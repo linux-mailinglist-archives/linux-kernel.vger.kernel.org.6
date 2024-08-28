@@ -1,157 +1,242 @@
-Return-Path: <linux-kernel+bounces-305156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06FFD962A58
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 16:34:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E1CB962A5A
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 16:35:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D1AF1F25230
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 14:34:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3E1B1C23825
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 14:35:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CCF319F470;
-	Wed, 28 Aug 2024 14:34:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 803B6177982;
+	Wed, 28 Aug 2024 14:34:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aAl4AFwE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="E3Q/mxC1"
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A476716C866;
-	Wed, 28 Aug 2024 14:34:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 002F4188CC2
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 14:34:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724855670; cv=none; b=FPO476oyK2djHQGo984IMIBB6Ei+g7ieY/M9j9ubR4BqNpFl4NBhP1UBNA+5U25RVw3BAa+fbnnQ2lKnKpujIvRyeEPulCeaMCkzY4Wqq0VuqNGYJTJ4hvUcLWnQKDxtCUqSlaAc7xMHnfHVPtuvfGJqMBuw/RVyBKWzz8UTeLc=
+	t=1724855682; cv=none; b=hbl3u5IAM8KfkalxCKzfEHlglm/qOsSd8mF9Z2mha49DEdiqZ3e1SVGKHi1k9DUou0TPyF+4KJdueBnPQoU0UzL/xMY25UvZ59lIU2eqX/QQQAFidiPLY6NVsdhRSJNdK2FM9OHSYE1LrDT0IfDAwIA353Is1c/NabzlT6Hz/hc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724855670; c=relaxed/simple;
-	bh=j/Q1LONafWjKMVos3PdLmRHYgCPTc52BK3D0sXgAucM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WImQN7r2HSk6VKrzmmJ2vX6FrvtMfzpVXVKHBkZuvTbmBaAvpaRvVFCoRtSVBJL71NeGRc1HnZxWYuVfYkb8z6/o6CKy/6k0wl8K6VWMuGj+Haif6wSn/ig8vYKVeNtd+yHfWYI9aGIKpCSPTsdfGspjxvlJpjPR5q5Bp/N9NaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aAl4AFwE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6821C51AA5;
-	Wed, 28 Aug 2024 14:34:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724855670;
-	bh=j/Q1LONafWjKMVos3PdLmRHYgCPTc52BK3D0sXgAucM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=aAl4AFwEfXuWO6RItuz6+ilTCQaGgagmI4SdJJWa1VBEcezZDFQ32QGHuTAhmH06T
-	 mS28JevqtPEa/yWM2FHoj72g9P+Xkw4LCBUXiQJCkNStAHpS/35LuF9mr9xJABqGHN
-	 kuI4uBMGMsYHrvuFOznMNLTOVkKxIOTcXQ4tCFOWvcW5NB08VX8ZXJkumzUeogQyBu
-	 DOwjjh+VToOCqpz/yKFg1s8khK71gNnP7C8T4J1mbOD/tkcxFe6ETK9o77US4/9FFd
-	 v9MCPfWwqi2bL4a6ntS49ZNw4BUcpfzQQJWV8g/hMdDGxbANHVrKNN1brsQThsSFAH
-	 La4e6W+hIzcBQ==
-Message-ID: <28106585-59d1-42c4-af56-89820b15bdfb@kernel.org>
-Date: Wed, 28 Aug 2024 16:34:23 +0200
+	s=arc-20240116; t=1724855682; c=relaxed/simple;
+	bh=CI4CXriw67wC68iskUm0bZE+6Nt/fOtp76fyzaDXIBM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Rz5zITyFmnhBhRTuAxWJJBSFmJVDMwyLBWaku/Y8EK/y/Q1Esf0Y/iURUMHLIYwEGZchqgkkHIUQsisppPdKn9r28UEuOh+ajEU/cKl6Mx9RO7uJX5J7lkSQYDHX79ldaXCweRQZB2RQsX+GGnf2nRiyXAl9o6mY5H1omx0/h2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=E3Q/mxC1; arc=none smtp.client-ip=209.85.222.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7a1dcba8142so54133785a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 07:34:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724855680; x=1725460480; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=gyUo6RUUr6GklVooVru1PomCfQxfqpdR7hVYNrLOVFg=;
+        b=E3Q/mxC1retEzgdYTp+Wp2cTs00/cVAU6QVTd8s6x8b18gVkxT/iPnUf7XCBN1VEtr
+         p2cm+0rI1br6zRsSmX8Uhqp0MenHT9bTjWX8kttgeExnc65joap/LKPLbmndHIymLMC9
+         WReongYmvKBaMPKtAB/7qzXyEjhbwksT3f5TuStsWWKMuxvqlPGDkhWlYcPicWKaPNnI
+         C5AM7boXbTPxxl6YSvfluRFVfvJVHR1m7oQ6LWN5SKmeaBt4qb0UvjMkQu1BlGgSyK3+
+         ofOqSJksCmLf74EvYmpoICp781KVIoDofgvVnSwunyfBoRuKFypsVw0YxOsOFVz1SupA
+         XuSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724855680; x=1725460480;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gyUo6RUUr6GklVooVru1PomCfQxfqpdR7hVYNrLOVFg=;
+        b=lQ4nOTWQddyvlsbuZ3nxiSTUvX31CnoYxuH/AMX48Fis3smFTIIKt14lL1EmEgED2f
+         rbqRT8P9GoAdoHM6vZJc+mbdpLwDJQjb9iIDG5YAZmnApTk0WJAqLU253X+MZ6IouJjt
+         UJIQtiBAWFDqOr6osOXMRplwHT+xlmBmA6w9/F7bkXLERqpAN+6XXSxbdplkvjYdZvFI
+         l3zn6VSdlXiWcf9eoZAMdVOYV4uI6K8AbYZlLaPJqB1VXHB3r+XJFequZel5OCCe1jiG
+         CuN0tyT6Jv6JZkQ+wW7lRjVqJQ6gJDp98T3tUPs3J0/HY4mBu9FAOKMvlEnQpb3dfUW0
+         fVJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVZm/vX+ca7PUQa1dh+ZDMVV6Rr0S8QXz8n2HIHT89CpjUV0PRQPAS2MohFMWqHFqFKxeiDHqD5dTxaruQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzu5kyHhJZeaBDQ88PQn4FqK2FsfN7jJ8L3yImupD8e+APc5gMP
+	xYi4/qS1Ecq6Dk9YLQxOXU/fpk27/9yr8yiSndQHhGa5Hcg1UUTBeHQ9tUOjxNKRLKKVeB6G7qi
+	EfiAQX0w4XndcR8WqBjPj1vAY0eu5sEYk5U2txA==
+X-Google-Smtp-Source: AGHT+IEmRhy3Ri7l+t9MTzUjqcgJRsQ6zYubfPpsh9IZnoAxSLNHwf8XAweS0vRUop5x8D4Zqj0ISY/ukGb1nnceqlE=
+X-Received: by 2002:a05:620a:44cf:b0:79f:aa9:b3a0 with SMTP id
+ af79cd13be357-7a7f4199661mr424667685a.13.1724855679800; Wed, 28 Aug 2024
+ 07:34:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/9] dt-bindings: soc: renesas: Document RZ/V2H EVK
- board
-To: Prabhakar <prabhakar.csengg@gmail.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>,
- Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
- Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20240828124134.188864-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20240828124134.188864-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240828124134.188864-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240827143838.192435816@linuxfoundation.org>
+In-Reply-To: <20240827143838.192435816@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Wed, 28 Aug 2024 20:04:27 +0530
+Message-ID: <CA+G9fYsUxRMXOZi6skrOV+ZOo0yCj6NrmBFi5CptTdRRQzWXpw@mail.gmail.com>
+Subject: Re: [PATCH 6.1 000/321] 6.1.107-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
+	broonie@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 28/08/2024 14:41, Prabhakar wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> 
-> Add "renesas,rzv2h-evk" which targets the Renesas RZ/V2H ("R9A09G057")
-> EVK board.
-> 
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> Acked-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
-> Hi Rob, I have restored your Ack with the below change, I hope that's OK.
-> 
-> Cheers, Prabhakar
-> 
-> v1->v4
-> - Updated 'renesas,gp-evk # GP-EVK' -> 'renesas,rzv2h-evk # RZ/V2H EVK'
-> - Updated commit message
-> 
-> v1: https://patchwork.kernel.org/project/linux-renesas-soc/patch/20240724094707.569596-2-prabhakar.mahadev-lad.rj@bp.renesas.com/
-> ---
->  Documentation/devicetree/bindings/soc/renesas/renesas.yaml | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/soc/renesas/renesas.yaml b/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
-> index d582992aaf0e..b7acb65bdecd 100644
-> --- a/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
-> +++ b/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
-> @@ -527,6 +527,8 @@ properties:
->  
->        - description: RZ/V2H(P) (R9A09G057)
->          items:
-> +          - enum:
-> +              - renesas,rzv2h-evk # RZ/V2H EVK
->            - enum:
-
-This is unusual pattern for me, but maybe I miss here something. Commit
-message does not explain why EXISTING boards needs to be changed. What
-does it mean "rzv2h-evk targets evk board"? How does this work?
-
-You have EVK board and now it is not valid anymore?
+On Tue, 27 Aug 2024 at 20:47, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.1.107 release.
+> There are 321 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu, 29 Aug 2024 14:37:36 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.107-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
 
-Best regards,
-Krzysztof
+The tinyconfig builds failed for all architectures on 6.1.107-rc1.
 
+Builds:
+  - clang-18-tinyconfig
+  - clang-nightly-tinyconfig
+  - gcc-13-tinyconfig
+  - gcc-8-tinyconfig
+
+lore links:
+ - https://lore.kernel.org/stable/CA+G9fYuS47-zRgv9GY3XO54GN_4EHPFe7jGR50ZoChEYeN0ihg@mail.gmail.com/
+
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+
+## Build
+* kernel: 6.1.107-rc1
+* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+* git commit: b9218327d235d21e2e82c8dc6a8ef4a389c9c6a6
+* git describe: v6.1.106-322-gb9218327d235
+* test details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.1.y/build/v6.1.106-322-gb9218327d235
+
+## Test Regressions (compared to v6.1.105-39-g09ce23af4dbb)
+* arm64, build
+* arm, build
+* i386, build
+* x86_64, build
+  - clang-18-tinyconfig
+  - clang-nightly-tinyconfig
+  - gcc-13-tinyconfig
+  - gcc-8-tinyconfig
+
+## Metric Regressions (compared to v6.1.105-39-g09ce23af4dbb)
+
+## Test Fixes (compared to v6.1.105-39-g09ce23af4dbb)
+
+## Metric Fixes (compared to v6.1.105-39-g09ce23af4dbb)
+
+## Test result summary
+total: 141679, pass: 122248, fail: 2025, skip: 17193, xfail: 213
+
+## Build Summary
+* arc: 5 total, 4 passed, 1 failed
+* arm: 135 total, 131 passed, 4 failed
+* arm64: 41 total, 37 passed, 4 failed
+* i386: 28 total, 23 passed, 5 failed
+* mips: 26 total, 21 passed, 5 failed
+* parisc: 4 total, 3 passed, 1 failed
+* powerpc: 36 total, 21 passed, 15 failed
+* riscv: 11 total, 8 passed, 3 failed
+* s390: 14 total, 10 passed, 4 failed
+* sh: 10 total, 8 passed, 2 failed
+* sparc: 7 total, 5 passed, 2 failed
+* x86_64: 33 total, 29 passed, 4 failed
+
+## Test suites summary
+* boot
+* commands
+* kselftest-arm64
+* kselftest-breakpoints
+* kselftest-capabilities
+* kselftest-cgroup
+* kselftest-clone3
+* kselftest-core
+* kselftest-cpu-hotplug
+* kselftest-cpufreq
+* kselftest-efivarfs
+* kselftest-exec
+* kselftest-filesystems
+* kselftest-filesystems-binderfs
+* kselftest-filesystems-epoll
+* kselftest-firmware
+* kselftest-fpu
+* kselftest-ftrace
+* kselftest-futex
+* kselftest-gpio
+* kselftest-intel_pstate
+* kselftest-ipc
+* kselftest-kcmp
+* kselftest-kvm
+* kselftest-livepatch
+* kselftest-membarrier
+* kselftest-memfd
+* kselftest-mincore
+* kselftest-mqueue
+* kselftest-net
+* kselftest-net-mptcp
+* kselftest-openat2
+* kselftest-ptrace
+* kselftest-rseq
+* kselftest-rtc
+* kselftest-seccomp
+* kselftest-sigaltstack
+* kselftest-size
+* kselftest-timers
+* kselftest-tmpfs
+* kselftest-tpm2
+* kselftest-user_events
+* kselftest-vDSO
+* kselftest-x86
+* kunit
+* kvm-unit-tests
+* libgpiod
+* libhugetlbfs
+* log-parser-boot
+* log-parser-test
+* ltp-commands
+* ltp-containers
+* ltp-controllers
+* ltp-cpuhotplug
+* ltp-crypto
+* ltp-cve
+* ltp-dio
+* ltp-fcntl-locktests
+* ltp-fs
+* ltp-fs_bind
+* ltp-fs_perms_simple
+* ltp-hugetlb
+* ltp-ipc
+* ltp-math
+* ltp-mm
+* ltp-nptl
+* ltp-pty
+* ltp-sched
+* ltp-smoke
+* ltp-syscalls
+* ltp-tracing
+* perf
+* rcutorture
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
