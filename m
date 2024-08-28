@@ -1,175 +1,134 @@
-Return-Path: <linux-kernel+bounces-305913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FCA8963644
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 01:44:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24403963643
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 01:43:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C41C31C22632
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 23:44:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE0B61F21B46
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 23:43:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B8DF1B14F4;
-	Wed, 28 Aug 2024 23:37:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F52C1AE027;
+	Wed, 28 Aug 2024 23:37:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ucr.edu header.i=@ucr.edu header.b="theS/+AY";
-	dkim=pass (1024-bit key) header.d=ucr.edu header.i=@ucr.edu header.b="GmfZt/FE"
-Received: from mx-lax3-1.ucr.edu (mx-lax3-1.ucr.edu [169.235.156.35])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HDbHEDNN"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1E441AE87F
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 23:37:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=169.235.156.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8E8C1AE024;
+	Wed, 28 Aug 2024 23:37:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724888264; cv=none; b=gHajgjWThCLFDlZjq8PO3hDmrhErmKZ20z/Mp9++1OtrVqAbgomfAf6Nz5X4aFK2h485TggZ5rR7x17Koy4PLFP4Lrfq9VsuxL55RVBxKj1Vg347sC46rBqSya0eGr3isIE7PzRqI4K0D4UHHNYKdF6s4idtBh52rnO+dlSP9IM=
+	t=1724888254; cv=none; b=XNnvr2ObvBkvBI0vRyod84S7gnff33jRqeLwAXXldno00bXuNC0ktJOjvuppDDP5nICI72ZKSQ9aLYlF8ZJsAQ3uQT7/uvgBEpzu4Plrlda2f5Q4eBCc/fOWPjvgEc7FYf45OyKlO6m31hUW63yVNwbILDeaGi9OOLbmZht8XXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724888264; c=relaxed/simple;
-	bh=GJdzld4jTWn6nYzAphdnp/WoAIQWPqdoYf2djtGyPmI=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=cZ3cgJdQSI5PDUNoW0Rwst/n8r6eMEbYaDvnmVTGkeG2oSnwazf1NGsFE1hzvV6aDmJRwau7xYAhz4FKJl3Pq9VWE6MZlaYqKFXdmuO3dNxoCVHwZHCh79WzVVEx1AM38CpavXzx3IW/r4YjOU2uGUCtGwPbxOVjiQUuNRJ4Cwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ucr.edu; spf=pass smtp.mailfrom=ucr.edu; dkim=pass (2048-bit key) header.d=ucr.edu header.i=@ucr.edu header.b=theS/+AY; dkim=pass (1024-bit key) header.d=ucr.edu header.i=@ucr.edu header.b=GmfZt/FE; arc=none smtp.client-ip=169.235.156.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ucr.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucr.edu
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=ucr.edu; i=@ucr.edu; q=dns/txt; s=selector3;
-  t=1724888263; x=1756424263;
-  h=dkim-signature:x-google-dkim-signature:
-   x-forwarded-encrypted:x-gm-message-state:
-   x-google-smtp-source:mime-version:from:date:message-id:
-   subject:to:cc:content-type:x-cse-connectionguid:
-   x-cse-msgguid;
-  bh=GJdzld4jTWn6nYzAphdnp/WoAIQWPqdoYf2djtGyPmI=;
-  b=theS/+AYWL6s2+gUHi4f24dGIirvnmGXz5K1myA2pmmQwYT1gxJkc/9l
-   2V8BCRDe1uJoqIc2wftnphbbOajkyoEkkXKt+NxZy56ABxh64mvx34Ar6
-   ggATKav+P7FJYieNnSHDC7UyJ5EP4MNzUfKwxkZgWagNJ5wxG+NfYhwOH
-   ZnH/UQoe6ZyLdnO4OSWwbKQ52tVDFNC3amD5JYDvFoC6cuZYwq3XCgir1
-   Vgv0zLrX2I7jwo4oIcgC6v6mriyJHYzzlDYgGFekJHDXii1Cqbsoyg6R3
-   NN5W2YlCo9nHl0iPkRyIbPUap6EyZTN9A9eIQ68gNbTGxTp0+JVMOlgpO
-   A==;
-X-CSE-ConnectionGUID: /fPUc9/LRdy7YSUVcfjkbQ==
-X-CSE-MsgGUID: Q7X84QBRRgCIQfzvcvFgvQ==
-Received: from mail-io1-f69.google.com ([209.85.166.69])
-  by smtp-lax3-1.ucr.edu with ESMTP/TLS/TLS_AES_256_GCM_SHA384; 28 Aug 2024 16:37:42 -0700
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-82a124bc41aso13614339f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 16:37:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ucr.edu; s=rmail; t=1724888261; x=1725493061; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=XtfXfaV+fxB/nHNeqMTTgAG3FKhTYBPjiNWqzba34qU=;
-        b=GmfZt/FEwNYHjjOpuH9YTigvuUC37LeB28N6RfZxKGYR0PKL7lRLnyMU4cS1lUUo3/
-         XjdA357yRICIw1ms0GaLzp+fzqFzfJ2soxUds1LSBswDOrf+J9ZLRfbWVzQ52+oRGtlY
-         7Z2+Uqon47IFoXhf7L5W10KIlbgt5MkmJUl+Y=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724888261; x=1725493061;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=XtfXfaV+fxB/nHNeqMTTgAG3FKhTYBPjiNWqzba34qU=;
-        b=mMsu7sidUpB30iPwuM34kcdqKPX07fRM3vdHeMOhnTFgi46YED+WN67vOfN0Xv0sMM
-         WI3uGnzPhXjPQYK2rIfxGG1TLcVE7dTFlgEt+qWCEXip4ZIXA6BGxhZawy/iR2JLFARu
-         h3bBefv5XVmLyBPhdLRU4Zf1AopAkQhQcQXZ1Welnc23U1rnp1N+QLLe+d5ADXdUrRtv
-         8RI0wH5ZO/3RZTcku3fG/YtfnsPwCQLS8IovaLTme/P/7VnTZcAQmZ8RQ5gXC88n+lfD
-         F4mpUA43k89pMEjLtGYClChBCnGDPEBeZ0DZpfdiM91jC+yHjFlijlr7o008nHYCconY
-         f/2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVAEm6i6w0kXLmYm0afxEMXvxS+k8PtpZEyBLIImIyktHU+NMvZ2naixs1IWLR8T2P+LeQQmGp/WP/tcUM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJ9L8fn3bAHmfviQ58psOuR81MHyThXtg7GMJ23DbUvXH9umr8
-	3KgUE7h2tuH1VRCpEkQo229Vws09aJ+Eb2zFpFuv8xgCuI74SCSDVLj7FWiRMWJWiPX627AQDJ+
-	awQEFaYFH/ffACFpV9VvSUNevDJVwrs+qauQScMmxr0RXd7EXY+C6W3fyO8DmxBR2e6B0VO80kM
-	qoj/iWqcAOKtvopj0g8pAButMyWtTGwra+KtflDw==
-X-Received: by 2002:a05:6e02:156c:b0:39b:33b5:5cc1 with SMTP id e9e14a558f8ab-39f37874675mr16268995ab.24.1724888261114;
-        Wed, 28 Aug 2024 16:37:41 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGxx1C0b3tOQfi3mchQ5k2jKuhuU0IWdL/9I8h3CXCgYCKjdAAvBght4r9+WFieJ5xDcRCFZ70dSaWPj3L+thA=
-X-Received: by 2002:a05:6e02:156c:b0:39b:33b5:5cc1 with SMTP id
- e9e14a558f8ab-39f37874675mr16268875ab.24.1724888260815; Wed, 28 Aug 2024
- 16:37:40 -0700 (PDT)
+	s=arc-20240116; t=1724888254; c=relaxed/simple;
+	bh=TBUUEgAxl2gdWJmU9KnpU2Ca2Mkau6Okcj2ojJsXNfc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=S/f1SicUrjmND0KGCvH6HEQssWjKJxf6ODJF8Wf6Xj4dTO5nLUvWjyBNqf7VOt3+MOKJMtnsPG8L+uF92xFWKhzQRF8fPkhG8KD65RhpAw2cSaeVHYcaoKCv5sma7rck1Qknmp1ba+JKYLZC79A6IitHV6I8FKtDc/1ftgEze+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HDbHEDNN; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724888253; x=1756424253;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=TBUUEgAxl2gdWJmU9KnpU2Ca2Mkau6Okcj2ojJsXNfc=;
+  b=HDbHEDNNf97hknIPRmPOEA6U0tBbjHmrG/CjIyE71auyItonzIy0KnOn
+   7Wk/1zOqrMIgXbRvG3CXx2zK/Lumjg2zx4vXQZ9jy7NWO6MpIzIl1Cs+Y
+   11I03juoLYjYw60esEHEVFrT3glViIFAR1xR2AM3CCW9jsMGoYyXHp6PR
+   bfyLEVIR++NxaAPo1tQdnekvyGbEIRIfTkpt/fhJoaLck4hnwJZf+kwM2
+   HVl+R+i8HuzrmstKcxy0HWYYAflcCAo17qhYsEEI1a/MsUs9Q7dil7oWP
+   9YqIR2Bi1kVS1ZJ7kVSy1q39DQ4qsUjq8irlx+FRBX2r3vGwiEi4Hx3sB
+   w==;
+X-CSE-ConnectionGUID: XbxN1yD9ROy5XZklmionxw==
+X-CSE-MsgGUID: kU5d8Y4fSUK9+B/o9jdrNw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11178"; a="23412077"
+X-IronPort-AV: E=Sophos;i="6.10,184,1719903600"; 
+   d="scan'208";a="23412077"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2024 16:37:32 -0700
+X-CSE-ConnectionGUID: Zeil5yAGS72JMaJ5zU2AwA==
+X-CSE-MsgGUID: Y04QKCWVROept/fdiJCjBg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,184,1719903600"; 
+   d="scan'208";a="68286949"
+Received: from inaky-mobl1.amr.corp.intel.com (HELO [10.125.111.94]) ([10.125.111.94])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2024 16:37:33 -0700
+Message-ID: <bc0f3e64-300e-4879-822c-3e86103720c5@intel.com>
+Date: Wed, 28 Aug 2024 16:37:31 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Xingyu Li <xli399@ucr.edu>
-Date: Wed, 28 Aug 2024 16:37:30 -0700
-Message-ID: <CALAgD-7DfifSgrCTLnp0Td0wCBFQ4DxHzfzXf_3oZ6OmQRQtcw@mail.gmail.com>
-Subject: BUG: corrupted list in rxrpc_discard_prealloc
-To: dhowells@redhat.com, marc.dionne@auristor.com, davem@davemloft.net, 
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
-	linux-afs@lists.infradead.org, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Cc: Yu Hao <yhao016@ucr.edu>
-Content-Type: text/plain; charset="UTF-8"
-
-Hi,
-
-We found a bug in Linux 6.10 using syzkaller. It is possibly a
-corrupted list bug.
-The bug report is as follows, but unfortunately there is no generated
-syzkaller reproducer.
-
-Bug report:
-
-bond0 (unregistering): Released all slaves
-list_del corruption. next->prev should be ffff88801ef15218, but was
-0000000000000000. (next=ffff88802ed18218)
-------------[ cut here ]------------
-kernel BUG at lib/list_debug.c:67!
-Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
-CPU: 0 PID: 2790 Comm: kworker/u4:9 Not tainted 6.10.0 #13
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
-Workqueue: netns cleanup_net
-RIP: 0010:__list_del_entry_valid_or_report+0x11e/0x120 lib/list_debug.c:65
-Code: 96 06 0f 0b 48 c7 c7 e0 5b a9 8b 4c 89 fe 48 89 d9 e8 96 ff 96
-06 0f 0b 48 c7 c7 60 5c a9 8b 4c 89 fe 4c 89 f1 e8 82 ff 96 06 <0f> 0b
-80 3d bd 35 c6 0a 00 74 01 c3 31 d2 eb 02 66 90 55 41 57 41
-RSP: 0018:ffffc900097ef8e8 EFLAGS: 00010246
-RAX: 000000000000006d RBX: ffff88802ed18220 RCX: 12f0e8d01e569d00
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
-RBP: ffff888041824064 R08: ffffffff8172e30c R09: 1ffff920012fdebc
-R10: dffffc0000000000 R11: fffff520012fdebd R12: dffffc0000000000
-R13: ffff88801ef15000 R14: ffff88802ed18218 R15: ffff88801ef15218
-FS:  0000000000000000(0000) GS:ffff888063a00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00005605ff865d58 CR3: 0000000040bd2000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- __list_del_entry_valid include/linux/list.h:124 [inline]
- __list_del_entry include/linux/list.h:215 [inline]
- list_del include/linux/list.h:229 [inline]
- rxrpc_discard_prealloc+0x27e/0x800 net/rxrpc/call_accept.c:208
- rxrpc_listen+0x280/0x3a0 net/rxrpc/af_rxrpc.c:246
- afs_close_socket+0xa4/0x310 fs/afs/rxrpc.c:112
- afs_net_exit+0x5b/0xf0 fs/afs/main.c:155
- ops_exit_list net/core/net_namespace.c:173 [inline]
- cleanup_net+0x810/0xcd0 net/core/net_namespace.c:640
- process_one_work kernel/workqueue.c:3248 [inline]
- process_scheduled_works+0x977/0x1410 kernel/workqueue.c:3329
- worker_thread+0xaa0/0x1020 kernel/workqueue.c:3409
- kthread+0x2eb/0x380 kernel/kthread.c:389
- ret_from_fork+0x49/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x11/0x20 arch/x86/entry/entry_64.S:244
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:__list_del_entry_valid_or_report+0x11e/0x120 lib/list_debug.c:65
-Code: 96 06 0f 0b 48 c7 c7 e0 5b a9 8b 4c 89 fe 48 89 d9 e8 96 ff 96
-06 0f 0b 48 c7 c7 60 5c a9 8b 4c 89 fe 4c 89 f1 e8 82 ff 96 06 <0f> 0b
-80 3d bd 35 c6 0a 00 74 01 c3 31 d2 eb 02 66 90 55 41 57 41
-RSP: 0018:ffffc900097ef8e8 EFLAGS: 00010246
-RAX: 000000000000006d RBX: ffff88802ed18220 RCX: 12f0e8d01e569d00
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
-RBP: ffff888041824064 R08: ffffffff8172e30c R09: 1ffff920012fdebc
-R10: dffffc0000000000 R11: fffff520012fdebd R12: dffffc0000000000
-R13: ffff88801ef15000 R14: ffff88802ed18218 R15: ffff88801ef15218
-FS:  0000000000000000(0000) GS:ffff888063a00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00005605ff865d58 CR3: 0000000040bd2000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] dmaengine: idxd: Add new DSA and IAA device IDs
+ for Diamond Rapids platform
+To: Fenghua Yu <fenghua.yu@intel.com>, Vinod Koul <vkoul@kernel.org>
+Cc: dmaengine@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>
+References: <20240828233401.186007-1-fenghua.yu@intel.com>
+ <20240828233401.186007-3-fenghua.yu@intel.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20240828233401.186007-3-fenghua.yu@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
--- 
-Yours sincerely,
-Xingyu
+
+On 8/28/24 4:34 PM, Fenghua Yu wrote:
+> A new DSA device ID, 0x1212, and a new IAA device ID, 0x1216, are
+> introduced for Diamond Rapids platform. Add the device IDs to the IDXD
+> driver.
+> 
+> The name "IAA" is used in new code instead of the old name "IAX".
+> However, the "IAX" naming (e.g., IDXD_TYPE_IAX) is retained for legacy
+> code compatibility.
+> 
+> Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+
+> ---
+> v2:
+> - Replace "IAX" with "IAA" (Dave Jiang)
+> 
+>  drivers/dma/idxd/init.c | 4 ++++
+>  include/linux/pci_ids.h | 2 ++
+>  2 files changed, 6 insertions(+)
+> 
+> diff --git a/drivers/dma/idxd/init.c b/drivers/dma/idxd/init.c
+> index 415b17b0acd0..0f693b27879c 100644
+> --- a/drivers/dma/idxd/init.c
+> +++ b/drivers/dma/idxd/init.c
+> @@ -71,9 +71,13 @@ static struct pci_device_id idxd_pci_tbl[] = {
+>  	{ PCI_DEVICE_DATA(INTEL, DSA_SPR0, &idxd_driver_data[IDXD_TYPE_DSA]) },
+>  	/* DSA on GNR-D platforms */
+>  	{ PCI_DEVICE_DATA(INTEL, DSA_GNRD, &idxd_driver_data[IDXD_TYPE_DSA]) },
+> +	/* DSA on DMR platforms */
+> +	{ PCI_DEVICE_DATA(INTEL, DSA_DMR, &idxd_driver_data[IDXD_TYPE_DSA]) },
+>  
+>  	/* IAX ver 1.0 platforms */
+>  	{ PCI_DEVICE_DATA(INTEL, IAX_SPR0, &idxd_driver_data[IDXD_TYPE_IAX]) },
+> +	/* IAA on DMR platforms */
+> +	{ PCI_DEVICE_DATA(INTEL, IAA_DMR, &idxd_driver_data[IDXD_TYPE_IAX]) },
+>  	{ 0, }
+>  };
+>  MODULE_DEVICE_TABLE(pci, idxd_pci_tbl);
+> diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
+> index ff99047dac44..8139231d0e86 100644
+> --- a/include/linux/pci_ids.h
+> +++ b/include/linux/pci_ids.h
+> @@ -2707,6 +2707,8 @@
+>  #define PCI_DEVICE_ID_INTEL_82815_CGC	0x1132
+>  #define PCI_DEVICE_ID_INTEL_SST_TNG	0x119a
+>  #define PCI_DEVICE_ID_INTEL_DSA_GNRD	0x11fb
+> +#define PCI_DEVICE_ID_INTEL_DSA_DMR	0x1212
+> +#define PCI_DEVICE_ID_INTEL_IAA_DMR	0x1216
+>  #define PCI_DEVICE_ID_INTEL_82092AA_0	0x1221
+>  #define PCI_DEVICE_ID_INTEL_82437	0x122d
+>  #define PCI_DEVICE_ID_INTEL_82371FB_0	0x122e
 
