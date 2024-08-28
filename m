@@ -1,136 +1,186 @@
-Return-Path: <linux-kernel+bounces-305410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8D65962E43
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 19:14:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA82D962E49
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 19:14:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D4291F226F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 17:14:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C1AB1C22044
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 17:14:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB80C1A7051;
-	Wed, 28 Aug 2024 17:14:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DD1D1A7070;
+	Wed, 28 Aug 2024 17:14:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VBLCCn7E"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="azHCmxiT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF0261A38E0
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 17:14:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3391C1A706C;
+	Wed, 28 Aug 2024 17:14:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724865256; cv=none; b=ISy6nPBnGQBj28wUmkyYemoYoZwyndgfWF/wZL+23D/zwgBrrNU6oAo4/ARqS1230N9N2cyo1qlHuNuNShFbNsFeYZylHg/pbaH0zKlMdlcObJGNAomGd4l+FFTsNOEEezuhafgqE/ak/9x/5RirHdjUn+qSH1fhL0Hzz9T2VDo=
+	t=1724865259; cv=none; b=qdbNctNH+buF0EwJMIkLmY0+7uZ0GE0RZrkobrf9lnCiMeU7GhXGT9AHF9D5NVqTC3UsYRG0cNW3lIMeVNIoBpC+CQCCUOHDPbeI9bVyIu0KgfAYOj/MW943LhDXUlXy50SIzs5X1tSPWn6J9vmGHra0eLzqD0/r0ZO/jw0JMEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724865256; c=relaxed/simple;
-	bh=XuU6lfnAXc7wBWZXO3LoSeJokR3ZvXf1xIXUsa6plnw=;
+	s=arc-20240116; t=1724865259; c=relaxed/simple;
+	bh=JMXcxtayu0gzzaCBWTcXmf2eB/HAKHtp+/XlQYk6MBo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZD/uCKbJ4gfTUd0V8Vlo/lDA8h5msP4n/SqMXGK/5OwywnTLfn/50m5LhOCwlaT91/ntAM2HoWHeXluZbDifhvMOj0+16wV7RKRA7cVfnDnHQTR/CKxLrgl1nABY1ofA+cycAHONdBqa09jZ9c4Hu/a8WTazZSGs3YsL2OaTp/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VBLCCn7E; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20260346ca1so13565ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 10:14:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724865254; x=1725470054; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sgsg9KYlOPgnINZ9GfyD+BBUo6PvUfKigYVEMj5LYlU=;
-        b=VBLCCn7Ezc56gL7vPp1OxXFkJWx8jAiTv0mUjPaAAvyu9Q54RSTGZk5WYPf5/Cuney
-         HmVvgHK1gmRL+MqRrQ1UFyzR8ClsYgByXUcVolKD+HheNu8dhHOY4rn9WbWn94O7dDXd
-         CMHvJkiiH5oTL+0juR0ZVOdwbAN5pY/1owU+grTKXK/THk+hntu6WO+94/ASNyoVIKsW
-         MBGqoEqkH4baLsuvXhV2oeLX/2R82hUckXEge9H/w0X1RCQUnwBDu2USW6ivrxgch3M4
-         RjZyzr23IxbzV3RzmBbCxgVStk7lWg6xGOWF3XM96LeNfZvk4cxAMVhSu5Hul1V5h2zx
-         wpuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724865254; x=1725470054;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sgsg9KYlOPgnINZ9GfyD+BBUo6PvUfKigYVEMj5LYlU=;
-        b=U/O07yLJWgviDtlMZsNJqfs+zTqANK12fSdXs2EbiS0aZxgfaN/A1YCtO3boROT3VS
-         TJVC1bn0v7Mh+SEh7d+Mqb0dFG2lboK/w4HDGI841KR8tKH9/8xo8Oecd20b96aq2Tpl
-         izsgtmyjjj9mvE7VwIooA9Ry3eq3p1goFU5svMQ0+tj7cPXncqokMmouMZPzu+ZIdzda
-         yK6FAIPsNMeVh7EtVrBX8PGQc/efgbZgBXhOQ7+Cskg6IJdPxC8ADpG2C6hJ7/uo61Z8
-         6H7lSFrw5q6/N0qbozlvEvrUbIUJ3MJMRxHkqilIslxSu+Z1zm+1Aem9oxrJBNDR6snP
-         +jow==
-X-Forwarded-Encrypted: i=1; AJvYcCUx25ZwhbPTB1+H/00ol3NTquskLCFvNq1Yewg+gO6t+nE1aes1T1o/qrsO1D4YRAESPSgo7L0FgLHoHlg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzClcoRYzI6Zt+c0/8REZ7TjSUS8QN9I1TR9xsGEjpo/GJNfdvC
-	qpe0GndEDGlxj8FuAno4cRsmtbtCbTPmOUoaX4C6iZpMQg5RDv9x41pGR1hB4miLnlXOUweoBMD
-	lmZi0Mkrd22ZeASwIhcbejFCf+pCU0mEoYcR/
-X-Google-Smtp-Source: AGHT+IEclezY9FbFmYOMIJpk7h1+XOP+3gwZEglT1ovqH0RFwg8+37NHUTVC2VrWG5GzhCh5VftM3Q+HdyA8/UzsKJM=
-X-Received: by 2002:a17:902:d512:b0:201:e2db:7be3 with SMTP id
- d9443c01a7336-204f960ea01mr3339395ad.21.1724865253338; Wed, 28 Aug 2024
- 10:14:13 -0700 (PDT)
+	 To:Cc:Content-Type; b=TRTAdVmcplpjL+SbRIxBUKo51aCAdWqS3aEZ+PX67vNjTOLo6zj4e7aB/HjEdrn4ilxiDtY/WyUZNDDTR7QL9fhblJtUfSNL8rmPC8KsPXf/jav8dCe/Fs79Vo20ZNv/ZbaTODV7VFpLHFCyIf5PP1SvCLr1Vx8o6wAgj7gph8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=azHCmxiT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC5EFC4AF10;
+	Wed, 28 Aug 2024 17:14:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724865258;
+	bh=JMXcxtayu0gzzaCBWTcXmf2eB/HAKHtp+/XlQYk6MBo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=azHCmxiTXKE3x7rwJPOfbJepWeWHKeou6GzC9yWlspuG4haAA3acy6WVh77iaM4z5
+	 O2OEFuda+1O6DK77JDqyue3RDMfwcX8207p6iR328o/8iCFuXjPiZeb+JIgV8NOlcs
+	 lMlASpeCY07DWlr9IefrQ5mr8lwLYIVSElhKb3L+YVjJ0eNch1k5kT5b39NgeDMQ6m
+	 wnqxzfoiN7p2vuIQv8LhOqnhQpNfhEaLIS5uA0nb9odqS6zthIw0K7LuXuSkMirueU
+	 Hto6PVWap9ehICcysOfp3iK4wrSz5Wd9tZ+DWn7JRrZ5fOm0dlYbkUW1gOfwO2wnms
+	 ruA65lYdzvEAA==
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-534366c1aa2so6137488e87.1;
+        Wed, 28 Aug 2024 10:14:18 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUFpq7AWRC/zaBOSIuXnWzId9zmXWhEVGCmJD+1k6PZzou+ll54NSIgh45z3qWTchKaiKj+E7WCKwKh@vger.kernel.org, AJvYcCVJxsff5RpUvTVQcPRLiRQ2tdTjP14ZgTq1bFjDfZrP7KITtgX45xnuTWI5Ihn4/IafK5y3vhrLgHXS@vger.kernel.org, AJvYcCVYOSb3/Q6a62+5SxrpdHSTNEI3r2v/fbhhhpi4BO0sJ4a6LbI23nieGa6Y/C9hK+bKJvFQagGDp3GToLmT@vger.kernel.org, AJvYcCWxxDWSFeDrRWRftxIaVzo1LWgrZZECdHOnZ06CdtuzJtVmErYCQ3XFDhU1FR0T/qERTlFZrrOVb+ky4rE=@vger.kernel.org, AJvYcCXvWxuB/chG7GRiSeojp4tkKGJpTXovEaJp/XeFOpk0KrIUvE3U4OV/na6uERmJyl25jRLRHHw+2mW7QxOUptFX@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyl02PTVlzuxEvCgU+6y7qp7gyPd7JsXDULCIQxTmRKorZlhV68
+	5WKoR17Ol12CTxx2pgTMzM34g1Txcoj9zeR8hXcqB9sf9ieLxjxY2rgFVLxqaFSbb6qOghvAHCq
+	XbmkQKCU5DfEiUvhq3m00zjFsbpg=
+X-Google-Smtp-Source: AGHT+IGjIAEHfnaAvWDGrHZH9ur0Yqdu+2C9S8V61720ewupp4mWfrA47TtZM9rrWmWlkP/s8kuZindCvpyLzRoi8jM=
+X-Received: by 2002:a05:6512:3052:b0:52e:9b2f:c313 with SMTP id
+ 2adb3069b0e04-53438831efbmr11902856e87.22.1724865257121; Wed, 28 Aug 2024
+ 10:14:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240828140736.156703-1-james.clark@linaro.org> <Zs9YGP4d0_QanpoA@tassilo>
-In-Reply-To: <Zs9YGP4d0_QanpoA@tassilo>
-From: Ian Rogers <irogers@google.com>
-Date: Wed, 28 Aug 2024 10:14:01 -0700
-Message-ID: <CAP-5=fW=eYuKQtnd=1gM3wh7MubZ+P56ZCHn9dwvkhUn_NQZMQ@mail.gmail.com>
-Subject: Re: [PATCH v5 0/7] Event parsing fixes
-To: Andi Kleen <ak@linux.intel.com>
-Cc: James Clark <james.clark@linaro.org>, linux-perf-users@vger.kernel.org, 
-	kan.liang@linux.intel.com, John Garry <john.g.garry@oracle.com>, 
-	Will Deacon <will@kernel.org>, Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Weilin Wang <weilin.wang@intel.com>, 
-	Athira Rajeev <atrajeev@linux.vnet.ibm.com>, Dominique Martinet <asmadeus@codewreck.org>, 
-	Yang Jihong <yangjihong@bytedance.com>, Colin Ian King <colin.i.king@gmail.com>, 
-	Ze Gao <zegao2021@gmail.com>, Yunseong Kim <yskelg@gmail.com>, 
-	Sun Haiyong <sunhaiyong@loongson.cn>, Jing Zhang <renyu.zj@linux.alibaba.com>, 
-	Yicong Yang <yangyicong@hisilicon.com>, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
+References: <20240826223835.3928819-21-ross.philipson@oracle.com> <202408290030.FEbUhHbr-lkp@intel.com>
+In-Reply-To: <202408290030.FEbUhHbr-lkp@intel.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Wed, 28 Aug 2024 19:14:06 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXGVn85ht_srwhYXDnKffPFX=B2+Cnv-8EAocwoHi__OoQ@mail.gmail.com>
+Message-ID: <CAMj1kXGVn85ht_srwhYXDnKffPFX=B2+Cnv-8EAocwoHi__OoQ@mail.gmail.com>
+Subject: Re: [PATCH v10 20/20] x86/efi: EFI stub DRTM launch support for
+ Secure Launch
+To: kernel test robot <lkp@intel.com>
+Cc: Ross Philipson <ross.philipson@oracle.com>, linux-kernel@vger.kernel.org, x86@kernel.org, 
+	linux-integrity@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-crypto@vger.kernel.org, kexec@lists.infradead.org, 
+	linux-efi@vger.kernel.org, iommu@lists.linux-foundation.org, 
+	oe-kbuild-all@lists.linux.dev, dpsmith@apertussolutions.com, 
+	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com, 
+	dave.hansen@linux.intel.com, mjg59@srcf.ucam.org, 
+	James.Bottomley@hansenpartnership.com, peterhuewe@gmx.de, jarkko@kernel.org, 
+	jgg@ziepe.ca, luto@amacapital.net, nivedita@alum.mit.edu, 
+	herbert@gondor.apana.org.au, davem@davemloft.net, corbet@lwn.net, 
+	ebiederm@xmission.com, dwmw2@infradead.org, baolu.lu@linux.intel.com, 
+	kanth.ghatraju@oracle.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 28, 2024 at 10:02=E2=80=AFAM Andi Kleen <ak@linux.intel.com> wr=
-ote:
+On Wed, 28 Aug 2024 at 19:09, kernel test robot <lkp@intel.com> wrote:
 >
-> On Wed, Aug 28, 2024 at 03:07:14PM +0100, James Clark wrote:
-> > I rebased this one and made some other fixes so that I could test it,
-> > so I thought I'd repost it here in case it's helpful. I also added a
-> > new test.
-> >
-> > But for the testing it all looks ok.
-> >
-> > There is one small difference where it now hides _all_ <not supported>
-> > events, when previously it would only hide some selected subset of
-> > events like "stalled-cycles-frontend". I think this is now more
-> > consistent across platforms because, for example, Apple M only has
-> > cycles and instructions, and the rest of the default events would
-> > always show as <not supported> there.
+> Hi Ross,
 >
-> I'm not a big fan of hiding all of <unsupported>, when they are explicitl=
-y
-> specified on the command line they should be absolutely shown.
+> kernel test robot noticed the following build warnings:
 >
-> I do have tools that specify events on the command line and expect
-> the same order/events in the output. This might well cause breakage.
+> [auto build test WARNING on tip/x86/core]
+> [also build test WARNING on char-misc/char-misc-testing char-misc/char-misc-next char-misc/char-misc-linus herbert-cryptodev-2.6/master efi/next linus/master v6.11-rc5]
+> [cannot apply to herbert-crypto-2.6/master next-20240828]
+> [If your patch is applied to the wrong git tree, kindly drop us a note.
+> And when submitting patch, we suggest to use '--base' as documented in
+> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+>
+> url:    https://github.com/intel-lab-lkp/linux/commits/Ross-Philipson/Documentation-x86-Secure-Launch-kernel-documentation/20240827-065225
+> base:   tip/x86/core
+> patch link:    https://lore.kernel.org/r/20240826223835.3928819-21-ross.philipson%40oracle.com
+> patch subject: [PATCH v10 20/20] x86/efi: EFI stub DRTM launch support for Secure Launch
+> config: i386-randconfig-062-20240828 (https://download.01.org/0day-ci/archive/20240829/202408290030.FEbUhHbr-lkp@intel.com/config)
 
-The patch series doesn't do this, it just doesn't display unsupported
-events that came from the set of default events - default evsels have
-a "skippable" flag set. In patch 3 James has added to
-should_skip_zero_counter in stat-display.c:
 
-+       /*
-+        * Skip unsupported default events when not verbose. (default event=
-s
-+        * are all marked 'skippable').
-+        */
-+       if (verbose =3D=3D 0 && counter->skippable && !counter->supported)
-+               return true;
+This is a i386 32-bit build, which makes no sense: this stuff should
+just declare 'depends on 64BIT'
 
-Thanks,
-Ian
+
+> compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240829/202408290030.FEbUhHbr-lkp@intel.com/reproduce)
+>
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202408290030.FEbUhHbr-lkp@intel.com/
+>
+> sparse warnings: (new ones prefixed by >>)
+> >> drivers/firmware/efi/libstub/x86-stub.c:945:41: sparse: sparse: non size-preserving pointer to integer cast
+>    drivers/firmware/efi/libstub/x86-stub.c:953:65: sparse: sparse: non size-preserving pointer to integer cast
+> >> drivers/firmware/efi/libstub/x86-stub.c:980:70: sparse: sparse: non size-preserving integer to pointer cast
+>    drivers/firmware/efi/libstub/x86-stub.c:1014:45: sparse: sparse: non size-preserving integer to pointer cast
+>
+> vim +945 drivers/firmware/efi/libstub/x86-stub.c
+>
+>    927
+>    928  static bool efi_secure_launch_update_boot_params(struct slr_table *slrt,
+>    929                                                   struct boot_params *boot_params)
+>    930  {
+>    931          struct slr_entry_intel_info *txt_info;
+>    932          struct slr_entry_policy *policy;
+>    933          struct txt_os_mle_data *os_mle;
+>    934          bool updated = false;
+>    935          int i;
+>    936
+>    937          txt_info = slr_next_entry_by_tag(slrt, NULL, SLR_ENTRY_INTEL_INFO);
+>    938          if (!txt_info)
+>    939                  return false;
+>    940
+>    941          os_mle = txt_os_mle_data_start((void *)txt_info->txt_heap);
+>    942          if (!os_mle)
+>    943                  return false;
+>    944
+>  > 945          os_mle->boot_params_addr = (u64)boot_params;
+>    946
+>    947          policy = slr_next_entry_by_tag(slrt, NULL, SLR_ENTRY_ENTRY_POLICY);
+>    948          if (!policy)
+>    949                  return false;
+>    950
+>    951          for (i = 0; i < policy->nr_entries; i++) {
+>    952                  if (policy->policy_entries[i].entity_type == SLR_ET_BOOT_PARAMS) {
+>    953                          policy->policy_entries[i].entity = (u64)boot_params;
+>    954                          updated = true;
+>    955                          break;
+>    956                  }
+>    957          }
+>    958
+>    959          /*
+>    960           * If this is a PE entry into EFI stub the mocked up boot params will
+>    961           * be missing some of the setup header data needed for the second stage
+>    962           * of the Secure Launch boot.
+>    963           */
+>    964          if (image) {
+>    965                  struct setup_header *hdr = (struct setup_header *)((u8 *)image->image_base +
+>    966                                              offsetof(struct boot_params, hdr));
+>    967                  u64 cmdline_ptr;
+>    968
+>    969                  boot_params->hdr.setup_sects = hdr->setup_sects;
+>    970                  boot_params->hdr.syssize = hdr->syssize;
+>    971                  boot_params->hdr.version = hdr->version;
+>    972                  boot_params->hdr.loadflags = hdr->loadflags;
+>    973                  boot_params->hdr.kernel_alignment = hdr->kernel_alignment;
+>    974                  boot_params->hdr.min_alignment = hdr->min_alignment;
+>    975                  boot_params->hdr.xloadflags = hdr->xloadflags;
+>    976                  boot_params->hdr.init_size = hdr->init_size;
+>    977                  boot_params->hdr.kernel_info_offset = hdr->kernel_info_offset;
+>    978                  efi_set_u64_form(boot_params->hdr.cmd_line_ptr, boot_params->ext_cmd_line_ptr,
+>    979                                   &cmdline_ptr);
+>  > 980                  boot_params->hdr.cmdline_size = strlen((const char *)cmdline_ptr);
+>    981          }
+>    982
+>    983          return updated;
+>    984  }
+>    985
+>
+> --
+> 0-DAY CI Kernel Test Service
+> https://github.com/intel/lkp-tests/wiki
+>
 
