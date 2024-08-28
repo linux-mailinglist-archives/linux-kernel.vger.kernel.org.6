@@ -1,138 +1,124 @@
-Return-Path: <linux-kernel+bounces-305554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DD9696306B
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 20:48:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EC0796306D
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 20:48:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68BD71C21511
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 18:48:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E290A1F22965
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 18:48:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBF5A1AB513;
-	Wed, 28 Aug 2024 18:47:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0515E1AAE21;
+	Wed, 28 Aug 2024 18:48:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QG/Wu4bH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RSyRGA3g"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0574A328DB;
-	Wed, 28 Aug 2024 18:47:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC947156F5E
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 18:48:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724870877; cv=none; b=ppuHuuIZoKdkDKBSa1qqtdIBbkYu0aT8Pl6g5MRyks2AeIoKTu32j0QCiCKuXR41xXeKzGwQ241F5irmuY72zTT8h5SZRihZPcIMt4ku4QMcYgcrFmNVcLbWUDbpTzOpWr0l5H7fwFEyYg7TrQuf384vSoWxgac9wOpz0O0Ar3w=
+	t=1724870926; cv=none; b=bNJrgcC7RcYj5SkE14UCk59C4+URdU1Al+kkCcx/mDF9gnipq6PlixBhZvC33u81TXy27Vij2nI6hFT3LthVkBt/xKvNr5pXnbyVUhQxGQwq0Oka2mtATUQ5RnHFTW3IpdZdhJgMpYzvV0zQ3O4NNx+AxUuGf3PXwELrRXXLFqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724870877; c=relaxed/simple;
-	bh=BWqtKeZjzI89ouRoevpj7gC/9WLPfDVqSv+VnjFUUv4=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:To:Date; b=hBW3su/CYRivwwv+T/qIqmmV1slY1PdHvNv32mKJ/fQ5P49JL3xYjVf2koPnxkX+LhYWrFujwB5ZEo0DDGz3PIovaTmCZ7gRwwaj+r2eydRm4OTWpU8hdFl8f2dlnnk2+FPljae3S/SE8HVVz+eRDPcsSDb/8MbkVgafdZpkh4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QG/Wu4bH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A123C4CEC0;
-	Wed, 28 Aug 2024 18:47:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724870876;
-	bh=BWqtKeZjzI89ouRoevpj7gC/9WLPfDVqSv+VnjFUUv4=;
-	h=In-Reply-To:References:Subject:From:To:Date:From;
-	b=QG/Wu4bH7Skgv9fh1+BCAdSlUsc+q6ygbSJwP+eAJzkAkDo/FjXXFnKVLtNtbHmVC
-	 xcQRuKe48fV5FFzyL32N9b2GJBiqH/rchG1C6MgwQ7x4o1znlQXFpzUPw5aI3pKfhK
-	 qVlspvwIujse9n9OsmH25IPpg9Mmi2+T/+x5DVhYvhumHLEoQPQi5AMrfWNhXwJAAQ
-	 sr1UxEJX0N3te3bC2kFfutZ8pZ4ZifyjLi2MdD9uWeDPcv13sA1bjFNUHTAF8z0Bhh
-	 PB9Qg6YJkrO/QgJ8wehkqWAAWsSpdBCttQb2/hu+qaaKt9sC8g8FOvSl5TZkUGnRvm
-	 oH+c2DMzAXvzA==
-Message-ID: <61c8234139fcd2b27610ef18e9d9fbf7.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1724870926; c=relaxed/simple;
+	bh=HfCYTyNwdb960/65HKXK1EAtTw5j0DpXyGeouZxsvdA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=SrIgUQIzcmxiUL6cepWq2YcG4trG76sBFDD6vfMJgibKHsW8fEARPtaCqIjfCEWxMUwQ0mcBxLtGVvxmqN0mEARXxC5yZDNJh7moJZj0/z84vEZ2PcdcaxnlENsEo3lMvRFHJuE3UFzzuCCyJCbc4pa5Yz5qzHue65lVcjfEfrE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RSyRGA3g; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5c0abaae174so4008052a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 11:48:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724870923; x=1725475723; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=Y4TuKTqviBGFP4ZDF4tveGym+O+ci2sBrO3pKcTbinI=;
+        b=RSyRGA3gwJi/dE3BrIbM3BaB18yiR2tLuoc/VKrtZ5wwEkx0KsFZvNLfLRA5mWhBo/
+         FeMhiyC1KC2zlKqY+BXrBFH9+IiKkgWNia72gt2ew9aX0tnS3GB1x674iAFw4DOvVd+q
+         JJm+rQDZH5i9I6yEq8ZrB36t665pA4pplmGVDRnJmTIpMkESiz87kuHlN0RYUGZnFwqw
+         qf7feBzq3GEjc0npSyUChk2gqDt7v1RhBnnufMxuXPfmIRDYuLh0V5ZB13xre7lpmtKT
+         ZiocCUo3FRGVXPOjDuGtL1AV1UgUoBuPUY4E8AoSjIULkKCW6JoE6vlINAtn867EiacR
+         wZcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724870923; x=1725475723;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Y4TuKTqviBGFP4ZDF4tveGym+O+ci2sBrO3pKcTbinI=;
+        b=hfo3xkv/CuL5Hwq0PGgtKtZFm3zPv6qm58NwNSOXAweYawemFcuiw382m8S5GFoALc
+         i0m+7YdmQAxFm2s4uapsWM9vzSXKGk2zkN5/lR/0JUViR+GcePGbcfARy9cBAvIlntfd
+         j2LIh2kSVaBATSej6WnXPQqTbBJ2cNEvP14AFIOC1IK6VG6IYmuVhyzzOMQxwBA3uxMS
+         yy06NMMOXE3fHHVHuJDei9XBRH0SbDE5iM77G3ANVz7xbKQx8+/at52a/NUUI0/aYU4t
+         U7o1jfMXPDoYOivvB2YuebNaiQ/tQPggLYtdFAKFVXvTB0zP8vVlQ3TxtYrcxzWZ0ZO2
+         shbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUxAshmI4cBEpN4yr7IDaU2Oi2iF1lSW/zEyg92e4Bc6Ee/fA3M4zH7EKoOmtEG0R6zJTWvWLGl7IxSLYw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzrwk+xg5K3gN3qVY7QGwaWrxkPOfZQRR2604dftfKCTtU8Rw99
+	/6ER58Up+B65eQ048g3BzTR5KfldXoIGg3f81rSXoFLF8eZMMyjb
+X-Google-Smtp-Source: AGHT+IHXgURMRyqoUm9rXVpjQa5L4iWj1GJFbNm9sxmB/L4X4vYfdMRudEJqs1hy89hYWUPWSGMZ0g==
+X-Received: by 2002:a17:907:9729:b0:a7a:a0c2:8be9 with SMTP id a640c23a62f3a-a897f84d369mr31594966b.18.1724870922886;
+        Wed, 28 Aug 2024 11:48:42 -0700 (PDT)
+Received: from ?IPV6:2003:c7:8f2a:8553:4dd4:7649:c4c2:f4e3? (p200300c78f2a85534dd47649c4c2f4e3.dip0.t-ipconnect.de. [2003:c7:8f2a:8553:4dd4:7649:c4c2:f4e3])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a86e594d041sm273783966b.213.2024.08.28.11.48.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 28 Aug 2024 11:48:42 -0700 (PDT)
+Message-ID: <9c1ab010-1436-4c54-9fa5-418472a9427f@gmail.com>
+Date: Wed, 28 Aug 2024 20:48:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240828062740.1614744-4-ryan_chen@aspeedtech.com>
-References: <20240828062740.1614744-1-ryan_chen@aspeedtech.com> <20240828062740.1614744-4-ryan_chen@aspeedtech.com>
-Subject: Re: [PATCH v2 3/3] clk: aspeed: add AST2700 clk driver
-From: Stephen Boyd <sboyd@kernel.org>
-To: andrew@codeconstruct.com.au, conor+dt@kernel.org, devicetree@vger.kernel.org, joel@jms.id.au, krzk+dt@kernel.org, linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, mturquette@baylibre.com, p.zabel@pengutronix.de, robh@kernel.org, ryan_chen@aspeedtech.com
-Date: Wed, 28 Aug 2024 11:47:54 -0700
-User-Agent: alot/0.10
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] staging: rtl8712: Align parenthesis in usb_ops_linux.c
+To: Dorine Tipo <dorine.a.tipo@gmail.com>,
+ Florian Schilhabel <florian.c.schilhabel@googlemail.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20240828082935.GA3815@ubuntu-focal>
+Content-Language: en-US
+From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
+In-Reply-To: <20240828082935.GA3815@ubuntu-focal>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Quoting Ryan Chen (2024-08-27 23:27:40)
-> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> index 983ef4f36d8c..855b65f2d6dd 100644
-> --- a/drivers/clk/Kconfig
-> +++ b/drivers/clk/Kconfig
-> @@ -269,6 +269,16 @@ config COMMON_CLK_ASPEED
->           The G4 and G5 series, including the ast2400 and ast2500, are su=
-pported
->           by this driver.
-> =20
-> +config COMMON_CLK_AST2700
-> +       bool "Clock driver for AST2700 SoC"
-> +       depends on ARCH_ASPEED || COMPILE_TEST
-> +       select MFD_SYSCON
+On 8/28/24 10:29, Dorine Tipo wrote:
+> Fix the parenthesis alignment in r8712_read_port() function to match
+> the opening parenthesis.
+> This improves code readability and adheres to the kernel coding style.
+> 
+> Signed-off-by: Dorine Tipo <dorine.a.tipo@gmail.com>
+> ---
+> Changelog:
+> V2: Edited the subject line to fix a typo and make it more unique as
+>      suggested by Philipp.
+>      Edited the description to include the reason for the change.
+> 
+>   drivers/staging/rtl8712/usb_ops_linux.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/staging/rtl8712/usb_ops_linux.c b/drivers/staging/rtl8712/usb_ops_linux.c
+> index 0a3451cdc8a1..4a34824830e3 100644
+> --- a/drivers/staging/rtl8712/usb_ops_linux.c
+> +++ b/drivers/staging/rtl8712/usb_ops_linux.c
+> @@ -221,7 +221,7 @@ static void r8712_usb_read_port_complete(struct urb *purb)
+>   			fallthrough;
+>   		case -EPROTO:
+>   			r8712_read_port(padapter, precvpriv->ff_hwaddr, 0,
+> -				  (unsigned char *)precvbuf);
+> +					(unsigned char *)precvbuf);
+>   			break;
+>   		case -EINPROGRESS:
+>   			netdev_err(padapter->pnetdev, "ERROR: URB IS IN PROGRESS!\n");
+> --
+> 2.25.1
+> 
 
-Why is this a syscon?
 
-> +       select RESET_CONTROLLER
-> +       help
-> +         This driver provides support for clock on AST2700 SoC.
-> +         This driver is responsible for managing the various clocks requ=
-ired
-> +         by the peripherals and cores within the AST2700.
-> +
->  config COMMON_CLK_S2MPS11
->         tristate "Clock driver for S2MPS1X/S5M8767 MFD"
->         depends on MFD_SEC_CORE || COMPILE_TEST
-> diff --git a/drivers/clk/clk-ast2700.c b/drivers/clk/clk-ast2700.c
-> new file mode 100644
-> index 000000000000..7e0466e73980
-> --- /dev/null
-> +++ b/drivers/clk/clk-ast2700.c
-> @@ -0,0 +1,1198 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2024 ASPEED Technology Inc.
-> + * Author: Ryan Chen <ryan_chen@aspeedtech.com>
-> + */
-> +
-> +#include <linux/bits.h>
-> +#include <linux/clk-provider.h>
-[...]
-> +
-> +struct ast2700_reset {
-> +       void __iomem *base;
-> +       struct ast2700_reset_signal const *signal;
-> +       struct reset_controller_dev rcdev;
-> +};
-
-Please move the reset controller to the drivers/reset directory by means
-of using an auxiliary device. There are some existing examples in there
-if you grep for auxiliary_device in drivers/reset to help guide.
-
-> +
-> +#define to_rc_data(p) container_of(p, struct ast2700_reset, rcdev)
-> +
-[...]
-> +
-> +static int ast2700_soc0_clk_init(struct device_node *soc0_node)
-> +{
-> +       struct clk_hw_onecell_data *clk_data;
-> +       void __iomem *clk_base;
-[...]
-> +                                            0, clk_base + SCU0_CLK_STOP,
-> +                                            28, 0, &ast2700_clk_lock);
-> +
-> +       of_clk_add_hw_provider(soc0_node, of_clk_hw_onecell_get, clk_data=
-);
-> +
-> +       return 0;
-> +};
-> +
-> +CLK_OF_DECLARE_DRIVER(ast2700_soc0, "aspeed,ast2700-scu0", ast2700_soc0_=
-clk_init);
-> +CLK_OF_DECLARE_DRIVER(ast2700_soc1, "aspeed,ast2700-scu1", ast2700_soc1_=
-clk_init);
-
-Why can't this be a platform driver?
+Tested-by: Philipp Hortmann <philipp.g.hortmann@gmail.com> AW-NU120
 
