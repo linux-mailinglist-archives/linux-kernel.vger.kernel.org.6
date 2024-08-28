@@ -1,100 +1,408 @@
-Return-Path: <linux-kernel+bounces-304445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AD20962026
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 08:58:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66A8C96204A
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 09:04:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 104C5B2127E
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 06:58:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD6941F262DF
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 07:04:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5EA61581F2;
-	Wed, 28 Aug 2024 06:58:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F889158A00;
+	Wed, 28 Aug 2024 07:04:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="A6xGqxM6"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RJnEg8XH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A9894D108
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 06:58:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEE5C158216;
+	Wed, 28 Aug 2024 07:04:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724828307; cv=none; b=aP7QCIfdB1CpIksVnk7BuSEmxgLntnjQVUYxtI4g3zQCBWjq5SrtgYYdN2R+ZyQcamx0UubWBsnYY4Ne7xskGGvQzMrF32LC+/gXFZx1FZDpy+Hue1F+qrGQkolbe2eKiYBMww44IyUI2vHmTkqhQt7kXhgw2oUN1KRzVnDm8sQ=
+	t=1724828688; cv=none; b=pt8h/wITf+PFdckuQHC1CBDpawORvHnVGxwGw9EBnd4HahBBfLICq6A3Uua5lDMoq/DIwSQe4oUgibUY5TkZkT7xZDrpHxtbDzdBANtJMz8mkVnkaywHxXNyXAnVhbaO4J/ioioq6S5IpFaqDwsU3Oe1LVIOXxYHn373lX4Gh0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724828307; c=relaxed/simple;
-	bh=wfqAgOhaK8jZJJGedj5Y/u8XaA7hh+dHLk9BAC/wSDQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TtX5FcqhlcHbkpHKylEKPwqCzinYBMlFaOjXsMjvfw6aD/SiobGg6FZdMJndqq66EPOZbKNWoq8QRRN6mKyTCyBm0ogAv5tkOn3CQ5Q7TibgRAHT0V0RRlDyb2g4OcsS9e2wn5BvSpqSDrcd7U2Pd3rSXNT8x/Hcs88YtElxJNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=A6xGqxM6; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724828305; x=1756364305;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=wfqAgOhaK8jZJJGedj5Y/u8XaA7hh+dHLk9BAC/wSDQ=;
-  b=A6xGqxM6n701NlQFQrMrsEVB2r0jaVDyyWuJPTxTJqW7xYl5FDYlu2yO
-   NuHlUUBvPpleues1ms11MXJfGEkmL9e7YLE50ZnmQ9ed3Kkb+RnaUhTfS
-   n3kOxXULk07RIPMZkqIdQyJ0o0ZrgZ6aJ5Zz/XK335tmx/3R3xlHP/ouI
-   Q0oKOU/NMx3Hd8pCHsG1v0WhEgga7aSOyWYrFjcMmQNHmeA5x6A+HJW/H
-   hnmTIQ609AUKoJb/jVeSj6msoUJrrcUF8xv/Bf1gizqlG0SSG38+ufaB1
-   5Hfngi16vY3wD2DIOU94xRtoGolRdo2Bce/AnZQOlQ4cdiZ3nI5MvSB37
-   g==;
-X-CSE-ConnectionGUID: k6Kip5dTQ6ymtci6LiSq+Q==
-X-CSE-MsgGUID: 0x7qDZszSymkx5LIyli2rA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11177"; a="27220608"
-X-IronPort-AV: E=Sophos;i="6.10,182,1719903600"; 
-   d="scan'208";a="27220608"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2024 23:58:25 -0700
-X-CSE-ConnectionGUID: 4O2nbH07QE6r5Gfe0d5uLA==
-X-CSE-MsgGUID: 7vNjQTuQQa6+p59pDGnP6Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,182,1719903600"; 
-   d="scan'208";a="63116074"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2024 23:58:24 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id 7BC2E11F8B3;
-	Wed, 28 Aug 2024 09:58:21 +0300 (EEST)
-Date: Wed, 28 Aug 2024 06:58:21 +0000
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Robert Mader <robert.mader@collabora.com>
-Cc: linux-kernel@vger.kernel.org, jacopo.mondi@ideasonboard.com,
-	javierm@redhat.com, kieran.bingham@ideasonboard.com
-Subject: Re: [PATCH v2] media: i2c: imx355: Parse and register properties
-Message-ID: <Zs7KjVvDHRXSOP5S@kekkonen.localdomain>
-References: <20240811111718.22513-1-robert.mader@collabora.com>
+	s=arc-20240116; t=1724828688; c=relaxed/simple;
+	bh=MfhCO+aoPnT7bM1llexzkTVmEUkUQSkDOaZ2GJAPLhs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jhQDbzVaEF+HG2bg38KnVdwDJT7ytBjZ+IR+5AU6z22PzG0q7GrcdqG2JCU9ap5pd90VLLD04CKQevyO0Mh5BUnA6EtHliNuqHanL32zvzfsYr2T9ZnCygbtuHQm35Lxy/lRkcxsC6kmXP4yfD2InE/WolalA9elsvwJKpT3TQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RJnEg8XH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5303DC4FEF9;
+	Wed, 28 Aug 2024 07:04:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724828687;
+	bh=MfhCO+aoPnT7bM1llexzkTVmEUkUQSkDOaZ2GJAPLhs=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=RJnEg8XHQzcZJRjFCtDHovzcfiKwd5ChEQJzlD8rJUl/+FTwndfEltv0KQYAaN0ve
+	 PIBdifKIFRM5k4uTkKmG6QogiIljTLnomJu1VoymavRqtX67q4scvdKvlNS3ut/0LL
+	 F/dx4T+GdcdK4grHLf6KK0MYyEG5i3iGoKrrzj50kgiaqzaZueugti5i3HYasBUJp+
+	 lN/nVjZ+3qiW8Tmrtt6OcD8rcFUc5fwojlZ4TP9qb3vtdFsB6wjphS8RK+vWUWHFbt
+	 cKPwH6pE1ToGDGgmh2czEhfRfuGdzHrkwncCiSFzFp9Mq1hXAcxyJch4wTOdN6G59J
+	 kIsr2t+L60ApQ==
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5334a8a1af7so6231388e87.2;
+        Wed, 28 Aug 2024 00:04:47 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWGOUQWmi3sAIJ7SFJFwz4PwyS1xk6Mi2HrYSIkus2lam8MLSb9L3KDQtqmj3Pq2EVWkcTzWEa9V3hAtswFyw==@vger.kernel.org, AJvYcCWOLiYhes0/QXQgK1fVnUy1s/BqMgdJ9GUFZ0n+tKociEjOa6kEz8onLL1rOtdHNBkIug7JQXcEVRzxlfg=@vger.kernel.org, AJvYcCWw9udLh7Cqc4a+gSGiogFH+dVkcM+p6XXBXzXabnVoNuSXkS99b7vQlj6Xz1KPkSJORZybi8SkqScmTzqmvVw=@vger.kernel.org, AJvYcCXmIGrz5OYAynpjQHdJRVUuQbOuoJGz4rZNoA04grnhvJP9bswniwgXg+kVe1ghntNfAvCYtJ8ptgWLSDWn@vger.kernel.org
+X-Gm-Message-State: AOJu0YwY0TcHchOrJGhPige8L1tGPUJ1wWHOioGqjPfVwIdgzOJXnpzg
+	IYit0SkJYoRGH9WTu20hXGqBIjAUHZBaaqrkFwNfkHvisoD37Lq0sBxOA1JW9Oon6eJs8+JPBOH
+	q6tXE97shtamGVXO8U0MzjGIoEMw=
+X-Google-Smtp-Source: AGHT+IEf4PFpd61AAYvVul2r3LocOq7T2Sn5db/vGtRGzWkE5TJ5A1H43CxsTMSyL+bS8oJZ3n+yIiQcZz9iUIjaXWI=
+X-Received: by 2002:a05:6512:124b:b0:52e:9f6b:64 with SMTP id
+ 2adb3069b0e04-5346c6431bdmr588887e87.34.1724828685754; Wed, 28 Aug 2024
+ 00:04:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240811111718.22513-1-robert.mader@collabora.com>
+References: <20240815173903.4172139-21-samitolvanen@google.com>
+In-Reply-To: <20240815173903.4172139-21-samitolvanen@google.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Wed, 28 Aug 2024 16:04:09 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQ0dHq3eALkvGDSCyVKOvhBqwCEG3BTQ0h52Xq_1YNu2A@mail.gmail.com>
+Message-ID: <CAK7LNAQ0dHq3eALkvGDSCyVKOvhBqwCEG3BTQ0h52Xq_1YNu2A@mail.gmail.com>
+Subject: Re: [PATCH v2 00/19] Implement DWARF modversions
+To: Sami Tolvanen <samitolvanen@google.com>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Matthew Maurer <mmaurer@google.com>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	Petr Pavlu <petr.pavlu@suse.com>, Neal Gompa <neal@gompa.dev>, Hector Martin <marcan@marcan.st>, 
+	Janne Grunau <j@jannau.net>, Asahi Linux <asahi@lists.linux.dev>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Robert,
+On Fri, Aug 16, 2024 at 2:39=E2=80=AFAM Sami Tolvanen <samitolvanen@google.=
+com> wrote:
+>
+> Hi,
+>
+> Here's v2 of the DWARF modversions series [1]. The main motivation
+> remains modversions support for Rust, which is important for
+> distributions like Android that are eager to ship Rust kernel
+> modules. However, per Luis' request [2], v2 drops all Rust specific
+> bits from the series and instead adds the feature as an option
+> for the entire kernel. Matt is addressing Rust modversion_info
+> compatibility issues in a separate series [3], and we'll follow up
+> with a patch to actually allow CONFIG_MODVERSIONS with Rust once
+> these have been sorted out.
+>
+> A short background recap: Unlike C, Rust source code doesn't have
+> sufficient information about the final ABI, as the compiler has
+> considerable freedom in adjusting structure layout for improved
+> performance [4], for example, which makes using a source code
+> parser like genksyms a non-starter. Based on Matt's suggestion and
+> previous feedback from maintainers, this series uses DWARF debugging
+> information for computing versions. DWARF is an established and
+> a relatively stable format, which includes all the necessary ABI
+> details, and adding a CONFIG_DEBUG_INFO dependency for Rust symbol
+> versioning seems like a reasonable trade-off.
+>
+> The first 16 patches of this series add a small tool for computing
 
-On Sun, Aug 11, 2024 at 01:17:04PM +0200, Robert Mader wrote:
-> Analogous to e.g. the imx219 driver. This enables propagating the
-> V4L2_CID_CAMERA_SENSOR_ROTATION and V4L2_CID_CAMERA_ORIENTATION
-> values so that userspace - e.g. libcamera - can detect the
-> correct rotation and orientation from the device tree.
-> 
-> Signed-off-by: Robert Mader <robert.mader@collabora.com>
-> Reviewed-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-> Reviewed-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
 
-Please always CC the linux-media list for Media tree patches. I've resent
-this to linux-media this time.
+Splitting a new tool into small chunks makes line-by-line review difficult.
 
--- 
-Kind regards,
+For example, 02/19 adds malloc().
 
-Sakari Ailus
+03/19 immediately replaces it with calloc().
+
+Then, I wonder why you did not add calloc() in the first place.
+
+
+
+
+
+And, I do not think it is so "small".
+It is bigger than the current genksyms.
+
+
+$ find scripts/genksyms/ -type f | xargs wc | tail -n 1
+ 1986  5633 45864 total
+$ find scripts/gendwarfksyms/ -type f | xargs wc | tail -n 1
+ 2859  7670 69105 total
+
+
+
+
+
+> symbol versions from DWARF, called gendwarfksyms. When passed a
+> list of exported symbols and an object file,
+
+
+Why is "a list of exported symbols" passed separately?
+
+All necessary information is available in the object file.
+(The export symbols are listed in the .export_symbol section.
+
+
+
+> the tool generates
+> an expanded type string for each symbol, and computes symbol CRCs
+> similarly to genksyms. gendwarfksyms is written in C and uses libdw
+> to process DWARF, mainly because of the existing support for C host
+> tools that use elfutils (e.g., objtool). The next two patches ensure
+> that debugging information is present where we need it and fix a
+> compilation issue with x86 asm-prototypes.h. The last patch adds
+> gendwarfksyms as an alternative to genksyms.
+>
+> A quick note about performance: On my development system, building
+> x86_64 defconfig with MODVERSIONS takes about 59.4s with gcc 13
+> (avg. of ten runs). Adding DEBUG_INFO_DWARF5 increases the build
+> time by ~23% to 73.3s. Switching from GENKSYMS to GENDWARFKSYMS
+> reduces the build time by 6% to 68.9s, which is still ~16% slower
+> than genksyms without debugging information. Therefore, if you
+> already build kernels with debugging information, gendwarfksyms
+> should be slightly faster. YMMV, of course.
+>
+> Things would change with LTO, because we won't have full DWARF
+> until we have an ELF binary, which means we'd have to process
+> vmlinux.o. This version of gendwarfksyms is still single-threaded
+> as it seems we can't rely on libdw to be thread-safe. Processing
+> a ThinLTO x86_64 defconfig vmlinux.o on my system takes ~2m16s,
+> and would have to happen even on incremental builds, just like
+> LTO linking itself. As cross-language LTO presumably isn't wildly
+> popular yet, gendwarfksyms intentionally depends in !LTO in this
+> version.
+>
+> Looking forward to hearing your thoughts!
+>
+> Sami
+>
+> [1] https://lore.kernel.org/lkml/20240617175818.58219-17-samitolvanen@goo=
+gle.com/
+> [2] https://lore.kernel.org/lkml/ZnIZEtkkQWEIGf9n@bombadil.infradead.org/
+> [3] https://lore.kernel.org/lkml/20240806212106.617164-1-mmaurer@google.c=
+om/
+> [4] https://lore.kernel.org/rust-for-linux/CAGSQo005hRiUZdeppCifDqG9zFDJR=
+wahpBLE4x7-MyfJscn7tQ@mail.gmail.com/
+>
+> ---
+>
+> Changes in v2:
+> - Per Luis' request, dropped Rust-specific patches and added
+>   gendwarfksyms as an alternative to genksyms for the entire
+>   kernel.
+>
+> - Added support for missing DWARF features needed to handle
+>   also non-Rust code.
+>
+> - Changed symbol address matching to use the symbol table
+>   information instead of relying on addresses in DWARF.
+>
+> - Added __gendwarfksyms_ptr patches to ensure the compiler emits
+>   the necessary type information in DWARF even for symbols that
+>   are defined in other TUs.
+>
+> - Refactored debugging output and moved the more verbose output
+>   behind --dump* flags.
+>
+> - Added a --symtypes flag for generating a genksyms-style
+>   symtypes output based on Petr's feedback, and refactored
+>   symbol version calculations to be based on symtypes instead
+>   of raw --dump-dies output.
+
+
+
+I do not know if this is worthwhile.
+
+
+And, it is obviously a build error.
+
+gendwarfksyms cannot create %.symtypes from %.c.
+
+
+The following is the step to see the build error.
+
+
+
+
+$ make mrproper
+$ make x86_64_defconfig
+#
+# No change to .config
+#
+$ scripts/config -e DEBUG_INFO_DWARF5 -e MODVERSIONS -e GENDWARFKSYMS
+$ make olddefconfig
+#
+# configuration written to .config
+#
+$ make kernel/fork.symtypes
+  SYNC    include/config/auto.conf.cmd
+  SYSHDR  arch/x86/include/generated/uapi/asm/unistd_32.h
+  SYSHDR  arch/x86/include/generated/uapi/asm/unistd_64.h
+  SYSHDR  arch/x86/include/generated/uapi/asm/unistd_x32.h
+  SYSTBL  arch/x86/include/generated/asm/syscalls_32.h
+  SYSHDR  arch/x86/include/generated/asm/unistd_32_ia32.h
+  SYSHDR  arch/x86/include/generated/asm/unistd_64_x32.h
+  SYSTBL  arch/x86/include/generated/asm/syscalls_64.h
+  HOSTCC  arch/x86/tools/relocs_32.o
+  HOSTCC  arch/x86/tools/relocs_64.o
+  HOSTCC  arch/x86/tools/relocs_common.o
+  HOSTLD  arch/x86/tools/relocs
+  HOSTCC  scripts/gendwarfksyms/gendwarfksyms.o
+  HOSTCC  scripts/gendwarfksyms/cache.o
+  HOSTCC  scripts/gendwarfksyms/crc32.o
+  HOSTCC  scripts/gendwarfksyms/die.o
+  HOSTCC  scripts/gendwarfksyms/dwarf.o
+  HOSTCC  scripts/gendwarfksyms/symbols.o
+  HOSTCC  scripts/gendwarfksyms/types.o
+  HOSTLD  scripts/gendwarfksyms/gendwarfksyms
+  HOSTCC  scripts/selinux/genheaders/genheaders
+  HOSTCC  scripts/selinux/mdp/mdp
+  HOSTCC  scripts/kallsyms
+  HOSTCC  scripts/sorttable
+  HOSTCC  scripts/asn1_compiler
+  WRAP    arch/x86/include/generated/uapi/asm/bpf_perf_event.h
+  WRAP    arch/x86/include/generated/uapi/asm/errno.h
+  WRAP    arch/x86/include/generated/uapi/asm/fcntl.h
+  WRAP    arch/x86/include/generated/uapi/asm/ioctl.h
+  WRAP    arch/x86/include/generated/uapi/asm/ioctls.h
+  WRAP    arch/x86/include/generated/uapi/asm/ipcbuf.h
+  WRAP    arch/x86/include/generated/uapi/asm/param.h
+  WRAP    arch/x86/include/generated/uapi/asm/poll.h
+  WRAP    arch/x86/include/generated/uapi/asm/resource.h
+  WRAP    arch/x86/include/generated/uapi/asm/socket.h
+  WRAP    arch/x86/include/generated/uapi/asm/sockios.h
+  WRAP    arch/x86/include/generated/uapi/asm/termbits.h
+  WRAP    arch/x86/include/generated/uapi/asm/termios.h
+  WRAP    arch/x86/include/generated/uapi/asm/types.h
+  WRAP    arch/x86/include/generated/asm/early_ioremap.h
+  WRAP    arch/x86/include/generated/asm/mcs_spinlock.h
+  WRAP    arch/x86/include/generated/asm/irq_regs.h
+  WRAP    arch/x86/include/generated/asm/kmap_size.h
+  WRAP    arch/x86/include/generated/asm/local64.h
+  WRAP    arch/x86/include/generated/asm/mmiowb.h
+  WRAP    arch/x86/include/generated/asm/module.lds.h
+  WRAP    arch/x86/include/generated/asm/rwonce.h
+  WRAP    arch/x86/include/generated/asm/unaligned.h
+  GEN     arch/x86/include/generated/asm/orc_hash.h
+  UPD     include/config/kernel.release
+  UPD     include/generated/uapi/linux/version.h
+  UPD     include/generated/utsrelease.h
+  UPD     include/generated/compile.h
+  CC      scripts/mod/empty.o
+  HOSTCC  scripts/mod/mk_elfconfig
+  MKELF   scripts/mod/elfconfig.h
+  HOSTCC  scripts/mod/modpost.o
+  CC      scripts/mod/devicetable-offsets.s
+  UPD     scripts/mod/devicetable-offsets.h
+  HOSTCC  scripts/mod/file2alias.o
+  HOSTCC  scripts/mod/sumversion.o
+  HOSTCC  scripts/mod/symsearch.o
+  HOSTLD  scripts/mod/modpost
+  UPD     include/generated/timeconst.h
+  CC      kernel/bounds.s
+  UPD     include/generated/bounds.h
+  CC      arch/x86/kernel/asm-offsets.s
+  UPD     include/generated/asm-offsets.h
+  CALL    scripts/checksyscalls.sh
+  CHKSHA1 include/linux/atomic/atomic-arch-fallback.h
+  CHKSHA1 include/linux/atomic/atomic-instrumented.h
+  CHKSHA1 include/linux/atomic/atomic-long.h
+  DESCEND objtool
+  HOSTCC  /home/masahiro/workspace/linux-kbuild/tools/objtool/fixdep.o
+  HOSTLD  /home/masahiro/workspace/linux-kbuild/tools/objtool/fixdep-in.o
+  LINK    /home/masahiro/workspace/linux-kbuild/tools/objtool/fixdep
+  CC      /home/masahiro/workspace/linux-kbuild/tools/objtool/libsubcmd/exe=
+c-cmd.o
+  CC      /home/masahiro/workspace/linux-kbuild/tools/objtool/libsubcmd/hel=
+p.o
+  CC      /home/masahiro/workspace/linux-kbuild/tools/objtool/libsubcmd/pag=
+er.o
+  CC      /home/masahiro/workspace/linux-kbuild/tools/objtool/libsubcmd/par=
+se-options.o
+  CC      /home/masahiro/workspace/linux-kbuild/tools/objtool/libsubcmd/run=
+-command.o
+  CC      /home/masahiro/workspace/linux-kbuild/tools/objtool/libsubcmd/sig=
+chain.o
+  CC      /home/masahiro/workspace/linux-kbuild/tools/objtool/libsubcmd/sub=
+cmd-config.o
+  LD      /home/masahiro/workspace/linux-kbuild/tools/objtool/libsubcmd/lib=
+subcmd-in.o
+  AR      /home/masahiro/workspace/linux-kbuild/tools/objtool/libsubcmd/lib=
+subcmd.a
+  INSTALL libsubcmd_headers
+  CC      /home/masahiro/workspace/linux-kbuild/tools/objtool/arch/x86/spec=
+ial.o
+  CC      /home/masahiro/workspace/linux-kbuild/tools/objtool/arch/x86/deco=
+de.o
+  CC      /home/masahiro/workspace/linux-kbuild/tools/objtool/arch/x86/orc.=
+o
+  LD      /home/masahiro/workspace/linux-kbuild/tools/objtool/arch/x86/objt=
+ool-in.o
+  CC      /home/masahiro/workspace/linux-kbuild/tools/objtool/weak.o
+  CC      /home/masahiro/workspace/linux-kbuild/tools/objtool/check.o
+  CC      /home/masahiro/workspace/linux-kbuild/tools/objtool/special.o
+  CC      /home/masahiro/workspace/linux-kbuild/tools/objtool/builtin-check=
+.o
+  CC      /home/masahiro/workspace/linux-kbuild/tools/objtool/elf.o
+  CC      /home/masahiro/workspace/linux-kbuild/tools/objtool/objtool.o
+  CC      /home/masahiro/workspace/linux-kbuild/tools/objtool/orc_gen.o
+  CC      /home/masahiro/workspace/linux-kbuild/tools/objtool/orc_dump.o
+  CC      /home/masahiro/workspace/linux-kbuild/tools/objtool/libstring.o
+  CC      /home/masahiro/workspace/linux-kbuild/tools/objtool/libctype.o
+  CC      /home/masahiro/workspace/linux-kbuild/tools/objtool/str_error_r.o
+  CC      /home/masahiro/workspace/linux-kbuild/tools/objtool/librbtree.o
+  LD      /home/masahiro/workspace/linux-kbuild/tools/objtool/objtool-in.o
+  LINK    /home/masahiro/workspace/linux-kbuild/tools/objtool/objtool
+  SYM     kernel/fork.symtypes
+nm: 'kernel/fork.o': No such file
+error: gendwarfksyms: main: open failed for 'kernel/fork.o': No such
+file or directory
+
+
+
+
+
+
+
+
+
+
+
+
+>
+> - Based on feedback from Greg and Petr, added --stable flag and
+>   support for reserved data structure fields and declaration-onl
+>   structures. Also added examples for using these features.
+>
+> - Added a GENDWARFKSYMS option and hooked up kbuild support
+>   for both C and assembly code. Note that with gendwarfksyms,
+>   we have to actually build a temporary .o file for calculating
+>   assembly modversions.
+>
+> ---
+>
+> Sami Tolvanen (19):
+>   tools: Add gendwarfksyms
+>   gendwarfksyms: Add symbol list handling
+>   gendwarfksyms: Add address matching
+>   gendwarfksyms: Add support for type pointers
+>   gendwarfksyms: Expand base_type
+>   gendwarfksyms: Add a cache for processed DIEs
+>   gendwarfksyms: Expand type modifiers and typedefs
+>   gendwarfksyms: Expand subroutine_type
+>   gendwarfksyms: Expand array_type
+>   gendwarfksyms: Expand structure types
+>   gendwarfksyms: Limit structure expansion
+>   gendwarfksyms: Add die_map debugging
+>   gendwarfksyms: Add symtypes output
+>   gendwarfksyms: Add symbol versioning
+>   gendwarfksyms: Add support for declaration-only data structures
+>   gendwarfksyms: Add support for reserved structure fields
+>   export: Add __gendwarfksyms_ptr_ references to exported symbols
+>   x86/asm-prototypes: Include <asm/ptrace.h>
+>   kbuild: Add gendwarfksyms as an alternative to genksyms
+>
+
+
+
+
+
+--
+Best Regards
+Masahiro Yamada
 
