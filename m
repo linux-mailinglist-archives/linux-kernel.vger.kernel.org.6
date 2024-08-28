@@ -1,122 +1,146 @@
-Return-Path: <linux-kernel+bounces-305774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC49B963411
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 23:42:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38F0C963415
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 23:43:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CB302834BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 21:42:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1A121F22EDF
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 21:43:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 229DC1AD3F6;
-	Wed, 28 Aug 2024 21:42:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4659D1AD40C;
+	Wed, 28 Aug 2024 21:43:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s/fpZj+h"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="vfWXKgX+"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CE4815ADB3;
-	Wed, 28 Aug 2024 21:42:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47F3215ADB3
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 21:43:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724881341; cv=none; b=rsuclyD2CA1COPYw9HPZBdxVc5Ai4SPKHZ4O0c+gpRPGGGE2CEl3/FsMTVNrnUlW5MmWIMqms41cPMof8USIo5UQ7XrKi1p95fdqFomph4OasXdULuyK9tFTK12XaiMNC6UYnt3uLz7jJC2YsJh2Fuo3k7IBdJ+vp+6XAwFIdbo=
+	t=1724881429; cv=none; b=Eg8p6cwbqeJgJUe2uTxEGNqSnV+5t4aUDqJ6BDCxtYygCHHHAy0qLU1CS2KliMC+/FgFn69YirpofpkK7A63mmZWjt333PPH7yDItN+QXQrVro1TcwLozyJzu9kQxPl6V+eSd8UjVPTTazOHgbjYQXipz8+c3BDjLSwTGGUn4XU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724881341; c=relaxed/simple;
-	bh=vNMzbmDzy/pexcwW1pIxaw1NKxWmwSdKEbK+fN5vVpE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=aSPNLoNnXw54jve8cbcCS5vjSf7JXGq2uJ+9WyfAEyPAcLH7i+R41J8/In91qYDMBC92giLl4hdFwIAkn2wJKed1xuEo4DPz7UJz5ETx2OySwZOdSPh+PqZDcMeMx2x/CwST3anKlz4VYBnGg5B+JcO5kHJyV3tiurb7+RqOBKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s/fpZj+h; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 813D8C4CEC0;
-	Wed, 28 Aug 2024 21:42:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724881340;
-	bh=vNMzbmDzy/pexcwW1pIxaw1NKxWmwSdKEbK+fN5vVpE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=s/fpZj+hT3CgYNBAWlmDIX1Y3GeLs40GI1ns9kixtBCs5nmqkrJtlj2Eit/XGB520
-	 S71Z5MAE2lDM2fwCLNv+V9uxRHKGuj+gDC2m6uDrvnD/K71JAApEAR3NzvkLjTCqhR
-	 qsXbdwvFZKdKqm+ap7VG39yF3e1h6zYoQWNsaRnvcloWwiv/1ptCH/g5HhYsHW8pd9
-	 uZNmaH48viyLTBxB2fBerL+ETsrFJaPoRyXJSF5gprxz7amXzjDYRtfwYePpZO8/OC
-	 lJBa24+iM9KzFoWBX4mHc1s1AUHQEo1JNrrbCR64lFqfLgU71pQfKRgAw9yz1fxAzd
-	 cMx5l69+DKcDA==
-Date: Wed, 28 Aug 2024 16:42:18 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Mario Limonciello <mario.limonciello@amd.com>
-Cc: linux-pci@vger.kernel.org,
-	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
-	"Maciej W . Rozycki" <macro@orcam.me.uk>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Lukas Wunner <lukas@wunner.de>,
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-	Duc Dang <ducdang@google.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	linux-kernel@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
-	"Li, Gary" <Gary.Li@amd.com>
-Subject: Re: [RFC PATCH 0/3] PCI: Use Configuration RRS to wait for device
- ready
-Message-ID: <20240828214218.GA40398@bhelgaas>
+	s=arc-20240116; t=1724881429; c=relaxed/simple;
+	bh=Ow2Oa4aH4/GHsxj85ciXs/uy/FkW9Ju27sF6MW2bpcI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dA9cWjYnk9WHiQLoDZJTry3Qu93g7GYYJ8io+4+caGK7GXfeLtXUmPyuBEDHU/UfrCJYD7TW4SX6YuBC2OqPSsvis4j51bv+vEU/SPKNByhaz6vDPyFag3k9SagT+/oqT33OJ6vvsfp0niOf74qv9o6+89peCxWAKSxbVxb00AM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=vfWXKgX+; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5bec67709easo1062589a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 14:43:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1724881425; x=1725486225; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=BgIVeN+hwaa3Zj0bf1QjMz6FtGwxuk1uApKAVTuU21M=;
+        b=vfWXKgX+2K5KPbnS608WoYeqWciqY8iHwgd8Xu7QlXUmoIOt0jH294T7jtaxn19/NO
+         x59rv06Pzh6QwE7b5ZvxOqjBiuRRksNMUucoSO4OqkTTrBv5CfHmE8cnJ6MoWUk/4VN3
+         5PXgQxxw30aT8rD1mAi7t4sRmPgElGmjqL5DHe7NE1iBzYikRCxG0NKq4DY+IyaMXlmW
+         68VWITSE/RglbUljesTD3Eo+G8/UMpxGSNjXAhLZdwrKUMc9r6xhVWMhO8GH3kLfbnn/
+         RoaQ5mXXyn3CgucplE5wvRHngmen+AMjH0rw11wbjy5XxUYpTd+/UK7smVh2dWLrYwtF
+         m6PA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724881425; x=1725486225;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BgIVeN+hwaa3Zj0bf1QjMz6FtGwxuk1uApKAVTuU21M=;
+        b=AZPtTtioWu8LQc3ohWtzWnZGM8A06j9nixZGKVT3yI4NMO0Fs+F0RCalBE1n1Jw7n2
+         WOFkM019qY63E2E1FvRuMtRtHnTmOutsdgT6ohPjQuXd/BYueJ9TgUz0KJ66fFJ1iVJB
+         koZX3+bEQsUavXrBu/ZGSwpj7VT4H9Bv8V8ONNWeEO5mTFz+uI2zDDWT+b/PdZrIU2ZL
+         DonxQy6ALv5vRA8dZ1L/CGf5JbeJLMd1qclDp9+osYi/vRSMyCx/maJx7725eJUmch6v
+         oScsNfI17PrZm6+zEVYCdEot0aWUJq/Zj4Y6dOCdS1SGT2CX14FzaeRMGW7XR8Twnpr6
+         JS0g==
+X-Forwarded-Encrypted: i=1; AJvYcCUh60NB96fXIcupk7rQTGj57XlSC72diaT8gg7eE30L20ViXZjZHCrOct2KHlEyBlSipoIw0MI5gCpKbG0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwxnkxTy2nWxoMEhdNCAp23ECxPy9Vcfmk247fK2E7FYytUsDaH
+	dzXO7flPqylY4fc8KIUAM+ZqVTXRLIw7BgE2hjQg4Y5If3/uveY7jT7V+OPLecftICe2/SP2E3E
+	IV3s=
+X-Google-Smtp-Source: AGHT+IGDaFnNlopk9OtBsTjpt60u8SdH1IppPU/d0oIAgCIrSzY8jx0IxHyYFQ2PotXqk9B0nC9M4g==
+X-Received: by 2002:a05:6402:4314:b0:5be:9bc5:f698 with SMTP id 4fb4d7f45d1cf-5c21ec639e9mr406264a12.0.1724881425416;
+        Wed, 28 Aug 2024 14:43:45 -0700 (PDT)
+Received: from fedora.fritz.box (aftr-82-135-80-228.dynamic.mnet-online.de. [82.135.80.228])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c0bb21399bsm2739670a12.50.2024.08.28.14.43.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Aug 2024 14:43:45 -0700 (PDT)
+From: Thorsten Blum <thorsten.blum@toblux.com>
+To: chuck.lever@oracle.com,
+	jlayton@kernel.org,
+	neilb@suse.de,
+	okorniev@redhat.com,
+	Dai.Ngo@oracle.com,
+	tom@talpey.com,
+	kees@kernel.org,
+	gustavoars@kernel.org
+Cc: linux-nfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org,
+	Thorsten Blum <thorsten.blum@toblux.com>
+Subject: [PATCH] NFSD: Annotate struct pnfs_block_deviceaddr with __counted_by()
+Date: Wed, 28 Aug 2024 23:42:55 +0200
+Message-ID: <20240828214254.2407-2-thorsten.blum@toblux.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <30d9589a-8050-421b-a9a5-ad3422feadad@amd.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 28, 2024 at 04:24:01PM -0500, Mario Limonciello wrote:
-> On 8/27/2024 18:48, Bjorn Helgaas wrote:
-> > From: Bjorn Helgaas <bhelgaas@google.com>
-> > 
-> > After a device reset, pci_dev_wait() waits for a device to become
-> > completely ready by polling the PCI_COMMAND register.  The spec envisions
-> > that software would instead poll for the device to stop responding to
-> > config reads with Completions with Request Retry Status (RRS).
-> > 
-> > Polling PCI_COMMAND leads to hardware retries that are invisible to
-> > software and the backoff between software retries doesn't work correctly.
-> > 
-> > Root Ports are not required to support the Configuration RRS Software
-> > Visibility feature that prevents hardware retries and makes the RRS
-> > Completions visible to software, so this series only uses it when available
-> > and falls back to PCI_COMMAND polling when it's not.
-> > 
-> > This is completely untested and posted for comments.
-> > 
-> > Bjorn Helgaas (3):
-> >    PCI: Wait for device readiness with Configuration RRS
-> >    PCI: aardvark: Correct Configuration RRS checking
-> >    PCI: Rename CRS Completion Status to RRS
-> > 
-> >   drivers/bcma/driver_pci_host.c             | 10 ++--
-> >   drivers/pci/controller/dwc/pcie-tegra194.c | 18 +++---
-> >   drivers/pci/controller/pci-aardvark.c      | 64 +++++++++++-----------
-> >   drivers/pci/controller/pci-xgene.c         |  6 +-
-> >   drivers/pci/controller/pcie-iproc.c        | 18 +++---
-> >   drivers/pci/pci-bridge-emul.c              |  4 +-
-> >   drivers/pci/pci.c                          | 41 +++++++++-----
-> >   drivers/pci/pci.h                          | 11 +++-
-> >   drivers/pci/probe.c                        | 33 +++++------
-> >   include/linux/bcma/bcma_driver_pci.h       |  2 +-
-> >   include/linux/pci.h                        |  1 +
-> >   include/uapi/linux/pci_regs.h              |  6 +-
-> >   12 files changed, 117 insertions(+), 97 deletions(-)
-> 
-> Although this looks like a useful series, I'm sorry to say but this doesn't
-> solve the issue that Gary and I raised.  We double checked today and found
-> that reading the vendor ID works just fine at this time.
+Add the __counted_by compiler attribute to the flexible array member
+volumes to improve access bounds-checking via CONFIG_UBSAN_BOUNDS and
+CONFIG_FORTIFY_SOURCE.
 
-Thanks for testing that.
+Use struct_size() instead of manually calculating the number of bytes to
+allocate for a pnfs_block_deviceaddr with a single volume.
 
-> I think that we're still better off polling PCI_PM_CTRL to "wait" for D0
-> after the state change from D3cold.
+Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+---
+ fs/nfsd/blocklayout.c    | 6 ++----
+ fs/nfsd/blocklayoutxdr.h | 2 +-
+ 2 files changed, 3 insertions(+), 5 deletions(-)
 
-Is there some spec justification for polling PCI_PM_CTRL?  I'm dubious
-about doing that just because "it works" in this situation, unless we
-have some better understanding about *why* it works and whether all
-devices are supposed to work that way.
+diff --git a/fs/nfsd/blocklayout.c b/fs/nfsd/blocklayout.c
+index 3c040c81c77d..08a20e5bcf7f 100644
+--- a/fs/nfsd/blocklayout.c
++++ b/fs/nfsd/blocklayout.c
+@@ -147,8 +147,7 @@ nfsd4_block_get_device_info_simple(struct super_block *sb,
+ 	struct pnfs_block_deviceaddr *dev;
+ 	struct pnfs_block_volume *b;
+ 
+-	dev = kzalloc(sizeof(struct pnfs_block_deviceaddr) +
+-		      sizeof(struct pnfs_block_volume), GFP_KERNEL);
++	dev = kzalloc(struct_size(dev, volumes, 1), GFP_KERNEL);
+ 	if (!dev)
+ 		return -ENOMEM;
+ 	gdp->gd_device = dev;
+@@ -255,8 +254,7 @@ nfsd4_block_get_device_info_scsi(struct super_block *sb,
+ 	const struct pr_ops *ops;
+ 	int ret;
+ 
+-	dev = kzalloc(sizeof(struct pnfs_block_deviceaddr) +
+-		      sizeof(struct pnfs_block_volume), GFP_KERNEL);
++	dev = kzalloc(struct_size(dev, volumes, 1), GFP_KERNEL);
+ 	if (!dev)
+ 		return -ENOMEM;
+ 	gdp->gd_device = dev;
+diff --git a/fs/nfsd/blocklayoutxdr.h b/fs/nfsd/blocklayoutxdr.h
+index b0361e8aa9a7..4e28ac8f1127 100644
+--- a/fs/nfsd/blocklayoutxdr.h
++++ b/fs/nfsd/blocklayoutxdr.h
+@@ -47,7 +47,7 @@ struct pnfs_block_volume {
+ 
+ struct pnfs_block_deviceaddr {
+ 	u32				nr_volumes;
+-	struct pnfs_block_volume	volumes[];
++	struct pnfs_block_volume	volumes[] __counted_by(nr_volumes);
+ };
+ 
+ __be32 nfsd4_block_encode_getdeviceinfo(struct xdr_stream *xdr,
+-- 
+2.46.0
 
-Bjorn
 
