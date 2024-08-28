@@ -1,95 +1,85 @@
-Return-Path: <linux-kernel+bounces-305006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEDAC96280F
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 14:59:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63EB396281C
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:01:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4EC23B20F6B
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 12:59:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91D511C209AA
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:01:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A584C184528;
-	Wed, 28 Aug 2024 12:59:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D2A217A5A4;
+	Wed, 28 Aug 2024 13:01:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="WhMkgT+o"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eurOd9Dr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B20E15B12F;
-	Wed, 28 Aug 2024 12:59:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB9D416BE1A;
+	Wed, 28 Aug 2024 13:01:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724849985; cv=none; b=iw5QklXJTg3SjpgqAMp7miTGb/KHZRH69hk85ntgMah33vXBOn3FsV7z2pwyJQoEL+GEFlM1nNsF7r3TBeHLbYH/Ogb73sjUvtBf0LjR3+pGDGyInKM5rYIc/WINp2J/MhdEGO9YHjX4LVMLWTKuznNcPMGzG/84eiMNmS3wLGk=
+	t=1724850062; cv=none; b=JblaXhBHEbthi4NfdYL/7iz00XMgpbOekZwnN1X+Vl0St8YLJ7jOQx3Ktf485EqhNaH3VOki4fvoKxsieeF9K+v+ul3Im8zKeYxIBbrAqXwc+hbXWtGJ/mJ9+HGkPTm8jpj9drvzsx3G6suD3D1jzwMOfmg9azhNMKQxizk9yCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724849985; c=relaxed/simple;
-	bh=PoJ58OyUY8+InttErmXtLqqc+RMwktChV0+7+uuGVHE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pHv4BYcjl0V0GwfFlPxUhwisPeIRLpfyCNbz6KQJj2Eb3dfh6wUFh5LERxmsV1u8xCw2LCWZUfr9nDo1yNTGtwHix7ch/hg06AnB09wu08HGTLtiZKgOdd+eIyToywrvwQ9qpRMLSFdThawtyAvvR2vtz9i1uKK4NqJqJHBAvxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=WhMkgT+o; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=FJB8kqxvEm2TG1FvDWYg7p79qtRb7PR5dNg6chIXUPg=; b=WhMkgT+ozZUJARpn4Hnh7CnYbZ
-	4zaPyvWd9DHlGFeyyWBp59bS+8rEpDTCJHnE3tUBhUw5m3+MjQPKu9iwje5dz/ZgFFnSuaEq/EsnG
-	lbcDPCCEEW6m2s+2IseCD3i5XPcMLB3rHct68y4Q8o4q7ExAGSBUUrpJzue++N7tKWxEbABLuxeip
-	QSKbpFOVe41PVRPGKoGP3VmpRTmOQ6qpw0v2tnvsuPeU1YzZIEA2zEDISn4Zw/sIfl7c74ic7X2h4
-	sFD9vEAaLhtlXvVf/FUXofXWAeaneyaAqUXzK97J8QJXB/GZ3yEz+/GaLaoX/etV1B/xSmwNpsgw4
-	7ZqNPXrw==;
-Received: from i5e8616cd.versanet.de ([94.134.22.205] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1sjIGv-0005Ox-Tl; Wed, 28 Aug 2024 14:59:37 +0200
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Jonathan Liu <net147@gmail.com>
-Cc: FUKAUMI Naoki <naoki@radxa.com>, Jonathan Liu <net147@gmail.com>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject:
- Re: [PATCH v2] arm64: dts: rockchip: Enable RK809 audio codec for Radxa ROCK
- 4C+
-Date: Wed, 28 Aug 2024 15:00:49 +0200
-Message-ID: <2502361.uoxibFcf9D@diego>
-In-Reply-To: <20240828074755.1320692-1-net147@gmail.com>
-References: <20240828074755.1320692-1-net147@gmail.com>
+	s=arc-20240116; t=1724850062; c=relaxed/simple;
+	bh=DMx89/M6A3gPXYVGxlU2/okNE/PkH+UqmZ871NmT0rI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kBOhuzSWdnah+Ms6Htp5OYRf+HLsPjvlUiNEGk8/G/C6XBGGFaE4DH0B/1YIg1iR0qSh86bNJeklbmyLUGtT0kD+1SsQFQDZfBBWEK4QjqmTbNPCx/rFc70NI9CK/eXOymHOC4Lwm58YxkJSicgIghG2mm819ZyIhQLL3U7hgg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eurOd9Dr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F2C7C4CAC2;
+	Wed, 28 Aug 2024 13:01:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724850062;
+	bh=DMx89/M6A3gPXYVGxlU2/okNE/PkH+UqmZ871NmT0rI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=eurOd9Drftv5gz5GQrJZGi9oOdWnevoqybSR6tyK7IUe5tvsk1Jo3jN7P6oSux3V7
+	 ZVkkPgi/z5NuCQYSpoohaeJUO2u/99kLfDapg0hfj8J1Gac7jBdWNoLRyyWhfHiUFs
+	 fdHYY30GeQe9Nf/t5H3FHPD9iB+KDp28XmBq6p30+CO+N/HrBjB6EkC6XV59tMb5Qp
+	 GTjYuMonKIIhgfImTjpeq56W8OAFY6BkgTbxCUMll5+n8wWRciHDm/NEQKOheRrCH+
+	 /WQjT2RvqmPVkUYyBVKQNEkVY8U/4nxopWVV1Hso1P8C0l0jk/qBNJXlv4LZsD0saB
+	 OCc1laXMHw+jA==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] regulator: qcom_spmi: Drop unnecessary of_find_property() call
+Date: Wed, 28 Aug 2024 08:00:54 -0500
+Message-ID: <20240828130056.3481050-1-robh@kernel.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8bit
 
-Hi Jonathan,
+There's no need to check for presence of "qcom,saw-reg" before parsing
+it. If the property doesn't exist, parsing it will return NULL.
 
-Am Mittwoch, 28. August 2024, 09:47:53 CEST schrieb Jonathan Liu:
-> This adds the necessary device tree changes to enable analog audio
-> output for the 3.5 mm TRS headphone jack on the Radxa ROCK 4C+ with
-> its RK809 audio codec.
-> 
-> Signed-off-by: Jonathan Liu <net147@gmail.com>
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+---
+ drivers/regulator/qcom_spmi-regulator.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-as it looks like you have one of those boards, could I possibly as you
-to take a look at the vdd_cpu_b and vdd_gpu nodes?
-
-I see (and devicetree check reports it too) a pinctrl-0 for the vsel-gpio
-without accompanying pinctrl-names.
-
-Could you check if things fail if you either add pinctrl-names or remove
-the pinctrl-0 entry?
-
-
-Thanks a lot
-Heiko
-
+diff --git a/drivers/regulator/qcom_spmi-regulator.c b/drivers/regulator/qcom_spmi-regulator.c
+index 9a9fa20dcd95..68603649db48 100644
+--- a/drivers/regulator/qcom_spmi-regulator.c
++++ b/drivers/regulator/qcom_spmi-regulator.c
+@@ -2528,8 +2528,8 @@ static int qcom_spmi_regulator_probe(struct platform_device *pdev)
+ 	if (!reg)
+ 		return -ENODEV;
+ 
+-	if (of_find_property(node, "qcom,saw-reg", &lenp)) {
+-		syscon = of_parse_phandle(node, "qcom,saw-reg", 0);
++	syscon = of_parse_phandle(node, "qcom,saw-reg", 0);
++	if (syscon) {
+ 		saw_regmap = syscon_node_to_regmap(syscon);
+ 		of_node_put(syscon);
+ 		if (IS_ERR(saw_regmap))
+-- 
+2.45.2
 
 
