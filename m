@@ -1,190 +1,194 @@
-Return-Path: <linux-kernel+bounces-304892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B700962654
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:50:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CB09962659
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:51:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 939A71F23C77
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:50:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E507D1F237C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:51:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97180171E5F;
-	Wed, 28 Aug 2024 11:50:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 949CD171E5F;
+	Wed, 28 Aug 2024 11:50:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rPhL52AF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="E7ObMKPb"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA04515B12F;
-	Wed, 28 Aug 2024 11:49:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E037155352;
+	Wed, 28 Aug 2024 11:50:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724845799; cv=none; b=K/RIOdatZ3rSatLBe/aT/5y3iI2QMIaQwP8yTswFV1xJlVQunpdJtzTxfAzmz1AEqTg6osHtMmbD8lEoHAt6Q+aCDIeHqAyC+rwZFEfApQtlbhoD2D+hlyjyGMq3j4Y7v5neQlzBK+3NFpsbpD7uPa9nr2JzOJZUQn3v2InVKlA=
+	t=1724845852; cv=none; b=Yxe+22KAcKYos4t0GOMXnwC3X6gqeOlKFotJygAP9R1rLncfqMMn3EqfClxG+mpW3IArd88Lx0YTB4exA/j+Q5eRsCw2y+OdYzvVdks8PZBMGeLQH1WyvCQeJKS41SNoYxsBBHp3yXbId3beE5dqwHsfxV9PnY/TxgpesR01KQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724845799; c=relaxed/simple;
-	bh=Rmg15xcrDSp/rS54nFzfPvGUre02UCMRZ4kZHLoLxMw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=DUowa8UEaGe25P0C3IGmqDE+DIKL7+frIaiV9ZQJkNx8DmsvttJFff2Jf9k15RxxzvyNsLCvOhQ5cN0MkIK51f1Z/Ot1g75ohf8/mLK0kMumC8ktQwq5bxnVE2RTW+/WeRXarImkBINgoqiP63P1L2Hh7+knhd/dMejg6+D97gI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rPhL52AF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69ADAC98EC3;
-	Wed, 28 Aug 2024 11:49:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724845799;
-	bh=Rmg15xcrDSp/rS54nFzfPvGUre02UCMRZ4kZHLoLxMw=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=rPhL52AFcFVJ8bqp8jCbLeuNE2JLek2l9kSCxYYmGHoXF96QFoPQNPt4pD4+FkKBk
-	 oiVFk8R2tSxj4GPoMCtpAtMP44II6JMTAHkIMkp1bR8j1Mv0xVisikw+ghA2rDP3w9
-	 bmdwhREEOYuDcJZcGSdrhvwgPiDjclwzv1HlTiFKQRYCSpcfKey9Z5CzJ1hyC335eD
-	 NO+5fd2Rhlrh5tKv/s9DfD1F7n2yZ7FSJn+8GYWnf1P1O2ZAlb+yoaLGkvhwfgl9mp
-	 H3I9sq/fbZcj0DMHUDz15PLuRc9aHOJIs+dliYres+QDfAVSE4KgvtpeySzZf8iiKd
-	 EDVKhpNXKrA/w==
-Message-ID: <fe4c8c72-1f7b-4274-a910-4ad803487951@kernel.org>
-Date: Wed, 28 Aug 2024 13:49:54 +0200
+	s=arc-20240116; t=1724845852; c=relaxed/simple;
+	bh=DAZw4dKbjYxQ/XUR7oulIBEXHxsRe8vk0SMfFTIeMXM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DaIqLxdyjeyZr7Et1ZF+lzi9vOX95SPC+XQQIqQLP2n/IjLTqHsNZrlk6yKRcmEI4hAHCpRqRx/dx4BJbEa5GzLneSN+9+v80BMxOliLfjJf+dwQ0mDPU6cNyPKIZa3F9Xmng/Y6BZcyOP5H9q66s2kW3+/EfrJR4iw726FyBQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=E7ObMKPb; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47SB22UK003146;
+	Wed, 28 Aug 2024 11:50:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:message-id:mime-version:subject:to; s=
+	qcppdkim1; bh=biUpZUVisTjyaUKNnvHNNG/jleI/CKxhuOCjjsOuR/k=; b=E7
+	ObMKPbzzkocgMtCHm7UTeSL/F5uJzzXkeRy9C4d/6xKHNlxIDb5Z/L/RfaAGizlp
+	W1WH6temyEPqZnI4LDva+UhTXUZaF8JFBcxJB3Qe6DuLELooctsSbGLxIleMOVzH
+	+HkdpftHXuP28nJQ4ww1D5kSXeFo0ctzi0xb9m7lQ8zWR3BU6cc1E4fM0MD77cuQ
+	Zwp4jbsukPyjMLDO+LpaO8gc083PN+vVhY1+erm+lFL7/IMAJyAlTF79XhNA1dPw
+	LQBxRYfZpm2eBJ+4bSyBeT2jYuFPYAUvOsDScgOQE9uEBpajN5tNJxLnS4CwpuRm
+	eWcjmIO9X+w3sMoLEVRg==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 419puu9mnu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 28 Aug 2024 11:50:48 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47SBoBKr006956
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 28 Aug 2024 11:50:11 GMT
+Received: from hu-mapa-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 28 Aug 2024 04:50:08 -0700
+From: Manish Pandey <quic_mapa@quicinc.com>
+To: Jens Axboe <axboe@kernel.dk>
+CC: <linux-block@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <quic_nitirawa@quicinc.com>, <quic_bhaskarv@quicinc.com>,
+        <quic_narepall@quicinc.com>, <quic_rampraka@quicinc.com>,
+        <quic_mapa@quicinc.com>, <quic_cang@quicinc.com>,
+        <quic_nguyenb@quicinc.com>
+Subject: [PATCH] blk-mq: Allow complete locally if capacities are different
+Date: Wed, 28 Aug 2024 17:19:58 +0530
+Message-ID: <20240828114958.29422-1-quic_mapa@quicinc.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 25/27] ARM: dts: at91: sam9x7: add device tree for SoC
-To: Varshini.Rajendran@microchip.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, Nicolas.Ferre@microchip.com,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240729065603.1986074-1-varshini.rajendran@microchip.com>
- <20240729070934.1991467-1-varshini.rajendran@microchip.com>
- <7031d811-2bb2-4325-996c-a6de766925db@kernel.org>
- <bf77fe95-0982-4605-a493-25c889e81639@microchip.com>
- <5fbc815f-d52e-437d-bdc3-c61f365e9d1c@kernel.org>
- <a36c4d23-e2fe-4bf5-a262-5eb9828e6e7a@microchip.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <a36c4d23-e2fe-4bf5-a262-5eb9828e6e7a@microchip.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: wGgtsDGNzAWWH1F7i4d0G8pe6xA3HUNX
+X-Proofpoint-ORIG-GUID: wGgtsDGNzAWWH1F7i4d0G8pe6xA3HUNX
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-28_04,2024-08-27_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ impostorscore=0 adultscore=0 malwarescore=0 suspectscore=0 bulkscore=0
+ clxscore=1015 mlxlogscore=999 mlxscore=0 phishscore=0 lowpriorityscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408280086
 
-On 28/08/2024 10:25, Varshini.Rajendran@microchip.com wrote:
-> On 27/08/24 6:18 pm, Krzysztof Kozlowski wrote:
->> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
->>
->> On 27/08/2024 11:50, Varshini.Rajendran@microchip.com wrote:
->>> Hi Krzysztof,
->>>
->>> Apologies for the delay in response.
->>>
->>> On 31/07/24 2:00 pm, Krzysztof Kozlowski wrote:
->>>> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
->>>>
->>>> On 29/07/2024 09:09, Varshini Rajendran wrote:
->>>>> Add device tree file for SAM9X7 SoC family.
->>>>>
->>>>> Co-developed-by: Nicolas Ferre <nicolas.ferre@microchip.com>
->>>>> Signed-off-by: Nicolas Ferre <nicolas.ferre@microchip.com>
->>>>> Signed-off-by: Varshini Rajendran <varshini.rajendran@microchip.com>
->>>>
->>>> ...
->>>>
->>>>> +
->>>>> +             can1: can@f8004000 {
->>>>> +                     compatible = "bosch,m_can";
->>>>> +                     reg = <0xf8004000 0x100>, <0x300000 0xbc00>;
->>>>> +                     reg-names = "m_can", "message_ram";
->>>>> +                     interrupts = <30 IRQ_TYPE_LEVEL_HIGH 0>,
->>>>> +                                  <69 IRQ_TYPE_LEVEL_HIGH 0>;
->>>>> +                     interrupt-names = "int0", "int1";
->>>>> +                     clocks = <&pmc PMC_TYPE_PERIPHERAL 30>, <&pmc PMC_TYPE_GCK 30>;
->>>>> +                     clock-names = "hclk", "cclk";
->>>>> +                     assigned-clocks = <&pmc PMC_TYPE_CORE PMC_UTMI>, <&pmc PMC_TYPE_GCK 30>;
->>>>> +                     assigned-clock-rates = <480000000>, <40000000>;
->>>>> +                     assigned-clock-parents = <&pmc PMC_TYPE_CORE PMC_UTMI>, <&pmc PMC_TYPE_CORE PMC_UTMI>;
->>>>> +                     bosch,mram-cfg = <0x7800 0 0 64 0 0 32 32>;
->>>>> +                     status = "disabled";
->>>>> +             };
->>>>> +
->>>>> +             tcb: timer@f8008000 {
->>>>> +                     compatible = "microchip,sam9x7-tcb","atmel,sama5d2-tcb", "simple-mfd", "syscon";
->>>>
->>>> Why this is simple-mfd without children?
->>>
->>> The tcb node will have each TC (Timer Counter) Block as a child when it
->>> is configured to be used as either one of the following modes Timer or
->>> Counter / Capture / PWM.
->>
->> And where are these children? What does it mean "will have", in context
->> when? DTS is static, if you do not have here children then this is not a
->> simple-mfd.
->>
-> I understand your concern. But the thing is that, each tc block is 
-> configured as a child and it can be configured in 3 different modes with 
-> different compatibles. In the current dts (i.e., sam9x75_curiosity 
-> board) we don't have a use case for the tcb, hence there are no child 
-> nodes defined. But there are instances where it can be defined in the 
-> dts, say for a custom board using sam9x7 SoC. In that case the 
+'Commit af550e4c9682 ("block/blk-mq: Don't complete locally if
+capacities are different")' enforces to complete the request locally
+only if the submission and completion CPUs have same capacity.
 
-Where are these instances? Can you point me to DTS?
+To have optimal IO load balancing or to avoid contention b/w submission
+path and completion path, user may need to complete IO request of large
+capacity CPU(s) on Small Capacity CPU(s) or vice versa.
 
-> simple-mfd usage is justified, if I am not wrong. If this justification 
-> doesn't suffice, then declaring child nodes with one mode as default 
+Hence introduce a QUEUE_FLAG_ALLOW_DIFF_CAPACITY blk queue flag to let
+user decide if it wants to complete the request locally or need an IPI
+even if the capacity of the requesting and completion queue is different.
+This gives flexibility to user to choose best CPU for their completion
+to give best performance for their system.
 
-If I understand correctly: some out of tree, non-upstream project wants
-this. Sorry, but out of tree does not matter. So it is not a correct
-justification.
+Link: https://lore.kernel.org/all/66912a22-540d-4b9a-bd06-cce55b9ad304@quicinc.com/T/
+Co-developed-by: Can Guo <quic_cang@quicinc.com>
+Co-developed-by: Nitin Rawat <quic_nitirawa@quicinc.com>
+Signed-off-by: Manish Pandey <quic_mapa@quicinc.com>
+---
+ block/blk-mq-debugfs.c |  1 +
+ block/blk-mq.c         |  3 ++-
+ block/blk-sysfs.c      | 12 ++++++++++--
+ include/linux/blkdev.h |  1 +
+ 4 files changed, 14 insertions(+), 3 deletions(-)
 
-With such argument you could claim that everything needs simple-mfd
-because some broken out-of-tree code adds there children.
-
-> which can be overridden in the dts and kept disabled in the dtsi should 
-> be the other plausible way. Please let me know your suggestions.
-
-No clue, please post complete binding and complete DTS so we can review
-these.
-
-Best regards,
-Krzysztof
+diff --git a/block/blk-mq-debugfs.c b/block/blk-mq-debugfs.c
+index 5463697a8442..af048dad9667 100644
+--- a/block/blk-mq-debugfs.c
++++ b/block/blk-mq-debugfs.c
+@@ -93,6 +93,7 @@ static const char *const blk_queue_flag_name[] = {
+ 	QUEUE_FLAG_NAME(RQ_ALLOC_TIME),
+ 	QUEUE_FLAG_NAME(HCTX_ACTIVE),
+ 	QUEUE_FLAG_NAME(SQ_SCHED),
++	QUEUE_FLAG_NAME(ALLOW_DIFF_CAPACITY),
+ };
+ #undef QUEUE_FLAG_NAME
+ 
+diff --git a/block/blk-mq.c b/block/blk-mq.c
+index aa28157b1aaf..1584312d870a 100644
+--- a/block/blk-mq.c
++++ b/block/blk-mq.c
+@@ -1164,7 +1164,8 @@ static inline bool blk_mq_complete_need_ipi(struct request *rq)
+ 	if (cpu == rq->mq_ctx->cpu ||
+ 	    (!test_bit(QUEUE_FLAG_SAME_FORCE, &rq->q->queue_flags) &&
+ 	     cpus_share_cache(cpu, rq->mq_ctx->cpu) &&
+-	     cpus_equal_capacity(cpu, rq->mq_ctx->cpu)))
++	     (test_bit(QUEUE_FLAG_ALLOW_DIFF_CAPACITY, &rq->q->queue_flags) ||
++	      cpus_equal_capacity(cpu, rq->mq_ctx->cpu))))
+ 		return false;
+ 
+ 	/* don't try to IPI to an offline CPU */
+diff --git a/block/blk-sysfs.c b/block/blk-sysfs.c
+index 60116d13cb80..37d6ab325180 100644
+--- a/block/blk-sysfs.c
++++ b/block/blk-sysfs.c
+@@ -300,8 +300,9 @@ static ssize_t queue_rq_affinity_show(struct gendisk *disk, char *page)
+ {
+ 	bool set = test_bit(QUEUE_FLAG_SAME_COMP, &disk->queue->queue_flags);
+ 	bool force = test_bit(QUEUE_FLAG_SAME_FORCE, &disk->queue->queue_flags);
++	bool allow = test_bit(QUEUE_FLAG_ALLOW_DIFF_CAPACITY, &disk->queue->queue_flags);
+ 
+-	return queue_var_show(set << force, page);
++	return queue_var_show((set << force) | (allow << set), page);
+ }
+ 
+ static ssize_t
+@@ -316,15 +317,22 @@ queue_rq_affinity_store(struct gendisk *disk, const char *page, size_t count)
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	if (val == 2) {
++	if (val == 3) {
++		blk_queue_flag_set(QUEUE_FLAG_SAME_COMP, q);
++		blk_queue_flag_clear(QUEUE_FLAG_SAME_FORCE, q);
++		blk_queue_flag_set(QUEUE_FLAG_ALLOW_DIFF_CAPACITY, q);
++	} else if (val == 2) {
+ 		blk_queue_flag_set(QUEUE_FLAG_SAME_COMP, q);
+ 		blk_queue_flag_set(QUEUE_FLAG_SAME_FORCE, q);
++		blk_queue_flag_clear(QUEUE_FLAG_ALLOW_DIFF_CAPACITY, q);
+ 	} else if (val == 1) {
+ 		blk_queue_flag_set(QUEUE_FLAG_SAME_COMP, q);
+ 		blk_queue_flag_clear(QUEUE_FLAG_SAME_FORCE, q);
++		blk_queue_flag_clear(QUEUE_FLAG_ALLOW_DIFF_CAPACITY, q);
+ 	} else if (val == 0) {
+ 		blk_queue_flag_clear(QUEUE_FLAG_SAME_COMP, q);
+ 		blk_queue_flag_clear(QUEUE_FLAG_SAME_FORCE, q);
++		blk_queue_flag_clear(QUEUE_FLAG_ALLOW_DIFF_CAPACITY, q);
+ 	}
+ #endif
+ 	return ret;
+diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+index b7664d593486..902fb726ebe1 100644
+--- a/include/linux/blkdev.h
++++ b/include/linux/blkdev.h
+@@ -602,6 +602,7 @@ enum {
+ 	QUEUE_FLAG_RQ_ALLOC_TIME,	/* record rq->alloc_time_ns */
+ 	QUEUE_FLAG_HCTX_ACTIVE,		/* at least one blk-mq hctx is active */
+ 	QUEUE_FLAG_SQ_SCHED,		/* single queue style io dispatch */
++	QUEUE_FLAG_ALLOW_DIFF_CAPACITY,	/* complete on different capacity CPU-group */
+ 	QUEUE_FLAG_MAX
+ };
+ 
+-- 
+2.17.1
 
 
