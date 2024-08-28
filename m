@@ -1,141 +1,199 @@
-Return-Path: <linux-kernel+bounces-304853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 747DC9625D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:18:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3A899625DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:20:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A77B41C2203B
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:18:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C278284FA8
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:20:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD50916D4F3;
-	Wed, 28 Aug 2024 11:18:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23935172BDE;
+	Wed, 28 Aug 2024 11:20:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="ie1ZgaJb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="efZexNXN"
+Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4C024D108;
-	Wed, 28 Aug 2024 11:18:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A94B516D300
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 11:20:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724843921; cv=none; b=Oqgj5/ACQ7Fvv6r7pu3kkW66XXUBu1rjYJJpougXBsixisMN9Tee01pdzgJHwqDV0llaqr4TcBjh+X1nugzuAHbZQddLHJqBSgZciYjW3WAzCrUkMHIJtjRosLTDEqhgf5fr0WTPnCkK29ufnkFSkMnsHLaUQff1hMOTC6zjtP4=
+	t=1724844013; cv=none; b=EKh8/G9b4KonKckpJUcfpSEc7gfUmbHlU7+cnBqtgxSRkFkhhuMjz+iPeqJhRMk3i7LS+61weuV47qczvQQisxh0XU6blZmanth9yKbK59p7scP5+rZjrvKkaUaHdBkRvHCLa0IPrb7DCQhSRcbsLnU0qafsLQsFEPEjrD/oA54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724843921; c=relaxed/simple;
-	bh=K4ffkU1d24Lo6Vpr60xC27K+SzTzNldohctsI0B5LAk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NvqefsuWo035y194PtUONVMgnmYQJAH3ApfPJuBS5KIXz14Q5YZsoz6upH3K6vGG76QAvoit8P4dmU+R/O/3qu94ODB+6KMJUrG0uO6FVhkVadeIN3IGEknS6btoUUPNZkM2Wo3v2vMX63WD6hR0g+K5AqyYvv9BsFvT5CUSL+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=ie1ZgaJb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0F77C98EC1;
-	Wed, 28 Aug 2024 11:18:37 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="ie1ZgaJb"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1724843916;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TaIlxacxM0cvax8nGT0Wo3sn3OzyvoPLEHrLd84XeNU=;
-	b=ie1ZgaJbmdO0NFZiWnbQxMHvES+WVoJwzMG9ptpU3Emt2rn3BokeH+49oxcj4dV6dn2A7R
-	OZIoYXalY4Ws4iv74BUjZGRKqr/jYLeyEjR6fhELEgh04xz8/D5eJuiLFmdCA7UTqCRd8K
-	hMYFoVGZZlHMLnB3FsT4kBzzeg3/4HU=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 8e8b7172 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Wed, 28 Aug 2024 11:18:35 +0000 (UTC)
-Date: Wed, 28 Aug 2024 13:18:34 +0200
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: Segher Boessenkool <segher@kernel.crashing.org>
-Cc: Eric Biggers <ebiggers@kernel.org>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Naveen N Rao <naveen@kernel.org>, Andy Lutomirski <luto@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, Theodore Ts'o <tytso@mit.edu>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Vincenzo Frascino <vincenzo.frascino@arm.com>,
-	Shuah Khan <shuah@kernel.org>, linuxppc-dev@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-mm@kvack.org,
-	linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v2 05/17] vdso: Avoid call to memset() by getrandom
-Message-ID: <Zs8HirKLk-SrwTIu@zx2c4.com>
-References: <cover.1724309198.git.christophe.leroy@csgroup.eu>
- <5deb67090b214f0e6eae96b7c406546d1a16f89b.1724309198.git.christophe.leroy@csgroup.eu>
- <20240827180819.GB2049@sol.localdomain>
- <20240827225330.GC29862@gate.crashing.org>
+	s=arc-20240116; t=1724844013; c=relaxed/simple;
+	bh=IjFhSB8wlD5MSEtY17iyGABjlB+B3SavU8V/cRJUmTo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ae4mab4qbfuadzycr6eS/iKZ+33trR50GQR6vXZ7ZtgQnbz1q+wD2yP4Sawxv4RGrZ+rVu+St2KQ3gOxvJdaZ0yP4YoswCrlGj3auCczERX2xTIKyuJ2kkcCI4GwKHwbAn7i5lPJGqyWkdtIxPo4yCQYrZf9kGTN9vFpPEgGxV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=efZexNXN; arc=none smtp.client-ip=115.124.30.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1724844002; h=From:To:Subject:Date:Message-ID:MIME-Version;
+	bh=ZGTJq2rAfxLvSQxM0K96ocXGs6cX+lZzDArmhphRc3k=;
+	b=efZexNXNF/KnPY7VWbOA44YGhay0vjs6Mwl52mX/E9hymgzTN4riLQbMpWPlnbZDGXBMcn63jqmV34CspCl4Ssw9PWOW+FZaxn1VLanaJvLnDcyTzKbNUtV4hzCj7U5dotmnaRIwuOd1kXiFEmliUCUn8Pe5CJfFJnmg/cF15uM=
+Received: from localhost(mailfrom:hongzhen@linux.alibaba.com fp:SMTPD_---0WDpi5rU_1724844000)
+          by smtp.aliyun-inc.com;
+          Wed, 28 Aug 2024 19:20:01 +0800
+From: Hongzhen Luo <hongzhen@linux.alibaba.com>
+To: linux-erofs@lists.ozlabs.org,
+	lihongbo22@huawei.com
+Cc: linux-kernel@vger.kernel.org,
+	Hongzhen Luo <hongzhen@linux.alibaba.com>
+Subject: [PATCH RFC v3 0/3] erofs: introduce page cache share feature
+Date: Wed, 28 Aug 2024 19:19:56 +0800
+Message-ID: <20240828111959.3677011-1-hongzhen@linux.alibaba.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240827225330.GC29862@gate.crashing.org>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Aug 27, 2024 at 05:53:30PM -0500, Segher Boessenkool wrote:
-> On Tue, Aug 27, 2024 at 11:08:19AM -0700, Eric Biggers wrote:
-> > On Thu, Aug 22, 2024 at 09:13:13AM +0200, Christophe Leroy wrote:
-> > > With the current implementation, __cvdso_getrandom_data() calls
-> > > memset(), which is unexpected in the VDSO.
-> > > 
-> > > Rewrite opaque data initialisation to avoid memset().
-> > > 
-> > > Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
-> > > ---
-> > >  lib/vdso/getrandom.c | 15 ++++++++++-----
-> > >  1 file changed, 10 insertions(+), 5 deletions(-)
-> > > 
-> > > diff --git a/lib/vdso/getrandom.c b/lib/vdso/getrandom.c
-> > > index cab153c5f9be..4a56f45141b4 100644
-> > > --- a/lib/vdso/getrandom.c
-> > > +++ b/lib/vdso/getrandom.c
-> > > @@ -4,6 +4,7 @@
-> > >   */
-> > >  
-> > >  #include <linux/minmax.h>
-> > > +#include <linux/array_size.h>
-> > >  #include <vdso/datapage.h>
-> > >  #include <vdso/getrandom.h>
-> > >  #include <vdso/unaligned.h>
-> > > @@ -74,11 +75,15 @@ __cvdso_getrandom_data(const struct vdso_rng_data *rng_info, void *buffer, size_
-> > >  	u32 counter[2] = { 0 };
-> > >  
-> > >  	if (unlikely(opaque_len == ~0UL && !buffer && !len && !flags)) {
-> > > -		*(struct vgetrandom_opaque_params *)opaque_state = (struct vgetrandom_opaque_params) {
-> > > -			.size_of_opaque_state = sizeof(*state),
-> > > -			.mmap_prot = PROT_READ | PROT_WRITE,
-> > > -			.mmap_flags = MAP_DROPPABLE | MAP_ANONYMOUS
-> > > -		};
-> > > +		struct vgetrandom_opaque_params *params = opaque_state;
-> > > +		int i;
-> > > +
-> > > +		params->size_of_opaque_state = sizeof(*state);
-> > > +		params->mmap_prot = PROT_READ | PROT_WRITE;
-> > > +		params->mmap_flags = MAP_DROPPABLE | MAP_ANONYMOUS;
-> > > +		for (i = 0; i < ARRAY_SIZE(params->reserved); i++)
-> > > +			params->reserved[i] = 0;
-> > > +
-> > >  		return 0;
-> > >  	}
-> > 
-> > Is there a compiler flag that could be used to disable the generation of calls
-> > to memset?
-> 
-> -fno-tree-loop-distribute-patterns .  But, as always, read up on it, see
-> what it actually does (and how it avoids your problem, and mostly: learn
-> what the actual problem *was*!)
+v3:
+Changes since v2:
+  - The implementation of page cache share has been redesigned to overcome read
+    dependencies during device unmounting, where an inode cannot be freed when
+    it is currently being used to perform a read elsewhere.
+  - Added support for compressed files.
+  - The relevant experiments were repeated, in accordance with the latest implementations.
 
-This might help with various loops, but it doesn't help with the matter
-that this patch fixes, which is struct initialization. I just tried it
-with the arm64 patch to no avail.
+v2: https://lore.kernel.org/all/20240731080704.678259-1-hongzhen@linux.alibaba.com/
+
+v1: https://lore.kernel.org/all/20240722065355.1396365-1-hongzhen@linux.alibaba.com/
+
+
+[Background]
+================
+Currently, reading files with different paths (or names) but the same
+content will consume multiple copies of the page cache, even if the
+content of these page caches is the same. For example, reading identical
+files (e.g., *.so files) from two different minor versions of container
+images will cost multiple copies of the same page cache, since different
+containers have different mount points. Therefore, sharing the page cache
+for files with the same content can save memory.
+
+[Implementation]
+================
+This introduces the page cache share feature in erofs. During the mkfs
+phase, the file content is hashed and the hash value is stored in the
+`trusted.erofs.fingerprint` extended attribute. Inodes of files with the
+same `trusted.erofs.fingerprint` are mapped to the same anonymous inode
+(indicated by the `ano_inode` field). When a read request occurs, the
+anonymous inode serves as a "container" whose page cache is shared. The
+actual operations involving the iomap are carried out by the original
+inode which is mapped to the anonymous inode.
+
+[Effect]
+================
+I conducted experiments on two aspects across two different minor versions of
+container images:
+
+1. reading all files in two different minor versions of container images 
+
+2. run workloads or use the default entrypoint within the containers^[1]
+
+Below is the memory usage for reading all files in two different minor
+versions of container images:
+
++-------------------+------------------+-------------+---------------+
+|       Image       | Page Cache Share | Memory (MB) |    Memory     |
+|                   |                  |             | Reduction (%) |
++-------------------+------------------+-------------+---------------+
+|                   |        No        |     241     |       -       |
+|       redis       +------------------+-------------+---------------+
+|   7.2.4 & 7.2.5   |        Yes       |     163     |      33%      |
++-------------------+------------------+-------------+---------------+
+|                   |        No        |     872     |       -       |
+|      postgres     +------------------+-------------+---------------+
+|    16.1 & 16.2    |        Yes       |     630     |      28%      |
++-------------------+------------------+-------------+---------------+
+|                   |        No        |     2771    |       -       |
+|     tensorflow    +------------------+-------------+---------------+
+|  1.11.0 & 2.11.1  |        Yes       |     2340    |      16%      |
++-------------------+------------------+-------------+---------------+
+|                   |        No        |     926     |       -       |
+|       mysql       +------------------+-------------+---------------+
+|  8.0.11 & 8.0.12  |        Yes       |     735     |      21%      |
++-------------------+------------------+-------------+---------------+
+|                   |        No        |     390     |       -       |
+|       nginx       +------------------+-------------+---------------+
+|   7.2.4 & 7.2.5   |        Yes       |     219     |      44%      |
++-------------------+------------------+-------------+---------------+
+|       tomcat      |        No        |     924     |       -       |
+| 10.1.25 & 10.1.26 +------------------+-------------+---------------+
+|                   |        Yes       |     474     |      49%      |
++-------------------+------------------+-------------+---------------+
+
+Additionally, the table below shows the runtime memory usage of the
+container:
+
++-------------------+------------------+-------------+---------------+
+|       Image       | Page Cache Share | Memory (MB) |    Memory     |
+|                   |                  |             | Reduction (%) |
++-------------------+------------------+-------------+---------------+
+|                   |        No        |      35     |       -       |
+|       redis       +------------------+-------------+---------------+
+|   7.2.4 & 7.2.5   |        Yes       |      28     |      20%      |
++-------------------+------------------+-------------+---------------+
+|                   |        No        |     149     |       -       |
+|      postgres     +------------------+-------------+---------------+
+|    16.1 & 16.2    |        Yes       |      95     |      37%      |
++-------------------+------------------+-------------+---------------+
+|                   |        No        |     1028    |       -       |
+|     tensorflow    +------------------+-------------+---------------+
+|  1.11.0 & 2.11.1  |        Yes       |     930     |      10%      |
++-------------------+------------------+-------------+---------------+
+|                   |        No        |     155     |       -       |
+|       mysql       +------------------+-------------+---------------+
+|  8.0.11 & 8.0.12  |        Yes       |     132     |      15%      |
++-------------------+------------------+-------------+---------------+
+|                   |        No        |      25     |       -       |
+|       nginx       +------------------+-------------+---------------+
+|   7.2.4 & 7.2.5   |        Yes       |      20     |      20%      |
++-------------------+------------------+-------------+---------------+
+|       tomcat      |        No        |     186     |       -       |
+| 10.1.25 & 10.1.26 +------------------+-------------+---------------+
+|                   |        Yes       |      98     |      48%      |
++-------------------+------------------+-------------+---------------+
+
+It can be observed that when reading all the files in the image, the reduced
+memory usage varies from 16% to 49%, depending on the specific image.
+Additionally, the container's runtime memory usage reduction ranges from 10%
+to 48%.
+
+[1] Below are the workload for these images:
+	- redis: redis-benchmark
+	- postgres: sysbench
+	- tensorflow: app.py of tensorflow.python.platform
+	- mysql: sysbench
+	- nginx: wrk
+	- tomcat: default entrypoint
+
+Hongzhen Luo (3):
+  erofs: move `struct erofs_anon_fs_type` to super.c
+  erofs: introduce page cache share feature
+  erofs: apply the page cache share feature
+
+ fs/erofs/Kconfig           |  10 +++
+ fs/erofs/Makefile          |   1 +
+ fs/erofs/data.c            |  34 +++++++-
+ fs/erofs/fscache.c         |  13 ---
+ fs/erofs/inode.c           |  12 +++
+ fs/erofs/internal.h        |   6 ++
+ fs/erofs/pagecache_share.c | 171 +++++++++++++++++++++++++++++++++++++
+ fs/erofs/pagecache_share.h |  20 +++++
+ fs/erofs/super.c           |  50 +++++++++++
+ fs/erofs/zdata.c           |  32 +++++++
+ 10 files changed, 335 insertions(+), 14 deletions(-)
+ create mode 100644 fs/erofs/pagecache_share.c
+ create mode 100644 fs/erofs/pagecache_share.h
+
+-- 
+2.43.5
+
 
