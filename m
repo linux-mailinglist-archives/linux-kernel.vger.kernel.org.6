@@ -1,160 +1,169 @@
-Return-Path: <linux-kernel+bounces-305520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89C09962FD7
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 20:24:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAB42962FF8
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 20:30:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28A2E1F268DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 18:24:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6406D281971
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 18:30:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D39FD1AE059;
-	Wed, 28 Aug 2024 18:21:12 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75ACB1AAE28;
+	Wed, 28 Aug 2024 18:30:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Rr30eYva"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD4991AC43A;
-	Wed, 28 Aug 2024 18:21:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59D9B189520;
+	Wed, 28 Aug 2024 18:30:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724869272; cv=none; b=ZXhN82WjQjEhAKz//aHOwireSdaQl7Ap/267WvRngOeiGzeT6nD7Zzzn4xlNwkq3DFnD7yVYDyT6gAusbcjXeGRVz5xWZ/kF1pV9ThxL3cNSBsvNweUu7r1w9GIyzxyybg4840xodoFUklHaO0heNSLLlBx1ZyDmRbV222EYA7c=
+	t=1724869820; cv=none; b=shVQ/rgftEVYIgFWFYruKYTq2nAl0DLNmXWfB5QSpvv0H2rgcg/OcW2HQZMIrE9y+SNvVFxtdAM0nYKtZo94eIEYNLXv9MC6wAESzS7D+FWzyB9+t+e3OuEjPZS0mZYJhR1CkmHYaY2URwRvB2HfXn9Rxxft9+//WIe07zVq4uc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724869272; c=relaxed/simple;
-	bh=jiA3UuqlX97ZnvNUnN+w9YMYUFqBk/4d4uYQfP38048=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OSiJsirIpiA0qxdQCaRYcgDR12cKxd3wttzMal8ty3x2ZuMab6wan9eHCA0perCigGrxnHNB7RwKsaBWLjle3bwSKGFHosXoGYpe3ylpXRMB5PC5JxgZ5PclpojyxPmlB8aPz2VXMOnGHros/0nJCAobQWQHrABBPPkw+Wc3E/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4WvCPt4t1Mz16Pbm;
-	Thu, 29 Aug 2024 02:20:18 +0800 (CST)
-Received: from kwepemd500012.china.huawei.com (unknown [7.221.188.25])
-	by mail.maildlp.com (Postfix) with ESMTPS id 42D2518007C;
-	Thu, 29 Aug 2024 02:21:07 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by kwepemd500012.china.huawei.com
- (7.221.188.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Thu, 29 Aug
- 2024 02:21:06 +0800
-From: Li Zetao <lizetao1@huawei.com>
-To: <clm@fb.com>, <josef@toxicpanda.com>, <dsterba@suse.com>,
-	<terrelln@fb.com>, <quwenruo.btrfs@gmx.com>, <willy@infradead.org>,
-	<dan.carpenter@linaro.org>
-CC: <lizetao1@huawei.com>, <linux-btrfs@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH -next v2 14/14] btrfs: convert copy_inline_to_page() to use folio
-Date: Thu, 29 Aug 2024 02:29:08 +0800
-Message-ID: <20240828182908.3735344-15-lizetao1@huawei.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240828182908.3735344-1-lizetao1@huawei.com>
-References: <20240828182908.3735344-1-lizetao1@huawei.com>
+	s=arc-20240116; t=1724869820; c=relaxed/simple;
+	bh=dQea9Qg67PNDnhCueW2H/8mfLiFuzo4DZ42TUgKOsS0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=azST2poMYET9MCpHx1BxABPrMWlNa7taauFdxf2qDFuFU/wdzq76Q0TQ/CM3I3Nz1YNkkC01OPeDKKlQJwNtHP4GCJnuGOr8Qt+yMqHk0iYa9PB4GT7BT72bTs5F+Atf1dqjyZSy9Nxy0z3YzfTVqghYbjhWrNrOt+unBqN1JoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Rr30eYva; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724869818; x=1756405818;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=dQea9Qg67PNDnhCueW2H/8mfLiFuzo4DZ42TUgKOsS0=;
+  b=Rr30eYvaVODjeiumXdsQk/UrOIJ9XvzwrHlqUpVaYwKyQ3h89ynDNLHX
+   S2W1dteuAMqP6bFHlWaKsfBr+C3sP5LY0UwpoCodTWbQ5tVl71wSJ15ey
+   aRdob/V6zJGUtoRy34VCkAQAnsCw0TdLjA1ydN9Qs1q4pq9G63OftDuqy
+   SntSRDg24+AnruukS1nAJIpE0Cjav1mqZl+o/KYxeAln6ulGkUdqEEN/S
+   HRLxSmRDIZhXXKEyhebAuj0T655mFBy9X7rC30oL2Z95B7TeyYy+eZjjA
+   bIQYHrjsFlivWZeLehw8QcGH7AIPQPeOa62+w0IqCFPqtih0iouppjdas
+   A==;
+X-CSE-ConnectionGUID: /u8rKmVgSC6gpXj3m2+nMw==
+X-CSE-MsgGUID: ZPfBkk5rQNq0rNJ5os6oIg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11178"; a="27190746"
+X-IronPort-AV: E=Sophos;i="6.10,183,1719903600"; 
+   d="scan'208";a="27190746"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2024 11:30:16 -0700
+X-CSE-ConnectionGUID: cW31v/9QTRCkZrSZJOA/8w==
+X-CSE-MsgGUID: Hl5mMik3R8aDwCjQ+6JOBg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,183,1719903600"; 
+   d="scan'208";a="68152618"
+Received: from sramkris-mobl1.amr.corp.intel.com (HELO [10.124.223.210]) ([10.124.223.210])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2024 11:30:13 -0700
+Message-ID: <fd1b8016-e73d-4535-9c67-579ab994351f@intel.com>
+Date: Wed, 28 Aug 2024 11:29:56 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemd500012.china.huawei.com (7.221.188.25)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 00/16] mm: Introduce MAP_BELOW_HINT
+To: Charlie Jenkins <charlie@rivosinc.com>, Arnd Bergmann <arnd@arndb.de>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Naveen N Rao <naveen@kernel.org>, Muchun Song <muchun.song@linux.dev>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
+ <vbabka@suse.cz>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+ Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>,
+ Russell King <linux@armlinux.org.uk>,
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ Helge Deller <deller@gmx.de>, Alexander Gordeev <agordeev@linux.ibm.com>,
+ Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+ Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>,
+ Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>,
+ John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+ "David S. Miller" <davem@davemloft.net>,
+ Andreas Larsson <andreas@gaisler.com>, Shuah Khan <shuah@kernel.org>,
+ Alexandre Ghiti <alexghiti@rivosinc.com>
+Cc: linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Palmer Dabbelt <palmer@rivosinc.com>, linux-riscv@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+ linux-mm@kvack.org, loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
+ linux-parisc@vger.kernel.org, linux-s390@vger.kernel.org,
+ linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+ linux-kselftest@vger.kernel.org
+References: <20240827-patches-below_hint_mmap-v1-0-46ff2eb9022d@rivosinc.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20240827-patches-below_hint_mmap-v1-0-46ff2eb9022d@rivosinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The old page API is being gradually replaced and converted to use folio
-to improve code readability and avoid repeated conversion between page
-and folio. Moreover find_or_create_page() is compatible API, and it can
-replaced with __filemap_get_folio(). Some interfaces have been converted
-to use folio before, so the conversion operation from page can be
-eliminated here.
+On 8/27/24 22:49, Charlie Jenkins wrote:
+> Some applications rely on placing data in free bits addresses allocated
+> by mmap. Various architectures (eg. x86, arm64, powerpc) restrict the
+> address returned by mmap to be less than the maximum address space,
+> unless the hint address is greater than this value.
 
-Signed-off-by: Li Zetao <lizetao1@huawei.com>
----
-v1 -> v2: fix a bug when a vaild folio should be unlocked and put in
-  copy_inline_to_page().
-v1: https://lore.kernel.org/all/20240822013714.3278193-15-lizetao1@huawei.com/
+Which applications are these, btw?
 
- fs/btrfs/reflink.c | 35 ++++++++++++++++++-----------------
- 1 file changed, 18 insertions(+), 17 deletions(-)
+Is this the same crowd as the folks who are using the address tagging
+features like X86_FEATURE_LAM?
 
-diff --git a/fs/btrfs/reflink.c b/fs/btrfs/reflink.c
-index b768e590a44c..f0824c948cb7 100644
---- a/fs/btrfs/reflink.c
-+++ b/fs/btrfs/reflink.c
-@@ -66,7 +66,7 @@ static int copy_inline_to_page(struct btrfs_inode *inode,
- 	const size_t inline_size = size - btrfs_file_extent_calc_inline_size(0);
- 	char *data_start = inline_data + btrfs_file_extent_calc_inline_size(0);
- 	struct extent_changeset *data_reserved = NULL;
--	struct page *page = NULL;
-+	struct folio *folio = NULL;
- 	struct address_space *mapping = inode->vfs_inode.i_mapping;
- 	int ret;
- 
-@@ -83,14 +83,15 @@ static int copy_inline_to_page(struct btrfs_inode *inode,
- 	if (ret)
- 		goto out;
- 
--	page = find_or_create_page(mapping, file_offset >> PAGE_SHIFT,
--				   btrfs_alloc_write_mask(mapping));
--	if (!page) {
-+	folio = __filemap_get_folio(mapping, file_offset >> PAGE_SHIFT,
-+					FGP_LOCK | FGP_ACCESSED | FGP_CREAT,
-+					btrfs_alloc_write_mask(mapping));
-+	if (IS_ERR(folio)) {
- 		ret = -ENOMEM;
- 		goto out_unlock;
- 	}
- 
--	ret = set_page_extent_mapped(page);
-+	ret = set_folio_extent_mapped(folio);
- 	if (ret < 0)
- 		goto out_unlock;
- 
-@@ -115,15 +116,15 @@ static int copy_inline_to_page(struct btrfs_inode *inode,
- 	set_bit(BTRFS_INODE_NO_DELALLOC_FLUSH, &inode->runtime_flags);
- 
- 	if (comp_type == BTRFS_COMPRESS_NONE) {
--		memcpy_to_page(page, offset_in_page(file_offset), data_start,
--			       datal);
-+		memcpy_to_folio(folio, offset_in_folio(folio, file_offset), data_start,
-+					datal);
- 	} else {
--		ret = btrfs_decompress(comp_type, data_start, page_folio(page),
--				       offset_in_page(file_offset),
-+		ret = btrfs_decompress(comp_type, data_start, folio,
-+				       offset_in_folio(folio, file_offset),
- 				       inline_size, datal);
- 		if (ret)
- 			goto out_unlock;
--		flush_dcache_page(page);
-+		flush_dcache_folio(folio);
- 	}
- 
- 	/*
-@@ -139,15 +140,15 @@ static int copy_inline_to_page(struct btrfs_inode *inode,
- 	 * So what's in the range [500, 4095] corresponds to zeroes.
- 	 */
- 	if (datal < block_size)
--		memzero_page(page, datal, block_size - datal);
-+		folio_zero_range(folio, datal, block_size - datal);
- 
--	btrfs_folio_set_uptodate(fs_info, page_folio(page), file_offset, block_size);
--	btrfs_folio_clear_checked(fs_info, page_folio(page), file_offset, block_size);
--	btrfs_folio_set_dirty(fs_info, page_folio(page), file_offset, block_size);
-+	btrfs_folio_set_uptodate(fs_info, folio, file_offset, block_size);
-+	btrfs_folio_clear_checked(fs_info, folio, file_offset, block_size);
-+	btrfs_folio_set_dirty(fs_info, folio, file_offset, block_size);
- out_unlock:
--	if (page) {
--		unlock_page(page);
--		put_page(page);
-+	if (!IS_ERR(folio)) {
-+		folio_unlock(folio);
-+		folio_put(folio);
- 	}
- 	if (ret)
- 		btrfs_delalloc_release_space(inode, data_reserved, file_offset,
--- 
-2.34.1
-
+Even if they are different, I also wonder if a per-mmap() thing
+MAP_BELOW_HINT is really what we want.  Or should the applications
+you're trying to service here use a similar mechanism to how LAM affects
+the *whole* address space as opposed to an individual mmap().
 
