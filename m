@@ -1,236 +1,262 @@
-Return-Path: <linux-kernel+bounces-305055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BBD09628B5
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:33:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCD6D9628BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:35:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0433E284D62
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:33:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 09C8AB22EF7
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:34:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 761741891A5;
-	Wed, 28 Aug 2024 13:32:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="N9MRGRdc"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 287FC187857;
+	Wed, 28 Aug 2024 13:34:48 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCFF918801C
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 13:32:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50B1F1D554;
+	Wed, 28 Aug 2024 13:34:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724851976; cv=none; b=Q3pxXqy/O+t8G44ilomoql8Gxf8dZZW6HS5K9Dwriz2ZllyHCMBS3M9tPSTAA6DqoxR+VG0rA5F3ZcKRcq7Pg15Xmw3y0pFbOGrtLceps/XLRs4eyI21y5V6lTLZr2kChNHI7aGFUxahN6PefnnMoaRf0fessT9s4Ek2D3HeOsE=
+	t=1724852087; cv=none; b=QMp8gcVV3BwDmBA2EHa5ndgZzFUJwuHrgqga0Km/5dY8jF4ema27SBT5EZBmWe2+V0vIkpeLiFd3tjWyr8nk4ODpWwLDg1LajrDz/FFETyy7zTpmjxJ3L11ywiUC6cSA+kW7FcXC0kNLz9QBJhHtqikdgUoxxfu1f81j/DogtNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724851976; c=relaxed/simple;
-	bh=x8UW8G7yRo1TaVJlKhWZNboAwC3S4JXibdcuvIJsCMo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dVkYZnKJU6te+u3jiJwC0YK3igiDqoAIYd+1vs9HcaDN4/WktzMmQ1dpGw55xHeV48+sRI95bJj335gt+3KtP26Zku80B+VQt4VujAutgB4/t1F/Yv84dg+mm/UZWuNr+n9Upd3lmF+DZ1gY8ga7a+hkp/T9AwO4TRFup2X/VLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=N9MRGRdc; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [192.168.88.20] (91-156-87-48.elisa-laajakaista.fi [91.156.87.48])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 0F4F22C5;
-	Wed, 28 Aug 2024 15:31:43 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1724851904;
-	bh=x8UW8G7yRo1TaVJlKhWZNboAwC3S4JXibdcuvIJsCMo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=N9MRGRdcXRunpbK+/aqTZ94Wgc7HibVMqLrEcTuhmnr6wR+5zEQ96lGiaHG2Z9rU1
-	 t2NvbfbCPtd2HUnm0WPgJPfKblFwVuWON1i7tSwUfRk8a/oDJ2ux+J9WtLSnfoFIks
-	 dHOyMT3cqa12VQc9FdzIaXWNVawBAJpiSLeG4kAQ=
-Message-ID: <5bb0459a-ec3a-487f-a9b5-28ee643a1215@ideasonboard.com>
-Date: Wed, 28 Aug 2024 16:32:47 +0300
+	s=arc-20240116; t=1724852087; c=relaxed/simple;
+	bh=hYxXtkxsQKOAkmN+b3xnHbaMT1UgdiIJMQzTuDcUAIk=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jbwhaPeqbyK3VhVb98to6lt9EG4XEij2w4F3l2oWPahaj+WJdIzqDAsVXHjacL0t8Tiw9DINlopBtNj5fkp0mrqdhKz+p1tECGU8OBmYm9l9lCHTy83xtGmBGAJHn8I92jgAbs+KznxfJ14nLNytUv1q9NJaADcc1hLZhsvwNE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Wv50X51yfz6H7YP;
+	Wed, 28 Aug 2024 21:31:24 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id 008C1140B30;
+	Wed, 28 Aug 2024 21:34:41 +0800 (CST)
+Received: from localhost (10.203.177.66) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 28 Aug
+ 2024 14:34:40 +0100
+Date: Wed, 28 Aug 2024 14:34:39 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Esteban Blanc <eblanc@baylibre.com>
+CC: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>, "Rob Herring"
+	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, "Conor Dooley"
+	<conor+dt@kernel.org>, Nuno Sa <nuno.sa@analog.com>, Jonathan Corbet
+	<corbet@lwn.net>, <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, David Lechner <dlechner@baylibre.com>,
+	<linux-doc@vger.kernel.org>
+Subject: Re: [PATCH 2/6] iio: adc: ad4030: add driver for ad4030-24
+Message-ID: <20240828143439.00006d3d@Huawei.com>
+In-Reply-To: <D3QUGZYL7INK.R3U3WQR0OCUS@baylibre.com>
+References: <20240822-eblanc-ad4630_v1-v1-0-5c68f3327fdd@baylibre.com>
+	<20240822-eblanc-ad4630_v1-v1-2-5c68f3327fdd@baylibre.com>
+	<20240824122111.425fa689@jic23-huawei>
+	<D3QUGZYL7INK.R3U3WQR0OCUS@baylibre.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/2] drm/bridge: tc358767: Fix
- DRM_BRIDGE_ATTACH_NO_CONNECTOR case
-To: Jan Kiszka <jan.kiszka@siemens.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Alexander Stein <alexander.stein@ew.tq-group.com>
-Cc: Aradhya Bhatia <a-bhatia1@ti.com>, dri-devel@lists.freedesktop.org,
- Marek Vasut <marex@denx.de>, Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Sam Ravnborg <sam@ravnborg.org>, linux-kernel@vger.kernel.org
-References: <f6af46e0-aadb-450a-9349-eec1337ea870@ti.com>
- <b221c978-2ce0-4d31-8146-ab43a9f86a1f@ti.com>
- <st6vgd2k6dxo4vd3pmqmqlc5haofhbym2jeb2eeh2pa2n6zcca@tradpzxrzexl>
- <2469374.jE0xQCEvom@steina-w>
- <CAA8EJpraKjBZRLL5U+BVQRf98_EBa5b=nSPxZATU+yvvq9Kfmw@mail.gmail.com>
- <4133a684-61a1-4d18-bb25-212d5fdc5620@siemens.com>
-Content-Language: en-US
-From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
- 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
-In-Reply-To: <4133a684-61a1-4d18-bb25-212d5fdc5620@siemens.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500004.china.huawei.com (7.191.163.9) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-On 26/08/2024 22:35, Jan Kiszka wrote:
-> On 24.06.24 12:17, Dmitry Baryshkov wrote:
->> On Mon, 24 Jun 2024 at 13:07, Alexander Stein
->> <alexander.stein@ew.tq-group.com> wrote:
->>>
->>> Hi,
->>>
->>> Am Montag, 24. Juni 2024, 11:49:04 CEST schrieb Dmitry Baryshkov:
->>>> On Mon, Jun 24, 2024 at 03:07:10PM GMT, Aradhya Bhatia wrote:
->>>>>
->>>>>
->>>>> On 22/06/24 17:49, Dmitry Baryshkov wrote:
->>>>>> On Sat, Jun 22, 2024 at 05:16:58PM GMT, Aradhya Bhatia wrote:
->>>>>>>
->>>>>>>
->>>>>>> On 17-Jun-24 13:41, Dmitry Baryshkov wrote:
->>>>>>>> On Mon, Jun 17, 2024 at 07:40:32AM GMT, Jan Kiszka wrote:
->>>>>>>>> On 16.02.24 15:57, Marek Vasut wrote:
->>>>>>>>>> On 2/16/24 10:10, Tomi Valkeinen wrote:
->>>>>>>>>>> Ok. Does anyone have a worry that these patches make the situation
->>>>>>>>>>> worse for the DSI case than it was before? Afaics, if the DSI lanes
->>>>>>>>>>> are not set up early enough by the DSI host, the driver would break
->>>>>>>>>>> with and without these patches.
->>>>>>>>>>>
->>>>>>>>>>> These do fix the driver for DRM_BRIDGE_ATTACH_NO_CONNECTOR and DPI, so
->>>>>>>>>>> I'd like to merge these unless these cause a regression with the DSI
->>>>>>>>>>> case.
->>>>>>>>>>
->>>>>>>>>> 1/2 looks good to me, go ahead and apply .
->>>>>>>
->>>>>>> Isn't there any way for the second patch to move forward as well though?
->>>>>>> The bridge device (under DPI to (e)DP mode) cannot really work without
->>>>>>> it, and the patches have been pending idle for a long time. =)
->>>>>>>
->>>>>>>>>
->>>>>>>>> My local patches still apply on top of 6.10-rc4, so I don't think this
->>>>>>>>> ever happened. What's still holding up this long-pending fix (at least
->>>>>>>>> for our devices)?
->>>>>>>>
->>>>>>>> Neither of the patches contains Fixes tags. If the first patch fixes an
->>>>>>>> issue in previous kernels, please consider following the stable process.
->>>>>>>>
->>>>>>>> If we are unsure about the second patch, please send the first patch
->>>>>>>> separately, adding proper tags.
->>>>>>>>
->>>>>>>
->>>>>>> Thanks Dmitry! I can send the patches again with the required fixes
->>>>>>> tags (or just patch-1 if we cannot do anything about patch-2).
->>>>>>
->>>>>> The problem with the second patch is that it get mixed reviews. I can
->>>>>> ack the first patch, but for the second one I'd need a confirmation from
->>>>>> somebody else. I'll go on and apply the first patch later today.
->>>>>>
->>>>>
->>>>> Thanks Dmitry!
->>>>>
->>>>> However, would it be okay if I instead add another patch that makes 2
->>>>> versions of the "tc_edp_bridge_funcs", say "tc_dpi_edp_bridge_funcs" and
->>>>> "tc_dsi_edp_bridge_funcs", that have all the same function hooks except
->>>>> for the .edid_read()?
->>>>>
->>>>> The dsi edid_read() will remain the same, and Tomi's patch - patch 2/2 -
->>>>> will only fix the dpi version of the edid_read()?
->>>>>
->>>>> The bridge already has the capability to distinguish a DSI input from a
->>>>> DPI input. This can be leveraged to decide which set of functions need
->>>>> to be used without any major changes.
->>>>
->>>> I'd prefer if somebody with the DSI setup can ack / test the second
->>>> patch.
->>>>
->>>>
->>>
->>> Now that my DSI-DP setup works apparently without issue I could test patch 2.
->>> Since my setup does not use DRM_BRIDGE_ATTACH_NO_CONNECTOR (running on
->>> drivers/gpu/drm/mxsfb/lcdif_drv.c), I can only say
->>> there is no regression.
->>
->> Let me send a (non-tested) patch, switching to drm_bridge_connector,
->> then you can probably test both of them
->>
+On Tue, 27 Aug 2024 18:45:49 +0200
+Esteban Blanc <eblanc@baylibre.com> wrote:
+
+> On Sat Aug 24, 2024 at 1:21 PM CEST, Jonathan Cameron wrote:
+> > On Thu, 22 Aug 2024 14:45:18 +0200
+> > Esteban Blanc <eblanc@baylibre.com> wrote:
+> >  
+> > > This adds a new driver for the Analog Devices INC. AD4030-24 ADC.
+> > > 
+> > > The driver implements basic support for the AD4030-24 1 channel
+> > > differential ADC with hardware gain and offset control.
+> > > 
+> > > Signed-off-by: Esteban Blanc <eblanc@baylibre.com>  
+> > Hi Esteban
+> >
+> > Some additional comments.  David did a good review already so
+> > I've tried not to duplicate too much of that.
+> >
+> > The big one in here is don't use extended_name.
+> > It's effectively deprecated for new drivers plus
+> > it would have required you add a lot of ABI docs as every
+> > sysfs file would have a strange name.
+> >  
+> > > diff --git a/drivers/iio/adc/ad4030.c b/drivers/iio/adc/ad4030.c
+> > > new file mode 100644
+> > > index 000000000000..a981dce988e5
+> > > --- /dev/null
+> > > +++ b/drivers/iio/adc/ad4030.c  
+> >  
+> > > +struct ad4030_state {
+> > > +	struct spi_device *spi;
+> > > +	struct regmap *regmap;
+> > > +	const struct ad4030_chip_info *chip;
+> > > +	struct gpio_desc *cnv_gpio;
+> > > +	int vref_uv;
+> > > +	int vio_uv;
+> > > +	int offset_avail[3];
+> > > +	u32 conversion_speed_hz;
+> > > +	enum ad4030_out_mode mode;
+> > > +
+> > > +	/*
+> > > +	 * DMA (thus cache coherency maintenance) requires the transfer buffers
+> > > +	 * to live in their own cache lines.
+> > > +	 */
+> > > +	u8 tx_data[AD4030_SPI_MAX_XFER_LEN] __aligned(IIO_DMA_MINALIGN);
+> > > +	struct {
+> > > +		union {
+> > > +			u8 raw[AD4030_MAXIMUM_RX_BUFFER_SIZE];
+> > > +			struct {
+> > > +				s32 val;
+> > > +				u32 common;
+> > > +			} __packed buffered[AD4030_MAX_HARDWARE_CHANNEL_NB];  
+> >
+> > David pointed out this doesn't need to be packed.
+> > Given you have a union here, add __beXX as needed to avoid casts below.  
 > 
-> I suppose [1] was that follow-up, just not leading to success, right?
+> They also pointed out that I should reduce the size for the common field.
+> I was planing to use an u32 bitfield here, 8 bits for common and 24 bits for
+> padding. As far as I understood, the C standard is quite flexible on the
+> size used for bitfield, so I should probably keep the __packed, right?
+Don't use a bitfield - they are a pain as the C standard is very vague
+on the data arrangement. Just use big enough storage and #define x GENMASK()
+etc to extract the dta.
+
 > 
-> Now, what's next? I'd love to see the regression we have for the IOT2050
-> devices finally fixed, even if it now only requires a short downstream
-> patch.
+
+> > > +static int ad4030_spi_read(void *context, const void *reg, size_t reg_size,
+> > > +			   void *val, size_t val_size)
+> > > +{
+> > > +	struct ad4030_state *st = context;
+> > > +
+> > > +	struct spi_transfer xfer = {
+> > > +		.tx_buf = st->tx_data,
+> > > +		.rx_buf = st->rx_data.raw,
+> > > +		.len = reg_size + val_size,
+> > > +	};
+> > > +	int ret;
+> > > +
+> > > +	memcpy(st->tx_data, reg, reg_size);
+> > > +
+> > > +	/*
+> > > +	 * This should use spi_write_the_read but when doing so, CS never get
+> > > +	 * deasserted.  
+> >
+> > I'm confused.  As a single transfer it won't be deasserted in the transfer
+> > whereas spi_write_then_read() will. So is this comment backwards or
+> > is it referring to something else?  
 > 
-> Jan
+> So, with a single transfer (what is done now), the transfer is working
+> as expected: CS goes low, the data is transferred, CS goes high again.
+> With spi_write_then_read(), CS goes low, data is transferred but CS never
+> goes high again. After some time I get a timeout error in the kernel logs.
+
+That's odd.  spi_write_then_read() should not behave differently.
+Perhaps a quirk of your SPI controller?
+
+That one is worth digging into as in both cases we should have some
+transactions and after that the chip select should behave the same.
+
+
+
+> > > +static int ad4030_reset(struct ad4030_state *st)
+> > > +{
+> > > +	struct device *dev = &st->spi->dev;
+> > > +	struct gpio_desc *reset;
+> > > +	int ret;
+> > > +
+> > > +	/* Use GPIO if available ... */
+> > > +	reset = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_HIGH);
+> > > +	if (IS_ERR(reset))
+> > > +		return dev_err_probe(dev, PTR_ERR(reset),
+> > > +				"Failed to get reset GPIO\n");
+> > > +
+> > > +	if (reset) {
+> > > +		ndelay(50);
+> > > +		gpiod_set_value_cansleep(reset, 0);
+> > > +	} else {
+> > > +		/* ... falback to software reset otherwise */
+> > > +		ret = ad4030_enter_config_mode(st);
+> > > +		if (ret)
+> > > +			return ret;
+> > > +
+> > > +		ret = regmap_write(st->regmap, AD4030_REG_INTERFACE_CONFIG_A,
+> > > +				   AD4030_REG_INTERFACE_CONFIG_A_SW_RESET);
+> > > +		if (ret)
+> > > +			return ret;
+> > > +	}
+> > > +
+> > > +	/* Wait for reset to complete before communicating to it */  
+> >
+> > I'd rather see a reference for the value than a generic comment
+> > like this.  Also pull the actual value down here. Not particularly
+> > useful to have a define for what is a real time unless you are going
+> >  to have some combined docs for a bunch of timings (i.e a datasheet
+> > table reference)  
 > 
-> [1] https://lore.kernel.org/dri-devel/20240624-mxc-lcdif-bridge-attach-v1-1-37e8c5d5d934@linaro.org/
+> I will put the real value in fsleep call directly. When you say "I'd
+> rather see a reference for the value", you ment a reference to the place
+> the value is defined in the datasheet, right?
+Exactly.
 
-I have to say I don't remember the details for this anymore, but half a 
-year ago I said:
+> 
+> > > +static int ad4030_detect_chip_info(const struct ad4030_state *st)
+> > > +{
+> > > +	unsigned int grade;
+> > > +	int ret;
+> > > +
+> > > +	ret = regmap_read(st->regmap, AD4030_REG_CHIP_GRADE, &grade);
+> > > +	if (ret)
+> > > +		return ret;
+> > > +
+> > > +	grade = FIELD_GET(AD4030_REG_CHIP_GRADE_MASK_CHIP_GRADE, grade);
+> > > +	if (grade != st->chip->grade)
+> > > +		return dev_err_probe(&st->spi->dev, -EINVAL,
+> > > +					"Unknown grade(0x%x) for %s\n", grade,
+> > > +					st->chip->name);  
+> >
+> > Is this similar to a missmatch on a whoami value?  
+> 
+> Yes. It also saved me multiple hours of debuging when the eval board
+> was not connected porperly and the SPI link was just not working.
+> 
+> > I.e. should we print a message and carry on in the interests of providing
+> > some degree of support for newer devices on older kernel?
+> > (fallback compatibles in DT)  
+> 
+> Ok, let's go with a warning then.
+> 
+> > > +static const struct spi_device_id ad4030_id_table[] = {
+> > > +	{ "ad4030-24", (kernel_ulong_t)&ad4030_24_chip_info },
+> > > +	{}  
+> >
+> > I'm going to assume you have a bunch of other parts you plan to
+> > support soon. Otherwise we normally don't add the chip specific
+> > support until it is needed.  It tends to complicate initial driver
+> > review a little and experience says that sometimes no other devices
+> > are ever added.  
+> 
+> I'm sending the other devices in the same series (patch 4 and 5).
+> For the sake of reducing noise in the later patches, I've put it in
+> the initial driver. If you feel like I should wait and do it in the
+> following patch (patch 4), I can do that.
 
-> Afaics, if the DSI lanes are not set up early enough by the DSI host, the driver would break with and without these patches.
+Oops. I didn't ready on ;)  Absolutely fine to have this here.
 
-I'm not sure if that is correct or not. But if it is, then, afaiu, this 
-(the second patch):
+Jonathan
 
-- Fixes the issue for the DPI-DP use case
-
-- Doesn't cause issues for the DSI-DP use case without 
-DRM_BRIDGE_ATTACH_NO_CONNECTOR (as per Alexander's test)
-
-- Shouldn't cause (new) issues for the DSI-DP use case with 
-DRM_BRIDGE_ATTACH_NO_CONNECTOR (as per my code review and guessing...)
-
-The third point is somewhat concerning, of course, but do we have any 
-setup with DSI-DP and DRM_BRIDGE_ATTACH_NO_CONNECTOR that works now? If 
-not, maybe we can just ignore the possible issues, as this fixes 
-problems on a setup we do have.
-
-  Tomi
+> 
+> Thanks for your time,
+> 
 
 
