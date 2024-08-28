@@ -1,175 +1,121 @@
-Return-Path: <linux-kernel+bounces-305487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CFF3962F82
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 20:13:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB1FB962F8E
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 20:15:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51F21281C26
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 18:13:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A31A1C23B22
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 18:15:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C62CF1AAE0D;
-	Wed, 28 Aug 2024 18:13:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E7AB1AAE2B;
+	Wed, 28 Aug 2024 18:14:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G+rL5mRf"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VFRh3Kfr"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AC5E149C53;
-	Wed, 28 Aug 2024 18:13:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF3AA1A7AE8
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 18:14:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724868820; cv=none; b=k1xSD5XoeFupDm5JHGzxwGdIds6octts4zyPcBK8F8ntwjQdGxA6tnDyh4OgGXZBMTJ2xRC4npHezii7EoT4fykH5fRW7KWDuyNJOrJ8grbb33EJxhx0GmC2nQ51ROaorKID73c9NZ05Yz2BNfqbXbr3GVdHWatG+sV36ODAYFE=
+	t=1724868892; cv=none; b=oML2OzH5YDWwY5SqQMsAxMCN8cGY1u95FXJZnZpOYluF0S4IHCsohXvQ5Q1xI+eFQXTqUg38RFBAcUhMmBUjp2eJcxusjDy1DHJ8h1F15y9CcEfEtceZxfzthxyVbLiOKQaNQPjj2thz9y+AV5MOpCUWMwBULQY4FH2JJTqpe68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724868820; c=relaxed/simple;
-	bh=84N7GUoSTh5Zag2sqMAuTBp8+3s6bgNeovLHo60vvIY=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ecmsb/G4eD8xEeM9a+t6BxY4SaSMt9uLZk/yT9ClolQj+JNtGzgkScyW8Rzv3kGY3WfLHdnxHG9KhmOX9vgqPSV2XTJq9lBI7FMi3pI1xHdeQrjd1Vdjg4pRlg03TGeaKcXmkaOs+MLnIUD8D+TzfhpodIHaF8BxOeT3y1AFSzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G+rL5mRf; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a867a564911so834192166b.2;
-        Wed, 28 Aug 2024 11:13:38 -0700 (PDT)
+	s=arc-20240116; t=1724868892; c=relaxed/simple;
+	bh=pVhXKjby8bhIreyL4PFHTc8fawyZtoXPbo8guPrsDeI=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=p46See/hmVr6ILk8Ah/28toxsWswvcPfVM4XhMoi7YqF0slV5K5298drQQlKGJB89+DzesoDnjfBjCsv6CED2TlymiqIfe9eeYnrgsxjlGq+HPgHpFVSonSh/upGR7VfWe3yp2z52X3jD4OsYi2YafopsqqR4/PSVer98X7TZ6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VFRh3Kfr; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e165d8c8c28so10693999276.2
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 11:14:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724868817; x=1725473617; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=qUjb4jH9ETimZE0pCg8LtC0TnBmwTnywA8+wN1lvhOQ=;
-        b=G+rL5mRffRIOqs+VztLcs1N0ds+OWdlhP5fEV0oDOul9UrLltaGpmdgooTysfGtmqd
-         lWH2zyGUd5Akb3eCr0w1qNfTEfvEF5i4rp52yMqSElAwwQhXTv3vw2HvkBEBpN+YRk2r
-         gbrZ9IrmkuMh4BDSY3qvKxEKAmAfv3m+PUkMykXbzRdok+Fm++s3W0MpFpzC+eFL0bCK
-         LBEVk1kYex5kxGE45SLCKiqAR1K83yGWCFJvdban+uj9ljzdJwTt99ZOfdwZNWlHOXxN
-         +WwBF1Q4XutozYjn1tVFoVsJZCdFoLbnBTJYUquihkH5KeOv4nnoDUFGBz5wzbQ5PYVZ
-         JWdA==
+        d=google.com; s=20230601; t=1724868890; x=1725473690; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FOTuctWAQz/uwHvaj+krenR+3V9HGV0qn8wI1oPN3U8=;
+        b=VFRh3KfrYyR0Na8u+20IBNqa59wgS5GXlH1K35CAAmP9MWNDJ44MWGIB1fAU+q1/6U
+         +hOibOgD1322uYV3aL6j2958ukk3RORCFN2iBDah9zfmi35/4nBEgimb5NakbczCO6al
+         moqFPynrHkoTjaL5WkhmOqvVS3RwX+yA0EAmu91So5Ee829hqKnOi0FIybn4m2q4LePu
+         LQ9LKG5KKV9n/2eQFMD0gHT/ZJBAQN8YmFlXVJdBCWTARjeSB9Phmk3gAzFEd1jFOeNp
+         U6MnOH5X52vvGd/1Hp0d3EJ9Y9awvvsbQflwxpcqA2BlQMVmd4b21vLLcM+XRa80jJqt
+         cb9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724868817; x=1725473617;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qUjb4jH9ETimZE0pCg8LtC0TnBmwTnywA8+wN1lvhOQ=;
-        b=pqv5T8HgiOF1jhkrv/Q5QUtXIgBqa6GJCddcZM+pe6mt2sPo+2rwzMhdGJ61A7Mdqc
-         oCBdR2oCske08SzXwgA+ZMng9H4uUsq/iuQlvp1+kv8DZCJ3jKZMQvrcwT7pZQCOqft0
-         c/oWaQI6/Jkrz4HbdX9kIZYyTxdjVNKLU+QVpYbclDrtx+AZBIjL+v+lxqq0/i6AKvYb
-         FmGmWeszS6r58jVR2QnfgmWBC08Z24GcZZqY19eBPOIqFwjSKNw/y+L5dx9QC2bdO6fS
-         CK4N2ykTd7SqoTvkj2AyCc+FCWCwAvKFZrjk2YLiS0qk37MaLTAuGcgZcr+B0p7SP43u
-         l+nQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUK4xYXRuZi3nWbjYnN+0IU/8YO2swyn549ER5pDK8Buy8EUpWJiZtAnbvDdTLUUacB7Ps0yyZ+UbG1@vger.kernel.org, AJvYcCWJTq9F9ZxmVx7AbmoQg+mUpsNASXjVsQE6/FobJRRBbT3u+tLKJwsIsqoRo9ys6xL24DHDcOZXLroCx5dl@vger.kernel.org, AJvYcCXqcD94mdUCsPllVvEFE+b7huRCMG/DtpcIik+E8iGtjmiczaz/lMFLwCDTdrWUmaURQfVOe2xX0TcW@vger.kernel.org
-X-Gm-Message-State: AOJu0YyfRKbpPXB5dAFCO7IG6jVeVSPV122/3CiMO+33dLSAhjXsNLFW
-	TwjXXSZWXbqPb63fRiiChdhITP+MXJMXSbv6bFgFaAxLSt99TRBb
-X-Google-Smtp-Source: AGHT+IGxGDh1vAJKcxejQ6uYAxsltvH9+XNhCUm0PLl6GKCm4I/7JUGkH9zDi4vDHQMcDBRI2Ydyxg==
-X-Received: by 2002:a17:907:72c8:b0:a86:8832:2fb7 with SMTP id a640c23a62f3a-a897f83b316mr19870266b.20.1724868815960;
-        Wed, 28 Aug 2024 11:13:35 -0700 (PDT)
-Received: from vamoiridPC ([2a04:ee41:82:7577:4c6b:aa66:d4d1:a1d2])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a86e54b50dbsm275221966b.93.2024.08.28.11.13.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2024 11:13:35 -0700 (PDT)
-From: Vasileios Amoiridis <vassilisamir@gmail.com>
-X-Google-Original-From: Vasileios Amoiridis <vamoirid@vamoiridPC>
-Date: Wed, 28 Aug 2024 20:13:33 +0200
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Vasileios Amoiridis <vassilisamir@gmail.com>, jic23@kernel.org,
-	lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, ang.iglesiasg@gmail.com,
-	linus.walleij@linaro.org, biju.das.jz@bp.renesas.com,
-	javier.carrasco.cruz@gmail.com, semen.protsenko@linaro.org,
-	579lpy@gmail.com, ak@it-klinger.de, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 6/7] iio: pressure: bmp280: Add data ready trigger
- support
-Message-ID: <20240828181333.GA80267@vamoiridPC>
-References: <20240823181714.64545-1-vassilisamir@gmail.com>
- <20240823181714.64545-7-vassilisamir@gmail.com>
- <ZsjrxLlhmx-TzwXF@smile.fi.intel.com>
- <20240824120222.GG9644@vamoiridPC>
- <ZsxXvGy4GNrZWs-D@smile.fi.intel.com>
- <20240828140119.GB4934@vamoiridPC>
- <Zs8xhMaFahBVanwd@smile.fi.intel.com>
+        d=1e100.net; s=20230601; t=1724868890; x=1725473690;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FOTuctWAQz/uwHvaj+krenR+3V9HGV0qn8wI1oPN3U8=;
+        b=Vrf0IG7lSmxoFwcMQH7kWDcG/UmFNpKdAqkItb42gHLHd4zaXlQAPheLGnJ6H6EszQ
+         rTm5tdXrBs9UrnHXrS5CbGsu2plNc3H6wKveEGSriPiUmkJEYMzaa/IDw/MsqCHJSul8
+         8mBc6lUY9QFsPKTOiJh2r3NXeE04NuBXzXU/xXG1RK21ceKMnR02uuD9CquWXxZ1rSsz
+         gXOhyX+Tmrzp4U2Rl+9nAUj2xhmJZELXEpOZyOgexilS7u2zt3l/frCc5PoMfG2qwWkP
+         sorv+8xMwLR/Togw8zRbWDXOh4gWAOrISJ+6NXFWy4QzfFiO4MRmRfQ89cBn180rT+ve
+         kjpA==
+X-Forwarded-Encrypted: i=1; AJvYcCVwjclbXFWEhurDbJ8ma3EF1gE7sl1pG5Z3u1anp37wAupooVLC33M5XHhXvh6QJE7EbJ9HTUConbDPYG4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywk0j1SCPk0REJ8eV1pDHElOLHvje/FomYuRhHd+fUmlUqXkdOo
+	QSXMGKiljPfxnotZP2NGpShsOcx66lXibkrXjR+WnX44f3d9iSVHCFvVEAqUc7ZD++LNc4/VGS7
+	8bQ==
+X-Google-Smtp-Source: AGHT+IG0qH6fA9bRjxhpjRUB2InNr/s22CMQVHqs6u2Z8BKUP2KlijIIpCznt61+Js/vDVlK65vywKUevps=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a25:6906:0:b0:e0b:a2a7:df77 with SMTP id
+ 3f1490d57ef6-e1a5ab5894dmr1037276.2.1724868889792; Wed, 28 Aug 2024 11:14:49
+ -0700 (PDT)
+Reply-To: Sean Christopherson <seanjc@google.com>
+Date: Wed, 28 Aug 2024 11:14:44 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zs8xhMaFahBVanwd@smile.fi.intel.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.46.0.295.g3b9ea8a38a-goog
+Message-ID: <20240828181446.652474-1-seanjc@google.com>
+Subject: [PATCH v2 0/2] KVM: Coalesced IO cleanup and test
+From: Sean Christopherson <seanjc@google.com>
+To: Paolo Bonzini <pbonzini@redhat.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>
+Cc: kvm@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Ilias Stamatis <ilstam@amazon.com>, 
+	Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+	Anup Patel <anup@brainfault.org>, Sean Christopherson <seanjc@google.com>, Paul Durrant <paul@xen.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Aug 28, 2024 at 05:17:40PM +0300, Andy Shevchenko wrote:
-> On Wed, Aug 28, 2024 at 04:01:19PM +0200, Vasileios Amoiridis wrote:
-> > On Mon, Aug 26, 2024 at 01:23:56PM +0300, Andy Shevchenko wrote:
-> > > On Sat, Aug 24, 2024 at 02:02:22PM +0200, Vasileios Amoiridis wrote:
-> > > > On Fri, Aug 23, 2024 at 11:06:28PM +0300, Andy Shevchenko wrote:
-> > > > > On Fri, Aug 23, 2024 at 08:17:13PM +0200, Vasileios Amoiridis wrote:
-> 
-> ...
-> 
-> > > > > > +	irq = fwnode_irq_get(fwnode, 0);
-> > > > > > +	if (!irq)
-> > > > > 
-> > > > > Are you sure this is correct check?
-> > > > > 
-> > > > Well, I think yes, because the function return either the Linux IRQ number
-> > > > on success or a negative errno on failure.
-> > > 
-> > > Where is 0 mentioned in this?
-> > > 
-> > > > https://elixir.bootlin.com/linux/v6.10.6/source/drivers/base/property.c#L987
-> > > > 
-> > > > > > +		return dev_err_probe(data->dev, -ENODEV,
-> > > > > 
-> > > > > Shadowed error code.
-> > > > 
-> > > > I am not sure I understand what you mean here. You mean that there is no
-> > > > chance that the first one will pass and this one will fail?
-> > > 
-> > > -ENODEV is not what fwnode_irq_get() returns on error.
-> > > 
-> > > > > > +				     "No interrupt found.\n");
-> 
-> ...
-> 
-> > > > > > +	desc = irq_get_irq_data(irq);
-> > > > > > +	if (!desc)
-> > > > > > +		return -EINVAL;
-> > > > > 
-> > > > > When may this fail?
-> > > > 
-> > > > I think that this will fail when Linux were not able to actually
-> > > > register that interrupt.
-> > > 
-> > > Wouldn't fwnode_irq_get() fail already?
-> > 
-> > By looking at it again, I didn't reply correct here. This function
-> > internally calls the irq_to_desc() which basically returns the
-> > irq desctiptor for this irq. This function can return NULL in
-> > case the interrupt is not found in the maple tree (CONFIG_SPARSE_IRQ)
-> > or in case the interrupt number is bigger than the NR_IRQs which
-> > the irq controller can handle (!CONFIG_SPARSE_IRQ).
-> > 
-> > So in my opinion, it makes sense to keep this check.
-> 
-> So, you mean that if fwnode_irq_get() succeeded there is a chance that returned
-> Linux IRQ number is invalid?! If it's so, it's something new to me. I would like
-> to see the details, please!
-> 
-> -- 
-> With Best Regards,
-> Andy Shevchenko
-> 
-> 
+Add a regression test for the bug fixed by commit 92f6d4130497 ("KVM:
+Fix coalesced_mmio_has_room() to avoid premature userspace exit"), and
+then do additional clean up on the offending KVM code.  I wrote the test
+mainly so that I was confident I actually understood Ilias' fix.
 
-Hi Andy,
+This applies on the aforementioned commit, which is sitting in
+kvm-x86/generic.
 
-I did some more digging, and from my understanding, fwnode_irq_get()
-directly returns the Linux IRQ which means that there should already
-exist the irq_desc structure that is returned by the irq_to_desc().
+Fully tested on x86 and arm64, compile tested on RISC-V.
 
-So as you already said, I cannot see how this function can fail, if
-the fwnode_irq_get() has succeeded. Thanks for asking the right
-questions, I am getting to know things better.
+Ilias, I deliberately didn't include your Reviewed-by for the selftest, just
+in case I botched something during the (minor, in theory) rework.
 
-Cheers,
-Vasilis
+v2:
+ - Collect a review. [Ilias]
+ - Fix a typo in patch 2's changelog. [Ilias]
+ - Rework the selftest to containerize the coalesced I/O ring and its state,
+   to hopefully make it easier to extend the test to validate using a ring
+   other than KVM's built-in default. [Ilias]
+
+Sean Christopherson (2):
+  KVM: selftests: Add a test for coalesced MMIO (and PIO on x86)
+  KVM: Clean up coalesced MMIO ring full check
+
+ tools/testing/selftests/kvm/Makefile          |   3 +
+ .../testing/selftests/kvm/coalesced_io_test.c | 236 ++++++++++++++++++
+ .../testing/selftests/kvm/include/kvm_util.h  |  26 ++
+ virt/kvm/coalesced_mmio.c                     |  29 +--
+ 4 files changed, 273 insertions(+), 21 deletions(-)
+ create mode 100644 tools/testing/selftests/kvm/coalesced_io_test.c
+
+
+base-commit: 728d17c2cb8cc5f9ac899173d0e9a67fb8887622
+-- 
+2.46.0.295.g3b9ea8a38a-goog
+
 
