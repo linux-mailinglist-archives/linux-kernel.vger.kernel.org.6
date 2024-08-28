@@ -1,79 +1,64 @@
-Return-Path: <linux-kernel+bounces-304468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D019C96207F
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 09:16:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 30ED0962085
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 09:17:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51EE71F25163
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 07:16:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D05E91F24C6F
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 07:17:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 519371586F6;
-	Wed, 28 Aug 2024 07:16:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F772158216;
+	Wed, 28 Aug 2024 07:17:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UnjDwi43"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b="SHdiDK6h"
+Received: from mail.thorsis.com (mail.thorsis.com [217.92.40.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49B7814D282;
-	Wed, 28 Aug 2024 07:16:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6518157494;
+	Wed, 28 Aug 2024 07:17:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.92.40.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724829410; cv=none; b=tYcMVyhUELtrL+ydTYsssfWBPZvkQtPNUs+T7CiZTvY2GUO0xXmpdKI9WYH0AZTY0uLqSWst1MdX/6FmQQl30xO/R1wZcoTj/XD1RWDDoEWg/TULYzPjDFSXZIAX2vHuLpSV0h3+y/NqTKOanyjvofbbIqolx/6WS5DeUk8RTVQ=
+	t=1724829428; cv=none; b=ms2PFa/ownBCDEdTADqHf2+YAl9GQUKfnfCHV7rRuAVASXLIehrBDguxhD7sInv0abKslcpT9mxOkRWKEFp0KTtozqEBt4eypquhDityWGBpgStMxI9QOalHm03Ov0/zMYCPpUu7LsYuyHBtPNUX0t/4gA/Uv8gudBVNO3jz/wM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724829410; c=relaxed/simple;
-	bh=t5gUXCf4GDx44h1Xin6e5g6NZ75gWQKVRnB3CEEVsW4=;
+	s=arc-20240116; t=1724829428; c=relaxed/simple;
+	bh=AnDRz3s+Akh9nNjep8PwRt6YI/1ulIb+StcovUeB1LY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RPeQy1EXdrNVyrdcclI2cOBo+rBoYD+9WCWSf/5md//agdZKJk7CwYZar7H9ssq0+bYiy9/mbXDQHuiBTGrfq2n7d0YdrZ2KWYUfz1szEkyoaNFz+UDEA4cIduGp50tqe1xR3QL2lFQftSPHfQsQWNLH7Xt1mjNnKo9CCMyxv+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UnjDwi43; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724829408; x=1756365408;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=t5gUXCf4GDx44h1Xin6e5g6NZ75gWQKVRnB3CEEVsW4=;
-  b=UnjDwi43TE1P1AfpluhLwFly40CVOgRByitR1LMggXiHYGwoAY0sIlGX
-   m9RR20U2Ne7kaMXzhaK5Lh3Dcm7h6zI+m1wZu8n73WIDv4CLzS6m51pHs
-   tH7JQatTZDsQu2gcIWQFEEKQJtwilPx+PlgqWvRV13BnZnc3cibzgXrTu
-   HjwhYOjRdb+rh4/4ZJZPH47J1W0um/VJmDDqLC/FheC+OP9tHbE2MA9II
-   kYMmLSttmsiYuatJizsY68WLQCnwB4JKNQfWuRHC0jNVJli6L1IsnJjSb
-   c64iSBQZh/FBW0LClrUYzIu7zyWvR8h5MsB6RUgu9QBynSJ2cy1f5FPXr
-   g==;
-X-CSE-ConnectionGUID: wFH5u49cS8upV/9cmeM0/A==
-X-CSE-MsgGUID: Ym/AzIIYQ5GGajGThjZW2w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11177"; a="34717281"
-X-IronPort-AV: E=Sophos;i="6.10,182,1719903600"; 
-   d="scan'208";a="34717281"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2024 00:16:47 -0700
-X-CSE-ConnectionGUID: DviJL/pkQmibmZqjyBY3CA==
-X-CSE-MsgGUID: ZALSYraISR2RjXfBsmsozg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,182,1719903600"; 
-   d="scan'208";a="100646498"
-Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
-  by orviesa001.jf.intel.com with ESMTP; 28 Aug 2024 00:16:43 -0700
-Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sjCv3-000Kae-1p;
-	Wed, 28 Aug 2024 07:16:41 +0000
-Date: Wed, 28 Aug 2024 15:16:03 +0800
-From: kernel test robot <lkp@intel.com>
-To: David Leonard <David.Leonard@digi.com>,
-	linux-arm-kernel@lists.infradead.org
-Cc: oe-kbuild-all@lists.linux.dev, Dong Aisheng <aisheng.dong@nxp.com>,
-	Fabio Estevam <festevam@gmail.com>, Shawn Guo <shawnguo@kernel.org>,
-	Jacky Bai <ping.bai@nxp.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH 4/6] pinctrl: ls1046a: Add pinctrl driver support
-Message-ID: <202408281442.Xos98wkO-lkp@intel.com>
-References: <c0ecf4f4-94f1-2efd-b05b-fc117c62e516@digi.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mRJOAKF8qQn+TTNhRAhMD9WlwYLxFnfEKLtR92t5Ha5hrhOC0a2JrJBeW86w1Kkm02ZJ1vEZC/lgEVtT0Fs7uT0FUnc3ghi9+n0fFvj85dQx3FrnL4Qf9f51QxmyrqXFHEk0apGQcQCmASrpG3lHX2yG2wy/O7QN7X8/G1hxrc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com; spf=pass smtp.mailfrom=thorsis.com; dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b=SHdiDK6h; arc=none smtp.client-ip=217.92.40.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thorsis.com
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id CC19C148347E;
+	Wed, 28 Aug 2024 09:17:02 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=thorsis.com; s=dkim;
+	t=1724829423; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=nNhkCfzyHMzEYGofIn7Ckl5mjzv4eT/hmvRvBJmLKpU=;
+	b=SHdiDK6hfYorFd3WSLqsMqX2OtkNxhlvW3EXUAvp4qFlU21QrVkwdM3HiWoK8wo+ILeGF+
+	Z80g05TDcVVaSN7tIxwnM+ebGEP3k98+Zrf5IWToYEV+3/CIaeUz9NkkRWOUKsvOb8yO35
+	JLkp5fFOVEWFaILGuXLg818un9n0P1/iG+YVr7HszvEUKZ/oWb6h2LBK1CZVM/+Y4+ESTA
+	lpCa0WHP+SjtmRKrmL4UTepkYdyBu3RvOlDCIdx/6mb2NH3RZJzY0m7jqFmwDfua6fiadK
+	sPsbX/mKuEC1n4HNifaJVWcOSfJN9vblrnpv9eSs2otLK4Io3WJVlOZEsUMXcw==
+Date: Wed, 28 Aug 2024 09:17:01 +0200
+From: Alexander Dahl <ada@thorsis.com>
+To: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Cc: nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	mturquette@baylibre.com, sboyd@kernel.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 2/3] clk: at91: sckc: Use SCKC_{TD, MD}_SLCK IDs for
+ clk32k clocks
+Message-ID: <20240828-unawake-unstamped-946e2840d0a1@thorsis.com>
+Mail-Followup-To: Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	mturquette@baylibre.com, sboyd@kernel.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20240826173116.3628337-1-claudiu.beznea@tuxon.dev>
+ <20240826173116.3628337-3-claudiu.beznea@tuxon.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,196 +67,87 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <c0ecf4f4-94f1-2efd-b05b-fc117c62e516@digi.com>
+In-Reply-To: <20240826173116.3628337-3-claudiu.beznea@tuxon.dev>
+User-Agent: Mutt/2.2.12 (2023-09-09)
+X-Last-TLS-Session-Version: TLSv1.3
 
-Hi David,
+Hello Claudiu,
 
-kernel test robot noticed the following build warnings:
+Am Mon, Aug 26, 2024 at 08:31:15PM +0300 schrieb Claudiu Beznea:
+> Use the newly introduced macros instead of raw numbers. With this the code
+> is a bit easier to understand.
+> 
+> Signed-off-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+> ---
+>  drivers/clk/at91/sckc.c | 24 +++++++++++++-----------
+>  1 file changed, 13 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/clk/at91/sckc.c b/drivers/clk/at91/sckc.c
+> index 7741d8f3dbee..021d1b412af4 100644
+> --- a/drivers/clk/at91/sckc.c
+> +++ b/drivers/clk/at91/sckc.c
+> @@ -12,6 +12,8 @@
+>  #include <linux/of_address.h>
+>  #include <linux/io.h>
+>  
+> +#include <dt-bindings/clock/at91.h>
+> +
+>  #define SLOW_CLOCK_FREQ		32768
+>  #define SLOWCK_SW_CYCLES	5
+>  #define SLOWCK_SW_TIME_USEC	((SLOWCK_SW_CYCLES * USEC_PER_SEC) / \
+> @@ -470,7 +472,7 @@ static void __init of_sam9x60_sckc_setup(struct device_node *np)
+>  {
+>  	void __iomem *regbase = of_iomap(np, 0);
+>  	struct clk_hw_onecell_data *clk_data;
+> -	struct clk_hw *slow_rc, *slow_osc;
+> +	struct clk_hw *slow_rc, *slow_osc, *hw;
+>  	const char *xtal_name;
+>  	const struct clk_hw *parent_hws[2];
+>  	static struct clk_parent_data parent_data = {
+> @@ -506,19 +508,19 @@ static void __init of_sam9x60_sckc_setup(struct device_node *np)
+>  
+>  	/* MD_SLCK and TD_SLCK. */
+>  	clk_data->num = 2;
+> -	clk_data->hws[0] = clk_hw_register_fixed_rate_parent_hw(NULL, "md_slck",
+> -								slow_rc,
+> -								0, 32768);
+> -	if (IS_ERR(clk_data->hws[0]))
+> +	hw = clk_hw_register_fixed_rate_parent_hw(NULL, "md_slck", slow_rc,
+> +						  0, 32768);
+> +	if (IS_ERR(hw))
+>  		goto clk_data_free;
+> +	clk_data->hws[SCKC_MD_SLCK] = hw;
+>  
+>  	parent_hws[0] = slow_rc;
+>  	parent_hws[1] = slow_osc;
+> -	clk_data->hws[1] = at91_clk_register_sam9x5_slow(regbase, "td_slck",
+> -							 parent_hws, 2,
+> -							 &at91sam9x60_bits);
+> -	if (IS_ERR(clk_data->hws[1]))
+> +	hw = at91_clk_register_sam9x5_slow(regbase, "td_slck", parent_hws,
+> +					   2, &at91sam9x60_bits);
+> +	if (IS_ERR(hw))
+>  		goto unregister_md_slck;
+> +	clk_data->hws[SCKC_TD_SLCK] = hw;
+>  
+>  	ret = of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clk_data);
+>  	if (WARN_ON(ret))
+> @@ -527,9 +529,9 @@ static void __init of_sam9x60_sckc_setup(struct device_node *np)
+>  	return;
+>  
+>  unregister_td_slck:
+> -	at91_clk_unregister_sam9x5_slow(clk_data->hws[1]);
+> +	at91_clk_unregister_sam9x5_slow(clk_data->hws[SCKC_TD_SLCK]);
+>  unregister_md_slck:
+> -	clk_hw_unregister(clk_data->hws[0]);
+> +	clk_hw_unregister(clk_data->hws[SCKC_MD_SLCK]);
+>  clk_data_free:
+>  	kfree(clk_data);
+>  unregister_slow_osc:
 
-[auto build test WARNING on linusw-pinctrl/devel]
-[also build test WARNING on linusw-pinctrl/for-next shawnguo/for-next arm64/for-next/core kvmarm/next rockchip/for-next soc/for-next linus/master v6.11-rc5 next-20240827]
-[cannot apply to arm/for-next arm/fixes]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Reviewed-by: Alexander Dahl <ada@thorsis.com>
 
-url:    https://github.com/intel-lab-lkp/linux/commits/David-Leonard/arm64-dts-ls1012a-add-pinctrl-node/20240827-104431
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git devel
-patch link:    https://lore.kernel.org/r/c0ecf4f4-94f1-2efd-b05b-fc117c62e516%40digi.com
-patch subject: [PATCH 4/6] pinctrl: ls1046a: Add pinctrl driver support
-config: sh-randconfig-r113-20240828 (https://download.01.org/0day-ci/archive/20240828/202408281442.Xos98wkO-lkp@intel.com/config)
-compiler: sh4-linux-gcc (GCC) 14.1.0
-reproduce: (https://download.01.org/0day-ci/archive/20240828/202408281442.Xos98wkO-lkp@intel.com/reproduce)
+Thanks and Greets
+Alex
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408281442.Xos98wkO-lkp@intel.com/
-
-sparse warnings: (new ones prefixed by >>)
->> drivers/pinctrl/freescale/pinctrl-ls1046a.c:55:31: sparse: sparse: symbol 'ls1046a_pins' was not declared. Should it be static?
->> drivers/pinctrl/freescale/pinctrl-ls1046a.c:199:59: sparse: sparse: incorrect type in argument 2 (different modifiers) @@     expected struct pinctrl_desc *pctldesc @@     got struct pinctrl_desc const * @@
-   drivers/pinctrl/freescale/pinctrl-ls1046a.c:199:59: sparse:     expected struct pinctrl_desc *pctldesc
-   drivers/pinctrl/freescale/pinctrl-ls1046a.c:199:59: sparse:     got struct pinctrl_desc const *
-
-vim +/ls1046a_pins +55 drivers/pinctrl/freescale/pinctrl-ls1046a.c
-
-    54	
-  > 55	const struct pinctrl_pin_desc ls1046a_pins[] = {
-    56		PINCTRL_PIN(PIN_L4, "L4"),
-    57		PINCTRL_PIN(PIN_M4, "M4"),
-    58		PINCTRL_PIN(PIN_M3, "M3"),
-    59		PINCTRL_PIN(PIN_N3, "N3"),
-    60	};
-    61	
-    62	/* Each pin is its own group */
-    63	static const char * const ls1046a_groups[] = { "L4", "M4", "M3", "N3" };
-    64	
-    65	static int ls1046a_get_groups_count(struct pinctrl_dev *pcdev)
-    66	{
-    67		return ARRAY_SIZE(ls1046a_pins);
-    68	}
-    69	
-    70	static const char *ls1046a_get_group_name(struct pinctrl_dev *pcdev,
-    71		unsigned int selector)
-    72	{
-    73		return ls1046a_pins[selector].name;
-    74	}
-    75	
-    76	static int ls1046a_get_group_pins(struct pinctrl_dev *pcdev,
-    77		unsigned int selector, const unsigned int **pins, unsigned int *npins)
-    78	{
-    79		*pins = &ls1046a_pins[selector].number;
-    80		*npins = 1;
-    81		return 0;
-    82	}
-    83	
-    84	static const struct pinctrl_ops ls1046a_pinctrl_ops = {
-    85		.get_groups_count = ls1046a_get_groups_count,
-    86		.get_group_name = ls1046a_get_group_name,
-    87		.get_group_pins = ls1046a_get_group_pins,
-    88		.dt_node_to_map = pinconf_generic_dt_node_to_map_group,
-    89		.dt_free_map = pinconf_generic_dt_free_map,
-    90	};
-    91	
-    92	/* Every pin has the same set of functions */
-    93	#define FUNC_i2c	0
-    94	#define FUNC_gpio	1
-    95	#define FUNC_evt	2
-    96	#define FUNC_usb	3
-    97	#define FUNC_ftm	4
-    98	
-    99	#define _PINFUNC(name) \
-   100		[FUNC_##name] = PINCTRL_PINFUNCTION(#name, ls1046a_groups, ARRAY_SIZE(ls1046a_groups))
-   101	static const struct pinfunction ls1046a_functions[] = {
-   102		_PINFUNC(i2c),
-   103		_PINFUNC(gpio),
-   104		_PINFUNC(evt),
-   105		_PINFUNC(usb),
-   106		_PINFUNC(ftm),
-   107	};
-   108	
-   109	static int ls1046a_get_functions_count(struct pinctrl_dev *pctldev)
-   110	{
-   111		return ARRAY_SIZE(ls1046a_functions);
-   112	}
-   113	
-   114	static const char *ls1046a_get_function_name(struct pinctrl_dev *pctldev, unsigned int func)
-   115	{
-   116		return ls1046a_functions[func].name;
-   117	}
-   118	
-   119	static int ls1046a_get_function_groups(struct pinctrl_dev *pctldev, unsigned int func,
-   120		const char * const **groups,
-   121		unsigned int * const ngroups)
-   122	{
-   123		*groups = ls1046a_functions[func].groups;
-   124		*ngroups = ls1046a_functions[func].ngroups;
-   125		return 0;
-   126	}
-   127	
-   128	static int ls1046a_set_mux(struct pinctrl_dev *pcdev,
-   129		unsigned int func, unsigned int pin)
-   130	{
-   131		struct ls1046a_pinctrl_pdata *pd = pinctrl_dev_get_drvdata(pcdev);
-   132		static const u32 cr0_reg_func[] = {
-   133			[FUNC_i2c] = RCWPMUXCR0_FUNC_I2C,
-   134			[FUNC_gpio] = RCWPMUXCR0_FUNC_GPIO,
-   135			[FUNC_evt] = RCWPMUXCR0_FUNC_EVT,
-   136			[FUNC_usb] = RCWPMUXCR0_FUNC_USB,
-   137			[FUNC_ftm] = RCWPMUXCR0_FUNC_FTM,
-   138		};
-   139		static const unsigned int cr0_pin_shift[] = {
-   140			[PIN_L4] = RCWPMUXCR0_IIC3_SCL_SHIFT,
-   141			[PIN_M4] = RCWPMUXCR0_IIC3_SDA_SHIFT,
-   142			[PIN_M3] = RCWPMUXCR0_IIC4_SCL_SHIFT,
-   143			[PIN_N3] = RCWPMUXCR0_IIC4_SDA_SHIFT,
-   144		};
-   145		u32 cr0;
-   146	
-   147		if (pd->big_endian)
-   148			cr0 = ioread32be(pd->cr0mem);
-   149		else
-   150			cr0 = ioread32(pd->cr0mem);
-   151	
-   152		unsigned int pin_shift = cr0_pin_shift[pin];
-   153		u32 reg_func = cr0_reg_func[func];
-   154		u32 newcr0 = (cr0 & ~RCWPMUXCR0_MASK(pin_shift)) |
-   155			RCWPMUXCR0_FIELD(pin_shift, reg_func);
-   156	
-   157		if (pd->big_endian)
-   158			iowrite32be(newcr0, pd->cr0mem);
-   159		else
-   160			iowrite32(newcr0, pd->cr0mem);
-   161		return 0;
-   162	}
-   163	
-   164	static const struct pinmux_ops ls1046a_pinmux_ops = {
-   165		.get_functions_count = ls1046a_get_functions_count,
-   166		.get_function_name = ls1046a_get_function_name,
-   167		.get_function_groups = ls1046a_get_function_groups,
-   168		.set_mux = ls1046a_set_mux,
-   169	};
-   170	
-   171	static const struct pinctrl_desc ls1046a_pinctrl_desc = {
-   172		.name = "ls1046a",
-   173		.pins = ls1046a_pins,
-   174		.npins = ARRAY_SIZE(ls1046a_pins),
-   175		.pctlops = &ls1046a_pinctrl_ops,
-   176		.pmxops = &ls1046a_pinmux_ops,
-   177		.owner = THIS_MODULE,
-   178	};
-   179	
-   180	static int ls1046a_pinctrl_probe(struct platform_device *pdev)
-   181	{
-   182		struct ls1046a_pinctrl_pdata *pd;
-   183		int ret;
-   184	
-   185		pd = devm_kzalloc(&pdev->dev, sizeof(*pd), GFP_KERNEL);
-   186		if (!pd)
-   187			return -ENOMEM;
-   188		platform_set_drvdata(pdev, pd);
-   189	
-   190		pd->big_endian = device_is_big_endian(&pdev->dev);
-   191	
-   192		/* SCFG PMUX0 */
-   193		pd->cr0mem = devm_platform_ioremap_resource(pdev, 0);
-   194		if (IS_ERR(pd->cr0mem))
-   195			return PTR_ERR(pd->cr0mem);
-   196		dev_dbg(&pdev->dev, "scfg pmuxcr0 at %px %s", pd->cr0mem,
-   197			pd->big_endian ? "be" : "le");
-   198	
- > 199		ret = devm_pinctrl_register_and_init(&pdev->dev, &ls1046a_pinctrl_desc,
-   200			pd, &pd->pctl_dev);
-   201		if (ret)
-   202			return dev_err_probe(&pdev->dev, ret, "Failed pinctrl init\n");
-   203	
-   204		pinctrl_enable(pd->pctl_dev);
-   205		return ret;
-   206	}
-   207	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
