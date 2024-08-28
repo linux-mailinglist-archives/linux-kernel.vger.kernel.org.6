@@ -1,162 +1,253 @@
-Return-Path: <linux-kernel+bounces-305430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D530A962E7A
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 19:28:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F39E4962E7F
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 19:30:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05CEB1C2187C
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 17:28:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9921283137
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 17:30:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E9601A76AE;
-	Wed, 28 Aug 2024 17:28:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F364C1A704F;
+	Wed, 28 Aug 2024 17:29:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digitalocean.com header.i=@digitalocean.com header.b="YrieHuyL"
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bBlFGv3t"
+Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com [209.85.217.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DEC81A4F28
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 17:28:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60B671A38F0
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 17:29:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724866094; cv=none; b=TZObSxapG0r0hBJaDwzg3Y60uK/HMoziDb0KhNF2D/znXSRTboSlW5fe/YoVwyw2yEX3IHzWLpuGSmU4ipmlAOJP3H6ibWzLV69F3UM9GLkfZrQvaqXzqNLJ2SwQpBYSRxZdPqyA5pSXOJ/TgEq+J7kMFjlV/inIeeI2gkF67a8=
+	t=1724866197; cv=none; b=btDy66XRZLRr7kspi5SJlpEi9KdaYRhoZdrgm4qvRq5B8GaYySCEQJU1d3EMZp5+z1HMFcwazSEkCPmMsX1Obh3N3K5URB6ldSUXrL59qcTZyGm2Ng8C8QmpXTOmGCA/Pfbe6hsU+g7jB5Bj5bShEMk2O2W2K6/jj3BR66S4Zjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724866094; c=relaxed/simple;
-	bh=HypgDgtB4ct/OuJkz4CzqDuTTpFOG82yJbB3Gp9Nl3A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gYWjZQpPBtqVAAGviRqftWlVoRI4+8UDcKS040qRqPrnI/cHNgWQoAOXAw4S94EOpR12HBge07mv7weGbQ2PG7l+Hep7TYFbDWoM1Az7K3X6Hne5KEUMEOadE3iUaOqchOMzlNpNvpHwrao2l9CH10sp7ZsF/Y5UqlEVLIwdssg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=digitalocean.com; spf=pass smtp.mailfrom=digitalocean.com; dkim=pass (1024-bit key) header.d=digitalocean.com header.i=@digitalocean.com header.b=YrieHuyL; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=digitalocean.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digitalocean.com
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-68d30057ae9so61676957b3.1
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 10:28:12 -0700 (PDT)
+	s=arc-20240116; t=1724866197; c=relaxed/simple;
+	bh=xq2862FC2H9fTr3XeCMmA8f8ZF7zdMx9ormtEYxTxxE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JaLzAj4CZwPUck9golaJP00UxKavQkZRm2x9QvuPKxC7sQnv7WjCh48pM60U4hUsI+OpTYu9a7m0atSZ9G6Sh5iso3M+DDMVi0wzGO6fIv08lg+4UZKShklcknO/RqiEDygOOlCCTTz1D5pcWyHIjLlh0PZ+lU5RWJFjU3d61QQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bBlFGv3t; arc=none smtp.client-ip=209.85.217.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-498d2645902so418158137.1
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 10:29:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=digitalocean.com; s=google; t=1724866092; x=1725470892; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=zCPXRj4O3bcsketV9hnxl4fQbKxvadzaMLv4xTGbmvw=;
-        b=YrieHuyLcaRqzVQYQoFYLCTswDKpIhgqW+kiyQ4rLa3Xa5DyiG5ftqU35tnxwzWHqV
-         zl1BAx2Gv8ZgHhewgd14S5s1wtRw4q/H15nm/Y1mRq0Wt8eT5qG09aYYBwTjtuF8Rd9T
-         EXMGNqv8w7Y+M36LSZJxoaNng7qxlLKZ6n5N0=
+        d=linaro.org; s=google; t=1724866194; x=1725470994; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=jO6WbuA2uYR9pLaLcnV8sYv7zeqotikN0u6aKu20M7M=;
+        b=bBlFGv3tpMvKT9weoBVDiwXPPn95LbdblNXbZIGVmysfJc7afXB1MuJgOjNilvvczz
+         gkxcaFzwD1KNLLgcF7lDWD+TmTecaK4O5UdE4dSmpsZRo/Axmlorpy/bMS9BToheRXVR
+         MxI4nqIK2QeJLSSh7mOHwHETnVrqpbCLspSnAbCZtpdy4g1xXFHRXDgNBGQRnjphJ8Ca
+         EXHfuD0QtjSrkjYx6Ic3CqegxfYSTTPmarRD/5gcEUl0vSASM7Er+4xH/TrAwah4VprU
+         eJ1MV6Dype/+NRrds9C2v3BBw7msVls3QQFQZ30tYNoLkaRSsajNLHd79GRGgbcCdeN1
+         t6oQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724866092; x=1725470892;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zCPXRj4O3bcsketV9hnxl4fQbKxvadzaMLv4xTGbmvw=;
-        b=DBlOuZf5NFyypUw4sjXfg1VKkGOlmnqwKLTHqybUSBN4XHqR+IBgZlxztgUv6VzRv1
-         jEga2FCtrOrjWHIXr9En8MSr1VWrzc8K4RWjrP/16hbIda/Ck7yS6UiW57lwPMMKjubV
-         wqKdBxvQf0PFTJY6fmBXQq4TDtLQxfgBHjSf2h2jUJmTxm9dy01P4suW29lOXSHlKb10
-         Xn12v/GaBeoLPw4uc9cpOx+18QL8rEFy5McfYHwOUGu0wDRhCAxF42ysFlgME/1R9TBp
-         OPJUaDaEGn6Yiv3uQg0/PoPnqq2Bdx7Dwir9FmhSFW6nlcx6wDShnigxVXG0vDsNbTCw
-         rhbw==
-X-Forwarded-Encrypted: i=1; AJvYcCWlm4ibJ+ntV+RVy5gXowzmd7zdMxl0HCt2Li4wTipgNNZbAXEmBtKj9kquRR6X3pg/iM8PVpYRf/5eUD4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOzgM+tvymGlG6H24+3AQ9WrXVF5FQsJdqHWCgkj3QbJMQaAsi
-	lUWKObTTgLA5VxRI/jLiHaQ4IvmhXgEifLm9egV6y6RngFpGnCdOfZ2iFQURNTo=
-X-Google-Smtp-Source: AGHT+IFPC41Qak2gZ0YGJ2D7BiYZJ3IUJn9Ef3OAyW792KU6hAe4yKyakK/6d00Omzjp9FW2G84t4Q==
-X-Received: by 2002:a05:690c:6512:b0:64a:4728:ef8 with SMTP id 00721157ae682-6d277f51e62mr651667b3.44.1724866092130;
-        Wed, 28 Aug 2024 10:28:12 -0700 (PDT)
-Received: from ?IPV6:2603:8080:7400:36da:b4f6:16b8:9118:2c1a? ([2603:8080:7400:36da:b4f6:16b8:9118:2c1a])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6c39de41cb8sm24217897b3.116.2024.08.28.10.28.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 28 Aug 2024 10:28:11 -0700 (PDT)
-Message-ID: <41a2a533-549e-4f45-9d8d-68b5ef484b05@digitalocean.com>
-Date: Wed, 28 Aug 2024 12:28:09 -0500
+        d=1e100.net; s=20230601; t=1724866194; x=1725470994;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jO6WbuA2uYR9pLaLcnV8sYv7zeqotikN0u6aKu20M7M=;
+        b=OHry7H1X30aiTfyQrxsaOwNmJilk6ZpIFk6IKroUuyeiuAmLtTurQQE+IDLJfPWZUx
+         VLwFmhzSBQze8aMldEU2kZ9nxB1CarEqF+w5UsU7i75fA4QKLJgPZM6e6ZBxIYdgTAF/
+         c65toDpca/NwilBgtxy6ouv3EEU6E8zreqnTfCzsu7lG3FiDm7PGHvQdKxSxUMObBbBp
+         hkykUmWkQ+YShC9UZW/9vfn6WLKRqGxl6jRs31ukbfFqiQGzyNyJ7TZcw9AiWMfYXXxW
+         buh1NviIxmb6ImEAE/1lZOsJGRdzc8D5GBntAQrAi/fTgrt9IQIkwm1MRYJFlLxPVrue
+         Ttzw==
+X-Forwarded-Encrypted: i=1; AJvYcCVCMYoahdgN3Q19NzeGTNfDLaAZev6/azgNDKLUuA1BAjv1oxtHnDHeONV7FhM72mF+jPADFytfmxvPpec=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyahvwVANz3gBGujCKg97GalEx+cnFJXHJ7g705e6eMYstlr5uc
+	c5rsrcRiJkCrU6HT5EvdKZjDgrSS0QqCb1e4rMTQM7mmwGBvXmDYodM3ZFHhxOkZddVDe6zyuF4
+	CcRTNUxl2phVeT7pyQmDdTp0aVDjMCp+dYUyO6w==
+X-Google-Smtp-Source: AGHT+IEiCFyB3OZw/XIox94ixhU3xa+nvwgNWznRK/vYEYi1rvpOzRrq8hn43RDFNhXIlTGReAClTYmoduDr2yIbeqc=
+X-Received: by 2002:a05:6102:3051:b0:497:6ae3:e541 with SMTP id
+ ada2fe7eead31-49a5b5bfcc3mr398727137.14.1724866194092; Wed, 28 Aug 2024
+ 10:29:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC] Why is set_config not supported in mlx5_vnet?
-To: Dragos Tatulea <dtatulea@nvidia.com>, Jason Wang <jasowang@redhat.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, mst@redhat.com,
- virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, kvm@vger.kernel.org, eperezma@redhat.com,
- sashal@kernel.org, yuehaibing@huawei.com, steven.sistare@oracle.com
-References: <33feec1a-2c5d-46eb-8d66-baa802130d7f@digitalocean.com>
- <afcbf041-7613-48e6-8088-9d52edd907ff@nvidia.com>
- <fd8ad1d9-81a0-4155-abf5-627ef08afa9e@lunn.ch>
- <24dbecec-d114-4150-87df-33dfbacaec54@nvidia.com>
- <CACGkMEsKSUs77biUTF14vENM+AfrLUOHMVe4nitd9CQ-obXuCA@mail.gmail.com>
- <f7479a55-9eee-4dec-8e09-ca01fa933112@nvidia.com>
-Content-Language: en-US
-From: Carlos Bilbao <cbilbao@digitalocean.com>
-In-Reply-To: <f7479a55-9eee-4dec-8e09-ca01fa933112@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20240827143843.399359062@linuxfoundation.org> <CA+G9fYuVcn734B-qqxYPKH++PtynJurhrhtBGLJhzhXoWo0sWQ@mail.gmail.com>
+In-Reply-To: <CA+G9fYuVcn734B-qqxYPKH++PtynJurhrhtBGLJhzhXoWo0sWQ@mail.gmail.com>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Wed, 28 Aug 2024 22:59:41 +0530
+Message-ID: <CA+G9fYs40THj+m4hWqV3ubYBPZaWQE44SXOUYYuU1T0x6R83Ng@mail.gmail.com>
+Subject: Re: [PATCH 6.6 000/341] 6.6.48-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
+	broonie@kernel.org, Zhen Lei <thunder.leizhen@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hello,
-
-On 8/27/24 11:54 AM, Dragos Tatulea wrote:
+On Wed, 28 Aug 2024 at 20:00, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
 >
-> On 27.08.24 04:03, Jason Wang wrote:
->> On Tue, Aug 27, 2024 at 12:11 AM Dragos Tatulea <dtatulea@nvidia.com> wrote:
->>>
->>> On 26.08.24 16:24, Andrew Lunn wrote:
->>>> On Mon, Aug 26, 2024 at 11:06:09AM +0200, Dragos Tatulea wrote:
->>>>>
->>>>> On 23.08.24 18:54, Carlos Bilbao wrote:
->>>>>> Hello,
->>>>>>
->>>>>> I'm debugging my vDPA setup, and when using ioctl to retrieve the
->>>>>> configuration, I noticed that it's running in half duplex mode:
->>>>>>
->>>>>> Configuration data (24 bytes):
->>>>>>   MAC address: (Mac address)
->>>>>>   Status: 0x0001
->>>>>>   Max virtqueue pairs: 8
->>>>>>   MTU: 1500
->>>>>>   Speed: 0 Mb
->>>>>>   Duplex: Half Duplex
->>>>>>   RSS max key size: 0
->>>>>>   RSS max indirection table length: 0
->>>>>>   Supported hash types: 0x00000000
->>>>>>
->>>>>> I believe this might be contributing to the underperformance of vDPA.
->>>>> mlx5_vdpa vDPA devicess currently do not support the VIRTIO_NET_F_SPEED_DUPLEX
->>>>> feature which reports speed and duplex. You can check the state on the
->>>>> PF.
->>>> Then it should probably report DUPLEX_UNKNOWN.
->>>>
->>>> The speed of 0 also suggests SPEED_UNKNOWN is not being returned. So
->>>> this just looks buggy in general.
->>>>
->>> The virtio spec doesn't mention what those values should be when
->>> VIRTIO_NET_F_SPEED_DUPLEX is not supported.
->>>
->>> Jason, should vdpa_dev_net_config_fill() initialize the speed/duplex
->>> fields to SPEED/DUPLEX_UNKNOWN instead of 0?
->> Spec said
->>
->> """
->> The following two fields, speed and duplex, only exist if
->> VIRTIO_NET_F_SPEED_DUPLEX is set.
->> """
->>
->> So my understanding is that it is undefined behaviour, and those
->> fields seems useless before feature negotiation. For safety, it might
->> be better to initialize them as UNKOWN.
->>
-> After a closer look my statement doesn't make sense: the device will copy
-> the virtio_net_config bytes on top.
+> On Tue, 27 Aug 2024 at 20:12, Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> >
+> > This is the start of the stable review cycle for the 6.6.48 release.
+> > There are 341 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> >
+> > Responses should be made by Thu, 29 Aug 2024 14:37:36 +0000.
+> > Anything received after that time might be too late.
+> >
+> > The whole patch series can be found in one patch at:
+> >         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.48-rc1.gz
+> > or in the git tree and branch at:
+> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
+> > and the diffstat can be found below.
+> >
+> > thanks,
+> >
+> > greg k-h
 >
-> The solution is to initialize these fields to UNKNOWN in the driver. Will send
-> a patch to fix this.
+> The tinyconfig builds failed for all architectures on 6.6.48-rc1.
+>
+> Builds
+>   - clang-18-tinyconfig
+>   - clang-nightly-tinyconfig
+>   - gcc-13-tinyconfig
+>   - gcc-8-tinyconfig
 
+The bisection pointed to the following is the first bad commit,
 
-With Dragos' permission, I'm sending a first draft of this now.
+bc2002c9d531dd4ad0241268c946abf074d2145d is the first bad commit
+    rcu: Dump memory object info if callback function is invalid
 
+    [ Upstream commit 2cbc482d325ee58001472c4359b311958c4efdd1 ]
+
+- Naresh
 
 >
-> Thanks,
-> Dragos
-
-
-Thanks, Carlos
-
+> lore links:
+>  - https://lore.kernel.org/stable/CA+G9fYuibSowhidTVByMzSRdqudz1Eg_aYBs9rVS3bYEBesiUA@mail.gmail.com/
+>
+> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+>
+> ## Build
+> * kernel: 6.6.48-rc1
+> * git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+> * git commit: 0ec2cf1e20adc2c8dcc5f58f3ebd40111c280944
+> * git describe: v6.6.47-342-g0ec2cf1e20ad
+> * test details:
+> https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.6.y/build/v6.6.47-342-g0ec2cf1e20ad
+>
+> ## Test Regressions (compared to v6.6.46-68-gf44ed2948b39)
+> * arm64, build
+> * arm, build
+> * i386, build
+> * x86_64, build
+>   - clang-18-tinyconfig
+>   - clang-nightly-tinyconfig
+>   - gcc-13-tinyconfig
+>   - gcc-8-tinyconfig
+>
+> ## Metric Regressions (compared to v6.6.46-68-gf44ed2948b39)
+>
+> ## Test Fixes (compared to v6.6.46-68-gf44ed2948b39)
+>
+> ## Metric Fixes (compared to v6.6.46-68-gf44ed2948b39)
+>
+> ## Test result summary
+> total: 175487, pass: 153815, fail: 1637, skip: 19813, xfail: 222
+>
+> ## Build Summary
+> * arc: 5 total, 4 passed, 1 failed
+> * arm: 129 total, 125 passed, 4 failed
+> * arm64: 41 total, 37 passed, 4 failed
+> * i386: 28 total, 23 passed, 5 failed
+> * mips: 26 total, 21 passed, 5 failed
+> * parisc: 4 total, 3 passed, 1 failed
+> * powerpc: 36 total, 31 passed, 5 failed
+> * riscv: 19 total, 16 passed, 3 failed
+> * s390: 14 total, 4 passed, 10 failed
+> * sh: 10 total, 8 passed, 2 failed
+> * sparc: 7 total, 5 passed, 2 failed
+> * x86_64: 33 total, 29 passed, 4 failed
+>
+> ## Test suites summary
+> * boot
+> * commands
+> * kselftest-arm64
+> * kselftest-breakpoints
+> * kselftest-capabilities
+> * kselftest-cgroup
+> * kselftest-clone3
+> * kselftest-core
+> * kselftest-cpu-hotplug
+> * kselftest-cpufreq
+> * kselftest-efivarfs
+> * kselftest-exec
+> * kselftest-filesystems
+> * kselftest-filesystems-binderfs
+> * kselftest-filesystems-epoll
+> * kselftest-firmware
+> * kselftest-fpu
+> * kselftest-ftrace
+> * kselftest-futex
+> * kselftest-gpio
+> * kselftest-intel_pstate
+> * kselftest-ipc
+> * kselftest-kcmp
+> * kselftest-livepatch
+> * kselftest-membarrier
+> * kselftest-memfd
+> * kselftest-mincore
+> * kselftest-mqueue
+> * kselftest-net
+> * kselftest-net-mptcp
+> * kselftest-openat2
+> * kselftest-ptrace
+> * kselftest-rseq
+> * kselftest-rtc
+> * kselftest-seccomp
+> * kselftest-sigaltstack
+> * kselftest-size
+> * kselftest-tc-testing
+> * kselftest-timers
+> * kselftest-tmpfs
+> * kselftest-tpm2
+> * kselftest-user_events
+> * kselftest-vDSO
+> * kselftest-x86
+> * kunit
+> * kvm-unit-tests
+> * libgpiod
+> * libhugetlbfs
+> * log-parser-boot
+> * log-parser-test
+> * ltp-commands
+> * ltp-containers
+> * ltp-controllers
+> * ltp-cpuhotplug
+> * ltp-crypto
+> * ltp-cve
+> * ltp-dio
+> * ltp-fcntl-locktests
+> * ltp-fs
+> * ltp-fs_bind
+> * ltp-fs_perms_simple
+> * ltp-hugetlb
+> * ltp-ipc
+> * ltp-math
+> * ltp-mm
+> * ltp-nptl
+> * ltp-pty
+> * ltp-sched
+> * ltp-smoke
+> * ltp-syscalls
+> * ltp-tracing
+> * perf
+> * rcutorture
+>
+> --
+> Linaro LKFT
+> https://lkft.linaro.org
 
