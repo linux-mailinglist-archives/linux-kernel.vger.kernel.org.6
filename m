@@ -1,134 +1,297 @@
-Return-Path: <linux-kernel+bounces-305244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4683E962BCC
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 17:15:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D46AA962BD0
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 17:15:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79B941C23D5D
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:15:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86A4B285FE7
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:15:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16CD01A4F1F;
-	Wed, 28 Aug 2024 15:12:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9BD91A3BA0;
+	Wed, 28 Aug 2024 15:14:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vg/e+0jO"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JbGFGsSX"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A457C1A2C29;
-	Wed, 28 Aug 2024 15:12:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 671E619FA94;
+	Wed, 28 Aug 2024 15:14:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724857966; cv=none; b=neHG3nW9qOXToHgPURQBp7m/NZrElbZ0mBf73j7xwRjjhCSAm7JyQfUkeI0J7NE10WaveJ+sMt+AAmiVpTlltjN4Ij7r6gau08Stl2rb93mXrRLgIuq7+/wv+lcMPN/HbWJLMfZmpzcSDAb92W2NIHVCs06OgiFTZ1tVG6K9/Mk=
+	t=1724858043; cv=none; b=czsBGRbOOufS0jRqU2G27gH+Qxj72UMRIUAkn7oxpfmaDzFNKIwroob3d3Ks0JPYbxUMvgnp9M2TljEWlvaDua7pJv3G3LoFSGKFbS+0JyFkVVHq6seAZNrhxC/niPNwJIjBH7t3GoTWq1vJJ0d3dSK1lBkR+79EM+wdw2AC1Wg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724857966; c=relaxed/simple;
-	bh=/IyRKuOeEvyqdB4QfYijTcKAfdptVOGW+q1DNzAAB5Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pJaP8C5JFLlZgL8yM5ZJdpAX4tOF+OdtFxWDcoUyFUTOrQnJVYK6Ay3y9PaKCayDy+wPGE4pp46kg2ngXVSE91f5gPzJSdPS3GR5NOSkrk2AQmYEb20JoVCr55NKZeXfER+4YxpK8Eamxg740iEBhq/vMPhtPM2/ENo4qEay29s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Vg/e+0jO; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-428e0d184b4so57788975e9.2;
-        Wed, 28 Aug 2024 08:12:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724857963; x=1725462763; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=kbaH3V7Lk+uax03Oqau7bBE1nBYKOYJZ2EVryMzrRy4=;
-        b=Vg/e+0jO4UDhGCehuMjbQuXLnnb+7WsW7TXvkZ9X3hihMUCCxJsvg2SKOEiIs2HhUV
-         rFi+UOY9RJGZVmnEJd2937GPkmsozNqZWn2t4QHgGRJkdpI7bpUHnar2Jz8aSRQ2kiQQ
-         geQhdYyM71iY+3OXurPXut8KNZAIHKN01ggrEpgqpKFhBWHJxrfEey0Tse9HoP3YyAsI
-         bVrsl1bK46tUjXu1JTPLGQerH2r0K2Y8VC24r03fDBn6Am93DcC46QmuRg0Xft0s1AF+
-         LHXqn9IUH4S8aRyEemAWhr/o39DHX3oXq80cLICITJGVefYI4Ju4DnZqzLLp8z9YakkN
-         GvMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724857963; x=1725462763;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kbaH3V7Lk+uax03Oqau7bBE1nBYKOYJZ2EVryMzrRy4=;
-        b=E9TCahAfZlC7bNwUj9kcei3tR/WOoAGpq8Do0oC2UKpFmjqfq7GkqM7myTR7cJLYVr
-         m4VeqgyZPhU8HsHclie9kqT4cQy+4VgPl2pGfjHjpdxSHD+9pTJ1nUmuPThJRRjbSwmb
-         I5yWFieE6nIXECETqHRKowwEJ6/RdX/3cE1Z2RicLbBJ1DEPrbirJ2kibQjUYimDkDVV
-         tQh9YUTQCNLcuFajKcK2gvE+/p3GD2ym+zoplzta8lqqoQMtRMuaFB2LyLunZvfriHo3
-         WZsuYygwjbDE93exKN8gKF0SDTDu630pwPYjo+tEyqDQDBOE9i2naOsoHh5ymaR2VSsg
-         WM2A==
-X-Forwarded-Encrypted: i=1; AJvYcCXVFlQCj8tgTrvEsnZ4zPG09NlqsUMWvle095vKW/A47aBO+P0aXdZ7oEYOZJPVNZ5epscSv4QG5FH/AgU=@vger.kernel.org, AJvYcCXVfluInBh7nNqQQkIVwwcUvTiq6ggq8RRn6WH1zFDjU+/9WJy7JT5MLu3By2s5zsijfl5wriTXUcV7CL8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZBTvdpfvLJbba1g+VkMjTKUZ5gJzyFDskrxELG50nVtMXfWnO
-	WchgtOK7NAnBOaCi1tgId4Sv3Y3lBe7QBFmMxnTtPMLu/axm4FZ2
-X-Google-Smtp-Source: AGHT+IGQW0+v8moibSdO2Q/RDfDjaFv/WD0sbqLqA5iBEEKPuRh2zkLaDWQrYYlWkKTTw2QwiUONiA==
-X-Received: by 2002:a05:600c:310f:b0:426:51ce:bb14 with SMTP id 5b1f17b1804b1-42acd5d79b1mr105634055e9.30.1724857962403;
-        Wed, 28 Aug 2024 08:12:42 -0700 (PDT)
-Received: from orome (p200300e41f29d300f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f29:d300:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ba63965dbsm24684245e9.6.2024.08.28.08.12.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2024 08:12:42 -0700 (PDT)
-Date: Wed, 28 Aug 2024 17:12:40 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Lu Baolu <baolu.lu@linux.intel.com>
-Cc: Mikko Perttunen <mperttunen@nvidia.com>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, Joerg Roedel <joro@8bytes.org>, 
-	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, 
-	Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>, 
-	dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, iommu@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, Jason Gunthorpe <jgg@nvidia.com>
-Subject: Re: [PATCH 1/1] gpu: host1x: Use iommu_paging_domain_alloc()
-Message-ID: <5bckndhbbvbvkt2bqxseyeo43qzvy6h2oykqbkhnfrpw7zjwu4@ziztccfxccv6>
-References: <20240812071605.9513-1-baolu.lu@linux.intel.com>
+	s=arc-20240116; t=1724858043; c=relaxed/simple;
+	bh=lzCqdn5yAOU/5DHTzbefZ5WAIZxB9/oRXnFZZ0zHwAU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IwuKZIIK5S+jmjaHO+vx9ma7G1mSn4BQoraFI+AUjxdl6WMjsPMd00C+HGN5MJo2gHK0Ew1gWlzbmrHX66sWnC1iyJoR8q2ai8ziTzgqQGKcy97J4/3kaJJEvYqLloMS1gnJCf6IUqwV0hLaVcK7QBgTaMOwLELNVtZ5Ci1Eu5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JbGFGsSX; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724858043; x=1756394043;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=lzCqdn5yAOU/5DHTzbefZ5WAIZxB9/oRXnFZZ0zHwAU=;
+  b=JbGFGsSXZdDFZfLCKEGHeE4usKw9571SXUKbCbIkS0QOxC7zRvQ8eDWb
+   AAeo4Qw8kIUVx/xQV4puwlwb9EoBnD/2tB9QOu+/LgdvnVkd7Xla+BzCJ
+   4/2+g7VDj/l5kJGxl4t0HAjBg1W2O8qYEpru/Wb9sJJlHT0zePQDWAHrD
+   sjUoLvLFrqkP3KpdgpF7VEacbqqdC5HZaUZyX2bfJact+eNK9J+6gzGeV
+   pqev+54/tLLtY+3mMHQLJqawcm5xrnwPLM2kAPudviEGRuffeTVFqmj04
+   qGsR3SJmc/UV0GNs1IA0I3HTiAPQBmcSLLnLL4lAcaqQ4hLb9q5yE1db4
+   w==;
+X-CSE-ConnectionGUID: t/TPNKKSTuuvVzoAZVuILg==
+X-CSE-MsgGUID: KgdHSjnoRuSSpI2YyndXUg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11178"; a="34773534"
+X-IronPort-AV: E=Sophos;i="6.10,183,1719903600"; 
+   d="scan'208";a="34773534"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2024 08:14:02 -0700
+X-CSE-ConnectionGUID: FsEXhLAbTMCRNowWAnMymQ==
+X-CSE-MsgGUID: Lwb2wqtWQXyFd4QKLYo8kA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,183,1719903600"; 
+   d="scan'208";a="63586378"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa006.jf.intel.com with ESMTP; 28 Aug 2024 08:14:01 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 7C43F143; Wed, 28 Aug 2024 18:13:59 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH v2 1/1] gpiolib: legacy: Consolidate devm_gpio_*() with other legacy APIs
+Date: Wed, 28 Aug 2024 18:12:43 +0300
+Message-ID: <20240828151357.2677340-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="7mk5vwuaumccccci"
-Content-Disposition: inline
-In-Reply-To: <20240812071605.9513-1-baolu.lu@linux.intel.com>
+Content-Transfer-Encoding: 8bit
 
+There is no reason to keep deprecated legacy API implementations
+in the gpiolib-devres.c. Consolidate devm_gpio_*() with other legacy
+APIs. While at it, clean up header inclusion block in gpiolib-devres.c.
 
---7mk5vwuaumccccci
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+v2: rebased on top of next-20240828
+ drivers/gpio/gpiolib-devres.c | 82 ++++-----------------------------
+ drivers/gpio/gpiolib-legacy.c | 86 +++++++++++++++++++++++++++++++++++
+ 2 files changed, 94 insertions(+), 74 deletions(-)
 
-On Mon, Aug 12, 2024 at 03:16:05PM GMT, Lu Baolu wrote:
-> An iommu domain is allocated in host1x_iommu_attach() and is attached to
-> host->dev. Use iommu_paging_domain_alloc() to make it explicit.
->=20
-> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
-> Link: https://lore.kernel.org/r/20240610085555.88197-8-baolu.lu@linux.int=
-el.com
-> ---
->  drivers/gpu/host1x/dev.c | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
+diff --git a/drivers/gpio/gpiolib-devres.c b/drivers/gpio/gpiolib-devres.c
+index 4987e62dcb3d..b063f466a4d6 100644
+--- a/drivers/gpio/gpiolib-devres.c
++++ b/drivers/gpio/gpiolib-devres.c
+@@ -6,15 +6,19 @@
+  * Copyright (c) 2011 John Crispin <john@phrozen.org>
+  */
+ 
+-#include <linux/module.h>
+-#include <linux/err.h>
+-#include <linux/gpio.h>
+-#include <linux/gpio/consumer.h>
+ #include <linux/device.h>
++#include <linux/err.h>
++#include <linux/export.h>
+ #include <linux/gfp.h>
++#include <linux/types.h>
++
++#include <linux/gpio/consumer.h>
+ 
+ #include "gpiolib.h"
+ 
++struct fwnode_handle;
++struct lock_class_key;
++
+ static void devm_gpiod_release(struct device *dev, void *res)
+ {
+ 	struct gpio_desc **desc = res;
+@@ -320,76 +324,6 @@ void devm_gpiod_put_array(struct device *dev, struct gpio_descs *descs)
+ }
+ EXPORT_SYMBOL_GPL(devm_gpiod_put_array);
+ 
+-static void devm_gpio_release(struct device *dev, void *res)
+-{
+-	unsigned *gpio = res;
+-
+-	gpio_free(*gpio);
+-}
+-
+-/**
+- *      devm_gpio_request - request a GPIO for a managed device
+- *      @dev: device to request the GPIO for
+- *      @gpio: GPIO to allocate
+- *      @label: the name of the requested GPIO
+- *
+- *      Except for the extra @dev argument, this function takes the
+- *      same arguments and performs the same function as
+- *      gpio_request().  GPIOs requested with this function will be
+- *      automatically freed on driver detach.
+- */
+-int devm_gpio_request(struct device *dev, unsigned gpio, const char *label)
+-{
+-	unsigned *dr;
+-	int rc;
+-
+-	dr = devres_alloc(devm_gpio_release, sizeof(unsigned), GFP_KERNEL);
+-	if (!dr)
+-		return -ENOMEM;
+-
+-	rc = gpio_request(gpio, label);
+-	if (rc) {
+-		devres_free(dr);
+-		return rc;
+-	}
+-
+-	*dr = gpio;
+-	devres_add(dev, dr);
+-
+-	return 0;
+-}
+-EXPORT_SYMBOL_GPL(devm_gpio_request);
+-
+-/**
+- *	devm_gpio_request_one - request a single GPIO with initial setup
+- *	@dev:   device to request for
+- *	@gpio:	the GPIO number
+- *	@flags:	GPIO configuration as specified by GPIOF_*
+- *	@label:	a literal description string of this GPIO
+- */
+-int devm_gpio_request_one(struct device *dev, unsigned gpio,
+-			  unsigned long flags, const char *label)
+-{
+-	unsigned *dr;
+-	int rc;
+-
+-	dr = devres_alloc(devm_gpio_release, sizeof(unsigned), GFP_KERNEL);
+-	if (!dr)
+-		return -ENOMEM;
+-
+-	rc = gpio_request_one(gpio, flags, label);
+-	if (rc) {
+-		devres_free(dr);
+-		return rc;
+-	}
+-
+-	*dr = gpio;
+-	devres_add(dev, dr);
+-
+-	return 0;
+-}
+-EXPORT_SYMBOL_GPL(devm_gpio_request_one);
+-
+ static void devm_gpio_chip_release(void *data)
+ {
+ 	struct gpio_chip *gc = data;
+diff --git a/drivers/gpio/gpiolib-legacy.c b/drivers/gpio/gpiolib-legacy.c
+index f421208ddbdd..9cb83f488cd5 100644
+--- a/drivers/gpio/gpiolib-legacy.c
++++ b/drivers/gpio/gpiolib-legacy.c
+@@ -1,4 +1,10 @@
+ // SPDX-License-Identifier: GPL-2.0
++#include <linux/bitops.h>
++#include <linux/device.h>
++#include <linux/errno.h>
++#include <linux/export.h>
++#include <linux/gfp.h>
++
+ #include <linux/gpio/consumer.h>
+ #include <linux/gpio/driver.h>
+ 
+@@ -71,3 +77,83 @@ int gpio_request(unsigned gpio, const char *label)
+ 	return gpiod_request(desc, label);
+ }
+ EXPORT_SYMBOL_GPL(gpio_request);
++
++static void devm_gpio_release(struct device *dev, void *res)
++{
++	unsigned *gpio = res;
++
++	gpio_free(*gpio);
++}
++
++/**
++ * devm_gpio_request - request a GPIO for a managed device
++ * @dev: device to request the GPIO for
++ * @gpio: GPIO to allocate
++ * @label: the name of the requested GPIO
++ *
++ * Except for the extra @dev argument, this function takes the
++ * same arguments and performs the same function as gpio_request().
++ * GPIOs requested with this function will be automatically freed
++ * on driver detach.
++ *
++ * **DEPRECATED** This function is deprecated and must not be used in new code.
++ *
++ * Returns:
++ * 0 on success, or negative errno on failure.
++ */
++int devm_gpio_request(struct device *dev, unsigned gpio, const char *label)
++{
++	unsigned *dr;
++	int rc;
++
++	dr = devres_alloc(devm_gpio_release, sizeof(unsigned), GFP_KERNEL);
++	if (!dr)
++		return -ENOMEM;
++
++	rc = gpio_request(gpio, label);
++	if (rc) {
++		devres_free(dr);
++		return rc;
++	}
++
++	*dr = gpio;
++	devres_add(dev, dr);
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(devm_gpio_request);
++
++/**
++ * devm_gpio_request_one - request a single GPIO with initial setup
++ * @dev: device to request for
++ * @gpio: the GPIO number
++ * @flags: GPIO configuration as specified by GPIOF_*
++ * @label: a literal description string of this GPIO
++ *
++ * **DEPRECATED** This function is deprecated and must not be used in new code.
++ *
++ * Returns:
++ * 0 on success, or negative errno on failure.
++ */
++int devm_gpio_request_one(struct device *dev, unsigned gpio,
++			  unsigned long flags, const char *label)
++{
++	unsigned *dr;
++	int rc;
++
++	dr = devres_alloc(devm_gpio_release, sizeof(unsigned), GFP_KERNEL);
++	if (!dr)
++		return -ENOMEM;
++
++	rc = gpio_request_one(gpio, flags, label);
++	if (rc) {
++		devres_free(dr);
++		return rc;
++	}
++
++	*dr = gpio;
++	devres_add(dev, dr);
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(devm_gpio_request_one);
+-- 
+2.43.0.rc1.1336.g36b5255a03ac
 
-Applied, thanks.
-
-Thierry
-
---7mk5vwuaumccccci
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmbPPmgACgkQ3SOs138+
-s6ErLBAArXWV8KB6676S4Mww6EFpvjmqtdeUPZADFF5+D4qAXK+eqPe/rprOAwCd
-6+tCPTAkEGrym0m4qeV44txjQOtxEM4a+YWx6WxQfCYg+oprDa/jtEF+ysICSiwe
-3fJRnrb16N/fFTaEHub+y+gAtr1BlhHmRt+zZKyNv7eCfM3tk5sMd6WcR8UCp/Ey
-zBFXXmcC5ugNsZtxITQWGcHaY6dotmlkqQpRq41NMRr4tSnJgmR3z0PwCVftt23x
-B+agCPY9txwY+vSCIwrQ/zQwP924utFtkf2avxSLhU8E/RabXCJFUtbKhe017SJC
-mNw7Ahz2a5QHaXKTjNCrO/xczR2i9RK9VOsJUgOl85zQEVE66XoFzMlkpKNZZKze
-B5jMd5Lm19Cqpl2wTRgqK5B4oulDKgwkusWOXuPTFZjocpKOzW6SsKzrmy/+/Ie+
-ICZNIv3Op1m6Bc8rK5WWHFYsY7584/3yDqmpI9pb3JeB9+VMU0UCEz7bNBHTZCAK
-kcj4LAOzk9oSvlN2h1oUBQzM+3tqh4v7Y++VVJxPi8ecNbgXekw8V76uKW0iKz9O
-uzq198fgfG0P1TvN15AtUueY3d6J8lGZuVH8FEphvkNagj6+x/dx/dJW9tu//poK
-Y8pQfxFEVSY4oC8gRlgIPwCEgFCSWKRatLXAokmYvhy3IRNc6Dc=
-=cWHB
------END PGP SIGNATURE-----
-
---7mk5vwuaumccccci--
 
