@@ -1,189 +1,124 @@
-Return-Path: <linux-kernel+bounces-305454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 296DC962EE9
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 19:50:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D645E962F01
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 19:51:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5CB681C20893
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 17:50:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 154941C208A3
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 17:51:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 141001A7ADD;
-	Wed, 28 Aug 2024 17:49:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54D651A76BB;
+	Wed, 28 Aug 2024 17:51:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AqmZBbRV"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="kGW+CQYN"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96356166302;
-	Wed, 28 Aug 2024 17:49:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 013EB1A4F35;
+	Wed, 28 Aug 2024 17:51:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724867397; cv=none; b=DTNBytlYZdZUZzRxBNBYxlEZnMbHZuumOxQW9E1QO6PCxUO5gyE5w9Foxe8TbQblmrxURpMye7jeoMvuoZj0bdNqd6DZeXP6wZF6eeghw3niPyqyl/dyOsOlpQFYBqGHuaj/85Hz/KpO68MqlM5i+ux41ZaFbz74Z+co0hFuUno=
+	t=1724867480; cv=none; b=GlBLG8jYwnURl/dX4a/xIG2EWPrLFRr/j1p0yK6GOf2rSGdAtB/HtudjTu2NGFCJW6R+Nig/IrXuXpT3LWJ0p451ZiceYiNevhJLtRx4gBouBIwBCbANqNAR6Z+KrMfDxJZhWQ+2SSHW6qz1S6nkWQQE+PTdX0f9ghcGaKD9YZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724867397; c=relaxed/simple;
-	bh=WLVw/MzwZZYc+FLwv4AVDjwEdiq3qFjmZrfxJuaPQi8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O8iHK4bRAEz8AI97Wqrx8eRi6hzkJn9CJTONGj753nX8UcdwJnaCgRitpNM8MT25njdrxiwgZ6M6jprf83vHF+QWpSKBvRyTNosM3yrrsxgEQPWmwMb0m5TeebdgLyqJ0bP0VZ22qE7aN3BMMABxL9xN9Fx0D7m+CeAPfZddbcg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AqmZBbRV; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a86910caf9cso176535166b.1;
-        Wed, 28 Aug 2024 10:49:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724867394; x=1725472194; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=LbtgMIebzvLQcLsMDmLEedziYElh6r9r50MOFoD98VM=;
-        b=AqmZBbRVI7m+7Ag83WI0MVmLzVLNzhIIHD0Pg7H3/DTb6R1nzr3hKDDFtXPt/kENir
-         df7R9dQh7OoxAsIqgudG8/ZlT5LZjBKZxfo4697JklsQpL2aP4TY6T1PNx23qbTKNb9q
-         ChNRH10YbsuK2k5nzyvK5703pDz0Mjl/SKOep9gq4pltipWTzsZMEHCMrP0iWK9BZfQk
-         g4QFm1BhOrE3jdk9RdunCZVuDPJzN3V0HI2LiESH6xq5oHRDg/qCICbnj+Pgte+E7QSv
-         4TZWbqzci/jdUVOhb4vy1Mb0kgZfFYpgw+Sq0K42vtJV06rVkBv5B7e3wgdMwFdUkI8z
-         mziw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724867394; x=1725472194;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LbtgMIebzvLQcLsMDmLEedziYElh6r9r50MOFoD98VM=;
-        b=ttu20UHvY0CVBUV9DOQqSs1KnbdzD/W0rnQXqRW/lQLh27i8vgR3pOT17Kd1S+jVMJ
-         QOTNE+USghyk0GfbodiC8VdiGxN6p7tuPU+P80G1Qui62E42f+rcXjon4Knxh5vFLT5N
-         lua0qUki7SzH3pwVqaFChxms48wFX9zL23Mr5fvO7WPbS7M50J7mlokh6N5QAh2SAgv6
-         fX3RnUrsA7iIp/akwQcrzUe9KRYPW80M6fQDAmEeE8cPnAghbRlA7Ihdmt589qZXd1gM
-         hCYQkRl3EyGmajUSxhL0BzkKhY8m3x7tTxubpOqbz38qfWjP7jUL5TxShh5Uuiu3Sfkb
-         s5iA==
-X-Forwarded-Encrypted: i=1; AJvYcCWA0xyCUha7rQ+qm8eESjmYoLYfZ6DyVvrOCikz2R3hC5/ucdnYd9syfRwOGRuiArNRIfmKA1MgsDLPHPpf@vger.kernel.org, AJvYcCWflPN4QNcb2o6cLI3rlbkKo5hyqpEZ+C5Itq9FXcjIy54FYy0Y9xZ908Pbb76fbsjjEDk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRA+4SSWekLKib4BMKASezA98kvMieL+GwjQyby94Sdb2klUfE
-	XB0Txa4QiRfs6F02KujtMQU4W0eCedSLqQv+UD5oAidCkwRBOmWZ
-X-Google-Smtp-Source: AGHT+IE4vBfeRFM4byIab76yDsQOJRX37Xos2G/MiQVHkE5Zzsz0kSeJfotFwXN4CHSqHQaZrkWSJQ==
-X-Received: by 2002:a17:907:3f8a:b0:a7a:a4cf:4f93 with SMTP id a640c23a62f3a-a897ead4b78mr36893766b.32.1724867393562;
-        Wed, 28 Aug 2024 10:49:53 -0700 (PDT)
-Received: from example.org (ip-94-112-152-157.bb.vodafone.cz. [94.112.152.157])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a86e588b39asm271462166b.159.2024.08.28.10.49.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2024 10:49:52 -0700 (PDT)
-Date: Wed, 28 Aug 2024 19:49:50 +0200
-From: Alexey Gladkov <gladkov.alexey@gmail.com>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-	linux-kbuild@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Oleg Nesterov <oleg@redhat.com>
-Subject: Re: [PATCH v2] bpf: Remove custom build rule
-Message-ID: <Zs9jPsBY_SNuuB3d@example.org>
-References: <CAK7LNAQju8OeqW_8JtNXAQWow8Ho8778Rq-Y_v22PSrbB39L0g@mail.gmail.com>
- <20240828170635.4112907-1-legion@kernel.org>
- <CAK7LNATb8dbhvdSgiNEMkdsgg93q4ZUGUxReZYNjOV3fDPnfyQ@mail.gmail.com>
+	s=arc-20240116; t=1724867480; c=relaxed/simple;
+	bh=Vu3wQoB9JYtFic0j/rwHtnjmjZKjbsRQ4ZzYVn+MFrE=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=EyPJjsJtFqGvxegPGAMtU2/+rMozF84L3TFJxEuBz8o7xyNh1YKYuAAs34lQUImWHUDBcrPv7GpvdkA41mf+t3kpnIfXYBiL79nZ2bUp6Zf6nj/VrfefFvU5QXfGNZaU8I9FLX770ScNvlxWjVsp7PHcZ2wn+O9t0MG5EhXRZWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=kGW+CQYN; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1724867436; x=1725472236; i=markus.elfring@web.de;
+	bh=LtVGxGVh9TDYbEyEfnGiuVp5FC+9j4hnBSLVAPE83ac=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=kGW+CQYNBSQqkuBaq1GlK8XiqaM5ncEdFXGuAcs0O7H1i+c2bdl7L1yFVfWiu2dU
+	 mum4MNqLpcUX8NUEWIjRD9BzwK7yk3l8bV4ro7fILPsMWYNOVlhvr1QssDf4Vfa0l
+	 hH3orzUY//aOozH6tfT/xmjUiXssyfjGgxGj+2bzjnRNvv7CEd4rYwFflv1YTb08g
+	 rMJMt6/zueAOM03ZK33l4LpoKkYZPdYu5Qgd2R0cG+/w/IqDz58F6hb7k6IhoQKIW
+	 W0t4pbTLyYkmQk6HXshTeZAOx6owbktrrG0HxuyHDCx7YSiSTgfmFyllSMH1cAFvu
+	 x+5tEZKE4y2iytkekg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MSqXS-1sWcoE0zIU-00U7H7; Wed, 28
+ Aug 2024 19:50:36 +0200
+Message-ID: <7eb981c3-4a5c-4173-a62a-7180acb9f299@web.de>
+Date: Wed, 28 Aug 2024 19:50:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAK7LNATb8dbhvdSgiNEMkdsgg93q4ZUGUxReZYNjOV3fDPnfyQ@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+To: Jie Gan <quic_jiegan@quicinc.com>, coresight@lists.linaro.org,
+ devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Bjorn Andersson <andersson@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ James Clark <james.clark@linaro.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Mike Leach <mike.leach@linaro.org>, Rob Herring <robh@kernel.org>,
+ Suzuki Poulouse <suzuki.poulose@arm.com>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Jinlong Mao <quic_jinlmao@quicinc.com>, Song Chai
+ <quic_songchai@quicinc.com>, Tingwei Zhang <quic_tingweiz@quicinc.com>,
+ Tao Zhang <quic_taozha@quicinc.com>,
+ Yuanfang Zhang <quic_yuanfang@quicinc.com>
+References: <20240828012706.543605-3-quic_jiegan@quicinc.com>
+Subject: Re: [PATCH v4 2/5] Coresight: Add trace_id function to retrieving the
+ trace ID
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240828012706.543605-3-quic_jiegan@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:rjkUlUIXEG7BqyN36JwLp90ca4DoKkKrF4nYX/VqHLE5YYvtHik
+ xl07Ou3U4ZCub7FNZ7SJQf0ONV00l3DsHMyLW2l+rBHK2wZRMOmnuhecYgCH/oEJyv3TPEy
+ HZVG5C8we3bkP8rPl1sXSWg5Jjt0zjLmr4uPbIhAU+uqJ8Wa7P/rnh1MceCoRXg3LlDQdSS
+ kleG43kfF8Koyy8NewxuQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:4H5l6eoKx5Q=;NFCpzLicFw+OLKbYbZGbHV7+FNE
+ N3E/yZCNcIbOOsqPolIn8RztVSC7/ZadGIvqR3vkHSk7zVlFuE+akgHqp+WzFb/pJ4y+08wGb
+ V7jhybsGk1exi9S2h0csm3WIYL8Lc0oxMBdxBDPsgPai9lWu4xZYfBmwMc5UBlbjU7N9FQVEy
+ Pq73arExOmIsG+WppiAjQK8dl11llbnLV4sl2juYnegn4jI46kgHHRBoAkLeZH4eTASldtHAm
+ KHIuM0HnKO7XlBfVV2P47mzYgX1d6NAkyMCB/VXATNscn/+XV/1dSSX+2uNklPitr+gAS7hFl
+ JqZvItzuQPMwBo9DmP+MAUeifQxgtuB4Y0cnnbMYM9k/maRdR3hN9Vlaz9ic/oIRpvBWDY/Rk
+ NFDIrHzwrHkzd7qCxNE9oP3F92gIJOnfTl4piCTxoHQM4JXZOev8wX48ANbyq4tibD+mjfjb2
+ ZFXi8q7ch/5gIQpf9zuILyHsJwVPjQTrU1o1CG9IdDkiCxYtCMamjJUUNo37TBV/sZ5XRp8gv
+ tVHcSJBtacjN6gy5jNmc85wD3ozy7YftWPxEjplqGXmsB5QxGvmJLjHJl5VxtDzEPNWMoKdQQ
+ avk4uRkCR515KOGmm+TI0uWX3kdorOB95/iU3BGztRQyvE3fNlo8U1pePkuWIdF5FRle6cYNV
+ ml0QMz1WtwUTN9fo1cHHjHikMyZ8ER7DIz/usbiTBZEBBhbYcEKP+h6YtKz+/JAjbXFu9T/IN
+ Ufxp+aFrPpfVRcWdKhce5K7hOqDBQdoPGjSBkhYYeJ4AgBkNaZAKDk/H/76sMvyq3N9a1iIxN
+ C8uSjzQq2wJD68Ma2k6eY+Lw==
 
-On Thu, Aug 29, 2024 at 02:22:33AM +0900, Masahiro Yamada wrote:
-> On Thu, Aug 29, 2024 at 2:07 AM Alexey Gladkov <legion@kernel.org> wrote:
-> >
-> > According to the documentation, when building a kernel with the C=2
-> > parameter, all source files should be checked. But this does not happen
-> > for the kernel/bpf/ directory.
-> >
-> > $ touch kernel/bpf/core.o
-> > $ make C=2 CHECK=true kernel/bpf/core.o
-> >
-> > Outputs:
-> >
-> >   CHECK   scripts/mod/empty.c
-> >   CALL    scripts/checksyscalls.sh
-> >   DESCEND objtool
-> >   INSTALL libsubcmd_headers
-> >   CC      kernel/bpf/core.o
-> >
-> > As can be seen the compilation is done, but CHECK is not executed. This
-> > happens because kernel/bpf/Makefile has defined its own rule for
-> > compilation and forgotten the macro that does the check.
-> >
-> > There is no need to duplicate the build code, and this rule can be
-> > removed to use generic rules.
-> >
-> > Signed-off-by: Alexey Gladkov <legion@kernel.org>
-> 
-> 
-> Did you compile-test this?
+=E2=80=A6
+> +++ b/drivers/hwtracing/coresight/coresight-sysfs.c
+> @@ -168,6 +168,7 @@ int coresight_enable_sysfs(struct coresight_device *=
+csdev)
+>  	int cpu, ret =3D 0;
+>  	struct coresight_device *sink;
+>  	struct list_head *path;
+> +	struct cs_sink_data *sink_data;
+=E2=80=A6
 
-Yes. I repeated my steps for reproduce:
+* How do you think about to use the attribute =E2=80=9C__free(kfree)=E2=80=
+=9D at more places accordingly?
+  https://elixir.bootlin.com/linux/v6.11-rc5/source/include/linux/slab.h#L=
+282
 
-$ touch kernel/bpf/core.c
-$ make C=2 CHECK=true |grep kernel/bpf/core
-  CC      kernel/bpf/core.o
-  CHECK   kernel/bpf/core.c
+* Would you like to reduce the scope for such a local variable?
 
-but maybe my config is too small.
 
-> 
-> See my previous email.
-> 
-> 
-> 
-> 
-> I said this:
-> 
-> $ cat kernel/bpf/btf_iter.c
-> #include "../../tools/lib/bpf/btf_iter.c"
-> 
-> 
-> Same for
-> kernel/bpf/btf_relocate.c
-> kernel/bpf/relo_core.c
-> 
-> 
-> 
-> 
-> 
-> 
-> 
-> 
-> 
-> 
-> 
-> > ---
-> >  kernel/bpf/Makefile | 6 ------
-> >  1 file changed, 6 deletions(-)
-> >
-> > diff --git a/kernel/bpf/Makefile b/kernel/bpf/Makefile
-> > index 0291eef9ce92..9b9c151b5c82 100644
-> > --- a/kernel/bpf/Makefile
-> > +++ b/kernel/bpf/Makefile
-> > @@ -52,9 +52,3 @@ obj-$(CONFIG_BPF_PRELOAD) += preload/
-> >  obj-$(CONFIG_BPF_SYSCALL) += relo_core.o
-> >  obj-$(CONFIG_BPF_SYSCALL) += btf_iter.o
-> >  obj-$(CONFIG_BPF_SYSCALL) += btf_relocate.o
-> > -
-> > -# Some source files are common to libbpf.
-> > -vpath %.c $(srctree)/kernel/bpf:$(srctree)/tools/lib/bpf
-> > -
-> > -$(obj)/%.o: %.c FORCE
-> > -       $(call if_changed_rule,cc_o_c)
-> > --
-> > 2.46.0
-> >
-> 
-> 
-> --
-> Best Regards
-> Masahiro Yamada
-> 
-
--- 
-Rgrds, legion
-
+Regards,
+Markus
 
