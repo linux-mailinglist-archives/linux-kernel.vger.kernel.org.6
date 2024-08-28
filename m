@@ -1,88 +1,108 @@
-Return-Path: <linux-kernel+bounces-305654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91BD49631C0
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 22:26:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4294F9631C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 22:27:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 169FAB2408F
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 20:26:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5B461F23EC7
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 20:27:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EEBE1AC440;
-	Wed, 28 Aug 2024 20:26:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10F021AC44C;
+	Wed, 28 Aug 2024 20:27:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XsHode9S"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EvD23ly0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C81DA1AAE3F;
-	Wed, 28 Aug 2024 20:26:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 503E015749A
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 20:27:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724876803; cv=none; b=WlI+ruk9I0+nJMDHOTnpUGUGeLEvZQhT9eEJKbwoEFNs6Y5hQd26Y9DyyIyvt8m8XkhPXvjuesNcRB1OMqvLRmwQt7P/q9Z6/IIcbmcaCM6j/j9ebBLeY959FpfMV9SUtuhMUjX9SAX70EZDqKGCe3X+Yg2de9KiEzdevhB9HNQ=
+	t=1724876824; cv=none; b=dE2sZ5onqPv1FnLzhwx/g8kkWhZjK1kCqCUQ2/uQub+Vy4kNb2wSg8LL4EoJ+gmu0cDjnwRLa5+mP8Uxa+X8e/3Uz4N4FHP7AZST98Er66tIP1kn/2zuM1OetHBygkXNQPQEbVXu6etcdJJdLll7Kbv7hucZFGA2XgGaPHZk1kM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724876803; c=relaxed/simple;
-	bh=Q43f6wvdjESKwx8IvcasE2ZU9/ZVOWLiHoqUlY336h8=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=tR8avp1LE9Vds5VfPsZjeJuSKO/rmkogQtPiLLXKF3ocWGrAtPbWOIidCCSUvhLRL7BBGdjdgk3GUqrDrTlxfr72/MkwgOrvdm1dJNdx0jDvgg/hk1zSyakpUOp4rkx4WMjGdbWeAy1a4+1KTNAFOtbbuqQ6EMdGokdvMABeisQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XsHode9S; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F305C4CEC0;
-	Wed, 28 Aug 2024 20:26:43 +0000 (UTC)
+	s=arc-20240116; t=1724876824; c=relaxed/simple;
+	bh=CmzwjkJ1vxFzbr1Eip2HWsK3aJZSJg4Hxr/r24h4P5w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G/B1179RcIHsWrb84W8wYyTV8CFmhddcQyqvY6B715D3peD33+W03FXKsd1LYEWGfZG3Zv0jHPr3+4FOR37nN0RMX2cl6BOP5+1BlcTXLTpwSzUiC5b2sUmKUlG4rFOneF/NTmurYQB7WEWGq6eAx/rrnPZ4SZjg+/CQJ2aW2Xk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EvD23ly0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C389FC4CEC0;
+	Wed, 28 Aug 2024 20:27:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724876803;
-	bh=Q43f6wvdjESKwx8IvcasE2ZU9/ZVOWLiHoqUlY336h8=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=XsHode9StjzQOqIks0AuhzaX0uRGdwiGE+bqxZ/ubG8x2cBleYghV/87EdMDRNI1b
-	 V9NC1lfNQH1Oxya7CkcpIt+/G3JXCX3fS5EeDMiQE9coiexyC3l2eO/FHZAKen01fM
-	 7P/GgewSAX8A0bfUk1V1YNy9JcZCl/Z549nTtz7P6Di715gTDmE/WNwUcBXh5bWJ/n
-	 uLp+EE/BCEEFhgk6zF96/N7udHnv1Xq8RkIk2KvZ38asBceg3/5Iy0+c6WAZw86X5V
-	 5JhZjzasOS3YawvLzXfS+luT8YBRi7EQ5X8l+Ns6gh0KCgxY6HOFOHOjZ5Ue5iPUXQ
-	 QtJeSdK1ItETA==
-Message-ID: <3ea62df4ff2d6615d0033322426f5f67.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1724876823;
+	bh=CmzwjkJ1vxFzbr1Eip2HWsK3aJZSJg4Hxr/r24h4P5w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EvD23ly0BWFXqFc0CjHyF5rPEKJHsLaFzY9sDU/pPYAAZkucy3alUD6E3Ly0Qgzal
+	 v8laa+OaFKC7MDnDmvIbCaV9+XN9L+bNDS+PgVSJIxvQH5t9HosBqfrDGM9ofmmew4
+	 0Zgjx7FDK4JYihDhxO9wIUBV8c3EFrFNPCfuOy6zVwpWyzMJb1ujjn3+mZZFrebXNJ
+	 ARE9eTD//neLoV0cuVhTihC60AFOhknJpZeYrKnp63eEGBKZR1ptumSs8pyrkJQac7
+	 oH5m7bl6tOh+XQfeLQI0PnD7b3/w7W1mch841pB+YC0sUhTCH7qLgelo7+gIhN8l0Y
+	 THSYiuYnffYLQ==
+Date: Wed, 28 Aug 2024 21:26:58 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Nishanth Menon <nm@ti.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Lee Jones <lee@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	afd@ti.com, bb@ti.com, d-gole@ti.com,
+	Jan Dakinevich <jan.dakinevich@salutedevices.com>
+Subject: Re: [PATCH] mfd: syscon: Set max_register_is_0 when syscon points to
+ a single register
+Message-ID: <efac0d73-9a33-4851-9f66-7dae5bfc515f@sirena.org.uk>
+References: <20240828121008.3066002-1-nm@ti.com>
+ <f72500a5-4514-4920-a7f0-3fc8e6874615@sirena.org.uk>
+ <20240828133229.67bej3utpgrmzr3p@retired>
+ <ce44b268-d138-445d-a149-e5348897d3c5@sirena.org.uk>
+ <20240828144434.oydsgflsqy5vibxe@sapling>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240820055705.3922754-6-quic_varada@quicinc.com>
-References: <20240820055705.3922754-1-quic_varada@quicinc.com> <20240820055705.3922754-6-quic_varada@quicinc.com>
-Subject: Re: [PATCH v7 5/7] clk: qcom: gcc-ipq9574: Add CPR clock definition
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Varadarajan Narayanan <quic_varada@quicinc.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Varadarajan Narayanan <quic_varada@quicinc.com>, andersson@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org, ilia.lin@kernel.org, konradybcio@kernel.org, krzk+dt@kernel.org, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, mturquette@baylibre.com, rafael@kernel.org, robh@kernel.org, ulf.hansson@linaro.org, viresh.kumar@linaro.org
-Date: Wed, 28 Aug 2024 13:26:41 -0700
-User-Agent: alot/0.10
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="EmOHjQImvootxwM+"
+Content-Disposition: inline
+In-Reply-To: <20240828144434.oydsgflsqy5vibxe@sapling>
+X-Cookie: You are number 6!  Who is number one?
 
-Quoting Varadarajan Narayanan (2024-08-19 22:57:03)
-> diff --git a/drivers/clk/qcom/gcc-ipq9574.c b/drivers/clk/qcom/gcc-ipq957=
-4.c
-> index 80fc94d705a0..058cde71b202 100644
-> --- a/drivers/clk/qcom/gcc-ipq9574.c
-> +++ b/drivers/clk/qcom/gcc-ipq9574.c
-> @@ -3997,6 +3997,43 @@ static struct clk_branch gcc_xo_div4_clk =3D {
->         },
->  };
-> =20
-> +static const struct freq_tbl ftbl_hmss_rbcpr_clk_src[] =3D {
-> +       F(24000000, P_XO, 1, 0, 0),
-> +       { }
-> +};
-> +
-> +static struct clk_rcg2 rbcpr_clk_src =3D {
-> +       .cmd_rcgr =3D 0x48044,
-> +       .mnd_width =3D 0,
-> +       .hid_width =3D 5,
-> +       .parent_map =3D gcc_xo_map,
-> +       .freq_tbl =3D ftbl_gp1_clk_src,
-> +       .clkr.hw.init =3D &(struct clk_init_data){
 
-Please mark these clk_init_data structures as const.=20
+--EmOHjQImvootxwM+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> +               .name =3D "rbcpr_clk_src",
-> +               .parent_data =3D gcc_xo_gpll0_gpll4,
+On Wed, Aug 28, 2024 at 09:44:34AM -0500, Nishanth Menon wrote:
+
+> This is a patch for syscon, not regmap. I am a bit confused as to what
+> objection beyond the "Fixes" usage (which I can drop
+> in a respin) you may have here, will appreciate if you are NAKing the
+> patch and on what rationale.
+
+> I understand that regmap considers the max_register usage entirely
+> optional, but syscon does already use it (my patch doesn't introduce
+> it). I am just getting syscon to catchup to what regmap already
+> provides.
+
+If you are absolutely confident that all syscon users know how big their
+regmap is then modulo the claim that it's a fix for an unrelated patch
+which doesn't change the behaviour for these regmaps at all then it's
+fine.
+
+--EmOHjQImvootxwM+
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbPiBIACgkQJNaLcl1U
+h9B/eQf/e7JcAyioIfJEyx9QaxhxH9VpJ7Q1ikXsUdi8HaUxG2Nfh7boJKFBeQd3
+/8ZwfgTAxdYHEq780ZcfcrFXvkFqAeZOQ6ODS7KeyIX9JZbbcklr3SMGI2IT+MxF
+h1w5yANSjlKSym9CVGY6UKtUPV0AgvxjMzNVeOCCTqzCI3h/2R4dX+2FRv+jwYd1
+lmmbzQmjkqIVvHmSPN0JYfDoLxymK3bvvvC2YFnSqA3wu+AJNYnEGU0nKqm7+0Vf
+zoh8oS2b9AQH6lJyISHCDzeUuPkibwTyHI7UlfQwNTwh4NqvEXPKCbKR3sqGvB4y
+heXKBp/4m64aYbYAw65OYLc86Q24Zg==
+=N1aE
+-----END PGP SIGNATURE-----
+
+--EmOHjQImvootxwM+--
 
