@@ -1,91 +1,175 @@
-Return-Path: <linux-kernel+bounces-304287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7E6D961D35
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 05:52:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CEA8961D37
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 05:54:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 85E6FB223BA
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 03:52:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B2C54B2351F
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 03:54:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47D093B298;
-	Wed, 28 Aug 2024 03:52:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A406A13E3EF;
+	Wed, 28 Aug 2024 03:53:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="K/hp7qWV"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jmClLio8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C17CD7D3F1
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 03:52:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D79FBDDC1;
+	Wed, 28 Aug 2024 03:53:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724817160; cv=none; b=AerMzUNgwhzzBQq4ivWICi8aSJFSQknQib54iTuJ8QfgTrpSAU7x8SYwjmP6CVlAWAHescPSP7tE6FoLcgxzQ7aQ11S+PL6HJXpSGJVwaym/R8Vt7M7jmbuH894bsLRoX2ho20M2auIjDHnxioOkoz0GYcFXhVT53iT3ZbHzkjQ=
+	t=1724817238; cv=none; b=eojZ4VKngCKsIJHnbcHaxMmbSjgbkUyn+DYCqfJI6fmUBm+rul3zZaoGQPGTgiS3gOOXbIQbgZgBIFFwc2NyvgDF3AWFhgAJ6V8nE+ZgmVOVNwPPbb1XDW8ctDUQX72esE3c4El5pxRloErjA0ZbHXlc1zMqAJhpheoSbyP62YE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724817160; c=relaxed/simple;
-	bh=JsgEEgVWbCBTCqIe0q/dIQDphbctIgCikCN6lE9Jil0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=g7LJsq3Xjr/xWcAfOmsAUP2uWmspMiXLGlhPbDjmxla2WktwamGePnp1Bebj4yvSnxMrAi1E63xG7uIDIPwvgY2Ail0ItVToYPSBPUZakh82xXl9cx8qXqO8HIOMX7GgPIGqunpqaLh3jZpm0l4H4DVJ53GQ0ta62CzZfpd7ryA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=K/hp7qWV; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
-	s=201909; t=1724817155;
-	bh=/coqd0kyu+RMCNpqcNa+zY0sEmKMxLb/nShBI2s8tWw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=K/hp7qWVj7zmla6BZonpnHCqTjnE2DuKbPZcKVCX3wgfCCeQiJvOQL80cfrSqO5+h
-	 hx4pBnZ8BcOIPMz3Paz734Wmp4nzEYqc4qnEwfZB4r1mFnNy0XVG7FfTHp4VPTiepT
-	 Av8Q0KPwp4raRpMrUGc55EYYj2+Dj98Qllp7DXgUcT8hUpG6v6WWd4AXdXy9WSjxiV
-	 TCyBw/DcpS0d18qABDaFLCSEAYqAy/bsi2rS7BsJOlELHLIRCvmD849HF8AfkvWZhA
-	 ZcLksUcuzlQyvucucCMe3uJ5eB3M31IiUgb4X9gvGCQDxicW7vRcS7cGQQZ5i7En4f
-	 bXu2gCj/CdNuQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Wtr8f4hX6z4wd0;
-	Wed, 28 Aug 2024 13:52:34 +1000 (AEST)
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: "Nysal Jan K.A." <nysal@linux.ibm.com>, Nicholas Piggin <npiggin@gmail.com>
-Cc: "Nysal Jan K.A." <nysal@linux.ibm.com>, Geetika Moolchandani
- <geetika@linux.ibm.com>, Vaishnavi Bhat <vaish123@in.ibm.com>, Jijo
- Varghese <vargjijo@in.ibm.com>, Christophe Leroy
- <christophe.leroy@csgroup.eu>, Naveen N Rao <naveen@kernel.org>,
- linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] powerpc/qspinlock: Fix deadlock in MCS queue
-In-Reply-To: <20240826081251.744325-1-nysal@linux.ibm.com>
-References: <20240826081251.744325-1-nysal@linux.ibm.com>
-Date: Wed, 28 Aug 2024 13:52:33 +1000
-Message-ID: <871q29fgn2.fsf@mail.lhotse>
+	s=arc-20240116; t=1724817238; c=relaxed/simple;
+	bh=yX0jAkexmM2SAzVU03uOMsxc/ExvX8+68XYeNfW/prc=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=BeHffqPsPt+1y62GB5hXKYAZhSx0Oq/vFS5huMan9IDjtxU/u1fdKIu6LLLu7txr8cNxos0fUZrgSlVI3infHItW1CcYaTU5MAOmnzhY2JUlzOkW8QjwK+NsvYFWV2KGu8KhCRD74fjsY+3QP3X0IyuHVXoF9pg/CJUe4TGPz3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jmClLio8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 014FFC4FEF4;
+	Wed, 28 Aug 2024 03:53:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724817237;
+	bh=yX0jAkexmM2SAzVU03uOMsxc/ExvX8+68XYeNfW/prc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=jmClLio8hGSqDakn2KGNnm+mZEy/N5jhzqme6TVTWgLQ6wPnKmpyb8p6IX2pIg3O4
+	 E5vA6FY/gSNkB0YEUqZwsfyyLPQjXYjswLQ5SHQ2vyGyyqUk/XDlmUWUe6g0/1avvu
+	 GlO1aCrWSQpaxx/zttkvM7epoOf2zj7ZPIzSN29e43J08mqKJ3h1WtY10y+PNg50vW
+	 QCCllL9Yl8f+Fjs0kH0c16lMtaRJj1vLxrqbzdw4LWxl5DYolChX9znBZPZZ9onD+e
+	 bSjuksLzlybaBau14l4lQTZa5AWf0AVIpg/8e1UD4sGXXmMOUyMhy1+CzQuT9ySirK
+	 8aXGehWoB7W6Q==
+Date: Wed, 28 Aug 2024 12:53:53 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Andrii Nakryiko <andrii@kernel.org>
+Cc: linux-trace-kernel@vger.kernel.org, rostedt@goodmis.org,
+ peterz@infradead.org, oleg@redhat.com, bpf@vger.kernel.org,
+ linux-kernel@vger.kernel.org, jolsa@kernel.org
+Subject: Re: [PATCH v3] uprobes: turn trace_uprobe's nhit counter to be
+ per-CPU one
+Message-Id: <20240828125353.86babe6e781834e9cc988e37@kernel.org>
+In-Reply-To: <20240813203409.3985398-1-andrii@kernel.org>
+References: <20240813203409.3985398-1-andrii@kernel.org>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-"Nysal Jan K.A." <nysal@linux.ibm.com> writes:
-> If an interrupt occurs in queued_spin_lock_slowpath() after we increment
-> qnodesp->count and before node->lock is initialized, another CPU might
-> see stale lock values in get_tail_qnode(). If the stale lock value happens
-> to match the lock on that CPU, then we write to the "next" pointer of
-> the wrong qnode. This causes a deadlock as the former CPU, once it becomes
-> the head of the MCS queue, will spin indefinitely until it's "next" pointer
-> is set by its successor in the queue. This results in lockups similar to
-> the following.
-...
->
-> Thanks to Saket Kumar Bhaskar for help with recreating the issue
->
-> Fixes: 84990b169557 ("powerpc/qspinlock: add mcs queueing for contended waiters")
-> Cc: stable@vger.kernel.org # v6.2+
-> Reported-by: Geetika Moolchandani <geetika@linux.ibm.com>
-> Reported-by: Vaishnavi Bhat <vaish123@in.ibm.com>
-> Reported-by: Jijo Varghese <vargjijo@in.ibm.com>
- 
-Do we have links for any of these reports?
+On Tue, 13 Aug 2024 13:34:09 -0700
+Andrii Nakryiko <andrii@kernel.org> wrote:
 
-cheers
+> trace_uprobe->nhit counter is not incremented atomically, so its value
+> is questionable in when uprobe is hit on multiple CPUs simultaneously.
+> 
+> Also, doing this shared counter increment across many CPUs causes heavy
+> cache line bouncing, limiting uprobe/uretprobe performance scaling with
+> number of CPUs.
+> 
+> Solve both problems by making this a per-CPU counter.
+> 
+
+Looks good to me. Let me pick it.
+
+> Reviewed-by: Oleg Nesterov <oleg@redhat.com>
+> Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+> ---
+>  kernel/trace/trace_uprobe.c | 24 +++++++++++++++++++++---
+>  1 file changed, 21 insertions(+), 3 deletions(-)
+> 
+> diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
+> index c98e3b3386ba..c3df411a2684 100644
+> --- a/kernel/trace/trace_uprobe.c
+> +++ b/kernel/trace/trace_uprobe.c
+> @@ -17,6 +17,7 @@
+>  #include <linux/string.h>
+>  #include <linux/rculist.h>
+>  #include <linux/filter.h>
+> +#include <linux/percpu.h>
+>  
+>  #include "trace_dynevent.h"
+>  #include "trace_probe.h"
+> @@ -62,7 +63,7 @@ struct trace_uprobe {
+>  	char				*filename;
+>  	unsigned long			offset;
+>  	unsigned long			ref_ctr_offset;
+> -	unsigned long			nhit;
+> +	unsigned long __percpu		*nhits;
+>  	struct trace_probe		tp;
+>  };
+>  
+> @@ -337,6 +338,12 @@ alloc_trace_uprobe(const char *group, const char *event, int nargs, bool is_ret)
+>  	if (!tu)
+>  		return ERR_PTR(-ENOMEM);
+>  
+> +	tu->nhits = alloc_percpu(unsigned long);
+> +	if (!tu->nhits) {
+> +		ret = -ENOMEM;
+> +		goto error;
+> +	}
+> +
+>  	ret = trace_probe_init(&tu->tp, event, group, true, nargs);
+>  	if (ret < 0)
+>  		goto error;
+> @@ -349,6 +356,7 @@ alloc_trace_uprobe(const char *group, const char *event, int nargs, bool is_ret)
+>  	return tu;
+>  
+>  error:
+> +	free_percpu(tu->nhits);
+>  	kfree(tu);
+>  
+>  	return ERR_PTR(ret);
+> @@ -362,6 +370,7 @@ static void free_trace_uprobe(struct trace_uprobe *tu)
+>  	path_put(&tu->path);
+>  	trace_probe_cleanup(&tu->tp);
+>  	kfree(tu->filename);
+> +	free_percpu(tu->nhits);
+>  	kfree(tu);
+>  }
+>  
+> @@ -815,13 +824,21 @@ static int probes_profile_seq_show(struct seq_file *m, void *v)
+>  {
+>  	struct dyn_event *ev = v;
+>  	struct trace_uprobe *tu;
+> +	unsigned long nhits;
+> +	int cpu;
+>  
+>  	if (!is_trace_uprobe(ev))
+>  		return 0;
+>  
+>  	tu = to_trace_uprobe(ev);
+> +
+> +	nhits = 0;
+> +	for_each_possible_cpu(cpu) {
+> +		nhits += per_cpu(*tu->nhits, cpu);
+> +	}
+> +
+>  	seq_printf(m, "  %s %-44s %15lu\n", tu->filename,
+> -			trace_probe_name(&tu->tp), tu->nhit);
+> +		   trace_probe_name(&tu->tp), nhits);
+>  	return 0;
+>  }
+>  
+> @@ -1512,7 +1529,8 @@ static int uprobe_dispatcher(struct uprobe_consumer *con, struct pt_regs *regs)
+>  	int ret = 0;
+>  
+>  	tu = container_of(con, struct trace_uprobe, consumer);
+> -	tu->nhit++;
+> +
+> +	this_cpu_inc(*tu->nhits);
+>  
+>  	udd.tu = tu;
+>  	udd.bp_addr = instruction_pointer(regs);
+> -- 
+> 2.43.5
+> 
+
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
