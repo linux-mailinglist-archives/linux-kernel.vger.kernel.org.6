@@ -1,53 +1,85 @@
-Return-Path: <linux-kernel+bounces-304788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05D0D9624E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 12:27:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DB4396250F
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 12:37:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 799BDB2153C
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 10:27:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 479C41F21959
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 10:37:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82E3716B720;
-	Wed, 28 Aug 2024 10:27:15 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00AED16C697;
+	Wed, 28 Aug 2024 10:37:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="u8xRLBYo"
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED55886250;
-	Wed, 28 Aug 2024 10:27:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B424158DC2;
+	Wed, 28 Aug 2024 10:37:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724840835; cv=none; b=Ggpf2L2h0O7/QZVRwUgp9CnBDvWS8opo2K1PyID4WPPvuF+d0syKIrtkaHZoCLJcRfrskiVT3q0Ni0DwGYWZO9q/YWvo6QVbOhWGhG1QUP+uL4U/1lqjg4LlcM1I206nIMiSsJ9JXh/vNdO0P72kek5sn8hEUT2jx+eX9v48aPM=
+	t=1724841463; cv=none; b=C3KP9ntMzfjug84ZgZYbFr8J/WflUYZNI8KQQ/GVqGLRTeyVulRozhK3KV5fUMeSuuZtXobcS8qM+I6DqX07ZxCDZHT38YbMzeyv8DEfFNpFh78IcnqKzn8c37serVyzHBxuoiv4/J3CLtSvXLjhi7SsrfJv3JY5T4u6pGLuFKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724840835; c=relaxed/simple;
-	bh=RWr9+h0rvHq0GKm8IUgq023hhxbkVtf+MlTrlE28Ho4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=tHSUylsMvrBcKMI8Pdrw+1IzMgmDoDLF6wszpc07GSKmnVdP+lTvT0n62qqPkrgdTp2N6sTho9SNSSP2QKoHV685RyhTN2WyNqUOO1ejD/IyVLHwDs9RkkWu56ErXLQW+oivYkJMO0ZqvxBndOheEXsdY9sL8VKg+MzG5bKacOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Wv0r4297qz1HFth;
-	Wed, 28 Aug 2024 18:23:48 +0800 (CST)
-Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
-	by mail.maildlp.com (Postfix) with ESMTPS id 0D1A214013B;
-	Wed, 28 Aug 2024 18:27:08 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by kwepemh500013.china.huawei.com
- (7.202.181.146) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 28 Aug
- 2024 18:27:07 +0800
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-To: <kashyap.desai@broadcom.com>, <sumit.saxena@broadcom.com>,
-	<shivasharan.srikanteshwara@broadcom.com>, <chandrakanth.patil@broadcom.com>,
-	<James.Bottomley@HansenPartnership.com>, <martin.petersen@oracle.com>,
-	<megaraidlinux.pdl@broadcom.com>, <linux-scsi@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: <ruanjinjie@huawei.com>
-Subject: [PATCH] scsi: megaraid: Use PCI_DEVID() macro to simplify the code
-Date: Wed, 28 Aug 2024 18:35:07 +0800
-Message-ID: <20240828103507.3680658-1-ruanjinjie@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1724841463; c=relaxed/simple;
+	bh=2JEtkyYBzbNUNWYD6K3reCmf/PfliNsGWxt62ICcuOU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=MVkk/3iWA1hfCUW101CiiQP+imjLG83B/XOn5VAABouImo2Vrr3NB+9C+BdK3l0nM5+da4hMtyg1/0tzHXBma3xZXm0FhQgtXIkHPp8aFcJuJ1CpZs4yHg2BbbZsRpUMsppi8eYmq++DWoYLwDCFlLVSdoLSrIYMqHWQMbzYcbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=u8xRLBYo; arc=none smtp.client-ip=80.241.56.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4Wv18138Bxz9tG3;
+	Wed, 28 Aug 2024 12:37:37 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
+	t=1724841457;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DYW8e2RAgi5MkOkqfurv6e1luZxwkEFySGMNtg8Nzlo=;
+	b=u8xRLBYo8f3HvWo+EN4nNZ/jxSloc0Ej/w6jhQXsNFzY03E55oe7bCKEI2WM2rgUwMS0X7
+	EKZbB+0IHPy9pJamyj10EgVQqcDxHk+AeYXdWPmlB1Ibw+nzXfSSw6vmy7C2koNNuxe5rt
+	Tirf0RKIJYTrk1eKLKqlsVeunacYT3KHktJhhmoCvGGRaB1kK56kWdH061ts+i6mXyd96h
+	50k7sRb8GRun9MayBzaZqCL0qBK/lwESCdDTtOqxLqSBHVMi28lRgyyMWG/51li8Nd0gwJ
+	o7L/9gC82L/dOmA7OZ5mvDjhookETmIZFXmdzKYghJ0xGAUdRMVOqIdd9AlhaA==
+From: Aleksa Sarai <cyphar@cyphar.com>
+To: fstests@vger.kernel.org,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Alexander Aring <alex.aring@gmail.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>
+Cc: Aleksa Sarai <cyphar@cyphar.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	Josef Bacik <josef@toxicpanda.com>,
+	linux-fsdevel@vger.kernel.org,
+	linux-nfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-api@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Subject: [PATCH xfstests v1 1/2] statx: update headers to include newer statx fields
+Date: Wed, 28 Aug 2024 20:37:05 +1000
+Message-ID: <20240828103706.2393267-1-cyphar@cyphar.com>
+In-Reply-To: <20240828-exportfs-u64-mount-id-v3-0-10c2c4c16708@cyphar.com>
+References: <20240828-exportfs-u64-mount-id-v3-0-10c2c4c16708@cyphar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,31 +87,84 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemh500013.china.huawei.com (7.202.181.146)
+X-Rspamd-Queue-Id: 4Wv18138Bxz9tG3
 
-The macro PCI_DEVID() can be used instead of compose it manually.
+These come from Linux v6.11-rc5.
 
-Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
 ---
- drivers/scsi/megaraid/megaraid_mbox.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ src/open_by_handle.c |  4 +++-
+ src/statx.h          | 22 ++++++++++++++++++++--
+ 2 files changed, 23 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/scsi/megaraid/megaraid_mbox.c b/drivers/scsi/megaraid/megaraid_mbox.c
-index bc867da650b6..92107a125aa2 100644
---- a/drivers/scsi/megaraid/megaraid_mbox.c
-+++ b/drivers/scsi/megaraid/megaraid_mbox.c
-@@ -3730,7 +3730,7 @@ gather_hbainfo(adapter_t *adapter, mraid_hba_info_t *hinfo)
- 	hinfo->irq		= adapter->host->irq;
- 	hinfo->baseport		= ADAP2RAIDDEV(adapter)->baseport;
+diff --git a/src/open_by_handle.c b/src/open_by_handle.c
+index 0f74ed08b1f0..d9c802ca9bd1 100644
+--- a/src/open_by_handle.c
++++ b/src/open_by_handle.c
+@@ -82,12 +82,14 @@ Examples:
+ #include <string.h>
+ #include <fcntl.h>
+ #include <unistd.h>
+-#include <sys/stat.h>
+ #include <sys/types.h>
+ #include <errno.h>
+ #include <linux/limits.h>
+ #include <libgen.h>
  
--	hinfo->unique_id	= (hinfo->pci_bus << 8) | adapter->pdev->devfn;
-+	hinfo->unique_id	= PCI_DEVID(hinfo->pci_bus, adapter->pdev->devfn);
- 	hinfo->host_no		= adapter->host->host_no;
++#include <sys/stat.h>
++#include "statx.h"
++
+ #define MAXFILES 1024
  
- 	return 0;
+ struct handle {
+diff --git a/src/statx.h b/src/statx.h
+index 3f239d791dfe..935cb2ed415e 100644
+--- a/src/statx.h
++++ b/src/statx.h
+@@ -102,7 +102,7 @@ struct statx {
+ 	__u64	stx_ino;	/* Inode number */
+ 	__u64	stx_size;	/* File size */
+ 	__u64	stx_blocks;	/* Number of 512-byte blocks allocated */
+-	__u64	__spare1[1];
++	__u64	stx_attributes_mask; /* Mask to show what's supported in stx_attributes */
+ 	/* 0x40 */
+ 	struct statx_timestamp	stx_atime;	/* Last access time */
+ 	struct statx_timestamp	stx_btime;	/* File creation time */
+@@ -114,7 +114,18 @@ struct statx {
+ 	__u32	stx_dev_major;	/* ID of device containing file [uncond] */
+ 	__u32	stx_dev_minor;
+ 	/* 0x90 */
+-	__u64	__spare2[14];	/* Spare space for future expansion */
++	__u64	stx_mnt_id;
++	__u32	stx_dio_mem_align;	/* Memory buffer alignment for direct I/O */
++	__u32	stx_dio_offset_align;	/* File offset alignment for direct I/O */
++	/* 0xa0 */
++	__u64	stx_subvol;	/* Subvolume identifier */
++	__u32	stx_atomic_write_unit_min;	/* Min atomic write unit in bytes */
++	__u32	stx_atomic_write_unit_max;	/* Max atomic write unit in bytes */
++	/* 0xb0 */
++	__u32   stx_atomic_write_segments_max;	/* Max atomic write segment count */
++	__u32   __spare1[1];
++	/* 0xb8 */
++	__u64	__spare3[9];	/* Spare space for future expansion */
+ 	/* 0x100 */
+ };
+ 
+@@ -139,6 +150,13 @@ struct statx {
+ #define STATX_BLOCKS		0x00000400U	/* Want/got stx_blocks */
+ #define STATX_BASIC_STATS	0x000007ffU	/* The stuff in the normal stat struct */
+ #define STATX_BTIME		0x00000800U	/* Want/got stx_btime */
++#define STATX_MNT_ID		0x00001000U	/* Got stx_mnt_id */
++#define STATX_DIOALIGN		0x00002000U	/* Want/got direct I/O alignment info */
++#define STATX_MNT_ID_UNIQUE	0x00004000U	/* Want/got extended stx_mount_id */
++#define STATX_SUBVOL		0x00008000U	/* Want/got stx_subvol */
++#define STATX_WRITE_ATOMIC	0x00010000U	/* Want/got atomic_write_* fields */
++
++#define STATX__RESERVED		0x80000000U	/* Reserved for future struct statx expansion */
+ #define STATX_ALL		0x00000fffU	/* All currently supported flags */
+ 
+ /*
 -- 
-2.34.1
+2.46.0
 
 
