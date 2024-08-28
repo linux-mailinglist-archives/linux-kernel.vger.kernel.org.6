@@ -1,203 +1,122 @@
-Return-Path: <linux-kernel+bounces-305568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7252796309A
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 21:01:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2C1F9630A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 21:01:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8AFB21C22585
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 19:01:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82D43B210C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 19:01:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 970CC1ABEAC;
-	Wed, 28 Aug 2024 19:00:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 320531ABEBF;
+	Wed, 28 Aug 2024 19:01:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="cnyW3MOE"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Wmz9FVVU"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EAC61993AF;
-	Wed, 28 Aug 2024 19:00:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB26B45C1C;
+	Wed, 28 Aug 2024 19:01:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724871650; cv=none; b=D3NdP118ZSamLtikyR16iycEL00Hhl81wWDt4hVceKz9JTwWHnXrkvab8KGF8rwGC663ZFuC5rY6rrvChq7WxGpr+dvkr+dsSX7doZPQ6zXy1FVtmyu4qVVopk9a6/lnHawNlM+Ye7lPytpRgOkVKHFTZJ6zpZ7RKnlcbBcrsEI=
+	t=1724871679; cv=none; b=U5gV/y9hI86ccsUbbXTn+5eyesCeJZIpYxxnVEx1HUGcUEnu7ENolcVD1PiaCq0R4xNtYVrqA+JW1Fwj492edcuMAz7IAPVGU51ESLN0/W7PqCdScyO35FHBf2r7xFuhEajE7bS3ev+ajPiUbB14XOt1SQ3zObShbCMXRVXoxl4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724871650; c=relaxed/simple;
-	bh=RBJz/zzglqhWIoTl5eUntzhmPrkWOg8/XY8mlpDT9ww=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=QJprGd9zNE86UXwBAnrYQR2Oti94yA5csJ0TK+SGomybTMdRK6n6kPjx5bOS0cZ9h+Ldpnpc72uI50UDdHg3TdYn5rG03J04Xxn8X/GZFgTmXSvvdYu1kckfwJ99TwS667pU84u0Zmxz9vWlQjVvc/b5x4Gc6eaXenPNlkXQ/2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=cnyW3MOE; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47SBC6xs002429;
-	Wed, 28 Aug 2024 19:00:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Ac2F4en+f7psj+DcGIT6h3TuBaKdmQsv/G+RfBE8thg=; b=cnyW3MOEcbliUvTA
-	4au+ulRW4w3FEnGSGxrSipH1r4oIA0tMyS77eUdXDz+AbhWmey5l/pHYt4D5EWdk
-	tNG3Uy5RicqhGk5BXkhvQ4BTSGrIvINoB1WC3SNXKUC86hR/t/I2sKk07PvncRBQ
-	mqKB4W4egzGIFF9khuayZWoMZiTP3/sdkWMxzTizdSRFBZLcjBu7l7H5PM3PmV9s
-	DZRwiDH/nr/EGhWNbzn3lQDBHiZ7CzLJFQLYdffJxVt8I0hZpaGb45K+7APrFLd9
-	8kAOE2WNbUJnvc++LCye5wtS1aoJJxSVgBxlEvt2ZKtXXsMeFtd7s4UMJjT2nXko
-	+6nFGA==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 419puuath0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 28 Aug 2024 19:00:19 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47SJ0FP4022838
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 28 Aug 2024 19:00:15 GMT
-Received: from [10.110.100.101] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 28 Aug
- 2024 12:00:14 -0700
-Message-ID: <2133dfd6-40f4-41cb-85ea-63fd9467a75f@quicinc.com>
-Date: Wed, 28 Aug 2024 12:00:14 -0700
+	s=arc-20240116; t=1724871679; c=relaxed/simple;
+	bh=W49lIIQLhc25HkMPMv7pqc/BGKv8KK5E0dnT9vOr82A=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Wh/GBZNllvkjUCoWSf+SoK0jDev0FIxqtG51ELDr8jL0Msjn3Pb5p6/TAG3grw8ZhJbUKV43wC4FExG2lcT36WjaK0GOo/YKQw7w61p7e9pRV3yfICsD99U5u9KhkkGTd/2ZPntU2b6iaZYxA0q/nO9O9UnSPZ7ZPOvgipsRYQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Wmz9FVVU; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47SJ1C87053966;
+	Wed, 28 Aug 2024 14:01:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1724871672;
+	bh=lMqr6G602EKrXBLjx4gdC8qgvRTCanVR3j+HV2xUhlc=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=Wmz9FVVU3Z9AF2HDSU5mE5idvg/uefrzc3Ubv6KYOBcqqgv0P8FRR8cMKpVTDNuWT
+	 4h35xifS0M/t8sZOQDM4wxyktYd5io8GWpARpUq4DXHb+MHW0I0b80hQ3CA97j1cFY
+	 WcSu9u/QmfozDgR7Wzp21vsE0uJgCm3tKjSM2C7o=
+Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47SJ1BGB064204
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 28 Aug 2024 14:01:12 -0500
+Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 28
+ Aug 2024 14:01:11 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 28 Aug 2024 14:01:11 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47SJ1BG3056559;
+	Wed, 28 Aug 2024 14:01:11 -0500
+From: Nishanth Menon <nm@ti.com>
+To: Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Bryan Brattlof <bb@ti.com>
+CC: Nishanth Menon <nm@ti.com>, <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Vibhore Vardhan
+	<vibhore@ti.com>
+Subject: Re: [PATCH] arm64: dts: ti: k3-am62p5-sk: Remove CTS/RTS from wkup_uart0 pinctrl
+Date: Wed, 28 Aug 2024 14:01:10 -0500
+Message-ID: <172487163881.3443021.2235453208168583366.b4-ty@ti.com>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <20240826-am62p-v1-1-b713b48628d1@ti.com>
+References: <20240826-am62p-v1-1-b713b48628d1@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v25 00/33] Introduce QC USB SND audio offloading support
-To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        <srinivas.kandagatla@linaro.org>, <mathias.nyman@intel.com>,
-        <perex@perex.cz>, <conor+dt@kernel.org>, <dmitry.torokhov@gmail.com>,
-        <corbet@lwn.net>, <broonie@kernel.org>, <lgirdwood@gmail.com>,
-        <tiwai@suse.com>, <krzk+dt@kernel.org>, <Thinh.Nguyen@synopsys.com>,
-        <bgoswami@quicinc.com>, <robh@kernel.org>,
-        <gregkh@linuxfoundation.org>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-sound@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        <linux-input@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>, <alsa-devel@alsa-project.org>
-References: <20240823200101.26755-1-quic_wcheng@quicinc.com>
- <f4e609c0-92ff-4724-8243-bfe5de50d308@linux.intel.com>
-Content-Language: en-US
-From: Wesley Cheng <quic_wcheng@quicinc.com>
-In-Reply-To: <f4e609c0-92ff-4724-8243-bfe5de50d308@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: jyj30OcvCZMaYaVv6BDWhbv4i4P4-mXk
-X-Proofpoint-ORIG-GUID: jyj30OcvCZMaYaVv6BDWhbv4i4P4-mXk
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-28_08,2024-08-28_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- impostorscore=0 adultscore=0 malwarescore=0 suspectscore=0 bulkscore=0
- clxscore=1015 mlxlogscore=999 mlxscore=0 phishscore=0 lowpriorityscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408280138
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Hi Pierre,
+Hi Bryan Brattlof,
 
-On 8/26/2024 2:28 AM, Pierre-Louis Bossart wrote:
->> Changelog
->> --------------------------------------------
->> Changes in v25:
->> - Cleanups on typos mentioned within the xHCI layers
->> - Modified the xHCI interrupter search if clients specify interrupter index
->> - Moved mixer_usb_offload into its own module, so that other vendor offload USB
->> modules can utilize it also.
->> - Added support for USB audio devices that may have multiple PCM streams, as
->> previous implementation only assumed a single PCM device.  SOC USB will be
->> able to handle an array of PCM indexes supported by the USB audio device.
->> - Added some additional checks in the QC USB offload driver to check that device
->> has at least one playback stream before allowing to bind
->> - Reordered DT bindings to fix the error found by Rob's bot.  The patch that
->> added USB_RX was after the example was updated.
->> - Updated comments within SOC USB to clarify terminology and to keep it consistent
->> - Added SND_USB_JACK type for notifying of USB device audio connections
-> I went through the code and didn't find anything that looked like a
-> major blocker. There are still a number of cosmetic things you'd want to
-> fix such as using checkpatch.pl --strict --codespell to look for obvious
-> style issues and typos, see selection below. git am also complains about
-> EOF lines.
+On Mon, 26 Aug 2024 13:07:48 -0500, Bryan Brattlof wrote:
+> wkup_uart0 is a reserved node that is used by Device Manager firmware.
+> Enabling pinctrl for CTS and RTS breaks the wakeup functionality of
+> wkup_uart0. Hence they have been dropped.
+> 
+> 
 
-Thanks for the consistent reviews.  Will fix the checkpatch errors and mis-spells.  I didn't have codespell added so fixed that and resolved the typos.
+I have applied the following to branch ti-k3-dts-next on [1].
+Thank you!
 
-Thanks
+[1/1] arm64: dts: ti: k3-am62p5-sk: Remove CTS/RTS from wkup_uart0 pinctrl
+      commit: 0c95ffb74eec3c3d0a5e712984f0c095e58a1021
 
-Wesley Cheng
+I did do a minor commit message cleanup to keep it sensible.
 
-> Overall this is starting to look good and ready for other reviewers to
-> look at.
->
->
->
-> WARNING: 'reaquire' may be misspelled - perhaps 'reacquire'?
-> #54: FILE: drivers/usb/host/xhci-ring.c:3037:
-> + * for non OS owned interrupter event ring. It may drop and reaquire
-> xhci->lock
->                                                              ^^^^^^^^
-> WARNING: 'compliation' may be misspelled - perhaps 'compilation'?
-> #16:
-> module compliation added by Wesley Cheng to complete original concept code
->        ^^^^^^^^^^^
-> CHECK: Prefer kzalloc(sizeof(*sgt)...) over kzalloc(sizeof(struct
-> sg_table)...)
-> #105: FILE: drivers/usb/host/xhci-sideband.c:35:
-> +	sgt = kzalloc(sizeof(struct sg_table), GFP_KERNEL);
->
-> CHECK: struct mutex definition without comment
-> #557: FILE: include/linux/usb/xhci-sideband.h:35:
-> +	struct mutex			mutex;
->
-> WARNING: 'straightfoward' may be misspelled - perhaps 'straightforward'?
-> #22:
-> straightfoward, as the ASoC components have direct references to the ASoC
-> ^^^^^^^^^^^^^^
-> CHECK: Unnecessary parentheses around 'card == sdev->card_idx'
-> #142: FILE: sound/soc/qcom/qdsp6/q6usb.c:217:
-> +	if ((card == sdev->card_idx) &&
-> +		(pcm == sdev->ppcm_idx[sdev->num_playback - 1])) {
->
-> CHECK: Unnecessary parentheses around 'pcm ==
-> sdev->ppcm_idx[sdev->num_playback - 1]'
-> #142: FILE: sound/soc/qcom/qdsp6/q6usb.c:217:
-> +	if ((card == sdev->card_idx) &&
-> +		(pcm == sdev->ppcm_idx[sdev->num_playback - 1])) {
->
-> WARNING: 'seqeunces' may be misspelled - perhaps 'sequences'?
-> #8:
-> seqeunces.  This allows for platform USB SND modules to properly initialize
-> ^^^^^^^^^
->
-> WARNING: 'exisiting' may be misspelled - perhaps 'existing'?
-> #12:
-> exisiting parameters.
-> ^^^^^^^^^
->
-> CHECK: Please use a blank line after function/struct/union/enum declarations
-> #1020: FILE: sound/usb/qcom/usb_audio_qmi_v01.h:98:
-> +};
-> +#define QMI_UAUDIO_STREAM_REQ_MSG_V01_MAX_MSG_LEN 46
->
-> CHECK: Please use a blank line after function/struct/union/enum declarations
-> #1054: FILE: sound/usb/qcom/usb_audio_qmi_v01.h:132:
-> +};
-> +#define QMI_UAUDIO_STREAM_RESP_MSG_V01_MAX_MSG_LEN 202
->
-> CHECK: Please use a blank line after function/struct/union/enum declarations
-> #1081: FILE: sound/usb/qcom/usb_audio_qmi_v01.h:159:
-> +};
-> +#define QMI_UAUDIO_STREAM_IND_MSG_V01_MAX_MSG_LEN 181
->
-> CHECK: Macro argument 'n' may be better as '(n)' to avoid precedence issues
-> #100: FILE: sound/usb/mixer_usb_offload.c:19:
-> +#define PCM_IDX(n)  (n & 0xffff)
->
-> CHECK: Macro argument 'n' may be better as '(n)' to avoid precedence issues
-> #101: FILE: sound/usb/mixer_usb_offload.c:20:
-> +#define CARD_IDX(n) (n >> 16)
->
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent up the chain during
+the next merge window (or sooner if it is a relevant bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git
+-- 
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
+
 
