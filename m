@@ -1,43 +1,43 @@
-Return-Path: <linux-kernel+bounces-305425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86F60962E72
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 19:27:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78FED962E76
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 19:28:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7AC31F241D0
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 17:27:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7314FB23513
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 17:28:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B9871A76D3;
-	Wed, 28 Aug 2024 17:27:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5006D1A7068;
+	Wed, 28 Aug 2024 17:27:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="B1qg64f5";
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="B1qg64f5"
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2075.outbound.protection.outlook.com [40.107.21.75])
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="WuShEUxk";
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="WuShEUxk"
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2071.outbound.protection.outlook.com [40.107.21.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F9051A7072
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 17:26:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.75
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7BD71A7072
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 17:27:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.71
 ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724866022; cv=fail; b=D4uNObsduATpKf0FvVtDCrRcuG5tLc49iiipKpwxUInUdVvGJ81zxMl0Di/+JNu/lAkPiOKRu9pCHxLa8rMW6DDu+IkqWdN6SJqm+uQfYSpani7UlhYWO7h4tsheFQy6Z0K25dunYtUCcmHzjMO+e93+VJSZTbL5SKgIMZHM0Bg=
+	t=1724866054; cv=fail; b=oZiVhKcXe0lu1qwnBWvcMteUFYhQWvWe1BBp1zbmfiGDhCkk1uBdg/B+Rb2wg95tBZ7NSZliDdAfhZE+AxW7V2w+0PmcITFf+fskV+iiiBaZQd5thrUA2Mv+36RNFMxZUgaDwTRu8rohXoxXC33yZ8PgXB5NYs4S8QBg1VwuVVo=
 ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724866022; c=relaxed/simple;
-	bh=pGUubN2XdFgqwl9F1bYZKR69MuIRDkBPV3fJCwMSaCI=;
+	s=arc-20240116; t=1724866054; c=relaxed/simple;
+	bh=Irvqn4wrQV1l6sptRrBlMJC2yGlYoU3xaqG5O0ge7JI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=qgYDFHtWduDlreFpri6b+r8raUKXwsC6usD5ZlphP4gawWXu67QwltQz9g2zlBGnaSexVVfTm3gahivALb8jK9R/dGSxn/CaEHipqlrRA0sYi5h6uUlPljTsrnfrTWxqeO+EI8RJOBXHXyt80uW+EAGPdhT+JHQcJbogHzgvBXU=
-ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=B1qg64f5; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=B1qg64f5; arc=fail smtp.client-ip=40.107.21.75
+	 Content-Type:MIME-Version; b=NbXyboj08Ddzgq7FM5tcrbLrfHyrss+sXT/tomDieF/Rc6vvyRr4lkQG9B8XipJe2OySGT/dS30DjuUfVyGW2DckGCGyKkUQs0qSMUDh/CSUar45kOqC17zH/NEnDi4BAJndwAWnHJea1YKkaUgl466xHJN92+VtNjemEBLBoBQ=
+ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=WuShEUxk; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=WuShEUxk; arc=fail smtp.client-ip=40.107.21.71
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
- b=E0CK2e6zffykVPTanZxFD7uJ/I0Lp+6+UY0dqobvZwH1cywT9TeMtVrVnNZShBtnsms+c9eihl7U4/G+yb/cnBdd+StxJwCi7lc1Qhe9mByILBNi3o1OE1cYHX+6IfDflQ+WLk1Jj73Cd0yJhunAUFa0exooRI0VQchnhkIRhyvOtGBJTCIEUQbnM/y6qDFfA9XpbqSiOGayYk4ZCkyWLLeGaiiuH8EDPuI+5Gz3INBbZqEAOA1OE7/Lr8gZ6qm8TUWAvjHM+OYhi4TDFVjZE7aBg3dEjK4ebSRVoYtDK0i7YpJbD2Y/Nvt3rHBycl/5q+zCyKElN5W9tSsOqNTTOw==
+ b=fUAOk9k3vZkdL5Y29l4UBb7BpwzPOTybDnEqlNaO+jTJSrBAivJh31QTeVgMjoA/kwwLkyw5p3p02AcPGn6Oyi2odlfAoMt9f+AbXf7FLtCLJbA13CvOZwQ6xiP6y4Kl2JbxhtDFnnDt1S339LOoS0DRUjmmIFmRWh4jhBpSMjUGZA50E/lEOrV5vwFF8zmU7s9Q7aYDL0A4O4MJ0T5aKZplgb/6CdD+qiH/PhtlXRDpe2Rp6E8tG1DsHeX5iO7yiwV44QNGZ79Aw+DvDRYmFDctxp0spzBgXA3bVC7ZUiJb3O599skoc5Yg69nBmifsp/6zcgUJfh943qxiZW+svg==
 ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6orZbKeA+ZAkLam0Ko+xKmcpwenNalfbnojri2vJjus=;
- b=WQ4YRFtLjajQrxzEkU/xB58o13hXS02mZAfryIiale8Z2A0poij+GD1jWaQqoosVC/LXfRIUwPCgRL0ywzthqZWoVpGWMTUyAw27v/i9fJJM1dNQUdXFJ2CdZov/kSrH8LQas8M4KLEJ8kCldelge9ONZ3NaPjCogszHEf+hNMF4VhrSGVaoSO2M54h09iDl7wSaR25q7mPoxK8B5B4Qcr+XcYf42fr5i2QPsvi+qvvnTgJAiVnLuE0OegG6dvkJ83df3r4Gp28aU5YAW1GBQnpLXvZfrUiqz2B4hbKHOTiAKlzAt78J9hej/a4m4uyMFIgWlRxeKEyGzNW7sgtNKQ==
+ bh=iXCyxG0usG7a1DvzITihDgiGfgG7tlcbmCP4nOK6SOU=;
+ b=VY+BgVJtpo9iG8IyTxW63oO5+YuHzKAaDyeBAyZ/GrJi/qmEAdJdP5Xjjxw63FnM87F0CbfH/7me11M0f9ovoO/QYPAKYIoBh4wOb63caMeu8qkicSO1raCgMtr7Gj1V5TW8q8/wn2TtLwTvuhw2fsseHo6FTvUs+8RNYxkIzN6GpXxS2D2WEQvdk9ytD+HAC9qrd8uX9clkv6SdA69L5FKyTHR36WsZf8hgUEoWPVRA+PetC/NOAk1zrrrDsJHL48sJtwB3ZyDBnhMyIgzGX84waJbw+xBDDcKMn5DiUZQA0Q8izaR5TYFwa1d4w6/i1IgNe1jXhtODCC1EjIpLkQ==
 ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
  63.35.35.123) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=arm.com;
  dmarc=pass (p=none sp=none pct=100) action=none header.from=arm.com;
@@ -46,18 +46,18 @@ ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
  dmarc=[1,1,header.from=arm.com])
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6orZbKeA+ZAkLam0Ko+xKmcpwenNalfbnojri2vJjus=;
- b=B1qg64f5fpQAK7QeE+jc/UMWqxIfnULep8MbWkPM8vW6Xi+jgRkrJ5iwaIU4Dmo9+XnobYV7ajOrLea3rYddmZdSgjknzHLZSpk/Nq1YL5FK95vVM7KsT1FL+I4oo56psDplOE2nEPVcf28plhik5YcLPbIg+6ic9oRcgq8cNp4=
-Received: from DB7PR05CA0031.eurprd05.prod.outlook.com (2603:10a6:10:36::44)
- by DBBPR08MB6058.eurprd08.prod.outlook.com (2603:10a6:10:201::15) with
+ bh=iXCyxG0usG7a1DvzITihDgiGfgG7tlcbmCP4nOK6SOU=;
+ b=WuShEUxke3VcM9YUWmmeOJchJspauP6QSO9BonEJPHoXi2jui6sYS+KkADHd7ajZ+wHfJEXSUcC6RZU+6RRn6ii4axyxfrExKSu3aMiREn2r3wpJ6gtwv46lGRRg/j6UsMAvXlwKwoev4RWuOWygCClgTuP7lifswR/FZJRLi/o=
+Received: from DU2PR04CA0301.eurprd04.prod.outlook.com (2603:10a6:10:2b5::6)
+ by AS8PR08MB7322.eurprd08.prod.outlook.com (2603:10a6:20b:441::18) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.18; Wed, 28 Aug
- 2024 17:26:53 +0000
-Received: from DB5PEPF00014B9E.eurprd02.prod.outlook.com
- (2603:10a6:10:36:cafe::6e) by DB7PR05CA0031.outlook.office365.com
- (2603:10a6:10:36::44) with Microsoft SMTP Server (version=TLS1_2,
+ 2024 17:27:25 +0000
+Received: from DB1PEPF000509FE.eurprd03.prod.outlook.com
+ (2603:10a6:10:2b5:cafe::e3) by DU2PR04CA0301.outlook.office365.com
+ (2603:10a6:10:2b5::6) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.26 via Frontend
- Transport; Wed, 28 Aug 2024 17:26:53 +0000
+ Transport; Wed, 28 Aug 2024 17:27:25 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 63.35.35.123)
  smtp.mailfrom=arm.com; dkim=pass (signature was verified)
  header.d=arm.com;dmarc=pass action=none header.from=arm.com;
@@ -66,45 +66,45 @@ Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
  client-ip=63.35.35.123; helo=64aa7808-outbound-1.mta.getcheckrecipient.com;
  pr=C
 Received: from 64aa7808-outbound-1.mta.getcheckrecipient.com (63.35.35.123) by
- DB5PEPF00014B9E.mail.protection.outlook.com (10.167.8.171) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.7918.13
- via Frontend Transport; Wed, 28 Aug 2024 17:26:53 +0000
-Received: ("Tessian outbound 8e666bd17457:v403"); Wed, 28 Aug 2024 17:26:53 +0000
+ DB1PEPF000509FE.mail.protection.outlook.com (10.167.242.40) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.7897.11
+ via Frontend Transport; Wed, 28 Aug 2024 17:27:25 +0000
+Received: ("Tessian outbound 22f8cf4ed816:v403"); Wed, 28 Aug 2024 17:27:25 +0000
 X-CheckRecipientChecked: true
-X-CR-MTA-CID: 2b872d9813555bf6
+X-CR-MTA-CID: a7dcc06a3ee0b256
 X-CR-MTA-TID: 64aa7808
-Received: from L5ae389042c40.2
-	by 64aa7808-outbound-1.mta.getcheckrecipient.com id 03390737-02AB-42FD-89D8-CAF50D87C549.1;
-	Wed, 28 Aug 2024 17:26:41 +0000
-Received: from EUR02-VI1-obe.outbound.protection.outlook.com
-    by 64aa7808-outbound-1.mta.getcheckrecipient.com with ESMTPS id L5ae389042c40.2
+Received: from Ld28cb033b529.2
+	by 64aa7808-outbound-1.mta.getcheckrecipient.com id 8BE817FC-9AF7-4D39-81D2-0CA4EF7A4BA4.1;
+	Wed, 28 Aug 2024 17:27:14 +0000
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com
+    by 64aa7808-outbound-1.mta.getcheckrecipient.com with ESMTPS id Ld28cb033b529.2
     (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384);
-    Wed, 28 Aug 2024 17:26:41 +0000
+    Wed, 28 Aug 2024 17:27:14 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=qTj/U41KGxl+XBlTQ2ATU6L6xTDGx1sxNjrIbMQPHRQqDwRCWE7oZRjIRU6imvT94OQcMln2M0EqiTt2T+hvTkTNdQ6cr+4PGueTNJPnpbARYFusytGJv39Gi2PE5IK7QIKl4l4eofGEsS5xws6XZRw+Iw9GWjdhXpwHM0Iu+Vd5rSvzBOStGrSY10AtFt+3IOBmfqgpaDFgW7KRkHvMZYmuNwX/yJ/1c5yUFaHqFBYFCdzClSWqGN87/ljLaUs9aO4udJy3saqNSt/iKvEGSl1yThxB7+fhiKnJUwycLTF84oaqJDX03Q2ddOoET4fGElNeJAxy7rN5Tx85JY8Wzg==
+ b=BJoHzw2uPJI4Hz97/kVLRzflYYUFyfdpMZW7XN7Bqx2iX9rnFMnvLcQ6Mj3FA/keHoWtKttFg5f05b1aRehk3zQHM7ejr6+9AoByro3ucwt5IHb9RnM0iUY61Sn8JygqWM7uO+phbE5uh1DvYJixnjf7PDNGrGzN+0M3wJJ0TRKreYjrJvmxD2oov0F62ww1MsyAFHyLe9lgKfEl4BdhyBiYHqj4bhJuAkZn/HYrhCZH11HIN1u6vIB6wIPc9/P1PKdQ1giUI/e/mrjCPcVQfppFu/wBKDY3WlDM95Zcp7yrE5S1Z3ZZ47uRTRjZOMnPRGdUR+sUB9SGGXdajKthMA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6orZbKeA+ZAkLam0Ko+xKmcpwenNalfbnojri2vJjus=;
- b=x+D61ChCtx23rvxtwuzmSC/atblBrPn6lmZKLYUkrov0sYUHXthpltbSVMOoH+x1pNaPeNIfQ9ykbSgrW2X/VQhWEEoRXJ46kyEY5AlGZ/Tv70ijOl/6S+tI4vX59arxOwF8TbQA0vaFav7BrrU7CqD+8DK46pPzagHgQyT+ZS2hV5aOAbzVv/95nDui2OM30RxoIjmqjQNNaE+wfiMxmrikc6xGT8t2YsI0h8UfsyL917Z4PlaJtl9n7si7lYn0dHgb0Iqred2u1lJQribefWkZvvXIkOa04+kmBd5fHZE5uVBnRg/JAImoE6WQgTAfZTpJbt82BcfUWdER1yubRA==
+ bh=iXCyxG0usG7a1DvzITihDgiGfgG7tlcbmCP4nOK6SOU=;
+ b=YhGAC4Sez9vTNH2l4dSuHiEKIeqeineNJylJndc6JF61K8qA1OUqymigNpt8UtUHqgmBaf9+a2PqjiyAB1mDI4xRPrOkCq3c28cNjfIcOcrwKjWf1v6ZhAV/ODszrdSuhe+G74tBdRgB+vGoXB3qSSTb1zDg4w6reV/YDMWcUj463wZlqJdy41ko0FaaMXbG7chcJ3oOk2g2dz99R4N16j8NDfR7H/9qEz/N9TlxL5sUcytVdsNGN0BAJuKNWjhEE+u4+8o8azhfZnfdRJMySAccWdc2AL829cxo8fe+ncafyl43XPA6aOiAlqEY+kqyTDi6oKa6vjVlulRPort5uA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
  header.d=arm.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6orZbKeA+ZAkLam0Ko+xKmcpwenNalfbnojri2vJjus=;
- b=B1qg64f5fpQAK7QeE+jc/UMWqxIfnULep8MbWkPM8vW6Xi+jgRkrJ5iwaIU4Dmo9+XnobYV7ajOrLea3rYddmZdSgjknzHLZSpk/Nq1YL5FK95vVM7KsT1FL+I4oo56psDplOE2nEPVcf28plhik5YcLPbIg+6ic9oRcgq8cNp4=
+ bh=iXCyxG0usG7a1DvzITihDgiGfgG7tlcbmCP4nOK6SOU=;
+ b=WuShEUxke3VcM9YUWmmeOJchJspauP6QSO9BonEJPHoXi2jui6sYS+KkADHd7ajZ+wHfJEXSUcC6RZU+6RRn6ii4axyxfrExKSu3aMiREn2r3wpJ6gtwv46lGRRg/j6UsMAvXlwKwoev4RWuOWygCClgTuP7lifswR/FZJRLi/o=
 Authentication-Results-Original: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=arm.com;
 Received: from AS8PR08MB6263.eurprd08.prod.outlook.com (2603:10a6:20b:290::9)
  by AS8PR08MB6551.eurprd08.prod.outlook.com (2603:10a6:20b:319::13) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.18; Wed, 28 Aug
- 2024 17:26:38 +0000
+ 2024 17:27:11 +0000
 Received: from AS8PR08MB6263.eurprd08.prod.outlook.com
  ([fe80::12b5:3f0a:2090:fa7c]) by AS8PR08MB6263.eurprd08.prod.outlook.com
  ([fe80::12b5:3f0a:2090:fa7c%7]) with mapi id 15.20.7918.012; Wed, 28 Aug 2024
- 17:26:38 +0000
+ 17:27:11 +0000
 From: Mihail Atanassov <mihail.atanassov@arm.com>
 To: linux-kernel@vger.kernel.org,
 	Boris Brezillon <boris.brezillon@collabora.com>,
@@ -123,16 +123,16 @@ Cc: dri-devel@lists.freedesktop.org,
 	Ketil Johnsen <ketil.johnsen@arm.com>,
 	Akash Goel <akash.goel@arm.com>,
 	Mihail Atanassov <mihail.atanassov@arm.com>
-Subject: [PATCH 5/8] drm/panthor: Factor out syncobj handling
-Date: Wed, 28 Aug 2024 18:26:01 +0100
-Message-ID: <20240828172605.19176-6-mihail.atanassov@arm.com>
+Subject: [PATCH 6/8] drm/panthor: Implement XGS queues
+Date: Wed, 28 Aug 2024 18:26:02 +0100
+Message-ID: <20240828172605.19176-7-mihail.atanassov@arm.com>
 X-Mailer: git-send-email 2.45.0
 In-Reply-To: <20240828172605.19176-1-mihail.atanassov@arm.com>
 References: <20240828172605.19176-1-mihail.atanassov@arm.com>
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: LO4P265CA0070.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:2af::10) To AS8PR08MB6263.eurprd08.prod.outlook.com
+X-ClientProxiedBy: LO4P123CA0395.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:18f::22) To AS8PR08MB6263.eurprd08.prod.outlook.com
  (2603:10a6:20b:290::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -141,8 +141,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-TrafficTypeDiagnostic:
-	AS8PR08MB6263:EE_|AS8PR08MB6551:EE_|DB5PEPF00014B9E:EE_|DBBPR08MB6058:EE_
-X-MS-Office365-Filtering-Correlation-Id: bf423370-5e04-4dbe-058e-08dcc7869bf0
+	AS8PR08MB6263:EE_|AS8PR08MB6551:EE_|DB1PEPF000509FE:EE_|AS8PR08MB7322:EE_
+X-MS-Office365-Filtering-Correlation-Id: 13b86bd3-f8ce-4c70-6c2b-08dcc786af28
 X-LD-Processed: f34e5979-57d9-4aaa-ad4d-b122a662184d,ExtAddr
 x-checkrecipientrouted: true
 NoDisclaimer: true
@@ -151,29 +151,29 @@ X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam-Untrusted:
  BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
 X-Microsoft-Antispam-Message-Info-Original:
- =?us-ascii?Q?qfUxHBytr7mLBBJKwDvvr4SWTv/JicsftDfdX3Yy6ZL2ORZtK8VP36AyV0KY?=
- =?us-ascii?Q?gCyk57/nmRLI2kBlM9DgRpPaBoczOQx1nX33F8Y7Lws+ahFiFLMh4XGsFXDk?=
- =?us-ascii?Q?0YeBsWRO3kEwq4R/wlTTic2xLAL7hubg+Yv+AjBltfZM+czCndeCx1kBXwCP?=
- =?us-ascii?Q?BBBvA/yPBhCxz/0feuLsDQEq9a4N+yFdFzhQGi4PFokEsTCu0xUGOQOBg/nM?=
- =?us-ascii?Q?lWl1pATYS5MFsc9pS3C36CXyMsDiG5wed4RWYmWCe9otdsMfILCITqm59lgm?=
- =?us-ascii?Q?cQt6yhxyq3vWWziXiBAgRtmfo+g7fX0s5q1nc4t+rmy1gDWKAUH4Rr46Yb6L?=
- =?us-ascii?Q?8M2DHbTlwx8G1GlDdMfadDkrGR1cg8eeFFWpEx3sWIuRcryENyI5FOh194ad?=
- =?us-ascii?Q?nBt+FFYIPt9jKffzIpUIhx7eAut5PSV4rFwBvHeysPq9c1sA0Rj0CdNAznve?=
- =?us-ascii?Q?cB/yYKFyIOUkYxZq6f3V/2OuX/oqvcQlinXTIKkJVxRWn5fNm+hzxiC19QFj?=
- =?us-ascii?Q?ObOz05UnrErxFMha4atJCUFF+AoB9B23pU4PP7I7QY053pWqQOxnVNFG84uZ?=
- =?us-ascii?Q?LZgY6RJdUCBoicOxgkEeadfH8l9w0QLmE2yIiVlzDZ1gq0xVxDAI55xS8mf9?=
- =?us-ascii?Q?+V6Jpl1B/Bxc42XjviXzrLEfWx/j34TE7YFrk/6QVyguB0xjE5dXNeerUXY4?=
- =?us-ascii?Q?Krg7n780sEFPpgvXln8obsLVyqOV4j/oSNxplIs06FptRkAeUh9IfVDQHnTJ?=
- =?us-ascii?Q?xd30NyEwJeQ/iYwUh9Ef4pcTqb/PX7KVVe/YScHwRRAawL1i1z/5hsohp+XI?=
- =?us-ascii?Q?ZODzpxA+qI2zINVmMvZc8SL0urOyYH7TTGXq+N6JVvfL3YQ3Nd1JiQ0XIbO2?=
- =?us-ascii?Q?IksQv1GCIjSY/ZbIgVJZkWFojzNYCpOaVvmkwjoAWSQrk52XA1O67GydOqyk?=
- =?us-ascii?Q?m++1pxS1YxmVgrbrGxZazfmausdlffVO/3xYleSdWUXODRz3N8lXnjjqIzmH?=
- =?us-ascii?Q?BLYAi/0AoKumDZ/zuUQy//mLsERB2SZq9rBuRJX2e0m6+t8CPY4up4FtT32o?=
- =?us-ascii?Q?k85MzHciYmhYfxEg7J/yuvz2FKKhts8bBVksvoRG+aT0FL0+4OUT/qa9dNHw?=
- =?us-ascii?Q?w7x8JdKojtzivs0pDd4I7RD4+9U3oBAVLu3xkHGVbFhG8vqkEUVd9c6xHoc/?=
- =?us-ascii?Q?EhPqsM9lSybo1/KnFHLyhRMAbYmBpcQ6WKfNM3wp+yl+4R6BigGxgdSm9A0I?=
- =?us-ascii?Q?+B4t7Mz0ca3NA4v5Ie5bNPyDMMywN0Wj2SKtX+wAM2c6nukY8IraqEF0QNX8?=
- =?us-ascii?Q?XsHSfTwmoPY/MKPntZ8YxFAYU7wn6OtFp1cGocDxBw5y8Q=3D=3D?=
+ =?us-ascii?Q?6kUYDRjAH4PXf2RC0CF71iA5l/hQr6WSfZptPkfmel0TISpaGs5R3YTQsvLN?=
+ =?us-ascii?Q?IrM1Rw4VrOCXZDCty7H/EdyhqWsc5405MdW9deU5nv5iTKgqRBAE5J+m6Ru+?=
+ =?us-ascii?Q?jgDNqZb19fFJV7c6NiyiKvCeEmDJiS2m9YohxYiUroMddVC7REiBcl9XVAnO?=
+ =?us-ascii?Q?bENwJ9H/kOtYi/RmCOrMUWvx7sKDpDJZdwrqNYf75ojtT34q4hDrv83Do4SV?=
+ =?us-ascii?Q?DnXBSVaEVIgE32Bqnm3E4DGAjOVor/WkWorH8KNUDrZN9pJqeN0Rd1Q59+sC?=
+ =?us-ascii?Q?fiWYXziuIiN7JAZTqpun5Djrny8aF33/FeyRx6HcrnepOocIPUertUoeXRKY?=
+ =?us-ascii?Q?zW0G43azu6ik5UpExfKyui39Dhj5215oElaANY390yy6yeydiLOZ/+S6b8XM?=
+ =?us-ascii?Q?5cexlZqIKZJLqUAMxSn78mlNgsjsi9oohUxN8q4wTwroHOqA/VJFGarsgXHs?=
+ =?us-ascii?Q?o6Y/i2HC1JCvhFAoQ+ayjPwQ2ZW/cu3UmYqRhe+M8av0scGo5ttrOQo/i04l?=
+ =?us-ascii?Q?rzFg0TNaioRZSuZnJFjehROO7ycccBTkFrYDJWmoPiEjHeUhkkdJa/2xb1jJ?=
+ =?us-ascii?Q?ORrUsIsUjjMK5BsbJAIPQX5cXkikQQhXi+6XON5lAtuldiOT3BlbpT5iR0Mu?=
+ =?us-ascii?Q?VLUXJPijEF+CMF4k62mLTiWsxefX8NVcZEEOphZnqkPM0x0hETZy0tXBLGNQ?=
+ =?us-ascii?Q?PLvLOWx28w7mjEeQT4DIYclD3Kl+8umZbKQxE2ra8Bt8B+1t9/l2aSd7PkKc?=
+ =?us-ascii?Q?59eeVZxKWUfciyTZC8kRyOR2j8sI2NtEB09iu4GJLSeNYnDKKPk69JlsulmW?=
+ =?us-ascii?Q?CyAaMWee13P+Isa9m6apiwXijZTUjcMEf2sCHe+YRWc9anJscqMREQ2MFgR+?=
+ =?us-ascii?Q?krILxGO9Z0BmFDxYCHsfZQboE+bUlcD9YSS8eyNPjB1qeUOmSIpiA0nXiefo?=
+ =?us-ascii?Q?QxYxikPqDQGJIL/6fq5REESB4CO5vYPoZJGTAm4orzkm+iHE5sUtLliQLV8r?=
+ =?us-ascii?Q?5sqDONIDLjqSVPHLqdiM19VZ3VH0u29dOTYx7VodwuY3kXWSrX+WRaZcc3t3?=
+ =?us-ascii?Q?8Y/f7GtJ4F7ocxys5BVn9SO+2z9v5xDkvQ0j4mroBYmK80myjxbQuUUN3jQS?=
+ =?us-ascii?Q?wx0vrwhu7BbEm1+e9y/zwBNbBdombRLKCIlpL2ZTToLijym9+CVNSeyH01qO?=
+ =?us-ascii?Q?wlsyneekbowrpvfg83bDZnrvFix89vVAA9i+S8NMuly14SBcY+mZ4xnaORCP?=
+ =?us-ascii?Q?sW/oMPrt2Jz7UE1dcfQOOfQeO21WdGS1Ckp8wGWLPLwHu0o6meMXBTPkoWyl?=
+ =?us-ascii?Q?xu53FePPyJJZ5C1FDeeJWXMjytHIKn57f5duF6i4RVPveQ=3D=3D?=
 X-Forefront-Antispam-Report-Untrusted:
  CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR08MB6263.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR08MB6551
@@ -183,546 +183,1055 @@ X-EOPAttributedMessage: 0
 X-MS-Exchange-SkipListedInternetSender:
  ip=[2603:10a6:20b:290::9];domain=AS8PR08MB6263.eurprd08.prod.outlook.com
 X-MS-Exchange-Transport-CrossTenantHeadersStripped:
- DB5PEPF00014B9E.eurprd02.prod.outlook.com
+ DB1PEPF000509FE.eurprd03.prod.outlook.com
 X-MS-PublicTrafficType: Email
 X-MS-Office365-Filtering-Correlation-Id-Prvs:
-	01395da6-af7b-4ad3-76df-08dcc7869285
+	58034394-4022-4958-eba0-08dcc786a69b
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|36860700013|82310400026|376014|35042699022;
+	BCL:0;ARA:13230040|36860700013|376014|1800799024|82310400026|35042699022;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?MTabfG2PkZxOArF9AOqksvga8aI3W9RDyw+YTMknAE4htGGiMWSc37Wl19Y3?=
- =?us-ascii?Q?rJolDf7sHAwME4v0d6SjjDIG0YBjLteWnV7XpUFGQ40Kp75QfTe6O4Hzu6Gr?=
- =?us-ascii?Q?/9neZNO3la6qwm4f3+ZCCcvxDTVBusMDq4UwubR+K8N3HMWZdpEWbA1/NIwC?=
- =?us-ascii?Q?wMSsa3hkY3cq+Lu263VAuE33NG0wLnBLtURrebueOMsFePDcxXLOfMhXDGS+?=
- =?us-ascii?Q?/ykSHboZbZY0B/Ykxfytb7V48IzxEFydKhCT+c7ueelofgVVI19+KiWK5+oI?=
- =?us-ascii?Q?7rntQqTeyqKzwcZJmrbF46TL3YqLtmcKLo4L83diuDAA9IVVgrwTrXjQmElm?=
- =?us-ascii?Q?7/7KiINey7uiZ1b+R0dtRpCy+o2/4ZKnhX22NgpoHCJPaBIFBIh9ppSXiBix?=
- =?us-ascii?Q?hVTOptRzSe98QvHQnygHuuwQKlDC0D6kmw6tds3311eBxn6klcQ8jUSv217O?=
- =?us-ascii?Q?qqEsucRmGl1k4L2qEUrrQrwgezvXyOJjUceItpDwPDnrUSBJGlVMJevhLE5P?=
- =?us-ascii?Q?vMaar/U8OhxaS++uzoSdw59CLfVO9uc7E/sHMYqpyrUxYBnDmaV9GRb+ExFF?=
- =?us-ascii?Q?FBNl7Z2mZmCPAiIBZAh8S73IssD1yFEy2+xdSHMxGRtUtrJfE2e1XYGnb/8f?=
- =?us-ascii?Q?dlOHVbL0UDoVSXVUD8qqKeIfVjhUBGgYr5dxNodwJJQm9uXVbvCswFIM7Dfr?=
- =?us-ascii?Q?JDAf0XuXa4hfN0oLG7YINYICWtBGwBqlDYSa7QKplmdBAqOg8WdckxRB0BmD?=
- =?us-ascii?Q?P/coR8E3PXIvj4Yz/41J4k8Es2Nz1zJrjiNtQxsEyLbQCjhepy42wCatL5S+?=
- =?us-ascii?Q?Ho/kATyMtfvQQcMQRgpir2pVkvNwnxoCK0vLY2EkWdLyzJ4eOXfZU/eXNiy8?=
- =?us-ascii?Q?bpbw+wt9MJWrUaCxfDy1zme9q8zI45oTujkvE4pM1AqECRHYKdYtKZnAlYc6?=
- =?us-ascii?Q?fJO6ZmohIHsQQx0b8sKHzXwSD5Fo5ONWwzTVtmv5k1kPz3vqsNTQEx8KFfD7?=
- =?us-ascii?Q?0OPiOLUOZK4moRAD6uckSO2VosW5FJXtKu4Tz+9km8BmcHhR/FduWpKqwYgw?=
- =?us-ascii?Q?9gvl1JGHGRiU0wseZXqTouHVO6/B7rrlui1gI2lQ7aBxqTbM0Ez4708J0QJ0?=
- =?us-ascii?Q?byI46IIY61aMK7mnPQCIWno28IcJqLiJGUTesqNqRZo2COwqAlc+xPG2t8qB?=
- =?us-ascii?Q?GVJQ5Mge1duE5TGD6VeAuzuFoWEAcj4/cAbyGw2Z9+VZshyiqXKMv91cDWv8?=
- =?us-ascii?Q?zbY2vYaFrQcaquJpVen0ugksUX2o25J7if/oy7E8SuNNeuKCfcoYuxECoitQ?=
- =?us-ascii?Q?nzbZqtHWS03c/pGbOQWXXX1y5qmAdV+2loEqOpCxNhL8wgUpik2iiKnE7HRH?=
- =?us-ascii?Q?2it6Xdnbijt2n4QGhQpeTw4zjkQn/NssfhzCwhRcV422yuvdbKVwIhxH9InF?=
- =?us-ascii?Q?o9m1ajKP0QNJtait94FqU5OSwz6wDA2c?=
+	=?us-ascii?Q?+e+xMFae2SS2oCWl87Jn8wVnhk3ys/IeftTUGUSZtALOGbkscdzrz3mpTGa6?=
+ =?us-ascii?Q?u8jpdSI8fczMroYCCu8EaVJ7h0F5jTb5VTcyErCX/vQ/b6gm20XGikgcI5J9?=
+ =?us-ascii?Q?Fr0E1dHJ0ltDYvG8UY5tRb65g0vLpepGO7Lw+L7QK7P/DqTfEKusMp6G/ko3?=
+ =?us-ascii?Q?yGfEIbLrfUeeo6kHIGVq7ZroR1v6byVlESSGeL3jSAlpshFrwJeNiFFowq63?=
+ =?us-ascii?Q?INuK+4Hf00dUuB9KaL1S1HCCjapd4c9LQmxBck91GJXTxwl0AJdgF2mhfkfD?=
+ =?us-ascii?Q?8cg1SwGT/qlKqq2KYwwEeNXDlFx75dtl1mSBMyq0VgbiO2yCDueLrjDY3Prg?=
+ =?us-ascii?Q?1wPKbTat8jhOWba6ICW0djYuZCjmCfKx5vMjrGfBzGA19xy6C6QK+bKhV8+M?=
+ =?us-ascii?Q?2mof/E0cj1F1rRRnbkjv3oDnJFnkI8UAHArXcThEHiCVDdWt0NOmQ1doUhpI?=
+ =?us-ascii?Q?XWfyE+wJZZcfLbU+NrZs49TduQVIYMf+tz7dC3dWSrd7rdftO8gCZZWqMr/b?=
+ =?us-ascii?Q?k5sjcxR2oqeUm9hXQ7qnkfMiNLurZ9Aju7a+WJ7A4DqWCdKausZkDefA9Q4i?=
+ =?us-ascii?Q?S+4cxaO+EI4mYbWcRMMfJZ60vxW+IIvHlGSGAeFUHHb5CnRlMSTsq0YAlZEU?=
+ =?us-ascii?Q?skNzcUZXIyu0JG/uNF26VgGokTIgXD9n97MRpkf8Mu9qqop0FpVYKNevW148?=
+ =?us-ascii?Q?Wlr5rCkJqfIm4GuyU4ZsIOQBUgQ91Rop1doGp1EYzUlpZxKIDql+m9IkMRy8?=
+ =?us-ascii?Q?GGaF0p06ZGxfRfTdNfcf6K5c3lNsoZw0i0PND2wKuRXPzUp3hFlbfC+CyGiY?=
+ =?us-ascii?Q?2ql0QM/srdR/mLbDrNOLLLlXfMkpuMOVvykRNEq4UutH5x+l90BoQedoxILM?=
+ =?us-ascii?Q?qhqHRgdeBHhwqRj+rLdPsA8qmNGUq6PfLKhZ1wjmyYdAI1OxBRaitPfhUbop?=
+ =?us-ascii?Q?T17FUUFsVRKzg9cDVIMcjB//cVk1+Z7GHs3BBSFP9IZQ0tWdvpVzRMffDg6s?=
+ =?us-ascii?Q?q+XOn/sYGV0Vdy5LK6Z/OOKcIvd5Brj0fLPLUK/QQYPW9+PZgMPmxMRqM1mM?=
+ =?us-ascii?Q?lnS12+yPlbpWDASBRi+qDQGnDJv9DWgLQcunyXaKw30rb8Ye+JnUSmqRwe07?=
+ =?us-ascii?Q?klH29vNm3T54/7XRe0WKi17tIKDcV4xq54MUxG9eTyhcOPr640XndKyPhg/g?=
+ =?us-ascii?Q?JqhvR3k74t6MMArMLuX9uYzjc+TkDA3nkHU+lHBNJSYQR7XkOFpClpcCNSjj?=
+ =?us-ascii?Q?l6li4kYjKXLXKp1AWsntV4iJL03drJIhA4LDxuVHg/2/C/4E8HX48rv2/d0W?=
+ =?us-ascii?Q?b9AnomHTUxYe1NPwFwOA+wq5Hc2iTrw1rGqJH7t3agiD6bOWKSmzrTGIWZ8K?=
+ =?us-ascii?Q?JxLR5iYDzuuQ7GJz4XFeqBQ6oWT9dgFTHi1HDzXhArjct+Vz9LrmNJV1vjDm?=
+ =?us-ascii?Q?+XI0da4CG5BwfF9uAyuz7KARiE1P8X+p?=
 X-Forefront-Antispam-Report:
-	CIP:63.35.35.123;CTRY:IE;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:64aa7808-outbound-1.mta.getcheckrecipient.com;PTR:ec2-63-35-35-123.eu-west-1.compute.amazonaws.com;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(82310400026)(376014)(35042699022);DIR:OUT;SFP:1101;
+	CIP:63.35.35.123;CTRY:IE;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:64aa7808-outbound-1.mta.getcheckrecipient.com;PTR:ec2-63-35-35-123.eu-west-1.compute.amazonaws.com;CAT:NONE;SFS:(13230040)(36860700013)(376014)(1800799024)(82310400026)(35042699022);DIR:OUT;SFP:1101;
 X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2024 17:26:53.5042
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2024 17:27:25.7662
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: bf423370-5e04-4dbe-058e-08dcc7869bf0
+X-MS-Exchange-CrossTenant-Network-Message-Id: 13b86bd3-f8ce-4c70-6c2b-08dcc786af28
 X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[63.35.35.123];Helo=[64aa7808-outbound-1.mta.getcheckrecipient.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	DB5PEPF00014B9E.eurprd02.prod.outlook.com
+	DB1PEPF000509FE.eurprd03.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR08MB6058
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR08MB7322
 
 From: Ketil Johnsen <ketil.johnsen@arm.com>
 
-The code is needed both for the existing kernel submission path and for
-implementing cross-group sync (XGS) queues which link between
-drm_syncobj and the HW syncobj primitives.
+Synchronisation between GPU queues in groups from the same VM is
+achieved using either 32b or 64b synchronisation objects (see
+panthor_syncobj.(c|h)). They are also the mechanism to sync between
+a queue and the kernel (or the user application). To allow for the
+latter case, introduce cross-group sync (XGS) queues. They are a drm
+scheduler-entity pair, associated with a VM, which runs XGS jobs --
+WAITs or SETs/ADDs on those HW syncobjs -- to enable a userspace driver
+to do CPU-to-GPU (and vice-versa) synchronisation, and link that up with
+DRM sync primitives.
 
 Signed-off-by: Ketil Johnsen <ketil.johnsen@arm.com>
+Co-developed-by: Akash Goel <akash.goel@arm.com>
+Signed-off-by: Akash Goel <akash.goel@arm.com>
 Signed-off-by: Mihail Atanassov <mihail.atanassov@arm.com>
 ---
- drivers/gpu/drm/panthor/Makefile          |   3 +-
- drivers/gpu/drm/panthor/panthor_sched.c   | 154 +++++---------------
- drivers/gpu/drm/panthor/panthor_syncobj.c | 167 ++++++++++++++++++++++
- drivers/gpu/drm/panthor/panthor_syncobj.h |  27 ++++
- 4 files changed, 234 insertions(+), 117 deletions(-)
- create mode 100644 drivers/gpu/drm/panthor/panthor_syncobj.c
- create mode 100644 drivers/gpu/drm/panthor/panthor_syncobj.h
+ drivers/gpu/drm/panthor/Makefile         |   3 +-
+ drivers/gpu/drm/panthor/panthor_device.h |   4 +
+ drivers/gpu/drm/panthor/panthor_drv.c    | 123 ++++-
+ drivers/gpu/drm/panthor/panthor_sched.c  |  25 +-
+ drivers/gpu/drm/panthor/panthor_sched.h  |   1 +
+ drivers/gpu/drm/panthor/panthor_xgs.c    | 638 +++++++++++++++++++++++
+ drivers/gpu/drm/panthor/panthor_xgs.h    |  42 ++
+ 7 files changed, 832 insertions(+), 4 deletions(-)
+ create mode 100644 drivers/gpu/drm/panthor/panthor_xgs.c
+ create mode 100644 drivers/gpu/drm/panthor/panthor_xgs.h
 
 diff --git a/drivers/gpu/drm/panthor/Makefile b/drivers/gpu/drm/panthor/Makefile
-index 15294719b09c..0af27f33bfe2 100644
+index 0af27f33bfe2..7637bae47e26 100644
 --- a/drivers/gpu/drm/panthor/Makefile
 +++ b/drivers/gpu/drm/panthor/Makefile
-@@ -9,6 +9,7 @@ panthor-y := \
- 	panthor_gpu.o \
+@@ -10,6 +10,7 @@ panthor-y := \
  	panthor_heap.o \
  	panthor_mmu.o \
--	panthor_sched.o
-+	panthor_sched.o \
-+	panthor_syncobj.o
+ 	panthor_sched.o \
+-	panthor_syncobj.o
++	panthor_syncobj.o \
++	panthor_xgs.o
  
  obj-$(CONFIG_DRM_PANTHOR) += panthor.o
+diff --git a/drivers/gpu/drm/panthor/panthor_device.h b/drivers/gpu/drm/panthor/panthor_device.h
+index 87cce384e36a..1e98d2a856b7 100644
+--- a/drivers/gpu/drm/panthor/panthor_device.h
++++ b/drivers/gpu/drm/panthor/panthor_device.h
+@@ -17,6 +17,7 @@
+ #include <drm/gpu_scheduler.h>
+ #include <drm/panthor_drm.h>
+ 
++struct panthor_xgs_queue_pool;
+ struct panthor_csf;
+ struct panthor_csf_ctx;
+ struct panthor_device;
+@@ -182,6 +183,9 @@ struct panthor_file {
+ 
+ 	/** @groups: Scheduling group pool attached to this file. */
+ 	struct panthor_group_pool *groups;
++
++	/** @xgs_queues: XGS queues attached to this file. */
++	struct panthor_xgs_queue_pool *xgs_queues;
+ };
+ 
+ int panthor_device_init(struct panthor_device *ptdev);
+diff --git a/drivers/gpu/drm/panthor/panthor_drv.c b/drivers/gpu/drm/panthor/panthor_drv.c
+index ce2fdcd3fb42..681ac09b6343 100644
+--- a/drivers/gpu/drm/panthor/panthor_drv.c
++++ b/drivers/gpu/drm/panthor/panthor_drv.c
+@@ -19,6 +19,7 @@
+ #include <drm/gpu_scheduler.h>
+ #include <drm/panthor_drm.h>
+ 
++#include "panthor_xgs.h"
+ #include "panthor_device.h"
+ #include "panthor_fw.h"
+ #include "panthor_gem.h"
+@@ -215,7 +216,8 @@ panthor_get_uobj_array(const struct drm_panthor_obj_array *in, u32 min_stride,
+ 		 PANTHOR_UOBJ_DECL(struct drm_panthor_sync_op, timeline_value), \
+ 		 PANTHOR_UOBJ_DECL(struct drm_panthor_queue_submit, syncs), \
+ 		 PANTHOR_UOBJ_DECL(struct drm_panthor_queue_create, ringbuf_size), \
+-		 PANTHOR_UOBJ_DECL(struct drm_panthor_vm_bind_op, syncs))
++		 PANTHOR_UOBJ_DECL(struct drm_panthor_vm_bind_op, syncs), \
++		 PANTHOR_UOBJ_DECL(struct drm_panthor_xgs_op, pad))
+ 
+ /**
+  * PANTHOR_UOBJ_SET() - Copy a kernel object to a user object.
+@@ -1316,6 +1318,114 @@ static int panthor_ioctl_group_kick(struct drm_device *ddev, void *data,
+ 	return 0;
+ }
+ 
++static int panthor_ioctl_xgs_queue_create(struct drm_device *ddev, void *data,
++					  struct drm_file *file)
++{
++	struct drm_panthor_xgs_queue_create *args = data;
++	struct panthor_file *pfile = file->driver_priv;
++
++	if (args->pad)
++		return -EINVAL;
++
++	return panthor_xgs_queue_create(pfile, args->vm_id,
++					args->eventfd_sync_update, &args->handle);
++}
++
++static int panthor_ioctl_xgs_queue_destroy(struct drm_device *ddev, void *data,
++					   struct drm_file *file)
++{
++	struct drm_panthor_xgs_queue_destroy *args = data;
++	struct panthor_file *pfile = file->driver_priv;
++
++	if (args->pad)
++		return -EINVAL;
++
++	return panthor_xgs_queue_destroy(pfile, args->handle);
++}
++
++#define XGS_QUEUE_SUBMIT_FLAGS (DRM_PANTHOR_XGS_QUEUE_SUBMIT_ERROR_BARRIER_PRE | \
++				DRM_PANTHOR_XGS_QUEUE_SUBMIT_ERROR_BARRIER_POST)
++
++static int panthor_ioctl_xgs_queue_submit(struct drm_device *ddev, void *data,
++					  struct drm_file *file)
++{
++	struct drm_panthor_xgs_queue_submit *args = data;
++	struct panthor_file *pfile = file->driver_priv;
++	struct drm_panthor_xgs_op *ops_args;
++	struct panthor_xgs_queue *queue;
++	struct panthor_submit_ctx ctx;
++	struct drm_sched_job *job;
++	struct panthor_vm *vm;
++	int ret;
++
++	if (args->flags & ~XGS_QUEUE_SUBMIT_FLAGS)
++		return -EINVAL;
++
++	if (args->ops.count) {
++		ret = PANTHOR_UOBJ_GET_ARRAY(ops_args, &args->ops);
++		if (ret)
++			return ret;
++	} else {
++		ops_args = NULL;
++	}
++
++	queue = panthor_xgs_queue_pool_get_xgs_queue(pfile->xgs_queues, args->handle);
++	if (!queue)
++		goto out_free_ops_args;
++
++	ret = panthor_submit_ctx_init(&ctx, file, 1);
++	if (ret)
++		goto out_put_queue;
++
++	/* Create job object */
++	job = panthor_xgs_job_create(queue, ops_args, args->ops.count);
++	if (IS_ERR(job)) {
++		ret = PTR_ERR(job);
++		goto out_cleanup_submit_ctx;
++	}
++
++	/* handed over to the job object */
++	ops_args = NULL;
++
++	/* attach sync operations */
++	ret = panthor_submit_ctx_add_job(&ctx, 0, job, &args->syncs);
++	if (ret)
++		goto out_cleanup_submit_ctx;
++
++	/* Collect signal operations on all */
++	ret = panthor_submit_ctx_collect_jobs_signal_ops(&ctx);
++	if (ret)
++		goto out_cleanup_submit_ctx;
++
++	/* The group already have a VM ref, so we don't need to take an extra one */
++	vm = panthor_xgs_queue_vm(queue);
++
++	/* We acquire/prepare revs on the job */
++	drm_exec_until_all_locked(&ctx.exec) {
++		ret = panthor_vm_prepare_mapped_bos_resvs(&ctx.exec, vm, 1);
++	}
++
++	if (ret)
++		goto out_cleanup_submit_ctx;
++
++	/* Add deps, arm job fence and register the job fence to signal array */
++	ret = panthor_submit_ctx_add_deps_and_arm_jobs(&ctx);
++	if (ret)
++		goto out_cleanup_submit_ctx;
++
++	/* Nothing can fail after that point */
++	panthor_submit_ctx_push_jobs(&ctx, panthor_xgs_job_update_resvs);
++
++out_cleanup_submit_ctx:
++	panthor_submit_ctx_cleanup(&ctx, panthor_xgs_job_put);
++out_put_queue:
++	panthor_xgs_queue_put(queue);
++out_free_ops_args:
++	kvfree(ops_args);
++
++	return ret;
++}
++
+ static int
+ panthor_open(struct drm_device *ddev, struct drm_file *file)
+ {
+@@ -1343,9 +1453,16 @@ panthor_open(struct drm_device *ddev, struct drm_file *file)
+ 	if (ret)
+ 		goto err_destroy_vm_pool;
+ 
++	ret = panthor_xgs_queue_pool_create(pfile);
++	if (ret)
++		goto err_destroy_group_pool;
++
+ 	file->driver_priv = pfile;
+ 	return 0;
+ 
++err_destroy_group_pool:
++	panthor_group_pool_destroy(pfile);
++
+ err_destroy_vm_pool:
+ 	panthor_vm_pool_destroy(pfile);
+ 
+@@ -1363,6 +1480,7 @@ panthor_postclose(struct drm_device *ddev, struct drm_file *file)
+ 	struct panthor_file *pfile = file->driver_priv;
+ 
+ 	panthor_group_pool_destroy(pfile);
++	panthor_xgs_queue_pool_destroy(pfile);
+ 	panthor_vm_pool_destroy(pfile);
+ 
+ 	kfree(pfile);
+@@ -1387,6 +1505,9 @@ static const struct drm_ioctl_desc panthor_drm_driver_ioctls[] = {
+ 	PANTHOR_IOCTL(TILER_HEAP_DESTROY, tiler_heap_destroy, DRM_RENDER_ALLOW),
+ 	PANTHOR_IOCTL(GROUP_SUBMIT, group_submit, DRM_RENDER_ALLOW),
+ 	PANTHOR_IOCTL(GROUP_KICK, group_kick, DRM_RENDER_ALLOW),
++	PANTHOR_IOCTL(XGS_QUEUE_CREATE, xgs_queue_create, DRM_RENDER_ALLOW),
++	PANTHOR_IOCTL(XGS_QUEUE_DESTROY, xgs_queue_destroy, DRM_RENDER_ALLOW),
++	PANTHOR_IOCTL(XGS_QUEUE_SUBMIT, xgs_queue_submit, DRM_RENDER_ALLOW),
+ };
+ 
+ static int panthor_mmap(struct file *filp, struct vm_area_struct *vma)
 diff --git a/drivers/gpu/drm/panthor/panthor_sched.c b/drivers/gpu/drm/panthor/panthor_sched.c
-index 3b56526a4b97..f272aeee8a8f 100644
+index f272aeee8a8f..92172b2c6253 100644
 --- a/drivers/gpu/drm/panthor/panthor_sched.c
 +++ b/drivers/gpu/drm/panthor/panthor_sched.c
-@@ -31,6 +31,7 @@
- #include "panthor_mmu.h"
- #include "panthor_regs.h"
- #include "panthor_sched.h"
-+#include "panthor_syncobj.h"
+@@ -22,6 +22,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/pm_runtime.h>
  
- /**
-  * DOC: Scheduler
-@@ -318,39 +319,6 @@ struct panthor_scheduler {
- 	} reset;
- };
++#include "panthor_xgs.h"
+ #include "panthor_devfreq.h"
+ #include "panthor_device.h"
+ #include "panthor_fw.h"
+@@ -1496,8 +1497,13 @@ static void csg_slot_sync_update_locked(struct panthor_device *ptdev,
  
--/**
-- * struct panthor_syncobj_32b - 32-bit FW synchronization object
-- */
--struct panthor_syncobj_32b {
--	/** @seqno: Sequence number. */
--	u32 seqno;
--
--	/**
--	 * @status: Status.
--	 *
--	 * Not zero on failure.
--	 */
--	u32 status;
--};
--
--/**
-- * struct panthor_syncobj_64b - 64-bit FW synchronization object
-- */
--struct panthor_syncobj_64b {
--	/** @seqno: Sequence number. */
--	u64 seqno;
--
--	/**
--	 * @status: Status.
--	 *
--	 * Not zero on failure.
--	 */
--	u32 status;
--
--	/** @pad: MBZ. */
--	u32 pad;
--};
--
- /**
-  * struct panthor_queue - Execution queue
-  */
-@@ -445,17 +413,8 @@ struct panthor_queue {
- 		/** @sync64: True if this is a 64-bit sync object. */
- 		bool sync64;
+ 	lockdep_assert_held(&ptdev->scheduler->lock);
  
--		/** @bo: Buffer object holding the synchronization object. */
--		struct drm_gem_object *obj;
--
--		/** @offset: Offset of the synchronization object inside @bo. */
--		u64 offset;
--
--		/**
--		 * @kmap: Kernel mapping of the buffer object holding the
--		 * synchronization object.
--		 */
--		void *kmap;
-+		/** @syncobj: Wrapper for the syncobj in memory */
-+		struct panthor_syncobj *syncobj;
- 	} syncwait;
- 
- 	/** @fence_ctx: Fence context fields. */
-@@ -794,53 +753,6 @@ struct panthor_job {
- 	struct dma_fence *done_fence;
- };
- 
--static void
--panthor_queue_put_syncwait_obj(struct panthor_queue *queue)
--{
--	if (queue->syncwait.kmap) {
--		struct iosys_map map = IOSYS_MAP_INIT_VADDR(queue->syncwait.kmap);
--
--		drm_gem_vunmap_unlocked(queue->syncwait.obj, &map);
--		queue->syncwait.kmap = NULL;
--	}
--
--	drm_gem_object_put(queue->syncwait.obj);
--	queue->syncwait.obj = NULL;
--}
--
--static void *
--panthor_queue_get_syncwait_obj(struct panthor_group *group, struct panthor_queue *queue)
--{
--	struct panthor_device *ptdev = group->ptdev;
--	struct panthor_gem_object *bo;
--	struct iosys_map map;
--	int ret;
--
--	if (queue->syncwait.kmap)
--		return queue->syncwait.kmap + queue->syncwait.offset;
--
--	bo = panthor_vm_get_bo_for_va(group->vm,
--				      queue->syncwait.gpu_va,
--				      &queue->syncwait.offset);
--	if (drm_WARN_ON(&ptdev->base, IS_ERR_OR_NULL(bo)))
--		goto err_put_syncwait_obj;
--
--	queue->syncwait.obj = &bo->base.base;
--	ret = drm_gem_vmap_unlocked(queue->syncwait.obj, &map);
--	if (drm_WARN_ON(&ptdev->base, ret))
--		goto err_put_syncwait_obj;
--
--	queue->syncwait.kmap = map.vaddr;
--	if (drm_WARN_ON(&ptdev->base, !queue->syncwait.kmap))
--		goto err_put_syncwait_obj;
--
--	return queue->syncwait.kmap + queue->syncwait.offset;
--
--err_put_syncwait_obj:
--	panthor_queue_put_syncwait_obj(queue);
--	return NULL;
--}
--
- static void group_free_queue(struct panthor_group *group, struct panthor_queue *queue)
- {
- 	if (IS_ERR_OR_NULL(queue))
-@@ -852,7 +764,7 @@ static void group_free_queue(struct panthor_group *group, struct panthor_queue *
- 	if (queue->scheduler.ops)
- 		drm_sched_fini(&queue->scheduler);
- 
--	panthor_queue_put_syncwait_obj(queue);
-+	panthor_syncobj_release(queue->syncwait.syncobj);
- 
- 	if (queue->ringbuf_offset)
- 		drm_vma_node_revoke(&queue->ringbuf->obj->vma_node, group->pfile->drm_file);
-@@ -2065,7 +1977,6 @@ group_term_post_processing(struct panthor_group *group)
- 	cookie = dma_fence_begin_signalling();
- 	for (i = 0; i < group->queue_count; i++) {
- 		struct panthor_queue *queue = group->queues[i];
--		struct panthor_syncobj_64b *syncobj;
- 		int err;
- 
- 		if (group->fatal_queues & BIT(i))
-@@ -2086,12 +1997,13 @@ group_term_post_processing(struct panthor_group *group)
- 		}
- 		spin_unlock(&queue->fence_ctx.lock);
- 
--		if (!group->user_submit) {
+-	if (group && !group->user_submit)
+-		group_queue_work(group, sync_upd);
++	if (group) {
++		/* Rerun XGS jobs immediately, as this can potentially unblock the group */
++		panthor_xgs_queue_pool_recheck(group->pfile);
++
 +		if (!group->user_submit)
- 			/* Manually update the syncobj seqno to unblock waiters. */
--			syncobj = group->syncobjs->kmap + (i * sizeof(*syncobj));
--			syncobj->status = ~0;
--			syncobj->seqno = atomic64_read(&queue->fence_ctx.seqno);
--		}
-+			panthor_syncobj_ptr64_signal_with_error(
-+				group->syncobjs->kmap + (i * PANTHOR_SYNCOBJ64_SIZE),
-+				atomic64_read(&queue->fence_ctx.seqno),
-+				~0);
-+
- 		sched_queue_work(group->ptdev->scheduler, sync_upd);
- 	}
- 	dma_fence_end_signalling(cookie);
-@@ -2461,28 +2373,32 @@ static void tick_work(struct work_struct *work)
- static int panthor_queue_eval_syncwait(struct panthor_group *group, u8 queue_idx)
- {
- 	struct panthor_queue *queue = group->queues[queue_idx];
--	union {
--		struct panthor_syncobj_64b sync64;
--		struct panthor_syncobj_32b sync32;
--	} *syncobj;
-+	struct panthor_syncobj *syncobj;
- 	bool result;
- 	u64 value;
- 
--	syncobj = panthor_queue_get_syncwait_obj(group, queue);
--	if (!syncobj)
--		return -EINVAL;
-+	if (!queue->syncwait.syncobj) {
-+		syncobj = panthor_syncobj_create(group->ptdev,
-+						 group->vm,
-+						 queue->syncwait.gpu_va,
-+						 queue->syncwait.sync64);
-+		if (IS_ERR_OR_NULL(syncobj))
-+			return PTR_ERR(syncobj);
- 
--	value = queue->syncwait.sync64 ?
--		syncobj->sync64.seqno :
--		syncobj->sync32.seqno;
-+		queue->syncwait.syncobj = syncobj;
-+	}
-+
-+	value = panthor_syncobj_get_value(queue->syncwait.syncobj);
- 
- 	if (queue->syncwait.gt)
- 		result = value > queue->syncwait.ref;
- 	else
- 		result = value <= queue->syncwait.ref;
- 
--	if (result)
--		panthor_queue_put_syncwait_obj(queue);
-+	if (result) {
-+		panthor_syncobj_release(queue->syncwait.syncobj);
-+		queue->syncwait.syncobj = NULL;
++			group_queue_work(group, sync_upd);
 +	}
  
- 	return result;
+ 	sched_queue_work(ptdev->scheduler, sync_upd);
  }
-@@ -2887,16 +2803,22 @@ static void group_sync_upd_work(struct work_struct *work)
- 	cookie = dma_fence_begin_signalling();
- 	for (queue_idx = 0; queue_idx < group->queue_count; queue_idx++) {
- 		struct panthor_queue *queue = group->queues[queue_idx];
--		struct panthor_syncobj_64b *syncobj;
-+		void *syncobj;
+@@ -1691,9 +1697,15 @@ static const char *queue_fence_get_timeline_name(struct dma_fence *fence)
+ 	return "queue-fence";
+ }
  
- 		if (!queue)
- 			continue;
- 
--		syncobj = group->syncobjs->kmap + (queue_idx * sizeof(*syncobj));
-+		syncobj = group->syncobjs->kmap + (queue_idx * PANTHOR_SYNCOBJ64_SIZE);
- 
- 		spin_lock(&queue->fence_ctx.lock);
- 		list_for_each_entry_safe(job, job_tmp, &queue->fence_ctx.in_flight_jobs, node) {
--			if (syncobj->seqno < job->done_fence->seqno)
-+			u64 value;
++static void job_fence_free(struct dma_fence *fence)
++{
++	dma_fence_free(fence);
++}
 +
-+			if (!job->call_info.size)
-+				continue;
+ static const struct dma_fence_ops panthor_queue_fence_ops = {
+ 	.get_driver_name = fence_get_driver_name,
+ 	.get_timeline_name = queue_fence_get_timeline_name,
++	.release = job_fence_free,
+ };
+ 
+ struct panthor_csg_slots_upd_ctx {
+@@ -2431,6 +2443,10 @@ static void sync_upd_work(struct work_struct *work)
+ 		if (unblocked_queues) {
+ 			group->blocked_queues &= ~unblocked_queues;
+ 
++			/* Sync updates from XGS queue could happen when we are not ticking */
++			if (sched->resched_target == U64_MAX)
++				immediate_tick = true;
 +
-+			value = panthor_syncobj_ptr64_get_value(syncobj);
-+			if (value < job->done_fence->seqno)
- 				break;
+ 			if (group->csg_id < 0) {
+ 				list_move(&group->run_node,
+ 					  &sched->groups.runnable[group->priority]);
+@@ -2788,6 +2804,11 @@ void panthor_sched_kick(struct panthor_file *pfile, u32 group_handle, u32 queue_
+ 	group_put(group);
+ }
  
- 			list_move_tail(&job->node, &done_jobs);
-@@ -2928,7 +2850,7 @@ queue_run_job(struct drm_sched_job *sched_job)
- 		       ptdev->csif_info.unpreserved_cs_reg_count;
- 	u64 val_reg = addr_reg + 2;
- 	u64 sync_addr = panthor_kernel_bo_gpuva(group->syncobjs) +
--			job->queue_idx * sizeof(struct panthor_syncobj_64b);
-+			job->queue_idx * PANTHOR_SYNCOBJ64_SIZE;
- 	u32 waitall_mask = GENMASK(sched->sb_slot_count - 1, 0);
- 	struct dma_fence *done_fence;
- 	int ret;
-@@ -3289,7 +3211,7 @@ int panthor_group_create(struct panthor_file *pfile,
- 	if (!group->user_submit) {
- 		group->syncobjs = panthor_kernel_bo_create(ptdev, group->vm,
- 							   group_args->queues.count *
--							   sizeof(struct panthor_syncobj_64b),
-+							   PANTHOR_SYNCOBJ64_SIZE,
- 							   DRM_PANTHOR_BO_NO_MMAP,
- 							   DRM_PANTHOR_VM_BIND_OP_MAP_NOEXEC |
- 							   DRM_PANTHOR_VM_BIND_OP_MAP_UNCACHED,
-@@ -3304,7 +3226,7 @@ int panthor_group_create(struct panthor_file *pfile,
- 			goto err_put_group;
++void panthor_sched_sync_update(struct panthor_device *ptdev)
++{
++	sched_queue_work(ptdev->scheduler, sync_upd);
++}
++
+ static void group_sync_upd_work(struct work_struct *work)
+ {
+ 	struct panthor_group *group =
+diff --git a/drivers/gpu/drm/panthor/panthor_sched.h b/drivers/gpu/drm/panthor/panthor_sched.h
+index 18fb7ad0952e..2cb58c66b8ac 100644
+--- a/drivers/gpu/drm/panthor/panthor_sched.h
++++ b/drivers/gpu/drm/panthor/panthor_sched.h
+@@ -49,5 +49,6 @@ void panthor_sched_report_fw_events(struct panthor_device *ptdev, u32 events);
  
- 		memset(group->syncobjs->kmap, 0,
--		       group_args->queues.count * sizeof(struct panthor_syncobj_64b));
-+		       group_args->queues.count * PANTHOR_SYNCOBJ64_SIZE);
- 	}
+ u8 panthor_sched_doorbell_id(struct panthor_file *pfile, u32 group_handle);
+ void panthor_sched_kick(struct panthor_file *pfile, u32 group_handle, u32 queue_mask);
++void panthor_sched_sync_update(struct panthor_device *ptdev);
  
- 	for (i = 0; i < group_args->queues.count; i++) {
-diff --git a/drivers/gpu/drm/panthor/panthor_syncobj.c b/drivers/gpu/drm/panthor/panthor_syncobj.c
+ #endif
+diff --git a/drivers/gpu/drm/panthor/panthor_xgs.c b/drivers/gpu/drm/panthor/panthor_xgs.c
 new file mode 100644
-index 000000000000..337f75bfa648
+index 000000000000..a900badb9224
 --- /dev/null
-+++ b/drivers/gpu/drm/panthor/panthor_syncobj.c
-@@ -0,0 +1,167 @@
++++ b/drivers/gpu/drm/panthor/panthor_xgs.c
+@@ -0,0 +1,638 @@
 +// SPDX-License-Identifier: GPL-2.0 or MIT
 +/* Copyright 2024 ARM Limited. All rights reserved. */
 +
++#include <drm/drm_drv.h>
++#include <drm/drm_gem.h>
++#include <drm/drm_managed.h>
++#include <drm/gpu_scheduler.h>
++#include <drm/panthor_drm.h>
++
 +#include <linux/iosys-map.h>
 +
++#include "panthor_xgs.h"
 +#include "panthor_device.h"
 +#include "panthor_gem.h"
 +#include "panthor_mmu.h"
++#include "panthor_sched.h"
 +#include "panthor_syncobj.h"
 +
++#define JOB_TIMEOUT_MS				5000
++
 +/**
-+ * struct panthor_syncobj_32b - 32-bit FW synchronization object
++ * struct panthor_xgs_queue - Scheduling group object
 + */
-+struct panthor_syncobj_32b {
-+	/** @value: Value field. */
-+	u32 value;
++struct panthor_xgs_queue {
++	/** @refcount: Reference count */
++	struct kref refcount;
++
++	/** @lock: Lock to synchronize access to this queue */
++	struct mutex lock;
++
++	/** @handle: integer value used by user to refer to this queue */
++	u32 handle;
++
++	/** @ptdev: Panthor device for which this queue was created */
++	struct panthor_device *ptdev;
++
++	/** @vm: VM associated with this XGS queue */
++	struct panthor_vm *vm;
++
++	/** @eventfd_sync_update_ctx: eventfd context to signal on XGS set ops */
++	struct eventfd_ctx *eventfd_sync_update_ctx;
++
++	/** @scheduler: scheduler instance used to execute XGS jobs */
++	struct drm_gpu_scheduler scheduler;
++
++	/** @entity: Scheduler entity with XGS jobs */
++	struct drm_sched_entity entity;
++
++	/** @fence_ctx: Fence context fields. */
++	struct {
++		/** @lock: Used to protect access to all fences allocated by this context. */
++		spinlock_t lock;
++
++		/**
++		 * @id: Fence context ID.
++		 *
++		 * Allocated with dma_fence_context_alloc().
++		 */
++		u64 id;
++
++		/** @seqno: Sequence number of the last initialized fence. */
++		atomic64_t seqno;
++
++		/**
++		 * @in_flight_jobs: List containing all in-flight jobs.
++		 *
++		 * Used to keep track and signal panthor_job::done_fence when the
++		 * synchronization object attached to the queue is signaled.
++		 */
++		struct list_head in_flight_jobs;
++	} fence_ctx;
++
++	/** @destroyed: True if queue is marked for destruction and should not be used */
++	bool destroyed;
 +
 +	/**
-+	 * @error: Error status.
++	 * @release_work: Work used to release XGS queue resources.
 +	 *
-+	 * Not zero on failure.
++	 * We need to postpone the queue release to avoid a deadlock,
++	 * otherwise "free_job" could end up calling back into DRM sched.
 +	 */
-+	u32 error;
++	struct work_struct release_work;
++};
++
++/*
++ * We currently set the maximum of XGS queues per file to an arbitrary low value.
++ * But this can be updated if we need more.
++ */
++#define MAX_XGS_QUEUES_PER_POOL 128
++
++/**
++ * struct panthor_xgs_queue_pool - XGS queue pool
++ *
++ * Each file get assigned a XGS queue pool.
++ */
++struct panthor_xgs_queue_pool {
++	/** @xa: Xarray used to manage XGS queue handles. */
++	struct xarray xa;
 +};
 +
 +/**
-+ * struct panthor_syncobj_64b - 64-bit FW synchronization object
++ * struct panthor_xgs_job - Used to manage XGS job
 + */
-+struct panthor_syncobj_64b {
-+	/** @value: Value field. */
++struct panthor_xgs_job {
++	/** @base: Inherit from drm_sched_job. */
++	struct drm_sched_job base;
++
++	/** @refcount: Reference count. */
++	struct kref refcount;
++
++	/** @group: XGS queue this job will be pushed to. */
++	struct panthor_xgs_queue *queue;
++
++	/** @ops: List of XGS operations to execute */
++	struct drm_panthor_xgs_op *ops;
++
++	/** @ops_count: Number of operations in the ops array */
++	u32 ops_count;
++
++	/** @done_fence: Fence signaled when the job is finished or cancelled. */
++	struct dma_fence *done_fence;
++
++	/** @node: Node used to insert job into in_flight_jobs list of queue */
++	struct list_head node;
++
++};
++
++static int panthor_xgs_try_run_job(struct panthor_xgs_job *job);
++
++static const char *xgs_fence_get_driver_name(struct dma_fence *fence)
++{
++	return "panthor";
++}
++
++static const char *xgs_fence_get_timeline_name(struct dma_fence *fence)
++{
++	return "xgs-fence";
++}
++
++static void xgs_fence_free(struct dma_fence *fence)
++{
++	dma_fence_free(fence);
++}
++
++static const struct dma_fence_ops panthor_xgs_fence_ops = {
++	.get_driver_name = xgs_fence_get_driver_name,
++	.get_timeline_name = xgs_fence_get_timeline_name,
++	.release = xgs_fence_free,
++};
++
++static void xgs_queue_release_work(struct work_struct *work)
++{
++	struct panthor_xgs_queue *queue = container_of(work, struct panthor_xgs_queue,
++						       release_work);
++
++	if (queue->entity.fence_context)
++		drm_sched_entity_destroy(&queue->entity);
++
++	if (queue->scheduler.ops)
++		drm_sched_fini(&queue->scheduler);
++
++	panthor_vm_put(queue->vm);
++
++	if (queue->eventfd_sync_update_ctx)
++		eventfd_ctx_put(queue->eventfd_sync_update_ctx);
++
++	kfree(queue);
++}
++
++static void xgs_queue_release(struct kref *kref)
++{
++	struct panthor_xgs_queue *queue = container_of(kref, struct panthor_xgs_queue, refcount);
++	struct panthor_device *ptdev = queue->ptdev;
++
++	drm_WARN_ON(&ptdev->base, !list_empty(&queue->fence_ctx.in_flight_jobs));
++
++	queue_work(panthor_cleanup_wq, &queue->release_work);
++}
++
++static struct panthor_xgs_queue *xgs_queue_get(struct panthor_xgs_queue *queue)
++{
++	if (queue)
++		kref_get(&queue->refcount);
++
++	return queue;
++}
++
++static void xgs_queue_recheck(struct panthor_xgs_queue *queue)
++{
++	struct panthor_xgs_job *job, *tmp;
++	int ret;
++
++	mutex_lock(&queue->lock);
++
++	list_for_each_entry_safe(job, tmp, &queue->fence_ctx.in_flight_jobs, node) {
++		ret = panthor_xgs_try_run_job(job);
++
++		if (ret != -EBUSY) {
++			/* completed or failed */
++			list_del_init(&job->node);
++
++			if (ret)
++				dma_fence_set_error(job->done_fence, -ETIMEDOUT);
++
++			dma_fence_signal(job->done_fence);
++
++			/* Ditch ref we took when adding it to the in_flight_jobs */
++			panthor_xgs_job_put(&job->base);
++		}
++	}
++
++	mutex_unlock(&queue->lock);
++}
++
++/* Internal flag to mark operations as completed. Avoid clashes with drm_panthor_xgs_op_flags */
++#define DRM_PANTHOR_XGS_OP_COMPLETED (1 << 15)
++
++static int panthor_xgs_wait(struct panthor_xgs_queue *queue, struct drm_panthor_xgs_op *xgs_op)
++{
++	struct panthor_device *ptdev = queue->ptdev;
++	struct panthor_syncobj *syncobj;
++	int ret;
 +	u64 value;
 +
-+	/**
-+	 * @error: Error status.
-+	 *
-+	 * Not zero on failure.
-+	 */
-+	u32 error;
++	if (xgs_op->flags & DRM_PANTHOR_XGS_OP_COMPLETED)
++		return 0;
 +
-+	/** @pad: MBZ. */
-+	u32 pad;
-+};
++	syncobj = panthor_syncobj_create(ptdev, queue->vm, xgs_op->addr,
++					 xgs_op->format == DRM_PANTHOR_XGS_OP_FORMAT_U64);
++	if (IS_ERR_OR_NULL(syncobj))
++		return PTR_ERR(syncobj);
 +
-+struct panthor_syncobj {
-+	/** @bo: Buffer object holding the synchronization object. */
-+	struct drm_gem_object *bo;
++	value = panthor_syncobj_get_value(syncobj);
 +
-+	/** @offset: Offset of the synchronization object inside @bo. */
-+	u64 offset;
++	ret = -EBUSY;
 +
-+	/**
-+	 * @kmap: Kernel mapping of the buffer object holding the
-+	 * synchronization object.
-+	 */
-+	void *kmap;
++	if (xgs_op->op == DRM_PANTHOR_XGS_OP_WAIT_LE) {
++		if (value <= xgs_op->value) {
++			ret = 0;
++			xgs_op->flags |= DRM_PANTHOR_XGS_OP_COMPLETED;
++		}
++	} else if (xgs_op->op == DRM_PANTHOR_XGS_OP_WAIT_GT) {
++		if (value > xgs_op->value) {
++			ret = 0;
++			xgs_op->flags |= DRM_PANTHOR_XGS_OP_COMPLETED;
++		}
++	}
 +
-+	/** @ptr: CPU ptr to synchronization object */
-+	union {
-+		struct panthor_syncobj_64b sync64;
-+		struct panthor_syncobj_32b sync32;
-+	} *ptr;
++	panthor_syncobj_release(syncobj);
 +
-+	/** @sync64: true for 64-bit synchronization object, otherwise 32-bit */
-+	bool sync64;
-+};
++	return ret;
++}
 +
-+
-+
-+struct panthor_syncobj *panthor_syncobj_create(struct panthor_device *ptdev,
-+					       struct panthor_vm *vm, u64 gpu_va,
-+					       bool sync64)
++static void
++panthor_xgs_signal(struct panthor_xgs_queue *queue, struct drm_panthor_xgs_op *xgs_op, u32 error)
 +{
-+	struct panthor_gem_object *bo;
-+	struct iosys_map map;
++	struct panthor_device *ptdev = queue->ptdev;
 +	struct panthor_syncobj *syncobj;
-+	int err;
++	u64 value;
 +
-+	syncobj = kzalloc(sizeof(*syncobj), GFP_KERNEL);
-+	if (!syncobj) {
-+		err = -ENOMEM;
-+		goto err;
-+	}
++	if (xgs_op->flags & DRM_PANTHOR_XGS_OP_COMPLETED)
++		return;
 +
-+	bo = panthor_vm_get_bo_for_va(vm, gpu_va, &syncobj->offset);
-+	if (drm_WARN_ON(&ptdev->base, IS_ERR_OR_NULL(bo))) {
-+		err = -EINVAL;
-+		goto err_free_syncobj;
-+	}
++	syncobj = panthor_syncobj_create(ptdev, queue->vm, xgs_op->addr,
++					 xgs_op->format == DRM_PANTHOR_XGS_OP_FORMAT_U64);
++	if (IS_ERR_OR_NULL(syncobj))
++		return;
 +
-+	syncobj->bo = &bo->base.base;
++	value = panthor_syncobj_get_value(syncobj);
 +
-+	err = drm_gem_vmap_unlocked(syncobj->bo, &map);
-+	if (drm_WARN_ON(&ptdev->base, err))
-+		goto err_put_gem_object;
++	if (xgs_op->op == DRM_PANTHOR_XGS_OP_SIGNAL_SET)
++		value = xgs_op->value;
++	else if (xgs_op->op == DRM_PANTHOR_XGS_OP_SIGNAL_ADD)
++		value += xgs_op->value;
 +
-+	syncobj->kmap = map.vaddr;
-+	syncobj->ptr = syncobj->kmap + syncobj->offset;
-+	syncobj->sync64 = sync64;
-+
-+	return syncobj;
-+
-+err_put_gem_object:
-+	drm_gem_object_put(syncobj->bo);
-+err_free_syncobj:
-+	kfree(syncobj);
-+err:
-+	return ERR_PTR(err);
-+}
-+
-+void panthor_syncobj_release(struct panthor_syncobj *syncobj)
-+{
-+	if (syncobj) {
-+		struct iosys_map map = IOSYS_MAP_INIT_VADDR(syncobj->kmap);
-+
-+		drm_gem_vunmap_unlocked(syncobj->bo, &map);
-+		drm_gem_object_put(syncobj->bo);
-+		kfree(syncobj);
-+	}
-+}
-+
-+u64 panthor_syncobj_get_value(struct panthor_syncobj *syncobj)
-+{
-+	return syncobj->sync64 ?
-+		syncobj->ptr->sync64.value :
-+		syncobj->ptr->sync32.value;
-+}
-+
-+u32 panthor_syncobj_get_error(struct panthor_syncobj *syncobj)
-+{
-+	return syncobj->sync64 ?
-+		syncobj->ptr->sync64.error :
-+		syncobj->ptr->sync32.error;
-+}
-+
-+void panthor_syncobj_signal(struct panthor_syncobj *syncobj, u64 value)
-+{
-+	if (syncobj->sync64)
-+		syncobj->ptr->sync64.value = value;
++	if (!error)
++		panthor_syncobj_signal(syncobj, value);
 +	else
-+		syncobj->ptr->sync32.value = (u32)value;
++		panthor_syncobj_signal_with_error(syncobj, value, error);
++
++	panthor_sched_sync_update(ptdev);
++
++	if (queue->eventfd_sync_update_ctx)
++		eventfd_signal(queue->eventfd_sync_update_ctx);
++
++	xgs_op->flags |= DRM_PANTHOR_XGS_OP_COMPLETED;
++
++	panthor_syncobj_release(syncobj);
 +}
 +
-+void panthor_syncobj_signal_with_error(struct panthor_syncobj *syncobj, u64 value, u32 error)
++static int panthor_xgs_try_run_job(struct panthor_xgs_job *job)
 +{
-+	if (syncobj->sync64) {
-+		syncobj->ptr->sync64.value = value;
-+		syncobj->ptr->sync64.error = error;
-+	} else {
-+		syncobj->ptr->sync32.value = (u32)value;
-+		syncobj->ptr->sync32.error = error;
++	int i;
++	int err_wait = 0;
++	struct drm_panthor_xgs_op *xgs_op;
++
++	lockdep_assert_held(&job->queue->lock);
++
++	for (i = 0; i < job->ops_count; i++) {
++		xgs_op = &job->ops[i];
++
++		switch (xgs_op->op & ~DRM_PANTHOR_XGS_OP_COMPLETED) {
++		case DRM_PANTHOR_XGS_OP_WAIT_LE:
++		case DRM_PANTHOR_XGS_OP_WAIT_GT:
++			if (!err_wait)
++				err_wait = panthor_xgs_wait(job->queue, &job->ops[i]);
++			if (err_wait == -EBUSY)
++				return err_wait;
++			break;
++		case DRM_PANTHOR_XGS_OP_SIGNAL_SET:
++		case DRM_PANTHOR_XGS_OP_SIGNAL_ADD:
++			panthor_xgs_signal(job->queue, &job->ops[i], err_wait);
++			break;
++		default:
++			/* unknown operation, assume this could be a critical error */
++			err_wait = -EINVAL;
++			break;
++		}
 +	}
++
++	return err_wait;
 +}
 +
-+u64 panthor_syncobj_ptr64_get_value(void *syncobj_ptr)
++static struct dma_fence *panthor_xgs_run_job(struct drm_sched_job *sched_job)
 +{
-+	struct panthor_syncobj_64b *syncobj = syncobj_ptr;
++	struct panthor_xgs_job *job = container_of(sched_job, struct panthor_xgs_job, base);
++	struct panthor_xgs_queue *queue = job->queue;
++	struct dma_fence *done_fence;
++	int ret;
 +
-+	return syncobj->value;
++	mutex_lock(&queue->lock);
++
++	ret = panthor_xgs_try_run_job(job);
++	if (ret == -EBUSY) {
++		dma_fence_init(job->done_fence,
++			&panthor_xgs_fence_ops,
++			&queue->fence_ctx.lock,
++			queue->fence_ctx.id,
++			atomic64_inc_return(&queue->fence_ctx.seqno));
++
++		done_fence = dma_fence_get(job->done_fence);
++		panthor_xgs_job_get(&job->base);
++
++		list_add_tail(&job->node, &queue->fence_ctx.in_flight_jobs);
++
++	} else if (ret) {
++		done_fence = ERR_PTR(ret);
++	} else {
++		/* job completed immediately, no need to return fence */
++		done_fence = NULL;
++	}
++
++	mutex_unlock(&queue->lock);
++
++	return done_fence;
 +}
 +
-+void panthor_syncobj_ptr64_signal_with_error(void *syncobj_ptr, u64 value, u32 error)
++static enum drm_gpu_sched_stat
++panthor_xgs_job_timedout(struct drm_sched_job *sched_job)
 +{
-+	struct panthor_syncobj_64b *syncobj = syncobj_ptr;
++	struct panthor_xgs_job *job = container_of(sched_job, struct panthor_xgs_job, base);
++	struct panthor_xgs_queue *queue = job->queue;
++	int ret;
 +
-+	syncobj->value = value;
-+	syncobj->error = error;
++	mutex_lock(&queue->lock);
++
++	list_del_init(&job->node);
++
++	/* Ditch ref we took when adding it to the in_flight_jobs */
++	panthor_xgs_job_put(&job->base);
++
++	ret = panthor_xgs_try_run_job(job);
++	if (ret)
++		dma_fence_set_error(job->done_fence, -ETIMEDOUT);
++
++	mutex_unlock(&queue->lock);
++
++	dma_fence_signal(job->done_fence);
++
++	panthor_xgs_job_put(sched_job);
++
++	return DRM_GPU_SCHED_STAT_NOMINAL;
 +}
-diff --git a/drivers/gpu/drm/panthor/panthor_syncobj.h b/drivers/gpu/drm/panthor/panthor_syncobj.h
++
++static const struct drm_sched_backend_ops panthor_xgs_sched_ops = {
++	.run_job = panthor_xgs_run_job,
++	.timedout_job = panthor_xgs_job_timedout,
++	.free_job = panthor_xgs_job_put,
++};
++
++int panthor_xgs_queue_create(struct panthor_file *pfile, u32 vm_id,
++			     int eventfd_sync_update, u32 *handle)
++{
++	struct panthor_device *ptdev = pfile->ptdev;
++	struct panthor_xgs_queue_pool *xgs_queue_pool = pfile->xgs_queues;
++	struct panthor_xgs_queue *queue;
++	struct drm_gpu_scheduler *drm_sched;
++	int ret;
++	int qid;
++
++	queue = kzalloc(sizeof(*queue), GFP_KERNEL);
++	if (!queue)
++		return -ENOMEM;
++
++	kref_init(&queue->refcount);
++	INIT_LIST_HEAD(&queue->fence_ctx.in_flight_jobs);
++	INIT_WORK(&queue->release_work, xgs_queue_release_work);
++	queue->ptdev = ptdev;
++
++	ret = drmm_mutex_init(&ptdev->base, &queue->lock);
++	if (ret)
++		goto err_put_queue;
++
++	if (eventfd_sync_update >= 0) {
++		queue->eventfd_sync_update_ctx = eventfd_ctx_fdget(eventfd_sync_update);
++		ret = PTR_ERR_OR_ZERO(queue->eventfd_sync_update_ctx);
++		if (ret)
++			goto err_put_queue;
++	}
++
++	queue->vm = panthor_vm_pool_get_vm(pfile->vms, vm_id);
++	if (!queue->vm) {
++		ret = -EINVAL;
++		goto err_put_queue;
++	}
++
++	ret = drm_sched_init(&queue->scheduler, &panthor_xgs_sched_ops,
++			     NULL, 1, 1, 0,
++			     msecs_to_jiffies(JOB_TIMEOUT_MS),
++			     NULL, NULL,
++			     "panthor_xgs",
++			     ptdev->base.dev);
++	if (ret)
++		goto err_put_queue;
++
++	drm_sched = &queue->scheduler;
++	ret = drm_sched_entity_init(&queue->entity, 0, &drm_sched, 1, NULL);
++	if (ret)
++		goto err_put_queue;
++
++	queue->fence_ctx.id = dma_fence_context_alloc(1);
++	spin_lock_init(&queue->fence_ctx.lock);
++
++	ret = xa_alloc(&xgs_queue_pool->xa, &qid, queue,
++		       XA_LIMIT(1, MAX_XGS_QUEUES_PER_POOL), GFP_KERNEL);
++	if (ret)
++		goto err_put_queue;
++
++	queue->handle = qid;
++	*handle = qid;
++
++	return 0;
++
++err_put_queue:
++	panthor_xgs_queue_put(queue);
++	return ret;
++}
++
++int panthor_xgs_queue_destroy(struct panthor_file *pfile, u32 handle)
++{
++	struct panthor_xgs_queue_pool *pool = pfile->xgs_queues;
++	struct panthor_xgs_queue *queue;
++	struct panthor_xgs_job *job, *tmp;
++	LIST_HEAD(faulty_jobs);
++	int err = -ECANCELED;
++
++	queue = xa_erase(&pool->xa, handle);
++	if (!queue)
++		return -EINVAL;
++
++	queue->destroyed = true;
++
++	mutex_lock(&queue->lock);
++
++	list_for_each_entry_safe(job, tmp, &queue->fence_ctx.in_flight_jobs, node) {
++		list_move_tail(&job->node, &faulty_jobs);
++		dma_fence_set_error(job->done_fence, err);
++		dma_fence_signal(job->done_fence);
++	}
++
++	mutex_unlock(&queue->lock);
++
++	list_for_each_entry_safe(job, tmp, &faulty_jobs, node) {
++		list_del_init(&job->node);
++		/* Ditch ref we took when adding it to the in_flight_jobs */
++		panthor_xgs_job_put(&job->base);
++	}
++
++	panthor_xgs_queue_put(queue);
++
++	return 0;
++}
++
++void panthor_xgs_queue_put(struct panthor_xgs_queue *queue)
++{
++	if (queue)
++		kref_put(&queue->refcount, xgs_queue_release);
++}
++
++struct panthor_vm *panthor_xgs_queue_vm(struct panthor_xgs_queue *queue)
++{
++	return queue->vm;
++}
++
++int panthor_xgs_queue_pool_create(struct panthor_file *pfile)
++{
++	struct panthor_xgs_queue_pool *pool;
++
++	pool = kzalloc(sizeof(*pool), GFP_KERNEL);
++	if (!pool)
++		return -ENOMEM;
++
++	xa_init_flags(&pool->xa, XA_FLAGS_ALLOC1);
++	pfile->xgs_queues = pool;
++	return 0;
++}
++
++void panthor_xgs_queue_pool_destroy(struct panthor_file *pfile)
++{
++	struct panthor_xgs_queue_pool *pool = pfile->xgs_queues;
++	struct panthor_xgs_queue *queue;
++	unsigned long i;
++
++	if (IS_ERR_OR_NULL(pool))
++		return;
++
++	xa_for_each(&pool->xa, i, queue)
++		panthor_xgs_queue_destroy(pfile, i);
++
++	xa_destroy(&pool->xa);
++	kfree(pool);
++	pfile->xgs_queues = NULL;
++}
++
++struct panthor_xgs_queue *panthor_xgs_queue_pool_get_xgs_queue(struct panthor_xgs_queue_pool *pool,
++							       u32 handle)
++{
++	struct panthor_xgs_queue *queue;
++
++	queue = xgs_queue_get(xa_load(&pool->xa, handle));
++
++	return queue;
++}
++
++void panthor_xgs_queue_pool_recheck(struct panthor_file *ptfile)
++{
++	unsigned long i;
++	struct panthor_xgs_queue *queue;
++
++	xa_for_each(&ptfile->xgs_queues->xa, i, queue)
++		xgs_queue_recheck(queue);
++}
++
++struct drm_sched_job *panthor_xgs_job_create(struct panthor_xgs_queue *queue,
++					     struct drm_panthor_xgs_op *ops, u32 ops_count)
++{
++	struct panthor_xgs_job *job;
++	int ret;
++
++	job = kzalloc(sizeof(*job), GFP_KERNEL);
++	if (!job)
++		return ERR_PTR(-ENOMEM);
++
++	kref_init(&job->refcount);
++	INIT_LIST_HEAD(&job->node);
++
++	job->queue = xgs_queue_get(queue);
++	if (!job->queue) {
++		ret = -EINVAL;
++		goto err_put_job;
++	}
++
++	job->done_fence = kzalloc(sizeof(*job->done_fence), GFP_KERNEL);
++	if (!job->done_fence) {
++		ret = -ENOMEM;
++		goto err_put_job;
++	}
++
++	ret = drm_sched_job_init(&job->base, &queue->entity, 1, queue);
++	if (ret)
++		goto err_put_job;
++
++	/* take ownership of ops array */
++	job->ops = ops;
++	job->ops_count = ops_count;
++
++	return &job->base;
++
++err_put_job:
++	panthor_xgs_job_put(&job->base);
++	return ERR_PTR(ret);
++}
++
++static void xgs_job_release(struct kref *ref)
++{
++	struct panthor_xgs_job *job = container_of(ref, struct panthor_xgs_job, refcount);
++
++	drm_WARN_ON(&job->queue->ptdev->base, !list_empty(&job->node));
++
++	if (job->base.s_fence)
++		drm_sched_job_cleanup(&job->base);
++
++	if (job->done_fence && job->done_fence->ops)
++		dma_fence_put(job->done_fence);
++	else
++		dma_fence_free(job->done_fence);
++
++	panthor_xgs_queue_put(job->queue);
++	kvfree(job->ops);
++	kfree(job);
++}
++
++struct drm_sched_job *panthor_xgs_job_get(struct drm_sched_job *sched_job)
++{
++	if (sched_job) {
++		struct panthor_xgs_job *job = container_of(sched_job, struct panthor_xgs_job, base);
++
++		kref_get(&job->refcount);
++	}
++
++	return sched_job;
++}
++
++void panthor_xgs_job_put(struct drm_sched_job *sched_job)
++{
++	struct panthor_xgs_job *job = container_of(sched_job, struct panthor_xgs_job, base);
++
++	if (sched_job)
++		kref_put(&job->refcount, xgs_job_release);
++}
++
++void panthor_xgs_job_update_resvs(struct drm_exec *exec, struct drm_sched_job *sched_job)
++{
++	struct panthor_xgs_job *job = container_of(sched_job, struct panthor_xgs_job, base);
++
++	panthor_vm_update_resvs(job->queue->vm, exec, &sched_job->s_fence->finished,
++				DMA_RESV_USAGE_BOOKKEEP, DMA_RESV_USAGE_WRITE);
++}
+diff --git a/drivers/gpu/drm/panthor/panthor_xgs.h b/drivers/gpu/drm/panthor/panthor_xgs.h
 new file mode 100644
-index 000000000000..018cfc87cdaa
+index 000000000000..fa7dd5e5ef83
 --- /dev/null
-+++ b/drivers/gpu/drm/panthor/panthor_syncobj.h
-@@ -0,0 +1,27 @@
++++ b/drivers/gpu/drm/panthor/panthor_xgs.h
+@@ -0,0 +1,42 @@
 +/* SPDX-License-Identifier: GPL-2.0 or MIT */
 +/* Copyright 2024 ARM Limited. All rights reserved. */
 +
-+#ifndef __PANTHOR_SYNCOBJ_H__
-+#define __PANTHOR_SYNCOBJ_H__
++#ifndef __PANTHOR_XGS_H__
++#define __PANTHOR_XGS_H__
 +
-+#define PANTHOR_SYNCOBJ32_SIZE 8
-+#define PANTHOR_SYNCOBJ64_SIZE 16
-+
-+struct panthor_syncobj;
++struct drm_exec;
++struct drm_panthor_xgs_op;
++struct drm_panthor_xgs_queue_create;
++struct drm_sched_job;
++struct panthor_xgs_queue;
++struct panthor_xgs_queue_pool;
++struct panthor_file;
 +struct panthor_vm;
 +
-+struct panthor_syncobj *panthor_syncobj_create(struct panthor_device *ptdev,
-+					       struct panthor_vm *vm, u64 gpu_va,
-+					       bool sync64);
-+void panthor_syncobj_release(struct panthor_syncobj *syncobj);
++int panthor_xgs_queue_create(struct panthor_file *pfile, u32 vm_id,
++			     int eventfd_sync_update, u32 *handle);
++int panthor_xgs_queue_destroy(struct panthor_file *pfile, u32 handle);
 +
-+u64 panthor_syncobj_get_value(struct panthor_syncobj *syncobj);
-+u32 panthor_syncobj_get_error(struct panthor_syncobj *syncobj);
++void panthor_xgs_queue_put(struct panthor_xgs_queue *queue);
 +
-+void panthor_syncobj_signal(struct panthor_syncobj *syncobj, u64 value);
-+void panthor_syncobj_signal_with_error(struct panthor_syncobj *syncobj, u64 value, u32 error);
++struct panthor_vm *panthor_xgs_queue_vm(struct panthor_xgs_queue *queue);
 +
-+u64 panthor_syncobj_ptr64_get_value(void *syncobj_ptr);
-+void panthor_syncobj_ptr64_signal_with_error(void *syncobj_ptr, u64 value, u32 error);
++int panthor_xgs_queue_pool_create(struct panthor_file *pfile);
++void panthor_xgs_queue_pool_destroy(struct panthor_file *pfile);
++
++struct panthor_xgs_queue *
++panthor_xgs_queue_pool_get_xgs_queue(struct panthor_xgs_queue_pool *pool, u32 handle);
++
++void panthor_xgs_queue_pool_recheck(struct panthor_file *ptfile);
++
++struct drm_sched_job *
++panthor_xgs_job_create(struct panthor_xgs_queue *queue,
++		       struct drm_panthor_xgs_op *ops,
++		       u32 ops_count);
++
++void panthor_xgs_job_put(struct drm_sched_job *sched_job);
++struct drm_sched_job *panthor_xgs_job_get(struct drm_sched_job *sched_job);
++
++void panthor_xgs_job_update_resvs(struct drm_exec *exec, struct drm_sched_job *sched_job);
 +
 +#endif
 -- 
