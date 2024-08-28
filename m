@@ -1,119 +1,122 @@
-Return-Path: <linux-kernel+bounces-305046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B62796289B
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:27:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F5499628A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:29:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA59E1F2395D
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:27:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9A831C20D2D
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:29:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2FF6188014;
-	Wed, 28 Aug 2024 13:26:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE2E2187859;
+	Wed, 28 Aug 2024 13:28:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="JM1M96AP"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b="c8kcyQH0"
+Received: from mx1.t-argos.ru (mx1.t-argos.ru [109.73.34.58])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C4DD18787A;
-	Wed, 28 Aug 2024 13:26:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65B3E16BE30;
+	Wed, 28 Aug 2024 13:28:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.73.34.58
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724851616; cv=none; b=ufCNmGR01ub7KKsPNY4HvrjRfbgkVwEjBz3Lj8txEgo2c4onuFm2HZAfZ354AanJxHnqKffUzXfs/U0+e2TuJ5uV3AHwQSHfoH903bYFjiHpiOIOOVkvK1z3tGL0sFK610RYs5aRBhL2KupIf937L00wwI+6bMjOzgcIdrNpm8Y=
+	t=1724851737; cv=none; b=IPwsAhGSzR8qsFCIMcnAOpYCGchiQYpNljrqmDV6ks+ORven9Rz/gCxobVMhosvRj9uCu0qhZUsAluX5kJbPtXkCtWnt2a96YQxVh/riGoJz3fyc0y3IWvt1WDyzs0zw9QWoOYa/dQKCDm3jF3TbWv01V862Y8e4OPOBMgMuCUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724851616; c=relaxed/simple;
-	bh=mKdxNze7LPA4BnzxUsya7Ql3UraKCjFaOUd1Eufz3O0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=VVvHqCy5DXjlCu3BH0xNgGSvPBLwI1hpfrnPhOTY2CRuBpQEt+mLdfzLSfrt5WLKUG76SyDaLxG4tmBIfqbax5CfHmWwDdVzhaIDhuxr+88vmVM4NDqODVNbqcYT81gYbCMMCy1bZpGsGKCP/+27RdXCSNpuXtZ12HgiJTPZT0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=JM1M96AP; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47SBCCxt021403;
-	Wed, 28 Aug 2024 13:26:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	5mFI5+1z5+OavddQsnH/J4iei7eW39BBAS7Gf4z7qdg=; b=JM1M96APN7/rlM7T
-	m2ALUqJbQRNFcIBJimT2vEIrWOxthXpXRF3Kwm2Uu13ROg4JN3oh7xCTZ4tHOduf
-	RV6tdJu+OoLIcWvsg8kUHOl1D2kF/Fhh3HHiouH4IxpGyTNojHVWFCgYJEPAHT+I
-	53SjrUSXAWkioaCNq+UKWjxhcxlljDfdth5EYvPnk3kOwhRqdnVSukT+86IKru+K
-	yb4OTp+962V6Yb5r2L41RVVLldnoJv2RvHm68NWoTrTAuget2br/77UY2pN5xI7x
-	2cCj6VqL3sGc94es8imuaKweyt35gH7skIFNKrPnUmAyQ4eWGtTdMONGGNnXH1HY
-	TvqDwA==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 419pv09uyp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 28 Aug 2024 13:26:12 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47SDQBYK015130
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 28 Aug 2024 13:26:11 GMT
-Received: from [10.217.217.229] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 28 Aug
- 2024 06:26:08 -0700
-Message-ID: <7849b980-a804-4375-b2c7-0643aad581d7@quicinc.com>
-Date: Wed, 28 Aug 2024 18:56:05 +0530
+	s=arc-20240116; t=1724851737; c=relaxed/simple;
+	bh=nv9P0I0ziGxkG0t9kR1RGOjjoLHoqRnw7ItUnlNg9EE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BhMIfUwZiOd0W43HhFXHR9rWzRgHrXYIZK0huNR+8mzit4zgWHf8OE7fOhNN3SbYhvhMb2xJgoNYuPeqi8oTOMyPeIL18Pnz0CdrQ2aP0CbJ55b5lblTsmNK0fL2P8iDhvHaysfn+/HghRx58ztGnLdKBL9F1UEZ/gRmGiQp4VM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru; spf=pass smtp.mailfrom=t-argos.ru; dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b=c8kcyQH0; arc=none smtp.client-ip=109.73.34.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=t-argos.ru
+Received: from mx1.t-argos.ru (localhost [127.0.0.1])
+	by mx1.t-argos.ru (Postfix) with ESMTP id 62016100004;
+	Wed, 28 Aug 2024 16:28:31 +0300 (MSK)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=t-argos.ru; s=mail;
+	t=1724851711; bh=gdf52+4K16QtdI7+VRo9GNJmZUemcY6slADrDQ4ikHY=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
+	b=c8kcyQH0pgOn0s5P9LmD9C2drpA1J7LwjQUtqaKHCzF2Mb8TMsIKi3jG4aYwTKKCN
+	 S+z+yPTigy9j1q8et31qMsrpLrnoYhrFHo8g7xl+gGzugb52hjn8fjaDXXsiAw8Ilk
+	 xEHWFlLYidIfQKPnEyRdawygk84UDj1fpeo/FvbIa81/CDvzVzSXoL/zhdC6Iq6Mdu
+	 gsIhD9fBverlBMV7i1m3d1aQTAAjg5bC3MA7RH8jDOazAkL8Dj+eT+vPcYAXRMp4cc
+	 714ZRWqkrTlXa/1xJ+ephnROwLDpFhfuYzS8J+Weq9AcoWY2GqCtbbPK8lgweiuONq
+	 MvyYdNvYgPbgg==
+Received: from mx1.t-argos.ru.ru (mail.t-argos.ru [172.17.13.212])
+	by mx1.t-argos.ru (Postfix) with ESMTP;
+	Wed, 28 Aug 2024 16:27:19 +0300 (MSK)
+Received: from Comp.ta.t-argos.ru (172.17.44.124) by ta-mail-02
+ (172.17.13.212) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 28 Aug
+ 2024 16:26:27 +0300
+From: Aleksandr Mishin <amishin@t-argos.ru>
+To: Vadym Kochan <vadym.kochan@plvision.eu>
+CC: Aleksandr Mishin <amishin@t-argos.ru>, Taras Chornyi
+	<taras.chornyi@plvision.eu>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>, Oleksandr Mazur <oleksandr.mazur@plvision.eu>, Serhiy
+ Boiko <serhiy.boiko@plvision.eu>, Volodymyr Mytnyk
+	<volodymyr.mytnyk@plvision.eu>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>
+Subject: [PATCH net] net: marvell: prestera: Remove unneeded check in prestera_port_create()
+Date: Wed, 28 Aug 2024 16:26:06 +0300
+Message-ID: <20240828132606.19878-1-amishin@t-argos.ru>
+X-Mailer: git-send-email 2.30.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] scsi: ufs: qcom: update MODE_MAX cfg_bw value
-To: Bart Van Assche <bvanassche@acm.org>,
-        Manivannan Sadhasivam
-	<manivannan.sadhasivam@linaro.org>,
-        "James E.J. Bottomley"
-	<James.Bottomley@HansenPartnership.com>,
-        "Martin K. Petersen"
-	<martin.petersen@oracle.com>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <quic_nitirawa@quicinc.com>,
-        <quic_bhaskarv@quicinc.com>, <quic_narepall@quicinc.com>,
-        <quic_rampraka@quicinc.com>, <quic_cang@quicinc.com>,
-        <quic_nguyenb@quicinc.com>
-References: <20240828120502.1439-1-quic_mapa@quicinc.com>
- <2cfcaf59-fc6d-4f89-a24f-6bc028956c78@acm.org>
-Content-Language: en-US
-From: MANISH PANDEY <quic_mapa@quicinc.com>
-In-Reply-To: <2cfcaf59-fc6d-4f89-a24f-6bc028956c78@acm.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: OjOcD7kntJMbGObxCjlm7f2QqLdnHh78
-X-Proofpoint-ORIG-GUID: OjOcD7kntJMbGObxCjlm7f2QqLdnHh78
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-28_05,2024-08-27_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 clxscore=1015
- priorityscore=1501 impostorscore=0 suspectscore=0 lowpriorityscore=0
- malwarescore=0 spamscore=0 mlxlogscore=741 mlxscore=0 bulkscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408280096
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: ta-mail-02.ta.t-argos.ru (172.17.13.212) To ta-mail-02
+ (172.17.13.212)
+X-KSMG-Rule-ID: 1
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 187387 [Aug 28 2024]
+X-KSMG-AntiSpam-Version: 6.1.0.4
+X-KSMG-AntiSpam-Envelope-From: amishin@t-argos.ru
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 27 0.3.27 71302da218a62dcd84ac43314e19b5cc6b38e0b6, {Tracking_from_domain_doesnt_match_to}, 127.0.0.199:7.1.2;mx1.t-argos.ru.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;t-argos.ru:7.1.1, FromAlignment: s
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean, bases: 2024/08/28 08:19:00
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2024/08/28 11:49:00 #26453044
+X-KSMG-AntiVirus-Status: Clean, skipped
 
+prestera_port_create() calls prestera_rxtx_port_init() and analyze its
+return code. prestera_rxtx_port_init() always returns 0, so this check is
+unneeded and should be removed.
 
+Remove unneeded check to clean up the code.
 
-On 8/28/2024 5:45 PM, Bart Van Assche wrote:
-> On 8/28/24 8:05 AM, Manish Pandey wrote:
->> update cfg_bw value for MODE_MAX for Qualcomm SoC.
-> 
-> A patch description should not only explain what has been changed but
-> also why.
-> 
-> Thanks,
-> 
-> Bart.
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
 
-I will update in next patch update [V2].
+Fixes: 501ef3066c89 ("net: marvell: prestera: Add driver for Prestera family ASIC devices")
+Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
+---
+ drivers/net/ethernet/marvell/prestera/prestera_main.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Regards
-manish
+diff --git a/drivers/net/ethernet/marvell/prestera/prestera_main.c b/drivers/net/ethernet/marvell/prestera/prestera_main.c
+index 63ae01954dfc..2d4f6d03b729 100644
+--- a/drivers/net/ethernet/marvell/prestera/prestera_main.c
++++ b/drivers/net/ethernet/marvell/prestera/prestera_main.c
+@@ -718,9 +718,7 @@ static int prestera_port_create(struct prestera_switch *sw, u32 id)
+ 		}
+ 	}
+ 
+-	err = prestera_rxtx_port_init(port);
+-	if (err)
+-		goto err_port_init;
++	prestera_rxtx_port_init(port);
+ 
+ 	INIT_DELAYED_WORK(&port->cached_hw_stats.caching_dw,
+ 			  &prestera_port_stats_update);
+-- 
+2.30.2
+
 
