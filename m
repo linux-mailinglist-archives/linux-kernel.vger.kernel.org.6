@@ -1,99 +1,231 @@
-Return-Path: <linux-kernel+bounces-304813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB66B96253B
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 12:48:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFB1796251A
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 12:40:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A74FD281C11
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 10:48:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 413C81F220D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 10:40:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E723316C42C;
-	Wed, 28 Aug 2024 10:48:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04F5E16BE39;
+	Wed, 28 Aug 2024 10:40:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="koD4xEJo"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="V1o5oMWR"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E861315C15B;
-	Wed, 28 Aug 2024 10:48:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A659A158DC2;
+	Wed, 28 Aug 2024 10:39:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724842091; cv=none; b=O8ayzMlK4LG8FBvwmCK16M3LaIi+/0lXVzThmG2JZPzLGbBrtUzVpgnqOGp4iEAI/7i9Y0Ei05qjaqaU9ytP6GrEraLZNHWo49edEHrbhLlWIKJb/iu6st3LNDniIQzqzC5xbMpXBtg53aCLhL5MbreLiJqa0T4Vg8drLxLmCrM=
+	t=1724841601; cv=none; b=nct3OKv4ao8k0kx/le8a0pJEBJPdSgp5c7n6mWpTV9TzawUsw6srhVaeILDiPK1ZCxlXy082UTeeY0Ft9uFs/pFDVvLoZK+g/fNQ6mrAoLx2HfnjQiXTkN84cCGK0lLVLnx9rf2pdzY1GOaOlLELrZ4I1JdTOOpggddWvdWuRL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724842091; c=relaxed/simple;
-	bh=AvpK99Ogtlm6T/flrdzVUTirkdfok6X8bw/cYu6MaPs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cPHr9V74Dmqk8TRjh32U5E+3HqcTfcHO1gUudn+FLGiklJEPQX61OGR5nXTGFuLuRgmUsgdpofFfDWuHS6LZx2eXJo074PxjJQgrWAxpYuEc799d+loq2Eu7ck+trj8ZIqbSRS6T6K0+Oa9tSOhj37+UB874PACVPv26nh+MX1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=koD4xEJo; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=HiHXsrU1uxoz44DKaTX7gem1HpGF3cKfHBXLo1xRc0I=; b=koD4xEJolxR4rrnjzgYuXUwenr
-	G7d/pX6vMbb+NMG/3KQa5ayqwKAWfdlTSOn0VvdzB+og4f+7CbUUHD+ZXYy5xLsC8N7Bz4RS/8Tnk
-	HKF1ajkZTxo8euK2Tq7mtjC/AQ3UsMaR7Jp3VbFTCRNNpyUvswfyYHK9hyaIHqzkwhPgisRd41HXx
-	ReF4DzwxixULXa4yCDZt9/iTYUNgGhg3GCRuGyGfbhxpTVpc72KnGPT7o/Jv5lMwWMmzo0SvalvnR
-	cJOLTq9pLwKbEfyxnmrx9ZwSvtU/djScjAiF3rL1SmYBqsMLrFtbciDpIiRZD4p2BtaexpsnXZCmt
-	oMKW86kA==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:39482)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1sjG4S-0008Ug-0G;
-	Wed, 28 Aug 2024 11:38:35 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1sjG4N-0004PU-1l;
-	Wed, 28 Aug 2024 11:38:31 +0100
-Date: Wed, 28 Aug 2024 11:38:31 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc: davem@davemloft.net, Pantelis Antoniou <pantelis.antoniou@gmail.com>,
-	Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
-	Herve Codina <herve.codina@bootlin.com>,
-	linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH net-next 6/6] net: ethernet: fs_enet: phylink conversion
-Message-ID: <Zs7+J5JWpfvSQ8/T@shell.armlinux.org.uk>
-References: <20240828095103.132625-1-maxime.chevallier@bootlin.com>
- <20240828095103.132625-7-maxime.chevallier@bootlin.com>
+	s=arc-20240116; t=1724841601; c=relaxed/simple;
+	bh=lypZN8Ptv+m64d7B5Itdi6jh1xC4xI6bvj1nplhou8I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SNC1y5EmN/VZzQx3LuKUZEYhlaxbQBl/piRfvmuUB1bn3bb3mmuM3jLy37prAiooa0eseuTm+MdssQSwoMV1KpAGmnTYqcsdzqatF7uPIRYo2JfFSalBGE8hwjpC/vSZepRQxDkVNWLjpcXtzl0KVe6eCasI2AmBX9KZzyXvQJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=V1o5oMWR; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47RM3gOi032469;
+	Wed, 28 Aug 2024 10:39:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=D
+	qi/bjjpKWWI81s91WHaD7aZLkRMpDLLY8cSHktKSYM=; b=V1o5oMWRr7qBMnt1y
+	+Wl1fOWH4Snlyu+bK/wb3K1JK7B5QPTASYdt7OZkkjn8boGA/GM7sLhrmwzYuo1a
+	OZZGgyXfz+O/fl8iJfUojSoYrOXKgMsSQy68l8PF5n/AD/BSEAJA0XJgkiOg0Fw+
+	Ixe84HjX7yKva9haDv9PKRFyhiQBfJLZGzAGWHv/+XRPYSZ1V+zDbTjGBa1tBTBH
+	VdzuMoIcRWf5D/Y5pWMCIKu+5KRMqfDHTyj+CNA1wD7sY2MnqZOGCjPQaOukWyNT
+	5X/21bEdYZY36DDCwkuZemtqU/p3a3z+Ce/XV7se0i4eFGBYqZEnIx/JANwEER0r
+	Kk8RA==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 419q8u29sv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 28 Aug 2024 10:39:44 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 47SAcYSg023254;
+	Wed, 28 Aug 2024 10:39:44 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 419q8u29sr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 28 Aug 2024 10:39:44 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 47S8N1Qg021752;
+	Wed, 28 Aug 2024 10:39:43 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 417suufd3q-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 28 Aug 2024 10:39:43 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 47SAdeCE46268678
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 28 Aug 2024 10:39:40 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 408722004E;
+	Wed, 28 Aug 2024 10:39:40 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1CBAB20040;
+	Wed, 28 Aug 2024 10:39:38 +0000 (GMT)
+Received: from [9.171.52.187] (unknown [9.171.52.187])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 28 Aug 2024 10:39:37 +0000 (GMT)
+Message-ID: <0b84b538-e40c-4e93-9bb4-33e5a2f1e09c@linux.ibm.com>
+Date: Wed, 28 Aug 2024 16:09:26 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240828095103.132625-7-maxime.chevallier@bootlin.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] perf vendor events power10: Update JSON/events
+To: Ian Rogers <irogers@google.com>
+Cc: acme@kernel.org, namhyung@kernel.org, linux-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        maddy@linux.ibm.com, atrajeev@linux.vnet.ibm.com,
+        hbathini@linux.ibm.com, disgoel@linux.vnet.ibm.com
+References: <20240827053206.538814-1-kjain@linux.ibm.com>
+ <CAP-5=fWBjt3pypEwEsbKsuNTqX+ZA7v9WbNJCUgc09xxF=pt1A@mail.gmail.com>
+Content-Language: en-US
+From: kajoljain <kjain@linux.ibm.com>
+In-Reply-To: <CAP-5=fWBjt3pypEwEsbKsuNTqX+ZA7v9WbNJCUgc09xxF=pt1A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 78gOJYNIXuVW2o2rUE5A5ejV4_VXH6_8
+X-Proofpoint-ORIG-GUID: J3ULAgdu2pbosU0P-8ecZO2-pFUV93Rr
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-28_03,2024-08-27_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ lowpriorityscore=0 clxscore=1015 bulkscore=0 phishscore=0 mlxscore=0
+ malwarescore=0 mlxlogscore=999 spamscore=0 priorityscore=1501 adultscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408280076
 
-On Wed, Aug 28, 2024 at 11:51:02AM +0200, Maxime Chevallier wrote:
-> +static int fs_eth_ioctl(struct net_device *dev, struct ifreq *ifr, int cmd)
-> +{
-> +	struct fs_enet_private *fep = netdev_priv(dev);
-> +
-> +	if (!netif_running(dev))
-> +		return -EINVAL;
 
-Why do you need this check?
 
--- 
-*** please note that I probably will only be occasionally responsive
-*** for an unknown period of time due to recent eye surgery making
-*** reading quite difficult.
+On 8/27/24 21:00, Ian Rogers wrote:
+> On Mon, Aug 26, 2024 at 10:33 PM Kajol Jain <kjain@linux.ibm.com> wrote:
+>>
+>> Update JSON/events for power10 platform with additional events.
+>>
+>> Signed-off-by: Kajol Jain <kjain@linux.ibm.com>
+> 
+> For the series:
+> Reviewed-by: Ian Rogers <irogers@google.com>
 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Hi Ian,
+Thanks for reviewing the patchset.
+
+> 
+> Just to note, the moving of events in patches 2 and 3 is necessary as
+> the filename sets the "topic" in perf list. I'm not sure the whole
+> "topic" thing makes total sense and we may want to revisit it at some
+> date. For example, AMD generally put the topic into the event name,
+> the PMU gives a strong hint of "topic", etc.
+
+In my opinion, having topic helps in understanding the area to which
+given event belongs. And since we have multiple event categories in case
+of core PMU, Just having PMU name may not not sufficient.
+I will check further on adding topic to event name(which AMD is using),
+my concern is it will increase the event name size. As we already have
+bigger event names.
+
+But may be rather then picking topic from file name, we can add one
+separate field to define the topic in json and use that instead?
+
+Thanks,
+Kajol Jain
+
+> 
+> Thanks,
+> Ian
+> 
+>> ---
+>>  .../arch/powerpc/power10/datasource.json      | 25 +++++++++++++++++++
+>>  .../arch/powerpc/power10/frontend.json        | 10 ++++++++
+>>  .../pmu-events/arch/powerpc/power10/pmc.json  |  5 ++++
+>>  3 files changed, 40 insertions(+)
+>>
+>> diff --git a/tools/perf/pmu-events/arch/powerpc/power10/datasource.json b/tools/perf/pmu-events/arch/powerpc/power10/datasource.json
+>> index 0eeaaf1a95b8..283284745d9c 100644
+>> --- a/tools/perf/pmu-events/arch/powerpc/power10/datasource.json
+>> +++ b/tools/perf/pmu-events/arch/powerpc/power10/datasource.json
+>> @@ -14,6 +14,31 @@
+>>      "EventName": "PM_DATA_FROM_MEMORY",
+>>      "BriefDescription": "The processor's data cache was reloaded from local, remote, or distant memory due to a demand miss."
+>>    },
+>> +  {
+>> +    "EventCode": "0x0000004080",
+>> +    "EventName": "PM_INST_FROM_L1",
+>> +    "BriefDescription": "An instruction fetch hit in the L1. Each fetch group contains 8 instructions. The same line can hit 4 times if 32 sequential instructions are fetched."
+>> +  },
+>> +  {
+>> +    "EventCode": "0x000000026080",
+>> +    "EventName": "PM_L2_LD_MISS",
+>> +    "BriefDescription": "All successful D-Side Load dispatches for this thread that missed in the L2. Since the event happens in a 2:1 clock domain and is time-sliced across all 4 threads, the event count should be multiplied by 2."
+>> +  },
+>> +  {
+>> +    "EventCode": "0x000000026880",
+>> +    "EventName": "PM_L2_ST_MISS",
+>> +    "BriefDescription": "All successful D-Side Store dispatches for this thread that missed in the L2. Since the event happens in a 2:1 clock domain and is time-sliced across all 4 threads, the event count should be multiplied by 2."
+>> +  },
+>> +  {
+>> +    "EventCode": "0x010000046880",
+>> +    "EventName": "PM_L2_ST_HIT",
+>> +    "BriefDescription": "All successful D-side store dispatches for this thread that were L2 hits. Since the event happens in a 2:1 clock domain and is time-sliced across all 4 threads, the event count should be multiplied by 2."
+>> +  },
+>> +  {
+>> +    "EventCode": "0x000000036880",
+>> +    "EventName": "PM_L2_INST_MISS",
+>> +    "BriefDescription": "All successful instruction (demand and prefetch) dispatches for this thread that missed in the L2. Since the event happens in a 2:1 clock domain and is time-sliced across all 4 threads, the event count should be multiplied by 2."
+>> +  },
+>>    {
+>>      "EventCode": "0x000300000000C040",
+>>      "EventName": "PM_INST_FROM_L2",
+>> diff --git a/tools/perf/pmu-events/arch/powerpc/power10/frontend.json b/tools/perf/pmu-events/arch/powerpc/power10/frontend.json
+>> index 53660c279286..456971f60814 100644
+>> --- a/tools/perf/pmu-events/arch/powerpc/power10/frontend.json
+>> +++ b/tools/perf/pmu-events/arch/powerpc/power10/frontend.json
+>> @@ -93,5 +93,15 @@
+>>      "EventCode": "0x400FC",
+>>      "EventName": "PM_ITLB_MISS",
+>>      "BriefDescription": "Instruction TLB reload (after a miss), all page sizes. Includes only demand misses."
+>> +  },
+>> +  {
+>> +    "EventCode": "0x00000040B8",
+>> +    "EventName": "PM_PRED_BR_TKN_COND_DIR",
+>> +    "BriefDescription": "A conditional branch finished with correctly predicted direction. Resolved taken."
+>> +  },
+>> +  {
+>> +    "EventCode": "0x00000048B8",
+>> +    "EventName": "PM_PRED_BR_NTKN_COND_DIR",
+>> +    "BriefDescription": "A conditional branch finished with correctly predicted direction. Resolved not taken."
+>>    }
+>>  ]
+>> diff --git a/tools/perf/pmu-events/arch/powerpc/power10/pmc.json b/tools/perf/pmu-events/arch/powerpc/power10/pmc.json
+>> index 0e0253d0e757..04732698d9b2 100644
+>> --- a/tools/perf/pmu-events/arch/powerpc/power10/pmc.json
+>> +++ b/tools/perf/pmu-events/arch/powerpc/power10/pmc.json
+>> @@ -104,6 +104,11 @@
+>>      "EventName": "PM_RUN_CYC",
+>>      "BriefDescription": "Processor cycles gated by the run latch."
+>>    },
+>> +  {
+>> +    "EventCode": "0x200F8",
+>> +    "EventName": "PM_EXT_INT",
+>> +    "BriefDescription": "Cycles an external interrupt was active."
+>> +  },
+>>    {
+>>      "EventCode": "0x30010",
+>>      "EventName": "PM_PMC2_OVERFLOW",
+>> --
+>> 2.43.5
+>>
 
