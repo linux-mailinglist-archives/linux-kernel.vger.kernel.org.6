@@ -1,87 +1,100 @@
-Return-Path: <linux-kernel+bounces-304399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C1A8961F96
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 08:22:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36AFB961F99
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 08:22:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB6FA1F259B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 06:22:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8EB51B22753
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 06:22:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C04615A84D;
-	Wed, 28 Aug 2024 06:19:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N/QPLBsP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6540515AD83;
+	Wed, 28 Aug 2024 06:20:02 +0000 (UTC)
+Received: from ssh247.corpemail.net (ssh247.corpemail.net [210.51.61.247])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 572FF159217;
-	Wed, 28 Aug 2024 06:19:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 661E43A8D0;
+	Wed, 28 Aug 2024 06:19:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.61.247
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724825982; cv=none; b=n6L+hlZtUhaThgYG79tpCbmRG/kPJSblSnVKg0xK8CfWCtKmufvQWiGDfgjAFZG0MIiaMDYZ+gK3bm4Wef2yl+w4Rr0BaFp7ntH79Mfk7OwlhY/WQobe5Qj240SEs8K5VvSQbuK8REcxKoamwMSaOlAezQaOjYTSXaZg5a45mvk=
+	t=1724826002; cv=none; b=u8N6ZulGmCcQ3KdqqQpS7McBZTGXCqS1cdsg7xF8iIsx2ZS6m7EBXR5W7G8y1TGu7IJqLsIwpK46M58wxoKBTSYoEemWjaLBAO37qzGCypCwUBFeCzne3JF+XIxSNURcrvkVnkmdQxiORKY+wohFc3S+19uUH9jqB3ZeMw9nxhk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724825982; c=relaxed/simple;
-	bh=aU4gyBsny6IrrUpfPEazxXaLn0QqsPUZFJya+AVYBjA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X3TsOp82NEDKaCnPJ/VY2kE1AdTXs8oaqR+AqD8gNk0IYkNMG3g3zIbgKRag7pU4GFKsVQCC+VSPXe4ZaULmqLlpjKjKkfNJhmY70sOX1Qt5l6w9EBamZGGIEH48J6Ark1iil39Ppd0awhvSvBpozIXyw2vJW1rY5RZFOAyHD/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N/QPLBsP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 397D2C4FE9F;
-	Wed, 28 Aug 2024 06:19:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724825981;
-	bh=aU4gyBsny6IrrUpfPEazxXaLn0QqsPUZFJya+AVYBjA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=N/QPLBsP8s6VJSJ+g+gvRF5MfWN6r5lKGB7A9b7gS0Zv8jKX+UMttCT0FzFb9AXCg
-	 cu+wQMJg+SLZvgNyBr8R0JVO468XdiXuSAFg1Sazu9Dkr610lNeRLbQWim+td9SMT5
-	 UKKqMIbwf/2kwetPqn7EGEIrlc+0QwjsEXr7XoMO66bBBD+MBpI4MWsD2DCwXKq+pI
-	 kGWoMQ59Fw4XXlgvgNbm+R/jaBxmTnyGX9JzWMyUeUU/GQxWsXlopMKPD3rotjv+jN
-	 ugScZT09rguV4XcTcpelo7ddfyrzpBrNI+q6KZMvEVqI2weO9yBENdcZ8wwqtCKmol
-	 9PWj/CfC0Wbjw==
-Date: Wed, 28 Aug 2024 08:19:38 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Lijuan Gao <quic_lijuang@quicinc.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, kernel@quicinc.com, 
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 3/6] dt-bindings: arm: qcom,ids: add SoC ID for QCS615
-Message-ID: <2uw6hiwwtlcqywnzqoijqplpg2ldgsgy4knnvx3mgx75gnvswp@5e562mjhmcnr>
-References: <20240828-add_initial_support_for_qcs615-v1-0-5599869ea10f@quicinc.com>
- <20240828-add_initial_support_for_qcs615-v1-3-5599869ea10f@quicinc.com>
+	s=arc-20240116; t=1724826002; c=relaxed/simple;
+	bh=xgqcKqyRtsAkM7aclFs0DsgCwOLSxK2usNJJ5fikuOY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=PFnoSVH8mT+1IHz++QyoPFx6wBNlH93sagIXFfGFVJ0c47JI1zKKYIYxMemrYHjIf5NSltWlflNVYIv1M+olKjVeHvE9QzxJMqdOp/tEz1YSQnItE/odxx6gdj7ANbRyCB5K8o8mLyuMQiqHc3maUFFgStpt2Y7gNNLdoOE1asQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.61.247
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
+Received: from ssh247.corpemail.net
+        by ssh247.corpemail.net ((D)) with ASMTP (SSL) id YEV00145;
+        Wed, 28 Aug 2024 14:19:45 +0800
+Received: from localhost.localdomain (10.94.16.18) by
+ jtjnmail201611.home.langchao.com (10.100.2.11) with Microsoft SMTP Server id
+ 15.1.2507.39; Wed, 28 Aug 2024 14:19:44 +0800
+From: Charles Han <hanchunchao@inspur.com>
+To: <m.grzeschik@pengutronix.de>, <davem@davemloft.net>,
+	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<liuyanming@ieisystem.com>, Charles Han <hanchunchao@inspur.com>
+Subject: [PATCH] arcnet: com20020-pci:Check devm_kasprintf() returned value
+Date: Wed, 28 Aug 2024 14:19:41 +0800
+Message-ID: <20240828061941.8173-1-hanchunchao@inspur.com>
+X-Mailer: git-send-email 2.31.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240828-add_initial_support_for_qcs615-v1-3-5599869ea10f@quicinc.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+tUid: 202482814194520dc3504598d31dbe689e8f61db04a77
+X-Abuse-Reports-To: service@corp-email.com
+Abuse-Reports-To: service@corp-email.com
+X-Complaints-To: service@corp-email.com
+X-Report-Abuse-To: service@corp-email.com
 
-On Wed, Aug 28, 2024 at 10:02:13AM +0800, Lijuan Gao wrote:
-> Add the ID for the Qualcomm QCS615 SoC.
-> 
-> Signed-off-by: Lijuan Gao <quic_lijuang@quicinc.com>
-> ---
->  include/dt-bindings/arm/qcom,ids.h | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/include/dt-bindings/arm/qcom,ids.h b/include/dt-bindings/arm/qcom,ids.h
-> index 8332f8d82f96..73a69fc535f6 100644
-> --- a/include/dt-bindings/arm/qcom,ids.h
-> +++ b/include/dt-bindings/arm/qcom,ids.h
-> @@ -278,6 +278,7 @@
->  #define QCOM_ID_IPQ5321			650
->  #define QCOM_ID_QCS8300			674
->  #define QCOM_ID_QCS8275			675
-> +#define QCOM_ID_QCS615			680
+devm_kasprintf() can return a NULL pointer on failure but this returned
+value is not checked.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Fix this lack and check the returned value.
 
-Best regards,
-Krzysztof
+Fixes: 8890624a4e8c ("arcnet: com20020-pci: add led trigger support")
+Signed-off-by: Charles Han <hanchunchao@inspur.com>
+---
+ drivers/net/arcnet/com20020-pci.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/drivers/net/arcnet/com20020-pci.c b/drivers/net/arcnet/com20020-pci.c
+index c5e571ec94c9..ca393f9658e9 100644
+--- a/drivers/net/arcnet/com20020-pci.c
++++ b/drivers/net/arcnet/com20020-pci.c
+@@ -254,6 +254,10 @@ static int com20020pci_probe(struct pci_dev *pdev,
+ 			card->tx_led.name = devm_kasprintf(&pdev->dev, GFP_KERNEL,
+ 							"pci:green:tx:%d-%d",
+ 							dev->dev_id, i);
++			if (!card->tx_led.default_trigger || !card->tx_led.name) {
++				ret = -ENOMEM;
++				goto err_free_arcdev;
++			}
+ 
+ 			card->tx_led.dev = &dev->dev;
+ 			card->recon_led.brightness_set = led_recon_set;
+@@ -263,6 +267,11 @@ static int com20020pci_probe(struct pci_dev *pdev,
+ 			card->recon_led.name = devm_kasprintf(&pdev->dev, GFP_KERNEL,
+ 							"pci:red:recon:%d-%d",
+ 							dev->dev_id, i);
++			if (!card->recon_led.default_trigger || !card->recon_led.name) {
++				ret = -ENOMEM;
++				goto err_free_arcdev;
++			}
++
+ 			card->recon_led.dev = &dev->dev;
+ 
+ 			ret = devm_led_classdev_register(&pdev->dev, &card->tx_led);
+-- 
+2.31.1
 
 
