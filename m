@@ -1,153 +1,188 @@
-Return-Path: <linux-kernel+bounces-305227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE923962B61
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 17:10:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62B94962B62
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 17:10:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73EFD1F211CF
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:10:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 889F11C23804
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:10:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E2C51A2844;
-	Wed, 28 Aug 2024 15:10:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C3241A2C0E;
+	Wed, 28 Aug 2024 15:10:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LiGS8aL5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="So6GTcbv";
+	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="NGAgRuxD"
+Received: from a7-28.smtp-out.eu-west-1.amazonses.com (a7-28.smtp-out.eu-west-1.amazonses.com [54.240.7.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C94B319FA94;
-	Wed, 28 Aug 2024 15:10:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44939381C2;
+	Wed, 28 Aug 2024 15:10:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.240.7.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724857840; cv=none; b=gsrUJXpdOrQO1OGMiC85KvO9KR9LbYgwHX/e9S6/oKk/3/05NlBhaU2La6yU0TKH9wR+1QZQVs+PSXKjNstXKEa3WHs7Iwda7Vet+AGkDbAZBqoXG/7UU+3TqXTVXZgfYmMXKFGJ23OOzbsvxmrjiW5bEoVQuIgl+etOsp4R4hY=
+	t=1724857841; cv=none; b=aW/0aPmJMSu7X0JBY4eEsGK4IlKRX7G4OMv7Ddn2tv3L5uM2Rzc/djQQc9jvvF4dWzG/g4nli0hiTgwXisQCM8HfXofRNIchSoDb2IioITEqv8gZCfIMHATlxOaTMiyVxPhVRUesilqOC9Qzfp42kqIE55I96XxiuH0kcgad3mE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724857840; c=relaxed/simple;
-	bh=biJYQeVgYUWBWA89iydoCExb8DsITDohv2E4/d/wiAQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ohgHZu/ojmgJb0lquwcUvyIVn0IvXZORFMSz4gwxFg2HZfZH6nDNL1sMUIw69xIoY50NmpNzpl47Bhi/yZPppGH+x0TkBRhvqnuheNwH684trhDxW67Fk23g2pKBVsmA1Q+U0yWE1l4K+6omB16QYyY+2jWF/hlCWLWIDJvPhxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LiGS8aL5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4060AC4CEC1;
-	Wed, 28 Aug 2024 15:10:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724857840;
-	bh=biJYQeVgYUWBWA89iydoCExb8DsITDohv2E4/d/wiAQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LiGS8aL55y9eA9nBTQFsTJDjmoJEJwIBE0mhM5nDmRbGOt9InuYjer0KBYriDsQDe
-	 lz4w2c2cQWAFgzzK/+1t0zoGmRS73ydmcDH4gUdkom3SgHIhRuC9PhVlG0b9cdRzDK
-	 3DTW8IwFZMeume+mQM4lX2sBlSIEKHMFO8KxOdTjuUvVGmFLFV5vlP2xzPu+uhVMop
-	 woV7x0yiTofOfcHjBYm2SRbGMDCzk8gQtUMfpkqM+I5XGVmgGKQFlEWD4Ep86wPFYh
-	 tX05N4zD31uEtNvJEOY4PJK/JA17EeDS1v8ufHlA3OoM0yXwEIEN01pXb4pDeNicTJ
-	 o3EEcCzavdoDw==
-Date: Wed, 28 Aug 2024 16:10:35 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Marc Zyngier <maz@kernel.org>
-Cc: Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Joey Gouly <joey.gouly@arm.com>,
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] KVM: arm64: Control visibility of S1PIE related
- sysregs to userspace
-Message-ID: <41dd2283-d5d8-4171-980d-6385f8b62f68@sirena.org.uk>
-References: <20240821-kvm-arm64-hide-pie-regs-v1-0-08cb3c79cb57@kernel.org>
- <86ed6ixa32.wl-maz@kernel.org>
- <e123ee24-2a0c-4ab3-8dc3-2906bf96f38d@sirena.org.uk>
- <86cym2x7cv.wl-maz@kernel.org>
- <5304749b-04c8-44f4-b4de-b2d0cef61169@sirena.org.uk>
- <86bk1lygm1.wl-maz@kernel.org>
- <ZsdZohZhre-fRmUv@finisterre.sirena.org.uk>
- <861q2gxxjr.wl-maz@kernel.org>
+	s=arc-20240116; t=1724857841; c=relaxed/simple;
+	bh=/6xBr387lHpMiwXE06HG6XGKl2MHb0i9Xw/IsslGxeY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=h/VpjMjNsvPYxOSZOy6Elr98917KpkQbF8ubC5DNobI4GVy8poGh8cOMVhO2S7OCzhVG62xcoTKqXHvPTFH2CmdhXs488wCSM1Vi5kJJfh7vLspV7i0aJVZFT/uYwrpg8fOCgPlwO8RjVuCz125eR9MaH7QAzVOMiGRdFDnk2qI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=amazonses.collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=So6GTcbv; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=NGAgRuxD; arc=none smtp.client-ip=54.240.7.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazonses.collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=4232tfv5ebdrjdwkr5zzm7kytdkokgug; d=collabora.com; t=1724857836;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Transfer-Encoding;
+	bh=/6xBr387lHpMiwXE06HG6XGKl2MHb0i9Xw/IsslGxeY=;
+	b=So6GTcbvolSMtNsUCWfb8CsMbmN8o1hLN+EU3OGSCp6G6ggakxwJR+tjfj4tuvmO
+	2iFphPt4sq3whGtEOFUlDZC0XFG7Ocmp3fzDtoj7lhbs4r7BBNudpIFNMLDJqIq7lFu
+	OtHXlEE0J6Tsk6+nt4i25p3SEtO2U7DX6P6MnfnUV/Q38nBG6RNnpIrEVLcj9dSlOEk
+	vZAgwDDjqiMUCl6Ziav3Nn/LyL7rdTuhGrwU2twVByj33MCEbtvHfh3piVEMQqcBnl5
+	5WhtHmiHN9c+mQ1Yhw5bNkyd5W2pncevISM+uTneW/tx1rFB60tC0uNnFAgzibv2z6V
+	C68N1PqD1w==
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=uku4taia5b5tsbglxyj6zym32efj7xqv; d=amazonses.com; t=1724857836;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Feedback-ID;
+	bh=/6xBr387lHpMiwXE06HG6XGKl2MHb0i9Xw/IsslGxeY=;
+	b=NGAgRuxDN5KLV7xQPZrLjHKHSu36qmbsagTi0A/Jw//EHQPMd3rky8uzhqSPZjzn
+	yW3h6SHcZ11Mi7D0oRMsawVkbWSuPcppzFU7IoxCqmkmivRRZFsS1gsservqYsNPHjE
+	cFeO8N7rwF4vkSpAlc2aIvusOfhoxD3Echpx1ZVU=
+From: Detlev Casanova <detlev.casanova@collabora.com>
+To: linux-kernel@vger.kernel.org
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, 
+	Andi Shyti <andi.shyti@kernel.org>, Lee Jones <lee@kernel.org>, 
+	Ulf Hansson <ulf.hansson@linaro.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Jiri Slaby <jirislaby@kernel.org>, Mark Brown <broonie@kernel.org>, 
+	Wim Van Sebroeck <wim@linux-watchdog.org>, 
+	Guenter Roeck <linux@roeck-us.net>, 
+	Chris Morgan <macromorgan@hotmail.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Tim Lunn <tim@feathertop.org>, 
+	Chukun Pan <amadeus@jmu.edu.cn>, 
+	Muhammed Efe Cetin <efectn@protonmail.com>, 
+	Andy Yan <andyshrk@163.com>, Jagan Teki <jagan@edgeble.ai>, 
+	Dragan Simic <dsimic@manjaro.org>, 
+	Detlev Casanova <detlev.casanova@collabora.com>, 
+	Ondrej Jirman <megi@xff.cz>, Jimmy Hon <honyuenkwun@gmail.com>, 
+	Elon Zhang <zhangzj@rock-chips.com>, 
+	Finley Xiao <finley.xiao@rock-chips.com>, 
+	Elaine Zhang <zhangqing@rock-chips.com>, 
+	Liang Chen <cl@rock-chips.com>, 
+	Yifeng Zhao <yifeng.zhao@rock-chips.com>, 
+	Jisheng Zhang <jszhang@kernel.org>, Jamie Iles <jamie@jamieiles.com>, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org, 
+	linux-i2c@vger.kernel.org, linux-mmc@vger.kernel.org, 
+	linux-serial@vger.kernel.org, linux-spi@vger.kernel.org, 
+	linux-watchdog@vger.kernel.org, kernel@collabora.com
+Subject: [PATCH v3 00/11] Add device tree for ArmSoM Sige 5 board
+Date: Wed, 28 Aug 2024 15:10:36 +0000
+Message-ID: <010201919989e3de-60b56341-85e0-4869-89d1-362407c4f2ec-000000@eu-west-1.amazonses.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="1rSZ6Ar8gPde4zlM"
-Content-Disposition: inline
-In-Reply-To: <861q2gxxjr.wl-maz@kernel.org>
-X-Cookie: You are number 6!  Who is number one?
+Content-Transfer-Encoding: 8bit
+Feedback-ID: ::1.eu-west-1.YpP9ZbxnARFfy3Cb5pfsLd/pdsXBCNK0KEM7HforL4k=:AmazonSES
+X-SES-Outgoing: 2024.08.28-54.240.7.28
 
+Add the rk3576-armsom-sige5 device tree as well as its rk3576.dtsi base
+and pinctrl information in rk3576-pinctrl.dtsi.
 
---1rSZ6Ar8gPde4zlM
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+The other commits add DT bindings documentation for the devices that
+already work with the current corresponding drivers.
 
-On Thu, Aug 22, 2024 at 06:44:08PM +0100, Marc Zyngier wrote:
-> Mark Brown <broonie@kernel.org> wrote:
+Note that as is, the rockchip gpio driver needs the gpio nodes
+to be children of the pinctrl node, even though this is deprecated.
 
-> > I haven't done an audit for fun cases to see how viable things are, for
-> > the EL2 cases I'd just have an encoding based check for EL2 rather than
-> > explicitly enumerating the ID register for each EL2.  That seemed
-> > quicker and less error prone.
+When the driver supports it, they can be moved out of the pinctrl node.
 
-> Sure, you can do that. Or rather, you can do that *right now*. But
-> that's not what the architecture says (there is no statement saying
-> that Op1==4 for an EL2 register). So the forward-looking way to do it
-> is to match the full encoding of a register against the properties
-> that define its existence.  Anything else is a short lived hack, and I
-> don't care much for them.
+The power-domain@RK3576_PD_USB is a child of power-domain@RK3576_PD_VOP.
+That looks strange but it is how the hardware is, and confirmed by
+Rockchip: The NOC bus of USB passes through the PD of VOP, so it relies on
+VOP PD.
 
-Oh, well - I had thought that was a case of me not having found the rule
-rather than the rule not existing given how consistent the scheme is
-currently but yes, if a rule definiteively doesn't exist then I agree
-that making one up in software is a bad idea.
+The other bindings and driver implementations are in other patch sets:
+- PMIC: https://lore.kernel.org/all/20240802134736.283851-1-detlev.casanova@collabora.com/ (applied on next)
+- CRU: https://lore.kernel.org/all/20240822194956.918527-1-detlev.casanova@collabora.com/
+- PINCTRL: https://lore.kernel.org/all/20240822195706.920567-1-detlev.casanova@collabora.com/
+- PM DOMAIN: https://lore.kernel.org/all/20240814222824.3170-1-detlev.casanova@collabora.com/ (applied on next)
+- DW-MMC: https://lore.kernel.org/all/20240822212418.982927-1-detlev.casanova@collabora.com/
+- GMAC: https://lore.kernel.org/all/20240823141318.51201-1-detlev.casanova@collabora.com/
 
-> > The other cases I'm aware of are more along the lines of features
-> > restricting the values other features/idregs can have (eg, for SME the
-> > information in ID_AA64PFR1_EL1.SME can also be gleaned from
-> > ID_AA64SMFR0_EL1.SMEver).
+Changes since v2:
+- Fix LEDs in armsom dts
+- mmc: Move allOf after the required block
+- Remove saradc dt-binding commit (already applied)
+- Remove opp-microvolt-L* fields
+- Reword mali commit message
+- Use rgmii-id and remove delays on gmac nodes
 
-> Well, they don't quite advertise the same thing. If you decode the
-> feature specification, you get:
+Changes since v1:
+- Add eMMC support
+- Add gpu node
+- Add rtc node
+- Add spi compatible dt-bindings
+- Add watchdog support
+- Dropped timer compatible commit (applied in [0])
+- Move ethernet aliases to board dt
+- Move mmio nodes to soc node
+- Removed cru grf phandle
+- Removed gpio aliases
+- Removed grf compatibles (applied in [1])
+- Removed pinctrl php-grf phandle
+- Removed v2-tuning for sdcard
+- Renamed clock nodes
+- Renamed regulators do match regulator-vcc-<voltage>-<name>
+- Renamed the rkvdec_sram node to vdec_sram to match prior generations
+- Reorder fields consistently in nodes
+- Use correct #power-domain-cells values
 
-> (FEAT_SME <-> (AArch64 ID_AA64PFR1_EL1.SME >= 1))
-> (FEAT_SME2 --> (AArch64 ID_AA64SMFR0_EL1.SMEver >= 1))
-> (FEAT_SME2 --> (AArch64 ID_AA64PFR1_EL1.SME >= 2))
-> (((AArch64 ID_AA64SMFR0_EL1.SMEver >= 1) || (AArch64 ID_AA64PFR1_EL1.SME >= 2)) --> FEAT_SME2)
-> (FEAT_SME2p1 <-> (AArch64 ID_AA64SMFR0_EL1.SMEver >= 2))
+[0]: https://lore.kernel.org/all/918bb9e4-02d9-4dca-bed2-28bb123bdc10@linaro.org/
+[1]: https://lore.kernel.org/all/172441646605.877570.8075942261050000.b4-ty@sntech.de/
 
-> So SME isn't really advertised in SMEver, SME2 is advertised in both
-> (and it is enough that one advertises SME2 for the feature to be
-> present), and SME2p1 is only advertised in SMEver.
+Detlev.
 
-> That's what we need to implement. Yes, this part of the architecture
-> is... interesting.
+Detlev Casanova (11):
+  dt-bindings: arm: rockchip: Add ArmSoM Sige 5
+  dt-bindings: arm: rockchip: Add rk3576 compatible string to pmu.yaml
+  dt-bindings: i2c: i2c-rk3x: Add rk3576 compatible
+  dt-bindings: mfd: syscon: Add rk3576 QoS register compatible
+  dt-bindings: serial: snps-dw-apb-uart: Add Rockchip RK3576
+  dt-bindings: mmc: Add support for rk3576 eMMC
+  dt-bindings: gpu: Add rockchip,rk3576-mali compatible
+  dt-bindings: watchdog: Add rockchip,rk3576-wdt compatible
+  spi: dt-bindings: Add rockchip,rk3576-spi compatible
+  arm64: dts: rockchip: Add rk3576 SoC base DT
+  arm64: dts: rockchip: Add rk3576-armsom-sige5 board
 
-Yes, it's not a 1:1 mapping but you can for example identify the
-presence of ZT0 via either SME or SMEVer since either implies FEAT_SME2
-which like you say makes things a bit interesting.
+ .../devicetree/bindings/arm/rockchip.yaml     |    5 +
+ .../devicetree/bindings/arm/rockchip/pmu.yaml |    2 +
+ .../bindings/gpu/arm,mali-bifrost.yaml        |    1 +
+ .../devicetree/bindings/i2c/i2c-rk3x.yaml     |    1 +
+ .../devicetree/bindings/mfd/syscon.yaml       |    2 +
+ .../bindings/mmc/snps,dwcmshc-sdhci.yaml      |   38 +-
+ .../bindings/serial/snps-dw-apb-uart.yaml     |    1 +
+ .../devicetree/bindings/spi/spi-rockchip.yaml |    1 +
+ .../bindings/watchdog/snps,dw-wdt.yaml        |    1 +
+ arch/arm64/boot/dts/rockchip/Makefile         |    1 +
+ .../boot/dts/rockchip/rk3576-armsom-sige5.dts |  659 ++
+ .../boot/dts/rockchip/rk3576-pinctrl.dtsi     | 5775 +++++++++++++++++
+ arch/arm64/boot/dts/rockchip/rk3576.dtsi      | 1644 +++++
+ 13 files changed, 8119 insertions(+), 12 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/rockchip/rk3576-armsom-sige5.dts
+ create mode 100644 arch/arm64/boot/dts/rockchip/rk3576-pinctrl.dtsi
+ create mode 100644 arch/arm64/boot/dts/rockchip/rk3576.dtsi
 
-> > For those I'm not sure if visibility checks
-> > are the best approach, if we should audit the registers when starting
-> > the guest to make sure they're self consistent or if we should just pick
-> > the most directly relevant register and rely on userspace to enforce
-> > consistancy.
+-- 
+2.46.0
 
-> We definitely rely on userspace to enforce consistency. If userspace
-> messes up, it's "garbage in, garbage out".
-
-It's definitely the simpler approach.
-
---1rSZ6Ar8gPde4zlM
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbPPeoACgkQJNaLcl1U
-h9DVFQf+L7g1Fnx28SJ8CXg4j4VzDz02YsJdysHKApdq4H3hbNdZtKDVB3TmPckY
-hIdozWJbyvZi/4cvIvgakCWA965qujkaoEhsqfrP5GnjjwKB1vx1WiK/3sax2nxl
-PaNPBpfW6aKNLXurN+H/NATYLXFn+bdMaMrPoDF8sc5k7FpyGiIf+ei839MAYdou
-L3/2YsPB9XjmvA4gCAa2xKPGIVdPpVnydjB6vzDukFsZkLivXIDWQgKlrDo5gYDh
-POKHTC9TzURjRbKqlGCGaBbIDEKbfVv8Ghxit7fdh/uEyMY+EZKDNWBfm3W6jngh
-eMKSGmn8bEes97+p5N7MpJd2sDzkTA==
-=8Tbh
------END PGP SIGNATURE-----
-
---1rSZ6Ar8gPde4zlM--
 
