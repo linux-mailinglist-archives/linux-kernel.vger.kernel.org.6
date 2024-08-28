@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-304763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4ABCB962487
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 12:16:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D63A962489
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 12:16:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB1191F25226
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 10:16:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80D8B1C23B70
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 10:16:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFC7316C857;
-	Wed, 28 Aug 2024 10:15:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4480616CD01;
+	Wed, 28 Aug 2024 10:15:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="DXz8Peaa"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="Wxv9aYnC"
 Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2022166312;
-	Wed, 28 Aug 2024 10:15:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B97016A934;
+	Wed, 28 Aug 2024 10:15:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724840121; cv=none; b=g21dK5rktI/Hnn5g8UOFbR/bmik8sdrxXQqi1+cROkQnTdiynRLWaGjhCxd3iJXCQY9pwxqiuLsDTQslLDYmkJzbgEYYx/PfVo1TQ/gIu2czLbQHuT2GMo2Owrsl7L65I8jHgA5ztGGLGta0bweMUZvL+6QH7AREATZePVao1zM=
+	t=1724840122; cv=none; b=O9xho7HLTg17fFl9AubGvPxxzvMjxK7nZxH1qK9iZDS+a5yi8AEE3BnOSpYMke9lTr9XcZRB8fhg3GRx735NjsSnRfiQ7cx326GoZYYFmqAqB4oDWgb5MpC9Fcg5lCpE7ZGaoKporJnZWQSapR41vkVdBTQvZ3seLogr55h8+Jc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724840121; c=relaxed/simple;
-	bh=KoT6uOr7NzEkQNsaRZtbnbzPhUcTeLbMlSihvlNQo8w=;
+	s=arc-20240116; t=1724840122; c=relaxed/simple;
+	bh=WR14k8P+mLy91L69HY4wBwuOQUnhcX1BRQ5eOt3Bxww=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZDBpEGndOHEV25kq4DG2QM2IBG3BQP8U9YDE9/U5o9g+xLjUPE1qiqoCOKr65GQtSl8mFcn+7hXVqO3yq4/1axWY+RFeQO6M34WGom3ygJEJwpr/N/NevbbwEtYdXpWf3MikVSvtvV/NU8LsBomtcrCcyLlVpxHyMxpMtFdnTfM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=DXz8Peaa; arc=none smtp.client-ip=185.11.138.130
+	 MIME-Version; b=PPQTusss2bb3urQCWdb2HWAxjOUBb7bCQMGvqnmZu+o1jQ9qd1HRyCmML4XXTlBpdAbpk6HvwwF0LmBMoEa1GeHzDSK81FpPsu3ZxkAdCniWEY/NLKc7PkvhF37ckIlkMe5aF2owxVUWdCf7NeHEOzkk/qMb1WI0bLV1TgnOPjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=Wxv9aYnC; arc=none smtp.client-ip=185.11.138.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
@@ -36,17 +36,17 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
 	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
 	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
 	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=2vEIhifhCgUZJb7JLEMEs6FgsfJuYynN2BlO+zQ+JIg=; b=DXz8PeaaBwK3stcuG4xOq3+jEa
-	t0pc4wEGkwsDwLAKzV7lSJllRe57nMtdiCu8loAHut3ETib8zEGPT1VmUWmKSfuh06Es7v/cJIyJp
-	aolH63EZ8Zx2GpGoYoZrYSkzExaejScFlPgJ2FN1/f0jDQU/RIfMHFXob36O9yz+n++b5hJZtDb0x
-	7wkpNlhiOAtSl2/3ZX1psHo9ou3cDlE4Be2q+5fpLb8i+hmxreufSrIs+iw8tNhO0QmS2ihSbOggv
-	mnrXFDBHneFsq4xHenDLZGLg7IxZ2/lDnW/eD0Piy5DMsx1lbfVvVzWenqdE7UKtwdCZGHrWd3/bK
-	TKAusGmw==;
+	bh=PlRpVtIBwwyT7sJiOXWleLS+M54tw81jUNBu+u7QyPQ=; b=Wxv9aYnCBQ2sHWb4hEkwzkky2w
+	hMLxucWM2eLIQdW66oKCOAmlzru8RSS20sw7pDv8j/rjhg6zImCqeAV+yBgf8MZbiz/a/q17KkNxz
+	2B9HDDosW7MzfH/FqEyzAciSIuXYOMl8RJBXt9TzbCHHzedUkg5+HKu1SfyGbjQoilXlBqGjSdZpk
+	mFjDi7xv0rYs3PiYhwTk4Z1uQD5/XA+N0XIMJJNRb943XBGuxrpWoBIl2f1U2oWXxvaPwNtxz5hUt
+	MoG0VhPdI+SmoEUSyGLPaOB4r63sC/3pr2OhRpH3ylvcbq7Qbk/tAdKbdHqmzb4rUvDIHh7F0/ZqW
+	KYd0eVow==;
 Received: from i5e8616cd.versanet.de ([94.134.22.205] helo=phil.lan)
 	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.94.2)
 	(envelope-from <heiko@sntech.de>)
-	id 1sjFht-0004M3-OU; Wed, 28 Aug 2024 12:15:17 +0200
+	id 1sjFhu-0004M3-7X; Wed, 28 Aug 2024 12:15:18 +0200
 From: Heiko Stuebner <heiko@sntech.de>
 To: mturquette@baylibre.com,
 	sboyd@kernel.org
@@ -59,9 +59,9 @@ Cc: robh@kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-rockchip@lists.infradead.org
-Subject: [PATCH v3 4/5] clk: clk-gpio: add driver for gated-fixed-clocks
-Date: Wed, 28 Aug 2024 12:15:02 +0200
-Message-ID: <20240828101503.1478491-5-heiko@sntech.de>
+Subject: [PATCH v3 5/5] arm64: dts: rockchip: fix the pcie refclock oscillator on Rock 5 ITX
+Date: Wed, 28 Aug 2024 12:15:03 +0200
+Message-ID: <20240828101503.1478491-6-heiko@sntech.de>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240828101503.1478491-1-heiko@sntech.de>
 References: <20240828101503.1478491-1-heiko@sntech.de>
@@ -73,230 +73,99 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In contrast to fixed clocks that are described as ungateable, boards
-sometimes use additional oscillators for things like PCIe reference
-clocks, that need actual supplies to get enabled and enable-gpios to be
-toggled for them to work.
+The Rock 5 ITX uses two PCIe controllers to drive both a M.2 slot and its
+SATA controller with 2 lanes each. The supply for the refclk oscillator is
+the same that supplies the M.2 slot, but the SATA controller port is
+supplied by a different rail.
 
-This adds a driver for those generic gated-fixed-clocks
-that can show up in schematics looking like
+This leads to the effect that if the PCIe30x4 controller for the M.2
+probes first, everything works normally. But if the PCIe30x2 controller
+that is connected to the SATA controller probes first, it will hang on
+the first DBI read as nothing will have enabled the refclock before.
 
-         ----------------
-Enable - | 100MHz,3.3V, | - VDD
-         |    3225      |
-   GND - |              | - OUT
-         ----------------
-
-The new driver gets grouped together with the existing gpio-gate and
-gpio-mux, as it for one re-uses a lot of the gpio-gate functions
-and also in it's core it's just another gpio-controlled clock, just
-with a fixed rate and a regulator-supply added in.
-
-The regulator-API provides function stubs for the !CONFIG_REGULATOR case,
-so no special handling is necessary.
+Fix this by describing the clock generator with its supplies so that
+both controllers can reference it as needed.
 
 Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 ---
- drivers/clk/clk-gpio.c | 182 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 182 insertions(+)
+ .../boot/dts/rockchip/rk3588-rock-5-itx.dts   | 38 ++++++++++++++++++-
+ 1 file changed, 36 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/clk-gpio.c b/drivers/clk/clk-gpio.c
-index cda362a2eca0..8bcdef340b4c 100644
---- a/drivers/clk/clk-gpio.c
-+++ b/drivers/clk/clk-gpio.c
-@@ -17,6 +17,7 @@
- #include <linux/device.h>
- #include <linux/of.h>
- #include <linux/platform_device.h>
-+#include <linux/regulator/consumer.h>
+diff --git a/arch/arm64/boot/dts/rockchip/rk3588-rock-5-itx.dts b/arch/arm64/boot/dts/rockchip/rk3588-rock-5-itx.dts
+index d0b922b8d67e..2d0bcf90bf0f 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3588-rock-5-itx.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3588-rock-5-itx.dts
+@@ -72,6 +72,15 @@ hdd-led2 {
+ 		};
+ 	};
  
- /**
-  * DOC: basic gpio gated clock which can be enabled and disabled
-@@ -239,3 +240,184 @@ static struct platform_driver gpio_clk_driver = {
- 	},
- };
- builtin_platform_driver(gpio_clk_driver);
++	/* Unnamed gated oscillator: 100MHz,3.3V,3225 */
++	pcie30_port0_refclk: pcie30_port1_refclk: pcie-oscillator {
++		compatible = "gated-fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <100000000>;
++		clock-output-names = "pcie30_refclk";
++		vdd-supply = <&vcc3v3_pi6c_05>;
++	};
 +
-+/**
-+ * DOC: gated fixed clock, controlled with a gpio output and a regulator
-+ * Traits of this clock:
-+ * prepare - clk_prepare and clk_unprepare are function & control regulator
-+ *           optionally a gpio that can sleep
-+ * enable - clk_enable and clk_disable are functional & control gpio
-+ * rate - rate is fixed and set on clock generation
-+ * parent - fixed clock is a root clock and has no parent.
-+ */
-+
-+/**
-+ * struct clk_gate_fixed - gated-fixed-clock
-+ *
-+ * clk_gpio:	instance of clk_gpio for gate-gpio
-+ * supply:	supply regulator
-+ * rate:	fixed rate
-+ */
-+struct clk_gated_fixed {
-+	struct clk_gpio clk_gpio;
-+	struct regulator *supply;
-+	u32 rate;
-+};
-+
-+#define to_clk_gated_fixed(_clk_gpio) container_of(_clk_gpio, struct clk_gated_fixed, clk_gpio)
-+
-+static unsigned long clk_gated_fixed_recalc_rate(struct clk_hw *hw,
-+						 unsigned long parent_rate)
-+{
-+	return to_clk_gated_fixed(to_clk_gpio(hw))->rate;
-+}
-+
-+static int clk_gated_fixed_prepare(struct clk_hw *hw)
-+{
-+	struct clk_gated_fixed *clk = to_clk_gated_fixed(to_clk_gpio(hw));
-+
-+	if (!clk->supply)
-+		return 0;
-+
-+	return regulator_enable(clk->supply);
-+}
-+
-+static void clk_gated_fixed_unprepare(struct clk_hw *hw)
-+{
-+	struct clk_gated_fixed *clk = to_clk_gated_fixed(to_clk_gpio(hw));
-+
-+	if (!clk->supply)
-+		return;
-+
-+	regulator_disable(clk->supply);
-+}
-+
-+static int clk_gated_fixed_is_prepared(struct clk_hw *hw)
-+{
-+	struct clk_gated_fixed *clk = to_clk_gated_fixed(to_clk_gpio(hw));
-+
-+	if (!clk->supply)
-+		return true;
-+
-+	return regulator_is_enabled(clk->supply);
-+}
-+
-+/*
-+ * Fixed gated clock with non-sleeping gpio.
-+ *
-+ * Prepare operation turns on the supply regulator
-+ * and the enable operation switches the enable-gpio.
-+ */
-+const struct clk_ops clk_gated_fixed_ops = {
-+	.prepare = clk_gated_fixed_prepare,
-+	.unprepare = clk_gated_fixed_unprepare,
-+	.is_prepared = clk_gated_fixed_is_prepared,
-+	.enable = clk_gpio_gate_enable,
-+	.disable = clk_gpio_gate_disable,
-+	.is_enabled = clk_gpio_gate_is_enabled,
-+	.recalc_rate = clk_gated_fixed_recalc_rate,
-+};
-+
-+static int clk_sleeping_gated_fixed_prepare(struct clk_hw *hw)
-+{
-+	int ret;
-+
-+	ret = clk_gated_fixed_prepare(hw);
-+	if (ret)
-+		return ret;
-+
-+	ret = clk_sleeping_gpio_gate_prepare(hw);
-+	if (ret)
-+		clk_gated_fixed_unprepare(hw);
-+
-+	return ret;
-+}
-+
-+static void clk_sleeping_gated_fixed_unprepare(struct clk_hw *hw)
-+{
-+	clk_gated_fixed_unprepare(hw);
-+	clk_sleeping_gpio_gate_unprepare(hw);
-+}
-+
-+/*
-+ * Fixed gated clock with non-sleeping gpio.
-+ *
-+ * Enabling the supply regulator and switching the enable-gpio happens
-+ * both in the prepare step.
-+ * is_prepared only needs to check the gpio state, as toggling the
-+ * gpio is the last step when preparing.
-+ */
-+const struct clk_ops clk_sleeping_gated_fixed_ops = {
-+	.prepare = clk_sleeping_gated_fixed_prepare,
-+	.unprepare = clk_sleeping_gated_fixed_unprepare,
-+	.is_prepared = clk_sleeping_gpio_gate_is_prepared,
-+	.recalc_rate = clk_gated_fixed_recalc_rate,
-+};
-+
-+static int clk_gated_fixed_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct clk_gated_fixed *clk;
-+	const struct clk_ops *ops;
-+	const char *clk_name;
-+	int ret;
-+
-+	clk = devm_kzalloc(dev, sizeof(*clk), GFP_KERNEL);
-+	if (!clk)
-+		return -ENOMEM;
-+
-+	if (device_property_read_u32(dev, "clock-frequency", &clk->rate))
-+		return dev_err_probe(dev, -EIO, "failed to get clock-frequency");
-+
-+	ret = device_property_read_string(dev, "clock-output-names", &clk_name);
-+	if (ret)
-+		clk_name = fwnode_get_name(dev->fwnode);
-+
-+	clk->supply = devm_regulator_get_optional(dev, "vdd");
-+	if (IS_ERR(clk->supply)) {
-+		if (PTR_ERR(clk->supply) != -ENODEV)
-+			return dev_err_probe(dev, PTR_ERR(clk->supply),
-+					     "failed to get regulator\n");
-+		clk->supply = NULL;
-+	}
-+
-+	clk->clk_gpio.gpiod = devm_gpiod_get_optional(dev, "enable",
-+						      GPIOD_OUT_LOW);
-+	if (IS_ERR(clk->clk_gpio.gpiod))
-+		return dev_err_probe(dev, PTR_ERR(clk->clk_gpio.gpiod),
-+				     "failed to get gpio\n");
-+
-+	if (gpiod_cansleep(clk->clk_gpio.gpiod))
-+		ops = &clk_sleeping_gated_fixed_ops;
-+	else
-+		ops = &clk_gated_fixed_ops;
-+
-+	clk->clk_gpio.hw.init = CLK_HW_INIT_NO_PARENT(clk_name, ops, 0);
-+
-+	/* register the clock */
-+	ret = devm_clk_hw_register(dev, &clk->clk_gpio.hw);
-+	if (ret)
-+		return dev_err_probe(dev, ret,
-+				     "failed to register clock\n");
-+
-+	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get,
-+					  &clk->clk_gpio.hw);
-+	if (ret)
-+		return dev_err_probe(dev, ret,
-+				     "failed to register clock provider\n");
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id gated_fixed_clk_match_table[] = {
-+	{ .compatible = "gated-fixed-clock" },
-+};
-+
-+static struct platform_driver gated_fixed_clk_driver = {
-+	.probe		= clk_gated_fixed_probe,
-+	.driver		= {
-+		.name	= "gated-fixed-clk",
-+		.of_match_table = gated_fixed_clk_match_table,
-+	},
-+};
-+builtin_platform_driver(gated_fixed_clk_driver);
+ 	fan0: pwm-fan {
+ 		compatible = "pwm-fan";
+ 		#cooling-cells = <2>;
+@@ -146,13 +155,14 @@ vcc3v3_lan: vcc3v3_lan_phy2: regulator-vcc3v3-lan {
+ 		vin-supply = <&vcc_3v3_s3>;
+ 	};
+ 
+-	vcc3v3_mkey: regulator-vcc3v3-mkey {
++	/* The PCIE30x4_PWREN_H controls two regulators */
++	vcc3v3_mkey: vcc3v3_pi6c_05: regulator-vcc3v3-pi6c-05 {
+ 		compatible = "regulator-fixed";
+ 		enable-active-high;
+ 		gpios = <&gpio1 RK_PA4 GPIO_ACTIVE_HIGH>;
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&pcie30x4_pwren_h>;
+-		regulator-name = "vcc3v3_mkey";
++		regulator-name = "vcc3v3_pi6c_05";
+ 		regulator-min-microvolt = <3300000>;
+ 		regulator-max-microvolt = <3300000>;
+ 		startup-delay-us = <5000>;
+@@ -513,6 +523,18 @@ &pcie30phy {
+ 
+ /* ASMedia ASM1164 Sata controller */
+ &pcie3x2 {
++	/*
++	 * The board has a "pcie_refclk" oscillator that needs enabling,
++	 * so add it to the list of clocks.
++	 */
++	clocks = <&cru ACLK_PCIE_2L_MSTR>, <&cru ACLK_PCIE_2L_SLV>,
++		 <&cru ACLK_PCIE_2L_DBI>, <&cru PCLK_PCIE_2L>,
++		 <&cru CLK_PCIE_AUX1>, <&cru CLK_PCIE2L_PIPE>,
++		 <&pcie30_port1_refclk>;
++	clock-names = "aclk_mst", "aclk_slv",
++		      "aclk_dbi", "pclk",
++		      "aux", "pipe",
++		      "ref";
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&pcie30x2_perstn_m1_l>;
+ 	reset-gpios = <&gpio4 RK_PB0 GPIO_ACTIVE_HIGH>;
+@@ -522,6 +544,18 @@ &pcie3x2 {
+ 
+ /* M.2 M.key */
+ &pcie3x4 {
++	/*
++	 * The board has a "pcie_refclk" oscillator that needs enabling,
++	 * so add it to the list of clocks.
++	 */
++	clocks = <&cru ACLK_PCIE_4L_MSTR>, <&cru ACLK_PCIE_4L_SLV>,
++		 <&cru ACLK_PCIE_4L_DBI>, <&cru PCLK_PCIE_4L>,
++		 <&cru CLK_PCIE_AUX0>, <&cru CLK_PCIE4L_PIPE>,
++		 <&pcie30_port0_refclk>;
++	clock-names = "aclk_mst", "aclk_slv",
++		      "aclk_dbi", "pclk",
++		      "aux", "pipe",
++		      "ref";
+ 	num-lanes = <2>;
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&pcie30x4_perstn_m1_l>;
 -- 
 2.43.0
 
