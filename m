@@ -1,190 +1,420 @@
-Return-Path: <linux-kernel+bounces-305611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FE77963125
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 21:45:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98A16963127
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 21:46:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D31A2867C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 19:45:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDC481C220F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 19:46:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A92E1ABED7;
-	Wed, 28 Aug 2024 19:44:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C16E91ABED2;
+	Wed, 28 Aug 2024 19:46:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Nk+licV5";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="hrEIAYDc"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="a4GU+fCZ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AF301A2554;
-	Wed, 28 Aug 2024 19:44:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B2831A4F16
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 19:45:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724874296; cv=none; b=Ibyj010R8I6zOugMiZqeap7F8V1gCLiDsGRCIgxb/KVw2rYMI5NM6LDXNDrlPspS0HZvpxCKWswXF9DhdumHcdxeFSwk48l6/edQipSBYN9+UKbGljYNsQ59FmURGpejswp6YxxDBW5swJIyPdF/ccu2vZqk9nYllEbLrUQFBis=
+	t=1724874359; cv=none; b=FAwd5O5zRuEXadJx5SOZlA1xHZelQlZQs2d41/YSJvxpvtAnMxJJFf+gKMqayZ2K2pFNrlw6LVebKABDuImvESACOpO7ror/fsDDkDkv18i20fY4782o4WVBG5F8Ln3mKyhAnxrVQIaodBh+qzQmroG1+BFhGRGN89V0Een/beM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724874296; c=relaxed/simple;
-	bh=b99Tvs/v4P+dXz/m/AfU2tdlp+L2gIsgBcvon+m0iBk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=bJdke+JiD6zmYTeTVhJbLuyi7fNYAFf5/GJ3jWKqzUr/rixoZhl4UH/dECsk0YA54eo5muTNBbJ2S2u/gPqkO545fwhBZw9SIkBUPpswaEL8KcCRofx1TjM1aconb2kVtLJLpIejtqZIYHmvEZnMYhsDeAa9JM38bD0+3XxMq6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Nk+licV5; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=hrEIAYDc; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Anna-Maria Behnsen <anna-maria@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1724874292;
+	s=arc-20240116; t=1724874359; c=relaxed/simple;
+	bh=+tj7zQKnHjSX8eAJuKX2LgOnWpTn6P4v/qosfomGgtY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pU4qFlJJqwicbQPPWflBm5ocZnNFcHvfaKeOwqS1M9wuJ3OLi9F688ahozB8IQzjeNErKffcWiCIvJdVuHWm85a0e0CwyQlEuUG9GksxIZoMV8gGg+wNL/3kJLYWRQbdY2JC7t5zKoPkVkIr48UMd3aSMIjNibBeAuED64CnPCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=a4GU+fCZ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724874356;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=NRxEhuyGDKNQE6r0QOp02t0+mI9ODKRljFUVuVm4U80=;
-	b=Nk+licV5nKLzeEC3E3SSCwADDUhrt/PpWv0cXQSzTSH2viNkx+FQlS5O/Z+p5jl+Jl1sg/
-	PuSnpuPoazz1Nk0/f0enoFI86ym8cyIO+Db602jBVYZPxQiJmSHVIquD+/MZNRRs5I2Bc/
-	ljGht5inEBgLdKCG+r5Ngc/zopt8vOVqwpIWP6bXKBDFVO/CZeSMZsM9LSmydQgPQBAPeO
-	DGJvxQhxhrWp6btM9yP6u0virgl8H3r5t/zGhwSdixKdYW41Xd3XsB8duYLkIhTbqZRsA9
-	Yh8UzO3Jrq2WK+YJ7sAC+KR2X3AhDKjJNCvOTrpqRIJJRwI9MZvUnXQ4oBK6GQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1724874292;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NRxEhuyGDKNQE6r0QOp02t0+mI9ODKRljFUVuVm4U80=;
-	b=hrEIAYDc0cLw7h//qLxLims3JtLz4PwY6LQbGDeQ82xHyc/nsYcYGwMxkUFKvSBFzXjQkz
-	osj4gHa12jar3kCA==
-To: Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, linux-acpi@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, Frederic
- Weisbecker <frederic@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- Jonathan Corbet <corbet@lwn.net>, Andrew Morton
- <akpm@linux-foundation.org>
-Subject: Re: [PATCH] ACPI: Remove msleep() bloat from acpi_os_sleep()
-In-Reply-To: <CAJvTdKmpfs_nh4J0R8T=1P9WaAJ-nJ+mKj=rT3tqMpmvpUTisA@mail.gmail.com>
-References: <2803b89021f991662b000f50e45dbaebdcca438a.1724729626.git.len.brown@intel.com>
- <CAJZ5v0jcOUoN6gDDFkufu8xWF-BHXaSKnXqraHsTkq8JanJXuQ@mail.gmail.com>
- <CAJvTdKkucaRVDZm6EVeUxwyrQexyuYd7ECUBSkpP0nC9PwzspA@mail.gmail.com>
- <CAJZ5v0jvYitb7DLyLkqTRv0TT=6yBHDvEvb8tJLzAOVKa3hqnQ@mail.gmail.com>
- <CAJZ5v0gxVqrASiuJq=UX9jyZsG=XvriFn2=7CPmG6-1sKbmPEQ@mail.gmail.com>
- <CAJvTdK=-ETniiwzwLYH14+TeU0kA49gvTnqyRxH7-Hc6tzTBUw@mail.gmail.com>
- <CAJvTdKmpfs_nh4J0R8T=1P9WaAJ-nJ+mKj=rT3tqMpmvpUTisA@mail.gmail.com>
-Date: Wed, 28 Aug 2024 21:44:51 +0200
-Message-ID: <87frqoig98.fsf@somnus>
+	bh=L734DZ5S8LoTHmIma5i8qfoMND7Q4A1Bv0JRoAj5Nks=;
+	b=a4GU+fCZXrQH23/55ZVNYkdlFPcYGr6E4iVCRyl/HIwWnWOuUgwSZScgt61m2VpPFJ8H0F
+	r5kgdstVV6jbbUnN7PHu1kkSAaYmxZnd89gyoHQaUrLrzzdcaI+EGjzRX6Mm6XM7M4MzVQ
+	c9op2Rnmk6JB678N6CAhX0U4kntxuNQ=
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
+ [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-593-4AGHdDVNOMSfGVCOo5Q2PQ-1; Wed, 28 Aug 2024 15:45:55 -0400
+X-MC-Unique: 4AGHdDVNOMSfGVCOo5Q2PQ-1
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7a7fa083271so88796285a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 12:45:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724874354; x=1725479154;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=L734DZ5S8LoTHmIma5i8qfoMND7Q4A1Bv0JRoAj5Nks=;
+        b=GJCpvciw7uCBOO1ubJUqQW5HpyyfSVf+WKWXmXSR1MFwMmn92mHpA0pJP4uut18QbF
+         D64MQVioTJ0wr+mwBKfDlhFCXjov6bKJxnE8UJpH2LKc9iGOJXkiwNO5bR523QcxmxQ8
+         K8fyl+MkxdQXiYCWgXj3jyFRIIbB9TMV8M3LxpBKANqiCDgm2Kw+bZb53abTeRzWWT8I
+         bZO3XTHnAOvNZlrroUwgUMfd7dQ2509kglQNVNn4mUW4UH3D9Dk5BKImeg0HfhljXArn
+         /BD2y+1hqWGPdaWzJzNr2pyE8ZpxYKTNrwDIiRwMrDX6sndjzNIEMNcJzKx8khua1omH
+         zSPA==
+X-Gm-Message-State: AOJu0YxdXVHedG24Ibkfguly3BShptsnJdD+qmqjO5HQSEk3nWk/niMe
+	GBXIkbvBPGu6zXwDEOu589CpberAzRVMmelPLN8bHSp4V9fT4TNRX83vS6qQ1U8L6tNaqx9Vlr2
+	ZODpXd8/DXualOhK05LjnSQNLFnBy33v7OqXeV1wbFeZ4VIetwoyjVlyy5mueYiavN6rHky4T
+X-Received: by 2002:a05:620a:254e:b0:79f:e9a:5ae5 with SMTP id af79cd13be357-7a804266bb7mr54281385a.60.1724874353628;
+        Wed, 28 Aug 2024 12:45:53 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGsRkbfxaQ2v8zv5NUTlC+wRgbNKKbywOOWW7bb22SixhenOa1GYiY2jzuWWLtCsKrTEebjFg==
+X-Received: by 2002:a05:620a:254e:b0:79f:e9a:5ae5 with SMTP id af79cd13be357-7a804266bb7mr54276185a.60.1724874352847;
+        Wed, 28 Aug 2024 12:45:52 -0700 (PDT)
+Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a7ff07fee3sm39710985a.91.2024.08.28.12.45.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Aug 2024 12:45:52 -0700 (PDT)
+Date: Wed, 28 Aug 2024 15:45:49 -0400
+From: Peter Xu <peterx@redhat.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	Gavin Shan <gshan@redhat.com>,
+	Catalin Marinas <catalin.marinas@arm.com>, x86@kernel.org,
+	Ingo Molnar <mingo@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Alistair Popple <apopple@nvidia.com>, kvm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Sean Christopherson <seanjc@google.com>,
+	Oscar Salvador <osalvador@suse.de>,
+	Jason Gunthorpe <jgg@nvidia.com>, Borislav Petkov <bp@alien8.de>,
+	Zi Yan <ziy@nvidia.com>, Axel Rasmussen <axelrasmussen@google.com>,
+	Yan Zhao <yan.y.zhao@intel.com>, Will Deacon <will@kernel.org>,
+	Kefeng Wang <wangkefeng.wang@huawei.com>,
+	Alex Williamson <alex.williamson@redhat.com>
+Subject: Re: [PATCH v2 06/19] mm/pagewalk: Check pfnmap for folio_walk_start()
+Message-ID: <Zs9-beA-eTuXTfN6@x1n>
+References: <20240826204353.2228736-1-peterx@redhat.com>
+ <20240826204353.2228736-7-peterx@redhat.com>
+ <9f9d7e96-b135-4830-b528-37418ae7bbfd@redhat.com>
+ <Zs8zBT1aDh1v9Eje@x1n>
+ <c1d8220c-e292-48af-bbab-21f4bb9c7dc5@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <c1d8220c-e292-48af-bbab-21f4bb9c7dc5@redhat.com>
 
-Hi,
+On Wed, Aug 28, 2024 at 05:30:43PM +0200, David Hildenbrand wrote:
+> > This one is correct; I overlooked this comment which can be obsolete.  I
+> > can either refine this patch or add one patch on top to refine the comment
+> > at least.
+> 
+> Probably best if you use what you consider reasonable in your patch.
+> 
+> > 
+> > > +       if (IS_ENABLED(CONFIG_ARCH_HAS_PMD_SPECIAL)) {
+> > 
+> > We don't yet have CONFIG_ARCH_HAS_PMD_SPECIAL, but I get your point.
+> > 
+> > > +               if (likely(!pmd_special(pmd)))
+> > > +                       goto check_pfn;
+> > > +               if (vma->vm_ops && vma->vm_ops->find_special_page)
+> > > +                       return vma->vm_ops->find_special_page(vma, addr);
+> > 
+> > Why do we ever need this?  This is so far destined to be totally a waste of
+> > cycles.  I think it's better we leave that until either xen/gntdev.c or any
+> > new driver start to use it, rather than keeping dead code around.
+> 
+> I just copy-pasted what we had in vm_normal_page() to showcase. If not
+> required, good, we can add a comment we this is not required.
+> 
+> > 
+> > > +               if (vma->vm_flags & (VM_PFNMAP | VM_MIXEDMAP))
+> > > +                       return NULL;
+> > > +               if (is_huge_zero_pmd(pmd))
+> > > +                       return NULL;
+> > 
+> > This is meaningless too until we make huge zero pmd apply special bit
+> > first, which does sound like to be outside the scope of this series.
+> 
+> Again, copy-paste, but ...
+> 
+> > 
+> > > +               if (pmd_devmap(pmd))
+> > > +                       /* See vm_normal_page() */
+> > > +                       return NULL;
+> > 
+> > When will it be pmd_devmap() if it's already pmd_special()?
+> > 
+> > > +               return NULL;
+> > 
+> > And see this one.. it's after:
+> > 
+> >    if (xxx)
+> >        return NULL;
+> >    if (yyy)
+> >        return NULL;
+> >    if (zzz)
+> >        return NULL;
+> >    return NULL;
+> > 
+> > Hmm??  If so, what's the difference if we simply check pmd_special and
+> > return NULL..
+> 
+> Yes, they all return NULL. The compiler likely optimizes it all out. Maybe
+> we have it like that for pure documentation purposes. But yeah, we should
+> simply return NULL and think about cleaning up vm_normal_page() as well, it
+> does look strange.
+> 
+> > 
+> > > +       }
+> > > +
+> > > +       /* !CONFIG_ARCH_HAS_PMD_SPECIAL case follows: */
+> > > +
+> > >          if (unlikely(vma->vm_flags & (VM_PFNMAP|VM_MIXEDMAP))) {
+> > >                  if (vma->vm_flags & VM_MIXEDMAP) {
+> > >                          if (!pfn_valid(pfn))
+> > >                                  return NULL;
+> > > +                       if (is_huge_zero_pmd(pmd))
+> > > +                               return NULL;
+> > 
+> > I'd rather not touch here as this series doesn't change anything for
+> > MIXEDMAP yet..
+> 
+> Yes, that can be a separate change.
+> 
+> > 
+> > >                          goto out;
+> > >                  } else {
+> > >                          unsigned long off;
+> > > @@ -692,6 +706,11 @@ struct page *vm_normal_page_pmd(struct vm_area_struct *vma, unsigned long addr,
+> > >                  }
+> > >          }
+> > > +       /*
+> > > +        * For historical reasons, these might not have pmd_special() set,
+> > > +        * so we'll check them manually, in contrast to vm_normal_page().
+> > > +        */
+> > > +check_pfn:
+> > >          if (pmd_devmap(pmd))
+> > >                  return NULL;
+> > >          if (is_huge_zero_pmd(pmd))
+> > > 
+> > > 
+> > > 
+> > > We should then look into mapping huge zeropages also with pmd_special.
+> > > pmd_devmap we'll leave alone until removed. But that's indeoendent of your series.
+> > 
+> > This does look reasonable to match what we do with pte zeropage.  Could you
+> > remind me what might be the benefit when we switch to using special bit for
+> > pmd zero pages?
+> 
+> See below. It's the way to tell the VM that a page is special, so you can
+> avoid a separate check at relevant places, like GUP-fast or in vm_normal_*.
+> 
+> > 
+> > > 
+> > > I wonder if CONFIG_ARCH_HAS_PTE_SPECIAL is sufficient and we don't need additional
+> > > CONFIG_ARCH_HAS_PMD_SPECIAL.
+> > 
+> > The hope is we can always reuse the bit in the pte to work the same for
+> > pmd/pud.
+> > 
+> > Now we require arch to select ARCH_SUPPORTS_HUGE_PFNMAP to say "pmd/pud has
+> > the same special bit defined".
+> 
+> Note that pte_special() is the way to signalize to the VM that a PTE does
+> not reference a refcounted page, or is similarly special and shall mostly be
+> ignored. It doesn't imply that it is a PFNAMP pte, not at all.
 
-I try to give some input from the timer perspective and maybe it helps
-to clarify which should be the proper way to go for acpi_os_sleep(). It
-also identifies some problems with the current documentation and
-implementation of msleep/fsleep.
+Right, it's just that this patch started with having pmd/pud special bit
+sololy used for pfnmaps only so far.  I'd agree, again, that I think it
+makes sense to keep it consistent with pte's in a longer run, but that'll
+need to be done step by step, and tested properly on each of the goals
+(e.g. when extend that to zeropage pmd).
 
-Len Brown <lenb@kernel.org> writes:
+> 
+> The shared zeropage is usually not refcounted (except during GUP FOLL_GET
+> ... but not FOLL_PIN) and the huge zeropage is usually also not refcounted
+> (but FOLL_PIN still does it). Both are special.
+> 
+> 
+> If you take a look at the history pte_special(), it was introduced for
+> VM_MIXEDMAP handling on s390x, because pfn_valid() to identify "special"
+> pages did not work:
+> 
+> commit 7e675137a8e1a4d45822746456dd389b65745bf6
+> Author: Nicholas Piggin <npiggin@gmail.com>
+> Date:   Mon Apr 28 02:13:00 2008 -0700
+> 
+>     mm: introduce pte_special pte bit
+> 
+> 
+> In the meantime, it's required for architectures that wants to support
+> GUP-fast I think, to make GUP-fast bail out and fallback to the slow path
+> where we do a vm_normal_page() -- or fail right at the VMA check for now
+> (VM_PFNMAP).
 
-> Attempting to grab all the loose ends from this discussion
-> and put them into a list of 4 things:
->
-> 1. Is it time to re-visit Jon's proposal to fix msleep, especially for
-> small sleep values?
+I wonder whether pfn_valid() would work for the archs that do not support
+pte_special but to enable gup-fast.
 
-Lets have a deeper look to msleep() internals: msleep() uses timer list
-timers. Because of the design of the timer wheel (granularity of buckets
-increases with the levels) and because of the granularity of jiffies the
-sleep values will be longer as specified. Let's assume we are executing
-a msleep(1) on a HZ=250 system:
+Meanwhile I'm actually not 100% sure pte_special is only needed in
+gup-fast.  See vm_normal_page() and for VM_PFNMAP when pte_special bit is
+not defined:
 
-First msecs are mapped on jiffies, so this results in a 4ms timeout
-value, as there is nothing shorter than 1 jiffie. Then the jiffie value
-is handed over to timer code and msleep() adds another jiffie to the
-timeout. The timeout is then 2 jiffies or 8ms. With this timeout a timer
-list timer is queued. To make sure that timers will not fire early or
-race with a concurrent incrementation of jiffie, timers are queued
-always into the next bucket. As the timer will end up in the first level
-of the timer wheel the granularity of the buckets is 1 jiffies. This
-means that the timeout would be 3 jiffies in worst case.
+		} else {
+			unsigned long off;
+			off = (addr - vma->vm_start) >> PAGE_SHIFT;
+			if (pfn == vma->vm_pgoff + off) <------------------ [1]
+				return NULL;
+			if (!is_cow_mapping(vma->vm_flags))
+				return NULL;
+		}
 
-The additional jiffie in msleep() is the historical prevention that the
-sleep time is at least the specified time. This is handled by timer
-wheel core code itself, so this extra jiffie could be removed. I will
-provide a patch for it.
+I suspect things can go wrong when there's assumption on vm_pgoff [1].  At
+least vfio-pci isn't storing vm_pgoff for the base PFN, so this check will
+go wrong when pte_special is not supported on any arch but when vfio-pci is
+present.  I suspect more drivers can break it.
 
-But even with this change, the worst case sleep length will be 8ms
-instead of 1ms.
+So I wonder if it's really the case in real life that only gup-fast would
+need the special bit.  It could be that we thought it like that, but nobody
+really seriously tried run it without special bit yet to see things broke.
 
-For comparison, see here a table with the values for all the steps
-explained above taking some different msleep values. I already dropped
-the addition of the extra jiffie. The granularity of the timer wheel
-levels can be found at the first long comment in kernel/time/timer.c.
+This series so far limit huge pfnmap with special bits; that make me feel
+safer to do as a start point.
 
-This is still a HZ=250 system:
+> 
+> An architecture that doesn't implement pte_special() can support pfnmaps but
+> not GUP-fast. Similarly, an architecture that doesn't implement
+> pmd_special() can support huge pfnmaps, but not GUP-fast.
+> 
+> If you take a closer look, really the only two code paths that look at
+> pte_special() are GUP-fast and vm_normal_page().
+> 
+> If we use pmd_special/pud_special in other code than that, we are diverging
+> from the pte_special() model, and are likely doing something wrong.
+> 
+> I see how you arrived at the current approach, focusing exclusively on x86.
+> But I think this just adds inconsistency.
 
-msleep()   | msecs_to_jiffies() | worst case delay after | timer wheel
-           |                    | enqueue (next bucket)  | level
---------------------------------------------------------------------------
-1 ms       | 1 jiffie           | 2 jiffies, 8 ms        | 0
-256 ms     | 64 jiffies         | 72 jiffies, 288 ms     | 1
-257 ms     | 65 jiffies         | 72 jiffies, 288 ms     | 1
-2048 ms    | 513 jiffies        | 576 jiffies, 2304 ms   | 2
-2300 ms    | 575 jiffies        | 576 jiffies, 2304 ms   | 2
-4096 ms    | 1024 jiffies       | 1088 jiffies, 4352 ms  | 2
+Hmm, that's definitely not what I wanted to express..
 
-The same values on a HZ=1000 system:
+IMHO it's about our current code base has very limited use of larger
+mappings, especialy pud, so even if I try to create the so-called
+vm_normal_page_pud() to match pte, it'll mostly only contain the pud
+special bit test.
 
-msleep()   | msecs_to_jiffies() | worst case delay after | timer wheel
-           |                    | enqueue (next bucket)  | level
---------------------------------------------------------------------------
-1 ms       | 1 jiffie           | 2 jiffies, 2 ms        | 0
-256 ms     | 256 jiffies        | 264 jiffies, 264 ms    | 1
-257 ms     | 257 jiffies        | 264 jiffies, 264 ms    | 1
-2048 ms    | 2048 jiffies       | 2112 jiffies, 2112 ms  | 2
-2300 ms    | 2300 jiffies       | 2304 jiffies, 2304 ms  | 2
-4096 ms    | 4096 jiffies       | 4608 jiffies, 4608 ms  | 3
+We could add some pfn_valid() checks (even if I know no arch that I can
+support !special but rely on pfn_valid.. nowhere I can test at all),
+process vm_ops->find_special_page() even if I know nobody is using it, and
+so on (obviously pud zeropage is missing so nothing to copy over
+there).. just trying to match vm_normal_page().
 
+But so far they're all redundant, and I prefer not adding redundant or dead
+codes; as simple as that..  It makes more sense to me sticking with what we
+know that will work, and then go from there, then we can add things by
+justifying them properly step by step later.
 
-The documentation states, that msleep is not valid for short sleep
-values. But as demonstrated with the two tables, this is not enirely
-true. So the descision whether msleep() is suitable for the usecase is
-not as simple as documented. It depends on the HZ configuration in
-combination with the timeout value, and on the request how precise the
-timeout has to be. And another important point is: hrtimers are more
-expensive then timer list timers...
+We indeed already have vm_normal_page_pmd(), please see below.
 
-The documentation was originally written back in 2010 where the non
-cascading timer wheel wasn't in place yet. So is has to be updated.
+> 
+> So my point is that we use the same model, where we limit
+> 
+> * pmd_special() to GUP-fast and vm_normal_page_pmd()
+> * pud_special() to GUP-fast and vm_normal_page_pud()
+> 
+> And simply do the exact same thing as we do for pte_special().
+> 
+> If an arch supports pmd_special() and pud_special() we can support both
+> types of hugepfn mappings. If not, an architecture *might* support it,
+> depending on support for GUP-fast and maybe depending on MIXEDMAP support
+> (again, just like pte_special()). Not your task to worry about, you will
+> only "unlock" x86.
 
-> 2. We agree that usleep_range() is appropriate for short acpi_os_sleep()
-> due to ASL loops with small Sleep() values.
-> But if we do something different for large and small values,
-> where is the line between small and large?
+And arm64 2M.  Yes I think I'd better leave the rest to others if I have
+totally no idea how to even test them..  Even with the current Alex was
+helping or I don't really have hardwares on hand.
 
-As pointed out above - this depends on HZ and what the requirements of
-the callsite are.
+> 
+> So maybe we do want CONFIG_ARCH_HAS_PMD_SPECIAL as well, maybe it can be
+> glued to CONFIG_ARCH_HAS_PTE_SPECIAL (but I'm afraid it can't unless all
+> archs support both). I'll leave that up to you.
+> 
+> > 
+> > > 
+> > > As I said, if you need someone to add vm_normal_page_pud(), I can handle that.
+> > 
+> > I'm pretty confused why we need that for this series alone.
+> 
+> See above.
+> 
+> > 
+> > If you prefer vm_normal_page_pud() to be defined and check pud_special()
+> > there, I can do that.  But again, I don't yet see how that can make a
+> > functional difference considering the so far very limited usage of the
+> > special bit, and wonder whether we can do that on top when it became
+> > necessary (and when we start to have functional requirement of such).
+> 
+> I hope my explanation why pte_special() even exists and how it is used makes
+> it clearer.
+> 
+> It's not that much code to handle it like pte_special(), really. I don't
+> expect you to teach GUP-slow about vm_normal_page() etc.
 
-> fsleep anointed 20ms, but didn't document why.
-> (and it made both short sleeps *and* long sleeps too slow to be useful
-> here, IMO)
+One thing I can do here is I move the pmd_special() check into the existing
+vm_normal_page_pmd(), then it'll be a fixup on top of this patch:
 
-fsleep() just implements what the outdated documentation states. And it
-adds a magic max value for usleep_range(). It seems to me, that fsleep()
-somehow accidentially found the way into the kernel in 2020. As it is
-now there this needs to be fixed and should take the above things into
-account in some generic way.
+===8<===
+diff --git a/mm/memory.c b/mm/memory.c
+index 288f81a8698e..42674c0748cb 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -672,11 +672,10 @@ struct page *vm_normal_page_pmd(struct vm_area_struct *vma, unsigned long addr,
+ {
+ 	unsigned long pfn = pmd_pfn(pmd);
+ 
+-	/*
+-	 * There is no pmd_special() but there may be special pmds, e.g.
+-	 * in a direct-access (dax) mapping, so let's just replicate the
+-	 * !CONFIG_ARCH_HAS_PTE_SPECIAL case from vm_normal_page() here.
+-	 */
++	/* Currently it's only used for huge pfnmaps */
++	if (unlikely(pmd_special(pmd)))
++		return NULL;
++
+ 	if (unlikely(vma->vm_flags & (VM_PFNMAP|VM_MIXEDMAP))) {
+ 		if (vma->vm_flags & VM_MIXEDMAP) {
+ 			if (!pfn_valid(pfn))
+diff --git a/mm/pagewalk.c b/mm/pagewalk.c
+index 12be5222d70e..461ea3bbd8d9 100644
+--- a/mm/pagewalk.c
++++ b/mm/pagewalk.c
+@@ -783,7 +783,7 @@ struct folio *folio_walk_start(struct folio_walk *fw,
+ 		fw->pmdp = pmdp;
+ 		fw->pmd = pmd;
+ 
+-		if (pmd_none(pmd) || pmd_special(pmd)) {
++		if (pmd_none(pmd)) {
+ 			spin_unlock(ptl);
+ 			goto not_found;
+ 		} else if (!pmd_leaf(pmd)) {
+-- 
+2.45.0
+===8<===
 
-> 3. Is usleep_range(min, max) with min= max bad?
-> If it is good, why is virtually nobody else using min=max?
+Would that look better to you?
 
-It's not bad to use it. It depends on your use case. If you really need
-the precise sleep length, then it should be valid to use min = max.
+> 
+> If you want me to just takeover some stuff, let me know.
 
-I hope the timer information will help to find the proper solution for
-acpi_os_sleep().
+Do you mean sending something on top of this?  I suppose any of us is free
+to do so, so please go ahead if it's the case.
 
 Thanks,
 
-	Anna-Maria
+-- 
+Peter Xu
 
 
