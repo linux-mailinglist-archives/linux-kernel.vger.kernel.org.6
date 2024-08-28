@@ -1,163 +1,125 @@
-Return-Path: <linux-kernel+bounces-305780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2D7A96342A
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 23:56:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AC4596342D
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 23:57:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 137161C2256F
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 21:56:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D3FF1C22307
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 21:57:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80DCC1AD9CD;
-	Wed, 28 Aug 2024 21:56:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B0181AE02F;
+	Wed, 28 Aug 2024 21:56:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="snovRBA0";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="9hrlAQbg";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="uHwXQfoz";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="WvONVaoy"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="u430U86/"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C8321A4F33;
-	Wed, 28 Aug 2024 21:56:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED53C1AD9F4
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 21:56:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724882198; cv=none; b=W8ztsKvr0aMfyClKdCjUEKshYLkVk0PsKyuaXvDRnauX8c5Wjpilc0Dm0I8sg/zzH55/pT/ZK8NsgCd3Cl9mepbENsc8stsDRn9GIUteVlp8IPiwYmZR4gI3pdn85J9ltUTvFk6T5F0+nN2A2wiM1IWQYgCio0htcOPw3yTY++Y=
+	t=1724882204; cv=none; b=AOvtZ9LqT+GLpHAITrNB9eNmiwdQUDUhQwAFimfqItAsBVvLucE9X1Kd4UFl+Ne2hJWlBY1kqUBLTQs0Vy4fNYZSAWNUXgwDNq3OcB8Q+Yd5Bn7+gZt3nWV/q/paq7hMxBscm/XUBZMuIYFdG0XPteqTo7360DqkDSBYxJUivqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724882198; c=relaxed/simple;
-	bh=JkexkIuMDd301M8amuwfTGnVa+Or+je1SVqJwgdPP7c=;
+	s=arc-20240116; t=1724882204; c=relaxed/simple;
+	bh=PID4ATgIcRdlwJUDpahwj8UfLb1Vr51kkg4K6Y9E+zY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r9x1/2B9gc+t4zmFOeiwXp4UFmVikMaGzi9WPydy7rzLcnX5Zi2SLlFsHjGLMtSqWEXQ5zvfEPZ4nomJyq3RV8AgcQm9bgUfYs5PO8w+gMiCsdEo7whzaatYxKZxz/MvHzEbUXPFkFYu1lPt3sCmElJbP8Ob1QCvRj9RU26OdKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=snovRBA0; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=9hrlAQbg; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=uHwXQfoz; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=WvONVaoy; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 8F9AB1FC0A;
-	Wed, 28 Aug 2024 21:56:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1724882194;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aZfya40WWjepWCyZQxYboFgmxDl/M9pWV9p14+Dr01g=;
-	b=snovRBA0IJZkRGpQ0bMr6HQdTCqVmmQBPP8z0xLv7wIA6J59taWmO/FI1oEp7sdSoYFCv3
-	xzJ6ruzVo2d83KQXkMXjbZWqvgPGV6v4QV2GnXCV/P43IanSb22rU1ENP+Pm1QEgzQnPQa
-	zaKwtfu/BR6lghIrpj29s+K/bIhOkMo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1724882194;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aZfya40WWjepWCyZQxYboFgmxDl/M9pWV9p14+Dr01g=;
-	b=9hrlAQbgSCTvFD5eRFj2inBCO7/cs+L1f5rF6zuH57Er/gYSL3TveCLx0zXth1orJsJfP6
-	EoFRH6k74MhMzrBQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1724882193;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aZfya40WWjepWCyZQxYboFgmxDl/M9pWV9p14+Dr01g=;
-	b=uHwXQfozmdRx8x0CW+X6+AfnLkCL7dCpGSDdfSrbjRXOH0iXm169p6/F3nHmBB36Xb6F3O
-	pCm835/u0b7ikQzIBk28nNaGtiSnUfvw870x9q/gzxyaQMPdvEpz4Q6Dbch5vqY1ryHA7X
-	wI2IoeioH+BCfO2EP+YO+qeCBAwnjPc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1724882193;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aZfya40WWjepWCyZQxYboFgmxDl/M9pWV9p14+Dr01g=;
-	b=WvONVaoyl5oCmyF6RVzMfcKTmv9yEFffijJUW2NgQYFTsMO1gkz9Dh2wFkF4f8ZI59IZkz
-	yHNJgSzeK3KIb2BQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6B3B7138D2;
-	Wed, 28 Aug 2024 21:56:33 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id fVDxGRGdz2a+PgAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Wed, 28 Aug 2024 21:56:33 +0000
-Date: Wed, 28 Aug 2024 23:56:32 +0200
-From: David Sterba <dsterba@suse.cz>
-To: Fedor Pchelkin <pchelkin@ispras.ru>
-Cc: Qu Wenruo <quwenruo.btrfs@gmx.com>, David Sterba <dsterba@suse.com>,
-	Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-	Boris Burkov <boris@bur.io>, linux-btrfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org,
-	syzbot+81670362c283f3dd889c@syzkaller.appspotmail.com,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v2] btrfs: qgroup: don't use extent changeset when not
- needed
-Message-ID: <20240828215632.GJ25962@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-References: <8d26b493-6bc4-488c-b0a7-f2d129d94089@gmx.com>
- <20240828161411.534042-1-pchelkin@ispras.ru>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gfSaVnZOicPGCY/TDCFLIXJn7wxXPG/Ffs6WcZ7/ggMITkUo6gExw1Kfq0R9ZMLohpTYaOXrj34nVO8P958IPRWmobIHYaPQuiXGBEGKw7xNtsl94Gtzhksg3V2Cdl1JSXwtpigp39+anmNOZNWpNid72fh7I73R2zhnVNl3lNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=u430U86/; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20353e5de9cso61875ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 14:56:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1724882202; x=1725487002; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=oMJtTqWHyENpXYFshc0NGQIcxCOjJlWKHxL6Pc51Vp8=;
+        b=u430U86/w41hIGFRxUWn2jOegZ4k8oU+D01A/WfKA6xHYh9biKU3pjpECPVqChTXeT
+         lh1cnSqRaX7byzuwdtxDxnKpWIFMUVmmbh5u9Yg526AnskSHunCa/RGuYq9iJWUz3pyt
+         bIOeiHXLS8Rq0JbG6TGfrkGVAyzbdE6FrqNS4qWL48M0godsDp1BxyNi3MpIyLolXEl0
+         u7d7wNZ6DfO5QMytEPTUFLEkpfzwtHrwO4+Z9a1+CyWpEhw55v+xc/8v3Zh7t8SbEaKF
+         T7+QXDzVJG+xqTsoqnKdHmizcldii+sbnNFkCqNHUr2aG5F3WVawzyR60yEF4xgyfGE3
+         jQDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724882202; x=1725487002;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=oMJtTqWHyENpXYFshc0NGQIcxCOjJlWKHxL6Pc51Vp8=;
+        b=mYFBBuxQt6cbtfjK1G9mb5i/0TvM5K7I+SlxEiEiVSKfToAXaTAGs+IpdmvXwOZpXy
+         Hvm9PIsZpFT8NgEe36t7wHNtMuo/Dz6PuAyM3BBa3czG04ohIFMtKRt5hwUXOXanO2nh
+         b+735nIcyZMsxGwN+8BTCXQ+Lh1PvGGGjU2BAbo26MfTB8M74qGzMljytH18P+r88Kmd
+         l3AwpxsntGyv4UGA1cw31zPWk8P0RtlsV3mBt0ndhnPxYmc0vsSmlVWkX86N3KF1Tjza
+         vaqqd4ec+ltSLj5D/hI4Ufq/DcKKk/PY2e4uYAygfz7iy3Qz2/FL74PLIdOKM+LmlDcL
+         863w==
+X-Forwarded-Encrypted: i=1; AJvYcCWn3aPAUm9plp4mJfQSQR9q+r3gV7Zjb3GPqOUfW32QTRI0IMFqDsWCvc15kbrIrgE7/RheBlgDO6biAXI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhZSeQHDHb2YbDj6HbxbLxZ6btxBROQon+hF3KSBjH6RsC3qwV
+	AMVfxJHeOXB/+FIg+jxnMadxaxMd8/ckXkvtLZYyJ2QNKIFIIrRNq9vUaqT7rw==
+X-Google-Smtp-Source: AGHT+IFWsFfpSmAomvEtt5G6mILaLDEaIo62yZwexT1w7z/fqh1GYiNgxkqAWApkzmvRxk0nVu7qtg==
+X-Received: by 2002:a17:903:187:b0:1f7:1c96:d2e8 with SMTP id d9443c01a7336-2050d1999a0mr965815ad.10.1724882201781;
+        Wed, 28 Aug 2024 14:56:41 -0700 (PDT)
+Received: from google.com (226.75.127.34.bc.googleusercontent.com. [34.127.75.226])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d8445f9602sm2484968a91.14.2024.08.28.14.56.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Aug 2024 14:56:40 -0700 (PDT)
+Date: Wed, 28 Aug 2024 21:56:37 +0000
+From: Sami Tolvanen <samitolvanen@google.com>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Matthew Maurer <mmaurer@google.com>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Gary Guo <gary@garyguo.net>, Petr Pavlu <petr.pavlu@suse.com>,
+	Neal Gompa <neal@gompa.dev>, Hector Martin <marcan@marcan.st>,
+	Janne Grunau <j@jannau.net>, Asahi Linux <asahi@lists.linux.dev>,
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-modules@vger.kernel.org, rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v2 03/19] gendwarfksyms: Add address matching
+Message-ID: <20240828215637.GD2130480@google.com>
+References: <20240815173903.4172139-21-samitolvanen@google.com>
+ <20240815173903.4172139-24-samitolvanen@google.com>
+ <CAK7LNASAzsgmkWGOU7WWuBMmzG4vPRDQLjyW4sW+q46QZT=vnQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240828161411.534042-1-pchelkin@ispras.ru>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.50 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_ENVRCPT(0.00)[gmx.com];
-	RCVD_TLS_ALL(0.00)[];
-	TAGGED_RCPT(0.00)[81670362c283f3dd889c];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[gmx.com,suse.com,fb.com,toxicpanda.com,bur.io,vger.kernel.org,linuxtesting.org,syzkaller.appspotmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,twin.jikos.cz:mid,linuxtesting.org:url,appspotmail.com:email,ispras.ru:email,suse.cz:replyto];
-	RCVD_COUNT_TWO(0.00)[2];
-	REPLYTO_DOM_NEQ_TO_DOM(0.00)[]
-X-Spam-Score: -2.50
-X-Spam-Flag: NO
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAK7LNASAzsgmkWGOU7WWuBMmzG4vPRDQLjyW4sW+q46QZT=vnQ@mail.gmail.com>
 
-On Wed, Aug 28, 2024 at 07:14:11PM +0300, Fedor Pchelkin wrote:
-> The local extent changeset is passed to clear_record_extent_bits() where
-> it may have some additional memory dynamically allocated for ulist. When
-> qgroup is disabled, the memory is leaked because in this case the
-> changeset is not released upon __btrfs_qgroup_release_data() return.
+On Thu, Aug 29, 2024 at 03:22:25AM +0900, Masahiro Yamada wrote:
+> On Fri, Aug 16, 2024 at 2:39 AM Sami Tolvanen <samitolvanen@google.com> wrote:
+> >  int symbol_read_exports(FILE *file)
+> > @@ -57,13 +93,14 @@ int symbol_read_exports(FILE *file)
+> >                 if (is_exported(name))
+> >                         continue; /* Ignore duplicates */
+> >
+> > -               sym = malloc(sizeof(struct symbol));
+> > +               sym = calloc(1, sizeof(struct symbol));
 > 
-> Since the recorded contents of the changeset are not used thereafter, just
-> don't pass it.
 > 
-> Found by Linux Verification Center (linuxtesting.org) with Syzkaller.
 > 
-> Reported-by: syzbot+81670362c283f3dd889c@syzkaller.appspotmail.com
-> Closes: https://lore.kernel.org/lkml/000000000000aa8c0c060ade165e@google.com
-> Fixes: af0e2aab3b70 ("btrfs: qgroup: flush reservations during quota disable")
-> Cc: stable@vger.kernel.org # 6.10+
-> Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
-> ---
-> v2: rework the fix as Qu Wenruo suggested - just don't pass unneeded
->     changeset. Update the commit title and description accordingly.
+> I am tired of noise changes when reviewing this patch set.
+> 
+> 
+> 2/19 added malloc(), which is immediately replaced with calloc() by 3/19.
 
-Thanks, added to for-next.
+This was changed to calloc because the structure now has a new field
+that should be zero-initialized, but I do agree, this could have
+just been a calloc from the beginning. I'll change this in the next
+version.
+
+I did try to make sure there wouldn't be too much churn in the series,
+but clearly I've missed a few places. Hopefully there's nothing
+equally egregious in the later patches!
+
+Sami
 
