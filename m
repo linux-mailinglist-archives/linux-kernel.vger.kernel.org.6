@@ -1,62 +1,55 @@
-Return-Path: <linux-kernel+bounces-304339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53474961E58
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 07:44:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCB59961E5C
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 07:47:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 784DC1C2321F
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 05:44:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AFF81F24D95
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 05:47:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E03C714F9D5;
-	Wed, 28 Aug 2024 05:44:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="DS98qfa0"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA3681514C6;
+	Wed, 28 Aug 2024 05:46:58 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0717374F1;
-	Wed, 28 Aug 2024 05:44:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E774F224D7
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 05:46:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724823887; cv=none; b=ZIKlYQ+HDKaINuHKRvcn5S546WsMKq91skS8jsXFQnNKIS6wC0+Y1sjwgXcGb59QXvQpN/F8AahIGoHK6H/81RSMmjIx5f3UROmIX9vDT6zOJVZCIjWDCB6fKOSGATyFcqEOpOo/c7Wc7rAglPb2e2v8JQv45h374CjUz0ofVxA=
+	t=1724824018; cv=none; b=dMQuc5+A31MRZXbLJkhXC0OABEb4Tf1S/7lawOupiJF2aRjKXpzFGvWNeYKVdIq53d2gaH/xw4pxH/RXJf0fk1JLYb1jm5G/gjr4lT22x7/kwSnR20JyFPPAKqYL4u+2VPTEo/fVPZUWHC0ei4aIxn+WhaUYmETJ8fxozFi7uzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724823887; c=relaxed/simple;
-	bh=EEWciR30cM4kvT87+kJQKG+l5SBgjdWF5gjx55BFXsM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=hiFIv23eMhVcDdd64Z1Xdh3XBwW/X/WFtsgCOfpp33w9+HG5OZyAYr+BoInkLGt0m9ItQ6ovKbDBFJKYI2sidmxGsSG//INFW6hRlnEBa6SXqdAgkfAXuWVyLtvwnP7ijT/gn+X3S+HR7odsEoeezs/l2UEa4Ox6PnPheMXwpHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=DS98qfa0; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47RLb5ZE006244;
-	Wed, 28 Aug 2024 05:44:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	dDTEUjZpSewglzxLKsTlGIpIjtikCO+cdiYifOtRYEk=; b=DS98qfa01loWgD/z
-	qquXH9p7LfJHyvhvqCb+rEKbUQHf88G6+evTSnb8IIkVoOAnXafCOFhyOUItmMZo
-	z07P/JEygcV6BMwW10RyH/V8ahUXazzmI7SJIzFUsY/8nVqoEVTjolnyAhcaH3bm
-	//AkQR48wi1x9w7gwYwXG16sQEaWKQnMdIjB49+w3MvUGr4R/7nFu7N6B5N4YHt4
-	xfJ8gKhKZf3iPVG82HDls4sVThwfxyalpwf2q87IaEhw67HyAWi918SBVDA/H5CF
-	H8KjekjTm675PUbsGOU13wZ0noIOTQVGZFvnDf3CCdBpB44yUu7CMeQBrjIyuqxj
-	7sUFYw==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 419pv2gs6j-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 28 Aug 2024 05:44:21 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47S5iJ5J002882
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 28 Aug 2024 05:44:19 GMT
-Received: from [10.253.78.205] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 27 Aug
- 2024 22:44:15 -0700
-Message-ID: <7f4d41a0-b1b9-4b63-8590-63f4fcf1a359@quicinc.com>
-Date: Wed, 28 Aug 2024 13:44:12 +0800
+	s=arc-20240116; t=1724824018; c=relaxed/simple;
+	bh=rojXzNX/jxTJ/4FaSurK1ttoVcOni2MebdzSlxTbJrg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RXFhNlVjsRCx5TPVur+md27+w+UHllXqqCc8NCWJNBW+c3eEqcLIxc3dyy7AaAM5Xrl1re+hLdDGDozab38wE2XWI8wTQsK8pMX37hbAt2hFmmzwrifbFH8DuUW5AyyEBT6aMBue/wooTWPTxMbbWTX7CCZHF8PjFTRmTVbG/UQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4WtthY439fz9sRy;
+	Wed, 28 Aug 2024 07:46:53 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id WURQqgcv68Sw; Wed, 28 Aug 2024 07:46:53 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4WtthY2Vnhz9sRs;
+	Wed, 28 Aug 2024 07:46:53 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 3EC5A8B77D;
+	Wed, 28 Aug 2024 07:46:53 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id lLmlTUzjpCpN; Wed, 28 Aug 2024 07:46:53 +0200 (CEST)
+Received: from [172.25.230.108] (unknown [172.25.230.108])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 09DBF8B764;
+	Wed, 28 Aug 2024 07:46:53 +0200 (CEST)
+Message-ID: <bd4908d2-cea9-406b-902f-618626e74c88@csgroup.eu>
+Date: Wed, 28 Aug 2024 07:46:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,351 +57,212 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/4] clk: qcom: Add CMN PLL clock controller driver for
- IPQ SoC
-To: Stephen Boyd <sboyd@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh@kernel.org>, Will Deacon <will@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <quic_kkumarcs@quicinc.com>,
-        <quic_suruchia@quicinc.com>, <quic_pavir@quicinc.com>,
-        <quic_linchen@quicinc.com>, <quic_leiwei@quicinc.com>,
-        <bartosz.golaszewski@linaro.org>, <srinivas.kandagatla@linaro.org>
-References: <20240827-qcom_ipq_cmnpll-v3-0-8e009cece8b2@quicinc.com>
- <20240827-qcom_ipq_cmnpll-v3-2-8e009cece8b2@quicinc.com>
- <d7b374670eb2f6d442f351106ab1221a.sboyd@kernel.org>
-Content-Language: en-US
-From: Jie Luo <quic_luoj@quicinc.com>
-In-Reply-To: <d7b374670eb2f6d442f351106ab1221a.sboyd@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: qJhNRyNqj3H3U_ZSztNVyeUIdABzBVO6
-X-Proofpoint-ORIG-GUID: qJhNRyNqj3H3U_ZSztNVyeUIdABzBVO6
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-28_03,2024-08-27_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
- priorityscore=1501 malwarescore=0 adultscore=0 phishscore=0
- impostorscore=0 bulkscore=0 spamscore=0 suspectscore=0 mlxscore=0
- mlxlogscore=999 lowpriorityscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2407110000 definitions=main-2408280038
+Subject: Re: [PATCH v1 2/2] powerpc/debug: hook to user return notifier
+ infrastructure
+To: =?UTF-8?B?6Jme6ZmG6ZOt?= <luming.yu@shingroup.cn>
+Cc: "shenghui.qu@shingroup.cn" <shenghui.qu@shingroup.cn>,
+ npiggin <npiggin@gmail.com>, "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
+ mpe <mpe@ellerman.id.au>, "luming.yu" <luming.yu@gmail.com>,
+ =?UTF-8?B?5p2o5L2z6b6Z?= <jialong.yang@shingroup.cn>,
+ linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+ linux-kernel <linux-kernel@vger.kernel.org>
+References: <B375A36C9C4D73FF+20231218031338.2084-1-luming.yu@shingroup.cn>
+ <8734vzsw0q.fsf@kernel.org> <8734vyn1ky.fsf@mail.lhotse>
+ <2acd6623-952b-4659-bc26-c632e94560a8@csgroup.eu>
+ <0638f0a2-782b-411f-9937-c62d99e9562b@csgroup.eu>
+ <tencent_4F2B3C0025D5A1722470D582@qq.com>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <tencent_4F2B3C0025D5A1722470D582@qq.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
+Hi,
 
-
-On 8/28/2024 7:50 AM, Stephen Boyd wrote:
-> Quoting Luo Jie (2024-08-27 05:46:00)
->> diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
->> index 8a6f0dabd02f..35f656146de7 100644
->> --- a/drivers/clk/qcom/Makefile
->> +++ b/drivers/clk/qcom/Makefile
->> @@ -29,6 +29,7 @@ obj-$(CONFIG_CLK_X1E80100_TCSRCC) += tcsrcc-x1e80100.o
->>   obj-$(CONFIG_CLK_QCM2290_GPUCC) += gpucc-qcm2290.o
->>   obj-$(CONFIG_IPQ_APSS_PLL) += apss-ipq-pll.o
->>   obj-$(CONFIG_IPQ_APSS_6018) += apss-ipq6018.o
->> +obj-$(CONFIG_IPQ_CMN_PLL) += clk-ipq-cmn-pll.o
+Le 28/08/2024 à 05:17, 虞陆铭 a écrit :
+> Hi,
 > 
-> I don't see many other filenames with clk- prefix in this directory, so
-> probably drop it.
+> it appears the little feature might require a little bit more work to find its value of the patch.
+> 
+> Using the following debug module ,  some debugging shows the TIF_USER_RETURN_NOTIFY
+> bit is propagated in __switch_to among tasks , but USER_RETURN_NOTIFY call back seems to
+> be dropped somewhere on somone who carries the bit return to user space.
+> side notes:
+> there is an issue that the module symbols is not appended to /sys/kernel/debug/tracing/available_filter_functions
+> which should be sovled first to make it easier for further debuggig.
 
-OK.
+As far as I can see, user return notifier infrastructure was implemented 
+in 2009 for KVM on x86, see 
+https://lore.kernel.org/all/1253105134-8862-1-git-send-email-avi@redhat.com/
+
+Can you explain what is your usage of that infrastructure with your 
+patch ? You are talking about debug, what's the added value, what is it 
+used for ?
+
+Thanks
+Christophe
 
 > 
->>   obj-$(CONFIG_IPQ_GCC_4019) += gcc-ipq4019.o
->>   obj-$(CONFIG_IPQ_GCC_5018) += gcc-ipq5018.o
->>   obj-$(CONFIG_IPQ_GCC_5332) += gcc-ipq5332.o
->> diff --git a/drivers/clk/qcom/clk-ipq-cmn-pll.c b/drivers/clk/qcom/clk-ipq-cmn-pll.c
->> new file mode 100644
->> index 000000000000..a9775c39b2f3
->> --- /dev/null
->> +++ b/drivers/clk/qcom/clk-ipq-cmn-pll.c
->> @@ -0,0 +1,241 @@
->> +// SPDX-License-Identifier: GPL-2.0-only
->> +/*
->> + * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
->> + */
->> +
->> +/*
->> + * CMN PLL block expects the reference clock from on-board Wi-Fi block, and
->> + * supplies fixed rate clocks as output to the Ethernet hardware blocks.
->> + * The Ethernet related blocks include PPE (packet process engine) and the
->> + * external connected PHY (or switch) chip receiving clocks from the CMN PLL.
->> + *
->> + * On the IPQ9574 SoC, There are three clocks with 50 MHZ, one clock with
->> + * 25 MHZ which are output from the CMN PLL to Ethernet PHY (or switch),
->> + * and one clock with 353 MHZ to PPE.
->> + *
->> + *               +---------+
->> + *               |   GCC   |
->> + *               +--+---+--+
->> + *           AHB CLK|   |SYS CLK
->> + *                  V   V
->> + *          +-------+---+------+
->> + *          |                  +-------------> eth0-50mhz
->> + * REF CLK  |     IPQ9574      |
->> + * -------->+                  +-------------> eth1-50mhz
->> + *          |  CMN PLL block   |
->> + *          |                  +-------------> eth2-50mhz
->> + *          |                  |
->> + *          +---------+--------+-------------> eth-25mhz
->> + *                    |
->> + *                    V
->> + *                    ppe-353mhz
->> + */
->> +
->> +#include <dt-bindings/clock/qcom,ipq-cmn-pll.h>
+> [root@localhost linux]# cat lib/user-return-test.c
+> #include <linux/module.h>
+> #include <linux/kernel.h>
+> #include <linux/init.h>
+> #include <linux/container_of.h>
+> #include <linux/user-return-notifier.h>
+> #include <linux/delay.h>
+> #include <linux/kthread.h>
+> #include <linux/sched.h>
 > 
-> Include dt-bindings after linux please.
-
-OK, will update.
-
+> MODULE_LICENSE("GPL");
 > 
->> +#include <linux/bitfield.h>
->> +#include <linux/clk.h>
->> +#include <linux/clk-provider.h>
->> +#include <linux/delay.h>
->> +#include <linux/io.h>
->> +#include <linux/iopoll.h>
->> +#include <linux/of.h>
->> +#include <linux/of_address.h>
->> +#include <linux/platform_device.h>
->> +#include <linux/slab.h>
->> +
->> +#define CMN_PLL_REFCLK_SRC_SELECTION           0x28
->> +#define CMN_PLL_REFCLK_SRC_DIV                 GENMASK(9, 8)
->> +
->> +#define CMN_PLL_LOCKED                         0x64
->> +#define CMN_PLL_CLKS_LOCKED                    BIT(8)
->> +
->> +#define CMN_PLL_POWER_ON_AND_RESET             0x780
->> +#define CMN_ANA_EN_SW_RSTN                     BIT(6)
->> +
->> +#define CMN_PLL_REFCLK_CONFIG                  0x784
->> +#define CMN_PLL_REFCLK_EXTERNAL                        BIT(9)
->> +#define CMN_PLL_REFCLK_DIV                     GENMASK(8, 4)
->> +#define CMN_PLL_REFCLK_INDEX                   GENMASK(3, 0)
->> +
->> +#define CMN_PLL_CTRL                           0x78c
->> +#define CMN_PLL_CTRL_LOCK_DETECT_EN            BIT(15)
->> +
->> +/**
->> + * struct cmn_pll_fixed_output_clk - CMN PLL output clocks information
->> + * @id:        Clock specifier to be supplied
->> + * @name: Clock name to be registered
->> + * @rate: Clock rate
->> + */
->> +struct cmn_pll_fixed_output_clk {
->> +       unsigned int id;
->> +       const char *name;
->> +       const unsigned long rate;
->> +};
->> +
->> +#define CLK_PLL_OUTPUT(_id, _name, _rate) {            \
->> +       .id = _id,                                      \
->> +       .name = _name,                                  \
->> +       .rate = _rate,                                  \
->> +}
->> +
->> +static const struct cmn_pll_fixed_output_clk ipq9574_output_clks[] = {
->> +       CLK_PLL_OUTPUT(PPE_353MHZ_CLK, "ppe-353mhz", 353000000UL),
->> +       CLK_PLL_OUTPUT(ETH0_50MHZ_CLK, "eth0-50mhz", 50000000UL),
->> +       CLK_PLL_OUTPUT(ETH1_50MHZ_CLK, "eth1-50mhz", 50000000UL),
->> +       CLK_PLL_OUTPUT(ETH2_50MHZ_CLK, "eth2-50mhz", 50000000UL),
->> +       CLK_PLL_OUTPUT(ETH_25MHZ_CLK, "eth-25mhz", 25000000UL),
->> +};
->> +
->> +static int ipq_cmn_pll_config(struct device *dev, unsigned long parent_rate)
->> +{
->> +       void __iomem *base;
->> +       u32 val;
->> +
->> +       base = devm_of_iomap(dev, dev->of_node, 0, NULL);
 > 
-> Use platform_device APIs please. This is a platform driver.
-
-OK. Will update to use API devm_platform_ioremap_resource().
-
+> struct test_user_return {
+>          struct user_return_notifier urn;
+>          bool registered;
+>          int urn_value_changed;
+>          struct task_struct *worker;
+> };
 > 
->> +       if (IS_ERR(base))
->> +               return PTR_ERR(base);
->> +
->> +       val = readl(base + CMN_PLL_REFCLK_CONFIG);
->> +       val &= ~(CMN_PLL_REFCLK_EXTERNAL | CMN_PLL_REFCLK_INDEX);
->> +
->> +       /*
->> +        * Configure the reference input clock selection as per the given rate.
->> +        * The output clock rates are always of fixed value.
->> +        */
->> +       switch (parent_rate) {
->> +       case 25000000:
->> +               val |= FIELD_PREP(CMN_PLL_REFCLK_INDEX, 3);
->> +               break;
->> +       case 31250000:
->> +               val |= FIELD_PREP(CMN_PLL_REFCLK_INDEX, 4);
->> +               break;
->> +       case 40000000:
->> +               val |= FIELD_PREP(CMN_PLL_REFCLK_INDEX, 6);
->> +               break;
->> +       case 48000000:
->> +               val |= FIELD_PREP(CMN_PLL_REFCLK_INDEX, 7);
->> +               break;
->> +       case 50000000:
->> +               val |= FIELD_PREP(CMN_PLL_REFCLK_INDEX, 8);
->> +               break;
->> +       case 96000000:
->> +               val |= FIELD_PREP(CMN_PLL_REFCLK_INDEX, 7);
->> +               val &= ~CMN_PLL_REFCLK_DIV;
->> +               val |= FIELD_PREP(CMN_PLL_REFCLK_DIV, 2);
->> +               break;
->> +       default:
->> +               return -EINVAL;
->> +       }
+> static struct test_user_return __percpu *user_return_test;
 > 
-> Why isn't this done with struct clk_ops::set_rate() or clk_ops::init()?
-
-OK, I will move this code into the clk_ops::init().
-
+> static void test_user_return_cb(struct user_return_notifier *urn)
+> {
+>          struct test_user_return *tur =
+>                  container_of(urn, struct test_user_return, urn);
+>          unsigned long flags;
 > 
->> +
->> +       writel(val, base + CMN_PLL_REFCLK_CONFIG);
->> +
->> +       /* Update the source clock rate selection. Only 96 MHZ uses 0. */
->> +       val = readl(base + CMN_PLL_REFCLK_SRC_SELECTION);
->> +       val &= ~CMN_PLL_REFCLK_SRC_DIV;
->> +       if (parent_rate != 96000000)
->> +               val |= FIELD_PREP(CMN_PLL_REFCLK_SRC_DIV, 1);
->> +
->> +       writel(val, base + CMN_PLL_REFCLK_SRC_SELECTION);
->> +
->> +       /* Enable PLL locked detect. */
->> +       val = readl(base + CMN_PLL_CTRL);
->> +       val |= CMN_PLL_CTRL_LOCK_DETECT_EN;
->> +       writel(val, base + CMN_PLL_CTRL);
->> +
->> +       /*
->> +        * Reset the CMN PLL block to ensure the updated configurations
->> +        * take effect.
->> +        */
->> +       val = readl(base + CMN_PLL_POWER_ON_AND_RESET);
->> +       val &= ~CMN_ANA_EN_SW_RSTN;
->> +       writel(val, base + CMN_PLL_POWER_ON_AND_RESET);
->> +       usleep_range(1000, 1200);
->> +
->> +       val |= CMN_ANA_EN_SW_RSTN;
->> +       writel(val, base + CMN_PLL_POWER_ON_AND_RESET);
->> +
->> +       /* Stability check of CMN PLL output clocks. */
->> +       return readl_poll_timeout(base + CMN_PLL_LOCKED, val,
->> +                                 (val & CMN_PLL_CLKS_LOCKED),
->> +                                 100, 100000);
->> +}
->> +
->> +static int ipq_cmn_pll_clk_register(struct device *dev, const char *parent)
+>          local_irq_save(flags);
+>          tur->urn_value_changed++;
+>          local_irq_restore(flags);
+>          return;
+> }
 > 
-> Please don't use string names to describe topology.
-
-
-OK, I will update to use an instance of 'struct clk_parent_data' to
-describe the parent clock. This will be part of clk_hw instance that we
-will define now, to represent the PLL clock and its ops (such as .init)
-along with the parent.
-
+> static int test_user_return_worker(void *tur)
+> {
+>          struct test_user_return *t;
+>          t = (struct test_user_return *) tur;
+>          preempt_disable();
+>          user_return_notifier_register(&t->urn);
+>          preempt_enable();
+>          t->registered = true;
+>          while (!kthread_should_stop()) {
+>                  static int err_rate = 0;
 > 
->> +{
->> +       const struct cmn_pll_fixed_output_clk *fixed_clk;
->> +       struct clk_hw_onecell_data *data;
->> +       unsigned int num_clks;
->> +       struct clk_hw *hw;
->> +     
->> +
->> +       num_clks = ARRAY_SIZE(ipq9574_output_clks);
->> +       fixed_clk = ipq9574_output_clks;
->> +
->> +       data = devm_kzalloc(dev, struct_size(data, hws, num_clks), GFP_KERNEL);
->> +       if (!data)
->> +               return -ENOMEM;
->> +
->> +       for (i = 0; i < num_clks; i++) {
->> +               hw = devm_clk_hw_register_fixed_rate(dev, fixed_clk[i].name,
->> +                                                    parent, 0,
->> +                                                    fixed_clk[i].rate);
->> +               if (IS_ERR(hw))
->> +                       return PTR_ERR(hw);
->> +
->> +               data->hws[fixed_clk[i].id] = hw;
->> +       }
->> +       data->num = num_clks;
->> +
->> +       return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get, data);
->> +}
->> +
->> +static int ipq_cmn_pll_clk_probe(struct platform_device *pdev)
->> +{
->> +       struct device *dev = &pdev->dev;
->> +       struct clk *clk;
->> +       int ret;
->> +
->> +       /*
->> +        * To access the CMN PLL registers, the GCC AHB & SYSY clocks
->> +        * for CMN PLL block need to be enabled.
->> +        */
->> +       clk = devm_clk_get_enabled(dev, "ahb");
->> +       if (IS_ERR(clk))
->> +               return dev_err_probe(dev, PTR_ERR(clk),
->> +                                    "Enable AHB clock failed\n");
->> +
->> +       clk = devm_clk_get_enabled(dev, "sys");
->> +       if (IS_ERR(clk))
->> +               return dev_err_probe(dev, PTR_ERR(clk),
->> +                                    "Enable SYS clock failed\n");
+>                  msleep (1000);
+>                  if (!test_thread_flag(TIF_USER_RETURN_NOTIFY) && (err_rate == 0)) {
+>                          pr_err("TIF_USER_RETURN_NOTIFY is lost");
+>                          err_rate++;
+>                  }
+>          }
+>          return 0;
+> }
+> static int init_test_user_return(void)
+> {
+>          int r = 0;
 > 
-> Usually qcom clk drivers do this with pm_clk_add() and runtime PM. Why
-> can't that be done here?
-
-Yes, the pm_clk_add() can be used to manage clocks, I will udpate to use
-the PM framework. Thanks for the suggestion.
-
+>          user_return_test = alloc_percpu(struct test_user_return);
+>          if (!user_return_test) {
+>                  pr_err("failed to allocate percpu test_user_return\n");
+>                  r = -ENOMEM;
+>                  goto exit;
+>          }
+>          {
+>                  unsigned int cpu;
+>                  struct task_struct *task;
+>                  struct test_user_return *tur;
 > 
->> +
->> +       clk = devm_clk_get(dev, "ref");
->> +       if (IS_ERR(clk))
->> +               return dev_err_probe(dev, PTR_ERR(clk),
->> +                                    "Get reference clock failed\n");
+>                  for_each_online_cpu(cpu) {
+>                          tur = per_cpu_ptr(user_return_test, cpu);
+>                          if (!tur->registered) {
+>                                  tur->urn.on_user_return = test_user_return_cb;
+>                                  task = kthread_create(test_user_return_worker,
+>                                          tur, "test_user_return");
+>                                  if (IS_ERR(task))
+>                                          pr_err("no test_user_return kthread created for cpu %d",cpu);
+>                                  else {
+>                                          tur->worker = task;
+>                                          wake_up_process(task);
+>                                  }
+>                          }
+>                  }
+>          }
 > 
-> We don't want clk providers to be clk consumers. Presumably this is the
-> PLL's parent clk, and so the frequency should be passed to the clk_ops
-> via the parent rate.
-
-Yes, this is the PLL's parent clock. OK, I will remove this code and 
-update to use clk_parent_data to describe this parent clock.
-
+> exit:
+>          return r;
+> }
+> static void exit_test_user_return(void)
+> {
+>          struct test_user_return *tur;
+>          int i,ret=0;
 > 
->> +
->> +       /* Configure CMN PLL to apply the reference clock. */
->> +       ret = ipq_cmn_pll_config(dev, clk_get_rate(clk));
->> +       if (ret)
->> +               return dev_err_probe(dev, ret, "Configure CMN PLL failed\n");
->> +
->> +       return ipq_cmn_pll_clk_register(dev, __clk_get_name(clk));
->> +}
->> +
->> +static const struct of_device_id ipq_cmn_pll_clk_ids[] = {
->> +       { .compatible = "qcom,ipq9574-cmn-pll", },
->> +       { }
->> +};
+>          for_each_online_cpu(i) {
+>                  tur = per_cpu_ptr(user_return_test, i);
+>                  if (tur->registered) {
+>                          pr_info("[cpu=%d, %d] ", i, tur->urn_value_changed);
+>                          user_return_notifier_unregister(&tur->urn);
+>                          tur->registered = false;
+>                  }
+>                  if (tur->worker) {
+>                          ret = kthread_stop(tur->worker);
+>                          if (ret)
+>                                  pr_err("can't stop test_user_return kthread for cpu %d", i);
+>                  }
+>          }
+>          free_percpu(user_return_test);
+>          return;
+> }
 > 
-> module device table?
+> module_init(init_test_user_return);
+> module_exit(exit_test_user_return);
 > 
-I will add the MODULE_DEVICE_TABLE.
-
+>   
+> ------------------ Original ------------------
+> From:  "Christophe Leroy"<christophe.leroy@csgroup.eu>;
+> Date:  Tue, Feb 20, 2024 05:02 PM
+> To:  "mpe"<mpe@ellerman.id.au>; "Aneesh Kumar K.V"<aneesh.kumar@kernel.org>; "虞陆铭"<luming.yu@shingroup.cn>; "linuxppc-dev"<linuxppc-dev@lists.ozlabs.org>; "linux-kernel"<linux-kernel@vger.kernel.org>; "npiggin"<npiggin@gmail.com>;
+> Cc:  "shenghui.qu@shingroup.cn"<shenghui.qu@shingroup.cn>; "dawei.li@shingroup.cn"<dawei.li@shingroup.cn>; "ke.zhao@shingroup.cn"<ke.zhao@shingroup.cn>; "luming.yu"<luming.yu@gmail.com>;
+> Subject:  Re: [PATCH v1 2/2] powerpc/debug: hook to user return notifier infrastructure
+> 
+>   
+> 
+> 
+> 
+> Le 20/02/2024 à 09:51, Christophe Leroy a écrit :
+>>
+>>
+>> Le 19/12/2023 à 07:33, Michael Ellerman a écrit :
+>>> Aneesh Kumar K.V <aneesh.kumar@kernel.org> writes:
+>>>> Luming Yu <luming.yu@shingroup.cn> writes:
+>>>>
+>>>>> Before we have powerpc to use the generic entry infrastructure,
+>>>>> the call to fire user return notifier is made temporarily in powerpc
+>>>>> entry code.
+>>>>>
+>>>>
+>>>> It is still not clear what will be registered as user return notifier.
+>>>> Can you summarize that here?
+>>>
+>>> fire_user_return_notifiers() is defined in kernel/user-return-notifier.c
+>>>
+>>> That's built when CONFIG_USER_RETURN_NOTIFIER=y.
+>>>
+>>> That is not user selectable, it's only enabled by:
+>>>
+>>> arch/x86/kvm/Kconfig:        select USER_RETURN_NOTIFIER
+>>>
+>>> So it looks to me like (currently) it's always a nop and does nothing.
+>>>
+>>> Which makes me wonder what the point of wiring this feature up is :)
+>>> Maybe it's needed for some other feature I don't know about?
+>>>
+>>> Arguably we could just enable it because we can, and it currently does
+>>> nothing so it's unlikely to break anything. But that also makes it
+>>> impossible to test the implementation is correct, and runs the risk that
+>>> one day in the future when it does get enabled only then do we discover
+>>> it doesn't work.
+>>
+>> Opened an "issue" for the day we need it:
+>> https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fgithub.com%2FKSPP%2Flinux%2Fissues%2F348&data=05%7C02%7Cchristophe.leroy%40csgroup.eu%7Cd9e9b6315413430cfba108dcc7100633%7C8b87af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638604118862628419%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C0%7C%7C%7C&sdata=iIYQTodb9zrGdfmzvnZrIVZ%2BKh2qZjMjT29ddkUpGIw%3D&reserved=0
+> 
+> Correct one is https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fgithub.com%2Flinuxppc%2Fissues%2Fissues%2F477&data=05%7C02%7Cchristophe.leroy%40csgroup.eu%7Cd9e9b6315413430cfba108dcc7100633%7C8b87af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638604118862637095%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C0%7C%7C%7C&sdata=aJRVdRWu%2F7NQ13jQ6yFLBynXIIfPPPQ3nS4FxiXGNyw%3D&reserved=0
 
