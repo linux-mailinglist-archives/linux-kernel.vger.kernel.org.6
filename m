@@ -1,87 +1,123 @@
-Return-Path: <linux-kernel+bounces-304466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C296E962076
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 09:16:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17DBF9620ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 09:25:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 01DC61C2374D
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 07:16:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49C571C22E4B
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 07:24:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19371158552;
-	Wed, 28 Aug 2024 07:15:50 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4996D15AADE;
+	Wed, 28 Aug 2024 07:24:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="mazciC6m"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 053D614D282
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 07:15:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C43E415957E;
+	Wed, 28 Aug 2024 07:24:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724829349; cv=none; b=ZusS/dgFeXbPKPTfXttXTr6oQY6607be0spBJUu0vgqqrQOh106ePXIt9HIBSLV32YB4/gXH9ru88xHcPxp/yq8fRXyPeNN7MZ0yH6GHZO+ovEbK0lslXeRcUUvJAI6/oSebjGxum2W691XRpQH/frFka2W4ycKK8dUmCblQyaU=
+	t=1724829850; cv=none; b=sZ7cQ6lpxLQxo7zJJtD7h1cRRmbr1YjBExnx2cmfzceGt5TGZyEyi3zavKkqH/qFfmNu7KKmHNRpaIYOxBk+zIDCXJbcPPhj2jaDpY/uxVAgLTepJKOxvDjUKj9ltD4L4ezLna4XyKo4hwW6h6gD8VyoNEarI8hd9NeLvnpTDTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724829349; c=relaxed/simple;
-	bh=MuZuQp+uLztFw2q9cNF/Umod0Y5qwAbjwzRmfx6vBgc=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dhE1kAUtsZCoYzJGc70yowzrkMq8L4oKbWzMagH37/OQzD3utUzf1FsBiHE+tX5XKujP+jGFdi5vmrqOT3YXXJfeQYbgbuN+FZMohLrjQmtKF2o63FFN0Vy5uLdQ5iOhjX4yMMgLm4oU7drEIoh4JSKQjyOpgZgqcFZlY+t8vrw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.234])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4WtwbD2WV4z1HHdj;
-	Wed, 28 Aug 2024 15:12:24 +0800 (CST)
-Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
-	by mail.maildlp.com (Postfix) with ESMTPS id EA9D81401F1;
-	Wed, 28 Aug 2024 15:15:43 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by kwepemh500013.china.huawei.com
- (7.202.181.146) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 28 Aug
- 2024 15:15:43 +0800
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-To: <brauner@kernel.org>, <akpm@linux-foundation.org>, <kees@kernel.org>,
-	<zeming@nfschina.com>, <adobriyan@gmail.com>, <rdunlap@infradead.org>,
-	<linux-kernel@vger.kernel.org>
-CC: <ruanjinjie@huawei.com>
-Subject: [PATCH -next] user_namespace: Use kmemdup_array() instead of kmemdup() for multiple allocation
-Date: Wed, 28 Aug 2024 15:23:40 +0800
-Message-ID: <20240828072340.1249310-1-ruanjinjie@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1724829850; c=relaxed/simple;
+	bh=6CmTzbXpU4WzlEQvnVHqE3EiYn0C7V0RHm7JIGuT8iQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=S17086R7uDszJhX592E+9hOSfCfOHbXjNpEZyQeflkZYkI2LZarDzuW8McowFBQ4CzcKaDnFCi60mjZjkSGi0q9ynZCIuhnUdtBWHbOUi83U11pMmIv2qYiMmVm0bbW/qygw7v3lEqEo0DEH6WtMdPX/KBTqF/aL9HtYKU5xgKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=mazciC6m; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47RLb2rL005522;
+	Wed, 28 Aug 2024 07:23:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	8KoqV5Hgx4GL211WXWMqK1XxknmZXyFuj0kMNo/U8Z8=; b=mazciC6mB6AEFPeM
+	bmKa5IOz0ittfuIr7aCVyn09nxPGESjSGnfa5JnUS6I1VxJN5heP6EZpE1qZqodo
+	iviElv32yhRBzVwAsRmo7MpBZ3d259iafPKRpZOlfTjyEYPXUsTlO/8LlMDtVcuU
+	1TI3/IDBofJzB2qpVG9RcJ3ktxd5bWf667Lb1hTxWSLLyd65WLOgW/k+u8n7HwAl
+	+FtuQCtdpPVsUtKSFvlDoBTSe2arz7cAFhUBO7JK9zItqq8epNBl3hR1XWlQVftO
+	BmSlmGLEn3fQRsTcNQ0jn3B+siI8ZScbV8kBl8HxpLvFlGz/UtVUTIxie+RgmukA
+	GBAL6A==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 419puu90vv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 28 Aug 2024 07:23:53 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47S7Nq9O031253
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 28 Aug 2024 07:23:52 GMT
+Received: from [10.218.5.19] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 28 Aug
+ 2024 00:23:47 -0700
+Message-ID: <72999a68-314e-4f63-9411-ef92638ed31b@quicinc.com>
+Date: Wed, 28 Aug 2024 12:53:44 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemh500013.china.huawei.com (7.202.181.146)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 4/8] clk: qcom: Add support for Camera Clock Controller
+ on SA8775P
+To: Taniya Das <quic_tdas@quicinc.com>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "Stephen
+ Boyd" <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>,
+        Bartosz Golaszewski
+	<bartosz.golaszewski@linaro.org>,
+        <quic_imrashai@quicinc.com>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240816-sa8775p-mm-v3-v1-0-77d53c3c0cef@quicinc.com>
+ <20240816-sa8775p-mm-v3-v1-4-77d53c3c0cef@quicinc.com>
+Content-Language: en-US
+From: Jagadeesh Kona <quic_jkona@quicinc.com>
+In-Reply-To: <20240816-sa8775p-mm-v3-v1-4-77d53c3c0cef@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: lXetiUr3hPXPzezup4fNePSW-1u02Tx8
+X-Proofpoint-ORIG-GUID: lXetiUr3hPXPzezup4fNePSW-1u02Tx8
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-28_03,2024-08-27_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ impostorscore=0 adultscore=0 malwarescore=0 suspectscore=0 bulkscore=0
+ clxscore=1015 mlxlogscore=949 mlxscore=0 phishscore=0 lowpriorityscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408280051
 
-Let the kmemdup_array() take care about multiplication and possible
-overflows.
 
-Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
----
- kernel/user_namespace.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/kernel/user_namespace.c b/kernel/user_namespace.c
-index 0b0b95418b16..aa0b2e47f2f2 100644
---- a/kernel/user_namespace.c
-+++ b/kernel/user_namespace.c
-@@ -853,9 +853,8 @@ static int sort_idmaps(struct uid_gid_map *map)
- 	     cmp_extents_forward, NULL);
- 
- 	/* Only copy the memory from forward we actually need. */
--	map->reverse = kmemdup(map->forward,
--			       map->nr_extents * sizeof(struct uid_gid_extent),
--			       GFP_KERNEL);
-+	map->reverse = kmemdup_array(map->forward, map->nr_extents,
-+				     sizeof(struct uid_gid_extent), GFP_KERNEL);
- 	if (!map->reverse)
- 		return -ENOMEM;
- 
--- 
-2.34.1
+On 8/16/2024 12:01 PM, Taniya Das wrote:
+> Add support for Camera Clock Controller on SA8755P platform.
+> 
+> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+> ---
+>   drivers/clk/qcom/Kconfig         |   10 +
+>   drivers/clk/qcom/Makefile        |    1 +
+>   drivers/clk/qcom/camcc-sa8775p.c | 1868 ++++++++++++++++++++++++++++++++++++++
+>   3 files changed, 1879 insertions(+)
 
+Reviewed-by: Jagadeesh Kona <quic_jkona@quicinc.com>
+
+Thanks,
+Jagadeesh
 
