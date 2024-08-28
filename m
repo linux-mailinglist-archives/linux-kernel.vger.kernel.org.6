@@ -1,131 +1,274 @@
-Return-Path: <linux-kernel+bounces-305353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 405D9962D56
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 18:11:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57627962D54
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 18:11:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C1F22B2450B
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 16:11:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C0811C2178C
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 16:11:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD8861A4B7A;
-	Wed, 28 Aug 2024 16:11:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C11A61A3BB3;
+	Wed, 28 Aug 2024 16:11:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="OmFhCKcD"
-Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="guNWp2bD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25EDA1A38CE;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E288941760;
 	Wed, 28 Aug 2024 16:11:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.152.168
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724861480; cv=none; b=WaqPQ2ZkwQp+QnmxRbCw3vd5pD/bYBklaCHRxrme1eDXSynJr6dcq+/1gtPvnZLVnr/8j8HkdcgOF9+sjtQIMdnhlUtF4QuL0E1GPOrfyyJxZNgxTCLlsgd5dwQiPdY1nX1IiStIoHyEkzcl9UEgnN1iWzcn8BLJbIBf8AV9p1M=
+	t=1724861478; cv=none; b=Jepy5uggcns8qdmw+l1OZVsjKSADh8/+RiiP8BjM64X81e9j1mQa8mTmGSL0A0L0RMyd87NlqJNqKVJ5MBybo+zoxIaQVYOjd85bH0LS6heAbG6hwWJSfI+CoWecjglwhYVfWVsw92dqLJrR099/P5yhO1lcw+fs2QbFbemdDBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724861480; c=relaxed/simple;
-	bh=Zbmal+2mF51IQI1fwlMilHXGLGrm5KE6MZAEPnc2M7s=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pYSi5yT47ojkm0WLduoAOVnHp68Sv4/JOdp5H/JysHTYBThnitiXYW1tPkgOFQMykSiE17ZMo0hCrfGnrQXoCfmxRy2qR6MtwwxCgh0rgWnjCUEbJpBFQgEZxSWt0FtkP4O+ucNhEI+EtXcozdSpxpiOAjFwJkM2zLSbKbVA6A0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=OmFhCKcD; arc=none smtp.client-ip=67.231.152.168
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
-Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-	by mx0b-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47SEIXHD003698;
-	Wed, 28 Aug 2024 11:11:14 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=PODMain02222019; bh=tgSo/BhDlyBHAY9S7i
-	VFFPRb0AmymEAZuiIy2mOqR7w=; b=OmFhCKcDWwMqTue+kH/aAd0oDFB241vfu7
-	UkZ+Yx+Qs37nW/1YGN1xeYHfUDYZCAxNrM0t4WuydzMuJMNRwUKbzvoFZzR0cjeR
-	0hhsoGrccuk8Mv3slVxoJ20PRfZJlB6WXa2o96V3eJ4lvelSsDtPOIP36cj1rF2F
-	E4/RJzuuFVko8xFoTsSK1XJSuMNSZmK56CvDGF1BvUXAD3maYxfEDtPdkIUeZtL+
-	7b3SM8SbAOz6V2DQGXCMQ8qHy1BoOhOQ6/l5dU59oC6cVQUhBJVG7v3ITTIdPQ3J
-	qPhvvxnthDGThVV8fkfc6KEbScU2F8NqAoepjj5GDAAaPQiJ7CBA==
-Received: from ediex01.ad.cirrus.com ([84.19.233.68])
-	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 419puw10qb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 28 Aug 2024 11:11:13 -0500 (CDT)
-Received: from ediex01.ad.cirrus.com (198.61.84.80) by ediex01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 28 Aug
- 2024 17:11:12 +0100
-Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
- anon-ediex01.ad.cirrus.com (198.61.84.80) with Microsoft SMTP Server id
- 15.2.1544.9 via Frontend Transport; Wed, 28 Aug 2024 17:11:12 +0100
-Received: from opensource.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTPS id EA5E3820244;
-	Wed, 28 Aug 2024 16:11:11 +0000 (UTC)
-Date: Wed, 28 Aug 2024 17:11:10 +0100
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-To: Richard Fitzgerald <rf@opensource.cirrus.com>
-CC: Thomas Gleixner <tglx@linutronix.de>, Yan Zhen <yanzhen@vivo.com>,
-        <linus.walleij@linaro.org>, <linux-sound@vger.kernel.org>,
-        <patches@opensource.cirrus.com>, <linux-kernel@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, <opensource.kernel@vivo.com>
-Subject: Re: [PATCH v1] cirrus: Simplify with dev_err_probe()
-Message-ID: <Zs9MHv+ljZUMfTqj@opensource.cirrus.com>
-References: <20240828120118.1284420-1-yanzhen@vivo.com>
- <Zs8XlyXw421hHjM/@opensource.cirrus.com>
- <8734mod7qi.ffs@tglx>
- <9b5a3025-3e78-44b9-98f5-c945a6ac48d7@opensource.cirrus.com>
+	s=arc-20240116; t=1724861478; c=relaxed/simple;
+	bh=9CtFrh3gKyelJvHQtwXVoL7gTTFZNFMEbrIHkpQX020=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I/RzoCMQeOnGR2hpSG00hirfPoX/m+LJV/okOBi+y/BYnYLTDo/Vfz51NC3BEJVJcbUVSnxfsnShmuW3sIxU2gUH9FHKL+h8gub04IAFRiukabptMHRe2YRM9xUhd5NLvuKDVMWYHm51MYVmgdiIN6EF9mX+RFdVAoLbDVFMv1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=guNWp2bD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BC89C4CABF;
+	Wed, 28 Aug 2024 16:11:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724861477;
+	bh=9CtFrh3gKyelJvHQtwXVoL7gTTFZNFMEbrIHkpQX020=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=guNWp2bD47/n92FQffLtDnx3F/38XLD7Q9FpHV2RCXj3jzotPNdPUO5BN+pHTfu69
+	 EW4MmLD5CEf3UXMqKMeS6UDdhEH2v6vFNL0fsdGp1Iz+Qgb0+IIa0pfk2D4yuHTXFF
+	 6LJhk6iD+rWsuaQ67bNl8uKCVi2ykNQLf9Ibmu5j9HqHq7/2aEvHeRRMphWNlobXkP
+	 WkgcHxUTV+M2fC0FlDCqLN4IcEHUU2M5OCSaBiBuyYkx3NRAxMOjdvryiHPNYxtmy6
+	 LDID3U86Onq4+mMmfPEqQRnguSDzZYjCBP8ugKTLsAktMs35GZMxKn9Ym3aygxWYij
+	 C1I9T80hbocoQ==
+Date: Wed, 28 Aug 2024 17:11:12 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Christian Bruel <christian.bruel@foss.st.com>
+Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, mcoquelin.stm32@gmail.com,
+	alexandre.torgue@foss.st.com, p.zabel@pengutronix.de,
+	linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	fabrice.gasnier@foss.st.com
+Subject: Re: [PATCH v4 1/5] dt-bindings: phy: Add STM32MP25 COMBOPHY bindings
+Message-ID: <20240828-handsfree-overarch-cd1af26cb0c5@spud>
+References: <20240828143452.1407532-1-christian.bruel@foss.st.com>
+ <20240828143452.1407532-2-christian.bruel@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="ZqexDgeCbf5zKW3c"
 Content-Disposition: inline
-In-Reply-To: <9b5a3025-3e78-44b9-98f5-c945a6ac48d7@opensource.cirrus.com>
-X-Proofpoint-GUID: mrkUOa25MLT7NtseVb9IZkBapcu6plf3
-X-Proofpoint-ORIG-GUID: mrkUOa25MLT7NtseVb9IZkBapcu6plf3
-X-Proofpoint-Spam-Reason: safe
+In-Reply-To: <20240828143452.1407532-2-christian.bruel@foss.st.com>
 
-On Wed, Aug 28, 2024 at 03:59:50PM +0100, Richard Fitzgerald wrote:
-> On 28/08/2024 15:47, Thomas Gleixner wrote:
-> > On Wed, Aug 28 2024 at 13:27, Charles Keepax wrote:
-> > > On Wed, Aug 28, 2024 at 08:01:18PM +0800, Yan Zhen wrote:
-> > > > @@ -1064,10 +1064,9 @@ static int madera_pin_probe(struct platform_device *pdev)
-> > > >   		ret = pinctrl_register_mappings(pdata->gpio_configs,
-> > > >   						pdata->n_gpio_configs);
-> > > >   		if (ret) {
-> > > > -			dev_err(priv->dev,
-> > > > -				"Failed to register pdata mappings (%d)\n",
-> > > > -				ret);
-> > > > -			return ret;
-> > > > +			return dev_err_probe(priv->dev, ret,
-> > > > +						"Failed to register pdata mappings (%d)\n",
-> > > > +						ret);
-> > > >   		}
-> > > 
-> > > Since we are doing a respin anyway also the brackets on the if
-> > > should be dropped on both of these as well.
-> > 
-> > No. https://www.kernel.org/doc/html/latest/process/maintainer-tip.html#bracket-rules
-> > 
-> 
-> https://www.kernel.org/doc/html/latest/process/coding-style.html#codingstyle
-> 
-> does not say that. It says:
-> 
-> "Do not unnecessarily use braces where a single statement will do."
-> 
-> Note: single statement, not single line.
-> 
-> coding-style.rst is the coding style. If you disagree with the coding
-> style, send a patch to change coding-style.rst.
-> 
 
-I mean certainly having two documents with apparently conflicting
-guidelines for the coding style is not a helpful situation at
-all. I would definitely second the call for patching the
-coding-style doc to be more explicit there.
+--ZqexDgeCbf5zKW3c
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-And to be clear I really don't care if we keep the brackets or
-not, was just trying to follow what I thought was the coding style
-guidance.
+On Wed, Aug 28, 2024 at 04:34:48PM +0200, Christian Bruel wrote:
+> Document the bindings for STM32 COMBOPHY interface, used to support
+> the PCIe and USB3 stm32mp25 drivers.
+> Following entries can be used to tune caracterisation parameters
+>  - st,output-micro-ohms and st,output-vswing-microvolt bindings entries
+> to tune the impedance and voltage swing using discrete simulation results
+>  - st,rx-equalizer register to set the internal rx equalizer filter value.
+>=20
+> Signed-off-by: Christian Bruel <christian.bruel@foss.st.com>
+> ---
+>  .../bindings/phy/st,stm32mp25-combophy.yaml   | 128 ++++++++++++++++++
+>  1 file changed, 128 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/phy/st,stm32mp25-co=
+mbophy.yaml
+>=20
+> diff --git a/Documentation/devicetree/bindings/phy/st,stm32mp25-combophy.=
+yaml b/Documentation/devicetree/bindings/phy/st,stm32mp25-combophy.yaml
+> new file mode 100644
+> index 000000000000..8d4a40b94507
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/phy/st,stm32mp25-combophy.yaml
+> @@ -0,0 +1,128 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/phy/st,stm32mp25-combophy.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: STMicroelectronics STM32MP25 USB3/PCIe COMBOPHY
+> +
+> +maintainers:
+> +  - Christian Bruel <christian.bruel@foss.st.com>
+> +
+> +description:
+> +  Single lane PHY shared (exclusive) between the USB3 and PCIe controlle=
+rs.
+> +  Supports 5Gbit/s for USB3 and PCIe gen2 or 2.5Gbit/s for PCIe gen1.
+> +
+> +properties:
+> +  compatible:
+> +    const: st,stm32mp25-combophy
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  "#phy-cells":
+> +    const: 1
+> +
+> +  clocks:
+> +    minItems: 2
+> +    items:
+> +      - description: apb Bus clock mandatory to access registers.
+> +      - description: ker Internal RCC reference clock for USB3 or PCIe
+> +      - description: pad Optional on board clock input for PCIe only. Ty=
+pically an
+> +                     external 100Mhz oscillator wired on dedicated CLKIN=
+ pad. Used as reference
+> +                     clock input instead of the ker
+> +
+> +  clock-names:
+> +    minItems: 2
+> +    items:
+> +      - const: apb
+> +      - const: ker
+> +      - const: pad
+> +
+> +  resets:
+> +    maxItems: 1
+> +
+> +  reset-names:
+> +    const: phy
+> +
+> +  power-domains:
+> +    maxItems: 1
+> +
+> +  wakeup-source: true
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +    description: interrupt used for wakeup
+> +
+> +  access-controllers:
+> +    minItems: 1
+> +    maxItems: 2
 
-Thanks,
-Charles
+Can you please describe the items here?
+
+> +  st,syscfg:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description: Phandle to the SYSCON entry required for configuring PC=
+Ie
+> +      or USB3.
+
+Why is a phandle required for this lookup, rather than doing it by
+compatible?
+
+> +
+> +  st,ssc-on:
+> +    type: boolean
+
+flag, not boolean, for presence based stuff. And in the driver,
+s/of_property_read_bool/of_property_present/.
+
+> +    description:
+> +      A boolean property whose presence indicates that the SSC for commo=
+n clock
+> +      needs to be set.
+
+And what, may I ask, does "SSC" mean? "Common clock" is also a bit of a
+"linuxism", what does this actually do in the hardware block?
+
+> +
+> +  st,rx-equalizer:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    minimum: 0
+> +    maximum: 7
+> +    default: 2
+> +    description:
+> +      A 3 bit value to tune the RX fixed equalizer setting for optimal e=
+ye compliance
+> +
+> +  st,output-micro-ohms:
+> +    minimum: 3999000
+> +    maximum: 6090000
+> +    default: 4968000
+> +    description:
+> +      A value property to tune the Single Ended Output Impedance, simula=
+tions results
+> +      at 25C for a VDDP=3D0.8V. The hardware accepts discrete values in =
+this range.
+> +
+> +  st,output-vswing-microvolt:
+> +    minimum: 442000
+> +    maximum: 803000
+> +    default: 803000
+> +    description:
+> +      A value property in microvolt to tune the Single Ended Output Volt=
+age Swing to change the
+> +      Vlo, Vhi for a VDDP =3D 0.8V. The hardware accepts discrete values=
+ in this range.
+> +
+> +required:
+> +  - "#phy-cells"
+> +  - compatible
+> +  - clocks
+> +  - clock-names
+> +  - reg
+> +  - resets
+> +  - reset-names
+> +  - st,syscfg
+
+The order here should reflect the ordering in a node, so compatible and
+reg first, rather than sorted alphanumerically.=20
+
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/st,stm32mp25-rcc.h>
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/reset/st,stm32mp25-rcc.h>
+> +
+> +    combophy: phy@480c0000 {
+
+You can drop the label here, it ain't used by anything.
+
+Cheers,
+Conor.
+
+> +        compatible =3D "st,stm32mp25-combophy";
+> +        reg =3D <0x480c0000 0x1000>;
+> +        #phy-cells =3D <1>;
+> +        clocks =3D <&rcc CK_BUS_USB3PCIEPHY>, <&rcc CK_KER_USB3PCIEPHY>;
+> +        clock-names =3D "apb", "ker";
+> +        resets =3D <&rcc USB3PCIEPHY_R>;
+> +        reset-names =3D "phy";
+> +        st,syscfg =3D <&syscfg>;
+> +        access-controllers =3D <&rifsc 67>;
+> +        power-domains =3D <&CLUSTER_PD>;
+> +        wakeup-source;
+> +        interrupts-extended =3D <&exti1 45 IRQ_TYPE_EDGE_FALLING>;
+> +    };
+> +...
+> --=20
+> 2.34.1
+>=20
+
+--ZqexDgeCbf5zKW3c
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZs9MIAAKCRB4tDGHoIJi
+0rh1AQCPLBp07OqC6pb/M6pgsgJC3wD1Sth/EdmLd/aA+HbfbQD/UrdgsGoXy9Qq
+CdxZUx/rJtHiFAP20+3XyjwVb1Gy1gU=
+=onYf
+-----END PGP SIGNATURE-----
+
+--ZqexDgeCbf5zKW3c--
 
