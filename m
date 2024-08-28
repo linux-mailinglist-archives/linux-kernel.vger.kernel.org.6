@@ -1,419 +1,141 @@
-Return-Path: <linux-kernel+bounces-304428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D55F5961FF0
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 08:44:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 60689961FFB
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 08:46:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 897C4284CC4
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 06:44:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6D8A286F01
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 06:46:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9198F157A55;
-	Wed, 28 Aug 2024 06:44:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 134FB157E88;
+	Wed, 28 Aug 2024 06:46:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OByETeiq"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="aXdis2mi"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C57114C592;
-	Wed, 28 Aug 2024 06:44:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8209157469
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 06:46:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724827467; cv=none; b=A5TVRXDwf+b1hWepwYuxenMYN5WHQqUKZrZOwVVPBq+gZCFYk13JIkJKpTVGsqgSlOxLQZx7DH62ckAbWVK39XpbRjmj5+YKnEoGXAwEfES6S0LLjxJJNRgXmVPZ1HmuER7rutAFDBn4mMuX4D2+ylunHU+1COfp9bqE++55J50=
+	t=1724827599; cv=none; b=B8S30/Zhw/Jul8exx4ZFGMnuu5LWO3edFkYu2PVcSt4GvObIz4lFA4pNFMFKnJCd6s7TkaJl+Kybu1nM5ErLTrP+beQwVl1IcXANR52zT+kbmeyV66h0nkmhBsNc+gk3mEWQQM63d1E6xCCP/rPrAOSLzUtZmQuQoVYeO2Pn5gU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724827467; c=relaxed/simple;
-	bh=ZtD8DehdY/yGq+FNYcKa60Z0xPXcr1rD3nIXAeKaBYc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t8zK3xzrfCzGUuXwVtbjWzB/mDRoJrC4KwSDODvctj0e73LcDtKcQoZdPozDEYwMZudG+r9s/nXmSkfvymH4ZBMJYzaYIajGDsAMNNNChYnWdfrh3JxgoZibAn6JlxliBFRCt7Fb0TtCB0Co9wsfBlELKY/YuxJzJlhbn8Xh9Dw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OByETeiq; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1724827599; c=relaxed/simple;
+	bh=k7OQG7UGq+5+V4/ckvBPFF0UXfEHVjzOblv15sDs95A=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nlBysJmzLHTFB4kT0qnNJxBupUtEU8w8Ywc0XTn4HxxPRRwb5kCCMSJ+hvoA0nlK+qe1VPHNpjVblLmmQa7J4DHCZhQUQDSOzjKuGndsrGCqwzlNRuwqwTXj6ZnTNKnQ6hO7xuAofIfLA0w91Ygb0NplP7P489quoFidYJ2+8H4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=aXdis2mi; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724827466; x=1756363466;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1724827596; x=1756363596;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=ZtD8DehdY/yGq+FNYcKa60Z0xPXcr1rD3nIXAeKaBYc=;
-  b=OByETeiqMbuYzYcZ6M/zG88ZODZVDZiNJNBbtZl/5OSNu1Wz8r7zZNV7
-   0/760rtc6eBsNgBUJd5pB13Ree6s/APU/wF8zX+eF0wsYXnD2fMEPmbmR
-   eCKxTaIKA6vVnNu3ro3mgKqbSFJ1ioueWDzGkFP08vNGa0WrG/vi8fpSh
-   pGa/+pAU/p11qZ4gMPxU/w80eiYubt7ft18WLOraz23cC7wOVCsEj81f9
-   5ERDc0DIh8YEdzRNhUdUknWnMzYu2YiLFITIOFLGIx3M8k89BuVcUdiPs
-   80/sZCkMl6mLYih9cH1mj72XcpA5HcEE9z88nQ/WVw1e79d+INOWcuHBT
-   Q==;
-X-CSE-ConnectionGUID: bk79ePq0SmiZjpyn1Ge6Ew==
-X-CSE-MsgGUID: +HBqykNwTWGTY2qFBHIPGQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11177"; a="23518129"
+  bh=k7OQG7UGq+5+V4/ckvBPFF0UXfEHVjzOblv15sDs95A=;
+  b=aXdis2mihd2Ja65oOhmNkoxLH3K+W/SfP/RfaE7AUto036y/ar82a3Od
+   zwv2v7UoszNK7wAKvUJHElTsW+XIg+GC05lIaRIRv8bzMxYDi9l6r+bdc
+   IcheA7+FmhHZc2cfWKEAlIYF7CGyTeog/av0WHPB0UO6116noE8ISb9Vz
+   87qJp8Knl+N1/yt+QR5bbpDGOWjKA+O0MLoplqZ9Qr+27Lx/pyuJyau4b
+   wXdxFPVOIRuYhVM1FXqpqG2neiPxOAy6n470mJNTZEWzO8Ays4JOj9eBt
+   gwtFu9XIBBdlJBPaEPqUySnn5CRZrwmuL98e41rrZK0+iYjqNxSLsG4VU
+   A==;
+X-CSE-ConnectionGUID: x3WSnwMeTXCQAFkJ2kaqjQ==
+X-CSE-MsgGUID: uEo4ucA1TdiN1WsF5bHHrQ==
 X-IronPort-AV: E=Sophos;i="6.10,182,1719903600"; 
-   d="scan'208";a="23518129"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2024 23:44:25 -0700
-X-CSE-ConnectionGUID: BaF0LFONR2aM2XPH/MUeAw==
-X-CSE-MsgGUID: 78zVWC0mSRmEHC+dBqcEfQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,182,1719903600"; 
-   d="scan'208";a="63826764"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2024 23:44:23 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id F1BA111F8B3;
-	Wed, 28 Aug 2024 09:44:19 +0300 (EEST)
-Date: Wed, 28 Aug 2024 06:44:19 +0000
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Tommaso Merciai <tomm.merciai@gmail.com>
-Cc: linuxfancy@googlegroups.com, michael.roeder@avnet.eu,
-	julien.massot@collabora.com,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/1] media: i2c: max96717: add test pattern ctrl
-Message-ID: <Zs7HQxieYEVJ9-5X@kekkonen.localdomain>
-References: <20240627151806.3999400-1-tomm.merciai@gmail.com>
- <20240627151806.3999400-2-tomm.merciai@gmail.com>
+   d="asc'?scan'208";a="30984765"
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 27 Aug 2024 23:46:35 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Tue, 27 Aug 2024 23:46:04 -0700
+Received: from wendy (10.10.85.11) by chn-vm-ex02.mchp-main.com (10.10.85.144)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35 via Frontend
+ Transport; Tue, 27 Aug 2024 23:46:02 -0700
+Date: Wed, 28 Aug 2024 07:45:30 +0100
+From: Conor Dooley <conor.dooley@microchip.com>
+To: Alexandre Ghiti <alex@ghiti.fr>
+CC: Conor Dooley <conor@kernel.org>, Alexandre Ghiti <alexghiti@rivosinc.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+	<palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Guo Ren
+	<guoren@kernel.org>, Heiko Stuebner <heiko@sntech.de>, Philipp Tomsich
+	<philipp.tomsich@vrull.eu>, <linux-riscv@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH -fixes] riscv: Fix RISCV_ALTERNATIVE_EARLY
+Message-ID: <20240828-wolf-expletive-f96cfc4e9c7a@wendy>
+References: <20240826105737.106879-1-alexghiti@rivosinc.com>
+ <20240827-striving-dispute-19b6cf97139b@spud>
+ <14d633c5-804b-4be9-8329-751a2ac08c7a@ghiti.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="6jLkahvux+y0lESW"
+Content-Disposition: inline
+In-Reply-To: <14d633c5-804b-4be9-8329-751a2ac08c7a@ghiti.fr>
+
+--6jLkahvux+y0lESW
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240627151806.3999400-2-tomm.merciai@gmail.com>
+Content-Transfer-Encoding: quoted-printable
 
-Hi Tommaso,
+On Tue, Aug 27, 2024 at 11:13:16AM +0200, Alexandre Ghiti wrote:
+> Hi Conor,
+>=20
+> On 27/08/2024 10:38, Conor Dooley wrote:
+> > On Mon, Aug 26, 2024 at 12:57:37PM +0200, Alexandre Ghiti wrote:
+> > > RISCV_ALTERNATIVE_EARLY will issue sbi_ecall() very early in the boot
+> > > process, before the first memory mapping is setup so we can't have any
+> > > instrumentation happening here.
+> > >=20
+> > > In addition, when the kernel is relocatable, we must also not issue a=
+ny
+> > > relocation this early since they would have been patched virtually on=
+ly.
+> > >=20
+> > > So, instead of disabling instrumentation for the whole kernel/sbi.c f=
+ile
+> > > and compiling it with -fno-pie, simply move __sbi_ecall() and
+> > > __sbi_base_ecall() into their own file where this is fixed.
+> > IOW, this should fix the issue that we discussed here
+> > https://lore.kernel.org/linux-riscv/abec162e-f3f2-488c-83d9-be17257a5df=
+8@ghiti.fr/
+> > also?
+>=20
+>=20
+> Yes, as a side effect it also fixes TRACEPOINTS + [KASAN|RELOCATABLE] as I
+> reported in this thread since I moved the tracepoints in a file where
+> instrumentation is disabled and compiled with no-pie.
 
-Thanks for the patch.
+And it does, so
+Closes: https://lore.kernel.org/linux-riscv/20240813-pony-truck-3e7a83e9759=
+e@spud/
+Reported-by: Conor Dooley <conor.dooley@microchip.com>
+Tested-by: Conor Dooley <conor.dooley@microchip.com>
 
-On Thu, Jun 27, 2024 at 05:18:06PM +0200, Tommaso Merciai wrote:
-> Add v4l2 test pattern control.
-> 
-> Signed-off-by: Tommaso Merciai <tomm.merciai@gmail.com>
-> ---
-> Changes since v1:
->  - Rename and move pattern regs under VTX section as suggested by JMassot
->  - Fix VTX regs order
->  - Add comment saying that the deserializer should manage the link in
->    pixel mode as suggested by JMassot
-> 
->  drivers/media/i2c/max96717.c | 213 ++++++++++++++++++++++++++++++++---
->  1 file changed, 197 insertions(+), 16 deletions(-)
-> 
-> diff --git a/drivers/media/i2c/max96717.c b/drivers/media/i2c/max96717.c
-> index 949306485873..859a439b64d9 100644
-> --- a/drivers/media/i2c/max96717.c
-> +++ b/drivers/media/i2c/max96717.c
-> @@ -16,6 +16,7 @@
->  #include <linux/regmap.h>
->  
->  #include <media/v4l2-cci.h>
-> +#include <media/v4l2-ctrls.h>
->  #include <media/v4l2-fwnode.h>
->  #include <media/v4l2-subdev.h>
->  
-> @@ -38,9 +39,35 @@
->  #define MAX96717_DEV_REV_MASK GENMASK(3, 0)
->  
->  /* VID_TX Z */
-> +#define MAX96717_VIDEO_TX0 CCI_REG8(0x110)
-> +#define MAX96717_VIDEO_AUTO_BPP BIT(3)
->  #define MAX96717_VIDEO_TX2 CCI_REG8(0x112)
->  #define MAX96717_VIDEO_PCLKDET BIT(7)
->  
-> +/* VTX_Z */
-> +#define MAX96717_VTX0                  CCI_REG8(0x24e)
-> +#define MAX96717_VTX1                  CCI_REG8(0x24f)
-> +#define MAX96717_PATTERN_CLK_FREQ      GENMASK(3, 1)
-> +#define MAX96717_VTX_VS_DLY            CCI_REG24(0x250)
-> +#define MAX96717_VTX_VS_HIGH           CCI_REG24(0x253)
-> +#define MAX96717_VTX_VS_LOW            CCI_REG24(0x256)
-> +#define MAX96717_VTX_V2H               CCI_REG24(0x259)
-> +#define MAX96717_VTX_HS_HIGH           CCI_REG16(0x25c)
-> +#define MAX96717_VTX_HS_LOW            CCI_REG16(0x25e)
-> +#define MAX96717_VTX_HS_CNT            CCI_REG16(0x260)
-> +#define MAX96717_VTX_V2D               CCI_REG24(0x262)
-> +#define MAX96717_VTX_DE_HIGH           CCI_REG16(0x265)
-> +#define MAX96717_VTX_DE_LOW            CCI_REG16(0x267)
-> +#define MAX96717_VTX_DE_CNT            CCI_REG16(0x269)
-> +#define MAX96717_VTX29                 CCI_REG8(0x26b)
-> +#define MAX96717_VTX_MODE              GENMASK(1, 0)
-> +#define MAX96717_VTX_GRAD_INC          CCI_REG8(0x26c)
-> +#define MAX96717_VTX_CHKB_COLOR_A      CCI_REG24(0x26d)
-> +#define MAX96717_VTX_CHKB_COLOR_B      CCI_REG24(0x270)
-> +#define MAX96717_VTX_CHKB_RPT_CNT_A    CCI_REG8(0x273)
-> +#define MAX96717_VTX_CHKB_RPT_CNT_B    CCI_REG8(0x274)
-> +#define MAX96717_VTX_CHKB_ALT          CCI_REG8(0x275)
-> +
->  /* GPIO */
->  #define MAX96717_NUM_GPIO         11
->  #define MAX96717_GPIO_REG_A(gpio) CCI_REG8(0x2be + (gpio) * 3)
-> @@ -82,6 +109,12 @@
->  /* MISC */
->  #define PIO_SLEW_1 CCI_REG8(0x570)
->  
-> +enum max96717_vpg_mode {
-> +	MAX96717_VPG_DISABLED = 0,
-> +	MAX96717_VPG_CHECKERBOARD = 1,
-> +	MAX96717_VPG_GRADIENT = 2,
-> +};
-> +
->  struct max96717_priv {
->  	struct i2c_client		  *client;
->  	struct regmap			  *regmap;
-> @@ -89,6 +122,7 @@ struct max96717_priv {
->  	struct v4l2_mbus_config_mipi_csi2 mipi_csi2;
->  	struct v4l2_subdev                sd;
->  	struct media_pad                  pads[MAX96717_PORTS];
-> +	struct v4l2_ctrl_handler          ctrl_handler;
->  	struct v4l2_async_notifier        notifier;
->  	struct v4l2_subdev                *source_sd;
->  	u16                               source_sd_pad;
-> @@ -96,6 +130,7 @@ struct max96717_priv {
->  	u8                                pll_predef_index;
->  	struct clk_hw                     clk_hw;
->  	struct gpio_chip                  gpio_chip;
-> +	enum max96717_vpg_mode            pattern;
->  };
->  
->  static inline struct max96717_priv *sd_to_max96717(struct v4l2_subdev *sd)
-> @@ -131,6 +166,118 @@ static inline int max96717_start_csi(struct max96717_priv *priv, bool start)
->  			       start ? MAX96717_START_PORT_B : 0, NULL);
->  }
->  
-> +static int max96717_apply_patgen_timing(struct max96717_priv *priv,
-> +					struct v4l2_subdev_state *state)
-> +{
-> +	struct v4l2_mbus_framefmt *fmt =
-> +		v4l2_subdev_state_get_format(state, MAX96717_PAD_SOURCE);
-> +	const u32 h_active = fmt->width;
-> +	const u32 h_fp = 88;
-> +	const u32 h_sw = 44;
-> +	const u32 h_bp = 148;
-> +	u32 h_tot;
-> +	const u32 v_active = fmt->height;
-> +	const u32 v_fp = 4;
-> +	const u32 v_sw = 5;
-> +	const u32 v_bp = 36;
+Cheers,
+Conor.
 
-Some comments here would be nice, what do these values signify for
-instance?
+--6jLkahvux+y0lESW
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> +	u32 v_tot;
-> +	int ret = 0;
-> +
-> +	h_tot = h_active + h_fp + h_sw + h_bp;
-> +	v_tot = v_active + v_fp + v_sw + v_bp;
-> +
-> +	/* 75 Mhz pixel clock */
-> +	cci_update_bits(priv->regmap, MAX96717_VTX1,
-> +			MAX96717_PATTERN_CLK_FREQ, 0xa, &ret);
-> +
-> +	dev_info(&priv->client->dev, "height: %d width: %d\n", fmt->height,
-> +		 fmt->width);
-> +
-> +	cci_write(priv->regmap, MAX96717_VTX_VS_DLY, 0, &ret);
-> +	cci_write(priv->regmap, MAX96717_VTX_VS_HIGH, v_sw * h_tot, &ret);
-> +	cci_write(priv->regmap, MAX96717_VTX_VS_LOW,
-> +		  (v_active + v_fp + v_bp) * h_tot, &ret);
-> +	cci_write(priv->regmap, MAX96717_VTX_HS_HIGH, h_sw, &ret);
-> +	cci_write(priv->regmap, MAX96717_VTX_HS_LOW, h_active + h_fp + h_bp,
-> +		  &ret);
-> +	cci_write(priv->regmap, MAX96717_VTX_V2D,
-> +		  h_tot * (v_sw + v_bp) + (h_sw + h_bp), &ret);
-> +	cci_write(priv->regmap, MAX96717_VTX_HS_CNT, v_tot, &ret);
-> +	cci_write(priv->regmap, MAX96717_VTX_DE_HIGH, h_active, &ret);
-> +	cci_write(priv->regmap, MAX96717_VTX_DE_LOW, h_fp + h_sw + h_bp,
-> +		  &ret);
-> +	cci_write(priv->regmap, MAX96717_VTX_DE_CNT, v_active, &ret);
-> +	/* B G R */
-> +	cci_write(priv->regmap, MAX96717_VTX_CHKB_COLOR_A, 0xfecc00, &ret);
-> +	/* B G R */
-> +	cci_write(priv->regmap, MAX96717_VTX_CHKB_COLOR_B, 0x006aa7, &ret);
-> +	cci_write(priv->regmap, MAX96717_VTX_CHKB_RPT_CNT_A, 0x3c, &ret);
-> +	cci_write(priv->regmap, MAX96717_VTX_CHKB_RPT_CNT_B, 0x3c, &ret);
-> +	cci_write(priv->regmap, MAX96717_VTX_CHKB_ALT, 0x3c, &ret);
-> +	cci_write(priv->regmap, MAX96717_VTX_GRAD_INC, 0x10, &ret);
-> +
-> +	return ret;
-> +}
-> +
-> +static int max96717_apply_patgen(struct max96717_priv *priv,
-> +				 struct v4l2_subdev_state *state)
-> +{
-> +	unsigned int val;
-> +	int ret = 0;
-> +
-> +	if (priv->pattern)
-> +		ret = max96717_apply_patgen_timing(priv, state);
-> +
-> +	cci_write(priv->regmap, MAX96717_VTX0, priv->pattern ? 0xfb : 0,
-> +		  &ret);
-> +
-> +	val = FIELD_PREP(MAX96717_VTX_MODE, priv->pattern);
-> +	cci_update_bits(priv->regmap, MAX96717_VTX29, MAX96717_VTX_MODE,
-> +			val, &ret);
-> +	return ret;
-> +}
-> +
-> +static int max96717_s_ctrl(struct v4l2_ctrl *ctrl)
-> +{
-> +	struct max96717_priv *priv =
-> +		container_of(ctrl->handler, struct max96717_priv, ctrl_handler);
-> +	int ret;
-> +
-> +	switch (ctrl->id) {
-> +	case V4L2_CID_TEST_PATTERN:
-> +		if (priv->enabled_source_streams)
-> +			return -EBUSY;
-> +		priv->pattern = ctrl->val;
-> +		break;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +
-> +	/* Use bpp from bpp register */
-> +	ret = cci_update_bits(priv->regmap, MAX96717_VIDEO_TX0,
-> +			      MAX96717_VIDEO_AUTO_BPP,
-> +			      priv->pattern ? 0 : MAX96717_VIDEO_AUTO_BPP,
-> +			      NULL);
-> +
-> +	/*
-> +	 * Pattern generator doesn't work with tunnel mode.
-> +	 * Needs RGB color format and deserializer tunnel mode must be disabled.
-> +	 */
-> +	return cci_update_bits(priv->regmap, MAX96717_MIPI_RX_EXT11,
-> +			       MAX96717_TUN_MODE,
-> +			       priv->pattern ? 0 : MAX96717_TUN_MODE, &ret);
-> +}
-> +
-> +static const char * const max96717_test_pattern[] = {
-> +	"Disabled",
-> +	"Checkerboard",
-> +	"Gradient"
-> +};
-> +
-> +static const struct v4l2_ctrl_ops max96717_ctrl_ops = {
-> +	.s_ctrl = max96717_s_ctrl,
-> +};
-> +
->  static int max96717_gpiochip_get(struct gpio_chip *gpiochip,
->  				 unsigned int offset)
->  {
-> @@ -352,20 +499,28 @@ static int max96717_enable_streams(struct v4l2_subdev *sd,
->  	u64 sink_streams;
->  	int ret;
->  
-> -	sink_streams = v4l2_subdev_state_xlate_streams(state,
-> -						       MAX96717_PAD_SOURCE,
-> -						       MAX96717_PAD_SINK,
-> -						       &streams_mask);
-> -
->  	if (!priv->enabled_source_streams)
->  		max96717_start_csi(priv, true);
->  
-> -	ret = v4l2_subdev_enable_streams(priv->source_sd, priv->source_sd_pad,
-> -					 sink_streams);
-> -	if (ret) {
-> -		dev_err(dev, "Fail to start streams:%llu on remote subdev\n",
-> -			sink_streams);
-> +	ret = max96717_apply_patgen(priv, state);
-> +	if (ret)
->  		goto stop_csi;
-> +
-> +	if (!priv->pattern) {
-> +		sink_streams =
-> +			v4l2_subdev_state_xlate_streams(state,
-> +							MAX96717_PAD_SOURCE,
-> +							MAX96717_PAD_SINK,
-> +							&streams_mask);
-> +
-> +		ret = v4l2_subdev_enable_streams(priv->source_sd,
-> +						 priv->source_sd_pad,
-> +						 sink_streams);
-> +		if (ret) {
-> +			dev_err(dev, "Fail to start streams:%llu on remote subdev\n",
-> +				sink_streams);
-> +			goto stop_csi;
-> +		}
->  	}
->  
->  	priv->enabled_source_streams |= streams_mask;
-> @@ -394,13 +549,23 @@ static int max96717_disable_streams(struct v4l2_subdev *sd,
->  	if (!priv->enabled_source_streams)
->  		max96717_start_csi(priv, false);
->  
-> -	sink_streams = v4l2_subdev_state_xlate_streams(state,
-> -						       MAX96717_PAD_SOURCE,
-> -						       MAX96717_PAD_SINK,
-> -						       &streams_mask);
-> +	if (!priv->pattern) {
-> +		int ret;
-> +
-> +		sink_streams =
-> +			v4l2_subdev_state_xlate_streams(state,
-> +							MAX96717_PAD_SOURCE,
-> +							MAX96717_PAD_SINK,
-> +							&streams_mask);
->  
-> -	return v4l2_subdev_disable_streams(priv->source_sd, priv->source_sd_pad,
-> -					   sink_streams);
-> +		ret = v4l2_subdev_disable_streams(priv->source_sd,
-> +						  priv->source_sd_pad,
-> +						  sink_streams);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
-> +	return 0;
->  }
->  
->  static const struct v4l2_subdev_pad_ops max96717_pad_ops = {
-> @@ -513,6 +678,19 @@ static int max96717_subdev_init(struct max96717_priv *priv)
->  	v4l2_i2c_subdev_init(&priv->sd, priv->client, &max96717_subdev_ops);
->  	priv->sd.internal_ops = &max96717_internal_ops;
->  
-> +	v4l2_ctrl_handler_init(&priv->ctrl_handler, 1);
-> +	priv->sd.ctrl_handler = &priv->ctrl_handler;
-> +
-> +	v4l2_ctrl_new_std_menu_items(&priv->ctrl_handler,
-> +				     &max96717_ctrl_ops,
-> +				     V4L2_CID_TEST_PATTERN,
-> +				     ARRAY_SIZE(max96717_test_pattern) - 1,
-> +				     0, 0, max96717_test_pattern);
-> +	if (priv->ctrl_handler.error) {
-> +		ret = priv->ctrl_handler.error;
-> +		goto err_free_ctrl;
-> +	}
-> +
->  	priv->sd.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE | V4L2_SUBDEV_FL_STREAMS;
+-----BEGIN PGP SIGNATURE-----
 
-With controls, you should add the HAS_EVENTS flag.
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZs7HhQAKCRB4tDGHoIJi
+0mRNAQDN1X4zm0B2mqva54OgfujQV8jdFEp/nNY3Mt1f+Fmy+wEA/uHkjAC3VXyc
+9lCVnuuUC/VbM/U/cV+Nqa/q5hRD2wU=
+=qxcC
+-----END PGP SIGNATURE-----
 
-I'll take this one as we're in rc5 already, please address these in a
-separate patch.
-
->  	priv->sd.entity.function = MEDIA_ENT_F_VID_IF_BRIDGE;
->  	priv->sd.entity.ops = &max96717_entity_ops;
-> @@ -552,6 +730,8 @@ static int max96717_subdev_init(struct max96717_priv *priv)
->  	v4l2_subdev_cleanup(&priv->sd);
->  err_entity_cleanup:
->  	media_entity_cleanup(&priv->sd.entity);
-> +err_free_ctrl:
-> +	v4l2_ctrl_handler_free(&priv->ctrl_handler);
->  
->  	return ret;
->  }
-> @@ -563,6 +743,7 @@ static void max96717_subdev_uninit(struct max96717_priv *priv)
->  	v4l2_async_nf_cleanup(&priv->notifier);
->  	v4l2_subdev_cleanup(&priv->sd);
->  	media_entity_cleanup(&priv->sd.entity);
-> +	v4l2_ctrl_handler_free(&priv->ctrl_handler);
->  }
->  
->  struct max96717_pll_predef_freq {
-
--- 
-Kind regards,
-
-Sakari Ailus
+--6jLkahvux+y0lESW--
 
