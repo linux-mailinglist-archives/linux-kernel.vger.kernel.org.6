@@ -1,237 +1,195 @@
-Return-Path: <linux-kernel+bounces-305821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D23D39634DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 00:35:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92DE99634DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 00:34:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 036381C24621
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 22:35:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2247C1F240CD
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 22:34:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8FC91AD40E;
-	Wed, 28 Aug 2024 22:34:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tT3TewUW"
-Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com [209.85.222.50])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BD661AD401;
+	Wed, 28 Aug 2024 22:34:23 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4182A1ACE10
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 22:34:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DB121553A2
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 22:34:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724884495; cv=none; b=uM2/LA/NiPrCnX5HmjhTpt2UnbspvpPAszb41G6z8wGIYTBsT49mLzD/MdcPZ9XwkkO1Nvq18oAFcSQ5H6GHbIG5PeI0JN4WcTJRsiMyPLUUZMUuKVyGGn63Gy+0SB5MzvXb0+x+NijWxu9+Nz05kfdoMb8vlZ9C8jqUELX3128=
+	t=1724884462; cv=none; b=doV2lbq6ZHowXJc9Ayqo+Bii131jQpLuQ97weMjmJmJf3MJ7K/5csgBO0rpoycWG4EatSqVIiIwi4xjlBzzMtWl9MlX2DZvRpCSpRqGnR4EhtHKu/hQRdaCItTMdBfbdphmIsApBv8Glm5orVlEXT+CnxOpbRQPTaZOtL6qyKr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724884495; c=relaxed/simple;
-	bh=z0DhTX8fYIHReskFFZabxzM3sVV6eDYOVk1eCVzfB9c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BD72UfUAE0bNShZieisg+KMbTQUqzyqcb35hIhQX/1NO+l6hCYbtc6B0mOGyDS7+X/uQBV+oZsM4dY3bEQx6foIhjVKJJBYelynCLZ9ZGcXRyhxkBTm3+cCpMzgjsD7rrDZ/osXdhmLeAXsHRTkfHStyvaJ5VKfX9ixuRMiBpq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tT3TewUW; arc=none smtp.client-ip=209.85.222.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ua1-f50.google.com with SMTP id a1e0cc1a2514c-842fdb1afb1so21433241.1
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 15:34:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724884493; x=1725489293; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=41f5gi45pknPv02YTSCRYyHEn7QAxd1eKb1xj0lbARc=;
-        b=tT3TewUWc0k7xOtBiwIkslFN6ZvIv8jCOCTd87bvEL8xMoo9kNUSt4ILHA8h9byd5u
-         g8o3f/Wfi0FmZZS+E9JZupEjxHTLFHM/kDsD721VAqEfAMFnLuA2EDAZBnS4BHUHm7Q3
-         /8k5Af1jTHOYkqugTTd8VSPcaZo7I9wTsYCq/S/ziDMDpllkWNYx8UG8+FmEPaFIWy+P
-         qw7Zocaio7Uf3b5eG8pZ2cJJ10W/z+kqdGTw8oClSkLLyGVFOvsPRDNZqzdyu3Sc3omd
-         5IEN4l+PyueeKVmf7n54TqvrAACW/C7K6CdhkJ7KRGphXF/JUXW6MRlTR55i5qb+bUEl
-         K3PQ==
+	s=arc-20240116; t=1724884462; c=relaxed/simple;
+	bh=sOQz8kkEi5Ubq+Mjv10jlf6DH/Uax0Bh8eUjBH/cOUo=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=eWyvajsDqMSpiuiwjda9G9OReou9V+wuiPtaj6qcMnOitJkOqSutHz1bqnkBdEKWvB4ifTwCmpjC//wF+ZnDeHDUA9zk8kBZG+P49UzHjIqIzXDDPPMXCxaiXtQGqZdcLgqiHpz22HwC+Ofm7rezwmQvZfXWWaBVCKsxNQxCfGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-82a13b28f1dso5012239f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 15:34:20 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724884493; x=1725489293;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=41f5gi45pknPv02YTSCRYyHEn7QAxd1eKb1xj0lbARc=;
-        b=F3rr/1uLr5XjWZs+xBbvjR/gdEQyY+cxypNmXA/Xu1jUQu4kJALUc9xnEwGHwH3qIr
-         xk6ySMUJ5o/uPbUrQKYosS3vFIuqNzGOnB4D1n93FTb5NPLoejuyyxo2p69GAy/92Ojc
-         3TnycrV0UBA/d/BEizTV6p1++GFFdlNoJOF/lL4Fp1t2G9tBgwRQYE6qpYTNps38YmU9
-         aOrR2sQesPu4ULsMqxM7aYdJKt0Z63FsALmBuduubxoSwQqJ3OWaDn0bU1Shg0kD5/+M
-         Na1Cgb/jyDpykjfEdeBH4ojjrmDxIg5Hr+jen3IMAQGEhm5F+s8Nha+zOUM48hfVE61s
-         zzAg==
-X-Forwarded-Encrypted: i=1; AJvYcCUvc5kl9gDxdYdnGQPOYpu+erRL1Dw2lgSw43EfU91vdQZQj0rPNVZt2OJoAMjM2e0K834BLoDcX94B06A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyfL5XSH0cUUSN4ki9EP+M4jkpPQIAtrfX0hhbaNI4IPYwKtYot
-	Cz8ds44kIbPNPL8nz4Hc9379sFCB/wEjgKBT683+0jiBqMhNqGTSpAK3M2Rt2T5IPcm6ezuJTLC
-	3b2iR3hPZUgWGDQRWiyTygF+VL3G3PS4OGRP4
-X-Google-Smtp-Source: AGHT+IFvmewkWoVr6K28frknzrUzXljJbINQuPS+H2qE0+ZfxUiThxc1/+OfgJyyVnpewvG3hqOFR86H2Buei3/+eGg=
-X-Received: by 2002:a05:6102:dcb:b0:49a:4992:e1d8 with SMTP id
- ada2fe7eead31-49a5afa1f6fmr1330145137.31.1724884492830; Wed, 28 Aug 2024
- 15:34:52 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724884460; x=1725489260;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+IjJ2MY54Emt8uSjZEqDveAzp1Pv35o4h28WCyiZ0Io=;
+        b=Xb6HfoyvmR21r93D6/egfVc+rvsWvGb6HsewGVXFJkeCEOnh1K9qrYCMk9Kz8Slg3Y
+         LktEdtNwcmmOe5wi+HW4f8fK96BmUuT5b9VaKkRbDKsj1QY50b8oijtqdO0imLTClLS0
+         FdshSLeX0XULaJfA1qraDYg3Lyvwv/Oq7nV28HRJ/5qnDkhCpRafPBTBtuseQ0wgMozR
+         MkKAAOdw9wXKlIg/fEMX0q+4HTzJkPYTqKXU7IG5fvQa4HZv61KI8dUvI3J9zxZw2LSX
+         GV+LhNbxR1YUve7hA29lVC3TqAbzZSeDu7HAzOTD/iECFQG4zTwGKsOBVzlMk3MXZlSM
+         NesQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUw2mmlq35zHUY2wVXNCYrL6treyUjjtrlMbcE4WTU9EHeCpKjQnyiCQXvBOx3+5qauEOIIPAeCBZM3Xlw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDX5qI7PTMfvmzc0WsNweO//Z9j3gToR4lSkw8A0yZqnxecn6Z
+	e1JDq9JNTGLbYJsLucwrr7xknBqQElZ6KXswKmAZ2bT+NOYmMDgmzQeIXFin5kduE1Ec4c59+1r
+	XaGAd7BxRZF9cMMDZdfc3SxzaKqk5w6tp6HRFRGuwUJLLvdlNmiu17PA=
+X-Google-Smtp-Source: AGHT+IHDOjRuYWKOInHY9wiI2ox0PvQiiErxuZ+PFgdIYthTmkhgpFsxVcxTm/LxXjxBoM7PrBdFjVzluYZ6hO9nrQdtye/m82hN
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240819021621.29125-1-kanchana.p.sridhar@intel.com>
- <CAKEwX=OO6frFa+S3xjtoabB2dY1Y5RN5qjMsVUsgKDK_QuOFzg@mail.gmail.com>
- <SJ0PR11MB5678288EE890E8CB882839CDC98E2@SJ0PR11MB5678.namprd11.prod.outlook.com>
- <SJ0PR11MB567801EE747E2810EF183C73C9892@SJ0PR11MB5678.namprd11.prod.outlook.com>
- <CAKEwX=PYv4Cn_a7WSnbUyhwSBO61xoDPSexXxS0uwwxu5P6XLw@mail.gmail.com>
- <SJ0PR11MB5678E44062CADBE8BAB546F3C9942@SJ0PR11MB5678.namprd11.prod.outlook.com>
- <CAKEwX=ORuJabxQSehU5E0QNG=Gx6QkyTCb1vek3AOcQuvF54Xg@mail.gmail.com>
- <DM8PR11MB5671D72CED6850CDBB62B95FC9942@DM8PR11MB5671.namprd11.prod.outlook.com>
- <SJ0PR11MB567807116A760D785F9822EBC9952@SJ0PR11MB5678.namprd11.prod.outlook.com>
- <CAJD7tkb0Lnq+mrFtpba80ck76BF2Hnc9Rn8OVs_7dqmE2Hww2w@mail.gmail.com> <SJ0PR11MB56788C517A01B83174591A45C9952@SJ0PR11MB5678.namprd11.prod.outlook.com>
-In-Reply-To: <SJ0PR11MB56788C517A01B83174591A45C9952@SJ0PR11MB5678.namprd11.prod.outlook.com>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Wed, 28 Aug 2024 15:34:13 -0700
-Message-ID: <CAJD7tkakML3vrZzG_tnxU9SuA3DFGiZY4pQDn4Yruv9y9vhVNg@mail.gmail.com>
-Subject: Re: [PATCH v4 0/4] mm: ZSWAP swap-out of mTHP folios
-To: "Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>
-Cc: Nhat Pham <nphamcs@gmail.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
-	"hannes@cmpxchg.org" <hannes@cmpxchg.org>, "ryan.roberts@arm.com" <ryan.roberts@arm.com>, 
-	"Huang, Ying" <ying.huang@intel.com>, "21cnbao@gmail.com" <21cnbao@gmail.com>, 
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, "Zou, Nanhai" <nanhai.zou@intel.com>, 
-	"Feghali, Wajdi K" <wajdi.k.feghali@intel.com>, "Gopal, Vinodh" <vinodh.gopal@intel.com>
+X-Received: by 2002:a05:6638:370d:b0:4c0:971d:36b1 with SMTP id
+ 8926c6da1cb9f-4ced08b2b8dmr15059173.3.1724884460255; Wed, 28 Aug 2024
+ 15:34:20 -0700 (PDT)
+Date: Wed, 28 Aug 2024 15:34:20 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000008851fe0620c5f51c@google.com>
+Subject: [syzbot] [btrfs?] kernel BUG in __extent_writepage_io (2)
+From: syzbot <syzbot+ba3c0273042a898c230e@syzkaller.appspotmail.com>
+To: clm@fb.com, dsterba@suse.com, hch@lst.de, josef@toxicpanda.com, 
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 28, 2024 at 11:50=E2=80=AFAM Sridhar, Kanchana P
-<kanchana.p.sridhar@intel.com> wrote:
->
-> Hi Yosry,
->
-> > -----Original Message-----
-> > From: Yosry Ahmed <yosryahmed@google.com>
-> > Sent: Wednesday, August 28, 2024 12:44 AM
-> > To: Sridhar, Kanchana P <kanchana.p.sridhar@intel.com>
-> > Cc: Nhat Pham <nphamcs@gmail.com>; linux-kernel@vger.kernel.org; linux-
-> > mm@kvack.org; hannes@cmpxchg.org; ryan.roberts@arm.com; Huang, Ying
-> > <ying.huang@intel.com>; 21cnbao@gmail.com; akpm@linux-foundation.org;
-> > Zou, Nanhai <nanhai.zou@intel.com>; Feghali, Wajdi K
-> > <wajdi.k.feghali@intel.com>; Gopal, Vinodh <vinodh.gopal@intel.com>
-> > Subject: Re: [PATCH v4 0/4] mm: ZSWAP swap-out of mTHP folios
-> >
-> > [..]
-> > >
-> > > This shows that in all cases, reclaim_high() is called only from the =
-return
-> > > path to user mode after handling a page-fault.
-> >
-> > I am sorry I haven't been keeping up with this thread, I don't have a
-> > lot of capacity right now.
-> >
-> > If my understanding is correct, the summary of the problem we are
-> > observing here is that with high concurrency (70 processes), we
-> > observe worse system time, worse throughput, and higher memory_high
-> > events with zswap than SSD swap. This is true (with varying degrees)
-> > for 4K or mTHP, and with or without charging zswap compressed memory.
-> >
-> > Did I get that right?
->
-> Thanks for your review and comments! Yes, this is correct.
->
-> >
-> > I saw you also mentioned that reclaim latency is directly correlated
-> > to higher memory_high events.
->
-> That was my observation based on the swap-constrained experiments with 4G=
- SSD.
-> With a faster compressor, we allow allocations to proceed quickly, and if=
- the pages
-> are not being faulted in, we need more swap slots. This increases the pro=
-bability of
-> running out of swap slots with the 4G SSD backing device, which, as the d=
-ata in v4
-> shows, causes memcg_swap_fail events, that drive folios to be resident in=
- memory
-> (triggering memcg_high breaches as allocations proceed even without zswap=
- cgroup
-> charging).
->
-> Things change when the experiments are run in a situation where there is =
-abundant
-> swap space and when the default behavior of zswap compressed data being c=
-harged
-> to the cgroup is enabled, as in the data with 176GiB ZRAM as ZSWAP's back=
-ing
-> swapfile posted in v5. Now, the critical path to workload performance cha=
-nges to
-> concurrent reclaims in response to memcg_high events due to allocation an=
-d zswap
-> usage. We see a lesser increase in swapout activity (as compared to the s=
-wap-constrained
-> experiments in v4), and compress latency seems to become the bottleneck. =
-Each
-> individual process's throughput/sys time degrades mainly as a function of=
- compress
-> latency. Anyway, these were some of my learnings from these experiments. =
-Please
-> do let me know if there are other insights/analysis I could be missing.
->
-> >
-> > Is it possible that with SSD swap, because we wait for IO during
-> > reclaim, this gives a chance for other processes to allocate and free
-> > the memory they need. While with zswap because everything is
-> > synchronous, all processes are trying to allocate their memory at the
-> > same time resulting in higher reclaim rates?
-> >
-> > IOW, maybe with zswap all the processes try to allocate their memory
-> > at the same time, so the total amount of memory needed at any given
-> > instance is much higher than memory.high, so we keep producing
-> > memory_high events and reclaiming. If 70 processes all require 1G at
-> > the same time, then we need 70G of memory at once, we will keep
-> > thrashing pages in/out of zswap.
-> >
-> > While with SSD swap, due to the waits imposed by IO, the allocations
-> > are more spread out and more serialized, and the amount of memory
-> > needed at any given instance is lower; resulting in less reclaim
-> > activity and ultimately faster overall execution?
->
-> This is a very interesting hypothesis, that is along the lines of the
-> "slower compressor" essentially causing allocation stalls (and buffering =
-us from
-> the swap slots unavailability effect) observation I gathered from the 4G =
-SSD
-> experiments. I think this is a possibility.
->
-> >
-> > Could you please describe what the processes are doing? Are they
-> > allocating memory and holding on to it, or immediately freeing it?
->
-> I have been using the vm-scalability usemem workload for these experiment=
-s.
-> Thanks Ying for suggesting I use this workload!
->
-> I am running usemem with these config options: usemem --init-time -w -O -=
-n 70 1g.
-> This forks 70 processes, each of which does the following:
->
-> 1) Allocates 1G mmap virtual memory with MAP_ANONYMOUS, read/write permis=
-sions.
-> 2) Steps through and accesses each 8 bytes chunk of memory in the mmap-ed=
- region, and:
->     2.a) Writes the index of that chunk to the (unsigned long *) memory a=
-t that index.
-> 3) Generates statistics on throughput.
->
-> There is an "munmap()" after step (2.a) that I have commented out because=
- I wanted to
-> see how much cold memory resides in the zswap zpool after the workload ex=
-its. Interestingly,
-> this was 0 for 64K mTHP, but of the order of several hundreds of MB for 2=
-M THP.
+Hello,
 
-Does the process exit immediately after step (3)? The memory will be
-unmapped and freed once the process exits anyway, so removing an unmap
-that immediately precedes the process exiting should have no effect.
+syzbot found the following issue on:
 
-I wonder how this changes if the processes sleep and keep the memory
-mapped for a while, to force the situation where all the memory is
-needed at the same time on SSD as well as zswap. This could make the
-playing field more even and force the same thrashing to happen on SSD
-for a more fair comparison.
+HEAD commit:    d2bafcf224f3 Merge tag 'cgroup-for-6.11-rc4-fixes' of git:..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=12d5fa7b980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4fc2afd52fd008bb
+dashboard link: https://syzkaller.appspot.com/bug?extid=ba3c0273042a898c230e
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=137c040b980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16ddb015980000
 
-It's not a fix, if very fast reclaim with zswap ends up causing more
-problems perhaps we need to tweak the throttling of memory.high or
-something.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/7569f02310fb/disk-d2bafcf2.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/e30fee7b6c1d/vmlinux-d2bafcf2.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/2ffddebac153/bzImage-d2bafcf2.xz
+mounted in repro #1: https://storage.googleapis.com/syzbot-assets/cd08557ae343/mount_0.gz
+mounted in repro #2: https://storage.googleapis.com/syzbot-assets/90ff8392fe84/mount_2.gz
+mounted in repro #3: https://storage.googleapis.com/syzbot-assets/9c5b91850930/mount_7.gz
+
+The issue was bisected to:
+
+commit f22b5dcbd71edea087946511554956591557de9a
+Author: Christoph Hellwig <hch@lst.de>
+Date:   Wed May 31 06:04:59 2023 +0000
+
+    btrfs: remove non-standard extent handling in __extent_writepage_io
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=10974043980000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=12974043980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=14974043980000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+ba3c0273042a898c230e@syzkaller.appspotmail.com
+Fixes: f22b5dcbd71e ("btrfs: remove non-standard extent handling in __extent_writepage_io")
+
+assertion failed: block_start != EXTENT_MAP_HOLE, in fs/btrfs/extent_io.c:1488
+------------[ cut here ]------------
+kernel BUG at fs/btrfs/extent_io.c:1488!
+Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
+CPU: 1 UID: 0 PID: 5722 Comm: syz-executor399 Not tainted 6.11.0-rc4-syzkaller-00255-gd2bafcf224f3 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+RIP: 0010:__extent_writepage_io+0x1224/0x1400 fs/btrfs/extent_io.c:1488
+Code: f7 07 90 0f 0b e8 dc 68 df fd 48 c7 c7 e0 92 2c 8c 48 c7 c6 c0 a0 2c 8c 48 c7 c2 80 92 2c 8c b9 d0 05 00 00 e8 9d 15 f7 07 90 <0f> 0b e8 b5 68 df fd 48 8b 3c 24 e8 bc 9d ff ff 48 89 c7 48 c7 c6
+RSP: 0018:ffffc900097d6ee8 EFLAGS: 00010246
+RAX: 000000000000004e RBX: 0000000000000000 RCX: 2f9fd79be1350f00
+RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
+RBP: dffffc0000000000 R08: ffffffff817402ac R09: 1ffff920012fad7c
+R10: dffffc0000000000 R11: fffff520012fad7d R12: ffffea0001ccbdc8
+R13: 1ffffd40003997b9 R14: fffffffffffffffd R15: 000000000007b000
+FS:  00007f11a84976c0(0000) GS:ffff8880b9300000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f11a0fff000 CR3: 0000000020e4c000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ __extent_writepage fs/btrfs/extent_io.c:1578 [inline]
+ extent_write_cache_pages fs/btrfs/extent_io.c:2251 [inline]
+ btrfs_writepages+0x12a2/0x2760 fs/btrfs/extent_io.c:2373
+ do_writepages+0x35d/0x870 mm/page-writeback.c:2683
+ filemap_fdatawrite_wbc+0x125/0x180 mm/filemap.c:397
+ __filemap_fdatawrite_range mm/filemap.c:430 [inline]
+ filemap_fdatawrite_range+0x120/0x180 mm/filemap.c:448
+ btrfs_fdatawrite_range+0x53/0xe0 fs/btrfs/file.c:3794
+ btrfs_direct_write+0x558/0xb40 fs/btrfs/direct-io.c:952
+ btrfs_do_write_iter+0x2a1/0x760 fs/btrfs/file.c:1505
+ do_iter_readv_writev+0x60a/0x890
+ vfs_writev+0x37c/0xbb0 fs/read_write.c:971
+ do_pwritev fs/read_write.c:1072 [inline]
+ __do_sys_pwritev2 fs/read_write.c:1131 [inline]
+ __se_sys_pwritev2+0x1ca/0x2d0 fs/read_write.c:1122
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f11a850bd79
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 41 1d 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f11a8497158 EFLAGS: 00000212 ORIG_RAX: 0000000000000148
+RAX: ffffffffffffffda RBX: 00007f11a85916d8 RCX: 00007f11a850bd79
+RDX: 0000000000000001 RSI: 0000000020000240 RDI: 0000000000000004
+RBP: 00007f11a85916d0 R08: 0000000000000000 R09: 0000000000000003
+R10: 0000000000002000 R11: 0000000000000212 R12: 00007f11a85916dc
+R13: 000000000000006e R14: 00007ffd9dcad860 R15: 00007ffd9dcad948
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:__extent_writepage_io+0x1224/0x1400 fs/btrfs/extent_io.c:1488
+Code: f7 07 90 0f 0b e8 dc 68 df fd 48 c7 c7 e0 92 2c 8c 48 c7 c6 c0 a0 2c 8c 48 c7 c2 80 92 2c 8c b9 d0 05 00 00 e8 9d 15 f7 07 90 <0f> 0b e8 b5 68 df fd 48 8b 3c 24 e8 bc 9d ff ff 48 89 c7 48 c7 c6
+RSP: 0018:ffffc900097d6ee8 EFLAGS: 00010246
+RAX: 000000000000004e RBX: 0000000000000000 RCX: 2f9fd79be1350f00
+RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
+RBP: dffffc0000000000 R08: ffffffff817402ac R09: 1ffff920012fad7c
+R10: dffffc0000000000 R11: fffff520012fad7d R12: ffffea0001ccbdc8
+R13: 1ffffd40003997b9 R14: fffffffffffffffd R15: 000000000007b000
+FS:  00007f11a84976c0(0000) GS:ffff8880b9200000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00005654e2821068 CR3: 0000000020e4c000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
