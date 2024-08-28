@@ -1,125 +1,119 @@
-Return-Path: <linux-kernel+bounces-304557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBE239621C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 09:51:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D3F59621C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 09:51:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89524282647
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 07:51:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB2D11F21746
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 07:51:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E4A715B0E4;
-	Wed, 28 Aug 2024 07:51:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F31915B109;
+	Wed, 28 Aug 2024 07:51:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="W1CHnnIg"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TEGld0Zr"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29617159596
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 07:51:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 708C0158A04;
+	Wed, 28 Aug 2024 07:51:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724831470; cv=none; b=pm8wC2o68nLCUSWIRKyijhEtbLUtD03NHmQMHwrp72riy/U6ff3RlcbmmZiC2Qkli8p3xzBIlwdcBHNQwwa72ZRG5viqxYD/K3uk6x42bWP2WJX2y3L9t16D1xBN/You147M0rxoPex2KQS+4S0nKl1kStMuBZT4txQ3UN7VqmE=
+	t=1724831484; cv=none; b=WUQ4JXYu4CAoA21kDPfkOrZbK0axtiNAlMRsri2/bjC1FS7BcH6GL6kT/7Da/KDML+WUDmB1LZsZAKlBZIio0EQYGApsH+qM3OhlM2yME1/AtmsNWBRRkF/2/4kbTnXP2l23b1/KDSw0jEZ6JRrD4W839ERzK/yN1uPAnL9jNUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724831470; c=relaxed/simple;
-	bh=1xVOh7u4bz7vUsAW3b8MvsNa+VA3R5snTgO/wuktJs8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IbHE1KrdDeT9q+pm0uHsZFB3j1F81h7ne6t8GB3lKDjfi9zQosexAUhXFQK32b/C/KS26SG5ijgeNwV1HmBdfk6GWsL9oJEJvbgEgIzIgQMwwFAQWJOiSrqCbWDPvHTRbI+Gr+wjTR2NB+4rP+ePZZ8Qp5SigjHvs1bu5vwEQsE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=W1CHnnIg; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2f401c20b56so2985411fa.0
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 00:51:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1724831467; x=1725436267; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1xVOh7u4bz7vUsAW3b8MvsNa+VA3R5snTgO/wuktJs8=;
-        b=W1CHnnIg+1pfhvm1yyiGHdp3opVk6FzD3C0lcByNHg3tGsbyAjz8wQkaBxnmHaguA1
-         mnuG3BQLxE3uwW/tLRfCDqT/AIWd33Zo0zKAR8GrRl3HyaxzQ8FsfKmHt9I3GLYlM/m7
-         UTnFqc8dyBIGrgATB2vHJpcS0jSb5dk0M4g+w=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724831467; x=1725436267;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1xVOh7u4bz7vUsAW3b8MvsNa+VA3R5snTgO/wuktJs8=;
-        b=RBtL8CgwAJl3aXMB4LPdUAS5Vbit4eslirKg2RcayQl+KZHO3Mh6MzwgAG8PnWDJ0u
-         g77L1+TPgs18PQVxJwkPDbOdfP9tfPx2V7ifDQWj7PnZVHXs0RhdjVweRZYaSDgrCfyW
-         E1p8sanHn3knWd0REqCcRQehP0DJnNIZk86UrM4ZzQuok2WvVBdIoya5oorEgzq1cEq8
-         1yUShZBazKzM69QsabSrGAuJ+PiirViDWh8Ivo99EPaP5h0UC9DpcWBvHrm0tCQr45Jn
-         ATW3mEyvWce3Cprs+aV1uZdt+uF7YqAHpj1j0Sg81edRwhF4tp9w9Jyp3L6qNIzTUDBd
-         ITHw==
-X-Forwarded-Encrypted: i=1; AJvYcCVCMKj/yoU5skZqYG9n3Unrx7VRZXvTiMIu//hi2UTdchkICKCF11V/lnfaGx1fADnjuUSzViS8vKbbAoE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywoqfb4PBqK/MLYh6xfEOs8XOtO7bXg5t/LzgmB3NPdcmkiZTAj
-	0pqNHk15cPaxrRskQ6/LZjZSbajQ23pj/XSbRgruHLAPSH+1cl9nYmYZkVHiTpTl46Nj/PUw3Fh
-	o5JLWN5vXeA/nbCCbl7zCYMUB43MBM+QlXJaL
-X-Google-Smtp-Source: AGHT+IH0LjY1WJEtfV7bBIXxyU8519V5C9eqCvjcTi9KSiJsKRT2mboVsXyhUsIpn8kBH00TsJ/Oqxo+cW+z/fvgG9c=
-X-Received: by 2002:a05:6512:1150:b0:52f:413:7e89 with SMTP id
- 2adb3069b0e04-5345675cc1dmr450928e87.17.1724831466960; Wed, 28 Aug 2024
- 00:51:06 -0700 (PDT)
+	s=arc-20240116; t=1724831484; c=relaxed/simple;
+	bh=g6S7cgkwyHTYMqfsr52CVhpQrrl8Vy5/S/YFliyHNKE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qaXKnLJjuH5HzYm+U4Fs63anXSdT9aDyrf5i56xl95lKxOw4whp0lowK8HNAMYun2KiDBTNkItZEbtiji6aRAhMHaxXnEjJ0Oe/WmZc94rrdjMjU1z9Qo/hNmQ/MRmQX+ehX1p+WhxSUXLRCNVQANjFnQ3iTZpRI3WoHmxDAchg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TEGld0Zr; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724831482; x=1756367482;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=g6S7cgkwyHTYMqfsr52CVhpQrrl8Vy5/S/YFliyHNKE=;
+  b=TEGld0ZrtBHs4WRW0gJqK+MgU3l59FRUQ9xQUl9JuNkUeQr3k1wqEeiC
+   sCo4VcFAPC2ijqsqnaq1zMEQ2xwYExwvctYpgEYExcQ1ZHrFGeOgMFNi8
+   NAWhEcmQzTLhtRMqeDoKOGjQHpokRWpXYUrb43hNWLeqeHraLNPoeiU9P
+   yKsfAzOSBpf785eB5kMupns4DDGeCZIlmAOEpJqvhYZ42EPseNCYMaQyo
+   stwDDPY2MK3MsU6jonqVYQiUFhJIfZjmRPJhnjInS5+T01NlOVRTe8b6H
+   mGE7/OFqwlSw2NmhY35g7oK2yenfw8TL1RYW4hplO/7GYtG8Z2aBHWX9U
+   A==;
+X-CSE-ConnectionGUID: K01A2caMQ4a6QfWAHREz6w==
+X-CSE-MsgGUID: TRGJT7F9Qy2rYMu4x1Bg1Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11177"; a="40849863"
+X-IronPort-AV: E=Sophos;i="6.10,182,1719903600"; 
+   d="scan'208";a="40849863"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2024 00:51:21 -0700
+X-CSE-ConnectionGUID: mV4/iQEoSU2UdekrGE/mQg==
+X-CSE-MsgGUID: xtm+W/8oToWtEBp4ANQBvg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,182,1719903600"; 
+   d="scan'208";a="63133947"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2024 00:51:18 -0700
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id 1D86911F95D;
+	Wed, 28 Aug 2024 10:51:16 +0300 (EEST)
+Date: Wed, 28 Aug 2024 07:51:16 +0000
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Zhi Mao <zhi.mao@mediatek.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, shengnan.wang@mediatek.com,
+	yaya.chang@mediatek.com, teddy.chen@mediatek.com,
+	yunkec@chromium.org, 10572168@qq.com
+Subject: Re: [PATCH] media: i2c: improve suspend/resume switch performance
+ for GT9769 VCM driver
+Message-ID: <Zs7W9PDY2ny5JI8w@kekkonen.localdomain>
+References: <20240817073452.21627-1-zhi.mao@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240827095550.675018-1-wenst@chromium.org> <20240827095550.675018-9-wenst@chromium.org>
- <Zs3mP547BolU4MRt@smile.fi.intel.com>
-In-Reply-To: <Zs3mP547BolU4MRt@smile.fi.intel.com>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Wed, 28 Aug 2024 15:50:55 +0800
-Message-ID: <CAGXv+5FSt=8yRBa0ZqVQs_27wTGDedJiLdhMfGzzSySQYXbctw@mail.gmail.com>
-Subject: Re: [PATCH 8/8] regulator: irq_helpers: Add missing "Return"
- kerneldoc section
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240817073452.21627-1-zhi.mao@mediatek.com>
 
-On Tue, Aug 27, 2024 at 10:44=E2=80=AFPM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
->
-> On Tue, Aug 27, 2024 at 05:55:48PM +0800, Chen-Yu Tsai wrote:
-> > kernel-doc complains about missing "Return" section for the function
-> > regulator_irq_map_event_simple().
-> >
-> > Add a "Return" section for it based on its behavior.
->
-> ...
->
-> > + * Return: 0
->
-> "0."
+Hi Zhi,
 
-Ack.
+Thanks for the patch.
 
-> > + *
->
-> I don't think we need this blank line.
+On Sat, Aug 17, 2024 at 03:34:02PM +0800, Zhi Mao wrote:
+> GT9769 VCM power-on default setting is PD=0,
+> so it is not necessary to set again in dw9768_init function,
+> and it also has no requirement of setting PD=1
+> before power-off in dw9768_release function.
+> For GT9769 VCM, PD mode control will add extra time
+> when switching between suspend and resume.
+> e.g. chrome camera AP can switch between video and photo mode,
+> the behavior corresponding to VCM is suspend and resume,
+> it will cause camera preview is not smooth.
 
-This actually changes the output. Without the blank line, they are treated
-as the same paragraph. With the blank line, the next line is treated as
-a separate paragraph, and put in the "Description" section.
+If this is the problem, wouldn't either of these two be a better option:
 
-Strictly speaking, the only return value is the 0 integer. The other
-"return" values are output parameters that have been modified by the
-function. I believe those should not be in the "Return" section.
+- keep the file handle open in the user space, to avoid powering off the
+  VCM or
 
+- add autosuspend support to the driver.
 
-ChenYu
+I also wouldn't differentiate driver behaviour between the chips. If the
+hardware default really is different (is it, this is rare for
+register-compatible parts), then the driver needs to reprogram it (at least
+on the one with a different default).
 
+-- 
+Kind regards,
 
-> > + * Actual regulator error and notification are passed back through @ri=
-d.
->
-> --
-> With Best Regards,
-> Andy Shevchenko
->
->
+Sakari Ailus
 
