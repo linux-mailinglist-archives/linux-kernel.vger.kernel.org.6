@@ -1,68 +1,69 @@
-Return-Path: <linux-kernel+bounces-304866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96B30962602
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:26:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2C38962605
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:27:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 16181B20E73
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:26:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21A081C22908
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:27:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0577916EB50;
-	Wed, 28 Aug 2024 11:26:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B9E816EB53;
+	Wed, 28 Aug 2024 11:27:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="U6eLyfwM"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="TBfjxxK/"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39AC016D330
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 11:26:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1CFC15ECDF;
+	Wed, 28 Aug 2024 11:27:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724844399; cv=none; b=ACk8nkyxWvXbdYNthb+7Kgs0poW/Er1NewUWa0tkQjKC0HJhhe16RG+KXicHckLVbn75Es5mraoxq/U9dBXE8+PgNccpP7YOwXc4iib9wE/2UbiCS/aN3tZxnsNNFnmB1z6kvOLNk2I56VINBJ6ac810H/Yyhs6Pirb75312/Sc=
+	t=1724844466; cv=none; b=RTwTKu8tOqO5taWdHY3dMe83cXLYKRZ2t3FHEWt5feqBHsuKoOJuEetZ6p91+YbkwH2sTnGaw5K6EbUQVBnDeO7auLTqpr+9RKIpqx9s+AeLdGXMGji3nb4IzNjw6BWQ/82iJcbQeMxC34f8mevHXas3ig+s3w9C1JgcdciUKVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724844399; c=relaxed/simple;
-	bh=1lW4rHkYfKN6aTUGiJr17kgBBwohBBWY1TtkDVc3V88=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aA7CZd6brEwVeY97DDEfNo+i8G0Pk7ajvrT4oV1V58jR8P+qfiaB9qZBPI8ru9Bp+6LBCDE+UvuBJsaifUdF2wPyk5kAe0sBC6jnusdksxnj81nQqULjt6pTaYoyIe8yyNpsPkCmIUe3QoaBQTPtj4a16eXGet2kSOUDPo3wu6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=U6eLyfwM; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724844395;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=qCsKHhEXZlOWdQXJLRcvaixcQZE/bIQcZ4s3f8ZjN3E=;
-	b=U6eLyfwM8BYCFDcwilfqB8m/I78634u/Z8AgeMq5unzwSiJ9TwlHyZCHJrintvXis4WOaM
-	jdpUF/7US+zx5Ko+srtt8hFJv8dQAqevmwQQmOBPpUgZw0CLVfZ40fDHoEEI7Y4nwfsTRl
-	kzZO8tGbvgvHGAl+2DUkwhmdXoIuVQY=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-3-Sr36sfm7Om2lnfvSfixrrA-1; Wed,
- 28 Aug 2024 07:26:31 -0400
-X-MC-Unique: Sr36sfm7Om2lnfvSfixrrA-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 941AB1955BF1;
-	Wed, 28 Aug 2024 11:26:29 +0000 (UTC)
-Received: from ws.redhat.com (unknown [10.96.134.128])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id C07991956048;
-	Wed, 28 Aug 2024 11:26:26 +0000 (UTC)
-From: Ricardo Robaina <rrobaina@redhat.com>
-To: audit@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Ricardo Robaina <rrobaina@redhat.com>,
-	paul@paul-moore.com,
-	eparis@redhat.com,
-	rgb@redhat.com
-Subject: [PATCH v2] audit: use task_tgid_nr() instead of task_pid_nr()
-Date: Wed, 28 Aug 2024 08:25:06 -0300
-Message-ID: <20240828112528.954163-1-rrobaina@redhat.com>
+	s=arc-20240116; t=1724844466; c=relaxed/simple;
+	bh=921Gu2m0OE0sOph8TYDD7nGRGyn7sSqlRXoNAgkkmGc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nStrq3dZCGs4jWRDSkViH36RKu47HL8QfRVehdbuVTCD45pszBl+Ljxcrm6eaf6rABqvQsMG1cvW/82ChrIgFMi03hUcRRP4FzrKBayGqCpZ6eGNUSLvsgenDU3RPJejZsGBZazCai6DcUj9L+boLMURK9o4B9ic+wASoJ7GVMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=TBfjxxK/; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47SBRJRA108700;
+	Wed, 28 Aug 2024 06:27:19 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1724844439;
+	bh=OiPkBEEP9Xv40rrT6c0x34d/Af13Zfh8YxHZdYecy6s=;
+	h=From:To:CC:Subject:Date;
+	b=TBfjxxK/9mLVOs77FRe9I8SmF4RzhjsrNCFyH/97zl8kQZnCBT8ELLN8uFiY7Al/3
+	 +3L8n56m1BtrDkUtDn87l+r3aMCPxNNs+tfS2TBtbiGJTWqWBGzCYjaXXgxpls5LR0
+	 N/jJt1UA6dUv3+4uc0NnRWE1Alu/hxSPTSs/LUVQ=
+Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47SBRIpX064355
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 28 Aug 2024 06:27:18 -0500
+Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 28
+ Aug 2024 06:27:18 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 28 Aug 2024 06:27:18 -0500
+Received: from uda0510294.dhcp.ti.com (uda0510294.dhcp.ti.com [172.24.227.151])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47SBRE6F008364;
+	Wed, 28 Aug 2024 06:27:15 -0500
+From: Beleswar Padhi <b-padhi@ti.com>
+To: <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>
+CC: <u-kumar1@ti.com>, <j-choudhary@ti.com>, <vaishnav.a@ti.com>, <afd@ti.com>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCH v3 0/2] Add Remoteproc Support for TI's J722S SoCs
+Date: Wed, 28 Aug 2024 16:57:11 +0530
+Message-ID: <20240828112713.2668526-1-b-padhi@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,75 +71,50 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-In a few audit records, PIDs were being recorded with task_pid_nr()
-instead of task_tgid_nr().
+Hello All,
 
-$ grep "task_pid_nr" kernel/audit*.c
-audit.c:       task_pid_nr(current),
-auditfilter.c: pid = task_pid_nr(current);
-auditsc.c:     audit_log_format(ab, " pid=%u", task_pid_nr(current));
+The K3 J722S SoCs have one single-core Arm Cortex-R5F processor in each
+of the WAKEUP, MCU and MAIN voltage domain, and two C71x DSP subsystems
+in MAIN voltage domain. Thus, this series adds the DT Nodes for the
+remote processors to add support for IPC.
 
-For single-thread applications, the process id (pid) and the thread
-group id (tgid) are the same. However, on multi-thread applications,
-task_pid_nr() returns the current thread id (user-space's TID), while
-task_tgid_nr() returns the main thread id (user-space's PID). Since
-the users are more interested in the process id (pid), rather than the
-thread id (tid), this patch converts these callers to the correct method.
+This series also enables IPC on the J722S-EVM platform based on the
+above SoC by adding the mailbox instances, shared memory carveouts and
+reserving the conflicting timer nodes (as they are used by remoteproc
+firmware).
 
-Link: https://github.com/linux-audit/audit-kernel/issues/126
+v3: Changelog:
+1) Reserved conflicting Timer Nodes in k3-j722s-evm.dts file to avoid remotecore
+boot failures.
 
-Reviewed-by: Richard Guy Briggs <rgb@redhat.com>
-Signed-off-by: Ricardo Robaina <rrobaina@redhat.com>
----
-V1 -> V2: Added a more detailed commit description
+Link to v2:
+https://lore.kernel.org/all/20240612112259.1131653-1-b-padhi@ti.com/
 
- kernel/audit.c       | 2 +-
- kernel/auditfilter.c | 2 +-
- kernel/auditsc.c     | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+v2: Changelog:
+1) Addressed Andrew's comments to refactor remotecore nodes into
+k3-j722s-main.dtsi file.
+2) Squashed Patch 2 and 3 from V1 into Patch 2 in V2 as they were doing
+the same logical thing.
+3) The DTBs check warnings from V1 are automatically fixed after a
+dt-binding patch[0] was merged in linux-next.
 
-diff --git a/kernel/audit.c b/kernel/audit.c
-index e7a62ebbf4d1..9f6b86acab62 100644
---- a/kernel/audit.c
-+++ b/kernel/audit.c
-@@ -1612,7 +1612,7 @@ static void audit_log_multicast(int group, const char *op, int err)
- 	cred = current_cred();
- 	tty = audit_get_tty();
- 	audit_log_format(ab, "pid=%u uid=%u auid=%u tty=%s ses=%u",
--			 task_pid_nr(current),
-+			 task_tgid_nr(current),
- 			 from_kuid(&init_user_ns, cred->uid),
- 			 from_kuid(&init_user_ns, audit_get_loginuid(current)),
- 			 tty ? tty_name(tty) : "(none)",
-diff --git a/kernel/auditfilter.c b/kernel/auditfilter.c
-index d6ef4f4f9cba..470041c49a44 100644
---- a/kernel/auditfilter.c
-+++ b/kernel/auditfilter.c
-@@ -1344,7 +1344,7 @@ int audit_filter(int msgtype, unsigned int listtype)
- 
- 			switch (f->type) {
- 			case AUDIT_PID:
--				pid = task_pid_nr(current);
-+				pid = task_tgid_nr(current);
- 				result = audit_comparator(pid, f->op, f->val);
- 				break;
- 			case AUDIT_UID:
-diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-index 6f0d6fb6523f..cd57053b4a69 100644
---- a/kernel/auditsc.c
-+++ b/kernel/auditsc.c
-@@ -2933,7 +2933,7 @@ void __audit_log_nfcfg(const char *name, u8 af, unsigned int nentries,
- 	audit_log_format(ab, "table=%s family=%u entries=%u op=%s",
- 			 name, af, nentries, audit_nfcfgs[op].s);
- 
--	audit_log_format(ab, " pid=%u", task_pid_nr(current));
-+	audit_log_format(ab, " pid=%u", task_tgid_nr(current));
- 	audit_log_task_context(ab); /* subj= */
- 	audit_log_format(ab, " comm=");
- 	audit_log_untrustedstring(ab, get_task_comm(comm, current));
+Link to v1:
+https://lore.kernel.org/all/20240607090433.488454-1-b-padhi@ti.com/
+
+[0]: https://lore.kernel.org/all/20240604171450.2455-1-hnagalla@ti.com/
+
+Apurva Nandan (2):
+  arm64: dts: ti: k3-j722s-main: Add R5F and C7x remote processor nodes
+  arm64: dts: ti: k3-j722s-evm: Enable Inter-Processor Communication
+
+ arch/arm64/boot/dts/ti/k3-j722s-evm.dts   | 153 ++++++++++++++++++++++
+ arch/arm64/boot/dts/ti/k3-j722s-main.dtsi |  61 +++++++++
+ 2 files changed, 214 insertions(+)
+
 -- 
-2.46.0
+2.34.1
 
 
