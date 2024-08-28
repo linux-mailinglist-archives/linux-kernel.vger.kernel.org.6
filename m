@@ -1,129 +1,110 @@
-Return-Path: <linux-kernel+bounces-304884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 758FC962639
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:40:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C3DE962637
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:40:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 339EE282D41
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:40:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DABC22821E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:40:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB71F1741E0;
-	Wed, 28 Aug 2024 11:40:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C74A171E49;
+	Wed, 28 Aug 2024 11:40:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="M6FcObym";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="rSh/iM2z"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="YbinkGXp"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9009D170A3A;
-	Wed, 28 Aug 2024 11:40:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 842DF3FEC;
+	Wed, 28 Aug 2024 11:40:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724845217; cv=none; b=QbiZr5zfWgEby8vUSJBMfn/SkhjK9RREnbkTXAScoE2LTeclBc2Rap1ISXR+3Vmv1qRrvLFiW4nmUNhLEOEwvrLaJ7BrVkF64Htm4P4yJM2YJcJ1umYYd3WAc6N3diWZAAh+PNYGnvah8VIZdWCPQOvTPi1LbASr5G72e8jxO/M=
+	t=1724845214; cv=none; b=uWf7Rfmc4G2tFXt7pHa6g2utjh/Xq2Rn8hSFnv2jrKR1k63YeOJNwNCFOZu8PpNeeQ2B3IFC2Ip2biArM9qMh9qF5hoTlWbbs32vXKnfHHhuw2XNMHiAJ/gG2eiue9AAcbqkwCoRS1VblFNVBFKuG90oOnQ+UWHfEg10BOMgoug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724845217; c=relaxed/simple;
-	bh=0jmzasQo49T8JkS5/bC+1aJ8RmASfYg9cfa6C3QFc10=;
-	h=Subject:Message-ID:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=pU8NdThIdvAGiEk/9iB3M8T7N90gs4o8xfbSO2fD8quJmGBVMEEXoPlMEGElzQrxugwGy3LGn36TX6eMLqYhPyPmygimTriIxvTHSPJahZlD6g58SwI2u9XAq+Bj4kSH63bjf74vs61ofGQOQTXlOVFFCx6sVGBkRd8+ExYf3nk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=M6FcObym; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=rSh/iM2z reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1724845215; x=1756381215;
-  h=message-id:from:reply-to:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version:subject;
-  bh=ffvjZeGZJmRKF1zvX61+fIWrJOwF0Wh/xImpPka5JUk=;
-  b=M6FcObymxvK6ZttqNi5nOdye2z0Y35Tn5+QdMHPDk2c0/rItIIScs2+J
-   aO+C1HwDYUuFVCMZpYyJ3DeIYAUxsn+Q0gR3YEK22OoS8bkarigTxZao5
-   Sk6VEnUN/qxCOvwvEkHxb+5JSSjgCkjeMyzZvLsNuMLz32BP4O4JoJ1Mv
-   MhAwS2HL92Q5BRWsKuoBFz7C/UPH62nEKXzVDJy/tdOSpXfx3Mmi4KuV7
-   3rpQaqmgUlUGHo46u+4cbWXIdMoY4FIn47Y3fEEt7lGe8gn94d2skpMBp
-   pZ/FWmRLmXAJkfXE94BCmvPZw1KaLTVyvDd4756RigiMZk16fUOdLFo91
-   Q==;
-X-CSE-ConnectionGUID: yY4hhAa1T3y70yq7jwMCGA==
-X-CSE-MsgGUID: PS9BkWz8Sw6Q+BXY98Dnsw==
-X-IronPort-AV: E=Sophos;i="6.10,182,1719871200"; 
-   d="scan'208";a="38634586"
-Subject: Re: Re: [PATCH 0/5] TQMa6x / MBa6x DT improvements
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 28 Aug 2024 13:40:12 +0200
-X-CheckPoint: {66CF0C9C-1B-5FF8EC80-F6CEE9F8}
-X-MAIL-CPID: 6B768D1F620E28EAB96671C719A6CEDD_0
-X-Control-Analysis: str=0001.0A782F24.66CF0C9C.00F5,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 0CA0716126B;
-	Wed, 28 Aug 2024 13:40:06 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1724845208;
-	h=from:reply-to:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=ffvjZeGZJmRKF1zvX61+fIWrJOwF0Wh/xImpPka5JUk=;
-	b=rSh/iM2zmUXu6QxTAewrjO8si2lXpjXMnhrfPPwxdzgoTxKnZsVe0wL4SUjYyNHd2sUcnM
-	ayS1Dc9cp96iNod2d1hIeU8qluVHDvxiV8K7rd4MWSein6i181xZ7v+UCTKSj2aqZ9sEH3
-	nLWFN2KvSFbegb9zAO3Hf9B0LJBbBKm37ZtaOJ/dXKx19zcuRQuTPXVvQT7vak5onqeDuT
-	XeSmve7cjndzX5jFSn459qnyXwpcBvJddUpx33BVD/ctT4SdN7lq5C3wcYRzasSm2gyZC3
-	4DDoUMIZc+Dxh7uFdo7X6MLaEI2p3p1/6UPRhW5ShzENDPVZIuxoCk4fQk/g0A==
-Message-ID: <e132095c10096c9ad7acfa89989a8f91888c6437.camel@ew.tq-group.com>
-From: "Niebel, Markus" <Markus.Niebel@ew.tq-group.com>
-Reply-To: Markus.Niebel@ew.tq-group.com
-To: Shawn Guo <shawnguo2@yeah.net>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-  Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,  Fabio Estevam <festevam@gmail.com>,
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- devicetree@vger.kernel.org, imx@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- linux@ew.tq-group.com
-Date: Wed, 28 Aug 2024 13:40:05 +0200
-In-Reply-To: <Zs6Y6XoqU4DBLvbL@dragon>
-References: <20240812143431.98323-1-Markus.Niebel@ew.tq-group.com>
-	 <Zs6Y6XoqU4DBLvbL@dragon>
-Organization: TQ-Systems GmbH
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1724845214; c=relaxed/simple;
+	bh=ELemZZZnsZftM63/e6cG2c7KGh59IznG1HU0lk6baMg=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kqA1WuvowkSqhlxgYa2SvS+lvJwYEiLop+TxAl3bsaiU4x7kSpNsj1MNla2iulhKUElgOFLt3TnXRnH8LNn292EN/56vd5k2QaT84N9VCCWOU33EliEDt4+Myu0tq6ytfuqZLjrWED+BqFmHffhMpXhUl31ANM47scm/TUuY8+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=YbinkGXp; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47SBe6tq114076;
+	Wed, 28 Aug 2024 06:40:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1724845206;
+	bh=WHidzx9hkGROCHhuKZARBqdGMwVAMnyTXFGOZlH9G7s=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=YbinkGXp+/+nmsePGQErzntJu+R2quk+x5Y6rR+BevTMw4jyOktgC+aefgsFnBe9r
+	 wsrRx8euiiUq/79aimwv3zHL1LMUFbEqnelfP/EnyP9hguyawhqKjbeVYn9QR9J6yA
+	 Yqljja/3jyM5L4V2OHugTMoKClOqH9KZZGrwDtXI=
+Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47SBe62x062141
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 28 Aug 2024 06:40:06 -0500
+Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 28
+ Aug 2024 06:40:06 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 28 Aug 2024 06:40:06 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47SBe6iV025132;
+	Wed, 28 Aug 2024 06:40:06 -0500
+Date: Wed, 28 Aug 2024 06:40:06 -0500
+From: Nishanth Menon <nm@ti.com>
+To: Beleswar Padhi <b-padhi@ti.com>
+CC: <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <u-kumar1@ti.com>,
+        <j-choudhary@ti.com>, <vaishnav.a@ti.com>, <afd@ti.com>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v3 1/2] arm64: dts: ti: k3-j722s-main: Add R5F and C7x
+ remote processor nodes
+Message-ID: <20240828114006.c6jasbkvdmrgvfrb@uniquely>
+References: <20240828112713.2668526-1-b-padhi@ti.com>
+ <20240828112713.2668526-2-b-padhi@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240828112713.2668526-2-b-padhi@ti.com>
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-> On Mon, Aug 12, 2024 at 04:34:26PM +0200, Markus Niebel wrote:
-> > This series brings following improvements:
-> > * use a more specific compatible for the LM75 temperature sensors
-> >   on SoM and mainboard
-> > * move I2C pinmux entries to variants that use them and prevent
-> >   doubled declaration
-> > * rename node name for onboard USB hub
-> >=20
-> > Alexander Stein (1):
-> >   ARM: dts: imx6qdl: Rename USB hub node name
-> >=20
-> > Markus Niebel (4):
-> >   arm: dts: imx6qdl-tqma6: move i2c3 pinmux to imx6qdl-tqma6b
-> >   arm: dts: imx6qdl-tqma6: improve compatible for LM75 temp sensor
-> >   arm: dts: imx6qdl-mba6: improve compatible for LM75 temp sensor
-> >   arm: dts: imx6qdl-mba6b: remove doubled entry for I2C1 pinmux
->=20
-> "ARM: dts: ..." please.
->=20
->=20
-> Thank you for the hint, will resend.
-> Shawn
->=20
+On 16:57-20240828, Beleswar Padhi wrote:
+[...]
 
-Markus
+> +		main_r5fss0_core0: r5f@78400000 {
+> +			compatible = "ti,am62-r5f";
+> +			reg = <0x78400000 0x00008000>,
+> +			      <0x78500000 0x00008000>;
+> +			reg-names = "atcm", "btcm";
+> +			ti,sci = <&dmsc>;
+> +			ti,sci-dev-id = <262>;
+> +			ti,sci-proc-ids = <0x04 0xff>;
+> +			resets = <&k3_reset 262 1>;
+> +			firmware-name = "j722s-main-r5f0_0-fw";
+> +			ti,atcm-enable = <1>;
+> +			ti,btcm-enable = <1>;
+> +			ti,loczrama = <1>;
 
---=C2=A0
-TQ-Systems GmbH | M=C3=BChlstra=C3=9Fe 2, Gut Delling | 82229 Seefeld, Germ=
-any
-Amtsgericht M=C3=BCnchen, HRB 105018
-Gesch=C3=A4ftsf=C3=BChrer: Detlef Schneider, R=C3=BCdiger Stahl, Stefan Sch=
-neider
-http://www.tq-group.com/
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/dts-coding-style.rst#n117
+
+Please keep the dts coding style for vendor prefix and generic
+properties in mind. resets and firmware-name are generic
+properties.
+
+
+-- 
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
 
