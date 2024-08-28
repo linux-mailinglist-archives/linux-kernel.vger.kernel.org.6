@@ -1,119 +1,142 @@
-Return-Path: <linux-kernel+bounces-304507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5E1B962116
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 09:30:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB822962119
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 09:30:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 376961F254A9
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 07:30:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8A037B24323
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 07:30:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71F17158D81;
-	Wed, 28 Aug 2024 07:29:58 +0000 (UTC)
-Received: from SHSQR01.spreadtrum.com (mx1.unisoc.com [222.66.158.135])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6100158DA3;
+	Wed, 28 Aug 2024 07:30:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="R1knZe88"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCBC7156230;
-	Wed, 28 Aug 2024 07:29:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2BD114BF92
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 07:30:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724830198; cv=none; b=H79jQieRvFiJSMsHs+Tl24aNRU4emh0Ymd6MHXlYg04rGvUGJyCOyaCI4JLOoERDWva2iwWqkzsa6zbw5UT6GOvAyNhDU8GxSl2MmIhprtXqVLOSA6zaFf7t8FP+4i8C1dOxweJyeY9oIQvJB5GSMO0Iz5p9Q77hNssfKefY5S4=
+	t=1724830217; cv=none; b=rZRSSVw+DLeC+r2j5xVYFnvBC3ic6JL56ujx8K3TMzR3ckrOiI7nCU7+a8ZhyQ9L3D+uSKLoficfyPoU5W9/k19m3lQ1NAhTlc7taHVwzNIlQ2sROQt4bboljNAxrF3Ca+is7FWSQIcfkYqwQl2AepjfZfzAQsyiX4Y5wFZNsZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724830198; c=relaxed/simple;
-	bh=lNHZNg/uyGVCYkoxTd0zuEgsyfWl2zmZoGRswPA4GCI=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=KGrieykgDdCJ8ZQTo7QvaxQ1niRH9rxLx85nk8lo6HVJTTynM1Gue+TY36qGxPuC64tKFPiqJ47HfwIomQhYGG7Qa/53HL4ULgQEiePdrgM9bByOpOyXiB1c2MzCDz4727Nh12s8nU85zjTLkz7DbSn/oaSFsUDf5zEYe88n5T0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
-Received: from SHSQR01.spreadtrum.com (localhost [127.0.0.2] (may be forged))
-	by SHSQR01.spreadtrum.com with ESMTP id 47S7TnbT072959;
-	Wed, 28 Aug 2024 15:29:49 +0800 (+08)
-	(envelope-from zhaoyang.huang@unisoc.com)
-Received: from dlp.unisoc.com ([10.29.3.86])
-	by SHSQR01.spreadtrum.com with ESMTP id 47S7TAFF069847;
-	Wed, 28 Aug 2024 15:29:10 +0800 (+08)
-	(envelope-from zhaoyang.huang@unisoc.com)
-Received: from SHDLP.spreadtrum.com (bjmbx01.spreadtrum.com [10.0.64.7])
-	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4Wtwpk1RcLz2K6mqQ;
-	Wed, 28 Aug 2024 15:22:22 +0800 (CST)
-Received: from bj03382pcu01.spreadtrum.com (10.0.73.40) by
- BJMBX01.spreadtrum.com (10.0.64.7) with Microsoft SMTP Server (TLS) id
- 15.0.1497.23; Wed, 28 Aug 2024 15:29:08 +0800
-From: "zhaoyang.huang" <zhaoyang.huang@unisoc.com>
-To: Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>,
-        <linux-nfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Zhaoyang Huang
-	<huangzhaoyang@gmail.com>, <steve.kang@unisoc.com>
-Subject: [RFC PATCH 1/1] fs: nfs: replace folio_set_private by folio_attach_private
-Date: Wed, 28 Aug 2024 15:29:01 +0800
-Message-ID: <20240828072901.1017792-1-zhaoyang.huang@unisoc.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1724830217; c=relaxed/simple;
+	bh=6D0a0spx7P8RAG+1zJk8ocf2zHpBv4xJNan/6sJxJeU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CORMUhdkrYP2+//ygwdphh0FPerN/67aCRKhaVXE/cHZufKms5jxKx6Xc5hpjaKIVYtFQDMaahRIECYJkNoj3o9/ZP8SLd2IJzTZxREpkGKOMmldPLEnklRZq5+DJkwTfSo3NQP/FGvItlQk/kYb6UuTsXoEOOD4dlRHf+QiFPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=R1knZe88; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D907DC4AF49;
+	Wed, 28 Aug 2024 07:30:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1724830216;
+	bh=6D0a0spx7P8RAG+1zJk8ocf2zHpBv4xJNan/6sJxJeU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=R1knZe886UkbAbEo+OL/VYkhYdlmNIA5xIrH2K6T7xEHoxI9wUXGiExtZDH7/ru1C
+	 IRstoVwatnRwqWHsVxOFyK1D632kUJ1NlrULaJ4ABe4I07DHY32X8s7stNf1+MzZQ4
+	 3DkPE82BCjAXHieLVdXpWORpuPS92ZJ0IModwnlo=
+Date: Wed, 28 Aug 2024 09:30:08 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>
+Cc: cve@kernel.org, linux-kernel@vger.kernel.org,
+	Tao Liu <thomas.liu@ucloud.cn>,
+	Willem de Bruijn <willemb@google.com>
+Subject: Re: CVE-2022-48936: gso: do not skip outer ip header in case of ipip
+ and net_failover
+Message-ID: <2024082854-reassign-uniformed-2c2f@gregkh>
+References: <2024082224-CVE-2022-48936-9302@gregkh>
+ <z3hh3yrf5wym3obgol6obh3dkmqoc3rwbkj23qcmadf63b47h2@nn2232wngans>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SHCAS01.spreadtrum.com (10.0.1.201) To
- BJMBX01.spreadtrum.com (10.0.64.7)
-X-MAIL:SHSQR01.spreadtrum.com 47S7TAFF069847
+In-Reply-To: <z3hh3yrf5wym3obgol6obh3dkmqoc3rwbkj23qcmadf63b47h2@nn2232wngans>
 
-From: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
+On Tue, Aug 27, 2024 at 05:02:36PM +0200, Michal Koutný wrote:
+> On Thu, Aug 22, 2024 at 11:31:37AM GMT, Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+> > We encounter a tcp drop issue in our cloud environment. Packet GROed in
+> > host forwards to a VM virtio_net nic with net_failover enabled. VM acts
+> > as a IPVS LB with ipip encapsulation. The full path like:
+> > host gro -> vm virtio_net rx -> net_failover rx -> ipvs fullnat
+> >  -> ipip encap -> net_failover tx -> virtio_net tx
+> > 
+> > When net_failover transmits a ipip pkt (gso_type = 0x0103, which means
+> > SKB_GSO_TCPV4, SKB_GSO_DODGY and SKB_GSO_IPXIP4), there is no gso
+> > did because it supports TSO and GSO_IPXIP4. But network_header points to
+> > inner ip header.
+> > 
+> > Call Trace:
+> >  tcp4_gso_segment        ------> return NULL
+> >  inet_gso_segment        ------> inner iph, network_header points to
+> >  ipip_gso_segment
+> >  inet_gso_segment        ------> outer iph
+> >  skb_mac_gso_segment
+> 
+> > Afterwards virtio_net transmits the pkt, only inner ip header is modified.
+> > And the outer one just keeps unchanged. The pkt will be dropped in remote
+> > host.
+> 
+> That may appear like a transient connection issue or permanently
+> impossible connection?
 
-This patch is inspired by a code review of fs codes which aims at
-folio's extra refcnt that could introduce unwanted behavious when
-judging refcnt, such as[1]. The change relys on the policy as the
-LRU page with private data should take one corresponding refcnt.
+I don't know.
 
-[1]
-long mapping_evict_folio(struct address_space *mapping, struct folio *folio)
-{
-...
-//current code will misjudge here if there is one pte on the folio which
-is be deemed as the one as folio's private
-        if (folio_ref_count(folio) >
-                        folio_nr_pages(folio) + folio_has_private(folio) + 1)
-                return 0;
-        if (!filemap_release_folio(folio, 0))
-                return 0;
+> > Call Trace:
+> >  inet_gso_segment        ------> inner iph, outer iph is skipped
+> >  skb_mac_gso_segment
+> >  __skb_gso_segment
+> >  validate_xmit_skb
+> >  validate_xmit_skb_list
+> >  sch_direct_xmit
+> >  __qdisc_run
+> >  __dev_queue_xmit        ------> virtio_net
+> >  dev_hard_start_xmit
+> >  __dev_queue_xmit        ------> net_failover
+> >  ip_finish_output2
+> >  ip_output
+> >  iptunnel_xmit
+> >  ip_tunnel_xmit
+> >  ipip_tunnel_xmit        ------> ipip
+> >  dev_hard_start_xmit
+> >  __dev_queue_xmit
+> >  ip_finish_output2
+> >  ip_output
+> >  ip_forward
+> >  ip_rcv
+> >  __netif_receive_skb_one_core
+> >  netif_receive_skb_internal
+> >  napi_gro_receive
+> >  receive_buf
+> >  virtnet_poll
+> >  net_rx_action
+> > 
+> > The root cause of this issue is specific with the rare combination of
+> > SKB_GSO_DODGY and a tunnel device that adds an SKB_GSO_ tunnel option.
+> > SKB_GSO_DODGY is set from external virtio_net. We need to reset network
+> > header when callbacks.gso_segment() returns NULL.
+> 
+> Who's in control of these configuration (who can cause this incorrect
+> packet being sent)?
+> 
+> > This patch also includes ipv6_gso_segment(), considering SIT, etc.
+> > 
+> > The Linux kernel CVE team has assigned CVE-2022-48936 to this issue.
+> 
+> What is the security issue here?
 
-        return remove_mapping(mapping, folio);
-}
+This was assigned as part of the import of the Linux kernel GSD entries
+into CVEs as required by the CVE board of directors (hence the 2022
+date).  If you don't feel this should be assigned a CVE, just let me
+know and I will be glad to reject it.
 
-Signed-off-by: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
----
- fs/nfs/write.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+thanks,
 
-diff --git a/fs/nfs/write.c b/fs/nfs/write.c
-index d074d0ceb4f0..80c6ded5f74c 100644
---- a/fs/nfs/write.c
-+++ b/fs/nfs/write.c
-@@ -772,8 +772,7 @@ static void nfs_inode_add_request(struct nfs_page *req)
- 	nfs_lock_request(req);
- 	spin_lock(&mapping->i_private_lock);
- 	set_bit(PG_MAPPED, &req->wb_flags);
--	folio_set_private(folio);
--	folio->private = req;
-+	folio_attach_private(folio, req);
- 	spin_unlock(&mapping->i_private_lock);
- 	atomic_long_inc(&nfsi->nrequests);
- 	/* this a head request for a page group - mark it as having an
-@@ -797,8 +796,7 @@ static void nfs_inode_remove_request(struct nfs_page *req)
- 
- 		spin_lock(&mapping->i_private_lock);
- 		if (likely(folio)) {
--			folio->private = NULL;
--			folio_clear_private(folio);
-+			folio_detach_private(folio);
- 			clear_bit(PG_MAPPED, &req->wb_head->wb_flags);
- 		}
- 		spin_unlock(&mapping->i_private_lock);
--- 
-2.25.1
-
+greg k-h
 
