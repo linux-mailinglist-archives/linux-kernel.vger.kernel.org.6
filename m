@@ -1,129 +1,129 @@
-Return-Path: <linux-kernel+bounces-304464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0036496206F
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 09:15:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65CE8962075
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 09:15:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFA26282AB8
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 07:15:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9978E1C23AD2
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 07:15:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D53A7158851;
-	Wed, 28 Aug 2024 07:14:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62FF915886C;
+	Wed, 28 Aug 2024 07:15:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="SskXlKU0"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VVlmGTDG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3244914C583
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 07:14:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9696E14D282;
+	Wed, 28 Aug 2024 07:15:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724829298; cv=none; b=oPoR6hxH2n/skFHtxtgVhSz3t5JX3uYKs46jgvyiflYhDKf+czoLYy6stKS4L9dCsYRvWwc/6WA+hyJaLI9fYBLWKnyHO/G0Xod97zVZobTGS7VuqvFTRqfD8Hl42AK5pwM6CtaaHlEhxwHkGe3HsuWTCwers2/XJJniH63pFSQ=
+	t=1724829341; cv=none; b=d3Lh5RR+pRrwZVlTJgxn8CUkvUq6+NvR+nZkHkAfsPH/2RD2uW8pJoQ31ZBcgoRAqxV+bKJRzRI9bzlmzTK/pTJn2/N/MqcISC/sJuricd/lTwkAnKyoFMPXdcYmqCiPBLD5PLmvBrF5dpZJ7gQTdjBmpzYKqir4HtKKNveVILU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724829298; c=relaxed/simple;
-	bh=WDCMytwnAp8pMu54YN3rA1pD3RkmB/XK2BssZPaZ/kU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i3y3D1y7ugpYuc38J2cpsQr6CQp5fl2FERulNafh1lCWYSM9vddkBVUIMRbxJnSFWrsNRyDcxQje3rANjUQ5/yQWA5fvfTb4j31/aI1LvGEyuAkh5jDF+wWy5+d3TljVgirox6tssQq3wXcK3kfkZvMO16tyGMRPprm2obhdsTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=SskXlKU0; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a869332c2c2so51987766b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 00:14:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1724829294; x=1725434094; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=PG+Y+iPEJrhNPEqaAwHaY0bOaMvK21xV21Vun1ew9Is=;
-        b=SskXlKU0aL9W5s87F2CWILvbceP5TcVMIwJeBX69+dh3crl72FlC4UrSxLt/AtqzmJ
-         yyz1yAEUjF33ndOANJQARIXgYGIvLcG9EH5WWZ5y+y7im0NWPxad0PRbVLrmhuzCkt89
-         UJkdpTg/8E+eAxTkQCtjM5P9SgFXjjnyJqeqont4xd2x3eIczrwBNzblqxqHwGgj4vFM
-         F0i0xAlgskqz2MhCtQC9Yj8fkKtlil808gqqkskTuzpp48Zo9bnZnFTeljMcjxv1pX+P
-         LbQfzDPPonLop4IY7FPufYAl01srIhwt8Roi8PaoQi/UTLW6+rkzIEAw1W6caN/7NJcm
-         XU3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724829294; x=1725434094;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PG+Y+iPEJrhNPEqaAwHaY0bOaMvK21xV21Vun1ew9Is=;
-        b=fktwIFA4HhURY7pt0abXISSz28MmEyNDWqvwrdr4weSzfJe3dzhVVtOBfu4POOp8GK
-         hqH59mH2/xJduZgZmo9MDnYvRz5x7/bP1kNagOzuXPRW2PuNldAHsZWkc5ELQ2pjwb8y
-         G3PSY9hPM6KW06jpYYg4o30CEeJqKmeOrYE9eEFSASRXE3WfE+MG5Gzetw/b6crR0P3Z
-         9YX457lTt3mzfFqmWqt89PNomBOK+26a5qiUuDR94w4gToGG3TD74/FFPRMyewwv3nqD
-         gzlFZjmL90rsdXDRyQQN66xYB9WQ5v8TZI+h3dobYWYIMUTGRByESc/Pd/H8/VuPp8me
-         j5/A==
-X-Forwarded-Encrypted: i=1; AJvYcCW8QX/wOr/plFKtuQWdWi/G6/XV9rE9dXjeiku/A0h/bWGLdMQH4lV+PBem9yjsk9HD55h816wJ4d7pYJc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxALHETmP+T8ac5bY4VjafUgPXSUdMTYNnKyNDU7aar1622w95r
-	QjcXbuzTQIMR3ZpwpkbaQOzLxMPFCGgRU9/2T3KAMK05IgOfGRl/LCGjK+kQrvw=
-X-Google-Smtp-Source: AGHT+IHFQn+2dk85m69kJ8Wp6sfOI9yrSVVvMx2xqX2Nlpk3qlQRXfnHV1pIvevTbCDASqx1v9/IJQ==
-X-Received: by 2002:a17:907:1b1d:b0:a86:b5ac:e22a with SMTP id a640c23a62f3a-a870ab0c6f6mr143124766b.34.1724829294499;
-        Wed, 28 Aug 2024 00:14:54 -0700 (PDT)
-Received: from localhost (109-81-92-122.rct.o2.cz. [109.81.92.122])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a86e549ca7bsm203208866b.52.2024.08.28.00.14.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2024 00:14:54 -0700 (PDT)
-Date: Wed, 28 Aug 2024 09:14:53 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: Uladzislau Rezki <urezki@gmail.com>
-Cc: Hailong Liu <hailong.liu@oppo.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Barry Song <21cnbao@gmail.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Tangquan Zheng <zhengtangquan@oppo.com>, stable@vger.kernel.org,
-	Baoquan He <bhe@redhat.com>, Matthew Wilcox <willy@infradead.org>,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [RESEND PATCH v1] mm/vmalloc: fix page mapping if
- vm_area_alloc_pages() with high order fallback to order 0
-Message-ID: <Zs7ObXBgULkuvaXK@tiehlicka>
-References: <Zr8mQbc3ETdeOMIK@pc636>
- <20240816114626.jmhqh5ducbk7qeur@oppo.com>
- <Zr9G-d6bMU4_QodJ@tiehlicka>
- <Zsi8Byjo4ayJORgS@pc638.lan>
- <Zsw0Sv9alVUb1DV2@tiehlicka>
- <Zsx3ULRaVu5Lh46Q@pc636>
- <Zs12_8AZ0k_WRWUE@tiehlicka>
- <Zs3K4h5ulL1zlj6L@pc636>
- <Zs3WouJpDk3AWV4D@tiehlicka>
- <Zs3w3k7-bzCYa3KC@pc636>
+	s=arc-20240116; t=1724829341; c=relaxed/simple;
+	bh=NMwwwM1jrp/qrf+hPLfBh9ss0lqgPsdHmYFP+q8ILEI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pO5Vbv3+nf+aQSY5+D+9yDfftgBaxZde9+cPr4EihrQVGs2937PMhNyW4+JDspWggg87d2g0j/Sxw4jaaV4Kd7AlpEexQtKREtGz70yO/EY2Qd8LkmXGRAcyjg+ZM9z25o/H4qjgWu5Lz5LsO+pvtbLPG46fEhQUttWgjlKQ0MM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VVlmGTDG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27D7FC4FEF3;
+	Wed, 28 Aug 2024 07:15:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724829341;
+	bh=NMwwwM1jrp/qrf+hPLfBh9ss0lqgPsdHmYFP+q8ILEI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=VVlmGTDGt1DEfNNVnLf2kSpnzzXEBlHUp8QVD2PvvhsRsxGVueSojv1wHXk8U4+9j
+	 o8ujGqY7Ff/gj9lfdDTD6Rt/cXc05VHh2shOwrIlrzidG1Sh50O5qBu0tLQaNdhQ0O
+	 dbg3h7IrLnhQg9xOY/SB+d0+lTnLucCqZdCXnviGyF/QfJdRmjZdIegu/L8CBcCn7p
+	 P1nslkrgOB7jC7BRWCPOdqcXf0WNZA25fYoimT0t2pla9pm7OkxOfXI/fiIs004TcF
+	 ET5/tFS9/umfCtgY8PPx76Xodu+zj4M1yU5HTzuo5ZcDtx7E5FMEZ0APVJqRciuhzq
+	 YIAHuZjMt0tIg==
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2f4f505118fso54024941fa.3;
+        Wed, 28 Aug 2024 00:15:41 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVg9jdiZ3d4GxnmIbKMi1iBWmP+0IyAYlnhUZD4Ir+KR4inLHDvEhBfdJ4V5PixMeDhsKiVitvzbV94+2I=@vger.kernel.org, AJvYcCWpS7LEhLd0vGXjSMBt4U+L2RSYi4pWi39+Q/B5wW1XiR50tgsZIfLfjg/Bz2zhZ/B5wijYmpTFKODkSWlpuLw=@vger.kernel.org, AJvYcCXHLakEkbP1B9ivRPq5TOAkBDd/CjJhIFanMZjSbnGoEfPZitiOkkl3ug+KcB6qXiXSJLHPdMWoSn8iS/Itcg==@vger.kernel.org, AJvYcCXhD1TZAZeXDMtpEyBHWeE5lcpKKDVLZkhpRWOVwq1A+4kz7Kur6nyiNeCTQc5/QTIM53+sMa4F2K+woxzs@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWYJnlzGXSyKuS3OUJawcKM/bnBR/vhqFlyWEwuX75RIr+AumB
+	+N3ql1PCAx0iqHp0Nx99g/8DEzhQB1aqYXgTNGWVuffchO4SgwUdkL7EifREKJmABOqYiLbLFq2
+	rtf/zIGzWENafpCPUn4T0LX7QDpM=
+X-Google-Smtp-Source: AGHT+IGeiHzjppyiOzBEOUZ/0V/PBewgAL1CCGk/uVR+74Z8yFzChu+qKl3qWPdvEuIh5XMH14MHw9544LmMkmjX1ss=
+X-Received: by 2002:a05:6512:3195:b0:52e:9f17:841a with SMTP id
+ 2adb3069b0e04-534387558bdmr10993178e87.6.1724829339571; Wed, 28 Aug 2024
+ 00:15:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zs3w3k7-bzCYa3KC@pc636>
+References: <20240815173903.4172139-21-samitolvanen@google.com>
+ <20240815173903.4172139-25-samitolvanen@google.com> <CAK7LNATb8zbwEVgM+_=CaYSysov6YBMbKjy8+t8CrRA_72jxuQ@mail.gmail.com>
+In-Reply-To: <CAK7LNATb8zbwEVgM+_=CaYSysov6YBMbKjy8+t8CrRA_72jxuQ@mail.gmail.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Wed, 28 Aug 2024 16:15:03 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQBO-VA8G9uumwH5m9idQofY1ZR+hnNfL7y4P3m16xFNQ@mail.gmail.com>
+Message-ID: <CAK7LNAQBO-VA8G9uumwH5m9idQofY1ZR+hnNfL7y4P3m16xFNQ@mail.gmail.com>
+Subject: Re: [PATCH v2 04/19] gendwarfksyms: Add support for type pointers
+To: Sami Tolvanen <samitolvanen@google.com>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Matthew Maurer <mmaurer@google.com>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	Petr Pavlu <petr.pavlu@suse.com>, Neal Gompa <neal@gompa.dev>, Hector Martin <marcan@marcan.st>, 
+	Janne Grunau <j@jannau.net>, Asahi Linux <asahi@lists.linux.dev>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue 27-08-24 17:29:34, Uladzislau Rezki wrote:
-> On Tue, Aug 27, 2024 at 03:37:38PM +0200, Michal Hocko wrote:
-> > On Tue 27-08-24 14:47:30, Uladzislau Rezki wrote:
-> > > On Tue, Aug 26, 2024 at 08:49:35AM +0200, Michal Hocko wrote:
-> > [...]
-> > > > > 2. High-order allocations. Do you think we should not care much about
-> > > > > it when __GFP_NOFAIL is set? Same here, there is a fallback for order-0
-> > > > > if "high" fails, it is more likely NO_FAIL succeed for order-0. Thus
-> > > > > keeping NOFAIL for high-order sounds like not a good approach to me.
-> > > > 
-> > > > We should avoid high order allocations with GFP_NOFAIL at all cost.
-> > > > 
-> > > What do you propose here? Fail such request?
-> > 
-> > We shouldn't have any hard requirements for higher order allocations in the vmalloc
-> > right? In other words we can always fallback to base pages.
+On Wed, Aug 28, 2024 at 3:50=E2=80=AFPM Masahiro Yamada <masahiroy@kernel.o=
+rg> wrote:
+>
+> On Fri, Aug 16, 2024 at 2:39=E2=80=AFAM Sami Tolvanen <samitolvanen@googl=
+e.com> wrote:
 > >
-> We always drop NOFAIL for high-order, if it fails we fall-back to
-> order-0. I got the feeling that you wanted just bail-out fully if
-> high-order and NOFAIL.
+> > The compiler may choose not to emit type information in DWARF for
+> > external symbols. Clang, for example, does this for symbols not
+> > defined in the current TU.
+> >
+> > To provide a way to work around this issue, add support for
+> > __gendwarfksyms_ptr_<symbol> pointers that force the compiler to emit
+> > the necessary type information in DWARF also for the missing symbols.
+> >
+> > Example usage:
+> >
+> >   #define GENDWARFKSYMS_PTR(sym) \
+> >       static typeof(sym) *__gendwarfksyms_ptr_##sym __used  \
+> >           __section(".discard.gendwarfksyms") =3D &sym;
+> >
+> >   extern int external_symbol(void);
+> >   GENDWARFKSYMS_PTR(external_symbol);
+> >
+> > Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
+>
+>
+>
+>
+> Commit ddb5cdbafaaad6b99d7007ae1740403124502d03
+> had a similar idea; it has a reference to each
+> export symbol, including the ones defined in different TUs,
+> but in assembly code.
+>
+> Didn't it suffice your need?
+>
 
-Nope. We should always fall back to order 0 for both NOFAIL and regular
-vmalloc allocations.
 
--- 
-Michal Hocko
-SUSE Labs
+Presumably, this is an unfortunate duplication, but I do not have an
+idea to avoid it.
+
+The symbol reference in assembly code works in *.S as well as *.c.
+
+The C reference will pull-in the debug info, but it will not work in *.S
+
+
+
+
+
+--
+Best Regards
+Masahiro Yamada
 
