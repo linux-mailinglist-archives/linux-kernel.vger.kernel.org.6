@@ -1,138 +1,128 @@
-Return-Path: <linux-kernel+bounces-305020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA82396283D
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:08:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FD7196283F
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:08:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 584BBB20E7F
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:08:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEF751F21E34
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:08:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB5B917C223;
-	Wed, 28 Aug 2024 13:08:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E1E6181328;
+	Wed, 28 Aug 2024 13:08:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HAiFsDAs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gVfdxwB9"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31EE3167D98;
-	Wed, 28 Aug 2024 13:08:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28B3D178399;
+	Wed, 28 Aug 2024 13:08:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724850491; cv=none; b=pjTlCur+rHq5DTaLosRTHI+lospovEVA5Mek4jhq7fHblO6iScrqWxfMrH25SpQhxzxZw3PfRP25urlIxesQnUqm8usauClzuGI6drP3hZfMEaySrPQxVw2P7c1Tgl6cv/5/9e7OAt+OuUAHq5RWBE82tN3aJ+NK0EvL9zlZ0vU=
+	t=1724850506; cv=none; b=JqUWFmXKzXFvCFo/YGmgU3Gu1uxpY/tbwMxlr8HhPuqpaHKS0gXlEv0tfGRdHkphLnmKiIKObhbzSQnQcl5DzPLwYkZ1JsulcC1/dsmxVq2EDNYVRdbrAjcAGZrf7OdVG5MvMyfkPF+aizzpT/6xBR1MAChvip4kfWrm/5bZ/DQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724850491; c=relaxed/simple;
-	bh=yaNMXXdjBE6xh1aUs25Qs6gO9zLIC6OHaKFtHsr955o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=gevC1FDvxiACCwBEdudWdrdXZmrndb/VhbZ1xYNi6pydr0Im76+/6q0jWHsXLMb8jQHtrU+794smxhXJ1M0EPy/FWpT6EndshrcqTrUufZhnfV5Ko7pqqBTwXMtnOm/2VkhCo5k2fh4zwizikUHn4TfiESUFjTjQsxADDJlAErk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HAiFsDAs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61077C98ED2;
-	Wed, 28 Aug 2024 13:08:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724850490;
-	bh=yaNMXXdjBE6xh1aUs25Qs6gO9zLIC6OHaKFtHsr955o=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=HAiFsDAsdF6t7Xr1B5cQxHIoAefJ28SjkFhQBQF4eSkwJ+O3/qPXsAzl8y6+7bSl+
-	 5F1i/Uagd/+9ocbcLtsfK9+LJieLzSUeAA5W6zuBoKfKKJ3jrffhVEFu6lORyJ/Fso
-	 iMxBYrLXxZjj2JxqgrsZJIWCrW54u3r6krNcNxajHPbJe8YqfxfS+5NQ0gaBPSc3ZC
-	 J0j+eTXai3PJG5r9AHMuY5K0SuFjwp+OLQ27EoHVYUhxtBRmSrKvSsmAXmfgoIFs4C
-	 tXdrHXFznFJuLS0Fudu/zUXiSBgWi888cb0KE5ukbrNnlPdsFsXkbPZOAMj/oFLUD7
-	 DX4KzuN7rxfLQ==
-Message-ID: <32e8ef50-ae45-4001-92b6-1e9e0608b402@kernel.org>
-Date: Wed, 28 Aug 2024 15:08:02 +0200
+	s=arc-20240116; t=1724850506; c=relaxed/simple;
+	bh=AaZvISxeByNLSJ2mWzj6u/5KcGJrceMC6IDkphTSzKA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NJQfMFQBkxbHUm5H60c66RAywYpyzF56gyVf/+hGKprPgot2DdqjoCgLH5Zt39n5egsyTM5vxpLdsYnh++OiG+3DxRxI2VBLWUXL2R0JO490LC6/z/PGEQq9Qmcc8SKqLdEVJtsx8J18cShYJwtszP+mao6q30sX/WTsgTXQNKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gVfdxwB9; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724850505; x=1756386505;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=AaZvISxeByNLSJ2mWzj6u/5KcGJrceMC6IDkphTSzKA=;
+  b=gVfdxwB9Tj+arsopFD16ARtKDtjlvTvvCJF2AT7my5WIh8mkw1aHYeLj
+   cf170T/ARnNIFA1lnV2z3xb+/mEUtsoehJv9UPvbJp0yUlkMsMJVHgPUZ
+   K9XmNar4SztGd4T+4AEnI38/C+9UkKVTeic4SoOnE583MBUJQNkHmmqz4
+   U1c6OsA15qDrk9zD4BxXNKZ78+yw14jdyHN4FV6tt84Sd+kdDay2rI9bX
+   KdFwl7gUz63/pfgcYivOvxOkjqYLH17QdkF23KF8Lqpf9Lg7DnEpr9U1C
+   zuUwQuI7ub3Tr8/X6Vbiy3DQP0M13k/3dhcoo+LcUHo3atOKk75rf1lFS
+   w==;
+X-CSE-ConnectionGUID: 4mskj7TzQW+kLhEZPTM60g==
+X-CSE-MsgGUID: uFTidn+jRWqT1NnIiWplqQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11178"; a="40852377"
+X-IronPort-AV: E=Sophos;i="6.10,182,1719903600"; 
+   d="scan'208";a="40852377"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2024 06:08:25 -0700
+X-CSE-ConnectionGUID: xcw9Y7zdRFiqp7Okt45Oug==
+X-CSE-MsgGUID: DVgp4aoET4eXEggHMniwRA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,182,1719903600"; 
+   d="scan'208";a="86413265"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2024 06:08:23 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sjIPM-00000002eQD-3R1i;
+	Wed, 28 Aug 2024 16:08:20 +0300
+Date: Wed, 28 Aug 2024 16:08:20 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
+Subject: Re: [PATCH v1 1/1] clk: devres: Simplify devres handling functions
+Message-ID: <Zs8hRPA9Lya29d6d@smile.fi.intel.com>
+References: <20240822155822.1771677-1-andriy.shevchenko@linux.intel.com>
+ <9e16ddb1c1a697464ce1f5438ab9ca31.sboyd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next 2/8] soc: fsl: cpm1: Simplify with dev_err_probe()
-To: Jinjie Ruan <ruanjinjie@huawei.com>, andrew@lunn.ch,
- sebastian.hesselbarth@gmail.com, gregory.clement@bootlin.com,
- herve.codina@bootlin.com, qiang.zhao@nxp.com, christophe.leroy@csgroup.eu,
- thierry.reding@gmail.com, jonathanh@nvidia.com, nm@ti.com,
- ssantosh@kernel.org, petlozup@nvidia.com, pshete@nvidia.com,
- christophe.jaillet@wanadoo.fr, ulf.hansson@linaro.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, linux-tegra@vger.kernel.org, jic23@kernel.org
-References: <20240827114607.4019972-1-ruanjinjie@huawei.com>
- <20240827114607.4019972-3-ruanjinjie@huawei.com>
- <87abe3f1-3cf2-4331-8dde-a422716dd94a@kernel.org>
- <97ff8c02-1a97-7974-06fa-edb35437707d@huawei.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <97ff8c02-1a97-7974-06fa-edb35437707d@huawei.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9e16ddb1c1a697464ce1f5438ab9ca31.sboyd@kernel.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On 28/08/2024 03:58, Jinjie Ruan wrote:
-> 
-> 
-> On 2024/8/27 21:50, Krzysztof Kozlowski wrote:
->> On 27/08/2024 13:46, Jinjie Ruan wrote:
->>> Use the dev_err_probe() helper to simplify error handling during probe.
->>> This also handle scenario, when EDEFER is returned and useless error
->>> is printed.
->>
->> ? Sorry, this cannot happen. Please point to below code which can defer.
->>
-> 
-> Thank you!
-> 
-> This is not referring to a specific one, but rather the benefits it
-> offers，simplify code is the main purpose, if necessary, it will be
-> removed in next version.
+On Tue, Aug 27, 2024 at 05:19:04PM -0700, Stephen Boyd wrote:
+> Quoting Andy Shevchenko (2024-08-22 08:58:22)
 
-It just feels like you are doing these in machine way without actually
-knowing concepts behind dev_err_probe().
+...
 
-Best regards,
-Krzysztof
+> > -       state = devres_alloc(devm_clk_release, sizeof(*state), GFP_KERNEL);
+> > +       state = devm_kmalloc(dev, sizeof(*state), GFP_KERNEL);
+> 
+> When is this allocation freed if the get() fails? When the calling
+> device driver detaches?
+
+At device unbinding. Is it a problem?
+
+...
+
+> > +       ret = devm_add_action_or_reset(dev, devm_clk_release, state);
+> > +       if (ret)
+> > +               goto err_clk_init;
+> 
+> Shouldn't we return an error here? Otherwise we call clk_put() twice?
+
+Or use devm_add_action().
+Thanks for catching this!
+
+> >         return clk;
+> >  
+> >  err_clk_init:
+> >         clk_put(clk);
+> >         return ERR_PTR(ret);
+> >  }
+
+...
+
+> I stopped reading, sorry! If you want to do this, please add a bunch of
+> KUnit tests.
+
+Sure. It's a good idea.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
 
