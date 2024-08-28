@@ -1,128 +1,205 @@
-Return-Path: <linux-kernel+bounces-304510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DDC596211F
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 09:30:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17767962125
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 09:31:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B5595B25A26
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 07:30:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A84FAB23B84
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 07:31:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07FAC159209;
-	Wed, 28 Aug 2024 07:30:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75FB01591E8;
+	Wed, 28 Aug 2024 07:31:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XJx+zllx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b="YGqt5rhN"
+Received: from mail.thorsis.com (mail.thorsis.com [217.92.40.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B09F14D439;
-	Wed, 28 Aug 2024 07:30:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D885328DB;
+	Wed, 28 Aug 2024 07:31:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.92.40.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724830236; cv=none; b=I/BzwdhY1jU/fWvzhxkK9ruZZL0gTTjCV2TgzTGJnx+3JrgoeVWR5oEQ2LSfHCIUT6Yl219fLWAqOL0zrOrZsnVjptFfbyHsx1Hwr590CNZSXzb3epQnWcXQSkTGOsvuw5kkdPLiqhsnRJcaWetmzjThKHzX43wLnsp/rSHT8Wg=
+	t=1724830272; cv=none; b=gwtFEuvqESXNG31yzUIsaW72QtpFaL2Lu2zMNuSrMxhfv8DWheXznqX1mJiPzeP66jgpT170bv1I0djTWr3xs8N+yC2Tg9qtBH9qbB7rg4zFunw1kVR/F4xvf5HbcTUnxQbKZpbqTe5+CSXn6RUhi/ds7qRZQ2KEEIkGwL/xloA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724830236; c=relaxed/simple;
-	bh=mj9I9fBzX6s8jrWfQm4upFCq8fdJWKzdo86ChRZDBn8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=HzsHWLdeHCGj3ylNG34ci/dZUkBrB8YyFPG7RD4XywFXDpFOPFmo8i8XMIXBWjf8sFhl+uscYi6JL3h0LnBJ3VayY8O66Z7wgG55DO8IZzVEmP+HjjdRB6ZKhIwdV1xQNTP86ZEozoVhlqyURgCsR4paWIFtV9noqND/RmrjCcQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XJx+zllx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A57B7C32782;
-	Wed, 28 Aug 2024 07:30:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724830235;
-	bh=mj9I9fBzX6s8jrWfQm4upFCq8fdJWKzdo86ChRZDBn8=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=XJx+zllxRtbIFcPw10+GB9U3KW5jZfJQkJy7Isv0on6gfCA69klLJDFtiNxJsmGm+
-	 D0rZzbbJ8RoJmK+Et2hE4W9g9HtfS+OX6mL1Po95rDWXG3yQ4zc1CP7HM5XYQHpTLr
-	 HiwlqVhx0M7K+pydVmJ8dendJ0h9kPw0hS3dchqTBEjvx17b9kdl/FgL9DwCbbiXcY
-	 wl1vyQxy6m6064jFersWuWUo3tpiHE6y3W6147hoRIYFzoKM1Mq8s2sNefi7JeAzyx
-	 oO15gH4SOF+qa5o28T/hrNblCJBDRe+a85SqWpQhH0Wy3H7ArRd8geF/FF6lKz5DSo
-	 sDUmeblQs0yqA==
-Message-ID: <12486d33-e70f-49df-b16e-85c99b5027ca@kernel.org>
-Date: Wed, 28 Aug 2024 09:30:28 +0200
+	s=arc-20240116; t=1724830272; c=relaxed/simple;
+	bh=RVZ2WzypTVL8aXwnyta5z6xdCi/wY4px/T4jPpfoPVk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UbfaXliByqBa9HdhcjTe/TffXyoLaMl4f0umOzJ4VJKmYJkHgO/c10dFseRmZ3E+SFC3vnceA4LlN/mtL/oLZGXndb3eSStuUEoBFaRlMOlQO/wkhQe3Hpyr98Xq/oy8vXYhXI0olFTqjPifURomji/9yMX5+H7I9AjTK+Rv6NA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com; spf=pass smtp.mailfrom=thorsis.com; dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b=YGqt5rhN; arc=none smtp.client-ip=217.92.40.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thorsis.com
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 216621483485;
+	Wed, 28 Aug 2024 09:31:06 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=thorsis.com; s=dkim;
+	t=1724830268; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=mTvFLF+yscDR3yye+ivUrz/P11CO4Y8bZCNC+3JezZE=;
+	b=YGqt5rhNIJ39St7tOOHVoemuVYd5/rMXiYi8EdmgACC8TdsAHxUcUe1FN94tgvWynWAlAU
+	PKe2NISLCPNy4pX0Nb/3no98nY9aonaTpLg3XhI8zNFkkBtJCSvB+IglMxrr7vr9VPte7w
+	Q3vBgjl+KI+0zRRDHPccIsVzY0D6oEw9vZHC2Nf8C9XZSdsRTHC37Fbhkxe40WmSYABpP9
+	+EXSidqte4a6aeOp1N6796wKV5vxNGWjJPaT0Fys/Z52ZdR2nralwZTyssZljkgpYEUrzW
+	No6P/LQ+NMTXxMTKovJ1bY6sSUrhuDFvbbBiNTWUqswBfca8IU8AVDE4LS0a9g==
+Date: Wed, 28 Aug 2024 09:31:05 +0200
+From: Alexander Dahl <ada@thorsis.com>
+To: claudiu beznea <claudiu.beznea@tuxon.dev>
+Cc: Alexander Dahl <ada@thorsis.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Christian Melki <christian.melki@t2data.com>,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v1 00/12] Microchip OTPC driver on SAM9X60 exposing UIDxR
+ as additional nvmem device
+Message-ID: <20240828-steadily-nearby-1fe97d4cbe97@thorsis.com>
+Mail-Followup-To: claudiu beznea <claudiu.beznea@tuxon.dev>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Christian Melki <christian.melki@t2data.com>,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20240821105943.230281-1-ada@thorsis.com>
+ <717bd06f-3eba-4825-a53f-b2f9aa1c81c8@tuxon.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/3] Add support for AST2700 clk driver
-To: Ryan Chen <ryan_chen@aspeedtech.com>, mturquette@baylibre.com,
- sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- joel@jms.id.au, andrew@codeconstruct.com.au, p.zabel@pengutronix.de,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-aspeed@lists.ozlabs.org
-References: <20240828062740.1614744-1-ryan_chen@aspeedtech.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240828062740.1614744-1-ryan_chen@aspeedtech.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <717bd06f-3eba-4825-a53f-b2f9aa1c81c8@tuxon.dev>
+User-Agent: Mutt/2.2.12 (2023-09-09)
+X-Last-TLS-Session-Version: TLSv1.3
 
-On 28/08/2024 08:27, Ryan Chen wrote:
-> This patch series is add clk driver for AST2700.
+Hello Claudiu,
+
+thanks for having a closer look on the series.  The issues the bots
+complained about are already fixed in my working copy and will be part
+of v2.  Detailed discussion on particular patches itself over there,
+general remarks below.
+
+Am Sat, Aug 24, 2024 at 07:17:43PM +0300 schrieb claudiu beznea:
+> Hi, Alexander,
 > 
-> AST2700 is the 8th generation of Integrated Remote Management Processor
-> introduced by ASPEED Technology Inc. Which is Board Management controller
-> (BMC) SoC family. AST2700 have two SoC connected, one is SoC0, another
-> is SoC1, it has it's own scu, this driver inlcude SCU0 and SCU1 driver.
+> On 21.08.2024 13:59, Alexander Dahl wrote:
+> > Hei hei,
+> > 
+> > on a custom sam9x60 based board we want to access a unique ID of the
+> > SoC.  Microchip sam-ba has a command 'readuniqueid' which returns the
+> > content of the OTPC Product UID x Register in that case.
+> > 
+> > (On different boards with a SAMA5D2 we use the Serial Number x Register
+> > exposed through the atmel soc driver.  Those registers are not present
+> > in the SAM9X60 series, but only for SAMA5D2/SAMA5D4 AFAIK.)
 > 
-> v2:
-> -yaml: drop 64bits address example.
-> -yaml: add discription about soc0 and soc1
+> Not sure if you are talking about Chip ID, Chip ID extension registers.
+> These are available also on SAM9X60.
 
-Where?
+No, this is not what I'm talking about.  The Chip ID and Chip ID
+extension registers are common over all SoCs of the same type.
 
-Proof read your patches before sending.
+What I need is a unique ID, the same sam-ba returns with the
+"readuniqueid" applet.  The SAMA5D2 has this in SFR_SN0 and SFR_SN1,
+handled by drivers/soc/atmel/sfr.c driver.  The SFR block on sam9x60
+has no SNx registers, the unique ID comes from OTPC_UIDxR here.
 
-Best regards,
-Krzysztof
+Best thing would be a simple nvmem device for the SAM9X60 providing
+just those 4 registers, in a similar way the sfr driver does for
+SAMA5D2.  This is the motivation for the series and what's eventually
+done in patch 12.  The other patches are just fixing the otpc driver
+for SAM9X60 so I can add that nvmem stuff.
 
+Greets
+Alex
+
+> > There is a driver for the OTPC of the SAMA7G5 and after comparing
+> > register layouts it seems that one is almost identical to the one used
+> > by SAM9X60.  Currently that driver has no support for the UIDx
+> > registers, but I suppose it would be the right place to implement it,
+> > because the registers are within the OTPC register address offsets.
+> > 
+> > The patch series starts with fixups for the current driver.  It then
+> > adds the necessary pieces to DT and driver to work on SAM9X60 in
+> > general.  Later support for enabling the main RC oscillator is added,
+> > which is required on SAM9X60 for the OTPC to work.  The last patch adds
+> > an additional nvmem device for the UIDx registers.
+> > 
+> > This v1 of the series was _not_ tested on SAMA7G5, because I don't have
+> > such a board for testing.  Actually I don't know if the main_rc_osc
+> > clock is required on SAMA7G5 too, and if yes how to handle that with
+> > regard to the different clock ids.  If someone could test on SAMA7G5
+> > and/or help me sorting out the core clock id things, that would be
+> > highly appreciated.
+> 
+> Please add Nicolas in the loop on the next revisions of this series as this
+> should also be tested on SAMA7G5. I don't have a SAMA7G5 with OTP memory
+> populated.
+> 
+> > 
+> > Also I assume some more devicetree and/or sysfs documentation is
+> > necessary.  If someone could point me what's exactly required, this
+> > would be very helpful for me.  You see I expect at least another version
+> > v2 of the series. ;-)
+> > 
+> > Maybe some files having that "sama7g5" should be renamed, because that
+> > DT binding is used for more SoCs now and deserves a more generic name?
+> 
+> Not needed, adding your compatible there is enough.
+> 
+> > Thinking of these for example:
+> > 
+> > - Documentation/devicetree/bindings/nvmem/microchip,sama7g5-otpc.yaml
+> > - include/dt-bindings/nvmem/microchip,sama7g5-otpc.h
+> > 
+> > Are there other SoCs than SAMA7G5 and SAM9X60 using the same OTPC?
+> > 
+> > Last question: Should the UID be added to the device entropy pool with
+> > add_device_randomness() as done in the SAMA5D2 sfr driver?
+> > 
+> > I sent an RFC patch on this topic earlier this year, you'll find the
+> > link below as a reference to the discussion.  The patch itself was
+> > trivial and not meant for applying as is anyways, so I decided to not
+> > write a full changelog from RFC to v1.
+> > 
+> > Last not least, special thanks to Christian Melki on IRC, who wrote and
+> > tested parts of this, and was very kind and helpful in discussing the
+> > topic several times in the past months.
+> > 
+> > Christian, if you feel there's credit missing, just point me where to
+> > add Co-developed-by and I'll happily do that for v2.
+> > 
+> > Greets
+> > Alex
+> > 
+> > (series based on v6.11-rc4)
+> > 
+> > Cc: linux-arm-kernel@lists.infradead.org
+> > Cc: devicetree@vger.kernel.org
+> > Cc: linux-kernel@vger.kernel.org
+> > Cc: linux-clk@vger.kernel.org
+> > Link: https://lore.kernel.org/all/20240412140802.1571935-2-ada@thorsis.com/
+> > 
+> > Alexander Dahl (12):
+> >   nvmem: microchip-otpc: Avoid writing a write-only register
+> >   nvmem: microchip-otpc: Fix swapped 'sleep' and 'timeout' parameters
+> >   dt-bindings: nvmem: microchip-otpc: Add compatible for SAM9X60
+> >   nvmem: microchip-otpc: Add SAM9X60 support
+> >   ARM: dts: microchip: sam9x60: Add OTPC node
+> >   ARM: dts: microchip: sam9x60_curiosity: Enable OTP Controller
+> >   nvmem: microchip-otpc: Add missing register definitions
+> >   nvmem: microchip-otpc: Add warnings for bad OTPC conditions on probe
+> >   clk: at91: sam9x60: Allow enabling main_rc_osc through DT
+> >   ARM: dts: microchip: sam9x60: Add clock properties to OTPC
+> >   nvmem: microchip-otpc: Enable main RC oscillator clock
+> >   nvmem: microchip-otpc: Expose UID registers as 2nd nvmem device
+> > 
+> >  .../nvmem/microchip,sama7g5-otpc.yaml         |  1 +
+> >  .../dts/microchip/at91-sam9x60_curiosity.dts  |  4 +
+> >  arch/arm/boot/dts/microchip/sam9x60.dtsi      | 10 +++
+> >  drivers/clk/at91/sam9x60.c                    |  3 +-
+> >  drivers/nvmem/microchip-otpc.c                | 86 ++++++++++++++++++-
+> >  include/dt-bindings/clock/at91.h              |  1 +
+> >  6 files changed, 100 insertions(+), 5 deletions(-)
+> > 
+> > 
+> > base-commit: 47ac09b91befbb6a235ab620c32af719f8208399
 
