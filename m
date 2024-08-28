@@ -1,148 +1,114 @@
-Return-Path: <linux-kernel+bounces-305361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7479962D7E
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 18:16:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40034962D7B
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 18:16:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 436ECB2223E
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 16:16:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F134E28588D
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 16:16:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 532E91A3BDC;
-	Wed, 28 Aug 2024 16:16:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5932D1A3BBB;
+	Wed, 28 Aug 2024 16:16:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RdaKJ+g0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 751521A254B;
-	Wed, 28 Aug 2024 16:16:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=classfun.cn header.i=@classfun.cn header.b="gks/6HOQ"
+Received: from classfun.cn (unknown [129.204.178.38])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C1361A2C02;
+	Wed, 28 Aug 2024 16:16:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.204.178.38
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724861789; cv=none; b=m9QzOysWWy9Sp60dXxakDFUEl4Y9DH4axM6Otb0JbVOCfwHBZ4R8Xw3dYrMWbKO3aFWQGz4pUTxPMfjYnfVFd1dr/vu4PjRQY9ACyA9140rznDO8PoG+QjmnMG3t5a+LVfmdxNPYkkE1oul8jI9QnCnDW6zm9lGJxCA5/EsFc7k=
+	t=1724861775; cv=none; b=FthzIcuIdomqfyZMJNm8HhqnpMvzQEyr51/MnUwtcO6siOGwuio7coA8W9dh9n0FQPXD+Mf4EQlZ2+xHZshb4pw6qb9F+im13qz7RTLrcFfaDsRiorSieBqCUchC6dvcwmrY5B1x81N12kAQi2svzS2TeTHpvPPCdP1nAMe42U0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724861789; c=relaxed/simple;
-	bh=5ehrFnCc+o7/6cA9eQPVNURWyEXSWTlwyaEFrwFQhZc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a9SGPkFoNZo19bfUJCSpRmbxk3HOq0TJjklfqn5ehbRaiBWvTDW2aCTOl1L2F9XkVK0o1W+MgUktO/kzE1XFGvrZxn8fQ0HEN3qI92x5cntPU3ZV6/7c3PrjJtc/W7hqEGw0XXKfWOFjIi1EKSL7boB9Zcf2GIj/0C3u1w5BvKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RdaKJ+g0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B4A4C4FF6C;
-	Wed, 28 Aug 2024 16:16:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724861789;
-	bh=5ehrFnCc+o7/6cA9eQPVNURWyEXSWTlwyaEFrwFQhZc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RdaKJ+g0foDLngSIME/eH0SuqkPcXepecMqvquw7sJANaAgAS9Jlw97jeTif2NKsw
-	 dZ+5UTnLcUoJ1ad5+UU8Cs0TTCJTQr9NmPv8D5bkp2FtIDe9LWp5qHQELGWy4atngv
-	 AII4OxkStsPAd86xz6bq30kOMopxtk3kEWlo5jlmfz9xuZmobwDAHofgWqimNoFbrh
-	 X2UNFAUl6JjF2DvZEGrKJ2WrMT4+9Jmf1PbB52pPxBJbgj2kBQds1RreQ9UH82b/4V
-	 ags+Fj0rpLo9WcAFAzUweELdXdH2heMxMR0vNc5+HT01o5KN9IHjg+IpygLe4q5elJ
-	 fRK7re4LGYjSA==
-Date: Wed, 28 Aug 2024 17:16:24 +0100
-From: Simon Horman <horms@kernel.org>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Marc Kleine-Budde <mkl@pengutronix.de>,
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	linux-can@vger.kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: can: cc770: Simplify parsing DT properties
-Message-ID: <20240828161624.GS1368797@kernel.org>
-References: <20240828131902.3632167-1-robh@kernel.org>
+	s=arc-20240116; t=1724861775; c=relaxed/simple;
+	bh=c+x6oeNJa2vT47H2q/piBvTdueZtifqSkd0+5DGx8vU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
+	 In-Reply-To:Content-Type; b=TVWWAXvLwvoT08j591SfuEIdHGPdOl65np3eRh/UxKNfrDX3oAPDM0ze3rPwfPJW7dY+AuErJVD5NLpgXrAHH5n6VoLNU74R0EtW9q0lHPmG5ipbJa61Ps/qLoAypQv+4uF7/i/FRZfhq8HUpZuJvgH7wlCsDjpZgpjioEGZeFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=classfun.cn; spf=pass smtp.mailfrom=classfun.cn; dkim=pass (1024-bit key) header.d=classfun.cn header.i=@classfun.cn header.b=gks/6HOQ; arc=none smtp.client-ip=129.204.178.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=classfun.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=classfun.cn
+Received: from [192.168.0.160] (unknown [14.153.79.170])
+	(Authenticated sender: bigfoot)
+	by classfun.cn (Postfix) with ESMTPSA id 33DC8789E7;
+	Thu, 29 Aug 2024 00:16:02 +0800 (CST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 classfun.cn 33DC8789E7
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=classfun.cn;
+	s=default; t=1724861763;
+	bh=6K8wd3nD9WLSsOwW9XksbhVbocZ+D0rpe/Hdv2t4fOg=;
+	h=Date:Subject:To:References:From:Cc:In-Reply-To:From;
+	b=gks/6HOQV81U32M4YIzHwfFzcxWsICyHwEYbTCylEzPt847v3Pqfo4iWNKohiF/v2
+	 fg26KbTD26Y8E/bg4/i8SR9mF/0OjQjpfTJ+mUsIQciojbHfbYs30NTi1d0FAUYl6V
+	 kYrJp9qTpldeIHYk8p9hluNDJt+8tvvXg8czotbk=
+Message-ID: <8be71b44-403d-47e2-b148-09ef9f1cf050@classfun.cn>
+Date: Thu, 29 Aug 2024 00:17:05 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240828131902.3632167-1-robh@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v2,3/3] arm64: dts: rockchip: add dts for LCKFB Taishan Pi
+ RK3566
+To: Heiko Stuebner <heiko@sntech.de>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20240826110300.735350-1-bigfoot@classfun.cn>
+ <172485421376.1511809.16668781813371034474.b4-ty@sntech.de>
+Content-Language: en-US
+From: Junhao Xie <bigfoot@classfun.cn>
+Cc: linux-kernel@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
+ Jonas Karlman <jonas@kwiboo.se>, Chukun Pan <amadeus@jmu.edu.cn>,
+ FUKAUMI Naoki <naoki@radxa.com>, Dragan Simic <dsimic@manjaro.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+ linux-rockchip@lists.infradead.org, Junhao Xie <bigfoot@classfun.cn>
+In-Reply-To: <172485421376.1511809.16668781813371034474.b4-ty@sntech.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Aug 28, 2024 at 08:19:02AM -0500, Rob Herring (Arm) wrote:
-> Use of the typed property accessors is preferred over of_get_property().
-> The existing code doesn't work on little endian systems either. Replace
-> the of_get_property() calls with of_property_read_bool() and
-> of_property_read_u32().
+On 2024/8/28 23:14, Heiko Stuebner wrote:
+> On Mon, 26 Aug 2024 19:02:26 +0800, Junhao Xie wrote:
+>> Add dts for LCKFB Taishan Pi.
+>> Working IO:
+>> * UART
+>> * RGB LED
+>> * AP6212 WiFi
+>> * AP6212 Bluetooth
+>> * SD Card
+>> * eMMC
+>> * HDMI
+>> * USB Type-C
+>> * USB Type-A
+>>
+>> [...]
 > 
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> Applied, thanks!
+> 
+> [1/1] arm64: dts: rockchip: add dts for LCKFB Taishan Pi RK3566
+>       commit: 251e5ade9ba43f44f60713310f89e0f4495a2088
+> 
+> 
+> It is customary to re-send the whole series when doing a v2.
+> Replacing only single patches confuses both people and tooling.
+> 
+> But no worries for this time, I found and picked the correct version
+> I hope ;-) .
+> 
+> I did sort some more properties and nodes [0], so maybe take a look to
+> make sure I did not break anything.
+> 
+> 
+> [0] There are sorting guidelines in
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/dts-coding-style.rst
+> 
+> 
+> Best regards,
 
-...
+Hi Heiko,
 
-> diff --git a/drivers/net/can/cc770/cc770_platform.c b/drivers/net/can/cc770/cc770_platform.c
-> index 13bcfba05f18..9993568154f8 100644
-> --- a/drivers/net/can/cc770/cc770_platform.c
-> +++ b/drivers/net/can/cc770/cc770_platform.c
-> @@ -71,16 +71,9 @@ static int cc770_get_of_node_data(struct platform_device *pdev,
->  				  struct cc770_priv *priv)
->  {
->  	struct device_node *np = pdev->dev.of_node;
-> -	const u32 *prop;
-> -	int prop_size;
-> -	u32 clkext;
-> -
-> -	prop = of_get_property(np, "bosch,external-clock-frequency",
-> -			       &prop_size);
-> -	if (prop && (prop_size ==  sizeof(u32)))
-> -		clkext = *prop;
-> -	else
-> -		clkext = CC770_PLATFORM_CAN_CLOCK; /* default */
-> +	u32 clkext = CC770_PLATFORM_CAN_CLOCK, clkout = 0;
+Thank you for merging the patch and sorting the details!
+I will make sure to reduce mistakes in future patch submissions.
 
-Marc,
-
-Could you clarify if reverse xmas tree ordering - longest line to shortest
-- of local variables is desired for can code? If so, I'm flagging that the
-above now doesn't follow that scheme.
-
-> +
-> +	of_property_read_u32(np, "bosch,external-clock-frequency", &clkext);
->  	priv->can.clock.freq = clkext;
->  
->  	/* The system clock may not exceed 10 MHz */
-
-...
-
-> @@ -109,20 +102,16 @@ static int cc770_get_of_node_data(struct platform_device *pdev,
->  	if (of_property_read_bool(np, "bosch,polarity-dominant"))
->  		priv->bus_config |= BUSCFG_POL;
->  
-> -	prop = of_get_property(np, "bosch,clock-out-frequency", &prop_size);
-> -	if (prop && (prop_size == sizeof(u32)) && *prop > 0) {
-> -		u32 cdv = clkext / *prop;
-> -		int slew;
-> +	of_property_read_u32(np, "bosch,clock-out-frequency", &clkout);
-> +	if (clkout > 0) {
-> +		u32 cdv = clkext / clkout;
-> +		u32 slew;
->  
->  		if (cdv > 0 && cdv < 16) {
->  			priv->cpu_interface |= CPUIF_CEN;
->  			priv->clkout |= (cdv - 1) & CLKOUT_CD_MASK;
->  
-> -			prop = of_get_property(np, "bosch,slew-rate",
-> -					       &prop_size);
-> -			if (prop && (prop_size == sizeof(u32))) {
-> -				slew = *prop;
-> -			} else {
-> +			if (of_property_read_u32(np, "bosch,slew-rate", &slew)) {
->  				/* Determine default slew rate */
->  				slew = (CLKOUT_SL_MASK >>
->  					CLKOUT_SL_SHIFT) -
-
-Rob,
-
-The next few lines look like this:
-
-					((cdv * clkext - 1) / 8000000);
-				if (slew < 0)
-					slew = 0;
-
-But slew is now unsigned, so this check will always be false.
-
-Flagged by Smatch and Coccinelle.
+Best regards,
+Junhao
 
