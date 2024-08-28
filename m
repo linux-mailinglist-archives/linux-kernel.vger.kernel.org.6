@@ -1,169 +1,131 @@
-Return-Path: <linux-kernel+bounces-304170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B615961B57
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 03:18:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E363961B5A
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 03:19:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6FE91F24887
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 01:18:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6C4CB22DB7
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 01:19:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34D9B1DFE1;
-	Wed, 28 Aug 2024 01:18:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A369D1DFE1;
+	Wed, 28 Aug 2024 01:18:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="kzJ4Lns4"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="TTG69V07"
+Received: from xmbghk7.mail.qq.com (xmbghk7.mail.qq.com [43.163.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A54C2224D7;
-	Wed, 28 Aug 2024 01:18:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9791B28370;
+	Wed, 28 Aug 2024 01:18:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.163.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724807901; cv=none; b=aPcGVNn7d0dQNlkB6aaiHJRTUAth60eqBV0sZEwNNPQ304xZ/BxUBkBjxxWdyEFSl8b4uGVnBNemwvQseTzcgEoWTeiCL9+aW3SomOfUUhGgYVtZiXRLOXhgpETsexWqo3EVhAykivywKbbpoIEy1yxsNyJ9MeVwtgPNOFhZC5k=
+	t=1724807936; cv=none; b=kJXzV6rY1mwsnKsWh1T9uoLKfXQKxFMpAimkaV5A9i7C1LVIAX/GmEqdmi8Tlmyqe9xP85vtdQcofDGdVqTJGlnsdSlyfMiBWMiVPp0GzH7f9lW4tfTlaWXcKYgxgXNLpLA/Bzv+Pt3NdmPRRgT52TTvIhCtipgkNcWTOigARZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724807901; c=relaxed/simple;
-	bh=NM/lwsS3G+GKJXhXb83ew0o1y2LlFi31QJtJmSZZeaI=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=m+1OMwN64OsMjR631GcOYRfGO8oHiDZYAOIjfpF5Wn0Ml/bhe21vrR+WZOKYYKche2ecIHbBB6wbrvX/5A6CTXbClNisy84/21rF7RXusV673qiZgLRlqA/db2JE8qKaO0kmd1eRbzCoJsxVv0l3AV9icsbnsGTCZ55WW6i6kM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=kzJ4Lns4; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1724807895;
-	bh=bSE2OAY6iKksQlsyS8uTUxZkQGdxPR2/GAYLJ2SIUjY=;
-	h=Subject:From:To:Date:In-Reply-To:References;
-	b=kzJ4Lns4D9k57LouPc/ML5CJP0WhGPBVqYuF+dpxMKLT5NJWLFIWCbArZVWkUv7Dr
-	 rhU/ZjoYbN0bOG7EImSeetjmM/eaOn0ymvzkub9Y4CMkLJ6I/EkeCzZ26P5/zfUrH0
-	 Pt8qEn+5i8uRsFe87NACLcOEXh+nGUCmEdpMr+wK9PxnyT2Dl154GimlC0p9NSflTw
-	 9b6T65PqWDACMy0vdxF49OENa6kLD7c3u22M8AEHLL1hgCDAbBLBOrkKF224YIdHTV
-	 va0gKzZ/sfuZpwaMDRH2SKLgACJw/LIb7LZ+RcvHJwV9wtne0Uf+oKRQaXfLi/Zwz7
-	 /aO25LvIqFCwQ==
-Received: from [192.168.68.112] (ppp118-210-185-99.adl-adc-lon-bras34.tpg.internode.on.net [118.210.185.99])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 4A16A6506F;
-	Wed, 28 Aug 2024 09:18:12 +0800 (AWST)
-Message-ID: <e629752d8c97a2d14641a7fbc0cbdb1cd01a8ac5.camel@codeconstruct.com.au>
-Subject: Re: [PATCH v1 2/2] gpio: Add G7 Aspeed gpio controller driver
-From: Andrew Jeffery <andrew@codeconstruct.com.au>
-To: Billy Tsai <billy_tsai@aspeedtech.com>, "linus.walleij@linaro.org"
- <linus.walleij@linaro.org>, "brgl@bgdev.pl" <brgl@bgdev.pl>,
- "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
- <krzk+dt@kernel.org>,  "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "joel@jms.id.au" <joel@jms.id.au>,  "linux-gpio@vger.kernel.org"
- <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org"
- <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>, "linux-aspeed@lists.ozlabs.org"
- <linux-aspeed@lists.ozlabs.org>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, BMC-SW <BMC-SW@aspeedtech.com>
-Date: Wed, 28 Aug 2024 10:48:10 +0930
-In-Reply-To: <OSQPR06MB7252CBAEBF1DBE2C613F24748B8B2@OSQPR06MB7252.apcprd06.prod.outlook.com>
-References: <20240821070740.2378602-1-billy_tsai@aspeedtech.com>
-	 <20240821070740.2378602-3-billy_tsai@aspeedtech.com>
-	 <cf92b3ab4b171e7c7c07cada066dad6323c5dace.camel@codeconstruct.com.au>
-	 <OSQPR06MB7252CBAEBF1DBE2C613F24748B8B2@OSQPR06MB7252.apcprd06.prod.outlook.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1724807936; c=relaxed/simple;
+	bh=lh2Z2Ca2Vgzgi/5Xe+Y6pxgbSV8+ZEUvCJ733j2dvrU=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=cUrSSudTUKo9YXdHF6A4dfk0Llxi4zIFUiQ+BeM9mZ2n3dOu272rmUnufLcaHDDU8BrdJNYoJpYDxrgz4u7hBBKc2rCvu03MIUJN4rLeelEJFATF9qsXFPdgBsfD25bdsS20Xq+HGhdHqsWAEGU2X4EVf7NW6lEMIai5tLNlwVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=TTG69V07; arc=none smtp.client-ip=43.163.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1724807920;
+	bh=VididwxujMY0a/lP1sce0+UlBHd78j55DgF2lpkP5ds=;
+	h=From:To:Cc:Subject:Date;
+	b=TTG69V07+ldKh9tsRlXVAVN61HrqygDqNlu0N57VNpZd3sVu9CvUKZHxA84iYpITZ
+	 NsMf3XplILivq+MQqSbX1PVe/yIKXwqEOXGimwexgpZUiRUNanXXzgowJ/45ovOs8Z
+	 Nyplvkb5H2FBGIX2vurxluo1tEbGhZxsTnO0TunY=
+Received: from RT-NUC.. ([39.156.73.10])
+	by newxmesmtplogicsvrsza29-0.qq.com (NewEsmtp) with SMTP
+	id 4A40CA45; Wed, 28 Aug 2024 09:18:36 +0800
+X-QQ-mid: xmsmtpt1724807916t6z31wrob
+Message-ID: <tencent_9F90905CD6FBE5B00AF1EBD9681A62990106@qq.com>
+X-QQ-XMAILINFO: MzYTHVlhOHw4q/ygwSb9kA8Q/JOBUoyPheKqkwzexnxtDA/1Iuq1AXbaTw89ol
+	 /8iKUh3wmh+h/0XPqeorQtR9vCYauMG8/igvtU+AVx9B9DsRyb3+h9/4gYqEFyf+bTDPK4LZvqVe
+	 Q7NmFnsSOdAyyxvH5wzVGclSrwj6pHdJ0607uUsqTxzSIJrX3YlpTU+xxlCoYI1pps/xHvBqHds/
+	 +m0gVie2jSOuGbOKUYladKUiinQuGEYeLRRs7bcOv+3TBt694Lhzhv8vjDvXVi1qIfJlzAD98emD
+	 HRve1FvDpOoNwZ/NSMa3OnvGeizKQTgM9nyAj6P65fbgMfpwJ66tuu+uJuh7o49eZ1mhbtIKtuty
+	 ocHOY+fQl3p+v+CwGhySeEA+Kj1NCrlW6VQ7e6ZVwlDL8Lgh0TUH0QATnoY7OpR2CIiC5xuZpT1N
+	 x8IOFrQs4WjVlDIb+mhhZ9LnTetf9CwJHr8si36ryxnGF6gwp4mr99OOCbyRRVLgZRj4hWr0YGlX
+	 qcxF0Gh2FCXe34pp0uRTgq+WxmwWlVhMeSJYwDdf8PHcqD1QoXUPDmFmRhWMn3KVPHDtWf+x/ttq
+	 XW7uCLOyiHy7uMhv2OO4ejjD5j/473Vz2sZNiZt5zZyc4aavryzgt8npwH0fxkicfmV8x6xM+lcG
+	 8pIB7JhpSYMY0pXh/pYn4+RF4XozvqFbNUWh0YrsSpZNWBZer0JA8b6izKGxSPtUiJqxveqQ3I76
+	 zh+N5n2eizVkWxqYkSTkt+WJS8pBt0XmBwSmtkY+bysiIhWGEvZi7JwDGOzbh1JCzD9AwbG1TaUZ
+	 momOmL5ItX0A1ZNR4BCI86LN0IFGKmUzmfbr71vuVNmuyanktc05bMmFmd1g4NuZxjzx0Zn/kuTT
+	 Su5eRl7dFzrgbvzzMgucGuswNHvijxTnb2RGqQPPVH0WsWih4GXSO+vYBAVD2mbvF56KrgQLqybR
+	 3knLrtV+rnFCBQZwOZ53KPUcbQxQ1xmFYXegrIS4U=
+X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
+From: Rong Tao <rtoax@foxmail.com>
+To: andrii@kernel.org,
+	daniel@iogearbox.net,
+	ast@kernel.org
+Cc: rongtao@cestc.cn,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	bpf@vger.kernel.org (open list:BPF [GENERAL] (Safe Dynamic Programs and Tools)),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH bpf-next] samples/bpf: tracex2: Replace kfree_skb from kprobe to tracepoint
+Date: Wed, 28 Aug 2024 09:18:34 +0800
+X-OQ-MSGID: <20240828011834.503297-1-rtoax@foxmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Tue, 2024-08-27 at 02:45 +0000, Billy Tsai wrote:
-> Hi Andrew,
->=20
-> Thanks for your suggestion. As I understand it, you=E2=80=99re suggesting=
- that this driver should share the
-> common parts with aspeed-gpio.c, correct?
-> However, I don=E2=80=99t think that=E2=80=99s necessary. You can treat it=
- as a new GPIO controller because the
-> register layout is quite different from aspeed-gpio.c.
+From: Rong Tao <rongtao@cestc.cn>
 
-Well, we could, but both share a lot of the same capabilities. aspeed-
-gpio.c already has to abstract over the register layout because it's so
-haphazard. What I was suggesting was to formalise this a bit more by
-converting some of the inline functions and macros to callbacks that
-can be implemented for each controller.
+In commit ba8de796baf4 ("net: introduce sk_skb_reason_drop function")
+kfree_skb_reason() becomes an inline function and cannot be traced.
+We can use the stable tracepoint kfree_skb to get 'ip'.
 
-I haven't tried it myself, but it feels feasible?
+Link: https://github.com/torvalds/linux/commit/ba8de796baf4bdc03530774fb284fe3c97875566
+Signed-off-by: Rong Tao <rongtao@cestc.cn>
+---
+ samples/bpf/tracex2.bpf.c | 13 ++++---------
+ 1 file changed, 4 insertions(+), 9 deletions(-)
 
-> If I try to make it common, the driver could become too complex, potentia=
-lly requiring a separate
-> gpio-aspeed-common.c and necessitating changes to the existing aspeed-gpi=
-o.c
+diff --git a/samples/bpf/tracex2.bpf.c b/samples/bpf/tracex2.bpf.c
+index 0a5c75b367be..dc3d91b65a6f 100644
+--- a/samples/bpf/tracex2.bpf.c
++++ b/samples/bpf/tracex2.bpf.c
+@@ -17,20 +17,15 @@ struct {
+ 	__uint(max_entries, 1024);
+ } my_map SEC(".maps");
+ 
+-/* kprobe is NOT a stable ABI. If kernel internals change this bpf+kprobe
+- * example will no longer be meaningful
+- */
+-SEC("kprobe/kfree_skb_reason")
+-int bpf_prog2(struct pt_regs *ctx)
++SEC("tracepoint/skb/kfree_skb")
++int bpf_prog1(struct trace_event_raw_kfree_skb *ctx)
+ {
+ 	long loc = 0;
+ 	long init_val = 1;
+ 	long *value;
+ 
+-	/* read ip of kfree_skb_reason caller.
+-	 * non-portable version of __builtin_return_address(0)
+-	 */
+-	BPF_KPROBE_READ_RET_IP(loc, ctx);
++	/* read ip */
++	loc = (long)ctx->location;
+ 
+ 	value = bpf_map_lookup_elem(&my_map, &loc);
+ 	if (value)
+-- 
+2.46.0
 
-I felt the trade-off between the volume of copy/paste and the
-complexity of adding a few callbacks weighed in favour of the latter.
-
-Also, given the volume of copy/paste, I think it would be best to
-retain the copyright information from aspeed-gpio.c if the outcome is
-these must be separate drivers.
-
-Many of the changes seemed to be dealing with the difference between
-`struct aspeed_gpio` and `struct aspeed_gpio_g7`, which might be
-addressed by some careful struct design and use of container_of().
-
-> Maybe the discussion of merging aspeed-gpio.c and this driver can be post=
-poned until after this one
-> is accepted?
-
-Yeah, but I suspect the discussion just won't happen if this is merged.
-Now's the time to get consensus on a way forward, while the driver is
-yet to be merged.
-
-> > > +
-> > > +static const int debounce_timers[4] =3D { 0x00, 0x04, 0x00, 0x08 };
->=20
-> > This is all largely copy/pasted from gpio-aspeed.c. Can we split it out
-> > and share the definitions?
->=20
-> Do you mean moving them into the common header file?=20
-> The structure is fine, but I=E2=80=99m unsure about the debounce_timers.=
-=20
-> It=E2=80=99s a static array, so I don=E2=80=99t think it needs to be shar=
-ed with gpio-aspeed.c.
-
-That can be changed though? An appropriate pointer can be point into
-the driver struct.
-
-> > > +static int aspeed_gpio_g7_get(struct gpio_chip *gc, unsigned int off=
-set)
-> > > +{
-> > > +     struct aspeed_gpio_g7 *gpio =3D gpiochip_get_data(gc);
-> > > +     void __iomem *addr =3D gpio->base + GPIO_G7_CTRL_REG_OFFSET(off=
-set);
-> > > +
-> > > +     return !!(field_get(GPIO_G7_IN_DATA, ioread32(addr)));
-> > > +}
-> > > +
-> > > +static void __aspeed_gpio_g7_set(struct gpio_chip *gc, unsigned int =
-offset, int val)
-> > > +{
-> > > +     struct aspeed_gpio_g7 *gpio =3D gpiochip_get_data(gc);
-> > > +     void __iomem *addr =3D gpio->base + GPIO_G7_CTRL_REG_OFFSET(off=
-set);
->=20
-> > The rest of the implementation of this function is broadly the same as
-> > in gpio-aspeed.c. The main difference is accounting for the address to
-> > access and the bit to whack. If we define some callbacks that replace
-> > GPIO_BANK()/to_bank() and GPIO_BIT() that can account for the
-> > differences in register layout, perhaps this could be common?
->=20
-> > The trade-off is some complexity vs copy-paste, but there does seem to
-> > be an awful lot of the latter with only minor changes so far.
->=20
-> Do you mean I need to create a gpio-aspeed-common.c, define the necessary=
- common APIs,
-> and have gpio-aspeed.c and this driver hook into those APIs?
-
-Well, you may not have to do that if we can put it all in gpio-
-aspeed.c?
-
-My suspicion is the g7 support could largely become some well-chosen
-callbacks.
-
-Andrew
 
