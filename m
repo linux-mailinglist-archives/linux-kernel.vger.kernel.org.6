@@ -1,119 +1,131 @@
-Return-Path: <linux-kernel+bounces-305616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A33EF963139
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 21:49:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3021B96313B
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 21:49:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 465401F26109
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 19:49:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 636E11C23BD2
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 19:49:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5B5C1ABED7;
-	Wed, 28 Aug 2024 19:49:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 812C41AC43F;
+	Wed, 28 Aug 2024 19:49:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mCusYVUw"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="bAqfn67/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93E7E125BA
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 19:49:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A874125BA
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 19:49:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724874564; cv=none; b=qAEcb4hfo/kkRHj+n49t3fdT4rLIg6/0Lru7AwmrQPBMmmmwi9IekciNr8iDyJwSoVvoY48qjqLup8DAh1MWs5iTSon0W65q2/r0RlN10hmbrKVSy7jKYDvwggW0QxHMEOdyoXkSBAZ/dix9FkpPP2pvOEe2wgoyNalXyWaGwSE=
+	t=1724874572; cv=none; b=cH50HSI9WYktCJDC4rqKryhbcIwyAQ885AH7wYevmJkG9QvTnOtSIZOJ5jWvmV9V6YWvag/cdhns7ZNicASyElKNl47khzeVXBonCi+qaE2o9lPlHKMSFq0dNFSZlqY4SRUs8ebR2skrRuyvy9UQPWOACsjlQdoGCOjIUz4jc8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724874564; c=relaxed/simple;
-	bh=iCpcqPThAPmZLodK+uZfdz3ZGn7+GEtpWdlwHYhSoSw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TCu/PQcKKQyZvauBEA0oUejrkGvPD65LEHZHRXYoxtoFgpRjSimljJiOR1UL3mL7gsGcQ1Ed42AM022BZvrIZedP+B9XuT2SEL+52kj/oollfFkNoh/DKBsdrGcRm4O1qvqHGhap5/A332kH731JNpjUQkmBdzQNDpJCh9LD2ps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mCusYVUw; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5334fdabefbso880836e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 12:49:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724874561; x=1725479361; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=WfREJfZgElEweHVwJvSVEk/D+r54zJQcIccfYEdIZSM=;
-        b=mCusYVUwhkOoWoZ7j3rRMP0aB6XymUwG3Nm3ngxRb5Kf+WyEQ7vQT2kxWYj7ejOKGQ
-         mXisgKT1Q3Q/tVY6bq7qla00l86iqNZPDbsYpv4eGkRtxDabeALMxyuvSAt/cg9O4gXm
-         CGBG/JWAT9d1Jx27KwioaHCgqdQXBjTsTGsurBwSiqAjGHd4wVJjn/+1UTe4ObDjfnaR
-         xmWHe0l1QYpDt0uUlk5c6Ak65AN4297l4FMZxgBYkYVGKgXHcsG/aEb+7JRs5xoxI+pw
-         Zaa8/9NsRdzr+Xvym1ITN/eLqnvac3QHRysQmZQ2hDmflO9onPZ3OJyEfcV6zHF1vczm
-         Qmrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724874561; x=1725479361;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WfREJfZgElEweHVwJvSVEk/D+r54zJQcIccfYEdIZSM=;
-        b=EHBEvy3+b026bGYY0sCoC8lyfQ78MrGqfi7IkmrZSZFtmb09tT9qjDPh7jWTE19Brm
-         BUYxxvJoFmToKd/Ab/11UWNIc5HC2TSJAmz8kMge6yYJ7XeCA8UrF/B+bBWdIgWzxmTc
-         u6gUjfcB83FE5UffHtO0jQY1sx566gpBGgOp3BNeJi69MKFk8sfxhv7gGSsHwwBDFXS/
-         dRQNfDxJFONmb/G5B9X3VbXDIO8TfNS4ProiKoNtPlkF9KCb0Ix4VYXItXJfgBcdKbAZ
-         YVNv9RKHdgIwuc6tMbpmAbyy6/fKVgC1zv204o+iFE4cXPqRYnZyDhAHfy3j+a6trrZU
-         mfFw==
-X-Forwarded-Encrypted: i=1; AJvYcCUhG5jdWNzHbF5Vj4vsyEDZGz0aWeeJGBhjggWurVJcQwSX1HQOGd2Tt6L8InmcOztw6AY6YV+FXWlo/+8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YysPe5XiRbsO2zq/gn0JE+IEDH6FOacqoMEMFU6qk7B9b87L+6f
-	rZUyyLrs/t4n++Rs1q1HBsjBv3JtOjRBr15pGfN5TI+NoajH/rZVAJsMu5LAJmE=
-X-Google-Smtp-Source: AGHT+IFR6avFKpr2wHph931hDBC2z+rTIPVUVlBNS/Uou013Y8gMhOrlNprLkZ/3P1WLSkHYPJBA7Q==
-X-Received: by 2002:a05:6512:3b97:b0:52f:228:cf91 with SMTP id 2adb3069b0e04-5353eba3ee1mr78077e87.1.1724874560042;
-        Wed, 28 Aug 2024 12:49:20 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5334ea99933sm2248052e87.309.2024.08.28.12.49.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2024 12:49:19 -0700 (PDT)
-Date: Wed, 28 Aug 2024 22:49:18 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
-	Amol Maheshwari <amahesh@qti.qualcomm.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Jassi Brar <jassisinghbrar@gmail.com>, 
-	Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
-	Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Tengfei Fan <quic_tengfan@quicinc.com>, 
-	Ling Xu <quic_lxu5@quicinc.com>
-Subject: Re: [PATCH v4 4/6] misc: fastrpc: Add support for cdsp1 remoteproc
-Message-ID: <vuviyau3vbmf4l4mfb47lyh2n2t65fy3j2lxrg5jtyuz34kil2@q5ytlfdcmf7x>
-References: <20240805-topic-sa8775p-iot-remoteproc-v4-0-86affdc72c04@linaro.org>
- <20240805-topic-sa8775p-iot-remoteproc-v4-4-86affdc72c04@linaro.org>
+	s=arc-20240116; t=1724874572; c=relaxed/simple;
+	bh=uDcyA+6qAGpnE7k34XCBcDJUi1OcpU22jJPtmtYD+cE=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=M/Z+fLwrDK0fBO84GoxywX356HerBNPmJrte3CFb95PGOSLfcmlGLdCnigbmbmaFT1GOE68m/Q84BBOt3NnDPRhKDHbT5q/9wYeIu7b54jqDTf3pKELBWWpttPAs/Ji0azS3IOmZju3lNx+/OvUEkI7iB4vGxLT0Rfnspe1d2+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=bAqfn67/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADCF1C4CEC0;
+	Wed, 28 Aug 2024 19:49:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1724874571;
+	bh=uDcyA+6qAGpnE7k34XCBcDJUi1OcpU22jJPtmtYD+cE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=bAqfn67/dDcTgES+k7FqIUMgXnc/WDD1hNBIq5/avDt5Vbjx2Eoq+W1RAC9vJWQLP
+	 BCOIBFSfrDXHLxehVeIMf6qHDiDbAPhzt/a2QhbzGNHcQhMg6JAH9yzad/8E+6MvEx
+	 9/pTw74pqILRUSjQNKKr3lef+Wn3S9aSiK4kuVPw=
+Date: Wed, 28 Aug 2024 12:49:29 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: muchun.song@linux.dev, dave@stgolabs.net, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org
+Subject: Re: [PATCH] mm/hugetlb: sort out global lock annotations
+Message-Id: <20240828124929.db332259c2afad1e9e545b1f@linux-foundation.org>
+In-Reply-To: <20240828160704.1425767-1-mjguzik@gmail.com>
+References: <20240828160704.1425767-1-mjguzik@gmail.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240805-topic-sa8775p-iot-remoteproc-v4-4-86affdc72c04@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 05, 2024 at 07:08:05PM GMT, Bartosz Golaszewski wrote:
-> From: Ling Xu <quic_lxu5@quicinc.com>
-> 
-> The fastrpc supports 4 remoteproc. There are some products which
-> support cdsp1 remoteproc. Add changes to support cdsp1 remoteproc.
+On Wed, 28 Aug 2024 18:07:04 +0200 Mateusz Guzik <mjguzik@gmail.com> wrote:
 
-I'd very much prefer to see this abstracted somehow, but it seems
-impossible with the current driver code.
+> The mutex array pointer shares a cacheline with the spinlock:
+> ffffffff84187480 B hugetlb_fault_mutex_table
+> ffffffff84187488 B hugetlb_lock
 
-> 
-> Signed-off-by: Ling Xu <quic_lxu5@quicinc.com>
-> [Bartosz: ported to mainline]
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> ---
->  drivers/misc/fastrpc.c | 10 ++++++----
->  1 file changed, 6 insertions(+), 4 deletions(-)
-> 
+Fair enough.  My x86_64 defconfig now has
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+num_fault_mutexes:
+	.zero	4
+	.globl	hugetlb_lock
+	.section	.data..cacheline_aligned,"aw"
+	.align 64
+	.type	hugetlb_lock, @object
+	.size	hugetlb_lock, 4
+hugetlb_lock:
+	.zero	4
+	.section	.init.data
+	.align 32
+	.type	default_hugepages_in_node, @object
+	.size	default_hugepages_in_node, 256
+default_hugepages_in_node:
+	.zero	256
+	.type	parsed_default_hugepagesz, @object
+	.size	parsed_default_hugepagesz, 1
+
+which looks good.
+
+> --- a/mm/hugetlb.c
+> +++ b/mm/hugetlb.c
+> @@ -72,14 +72,14 @@ static unsigned int default_hugepages_in_node[MAX_NUMNODES] __initdata;
+>   * Protects updates to hugepage_freelists, hugepage_activelist, nr_huge_pages,
+>   * free_huge_pages, and surplus_huge_pages.
+>   */
+> -DEFINE_SPINLOCK(hugetlb_lock);
+> +__cacheline_aligned_in_smp DEFINE_SPINLOCK(hugetlb_lock);
+>  
+>  /*
+>   * Serializes faults on the same logical page.  This is used to
+>   * prevent spurious OOMs when the hugepage pool is fully utilized.
+>   */
+> -static int num_fault_mutexes;
+> -struct mutex *hugetlb_fault_mutex_table ____cacheline_aligned_in_smp;
+> +static __ro_after_init int num_fault_mutexes;
+> +__ro_after_init struct mutex *hugetlb_fault_mutex_table;
+
+It's conventional (within MM, at least) to put the section thing at the
+end of the definition, so tweak:
+
+--- a/mm/hugetlb.c~mm-hugetlb-sort-out-global-lock-annotations-fix
++++ a/mm/hugetlb.c
+@@ -72,14 +72,14 @@ static unsigned int default_hugepages_in
+  * Protects updates to hugepage_freelists, hugepage_activelist, nr_huge_pages,
+  * free_huge_pages, and surplus_huge_pages.
+  */
+-__cacheline_aligned_in_smp DEFINE_SPINLOCK(hugetlb_lock);
++DEFINE_SPINLOCK(hugetlb_lock) __cacheline_aligned_in_smp;
+ 
+ /*
+  * Serializes faults on the same logical page.  This is used to
+  * prevent spurious OOMs when the hugepage pool is fully utilized.
+  */
+-static __ro_after_init int num_fault_mutexes;
+-__ro_after_init struct mutex *hugetlb_fault_mutex_table;
++static int num_fault_mutexes __ro_after_init;
++struct mutex *hugetlb_fault_mutex_table __ro_after_init;
+ 
+ /* Forward declaration */
+ static int hugetlb_acct_memory(struct hstate *h, long delta);
+_
 
 
--- 
-With best wishes
-Dmitry
 
