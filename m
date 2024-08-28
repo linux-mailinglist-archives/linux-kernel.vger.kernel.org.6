@@ -1,166 +1,167 @@
-Return-Path: <linux-kernel+bounces-305719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA60596335B
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 23:02:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51D9896335D
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 23:03:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49AE61F21B7D
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 21:02:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D07D41F21B81
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 21:03:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 528A71AC8B0;
-	Wed, 28 Aug 2024 21:01:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 919CE1AC89F;
+	Wed, 28 Aug 2024 21:02:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SBp4eS4t"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PI8p9cA+"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B48EC1AC43B
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 21:01:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AEB6158A26
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 21:02:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724878913; cv=none; b=oB48lGbHCb0S03cgQc/s1d8xyaYL3QSTsUBlUMYQ0Wnt+x28Fpmzf6cN9HKPXnah751dBqp9H3IittW+JcKllYBT4LHd9XsWj7KDtGMU+EmRchNue6WQk9sO+hxv5RGZauyHUtS0h1Y5fw9sBxln84e22lsD+lo2tcenJYswMac=
+	t=1724878975; cv=none; b=DOS3/PH5j19IRiNQfjYFHelnehJs1fWywkZsIz10UlijVzX8eQPtqUUCDUyUQaVa4ipmtx9gspDzqGM0rGvVkMltsoHAIeFIXilPoplFySldBNcTuOriFmDu+rsDRSuw8t7whI545RNd4LWmJm1QAkLA2bhuSOpzU83T6pkRA+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724878913; c=relaxed/simple;
-	bh=dlIRFRRqOUfbBTTzHCw3bIRHgjbd1gyMfANoQGpbubA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JdCxDjG98RqIeXUBuuk7bymnAvifANI55I3HBBvvSm72VFiKCg5fCsbeEWh0jY8ADKkv8lipirD32rwVZ2R+Zs53tODyiZ58EwAnpOsaiZzaLRtRv8mkkeAi3JOBL2KqmkVGLEEwyXFrYeKG00Xwz4hsbtiIc5KFzB7rjbzLIrw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SBp4eS4t; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5353cd18c20so659750e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 14:01:51 -0700 (PDT)
+	s=arc-20240116; t=1724878975; c=relaxed/simple;
+	bh=mJRgKkDiz+7y4GSw46vtKeS0O1aFErkLK7gJELgpE74=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pYE8XU81XfFHx4XPSLDNVLJthvU5NNiEY0OT1muhc+ATXorUOZOdyGq5gKEWYJHMGjUTP/hh9q1VICpsCyNLOb/Q9D9IvOGI/2dRjS43o2L1NlrLIAoCENsY+1IQZ2AGkChdDqrLyBrcRvxCkTOxo8qwQRikbfE++vBY7hGqgZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PI8p9cA+; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5bed83488b6so8234427a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 14:02:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724878910; x=1725483710; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=9OrGNAAWQoFpJEHjcXRj5aD9CPBwOs7tFWfZHpIv76g=;
-        b=SBp4eS4tsGwMuVTZFDCCmivDqNijPni3pfsAhRtP02LB+kGcfeK7g6EKa3LVc+TVcL
-         cf5Xs9TBJ8XD0FJvjt0/SLRK7kFQNd0vVW0gInMmu2BX8dtYJJyQSHIUWNL1b+P+mpcn
-         iete7iFnM9aJ5p+gMvuIkuK6IV7kC2IIlMkJddZDozSbfi2D6ky2SDWtbicdJhcEkgTm
-         pNG8EGdIJtMtV0FDvbYX3Tq+0Et6n8L0AFFMqImpA5jEB3kM0vSk/U6F26JgzWMejPWT
-         JzOPuDXTfE3IkrkY1v7yU3wudM0Ce8uRxd6FyxGtw6kThBACi4ZLV4ktuFqa8Tkrzo5O
-         KTtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724878910; x=1725483710;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1724878972; x=1725483772; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=9OrGNAAWQoFpJEHjcXRj5aD9CPBwOs7tFWfZHpIv76g=;
-        b=bnpqs7L6KEiUEykzieD5dhrfvtSKhU9iM0i2QyDV5FZElX3e56Yq1SoWcbaAaR77ie
-         595gzUXqJhR/cbPRLOs2ZL+nY5VKKqvzdgBZqSYom/NPtijJMbojdZ3U0rflfJMKSMwm
-         fE4igigelC3NGJHSiyTl3zFIjQmezMxCFhQclfoz8nREl2CR1ghkb4RJQjGP+J7L7pAN
-         aIO36MGjKL6DoMvP2etEHMuZ0xgSo51iK/rxFYB8JgwkAi0R3IRZldp8f177e2OAd046
-         QDufJM7zwDJId6RAHfmzRpy6QDpKz5OWywsgM2XYK9BJznb3PKUSdfrsVJif9Wc4e0xH
-         yPiA==
-X-Forwarded-Encrypted: i=1; AJvYcCXJrOtY13sjYxUkX/zY7XDkcg6SaISBipsSgNZLvqFs76sWtaFYJS5NvI/wSfvRtl/comGiO5jBRv8CUSQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQjeRkVUhi14FAKiqoET+p5lF+vQyDjoJd0GJC5BxYDTVmB1DG
-	GDA93oOABz7u/7+IzptKbiSymdCUXX3BUp8GXkCDwXGB8xq8962JinuInqXFAYo=
-X-Google-Smtp-Source: AGHT+IGiHuoKMiiPcr4b2w40l5MMLxSg/HrhC7ywebXGvK5HJJmHbS3Pb68beruYP+cc7V41QUN+Cg==
-X-Received: by 2002:a05:6512:ba1:b0:530:c1fb:51a1 with SMTP id 2adb3069b0e04-5353e56764fmr263510e87.17.1724878909295;
-        Wed, 28 Aug 2024 14:01:49 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5334ea366desm2283755e87.82.2024.08.28.14.01.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2024 14:01:48 -0700 (PDT)
-Date: Thu, 29 Aug 2024 00:01:47 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Varadarajan Narayanan <quic_varada@quicinc.com>
-Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, 
-	ilia.lin@kernel.org, rafael@kernel.org, viresh.kumar@linaro.org, 
-	ulf.hansson@linaro.org, linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
-	Praveenkumar I <quic_ipkumar@quicinc.com>
-Subject: Re: [PATCH v7 6/7] soc: qcom: cpr3: Add IPQ9574 definitions
-Message-ID: <fmzjfzksja24pev7bkjdr2kelp7djq3jlwib2dauzop7em7tkl@gurroyrzeqqm>
-References: <20240820055705.3922754-1-quic_varada@quicinc.com>
- <20240820055705.3922754-7-quic_varada@quicinc.com>
+        bh=pCaH1KaRawGByB0NtRqHaeIEYFf5awkEOY5yS4shy5k=;
+        b=PI8p9cA+f//Yb/InNSG4kqvq5IO0SxMNQbzTBa9hkMiuhLEJQwOiBRpanDRZjmlWbP
+         CXTQJFyQKe8AWf17sQFqU0hFRED7LPb1mSnRPcUWHUHUFC4IMi0MZi8nxEdjyPChlOVP
+         96x2K1zE5H8Ovps4Z0Z56eQRzb6lGe1clDxZ8EECeSZbqBd2X3Rz1s11b61OtTrNMOyY
+         /u3+lT04wFCQp32nm8h2bqvcoamox/Kigv2KKKDXKF3Vm2vpg1rF3FntMpPCDNNiwsx4
+         PQm5dZF0QE5So91xUksoJwAuNFz1Uf2VpesdnVCwLOedBQBb4633/KVwiJ3YEQuIzGAC
+         rRfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724878972; x=1725483772;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pCaH1KaRawGByB0NtRqHaeIEYFf5awkEOY5yS4shy5k=;
+        b=w0ZK6csi7pRVgCeaLx3wNkHPMUCD4YTVGHjL679rTqSV1aoQSxrcVZe3/nuNv0PuZl
+         /b2hQTBj/ck2WR5J4re2+DvRdT60BITmGvRYI9SgvNI9qM2XzLYI+0O4jRYWG6Ue8vf2
+         twzdYbc50+jfUL7uAmhBPRVosP8xCPooWQ6oWkyPPF8GYcBlCAt+l6QVR7ASmywvgSHw
+         LchQ3j0n1D8VB3cID1peR91aMiRlwOJLujbWDzZIhHKLuHrAZTVZm2dOjc69nPImk9bj
+         vtkAflM7Yc4LTb2PHDZQjdocc9vAMdbjbg/srzyArvpcEYJByX0elNJZjooxikrDv5W+
+         gJ3g==
+X-Forwarded-Encrypted: i=1; AJvYcCWPa2eXtvwFfY5R8qz62vTvTMgx2wWHv8p7fvYgQZbYOIZ7j9Y48OXIeF2eWoOVqgkc0TANz98W9H7KT3g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7D0jPI1EhLYpgbbjYcD8vPuIRRigNbB/g7RUumKl9sqgA3fRT
+	fWOHa+CNg2p3ZhZE6TWFCXuR1Sx/ZbvZAOmuugMkAAbXj8L7ZfdgkEPoMOQHMhIi9cUlE6ScBeL
+	GNTxSLJQTOuhzAj5ZYDl7QxnXjGFd3yuV
+X-Google-Smtp-Source: AGHT+IFhHK8zbeXAR3a4yCGVr6+EUruQt5vkVACUuRVky5v8fzuR+SJIDe3mMrBw7+3ZADyklUCu9NrrA7X2w/xWhEY=
+X-Received: by 2002:a17:907:3ea2:b0:a7a:cc10:667c with SMTP id
+ a640c23a62f3a-a897f835ca1mr52551166b.16.1724878971928; Wed, 28 Aug 2024
+ 14:02:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240820055705.3922754-7-quic_varada@quicinc.com>
+References: <20240828160704.1425767-1-mjguzik@gmail.com> <20240828124929.db332259c2afad1e9e545b1f@linux-foundation.org>
+ <CAGudoHE73o5oK77iOFKqH4D4Cz6t9TAu4882+_F9vHH7muNH-A@mail.gmail.com> <20240828134435.443d7f7ec65eba1db4436434@linux-foundation.org>
+In-Reply-To: <20240828134435.443d7f7ec65eba1db4436434@linux-foundation.org>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Wed, 28 Aug 2024 23:02:39 +0200
+Message-ID: <CAGudoHH3hFu=7_ouHz+HY8djBxZj3-Zw30gE-F0H_2t1=sv_0A@mail.gmail.com>
+Subject: Re: [PATCH] mm/hugetlb: sort out global lock annotations
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: muchun.song@linux.dev, dave@stgolabs.net, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 20, 2024 at 11:27:04AM GMT, Varadarajan Narayanan wrote:
-> From: Praveenkumar I <quic_ipkumar@quicinc.com>
-> 
-> * Add thread, scaling factor, CPR descriptor defines to enable
->   CPR on IPQ9574.
-> 
-> * Skip 'acc' usage since IPQ9574 does not have acc
-> 
-> Signed-off-by: Praveenkumar I <quic_ipkumar@quicinc.com>
-> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> ---
-> v7: Add rangeuV vaues
->     Fix IRQ handler 'argument'
-> 
-> v6: Rebase on top of Konrad's v15
-> 	- https://lore.kernel.org/lkml/20240708-topic-cpr3h-v15-0-5bc8b8936489@linaro.org/T/
-> 
-> v5: Move the 'acc_desc' usage check to first patch
-> 
-> v4: s/silver//, s/cprh/cpr4/
->     Skip 'acc' related code as IPQ9574 does not have acc
-> 
-> v3: Fix patch author
->     Included below information in cover letter
-> v2: Fix Signed-off-by order
-> Depends:
-> 	[1] https://lore.kernel.org/lkml/20230217-topic-cpr3h-v14-0-9fd23241493d@linaro.org/T/
-> 	[2] https://github.com/quic-varada/cpr/commits/konrad/
-> ---
->  drivers/pmdomain/qcom/cpr3.c | 142 ++++++++++++++++++++++++++++++++++-
->  1 file changed, 140 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pmdomain/qcom/cpr3.c b/drivers/pmdomain/qcom/cpr3.c
-> index d594bc79be1c..51c8b5766ccd 100644
-> --- a/drivers/pmdomain/qcom/cpr3.c
-> +++ b/drivers/pmdomain/qcom/cpr3.c
-> @@ -2461,7 +2597,7 @@ static int cpr_thread_init(struct cpr_drv *drv, int tid)
->  						NULL, cpr_irq_handler,
->  						IRQF_ONESHOT |
->  						IRQF_TRIGGER_RISING,
-> -						"cpr", drv);
-> +						"cpr", thread);
+On Wed, Aug 28, 2024 at 10:44=E2=80=AFPM Andrew Morton
+<akpm@linux-foundation.org> wrote:
+>
+> On Wed, 28 Aug 2024 22:13:49 +0200 Mateusz Guzik <mjguzik@gmail.com> wrot=
+e:
+>
+> > > It's conventional (within MM, at least) to put the section thing at t=
+he
+> > > end of the definition, so tweak:
+> > >
+> > > --- a/mm/hugetlb.c~mm-hugetlb-sort-out-global-lock-annotations-fix
+> > > +++ a/mm/hugetlb.c
+> > > @@ -72,14 +72,14 @@ static unsigned int default_hugepages_in
+> > >   * Protects updates to hugepage_freelists, hugepage_activelist, nr_h=
+uge_pages,
+> > >   * free_huge_pages, and surplus_huge_pages.
+> > >   */
+> > > -__cacheline_aligned_in_smp DEFINE_SPINLOCK(hugetlb_lock);
+> > > +DEFINE_SPINLOCK(hugetlb_lock) __cacheline_aligned_in_smp;
+> > >
+> >
+> > I tried things in this order and this does not compile for me:
+> > In file included from ./arch/x86/include/asm/current.h:10,
+> >                  from ./arch/x86/include/asm/preempt.h:7,
+> >                  from ./include/linux/preempt.h:79,
+> >                  from ./include/linux/spinlock.h:56,
+> >                  from ./include/linux/mmzone.h:8,
+> >                  from ./include/linux/gfp.h:7,
+> >                  from ./include/linux/mm.h:7,
+> >                  from mm/hugetlb.c:8:
+> > ./include/linux/cache.h:80:3: error: expected =E2=80=98,=E2=80=99 or =
+=E2=80=98;=E2=80=99 before =E2=80=98__attribute__=E2=80=99
+> >    80 |   __attribute__((__aligned__(SMP_CACHE_BYTES),                 =
+ \
+> >       |   ^~~~~~~~~~~~~
+> > ./include/linux/cache.h:86:36: note: in expansion of macro =E2=80=98__c=
+acheline_aligned=E2=80=99
+> >    86 | #define __cacheline_aligned_in_smp __cacheline_aligned
+> >       |                                    ^~~~~~~~~~~~~~~~~~~
+> > mm/hugetlb.c:75:31: note: in expansion of macro =E2=80=98__cacheline_al=
+igned_in_smp=E2=80=99
+> >    75 | DEFINE_SPINLOCK(hugetlb_lock) __cacheline_aligned_in_smp;
+> >       |                               ^~~~~~~~~~~~~~~~~~~~~~~~~~
+>
+> Well that's annoying.  It's because DEFINE_SPINLOCK includes an initializ=
+er.
+>
+> --- a/mm/hugetlb.c~mm-hugetlb-sort-out-global-lock-annotations-fix-fix
+> +++ a/mm/hugetlb.c
+> @@ -72,7 +72,7 @@ static unsigned int default_hugepages_in
+>   * Protects updates to hugepage_freelists, hugepage_activelist, nr_huge_=
+pages,
+>   * free_huge_pages, and surplus_huge_pages.
+>   */
+> -DEFINE_SPINLOCK(hugetlb_lock) __cacheline_aligned_in_smp;
+> +spinlock_t hugetlb_lock __cacheline_aligned_in_smp =3D __SPIN_LOCK_UNLOC=
+KED(hugetlb_lock);
+>
+>  /*
+>   * Serializes faults on the same logical page.  This is used to
+> _
+>
+> We'd need a new DEFINE_SPINLOCK_ALIGNED() or something.
+>
+> Ho hum, I'll fix.
 
-Unrelated change => separate patch.
+that would be a nice addition
 
-LGTM otherwise.
+so as is this triviality grew to 3 patches which I consider rather
+extreme, and the middle one breaks the build
 
->  		if (ret)
->  			goto fail;
->  	}
-> @@ -2544,7 +2680,8 @@ static int cpr_probe(struct platform_device *pdev)
->  	desc = data->cpr_desc;
->  
->  	/* CPRh disallows MEM-ACC access from the HLOS */
-> -	if (!(data->acc_desc || desc->cpr_type == CTRL_TYPE_CPRH))
-> +	if (!(data->acc_desc || desc->cpr_type == CTRL_TYPE_CPRH ||
-> +	      of_device_is_compatible(dev->of_node, "qcom,ipq9574-cpr4")))
->  		return dev_err_probe(dev, -EINVAL, "Invalid ACC data\n");
->  
->  	drv = devm_kzalloc(dev, sizeof(*drv), GFP_KERNEL);
-> @@ -2694,6 +2831,7 @@ static void cpr_remove(struct platform_device *pdev)
->  }
->  
->  static const struct of_device_id cpr3_match_table[] = {
-> +	{ .compatible = "qcom,ipq9574-cpr4", .data = &ipq9574_cpr_acc_desc },
->  	{ .compatible = "qcom,msm8998-cprh", .data = &msm8998_cpr_acc_desc },
->  	{ .compatible = "qcom,sdm630-cprh", .data = &sdm630_cpr_acc_desc },
->  	{ }
-> -- 
-> 2.34.1
-> 
+In the vfs land this would get squashed into one commit with a
+maintainer note that some tweaking was performed, which I would
+suggest here
 
--- 
-With best wishes
-Dmitry
+alternatively, given the trivial nature of the entire thing, if you
+add DEFINE_SPINLOCK_ALIGNED and do the annotation tweak, you may as
+well commit this as your own patch. I don't need any credit
+
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
