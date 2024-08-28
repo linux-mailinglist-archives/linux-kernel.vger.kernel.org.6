@@ -1,132 +1,231 @@
-Return-Path: <linux-kernel+bounces-304817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0413F962549
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 12:53:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 656C396254A
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 12:55:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F7A21F24969
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 10:53:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22E86282FEB
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 10:55:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3895416C686;
-	Wed, 28 Aug 2024 10:53:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C4C816C687;
+	Wed, 28 Aug 2024 10:55:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SrYfdQ5x"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Q5KfTMkc";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="YJt1uXAz";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="aI4r+ML2";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="XECcFiio"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E587C145323;
-	Wed, 28 Aug 2024 10:53:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB7EF16A37C;
+	Wed, 28 Aug 2024 10:54:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724842396; cv=none; b=CPvZtvwlS9sOOeio9DLUSuWI/JbwuQCsw3OVeRsRn6ys7Hy1QDeKKXRb/EcCDJn/HTwwca7xR1/IJq7/7JRHxNg+F6EFPzHfti5UUN7w1J3CXUtJqdZFzMwlON1ZFrASa4lLPj25pjvdty965zbeP2feTn4P5YVxy/meGkrRn/U=
+	t=1724842501; cv=none; b=qoeaqnI51f2Ufmx7eMDv1EX5GTILBuwChf5V9jBEjZdTbDWurVN4yJFcSGm4zqG+WAWCPUQKwRPFJofAof1hTtDMkD46rwiv8UGFoQQh4bSaTtZEA+ypZGXDP3URiBufEiR8ZrCO2tVP2Zgh7sSIXHmjNWgfn0DePAmkxsvh3Js=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724842396; c=relaxed/simple;
-	bh=HtDkjtaxe3miaxMYMdKc7yS5PMEQcFjoZyJk2VNa5qY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RsMm99Cp9q23pYqzMh8pfMFoTxjMIjpMKS9AruU9h8UJk3cdNjSD7BPk37Kep20CWY9UuJ8vQoX20I8cVCywhqoXPsC1K4X3m/KGW6VXlbjg3WZeyvZoZlWok2EWc3VaVXeQ3NtVMadJVZCVVRVKf/jbr/Q+zGuIFB4fO6At9rs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SrYfdQ5x; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52f01b8738dso5063621e87.1;
-        Wed, 28 Aug 2024 03:53:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724842393; x=1725447193; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=P/oO55OLwIlvvWrft7aZlbidsgbt95mQfK88nVF8lCQ=;
-        b=SrYfdQ5xlVHjxN3lKF9BaNtlTLPc725MUeaoX3GVnLO8bEhY5b/NUjg1bXDfcNqURS
-         W4iukO/5G/tT0oCbVouL0IWmPc0oFx3CAc1JdONWShFHngoGmJR+Yzx1Q6+AH8JUMVp5
-         6L/Gxf6C+m7/it9lt9u1bAmYCz77F+FOD6ivO0r0m3JICsjnZB2gpCx3wMYUhlv/NzXG
-         LfD0EVwvWMboXHkRtbizvLAuJvaZ5YNPaakvS0kMLc5l/Z3wHY4CmV8jpfTPZbVIUlUv
-         CzwJMjoWsCKBUHpA56XyagUgU2CLxS9AibeTAD9ym+qblskvIPsGIUTezmNFx2JcXUX8
-         K/KA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724842393; x=1725447193;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=P/oO55OLwIlvvWrft7aZlbidsgbt95mQfK88nVF8lCQ=;
-        b=rDpmDT07r4jO7js6PQTHLz23mdTqrM+TuGQNOfdq7oZvGrNk7QHR/oqNXbBvE66iSD
-         Wb3purojAfudzdWwdDDZSOniyZqqdPm2yEf9hZ3qyA4evgQcW1+lgBGjHTy6k2gAY2Kh
-         DultHvJeGer+Mn3ExCu+O+1bjOCJTTMskw7w3Au/tSOhFHU4SoKXLROaL6raDPV51F/x
-         8XSVzQcTAUYnp98lgZLBmWXFJ/JXJop4CF2CYbiub/XCAIJWSMqYO+xon5uEOVHvrKYo
-         H60zfjDxRCqWaRftpJErx+5QdWonP3BqA8JzibVC1h12oB+eLVxLHVOcp9qB2vpC47pJ
-         bYwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUtrirS3FUSJE0hKDMr5RsPZjEyYpgHGo2m9f20pxnkj+FVc5wptHKalECuN9yek8EvwYF8ppYReHBiLyPp@vger.kernel.org, AJvYcCXNXZxGjPIlnKO9jrfK32Vod5CBg5und+4Tbm9MlV7xZ7OjAuzep1BV2gFhAKan01y9Li7gHbMdRjab@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqEOaTDSaSug6qGF9Tcdm/sAb/WzFsxJrQ3i0O6YQOU+fPxlo8
-	KmEDQOueOubS5mwwIdk8/yqfKqZyGjYFRV9qHzBqo2PnM2T1xNDx
-X-Google-Smtp-Source: AGHT+IH6mdEjNO8lFcO7gyh2vhdnt9t/44n0EW9WpjQVd0L1g3aWJISkLCKCpMTT1sVFJ9icC9QuHQ==
-X-Received: by 2002:a05:6512:224a:b0:533:47ca:9773 with SMTP id 2adb3069b0e04-534387be915mr12265378e87.57.1724842392155;
-        Wed, 28 Aug 2024 03:53:12 -0700 (PDT)
-Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a86e5489383sm228017066b.20.2024.08.28.03.53.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 28 Aug 2024 03:53:11 -0700 (PDT)
-Message-ID: <1145f7e2-248d-4170-b7be-db694e37fec4@gmail.com>
-Date: Wed, 28 Aug 2024 12:53:08 +0200
+	s=arc-20240116; t=1724842501; c=relaxed/simple;
+	bh=S30IzBTvZMfC9d/ElKB9D8NDvjEbQC5vqnWEYkcJimE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K6rBTJCWlF1jF3rddMT1xaVqjlGVRg1749LmeCzlk2TyuBcE7eJJEOCkl7GHdRSR3pHmURoquuZwHunNeah821Oc54gWqTnmjIAnE+Ct9aKlFlr1u+r655DmgoTfQu95L7VAtj4kS0p8uJ0xu1e30EbaxdAKpCtsvW34Y5ME00o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Q5KfTMkc; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=YJt1uXAz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=aI4r+ML2; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=XECcFiio; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id D77581FC04;
+	Wed, 28 Aug 2024 10:54:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1724842497; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jB9SfZ0mCFHAKCSMP99d+Ef51sDm553ruU6X+bNK0e4=;
+	b=Q5KfTMkcElxsOKMZ5Ba4jG8GXue1FLKsMI9ijOp/XarfGan+v+2/IclBr6AIqygNQunGM+
+	rlMnZVqMqa4GNgQoahyNBUpVMsdvAQARLZAAJgqUeHDCVpDxoUzqVfkOTBG6QMPxcK1T7H
+	KGLbsQ+qwv+fnxL1aw1ZDVSp3eTXmAc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1724842497;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jB9SfZ0mCFHAKCSMP99d+Ef51sDm553ruU6X+bNK0e4=;
+	b=YJt1uXAz6JoaUlOHdVGJhhtV2wIJNkgfJTPMhQ5CzlIN0Oc43oKQv/PecGfuMKdiY41f2a
+	Bbw3w0DEvKBYNTDA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=aI4r+ML2;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=XECcFiio
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1724842496; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jB9SfZ0mCFHAKCSMP99d+Ef51sDm553ruU6X+bNK0e4=;
+	b=aI4r+ML2j7+dnebnwxye7zkvZh2Z7HPi6LfF2sIRMWIsJK0+hyTOqpNtgxMvYtWhd5o9aq
+	F7jNPTAuqAbhlCbeI1srvwE0cCUXbloRLi6zb908Qk3bzKz2gP2ZicQZKcDuoC1GCjgFhb
+	cjGlk/rDAfFdZCcfzO2uSQXmaGNP8yA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1724842496;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jB9SfZ0mCFHAKCSMP99d+Ef51sDm553ruU6X+bNK0e4=;
+	b=XECcFiio7Bpd/X0jaN/LYv6iatUqlmk0pUqV2eTgCgofIky+GtLIHg54nSztsrnSjbbVTO
+	lBVTwS/lUQe8BEBA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BA031138D2;
+	Wed, 28 Aug 2024 10:54:56 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id fBcjLQACz2bNcgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 28 Aug 2024 10:54:56 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 3C6A7A0968; Wed, 28 Aug 2024 12:54:52 +0200 (CEST)
+Date: Wed, 28 Aug 2024 12:54:52 +0200
+From: Jan Kara <jack@suse.cz>
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: Vinicius Peixoto <vpeixoto@lkcamp.dev>,
+	syzbot+8512f3dbd96253ffbe27@syzkaller.appspotmail.com,
+	jack@suse.com, jlbec@evilplan.org, joseph.qi@linux.alibaba.com,
+	linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+	mark@fasheh.com, ocfs2-devel@lists.linux.dev,
+	Julian Sun <sunjunchao2870@gmail.com>,
+	syzkaller-bugs@googlegroups.com, ~lkcamp/discussion@lists.sr.ht
+Subject: Re: [syzbot] [ext4?] [ocfs2?] kernel BUG in jbd2_cleanup_journal_tail
+Message-ID: <20240828105452.z6tqwq47bcnmrevd@quack3>
+References: <00000000000070a66706204e7698@google.com>
+ <d673f289-2385-4949-ac80-f3a502d4deb2@lkcamp.dev>
+ <20240826133208.GB424729@mit.edu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 03/16] arm64: dts: qcom: sc7180: change labels to
- lower-case
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, cros-qcom-dts-watchers@chromium.org
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240828-dts-qcom-label-v1-0-b27b72130247@linaro.org>
- <20240828-dts-qcom-label-v1-3-b27b72130247@linaro.org>
-Content-Language: en-US
-From: Konrad Dybcio <konradybcio@gmail.com>
-In-Reply-To: <20240828-dts-qcom-label-v1-3-b27b72130247@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240826133208.GB424729@mit.edu>
+X-Rspamd-Queue-Id: D77581FC04
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[13];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	MIME_TRACE(0.00)[0:+];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_TLS_LAST(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:dkim];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TAGGED_RCPT(0.00)[8512f3dbd96253ffbe27];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_CC(0.00)[lkcamp.dev,syzkaller.appspotmail.com,suse.com,evilplan.org,linux.alibaba.com,vger.kernel.org,fasheh.com,lists.linux.dev,gmail.com,googlegroups.com,lists.sr.ht];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	SUBJECT_HAS_QUESTION(0.00)[]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -2.51
+X-Spam-Flag: NO
 
-On 28.08.2024 9:17 AM, Krzysztof Kozlowski wrote:
-> DTS coding style expects labels to be lowercase.  No functional impact.
-> Verified with comparing decompiled DTB (dtx_diff and fdtdump+diff).
+On Mon 26-08-24 09:32:08, Theodore Ts'o wrote:
+> On Mon, Aug 26, 2024 at 01:22:54AM -0300, Vinicius Peixoto wrote:
+> > Since the disk data is bogus, journal_reset fails with -EINVAL ("JBD2:
+> > Journal too short (blocks 2-1024)"); this leaves journal->j_head == NULL.
+> > However, jbd2_journal_load clears the JBD2_ABORT flag right before calling
+> > journal_reset. This leads to a problem later when ofcs2_mount_volume tries
+> > to flush the journal as part of the cleanup when aborting the mount
+> > operation:
+> > 
+> >   -> ofcs2_mount_volume (error; goto out_system_inodes)
+> >     -> ofcs2_journal_shutdown
+> >       -> jbd2_journal_flush
+> >         -> jbd2_cleanup_journal_tail (J_ASSERT fails)
+> > ...
+> >
+> > I confirmed that setting the JBD2_ABORT flag in journal_reset before
+> > returning -EINVAL fixes the problem:
+> > 
+> >         static int journal_reset(journal_t *journal)
+> >                         journal_fail_superblock(journal);
+> >         +               journal->j_flags |= JBD2_ABORT;
+> >                         return -EINVAL;
+> > 
+> > You can find a proper patch file + the syzbot re-test result in [1].
+> > However, I'm not entirely sure whether this is the correct decision, and I
+> > wanted to confirm that this is an appropriate solution before sending a
+> > proper patch to the mailing list.
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->  arch/arm64/boot/dts/qcom/sc7180-firmware-tfa.dtsi  |  84 ++---
->  .../arm64/boot/dts/qcom/sc7180-trogdor-coachz.dtsi |   8 +-
->  .../boot/dts/qcom/sc7180-trogdor-homestar.dtsi     |   8 +-
->  .../boot/dts/qcom/sc7180-trogdor-wormdingler.dtsi  |   8 +-
->  arch/arm64/boot/dts/qcom/sc7180.dtsi               | 344 ++++++++++-----------
->  arch/arm64/boot/dts/qcom/sm7125.dtsi               |  16 +-
->  6 files changed, 234 insertions(+), 234 deletions(-)
+> The reason why this isn't an issue with ext4 is because the normal
+> "right" way to do this is if jbd2_journal_load() returns an error, is
+> to call jbd2_journal_destroy() to release the data structures with the
+> journal --- and then don't try to use the journal afterwards.
+
+Yep. OCFS2 guys are actually looking into fixing this in OCFS2
+(https://lore.kernel.org/ocfs2-devel/20240819131120.746077-1-sunjunchao2870@gmail.com/)
+Not sure what's the status though. Julian, did you send v2 of your fix?
+
+								Honza
+
+> The weird thing is that there are two code paths in ocfs2 that calls
+> jbd2_journal_load().  One is in ocfs2_replay_journal() which does what
+> ext4 does.  The other is ocfs2_load_journal() which does *not* do
+> this, and this is the one which you saw in the syzkaller reproducer.
+> It looks like one codepath is used to replay the ocfs2 for some other
+> node, and the is to load (and presumably later, replay) the journal
+> for the mounting node.
 > 
-> diff --git a/arch/arm64/boot/dts/qcom/sc7180-firmware-tfa.dtsi b/arch/arm64/boot/dts/qcom/sc7180-firmware-tfa.dtsi
-> index ee35a454dbf6..f362b6b436ce 100644
-> --- a/arch/arm64/boot/dts/qcom/sc7180-firmware-tfa.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sc7180-firmware-tfa.dtsi
-> @@ -6,82 +6,82 @@
->   * by Qualcomm firmware.
->   */
->  
-> -&CPU0 {
-> +&cpu0 {
->  	/delete-property/ power-domains;
->  	/delete-property/ power-domain-names;
->  
-> -	cpu-idle-states = <&LITTLE_CPU_SLEEP_0
-> -			   &LITTLE_CPU_SLEEP_1
-> -			   &CLUSTER_SLEEP_0>;
-> +	cpu-idle-states = <&LITTLE_cpu_sleep_0
-> +			   &LITTLE_cpu_sleep_1
-> +			   &cluster_sleep_0>;
-
-I suppose this wasn't intended
-
-Konrad
+> There are also some other things which look very confusing, such as the
+> fact that ocfs2_journal_shutdown calls igrab:
+> 
+> 	/* need to inc inode use count - jbd2_journal_destroy will iput. */
+> 	if (!igrab(inode))
+> 		BUG();
+> 
+> ... which is *weird*.  Normaly the journal inode refcount is expected
+> to be bumped before calling jbd2_journal_init_inode() --- which
+> normally is done by an iget() function, and is needed to make sure the
+> journal inode isn't released out from under the jbd2 layer.  It looks
+> like ocfs2 uses the journal inode for other stuff so get the journal
+> inode without calling something like iget().  Which is OK, I guess,
+> but it means that there are a whole bunch of places where it has to
+> call !BUG_ON(igrab(journal->j_inode) before calling
+> jbd2_journal_destroy().  It would seem like the *right* thing to do is
+> to bump the refcount in ocfs2_journal_init(), and if for some reason
+> the igrab fails, it can just return an error early, instead of having
+> to resort to BUG_ON() later, and if you don't realize that you have to
+> do this weird igrab() before calling jbd2_journal_destroy(), you'll
+> end up leaking the journal inode.
+> 
+> Anyway, I think the right thing to do is to restructure how ocfs2
+> calls the jbd2 journal, but that's going to require a more careful
+> examination of the code paths.  Your patch is a bit of a blunt force
+> hack that should be harmless, but it's probably not the best way to
+> fix the problem, although doing it "right" would be more
+> complicated....
+> 
+> 					- Ted
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
