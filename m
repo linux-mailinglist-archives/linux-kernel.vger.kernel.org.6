@@ -1,174 +1,119 @@
-Return-Path: <linux-kernel+bounces-305618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E21296313D
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 21:50:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A33EF963139
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 21:49:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B26D1C23CD4
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 19:50:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 465401F26109
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 19:49:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A025D1AB526;
-	Wed, 28 Aug 2024 19:49:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5B5C1ABED7;
+	Wed, 28 Aug 2024 19:49:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="MLICXYbE"
-Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazolkn19012038.outbound.protection.outlook.com [52.103.32.38])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mCusYVUw"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E01EC1A76CE;
-	Wed, 28 Aug 2024 19:49:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.32.38
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724874581; cv=fail; b=h+4GO3lVCWNkZMd9A0529pY5Vvfqnp3JMrD5GjUgLiYhlw2Ls159i7Wmvwk8RY0FIdxkTLpAQpZaXL5T/ZY/V5GFOfjag72ga9veK/uLinQQafspXad7Y5cWntwfrFN8WTRV27kfg2VgGT5jOTs/hiTiQM8EMoBPpN0L72odpGs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724874581; c=relaxed/simple;
-	bh=ZoKicK9oj7IU7ppsDSDQzxm4RrCh62YDD+8yFpPMz6Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=sq7THUL8b7BRv6SfgjoxLnvJVyFN9AM9/5YUMGCjVxTR2CUNJaIi3e2KpIBZyNmpLhAJw0zIMtLwRdRg6UdRSeclD4t9GFLENYQ88bLzgO1WPNpaCzghvUvuzKF01WoOo1cYpbYlzLikudXAO7OIGPyKlYG/VpAmksmas/82YSE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=MLICXYbE; arc=fail smtp.client-ip=52.103.32.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=XOoKTnBWMh06lqafzERZcca/GQFW1q6eX8Zes+PIcMrV6UtjnmgiRpyggF+xXQau7myYZ3xl+E6e/OGsChDbGelJIcjNCUAfBB0DVMSoUYFsogSwLkU5oLUXvlGT3EiUaA+YHKEcOodOxP/cscXMNmShU8Y8OVxqzqvRa5uKh1L/LHjEi/BrgWmGJFzzINKCCTiM0ulk+HuDu7joJ6gAzCAK2CDIJ+4sj0MAxwHPRcHjruQXZBsxdbyUHMNvZ0ZZ+8b8y64AQQO8rikt/OA1cHj5cX1ZKEiVvujQSDWoOGniKFpPWWk/tpB0Zlvb0eHBVwgYmgOvoiljKFbISkA5Aw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=juFGlL8RNkGyKAsi+4qo6HpF4AJ7y67q2jLQ7zY7Ias=;
- b=RvSH2GHsHQUBeYiCu21m6zx311999ZoF1N7uyX3Npls+Ge2ClNWuny/W+6om7sMS2+Hcg1yi24A92fh1DCS7ho8rb6Qrps7vS9yM5XSSbEcYfkYUBsJyIRlCVJdmzBTAstIni642PS1Q8PAI4HdKeSYjveGh6iQ10QTdLATsLJUu4GkyItkowL0L58jd98W2DjtNnmSYX5sxwCY8v35UCbYgW1ZsvhZVH+mC6esQgdOD2RBv3C4Fw7/oBBLB1nlaOPG8UDDv1V84KLXg4cWOw2eXOb63Otwm0Ysdnv6SXLQU7y++9m61sCwH9i7z5rB7i8Ss0YnMpK1zdoS6Qu7UwA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=juFGlL8RNkGyKAsi+4qo6HpF4AJ7y67q2jLQ7zY7Ias=;
- b=MLICXYbE0TdQNn8S3lgnXDAc+34BnEYPnRAAIixtda9sHchcPF9nwGcO2F2idmaVWOGGkPHom9Uj5PYkQoneGxYjt5XL0RfD4ETszQ8Cm82J8yi11J3cgAyMO+uAapGbnlnQAaezlPAeT7HnLVfZfsrUAQr1qVpIRLOX+hWc8AbhMIRMub44LHwkEHukUAl8TMGYYko2p1RJyYBAy4f8MRbhlciTB9HTLlscJujhIVvcmQLjzOy6Az+yFuorx5JJbW7r2bZoBBp9LzAKOExe58EzQQIpb00VTZDMNjGwo5n1vuUrS2zmEMtvA1QWN0HxrZuwl/hK1/yoGv9I+/7K2g==
-Received: from AM6PR03MB5848.eurprd03.prod.outlook.com (2603:10a6:20b:e4::10)
- by PAWPR03MB9785.eurprd03.prod.outlook.com (2603:10a6:102:2e4::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.24; Wed, 28 Aug
- 2024 19:49:37 +0000
-Received: from AM6PR03MB5848.eurprd03.prod.outlook.com
- ([fe80::4b97:bbdb:e0ac:6f7]) by AM6PR03MB5848.eurprd03.prod.outlook.com
- ([fe80::4b97:bbdb:e0ac:6f7%4]) with mapi id 15.20.7897.021; Wed, 28 Aug 2024
- 19:49:37 +0000
-From: Juntong Deng <juntong.deng@outlook.com>
-To: ast@kernel.org,
-	daniel@iogearbox.net,
-	john.fastabend@gmail.com,
-	andrii@kernel.org,
-	martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	memxor@gmail.com,
-	snorcht@gmail.com
-Cc: bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH bpf-next v2 1/2] bpf: Relax KF_ACQUIRE kfuncs strict type matching constraint
-Date: Wed, 28 Aug 2024 20:48:11 +0100
-Message-ID:
- <AM6PR03MB5848FD2BD89BF0B6B5AA3B4C99952@AM6PR03MB5848.eurprd03.prod.outlook.com>
-X-Mailer: git-send-email 2.39.2
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-TMN: [CN0PWSKvxgexGrenKCsp/GgYJd0mlCFi]
-X-ClientProxiedBy: LO4P123CA0085.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:190::18) To AM6PR03MB5848.eurprd03.prod.outlook.com
- (2603:10a6:20b:e4::10)
-X-Microsoft-Original-Message-ID:
- <20240828194811.49890-1-juntong.deng@outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93E7E125BA
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 19:49:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724874564; cv=none; b=qAEcb4hfo/kkRHj+n49t3fdT4rLIg6/0Lru7AwmrQPBMmmmwi9IekciNr8iDyJwSoVvoY48qjqLup8DAh1MWs5iTSon0W65q2/r0RlN10hmbrKVSy7jKYDvwggW0QxHMEOdyoXkSBAZ/dix9FkpPP2pvOEe2wgoyNalXyWaGwSE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724874564; c=relaxed/simple;
+	bh=iCpcqPThAPmZLodK+uZfdz3ZGn7+GEtpWdlwHYhSoSw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TCu/PQcKKQyZvauBEA0oUejrkGvPD65LEHZHRXYoxtoFgpRjSimljJiOR1UL3mL7gsGcQ1Ed42AM022BZvrIZedP+B9XuT2SEL+52kj/oollfFkNoh/DKBsdrGcRm4O1qvqHGhap5/A332kH731JNpjUQkmBdzQNDpJCh9LD2ps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mCusYVUw; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5334fdabefbso880836e87.1
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 12:49:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724874561; x=1725479361; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=WfREJfZgElEweHVwJvSVEk/D+r54zJQcIccfYEdIZSM=;
+        b=mCusYVUwhkOoWoZ7j3rRMP0aB6XymUwG3Nm3ngxRb5Kf+WyEQ7vQT2kxWYj7ejOKGQ
+         mXisgKT1Q3Q/tVY6bq7qla00l86iqNZPDbsYpv4eGkRtxDabeALMxyuvSAt/cg9O4gXm
+         CGBG/JWAT9d1Jx27KwioaHCgqdQXBjTsTGsurBwSiqAjGHd4wVJjn/+1UTe4ObDjfnaR
+         xmWHe0l1QYpDt0uUlk5c6Ak65AN4297l4FMZxgBYkYVGKgXHcsG/aEb+7JRs5xoxI+pw
+         Zaa8/9NsRdzr+Xvym1ITN/eLqnvac3QHRysQmZQ2hDmflO9onPZ3OJyEfcV6zHF1vczm
+         Qmrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724874561; x=1725479361;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WfREJfZgElEweHVwJvSVEk/D+r54zJQcIccfYEdIZSM=;
+        b=EHBEvy3+b026bGYY0sCoC8lyfQ78MrGqfi7IkmrZSZFtmb09tT9qjDPh7jWTE19Brm
+         BUYxxvJoFmToKd/Ab/11UWNIc5HC2TSJAmz8kMge6yYJ7XeCA8UrF/B+bBWdIgWzxmTc
+         u6gUjfcB83FE5UffHtO0jQY1sx566gpBGgOp3BNeJi69MKFk8sfxhv7gGSsHwwBDFXS/
+         dRQNfDxJFONmb/G5B9X3VbXDIO8TfNS4ProiKoNtPlkF9KCb0Ix4VYXItXJfgBcdKbAZ
+         YVNv9RKHdgIwuc6tMbpmAbyy6/fKVgC1zv204o+iFE4cXPqRYnZyDhAHfy3j+a6trrZU
+         mfFw==
+X-Forwarded-Encrypted: i=1; AJvYcCUhG5jdWNzHbF5Vj4vsyEDZGz0aWeeJGBhjggWurVJcQwSX1HQOGd2Tt6L8InmcOztw6AY6YV+FXWlo/+8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YysPe5XiRbsO2zq/gn0JE+IEDH6FOacqoMEMFU6qk7B9b87L+6f
+	rZUyyLrs/t4n++Rs1q1HBsjBv3JtOjRBr15pGfN5TI+NoajH/rZVAJsMu5LAJmE=
+X-Google-Smtp-Source: AGHT+IFR6avFKpr2wHph931hDBC2z+rTIPVUVlBNS/Uou013Y8gMhOrlNprLkZ/3P1WLSkHYPJBA7Q==
+X-Received: by 2002:a05:6512:3b97:b0:52f:228:cf91 with SMTP id 2adb3069b0e04-5353eba3ee1mr78077e87.1.1724874560042;
+        Wed, 28 Aug 2024 12:49:20 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5334ea99933sm2248052e87.309.2024.08.28.12.49.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Aug 2024 12:49:19 -0700 (PDT)
+Date: Wed, 28 Aug 2024 22:49:18 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+	Amol Maheshwari <amahesh@qti.qualcomm.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Jassi Brar <jassisinghbrar@gmail.com>, 
+	Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Tengfei Fan <quic_tengfan@quicinc.com>, 
+	Ling Xu <quic_lxu5@quicinc.com>
+Subject: Re: [PATCH v4 4/6] misc: fastrpc: Add support for cdsp1 remoteproc
+Message-ID: <vuviyau3vbmf4l4mfb47lyh2n2t65fy3j2lxrg5jtyuz34kil2@q5ytlfdcmf7x>
+References: <20240805-topic-sa8775p-iot-remoteproc-v4-0-86affdc72c04@linaro.org>
+ <20240805-topic-sa8775p-iot-remoteproc-v4-4-86affdc72c04@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM6PR03MB5848:EE_|PAWPR03MB9785:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7a5b16ed-ea33-4ca9-48a1-08dcc79a8bbb
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|461199028|8060799006|15080799006|5072599009|19110799003|3412199025|440099028;
-X-Microsoft-Antispam-Message-Info:
-	NnVR/W7PH+ax0BPz2J172+EY6M7xxP3U6qgZ89Z9R23bvl8rz8lJhjYaFricGKbf8wjS5O3GvgnS+L3rbIjSUVj1avV5GJMdcIFWCdxTP6abOOrmIwB+LciBYOBrEI0V93lgMzYqtXmXdR0y/8AFbO12aa2k/xAO9TDDyfQnt1D6/tzVNapZWgicXnWJ4w0APnKzmEOEIlSNASEeI66ob3VgPArM2tZX0+hpd/b8BgB/XJURzEi1A4mnrGN7ge7ybjFM2XEzYl471pOst7Vna+dcVFBHp4JgS8KZVfgW9nutCBcccGP0FIsmVGPfIQIlyR4gXWg3942Rf7iWsB/ivaPSI5Evc5qu96iLXVX4GL9nbdLFNS9ceXGBG+GixAAojyO/3dxso/tS4UXC7UqzSsEmwv/o0f9OqxS4hWxWcagYGwu70TTfnzlPf2uP6GHyTKw37y26rtcB9KCNyodyAT51PK+w5xk8Twxo5pUUHZBD17gK2Lcdbt5+2t8Umkmrll2tJXTeBZbGC2o6yNLPBUNhzWKJIeVodUfAFhpR4/W7RqcUlgJ0wjYzD3cZ71yTmF9jRqLFhWdATO6+QkMQkaqf+qSxK81x1R/Adhb21ITvtvIuPfrKW6xRSLa6bIwlMs6uV6z03WcNiWR+tkbUKsRpWAJpMbJGJfM/HfzvqJD7vXFv7mwlxnUvCjEQ0Teot1CF0UYotmnIXJSgumbwx/vMGlRZTavqySjh2ocpmxYpW9JWLRW5PsPUsFuCZLLv
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?tJH/InqoHZORQ9qRAxuv9/am57BxbnTWRYXU1OPDkTToUGxegyV9QJFwipPk?=
- =?us-ascii?Q?j1KMTV7YMuKdu0b+QUc2DwRG8WtP93xNGLJIkPlMt2AXlHa7lCA5HYzhgyyR?=
- =?us-ascii?Q?qZstVCmWPqmoYCF4J+ZzdLGbL8ABaH1PhGQ4fF7wUamk1dL4Wy+9TtoX+1WF?=
- =?us-ascii?Q?/9EJTRvpDXQiF+C6nA+/GpPFyeOaEmp9LmiFrXbhryBqHULIn1M51kLZPvJx?=
- =?us-ascii?Q?+aRVCJQyWGdOp80F4ov36C8lSEepdKBgmn5UcP3fg3XfGhNjBMbptey4BWnW?=
- =?us-ascii?Q?GltwrvC2bAiskywOYZYO4Nh/aNgL4u//I4ba/eCxaaNh+M9XPN+6cQ5SaP6Y?=
- =?us-ascii?Q?F7074w0oRKjKSOdSx659puD9Lwxe1A4TD4TsjmXIyqJW2cVazBWE31i8d2OD?=
- =?us-ascii?Q?eXEATKUe1ltiSLCbXoVpGW2Zixp4zVI5/XD6oljxEXXmxTCYbI2W+TqApA59?=
- =?us-ascii?Q?BzcpvBQjcpcB3Gn6TznJ7gxabx8ZWXqrl6KmSDU1rGObIH5pbQ9ywoQ/AODN?=
- =?us-ascii?Q?zI3JovFXU6Umv79wc13SXsZliHFY9xVwXkODGIjtAQXsmn2hzs9sXJsrHPNx?=
- =?us-ascii?Q?c7w0si9N00/WcDlIufN5SUHeii09lfBrIujfuDI4clpvD6tCjxlV5AoOWDGY?=
- =?us-ascii?Q?Vb5k8DUQIaahG4jMqiyfubjDbrmrhF5Hn1tBiIxdzWNZqyg48Nx59vsSpHk8?=
- =?us-ascii?Q?LDtE7h6Q/xUTq+4vx+cmJuZ1NPKxAlLzhEKhBfTRvCAog6lQTyLaz4cQwwXL?=
- =?us-ascii?Q?dXCx3MxHLj0T4nY6a7qHH0ObYPyOW0B6sl/JdH+Elb7/pLSUM36EgYLPFz7H?=
- =?us-ascii?Q?Dx2NaizGzZUYIbbnJJe6A+b9Kzh4KJ5rN+IB+yqeloQb6p8N0AstPNDBaEWT?=
- =?us-ascii?Q?OzXuEJpS9sv/faiVLjmKzhpDddmIPFEGS+ERU1cr1u/44h0MW4smczR1b0ct?=
- =?us-ascii?Q?BJmYi2calpEI76Y+afofNDHE+u6gILpOYxd/QYzul07ye2q2wCOyKiYjy6sw?=
- =?us-ascii?Q?TRFGw3yJQwCOozxA2xo2d6mp9Ndb37d3scQPRZ9K8/Baf4XImg3Xsy8acnI5?=
- =?us-ascii?Q?cWXb71dQFGYtNUTNVEterE79Guobk3jFmyVXngNoaSDGLQMKybnlTsZ7lO7c?=
- =?us-ascii?Q?9dJhzM2eRlOtsp0Bz7/Co39+PvrcCoN8cMRV+0m2N73IGJvSHlftryun+sur?=
- =?us-ascii?Q?Iw3eFfyw9hN+w6vx3T3Oogpraa4Ja5x6fQja9GbMNn0CuKzr1gKZLlGHqTia?=
- =?us-ascii?Q?ucvsNs9OiEpicQUlflS6?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7a5b16ed-ea33-4ca9-48a1-08dcc79a8bbb
-X-MS-Exchange-CrossTenant-AuthSource: AM6PR03MB5848.eurprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2024 19:49:37.0942
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAWPR03MB9785
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240805-topic-sa8775p-iot-remoteproc-v4-4-86affdc72c04@linaro.org>
 
-Currently we cannot pass zero offset (implicit cast) or non-zero offset
-pointers to KF_ACQUIRE kfuncs. This is because KF_ACQUIRE kfuncs
-requires strict type matching, but zero offset or non-zero offset does
-not change the type of pointer, which causes the ebpf program to be
-rejected by the verifier.
+On Mon, Aug 05, 2024 at 07:08:05PM GMT, Bartosz Golaszewski wrote:
+> From: Ling Xu <quic_lxu5@quicinc.com>
+> 
+> The fastrpc supports 4 remoteproc. There are some products which
+> support cdsp1 remoteproc. Add changes to support cdsp1 remoteproc.
 
-This can cause some problems, one example is that bpf_skb_peek_tail
-kfunc [0] cannot be implemented by just passing in non-zero offset
-pointers. We cannot pass pointers like &sk->sk_write_queue (non-zero
-offset) or &sk->__sk_common (zero offset) to KF_ACQUIRE kfuncs.
+I'd very much prefer to see this abstracted somehow, but it seems
+impossible with the current driver code.
 
-This patch makes KF_ACQUIRE kfuncs not require strict type matching.
+> 
+> Signed-off-by: Ling Xu <quic_lxu5@quicinc.com>
+> [Bartosz: ported to mainline]
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> ---
+>  drivers/misc/fastrpc.c | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
+> 
 
-[0]: https://lore.kernel.org/bpf/AM6PR03MB5848CA39CB4B7A4397D380B099B12@AM6PR03MB5848.eurprd03.prod.outlook.com/
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-Signed-off-by: Juntong Deng <juntong.deng@outlook.com>
----
-v1 -> v2: Completely remove strict type matching for KF_ACQUIRE kfuncs
 
- kernel/bpf/verifier.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-index 5437dca56159..0f3b6fa3db39 100644
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -11497,8 +11497,7 @@ static int process_kf_arg_ptr_to_btf_id(struct bpf_verifier_env *env,
- 	 * btf_struct_ids_match() to walk the struct at the 0th offset, and
- 	 * resolve types.
- 	 */
--	if (is_kfunc_acquire(meta) ||
--	    (is_kfunc_release(meta) && reg->ref_obj_id) ||
-+	if ((is_kfunc_release(meta) && reg->ref_obj_id) ||
- 	    btf_type_ids_nocast_alias(&env->log, reg_btf, reg_ref_id, meta->btf, ref_id))
- 		strict_type_match = true;
- 
 -- 
-2.39.2
-
+With best wishes
+Dmitry
 
