@@ -1,122 +1,222 @@
-Return-Path: <linux-kernel+bounces-305490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA027962F88
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 20:14:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54634962F78
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 20:13:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED4DA1C23925
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 18:14:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA0971F21FE9
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 18:13:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D763D1ABEA0;
-	Wed, 28 Aug 2024 18:13:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7AEA1AAE13;
+	Wed, 28 Aug 2024 18:13:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rew266iW"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="hko6XWNR"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CC6D1AAE23;
-	Wed, 28 Aug 2024 18:13:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 120A81A704D
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 18:13:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724868823; cv=none; b=EAmNWc2pEwgheesr027wFMblln6MuqyoPTDoaL30wvGNt1HjFTNM4rqv0R1M+ZeAduL466et/5CR9fUVppuumylRwLO6hXg1TmYoCvCTv0xfF9s0iEwXQH7/DRHeDTTpxS0vxtTYIEBIiMpCs4NZaSDllXKBh4jEXlO8eQoMZSk=
+	t=1724868800; cv=none; b=oul5zyKoeSMSEtuZJRL/oyKGSf9OlIXnsTWLUgfWxYDimxor3avVjNma2hGnWEXgYcnnFJxrGlIb1/iyG1ZOEQ+dp2EJNXWSaY/+aAPVgXM1cUIdjdHXD+f0YdMvozVNlrOr7lPERtCo4L6eLXA+mVq7IIMqeJNdF1cT9iXnLcU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724868823; c=relaxed/simple;
-	bh=U46e1NPxxmeg/TwG/zcQc/Ykfl2jj1avETnLnIwJbhY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=bqHc9LDJJ6P7osFq3h93cIXdzRMuNbuWlZp13cqA76Nx7YvPyNtblUkB9dD2Ey1Im6fhRY0fuIHmXu2hT0JCTB9Ubfc/Oue3rwskhdvG1ImRKhcN0UOL2esNj473Q8W5ziyor9/LkXqmIFRsQVeK0/Wy6dAXZKTflxArkGbIN5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Rew266iW; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5a10835487fso10449931a12.1;
-        Wed, 28 Aug 2024 11:13:41 -0700 (PDT)
+	s=arc-20240116; t=1724868800; c=relaxed/simple;
+	bh=GjNoHkVtc76GrU4YhTR/L/zP4IfI5x+2GTndy1pzi+I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MW6l0BJNKguEOhwipfKJiTj22/+1jrJsgqk/Q5Y1CMVpnfnqOfdog9jjOPIdU1ynprirCThboYKzwBxvsAOU0CSF3VnomB5VEbv+b3afT3drSjUV7u1qz8dRIo73nPda1oWU72/CeBqFUtZ81cTrQtYfHXnKk9ish5R1mKYef00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=hko6XWNR; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-202376301e6so56022705ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 11:13:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724868820; x=1725473620; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4ujNRN889/t6K0n1E+yA+haDN1wdzDXSnITwKdROfLs=;
-        b=Rew266iWutUAjNEeqf55B8EPjTX76t6nsAIWmr9Fc3r6RNHfh/HvmdPVSSe3j6Ency
-         eqbA+w9Y/QGvOhPQGCCoMRwVRM3xJDOdakreUMfo6UtAndWamEk2NgxbqZu6TKJ5Sgyr
-         CtI2Vzxx8N6go4/kppd6tltswpC5wGbkTQIPpKEJYaqhHeCo4CuTOb0ddEO0bzxcUa4y
-         4eZQFtIBY7NamuJcclpW7oJ3rGHEX0QLugFt2LlKa7pD9K8QX4273JzgaFhWaQnLxveF
-         J6NQq/JdhaPQnyJNg2OQJ5AimzC5rVCoD5+9SufQ7y9yyuKtqYlMDzLy4rGOch4I8YT5
-         sT0g==
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1724868797; x=1725473597; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=LALoI8v52A4/X4uxJhIa0heHcwoa9eC5vLoHkCEA7Ac=;
+        b=hko6XWNR1U9Va28J0QMAOLkvAdlT1yDDHgL2BGKkWhWQdGg6U5W+GJWE5nwFemlnxq
+         RkE8tiPBBsyjjAWV4QTeEItLURhcOw/5Z/xMYVylknRN1kLLP7O1Yb0bMk4Xf2nB1Hcc
+         ZIziH5SRnO3cE4x9WiBpMDY85aVJ1P1hmU2LmW4fLvtYzWB26mk4F7CavlIXsJ0SPrTY
+         uUl6Lq7TDeCLzmj1OB2lR+lUd8kma0+ctGLst4GzUQIbb4gTvJhdRvZ9xsaYZmxrsanM
+         ABDvyZGH/ElJIfdmiXYh9XTfkVZCn6AWYqcmiHeqDysq+BIfMg85TvymAkIQPO/iQ51B
+         gnrA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724868820; x=1725473620;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4ujNRN889/t6K0n1E+yA+haDN1wdzDXSnITwKdROfLs=;
-        b=ODNJZEpulyvOsYztmpDEbeWXwTqrWU5wTqRgprxqgmmcTjGby07ApouhEkWJSLXGyv
-         5ENHWQ5x0VpQkyMjmWMAK2aWi77ccodoIT9/y/KQIdL8PqccII1MGJtkz4fSEF0vQDY8
-         hSOKlf7Ikq1gWBa+gQq0TDtVM4Nuk1b9WKGr5zUkfmHHGXKrggTy1OWda3898FIGMpLM
-         jSA+O2mITFJaeTeDYRRU6FF+VvrGtdYiywKA8wisAKgDg97W4I93FdO7GT71TWl/X5Zx
-         IOXspWs7bzN7QU2GGiY3gI9kryTgtdH+CrgyuRAJEbc+TdFnp4qSQAvgPrsfWyBhwAQk
-         o+Xg==
-X-Forwarded-Encrypted: i=1; AJvYcCWMk/Bk5NpT3zPpMvYXDl2/Lpwodow8d4HjxPCjqBq613s8Uf2WXmasKDSQ7Fv+1Hx49MvbdtLBtnLD+KI=@vger.kernel.org, AJvYcCXpKDiHPegUr1h0gwhFu6k5qEKxL8YE0CjGcoXpv7IY/RggceMJQpjGKiYF1KIrJr1N0BnqvpcjAgdLkRY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIxLiD7v+JZoyUn8kqIFZuTotM2wmZxBOzcO+zCkeppBjb+rfY
-	KGaPMhIxFimzhJyL2Aw6++KVHnjFuwm+JHE1MYUYlihWTmMlVD0v
-X-Google-Smtp-Source: AGHT+IEKcUVpPlL/1BOz67lP6O/BgYV0leAFS9TVJppfpTrc6oZPLrnFVdfOvmRNG+sdkiZNH6HqfQ==
-X-Received: by 2002:a05:6402:3705:b0:5c0:aadc:8b51 with SMTP id 4fb4d7f45d1cf-5c21ed5758emr272237a12.22.1724868819711;
-        Wed, 28 Aug 2024 11:13:39 -0700 (PDT)
-Received: from [127.0.1.1] (77.116.208.33.wireless.dyn.drei.com. [77.116.208.33])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c0bb1e51c8sm2525549a12.34.2024.08.28.11.13.38
+        d=1e100.net; s=20230601; t=1724868797; x=1725473597;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LALoI8v52A4/X4uxJhIa0heHcwoa9eC5vLoHkCEA7Ac=;
+        b=rid8Nk7ppt/RandHT5my3YueexzpXks2wkIeIKbmrzf32gJ7CTja0CKkUvYcCGUgy6
+         PmTq98b4RlN2Qlb9jEjy1KSUF4OxFftIxZECjoLNPDx1xIICl6jx2SO/dFwBKoVhh+6U
+         mY1Ok6bLlUtj0LUEFK31R9eod1VvqiwA0dv8NvFPrf+xGsRfiLcjE6QsZqFptqabZR1W
+         ho2E4kcfFohY7kBqawdO2I8kiAmv5VlLaV2wi2ccdaxLFr7t0Me3Ca9m0/XdIjm6+tWh
+         CkJ+pj8qiaG5Eqt3Nq8sb7kPQRzil4ML3NJLZLN+FNge0NxjCnYd/EURKvpIaPSWbrt/
+         8hRw==
+X-Forwarded-Encrypted: i=1; AJvYcCVyVjuYizVcDUTDYU/ATx5UFAtWpMeiQfneEvjF/+RThmPZAcTuHKTqKJimiAMbxE1/h9tGIaBaMzFjNy0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxVgpJkqgYIyuCpPvle+UrdK5YTR+L+8C/AwkApZFt9p0hSGSq
+	PD1LCfoqKwqmeFH2DeocL/XG2fdqF8GuqHpdrrtgBslEauT9WlMYiLWP6AeelRM=
+X-Google-Smtp-Source: AGHT+IGuZvjR8n1DEJgaREJ89Ekx33Df2TcjSjzsxg5aNNIN6dSl+M4/n8ZHA/SWHFgBiHe+4H0WZQ==
+X-Received: by 2002:a17:902:f78c:b0:1fd:9269:72c6 with SMTP id d9443c01a7336-2050c4a5b8fmr3765425ad.62.1724868797179;
+        Wed, 28 Aug 2024 11:13:17 -0700 (PDT)
+Received: from ghost ([50.145.13.30])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-203855df88esm101966005ad.152.2024.08.28.11.13.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2024 11:13:39 -0700 (PDT)
-From: Benjamin Bara <bbara93@gmail.com>
-X-Google-Original-From: Benjamin Bara <benjamin.bara@skidata.com>
-Date: Wed, 28 Aug 2024 20:13:08 +0200
-Subject: [PATCH v2 2/2] media: i2c: imx290: Remove CHIP_ID reg definition
+        Wed, 28 Aug 2024 11:13:16 -0700 (PDT)
+Date: Wed, 28 Aug 2024 11:13:11 -0700
+From: Charlie Jenkins <charlie@rivosinc.com>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	Muchun Song <muchun.song@linux.dev>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>,
+	Russell King <linux@armlinux.org.uk>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+	Helge Deller <deller@gmx.de>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Yoshinori Sato <ysato@users.sourceforge.jp>,
+	Rich Felker <dalias@libc.org>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	"David S. Miller" <davem@davemloft.net>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Alexandre Ghiti <alexghiti@rivosinc.com>,
+	linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Palmer Dabbelt <palmer@rivosinc.com>,
+	linux-riscv@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+	linux-mm@kvack.org, loongarch@lists.linux.dev,
+	linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+	sparclinux@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH 16/16] selftests/mm: Create MAP_BELOW_HINT test
+Message-ID: <Zs9oty09IysKUHCF@ghost>
+References: <20240827-patches-below_hint_mmap-v1-0-46ff2eb9022d@rivosinc.com>
+ <20240827-patches-below_hint_mmap-v1-16-46ff2eb9022d@rivosinc.com>
+ <71528354-4884-41e4-a4a9-318e26187f86@lucifer.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240828-imx290-avail-v2-2-bd320ac8e8fa@skidata.com>
-References: <20240828-imx290-avail-v2-0-bd320ac8e8fa@skidata.com>
-In-Reply-To: <20240828-imx290-avail-v2-0-bd320ac8e8fa@skidata.com>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
- Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Hans de Goede <hdegoede@redhat.com>, 
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Alexander Stein <alexander.stein@ew.tq-group.com>, 
- linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Benjamin Bara <benjamin.bara@skidata.com>
-X-Mailer: b4 0.14.1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <71528354-4884-41e4-a4a9-318e26187f86@lucifer.local>
 
-This register is not described in the public available imx290 datasheet.
-Additionally, a read returns '0x07d0' for an imx327lqr and also for an
-imx462, which means it cannot be used to distinguish between those two
-imx290 derivatives.
+On Wed, Aug 28, 2024 at 06:48:33PM +0100, Lorenzo Stoakes wrote:
+> On Tue, Aug 27, 2024 at 10:49:22PM GMT, Charlie Jenkins wrote:
+> > Add a selftest for MAP_BELOW_HINT that maps until it runs out of space
+> > below the hint address.
+> >
+> > Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+> > ---
+> >  tools/testing/selftests/mm/Makefile         |  1 +
+> >  tools/testing/selftests/mm/map_below_hint.c | 29 +++++++++++++++++++++++++++++
+> >  2 files changed, 30 insertions(+)
+> >
+> > diff --git a/tools/testing/selftests/mm/Makefile b/tools/testing/selftests/mm/Makefile
+> > index cfad627e8d94..4e2de85267b5 100644
+> > --- a/tools/testing/selftests/mm/Makefile
+> > +++ b/tools/testing/selftests/mm/Makefile
+> > @@ -50,6 +50,7 @@ TEST_GEN_FILES += hugepage-shm
+> >  TEST_GEN_FILES += hugepage-vmemmap
+> >  TEST_GEN_FILES += khugepaged
+> >  TEST_GEN_FILES += madv_populate
+> > +TEST_GEN_FILES += map_below_hint
+> >  TEST_GEN_FILES += map_fixed_noreplace
+> >  TEST_GEN_FILES += map_hugetlb
+> >  TEST_GEN_FILES += map_populate
+> > diff --git a/tools/testing/selftests/mm/map_below_hint.c b/tools/testing/selftests/mm/map_below_hint.c
+> > new file mode 100644
+> > index 000000000000..305274c5af49
+> > --- /dev/null
+> > +++ b/tools/testing/selftests/mm/map_below_hint.c
+> > @@ -0,0 +1,29 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * Test the MAP_BELOW_HINT mmap flag.
+> > + */
+> > +#include <sys/mman.h>
+> > +#include "../kselftest.h"
+> > +
+> > +#define ADDR 0x1000000UL
+> > +#define LENGTH (ADDR / 100)
+> > +
+> > +#define MAP_BELOW_HINT	  0x8000000	/* Not defined in all libc */
+> > +
+> > +/*
+> > + * Map memory with MAP_BELOW_HINT until no memory left. Ensure that all returned
+> > + * addresses are below the hint.
+> > + */
+> > +int main(int argc, char **argv)
+> > +{
+> > +	void *addr;
+> > +
+> > +	do {
+> > +		addr = mmap((void *)ADDR, LENGTH, MAP_ANONYMOUS, MAP_BELOW_HINT, -1, 0);
+> 
+> How can this be correct? mmap() has parameters:
+> 
+>        void *mmap(void addr[.length], size_t length, int prot, int flags,
+>                   int fd, off_t offset);
+> 
+> You'r setting prot = MAP_ANONYMOUS, flags = MAP_BELOW_HINT...
+> 
+> This surely should be:
+> 
+> mmap(..., PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE | MAP_BELOW_HINT, -1, 0);
+> 
+> > +	} while (addr == MAP_FAILED && (unsigned long)addr <= ADDR);
+> 
+> How can addr == MAP_FAILED (i.e. ~0) and addr <= ADDR? This will just loop
+> through once...
+> 
+> If you want to make sure you're getting mappings only below the hint until
+> you start getting MAP_FAILED's you'll need to handle this more robustly.
+> 
+> > +
+> > +	if (addr != MAP_FAILED && (unsigned long)addr > ADDR)
+> > +		ksft_exit_fail_msg("mmap returned address above hint with MAP_BELOW_HINT\n");
+> 
+> This is just going to fail because your flags are wrong then wrongly claim
+> to have passed...
 
-Signed-off-by: Benjamin Bara <benjamin.bara@skidata.com>
----
-introduced in v2
----
- drivers/media/i2c/imx290.c | 1 -
- 1 file changed, 1 deletion(-)
+I obviously didn't spend enough time thinking about this test case...
+You are correct that I wrote this incorrectly. I will make a proper test case
+and send out a new version.
 
-diff --git a/drivers/media/i2c/imx290.c b/drivers/media/i2c/imx290.c
-index 2a869576600c..48502ba19cdc 100644
---- a/drivers/media/i2c/imx290.c
-+++ b/drivers/media/i2c/imx290.c
-@@ -80,7 +80,6 @@
- #define IMX290_ADBIT2					CCI_REG8(0x317c)
- #define IMX290_ADBIT2_10BIT				0x12
- #define IMX290_ADBIT2_12BIT				0x00
--#define IMX290_CHIP_ID					CCI_REG16_LE(0x319a)
- #define IMX290_ADBIT3					CCI_REG8(0x31ec)
- #define IMX290_ADBIT3_10BIT				0x37
- #define IMX290_ADBIT3_12BIT				0x0e
+- Charlie
 
--- 
-2.46.0
-
+> 
+> > +
+> > +	ksft_test_result_pass("MAP_BELOW_HINT works\n");
+> > +}
+> >
+> > --
+> > 2.45.0
+> >
 
