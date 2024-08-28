@@ -1,168 +1,167 @@
-Return-Path: <linux-kernel+bounces-305768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD8389633F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 23:36:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E9BF39633FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 23:37:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49D661F24967
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 21:36:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 776E91F24B46
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 21:37:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 633CD1AD40E;
-	Wed, 28 Aug 2024 21:36:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A2041AD400;
+	Wed, 28 Aug 2024 21:37:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b="RW2YVbX2"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
+	dkim=pass (2048-bit key) header.d=ucr.edu header.i=@ucr.edu header.b="aP5QZB4O";
+	dkim=pass (1024-bit key) header.d=ucr.edu header.i=@ucr.edu header.b="SvtfCZxt"
+Received: from mx2.ucr.edu (mx2.ucr.edu [138.23.62.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 316561AB512;
-	Wed, 28 Aug 2024 21:36:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0AED1AB531
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 21:37:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=138.23.62.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724881001; cv=none; b=VPzFnZC83l4Y2MhQuWbvDPO8Z8Ms4Z1r46cq9rt69LW126wS8hr4T4cPZ5z0z1+s2GRNXoNuJ+SnkPWJC9qzLDq5IngpPzW1BPsiblsfrXV5vig6lmOYEl2u+ZWtSTPG3Vqv81LTKLP/WQ/0aky4BB4z6JNCy7Fesiu14oCYMok=
+	t=1724881044; cv=none; b=HsUfs7LUJOu7BaPdfnt8NmgDfJ2s64NPwFhszdx2yxeit2UaD1bVcM7gzhM/54Y8BPgMfHXeMhyuNeL36F2H78HnK8V4uzD8Wer16PXChCb2n2ERADxC6L9P80MnOsy0GH9LFiiOkY0qGPF8bF5zkMcHwjIGPAx48mVk2in+x1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724881001; c=relaxed/simple;
-	bh=unCkoQWs3+D0Rb9hgPLFucvkm0aa+cAXsWLZY4fRCDE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=g1YV5+1BqDZRY2ZfuIqdnV3HsSpbOXM92/Ekuu0hv+sW9cljlZZbKmqcziZcPbJF4JD2zrAaXPsc2XwgmAg5Zi63HYs2qZivgFDU+TsjxPnKs0kmBfu3BET9FYZk1opo3xReQO3bGckGMkMITj38XYmFptzNXcChaj1dmwQuKbo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com; spf=pass smtp.mailfrom=gmx.com; dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b=RW2YVbX2; arc=none smtp.client-ip=212.227.17.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.com;
-	s=s31663417; t=1724880972; x=1725485772; i=quwenruo.btrfs@gmx.com;
-	bh=7EWVk8UYp3QZZ7++Et/aCkLzlQMXcHopk6h7LDs8iYc=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=RW2YVbX2M3vtIVxznKZbm/uI9A6S8J1vaum3rsGUcmpPEZsJ7vNO1AtXBEDCyjUu
-	 Tld4DFIkYRQeDX2LsImWr9O6v2+tbfKXAM2t+dox4K7ScwiDpscHh5DSy/kPDQMAx
-	 rLyzRZJpmn3+06swmmVQ68Q+rzSbtJs5yOaLmLW0FkjoijkQjhR4CNuNJ4VOfhEzM
-	 jGjBd5I08wbMPdrJ3CkSwxsLWTtTGq7TCG/Lbe5tHENLFhwMerd49hZZpDs8QPOY9
-	 fcpA+PpItdbe2OBpQF0BVAWkrWGAkaX+FajQuUgUgEK0Z4Z/ZwKOrUkDVz2OVZbDi
-	 lDjBeG/zyC1I7VcPyw==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [172.16.0.191] ([159.196.52.54]) by mail.gmx.net (mrgmx105
- [212.227.17.174]) with ESMTPSA (Nemesis) id 1Mlf4c-1sINKA0IHy-00qi1U; Wed, 28
- Aug 2024 23:36:12 +0200
-Message-ID: <1a972f83-d583-466d-9fc4-d96baf2e057c@gmx.com>
-Date: Thu, 29 Aug 2024 07:06:06 +0930
+	s=arc-20240116; t=1724881044; c=relaxed/simple;
+	bh=0haksBrdfYlCNq5hQizhK6BxPSsBBu/Anbu24tJfB+A=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=mqzSObh8aJZy9R7k78rnpHwBQ8+FBvO070ytPbvEjv2Kj9W6Y/gSpWWTg5hPOnoPjA0vg+MFmLq6QEe4kplorbJoN6t7G21y5fkfpIp3qlWlZDW+00BlT3fduVhtfxQx+Xd9+y8cayv6NJIQrg+jmUHMKvVAC2KYBRGlDmede8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ucr.edu; spf=pass smtp.mailfrom=ucr.edu; dkim=pass (2048-bit key) header.d=ucr.edu header.i=@ucr.edu header.b=aP5QZB4O; dkim=pass (1024-bit key) header.d=ucr.edu header.i=@ucr.edu header.b=SvtfCZxt; arc=none smtp.client-ip=138.23.62.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ucr.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucr.edu
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=ucr.edu; i=@ucr.edu; q=dns/txt; s=selector3;
+  t=1724881043; x=1756417043;
+  h=dkim-signature:x-google-dkim-signature:
+   x-forwarded-encrypted:x-gm-message-state:
+   x-google-smtp-source:mime-version:from:date:message-id:
+   subject:to:cc:content-type:x-cse-connectionguid:
+   x-cse-msgguid;
+  bh=0haksBrdfYlCNq5hQizhK6BxPSsBBu/Anbu24tJfB+A=;
+  b=aP5QZB4OhdaxFKJ+BGttnwKGgK/Ht6o7q+gj5/ZN/enN1b6iMYIX+sQA
+   NSFNfsm+4ald2Luk/2z4kdleRxPqsxznP0baB01qu+p9thTOQOhBsTEb0
+   hCMc3JedDkUzyOzbFTJgnPdxjCE6z+VM+RMGFg32GMRdQsKU+fcSJoHC9
+   hoHFRdRF/9n4v8s9/NnQXkVdYZZoQVhAHHI3rS7dkF/75aaf1YdZnXFxD
+   hmhw9psZPyzmUAEuhK7uYts9hBup/oD8lOYnewYj3irkFy8QzNQf3bgIe
+   Y8/T+Jdk4aPkvY9QVpRV4Ooesjx/z3Uq+yoFM53Sr6ye+8Os8bw9kTfVF
+   g==;
+X-CSE-ConnectionGUID: Poirwb6rStaDpY4TNpvrOg==
+X-CSE-MsgGUID: OaYiz+6GQ1eWA66BPuGKVA==
+Received: from mail-pj1-f71.google.com ([209.85.216.71])
+  by smtp2.ucr.edu with ESMTP/TLS/TLS_AES_256_GCM_SHA384; 28 Aug 2024 14:37:16 -0700
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-2d699beb78dso5100450a91.0
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 14:37:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ucr.edu; s=rmail; t=1724881035; x=1725485835; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=QU8B1TkKudrXi3t6vU2mLRqC95KcE+EPN+9AF0WMWOU=;
+        b=SvtfCZxtGcfA6sxhfc7KvvhN8u2/b3bv7Fg/fPra9iLNptFeCGtd5LhnTjh/qZZqGx
+         nfRRSZKEk33lIY5tFeFLfMtxae5ixvm08Xme3hbeF45T0uDT9XA3JkO4+ce7Ojigabho
+         3nTvDsZg0mcjuEXUy3yN8KdVFWNU4QYaInoaM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724881035; x=1725485835;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=QU8B1TkKudrXi3t6vU2mLRqC95KcE+EPN+9AF0WMWOU=;
+        b=N5ZZRdvojchn3M6ZGEQEMFxCvkkhZBoSTV6CT5TJ3Fvd5YkkLZHowo7uU31WhFVZrA
+         t0juKJushhbx8eCPQU3zgCttIpzpB8PAFlaIx6Vb3KJBenwE7Kgwzm7KgY2/ugfWLWnW
+         jt1UMqKX8OfAoJIF+RCjh6bIqW3gEAtb8HQZk1LQzrez5RRlyhJvXEa0Io0klj8/ricp
+         eELoq6q/aiXNJzG06yt9lyE4Sv2L2IKQCmy3+7BdxWySSDzIJUaZ/mQqXRANvyNP31op
+         3F8RypQqYkUu3c698/WXuL0Sd26Pb+IxBRktceRhgHhcm7qGcJ3oSk6jrmJxsdfPKCXK
+         3LKw==
+X-Forwarded-Encrypted: i=1; AJvYcCWK+GFRM6U0vN806r5rCSm+GNy9/CchICMgcY+uAHetcLVRhC3sk35LEkaMCHNPvJE8wG7DxlzxBL0DOsY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPB4Ngr69DZxwcS5D4x2Ipcwtn8SJjRGBGKX7embF3whnzWH03
+	hJmwQ53oSVUQzk8iULXctEfgO2ZWGgobCfSTSu8e49riEV3Ydn5kIj0ImugHdY8vonOaoV5bDrs
+	m/9yvu/OdeYHvTAlQbKHtel86+8EeqFst5AiqCsOvA5+p/J7DyBBzmq7sz1yUO2gLKEc9gL4lK5
+	Y0SxKdHaQs55TTlkiOgLLiu7SmfaRNh2UC+BbEaJ86HxScGE6vnSc=
+X-Received: by 2002:a17:90b:204:b0:2c4:aa78:b48b with SMTP id 98e67ed59e1d1-2d8564ad2e8mr717421a91.38.1724881034964;
+        Wed, 28 Aug 2024 14:37:14 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHhmH98AhDlCMsobVBa8AbjzqM3ZS37VCwF14SOZHioc0I5Lh1Ow0KhTADaXXlDeEYLA0Zv9EhmZ2wPQa+/NoI=
+X-Received: by 2002:a17:90b:204:b0:2c4:aa78:b48b with SMTP id
+ 98e67ed59e1d1-2d8564ad2e8mr717406a91.38.1724881034589; Wed, 28 Aug 2024
+ 14:37:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] btrfs: qgroup: don't use extent changeset when not
- needed
-To: Fedor Pchelkin <pchelkin@ispras.ru>, David Sterba <dsterba@suse.com>
-Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
- Boris Burkov <boris@bur.io>, linux-btrfs@vger.kernel.org,
- linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org,
- syzbot+81670362c283f3dd889c@syzkaller.appspotmail.com, stable@vger.kernel.org
-References: <20240828161411.534042-1-pchelkin@ispras.ru>
-Content-Language: en-US
-From: Qu Wenruo <quwenruo.btrfs@gmx.com>
-Autocrypt: addr=quwenruo.btrfs@gmx.com; keydata=
- xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
- 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
- 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
- 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
- gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
- AAHNIlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT7CwJQEEwEIAD4CGwMFCwkI
- BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCY00iVQUJDToH
- pgAKCRDCPZHzoSX+qNKACACkjDLzCvcFuDlgqCiS4ajHAo6twGra3uGgY2klo3S4JespWifr
- BLPPak74oOShqNZ8yWzB1Bkz1u93Ifx3c3H0r2vLWrImoP5eQdymVqMWmDAq+sV1Koyt8gXQ
- XPD2jQCrfR9nUuV1F3Z4Lgo+6I5LjuXBVEayFdz/VYK63+YLEAlSowCF72Lkz06TmaI0XMyj
- jgRNGM2MRgfxbprCcsgUypaDfmhY2nrhIzPUICURfp9t/65+/PLlV4nYs+DtSwPyNjkPX72+
- LdyIdY+BqS8cZbPG5spCyJIlZonADojLDYQq4QnufARU51zyVjzTXMg5gAttDZwTH+8LbNI4
- mm2YzsBNBFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcga
- CbPEwhLj1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj
- /IrRUUka68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fN
- GSsRb+pKEKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0
- q1eW4Jrv0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEv
- ABEBAAHCwHwEGAEIACYCGwwWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCY00ibgUJDToHvwAK
- CRDCPZHzoSX+qK6vB/9yyZlsS+ijtsvwYDjGA2WhVhN07Xa5SBBvGCAycyGGzSMkOJcOtUUf
- tD+ADyrLbLuVSfRN1ke738UojphwkSFj4t9scG5A+U8GgOZtrlYOsY2+cG3R5vjoXUgXMP37
- INfWh0KbJodf0G48xouesn08cbfUdlphSMXujCA8y5TcNyRuNv2q5Nizl8sKhUZzh4BascoK
- DChBuznBsucCTAGrwPgG4/ul6HnWE8DipMKvkV9ob1xJS2W4WJRPp6QdVrBWJ9cCdtpR6GbL
- iQi22uZXoSPv/0oUrGU+U5X4IvdnvT+8viPzszL5wXswJZfqfy8tmHM85yjObVdIG6AlnrrD
-In-Reply-To: <20240828161411.534042-1-pchelkin@ispras.ru>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:PHUZKcWKh/NXYbkwkmEG2Kpja0CPbnuxdeeCwkDajTIvw03A10T
- iw95bHTFfUnCsMZMAaIP4HAZnYZWvZoL7wAfuCCG08faY2F0JhDd0u5PoI8N2BC0mb9pkok
- pFttp8bZMTocWPmwGvJwHlemVe7mUtCIH6OfAN3RmUR1wvM4BF0tNPCNcF0z5G4U1KyjIzu
- g7qFCrZ7EgV47TlXP2fYA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Z2X2ZbQJalo=;FBaXlpk0sGTNuf0dxdwtCl0Vzzu
- oDlZOhmZoY/ENgM4Qf36f5R0NfLja8wr2X0/EuKUUto3JN0xPLvT57Da+XAi4CYZW5G/SNdgM
- fuOsVuqGuIZ4VDtU2/QRXys/nbExcIGIgwIMRFUHcFI6psyHBdc1JSCesDHAOA7p1tfjob8o6
- XTb2UPQ4qnqCPu37Kn6otniN82/h3Tv0Jv/JeEmDmgCM0nknEsg8+R61VHmaTH4DH6zNVHs8v
- d8sdbn+MmmvzM59QEM3Ce+38k/y5cb1W37Gry+3z8rX4vqRbAmjl4/YP3Uic6GV1pyJGwx7gR
- wTHgoJwuattT4iWPe3lsUPoIlN3RKsnhMHbukkfEHCDmUJp7r28djc0g+PYFByDMh42Idum7l
- 66gJ3VL/Inf4tIovZt+mOPeBDRMtYzPS37IkNCZUPbvUsPvKsvswnLqN7GRK2CZ/6hqe/YW9x
- 4bXWb+KN+l0WMFEBL4N5abvvJX0n2rowcvn1EE7qLdvv+GZdQ4ytAEbnABtAR3drsP2OLldfB
- 3TBlGdT55yCScbibTGdOkwkbb4aktOOBTM1uI0DyGHHvY0YASuTpKn98B+Um2ZHWiyfmqvnhU
- vt077PRWee6aruxaJDKl5mcX3TMDac0h79qfEB/riVw2FYPQ5coGuL8kGEYJKBxu+mpLvJoB/
- ALwGnMq1JF74FGAeElv/l4jpCsI4sw7V2wRSdwJclaztdGnsJfP36BhipQmWG4C8vknuJwGDC
- wyUOwPgs14KE1AtVd4RmiAqY3gUmHnKz+K/R0asec8IEiOefZjVheum4wQ9kAL21W0cWb68DW
- QfIQnUxSfCvfVVzdFeFz2YFM0ygcTYd623g3fm3LW5P1k=
+From: Xingyu Li <xli399@ucr.edu>
+Date: Wed, 28 Aug 2024 14:37:04 -0700
+Message-ID: <CALAgD-5kt+F6S1aAwRhKMKb0KwFGzfJCWyHguotEvJGBBBvFkA@mail.gmail.com>
+Subject: BUG: WARNING in free_pgtables
+To: akpm@linux-foundation.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org
+Cc: Yu Hao <yhao016@ucr.edu>
+Content-Type: text/plain; charset="UTF-8"
+
+Hi,
+
+We found a bug in Linux 6.10 using syzkaller. It is possibly a  logic bug.
+The reprodcuer is
+https://gist.github.com/freexxxyyy/5f0c95e95e1bc0fb681e504114b61de8
+
+The bug report is:
+
+WARNING: CPU: 0 PID: 8053 at include/linux/rwsem.h:203
+mmap_assert_write_locked include/linux/mmap_lock.h:70 [inline]
+WARNING: CPU: 0 PID: 8053 at include/linux/rwsem.h:203
+__is_vma_write_locked include/linux/mm.h:714 [inline]
+WARNING: CPU: 0 PID: 8053 at include/linux/rwsem.h:203 vma_start_write
+include/linux/mm.h:733 [inline]
+WARNING: CPU: 0 PID: 8053 at include/linux/rwsem.h:203
+free_pgtables+0x4df/0xbb0 mm/memory.c:403
+Modules linked in:
+CPU: 0 PID: 8053 Comm: syz-executor107 Not tainted 6.10.0 #13
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
+RIP: 0010:rwsem_assert_held_write include/linux/rwsem.h:203 [inline]
+RIP: 0010:mmap_assert_write_locked include/linux/mmap_lock.h:70 [inline]
+RIP: 0010:__is_vma_write_locked include/linux/mm.h:714 [inline]
+RIP: 0010:vma_start_write include/linux/mm.h:733 [inline]
+RIP: 0010:free_pgtables+0x4df/0xbb0 mm/memory.c:403
+Code: 04 00 4d 85 e4 0f 84 86 03 00 00 e8 3b 46 b6 ff 4d 89 ee 4d 89
+e5 49 bc 00 00 00 00 00 fc ff df e9 86 fd ff ff e8 21 46 b6 ff <0f> 0b
+e9 b8 fe ff ff 48 c7 c1 6c 91 24 8f 80 e1 07 80 c1 03 38 c1
+RSP: 0018:ffffc9000ac7f748 EFLAGS: 00010293
+RAX: ffffffff81db0b3f RBX: ffff88801d8cbe98 RCX: ffff888021fa1e00
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000000 R08: ffffffff81db09ea R09: ffffffff8aed5df0
+R10: 0000000000000004 R11: ffff888021fa1e00 R12: ffff88802ce66ba0
+R13: ffff88801d8cbe88 R14: ffff88802ce66aa8 R15: 1ffff11003b197d1
+FS:  0000000000000000(0000) GS:ffff888063a00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ff0448ce6b0 CR3: 00000000244bc000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ exit_mmap+0x435/0xa20 mm/mmap.c:3352
+ __mmput+0x114/0x3b0 kernel/fork.c:1346
+ exit_mm+0x207/0x2e0 kernel/exit.c:567
+ do_exit+0x996/0x2560 kernel/exit.c:863
+ do_group_exit+0x1fd/0x2b0 kernel/exit.c:1025
+ get_signal+0x1697/0x1730 kernel/signal.c:2909
+ arch_do_signal_or_restart+0x92/0x7f0 arch/x86/kernel/signal.c:310
+ exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0x95/0x280 kernel/entry/common.c:218
+ do_syscall_64+0x8a/0x150 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x67/0x6f
+RIP: 0033:0x7fb06353406d
+Code: Unable to access opcode bytes at 0x7fb063534043.
+RSP: 002b:00007fb0634d10c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: 0000000000000002 RBX: 00007fb0635c92e8 RCX: 00007fb06353406d
+RDX: 0000000020000080 RSI: 0000000000000001 RDI: 0000000000000004
+RBP: 00007fb0635c92e0 R08: 00007fb0634d1640 R09: 0000000000000000
+R10: 00007fb0634d1640 R11: 0000000000000246 R12: 00007fb0635c92ec
+R13: 0000000000000000 R14: 00007fb0634f67c0 R15: 00007fb0634b1000
+ </TASK>
 
 
-
-=E5=9C=A8 2024/8/29 01:44, Fedor Pchelkin =E5=86=99=E9=81=93:
-> The local extent changeset is passed to clear_record_extent_bits() where
-> it may have some additional memory dynamically allocated for ulist. When
-> qgroup is disabled, the memory is leaked because in this case the
-> changeset is not released upon __btrfs_qgroup_release_data() return.
->
-> Since the recorded contents of the changeset are not used thereafter, ju=
-st
-> don't pass it.
->
-> Found by Linux Verification Center (linuxtesting.org) with Syzkaller.
->
-> Reported-by: syzbot+81670362c283f3dd889c@syzkaller.appspotmail.com
-> Closes: https://lore.kernel.org/lkml/000000000000aa8c0c060ade165e@google=
-.com
-> Fixes: af0e2aab3b70 ("btrfs: qgroup: flush reservations during quota dis=
-able")
-> Cc: stable@vger.kernel.org # 6.10+
-> Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
-
-Reviewed-by: Qu Wenruo <wqu@suse.com>
-
-Thanks,
-Qu
-
-> ---
-> v2: rework the fix as Qu Wenruo suggested - just don't pass unneeded
->      changeset. Update the commit title and description accordingly.
->
->   fs/btrfs/qgroup.c | 3 +--
->   1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/fs/btrfs/qgroup.c b/fs/btrfs/qgroup.c
-> index 5d57a285d59b..f6118c5f3c9f 100644
-> --- a/fs/btrfs/qgroup.c
-> +++ b/fs/btrfs/qgroup.c
-> @@ -4344,10 +4344,9 @@ static int __btrfs_qgroup_release_data(struct btr=
-fs_inode *inode,
->   	int ret;
->
->   	if (btrfs_qgroup_mode(inode->root->fs_info) =3D=3D BTRFS_QGROUP_MODE_=
-DISABLED) {
-> -		extent_changeset_init(&changeset);
->   		return clear_record_extent_bits(&inode->io_tree, start,
->   						start + len - 1,
-> -						EXTENT_QGROUP_RESERVED, &changeset);
-> +						EXTENT_QGROUP_RESERVED, NULL);
->   	}
->
->   	/* In release case, we shouldn't have @reserved */
+-- 
+Yours sincerely,
+Xingyu
 
