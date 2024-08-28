@@ -1,134 +1,122 @@
-Return-Path: <linux-kernel+bounces-305418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19832962E63
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 19:24:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D8A5962E97
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 19:32:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17EEC1C2196A
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 17:24:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 686391C21431
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 17:32:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BAD61A4B84;
-	Wed, 28 Aug 2024 17:24:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ecYsA2Q1"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA4E236130;
-	Wed, 28 Aug 2024 17:24:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DA9F1A7072;
+	Wed, 28 Aug 2024 17:32:34 +0000 (UTC)
+Received: from gate.crashing.org (gate.crashing.org [63.228.1.57])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1809F142633;
+	Wed, 28 Aug 2024 17:32:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.228.1.57
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724865845; cv=none; b=SQ3T3k4W1o32lJiYP8zdUjpEgQReQ92loDNJfRykuqwhtO22XH812sjYIZ/XnI0hPeeaZQW11B4421SxR1rZQTCz8DxLfYesw4krkzxgwz8ljn5QVk6MexqDOKDj42gXQ2hy4SbZrFf6hVNL3Ubd5QHv57gBz8JsbovVVGXvV9c=
+	t=1724866353; cv=none; b=nLXAjrUDuJoFTbpBk7ZI6QV8oiBf8G8w6RJoCBe4zEFj1gxDR7jrmDE0eBadB4qAUvRTgMX08FBcJowxNE61uLiLf5gLLaJva7fRK3M/oeejIsUDOm9lIL2hh3WSLCauQk0AF3Um/qnMAnzyxDdCIl9K7LE39J6sHvBMiCuTS88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724865845; c=relaxed/simple;
-	bh=vFWl8poib/+4F/OW6aol1GsR7dFJOwzrkvpb0GGqDlg=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SH6eqEIfCRBw/WCBv8wMAd2RqYRlJ/23czKlr5FO98zIA2sFG3aFsPkMYDDfS4uqG9t1tMYoQMY/eSXEDiH7JgzdtoYq5PSzuZ5HYSqlQmYqpM4pehxoCYy+/m36OtMvDjRKa3tdNl04xFKa5Fe5pAORbEZAzZpwgrqbcnnFm7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ecYsA2Q1; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2f50f1d864fso36823261fa.1;
-        Wed, 28 Aug 2024 10:24:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724865842; x=1725470642; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=wKSf7KHGE8x6jvVOVqxv8wQa+Jwbt0tqgqyGwouit5E=;
-        b=ecYsA2Q1+2Gf8za/kg/QadO3R+U8jO93+rq2POyp327ImN7ZY/2n7eeblnEXB6Qpsm
-         aCpFgZxD9Si8i+liOXFt71/zSlDnjjQt7Y6msYf8JqpaZET2iqeS/D9LtvhoxY1P4VaU
-         Rrno6P8ZufrmfS/c/ybHpp3+pKOhRaIuirfRHLToB5vKBcZdRnuU4R8bhXW5NkrI9nG9
-         70hYzkKM/5uP4dRXr9QKsL0dS9eWmvLOmB1TNa79eF/+tI6hqIGpv84FyN/cjBp9ihvK
-         DzOhVcmpdeMzR3d99po68+6QyaCGkDtBBEuaeKx0U+5rd1C3ggI2igvuGkR6rJFUuknu
-         1G3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724865842; x=1725470642;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wKSf7KHGE8x6jvVOVqxv8wQa+Jwbt0tqgqyGwouit5E=;
-        b=o2is1lgYivvPMoEbL5lVVR6c7NBmgnBMk4hJbCVEVA8+8j4JDE1hgq8132Lq4hMlRj
-         +h8+IgJ8aY6RcZrpyIJvJymUEoPB06QVFg1D+HBWP4BDtgwVPQ74CEZ71Pqg7mu7w6yd
-         T9qSHrAJW+JazVVJp+qM+AJgRAt2uautle2XAdZA0I2TAusmx1L3W5w5fgLFlm8pt2Lq
-         EwEEPTRVA5ZjVRaflHw2aVXnXGxVuNHuM9jWdd0s4qc96Q1+tAbMpfUyQfnSbtOpEqt0
-         DJsa2CawDIKEHN5oAplBWe10eCMQ0Fcy5mS+9C9gh8cRVNZ4owcMY42zp1B62gcvnpv/
-         R1gg==
-X-Forwarded-Encrypted: i=1; AJvYcCU6mI28lj7jmjvOopKu0B2bMkKwbCcQ4mA70Kc6fPHRClghvl8GBEf1K5iCHwbXdXb8m36h3QqBuBxEFQU=@vger.kernel.org, AJvYcCUrsF2p3ST18eR2Fb40WQ8gLiLA1iO9esmhRbfCQ45HygSTmLHctEths8SCd6iTSwa4vyjty3Ng@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLLJVJVeiVVqkKiA65D3ofTvp0+J6pqxfAr2puazD5NVpXSXIv
-	nJyXXBgmRFf2gyNLp2OsG+KhrJUnoNtZMrAyter1wCVBs4dWW8f9
-X-Google-Smtp-Source: AGHT+IGsw/F5hC5DWs12E3b4scBC2HyWOsUKn1a0W2LDOS1mCJtNnBGRm4CD71rylVT8vnXP8/sAgg==
-X-Received: by 2002:a2e:4e11:0:b0:2ec:55b5:ed45 with SMTP id 38308e7fff4ca-2f6103f62cemr2492661fa.24.1724865841293;
-        Wed, 28 Aug 2024 10:24:01 -0700 (PDT)
-Received: from pc636 (host-90-233-206-146.mobileonline.telia.com. [90.233.206.146])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f40487f80csm19726941fa.107.2024.08.28.10.23.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2024 10:24:00 -0700 (PDT)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date: Wed, 28 Aug 2024 19:23:58 +0200
-To: Michal Hocko <mhocko@suse.com>
-Cc: Uladzislau Rezki <urezki@gmail.com>, Hailong Liu <hailong.liu@oppo.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Barry Song <21cnbao@gmail.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Tangquan Zheng <zhengtangquan@oppo.com>, stable@vger.kernel.org,
-	Baoquan He <bhe@redhat.com>, Matthew Wilcox <willy@infradead.org>,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [RESEND PATCH v1] mm/vmalloc: fix page mapping if
- vm_area_alloc_pages() with high order fallback to order 0
-Message-ID: <Zs9dLuNrEwa-DxCk@pc636>
-References: <20240816114626.jmhqh5ducbk7qeur@oppo.com>
- <Zr9G-d6bMU4_QodJ@tiehlicka>
- <Zsi8Byjo4ayJORgS@pc638.lan>
- <Zsw0Sv9alVUb1DV2@tiehlicka>
- <Zsx3ULRaVu5Lh46Q@pc636>
- <Zs12_8AZ0k_WRWUE@tiehlicka>
- <Zs3K4h5ulL1zlj6L@pc636>
- <Zs3WouJpDk3AWV4D@tiehlicka>
- <Zs3w3k7-bzCYa3KC@pc636>
- <Zs7ObXBgULkuvaXK@tiehlicka>
+	s=arc-20240116; t=1724866353; c=relaxed/simple;
+	bh=oxW2+MTjMrJ+ZeeK8Liz6ctDws6qsgf5Ch9PI4RjS2M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tip5iUbohSgFAXsqTbsZHvRNF9f2zcI7uexSQ5rRqywz82a9XM5ZuBBVjeJjmcPuLH4EM0JNbLQLO/GDGK5tvffo+8WPznJ4seh65/TbvDGXVrIF5DprV8YwBLbXuFSH1yciMp9DRWiYn4+1nrH54s8A+71GF41QOtQrTtfQdqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org; spf=pass smtp.mailfrom=kernel.crashing.org; arc=none smtp.client-ip=63.228.1.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.crashing.org
+Received: from gate.crashing.org (localhost.localdomain [127.0.0.1])
+	by gate.crashing.org (8.14.1/8.14.1) with ESMTP id 47SHPeo9010804;
+	Wed, 28 Aug 2024 12:25:40 -0500
+Received: (from segher@localhost)
+	by gate.crashing.org (8.14.1/8.14.1/Submit) id 47SHPc5F010803;
+	Wed, 28 Aug 2024 12:25:38 -0500
+X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
+Date: Wed, 28 Aug 2024 12:25:38 -0500
+From: Segher Boessenkool <segher@kernel.crashing.org>
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, "Jason A . Donenfeld" <Jason@zx2c4.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>, Naveen N Rao <naveen@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>, "Theodore Ts'o" <tytso@mit.edu>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        shuah <shuah@kernel.org>, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Linux-Arch <linux-arch@vger.kernel.org>, linux-mm@kvack.org,
+        linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v2 05/17] vdso: Avoid call to memset() by getrandom
+Message-ID: <20240828172538.GI29862@gate.crashing.org>
+References: <cover.1724309198.git.christophe.leroy@csgroup.eu> <5deb67090b214f0e6eae96b7c406546d1a16f89b.1724309198.git.christophe.leroy@csgroup.eu> <20240827180819.GB2049@sol.localdomain> <20240827225330.GC29862@gate.crashing.org> <Zs8HirKLk-SrwTIu@zx2c4.com> <fc19bf63-d519-46e2-be70-80202c85ff92@app.fastmail.com> <20240828124519.GE29862@gate.crashing.org> <CAMj1kXGmDmxy75eP=rf_fzKmg0g_FeKV43jk2G_gibnKZBtVww@mail.gmail.com> <20240828162025.GG29862@gate.crashing.org> <CAMj1kXHZPfr2Sz78UrgsdX-2uBp0D1sCnznQnz5ZyMdiJq6rAA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Zs7ObXBgULkuvaXK@tiehlicka>
+In-Reply-To: <CAMj1kXHZPfr2Sz78UrgsdX-2uBp0D1sCnznQnz5ZyMdiJq6rAA@mail.gmail.com>
+User-Agent: Mutt/1.4.2.3i
 
-On Wed, Aug 28, 2024 at 09:14:53AM +0200, Michal Hocko wrote:
-> On Tue 27-08-24 17:29:34, Uladzislau Rezki wrote:
-> > On Tue, Aug 27, 2024 at 03:37:38PM +0200, Michal Hocko wrote:
-> > > On Tue 27-08-24 14:47:30, Uladzislau Rezki wrote:
-> > > > On Tue, Aug 26, 2024 at 08:49:35AM +0200, Michal Hocko wrote:
-> > > [...]
-> > > > > > 2. High-order allocations. Do you think we should not care much about
-> > > > > > it when __GFP_NOFAIL is set? Same here, there is a fallback for order-0
-> > > > > > if "high" fails, it is more likely NO_FAIL succeed for order-0. Thus
-> > > > > > keeping NOFAIL for high-order sounds like not a good approach to me.
-> > > > > 
-> > > > > We should avoid high order allocations with GFP_NOFAIL at all cost.
-> > > > > 
-> > > > What do you propose here? Fail such request?
-> > > 
-> > > We shouldn't have any hard requirements for higher order allocations in the vmalloc
-> > > right? In other words we can always fallback to base pages.
-> > >
-> > We always drop NOFAIL for high-order, if it fails we fall-back to
-> > order-0. I got the feeling that you wanted just bail-out fully if
-> > high-order and NOFAIL.
+On Wed, Aug 28, 2024 at 07:12:55PM +0200, Ard Biesheuvel wrote:
+> On Wed, 28 Aug 2024 at 18:24, Segher Boessenkool
+> <segher@kernel.crashing.org> wrote:
+> > > In my experience, this is likely to do the opposite: it causes the
+> > > compiler to 'forget' the semantics of memcpy() and memset(), so that
+> > > explicit trivial calls will no longer be elided and replaced with
+> > > plain loads and stores (as it can no longer guarantee the equivalence)
+> >
+> > No, the compiler will never forget those semantics.  But if you tell it
+> > your function named memset() is not the actual standard memset -- via
+> > -fno-builtin-memset for example -- the compiler won't optimise things
+> > involving it quite as much.  You told it so eh?
 > 
-> Nope. We should always fall back to order 0 for both NOFAIL and regular
-> vmalloc allocations.
+> That is exactly the point I am making. So how would this help in this case?
+
+I think we agree?  :-)
+
+> > > This needs to be fixed for Clang as well, so throwing GCC specific
+> > > flags at it will at best be a partial solution.
+> >
+> > clang says it is a 100% plug-in replacement for GCC, so they will have
+> > to accept all GCC flags.  And in many cases they do.  Cases where they
+> > don't are bugs.
 > 
-Good.
+> Even if this were true, we support Clang versions today that do not
+> support -fno-tree-loop-distribute-patterns so my point stands.
 
-Thanks for the ACK!
+It is true.  Yes, this cause problems for their users.
 
---
-Uladzislau Rezki
+> > > It is not a complete solution, unfortunately, and I guess there may be
+> > > other situations (compiler/arch combinations) where this might pop up
+> > > again.
+> >
+> > Why do mem* not work in VDSOs?  Fix that, and all these problems
+> > disappear, and you do not need workrarounds :-)
+> 
+> Good point. We should just import memcpy and memset in the VDSO ELF metadata.
+
+Yeah.  In many cases GCC will replace such calls by (faster and/or
+smaller) inline code anyway, but when it does leave a call, there needs
+to be an external function implementing it :-)
+
+> Not sure about static binaries, though: do those even use the VDSO?
+
+With "static binary" people usually mean "a binary not using any DSOs",
+I think the VDSO is a DSO, also in this respect?  As always, -static
+builds are *way* less problematic (and faster and smaller :-) )
+
+
+Segher
 
