@@ -1,164 +1,212 @@
-Return-Path: <linux-kernel+bounces-304142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8818961AF3
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 02:08:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C031961AF7
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 02:09:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C98251C2308E
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 00:08:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9C911C22FA9
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 00:09:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 660C24C8F;
-	Wed, 28 Aug 2024 00:07:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="x1wC7/X/"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD93B53A7;
+	Wed, 28 Aug 2024 00:09:25 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7D231870
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 00:07:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73E772F41
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 00:09:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724803675; cv=none; b=GvH2s/AXURSpHne3e6CXmzMwdrMrbKXHDmxyvEHHLsg2jjdsz2zXJgRV9GTb5/eNUwySgjBe20epyw7NkB6IOlrTNfNnJVYlJSVWnPxVKq/a6suv527+V2iMhgtDlMZ5PoLKPOwN+5qa3HNpdDCIk5+ajCglSWfDAg2e95k94Bk=
+	t=1724803765; cv=none; b=fh37GQQ/iHnSmJvTELzAxTTmnMi3z5mNu/kvLDrfRbASTpH2ujyX2axWLnc9AGvDtb/nYimyDvlQzpPPnPNICNv0ZNpnjKwB1ab4ePSkPiiKbjxF3G9IkfqSpnpj8em2y8TeK5ixTItkegi3vRqGbgpZpWQySkqha5oyJ79jW8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724803675; c=relaxed/simple;
-	bh=QMUdZjGC2QmYpDOPkVE0D9YYi7Yy9Rbf/i/1r1H7Ov8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nFWNUj+P9HmaGGeNS9A7IOApz8QGeaY1vaBwTdE4Is2iVrXhHlRE7VEpbtwtbJas4paYj8cYkRBa8rrQQE4ZAb4M9tChH4s4QnwiupApHY7DgZDa0V4nymn6ZGTMGiBo36qHEk307fEmInmOK/21k1Ww94J4fBN+nwqOhBsQ0PY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=x1wC7/X/; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-428e3129851so54481705e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 17:07:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724803671; x=1725408471; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=IZV5iUMfoRoMcZ6Zd2j6GcTtSN2V/vbrvCSm64aXh2o=;
-        b=x1wC7/X/hAE2jhMCa74iWHA1GpVhgGZF6wwn1+VWQMD+LIdXsa7mUTLccpiqyKk5MX
-         Rk6WliIX291EykVe8UGqGXi0IyPFf76NXOkqwN5ao7Xc68HeoeQD75eYwTLJgvgBCts2
-         AT6ioPtRj0VKYoPV53l5fQYDUs8XCqTQu5e1tk78cbv6D9R67GvDvsN4SR6tJrMKXSR2
-         njU19aUVeXk3BbHTiCTQGOeWIW5cM7lfWY3VvcpSiQklWntOTUNkE1oHWhQJKGhCPHJW
-         xZxqZ8smxuyIKic8prIH2k0iiujlYlwQu2GynCZMzE+3l8IVuu+Ix8n3sF/fC416jljt
-         TvJA==
+	s=arc-20240116; t=1724803765; c=relaxed/simple;
+	bh=0ac49p/YwVZC2Ykmla05kPB1bydY7WVFX1mhQB87lIY=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=m+G7JyHCA9KjtX4eo6iR/q0u01E023ZH9wFM0Gw/8lHkytal3vmfyjRnwrbediKKRhRYDxjA6tClrZm7atgjFFPBnprE9sg+3ikh3fGrzwGzs+PBhtoRJizZhjsa5qFblD+PwfokziQtSWplL3KclFEpyIY9vaXQziM4nbkcEpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-8223c3509a9so668240539f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 17:09:23 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724803671; x=1725408471;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IZV5iUMfoRoMcZ6Zd2j6GcTtSN2V/vbrvCSm64aXh2o=;
-        b=g3aKUR1Me9cLvm9lSSihCP1ZK2aRr+u/rCOfOH1jkOszBotfo1mHmqeZiOmwE86i+h
-         /nCo35KAUUvCAKrCdTdAXs5R0uGkJoJfNOWRZrdGn+7IBKNdxIad5x7HPH/agdhR0fUP
-         ydWyr2JQWaCysWtHk1n3nHECSJRwmcDEr9R7NgcgBzXvC6zGh6xaIxwp+ktfsofEh/U9
-         qJGXAfUTEq2oQYNaMjOzCfpiPwmJDapQjaMPwoR3S+SkSNvkI0rd3T2OQ27Jcgzn1PBj
-         flZHMvW6zpgV6mdkEOC4zdpX0PWPGXU8Cx27Ao2bjm2BFkXZVKcCxppdcH1ph+QGdCDO
-         3GBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXYpVJIyaVY11E413dfb7YfMoRD3KgQRcgfE5WgU6hhRX2lMOrGS647Nf390GvIyl0WbJkUDzotpgWXbxM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGgtVLgkVjvfaP9rXCNqi74IpZvae0h1p/6jzC7H7nLPuELEQB
-	stOC0mc2eg0UnH2GMrpq+HVZs1cTGKej4GWWGJCGAVT1SYkQlyBrrQ6AkZuZFF4=
-X-Google-Smtp-Source: AGHT+IGaIcNGFJW9yUTOExLdE4h+xkmIeIJSNv3W/zzwc6H+isLKaj5qd9G/r5DrurzJWeLTrYBIFg==
-X-Received: by 2002:a5d:49cf:0:b0:362:2111:4816 with SMTP id ffacd0b85a97d-374968557f1mr112894f8f.55.1724803671136;
-        Tue, 27 Aug 2024 17:07:51 -0700 (PDT)
-Received: from [192.168.0.25] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c0bb475f2esm1538702a12.63.2024.08.27.17.07.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 27 Aug 2024 17:07:50 -0700 (PDT)
-Message-ID: <47aa934d-bdad-4c76-9420-ce65950f67d1@linaro.org>
-Date: Wed, 28 Aug 2024 01:07:49 +0100
+        d=1e100.net; s=20230601; t=1724803762; x=1725408562;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=S5pQmfmWhO7uDBeiOxD+Vg5Xhuy+K2v6Bu9xsxzzAbU=;
+        b=ZXO/ehKsPRydvoTkdJEM9uT5AJ0WQyWJCKsVOx1ZghYEcUo6u6K7u2dL11uwvVMuOm
+         YpBfaYwJ7Nyv5l4oUyjL36YKz+D4YQ0qJvmtZT86CUJt6ME4/fyLSJR/tPR1+kp3ztwT
+         YKxRsWZxSiiKWsiAThiAHOV6VdX3+U2S3Nopm8kvwKVM+IxHcVqvMLi3z4/EiXMnt4HE
+         LIMtfbt02PLyQvs6IDkdtrLl7/z5Ry1UC3G/pMQPjp9MUQlZP/ot5JNM8zEB4NdELAba
+         BDS3gylu/qnBJlQAa0/wZP00Nn5coMuMTrU3CfAjF536and7blqtSS8Hr9C9Zv8/Wp04
+         JzHw==
+X-Forwarded-Encrypted: i=1; AJvYcCXhs0oKMIswutAICl0vYzGzLFuy1Cfc67m2iSLrTdq0gT/zkQ3qVA2ogGzxeY1vRFKdxkdOYnpqxmhssiI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywc0w/wsiIgyhsoETSX2tNK1tOoEL46fZs7B5PaFmcaH8M3CE3V
+	jVdrRwAg1CaE57BjIGvNAMGVaEaWrqdOkLVBIByaDqVl1xHu2r/AH9A8hJeEsQoBnJiq+7Nn3I+
+	Yu/hKQEWjrpL4y1R0C83C4Nhyb/HKzel6uSGRss+7HXa3w74XxvXmhco=
+X-Google-Smtp-Source: AGHT+IE3K3n0CCYLHpsfSIQX9kqPIl0U6pW/+iBrG5MFk6ZdO1ublZxnvg8uw2UnGH4ZcGb3FBaW4pfi2qVUkjgQ5yu47+bt3xZN
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 09/13] media: qcom: camss: vfe: Move common code into vfe
- core
-To: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- Depeng Shao <quic_depengs@quicinc.com>, rfoss@kernel.org,
- todor.too@gmail.com, mchehab@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@quicinc.com
-References: <20240812144131.369378-1-quic_depengs@quicinc.com>
- <20240812144131.369378-10-quic_depengs@quicinc.com>
- <0611458d-b508-4e52-bafe-7f5612c63b72@linaro.org>
- <b1e1ff88-5bba-4424-bc85-38caa85b831f@linaro.org>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <b1e1ff88-5bba-4424-bc85-38caa85b831f@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6638:14c1:b0:4c0:838e:9fd1 with SMTP id
+ 8926c6da1cb9f-4cec4fab5a8mr4755173.5.1724803762644; Tue, 27 Aug 2024 17:09:22
+ -0700 (PDT)
+Date: Tue, 27 Aug 2024 17:09:22 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000094740b0620b32b4e@google.com>
+Subject: [syzbot] [net?] general protection fault in phy_start_cable_test_tdr
+From: syzbot <syzbot+5cf270e2069645b6bd2c@syzkaller.appspotmail.com>
+To: andrew@lunn.ch, christophe.leroy@csgroup.eu, davem@davemloft.net, 
+	edumazet@google.com, hkallweit1@gmail.com, kuba@kernel.org, 
+	linux-kernel@vger.kernel.org, linux@armlinux.org.uk, 
+	maxime.chevallier@bootlin.com, netdev@vger.kernel.org, pabeni@redhat.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 24/08/2024 14:06, Vladimir Zapolskiy wrote:
->> Right so generally speaking I don't believe we should have any null
->> function pointers.
->>
->> We just mandate that to be comitted, an impelmentation must provide a
->> dummy but, in this case when do we ever want a dummy function anyway
->> surely enable_irq() is a fundamental operation that is core to the logic.
-> 
-> Why? What could be a justification here?
+Hello,
 
-a) In principle I don't believe we should be adding an interface that 
-requires an exception in its first go.
+syzbot found the following issue on:
 
-b) I don't think its a good idea to proliferate patterns like this 
-throughout the code
+HEAD commit:    f9db28bb09f4 Merge branch 'net-redundant-judgments'
+git tree:       net-next
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=1656cc7b980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=df2f0ed7e30a639d
+dashboard link: https://syzkaller.appspot.com/bug?extid=5cf270e2069645b6bd2c
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1582047b980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=100af825980000
 
-if (vfe->res->hw_ops->enable_irq)
-     vfe->res->hw_ops->enable_irq();
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/585e02f7fe7b/disk-f9db28bb.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/b9faf5d24900/vmlinux-f9db28bb.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/f9df5868ea4f/bzImage-f9db28bb.xz
 
-too->many->indirection->calls();
+The issue was bisected to:
 
-easily dealt with but "looks wrong"
+commit 3688ff3077d3f334cee1d4b61d8bfb6a9508c2d2
+Author: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Date:   Wed Aug 21 15:10:05 2024 +0000
 
-https://www.joelonsoftware.com/2005/05/11/making-wrong-code-look-wrong/
+    net: ethtool: cable-test: Target the command to the requested PHY
 
-So if we are adding callbacks, the exception should be stubbing to an 
-empty function because 9/10 of implementations find the interface useful.
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=10163b05980000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=12163b05980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=14163b05980000
 
-> It might be extremely confusing to see in the code that some not ever
-> requested interrupts are enabled/disabled, and then to discover that just
-> some stubs around VFE interrupts are added. And it's the case especially
-> in this new vfe_enable_v2() function, which I believe is intended for
-> CAMSS support on new platforms.
-> 
-> What's worse, since these VFE interrupts are not needed on the modern
-> platforms, it will require to add a proposed dummy "return 0" function
-> into any CAMSS support for new platforms forever. I believe it'd be better
-> to clearly say that it's a legacy to have an obligatory support of VFE
-> interrupts.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+5cf270e2069645b6bd2c@syzkaller.appspotmail.com
+Fixes: 3688ff3077d3 ("net: ethtool: cable-test: Target the command to the requested PHY")
 
-I think enable_irq();/disable_irq(); should be handled from wm_start() 
-and wm_stop() for each VFE so that 480 and after can have shared 
-top-level logic.
+Oops: general protection fault, probably for non-canonical address 0xdffffc00000000f8: 0000 [#1] PREEMPT SMP KASAN PTI
+KASAN: null-ptr-deref in range [0x00000000000007c0-0x00000000000007c7]
+CPU: 0 UID: 0 PID: 5234 Comm: syz-executor293 Not tainted 6.11.0-rc4-syzkaller-00565-gf9db28bb09f4 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+RIP: 0010:phy_start_cable_test_tdr+0x3a/0x5c0 drivers/net/phy/phy.c:885
+Code: ec 38 48 89 54 24 18 49 89 f6 48 89 fb 49 bd 00 00 00 00 00 fc ff df e8 e4 24 2b fb 48 8d bb c0 07 00 00 48 89 f8 48 c1 e8 03 <42> 80 3c 28 00 74 05 e8 9a 66 92 fb 48 8b 83 c0 07 00 00 48 89 44
+RSP: 0018:ffffc90003c7f230 EFLAGS: 00010202
+RAX: 00000000000000f8 RBX: 0000000000000000 RCX: ffff888029b23c00
+RDX: 0000000000000000 RSI: ffffc90003c7f740 RDI: 00000000000007c0
+RBP: ffffc90003c7f470 R08: ffffffff89cb116d R09: 1ffff1100452bc15
+R10: dffffc0000000000 R11: ffffffff86686630 R12: ffffc90003c7f3f0
+R13: dffffc0000000000 R14: ffffc90003c7f740 R15: 0000000000000000
+FS:  000055555a907380(0000) GS:ffff8880b9200000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055fce9c1f000 CR3: 000000001a7d2000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ ethnl_act_cable_test_tdr+0x607/0x10d0 net/ethtool/cabletest.c:350
+ genl_family_rcv_msg_doit net/netlink/genetlink.c:1115 [inline]
+ genl_family_rcv_msg net/netlink/genetlink.c:1195 [inline]
+ genl_rcv_msg+0xb14/0xec0 net/netlink/genetlink.c:1210
+ netlink_rcv_skb+0x1e3/0x430 net/netlink/af_netlink.c:2550
+ genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
+ netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
+ netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1357
+ netlink_sendmsg+0x8e4/0xcb0 net/netlink/af_netlink.c:1901
+ sock_sendmsg_nosec net/socket.c:730 [inline]
+ __sock_sendmsg+0x221/0x270 net/socket.c:745
+ ____sys_sendmsg+0x525/0x7d0 net/socket.c:2597
+ ___sys_sendmsg net/socket.c:2651 [inline]
+ __sys_sendmsg+0x2b0/0x3a0 net/socket.c:2680
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f3311b2ef49
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 01 1a 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffe6e4b3118 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007f3311b2ef49
+RDX: 0000000000000000 RSI: 0000000020000240 RDI: 0000000000000003
+RBP: 00000000000f4240 R08: 0000000000000000 R09: 0000000000000001
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffe6e4b3170
+R13: 00007f3311b7c406 R14: 0000000000000003 R15: 00007ffe6e4b3150
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:phy_start_cable_test_tdr+0x3a/0x5c0 drivers/net/phy/phy.c:885
+Code: ec 38 48 89 54 24 18 49 89 f6 48 89 fb 49 bd 00 00 00 00 00 fc ff df e8 e4 24 2b fb 48 8d bb c0 07 00 00 48 89 f8 48 c1 e8 03 <42> 80 3c 28 00 74 05 e8 9a 66 92 fb 48 8b 83 c0 07 00 00 48 89 44
+RSP: 0018:ffffc90003c7f230 EFLAGS: 00010202
+RAX: 00000000000000f8 RBX: 0000000000000000 RCX: ffff888029b23c00
+RDX: 0000000000000000 RSI: ffffc90003c7f740 RDI: 00000000000007c0
+RBP: ffffc90003c7f470 R08: ffffffff89cb116d R09: 1ffff1100452bc15
+R10: dffffc0000000000 R11: ffffffff86686630 R12: ffffc90003c7f3f0
+R13: dffffc0000000000 R14: ffffc90003c7f740 R15: 0000000000000000
+FS:  000055555a907380(0000) GS:ffff8880b9300000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f3311b15a00 CR3: 000000001a7d2000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess):
+   0:	ec                   	in     (%dx),%al
+   1:	38 48 89             	cmp    %cl,-0x77(%rax)
+   4:	54                   	push   %rsp
+   5:	24 18                	and    $0x18,%al
+   7:	49 89 f6             	mov    %rsi,%r14
+   a:	48 89 fb             	mov    %rdi,%rbx
+   d:	49 bd 00 00 00 00 00 	movabs $0xdffffc0000000000,%r13
+  14:	fc ff df
+  17:	e8 e4 24 2b fb       	call   0xfb2b2500
+  1c:	48 8d bb c0 07 00 00 	lea    0x7c0(%rbx),%rdi
+  23:	48 89 f8             	mov    %rdi,%rax
+  26:	48 c1 e8 03          	shr    $0x3,%rax
+* 2a:	42 80 3c 28 00       	cmpb   $0x0,(%rax,%r13,1) <-- trapping instruction
+  2f:	74 05                	je     0x36
+  31:	e8 9a 66 92 fb       	call   0xfb9266d0
+  36:	48 8b 83 c0 07 00 00 	mov    0x7c0(%rbx),%rax
+  3d:	48                   	rex.W
+  3e:	89                   	.byte 0x89
+  3f:	44                   	rex.R
 
-However VFE can raise several error cases which TBH we should probably 
-be capturing somehow, if not in IRQ then in debugfs and/or trace
-
-https://git.codelinaro.org/bryan.odonoghue/kernel/-/commit/cd88d924eb55f5dfeb2283e6e0eef37d5bd4c1c4
-
-@Depeng can you move your enable_irq(); to camss-vfe-480.c::wm_start()
-
-just after we switch on a WM
-
-https://git.codelinaro.org/bryan.odonoghue/kernel/-/blob/2ea8172164e2b12a629cf3d939edac9a0f7a9368/drivers/media/platform/qcom/camss/camss-vfe-480.c#L127
-
-as well as a disable_irq() to camss-vfe-480.c::wm_stop(); @ the top of 
-the function ?
-
-https://git.codelinaro.org/bryan.odonoghue/kernel/-/blob/2ea8172164e2b12a629cf3d939edac9a0f7a9368/drivers/media/platform/qcom/camss/camss-vfe-480.c#L131
-
-disable_irq() should also collapse the TOP irq when stream_count == 0
-
-The stream_count variable should ensure the TOP irq value only gets 
-switched on/off once while also removing the special case from your 
-proposed amalgamated code.
 
 ---
-bod
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
