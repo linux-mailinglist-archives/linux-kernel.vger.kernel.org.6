@@ -1,171 +1,219 @@
-Return-Path: <linux-kernel+bounces-304631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A7A89622F7
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:07:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AD89B9622F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:07:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33169285BED
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 09:07:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65F3D285DDD
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 09:07:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4EB315DBB2;
-	Wed, 28 Aug 2024 09:07:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACCA615C151;
+	Wed, 28 Aug 2024 09:07:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ryph/kPm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="HZr3+rFa"
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02140158543;
-	Wed, 28 Aug 2024 09:07:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA3D115A849
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 09:07:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724836028; cv=none; b=WTgOX4qIhzKr95tXQCcA6kmlD+WzshrKNdD5566uRjoEU5I6n3npkPC4CrIabXje95JsexPxlKX+SI8t1ePWtBTEJakdcrLfaPuw/+Ge6slaiNJHHG2IwlLRY1dz8FkwOIMaIB7amhilfg4+hpvVVzA1MhJ2GiCLZfES6Kq5FxI=
+	t=1724836064; cv=none; b=dDEL+rwwTS7Glnr224Uvk2Xi3gW+RNRF/X1dGQ0oLmI0EzKBmB1NmRiEX3WcT8ozJz7rQzKtbUBZvsBefm0rcGL9t2VcuDJYVhCRw3joTB+LPVqUEt4GK88kKf4SJhKu2HjFERAgOycWtt0vaXrRzA6Yy1VgUapCPdUEuTAQy9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724836028; c=relaxed/simple;
-	bh=qa1D8sWQ7smF5eON7ApWsmnuqplMQ1HKdz1ku1wHFIE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=t23kUJzTcHEG0lH1j+hU1BPUbNwx0ojnj6HTHNrCjxngOgfI/jGj5OTbcsAKbuzazkI23KSI6o+mjuC0AiuLTeZjSESu0XetOWqvg8J/Zh6H1sBqn44nHEHL+fEsqJK1SGXQTMWzHNT+NIB2cPdWbSOizSzI/PoHMZbHQYi2pLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ryph/kPm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1CB7C4AF51;
-	Wed, 28 Aug 2024 09:07:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724836027;
-	bh=qa1D8sWQ7smF5eON7ApWsmnuqplMQ1HKdz1ku1wHFIE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ryph/kPmI6mUyBZsV6IIW1VHyrUCZWOFAK4yYtYd087XawAaKkN4wndjstA3AxXyG
-	 h3mMMnbIho93JqD02uKUztohPXOCAYk7wB1KcQBb6HosG6yBf7xTP0jxNVZWDPr4go
-	 URklcY28JBD+ho8cF9T1XAuZyM6eVjWTw26ROWLRv04RRc6zvMOD5ub1k4vLv/R54f
-	 oDe8Jrp4XX2DFwMCNvJxsM26nM5zy1LgGmD47MueRrOaBub1m2sMx7HWtn1vKyof8l
-	 Xd2PUX4nIoXTlM7vjLPA+xoc6b8YQBKcJxpA1TGxewoj48hwIWsMM3V2IQor7tD2Gb
-	 tVnb895fiYipw==
-Message-ID: <fcf59ffe-69f7-48d3-bf20-fc223a2c2d10@kernel.org>
-Date: Wed, 28 Aug 2024 11:07:00 +0200
+	s=arc-20240116; t=1724836064; c=relaxed/simple;
+	bh=EKyC33cDFQACdKdFn9YBTnMhr5pOWML1YgTKMjs3SAA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f/k/4SvhzmlQYICTOy5k9IoqhXsH70vxgujlibW8faPqENJr8HV7/qDd53nw0Vfz/GGA+hWE+2xwSAasq/xKHVNHn9SxGqMT5JF4IU5ugaaJc2AIDfxTSQ773w3/DLzLlHAP1gDrovQh2hTKL/66vXRGQO/XEUfW4gHP0261XVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=HZr3+rFa; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id B26A1FF80C;
+	Wed, 28 Aug 2024 09:07:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1724836060;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Zz6DLvfJRS+oja0Jh65Ow9R3+OFipp+nRBopAIUquPU=;
+	b=HZr3+rFaDgZ5jLlvkG6vFKp1SByVaSvFBelAgXt08tU5mG4/H/gAQTI9tfZDUJWVwCsFSO
+	55nczXRDdOqnvocUxWkzX3bkDUhly3QGbJ6KurDCZlB1VDTRFCL53iM4YxZx6mlh/uhueX
+	EtGrQd8udFMfI8a59FXURw2jQ8Y/maYGDIEMPXjiua/Eh9uDkx+sJA1MrmgFx9Ogciv/z5
+	l7bCXfqr2vho0rhY0bsyu0kczITsmpTlHECPU2AP5gg1m69SAnIzU3nV1u3O1wEbj0csQu
+	G7zMS4zC5Vp7GO9pXRMXCh5VIoSRKP+yH9GQcDE8WQJ5vY7aFfkXCvoyoM6hOg==
+Date: Wed, 28 Aug 2024 11:07:37 +0200
+From: Louis Chauvet <louis.chauvet@bootlin.com>
+To: Jani Nikula <jani.nikula@linux.intel.com>
+Cc: Maxime Ripard <mripard@kernel.org>,
+	Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
+	Melissa Wen <melissa.srw@gmail.com>,
+	=?iso-8859-1?Q?Ma=EDra?= Canal <mairacanal@riseup.net>,
+	Haneen Mohammed <hamohammed.sa@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, dri-devel@lists.freedesktop.org,
+	arthurgrillo@riseup.net, linux-kernel@vger.kernel.org,
+	jeremie.dautheribes@bootlin.com, miquel.raynal@bootlin.com,
+	thomas.petazzoni@bootlin.com, seanpaul@google.com,
+	nicolejadeyee@google.com
+Subject: Re: [PATCH RFC 11/15] drm: writeback: Add drm_writeback_connector
+ cleanup
+Message-ID: <Zs7o2REyQuVrlmbo@louis-chauvet-laptop>
+Mail-Followup-To: Jani Nikula <jani.nikula@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
+	Melissa Wen <melissa.srw@gmail.com>,
+	=?iso-8859-1?Q?Ma=EDra?= Canal <mairacanal@riseup.net>,
+	Haneen Mohammed <hamohammed.sa@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, dri-devel@lists.freedesktop.org,
+	arthurgrillo@riseup.net, linux-kernel@vger.kernel.org,
+	jeremie.dautheribes@bootlin.com, miquel.raynal@bootlin.com,
+	thomas.petazzoni@bootlin.com, seanpaul@google.com,
+	nicolejadeyee@google.com
+References: <20240814-google-remove-crtc-index-from-parameter-v1-0-6e179abf9fd4@bootlin.com>
+ <20240814-google-remove-crtc-index-from-parameter-v1-11-6e179abf9fd4@bootlin.com>
+ <20240827-solid-adorable-coucal-c3e0d1@houat>
+ <Zs3z7tx4dMBfY_DX@louis-chauvet-laptop>
+ <87a5gxyrhc.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: remoteproc: qcom,sa8775p-pas: Document
- QCS8300 remoteproc
-To: Jingyi Wang <quic_jingyw@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
- andersson@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, mathieu.poirier@linaro.org,
- bartosz.golaszewski@linaro.or, quic_tingweiz@quicinc.com,
- quic_aiquny@quicinc.com, quic_tengfan@quicinc.com,
- Xin Liu <quic_liuxin@quicinc.com>
-References: <20240828030511.443605-1-quic_jingyw@quicinc.com>
- <20240828030511.443605-2-quic_jingyw@quicinc.com>
- <eetb73ycz7kzcgknuzorsnoszhpdljuxepuoflhakobli6dozl@q2sbmj77hedo>
- <51280d4a-ad55-466d-b9d8-c5bdc1a2f0ee@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
- QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
- gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
- /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
- iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
- VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
- 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
- xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
- eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
- AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
- MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
- Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
- ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
- vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
- oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
- lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
- t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
- uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
- 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
- 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <51280d4a-ad55-466d-b9d8-c5bdc1a2f0ee@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <87a5gxyrhc.fsf@intel.com>
+X-GND-Sasl: louis.chauvet@bootlin.com
 
-On 28/08/2024 09:28, Jingyi Wang wrote:
+Le 28/08/24 - 11:35, Jani Nikula a écrit :
+> On Tue, 27 Aug 2024, Louis Chauvet <louis.chauvet@bootlin.com> wrote:
+> > Le 27/08/24 - 16:33, Maxime Ripard a écrit :
+> >> Hi,
+> >> 
+> >> On Wed, Aug 14, 2024 at 04:36:33PM GMT, Louis Chauvet wrote:
+> >> > Currently drm_writeback_connector are created by
+> >> > drm_writeback_connector_init or drm_writeback_connector_init_with_encoder.
+> >> > Both of the function uses drm_connector_init and drm_encoder_init, but
+> >> > there is no way to properly clean those structure from outside.
+> >> > 
+> >> > This patch introduce the new function drm_writeback_connector_cleanup to
+> >> > allow a proper cleanup.
+> >> > 
+> >> > Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+> >> > ---
+> >> >  drivers/gpu/drm/drm_writeback.c | 10 ++++++++++
+> >> >  include/drm/drm_writeback.h     | 11 +++++++++++
+> >> >  2 files changed, 21 insertions(+)
+> >> > 
+> >> > diff --git a/drivers/gpu/drm/drm_writeback.c b/drivers/gpu/drm/drm_writeback.c
+> >> > index a031c335bdb9..505a4eb40f93 100644
+> >> > --- a/drivers/gpu/drm/drm_writeback.c
+> >> > +++ b/drivers/gpu/drm/drm_writeback.c
+> >> > @@ -184,6 +184,7 @@ int drm_writeback_connector_init(struct drm_device *dev,
+> >> >  	drm_encoder_helper_add(&wb_connector->encoder, enc_helper_funcs);
+> >> >  
+> >> >  	wb_connector->encoder.possible_crtcs = possible_crtcs;
+> >> > +	wb_connector->managed_encoder = true;
+> >> >  
+> >> >  	ret = drm_encoder_init(dev, &wb_connector->encoder,
+> >> >  			       &drm_writeback_encoder_funcs,
+> >> > @@ -290,6 +291,15 @@ int drm_writeback_connector_init_with_encoder(struct drm_device *dev,
+> >> >  }
+> >> >  EXPORT_SYMBOL(drm_writeback_connector_init_with_encoder);
+> >> >  
+> >> > +void drm_writeback_connector_cleanup(struct drm_writeback_connector *wb_connector)
+> >> > +{
+> >> > +	drm_connector_cleanup(&wb_connector->base);
+> >> > +	drm_property_blob_put(wb_connector->pixel_formats_blob_ptr);
+> >> > +	if (wb_connector->managed_encoder)
+> >> > +		drm_encoder_cleanup(&wb_connector->encoder);
+> >> > +}
+> >> > +EXPORT_SYMBOL(drm_writeback_connector_cleanup);
+> >> > +
+> >> >  int drm_writeback_set_fb(struct drm_connector_state *conn_state,
+> >> >  			 struct drm_framebuffer *fb)
+> >> >  {
+> >> > diff --git a/include/drm/drm_writeback.h b/include/drm/drm_writeback.h
+> >> > index 17e576c80169..e651c0c0c84c 100644
+> >> > --- a/include/drm/drm_writeback.h
+> >> > +++ b/include/drm/drm_writeback.h
+> >> > @@ -35,6 +35,15 @@ struct drm_writeback_connector {
+> >> >  	 */
+> >> >  	struct drm_encoder encoder;
+> >> >  
+> >> > +	/**
+> >> > +	 * @managed_encoder: Sets to true if @encoder was created by drm_writeback_connector_init()
+> >> > +	 *
+> >> > +	 * If the user used drm_writeback_connector_init_with_encoder() to create the connector,
+> >> > +	 * @encoder is not valid and not managed by drm_writeback_connector. This fields allows
+> >> > +	 * the drm_writeback_cleanup() function to properly destroy the encoder if needed.
+> >> > +	 */
+> >> > +	bool managed_encoder;
+> >> > +
+> >> 
+> >> I think we should rather create drmm_writeback_connector variants,
+> >> and make both deprecated in favor of these new functions.
+> >
+> > Hi,
+> >
+> > I can try to do it. If I understand correctly, you want to create two 
+> > functions like this? 
+> >
+> > 	int drmm_writeback_connector_init([...]) {
+> > 		/* drmm and alloc as we want to let drm core to manage this 
+> > 		   encoder, no need to store it in drm_writeback_connector 
+> > 		   */
+> > 		enc = drmm_plain_encoder_alloc(...);
+> >
+> > 		return drmm_writeback_connector_init_with_encoder([...], enc);
+> > 	}
+> >
+> > 	int drmm_writeback_connector_init_with_encoder([...], enc) {
+> > 		con = drmm_connector_init([...]);
+> >
+> > 		drm_connector_attach_encoder(enc, con);
+> >
+> > 		/* Needed for pixel_formats_blob_ptr, base is already 
+> > 		   managed by drmm_connector_init. Maybe cleaning 
+> > 		   job_queue is also needed? */
+> > 		drmm_add_action_or_reset([...], &drm_writeback_connector_cleanup)
+> > 	}
+> 
+> Why add two variants, when you can have one and pass NULL for encoder?
+> We have the _init_with_encoder variant only because nobody bothered to
+> clean up existing call sites.
+
+I just followed the existing code, but yes, I can make only one function 
+and create the encoder if the pointer is NULL.
+ 
+> Side note, I'd still like to be able to pass driver's own allocated
+> connector instead of having writeback midlayer force it on you.
+
+I just checked, it seems non-trivial to make this change and I don't feel 
+confident to change this much the drm core.
+
+Louis Chauvet
+
+> BR,
+> Jani.
 > 
 > 
-> On 8/28/2024 3:22 PM, Krzysztof Kozlowski wrote:
->> On Wed, Aug 28, 2024 at 11:05:10AM +0800, Jingyi Wang wrote:
->>> Document the components used to boot the ADSP, CDSP and GPDSP on the
->>> QCS8300 SoC.
->>>
->>> Co-developed-by: Xin Liu <quic_liuxin@quicinc.com>
->>> Signed-off-by: Xin Liu <quic_liuxin@quicinc.com>
->>> Signed-off-by: Jingyi Wang <quic_jingyw@quicinc.com>
->>> ---
->>>  .../bindings/remoteproc/qcom,sa8775p-pas.yaml | 22 +++++++++++++++++++
->>>  1 file changed, 22 insertions(+)
->>>
->>> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sa8775p-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sa8775p-pas.yaml
->>> index 7fe401a06805..44b070a17ca0 100644
->>> --- a/Documentation/devicetree/bindings/remoteproc/qcom,sa8775p-pas.yaml
->>> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,sa8775p-pas.yaml
->>> @@ -16,6 +16,9 @@ description:
->>>  properties:
->>>    compatible:
->>>      enum:
->>> +      - qcom,qcs8300-adsp-pas
->>> +      - qcom,qcs8300-cdsp-pas
->>> +      - qcom,qcs8300-gpdsp-pas
->>>        - qcom,sa8775p-adsp-pas
->>>        - qcom,sa8775p-cdsp0-pas
->>>        - qcom,sa8775p-cdsp1-pas
->>> @@ -64,6 +67,7 @@ allOf:
->>>        properties:
->>>          compatible:
->>>            enum:
->>> +            - qcom,qcs8300-adsp-pas
->>>              - qcom,sa8775p-adsp-pas
->>>      then:
->>>        properties:
->>> @@ -75,6 +79,23 @@ allOf:
->>>            items:
->>>              - const: lcx
->>>              - const: lmx
->>> +  - if:
->>> +      properties:
->>> +        compatible:
->>> +          enum:
->>> +            - qcom,qcs8300-cdsp-pas
->>
->> This looks the same as sa8775p cdsp. Why new entry?
->>
-> There is difference in power domain, sa8775p use nsp while qcs8300 use nsp0
-
-Please paste code where do you see the difference.
-
-Best regards,
-Krzysztof
-
+> >
+> > Louis Chauvet
+> >  
+> >> Maxime
+> >
+> >
+> 
+> -- 
+> Jani Nikula, Intel
 
