@@ -1,115 +1,103 @@
-Return-Path: <linux-kernel+bounces-305277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C26BE962C44
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 17:27:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F649962C2F
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 17:25:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D7261F253FD
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:27:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1D791C237DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:25:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 329FF1A7AE4;
-	Wed, 28 Aug 2024 15:25:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B0E71A38E8;
+	Wed, 28 Aug 2024 15:24:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="4QYF/WTy"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="RsD8UhDq";
+	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="BEJhkJOV"
+Received: from a7-45.smtp-out.eu-west-1.amazonses.com (a7-45.smtp-out.eu-west-1.amazonses.com [54.240.7.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 825701A76DF;
-	Wed, 28 Aug 2024 15:25:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6123B19E83D;
+	Wed, 28 Aug 2024 15:24:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.240.7.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724858731; cv=none; b=tV40/7esJ9TAwzUYOQC9eCiWbI1Z6slROT2yiwc/FiBsWY0z3lnFSLUbJ2Jyxz4TGhkG1Aj7vtep3RZHs0yaSlY0grKA4KRpTw1LOS6whYCF/IuTQ1BSsc0xGP2AplKsXc/5e+qvSHWHiJP7LJkxnib+Hhx/bbyI+3AMqXnOgOk=
+	t=1724858697; cv=none; b=RPeR+6tvpDx2A9XDUMhawb+5t1dASuH24/VYxgau2BGVKKebp1LVHk2S3MNiikPWO+7862gQxdFOf+PMELEf4NBu298M3Cc1HQ9rc/ty//49uSYtzWHUWwvtrXl2vOJLBw5vnMHDbQAHb//xV6W6v0bRkVWUuNYD2N81HGPuWFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724858731; c=relaxed/simple;
-	bh=I1Nby7tDKVVdapSHtGQT7L9Eim8jq/dT28PjMGd+PHE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r3tMRwof3rvufRb5VpW+W52dGonLBakZIwt3oOnoSNRjQvl/Ld/norSE8rb2T13321rOMZ1AbuvfVvo69e/CGg9jf8fGUONHbYZ+pQie8XNAo+YrcOeHK4RpgtQXLPyJoyQBBR04Nqr4NDb0L3yTr7VfoNBrLoqzKMaFhfeOIvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=4QYF/WTy; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=q9URPVBkUtuX1b5vQ91DBWUEAecVTYj3WQtfiiyjLe8=; b=4QYF/WTy90NVcHGEOPZW700puH
-	PsWHZNWpHEEmbUSmKRVNivVlJQkwuHYMKXyODQQdUQ9oRrpIMyHeXgljjtrbAc62/dTBO/DeDzES2
-	ljIryYIG/AOUumjbxUyE+dFDD5Ya7ABiL3AzxT0XW2O9c/AC8edgXY63kxxwLYPrXxP8=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sjKXU-005wr6-5U; Wed, 28 Aug 2024 17:24:52 +0200
-Date: Wed, 28 Aug 2024 17:24:52 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Jinjie Ruan <ruanjinjie@huawei.com>, woojung.huh@microchip.com,
-	f.fainelli@gmail.com, olteanv@gmail.com, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	linus.walleij@linaro.org, alsi@bang-olufsen.dk,
-	justin.chen@broadcom.com, sebastian.hesselbarth@gmail.com,
-	alexandre.torgue@foss.st.com, joabreu@synopsys.com,
-	mcoquelin.stm32@gmail.com, wens@csie.org, jernej.skrabec@gmail.com,
-	samuel@sholland.org, hkallweit1@gmail.com, linux@armlinux.org.uk,
-	ansuelsmth@gmail.com, UNGLinuxDriver@microchip.com,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	bcm-kernel-feedback-list@broadcom.com,
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-	linux-stm32@st-md-mailman.stormreply.com, jic23@kernel.org
-Subject: Re: [PATCH net-next v2 00/13] net: Simplified with scoped function
-Message-ID: <6d88b103-ba8a-4631-bbf5-b9046b9b82cd@lunn.ch>
-References: <20240828032343.1218749-1-ruanjinjie@huawei.com>
- <6092e318-ae0c-44f6-89fa-989a384921b7@lunn.ch>
- <71deb322-4b54-4c1c-a665-d9de84ea9baf@kernel.org>
+	s=arc-20240116; t=1724858697; c=relaxed/simple;
+	bh=EpZHRzb5vxXqStDRMR2abxBBT9XwtEmAmcq/fLiwWyw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Db+Qt7nEzsrr37PU1SyQSzz4IC5mpyVTzqaK4ofY/K5yNsVps9vw39LzvUYEbRIrf1dkXqMRcdPTmhlp1mghEyQsBk4iCGuxvlqUZ4CstvHWZJaVTgkhC/1OJ5ZdeuqhNxUMWI8YHWIixeE6rBz+4s1IRmKyywrS9A/5PD8jAvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=amazonses.collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=RsD8UhDq; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=BEJhkJOV; arc=none smtp.client-ip=54.240.7.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazonses.collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=4232tfv5ebdrjdwkr5zzm7kytdkokgug; d=collabora.com; t=1724858693;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
+	bh=EpZHRzb5vxXqStDRMR2abxBBT9XwtEmAmcq/fLiwWyw=;
+	b=RsD8UhDqdmkZlThC6YlIbq4HN/sxjXVKJhjXoQMj6O7irjHS2wbmbnNDCSxVC0mu
+	2JtguforWkU/pLTNPq+mBMSYjfthOi65r95YdBFUozro/6bUnHuNAtzgjSo+3LFmIhp
+	xHPrMfvHgGT8tqB3Mp5oBUS6KfKVm2T1zZyRVK6RmXngkohT5HDX6wg6C68nCCb5a7V
+	taDx7C7f0nDQFmBEzQw0S/JYC7gK2fS6qb6kRH5Ig64ybYu0j+E4w3ZH8Q9FotWSDJ3
+	75ESR76FCW8EdePUswS1ge551iwRUHT1/lm0aMCmxo6VMksAPt94762JbYxo/NsVYTM
+	0r82BbWbJQ==
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=uku4taia5b5tsbglxyj6zym32efj7xqv; d=amazonses.com; t=1724858693;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Feedback-ID;
+	bh=EpZHRzb5vxXqStDRMR2abxBBT9XwtEmAmcq/fLiwWyw=;
+	b=BEJhkJOVjwWoEiVM/fsR/p2Nk8VPtzWgltasKsa8+jk+SueLJua7aMinItvqTfir
+	e/AA/bNImD4rm/THrRSzqgBZjC/q8uy+xpwTMXxjqJ3WM8kGD4Kgn0DGwJ8wV83v3Ss
+	KeUEM+hrb+oBor5L1YpiEY0FQTVa/hIJXM+TJR0A=
+From: Detlev Casanova <detlev.casanova@collabora.com>
+To: linux-kernel@vger.kernel.org
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
+	Jaehoon Chung <jh80.chung@samsung.com>, linux-mmc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, kernel@collabora.com, 
+	Detlev Casanova <detlev.casanova@collabora.com>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v5 1/3] dt-bindings: mmc: Add support for rk3576 dw-mshc
+Date: Wed, 28 Aug 2024 15:24:53 +0000
+Message-ID: <010201919996f687-08c1988a-f588-46fa-ad82-023068c316ba-000000@eu-west-1.amazonses.com>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <20240828152446.42896-1-detlev.casanova@collabora.com>
+References: <20240828152446.42896-1-detlev.casanova@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <71deb322-4b54-4c1c-a665-d9de84ea9baf@kernel.org>
+Content-Transfer-Encoding: 8bit
+Feedback-ID: ::1.eu-west-1.YpP9ZbxnARFfy3Cb5pfsLd/pdsXBCNK0KEM7HforL4k=:AmazonSES
+X-SES-Outgoing: 2024.08.28-54.240.7.45
 
-On Wed, Aug 28, 2024 at 04:45:32PM +0200, Krzysztof Kozlowski wrote:
-> On 28/08/2024 16:32, Andrew Lunn wrote:
-> > On Wed, Aug 28, 2024 at 11:23:30AM +0800, Jinjie Ruan wrote:
-> >> Simplify with scoped for each OF child loop and __free(), as well as
-> >> dev_err_probe().
-> >>
-> >> Changes in v2:
-> >> - Subject prefix: next -> net-next.
-> >> - Split __free() from scoped for each OF child loop clean.
-> >> - Fix use of_node_put() instead of __free() for the 5th patch.
-> > 
-> > I personally think all these __free() are ugly and magical. Can it
-> 
-> It is code readability so quite subjective.
+Add the compatible string for rockchip,rk3576-dw-mshc in its own new
+block, for devices that have internal phase settings instead of external
+clocks.
 
-Try.
+Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-But the __ is also a red flag. Anything starting with _ or __ in
-general should not be used in common code. That prefix is supposed to
-indicate it is internal plumbing which should be hidden away, out of
-sight, not to be used directly. Yet here it is, being scattered
-everywhere.
+diff --git a/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.yaml b/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.yaml
+index 211cd0b0bc5f..06df1269f247 100644
+--- a/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.yaml
++++ b/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.yaml
+@@ -43,6 +43,8 @@ properties:
+               - rockchip,rv1108-dw-mshc
+               - rockchip,rv1126-dw-mshc
+           - const: rockchip,rk3288-dw-mshc
++      # for Rockchip RK3576 with phase tuning inside the controller
++      - const: rockchip,rk3576-dw-mshc
+ 
+   reg:
+     maxItems: 1
+-- 
+2.46.0
 
-I also wounder if this is lipstick on a pig. I suspect the reference
-counting on DT object is broken everywhere, because it is almost never
-used. In general, DT blobs exist from boot to shutdown. They don't go
-away, so these reference counts are never used. DT overlays do exist,
-but account for what, 1% of DT objects? And how often does an overlay
-actually get unloaded? Has anybody written a fuzzer to try unloading
-parts of DT blobs? I suspect we would quickly drown in bug reports.
-
-Adding missing of_node_put() seems to be high on the list of bot
-driven patches, which cause a lot of maintainer effort for no real
-gain. And those submitting the patches probably have little
-understanding of what they are doing, other than making the bot happy.
-Do we really want to be adding ugly code, probably with a few
-additional bugs thrown in, just to make a bot happy, but probably no
-real benefit?
-
-	Andrew
 
