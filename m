@@ -1,128 +1,109 @@
-Return-Path: <linux-kernel+bounces-305440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D64D2962E9D
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 19:33:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 400D1962F35
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 20:02:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62E9E1F238A8
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 17:33:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 98DCAB22F23
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 18:02:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E2B91A4F3F;
-	Wed, 28 Aug 2024 17:33:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZoeIGvUv";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pR+zgidQ"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 357181AB519;
+	Wed, 28 Aug 2024 18:01:30 +0000 (UTC)
+Received: from finn.localdomain (finn.gateworks.com [108.161.129.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6673D166F2B
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 17:33:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F6A81AAE02;
+	Wed, 28 Aug 2024 18:01:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=108.161.129.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724866407; cv=none; b=RI8Nwons7O6y2FjjMYs4wKm6KVz93olkxu9EgmniEcbpCsfPnKWqMLMk0GhlrOTn2o28ckdeXdf1VslL8zUy/g0qsuo/nbhzOXksUh2ricEmbDzeKjw2cUJHQUSmD/xP+or8+ff26Hzd+HfRck4djvlpuscH25hZZ/86QrNjuMI=
+	t=1724868089; cv=none; b=ISNqqrc6u5D/OebryEix4sZNB5uBm7oOq63dFhzje01kITAiIU9Em6oboQBBFtsDMtQtglGNUmEzG76esNbMyyeQDiPM7Y7axNQtFZQqEGt90mEJ7M2/Gvjp37KGA1P1L/mtzb73rxK7ZyL4uH88jcj3YwSrijzX0qD/dzXXPek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724866407; c=relaxed/simple;
-	bh=3H5J3L2xof8F9mgHp70NUvd3NFYibPFG40CB+iEOrbQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=XPSdL6k/lgcHldZymMTp5SEjXJ6m5hAfk0o8L6oveVpvhCTEADbBzA4vI0KzBkJS+so13LDht2X3n4o3NlxytxJpJRQDfZU8YkuVRJfZooYit/AKbxhEG7k5OcbSMtaF2yctpJ8aa4C+PmN8oEdla79EwSTzQIEaCFI5NOXYIwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZoeIGvUv; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pR+zgidQ; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: John Ogness <john.ogness@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1724866403;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VlzVH2I0xjZsHsbx2kSBiip49ZnONc151wXAOnUGLqM=;
-	b=ZoeIGvUvrmq/wzPFp7vF9TT3WUnHYOyCZFWV/fTjT3t91up30+ro7jRC/8J3olXsDhyukc
-	SABNAWQuXG2OnMo3/2qzRT8cConkCmC1c3xUWLid6u7WZJkIe0ihOpE0We/2wY1N1xGQRh
-	2WzlbUqDLYQW9J7L+jbwfiuTE0XzHxz2WPl6/AluiyQsT6vYD3Wp4p6C5hGY5zq1M+d2nY
-	ukku99R2+n7oYMeiUoUaGRb/+2Lq9hxD6n3Y/U06sT0hr10YkfeiYl2XMYm1PxWM1qrVk8
-	ascI3KrZqRq2a6GNIX/JLkPlLl/TMd3NJUcK+fOA7MKkjVBZpMRKS1vkTRjxLw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1724866403;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VlzVH2I0xjZsHsbx2kSBiip49ZnONc151wXAOnUGLqM=;
-	b=pR+zgidQ6RzouqkICdZE89CEEOx8g8VsadqDotDDL5oBkMoV9zyoS/ntLlidtMQUXw0w6z
-	Jn9QZxAiVpqTWNAg==
-To: Petr Mladek <pmladek@suse.com>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>, Steven Rostedt
- <rostedt@goodmis.org>, Thomas Gleixner <tglx@linutronix.de>,
- linux-kernel@vger.kernel.org, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH printk v4 06/17] printk: nbcon: Introduce printer kthreads
-In-Reply-To: <Zs3nRK4ikgzMx7JU@pathway.suse.cz>
-References: <20240827044333.88596-1-john.ogness@linutronix.de>
- <20240827044333.88596-7-john.ogness@linutronix.de>
- <Zs3nRK4ikgzMx7JU@pathway.suse.cz>
-Date: Wed, 28 Aug 2024 19:39:22 +0206
-Message-ID: <87r0a8wo0t.fsf@jogness.linutronix.de>
+	s=arc-20240116; t=1724868089; c=relaxed/simple;
+	bh=EjfuYfaMC3g1Z5btZkNuPB0VpW1sNf0w6vjQ7NT/t04=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=N0UGXYkGa08Ayh0F+zziW0mmNK/lTujQzFD7c4Yz2R+ma7Tz8T6+CoYWNLEFJfNC5oXHvr20xhSWlfjwGKllmb90cjWZdmepgah1tEgVTKRPjLFhWSs9pVWLkDv7onY3XoGHUvDJIsIZGHBb77RZRoOHrlu0XHTUHQLyHTtvGNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gateworks.com; spf=pass smtp.mailfrom=gateworks.com; arc=none smtp.client-ip=108.161.129.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gateworks.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gateworks.com
+Received: from syn-068-189-091-139.biz.spectrum.com ([68.189.91.139] helo=tharvey.pdc.gateworks.com)
+	by finn.localdomain with esmtp (Exim 4.95)
+	(envelope-from <tharvey@gateworks.com>)
+	id 1sjMbG-005gbd-0p;
+	Wed, 28 Aug 2024 17:36:54 +0000
+From: Tim Harvey <tharvey@gateworks.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Li Yang <leoyang.li@nxp.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org
+Cc: Tim Harvey <tharvey@gateworks.com>
+Subject: [PATCH 1/2 v2] dt-bindings: arm: fsl: rename gw7905 to gw75xx
+Date: Wed, 28 Aug 2024 10:36:50 -0700
+Message-Id: <20240828173651.4053753-1-tharvey@gateworks.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 2024-08-27, Petr Mladek <pmladek@suse.com> wrote:
->> +/**
->> + * nbcon_kthread_create - Create a console printer thread
->> + * @con:	Console to operate on
->> + *
->> + * Return:	True if the kthread was started or already exists.
->> + *		Otherwise false and @con must not be registered.
->> + *
->> + * If @con was already registered, it must be unregistered before
->> + * the global state variable @printk_kthreads_running can be set.
->
-> This paragraph is quite confusing without more context.
+The GW7905 was renamed to GW7500 before production release.
 
-Agreed.
+While we typically do not change compatibles, the GW7905 was never
+released before its product name was changed to a GW7500.
 
-> I would either remove it completely or write something like:
->
-> <proposal>
->  * This function is called when nbcon consoles are supposed to be flushed
->  * using the kthread. The messages printed with NBCON_PRIO_NORMAL are not
->  * longer flushed by the legacy loop. This is why the failure is considered
->  * fatal leading to the console unregistration.
-> </proposal>
+The use the the 'xx' wildcard is to denote the fact that this
+device-tree can support range of board models from GW7500 to GW7599 as
+has been done historically with the Gateworks baseboards to support
+various build customizatoins based on the same PCB.
 
-For v5 I am keeping both, slightly modified:
+Signed-off-by: Tim Harvey <tharvey@gateworks.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+v2:
+ - collected tags
+ - added to commit log reason for non-standard rename
+ - added to commit log reason for a-typical wildcard (xx) in model name
+---
+ Documentation/devicetree/bindings/arm/fsl.yaml | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
- * This function is called when it will be expected that nbcon consoles are
- * flushed using the kthread. The messages printed with NBCON_PRIO_NORMAL
- * will be no longer flushed by the legacy loop. This is why failure must
- * be fatal for console registration.
- *
- * If @con was already registered and this function fails, @con must be
- * unregistered before the global state variable @printk_kthreads_running
- * can be set.
+diff --git a/Documentation/devicetree/bindings/arm/fsl.yaml b/Documentation/devicetree/bindings/arm/fsl.yaml
+index 80747d79418a..f174cbfe2af7 100644
+--- a/Documentation/devicetree/bindings/arm/fsl.yaml
++++ b/Documentation/devicetree/bindings/arm/fsl.yaml
+@@ -939,8 +939,8 @@ properties:
+               - fsl,imx8mm-ddr4-evk       # i.MX8MM DDR4 EVK Board
+               - fsl,imx8mm-evk            # i.MX8MM EVK Board
+               - fsl,imx8mm-evkb           # i.MX8MM EVKB Board
++              - gateworks,imx8mm-gw75xx-0x # i.MX8MM Gateworks Board
+               - gateworks,imx8mm-gw7904
+-              - gateworks,imx8mm-gw7905-0x # i.MX8MM Gateworks Board
+               - gw,imx8mm-gw71xx-0x       # i.MX8MM Gateworks Development Kit
+               - gw,imx8mm-gw72xx-0x       # i.MX8MM Gateworks Development Kit
+               - gw,imx8mm-gw73xx-0x       # i.MX8MM Gateworks Development Kit
+@@ -1082,7 +1082,7 @@ properties:
+               - gateworks,imx8mp-gw72xx-2x # i.MX8MP Gateworks Board
+               - gateworks,imx8mp-gw73xx-2x # i.MX8MP Gateworks Board
+               - gateworks,imx8mp-gw74xx   # i.MX8MP Gateworks Board
+-              - gateworks,imx8mp-gw7905-2x # i.MX8MP Gateworks Board
++              - gateworks,imx8mp-gw75xx-2x # i.MX8MP Gateworks Board
+               - skov,imx8mp-skov-revb-hdmi # SKOV i.MX8MP climate control without panel
+               - skov,imx8mp-skov-revb-lt6 # SKOV i.MX8MP climate control with 7” panel
+               - skov,imx8mp-skov-revb-mi1010ait-1cp1 # SKOV i.MX8MP climate control with 10.1" panel
+-- 
+2.25.1
 
->> @@ -1419,6 +1644,13 @@ bool nbcon_alloc(struct console *con)
->>  			con_printk(KERN_ERR, con, "failed to allocate printing buffer\n");
->>  			return false;
->>  		}
->> +
->> +		if (printk_kthreads_running) {
->> +			if (!nbcon_kthread_create(con)) {
->> +				kfree(con->pbufs);
->
-> It probably is not much important but I would rather do here:
->
-> 				con->pbufs = NULL;
-
-Sure.
-
-I'll leave off your Reviewed-by since the comment changes are a bit
-different than you suggested.
-
-John
 
