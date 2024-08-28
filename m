@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-304337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59C08961E4F
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 07:40:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EA07961E54
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 07:43:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB7A8B214F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 05:40:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3EA31C22B8A
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 05:43:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6F50154C14;
-	Wed, 28 Aug 2024 05:39:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34C2814EC44;
+	Wed, 28 Aug 2024 05:43:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S4pgBgg9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K/VOggvf"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1541F14F9D5;
-	Wed, 28 Aug 2024 05:39:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 535071799F;
+	Wed, 28 Aug 2024 05:43:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724823591; cv=none; b=lycWDAniglk0Ev72+mIBBeM57n6D0T0h8vbs6PMzX+g5rO3Vnl9UY/NttwD1iXVu6KTwyyUvjDVe9AcuNCVbrwlZhqa7MU5uvKihOz1VGeK7+PDrtVVK5cMag/oxsNFQHkoPUjQP/Ski/PS5u3CtJ4Kzt8PdMF3T71RIYNjltks=
+	t=1724823829; cv=none; b=Hm4pSDF8mGXgp1Rt4svGx7Dr3h3/n6gzrdbrUg0B9/jYtSjdRrZKM6R65rGxyYP4wIy3pSZCdUfuxZOqFZ60LZo2B5fwAQgTqw8m0OFRMHcQeTMH9RTSQjqAuIt3LVgt4+hU3db2a6gwH8JkoJnFtWGiTtuMUYJnwF3T/RY/HIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724823591; c=relaxed/simple;
-	bh=2utZWgmFpHz1C73dYz/cMyxqXixPHQCmnl+SOa5MRqA=;
+	s=arc-20240116; t=1724823829; c=relaxed/simple;
+	bh=e+UX0uF21Uqf4t5Gdm4xCeKbdQcHfh2viPYaR1DGi+k=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TjbLbn+b0IWRKCD5oDL3W3ldZJQO72RAlqkIGhmliLPvG/JK1U9cZj87XA0d/QJ5TQPo/YKsXpmiHfUvh3DForiSAYSNCu9sIsn0yihNy5eQKs75+4NJTggcEC69SMFUOeyU1Lpn013yGs3Oaz3lTOQ9PTnwfCdGuwHbk7g+yOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S4pgBgg9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D367C32786;
-	Wed, 28 Aug 2024 05:39:43 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=T7NsfGrod8iDaFw8lVeZN3FPIrIXvjXz3n4vrQgVWyklotxBajQ066/CE4bUZnT/AJXftVR5pb49lpT63lJouVYheNGcL5c6M7uJzuHRtynnzFfh66lMcJ5HiAU7p0qFOtzx69AxGLbbPSMqKS/lpuYMVauiwNIwqzjlKjLIG1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K/VOggvf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E5DCC32786;
+	Wed, 28 Aug 2024 05:43:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724823590;
-	bh=2utZWgmFpHz1C73dYz/cMyxqXixPHQCmnl+SOa5MRqA=;
+	s=k20201202; t=1724823828;
+	bh=e+UX0uF21Uqf4t5Gdm4xCeKbdQcHfh2viPYaR1DGi+k=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=S4pgBgg9Isbo0H364/Pruhc9ME7WoneD9NWr0+YsKmK+Cbe1nZ7yGjmy48opIrIE4
-	 mw9d0nuUVbQXjuh78ZM97ciAr6t1BfNX7izWBjfBHppB0pnTWuGBKb676a9SBLbmH+
-	 qLcKsc3fBgtaSr40oA3HLUzj4B3h4BR4frZF/9/3LMalubIA0ajjTMJ/+wCVSTBzFq
-	 mr2dHM5OivaqCsKstMg5I+CezFmYnjMspbSICUvtnuMtJsiw8dXBh3BbdasfPrIbMT
-	 oB/HANWobVgFyxwln+phxf3g77H50cZD4Zn2TMMR0N3a+fRqxMyC9tPlvBp6fWUIgE
-	 Sga/+QZio1XAQ==
-Message-ID: <587ef110-592a-4fa1-ae83-cacd74f6e57b@kernel.org>
-Date: Wed, 28 Aug 2024 07:39:41 +0200
+	b=K/VOggvfZWoyN1TCtyIbpDg0DAMJC59ojdeQG4+1QqETqfBWAfiNGAIxjJePrFIZM
+	 voLRFLhXmU2elCHa/BSp803kwPMtQxBnIEg2nGBpEkwwoKqbvb1eqd99ztgxEJJPh4
+	 jZYKeHlFv92C7FMIW+EWFTSeYf/kHB7TgXSFHb8MOW8/I4PICVGntRp/rwgbr1wmlY
+	 FQahcp6StUDAJS3vDtMcR77NIX6gjRCD4wV4Jxpr1wwrm3TDcSyzqoKIqAX2D66mG1
+	 OTYBjWvH0yDVENulfqVWm02wKCIb2r87PwUWsaN05I5LnScbseAJ1DLvmDlDMTn6Ch
+	 e8+m7Eo3WzNzg==
+Message-ID: <b5c70885-a307-40c0-8d5c-3ee5260b7a81@kernel.org>
+Date: Wed, 28 Aug 2024 07:43:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,21 +49,22 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v12 3/5] dt-bindings: net: wireless: brcm4329-fmac: change
- properties enum structure
-To: Jacobe Zang <jacobe.zang@wesion.com>, arend.vanspriel@broadcom.com,
- kvalo@kernel.org, marcan@marcan.st, sven@svenpeter.dev, alyssa@rosenzweig.io
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- saikrishnag@marvell.com, megi@xff.cz, bhelgaas@google.com,
- duoming@zju.edu.cn, minipli@grsecurity.net, yajun.deng@linux.dev,
- stern@rowland.harvard.edu, gregkh@linuxfoundation.org,
- christophe.jaillet@wanadoo.fr, linux-wireless@vger.kernel.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- brcm80211@lists.linux.dev, brcm80211-dev-list.pdl@broadcom.com,
- nick@khadas.com
-References: <20240828034915.969383-1-jacobe.zang@wesion.com>
- <20240828034915.969383-4-jacobe.zang@wesion.com>
+Subject: Re: [PATCH 3/6] dt-bindings: pinctrl: Add fsl,ls1012a-pinctrl yaml
+ file
+To: David Leonard <David.Leonard@digi.com>
+Cc: linux-arm-kernel@lists.infradead.org, Dong Aisheng
+ <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>,
+ Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-gpio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <a5c1eef7-372d-082b-066e-ecd5e001d1cf@digi.com>
+ <pywfy4ypttq7y2llfkdgkwgpjfvnzk3lcgd67efp2v6qu6f2it@fdgiw5pac7uz>
+ <f682476b-f7af-0d66-7105-1d064f5f1739@digi.com>
+ <db12d221-d3b1-4df5-91e4-d31fb0acdb8b@kernel.org>
+ <6ddcd97d-7d60-8e4f-fede-42bf7f99e2b0@digi.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -109,37 +110,94 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240828034915.969383-4-jacobe.zang@wesion.com>
+In-Reply-To: <6ddcd97d-7d60-8e4f-fede-42bf7f99e2b0@digi.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 28/08/2024 05:49, Jacobe Zang wrote:
-> Add "brcm,bcm4329-fmac" as fallback compatible for wireless devices that
-> used PCI ID based compatible. So that can pass the compatible check in
-> driver.
+On 28/08/2024 02:43, David Leonard wrote:
+> On Tue, 27 Aug 2024, Krzysztof Kozlowski wrote:
 > 
-> Signed-off-by: Jacobe Zang <jacobe.zang@wesion.com>
-> ---
+>> On 27/08/2024 18:51, David Leonard wrote:
+>>>>> +properties:
+>>>>> +  compatible:
+>>>>> +    const: fsl,ls1012a-pinctrl
+>>>>> +
+>>>>> +  reg:
+>>>>> +    description: Specifies the base address of the PMUXCR0 register.
+>>>>> +    maxItems: 2
+>>>>
+>>>> Instead list and describe the items.
+>>>
+>>> Changed to
+>>>
+>>>     reg:
+>>>       items:
+>>>         - description: Physical base address of the PMUXCR0 register.
+>>>         - description: Size of the PMUXCR0 register (4).
+>>>
+>>> Is this what you meant?
+>>
+>> Almost, second reg is not a size. You claim there are two IO address
+>> spaces. Each address space contains base address and size. Look at other
+>> bindings how they do it.
+> 
+> Previously, dt_binding_check was giving me a warning that 'maxItems' needed
+> to be supplied. Which confused me because I thought of reg as an opaque subspace
 
-<form letter>
-Please use scripts/get_maintainers.pl to get a list of necessary people
-and lists to CC. It might happen, that command when run on an older
-kernel, gives you outdated entries. Therefore please be sure you base
-your patches on recent Linux kernel.
+No.
 
-Tools like b4 or scripts/get_maintainer.pl provide you proper list of
-people, so fix your workflow. Tools might also fail if you work on some
-ancient tree (don't, instead use mainline) or work on fork of kernel
-(don't, instead use mainline). Just use b4 and everything should be
-fine, although remember about `b4 prep --auto-to-cc` if you added new
-patches to the patchset.
+> descriptor, but I was just trying to placate the checks. After tool upgrades,
+> that warning doesn't appear any more.
+> 
+> So the neatest documentation would be:
+> 
+>    reg:
+>      description: Specifies the address of the PMUXCR0 register.
 
-You missed at least devicetree list (maybe more), so this won't be
-tested by automated tooling. Performing review on untested code might be
-a waste of time.
+No. Please go through example-schema. Or any other binding... If you
+find any binding with above syntax, let me know.
 
-Please kindly resend and include all necessary To/Cc entries.
-</form letter>
+Instead: maxItems: 1.
+
+> 
+>>>>> +  big-endian:
+>>>>> +    description: If present, the PMUXCR0 register is implemented in big-endian.
+>>>>
+>>>> Why is this here? Either it is or it is not?
+>>>
+>>> You're right. Changed to
+>>>
+>>>     big-endian: true
+>>>
+>>> (This also lead to some code simplification)
+>>
+>> OK, but I still wonder why is it here. Without it the hardware will work
+>> in little-endian?
+> 
+> Well, it's here firstly because I was trying to follow a perceived convention in
+> dts/freescale/fsl,ls1012a.dtsi. That DT uses big-endian in child
+
+I am confused. Are you adding new device or converting existing bindings?
+
+
+> nodes of /soc that match up with memory map tables from the datasheet.
+> (Not only do different and adjacent parts of the register map have
+> opposing endianess, some register layouts also seem to be reversed
+> bitwise, others bytewise.)
+> 
+> The second reason is practical/dodgy. The pinctrl driver should logically
+> be a child of the scfg node, but the syscon driver doesn't populate its
+> child nodes. To get the pinctrl driver to work meant making it a sibling
+
+So fix driver...
+
+> node with an unsatisfactory overlap with the scfg's address region
+> 0x1570000+0x10000. (No driver binds to "fsl,ls1012a-scfg".)
+> 
+
+Several big-endian properties were added unnecessarily and are now being
+removed. You cannot provide me answer whether this hardware is
+little/big endian, so it also feels unnecessary.
 
 Best regards,
 Krzysztof
