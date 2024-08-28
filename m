@@ -1,257 +1,204 @@
-Return-Path: <linux-kernel+bounces-305803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B61479634AD
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 00:26:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B6AB9634AE
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 00:27:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 400A71F22FA0
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 22:26:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F10CA1F23180
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 22:27:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C76C1AD403;
-	Wed, 28 Aug 2024 22:26:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA95D1AD3F9;
+	Wed, 28 Aug 2024 22:27:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="PvvItzV5"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2044.outbound.protection.outlook.com [40.107.94.44])
+	dkim=pass (2048-bit key) header.d=ucr.edu header.i=@ucr.edu header.b="DPhZmxv5";
+	dkim=pass (1024-bit key) header.d=ucr.edu header.i=@ucr.edu header.b="xwijqajO"
+Received: from mx2.ucr.edu (mx2.ucr.edu [138.23.62.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99D3D167D97;
-	Wed, 28 Aug 2024 22:26:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.44
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724884000; cv=fail; b=bYubV2G4XOPbNeWMDFx4dPC502Vdy6r4Qx2rOKxH5BQCmaH1k2MsqmdNxbQAABa8Vlg+zKLNgPDx6zzfaXgo6PyBQRLX7ORvvw07cOYoOA/NqQARByCC3DLfhaZE4dYSLgZ3JQvDXX6mOVGdGylf8kk3wXCzkVTxasiYbGVDYfM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724884000; c=relaxed/simple;
-	bh=59F6GUAxS9NTFA8IJfY4ZD7/dqro8ToYttgCcw7k6/I=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=dvYG2IIgNQ/ShD9kKNdw2agXWGSQNbgYKJTRHFXWsfFqnM3MpnYFa/UhEj64QJubXNs8/CrUQytvHliivyKZr23gXPCnHz7pZ5TX69q2mRRCpAiXgrTEIqYiQwNdMpf1BnkvjcAMOtQ3M7JSx1gssIvDZq0rBLVUclWrTXbap4c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=PvvItzV5; arc=fail smtp.client-ip=40.107.94.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=M2tvDcpFX3isoNs+j8lTbXKXFo/g0f+L+lfOSMg7L5wPwZibQoGcmtviVlxs7NjCU244TG0yfNR44RgBWfLvrPLNYvbqM3W52p4AT3K3mKQrSXeQ89omOeJKwoNAQLooIOrtckE6p1tJ3cyRddAQlPS+6sgz6bZFZXMpwW4oIdEBqmQTJFNViAU6CGJG9t1FfGSGl8U78pH+1Q9jhdMKGmUt8VRiryKGY2SLEpBf3SdL7HLO2Xlj/ZBAYoEbPDLh5C8907k4ZEqU4lM4FiqMOSY31B6ta0PzVlSbhXoTjSBh/XgwdH6oLj2/74odDIm1XIM4eaqiShIftOyQbmAxZQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=DYG5fjJyTU5mBr05OytNbeWEP2T3g/f7VheSG4+12IQ=;
- b=Wkg/SEGTeqVftlUZ7R9vfenrL3gW/A7OtFJ6K8xHkeirtLd7wf9o2+xqgjpAAc6DwEa0IXYDVOsgKXHb6/CXs39BhPDPLkGlaa5f2Ef2ATOuvRyfl5rjI0n0zjsjjUVo2rpW5kRqajQFFUHL24+aM5T3J4xTDiHVNxdop4X/FqeHq/ocEbo3Ep6zChglrPQqaIRLBpoOv/6qyvJWaelu5IusSHjJVW1n6Cuy2hDaufg8dmQgJYKEOjlwA8W6H7iVXNvOCf4GilhUcvDOprWrmDhMLMFHVq+FQNA5S1lH64pj4+to7BTtMSAVIxFl3VwIpAsWq0PIF8sLbcjmfm/ueQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DYG5fjJyTU5mBr05OytNbeWEP2T3g/f7VheSG4+12IQ=;
- b=PvvItzV5f7rO+YYKNmJYFfrmxbhzSWb4lXzjkZbzFRynGrBrRTX5tiF5/7/suBy331TMLvlEoz0+M0oKw+j22MIddOUCD6rfSXgdbfouvKuGTWCqxJzmzaAjcETaJOGCeDaUUQgR9ChBs0NpJJ8+Pavd3CbqQAGm2dPKLuQqZZk=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DS7PR12MB6095.namprd12.prod.outlook.com (2603:10b6:8:9c::19) by
- CYYPR12MB8892.namprd12.prod.outlook.com (2603:10b6:930:be::12) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7897.25; Wed, 28 Aug 2024 22:26:36 +0000
-Received: from DS7PR12MB6095.namprd12.prod.outlook.com
- ([fe80::c48a:6eaf:96b0:8405]) by DS7PR12MB6095.namprd12.prod.outlook.com
- ([fe80::c48a:6eaf:96b0:8405%7]) with mapi id 15.20.7849.023; Wed, 28 Aug 2024
- 22:26:36 +0000
-Message-ID: <ab893fd1-6a90-4a39-963a-111dbdc9f720@amd.com>
-Date: Wed, 28 Aug 2024 17:26:32 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 0/3] PCI: Use Configuration RRS to wait for device
- ready
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: linux-pci@vger.kernel.org, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?=
- <ilpo.jarvinen@linux.intel.com>, "Maciej W . Rozycki" <macro@orcam.me.uk>,
- Mika Westerberg <mika.westerberg@linux.intel.com>,
- Lukas Wunner <lukas@wunner.de>,
- "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
- Duc Dang <ducdang@google.com>, Alex Williamson <alex.williamson@redhat.com>,
- linux-kernel@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
- "Li, Gary" <Gary.Li@amd.com>
-References: <20240828214218.GA40398@bhelgaas>
-Content-Language: en-US
-From: Mario Limonciello <mario.limonciello@amd.com>
-In-Reply-To: <20240828214218.GA40398@bhelgaas>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SA0PR13CA0022.namprd13.prod.outlook.com
- (2603:10b6:806:130::27) To DS7PR12MB6095.namprd12.prod.outlook.com
- (2603:10b6:8:9c::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 455361AC442
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 22:27:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=138.23.62.3
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724884024; cv=none; b=ad95bS6L7L+ykuv4K8uIJyHa1zMwGA2yqC4agSqi60eXEbBIZIz2ywKHMkexc1ctHFjckDAfTWcWTKl0fpSDyxZslaj6z8EYqHX+aVnKKHlqvotb3Eroi6bgkvt6Y42x3EvYAW7/jlYQCCj+zVJjXBj+TQ3lJf9QmS95JIy0fJU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724884024; c=relaxed/simple;
+	bh=E900X6eOIDysivie/UIIxy4tEChL87qrfDGcuGsm3qE=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=kEjozlhj/foOps8QCz43ZZ/XdMRknvm4QvuI/7JwwiNddEjhmhpnYagdrjanKM5QaYLk/pNG+4SnUxuix9iqare6MyRZ5C1bkSs1EaxytoSkDTjId2/IhEXMcOdhVJXReB3WxzKFpEC/AGG4FOAHDQ/sjqfRFMDbIX6X1PB1qzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ucr.edu; spf=pass smtp.mailfrom=ucr.edu; dkim=pass (2048-bit key) header.d=ucr.edu header.i=@ucr.edu header.b=DPhZmxv5; dkim=pass (1024-bit key) header.d=ucr.edu header.i=@ucr.edu header.b=xwijqajO; arc=none smtp.client-ip=138.23.62.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ucr.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucr.edu
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=ucr.edu; i=@ucr.edu; q=dns/txt; s=selector3;
+  t=1724884023; x=1756420023;
+  h=dkim-signature:x-google-dkim-signature:
+   x-forwarded-encrypted:x-gm-message-state:
+   x-google-smtp-source:mime-version:from:date:message-id:
+   subject:to:cc:content-type:x-cse-connectionguid:
+   x-cse-msgguid;
+  bh=E900X6eOIDysivie/UIIxy4tEChL87qrfDGcuGsm3qE=;
+  b=DPhZmxv5VxO0z56trxlZnsPt24ri6oJTRVIaAu1zWeaoI4jldwpRUha6
+   Y+EqSI6CW953IwJN0bfnvLzb8VkfYkXUm26qL5TuGZgRuthdeIleD+eP0
+   S2OI5/EF/I7OuvskxhaqVHlYULqd/FjF4xMskdRUEa4jvgDn9tOPE5UjW
+   RoaZQV4d/zKbk/xIcmTw54zgWLzJwPNK7gmHAtBlgo1APOAl3kyGaEaTE
+   4836e0oaR00+rrlkc5Ze4OIv2yyGMp43dXldMRWa1urmsqW3vdiNH+ycW
+   c2cLrw+60PxY6mR2eENIGNj/IqxBi9FeHttKtip92274zl+ZSWjDj/kJb
+   g==;
+X-CSE-ConnectionGUID: czD0MlqjSn+SOp5Kh4PrGg==
+X-CSE-MsgGUID: CV7oDkyLTEK2Zn8DawCiGg==
+Received: from mail-pg1-f200.google.com ([209.85.215.200])
+  by smtp2.ucr.edu with ESMTP/TLS/TLS_AES_256_GCM_SHA384; 28 Aug 2024 15:27:03 -0700
+Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-7163489149fso6873781a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 15:27:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ucr.edu; s=rmail; t=1724884022; x=1725488822; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=eDOXD/EP9F/yMuuaJch1JjWR7K79TDmYgKEG8ltHe34=;
+        b=xwijqajO5kF7OtxveBLADVAUhppni7TVlDpVZM3eRtLhWW6ccCsxofErNQVHhKpSBM
+         Z6Z9fJO5QKcQqg4bZDQZqmWTzq2RaZyi009jGSI++okJ72Bl4TPCFc9oRBTaMkaFp0sk
+         wRMRZBi0ivEZlaSK/+S0+ttxW8S0v7iTkEbbo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724884022; x=1725488822;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=eDOXD/EP9F/yMuuaJch1JjWR7K79TDmYgKEG8ltHe34=;
+        b=bxBXJPcNc4IZaKqOSHicELqnEWm1Q2EM4vSSv5CcYuWaOkwCPESnQzfzYT+NDq39qq
+         C6Wl46+R1g9st1BNmmkG3XR+E7Sdzvjyib1/5ZBOm8hrrRNlSKz9YqrSLjwmLEMGa+6y
+         ++3yYssm7V7CEqEIinMibbfLYtXId2iQY3j8I1Qt2yBOqZ6HwK7GRi6T/iLRSZ5XuOfo
+         nTD/z1SuBLtpbGv8hXizFCqpR8NffHasne5Zz4X17O3ZZc2MrOdVbq8dFNje6pTthH7U
+         NyBoaNjbfHaXCXaRivZ4StDvLQfMTAbM+qGfCcK6qGZzJQhigmivsNq5XEcd8mntHRfM
+         /PfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXLYzhRUFl2FHie61Nr69TWjtcl6r3haSRDxEiytwWplPft9kZ+YGEHoCE9+RgdWNoIQ44AkMpizzVgVOc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3QABb/TaMS1m2+AvSYnbJbQMBYcjneW6MYs6IkkXU+AVEauSZ
+	sWAs52RzHftKf7U9v4gwg4kndoUKGREEX0UYxDsFOWVjGW8Z4fJ8bbK+3omN/HrhDpfL4hAhDaM
+	FzKSGoJcMbYLNMcyJEElFfKkDvXyh18mqbEfHtKHd5iepZeRrQNhspPmOkshIUVKkJD64wpG9lm
+	bpUxYxt3hYiOx8uqXRdkCAbwzQByI7+kuRxDrc5g==
+X-Received: by 2002:a17:90b:4b01:b0:2d3:ce8d:f7f1 with SMTP id 98e67ed59e1d1-2d8561c7556mr867151a91.25.1724884021821;
+        Wed, 28 Aug 2024 15:27:01 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGrnlHDYNEZ3LM9N1ZyjWq7qFuRO6rPI0y/TNS8kmGFEz+u5w7lJ9GUvzIOqvSDHJO/uK6Kk8bjKnAOjM/Od/4=
+X-Received: by 2002:a17:90b:4b01:b0:2d3:ce8d:f7f1 with SMTP id
+ 98e67ed59e1d1-2d8561c7556mr867133a91.25.1724884021483; Wed, 28 Aug 2024
+ 15:27:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB6095:EE_|CYYPR12MB8892:EE_
-X-MS-Office365-Filtering-Correlation-Id: aa9730fd-01b4-4996-55b0-08dcc7b07a37
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?UVVIME5QUUMwSEpFWENwM1Z4aUYvdk4zdTVBbDdBYktMQUM1QWFhdTJHTGps?=
- =?utf-8?B?MUdtQ0lmNXhSbklnN0l0amtFVFFHTDV6c0kwc0VrVWkxRThwZTA5bDRkTnlh?=
- =?utf-8?B?amtRMGJIeGQ2NU5peE1ZSnJXTXJBZGpQajU1Y0ZEaW5SU3Y4ZmVydDZGeC9R?=
- =?utf-8?B?WmN1UDFKRWI1Z1N4ZTFTa21USG8yRjJCWm5UNm85N2F0ek1ZSXdzUVc0NVRr?=
- =?utf-8?B?U2Z4OUF4V1JPVE8xbGltRDRuMGdYNnpYazNZWnl6RHltQkQzMmFwQkVLcDBF?=
- =?utf-8?B?ZkdzYzNBZlpGK3FHNW9MWmlhRTU0K1FSaFNLbWo3SUpISzNISWQzMXNZREoy?=
- =?utf-8?B?L0ZBQm1JekJONGMybFMvMTJ0ZGJtK2x4UEtMakNvREJoS1NiSXZZN0VCNXlD?=
- =?utf-8?B?dmgvUTRmNElnOHB0OFhzelJ3RkRMWkZZck44NUZRT0tCaGFEa1UzRjFuTU1n?=
- =?utf-8?B?encxaG0rYXVBanRKemNteUVER3J5MTVXaGVuVFF5ZVFWbjN1eDNQUDlZUldh?=
- =?utf-8?B?dlBzb3pTQU9zWTh5MHNTdXBuYWFPUWVsTmx6cWZtQTEvNVQ5dGJMWHdPbTZ1?=
- =?utf-8?B?MDdwODZ1RFRsVGFLNWhFZExFSmVod1BzQzNUbHhUeEduck9tT1liRzFsbVls?=
- =?utf-8?B?NkV1UStTcENmZUhnWVEyM0FNc2ZIS3NWVFpzcHZEL1BoUXVIVGRjd2MrRmxj?=
- =?utf-8?B?MFRoUTNxSUlDK29iVml5VW9VazBSSzhCUzdOMHVXTXBPRld6MzNna3FueWNN?=
- =?utf-8?B?L0loVlJIZ2lPMmN0RWhraWEramhib0tZMjhYUkV5QkdCc2psby9pNC9tUmhJ?=
- =?utf-8?B?bzVadnJPeWFxV1Z1SHdJM1FLWUREWEM5bzVDdkFNOTYrL20xSlhWUnFZZjhz?=
- =?utf-8?B?clNBVEpFUWF3Y2YyOUpDMWpWK1dpUytjMWJUdUJWOGkrL1IrcTkzWE41QnBZ?=
- =?utf-8?B?V3FSNDNodWY0VzRjZHpycGczM0FMd0hrakN0b2JRakhtNmNKRGppcjlDVFN0?=
- =?utf-8?B?N0tEcXlRVUV0RUNyQUROdTliL3ovV1l1N0x6c2V6TDkrdlZQNkxaWXF4alFm?=
- =?utf-8?B?NlVSaFUzNlpIUWtHWld4Wml6c0xFYnNMTHVXeUZhK0JTaEVPWnFXR01sVUh2?=
- =?utf-8?B?T0VCQUZMZHdwNjZlWDI4V0V2L1BneUdUQUxkUmNFOFBucEl6WXNqWDNublph?=
- =?utf-8?B?T0hIMklMVnltRHNueWN2aUY3RXpDaEVBQXdWRS9kMkZsZFZES1VXY2E2WVlw?=
- =?utf-8?B?T1RZaWNkNnJJN2xWM3Z6NGI3b2NNRWtqUkNaSmU4c2ppNDhjNnVXTm1wWHNq?=
- =?utf-8?B?WWRuYm9EL0MzT3BkVVAxRTNweDRmWWNKVUtXRUJNUjkvTjlQdDg4L2R6NXYv?=
- =?utf-8?B?RThVdXAyaUFVZWpZaHBySG1yM1NuL2FoMWZObGk0bzE2U2NhVTRIODVhNHVI?=
- =?utf-8?B?cDNCTTFBRTNTSTBQd0g4SU10b015T0k4ZmJNVzhRa2lEQkhLd2pDbXBWdUcx?=
- =?utf-8?B?djNwVUJwbnV6eWs5YUtNQm9zSGMwdXErc2ZIcXpYODd4N1pDYnAwN2lPSXJw?=
- =?utf-8?B?MmlocUUrY2dkS3h4MHVlZm5yWUxCNURNRVhXbG1lNHJJSjF3SnZ1MHFjRmc1?=
- =?utf-8?B?cFczSE1qTlpyTDVVeUcvQUFsV0ZoM3Y5NkpKbTkrME9NaGQrVVFucU9LcjRT?=
- =?utf-8?B?NnVVVE8yak55TkErVG1wSGVRSHhHTjZuSjJqcU4yTHl2K01TbHNmVE9tMmla?=
- =?utf-8?B?Z3pUZnk3MUswbHFUc3dmVnJwcHRHMXZzRHhwMmVoUll2ZktKY2dsWDg2L2pw?=
- =?utf-8?B?c3JPMFlXY0RiSDI1M1dNZz09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB6095.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?WG94cTd2QWM1MmtaY1d5ME9WbDlBV3VPdXRxTCtxOVJYR0xjOXdKQkUzV1dx?=
- =?utf-8?B?R1hMRGZ2c1pMMWtqVGhvcE1ya1prdzZ4VVdiR0p5V0wyK3lkUzdlZ2huTDBF?=
- =?utf-8?B?aDMwYWowVnR6VXpjSTBkdHJnRVh2L29aZFdtbWxoRGxtZkxNa3BOUXh1bmk0?=
- =?utf-8?B?V1FGaWpiRWhSdkVrS2hsOEFIUGxTU0FlcFZyZW41TUhnUk1mYWxFT2UwQWhG?=
- =?utf-8?B?SUhQb3A0NXRKelRUNHpSUklYU0QrcFBHVlBLS1k4dTkwWHhFT1ZYRUpjbCt6?=
- =?utf-8?B?VHMybnVaTmFHaHJBaWltK2F2WngwQW9uZG5qbVNDamRFNUY3S3cyNDAydmI1?=
- =?utf-8?B?TW5UcElzSmNCOEFYN2REK2NuQUtremV0SHhuclVJZCs2QnMxRUluMWt0d2lD?=
- =?utf-8?B?SWZxeE5mUll5TTlzcnoxTVpzWUh4ZlZJSSt3WlM1d1BaVmhrd0EzcnVFOXhj?=
- =?utf-8?B?V2JnUUt4WHdUaFp2eXZiWGpmQlg2WHYxc3dxR09pZW81Nml3cjhhZFNGekxr?=
- =?utf-8?B?WVhDYW9KNWgrd00ycHBOL1RtekdVWURtL04rNlgzamVPUy8yS0VNaUN0MmJS?=
- =?utf-8?B?T3hMbXN3WjRwNld3bkhsZFpZakdIV0hhQVZYdlBqaXhCRzBGSk1uU044aGhj?=
- =?utf-8?B?UjhvcEc0N0M0Wi83L0pROGxWV3VoTXJBTGRaZmt4QWVYdlpEMUVmTkZqb04y?=
- =?utf-8?B?Tk54T3JoTmp4QTN3anAzQWNzaUhNRnYrdzNLOUV3Sjhzdi8vQy9YRHdja1pS?=
- =?utf-8?B?YVJvNHp2cFJJUG96QTFwNnV6c0ZVWWxITDNnMlFyZ0IrcVJrQ2UxalNXZ0Zm?=
- =?utf-8?B?MFpvQ1VBNnFpM2RIMktmOGx4cyt3TDV3d0t4NVE2VUR6N2hocEsyQWQ2VHRR?=
- =?utf-8?B?YkViTU9BM0lrNDg4cnFHU1NRRnhQbGNJOVlKZnFoRUoxcmE0bjhwMklvYUE5?=
- =?utf-8?B?UzRNMnR2ZWpZZ2tMb1hEUVFkb2RWbVNnV201ZnBGa0V2MzRwdVgyYUYzWU02?=
- =?utf-8?B?TlN5MFhZWGZvL09CUG1YTHlCZ3pKeFZOZkFoaHdUMXhNZzh4UDVsbDBtU0Zm?=
- =?utf-8?B?TUdRZjVmdmVIUURkR1JRaFdIMjgwYVJnS1NwQ2VPV3MvTkh6UjFYMWNRTXdm?=
- =?utf-8?B?dHNvNXpnNW1JbEEwdVhoNnZ3TkM5UzVyZ2dYTUxSUDhxRHdDOGxWZzlXZ29N?=
- =?utf-8?B?ak1IUStLOFBBWVpKUWlrdVN6Qm5ndjJld3R6NGU5enQ1ckYrN1ZKaFFQRitR?=
- =?utf-8?B?RlhKbnRwL202Yjdja2J1eHlRelZMRnRMNEhaTGxkVnIyU2JJdjQvVVVCa3VJ?=
- =?utf-8?B?VGg0VnJiMU0rRElvem1NUnk2QUtxNHlyZmJ0VGZYODJNRCtvZ1U0eTZIajBV?=
- =?utf-8?B?eE1STDYvN1VPWElxcVVrQU1aVDNLTnNYQnZIRGVwY3RDUUxiektkZkl4Q1R5?=
- =?utf-8?B?NWp4cGhmcGJ2ZWtJeGF3WEpNdHNwVjJaUnExeE9EZVhlVG1DUU41WXNVTk0x?=
- =?utf-8?B?ZEt4WGs0UlhjTk9BT0ZCc0hqMHRMRTlPbW5EdHVWaGNzdG0wekZFUk94UlN0?=
- =?utf-8?B?cGRuUWZMN1ZHM3ZrVGFSVUNFQ1VJd20xS3JxSE95L29sT0RnUDJNT3ZQMmRw?=
- =?utf-8?B?Sjd2SjlOS2NCV2ZybmFveU5LNlZzRHhjYU1iREtwOFF2VXZhQWNBeGh3T1pK?=
- =?utf-8?B?RC8rYW9BK2dpalVqUWtiL1NIY2VBK1FhMTZTWHRMRmJSWmhHMU1hdU1KaFNj?=
- =?utf-8?B?Mi9pcjVJVVVmMkUyN2FmVlVxRmlMVEdtUnI2NTc5S0ZhUDN6WkkyTjZTeW1n?=
- =?utf-8?B?aGdQeHo4cUVuTWFneWhhbEdOUU1pUHAwSzlHWmFIMlZGTkdiaUxRZHhwczVw?=
- =?utf-8?B?c1JoZkhvbng4dCswWUxSaWJXNHNhYWRuS2VJMDlQMUExcThIc3hHYkE0K2NC?=
- =?utf-8?B?cjdQNHhBdE1XMVd4cCsvbThGOVRzMFFEN0QvZXhPWmNnSE01M0RXZmFHa0RI?=
- =?utf-8?B?Z0ptRmNnYjAwZGVSNnhhcEo5T1VLMzgvOWxPZldYQlRiSmpFUmYwOFRWTnow?=
- =?utf-8?B?bk45Sncva011T3kzb242L05sbUdMdE5zdXoyOU1SZFBoRFdka2hTc3RoR042?=
- =?utf-8?Q?1H92ho4QYL2r2VX83TFLSzCaD?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: aa9730fd-01b4-4996-55b0-08dcc7b07a37
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB6095.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2024 22:26:35.9754
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 6mX2JqMctLOcLPMn6cdIsQpcG5euy6rjDRWOlHee4Pvl7ToEyPFWy0r7+sFwLmELNeINR4ECGQ9Kb6AXJYqKZA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYYPR12MB8892
+From: Xingyu Li <xli399@ucr.edu>
+Date: Wed, 28 Aug 2024 15:26:51 -0700
+Message-ID: <CALAgD-4953yNbwDnL99Tzt+H=Sa7jGOzPWZ0VZJU-=XRrZ3DaA@mail.gmail.com>
+Subject: BUG: stack segment fault in insert_vmap_area_augment
+To: akpm@linux-foundation.org, urezki@gmail.com, hch@infradead.org, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Cc: Yu Hao <yhao016@ucr.edu>
+Content-Type: text/plain; charset="UTF-8"
 
-On 8/28/2024 16:42, Bjorn Helgaas wrote:
-> On Wed, Aug 28, 2024 at 04:24:01PM -0500, Mario Limonciello wrote:
->> On 8/27/2024 18:48, Bjorn Helgaas wrote:
->>> From: Bjorn Helgaas <bhelgaas@google.com>
->>>
->>> After a device reset, pci_dev_wait() waits for a device to become
->>> completely ready by polling the PCI_COMMAND register.  The spec envisions
->>> that software would instead poll for the device to stop responding to
->>> config reads with Completions with Request Retry Status (RRS).
->>>
->>> Polling PCI_COMMAND leads to hardware retries that are invisible to
->>> software and the backoff between software retries doesn't work correctly.
->>>
->>> Root Ports are not required to support the Configuration RRS Software
->>> Visibility feature that prevents hardware retries and makes the RRS
->>> Completions visible to software, so this series only uses it when available
->>> and falls back to PCI_COMMAND polling when it's not.
->>>
->>> This is completely untested and posted for comments.
->>>
->>> Bjorn Helgaas (3):
->>>     PCI: Wait for device readiness with Configuration RRS
->>>     PCI: aardvark: Correct Configuration RRS checking
->>>     PCI: Rename CRS Completion Status to RRS
->>>
->>>    drivers/bcma/driver_pci_host.c             | 10 ++--
->>>    drivers/pci/controller/dwc/pcie-tegra194.c | 18 +++---
->>>    drivers/pci/controller/pci-aardvark.c      | 64 +++++++++++-----------
->>>    drivers/pci/controller/pci-xgene.c         |  6 +-
->>>    drivers/pci/controller/pcie-iproc.c        | 18 +++---
->>>    drivers/pci/pci-bridge-emul.c              |  4 +-
->>>    drivers/pci/pci.c                          | 41 +++++++++-----
->>>    drivers/pci/pci.h                          | 11 +++-
->>>    drivers/pci/probe.c                        | 33 +++++------
->>>    include/linux/bcma/bcma_driver_pci.h       |  2 +-
->>>    include/linux/pci.h                        |  1 +
->>>    include/uapi/linux/pci_regs.h              |  6 +-
->>>    12 files changed, 117 insertions(+), 97 deletions(-)
->>
->> Although this looks like a useful series, I'm sorry to say but this doesn't
->> solve the issue that Gary and I raised.  We double checked today and found
->> that reading the vendor ID works just fine at this time.
-> 
-> Thanks for testing that.
+Hi,
 
-Sure.
+We found a bug in Linux 6.10 using syzkaller. It is possibly a
+corrupted stack  bug.
+The bug report is as follows, but unfortunately there is no generated
+syzkaller reproducer.
 
-> 
->> I think that we're still better off polling PCI_PM_CTRL to "wait" for D0
->> after the state change from D3cold.
-> 
-> Is there some spec justification for polling PCI_PM_CTRL?  I'm dubious
-> about doing that just because "it works" in this situation, unless we
-> have some better understanding about *why* it works and whether all
-> devices are supposed to work that way.
-> 
+Bug report:
 
-I mentioned this a little bit in my patch 3/5 in my submission.  The 
-issue isn't "normal" D3cold exit that is fully settled down.
-That takes ~6ms from measurements.  The issue is how long it takes for 
-D3cold *entry* followed by *exit*.
+Oops: stack segment: 0000 [#1] PREEMPT SMP KASAN PTI
+CPU: 0 PID: 8042 Comm: syz-executor Not tainted 6.10.0 #13
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
+RIP: 0010:__rb_insert lib/rbtree.c:115 [inline]
+RIP: 0010:__rb_insert_augmented+0x90/0x6a0 lib/rbtree.c:459
+Code: 48 89 ef e8 d2 4c 03 f7 4c 8b 6d 00 41 f6 c5 01 0f 85 0c 06 00
+00 48 89 5c 24 18 48 89 2c 24 4d 8d 75 08 4c 89 f5 48 c1 ed 03 <42> 80
+7c 3d 00 00 74 08 4c 89 f7 e8 a0 4c 03 f7 49 8b 1e 48 3b 1c
+RSP: 0018:ffffc9000a9b74e8 EFLAGS: 00010202
+RAX: 1ffff11003b5f029 RBX: ffff88801daf8148 RCX: 0000000000000000
+RDX: ffffffff81e63c60 RSI: ffffffff92949620 RDI: ffff88801daf8148
+RBP: 0000000000000001 R08: ffffffff81e68333 R09: 0000000000000000
+R10: ffff88801daf8150 R11: ffff88802f3f1e00 R12: 1ffff110078b0ff0
+R13: 0000000000000000 R14: 0000000000000008 R15: dffffc0000000000
+FS:  0000555565ef3500(0000) GS:ffff888063a00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000001b2f25ffff CR3: 000000001bc74000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ rb_insert_augmented include/linux/rbtree_augmented.h:50 [inline]
+ __link_va mm/vmalloc.c:1197 [inline]
+ link_va_augment mm/vmalloc.c:1221 [inline]
+ insert_vmap_area_augment+0x322/0x640 mm/vmalloc.c:1347
+ va_clip mm/vmalloc.c:1722 [inline]
+ va_alloc mm/vmalloc.c:1747 [inline]
+ __alloc_vmap_area mm/vmalloc.c:1783 [inline]
+ alloc_vmap_area+0xde6/0x2200 mm/vmalloc.c:1999
+ __get_vm_area_node+0x1c9/0x290 mm/vmalloc.c:3118
+ __vmalloc_node_range_noprof+0x3c5/0x1440 mm/vmalloc.c:3800
+ alloc_thread_stack_node+0x354/0x5f0 kernel/fork.c:309
+ dup_task_struct+0x8b/0x5a0 kernel/fork.c:1115
+ copy_process+0x5c8/0x3d80 kernel/fork.c:2220
+ kernel_clone+0x224/0x6c0 kernel/fork.c:2797
+ __do_sys_clone3 kernel/fork.c:3098 [inline]
+ __se_sys_clone3+0x2c6/0x340 kernel/fork.c:3082
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0x7e/0x150 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x67/0x6f
+RIP: 0033:0x7f22ec1b48e9
+Code: bc 07 00 48 8d 3d 7c bc 07 00 e8 a2 29 f6 ff 66 90 b8 ea ff ff
+ff 48 85 ff 74 2c 48 85 d2 74 27 49 89 c8 b8 b3 01 00 00 0f 05 <48> 85
+c0 7c 18 74 01 c3 31 ed 48 83 e4 f0 4c 89 c7 ff d2 48 89 c7
+RSP: 002b:00007ffec2afdbf8 EFLAGS: 00000206 ORIG_RAX: 00000000000001b3
+RAX: ffffffffffffffda RBX: 00007f22ec17ebc0 RCX: 00007f22ec1b48e9
+RDX: 00007f22ec17ebc0 RSI: 0000000000000058 RDI: 00007ffec2afdc60
+RBP: 00007ffec2afdcc0 R08: 00007ffec2afdcc0 R09: 0000000000000000
+R10: 0000000000000008 R11: 0000000000000206 R12: ffffffffffffffa8
+R13: 0000000000000009 R14: 00007ffec2afdc60 R15: 00007ffec2afe130
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:__rb_insert lib/rbtree.c:115 [inline]
+RIP: 0010:__rb_insert_augmented+0x90/0x6a0 lib/rbtree.c:459
+Code: 48 89 ef e8 d2 4c 03 f7 4c 8b 6d 00 41 f6 c5 01 0f 85 0c 06 00
+00 48 89 5c 24 18 48 89 2c 24 4d 8d 75 08 4c 89 f5 48 c1 ed 03 <42> 80
+7c 3d 00 00 74 08 4c 89 f7 e8 a0 4c 03 f7 49 8b 1e 48 3b 1c
+RSP: 0018:ffffc9000a9b74e8 EFLAGS: 00010202
+RAX: 1ffff11003b5f029 RBX: ffff88801daf8148 RCX: 0000000000000000
+RDX: ffffffff81e63c60 RSI: ffffffff92949620 RDI: ffff88801daf8148
+RBP: 0000000000000001 R08: ffffffff81e68333 R09: 0000000000000000
+R10: ffff88801daf8150 R11: ffff88802f3f1e00 R12: 1ffff110078b0ff0
+R13: 0000000000000000 R14: 0000000000000008 R15: dffffc0000000000
+FS:  0000555565ef3500(0000) GS:ffff888063a00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000001b2f25ffff CR3: 000000001bc74000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess):
+   0: 48 89 ef             mov    %rbp,%rdi
+   3: e8 d2 4c 03 f7       call   0xf7034cda
+   8: 4c 8b 6d 00           mov    0x0(%rbp),%r13
+   c: 41 f6 c5 01           test   $0x1,%r13b
+  10: 0f 85 0c 06 00 00     jne    0x622
+  16: 48 89 5c 24 18       mov    %rbx,0x18(%rsp)
+  1b: 48 89 2c 24           mov    %rbp,(%rsp)
+  1f: 4d 8d 75 08           lea    0x8(%r13),%r14
+  23: 4c 89 f5             mov    %r14,%rbp
+  26: 48 c1 ed 03           shr    $0x3,%rbp
+* 2a: 42 80 7c 3d 00 00     cmpb   $0x0,0x0(%rbp,%r15,1) <-- trapping
+instruction
+  30: 74 08                 je     0x3a
+  32: 4c 89 f7             mov    %r14,%rdi
+  35: e8 a0 4c 03 f7       call   0xf7034cda
+  3a: 49 8b 1e             mov    (%r14),%rbx
+  3d: 48                   rex.W
+  3e: 3b                   .byte 0x3b
+  3f: 1c                   .byte 0x1c
 
-When this issue occurs it's tied with a tight loop of runtime PM entry 
-and exit happening in that short window.
-That's why it can be tripped by unplugging a dock, waiting until 
-~approximately autosuspend delay and plugging it back in.  If you catch 
-the right timing then the USB4 router is still on it's way down to D3cold.
 
-In terms of a way to match this problem to the spec, the closest I could 
-think is PCI-PM spec.
-
-But I do see in the PCI-PM spec that the delay for D0->D3hot should be 
-10ms. In the Linux kernel implementation __pci_set_power_state() when 
-called with D3cold calls pci_set_low_power_state() which does wait 10ms 
-followed by using the platform to remove power.
-
-I can't find any timing requirements for D3hot->D3cold transition though.
-
-I would hypothesize that if we injected a longer delay on the "other 
-end" for the D3cold transition entry it would solve this issue as well 
-though.
+-- 
+Yours sincerely,
+Xingyu
 
