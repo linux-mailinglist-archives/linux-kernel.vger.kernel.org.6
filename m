@@ -1,122 +1,138 @@
-Return-Path: <linux-kernel+bounces-305302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD611962C9C
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 17:41:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 500E0962CA3
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 17:43:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F59A287690
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:41:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 063BB1F25ACD
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:43:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD8531A38F9;
-	Wed, 28 Aug 2024 15:40:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2091D1A257A;
+	Wed, 28 Aug 2024 15:42:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nfGviRa1"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="O3W7b2tF";
+	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="bu4hQFmF"
+Received: from a7-43.smtp-out.eu-west-1.amazonses.com (a7-43.smtp-out.eu-west-1.amazonses.com [54.240.7.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EB68188013
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 15:40:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 706D183A18;
+	Wed, 28 Aug 2024 15:42:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.240.7.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724859654; cv=none; b=K1g0igkycnMlYnoSgJ4L5tIP0mCDzCZkL4FgRoNbvBCYxN2+EpOT7KsHDXc/TV0kIhKNwB2azmS/Tj4mzFBmZdVcJv5OqRKHLV+3lYYnqjQ91HMlXrULwiIQT7f3euXowIPk7NrOmm5PRP0oXf8ZydL+aAqrOiDN/uebgzy7VRM=
+	t=1724859772; cv=none; b=IjxDFOROGpFu2klge+pQv9IQ1OEZfbOsKwc+YbKUTg5NnDgPhUQduZxlvdd3opABOGQYN2Za4KMWACy2Qk/JbliIvS6/EV3XA7FJb/PbX+JTVbsnEARMQ3FaSYoyJ0AuXTGsaxssdcqGTROhWFe0PDGxpl8N9SFGYoFcoeKxxTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724859654; c=relaxed/simple;
-	bh=HykGhePu5Waby/uF/gEeTut7MAeUH5w5U+QMGn9p0ao=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=MLJkH9ZnCGTpyt1TW+iqChsMG9itUmgRiGPP1vllHekvJ6CLM7uQ3hIY2w72FF6uXBR8g+2hgGn0mqox5bxM79qnVnEDzrZ0BkIPLLUFy/DBXTEAFnnpuQWWGC/BhCsk7u7RBVVxCX+NTz0vDIlNnYivjglGmIbxi3M8qFHj3eo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--vdonnefort.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nfGviRa1; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--vdonnefort.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-428207daff2so63304115e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 08:40:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724859650; x=1725464450; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0RM2/YRNqaAKVm5MVIrmJ/pD1AXRYechixdNATzKjho=;
-        b=nfGviRa1/x2YHLm/uM0isfWhDIxiyl7xYtnVvqVGt1puOCe9marvxnvxeHemOBTBwy
-         bBhFVQLWcZaXV8tJa1wdWYbwO+leIdQ/UjL7AveAt3SiwcThur+DPSHEQMM7//Us8gA0
-         MdMQR6yzJJjIce1wJaFi83czloVgRaP0N9cCKkIkm8hHUYeXv3gQL1gP9mUiky0CbhFw
-         G31oQaZSkoyOHUwAn+eaZ0MuEigDtVWhFu7bQYzJUx7qIi53GbhdzzWApFpmerTpMbHU
-         h+LDpi/VABgAlfw5UuCvF5XaxyUceP7j+jAbTOeEhBxOmiP+EZX9RknLYu9OPKx04Aeq
-         B8vQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724859650; x=1725464450;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0RM2/YRNqaAKVm5MVIrmJ/pD1AXRYechixdNATzKjho=;
-        b=J0jLTzAmCXBNMzLzkOkVXGl0V4UXDoE1yY6quA9fGCfFvomwcHcW/sdE8QWSLVXInG
-         CQzxqVXTrjwl1/czp8HYGrQvKQZ10e8F2OioUqoynh1kG/pbqqd2p7HH5F8scg4Oy3vb
-         uqvyarkNFH+ONyDIdCuUGrLfYQITIqEFG01v/Uweqtcw8v/+0v4GmbftnmCd6k60vNxk
-         Tc8nclV2qoyT2cRFD7494CBu0tSP/omLo0Ok0grox/ZMGXgRhCoy01iHPYv6wNQutAVu
-         e02X6f2gmypOP1IazBfIAX0iQIqHGWPxFy6HbMf9kNGFAVYD/hVkhWriEqsVSN4GL+Fl
-         +Z4w==
-X-Forwarded-Encrypted: i=1; AJvYcCXrdMG2QX1pRqoIWWvjCrewtuVH+hIeOgFi2ig/WDYrST6+Y0FnuqfO3Zu49Bvke4KTMGafjTCPzrMqMfo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLUDyjQIsmnCcZkxFney8B0M9sXVCIuBuhn8CXbIeTXjvmVXDi
-	8iUZX6HxZSViWoOUjIwfkFx4VrNark//MXd9ohlegaCO54hituK/aYuFQXsolUEFzGsF8m6bl8L
-	UIzos3E69jJbqk6bR8w==
-X-Google-Smtp-Source: AGHT+IGJjmP01VW6ffyzn6YF3275GVaOcQu67Zs0O0+IsNi517+lhBzC6eWFquc/CuzjtQVxikHAUoj4S+crJs2T
-X-Received: from vdonnefort.c.googlers.com ([fda3:e722:ac3:cc00:28:9cb1:c0a8:2eea])
- (user=vdonnefort job=sendgmr) by 2002:a05:600c:2d08:b0:428:1d50:b9b1 with
- SMTP id 5b1f17b1804b1-42bb023d043mr1825e9.2.1724859649791; Wed, 28 Aug 2024
- 08:40:49 -0700 (PDT)
-Date: Wed, 28 Aug 2024 16:40:40 +0100
-In-Reply-To: <20240828154040.2803428-1-vdonnefort@google.com>
+	s=arc-20240116; t=1724859772; c=relaxed/simple;
+	bh=xvS7mUpObgNa0y44bNiTQm/TS6jfEf1+p9f/JF2fZJs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OXjpp7refB4+oWjwRyYHc5pD+bMX0v6nM4teHYjuK7Q2L8khZE39U5qz/fxHt/LsIoFCdycdT4UkhbUi2HtQWkkIQBQM8ixHAYKNXZQXCZW4IE5yWfIH2NV+kX/MYLGF6brzikS1bqfL5f1x1ntP3gqvL1m/HV03WrQdWmZMU/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=amazonses.collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=O3W7b2tF; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=bu4hQFmF; arc=none smtp.client-ip=54.240.7.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazonses.collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=4232tfv5ebdrjdwkr5zzm7kytdkokgug; d=collabora.com; t=1724859768;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Transfer-Encoding;
+	bh=xvS7mUpObgNa0y44bNiTQm/TS6jfEf1+p9f/JF2fZJs=;
+	b=O3W7b2tFPIArTnoTwpvggcVI7B+QHPVcjk2p+kSuNcNWX8qUsCJAwBH9oK+7xj8G
+	rWuv+ZB3uEDOAxQnvPmcva/sfOJXpfTU04hcr3z0YKPbTpwgNGgpxNDBRyOiJ/YchK3
+	pg+sq6MICMh38evtC4mxjTwHdzJreVNU+pp7sljRPzZhS1Dg7rcQ02kUgojJzYbNveK
+	1bZRAOEvRVVv1Mj0xM+NR3qoxFlTT0e9yT9rCOVHw9rCeio+hojI9fYl3bATJLGxrAl
+	behdh/BJUjq5axQmDNbsV1aMRbyovdIb39DIOEuJhQMVMvLWb5pnfAEcWUCKqV2HtHy
+	w03vbxWQKA==
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=uku4taia5b5tsbglxyj6zym32efj7xqv; d=amazonses.com; t=1724859768;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Feedback-ID;
+	bh=xvS7mUpObgNa0y44bNiTQm/TS6jfEf1+p9f/JF2fZJs=;
+	b=bu4hQFmFlsZiszzltCIyxjjy13w3RtbJmRZE2ryjF8y0kpr1vAC0gZKlTWCtbzbv
+	iuGC1k/0cDipVqUD1PtM2eAuE9nXWS7Im78IA6jVjO1VkEngX8BIqvWk1rG1JZDX4Em
+	MFL6U9vzbFW8XxELouQljBPIKbaQvdps84zCWX0I=
+From: Detlev Casanova <detlev.casanova@collabora.com>
+To: linux-kernel@vger.kernel.org
+Cc: Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, 
+	Elaine Zhang <zhangqing@rock-chips.com>, 
+	Detlev Casanova <detlev.casanova@collabora.com>, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, kernel@collabora.com
+Subject: [PATCH v7 0/3] Add CRU support for rk3576 SoC
+Date: Wed, 28 Aug 2024 15:42:48 +0000
+Message-ID: <0102019199a75f9b-aab57db6-806a-474b-8295-e5be5a99d424-000000@eu-west-1.amazonses.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240821115636.3546f684@gandalf.local.home> <20240828154040.2803428-1-vdonnefort@google.com>
-X-Mailer: git-send-email 2.46.0.295.g3b9ea8a38a-goog
-Message-ID: <20240828154040.2803428-2-vdonnefort@google.com>
-Subject: [PATCH 2/2] ring-buffer/selftest: Handle meta-page bigger than the system
-From: Vincent Donnefort <vdonnefort@google.com>
-To: rostedt@goodmis.org
-Cc: mhiramat@kernel.org, linux-kernel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, mathieu.desnoyers@efficios.com, 
-	kernel-team@android.com, david@redhat.com, 
-	Vincent Donnefort <vdonnefort@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Feedback-ID: ::1.eu-west-1.YpP9ZbxnARFfy3Cb5pfsLd/pdsXBCNK0KEM7HforL4k=:AmazonSES
+X-SES-Outgoing: 2024.08.28-54.240.7.43
 
-Handle the case where the meta-page content is bigger than the system
-page-size. This prepares the ground for extending features covered by
-the meta-page.
+Add support for clocks and resets on the rk3576.
+Patches from downstream have been squashed and rebased.
 
-Signed-off-by: Vincent Donnefort <vdonnefort@google.com>
+The resets have been renumbered without gaps and their actual register/bit
+information is set in rst-rk3576.c as it has been done for rk3588.
 
-diff --git a/tools/testing/selftests/ring-buffer/map_test.c b/tools/testing/selftests/ring-buffer/map_test.c
-index ba12fd31de87..d10a847130fb 100644
---- a/tools/testing/selftests/ring-buffer/map_test.c
-+++ b/tools/testing/selftests/ring-buffer/map_test.c
-@@ -92,12 +92,22 @@ int tracefs_cpu_map(struct tracefs_cpu_map_desc *desc, int cpu)
- 	if (desc->cpu_fd < 0)
- 		return -ENODEV;
- 
-+again:
- 	map = mmap(NULL, page_size, PROT_READ, MAP_SHARED, desc->cpu_fd, 0);
- 	if (map == MAP_FAILED)
- 		return -errno;
- 
- 	desc->meta = (struct trace_buffer_meta *)map;
- 
-+	/* the meta-page is bigger than the original mapping */
-+	if (page_size < desc->meta->meta_struct_len) {
-+		int meta_page_size = desc->meta->meta_page_size;
-+
-+		munmap(desc->meta, page_size);
-+		page_size = meta_page_size;
-+		goto again;
-+	}
-+
- 	return 0;
- }
- 
+Also add the pll_rk3588_ddr pll type that is used by the ppll clock.
+
+Changes since v6:
+- Renamed HDMITXHPD to HDMITXHDP in clocks and resets
+
+Changes since v5:
+- Use mandatory syscon lookup instead of optional grf phandle
+- Add pll_rk3588_ddr type to always have correct rate values
+
+Changes since v4:
+- Fix commit message with idx starting at 0
+- Stash all bindings commits
+- Cleanup example and add me as maintainer
+
+Changes since v3:
+- Add missing include in bindings
+
+Changes since v2:
+- Renumber IDs from 0
+- Commit clock header with clock bindings
+- Add missing resets on sub-cores
+- Add redundant fields in bindings
+
+Changes since v1:
+- Remove reset defines that are probably out of the main core
+- Separate resets and clocks bindings
+- Renumber the resets without gaps
+
+Detlev.
+
+Detlev Casanova (1):
+  dt-bindings: clock, reset: Add support for rk3576
+
+Elaine Zhang (2):
+  clk: rockchip: Add new pll type pll_rk3588_ddr
+  clk: rockchip: Add clock controller for the RK3576
+
+ .../bindings/clock/rockchip,rk3576-cru.yaml   |   56 +
+ drivers/clk/rockchip/Kconfig                  |    7 +
+ drivers/clk/rockchip/Makefile                 |    1 +
+ drivers/clk/rockchip/clk-pll.c                |    6 +-
+ drivers/clk/rockchip/clk-rk3576.c             | 1829 +++++++++++++++++
+ drivers/clk/rockchip/clk.h                    |   54 +
+ drivers/clk/rockchip/rst-rk3576.c             |  652 ++++++
+ .../dt-bindings/clock/rockchip,rk3576-cru.h   |  592 ++++++
+ .../dt-bindings/reset/rockchip,rk3576-cru.h   |  564 +++++
+ 9 files changed, 3760 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3576-cru.yaml
+ create mode 100644 drivers/clk/rockchip/clk-rk3576.c
+ create mode 100644 drivers/clk/rockchip/rst-rk3576.c
+ create mode 100644 include/dt-bindings/clock/rockchip,rk3576-cru.h
+ create mode 100644 include/dt-bindings/reset/rockchip,rk3576-cru.h
+
 -- 
-2.46.0.295.g3b9ea8a38a-goog
+2.46.0
 
 
