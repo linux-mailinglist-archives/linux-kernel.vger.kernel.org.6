@@ -1,199 +1,143 @@
-Return-Path: <linux-kernel+bounces-304634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F273962305
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:09:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAB4A962309
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:10:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 83F2B1C21226
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 09:09:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70E0F1F21661
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 09:10:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1C8A15E5B5;
-	Wed, 28 Aug 2024 09:09:29 +0000 (UTC)
-Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01on2118.outbound.protection.outlook.com [40.107.215.118])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65F0615CD79;
+	Wed, 28 Aug 2024 09:09:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PlENJn2L"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 920B21591FC;
-	Wed, 28 Aug 2024 09:09:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.118
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724836169; cv=fail; b=rRFb+zpmH11Z+ZO3CtpfO08KtsI33vjlKshRu6AsPhZzwi9fUYSN8Vz5X9f+IJ2EiYFpH3shTRQp8W7pZ8++bxhcTnQ0za1hLAYvdT2xfS/9RzirQsgDz7WhtcWJABcn3ysLf92RA1AHZ7Rw5vVWCX8U+7mki8EMwwp/mZTJrB0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724836169; c=relaxed/simple;
-	bh=GaU8kNJ20FAGzOf43b3y+siDA+hN6NW0TmcOj5CuL8A=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=ct6cTKo6+sJm0r1CGNVe3/Yq5EuRc+9uW46K56tVG1AXOgYOG4mLIPpn5GFxWv3gIMqQURQzSCSd50J6z1ZVwUbzACZh7JhDfqfz6Dv8O2dI9VMDxmxt7b+MpecFOqEYDdIMUurQ52DUT8awT60B3Bqw/7E9Lg70G1Qs86QUhFE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wesion.com; spf=pass smtp.mailfrom=wesion.com; arc=fail smtp.client-ip=40.107.215.118
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wesion.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wesion.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=DQDdMR6jAiMfIyCVUI7M5DVZv7u1ZZo3IcO2VoAgowAJb2CpziHhVsbdybx8CTJlu+J1nRIqLRCGnRv9Bop0UMVntg/LJ4CHSnFSOPwE95tV8Xw7rQVRg7betqNvVaASH9GD7XY/naWBRgmamPJ5h6Xq50RTfstV1cMzzcjqTFi+Gp3om+A4OqH/R8iaxfxDKXSPncOSY+Mt2Nc89aDhSOy6rCu99aOpXBZrL97kOLgnZrozI/Be/vzyA6bURWxk6c+NQyJ2Dwl5qm7kemZ9UZsgBHIQN6ZgKzXcrV2RWIFYGJd+0oWntBL8ixwVb1kEgZYRqrUY1Dry6wTKbH++FQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ZgRXmecMfcOQltINsYE862DPHZKPEg2H8QOg0cnx/9M=;
- b=bQBax/ZzNLyJPWr/1fKJVd7Rtvc3Fkac+ZU7/mVQvZMrly9UH+9tOAiLjJv5951zR7e0zn0yLqwRsQDE2yRaxTaPn1TrShDW8gETOvc8OcHiDmurVfAlfTbxZ/f8Fc3MnoeNFl5KhzhJPHbmBqWlCP8G0EnN5L5j4EM991hPciNxthJ8o+Fs3RnZwTQmyvho62ObZ/NxZ0CzZGp6xZgfQC8rEP4KYz0vjWnLbFadBaUkeClrzAeS8hewiOmn4Ce6reVTrpHC9IY/1wEdnsqsRLT+W07ktfKgKFS+EUse20PKBrl8FDdIM9TkUCAXdEFBEZmAlqXplwYy8GFdeQWRrg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wesion.com; dmarc=pass action=none header.from=wesion.com;
- dkim=pass header.d=wesion.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=wesion.com;
-Received: from TYZPR03MB7001.apcprd03.prod.outlook.com (2603:1096:400:26a::14)
- by SEYPR03MB6674.apcprd03.prod.outlook.com (2603:1096:101:6b::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.25; Wed, 28 Aug
- 2024 09:09:22 +0000
-Received: from TYZPR03MB7001.apcprd03.prod.outlook.com
- ([fe80::78dd:5e68:1a9c:36c0]) by TYZPR03MB7001.apcprd03.prod.outlook.com
- ([fe80::78dd:5e68:1a9c:36c0%4]) with mapi id 15.20.7875.019; Wed, 28 Aug 2024
- 09:09:22 +0000
-Message-ID: <157bb276-aae2-488c-8163-367f69c944df@wesion.com>
-Date: Wed, 28 Aug 2024 17:09:18 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v13 0/2] Add Wi-Fi support for Khadas Edge2 and fallback
- compatible for Apple
-To: Arend van Spriel <arend.vanspriel@broadcom.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
- Alyssa Rosenzweig <alyssa@rosenzweig.io>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- asahi@lists.linux.dev, Muhammed Efe Cetin <efectn@protonmail.com>
-References: <20240828-dts-v13-0-6bff9896d649@wesion.com>
- <7951482c-ee1e-45f4-8753-433a933321b6@broadcom.com>
-Content-Language: en-US
-From: Jacobe Zang <jacobe.zang@wesion.com>
-In-Reply-To: <7951482c-ee1e-45f4-8753-433a933321b6@broadcom.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: TYCP301CA0016.JPNP301.PROD.OUTLOOK.COM
- (2603:1096:400:381::17) To TYZPR03MB7001.apcprd03.prod.outlook.com
- (2603:1096:400:26a::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1C1715A849;
+	Wed, 28 Aug 2024 09:09:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724836193; cv=none; b=h95SsuimP1XRpYG62sEnn5gU4E3ALA4Qo8rNFC3Wt8sYhGkbr8DSxILclXOczaNhC6jQcSjhgwVQzSSJ3oI8tsv0Po+LPCaXsWVnQMo0/GAbJGnUgUWwmNlcFAH5XFmYwIE27CpKXZQ60xQmTOhki2npfubXkyLTZt5ltDYKD+0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724836193; c=relaxed/simple;
+	bh=2EC+oPQzFSSuT7cYAzMjwtmQRGQcrLbG+8LOjwHTbGE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ELFDY0Aqmad1pLRH59HO6Vv8tKhy4tFqQgqYOsIiAKs7/B3R2szcamBNxMJ+25Iah3x0fvB+LE4SyaYuAavpjJlhMUFIi3TIi2yVCo1IUhXOnmCNwVj7/ldIVnfYG2hvn4YllfMXpszt+SyoI+9mCz3qqSaI0pb7dtclCE5edIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PlENJn2L; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724836192; x=1756372192;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=2EC+oPQzFSSuT7cYAzMjwtmQRGQcrLbG+8LOjwHTbGE=;
+  b=PlENJn2LDOs7lrcYoqyPLhpTZOKX4lvhf+U+qzILMU8HSF5TC3wxNYtT
+   QBwMDGw9bw/u+/62IkiXEbRls6Y9D4VFfehEA+Ba9hCwLI2c3F050FjpM
+   TSMcD4wP+pkuNk0w7lA0lhBj75t68N335PDWBQ66QSJNnEAB97Lv1K5uX
+   3hxZFsmV7bA583meRA4JvaJOPlzR67w+I7RWlUqfR5YKWfFWTy8II0zMJ
+   Ab7sNF9dksXc0u7pgE5xFAIl3PQkJQ6+tHbDHz2ObcIKCP+Z2bTqsz5Cq
+   NcLJALRbu+IBknM/Tw25ZqgVUH1pauKA29Pl2t8V/ceu7Y70w0y5ILH2p
+   g==;
+X-CSE-ConnectionGUID: RMGkT3juRtCfgKokVwku9g==
+X-CSE-MsgGUID: R0kC9JtYS+KjXccwd45Kxg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11177"; a="23534453"
+X-IronPort-AV: E=Sophos;i="6.10,182,1719903600"; 
+   d="scan'208";a="23534453"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2024 02:09:51 -0700
+X-CSE-ConnectionGUID: bkTH4lYKRG+sP7JLtfigoQ==
+X-CSE-MsgGUID: U9bIU00SReCU4tYxuw8v0g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,182,1719903600"; 
+   d="scan'208";a="68044850"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by orviesa004.jf.intel.com with ESMTP; 28 Aug 2024 02:09:48 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sjEgU-000KiY-0I;
+	Wed, 28 Aug 2024 09:09:46 +0000
+Date: Wed, 28 Aug 2024 17:09:30 +0800
+From: kernel test robot <lkp@intel.com>
+To: Mario Limonciello <superm1@kernel.org>, Borislav Petkov <bp@alien8.de>,
+	"Gautham R . Shenoy" <gautham.shenoy@amd.com>,
+	Perry Yuan <perry.yuan@amd.com>
+Cc: oe-kbuild-all@lists.linux.dev,
+	"(maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT))" <x86@kernel.org>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	"(open list:X86 ARCHITECTURE (32-BIT AND 64-BIT))" <linux-kernel@vger.kernel.org>,
+	linux-acpi@vger.kernel.org, linux-pm@vger.kernel.org,
+	Mario Limonciello <mario.limonciello@amd.com>
+Subject: Re: [PATCH 2/8] x86/amd: Rename amd_get_highest_perf() to
+ amd_get_boost_ratio_numerator()
+Message-ID: <202408281637.ssIOSO7H-lkp@intel.com>
+References: <20240826211358.2694603-3-superm1@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYZPR03MB7001:EE_|SEYPR03MB6674:EE_
-X-MS-Office365-Filtering-Correlation-Id: 125f1b4f-8c5c-4f5b-dab1-08dcc7411b1a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ZVlNdzRUWHlQNVpWeCtCK05oTTVTVUlHR2lMYUpGZmlYeS9yWUdmZ1hHbm41?=
- =?utf-8?B?emdTeDc4NFIwTVNSMUZNT1pxdUY1b0FYbDdBQ0REWVU2WDFRcGVGZ24waTJB?=
- =?utf-8?B?WGFGemFwMWFqcHBWQnZlanVQSG8zYVdLNWJMSnMvTENuVXpzazdMTDc4c2ND?=
- =?utf-8?B?Y1BCLzhsSm5hRnVGRnBYVnIrdUY0Q0k4S3V5YzBnaHIzTkZnS2duODZiRjRj?=
- =?utf-8?B?NkdoOG1MV1VZZ0xMeVBEN1V1djh6TlUwTzdTeEk1VmhxcHhMQWhRcFVzdWtV?=
- =?utf-8?B?RVc0TFJBTGdFYmhBVktzVjN3QXpJRkt4Z2xmdC81N1ZYU3liZWx6QjlwWTk0?=
- =?utf-8?B?MG9PZSt6VGUzMStjZDZseUtWMGYzSGpKNkszUFJ4ZVNOUlhUNWVBNkY2T3cr?=
- =?utf-8?B?Z0MyM2FvWVFYTURnMTJWakNpdE95QjNpQTNaN1J2OGg1ZHorU3QwRzJwTUc0?=
- =?utf-8?B?dkh3RzNjNEllQTdnS2hTODVKb3FpYmhtU0pDV1V3aW5LTjdDRStMcHpvdnA5?=
- =?utf-8?B?SDZWdUhMY0ZWNWFrSDJtOVkxaFZlMjBOQzBzVU1jMXFnK1pvdFhrR3hwZzNR?=
- =?utf-8?B?SGpoK0dVYTY0NUphcHZmSnZzN2lBVlRwSExjeG5UUThKcCtiREYvckF2YkJD?=
- =?utf-8?B?V3B3a1JrZGk4WnNvYjZLYkE5dWhscHd5bXRFd0RQN21ZRlNIeFoySm5yVm0v?=
- =?utf-8?B?R3BGeExTL21HT0VoWWxucXJSU1JoQmNQN0dRMEtCWE50RmJiaEEyb0VBS3Ji?=
- =?utf-8?B?ZnpjNjBzaXc4Q1UyRlc3b2RobFlHelZZSkRqdDRPQUFkQytoclZWNHNmNEF6?=
- =?utf-8?B?UGtFdUFSTTU5OTJkenBHUjVmTXV5LytWbjJPS3VpTSsyVU5wc1MwRnV2aGJ2?=
- =?utf-8?B?YVR6d2wrT09rd1ZWU2p1Rlp0SDNRS2RwVjNWOXdYYW13cGplbWw4bGVFeDdY?=
- =?utf-8?B?ODZtQjBwWHhudGEyTkZXMy9BTWlkbXI2aE9vdUt2S21YbHVLUjNqeWZjdWYw?=
- =?utf-8?B?NGlzS1JLc1gxd3ExWDVBTDZVZWVta2twMHI4ZXpTOUhLUklWMjdUL1c5Q2xw?=
- =?utf-8?B?UmlSSFdiUXJRcVFuWFlKanZKQjVvNlJnUWlQZWplK0V2MnlJdDR6aVkxdWdw?=
- =?utf-8?B?bHVuRk1yWDkyUmNnbUNBRGh2S2pSUm9kU1F5QTlnb3U1WVVXQWFVOXBGcU9L?=
- =?utf-8?B?QkgwMW1ZMjdYanZEbVpNT3h1cFZtZ2tmbnFOanpwNkVQTGVSUTRQWkhyemZN?=
- =?utf-8?B?dVNUSkhiWUhzWGNGaUVZSUNEV2VaQXFobFlIUWpLSVNVb1ZFTEw1Z3J3Zk1O?=
- =?utf-8?B?TGVYUHJtZUhaQmZIaHdUTjc4OVIxTXZGOU9HQ3F6b01rNmRUNEk0eSt5V2V6?=
- =?utf-8?B?UmtPZG1xN0Z4dUZUSmFFcmhTNmtBNE5pdlhGbCtoOHFOQVR2WDBXYk1DblpY?=
- =?utf-8?B?dktBeUJRRlQ0TElvaGVKWTQ2S2RMVDlUSjBFLzlFTHZVV0lkcHA1SlN5T0xC?=
- =?utf-8?B?TkZ3YmhxRm9YVE1ZQVNIcllOa3MrNUxSVmhEZXl6TkdxZ2VpMEhuOU9RZTY0?=
- =?utf-8?B?Q3dJcW5YK2hFcDhUdzVkR0JkKzI4VDRFM3cxY2JaSkx5WHRPbGZIVlN1ejkv?=
- =?utf-8?B?VlgveTU4MlkzNVlBMWIwMUFvZ3k2QURzV1FGNmc4N2NtQzMydVpDQld2cTBi?=
- =?utf-8?B?UVcrRThyR1FSTC9xelp5TkVLTmhkM3k2MDhHSWo0VW5jeXFLam50cTN5eS9I?=
- =?utf-8?B?bmJWT04wSDVaaWd6TXJJa1dwK2czdElSckd3a3ExUk1xZ2p0Q2VpdDRHVjAz?=
- =?utf-8?B?SWVmTVBlZ2Z2Z0NGQ2FhQT09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR03MB7001.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?eDRIRDd4RXBvM05Dbm1hVVNab1VicFpVMTdwY09QSW12RXZzTU9uQnM4dDlr?=
- =?utf-8?B?RmlZckJWWlFwVVN6ZHppNGgyUmtxZTJNRzRhMGRUVG9waDBGVEU4elp1dmNF?=
- =?utf-8?B?dksrQThpcnhhWGNjRFdRVkFDSHBiR2cwMnFVSDhSckY0VnRWRjcyUWNTdlFS?=
- =?utf-8?B?VkYxSlg2V1h3TFNLYlBYRE5uNFlVS2tFbFlyR1I2emRWeDNKVHpsSnVlOHIr?=
- =?utf-8?B?WFlOaXdvZFBZTGFISTRnOFNLSzNFMmd1RUFueGIwMFJ5c0hrNWg1SDd2b0R4?=
- =?utf-8?B?UGRoQmRsK0t2ZXp0a3RLb1RZTUp2MVNodmV5bUI1MkhYSm5LbzFqYS9taUF2?=
- =?utf-8?B?amRySVdUcjNla1g2dkdiaGJtNVZ0MnkvYm5SaHpCNG8xUk95Q3hjbHV3WlFW?=
- =?utf-8?B?S0tVVGRtM3UwSEpMeTBSRUJIYkNzYWdTb0k1anJDRktWYjVUSStUODkxL3Nj?=
- =?utf-8?B?MlpvanJ2aHl2Q2hYY2dpN3JqWEpTaHcreGovNkh2TVlIQTR3aStrNnlzS244?=
- =?utf-8?B?em1EbkhFUUNXNkhZcVFETEU3UWtsQ2Y3cE5jUC9vdGVvR0RpMy9ISGpjbFRt?=
- =?utf-8?B?V1I0SGppaStGYmxONnFJMWRoMjRvbG1UdzgxbzBJNkl3dmtJbVY5WThtRTN0?=
- =?utf-8?B?ZWRGY2lhUkFhS2lKTy92QURlbndCSjhYZkhMVWxhSlN4VGFwRG9iWi9aejla?=
- =?utf-8?B?WlQyQkY5SUZBM2ZieWI4MUtaQzF6Z2ovbHZCMnJwM3VWWXNRTzh3bmxXWTdJ?=
- =?utf-8?B?VEliaE0yY1p1ZjZoMDd5azRGRlhkdVhZc0ZRcHl0T0RNWkFnWndLWW8wYWhV?=
- =?utf-8?B?RE9tand6Nk9ZVWZZYldUVmdiaE45TG9jY0dkWE9xdjdvSUhGSkE2MmFaTk1a?=
- =?utf-8?B?NGdXSUVtREozc0JPT05obmVaVWxzSGV2Y3Z4RzYxMXpEUytraUsyVW9TNGFZ?=
- =?utf-8?B?b2FhdU0zZ3BUclB5L09XRmpBQ0pDcElMMVZvMFNXTUNIbXJXTFA4Q3RxWGFY?=
- =?utf-8?B?YURUSUdmQ0RmN3BXYllDRGIrUnJ2TWk4ZHBzLzBQS2pySnlpVGNFZWRpL0ZS?=
- =?utf-8?B?OGM3bnp2cHVMR3lPTGoyeldWY2FuZUo5SDZqVWV6aDF4bHZKRXcvL3JzSFY5?=
- =?utf-8?B?VVEzaWppOFltUlJhRERxYVBLOWkySGxkVDVNbEFZVE4zbDQwcnQ4VHJRd2dC?=
- =?utf-8?B?eUFSZ09QbDdWdFZlS0RHVHg2OWhsaERhaFV6YUNUM0VmbDNybGhSWTNaWVph?=
- =?utf-8?B?QXRuVEFSSThhSUxUZ3FTSWRWdWluSTRqaEVFR1lXaXQvT3dVQ1RFditrNVlS?=
- =?utf-8?B?MWZxQnVhaFpiZ1BjckF1dU9MVFFTa3AxUFF3T1pDUFMwN3BmQXA5ZzIwckpi?=
- =?utf-8?B?ZERJU0x3cTcyZnJxVEtnVncxOXFOY1BscGEybGNtOHNFZnNnWEVVRVk3UGEz?=
- =?utf-8?B?NzRGSUY4R1V2Y0hMTis0bUh5UWNrZHBNd0xPeElEdGFVQWQzd29qa1pJeDh0?=
- =?utf-8?B?R1ExM3d6eEw0dEh0VHVjcURMQ0M4Rk9jRzZZM1poUThoOVhGdCtUajJIdnRH?=
- =?utf-8?B?ZTVWQVJ2emdWL0dvOWtkdXMzaFVycURHcjdVa2pteDJmRG5nRnJxdGVrTXVZ?=
- =?utf-8?B?QWFlT3grSlRWMERydGpvTURmclM3NFJTdTBRWi9CU3JMR0owYmFrakloVzF5?=
- =?utf-8?B?Vk9ja3cvNzZwVnJGdUJEa1UrVTl6OTE3YWtDcDRpTXI1d0hoQ2s2WjB3OU5R?=
- =?utf-8?B?cXR5K3FHNWlvd0dKRDBjaVgyeWo0ZnZOdUIwZjZWdnpGRGUyVEZUbHVDdWMx?=
- =?utf-8?B?YktMclFCbE1taUQ0aGllRHFOYktTQzVpMDcxcGpWQVJKQkhYMzhaK2ZSMnBO?=
- =?utf-8?B?MC9YM1hXR3hzMWJ5SERQSVcranljV00zS3d2MDJ4WE9oN0NEdkdvRElxdHpG?=
- =?utf-8?B?MmN2Rm9kVWtiWm9SZXZNMllYK1JJRTNpRWt3TnBlNDV5Q3lJZmpWOTVDWFlY?=
- =?utf-8?B?eVFja3dxVkltRktleUp4MnBmUjJaSFF6QlhhY2gwWU5PRFBWTUU3b3A5cTBB?=
- =?utf-8?B?TnFJZ3EzK25EZUZVcDk1RHNwVVFVc1liUFRtTzRlN1F2QUtFYVpSNitHVVdr?=
- =?utf-8?Q?/cvP+b6DPSCtHiY0FtrqPGdjr?=
-X-OriginatorOrg: wesion.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 125f1b4f-8c5c-4f5b-dab1-08dcc7411b1a
-X-MS-Exchange-CrossTenant-AuthSource: TYZPR03MB7001.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2024 09:09:22.1974
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 2dc3bd76-7ac2-4780-a5b7-6c6cc6b5af9b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: WXvbQyaYdKFRGxF3KFIpiqrSrOIEh3SG0kyx2gmDPV33+wET9qsTFqEgS+TwZTvktwmXgJpzzsmrbqiazce51Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR03MB6674
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240826211358.2694603-3-superm1@kernel.org>
+
+Hi Mario,
+
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on rafael-pm/linux-next]
+[also build test ERROR on rafael-pm/bleeding-edge tip/x86/core tip/master linus/master v6.11-rc5 next-20240827]
+[cannot apply to tip/auto-latest]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Mario-Limonciello/x86-amd-Move-amd_get_highest_perf-from-amd-c-to-cppc-c/20240827-051648
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git linux-next
+patch link:    https://lore.kernel.org/r/20240826211358.2694603-3-superm1%40kernel.org
+patch subject: [PATCH 2/8] x86/amd: Rename amd_get_highest_perf() to amd_get_boost_ratio_numerator()
+config: x86_64-randconfig-074-20240828 (https://download.01.org/0day-ci/archive/20240828/202408281637.ssIOSO7H-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240828/202408281637.ssIOSO7H-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408281637.ssIOSO7H-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> arch/x86/kernel/acpi/cppc.c:133:5: error: redefinition of 'amd_get_boost_ratio_numerator'
+     133 | int amd_get_boost_ratio_numerator(unsigned int cpu, u64 *numerator)
+         |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   In file included from arch/x86/kernel/acpi/cppc.c:7:
+   include/acpi/cppc_acpi.h:142:19: note: previous definition of 'amd_get_boost_ratio_numerator' with type 'int(unsigned int,  u64 *)' {aka 'int(unsigned int,  long long unsigned int *)'}
+     142 | static inline int amd_get_boost_ratio_numerator(unsigned int cpu, u64 *numerator) { return -ENODEV; }
+         |                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
+vim +/amd_get_boost_ratio_numerator +133 arch/x86/kernel/acpi/cppc.c
 
-On 2024/8/28 16:55, Arend van Spriel wrote:
-> On 8/28/2024 10:45 AM, Jacobe Zang wrote:
->> Add basic Wi-Fi support on Khadas Edge2. Wireless driver need to check 
->> "brcm,bcm4329-fmac"
->> compatible so add it to Apple's devices.
-> 
-> Did not receive [PATCH v13 2/2]. I don't follow every kernel list. Maybe 
-> good to add linux-wireless list?
-
-Just now in your reply said the compatible should not be added. So 2/2 
-patch is also dropped. Maybe the patch is about DTS, so b4 didn't 
-include linux-wireless, need to be added manually.
-
-> 
-> Regards,
-> Arend
-> 
->> Signed-off-by: Jacobe Zang <jacobe.zang@wesion.com>
->> ---
->> Changes in v13:
->>   - Change patch 2/2 argument from driver to bindings.
+   121	
+   122	/**
+   123	 * amd_get_boost_ratio_numerator: Get the numerator to use for boost ratio calculation
+   124	 * @cpu: CPU to get numerator for.
+   125	 * @numerator: Output variable for numerator.
+   126	 *
+   127	 * Determine the numerator to use for calculating the boost ratio on
+   128	 * a CPU. On systems that support preferred cores, this will be a hardcoded
+   129	 * value. On other systems this will the highest performance register value.
+   130	 *
+   131	 * Return: 0 for success, negative error code otherwise.
+   132	 */
+ > 133	int amd_get_boost_ratio_numerator(unsigned int cpu, u64 *numerator)
 
 -- 
-Best Regards
-Jacobe
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
