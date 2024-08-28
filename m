@@ -1,220 +1,129 @@
-Return-Path: <linux-kernel+bounces-304756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D815A962468
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 12:13:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99220962472
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 12:14:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EEF9F1C21000
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 10:12:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55F87284BAE
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 10:14:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D859316A38B;
-	Wed, 28 Aug 2024 10:12:50 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0CD7169AD0;
+	Wed, 28 Aug 2024 10:14:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="JrshnpEN"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9069815854A;
-	Wed, 28 Aug 2024 10:12:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7681715B98E;
+	Wed, 28 Aug 2024 10:14:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724839970; cv=none; b=ggav7+/LX890kbtDlzpifoimj0NqX2wLfDIyHcdH9uzniuTTlD4sIu6fSd8+65JK0P33WNauuj5lFIJhW9uIMG3IS0XWkQSgL20ek0zfakFqIcBdVNWBOcN7RrDiNf9B59OcR0MZ9o9wfQeTCrSN9aHMw86xyaD/JM55S5hP7bk=
+	t=1724840046; cv=none; b=l7eI0Ajy1Rlr8nSvZQZastIyrG4Co/Xv3qlvnmz5TXW1RUsIObXZIedfGfR9Rwv+qOLyWfSWIBeChh+ZEFkdp4Ytwhc/nJ0RyWf7FFM5EE4iMJffSeUQa89SVomxq6L3J/jwhPPU1KZd/rRUnPoUm0yxsmQDEgOyvg4KVewq49Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724839970; c=relaxed/simple;
-	bh=X8RJJ/vaLQPD3WTubZZIPP+JuPrMkOIPbFs0XWLVNHo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iZfi0FSBd9XeT0lBuBnb88eA9AMM1q7A4mPH/qPFJzo0KLczTuRtBzBGfpXYri7egYvUSSXxnW9hwv5rNH9c8faceSbBVQHjN/ntrgJDZJ4Kphmj3ok/iijyRDuaQo2IHppkJ03EJJ9tQIUvbXa6xLiXz0FOpGuk7J69GvfN8vA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4Wv0bL5tmvz9sRy;
-	Wed, 28 Aug 2024 12:12:46 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id g7nm2FoFxJLY; Wed, 28 Aug 2024 12:12:46 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4Wv0bL4szYz9sRs;
-	Wed, 28 Aug 2024 12:12:46 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 93F5A8B78F;
-	Wed, 28 Aug 2024 12:12:46 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id gnorZT8uKGam; Wed, 28 Aug 2024 12:12:46 +0200 (CEST)
-Received: from [172.25.230.108] (unknown [172.25.230.108])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 55FEA8B764;
-	Wed, 28 Aug 2024 12:12:46 +0200 (CEST)
-Message-ID: <27fc0052-c7d6-455b-933c-4b1dc6f4a95b@csgroup.eu>
-Date: Wed, 28 Aug 2024 12:12:46 +0200
+	s=arc-20240116; t=1724840046; c=relaxed/simple;
+	bh=H/spxYuv25xMJd7avzns1jDAaEpUBgBfR27818iNls0=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WPFQOSgxIm1MCSZynA/tTNlAMTUfQJkHMAO/QIrSStt990XJ+7HUN7lCWkep+BCog/plI8n2RzOmCVPTpFUsXI77SDULsHk+BBJroE5n7ZBY7MUDIU2qqyXh0nLGeFDBWT+Ne3d9uU7vvw4wvf1S2znRDvul//cK9bbJq84SPWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=JrshnpEN; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 3C92840006;
+	Wed, 28 Aug 2024 10:14:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1724840041;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CB6BO/KLb4RXq0NQixkj5jR5dZS0zY9MFbOR0+McABQ=;
+	b=JrshnpENn0+8kCxDPw+vOidiPhzUcXXxucnC4nGtiyuMRWQidOL3DVsxiasc3vXZAwp7B4
+	ew2l+EBphQqvvPq1Dunr2Ct/olGkJG2cjbyKTzCvHAeXMlUZPOOG97soXRXRPsLJ0Akx0X
+	eCKbfO9xYw6SOFggoIG70At4MjJ5CRAXOZpqWKL6dNEvd6Pm8fIbCuMxhhf3RcgYTS3w2K
+	E6zmQcXPVI4E8tXnNmB7eqFE+77qXR+MYOSQn4wUN0szD+lFZ9R0mWxRG8dOjbE9T5Y9ec
+	Jaln9w4t/Z2bHbqgkbc9U1A5YUN1GORqMR8PY3cNOHOR391NqdjmaUMqbu7w/Q==
+Date: Wed, 28 Aug 2024 12:14:00 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: claudiu beznea <claudiu.beznea@tuxon.dev>, nicolas.ferre@microchip.com,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	mturquette@baylibre.com, sboyd@kernel.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 3/3] ARM: dts: microchip: Use SCKC_{TD, MD}_SLCK IDs for
+ clk32k clocks
+Message-ID: <2024082810140092b1c3d7@mail.local>
+References: <20240826173116.3628337-1-claudiu.beznea@tuxon.dev>
+ <20240826173116.3628337-4-claudiu.beznea@tuxon.dev>
+ <8ae724e3-f467-4df4-b8cc-f03489bd0f35@tuxon.dev>
+ <20240828-chivalry-brunch-7e21bd12b7fa@thorsis.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 1/6] net: ethernet: fs_enet: convert to SPDX
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>, davem@davemloft.net,
- Pantelis Antoniou <pantelis.antoniou@gmail.com>, Andrew Lunn
- <andrew@lunn.ch>, Jakub Kicinski <kuba@kernel.org>,
- Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
- Russell King <linux@armlinux.org.uk>, Florian Fainelli
- <f.fainelli@gmail.com>, Heiner Kallweit <hkallweit1@gmail.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- thomas.petazzoni@bootlin.com, Herve Codina <herve.codina@bootlin.com>,
- linuxppc-dev@lists.ozlabs.org
-References: <20240828095103.132625-1-maxime.chevallier@bootlin.com>
- <20240828095103.132625-2-maxime.chevallier@bootlin.com>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <20240828095103.132625-2-maxime.chevallier@bootlin.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240828-chivalry-brunch-7e21bd12b7fa@thorsis.com>
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-
-
-Le 28/08/2024 à 11:50, Maxime Chevallier a écrit :
-> The ENET driver has SPDX tags in the header files, but they were missing
-> in the C files. Change the licence information to SPDX format.
-
-AFAIK you have to CC linux-spdx@vger.kernel.org for this kind of change.
-
+On 28/08/2024 09:07:05+0200, Alexander Dahl wrote:
+> Hello Claudiu,
 > 
-> Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
-
-Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
-
-> ---
->   drivers/net/ethernet/freescale/fs_enet/fs_enet-main.c | 5 +----
->   drivers/net/ethernet/freescale/fs_enet/mac-fcc.c      | 5 +----
->   drivers/net/ethernet/freescale/fs_enet/mac-fec.c      | 5 +----
->   drivers/net/ethernet/freescale/fs_enet/mac-scc.c      | 5 +----
->   drivers/net/ethernet/freescale/fs_enet/mii-bitbang.c  | 5 +----
->   drivers/net/ethernet/freescale/fs_enet/mii-fec.c      | 5 +----
->   6 files changed, 6 insertions(+), 24 deletions(-)
+> Am Mon, Aug 26, 2024 at 08:42:10PM +0300 schrieb claudiu beznea:
+> > 
+> > 
+> > On 26.08.2024 20:31, Claudiu Beznea wrote:
+> > > Use the newly introduced macros instead of raw number. With this device
+> > > tree code is a bit easier to understand.
+> > > 
+> > > Signed-off-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+> > > ---
+> > >  arch/arm/boot/dts/microchip/sam9x60.dtsi | 18 +++++++++---------
+> > >  arch/arm/boot/dts/microchip/sama7g5.dtsi | 16 ++++++++--------
+> > >  2 files changed, 17 insertions(+), 17 deletions(-)
+> > > 
+> > > diff --git a/arch/arm/boot/dts/microchip/sam9x60.dtsi b/arch/arm/boot/dts/microchip/sam9x60.dtsi
+> > > index 04a6d716ecaf..eeda277e684f 100644
+> > > --- a/arch/arm/boot/dts/microchip/sam9x60.dtsi
+> > > +++ b/arch/arm/boot/dts/microchip/sam9x60.dtsi
+> > > @@ -560,7 +560,7 @@ tcb0: timer@f8008000 {
+> > >  				#size-cells = <0>;
+> > >  				reg = <0xf8008000 0x100>;
+> > >  				interrupts = <17 IRQ_TYPE_LEVEL_HIGH 0>;
+> > > -				clocks = <&pmc PMC_TYPE_PERIPHERAL 17>, <&clk32k 0>;
+> > > +				clocks = <&pmc PMC_TYPE_PERIPHERAL 17>, <&clk32k SCKC_MD_SLCK>;
+> > 
+> > Actually, looking again at it, I don't know if it worth as we use numbers
+> > directly also for other PMC clock IDs.
 > 
-> diff --git a/drivers/net/ethernet/freescale/fs_enet/fs_enet-main.c b/drivers/net/ethernet/freescale/fs_enet/fs_enet-main.c
-> index cf392faa6105..5bfdd43ffdeb 100644
-> --- a/drivers/net/ethernet/freescale/fs_enet/fs_enet-main.c
-> +++ b/drivers/net/ethernet/freescale/fs_enet/fs_enet-main.c
-> @@ -1,3 +1,4 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
->   /*
->    * Combined Ethernet driver for Motorola MPC8xx and MPC82xx.
->    *
-> @@ -9,10 +10,6 @@
->    *
->    * Heavily based on original FEC driver by Dan Malek <dan@embeddededge.com>
->    * and modifications by Joakim Tjernlund <joakim.tjernlund@lumentis.se>
-> - *
-> - * This file is licensed under the terms of the GNU General Public License
-> - * version 2. This program is licensed "as is" without any warranty of any
-> - * kind, whether express or implied.
->    */
->   
->   #include <linux/module.h>
-> diff --git a/drivers/net/ethernet/freescale/fs_enet/mac-fcc.c b/drivers/net/ethernet/freescale/fs_enet/mac-fcc.c
-> index e2ffac9eb2ad..add062928d99 100644
-> --- a/drivers/net/ethernet/freescale/fs_enet/mac-fcc.c
-> +++ b/drivers/net/ethernet/freescale/fs_enet/mac-fcc.c
-> @@ -1,3 +1,4 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
->   /*
->    * FCC driver for Motorola MPC82xx (PQ2).
->    *
-> @@ -6,10 +7,6 @@
->    *
->    * 2005 (c) MontaVista Software, Inc.
->    * Vitaly Bordug <vbordug@ru.mvista.com>
-> - *
-> - * This file is licensed under the terms of the GNU General Public License
-> - * version 2. This program is licensed "as is" without any warranty of any
-> - * kind, whether express or implied.
->    */
->   
->   #include <linux/module.h>
-> diff --git a/drivers/net/ethernet/freescale/fs_enet/mac-fec.c b/drivers/net/ethernet/freescale/fs_enet/mac-fec.c
-> index cdc89d83cf07..f75acb3b358f 100644
-> --- a/drivers/net/ethernet/freescale/fs_enet/mac-fec.c
-> +++ b/drivers/net/ethernet/freescale/fs_enet/mac-fec.c
-> @@ -1,3 +1,4 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
->   /*
->    * Freescale Ethernet controllers
->    *
-> @@ -6,10 +7,6 @@
->    *
->    * 2005 (c) MontaVista Software, Inc.
->    * Vitaly Bordug <vbordug@ru.mvista.com>
-> - *
-> - * This file is licensed under the terms of the GNU General Public License
-> - * version 2. This program is licensed "as is" without any warranty of any
-> - * kind, whether express or implied.
->    */
->   
->   #include <linux/module.h>
-> diff --git a/drivers/net/ethernet/freescale/fs_enet/mac-scc.c b/drivers/net/ethernet/freescale/fs_enet/mac-scc.c
-> index 9e89ac2b6ce3..29ba0048396b 100644
-> --- a/drivers/net/ethernet/freescale/fs_enet/mac-scc.c
-> +++ b/drivers/net/ethernet/freescale/fs_enet/mac-scc.c
-> @@ -1,3 +1,4 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
->   /*
->    * Ethernet on Serial Communications Controller (SCC) driver for Motorola MPC8xx and MPC82xx.
->    *
-> @@ -6,10 +7,6 @@
->    *
->    * 2005 (c) MontaVista Software, Inc.
->    * Vitaly Bordug <vbordug@ru.mvista.com>
-> - *
-> - * This file is licensed under the terms of the GNU General Public License
-> - * version 2. This program is licensed "as is" without any warranty of any
-> - * kind, whether express or implied.
->    */
->   
->   #include <linux/module.h>
-> diff --git a/drivers/net/ethernet/freescale/fs_enet/mii-bitbang.c b/drivers/net/ethernet/freescale/fs_enet/mii-bitbang.c
-> index f965a2329055..2e210a003558 100644
-> --- a/drivers/net/ethernet/freescale/fs_enet/mii-bitbang.c
-> +++ b/drivers/net/ethernet/freescale/fs_enet/mii-bitbang.c
-> @@ -1,3 +1,4 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
->   /*
->    * Combined Ethernet driver for Motorola MPC8xx and MPC82xx.
->    *
-> @@ -6,10 +7,6 @@
->    *
->    * 2005 (c) MontaVista Software, Inc.
->    * Vitaly Bordug <vbordug@ru.mvista.com>
-> - *
-> - * This file is licensed under the terms of the GNU General Public License
-> - * version 2. This program is licensed "as is" without any warranty of any
-> - * kind, whether express or implied.
->    */
->   
->   #include <linux/module.h>
-> diff --git a/drivers/net/ethernet/freescale/fs_enet/mii-fec.c b/drivers/net/ethernet/freescale/fs_enet/mii-fec.c
-> index 7bb69727952a..93d91e8ad0de 100644
-> --- a/drivers/net/ethernet/freescale/fs_enet/mii-fec.c
-> +++ b/drivers/net/ethernet/freescale/fs_enet/mii-fec.c
-> @@ -1,3 +1,4 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
->   /*
->    * Combined Ethernet driver for Motorola MPC8xx and MPC82xx.
->    *
-> @@ -6,10 +7,6 @@
->    *
->    * 2005 (c) MontaVista Software, Inc.
->    * Vitaly Bordug <vbordug@ru.mvista.com>
-> - *
-> - * This file is licensed under the terms of the GNU General Public License
-> - * version 2. This program is licensed "as is" without any warranty of any
-> - * kind, whether express or implied.
->    */
->   
->   #include <linux/module.h>
+> I think in this case it is worth it.  The macros you added are more
+> like the already existing PMC_MCK et al. macros for PMC_TYPE_CORE and
+> do essentially the same thing in driver code working as somewhat
+> arbitrary array index, without relation to SoC internals.
+> 
+> The PMC clock IDs on the other hand are for PMC_TYPE_PERIPHERAL and
+> are that long list in the Peripheral Identifiers table and correspond
+> to the SoC internal IDs, which are not used in the same way.
+> 
+> So from my point of view, the patch series is valuable and should be
+> further worked on.
+> 
+
+I agree with this.
+
+> Greets
+> Alex
+> 
+> > Sorry for the noise,
+> > Claudiu Beznea
+> > 
+> > 
+> > 
+
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
