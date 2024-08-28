@@ -1,395 +1,204 @@
-Return-Path: <linux-kernel+bounces-304933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0A539626DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 14:23:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B4969626E3
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 14:23:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 528F6B2291F
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 12:22:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF411B22A60
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 12:23:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5009176AAA;
-	Wed, 28 Aug 2024 12:22:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E77AC16A95E;
+	Wed, 28 Aug 2024 12:23:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="J9VK2yGR"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZMTWt8VW"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61C23175D2F
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 12:22:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D6FC171E40
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 12:23:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724847763; cv=none; b=KxpAwb+yhFmE16uLPi0lEPN4KAKMsNKFWG5GiTAU1zAWBbpbUOkySxJZQsIh+kL0CLEhuTFFL8ViLY+MrGg3uD3fVrvHiWvWxll4mJiyCeIkepsFjwudZa6xtjJMLMS9Yiycz4IW2V64avMGk+CXZXMqbaCgdticsLSVinf7CNE=
+	t=1724847828; cv=none; b=svyeoevhH1i9RyEJPfxFaxLQiFCqzGoJ45MDtTpNL1rZ4uBAY1o1cF5Kr/uYn6W7vd3zgpKbrSWXf2ybiFOn+RZkcFazuuJBe1VaPlxQkwaga4fB095TWhnpkZFjkhadob4v9OMkQriJ4vNgUu8DS0Cry3tkdBk4f9Zq9mctSo8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724847763; c=relaxed/simple;
-	bh=duMOYSVY+NxUsu7pc7EwV738PsRb7Fy5WPc1UTCdPaY=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=PrTVb8+volaX8OUB6zVWFqGOIFKKRpxxraOzb3tmd4cEeCGfs1BkuEsKua0VNzGnswAu0fwSF3PxEfmRP52lhNybMAjNAoFGR4irM5DpPDX0hXobfkXDAyWk+a7CKeZihUkKW/nenDJNDzQkFtWSJfHg54LEWvbESkfCLFKPkEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=J9VK2yGR; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-428119da952so58514125e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 05:22:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724847760; x=1725452560; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=miW3iBbKvjDRoBEs8t1sI/RrThKchvEUyK5mflPhcp4=;
-        b=J9VK2yGRfvDg38kgid1OFVvPCfIjCTP1Nbm952pzQIPuK2Cug+4Wzw26flktGe+wdm
-         o/nsxc8E7wpw1KlmzfmziAuzArnDee3swFmXECF6Qpf/byYPhdvsYm2N4VWSGw6ldv6t
-         A4AbWjGskQNWcZ+xPieZvZvsqVP6t4VxoO7S/bIaZBsUVxtZQ9phh21yvKcPcZtpvwx0
-         Uep9ZS4vbBcvBemhePb4a37quLAxIPIQNfBx35HhHouFBt7+jwtK7x5FfIfn55v+Ov0o
-         ZXe1MQm9o0Fiu6g7ftz437NPQNAf5h4MTotdgdDkVw+u6Srf2h0zpkO62P32gj3ouiZF
-         jJuw==
+	s=arc-20240116; t=1724847828; c=relaxed/simple;
+	bh=5pNoFkKDtgrMW6h2yL3PA3PIYgDnnl6mXCnZICusJbw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=oya3c9Ms7M4H19c8M7BhCX57kHdx/5a0N6C6qVTID0rtUmMcqsUEvg9bc1tlx56LiF3KxKeQN2z24FQq92cwTKxs9LA+Azy7aQ0jAf9HB2jH2htzmjUClGwLtsORxb28vgLaWwFGkTnxVKhGwaB8Uc0POOUT2oZv0WetQRVe4GA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZMTWt8VW; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724847825;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=79VnjjDwdlP3Jdk4mfldqnbgXYpOctR7Yz2Tdi8z5AE=;
+	b=ZMTWt8VWIVfYGyIVh5A48N1AxwsUJC3Dn6gtAKSyVGEu+6tn+TIo6cQXdULJVe8geJ8U1L
+	9yKfEtDZgiI70ZspLPcrtLNbT43bkFHCg0BBEmarLI3iltFKd0gLffnXcYYWOkqhE98gum
+	ybsn8gFCVIlubJefkeG6rRAMVAs0UjQ=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-182-Y1BK28CeO8qv_Kz9BcGkkA-1; Wed, 28 Aug 2024 08:23:43 -0400
+X-MC-Unique: Y1BK28CeO8qv_Kz9BcGkkA-1
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-371a82ceaa7so3763936f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 05:23:42 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724847760; x=1725452560;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=miW3iBbKvjDRoBEs8t1sI/RrThKchvEUyK5mflPhcp4=;
-        b=w5JPq9IsSqBkna2S/AIWarGFfaRYPxXs7gIISV8b43SBONY0/JHh8leDHOvvU+9/r/
-         2HZzGzH822KoqXEVv9jPzZ19SpBLE1NvG0tE8V7EzFumEgGKdC70g3p3jYeqLWeFAnSs
-         zhRT0SVpu1cNChQvWmpFIj2qOo/vD6vnZRFTCyaDIad2ZQ/w83aiwBzM2pFHk/n0Y1QP
-         mm+YLL1WWw+302Usj3deJ9Fxy595nGPMQxwsC6G/BaKWQDOFJjSeTnziQD+WATfthij/
-         WIk/kLj7zZwNsiiOTeh0Fh/bcd0qSPwizpTZRBo4vzlltFNKXBUJrnvgdYlHoryvigY0
-         cYvg==
-X-Gm-Message-State: AOJu0YybcPkBLJ7VB5O49ifFy8oZs0v4vPUDKE7yIKir9mumS5Qo1zau
-	aPN9N0QHYLBZN4JuSQ72lDgLMU90semOniTgMDSCFDK7p0Ob9HrpBGpNTQ8km6I=
-X-Google-Smtp-Source: AGHT+IGdHs+4KGH6JPMAhg9I7m6/CQOMPuOGIEmgAYybMBpNiO2Y1p9zbD7hHnrC6SL2JPKMhVCXEg==
-X-Received: by 2002:a05:600c:3b83:b0:426:5dd0:a1ee with SMTP id 5b1f17b1804b1-42acc8d5269mr114246655e9.2.1724847759170;
-        Wed, 28 Aug 2024 05:22:39 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:765d:64ff:5f38:550? ([2a01:e0a:982:cbb0:765d:64ff:5f38:550])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ba63ae05bsm19636775e9.27.2024.08.28.05.22.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 28 Aug 2024 05:22:38 -0700 (PDT)
-Message-ID: <1684855f-5901-459a-beb7-2569003b30ac@linaro.org>
-Date: Wed, 28 Aug 2024 14:22:37 +0200
+        d=1e100.net; s=20230601; t=1724847822; x=1725452622;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=79VnjjDwdlP3Jdk4mfldqnbgXYpOctR7Yz2Tdi8z5AE=;
+        b=TPCuzXFhTm4a3CFO8TOmkkKI69nz6QpTnCa3lu1+xHhWkN24IdSWjxO05v67++EsGk
+         4Gvt2SBDlPeL+BBW9Fefedz/q6X6/jkZG456/WElYHDkOzg58e8IQuhd3obUM8e5JkrB
+         0j0WjVKueQoRQL2y/89c32FXQldTPs3drvvzn2BzE4Xs14mkXwlVYD5v8dUvcX7fo8MQ
+         eZzOhLK/OSa1oE2AlPTGBHYmzdcUOK7XXuz3bo925gwmpJ8+SSWKkS8L/9v414LvaCe/
+         fhAvUWE0xgbaIPOKdAaPkNtil9j8wss4z9rOAnNbUP/Dn8V0ukm5DAcyeG+xuFev1vZj
+         t6Gw==
+X-Forwarded-Encrypted: i=1; AJvYcCVIWSaiP/pmVfDXIF69ZtpAX56wVWGhpaWmu20j8JAmn+qnNj4kg+D+3E0QHQ+8WQgT5haP9Ku5Vcad2cw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyeObFMFX8rUpn2dNLZtIOc3SqDy1FzCpXJmy5pYkQQLnB3hy3X
+	kApcZLSfycP7m23QFYiYAGBMl3KApScWdMvTSx9vTsK0S85H/PbydHGx6ttW8kQwSithNoFuAiv
+	jiLNFlPXV5etkSP8PmN0Ar9Gzb1NWkGw+WfyM2JppUrgR/sYYtah9++a5SApMfptfXopCoNU0qt
+	KBWjLmRuaO1i4Zh5n+R3fy2d33Zvrv/4dI1friR8OOFSVIvQ==
+X-Received: by 2002:a5d:674f:0:b0:367:980a:6af with SMTP id ffacd0b85a97d-373118e3631mr9554041f8f.59.1724847821715;
+        Wed, 28 Aug 2024 05:23:41 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEQtj/08Ph01mH2iPkwg5wNOM8hnp3rYVg0eugXm0Uqxy9vl1nwQCqK8gISOxxxp2+D9d2VOQ==
+X-Received: by 2002:a5d:674f:0:b0:367:980a:6af with SMTP id ffacd0b85a97d-373118e3631mr9554005f8f.59.1724847821069;
+        Wed, 28 Aug 2024 05:23:41 -0700 (PDT)
+Received: from fedora (g2.ign.cz. [91.219.240.8])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3730813cdf2sm15513022f8f.38.2024.08.28.05.23.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Aug 2024 05:23:40 -0700 (PDT)
+From: Vitaly Kuznetsov <vkuznets@redhat.com>
+To: Anirudh Rayabharam <anirudh@anirudhrb.com>, "K. Y. Srinivasan"
+ <kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu
+ <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>, Thomas Gleixner
+ <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
+ <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>, Michael Kelley <mikelley@microsoft.com>
+Cc: Anirudh Rayabharam <anirudh@anirudhrb.com>, stable@vger.kernel.org,
+ linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] x86/hyperv: fix kexec crash due to VP assist page
+ corruption
+In-Reply-To: <20240828112158.3538342-1-anirudh@anirudhrb.com>
+References: <20240828112158.3538342-1-anirudh@anirudhrb.com>
+Date: Wed, 28 Aug 2024 14:23:39 +0200
+Message-ID: <87le0gygxg.fsf@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH v2 2/2] clk: qcom: gcc-sm8550: Don't use shared clk_ops
- for QUPs
-To: Stephen Boyd <swboyd@chromium.org>, Konrad Dybcio
- <konradybcio@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Stephen Boyd <sboyd@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- patches@lists.linux.dev, linux-clk@vger.kernel.org,
- Taniya Das <quic_tdas@quicinc.com>, Amit Pundir <amit.pundir@linaro.org>
-References: <20240827231237.1014813-1-swboyd@chromium.org>
- <20240827231237.1014813-3-swboyd@chromium.org>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20240827231237.1014813-3-swboyd@chromium.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On 28/08/2024 01:12, Stephen Boyd wrote:
-> The QUPs aren't shared in a way that requires parking the RCG at an
-> always on parent in case some other entity turns on the clk. The
-> hardware is capable of setting a new frequency itself with the DFS mode,
-> so parking is unnecessary. Furthermore, there aren't any GDSCs for these
-> devices, so there isn't a possibility of the GDSC turning on the clks
-> for housekeeping purposes.
-> 
-> This wasn't a problem to mark these clks shared until we started parking
-> shared RCGs at clk registration time in commit 01a0a6cc8cfd ("clk: qcom:
-> Park shared RCGs upon registration"). Parking at init is actually
-> harmful to the UART when earlycon is used. If the device is pumping out
-> data while the frequency changes you'll see garbage on the serial
-> console until the driver can probe and actually set a proper frequency.
-> 
-> Revert the QUP part of commit 929c75d57566 ("clk: qcom: gcc-sm8550: Mark
-> RCGs shared where applicable") so that the QUPs don't get parked during
-> clk registration and break UART operations.
-> 
-> Fixes: 01a0a6cc8cfd ("clk: qcom: Park shared RCGs upon registration")
-> Fixes: 929c75d57566 ("clk: qcom: gcc-sm8550: Mark RCGs shared where applicable")
-> Cc: Konrad Dybcio <konradybcio@kernel.org>
-> Cc: Bjorn Andersson <andersson@kernel.org>
-> Cc: Taniya Das <quic_tdas@quicinc.com>
-> Cc: Neil Armstrong <neil.armstrong@linaro.org>
-> Reported-by: Amit Pundir <amit.pundir@linaro.org>
-> Closes: https://lore.kernel.org/CAMi1Hd1KQBE4kKUdAn8E5FV+BiKzuv+8FoyWQrrTHPDoYTuhgA@mail.gmail.com
-> Tested-by: Amit Pundir <amit.pundir@linaro.org>
-> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+Anirudh Rayabharam <anirudh@anirudhrb.com> writes:
+
+> From: Anirudh Rayabharam (Microsoft) <anirudh@anirudhrb.com>
+>
+> commit 9636be85cc5b ("x86/hyperv: Fix hyperv_pcpu_input_arg handling when
+> CPUs go online/offline") introduces a new cpuhp state for hyperv
+> initialization.
+>
+> cpuhp_setup_state() returns the state number if state is
+> CPUHP_AP_ONLINE_DYN or CPUHP_BP_PREPARE_DYN and 0 for all other states.
+> For the hyperv case, since a new cpuhp state was introduced it would
+> return 0. However, in hv_machine_shutdown(), the cpuhp_remove_state() call
+> is conditioned upon "hyperv_init_cpuhp > 0". This will never be true and
+> so hv_cpu_die() won't be called on all CPUs. This means the VP assist page
+> won't be reset. When the kexec kernel tries to setup the VP assist page
+> again, the hypervisor corrupts the memory region of the old VP assist page
+> causing a panic in case the kexec kernel is using that memory elsewhere.
+> This was originally fixed in commit dfe94d4086e4 ("x86/hyperv: Fix kexec
+> panic/hang issues").
+>
+> Get rid of hyperv_init_cpuhp entirely since we are no longer using a
+> dynamic cpuhp state and use CPUHP_AP_HYPERV_ONLINE directly with
+> cpuhp_remove_state().
+>
+> Cc: stable@vger.kernel.org
+> Fixes: 9636be85cc5b ("x86/hyperv: Fix hyperv_pcpu_input_arg handling when CPUs go online/offline")
+> Signed-off-by: Anirudh Rayabharam (Microsoft) <anirudh@anirudhrb.com>
 > ---
->   drivers/clk/qcom/gcc-sm8550.c | 52 +++++++++++++++++------------------
->   1 file changed, 26 insertions(+), 26 deletions(-)
-> 
-> diff --git a/drivers/clk/qcom/gcc-sm8550.c b/drivers/clk/qcom/gcc-sm8550.c
-> index 7944ddb4b47d..0244a05866b8 100644
-> --- a/drivers/clk/qcom/gcc-sm8550.c
-> +++ b/drivers/clk/qcom/gcc-sm8550.c
-> @@ -536,7 +536,7 @@ static struct clk_rcg2 gcc_qupv3_i2c_s0_clk_src = {
->   		.parent_data = gcc_parent_data_0,
->   		.num_parents = ARRAY_SIZE(gcc_parent_data_0),
->   		.flags = CLK_SET_RATE_PARENT,
-> -		.ops = &clk_rcg2_shared_ops,
-> +		.ops = &clk_rcg2_ops,
->   	},
->   };
->   
-> @@ -551,7 +551,7 @@ static struct clk_rcg2 gcc_qupv3_i2c_s1_clk_src = {
->   		.parent_data = gcc_parent_data_0,
->   		.num_parents = ARRAY_SIZE(gcc_parent_data_0),
->   		.flags = CLK_SET_RATE_PARENT,
-> -		.ops = &clk_rcg2_shared_ops,
-> +		.ops = &clk_rcg2_ops,
->   	},
->   };
->   
-> @@ -566,7 +566,7 @@ static struct clk_rcg2 gcc_qupv3_i2c_s2_clk_src = {
->   		.parent_data = gcc_parent_data_0,
->   		.num_parents = ARRAY_SIZE(gcc_parent_data_0),
->   		.flags = CLK_SET_RATE_PARENT,
-> -		.ops = &clk_rcg2_shared_ops,
-> +		.ops = &clk_rcg2_ops,
->   	},
->   };
->   
-> @@ -581,7 +581,7 @@ static struct clk_rcg2 gcc_qupv3_i2c_s3_clk_src = {
->   		.parent_data = gcc_parent_data_0,
->   		.num_parents = ARRAY_SIZE(gcc_parent_data_0),
->   		.flags = CLK_SET_RATE_PARENT,
-> -		.ops = &clk_rcg2_shared_ops,
-> +		.ops = &clk_rcg2_ops,
->   	},
->   };
->   
-> @@ -596,7 +596,7 @@ static struct clk_rcg2 gcc_qupv3_i2c_s4_clk_src = {
->   		.parent_data = gcc_parent_data_0,
->   		.num_parents = ARRAY_SIZE(gcc_parent_data_0),
->   		.flags = CLK_SET_RATE_PARENT,
-> -		.ops = &clk_rcg2_shared_ops,
-> +		.ops = &clk_rcg2_ops,
->   	},
->   };
->   
-> @@ -611,7 +611,7 @@ static struct clk_rcg2 gcc_qupv3_i2c_s5_clk_src = {
->   		.parent_data = gcc_parent_data_0,
->   		.num_parents = ARRAY_SIZE(gcc_parent_data_0),
->   		.flags = CLK_SET_RATE_PARENT,
-> -		.ops = &clk_rcg2_shared_ops,
-> +		.ops = &clk_rcg2_ops,
->   	},
->   };
->   
-> @@ -626,7 +626,7 @@ static struct clk_rcg2 gcc_qupv3_i2c_s6_clk_src = {
->   		.parent_data = gcc_parent_data_0,
->   		.num_parents = ARRAY_SIZE(gcc_parent_data_0),
->   		.flags = CLK_SET_RATE_PARENT,
-> -		.ops = &clk_rcg2_shared_ops,
-> +		.ops = &clk_rcg2_ops,
->   	},
->   };
->   
-> @@ -641,7 +641,7 @@ static struct clk_rcg2 gcc_qupv3_i2c_s7_clk_src = {
->   		.parent_data = gcc_parent_data_0,
->   		.num_parents = ARRAY_SIZE(gcc_parent_data_0),
->   		.flags = CLK_SET_RATE_PARENT,
-> -		.ops = &clk_rcg2_shared_ops,
-> +		.ops = &clk_rcg2_ops,
->   	},
->   };
->   
-> @@ -656,7 +656,7 @@ static struct clk_rcg2 gcc_qupv3_i2c_s8_clk_src = {
->   		.parent_data = gcc_parent_data_0,
->   		.num_parents = ARRAY_SIZE(gcc_parent_data_0),
->   		.flags = CLK_SET_RATE_PARENT,
-> -		.ops = &clk_rcg2_shared_ops,
-> +		.ops = &clk_rcg2_ops,
->   	},
->   };
->   
-> @@ -671,7 +671,7 @@ static struct clk_rcg2 gcc_qupv3_i2c_s9_clk_src = {
->   		.parent_data = gcc_parent_data_0,
->   		.num_parents = ARRAY_SIZE(gcc_parent_data_0),
->   		.flags = CLK_SET_RATE_PARENT,
-> -		.ops = &clk_rcg2_shared_ops,
-> +		.ops = &clk_rcg2_ops,
->   	},
->   };
->   
-> @@ -700,7 +700,7 @@ static struct clk_init_data gcc_qupv3_wrap1_s0_clk_src_init = {
->   	.parent_data = gcc_parent_data_0,
->   	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
->   	.flags = CLK_SET_RATE_PARENT,
-> -	.ops = &clk_rcg2_shared_ops,
-> +	.ops = &clk_rcg2_ops,
->   };
->   
->   static struct clk_rcg2 gcc_qupv3_wrap1_s0_clk_src = {
-> @@ -717,7 +717,7 @@ static struct clk_init_data gcc_qupv3_wrap1_s1_clk_src_init = {
->   	.parent_data = gcc_parent_data_0,
->   	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
->   	.flags = CLK_SET_RATE_PARENT,
-> -	.ops = &clk_rcg2_shared_ops,
-> +	.ops = &clk_rcg2_ops,
->   };
->   
->   static struct clk_rcg2 gcc_qupv3_wrap1_s1_clk_src = {
-> @@ -750,7 +750,7 @@ static struct clk_init_data gcc_qupv3_wrap1_s2_clk_src_init = {
->   	.parent_data = gcc_parent_data_0,
->   	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
->   	.flags = CLK_SET_RATE_PARENT,
-> -	.ops = &clk_rcg2_shared_ops,
-> +	.ops = &clk_rcg2_ops,
->   };
->   
->   static struct clk_rcg2 gcc_qupv3_wrap1_s2_clk_src = {
-> @@ -767,7 +767,7 @@ static struct clk_init_data gcc_qupv3_wrap1_s3_clk_src_init = {
->   	.parent_data = gcc_parent_data_0,
->   	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
->   	.flags = CLK_SET_RATE_PARENT,
-> -	.ops = &clk_rcg2_shared_ops,
-> +	.ops = &clk_rcg2_ops,
->   };
->   
->   static struct clk_rcg2 gcc_qupv3_wrap1_s3_clk_src = {
-> @@ -784,7 +784,7 @@ static struct clk_init_data gcc_qupv3_wrap1_s4_clk_src_init = {
->   	.parent_data = gcc_parent_data_0,
->   	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
->   	.flags = CLK_SET_RATE_PARENT,
-> -	.ops = &clk_rcg2_shared_ops,
-> +	.ops = &clk_rcg2_ops,
->   };
->   
->   static struct clk_rcg2 gcc_qupv3_wrap1_s4_clk_src = {
-> @@ -801,7 +801,7 @@ static struct clk_init_data gcc_qupv3_wrap1_s5_clk_src_init = {
->   	.parent_data = gcc_parent_data_0,
->   	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
->   	.flags = CLK_SET_RATE_PARENT,
-> -	.ops = &clk_rcg2_shared_ops,
-> +	.ops = &clk_rcg2_ops,
->   };
->   
->   static struct clk_rcg2 gcc_qupv3_wrap1_s5_clk_src = {
-> @@ -818,7 +818,7 @@ static struct clk_init_data gcc_qupv3_wrap1_s6_clk_src_init = {
->   	.parent_data = gcc_parent_data_0,
->   	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
->   	.flags = CLK_SET_RATE_PARENT,
-> -	.ops = &clk_rcg2_shared_ops,
-> +	.ops = &clk_rcg2_ops,
->   };
->   
->   static struct clk_rcg2 gcc_qupv3_wrap1_s6_clk_src = {
-> @@ -835,7 +835,7 @@ static struct clk_init_data gcc_qupv3_wrap1_s7_clk_src_init = {
->   	.parent_data = gcc_parent_data_0,
->   	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
->   	.flags = CLK_SET_RATE_PARENT,
-> -	.ops = &clk_rcg2_shared_ops,
-> +	.ops = &clk_rcg2_ops,
->   };
->   
->   static struct clk_rcg2 gcc_qupv3_wrap1_s7_clk_src = {
-> @@ -852,7 +852,7 @@ static struct clk_init_data gcc_qupv3_wrap2_s0_clk_src_init = {
->   	.parent_data = gcc_parent_data_0,
->   	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
->   	.flags = CLK_SET_RATE_PARENT,
-> -	.ops = &clk_rcg2_shared_ops,
-> +	.ops = &clk_rcg2_ops,
->   };
->   
->   static struct clk_rcg2 gcc_qupv3_wrap2_s0_clk_src = {
-> @@ -869,7 +869,7 @@ static struct clk_init_data gcc_qupv3_wrap2_s1_clk_src_init = {
->   	.parent_data = gcc_parent_data_0,
->   	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
->   	.flags = CLK_SET_RATE_PARENT,
-> -	.ops = &clk_rcg2_shared_ops,
-> +	.ops = &clk_rcg2_ops,
->   };
->   
->   static struct clk_rcg2 gcc_qupv3_wrap2_s1_clk_src = {
-> @@ -886,7 +886,7 @@ static struct clk_init_data gcc_qupv3_wrap2_s2_clk_src_init = {
->   	.parent_data = gcc_parent_data_0,
->   	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
->   	.flags = CLK_SET_RATE_PARENT,
-> -	.ops = &clk_rcg2_shared_ops,
-> +	.ops = &clk_rcg2_ops,
->   };
->   
->   static struct clk_rcg2 gcc_qupv3_wrap2_s2_clk_src = {
-> @@ -903,7 +903,7 @@ static struct clk_init_data gcc_qupv3_wrap2_s3_clk_src_init = {
->   	.parent_data = gcc_parent_data_0,
->   	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
->   	.flags = CLK_SET_RATE_PARENT,
-> -	.ops = &clk_rcg2_shared_ops,
-> +	.ops = &clk_rcg2_ops,
->   };
->   
->   static struct clk_rcg2 gcc_qupv3_wrap2_s3_clk_src = {
-> @@ -920,7 +920,7 @@ static struct clk_init_data gcc_qupv3_wrap2_s4_clk_src_init = {
->   	.parent_data = gcc_parent_data_0,
->   	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
->   	.flags = CLK_SET_RATE_PARENT,
-> -	.ops = &clk_rcg2_shared_ops,
-> +	.ops = &clk_rcg2_ops,
->   };
->   
->   static struct clk_rcg2 gcc_qupv3_wrap2_s4_clk_src = {
-> @@ -937,7 +937,7 @@ static struct clk_init_data gcc_qupv3_wrap2_s5_clk_src_init = {
->   	.parent_data = gcc_parent_data_0,
->   	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
->   	.flags = CLK_SET_RATE_PARENT,
-> -	.ops = &clk_rcg2_shared_ops,
-> +	.ops = &clk_rcg2_ops,
->   };
->   
->   static struct clk_rcg2 gcc_qupv3_wrap2_s5_clk_src = {
-> @@ -975,7 +975,7 @@ static struct clk_init_data gcc_qupv3_wrap2_s6_clk_src_init = {
->   	.parent_data = gcc_parent_data_8,
->   	.num_parents = ARRAY_SIZE(gcc_parent_data_8),
->   	.flags = CLK_SET_RATE_PARENT,
-> -	.ops = &clk_rcg2_shared_ops,
-> +	.ops = &clk_rcg2_ops,
->   };
->   
->   static struct clk_rcg2 gcc_qupv3_wrap2_s6_clk_src = {
-> @@ -992,7 +992,7 @@ static struct clk_init_data gcc_qupv3_wrap2_s7_clk_src_init = {
->   	.parent_data = gcc_parent_data_0,
->   	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
->   	.flags = CLK_SET_RATE_PARENT,
-> -	.ops = &clk_rcg2_shared_ops,
-> +	.ops = &clk_rcg2_ops,
->   };
->   
->   static struct clk_rcg2 gcc_qupv3_wrap2_s7_clk_src = {
+>
+> v1->v2:
+> - Remove hyperv_init_cpuhp entirely and use CPUHP_AP_HYPERV_ONLINE directly
+>   with cpuhp_remove_state().
 
-I think you missed gcc_qupv3_wrap2_s7_clk_src
+Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+
+Thanks!
+
+>
+> v1: https://lore.kernel.org/linux-hyperv/87wmk2xt5i.fsf@redhat.com/T/#m54b8ae17e98d65e77a09002e478669d15d9830d0
+>
+> ---
+>  arch/x86/hyperv/hv_init.c       | 5 +----
+>  arch/x86/include/asm/mshyperv.h | 1 -
+>  arch/x86/kernel/cpu/mshyperv.c  | 4 ++--
+>  3 files changed, 3 insertions(+), 7 deletions(-)
+>
+> diff --git a/arch/x86/hyperv/hv_init.c b/arch/x86/hyperv/hv_init.c
+> index 17a71e92a343..95eada2994e1 100644
+> --- a/arch/x86/hyperv/hv_init.c
+> +++ b/arch/x86/hyperv/hv_init.c
+> @@ -35,7 +35,6 @@
+>  #include <clocksource/hyperv_timer.h>
+>  #include <linux/highmem.h>
+>  
+> -int hyperv_init_cpuhp;
+>  u64 hv_current_partition_id = ~0ull;
+>  EXPORT_SYMBOL_GPL(hv_current_partition_id);
+>  
+> @@ -607,8 +606,6 @@ void __init hyperv_init(void)
+>  
+>  	register_syscore_ops(&hv_syscore_ops);
+>  
+> -	hyperv_init_cpuhp = cpuhp;
+> -
+>  	if (cpuid_ebx(HYPERV_CPUID_FEATURES) & HV_ACCESS_PARTITION_ID)
+>  		hv_get_partition_id();
+>  
+> @@ -637,7 +634,7 @@ void __init hyperv_init(void)
+>  clean_guest_os_id:
+>  	wrmsrl(HV_X64_MSR_GUEST_OS_ID, 0);
+>  	hv_ivm_msr_write(HV_X64_MSR_GUEST_OS_ID, 0);
+> -	cpuhp_remove_state(cpuhp);
+> +	cpuhp_remove_state(CPUHP_AP_HYPERV_ONLINE);
+>  free_ghcb_page:
+>  	free_percpu(hv_ghcb_pg);
+>  free_vp_assist_page:
+> diff --git a/arch/x86/include/asm/mshyperv.h b/arch/x86/include/asm/mshyperv.h
+> index 390c4d13956d..5f0bc6a6d025 100644
+> --- a/arch/x86/include/asm/mshyperv.h
+> +++ b/arch/x86/include/asm/mshyperv.h
+> @@ -40,7 +40,6 @@ static inline unsigned char hv_get_nmi_reason(void)
+>  }
+>  
+>  #if IS_ENABLED(CONFIG_HYPERV)
+> -extern int hyperv_init_cpuhp;
+>  extern bool hyperv_paravisor_present;
+>  
+>  extern void *hv_hypercall_pg;
+> diff --git a/arch/x86/kernel/cpu/mshyperv.c b/arch/x86/kernel/cpu/mshyperv.c
+> index e0fd57a8ba84..e98db51f25ba 100644
+> --- a/arch/x86/kernel/cpu/mshyperv.c
+> +++ b/arch/x86/kernel/cpu/mshyperv.c
+> @@ -199,8 +199,8 @@ static void hv_machine_shutdown(void)
+>  	 * Call hv_cpu_die() on all the CPUs, otherwise later the hypervisor
+>  	 * corrupts the old VP Assist Pages and can crash the kexec kernel.
+>  	 */
+> -	if (kexec_in_progress && hyperv_init_cpuhp > 0)
+> -		cpuhp_remove_state(hyperv_init_cpuhp);
+> +	if (kexec_in_progress)
+> +		cpuhp_remove_state(CPUHP_AP_HYPERV_ONLINE);
+>  
+>  	/* The function calls stop_other_cpus(). */
+>  	native_machine_shutdown();
+
+-- 
+Vitaly
 
 
