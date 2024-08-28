@@ -1,158 +1,144 @@
-Return-Path: <linux-kernel+bounces-305344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19BC6962D3E
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 18:05:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F155962D76
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 18:15:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5AB72858A1
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 16:05:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D8AF7B237A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 16:15:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F24C1A2C24;
-	Wed, 28 Aug 2024 16:05:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29BB11A2C22;
+	Wed, 28 Aug 2024 16:15:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DxyJ57EZ"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="rm9vIo+M"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CD047E574;
-	Wed, 28 Aug 2024 16:05:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 885E2189BAA
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 16:15:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724861128; cv=none; b=dRyveFn7wkHPg66GiZjhqx0zXd+6wQP5uxVsZmAPeohrNxvPgquU1o39ktf0mCPnPC8nBe57ssBr4NTykDPEm2Xsyusblwpfv0nQVv9WAtpzm2TuK6tzwx4k8ykDLMLWNXWuOIYor4B6bMxMDm6JwSIKdgiSF9UCl6phQd7vRyA=
+	t=1724861723; cv=none; b=lHBAByS+SdPAasg3cFRaSTvhS/0sGM9i73cvpgHRiTS+2M7dQwkHIsQArR9b7XU7MFzaxEsrsbPRMEK0jzQenJqaV1buNRl1MDJrFnDGmQJvh1UvNrqS4TVDtX/oEd3z2kVE9P4yELftTEegpzIeu80iI2gH0jKntWRa2ej0SKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724861128; c=relaxed/simple;
-	bh=Co+ZoX9nlmvVIKGutVNONku1/Na4NsMBksYnyHdgsIY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=qgIPPCciINlFsrHldVvAtHYvSCSb6iHERfchvF4CaIibaGUM0NS7CLB4fGms3t1V1pnnNlSdbW4cygsA1hqZ533MgT9EP9Wt+J280exCh8ujOjbQf9z1oX4zPH4P4fsv3iQps0nY8kZf0bvuamD40eHUbaKRIN7wEv1FdnVyrfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DxyJ57EZ; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-53345604960so7499720e87.3;
-        Wed, 28 Aug 2024 09:05:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724861125; x=1725465925; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kosFjdk6GkyQVi+AThfAIGP1FTIA4D/dob1Vut4HNXM=;
-        b=DxyJ57EZ5bUSF+dbUjpXk4TyJxgjVXI3AtWYiyaLfFd++ny+laFzhIxpbSvR3ucXUc
-         pee/y3XRB/0vTjbWSgkEX8BaI2g3irzb5H6zwRNXdgEjD3qF7eOu6gyWjSfULHVQIefn
-         x/AdXLxYqltI9cw5XaVd/mwLZXs/wjmtNDL1tWwZlukRkYcXRHAlqsPdKkSYZLXQlXm1
-         05LslcLjCM30zb6+heRHn3BOJcavRtpGvaHK7s4oPa3b4GR6q9ImTIWIDm8jmIDumLd/
-         aa3osbl4x/JgtBsJao4sBWAcTBYqV5EJf3VMjPJpgT/Kmr4m+iDZ8nBUmxY28xf46+3P
-         RrBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724861125; x=1725465925;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kosFjdk6GkyQVi+AThfAIGP1FTIA4D/dob1Vut4HNXM=;
-        b=OyPX0fF2a2CXFA5PMs00cgO/mDQVYh28JBZsAosjsIuH7jIBQ9kiWqS85+4pfZ1Jjm
-         84blFZ1r+06+z6xejXAazxFXJ8tAKD8wQ2aRfCrBefIQjojBH+4AKwyFszRdk7imcjkN
-         YQuQkyESbZ6Ivs/F1xIeN+a/PRsCtf+4gBN2/3Q2yzM/FnBaHz73HIB+8r95bFxenCRP
-         CKBdh/5YVCiTJeBaKpd78Y67YmBKpniA5LuOJTxov6hO0cM9mDU9RI//FrEgq5wJ8Orx
-         3E1Qu4flk8eFyf6AHZjS+oYcNmY7UWaNQ7ca4aWcYad6Z944AyjVVmeVixXh2Px96+wB
-         kH0A==
-X-Forwarded-Encrypted: i=1; AJvYcCVsaI5I7XkXC7h/SqCIip97gm04893zOIZ5h4M4Ci+fm0kaDXV/gcJ2MClnyFg7vVhCdSZ/wEHsPst1ccgG@vger.kernel.org, AJvYcCXypxWCsQPu8RCBr5nwEg2laKyz2BXBl0MLIAVXswqyizTvuqrIaDaFRlMOEo7T5udgyZ8WnqEVWl/aSA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy04jzHDNi0q3s+qa98CElQWYc1mTztunCAQ+5V4DeZGA5Z4nuF
-	tTQjBkLWEB5SRjAz/5lHxom/luENtv8gbeQZOTy7bQ3c1dyh1inq
-X-Google-Smtp-Source: AGHT+IF8cqYWal0brvhOLe0qRqU3sh07nqJ466gkpWctJCE4jZ4ugYsFvlQqJ1bO6yO2kpbpLZkyXA==
-X-Received: by 2002:a05:6512:1111:b0:52c:8abe:51fb with SMTP id 2adb3069b0e04-5343875582emr11230031e87.10.1724861124497;
-        Wed, 28 Aug 2024 09:05:24 -0700 (PDT)
-Received: from localhost.localdomain ([78.209.220.215])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ba6397de5sm26691585e9.8.2024.08.28.09.05.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2024 09:05:24 -0700 (PDT)
-From: Antoni Pokusinski <apokusinski01@gmail.com>
-To: linux@roeck-us.net
-Cc: apokusinski01@gmail.com,
-	jdelvare@suse.com,
-	linux-hwmon@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: Re: [PATCH v3] hwmon: (sht4x): add heater support
-Date: Wed, 28 Aug 2024 18:05:11 +0200
-Message-Id: <20240828160511.307768-1-apokusinski01@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <790f67c3-84f4-441b-bd80-0c11f002af5b@roeck-us.net>
-References: <790f67c3-84f4-441b-bd80-0c11f002af5b@roeck-us.net>
+	s=arc-20240116; t=1724861723; c=relaxed/simple;
+	bh=vS0JM2WxR5KtYE5L1XEoTZ9ENuthPVf/54bNlaPf0wk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
+	 Content-Type:References; b=FO77dM/qlmPjFrrRVbn52y2c8LxAsEgFGPgoWq6JXpTf+xZrGj8zJya12hqljHkjUFSwZVkDDUFlRg0OKd+I1VhHOfIF88wnCX1tQNXMQ/RFecWEldnGK0j09rGVgXkoaetXzsbP1rc4fVh9/g059JkJOWOtsuJuUjtLNTNNsiw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=rm9vIo+M; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240828161519epoutp0339b60cfe48b7af607fb7c4ff9b0beb19~v8JhNjbC13090630906epoutp03h
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 16:15:19 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240828161519epoutp0339b60cfe48b7af607fb7c4ff9b0beb19~v8JhNjbC13090630906epoutp03h
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1724861719;
+	bh=vS0JM2WxR5KtYE5L1XEoTZ9ENuthPVf/54bNlaPf0wk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=rm9vIo+M+XhyXTIIbuO9bTytk8QIxlj6zj8+PgbgylPkrUUzytpZqnzO/Hxokkywd
+	 rQtD/7hQ6Mf6ktCgH1iOn7bHthyOp6U6LeYl8EtnfzSQ+lC1kiHBH7cb6DsY3z/LDZ
+	 zjM6CAm2G1YkZsy/dFwKQELVRZFm+zrD2A3mYJ/o=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTP id
+	20240828161518epcas5p15045320301b2fa95f4190ee68a8958cf~v8Jg2lX_b1502715027epcas5p1j;
+	Wed, 28 Aug 2024 16:15:18 +0000 (GMT)
+Received: from epsmges5p1new.samsung.com (unknown [182.195.38.176]) by
+	epsnrtp4.localdomain (Postfix) with ESMTP id 4Wv8dd4RSKz4x9Pq; Wed, 28 Aug
+	2024 16:15:17 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
+	epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	A4.61.09640.51D4FC66; Thu, 29 Aug 2024 01:15:17 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240828095322epcas5p134935f60a199bc085198b06871cd33ba~v28CAccW40840408404epcas5p1C;
+	Wed, 28 Aug 2024 09:53:22 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240828095322epsmtrp1234caec0be77e195d9b287cc91375a35~v28B-wj1G2560425604epsmtrp1i;
+	Wed, 28 Aug 2024 09:53:22 +0000 (GMT)
+X-AuditID: b6c32a49-aabb8700000025a8-6d-66cf4d154d73
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	1D.7A.07567.193FEC66; Wed, 28 Aug 2024 18:53:21 +0900 (KST)
+Received: from green245 (unknown [107.99.41.245]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20240828095320epsmtip236d52ca600f940aec91bef7a23e2f579~v28AXO2qf1869918699epsmtip2E;
+	Wed, 28 Aug 2024 09:53:20 +0000 (GMT)
+Date: Wed, 28 Aug 2024 15:15:50 +0530
+From: Anuj Gupta <anuj20.g@samsung.com>
+To: Puranjay Mohan <pjy@amazon.com>
+Cc: Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>, Christoph
+	Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+	linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
+	puranjay@kernel.org
+Subject: Re: nvme: check if the namespace supports metadata in
+ nvme_map_user_request()
+Message-ID: <20240828094550.56id5x4x6neitsec@green245>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240827132327.1704-1-pjy@amazon.com>
+User-Agent: NeoMutt/20171215
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrKJsWRmVeSWpSXmKPExsWy7bCmuq6o7/k0g5cflCxW3+1ns1i5+iiT
+	xaRD1xgtLu+aw2Yxf9lTdovrD6Qsdk9rZ7ZY9/o9iwOHx4oLXawe5+9tZPG4fLbUY9OqTjaP
+	zUvqPXbfbGDz+LxJLoA9KtsmIzUxJbVIITUvOT8lMy/dVsk7ON453tTMwFDX0NLCXEkhLzE3
+	1VbJxSdA1y0zB+gkJYWyxJxSoFBAYnGxkr6dTVF+aUmqQkZ+cYmtUmpBSk6BSYFecWJucWle
+	ul5eaomVoYGBkSlQYUJ2xpRHzawF/5gqbv/7yNrAeJ+pi5GDQ0LARKJhW0oXIxeHkMBuRone
+	LWvZIJxPjBKH5y1jgXC+MUr8un+SsYuRE6zj+eJJ7BCJvYwSK9ZPhXKeMUpc3TgPrIpFQFWi
+	q3ULC4jNJqAuceR5K1hcREBZYuGsxUwgDcwCdxglph3/AVYkLBAhsbbpP9hRvAJmEluepoCE
+	eQUEJU7OfAJWwilgLLF/8xRmEFtUQEZixtKvzCBzJAR6OSSunHzACvGQi8TP3kCIS4UlXh3f
+	wg5hS0m87G+DstMlflx+ygRhF0g0H9sH9Zm9ROupfmaQMcwCGRLzH+lDhGUlpp5aB1bOLMAn
+	0fv7CVQrr8SOeTC2kkT7yjlQtoTE3nMNULaHxOruHdAgbWOUWHfqJfMERvlZSF6bhbBuFtgK
+	K4nOD02sEGFpieX/OCBMTYn1u/QXMLKuYpRMLSjOTU8tNi0wzEsth0d3cn7uJkZwetXy3MF4
+	98EHvUOMTByMhxglOJiVRHhPHD+bJsSbklhZlVqUH19UmpNafIjRFBhTE5mlRJPzgQk+ryTe
+	0MTSwMTMzMzE0tjMUEmc93Xr3BQhgfTEktTs1NSC1CKYPiYOTqkGJrv6DwxPd25cy/A9dnJx
+	XdWZD7teWO1SM3z8WcVrYUT/5oCz4kzaHyw/M6x2ELv3lOHPAT3VD4wGRxUrp719u635XOXq
+	3LYojehpz+aaFjz8ksGXcWJr6eody9IcOQSPM/rFML9R2rBc8sbLynpVo7YFfor285xv31o2
+	t+/CGgbJWezZZ+U9ZgZcqb2iOufbyekP+G69tt1958S209xPrjgHvLDSMu96nVK6K//8TlWd
+	rL2uU/ukzkyR/a4oLMDDW3Pb/k6owdpdmy4lJP8MP5E0TfDW6U0qHZNWzja3PXCftSXp/PL7
+	c5/5Lp1RuHt5obvYR/ZtU1jnH90qFHVqdcSSsv2S8aXPJnQ3qThkP4xTYinOSDTUYi4qTgQA
+	wl+lVTgEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrGLMWRmVeSWpSXmKPExsWy7bCSvO7Ez+fSDJquWVusvtvPZrFy9VEm
+	i0mHrjFaXN41h81i/rKn7BbXH0hZ7J7Wzmyx7vV7FgcOjxUXulg9zt/byOJx+Wypx6ZVnWwe
+	m5fUe+y+2cDm8XmTXAB7FJdNSmpOZllqkb5dAlfGzQfz2QsMKt62L2JtYNTuYuTkkBAwkXi+
+	eBI7iC0ksJtR4uOzOIi4hMSpl8sYIWxhiZX/ngPVcAHVPGGUmLe2kw0kwSKgKtHVuoUFxGYT
+	UJc48rwVrEFEQFli4azFTCANzAJ3GCWu7rsBtkFYIEJibdN/oAQHB6+AmcSWpykQi40kph3Z
+	ANbLKyAocXLmE7CZzEAl8zY/ZAYpZxaQllj+jwMkzClgLLF/8xRmEFtUQEZixtKvzBMYBWch
+	6Z6FpHsWQvcCRuZVjJKpBcW56bnJhgWGeanlesWJucWleel6yfm5mxjBUaGlsYPx3vx/eocY
+	mTgYDzFKcDArifCeOH42TYg3JbGyKrUoP76oNCe1+BCjNAeLkjiv4YzZKUIC6YklqdmpqQWp
+	RTBZJg5OqQamq2K/k35wlk39fN1Gj/kzz0IDfevt0zgehCnbLj3TtLrrXuOWusnbFin+TtGc
+	srvwRPsRpW1htrv3vxHZq6skGHCtxG3vnd+XD6nZdfH1ROaZM1tOT3Yz4311ryg120HSODj/
+	pUDxpbTDUjOrci7E7KqL+i0f9EMx7sLC6nNT+nsPlgVf769e/VzGZb/BXNbG9S/Fa1Y9n3VA
+	MTz+tumCWuGMttAzCis6LpoV/LLiZl3z8u56xll/ZxZ+ZuF64p/XkbbNs71t35NIfmuum63n
+	Tizbdc380bZuxsdbp4Yzp/N3LxaQ7WF/FtFdIXPuTsjdVUUL69ZuMAutiymZrtmdskbm9krW
+	Mxfb3fq1711SYinOSDTUYi4qTgQAF3N5MvkCAAA=
+X-CMS-MailID: 20240828095322epcas5p134935f60a199bc085198b06871cd33ba
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+	boundary="----wG8aeMZ_I9uC6yBdj_JCG0W3RU-IZGBujJEAuAycL.OUxp4R=_dcb61_"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240828095322epcas5p134935f60a199bc085198b06871cd33ba
+References: <20240827132327.1704-1-pjy@amazon.com>
+	<CGME20240828095322epcas5p134935f60a199bc085198b06871cd33ba@epcas5p1.samsung.com>
 
-Hello,
+------wG8aeMZ_I9uC6yBdj_JCG0W3RU-IZGBujJEAuAycL.OUxp4R=_dcb61_
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Disposition: inline
 
-I've been thinking on how to approach the problem of NACKs received
-from the sensor while the heater is on but I haven't found
-a perfectly satisfying solution either. This is due to the fact that
-the device does not provide any way to check if the heater is on/off.
+Reviewed-by: Anuj Gupta <anuj20.g@samsung.com>
 
-1. I guess that the simplest possible approach would involve sleeping
-in `heater_enable_store()`:
-  
-  ssize_t heater_enable_store() {
-    ...
-    mutex_lock(data->lock);
-    ret = i2c_master_send(data->client, &cmd, SHT4X_CMD_LEN);
-    msleep(...) /* for >100 or >1000 ms */
-    mutex_unlock(data->lock);
-    ...
-  }
+------wG8aeMZ_I9uC6yBdj_JCG0W3RU-IZGBujJEAuAycL.OUxp4R=_dcb61_
+Content-Type: text/plain; charset="utf-8"
 
-This way, the user would have to wait for the heating to complete in
-order to read RH or temperature measurement. However, I find this
-solution unacceptable since it's completely unnecessary for the user
-to wait for the heating to complete.
 
-2. A better solution could be possibly to use a wait queue in order
-to defer the job of enabling the heater:
-
-  struct sht4x_data {
-    ...
-    struct work_struct* heater_work; /* This would be initialized
-                                        with the handler described
-                                        below */
-  }
-
-The task of sending the "heater_enable" command and sleeping would be
-performed by the worker function:
-
-  static void heater_enable_handler(struct work_struct *work) {
-    ...
-    mutex_lock(data->lock);
-    ret = i2c_master_send(data->client, &cmd, SHT4X_CMD_LEN);
-    msleep(...) /* for >100 or >1000 ms */
-    mutex_unlock(data->lock);
-    ...
-  }
-
-And that above mentioned work would be scheduled
-in `heater_enable_store()`:
-
-  ssize_t heater_enable_store() {
-    ...
-    schedule_work(data->heater_work);
-    ...
-  }
-
-I think that this approach with work queue is better since the user
-doesn't have to wait for the heating to complete and the RH or
-temperature measurements can also be retrieved without the NACK error
-(even though the user still may have to wait for the heater to be
-off), since the `data->lock` mutex is used to guard both measurement
-reads from the sensor and the heating in `heater_enable_handler`.
-
-I'm worried though about the situation where the user writes 1 to
-"heater_enable" while it's already enabled. Since the `work_struct`
-is already on the queue, the `heater_enable_store` would return an
-error and I see no easy solution to this for now.
-
-Regards,
-Antoni Pokusinski
+------wG8aeMZ_I9uC6yBdj_JCG0W3RU-IZGBujJEAuAycL.OUxp4R=_dcb61_--
 
