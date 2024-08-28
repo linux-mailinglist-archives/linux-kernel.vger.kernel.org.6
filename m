@@ -1,115 +1,108 @@
-Return-Path: <linux-kernel+bounces-305134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCAD99629F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 16:14:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C159A962A05
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 16:17:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78272284DBC
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 14:14:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AD292847E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 14:17:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E9621990C3;
-	Wed, 28 Aug 2024 14:13:57 +0000 (UTC)
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5A41189F45;
+	Wed, 28 Aug 2024 14:17:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="2B6goa/c"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E298218E02A;
-	Wed, 28 Aug 2024 14:13:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1191E1BC20;
+	Wed, 28 Aug 2024 14:17:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724854437; cv=none; b=FLp/+wTxbgWrZnJcgNrDGTjuAEFfEiFzN8q6Ew2pYgGdYDGlkIuffQSSnF7IyKNUGR503o33Hr6lccesA0HX0AtpbysF0E42XGh2coIceoyHTtDvkalexS0bz5Hu7LwNR+1NLi+iUoxDO/08jUaIwy9kCI78YmnqC4DiiDsBJDA=
+	t=1724854652; cv=none; b=OKkvDvcOvW8YRIM3o5UJpRZdQhF14VvrTCOX7+F7NLY1tapgxib+U2mwSZMMrXLJsVtneZ9puclGucPMoVoLZFTruF3UfYVPn5pz2l2IxnJL8DYWBxft9wZrO6joqmE3KXvqKPvGxh2p1oUFVIGbHosCvnM+sPjfSLiQAdPcSFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724854437; c=relaxed/simple;
-	bh=lQw5IXbIgR7J91Fs5P8TJVg4q3mpXXl2Homce8Cp3Vk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SLws8Ty/3LIgpSMI7yHb9K3aI5SMQ5ccTQEyGfqQyo5Q64xdreWbWjRtvRhj7preLbK8EHmB407GLjhmEbFCH7vIqcC8eMZ9JMt16WMYRfJsTI6hm+SUEwvSFlBdx4QBXBMfrr7sN6FmqTmarSrZEY2Be4vEe2FwUnWqS2J4Y4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-53436e04447so708259e87.1;
-        Wed, 28 Aug 2024 07:13:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724854432; x=1725459232;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=rfggEhwHyOU2sq8xoB6q7hwwxN+IvnAAtnYfI0ptIPU=;
-        b=EK2tXSMQCVflkGcQ+2sQAtl/J2/trvD2AUCaBfgL8pu7BGeTo7BlH36V4kr4qeg+Yt
-         gkD9K4pc7BR4EIEhnFIXpDSn7QD8UQ7zx3qI7n6rmAhjOFFHnHDsBnOP8Fh7Ju44putS
-         Xt9GOsTOeUYXGm8a1jld10AbWTMD0Wv/CcO+W/3LXzyaiaHgWQ7KayGk+5Apx/GSwe9r
-         y4XZ44lrDEVMEFimZl7OZJcuWSG1t3VDL2zgadGXWwVi2rv222fVmQwDauzS8Sj/WGlN
-         isHjzr2ndJOM7DTeXS5X/Jl+vUZvfzUQyJBSC2MUBGZB0lOlO3RLY5aDOEFI4X9Wk9zE
-         FNVg==
-X-Forwarded-Encrypted: i=1; AJvYcCUTyEwjoOjl5lnrVguHL/pOHhC6PVJNdGJ0JkxNBIMRSPwTXs44P8b2g/PsgB0KcVVzwA5enGMZYrs4kyis@vger.kernel.org, AJvYcCUVs5+4i+V6yp/cfNayfIiWLm+KDBgExrnwqqpl6kosXQJ6vwoJpGvG6I5YwtdiRcM9VL76FH8J3qM=@vger.kernel.org, AJvYcCVJ6DIih71RFCRG8oXJWNDpV2hJ5JCq+7MBv6WDQmqt/nhzyJysrFhHgSjPq2h9wb0pCjjR90zAXHBQRIoLDN8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKFByun4f2nHKaFNbyBSuSPbaHC4EsPLV9dxO56l0n59l7m/OA
-	/axVoIfb5ws3dDkhPFwo8yK2VNQqKzXnefphMM7njDFIqJYTla2oeA1yhg==
-X-Google-Smtp-Source: AGHT+IEFiEsRkjyQY12sznbZL9UdZkjyFLeKD2kKWSFTCYTWyWg/zh4C69GCQF7H2Q0l4CF2BVR9pQ==
-X-Received: by 2002:a05:6512:2806:b0:52f:cc9e:449d with SMTP id 2adb3069b0e04-5345673d65amr680560e87.3.1724854431598;
-        Wed, 28 Aug 2024 07:13:51 -0700 (PDT)
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com. [209.85.208.179])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5334ea2a64fsm2187537e87.57.2024.08.28.07.13.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 28 Aug 2024 07:13:50 -0700 (PDT)
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2f401b2347dso6937721fa.1;
-        Wed, 28 Aug 2024 07:13:50 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVXk03NCi8elueuoMLyvwjgFOSFotaKMU/HWems1MPWdbjmDu8gzQf0lDrIHtS8aoEBlFFLltbps8o=@vger.kernel.org, AJvYcCWhxrI3+Dv3+n9+NI3ddG0ddu+PUvw1SV/jA2CMVxAxax74uHRExbuAawQ9MV5mEyW3UGSut0AdT1bR10LW@vger.kernel.org, AJvYcCWvacXAT1iU9iqlx/5hnV8a7Ef7Tw6yfkMKooUkcx6GcH25hoP2Roa4TyZ/fb+rGzuFqks7ovWbQdxfFGDHdY4=@vger.kernel.org
-X-Received: by 2002:a05:651c:546:b0:2ef:1f5e:92be with SMTP id
- 38308e7fff4ca-2f5232705c1mr9467481fa.9.1724854430536; Wed, 28 Aug 2024
- 07:13:50 -0700 (PDT)
+	s=arc-20240116; t=1724854652; c=relaxed/simple;
+	bh=5SD3vS3hfinL4O4GRh1j4kmE2yjUTv86L39GGCDrJo8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Bv8y9WdhQobdxYiDA2tFRg2xrH/5CljpszM7mLM3bnzgSMAA7Ptppjt/cXJ09uRf0NlS5RtQTsDOFx+NCNPiaBVMwlJuuh9iaXBLY4vwqkWfkItkVvMBBAtuUsydknKiEQsz7W/kv2LDwEkXphPztBtg1EUHvlWcqeqsjaGlRtI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=2B6goa/c; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=Vfekbi0HchxBjQQ/RvzxtQJeD9GLl2y8IkOsbfDf82s=; b=2B6goa/cDio3lnpvelC5GvCUuA
+	nWt5Lxn9qeayYM7qd7LBItOIe/RcB4Ge/jGfvdwztUetwRv73BK9KNuCLVXUieCPkHTsS34SA7eNu
+	WFJzmlNvBnd9nmhShD+entZRaCx+G6bY0yPSwIyGGMTy/3Z8H/oqA3jeur4iksY9fIxI=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sjJTr-005wST-EH; Wed, 28 Aug 2024 16:17:03 +0200
+Date: Wed, 28 Aug 2024 16:17:03 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Jinjie Ruan <ruanjinjie@huawei.com>
+Cc: woojung.huh@microchip.com, f.fainelli@gmail.com, olteanv@gmail.com,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, linus.walleij@linaro.org, alsi@bang-olufsen.dk,
+	justin.chen@broadcom.com, sebastian.hesselbarth@gmail.com,
+	alexandre.torgue@foss.st.com, joabreu@synopsys.com,
+	mcoquelin.stm32@gmail.com, wens@csie.org, jernej.skrabec@gmail.com,
+	samuel@sholland.org, hkallweit1@gmail.com, linux@armlinux.org.uk,
+	ansuelsmth@gmail.com, UNGLinuxDriver@microchip.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	bcm-kernel-feedback-list@broadcom.com,
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+	linux-stm32@st-md-mailman.stormreply.com, krzk@kernel.org,
+	jic23@kernel.org
+Subject: Re: [PATCH net-next v2 01/13] net: stmmac: dwmac-sun8i: Use
+ for_each_child_of_node_scoped()
+Message-ID: <52435305-d134-4cee-8660-f7bf60206ddf@lunn.ch>
+References: <20240828032343.1218749-1-ruanjinjie@huawei.com>
+ <20240828032343.1218749-2-ruanjinjie@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240828093447.271503-1-colin.i.king@gmail.com>
-In-Reply-To: <20240828093447.271503-1-colin.i.king@gmail.com>
-Reply-To: wens@csie.org
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Wed, 28 Aug 2024 22:13:37 +0800
-X-Gmail-Original-Message-ID: <CAGb2v64D9ciU1UPMii9P9yiP4jEjsNH_3SVhaN3XmR85QH3q6Q@mail.gmail.com>
-Message-ID: <CAGb2v64D9ciU1UPMii9P9yiP4jEjsNH_3SVhaN3XmR85QH3q6Q@mail.gmail.com>
-Subject: Re: [PATCH][next] power: supply: axp20x_usb_power: Fix spelling
- mistake "reqested" -> "requested"
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240828032343.1218749-2-ruanjinjie@huawei.com>
 
-On Wed, Aug 28, 2024 at 5:34=E2=80=AFPM Colin Ian King <colin.i.king@gmail.=
-com> wrote:
->
-> There is a spelling mistake in a dev_warn message. Fix it.
->
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-
-Acked-by: Chen-Yu Tsai <wens@csie.org>
-
+On Wed, Aug 28, 2024 at 11:23:31AM +0800, Jinjie Ruan wrote:
+> Avoid need to manually handle of_node_put() by using
+> for_each_child_of_node_scoped(), which can simplfy code.
+> 
+> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
 > ---
->  drivers/power/supply/axp20x_usb_power.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/power/supply/axp20x_usb_power.c b/drivers/power/supp=
-ly/axp20x_usb_power.c
-> index 69fbb5861934..ab45ee6c283c 100644
-> --- a/drivers/power/supply/axp20x_usb_power.c
-> +++ b/drivers/power/supply/axp20x_usb_power.c
-> @@ -326,7 +326,7 @@ static int axp20x_usb_power_set_input_current_limit(s=
-truct axp20x_usb_power *pow
->
->         if (power->max_input_cur && (intval > power->max_input_cur)) {
->                 dev_warn(power->dev,
-> -                        "reqested current %d clamped to max current %d\n=
-",
-> +                        "requested current %d clamped to max current %d\=
-n",
->                          intval, power->max_input_cur);
->                 intval =3D power->max_input_cur;
->         }
-> --
-> 2.39.2
->
+>  drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
+> index cc93f73a380e..8c5b4e0c0976 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
+> @@ -774,7 +774,7 @@ static int sun8i_dwmac_reset(struct stmmac_priv *priv)
+>  static int get_ephy_nodes(struct stmmac_priv *priv)
+>  {
+>  	struct sunxi_priv_data *gmac = priv->plat->bsp_priv;
+> -	struct device_node *mdio_mux, *iphynode;
+> +	struct device_node *mdio_mux;
+>  	struct device_node *mdio_internal;
+>  	int ret;
+
+Networking uses reverse Christmas tree. Variables are sorted, longest
+first, shortest last. So you need to move mdio_mux after
+mdio_internal.
+
+The rest looks O.K.
+
+
+    Andrew
+
+---
+pw-bot: cr
 
