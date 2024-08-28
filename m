@@ -1,133 +1,140 @@
-Return-Path: <linux-kernel+bounces-305711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E35A96331E
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 22:56:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A1F4963314
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 22:55:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 618871C21E4A
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 20:56:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BB25DB20CA3
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 20:55:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D63B1AE05E;
-	Wed, 28 Aug 2024 20:54:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFF561AD3FF;
+	Wed, 28 Aug 2024 20:54:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pMpVJ1m1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oUGv8PmY"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5330C1AE040;
-	Wed, 28 Aug 2024 20:54:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CE84156C6F;
+	Wed, 28 Aug 2024 20:53:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724878487; cv=none; b=DFcWLHgzb49driz1TCP5DZ9epSNxTN3OqSaYJAT9fAtumVop3+CDukp2q7d/5T/rNVuVePU50A2C9wIYcMblkgw5DKfM4aq0bUGEBzMHnZOAFX8mpAX69FrkEvWKn/Gmrsusl1c/acDs4i3PsJTUOzM3rgy+yir20Q2VVvcD5vo=
+	t=1724878440; cv=none; b=ofnvhr10aW3cVdH+G/yuSd70In4OkGUIKJTg+cBtk+t38/uz3r3ROovc9wNVMw1U7bQA5zhBSrZX21WQSgqWLiKDCDnYgqlirsnJdNT0nTUtYmsvMI5JOHwOhMDLWN7vVSL+nDZJKWFkYIGEiecVR6gBBDzoEf+KiWEbMlp8t1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724878487; c=relaxed/simple;
-	bh=SnlJ2b10GpeB/eeD0bQeMJKYa+5VGMkiM/OyO0qSSv4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EotSu6VdoaVQevUqkVPV3/zJPKTXtxtgLOSVcS/KN2B9pVz7d7wmT9MkPF2ZNGJ+9r79RgRMXuY64mV9+WEggvH9+7gablwZE3vJkC4jwsvoBxTxiktnecPnrc6VWMro+GY8Ft02D1IXsJE/HCL+zJ0hVNngTsso10w+Y0+5NKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pMpVJ1m1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE28CC4CEC0;
-	Wed, 28 Aug 2024 20:54:46 +0000 (UTC)
+	s=arc-20240116; t=1724878440; c=relaxed/simple;
+	bh=XAkjYOvWfhrvm/X1rNgkOi5Ip0NoC3OasguBXC06H5w=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=YsPSsTmV1eHqfEcs0tCAQQM1INlTABf5pk5MtCI4C7YMqL4SDp1Gp+TffWrtIH/sg0HtKReN8OeGyl/+Dac2eb2aTwJ1FTXgcClgEJ9Q38wewYKdkuaAl2KhZwqemKwDT7U8bE+2xpdRx8DAyL6yARhrgJcfTbz0Gf2xsaFidrw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oUGv8PmY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51FC5C4CEC0;
+	Wed, 28 Aug 2024 20:53:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724878487;
-	bh=SnlJ2b10GpeB/eeD0bQeMJKYa+5VGMkiM/OyO0qSSv4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pMpVJ1m1B1D1s/JjTA+nJSk93kCWrD5UISQvcX+6IgL4pB8MwfXMvY+ghZPj/yyPI
-	 5acAgLfeJxn0RPNL2vmYhFr1KtV8MCUuJ767926DzNWaRtJjbyKTnasJ1TVnCMsZqe
-	 T9XmM/Sw/nvn/25O0z1sQ7Vvbp2RpPDdaDfTwU8B3K83hK9/fNQwtEVDedSy2g8d8Z
-	 T2fCXbEiPKhBi/cZTfRnLzFfQEgYoSBu95IQXGIogeSiPh747Kc7y0HSkWLoVGrAh/
-	 80uJP4Nz3NpE5v2o2AjZf+JMpdWrKbsr6D0amCN/yLryNLtwUOWh7w7Glzg61R597e
-	 rtbmCiM68M1CA==
-Date: Wed, 28 Aug 2024 17:53:04 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] perf report: Name events in stats for pipe mode
-Message-ID: <Zs-OMNr74getypNN@x1>
-References: <20240827212757.1469340-1-irogers@google.com>
- <CAM9d7cgoRUzRkwf37BisHV8vKWFD2AY+GJKH+eOqH4HmGBY2Wg@mail.gmail.com>
+	s=k20201202; t=1724878439;
+	bh=XAkjYOvWfhrvm/X1rNgkOi5Ip0NoC3OasguBXC06H5w=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=oUGv8PmYlxexpSuOdabSUd42Ulupy14Br2vHnnIpEPydK9E/zmcXGN8r4Mt3UckRM
+	 EX4aud81Lg6z5GvKU0lwf3PDVszxt0I1SKRfKT7LPrSGcFU34ByGzY7eGmIyaOz9Yt
+	 Vw2YMXHKuxnIdxbeVR/8JtBK75VhrX7mT9jAJ0HXi1TG+Rrp4MTvHpXRLkA3Wkjx1/
+	 +YrEFUdapuZW+i2eANnUkYw1mb6tcQEHAXJDIaCjd4ljjg6oAnVMjZrF8aHU32dSb2
+	 CgvhoFpKXcXs3jmOVJF+1WFa0rznMpEDeowosbHAtzu1MGz6005KDPqsJVy6/15XhY
+	 FB8A9qiIk04/A==
+Date: Wed, 28 Aug 2024 15:53:57 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Lukas Wunner <lukas@wunner.de>
+Cc: linux-pci@vger.kernel.org,
+	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
+	"Maciej W . Rozycki" <macro@orcam.me.uk>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Duc Dang <ducdang@google.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	linux-kernel@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
+	Stanislav Spassov <stanspas@amazon.de>,
+	Rajat Jain <rajatja@google.com>
+Subject: Re: [RFC PATCH 1/3] PCI: Wait for device readiness with
+ Configuration RRS
+Message-ID: <20240828205357.GA36177@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAM9d7cgoRUzRkwf37BisHV8vKWFD2AY+GJKH+eOqH4HmGBY2Wg@mail.gmail.com>
+In-Reply-To: <Zs6kwHX7EIGvnf9_@wunner.de>
 
-On Wed, Aug 28, 2024 at 10:06:37AM -0700, Namhyung Kim wrote:
-> Hi Ian,
+[+cc Stanislav, Rajat]
+
+On Wed, Aug 28, 2024 at 06:17:04AM +0200, Lukas Wunner wrote:
+> On Tue, Aug 27, 2024 at 06:48:46PM -0500, Bjorn Helgaas wrote:
+> > @@ -1311,9 +1320,15 @@ static int pci_dev_wait(struct pci_dev *dev, char *reset_type, int timeout)
+> >  			return -ENOTTY;
+> >  		}
+> >  
+> > -		pci_read_config_dword(dev, PCI_COMMAND, &id);
+> > -		if (!PCI_POSSIBLE_ERROR(id))
+> > -			break;
+> > +		if (root && root->config_crs_sv) {
+> > +			pci_read_config_dword(dev, PCI_VENDOR_ID, &id);
+> > +			if (!pci_bus_crs_vendor_id(id))
+> > +				break;
 > 
-> On Tue, Aug 27, 2024 at 2:37 PM Ian Rogers <irogers@google.com> wrote:
-> >
-> > In stats mode PERF_RECORD_EVENT_UPDATE isn't being handled meaning the
-> > evsels aren't named when handling pipe mode output.
-> >
-> > Before:
-> > ```
-> > $ perf record -e inst_retired.any -a -o - sleep 0.1|perf report --stats -i -
-> > ...
-> > Aggregated stats:
-> >            TOTAL events:      23358
-> >             COMM events:       2608  (11.2%)
-> >             EXIT events:          1  ( 0.0%)
-> >             FORK events:       2607  (11.2%)
-> >           SAMPLE events:        174  ( 0.7%)
-> >            MMAP2 events:      17936  (76.8%)
-> >             ATTR events:          2  ( 0.0%)
-> >   FINISHED_ROUND events:          2  ( 0.0%)
-> >         ID_INDEX events:          1  ( 0.0%)
-> >       THREAD_MAP events:          1  ( 0.0%)
-> >          CPU_MAP events:          1  ( 0.0%)
-> >     EVENT_UPDATE events:          3  ( 0.0%)
-> >        TIME_CONV events:          1  ( 0.0%)
-> >          FEATURE events:         20  ( 0.1%)
-> >    FINISHED_INIT events:          1  ( 0.0%)
-> > raw 0xc0 stats:
-> >           SAMPLE events:        174
-> > ```
-> >
-> > After:
-> > ```
-> > $ perf record -e inst_retired.any -a -o - sleep 0.1|perf report --stats -i -
-> > ...
-> > Aggregated stats:
-> >            TOTAL events:      23742
-> >             COMM events:       2620  (11.0%)
-> >             EXIT events:          2  ( 0.0%)
-> >             FORK events:       2619  (11.0%)
-> >           SAMPLE events:        165  ( 0.7%)
-> >            MMAP2 events:      18304  (77.1%)
-> >             ATTR events:          2  ( 0.0%)
-> >   FINISHED_ROUND events:          2  ( 0.0%)
-> >         ID_INDEX events:          1  ( 0.0%)
-> >       THREAD_MAP events:          1  ( 0.0%)
-> >          CPU_MAP events:          1  ( 0.0%)
-> >     EVENT_UPDATE events:          3  ( 0.0%)
-> >        TIME_CONV events:          1  ( 0.0%)
-> >          FEATURE events:         20  ( 0.1%)
-> >    FINISHED_INIT events:          1  ( 0.0%)
-> > inst_retired.any stats:
-> >           SAMPLE events:        165
-> > ```
-> >
-> > This makes the pipe output match the regular output.
-> >
-> > Signed-off-by: Ian Rogers <irogers@google.com>
+> There was an effort from Amazon back in 2020/2021 to improve CRS support:
 > 
-> Acked-by: Namhyung Kim <namhyung@kernel.org>
+> https://lore.kernel.org/linux-pci/20200307172044.29645-1-stanspas@amazon.com/
 
-Thanks, applied to perf-tools-next,
+Thanks for reminding me of that, and I'm sorry that series didn't get
+applied back then because it's very similar to this one.
 
-- Arnaldo
+> One suggestion you raised in the subsequent discussion was to use a
+> 16-bit (word) instead of a 32-bit (dword) read of the Vendor ID
+> register to avoid issues with devices that don't implement CRS SV
+> correctly:
+> 
+> https://lore.kernel.org/linux-pci/20210913160745.GA1329939@bjorn-Precision-5520/
+
+Thanks.  Reading that response, I don't understand my point about using
+a 16-bit read.  I mentioned 89665a6a7140 ("PCI: Check only the Vendor
+ID to identify Configuration Request Retry"), the commit log of which
+points to http://lkml.kernel.org/r/4729FC36.3040000@gmail.com, which
+documents several defective devices that have a Vendor ID of 0x0001.
+
+E.g., the Realtek rtl8169 controller mentioned there has Vendor/Device
+ID of [0001:8168].  Doing either a 16-bit read or a 32-bit read and
+checking the low 16 bits would incorrectly treat that as a Config RRS
+completion.
+
+So it *looks* to me like we will time out after 60 seconds and
+conclude the device never became ready:
+
+  pci_scan_device(..., timeout=60*1000)
+    pci_bus_read_dev_vendor_id
+      pci_bus_generic_read_dev_vendor_id
+        pci_bus_read_config_dword(PCI_VENDOR_ID, l)  # <--
+        # *l == 0x81680001
+        if (pci_bus_crs_vendor_id(*l))        # 0x81680001 & 0xffff = 0x0001
+          pci_bus_wait_crs(..., timeout=60*1000)
+            while (pci_bus_crs_vendor_id(*l)) {
+              if (delay > timeout)
+                return false;                 # device not ready
+              pci_bus_read_config_dword(PCI_VENDOR_ID, l)
+            }
+
+That *might* be an argument for doing a 32-bit read and checking for
+0xffff0001, since the spec requires all 1's in the extra bytes.  But
+I'm not aware of any complaints about these broken devices with a
+0x0001 Vendor ID, and the 89665a6a7140 commit log says there are also
+defective devices that don't fill the extra bytes with all 1's.
+
+So my inclination is to keep the current code that does a 32-bit read
+and checks only the low 16 bits.
+
+> I realize that pci_bus_crs_vendor_id() masks the Device ID bits,
+> so probably no biggie.  Just want to make sure all lessons learned
+> during previous discussions on this topic are considered. :)
+
 
