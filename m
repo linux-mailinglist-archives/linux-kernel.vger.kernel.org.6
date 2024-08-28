@@ -1,87 +1,97 @@
-Return-Path: <linux-kernel+bounces-304993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 814E39627DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 14:54:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D733E9627E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 14:54:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B43031C23DB4
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 12:54:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16ED31C23F12
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 12:54:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C75A184535;
-	Wed, 28 Aug 2024 12:53:35 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C2EE188CAC;
+	Wed, 28 Aug 2024 12:53:50 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 775A8178368;
-	Wed, 28 Aug 2024 12:53:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C5AE17C9BA;
+	Wed, 28 Aug 2024 12:53:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724849614; cv=none; b=QrKO+lyqcUWoO5+cXoY01oaBp5XSvy5WDvttxT29qOpRK0s5L6+ofOC5898NX+u+AMXVdYEoEzsDbK5xJh9RdtzWKacr4ka8Z2uQzpPXbEKLx0uEAGRBSKvASK4G5rsT6DNjGl0N+2wW/T+7RX9MtJc/kVvizKRoxQhs7F6sWok=
+	t=1724849629; cv=none; b=st98vM4nE0rUdRY9kXxbzK9H/BR28QVwvQ6Vdekvc0HL/luFnipiFJfpiMrAs/L0LEzdNOlgxc/tV1ixOG8M6DYChw6hLlvj4grIWP2dk53KGR7orE3f3OHio4ogC7btMtaxzCJeEZPeiVLKg4G1tn+PiGoJFqnyfK2Z8fWDHvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724849614; c=relaxed/simple;
-	bh=Hfhlae1NIIprmJAk4BOGY1ir7b9VAyVtJ3M/m/bnHoc=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=a1dQ8ex8cxftfxPP6G8VUFOydvQwnHDs81ATrejw2jccp6LYo51dG3wKL6yNNzd5Z5cUnozKj0tmR1hpUAwYC3U4Hj3voi1Ms/VrWGrfAAcMPAZceq1biL1D1Rp34xWmVeTzZLUuaRI9hFcKf2X4ioahu+ycDLnU83cmzppWAZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+	s=arc-20240116; t=1724849629; c=relaxed/simple;
+	bh=iJABBce2yqZMbaxDvBMY/LZjkjggxq+k4dcuQAm1i5c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=XZWDfH4E24OMXZpK5IJ6mGwT4iD9FiUHQwUxPfQD2VMrn8AtDVHmnqjD9X4Nrn9Xrna9MvOQnL7irz+5LiGjaKLFt8Ul77t0N4eLf2+nN0iFHfC41/ygtTIGi93aYBjIZcmdkF4wnF0ytfoiyvkjoGxvvQE4zkzsSBmuNcza9RE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Wv4510rtCz6K99X;
-	Wed, 28 Aug 2024 20:50:13 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id 6787A140B38;
-	Wed, 28 Aug 2024 20:53:31 +0800 (CST)
-Received: from localhost (10.203.177.66) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 28 Aug
- 2024 13:53:30 +0100
-Date: Wed, 28 Aug 2024 13:53:30 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-CC: <woojung.huh@microchip.com>, <andrew@lunn.ch>, <f.fainelli@gmail.com>,
-	<olteanv@gmail.com>, <davem@davemloft.net>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>, <linus.walleij@linaro.org>,
-	<alsi@bang-olufsen.dk>, <justin.chen@broadcom.com>,
-	<sebastian.hesselbarth@gmail.com>, <alexandre.torgue@foss.st.com>,
-	<joabreu@synopsys.com>, <mcoquelin.stm32@gmail.com>, <wens@csie.org>,
-	<jernej.skrabec@gmail.com>, <samuel@sholland.org>, <hkallweit1@gmail.com>,
-	<linux@armlinux.org.uk>, <ansuelsmth@gmail.com>,
-	<UNGLinuxDriver@microchip.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <bcm-kernel-feedback-list@broadcom.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-sunxi@lists.linux.dev>,
-	<linux-stm32@st-md-mailman.stormreply.com>, <krzk@kernel.org>,
-	<jic23@kernel.org>
-Subject: Re: [PATCH net-next v2 13/13] net: bcmasp: Simplify with __free()
-Message-ID: <20240828135330.00002a59@Huawei.com>
-In-Reply-To: <20240828032343.1218749-14-ruanjinjie@huawei.com>
-References: <20240828032343.1218749-1-ruanjinjie@huawei.com>
-	<20240828032343.1218749-14-ruanjinjie@huawei.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Wv43X2QMSz20n22;
+	Wed, 28 Aug 2024 20:48:56 +0800 (CST)
+Received: from kwepemd500012.china.huawei.com (unknown [7.221.188.25])
+	by mail.maildlp.com (Postfix) with ESMTPS id C46471A016C;
+	Wed, 28 Aug 2024 20:53:45 +0800 (CST)
+Received: from [10.67.111.176] (10.67.111.176) by
+ kwepemd500012.china.huawei.com (7.221.188.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Wed, 28 Aug 2024 20:53:45 +0800
+Message-ID: <40421bdb-4573-4768-8d6d-39b0d0df9260@huawei.com>
+Date: Wed, 28 Aug 2024 20:53:44 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100001.china.huawei.com (7.191.160.183) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH next] btrfs: Fix reversed condition in
+ copy_inline_to_page()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+CC: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, David Sterba
+	<dsterba@suse.com>, <linux-btrfs@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+References: <3a05145b-6c24-4101-948e-1a457b92ea3e@stanley.mountain>
+From: Li Zetao <lizetao1@huawei.com>
+In-Reply-To: <3a05145b-6c24-4101-948e-1a457b92ea3e@stanley.mountain>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggpeml500018.china.huawei.com (7.185.36.186) To
+ kwepemd500012.china.huawei.com (7.221.188.25)
 
-On Wed, 28 Aug 2024 11:23:43 +0800
-Jinjie Ruan <ruanjinjie@huawei.com> wrote:
+Hi Dan,
 
-> Avoid need to manually handle of_node_put() by using __free(), which
-> can simplfy code.
+在 2024/8/27 18:21, Dan Carpenter 写道:
+> This if statement is reversed leading to locking issues.
 > 
-> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Fixes: 8e603cfe05f0 ("btrfs: convert copy_inline_to_page() to use folio")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+> This patch is obviously correct but it's from static analysis so additional
+> testing would be good as well.
+> 
+>   fs/btrfs/reflink.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/btrfs/reflink.c b/fs/btrfs/reflink.c
+> index 1681d63f03dd..f0824c948cb7 100644
+> --- a/fs/btrfs/reflink.c
+> +++ b/fs/btrfs/reflink.c
+> @@ -146,7 +146,7 @@ static int copy_inline_to_page(struct btrfs_inode *inode,
+>   	btrfs_folio_clear_checked(fs_info, folio, file_offset, block_size);
+>   	btrfs_folio_set_dirty(fs_info, folio, file_offset, block_size);
+>   out_unlock:
+> -	if (IS_ERR(folio)) {
+> +	if (!IS_ERR(folio)) {
+This is a mistake caused by my carelessness,thank you for the patch
+>   		folio_unlock(folio);
+>   		folio_put(folio);
+>   	}
 
-Longer term I'd prefer to see a lot of this stuff replaced
-with firmware independent calls from property.h but in meantime
-these are nice cleanup.
+Can I merge your patch into my patchset and add you as a co-author?
+
+Thanks,
+Li Zetao.
 
