@@ -1,94 +1,68 @@
-Return-Path: <linux-kernel+bounces-304864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99B579625F5
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:23:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96B30962602
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:26:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51FBC2847BE
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:23:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 16181B20E73
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:26:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 068DC16D4CD;
-	Wed, 28 Aug 2024 11:23:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0577916EB50;
+	Wed, 28 Aug 2024 11:26:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="mEMkloe8";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="MfN8i1Nh";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="0iVyuTYF";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="DKNLhB3p"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="U6eLyfwM"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96CDB15B54E;
-	Wed, 28 Aug 2024 11:23:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39AC016D330
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 11:26:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724844222; cv=none; b=MLTbXTAKAX1Wan7HFFaipyWuorX3yn0x0TIetB3/jOuuEKQ/ZYHMfylJ2VHbJgOz/bcyQUEj5pmKZ0cmQeLE3h63mtjE+ZfI9I2GyVwa2fZXAN2VLWvBfBUOWJgqfA7uMPtVA2aTFBhEcpJn/3QKz9uS3GsDZM72gEgeklTdd50=
+	t=1724844399; cv=none; b=ACk8nkyxWvXbdYNthb+7Kgs0poW/Er1NewUWa0tkQjKC0HJhhe16RG+KXicHckLVbn75Es5mraoxq/U9dBXE8+PgNccpP7YOwXc4iib9wE/2UbiCS/aN3tZxnsNNFnmB1z6kvOLNk2I56VINBJ6ac810H/Yyhs6Pirb75312/Sc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724844222; c=relaxed/simple;
-	bh=woMfM9462eOJrwEHB3r89jnJI7ptsCPZp79CgwGCT4I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tUYFnBaPdj0pDWhOKXG8GPBXtKj8rOdf64tRd9oUJzDpWDAIT8FZpjbbNDIGSK/CN5tYejXkuJ17Vb4IlDsDJsCzzHeMVPCJrG363jJDDjRZiC6ntEZmMJxMyAj8hvvQ1fiSdgVhY72fvygWaDsL/bHYS4DUbenglYDPx5c4ZyM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=mEMkloe8; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=MfN8i1Nh; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=0iVyuTYF; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=DKNLhB3p; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from kitsune.suse.cz (unknown [10.100.12.127])
-	by smtp-out2.suse.de (Postfix) with ESMTP id DDD861FC11;
-	Wed, 28 Aug 2024 11:23:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1724844219; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZS4TScwxClFiQ42wXyGSbjTyqoV2glgYXGELYPtGsIg=;
-	b=mEMkloe8uBVVT65y8ATG3DiHAAVImkLXI9lDirmuTeKgh2rFDbXKbQPRFjonMoIPKDTOmD
-	v3TnsT8rKiBNZxLlJiyW/bRQFNSAWMrbYgbMYlS8JdV5QHxFTFNk6B0UXz0gygH2M7Q/EE
-	eLVSGdwZrXuyISBg8OcXH87M7K6dBVk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1724844219;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZS4TScwxClFiQ42wXyGSbjTyqoV2glgYXGELYPtGsIg=;
-	b=MfN8i1NhZKFqEHz2fh+F4GZwU/JhkaoOfEUsGv2WkHjuPsMjQA18HArQFTV63SQyTDa9EE
-	uya6Y0L68/ffM2DA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1724844218; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZS4TScwxClFiQ42wXyGSbjTyqoV2glgYXGELYPtGsIg=;
-	b=0iVyuTYFlBgdulA+mST/oUVSrgTpEQdFdfa8adNsEQ1qNNGQIExpE4mSBwNXGiiktB9P3s
-	REf5AhuwPFq+jB83IMPiJINNZ6FSbZVxkyk3762SO6csfVUOTjpot6HRXpYOV3twir9hPt
-	2POKkYtjuzvJjk7xL+lcIimRDAgx7AA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1724844218;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZS4TScwxClFiQ42wXyGSbjTyqoV2glgYXGELYPtGsIg=;
-	b=DKNLhB3pEiloMcO4Z2CGHXoLoLC99guHQ3I6cj7US3kbnqTTrMSZhUZlZ87tXKKDlSELsH
-	Yx1AzSkpjlfrn9AA==
-From: Michal Suchanek <msuchanek@suse.de>
-To: linux-integrity@vger.kernel.org
-Cc: Michal Suchanek <msuchanek@suse.de>,
-	Peter Huewe <peterhuewe@gmx.de>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Shuah Khan <shuah@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: [PATCH 2/2] selftests: tpm2: test_smoke: Run only when TPM2 is avaialable.
-Date: Wed, 28 Aug 2024 13:23:20 +0200
-Message-ID: <1794c9c1d60a34ebae28d3a18b408765e955907b.1724842902.git.msuchanek@suse.de>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <52c629ebbfc8f5218a90fa539f816c8555cb552a.1724842902.git.msuchanek@suse.de>
-References: <52c629ebbfc8f5218a90fa539f816c8555cb552a.1724842902.git.msuchanek@suse.de>
+	s=arc-20240116; t=1724844399; c=relaxed/simple;
+	bh=1lW4rHkYfKN6aTUGiJr17kgBBwohBBWY1TtkDVc3V88=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aA7CZd6brEwVeY97DDEfNo+i8G0Pk7ajvrT4oV1V58jR8P+qfiaB9qZBPI8ru9Bp+6LBCDE+UvuBJsaifUdF2wPyk5kAe0sBC6jnusdksxnj81nQqULjt6pTaYoyIe8yyNpsPkCmIUe3QoaBQTPtj4a16eXGet2kSOUDPo3wu6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=U6eLyfwM; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724844395;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=qCsKHhEXZlOWdQXJLRcvaixcQZE/bIQcZ4s3f8ZjN3E=;
+	b=U6eLyfwM8BYCFDcwilfqB8m/I78634u/Z8AgeMq5unzwSiJ9TwlHyZCHJrintvXis4WOaM
+	jdpUF/7US+zx5Ko+srtt8hFJv8dQAqevmwQQmOBPpUgZw0CLVfZ40fDHoEEI7Y4nwfsTRl
+	kzZO8tGbvgvHGAl+2DUkwhmdXoIuVQY=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-3-Sr36sfm7Om2lnfvSfixrrA-1; Wed,
+ 28 Aug 2024 07:26:31 -0400
+X-MC-Unique: Sr36sfm7Om2lnfvSfixrrA-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 941AB1955BF1;
+	Wed, 28 Aug 2024 11:26:29 +0000 (UTC)
+Received: from ws.redhat.com (unknown [10.96.134.128])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id C07991956048;
+	Wed, 28 Aug 2024 11:26:26 +0000 (UTC)
+From: Ricardo Robaina <rrobaina@redhat.com>
+To: audit@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Ricardo Robaina <rrobaina@redhat.com>,
+	paul@paul-moore.com,
+	eparis@redhat.com,
+	rgb@redhat.com
+Subject: [PATCH v2] audit: use task_tgid_nr() instead of task_pid_nr()
+Date: Wed, 28 Aug 2024 08:25:06 -0300
+Message-ID: <20240828112528.954163-1-rrobaina@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,53 +70,74 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Spam-Score: -6.80
-X-Spamd-Result: default: False [-6.80 / 50.00];
-	REPLY(-4.00)[];
-	BAYES_HAM(-3.00)[99.99%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	RCVD_COUNT_ZERO(0.00)[0];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[suse.de,gmx.de,kernel.org,ziepe.ca,vger.kernel.org];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:email];
-	FREEMAIL_ENVRCPT(0.00)[gmx.de]
-X-Spam-Flag: NO
-X-Spam-Level: 
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-Since Linux 5.6 tpm_version_major sysfs file is avaialble which gives
-the TPM version.
+In a few audit records, PIDs were being recorded with task_pid_nr()
+instead of task_tgid_nr().
 
-Using this file the test can be skipped on systems with TPM 1.2.
+$ grep "task_pid_nr" kernel/audit*.c
+audit.c:       task_pid_nr(current),
+auditfilter.c: pid = task_pid_nr(current);
+auditsc.c:     audit_log_format(ab, " pid=%u", task_pid_nr(current));
 
-Signed-off-by: Michal Suchanek <msuchanek@suse.de>
+For single-thread applications, the process id (pid) and the thread
+group id (tgid) are the same. However, on multi-thread applications,
+task_pid_nr() returns the current thread id (user-space's TID), while
+task_tgid_nr() returns the main thread id (user-space's PID). Since
+the users are more interested in the process id (pid), rather than the
+thread id (tid), this patch converts these callers to the correct method.
+
+Link: https://github.com/linux-audit/audit-kernel/issues/126
+
+Reviewed-by: Richard Guy Briggs <rgb@redhat.com>
+Signed-off-by: Ricardo Robaina <rrobaina@redhat.com>
 ---
- tools/testing/selftests/tpm2/test_smoke.sh | 2 ++
- 1 file changed, 2 insertions(+)
+V1 -> V2: Added a more detailed commit description
 
-diff --git a/tools/testing/selftests/tpm2/test_smoke.sh b/tools/testing/selftests/tpm2/test_smoke.sh
-index 58af963e5b55..e5e3386077d9 100755
---- a/tools/testing/selftests/tpm2/test_smoke.sh
-+++ b/tools/testing/selftests/tpm2/test_smoke.sh
-@@ -5,5 +5,7 @@
- ksft_skip=4
+ kernel/audit.c       | 2 +-
+ kernel/auditfilter.c | 2 +-
+ kernel/auditsc.c     | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/kernel/audit.c b/kernel/audit.c
+index e7a62ebbf4d1..9f6b86acab62 100644
+--- a/kernel/audit.c
++++ b/kernel/audit.c
+@@ -1612,7 +1612,7 @@ static void audit_log_multicast(int group, const char *op, int err)
+ 	cred = current_cred();
+ 	tty = audit_get_tty();
+ 	audit_log_format(ab, "pid=%u uid=%u auid=%u tty=%s ses=%u",
+-			 task_pid_nr(current),
++			 task_tgid_nr(current),
+ 			 from_kuid(&init_user_ns, cred->uid),
+ 			 from_kuid(&init_user_ns, audit_get_loginuid(current)),
+ 			 tty ? tty_name(tty) : "(none)",
+diff --git a/kernel/auditfilter.c b/kernel/auditfilter.c
+index d6ef4f4f9cba..470041c49a44 100644
+--- a/kernel/auditfilter.c
++++ b/kernel/auditfilter.c
+@@ -1344,7 +1344,7 @@ int audit_filter(int msgtype, unsigned int listtype)
  
- [ -e /dev/tpm0 ] || exit $ksft_skip
-+read tpm_version < /sys/class/tpm/tpm0/tpm_version_major
-+[ "$tpm_version" == 2 ] || exit $ksft_skip
+ 			switch (f->type) {
+ 			case AUDIT_PID:
+-				pid = task_pid_nr(current);
++				pid = task_tgid_nr(current);
+ 				result = audit_comparator(pid, f->op, f->val);
+ 				break;
+ 			case AUDIT_UID:
+diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+index 6f0d6fb6523f..cd57053b4a69 100644
+--- a/kernel/auditsc.c
++++ b/kernel/auditsc.c
+@@ -2933,7 +2933,7 @@ void __audit_log_nfcfg(const char *name, u8 af, unsigned int nentries,
+ 	audit_log_format(ab, "table=%s family=%u entries=%u op=%s",
+ 			 name, af, nentries, audit_nfcfgs[op].s);
  
- python3 -m unittest -v tpm2_tests.SmokeTest
+-	audit_log_format(ab, " pid=%u", task_pid_nr(current));
++	audit_log_format(ab, " pid=%u", task_tgid_nr(current));
+ 	audit_log_task_context(ab); /* subj= */
+ 	audit_log_format(ab, " comm=");
+ 	audit_log_untrustedstring(ab, get_task_comm(comm, current));
 -- 
 2.46.0
 
