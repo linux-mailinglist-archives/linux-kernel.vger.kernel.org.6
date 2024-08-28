@@ -1,214 +1,114 @@
-Return-Path: <linux-kernel+bounces-305105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF8B4962994
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 16:01:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8A7F962997
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 16:01:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F6CF1C23E26
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 14:01:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FF2C1F2517B
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 14:01:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE773187850;
-	Wed, 28 Aug 2024 14:01:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE613188CAE;
+	Wed, 28 Aug 2024 14:01:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hQzo0utK"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="baJSbmDs"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B06A16BE06;
-	Wed, 28 Aug 2024 14:01:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0285013BAC3
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 14:01:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724853689; cv=none; b=iuaZOY9Ds9ssRVlUgDqNeoe5wn3dl3AvvI92bquurLKqx/lYmDrfaVMzgKblMcvlY9ypiZF2Cq6lJjqoG6dhwYSNFRXEei3D1EQ+r8a/4hCNqlWiN8XtQ3EK/x1ndG1NjhvD32rD/trQdKFbGPFmqCNOGA7+0ci3+uMyxl81UB4=
+	t=1724853708; cv=none; b=n/G87h0rzUTPvd+uGZM2wNqBoMo/gT6gnZcMZZHvDOajKKlEl52h8eVdcBMvoizJw8ipkhV6UptpY00lWkzRQdLYFHUSACgF1Wtm7fcB6v+0Cmm2pMK1zWFnHz+KZ0viCFRAdfm9+fCCjED1dAH6KvL9ocBU8i6cH3E//vVo0yo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724853689; c=relaxed/simple;
-	bh=nRr179BtBxb/Y/0dnj/sJX6MHVC7tZBnmMjP//Gtkks=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ESof9JPX3wJGEuXCGOrYEx+qZ7PQpcpUfF8QHyT7ACJcHVegsfQlkIrJKdp3YUBTs8ssT+/NcJ9GIpk4NzhxZxZmEIqv8fg8VTlSDffGRaVrauu+Vs8oIYZ0Fdi7wxBiNoGUMyLihT6A8+NKjGSr4Z3STA25Ci6e9VSD2SJxneU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hQzo0utK; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-533461323cdso7853777e87.2;
-        Wed, 28 Aug 2024 07:01:26 -0700 (PDT)
+	s=arc-20240116; t=1724853708; c=relaxed/simple;
+	bh=V/Wy18YR5ke/o9Xi8LgbZDbzUDBROCTr9RH1OmbZup4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=q1NB9CvX+VB3Gy1a63L40pRy1D3LWXRU3Y1X734u0rBqMSWkviC8/HQC5O+ShRs+EfWdIsAydG7/ibUC/bNYr4XOVY7vvQENSBGTtsbM/y6vD9QhKxLpBmiWMT3T9rGlOXr/N533ExNdZR5IjNZoXko0Mqo3ZCeMcE3KRMXHcx8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=baJSbmDs; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5333b2fbedaso2707535e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 07:01:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724853685; x=1725458485; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ty49zj19B9dflfxgkTafzOnR24yLpnVjka8nQSk8PJM=;
-        b=hQzo0utK09pkBOWuZu3Ij/nEmr3lL6NV8rQtSB1vYv1JJI5189mYl7RN3TrhOjXrnr
-         nEc+0n1nSK6iokhAif/x/bNnSZhTmaIKxx3KtMEuK9z5ESv60jzNOa9iAvEDcFfPEGxz
-         arKC2y/HYVBjmgHzxhXnZLvLSBB8dZYPQQr3BrxINqanqRVlnmlD8n3zeyFQQQ1r2FE/
-         XzHNVGEtMz6FMrLQKRHi/XKZZesG1sk7kp5I8fNYNA9QzDdbAeHdyhCRYuXOQvf1+ZBF
-         oomExAEj+ONJ+flgnplK9ScjvHjKLfpnta7kkbiVQzX1yah3nU9XzB9jQrIFAf8l0yuw
-         PJZA==
+        d=suse.com; s=google; t=1724853704; x=1725458504; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Yz/ibjJeKSSnXM/JUAR1kWRXaxDhHhqY4dbSHAOlf9M=;
+        b=baJSbmDs1Zanm6PC8MudL7XTvoqv8x7jKPGyRlClW59ZV//r7B/HqQxACyA8mJ0E/Q
+         mERXL8M+nlRowzxRHuIDmNNtO/FBmbtvlI7vr5i32zCG3Cv4rfxGyM9IcBomjxp6P2Cr
+         PsQrY3grHRKGFjzecVfnv2JMwHH5ZUKgRc6ThGqvsxRQ5ef/d/AdYjI/EktARSo4ch2o
+         1f8IWSWJwZpZk3Tu8woB6FSjyj+F6K85VPd7+7LyeK1SxvGO4ejTN+K2XpAtD3mJPbkL
+         UC+yLwph3Zi2ME/TkCteCyVIw7i/ZDhKv5MimvasUj5d9bbbI+ONv/tvcoyiTK19Wttg
+         fuwg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724853685; x=1725458485;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ty49zj19B9dflfxgkTafzOnR24yLpnVjka8nQSk8PJM=;
-        b=t4ekZRDDdt9Ldgn/ns6HiNDND5+j6FkXsYacGMebWrSmTGpKThJSDKa2BjU3sni7YA
-         4CF0v4QfaKTA+2EX9h8EH7vgtFbVrz0kHAbLnKTvU6aVjWi++1qtmbz9oeTQqUraBdht
-         sXXzsXJxovqyyjozwx2Pk+L5P6SVEYs8thwNCOJEZe+0fCm5jzEZrjJpwSzjeKFW9fQc
-         quzcKTcKIil/Nsdnl4xFiREcVYpSP3jxY/XQCiXlNBz02R7B7WADX351K5aJHi6N6zE3
-         K/r5WLL5cUUZMCGF/B85AXnDx5SVp6dgtpz6vzari6Uxr56cPAfFvQyjS+ZX+mRQ3PYz
-         z7+A==
-X-Forwarded-Encrypted: i=1; AJvYcCWAswsXxaxQQ3U+ksgrAoCjnjY270TUBAqsRCoBrvQxkWW9i0zEHmBG5eZRNrdZ4nqc1VAAWmHMtXdM@vger.kernel.org, AJvYcCWIXWXAumVdmXrDf/mifCgYvQz553Rsz0IEAIM7D1tCqbEMYksFuW2UJo9DsuCIBi4AT6O61f2yUwEOKAWF@vger.kernel.org, AJvYcCWnFYENpXix2z9Fhvmahzq8gWZLP432i65UCRDLDe4uhge6NsrHHZqGNAA/h8PDDGzTZTeYBw11Mqj2@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxRzAhmaH1j4TC/0cPHaFMk1fXVXGWQzmOg/iaSDple1fj04KG
-	Uz59PIyGUiVXeJhMg0F6OApNIbMEHqQWQTeOBhA+qxkockcZWn3S
-X-Google-Smtp-Source: AGHT+IHa7wPRTvnz4K3W76cG3whCxm5EYPjZMMXK9d4KVx/23yQwdaIE4SXzEuVIMm0UDrqfYzoA/A==
-X-Received: by 2002:a05:6512:3b13:b0:530:ac6e:ea2f with SMTP id 2adb3069b0e04-5343885f5camr12019358e87.37.1724853681550;
-        Wed, 28 Aug 2024 07:01:21 -0700 (PDT)
-Received: from vamoiridPC ([2a04:ee41:82:7577:4c6b:aa66:d4d1:a1d2])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a86e549ccebsm250466566b.84.2024.08.28.07.01.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2024 07:01:20 -0700 (PDT)
-From: Vasileios Amoiridis <vassilisamir@gmail.com>
-X-Google-Original-From: Vasileios Amoiridis <vamoirid@vamoiridPC>
-Date: Wed, 28 Aug 2024 16:01:19 +0200
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Vasileios Amoiridis <vassilisamir@gmail.com>, jic23@kernel.org,
-	lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, ang.iglesiasg@gmail.com,
-	linus.walleij@linaro.org, biju.das.jz@bp.renesas.com,
-	javier.carrasco.cruz@gmail.com, semen.protsenko@linaro.org,
-	579lpy@gmail.com, ak@it-klinger.de, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 6/7] iio: pressure: bmp280: Add data ready trigger
- support
-Message-ID: <20240828140119.GB4934@vamoiridPC>
-References: <20240823181714.64545-1-vassilisamir@gmail.com>
- <20240823181714.64545-7-vassilisamir@gmail.com>
- <ZsjrxLlhmx-TzwXF@smile.fi.intel.com>
- <20240824120222.GG9644@vamoiridPC>
- <ZsxXvGy4GNrZWs-D@smile.fi.intel.com>
+        d=1e100.net; s=20230601; t=1724853704; x=1725458504;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Yz/ibjJeKSSnXM/JUAR1kWRXaxDhHhqY4dbSHAOlf9M=;
+        b=pYEsB3n8h1Wl/4GJ6pPNX7ziPPBVwtb3E8pcE5lE1ztpJtxGrzViHImwyTuGK0HDo4
+         TadxRzACUzxBMaaWinERYUcw9UTO1mi1p99CtAnlIA/h2yFRyx5iPNLz4mDeALu56uAn
+         ld1iIVNjY9bFIpDlZt9sNJesegYKVtah6zuC+Njj94zjwiRFUlNlYcbYDte5n5N/kXl5
+         kH7qqU48QDRosOHa6WAgTLPoexahG3SBfhuos6Sn+IzAvHmvMxq7/WevAjxRRe2qf9+y
+         Y9a1IUDeX0gXd8HNcPlGgfZ+CW1y0YD9YEIClANX1p0EoDOk9/T5mBr5obrmm5Q3kfkJ
+         8vGw==
+X-Forwarded-Encrypted: i=1; AJvYcCUNOh+mq7UubLkIrv4bQcLZQ6lhyKYTFikbndltfW8DvjYQhaYrpazsj2ZDBCIow5tbBSixr+5neFQBkkU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxow/9wW2bKQbzGwh1fvysksg5EADZNadp6xHpu/UKelWlyutjy
+	EsED90nZ8Py8BpG8xhJFZTLm1gs/xnOpiVg0ZFCn4xzWgeIxpo/6gqc27n7TLNk=
+X-Google-Smtp-Source: AGHT+IHcKCNBrrb4V9Cp57xz1/wEeaxh4KI4YfsCOBvju9zEuyDvwAodbuqKUKWsyZSFfDFIfw8cxw==
+X-Received: by 2002:a05:6512:1595:b0:52c:88d7:ae31 with SMTP id 2adb3069b0e04-5346c763611mr1757423e87.48.1724853702167;
+        Wed, 28 Aug 2024 07:01:42 -0700 (PDT)
+Received: from [10.20.4.146] (212-5-158-46.ip.btc-net.bg. [212.5.158.46])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a88a48d4a39sm34478966b.12.2024.08.28.07.01.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 28 Aug 2024 07:01:41 -0700 (PDT)
+Message-ID: <135b7be6-b31a-4104-abd2-986114323745@suse.com>
+Date: Wed, 28 Aug 2024 17:01:38 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZsxXvGy4GNrZWs-D@smile.fi.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 4/4] x86/cacheinfo: Clean out init_cache_level()
+To: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>, x86@kernel.org
+Cc: Andreas Herrmann <aherrmann@suse.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Chen Yu <yu.c.chen@intel.com>,
+ Len Brown <len.brown@intel.com>, Radu Rendec <rrendec@redhat.com>,
+ Pierre Gondois <Pierre.Gondois@arm.com>, Pu Wen <puwen@hygon.cn>,
+ "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+ Sudeep Holla <sudeep.holla@arm.com>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ Will Deacon <will@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
+ Huang Ying <ying.huang@intel.com>, Ricardo Neri <ricardo.neri@intel.com>,
+ linux-kernel@vger.kernel.org
+References: <20240827051635.9114-1-ricardo.neri-calderon@linux.intel.com>
+ <20240827051635.9114-5-ricardo.neri-calderon@linux.intel.com>
+From: Nikolay Borisov <nik.borisov@suse.com>
+Content-Language: en-US
+In-Reply-To: <20240827051635.9114-5-ricardo.neri-calderon@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 26, 2024 at 01:23:56PM +0300, Andy Shevchenko wrote:
-> On Sat, Aug 24, 2024 at 02:02:22PM +0200, Vasileios Amoiridis wrote:
-> > On Fri, Aug 23, 2024 at 11:06:28PM +0300, Andy Shevchenko wrote:
-> > > On Fri, Aug 23, 2024 at 08:17:13PM +0200, Vasileios Amoiridis wrote:
-> 
-> ...
-> 
-> > > > +static int __bmp280_trigger_probe(struct iio_dev *indio_dev,
-> > > > +				  const struct iio_trigger_ops *trigger_ops,
-> > > > +				  int (*int_config)(struct bmp280_data *data),
-> > > 
-> > > > +				  irqreturn_t (*irq_thread_handler)(int irq, void *p))
-> > > 
-> > > irq_handler_t
-> > 
-> > But the function returns an irqreturn_t type, no?
-> 
-> The type of the last parameter is irq_handler_t, no need to open code it.
-> 
-> ...
-> 
-> > > > +	fwnode = dev_fwnode(data->dev);
-> > > > +	if (!fwnode)
-> > > > +		return -ENODEV;
-> > > 
-> > > Why do you need this? The below will fail anyway.
-> > 
-> > Because If I don't make this check then fwnode might be garbage and I will
-> > pass garbage to the fwnode_irq_get() function. Or do I miss something?
-> 
-> Yes, the function validates fwnode before use. So, please drop unneeded (or
-> even duplicate) check.
-> 
-> ...
-> 
-> > > > +	irq = fwnode_irq_get(fwnode, 0);
-> > > > +	if (!irq)
-> > > 
-> > > Are you sure this is correct check?
-> > > 
-> > Well, I think yes, because the function return either the Linux IRQ number
-> > on success or a negative errno on failure.
-> 
-> Where is 0 mentioned in this?
-> 
-> > https://elixir.bootlin.com/linux/v6.10.6/source/drivers/base/property.c#L987
-> > 
-> > > > +		return dev_err_probe(data->dev, -ENODEV,
-> > > 
-> > > Shadowed error code.
-> > 
-> > I am not sure I understand what you mean here. You mean that there is no
-> > chance that the first one will pass and this one will fail?
-> 
-> -ENODEV is not what fwnode_irq_get() returns on error.
-> 
-> > > > +				     "No interrupt found.\n");
-> 
-> ...
-> 
-> > > > +	desc = irq_get_irq_data(irq);
-> > > > +	if (!desc)
-> > > > +		return -EINVAL;
-> > > 
-> > > When may this fail?
-> > 
-> > I think that this will fail when Linux were not able to actually
-> > register that interrupt.
-> 
-> Wouldn't fwnode_irq_get() fail already?
-> 
 
-Hi Andy,
 
-By looking at it again, I didn't reply correct here. This function
-internally calls the irq_to_desc() which basically returns the
-irq desctiptor for this irq. This function can return NULL in
-case the interrupt is not found in the maple tree (CONFIG_SPARSE_IRQ)
-or in case the interrupt number is bigger than the NR_IRQs which
-the irq controller can handle (!CONFIG_SPARSE_IRQ).
+On 27.08.24 г. 8:16 ч., Ricardo Neri wrote:
+> init_cache_level() no longer has a purpose on x86. It no longer needs to
+> set num_leaves, and it never had to set num_levels, which was unnecessary
+> on x86.
+> 
+> Replace it with "return 0" simply to override the weak function, which
+> would return an error.
+> 
+> Reviewed-by: Len Brown <len.brown@intel.com>
+> Signed-off-by: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
 
-So in my opinion, it makes sense to keep this check.
+Reviewed-by: Nikolay Borisov <nik.borisov@suse.com>
 
-Cheers,
-Vasilis
-
-https://elixir.bootlin.com/linux/v6.10.6/source/kernel/irq/chip.c#L155
-
-> ...
-> 
-> > > 	if (ret)
-> > > 		dev_err(data->dev, "Could not enable/disable interrupt\n");
-> 
-> Btw you may use str_enable_disable() here.
-> 
-> > > 	return ret;
-> > > 
-> > > ?
-> > 
-> > All the other if statements follow the style that I typed. If I
-> > follow yours, will make it different just for this one, does it
-> > make sense?
-> 
-> When a comment is given, it's assumed that the _full_ patch (or patch series)
-> should be revisited for it. Or should I add to every comment something like
-> this:
-> 
-> "Please, check the entire code for the same or similar case and amend
-> accordingly."
-> 
-> ?
-> 
-> -- 
-> With Best Regards,
-> Andy Shevchenko
-> 
-> 
+<snip>
 
