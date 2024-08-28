@@ -1,184 +1,172 @@
-Return-Path: <linux-kernel+bounces-304713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1D4E9623DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:47:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D601A9623E3
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:47:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C0DFB21046
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 09:47:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91647285F5A
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 09:47:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9072916A396;
-	Wed, 28 Aug 2024 09:47:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB2811684A7;
+	Wed, 28 Aug 2024 09:47:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="or4cHeG4"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Iy002u14"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63D8C16728E
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 09:47:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B621166F37;
+	Wed, 28 Aug 2024 09:47:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724838428; cv=none; b=Hgqm05GfyR50bGze2uxScl3U0y64ucvPLclmRNA4FQ8jGe4ruWZTE8+cek7c50TcHFh0YF25ZPxYD529a7aRB+4rIPOGu8gzi4tS2yS5gnkKQv8LawoJG9L0RWXNbbKDk5HuZv0ppa8LhqpepiMaZQKGglIeMGxt55yWvFmYkl4=
+	t=1724838446; cv=none; b=t4jZ7Av+K+NsITPdGxPSYFbiwDnno6Xc8OOuqrv24ASTv9aYQ6r0LAWFoKQj4bx1/iuKcifj6s8U78mumNnbPEnC/zRqMST8tVt3Z7iL+SwqGrdRlH4xEEnQ2Mun+BeSGopysAyjeNE4BjRYU9eBKJbvqQVxNVdE0MS34GCORNc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724838428; c=relaxed/simple;
-	bh=JaahmtBNvMYpYGDI8TfWiHxXUqqgkc9FlY7+LPCUrzE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=p1BvBQ5ngs2TL1n8BGASZvLkag0JV4CCcspEf4Ok/yse08RuPp5EqSPcRKo+gJugDiEonv6sESwwtPzDCNyMr6o2fH4BaQ94BJLoWmajIRg4dSHgdUzOS8FdL/429imespg1upN+M9PH1BP5g/oks/zUV+qNRziVlcvOB91UQw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=or4cHeG4; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-371afae614aso3427978f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 02:47:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724838425; x=1725443225; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:references
-         :in-reply-to:subject:cc:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=f4FnjsYFSElhR+3f7IugFyQV34/agqN5SguHwrwKdRE=;
-        b=or4cHeG4LREv2WCATRM1JdsEkUyYTm03bcdXlgfrhCGX7AhQY/hHX8ao5qn7FcSorp
-         8x6uYfJmWkMAJNUKHOzdPS0aCXEsYbXGf+vfPVjiQ7LHqIQC3Pigmin84W3YKpBbDHbz
-         bxB9d6eRmh69mx+NPI5KF20gGCthAlElKQDhid26YhB03C71tGGeAF2t3sZs3CtkzE1Y
-         WnqJouMgGhxNRABuLDkza4yfVVa8D/ERhDSmfhrx9Wnh7S3RVj9G7YoZ7czx8jmyc9AQ
-         Deyz1Jk/woPBYJhVHr4cBQRJUCKbupX2j/7hov/FMbYU2Zbpf80uou5q6/7NsyBgIVEj
-         4mxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724838425; x=1725443225;
-        h=content-transfer-encoding:mime-version:message-id:date:references
-         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=f4FnjsYFSElhR+3f7IugFyQV34/agqN5SguHwrwKdRE=;
-        b=kri1LukkGScTDY+I0VgcfZpMT0eVPsJEwAauqfCIBS8sA/RIwk64s9XfumtR5Rnkqy
-         9FMo1C14EnSJX9f037rHyEMlE9oMPx9iYVANUoxgKGGJfkoH8bHsevPBUat0lxri08nZ
-         cd7xlGCpZrce5OiRCnBRCzbCaCNJyTHJANtHMDESmCyH3beS/MJ308905QFFj3yVvwS1
-         XNF6lRfye76xmHCGomvz+iNRkxZhO9L4CaHoQqSUigIxei4P+uaJPmPxb5PjbuPG9LmG
-         wV8mB6ghKUsubWNiCljmIR4MeJ5qInyGRKl2yv6jmzDNQCrI8TpuoK4g4j7LP0dQuwb+
-         EO1A==
-X-Gm-Message-State: AOJu0Yz+TE9HSl4gfo7W/xKy2tKHBY1tRQ8bif3vFJk/Rh6NXmWQ11z8
-	aILZm5nz1rYRXTUOyvh68umRtiXiFVjw1NS0jYdAivN9+5JOW1gkgzJo9/KfDdE=
-X-Google-Smtp-Source: AGHT+IH0KC6Z0HHx3zEIhScnAd0zosTOFRut+SoaKBSOi0hUzOh0yIoDnTQbgYeiAVq0L8twAXC6cQ==
-X-Received: by 2002:adf:f7d2:0:b0:368:77f9:fb34 with SMTP id ffacd0b85a97d-37311857bf9mr9665467f8f.15.1724838424122;
-        Wed, 28 Aug 2024 02:47:04 -0700 (PDT)
-Received: from draig.lan ([85.9.250.243])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3730813c0dcsm15170235f8f.37.2024.08.28.02.47.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2024 02:47:03 -0700 (PDT)
-Received: from draig (localhost [IPv6:::1])
-	by draig.lan (Postfix) with ESMTP id 999935F796;
-	Wed, 28 Aug 2024 10:47:02 +0100 (BST)
-From: =?utf-8?Q?Alex_Benn=C3=A9e?= <alex.bennee@linaro.org>
-To: D Scott Phillips <scott@os.amperecomputing.com>
-Cc: linux-kernel@vger.kernel.org,  kvm@vger.kernel.org,
-  linux-arm-kernel@lists.infradead.org,  kvmarm@lists.linux.dev,
-  maz@kernel.org,  arnd@linaro.org
-Subject: Re: [PATCH 1/3] ampere/arm64: Add a fixup handler for alignment
- faults in aarch64 code
-In-Reply-To: <86frqpk6d7.fsf@scott-ph-mail.amperecomputing.com> (D. Scott
-	Phillips's message of "Tue, 27 Aug 2024 14:23:16 -0700")
-References: <20240827130829.43632-1-alex.bennee@linaro.org>
-	<20240827130829.43632-2-alex.bennee@linaro.org>
-	<86frqpk6d7.fsf@scott-ph-mail.amperecomputing.com>
-Date: Wed, 28 Aug 2024 10:47:02 +0100
-Message-ID: <87plpt3rop.fsf@draig.linaro.org>
+	s=arc-20240116; t=1724838446; c=relaxed/simple;
+	bh=yfMj4pW5P/0JNbbT2dV5VwJXg//vOMNzR88TEbLrb4Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=cUMSt+BbzzGpN7tjSH2KCnN2QHg4c76wm9Y0jRzV6YWbW7hWQE5QliL//cRfpCrBPLQ/5UMp7xK2uvCGZRniXsFpGMeLOqjPIwrY5bIoyCxA4RzCoxf7WDRtjBv4K33YfxRauL9cRpkv7Q74J+39GggZCBTciDBlGqjDgaRWX/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Iy002u14; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47RLa8Vd003338;
+	Wed, 28 Aug 2024 09:47:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	wFrCP06yThMc9EUNQaHvP6RM6Ru44h3Cwde2qdVIPg8=; b=Iy002u14I9Dn0CL9
+	4FMVMqIMRSdotoyDQbbcZdg3RLZmW3vZttY551Q8tcn+BZ+bgfB1mKqz4aCxsDPd
+	EV2J3sDPHjT8AuupszFnoRpBEtwGwvKieP4660H6fDIL1K9jSct0J92tFw7UxArC
+	5n5mTce+6mFhqCwVdRXXamG5PDx84dL4rrNnH9nzWWf9cm1hwSDLlR7RiQbqKLG1
+	/PHIJSvzvyFDXLHB6ZD/foZmR0pRTvgBJwLq4xR1EIcL34xmXgUJADH616hZok92
+	h4N1FjT8Biw4lPjpEJMzIi74qhH3Pn645l8b5/1q5xgoQEBrlL2YiGasS4Wo3wPI
+	CKdudA==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 419puuhc4d-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 28 Aug 2024 09:47:15 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47S9lE2Z022003
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 28 Aug 2024 09:47:14 GMT
+Received: from [10.239.29.179] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 28 Aug
+ 2024 02:47:08 -0700
+Message-ID: <2c23f7e8-c407-4c5c-a8e2-65be98f9c92b@quicinc.com>
+Date: Wed, 28 Aug 2024 17:47:04 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/8] phy: qcom: qmp: Add phy register and clk setting for
+ x1e80100 PCIe3
+To: Konrad Dybcio <konradybcio@kernel.org>, <manivannan.sadhasivam@linaro.org>,
+        <vkoul@kernel.org>, <kishon@kernel.org>, <robh@kernel.org>,
+        <andersson@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>, <abel.vesa@linaro.org>,
+        <quic_msarkar@quicinc.com>, <quic_devipriy@quicinc.com>
+CC: <dmitry.baryshkov@linaro.org>, <kw@linux.com>, <lpieralisi@kernel.org>,
+        <neil.armstrong@linaro.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-phy@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>
+References: <20240827063631.3932971-1-quic_qianyu@quicinc.com>
+ <20240827063631.3932971-4-quic_qianyu@quicinc.com>
+ <2d3f3da1-713e-4378-b87d-11f10f0f9590@kernel.org>
+Content-Language: en-US
+From: Qiang Yu <quic_qianyu@quicinc.com>
+In-Reply-To: <2d3f3da1-713e-4378-b87d-11f10f0f9590@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: bPaR0HwOi_PMeNhFKaeI2BPb0mytkZPr
+X-Proofpoint-GUID: bPaR0HwOi_PMeNhFKaeI2BPb0mytkZPr
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-28_03,2024-08-27_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 clxscore=1015 impostorscore=0 phishscore=0 adultscore=0
+ bulkscore=0 suspectscore=0 lowpriorityscore=0 spamscore=0 mlxlogscore=799
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408280070
 
-D Scott Phillips <scott@os.amperecomputing.com> writes:
 
-> Alex Benn=C3=A9e <alex.bennee@linaro.org> writes:
->
->> From: D Scott Phillips <scott@os.amperecomputing.com>
+On 8/27/2024 6:33 PM, Konrad Dybcio wrote:
+> On 27.08.2024 8:36 AM, Qiang Yu wrote:
+>> Currently driver supports only x4 lane based functionality using tx/rx and
+>> tx2/rx2 pair of register sets. To support 8 lane functionality with PCIe3,
+>> PCIe3 related QMP PHY provides additional programming which are available
+>> as txz and rxz based register set. Hence adds txz and rxz based registers
+>> usage and programming sequences. Phy register setting for txz and rxz will
+>> be applied to all 8 lanes. Some lanes may have different settings on
+>> several registers than txz/rxz, these registers should be programmed after
+>> txz/rxz programming sequences completing.
 >>
->> A later patch will hand out Device memory in some cases to code
->> which expects a Normal memory type, as an errata workaround.
->> Unaligned accesses to Device memory will fault though, so here we
->> add a fixup handler to emulate faulting accesses, at a performance
->> penalty.
+>> Besides, PCIe3 related QMP PHY also requires addtional clk, which is named
+>> as clkref_en. Hence, add this clk into qmp_pciephy_clk_l so that it can be
+>> easily parsed from devicetree during init.
 >>
->> Many of the instructions in the Loads and Stores group are supported,
->> but these groups are not handled here:
->>
->>  * Advanced SIMD load/store multiple structures
->>  * Advanced SIMD load/store multiple structures (post-indexed)
->>  * Advanced SIMD load/store single structure
->>  * Advanced SIMD load/store single structure (post-indexed)
+>> Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
+>> ---
+> [...]
 >
-> Hi Alex, I'm keeping my version of these patches here:
+>> +static const struct qmp_phy_init_tbl x1e80100_qmp_gen4x8_pcie_rx_tbl[] = {
+>> +	QMP_PHY_INIT_CFG_LANE(QSERDES_V6_20_RX_DFE_CTLE_POST_CAL_OFFSET, 0x3a, 1),
+> 1 -> BIT(0)
 >
-> https://github.com/AmpereComputing/linux-ampere-altra-erratum-pcie-65
+> [...]
 >
-> It looks like the difference to the version you've harvested is that
-> I've since added handling for these load/store types:
->
-> Advanced SIMD load/store multiple structure
-> Advanced SIMD load/store multiple structure (post-indexed)
-> Advanced SIMD load/store single structure
-> Advanced SIMD load/store single structure (post-indexed)
-
-Are you going to roll in the fixes I added or should I re-spin with your
-additional handling?
-
-> I've never sent these patches because in my opinion there's too much
-> complexity to maintain upstream for this workaround, though now they're
-> here so we can have that conversation.
-
-It's not totally out of the scope of the kernel to do instruction
-decoding to workaround things that can't be executed directly. There is
-already a bunch of instruction decode logic to handle stepping over
-instruction probes. The 32 bit ARM code even has a complete user-space
-alignment fixup handler driver by procfs.
-
-It might make sense to share some of the logic although of course the
-probe handler and the misaligned handler are targeting different sets of
-instructions.
-
-The core kernel code also has a bunch of unaligned load/store helper
-functions that could probably be re-used as well to further reduce the
-code delta.
-
-> Finally, I think a better approach overall would have been to have
-> device memory mapping in the stage 2 page table, then booting with pkvm
-> would have this workaround for both the host and guests. I don't think
-> that approach changes the fact that there's too much complexity here.
-
-That would be a cleaner solution for pKVM although we would like to see
-it ported to Xen as well. There is a tension there between having a
-generic fixup library and something tightly integrated into a given
-kernel/hypervisor.
-
-I don't think instruction decoding is fundamentally too complicated for
-a kernel - although I may be biased as a QEMU developer ;-). However if
-it is to be taken forward I think it should probably come with an
-exhaustive test case to exercise the decoder and fixup handler. The
-fixes so far were found by repeatedly iterating on vkmark and seeing
-were things failed and fixing when they came up.
-
-I will leave it to the kernel maintainers to decide if this is an
-acceptable workaround or not.
-
-I do have two remaining questions:
-
-  - Why do AMD GPUs trigger this and not nVidia? Do they just have their
-    own fixup code hidden in the binary blob? Would Nouveau suffer
-    similar problems?
-
-  - Will Arm SoC PCI implementations continue to see these edge cases
-    that don't affect the x86 world? This is not the first Arm machine
-    with PCI to see issues. In fact of the 3 machines I have (SynQuacer,
-    MachiatoBin and AVA) all have some measure of PCI "fun" to deal
-    with.
+>> +	/* Set to true for programming all 8 lanes using txz/rxz registers */
+>> +	bool lane_broadcasting;
+> This is unnecessary because you call qmp_configure_lane conditionally,
+> but that function has a nullcheck built in
+Yes, there is null pointer check in qmp_configure_lane, will remove
+lane_broadcating check.
+>> +
+>>   	/* resets to be requested */
+>>   	const char * const *reset_list;
+>>   	int num_resets;
+>> @@ -2655,6 +2815,8 @@ struct qmp_pcie {
+>>   	void __iomem *rx;
+>>   	void __iomem *tx2;
+>>   	void __iomem *rx2;
+>> +	void __iomem *txz;
+>> +	void __iomem *rxz;
+>>   	void __iomem *ln_shrd;
+>>   
+>>   	void __iomem *port_b;
+>> @@ -2700,7 +2862,7 @@ static inline void qphy_clrbits(void __iomem *base, u32 offset, u32 val)
+>>   
+>>   /* list of clocks required by phy */
+>>   static const char * const qmp_pciephy_clk_l[] = {
+>> -	"aux", "cfg_ahb", "ref", "refgen", "rchng", "phy_aux",
+>> +	"aux", "cfg_ahb", "ref", "refgen", "rchng", "phy_aux", "clkref_en",
+> Why not just put in TCSR_PCIE_8L_CLKREF_EN as "ref"? It's downstream
+> of the XO anyway.
+Yes, TCSR_PCIE_8L_CLKREF_EN is source from XO, will update patch as
+your comments.
 
 Thanks,
-
---=20
-Alex Benn=C3=A9e
-Virtualisation Tech Lead @ Linaro
+Qiang
+>
+> [...]
+>
+>>   	const struct qmp_phy_cfg *cfg = qmp->cfg;
+>> @@ -3700,6 +3907,11 @@ static void qmp_pcie_init_registers(struct qmp_pcie *qmp, const struct qmp_phy_c
+>>   
+>>   	qmp_configure(qmp->dev, serdes, tbls->serdes, tbls->serdes_num);
+>>   
+>> +	if (cfg->lane_broadcasting) {
+> All these ifs can be unconditional
+>
+> Konrad
 
