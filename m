@@ -1,114 +1,124 @@
-Return-Path: <linux-kernel+bounces-305330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DF95962D03
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 17:52:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA38A962D09
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 17:53:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40F141C23B2C
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:52:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 802F01F28434
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:53:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A2941A3BBF;
-	Wed, 28 Aug 2024 15:52:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E6F11A38E0;
+	Wed, 28 Aug 2024 15:53:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K+idIZXh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YSHlBo+l"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0DAE1A2572
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 15:52:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FD2036130;
+	Wed, 28 Aug 2024 15:53:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724860352; cv=none; b=MQkcbWFLn6mVEl73d5g8CCi2IIZ02T+TSlzCoOUNdaeAKwWyKcXtSGZHNVBNgfzihREqPVNUEuXfQtLgnwiM+swWfDRARIuh9XvyRHxmo7ZfbHc/K4Fi8/DAqhYbsr+mH/g7lfM2VfrKO4/HZDAyGEfaB1xPe4frKAFkpKtnbf0=
+	t=1724860423; cv=none; b=lwlY+/Cskz0Fz0zfyEAJ9/3EsbW6T6wuAL0gUDwtuZA0+PmJc341xSCzpgyRcHCB5OzqXYWl2lmYlqZcyQUsG9OkPB2/LFKqlN1KFVMOSMqmEYvswhVAUd6kFgnCV3kGiErno0aV5rp7qke0MirK2LvKqthHJpQbxfIJXBn2BQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724860352; c=relaxed/simple;
-	bh=aLJZstYbMFsoiIlcnF9iYgXbHkoB/kdXa6tTizeKPLA=;
+	s=arc-20240116; t=1724860423; c=relaxed/simple;
+	bh=FceCKpvwCfYxeVjhu7dja8rLnOmk8oo7I++7LCS81Os=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gHe4IEaoiK8ufZwUuK5hZ8hJmgN7/pzlg0HPMqoNW/kr6BdBCJX2SlsAB7mUkvKJGo63PKxyrgtcqSUlqD67sm0qchxpybcSa11ChkKL/NL4SWQlhbBFOD0Kuet3rw1zOl8lEz7htNL7HWbP+z7puTrhPHPjiJRGEBek/w5JdWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K+idIZXh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED034C4CEC2;
-	Wed, 28 Aug 2024 15:52:30 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=bpGreNAnheUVzblTwTNOyv5uwyvqbPL2VAmXW4zBXu+EpSZs2b5AFSEAkVwqREq+wB7gy3GbiD8G3ta9Q/fQRhVmbKfEEmr3/8AjsxlpHOpnjWGDqd8ZGYrK0w/d4G5BiwaixQ45sE8PWRrx1oyKIEn1WW4eCI7fsYb3+glj6lM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YSHlBo+l; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31BEEC4CEC4;
+	Wed, 28 Aug 2024 15:53:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724860351;
-	bh=aLJZstYbMFsoiIlcnF9iYgXbHkoB/kdXa6tTizeKPLA=;
+	s=k20201202; t=1724860423;
+	bh=FceCKpvwCfYxeVjhu7dja8rLnOmk8oo7I++7LCS81Os=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=K+idIZXhm71qDaiB+CSRtRkiCrA21en25/YuTiXq4wMjDxpUitQFB/2D2gN8oUbdU
-	 JPG7wE1lHOx8AgAyo/QB+EZ1t2YoiREcVuhOHIwEQ/Y9ipfMgwb8NZPA5XMH3W5tZ/
-	 JmFuwCnj2YXHJrnUlBcucITQZSFEySs+smgK6SRG1aEmTAz9AvpNt/8QJo+apHLNJQ
-	 3km0M4JMnfCmZFUemMQ3zVyhkbLL4kSURg9n6yMA4VBWyWdgCxPgQ5tBZtN+VsCi7A
-	 YNiuHVmYexJ2yYZeYX01IgD8BOPftu4jArnYwLx+yHmYPaChULyrffo9QUfOvdkALc
-	 oHMANM+Taynmw==
-Date: Wed, 28 Aug 2024 09:52:28 -0600
-From: Keith Busch <kbusch@kernel.org>
-To: Puranjay Mohan <pjy@amazon.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
-	Sagi Grimberg <sagi@grimberg.me>, linux-nvme@lists.infradead.org,
-	linux-kernel@vger.kernel.org, puranjay@kernel.org
-Subject: Re: [PATCH v2] nvme: check if the namespace supports metadata in
- nvme_map_user_request()
-Message-ID: <Zs9HvJh8GRvYilFB@kbusch-mbp>
-References: <20240827132327.1704-1-pjy@amazon.com>
- <Zs8360kRPGa1B5xy@kbusch-mbp>
- <mb61p1q28y88y.fsf@amazon.com>
+	b=YSHlBo+lH7EtoI6uF+gIKcgjd9oBGCAmJJm51PU7R5og/9T8YIhusI+lD6Hjb8iLY
+	 hAtNShc4mk69/Qc56HZoyml4uqh0lO47YpsTrZ4etaMElT9d+jlndSc/aHWkasKc+D
+	 FV2ucl0nT3Q6yVPGQh/I/y+0jmwJksKsfxZ+7OROHiB2iWyYav4i3Ds10emSgnx5ol
+	 A7CWs3QoFl6kfXs6Ti6gV2IJRdAb8w/tX1vfgZjkT9i/46Exm4qV1f563eSGQh4Wxh
+	 1M5e+xKvpzP8ShQEOfg7M/f91GjOc52bGt4cB3H6My1e9dFCLU9wGhhvvhPlbPsy+i
+	 19ckAowLYmw5w==
+Date: Wed, 28 Aug 2024 16:53:36 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Emanuele Ghidoli <emanuele.ghidoli@toradex.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Maxime Ripard <mripard@kernel.org>,
+	Masahiro Yamada <yamada.masahiro@socionext.com>,
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor.dooley@microchip.com>, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH 3/3] dt-bindings: gpio: simplify GPIO hog nodes schema
+Message-ID: <20240828-goofiness-haven-6d22011353e4@spud>
+References: <20240828-dt-bindings-gpio-hog-v1-0-63b83e47d804@linaro.org>
+ <20240828-dt-bindings-gpio-hog-v1-3-63b83e47d804@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="OayRlMiikjtxs/jT"
+Content-Disposition: inline
+In-Reply-To: <20240828-dt-bindings-gpio-hog-v1-3-63b83e47d804@linaro.org>
+
+
+--OayRlMiikjtxs/jT
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <mb61p1q28y88y.fsf@amazon.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 28, 2024 at 03:31:09PM +0000, Puranjay Mohan wrote:
-> Keith Busch <kbusch@kernel.org> writes:
-> 
-> > On Tue, Aug 27, 2024 at 01:23:27PM +0000, Puranjay Mohan wrote:
-> >> @@ -119,9 +120,13 @@ static int nvme_map_user_request(struct request *req, u64 ubuffer,
-> >>  	struct request_queue *q = req->q;
-> >>  	struct nvme_ns *ns = q->queuedata;
-> >>  	struct block_device *bdev = ns ? ns->disk->part0 : NULL;
-> >> +	bool has_metadata = bdev && meta_buffer && meta_len;
-> >
-> > If this is an admin command, then bdev is NULL, so "has_metadata" is
-> > false.
-> >
-> >>  	struct bio *bio = NULL;
-> >>  	int ret;
-> >>  
-> >> +	if (has_metadata && !blk_get_integrity(bdev->bd_disk))
-> >> +		return -EINVAL;
-> >> +
-> >
-> > Since has_metadata is false, we continue on to process this admin
-> > command, but ignore the user's metadata settings. Do we want to return
-> > error there too?
-> 
-> As an admin command with metadata is an invalid configuration, we can
+On Wed, Aug 28, 2024 at 11:35:59AM +0200, Krzysztof Kozlowski wrote:
+> The core schema in dtschema already strictly defines contents of nodes
+> with "gpio-hog" property (with additionalProperties: false), thus the
+> only thing device schema should do is: define "type: object" and
+> required "gpio-hog".  Make the code a bit simpler by removing redundant
+> parts.
+>=20
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>  .../devicetree/bindings/gpio/fairchild,74hc595.yaml          | 11 ------=
+-----
+>  Documentation/devicetree/bindings/gpio/fsl-imx-gpio.yaml     | 11 ------=
+-----
+>  Documentation/devicetree/bindings/gpio/gpio-pca95xx.yaml     | 11 ------=
+-----
+>  .../devicetree/bindings/gpio/microchip,mpfs-gpio.yaml        | 12 ------=
+------
 
-It's not that it's an invalid configuration. The spec defines the common
-command format allowing admin commands to transfer metadata.
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
 
-There's just no existing spec defined command that makes use of it.
-Nothing stops a vendor specific command from using it. If someone
-tried, the kernel reports success, but we didn't execute the requested
-command.
 
-> ignore the metada and go ahead with the admin command or I can add the
-> following after the above check:
-> 
-> 	if (!bdev && (meta_buffer || meta_len))
->     	return -EINVAL;
-> 
-> I don't know what is the best approach here.
+Cheers,
+Conor.
 
-Yeah, or just do it in one line with the bdev case too:
+--OayRlMiikjtxs/jT
+Content-Type: application/pgp-signature; name="signature.asc"
 
-	bool has_metadata = meta_buffer && meta_len;
-	...
+-----BEGIN PGP SIGNATURE-----
 
-	if (has_metadata && (!bdev || !blk_get_integrity(bdev->bd_disk)))
-		return -EINVAL
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZs9H/wAKCRB4tDGHoIJi
+0r7DAQDw7o8LeA1EG/uppquSI4wvHkpnTbF9vLKnFD2DK5QubgEApnVKe+GiJvsk
+xuyCPYk1pqnyzWfnNVW7zYqynGfKLQ8=
+=DkUp
+-----END PGP SIGNATURE-----
+
+--OayRlMiikjtxs/jT--
 
