@@ -1,154 +1,114 @@
-Return-Path: <linux-kernel+bounces-304783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A62D09624CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 12:24:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60FB79624CB
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 12:24:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D99871C23CA8
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 10:24:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C6C2285B69
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 10:24:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9D6216B74B;
-	Wed, 28 Aug 2024 10:23:39 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FD14158DCD
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 10:23:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67A0C16CD06;
+	Wed, 28 Aug 2024 10:23:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="0FTAnkuq"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50EB8142E6F;
+	Wed, 28 Aug 2024 10:23:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724840619; cv=none; b=chiGjpHHwJKlRAMo/8ZOd8WEcNafnRxFqMuTopC9lxOLOgZYtAiklNgbDoqjxGdlkgD7aPVHyHPVpvdO56MUV3qsXSTZo+YTgqLTjhIh3yO3Phu2ieugYXhH/KSajKSiWpkuF5I6nSwnQleS0wStRu3yUbBUguuY3KuOMUQsmnU=
+	t=1724840613; cv=none; b=a9R7QH3FLPL7sCqXo+OA5+3ZhDD3zBBHdykTLIZRgWK+elxD8EVC+0QRuQnuI9kweOQYuZNL3XxOz6Iyde52ED49xJW1IPtjJ8HqIRlH5ZSFH3SXXhBW5xM2s9iPOp30m7Lrmo0gXiVIpvJl0n+nKJnH6WUQhsmxo5IVdzdcgdg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724840619; c=relaxed/simple;
-	bh=kPzJM2c0Obm6HprXy0/mVlTdPadhsamBGsBFswu7MYo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hu6CYy+oSw5u6fs81JXc+D6YUKDjwGDux61N0CGZEQv/fO5NWKRtJt8iOatkC9KcosdMTp8nXtn3aLx2KdQlCwmbpxe+Nr8btgAifvA+IjmkNDgYcONHnyzLGSBnvcj3zdBmsV6ES0eFaXluX5xo1KjhtTQqiCsAj+n+qAhRFj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E8750DA7;
-	Wed, 28 Aug 2024 03:24:02 -0700 (PDT)
-Received: from [10.57.48.229] (unknown [10.57.48.229])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id ECCC23F73B;
-	Wed, 28 Aug 2024 03:23:34 -0700 (PDT)
-Message-ID: <770da6f7-89f6-49b7-b8db-a7318abbd828@arm.com>
-Date: Wed, 28 Aug 2024 11:23:33 +0100
+	s=arc-20240116; t=1724840613; c=relaxed/simple;
+	bh=v4mNzuXWMR5xVj/YDdlp+dtthC0549x9mum6fXktL+k=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=le8HoVbKT10dg9YNoPWSCmSy0Yu81ltcBikYGORRNgVXqTsCZmKQicQFcaY9A2TynAJqoO9PbvquIK4CAjn2vM3cu1dgurZYIlTtY6yO/07gvStgP5cUtkVo6cI2ByAu4GFt5mM1ENG8xtjhaa1og8X/YKYAiWBfRaMGs/+6NPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=0FTAnkuq; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=aFQK/ZLIDbeLUcGWGrZVvPLgm/ml3PTfZm4/e+yiKXc=; b=0FTAnkuq+zHry0MHA3HaPY0gHg
+	jEqvz5OWzxRwj3v6Bpvrz99N2hOXjox1zDzA+fsuX30tst99rscyOChpM2vRkYIGhksA9fPbUfoX4
+	5luES/5Ns6CW1i0Jy84FETYYSuDCsFuMlC9naAXZh2a4XwffugZa+mlRCZ/QjAarmXET0L9vT+0hP
+	87JAr8GgjJ6y+vX6H8mULY4q/2eWV78eU3R2rHm45R8NovJ5p0qS+XoKgLi6A4pQuxZ7lMWMn7HnO
+	sXtlJTCdbtJOPVAjvsd+B28qHqvkZzMyZvZnf4Co0u2Dbb7qqo/pq8eyZkrpWx0tqxN9DFCCAlupW
+	RD06O70g==;
+Received: from i5e8616cd.versanet.de ([94.134.22.205] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1sjFpo-0004U0-GI; Wed, 28 Aug 2024 12:23:28 +0200
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Alex Bee <knaerzche@gmail.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ linux-media@vger.kernel.org, Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+ linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ Rob Herring <robh@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Subject: Re: (subset) [PATCH 0/3] Add VPU support for RK3128
+Date: Wed, 28 Aug 2024 12:24:38 +0200
+Message-ID: <14376251.lVVuGzaMjS@diego>
+In-Reply-To: <8a5f1856-823b-4cf7-a9fa-1dc6b9b54cd2@gmail.com>
+References:
+ <20240523185633.71355-1-knaerzche@gmail.com>
+ <171690893336.1899981.5081114224300578276.b4-ty@sntech.de>
+ <8a5f1856-823b-4cf7-a9fa-1dc6b9b54cd2@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] sched/deadline: fix the hang in dl_task_of
-To: Huang Shijie <shijie@os.amperecomputing.com>, mingo@redhat.com
-Cc: patches@amperecomputing.com, peterz@infradead.org, juri.lelli@redhat.com,
- vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org,
- bsegall@google.com, mgorman@suse.de, vschneid@redhat.com,
- vineeth@bitbyteword.org, bristot@kernel.org, linux-kernel@vger.kernel.org
-References: <20240828091141.12043-1-shijie@os.amperecomputing.com>
-Content-Language: en-US
-From: Hongyan Xia <hongyan.xia2@arm.com>
-In-Reply-To: <20240828091141.12043-1-shijie@os.amperecomputing.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-On 28/08/2024 10:11, Huang Shijie wrote:
-> When we enable the schedstats, we will meet an OS hang like this:
->    --------------------------------------------------------
-> 	[  134.104253] kernel BUG at kernel/sched/deadline.c:63!
-> 	[  134.132013] ------------[ cut here ]------------
-> 	[  134.133441]  x27: 0000000000000001
-> 	[  134.138048] kernel BUG at kernel/sched/deadline.c:63!
-> 	[  134.146478] x26: 0000000000000001 x25: 0000000000000000 x24: 0000000000000001
-> 	[  134.153607] x23: 0000000000000001 x22: 0000000000000000 x21: 0000000000000001
-> 	[  134.160734] x20: ffff007dbf1b6d00 x19: ffff007dbf1b7610 x18: 0000000000000014
-> 	[  134.162027] ------------[ cut here ]------------
-> 	[  134.167861] x17: 000000009deab6cd x16: 00000000527c9a1c x15: 00000000000000dc
-> 	[  134.172473] kernel BUG at kernel/sched/deadline.c:63!
-> 	[  134.179595] x14: 0000000001200011 x13: 0000000040001000 x12: 0000ffffb6df05bc
-> 	[  134.191760] x11: ffff007dbf1b6d00 x10: ffff0001062dd2e8 x9 : ffff8000801215ac
-> 	[  134.192036] ------------[ cut here ]------------
-> 	[  134.198888] x8 : 0000000000000000 x7 : 0000000000000021 x6 : ffff0001764ed280
-> 	[  134.203498] kernel BUG at kernel/sched/deadline.c:63!
-> 	[  134.210622] x5 : 0000000000000000 x4 : 0000000000000001 x3 : ffff807d3dd24000
-> 	[  134.222787] x2 : 000000028b77a140 x1 : 0000003400000000 x0 : ffff007dbf1b6c80
-> 	[  134.229915] Call trace:
-> 	[  134.232353]  dl_task_of.part.0+0x0/0x10
-> 	[  134.236182]  dl_server_start+0x54/0x158
-> 	[  134.240013]  enqueue_task_fair+0x138/0x420
-> 	[  134.244100]  enqueue_task+0x44/0xb0
-> 	[  134.247584]  wake_up_new_task+0x1c0/0x3a0
-> 	[  134.251584]  kernel_clone+0xe8/0x3e8
-> 	[  134.252022] ------------[ cut here ]------------
-> 	[  134.255156]  __do_sys_clone+0x70/0xa8
-> 	[  134.259764] kernel BUG at kernel/sched/deadline.c:63!
-> 	[  134.263412]  __arm64_sys_clone+0x28/0x40
-> 	[  134.272360]  invoke_syscall+0x50/0x120
-> 	[  134.276101]  el0_svc_common+0x44/0xf8
-> 	[  134.279753]  do_el0_svc+0x28/0x40
-> 	[  134.283058]  el0_svc+0x40/0x150
-> 	[  134.286195]  el0t_64_sync_handler+0x100/0x130
-> 	[  134.290546]  el0t_64_sync+0x1a4/0x1a8
-> 	[  134.294200] Code: 35ffffa2 17ffffe3 d4210000 17ffffb4 (d4210000)
-> 	[  134.300283] ---[ end trace 0000000000000000 ]---
-> 	[  134.304890] Kernel panic - not syncing: Oops - BUG: Fatal exception
-> 	[  134.311147] SMP: stopping secondary CPUs
-> 	[  135.365096] SMP: failed to stop secondary CPUs 8-9,16,30,43,86,88,121,149
-> 	[  135.371884] Kernel Offset: disabled
-> 	[  135.375361] CPU features: 0x00,00100003,80153d29,d75ffea7
-> 	[  135.380749] Memory Limit: none
-> 	[  135.383793] ---[ end Kernel panic - not syncing: Oops - BUG: Fatal exception ]
->    --------------------------------------------------------
+Am Sonntag, 4. August 2024, 18:42:13 CEST schrieb Alex Bee:
+> Hi Heiko
 > 
-> In dl_server_start(), we set the dl_se->dl_server with 1. When schedstats
-> is enabled, in the following:
->     dl_server_start() --> enqueue_dl_entity() --> update_stats_enqueue_dl()
-> 	__schedstats_from_dl_se() -->dl_task_of()
-> 
-> we will meet the BUG_ON.
-> 
-> Since the fair task has already had its own schedstats, there is no need
-> to track anything for the associated dl_server.
-> 
-> So add check in enqueue_dl_entity(), skip the update_stats_enqueue_dl()
-> for a dl_server dl_se.
-> 
-> Tested this patch with memcached in Altra.
-> 
-> Fixes: 5f6bd380c7bd ("sched/rt: Remove default bandwidth control")
-> Signed-off-by: Huang Shijie <shijie@os.amperecomputing.com>
-> ---
-> v1 --> v2:
->     Skip the update_stats_enqueue_dl() for a dl_server dl_se
->     in enqueue_dl_entity().
-> 
->     Btw, the update_stats_{wait_start,wait_end}_dl has already had
->     the dl_server() check.
-> 
->     The v1 link: https://lore.kernel.org/lkml/20240826021115.9284-1-shijie@os.amperecomputing.com/T/
-> ---
->   kernel/sched/deadline.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-> index 0f2df67f710b..cb9bd3a480dd 100644
-> --- a/kernel/sched/deadline.c
-> +++ b/kernel/sched/deadline.c
-> @@ -2002,7 +2002,8 @@ enqueue_dl_entity(struct sched_dl_entity *dl_se, int flags)
->   {
->   	WARN_ON_ONCE(on_dl_rq(dl_se));
->   
-> -	update_stats_enqueue_dl(dl_rq_of_se(dl_se), dl_se, flags);
-> +	if (!dl_server(dl_se))
-> +		update_stats_enqueue_dl(dl_rq_of_se(dl_se), dl_se, flags);
->   
->   	/*
->   	 * Check if a constrained deadline task was activated
+> Am 28.05.24 um 17:09 schrieb Heiko Stuebner:
+> > On Thu, 23 May 2024 20:56:30 +0200, Alex Bee wrote:
+> >> Similar to most Rockchip SoCs RK312x have hantro G1 based decoder and a
+> >> hantro H1 based encoder with attached iommu.
+> >>
+> >> The existing drivers can be used as-is.
+> >>
+> >> Fluster scores:
+> >>    - FFmpeg:
+> >>      - H.264: 127/135
+> >>      - VP8:    59/61
+> >>    - GStreamer:
+> >>      - H.264: 129/135
+> >>      - VP8:    59/61
+> >>
+> >> [...]
+> > Applied, thanks!
+> >
+> > [2/3] soc: rockchip: grf: Set RK3128's vpu main clock
+> >        commit: b465223129f951d110e633a305085bd8430d7df0
+> I just noticed this patch didn't make it in 6.11-rc1. While it's not really
+> important for this patch as the media mainainters didn't manage to apply
+> the vpu bindings patch for 6.11 anyways, it looks like all commits of your
+> v6.11-armsoc/drivers aren't merged. I still haven't fully understand how
+> the SoC tree *really* works, but I couldn't find a PR for this branch [0].
 
-Thanks for the patch. I'm seeing the same crash and your fix looks good 
-to me. Now it boots on my Juno board with CONFIG_SCHEDSTATS.
+That was me actually forgetting that branch :-( .
 
-Reviewed- and Tested-by: Hongyan Xia <hongyan.xia2@arm.com>
+With the rk3128 vpu-binding getting merged today, I just moved that
+onwards to 6.12 too. I guess this time I shouln't forget ;-)
+
+
+Heiko
+
+
 
