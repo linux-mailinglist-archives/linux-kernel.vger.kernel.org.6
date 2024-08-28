@@ -1,343 +1,132 @@
-Return-Path: <linux-kernel+bounces-305526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3AA4962FEF
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 20:28:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49C9F962FC8
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 20:22:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 221AD1C23AF8
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 18:28:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08AB6286AD4
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 18:22:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47C3B1A76CE;
-	Wed, 28 Aug 2024 18:28:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="HA7xUb5o"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D80AA1AC443;
+	Wed, 28 Aug 2024 18:21:09 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A058154C19;
-	Wed, 28 Aug 2024 18:28:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97E9514D71E;
+	Wed, 28 Aug 2024 18:21:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724869684; cv=none; b=PFgHwtrzCoA9QENvWTudLhFMiG9D+o5I/H3X/YWMeU6uFFw4YR4DC8I+FPCarRibmppFKYBVf8zr21S0O+FP9tNy4YE9C/XseXCao6Z2+ymGqcuVvwgxK+XIA2rMlaZvF20JrcPZfhISPrv3ylOvWuaGLabpgRTtzX7M9qvgDTY=
+	t=1724869269; cv=none; b=DScAsP9CJSSjUTrV7hhmdIvaINah9au3LUKPJLM8+Qz77WZrhaPYPKBpuyMxroWpj3d49MJEPfrws9zixb3KQzi/JOPGSx3+iqT0P6m/wSb5vlbdu8JVJALPV6ZXmLW6QUE3ee7v/Ps7x0+7SGg/lvur79qCu6XC+c+tGlN2ELM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724869684; c=relaxed/simple;
-	bh=aCAeJRxX3OOMMGQLteBZ6z4OrD0eBvsrA/f5/ym6en8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=OZ7N6iGMzAywOK1jza7yULS4pqLu55lxw1mQjO8QFaOae8jAsMHnw5kBu3MAuatnRyP6UgqjTTH0OmMswa4zBL7MqN1Yie6RNxZjCunreonI5NODnvMvpLgDnAYkIYONzikYv+YJhCqc2YnUc71Nw8zThCRnRIpqhxL77Kb+CHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=HA7xUb5o; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47SBkOdH001796;
-	Wed, 28 Aug 2024 18:27:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	t6OiZigp34+5PZDO1ghwcrR5DceV0lzroVaQE5qnpj4=; b=HA7xUb5o4fjSk4d6
-	BNSuXPDf+1VfCnmncb300H5+EH3aRHRJxk70fMMZuT6fVQXngOTTsAvqD3dtbslY
-	4Z6oYhf3N3zJeyWjvUZlUmTON1ZEwl9niWKH6sisCiLRS1m5cpUhDYPOEgOS1sU7
-	Q8C0/6NlQ0J0Nz439kP/z7z2djR7TjsZMsh8zJsKa3Km6v7oQQgoNFbFcnhnk1+R
-	3E1dfN3d7uczPVEIfN4+hCLd2wuhjpSfZcCrc/RTOLKh35q9aTSlRNoydgj2Pk4f
-	4uOlzxdQK+lDkU+1F+2+4v7HVWwc7FY0U2A/b8+WMFoRP3m09fOSxm9R46IpYVmf
-	FwoMbg==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 419puw2rfx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 28 Aug 2024 18:27:54 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47SIRrwE005623
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 28 Aug 2024 18:27:53 GMT
-Received: from [10.71.111.76] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 28 Aug
- 2024 11:27:53 -0700
-Message-ID: <1facdd7c-b15d-4d91-b96a-5b3b72dbad66@quicinc.com>
-Date: Wed, 28 Aug 2024 11:27:52 -0700
+	s=arc-20240116; t=1724869269; c=relaxed/simple;
+	bh=IBSHBawgClK9JaPGHklBxDfCk453gFDJElM3fueeQLk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=FucVvhqjIO0Ya1mBVttGv6SMkmjScbPUgX9YQQpK7scDK+dLOWSybpBTqi+tPVK5Eo9+/TMV9TaLf4Riy3xlllJh32U54mmwDpyo7GCVXn9tnO052ie58azUrT9THlFLsBsj58/ounatwugW2bI9fUa/XLYqR19QqlJJyD9TUCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4WvCQV0jJVz2DbZl;
+	Thu, 29 Aug 2024 02:20:50 +0800 (CST)
+Received: from kwepemd500012.china.huawei.com (unknown [7.221.188.25])
+	by mail.maildlp.com (Postfix) with ESMTPS id CB0941401F2;
+	Thu, 29 Aug 2024 02:21:01 +0800 (CST)
+Received: from huawei.com (10.90.53.73) by kwepemd500012.china.huawei.com
+ (7.221.188.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Thu, 29 Aug
+ 2024 02:21:01 +0800
+From: Li Zetao <lizetao1@huawei.com>
+To: <clm@fb.com>, <josef@toxicpanda.com>, <dsterba@suse.com>,
+	<terrelln@fb.com>, <quwenruo.btrfs@gmx.com>, <willy@infradead.org>,
+	<dan.carpenter@linaro.org>
+CC: <lizetao1@huawei.com>, <linux-btrfs@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH -next v2 00/14] btrfs: Cleaned up folio->page conversion
+Date: Thu, 29 Aug 2024 02:28:54 +0800
+Message-ID: <20240828182908.3735344-1-lizetao1@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 08/12] drm/msm/dpu: split dpu_plane_atomic_check()
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Rob Clark
-	<robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Daniel
- Vetter <daniel@ffwll.ch>
-CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-References: <20240627-dpu-virtual-wide-v5-0-5efb90cbb8be@linaro.org>
- <20240627-dpu-virtual-wide-v5-8-5efb90cbb8be@linaro.org>
-Content-Language: en-US
-From: Abhinav Kumar <quic_abhinavk@quicinc.com>
-In-Reply-To: <20240627-dpu-virtual-wide-v5-8-5efb90cbb8be@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: sLxxy_Ae_vYnYIcXMI49bTgP9t0eg_Ju
-X-Proofpoint-GUID: sLxxy_Ae_vYnYIcXMI49bTgP9t0eg_Ju
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-28_08,2024-08-28_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
- priorityscore=1501 malwarescore=0 bulkscore=0 mlxscore=0
- lowpriorityscore=0 phishscore=0 mlxlogscore=999 suspectscore=0
- adultscore=0 spamscore=0 impostorscore=0 classifier=spam adjust=0
- reason=mlx scancount=1 engine=8.19.0-2407110000
- definitions=main-2408280134
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemd500012.china.huawei.com (7.221.188.25)
 
+Hi all,
 
+In btrfs, because there are some interfaces that do not use folio,
+there is page-folio-page mutual conversion. This patch set should
+clean up folio-page conversion as much as possible and use folio
+directly to reduce invalid conversions.
 
-On 6/26/2024 2:46 PM, Dmitry Baryshkov wrote:
-> Split dpu_plane_atomic_check() function into two pieces:
-> 
-> dpu_plane_atomic_check_nopipe() performing generic checks on the pstate,
-> without touching the associated pipe,
-> 
-> and
-> 
-> dpu_plane_atomic_check_pipes(), which takes into account used pipes.
-> 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->   drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c | 178 +++++++++++++++++++-----------
->   1 file changed, 112 insertions(+), 66 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
-> index 115c1bd77bdd..9b9fe28052ad 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
-> @@ -788,49 +788,22 @@ static int dpu_plane_atomic_check_pipe(struct dpu_plane *pdpu,
->   #define MAX_UPSCALE_RATIO	20
->   #define MAX_DOWNSCALE_RATIO	4
->   
-> -static int dpu_plane_atomic_check(struct drm_plane *plane,
-> -				  struct drm_atomic_state *state)
-> +static int dpu_plane_atomic_check_nopipe(struct drm_plane *plane,
-> +					 struct drm_plane_state *new_plane_state,
-> +					 const struct drm_crtc_state *crtc_state)
->   {
-> -	struct drm_plane_state *new_plane_state = drm_atomic_get_new_plane_state(state,
-> -										 plane);
->   	int ret = 0, min_scale, max_scale;
->   	struct dpu_plane *pdpu = to_dpu_plane(plane);
->   	struct dpu_kms *kms = _dpu_plane_get_kms(&pdpu->base);
->   	u64 max_mdp_clk_rate = kms->perf.max_core_clk_rate;
->   	struct dpu_plane_state *pstate = to_dpu_plane_state(new_plane_state);
-> -	struct dpu_sw_pipe *pipe = &pstate->pipe;
-> -	struct dpu_sw_pipe *r_pipe = &pstate->r_pipe;
-> -	const struct drm_crtc_state *crtc_state = NULL;
-> -	const struct msm_format *fmt;
->   	struct dpu_sw_pipe_cfg *pipe_cfg = &pstate->pipe_cfg;
->   	struct dpu_sw_pipe_cfg *r_pipe_cfg = &pstate->r_pipe_cfg;
->   	struct drm_rect fb_rect = { 0 };
->   	uint32_t max_linewidth;
-> -	unsigned int rotation;
-> -	uint32_t supported_rotations;
-> -	const struct dpu_sspp_cfg *pipe_hw_caps;
-> -	const struct dpu_sspp_sub_blks *sblk;
-> -
-> -	if (new_plane_state->crtc)
-> -		crtc_state = drm_atomic_get_new_crtc_state(state,
-> -							   new_plane_state->crtc);
-> -
-> -	pipe->sspp = dpu_rm_get_sspp(&kms->rm, pdpu->pipe);
-> -	r_pipe->sspp = NULL;
->   
-> -	if (!pipe->sspp)
-> -		return -EINVAL;
-> -
-> -	pipe_hw_caps = pipe->sspp->cap;
-> -	sblk = pipe->sspp->cap->sblk;
-> -
-> -	if (sblk->scaler_blk.len) {
-> -		min_scale = FRAC_16_16(1, MAX_UPSCALE_RATIO);
-> -		max_scale = MAX_DOWNSCALE_RATIO << 16;
-> -	} else {
-> -		min_scale = DRM_PLANE_NO_SCALING;
-> -		max_scale = DRM_PLANE_NO_SCALING;
-> -	}
-> +	min_scale = FRAC_16_16(1, MAX_UPSCALE_RATIO);
-> +	max_scale = MAX_DOWNSCALE_RATIO << 16;
->   
->   	ret = drm_atomic_helper_check_plane_state(new_plane_state, crtc_state,
->   						  min_scale,
-> @@ -843,11 +816,6 @@ static int dpu_plane_atomic_check(struct drm_plane *plane,
->   	if (!new_plane_state->visible)
->   		return 0;
->   
-> -	pipe->multirect_index = DPU_SSPP_RECT_SOLO;
-> -	pipe->multirect_mode = DPU_SSPP_MULTIRECT_NONE;
-> -	r_pipe->multirect_index = DPU_SSPP_RECT_SOLO;
-> -	r_pipe->multirect_mode = DPU_SSPP_MULTIRECT_NONE;
-> -
->   	pstate->stage = DPU_STAGE_0 + pstate->base.normalized_zpos;
->   	if (pstate->stage >= pdpu->catalog->caps->max_mixer_blendstages) {
->   		DPU_ERROR("> %d plane stages assigned\n",
-> @@ -871,8 +839,6 @@ static int dpu_plane_atomic_check(struct drm_plane *plane,
->   		return -E2BIG;
->   	}
->   
-> -	fmt = msm_framebuffer_format(new_plane_state->fb);
-> -
->   	max_linewidth = pdpu->catalog->caps->max_linewidth;
->   
->   	drm_rect_rotate(&pipe_cfg->src_rect,
-> @@ -881,6 +847,78 @@ static int dpu_plane_atomic_check(struct drm_plane *plane,
->   
->   	if ((drm_rect_width(&pipe_cfg->src_rect) > max_linewidth) ||
->   	     _dpu_plane_calc_clk(&crtc_state->adjusted_mode, pipe_cfg) > max_mdp_clk_rate) {
-> +		if (drm_rect_width(&pipe_cfg->src_rect) > 2 * max_linewidth) {
-> +			DPU_DEBUG_PLANE(pdpu, "invalid src " DRM_RECT_FMT " line:%u\n",
-> +					DRM_RECT_ARG(&pipe_cfg->src_rect), max_linewidth);
-> +			return -E2BIG;
-> +		}
-> +
-> +		*r_pipe_cfg = *pipe_cfg;
-> +		pipe_cfg->src_rect.x2 = (pipe_cfg->src_rect.x1 + pipe_cfg->src_rect.x2) >> 1;
-> +		pipe_cfg->dst_rect.x2 = (pipe_cfg->dst_rect.x1 + pipe_cfg->dst_rect.x2) >> 1;
-> +		r_pipe_cfg->src_rect.x1 = pipe_cfg->src_rect.x2;
-> +		r_pipe_cfg->dst_rect.x1 = pipe_cfg->dst_rect.x2;
-> +	} else {
-> +		memset(r_pipe_cfg, 0, sizeof(*r_pipe_cfg));
-> +	}
-> +
+This patch set starts with the rectification of function parameters,
+using folio as parameters directly. And some of those functions have
+already been converted to folio internally, so this part has little
+impact. 
 
-This is the part I am not able to fully understand. Assignment of 
-r_pipe_cfg is also pipe related so why should that move to 
-dpu_plane_atomic_check_nopipe(). It should be part of 
-dpu_plane_atomic_check_pipe().
+I have tested with fsstress more than 10 hours, and no problems were
+found. For the convenience of reviewing, I try my best to only modify
+a single interface in each patch.
 
-> +	drm_rect_rotate_inv(&pipe_cfg->src_rect,
-> +			    new_plane_state->fb->width, new_plane_state->fb->height,
-> +			    new_plane_state->rotation);
-> +	if (r_pipe_cfg->src_rect.x1 != 0)
-> +		drm_rect_rotate_inv(&r_pipe_cfg->src_rect,
-> +				    new_plane_state->fb->width, new_plane_state->fb->height,
-> +				    new_plane_state->rotation);
-> +
-> +	pstate->needs_qos_remap = drm_atomic_crtc_needs_modeset(crtc_state);
-> +
-> +	return 0;
-> +}
-> +
-> +static int dpu_plane_atomic_check_pipes(struct drm_plane *plane,
-> +					struct drm_atomic_state *state,
-> +					const struct drm_crtc_state *crtc_state)
-> +{
-> +	struct drm_plane_state *new_plane_state =
-> +		drm_atomic_get_new_plane_state(state, plane);
-> +	struct dpu_plane *pdpu = to_dpu_plane(plane);
-> +	struct dpu_plane_state *pstate = to_dpu_plane_state(new_plane_state);
-> +	struct dpu_sw_pipe *pipe = &pstate->pipe;
-> +	struct dpu_sw_pipe *r_pipe = &pstate->r_pipe;
-> +	const struct msm_format *fmt;
-> +	struct dpu_sw_pipe_cfg *pipe_cfg = &pstate->pipe_cfg;
-> +	struct dpu_sw_pipe_cfg *r_pipe_cfg = &pstate->r_pipe_cfg;
-> +	uint32_t max_linewidth;
-> +	unsigned int rotation;
-> +	uint32_t supported_rotations;
-> +	const struct dpu_sspp_cfg *pipe_hw_caps;
-> +	const struct dpu_sspp_sub_blks *sblk;
-> +	int ret = 0;
-> +
-> +	pipe_hw_caps = pipe->sspp->cap;
-> +	sblk = pipe->sspp->cap->sblk;
-> +
-> +	/*
-> +	 * We already have verified scaling against platform limitations.
-> +	 * Now check if the SSPP supports scaling at all.
-> +	 */
-> +	if (!sblk->scaler_blk.len &&
-> +	    ((drm_rect_width(&new_plane_state->src) >> 16 !=
-> +	      drm_rect_width(&new_plane_state->dst)) ||
-> +	     (drm_rect_height(&new_plane_state->src) >> 16 !=
-> +	      drm_rect_height(&new_plane_state->dst))))
-> +		return -ERANGE;
-> +
+Josef also worked on converting pages to folios, and this patch set was
+inspired by him[1].
 
-Should this part be retained under dpu_plane_atomic_check_nopipe()?
+Considering Josef's suggestion[2], this patchset has passed most of the
+xfs/btrfs use cases, include btrfs/060 and btrfs/069.
 
-This is also not pipe dependent.
+This patchset is based on commit bcdaf0fe6a52("btrfs: initialize
+last_extent_end to fix -Wmaybe-uninitialized warning in extent_fiemap()")
 
-> +	fmt = msm_framebuffer_format(new_plane_state->fb);
-> +
-> +	max_linewidth = pdpu->catalog->caps->max_linewidth;
-> +
-> +	ret = dpu_plane_atomic_check_pipe(pdpu, pipe, pipe_cfg, fmt,
-> +					  &crtc_state->adjusted_mode);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (drm_rect_width(&r_pipe_cfg->src_rect) != 0) {
->   		/*
->   		 * In parallel multirect case only the half of the usual width
->   		 * is supported for tiled formats. If we are here, we know that
-> @@ -894,12 +932,6 @@ static int dpu_plane_atomic_check(struct drm_plane *plane,
->   			return -E2BIG;
->   		}
->   
-> -		if (drm_rect_width(&pipe_cfg->src_rect) > 2 * max_linewidth) {
-> -			DPU_DEBUG_PLANE(pdpu, "invalid src " DRM_RECT_FMT " line:%u\n",
-> -					DRM_RECT_ARG(&pipe_cfg->src_rect), max_linewidth);
-> -			return -E2BIG;
-> -		}
-> -
->   		if (drm_rect_width(&pipe_cfg->src_rect) != drm_rect_width(&pipe_cfg->dst_rect) ||
->   		    drm_rect_height(&pipe_cfg->src_rect) != drm_rect_height(&pipe_cfg->dst_rect) ||
->   		    (!test_bit(DPU_SSPP_SMART_DMA_V1, &pipe->sspp->cap->features) &&
-> @@ -921,26 +953,6 @@ static int dpu_plane_atomic_check(struct drm_plane *plane,
->   		r_pipe->multirect_index = DPU_SSPP_RECT_1;
->   		r_pipe->multirect_mode = DPU_SSPP_MULTIRECT_PARALLEL;
->   
-> -		*r_pipe_cfg = *pipe_cfg;
-> -		pipe_cfg->src_rect.x2 = (pipe_cfg->src_rect.x1 + pipe_cfg->src_rect.x2) >> 1;
-> -		pipe_cfg->dst_rect.x2 = (pipe_cfg->dst_rect.x1 + pipe_cfg->dst_rect.x2) >> 1;
-> -		r_pipe_cfg->src_rect.x1 = pipe_cfg->src_rect.x2;
-> -		r_pipe_cfg->dst_rect.x1 = pipe_cfg->dst_rect.x2;
-> -	}
-> -
-> -	drm_rect_rotate_inv(&pipe_cfg->src_rect,
-> -			    new_plane_state->fb->width, new_plane_state->fb->height,
-> -			    new_plane_state->rotation);
-> -	if (r_pipe->sspp)
-> -		drm_rect_rotate_inv(&r_pipe_cfg->src_rect,
-> -				    new_plane_state->fb->width, new_plane_state->fb->height,
-> -				    new_plane_state->rotation);
-> -
-> -	ret = dpu_plane_atomic_check_pipe(pdpu, pipe, pipe_cfg, fmt, &crtc_state->adjusted_mode);
-> -	if (ret)
-> -		return ret;
-> -
-> -	if (r_pipe->sspp) {
->   		ret = dpu_plane_atomic_check_pipe(pdpu, r_pipe, r_pipe_cfg, fmt,
->   						  &crtc_state->adjusted_mode);
->   		if (ret)
-> @@ -963,11 +975,45 @@ static int dpu_plane_atomic_check(struct drm_plane *plane,
->   	}
->   
->   	pstate->rotation = rotation;
+v1 -> v2:
+ * Change clear_page_extent_mapped() to clear_folio_extent_mapped()
+ * Fix a bug[3] when folio is valid and it should be unlocked and put
+ in copy_inline_to_page().
 
-The dpu_plane_check_inline_rotation() is also pipe independent. So even 
-that goes to dpu_plane_atomic_check_nopipe()?
+v1: https://lore.kernel.org/all/20240822013714.3278193-14-lizetao1@huawei.com/
 
-> -	pstate->needs_qos_remap = drm_atomic_crtc_needs_modeset(crtc_state);
->   
->   	return 0;
->   }
->   
+[1]: https://lore.kernel.org/all/cover.1722022376.git.josef@toxicpanda.com/
+[2]: https://lore.kernel.org/all/20240826140818.GA2393039@perftesting/
+[3]: https://lore.kernel.org/all/20240822013714.3278193-15-lizetao1@huawei.com/
 
-<snip>
+Thanks,
+Li Zetao
+
+Li Zetao (14):
+  btrfs: convert clear_page_extent_mapped() to take a folio
+  btrfs: convert get_next_extent_buffer() to take a folio
+  btrfs: convert try_release_subpage_extent_buffer() to take a folio
+  btrfs: convert try_release_extent_buffer() to take a folio
+  btrfs: convert read_key_bytes() to take a folio
+  btrfs: convert submit_eb_subpage() to take a folio
+  btrfs: convert submit_eb_page() to take a folio
+  btrfs: convert try_release_extent_state() to take a folio
+  btrfs: convert try_release_extent_mapping() to take a folio
+  btrfs: convert zlib_decompress() to take a folio
+  btrfs: convert lzo_decompress() to take a folio
+  btrfs: convert zstd_decompress() to take a folio
+  btrfs: convert btrfs_decompress() to take a folio
+  btrfs: convert copy_inline_to_page() to use folio
+
+ fs/btrfs/compression.c | 14 +++----
+ fs/btrfs/compression.h |  8 ++--
+ fs/btrfs/disk-io.c     |  2 +-
+ fs/btrfs/extent_io.c   | 92 ++++++++++++++++++++----------------------
+ fs/btrfs/extent_io.h   |  6 +--
+ fs/btrfs/inode.c       |  8 ++--
+ fs/btrfs/lzo.c         | 12 +++---
+ fs/btrfs/reflink.c     | 35 ++++++++--------
+ fs/btrfs/verity.c      | 14 +++----
+ fs/btrfs/zlib.c        | 14 +++----
+ fs/btrfs/zstd.c        | 16 ++++----
+ 11 files changed, 109 insertions(+), 112 deletions(-)
+
+-- 
+2.34.1
 
 
