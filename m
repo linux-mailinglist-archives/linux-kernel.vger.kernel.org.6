@@ -1,110 +1,137 @@
-Return-Path: <linux-kernel+bounces-305855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60E29963547
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 01:16:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A8E196354A
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 01:17:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C9ED1C21A24
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 23:16:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE834B218BA
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 23:17:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EABE31AD413;
-	Wed, 28 Aug 2024 23:16:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25A631AB535;
+	Wed, 28 Aug 2024 23:17:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kutsevol-com.20230601.gappssmtp.com header.i=@kutsevol-com.20230601.gappssmtp.com header.b="VDEZrShU"
-Received: from mail-oi1-f171.google.com (mail-oi1-f171.google.com [209.85.167.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Zjt8ALt/"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D99A014EC44
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 23:16:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B964F156230;
+	Wed, 28 Aug 2024 23:17:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724887006; cv=none; b=qrUVQFpFV0xmvHYblSxXszwOm2ViPpkGEkXuS68YF+1OSXYPeNM7NHgVu8rgq271QUn2WGi7a8lihm/jA8FxT4uwb5vyf259vCoKcr2cN+fNqKPVLPpJyan1MYuzttuDyrDOniOerLGmp8Dk4IcaT3NTmWn4vmulVeKm/hVjyoo=
+	t=1724887059; cv=none; b=lTG8P4rfTJEQI8XUb2Xh+eGmddJ8QDA3h4GabgYx8W122NoSq+MDhBzdNTPIDYkFJ3P6GCRhdlTEdCNDvI5Epo1NGR3BW+vLsSRWughUihHrrOujvCx9tnbrCiluTy6ihBQzixcoQewbmSk7iOQB17oceD1K8j4UDuoLM7YbIVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724887006; c=relaxed/simple;
-	bh=6WxycaVxQT38O78SqFvhfYRoa5EqgpzzCOzyVVksNL4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bJzm5/uVKycggHTF3J51MsA36aMDlfMxvAa/K4n/pu04d8i486GMvmPg1rkevoZxanOOXSRou3d1QTJx6XWUjUDw6SUUNxlFrTf22E/8CuwJ+am0tyxHGIINkSzUhaJU+ugJcksbOr3Dg2I6aLtSnVnS5eJwW3DWvQKTbk2b+ak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kutsevol.com; spf=none smtp.mailfrom=kutsevol.com; dkim=pass (2048-bit key) header.d=kutsevol-com.20230601.gappssmtp.com header.i=@kutsevol-com.20230601.gappssmtp.com header.b=VDEZrShU; arc=none smtp.client-ip=209.85.167.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kutsevol.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=kutsevol.com
-Received: by mail-oi1-f171.google.com with SMTP id 5614622812f47-3df04a2420aso20711b6e.1
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 16:16:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kutsevol-com.20230601.gappssmtp.com; s=20230601; t=1724887004; x=1725491804; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6WxycaVxQT38O78SqFvhfYRoa5EqgpzzCOzyVVksNL4=;
-        b=VDEZrShUDe/CmWkpoaIcQeuYCLcQKX5287UJW+4Z5/5hL6GApkrQtxM6Ge8MqM2Dxr
-         SAR9pRMqo1D9e/JNRFLeW81EfKOBHEMPPbNcHSunYzVaAVn/7uzJKKuBkeoP54r48Elw
-         blFabEy1xonHkQm/wMGcAXOCMLEoy3M33GWC5ugcGIrHUqvH3eV1d9IkltuiM/AJKuRm
-         Ynxu1QNFekRy0t/Ut/aI1KWcG+gk0bboiuXEhI9g0a681wc0jhVlAas9ROL3UgjwRQLC
-         egQNXW1Nqf9zMtsNEWTJWUyqY4HN8jE+AOUboFfPRhKfLKQhs0hHc/OBCSjhh3bsni7d
-         D+Vw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724887004; x=1725491804;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6WxycaVxQT38O78SqFvhfYRoa5EqgpzzCOzyVVksNL4=;
-        b=ii4zfReQY0Y4gvSdb7HZR85wNS+XtXpxoX2X+tmoGltEFd1eVSasVR3unaJjSLJkoo
-         OzDe01zeG+J9ZqRkQybgUOeTdlSkmZhDzGJesQuAhPItFjMM9W3qhf1FbuLBpGukOaBV
-         idaEZGavHaH3vogPJF5bvhOLAFSaaSzmADiJOkZrq/hz8BcNrWCs69Qo3vzjVd4IdMT5
-         TanOklxqsfvM/08m+FddTU4Vz6ExvXd/Z9NGUFdYmHr0RFTtjXnOJ4iGKU0Bd3+RmUwT
-         HpTHalj++QKK53dlZa1DsOa06qNY0vVpme6cEqBlQDYqwu6pyxQYqy7Qa/XsO1EdEuTe
-         O1ZA==
-X-Forwarded-Encrypted: i=1; AJvYcCV5QkFm91LAHTmggi6TF6gHvCqU0bMX+7QXiFANkCbocPZULe74kL63AU5bkuPg2GvL0rkHXmwTCCjo6fs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxtq10jEDHUykbDBtWJUye3lEIWc3QW2FIeQBjNcUToSqLy6f1N
-	4p8QzyEJy06EUl3rdy0skRPRaASdd6Fe25ydAFCojpWXfklD3JSe00duycTNgvZ4DSilBGVjWBm
-	QWrGDFovTD3zEeuJMIMqupNGFcNOjibmyI5dbgw==
-X-Google-Smtp-Source: AGHT+IFulYLTr/q0MYpGuiK8dbocOeHO0TRrOPOfH6etK3coAQIF7gKYWtaOzA1GlbWnLpY0TqDn7PU0n7Wei9j1CaQ=
-X-Received: by 2002:a05:6808:384a:b0:3d6:3050:7caa with SMTP id
- 5614622812f47-3df05afed36mr1403510b6e.0.1724887003694; Wed, 28 Aug 2024
- 16:16:43 -0700 (PDT)
+	s=arc-20240116; t=1724887059; c=relaxed/simple;
+	bh=xTFXw5fW98i/uom18MtpYnU+ph1/QdPNkw+9Ey01zDI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pInlACS1hq5BZzffvfRccaHO3Lz+NU6jEPdOgZuUGuwpWbBQdCEAibhOTZXzC5TuyUMtj31n/O0emtbjL2pb8iRo7mtF9BjGfY+OW+fxIrKCsZG9/7V0mpsk8NSwcJlyIh5CQCRqfHNVqru6PN366hU5cXY98NZ+468fcif2XVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Zjt8ALt/; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724887057; x=1756423057;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=xTFXw5fW98i/uom18MtpYnU+ph1/QdPNkw+9Ey01zDI=;
+  b=Zjt8ALt/+6yVb7SOZYn9oa2+ILSV4RDKDd63WE2nSPsN8IeZIzVzE0Io
+   nE+Gbu0GxgFmMq4GesR6822QvnilvWUe0wpGNMMARhSuuj062+Tx0cjD9
+   kWlBHUBKIB4CJ8lCvyxsOkfA1CmEU+K8VuydFHZdjqtkHzg3BzWKg6iNx
+   MSdVpDtLLIedwUsebQCXgdi3qaDz5SYPm8TAO1g3y3BwfpyjqVQZnWqb0
+   Kh6YS5mDIbQeMay6E28DjMDP8tHrASJYcpQQIHJjDdTRdW5sl0DfeB0VJ
+   D3gyPkp2dNfu/JY7QqjMXU8X4J0IhacD0OTicuU2HRneLxYebkWBE7AIW
+   w==;
+X-CSE-ConnectionGUID: FpfCNB3xQsWytnf0/ya8Lg==
+X-CSE-MsgGUID: 6l2AKAFORGGlEXvU9nmxHw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11178"; a="34022070"
+X-IronPort-AV: E=Sophos;i="6.10,184,1719903600"; 
+   d="scan'208";a="34022070"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2024 16:17:37 -0700
+X-CSE-ConnectionGUID: Nfd4LzNgRCmLQ0OShireQw==
+X-CSE-MsgGUID: 3u170mVFQTGlOlu+J54MEA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,184,1719903600"; 
+   d="scan'208";a="63714103"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by orviesa006.jf.intel.com with ESMTP; 28 Aug 2024 16:17:33 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sjRut-000LRK-09;
+	Wed, 28 Aug 2024 23:17:31 +0000
+Date: Thu, 29 Aug 2024 07:16:52 +0800
+From: kernel test robot <lkp@intel.com>
+To: Li Lingfeng <lilingfeng3@huawei.com>, trondmy@kernel.org,
+	anna@kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, jlayton@kernel.org,
+	linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	yukuai1@huaweicloud.com, houtao1@huawei.com, yi.zhang@huawei.com,
+	yangerkun@huawei.com, lilingfeng@huaweicloud.com,
+	lilingfeng3@huawei.com
+Subject: Re: [PATCH] nfs: protect nfs41_impl_id by rcu
+Message-ID: <202408290616.QG17h6tl-lkp@intel.com>
+References: <20240828044933.676898-1-lilingfeng3@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240824215130.2134153-1-max@kutsevol.com> <20240828214524.1867954-1-max@kutsevol.com>
- <20240828155758.61e3a214@kernel.org>
-In-Reply-To: <20240828155758.61e3a214@kernel.org>
-From: Maksym Kutsevol <max@kutsevol.com>
-Date: Wed, 28 Aug 2024 19:16:33 -0400
-Message-ID: <CAO6EAnX7i0zi840zMidR89UyWF0dZHP032C5o6Ur=6hWQPp2CQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] netpoll: Make netpoll_send_udp return status
- instead of void
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Paolo Abeni <pabeni@redhat.com>, Breno Leitao <leitao@debian.org>, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240828044933.676898-1-lilingfeng3@huawei.com>
 
-Hey Jakub,
+Hi Li,
 
-On Wed, Aug 28, 2024 at 6:58=E2=80=AFPM Jakub Kicinski <kuba@kernel.org> wr=
-ote:
->
-> On Wed, 28 Aug 2024 14:33:48 -0700 Maksym Kutsevol wrote:
-> > netpoll_send_udp can return if send was successful.
-> > It will allow client code to be aware of the send status.
-> >
-> > Possible return values are the result of __netpoll_send_skb (cast to in=
-t)
-> > and -ENOMEM. This doesn't cover the case when TX was not successful
-> > instantaneously and was scheduled for later, __netpoll__send_skb return=
-s
-> > success in that case.
->
-> no need to repost but, quoting documentation:
-I definitely didn't find this doc, thanks for the link, looked at it,
-and I see at least another error in
-this submission - there's no designation which tree it's for, it
-should be net-next. Will follow
-the doc for in the future.
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on trondmy-nfs/linux-next]
+[also build test WARNING on linus/master v6.11-rc5 next-20240828]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Li-Lingfeng/nfs-protect-nfs41_impl_id-by-rcu/20240828-124056
+base:   git://git.linux-nfs.org/projects/trondmy/linux-nfs.git linux-next
+patch link:    https://lore.kernel.org/r/20240828044933.676898-1-lilingfeng3%40huawei.com
+patch subject: [PATCH] nfs: protect nfs41_impl_id by rcu
+config: x86_64-randconfig-121-20240829 (https://download.01.org/0day-ci/archive/20240829/202408290616.QG17h6tl-lkp@intel.com/config)
+compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240829/202408290616.QG17h6tl-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408290616.QG17h6tl-lkp@intel.com/
+
+sparse warnings: (new ones prefixed by >>)
+>> fs/nfs/nfs4client.c:296:18: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void const *objp @@     got struct nfs41_impl_id [noderef] __rcu *cl_implid @@
+   fs/nfs/nfs4client.c:296:18: sparse:     expected void const *objp
+   fs/nfs/nfs4client.c:296:18: sparse:     got struct nfs41_impl_id [noderef] __rcu *cl_implid
+
+vim +296 fs/nfs/nfs4client.c
+
+ec409897e7c715 Bryan Schumaker 2012-07-16  283  
+ec409897e7c715 Bryan Schumaker 2012-07-16  284  static void nfs4_shutdown_client(struct nfs_client *clp)
+ec409897e7c715 Bryan Schumaker 2012-07-16  285  {
+ec409897e7c715 Bryan Schumaker 2012-07-16  286  	if (__test_and_clear_bit(NFS_CS_RENEWD, &clp->cl_res_state))
+ec409897e7c715 Bryan Schumaker 2012-07-16  287  		nfs4_kill_renewd(clp);
+abf79bb341bf52 Chuck Lever     2013-08-09  288  	clp->cl_mvops->shutdown_client(clp);
+ec409897e7c715 Bryan Schumaker 2012-07-16  289  	nfs4_destroy_callback(clp);
+ec409897e7c715 Bryan Schumaker 2012-07-16  290  	if (__test_and_clear_bit(NFS_CS_IDMAP, &clp->cl_res_state))
+ec409897e7c715 Bryan Schumaker 2012-07-16  291  		nfs_idmap_delete(clp);
+ec409897e7c715 Bryan Schumaker 2012-07-16  292  
+ec409897e7c715 Bryan Schumaker 2012-07-16  293  	rpc_destroy_wait_queue(&clp->cl_rpcwaitq);
+ec409897e7c715 Bryan Schumaker 2012-07-16  294  	kfree(clp->cl_serverowner);
+ec409897e7c715 Bryan Schumaker 2012-07-16  295  	kfree(clp->cl_serverscope);
+ec409897e7c715 Bryan Schumaker 2012-07-16 @296  	kfree(clp->cl_implid);
+ceb3a16c070c40 Trond Myklebust 2015-01-03  297  	kfree(clp->cl_owner_id);
+ec409897e7c715 Bryan Schumaker 2012-07-16  298  }
+ec409897e7c715 Bryan Schumaker 2012-07-16  299  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
