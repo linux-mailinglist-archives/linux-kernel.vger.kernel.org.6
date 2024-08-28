@@ -1,248 +1,201 @@
-Return-Path: <linux-kernel+bounces-304545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6546196219C
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 09:44:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69BD5962197
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 09:43:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 228D1287760
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 07:44:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86C801C24193
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 07:43:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB1CB15ADA1;
-	Wed, 28 Aug 2024 07:43:56 +0000 (UTC)
-Received: from zg8tmtyylji0my4xnjeumjiw.icoremail.net (zg8tmtyylji0my4xnjeumjiw.icoremail.net [162.243.161.220])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D34B11552EB;
-	Wed, 28 Aug 2024 07:43:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.161.220
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7878415B13C;
+	Wed, 28 Aug 2024 07:42:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="nOsfdB/i"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CB591552EB;
+	Wed, 28 Aug 2024 07:42:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724831036; cv=none; b=Aaehg/fUWlK5z6oiI3DIrlfeKiRrdLTYn+hU1xg+moo/tPk3I/sNnzRYlSXEPWhxTtPDKFbTNvGMoQN7pOx8U7E7NcWLy4zBfJpxS49iNEb8hF4yKv3KjKE6FGiOXoshn1tWViNZu1EipCrDNbPhz3d/LFdeQVazP9mbpDKtKiM=
+	t=1724830972; cv=none; b=khNtVHhNXBHYR9WLjRVwyr8z5XrV0IpyLFu8rFTzkOkI8kGPL5Yzewmhdy1BboD59MmCPsEi//hTzPaB4+vldjBrZ3frs2BJYui/NV/6s/yTjz2MC8mTRSBlcWKVqCQ9JsJaYJwC3C0tCZm/gi7d3s1Z/Z1EGFWGo8dCp1PEB/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724831036; c=relaxed/simple;
-	bh=tgZElXEW/k+zqqpn44uzCLqkqVHYMPI9jUULFZjtiBs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=QK3+dICWkoR+CNoVkwI/7JhLZWBvJxtVT04k64yHH3ORZshGQmyI70Qj+j3qC6g3XElsACZHVE5XFmvYHf4upI+ueAY/Nvzk7wg1InDzZTSzRIGFdAOeCYiz4EHL98CWIglR9azgTU29T2WpNZ6Gd3Rq0mhvYoOdDpb//GJEGC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn; spf=pass smtp.mailfrom=hust.edu.cn; arc=none smtp.client-ip=162.243.161.220
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hust.edu.cn
-Received: from hust.edu.cn (unknown [172.16.0.52])
-	by app1 (Coremail) with SMTP id HgEQrADHzX0S1c5mWSLrBA--.43518S2;
-	Wed, 28 Aug 2024 15:43:14 +0800 (CST)
-Received: from pride-PowerEdge-R740.. (unknown [222.20.126.129])
-	by gateway (Coremail) with SMTP id _____wDHsE4L1c5mqcHAAA--.58773S2;
-	Wed, 28 Aug 2024 15:43:09 +0800 (CST)
-From: Dongliang Mu <dzm91@hust.edu.cn>
-To: Alex Shi <alexs@kernel.org>,
-	Yanteng Si <siyanteng@loongson.cn>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Dongliang Mu <dzm91@hust.edu.cn>
-Cc: hust-os-kernel-patches@googlegroups.com,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: [PATCH] docs/zh_CN: add the translation of kbuild/gcc-plugins.rst
-Date: Wed, 28 Aug 2024 15:42:28 +0800
-Message-ID: <20240828074305.314666-1-dzm91@hust.edu.cn>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1724830972; c=relaxed/simple;
+	bh=x8lNSgnyVAVfqukk19F7f8nycin/R7tfovVRZ46bXi4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=jg+H8QYTjNBaIThOkusMB1709IeOELpRECA1H/k/PPe/9G95lmNR1i7nUGE555BoolRi1iRa3o2TnAz02E2ZPFFNwejlQXmxXpPheaaT2GDb2QSB865JAZez5VzObm5cA40MoC1nAJJDaQIDImpLUfILmWtLkiTf6RcYVgg7o6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=nOsfdB/i; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47RLa76g020980;
+	Wed, 28 Aug 2024 07:42:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	QCWsgOxbrgIosIr/7BN8CKVX4ttXYcnDeJzlJC+bpzs=; b=nOsfdB/ir34lCuT4
+	kGeOm0NSkg18khZYFpoE+3KJ9Pb+UpYlnEM6Asjb82x88BA9holzXINwcG3Enk2N
+	Sr8UzCk/uW0NLYabOiaLtl7VzwSdc2iYqCp+q783FLJLXc4IFmPN5ykHrETCSx31
+	AbW520bq0CR3nZzjlhxSBP1tQAZtzaDNyU0LKu/Cz0z9yO+0WKWcWa0nFYze2tt8
+	YV3pOyqlkdiTINeq7MTyrQFxXT2wcpfIwnQFCq+M9dZN3H9aEImzdjTtMsxO3Fpk
+	2MCy2UbrC/MN0WrCuTw/QX2WoHQiZ3ePcrNLgdfc7lcU20DR0ZxFQ2yJByOlUpAV
+	baLqDA==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 419pv0h2yk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 28 Aug 2024 07:42:44 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47S7gh3i018673
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 28 Aug 2024 07:42:43 GMT
+Received: from [10.239.132.205] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 28 Aug
+ 2024 00:42:37 -0700
+Message-ID: <955c0fdc-5b04-42d6-a15d-58966c7145c4@quicinc.com>
+Date: Wed, 28 Aug 2024 15:42:34 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/6] arm64: dts: qcom: add initial support for QCS615 DTSI
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>, <kernel@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+References: <20240828-add_initial_support_for_qcs615-v1-0-5599869ea10f@quicinc.com>
+ <20240828-add_initial_support_for_qcs615-v1-5-5599869ea10f@quicinc.com>
+ <gtoz6fzmukti7mbdihsw5ycltoozhrxgery536rh6dgpcqoru2@gd27iemigqae>
+From: Lijuan Gao <quic_lijuang@quicinc.com>
+In-Reply-To: <gtoz6fzmukti7mbdihsw5ycltoozhrxgery536rh6dgpcqoru2@gd27iemigqae>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:HgEQrADHzX0S1c5mWSLrBA--.43518S2
-Authentication-Results: app1; spf=neutral smtp.mail=dzm91@hust.edu.cn;
-X-Coremail-Antispam: 1UD129KBjvJXoWxtryfXF4fur15KFyUur48Zwb_yoWxXr4fpw
-	1qk34SgFWSyFy093yfKr1fuF15JFs3Ww15Ka4kGwn7tF1kJrZ0y39xtry5GFyfWFy8ZrW7
-	XF4YyrW8uw1jva7anT9S1TB71UUUUjJqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUQSb7Iv0xC_Zr1lb4IE77IF4wAFc2x0x2IEx4CE42xK8VAvwI8I
-	cIk0rVWrJVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjx
-	v20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1l84ACjcxK
-	6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1ln4kS14v26r
-	126r1DM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI
-	12xvs2x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj64x0Y40En7xvr7AKxV
-	W8Jr0_Cr1UMcIj6x8ErcxFaVAv8VW8uFyUJr1UMcIj6xkF7I0En7xvr7AKxVW8Jr0_Cr1U
-	McvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCY1x0262kKe7AKxVWUtVW8Zw
-	CF04k20xvY0x0EwIxGrwCF04k20xvE74AGY7Cv6cx26r4fZr1UJr1l4I8I3I0E4IkC6x0Y
-	z7v_Jr0_Gr1l4IxYO2xFxVAFwI0_JF0_Jw1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
-	8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE
-	2Ix0cI8IcVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
-	xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF
-	7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUVDGYDUUUU
-X-CM-SenderInfo: asqsiiirqrkko6kx23oohg3hdfq/
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 9vCTBPG4BHIOexPTsJF0IX0SztEId7Fa
+X-Proofpoint-ORIG-GUID: 9vCTBPG4BHIOexPTsJF0IX0SztEId7Fa
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-28_03,2024-08-27_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ mlxlogscore=820 bulkscore=0 impostorscore=0 phishscore=0 clxscore=1011
+ mlxscore=0 spamscore=0 suspectscore=0 malwarescore=0 adultscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408280054
 
-Finish the translation of kbuild/gcc-plugins.rst and move gcc-plugins
-from TODO to the main body.
 
-Update to commit 3832d1fd84b6 ("docs/core-api: expand Fedora instructions
-for GCC plugins")
 
-Signed-off-by: Dongliang Mu <dzm91@hust.edu.cn>
----
- .../translations/zh_CN/kbuild/gcc-plugins.rst | 126 ++++++++++++++++++
- .../translations/zh_CN/kbuild/index.rst       |   2 +-
- 2 files changed, 127 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/translations/zh_CN/kbuild/gcc-plugins.rst
+在 8/28/2024 2:23 PM, Krzysztof Kozlowski 写道:
+> On Wed, Aug 28, 2024 at 10:02:15AM +0800, Lijuan Gao wrote:
+>> Add initial DTSI for QCS615 SoC. It includes base description
+>> of CPUs, interrupt-controller and cpu idle on Qualcomm QCS615
+>> platform.
+>>
+>> Signed-off-by: Lijuan Gao <quic_lijuang@quicinc.com>
+>> ---
+>>   arch/arm64/boot/dts/qcom/qcs615.dtsi | 449 +++++++++++++++++++++++++++++++++++
+>>   1 file changed, 449 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/qcs615.dtsi b/arch/arm64/boot/dts/qcom/qcs615.dtsi
+>> new file mode 100644
+>> index 000000000000..cf7aaa7f6131
+>> --- /dev/null
+>> +++ b/arch/arm64/boot/dts/qcom/qcs615.dtsi
+>> @@ -0,0 +1,449 @@
+>> +// SPDX-License-Identifier: BSD-3-Clause
+>> +/*
+>> + * Copyright (c) 2024, Qualcomm Innovation Center, Inc. All rights reserved.
+>> + */
+>> +
+>> +#include <dt-bindings/interrupt-controller/arm-gic.h>
+>> +
+>> +/ {
+>> +	interrupt-parent = <&intc>;
+>> +
+> 
+> No need for blank line.
+Well noted. Will update in the next patch.
+> 
+>> +	#address-cells = <2>;
+>> +	#size-cells = <2>;
+>> +
+>> +	chosen { };
+> 
+> Drop, redundant.
+Well noted. Will update in the next patch.
+> 
+>> +
+>> +	clocks {
+>> +		xo_board: xo-board {
+> 
+> xo-clk? xo-board-clk?
+> 
+> But if board, this does not sound like part of SoC. See other files how
+> they do it.
+> 
+Other files also added ‘xo_board’. The ‘xo_board’ is the clock that will 
+be used by other SoC nodes, such as rpmhcc. Currently, the node can be 
+deleted as no one is using it.
+> 
+>> +			compatible = "fixed-clock";
+>> +			clock-frequency = <38400000>;
+>> +			#clock-cells = <0>;
+>> +		};
+>> +
+>> +		sleep_clk: sleep-clk {
+>> +			compatible = "fixed-clock";
+>> +			clock-frequency = <32000>;
+>> +			#clock-cells = <0>;
+>> +		};
+>> +	};
+>> +
+>> +	cpus {
+>> +		#address-cells = <2>;
+>> +		#size-cells = <0>;
+>> +
+>> +		CPU0: cpu@0 {
+> 
+> labels are lowercase.
+Well noted. Will update in the next patch.
+> 
+>> +			device_type = "cpu";
+>> +			compatible = "arm,cortex-a55";
+>> +			reg = <0x0 0x0>;
+>> +			enable-method = "psci";
+>> +			power-domains = <&CPU_PD0>;
+>> +			power-domain-names = "psci";
+>> +			next-level-cache = <&L2_0>;
+>> +			#cooling-cells = <2>;
+>> +
+>> +			L2_0: l2-cache {
+> 
+> lowercase
+Well noted. Will update in the next patch.
+> 
+>> +			      compatible = "cache";
+>> +			      cache-level = <2>;
+>> +			      cache-unified;
+>> +			      next-level-cache = <&L3_0>;
+> 
+> Best regards,
+> Krzysztof
+> 
+> 
 
-diff --git a/Documentation/translations/zh_CN/kbuild/gcc-plugins.rst b/Documentation/translations/zh_CN/kbuild/gcc-plugins.rst
-new file mode 100644
-index 000000000000..214945a4ecf3
---- /dev/null
-+++ b/Documentation/translations/zh_CN/kbuild/gcc-plugins.rst
-@@ -0,0 +1,126 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+.. include:: ../disclaimer-zh_CN.rst
-+
-+:Original: Documentation/kbuild/gcc-plugins.rst
-+:Translator: 慕冬亮 Dongliang Mu <dzm91@hust.edu.cn>
-+
-+================
-+GCC 插件基础设施
-+================
-+
-+
-+介绍
-+============
-+
-+GCC 插件是为编译器提供额外功能的可加载模块 [1]_。它们对于运行时插装和静态分析非常有用。
-+我们可以在编译过程中通过回调 [2]_，GIMPLE [3]_，IPA [4]_ 和 RTL Passes [5]_
-+（译者注：Pass 是编译器所采用的一种结构化技术，用于完成编译对象的分析、优化或转换等功能）
-+来分析、修改和添加更多的代码。
-+
-+内核的 GCC 插件基础设施支持构建树外模块、交叉编译和在单独的目录中构建。插件源文件必须由
-+C++ 编译器编译。
-+
-+目前 GCC 插件基础设施只支持一些架构。搜索 "select HAVE_GCC_PLUGINS" 来查找支持
-+GCC 插件的架构。
-+
-+这个基础设施是从 grsecurity [6]_  和 PaX [7]_ 移植过来的。
-+
-+--
-+
-+.. [1] https://gcc.gnu.org/onlinedocs/gccint/Plugins.html
-+.. [2] https://gcc.gnu.org/onlinedocs/gccint/Plugin-API.html#Plugin-API
-+.. [3] https://gcc.gnu.org/onlinedocs/gccint/GIMPLE.html
-+.. [4] https://gcc.gnu.org/onlinedocs/gccint/IPA.html
-+.. [5] https://gcc.gnu.org/onlinedocs/gccint/RTL.html
-+.. [6] https://grsecurity.net/
-+.. [7] https://pax.grsecurity.net/
-+
-+
-+目的
-+=======
-+
-+GCC 插件的设计目的是提供一个场所，用于试验 GCC 或 Clang 上游没有的潜在编译器功能。
-+一旦它们的实用性得到验证，目标就是将这些功能添加到 GCC（和 Clang）的上游，然后在
-+所有支持的 GCC 版本都支持这些功能后，再将它们从内核中移除。
-+
-+具体来说，新插件应该只实现上游编译器（GCC 和 Clang）不支持的功能。
-+
-+当 Clang 中存在 GCC 中不存在的某项功能时，应努力将该功能上传到上游 GCC（而不仅仅
-+是作为内核专用的 GCC 插件），以使整个生态都能从中受益。
-+
-+类似的，如果 GCC 插件提供的功能在 Clang 中 **不** 存在，但该功能被证明是有用的，也应
-+努力将该功能上传到 GCC（和 Clang）。
-+
-+在上游 GCC 提供了某项功能后，该插件将无法在相应的 GCC 版本（以及更高版本）下编译。
-+一旦所有内核支持的 GCC 版本都提供了该功能，该插件将从内核中移除。
-+
-+
-+文件
-+=====
-+
-+**$(src)/scripts/gcc-plugins**
-+
-+	这是 GCC 插件的目录。
-+
-+**$(src)/scripts/gcc-plugins/gcc-common.h**
-+
-+	这是 GCC 插件的兼容性头文件。
-+	应始终包含它，而不是单独的 GCC 头文件。
-+
-+**$(src)/scripts/gcc-plugins/gcc-generate-gimple-pass.h,
-+$(src)/scripts/gcc-plugins/gcc-generate-ipa-pass.h,
-+$(src)/scripts/gcc-plugins/gcc-generate-simple_ipa-pass.h,
-+$(src)/scripts/gcc-plugins/gcc-generate-rtl-pass.h**
-+
-+	这些头文件可以自动生成 GIMPLE、SIMPLE_IPA、IPA 和 RTL passes 的注册结构。
-+	与手动创建结构相比，它们更受欢迎。
-+
-+
-+用法
-+=====
-+
-+你必须为你的 GCC 版本安装 GCC 插件头文件，以 Ubuntu 上的 gcc-10 为例::
-+
-+	apt-get install gcc-10-plugin-dev
-+
-+或者在 Fedora 上::
-+
-+	dnf install gcc-plugin-devel libmpc-devel
-+
-+或者在 Fedora 上使用包含插件的交叉编译器时::
-+
-+	dnf install libmpc-devel
-+
-+在内核配置中启用 GCC 插件基础设施与一些你想使用的插件::
-+
-+	CONFIG_GCC_PLUGINS=y
-+	CONFIG_GCC_PLUGIN_LATENT_ENTROPY=y
-+	...
-+
-+运行 gcc（本地或交叉编译器），确保能够检测到插件头文件::
-+
-+	gcc -print-file-name=plugin
-+	CROSS_COMPILE=arm-linux-gnu- ${CROSS_COMPILE}gcc -print-file-name=plugin
-+
-+"plugin" 这个词意味着它们没有被检测到::
-+
-+	plugin
-+
-+完整的路径则表示插件已经被检测到::
-+
-+       /usr/lib/gcc/x86_64-redhat-linux/12/plugin
-+
-+编译包括插件在内的最小工具集::
-+
-+	make scripts
-+
-+或者直接在内核中运行 make，使用循环复杂性 GCC 插件编译整个内核。
-+
-+
-+4. 如何添加新的 GCC 插件
-+==============================
-+
-+GCC 插件位于 scripts/gcc-plugins/。你需要将插件源文件放在 scripts/gcc-plugins/ 目录下。
-+子目录创建并不支持，你必须添加在 scripts/gcc-plugins/Makefile、scripts/Makefile.gcc-plugins
-+和相关的 Kconfig 文件中。
-diff --git a/Documentation/translations/zh_CN/kbuild/index.rst b/Documentation/translations/zh_CN/kbuild/index.rst
-index d906a4e88d0f..b51655d981f6 100644
---- a/Documentation/translations/zh_CN/kbuild/index.rst
-+++ b/Documentation/translations/zh_CN/kbuild/index.rst
-@@ -13,6 +13,7 @@
-     :maxdepth: 1
- 
-     headers_install
-+    gcc-plugins
- 
- TODO:
- 
-@@ -24,7 +25,6 @@ TODO:
- - modules
- - issues
- - reproducible-builds
--- gcc-plugins
- - llvm
- 
- .. only::  subproject and html
 -- 
-2.43.0
-
+Thx and BRs
+Lijuan Gao
 
