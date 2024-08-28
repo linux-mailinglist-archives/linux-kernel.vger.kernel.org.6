@@ -1,377 +1,137 @@
-Return-Path: <linux-kernel+bounces-305730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65D9296338D
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 23:06:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C84A96338C
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 23:06:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18EE2283A56
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 21:06:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 511C71F25421
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 21:06:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6246A1AD9DE;
-	Wed, 28 Aug 2024 21:05:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C08081AD40E;
+	Wed, 28 Aug 2024 21:05:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ucr.edu header.i=@ucr.edu header.b="Ic1IS0ah";
-	dkim=pass (1024-bit key) header.d=ucr.edu header.i=@ucr.edu header.b="e018JNPq"
-Received: from mx-lax3-3.ucr.edu (mx.ucr.edu [169.235.156.38])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wuf1HVnb"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27C481AD41B
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 21:05:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=169.235.156.38
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2391D1AC89F
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 21:05:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724879127; cv=none; b=Ob74vYRfWi0r70tCYqBsMcc+hx0wAAf/NpPbyh4dUMnXBQhem7D+p/z+GVbD09/OJBkV3iLrqoZa+hEsMM21a2v1s6PKMgs8v1P6wPAA10c2r6xK2yQfGr25VlRT9WY3AbV2ke2Xc6GR3xhitzvu8Lo1/WRm+CUB/nLUt5gB06I=
+	t=1724879123; cv=none; b=J9sSkkQUYVS9kPqhRfoa60L+aluDwtfuqG/jOshjieAjrabunhZAHgHq1Z8WTyQPHYWraOnv+w1pmQIhFop5R37jcevxS7hGGuyIjmVed0dGMR+bbaNovMOT4e99fvDgRbQueRHpaXkwyptfkMFqpR12X3AgupQyyvtaGvS2WAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724879127; c=relaxed/simple;
-	bh=dbz611zd7+ppfjBYune117kdUuZZARe2W8JAeeEg+oM=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=DHVC3oHrdFi7aovCdmBy1qzfTDQtqy8zfMWsk2GvT52BouiM5O30hc8G5Vo5GKIvnDtcXXvnSJvgHTemLK5fc9GpMshQ0vn1QmkPlFJ0c36p1HvUZnReT6DQM5N6ECQT/mzTNjBjcqmfuTFBeFEIuifcx6CLJeByMcSaxrPLlLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ucr.edu; spf=pass smtp.mailfrom=ucr.edu; dkim=pass (2048-bit key) header.d=ucr.edu header.i=@ucr.edu header.b=Ic1IS0ah; dkim=pass (1024-bit key) header.d=ucr.edu header.i=@ucr.edu header.b=e018JNPq; arc=none smtp.client-ip=169.235.156.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ucr.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucr.edu
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=ucr.edu; i=@ucr.edu; q=dns/txt; s=selector3;
-  t=1724879125; x=1756415125;
-  h=dkim-signature:x-google-dkim-signature:
-   x-forwarded-encrypted:x-gm-message-state:
-   x-google-smtp-source:mime-version:from:date:message-id:
-   subject:to:cc:content-type:x-cse-connectionguid:
-   x-cse-msgguid;
-  bh=dbz611zd7+ppfjBYune117kdUuZZARe2W8JAeeEg+oM=;
-  b=Ic1IS0ahOR0Wrym0Dr/vabRtds5ds2uxMdt07dDSrHm0NXFELSrwOl5y
-   gChnOH7ytHYZJBeRgEdeyRJ538GL+zg5l9230einTgQIK9Bi7ZiKxbFjp
-   B4NBN8e9J4RqgfQCsCvIlHw8cjPo9sZ22jQPiedXKP+OOghzWP6M4G01z
-   PStq7cuT8onYtEko9CNBR7A8I+WEg2uMLjMbOMsB8aRanNvFZjdx16Dci
-   Nyp8azMhmPyYq7HVsDQafoYTUIwh4pHbh3dvpD22sMRXYHN8adloNO5oU
-   icCWF8Ypw9KxMAEL1UkjlktjMk41S9+FK0a1zcYQpGfi/sKD0Nj6GPhlg
-   A==;
-X-CSE-ConnectionGUID: EvVjtnRWS0SeS+jPLi7Zhw==
-X-CSE-MsgGUID: kRYqRJ3oSF2+B7OsCQQ6eg==
-Received: from mail-pg1-f198.google.com ([209.85.215.198])
-  by smtp-lax3-3.ucr.edu with ESMTP/TLS/TLS_AES_256_GCM_SHA384; 28 Aug 2024 14:05:24 -0700
-Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-7cd8c27fa53so877209a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 14:05:24 -0700 (PDT)
+	s=arc-20240116; t=1724879123; c=relaxed/simple;
+	bh=xw/CcMz6j7BEBe/0r7XKlnCuk0/U9f4ac4w2v40x8e4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fPSyLwWz/mFwj6HXK2M+MQCfq0kEOQztZxgNWaaJr5CT4DzAqbDDSY/BBiPayMitzf3PTKWUN/AkeHvT/qVC8P5y1jOPU09Z5eyqGzmLw2XzNwMJ7UoKuK5jVFXLWOOQ9Y+RkLUoUo0hIIxLcAbOBWxt9MqogBBafdqZaX/hcBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wuf1HVnb; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5334a8a1af7so7068712e87.2
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 14:05:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ucr.edu; s=rmail; t=1724879124; x=1725483924; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=NS4PHoy2XxVwSyIO+Te9GZzymSycF+o1Mj8eMrvIk8Q=;
-        b=e018JNPqnaaPmKU3/PU2DIOCnulxanhaAB4q206Lu/SuFa35EvoEiL0g08ajDIwJE8
-         Ym2illtuXKzGmVUjv5V9ewtikvGD5+U4zaUhGZcQqFdsPfIFQynq5C8OSpA1Y5qU7h+B
-         bDERmA4BuF1427NUR4W+c0zr5uxTTHXSd26No=
+        d=linaro.org; s=google; t=1724879119; x=1725483919; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=J8P1AfMskY/XNd3kwlMg/4oyb4V66AijIk4o7h53BOc=;
+        b=wuf1HVnb5IqraD2dhlHqzVZuOO84yxt6DMQy3p5itgXbYqzhSeo7Alkv3pabW+kfSI
+         F3H79OxO/NkRb6Lm1cYGbsnNO2y7MX9HD9XcOadCyyU/ZTZCRiaiL6KRbNqjxw66x7Yj
+         VSk51mr2jgduB1vHjCYo8o/v/Av2LfuWnC6UrtDyFdmy5OCyVHe76P2Xz5M+zKwx5D+e
+         orCoD9wuTCBub94nY22fGCDScVSFFCI7un/Fixr8eb9dCwKPFfHvCKDEj0unletXFXt+
+         +vQ5M/2gJ9STIws4VGnHvPmvzsxglB8b8vAbqHYV6Xxddln989t50zb7y7k+X1nkRmVK
+         KQ1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724879124; x=1725483924;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=NS4PHoy2XxVwSyIO+Te9GZzymSycF+o1Mj8eMrvIk8Q=;
-        b=sh8DvraI73av0xHNjksld32XJsrZQyaJsE1XOAHiHmDUyPncIsVsUXPmwWVkZh+jAZ
-         iq9tckw4RsHVLdlInVKf7hrylNUwiZI8QoFrIqo6c7kzIrjXhkFTyPp4IatFflVLM36r
-         AHWJoGfcGt3FGZXWIFJMvFTLopt8K812ljD3E6OuPUD3C8H/DsSthjmZ5MyMAEtSfbJM
-         N1BHzbwh6pdRHnY9tINYW/SJiApKCuIn0BZ8oMVIpnv2NtWZMoFTAGhDgijTi7GXTEFp
-         HZkcOws/i8DyoFKCXkQmZ3OnPHtFixlD9BOB2F7YnkHvhtK5K50gv4+ALPfxHQNeTkxl
-         7U7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCURjgEkf8E3x94Ao/NhQvpfX96DP1AB9YAVrIqjl23gxHEiwRMLXjPYlLql5O0Np4Sabu67yNbPBKTalA0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRuiJSKw5/Xbm3IrTbBZ6PFS3392ik6guaxVU8YEVWQT5McUhk
-	oFZPW6n8nZfmz8hXFAk5LBmJu2RUvrVj0khBy4V9Lryqka4DNJgiW2Du8ghoazPI+pp7GubMcVB
-	+iBd+GyBSMCZfbfhGAkld72N3bAv83u22fA1q9sv2N0s3rH9ib95zq9R3OMHpfLnTKaUYC3jFit
-	EvTN2u8jP+4NyKf9ym+kdQ7W1L9+7tN+7FtmNtEg==
-X-Received: by 2002:a17:90a:9201:b0:2d3:acbd:307b with SMTP id 98e67ed59e1d1-2d856a62894mr630404a91.10.1724879123265;
-        Wed, 28 Aug 2024 14:05:23 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEVcoppRtvSw4i8OTRRNvI74/5q67YyLV8vCnzgLa8/RhIrq0Ar0nKLfK4AuRSSDFAKCUApvFOQK1tqIyEVivs=
-X-Received: by 2002:a17:90a:9201:b0:2d3:acbd:307b with SMTP id
- 98e67ed59e1d1-2d856a62894mr630366a91.10.1724879122724; Wed, 28 Aug 2024
- 14:05:22 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724879119; x=1725483919;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=J8P1AfMskY/XNd3kwlMg/4oyb4V66AijIk4o7h53BOc=;
+        b=jhyPO8MDDCngDqEcho20yy775ls0POsrIeyLuK+rZ8PUxX7VmEXTUyP/I5GTQF+arz
+         1NGE+YHtogJ29F93QC0AjFqStzg+y5J8F0G7JsvGrEehgtCqFCjV/MySKKIj4fkPiYgy
+         iWQPJzZAFHIVQh0YPxDKpjVIXoLFd9KI5HfyYwde5+BsiPi9VJ51rTJMYXFqZtSO2lU4
+         PfNxHZZI6UaG8AqlmNuYfVjvPnM6v2gaMaf4SwQYX45jo4jBQGTHwx/MqDc3Q8uO4nWS
+         Ubhx1NhVisaCkTuPUWhv308M+tKiD/7wsliqK46qjPLyvXP0mwZmA0TLBFKpnGE3so8E
+         a9iw==
+X-Forwarded-Encrypted: i=1; AJvYcCW+8TNvth30uDAlk70ACu+KXjujKgdh3s2vXQo0IGELfS/YZw1z2oSKflB26phB8BNrCyoQEFZFSZVWrZo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDy/yF/RcjQ5MiL3bcaAUR3fQIB2sr33497qQqVhegGFJXEQGW
+	7dA3Q26aQO9bRMjznsI4iF/njbfrMp0314YRvmkOOuqWZpGqutZ0HqevfmpHpB8=
+X-Google-Smtp-Source: AGHT+IGwy00ojcB+2DLJtwYPQ2cEU/bfftwOA25DuW2BUnyVrQjczSw876qvUyAwWFtEYqRAhYN0BA==
+X-Received: by 2002:a05:6512:acc:b0:52c:e3bd:c708 with SMTP id 2adb3069b0e04-5353e548762mr303636e87.10.1724879118526;
+        Wed, 28 Aug 2024 14:05:18 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5334ea29321sm2292090e87.25.2024.08.28.14.05.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Aug 2024 14:05:17 -0700 (PDT)
+Date: Thu, 29 Aug 2024 00:05:16 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>
+Cc: andersson@kernel.org, linux-arm-msm@vger.kernel.org, 
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, quic_varada@quicinc.com, 
+	quic_srichara@quicinc.com, quic_viswanat@quicinc.com, quic_mojha@quicinc.com
+Subject: Re: [PATCH V2 1/1] remoteproc: qcom: Add NOTIFY_FATAL event type to
+ SSR subdevice
+Message-ID: <o2auzct6aoda4hifggxjtsyzskx2edbut2lmpdf33fzvkczpmd@ngen35gjnoh2>
+References: <20240820060943.277260-1-quic_gokulsri@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Xingyu Li <xli399@ucr.edu>
-Date: Wed, 28 Aug 2024 14:05:12 -0700
-Message-ID: <CALAgD-6MJC+D0DzxLOpVvCbYzHE-r1YzNORtpOh-f+hgEkMjzg@mail.gmail.com>
-Subject: BUG: WARNING: ODEBUG bug in schedule_timeout
-To: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com, 
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org, 
-	bsegall@google.com, mgorman@suse.de, vschneid@redhat.com, 
-	linux-kernel@vger.kernel.org
-Cc: Yu Hao <yhao016@ucr.edu>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240820060943.277260-1-quic_gokulsri@quicinc.com>
 
-Hi,
+On Tue, Aug 20, 2024 at 11:39:43AM GMT, Gokul Sriram Palanisamy wrote:
+> From: Vignesh Viswanathan <quic_viswanat@quicinc.com>
+> 
+> Currently the SSR subdevice notifies the client driver on crash of the
+> rproc from the recovery workqueue using the BEFORE_SHUTDOWN event.
+> However, the client driver might be interested to know that the device
+> has crashed immediately to pause any further transactions with the
+> rproc. This calls for an event to be sent to the driver in the IRQ
+> context as soon as the rproc crashes.
+> 
+> Add NOTIFY_FATAL event to SSR subdevice to atomically notify rproc has
+> crashed to the client driver. The client driver in this scenario is a
+> ath Wi-Fi driver which is continuously queuing data to the remoteproc and
+> needs to know if remoteproc crashes as soon as possible to stop queuing
+> further data and also dump some debug statistics on the driver side that
+> could potentially help in debug of why the remoteproc crashed.
+> 
+> Validated the event in IPQ9574 and IPQ5332 by forcing the rproc to crash
+> and ensuring the registered notifier function receives the notification
+> in IRQ context.
+> 
+> The client driver in this scenario is a Wi-Fi driver which is continuously
+> queuing data to the remoteproc and needs to know if remoteproc crashes
+> as soon as possible to stop queuing further data and also dump some 
+> debug statistics on the driver side that could potentially help in
+> debug of why the remoteproc crashed.
 
-We found a bug in Linux 6.10. It is possibly a use-before-initialization  bug.
-The bug report and the reproducer are as follows:
+Please post the patch together with the user of the API. Right now the
+series has just a single patch in it, so it's impossible to judge
+whether it makes sense or not.
 
-Bug report:
-
-ODEBUG: assert_init not available (active state 0) object:
-ffffc9000a9cf540 object type: timer_list hint:
-process_timeout+0x0/0x40
-WARNING: CPU: 0 PID: 8051 at lib/debugobjects.c:517
-debug_print_object+0x176/0x1e0 lib/debugobjects.c:514
-Modules linked in:
-CPU: 0 PID: 8051 Comm: syz-executor163 Not tainted 6.10.0 #13
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
-RIP: 0010:debug_print_object+0x176/0x1e0 lib/debugobjects.c:514
-Code: df e8 6e e9 95 fd 4c 8b 0b 48 c7 c7 a0 61 a9 8b 48 8b 74 24 08
-48 89 ea 44 89 e1 4d 89 f8 ff 34 24 e8 de 2c f7 fc 48 83 c4 08 <0f> 0b
-ff 05 42 1e c6 0a 48 83 c4 10 5b 41 5c 41 5d 41 5e 41 5f 5d
-RSP: 0018:ffffc9000a9cf298 EFLAGS: 00010282
-RAX: 23ee1da135379d00 RBX: ffffffff8b4ee740 RCX: ffff88801a0c9e00
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffffffff8ba96360 R08: ffffffff8155a25a R09: 1ffff1100c74519a
-R10: dffffc0000000000 R11: ffffed100c74519b R12: 0000000000000000
-R13: ffffffff8ba96248 R14: dffffc0000000000 R15: ffffc9000a9cf540
-FS:  000055558a14e3c0(0000) GS:ffff888063a00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f79c90aaa60 CR3: 000000001f8be000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- debug_object_assert_init+0x35f/0x420 lib/debugobjects.c:910
- debug_timer_assert_init kernel/time/timer.c:846 [inline]
- debug_assert_init kernel/time/timer.c:891 [inline]
- __try_to_del_timer_sync kernel/time/timer.c:1504 [inline]
- __timer_delete_sync+0x2ba/0x410 kernel/time/timer.c:1665
- timer_delete_sync kernel/time/timer.c:1720 [inline]
- del_timer_sync include/linux/timer.h:185 [inline]
- schedule_timeout+0x1c3/0x300 kernel/time/timer.c:2582
- io_schedule_timeout+0x96/0x120 kernel/sched/core.c:9034
- do_wait_for_common kernel/sched/completion.c:95 [inline]
- __wait_for_common kernel/sched/completion.c:116 [inline]
- wait_for_common_io+0x31c/0x620 kernel/sched/completion.c:133
- blk_wait_io block/blk.h:82 [inline]
- blk_execute_rq+0x369/0x4a0 block/blk-mq.c:1408
- sg_scsi_ioctl drivers/scsi/scsi_ioctl.c:593 [inline]
- scsi_ioctl+0x20fc/0x2c70 drivers/scsi/scsi_ioctl.c:901
- sg_ioctl_common drivers/scsi/sg.c:1109 [inline]
- sg_ioctl+0x16c3/0x2d50 drivers/scsi/sg.c:1163
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:907 [inline]
- __se_sys_ioctl+0xfe/0x170 fs/ioctl.c:893
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0x7e/0x150 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x67/0x6f
-RIP: 0033:0x7f6a2ca8418d
-Code: c3 e8 a7 1f 00 00 0f 1f 80 00 00 00 00 f3 0f 1e fa 48 89 f8 48
-89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d
-01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffe3f6398f8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 000000000002fba0 RCX: 00007f6a2ca8418d
-RDX: 0000000020000080 RSI: 0000000000000001 RDI: 0000000000000003
-RBP: 0000000000000000 R08: 002367732f766564 R09: 0000000000000000
-R10: 000000000000000f R11: 0000000000000246 R12: 00007ffe3f63990c
-R13: 431bde82d7b634db R14: 00007f6a2cb014f0 R15: 0000000000000001
- </TASK>
-
-C reproducer:
-// autogenerated by syzkaller (https://github.com/google/syzkaller)
-
-#define _GNU_SOURCE
-
-#include <dirent.h>
-#include <endian.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <signal.h>
-#include <stdarg.h>
-#include <stdbool.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/prctl.h>
-#include <sys/stat.h>
-#include <sys/syscall.h>
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <time.h>
-#include <unistd.h>
-
-static void sleep_ms(uint64_t ms)
-{
-  usleep(ms * 1000);
-}
-
-static uint64_t current_time_ms(void)
-{
-  struct timespec ts;
-  if (clock_gettime(CLOCK_MONOTONIC, &ts))
-    exit(1);
-  return (uint64_t)ts.tv_sec * 1000 + (uint64_t)ts.tv_nsec / 1000000;
-}
-
-static bool write_file(const char* file, const char* what, ...)
-{
-  char buf[1024];
-  va_list args;
-  va_start(args, what);
-  vsnprintf(buf, sizeof(buf), what, args);
-  va_end(args);
-  buf[sizeof(buf) - 1] = 0;
-  int len = strlen(buf);
-  int fd = open(file, O_WRONLY | O_CLOEXEC);
-  if (fd == -1)
-    return false;
-  if (write(fd, buf, len) != len) {
-    int err = errno;
-    close(fd);
-    errno = err;
-    return false;
-  }
-  close(fd);
-  return true;
-}
-
-static long syz_open_dev(volatile long a0, volatile long a1, volatile long a2)
-{
-  if (a0 == 0xc || a0 == 0xb) {
-    char buf[128];
-    sprintf(buf, "/dev/%s/%d:%d", a0 == 0xc ? "char" : "block", (uint8_t)a1,
-            (uint8_t)a2);
-    return open(buf, O_RDWR, 0);
-  } else {
-    char buf[1024];
-    char* hash;
-    strncpy(buf, (char*)a0, sizeof(buf) - 1);
-    buf[sizeof(buf) - 1] = 0;
-    while ((hash = strchr(buf, '#'))) {
-      *hash = '0' + (char)(a1 % 10);
-      a1 /= 10;
-    }
-    return open(buf, a2, 0);
-  }
-}
-
-static void kill_and_wait(int pid, int* status)
-{
-  kill(-pid, SIGKILL);
-  kill(pid, SIGKILL);
-  for (int i = 0; i < 100; i++) {
-    if (waitpid(-1, status, WNOHANG | __WALL) == pid)
-      return;
-    usleep(1000);
-  }
-  DIR* dir = opendir("/sys/fs/fuse/connections");
-  if (dir) {
-    for (;;) {
-      struct dirent* ent = readdir(dir);
-      if (!ent)
-        break;
-      if (strcmp(ent->d_name, ".") == 0 || strcmp(ent->d_name, "..") == 0)
-        continue;
-      char abort[300];
-      snprintf(abort, sizeof(abort), "/sys/fs/fuse/connections/%s/abort",
-               ent->d_name);
-      int fd = open(abort, O_WRONLY);
-      if (fd == -1) {
-        continue;
-      }
-      if (write(fd, abort, 1) < 0) {
-      }
-      close(fd);
-    }
-    closedir(dir);
-  } else {
-  }
-  while (waitpid(-1, status, __WALL) != pid) {
-  }
-}
-
-static void setup_test()
-{
-  prctl(PR_SET_PDEATHSIG, SIGKILL, 0, 0, 0);
-  setpgrp();
-  write_file("/proc/self/oom_score_adj", "1000");
-}
-
-static void execute_one(void);
-
-#define WAIT_FLAGS __WALL
-
-static void loop(void)
-{
-  int iter = 0;
-  for (;; iter++) {
-    int pid = fork();
-    if (pid < 0)
-      exit(1);
-    if (pid == 0) {
-      setup_test();
-      execute_one();
-      exit(0);
-    }
-    int status = 0;
-    uint64_t start = current_time_ms();
-    for (;;) {
-      sleep_ms(10);
-      if (waitpid(-1, &status, WNOHANG | WAIT_FLAGS) == pid)
-        break;
-      if (current_time_ms() - start < 5000)
-        continue;
-      kill_and_wait(pid, &status);
-      break;
-    }
-  }
-}
-
-uint64_t r[1] = {0xffffffffffffffff};
-
-void execute_one(void)
-{
-  intptr_t res = 0;
-  if (write(1, "executing program\n", sizeof("executing program\n") - 1)) {
-  }
-  memcpy((void*)0x20000000,
-         "\x2b\x95\x24\x80\xc7\xca\x55\x09\x7d\x17\x07\x93\x5b\xa6\x4b\x20\xf3"
-         "\x02\x6c\x03\xd6\x58\x02\x6b\x81\xbf\x26\x43\x40\x51\x2b\x3c\xb4\xe0"
-         "\x1a\xfd\xa2\xde\x75\x42\x99\xea\x7a\x11\x33\x43\xab\x7b\x9b\xda\x2f"
-         "\xc0\xa2\xe2\xcd\xbf\xec\xbc\xa0\x23\x3a\x07\x72\xb1\x2e\xbd\xe5\xd9"
-         "\x8a\x12\x03\xcb\x87\x16\x72\xdf\xf7\xe4\xc8\x6e\xc1\xdc\xce\xf0\xa7"
-         "\x63\x12\xfb\xe8\xd4\x5d\xc2\xbd\x0f\x8f\xc2\xeb\xeb\x2a\x6b\xe6\xa3"
-         "\x00\x91\x6c\x52\x81\xda\x2c\x1e\xf6\x4d\x66\x26\x70\x91\xb8\x24\x29"
-         "\x97\x6c\x01\x9d\xa3\x64\x55\x57\xed\x1d\x43\x9c\x5a\x63\x7f\x6b\xf5"
-         "\x8c\x53\xbc\x41\x45\x39\xdd\x87\xc6\x90\x98\xd6\x71\x40\x25\x86\xb6"
-         "\x31\xf9\xac\x5c\x2f\xe9\xce\xdc\x28\x1a\x6f\x00\x5b\x5c\x4d\x1d\xd5"
-         "\xed\x9b\xe4\x00\x00\x00\x00\x00\x00\x00",
-         180);
-  syscall(__NR_write, /*fd=*/-1, /*arg0=*/0x20000000ul, /*len=*/0xb4ul);
-  memcpy((void*)0x20000080, "/dev/sg#\000", 9);
-  res = -1;
-  res = syz_open_dev(/*dev=*/0x20000080, /*id=*/0,
-                     /*flags=O_CREAT|FASYNC|O_RDWR*/ 0x2042);
-  if (res != -1)
-    r[0] = res;
-  *(uint32_t*)0x20000080 = 0;
-  *(uint32_t*)0x20000084 = 2;
-  *(uint8_t*)0x20000088 = 0x85;
-  *(uint8_t*)0x20000089 = 8;
-  *(uint8_t*)0x2000008a = 2;
-  *(uint8_t*)0x2000008b = 0xd;
-  syscall(__NR_ioctl, /*fd=*/r[0], /*arg0=*/1, /*arg1=*/0x20000080ul);
-}
-int main(void)
-{
-  syscall(__NR_mmap, /*addr=*/0x1ffff000ul, /*len=*/0x1000ul, /*prot=*/0ul,
-          /*flags=MAP_FIXED|MAP_ANONYMOUS|MAP_PRIVATE*/ 0x32ul, /*fd=*/-1,
-          /*offset=*/0ul);
-  syscall(__NR_mmap, /*addr=*/0x20000000ul, /*len=*/0x1000000ul,
-          /*prot=PROT_WRITE|PROT_READ|PROT_EXEC*/ 7ul,
-          /*flags=MAP_FIXED|MAP_ANONYMOUS|MAP_PRIVATE*/ 0x32ul, /*fd=*/-1,
-          /*offset=*/0ul);
-  syscall(__NR_mmap, /*addr=*/0x21000000ul, /*len=*/0x1000ul, /*prot=*/0ul,
-          /*flags=MAP_FIXED|MAP_ANONYMOUS|MAP_PRIVATE*/ 0x32ul, /*fd=*/-1,
-          /*offset=*/0ul);
-  const char* reason;
-  (void)reason;
-  loop();
-  return 0;
-}
+> 
+> Signed-off-by: Vignesh Viswanathan <quic_viswanat@quicinc.com>
+> Acked-by: Mukesh Ojha <quic_mojha@quicinc.com>
+> Signed-off-by: Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>
+> ---
+> changes since v1:
+> 	- No changes. Rebased on top of linux-next.
+> 	- We will now have a user for this notifier, ath12k.
+> 
+>  drivers/remoteproc/qcom_common.c      | 60 +++++++++++++++++++++++++++
+>  drivers/remoteproc/remoteproc_core.c  | 12 ++++++
+>  include/linux/remoteproc.h            |  3 ++
+>  include/linux/remoteproc/qcom_rproc.h | 17 ++++++++
+>  4 files changed, 92 insertions(+)
 
 -- 
-Yours sincerely,
-Xingyu
+With best wishes
+Dmitry
 
