@@ -1,69 +1,71 @@
-Return-Path: <linux-kernel+bounces-304369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0680C961F10
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 08:09:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 476F7961F23
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 08:11:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 78DDAB23390
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 06:08:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0F091F24FE5
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 06:11:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C9DA155316;
-	Wed, 28 Aug 2024 06:08:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E791E156669;
+	Wed, 28 Aug 2024 06:11:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ApTn6ikf"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="DachNt1c"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D70401799F;
-	Wed, 28 Aug 2024 06:08:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2B89154BEB;
+	Wed, 28 Aug 2024 06:11:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724825328; cv=none; b=NlNPAGdoX+GwicpMvGbXc3WVn0OquXMkYZH3aKBsLdADNeZ6lF003B11fPDAXWnw/jYQVFtzNVrpDBfWiztnoRBIcsRlboE+olrNA2iYRQShekFUyLwl3CifWqvIWZXrcLivYmWtAtmqpU1QtZeGx3zmI1GDjF7k73caGXTTpPw=
+	t=1724825474; cv=none; b=OOh3lQ2G88eN+xYQgj8HCLJVEWmz3zoVOFscsRvQ94i4dd48I2YpDiFf6jB4ZAhOpxYbr8qAaO+h8Tqd7+S+ThgDJ40obkJDQOs3eJlHTrhIzVU6HftMf6OTklerlu27O53oqpb5FKRgC5VbBBNDELlt/V8eDQjeu5LiDo4NS5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724825328; c=relaxed/simple;
-	bh=Pl1+NSifgoRpJ4LlZciVlTEEXJmTEpqOHSiN9reOK54=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jRIxrIEb/NqYfo9YVkBkRbUUj8ix7W2vzZSa4MP7ekJq/f0aWwl+Ge9XwKrRDri6Zu4W/O+OwR80+FmD4yB/EXGY876dZe0vF6M6MTICm94Uj4+GuJKaqZrb4mcQZmpMwNfLn/Mzvk+wPQmbvgXsAADd2KY/j9cvUj7zPOZnRcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ApTn6ikf; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47S68aI7055360;
-	Wed, 28 Aug 2024 01:08:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1724825316;
-	bh=I9CxeLlhRLFlFLlPgD1G7AfcoceYacs6pNC/qxoK6i0=;
-	h=From:To:CC:Subject:Date;
-	b=ApTn6ikfQxsvUN8bpUk85e4QsZlQYxigQLZeqcbBDcAMJpgN/FfZmv2L3kmJFlJef
-	 X/4GATzLKIqnv65X5LIUHsrxNprwl+ABl6ZA3+5P4o+V2EV2bWdhMDrm5GNDJCRwJg
-	 nNiuWFkES7sJyq2HCMB2zvNxyl8uq45JuIGApJQA=
-Received: from DFLE101.ent.ti.com (dfle101.ent.ti.com [10.64.6.22])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47S68a8g029671
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 28 Aug 2024 01:08:36 -0500
-Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 28
- Aug 2024 01:08:36 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 28 Aug 2024 01:08:36 -0500
-Received: from prasanth-server.dhcp.ti.com (prasanth-server.dhcp.ti.com [172.24.227.197])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47S68Wh3037421;
-	Wed, 28 Aug 2024 01:08:33 -0500
-From: Prasanth Babu Mantena <p-mantena@ti.com>
-To: <vigneshr@ti.com>, <nm@ti.com>, <krzk+dt@kernel.org>, <kristo@kernel.org>,
-        <robh@kernel.org>, <conor+dt@kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <u-kumar1@ti.com>,
-        <sinthu.raja@ti.com>, <m-chawdhry@ti.com>
-Subject: [PATCH] arm64: dts: ti: k3-am68-sk-som: Update Partition info for OSPI Flash
-Date: Wed, 28 Aug 2024 11:38:30 +0530
-Message-ID: <20240828060830.555733-1-p-mantena@ti.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1724825474; c=relaxed/simple;
+	bh=V6pyX/V9WzOPOgZXoGWZlDs9X15kC2OZmru0k2I4WI4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=k75l84nfPaum7HSTQ9imQWt2O+Y3Xm/uv5JxxArJpLBHEQNgBuj+uR5OPpC6r3dwkyS4veIADSh/UlJwpauZVrwJN3MrlgKBzNWCgltj0sp60XXkNwFyQpKz1sX6JQF+nx9RO1AGKhD/E3HfToS9NEhGxHRaMj7sIJ9aBgfrPu4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=DachNt1c; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=3ciW+jDJYrdLJiK7yrXhNzVEL4ig56HUYUk4VOvh/z0=; b=DachNt1cx+ujVHKXHJfhguYPcC
+	9aAqfBoRuTD2BycDnkoq2+XVJgduR0jUZafb+wHb4B+tRHNCEo+SGOrtcsQvZMydA7tNGInWBQs5w
+	69FOaQMwVwWuo6pPJtsi2BcUec+73lr/fSkNmYLKWVNWI7lSQZKrpLFPAp9IcRtasZAYiQf8cOkxO
+	tni42Ic2e8NqYRy7ZadXs2xugccm0Zfp5fifHQ9pwwtZOGq968HzDTabeQWV+VtZubJN2NukZ+srM
+	m7lxrEC4huwPqB6G7d3uGQA+7nAvrJsZgB3gE8FZFou6JBOpJJHKhnTlWsvD8OBG21HfoKRWJ0AQk
+	brwIO41g==;
+Received: from [2001:4bb8:2dc:a2cd:2ccf:8fbe:8ab4:c9db] (helo=localhost)
+	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sjBtc-0000000E1uI-0svg;
+	Wed, 28 Aug 2024 06:11:08 +0000
+From: Christoph Hellwig <hch@lst.de>
+To: iommu@lists.linux.dev
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Bingbu Cao <bingbu.cao@intel.com>,
+	"Michael S . Tsirkin " <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	linux-kernel@vger.kernel.org,
+	linux-alpha@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mips@vger.kernel.org,
+	linux-parisc@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-s390@vger.kernel.org,
+	sparclinux@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	virtualization@lists.linux.dev,
+	xen-devel@lists.xenproject.org
+Subject: clearly mark DMA_OPS support as an architecture feature v2
+Date: Wed, 28 Aug 2024 09:10:27 +0300
+Message-ID: <20240828061104.1925127-1-hch@lst.de>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,36 +73,28 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Commit 73f1f26e2e4c ("arm64: dts: ti: k3-am68-sk-som: Add support
-for OSPI flash") introduced the flash node with discontinuous
-partitions. Updating the partition offset to be continuous from
-the previous partition to maintain linearity.
+Hi all,
 
-Signed-off-by: Prasanth Babu Mantena <p-mantena@ti.com>
----
- arch/arm64/boot/dts/ti/k3-am68-sk-som.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+we've had a long standing problems where drivers try to hook into the
+DMA_OPS mechanisms to override them for something that is not DMA, or
+to introduce additional dispatching.
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am68-sk-som.dtsi b/arch/arm64/boot/dts/ti/k3-am68-sk-som.dtsi
-index 5c66e0ec6e82..2e5730216caa 100644
---- a/arch/arm64/boot/dts/ti/k3-am68-sk-som.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am68-sk-som.dtsi
-@@ -215,9 +215,9 @@ partition@680000 {
- 				reg = <0x680000 0x40000>;
- 			};
- 
--			partition@740000 {
-+			partition@6c0000 {
- 				label = "ospi.env.backup";
--				reg = <0x740000 0x40000>;
-+				reg = <0x6c0000 0x40000>;
- 			};
- 
- 			partition@800000 {
--- 
-2.34.1
+Now that we are not using DMA_OPS support for dma-iommu and can build
+kernels without DMA_OPS support on many common setups this becomes even
+more problematic.
 
+This series renames the option to ARCH_HAS_DMA_OPS and adds very explicit
+comment to not use it in drivers.  The ipu6 and vdpa_sim/user drivers
+that abuse the mechanism are made to depend on the option instead of
+selecting it with a big comment, but I expect this to be fixed rather
+sooner than later (I know the ipu6 maintainers are on it based on a
+previous discussion).
+
+Changes since v1:
+ - s/ARCH_DMA_OPS/ARCH_HAS_DMA_OPS/g
+ - spelling fixes
+ - vdpa_sim actually doesn't need dma ops these days, add a prep patch
+   to remove the dependency
 
