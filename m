@@ -1,157 +1,84 @@
-Return-Path: <linux-kernel+bounces-304668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A4CB96236C
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:31:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2097C96236E
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:31:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48EA02847A3
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 09:31:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 533E91C2219C
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 09:31:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 326C7166310;
-	Wed, 28 Aug 2024 09:31:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Kd7w/fje"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 864F315C15D
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 09:31:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 884AF161901;
+	Wed, 28 Aug 2024 09:31:48 +0000 (UTC)
+Received: from cmccmta2.chinamobile.com (cmccmta6.chinamobile.com [111.22.67.139])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30BFCA48;
+	Wed, 28 Aug 2024 09:31:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724837477; cv=none; b=u/dluuHXksG9EFJulmughaJGzYyuuu6o7gc5v+LrhNhBSZNI3ednFI+AmaGTzMss8L/6KfsUtyo8wWgXwMUILIsO1hjJ2K8H7qfczvYWns46MZllbWpx2kOiiRC4rbTSXj/bbzbxTXzDjlqsig7NttoYzDeOokwmdimWbdm3M3Y=
+	t=1724837508; cv=none; b=ZsitDzbRbQJc0E5Ea/FtJRfQndFAtExu8wGjkz2yQgNO2tjgmkw5YS2Lrn1vBlVdpqaA89Yk4smac7C091LL0Y+hsO+Ly9iOOsQ3vjt9IKmuZLvjXPNUlAg+WhZwYqCbk56jb+WvIh6g8z5LDQi5EEIEm7rMsbsfA7C8HLiV2eI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724837477; c=relaxed/simple;
-	bh=zQqg7cbzkAAqq8El2KBhqA+3KnZohuXfc/S1tJbpDuk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=hVrSfsk52tB/ZYU9SUSwZVoh90ayLXy+Py7c0FlROq8KnK8j3iUtHGoG5XsLmcVYH/0fHfus3lbjZTI5xZhRlWan+4DaxAKoGBGeAAQwKHH1vKbGSlkATbU5iBYSDty9cWBO0RIn+Wio5Uzgs5jFnDTbCYv9fF5XDjN42UwDNrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Kd7w/fje; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-429e29933aaso54316185e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 02:31:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1724837472; x=1725442272; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:references
-         :in-reply-to:subject:cc:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Nztb8QTWKE8vCqoi2j1vz8Fswgv7hpm8l/u2GeDh0dg=;
-        b=Kd7w/fjehnmRzxP8+5uAV3zYbfe2EuE28RcGTEKXUqMp1ycV6THrC/563lTiQmMgzn
-         ei4eBLBDhTcpHPU/y4/vjhcHGolxGMSPSwsS+uOqRmyu2XtlAqsQy4fG65mVvYRRzq4G
-         /RbzuN09r1pNvV9YzvVW/OCsjD4zp5UtCputf9gtXlSai51XCJHrk5zOeXeLTAoRqM4P
-         nGKoDlVAgOJWBP6q9+ln1+RvB1EaqYFqGVDzhxz9FpMmSUkBws9lhkAJAcH44xnjTljL
-         tjZVJgIn5CxRmxUgJbq6ZA8Ju5SOKIg1PRCXQn+Za2UB4OK4EVIO6tT2u1247maDkifN
-         0qYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724837472; x=1725442272;
-        h=content-transfer-encoding:mime-version:message-id:date:references
-         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Nztb8QTWKE8vCqoi2j1vz8Fswgv7hpm8l/u2GeDh0dg=;
-        b=Rc6xZ3zpS6VB2ej5DO98EM/eKkmV6TEWcHK/wN+Sa7iGXlY9avOrNqCv/4LlWOgurO
-         1Iwq/eONqy0oyQ43L/TFDVHM63k1HphGfDqAIaV9sXi6BLe3PM3b8dAD5qA6pMJqU+sw
-         qaMw1C+bOU1JYfEFuqbtVI8V+WAyyPIOdWE0mNIbaghY2t6NRJ+wwipyMmBfw7WW0f2/
-         g9Sn9ysB3kifb695kf+FgUW7x4EHE3p3e9u3Na1UPPq8CBjFR/3FLj7A4R0yYvfuu6mn
-         rttT7/QUJU4ajszCxxjkdKYCQnZKIR9K59IY0YlrjdxJe+B/nbcVP3ORQfyENkiA1Hd2
-         wrEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVjRu9m7VLa9yv8jooYj1cygPg7WP31OJkZonAAdF5yBWcmixlfX8+CuHsPiOL1BU7LixmivyPkrwgG1Kw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfPEPBxV7vrKy1dT0LRF02nNYCcY+Ysup+rheT+ezvs0t7vdHl
-	mwGQicCAGXuoPLJ8RhMsgA1tNXPrBscjU2VpISbuqM/2zTWxt/Iz3elFkVaCG2k=
-X-Google-Smtp-Source: AGHT+IF2qTvtGuAd4Hsxi0pkISJXFGgyQwIBCynnMQqBlF2Bo98neUQNmwhUdIKiZ3qtSZRVcHdVng==
-X-Received: by 2002:a5d:4687:0:b0:371:7e73:eb43 with SMTP id ffacd0b85a97d-373118e35ccmr10622857f8f.42.1724837471143;
-        Wed, 28 Aug 2024 02:31:11 -0700 (PDT)
-Received: from localhost ([2a01:cb19:95ba:5000:d6dd:417f:52ac:335b])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3730813cdf2sm15169916f8f.38.2024.08.28.02.31.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2024 02:31:10 -0700 (PDT)
-From: Mattijs Korpershoek <mkorpershoek@baylibre.com>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
- <angelogioacchino.delregno@collabora.com>, linux-input@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH] Input: mt6779-keypad - use devm_clk_get_enabled()
-In-Reply-To: <Zs4UWGKt3hLjNmoP@google.com>
-References: <Zs4UWGKt3hLjNmoP@google.com>
-Date: Wed, 28 Aug 2024 11:31:08 +0200
-Message-ID: <87r0a9q9ib.fsf@baylibre.com>
+	s=arc-20240116; t=1724837508; c=relaxed/simple;
+	bh=aaHump5Ez603AvINyLLmEIe2gGnCkcovisCUNr6gNsk=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=E20chEf9T3l9Lq8Ukz4GetKGAxEaRDD3+uVuIkI6gU8JBWPPSxHabh3azyLHwGe7h1ITHHCTQe7hHzjQmwMqWSFyG6NqlDU4FQME6kcGb4FrPEj1fHQ02dhsMFqMfG/qe633rrQNR1bRlBjJhYrVetsaaMrRYjllkuzOLLKv9bQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app05-12005 (RichMail) with SMTP id 2ee566ceee7852b-ac52e;
+	Wed, 28 Aug 2024 17:31:39 +0800 (CST)
+X-RM-TRANSID:2ee566ceee7852b-ac52e
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from ubuntu.localdomain (unknown[223.108.79.99])
+	by rmsmtp-syy-appsvr03-12003 (RichMail) with SMTP id 2ee366ceee79ce4-5d4dc;
+	Wed, 28 Aug 2024 17:31:39 +0800 (CST)
+X-RM-TRANSID:2ee366ceee79ce4-5d4dc
+From: Zhu Jun <zhujun2@cmss.chinamobile.com>
+To: jic23@kernel.org
+Cc: lars@metafoo.de,
+	linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	zhujun2@cmss.chinamobile.com
+Subject: [PATCH] tools/iio: Add memory allocation failure check for trigger_name
+Date: Wed, 28 Aug 2024 02:31:29 -0700
+Message-Id: <20240828093129.3040-1-zhujun2@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
 
-Hi Dmitry
+Added a check to handle memory allocation failure for `trigger_name`
+and return `-ENOMEM`.
 
-Thank you for the patch.
+Signed-off-by: Zhu Jun <zhujun2@cmss.chinamobile.com>
+---
+ tools/iio/iio_generic_buffer.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-On mar., ao=C3=BBt 27, 2024 at 11:00, Dmitry Torokhov <dmitry.torokhov@gmai=
-l.com> wrote:
+diff --git a/tools/iio/iio_generic_buffer.c b/tools/iio/iio_generic_buffer.c
+index 0d0a7a19d6f9..9ef5ee087eda 100644
+--- a/tools/iio/iio_generic_buffer.c
++++ b/tools/iio/iio_generic_buffer.c
+@@ -498,6 +498,10 @@ int main(int argc, char **argv)
+ 			return -ENOMEM;
+ 		}
+ 		trigger_name = malloc(IIO_MAX_NAME_LENGTH);
++		if (!trigger_name) {
++			ret = -ENOMEM;
++			goto error;
++		}
+ 		ret = read_sysfs_string("name", trig_dev_name, trigger_name);
+ 		free(trig_dev_name);
+ 		if (ret < 0) {
+-- 
+2.17.1
 
-> Switch to using devm_clk_get_enable() helper instead of acquiring the
-> clock with devm_clk_get(), enabling it, and defining and installing
-> a custom devm action to call clk_disable().
->
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-Reviewed-by: Mattijs Korpershoek <mkorpershoek@baylibre.com>
 
-> ---
->  drivers/input/keyboard/mt6779-keypad.c | 18 +-----------------
->  1 file changed, 1 insertion(+), 17 deletions(-)
->
-> diff --git a/drivers/input/keyboard/mt6779-keypad.c b/drivers/input/keybo=
-ard/mt6779-keypad.c
-> index 19f69d167fbd..c13880103429 100644
-> --- a/drivers/input/keyboard/mt6779-keypad.c
-> +++ b/drivers/input/keyboard/mt6779-keypad.c
-> @@ -92,11 +92,6 @@ static irqreturn_t mt6779_keypad_irq_handler(int irq, =
-void *dev_id)
->  	return IRQ_HANDLED;
->  }
->=20=20
-> -static void mt6779_keypad_clk_disable(void *data)
-> -{
-> -	clk_disable_unprepare(data);
-> -}
-> -
->  static void mt6779_keypad_calc_row_col_single(unsigned int key,
->  					      unsigned int *row,
->  					      unsigned int *col)
-> @@ -213,21 +208,10 @@ static int mt6779_keypad_pdrv_probe(struct platform=
-_device *pdev)
->  	regmap_update_bits(keypad->regmap, MTK_KPD_SEL, MTK_KPD_SEL_COL,
->  			   MTK_KPD_SEL_COLMASK(keypad->n_cols));
->=20=20
-> -	keypad->clk =3D devm_clk_get(&pdev->dev, "kpd");
-> +	keypad->clk =3D devm_clk_get_enabled(&pdev->dev, "kpd");
->  	if (IS_ERR(keypad->clk))
->  		return PTR_ERR(keypad->clk);
->=20=20
-> -	error =3D clk_prepare_enable(keypad->clk);
-> -	if (error) {
-> -		dev_err(&pdev->dev, "cannot prepare/enable keypad clock\n");
-> -		return error;
-> -	}
-> -
-> -	error =3D devm_add_action_or_reset(&pdev->dev, mt6779_keypad_clk_disabl=
-e,
-> -					 keypad->clk);
-> -	if (error)
-> -		return error;
-> -
->  	irq =3D platform_get_irq(pdev, 0);
->  	if (irq < 0)
->  		return irq;
-> --=20
-> 2.46.0.295.g3b9ea8a38a-goog
->
->
-> --=20
-> Dmitry
 
