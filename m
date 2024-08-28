@@ -1,148 +1,144 @@
-Return-Path: <linux-kernel+bounces-304460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2AA1962068
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 09:13:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4BF196206A
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 09:13:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 220F41C210E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 07:13:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34E82B21D28
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 07:13:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8FA1158A26;
-	Wed, 28 Aug 2024 07:13:08 +0000 (UTC)
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24BBF15957E;
+	Wed, 28 Aug 2024 07:13:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VwOzehiN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1737D2CA6;
-	Wed, 28 Aug 2024 07:13:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6155F2CA6;
+	Wed, 28 Aug 2024 07:13:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724829188; cv=none; b=DCOhIH5xVLB/ldNkTdIpWL5BIll9V3h+JMxBwCKQixiWjuP3e3oYCsvb1AtWuR5I4UeT+ooynSL2viSGXUJUmPR54ZnBMf8bLVoo0QdoX666o93BVE4EmYcky8T416g77K4OWwMG1G7FCRzeIRY75kOSo8NvVzpVgiKnlIv2Fe4=
+	t=1724829191; cv=none; b=RJMptbLeAhmVQhy/gC9aDdTC0vhJ4TLqZNhqCU8N7UFIczcSB/Z8Ny+yRMjnO5mbXJlBBV0QDjsHzka6hh00bxYTjXWqgoR0SmqHiGdf0kjog+KO8UMHYjajaHabhcM/DYFKwJQTJMgeg0KGLLTFTIbtHu7cdfzHgAlmkZV1WZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724829188; c=relaxed/simple;
-	bh=UZYnlznxHgHahL9IgW5qk4LVk7i/ozJ7tT74Y/giKNw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=M0YZLngeWovC44lXpb1pIJSnoTYdCrQVJKbi2kd9a0jSCkUpQqDdLRzhjijUpeHF+ilFjVCQUmq02bVbXKSUyGm5WI1VLScHRcUHpguDB3ynRBro0D65zHdsWjGUOESJw+B7/+Xxh8gWHpI7hvQA4bO5Ilooi99g1s3ts7cUxgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6b99988b6ceso62918747b3.0;
-        Wed, 28 Aug 2024 00:13:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724829184; x=1725433984;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IRttU90cGhHvxq7l+2uEOOgIlDZs3J8W+eir8dqoS4M=;
-        b=Qlx3Fj/V8cqro+ewMLurSetAOvj63OOnd84039UsfjziP/OAdMXNzOCUh2xXZSvuiT
-         9o7TlLmrSQmsAKOsY5p0WWcYK+qEkkJrQan3BmTWc3Cv2U2mOXcqJmfi5nDfx9LJNmET
-         ANxQY+wCi5KAq59NCxi/lNim8p7yh1IdU1w/rDhWGJGLcRMMS5lVJhZM9A/ahkcmhz0j
-         kv6TfF8JyPmR46PaxXknzvpQYR10PYFQmoWrC8x6jiQQPWPvuNSlyFCtw5rQvrBzf/mT
-         v42socvkrPgxOXGphF67rk8ROa3kSpnkKq+Tm1D5B9/HF5dPdQW2h9E/It/Ps8bLXsVF
-         j7nA==
-X-Forwarded-Encrypted: i=1; AJvYcCUDJFfuAlkAqJVXOGLsDyHKpFexSZWa+uUMY4ARLC3AUwNLWEWE65d0IEXjrstSAs4huvdLsxCD@vger.kernel.org, AJvYcCVYdBD5yf//tg4D+aBDC7b3QsfsSMjQQswWzAZ0KPw/iouIcqTHohWvflrwLD8XzCxctITkfKoectfCMbs=@vger.kernel.org, AJvYcCX9zHUdx6MdjeS40L82gqfPNzesCCThoy0jEDcBxKG8m840KvcmWZynVa3xkoFqaSPXs3+oVeeIMWNHqyBlOc5jkxs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/rlg3sVbcfCkkF4ztYZz4ooGjTmjxPx/OpuBSV2Otw3XnuGGu
-	BXUVuZL9kG4mZSvcy4LfPptfmvRfr3MrFrCL8EjbPm36fHS75vJDet6rs2aA
-X-Google-Smtp-Source: AGHT+IF7INMxQFSKNupD65V2J84remS1RXbzWpoys8br3CUPNOfL5R9+j/yYCyph3CoFbvEBRwI6Lg==
-X-Received: by 2002:a05:690c:290d:b0:6be:8c:691b with SMTP id 00721157ae682-6c62557db60mr133642167b3.17.1724829183785;
-        Wed, 28 Aug 2024 00:13:03 -0700 (PDT)
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com. [209.85.128.169])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6c39d3a9f9bsm22365517b3.78.2024.08.28.00.13.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 28 Aug 2024 00:13:02 -0700 (PDT)
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6b99988b6ceso62918477b3.0;
-        Wed, 28 Aug 2024 00:13:02 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU4x7NcJf9caucByhM7d8b/nxQofzLyLpOur+AhEXa2OmvnOd189TeQwfWBNX2kvahueYfYdbBq@vger.kernel.org, AJvYcCVL0KerHIi9epFO4dCBbp+J7F3I5C6OPnv27vU1U75Fp0wtXLSYEhJr5IhK8dkclwZ/PSgzSf0C2I7CdUBLrDnyfcI=@vger.kernel.org, AJvYcCViV+RsFC9lhw+ooUgp/fglg67Lg6vWbMvadvGgCiN2Xm+6g4osENV6SbHwb5WGtU48pqQipIanHUc51DU=@vger.kernel.org
-X-Received: by 2002:a05:690c:2f0a:b0:6b0:cad5:2239 with SMTP id
- 00721157ae682-6c628a9f1c5mr129690527b3.31.1724829182652; Wed, 28 Aug 2024
- 00:13:02 -0700 (PDT)
+	s=arc-20240116; t=1724829191; c=relaxed/simple;
+	bh=qamZVgTLzxmf+M2qHioyapuwePftf9clOU3H2jaNQ7Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EFyhE/AEHmTVyJag7/ir+Mqo9K+ZuRGrrVwDTix+c1ZsWWlj1C7QC+v2tv0M77nRn9ewavnN/Ql4KLBAGZ57ATZUTtHiCAo2pa/ShEfGiIlH0itOK8fF/nL6Ft52uzybYkKJ+NSzOP6A5yO7j5LfTaTJG1DrgwEmL5XNdjLkf4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VwOzehiN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A616DC4FE81;
+	Wed, 28 Aug 2024 07:13:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724829191;
+	bh=qamZVgTLzxmf+M2qHioyapuwePftf9clOU3H2jaNQ7Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VwOzehiNNM9WfPV8BdMT0ysx/swiBHT/DwrbkeE6J+9nIPvQvMRlkxGpjO06QZR2A
+	 7AZvSNZeNaPbhfpkhR8txsyOACm2ayebQ3VG0JoftPJ+VkWJwOFCQQ2fJXvo57y6gG
+	 SU8/HnIl8dVWE9X7DWlhKshL9aPmMNxsIe8/LrBtMiRsi7S5MhbQOMn2SW87FGsLPE
+	 8zL8PakTTcNMfy3V+iyzQchaoqgqw+8GSFZcNC8nzH5eSuQYhLMD4vAmw0UEaqCWUx
+	 /xQJ+ivmUJdVL/tT2hI3HzawrqXsyNwJe3QpP3BJYiYeLN0sEWokc+5gpuMk6nqWXf
+	 FFESLx39pY7bg==
+Date: Wed, 28 Aug 2024 15:13:03 +0800
+From: Peter Chen <peter.chen@kernel.org>
+To: Mario Limonciello <mario.limonciello@amd.com>
+Cc: superm1@kernel.org, Mathias Nyman <mathias.nyman@intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"open list:USB XHCI DRIVER" <linux-usb@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	Kai-Heng Feng <kai.heng.feng@canonical.com>,
+	mika.westerberg@linux.intel.com, stern@rowland.harvard.edu
+Subject: Re: [PATCH 2/2] xhci: pci: Put XHCI controllers into D3hot at
+ shutdown
+Message-ID: <20240828071303.GA921051@nchen-desktop>
+References: <20240712185418.937087-1-superm1@kernel.org>
+ <20240712185418.937087-3-superm1@kernel.org>
+ <20240827063206.GA879539@nchen-desktop>
+ <4db33660-2720-471d-a017-1fca4c9b7268@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240827095712.2672820-1-frank.li@vivo.com> <20240827095712.2672820-9-frank.li@vivo.com>
- <20240827120953.00005450@Huawei.com> <CAHzn2R0r9Jziex+7fyhPGaPf12ckwqZwO40bshDBGdq_Tyenqg@mail.gmail.com>
-In-Reply-To: <CAHzn2R0r9Jziex+7fyhPGaPf12ckwqZwO40bshDBGdq_Tyenqg@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 28 Aug 2024 09:12:50 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVSz32c6qXYSX4YSfO5mo-30Jku3kgPyR3-PXBoQqex3g@mail.gmail.com>
-Message-ID: <CAMuHMdVSz32c6qXYSX4YSfO5mo-30Jku3kgPyR3-PXBoQqex3g@mail.gmail.com>
-Subject: Re: [net-next v3 8/9] net: mvpp2: Convert to devm_clk_get_enabled()
- and devm_clk_get_optional_enabled()
-To: Marcin Wojtas <marcin.s.wojtas@gmail.com>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, Yangtao Li <frank.li@vivo.com>, 
-	clement.leger@bootlin.com, andrew@lunn.ch, f.fainelli@gmail.com, 
-	olteanv@gmail.com, davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
-	pabeni@redhat.com, ulli.kroll@googlemail.com, linus.walleij@linaro.org, 
-	linux@armlinux.org.uk, alexandre.torgue@foss.st.com, joabreu@synopsys.com, 
-	mcoquelin.stm32@gmail.com, hkallweit1@gmail.com, 
-	u.kleine-koenig@pengutronix.de, jacob.e.keller@intel.com, 
-	justinstitt@google.com, sd@queasysnail.net, horms@kernel.org, 
-	linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-stm32@st-md-mailman.stormreply.com, 
-	Maxime Chevallier <maxime.chevallier@bootlin.com>, 
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4db33660-2720-471d-a017-1fca4c9b7268@amd.com>
 
-Hi Marcin,
+On 24-08-27 13:44:02, Mario Limonciello wrote:
+> On 8/27/2024 01:32, Peter Chen wrote:
+> > On 24-07-12 13:54:18, superm1@kernel.org wrote:
+> > > From: Mario Limonciello <mario.limonciello@amd.com>
+> > > 
+> > > A workaround was put in place for Haswell systems with spurious events
+> > > to put XHCI controllers into D3hot at shutdown.  This solution actually
+> > > makes sense for all XHCI controllers though because XHCI controllers
+> > > left in D0 by the OS may remain in D0 when the SoC goes into S5.
+> > > 
+> > > Explicitly put all XHCI controllers into D3hot at shutdown and when
+> > > module is unloaded.
+> > > 
+> > > Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+> > > ---
+> > >   drivers/usb/host/xhci-pci.c | 8 ++------
+> > >   1 file changed, 2 insertions(+), 6 deletions(-)
+> > > 
+> > > diff --git a/drivers/usb/host/xhci-pci.c b/drivers/usb/host/xhci-pci.c
+> > > index 4408d4caf66d2..dde5e4a210719 100644
+> > > --- a/drivers/usb/host/xhci-pci.c
+> > > +++ b/drivers/usb/host/xhci-pci.c
+> > > @@ -667,9 +667,7 @@ static void xhci_pci_remove(struct pci_dev *dev)
+> > >   		xhci->shared_hcd = NULL;
+> > >   	}
+> > > -	/* Workaround for spurious wakeups at shutdown with HSW */
+> > > -	if (xhci->quirks & XHCI_SPURIOUS_WAKEUP)
+> > > -		pci_set_power_state(dev, PCI_D3hot);
+> > > +	pci_set_power_state(dev, PCI_D3hot);
+> > >   	usb_hcd_pci_remove(dev);
+> > >   }
+> > > @@ -882,9 +880,7 @@ static void xhci_pci_shutdown(struct usb_hcd *hcd)
+> > >   	xhci_shutdown(hcd);
+> > >   	xhci_cleanup_msix(xhci);
+> > > -	/* Yet another workaround for spurious wakeups at shutdown with HSW */
+> > > -	if (xhci->quirks & XHCI_SPURIOUS_WAKEUP)
+> > > -		pci_set_power_state(pdev, PCI_D3hot);
+> > > +	pci_set_power_state(pdev, PCI_D3hot);
+> > 
+> > Hi Mario & Mathias,
+> > 
+> > According to xHCI spec v1.2: A.1.2 Power State Definitions:
+> > 
+> > 	Software shall place each downstream USB port with power
+> > 	enabled into the Suspend or Disabled state before it
+> > 	attempts to move the xHC out of the D0 power state.
+> > 
+> > But I have not found any USB core code does it, do you have any ideas
+> > about it?
+> > 
+> > We have added the similar codes at non-PCI USB platform, but met above
+> > concerns. In fact, we met kernel dump that the thread usb-storage try
+> > to access the port status when the platform xHCI code has already put
+> > the controller to D3.
+> > 
+> > Best regards,
+> > Peter
+> > 
+> > 
+> 
+> This is pretty tangential to my patch.  But FWIW in case you missed we're
+> going to discard this patch in favor of another approach in PCI core.
+> 
+> Regarding your point though If I'm not mistaken this should be handled by
+> the Linux parent/child device model.  Each of the ports should be children
+> of the hub they're connected to and the hub a child of the controller.  So
+> when doing any actions that start runtime PM on the host controller the
+> children need to first be in runtime PM.
+> 
 
-On Wed, Aug 28, 2024 at 8:26=E2=80=AFAM Marcin Wojtas <marcin.s.wojtas@gmai=
-l.com> wrote:
-> wt., 27 sie 2024 o 13:09 Jonathan Cameron
-> <Jonathan.Cameron@huawei.com> napisa=C5=82(a):
-> > On Tue, 27 Aug 2024 03:57:11 -0600
-> > Yangtao Li <frank.li@vivo.com> wrote:
-> > > Use devm_clk_get_enabled() and devm_clk_get_optional_enabled()
-> > > to simplify code.
-> > >
-> > > Signed-off-by: Yangtao Li <frank.li@vivo.com>
-> > > Reviewed-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
-> > > Tested-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
-> > > Suggested-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> > > Reviewed-by: Marcin Wojtas <marcin.s.wojtas@gmail.com>
-> >
-> > >
-> > > @@ -7745,12 +7710,6 @@ static void mvpp2_remove(struct platform_devic=
-e *pdev)
-> > >
-> > >       if (!dev_of_node(&pdev->dev))
-> > >               return;
-> >
-> > Given this makes no difference any more, drop the above dev_of_node() c=
-heck.
->
-> This check is to not execute the clk-related code when booting with
-> ACPI. It should remain as-is, unless the new devm_clk_get* api is
-> capable of not exploding in non-DT case. Can you confirm?
+It seems there is no runtime PM suspend for xhci and USB core at
+.shutdown currently. Alan & Mathias, please correct me if I was wrong.
 
-As per the removals below, there is no code left in this function after
-the check (i.e. the "else" part became empty).
-
-> > > -
-> > > -     clk_disable_unprepare(priv->axi_clk);
-> > > -     clk_disable_unprepare(priv->mg_core_clk);
-> > > -     clk_disable_unprepare(priv->mg_clk);
-> > > -     clk_disable_unprepare(priv->pp_clk);
-> > > -     clk_disable_unprepare(priv->gop_clk);
-> > >  }
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Thanks,
+Peter
 
