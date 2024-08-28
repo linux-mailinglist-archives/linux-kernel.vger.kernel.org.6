@@ -1,144 +1,221 @@
-Return-Path: <linux-kernel+bounces-305358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F155962D76
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 18:15:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 18D25962D41
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 18:06:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D8AF7B237A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 16:15:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4478CB21AEC
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 16:06:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29BB11A2C22;
-	Wed, 28 Aug 2024 16:15:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8F651A3BD1;
+	Wed, 28 Aug 2024 16:06:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="rm9vIo+M"
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YIEO1E3N"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 885E2189BAA
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 16:15:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A3E07E574;
+	Wed, 28 Aug 2024 16:06:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724861723; cv=none; b=lHBAByS+SdPAasg3cFRaSTvhS/0sGM9i73cvpgHRiTS+2M7dQwkHIsQArR9b7XU7MFzaxEsrsbPRMEK0jzQenJqaV1buNRl1MDJrFnDGmQJvh1UvNrqS4TVDtX/oEd3z2kVE9P4yELftTEegpzIeu80iI2gH0jKntWRa2ej0SKE=
+	t=1724861178; cv=none; b=A2f2SiqtcpXoroE7r/ZG1LymLYlgyISsnIDdJvB3LP554v/niyOlW7xtRAJchw4RxEz6lUJN5wbDwXgv2Ff+eC52U6PMWGtXVUqh3l5E27Q6qdfuXQX3AGxbkVUe9F+wtfFiYX0myQ01u9d7BL1J3ltWezj6OznlBg0PDToosvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724861723; c=relaxed/simple;
-	bh=vS0JM2WxR5KtYE5L1XEoTZ9ENuthPVf/54bNlaPf0wk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
-	 Content-Type:References; b=FO77dM/qlmPjFrrRVbn52y2c8LxAsEgFGPgoWq6JXpTf+xZrGj8zJya12hqljHkjUFSwZVkDDUFlRg0OKd+I1VhHOfIF88wnCX1tQNXMQ/RFecWEldnGK0j09rGVgXkoaetXzsbP1rc4fVh9/g059JkJOWOtsuJuUjtLNTNNsiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=rm9vIo+M; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240828161519epoutp0339b60cfe48b7af607fb7c4ff9b0beb19~v8JhNjbC13090630906epoutp03h
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 16:15:19 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240828161519epoutp0339b60cfe48b7af607fb7c4ff9b0beb19~v8JhNjbC13090630906epoutp03h
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1724861719;
-	bh=vS0JM2WxR5KtYE5L1XEoTZ9ENuthPVf/54bNlaPf0wk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=rm9vIo+M+XhyXTIIbuO9bTytk8QIxlj6zj8+PgbgylPkrUUzytpZqnzO/Hxokkywd
-	 rQtD/7hQ6Mf6ktCgH1iOn7bHthyOp6U6LeYl8EtnfzSQ+lC1kiHBH7cb6DsY3z/LDZ
-	 zjM6CAm2G1YkZsy/dFwKQELVRZFm+zrD2A3mYJ/o=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTP id
-	20240828161518epcas5p15045320301b2fa95f4190ee68a8958cf~v8Jg2lX_b1502715027epcas5p1j;
-	Wed, 28 Aug 2024 16:15:18 +0000 (GMT)
-Received: from epsmges5p1new.samsung.com (unknown [182.195.38.176]) by
-	epsnrtp4.localdomain (Postfix) with ESMTP id 4Wv8dd4RSKz4x9Pq; Wed, 28 Aug
-	2024 16:15:17 +0000 (GMT)
-Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
-	epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	A4.61.09640.51D4FC66; Thu, 29 Aug 2024 01:15:17 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20240828095322epcas5p134935f60a199bc085198b06871cd33ba~v28CAccW40840408404epcas5p1C;
-	Wed, 28 Aug 2024 09:53:22 +0000 (GMT)
-Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240828095322epsmtrp1234caec0be77e195d9b287cc91375a35~v28B-wj1G2560425604epsmtrp1i;
-	Wed, 28 Aug 2024 09:53:22 +0000 (GMT)
-X-AuditID: b6c32a49-aabb8700000025a8-6d-66cf4d154d73
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	1D.7A.07567.193FEC66; Wed, 28 Aug 2024 18:53:21 +0900 (KST)
-Received: from green245 (unknown [107.99.41.245]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20240828095320epsmtip236d52ca600f940aec91bef7a23e2f579~v28AXO2qf1869918699epsmtip2E;
-	Wed, 28 Aug 2024 09:53:20 +0000 (GMT)
-Date: Wed, 28 Aug 2024 15:15:50 +0530
-From: Anuj Gupta <anuj20.g@samsung.com>
-To: Puranjay Mohan <pjy@amazon.com>
-Cc: Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>, Christoph
-	Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
-	linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
-	puranjay@kernel.org
-Subject: Re: nvme: check if the namespace supports metadata in
- nvme_map_user_request()
-Message-ID: <20240828094550.56id5x4x6neitsec@green245>
+	s=arc-20240116; t=1724861178; c=relaxed/simple;
+	bh=Pcc2ywD3Ph5edpvvemDwE9pwJ5atBlosbGQO/CDOgmc=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=K4/GKsNSGcjimob0UD7acTXvFj8M7WR/h+B0gn6O1Xr4IwL/spyPixlpDLdrjwzds81/Jsz83lpqmic9tfAAFZ0vrYM8pLnOXh5/r5QKG/6qBiPrK0ykvBF4qaEqZcdCLo2z6PkE5C2JF6B+dVstE5CkDdI4YN4XiWJ8pqP9HFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YIEO1E3N; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-201f7fb09f6so60055655ad.2;
+        Wed, 28 Aug 2024 09:06:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724861176; x=1725465976; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Pcc2ywD3Ph5edpvvemDwE9pwJ5atBlosbGQO/CDOgmc=;
+        b=YIEO1E3NT/26mFb37fAVQUJZ433Iw3QBh6MrtdzrCGoCBy3gkgtUW+MSxcFjo453Xr
+         unNl1syArulBAK28qzYl9vYVASkpq93+0mbb6+0onOZ0kYce0wkSaGiG58oZw2TifBVd
+         OYirOeYRhFq1ZvcPCD6NJIrnV/TPuOsH2Lw4ibRDvUWl5MxlAnL6hkHpgzdnozFxurnX
+         ODWHtlFshQWjw6TXgzEVhRfLb6TSj5TCbtDpLRHdjCi1WoJtrLUL7xGtFBrIMSDRHZN6
+         Eh2D5tN4O92t4+qRPQugYUH9tWRPYaFgRRgaRVFggms8dR7i+WPJs2tc/exemdPgdiyu
+         Cx+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724861176; x=1725465976;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Pcc2ywD3Ph5edpvvemDwE9pwJ5atBlosbGQO/CDOgmc=;
+        b=ferDg55ZOWgGGttF4Q+TaLf9C+SHRqM+NVXJQzYAZRMm3pWai8hki8HRrkc+TQY20h
+         h0G8koqAfWvTI9pLRFh8X2EE+jtuSD8S+nsA7lJdJholu9LcAQ7aCGiTRQaA3GDykCgi
+         71ONbOLrRC8QT1fZZkqRbqvAN5MkZE5TI5KzbsFVk+fDCa03XtZbP1WUVni+2A5W83gJ
+         FpV7jEYLxObWoOtEqlsHc1iyx8tkZ8K1XebhIt5FL42K28j2Dobxx0yxUFzA9PGl7U4C
+         g3GZ83/wwqlpaW1T8wkCaU6M6V2VHEf9s4iAx8nrH6XSTlVn+YbPItA/s+K9+goR2yO7
+         CJew==
+X-Forwarded-Encrypted: i=1; AJvYcCVQCJqrhg4f6aB4lckLokFxm7zFG+WPgDh/yoXlsS6f/mQ+wkreY2PNaA9j7sym9UTM5u6ikosFwG3OXPM=@vger.kernel.org, AJvYcCVq2iuXqvqdOqVkoKMO9/9G+p1GEuHr/DCZGwu7oCMqBv0UJHJAAhMnpTFlx5vMH0ZlVdDY1AHQ@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9n8bTDMRNkwC6ag81wtrm5h6Ste9FWmwBQIpLyyiS1p4w0JAN
+	M2yZtxiP8T6lFOZiSD+Pr0CWpkN4LSmRUoC/kUber8pmAcLZygz4
+X-Google-Smtp-Source: AGHT+IEJgTitc5j5MuB4aK+ZM8bcNpkkHTQk7StOQd6wdrMwd5G3xO/DVk+x+wtaNoY1TfJChdqveg==
+X-Received: by 2002:a17:903:41ca:b0:1fd:672f:2b34 with SMTP id d9443c01a7336-2039e4b77eamr141094535ad.33.1724861175477;
+        Wed, 28 Aug 2024 09:06:15 -0700 (PDT)
+Received: from [127.0.0.1] ([174.139.202.50])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20385580810sm100329295ad.105.2024.08.28.09.06.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Aug 2024 09:06:14 -0700 (PDT)
+Message-ID: <e09856753d986a810601e2e84261e783f30b0d04.camel@gmail.com>
+Subject: Re: [PATCH] f2fs: Do not check the FI_DIRTY_INODE flag when
+ umounting a ro fs.
+From: Julian Sun <sunjunchao2870@gmail.com>
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: syzbot+ebea2790904673d7c618@syzkaller.appspotmail.com, chao@kernel.org, 
+	linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, stable@vger.kernel.org
+Date: Thu, 29 Aug 2024 00:06:09 +0800
+In-Reply-To: <Zs9BsP1UdFn4FoK5@google.com>
+References: <000000000000b0231406204772a1@google.com>
+	 <20240827034324.339129-1-sunjunchao2870@gmail.com>
+	 <Zs9BsP1UdFn4FoK5@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240827132327.1704-1-pjy@amazon.com>
-User-Agent: NeoMutt/20171215
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrKJsWRmVeSWpSXmKPExsWy7bCmuq6o7/k0g5cflCxW3+1ns1i5+iiT
-	xaRD1xgtLu+aw2Yxf9lTdovrD6Qsdk9rZ7ZY9/o9iwOHx4oLXawe5+9tZPG4fLbUY9OqTjaP
-	zUvqPXbfbGDz+LxJLoA9KtsmIzUxJbVIITUvOT8lMy/dVsk7ON453tTMwFDX0NLCXEkhLzE3
-	1VbJxSdA1y0zB+gkJYWyxJxSoFBAYnGxkr6dTVF+aUmqQkZ+cYmtUmpBSk6BSYFecWJucWle
-	ul5eaomVoYGBkSlQYUJ2xpRHzawF/5gqbv/7yNrAeJ+pi5GDQ0LARKJhW0oXIxeHkMBuRone
-	LWvZIJxPjBKH5y1jgXC+MUr8un+SsYuRE6zj+eJJ7BCJvYwSK9ZPhXKeMUpc3TgPrIpFQFWi
-	q3ULC4jNJqAuceR5K1hcREBZYuGsxUwgDcwCdxglph3/AVYkLBAhsbbpP9hRvAJmEluepoCE
-	eQUEJU7OfAJWwilgLLF/8xRmEFtUQEZixtKvzCBzJAR6OSSunHzACvGQi8TP3kCIS4UlXh3f
-	wg5hS0m87G+DstMlflx+ygRhF0g0H9sH9Zm9ROupfmaQMcwCGRLzH+lDhGUlpp5aB1bOLMAn
-	0fv7CVQrr8SOeTC2kkT7yjlQtoTE3nMNULaHxOruHdAgbWOUWHfqJfMERvlZSF6bhbBuFtgK
-	K4nOD02sEGFpieX/OCBMTYn1u/QXMLKuYpRMLSjOTU8tNi0wzEsth0d3cn7uJkZwetXy3MF4
-	98EHvUOMTByMhxglOJiVRHhPHD+bJsSbklhZlVqUH19UmpNafIjRFBhTE5mlRJPzgQk+ryTe
-	0MTSwMTMzMzE0tjMUEmc93Xr3BQhgfTEktTs1NSC1CKYPiYOTqkGJrv6DwxPd25cy/A9dnJx
-	XdWZD7teWO1SM3z8WcVrYUT/5oCz4kzaHyw/M6x2ELv3lOHPAT3VD4wGRxUrp719u635XOXq
-	3LYojehpz+aaFjz8ksGXcWJr6eody9IcOQSPM/rFML9R2rBc8sbLynpVo7YFfor285xv31o2
-	t+/CGgbJWezZZ+U9ZgZcqb2iOufbyekP+G69tt1958S209xPrjgHvLDSMu96nVK6K//8TlWd
-	rL2uU/ukzkyR/a4oLMDDW3Pb/k6owdpdmy4lJP8MP5E0TfDW6U0qHZNWzja3PXCftSXp/PL7
-	c5/5Lp1RuHt5obvYR/ZtU1jnH90qFHVqdcSSsv2S8aXPJnQ3qThkP4xTYinOSDTUYi4qTgQA
-	wl+lVTgEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrGLMWRmVeSWpSXmKPExsWy7bCSvO7Ez+fSDJquWVusvtvPZrFy9VEm
-	i0mHrjFaXN41h81i/rKn7BbXH0hZ7J7Wzmyx7vV7FgcOjxUXulg9zt/byOJx+Wypx6ZVnWwe
-	m5fUe+y+2cDm8XmTXAB7FJdNSmpOZllqkb5dAlfGzQfz2QsMKt62L2JtYNTuYuTkkBAwkXi+
-	eBI7iC0ksJtR4uOzOIi4hMSpl8sYIWxhiZX/ngPVcAHVPGGUmLe2kw0kwSKgKtHVuoUFxGYT
-	UJc48rwVrEFEQFli4azFTCANzAJ3GCWu7rsBtkFYIEJibdN/oAQHB6+AmcSWpykQi40kph3Z
-	ANbLKyAocXLmE7CZzEAl8zY/ZAYpZxaQllj+jwMkzClgLLF/8xRmEFtUQEZixtKvzBMYBWch
-	6Z6FpHsWQvcCRuZVjJKpBcW56bnJhgWGeanlesWJucWleel6yfm5mxjBUaGlsYPx3vx/eocY
-	mTgYDzFKcDArifCeOH42TYg3JbGyKrUoP76oNCe1+BCjNAeLkjiv4YzZKUIC6YklqdmpqQWp
-	RTBZJg5OqQamq2K/k35wlk39fN1Gj/kzz0IDfevt0zgehCnbLj3TtLrrXuOWusnbFin+TtGc
-	srvwRPsRpW1htrv3vxHZq6skGHCtxG3vnd+XD6nZdfH1ROaZM1tOT3Yz4311ryg120HSODj/
-	pUDxpbTDUjOrci7E7KqL+i0f9EMx7sLC6nNT+nsPlgVf769e/VzGZb/BXNbG9S/Fa1Y9n3VA
-	MTz+tumCWuGMttAzCis6LpoV/LLiZl3z8u56xll/ZxZ+ZuF64p/XkbbNs71t35NIfmuum63n
-	Tizbdc380bZuxsdbp4Yzp/N3LxaQ7WF/FtFdIXPuTsjdVUUL69ZuMAutiymZrtmdskbm9krW
-	Mxfb3fq1711SYinOSDTUYi4qTgQAF3N5MvkCAAA=
-X-CMS-MailID: 20240828095322epcas5p134935f60a199bc085198b06871cd33ba
-X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-	boundary="----wG8aeMZ_I9uC6yBdj_JCG0W3RU-IZGBujJEAuAycL.OUxp4R=_dcb61_"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240828095322epcas5p134935f60a199bc085198b06871cd33ba
-References: <20240827132327.1704-1-pjy@amazon.com>
-	<CGME20240828095322epcas5p134935f60a199bc085198b06871cd33ba@epcas5p1.samsung.com>
 
-------wG8aeMZ_I9uC6yBdj_JCG0W3RU-IZGBujJEAuAycL.OUxp4R=_dcb61_
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-Content-Disposition: inline
+On Wed, 2024-08-28 at 15:26 +0000, Jaegeuk Kim wrote:
+> On 08/27, Julian Sun wrote:
+> > Hi, all.
+> >=20
+> > Recently syzbot reported a bug as following:
+> >=20
+> > kernel BUG at fs/f2fs/inode.c:896!
+> > CPU: 1 UID: 0 PID: 5217 Comm: syz-executor605 Not tainted 6.11.0-
+> > rc4-syzkaller-00033-g872cf28b8df9 #0
+> > RIP: 0010:f2fs_evict_inode+0x1598/0x15c0 fs/f2fs/inode.c:896
+> > Call Trace:
+> > =C2=A0<TASK>
+> > =C2=A0evict+0x532/0x950 fs/inode.c:704
+> > =C2=A0dispose_list fs/inode.c:747 [inline]
+> > =C2=A0evict_inodes+0x5f9/0x690 fs/inode.c:797
+> > =C2=A0generic_shutdown_super+0x9d/0x2d0 fs/super.c:627
+> > =C2=A0kill_block_super+0x44/0x90 fs/super.c:1696
+> > =C2=A0kill_f2fs_super+0x344/0x690 fs/f2fs/super.c:4898
+> > =C2=A0deactivate_locked_super+0xc4/0x130 fs/super.c:473
+> > =C2=A0cleanup_mnt+0x41f/0x4b0 fs/namespace.c:1373
+> > =C2=A0task_work_run+0x24f/0x310 kernel/task_work.c:228
+> > =C2=A0ptrace_notify+0x2d2/0x380 kernel/signal.c:2402
+> > =C2=A0ptrace_report_syscall include/linux/ptrace.h:415 [inline]
+> > =C2=A0ptrace_report_syscall_exit include/linux/ptrace.h:477 [inline]
+> > =C2=A0syscall_exit_work+0xc6/0x190 kernel/entry/common.c:173
+> > =C2=A0syscall_exit_to_user_mode_prepare kernel/entry/common.c:200
+> > [inline]
+> > =C2=A0__syscall_exit_to_user_mode_work kernel/entry/common.c:205
+> > [inline]
+> > =C2=A0syscall_exit_to_user_mode+0x279/0x370 kernel/entry/common.c:218
+> > =C2=A0do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
+> > =C2=A0entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> >=20
+> > The syzbot constructed the following scenario: concurrently
+> > creating directories and setting the file system to read-only.
+> > In this case, while f2fs was making dir, the filesystem switched to
+> > readonly, and when it tried to clear the dirty flag, it triggered
+> > this
+> > code path: f2fs_mkdir()-> f2fs_sync_fs()->f2fs_write_checkpoint()
+> > ->f2fs_readonly(). This resulted FI_DIRTY_INODE flag not being
+> > cleared,
+> > which eventually led to a bug being triggered during the
+> > FI_DIRTY_INODE
+> > check in f2fs_evict_inode().
+> >=20
+> > In this case, we cannot do anything further, so if filesystem is
+> > readonly,
+> > do not trigger the BUG. Instead, clean up resources to the best of
+> > our
+> > ability to prevent triggering subsequent resource leak checks.
+> >=20
+> > If there is anything important I'm missing, please let me know,
+> > thanks.
+> >=20
+> > Reported-by: syzbot+ebea2790904673d7c618@syzkaller.appspotmail.com
+> > Closes:
+> > https://syzkaller.appspot.com/bug?extid=3Debea2790904673d7c618
+> > Fixes: ca7d802a7d8e ("f2fs: detect dirty inode in evict_inode")
+> > CC: stable@vger.kernel.org
+> > Signed-off-by: Julian Sun <sunjunchao2870@gmail.com>
+> > ---
+> > =C2=A0fs/f2fs/inode.c | 8 ++++++--
+> > =C2=A01 file changed, 6 insertions(+), 2 deletions(-)
+> >=20
+> > diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+> > index aef57172014f..52d273383ec2 100644
+> > --- a/fs/f2fs/inode.c
+> > +++ b/fs/f2fs/inode.c
+> > @@ -892,8 +892,12 @@ void f2fs_evict_inode(struct inode *inode)
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+atomic_read(&fi->i_compr_blocks));
+> > =C2=A0
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (likely(!f2fs_cp_err=
+or(sbi) &&
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0!is_sbi_flag_set(sbi,
+> > SBI_CP_DISABLED)))
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0f2fs_bug_on(sbi, is_inode_flag_set(inode,
+> > FI_DIRTY_INODE));
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0!is_sbi_flag_set(sbi,
+> > SBI_CP_DISABLED))) {
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0if (!f2fs_readonly(sbi->sb))
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0f2fs_b=
+ug_on(sbi, is_inode_flag_set(inode,
+> > FI_DIRTY_INODE));
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0else
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0f2fs_i=
+node_synced(inode);
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0}
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0else
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0f2fs_inode_synced(inode);
+>=20
+> What about:
+>=20
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (likely(!f2fs_cp_error=
+(sbi) &&
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 !is_sbi_flag_set(sbi, SBI_CP_DISABLED)=
+) &&
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 !f2fs_readonly(sbi->sb)))
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0f2fs_bug_on(sbi, is_inode_flag_set(inode,
+> FI_DIRTY_INODE));
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0else
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0f2fs_inode_synced(inode);
 
-Reviewed-by: Anuj Gupta <anuj20.g@samsung.com>
+Hi, Jaegeuk, thanks for your review.
 
-------wG8aeMZ_I9uC6yBdj_JCG0W3RU-IZGBujJEAuAycL.OUxp4R=_dcb61_
-Content-Type: text/plain; charset="utf-8"
+Yeah, it is semantically identical, and the code is clearer.
+I will fix it in patch v2.
+>=20
+> >=20
+>=20
+> > =C2=A0
+> > --=20
+> > 2.39.2
 
-
-------wG8aeMZ_I9uC6yBdj_JCG0W3RU-IZGBujJEAuAycL.OUxp4R=_dcb61_--
 
