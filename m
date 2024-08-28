@@ -1,122 +1,112 @@
-Return-Path: <linux-kernel+bounces-304937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38DDA96270F
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 14:26:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5021D962712
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 14:27:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D61B21F240F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 12:26:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06C881F241FF
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 12:27:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42B32176248;
-	Wed, 28 Aug 2024 12:26:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="pZhFFwvf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6579B16C859;
-	Wed, 28 Aug 2024 12:26:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 064B1176226;
+	Wed, 28 Aug 2024 12:26:55 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7AC016A95E;
+	Wed, 28 Aug 2024 12:26:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724847987; cv=none; b=OCyd4dLUMQjKwxLuH+oVXZl11wpmbuxew/UFZ3AZGQokradMWQXf+yRamhr+SBlerJxTFp9GapSxvFHrNTb41FON2kG/ZJWAvP2Wt086TTvH4wyukhvShmWeT53HJDkGni5uusjIOYzINULQdIBzvTFJLMUqWvUInPomF6Q+aEI=
+	t=1724848014; cv=none; b=mcYSghbM6B0zl4UiLI7aSyA2xEYyarjLwuW6GlBwi01uL2tdDlQM5SCwWBhW56cQ+bHvOoX9EHgvLe//gIzzgr/g+2QQjGfMtd1p7jtNSMSW6Cium8HPc5EaRjJf8UpnFbvbBhfqCVg3+rttzQsJ8mUMQRKc07mExNDRzgcLxRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724847987; c=relaxed/simple;
-	bh=1flW7GCzzsPh16d1yPD4h41cC6zIzhxJDTsj3ZwcKZc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KByFglBWxE1Dm3ub7RQ190kZhRT/LtFd6h7LLEU9xrfwE7RiSes2/vtN2r9WLV4ZaP7HZrAz2NOrBbjr3D3DAnYgRyyS/PSnFVgEYOmdpeOtd/WQyTti48UDApo4Bvx0ufNORZiIklDi6Nrf8PevMyZkBRJ4fri4hP71ZEGqKAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=pZhFFwvf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65BEEC98EDB;
-	Wed, 28 Aug 2024 12:26:26 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="pZhFFwvf"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1724847983;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uEFEGqQJQMz8Ub4wy+aep50eWmgdp8pcSL8AmUjJ5J8=;
-	b=pZhFFwvf2+rUCk0mnu74yzuq8D0OlV5RRX3O/pUcL2EJirk1lWLjJ7T+VmJhAB+Nwuqruo
-	5w43+j7738kAhUtF/Op+T7PkY55MvhYmMEm2AulNbOZOm5YzBQVDPiZl6Xd1e0lo4jpoA9
-	0Tg6/x3YqzwUs/XLZ+j/psnPUsH+3wQ=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id a699d10f (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Wed, 28 Aug 2024 12:26:22 +0000 (UTC)
-Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-27018df4ff3so4910521fac.1;
-        Wed, 28 Aug 2024 05:26:21 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCURXtByFUqqUn01GwdQRMnNmmh17KxzSjZwR4CWstb5JeTywOt+zGaxYyE0DuWOZ5jG4vHkRa8rcQlzeWtW@vger.kernel.org, AJvYcCVDToxFmv9r1s9rhL3G4itdOjZHOyydMFVF/hLIEfT5fDAjSHHionQd8uGrKJ1o0Ic49XwFnVeRgBqqYlHpMw==@vger.kernel.org, AJvYcCVREVXiBUsIXTVICUsG2yJCj6eNustd0FOFrXcUB5kp6GboY0v9iaBKmkXwmh/k2WX/iqB3yVdIZe7O@vger.kernel.org, AJvYcCWaPnfSqC0DKCKNHHpQw1UCOKccq/VD0K8UYjc9xcSXzA2wPv12KCJU2PrxdEQEjQV7oJl26T5D32pE8ZT+7jems/3L@vger.kernel.org, AJvYcCXH5tHVJ8knZppEDz5G9ZvQcUfjTq+LMhBQrPYtBYaKvyNJvo8aBxP0NUKnUyJhH/k+C/rfMqbPzGItBL6j0Y6P@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6YOs8LDGHfWIvCp3Suv4io2RBW6nDT337BcXPqteSdwEev7zy
-	pIv/EQb7OSndvq1kPVW0WENeiVgVfU97PNB//aJBtIy+ek6uUOh/PSQjsP35HIVl55kqD5VnSW+
-	p4BwJydemrhP/dkVAwTLn1m7KBmk=
-X-Google-Smtp-Source: AGHT+IHXO1KZEIb1pBgGn7dKx8LC6G7ifrWZYsusE/oKQVZmO1hrOeMVz7hy7j/rnnH9GmqVmjbXApoOhTEeHD761oc=
-X-Received: by 2002:a05:6870:1713:b0:25e:bd9d:b1cb with SMTP id
- 586e51a60fabf-273e667ed95mr19307401fac.40.1724847980462; Wed, 28 Aug 2024
- 05:26:20 -0700 (PDT)
+	s=arc-20240116; t=1724848014; c=relaxed/simple;
+	bh=ImIC3vyFzObBoriW48+BQvmzYEpG+mruKbJM4GXGUJU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jVrY3HHcFMnx/PPU9CMPMXl2YjTEnKMwDORjJgd/h5YBXR10szt4SD0RGUt7p6rWfLbYig3R+4YyUp2ZaRVlJOaI8L4vgZ0DI0mhIZEEf4JexbHOEo23PCi/IZOHo7BEzZVq8+9JOsWtMxpg9bLoradJ2zhc9Z06VXYzRKMuH9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 67739DA7;
+	Wed, 28 Aug 2024 05:27:18 -0700 (PDT)
+Received: from [10.1.35.53] (e127648.arm.com [10.1.35.53])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8636C3F762;
+	Wed, 28 Aug 2024 05:26:49 -0700 (PDT)
+Message-ID: <7661afec-168d-406e-903b-a2dc9adf6408@arm.com>
+Date: Wed, 28 Aug 2024 13:26:47 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1724309198.git.christophe.leroy@csgroup.eu>
- <5deb67090b214f0e6eae96b7c406546d1a16f89b.1724309198.git.christophe.leroy@csgroup.eu>
- <20240827180819.GB2049@sol.localdomain> <20240827225330.GC29862@gate.crashing.org>
- <Zs8HirKLk-SrwTIu@zx2c4.com> <fc19bf63-d519-46e2-be70-80202c85ff92@app.fastmail.com>
-In-Reply-To: <fc19bf63-d519-46e2-be70-80202c85ff92@app.fastmail.com>
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date: Wed, 28 Aug 2024 14:26:08 +0200
-X-Gmail-Original-Message-ID: <CAHmME9rjH4Ek3e8jmBvRp3wy+mrzJAeYxk5=o+OHjoT5sTOQPg@mail.gmail.com>
-Message-ID: <CAHmME9rjH4Ek3e8jmBvRp3wy+mrzJAeYxk5=o+OHjoT5sTOQPg@mail.gmail.com>
-Subject: Re: [PATCH v2 05/17] vdso: Avoid call to memset() by getrandom
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Segher Boessenkool <segher@kernel.crashing.org>, Eric Biggers <ebiggers@kernel.org>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Nicholas Piggin <npiggin@gmail.com>, Naveen N Rao <naveen@kernel.org>, Andy Lutomirski <luto@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, "Theodore Ts'o" <tytso@mit.edu>, Andrew Morton <akpm@linux-foundation.org>, 
-	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Vincenzo Frascino <vincenzo.frascino@arm.com>, shuah <shuah@kernel.org>, 
-	linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>, 
-	linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] blk-mq: Allow complete locally if capacities are
+ different
+To: Bart Van Assche <bvanassche@acm.org>,
+ Manish Pandey <quic_mapa@quicinc.com>, Jens Axboe <axboe@kernel.dk>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ quic_nitirawa@quicinc.com, quic_bhaskarv@quicinc.com,
+ quic_narepall@quicinc.com, quic_rampraka@quicinc.com, quic_cang@quicinc.com,
+ quic_nguyenb@quicinc.com, Qais Yousef <qyousef@layalina.io>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>
+References: <20240828114958.29422-1-quic_mapa@quicinc.com>
+ <c5d0966b-7de3-4eff-9310-d9a31d822dad@acm.org>
+Content-Language: en-US
+From: Christian Loehle <christian.loehle@arm.com>
+In-Reply-To: <c5d0966b-7de3-4eff-9310-d9a31d822dad@acm.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 28, 2024 at 2:24=E2=80=AFPM Arnd Bergmann <arnd@arndb.de> wrote=
-:
->
-> On Wed, Aug 28, 2024, at 11:18, Jason A. Donenfeld wrote:
-> > On Tue, Aug 27, 2024 at 05:53:30PM -0500, Segher Boessenkool wrote:
-> >> On Tue, Aug 27, 2024 at 11:08:19AM -0700, Eric Biggers wrote:
-> >> >
-> >> > Is there a compiler flag that could be used to disable the generatio=
-n of calls
-> >> > to memset?
-> >>
-> >> -fno-tree-loop-distribute-patterns .  But, as always, read up on it, s=
-ee
-> >> what it actually does (and how it avoids your problem, and mostly: lea=
-rn
-> >> what the actual problem *was*!)
-> >
-> > This might help with various loops, but it doesn't help with the matter
-> > that this patch fixes, which is struct initialization. I just tried it
-> > with the arm64 patch to no avail.
->
-> Maybe -ffreestanding can help here? That should cause the vdso to be buil=
-t
-> with the assumption that there is no libc, so it would neither add nor
-> remove standard library calls. Not sure if that causes other problems,
-> e.g. if the calling conventions are different.
+On 8/28/24 13:13, Bart Van Assche wrote:
+> On 8/28/24 7:49 AM, Manish Pandey wrote:
+>> 'Commit af550e4c9682 ("block/blk-mq: Don't complete locally if
+>> capacities are different")' enforces to complete the request locally
+>> only if the submission and completion CPUs have same capacity.
+>>
+>> To have optimal IO load balancing or to avoid contention b/w submission
+>> path and completion path, user may need to complete IO request of large
+>> capacity CPU(s) on Small Capacity CPU(s) or vice versa.
+>>
+>> Hence introduce a QUEUE_FLAG_ALLOW_DIFF_CAPACITY blk queue flag to let
+>> user decide if it wants to complete the request locally or need an IPI
+>> even if the capacity of the requesting and completion queue is different.
+>> This gives flexibility to user to choose best CPU for their completion
+>> to give best performance for their system.
 
-From https://gcc.gnu.org/bugzilla/show_bug.cgi?id=3D90701:
+Why have the flag be
+QUEUE_FLAG_ALLOW_DIFF_CAPACITY
+instead of just
+QUEUE_FLAG_SAME_LLC
+so it isn't as HMP specifically-worded?
+(And of course then having QUEUE_FLAG_SAME_COMP be strictly
+stronger than QUEUE_FLAG_SAME_LLC. On !HMP they are equal.)
+That would also answer Bart's question below how this is
+different to rq_affinity=0.
 
-| You need -ffreestanding but that is documented to emit memset and
-memcpy still.
+> 
+> I think that the following is missing from the above description:
+> - Mentioning that this is for an unusual interrupt routing technology
+>   (SoC sends the interrupt to another CPU core than what has been
+>    specified in the smp_affinity mask).
+
+FWIW on !mcq that doesn't have to be the case.
+
+> - An explanation why the desired effect cannot be achieved by changing
+>   rq_affinity into 0.
+> 
+>>   block/blk-mq-debugfs.c |  1 +
+>>   block/blk-mq.c         |  3 ++-
+>>   block/blk-sysfs.c      | 12 ++++++++++--
+>>   include/linux/blkdev.h |  1 +
+>>   4 files changed, 14 insertions(+), 3 deletions(-)
+> 
+> Since the semantics of a sysfs attribute are modified,
+> Documentation/ABI/stable/sysfs-block should be updated.
+> 
+> Thanks,
+> 
+> Bart.
+> 
+
 
