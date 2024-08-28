@@ -1,290 +1,225 @@
-Return-Path: <linux-kernel+bounces-304832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B830962573
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:04:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D020496257B
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:06:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4327E2856CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:04:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00E241C21673
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:06:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3236016C69A;
-	Wed, 28 Aug 2024 11:04:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B78FF16C6BE;
+	Wed, 28 Aug 2024 11:06:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="0tBK1UVU";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="7fHWZT4r";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="0tBK1UVU";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="7fHWZT4r"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZKZKm0Kf"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7414E5A79B;
-	Wed, 28 Aug 2024 11:04:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D329016B3BA;
+	Wed, 28 Aug 2024 11:06:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724843088; cv=none; b=M6oFsBCpZNO424Yzj5hMoexzI+IAavJM7xT8DXJ+AKEcRevoqNW8LlyzIY4GkaR54Qhd8kIZHS/LSk9RvBjL4r9gARtS/uaqzgdu63VG305lLK3UxFcU9KQ1ZhxumtECGLYko5w2U5K/7WjXI0V97H6BolRRKR8JXujJXRdJvGs=
+	t=1724843195; cv=none; b=WzlASe5YPyXjCZTmPD2ZsFDiSuLAXi/H1/Q74n9amNRPesKApzgBUkXlW179o/Feb4qqpKwpUwhAuWf0236PJs8BUpcAMdvoEuHWl5cDPEdvCFhxMiKCjVG6f0+scKhzTHAkuzU4qzhtBheSYcL0fP/n5nqUZuF6onShn3oZalY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724843088; c=relaxed/simple;
-	bh=IYw/5jfec3G9EL5cIvBTKWMPYFfAUAmYIUT55trKI1c=;
+	s=arc-20240116; t=1724843195; c=relaxed/simple;
+	bh=XZmmdO2kYeD5TGivqJdO4zd4Bfu/ZBI17NXpvzMGjEY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GaJIkU6YVchqqVYf9OzcbGBlc7u02/qvC8Auz6G42AXOtxWF6ZkF+3Ov1ic/E/vHKIJU9jbRRAsAGKOKeYkL4cpLBXG7dCBZmfbULT4FFgc2WR/Xt7rsoJo5puhjPxVr/DmOaI5bFZeAtNrXkdvgrnTMtA6B4+Nm1fiazYqveSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=0tBK1UVU; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=7fHWZT4r; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=0tBK1UVU; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=7fHWZT4r; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id A72531FC06;
-	Wed, 28 Aug 2024 11:04:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1724843084; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IcJrGrxrJ3Kg3x9BNXw8QcolNjCA/gMiIrvdnowUhvM=;
-	b=0tBK1UVU1kCEphLWsOeXcQ7WWVlkGlXeBwpmEEOUEzq2dzkskt4XhLK9LiWcsVEEGRlUch
-	0XWRsIG90rEfGRYyz9NTuQVZkRPPU39LAauOgoY4QkJJawU8sdtP6FzKPxxI2v56xpdS/N
-	a/5x2mejLjpMRv1BppeyZAp5JrMikj4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1724843084;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IcJrGrxrJ3Kg3x9BNXw8QcolNjCA/gMiIrvdnowUhvM=;
-	b=7fHWZT4r/JR3XVe7abGcoESf7/W+kl6X37LThY+dsAeNvc5n9x0TgNrbP8fZE88tk/Dfgx
-	VH9YQAomMQNMBUDw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1724843084; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IcJrGrxrJ3Kg3x9BNXw8QcolNjCA/gMiIrvdnowUhvM=;
-	b=0tBK1UVU1kCEphLWsOeXcQ7WWVlkGlXeBwpmEEOUEzq2dzkskt4XhLK9LiWcsVEEGRlUch
-	0XWRsIG90rEfGRYyz9NTuQVZkRPPU39LAauOgoY4QkJJawU8sdtP6FzKPxxI2v56xpdS/N
-	a/5x2mejLjpMRv1BppeyZAp5JrMikj4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1724843084;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IcJrGrxrJ3Kg3x9BNXw8QcolNjCA/gMiIrvdnowUhvM=;
-	b=7fHWZT4r/JR3XVe7abGcoESf7/W+kl6X37LThY+dsAeNvc5n9x0TgNrbP8fZE88tk/Dfgx
-	VH9YQAomMQNMBUDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9D7C1138D2;
-	Wed, 28 Aug 2024 11:04:44 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id rANtJkwEz2Y2dgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 28 Aug 2024 11:04:44 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 4C4AAA0968; Wed, 28 Aug 2024 13:04:44 +0200 (CEST)
-Date: Wed, 28 Aug 2024 13:04:44 +0200
-From: Jan Kara <jack@suse.cz>
-To: zhangshida <starzhangzsd@gmail.com>
-Cc: tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.com,
-	linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
-	zhangshida@kylinos.cn, Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH 1/2] ext4: hoist ext4_block_write_begin and replace the
- __block_write_begin
-Message-ID: <20240828110444.7wvo4ev32m5pewo7@quack3>
-References: <20240823013329.1996741-1-zhangshida@kylinos.cn>
- <20240823013329.1996741-2-zhangshida@kylinos.cn>
+	 Content-Type:Content-Disposition:In-Reply-To; b=EYVxg+rsTnkRLSJkixov95CSqpkCkvkEi8ChkTXpJiW0j7JqNjFop2HGarFYTO69r49DTQlk+Sp28KZsKskUzPCxqf64XEUPxFtP+pHgtS7djm5z3UVTeyYfXmxuiX4QqV7Qhj609qCvmO4zUhYDY+FTc5wqXnbb1EeeZnoVx/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZKZKm0Kf; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724843193; x=1756379193;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=XZmmdO2kYeD5TGivqJdO4zd4Bfu/ZBI17NXpvzMGjEY=;
+  b=ZKZKm0Kfd6HxVAZI1O3Kcibm3eagaYXaf8eH0VSpZvBpIi8HV2eJ9CP4
+   k9sBj+htr+EYPfttTlagjxCfb9SUZIyhAdVx/kJfVzaYqRsFMtTrJjWub
+   ibp9cs2sdccz7XuYOpF2erespugr+fMGyPshgJqp9hNxgI24jr54bhCwA
+   gPukm1QKFKLCs2vXS1yJ26cQPJAeSjD0z0F9hTe5z6ZV5IeH6OCU3bxkU
+   YTIwKRBdL8s/ooAIDEpMKE6s/+bbDmbUQ71GGQ7ZYSIbLWvw8k5uyPNDC
+   Hj2QBnnpu+i9nINQ/kcAHq6qFHajJ5hbemXYgfUeBHKSKTwc8fHUyWUW4
+   A==;
+X-CSE-ConnectionGUID: c08sg9tXSPq7bOk2UJ0DPw==
+X-CSE-MsgGUID: YgAe4NpBQgGHvJyrivqnVg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11177"; a="22887877"
+X-IronPort-AV: E=Sophos;i="6.10,182,1719903600"; 
+   d="scan'208";a="22887877"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2024 04:06:30 -0700
+X-CSE-ConnectionGUID: 4GY8qefQRVyn6EG4fH8Fvg==
+X-CSE-MsgGUID: heAXf6J7T32tkoZMqb1/4w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,182,1719903600"; 
+   d="scan'208";a="63230839"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2024 04:06:25 -0700
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id 2780E1201A1;
+	Wed, 28 Aug 2024 14:06:23 +0300 (EEST)
+Date: Wed, 28 Aug 2024 11:06:23 +0000
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	Naushir Patuck <naush@raspberrypi.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>,
+	20240531080707.34568-1-jacopo.mondi@ideasonboard.com
+Subject: Re: [PATCH v2 2/4] dt-bindings: media: Add bindings for
+ raspberrypi,rp1-cfe
+Message-ID: <Zs8ErwJVTGYkHfJl@kekkonen.localdomain>
+References: <20240620-rp1-cfe-v2-0-b8b48fdba3b3@ideasonboard.com>
+ <20240620-rp1-cfe-v2-2-b8b48fdba3b3@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240823013329.1996741-2-zhangshida@kylinos.cn>
-X-Spam-Score: -3.80
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-0.998];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_TO(0.00)[gmail.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:email,suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
+In-Reply-To: <20240620-rp1-cfe-v2-2-b8b48fdba3b3@ideasonboard.com>
 
-On Fri 23-08-24 09:33:28, zhangshida wrote:
-> From: Shida Zhang <zhangshida@kylinos.cn>
+Moi,
+
+Thanks for the set!
+
+On Thu, Jun 20, 2024 at 02:07:51PM +0300, Tomi Valkeinen wrote:
+> Add DT bindings for raspberrypi,rp1-cfe.
 > 
-> Using __block_write_begin() make it inconvenient to journal the
-> user data dirty process. We can't tell the block layer maintainer,
-> ‘Hey, we want to trace the dirty user data in ext4, can we add some
-> special code for ext4 in __block_write_begin?’:P
-> 
-> So use ext4_block_write_begin() instead.
-> 
-> The two functions are basically doing the same thing except for the
-> fscrypt related code. Narrow the scope of CONFIG_FS_ENCRYPTION so as
-> to allow ext4_block_write_begin() to function like __block_write_begin
-> when the config is disabled.
-> And hoist the ext4_block_write_begin so that it can be used in other
-> files.
-> 
-> Suggested-by: Jan Kara <jack@suse.cz>
-> Signed-off-by: Shida Zhang <zhangshida@kylinos.cn>
-
-Looks good to me! Feel free to add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
+> Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
 > ---
->  fs/ext4/ext4.h   |  2 ++
->  fs/ext4/inline.c | 10 +++++-----
->  fs/ext4/inode.c  | 23 ++++++-----------------
->  3 files changed, 13 insertions(+), 22 deletions(-)
+>  .../bindings/media/raspberrypi,rp1-cfe.yaml        | 98 ++++++++++++++++++++++
+>  1 file changed, 98 insertions(+)
 > 
-> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-> index 08acd152261e..5f8257b68190 100644
-> --- a/fs/ext4/ext4.h
-> +++ b/fs/ext4/ext4.h
-> @@ -3851,6 +3851,8 @@ static inline int ext4_buffer_uptodate(struct buffer_head *bh)
->  	return buffer_uptodate(bh);
->  }
->  
-> +extern int ext4_block_write_begin(struct folio *folio, loff_t pos, unsigned len,
-> +				  get_block_t *get_block);
->  #endif	/* __KERNEL__ */
->  
->  #define EFSBADCRC	EBADMSG		/* Bad CRC detected */
-> diff --git a/fs/ext4/inline.c b/fs/ext4/inline.c
-> index e7a09a99837b..0a1a8431e281 100644
-> --- a/fs/ext4/inline.c
-> +++ b/fs/ext4/inline.c
-> @@ -601,10 +601,10 @@ static int ext4_convert_inline_data_to_extent(struct address_space *mapping,
->  		goto out;
->  
->  	if (ext4_should_dioread_nolock(inode)) {
-> -		ret = __block_write_begin(&folio->page, from, to,
-> -					  ext4_get_block_unwritten);
-> +		ret = ext4_block_write_begin(folio, from, to,
-> +					     ext4_get_block_unwritten);
->  	} else
-> -		ret = __block_write_begin(&folio->page, from, to, ext4_get_block);
-> +		ret = ext4_block_write_begin(folio, from, to, ext4_get_block);
->  
->  	if (!ret && ext4_should_journal_data(inode)) {
->  		ret = ext4_walk_page_buffers(handle, inode,
-> @@ -856,8 +856,8 @@ static int ext4_da_convert_inline_data_to_extent(struct address_space *mapping,
->  			goto out;
->  	}
->  
-> -	ret = __block_write_begin(&folio->page, 0, inline_size,
-> -				  ext4_da_get_block_prep);
-> +	ret = ext4_block_write_begin(folio, 0, inline_size,
-> +				     ext4_da_get_block_prep);
->  	if (ret) {
->  		up_read(&EXT4_I(inode)->xattr_sem);
->  		folio_unlock(folio);
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index 941c1c0d5c6e..6b15805ca88b 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -1041,9 +1041,8 @@ int do_journal_get_write_access(handle_t *handle, struct inode *inode,
->  	return ret;
->  }
->  
-> -#ifdef CONFIG_FS_ENCRYPTION
-> -static int ext4_block_write_begin(struct folio *folio, loff_t pos, unsigned len,
-> -				  get_block_t *get_block)
-> +int ext4_block_write_begin(struct folio *folio, loff_t pos, unsigned len,
-> +			   get_block_t *get_block)
->  {
->  	unsigned from = pos & (PAGE_SIZE - 1);
->  	unsigned to = from + len;
-> @@ -1119,7 +1118,9 @@ static int ext4_block_write_begin(struct folio *folio, loff_t pos, unsigned len,
->  	}
->  	if (unlikely(err)) {
->  		folio_zero_new_buffers(folio, from, to);
-> -	} else if (fscrypt_inode_uses_fs_layer_crypto(inode)) {
-> +	}
-> +#ifdef CONFIG_FS_ENCRYPTION
-> +	else if (fscrypt_inode_uses_fs_layer_crypto(inode)) {
->  		for (i = 0; i < nr_wait; i++) {
->  			int err2;
->  
-> @@ -1131,10 +1132,10 @@ static int ext4_block_write_begin(struct folio *folio, loff_t pos, unsigned len,
->  			}
->  		}
->  	}
-> +#endif
->  
->  	return err;
->  }
-> -#endif
->  
->  /*
->   * To preserve ordering, it is essential that the hole instantiation and
-> @@ -1216,19 +1217,11 @@ static int ext4_write_begin(struct file *file, struct address_space *mapping,
->  	/* In case writeback began while the folio was unlocked */
->  	folio_wait_stable(folio);
->  
-> -#ifdef CONFIG_FS_ENCRYPTION
->  	if (ext4_should_dioread_nolock(inode))
->  		ret = ext4_block_write_begin(folio, pos, len,
->  					     ext4_get_block_unwritten);
->  	else
->  		ret = ext4_block_write_begin(folio, pos, len, ext4_get_block);
-> -#else
-> -	if (ext4_should_dioread_nolock(inode))
-> -		ret = __block_write_begin(&folio->page, pos, len,
-> -					  ext4_get_block_unwritten);
-> -	else
-> -		ret = __block_write_begin(&folio->page, pos, len, ext4_get_block);
-> -#endif
->  	if (!ret && ext4_should_journal_data(inode)) {
->  		ret = ext4_walk_page_buffers(handle, inode,
->  					     folio_buffers(folio), from, to,
-> @@ -2961,11 +2954,7 @@ static int ext4_da_write_begin(struct file *file, struct address_space *mapping,
->  	if (IS_ERR(folio))
->  		return PTR_ERR(folio);
->  
-> -#ifdef CONFIG_FS_ENCRYPTION
->  	ret = ext4_block_write_begin(folio, pos, len, ext4_da_get_block_prep);
-> -#else
-> -	ret = __block_write_begin(&folio->page, pos, len, ext4_da_get_block_prep);
-> -#endif
->  	if (ret < 0) {
->  		folio_unlock(folio);
->  		folio_put(folio);
-> -- 
-> 2.33.0
+> diff --git a/Documentation/devicetree/bindings/media/raspberrypi,rp1-cfe.yaml b/Documentation/devicetree/bindings/media/raspberrypi,rp1-cfe.yaml
+> new file mode 100644
+> index 000000000000..851533de2305
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/raspberrypi,rp1-cfe.yaml
+> @@ -0,0 +1,98 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/media/raspberrypi,rp1-cfe.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Raspberry Pi PiSP Camera Front End
+> +
+> +maintainers:
+> +  - Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+> +  - Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>
+> +
+> +description: |
+> +  The Raspberry Pi PiSP Camera Front End is a module in Raspberrypi 5's RP1 I/O
+> +  controller, that contains:
+> +  - MIPI D-PHY
+> +  - MIPI CSI-2 receiver
+> +  - Simple image processor (called PiSP Front End, or FE)
+> +
+> +  The FE documentation is available at:
+> +  https://datasheets.raspberrypi.com/camera/raspberry-pi-image-signal-processor-specification.pdf
+> +
+> +  The PHY and CSI-2 receiver part have no public documentation.
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - const: raspberrypi,rp1-cfe
+> +
+> +  reg:
+> +    items:
+> +      - description: CSI-2 registers
+> +      - description: D-PHY registers
+> +      - description: MIPI CFG (a simple top-level mux) registers
+> +      - description: FE registers
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  port:
+> +    $ref: /schemas/graph.yaml#/$defs/port-base
+> +    additionalProperties: false
+> +    description: CSI-2 RX Port
+> +
+> +    properties:
+> +      endpoint:
+> +        $ref: video-interfaces.yaml#
+> +        unevaluatedProperties: false
+> +
+> +        properties:
+> +          data-lanes:
+> +            minItems: 1
+> +            maxItems: 4
+> +
+> +          clock-lanes:
+> +            maxItems: 1
+
+minItems needs to be 1 as well.
+
+Or... is this actually configurable in hardware?
+
+> +
+> +        required:
+> +          - clock-lanes
+> +          - data-lanes
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - clocks
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    rp1 {
+> +      #address-cells = <2>;
+> +      #size-cells = <2>;
+> +
+> +      csi@110000 {
+> +        compatible = "raspberrypi,rp1-cfe";
+> +        reg = <0xc0 0x40110000 0x0 0x100>,
+> +              <0xc0 0x40114000 0x0 0x100>,
+> +              <0xc0 0x40120000 0x0 0x100>,
+> +              <0xc0 0x40124000 0x0 0x1000>;
+> +
+> +        interrupts = <42>;
+> +
+> +        clocks = <&rp1_clocks>;
+> +
+> +        port {
+> +          csi_ep: endpoint {
+> +            remote-endpoint = <&cam_endpoint>;
+> +            clock-lanes = <0>;
+> +            data-lanes = <1 2>;
+> +          };
+> +        };
+> +      };
+> +    };
 > 
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Terveisin,
+
+Sakari Ailus
 
