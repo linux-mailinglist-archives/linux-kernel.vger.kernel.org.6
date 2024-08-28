@@ -1,111 +1,166 @@
-Return-Path: <linux-kernel+bounces-305372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C6A7962DB7
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 18:32:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE1A0962DB9
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 18:32:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A29D2B219F8
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 16:32:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D28281C23496
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 16:32:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BCDE1A3BD1;
-	Wed, 28 Aug 2024 16:32:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6ACD1A705A;
+	Wed, 28 Aug 2024 16:32:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Fqaqd6K/"
-Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pR5/59CT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D25D01A257C
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 16:32:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D24B61A7042;
+	Wed, 28 Aug 2024 16:32:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724862748; cv=none; b=Mee6TRPbJBnpYixJYcaAXsRKHiUXa5Nv9DYCKc6UNE1DauRDtdE7jH+egnbvQbbihjOaelE5fW+aUgoFqzLbpHz+Y+3sSke7x07sYuDZiA4C6WHU23T+PJF5j7hRYtwtbW6uWWNMykKP1W8CR4CtplMZjIgsgb33ZzBDMWdsEzw=
+	t=1724862749; cv=none; b=F/MY3G90y7sUC18UHCWGbG48ya25CTmpNNtkyumm49suU5Xx/aIh4ElJGzlO1XhjlVtmU8a8jWKMnsV7a58f5aDBTGb78Q8/3gTpfpyfoaiRxaMtuun8QqvvwPu0p5Rav0cNJ1F7BmVAeLUHudweWi5e3758kM8RQnOs2ZtVe5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724862748; c=relaxed/simple;
-	bh=RtyC+DJzSu5OVYSmEs62W49jDoc5U19zL58+7inwVxo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NdRGqp4jLV5HtmTGts76KcAns+q3Wbk6ISKbjCPDfYVITRc5bGOeXmjAhPdOJ1bBCmrF7GkjcJcLTKa1bsTczQ3GFb0ESYtFZTGwy2IomTOzaOq8r+gJPRPd/hRtk4mrgImYaH65S6pCM3Je4ngcAeBm7461mGQd/vRJsVt1wtk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Fqaqd6K/; arc=none smtp.client-ip=209.85.219.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6bf7707dbb6so6817266d6.0
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 09:32:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1724862745; x=1725467545; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ocd9Zpo6DgcIf45l8s+t0c2v2FPDJ94NLUV2A2cC1Es=;
-        b=Fqaqd6K/ylq6c7NAt+Cm1zJgXAXV8RUkFUUIr9zXS11NCCpNd75v8HMdQX/cgema8O
-         IrAO0EpCM1MObC7P/alFinYVC+0Z29YBR8ZJJNQbsYVWMJhsU9jzAsh7DT/vwjvXaAZk
-         09tNsgxAUPXgalq1rD4RxYjqYh39JqdEHXF+M=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724862745; x=1725467545;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ocd9Zpo6DgcIf45l8s+t0c2v2FPDJ94NLUV2A2cC1Es=;
-        b=NAXf8rHkFk/UPxAnITznEDv4pKwo+nLLEIY+DCqLtmOnhsXdgXYwZqB0O1CkNDG94f
-         205YcCWyhMBqBcTuWSetRkAAJyBqOgBcdVvBOmAg81c3cxLRxH0+05dYItJPHK0RCowx
-         V8WL/M5Bl5e7BHDzBa8JHGofmG16OBhhL69LxyRnn0OaFnrRtBffjR9lOdyxxIMtEf5+
-         OpN+cTbjPUo3z47xVy9KtjnW95gc62UL1Qj4Ecl9Ey7QbVggnMXvXP3E8vJ8xueioyFs
-         ESqql7I/77DrLjg7QAPw4fOE53ODx4+b8ePUENiGyE92bZg+twmBu6wcMCmq+Wx5gNOT
-         tclQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWl10YmV9vHF7bQF+BWFraZ+8ZaVKLN6XWYvalWKT6mqWpbp9B31fwqU5nTAp0VxSg9hG4ttJeickTjTN8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxktPp/MygLI8XauKDDEVwgdpJ3qshJQW365PdWkNHL6ZEgxaxD
-	poM1eQb0/6WRg6Vwy3tUZ44da0eluKKq7HLybcZ87c7z8W5DqhSZKdCdJz1ygV6DYyW/FeZLiSk
-	=
-X-Google-Smtp-Source: AGHT+IE7cKcSMR8BXetiiFXbBCfXEkbq7DJjXsz28E0vPhLb4VBIqldGmTQlgT8ye7B7bQ5y8eRPyw==
-X-Received: by 2002:a0c:f407:0:b0:6b5:d95c:692d with SMTP id 6a1803df08f44-6c33e3a32demr1581126d6.13.1724862745150;
-        Wed, 28 Aug 2024 09:32:25 -0700 (PDT)
-Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com. [209.85.219.49])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c162d4c1c6sm67152196d6.46.2024.08.28.09.32.21
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 28 Aug 2024 09:32:21 -0700 (PDT)
-Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-6bf7707dbb6so6816496d6.0
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 09:32:21 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWgJkGghUZvHq8WASpYOND15BkwVHcwf5tx0x42OF8GPlBX1miDA1sb0EqZ1gsJKubmBA0JGXqM/qHRWzA=@vger.kernel.org
-X-Received: by 2002:a05:6214:21ce:b0:6bf:835a:87b6 with SMTP id
- 6a1803df08f44-6c335d97ae7mr43324726d6.27.1724862740933; Wed, 28 Aug 2024
- 09:32:20 -0700 (PDT)
+	s=arc-20240116; t=1724862749; c=relaxed/simple;
+	bh=IcOpHz8GgohndUTMyAYMIG+hCu7kJbe6e1APBKfYgPY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZZwSUolYhqLa9JXrskZUauBHbhJmvmXX4tGTQ/snc2LneLeobpI89DFTc3Hicj8qJg40DLiTMq1PGAreEeAWb4B2Wjc6hXS/Iy8SD9KPhlw322l//yKFCs5VWgU7IPSM3F+v9y0BGsembgqnvnUF31lxTNRgtIfKpJQyAqBy/+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pR5/59CT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 433E5C515B4;
+	Wed, 28 Aug 2024 16:32:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724862749;
+	bh=IcOpHz8GgohndUTMyAYMIG+hCu7kJbe6e1APBKfYgPY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pR5/59CTcmE9y0TjuQtpRRU3O8DmJUlgFo4Y3OfmCeqIgIPRE4+iuwlxl+bC5IsIE
+	 gOXLu02v+azXCkwZ0eRQPL5UavCwaAq5b9aMsznsCN1YvMX9YFvIiX07ApHGdRN9Er
+	 pCEJo7LHnlfTP/Jf5UKH3EukXS7kRH1Igoi71h4PRA+PLaLfuyggj6/FYeNUS5RfzR
+	 48neoiCmzP/+8UggeZ5ic1cAanCrHwwYo5exk6A++87m0f1fb/qG2b6cX4YBKKlUuj
+	 60Z25CRgS416qfMPZlbg2HmXe1Y0MshwxeUoMlSIL9uTD1rMqLZE05g4LvQoDqujex
+	 f4aeE+c9aSomQ==
+Date: Wed, 28 Aug 2024 17:32:24 +0100
+From: Simon Horman <horms@kernel.org>
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc: davem@davemloft.net, Pantelis Antoniou <pantelis.antoniou@gmail.com>,
+	Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
+	Herve Codina <herve.codina@bootlin.com>,
+	linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH net-next 6/6] net: ethernet: fs_enet: phylink conversion
+Message-ID: <20240828163224.GT1368797@kernel.org>
+References: <20240828095103.132625-1-maxime.chevallier@bootlin.com>
+ <20240828095103.132625-7-maxime.chevallier@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240828-topic-sm8x50-upstream-vtdr6130-multi-v1-0-0cae20d4c55d@linaro.org>
- <20240828-topic-sm8x50-upstream-vtdr6130-multi-v1-2-0cae20d4c55d@linaro.org>
-In-Reply-To: <20240828-topic-sm8x50-upstream-vtdr6130-multi-v1-2-0cae20d4c55d@linaro.org>
-From: Doug Anderson <dianders@chromium.org>
-Date: Wed, 28 Aug 2024 09:32:09 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=XY5Sh0Ax6P-LRO6n21EGL7K0tSKRaPyQWg-ZGmi_vRAw@mail.gmail.com>
-Message-ID: <CAD=FV=XY5Sh0Ax6P-LRO6n21EGL7K0tSKRaPyQWg-ZGmi_vRAw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] drm/panel: visionox-vtdr6130: switch to devm_regulator_bulk_get_const
-To: Neil Armstrong <neil.armstrong@linaro.org>
-Cc: Jessica Zhang <quic_jesszhan@quicinc.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240828095103.132625-7-maxime.chevallier@bootlin.com>
 
-Hi,
+On Wed, Aug 28, 2024 at 11:51:02AM +0200, Maxime Chevallier wrote:
+> fs_enet is a quite old but still used Ethernet driver found on some NXP
+> devices. It has support for 10/100 Mbps ethernet, with half and full
+> duplex. Some variants of it can use RMII, while other integrations are
+> MII-only.
+> 
+> Add phylink support, thus removing custom fixed-link hanldling.
+> 
+> This also allows removing some internal flags such as the use_rmii flag.
+> 
+> Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
 
-On Wed, Aug 28, 2024 at 9:03=E2=80=AFAM Neil Armstrong
-<neil.armstrong@linaro.org> wrote:
->
-> Switch to devm_regulator_bulk_get_const() to stop setting the supplies
-> list in probe(), and move the regulator_bulk_data struct in static const.
->
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-> ---
->  drivers/gpu/drm/panel/panel-visionox-vtdr6130.c | 26 +++++++++++++++----=
-------
->  1 file changed, 16 insertions(+), 10 deletions(-)
+Hi Maxime,
 
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
+Some minor issues from my side: not a full review by any stretch of
+the imagination.
+
+...
+
+> @@ -911,7 +894,7 @@ static int fs_enet_probe(struct platform_device *ofdev)
+>  	if (!IS_ERR(clk)) {
+>  		ret = clk_prepare_enable(clk);
+>  		if (ret)
+> -			goto out_deregister_fixed_link;
+> +			goto out_phylink;
+>  
+>  		fpi->clk_per = clk;
+>  	}
+
+This goto will result in a dereference of fep.
+But fep is not initialised until the following line,
+which appears a little below this hunk.
+
+	fep = netdev_priv(ndev);
+
+This goto will also result in the function returning without
+releasing clk.
+
+Both flagged by Smatch.
+
+> @@ -936,6 +919,26 @@ static int fs_enet_probe(struct platform_device *ofdev)
+>  	fep->fpi = fpi;
+>  	fep->ops = ops;
+>  
+> +	fep->phylink_config.dev = &ndev->dev;
+> +	fep->phylink_config.type = PHYLINK_NETDEV;
+> +	fep->phylink_config.mac_capabilities = MAC_10 | MAC_100;
+> +
+> +	__set_bit(PHY_INTERFACE_MODE_MII,
+> +		  fep->phylink_config.supported_interfaces);
+> +
+> +	if (of_device_is_compatible(ofdev->dev.of_node, "fsl,mpc5125-fec"))
+> +		__set_bit(PHY_INTERFACE_MODE_RMII,
+> +			  fep->phylink_config.supported_interfaces);
+> +
+> +	phylink = phylink_create(&fep->phylink_config, dev_fwnode(fep->dev),
+> +				 phy_mode, &fs_enet_phylink_mac_ops);
+> +	if (IS_ERR(phylink)) {
+> +		ret = PTR_ERR(phylink);
+> +		goto out_free_fpi;
+
+This also appears to leak clk, as well as ndev.
+
+I didn't look for other cases.
+
+> +	}
+> +
+> +	fep->phylink = phylink;
+> +
+>  	ret = fep->ops->setup_data(ndev);
+>  	if (ret)
+>  		goto out_free_dev;
+> @@ -968,8 +971,6 @@ static int fs_enet_probe(struct platform_device *ofdev)
+>  
+>  	ndev->ethtool_ops = &fs_ethtool_ops;
+>  
+> -	netif_carrier_off(ndev);
+> -
+>  	ndev->features |= NETIF_F_SG;
+>  
+>  	ret = register_netdev(ndev);
+> @@ -988,10 +989,8 @@ static int fs_enet_probe(struct platform_device *ofdev)
+>  	free_netdev(ndev);
+>  out_put:
+>  	clk_disable_unprepare(fpi->clk_per);
+> -out_deregister_fixed_link:
+> -	of_node_put(fpi->phy_node);
+> -	if (of_phy_is_fixed_link(ofdev->dev.of_node))
+> -		of_phy_deregister_fixed_link(ofdev->dev.of_node);
+> +out_phylink:
+> +	phylink_destroy(fep->phylink);
+>  out_free_fpi:
+>  	kfree(fpi);
+>  	return ret;
+
+...
 
