@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-305295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09EA1962C87
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 17:37:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7E5B962C89
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 17:37:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B5D41F2342F
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:37:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F79528871F
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:37:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24A2C1A38D2;
-	Wed, 28 Aug 2024 15:37:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 717D61A3BC1;
+	Wed, 28 Aug 2024 15:37:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TD/5JiYO"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VkfKC15t"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2D1F188014;
-	Wed, 28 Aug 2024 15:37:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 888B91A257A;
+	Wed, 28 Aug 2024 15:37:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724859432; cv=none; b=Lsz4je/uy/S61+x1u4Zzt0U/606ze9bLwU+iIEjF7Rz3QHDQFEhDtxiBwxkPHQ+h5tR6e1f9TibyuYZ+jv/VKqBb0hMtMvtR92L6QXld5/2MrIEtEvnQ7zNUdmjxibu00aKx4HsIBxoWBYpbXcq8rHFK/G1eE1JO468OpzpH07o=
+	t=1724859434; cv=none; b=Qq1cn1sc/Ev5xugIbaCzl0WGUx85t2J4xfL726091hKL/vUVn7h71UYJf0J69BzuXglcVRLK1VZuQgXWOI+nGHGKIUquHHQp1MSwRU5YbCWX/+/SQGMrkTvRQL7Rj7HZfLLJR4Hn/t+6XM5vn4+lBozssF3pN3TABvstHsT5dF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724859432; c=relaxed/simple;
-	bh=wveWSOl2iDkmjfaAlSQRHxBeV10WS1rrCw3NusQw5lY=;
+	s=arc-20240116; t=1724859434; c=relaxed/simple;
+	bh=OcPrd7nHRFmS4qTnofNkLKtGbq2pWyjfUsqWOPtLLOU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SYjFmuiUI7G2V5KvaT0gxd2irI+p6N/kgfdvw6v6qk01CKzQk9hJpSzf6y+rnsTVWbIROU5if+ws3FfZ5I6sNkwncUxp3dc0312d+RG95bik8mtuu5oAIVWoZOo5pWfs1JJvZetpWIEyvHCv1Tz3npgiTdbvdSYIuSOw5NTfcEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TD/5JiYO; arc=none smtp.client-ip=192.198.163.10
+	 MIME-Version; b=g8P5xXLna+lAKJd/yVbGspdm7jchmSM6kEP6p5Ha3g38da0w3WxRBfaNcbODd2UY0XyASmTMZW/Vkkh0cjIuFeBssby9qFL7iB3NhdV6rs4XnJV7lxEZzQd0vH8bObS4EVF7fg+AZTFsX8lQXX/CN/b/hKM0jLw/SxS0gBF56+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VkfKC15t; arc=none smtp.client-ip=192.198.163.10
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724859431; x=1756395431;
+  t=1724859433; x=1756395433;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=wveWSOl2iDkmjfaAlSQRHxBeV10WS1rrCw3NusQw5lY=;
-  b=TD/5JiYOLZDA4aG6uoSUJgml9qj4u2fqzEnSzUutsNVVPpgZ+uWRl1YN
-   ZPurkokezlx/YJEAAkM+c8QK1P79K+mDS9q2O+wKItsZ/CPuq5Jw1jBUP
-   S0V2Yq1DWsfylbKXZQJa4QSUFJCYiUVT5WS7jR7zz36pdFVjHy8dK6jZ7
-   YC9uldpaHUgtnTUL25JaDap3MkyQkUtkJiWQF8SQ3whxXufwgUQ4TgNri
-   qljP258YPnFtwfUNzEjItjS/ilK08DKvTL0LGN5OR2D+AVqKwXcwaNvWK
-   nu3XKyXkk2oVvfMts2JXdANlCZWCJmQ55239qpLNAnfN9Jvd01fsEtsTB
+  bh=OcPrd7nHRFmS4qTnofNkLKtGbq2pWyjfUsqWOPtLLOU=;
+  b=VkfKC15tSFJjRU0iLoG7SevCnG3QHTp48XStZu/HROZhnZq5ZcBrmYlI
+   NX9G9pG3O0II1nAeVweUX9PWBaa4LMjVCYv2W7D5sCAmIqH18EEXrrO7S
+   csONsYVa3UgYVKyMmeAlXp3cUVFYx2Uui+vzq64A6jHkLxLp4HP2AVGpf
+   wiTLGX4Iio3fGq/nqKIswJSiCUL/7SwYvL56ou0WBdovLFOpQ1lSIlTQb
+   zyQChXeMLiiMasf7osMQEspOEB06/9zY82W9WS3urCN44BYLjIaqfu+JH
+   sxkb37YN1T+YlfyuzZ0V4cBe7ix+7Xm6mim5cdh9MrdoyzVcIXQrJYe29
    A==;
-X-CSE-ConnectionGUID: dGncf+ARQ02xoggb4YH5TA==
-X-CSE-MsgGUID: 97xbgd+pS++fUiLjLPMGQw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11178"; a="34809263"
+X-CSE-ConnectionGUID: FpKgralESBOhp6UiIR7/Og==
+X-CSE-MsgGUID: EvdNGSZFQESvXY/A6UTGaA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11178"; a="34809269"
 X-IronPort-AV: E=Sophos;i="6.10,183,1719903600"; 
-   d="scan'208";a="34809263"
+   d="scan'208";a="34809269"
 Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2024 08:37:10 -0700
-X-CSE-ConnectionGUID: U727z7dAREWjQiuJb+buOw==
-X-CSE-MsgGUID: 8oi2PM+SQo64uuFEK+gq5g==
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2024 08:37:12 -0700
+X-CSE-ConnectionGUID: G3cNEQ1GTSWzKAp0bkNF7A==
+X-CSE-MsgGUID: RqG2TAn/RaOyIQJzLpx1sQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.10,183,1719903600"; 
-   d="scan'208";a="94064340"
+   d="scan'208";a="94064352"
 Received: from fdefranc-mobl3.ger.corp.intel.com (HELO tkristo-desk.intel.com) ([10.245.246.90])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2024 08:37:08 -0700
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2024 08:37:10 -0700
 From: Tero Kristo <tero.kristo@linux.intel.com>
 To: ilpo.jarvinen@linux.intel.com,
 	hdegoede@redhat.com,
 	srinivas.pandruvada@linux.intel.com
 Cc: platform-driver-x86@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/3] Documentation: admin-guide: pm: Add efficiency vs. latency tradeoff to uncore documentation
-Date: Wed, 28 Aug 2024 18:34:53 +0300
-Message-ID: <20240828153657.1296410-2-tero.kristo@linux.intel.com>
+Subject: [PATCH v2 2/3] platform/x86/intel-uncore-freq: Add support for efficiency latency control
+Date: Wed, 28 Aug 2024 18:34:54 +0300
+Message-ID: <20240828153657.1296410-3-tero.kristo@linux.intel.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240828153657.1296410-1-tero.kristo@linux.intel.com>
 References: <20240828153657.1296410-1-tero.kristo@linux.intel.com>
@@ -77,84 +77,262 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Added documentation about the functionality of efficiency vs. latency tradeoff
-control in intel Xeon processors, and how this is configured via sysfs.
+Add efficiency latency control support to the TPMI uncore driver. This
+defines two new threshold values for controlling uncore frequency, low
+threshold and high threshold. When CPU utilization is below low threshold,
+the user configurable floor latency control frequency can be used by the
+system. When CPU utilization is above high threshold, the uncore frequency
+is increased in 100MHz steps until power limit is reached.
 
 Signed-off-by: Tero Kristo <tero.kristo@linux.intel.com>
 ---
 v2:
-  * Largely re-wrote the documentation
+  * Converted a long sequence of if (...)'s to a switch
 
- .../pm/intel_uncore_frequency_scaling.rst     | 59 +++++++++++++++++++
- 1 file changed, 59 insertions(+)
+ .../uncore-frequency-common.h                 |   4 +
+ .../uncore-frequency/uncore-frequency-tpmi.c  | 158 +++++++++++++++++-
+ 2 files changed, 160 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/admin-guide/pm/intel_uncore_frequency_scaling.rst b/Documentation/admin-guide/pm/intel_uncore_frequency_scaling.rst
-index 5ab3440e6cee..26ded32b06f5 100644
---- a/Documentation/admin-guide/pm/intel_uncore_frequency_scaling.rst
-+++ b/Documentation/admin-guide/pm/intel_uncore_frequency_scaling.rst
-@@ -113,3 +113,62 @@ to apply at each uncore* level.
+diff --git a/drivers/platform/x86/intel/uncore-frequency/uncore-frequency-common.h b/drivers/platform/x86/intel/uncore-frequency/uncore-frequency-common.h
+index 4c245b945e4e..b5c7311bfa05 100644
+--- a/drivers/platform/x86/intel/uncore-frequency/uncore-frequency-common.h
++++ b/drivers/platform/x86/intel/uncore-frequency/uncore-frequency-common.h
+@@ -70,6 +70,10 @@ enum uncore_index {
+ 	UNCORE_INDEX_MIN_FREQ,
+ 	UNCORE_INDEX_MAX_FREQ,
+ 	UNCORE_INDEX_CURRENT_FREQ,
++	UNCORE_INDEX_EFF_LAT_CTRL_LOW_THRESHOLD,
++	UNCORE_INDEX_EFF_LAT_CTRL_HIGH_THRESHOLD,
++	UNCORE_INDEX_EFF_LAT_CTRL_HIGH_THRESHOLD_ENABLE,
++	UNCORE_INDEX_EFF_LAT_CTRL_FREQ,
+ };
  
- Support for "current_freq_khz" is available only at each fabric cluster
- level (i.e., in uncore* directory).
+ int uncore_freq_common_init(int (*read)(struct uncore_data *data, unsigned int *value,
+diff --git a/drivers/platform/x86/intel/uncore-frequency/uncore-frequency-tpmi.c b/drivers/platform/x86/intel/uncore-frequency/uncore-frequency-tpmi.c
+index 9fa3037c03d1..50b28b4b1fc0 100644
+--- a/drivers/platform/x86/intel/uncore-frequency/uncore-frequency-tpmi.c
++++ b/drivers/platform/x86/intel/uncore-frequency/uncore-frequency-tpmi.c
+@@ -30,6 +30,7 @@
+ 
+ #define	UNCORE_MAJOR_VERSION		0
+ #define	UNCORE_MINOR_VERSION		2
++#define UNCORE_ELC_SUPPORTED_VERSION	2
+ #define UNCORE_HEADER_INDEX		0
+ #define UNCORE_FABRIC_CLUSTER_OFFSET	8
+ 
+@@ -46,6 +47,7 @@ struct tpmi_uncore_struct;
+ /* Information for each cluster */
+ struct tpmi_uncore_cluster_info {
+ 	bool root_domain;
++	bool elc_supported;
+ 	u8 __iomem *cluster_base;
+ 	struct uncore_data uncore_data;
+ 	struct tpmi_uncore_struct *uncore_root;
+@@ -75,6 +77,10 @@ struct tpmi_uncore_struct {
+ /* Bit definitions for CONTROL register */
+ #define UNCORE_MAX_RATIO_MASK				GENMASK_ULL(14, 8)
+ #define UNCORE_MIN_RATIO_MASK				GENMASK_ULL(21, 15)
++#define UNCORE_EFF_LAT_CTRL_RATIO_MASK			GENMASK_ULL(28, 22)
++#define UNCORE_EFF_LAT_CTRL_LOW_THRESHOLD_MASK		GENMASK_ULL(38, 32)
++#define UNCORE_EFF_LAT_CTRL_HIGH_THRESHOLD_ENABLE	BIT(39)
++#define UNCORE_EFF_LAT_CTRL_HIGH_THRESHOLD_MASK		GENMASK_ULL(46, 40)
+ 
+ /* Helper function to read MMIO offset for max/min control frequency */
+ static void read_control_freq(struct tpmi_uncore_cluster_info *cluster_info,
+@@ -89,6 +95,48 @@ static void read_control_freq(struct tpmi_uncore_cluster_info *cluster_info,
+ 		*value = FIELD_GET(UNCORE_MIN_RATIO_MASK, control) * UNCORE_FREQ_KHZ_MULTIPLIER;
+ }
+ 
++/* Helper function to read efficiency latency control values over MMIO */
++static int read_eff_lat_ctrl(struct uncore_data *data, unsigned int *val, enum uncore_index index)
++{
++	struct tpmi_uncore_cluster_info *cluster_info;
++	u64 ctrl;
 +
-+Efficiency vs. Latency Tradeoff
-+-------------------------------
++	cluster_info = container_of(data, struct tpmi_uncore_cluster_info, uncore_data);
++	if (cluster_info->root_domain)
++		return -ENODATA;
 +
-+The Efficiency Latency Control (ELC) feature improves performance
-+per watt. With this feature hardware power management algorithms
-+optimize trade-off between latency and power consumption. For some
-+latency sensitive workloads further tuning can be done by SW to
-+get desired performance.
++	if (!cluster_info->elc_supported)
++		return -EOPNOTSUPP;
 +
-+The hardware monitors the average CPU utilization across all cores
-+in a power domain at regular intervals and decides an uncore frequency.
-+While this may result in the best performance per watt, workload may be
-+expecting higher performance at the expense of power. Consider an
-+application that intermittently wakes up to perform memory reads on an
-+otherwise idle system. In such cases, if hardware lowers uncore
-+frequency, then there may be delay in ramp up of frequency to meet
-+target performance.
++	ctrl = readq(cluster_info->cluster_base + UNCORE_CONTROL_INDEX);
 +
-+The ELC control defines some parameters which can be changed from SW.
-+If the average CPU utilization is below a user defined threshold
-+(elc_low_threshold_percent attribute below), the user defined uncore
-+frequency floor frequency will be used (elc_floor_freq_khz attribute
-+below) instead of hardware calculated minimum.
++	switch (index) {
++	case UNCORE_INDEX_EFF_LAT_CTRL_LOW_THRESHOLD:
++		*val = FIELD_GET(UNCORE_EFF_LAT_CTRL_LOW_THRESHOLD_MASK, ctrl);
++		*val *= 100;
++		*val = DIV_ROUND_UP(*val, FIELD_MAX(UNCORE_EFF_LAT_CTRL_LOW_THRESHOLD_MASK));
++		break;
 +
-+Similarly in high load scenario where the CPU utilization goes above
-+the high threshold value (elc_high_threshold_percent attribute below)
-+instead of jumping to maximum uncore frequency, frequency is increased
-+in 100MHz steps. This avoids consuming unnecessarily high power
-+immediately with CPU utilization spikes.
++	case UNCORE_INDEX_EFF_LAT_CTRL_HIGH_THRESHOLD:
++		*val = FIELD_GET(UNCORE_EFF_LAT_CTRL_HIGH_THRESHOLD_MASK, ctrl);
++		*val *= 100;
++		*val = DIV_ROUND_UP(*val, FIELD_MAX(UNCORE_EFF_LAT_CTRL_HIGH_THRESHOLD_MASK));
++		break;
 +
-+Attributes for efficiency latency control:
++	case UNCORE_INDEX_EFF_LAT_CTRL_HIGH_THRESHOLD_ENABLE:
++		*val = FIELD_GET(UNCORE_EFF_LAT_CTRL_HIGH_THRESHOLD_ENABLE, ctrl);
++		break;
++	case UNCORE_INDEX_EFF_LAT_CTRL_FREQ:
++		*val = FIELD_GET(UNCORE_EFF_LAT_CTRL_RATIO_MASK, ctrl) * UNCORE_FREQ_KHZ_MULTIPLIER;
++		break;
 +
-+``elc_floor_freq_khz``
-+	This attribute is used to get/set the efficiency latency floor frequency.
-+	If this variable is lower than the 'min_freq_khz', it is ignored by
-+	the firmware.
++	default:
++		return -EOPNOTSUPP;
++	}
 +
-+``elc_low_threshold_percent``
-+	This attribute is used to get/set the efficiency latency control low
-+	threshold. This attribute is in percentages of CPU utilization.
++	return 0;
++}
 +
-+``elc_high_threshold_percent``
-+	This attribute is used to get/set the efficiency latency control high
-+	threshold. This attribute is in percentages of CPU utilization.
+ #define UNCORE_MAX_RATIO	FIELD_MAX(UNCORE_MAX_RATIO_MASK)
+ 
+ /* Helper for sysfs read for max/min frequencies. Called under mutex locks */
+@@ -137,6 +185,82 @@ static int uncore_read_control_freq(struct uncore_data *data, unsigned int *valu
+ 	return 0;
+ }
+ 
++/* Helper function for writing efficiency latency control values over MMIO */
++static int write_eff_lat_ctrl(struct uncore_data *data, unsigned int val, enum uncore_index index)
++{
++	struct tpmi_uncore_cluster_info *cluster_info;
++	u64 control;
 +
-+``elc_high_threshold_enable``
-+	This attribute is used to enable/disable the efficiency latency control
-+	high threshold. Write '1' to enable, '0' to disable.
++	cluster_info = container_of(data, struct tpmi_uncore_cluster_info, uncore_data);
 +
-+Example system configuration below, which does following:
-+  * when CPU utilization is less than 10%: sets uncore frequency to 800MHz
-+  * when CPU utilization is higher than 95%: increases uncore frequency in
-+    100MHz steps, until power limit is reached
++	if (cluster_info->root_domain)
++		return -ENODATA;
 +
-+  elc_floor_freq_khz:800000
-+  elc_high_threshold_percent:95
-+  elc_high_threshold_enable:1
-+  elc_low_threshold_percent:10
++	if (!cluster_info->elc_supported)
++		return -EOPNOTSUPP;
++
++	switch (index) {
++	case UNCORE_INDEX_EFF_LAT_CTRL_LOW_THRESHOLD:
++		if (val > 100)
++			return -EINVAL;
++		break;
++
++	case UNCORE_INDEX_EFF_LAT_CTRL_HIGH_THRESHOLD:
++		if (val > 100)
++			return -EINVAL;
++		break;
++
++	case UNCORE_INDEX_EFF_LAT_CTRL_HIGH_THRESHOLD_ENABLE:
++		if (val > 1)
++			return -EINVAL;
++		break;
++
++	case UNCORE_INDEX_EFF_LAT_CTRL_FREQ:
++		val /= UNCORE_FREQ_KHZ_MULTIPLIER;
++		if (val > FIELD_MAX(UNCORE_EFF_LAT_CTRL_RATIO_MASK))
++			return -EINVAL;
++		break;
++
++	default:
++		return -EOPNOTSUPP;
++	}
++
++	control = readq(cluster_info->cluster_base + UNCORE_CONTROL_INDEX);
++
++	switch (index) {
++	case UNCORE_INDEX_EFF_LAT_CTRL_LOW_THRESHOLD:
++		val *= FIELD_MAX(UNCORE_EFF_LAT_CTRL_LOW_THRESHOLD_MASK);
++		val /= 100;
++		control &= ~UNCORE_EFF_LAT_CTRL_LOW_THRESHOLD_MASK;
++		control |= FIELD_PREP(UNCORE_EFF_LAT_CTRL_LOW_THRESHOLD_MASK, val);
++		break;
++
++	case UNCORE_INDEX_EFF_LAT_CTRL_HIGH_THRESHOLD:
++		val *= FIELD_MAX(UNCORE_EFF_LAT_CTRL_HIGH_THRESHOLD_MASK);
++		val /= 100;
++		control &= ~UNCORE_EFF_LAT_CTRL_HIGH_THRESHOLD_MASK;
++		control |= FIELD_PREP(UNCORE_EFF_LAT_CTRL_HIGH_THRESHOLD_MASK, val);
++		break;
++
++	case UNCORE_INDEX_EFF_LAT_CTRL_HIGH_THRESHOLD_ENABLE:
++		control &= ~UNCORE_EFF_LAT_CTRL_HIGH_THRESHOLD_ENABLE;
++		control |= FIELD_PREP(UNCORE_EFF_LAT_CTRL_HIGH_THRESHOLD_ENABLE, val);
++		break;
++
++	case UNCORE_INDEX_EFF_LAT_CTRL_FREQ:
++		control &= ~UNCORE_EFF_LAT_CTRL_RATIO_MASK;
++		control |= FIELD_PREP(UNCORE_EFF_LAT_CTRL_RATIO_MASK, val);
++		break;
++
++	default:
++		break;
++	}
++
++	writeq(control, cluster_info->cluster_base + UNCORE_CONTROL_INDEX);
++
++	return 0;
++}
++
+ /* Helper function to write MMIO offset for max/min control frequency */
+ static void write_control_freq(struct tpmi_uncore_cluster_info *cluster_info, unsigned int input,
+ 			      unsigned int index)
+@@ -156,7 +280,7 @@ static void write_control_freq(struct tpmi_uncore_cluster_info *cluster_info, un
+ 	writeq(control, (cluster_info->cluster_base + UNCORE_CONTROL_INDEX));
+ }
+ 
+-/* Callback for sysfs write for max/min frequencies. Called under mutex locks */
++/* Helper for sysfs write for max/min frequencies. Called under mutex locks */
+ static int uncore_write_control_freq(struct uncore_data *data, unsigned int input,
+ 				     enum uncore_index index)
+ {
+@@ -234,6 +358,33 @@ static int uncore_read(struct uncore_data *data, unsigned int *value, enum uncor
+ 	case UNCORE_INDEX_CURRENT_FREQ:
+ 		return uncore_read_freq(data, value);
+ 
++	case UNCORE_INDEX_EFF_LAT_CTRL_LOW_THRESHOLD:
++	case UNCORE_INDEX_EFF_LAT_CTRL_HIGH_THRESHOLD:
++	case UNCORE_INDEX_EFF_LAT_CTRL_HIGH_THRESHOLD_ENABLE:
++	case UNCORE_INDEX_EFF_LAT_CTRL_FREQ:
++		return read_eff_lat_ctrl(data, value, index);
++
++	default:
++		break;
++	}
++
++	return -EOPNOTSUPP;
++}
++
++/* Callback for sysfs write for TPMI uncore data. Called under mutex locks. */
++static int uncore_write(struct uncore_data *data, unsigned int value, enum uncore_index index)
++{
++	switch (index) {
++	case UNCORE_INDEX_EFF_LAT_CTRL_LOW_THRESHOLD:
++	case UNCORE_INDEX_EFF_LAT_CTRL_HIGH_THRESHOLD:
++	case UNCORE_INDEX_EFF_LAT_CTRL_HIGH_THRESHOLD_ENABLE:
++	case UNCORE_INDEX_EFF_LAT_CTRL_FREQ:
++		return write_eff_lat_ctrl(data, value, index);
++
++	case UNCORE_INDEX_MIN_FREQ:
++	case UNCORE_INDEX_MAX_FREQ:
++		return uncore_write_control_freq(data, value, index);
++
+ 	default:
+ 		break;
+ 	}
+@@ -291,7 +442,7 @@ static int uncore_probe(struct auxiliary_device *auxdev, const struct auxiliary_
+ 		return -EINVAL;
+ 
+ 	/* Register callbacks to uncore core */
+-	ret = uncore_freq_common_init(uncore_read, uncore_write_control_freq);
++	ret = uncore_freq_common_init(uncore_read, uncore_write);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -409,6 +560,9 @@ static int uncore_probe(struct auxiliary_device *auxdev, const struct auxiliary_
+ 
+ 			cluster_info->uncore_root = tpmi_uncore;
+ 
++			if (TPMI_MINOR_VERSION(pd_info->ufs_header_ver) >= UNCORE_ELC_SUPPORTED_VERSION)
++				cluster_info->elc_supported = true;
++
+ 			ret = uncore_freq_add_entry(&cluster_info->uncore_data, 0);
+ 			if (ret) {
+ 				cluster_info->cluster_base = NULL;
 -- 
 2.43.1
 
