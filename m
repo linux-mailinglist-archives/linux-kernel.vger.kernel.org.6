@@ -1,128 +1,152 @@
-Return-Path: <linux-kernel+bounces-305463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08BB6962F21
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 20:00:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33EDF962F30
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 20:02:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B22C92828FA
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 18:00:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A4C71C215D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 18:02:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCFA71A7AD2;
-	Wed, 28 Aug 2024 18:00:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC5511AB503;
+	Wed, 28 Aug 2024 18:01:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N3s6Q64y"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=siemens.com header.i=jan.kiszka@siemens.com header.b="O1oskRcJ"
+Received: from mta-64-227.siemens.flowmailer.net (mta-64-227.siemens.flowmailer.net [185.136.64.227])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A25B19DF40;
-	Wed, 28 Aug 2024 18:00:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9477E1A4F0F
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 18:01:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.64.227
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724868013; cv=none; b=WZQ3lfa1+1sXeRIgvyM4fEIEt/ba8CZxAhcFGzms8ekH0FBtsG/uMcnxf53+C1r2Gd1eP03f7ZUhGPjzsldWDMgxW99JmV/A5GHeBUGmZMyfrxs2Su+xKUN7Qj9vzZojZqAEEQswYYa/sE8m935fjpDDcM6kylLsNcnAYNMUztc=
+	t=1724868088; cv=none; b=Zt9B3+LmoGDMlIz4Pv41mYWeV8ZXQJumqnhg8vLBA8iRN9SYGqSu3MYpunKbIdPRqA+B8IaghYBRyYtEiZ7XGxZBQn/KGA4/GTq6m49VzirLvMvasNb3Mk2ycp/2BLCK41dFjQPzhKY4JnFhYXOSugJd9pEr4Hh5KJ1ID3ER46w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724868013; c=relaxed/simple;
-	bh=7H/E7MSDZxVkPqQwHScaGrL3nzpRLI/Qqo9WirUXiIw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J4QjZPUg6DYxzjksetoU/kv+CjAaQV7yKQY3dStEeYLEdMO6rwppAUDUOI/QpNjWzuliE2e/CWfQvFgqjhKW2QRq+dPWICWfMG+3ZpHYDolFjrnrPD7ZySb2ITkHo6oyu4dkwbrapM7UUeLzQRXrvFNEpcc/eLIWv1Y41nTChfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N3s6Q64y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A404FC4CEC1;
-	Wed, 28 Aug 2024 18:00:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724868012;
-	bh=7H/E7MSDZxVkPqQwHScaGrL3nzpRLI/Qqo9WirUXiIw=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=N3s6Q64yg3+L2ByOW9TijOw2EdzX3BuWiid6c7ce/haA10hMLak1BggFTW1ZrWoRF
-	 7mrSyehShsVwFo4RFkHB0kU+LBMdO9OZDR5L7AYVFtMS/Cxbv1aM64ChcTySOAQ58L
-	 5+AUWY9tDBaHj1lQs7lKIqzfq2PtPiqg89GO5Vr6xVRVQIPiBKwt1quVrqg9i18v5H
-	 xZUZl7jp5XZGCwvcoQLjZjKzOHx+nG3ufciY/a7RzcRSUh2qoDzsK43Y0K+9NZF3XE
-	 S6ZBmmNGZshEXApDyNbsPxDmnnDJKwWEMy3cSNwIMLIQjzzspyf3matxcLdHqwA7ZB
-	 EMULHU7RREyHw==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 43F8CCE0FF3; Wed, 28 Aug 2024 11:00:12 -0700 (PDT)
-Date: Wed, 28 Aug 2024 11:00:12 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Uladzislau Rezki <urezki@gmail.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>, RCU <rcu@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Neeraj upadhyay <Neeraj.Upadhyay@amd.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
-Subject: Re: [PATCH 1/4] rcu/kvfree: Support dynamic rcu_head for single
- argument objects
-Message-ID: <184844f5-71fd-4b62-bf86-87cdff3aa546@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20240828110929.3713-1-urezki@gmail.com>
- <64bebc29-a007-4ebc-bf86-8c2c0a7e6bf6@suse.cz>
- <Zs9Xm6VKcpMkWbLE@pc636>
+	s=arc-20240116; t=1724868088; c=relaxed/simple;
+	bh=ePkc2PsbkgF0p1uGvpY8HCwe6DiqE7bSa7rKWqI5PcY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UUIbA6Oh0oO5JOxJXXmMIuNDLu3qY89k0oFvyx0TkCGZ/REpFBJYzzXAShq2qE5pgIfvRGfikVZ+ki+1ikgkZprgXV8l+hYuKvCgg6UvcgyfsSBThivYeRhrJvTYQ0GI9we8r36lAWzw5UHFxTRDUiiRN6RWC0UrcQdRIQm/pFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=jan.kiszka@siemens.com header.b=O1oskRcJ; arc=none smtp.client-ip=185.136.64.227
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
+Received: by mta-64-227.siemens.flowmailer.net with ESMTPSA id 202408281801223e9d68ad472bc3cbd7
+        for <linux-kernel@vger.kernel.org>;
+        Wed, 28 Aug 2024 20:01:22 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=jan.kiszka@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
+ bh=FPzWbEIJ2nzFNeOyuBWSWLU3hoxSsNE9Y1WR/uYxWQo=;
+ b=O1oskRcJT46ZMZ1ijK7G4RcPfpXzNwmAnQYCLRPMyFNrlsXaxlEdUJk8POvcCqkdBFu9He
+ FYrlrqMZb+rqdLTIpgmOSpxac5YH2ComztAkpx4XHzPYzsN3IxnEOYKZz1/JF8GlgzRT3lP2
+ UwscJMcyBChlCtUgO5TZnOT1AQba5J3REeHx2pKJ4dfBzoI3h1adPYPHxCPFA8ZI5Np3F5Fa
+ r2pqyxivzQcBZ75Gn/d3a0KYLzSNlkHV5nDIDweHz3c+ybmSS/ea3wMxjtL4+VxgETR/agU0
+ bJHtdC2Z/ggxG1jF15HnKeUykcr3p/eBn/ZbSpjwQLCy3ZASXDkz0KVw==;
+From: Jan Kiszka <jan.kiszka@siemens.com>
+To: Nishanth Menon <nm@ti.com>,
+	Santosh Shilimkar <ssantosh@kernel.org>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Tero Kristo <kristo@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-pci@vger.kernel.org,
+	Siddharth Vadapalli <s-vadapalli@ti.com>,
+	Bao Cheng Su <baocheng.su@siemens.com>,
+	Hua Qian Li <huaqian.li@siemens.com>,
+	Diogo Ivo <diogo.ivo@siemens.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>
+Subject: [PATCH v3 0/7] soc: ti: Add and use PVU on K3-AM65 for DMA isolation
+Date: Wed, 28 Aug 2024 20:01:13 +0200
+Message-ID: <cover.1724868080.git.jan.kiszka@siemens.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zs9Xm6VKcpMkWbLE@pc636>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-294854:519-21489:flowmailer
 
-On Wed, Aug 28, 2024 at 07:00:11PM +0200, Uladzislau Rezki wrote:
-> On Wed, Aug 28, 2024 at 04:58:48PM +0200, Vlastimil Babka wrote:
-> > On 8/28/24 13:09, Uladzislau Rezki (Sony) wrote:
-> > > Add a support of dynamically attaching an rcu_head to an object
-> > > which gets freed via the single argument of kvfree_rcu(). This is
-> > > used in the path, when a page allocation fails due to a high memory
-> > > pressure.
-> > > 
-> > > The basic idea behind of this is to minimize a hit of slow path
-> > > which requires a caller to wait until a grace period is passed.
-> > > 
-> > > Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
-> > 
-> > So IIUC it's a situation where we can't allocate a page, but we hope the
-> > kmalloc-32 slab has still free objects to give us dyn_rcu_head's before it
-> > would have to also make a page allocation?
-> > 
-> Yes, you understood it correctly :)
-> 
-> >
-> > So that may really be possible and there might potentially be many such
-> > objects, but I wonder if there's really a benefit. The system is struggling
-> > for memory and the single-argument caller specifically is _mightsleep so it
-> > could e.g. instead go direct reclaim a page rather than start depleting the
-> > kmalloc-32 slab, no?
-> > 
-> This is a good question about benefit and i need to say that i do not
-> have a strong opinion here. I post this patch to get some opinions about
-> it. This "dynamic attaching" we discussed with RCU folk a few years ago
-> and decided not to go with it. I have not found an information why.
+Changes in v3:
+ - fix ti,am654-pvu.yaml according to review comments
+ - address review comments on ti,am65-pci-host.yaml
+ - differentiate between different compatibles in ti,am65-pci-host.yaml
+ - move pvu nodes to k3-am65-main.dtsi
+ - reorder patch series, pulling bindings and generic DT bits to the front
 
-If I remember correctly, I asked "How are you testing this?", which
-was then taken as a criticism rather than a question.  ;-)
+Changes in v2:
+ - fix dt_bindings_check issues (patch 1)
+ - address first review comments (patch 2)
+ - extend ti,am65-pci-host bindings for PVU (new patch 3)
 
-No one has reported an OOM-related problem with the code in its current
-form, for what little that is worth.
+Only few of the K3 SoCs have an IOMMU and, thus, can isolate the system
+against DMA-based attacks of external PCI devices. The AM65 is without
+an IOMMU, but it comes with something close to it: the Peripheral
+Virtualization Unit (PVU).
 
-							Thanx, Paul
+The PVU was originally designed to establish static compartments via a
+hypervisor, isolate those DMA-wise against each other and the host and
+even allow remapping of guest-physical addresses. But it only provides
+a static translation region, not page-granular mappings. Thus, it cannot
+be handled transparently like an IOMMU.
 
-> The page request path, which is "normal/fast", can lead to a "light"
-> direct reclaim, if still fails, then we are in a high pressure situation.
-> Depleting a slab is probably not worth it, especially that the patch in
-> this series:
-> 
-> [PATCH 4/4] rcu/kvfree: Switch to expedited version in slow path
-> 
-> switches to more faster synchronize_rcu() version to speedup a reclaim.
-> 
-> + this [PATCH 3/4] rcu/kvfree: Use polled API in a slow path
-> which also improves a slow path in terms of that a GP might be already
-> passed for the object being freed.
-> 
-> I am totally OK to drop this patch. This is fine to me.
-> 
-> --
-> Uladzislau Rezki
+Now, to use the PVU for the purpose of isolated PCI devices from the
+Linux host, this series takes a different approach. It defines a
+restricted-dma-pool for the PCI host, using swiotlb to map all DMA
+buffers from a static memory carve-out. And to enforce that the devices
+actually follow this, a special PVU soc driver is introduced. The driver
+permits access to the GIC ITS and otherwise waits for other drivers that
+detect devices with constrained DMA to register pools with the PVU.
+
+For the AM65, the first (and possibly only) driver where this is
+introduced is the pci-keystone host controller. Finally, this series
+configures the IOT2050 devices (all have MiniPCIe or M.2 extension
+slots) to make use of this protection scheme.
+
+Due to the cross-cutting nature of these changes, multiple subsystems
+are affected. However, I wanted to present the whole thing in one series
+to allow everyone to review with the complete picture in hands. If
+preferred, I can also split the series up, of course.
+
+Jan
+
+CC: Bjorn Helgaas <bhelgaas@google.com>
+CC: "Krzysztof Wilczyński" <kw@linux.com>
+CC: linux-pci@vger.kernel.org
+CC: Lorenzo Pieralisi <lpieralisi@kernel.org>
+
+Jan Kiszka (7):
+  dt-bindings: soc: ti: Add AM65 peripheral virtualization unit
+  dt-bindings: PCI: ti,am65: Extend for use with PVU
+  arm64: dts: ti: k3-am65-main: Add PVU nodes
+  arm64: dts: ti: k3-am65-main: Add VMAP registers to PCI root complexes
+  soc: ti: Add IOMPU-like PVU driver
+  PCI: keystone: Add supported for PVU-based DMA isolation on AM654
+  arm64: dts: ti: iot2050: Enforce DMA isolation for devices behind PCI
+    RC
+
+ .../bindings/pci/ti,am65-pci-host.yaml        |  52 +-
+ .../bindings/soc/ti/ti,am654-pvu.yaml         |  51 ++
+ .../boot/dts/ti/k3-am65-iot2050-common.dtsi   |  15 +
+ arch/arm64/boot/dts/ti/k3-am65-main.dtsi      |  38 +-
+ drivers/pci/controller/dwc/pci-keystone.c     | 101 ++++
+ drivers/soc/ti/Kconfig                        |   4 +
+ drivers/soc/ti/Makefile                       |   1 +
+ drivers/soc/ti/ti-pvu.c                       | 487 ++++++++++++++++++
+ include/linux/ti-pvu.h                        |  16 +
+ 9 files changed, 749 insertions(+), 16 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/soc/ti/ti,am654-pvu.yaml
+ create mode 100644 drivers/soc/ti/ti-pvu.c
+ create mode 100644 include/linux/ti-pvu.h
+
+-- 
+2.43.0
+
 
