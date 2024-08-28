@@ -1,560 +1,130 @@
-Return-Path: <linux-kernel+bounces-305145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70A5C962A39
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 16:28:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42A4F962A33
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 16:27:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF4C31F25951
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 14:28:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67E061C23D8D
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 14:27:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4729618A6BF;
-	Wed, 28 Aug 2024 14:27:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF31F189B9F;
+	Wed, 28 Aug 2024 14:27:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Iw0eSo56"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aAushX44"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4E1519E838;
-	Wed, 28 Aug 2024 14:27:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 330A62D600
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 14:27:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724855261; cv=none; b=ut8lRFNbUkMCS2RvZmQv8dpBJV3VbOYZBglmRNu7laZnX1YFOfJSNmfl0hxp0+tcYcHF+Qefo03nYNspE7j4vZK2FhNiMD+G4dMpBnsibhP6NdS7IsO5C+7FG2EjgzpJhJx/0jBlCOwIndw//Q4w8ysJqjkzoWKGoZUb/M0LeTw=
+	t=1724855254; cv=none; b=PwB2ADNq4HDLsAa5aAyYuLVVugkmWMRjkYBYLB1/NtlzBaN6Hh18Vk/R4e9Ibbru0WMrCbDLBivGmd3XUb0oHEoLQtyYXZiPsuUvAnTpoSc34dkHz82eKDUGVWk2rh5jLRp6xhX4E4y6sRzBTikI4V004rj0imFAr5W3tC6GcXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724855261; c=relaxed/simple;
-	bh=W86cFGXloGDircM5sjQ+H2FeC6x3oY/12NtRtsl2S8A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XWoB6HNu2+wlnEzRrDJU8u8UKPDGYiz90NKM8mZLuv/+KJ//aZkfRBlHaQzLZOlxIF6FTNMIXDVjx0Nij6uuOe5xueNSaN6HHETEKwloXx/ZEKlAkYeHpFMrboRyUzUKUXcmqXM3pSAPgS5CD8waOhLgXVEitm71Q3M303Bgo08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Iw0eSo56; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88C41C4CEFA;
-	Wed, 28 Aug 2024 14:27:41 +0000 (UTC)
+	s=arc-20240116; t=1724855254; c=relaxed/simple;
+	bh=1f0GM8hUkAqNGCKC4UeJzlvRwpjAPmIHcveEyFdIPQI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=syc1vD1zLbznEOknA8NP9ep033KKJ08JQO50ZbsmpBF1ZNhclD3LC52E06s6IbgzrboG1OZAI85JwTkAhFc3J9lokWO5Mh4MbZ/9VRiGM2A4JKjSWOKoURzX9NP70NPfwPipeQmwJSxZcu99mTAiDLsuNAq4KTlYYeQCPvZgaxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aAushX44; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD427C4CEE5;
+	Wed, 28 Aug 2024 14:27:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724855261;
-	bh=W86cFGXloGDircM5sjQ+H2FeC6x3oY/12NtRtsl2S8A=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Iw0eSo56jtwdMbq6ddVkdJSA925bTeLlFDBSGG67NMW41oZZ/omeKSX8mxaSd+4ks
-	 ab2y1fzlku1cGZQg/pvjD960OGE0tAB7a2A8i7fc8pUy7hE/MCPt1FLtiIpBE5U27R
-	 Fu14O244d4btqqOwLqmZyeimMCBNHLCSudFqeVS5nzZ1SiK0R5xX+Zjtd+C9Gv14Gh
-	 RZNnX0Sl/OtdDDmBAhr2abjmWNlNdDibBtYLrkgjsFMVVARJqTWPWi1BYOyxQK+OCN
-	 P34036l9K28i1EdUSFkLpoQrDH42l34Fi+v/7Ft1ohzFNXQa6dWCULALwiZ7wNsKo3
-	 KN9RbacmSC3og==
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5c09fd20eddso3954375a12.3;
-        Wed, 28 Aug 2024 07:27:41 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUrHxAHe0GsLj+C6Y7NqPK/M4vbMUqVLwgyzYVVzHm7ja1yTRZ1B935dlxkh7eOHuaRbllrw5HPK8MOD5OP@vger.kernel.org, AJvYcCV5IgEGiLvI6YHAwig5bMQQZfQxmbgkZXEgFN+oP9+HnMZHLfTZbLR7NAnp/a0C00M3/Gg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzRb+Fd6lOuFHYdNTHgOAs4iZp5cnGsN66PFQlDdvuouscWOL3
-	PDeqkKROj3EVuC85BfZVaOMLleUU+6YpwmGm5YncodWOPtU4oZtnNkp+3SLshsTVAEYJbD+hmpR
-	MqfT1HYovkSDfD3vU7tUQL/fbu4I=
-X-Google-Smtp-Source: AGHT+IFK7ior7Bd9byn++Dm/7uIzZMVQSFMtV/l/kcleimrLqfixVwWfYtfsKow8/uh9Uy6cPtIuSSgf9nG/U1/PNqo=
-X-Received: by 2002:a05:6402:1e94:b0:5be:ffe1:6539 with SMTP id
- 4fb4d7f45d1cf-5c214c5540emr1760903a12.24.1724855260027; Wed, 28 Aug 2024
- 07:27:40 -0700 (PDT)
+	s=k20201202; t=1724855253;
+	bh=1f0GM8hUkAqNGCKC4UeJzlvRwpjAPmIHcveEyFdIPQI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aAushX44OCSw8ggaOVktNLI0KQrqFQdn23UKjd05luCp7XLUmBYUMW5RMC6sTXoGK
+	 0olfj2FOOmTbHDsVBBXQjtNwwGSX0mnCwuZ+0kiz4s41xIbt5pp1qIrWRLzsZ1RfeK
+	 +6N1MO7f95zFZ5Wvs1hU+xSmu5UD1pL3wMf+0u/YAnvx/l6Q6ANQnGqBo4Xlm1Nkbu
+	 xCoPD2+aDQk/2Qs+8fN9CCgFMGfiQHDwO38At/ZE0Rn4FHqctOQVg+pVY+2mmLL2hE
+	 itmrlAmwrb1/Yt8WqKKnNjgTCssJg1NHF8fwMMCi+yIQ2b9AbNYcY4v7tGYLVM4AVf
+	 HhoYsoyJOcLjg==
+Date: Wed, 28 Aug 2024 15:27:28 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Nishanth Menon <nm@ti.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Lee Jones <lee@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	afd@ti.com, bb@ti.com, d-gole@ti.com,
+	Jan Dakinevich <jan.dakinevich@salutedevices.com>
+Subject: Re: [PATCH] mfd: syscon: Set max_register_is_0 when syscon points to
+ a single register
+Message-ID: <ce44b268-d138-445d-a149-e5348897d3c5@sirena.org.uk>
+References: <20240828121008.3066002-1-nm@ti.com>
+ <f72500a5-4514-4920-a7f0-3fc8e6874615@sirena.org.uk>
+ <20240828133229.67bej3utpgrmzr3p@retired>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240823063943.2618675-1-maobibo@loongson.cn> <20240823063943.2618675-4-maobibo@loongson.cn>
-In-Reply-To: <20240823063943.2618675-4-maobibo@loongson.cn>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Wed, 28 Aug 2024 22:27:27 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H7t0Bn=iK7UygG6ym=hsCJqZAFVJHqDupm7mL9rVAm0GA@mail.gmail.com>
-Message-ID: <CAAhV-H7t0Bn=iK7UygG6ym=hsCJqZAFVJHqDupm7mL9rVAm0GA@mail.gmail.com>
-Subject: Re: [PATCH v7 3/3] irqchip/loongson-eiointc: Add extioi virt
- extension support
-To: Bibo Mao <maobibo@loongson.cn>
-Cc: Tianrui Zhao <zhaotianrui@loongson.cn>, Thomas Gleixner <tglx@linutronix.de>, 
-	WANG Xuerui <kernel@xen0n.name>, kvm@vger.kernel.org, loongarch@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, virtualization@lists.linux.dev, x86@kernel.org, 
-	Song Gao <gaosong@loongson.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="r+Wbd9LpO3QX5yNH"
+Content-Disposition: inline
+In-Reply-To: <20240828133229.67bej3utpgrmzr3p@retired>
+X-Cookie: You are number 6!  Who is number one?
 
-Hi, Bibo,
 
-On Fri, Aug 23, 2024 at 2:39=E2=80=AFPM Bibo Mao <maobibo@loongson.cn> wrot=
-e:
->
-> Interrupts can be routed to maximal four virtual CPUs with one HW
-> EIOINTC interrupt controller model, since interrupt routing is encoded wi=
-th
-> CPU bitmap and EIOINTC node combined method. Here add the EIOINTC virt
-> extension support so that interrupts can be routed to 256 vCPUs on
-> hypervisor mode. CPU bitmap is replaced with normal encoding and EIOINTC
-> node type is removed, so there are 8 bits for cpu selection, at most 256
-> vCPUs are supported for interrupt routing.
->
-> Co-developed-by: Song Gao <gaosong@loongson.cn>
-> Signed-off-by: Song Gao <gaosong@loongson.cn>
-> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
-> ---
->  .../arch/loongarch/irq-chip-model.rst         |  64 +++++++++++
->  .../zh_CN/arch/loongarch/irq-chip-model.rst   |  55 +++++++++
->  arch/loongarch/include/asm/irq.h              |   1 +
->  drivers/irqchip/irq-loongson-eiointc.c        | 106 ++++++++++++++----
->  4 files changed, 205 insertions(+), 21 deletions(-)
->
-> diff --git a/Documentation/arch/loongarch/irq-chip-model.rst b/Documentat=
-ion/arch/loongarch/irq-chip-model.rst
-> index 7988f4192363..d2350780ad1d 100644
-> --- a/Documentation/arch/loongarch/irq-chip-model.rst
-> +++ b/Documentation/arch/loongarch/irq-chip-model.rst
-> @@ -85,6 +85,70 @@ to CPUINTC directly::
->      | Devices |
->      +---------+
->
-> +Virtual extended IRQ model
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D
-> +
-> +In this model, IPI (Inter-Processor Interrupt) and CPU Local Timer inter=
-rupt
-> +go to CPUINTC directly, CPU UARTS interrupts go to PCH-PIC, while all ot=
-her
-> +devices interrupts go to PCH-PIC/PCH-MSI and gathered by V-EIOINTC (Virt=
-ual
-> +Extended I/O Interrupt Controller), and then go to CPUINTC directly::
-> +
-> +       +-----+    +-------------------+     +-------+
-> +       | IPI |--> | CPUINTC(0-255vcpu)| <-- | Timer |
-> +       +-----+    +-------------------+     +-------+
-> +                            ^
-> +                            |
-> +                      +-----------+
-> +                      | V-EIOINTC |
-> +                      +-----------+
-> +                       ^         ^
-> +                       |         |
-> +                +---------+ +---------+
-> +                | PCH-PIC | | PCH-MSI |
-> +                +---------+ +---------+
-> +                  ^      ^          ^
-> +                  |      |          |
-> +           +--------+ +---------+ +---------+
-> +           | UARTs  | | Devices | | Devices |
-> +           +--------+ +---------+ +---------+
-> +
-> +
-> +Description
-> +-----------
-> +V-EIOINTC (Virtual Extended I/O Interrupt Controller) is an extension of
-> +EIOINTC, it only works in VM mode which runs in KVM hypervisor. Interrup=
-ts can
-> +be routed to up to four vCPUs via standard EIOINTC, however with V-EIOIN=
-TC
-> +interrupts can be routed to up to 256 virtual cpus.
-> +
-> +With standard EIOINTC, interrupt routing setting includes two parts: eig=
-ht
-> +bits for CPU selection and four bits for CPU IP (Interrupt Pin) selectio=
-n.
-> +For CPU selection there is four bits for EIOINTC node selection, four bi=
-ts
-> +for EIOINTC CPU selection. Bitmap method is used for CPU selection and
-> +CPU IP selection, so interrupt can only route to CPU0 - CPU3 and IP0-IP3=
- in
-> +one EIOINTC node.
-> +
-> +With V-EIOINTC it supports to route more CPUs and CPU IP (Interrupt Pin)=
-,
-> +there are two newly added registers with V-EIOINTC.
-> +
-> +EXTIOI_VIRT_FEATURES
-> +--------------------
-> +This register is read-only register, which indicates supported features =
-with
-> +V-EIOINTC. Feature EXTIOI_HAS_INT_ENCODE and EXTIOI_HAS_CPU_ENCODE is ad=
-ded.
-> +
-> +Feature EXTIOI_HAS_INT_ENCODE is part of standard EIOINTC. If it is 1, i=
-t
-> +indicates that CPU Interrupt Pin selection can be normal method rather t=
-han
-> +bitmap method, so interrupt can be routed to IP0 - IP15.
-> +
-> +Feature EXTIOI_HAS_CPU_ENCODE is entension of V-EIOINTC. If it is 1, it
-> +indicates that CPU selection can be normal method rather than bitmap met=
-hod,
-> +so interrupt can be routed to CPU0 - CPU255.
-> +
-> +EXTIOI_VIRT_CONFIG
-> +------------------
-> +This register is read-write register, for compatibility intterupt routed=
- uses
-> +the default method which is the same with standard EIOINTC. If the bit i=
-s set
-> +with 1, it indicated HW to use normal method rather than bitmap method.
-> +
->  ACPI-related definitions
->  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->
-> diff --git a/Documentation/translations/zh_CN/arch/loongarch/irq-chip-mod=
-el.rst b/Documentation/translations/zh_CN/arch/loongarch/irq-chip-model.rst
-> index f1e9ab18206c..d696bd394c02 100644
-> --- a/Documentation/translations/zh_CN/arch/loongarch/irq-chip-model.rst
-> +++ b/Documentation/translations/zh_CN/arch/loongarch/irq-chip-model.rst
-> @@ -87,6 +87,61 @@ PCH-LPC/PCH-MSI=EF=BC=8C=E7=84=B6=E5=90=8E=E8=A2=ABEIO=
-INTC=E7=BB=9F=E4=B8=80=E6=94=B6=E9=9B=86=EF=BC=8C=E5=86=8D=E7=9B=B4=E6=8E=
-=A5=E5=88=B0=E8=BE=BECPUINTC::
->      | Devices |
->      +---------+
->
-> +=E8=99=9A=E6=8B=9F=E6=89=A9=E5=B1=95IRQ=E6=A8=A1=E5=9E=8B
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +=E5=9C=A8=E8=BF=99=E7=A7=8D=E6=A8=A1=E5=9E=8B=E9=87=8C=E9=9D=A2, IPI(Int=
-er-Processor Interrupt) =E5=92=8CCPU=E6=9C=AC=E5=9C=B0=E6=97=B6=E9=92=9F=E4=
-=B8=AD=E6=96=AD=E7=9B=B4=E6=8E=A5=E5=8F=91=E9=80=81=E5=88=B0CPUINTC,
-> +CPU=E4=B8=B2=E5=8F=A3 (UARTs) =E4=B8=AD=E6=96=AD=E5=8F=91=E9=80=81=E5=88=
-=B0PCH-PIC, =E8=80=8C=E5=85=B6=E4=BB=96=E6=89=80=E6=9C=89=E8=AE=BE=E5=A4=87=
-=E7=9A=84=E4=B8=AD=E6=96=AD=E5=88=99=E5=88=86=E5=88=AB=E5=8F=91=E9=80=81=E5=
-=88=B0=E6=89=80=E8=BF=9E=E6=8E=A5=E7=9A=84PCH_PIC/
-> +PCH-MSI, =E7=84=B6=E5=90=8EV-EIOINTC=E7=BB=9F=E4=B8=80=E6=94=B6=E9=9B=86=
-=EF=BC=8C=E5=86=8D=E7=9B=B4=E6=8E=A5=E5=88=B0=E8=BE=BECPUINTC::
-> +
-> +        +-----+    +-------------------+     +-------+
-> +        | IPI |--> | CPUINTC(0-255vcpu)| <-- | Timer |
-> +        +-----+    +-------------------+     +-------+
-> +                             ^
-> +                             |
-> +                       +-----------+
-> +                       | V-EIOINTC |
-> +                       +-----------+
-> +                        ^         ^
-> +                        |         |
-> +                 +---------+ +---------+
-> +                 | PCH-PIC | | PCH-MSI |
-> +                 +---------+ +---------+
-> +                   ^      ^          ^
-> +                   |      |          |
-> +            +--------+ +---------+ +---------+
-> +            | UARTs  | | Devices | | Devices |
-> +            +--------+ +---------+ +---------+
-> +
-> +V-EIOINTC =E6=98=AFEIOINTC=E7=9A=84=E6=89=A9=E5=B1=95, =E4=BB=85=E5=B7=
-=A5=E4=BD=9C=E5=9C=A8hyperisor=E6=A8=A1=E5=BC=8F=E4=B8=8B, =E4=B8=AD=E6=96=
-=AD=E7=BB=8FEIOINTC=E6=9C=80=E5=A4=9A=E5=8F=AF=E4=B8=AA=E8=B7=AF=E7=94=B1=
-=E5=88=B0=EF=BC=94=E4=B8=AA
-> +=E8=99=9A=E6=8B=9Fcpu. =E4=BD=86=E4=B8=AD=E6=96=AD=E7=BB=8FV-EIOINTC=E6=
-=9C=80=E5=A4=9A=E5=8F=AF=E4=B8=AA=E8=B7=AF=E7=94=B1=E5=88=B0256=E4=B8=AA=E8=
-=99=9A=E6=8B=9Fcpu.
-> +
-> +=E4=BC=A0=E7=BB=9F=E7=9A=84EIOINTC=E4=B8=AD=E6=96=AD=E6=8E=A7=E5=88=B6=
-=E5=99=A8=EF=BC=8C=E4=B8=AD=E6=96=AD=E8=B7=AF=E7=94=B1=E5=88=86=E4=B8=BA=E4=
-=B8=A4=E4=B8=AA=E9=83=A8=E5=88=86=EF=BC=9A8=E6=AF=94=E7=89=B9=E7=94=A8=E4=
-=BA=8E=E6=8E=A7=E5=88=B6=E8=B7=AF=E7=94=B1=E5=88=B0=E5=93=AA=E4=B8=AACPU=EF=
-=BC=8C
-> +4=E6=AF=94=E7=89=B9=E7=94=A8=E4=BA=8E=E6=8E=A7=E5=88=B6=E8=B7=AF=E7=94=
-=B1=E5=88=B0=E7=89=B9=E5=AE=9ACPU=E7=9A=84=E5=93=AA=E4=B8=AA=E4=B8=AD=E6=96=
-=AD=E7=AE=A1=E8=84=9A.=E6=8E=A7=E5=88=B6CPU=E8=B7=AF=E7=94=B1=E7=9A=848=E6=
-=AF=94=E7=89=B9=E5=89=8D4=E6=AF=94=E7=89=B9=E7=94=A8=E4=BA=8E=E6=8E=A7=E5=
-=88=B6
-> +=E8=B7=AF=E7=94=B1=E5=88=B0=E5=93=AA=E4=B8=AAEIOINTC=E8=8A=82=E7=82=B9=
-=EF=BC=8C=E5=90=8E4=E6=AF=94=E7=89=B9=E7=94=A8=E4=BA=8E=E6=8E=A7=E5=88=B6=
-=E6=AD=A4=E8=8A=82=E7=82=B9=E5=93=AA=E4=B8=AACPU=E3=80=82=E4=B8=AD=E6=96=AD=
-=E8=B7=AF=E7=94=B1=E5=9C=A8=E9=80=89=E6=8B=A9CPU=E8=B7=AF=E7=94=B1
-> +=E5=92=8CCPU=E4=B8=AD=E6=96=AD=E7=AE=A1=E8=84=9A=E8=B7=AF=E7=94=B1=E6=97=
-=B6=EF=BC=8C=E4=BD=BF=E7=94=A8bitmap=E7=BC=96=E7=A0=81=E6=96=B9=E5=BC=8F=E8=
-=80=8C=E4=B8=8D=E6=98=AF=E6=AD=A3=E5=B8=B8=E7=BC=96=E7=A0=81=E6=96=B9=E5=BC=
-=8F=EF=BC=8C=E6=89=80=E4=BB=A5=E5=AF=B9=E4=BA=8E=E4=B8=80=E4=B8=AA
-> +EIOINTC=E4=B8=AD=E6=96=AD=E6=8E=A7=E5=88=B6=E5=99=A8=E8=8A=82=E7=82=B9=
-=EF=BC=8C=E4=B8=AD=E6=96=AD=E5=8F=AA=E8=83=BD=E8=B7=AF=E7=94=B1=E5=88=B0CPU=
-0 - CPU3=EF=BC=8C=E4=B8=AD=E6=96=AD=E7=AE=A1=E6=95=99IP0-IP3=E3=80=82
-> +
-> +V-EIOINTC=E6=96=B0=E5=A2=9E=E4=BA=86=E4=B8=A4=E4=B8=AA=E5=AF=84=E5=AD=98=
-=E5=99=A8=EF=BC=8C=E6=94=AF=E6=8C=81=E4=B8=AD=E6=96=AD=E8=B7=AF=E7=94=B1=E5=
-=88=B0=E6=9B=B4=E5=A4=9ACPU=E4=B8=AA=E5=92=8C=E4=B8=AD=E6=96=AD=E7=AE=A1=E8=
-=84=9A=E3=80=82
-> +
-> +V-EIOINTC=E5=8A=9F=E8=83=BD=E5=AF=84=E5=AD=98=E5=99=A8
-> +-------------------
-> +=E5=8A=9F=E8=83=BD=E5=AF=84=E5=AD=98=E5=99=A8=E6=98=AF=E5=8F=AA=E8=AF=BB=
-=E5=AF=84=E5=AD=98=E5=99=A8=EF=BC=8C=E7=94=A8=E4=BA=8E=E6=98=BE=E7=A4=BAV-E=
-IOINTC=E6=94=AF=E6=8C=81=E7=9A=84=E7=89=B9=E6=80=A7=EF=BC=8C=E7=9B=AE=E5=89=
-=8D=E4=B8=A4=E4=B8=AA=E6=94=AF=E6=8C=81=E4=B8=A4=E4=B8=AA=E7=89=B9=E6=80=A7
-> +EXTIOI_HAS_INT_ENCODE =E5=92=8C EXTIOI_HAS_CPU_ENCODE=E3=80=82
-> +
-> +=E7=89=B9=E6=80=A7EXTIOI_HAS_INT_ENCODE=E6=98=AF=E4=BC=A0=E7=BB=9FEIOINT=
-C=E4=B8=AD=E6=96=AD=E6=8E=A7=E5=88=B6=E5=99=A8=E7=9A=84=E4=B8=80=E4=B8=AA=
-=E7=89=B9=E6=80=A7=EF=BC=8C=E5=A6=82=E6=9E=9C=E6=AD=A4=E6=AF=94=E7=89=B9=E4=
-=B8=BA1=EF=BC=8C
-> +=E6=98=BE=E7=A4=BACPU=E4=B8=AD=E6=96=AD=E7=AE=A1=E8=84=9A=E8=B7=AF=E7=94=
-=B1=E6=96=B9=E5=BC=8F=E6=94=AF=E6=8C=81=E6=AD=A3=E5=B8=B8=E7=BC=96=E7=A0=81=
-=EF=BC=8C=E8=80=8C=E4=B8=8D=E6=98=AFbitmap=E7=BC=96=E7=A0=81=EF=BC=8C=E6=89=
-=80=E4=BB=A5=E4=B8=AD=E6=96=AD=E5=8F=AF=E4=BB=A5=E8=B7=AF=E7=94=B1=E5=88=B0
-> +=E7=AE=A1=E8=84=9AIP0 - IP15=E3=80=82
-> +
-> +=E7=89=B9=E6=80=A7EXTIOI_HAS_CPU_ENCODE=E6=98=AFV-EIOINTC=E6=96=B0=E5=A2=
-=9E=E7=89=B9=E6=80=A7=EF=BC=8C=E5=A6=82=E6=9E=9C=E6=AD=A4=E6=AF=94=E7=89=B9=
-=E4=B8=BA1=EF=BC=8C=E8=A1=A8=E7=A4=BACPU=E8=B7=AF=E7=94=B1
-> +=E6=96=B9=E5=BC=8F=E6=94=AF=E6=8C=81=E6=AD=A3=E5=B8=B8=E7=BC=96=E7=A0=81=
-=EF=BC=8C=E8=80=8C=E4=B8=8D=E6=98=AFbitmap=E7=BC=96=E7=A0=81=EF=BC=8C=E6=89=
-=80=E4=BB=A5=E4=B8=AD=E6=96=AD=E5=8F=AF=E4=BB=A5=E8=B7=AF=E7=94=B1=E5=88=B0=
-CPU0 - CPU255=E3=80=82
-> +
-> +V-EIOINTC=E9=85=8D=E7=BD=AE=E5=AF=84=E5=AD=98=E5=99=A8
-> +-------------------
-> +=E9=85=8D=E7=BD=AE=E5=AF=84=E5=AD=98=E5=99=A8=E6=98=AF=E5=8F=AF=E8=AF=BB=
-=E5=86=99=E5=AF=84=E5=AD=98=E5=99=A8=EF=BC=8C=E4=B8=BA=E4=BA=86=E5=85=BC=E5=
-=AE=B9=E6=80=A7=E8=80=83=E8=99=91=EF=BC=8C=E5=A6=82=E6=9E=9C=E4=B8=8D=E5=86=
-=99=E6=AD=A4=E5=AF=84=E5=AD=98=E5=99=A8=EF=BC=8C=E4=B8=AD=E6=96=AD=E8=B7=AF=
-=E7=94=B1=E9=87=87=E7=94=A8
-> +=E5=92=8C=E4=BC=A0=E7=BB=9FEIOINTC=E7=9B=B8=E5=90=8C=E7=9A=84=E8=B7=AF=
-=E7=94=B1=E8=AE=BE=E7=BD=AE=E3=80=82=E5=A6=82=E6=9E=9C=E5=AF=B9=E5=BA=94=E6=
-=AF=94=E7=89=B9=E8=AE=BE=E7=BD=AE=E4=B8=BA1=EF=BC=8C=E8=A1=A8=E7=A4=BA=E9=
-=87=87=E7=94=A8=E6=AD=A3=E5=B8=B8=E8=B7=AF=E7=94=B1=E6=96=B9=E5=BC=8F=E8=80=
-=8C
-> +=E4=B8=8D=E6=98=AFbitmap=E7=BC=96=E7=A0=81=E7=9A=84=E8=B7=AF=E7=94=B1=E6=
-=96=B9=E5=BC=8F=E3=80=82
-> +
->  ACPI=E7=9B=B8=E5=85=B3=E7=9A=84=E5=AE=9A=E4=B9=89
->  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->
-> diff --git a/arch/loongarch/include/asm/irq.h b/arch/loongarch/include/as=
-m/irq.h
-> index 480418bc5071..ce85d4c7d225 100644
-> --- a/arch/loongarch/include/asm/irq.h
-> +++ b/arch/loongarch/include/asm/irq.h
-> @@ -54,6 +54,7 @@ extern struct acpi_vector_group pch_group[MAX_IO_PICS];
->  extern struct acpi_vector_group msi_group[MAX_IO_PICS];
->
->  #define CORES_PER_EIO_NODE     4
-> +#define CORES_PER_VEIO_NODE    256
->
->  #define LOONGSON_CPU_UART0_VEC         10 /* CPU UART0 */
->  #define LOONGSON_CPU_THSENS_VEC                14 /* CPU Thsens */
-> diff --git a/drivers/irqchip/irq-loongson-eiointc.c b/drivers/irqchip/irq=
--loongson-eiointc.c
-> index b1f2080be2be..bc54f81ec129 100644
-> --- a/drivers/irqchip/irq-loongson-eiointc.c
-> +++ b/drivers/irqchip/irq-loongson-eiointc.c
-> @@ -14,6 +14,7 @@
->  #include <linux/irqdomain.h>
->  #include <linux/irqchip/chained_irq.h>
->  #include <linux/kernel.h>
-> +#include <linux/kvm_para.h>
->  #include <linux/syscore_ops.h>
->  #include <asm/numa.h>
->
-> @@ -24,15 +25,37 @@
->  #define EIOINTC_REG_ISR                0x1800
->  #define EIOINTC_REG_ROUTE      0x1c00
->
-> +#define EXTIOI_VIRT_FEATURES           0x40000000
-> +#define  EXTIOI_HAS_VIRT_EXTENSION     BIT(0)
-> +#define  EXTIOI_HAS_ENABLE_OPTION      BIT(1)
-> +#define  EXTIOI_HAS_INT_ENCODE         BIT(2)
-> +#define  EXTIOI_HAS_CPU_ENCODE         BIT(3)
-> +#define EXTIOI_VIRT_CONFIG             0x40000004
-> +#define  EXTIOI_ENABLE                 BIT(1)
-> +#define  EXTIOI_ENABLE_INT_ENCODE      BIT(2)
-> +#define  EXTIOI_ENABLE_CPU_ENCODE      BIT(3)
-I think qemu hasn't release with v-eiointc? So we still have a chance
-to modify qemu and this driver to simplify registers:
+--r+Wbd9LpO3QX5yNH
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-+#define EXTIOI_VIRT_FEATS             0x40000000
-+#define  EXTIOI_HAS_INT_ENCODE         BIT(0)
-+#define  EXTIOI_HAS_CPU_ENCODE         BIT(1)
-+#define EXTIOI_VIRT_CONFIG             0x40000004
-+#define  EXTIOI_ENABLE_INT_ENCODE      BIT(0)
-+#define  EXTIOI_ENABLE_CPU_ENCODE      BIT(1)
+On Wed, Aug 28, 2024 at 08:32:29AM -0500, Nishanth Menon wrote:
+> On 13:57-20240828, Mark Brown wrote:
+> > On Wed, Aug 28, 2024 at 07:10:08AM -0500, Nishanth Menon wrote:
 
-> +
->  #define VEC_REG_COUNT          4
->  #define VEC_COUNT_PER_REG      64
->  #define VEC_COUNT              (VEC_REG_COUNT * VEC_COUNT_PER_REG)
->  #define VEC_REG_IDX(irq_id)    ((irq_id) / VEC_COUNT_PER_REG)
->  #define VEC_REG_BIT(irq_id)     ((irq_id) % VEC_COUNT_PER_REG)
->  #define EIOINTC_ALL_ENABLE     0xffffffff
-> +#define EIOINTC_ALL_ENABLE_VEC_MASK(vector)    (EIOINTC_ALL_ENABLE & ~BI=
-T(vector & 0x1F))
-> +#define EIOINTC_REG_ENABLE_VEC(vector)         (EIOINTC_REG_ENABLE + ((v=
-ector >> 5) << 2))
-> +#define EIOINTC_USE_CPU_ENCODE                 BIT(0)
->
->  #define MAX_EIO_NODES          (NR_CPUS / CORES_PER_EIO_NODE)
->
-> +/*
-> + * Routing registers are 32bit, and there is 8-bit route setting for eve=
-ry
-> + * interrupt vector. So one Route register contains four vectors routing
-> + * information.
-> + */
-> +#define EIOINTC_REG_ROUTE_VEC(vector)          (EIOINTC_REG_ROUTE + (vec=
-tor & ~0x03))
-> +#define EIOINTC_REG_ROUTE_VEC_SHIFT(vector)    ((vector & 0x03) << 3)
-> +#define EIOINTC_REG_ROUTE_VEC_MASK(vector)     (0xff << EIOINTC_REG_ROUT=
-E_VEC_SHIFT(vector))
-> +
->  static int nr_pics;
->
->  struct eiointc_priv {
-> @@ -42,6 +65,7 @@ struct eiointc_priv {
->         cpumask_t               cpuspan_map;
->         struct fwnode_handle    *domain_handle;
->         struct irq_domain       *eiointc_domain;
-> +       int                     flags;
->  };
->
->  static struct eiointc_priv *eiointc_priv[MAX_IO_PICS];
-> @@ -57,7 +81,13 @@ static void eiointc_enable(void)
->
->  static int cpu_to_eio_node(int cpu)
->  {
-> -       return cpu_logical_map(cpu) / CORES_PER_EIO_NODE;
-> +       int cores;
-> +
-> +       if (kvm_para_has_feature(KVM_FEATURE_VIRT_EXTIOI))
-> +               cores =3D CORES_PER_VEIO_NODE;
-> +       else
-> +               cores =3D CORES_PER_EIO_NODE;
-> +       return cpu_logical_map(cpu) / cores;
->  }
->
->  #ifdef CONFIG_SMP
-> @@ -89,6 +119,16 @@ static void eiointc_set_irq_route(int pos, unsigned i=
-nt cpu, unsigned int mnode,
->
->  static DEFINE_RAW_SPINLOCK(affinity_lock);
->
-> +static void virt_extioi_set_irq_route(unsigned int vector, unsigned int =
-cpu)
-Use veiointc_set_irq_route() can keep consistency with real machines.
+> > > Fixes: 0ec74ad3c157 ("regmap: rework ->max_register handling")
 
-> +{
-> +       unsigned long reg =3D EIOINTC_REG_ROUTE_VEC(vector);
-> +       u32 data =3D iocsr_read32(reg);
-> +
-> +       data &=3D ~EIOINTC_REG_ROUTE_VEC_MASK(vector);
-> +       data |=3D cpu_logical_map(cpu) << EIOINTC_REG_ROUTE_VEC_SHIFT(vec=
-tor);
-> +       iocsr_write32(data, reg);
-> +}
-> +
->  static int eiointc_set_irq_affinity(struct irq_data *d, const struct cpu=
-mask *affinity, bool force)
->  {
->         unsigned int cpu;
-> @@ -105,18 +145,24 @@ static int eiointc_set_irq_affinity(struct irq_data=
- *d, const struct cpumask *af
->         }
->
->         vector =3D d->hwirq;
-> -       regaddr =3D EIOINTC_REG_ENABLE + ((vector >> 5) << 2);
-> -
-> -       /* Mask target vector */
-> -       csr_any_send(regaddr, EIOINTC_ALL_ENABLE & (~BIT(vector & 0x1F)),
-> -                       0x0, priv->node * CORES_PER_EIO_NODE);
-> -
-> -       /* Set route for target vector */
-> -       eiointc_set_irq_route(vector, cpu, priv->node, &priv->node_map);
-> -
-> -       /* Unmask target vector */
-> -       csr_any_send(regaddr, EIOINTC_ALL_ENABLE,
-> -                       0x0, priv->node * CORES_PER_EIO_NODE);
-> +       regaddr =3D EIOINTC_REG_ENABLE_VEC(vector);
-> +
-> +       if (priv->flags & EIOINTC_USE_CPU_ENCODE) {
-> +               iocsr_write32(EIOINTC_ALL_ENABLE_VEC_MASK(vector), regadd=
-r);
-> +               virt_extioi_set_irq_route(vector, cpu);
-> +               iocsr_write32(EIOINTC_ALL_ENABLE, regaddr);
-We can add the same comments as real machines here.
+> > In what sense is this a fix?
 
-Huacai
+> The max_register was 0x0 was clearly a corner case. The fix done for
+> remap  should have cleaned up the users of max_register to maintain the
+> behavior. That is just my opinion.
 
-> +       } else {
-> +               /* Mask target vector */
-> +               csr_any_send(regaddr, EIOINTC_ALL_ENABLE_VEC_MASK(vector)=
-,
-> +                            0x0, priv->node * CORES_PER_EIO_NODE);
-> +
-> +               /* Set route for target vector */
-> +               eiointc_set_irq_route(vector, cpu, priv->node, &priv->nod=
-e_map);
-> +
-> +               /* Unmask target vector */
-> +               csr_any_send(regaddr, EIOINTC_ALL_ENABLE,
-> +                            0x0, priv->node * CORES_PER_EIO_NODE);
-> +       }
->
->         irq_data_update_effective_affinity(d, cpumask_of(cpu));
->
-> @@ -140,17 +186,23 @@ static int eiointc_index(int node)
->
->  static int eiointc_router_init(unsigned int cpu)
->  {
-> -       int i, bit;
-> -       uint32_t data;
-> -       uint32_t node =3D cpu_to_eio_node(cpu);
-> -       int index =3D eiointc_index(node);
-> +       int i, bit, cores, index, node;
-> +       unsigned int data;
-> +
-> +       node =3D cpu_to_eio_node(cpu);
-> +       index =3D eiointc_index(node);
->
->         if (index < 0) {
->                 pr_err("Error: invalid nodemap!\n");
-> -               return -1;
-> +               return -EINVAL;
->         }
->
-> -       if ((cpu_logical_map(cpu) % CORES_PER_EIO_NODE) =3D=3D 0) {
-> +       if (eiointc_priv[index]->flags & EIOINTC_USE_CPU_ENCODE)
-> +               cores =3D CORES_PER_VEIO_NODE;
-> +       else
-> +               cores =3D CORES_PER_EIO_NODE;
-> +
-> +       if ((cpu_logical_map(cpu) % cores) =3D=3D 0) {
->                 eiointc_enable();
->
->                 for (i =3D 0; i < eiointc_priv[0]->vec_count / 32; i++) {
-> @@ -166,7 +218,9 @@ static int eiointc_router_init(unsigned int cpu)
->
->                 for (i =3D 0; i < eiointc_priv[0]->vec_count / 4; i++) {
->                         /* Route to Node-0 Core-0 */
-> -                       if (index =3D=3D 0)
-> +                       if (eiointc_priv[index]->flags & EIOINTC_USE_CPU_=
-ENCODE)
-> +                               bit =3D cpu_logical_map(0);
-> +                       else if (index =3D=3D 0)
->                                 bit =3D BIT(cpu_logical_map(0));
->                         else
->                                 bit =3D (eiointc_priv[index]->node << 4) =
-| 1;
-> @@ -370,7 +424,7 @@ static int __init acpi_cascade_irqdomain_init(void)
->  static int __init eiointc_init(struct eiointc_priv *priv, int parent_irq=
-,
->                                u64 node_map)
->  {
-> -       int i;
-> +       int i, val;
->
->         node_map =3D node_map ? node_map : -1ULL;
->         for_each_possible_cpu(i) {
-> @@ -390,6 +444,16 @@ static int __init eiointc_init(struct eiointc_priv *=
-priv, int parent_irq,
->                 return -ENOMEM;
->         }
->
-> +       if (kvm_para_has_feature(KVM_FEATURE_VIRT_EXTIOI)) {
-> +               val =3D iocsr_read32(EXTIOI_VIRT_FEATURES);
-> +               if (val & EXTIOI_HAS_CPU_ENCODE) {
-> +                       val =3D iocsr_read32(EXTIOI_VIRT_CONFIG);
-> +                       val |=3D EXTIOI_ENABLE_CPU_ENCODE;
-> +                       iocsr_write32(val, EXTIOI_VIRT_CONFIG);
-> +                       priv->flags =3D EIOINTC_USE_CPU_ENCODE;
-> +               }
-> +       }
-> +
->         eiointc_priv[nr_pics++] =3D priv;
->         eiointc_router_init(0);
->         irq_set_chained_handler_and_data(parent_irq, eiointc_irq_dispatch=
-, priv);
-> --
-> 2.39.3
->
+No, apart from the fact that catching all possible regmap users would be
+rather hard it's entirely optional for regmaps to specify a maxium
+register.
+
+> > really does not seem like a good idea - unless you've done an audit of
+> > every single syscon to make sure they do explicitly specify a maximum
+> > register, and confirmed that this can't be specified via DT, then it's
+> > going to break things.
+
+> I understand the risk - but having a consistent max_register definition
+> is important - key here is that in regmap, max_register is valid if:
+> a) max_register not being 0
+> b) if max_register is 0, it is valid only if max_register_is_0 is set to
+> true.
+
+> When syscon sets the max_register, it operates correctly for num_reg > 1
+> however, when reg_size == 1, you don't get the checks that you
+> get when num_regs > 1. That is inconsistent behavior.
+
+> It might help if you can clarify why you think an inconsistent behavior
+> is correct for syscon?
+
+Like I say specifying a maximum register is entirely optional, not
+everyone wants that feature and if you don't use the debugfs interface
+or the flat cache it doesn't *super* matter.  With 0 as default it's
+always going to be awkward to describe a maximum register of 0 while
+allowing that to be optional, fortunately very few devices have a single
+register.
+
+--r+Wbd9LpO3QX5yNH
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbPM9AACgkQJNaLcl1U
+h9Aghwf+OLLk3MIiyJOte94+Y9YMQGcWM7eunBitGTaIb3+zGRlMKQInC/IjBRv5
+1bSXYoIfK/bL5lHdju7eZ+p+2mxuztEczOdfFl2weoGL9kVztTL4D1ghVeq1RKk4
+tIdjUfibxViu2yb5RPWnsUyZlaV0Rrq6SiLox+pZ7WCLoep9Dol9Jt/wVISFYry3
+crqHhWyLYfU9qCtHKh9OI9l2z3ETQXa0DhwRV5aMgUgIHwPyqH2I5JyfOKhaVgjO
+9fa+DnCMoL9pJqVMqbuSTkSCB+2bd2zuncG8uQRQf9N/sLr6mbVhyb8GY29zdMFH
+QUzBEeivksblMDxJqfYXIy1Tqg7KsA==
+=zuee
+-----END PGP SIGNATURE-----
+
+--r+Wbd9LpO3QX5yNH--
 
