@@ -1,107 +1,150 @@
-Return-Path: <linux-kernel+bounces-304421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9B28961FD2
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 08:31:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DAEF961FEA
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 08:41:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 27C8B1C238F8
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 06:31:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 528B5286142
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 06:41:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6CCB15667E;
-	Wed, 28 Aug 2024 06:31:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F455157493;
+	Wed, 28 Aug 2024 06:41:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="gWlLXTww"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OH4zoj/v"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F075912CD8B;
-	Wed, 28 Aug 2024 06:31:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC5F35A79B;
+	Wed, 28 Aug 2024 06:41:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724826703; cv=none; b=Wgfx9NCOCqsJES7ih0YozpXpxoQwGxQ50JDzI8MEEyeoJIDBPR9AYsu2CwvPZkU1FsHw5k8h1S1iRf9W4GW/YKpWwzaevfNCZtxMeYA/YwhYYxUB2xQV9WxdQMHCBArBW2JgEfn4svDHjJiHUzRiUIW1kISeRni1bWtt/jCMHGE=
+	t=1724827295; cv=none; b=H/5zbeY9nquxSD1n9spar5VfZdF073D2suTD7H++3/u7UUWc65FF1K8C6Qrx9QvmWKqgo/Y3AuThDgq7txzKEILEjl+6RsKS7K38khBYdCXg3KmbaOVCIY64hWclmP6GdVUuQ0dAQlJsjwtYr0zAAALZtGac8tCTIh3BQzfFQ6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724826703; c=relaxed/simple;
-	bh=706jf2NBauU+HYna34mCoZMrCu2OyinSMb5+pw/nikM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nOdaNdWue3dbmztmsMOFoGWdhJUV0RrNoQ2J9XQSH/9QLuFzskkVOMuzva/CAwwWZTg1bjTDj9iZ6Jat1vUTrxrqZQn6dRTxTbBV23MSIHe2l6L8mSMkJWhWb3wmskfULEFcF1liDNoJKaF/ATCOTGv2Kws1U7BBM+LSPSWUlN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=gWlLXTww; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPA id 36BD640003;
-	Wed, 28 Aug 2024 06:31:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1724826693;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=kDGEpNIBtaj4Rf31gNnJB1VhzNmuEVn8ETptfVZFZU0=;
-	b=gWlLXTwwWjWWfvnthSlYOKfAoUjSlANxazUeNAlT325Or72QP69rEDSeKCyFS1hiP38fWN
-	Qt2x69M+yNSekB8M6i9JQYQBO4cJnXeIdH+DFoWKtX1aAcF8nXi4oK+YXnlcLaXui6udTL
-	Wmx4w1Ec3FgMbgdtwZUCS0pq1QlCtYsq3eIbQn2UTHGRa6suejR073XrNNtl8SmxmhSCpR
-	0bKn8luyjpiWzA3oablpdBiIaNLui3/erPN0+rHcPYXJ9wVddPr5IqK/bkkM0JnxjCpiAg
-	WKdJ5/jKwRzSCVCdiq1ouC8IHXuqiQ0DrtW/2QD1asA1R5mxuG4ydDNh2STR8A==
-From: Bastien Curutchet <bastien.curutchet@bootlin.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: linux-spi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Christopher Cordahi <christophercordahi@nanometrics.ca>,
-	Bastien Curutchet <bastien.curutchet@bootlin.com>
-Subject: [PATCH] spi: davinci: Adapt transfer's timeout to transfer's length
-Date: Wed, 28 Aug 2024 08:31:31 +0200
-Message-ID: <20240828063131.10507-1-bastien.curutchet@bootlin.com>
-X-Mailer: git-send-email 2.45.0
+	s=arc-20240116; t=1724827295; c=relaxed/simple;
+	bh=oNobC8h5dVqhl9uEOpyU134ulI+DdueZlcJwC6uExXw=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=b32jQs6pz3sY/q1hB4dGHMF1kWJ+JenTuu8uA1CmTCX3WE9+Shn1/ZsZ60bNzhrYl9u4+UiBgQ8LVsXO1jqvnARwvWmDV1DG6xL7SxXBo6+oyM4whI2NhXVwuAXs+CkZ77SgerkHyJ0nvcnWUAKhV5TtXS26EH8Lfr4ToxEQmtY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OH4zoj/v; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2021c03c13aso2458785ad.1;
+        Tue, 27 Aug 2024 23:41:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724827293; x=1725432093; darn=vger.kernel.org;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Vjxy1ZZo2xCcgaLJDeDKhMOnGHqoBddskdGj4omc7ts=;
+        b=OH4zoj/vZij71mWVCQ/lpxMMCfARGNJUcOjTs3ay1jj8hGPpN5Hrsdf8hSBW7pUYY8
+         lyz7xTOjhdZxutG5bB8h/e2ftvbQMPa55oKl3D33LSfQ9S3iL6vHS1cSNv6RmL01PCrp
+         /2PoxpesbASvSVjpON6T3LR2VpfJzN9JVMYp2fE0+Jz/GhF3PZJwZ/5Hjc6Jxya4b3Z4
+         ndFIdss6TFkdQOgzFL50UoeGnxqifQKulrFoVvbFTDJsbBuCb8KD8U4LTB3L0cq6GHyN
+         zFNAbGrIk/aPp/f1a615sHG7U9Ch/cL9Zh+KKP94t5K5qBRYM0uWniZCc/XNRganpmDu
+         jzxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724827293; x=1725432093;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Vjxy1ZZo2xCcgaLJDeDKhMOnGHqoBddskdGj4omc7ts=;
+        b=TzJWu3a9Oa/XdCtXm/FF0QFtCEIrqVdC2cey3rlQoJlIxSrkMFRvy7mjozox6YDy9H
+         xueSdmqn6DFEwzOkj6tH938xG2hgRkXynxSFD33MYJkvqjkeQFok3UC8Y9R336xDynl+
+         cNJFfJ8Q02fBNXaX9d5UvSpGshhlrMw5BTtcDkp/h5lL5v2xpwuXS/96xEqgZNlBgiWo
+         QjsL7GkdpykNqzmMVngNP3T8aRQQqcBp2tQZwyU8/4Ifctd7eZTtuWBj9924/SigUMqu
+         S3HRBmh2wy0S7+1SAFU3zhtj1QeyENsjmt2+0OrChHF8WXe/c808zUfVlFeCiWG4A0bQ
+         VOIg==
+X-Forwarded-Encrypted: i=1; AJvYcCVKRe8zVb9r10Sgl44M8tf8hq1wLa5SeVa0FG3oPHr8Dd2NMi1tiuACxkyynn2F/BzBjWvnT5Y9svon@vger.kernel.org, AJvYcCXoDNiegX41L/ddBHGBxlw28BkW0O6j1ymPBUioUN3GYp2B0EhYucUONs5u+1B6BZ1D77z51Ecdwwj8OZI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxyDBKPwwC6amNzlDKf44nb4DWOFECWnDXBrFs4GLPXF3xcOiUU
+	sV+rKqvdNVKNS/5e11wHxMCIyuZu40LYBIeN/uBAeKd3vDXIQA7A
+X-Google-Smtp-Source: AGHT+IFs5b6fXG276iUXoEFxJ0d9IBx+yOx87n53Q1tJLP006ZOOZ/hULu7fACO7sCJj408VFJ9HJw==
+X-Received: by 2002:a17:903:1c6:b0:204:e471:8f06 with SMTP id d9443c01a7336-204f9c30059mr17375835ad.17.1724827293035;
+        Tue, 27 Aug 2024 23:41:33 -0700 (PDT)
+Received: from dw-tp ([49.205.218.89])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20385567907sm93431465ad.12.2024.08.27.23.41.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 Aug 2024 23:41:32 -0700 (PDT)
+From: Ritesh Harjani <ritesh.list@gmail.com>
+To: Seunghwan Baek <sh8267.baek@samsung.com>, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, ulf.hansson@linaro.org, quic_asutoshd@quicinc.com, adrian.hunter@intel.com
+Cc: grant.jung@samsung.com, jt77.jang@samsung.com, junwoo80.lee@samsung.com, dh0421.hwang@samsung.com, jangsub.yi@samsung.com, sh043.lee@samsung.com, cw9316.lee@samsung.com, sh8267.baek@samsung.com, wkon.kim@samsung.com
+Subject: Re: [PATCH 2/2] mmc : fix for check cqe halt.
+In-Reply-To: <20240828060708.20807-1-sh8267.baek@samsung.com>
+Date: Wed, 28 Aug 2024 12:02:12 +0530
+Message-ID: <87zfoxqhsj.fsf@gmail.com>
+References: <CGME20240828060713epcas1p4ff8b4f345747eeb7e581385a62d07879@epcas1p4.samsung.com> <20240828060708.20807-1-sh8267.baek@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: bastien.curutchet@bootlin.com
 
-The timeout used when waiting for transfer's completion is always set to
-HZ. This isn't enough if a transfer is too large or if the bus speed is
-too low.
+Seunghwan Baek <sh8267.baek@samsung.com> writes:
 
-Use the bus speed and the transfer length to calculate an appropriate
-timeout
+> Code to check whether cqe is in halt state is modified to cqhci_halted,
+> which has already been implemented.
+>
+> Fixes: a4080225f51d ("mmc: cqhci: support for command queue enabled host")
 
-Signed-off-by: Bastien Curutchet <bastien.curutchet@bootlin.com>
----
- drivers/spi/spi-davinci.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+Few obsevations/corrections - 
+1. This is not a fix patch. So don't add "Fixes" tag
+2. Commit subject needs correction... maybe- "cqhci-core: Make use cqhci_halted() routine"
+3. This fix tag should be added to your previous patch which fixes a
+bug. I later noticed that the tag mentioned in previous patch is incorrect.
+4. The commit subject says [PATCH 2/2], but the mails were not linked properly, I guess.
 
-diff --git a/drivers/spi/spi-davinci.c b/drivers/spi/spi-davinci.c
-index f7e8b5efa50e..ad26c8409733 100644
---- a/drivers/spi/spi-davinci.c
-+++ b/drivers/spi/spi-davinci.c
-@@ -570,6 +570,7 @@ static int davinci_spi_bufs(struct spi_device *spi, struct spi_transfer *t)
- 	u32 errors = 0;
- 	struct davinci_spi_config *spicfg;
- 	struct davinci_spi_platform_data *pdata;
-+	unsigned long timeout;
- 
- 	dspi = spi_controller_get_devdata(spi->controller);
- 	pdata = &dspi->pdata;
-@@ -661,7 +662,12 @@ static int davinci_spi_bufs(struct spi_device *spi, struct spi_transfer *t)
- 
- 	/* Wait for the transfer to complete */
- 	if (spicfg->io_type != SPI_IO_TYPE_POLL) {
--		if (wait_for_completion_timeout(&dspi->done, HZ) == 0)
-+		timeout = DIV_ROUND_UP(t->speed_hz, MSEC_PER_SEC);
-+		timeout = DIV_ROUND_UP(t->len * 8, timeout);
-+		/* Assume we are at most 2x slower than the nominal bus speed */
-+		timeout = 2 * msecs_to_jiffies(timeout);
-+
-+		if (wait_for_completion_timeout(&dspi->done, timeout) == 0)
- 			errors = SPIFLG_TIMEOUT_MASK;
- 	} else {
- 		while (dspi->rcount > 0 || dspi->wcount > 0) {
--- 
-2.45.0
 
+> Signed-off-by: Seunghwan Baek <sh8267.baek@samsung.com>
+> ---
+>  drivers/mmc/host/cqhci-core.c | 14 +++++++-------
+>  1 file changed, 7 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/mmc/host/cqhci-core.c b/drivers/mmc/host/cqhci-core.c
+> index a02da26a1efd..178277d90c31 100644
+> --- a/drivers/mmc/host/cqhci-core.c
+> +++ b/drivers/mmc/host/cqhci-core.c
+> @@ -33,6 +33,11 @@ struct cqhci_slot {
+>  #define CQHCI_HOST_OTHER	BIT(4)
+>  };
+>  
+> +static bool cqhci_halted(struct cqhci_host *cq_host)
+> +{
+> +	return cqhci_readl(cq_host, CQHCI_CTL) & CQHCI_HALT;
+> +}
+> +
+>  static inline u8 *get_desc(struct cqhci_host *cq_host, u8 tag)
+>  {
+>  	return cq_host->desc_base + (tag * cq_host->slot_sz);
+> @@ -282,7 +287,7 @@ static void __cqhci_enable(struct cqhci_host *cq_host)
+>  
+>  	cqhci_writel(cq_host, cqcfg, CQHCI_CFG);
+>  
+> -	if (cqhci_readl(cq_host, CQHCI_CTL) & CQHCI_HALT)
+> +	if (cqhci_halted(cq_host))
+>  		cqhci_writel(cq_host, 0, CQHCI_CTL);
+>  
+>  	mmc->cqe_on = true;
+> @@ -617,7 +622,7 @@ static int cqhci_request(struct mmc_host *mmc, struct mmc_request *mrq)
+>  		cqhci_writel(cq_host, 0, CQHCI_CTL);
+>  		mmc->cqe_on = true;
+>  		pr_debug("%s: cqhci: CQE on\n", mmc_hostname(mmc));
+> -		if (cqhci_readl(cq_host, CQHCI_CTL) & CQHCI_HALT) {
+> +		if (cqhci_halted(cq_host)) {
+>  			pr_err("%s: cqhci: CQE failed to exit halt state\n",
+>  			       mmc_hostname(mmc));
+>  		}
+> @@ -953,11 +958,6 @@ static bool cqhci_clear_all_tasks(struct mmc_host *mmc, unsigned int timeout)
+>  	return ret;
+>  }
+>  
+> -static bool cqhci_halted(struct cqhci_host *cq_host)
+> -{
+> -	return cqhci_readl(cq_host, CQHCI_CTL) & CQHCI_HALT;
+> -}
+> -
+>  static bool cqhci_halt(struct mmc_host *mmc, unsigned int timeout)
+>  {
+>  	struct cqhci_host *cq_host = mmc->cqe_private;
+> -- 
+> 2.17.1
+
+-ritesh
 
