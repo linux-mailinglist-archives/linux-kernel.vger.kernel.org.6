@@ -1,143 +1,150 @@
-Return-Path: <linux-kernel+bounces-305081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0144696293E
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:49:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F1CD962940
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:50:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 344131C22449
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:49:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C055282F6A
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:50:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 569BF186E2C;
-	Wed, 28 Aug 2024 13:49:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6122818756D;
+	Wed, 28 Aug 2024 13:49:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="VthyfXne";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="em5bzErH"
-Received: from fout4-smtp.messagingengine.com (fout4-smtp.messagingengine.com [103.168.172.147])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FNYQKbqc"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 664F01EB3D;
-	Wed, 28 Aug 2024 13:49:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 269CD16CD06
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 13:49:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724852945; cv=none; b=LWCFfEEGZb19+aiNWKFQCyTnmbkHn4tuHWaGqJgVQsZwSxx6UiQs1mZvrspQ5m26v06x5A08P/cuGfQTy3xbhxlSJRQSV08/FU2Jj8wIu6xXYk4wXzfcUGJecBp5kG2gZZjcs/EFbXzy+2tivVQZYSCEy+2rCmXlLRaYPyDg/gA=
+	t=1724852994; cv=none; b=LweKFaI4O1+MnP9ui44UWczdYo8vBJXwjKWHxKVsSiiS8ymyL0AtcpxWTIYEc5F0FOpnvN5zrfDFMaoBQYu+dH7gU+uAuuNRFjrpsCho6sY3dbpvt/g0fGJmGpjFvQMeqDuhQAjsMaswy01caOF9MBVdGew9e48dgnIBqT+5Ai4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724852945; c=relaxed/simple;
-	bh=OYorvbavpIzB4tCMgAp76XG3IeqGaSzUi1L2iqOdkwg=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=MqUWHqh5aHdIBL/VPNKtuLNS1uDYv/93+2q5snIEkO5ml6Z9EF1QT3DtETFGUlJgasvkjp7OmW+tuuCrWgTisiBeP70vFCmzE+u64rIJHdNE7/QkimvM4epNO8ALdcTOoNFuG8lJk5TehK0h01iti4YukGts0+5tLEcNOA+wCF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=VthyfXne; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=em5bzErH; arc=none smtp.client-ip=103.168.172.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-04.internal (phl-compute-04.nyi.internal [10.202.2.44])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 6BEE1138FF21;
-	Wed, 28 Aug 2024 09:49:02 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-04.internal (MEProxy); Wed, 28 Aug 2024 09:49:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1724852942;
-	 x=1724939342; bh=spkJIQn60uBLOli5zEVF98cUm3cSDPA78s7enFv/a5E=; b=
-	VthyfXneUZjp4Jut7qKbS8VOKRMzNfCK4LOwOvE4JAJi+L8OaEbk2gvieiSOwMkp
-	WS+Dhbvl4nS8wRCEGLZr1mr26iNNtK9gODEu69OjsV22HAL4IXcFPUFhKYGzief9
-	+wUPUCTYUUiQW6Yu8wNC2xly95oVUVC81yXOyDRtKDbeM2gn//vI4nzDNu1x0HS1
-	rS3WszDryZ6r3E8ykIWq5p4ATDEMzpEoTaue41CdGNYIlMgPL9CfR6YaFw53BxZf
-	EQOpeoONTC8s/h7kzbm+BHleBi6+iBGQXB+BpTsbDhb9umLZKnHWI7WNeisIh7Hr
-	+ZI1zaIMSCpUhH+pt3sscA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1724852942; x=
-	1724939342; bh=spkJIQn60uBLOli5zEVF98cUm3cSDPA78s7enFv/a5E=; b=e
-	m5bzErHTBiONcITuhN9bZFXO/SA8p47sWbapwWsUeyoBWlIXz9BWFz2K+gGXwLTU
-	i/qqxxBbkZG4wFowwtm3SyT3EJF5y9AAK1abUx/G0YpOkYrqZbfTFvUrZKNdCz0n
-	yUWWpt/cD8tkWQ6ko0+3YeFiukoVUKw6lDxec+EOdFBkHBueN59zX/EcfOLMbujp
-	CiegSmGnrog1XyheBRZK5IZt3bFC49umAufBmD2KZgShU76EWx/PL4MKMl0wYa1i
-	Qm4jlZwP+iowwWeRzJhpzzKO8y0maNeQUzKDXpywY2zbh8vJTxMa0oHQhztlX+EO
-	CuQOdMVl25bVPByq7tHNg==
-X-ME-Sender: <xms:zirPZu7GVn63jThrCfqjeNjyvbRN3BWTpdk4zmShMUg_4jR-0c_fuQ>
-    <xme:zirPZn6jCtHI5xrGy6J3j79Qyqxwj5lj_8Q9PnPIWW_fhCoDAf-HZ79DsIhWkVM8b
-    dCnrfSYi1BOSzoya0U>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudefvddgieejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
-    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
-    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
-    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepfedp
-    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepphgruhhlmhgtkheskhgvrhhnvghlrd
-    horhhgpdhrtghpthhtoheplhhinhhugidqrghrtghhsehvghgvrhdrkhgvrhhnvghlrdho
-    rhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrd
-    horhhg
-X-ME-Proxy: <xmx:zirPZtco84MM-73O1enCE0iJxW2psQ4bcWzgzqbdqWSWXxbfyNZG_g>
-    <xmx:zirPZrL5UALh175XxtZri7NU_QNjX2Ox5niInwr8BvGgGs2FNQ6iIw>
-    <xmx:zirPZiIBLIUj66USMnRjltFybb9o6d-JrWHJy4WlS0Hvye94TX779w>
-    <xmx:zirPZsyj_0RmNXri9zDg0EMDByDEfkVot7EGyP3TbBqMCJwkCKvQpA>
-    <xmx:zirPZpVQFYRAAGBR_9TtfLzsy7IKVV0wv49f1jS0QgsPj5HzlH5e1Tyl>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 3A358222006F; Wed, 28 Aug 2024 09:49:02 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1724852994; c=relaxed/simple;
+	bh=XdnxS+ThTom5ki5hiMAbnDn3XAJSkM7Zm9DKdFjTWLs=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=jpL2bdHMqmIiKZ7qBkzGUFaMZbsECzBDdQlgQKsDc9NmKYi0Gj7R2K7gfCu6EJmOGS5IM1xlOHwacuLoiamZjD5OPtJQWSfltsua9ZPfDvJH7qCQ//nyYB0oX9BOhDW+OplPCC6KncSteNsgbffVjndzExHsnMFIm4TSql6uu7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FNYQKbqc; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724852992;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gJDSm433FYP55u2CYP1GWdEVQeqpBvgJzKAy8UxrTOE=;
+	b=FNYQKbqc/XHLQaW0k9bEle1TreyQqVpM8hpch2OaECmLH1XQ1ibNP3YslZsJoWKLTvzCAE
+	dBLmUYnDzxB4N/NXzYeRRDZfgVh704/kdWVf0I2jrSnqlJoB6a2jrvasCUQRuiwZw0L1IO
+	hcWudjYueHO9Zwaddb3Z1qd32B8fhCk=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-651-BT5Gj52DNgCyXLeFxjQAFg-1; Wed,
+ 28 Aug 2024 09:49:49 -0400
+X-MC-Unique: BT5Gj52DNgCyXLeFxjQAFg-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DA9411955BED;
+	Wed, 28 Aug 2024 13:49:47 +0000 (UTC)
+Received: from [10.45.224.222] (unknown [10.45.224.222])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9516919560A3;
+	Wed, 28 Aug 2024 13:49:45 +0000 (UTC)
+Date: Wed, 28 Aug 2024 15:49:41 +0200 (CEST)
+From: Mikulas Patocka <mpatocka@redhat.com>
+To: =?ISO-8859-2?Q?=A3ukasz_Patron?= <priv.luk@gmail.com>
+cc: Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>, 
+    dm-devel@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dm: Implement set_read_only
+In-Reply-To: <0a02f887-aa70-4c7a-be58-3920596c175e@gmail.com>
+Message-ID: <0d430a00-192a-5aa3-4286-c5f47b9c7cd4@redhat.com>
+References: <20240821213048.726082-1-priv.luk@gmail.com> <da447e8f-0068-d847-b712-47081fa9f2e7@redhat.com> <0a02f887-aa70-4c7a-be58-3920596c175e@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 28 Aug 2024 13:48:41 +0000
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>
-Message-Id: <b3512703-bab3-4999-ac20-b1b874fcfcc3@app.fastmail.com>
-In-Reply-To: <3ca4590a-8256-42d1-89ca-f337ae6f755c@paulmck-laptop>
-References: <3ca4590a-8256-42d1-89ca-f337ae6f755c@paulmck-laptop>
-Subject: Re: 16-bit store instructions &c?
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; boundary="-1463811712-1869205479-1724852987=:948041"
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Wed, Aug 28, 2024, at 13:11, Paul E. McKenney wrote:
-> Hello, Arnd,
->
-> You know how it goes, give them an inch...
->
-> I did get a request for 16-bit xchg(), but last I checked, Linux still
-> supports some systems that do not have 16-bit store instructions.
->
-> Could you please let me know whether this is still the case?
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Hi Paul,
+---1463811712-1869205479-1724852987=:948041
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 
-The only one I'm aware of that can't do it easily
-is a configuration on 32-bit ARM that enables both 
-CONFIG_CPU_V6 and CONFIG_SMP, but I already wrote
-a patch that forbids that configuration for other
-reasons. I just need to send that patch.
 
-There is a related problem with ARM RiscPC, which
-uses a kernel built with -march=armv3, and that
-disallows 16-bit load/store instructions entirely,
-similar to how alpha ev5 and earlier lacked both
-byte and word access.
 
-Everything else that I see has native load/store
-on 16-bit words and either has 16-bit atomics or
-can emulate them using the 32-bit ones.
+On Wed, 28 Aug 2024, Łukasz Patron wrote:
 
-However, the one thing that people usually
-want 16-bit xchg() for is qspinlock, and that
-one not only depends on it being atomic but also
-on strict forward-progress guarantees, which
-I think the emulated version can't provide
-in general.
+> Hi
+> 
+> >I'd like to ask why is this patch needed? Why do you want to set read-only
+> >status using this ioctl instead of using the existing table flag?
+> 
+> I basically just wanted to be able to use `blockdev --setrw {}` on
+> Android for a block device that had its table mapped as read only. I
+> believe that used to work on 5.10 or so, but not anymore.
 
-This does not prevent architectures from doing
-it anyway.
+Yes, I looked at the older kernel and it will just flip the read-only flag 
+regardress of whether the driver supports it or not.
 
-      Arnd
+What specific partition do you need to write to? Is it possible to just 
+reload the table instead of using blockdev --setrw?
+
+Is it required for rooting the phone or for some other activity?
+
+> >If this is needed, we need to add another flag that is being set by
+> >dm_blk_set_read_only, so that dm_blk_set_read_only and dm_resume won't
+> >step over each other's changes.
+> 
+> The following diff should address that, however I noticed that
+> set_disk_ro() itself, triggers an uevent message that makes upstream
+> lvm2/udev/10-dm.rules.in <http://10-dm.rules.in> disable a dm device, so not
+> sure if this is
+> good to have, after all.
+
+This patch doesn't address that - when someone loads a new table and then 
+does suspend+resume to swap the table, set_disk_ro will be called and the 
+value specified by dm_blk_set_read_only will be overwritten.
+
+Another problem is that if the table is read-only and you forcefully flip 
+it to read-write, then the underlying devices will still be read-only and 
+you would be writing to them. This is something that shouldn't be done. 
+Unforunatelly, older lvm does that - so the kernel just prints a warning 
+instead of rejecting the write. But I just don't want to add more places 
+where we are writing to read-only devices.
+
+Mikulas
+
+> --- a/drivers/md/dm.c
+> +++ b/drivers/md/dm.c
+> @@ -412,6 +412,19 @@ static int dm_blk_getgeo(struct block_device *bdev,
+> struct hd_geometry *geo)
+>   static int dm_blk_set_read_only(struct block_device *bdev, bool ro)
+>  {
+> +	struct mapped_device *md = bdev->bd_disk->private_data;
+> +	int srcu_idx;
+> +	struct dm_table *table;
+> +
+> +	table = dm_get_live_table(md, &srcu_idx);
+> +	if (table) {
+> +		if (ro)
+> +			table->mode &= ~BLK_OPEN_WRITE;
+> +		else
+> +			table->mode = ~BLK_OPEN_WRITE;
+> +	}
+> +	dm_put_live_table(md, srcu_idx);
+> +
+>  	set_disk_ro(bdev->bd_disk, ro);
+>  	return 0;
+>  }
+---1463811712-1869205479-1724852987=:948041--
+
 
