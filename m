@@ -1,92 +1,148 @@
-Return-Path: <linux-kernel+bounces-305399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64D4F962E22
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 19:04:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31474962E27
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 19:05:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1030F1F22D9A
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 17:04:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF96C1F22D9A
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 17:05:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45ED91A4F26;
-	Wed, 28 Aug 2024 17:03:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F1B01A4F20;
+	Wed, 28 Aug 2024 17:05:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="XRUBu5Xh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KOE+UeOH"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 807B315F3E6;
-	Wed, 28 Aug 2024 17:03:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D02513D612;
+	Wed, 28 Aug 2024 17:05:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724864636; cv=none; b=Grh1JUoUM9R8suMLqbA0jZ/qOYqJQOm85HVS901WGcf3BT4eSwAguwlu/MlobopN9cUSSw4SXs5XlVxD30MaYy1xwu+pnaEL/8y/Or/8VJVjYI8yhAJBbd1uO64mo5MUuX5gfWgZaUHA3uI19wh40HT8We1V7tkZ9nKYkG6bu2Q=
+	t=1724864734; cv=none; b=pT73aeIYAeeHG+Hhnf35tOx/b0LGdNLpxC3ZrzF7a+Dz8UaHT+rf8CW8Tkhpzva1uwteYSsDVhDs8U4iRB0lB8TEpvncQ9WyztOElyJ/pA7+Xg6lZCOYGLEWyBhUe9dxy4PSvUutImlD3qvtyzJqSFT0Vn4I1LUwzWskxHMGxqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724864636; c=relaxed/simple;
-	bh=n819NHCxtnhnw1i53ckId8OAwuQolpEzr4GYYZZH2sE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HgqU1WC928HvVU8AJ7U/YZL3SgLivOdHVlmfTe3Xgh8HTJ7ujK+16WdvNFoYC065N++Pzkg9rEH+YJqoaNR+DG11gL7g/IHpM2rpIDFDuQ/2Otsk3SYKi6P5XpHm8E0V+Izm1rE2+vwbrmyuCTKgHnvI9XXrHxmW98l0bbVSKQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=XRUBu5Xh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 969FDC4CEC0;
-	Wed, 28 Aug 2024 17:03:55 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="XRUBu5Xh"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1724864634;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=fnlf4Nn0q79QyDN//xTaS0uYdOMz1VYesQkx3XoquQo=;
-	b=XRUBu5Xhs4SJzVjQpxnUgwxRhcHayZNlUeTN6nw+++fxV3sDUWZ7NaQYh1vensiP/6l+hP
-	np888uoOXxZLON2r2XomwGeD4LE2+qzSpliX6NGGqayEpD5ZSRl9mXHMjNHzchvbq4Bu5Z
-	1OIpl2+iUTFD+B0CNjFhqtQ9WGOqLhM=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 9dce1b26 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Wed, 28 Aug 2024 17:03:53 +0000 (UTC)
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	christophe.leroy@csgroup.eu
-Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>
-Subject: [PATCH] random: vDSO: assume key is 32-bit aligned on x86_64
-Date: Wed, 28 Aug 2024 19:03:50 +0200
-Message-ID: <20240828170350.3422587-1-Jason@zx2c4.com>
+	s=arc-20240116; t=1724864734; c=relaxed/simple;
+	bh=0YrXGL5cUGbIblDpKlt0dTLFCsiCdrv3/assd9BTMzw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=rUxhWfGP7sw2kyi0HFS7KJgfiBsRB9voR/o0uRYR55xOMhzy9G6eNpsc5bd5Duaxiy+X9GSFjzdL6z4Po0HDzLkfok9yI//FzS62Kal+uQ8i5zUf3nFtxwjtqVu79RyiMGmH12hbqlzCzeBjCg4Ukd5zRyZyrTpfj3v6I0/uP1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KOE+UeOH; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3730749ee7aso4109150f8f.2;
+        Wed, 28 Aug 2024 10:05:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724864731; x=1725469531; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=0YrXGL5cUGbIblDpKlt0dTLFCsiCdrv3/assd9BTMzw=;
+        b=KOE+UeOHa6Ykgmk+gX6yE0wymtBhTPXPFcrJszPLYjaesxmCmVWCavD1TPD2XBBwuu
+         xQ5u/uxTwf74smORWc6SYM+BP3UyFIZYWp1Szx5psI1a28ZENh9mhUSt18IndyQJIkkO
+         v96K4hlL+aiX+pPCUFWye6uub2PtB+jLcGLNuqBSKSZ8FcU2+0SP0kFp70bf18r0HUQv
+         Z7MbKhdZN6CFKSu8TxiDk1vx4vGlgT++4RnBE0Wrf9jE8ksDrDFAhhn5WlRLv+QWfxTx
+         8HNW3E/q9TfLf5FcA+mmfs52QmdFyh0SIgf7LOxBvE7sqGaoXOePYvkqiBIr7fldDlDB
+         c/vA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724864731; x=1725469531;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0YrXGL5cUGbIblDpKlt0dTLFCsiCdrv3/assd9BTMzw=;
+        b=wG0NnkXss3opLXe+de1J5M1x1LjqN6n6VemowRlrtCj4PtUrO4f9qXyq5fkJK7Nrx1
+         azT/VjghlQ2q3cTemsUJsOOSicl7gbXgPrHkB0PY+J1JY4rnm8qZMjA1jEqi1YK3iunj
+         EPu23PbWvACZE6hflLhZ0RAkjqkRNrayr2UPwMfELqp3RTQ98hcKK8OB7Eyr052t6YHn
+         pF6H8rLWBodeFCRMEmw6g7v/Blin3X8WDZDNhqd58j7zBkkQRurRb7uki8IyLrmmUGCc
+         a8S2Sn6evneHsKh2pmfLVgd5hyfcvDM5AQ4zX1fERrdkFcFpVAibuOzZza6EBWBPCyy7
+         yo+g==
+X-Forwarded-Encrypted: i=1; AJvYcCU/rlGkLm2dSstVg+z/frL1tTQl3iV3mfhO8cqfXgkDnPIwCncOpTgPT/Lw8dmevrBcQvinQSvHAKyb@vger.kernel.org, AJvYcCU0o0vTSVtw0akPB8gLb96hpFk1aNR9L7MRcqeXO7TYHmTrOP3Dq+ia1Id/CQ+0XiITP9oA3xxQal/R/662@vger.kernel.org, AJvYcCW4nW7vVuxEfGr/9x8dL/NmHqF+GXb3Yse0AP4W6LjMYooorwD6ivS6Pwy7oggoaj50YaPmdbkrmrVYeQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2ax9DDgIgyPwang6nbsmjrYs5SbWokWHOsfcnmApZ3LmM7jwe
+	uBgDUOw12hliiUk2GSlAtVB0r/Kr+jUa6q/k7htyxisdgJmtVLy7
+X-Google-Smtp-Source: AGHT+IFqmPFtwx22aSwUiTa6+SlKocxcaXUGRyhPHCY180ArsnC7ZPaC5mq0cW5NxbK5x79RL/jwTQ==
+X-Received: by 2002:a05:6000:1010:b0:369:ba89:a577 with SMTP id ffacd0b85a97d-3749b54d374mr191440f8f.34.1724864730914;
+        Wed, 28 Aug 2024 10:05:30 -0700 (PDT)
+Received: from giga-mm-1.home ([2a02:1210:861b:6f00:82ee:73ff:feb8:99e3])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3749b22d99bsm263396f8f.10.2024.08.28.10.05.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Aug 2024 10:05:30 -0700 (PDT)
+Message-ID: <e29c28fa5e1a0aa912e0a490588b67a3cfede5d5.camel@gmail.com>
+Subject: Re: [PATCH v1 0/2] gpiolib:legacy: Kill GPIOF_DIR_* and GPIOF_INIT_*
+From: Alexander Sverdlin <alexander.sverdlin@gmail.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Linus Walleij
+	 <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org, 
+	linux-gpio@vger.kernel.org
+Cc: Hartley Sweeten <hsweeten@visionengravers.com>, Russell King
+	 <linux@armlinux.org.uk>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+ Bartosz Golaszewski
+	 <brgl@bgdev.pl>
+Date: Wed, 28 Aug 2024 19:05:30 +0200
+In-Reply-To: <20240828142554.2424189-1-andriy.shevchenko@linux.intel.com>
+References: <20240828142554.2424189-1-andriy.shevchenko@linux.intel.com>
+Autocrypt: addr=alexander.sverdlin@gmail.com; prefer-encrypt=mutual;
+ keydata=mQINBGWpGj8BEACy09IxfduHTzAdqKkf3SmGIHIEquHWHIXqgVIoZo/ufP8mIpsWYwFKP
+ 9gsCvVvNNugtK8YPN92lbHol35nfZiXLIp16ASRQXYFtBjXj4GAVjUPjaTkQbcedIgD2nEZ/HQSio
+ hfnUSS0YmxI0UUJmZFulwQZil6OmPVbbQoda8/In5h/wNRo6y5vJreRhsjqcP5LckLRov3t+jabUz
+ n0/1twHNO0SnI508dXenEhQcBX7Wns+JfwRqO8jxBK1P3DntW+n0OJ8DkjSMJjm0zk9JtY28WK332
+ Vpq8smZxNDNCfs1YtRMzfEEZKRvxsSMzTxri/cw7VXJa7m138LlyPBkXizjAKqad/Mrthx4ambsWu
+ RXyjklYOBYqMEAdlZNLPQnhnIICFwkJ/lnLE8Ek6Dh0NYl1HpsOyvu1ii7VPEXHLMGTKFmFmWtrmC
+ UrHIBrAvStMJ2jIRhEyCGDpf6f5dfKNOb3GWRtX36326TDOa2eXWqaTQEPKWRSUwhC3f3j/C/o/vj
+ 6bDHQ8ZsNcKYxwtSoh+elHT5xtHOMvPBP6gavgZRDnH6wBSHWnXYxyOmZPKr2NuhMwhEyhpvkEq5z
+ W6Z/hp5POzZ74GNkIKB5/FpETobgoV/XB2HMnlIUAJE2RYRYwvbgIkKTJxFD4FIIP2DVt/7cT/8ry
+ 5Nhe2fouscuDQARAQABtDFBbGV4YW5kZXIgU3ZlcmRsaW4gPGFsZXhhbmRlci5zdmVyZGxpbkBnbW
+ FpbC5jb20+iQJUBBMBCAA+FiEEYDtVWuq7d7K0J3aR+5lQra83LKgFAmWpGj8CGwMFCQPCZwAFCwk
+ IBwIGFQoJCAsCBBYCAwECHgECF4AACgkQ+5lQra83LKjUHA/+KlP0no2WRK1co+2yi0Jz2kbSY61Z
+ oX+RqbLqkCoo1UxsU/MddscgjKOfggNASZ1l//jUkx39smTBONmxcauTtY4bB4Q9X8Djk+XO1M9iw
+ Gb7feCbnIuRHyvI3qygC+k3XgLIJScui3/yEL0aikd5U4F6nkKyQiPQk7ihKWKyBQXQ+tXS06mUH4
+ p0O5BYvxijW32Z9esVB15OB8vUcx2bsdjogEuNc0uwOGMHsVIsW4qupoHRHPc1865uAqzv9vW3a2/
+ GOG6IpBFjmXqg7Wy9zwVjSJFMvVxu2xs3RCdpS99aMrfA2na1vjC5A7gNFnr+/N2vtMBP0d0ESfd/
+ 54zSglu3FW0TIOIz7qkrWQKwiennfUun/mAvCynCrKpCpUMkEgeQw1rHCWpSfnJ6TPG0UfQGNUFyz
+ zmBheQRSEksaepfCtqwCxtjF19JZ6yapLi/lQt7YBjwxIPkZRHJNelPkK/bs6yeRJul90+X6UAJst
+ Wh4mC7HzVvmopJoCxbInS4+L6qlefdjqhB6NYw9Q5GsRmTKalaqJoW1/kXopeGExCY4r1FP5ZoLHF
+ s0xNbycpD2tp/GnI8GlYCIzQED3TNab7IkWP2otXnWAnF8CrqhglBbYnp8oCkgBPatYftO4dWFP3Y
+ LVWE0EtoWLLrmiWzHkbWc8YKpWAiFX8OhUJLKtA=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-The prototype of this function ensures a u32* type for the key, and all
-uses of it are using state->key, which is a u32 array. When userspace
-slices up a memory region into an array of states, it does so using a
-state size that also ensures the alignment. So it's safe to assume that
-the key is always 32-bit aligned. That in turn means it's possible to
-use movaps instead of movups for loading the key.
+Hi Andy,
 
-Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
----
- arch/x86/entry/vdso/vgetrandom-chacha.S | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+On Wed, 2024-08-28 at 17:23 +0300, Andy Shevchenko wrote:
+> Shrink the legacy API and definition surface by killing the (internal)
+> definitions. This, in particular, will fix a couple of drivers that took
+> it wrong.
+>=20
+> This is assumed to go via BPIOLIB tree as this is quite small series and
+> most of the changes related to it.
+>=20
+> Andy Shevchenko (2):
+> =C2=A0 gpiolib: legacy: Kill GPIOF_INIT_* definitions
+> =C2=A0 gpiolib: legacy: Kill GPIOF_DIR_* definitions
+>=20
+> =C2=A0arch/arm/mach-ep93xx/vision_ep9307.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
+|=C2=A0 6 ++----
 
-diff --git a/arch/x86/entry/vdso/vgetrandom-chacha.S b/arch/x86/entry/vdso/vgetrandom-chacha.S
-index bcba5639b8ee..07ae91dcdbda 100644
---- a/arch/x86/entry/vdso/vgetrandom-chacha.S
-+++ b/arch/x86/entry/vdso/vgetrandom-chacha.S
-@@ -43,8 +43,8 @@ SYM_FUNC_START(__arch_chacha20_blocks_nostack)
- 	/* copy0 = "expand 32-byte k" */
- 	movaps		CONSTANTS(%rip),copy0
- 	/* copy1,copy2 = key */
--	movups		0x00(key),copy1
--	movups		0x10(key),copy2
-+	movaps		0x00(key),copy1
-+	movaps		0x10(key),copy2
- 	/* copy3 = counter || zero nonce */
- 	movq		0x00(counter),copy3
- 	/* one = 1 || 0 */
--- 
-2.46.0
+for the mach-ep93xx part,
+Acked-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
+and in general, for the whole series,
+Reviewed-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
+
+> =C2=A0arch/mips/bcm63xx/boards/board_bcm963xx.c |=C2=A0 2 +-
+> =C2=A0drivers/gpio/gpiolib-legacy.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 5 ++---
+> =C2=A0include/linux/gpio.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 | 12 +++---------
+> =C2=A04 files changed, 8 insertions(+), 17 deletions(-)
+
+--=20
+Alexander Sverdlin.
 
 
