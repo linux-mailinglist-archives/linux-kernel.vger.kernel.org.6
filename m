@@ -1,117 +1,135 @@
-Return-Path: <linux-kernel+bounces-305357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B3C2962D73
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 18:15:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7856A962D78
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 18:15:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 13AB7B230F7
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 16:15:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CA241F267A4
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 16:15:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EC321A3BA1;
-	Wed, 28 Aug 2024 16:15:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEF091A3BAF;
+	Wed, 28 Aug 2024 16:15:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gTtZ7da2"
-Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="pfT29mLg"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 406B91A4F1E
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 16:15:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8F4B189BAA;
+	Wed, 28 Aug 2024 16:15:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724861709; cv=none; b=fBt6rMjYUH1o/v8eXL6U7R+SXs+vjAHRZtlYKSjvrWP3M3gtMKOQ/klIGOwtKWv7zbUIRnGrR8eGig0v8pcxA8vKWRXLM9rdn++mCnAXy7740pe08zqANrjZpSkWP17ydjBBrAa5K83LESF+MdXkDKyONtcfJScUT5Pn5zOwUEg=
+	t=1724861737; cv=none; b=RN8urGk+OBbRD39Wul1Q8bopk38NQ58qDmjNIO89bJkRThXc4JEjM97DHlRB519uQdlCfNBpCd+xNe15TA9vr8jz7fppqko31mF3bp4q/F58RMMEntU0TKSZjMElpJ9Y58JdLCu7CAjPIjNvilUk7fuUU1QM8PO+DicQ33ANfwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724861709; c=relaxed/simple;
-	bh=Okmgsan3LUVkkzZFXpwqucFWbJOTa7oheGqbn5qPhbI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HNcl+0sugFAolRMDPl/mMJJNVMlc55hE3iZRWKtvXntxdr1BFwCzMAqY/THkVIuFsfVwyq4g3QKuHl4FbSgw+gwZdpBAJqrCtMBVUoLy970yn/hCuplB4kzzq9jSpfX2IpLv8/BTE5Y8DhT3CgKSlu/i8s501H+hxZa9u+BdYOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gTtZ7da2; arc=none smtp.client-ip=209.85.167.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-3db10d8830aso128790b6e.0
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 09:15:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724861707; x=1725466507; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CuEwGIpDkqfIpxW0bgF/RVPt4IxIPFyBx9pLhSVN2JI=;
-        b=gTtZ7da2HWgtPhxpewC7T3BDMHih4kiyC2GhbsisGD+eLJxEuuk+y+NwO2hN+xx3Ub
-         SeuorL9ApgDhaYfOKv70rR0/auefljv6uBgj2bEDiO74N1OE+0VuwW1ZNaqUS7FEfTcw
-         OPl/zl0MrqTwuENhC8H+q2Mwj2OxrFj7vhIvGQJ6hwWf0HQZoNsFrOc6sfFx8Z8fGrJx
-         UXb59etx5vgSuDADoxzdWUIq5Cs5bawkcxABZ0Yd8GgGdLZS+ODwby8vXdzcKlwTfFCw
-         bMqX5hqDGkQcPUb1DAF4WjccGvjY4xFbS2w62V/0iR8cMQBUYMfL3t9/bBjt5O5Nm+zg
-         QIiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724861707; x=1725466507;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CuEwGIpDkqfIpxW0bgF/RVPt4IxIPFyBx9pLhSVN2JI=;
-        b=CAzjQIREx0zFiKyvJ+NBLPDv4bDHn3Ixmnfhwx7fXOfKxnQj7i+7TqR8wmNPahhbch
-         I48Qh0C9VWR7p0bgCY7OPYYwjEbmejDTCjScfD3d86EBluJ3UI4+mHSIPtm/ckIQAlow
-         SCQihP7fURg/H6U0ix+PqI8hQMN9t6cL71QoKCsptT2zHrQgHVv/epE4PWnIYLFw/4pk
-         eZCzUXYmSTeC2L7TJ+mmmvgF5A+0fu/+tTpKv45RifwGu+Ne/PTUJVhTSNuIwMzp7zW1
-         i17pn+paIgkjqV0LKWqMWWKEizpv2ryq5dO0C0RNGWPMctLvLp7Jf3t/k2ou3dZRDF4i
-         QpDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXNFPniCUVAyF20BXhWmMLr/rY2FQxAUSayJxpzMq0iqsDdRcmZZgT/cW4Itlb6H/QLfhDW8H3t7U/sWT8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJE86IncgGdo23AqOnDjAJ22gCUJisz4GRW1QdZiDs7ZuKMGx2
-	ri6zSgeA67msaxj0caeijddEcm6pCKVVAcY35MFxzVIuECGo4/3QDBgIQH+SZae41XCI4r/Fdpn
-	IClNBy2JcFIRi+ElKg/dFkvq20wk=
-X-Google-Smtp-Source: AGHT+IEKPm0X049OLCCWte/lKWA1onDQZDte91zJigx88Na7YtcnnIcK4NXUHhl/qlfnTtpRZbsgkb9gE5ObhgepknQ=
-X-Received: by 2002:a54:4405:0:b0:3db:291e:2467 with SMTP id
- 5614622812f47-3de2a8a90a3mr8754550b6e.7.1724861706964; Wed, 28 Aug 2024
- 09:15:06 -0700 (PDT)
+	s=arc-20240116; t=1724861737; c=relaxed/simple;
+	bh=LzrJBLUUzTBNBVpZCHtV3gHE+eUDErEkmHx8rmE8QjI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aNI4HsrU4YKs2bdYGJmyE5Sn6vQIoAa/nC0EIBzG3YiHz5ofwyrNHRVOmQOCUEObh/xMvXBdRqik3VQrnRgi1a+O7GkkYoqZ6yQGfhBsLh511DED4pvBQWWgoAlDOCBzdLOuCYVXun4zR86ivrcdbu+fnNP7/qfWwQa+FHcQo5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=pfT29mLg; arc=none smtp.client-ip=212.227.17.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
+	s=s31663417; t=1724861718; x=1725466518; i=wahrenst@gmx.net;
+	bh=LzrJBLUUzTBNBVpZCHtV3gHE+eUDErEkmHx8rmE8QjI=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=pfT29mLgxw8xgPiRRRrU7is3xEfs6SizIrDzdICv7MFEMp7z9ayce00Sx3+tY8MY
+	 YPRW4qzN1wtKfet64nQucfWNu6EYeqNjfxi2v0eCmJ48RM23zKXWA5adJlpi646kM
+	 9B4MJbWQLoufJd197yaoucjqAzYI6xy8w3fbf/OWLznQKZ7IqqVHQOgvCD5eAvo7X
+	 wJwao6J03rNXcPEkUI2cT/ppHT/XitLgRXDpstal9jlG1tl5MEXCr3TeAeaPm1xsw
+	 p7JcY84p6U4lgcHvS+aeGbe/11Ek/F+MH3kHp2Jod2TbTKAbgyZgKbXBvlLLEG8QG
+	 rRhjgYYnoKwtVr/bHA==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.1.127] ([37.4.248.43]) by mail.gmx.net (mrgmx104
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MGz1f-1svlnK3wQN-00FnQi; Wed, 28
+ Aug 2024 18:15:18 +0200
+Message-ID: <db357e68-ddae-40be-8945-15734d3ec832@gmx.net>
+Date: Wed, 28 Aug 2024 18:15:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <3EA7C2B9E8C4D00A+20240828105938.37674-1-wangyuli@uniontech.com>
- <CADnq5_P42A81D_VufAdSkwVwC08ZRiT=6XAS3oHmSH325ygbow@mail.gmail.com> <D25D5E6FB683DA94+808c82a3-546f-4289-b531-fa24d7278879@uniontech.com>
-In-Reply-To: <D25D5E6FB683DA94+808c82a3-546f-4289-b531-fa24d7278879@uniontech.com>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Wed, 28 Aug 2024 12:14:55 -0400
-Message-ID: <CADnq5_MJTTX0koP7am-D0RoZro=0_e38ic5BoJuKhbyM6y-99g@mail.gmail.com>
-Subject: Re: [PATCH] amdgpu: disable amdgpu_dpm on THTF-SW831-1W-DS25_MB board
-To: WangYuli <wangyuli@uniontech.com>
-Cc: alexander.deucher@amd.com, christian.koenig@amd.com, Xinhui.Pan@amd.com, 
-	airlied@gmail.com, daniel@ffwll.ch, lijo.lazar@amd.com, 
-	mario.limonciello@amd.com, le.ma@amd.com, Jun.Ma2@amd.com, 
-	hamza.mahfooz@amd.com, andrealmeid@igalia.com, wenlunpeng@uniontech.com, 
-	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, guanwentao@uniontech.com, zhanjun@uniontech.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm: dts: mxs: Remove not used "fsl,imx2[38]-icoll'
+ compatibles
+To: Lukasz Majewski <lukma@denx.de>, Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20240828093518.2628817-1-lukma@denx.de>
+ <f4b7e56f-50d1-486b-9866-ee1f82262b53@kernel.org>
+ <20240828173334.21dcdeb2@wsk>
+Content-Language: en-US
+From: Stefan Wahren <wahrenst@gmx.net>
+In-Reply-To: <20240828173334.21dcdeb2@wsk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:2w+TjR4P91/lQ2e+lRY5nxJl6S/iUgwk+Cx6KmW/yHOSWfZhy2O
+ D10QuLjotSbW4WIkh2p6hpF5HWcBqCbS09ioIdWClLAm7Vsqn9ugEMkln+sZU2gKJ9mjeED
+ aUcropP+B0nOUkhHQKz9smB7IiBtD6u4D4l0wnZahupgwX7+UXknfYK9359emjRcjmmA+id
+ q2dr/gqi0uu8kOj2S456A==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:h1THvmECcQs=;c6idsHm4HAT/RIJfPx4FiiJ+7Qt
+ 7h0BYDcYpr4smBo9rZ95G2RTWjtQE21vOIJ7PJlT8UC78urh/krmw64AhBV2K0wKjhfuC2QHc
+ W0iixfmSJ+9s4NI7sTCh27ijkGYGPuplowgCYvvEk69hChjGFhj6E9mT1PQMRVxr7FdMpC0IQ
+ 7qVN+g7W26s+a98FapxNNFzGgDieV0xdTPnkKEa1fxrXBZ+j1fU+Sf9DNFoQ/rMkAPME34jez
+ dtZmObrY5NZ5xnr4IcIUPok4fggx/O3itgjew/tg3utOr8EP/0tSDc1bLBiqJNJJ/FLFWhWc/
+ 58SSuq7Qk6Y9MldxzGFuGIcG1tOeyzIhDYeN8ouoqZJUdzMDW2o4A02y+ZXTX3qu7uR1YBG7i
+ zLe11w8ZAnqgnllWO3OpYGi6L9MJsOUNoRj89cRc+FyIbK7N/b2rm3/x3GLBPkiIb8GN5AxDt
+ yILMrxK3TdDjp2GXSYN1Wi+4MBXKkg8N/y8L7WmKx6wlvR3Cz73FSB3W853mLhZ4at2eDL8Af
+ FAQ2CVTnmy8vTo+TfS2FDFsYO7rzfMzJZL4OnAwFrKiEa64kspZioVv3uf6l8y2iVSTzw8j3e
+ 8gaV/EBsuDGpahiTLaWpZU4DJYAAMOI7dBujsI7u5HU+BXvQlxKwmGflV3jIiQ11d4ofxvhz9
+ WxxyNTvl8OvIdJWLvCs2BMAGDG0D4ksxb/wrKrYJw1gdv/rWJ07wxIuryHWuLjJi5q1L13WyI
+ A10LLIrxTWXPlagdjSezePBAt1ngPntjVu53OENfqP+mYeJi45Cpy9o3Ov7H7yuG+khFl2+MR
+ PR4sNIf/grJCaJ62wc8XSy+g==
 
-On Wed, Aug 28, 2024 at 11:47=E2=80=AFAM WangYuli <wangyuli@uniontech.com> =
-wrote:
->
->
-> On 2024/8/28 23:30, Alex Deucher wrote:
-> > On Wed, Aug 28, 2024 at 7:28=E2=80=AFAM WangYuli <wangyuli@uniontech.co=
-m> wrote:
-> >
-> > This will disable dpm on all devices that you might install on this
-> > platform.  If this is specific to a particular platform and board
-> > combination, it might be better to check the platform in the
-> > dpm_init() code for the specific chip that is problematic.
-> > Additionally, disabling dpm will result in boot clocks which means
-> > performance will be very low.
-> >
-> > Alex
->
-> This motherboard model doesn't have combinations with different
-> platforms or chipsets now.Their model numbers are unique,so it seems
-> unnecessary to add extra judgment.
+Hi Lukasz,
 
-The error message looks to be from an SI board which is a dGPU.  Is
-that dGPU integrated into the motherboard?  Does the motherboard have
-PCIe slots?  If there are PCIe slots you could presumably put any GPU
-into it and if you did, dpm would be disabled by default.
+thanks for taking care of MXS DT issues.
 
-Alex
+Am 28.08.24 um 17:33 schrieb Lukasz Majewski:
+> Hi Krzysztof,
+>
+>> On 28/08/2024 11:35, Lukasz Majewski wrote:
+>>> The 'fsl,imx23-icoll' and 'fsl,imx28-icoll' are not used at any
+>>> place in the Linux kernel - instead for imx2[38] the 'fsl,icoll' is
+>>> used.
+>>>
+>>> Hence, it is possible to remove them.
+>> Preference is to have SoC-specific compatibles in the front, so
+>> instead of dropping it, these should be documented as bindings.
++1
+
+We cannot conclude that nobody is using these compatibles.
+>>
+>> imx23 and imx28 are quite old platforms, so I think no one really
+>> cared about dtbs_check and their bindings. If the platform is being
+>> actively used (as judging by your contributions) then some bigger
+>> cleanup could be useful. Also, drop your email somewhere in the files
+>> or maintainer entry, so we will know whom to ping when asking for
+>> platform removal.\
+>> But if there is no product on imx23/28, then I am afraid it might be
+>> wasted effort - isn't it planned for deprecation/removal by Arnd?
+>>
+> I cannot say about imx23, but for sure imx287 will stay with us for
+> many, many years.
+>
+> imx287 (arm9) is still in active production, for extended life time
+> devices...
+>
+> It is just pervasive in the industry.
+I can confirm this.
+
+Best regards
 
