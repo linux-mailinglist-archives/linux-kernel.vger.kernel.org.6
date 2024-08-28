@@ -1,79 +1,72 @@
-Return-Path: <linux-kernel+bounces-305241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE7C4962BC3
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 17:14:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75085962BCA
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 17:15:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 788C81F210C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:14:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32131287201
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:15:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3E631A3BD5;
-	Wed, 28 Aug 2024 15:11:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BAFC1A4B9F;
+	Wed, 28 Aug 2024 15:12:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VlXAWp/h"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z5wR9DUa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CB1B1A3BD0;
-	Wed, 28 Aug 2024 15:11:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C8F51A2C17;
+	Wed, 28 Aug 2024 15:12:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724857903; cv=none; b=Wtu6nfaQ5mvVZjT5HPY1EnBOzQkN/ox7MiHmZjIM9o3gR9kwVyjELZAAIrekgtOX6H1jwglA7Fn/MD4h8hTj3nGjIUg2dJX48DWz40ZhZgrV5mfICGo3Oy4b8rJ7bdFMGM3BYI8or2whwi9w5ON5vTSBrWPl/e6hD6t48BkiweE=
+	t=1724857927; cv=none; b=JPPixrghu6gH/k2CIkZDkKaHM3GLS2+IDTHaz04hZ/LXfHUuPCjlMmWJPZSAhD03PfVK7qCs/VlMNC+zm1VZg8rcIZnd2OKVnhb15WAj2lzOcBJoV9wOhOSZWhFOPGXpoD9+/FlS2mFwDsoD3Oc92pjHnez/njnE0nRO3zd8PvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724857903; c=relaxed/simple;
-	bh=5YJPyU93FZIqQ3QHkGoylE4Fc+ccIKPNGyZgM50RjXw=;
+	s=arc-20240116; t=1724857927; c=relaxed/simple;
+	bh=9GuXAxjPKxPmRMioM0desVcabOX2V79hzACInoh3ahU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cfYrE7hQ0bc5FJNvrKfaUTDx51TLX2YWcl+xsHFbOUKLHkS8EaaltJJAL0nrfYVSLjatJsaCjVvQHvK+tqs2m+qzuR3o8esLv3rXvOapVG3oMystSq6+Nmdqb8+RiV69vg0yqC58HbKl4xki5g/nhNDAl/jaJ5n2RsnlSx2vv1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VlXAWp/h; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724857902; x=1756393902;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=5YJPyU93FZIqQ3QHkGoylE4Fc+ccIKPNGyZgM50RjXw=;
-  b=VlXAWp/hRZeg7VSm2ha+kw9MzXIjOKodLHjeoF1vpm43jq08FXIvJsdI
-   6R3feUE6dFZL557G2kfJMv3o/o03pfIEhEo1Nox3GxpMuKab+bGp+oCgl
-   sjYoqmBsUql7s+wT58rw7AaVsBmNP0+QzvTpiZPfMRPeaiK9of6Bio/7Y
-   6n0VgXZLk/9pe3PQlnG1VvkW5o0vTDD0E3v7suQCszGgwnB7As6GIE9yP
-   vk+bmHghhhg5EB7sVh4fX45mzXj0m0RWYV71vI4EvMchY7G3QbJR7uQqI
-   Drb5bs/bSVo/VSGXrIUj7KJjLQTQ5bxak0w02ECm5weN6a6dn/KDdRRhs
-   w==;
-X-CSE-ConnectionGUID: K2obO4k0QGuEHl9bAjkhpg==
-X-CSE-MsgGUID: BDXpQwj3Tk+gaGnWOikpEw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11178"; a="23200976"
-X-IronPort-AV: E=Sophos;i="6.10,183,1719903600"; 
-   d="scan'208";a="23200976"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2024 08:11:41 -0700
-X-CSE-ConnectionGUID: GJ2FmotUT3i99/ZNkEtC6Q==
-X-CSE-MsgGUID: 2fokvfrRQ5KhwzXOcKAFmA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,183,1719903600"; 
-   d="scan'208";a="63246069"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2024 08:11:38 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sjKKd-00000002gZH-28Fd;
-	Wed, 28 Aug 2024 18:11:35 +0300
-Date: Wed, 28 Aug 2024 18:11:35 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Linus Walleij <linus.walleij@linaro.org>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=tWhzj+IiPtJunr8sEQ5vlxnNzrOv+1qiXkqYhe+72lzuqPGbi2462iEKs9NXkTjG4s8fz0F7RJAc18NIlF5oNMNgW6WjMJVhzhn3tz5wU0mi/ltUq+lS/cWtszLqt/a5Qy/385jPj7g6s+qJA8NrJZW+yk3co+Yo724WRQ7lqVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z5wR9DUa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBC85C4CEC1;
+	Wed, 28 Aug 2024 15:12:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724857927;
+	bh=9GuXAxjPKxPmRMioM0desVcabOX2V79hzACInoh3ahU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Z5wR9DUaujBFT4XeskFDnq/unR1mK7T6eJVLJ6YdAP+4nJKvH1Bn+zE/tDmRvwe07
+	 q/ANLYGHJerruJiRG5M1e2eew8M4KozXaXfYkpzvJB9ffU04lJC7uDBHeA7OhT5ybC
+	 /dwjw3Ixv+2eEcBdWnkCfyxbmgyH6b5BixfZHYVkOEDpn3+drA5zECDmYH3rcGhoAw
+	 a7xOWsHEdyshtT5wRUFmtLz2zx2NqjL3wV7S11mJQbOG3xkIqm45rnAVDuUkpDBTxH
+	 +BteBBRDPODTWwLRe+4wEk7ibapa3HeaM69wia0TMC7HzTu30IDQtkcZ8zKeXk0utP
+	 nQ28Nxcj3TxiA==
+Date: Wed, 28 Aug 2024 10:12:05 -0500
+From: Rob Herring <robh@kernel.org>
+To: Jie Gan <quic_jiegan@quicinc.com>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Mike Leach <mike.leach@linaro.org>,
+	James Clark <james.clark@linaro.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Jinlong Mao <quic_jinlmao@quicinc.com>, coresight@lists.linaro.org,
 	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-mips@vger.kernel.org, linux-gpio@vger.kernel.org
-Cc: Hartley Sweeten <hsweeten@visionengravers.com>,
-	Alexander Sverdlin <alexander.sverdlin@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: Re: [PATCH v1 0/2] gpiolib:legacy: Kill GPIOF_DIR_* and GPIOF_INIT_*
-Message-ID: <Zs8-J2fXH6oF7roE@smile.fi.intel.com>
-References: <20240828142554.2424189-1-andriy.shevchenko@linux.intel.com>
+	devicetree@vger.kernel.org,
+	Tingwei Zhang <quic_tingweiz@quicinc.com>,
+	Yuanfang Zhang <quic_yuanfang@quicinc.com>,
+	Tao Zhang <quic_taozha@quicinc.com>,
+	Song Chai <quic_songchai@quicinc.com>,
+	linux-arm-msm@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH v4 3/5] dt-bindings: arm: Add Coresight TMC Control Unit
+ hardware
+Message-ID: <20240828151205.GA3830921-robh@kernel.org>
+References: <20240828012706.543605-1-quic_jiegan@quicinc.com>
+ <20240828012706.543605-4-quic_jiegan@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,25 +75,120 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240828142554.2424189-1-andriy.shevchenko@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20240828012706.543605-4-quic_jiegan@quicinc.com>
 
-On Wed, Aug 28, 2024 at 05:23:56PM +0300, Andy Shevchenko wrote:
-> Shrink the legacy API and definition surface by killing the (internal)
-> definitions. This, in particular, will fix a couple of drivers that took
-> it wrong.
+On Wed, Aug 28, 2024 at 09:27:04AM +0800, Jie Gan wrote:
+> Add binding file to specify how to define a Coresight TMC
+> Control Unit device in device tree.
 > 
-> This is assumed to go via BPIOLIB tree as this is quite small series and
-> most of the changes related to it.
+> It is responsible for controlling the data filter function
+> based on the source device's Trace ID for TMC ETR device.
+> The trace data with that Trace id can get into ETR's buffer
+> while other trace data gets ignored.
+> 
+> Signed-off-by: Jie Gan <quic_jiegan@quicinc.com>
+> ---
+>  .../bindings/arm/qcom,coresight-ctcu.yaml     | 84 +++++++++++++++++++
+>  1 file changed, 84 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/arm/qcom,coresight-ctcu.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/qcom,coresight-ctcu.yaml b/Documentation/devicetree/bindings/arm/qcom,coresight-ctcu.yaml
+> new file mode 100644
+> index 000000000000..669aac646451
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/arm/qcom,coresight-ctcu.yaml
+> @@ -0,0 +1,84 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/arm/qcom,coresight-ctcu.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: CoreSight TMC Control Unit
+> +
+> +maintainers:
+> +  - Yuanfang Zhang <quic_yuanfang@quicinc.com>
+> +  - Mao Jinlong <quic_jinlmao@quicinc.com>
+> +  - Jie Gan <quic_jiegan@quicinc.com>
+> +
+> +description:
 
-Hmm... LKP complained that it can't apply them on top of Linux Next, however
-I don't see any issues as my branch based on next-20240828.
+You need '>' or '|' if you want to preserve paragraphs.
 
-Tell me if I need to resend.
+> +  The Trace Memory Controller(TMC) is used for Embedded Trace Buffer(ETB),
+> +  Embedded Trace FIFO(ETF) and Embedded Trace Router(ETR) configurations.
+> +  The configuration mode (ETB, ETF, ETR) is discovered at boot time when
+> +  the device is probed.
+> +
+> +  The Coresight TMC Control unit controls various Coresight behaviors.
+> +  It works as a helper device when connected to TMC ETR device.
+> +  It is responsible for controlling the data filter function based on
+> +  the source device's Trace ID for TMC ETR device. The trace data with
+> +  that Trace id can get into ETR's buffer while other trace data gets
+> +  ignored.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - qcom,sa8775p-ctcu
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  clock-names:
+> +    items:
+> +      - const: apb
+> +
+> +  in-ports:
 
--- 
-With Best Regards,
-Andy Shevchenko
+Just "ports". "in-ports" is for the case when you have "out-ports".
 
-
+> +    $ref: /schemas/graph.yaml#/properties/ports
+> +
+> +    patternProperties:
+> +      '^port(@[0-1])?$':
+> +        description: Input connections from CoreSight Trace bus
+> +        $ref: /schemas/graph.yaml#/properties/port
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - in-ports
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    ctcu@1001000 {
+> +        compatible = "qcom,sa8775p-ctcu";
+> +        reg = <0x1001000 0x1000>;
+> +
+> +        clocks = <&aoss_qmp>;
+> +        clock-names = "apb";
+> +
+> +        in-ports {
+> +            #address-cells = <1>;
+> +            #size-cells = <0>;
+> +
+> +            port@0 {
+> +                reg = <0>;
+> +                ctcu_in_port0: endpoint {
+> +                    remote-endpoint = <&etr0_out_port>;
+> +                };
+> +            };
+> +
+> +            port@1 {
+> +                reg = <1>;
+> +                ctcu_in_port1: endpoint {
+> +                    remote-endpoint = <&etr1_out_port>;
+> +                };
+> +            };
+> +        };
+> +    };
+> -- 
+> 2.34.1
+> 
 
