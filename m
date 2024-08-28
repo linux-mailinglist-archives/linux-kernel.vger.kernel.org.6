@@ -1,70 +1,84 @@
-Return-Path: <linux-kernel+bounces-305049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D9489628A5
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:29:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 08BB79628A9
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:31:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 241B028266B
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:29:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4FF6283A86
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:31:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D254187862;
-	Wed, 28 Aug 2024 13:29:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A443187859;
+	Wed, 28 Aug 2024 13:31:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="sa4EIlir"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FhQyBlfB"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB16C156F4A;
-	Wed, 28 Aug 2024 13:29:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFA1716C864
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 13:31:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724851748; cv=none; b=nM7SJ6Aw1QcOnWHXBZwzwzxftrwis5edmrKnSLBXPXFcZyrGgFpRsrOF5j5E/1zkJ8/qWWFfDe3aJk0kRbdm4nGRxKM+p1lYg+aVincMJMaR1X7O2yEpF32xWFvfy+CUnpuiTLfaKFINxaLrJnObDBADQWIxWo0kdUOehOwzGvc=
+	t=1724851900; cv=none; b=JFgQ1gajArTcJJm92LCp4WsLOmQ7tJRxPqx4v+bIiNRLl6Uo7t667+sK4z+EjS/7e7yTksuL9pqml8uL4JJFq3XxDNq/1PfSFABbBY2G6+6fOsmFwY/bkrGWlHGqhJHK2i7BIvcVg1qoo7+Ub8tnUnggV0hpTv2xmGFAZp1auLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724851748; c=relaxed/simple;
-	bh=/r0MT3aB8uX7pI7/PuwSmyCqrVzxDBWEBTArzIlqKtg=;
+	s=arc-20240116; t=1724851900; c=relaxed/simple;
+	bh=aFunOdE2IWWGEtEGitXEh2j1fwzDFTJ8EAELatQZE60=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NxyDYagNGC904/vg0QisqXQQqRHTkuczmQNppe6a+c8hmwxo9swPSSJtH3xhVlTtBzBVH/zrO072VAFd8xEGhWzL5yb4dAyToOxMMozxmzRX1QWDiq5x5vZd91q9zG4ShXvUmRjnS/tvY4jb6Q1lmSlyDEN+I8Oac0qvI7Zl0oo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=sa4EIlir; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 09B9E2C5;
-	Wed, 28 Aug 2024 15:27:56 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1724851677;
-	bh=/r0MT3aB8uX7pI7/PuwSmyCqrVzxDBWEBTArzIlqKtg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sa4EIlirLCtNbuz27sn3LDUZK5582Sc6xwe+z8OuwabPWIL6vnsUPtXVqO3dxfzb7
-	 Ly4DHj0m/ypq8aIpGKghHUiC2p8yb9vzxDXrJA6SCXbiS0EsWrECRRbOfsjRDmZo2K
-	 q01D8QzhpQ7nzVx8srIqHS7J3KOECh2gGiaUsfhs=
-Date: Wed, 28 Aug 2024 16:29:00 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: display: renesas,du: narrow interrupts
- and resets per variants
-Message-ID: <20240828132900.GB27131@pendragon.ideasonboard.com>
-References: <20240818173003.122025-1-krzysztof.kozlowski@linaro.org>
- <20240818174137.GC29465@pendragon.ideasonboard.com>
- <4615f52b-4e4c-4fe4-bfef-a66e196410d7@linaro.org>
- <20240818175118.GF29465@pendragon.ideasonboard.com>
- <526b6f56-7807-4bb6-9365-077b1cc490b2@linaro.org>
- <20240828124517.GA23978@pendragon.ideasonboard.com>
- <3aa885c1-d653-4d73-98ab-3d4d3d214235@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tTgw5volyMJofPO+419IxmgKyA5lJ7q0K2xZtAA8ACmzzNTiz7FbMU28+J857ffGwVLrJeGjjAq6yspAKyzpRq0xjnPPTOJRBFBIylpbfTctNUSK0noLg4MW/1JezMf649NMMc6PDVA+GD2tyFvjQTNL/eyuJDEZK2SC/o7eWUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FhQyBlfB; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-7106cf5771bso5653790b3a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 06:31:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724851898; x=1725456698; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=ooxQLoKfDn6EQlD0rIDPMhXYCiCug8IilBfMsi5Lan0=;
+        b=FhQyBlfBWoSppDFD4YNSBTqpYsxopU57NUtDNrrc5MzqPoECOvN1Tjx6Yx0QKsEhma
+         Y39nhL9aLi76Tw44SV0mqUJpZ+GB0PM7lfxA90gGqz8V2L6+XbCYSlRJ5yw99PdYm+Rq
+         f7peM0Mtu0A8GMXHkRjDAgayUQsSZltK2AfPZ7daeedAz9rp36IeXSHdhpVZECpISX/A
+         OLW2PoXpOaoJbqsGyiqkEPEDOC0yPKjPNen88GU8LoZLYsLINOy9B0cOWHguqUmhJu10
+         aZTVkmgvKj0pezUIVFvpr2uKeyX8Co7+fID4YMW3HHZGj2SSz6LqpeWEequH2N/cSmc1
+         1IOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724851898; x=1725456698;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ooxQLoKfDn6EQlD0rIDPMhXYCiCug8IilBfMsi5Lan0=;
+        b=diiLA2OFDRuasMCENJHeK/G6YQnO0vzP/IqgEwG7VZka9Ka1XxD81hnDeyd4yyU7N1
+         aesaMgxxUHQM+KQqKSur+alR2lWtfQHq/Hr5/pNxUAQWyhs35cu+oeHLFyk8sjHFENKr
+         QVFKo6qS8FsKj9Ee2Pj2v3EkVrpAjLvZc+rtTIe8WWO9l8OY6PB3dUKfkblcXUiTvCkC
+         I8/jcDYEy0L/MR1mfgygfupclqWMlB8bi/18iWUJebElIBxawZYetb7YkOzKcae0RHI+
+         06XprkM+N4tKjoSj0jmDWJ/8umj+jkiY8iDQSsmSyrzopf5jrOXuvHbM+TTPn2LlgzKF
+         R4YQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXBWVmdD5aMwUemWaX9yVNBr89gRn1WKMQGtGe0ihDe4FeXJx1n67iSjcGv8fIqzYOUEKoUCrRQV/iW/cw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzA81J7ZQDw05YPS3XbmDaWJbyOw9bD+0OQ+8c1e+lX/xOkii4Q
+	TTRTxxHf9atbUlFphCWvDKHdStRaxTy7idwxFHZkqOPLD6qiaHT24lM/97QD2A==
+X-Google-Smtp-Source: AGHT+IEINpO4o8xwOCNrCh0RMflT1QvZim19vykwVlDpRWD2mxcSv4yYUaeulVY/t40l8zuo0u5EGg==
+X-Received: by 2002:a05:6a00:92a4:b0:710:7fd2:c91 with SMTP id d2e1a72fcca58-714458b4330mr18935675b3a.26.1724851898012;
+        Wed, 28 Aug 2024 06:31:38 -0700 (PDT)
+Received: from thinkpad ([120.56.198.191])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71434316405sm10101761b3a.162.2024.08.28.06.31.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Aug 2024 06:31:37 -0700 (PDT)
+Date: Wed, 28 Aug 2024 19:01:32 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Manish Pandey <quic_mapa@quicinc.com>
+Cc: "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, quic_nitirawa@quicinc.com,
+	quic_bhaskarv@quicinc.com, quic_narepall@quicinc.com,
+	quic_rampraka@quicinc.com, quic_cang@quicinc.com,
+	quic_nguyenb@quicinc.com
+Subject: Re: [PATCH V2] scsi: ufs: qcom: update MODE_MAX cfg_bw value
+Message-ID: <20240828133132.zqozjegmbnwa7byb@thinkpad>
+References: <20240828132526.25719-1-quic_mapa@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,106 +87,47 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <3aa885c1-d653-4d73-98ab-3d4d3d214235@linaro.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240828132526.25719-1-quic_mapa@quicinc.com>
 
-On Wed, Aug 28, 2024 at 02:52:25PM +0200, Krzysztof Kozlowski wrote:
-> On 28/08/2024 14:45, Laurent Pinchart wrote:
-> > On Sun, Aug 18, 2024 at 08:48:54PM +0200, Krzysztof Kozlowski wrote:
-> >> On 18/08/2024 19:51, Laurent Pinchart wrote:
-> >>> On Sun, Aug 18, 2024 at 07:44:22PM +0200, Krzysztof Kozlowski wrote:
-> >>>> On 18/08/2024 19:41, Laurent Pinchart wrote:
-> >>>>> On Sun, Aug 18, 2024 at 07:30:02PM +0200, Krzysztof Kozlowski wrote:
-> >>>>>> Each variable-length property like interrupts or resets must have fixed
-> >>>>>> constraints on number of items for given variant in binding.  The
-> >>>>>> clauses in "if:then:" block should define both limits: upper and lower.
-> >>>>>
-> >>>>> I thought that, when only one of minItems or maxItems was specified, the
-> >>>>> other automatically defaulted to the same value. I'm pretty sure I
-> >>>>> recall Rob asking me to drop one of the two in some bindings. Has the
-> >>>>> rule changes ? Is it documented somewhere ?
-> >>>>
-> >>>> New dtschema changed it and, even if previous behavior is restored, the
-> >>>> size in if:then: always had to be constrained. You could have skipped
-> >>>> one side of limit if it was equal to outer/top-level limit, e.g:
-> >>>>
-> >>>> properties:
-> >>>>   clocks:
-> >>>>     minItems: 1
-> >>>>     maxItems: 2
-> >>>>
-> >>>>
-> >>>> if:then:properties:
-> >>>>   clocks:
-> >>>>     minItems: 2
-> >>>
-> >>> Where can I find a description of the behaviour of the new dtschema
-> >>> (hopefully with some documentation) ?
-> >>
-> >> No clue, but I feel there is some core concept missing. Your earlier
-> >> statement:
-> >> "I thought that, when only one of minItems or maxItems was specified, the"
-> >>
-> >> was never logically correct for the "if:then", except for the case I
-> >> mentioned above. That's why all schema used as examples had it explicit:
-> >>
-> >> My talk from 2022, page 30:
-> >> https://static.sched.com/hosted_files/osseu2022/bd/How%20to%20Get%20Your%20DT%20Schema%20Bindings%20Accepted%20in%20Less%20than%2010%20Iterations%20-%20Krzysztof%20Kozlowski%2C%20Linaro.pdf?_gl=1*kmzqmt*_gcl_au*MTU2MzQ1MjY0Mi4xNzIxNzE0NDc1
-> >> all constraints defined,.
-> >>
-> >> My talk from 2023, page 34:
-> >> https://static.sched.com/hosted_files/eoss2023/a8/How%20to%20Get%20Your%20DT%20Schema%20Bindings%20Accepted%20in%20Less%20than%2010%20Iterations%20-%20Krzysztof%20Kozlowski%2C%20Linaro%20-%20ELCE%202023.pdf?_gl=1*1jgx6d3*_gcl_au*MTU2MzQ1MjY0Mi4xNzIxNzE0NDc1
-> >>
-> >> Recently, I started using other example as "useful reference":
-> >> https://elixir.bootlin.com/linux/v6.8/source/Documentation/devicetree/bindings/ufs/qcom,ufs.yaml#L132
-> >>
-> >> That's nothing. All three above reference examples I keep giving are
-> >> already there and repeated in emails all the time.
-> >>
-> >> So aren't you confusing the entire "skip one limit" for top-level
-> >> properties? This patch is not about it all and dtschema did not change.
-> > 
-> > There must have been a misunderstanding indeed, I interpreted "New
-> > dtschema changed it" as meaning there were now new rules. Is that
-> > incorrect ?
-> 
-> For the binding with a property defined only in top-level properties: no
-> changes, no new rules.
-> 
-> For the binding with top-level and if:then:else: dtschema since few
-> months changed interpretation.
+On Wed, Aug 28, 2024 at 06:55:26PM +0530, Manish Pandey wrote:
+> The cfg_bw value for max mode was incorrect for the Qualcomm SoC.
 
-OK, that's what I didn't understand correctly.
+What do you mean by 'incorrect'? I extracted the value from downstream DTs. So
+it cannot be incorrect.
 
-> > If you don't mind clarifying, what is the current recommendation to
-> > indicate that a property has a fixed number of items ? Which of the
-> > following three options is preferred ?
-> 
-> Answer below assumes we have clocks defined in top-level properties and
-> there is no if:then:else customizing it.
-> 
-> > properties:
-> >   clocks:
-> >     minItems: 2
-> 
-> That's wrong, because items are unconstrained.
-> 
-> > properties:
-> >   clocks:
-> >     maxItems: 2
-> 
-> This one is preferred.
-> 
-> > properties:
-> >   clocks:
-> >     minItems: 2
-> >     maxItems: 2
-> 
-> This one is correct, but less preferred.
+If you want to update it, please clearly provide the reason.
 
-Thank you, that is clear now.
+And if this patch is addressing an issue, then a Fixes tag should be present. If
+you want to get it backported (if it is a critical fix), then stable list should
+be CCed.
+
+- Mani
+
+> Update it to the correct value for cfg_bw max mode.
+> 
+> Signed-off-by: Manish Pandey <quic_mapa@quicinc.com>
+> ---
+>  drivers/ufs/host/ufs-qcom.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
+> index c87fdc849c62..ecdfff2456e3 100644
+> --- a/drivers/ufs/host/ufs-qcom.c
+> +++ b/drivers/ufs/host/ufs-qcom.c
+> @@ -93,7 +93,7 @@ static const struct __ufs_qcom_bw_table {
+>  	[MODE_HS_RB][UFS_HS_G3][UFS_LANE_2] = { 1492582,	204800 },
+>  	[MODE_HS_RB][UFS_HS_G4][UFS_LANE_2] = { 2915200,	409600 },
+>  	[MODE_HS_RB][UFS_HS_G5][UFS_LANE_2] = { 5836800,	819200 },
+> -	[MODE_MAX][0][0]		    = { 7643136,	307200 },
+> +	[MODE_MAX][0][0]		    = { 7643136,	819200 },
+>  };
+>  
+>  static void ufs_qcom_get_default_testbus_cfg(struct ufs_qcom_host *host);
+> -- 
+> 2.17.1
+> 
 
 -- 
-Regards,
-
-Laurent Pinchart
+மணிவண்ணன் சதாசிவம்
 
