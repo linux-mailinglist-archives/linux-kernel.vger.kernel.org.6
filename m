@@ -1,84 +1,111 @@
-Return-Path: <linux-kernel+bounces-304409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AE0A961FAA
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 08:25:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 03828961FAD
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 08:25:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0932B23E88
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 06:25:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 688D8B24200
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 06:25:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B7351552FA;
-	Wed, 28 Aug 2024 06:25:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A5081553AF;
+	Wed, 28 Aug 2024 06:25:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sbDHE9bv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EC171BC2F;
-	Wed, 28 Aug 2024 06:25:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D530A1BC2F;
+	Wed, 28 Aug 2024 06:25:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724826319; cv=none; b=UXhGF3WoeZ1AKwX1opLIzezqMjWxZsGlmnkm9p0+1ZDgjGPcO0H5m7CRW3Rj+9G4yrYzm6B1RlFv2p0eRbRkqtBirGJaWp37qb/OKgvzvrEL8s1MtLs9uMfHefux+HAa0avTroonZH9x29NIgfETeCnCW/LxVu9OrCqY1WY2b9Y=
+	t=1724826331; cv=none; b=kkh4o8BKsEMPYk4tpoC4ybmtTcpKxmi/o8NkdoQeucvRYec6RpCmlrPTC85UAQ+JVE3/U8mTfh0kd7ToRuu3Ib2FZdUUwJFV3IJP+iEuNr4Dt4fGJ8WXMQGzuioY7TpaVNxZ4bLzIlN/B9JnWFPVGIz6VVLmtOZMrajpB3pY1Ws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724826319; c=relaxed/simple;
-	bh=MEuMtdmGcnCXCBbyeF3r94mGLyQW7MccMHMw4Wd22i4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uTpj7RQbWXq4hg5gXBC6laiPxKEzCznW+4e9P4rpzuK1qKgzW0YoQDJg84hMtuAYhV7ktyPdl1l/C7v5WBsa3kBAARYYVIGTbjS4TcjBwm3O4HJMHj4EqyiAdXrQvBRF7izjwYd+iRlLVin6BIQkCumrDyCICJi/taDhUAgZ3nE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92576C5813C;
-	Wed, 28 Aug 2024 06:25:16 +0000 (UTC)
-From: Huacai Chen <chenhuacai@loongson.cn>
-To: "Rafael J . Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Huacai Chen <chenhuacai@kernel.org>
-Cc: loongarch@lists.linux.dev,
-	linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Xuerui Wang <kernel@xen0n.name>,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>,
-	Huacai Chen <chenhuacai@loongson.cn>,
-	Xi Ruoyao <xry111@xry111.site>,
-	Binbin Zhou <zhoubinbin@loongson.cn>
-Subject: [PATCH] cpufreq: loongson3: Use raw_smp_processor_id() in do_service_request()
-Date: Wed, 28 Aug 2024 14:24:59 +0800
-Message-ID: <20240828062459.1853837-1-chenhuacai@loongson.cn>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1724826331; c=relaxed/simple;
+	bh=3pJFadj/uOYX+IMAKfXMeRK5ez0VFC7d4Lt/cF61HuU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rKEv5PZKh2L/oTh1wIrkDQn3FMk19hhtIY5rb9SxhdPC0i+RkahItySlxYqNLsgdb09iuytGHjILbHxcLHKIBRdL6UbRe3E4nyHs5CFjCDeo7AmJc/EIbzB1mUk4Bx2MHGcouziLmgomN2sXTrPflUPrK/29YblMfkdGTue4Wu4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sbDHE9bv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BFDC9C58138;
+	Wed, 28 Aug 2024 06:25:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724826329;
+	bh=3pJFadj/uOYX+IMAKfXMeRK5ez0VFC7d4Lt/cF61HuU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sbDHE9bveipmpoB5W+YDPjZPqZeIb/9oGLVKJ0vnYHBzu43Hy59fRl9uvtoDPrhVI
+	 5ytTsMO6GVToekDibDGFuUhgVmVejqcAGCuDC6fE5AVpsT/RRxDLEVQIWhDAf42U4f
+	 bUv+g9Uj2h6D1Ldl17ohxe9nk5ypLxuNceK3GYmzQmNtuyhK6VEr7xqB/fp57ySqKs
+	 jpOT++B5qunVW50KZUClPglx/blu6KYH68sh3OtfKFZslnKtWE9qfbDn/Zf/Xf08SC
+	 gkOU+vXYWD1M+TSDG/cB8WlXSPRV+Ccan2+tRkEMvFUHRnenFGzQs71Jps/gQV0L45
+	 wypTy1N/R9UmA==
+Date: Wed, 28 Aug 2024 08:25:25 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Lijuan Gao <quic_lijuang@quicinc.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, kernel@quicinc.com, 
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 6/6] arm64: dts: qcom: add base QCS615 RIDE dts
+Message-ID: <22qkvfravm6sxiq3xfavahg2u6b2pwlyzqbqvd55zym5zef3gi@m4bsqkdvggty>
+References: <20240828-add_initial_support_for_qcs615-v1-0-5599869ea10f@quicinc.com>
+ <20240828-add_initial_support_for_qcs615-v1-6-5599869ea10f@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240828-add_initial_support_for_qcs615-v1-6-5599869ea10f@quicinc.com>
 
-Use raw_smp_processor_id() instead of plain smp_processor_id() in
-do_service_request(), otherwise we may get some errors with the driver
-enabled:
+On Wed, Aug 28, 2024 at 10:02:16AM +0800, Lijuan Gao wrote:
+> Add initial support for Qualcomm QCS615 RIDE board and enable
+> the QCS615 RIDE board to shell with dcc console.
+> 
+> Signed-off-by: Lijuan Gao <quic_lijuang@quicinc.com>
+> ---
+>  arch/arm64/boot/dts/qcom/Makefile        |  1 +
+>  arch/arm64/boot/dts/qcom/qcs615-ride.dts | 15 +++++++++++++++
+>  2 files changed, 16 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
+> index 197ab325c0b9..c5503f189847 100644
+> --- a/arch/arm64/boot/dts/qcom/Makefile
+> +++ b/arch/arm64/boot/dts/qcom/Makefile
+> @@ -110,6 +110,7 @@ dtb-$(CONFIG_ARCH_QCOM)	+= qcm6490-idp.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)	+= qcm6490-shift-otter.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)	+= qcs404-evb-1000.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)	+= qcs404-evb-4000.dtb
+> +dtb-$(CONFIG_ARCH_QCOM)	+= qcs615-ride.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)	+= qcs6490-rb3gen2.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)	+= qcs8550-aim300-aiot.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)	+= qdu1000-idp.dtb
+> diff --git a/arch/arm64/boot/dts/qcom/qcs615-ride.dts b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
+> new file mode 100644
+> index 000000000000..31d32ad951b5
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
+> @@ -0,0 +1,15 @@
+> +// SPDX-License-Identifier: BSD-3-Clause
+> +/*
+> + * Copyright (c) 2024, Qualcomm Innovation Center, Inc. All rights reserved.
+> + */
+> +/dts-v1/;
+> +
+> +#include "qcs615.dtsi"
+> +/ {
+> +	model = "Qualcomm Technologies, Inc. QCS615 Ride";
+> +	compatible = "qcom,qcs615-ride", "qcom,qcs615";
+> +
+> +	chosen {
+> +		bootargs = "console=hvc0";
 
- BUG: using smp_processor_id() in preemptible [00000000] code: (udev-worker)/208
- caller is loongson3_cpufreq_probe+0x5c/0x250 [loongson3_cpufreq]
+Noooo, last time I agreed on this, you told me later it is different.
 
-Reported-by: Xi Ruoyao <xry111@xry111.site>
-Tested-by: Binbin Zhou <zhoubinbin@loongson.cn>
-Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
----
- drivers/cpufreq/loongson3_cpufreq.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/cpufreq/loongson3_cpufreq.c b/drivers/cpufreq/loongson3_cpufreq.c
-index 5f79b6de127c..6b5e6798d9a2 100644
---- a/drivers/cpufreq/loongson3_cpufreq.c
-+++ b/drivers/cpufreq/loongson3_cpufreq.c
-@@ -176,7 +176,7 @@ static DEFINE_PER_CPU(struct loongson3_freq_data *, freq_data);
- static inline int do_service_request(u32 id, u32 info, u32 cmd, u32 val, u32 extra)
- {
- 	int retries;
--	unsigned int cpu = smp_processor_id();
-+	unsigned int cpu = raw_smp_processor_id();
- 	unsigned int package = cpu_data[cpu].package;
- 	union smc_message msg, last;
- 
--- 
-2.43.5
+Best regards,
+Krzysztof
 
 
