@@ -1,130 +1,131 @@
-Return-Path: <linux-kernel+bounces-304570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CF839621F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 10:00:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97B809621F6
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 10:00:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F9E01C23C86
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 08:00:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 422C01F262B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 08:00:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11E5F15B10D;
-	Wed, 28 Aug 2024 07:59:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA65815C125;
+	Wed, 28 Aug 2024 07:59:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Ft8tB0vk"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jpYRJUvs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A962515ADA6
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 07:59:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FF4F15AAC1;
+	Wed, 28 Aug 2024 07:59:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724831986; cv=none; b=NaY0GWxdAFugGOl5y15J0wWhj7YOHxZ/H2vpvkAARjWnJnJM03ivRaHQ1UiJV6ipawfHWq2CgnssCop0kW/Pr6hebsvvn6UBCzSMcDIlXe4Ajy2XxRwu8w+2iqo9Ukw5ZQ/d3cZzn4BcqUs9+SGgxGmdDbAjHyiXlfxvF5xZ4po=
+	t=1724831992; cv=none; b=XB05evKiPTYKN+dh+NMjeiLDTiQK3EUUO0oESPqirK+tarOcsIS4k/jzr8FNbLDdKB2cMslsaGTrFSta3/xP4mAMjj9nPdEkApViJP6iBCNDR/1JsCI4gUITmzRJCrh2bCW8L3ZrS5DMO1no7GOk94VaNgpstQvRk44LreHO22g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724831986; c=relaxed/simple;
-	bh=JnlKxCdsimwP62tU4JbtAJk9KVn28iJLPP8O7ohrt9M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Zq9BqcONBoxzV8PwQvSo2BUWDfySVlI8YRcy0L14/7eNfUpPr6AAtZEF06Z6y9Mf1bcw5LFX2SQAP8fh6hsh/KffH0xQGqv6uQqyBG7fx1pvl2I/G/iwaqVFv/Ynf7emvCs5y1wKMsEU7uK55C+z9vW3CQPYxqH/pi4xp3HAQWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Ft8tB0vk; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-53349ee42a9so7637873e87.3
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 00:59:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1724831983; x=1725436783; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vpbdCTKDG8BlkY8bq+95N74FpPnEcE9cjf0ykJ0s63w=;
-        b=Ft8tB0vkHgGJykw7wMJ/3p/JFYt1Xfh1tgH6zbkTzlRzNBvOyIhJJK7u8FcQQuhBHm
-         fSGIj0PEzjrJa61pXYiveEd1Fa2q0OicE6VjyEJDHbSw/mMDkedOffoIcdyjk/h9mA4C
-         uyjloz8osvuN5EWiAbZAytASOhFFntrtBwjlo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724831983; x=1725436783;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vpbdCTKDG8BlkY8bq+95N74FpPnEcE9cjf0ykJ0s63w=;
-        b=d1YGpLNgfhvyQY5hWyg2IjL35H8uq5KwIKyvRolUlF23xmJUYHFAWG0UVgtAi4xZAK
-         Om3WQAW+TGfZ0Wb9QCb46d+x3qOTECyQhbOVZgD1jY/BKf7xgaLhIm3uKV28u4uoJ0Oa
-         yHWbortfDHMbC8eIYrxEMLSybhYoBU/JG5yoh36jFctc6eMgIOioWxrUjDTf2YlAlm2y
-         rLYZdLgBtg8txOIMoGFsmIMZiozgrJ8SBebOa/Gc1jtPJkUwa1m7xIWOAIg20iK+v4u6
-         kGPtQVUumejCIN81IpY8qGQ74ssNMV4TyMsx1LrVcIAiU6i0TeJik5rNsqlverdk7TIC
-         Zdrg==
-X-Forwarded-Encrypted: i=1; AJvYcCVcfXrkszUF62oBS2qtzPeQbCYYmO/oOGtEkiGFtZBresya14jZyRkvNYAQhDyli2vElo8KVCcneZixWGs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5DwOYzoGn73QmeOoDDlNoUptPS1PLxwvriVMXhJ8UvjwyXAUL
-	jRRl8qNKowwzUyZJEzeakCooDdaHE9wSXjZwIAV2XGqPDqNH6uzCuKiK9GnAE8EtzQi0TI7OjVy
-	t2E4tUuOyZOWcVLdjlni2Zw7JwQ091fYMW4yf
-X-Google-Smtp-Source: AGHT+IEtQN2UPYArYHj3m9xXkKbP250WT7DpNjEJHdBt8d1OEprg7PRrbNSge3xwYWwIZH/ZN12tNTuf3d2deVk58QU=
-X-Received: by 2002:a05:6512:694:b0:533:901:e441 with SMTP id
- 2adb3069b0e04-5346c3f90afmr887636e87.10.1724831982552; Wed, 28 Aug 2024
- 00:59:42 -0700 (PDT)
+	s=arc-20240116; t=1724831992; c=relaxed/simple;
+	bh=1mT8u2WLwDiFrnGewTawEhlP5powxsf7TK/dgaKx/5Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ry/3qNRyJMcliootQ9hFIUdwGTble6Ajjo2f7aZTOF7XtQKoCw+OFd5D0SyXggLpdB9TSfJzsnutcc9rU0OWZcJ+ZPPW0J6a6BUnmp8vyg2LWmZRLOMLwBKO1/QuHQpGBrvDqbkAtAM4QZU8C5rwNdVAawSaKHwAhDTNheH2vsU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jpYRJUvs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC3C1C5831F;
+	Wed, 28 Aug 2024 07:59:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724831991;
+	bh=1mT8u2WLwDiFrnGewTawEhlP5powxsf7TK/dgaKx/5Q=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=jpYRJUvsfJBCQzVwnrJoRDcKvy2vXBo6p1uf6ik1Aopxj5p5ibCaiXUPJoC32pQt/
+	 tLAJe16PBImPjsDI8ZpyM/P6Nkrh8hDQHMSTyv4kp7VKLHKmDFwcvDm0dttlymhklZ
+	 443N5FnJ/gmf5SLFiwLltlbkhBcNL+5MRc7iG7l0x42Vhd1ld8cZGlXqDzCdVewONw
+	 QUnbyyQGCu9RxDCGfccziYXGC7vv+jL0xph6EYrDckcnf73JCsm9oRO0/IVmcJw0T9
+	 Odrc70EyL98iWEP5nzabyWQJ6m+z4grfz9nQixy4unu/N/yJ1MNOGr8i8Ji+lGPZW2
+	 EfNVs5iOruolw==
+Message-ID: <33d0151d-7708-45da-8414-b161892db937@kernel.org>
+Date: Wed, 28 Aug 2024 09:59:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240827095550.675018-1-wenst@chromium.org> <20240827095550.675018-3-wenst@chromium.org>
- <Zs3kRrRW9rrfbSDP@smile.fi.intel.com>
-In-Reply-To: <Zs3kRrRW9rrfbSDP@smile.fi.intel.com>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Wed, 28 Aug 2024 15:59:31 +0800
-Message-ID: <CAGXv+5EM1B2w0Ukzx3HBMG1yT6Qq5RpOOmdSsVv9ib+H+9o2pQ@mail.gmail.com>
-Subject: Re: [PATCH 2/8] regulator: core: Fix regulator_is_supported_voltage()
- kerneldoc return value
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v12 0/5] Add AP6276P wireless support
+To: Jacobe Zang <jacobe.zang@wesion.com>, Kalle Valo <kvalo@kernel.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, van Spriel <arend@broadcom.com>,
+ Arend van Spriel <arend.vanspriel@broadcom.com>
+Cc: linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ brcm80211@lists.linux.dev, brcm80211-dev-list.pdl@broadcom.com,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Ondrej Jirman <megi@xff.cz>, Sai Krishna <saikrishnag@marvell.com>
+References: <20240828-wireless-mainline-v12-0-9064ac7acf1d@wesion.com>
+Content-Language: en-US
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240828-wireless-mainline-v12-0-9064ac7acf1d@wesion.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Aug 27, 2024 at 10:35=E2=80=AFPM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
->
-> On Tue, Aug 27, 2024 at 05:55:42PM +0800, Chen-Yu Tsai wrote:
-> > The kerneldoc for regulator_is_supported_voltage() states that the
-> > return value is a boolean. That is not correct, as it could return an
-> > error number if the check failed.
->
-> I don't know what error number means. Is it positive? Negative?
->
-> s/error number/negative error code/g
-> (Here and everywhere else)
+On 28/08/2024 09:40, Jacobe Zang wrote:
+> Signed-off-by: Jacobe Zang <jacobe.zang@wesion.com>
+> ---
+> These add AP6275P wireless support on Khadas Edge2. Enable 32k clock
+> for Wi-Fi module and extend the hardware IDs table in the brcmfmac
+> driver for it to attach.
+> 
 
-Ack. I intended to unify them throughout the series. Looks like I missed
-a couple spots.
+I saw v12 and responded to it. This is confusing. Also to other people
+if they start reviewing different copies.
 
-> > Fix the description by expanding it to cover the true, false and error
->
-> true and false are not what is returned, right?
+Please read carefully submitting. This is v12, so I don't get why such
+basic submission guidelines are not respected here.
 
-What I meant to describe was true or false with regards to the function
-name. I'll try to make it clear.
+Best regards,
+Krzysztof
 
-> > conditions. The description is also converted to a proper "Return"
-> > section.
->
-> ...
->
-> > - * Returns a boolean.
-> > + * Return: 1 if voltage range is support, 0 if not, or error number if
->
-> supported
-
-Ack.
-
-
-Thanks
-ChenYu
-
-> > + *      voltage can't be changed and voltage readback failed.
->
-> --
-> With Best Regards,
-> Andy Shevchenko
->
->
 
