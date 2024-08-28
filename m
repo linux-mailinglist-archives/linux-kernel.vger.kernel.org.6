@@ -1,167 +1,261 @@
-Return-Path: <linux-kernel+bounces-305620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A0A4963144
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 21:50:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB12F96314F
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 21:52:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3610C1F26649
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 19:50:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66EBE283564
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 19:52:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99CC21AC445;
-	Wed, 28 Aug 2024 19:50:29 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6EBE1ABEDA;
-	Wed, 28 Aug 2024 19:50:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724874629; cv=none; b=YOdXC8fcWuAXeBBEUNJ4x10RhUhWfhnSNL99mSpU9N0P3qSzBg91sodtACZkDseUsuXpMXoJ1Cp2hIk5Hk2Ke6/tfYuVlFkALggSoDD9tDxAQoomq8p7nUnzoSuKKlE83KtObp7CrlsfLnNaOZLr4qBRalaC7WIPclR+v2QJAUU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724874629; c=relaxed/simple;
-	bh=J5uLwfIH0C5JMzfyTNRjXZlVW+LbfOQyjRaqBUfyWGc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PJ+JqbJt4HbfXY5pypZqMqVdM+kbQG4MUjSf0/50wk45wOaje4a+wSDw988Lr9ydy91pF2N+bfhlO9Quz1Ta18CJ8pRaWxuXsrKtMpcnyQGXCwT6Ru5DBctnG5vzau3tF2gWAF5Rl4F85I4kTT8GzBCe0/YGeL3RbKwv6H8nG/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 18CDDDA7;
-	Wed, 28 Aug 2024 12:50:52 -0700 (PDT)
-Received: from [10.57.15.188] (unknown [10.57.15.188])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 269DF3F762;
-	Wed, 28 Aug 2024 12:50:23 -0700 (PDT)
-Message-ID: <bb7dd4ca-948f-4af7-b2ac-3ca02e82699f@arm.com>
-Date: Wed, 28 Aug 2024 20:50:21 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5B661AC427;
+	Wed, 28 Aug 2024 19:52:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="GS0kQ2Cj"
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazolkn19011034.outbound.protection.outlook.com [52.103.33.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09C85189511;
+	Wed, 28 Aug 2024 19:52:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.33.34
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724874722; cv=fail; b=OaELbaoqQ9A5C3xfiQTT58xQ7OuRP+Bs5x4Sj111TILQ2tLu9+IofPVGUWxPbQivQ4Us0wOREhofl+o3xbzRGSMosfv9Bz4xGwfonRcsldYNB0FJCevURHeILufghimaoBsUgwnwzmF5FXcLwzEy5+EJcRxmfj2NkZ74gXAoFOQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724874722; c=relaxed/simple;
+	bh=I+PRF25M7jfBqRgW2Ga7WKjqfRzrL9d3hmcjmGC05ks=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=VxG/H0rd6kkVnYFmEYczmfyCuleQfqZlW3vo8/4XCYcecLKIHSYXadzOXyLTEVCFIMzz1aBlnniolBiiPstK/F6UnrEtgaenoXgGdUSyghzYDyr+s6aYLYx6nvpGsVPAJj0m84JRoYLNZjMHyV18pHRs36zBm3SD1tS+qoXUDmw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=GS0kQ2Cj; arc=fail smtp.client-ip=52.103.33.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=EMHTIxIG5Cla0Y9BsGAhrE02NBIooSNtWFU6qhu5zlujjs2DYUShluDGW6iwPpk0WnTovNLC0jxyfhiTdlvDT0xDZwNgtFAK8SJVrmQkMH9rxN9fiogcKW0OnJqin1Y3HsX8Y4s9FdTGiaTUAPmDHRMQDuW05YXIG/pzY19CMFguYqViTrP5jmvv/TXEnec8XI90xMfiKWgZ+G0cwoCNG0/ifhMoaelJfQfN5SeiczET8aHdNI13TtS5ssdGKuSTe8hanU0ffkOVRXvqVwT8cuzlnOVIMVcMj8j/fNycRV4kY7iRhYn/kRyLYnh5Gc1VoHI5kGZmTEINHLX0R9O5Jw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=XRzYS+j2NqWHTDb4LpZDygrfOUTmSmzG8CChrzTWgHI=;
+ b=JimFrS4FyAT6lkx5MG2bx5lz2ix4M5XW6x6BeLBSykSgcE05aDhFDxWtQ1SlSuj335mXrxJfBtDQ2F34o93vUs2nGMAJU9XIQgl0DgBeWN7Kz81DWo9LcOAq9XTWtZtPZ8u3nGQjPHM28JKa6h+Tfx5cPZTe0/cw4GwZua9pCxxW9SO+7ZqDwpPcBd66kcAVMiexnFSypyou7hnQFeKoKUcrESrdOcdC0scU79MHmtrgXu1s+7TlR3tC8PT61CevGkf8VxRCAUEbhvAaGgSVYvGN2L9Xn6wUSRcnvBZH7EbK/8x+x+ruJ/WIvSFbBhkZq9BXUd/FkZuLa+uQzOszZQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XRzYS+j2NqWHTDb4LpZDygrfOUTmSmzG8CChrzTWgHI=;
+ b=GS0kQ2Cjuyn8sqnbc0eh3D8wzGxc7q7qrvbPxbHw2ArLcu6E9sfY8nPJzQ/GF/tAUtQFpkvuGrXD07vqaLRePAshWz8EVF3jdQu3C1E02LlA+mGYemW1anK3Y9eqXnGN0BHhRIc4mKttOnmpaUHZyzTxpM9EzRaObHkZ6EilGqF92O9VaNemeWfuuxxC51sWvVjMbqisaXOWYN559mVmDzEqzC7e3/7aYh1GEiCv6OW0M/udhyo4pa8hgimqqRJ3OBOWrekJzAnxltZChNCIruHMZFMIgDfNMnWay0zQFoX2xJ7srNjKuvU0XuHGUwTGKMIH5wtT38dsj4kVhBsp6A==
+Received: from AM6PR03MB5848.eurprd03.prod.outlook.com (2603:10a6:20b:e4::10)
+ by PAWPR03MB9785.eurprd03.prod.outlook.com (2603:10a6:102:2e4::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.24; Wed, 28 Aug
+ 2024 19:51:58 +0000
+Received: from AM6PR03MB5848.eurprd03.prod.outlook.com
+ ([fe80::4b97:bbdb:e0ac:6f7]) by AM6PR03MB5848.eurprd03.prod.outlook.com
+ ([fe80::4b97:bbdb:e0ac:6f7%4]) with mapi id 15.20.7897.021; Wed, 28 Aug 2024
+ 19:51:58 +0000
+From: Juntong Deng <juntong.deng@outlook.com>
+To: ast@kernel.org,
+	daniel@iogearbox.net,
+	john.fastabend@gmail.com,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	memxor@gmail.com,
+	snorcht@gmail.com
+Cc: bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH bpf-next v2 2/2] selftests/bpf: Add test for zero offset or non-zero offset pointers as KF_ACQUIRE kfuncs argument
+Date: Wed, 28 Aug 2024 20:51:32 +0100
+Message-ID:
+ <AM6PR03MB5848CB6F0D4D9068669A905B99952@AM6PR03MB5848.eurprd03.prod.outlook.com>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <AM6PR03MB5848FD2BD89BF0B6B5AA3B4C99952@AM6PR03MB5848.eurprd03.prod.outlook.com>
+References: <AM6PR03MB5848FD2BD89BF0B6B5AA3B4C99952@AM6PR03MB5848.eurprd03.prod.outlook.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TMN: [0BW342BtYrawydNSq+Wc5V8bxSrN52Gb]
+X-ClientProxiedBy: LO4P123CA0531.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:2c5::15) To AM6PR03MB5848.eurprd03.prod.outlook.com
+ (2603:10a6:20b:e4::10)
+X-Microsoft-Original-Message-ID:
+ <20240828195132.50260-1-juntong.deng@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC 0/7] Introduce swiotlb throttling
-To: =?UTF-8?B?UGV0ciBUZXNhxZnDrWs=?= <petr@tesarici.cz>
-Cc: mhklinux@outlook.com, kbusch@kernel.org, axboe@kernel.dk,
- sagi@grimberg.me, James.Bottomley@HansenPartnership.com,
- martin.petersen@oracle.com, kys@microsoft.com, haiyangz@microsoft.com,
- wei.liu@kernel.org, decui@microsoft.com, hch@lst.de,
- m.szyprowski@samsung.com, iommu@lists.linux.dev,
- linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
- linux-scsi@vger.kernel.org, linux-hyperv@vger.kernel.org,
- linux-coco@lists.linux.dev
-References: <20240822183718.1234-1-mhklinux@outlook.com>
- <efc1eafc-dba4-4991-9f9a-58ceca1d9a35@arm.com>
- <20240828150356.46d3d3dc@mordecai.tesarici.cz>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20240828150356.46d3d3dc@mordecai.tesarici.cz>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM6PR03MB5848:EE_|PAWPR03MB9785:EE_
+X-MS-Office365-Filtering-Correlation-Id: abc03ebf-59d0-4048-f9ff-08dcc79ae027
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|461199028|8060799006|15080799006|5072599009|19110799003|3412199025|440099028;
+X-Microsoft-Antispam-Message-Info:
+	ElpsPg1MvCmqFkQJfgQyZvxgx5exuwIsUW08NEhNhq2DgRU4jaLiUDZOMC5JZneOawjXvrUocDPjzsko2ZLk2wLDLNBZeK3mqoHPSY0GWB1tEp5Nupr7IdBDKSQN/OnTyKPvmMsiv1JP5JC2NhYRILU1ocq/CJrfOAUsCELWhKQo7x1DU7HEGIQSJnVplVYcwY0u79VSJfnugVffOY4Gpy/4X0UxBaGkcV4wmPwU9gO+uEtqtglwVWSxRj/xEP11di/dJsyj+Rk3wwSKHiUY+X7/YTBgf2B0ij8x0AF58o/EN5EXBSz4HHbPx1GsPRcgT7G1Hd2/YtoG2V9gS/ObPfQf2xb+Krs3zRoTIP1OaitrxlMRIgKs2XUhXtnsyjVvReXAWGPVgaIqXGPo4yTmbpEFNyYvp2nzfX3+KkqvKKDI9bx0q35Pzoiv7kALiHUPE4WMxQcExFlFnKGi40S2ixn8H+arFW76q6gbqqB8hLggI2e9AF+CPClTS5eiQDu5SXHUnv1TfTvjAEPspTJyJFGiRVZ0WXvl5aicJLmo7+vbksbnW+TMRh/XYOeeQEFR05KannER+b4rjGbP8aMVy9msdg/XrZiNfhHW5RXV3BXzDL1Ovkx+VMJ3MOcl7rCNdGqTBOTluJKZW8ZferJ7+rYsNtDek/vXjuiV7VrBxvnAMtfYsBbnJ3LhH9SbWl9knAlJIYxxK1TB40K+4v+ckw==
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?FSqpcoqb3RYvSgvfjhIgOSCP5HWrquOyJIlZ8mAQbtOOfWeMkCWJ6Ce+n4Bf?=
+ =?us-ascii?Q?JHmDS6HhB0C7bYgMWv9Lzf2xn4Ag0PJprGNOPr4LI8mGGWPfIQetr9s94KVX?=
+ =?us-ascii?Q?Qk1CZCcjeh5TibROEdq3kxX3FVdpCx1rDvTWv+UAa+M/K6JxncAd8JNNQMfh?=
+ =?us-ascii?Q?GJke3GyHrt8XBRrPgqhR2MOctWgo/fd4UrahiaXEIs6LCHj/RRpXYxtpz9eo?=
+ =?us-ascii?Q?g4+iUMJq8RgqgFOduqYJJLc2AIN2BMWnZWUylws3oND3jocrAoyAIaeoTiFD?=
+ =?us-ascii?Q?vafTf0NDf4XZF/z4v5OCgYTrtpdO5ym0qmwV4VAmNAK4mDPp5+sl7JNiyKWf?=
+ =?us-ascii?Q?oH2dK2TH34OseBE7wuoYjEy6rYjTyF8llnQ2pB60wG+n3dcZJM8pZOVz/VO2?=
+ =?us-ascii?Q?0QMstrUYGyNHL8q+/DHgGv5sMDWmt6j9eAKBL5gsGYpQ+0NRyhZCa3+3ffCr?=
+ =?us-ascii?Q?U8IGbhbYBBlYA55RwY90SVsQn9twZ2RghjpSREP572xbLfEA6sf+ngmQw/jX?=
+ =?us-ascii?Q?2pSL3XcvQvIXz2zkm1Z3Pntz5XsvO9VHs1Ex4/F+KFumXpXlYi8GVXeW2dka?=
+ =?us-ascii?Q?HCUeY3aYsBd40ehIciZi8aDj05WME3+0Wdyj12nLCamevDNBlp9c4JRTzBxW?=
+ =?us-ascii?Q?M1yJ+DlJ5ygdnlvZPTU1gWivfer4+xVEt8TcOmplVNy0uB4qRm22lyI0nflG?=
+ =?us-ascii?Q?drEDHasdYftBD0r1ZaTJ7cS22CIFAob5TfCkiGUV/SoHJOJLWNQ86x5+/Fbk?=
+ =?us-ascii?Q?JkJIXq5MbnV4eHpe9q0D151O46oTVyeuDU6U+oP8AjkfEaRiiYTL7LYWMazA?=
+ =?us-ascii?Q?US0pM2vsIyddIqy+b0eU9EOlafnD2YE1UVi6wrFi41f+Imb1VUqISS+KzOYO?=
+ =?us-ascii?Q?Ex+EO1uI8ZCuRe+sIRwEPmrwCUmiSGUfDrqkAmUHpLZLOFQr4GQsC9HdyuOR?=
+ =?us-ascii?Q?0hmXlV0MKhv24bw9FoKgKOC/CIGyzzFzHti753oAjTQ//XDSJRaHVyZeoBFn?=
+ =?us-ascii?Q?AnpMd7nZtazU9C3/8IC6n96vJMgBK7+sEj9tHuuhrW+R9qkUn8d9xCPTqRN6?=
+ =?us-ascii?Q?pc8oxJ+wFAf5eTdmIR2CvUoXy8PQ4LRJFNFkzqhaGGeiYftvWC2xptEUMZ1t?=
+ =?us-ascii?Q?98qHlsdQTZ1hwzL3DX9OZvN7riC7Qa0dKgajdQ/SEPu11r6j1J5ei77+iZ4w?=
+ =?us-ascii?Q?5fvUdfRa7BYBAd+eXaMxPAxZxHcHC0ltg+Q/KhRk9mFdKtzoXz5LeA+Nysbx?=
+ =?us-ascii?Q?lEuewT9S90dJpLA1qLND?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: abc03ebf-59d0-4048-f9ff-08dcc79ae027
+X-MS-Exchange-CrossTenant-AuthSource: AM6PR03MB5848.eurprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2024 19:51:58.1941
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAWPR03MB9785
 
-On 2024-08-28 2:03 pm, Petr Tesařík wrote:
-> On Wed, 28 Aug 2024 13:02:31 +0100
-> Robin Murphy <robin.murphy@arm.com> wrote:
-> 
->> On 2024-08-22 7:37 pm, mhkelley58@gmail.com wrote:
->>> From: Michael Kelley <mhklinux@outlook.com>
->>>
->>> Background
->>> ==========
->>> Linux device drivers may make DMA map/unmap calls in contexts that
->>> cannot block, such as in an interrupt handler. Consequently, when a
->>> DMA map call must use a bounce buffer, the allocation of swiotlb
->>> memory must always succeed immediately. If swiotlb memory is
->>> exhausted, the DMA map call cannot wait for memory to be released. The
->>> call fails, which usually results in an I/O error.
->>>
->>> Bounce buffers are usually used infrequently for a few corner cases,
->>> so the default swiotlb memory allocation of 64 MiB is more than
->>> sufficient to avoid running out and causing errors. However, recently
->>> introduced Confidential Computing (CoCo) VMs must use bounce buffers
->>> for all DMA I/O because the VM's memory is encrypted. In CoCo VMs
->>> a new heuristic allocates ~6% of the VM's memory, up to 1 GiB, for
->>> swiotlb memory. This large allocation reduces the likelihood of a
->>> spike in usage causing DMA map failures. Unfortunately for most
->>> workloads, this insurance against spikes comes at the cost of
->>> potentially "wasting" hundreds of MiB's of the VM's memory, as swiotlb
->>> memory can't be used for other purposes.
->>>
->>> Approach
->>> ========
->>> The goal is to significantly reduce the amount of memory reserved as
->>> swiotlb memory in CoCo VMs, while not unduly increasing the risk of
->>> DMA map failures due to memory exhaustion.
->>
->> Isn't that fundamentally the same thing that SWIOTLB_DYNAMIC was already
->> meant to address? Of course the implementation of that is still young
->> and has plenty of scope to be made more effective, and some of the ideas
->> here could very much help with that, but I'm struggling a little to see
->> what's really beneficial about having a completely disjoint mechanism
->> for sitting around doing nothing in the precise circumstances where it
->> would seem most possible to allocate a transient buffer and get on with it.
-> 
-> This question can be probably best answered by Michael, but let me give
-> my understanding of the differences. First the similarity: Yes, one
-> of the key new concepts is that swiotlb allocation may block, and I
-> introduced a similar attribute in one of my dynamic SWIOTLB patches; it
-> was later dropped, but dynamic SWIOTLB would still benefit from it.
-> 
-> More importantly, dynamic SWIOTLB may deplete memory following an I/O
-> spike. I do have some ideas how memory could be returned back to the
-> allocator, but the code is not ready (unlike this patch series).
-> Moreover, it may still be a better idea to throttle the devices
-> instead, because returning DMA'able memory is not always cheap. In a
-> CoCo VM, this memory must be re-encrypted, and that requires a
-> hypercall that I'm told is expensive.
+This patch adds test cases for zero offset (implicit cast) or non-zero
+offset pointer as KF_ACQUIRE kfuncs argument. Currently KF_ACQUIRE
+kfuncs should support passing in pointers like &sk->sk_write_queue
+(non-zero offset) or &sk->__sk_common (zero offset) and not be rejected
+by the verifier.
 
-Sure, making a hypercall in order to progress is expensive relative to 
-being able to progress without doing that, but waiting on a lock for an 
-unbounded time in the hope that other drivers might release their DMA 
-mappings soon represents a potentially unbounded expense, since it 
-doesn't even carry any promise of progress at all - oops userspace just 
-filled up SWIOTLB with a misguided dma-buf import and now the OS has 
-livelocked on stalled I/O threads fighting to retry :(
+Signed-off-by: Juntong Deng <juntong.deng@outlook.com>
+---
+ .../selftests/bpf/bpf_testmod/bpf_testmod.c   | 17 ++++++++++
+ .../bpf/bpf_testmod/bpf_testmod_kfunc.h       |  4 +++
+ .../selftests/bpf/prog_tests/nested_trust.c   |  4 +++
+ .../selftests/bpf/progs/nested_acquire.c      | 33 +++++++++++++++++++
+ 4 files changed, 58 insertions(+)
+ create mode 100644 tools/testing/selftests/bpf/progs/nested_acquire.c
 
-As soon as we start tracking thresholds etc. then that should equally 
-put us in the position to be able to manage the lifecycle of both 
-dynamic and transient pools more effectively - larger allocations which 
-can be reused by multiple mappings until the I/O load drops again could 
-amortise that initial cost quite a bit.
+diff --git a/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c b/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c
+index bbf9442f0722..e8b34aeef232 100644
+--- a/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c
++++ b/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c
+@@ -183,6 +183,20 @@ __bpf_kfunc void bpf_kfunc_dynptr_test(struct bpf_dynptr *ptr,
+ {
+ }
+ 
++__bpf_kfunc struct sk_buff *bpf_kfunc_nested_acquire_nonzero_offset_test(struct sk_buff_head *ptr)
++{
++	return NULL;
++}
++
++__bpf_kfunc struct sk_buff *bpf_kfunc_nested_acquire_zero_offset_test(struct sock_common *ptr)
++{
++	return NULL;
++}
++
++__bpf_kfunc void bpf_kfunc_nested_release_test(struct sk_buff *ptr)
++{
++}
++
+ __bpf_kfunc struct bpf_testmod_ctx *
+ bpf_testmod_ctx_create(int *err)
+ {
+@@ -541,6 +555,9 @@ BTF_ID_FLAGS(func, bpf_iter_testmod_seq_destroy, KF_ITER_DESTROY)
+ BTF_ID_FLAGS(func, bpf_iter_testmod_seq_value)
+ BTF_ID_FLAGS(func, bpf_kfunc_common_test)
+ BTF_ID_FLAGS(func, bpf_kfunc_dynptr_test)
++BTF_ID_FLAGS(func, bpf_kfunc_nested_acquire_nonzero_offset_test, KF_ACQUIRE)
++BTF_ID_FLAGS(func, bpf_kfunc_nested_acquire_zero_offset_test, KF_ACQUIRE)
++BTF_ID_FLAGS(func, bpf_kfunc_nested_release_test, KF_RELEASE)
+ BTF_ID_FLAGS(func, bpf_testmod_ctx_create, KF_ACQUIRE | KF_RET_NULL)
+ BTF_ID_FLAGS(func, bpf_testmod_ctx_release, KF_RELEASE)
+ BTF_KFUNCS_END(bpf_testmod_common_kfunc_ids)
+diff --git a/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod_kfunc.h b/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod_kfunc.h
+index e587a79f2239..c6c314965bb1 100644
+--- a/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod_kfunc.h
++++ b/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod_kfunc.h
+@@ -144,4 +144,8 @@ void bpf_kfunc_dynptr_test(struct bpf_dynptr *ptr, struct bpf_dynptr *ptr__nulla
+ struct bpf_testmod_ctx *bpf_testmod_ctx_create(int *err) __ksym;
+ void bpf_testmod_ctx_release(struct bpf_testmod_ctx *ctx) __ksym;
+ 
++struct sk_buff *bpf_kfunc_nested_acquire_nonzero_offset_test(struct sk_buff_head *ptr) __ksym;
++struct sk_buff *bpf_kfunc_nested_acquire_zero_offset_test(struct sock_common *ptr) __ksym;
++void bpf_kfunc_nested_release_test(struct sk_buff *ptr) __ksym;
++
+ #endif /* _BPF_TESTMOD_KFUNC_H */
+diff --git a/tools/testing/selftests/bpf/prog_tests/nested_trust.c b/tools/testing/selftests/bpf/prog_tests/nested_trust.c
+index 39886f58924e..54a112ad5f9c 100644
+--- a/tools/testing/selftests/bpf/prog_tests/nested_trust.c
++++ b/tools/testing/selftests/bpf/prog_tests/nested_trust.c
+@@ -4,9 +4,13 @@
+ #include <test_progs.h>
+ #include "nested_trust_failure.skel.h"
+ #include "nested_trust_success.skel.h"
++#include "nested_acquire.skel.h"
+ 
+ void test_nested_trust(void)
+ {
+ 	RUN_TESTS(nested_trust_success);
+ 	RUN_TESTS(nested_trust_failure);
++
++	if (env.has_testmod)
++		RUN_TESTS(nested_acquire);
+ }
+diff --git a/tools/testing/selftests/bpf/progs/nested_acquire.c b/tools/testing/selftests/bpf/progs/nested_acquire.c
+new file mode 100644
+index 000000000000..8e521a21d995
+--- /dev/null
++++ b/tools/testing/selftests/bpf/progs/nested_acquire.c
+@@ -0,0 +1,33 @@
++// SPDX-License-Identifier: GPL-2.0
++
++#include <vmlinux.h>
++#include <bpf/bpf_tracing.h>
++#include <bpf/bpf_helpers.h>
++#include "bpf_misc.h"
++#include "../bpf_testmod/bpf_testmod_kfunc.h"
++
++char _license[] SEC("license") = "GPL";
++
++SEC("tp_btf/tcp_probe")
++__success
++int BPF_PROG(test_nested_acquire_nonzero, struct sock *sk, struct sk_buff *skb)
++{
++	struct sk_buff *ptr;
++
++	ptr = bpf_kfunc_nested_acquire_nonzero_offset_test(&sk->sk_write_queue);
++
++	bpf_kfunc_nested_release_test(ptr);
++	return 0;
++}
++
++SEC("tp_btf/tcp_probe")
++__success
++int BPF_PROG(test_nested_acquire_zero, struct sock *sk, struct sk_buff *skb)
++{
++	struct sk_buff *ptr;
++
++	ptr = bpf_kfunc_nested_acquire_zero_offset_test(&sk->__sk_common);
++
++	bpf_kfunc_nested_release_test(ptr);
++	return 0;
++}
+-- 
+2.39.2
 
-Furthermore I'm not entirely convinced that the rationale for throttling 
-being beneficial is even all that sound. Serialising requests doesn't 
-make them somehow use less memory, it just makes them use it... 
-serially. If a single CPU is capable of queueing enough requests at once 
-to fill the SWIOTLB, this is going to do absolutely nothing; if two CPUs 
-are capable of queueing enough requests together to fill the SWIOTLB, 
-making them take slightly longer to do so doesn't inherently mean 
-anything more than reaching the same outcome more slowly. At worst, if a 
-thread is blocked from polling for completion and releasing a bunch of 
-mappings of already-finished descriptors because it's stuck on an unfair 
-lock trying to get one last one submitted, then throttling has actively 
-harmed the situation.
-
-AFAICS this is dependent on rather particular assumptions of driver 
-behaviour in terms of DMA mapping patterns and interrupts, plus the 
-overall I/O workload shape, and it's not clear to me how well that 
-really generalises.
-
-> In short, IIUC it is faster in a CoCo VM to delay some requests a bit
-> than to grow the swiotlb.
-
-I'm not necessarily disputing that for the cases where the assumptions 
-do hold, it's still more a question of why those two things should be 
-separate and largely incompatible (I've only skimmed the patches here, 
-but my impression is that it doesn't look like they'd play all that 
-nicely together if both enabled). To me it would make far more sense for 
-this to be a tuneable policy of a more holistic SWIOTLB_DYNAMIC itself, 
-i.e. blockable calls can opportunistically wait for free space up to a 
-well-defined timeout, but then also fall back to synchronously 
-allocating a new pool in order to assure a definite outcome of success 
-or system-is-dying-level failure.
-
-Thanks,
-Robin.
 
