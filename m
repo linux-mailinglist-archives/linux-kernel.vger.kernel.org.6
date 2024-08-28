@@ -1,266 +1,290 @@
-Return-Path: <linux-kernel+bounces-304229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D85B6961C35
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 04:39:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D83FB961C39
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 04:44:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08B191C23070
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 02:39:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 06B511C22DAF
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 02:44:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C4DA129E93;
-	Wed, 28 Aug 2024 02:39:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1884776034;
+	Wed, 28 Aug 2024 02:44:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UD21eSBo"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="FOo6j8GY"
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011006.outbound.protection.outlook.com [52.101.70.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2E1C200CD;
-	Wed, 28 Aug 2024 02:39:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724812776; cv=none; b=eRxx2vzZoDZUZVlsIjAd/W8dTSVBnBwJmXUw9FoMkageS5jaoqt7V+0VR3+MFPdDeeofs0qWCsvyvahPa0RSHpYGn+N2maF4ACA7sgoR3mCMOffTTSDKWg+f7wJe66em39yXeuAf9ZhHBqBaByKWpn8Zw6axnKIOMtAKgit8SG8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724812776; c=relaxed/simple;
-	bh=2ZXtBTUi5Kw/5EWXmiCqP0tVkkTkI9dk6zjA1j9gRKg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qde8UwytD/KzsULMO9o3Bfou9ajqGDyNgjhXHWCKVYqEh827lYn9hSou/dHp1fvNlJ/90YouRDL/2hFsz9h1ESEo6Gc8KSaYHibP7e4B+E6Ew0cSw5ljhXuz9j282DyT1D2uDSWBETJTqIGOqslC7EZJ/1B4TLoBzxkUyPLGVFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UD21eSBo; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724812775; x=1756348775;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=2ZXtBTUi5Kw/5EWXmiCqP0tVkkTkI9dk6zjA1j9gRKg=;
-  b=UD21eSBogC9JYZTYQZdhPTenI+ZgtiRVC6qgPfVI3BX1clV37m5/1c2s
-   DiY3mCTIY2/e0S5obf7HlD+nQw8Ku58lmjGat8HLkfwTITdEGWJDwp5VE
-   rzkCHCpPrpYm3v6nZCFIvR50DvyBUBnubtm4IyC/u6E7a2vVy9ZQCe0Cw
-   rCI7zKmoFlxgk92XrojrKQ82Un8+VDu5qf5o9wyHLqMAcvsQloW1qBOgY
-   3uBLerCbNTMzgqZxHHECtwk+l7t8MvhQAFfYSBMWbS2+F2pgEhqclo+u3
-   D1izABvv2D3P29RhGficmqa+fmc4bc4ccqaRwqN2T9jNMnOPTJRYaUYYY
-   A==;
-X-CSE-ConnectionGUID: fUlfQiOgR6+zj+S+TPbDNw==
-X-CSE-MsgGUID: WyQ8a/jzQKStLAO/F0UA/A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11177"; a="34696140"
-X-IronPort-AV: E=Sophos;i="6.10,181,1719903600"; 
-   d="scan'208";a="34696140"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2024 19:39:35 -0700
-X-CSE-ConnectionGUID: YUfKDBDLQnyG7HqzOxSihA==
-X-CSE-MsgGUID: ZTHQgopVQwuL/xcntPkIxQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,181,1719903600"; 
-   d="scan'208";a="67433426"
-Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
-  by fmviesa005.fm.intel.com with ESMTP; 27 Aug 2024 19:39:30 -0700
-Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sj8am-000KMQ-0g;
-	Wed, 28 Aug 2024 02:39:28 +0000
-Date: Wed, 28 Aug 2024 10:38:52 +0800
-From: kernel test robot <lkp@intel.com>
-To: Dikshita Agarwal via B4 Relay <devnull+quic_dikshita.quicinc.com@kernel.org>,
-	Vikash Garodia <quic_vgarodia@quicinc.com>,
-	Abhinav Kumar <quic_abhinavk@quicinc.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Dikshita Agarwal <quic_dikshita@quicinc.com>
-Subject: Re: [PATCH v3 06/29] media: iris: introduce iris core state
- management with shared queues
-Message-ID: <202408281019.97M0qU7D-lkp@intel.com>
-References: <20240827-iris_v3-v3-6-c5fdbbe65e70@quicinc.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A13891F5FF
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 02:44:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.6
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724813048; cv=fail; b=f67xbbv/8/fCoIK7lBxP1YZL+8UCw3mq5nHOb9O9flMzKr2iwixj08bCSE4uldH6btPofYavu8NP7UYypsBPJqpfUp2Wkie5WvOptwM6aaTiQR0lN9u7EAl8P5G2Me1Mo6XeXPD3xakoi9fpvyk7W3+57WdV93mSUoNdx1Gyk+s=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724813048; c=relaxed/simple;
+	bh=ivK5Zl7QoOfxBAnKdcDgwteo6/bHFB1ZSLwJq1MinnU=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=jEtjEL2zzXdxF5RBbwxD81teut6XlAZWDxRsmhBu0+03VfHhBs9QkwqMzmeotpQQXIsQQUMBCTp2FGcTnTxEeNUDNazUyLnDa6MsmRPdRbXHFQfr5k/3fiGdCAUo365KbLzYCtkeCmTzJHRJVldPCMc0uTyFi8ZQHQFb7vuspiI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=FOo6j8GY; arc=fail smtp.client-ip=52.101.70.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=gEvgxouLR0XnUaTyhzIh+Biy4I0M0kn7s0cvncvR2eBlT7zlAqDmGFlwJXxU9qiLfqiXl0jvql0gvINJGdswlpoBZ5sxj0B+AfovRcGdmZQDWkXNxHENnf53Q0mhxSBqlqhOTySv1rNEpw9kPvw+W7lOLm/CZgPywgAiMNXaAX7TC05wbv01RQdEL9JW55cDjW1yNQ224530N3H8V3oNthbRLDJd+84V2Fj5X/8qzgvXZKohRIu2Ktqo0lSY8owjX0w6Nn6oDCUk4XxlKUTZYfqnuPQziQ8CiOc3BUTiQS5a3EhnVtdyGahPKbYYmXE4pfS2WVQxSk583+5jXtLHaA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=zIsognfvdI+S6bVS6snERZ2WFyHHwFERAE3cX6ilidc=;
+ b=auDugSJMh+R38p0oitTRLpwbef+E0sgFptzgO2bP3SZ8QtSsRwuAhFHp5ryEgwAmX32WQu8iz03HTsEVzD3kiD0eJ5CLXBD4xMreAdrbo7iW6Wz/IQY9v3DeMcASjU7GOOglvWSEu0Pgfsn05oOekYbgukoB/xH5ffmHiBHgAh2Jo5OwwVduX3SePpnRgDpTU2nrOKSkl7m8ZVQq2cFT7vSKHYiedMs+pC0OYEMQBA1VjICchl7pFDEF6TdVm0D6nA4B0iIw7Lh75GhbzEgRCb2vi9/yJMTybR97qtGjXuL0geKmcCnUECLBW92sSTcaeLZCwoFfe842tERAIQIojA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zIsognfvdI+S6bVS6snERZ2WFyHHwFERAE3cX6ilidc=;
+ b=FOo6j8GYOLwIQtSO8D6ee/o9iiYQbZL3a63XNyhH7i00Eaj7f08hpG2/TQIj93RhRzIq6ePMm0MAHCLkFgvwW5SHscntFjUj5Ne14qIlvz3z0743Lw/2pG5Gh/lczyNEOsFYmeEdmPGFNMLlL5xRS7v+e55XoQNLXmgfH6E7nKu4JdsNpgPMkOH8oYRmH4wGGJmem8OWJDi7bihtiWp/ckDANt2Zk+SJsvm7ixxtSoMtSPtOcxMdwlDtBn07/CMcCMbfLeQ8rm767F4KAIbygC06uMhTVhTabIVBisUEPRKY1oxGi8dmAdIXxIZABi0rvzUCJqSVFX/rYv6XhgLZeg==
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
+ by PA4PR04MB7856.eurprd04.prod.outlook.com (2603:10a6:102:cc::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.24; Wed, 28 Aug
+ 2024 02:44:03 +0000
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630%6]) with mapi id 15.20.7897.027; Wed, 28 Aug 2024
+ 02:44:00 +0000
+From: Peng Fan <peng.fan@nxp.com>
+To: Feng Tang <feng.tang@intel.com>, "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+CC: "nicolas.bouchinet@clip-os.org" <nicolas.bouchinet@clip-os.org>,
+	"chengming.zhou@linux.dev" <chengming.zhou@linux.dev>, "vbabka@suse.cz"
+	<vbabka@suse.cz>, Christoph Lameter <cl@linux.com>, Pekka Enberg
+	<penberg@kernel.org>, David Rientjes <rientjes@google.com>, Joonsoo Kim
+	<iamjoonsoo.kim@lge.com>, Andrew Morton <akpm@linux-foundation.org>, Roman
+ Gushchin <roman.gushchin@linux.dev>, Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+	"open list:SLAB ALLOCATOR" <linux-mm@kvack.org>, open list
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH V1] mm, slub: avoid zeroing kmalloc redzone
+Thread-Topic: [PATCH V1] mm, slub: avoid zeroing kmalloc redzone
+Thread-Index: AQHa9SPdEQxIue98MkeZxIMfiUY2nbI39J6AgAQEQWA=
+Date: Wed, 28 Aug 2024 02:43:58 +0000
+Message-ID:
+ <PAXPR04MB8459FAA6D4E1BB8A1BD1841488952@PAXPR04MB8459.eurprd04.prod.outlook.com>
+References: <20240823062415.3632189-1-peng.fan@oss.nxp.com>
+ <ZsssFS68lfFR2yJU@feng-clx.sh.intel.com>
+In-Reply-To: <ZsssFS68lfFR2yJU@feng-clx.sh.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PAXPR04MB8459:EE_|PA4PR04MB7856:EE_
+x-ms-office365-filtering-correlation-id: ec3799a0-e315-48d1-a479-08dcc70b44c1
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|376014|366016|7416014|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?6EoxSIqAvU28vNxUwfwzLrRHWBZX1kOBkil7pWHgmqsUTUetSaroKnSI3ATR?=
+ =?us-ascii?Q?A6xHQ4GfkXmYyetA5O8jv/42pBJjtU1YFpG0BJrAc0fmh+lyaMjdxvwjlNnh?=
+ =?us-ascii?Q?+oljenkrxOtlFtgv3bSYXtvGXmYaoy5I3/Agp+iKvQegh252nig/1kHcOKdg?=
+ =?us-ascii?Q?lIe7cR7WD5QFAvJQUaTSSMohs8BtK3UiuJP3ivO56Gy2mHf0AYmjQuKJWklz?=
+ =?us-ascii?Q?DcpZR9QF+qQdeLU3tr3B1Z7Hz5QvmNSGeJ73Ug4jGmvFDIaQB22eO/v7Rn7W?=
+ =?us-ascii?Q?mwl7Km1J2dnNLyVu6zu8uO88nU29e7U0VS4VNRK7y+juJQHuO+4kIBTEPJEV?=
+ =?us-ascii?Q?M4lRCSX5DdODZYiFrSsAHkp2VBRNUb4Vg2CstxTCWNdRX/ej2tsqRK9cKvLa?=
+ =?us-ascii?Q?WQKEXvOEINvbRZpaei+2aM6jK9r2kqiE0Y5lMt0bspA8nBCkxL9wJNKw8Jzm?=
+ =?us-ascii?Q?IOX4FikKCSEV5I5utW3D/DrJomSOvzvk8XYhAztkaXk0D5dhTqSGCWoGrvK5?=
+ =?us-ascii?Q?ZQ/1b8Z70BQfwrbFqxH4TMJDlWP5TiDutTbiAv3jbRnjheZEglqfiNaPnYFl?=
+ =?us-ascii?Q?q7K3ev0hS7ufbmcHTjD2lBja6KKWPq6Vquu8LEsJMbRZPjqjWdYJ/Di+ZYpf?=
+ =?us-ascii?Q?D//TZUMC00ptZNiozdQIhsqZeMNohwuGx1hgqQFnH1q/f85SG5qXGX8lAvdr?=
+ =?us-ascii?Q?B0r7QztmCGD1rKAgvRr2YbGWTGXd6RT3On8p++VPD2E1sHay2tDjcKYH3BsA?=
+ =?us-ascii?Q?xDSn5/JhvX+9XzP6xKowsizXz3jmhK2RBEc4woOxEB1OCZgjd+j1vq/cv7Ow?=
+ =?us-ascii?Q?oKakaUrCklUaEFIjr3a42c7+3NWZkp2OO76pIQBTMUppwnwzMZZkn+31njlj?=
+ =?us-ascii?Q?IDMcwRccXgEZN/jwRhlluV8mkBO9CBoLpAnmzr1nhQWCzQX6hSuKxPqrKnY/?=
+ =?us-ascii?Q?BtbvQr6sdu7c/4Mwft9YyApgNEe7pyLasAbCUeYT+lHD1n78GKDJ8nJPD3wu?=
+ =?us-ascii?Q?+9G1DVtLTejMHa/YEH9GSiM8qklK0ufAtZoqtuSy3XQUI0KY889CyBrRHYJN?=
+ =?us-ascii?Q?UpE3NARBc/3Ub0jlC3Kmw6poOuAPqnrGYgibg3Txy1uBU00m76aB28cGW2Ec?=
+ =?us-ascii?Q?migRF1/SkhLwNC3R88C9uSL1pWT5bsrbGdg6br9GoNaBOE2rkYxRDQ4QfM+p?=
+ =?us-ascii?Q?dbhj6zMnvkP2awQJ1hxiKdh4xBR4GuAHkXMcNviH79CqJfFs+3xMru/BVuaR?=
+ =?us-ascii?Q?9sn7RoSxi4AFAmljmK8NXIn49RTcD9/JVhb9JsitwsU51AOEtE108Gt92o3E?=
+ =?us-ascii?Q?lZ1yi52qhlwb0va/2RRwoWjKTeowWSVtU7Nxo17ucs5CtsW5L0TD6IiU9cuW?=
+ =?us-ascii?Q?z1Zms3dSfWFdg3h8nG1bvExWnp10xwAwRXpIjyWuPrS2CzySNg=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(7416014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?bRzIuzbadBCG9yot1zGdBwWzq6+zhQ+Xlqyl549r9H7bXD+X4jmlAww23gEb?=
+ =?us-ascii?Q?FdXukkC4LUJ+ch/Z5H0EL4fxjozq3Id7q+kgL4RG/eXm3ClbD7oOWLPHfI4f?=
+ =?us-ascii?Q?EJzDl/bGkxsJTx5vbXfTFhFgcQkoVB4eaWQu1vHL4KAhqgb3dTzXzgIRzuz7?=
+ =?us-ascii?Q?2L3HLKe1/NvJ9f1GeA0rtelc+REevSXCBstfF5YiFz47ba6zYRQvt9F5Q0Cp?=
+ =?us-ascii?Q?iUOqfIMz88yf+jybGxLsVC1qE42ZIRajsMWk8u880ID8fZ59qL7oCzaaPAUP?=
+ =?us-ascii?Q?JRBAVuDSlLMwkjjaOONpBcdW0hsKkNRSI7VrFWzQdqKgV47hpzz2MZHey7qA?=
+ =?us-ascii?Q?oYsqwd6Kd8iGhlJ451+q/8M+1tIoq0f0D4eJljoJ0kuIrZ3j437z3f8yhzel?=
+ =?us-ascii?Q?ShNzbNfm+vEbDDV0TNmxMtX5Scg/IzO3Ja58yFX17rP3apR69J+29+tPJdd3?=
+ =?us-ascii?Q?kWB5bp+fcaLPRWXXzpizBk93KDTGvlyc/ufN/kSioVI+zOMHgsG4byJrWY/v?=
+ =?us-ascii?Q?FZbzmdJjwwlf7mHsd9YUYLZuIqJZRROIufuXHJ1m/GZYCrtJRUTvUTruEx/z?=
+ =?us-ascii?Q?ANsLwYrocp/DfS41efFQYsR/D1UX5Tpijk2H9134ksUp4WbOdJ2ZaySNty0c?=
+ =?us-ascii?Q?LsvENko+P6v0/FPc2o20jRBelnut2FqFLoRcbkXty34E/efLYSK5yo4VrWcf?=
+ =?us-ascii?Q?6RdeJZ5RmEU8ASWrJDcdeT8DKYqANgG1549sZeB1Dx0D2sKsGdwuXJcY8kZa?=
+ =?us-ascii?Q?j0hHVxOIrasgvDr87Ix97ynXI+zZkGA/QVUcPIBvVAVRPk34QRAtZFbYkz/e?=
+ =?us-ascii?Q?Y0FVRN1iKrZsUmSosFkXpEfrnf3WNJby+v8iRCm+p1yiJgV0GY40/ttXAJN5?=
+ =?us-ascii?Q?+XZHXl2r+c5MiVA1c+x2uubhavnWOYNhWAZ2sEY37FQzyJAm9qlWQwWw0j4n?=
+ =?us-ascii?Q?qMi1WDd6hjCw0hk5fMHzgaCZxprw7SVNwSS+PJ0t5yDXrYBfrlLK5SbhKgkA?=
+ =?us-ascii?Q?iwcKLGlQrrrDXMdqHKLwKTwS97CX7HyAAeClofGkiqvpJMJ48509oiU0RTaG?=
+ =?us-ascii?Q?J/Q9jq3NS9JDpagDCrJbmnB2paMb7Bm2KkfTBVvixn3djUba7jd39nV7CS5i?=
+ =?us-ascii?Q?RLgzQbsLHx5jJJPhm+5mKTDsPf1GtNCPo0AxRR80iDTAdR6EV/WpbW8aUOg1?=
+ =?us-ascii?Q?T8V9esrlf0G2UBfyNSCPDeWzN8y++VNvC+YoHPHU6hhc5d+cq6EWN+HEf87K?=
+ =?us-ascii?Q?YIyKA3jEUDKrvPt+Cnh6P6cAuoRIbY1J/snbmQH496+9GH0fJNAznMg7hTu0?=
+ =?us-ascii?Q?d9Do7/EueHvVcc7PxYqZw0XMuVkwh/ee0wHOrJ5vn3d4uroiU8/PAHwXGGpK?=
+ =?us-ascii?Q?5lzRSN+WL/hyp33VLIVblw8rB36phQZFBleIp2IlSwmc+/svCI3O8eCeALwH?=
+ =?us-ascii?Q?ZvF/YdYgfYWdQEluNWeNnANNQ905viw3QDWRLT6y0oyrcRExRfWLlHi4MDEb?=
+ =?us-ascii?Q?j+VcXETSAXmStzEqgKhJ7NX8+24Xz4G+xHziU57DE3vw8ICO+ukJgqbgwVUc?=
+ =?us-ascii?Q?4d5WA8Rpei13OC5zS2Y=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240827-iris_v3-v3-6-c5fdbbe65e70@quicinc.com>
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ec3799a0-e315-48d1-a479-08dcc70b44c1
+X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Aug 2024 02:43:59.1679
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 1KAoCPubbgSwsZCSMZPixxJo8UORi317BgF54LI/k+hMwfgoHCtAYHT8jG4tiDaWgApexhQFis6/aGXry0T8oA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4PR04MB7856
 
-Hi Dikshita,
+> Subject: Re: [PATCH V1] mm, slub: avoid zeroing kmalloc redzone
+>=20
+> On Fri, Aug 23, 2024 at 02:24:15PM +0800, Peng Fan (OSS) wrote:
+> > From: Peng Fan <peng.fan@nxp.com>
+> >
+> > With commit 946fa0dbf2d8
+> > ("mm/slub: extend redzone check to extra allocated kmalloc space
+> than
+> > requested"), setting orig_size treats the wasted space (object_size -
+> > orig_size) as redzones. But (in check_object()) when orig_size is set
+> > to zero, the entire object is perceived as a redzone. To a valid
+> > allocated kmalloc space, when init_on_free=3D1, the wasted space and
+> the
+> > orig_size should not be cleared to 0, otherwise there will be kernel
+> dump:
+> >
+> > [    0.000000]
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > [    0.000000] BUG kmalloc-8 (Not tainted): kmalloc Redzone
+> overwritten
+> > [    0.000000] --------------------------------------------------------=
+---------------------
+> > [    0.000000]
+> > [    0.000000] 0xffff000010032858-0xffff00001003285f
+> @offset=3D2136. First byte 0x0 instead of 0xcc
+> > [    0.000000] FIX kmalloc-8: Restoring kmalloc Redzone
+> 0xffff000010032858-0xffff00001003285f=3D0xcc
+> > [    0.000000] Slab 0xfffffdffc0400c80 objects=3D36 used=3D23
+> fp=3D0xffff000010032a18
+> flags=3D0x3fffe0000000200(workingset|node=3D0|zone=3D0|lastcpupid=3D0x1f
+> fff)
+> > [    0.000000] Object 0xffff000010032858 @offset=3D2136
+> fp=3D0xffff0000100328c8
+> > [    0.000000]
+> > [    0.000000] Redzone  ffff000010032850: cc cc cc cc cc cc cc
+> cc                          ........
+> > [    0.000000] Object   ffff000010032858: cc cc cc cc cc cc cc
+> cc                          ........
+> > [    0.000000] Redzone  ffff000010032860: cc cc cc cc cc cc cc
+> cc                          ........
+> > [    0.000000] Padding  ffff0000100328b4: 00 00 00 00 00 00 00 00
+> 00 00 00 00              ............
+> > [    0.000000] CPU: 0 UID: 0 PID: 0 Comm: swapper/0 Not tainted
+> 6.11.0-rc3-next-20240814-00004-g61844c55c3f4 #144
+> > [    0.000000] Hardware name: NXP i.MX95 19X19 board (DT)
+> > [    0.000000] Call trace:
+> > [    0.000000]  dump_backtrace+0x90/0xe8
+> > [    0.000000]  show_stack+0x18/0x24
+> > [    0.000000]  dump_stack_lvl+0x74/0x8c
+> > [    0.000000]  dump_stack+0x18/0x24
+> > [    0.000000]  print_trailer+0x150/0x218
+> > [    0.000000]  check_object+0xe4/0x454
+> > [    0.000000]  free_to_partial_list+0x2f8/0x5ec
+> >
+> > To address the issue, use orig_size to clear the used area. And
+> > restore the value of orig_size after clear the remaining area.
+> >
+> > When CONFIG_SLUB_DEBUG not defined, (get_orig_size()' directly
+> returns
+> > s->object_size. So when using memset to init the area, the size can
+> > s->simply
+> > be orig_size, as orig_size returns object_size when
+> CONFIG_SLUB_DEBUG
+> > not enabled. And orig_size can never be bigger than object_size.
+> >
+> > Fixes: 946fa0dbf2d8 ("mm/slub: extend redzone check to extra
+> allocated
+> > kmalloc space than requested")
+>=20
+> Thanks for the fix! I missed to test the 'init_on_free' case back then.
+>=20
+> Reviewed-by: Feng Tang <feng.tang@intel.com>
+>=20
+> with one small nit below
+>=20
+> > Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> > ---
+> >
+> > RFC->V1:
+> >  Update commit log (Per Hyeonggon)
+> >  Use orig_size to do memset(Per Hyeonggon)  Add get_orig_size and
+> > set_orig_size when CONFIG_SLUB_DEBUG not enabled(kernel test
+> robot)
+> >
+> >
+> >
+> >  mm/slub.c | 20 ++++++++++++++++++--
+> >  1 file changed, 18 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/mm/slub.c b/mm/slub.c
+> > index 94f5a4143825..a5fbeb2835b1 100644
+> > --- a/mm/slub.c
+> > +++ b/mm/slub.c
+> > @@ -1895,6 +1895,15 @@ static inline void inc_slabs_node(struct
+> > kmem_cache *s, int node,  static inline void dec_slabs_node(struct
+> kmem_cache *s, int node,
+> >  							int objects)
+> {}
+> >
+> > +static inline unsigned int get_orig_size(struct kmem_cache *s, void
+> > +*object) {
+> > +	return s->object_size;
+> > +}
+> > +
+> > +static inline void set_orig_size(struct kmem_cache *s, void *object,
+> > +				 unsigned int orig_size)
+> > +{}
+>=20
+> Current get_orig_size() and set_orig_size() are protected by
+> CONFIG_SLUB_DEUG=3Dy macro, and with this patch, they will be called
+> in both ON and OFF case. Maybe we can just lift those existing
+> functions out of the "#ifdef CONFIG_SLUB_DEBUG" protection?
 
-kernel test robot noticed the following build warnings:
+This will build a bit more code when CONFIG_SLUB_DEBUG is
+not defined. But it should be fine. I will wait to see if other people
+have comments on this.
 
-[auto build test WARNING on 31aaa7d95e09892c81df0d7c49ae85640fa4e202]
+Thanks,
+Peng.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Dikshita-Agarwal-via-B4-Relay/dt-bindings-media-Add-sm8550-dt-schema/20240827-181059
-base:   31aaa7d95e09892c81df0d7c49ae85640fa4e202
-patch link:    https://lore.kernel.org/r/20240827-iris_v3-v3-6-c5fdbbe65e70%40quicinc.com
-patch subject: [PATCH v3 06/29] media: iris: introduce iris core state management with shared queues
-config: hexagon-allmodconfig (https://download.01.org/0day-ci/archive/20240828/202408281019.97M0qU7D-lkp@intel.com/config)
-compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 08e5a1de8227512d4774a534b91cb2353cef6284)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240828/202408281019.97M0qU7D-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408281019.97M0qU7D-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   In file included from drivers/media/platform/qcom/iris/iris_probe.c:8:
-   In file included from drivers/media/platform/qcom/iris/iris_core.h:10:
-   In file included from include/media/v4l2-device.h:12:
-   In file included from include/media/media-device.h:16:
-   In file included from include/linux/pci.h:38:
-   In file included from include/linux/interrupt.h:11:
-   In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/hexagon/include/asm/io.h:328:
-   include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     548 |         val = __raw_readb(PCI_IOBASE + addr);
-         |                           ~~~~~~~~~~ ^
-   include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     561 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
-      37 | #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
-         |                                                   ^
-   In file included from drivers/media/platform/qcom/iris/iris_probe.c:8:
-   In file included from drivers/media/platform/qcom/iris/iris_core.h:10:
-   In file included from include/media/v4l2-device.h:12:
-   In file included from include/media/media-device.h:16:
-   In file included from include/linux/pci.h:38:
-   In file included from include/linux/interrupt.h:11:
-   In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/hexagon/include/asm/io.h:328:
-   include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     574 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
-      35 | #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
-         |                                                   ^
-   In file included from drivers/media/platform/qcom/iris/iris_probe.c:8:
-   In file included from drivers/media/platform/qcom/iris/iris_core.h:10:
-   In file included from include/media/v4l2-device.h:12:
-   In file included from include/media/media-device.h:16:
-   In file included from include/linux/pci.h:38:
-   In file included from include/linux/interrupt.h:11:
-   In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/hexagon/include/asm/io.h:328:
-   include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     585 |         __raw_writeb(value, PCI_IOBASE + addr);
-         |                             ~~~~~~~~~~ ^
-   include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     595 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
-   include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     605 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
-   In file included from drivers/media/platform/qcom/iris/iris_probe.c:8:
-   In file included from drivers/media/platform/qcom/iris/iris_core.h:10:
-   In file included from include/media/v4l2-device.h:12:
-   In file included from include/media/media-device.h:16:
-   In file included from include/linux/pci.h:2669:
-   In file included from include/linux/dma-mapping.h:11:
-   In file included from include/linux/scatterlist.h:8:
-   In file included from include/linux/mm.h:2228:
-   include/linux/vmstat.h:514:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     514 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
->> drivers/media/platform/qcom/iris/iris_probe.c:114:35: warning: implicit conversion from 'unsigned long long' to 'unsigned long' changes value from 18446744073709551615 to 4294967295 [-Wconstant-conversion]
-     114 |         dma_set_seg_boundary(&pdev->dev, DMA_BIT_MASK(64));
-         |         ~~~~~~~~~~~~~~~~~~~~             ^~~~~~~~~~~~~~~~
-   include/linux/dma-mapping.h:77:40: note: expanded from macro 'DMA_BIT_MASK'
-      77 | #define DMA_BIT_MASK(n) (((n) == 64) ? ~0ULL : ((1ULL<<(n))-1))
-         |                                        ^~~~~
-   8 warnings generated.
-
-
-vim +114 drivers/media/platform/qcom/iris/iris_probe.c
-
-    59	
-    60	static int iris_probe(struct platform_device *pdev)
-    61	{
-    62		struct device *dev = &pdev->dev;
-    63		struct iris_core *core;
-    64		u64 dma_mask;
-    65		int ret;
-    66	
-    67		core = devm_kzalloc(&pdev->dev, sizeof(*core), GFP_KERNEL);
-    68		if (!core)
-    69			return -ENOMEM;
-    70		core->dev = dev;
-    71	
-    72		core->state = IRIS_CORE_DEINIT;
-    73		mutex_init(&core->lock);
-    74	
-    75		core->reg_base = devm_platform_ioremap_resource(pdev, 0);
-    76		if (IS_ERR(core->reg_base))
-    77			return PTR_ERR(core->reg_base);
-    78	
-    79		core->irq = platform_get_irq(pdev, 0);
-    80		if (core->irq < 0)
-    81			return core->irq;
-    82	
-    83		core->iris_platform_data = of_device_get_match_data(core->dev);
-    84		if (!core->iris_platform_data) {
-    85			ret = -ENODEV;
-    86			dev_err_probe(core->dev, ret, "init platform failed\n");
-    87			return ret;
-    88		}
-    89	
-    90		iris_init_ops(core);
-    91		ret = iris_init_resources(core);
-    92		if (ret) {
-    93			dev_err_probe(core->dev, ret, "init resource failed\n");
-    94			return ret;
-    95		}
-    96	
-    97		ret = v4l2_device_register(dev, &core->v4l2_dev);
-    98		if (ret)
-    99			return ret;
-   100	
-   101		ret = iris_register_video_device(core);
-   102		if (ret)
-   103			goto err_v4l2_unreg;
-   104	
-   105		platform_set_drvdata(pdev, core);
-   106	
-   107		dma_mask = core->iris_platform_data->dma_mask;
-   108	
-   109		ret = dma_set_mask_and_coherent(dev, dma_mask);
-   110		if (ret)
-   111			goto err_vdev_unreg;
-   112	
-   113		dma_set_max_seg_size(&pdev->dev, DMA_BIT_MASK(32));
- > 114		dma_set_seg_boundary(&pdev->dev, DMA_BIT_MASK(64));
-   115	
-   116		return 0;
-   117	
-   118	err_vdev_unreg:
-   119		video_unregister_device(core->vdev_dec);
-   120	err_v4l2_unreg:
-   121		v4l2_device_unregister(&core->v4l2_dev);
-   122	
-   123		return ret;
-   124	}
-   125	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+>=20
+> Thanks,
+> Feng
 
