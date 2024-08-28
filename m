@@ -1,75 +1,85 @@
-Return-Path: <linux-kernel+bounces-304796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F348996250A
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 12:35:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05D0D9624E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 12:27:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 823762828E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 10:35:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 799BDB2153C
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 10:27:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BABAD16BE04;
-	Wed, 28 Aug 2024 10:35:14 +0000 (UTC)
-Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 805A4158DC2
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 10:35:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82E3716B720;
+	Wed, 28 Aug 2024 10:27:15 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED55886250;
+	Wed, 28 Aug 2024 10:27:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724841314; cv=none; b=G29tGJ4lhBoVbSU+QkIpLkvqvKZeUpIm8+tCLRK0DRrf1Qpgd5nLsXu6P6G3ZsvflVJd5mcLeXAAad3dFQ5rxOBlqvYg8I1rRO2CtfBjqvTrrtJVtybKSlAWBQfwC9gmtNypAYnghgwkBs0w1cxdl1HBxEo37BUbiTaaDcqJxTI=
+	t=1724840835; cv=none; b=Ggpf2L2h0O7/QZVRwUgp9CnBDvWS8opo2K1PyID4WPPvuF+d0syKIrtkaHZoCLJcRfrskiVT3q0Ni0DwGYWZO9q/YWvo6QVbOhWGhG1QUP+uL4U/1lqjg4LlcM1I206nIMiSsJ9JXh/vNdO0P72kek5sn8hEUT2jx+eX9v48aPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724841314; c=relaxed/simple;
-	bh=T16fsUPl550numgCq3KQn3gR+JJ17P7o5/vVVn5Y3uA=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=E0mf6pRc5UC6Sc+kiV4pVZoLVP2P6Hm1Fcw7smvrjShmbctnD5umXAdFeB1H4ujV9aZFaMwig48tSLuWjQFxcBNKttnldXUyZEzKvXwirRs4iahmXJX4r44VYlZ0zA6a5QdKUgJVMSSL9AC5NJgvtAibmt9v03iNB/r5YSD2vhc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
-Received: by angie.orcam.me.uk (Postfix, from userid 500)
-	id 86CA092009C; Wed, 28 Aug 2024 12:35:02 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by angie.orcam.me.uk (Postfix) with ESMTP id 7FF1592009B;
-	Wed, 28 Aug 2024 11:35:02 +0100 (BST)
-Date: Wed, 28 Aug 2024 11:35:02 +0100 (BST)
-From: "Maciej W. Rozycki" <macro@orcam.me.uk>
-To: Christoph Hellwig <hch@infradead.org>
-cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-    Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
-    x86@kernel.org, Boris Ostrovsky <boris.ostrovsky@oracle.com>, 
-    "H. Peter Anvin" <hpa@zytor.com>, 
-    "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, 
-    Rick Edgecombe <rick.p.edgecombe@intel.com>, 
-    Isaku Yamahata <isaku.yamahata@intel.com>, 
-    Kevin Loughlin <kevinloughlin@google.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] x86/EISA: Use memremap() to probe for the EISA BIOS
- signature
-In-Reply-To: <Zs7PlOqxdz9xGCIo@infradead.org>
-Message-ID: <alpine.DEB.2.21.2408281109550.33652@angie.orcam.me.uk>
-References: <alpine.DEB.2.21.2408261015270.30766@angie.orcam.me.uk> <Zs7PlOqxdz9xGCIo@infradead.org>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+	s=arc-20240116; t=1724840835; c=relaxed/simple;
+	bh=RWr9+h0rvHq0GKm8IUgq023hhxbkVtf+MlTrlE28Ho4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=tHSUylsMvrBcKMI8Pdrw+1IzMgmDoDLF6wszpc07GSKmnVdP+lTvT0n62qqPkrgdTp2N6sTho9SNSSP2QKoHV685RyhTN2WyNqUOO1ejD/IyVLHwDs9RkkWu56ErXLQW+oivYkJMO0ZqvxBndOheEXsdY9sL8VKg+MzG5bKacOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Wv0r4297qz1HFth;
+	Wed, 28 Aug 2024 18:23:48 +0800 (CST)
+Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
+	by mail.maildlp.com (Postfix) with ESMTPS id 0D1A214013B;
+	Wed, 28 Aug 2024 18:27:08 +0800 (CST)
+Received: from huawei.com (10.90.53.73) by kwepemh500013.china.huawei.com
+ (7.202.181.146) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 28 Aug
+ 2024 18:27:07 +0800
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+To: <kashyap.desai@broadcom.com>, <sumit.saxena@broadcom.com>,
+	<shivasharan.srikanteshwara@broadcom.com>, <chandrakanth.patil@broadcom.com>,
+	<James.Bottomley@HansenPartnership.com>, <martin.petersen@oracle.com>,
+	<megaraidlinux.pdl@broadcom.com>, <linux-scsi@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: <ruanjinjie@huawei.com>
+Subject: [PATCH] scsi: megaraid: Use PCI_DEVID() macro to simplify the code
+Date: Wed, 28 Aug 2024 18:35:07 +0800
+Message-ID: <20240828103507.3680658-1-ruanjinjie@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemh500013.china.huawei.com (7.202.181.146)
 
-On Wed, 28 Aug 2024, Christoph Hellwig wrote:
+The macro PCI_DEVID() can be used instead of compose it manually.
 
-> > +	if (p && *p == 'E' + ('I' << 8) + ('S' << 16) + ('A' << 24))
-> 
-> Should this simply use strcmp now?
+Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+---
+ drivers/scsi/megaraid/megaraid_mbox.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- It's not an ASCIIZ string, so I guess memcmp() instead.  I can see there 
-is still no clarity as to whether memremap() is enough here (though it 
-escapes me why it wouldn't, given that early_memremap() analogously works 
-for the MP-table with the scenarios in question), so I'll let things 
-settle and look into an update once I'm back from my holiday next week.
+diff --git a/drivers/scsi/megaraid/megaraid_mbox.c b/drivers/scsi/megaraid/megaraid_mbox.c
+index bc867da650b6..92107a125aa2 100644
+--- a/drivers/scsi/megaraid/megaraid_mbox.c
++++ b/drivers/scsi/megaraid/megaraid_mbox.c
+@@ -3730,7 +3730,7 @@ gather_hbainfo(adapter_t *adapter, mraid_hba_info_t *hinfo)
+ 	hinfo->irq		= adapter->host->irq;
+ 	hinfo->baseport		= ADAP2RAIDDEV(adapter)->baseport;
+ 
+-	hinfo->unique_id	= (hinfo->pci_bus << 8) | adapter->pdev->devfn;
++	hinfo->unique_id	= PCI_DEVID(hinfo->pci_bus, adapter->pdev->devfn);
+ 	hinfo->host_no		= adapter->host->host_no;
+ 
+ 	return 0;
+-- 
+2.34.1
 
- NB sparse chokes on some headers' contents here, so it seems I can't 
-really make use of it without figuring out what's wrong first.
-
-  Maciej
 
