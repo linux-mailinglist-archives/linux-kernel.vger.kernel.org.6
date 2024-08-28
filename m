@@ -1,159 +1,99 @@
-Return-Path: <linux-kernel+bounces-304781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E6739624C8
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 12:24:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59E2C9624CE
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 12:24:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43FEB1C213DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 10:23:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1A291F24E57
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 10:24:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E7A716C847;
-	Wed, 28 Aug 2024 10:23:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C8E516C68D;
+	Wed, 28 Aug 2024 10:23:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="xRNOZVR9"
-Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com [209.85.217.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="ByTxmvBW"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EECC516C69E
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 10:23:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D6E016630F;
+	Wed, 28 Aug 2024 10:23:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724840604; cv=none; b=gLHoCd48XNDNmv/c+lChk4hSYCNQWxOXQlAzH/6xVG3mjQo0Kzd5iV66apwZo5PWRPigJQzfUT9Nly0WgmJ+C0IAz21OBjVYzCkmegwN6zchVUBhkdaqC2iCK4+n1bVXob6VWj84JiQiKzsl6SkEMfoApsw3bkj7+DMWnKBn41s=
+	t=1724840630; cv=none; b=qDV8if1tTSfspYivUJ5VmOLVIsA97YxBxCS53mOtAYZiqmF4gYVaYxTOf7IY7RXsfYk3PqD1jMnyUGlrAdOJLLbOgPkU70Kd1qY0oEb/5gE+A+tzrB1TtLEzHLWY8DR+v7sEHiXIzdc49TQT677EXDQDbhphlfa5IDKhGri+aqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724840604; c=relaxed/simple;
-	bh=pcmoMHkfM6+rVu9NGxIUa/tgdGuUsUHn2TixcQ7+jBo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OVyVzSYglF4g96R9lbwvpdqUsgkdhuN3+EaAac1pN+7BN+K6b41eNbbeg/Bu2W4cQCivbgkyiveVewohCGeeth2E5KnBTFPiR4PlU10TVo1t3FzYBMry/HpaGB0KOWnSGX/vcFBW+1EQOgkgPz+Wa3u5TIPfEly6zun/dQ44Gl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=xRNOZVR9; arc=none smtp.client-ip=209.85.217.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-498d14b9b8cso2244924137.3
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 03:23:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1724840602; x=1725445402; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1Mbi6UDIyTd2bDtcfNWtgeu1nnW22anmzdjv6AWS1kU=;
-        b=xRNOZVR9KJLSv7UMEP/2pMW7e/I6KpxUGJqVk2BgkYJuAjl6pha8zmpykWXST+9v+z
-         hCvQyNc1uSdYXD0cPP1YymS2c2dntk/XfIuPv/k7imQbshMpQC8JMp5HLmKGA8a/ATgR
-         Y1EBzO7snbX87v+rmMUB5mw4fobN9MlNVav4ZDCdgESseL4Hnb1zJ7xl58y2wLl7Zr6l
-         ncufmw1wzBNHP37LVAjzhgjKwlqOKjsgYWqyURK1RSElBoJyDxag70+5fzV3z12dqFdS
-         QgJ+CbWkC8yGWXBwTaE1Yq1lfbVMHoT0JAU05l6PqNT+Jggjxq0IoeSNszDeuH+C0n+E
-         aAug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724840602; x=1725445402;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1Mbi6UDIyTd2bDtcfNWtgeu1nnW22anmzdjv6AWS1kU=;
-        b=DPWexckSNiQCvXJU32XpWjtcB6PUi9XUen9dgFc2pz+fnzh1wigG/ysPGsyeGVFjTE
-         jmvfGRibpPLQ3dPicihK7U/4KZiU+9+6Ku+zGUok4oFcnG/NnkgCO4rEavilERtcyw1i
-         KqD6qUMEix2wD7cfU5Cf5M1ruu7r+nysVt/rtCACIoKSldrX/lD/WviP/4yCLgSGISiK
-         HcZBQEfrgyclXFQjCf1cc7GOoFjp2w/atAAaFvVsG+d1GBpvYCS//IzKCMkvlslFhlmD
-         mZQHDNvWkMDvOMV3Ami+eHUrcnUfvdNrln2Zy+g/JcCZ9R7uTI19jHSJC6/xkTPbsAR7
-         +r8g==
-X-Forwarded-Encrypted: i=1; AJvYcCVUXZLfJcBrYr+U66C0shML8ZtAEiSHZ71D9Q/HIyWPX1nJTShV9HeQLVfXX3hbYoxvqXNdTco3/LSKS4E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBYCs/Fh5gXREVuTF6zCbrxT51KFwK5dAAbDrsOZ4S7/AMhpvl
-	Qd1jy7LdB/6nJKspq+qSmtMDGPxRmBh97xXMn4T3x1I71UTX7oNyyuYNHSSwGIHj2zqgdU31J9O
-	VDFS52VqHuFKe/8WUXs2RR4Kw1jkNAuIRyeMxmQ==
-X-Google-Smtp-Source: AGHT+IGiYzqoMHpp0MAoVgUWF9ZasIX8jeUlgNpRL3MOlPNFy1/rfUwF8T0ImEZUhZW1LvMGbo0ZvCX5hvYP3bgA260=
-X-Received: by 2002:a05:6102:38c8:b0:498:efe0:f91d with SMTP id
- ada2fe7eead31-498f46ea982mr17511357137.19.1724840601668; Wed, 28 Aug 2024
- 03:23:21 -0700 (PDT)
+	s=arc-20240116; t=1724840630; c=relaxed/simple;
+	bh=WkeWkMHT8wJffburwSLbbQl3fGKE0R0M5twr/hXzINw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G6wYmXJ9p/Pq5qqfkhKIemqOSBJYTcYMR0/OUZp/DDH9ww4mWXXPgs6vG0Ep49R0S1pnMJve0qo20jmCD/b9ZMzL9KPA+qD4vk+JB970IiIOFslyNKsrOI96djxc/FM0vSyeeNsMhBuYA55UEG7W7VSPQYRdUNu8JFJOwC8sxqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=ByTxmvBW; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 073F240E025E;
+	Wed, 28 Aug 2024 10:23:46 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id QOgJoKfMJfor; Wed, 28 Aug 2024 10:23:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1724840621; bh=ddCbswtjTTHgDRFIT8XIkmnHRxR08h6tTIECtSm3fKw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ByTxmvBWJnONmGpOAoF2R0u4iMB1sYKum675i9AQIA9+bPv5zeaw1jtFjSHVAa3Um
+	 uED/jGJx+9BfCIvlSbmP5DGPfmnWJSxkvASJfgrMd7KkUGTL++siweoEcMe3aX0AFo
+	 E16XB3fjXRfjzLOX7c2QPHcVNy04K8Szs3bOsPlPKFdR7M0uI3ZtpZstwIv4d3P3CH
+	 yjIg1FpigC8i38XyvesjdOEN9zDspmgfXdzW3y32g/Lof8Z8svneKaBER2qkPZKh66
+	 GCgIq2THCfAb/1KkDVAgJlCMo/n3hz7Jpko35/l0qaiDizx4kiJPNOdEEGk63vz0kp
+	 86TaiSc3XhXTBqx4VZrRpT9+4JvaKzdYMlZd8Gxo1aHa60rioDr2OYIhewuF5R5Kzm
+	 CRXq5e38et/yIZyDd63sNDZ3MLOo3DtJtYmD1GiCkHWgIQ9zKBucLU8nyPCMDkAu3Z
+	 oEeaG0dHbQYNJR4PDjryh+4Qy7j8v9U5bPSDQuSv9Hlm32k2qUZX5rGletywyguOYn
+	 j/ndFBvvt9ikLbkw8mzxauWH8DDraJDQ7LXtlhpqieU9A3rIqDuyd4VC7gYpYKlA8w
+	 Ep7NcnS1NX2HWtSwqF+QjDdZrn9pHl+unNpvgE4bIJLdjVMPq0fahqRcARgSXGNqNm
+	 uJk2cjR8pq6rfYSS7RnW1R6U=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id B27C240E0169;
+	Wed, 28 Aug 2024 10:23:30 +0000 (UTC)
+Date: Wed, 28 Aug 2024 12:23:25 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: "Nikunj A. Dadhania" <nikunj@amd.com>
+Cc: linux-kernel@vger.kernel.org, thomas.lendacky@amd.com, x86@kernel.org,
+	kvm@vger.kernel.org, mingo@redhat.com, tglx@linutronix.de,
+	dave.hansen@linux.intel.com, pgonda@google.com, seanjc@google.com,
+	pbonzini@redhat.com
+Subject: Re: [PATCH v11 06/20] x86/sev: Handle failures from snp_init()
+Message-ID: <20240828102325.GBZs76nXJVyj-pILca@fat_crate.local>
+References: <20240731150811.156771-1-nikunj@amd.com>
+ <20240731150811.156771-7-nikunj@amd.com>
+ <20240827113227.GAZs25S8Ubep1CDYr8@fat_crate.local>
+ <5b62f751-668f-714e-24a2-6bbc188c3ce8@amd.com>
+ <20240828094933.GAZs7yrbCHDJUeUWys@fat_crate.local>
+ <94899c78-97e3-230a-a7eb-d4d448d9fa75@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240819064721.91494-1-aardelean@baylibre.com>
- <20240819064721.91494-7-aardelean@baylibre.com> <zuvwoy5wtdel7qgkz6wa6valwjwajpwoqnizyoooiawghrxvc3@cuoswu32h4fl>
- <CA+GgBR_V8r0Vz1PeKxwD6ovwHXxGM6=Z6XVd03ehokT5C3zjnQ@mail.gmail.com>
- <20240821212606.6981eae1@jic23-huawei> <46153017-9ab2-4a2f-afe6-9321e0f65f03@kernel.org>
-In-Reply-To: <46153017-9ab2-4a2f-afe6-9321e0f65f03@kernel.org>
-From: Alexandru Ardelean <aardelean@baylibre.com>
-Date: Wed, 28 Aug 2024 13:23:10 +0300
-Message-ID: <CA+GgBR-ZPfJuOJJuXqUu6YEBmzHf6SLYWFprQUo8X-UhyRTyEg@mail.gmail.com>
-Subject: Re: [PATCH 6/7] dt-bindings: iio: adc: add adi,ad7606c-{16,18}
- compatible strings
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Jonathan Cameron <jic23@kernel.org>, linux-iio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, krzk+dt@kernel.org, 
-	robh@kernel.org, lars@metafoo.de, michael.hennerich@analog.com, 
-	gstols@baylibre.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <94899c78-97e3-230a-a7eb-d4d448d9fa75@amd.com>
 
-On Fri, Aug 23, 2024 at 12:09=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.o=
-rg> wrote:
->
-> On 21/08/2024 22:26, Jonathan Cameron wrote:
-> >
-> >>>> +    type: object
-> >>>> +    $ref: adc.yaml
-> >>>> +    unevaluatedProperties: false
-> >>>> +
-> >>>> +    properties:
-> >>>> +      reg:
-> >>>> +        description: The channel number.
-> >>>> +        minimum: 0
-> >>>> +        maximum: 7
-> >>>> +
-> >>>> +      diff-channel:
-> >>>> +        description: Channel is bipolar differential.
-> >>>
-> >>> There is diff-channels property, why do we need one more?
-> >>
-> >> Yeah, I wanted to use that.
-> >> Maybe I will try another spin at that.
-> >> The thing with "diff-channels" is that it requires 2 ints.
-> >> So,  diff-channels =3D <0 0>.
-> >> To use it here, a rule would need to be put in place where  "reg =3D=
-=3D
-> >> diff-channels[0] && reg =3D=3D diff-channels[1]".
-> >> That also works from my side.
-> >> Part of the reason for this patchset, was to also get some feedback
-> >> (if this is the correct direction).
-> >>
-> > So I 'think' this is a datasheet matching thing.
-> > In many cases, even for strictly differential devices, the pin
-> > naming allows for a clear A - B channel description. Here
-> > in the non differential modes, the negative pins are effectively
-> > not used (from a really quick look at the datasheet)
-> >
-> > So we 'could' introduce magic channels (give them high numbers) for
-> > the negative ends. I think we may want to do that for the
-> > userspace ABI (0-0 on the few times it has come up has been a
-> > calibration / self check mode not what you have here - it
-> > wires the actual inputs together).  Alternative is just present
-> > them as a simple voltage and don't worry about the differential aspect
-> > as it's not hugely different to bipolar (where the zero level is
-> > effectively the negative input of a differential ADC.
-> >
-> > For the binding I'm fine with the binding using A, A as you suggest
-> > with an update to adc.yaml to cover this corner.
+On Wed, Aug 28, 2024 at 03:46:23PM +0530, Nikunj A. Dadhania wrote:
+> Do you want me to send the patch again with above change?
 
-The main difference the "diff-channels" property brings is a change to
-the available scales.
-They differ a bit between differential, and single-ended (unipolar and bipo=
-lar).
+After I've gone through the whole set, sure.
 
-I'll update the adc.yaml file then.
+Thx.
 
->
-> Yep, let's add it to adc.yaml.
->
-> >
-> > We never (I think) have bindings for the self check case where the inpu=
-t
-> > is wired to both sides. It's just a mode that is applied to
-> > any inputs that are wired.
-> >
-> Best regards,
-> Krzysztof
->
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
