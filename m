@@ -1,100 +1,189 @@
-Return-Path: <linux-kernel+bounces-305453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77518962EE7
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 19:50:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 296DC962EE9
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 19:50:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 225631F21D8B
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 17:50:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5CB681C20893
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 17:50:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2E381AAE05;
-	Wed, 28 Aug 2024 17:49:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 141001A7ADD;
+	Wed, 28 Aug 2024 17:49:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="D/CqHwv5"
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AqmZBbRV"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7CF31A76AB
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 17:49:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96356166302;
+	Wed, 28 Aug 2024 17:49:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724867381; cv=none; b=JBjtIrRlUdkMR9Nsd0iyEJmqG8XHYtia/S/EviLks+P42sFisgbflPl02SdNJO8dHw1Il90wZPV6QU/kz+pmZVi6OQbu24U+BhRAKjuoks+vQIIUnuPnukTpfYm0z2S28K4KsaYw9haOgc57FkzFC8M29bsbmW8iS/iGgkO73hI=
+	t=1724867397; cv=none; b=DTNBytlYZdZUZzRxBNBYxlEZnMbHZuumOxQW9E1QO6PCxUO5gyE5w9Foxe8TbQblmrxURpMye7jeoMvuoZj0bdNqd6DZeXP6wZF6eeghw3niPyqyl/dyOsOlpQFYBqGHuaj/85Hz/KpO68MqlM5i+ux41ZaFbz74Z+co0hFuUno=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724867381; c=relaxed/simple;
-	bh=RB0gYDlrNJiZM9gMOPtX9bPUIJv5wG4yrnIl4zbzdR8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dvyvnNmx5zmFawEqbUoIVXyre0ciriiKMR5+CJT07Mgs5ua3l0OcQUHbsMvcabybgKx6mIW3/XjHwQFxIJQAzTBjuLhnaMLVuAB8XiOxIwPewPthQbe3fouZNsu4alAMeKj92MmmN7FgY6xfJU281JjnZDXRZH4QSJVfdiyFIeg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=D/CqHwv5; arc=none smtp.client-ip=209.85.160.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-45029af1408so19851cf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 10:49:39 -0700 (PDT)
+	s=arc-20240116; t=1724867397; c=relaxed/simple;
+	bh=WLVw/MzwZZYc+FLwv4AVDjwEdiq3qFjmZrfxJuaPQi8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O8iHK4bRAEz8AI97Wqrx8eRi6hzkJn9CJTONGj753nX8UcdwJnaCgRitpNM8MT25njdrxiwgZ6M6jprf83vHF+QWpSKBvRyTNosM3yrrsxgEQPWmwMb0m5TeebdgLyqJ0bP0VZ22qE7aN3BMMABxL9xN9Fx0D7m+CeAPfZddbcg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AqmZBbRV; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a86910caf9cso176535166b.1;
+        Wed, 28 Aug 2024 10:49:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724867379; x=1725472179; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RB0gYDlrNJiZM9gMOPtX9bPUIJv5wG4yrnIl4zbzdR8=;
-        b=D/CqHwv5uhyfmEGFK4XYZScKucS4zob6THJFqlLp8KFLn+z3e8NazklJLRTGVEDZ9l
-         /7WvgGOLozoIbIazms/ij6bqz7sIdHY/U94/+a/c3ulKN8Xg1QHpNcH9sItKtO/t1VPO
-         Ey9TSCPNtvJUG5XAZy8uIweOpD7V5YDaDNtL2blNRP46g3EolKN8szMJWeJQi0gMbwEJ
-         81rnWzRlodrF2l+1/EocQJTZAK0Eku22PmnDZwanjRFlIJNdZoB/s0ao0TuZGLBGtTzg
-         hALZK8N9DOsx0phbXERUcYbPM2y6atMjO3bTyTyVu1qZphPv7LciVCH2+K1YJvaD1qOZ
-         0xxg==
+        d=gmail.com; s=20230601; t=1724867394; x=1725472194; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=LbtgMIebzvLQcLsMDmLEedziYElh6r9r50MOFoD98VM=;
+        b=AqmZBbRVI7m+7Ag83WI0MVmLzVLNzhIIHD0Pg7H3/DTb6R1nzr3hKDDFtXPt/kENir
+         df7R9dQh7OoxAsIqgudG8/ZlT5LZjBKZxfo4697JklsQpL2aP4TY6T1PNx23qbTKNb9q
+         ChNRH10YbsuK2k5nzyvK5703pDz0Mjl/SKOep9gq4pltipWTzsZMEHCMrP0iWK9BZfQk
+         g4QFm1BhOrE3jdk9RdunCZVuDPJzN3V0HI2LiESH6xq5oHRDg/qCICbnj+Pgte+E7QSv
+         4TZWbqzci/jdUVOhb4vy1Mb0kgZfFYpgw+Sq0K42vtJV06rVkBv5B7e3wgdMwFdUkI8z
+         mziw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724867379; x=1725472179;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RB0gYDlrNJiZM9gMOPtX9bPUIJv5wG4yrnIl4zbzdR8=;
-        b=muG4y9jslJGZ/rPbRaN0Y5UQtMM8aX+toNCwIDLxRh0koUYo1KOWGvZqJoL6AaUbd5
-         kqaMUZDboT6m9cyTxlh1Zt1O/SFxxfzzZa7LvQQlK7FQaf9nKTrLmzK6a2VvpAGUr77A
-         6zgO8QamryIaGoTwhbRj1D8HKHtwbat8UYToRTg+Mgan2C3ayVRZbAW0YwY+nbqM1Plb
-         e2XoH2J+kM6HXcVxdPnhZDR/Z+qAjHZ+E6+JBaiax1CzNia8fvOjZIvt8PdTtT/V5I/Z
-         Ct3gq/w0MMbNWgfdYdlO3AGuF25+Mop4uF2e2IOZSCTpV3Tc6BmMS1x95RUMl3AfQ+dR
-         mymQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX8NPcq3XuHWmUcrRn82lEBgDMkKS25no5DXHRm1fwi0WhNHAyyX7d81qEQ/7WltTdcJfmzdgfOSWEdZ8g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMQQMDDoaPjxb8EEfIQPMfPsMF0aw/QeuEAlU2sRU15JjW5xR/
-	GtftUiBcEUPPROIlTWOzb5UClvHd0sb7Jf1L3vrpSIA4iMf/ze9bvwqMWwULFUchtGeGDuqbfzO
-	bLZz/n2CLUq4DPZU0CjcxyHk44W+GmD/9vODA
-X-Google-Smtp-Source: AGHT+IEKMHHGJtLqzfE5OLqcqKU8/kPCWNZdnQNkYHAgAgw0nhFgAtmur8/MwM72yoqZWIkF41V9O79fVwQTWov+owQ=
-X-Received: by 2002:a05:622a:390:b0:44f:cb30:8b71 with SMTP id
- d75a77b69052e-4566e2acf5bmr3573481cf.25.1724867378580; Wed, 28 Aug 2024
- 10:49:38 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724867394; x=1725472194;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LbtgMIebzvLQcLsMDmLEedziYElh6r9r50MOFoD98VM=;
+        b=ttu20UHvY0CVBUV9DOQqSs1KnbdzD/W0rnQXqRW/lQLh27i8vgR3pOT17Kd1S+jVMJ
+         QOTNE+USghyk0GfbodiC8VdiGxN6p7tuPU+P80G1Qui62E42f+rcXjon4Knxh5vFLT5N
+         lua0qUki7SzH3pwVqaFChxms48wFX9zL23Mr5fvO7WPbS7M50J7mlokh6N5QAh2SAgv6
+         fX3RnUrsA7iIp/akwQcrzUe9KRYPW80M6fQDAmEeE8cPnAghbRlA7Ihdmt589qZXd1gM
+         hCYQkRl3EyGmajUSxhL0BzkKhY8m3x7tTxubpOqbz38qfWjP7jUL5TxShh5Uuiu3Sfkb
+         s5iA==
+X-Forwarded-Encrypted: i=1; AJvYcCWA0xyCUha7rQ+qm8eESjmYoLYfZ6DyVvrOCikz2R3hC5/ucdnYd9syfRwOGRuiArNRIfmKA1MgsDLPHPpf@vger.kernel.org, AJvYcCWflPN4QNcb2o6cLI3rlbkKo5hyqpEZ+C5Itq9FXcjIy54FYy0Y9xZ908Pbb76fbsjjEDk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRA+4SSWekLKib4BMKASezA98kvMieL+GwjQyby94Sdb2klUfE
+	XB0Txa4QiRfs6F02KujtMQU4W0eCedSLqQv+UD5oAidCkwRBOmWZ
+X-Google-Smtp-Source: AGHT+IE4vBfeRFM4byIab76yDsQOJRX37Xos2G/MiQVHkE5Zzsz0kSeJfotFwXN4CHSqHQaZrkWSJQ==
+X-Received: by 2002:a17:907:3f8a:b0:a7a:a4cf:4f93 with SMTP id a640c23a62f3a-a897ead4b78mr36893766b.32.1724867393562;
+        Wed, 28 Aug 2024 10:49:53 -0700 (PDT)
+Received: from example.org (ip-94-112-152-157.bb.vodafone.cz. [94.112.152.157])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a86e588b39asm271462166b.159.2024.08.28.10.49.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Aug 2024 10:49:52 -0700 (PDT)
+Date: Wed, 28 Aug 2024 19:49:50 +0200
+From: Alexey Gladkov <gladkov.alexey@gmail.com>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+	linux-kbuild@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Oleg Nesterov <oleg@redhat.com>
+Subject: Re: [PATCH v2] bpf: Remove custom build rule
+Message-ID: <Zs9jPsBY_SNuuB3d@example.org>
+References: <CAK7LNAQju8OeqW_8JtNXAQWow8Ho8778Rq-Y_v22PSrbB39L0g@mail.gmail.com>
+ <20240828170635.4112907-1-legion@kernel.org>
+ <CAK7LNATb8dbhvdSgiNEMkdsgg93q4ZUGUxReZYNjOV3fDPnfyQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240827230753.2073580-1-kinseyho@google.com> <20240827230753.2073580-6-kinseyho@google.com>
-In-Reply-To: <20240827230753.2073580-6-kinseyho@google.com>
-From: "T.J. Mercier" <tjmercier@google.com>
-Date: Wed, 28 Aug 2024 10:49:26 -0700
-Message-ID: <CABdmKX2GbvqtB2dED7hNKYtMLwu=akanYUVN3DS3Vtgbcde8bw@mail.gmail.com>
-Subject: Re: [PATCH mm-unstable v3 5/5] mm: clean up mem_cgroup_iter()
-To: Kinsey Ho <kinseyho@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, 
-	Yosry Ahmed <yosryahmed@google.com>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
-	Shakeel Butt <shakeel.butt@linux.dev>, Muchun Song <muchun.song@linux.dev>, 
-	Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>, mkoutny@suse.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAK7LNATb8dbhvdSgiNEMkdsgg93q4ZUGUxReZYNjOV3fDPnfyQ@mail.gmail.com>
 
-On Tue, Aug 27, 2024 at 4:11=E2=80=AFPM Kinsey Ho <kinseyho@google.com> wro=
-te:
->
-> A clean up to make variable names more clear and to improve code
-> readability.
->
-> No functional change.
->
-> Signed-off-by: Kinsey Ho <kinseyho@google.com>
+On Thu, Aug 29, 2024 at 02:22:33AM +0900, Masahiro Yamada wrote:
+> On Thu, Aug 29, 2024 at 2:07 AM Alexey Gladkov <legion@kernel.org> wrote:
+> >
+> > According to the documentation, when building a kernel with the C=2
+> > parameter, all source files should be checked. But this does not happen
+> > for the kernel/bpf/ directory.
+> >
+> > $ touch kernel/bpf/core.o
+> > $ make C=2 CHECK=true kernel/bpf/core.o
+> >
+> > Outputs:
+> >
+> >   CHECK   scripts/mod/empty.c
+> >   CALL    scripts/checksyscalls.sh
+> >   DESCEND objtool
+> >   INSTALL libsubcmd_headers
+> >   CC      kernel/bpf/core.o
+> >
+> > As can be seen the compilation is done, but CHECK is not executed. This
+> > happens because kernel/bpf/Makefile has defined its own rule for
+> > compilation and forgotten the macro that does the check.
+> >
+> > There is no need to duplicate the build code, and this rule can be
+> > removed to use generic rules.
+> >
+> > Signed-off-by: Alexey Gladkov <legion@kernel.org>
+> 
+> 
+> Did you compile-test this?
 
-Reviewed-by: T.J. Mercier <tjmercier@google.com>
+Yes. I repeated my steps for reproduce:
+
+$ touch kernel/bpf/core.c
+$ make C=2 CHECK=true |grep kernel/bpf/core
+  CC      kernel/bpf/core.o
+  CHECK   kernel/bpf/core.c
+
+but maybe my config is too small.
+
+> 
+> See my previous email.
+> 
+> 
+> 
+> 
+> I said this:
+> 
+> $ cat kernel/bpf/btf_iter.c
+> #include "../../tools/lib/bpf/btf_iter.c"
+> 
+> 
+> Same for
+> kernel/bpf/btf_relocate.c
+> kernel/bpf/relo_core.c
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> > ---
+> >  kernel/bpf/Makefile | 6 ------
+> >  1 file changed, 6 deletions(-)
+> >
+> > diff --git a/kernel/bpf/Makefile b/kernel/bpf/Makefile
+> > index 0291eef9ce92..9b9c151b5c82 100644
+> > --- a/kernel/bpf/Makefile
+> > +++ b/kernel/bpf/Makefile
+> > @@ -52,9 +52,3 @@ obj-$(CONFIG_BPF_PRELOAD) += preload/
+> >  obj-$(CONFIG_BPF_SYSCALL) += relo_core.o
+> >  obj-$(CONFIG_BPF_SYSCALL) += btf_iter.o
+> >  obj-$(CONFIG_BPF_SYSCALL) += btf_relocate.o
+> > -
+> > -# Some source files are common to libbpf.
+> > -vpath %.c $(srctree)/kernel/bpf:$(srctree)/tools/lib/bpf
+> > -
+> > -$(obj)/%.o: %.c FORCE
+> > -       $(call if_changed_rule,cc_o_c)
+> > --
+> > 2.46.0
+> >
+> 
+> 
+> --
+> Best Regards
+> Masahiro Yamada
+> 
+
+-- 
+Rgrds, legion
+
 
