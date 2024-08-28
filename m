@@ -1,43 +1,44 @@
-Return-Path: <linux-kernel+bounces-304912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3FB696269C
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 14:12:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96A1596269A
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 14:11:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FEBA284A9E
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 12:12:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B924A1C21C0D
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 12:11:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A502217624D;
-	Wed, 28 Aug 2024 12:11:47 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E716175548;
+	Wed, 28 Aug 2024 12:11:45 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F6941741F8;
-	Wed, 28 Aug 2024 12:11:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C53E115B119;
+	Wed, 28 Aug 2024 12:11:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724847107; cv=none; b=dAajmPFkYDwJtyLteotuJ5Mj8ks5n0TYSbNt1fW2EoZyJGi5py9PK6bw7+w56vqqewp9X5RPpqOPNClBG/0tmXbSGDwT/sNzSwd0mZa5WR9uwgB5DcutTIbJtXAHI5GAUu5/kCRBOA4BvgHcuNn7HoFNbFM/veFiHp8rNtJ7lQs=
+	t=1724847105; cv=none; b=GHr6JgnhnIYAo2CexincYxF0UfB0PRRbjNbrrFc1o8vQdcrd7AaUpzg5jcDZMgqXu4D9/wYDfrKKPDbtEk8rkmIcGq3FHMjmqinLRQdFnAXPlbPT2c0A1mtSHynsBEdFvBPjgc4RrdDdGIRAuhLgRxoGO9ZHk2pXCDGGuBQ4YrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724847107; c=relaxed/simple;
-	bh=L96hpiUj9zz6eO2waJt6dvD456qimUKMeemG2ho+jRw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uFW8xO9T2by1qwdXyC/fFL/XYQN6S+7AVvW1zKvxPDXv04oz43wsythmcNw0bYxcvkmKI76J4FtrYIp2CZJ8EiX2pUmtR5JmMTjZIYX++Gk8XhLpuMWBtT7I2SuSxV3YznhA5Mgr/qb60nh0ATGOtCCgRA7RyFFzyjr4gy0izv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Wv3DG4lF8z4f3nT8;
-	Wed, 28 Aug 2024 20:11:26 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 22FE81A018D;
-	Wed, 28 Aug 2024 20:11:42 +0800 (CST)
-Received: from [10.174.177.174] (unknown [10.174.177.174])
-	by APP4 (Coremail) with SMTP id gCh0CgCHr4X7E89mFlHTCw--.41618S3;
-	Wed, 28 Aug 2024 20:11:41 +0800 (CST)
-Message-ID: <89b6b6ae-f805-43be-86ca-d3fb06ad8fec@huaweicloud.com>
+	s=arc-20240116; t=1724847105; c=relaxed/simple;
+	bh=brvSlVRQUtSQzpnupfzaGuH7iENC8NYAFLZWH5pm/RY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=GZrHJSzrmZCSp+/sL9uOpE6BC4Tsa687SIS4uafcJhuNTIm0qZfAp2mIbNgckFCp1CrGuOE8NQcxRtTztD9Yk07bYMk7DuKKssesW+Fntu0axLfaeX9xwVKpvMdEZ58tFIHoxqTEw5utFmLmnK6IZt5nWjePS+EQBUZ306c38TI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Wv3DJ4T87z2DbZ4;
+	Wed, 28 Aug 2024 20:11:28 +0800 (CST)
+Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
+	by mail.maildlp.com (Postfix) with ESMTPS id 0A5D31402CD;
+	Wed, 28 Aug 2024 20:11:40 +0800 (CST)
+Received: from [10.67.120.129] (10.67.120.129) by
+ dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 28 Aug 2024 20:11:39 +0800
+Message-ID: <1c342d98-11d5-444c-825a-6af716d1dce8@huawei.com>
 Date: Wed, 28 Aug 2024 20:11:39 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -46,85 +47,115 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] netfs: Delete subtree of 'fs/netfs' when netfs module
- exits
-To: David Howells <dhowells@redhat.com>
-Cc: netfs@lists.linux.dev, jlayton@kernel.org, hsiangkao@linux.alibaba.com,
- jefflexu@linux.alibaba.com, linux-erofs@lists.ozlabs.org,
- brauner@kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, yangerkun@huawei.com, houtao1@huawei.com,
- yukuai3@huawei.com, wozizhi@huawei.com, Baokun Li <libaokun1@huawei.com>,
- stable@kernel.org, Baokun Li <libaokun@huaweicloud.com>
-References: <20240826113404.3214786-1-libaokun@huaweicloud.com>
- <952423.1724841455@warthog.procyon.org.uk>
+Subject: Re: [PATCH net-next v15 06/13] mm: page_frag: reuse existing space
+ for 'size' and 'pfmemalloc'
+To: Alexander Duyck <alexander.duyck@gmail.com>
+CC: <davem@davemloft.net>, <kuba@kernel.org>, <pabeni@redhat.com>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Andrew Morton
+	<akpm@linux-foundation.org>, <linux-mm@kvack.org>
+References: <20240826124021.2635705-1-linyunsheng@huawei.com>
+ <20240826124021.2635705-7-linyunsheng@huawei.com>
+ <CAKgT0Uc7tRi6uGTpx2n9_JAK+sbPg7QcOOOSLK+a41cFMcqCWg@mail.gmail.com>
+ <82be328d-8f04-417f-bdf2-e8c0f6f58057@huawei.com>
+ <CAKgT0UcEuYanVEaRViuJ5v8F7EXKJLr4_yP=ZkiMdamznt0FoQ@mail.gmail.com>
 Content-Language: en-US
-From: Baokun Li <libaokun@huaweicloud.com>
-In-Reply-To: <952423.1724841455@warthog.procyon.org.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgCHr4X7E89mFlHTCw--.41618S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7Cry7Kw4xZr1xGFykXFy5Jwb_yoW8Ww4rpa
-	4ku34xCr18WryUJF4fJw1jvr4UZF4UGF1UJ3s7Gr1UJ3W7Aw18X3WF9F45AF9FkF1UAF45
-	t3WUtr1vyr1UZ3JanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvE14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
-	0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7
-	v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF
-	1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIx
-	AIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI
-	42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWI
-	evJa73UjIFyTuYvjfUOv38UUUUU
-X-CM-SenderInfo: 5olet0hnxqqx5xdzvxpfor3voofrz/1tbiAgAJBWbO4BkSYgABsu
+From: Yunsheng Lin <linyunsheng@huawei.com>
+In-Reply-To: <CAKgT0UcEuYanVEaRViuJ5v8F7EXKJLr4_yP=ZkiMdamznt0FoQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ dggpemf200006.china.huawei.com (7.185.36.61)
 
-Hi David,
-
-On 2024/8/28 18:37, David Howells wrote:
-> libaokun@huaweicloud.com wrote:
->
->> In netfs_init() or fscache_proc_init(), we create dentry under 'fs/netfs',
->> but in netfs_exit(), we only delete the proc entry of 'fs/netfs' without
->> deleting its subtree. This triggers the following WARNING:
+On 2024/8/28 2:16, Alexander Duyck wrote:
+> On Tue, Aug 27, 2024 at 5:06 AM Yunsheng Lin <linyunsheng@huawei.com> wrote:
 >>
->> ==================================================================
->> remove_proc_entry: removing non-empty directory 'fs/netfs', leaking at least 'requests'
->> WARNING: CPU: 4 PID: 566 at fs/proc/generic.c:717 remove_proc_entry+0x160/0x1c0
->> Modules linked in: netfs(-)
->> CPU: 4 UID: 0 PID: 566 Comm: rmmod Not tainted 6.11.0-rc3 #860
->> RIP: 0010:remove_proc_entry+0x160/0x1c0
->> Call Trace:
->>   <TASK>
->>   netfs_exit+0x12/0x620 [netfs]
->>   __do_sys_delete_module.isra.0+0x14c/0x2e0
->>   do_syscall_64+0x4b/0x110
->>   entry_SYSCALL_64_after_hwframe+0x76/0x7e
->> ==================================================================
+>> On 2024/8/27 0:46, Alexander Duyck wrote:
+>>> On Mon, Aug 26, 2024 at 5:46 AM Yunsheng Lin <linyunsheng@huawei.com> wrote:
+>>>>
+>>>> Currently there is one 'struct page_frag' for every 'struct
+>>>> sock' and 'struct task_struct', we are about to replace the
+>>>> 'struct page_frag' with 'struct page_frag_cache' for them.
+>>>> Before begin the replacing, we need to ensure the size of
+>>>> 'struct page_frag_cache' is not bigger than the size of
+>>>> 'struct page_frag', as there may be tens of thousands of
+>>>> 'struct sock' and 'struct task_struct' instances in the
+>>>> system.
+>>>>
+>>>> By or'ing the page order & pfmemalloc with lower bits of
+>>>> 'va' instead of using 'u16' or 'u32' for page size and 'u8'
+>>>> for pfmemalloc, we are able to avoid 3 or 5 bytes space waste.
+>>>> And page address & pfmemalloc & order is unchanged for the
+>>>> same page in the same 'page_frag_cache' instance, it makes
+>>>> sense to fit them together.
+>>>>
+>>>> After this patch, the size of 'struct page_frag_cache' should be
+>>>> the same as the size of 'struct page_frag'.
+>>>>
+>>>> CC: Alexander Duyck <alexander.duyck@gmail.com>
+>>>> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+>>>> ---
+>>>>  include/linux/mm_types_task.h   | 19 ++++++-----
+>>>>  include/linux/page_frag_cache.h | 60 +++++++++++++++++++++++++++++++--
+>>>>  mm/page_frag_cache.c            | 51 +++++++++++++++-------------
+>>>>  3 files changed, 97 insertions(+), 33 deletions(-)
+>>>>
+> 
+> ...
+> 
+>>>>  void page_frag_cache_drain(struct page_frag_cache *nc);
+>>>
+>>> So how many of these additions are actually needed outside of the
+>>> page_frag_cache.c file? I'm just wondering if we could look at moving
 >>
->> Therefore use remove_proc_subtree instead() of remove_proc_entry() to
->> fix the above problem.
->>
->> Fixes: 7eb5b3e3a0a5 ("netfs, fscache: Move /proc/fs/fscache to /proc/fs/netfs and put in a symlink")
->> Cc: stable@kernel.org
->> Signed-off-by: Baokun Li <libaokun1@huawei.com>
-> Should remove_proc_entry() just remove the entire subtree anyway?
-Yeah, in general, when we remove a proc entry, we don't care if it has
-subtrees. But I'm not sure if there are certain scenarios where entries
-must be removed in a certain order .
->
-> But you can add:
->
-> 	Acked-by: David Howells <dhowells@redhat.com>
->
-> David
+>> At least page_frag_cache_is_pfmemalloc(), page_frag_encoded_page_order(),
+>> page_frag_encoded_page_ptr(), page_frag_encoded_page_address() are needed
+>> out of the page_frag_cache.c file for now, which are used mostly in
+>> __page_frag_cache_commit() and __page_frag_alloc_refill_probe_align() for
+>> debugging and performance reason, see patch 7 & 10.
+> 
+> As far as the __page_frag_cache_commit I might say that could be moved
+> to page_frag_cache.c, but admittedly I don't know how much that would
+> impact the performance.
 
-Thanks for your ack!
+The performance impact seems large enough that it does not seem to justify
+the moving to page_frag_cache.c,
 
--- 
-With Best Regards,
-Baokun Li
+Before the moving:
+ Performance counter stats for 'insmod page_frag_test.ko test_push_cpu=16 test_pop_cpu=17 test_alloc_len=256 nr_test=512000000 test_align=0 test_prepare=0' (20 runs):
 
+         17.749582      task-clock (msec)         #    0.002 CPUs utilized            ( +-  0.15% )
+                 5      context-switches          #    0.304 K/sec                    ( +-  2.48% )
+                 0      cpu-migrations            #    0.017 K/sec                    ( +- 35.04% )
+                76      page-faults               #    0.004 M/sec                    ( +-  0.45% )
+          46103462      cycles                    #    2.597 GHz                      ( +-  0.14% )
+          60692196      instructions              #    1.32  insn per cycle           ( +-  0.12% )
+          14734050      branches                  #  830.107 M/sec                    ( +-  0.12% )
+             19792      branch-misses             #    0.13% of all branches          ( +-  0.75% )
+
+       9.837758611 seconds time elapsed                                          ( +-  0.38% )
+
+
+After the moving:
+
+ Performance counter stats for 'insmod page_frag_test.ko test_push_cpu=16 test_pop_cpu=17 test_alloc_len=256 nr_test=512000000 test_align=0 test_prepare=0' (20 runs):
+
+         19.682296      task-clock (msec)         #    0.002 CPUs utilized            ( +-  4.08% )
+                 6      context-switches          #    0.305 K/sec                    ( +-  3.42% )
+                 0      cpu-migrations            #    0.000 K/sec
+                76      page-faults               #    0.004 M/sec                    ( +-  0.44% )
+          51128091      cycles                    #    2.598 GHz                      ( +-  4.08% )
+          58833583      instructions              #    1.15  insn per cycle           ( +-  4.50% )
+          14260855      branches                  #  724.552 M/sec                    ( +-  4.63% )
+             20120      branch-misses             #    0.14% of all branches          ( +-  0.92% )
+
+      12.318770150 seconds time elapsed                                          ( +-  0.15% )
+
+> 
+>> The only left one is page_frag_encode_page(), I am not sure if it makes
+>> much sense to move it to page_frag_cache.c while the rest of them are in
+>> .h file.
+> 
+> I would move it. There is no point in exposing internals more than
+> necessary. Also since you are carrying a BUILD_BUG_ON it would make
+> sense to keep that internal to your implementation.
 
