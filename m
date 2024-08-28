@@ -1,165 +1,196 @@
-Return-Path: <linux-kernel+bounces-304157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24C90961B2E
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 02:46:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 544D7961B38
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 02:59:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1774285194
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 00:46:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C96BE1F2440B
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 00:59:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BFA61804E;
-	Wed, 28 Aug 2024 00:46:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dQS5Kesd"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 456FA18E0E;
+	Wed, 28 Aug 2024 00:59:18 +0000 (UTC)
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A75DDF51
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 00:46:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4241B1799F
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 00:59:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724805997; cv=none; b=nkn0F9QAAlrM+2JSU7SBywSKxzFp7aFT93z0vQTUam1KN613eON5q/EIEx1txx57xHoh7JYoT4ALXK5LlT3ouGFstVmlF0N+0/JE4nc2Y6TffAHmiMbGHCCAqo0qOZ0e9xkME3wpAXGqyf7LqxRKTkICbf7wzKaD1GnCmcaSnOA=
+	t=1724806757; cv=none; b=PmUwgvym0K95g0ML42Qzekuh6DAuSlw2Ejylp4IhyaU0qfu5D2vvoS8x//dxvvOnVK/32iPyu9zBy6Tkll5IujHQZiFV8x1l+gaC7APauRgJrodrwqs/CghR02SkG4+G7G3tAw1TwKPykOrlfJra7TuEu4+Nd6mY+U0U6cej4L8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724805997; c=relaxed/simple;
-	bh=mNtL7Y4SLCuHl55ceG+Z2aJ+HGfSmmJoRhqG+ba1GF0=;
+	s=arc-20240116; t=1724806757; c=relaxed/simple;
+	bh=1o0r7ejATkul3C7hADT3ZatthBW1OI71C4zY8O0SCTU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Z0cW2HK4zTyAPj83CcKwViI4gBP7eStNkVNM4lK9Zm+kcze9DujEJzHEmUGGzuoCqitESN8TrH6VB1D02A1AyRKHcy0qTIE2lALue5T/Tmf9fANeosX1RV8I/RjZhS+MMN/ICmFkGA+Whseoa1/EA85ZRDDQ+nRI9cwZZYgSOj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dQS5Kesd; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-427fc9834deso26845e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 17:46:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724805994; x=1725410794; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mNtL7Y4SLCuHl55ceG+Z2aJ+HGfSmmJoRhqG+ba1GF0=;
-        b=dQS5Kesd8MlWvsYC7Oq0RN/ICLVHuVj4OaWxp796Z4Fw2z399ue9iRHgF7+qLeM7i0
-         JjyVoOTH2E3IH7+PWHLomBcBYfvq2OgEYk+Q3cF8tEMPrmhvGAhkpjkp213yzWtUo9wb
-         9GsVtNiOMox3tRApMp6Jec/5XtS/8ONMHApTn7qsOuNEZh+mw5CqECGQK7HNp5nzIghg
-         tRkceVIzw1eM29WMAvg2NUjLUyW4FrpGZscBiB89rWMDSaRdl2vm5E5vpWHWfL9i/MA4
-         J3m81hpAKV+HnGKzEc4iiYJDjdT2RjcoYIA/3PaidRYDMQLsqvE4+ASbhIWEef/5vBEj
-         UjzA==
+	 To:Cc:Content-Type; b=d+5CIvooW6ZDi+auJ9lRDHdCQ9vLCt8GW7NXnDH4zcouvYqSHS7s4R9FYsu9vTFazOSbS98olwgLqhkm/tXaOg9c3k+IkQTF29qogbFY7WoiC4r0MTLqQVTAgIueTbNDM4bYmTwPCX9Tn1OssxEi6vVMs2W1AFSfWxsqsqUIZ7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-7cd830e0711so81487a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 17:59:16 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724805994; x=1725410794;
+        d=1e100.net; s=20230601; t=1724806755; x=1725411555;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=mNtL7Y4SLCuHl55ceG+Z2aJ+HGfSmmJoRhqG+ba1GF0=;
-        b=MUvo0jWqk4eIbcSlDfLLKnodb+cWm/9Kj4R48Gqxh1ubNpVkSYIk+GsPaMZK6f92l0
-         +0Z3K9pfcWrJu7ZGclHQvcgEyb9ILwxWLS3wAjddLcZxtV1adwqZZmiwq+PqDWxB31Ys
-         ZSWXZ/MAfhYqby9n6+NH2QtpBZrpBGcRedTxrsxGoN0f+01GWjcRe8Y/W+gntgxyJTnM
-         TcEZwcSPzyjpAXCU9pZO9fJGmkDGSDSF9Mf77Z99GEuGofnvmCibBXS4Ybp/8xkA9vDR
-         nXxWO8+6zPR63bMgDVnO3xOsE2C3VPXLoHYK4OEDpFKvGrIlXUcBPO8YK841sj4/0PyJ
-         I1ZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXktEXLqCFZyVBVUM5PE+WFw76Q0HiaL3uk8y5xIP++Ryq6h2lDzCasvdrhoG3VRTzyGf1CNJxWfDbqsAA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8dfeE4N3WQfVRVQHJrVq2Q+LBUMbxUccpwO5bi+5hMWsMWtRA
-	+lK1IDSBnvOjtgcedD2Otc+9jW6DwpKshrU2nGc/1TZalxwHkW/zk22ADhwWOtGl6RPobwc4GfL
-	l8XX28c/IS8aWA6CGFTjjqrB5uXhmZZ4JSqdX
-X-Google-Smtp-Source: AGHT+IEJQjNM5EEZ0P+DtwfmFfwnYXEBTl1Xu2jOycjfCFoQgr5nBySorNilM2CyUNtMN31u1OefYix4Fj2yslkbGGQ=
-X-Received: by 2002:a05:600c:3d18:b0:42b:892a:333b with SMTP id
- 5b1f17b1804b1-42ba432dd18mr625745e9.2.1724805994079; Tue, 27 Aug 2024
- 17:46:34 -0700 (PDT)
+        bh=XG5JOqmbnyihRYmwQmKkVKBHVAamXjh98RgIHtDtvlo=;
+        b=t12emkTuBt5ZHgHKd+tAD40aXTvZANgcD0tTo4f4suQ99ppU0MDDw5qaEw/9H9AF1j
+         uuCzlhZQRJJiXRo2F8uBekAZcDHgIlLOHJHeJleX0ODq6nhVTnoTAu6E2deZpBi1d0vQ
+         S/RBajPU62UsBK2UZ0pZvfdHis1gRQfZ8vsDlT5N8aCxJNrhBq4IIg7Z3LqUqLC9YEHZ
+         ddKSW3i32UtvirqbWu5qDr24oNACuSfPXn7yaG3c9lMGc1CbGI7jzhMHDDPFA0KntS22
+         lgREOkHanWmrijsw62NAtl9fL12zpywgK57OlYzvOvu/wQekWqOgW7rTqQ6EWpLThaYN
+         rlJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVXIHDRs12/HSblDV2LP0bDbzPduxNIvAQSu8qk928XrmGqUlYt26WDlva1XFBQEWcaFpT5szUv/487zuw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGpiNhuDI3T9SsKI5zrtUI3fvI0/1tOG1Hwkg2Gwcbi24jeFxF
+	0yPxTcjdJWfBcPkStp03mtTtrVq4lYBHe6ivaeQhcB33W8DmNMctOB/vI6JhKr1qM5cFuDMK7Tr
+	FncqB6/r8s7EoGgcpX/EYL4UMAvw=
+X-Google-Smtp-Source: AGHT+IFE94e80ft8fus3FbhOE3Kbywq6tPiAuG+LWZu7doHoCxk2l298vcW0160etiCy7tLRNkYjwhBSn4WKE+TnS4w=
+X-Received: by 2002:a17:90a:f2cd:b0:2d3:c365:53b1 with SMTP id
+ 98e67ed59e1d1-2d843d3cedemr902382a91.6.1724806755186; Tue, 27 Aug 2024
+ 17:59:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240826204353.2228736-1-peterx@redhat.com> <CACw3F50Zi7CQsSOcCutRUy1h5p=7UBw7ZRGm4WayvsnuuEnKow@mail.gmail.com>
- <Zs5Z0Y8kiAEe3tSE@x1n> <CACw3F52_LtLzRD479piaFJSePjA-DKG08o-hGT-f8R5VV94S=Q@mail.gmail.com>
-In-Reply-To: <CACw3F52_LtLzRD479piaFJSePjA-DKG08o-hGT-f8R5VV94S=Q@mail.gmail.com>
-From: Jiaqi Yan <jiaqiyan@google.com>
-Date: Tue, 27 Aug 2024 17:46:22 -0700
-Message-ID: <CACw3F50rV2Vy60Pq+Jh-hxvK9V4Z1C4L00xeOLf34bUkQ35HFg@mail.gmail.com>
-Subject: Re: [PATCH v2 00/19] mm: Support huge pfnmaps
-To: ankita@nvidia.com
-Cc: Peter Xu <peterx@redhat.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	Gavin Shan <gshan@redhat.com>, Catalin Marinas <catalin.marinas@arm.com>, x86@kernel.org, 
-	Ingo Molnar <mingo@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Alistair Popple <apopple@nvidia.com>, kvm@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, Sean Christopherson <seanjc@google.com>, 
-	Oscar Salvador <osalvador@suse.de>, Jason Gunthorpe <jgg@nvidia.com>, Borislav Petkov <bp@alien8.de>, 
-	Zi Yan <ziy@nvidia.com>, Axel Rasmussen <axelrasmussen@google.com>, 
-	David Hildenbrand <david@redhat.com>, Yan Zhao <yan.y.zhao@intel.com>, Will Deacon <will@kernel.org>, 
-	Kefeng Wang <wangkefeng.wang@huawei.com>, Alex Williamson <alex.williamson@redhat.com>
+References: <20240822230816.564262-1-namhyung@kernel.org> <721f055b-d594-4b24-b9e4-6d56475927fd@amd.com>
+In-Reply-To: <721f055b-d594-4b24-b9e4-6d56475927fd@amd.com>
+From: Namhyung Kim <namhyung@kernel.org>
+Date: Tue, 27 Aug 2024 17:59:03 -0700
+Message-ID: <CAM9d7ciLHBD9=eepdbNDo8HRZYm-Wqg0M-Z_GsqMjPQmLt5Xfw@mail.gmail.com>
+Subject: Re: [RFC/PATCH] perf/x86: Relax privilege filter restriction on AMD IBS
+To: Ravi Bangoria <ravi.bangoria@amd.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, 
+	Kan Liang <kan.liang@linux.intel.com>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Stephane Eranian <eranian@google.com>, Sandipan Das <sandipan.das@amd.com>, 
+	Ananth Narayan <ananth.narayan@amd.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Adding Ankit in case he has opinions.
+Hi Ravi,
 
-On Tue, Aug 27, 2024 at 5:42=E2=80=AFPM Jiaqi Yan <jiaqiyan@google.com> wro=
-te:
+Thanks for your review!
+
+On Mon, Aug 26, 2024 at 9:42=E2=80=AFPM Ravi Bangoria <ravi.bangoria@amd.co=
+m> wrote:
 >
-> On Tue, Aug 27, 2024 at 3:57=E2=80=AFPM Peter Xu <peterx@redhat.com> wrot=
-e:
+> Hi Namhyung,
+>
+> On 23-Aug-24 4:38 AM, Namhyung Kim wrote:
+> > While IBS is available for per-thread profiling, still regular users
+> > cannot open an event due to the default paranoid setting (2) which
+> > doesn't allow unprivileged users to get kernel samples.  That means
+> > it needs to set exclude_kernel bit in the attribute but IBS driver
+> > would reject it since it has PERF_PMU_CAP_NO_EXCLUDE.  This is not what
+> > we want and I've been getting requests to fix this issue.
 > >
-> > On Tue, Aug 27, 2024 at 03:36:07PM -0700, Jiaqi Yan wrote:
-> > > Hi Peter,
+> > This should be done in the hardware, but until we get the fix we may
+> > allow exclude_{kernel,user} in the attribute and silently drop the
+> > samples in the PMU IRQ handler.  It won't guarantee the sampling
+> > frequency or even it'd miss some with fixed period too.  Not ideal,
+> > but that'd still be helpful to regular users.
 > >
-> > Hi, Jiaqi,
+> > I also think that it should be able to inform the number of dropped
+> > samples to userspace so I've increased the lost_samples count.  This
+> > can be read with the PERF_FORMAT_LOST (perf tools set it by default)
+> > so I didn't emit the PERF_RECORD_LOST_SAMPLES for this.
+>
+> Samples are discarded not lost. Should we count them as lost?
+
+Yeah, I'm asking for help on how to handle them properly.  We could:
+
+1. ignore dropped samples
+2. count them as lost
+3. count them separately and emit a (new) record in the ring buffer
+4. count them separately and let users can read(2) them with a new format
+5. anything else?
+
+>
+> > I'm not sure if it's acceptable since it might be confusing to figure
+> > out whether it's because of a lack of the ring buffer or it's dropped
+> > due to privileges.  Or we can add a new record format for this.  Let me
+> > know if you have a better idea.
 > >
-> > > I am curious if there is any work needed for unmap_mapping_range? If =
-a
-> > > driver hugely remap_pfn_range()ed at 1G granularity, can the driver
-> > > unmap at PAGE_SIZE granularity? For example, when handling a PFN is
+> > Cc: Ravi Bangoria <ravi.bangoria@amd.com>
+> > Cc: Stephane Eranian <eranian@google.com>
+> > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> > ---
+> >  arch/x86/events/amd/ibs.c | 14 ++++++++++++--
+> >  1 file changed, 12 insertions(+), 2 deletions(-)
 > >
-> > Yes it can, but it'll invoke the split_huge_pud() which default routes =
-to
-> > removal of the whole pud right now (currently only covers either DAX
-> > mappings or huge pfnmaps; it won't for anonymous if it comes, for examp=
-le).
+> > diff --git a/arch/x86/events/amd/ibs.c b/arch/x86/events/amd/ibs.c
+> > index e91970b01d62..6f514072c440 100644
+> > --- a/arch/x86/events/amd/ibs.c
+> > +++ b/arch/x86/events/amd/ibs.c
+> > @@ -290,6 +290,11 @@ static int perf_ibs_init(struct perf_event *event)
+> >       if (has_branch_stack(event))
+> >               return -EOPNOTSUPP;
 > >
-> > In that case it'll rely on the driver providing proper fault() /
-> > huge_fault() to refault things back with smaller sizes later when acces=
-sed
-> > again.
->
-> I see, so the driver needs to drive the recovery process, and code
-> needs to be in the driver.
->
-> But it seems to me the recovery process will be more or less the same
-> to different drivers? In that case does it make sense that
-> memory_failure do the common things for all drivers?
->
-> Instead of removing the whole pud, can driver or memory_failure do
-> something similar to non-struct-page-version of split_huge_page? So
-> driver doesn't need to re-fault good pages back?
->
->
+> > +     /* handle exclude_{user,kernel} in the IRQ handler */
+> > +     if (event->attr.exclude_hv || event->attr.exclude_idle ||
+> > +         event->attr.exclude_host || event->attr.exclude_guest)
+> > +             return -EINVAL;
+> > +
+> >       ret =3D validate_group(event);
+> >       if (ret)
+> >               return ret;
+> > @@ -667,7 +672,6 @@ static struct perf_ibs perf_ibs_fetch =3D {
+> >               .start          =3D perf_ibs_start,
+> >               .stop           =3D perf_ibs_stop,
+> >               .read           =3D perf_ibs_read,
+> > -             .capabilities   =3D PERF_PMU_CAP_NO_EXCLUDE,
+> >       },
+> >       .msr                    =3D MSR_AMD64_IBSFETCHCTL,
+> >       .config_mask            =3D IBS_FETCH_CONFIG_MASK,
+> > @@ -691,7 +695,6 @@ static struct perf_ibs perf_ibs_op =3D {
+> >               .start          =3D perf_ibs_start,
+> >               .stop           =3D perf_ibs_stop,
+> >               .read           =3D perf_ibs_read,
+> > -             .capabilities   =3D PERF_PMU_CAP_NO_EXCLUDE,
+> >       },
+> >       .msr                    =3D MSR_AMD64_IBSOPCTL,
+> >       .config_mask            =3D IBS_OP_CONFIG_MASK,
+> > @@ -1062,6 +1065,13 @@ static int perf_ibs_handle_irq(struct perf_ibs *=
+perf_ibs, struct pt_regs *iregs)
+> >       if (!perf_ibs_set_period(perf_ibs, hwc, &period))
+> >               goto out;       /* no sw counter overflow */
 > >
-> > > poisoned in the 1G mapping, it would be great if the mapping can be
-> > > splitted to 2M mappings + 4k mappings, so only the single poisoned PF=
-N
-> > > is lost. (Pretty much like the past proposal* to use HGM** to improve
-> > > hugetlb's memory failure handling).
-> >
-> > Note that we're only talking about MMIO mappings here, in which case th=
-e
-> > PFN doesn't even have a struct page, so the whole poison idea shouldn't
-> > apply, afaiu.
+> > +     if ((event->attr.exclude_kernel && !user_mode(iregs)) ||
+> > +         (event->attr.exclude_user && user_mode(iregs))) {
 >
-> Yes, there won't be any struct page. Ankit proposed this patchset* for
-> handling poisoning. I wonder if someday the vfio-nvgrace-gpu-pci
-> driver adopts your change via new remap_pfn_range (install PMD/PUD
-> instead of PTE), and memory_failure_pfn still
-> unmap_mapping_range(pfn_space->mapping, pfn << PAGE_SHIFT, PAGE_SIZE,
-> 0), can it somehow just work and no re-fault needed?
+> Should we use kernel_ip() instead? That would be accurate since RIP is
+> provided by IBS hw itself.
 >
-> * https://lore.kernel.org/lkml/20231123003513.24292-2-ankita@nvidia.com/#=
-t
+> user_mode() relies on CS which is captured at interrupt time, not at the
+> sample capture time, and processor might have switched privilege mode by
+> the time IBS interrupt arrives. We might need to fallback to user_mode()
+> if ibs_op_data->op_rip_invalid is set.
+
+Sure.  I'll update it in v2.
+
 >
+> Wondering, should perf_misc_flags() also switch to kernel_ip() ?
+
+Probably.
+
+Thanks,
+Namhyung
+
 >
+> > +             throttle =3D perf_event_account_interrupt(event);
+> > +             atomic64_inc(&event->lost_samples);
+> > +             goto out;
+> > +     }
+> > +
+> >       ibs_data.caps =3D ibs_caps;
+> >       size =3D 1;
+> >       offset =3D 1;
 >
-> >
-> > Thanks,
-> >
-> > --
-> > Peter Xu
-> >
+> Thanks,
+> Ravi
 
