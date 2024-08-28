@@ -1,139 +1,174 @@
-Return-Path: <linux-kernel+bounces-305615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9D86963135
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 21:48:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E21296313D
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 21:50:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2885E1C23BA4
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 19:48:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B26D1C23CD4
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 19:50:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FD851ABEC4;
-	Wed, 28 Aug 2024 19:48:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A025D1AB526;
+	Wed, 28 Aug 2024 19:49:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dNIzkp+6"
-Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="MLICXYbE"
+Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazolkn19012038.outbound.protection.outlook.com [52.103.32.38])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 526D6125BA;
-	Wed, 28 Aug 2024 19:48:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724874517; cv=none; b=ntWqjZ0scpFtp4Y1+PiRoTAlGmiXCpklgP4trhzsoTPKgVgUPpowBYvvLQHTOJUlxBcYct3FysoBjg1mbhQQAAsEe9z7SHmOBX5wBc5zUCC6/8aHDzYOHvlvRkm5/W4cc45kZ8PJn9v+Q2FVnQbBQ57+Ntd1rGvxls6SukyWi9c=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724874517; c=relaxed/simple;
-	bh=T+y2Sp2I/AnCuxrPMoWAy41YouAMEHYew2EbmzfD8y8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Lj5DfdxbD4FAs9O1PLymzMvqrsmOCZeB9VZ+/Jy1TtbZCqT6dvaBqaMcq/YvYrLAvVI6oCQihuIAcQloWpI6n+8d7A9q6lMnZ0u2ao5jU72okhI1lvp+0Skn2+Oa678vYIdSiN3U7oBtVVUWNOpm7XqH8gtx/C2nXKpJPXOEMk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dNIzkp+6; arc=none smtp.client-ip=209.85.219.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6bf825d779eso34720506d6.0;
-        Wed, 28 Aug 2024 12:48:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724874515; x=1725479315; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xplm6NVOjj7WQ4sm6b8trxIQwwR4NFeBU2VDjNPXlzc=;
-        b=dNIzkp+6a83ezIC/BYYrhBj2ZGNWbY8SdWmwqDMGAc4HbvJhBCo/cmsjICkMp06w4o
-         fvFafzPZqRiQwpCpdfNrL9RoY0bZ2YFEgY2RdVsvKq6qyUXEhSS1Kdd9jJRfYD6WdKdB
-         36ZCJva6nGGWwDoSvYbL8aWObN8JXA2/LJp2OkPheiuyTPB79La5JWzAEZFapVn2Jy52
-         ZZAP4L+c+UQZihDnviGRueeZWb/7P36XVLJOCa+TU0BulcjjihTFVcfAPip8adzEdrsp
-         ecrmzLZMMUcBoPTim+2er5Z2xUaXnlnu6o3WoviDGV1wXvtM1Ut67IHzNgoHuqB9A+c3
-         ZUEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724874515; x=1725479315;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xplm6NVOjj7WQ4sm6b8trxIQwwR4NFeBU2VDjNPXlzc=;
-        b=raZ6cfmhuLW6CDODDhdtA9lRZMaipvTjUl/Zx6LuJGlTWhwZd+RGcYDr4CBXbLaxSv
-         RPj3tkPc5pDr4P6AUK8QxEc3c1bEuLdpQOm132WZxHOQA4JnWwhVmzXBTfr9Isuvzs/N
-         bY6rvm0M0oHlwsDm+n3lBT7QZ/v7nFJQ7TOI4ZVvxamDZJgm4+wFVFi86ECM+WoEsr8H
-         p7EKPNRK1b1EkhEsDERJROhAjgI9ZaAPOnEI37oFcoS241gxQ4nEb4GPhoF8QvchKNAu
-         92l3FhiEFSp8Qt5ozrcC/D+nvAV8RRTy0TSIlpkuqcCgFFBjhZNOy6IUA0MXWjOunEcf
-         nuzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXloWuIG3EpYBeMaH7XHpSRHWj2A8IKM3fzsfqbBd61uOzrTJSlFlkfhzbOCYfjFywBXrKkmSqkEzKp@vger.kernel.org, AJvYcCXyf9ya+JMkUdwzihI6OS3okqDOxfDks2uq6/jtkbzwvb7k1M51jKSJ0dODZoe15i4FihjlTPY0xfy0a6IZ@vger.kernel.org
-X-Gm-Message-State: AOJu0YxyA2SeLgpBvvge6mScfHHxK77w+ZczqNXBtxcioTqwRTsmk3dh
-	OrXf07z1eyLYUOmzlvjNgjFYiPcTkRvZVEyXcsCj0CLP/Rv502I2wFiKmpT3nz8+W7D+izRgzy3
-	3UZooXNWROCCXkfBkJcOegV8nSfozIQ==
-X-Google-Smtp-Source: AGHT+IHcNA1i+ClZxAmogf8L75nNE/ZbojI8W7DLFgdNeoyUDfp9cwp5v1AqlcpV+VB0TP8xunu8fM+SahM89YO+zFs=
-X-Received: by 2002:a05:6214:5c0a:b0:6b5:7e70:3537 with SMTP id
- 6a1803df08f44-6c33e69bfccmr6912876d6.50.1724874514838; Wed, 28 Aug 2024
- 12:48:34 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E01EC1A76CE;
+	Wed, 28 Aug 2024 19:49:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.32.38
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724874581; cv=fail; b=h+4GO3lVCWNkZMd9A0529pY5Vvfqnp3JMrD5GjUgLiYhlw2Ls159i7Wmvwk8RY0FIdxkTLpAQpZaXL5T/ZY/V5GFOfjag72ga9veK/uLinQQafspXad7Y5cWntwfrFN8WTRV27kfg2VgGT5jOTs/hiTiQM8EMoBPpN0L72odpGs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724874581; c=relaxed/simple;
+	bh=ZoKicK9oj7IU7ppsDSDQzxm4RrCh62YDD+8yFpPMz6Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=sq7THUL8b7BRv6SfgjoxLnvJVyFN9AM9/5YUMGCjVxTR2CUNJaIi3e2KpIBZyNmpLhAJw0zIMtLwRdRg6UdRSeclD4t9GFLENYQ88bLzgO1WPNpaCzghvUvuzKF01WoOo1cYpbYlzLikudXAO7OIGPyKlYG/VpAmksmas/82YSE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=MLICXYbE; arc=fail smtp.client-ip=52.103.32.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=XOoKTnBWMh06lqafzERZcca/GQFW1q6eX8Zes+PIcMrV6UtjnmgiRpyggF+xXQau7myYZ3xl+E6e/OGsChDbGelJIcjNCUAfBB0DVMSoUYFsogSwLkU5oLUXvlGT3EiUaA+YHKEcOodOxP/cscXMNmShU8Y8OVxqzqvRa5uKh1L/LHjEi/BrgWmGJFzzINKCCTiM0ulk+HuDu7joJ6gAzCAK2CDIJ+4sj0MAxwHPRcHjruQXZBsxdbyUHMNvZ0ZZ+8b8y64AQQO8rikt/OA1cHj5cX1ZKEiVvujQSDWoOGniKFpPWWk/tpB0Zlvb0eHBVwgYmgOvoiljKFbISkA5Aw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=juFGlL8RNkGyKAsi+4qo6HpF4AJ7y67q2jLQ7zY7Ias=;
+ b=RvSH2GHsHQUBeYiCu21m6zx311999ZoF1N7uyX3Npls+Ge2ClNWuny/W+6om7sMS2+Hcg1yi24A92fh1DCS7ho8rb6Qrps7vS9yM5XSSbEcYfkYUBsJyIRlCVJdmzBTAstIni642PS1Q8PAI4HdKeSYjveGh6iQ10QTdLATsLJUu4GkyItkowL0L58jd98W2DjtNnmSYX5sxwCY8v35UCbYgW1ZsvhZVH+mC6esQgdOD2RBv3C4Fw7/oBBLB1nlaOPG8UDDv1V84KLXg4cWOw2eXOb63Otwm0Ysdnv6SXLQU7y++9m61sCwH9i7z5rB7i8Ss0YnMpK1zdoS6Qu7UwA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=juFGlL8RNkGyKAsi+4qo6HpF4AJ7y67q2jLQ7zY7Ias=;
+ b=MLICXYbE0TdQNn8S3lgnXDAc+34BnEYPnRAAIixtda9sHchcPF9nwGcO2F2idmaVWOGGkPHom9Uj5PYkQoneGxYjt5XL0RfD4ETszQ8Cm82J8yi11J3cgAyMO+uAapGbnlnQAaezlPAeT7HnLVfZfsrUAQr1qVpIRLOX+hWc8AbhMIRMub44LHwkEHukUAl8TMGYYko2p1RJyYBAy4f8MRbhlciTB9HTLlscJujhIVvcmQLjzOy6Az+yFuorx5JJbW7r2bZoBBp9LzAKOExe58EzQQIpb00VTZDMNjGwo5n1vuUrS2zmEMtvA1QWN0HxrZuwl/hK1/yoGv9I+/7K2g==
+Received: from AM6PR03MB5848.eurprd03.prod.outlook.com (2603:10a6:20b:e4::10)
+ by PAWPR03MB9785.eurprd03.prod.outlook.com (2603:10a6:102:2e4::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.24; Wed, 28 Aug
+ 2024 19:49:37 +0000
+Received: from AM6PR03MB5848.eurprd03.prod.outlook.com
+ ([fe80::4b97:bbdb:e0ac:6f7]) by AM6PR03MB5848.eurprd03.prod.outlook.com
+ ([fe80::4b97:bbdb:e0ac:6f7%4]) with mapi id 15.20.7897.021; Wed, 28 Aug 2024
+ 19:49:37 +0000
+From: Juntong Deng <juntong.deng@outlook.com>
+To: ast@kernel.org,
+	daniel@iogearbox.net,
+	john.fastabend@gmail.com,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	memxor@gmail.com,
+	snorcht@gmail.com
+Cc: bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH bpf-next v2 1/2] bpf: Relax KF_ACQUIRE kfuncs strict type matching constraint
+Date: Wed, 28 Aug 2024 20:48:11 +0100
+Message-ID:
+ <AM6PR03MB5848FD2BD89BF0B6B5AA3B4C99952@AM6PR03MB5848.eurprd03.prod.outlook.com>
+X-Mailer: git-send-email 2.39.2
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TMN: [CN0PWSKvxgexGrenKCsp/GgYJd0mlCFi]
+X-ClientProxiedBy: LO4P123CA0085.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:190::18) To AM6PR03MB5848.eurprd03.prod.outlook.com
+ (2603:10a6:20b:e4::10)
+X-Microsoft-Original-Message-ID:
+ <20240828194811.49890-1-juntong.deng@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240822170440.265055-1-robertcnelson@gmail.com>
- <20240822170440.265055-2-robertcnelson@gmail.com> <2774e7e5-8c03-4f38-90c3-b414bc6af255@kernel.org>
- <CAOCHtYhK36QyKOmQhY+Q31rB23ASoxUXTX+0R1tzK-ZhvvWSLA@mail.gmail.com>
- <CAOCHtYiPdxpxz9oPO-deLMMgMZtjCjtEMqPARAPtqMKg8JxOhQ@mail.gmail.com> <87752439-1b41-4f4b-9e94-5c2a43fab4f4@kernel.org>
-In-Reply-To: <87752439-1b41-4f4b-9e94-5c2a43fab4f4@kernel.org>
-From: Robert Nelson <robertcnelson@gmail.com>
-Date: Wed, 28 Aug 2024 14:48:08 -0500
-Message-ID: <CAOCHtYg2hEYZVQ-5P3PPh03-q+FjijJtk2j2=9kKKz9fev=HZA@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] arm64: dts: ti: Add k3-am67a-beagley-ai
-To: Roger Quadros <rogerq@kernel.org>, "Aldea, Andrei" <a-aldea@ti.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Vignesh Raghavendra <vigneshr@ti.com>, Nishanth Menon <nm@ti.com>, Andrew Davis <afd@ti.com>, Jai Luthra <j-luthra@ti.com>, 
-	Siddharth Vadapalli <s-vadapalli@ti.com>, Jared McArthur <j-mcarthur@ti.com>, 
-	Jason Kridner <jkridner@beagleboard.org>, Deepak Khatri <lorforlinux@beagleboard.org>, 
-	Drew Fustini <drew@beagleboard.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM6PR03MB5848:EE_|PAWPR03MB9785:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7a5b16ed-ea33-4ca9-48a1-08dcc79a8bbb
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|461199028|8060799006|15080799006|5072599009|19110799003|3412199025|440099028;
+X-Microsoft-Antispam-Message-Info:
+	NnVR/W7PH+ax0BPz2J172+EY6M7xxP3U6qgZ89Z9R23bvl8rz8lJhjYaFricGKbf8wjS5O3GvgnS+L3rbIjSUVj1avV5GJMdcIFWCdxTP6abOOrmIwB+LciBYOBrEI0V93lgMzYqtXmXdR0y/8AFbO12aa2k/xAO9TDDyfQnt1D6/tzVNapZWgicXnWJ4w0APnKzmEOEIlSNASEeI66ob3VgPArM2tZX0+hpd/b8BgB/XJURzEi1A4mnrGN7ge7ybjFM2XEzYl471pOst7Vna+dcVFBHp4JgS8KZVfgW9nutCBcccGP0FIsmVGPfIQIlyR4gXWg3942Rf7iWsB/ivaPSI5Evc5qu96iLXVX4GL9nbdLFNS9ceXGBG+GixAAojyO/3dxso/tS4UXC7UqzSsEmwv/o0f9OqxS4hWxWcagYGwu70TTfnzlPf2uP6GHyTKw37y26rtcB9KCNyodyAT51PK+w5xk8Twxo5pUUHZBD17gK2Lcdbt5+2t8Umkmrll2tJXTeBZbGC2o6yNLPBUNhzWKJIeVodUfAFhpR4/W7RqcUlgJ0wjYzD3cZ71yTmF9jRqLFhWdATO6+QkMQkaqf+qSxK81x1R/Adhb21ITvtvIuPfrKW6xRSLa6bIwlMs6uV6z03WcNiWR+tkbUKsRpWAJpMbJGJfM/HfzvqJD7vXFv7mwlxnUvCjEQ0Teot1CF0UYotmnIXJSgumbwx/vMGlRZTavqySjh2ocpmxYpW9JWLRW5PsPUsFuCZLLv
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?tJH/InqoHZORQ9qRAxuv9/am57BxbnTWRYXU1OPDkTToUGxegyV9QJFwipPk?=
+ =?us-ascii?Q?j1KMTV7YMuKdu0b+QUc2DwRG8WtP93xNGLJIkPlMt2AXlHa7lCA5HYzhgyyR?=
+ =?us-ascii?Q?qZstVCmWPqmoYCF4J+ZzdLGbL8ABaH1PhGQ4fF7wUamk1dL4Wy+9TtoX+1WF?=
+ =?us-ascii?Q?/9EJTRvpDXQiF+C6nA+/GpPFyeOaEmp9LmiFrXbhryBqHULIn1M51kLZPvJx?=
+ =?us-ascii?Q?+aRVCJQyWGdOp80F4ov36C8lSEepdKBgmn5UcP3fg3XfGhNjBMbptey4BWnW?=
+ =?us-ascii?Q?GltwrvC2bAiskywOYZYO4Nh/aNgL4u//I4ba/eCxaaNh+M9XPN+6cQ5SaP6Y?=
+ =?us-ascii?Q?F7074w0oRKjKSOdSx659puD9Lwxe1A4TD4TsjmXIyqJW2cVazBWE31i8d2OD?=
+ =?us-ascii?Q?eXEATKUe1ltiSLCbXoVpGW2Zixp4zVI5/XD6oljxEXXmxTCYbI2W+TqApA59?=
+ =?us-ascii?Q?BzcpvBQjcpcB3Gn6TznJ7gxabx8ZWXqrl6KmSDU1rGObIH5pbQ9ywoQ/AODN?=
+ =?us-ascii?Q?zI3JovFXU6Umv79wc13SXsZliHFY9xVwXkODGIjtAQXsmn2hzs9sXJsrHPNx?=
+ =?us-ascii?Q?c7w0si9N00/WcDlIufN5SUHeii09lfBrIujfuDI4clpvD6tCjxlV5AoOWDGY?=
+ =?us-ascii?Q?Vb5k8DUQIaahG4jMqiyfubjDbrmrhF5Hn1tBiIxdzWNZqyg48Nx59vsSpHk8?=
+ =?us-ascii?Q?LDtE7h6Q/xUTq+4vx+cmJuZ1NPKxAlLzhEKhBfTRvCAog6lQTyLaz4cQwwXL?=
+ =?us-ascii?Q?dXCx3MxHLj0T4nY6a7qHH0ObYPyOW0B6sl/JdH+Elb7/pLSUM36EgYLPFz7H?=
+ =?us-ascii?Q?Dx2NaizGzZUYIbbnJJe6A+b9Kzh4KJ5rN+IB+yqeloQb6p8N0AstPNDBaEWT?=
+ =?us-ascii?Q?OzXuEJpS9sv/faiVLjmKzhpDddmIPFEGS+ERU1cr1u/44h0MW4smczR1b0ct?=
+ =?us-ascii?Q?BJmYi2calpEI76Y+afofNDHE+u6gILpOYxd/QYzul07ye2q2wCOyKiYjy6sw?=
+ =?us-ascii?Q?TRFGw3yJQwCOozxA2xo2d6mp9Ndb37d3scQPRZ9K8/Baf4XImg3Xsy8acnI5?=
+ =?us-ascii?Q?cWXb71dQFGYtNUTNVEterE79Guobk3jFmyVXngNoaSDGLQMKybnlTsZ7lO7c?=
+ =?us-ascii?Q?9dJhzM2eRlOtsp0Bz7/Co39+PvrcCoN8cMRV+0m2N73IGJvSHlftryun+sur?=
+ =?us-ascii?Q?Iw3eFfyw9hN+w6vx3T3Oogpraa4Ja5x6fQja9GbMNn0CuKzr1gKZLlGHqTia?=
+ =?us-ascii?Q?ucvsNs9OiEpicQUlflS6?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7a5b16ed-ea33-4ca9-48a1-08dcc79a8bbb
+X-MS-Exchange-CrossTenant-AuthSource: AM6PR03MB5848.eurprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2024 19:49:37.0942
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAWPR03MB9785
 
-On Wed, Aug 28, 2024 at 2:44=E2=80=AFPM Roger Quadros <rogerq@kernel.org> w=
-rote:
->
->
->
-> On 28/08/2024 17:33, Robert Nelson wrote:
-> > On Fri, Aug 23, 2024 at 10:33=E2=80=AFAM Robert Nelson <robertcnelson@g=
-mail.com> wrote:
-> >>
-> >>>> +
-> >>>> +&cpsw3g {
-> >>>> +     pinctrl-names =3D "default";
-> >>>> +     pinctrl-0 =3D <&rgmii1_pins_default>, <&gbe_pmx_obsclk>;
-> >>>
-> >>> Why do you need OBSCLK for Ethernet MAC?
-> >>> The OBSCLK is connected to the Ethernet PHY via C406 which is not eve=
-n populated.
-> >>> It seems that the PHY is clocked by a crystal oscillator X5 so doesn'=
-t really
-> >>> need OBSCLK in the stock configuration?
-> >>
-> >> Ah crap, I'll take a look at this... I bet it's left over from the
-> >> first pcb, (all my first rev pcb's are now locked up so i don't use
-> >> them anymore)..  Seeed/BeagleBoard was playing it safe and designing
-> >> in both options.. Once the internal clocks were verified newer
-> >> revisions removed the external clock.
-> >>
-> >> Yeah, I'm pretty sure final production boards removed every external
-> >> clock option.
-> >
-> > Yeap, external clock is the default for all production boards, i
-> > removed this internal clock configuration.
->
-> Did you mean internal clock is the default?
-> Earlier you mentioned
-> "after verification newer versions removed the external clock"
+Currently we cannot pass zero offset (implicit cast) or non-zero offset
+pointers to KF_ACQUIRE kfuncs. This is because KF_ACQUIRE kfuncs
+requires strict type matching, but zero offset or non-zero offset does
+not change the type of pointer, which causes the ebpf program to be
+rejected by the verifier.
 
-Yeah sorry Roger, screwed up on my previous message... I thought one
-of our goals was to have an internal clock for everything. But @Aldea,
-Andrei reminded me Monday night, that Ethernet was external..
+This can cause some problems, one example is that bpf_skb_peek_tail
+kfunc [0] cannot be implemented by just passing in non-zero offset
+pointers. We cannot pass pointers like &sk->sk_write_queue (non-zero
+offset) or &sk->__sk_common (zero offset) to KF_ACQUIRE kfuncs.
 
-Regards,
+This patch makes KF_ACQUIRE kfuncs not require strict type matching.
 
---=20
-Robert Nelson
-https://rcn-ee.com/
+[0]: https://lore.kernel.org/bpf/AM6PR03MB5848CA39CB4B7A4397D380B099B12@AM6PR03MB5848.eurprd03.prod.outlook.com/
+
+Signed-off-by: Juntong Deng <juntong.deng@outlook.com>
+---
+v1 -> v2: Completely remove strict type matching for KF_ACQUIRE kfuncs
+
+ kernel/bpf/verifier.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+index 5437dca56159..0f3b6fa3db39 100644
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -11497,8 +11497,7 @@ static int process_kf_arg_ptr_to_btf_id(struct bpf_verifier_env *env,
+ 	 * btf_struct_ids_match() to walk the struct at the 0th offset, and
+ 	 * resolve types.
+ 	 */
+-	if (is_kfunc_acquire(meta) ||
+-	    (is_kfunc_release(meta) && reg->ref_obj_id) ||
++	if ((is_kfunc_release(meta) && reg->ref_obj_id) ||
+ 	    btf_type_ids_nocast_alias(&env->log, reg_btf, reg_ref_id, meta->btf, ref_id))
+ 		strict_type_match = true;
+ 
+-- 
+2.39.2
+
 
