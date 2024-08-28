@@ -1,91 +1,101 @@
-Return-Path: <linux-kernel+bounces-305336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5CC6962D20
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 18:00:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67B55962D26
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 18:01:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F87B284481
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 16:00:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98FA41C226E6
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 16:01:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B32D1A4AA4;
-	Wed, 28 Aug 2024 16:00:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F3751A4B73;
+	Wed, 28 Aug 2024 16:01:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iE6l7z/Q"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b+e4Q7kQ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC5A834CC4;
-	Wed, 28 Aug 2024 16:00:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A8671A38D2;
+	Wed, 28 Aug 2024 16:01:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724860840; cv=none; b=oi19ZK9sOF9xEH/e453sG6N9+CuaB+CgEuW7DvBDArovlEJ8Gkv2yLyo/KNA3ezhjiMC9uu5UvO2BSW9nR7U5sLjGIed03PAB2XLsCghTxEPXXeA4Ou01q2p+VsFXlPrgbwun8eEOS2j9sJwPHGKMwvBkqEGeA1b4Fh2yQaFKFw=
+	t=1724860892; cv=none; b=CovO7Gq3bOh86iS7mfx4Y/prFxMMOJf6cBElPTVu4bLriICoZjJ4iUGUeSqHK5avUXdUXZIJLp+Lc6WM02z/wvG40G8fV69/lzY6AqzGBWZFfvHaW4frUHGs1079MTsG04/V8AaFcKKtPEWG3191DAypkLcrjpbt2nIzJYVdRSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724860840; c=relaxed/simple;
-	bh=gpthfaPiNOiFnAxDD96UbfcYTq4HbUN6qQAbihWPC/A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o/1SJHk4HbPQ4sOSOBNy8ST5HBG88UeInaN4tvl3d4Jqrz0vgV4CecqKbpQJ4Z6gqu1eGQn8HvVGKuiw/SRxrstn/b/927rWuCHONm+vuOtukO5Hc+c7hBIq9V14O4ks1qL4oYV3lnfKbm/66H6lfaS5brjts38HOfUvaAULLvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iE6l7z/Q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1C71C4CEC6;
-	Wed, 28 Aug 2024 16:00:38 +0000 (UTC)
+	s=arc-20240116; t=1724860892; c=relaxed/simple;
+	bh=2ZEc39QyYycRl49ZFRInIHmmXhN2ykEKq5khgjXkDOI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=EC9SRjONJ6eBvhFhHKAiu0b7eF4BvZ/8eGGLzPrTl9NVxChAEuT3On4r3qi41MBNrJ2IeCm5XAQmbxTGKbJroTJSVFtpHNdSWfpj8M6AUiiAh+V4b88aJfHl6s8NIHKwIzdibfwKe8urDDDzxi3naScKEw9Uoc2qL3OXRF26sZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b+e4Q7kQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A09A6C4CED7;
+	Wed, 28 Aug 2024 16:01:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724860840;
-	bh=gpthfaPiNOiFnAxDD96UbfcYTq4HbUN6qQAbihWPC/A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iE6l7z/QRfxocESGvhxDjTc/ZHq9wUy98SZTFOeiiuNRrMVicHbTwj22YexzFyoiD
-	 YAqncJVrypKbdLQf9yrMGkCLyuPkZvdfLswgXgtH6TJQwxkmXiEZWTE9eIawnFKUTH
-	 2xSv2FZiuz4zwfM793WILf9+3J6gy+O58ifCiJ5Cd9obVTxbjf9XO0AMmGkkaJN7z0
-	 MdOD6FAVnZcHnkyoxkDSxFxW73/JB+CoVq2degoNVXF1LXRRQVA6RCJMmRqrifnx/I
-	 S8WXJ/1yvraqS4guEhVdev3cGvI4bV24035zJprybMCvpXjq7Vol/OKP84jVvgLPzX
-	 fAeb0QHB9Sv8A==
-Date: Wed, 28 Aug 2024 17:00:36 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: arm: psci: change labels to lower-case in
- example
-Message-ID: <20240828-unbraided-runaround-70a98ff29f24@spud>
-References: <20240828064919.79625-1-krzysztof.kozlowski@linaro.org>
+	s=k20201202; t=1724860892;
+	bh=2ZEc39QyYycRl49ZFRInIHmmXhN2ykEKq5khgjXkDOI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=b+e4Q7kQ3x0bckAUBSJmaUm+sOKyZdfy8hhoVwllydQ2DSimcr7c5FXfy3SRbu8Lr
+	 gNLUE9sDLRBUqKHs3lpDIF3IWmQfYMr8fdr/z2zAK/wBnCd+IKpy3RPy3Orn6aadve
+	 7kyaHGTtwi939SKTUQ+2nwyZgEnuQq7itIFD7hxhlMNnjo0Y1LsY26vHS925mjGXzs
+	 v3rtYrJbOF1vXQc2U8niNGTdhCbo6/pVYw6DRTsaqDzgxirnJoZtKysgnIz8+8wrRF
+	 Sb3rfvH3PGGB2pNbov7kV1Nj+9J7BUMs41B8p+73DrJtgFFiHt6Xos/HPFvEq86icZ
+	 djUX72pHHetZQ==
+From: Miguel Ojeda <ojeda@kernel.org>
+To: gregkh@linuxfoundation.org
+Cc: akpm@linux-foundation.org,
+	allen.lkml@gmail.com,
+	broonie@kernel.org,
+	conor@kernel.org,
+	f.fainelli@gmail.com,
+	jonathanh@nvidia.com,
+	linux-kernel@vger.kernel.org,
+	linux@roeck-us.net,
+	lkft-triage@lists.linaro.org,
+	patches@kernelci.org,
+	patches@lists.linux.dev,
+	pavel@denx.de,
+	rwarsow@gmx.de,
+	shuah@kernel.org,
+	srw@sladewatkins.net,
+	stable@vger.kernel.org,
+	sudipm.mukherjee@gmail.com,
+	torvalds@linux-foundation.org,
+	Miguel Ojeda <ojeda@kernel.org>
+Subject: Re: [PATCH 6.1 000/321] 6.1.107-rc1 review
+Date: Wed, 28 Aug 2024 18:01:13 +0200
+Message-ID: <20240828160113.139079-1-ojeda@kernel.org>
+In-Reply-To: <20240827143838.192435816@linuxfoundation.org>
+References: <20240827143838.192435816@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="P/XHFMBwvHP/5q8q"
-Content-Disposition: inline
-In-Reply-To: <20240828064919.79625-1-krzysztof.kozlowski@linaro.org>
+Content-Transfer-Encoding: 8bit
 
+On Tue, 27 Aug 2024 16:35:08 +0200 Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.1.107 release.
+> There are 321 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu, 29 Aug 2024 14:37:36 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+> https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.107-rc1.gz
+> or in the git tree and branch at:
+> git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+> and the diffstat can be found below.
 
---P/XHFMBwvHP/5q8q
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Boot-tested under QEMU for Rust x86_64.
 
-On Wed, Aug 28, 2024 at 08:49:19AM +0200, Krzysztof Kozlowski wrote:
-> DTS coding style expects labels to be lowercase, so adjust the example
-> code.  No functional impact.
->=20
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Tested-by: Miguel Ojeda <ojeda@kernel.org>
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Thanks!
 
---P/XHFMBwvHP/5q8q
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZs9JpAAKCRB4tDGHoIJi
-0qSjAP40tld6jLrgDMfdyMGa6e9rLchinFN2k8fcYYiCQM2i3gEA8PJMNK3Gcbmg
-Vw76rc+EAsMpghDiEKmQxBVjEM6/Gwo=
-=S2N3
------END PGP SIGNATURE-----
-
---P/XHFMBwvHP/5q8q--
+Cheers,
+Miguel
 
