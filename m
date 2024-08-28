@@ -1,132 +1,215 @@
-Return-Path: <linux-kernel+bounces-304600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34EBD962254
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 10:31:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F40A96225A
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 10:36:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B81621F23AF3
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 08:31:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29786281E0F
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 08:36:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3036A15C131;
-	Wed, 28 Aug 2024 08:31:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 769D815B971;
+	Wed, 28 Aug 2024 08:36:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Od8zZ/85"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mtncNZ6F"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6E4415B55D
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 08:31:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 054148288F
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 08:36:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724833893; cv=none; b=UOX2NljMiSYxbD77NmrwFrly9d4ee/41MANM6HEdQLYoXBCZ2Vr/jpMmze73AcayS43Vp9kWwaMM9a7yvSCB2JglDLqCXf5m2q6WsBKRXCNYiiKbNavUqc95LJizqeMXi2nBiLCUybEouiogwwDK2QTrmeaRX2NjEJcgRXxIxDQ=
+	t=1724834163; cv=none; b=LWPyX4hJFzfbOuNi2KKMlgPABdPOhY+NHsjjWgcRuwhLfA2aQnTKXNwz/EREBFQ/WKCCamJarXJxtP88DoDq9IzTFBqueP0gOJKbwx4PcIaU8XU+YUJYIqsRjWj1tlWa/cDI6ibQweqXODeiMqLFIs/KEUjFjq2hfUL5nCMLX0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724833893; c=relaxed/simple;
-	bh=gjsYJdp7ScKwKcIE4Uu+ggF9Axf9/49wqI34k9cojGU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c1j/4gLyUDcp+UaneQ2lPObDQ0ehEc3mVEsPngaOmseg7MTaW4kPrnEJHPy1IF76EWeO1xrpg9ejYkc9/SGtDFYo1zzD/xGR8eBwBjBVPjQk9QtI+7KxZAuCWwa/D1r3uYtG3Ir7l72YiK3GyQIEFW/pIlSVSKS51L6mLPa1QGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Od8zZ/85; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a86e9db75b9so199655566b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 01:31:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724833889; x=1725438689; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3c7NVkKcmxAMyio8/L9pzMWp9IJ9Pqc+LaOhJRGv9yg=;
-        b=Od8zZ/856Oi5TpVaYDkGZl1v7MlQe3rFlqAlgbHVyhBtC3AVHUpmdIL9uoWs7Zo9NN
-         C0nuKtBEDyzTsyNvFE5g21D9KdDAEC68W2xKO10WIOMAKx3at6fJxLgXF+x3S3wKkKgv
-         GDCZD15PsJvI1pt1tZRT9Fd+4P1icFD8w86cos+6iUnsCSnfbpB38eqhFN3szRrZ7GvJ
-         IZLyrpllE0i+06QLhXWIH4g1uC9FAHOHBmU6eMil/w9F5wOqQKGHJ1ZBp5OJLCTiPP57
-         c4XzMTtVG9zbZgZOxv2AjWc4aEupisZfBveJasUjec8PlYgrO9cj16QqxhXTDy57mvDf
-         O8pg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724833889; x=1725438689;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3c7NVkKcmxAMyio8/L9pzMWp9IJ9Pqc+LaOhJRGv9yg=;
-        b=qJpn2RydMVe7LEZwpxKoPOk4sE2wE7SG/hqyT5XJxoeueoUBj8lMzdClUbQ4WhgndQ
-         +eGISaxeKhczLI1QmPkyxy2Ak1tEdn+xzp7I8ea+iNHQH1/5RWMAQvn5aqK8Z3kpLnly
-         EPITqwUe08qXOqotHaECBCSFvjCmp2IEaK2+yvo4HaJoHwMJpfnqw+V6lgeQde2VTVyC
-         FLFtlr8jf7ww6QAT/UH2cz74vEyTTV1O2uCUT5agyGchYTzzQFLdATTjXdHZcKJt8Xga
-         uzVBYlLJVeSHEQP8y+fJ1+aGCMjnN+MFXsvgeImT4LwnRPpZUF5feoFmo5F8+5oSurVm
-         izMg==
-X-Forwarded-Encrypted: i=1; AJvYcCXuStMKMoZotICEt501k/VHpjSDjr76jYCZDPOUMpfJ8E2iX1cOwpWOWLiAXOybXlL7pUdwcN8HD+oJQy8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOQEELj9/SJC5498xAZmPTF5tT8skoo5UWWMCdvFmwBKogsMZH
-	S2lHYcp0rB6t7x0eSMixYgC6iXQwPKbtM4fJswCTjpymKt6BLkgXqiiTgeOlj5k=
-X-Google-Smtp-Source: AGHT+IGObeLl3j0bnFYb8shzD2k1t7YBRB0S+K2t7vP1NBHH1oO3NjvEy1RtpFlfZhpgj6jiJ48fgA==
-X-Received: by 2002:a17:907:c0f:b0:a86:c111:cc35 with SMTP id a640c23a62f3a-a86c111cfb5mr901917966b.50.1724833888846;
-        Wed, 28 Aug 2024 01:31:28 -0700 (PDT)
-Received: from linaro.org ([82.79.186.176])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a86e549d10fsm212595766b.54.2024.08.28.01.31.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2024 01:31:28 -0700 (PDT)
-Date: Wed, 28 Aug 2024 11:31:26 +0300
-From: Abel Vesa <abel.vesa@linaro.org>
-To: Diogo Manuel Pais Silva <diogo.pais@ttcontrol.com>
-Cc: Peng Fan <peng.fan@nxp.com>,
-	"abelvesa@kernel.org" <abelvesa@kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"shawnguo@kernel.org" <shawnguo@kernel.org>,
-	"kernel@pengutronix.de" <kernel@pengutronix.de>,
-	"s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"sboyd@kernel.org" <sboyd@kernel.org>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>,
-	"festevam@gmail.com" <festevam@gmail.com>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"EMC: linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] clk: imx8qxp: Defer instead of failing probe
-Message-ID: <Zs7gXhohOyQ/abOf@linaro.org>
-References: <DU0PR01MB93828B0E6808E33C608BC0E29DD32@DU0PR01MB9382.eurprd01.prod.exchangelabs.com>
- <AM6PR04MB5941651E3920794104B3D24F88D32@AM6PR04MB5941.eurprd04.prod.outlook.com>
- <DU0PR01MB9382F1AC496F22A20C074BDE9DDC2@DU0PR01MB9382.eurprd01.prod.exchangelabs.com>
+	s=arc-20240116; t=1724834163; c=relaxed/simple;
+	bh=gizPOTp7IDSjb6kUrZDKwYTy4pO6ej/HLu/OaGGmw2M=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ZMdQdJCEsThH4NMPTq0y9mtOOGK7O7gMdBynO0C5DD4QvlhL0xqr3ohuj+WVkwOmorl5abia3WRm22DBo2DRuPT4Rwuz7A6Dh1nO7mtt8l4q2avTL9hyr4e4zVhwZaCuy2kyEFpXODGBlKAVYBatrc6oHCDFhTiQ60gUKp0FYOM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mtncNZ6F; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724834161; x=1756370161;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version:content-transfer-encoding;
+  bh=gizPOTp7IDSjb6kUrZDKwYTy4pO6ej/HLu/OaGGmw2M=;
+  b=mtncNZ6Ffzj2ZHbsM5NHlRp2Npnek3hxa3pWfuXJH7uPtppTmfZcQRiA
+   zohWLwMel9I/zr72xhygWIX3bzTZPcEHnnvwWTbiY3ihUU0Bmhd1wVMs5
+   qrSKV/+TcDqQzSj812zASV7gEzlKDFwaQRZ/finMNmvTO3+Vv8C1eP84E
+   R+5CA2bkuyM0zBhWYICYcnX5BzBIPW1C30ig45pm90XwxlqBhJZqJsVr9
+   xlrEsnz131wTOHV1IvfsixfyKO7IMYatf25DQb+AEC2QqWZnFG/L/0X9t
+   /6JlLZO2XMFXoGqujONFyum1v8Hpy2fkruCQmwFdvGz24EG6mtcbstRjY
+   A==;
+X-CSE-ConnectionGUID: HrG4zG5SRm2bDO23jzPopg==
+X-CSE-MsgGUID: fMKkCwksTL+fWFtGFnEfgQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11177"; a="23512091"
+X-IronPort-AV: E=Sophos;i="6.10,182,1719903600"; 
+   d="scan'208";a="23512091"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2024 01:35:56 -0700
+X-CSE-ConnectionGUID: +4WDI96SRaSN52XLKOcOug==
+X-CSE-MsgGUID: Dv6d161JQlCWjkDgTXxWMQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,182,1719903600"; 
+   d="scan'208";a="63193476"
+Received: from fdefranc-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.246.110])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2024 01:35:49 -0700
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Louis Chauvet <louis.chauvet@bootlin.com>, Maxime Ripard
+ <mripard@kernel.org>
+Cc: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>, Melissa Wen
+ <melissa.srw@gmail.com>, =?utf-8?Q?Ma=C3=ADra?= Canal
+ <mairacanal@riseup.net>, Haneen
+ Mohammed <hamohammed.sa@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
+ <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ dri-devel@lists.freedesktop.org, arthurgrillo@riseup.net,
+ linux-kernel@vger.kernel.org, jeremie.dautheribes@bootlin.com,
+ miquel.raynal@bootlin.com, thomas.petazzoni@bootlin.com,
+ seanpaul@google.com, nicolejadeyee@google.com
+Subject: Re: [PATCH RFC 11/15] drm: writeback: Add drm_writeback_connector
+ cleanup
+In-Reply-To: <Zs3z7tx4dMBfY_DX@louis-chauvet-laptop>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20240814-google-remove-crtc-index-from-parameter-v1-0-6e179abf9fd4@bootlin.com>
+ <20240814-google-remove-crtc-index-from-parameter-v1-11-6e179abf9fd4@bootlin.com>
+ <20240827-solid-adorable-coucal-c3e0d1@houat>
+ <Zs3z7tx4dMBfY_DX@louis-chauvet-laptop>
+Date: Wed, 28 Aug 2024 11:35:43 +0300
+Message-ID: <87a5gxyrhc.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DU0PR01MB9382F1AC496F22A20C074BDE9DDC2@DU0PR01MB9382.eurprd01.prod.exchangelabs.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 24-07-02 08:10:44, Diogo Manuel Pais Silva wrote:
-> When of_clk_parent_fill is ran without all the parent clocks having been probed then the probe function will return -EINVAL, making it so that the probe isn't attempted again. As fw_devlink is on by default this does not usually happen, but if fw_devlink is disabled then it is very possible that the parent clock will be probed after the lpcg first attempt.
-> 
-> Signed-off-by: Diogo Silva <diogo.pais@ttcontrol.com>
+On Tue, 27 Aug 2024, Louis Chauvet <louis.chauvet@bootlin.com> wrote:
+> Le 27/08/24 - 16:33, Maxime Ripard a =C3=A9crit :
+>> Hi,
+>>=20
+>> On Wed, Aug 14, 2024 at 04:36:33PM GMT, Louis Chauvet wrote:
+>> > Currently drm_writeback_connector are created by
+>> > drm_writeback_connector_init or drm_writeback_connector_init_with_enco=
+der.
+>> > Both of the function uses drm_connector_init and drm_encoder_init, but
+>> > there is no way to properly clean those structure from outside.
+>> >=20
+>> > This patch introduce the new function drm_writeback_connector_cleanup =
+to
+>> > allow a proper cleanup.
+>> >=20
+>> > Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+>> > ---
+>> >  drivers/gpu/drm/drm_writeback.c | 10 ++++++++++
+>> >  include/drm/drm_writeback.h     | 11 +++++++++++
+>> >  2 files changed, 21 insertions(+)
+>> >=20
+>> > diff --git a/drivers/gpu/drm/drm_writeback.c b/drivers/gpu/drm/drm_wri=
+teback.c
+>> > index a031c335bdb9..505a4eb40f93 100644
+>> > --- a/drivers/gpu/drm/drm_writeback.c
+>> > +++ b/drivers/gpu/drm/drm_writeback.c
+>> > @@ -184,6 +184,7 @@ int drm_writeback_connector_init(struct drm_device=
+ *dev,
+>> >  	drm_encoder_helper_add(&wb_connector->encoder, enc_helper_funcs);
+>> >=20=20
+>> >  	wb_connector->encoder.possible_crtcs =3D possible_crtcs;
+>> > +	wb_connector->managed_encoder =3D true;
+>> >=20=20
+>> >  	ret =3D drm_encoder_init(dev, &wb_connector->encoder,
+>> >  			       &drm_writeback_encoder_funcs,
+>> > @@ -290,6 +291,15 @@ int drm_writeback_connector_init_with_encoder(str=
+uct drm_device *dev,
+>> >  }
+>> >  EXPORT_SYMBOL(drm_writeback_connector_init_with_encoder);
+>> >=20=20
+>> > +void drm_writeback_connector_cleanup(struct drm_writeback_connector *=
+wb_connector)
+>> > +{
+>> > +	drm_connector_cleanup(&wb_connector->base);
+>> > +	drm_property_blob_put(wb_connector->pixel_formats_blob_ptr);
+>> > +	if (wb_connector->managed_encoder)
+>> > +		drm_encoder_cleanup(&wb_connector->encoder);
+>> > +}
+>> > +EXPORT_SYMBOL(drm_writeback_connector_cleanup);
+>> > +
+>> >  int drm_writeback_set_fb(struct drm_connector_state *conn_state,
+>> >  			 struct drm_framebuffer *fb)
+>> >  {
+>> > diff --git a/include/drm/drm_writeback.h b/include/drm/drm_writeback.h
+>> > index 17e576c80169..e651c0c0c84c 100644
+>> > --- a/include/drm/drm_writeback.h
+>> > +++ b/include/drm/drm_writeback.h
+>> > @@ -35,6 +35,15 @@ struct drm_writeback_connector {
+>> >  	 */
+>> >  	struct drm_encoder encoder;
+>> >=20=20
+>> > +	/**
+>> > +	 * @managed_encoder: Sets to true if @encoder was created by drm_wri=
+teback_connector_init()
+>> > +	 *
+>> > +	 * If the user used drm_writeback_connector_init_with_encoder() to c=
+reate the connector,
+>> > +	 * @encoder is not valid and not managed by drm_writeback_connector.=
+ This fields allows
+>> > +	 * the drm_writeback_cleanup() function to properly destroy the enco=
+der if needed.
+>> > +	 */
+>> > +	bool managed_encoder;
+>> > +
+>>=20
+>> I think we should rather create drmm_writeback_connector variants,
+>> and make both deprecated in favor of these new functions.
+>
+> Hi,
+>
+> I can try to do it. If I understand correctly, you want to create two=20
+> functions like this?=20
+>
+> 	int drmm_writeback_connector_init([...]) {
+> 		/* drmm and alloc as we want to let drm core to manage this=20
+> 		   encoder, no need to store it in drm_writeback_connector=20
+> 		   */
+> 		enc =3D drmm_plain_encoder_alloc(...);
+>
+> 		return drmm_writeback_connector_init_with_encoder([...], enc);
+> 	}
+>
+> 	int drmm_writeback_connector_init_with_encoder([...], enc) {
+> 		con =3D drmm_connector_init([...]);
+>
+> 		drm_connector_attach_encoder(enc, con);
+>
+> 		/* Needed for pixel_formats_blob_ptr, base is already=20
+> 		   managed by drmm_connector_init. Maybe cleaning=20
+> 		   job_queue is also needed? */
+> 		drmm_add_action_or_reset([...], &drm_writeback_connector_cleanup)
+> 	}
 
-This patch doesn't apply cleanly.
+Why add two variants, when you can have one and pass NULL for encoder?
+We have the _init_with_encoder variant only because nobody bothered to
+clean up existing call sites.
 
-Please respin.
+Side note, I'd still like to be able to pass driver's own allocated
+connector instead of having writeback midlayer force it on you.
 
-Thanks!
+BR,
+Jani.
 
-> ---
-> v2: change from dev_warn to dev_err_probe
-> ---
->  drivers/clk/imx/clk-imx8qxp-lpcg.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/imx/clk-imx8qxp-lpcg.c b/drivers/clk/imx/clk-imx8qxp-lpcg.c
-> index d0ccaa040225..7bd9b745edbe 100644
-> --- a/drivers/clk/imx/clk-imx8qxp-lpcg.c
-> +++ b/drivers/clk/imx/clk-imx8qxp-lpcg.c
-> @@ -225,8 +225,8 @@ static int imx_lpcg_parse_clks_from_dt(struct platform_device *pdev,
->  
->  	ret = of_clk_parent_fill(np, parent_names, count);
->  	if (ret != count) {
-> -		dev_err(&pdev->dev, "failed to get clock parent names\n");
-> -		return count;
-> +		return dev_err_probe(&pdev->dev, -EPROBE_DEFER,
-> +				"failed to get all clock parent names\n");
->  	}
->  
->  	ret = of_property_read_string_array(np, "clock-output-names",
-> -- 
-> 2.34.1
+
+>
+> Louis Chauvet
+>=20=20
+>> Maxime
+>
+>
+
+--=20
+Jani Nikula, Intel
 
