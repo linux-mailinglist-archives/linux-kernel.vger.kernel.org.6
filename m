@@ -1,145 +1,114 @@
-Return-Path: <linux-kernel+bounces-305329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04488962D02
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 17:52:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DF95962D03
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 17:52:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 370821C232F7
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:52:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40F141C23B2C
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:52:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EF4D1A38D5;
-	Wed, 28 Aug 2024 15:52:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A2941A3BBF;
+	Wed, 28 Aug 2024 15:52:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="D5ieMxB+"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K+idIZXh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56D841A2572
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 15:52:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0DAE1A2572
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 15:52:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724860344; cv=none; b=j3SsVzMgRvuimYXM+ocR+ibnLdp6pqlhRzqBK+wxf84+jkOU9vofUAavGznSsPTK8zIL50d5Cdry7qmiN36AxoJueIzp/ENq+8CnW67xkt71VaE7G4Knyhc6D8NR9so28hZ7giKg5K6M6jG14A7yymQwwu8cRMDGYamIG5gSfAg=
+	t=1724860352; cv=none; b=MQkcbWFLn6mVEl73d5g8CCi2IIZ02T+TSlzCoOUNdaeAKwWyKcXtSGZHNVBNgfzihREqPVNUEuXfQtLgnwiM+swWfDRARIuh9XvyRHxmo7ZfbHc/K4Fi8/DAqhYbsr+mH/g7lfM2VfrKO4/HZDAyGEfaB1xPe4frKAFkpKtnbf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724860344; c=relaxed/simple;
-	bh=AYwJsPFJTs+BMyQDHjSBUGoJbZSElw/swWIE6XYBz38=;
+	s=arc-20240116; t=1724860352; c=relaxed/simple;
+	bh=aLJZstYbMFsoiIlcnF9iYgXbHkoB/kdXa6tTizeKPLA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N1L7mZa/w8IwwuUl0xiyIhAsIX12up1RZAred+cq3HNsm7QbcebLVuAwonH6T92xY2IHT7dJgryVLEdo0wrJUV+yw+vjwRQBBvVZ25cC3Uq50ezu5mhi5EkoD47ZhzHdJNRv//p9tUX+UL41kh9uxYQkeY3OJC/qGkryoPtCwok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=D5ieMxB+; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-201e52ca0caso49251145ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 08:52:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724860342; x=1725465142; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ftzkSWbFvLJ9948dQ8TVsavC0mFp50UvDV94rVgLQ2k=;
-        b=D5ieMxB+8jlaaVGNpIWduVsHlNFpIqCSgy736Vrmb5V7d4upg4KJNCwjHJnJoGx1Tz
-         Ixx9U82Lf2mZUEr+YV9P/h7SCT43KRcFYN6vEln9Jz34yON15iLtfzOu375s65bUf2c0
-         +9ugFN6tBHQZli7WBsitkgiVLotuPcwAp4NwS4pFCVLL0Ku1o/c0KQr1l1/Pi1T+fxvG
-         /P0IcK8/QChufejp+qVNFfzExS2uKP+S/u4Dn8lXbIegfljt2z49B8WyLI5HYXuke7SE
-         8lJab0D9WR6pKI1G4oY2zr81BbOYJx6btQHaNAZ0a1BcqofzJI741IuIXuFZWj2zm/is
-         /3Uw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724860342; x=1725465142;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ftzkSWbFvLJ9948dQ8TVsavC0mFp50UvDV94rVgLQ2k=;
-        b=I+osaN8/0QF5VK8ZBCET/eUXsf4zFCV0RyagGRl1Zn+C9IJ+H/Ci726jXkksTIdbF/
-         hkck9V4aU2JC6mt25o9CiQKeinRnO0sCyc+Ew9ves0tlg1MbWP7x8kGEr5bAZNqhKCU+
-         rb21YUUUdBcWYlukpK9/p+wdiuZITwkdHzWFwrJ5AYmvV2MqmJ7unhQ1Y5rEzfKCln9e
-         67xPMxyeBTrZdfD4QHxMUkO/g7RG11EVrloCuC7TxCFUyanCCC5AKYWPlTUdhzzXY9bJ
-         bkoc3jLiOQ1OFWK8H40Vu4oiUw0Vv13ZogSBQQgjQVG6AMj8nEFiMViCeOo8iR9Ua3VU
-         0dPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUxlhpQ6opQnPNaq6iLh9CHaszJmyZUOR4llMK98clxpWuIK09fIR5mvWAHhUVmQZcXp3pzV9IVFvIiKqQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7t6/9bcaLJiCNFr20MABIS+v+Dg68T6QEEPiE9cVamItCcDSb
-	CM8IO5gf8gB6G+IrSUp3ewFvdLkIIUjVMCLY7PydpUwToDoNC5g9hNcpmex/Yg==
-X-Google-Smtp-Source: AGHT+IFgo/cUJQwlwSXIoPmB/Y0s5lv+ozTSguIks56E+QNBK2Z1wW4Eku59mqPReTGV1Hr4ehcyCw==
-X-Received: by 2002:a17:903:230b:b0:200:aa31:dc8d with SMTP id d9443c01a7336-2039e52cb0fmr191870685ad.63.1724860342472;
-        Wed, 28 Aug 2024 08:52:22 -0700 (PDT)
-Received: from thinkpad ([120.56.198.191])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20385564b6csm100745445ad.27.2024.08.28.08.52.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2024 08:52:22 -0700 (PDT)
-Date: Wed, 28 Aug 2024 21:22:17 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
-	lukas@wunner.de, mika.westerberg@linux.intel.com,
-	Hsin-Yi Wang <hsinyi@chromium.org>
-Subject: Re: [PATCH v5 3/4] PCI: Decouple D3Hot and D3Cold handling for
- bridges
-Message-ID: <20240828155217.jccpmcgvizqomj4x@thinkpad>
-References: <20240802-pci-bridge-d3-v5-3-2426dd9e8e27@linaro.org>
- <20240821014559.GA236134@bhelgaas>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gHe4IEaoiK8ufZwUuK5hZ8hJmgN7/pzlg0HPMqoNW/kr6BdBCJX2SlsAB7mUkvKJGo63PKxyrgtcqSUlqD67sm0qchxpybcSa11ChkKL/NL4SWQlhbBFOD0Kuet3rw1zOl8lEz7htNL7HWbP+z7puTrhPHPjiJRGEBek/w5JdWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K+idIZXh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED034C4CEC2;
+	Wed, 28 Aug 2024 15:52:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724860351;
+	bh=aLJZstYbMFsoiIlcnF9iYgXbHkoB/kdXa6tTizeKPLA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=K+idIZXhm71qDaiB+CSRtRkiCrA21en25/YuTiXq4wMjDxpUitQFB/2D2gN8oUbdU
+	 JPG7wE1lHOx8AgAyo/QB+EZ1t2YoiREcVuhOHIwEQ/Y9ipfMgwb8NZPA5XMH3W5tZ/
+	 JmFuwCnj2YXHJrnUlBcucITQZSFEySs+smgK6SRG1aEmTAz9AvpNt/8QJo+apHLNJQ
+	 3km0M4JMnfCmZFUemMQ3zVyhkbLL4kSURg9n6yMA4VBWyWdgCxPgQ5tBZtN+VsCi7A
+	 YNiuHVmYexJ2yYZeYX01IgD8BOPftu4jArnYwLx+yHmYPaChULyrffo9QUfOvdkALc
+	 oHMANM+Taynmw==
+Date: Wed, 28 Aug 2024 09:52:28 -0600
+From: Keith Busch <kbusch@kernel.org>
+To: Puranjay Mohan <pjy@amazon.com>
+Cc: Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
+	Sagi Grimberg <sagi@grimberg.me>, linux-nvme@lists.infradead.org,
+	linux-kernel@vger.kernel.org, puranjay@kernel.org
+Subject: Re: [PATCH v2] nvme: check if the namespace supports metadata in
+ nvme_map_user_request()
+Message-ID: <Zs9HvJh8GRvYilFB@kbusch-mbp>
+References: <20240827132327.1704-1-pjy@amazon.com>
+ <Zs8360kRPGa1B5xy@kbusch-mbp>
+ <mb61p1q28y88y.fsf@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240821014559.GA236134@bhelgaas>
+In-Reply-To: <mb61p1q28y88y.fsf@amazon.com>
 
-On Tue, Aug 20, 2024 at 08:45:59PM -0500, Bjorn Helgaas wrote:
-> On Fri, Aug 02, 2024 at 11:25:02AM +0530, Manivannan Sadhasivam via B4 Relay wrote:
-> > From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > 
-> > Currently, there is no proper distinction between D3Hot and D3Cold while
-> > handling the power management for PCI bridges. For instance,
-> > pci_bridge_d3_allowed() API decides whether it is allowed to put the
-> > bridge in D3, but it doesn't explicitly specify whether D3Hot or D3Cold
-> > is allowed in a scenario. This often leads to confusion and may be prone
-> > to errors.
-> > 
-> > So let's split the D3Hot and D3Cold handling where possible. The current
-> > pci_bridge_d3_allowed() API is now split into pci_bridge_d3hot_allowed()
-> > and pci_bridge_d3cold_allowed() APIs and used in relevant places.
+On Wed, Aug 28, 2024 at 03:31:09PM +0000, Puranjay Mohan wrote:
+> Keith Busch <kbusch@kernel.org> writes:
 > 
-> s/So let's split/Split/
+> > On Tue, Aug 27, 2024 at 01:23:27PM +0000, Puranjay Mohan wrote:
+> >> @@ -119,9 +120,13 @@ static int nvme_map_user_request(struct request *req, u64 ubuffer,
+> >>  	struct request_queue *q = req->q;
+> >>  	struct nvme_ns *ns = q->queuedata;
+> >>  	struct block_device *bdev = ns ? ns->disk->part0 : NULL;
+> >> +	bool has_metadata = bdev && meta_buffer && meta_len;
+> >
+> > If this is an admin command, then bdev is NULL, so "has_metadata" is
+> > false.
+> >
+> >>  	struct bio *bio = NULL;
+> >>  	int ret;
+> >>  
+> >> +	if (has_metadata && !blk_get_integrity(bdev->bd_disk))
+> >> +		return -EINVAL;
+> >> +
+> >
+> > Since has_metadata is false, we continue on to process this admin
+> > command, but ignore the user's metadata settings. Do we want to return
+> > error there too?
 > 
-> > Also, pci_bridge_d3_update() API is now renamed to
-> > pci_bridge_d3cold_update() since it was only used to check the possibility
-> > of D3Cold.
-> > 
-> > Note that it is assumed that only D3Hot needs to be checked while
-> > transitioning the bridge during runtime PM and D3Cold in other places. In
-> > the ACPI case, wakeup is now only enabled if both D3Hot and D3Cold are
-> > allowed for the bridge.
-> > 
-> > Still, there are places where just 'd3' is used opaquely, but those are
-> > hard to distinguish, hence left for future cleanups.
-> 
-> The spec does use "D3Hot/D3Cold" (with Hot/Cold capitalized and
-> subscripted), but most Linux doc and comments use "D3hot" and
-> "D3cold", so I think we should stick with the Linux convention (it's
-> not 100%, but it's a pretty big majority).
-> 
-> > -	if (pci_dev->bridge_d3_allowed)
-> > +	if (pci_dev->bridge_d3cold_allowed && pci_dev->bridge_d3hot_allowed)
-> 
-> Much of this patch is renames that could be easily reviewed.  But
-> there are a few things like this that are not simple renames.  Can you
-> split out these non-rename things to their own patch(es) with their
-> own explanations?
-> 
+> As an admin command with metadata is an invalid configuration, we can
 
-I can, but I do not want these cleanups/refactoring to delay merging the patch
-4. Are you OK if I just send it standalone and work on the refactoring as a
-separate series?
+It's not that it's an invalid configuration. The spec defines the common
+command format allowing admin commands to transfer metadata.
 
-- Mani
+There's just no existing spec defined command that makes use of it.
+Nothing stops a vendor specific command from using it. If someone
+tried, the kernel reports success, but we didn't execute the requested
+command.
 
--- 
-மணிவண்ணன் சதாசிவம்
+> ignore the metada and go ahead with the admin command or I can add the
+> following after the above check:
+> 
+> 	if (!bdev && (meta_buffer || meta_len))
+>     	return -EINVAL;
+> 
+> I don't know what is the best approach here.
+
+Yeah, or just do it in one line with the bdev case too:
+
+	bool has_metadata = meta_buffer && meta_len;
+	...
+
+	if (has_metadata && (!bdev || !blk_get_integrity(bdev->bd_disk)))
+		return -EINVAL
 
