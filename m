@@ -1,88 +1,117 @@
-Return-Path: <linux-kernel+bounces-305350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF254962D4F
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 18:10:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97530962D51
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 18:11:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D7F71C2133B
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 16:10:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50FEA2861E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 16:11:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F4551A3BBA;
-	Wed, 28 Aug 2024 16:10:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E80C61A3BA1;
+	Wed, 28 Aug 2024 16:10:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YDMdtMJP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jIjx1vJB"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C50CF13775E;
-	Wed, 28 Aug 2024 16:10:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B19D813BC1E
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 16:10:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724861405; cv=none; b=BWjBEMHiNX35tNzzFZGKe4BQhhIqMWhRNOeD3mbdC6n971nqwWUfMD1jcZp+RmTBS5jgA72NEINM4bC/nh/xRnkoSAM4C6APz8us9XwJYEbhuMDCsC+OwEQcEmo1zM2/P9Bd6Ihq931E23+VnZvnnvp4U2892RsY1pvmDT9qfZA=
+	t=1724861452; cv=none; b=KL67xS7tMsQMHJMDbZl9VT5ixJBQP9G9AM/lXXBdFMPubQG3qg1x2yX/i1q/MyxUmnfBfDPxWtObVWWM6qoNB/6C7240mTPxOTYbyBoq8bFeCbKF2hoe/lzfOT2yJitZQ74cykDdOSiGF45Eh3+Qxk2/qWziX4EXiESmdsR3pBw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724861405; c=relaxed/simple;
-	bh=5gCyXX8Bq2vU6a/ioVEkb49fxdLAIegxKwjcc6pXyT0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e5TXbEK7Lcafg/C45JJj7/1iLnkpTVqcX1+IqMEgFIuTBULc8fHjDc111Ro+vID8aj+iWQeC/BbDfesVEjIotBZGJ2L9f3NpGVQNt5lGZpVHXtMan4AR8gnLMXSEk9pduEs4A95BLl0PruWsk/sNtBJrMt1U8iHEVFKZnXG1Kb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YDMdtMJP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 513F1C4CED8;
-	Wed, 28 Aug 2024 16:10:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724861405;
-	bh=5gCyXX8Bq2vU6a/ioVEkb49fxdLAIegxKwjcc6pXyT0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YDMdtMJPVO8SYN2blFJyFvekwizxL0U/Bt8OQiBLIO59Ajl9kWY4a5U1/RfrKXhLE
-	 br3+epEu0CLZDR7haYWCtaEkBvWkb+9IZJK1VQkSiYPURrduls9OKOBV163JpAsJRF
-	 V9LQyldInlcY5WE5/8JgHvm6hZ9BS1Fs3iQYkZYJ9Q0GGzo3F4wwXUObSyJsrYx1Ia
-	 XcwDFhMkwBX8eHqZAJ99Kny74k9F3lFQxflcbNbU0kqqDGeB21w4O1J0f90EFJuXqb
-	 6Hmyh/kibnx3qKRSXieNYpa3Cooo+Iz4QH1KeRbY+7yj3vZyEOl5sgPo4KaJu4JEdi
-	 UC9jPssea/vJw==
-Date: Wed, 28 Aug 2024 09:10:04 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Christoph Hellwig <hch@lst.de>,
-	Chandan Babu R <chandan.babu@oracle.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 2/5] xfs: move the tagged perag lookup helpers to
- xfs_icache.c
-Message-ID: <20240828161004.GG1977952@frogsfrogsfrogs>
-References: <20240821063901.650776-1-hch@lst.de>
- <20240821063901.650776-3-hch@lst.de>
- <20240821163407.GH865349@frogsfrogsfrogs>
- <Zs7DoMzcyh7QbfUb@infradead.org>
+	s=arc-20240116; t=1724861452; c=relaxed/simple;
+	bh=pUxW3H51tdCti7975tz1MGr7ixTkv8/Vj6O0jDTq5hM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=p+up5bzwPyN1l1ZOON6ADhoeJfrkdLXO3ktxTuJSHJ2OV5IsPLXxhpD4GYxmxiFE8G+YUlDMHhyS8rwH2wZqyepD2HMByOAiJWbfj7OuSXlTuMOrSRVHxkCV6mQTZHaHJLgLDAbE7bItxeaF91DqZmyelFwjiYdRPKtZf8mwAzU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jIjx1vJB; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-427fc9834deso70645e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 09:10:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1724861449; x=1725466249; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pUxW3H51tdCti7975tz1MGr7ixTkv8/Vj6O0jDTq5hM=;
+        b=jIjx1vJBh3p5OZbqQ+ZxHO7j4xRxIIQlQZfA3tuV9sX3QG4AntHH+Hv2BYiKE9ZrRQ
+         zme8QX/hUQmZmWipREV7nGqT3f6k9EQu3On9vC8NXBY2mVXM7z+XTaxF11HKHAPfKYA7
+         iZPYyhndGaeRcb/WBk9tbv3xkLf6ej2uK/E5CpRBO9z4OfSaJ5ivVIfToF/ELhPwP+B7
+         rHCOb/BB+P0A6j23E0l3dpJGGf0flFFRjklzSb5FQpM7VgSxmFCKwqY+xOB1QLcnsAZG
+         gR6+xXOGNFgOo9CjFZ15y5Dkgr5TEUyPvlisHwWXUPtGdPsgKRVb5nR2MSRRH4Lvz35b
+         mR1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724861449; x=1725466249;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pUxW3H51tdCti7975tz1MGr7ixTkv8/Vj6O0jDTq5hM=;
+        b=L1mpJdvF/giXhQr6b0NxKykmOWUSEG1xYcjbjjAyLW2mBpn0vN9Owb5f72wIWYnhfm
+         TR2qYwrWY68o2lZxlmf0Tq1HoZtY1uc3QKGzDKMiK805C7SKgekuJaBppvb2+W1YTR37
+         nftrCiYVqKEsqGuL0+0I+U2cjKHLj9GBW4WOF/JPFrNVNsBm9wwUkKnTjIY29o/K/Hs2
+         jHU07koXWJ2pMcbrPltwhrOe3xOsFeKMTl3yBI42j42cuCNa5RhnvbaTQqFkpKy8U5/y
+         R6VkIkSJwYw8yaf/F4tck4xyVoFsJBo97uRhJXKTYIBCucKzQltCns0lv9ypZnoxBBWK
+         Qwzg==
+X-Forwarded-Encrypted: i=1; AJvYcCXl7m03HZCuMW/8pOu+SBzeR3BrQAAcKS53gUFu1rPfOukzlCoEUgdJEVGTRFEpVxZEr7EAWSTJZk/srxk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkVAGpAtlQq3MUP9u/FWz44B7NHSlQ9OMSBc0Zd8uUuYQuhjNJ
+	AUSawGOQRSrnErD8x6I0KNlLJsmPUVjD5MKdJnAbdwQVMi8tmeOdKImk5uBDGhNzWLOoVM9Tro4
+	N8RnflYtpy8o4WfhJEm8p5Wbn7ez0k/WlBYfYiYfnf82tkBySAuJK
+X-Google-Smtp-Source: AGHT+IHtbZb6lBm6dWZvdL70hryO/pm9b4DtbL7TjizNJ7LY01ZIlDL96COPc9v/E4sIswiSF687/R0RG3k7W+e1uXo=
+X-Received: by 2002:a05:600c:54d2:b0:42b:a961:e51 with SMTP id
+ 5b1f17b1804b1-42ba9611004mr714685e9.0.1724861448603; Wed, 28 Aug 2024
+ 09:10:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zs7DoMzcyh7QbfUb@infradead.org>
+References: <20240826204353.2228736-1-peterx@redhat.com> <CACw3F50Zi7CQsSOcCutRUy1h5p=7UBw7ZRGm4WayvsnuuEnKow@mail.gmail.com>
+ <Zs5Z0Y8kiAEe3tSE@x1n> <CACw3F52_LtLzRD479piaFJSePjA-DKG08o-hGT-f8R5VV94S=Q@mail.gmail.com>
+ <20240828142422.GU3773488@nvidia.com>
+In-Reply-To: <20240828142422.GU3773488@nvidia.com>
+From: Jiaqi Yan <jiaqiyan@google.com>
+Date: Wed, 28 Aug 2024 09:10:34 -0700
+Message-ID: <CACw3F53QfJ4anR0Fk=MHJv8ad_vcG-575DX=bp7mfPpzLgUxbQ@mail.gmail.com>
+Subject: Re: [PATCH v2 00/19] mm: Support huge pfnmaps
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Peter Xu <peterx@redhat.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	Gavin Shan <gshan@redhat.com>, Catalin Marinas <catalin.marinas@arm.com>, x86@kernel.org, 
+	Ingo Molnar <mingo@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Alistair Popple <apopple@nvidia.com>, kvm@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, Sean Christopherson <seanjc@google.com>, 
+	Oscar Salvador <osalvador@suse.de>, Borislav Petkov <bp@alien8.de>, Zi Yan <ziy@nvidia.com>, 
+	Axel Rasmussen <axelrasmussen@google.com>, David Hildenbrand <david@redhat.com>, 
+	Yan Zhao <yan.y.zhao@intel.com>, Will Deacon <will@kernel.org>, 
+	Kefeng Wang <wangkefeng.wang@huawei.com>, Alex Williamson <alex.williamson@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 27, 2024 at 11:28:48PM -0700, Christoph Hellwig wrote:
-> On Wed, Aug 21, 2024 at 09:34:07AM -0700, Darrick J. Wong wrote:
-> > I don't particularly like moving these functions to another file, but I
-> > suppose the icache is the only user of these tags.  How hard is it to
-> > make userspace stubs that assert if anyone ever tries to use it?
-> 
-> I looked into not moving them, but the annoying thing is that we then
-> need to make the ici_tag_to_mark helper added later and the marks
-> global.  Unless this is a blocker for you I'd much prefer to just
-> keep all the tag/mark logic contained in icache.c for now.  Things
-> might change a bit if/when we do the generic xfs_group and also use
-> tags for garbage collection of zoned rtgs, but I'd rather build the
-> right abstraction when we get to that.  That will probably also
-> include sorting out the current mess with the ICI vs IWALK flags.
+On Wed, Aug 28, 2024 at 7:24=E2=80=AFAM Jason Gunthorpe <jgg@nvidia.com> wr=
+ote:
+>
+> On Tue, Aug 27, 2024 at 05:42:21PM -0700, Jiaqi Yan wrote:
+>
+> > Instead of removing the whole pud, can driver or memory_failure do
+> > something similar to non-struct-page-version of split_huge_page? So
+> > driver doesn't need to re-fault good pages back?
+>
+> It would be far nicer if we didn't have to poke a hole in a 1G mapping
+> just for memory failure reporting.
 
-Or converting pag_ici_root to an xarray, and then we can make all of
-them use the same mark symbols. <shrug>
+If I follow this, which of the following sounds better? 1. remove pud
+and rely on the driver to re-fault PFNs that it knows are not poisoned
+(what Peter suggested), or 2. keep the pud and allow access to both
+good and bad PFNs.
 
---D
+Or provide some knob (configured by ?) so that kernel + driver can
+switch between the two?
+
+>
+> Jason
 
