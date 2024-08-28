@@ -1,262 +1,240 @@
-Return-Path: <linux-kernel+bounces-305058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCD6D9628BE
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:35:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D0B49628C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 15:35:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 09C8AB22EF7
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:34:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D9D11F2387A
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:35:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 287FC187857;
-	Wed, 28 Aug 2024 13:34:48 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 212F51862B3;
+	Wed, 28 Aug 2024 13:35:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hKEiJ9ub"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50B1F1D554;
-	Wed, 28 Aug 2024 13:34:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724852087; cv=none; b=QMp8gcVV3BwDmBA2EHa5ndgZzFUJwuHrgqga0Km/5dY8jF4ema27SBT5EZBmWe2+V0vIkpeLiFd3tjWyr8nk4ODpWwLDg1LajrDz/FFETyy7zTpmjxJ3L11ywiUC6cSA+kW7FcXC0kNLz9QBJhHtqikdgUoxxfu1f81j/DogtNM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724852087; c=relaxed/simple;
-	bh=hYxXtkxsQKOAkmN+b3xnHbaMT1UgdiIJMQzTuDcUAIk=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jbwhaPeqbyK3VhVb98to6lt9EG4XEij2w4F3l2oWPahaj+WJdIzqDAsVXHjacL0t8Tiw9DINlopBtNj5fkp0mrqdhKz+p1tECGU8OBmYm9l9lCHTy83xtGmBGAJHn8I92jgAbs+KznxfJ14nLNytUv1q9NJaADcc1hLZhsvwNE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Wv50X51yfz6H7YP;
-	Wed, 28 Aug 2024 21:31:24 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id 008C1140B30;
-	Wed, 28 Aug 2024 21:34:41 +0800 (CST)
-Received: from localhost (10.203.177.66) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 28 Aug
- 2024 14:34:40 +0100
-Date: Wed, 28 Aug 2024 14:34:39 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Esteban Blanc <eblanc@baylibre.com>
-CC: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>, "Rob Herring"
-	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, "Conor Dooley"
-	<conor+dt@kernel.org>, Nuno Sa <nuno.sa@analog.com>, Jonathan Corbet
-	<corbet@lwn.net>, <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, David Lechner <dlechner@baylibre.com>,
-	<linux-doc@vger.kernel.org>
-Subject: Re: [PATCH 2/6] iio: adc: ad4030: add driver for ad4030-24
-Message-ID: <20240828143439.00006d3d@Huawei.com>
-In-Reply-To: <D3QUGZYL7INK.R3U3WQR0OCUS@baylibre.com>
-References: <20240822-eblanc-ad4630_v1-v1-0-5c68f3327fdd@baylibre.com>
-	<20240822-eblanc-ad4630_v1-v1-2-5c68f3327fdd@baylibre.com>
-	<20240824122111.425fa689@jic23-huawei>
-	<D3QUGZYL7INK.R3U3WQR0OCUS@baylibre.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FE1816C864;
+	Wed, 28 Aug 2024 13:34:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.10
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724852102; cv=fail; b=npsnc9oU2Pce04aUqkPTaok7LJTuqkPE4bMbpIZ/FvkplKpgEf8QcLdmuSXUcPkDrTlQuU1Fvo0Gcn4ICXpmRcjsfG696x4xs+udOCCwe4PWMq9revcXVoZBzCOkD9me+QD2TtGMbi4LK5VPWivV5YxmdL/yAc5DmZgm0IWHOvA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724852102; c=relaxed/simple;
+	bh=gmJwtoKCU7DC4egyTs2gSk83I4gdrdGO05pXUZA1KBs=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=hgGmDawtf3q1HU6zgLOtsOMqOW8a+v314Ovy+H1qqE1r/ljD8rL7+q8SQ+dhdpKQFx4+porgy0z61CQfhX6xKplPoaI9WOVdEf2H7wmRxFLuYn8OPjF2VgMQbSm+pMiR61/iVAE1ZwMTJQsd+HMSL7E/xsJ3Py8t5SaWmAuEQc8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hKEiJ9ub; arc=fail smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724852100; x=1756388100;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=gmJwtoKCU7DC4egyTs2gSk83I4gdrdGO05pXUZA1KBs=;
+  b=hKEiJ9ubYmr5NwHB3eQwa85E9iage0fZ9L5BsfMWGMRy7bHI+hIzKIbT
+   2CfBqcgOh2lWARfxgJqSWNVw2qzqngvC4WRt1YtEkGXHc4oMjZb+kZLPa
+   utbEw+griJU/4/QlXcMnBLaHNvdYxKjrXs7AdukaXYVnyDKY8wEWlQJRq
+   dBJ7TB2xJV0GrrKW9Hvh5omloUpb14LJE6WVSLsNats/YBIDrXzcCnMKa
+   czNw3dS/jrQuOOJOUoHKLhaQZ1glX7XXoLunCtQhhBL0QdaypKnhmxg+N
+   grt6YWHAjxh71D4bMVboiJPcuK8J427vLAesbYhzjcmcVTZNcXTsQsuCv
+   Q==;
+X-CSE-ConnectionGUID: KM+WcmkGS56FTOIMCqJUEg==
+X-CSE-MsgGUID: wj2yMVHnQ4yvIVSvFaD73g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11178"; a="34788803"
+X-IronPort-AV: E=Sophos;i="6.10,182,1719903600"; 
+   d="scan'208";a="34788803"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2024 06:34:59 -0700
+X-CSE-ConnectionGUID: yE4i3+5UR32lr5hQbN2SlA==
+X-CSE-MsgGUID: JeWreLOZRfCAqxuasXthFg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,182,1719903600"; 
+   d="scan'208";a="63063052"
+Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
+  by orviesa010.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 28 Aug 2024 06:34:58 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Wed, 28 Aug 2024 06:34:58 -0700
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Wed, 28 Aug 2024 06:34:58 -0700
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (104.47.56.172)
+ by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Wed, 28 Aug 2024 06:34:57 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=LyZjvonSvwOHpJ12P20w5AEq0+tJvfUQLf3P9yQ+eN6SHs/fNF/NAgHx10f9cy9BbdM3ct6wOd2UfGVEvgmN7s/fmDBouOE8oG0xsyPYYDwCw71ExgkDi3Jav25pcdeEYDaPLv5yPaTtkDwmqSoCZ5bqSOlyUNUpL6zbPvn43vyn/7v6L1v4VU3oR89zFmgfVtXWIxY/xy7VQIelVEU8Abi25J1gWyjptpR3tN8y8mZ3iYR+crfWXfIpqYdHd9f8Q3WkZBZYR2KAK384oKYQ3a9jwzvO/13hDZ3z54QNp0M2Tl7agY/qPPT9BlEzSkcGvwA8mCYyDq9ZDB0CLa+I1w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=gmJwtoKCU7DC4egyTs2gSk83I4gdrdGO05pXUZA1KBs=;
+ b=ss3PMaASBRMFxqaYESPvRF499ZbdF4I/QqrVQqVuAZux/TK5VmYlBbECMOnkiCaeXNuoxBv9nfMeoleMCi+XQTgwuNwDMgqkP027fwXeCyKK8eLA3gpDXo26/QLy9n1+rq3KsiR5aONjt4/AhSCLDRY2blNJiaePByN9TuxsLjLjXxiAI9utSnoxmlCo3X5HF5PoE+Plz+TFJ27Q1v65PV2e6PoIqJQTDAHogv+QQDbnma1fxfRRAZSvPC185mp/lT+fgyk/fidO3gq1gwvJVEdV8aytEwxyqmB7nC56BR6V38TEVg+QGx6VdbEw1Oj1eNRoCJpvIHzER+vTXZcEtg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from MN0PR11MB5963.namprd11.prod.outlook.com (2603:10b6:208:372::10)
+ by SA1PR11MB6989.namprd11.prod.outlook.com (2603:10b6:806:2be::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.27; Wed, 28 Aug
+ 2024 13:34:55 +0000
+Received: from MN0PR11MB5963.namprd11.prod.outlook.com
+ ([fe80::edb2:a242:e0b8:5ac9]) by MN0PR11MB5963.namprd11.prod.outlook.com
+ ([fe80::edb2:a242:e0b8:5ac9%4]) with mapi id 15.20.7897.021; Wed, 28 Aug 2024
+ 13:34:55 +0000
+From: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+To: "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
+	"seanjc@google.com" <seanjc@google.com>
+CC: "linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>,
+	"jpoimboe@kernel.org" <jpoimboe@kernel.org>, "Hansen, Dave"
+	<dave.hansen@intel.com>, "dave.hansen@linux.intel.com"
+	<dave.hansen@linux.intel.com>, "haiyangz@microsoft.com"
+	<haiyangz@microsoft.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "mingo@redhat.com" <mingo@redhat.com>,
+	"pbonzini@redhat.com" <pbonzini@redhat.com>, "kys@microsoft.com"
+	<kys@microsoft.com>, "Cui, Dexuan" <decui@microsoft.com>,
+	"tglx@linutronix.de" <tglx@linutronix.de>, "hpa@zytor.com" <hpa@zytor.com>,
+	"peterz@infradead.org" <peterz@infradead.org>, "wei.liu@kernel.org"
+	<wei.liu@kernel.org>, "bp@alien8.de" <bp@alien8.de>,
+	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+	"x86@kernel.org" <x86@kernel.org>
+Subject: Re: [PATCH] x86/tdx: Enhance code generation for TDCALL and SEAMCALL
+ wrappers
+Thread-Topic: [PATCH] x86/tdx: Enhance code generation for TDCALL and SEAMCALL
+ wrappers
+Thread-Index: AQHa+U8Rr2etvu2hu0eAKDh79CDLuw==
+Date: Wed, 28 Aug 2024 13:34:54 +0000
+Message-ID: <8e3146250f31db92fa42a29a892858c9ec33aeab.camel@intel.com>
+References: <20240602115444.1863364-1-kirill.shutemov@linux.intel.com>
+	 <8992921e-7343-4279-9953-0c042d8baf90@intel.com>
+	 <crv2ak76xudopm7xnbg6zp2ntw4t2gni3vlowm7otl7xyu72oz@rt2ncbmodsth>
+	 <Zl9sXGj890yerBPJ@google.com>
+In-Reply-To: <Zl9sXGj890yerBPJ@google.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+user-agent: Evolution 3.44.4-0ubuntu2 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: MN0PR11MB5963:EE_|SA1PR11MB6989:EE_
+x-ms-office365-filtering-correlation-id: 8987bfac-9e68-4ca1-6936-08dcc76633d7
+x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014|38070700018;
+x-microsoft-antispam-message-info: =?utf-8?B?TC9LVnZvWWx5TmZQZGo3U2Jxd1Zna0lPZXdHRUxxOVpTMWtvNU0rSkFpMjFq?=
+ =?utf-8?B?cjlhOXRyN2N3b042Q3I3K2YzTms4elVzK2FHbGtiN2tRQi91R0hleXZ5bHJt?=
+ =?utf-8?B?WHZka0VWMXYyNk0vdE45ZjNuQmh1Rm5EcEJRVm5vMTZ0djlNYzA0allFT0Q3?=
+ =?utf-8?B?MVJKdVh0YzRkc0dLSEYrSkxjSzcvbERwNVljNG9jZU15L0dLb2xhRmZvNFY0?=
+ =?utf-8?B?b1o2NXFuYXRJeDArNjMzaUh1Tm9wZnZkdHFFems5aStiSmhWNUhWVXR4LzRP?=
+ =?utf-8?B?M1NlMDIrL3lTUER0bGRpa1BFQlNjWnBabHkzdTQ1anVEUVBIcG5XUmExK1k3?=
+ =?utf-8?B?d0VwaE0zRjBidkNhT3ZEYlhyVXFWVnVOSmg4ZGhzcW5Zb0U4YmRoaFh3aURy?=
+ =?utf-8?B?bUFuWDVJaEl1UTV5MnA4S1lXOUkxMTZkb1h4dTVJQ1hGZitVRTk4Yk8xSjMr?=
+ =?utf-8?B?Z0JNT0pmZHhHTFlkellBNFpXTjVrK1JRRkUzdnE0OTBMdUxkOUI1dVNndENq?=
+ =?utf-8?B?V3k0VGJSY1FFYWNURHNCRW5YRnFIajE3dmt1L3ExOGJONkVIeEdHb0ZtN3hr?=
+ =?utf-8?B?UzcwbVhmWGE5UDMxN0U5ZTBBbVZGemROR0J3UXV4T29rdEU5VC95ckRQNnpK?=
+ =?utf-8?B?UXhQS256QlpFd0NQdTBCNlJaYUk1bWtwWW96aDNlSUNrcVFqMTZTZmNPMFhr?=
+ =?utf-8?B?SDNVeStlTnFERUk3cklkajBmMk42V0VTMUtxQWxtYlRzWE5xRDZCQXZkR2tz?=
+ =?utf-8?B?MmRlRTJLV1JHVE5QU1JncnNoT1pOUStSM3dUUkFwN1JCSE4xTTF5UzNGQ1VC?=
+ =?utf-8?B?bXN1aER4Y3hrZXVOMTc0UlpaYURxdUQvMGdEQitPaGJ5TDFUVndOTEdORmNi?=
+ =?utf-8?B?Ky9JVit2aExFVUdGNzZ3SUxONm90d3k4clltVy9kV3F6TVZNQUNYSkZFTzBi?=
+ =?utf-8?B?YVdYQitSak9SdCtOV3pXRUxGZ1hxMGRXZ1psVC93akUxRkRYT3N6UlpWQUti?=
+ =?utf-8?B?eXc2ZDJwdUZ0MTJ1ZEV6dloxcEZkdmtLelkrbWZFbDRDNmpMaUZCSnhyVzdr?=
+ =?utf-8?B?anYweUFZQVhGbGVtd244R0NNaW9vYlM4Q1dIalg4QU1Ba3BtdmFYZDlkQzRw?=
+ =?utf-8?B?aXRNQmVWMnVDQ0tJeklOd1FCVGRWaDNLbFAxaWV6L1IzbDBscklOa2RsbG81?=
+ =?utf-8?B?VlJPVUR5RnlGVE52blFlbjhJeTEvQXFtY0NqazBGL01ldEM4eVF0ajVJdWdW?=
+ =?utf-8?B?RVN3Myt6QStSN283RmFGaG45bzAwWFVsd2ZmSjJKWFEva2dEM2NQcDdLelZ5?=
+ =?utf-8?B?ZnBwTVhiMk5KVnNuTmZPSnlaL1Ntd1NuQVIrZmQ0RDNNSGZjTTE4Rkx1Qzl4?=
+ =?utf-8?B?N0N4YmIreVBrZVZiRGkzbU0wTjg2VTlBMlFncm9tb1pseE5QM3pLa3NIR09a?=
+ =?utf-8?B?ZGpFbGdGVXdDVS9acDR5VlZtcTh2SzZrelBGVXZRT29KRFM0TlRqSUlBV2FX?=
+ =?utf-8?B?aEdLZm9rWXRDNGdjY3BLZUlPYXRURWRJaTU5eS9kRnNPVjFVZ3V3WWVhWk9I?=
+ =?utf-8?B?ZkUrYmlzamhPMmVyODBhNUhmYUJnSGd6WWl4anJCYUFVS1dhMG1qWDcvSGVP?=
+ =?utf-8?B?THVCcUpGb0xHcnVoVmZwZmtVWnV1cC8xaW5mMEVTVFkyVnFpeURZQW9vYUg0?=
+ =?utf-8?B?Mi9hYVpDZ2M1dkZQL1czMUFSS1pPMzNYYTlDNzdMMVFpUlo1U01UNFp3YVJ0?=
+ =?utf-8?B?c3MzSXJudjRSd1pvcmtOT0p4TDJkYzFPeW1TL2crT0VIeG9wRWw5dXBxRy9G?=
+ =?utf-8?Q?mFPm1bTLBpZJbPJIJkQiCvlUmeMBupXl3mI7o=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR11MB5963.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?N0lvcURHVmthZDBFUDQwWStwYTFYZTEwZVJOL0NQejFMSEhRNm5JS1hmRzZa?=
+ =?utf-8?B?R1dnWm0rWHFhVFNMQVNOUlJiSFYxNisvNTBEQldSOHYvdmMzMWJMZEdFWnNk?=
+ =?utf-8?B?MXN0ZDdjMlo3MGw4MHlYT1pPWVFmNnpUaUl4TERZTkxOQ1lveUY3Y1hZK1lX?=
+ =?utf-8?B?NHdoOG10Z1Q5VXJPUUlVSk9YN3VZSGhvRHZpbVZ5bTdiVzhZaWVGbDAzKzNW?=
+ =?utf-8?B?b2JNR0ZZNmo3ZDQwbEdON3R1UmJpVUQ5TXl0a0dkTnQvVGZkTVdqRmx5THBC?=
+ =?utf-8?B?MGRHV3ZCSFJ3eElBM2swNEJLaDJMYzNPZUw1eG4vcjE5VTJRSTV5SlA4MXFV?=
+ =?utf-8?B?ZTB4Ry9wcm9abmtsT3pDMnUyeHQyTUZVOEZ4U05jWGpEVDRaYkJxcFZBZGFF?=
+ =?utf-8?B?ZXF5dnFLRE9aWkVCOTh3cktXZHZnWVZjcjhXSXNYaHpETU5Jam1Hb3ZTV1ZI?=
+ =?utf-8?B?QWtjSXJJT1k0NFN2YmRHSGhaVWZxSlpMSXdoNVBKcDNISTFYcEQyQ1I4c1Nw?=
+ =?utf-8?B?eEg2R3BPaDJ6eWlZNkpkMXQzc2QzYm5CcnB0cGRlUDJqak1XZTEzRXQ4YjRR?=
+ =?utf-8?B?L25wMFpDdlgxcHBoRzc3SDJSazhJVnVFNTg5QlF2ZUxIc2dXNWpXeHFPR0dQ?=
+ =?utf-8?B?TmlvU1l4bW1hZDF4OXl5a0lVeEJXbkwvb2JSS21WVi9ETGZOSWlqcThtNlJp?=
+ =?utf-8?B?TUh4TUJUK2plR25mbkVFRnFJWDZwQ2hIMGxtWGsyWW9ySEdGNGtqYTYycmNS?=
+ =?utf-8?B?L0hsVFh1MTltRHUrcUlBOVhrRjlTVXdyK2Q5Mnl4SHhZWmNTaXVvMlkrNmZ4?=
+ =?utf-8?B?eUp3dTRGVEJnMTFJc1lsblV0RzBrTFVmcDFRdnJOeWR5T2JHL25OQk5MUG93?=
+ =?utf-8?B?WHVuaXM3QkhkYlhWckk3T05rb0tBVVk2MFdlaDFOYjlmbzdxQlVocEdFdDBr?=
+ =?utf-8?B?T3ZRanoyalNrV3dnR0ZaL0Q4VUcyNHVOeTUyaDdsY0NIZWVwV2R1Qzlualdz?=
+ =?utf-8?B?N3NIS0ZESTBWMHVqVXBSSVF4NFdtV2o2d1JTVGNRV2Z5dG9nUHh2Njdld2E5?=
+ =?utf-8?B?T3NseFlBMDROTVBFaXZxQ3VJZFN0SS9ZY1dCVnpZbmxxQUpwcFlmbUR3QVpX?=
+ =?utf-8?B?SGhVKzdnZmRPcVgrYnpMbUp2VVZDR2ZwNk5ISm1JelNSUVlWRVVzU1FUZGk2?=
+ =?utf-8?B?MzZjNmVwblB0QmsydEUyRXBRcjRGRno5bUQvK0tpNmlNNU1IZ0FNS3hIZFhs?=
+ =?utf-8?B?TDdsUWg4SEIvK0RLWTVkTzZmZlpGdTBWcFBNc1JTYXQ1L3llQXZ2M3lQbXZm?=
+ =?utf-8?B?YlZJSGRHbXg5dE13M3FuMUFZMnlySTc4dGVJcUlhSitKck12VVdXWWZpclY0?=
+ =?utf-8?B?OUJ1YTJaT05XaXAvckN6MWNjK3E4aEFSZjgvKzg0d3NxYWV4eU01RUtqM3NK?=
+ =?utf-8?B?dHZSNE1ITWppUlZ3am1EanFRcHU5RktWNEJ5N0RFUzRoWlN0OVQrZHdxb05C?=
+ =?utf-8?B?WFJjamlWVitFZml1OFB5eE5Yc0kwOHVkU2N1bmJ6T0FsQis0SU5NUy9wcXAx?=
+ =?utf-8?B?UUs5NUFQTXkxbkl5QUpyWDc1WVAwcFhYaEhiTjV1RjdJampBUmVwa1k4a1JL?=
+ =?utf-8?B?VGxKY2NSVjl4RHVSd0hFRlFScWUyaFNzL29MK2x6Q1NhT0JDSVFWNDNZcUV6?=
+ =?utf-8?B?NW52djE4UVNHWngxVXlIM0dURVZnRXMxNjZkb3M5V3l5TkZMOWRWTlFqaHlm?=
+ =?utf-8?B?NnMxcVk4ZHZtemxSOWJyZkZMbXJlS1hTYlk3d3VLOThLR242dHpPZzA1T1cy?=
+ =?utf-8?B?Z1JFT2VyM3pLQi8ybDYrU3Zhc0tFcVF1U3pBdmRpbEtjekZURklZTkhKbVB4?=
+ =?utf-8?B?M1NWekQvYU53eUxkSnVwTjBmVmhmUnZSMU5LRktKNVJVRE5YM3ZVYlRacVZF?=
+ =?utf-8?B?N3RRMFI0T3NFajJ4Z0k0K3NvUUhSanZ1WmlxQW1oS3NLU2NQRit1cm5yREVv?=
+ =?utf-8?B?T3QrNG5PNllmdnNHNis3Y291QkY5NjhwSzJsWStTK1grOEZvUkxWZlZRMDUy?=
+ =?utf-8?B?NUFvSjljMDFwVTlPaGNWSGsyTHlxSGZxVHN0b1k3WDIxYmZ5R1pjVEZ5ekhn?=
+ =?utf-8?B?K3FpWWtub0l2S3VlU2VzTFNDWVRiTUhaYnNxNGV0cHBzWUIrSk5jM1EzbjVX?=
+ =?utf-8?B?RWc9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <074DE95B9DBA7C4AB36013FE6E1289CE@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500004.china.huawei.com (7.191.163.9) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR11MB5963.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8987bfac-9e68-4ca1-6936-08dcc76633d7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Aug 2024 13:34:54.9659
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: RDPt96+fyO5S075ZPx0mlKYEJ5NV2BfqMsX9aZBxuSRID4VBtZt0Sbk8+L3VkfdOct7JvVsuMkmcOzFz4q48nZIiyfXWrueUABZzDJy7PzU=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB6989
+X-OriginatorOrg: intel.com
 
-On Tue, 27 Aug 2024 18:45:49 +0200
-Esteban Blanc <eblanc@baylibre.com> wrote:
-
-> On Sat Aug 24, 2024 at 1:21 PM CEST, Jonathan Cameron wrote:
-> > On Thu, 22 Aug 2024 14:45:18 +0200
-> > Esteban Blanc <eblanc@baylibre.com> wrote:
-> >  
-> > > This adds a new driver for the Analog Devices INC. AD4030-24 ADC.
-> > > 
-> > > The driver implements basic support for the AD4030-24 1 channel
-> > > differential ADC with hardware gain and offset control.
-> > > 
-> > > Signed-off-by: Esteban Blanc <eblanc@baylibre.com>  
-> > Hi Esteban
-> >
-> > Some additional comments.  David did a good review already so
-> > I've tried not to duplicate too much of that.
-> >
-> > The big one in here is don't use extended_name.
-> > It's effectively deprecated for new drivers plus
-> > it would have required you add a lot of ABI docs as every
-> > sysfs file would have a strange name.
-> >  
-> > > diff --git a/drivers/iio/adc/ad4030.c b/drivers/iio/adc/ad4030.c
-> > > new file mode 100644
-> > > index 000000000000..a981dce988e5
-> > > --- /dev/null
-> > > +++ b/drivers/iio/adc/ad4030.c  
-> >  
-> > > +struct ad4030_state {
-> > > +	struct spi_device *spi;
-> > > +	struct regmap *regmap;
-> > > +	const struct ad4030_chip_info *chip;
-> > > +	struct gpio_desc *cnv_gpio;
-> > > +	int vref_uv;
-> > > +	int vio_uv;
-> > > +	int offset_avail[3];
-> > > +	u32 conversion_speed_hz;
-> > > +	enum ad4030_out_mode mode;
-> > > +
-> > > +	/*
-> > > +	 * DMA (thus cache coherency maintenance) requires the transfer buffers
-> > > +	 * to live in their own cache lines.
-> > > +	 */
-> > > +	u8 tx_data[AD4030_SPI_MAX_XFER_LEN] __aligned(IIO_DMA_MINALIGN);
-> > > +	struct {
-> > > +		union {
-> > > +			u8 raw[AD4030_MAXIMUM_RX_BUFFER_SIZE];
-> > > +			struct {
-> > > +				s32 val;
-> > > +				u32 common;
-> > > +			} __packed buffered[AD4030_MAX_HARDWARE_CHANNEL_NB];  
-> >
-> > David pointed out this doesn't need to be packed.
-> > Given you have a union here, add __beXX as needed to avoid casts below.  
-> 
-> They also pointed out that I should reduce the size for the common field.
-> I was planing to use an u32 bitfield here, 8 bits for common and 24 bits for
-> padding. As far as I understood, the C standard is quite flexible on the
-> size used for bitfield, so I should probably keep the __packed, right?
-Don't use a bitfield - they are a pain as the C standard is very vague
-on the data arrangement. Just use big enough storage and #define x GENMASK()
-etc to extract the dta.
-
-> 
-
-> > > +static int ad4030_spi_read(void *context, const void *reg, size_t reg_size,
-> > > +			   void *val, size_t val_size)
-> > > +{
-> > > +	struct ad4030_state *st = context;
-> > > +
-> > > +	struct spi_transfer xfer = {
-> > > +		.tx_buf = st->tx_data,
-> > > +		.rx_buf = st->rx_data.raw,
-> > > +		.len = reg_size + val_size,
-> > > +	};
-> > > +	int ret;
-> > > +
-> > > +	memcpy(st->tx_data, reg, reg_size);
-> > > +
-> > > +	/*
-> > > +	 * This should use spi_write_the_read but when doing so, CS never get
-> > > +	 * deasserted.  
-> >
-> > I'm confused.  As a single transfer it won't be deasserted in the transfer
-> > whereas spi_write_then_read() will. So is this comment backwards or
-> > is it referring to something else?  
-> 
-> So, with a single transfer (what is done now), the transfer is working
-> as expected: CS goes low, the data is transferred, CS goes high again.
-> With spi_write_then_read(), CS goes low, data is transferred but CS never
-> goes high again. After some time I get a timeout error in the kernel logs.
-
-That's odd.  spi_write_then_read() should not behave differently.
-Perhaps a quirk of your SPI controller?
-
-That one is worth digging into as in both cases we should have some
-transactions and after that the chip select should behave the same.
-
-
-
-> > > +static int ad4030_reset(struct ad4030_state *st)
-> > > +{
-> > > +	struct device *dev = &st->spi->dev;
-> > > +	struct gpio_desc *reset;
-> > > +	int ret;
-> > > +
-> > > +	/* Use GPIO if available ... */
-> > > +	reset = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_HIGH);
-> > > +	if (IS_ERR(reset))
-> > > +		return dev_err_probe(dev, PTR_ERR(reset),
-> > > +				"Failed to get reset GPIO\n");
-> > > +
-> > > +	if (reset) {
-> > > +		ndelay(50);
-> > > +		gpiod_set_value_cansleep(reset, 0);
-> > > +	} else {
-> > > +		/* ... falback to software reset otherwise */
-> > > +		ret = ad4030_enter_config_mode(st);
-> > > +		if (ret)
-> > > +			return ret;
-> > > +
-> > > +		ret = regmap_write(st->regmap, AD4030_REG_INTERFACE_CONFIG_A,
-> > > +				   AD4030_REG_INTERFACE_CONFIG_A_SW_RESET);
-> > > +		if (ret)
-> > > +			return ret;
-> > > +	}
-> > > +
-> > > +	/* Wait for reset to complete before communicating to it */  
-> >
-> > I'd rather see a reference for the value than a generic comment
-> > like this.  Also pull the actual value down here. Not particularly
-> > useful to have a define for what is a real time unless you are going
-> >  to have some combined docs for a bunch of timings (i.e a datasheet
-> > table reference)  
-> 
-> I will put the real value in fsleep call directly. When you say "I'd
-> rather see a reference for the value", you ment a reference to the place
-> the value is defined in the datasheet, right?
-Exactly.
-
-> 
-> > > +static int ad4030_detect_chip_info(const struct ad4030_state *st)
-> > > +{
-> > > +	unsigned int grade;
-> > > +	int ret;
-> > > +
-> > > +	ret = regmap_read(st->regmap, AD4030_REG_CHIP_GRADE, &grade);
-> > > +	if (ret)
-> > > +		return ret;
-> > > +
-> > > +	grade = FIELD_GET(AD4030_REG_CHIP_GRADE_MASK_CHIP_GRADE, grade);
-> > > +	if (grade != st->chip->grade)
-> > > +		return dev_err_probe(&st->spi->dev, -EINVAL,
-> > > +					"Unknown grade(0x%x) for %s\n", grade,
-> > > +					st->chip->name);  
-> >
-> > Is this similar to a missmatch on a whoami value?  
-> 
-> Yes. It also saved me multiple hours of debuging when the eval board
-> was not connected porperly and the SPI link was just not working.
-> 
-> > I.e. should we print a message and carry on in the interests of providing
-> > some degree of support for newer devices on older kernel?
-> > (fallback compatibles in DT)  
-> 
-> Ok, let's go with a warning then.
-> 
-> > > +static const struct spi_device_id ad4030_id_table[] = {
-> > > +	{ "ad4030-24", (kernel_ulong_t)&ad4030_24_chip_info },
-> > > +	{}  
-> >
-> > I'm going to assume you have a bunch of other parts you plan to
-> > support soon. Otherwise we normally don't add the chip specific
-> > support until it is needed.  It tends to complicate initial driver
-> > review a little and experience says that sometimes no other devices
-> > are ever added.  
-> 
-> I'm sending the other devices in the same series (patch 4 and 5).
-> For the sake of reducing noise in the later patches, I've put it in
-> the initial driver. If you feel like I should wait and do it in the
-> following patch (patch 4), I can do that.
-
-Oops. I didn't ready on ;)  Absolutely fine to have this here.
-
-Jonathan
-
-> 
-> Thanks for your time,
-> 
-
+T24gVHVlLCAyMDI0LTA2LTA0IGF0IDEyOjM0IC0wNzAwLCBTZWFuIENocmlzdG9waGVyc29uIHdy
+b3RlOg0KPiANCj4gSWYgd2UncmUgd2lsbGluZyB0byBzdWZmZXIgYSBmZXcgZ25hcmx5IG1hY3Jv
+cywgSSB0aGluayB3ZSBnZXQgYSBzYXRpc2ZhY3RvcnkNCj4gbWl4DQo+IG9mIHN0YW5kYXJkaXpl
+ZCBhcmd1bWVudHMgYW5kIGV4cGxpY2l0IG9wZXJhbmRzLCBhbmQgZ2VuZXJhdGUgdmFzdGx5IGJl
+dHRlcg0KPiBjb2RlLg0KDQpIaSBTZWFuLA0KDQpXZSBhcmUga2luZCBvZiBzdHVjayBvbiBpbXBy
+b3ZpbmcgdGhlIGNvZGUgZ2VuZXJhdGlvbiBmb3IgdGhlIGV4aXN0aW5nIGNhbGxzLg0KeDg2IG1h
+aW50YWluZXJzIGRvbid0IHNlZW0gdG8gYmUgZW50aHVzaWFzdGljIGFib3V0IHRhY2tsaW5nIHRo
+aXMgdXJnZW50bHkgYW5kDQp0aGVyZSBpcyBub3QgY29uc2Vuc3VzIG9uIGhvdyB0byB3ZWlnaCBz
+b3VyY2UgY29kZSBjbGFyaXR5IHdpdGggY29kZSBnZW5lcmF0aW9uDQpzYW5pdHkgWzBdLiBJIHRo
+aW5rIHdlIGFyZSBnb2luZyB0byB0YWJsZSBpdCBmb3IgdGhlIHRpbWUgYmVpbmcsIHVubGVzcyBp
+dCdzIGENCnNob3dzdG9wcGVyIGZvciB5b3UuDQoNCkFuIG9wdGlvbiBpcyBzdGlsbCB0byBoYXZl
+IGEgc2VwYXJhdGUgaGVscGVyIGluZnJhc3RydWN0dXJlIGZvciBLVk0ncyBjYWxscywgYnV0DQph
+cyBkaXNjdXNzZWQgb3JpZ2luYWxseSB0aGlzIGR1cGxpY2F0ZXMgY29kZS4NCg0KUmljaw0KDQpb
+MF0gaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvYWxsLzNhMjEwMjg2LTdkMGYtNDQwNC1hZDc5LWM4
+ZWFiMTUxNDM4MUBpbnRlbC5jb20vDQoNCg==
 
