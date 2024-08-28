@@ -1,126 +1,176 @@
-Return-Path: <linux-kernel+bounces-304293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 512C7961D61
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 06:10:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5358F961D66
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 06:11:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE7B31F241C9
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 04:10:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78A971C210FA
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 04:11:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F71A145B11;
-	Wed, 28 Aug 2024 04:10:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19B71143890;
+	Wed, 28 Aug 2024 04:11:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="ogYpZJeJ"
-Received: from mail-oo1-f48.google.com (mail-oo1-f48.google.com [209.85.161.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="i5bVOaov"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0279C3398E
-	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 04:10:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B6D21DA21;
+	Wed, 28 Aug 2024 04:11:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724818204; cv=none; b=SRVeLamPsmiUqSw8dK52VRIRrZTS4ch0ZtpTcIhcPAEmOM6Vjc2QE6VcB9H+50sZ9kCMj7/3Ifw6LHT8y4tw/GnJclCSfYGlU1hZ6a0r4b9BLjxG9c2EgJIL6hpciovB4RwWQZq9jPhPOFYsIJTc/UIfkeo4L4GjAge2q9HV60E=
+	t=1724818288; cv=none; b=nIXkrbHffJvaRzNsnNygonhDb4Tk5mX8+fdySBUUFjoOIid8vXeaDVITqaH5Soe+bo7yPMDj3U1en6iLdkCvIdQTd9yq4PX0FDAtXOyB0udeVHBuGOf9HtZ+9Me3C3eSUjCoLku+JNrCHte8syXf3I0JkU1VYmnfG8H6sL48c18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724818204; c=relaxed/simple;
-	bh=zNlNxjFW08JSSEcyMPvi4h5DZH3WzzFkawQQUbG3njo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AYN1Bt0rJQM5h1IykWaPV947KH96tV0H2diPSutI8YTqJsZM2KQhmaiJ4Y1HM+rY3envoiKKRkcTYiGQJdfuU1Vz2JPLwy3Hiit/CHKIjo/t/sqydA8pjMaywOhj3lQNscG4qWNM30F20eD6AxpVPVSNZuVGnpsf1JV+eETewiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=ogYpZJeJ; arc=none smtp.client-ip=209.85.161.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-5daa93677e1so4600197eaf.3
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2024 21:10:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1724818201; x=1725423001; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=TbUlXEtla2rVUESWfqavCUSiACHVI6vmcJ0NsirDOl4=;
-        b=ogYpZJeJCWC26f4eswjmffJffjMHzY7WOGWDv/8n3yhN5BLJuWqGRQvRrBKEX7NuEJ
-         YkIZmgbgv0Xv9ICerTAjo0Nd5L03a47n+kZ6rYRhKx+x2YKSwY9ScjB+y/Ui8pWYzZt8
-         vJBqoRpCB4lpK+luMv7d2kZ7uGzSLNglH1WB9yeQnnChIamUmjJ9D8eatMxnbqhpab3Y
-         UnMtG3pZXam98GJBpdydDC7t8jkhbntMcc3KKthNzv+JpHakYz3Hlg5mKUZQnOGydQEK
-         qzKtJnB3zAAP+kyRpzaw38L6jKcsXIZXFIVFTrMEVUISarq/4IzjG4pl+9jUOxkS8IZh
-         WInA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724818201; x=1725423001;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TbUlXEtla2rVUESWfqavCUSiACHVI6vmcJ0NsirDOl4=;
-        b=W85arGRgTNWuSmYNyNwLtBt7j2oXx7sPuovDMszyDfHOknch4SBM+MQCYNQlrfHrlG
-         cnQ6oPkRRJHr/VPmBhBFvs/ROb1FoUh+qhz3VcPSdjjuZZe5kELljwEpj7lolHV9NmOD
-         kOt2Cku8Hjj+vcupC2SQGU6j8px+2cGw6HDgIzGh5a8usYyDgzob8OjkRIz775CMAB9U
-         TaAkHOtWuhSk7vsMrOaKaZ6fv6xCgUacsXS4QwDnJ8yaEl3OQd5k3W5OIzXWdodQNyqS
-         9IB4GTbSVtIYsIcffVW50nVLUFSkpq/xBjGVRMlt76DYyHdTug1Zc6wV/0mKacHSo96S
-         g9BQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWKKgyLf+jD2b4YjxBuUm1z6RhntPA9erxau4MdhDwN0bj7BCKVz+uY0aVqK6BURdvpswIoX7CyGoilNHg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxVtOBC88M55ROWUp8qqrPhZIVZ9EgDqz/BlsIxyCdMptim5n6
-	yFw/FedPH1ZTs/Kl7XWvjz85IFWkv+4lAv80JfOhUqgiJKNPr6F8eC8NnYq1xQs=
-X-Google-Smtp-Source: AGHT+IFfFN76jaKMmeyJLYLrAmGyGf6VTmFCJDdjyeumUMkRB244pfXxTGN0Cua4OLIg1wtsh8Hazg==
-X-Received: by 2002:a05:6358:9143:b0:1b1:a961:7977 with SMTP id e5c5f4694b2df-1b5fad71e17mr97610355d.29.1724818200852;
-        Tue, 27 Aug 2024 21:10:00 -0700 (PDT)
-Received: from dread.disaster.area (pa49-179-0-65.pa.nsw.optusnet.com.au. [49.179.0.65])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7143432ee26sm9279075b3a.188.2024.08.27.21.10.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Aug 2024 21:10:00 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1sjA0L-00FJwC-3A;
-	Wed, 28 Aug 2024 14:09:58 +1000
-Date: Wed, 28 Aug 2024 14:09:57 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: Michal Hocko <mhocko@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Christoph Hellwig <hch@lst.de>, Yafang Shao <laoar.shao@gmail.com>,
-	Kent Overstreet <kent.overstreet@linux.dev>, jack@suse.cz,
-	Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, linux-bcachefs@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Michal Hocko <mhocko@suse.com>
-Subject: Re: [PATCH 1/2 v2] bcachefs: do not use PF_MEMALLOC_NORECLAIM
-Message-ID: <Zs6jFb953AR2Raec@dread.disaster.area>
-References: <20240826085347.1152675-2-mhocko@kernel.org>
- <20240827061543.1235703-1-mhocko@kernel.org>
+	s=arc-20240116; t=1724818288; c=relaxed/simple;
+	bh=qgkBj3XLOswSombZfzQeBF9pmB4ZPEywspV6gRvK8X8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=sHg5bl+0jEwD/zb9nvcvrc843n6qx7YC/juA9d9T9pCoDOCdN3n5a/Dxr/tvWUyvltejMWRRwyQ+/HoGIvHXZZ4/NQDXeJFdgxhNgXQRymxeVg6JrXPEOoNGc1UC9em03x43poGEIg1D0UjGw/P0PfWymnfQajMYt2s1fF4sJdk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=i5bVOaov; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47RLaK7c018483;
+	Wed, 28 Aug 2024 04:11:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	XB3nitMDrhcgYWDNF7i/xDc7nt8v4/tU5UOice/FsLQ=; b=i5bVOaovkwnfnyBj
+	oxZ18P00ZOv3oE8QJ2KdcUb7O4Q2Ft6y5fQhb40I+WO+usVmrx6XS/KcaW46qbsx
+	J5vvC8Dm9pKxQEFufASFgy8gzOMXr7EL0WbGTyCVjRLrwjhDO5f4rWjK5WSzgmnc
+	WgUrWReELcdULFpv6suGZXrI4YTp8nfqO3vgH6FV9i4SllEs0nw1mVJAPeumnimE
+	10PU33kZCsHtEbmL8ZLYMJpw1gI0dcRVKvnKpBR3gD7Q8iMeqvr9jrBbgF8GPyr7
+	bfHU9G13WnrTwAJ6KtOWX1Uh3Eani3pZfnhibD3EvcXS9uFTDBfyPIk1xeNuvLa1
+	JA7fzA==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 419pv08mra-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 28 Aug 2024 04:11:18 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47S4BGtt026494
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 28 Aug 2024 04:11:16 GMT
+Received: from [10.217.219.148] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 27 Aug
+ 2024 21:11:10 -0700
+Message-ID: <93955b6d-0ce1-42cb-ad18-a82e2e8cfca9@quicinc.com>
+Date: Wed, 28 Aug 2024 09:41:02 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240827061543.1235703-1-mhocko@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] usb: dwc3: gadget: Fix TX FIFO size for HS ISOC endpoints
+To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jing Leng
+	<jleng@ambarella.com>, Felipe Balbi <balbi@kernel.org>,
+        Jack Pham
+	<quic_jackp@quicinc.com>,
+        "kernel@quicinc.com" <kernel@quicinc.com>,
+        "Wesley
+ Cheng" <quic_wcheng@quicinc.com>,
+        Laurent Pinchart
+	<laurent.pinchart@ideasonboard.com>,
+        Daniel Scally
+	<dan.scally@ideasonboard.com>,
+        Vijayavardhan Vennapusa
+	<quic_vvreddy@quicinc.com>,
+        Krishna Kurapati <quic_kriskura@quicinc.com>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20240827054956.28241-1-quic_akakum@quicinc.com>
+ <20240827231552.7yokoe7jqdm3wduu@synopsys.com>
+Content-Language: en-US
+From: AKASH KUMAR <quic_akakum@quicinc.com>
+In-Reply-To: <20240827231552.7yokoe7jqdm3wduu@synopsys.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: HPuyTsXJL0o3NzgyxJyNHMzwNJZErJTV
+X-Proofpoint-ORIG-GUID: HPuyTsXJL0o3NzgyxJyNHMzwNJZErJTV
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-28_02,2024-08-27_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 clxscore=1015
+ priorityscore=1501 impostorscore=0 suspectscore=0 lowpriorityscore=0
+ malwarescore=0 spamscore=0 mlxlogscore=947 mlxscore=0 bulkscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408280027
 
-On Tue, Aug 27, 2024 at 08:15:43AM +0200, Michal Hocko wrote:
-> From: Michal Hocko <mhocko@suse.com>
-> 
-> bch2_new_inode relies on PF_MEMALLOC_NORECLAIM to try to allocate a new
-> inode to achieve GFP_NOWAIT semantic while holding locks. If this
-> allocation fails it will drop locks and use GFP_NOFS allocation context.
-> 
-> We would like to drop PF_MEMALLOC_NORECLAIM because it is really
-> dangerous to use if the caller doesn't control the full call chain with
-> this flag set. E.g. if any of the function down the chain needed
-> GFP_NOFAIL request the PF_MEMALLOC_NORECLAIM would override this and
-> cause unexpected failure.
-> 
-> While this is not the case in this particular case using the scoped gfp
-> semantic is not really needed bacause we can easily pus the allocation
-> context down the chain without too much clutter.
-> 
-> Acked-by: Christoph Hellwig <hch@lst.de>
-> Signed-off-by: Michal Hocko <mhocko@suse.com>
+Hi Thinh,
 
-Looks good to me.
+On 8/28/2024 4:45 AM, Thinh Nguyen wrote:
+> On Tue, Aug 27, 2024, Akash Kumar wrote:
+>> Use 2K TX FIFO size for low-resolution UVC cameras to support the
+>> maximum possible UVC instances. Restrict 2K TX FIFO size based on
+>> the minimum maxburst required to run low-resolution UVC cameras.
+>>
+>> Signed-off-by: Akash Kumar <quic_akakum@quicinc.com>
+>> ---
+>>   drivers/usb/dwc3/gadget.c | 4 ++++
+>>   1 file changed, 4 insertions(+)
+>>
+>> diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
+>> index 89fc690fdf34..f342ccda6705 100644
+>> --- a/drivers/usb/dwc3/gadget.c
+>> +++ b/drivers/usb/dwc3/gadget.c
+>> @@ -788,6 +788,10 @@ static int dwc3_gadget_resize_tx_fifos(struct dwc3_ep *dep)
+>>   	     usb_endpoint_xfer_isoc(dep->endpoint.desc)) && DWC3_IP_IS(DWC31))
+>>   		num_fifos = dwc->tx_fifo_resize_max_num;
+>>   
+>> +	if (dep->endpoint.maxburst <= 1 &&
+>> +	    usb_endpoint_xfer_isoc(dep->endpoint.desc))
+>> +		num_fifos = 2;
+>> +
+>>   	/* FIFO size for a single buffer */
+>>   	fifo = dwc3_gadget_calc_tx_fifo_size(dwc, 1);
+>>   
+>> -- 
+>> 2.17.1
+>>
+> These settings are starting to get too specific for each application.
+> Can we find a better calculation?
+>
+> Perhaps something like this? (code not tested)
+>
+> diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
+> index 9a18973ebc05..d54b08f92aea 100644
+> --- a/drivers/usb/dwc3/gadget.c
+> +++ b/drivers/usb/dwc3/gadget.c
+> @@ -908,15 +908,10 @@ static int dwc3_gadget_resize_tx_fifos(struct dwc3_ep *dep)
+>   
+>   	ram1_depth = DWC3_RAM1_DEPTH(dwc->hwparams.hwparams7);
+>   
+> -	if ((dep->endpoint.maxburst > 1 &&
+> -	     usb_endpoint_xfer_bulk(dep->endpoint.desc)) ||
+> +	if (usb_endpoint_xfer_bulk(dep->endpoint.desc) ||
+>   	    usb_endpoint_xfer_isoc(dep->endpoint.desc))
+> -		num_fifos = 3;
+> -
+> -	if (dep->endpoint.maxburst > 6 &&
+> -	    (usb_endpoint_xfer_bulk(dep->endpoint.desc) ||
+> -	     usb_endpoint_xfer_isoc(dep->endpoint.desc)) && DWC3_IP_IS(DWC31))
+> -		num_fifos = dwc->tx_fifo_resize_max_num;
+> +		num_fifos = min_t(unsigned int, dep->endpoint.maxburst + 1,
+> +				  dwc->tx_fifo_resize_max_num);
+>   
+>   	/* FIFO size for a single buffer */
+>   	fifo = dwc3_gadget_calc_tx_fifo_size(dwc, 1);
+>
+should be fine for me, as earlier there was no case handling for 
+maxburst <= 1, by allocating fifo based on maxburst itself
 
-Reviewed-by: Dave Chinner <dchinner@redhat.com>
+should be a good solution and will work for all as they customize based 
+on maxburst through init scripts, let me test and update.
 
--- 
-Dave Chinner
-david@fromorbit.com
+Thanks,
+Akash
 
