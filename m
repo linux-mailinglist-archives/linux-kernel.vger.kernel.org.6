@@ -1,176 +1,132 @@
-Return-Path: <linux-kernel+bounces-304850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B34E9625BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:16:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 681469625CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 13:17:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8EEB1F225E6
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:16:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 04D9AB21D74
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 11:17:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AD4916D4EA;
-	Wed, 28 Aug 2024 11:15:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3152616DC04;
+	Wed, 28 Aug 2024 11:16:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="dS+FAs1K"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dh+Kei9l"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03C2E16D4C4;
-	Wed, 28 Aug 2024 11:15:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7455F4D108;
+	Wed, 28 Aug 2024 11:16:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724843740; cv=none; b=NPn9v4YWp3xEPrbjwcFWCHDbALe4NuIpr6k+0ODNUyOxPXS3DodHW6Rb8TQ3iGVrtZwGAlss3dpAn7Q0ev+ILmatoo9Nwzd7WWZYwg2vyQ4ZKt7sve5qAZ19e5DevgFJCSYhQRwizRvUK1eXwcD8KiGuckB0yCRZtZcJLWQ8oVQ=
+	t=1724843803; cv=none; b=dzDsOJWQ1cuZeC0pp9dVgaXmDPwT9g4JIRUhlejW2MxgbILeW6HCSbPaU3MqbHyV6ljk7JEd/utmcYWhD2vq2pNkxRQXzEnxUoqi8d5+GQtUUWF687NGCkQJLNrp/ktXqHNiX9H4IU3NJhLU8yfkVcaqXGOu4EE/J7hqJDeI+8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724843740; c=relaxed/simple;
-	bh=rqA7jF7A7vz8n74HxzUFOh3lgDGvDqNaspxJBN9Qh/w=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=SM5FyxuD8wkQC2DAzQO3LSlT4Z5p32T6fbm9TPyQcuA9A1c9fI51tvOzqSLbPIlR0Xz80TBy7ODvWAQxAm3E2MttJNodRgI3RRqPe2HL72h4zZqse9uaP9HELWO5XiW6gU3rx5vpsfWZzyI52qdBJyIRsY/AQtKSMcjbPuNuzQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=dS+FAs1K; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47SBFRwY110003;
-	Wed, 28 Aug 2024 06:15:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1724843727;
-	bh=ThdwiZjEeutdAObkB4+YI1yvrwfMFiN+aq8QuXwJeGk=;
-	h=From:Date:Subject:References:In-Reply-To:To:CC;
-	b=dS+FAs1KwCvK4BrOXZKrqRynDuFzZ1sHQ2I0toZT+ulfQfjpQq2RFlSBZBx7cZ11I
-	 gLhivQ63bY0CeF6daiigTHDgzfqkh5J9qn81mQtLGXp1h5hZAUUAXgDvDxSzqJZgbs
-	 fKkuWB7DaI1ojubm4SjAkhKFtE0s7C7MQC4hn1Hg=
-Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47SBFRmW130933
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 28 Aug 2024 06:15:27 -0500
-Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 28
- Aug 2024 06:15:26 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 28 Aug 2024 06:15:26 -0500
-Received: from [127.0.1.1] (uda0497581.dhcp.ti.com [10.24.68.185])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47SBF10C122618;
-	Wed, 28 Aug 2024 06:15:23 -0500
-From: Manorit Chawdhry <m-chawdhry@ti.com>
-Date: Wed, 28 Aug 2024 16:45:03 +0530
-Subject: [PATCH v5 5/5] arm64: dts: ti: Add support for J742S2 EVM board
+	s=arc-20240116; t=1724843803; c=relaxed/simple;
+	bh=WaqToENXOPqb2z6sLJVOLE/E0rhIdPZwlwNAG/Pv/xo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NR1DcZeh+rdVJoVVwQSorX9L/vTkUr5gzRiQilF/mAPKnBCrJj8SOXFqxgDqg8YkxwRZWqhZmW3/dLj3cxpSGOnuGRWf4h7Mv7Qed6DwO8pEJBrvrtPReYI44WhPokctHwyQkWRTkI9mGgyDerLWn6hR+VNZHSllQntPcBa6IYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dh+Kei9l; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A81AC98EC6;
+	Wed, 28 Aug 2024 11:16:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724843803;
+	bh=WaqToENXOPqb2z6sLJVOLE/E0rhIdPZwlwNAG/Pv/xo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=dh+Kei9l669eirm87ad4gnsLiva4otm7C44LdJdRAcBaW99pECuC4yN6K1TvbqCUO
+	 dhmBNy6ytoMY+E06TCfrD9kFbeNtDkihlbG3mKFBdm/JRCD1OXsuP7PyzPNXWpmRir
+	 fSKvePui931OOHyIwJ2Pw1UOU7+upIo2fwsLBoCVvBPb5AsBkr/1KlL0uD1BugNufy
+	 yT2h3IIYlUXAw71Vj60NGLRn99BlDDG7jEx23P5UHs4PZsd/vOoxNprzMVVyaz3UKg
+	 c4fwdgJItMGrU7Rk33KBdfAQPcoUzWhopVjbhzMuVVqheBnvE/7NEsIY1r/iKGJq6u
+	 Dym/p8aMORQUA==
+Message-ID: <3ead166f-8108-4503-ae81-7605585c816b@kernel.org>
+Date: Wed, 28 Aug 2024 13:16:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240828-b4-upstream-j742s2-v5-5-9aaa02a0faee@ti.com>
-References: <20240828-b4-upstream-j742s2-v5-0-9aaa02a0faee@ti.com>
-In-Reply-To: <20240828-b4-upstream-j742s2-v5-0-9aaa02a0faee@ti.com>
-To: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-        Tero
- Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Udit Kumar <u-kumar1@ti.com>,
-        Neha Malcom
- Francis <n-francis@ti.com>,
-        Aniket Limaye <a-limaye@ti.com>, Beleswar Padhi
-	<b-padhi@ti.com>,
-        Manorit Chawdhry <m-chawdhry@ti.com>
-X-Mailer: b4 0.14-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1724843701; l=2841;
- i=m-chawdhry@ti.com; s=20231127; h=from:subject:message-id;
- bh=rqA7jF7A7vz8n74HxzUFOh3lgDGvDqNaspxJBN9Qh/w=;
- b=SwbZv6TaZMqwIK8yRlEkTGHnhuXm+gbMpVPOjJvCnyzVbdWzDSzxtpDaosre16Xkkosq+D3mY
- AZwF8JXha1vC43XwiHhsMZ4td32w5ibnC4r8PspPgSwem1x0rh1dkRo
-X-Developer-Key: i=m-chawdhry@ti.com; a=ed25519;
- pk=fsr6Tm39TvsTgfyfFQLk+nnqIz2sBA1PthfqqfiiYSs=
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/5] drm/msm/a6xx: Store gmu_cgc_mode in struct a6xx_info
+To: Rob Clark <robdclark@gmail.com>, Konrad Dybcio <konradybcio@kernel.org>
+Cc: Sean Paul <sean@poorly.run>, Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ Konrad Dybcio <konrad.dybcio@linaro.org>
+References: <20240719-topic-a621-v1-0-850ae5307cf4@linaro.org>
+ <20240719-topic-a621-v1-3-850ae5307cf4@linaro.org>
+ <CAF6AEGs23d5OqKst+ik-kMMXPCS_0=-a8ndskv3j4NduOVR1Vw@mail.gmail.com>
+ <CAF6AEGuB5oB6RZLk+PfYMTV8ybboJymcvzJVu9ByHdu=KyvV+w@mail.gmail.com>
+ <CAF6AEGtkikykNKHz0905HZ4FOJYieO5R3jr6-OO8QLYqok25BA@mail.gmail.com>
+Content-Language: en-US
+From: Konrad Dybcio <konradybcio@kernel.org>
+In-Reply-To: <CAF6AEGtkikykNKHz0905HZ4FOJYieO5R3jr6-OO8QLYqok25BA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-J742S2 EVM board is designed for TI J742S2 SoC. It supports the following
-interfaces:
-* 16 GB DDR4 RAM
-* x2 Gigabit Ethernet interfaces capable of working in Switch and MAC mode
-* x1 Input Audio Jack, x1 Output Audio Jack
-* x1 USB2.0 Hub with two Type A host and x1 USB 3.1 Type-C Port
-* x1 4L PCIe connector
-* x1 UHS-1 capable micro-SD card slot
-* 512 Mbit OSPI flash, 1 Gbit Octal NAND flash, 512 Mbit QSPI flash,
-  UFS flash.
-* x6 UART through UART-USB bridge
-* XDS110 for onboard JTAG debug using USB
-* Temperature sensors, user push buttons and LEDs
-* x1 GESI expander, x2 Display connector
-* x1 15-pin CSI header
-* x6 MCAN instances
+On 27.08.2024 10:12 PM, Rob Clark wrote:
+> resending with updated Konrad email addr
+> 
+> On Mon, Aug 26, 2024 at 2:09 PM Rob Clark <robdclark@gmail.com> wrote:
+>>
+>> On Mon, Aug 26, 2024 at 2:07 PM Rob Clark <robdclark@gmail.com> wrote:
+>>>
+>>> On Fri, Jul 19, 2024 at 3:03 AM Konrad Dybcio <konrad.dybcio@linaro.org> wrote:
+>>>>
+>>>> This was apparently almost never set on a6xx.. move the existing values
+>>>> and fill out the remaining ones within the catalog.
+>>>>
+>>>> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+>>>> ---
 
-Link: https://www.ti.com/lit/ug/sprujd8/sprujd8.pdf (EVM user guide)
-Link: https://www.ti.com/lit/zip/SPAC001 (Schematics)
-Reviewed-by: Beleswar Padhi <b-padhi@ti.com>
-Signed-off-by: Manorit Chawdhry <m-chawdhry@ti.com>
----
- arch/arm64/boot/dts/ti/Makefile          |  4 ++++
- arch/arm64/boot/dts/ti/k3-j742s2-evm.dts | 26 ++++++++++++++++++++++++++
- 2 files changed, 30 insertions(+)
+[...]
 
-diff --git a/arch/arm64/boot/dts/ti/Makefile b/arch/arm64/boot/dts/ti/Makefile
-index e20b27ddf901..1bf645726a10 100644
---- a/arch/arm64/boot/dts/ti/Makefile
-+++ b/arch/arm64/boot/dts/ti/Makefile
-@@ -119,6 +119,9 @@ dtb-$(CONFIG_ARCH_K3) += k3-j784s4-evm-pcie0-pcie1-ep.dtbo
- dtb-$(CONFIG_ARCH_K3) += k3-j784s4-evm-quad-port-eth-exp1.dtbo
- dtb-$(CONFIG_ARCH_K3) += k3-j784s4-evm-usxgmii-exp1-exp2.dtbo
- 
-+# Boards with J742S2 SoC
-+dtb-$(CONFIG_ARCH_K3) += k3-j742s2-evm.dtb
-+
- # Build time test only, enabled by CONFIG_OF_ALL_DTBS
- k3-am625-beagleplay-csi2-ov5640-dtbs := k3-am625-beagleplay.dtb \
- 	k3-am625-beagleplay-csi2-ov5640.dtbo
-@@ -240,3 +243,4 @@ DTC_FLAGS_k3-j721e-common-proc-board += -@
- DTC_FLAGS_k3-j721e-sk += -@
- DTC_FLAGS_k3-j721s2-common-proc-board += -@
- DTC_FLAGS_k3-j784s4-evm += -@
-+DTC_FLAGS_k3-j742s2-evm += -@
-diff --git a/arch/arm64/boot/dts/ti/k3-j742s2-evm.dts b/arch/arm64/boot/dts/ti/k3-j742s2-evm.dts
-new file mode 100644
-index 000000000000..fcb7f05d7faf
---- /dev/null
-+++ b/arch/arm64/boot/dts/ti/k3-j742s2-evm.dts
-@@ -0,0 +1,26 @@
-+// SPDX-License-Identifier: GPL-2.0-only OR MIT
-+/*
-+ * Copyright (C) 2024 Texas Instruments Incorporated - https://www.ti.com/
-+ *
-+ * EVM Board Schematics: https://www.ti.com/lit/zip/SPAC001
-+ */
-+
-+/dts-v1/;
-+
-+#include <dt-bindings/net/ti-dp83867.h>
-+#include <dt-bindings/gpio/gpio.h>
-+#include "k3-j742s2.dtsi"
-+#include "k3-j784s4-j742s2-evm-common.dtsi"
-+
-+/ {
-+	model = "Texas Instruments J742S2 EVM";
-+	compatible = "ti,j742s2-evm", "ti,j742s2";
-+
-+	memory@80000000 {
-+		/* 16G RAM */
-+		reg = <0x00000000 0x80000000 0x00000000 0x80000000>,
-+		      <0x00000008 0x80000000 0x00000003 0x80000000>;
-+		device_type = "memory";
-+		bootph-all;
-+	};
-+};
+>>>> --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+>>>> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+>>>> @@ -402,7 +402,7 @@ static void a6xx_set_hwcg(struct msm_gpu *gpu, bool state)
+>>>>         struct a6xx_gmu *gmu = &a6xx_gpu->gmu;
+>>>>         const struct adreno_reglist *reg;
+>>>>         unsigned int i;
+>>>> -       u32 val, clock_cntl_on, cgc_mode;
+>>>> +       u32 val, clock_cntl_on;
+>>>>
+>>>>         if (!(adreno_gpu->info->a6xx->hwcg || adreno_is_a7xx(adreno_gpu)))
+>>>>                 return;
+>>>> @@ -417,10 +417,8 @@ static void a6xx_set_hwcg(struct msm_gpu *gpu, bool state)
+>>>>                 clock_cntl_on = 0x8aa8aa82;
+>>>>
+>>>>         if (adreno_is_a7xx(adreno_gpu)) {
+>>>> -               cgc_mode = adreno_is_a740_family(adreno_gpu) ? 0x20222 : 0x20000;
+>>>> -
+>>>
+>>> This does appear to change the gmu_cgc_mode in nearly all cases.. was
+>>> this intended?
+>>
+>> Hmm, and this will only get written for a7xx, so we're dropping the
+>> reg write for a690..
 
--- 
-2.46.0
+Right, this patch is a lot to chew through.. It:
 
+- adds the proper magic value per gpu gen
+- removes the sneaky a690 write
+- uses the new struct entry
+
+but also
+
+- fails to remove the if (a7xx) check
+
+so I suppose for v2 I can split it into:
+
+1. add the magic values
+2. fix the if (a7xx) check
+3. use the struct value and drop the a690 one
+
+does that sound good?
+
+Konrad
 
