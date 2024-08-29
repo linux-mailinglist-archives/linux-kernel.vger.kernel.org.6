@@ -1,136 +1,92 @@
-Return-Path: <linux-kernel+bounces-306309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E84A7963D06
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 09:31:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AD46963D03
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 09:30:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5ECCEB2415F
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 07:31:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E90CCB2344F
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 07:30:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80059189F5A;
-	Thu, 29 Aug 2024 07:30:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DA00189BB6;
+	Thu, 29 Aug 2024 07:30:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="doZP7xNs"
-Received: from smtpbg151.qq.com (smtpbg151.qq.com [18.169.211.239])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tI9k2or4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FD09189BBD;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96F8B1F61C;
 	Thu, 29 Aug 2024 07:30:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.169.211.239
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724916628; cv=none; b=UqVsoMW32IGPx9vF6dl/a164j0Yj36rA69w4eoG7lbEfqe4S6KGGD1vbbBWwKslRgNilx+j8xgFtUqHaMRF5uzXTCyU1nBzj/m9y+wZpWLLfGacoemcokS9KbB/pDUjaiW29Jk3wTPAgE2zHkFl0doldHWkGVMNrXp+RXtM2nDA=
+	t=1724916622; cv=none; b=G4aGS3LA46R//VMD3R+MoAYuHCNfBf5n/YiBt4iIxqAABRxLLu7UXIDU3QvuQ+ylQXjA240zdJw/XAuveTAo1Pwk88zWKxLcoPMp/dX/WpiLFfuCyoYaWc8g/Mz2JvI6trZDOjxZzFrnU4z/o9Ro1IXoDaT0ptJUbKkM9EITMAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724916628; c=relaxed/simple;
-	bh=LyEMVh4RLCp2HjxapIF7Tq+5ikLws1y4KEPU3klkGN0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aCiFqjvIBr48CzNTBjYFoogy9KbOtDkPo9aDOhX9xjueXfqvALyb0IrI1i2M1OWnlbP+NWFGkK9VfLY4u+EHH7wBIoCFwft0EgR+R5me3L03QLFnNk1heW0BwCN/NtWIK33+22L6CE5bGyOdaO2zghA1C+ars9aV8ikoW9z7s3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=doZP7xNs; arc=none smtp.client-ip=18.169.211.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1724916614;
-	bh=dAJ8ztKTv9lIJL1qRsZJt5YWdjQ1q7wv2JIz9gJfdcI=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=doZP7xNsVsFUD/UtQm6RFYSF/pTMW0qzh/4k2vUxAM9I86i18/z4ZOgR4B+g67NgZ
-	 cL2LuwmpnOqQ19aDtPmAP0l3L7Tu4AWnu+MLIlZiDyBdOZjfgWde2XZqfue4zqEpnn
-	 DPDSbP2SOoHtICK4sa5/UIe7CKnF54cm0B5ZmGjU=
-X-QQ-mid: bizesmtp87t1724916610td1la1ss
-X-QQ-Originating-IP: k3Vx3kPdv4++iXJufQYQJD+NYUDo2mSAC6TuiRzZhRA=
-Received: from localhost.localdomain ( [113.57.152.160])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Thu, 29 Aug 2024 15:30:08 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 939266593025190656
-From: WangYuli <wangyuli@uniontech.com>
-To: mathias.nyman@intel.com,
-	gregkh@linuxfoundation.org,
-	bhelgaas@google.com
-Cc: linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	guanwentao@uniontech.com,
-	zhanjun@uniontech.com,
-	WangYuli <wangyuli@uniontech.com>,
-	Chen Baozi <chenbaozi@phytium.com.cn>,
-	Wang Zhimin <wangzhimin1179@phytium.com.cn>,
-	Chen Zhenhua <chenzhenhua@phytium.com.cn>,
-	Wang Yinfeng <wangyinfeng@phytium.com.cn>,
-	Jiakun Shuai <shuaijiakun1288@phytium.com.cn>
-Subject: [PATCH] usb: xHCI: add XHCI_RESET_ON_RESUME quirk for Phytium xHCI host
-Date: Thu, 29 Aug 2024 15:30:05 +0800
-Message-ID: <59E000092FD56E43+20240829073005.304698-1-wangyuli@uniontech.com>
-X-Mailer: git-send-email 2.43.4
+	s=arc-20240116; t=1724916622; c=relaxed/simple;
+	bh=vd54NGSTZ8s6qjk4QCD3xlt9tn4hIWGJF9fjaEYB8ho=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e5Kb5NU6cgFWft3f/HxHK+oELRmQYTH3xL/+vI3F+SCFdjPIocN6M0xwlK6UmdRARmMDPPPdbubu9Gf6QOpbrkTa5KE2d74et9WdlqOI/wR0YbfgPZEwdUcwiULOYGMsGopUSSNT70Ofv0uo9PZxkaoKdBMdCf2TuqfQ+Vs4RW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tI9k2or4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43C42C4CEC1;
+	Thu, 29 Aug 2024 07:30:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724916622;
+	bh=vd54NGSTZ8s6qjk4QCD3xlt9tn4hIWGJF9fjaEYB8ho=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tI9k2or4Ev4ecIxXqMChBXaN1jDLAqzB3+UnmcDDCnb3AL2yM+1O2CboyfLboAkGp
+	 scStB/cgURzRL1zzu/oKK5UtVbq0U4zJJe96T1XLOiBBXFHdpmo4dseZtxM8vl+lD+
+	 nFNpN9v5vW4++l1RjEGDqV/PbUVlGpv+i5ZgXbQz1LBBzMdVYMmiwm90JmKlLDD5aK
+	 ObQWc8h4MPjFp8Bdz4kqFjmDRJpNHWSnCHSTe7ygT52A9TFY92T/GUrgi2jphjiyd+
+	 QxXgoncP8cqHsaA3vpsEs6pudafBhwhJNJCxi0ziQzovgfa0hCVybK3Fm4x1uPqMLz
+	 s6lum6pEE7/tg==
+Date: Thu, 29 Aug 2024 09:30:17 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Nikunj Kela <quic_nkela@quicinc.com>
+Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, rafael@kernel.org, viresh.kumar@linaro.org, 
+	herbert@gondor.apana.org.au, davem@davemloft.net, sudeep.holla@arm.com, andi.shyti@kernel.org, 
+	tglx@linutronix.de, will@kernel.org, joro@8bytes.org, jassisinghbrar@gmail.com, 
+	lee@kernel.org, linus.walleij@linaro.org, amitk@kernel.org, 
+	thara.gopinath@gmail.com, broonie@kernel.org, wim@linux-watchdog.org, linux@roeck-us.net, 
+	robin.murphy@arm.com, cristian.marussi@arm.com, rui.zhang@intel.com, 
+	lukasz.luba@arm.com, vkoul@kernel.org, quic_gurus@quicinc.com, agross@kernel.org, 
+	bartosz.golaszewski@linaro.org, quic_rjendra@quicinc.com, robimarko@gmail.com, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-crypto@vger.kernel.org, arm-scmi@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org, iommu@lists.linux.dev, 
+	linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, linux-spi@vger.kernel.org, 
+	linux-watchdog@vger.kernel.org, kernel@quicinc.com, quic_psodagud@quicinc.com, 
+	quic_tsoni@quicinc.com, quic_shazhuss@quicinc.com
+Subject: Re: [PATCH 10/22] dt-bindings: pinctrl: document support for SA8255p
+Message-ID: <mn67vjsfa7jjjw6jblwbpdhpzccmmao5qwsydsnnlu3hi6tos3@jmhlrxsvufhf>
+References: <20240828203721.2751904-1-quic_nkela@quicinc.com>
+ <20240828203721.2751904-11-quic_nkela@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtp:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240828203721.2751904-11-quic_nkela@quicinc.com>
 
-The resume operation of Phytium Px210 xHCI host would failed
-to restore state. Use the XHCI_RESET_ON_RESUME quirk to skip
-it and reset the controller after resume.
+On Wed, Aug 28, 2024 at 01:37:09PM -0700, Nikunj Kela wrote:
+> Add compatible for pincontrol representing support on SA8255p.
+> 
+> SA8255p uses the same TLMM block as SA8775p however the ownership
+> of pins are split between Firmware VM and Linux VM on SA8255p. For
+> example, pins used by UART are owned and configured by Firmware VM
+> while pins used by ethernet are owned and configured by Linux VM.
+> Therefore, adding a sa8255p specific compatible to mark the difference.
+> 
+> Signed-off-by: Nikunj Kela <quic_nkela@quicinc.com>
+> ---
 
-Co-developed-by: Chen Baozi <chenbaozi@phytium.com.cn>
-Signed-off-by: Chen Baozi <chenbaozi@phytium.com.cn>
-Co-developed-by: Wang Zhimin <wangzhimin1179@phytium.com.cn>
-Signed-off-by: Wang Zhimin <wangzhimin1179@phytium.com.cn>
-Co-developed-by: Chen Zhenhua <chenzhenhua@phytium.com.cn>
-Signed-off-by: Chen Zhenhua <chenzhenhua@phytium.com.cn>
-Co-developed-by: Wang Yinfeng <wangyinfeng@phytium.com.cn>
-Signed-off-by: Wang Yinfeng <wangyinfeng@phytium.com.cn>
-Co-developed-by: Jiakun Shuai <shuaijiakun1288@phytium.com.cn>
-Signed-off-by: Jiakun Shuai <shuaijiakun1288@phytium.com.cn>
-Signed-off-by: WangYuli <wangyuli@uniontech.com>
----
- drivers/usb/host/xhci-pci.c | 6 ++++++
- include/linux/pci_ids.h     | 2 ++
- 2 files changed, 8 insertions(+)
+Explanation does not match driver (discussion in the driver).
 
-diff --git a/drivers/usb/host/xhci-pci.c b/drivers/usb/host/xhci-pci.c
-index b5705ed01d83..af967644489c 100644
---- a/drivers/usb/host/xhci-pci.c
-+++ b/drivers/usb/host/xhci-pci.c
-@@ -55,6 +55,8 @@
- #define PCI_DEVICE_ID_INTEL_ALDER_LAKE_PCH_XHCI		0x51ed
- #define PCI_DEVICE_ID_INTEL_ALDER_LAKE_N_PCH_XHCI	0x54ed
- 
-+#define PCI_DEVICE_ID_PHYTIUM_XHCI			0xdc27
-+
- /* Thunderbolt */
- #define PCI_DEVICE_ID_INTEL_MAPLE_RIDGE_XHCI		0x1138
- #define PCI_DEVICE_ID_INTEL_ALPINE_RIDGE_2C_XHCI	0x15b5
-@@ -407,6 +409,10 @@ static void xhci_pci_quirks(struct device *dev, struct xhci_hcd *xhci)
- 	if (pdev->vendor == PCI_VENDOR_ID_VIA)
- 		xhci->quirks |= XHCI_RESET_ON_RESUME;
- 
-+	if (pdev->vendor == PCI_VENDOR_ID_PHYTIUM ||
-+	    pdev->device == PCI_DEVICE_ID_PHYTIUM_XHCI)
-+		xhci->quirks |= XHCI_RESET_ON_RESUME;
-+
- 	/* See https://bugzilla.kernel.org/show_bug.cgi?id=79511 */
- 	if (pdev->vendor == PCI_VENDOR_ID_VIA &&
- 			pdev->device == 0x3432)
-diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
-index e388c8b1cbc2..25fff4130503 100644
---- a/include/linux/pci_ids.h
-+++ b/include/linux/pci_ids.h
-@@ -2605,6 +2605,8 @@
- 
- #define PCI_VENDOR_ID_FUNGIBLE		0x1dad
- 
-+#define PCI_VENDOR_ID_PHYTIUM		0x1db7
-+
- #define PCI_VENDOR_ID_HXT		0x1dbf
- 
- #define PCI_VENDOR_ID_TEKRAM		0x1de1
--- 
-2.43.4
+Best regards,
+Krzysztof
 
 
