@@ -1,83 +1,86 @@
-Return-Path: <linux-kernel+bounces-306381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5F80963E32
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:17:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B9BA963E38
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:21:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D21C1F22782
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:17:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 662F01C211CE
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:21:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6445E18A6A6;
-	Thu, 29 Aug 2024 08:17:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED75718C02E;
+	Thu, 29 Aug 2024 08:20:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PaFukGtV"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LvYl67KD"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE9961547C7;
-	Thu, 29 Aug 2024 08:17:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B678D18C021;
+	Thu, 29 Aug 2024 08:20:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724919459; cv=none; b=cnGeLUsYY6v1MN8Zy/SPclN1nb21wPvdljsUvYaLgG97gw8mv0CSBIA1RyXj0f4RaT6rhrGNcGaIK750QvDL+DcGPifopC6+NReLb8T6YcL6HABQfRmfAUl/gYj/a4IWSYdPNSVAbC5GOC92dQV7yq98+hyrIi/NUdqZTkjZiqU=
+	t=1724919653; cv=none; b=Wubq5vDtxgJe0UiT8lQPYHtQ6OCkaDt/Kmawetvv2oQcUC1s/31op75WCrD5vAg9/Qt4LbmPYbmOS+VKxsNjBYQLyJEp8951EPTKWDxpmQzheAdEjW9eE9mmQG2b2JiuHLHlkx2T7Rr2Kl9etpzn4LhFOF8LronFdTaMss1eBkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724919459; c=relaxed/simple;
-	bh=94yesiRcSKI7p8hgdXnXcUCe/LjasPsTf4pmmkoiuew=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ahRncCbtz1SL5Nf/fxnHvN+auvLG4dtCH0PE8V5t1ywsLkM5fpbgli12Pgsx6Xm5WXgDpIt+6yh9s2Ozg9oD2LoMx49OtOpirOkZP6zhD/7AvBXjjpSapom4F75xthgk+QpdMU0Ne36p724hr3ZWA1ki/TA71SVhQ/FTreG+kcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PaFukGtV; arc=none smtp.client-ip=209.85.208.180
+	s=arc-20240116; t=1724919653; c=relaxed/simple;
+	bh=FJgsYlILKYE6AZml0b+hyh4/86XwcodMKNhsDQGUxJw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HUOZElGyUFHPmlThCMfnLlIK14V4+9IuiFzlalIO+/JYAYBpQh7J80ufWF6RoXXsAIFUKnqUhHe+PEcPaQksntiUE4kk11bCTYY9t/udiIeVL57JaUB5+u79k3ZDQIhtJv/MQhcLwoO1qzuWoolgM57v8tkTADNTZ2OslQ6l44E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LvYl67KD; arc=none smtp.client-ip=209.85.128.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2f401b2347dso3371061fa.1;
-        Thu, 29 Aug 2024 01:17:37 -0700 (PDT)
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42bb72a5e0bso2506295e9.1;
+        Thu, 29 Aug 2024 01:20:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724919456; x=1725524256; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=xRw+yYJIWYJBgQtd5Koyt9FZtq29Nv6YI6t+mocf7VM=;
-        b=PaFukGtVs6ywHYYxW7gL0NU3YObBie+kAej9O6Dbc+un3juZcsWFQIWQg+/yrpE6B3
-         Prai0e45sPKTpeEeeQq/wpY/Cw4Om7b72J/1siqLQCh9xftl0TLKm2bZtx/2ylU5kn7r
-         hX2j8yH6Zrb4qm1RKn9YQ013d0+5huW/g/JMivcRdXKvyOuWEog6p6T3WWP9rDbVeig6
-         35vp4LP3GPgSf5khoSNQQm5N2/ebMVnADz/USrvulVHI3sBMwTRbRdQkZiNQH1uVJ5nm
-         1UjYdqV+IclYq/ZTiogYkxrsT06kN3uXcHGXFsMEnPz6zdb53IBSScp7UvXYdlgmY/Ul
-         fzjQ==
+        d=gmail.com; s=20230601; t=1724919650; x=1725524450; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nyWujZXUph0LpAdyIQjvJMmkqt6sQ3l3/uAnrfaVN6A=;
+        b=LvYl67KDW8kubIiJZOof15lBR9RFHCdVspnAC+pBPk8NvsV63atcwRlwYisDjtRyol
+         hhOjLsEG5Z8qJ7y+sOyt2w37QVZfTyBFQOus4cTNROAFLJz5qDzY/tlE+ASJcbTXmb7m
+         56QPNd96FPQwaG83Nd9asAj42w50/jCgfCISPY+81Bo2VLjb5dXuY7HMJHkNuaLPPAW3
+         /bwlIb4msb+Ap5dm1L0+gP894tUgtFrLkpnrw1bWLIGI/0xV8VAM0OKTcY4SJJNqjKT/
+         AhiWA/UER6/oEBcqHdusnJvQVxqS7KgvB1OtIgYrlxw6Y+EOMOyERkh+vS5AzG9DIfpe
+         YtuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724919456; x=1725524256;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xRw+yYJIWYJBgQtd5Koyt9FZtq29Nv6YI6t+mocf7VM=;
-        b=hlh2yi1+bXjQp5Cw0FRtY7FhHGiovNv/hqbFJc8tNQMPCQ8+A422fYWLpXiv1KPb/O
-         KMpY38ZSmYGijspNbSzGu9AoTNsVOhcTlD5aZ3/qMN9YiEO4ek3L73j6+huoEcjkHEFh
-         3H6wIGYbsv1ZbPMnvj10PUi7Rgx+TpYGeVA+eDLQ97z+PgtgbgrQSSz8oCvHXr39zjWb
-         uGBLEyJCQx3xedqJ5jmyoearZJkwlJC8ZxiaDRqi/N1Chuu5SbgH2U+BlgfI5G9Vs398
-         Dm57DB0ff04wd1Wf2yDfjuolsSazLHMvQN5nEn0kQbvsgjbncXqOhL+DuXIPSnDq5kGi
-         tr0A==
-X-Forwarded-Encrypted: i=1; AJvYcCU7C3UyvA1xIpXNLOa3i4ccycvoDHRP0r16sXU9baUEfau6VUSoLslyaKHWrPOjpSxYqRA4@vger.kernel.org, AJvYcCUgWK9nrO1UGKX/twoNOMb5jVqZ8tuI7GWNc/e5zaBLHjn++Htep6dgeoOQEpW49ZbBCt3QSDDQuIjkLK0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjF9QWVzg8m0lUkV3hAPPZQI0sFuaXlEPL5zsb6e/0+XsYFih/
-	lV0Q1s0daeDZEUV+OrOX8X8wEqx5ApmJr8Zox6qFIHotarYn9Onw
-X-Google-Smtp-Source: AGHT+IGmUjcQLAojmb2e/G6yBZ1hi4nWMRHDXhhWQIFuqgSyag/8WKfzfR4Rs7r8Wx+pbZiXxr62Sw==
-X-Received: by 2002:a2e:6111:0:b0:2f4:f66f:d55a with SMTP id 38308e7fff4ca-2f61689caa4mr2653121fa.21.1724919455229;
-        Thu, 29 Aug 2024 01:17:35 -0700 (PDT)
-Received: from pc636 (84-217-131-213.customers.ownit.se. [84.217.131.213])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f614ed15f1sm1147021fa.4.2024.08.29.01.17.34
+        d=1e100.net; s=20230601; t=1724919650; x=1725524450;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nyWujZXUph0LpAdyIQjvJMmkqt6sQ3l3/uAnrfaVN6A=;
+        b=AOGFIHLS7cT0FN4FJj7TYFBV/QHXi2bRTeerty0mVmtGEPeA2YxIUBJPnDO5uU8/kb
+         XmwXlSF7qJcAVgxI4b7K2ugLxzbjxLahbpyikpfw3ZcV+x+e7GVJxpUE9UbH8y4IAPUJ
+         f6gjqxyCaQXiePayvISxlycS89qf/Gz3s+uyde0tGmEhedo1NfGG/rSTyCwdatJFCECY
+         pp7oEs639XlgQO+BxkGAYnGHboKiSd0PRKh/wr/GJCNkzQHYkKHTcAyg8V8nNQVGfg+B
+         yXbWw4Lx34yjxhpTLGa70DgNXmCFnA/1b1HI46sWFX48uYjT6wqwXReTMajEgsP1DXrE
+         EPig==
+X-Forwarded-Encrypted: i=1; AJvYcCVLU5ke2qXTv5rtFCMLtjF64Ef3/ESH6WcfY5xXHR0CazN1GTzPF4brEDXanspvlxzkRARfmwIG@vger.kernel.org, AJvYcCXWEXtuarRfdHqQfQhoaSqrkF3YeATWfflh/gA86OP0O6VbK4LToO1C5cz90wO3ICVlkXuJaWpIQ1gzNfI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy21sK14Ge/tpk8k0Pyd0y8aUCnfiEqhmJBaBCrRo0Ix+NngfKq
+	mUofnktU2FsIJ56FGJJpkTspi48aAOf7kcEmLYTLbzH+Hgf1DJ/c
+X-Google-Smtp-Source: AGHT+IFYa2f9NUTllmq3w8T8mdv55B6znRTNYxVksHlaze70fPmQwiMF+jdriFc0E5XQyL+UPsGOMg==
+X-Received: by 2002:a05:600c:5102:b0:425:80d5:b8b2 with SMTP id 5b1f17b1804b1-42bb01bd7f2mr14006675e9.16.1724919649482;
+        Thu, 29 Aug 2024 01:20:49 -0700 (PDT)
+Received: from localhost ([81.168.73.77])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3749ee73fa0sm784667f8f.43.2024.08.29.01.20.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 01:17:34 -0700 (PDT)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date: Thu, 29 Aug 2024 10:17:33 +0200
-To: Xingyu Li <xli399@ucr.edu>
-Cc: paulmck@kernel.org, frederic@kernel.org, neeraj.upadhyay@kernel.org,
-	joel@joelfernandes.org, josh@joshtriplett.org, boqun.feng@gmail.com,
-	urezki@gmail.com, rostedt@goodmis.org,
-	mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
-	qiang.zhang1211@gmail.com, rcu@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Yu Hao <yhao016@ucr.edu>
-Subject: Re: BUG: WARNING in kvfree_rcu_bulk
-Message-ID: <ZtAunXBPC4WElcez@pc636>
-References: <CALAgD-7JNKw5m0wpGAN+ezCL-qn7LcTL5vgyBmQZKbf5BTNUCw@mail.gmail.com>
+        Thu, 29 Aug 2024 01:20:48 -0700 (PDT)
+Date: Thu, 29 Aug 2024 09:20:48 +0100
+From: Martin Habets <habetsm.xilinx@gmail.com>
+To: Shen Lichuan <shenlichuan@vivo.com>
+Cc: ecree.xilinx@gmail.com, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
+	linux-net-drivers@amd.com, linux-kernel@vger.kernel.org,
+	opensource.kernel@vivo.com
+Subject: Re: [PATCH v2] sfc: Convert to use ERR_CAST()
+Message-ID: <20240829081951.GA67561@gmail.com>
+Mail-Followup-To: Shen Lichuan <shenlichuan@vivo.com>,
+	ecree.xilinx@gmail.com, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
+	linux-net-drivers@amd.com, linux-kernel@vger.kernel.org,
+	opensource.kernel@vivo.com
+References: <20240829021253.3066-1-shenlichuan@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,64 +89,37 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CALAgD-7JNKw5m0wpGAN+ezCL-qn7LcTL5vgyBmQZKbf5BTNUCw@mail.gmail.com>
+In-Reply-To: <20240829021253.3066-1-shenlichuan@vivo.com>
 
-Hello!
+On Thu, Aug 29, 2024 at 10:12:53AM +0800, Shen Lichuan wrote:
+> As opposed to open-code, using the ERR_CAST macro clearly indicates that
+> this is a pointer to an error value and a type conversion was performed.
+> 
+> Signed-off-by: Shen Lichuan <shenlichuan@vivo.com>
+> Reviewed-by: Jacob Keller <jacob.e.keller@intel.com>
 
-> Hi,
-> 
-> We found a bug in Linux 6.10 using syzkaller. It is possibly a  task hung bug.
-> The reprodcuer is
-> https://gist.github.com/freexxxyyy/67172235de920ccf2f282f9e1179354d
-> 
-> The bug report is:
-> 
-> ------------[ cut here ]------------
-> ODEBUG: active_state not available (active state 0) object:
-> ffff88802526c180 object type: rcu_head hint: 0x0
-> WARNING: CPU: 0 PID: 4497 at lib/debugobjects.c:517 debug_print_object
-> lib/debugobjects.c:514 [inline]
-> WARNING: CPU: 0 PID: 4497 at lib/debugobjects.c:517
-> debug_object_active_state+0x2b0/0x360 lib/debugobjects.c:954
-> Modules linked in:
-> CPU: 0 PID: 4497 Comm: kworker/0:3 Not tainted 6.10.0 #13
-> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
-> Workqueue: events kfree_rcu_work
-> RIP: 0010:debug_print_object lib/debugobjects.c:514 [inline]
-> RIP: 0010:debug_object_active_state+0x2b0/0x360 lib/debugobjects.c:954
-> Code: d7 95 fd 4d 8b 0c 24 48 c7 c7 a0 61 a9 8b 48 c7 c6 60 5e a9 8b
-> 48 89 ea 8b 4c 24 04 49 89 d8 41 57 e8 24 1b f7 fc 48 83 c4 08 <0f> 0b
-> ff 05 88 0c c6 0a 48 83 c4 28 5b 41 5c 41 5d 41 5e 41 5f 5d
-> RSP: 0018:ffffc90002cc7a10 EFLAGS: 00010292
-> RAX: f9c69a923cadb800 RBX: ffff88802526c180 RCX: ffff88801e3cbc00
-> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-> RBP: ffffffff8ba96360 R08: ffffffff8155a25a R09: 1ffff1100c74519a
-> R10: dffffc0000000000 R11: ffffed100c74519b R12: ffffffff8b4de5c0
-> R13: 0000000000000005 R14: dffffc0000000000 R15: 0000000000000000
-> FS:  0000000000000000(0000) GS:ffff888063a00000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007fa7a316ef78 CR3: 000000000d932000 CR4: 0000000000350ef0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  <TASK>
->  debug_rcu_head_unqueue kernel/rcu/rcu.h:236 [inline]
->  debug_rcu_bhead_unqueue kernel/rcu/tree.c:3287 [inline]
->  kvfree_rcu_bulk+0xc5/0x4d0 kernel/rcu/tree.c:3364
->  kfree_rcu_work+0x443/0x500 kernel/rcu/tree.c:3450
->  process_one_work kernel/workqueue.c:3248 [inline]
->  process_scheduled_works+0x977/0x1410 kernel/workqueue.c:3329
->  worker_thread+0xaa0/0x1020 kernel/workqueue.c:3409
->  kthread+0x2eb/0x380 kernel/kthread.c:389
->  ret_from_fork+0x49/0x80 arch/x86/kernel/process.c:147
->  ret_from_fork_asm+0x11/0x20 arch/x86/entry/entry_64.S:244
->  </TASK>
-> 
-Is your kernel configuration special? I mean should i have something
-truly enabled in the .config to reproduce it?
+Reviewed-by: Martin Habets <habetsm.xilinx@gmail.com>
 
-Thank you for the report!
-
---
-Uladzislau Rezki
+> ---
+> v1 -> v2: Removed the superfluous comment.
+> 
+>  drivers/net/ethernet/sfc/tc_counters.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/ethernet/sfc/tc_counters.c b/drivers/net/ethernet/sfc/tc_counters.c
+> index c44088424323..a421b0123506 100644
+> --- a/drivers/net/ethernet/sfc/tc_counters.c
+> +++ b/drivers/net/ethernet/sfc/tc_counters.c
+> @@ -249,7 +249,7 @@ struct efx_tc_counter_index *efx_tc_flower_get_counter_index(
+>  					       &ctr->linkage,
+>  					       efx_tc_counter_id_ht_params);
+>  			kfree(ctr);
+> -			return (void *)cnt; /* it's an ERR_PTR */
+> +			return ERR_CAST(cnt);
+>  		}
+>  		ctr->cnt = cnt;
+>  		refcount_set(&ctr->ref, 1);
+> -- 
+> 2.17.1
+> 
 
