@@ -1,138 +1,180 @@
-Return-Path: <linux-kernel+bounces-307082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65FFA9647AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:12:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F08C696481B
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:23:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03E861F23910
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 14:12:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A80B1F258AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 14:23:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61F9E1AE033;
-	Thu, 29 Aug 2024 14:12:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=apertussolutions.com header.i=dpsmith@apertussolutions.com header.b="fRJYXpXL"
-Received: from sender4-of-o51.zoho.com (sender4-of-o51.zoho.com [136.143.188.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83B711B14E0;
+	Thu, 29 Aug 2024 14:20:15 +0000 (UTC)
+Received: from greygoose-centos7.csh.rit.edu (greygoose-centos7.csh.rit.edu [129.21.49.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9034E1A3BDD;
-	Thu, 29 Aug 2024 14:12:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.51
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724940747; cv=pass; b=MbqgQEZK5Xk+2D+sOpjtK2h+HFdl+0bfkj37W1K1Uds1NxXSt78iZyNW93HJ2rFrgcJzjKZMxgYrhyvsJpTZ87TKTGpadfQfoTBwhTaexdPGBv5T7SB1uCKGR37iXhBTzW/4zZHknpr67Vv3YwgMiqf/Ah8ym8wJMIiAo15+A/o=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724940747; c=relaxed/simple;
-	bh=7hB/1UOJaiqQ99Joa1DObT9nogjXVp6w2U15f4FVo3Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Lxb0veOerT8BEIzmJq9Tk7r/EASVTsWNexoWFtVdf0MxZOZfnpPtwQ+VtE1GHfeH/V3xMNoD2tNr8GuK6Y7VWRCRCJgqDLDOKK6CpYcj5wwtUJWS9N4ED2EpPwtwequwRmLlVNfxbsu3UpsA0DFVu51hnzxJ/y8gQzsIfBRX+jA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=apertussolutions.com; spf=pass smtp.mailfrom=apertussolutions.com; dkim=pass (1024-bit key) header.d=apertussolutions.com header.i=dpsmith@apertussolutions.com header.b=fRJYXpXL; arc=pass smtp.client-ip=136.143.188.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=apertussolutions.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=apertussolutions.com
-ARC-Seal: i=1; a=rsa-sha256; t=1724940676; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=E7EusWO6er6F2xI1Zxfssj17795cFIrBU9nS7H5PyLGs+6UWBCNXAkfV+JQpsvkn4X6QnDjZg59GcAbdwpZwp541+ugqTaxP6T/nv6M351s7VISQpTXJZegJ/QpLmHKW8PhIgd5ObyYNwREe1/OqSZxAHGA/WYAAlVOJLcXTMDk=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1724940676; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=HgDBKtReaNoT627XPwozc8cV/1MN4aAoTtHPOciy3pM=; 
-	b=F8+Ieta99m9Sb6grjg5r5Hse1Vt8cQANARXzRz4E2JRoFdXjGYznYWVRmMvi/k0t3GJxjfgkNXCi7mbnz93mta8ovG1WRwOCa2szi73evgpHYzIgytv1sd3soamVZ71SpJYmuyZoaySGKcb25OExw2BJMSP43syvz3OmqKbf23o=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=apertussolutions.com;
-	spf=pass  smtp.mailfrom=dpsmith@apertussolutions.com;
-	dmarc=pass header.from=<dpsmith@apertussolutions.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1724940676;
-	s=zoho; d=apertussolutions.com; i=dpsmith@apertussolutions.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=HgDBKtReaNoT627XPwozc8cV/1MN4aAoTtHPOciy3pM=;
-	b=fRJYXpXL9J45pXy0RROxungza/op8PLpbcAgBCB2imI/b3vHv4nw02sEX8neAivz
-	PPiCX2FneFCwIi7K74vsx1xZ2NcmUIkgDl+v3rZoRF1EkHBouBvTymaYqasGUoGZL83
-	itV4OEfBmfm1uvXSAhidcGZMH/LIAtY/V/1UW3+4=
-Received: by mx.zohomail.com with SMTPS id 1724940674239491.862092879441;
-	Thu, 29 Aug 2024 07:11:14 -0700 (PDT)
-Message-ID: <e3194ad1-e976-40a6-a8f3-98081b0b07ea@apertussolutions.com>
-Date: Thu, 29 Aug 2024 10:11:11 -0400
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9388E1B0126;
+	Thu, 29 Aug 2024 14:20:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.21.49.170
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724941215; cv=none; b=MAwXV1z+mCKIKdJZtCgPSm7iGQuuax4kyICXLnJwymqMCFWxyNwxAycxfeJT5Q0LwqbD/l8A4pNlcTOLioKt9zAkg1HvknWa7RF3S4MlTQRXX5CG+/yEuO5/BVRs2owYJSiE/dmAQnllnVh/602+Unw6GLyES9EGdzILisOu7V8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724941215; c=relaxed/simple;
+	bh=vVnHDMPRWEqw78UqpM0GcVu6kdAO83JBT5gVll4IiqI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d9L9rqGfCFQ9DUqX0D52R3bTtLFBHn6Jbi87nTTBI5QxUioY8XQzdJCYAgEVI28FEKixPPoWZmRr+zO0+ViTKqERAdGmZOhMWh/UyC/nAygvmn4/gr7zBACnxTvfNkHfzHrDJISKeOluSBY3GwA60eqIWbR6oPCRea1eESdf23Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=freedom.csh.rit.edu; spf=none smtp.mailfrom=freedom.csh.rit.edu; arc=none smtp.client-ip=129.21.49.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=freedom.csh.rit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=freedom.csh.rit.edu
+Received: from localhost (localhost [127.0.0.1])
+	by greygoose-centos7.csh.rit.edu (Postfix) with ESMTP id AD15240D7C7C;
+	Thu, 29 Aug 2024 10:11:14 -0400 (EDT)
+X-Virus-Scanned: amavisd-new at csh.rit.edu
+Received: from greygoose-centos7.csh.rit.edu ([127.0.0.1])
+ by localhost (mail.csh.rit.edu [127.0.0.1]) (amavisd-new, port 10026)
+ with ESMTP id uXjXtRG2l_4c; Thu, 29 Aug 2024 10:11:14 -0400 (EDT)
+Received: from freedom.csh.rit.edu (unknown [129.21.49.24])
+	by greygoose-centos7.csh.rit.edu (Postfix) with ESMTPS id 2659445735E9;
+	Thu, 29 Aug 2024 10:11:14 -0400 (EDT)
+Date: Thu, 29 Aug 2024 10:11:13 -0400
+From: Mary Strodl <mstrodl@freedom.csh.rit.edu>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Mary Strodl <mstrodl@csh.rit.edu>, linux-kernel@vger.kernel.org,
+	brgl@bgdev.pl, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH] gpio: add support for FTDI's MPSSE as GPIO
+Message-ID: <ZtCBgWrdFI6h3zbo@freedom.csh.rit.edu>
+References: <20240814191509.1577661-1-mstrodl@csh.rit.edu>
+ <CACRpkdYyo9MD6zfiPde+3vSdpH96r+ZO12bdmMAfjw5PCNJ1BQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 01/15] x86/boot: Place kernel_info at a fixed offset
-To: Ard Biesheuvel <ardb@kernel.org>, Stuart Yoder <stuart.yoder@arm.com>
-Cc: Ross Philipson <ross.philipson@oracle.com>, linux-kernel@vger.kernel.org,
- x86@kernel.org, linux-integrity@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-crypto@vger.kernel.org, kexec@lists.infradead.org,
- linux-efi@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
- bp@alien8.de, hpa@zytor.com, dave.hansen@linux.intel.com,
- mjg59@srcf.ucam.org, James.Bottomley@hansenpartnership.com,
- peterhuewe@gmx.de, jarkko@kernel.org, jgg@ziepe.ca, luto@amacapital.net,
- nivedita@alum.mit.edu, herbert@gondor.apana.org.au, davem@davemloft.net,
- kanth.ghatraju@oracle.com, trenchboot-devel@googlegroups.com
-References: <20240214221847.2066632-1-ross.philipson@oracle.com>
- <20240214221847.2066632-2-ross.philipson@oracle.com>
- <CAMj1kXH3Gvr3vDRLDdXuc0s7ZAQYE6+D7tmCRBjJWwWt2fn4-w@mail.gmail.com>
- <9d01a6d2-4dd9-4331-8fc9-b01c07cfdbb5@apertussolutions.com>
- <CAMj1kXHn6xeAskWiDLvvA4oG3j9_tqx+iMYJXMqmgvyX4pMzgg@mail.gmail.com>
-Content-Language: en-US
-From: "Daniel P. Smith" <dpsmith@apertussolutions.com>
-In-Reply-To: <CAMj1kXHn6xeAskWiDLvvA4oG3j9_tqx+iMYJXMqmgvyX4pMzgg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACRpkdYyo9MD6zfiPde+3vSdpH96r+ZO12bdmMAfjw5PCNJ1BQ@mail.gmail.com>
 
-On 8/28/24 13:45, Ard Biesheuvel wrote:
-> (cc Stuart)
+On Sat, Aug 24, 2024 at 04:25:59PM +0200, Linus Walleij wrote:
+> thanks for your patch!
+
+Thank you for reviewing!
+
+> > +config GPIO_MPSSE
+> > +       tristate "FTDI MPSSE GPIO support"
+> > +       help
+> > +         GPIO driver for FTDI's MPSSE interface. These can do input and
+> > +         output. Each MPSSE provides 16 IO pins.
 > 
-> On Thu, 21 Mar 2024 at 15:46, Daniel P. Smith
-> <dpsmith@apertussolutions.com> wrote:
->>
->> Hi Ard!
->>
->> On 2/15/24 02:56, Ard Biesheuvel wrote:
->>> On Wed, 14 Feb 2024 at 23:31, Ross Philipson <ross.philipson@oracle.com> wrote:
->>>>
->>>> From: Arvind Sankar <nivedita@alum.mit.edu>
->>>>
->>>> There are use cases for storing the offset of a symbol in kernel_info.
->>>> For example, the trenchboot series [0] needs to store the offset of the
->>>> Measured Launch Environment header in kernel_info.
->>>>
->>>
->>> Why? Is this information consumed by the bootloader?
->>
->> Yes, the bootloader needs a standardized means to find the offset of the
->> MLE header, which communicates a set of meta-data needed by the DCE in
->> order to set up for and start the loaded kernel. Arm will also need to
->> provide a similar metadata structure and alternative entry point (or a
->> complete rewrite of the existing entry point), as the current Arm entry
->> point is in direct conflict with Arm DRTM specification.
->>
+> select GPIOLIB_IRQCHIP
+
+Will-do!
+
+> > +struct mpsse_priv {
+> > +       struct gpio_chip gpio;
+> > +       struct usb_device *udev;     /* USB device encompassing all MPSSEs */
+> > +       struct usb_interface *intf;  /* USB interface for this MPSSE */
+> > +       u8 intf_id;                  /* USB interface number for this MPSSE */
+> > +       struct irq_chip irq;
 > 
-> Digging up an old thread here: could you elaborate on this? What do
-> you mean by 'Arm entry point' and how does it conflict directly with
-> the Arm DRTM specification? The Linux/arm64 port predates that spec by
-> about 10 years, so I would expect the latter to take the former into
-> account. If that failed to happen, we should fix the spec while we
-> still can.
+> What is this irq_chip? You already have an immutable one lower in the code.
 
-Yes, we have been working with Stuart regarding the specification and 
-crafting a compliant implementation approach. It is still very early 
-days, we are attempting to draft a plan around the specification with no 
-physical implementation to validate against. After some discussion, the 
-concern that a separate entry point may be needed has faded and in fact 
-it likely will not be needed. As always, the devil is in the details, 
-and until we have a hardware that has implemented the specification, and 
-we attempt to light it up, we won't know what will be needed for the 
-implementation.
+Oops. Forgot to remove this, thanks.
 
-In short, at this point it was determined no update to the DRTM spec is 
-needed. As hardware becomes available, and we do battle with it, Stuart 
-will be kept up to date. We will work with him to ensure any changes are 
-captured that will help reduce chances that vendors and developers do 
-not misinterpret the spec.
+> 
+> > +       struct work_struct irq_work; /* polling work thread */
+> > +       struct mutex irq_mutex;      /* lock over irq_data */
+> > +       atomic_t irq_type[16];       /* pin -> edge detection type */
+> > +       atomic_t irq_enabled;
+> > +       int id;
+> > +
+> > +       u8 gpio_outputs[2];          /* Output states for GPIOs [L, H] */
+> > +       u8 gpio_dir[2];              /* Directions for GPIOs [L, H] */
+> 
+> Caching states of lines is a bit regmap territory. Have you looked into
+> just using regmap?
 
-V/r,
-Daniel P. Smith
+Do you mean gpio_regmap or using regmap directly? I'm not sure that gpio_regmap
+will do what I want because I need to provide an irq_chip (and I don't see a way
+to "break the glass" and access the gpio_chip directly)
+
+> If this doesn't need to be atomic you should use
+> __set_bit() and __clear_bit().
+> 
+> Yeah I know it's confusing... I think you should use the __variants
+> everywhere.
+
+Oops, thanks.
+
+> Is there something wrong with just using the gpiolib irqchip library
+> 
+> select GPIOLIB_IRQCHIP
+> 
+> there are several examples in other drivers of how to use this.
+
+I've ripped out all the extra stuff, I didn't realise how much was
+already being done for me!
+
+> > +static int gpio_mpsse_probe(struct usb_interface *interface,
+> > +                           const struct usb_device_id *id)
+> > +{
+> > +       struct mpsse_priv *priv;
+> > +       struct device *dev;
+> > +       int err, irq, offset;
+> > +
+> > +       dev = &interface->dev;
+> > +       priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+> > +       if (!priv)
+> > +               return -ENOMEM;
+> > +
+> > +       priv->udev = usb_get_dev(interface_to_usbdev(interface));
+> > +       priv->intf = interface;
+> > +       priv->intf_id = interface->cur_altsetting->desc.bInterfaceNumber;
+> > +
+> > +       priv->id = ida_simple_get(&gpio_mpsse_ida, 0, 0, GFP_KERNEL);
+> > +       if (priv->id < 0)
+> > +               return priv->id;
+> > +
+> > +       devm_mutex_init(dev, &priv->io_mutex);
+> > +       devm_mutex_init(dev, &priv->irq_mutex);
+> > +
+> > +       priv->gpio.label = devm_kasprintf(dev, GFP_KERNEL,
+> > +                                         "gpio-mpsse.%d.%d",
+> > +                                         priv->id, priv->intf_id);
+> > +       if (!priv->gpio.label) {
+> > +               err = -ENOMEM;
+> > +               goto err;
+> > +       }
+> 
+> So you are accomodating for several irqchips in the same device,
+> and handling it like we don't really know how many they will be?
+> Does it happen in practice that this is anything else than 0?
+
+Are you asking about intf_id? Yes, the hardware I'm supporting here populates
+as a composite USB device with 2 MPSSEs.
+
+The terminology is kind of confusing by the way. MPSSE is a functional unit inside one
+chip. The device I have here has one chip, and shows up as one usb device with two interfaces:
+
+$ lsusb -t # trimmed down to just the relevant bits
+/:  Bus 01.Port 1: Dev 1, Class=root_hub, Driver=xhci_hcd/10p, 480M
+    |__ Port 5: Dev 4, If 0, Class=Vendor Specific Class, Driver=gpio-mpsse, 480M
+    |__ Port 5: Dev 4, If 1, Class=Vendor Specific Class, Driver=gpio-mpsse, 480M
+$ lsusb
+Bus 001 Device 004: ID 0c52:a064 Sealevel Systems, Inc. USB <-> Serial Converter
+
+Other models of this chip (FT232) only have 1 MPSSE. I don't have any to test with,
+but my assumption is that the 2nd interface won't populate.
+
+As for `priv->id`, I do that because these are USB peripherals, it's conceivable
+that more than one of these chips could be attached at once.
+
+> Yours,
+> Linus Walleij
+
+Thanks for taking the time to review!
+
+Mary Strodl
 
