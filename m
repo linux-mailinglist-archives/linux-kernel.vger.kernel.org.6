@@ -1,145 +1,169 @@
-Return-Path: <linux-kernel+bounces-307548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B233A964ED3
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 21:29:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DFA4C964EF3
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 21:31:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E594B1C22EBF
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 19:29:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA2781C20B4B
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 19:31:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE2441B86FA;
-	Thu, 29 Aug 2024 19:29:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F0D71BA27F;
+	Thu, 29 Aug 2024 19:30:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nV4TTSlY"
-Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FbYM6A9K"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7EA747A76;
-	Thu, 29 Aug 2024 19:29:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3F36153BEF
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 19:30:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724959769; cv=none; b=rh9rEa5fkcEPgL3feq1t7jDlv+/osNgJqm13rzxrhkWp+vvUXX+sqBIzZrHQz/Jbr3iR7kLxXuhYMSw0dc0wy0d6OCNPvmKBIExEchvNgkvCSJSsknsDKKuDhh+YPSUVk9hmwRihzuMwZiaAMlC0jQzwMnvz4v7NR6VC7NnIlQQ=
+	t=1724959847; cv=none; b=RN8vMODcpCGKNgoIkcBqzQ06UJ6hL3vMahYOhCXP+Kof69Dufbb3aKJIGrjoVodwCG7o2px/sxTQb143phQxgetw1dS6whRUkId3aiX8a+q0Z/ORHUXJha6fLJqs1QUzGzNKx42y3z0NzYoTBYXvtSE1jLvqxHwXcIBIibfVY50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724959769; c=relaxed/simple;
-	bh=3KpG/wc2uvwyuNONFaqBxDlDvvAS4epRIbXbeEuwtwY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=O5UAKduD/ymCyyg6mbN6CAkhjQQBS4YuZZTDWm9ej8s5ClH7xD+pN7+0tcAzcseVVPOngIjYnW5LecZuweaSliE/+Sre0kHNwivnWRQEmqVGdNb8x+ecabxzuCPC7ApNDoXsd/5MPhNvVVRFEEJBHJ9DV0MH2rXadimVyqX8RVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nV4TTSlY; arc=none smtp.client-ip=209.85.221.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-4fcf40c9ed3so387392e0c.2;
-        Thu, 29 Aug 2024 12:29:26 -0700 (PDT)
+	s=arc-20240116; t=1724959847; c=relaxed/simple;
+	bh=CXsIUiDA8SVSLQs9npYgmvUfqux38XLA9LpGsNTuAmw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=agY9tRA0r2WSYYewSnFdhgwz9AxEA9PEQaSqbKwvSBWZL6HZ6MfAXwrH5S2muwxtGCvhwRoO2iBCCdOG+dg4Pl0Gsj7FqQVpaEmzoihTs5nNhYqzxSt7GokMmbzohAY5bQalTFrIPuqyt1DoKavjY8bMiznCrGqsVinOzb0AZjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FbYM6A9K; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-371ba7e46easo708465f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 12:30:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724959765; x=1725564565; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DGGo2SsQCJsSRPiHAjvLnUoOPi0Z0l/2WghbU6Jy+dI=;
-        b=nV4TTSlYu5R7IDdHne7y9pIfl4IER4snxqo+OV3wmbM4prFNYGDe7KK5HPkv57ZTIk
-         PZy7VszheVd6sU/Eg7fVWOUcSAofZbJdOV7u/lGn/DRPoGDMF+xpt420X3GHfJoo1Gr5
-         VLF1gIrcudUivK4QsytOoTYm2wKfM2+kZ5runZCdRuDs57idx4nLB4QGCI5uFv5bDOsq
-         OcVRrQAaxfLKZidUnuonhXxHy+XTDzaFFB1B1rsw+UfiAEIAZ+Vw249ngNqQcw+/lt6H
-         H56B3lCsFBR4mEhlOLAQY2+7C0XBEqHjKcwHYCRpLMXgbOaefvEx00hvBo/O1iVD51Ld
-         g1OQ==
+        d=linaro.org; s=google; t=1724959844; x=1725564644; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=XTIlWbVkKMoIHTYoPixZvVSXn7Ujj8xniVFLaiolivE=;
+        b=FbYM6A9KMRV4byW9IySWbU3U/PN/eFWvi+L0A3L3K5TONTHj8DiMwB9v42GW13pksw
+         egH+iDFnrWWrwy5q37E1G24+0QO7vOBtImCOJ2myw7pkyPHh3IOVdlo2MQ8RMbUPubiV
+         +AS1xNL5brjDI4rTVBz1AKSKqgHKL0QG1C60uP7RdV+PcRUPlfjjZcKeKQRZaplEuM5t
+         rKCpOGHyXp4RS/aOFYQI/uIjEin3pG8FPn2vRy800oheH5YgcecZu1nJwbSLjqEivdSE
+         EHRDUGSzT7bsTgI/q3jjWJQ+TCcUWSr45fZdhymLsSbE9dLnfZiyHNGBe8FwCo3mXOBf
+         yWXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724959765; x=1725564565;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DGGo2SsQCJsSRPiHAjvLnUoOPi0Z0l/2WghbU6Jy+dI=;
-        b=Sf3iQ4Uy8Utq/E/vncD3Ksh7kx3lvmmj7GMLTPnWHX9iSaigVhtYxBJLvbbYUHn4LM
-         g3KXH8CnzEe+V+K/+0P9UD5cgh0zDJKk8u9//DYC81tOsXUes4OyTkF5cPD/B0PzjKIl
-         9hC3Sp+xmQ6kJHZuAilnDBoJHWWd4aGmCd5aUky3ykdsbzk6TS4t+yScPRPv+b652tSt
-         ztfazJwO8KiI3G7gfadxJ5dxWW5EdsrXrr7msqHXpLuEtAY1ZUKco32THROCSXxEgM6D
-         SLH8cR2K7Wh+n6Sw/U8JUG72GmwiQSbz4j4MWQciVQ6AfiXvEFL5tmznHFIsDU1pgO/g
-         LRMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUGOFXZQCEHtY1grdTD7kg0avl6P31DFUQ4/CSw/XBvI6Lw1bXp2IV7PkpyflzaQomqWJO+SyXBrz4iLFFPxgQ=@vger.kernel.org, AJvYcCUeTR4T4wISmUnfHNDEhbXiOoKu/nxoBSWq9tX0qNiNzYsVFFjDN8LRKktmjBWK8DPG9M4ITvcw1uAZ@vger.kernel.org, AJvYcCUxYj0gWea/IwjnOmzGUlhw8pg36QWeB+cIFGdQdlSd/ifMNU/dsQFLZnHU1p2z49fnQ6GWNOjpLbuG9M/2@vger.kernel.org, AJvYcCWeHGhoGtGSTVXuDw9q1eiv1GFcUoy7lg9Y7kGn43RfbasKbK2GpwBE3c9KoyA2ouvJ7Kgj6RJgGOx5lIri/JkPcVs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqURiJLy0pcwgblkB23L+H3jLKj8S/W6iMsij9SerKZtOpu6MM
-	JLc3dIoD5MnNwfHtibtJ/mRIU3V0dsPcAv4HNfUD0w2YSqurXwrcQLlbkuMvFPQml+gexnDfiX3
-	yFWCaQQqbI31llH3jPRM8mfEevn8=
-X-Google-Smtp-Source: AGHT+IHXKA2wunTaaLZKYHYRHBG7bSAniQ2ZxL8dU1VVslmMiYZoE7LHztbtU809u4jFkK9vfv83aNVqlxPAOYB8C48=
-X-Received: by 2002:a05:6122:32cb:b0:4eb:5cb9:f219 with SMTP id
- 71dfb90a1353d-4ffdc01e02dmr3845066e0c.0.1724959765459; Thu, 29 Aug 2024
- 12:29:25 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724959844; x=1725564644;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XTIlWbVkKMoIHTYoPixZvVSXn7Ujj8xniVFLaiolivE=;
+        b=RwVP3siYFibrM4vkksopYbjztIHgjU7d/ZnQUCn/zfSpNrKdL06JQcvYCTHM0QXg3t
+         UkH4MBUIHvdXa1NolqXFPZQV6vThNzJmCXWdKNVaTV+vxEjwDO31iffWn2Rjh2XUeIMD
+         gPUeo4d6WGfQLI3UPghQVubGvuQccAdyKUUOfkuRi6MbmkSnOxuu1dcdYZHgQuR8/oYv
+         g6RrjHJeZq8GmhpTWQagfWKPiEACh13RqIW+avw/tlV3629u7aHeHKX1HnjXUz/Tk323
+         cb9J08nneh/mkjDpddRIsYS/q04fWlf5+vgQdu6b5g6P0EXq0aASWIJWWX9KpdAyr/yP
+         ++qA==
+X-Forwarded-Encrypted: i=1; AJvYcCWDkSZJNWDzQmfb1fZCnuHEsNJDYnyQ5dvDhD4pVFIagGWKkPYGI4HyCZbe5ykL+e6OnryfGjHNEm+luXM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJBEZTLUtRkcsY1HKtehJcaicVVszLzlZBMnMGBO80S168KtLv
+	S/X/DffPQfP4PYg8PBoDKwEeat754GGzHvfLeLnSS2drmWYTOCPT3aJsa/i0q8Q=
+X-Google-Smtp-Source: AGHT+IGMmdJvaYiB1UpCQZzEoivkHJ5zTToQgDAadoaIM0r4rBLJnjEluKCsaEeb89RagvSoKzM+YQ==
+X-Received: by 2002:adf:f792:0:b0:371:87d1:4248 with SMTP id ffacd0b85a97d-3749b5508f7mr2840300f8f.29.1724959843972;
+        Thu, 29 Aug 2024 12:30:43 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bb6df954asm25460525e9.26.2024.08.29.12.30.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Aug 2024 12:30:43 -0700 (PDT)
+Date: Thu, 29 Aug 2024 22:30:39 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Charles Wang <charles.goodix@gmail.com>
+Cc: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH v2 next] HID: hid-goodix: Fix type promotion bug in
+ goodix_hid_get_raw_report()
+Message-ID: <a04cfa63-de06-4d09-af80-a567f2db8f12@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240806210623.183842-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20240806210623.183842-2-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdUW8FjgNb9J4hsfZOk3EbXMmihemm2BkO4pLAaZ-QGNiw@mail.gmail.com>
-In-Reply-To: <CAMuHMdUW8FjgNb9J4hsfZOk3EbXMmihemm2BkO4pLAaZ-QGNiw@mail.gmail.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Thu, 29 Aug 2024 20:28:55 +0100
-Message-ID: <CA+V-a8sLppm1Mn08nVXxXOpmBtwmDmMQjzuAcuV9yku-0V=5Hg@mail.gmail.com>
-Subject: Re: [PATCH v4 1/2] dt-bindings: watchdog: renesas,wdt: Document
- RZ/V2H(P) SoC
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck <linux@roeck-us.net>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Magnus Damm <magnus.damm@gmail.com>, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-watchdog@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
-	Conor Dooley <conor.dooley@microchip.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-Hi Geert,
+The issue is GOODIX_HID_PKG_LEN_SIZE is defined as sizeof(u16) which is
+type size_t.  However, goodix_hid_check_ack_status() returns negative
+error codes or potentially a positive but invalid length which is too
+small.  So when we compare "if ((response_data_len <=
+GOODIX_HID_PKG_LEN_SIZE)" then negative error codes are type promoted to
+size_t and counted as a positive large value and treated as valid.
 
-Thank you for the review.
+It would have been easy enough to add some casting to avoid the type
+promotion, however this patch takes a more thourough approach and moves
+the length check into goodix_hid_check_ack_status().  Now the function
+only return negative error codes or zero on success and the length
+pointer is never set to an invalid length.
 
-On Thu, Aug 29, 2024 at 11:07=E2=80=AFAM Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
->
-> Hi Prabhakar,
->
-> Thanks for your patch!
->
-> On Tue, Aug 6, 2024 at 11:06=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail=
-.com> wrote:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > Add support for the Watchdog Timer (WDT) hardware found in the Renesas
-> > RZ/V2H(P) SoC to the `renesas,wdt` device tree bindings. The RZ/V2H(P)
-> > SoC features a WDT that is compatible with existing Renesas watchdog
-> > drivers.
->
-> Your patch "watchdog: Add Watchdog Timer driver for RZ/V2H(P)"
-> contradicts the last sentence, so please drop the latter.
->
-Ok, I'll update the commit message and send a v5.
+Fixes: 75e16c8ce283 ("HID: hid-goodix: Add Goodix HID-over-SPI driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+v2: take a different approach
 
+ drivers/hid/hid-goodix-spi.c | 22 +++++++++++++++-------
+ 1 file changed, 15 insertions(+), 7 deletions(-)
 
-Cheers,
-Prabhakar
+diff --git a/drivers/hid/hid-goodix-spi.c b/drivers/hid/hid-goodix-spi.c
+index 5103bf0aada4..de655f745d3f 100644
+--- a/drivers/hid/hid-goodix-spi.c
++++ b/drivers/hid/hid-goodix-spi.c
+@@ -335,11 +335,12 @@ static void goodix_hid_close(struct hid_device *hid)
+ }
+ 
+ /* Return date length of response data */
+-static int goodix_hid_check_ack_status(struct goodix_ts_data *ts)
++static int goodix_hid_check_ack_status(struct goodix_ts_data *ts, u32 *resp_len)
+ {
+ 	struct goodix_hid_report_header hdr;
+ 	int retry = 20;
+ 	int error;
++	int len;
+ 
+ 	while (retry--) {
+ 		/*
+@@ -349,8 +350,15 @@ static int goodix_hid_check_ack_status(struct goodix_ts_data *ts)
+ 		 */
+ 		error = goodix_spi_read(ts, ts->hid_report_addr,
+ 					&hdr, sizeof(hdr));
+-		if (!error && (hdr.flag & GOODIX_HID_ACK_READY_FLAG))
+-			return le16_to_cpu(hdr.size);
++		if (!error && (hdr.flag & GOODIX_HID_ACK_READY_FLAG)) {
++			len = le16_to_cpu(hdr.size);
++			if (len < GOODIX_HID_PKG_LEN_SIZE) {
++				dev_err(ts->dev, "hrd.size too short: %d", len);
++				return -EINVAL;
++			}
++			*resp_len = len;
++			return 0;
++		}
+ 
+ 		/* Wait 10ms for another try */
+ 		usleep_range(10000, 11000);
+@@ -383,7 +391,7 @@ static int goodix_hid_get_raw_report(struct hid_device *hid,
+ 	u16 cmd_register = le16_to_cpu(ts->hid_desc.cmd_register);
+ 	u8 tmp_buf[GOODIX_HID_MAX_INBUF_SIZE];
+ 	int tx_len = 0, args_len = 0;
+-	int response_data_len;
++	u32 response_data_len;
+ 	u8 args[3];
+ 	int error;
+ 
+@@ -434,9 +442,9 @@ static int goodix_hid_get_raw_report(struct hid_device *hid,
+ 		return 0;
+ 
+ 	/* Step2: check response data status */
+-	response_data_len = goodix_hid_check_ack_status(ts);
+-	if (response_data_len <= GOODIX_HID_PKG_LEN_SIZE)
+-		return -EINVAL;
++	error = goodix_hid_check_ack_status(ts, &response_data_len);
++	if (error)
++		return error;
+ 
+ 	len = min(len, response_data_len - GOODIX_HID_PKG_LEN_SIZE);
+ 	/* Step3: read response data(skip 2bytes of hid pkg length) */
+-- 
+2.43.0
 
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
->
-> > --- a/Documentation/devicetree/bindings/watchdog/renesas,wdt.yaml
-> > +++ b/Documentation/devicetree/bindings/watchdog/renesas,wdt.yaml
->
-> With the above fixed:
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
->
-> Gr{oetje,eeting}s,
->
->                         Geert
->
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
-8k.org
->
-> In personal conversations with technical people, I call myself a hacker. =
-But
-> when I'm talking to journalists I just say "programmer" or something like=
- that.
->                                 -- Linus Torvalds
 
