@@ -1,103 +1,92 @@
-Return-Path: <linux-kernel+bounces-305951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAF309636D5
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 02:21:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDD2D9636CE
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 02:21:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CB0E1F23AC3
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 00:21:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 55B9CB22362
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 00:21:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE34E22EE8;
-	Thu, 29 Aug 2024 00:20:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E258817BD3;
+	Thu, 29 Aug 2024 00:20:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="wEfWSVSL"
-Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sG1hZYK+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E81752BD08
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 00:20:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31638DDA0;
+	Thu, 29 Aug 2024 00:20:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724890849; cv=none; b=luenOHmIqhAh8ZjWXJQsysSFIyoK8jwaPbJBfw1IwANj8ZWNsJvHT/3CM1BI4XiBecMxg/0zSnwhUjCEaTmJ9lXKuEuDDyZH4+fOdXjhVmphD9z4R+jFcEcIIFRrt/xy1ZaCecZshL9mXPAXSlfkb1QJA/oIm+jkLeYAa5BeuyY=
+	t=1724890840; cv=none; b=GBo9PfOjXI7/52+0HHtR1xLquVe4uFia8gjYHkUSixNmb0j0GI6RLnin/acta3A2KNmn6qF130VpfjTER5JkPAIoRVDWmVwVgAnpTRcdZgLcYc16ICKewqjqt6VCbRTKzrhPpljbcYNoy5rZuUnhtaxVU01JFHP01hlblqJadQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724890849; c=relaxed/simple;
-	bh=LF6T8AcFzxJizs1RNCrNj0Wn0KwlYf0KoRJaWjlDoSg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=abtwPZqtA0YdSkibhAUfmhiAf+lPYDI2YDldQvb1bZAqaVV8fTyp0maczDT59eJnKcZ9sCaEfXgMgSxhCRq3fkgZGaDrLPxynxgXMYwaZYa6HRsWlYWFd/VrYcQty+gqkLvJBkuBvUG3hVv9AyKwjZbr0jZvxs0MRrL+dWX61lI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=wEfWSVSL; arc=none smtp.client-ip=91.218.175.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 28 Aug 2024 17:20:36 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1724890844;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bLXGCrNct9jGqEI7ms61SYRJsNBSmqcaMgAuOY37bXA=;
-	b=wEfWSVSLfFpu7JERnDYNjiiIwW4JZQsCwl4xp8Syd1XmPU8IE/Irj0KslMKizlipQuShWx
-	5T8jRqwGe8wgiCwQsQa3Tl0rqCQb8+Wdw8Ylgxw8Ti0A1lTYqkbH2IJP+TmIQYE9fpQh2x
-	0WhlCBfkY/CW+AUV00RfKzHiTPlEfcY=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Yosry Ahmed <yosryahmed@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Muchun Song <muchun.song@linux.dev>, 
-	Vlastimil Babka <vbabka@suse.cz>, David Rientjes <rientjes@google.com>, 
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>, Eric Dumazet <edumazet@google.com>, 
-	"David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	Meta kernel team <kernel-team@meta.com>, cgroups@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH v2] memcg: add charging of already allocated slab objects
-Message-ID: <txl7l7vp6qy3udxlgmjlsrayvnj7sizjaopftyxnzlklza3n32@geligkrhgnvu>
-References: <20240827235228.1591842-1-shakeel.butt@linux.dev>
- <CAJD7tkYPzsr8YYOXP10Z0BLAe0E36fqO3yxV=gQaVbUMGhM2VQ@mail.gmail.com>
+	s=arc-20240116; t=1724890840; c=relaxed/simple;
+	bh=eBdRKI+jWY2+i6cFgW77TOP+7WLPwhi0XxTqy7tOYoo=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=YsSWEzIAwsFlbCKzxkXfxYZce80mr8NeVpmskFsuYJmqJPY92NddA0XJAf30GFVkcmq0i5DaXko8GG54s/bEtNyh6zGSZozi4F4QMySn8aBuGc+nhgcwSXL/o0YFe6lwJ84JAb72XQ9w8k4NDWk5QjpDyLbDAvhQPgCTd/QbbLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sG1hZYK+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B42F1C4CEC4;
+	Thu, 29 Aug 2024 00:20:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724890839;
+	bh=eBdRKI+jWY2+i6cFgW77TOP+7WLPwhi0XxTqy7tOYoo=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=sG1hZYK+1QTmNn/xbvTl/6TmcYKrlLn8u9HAdFHg1HqiuxyU94OLWvTBxmNM0eqoW
+	 DnNYMXacQ4k0o/Ws4OGIWghS/JNfQ+Qo/CKJhMG5xzdyLjqDVX79Ni8DyFswA4+UiS
+	 Eky6Rl3d7QF1ctg0XH4RWHmvmdMwbzq3KB9PuiP/bynIJ47CcjvLo5IgKlPYv17jRG
+	 kI5y1tvcY9shy+rurvFuA3ns9a6f3KTMd2LC3Sb/C4+93bJUhrvRvl81WgbTiyso4K
+	 xHhSqjdLjP9L0dZxNkbLSOEiJ+qVLgpsf2MKrmC/kMM2kahN7iIrU4ixvlifr2UK2k
+	 N2cE+9qfsB+mw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33DB73809A80;
+	Thu, 29 Aug 2024 00:20:41 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJD7tkYPzsr8YYOXP10Z0BLAe0E36fqO3yxV=gQaVbUMGhM2VQ@mail.gmail.com>
-X-Migadu-Flow: FLOW_OUT
+Subject: Re: [PATCH net] net/xen-netback: prevent UAF in xenvif_flush_hash()
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172489083974.1473828.6183768950292270791.git-patchwork-notify@kernel.org>
+Date: Thu, 29 Aug 2024 00:20:39 +0000
+References: <20240822181109.2577354-1-aha310510@gmail.com>
+In-Reply-To: <20240822181109.2577354-1-aha310510@gmail.com>
+To: Jeongjun Park <aha310510@gmail.com>
+Cc: wei.liu@kernel.org, paul@xen.org, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ madhuparnabhowmik04@gmail.com, xen-devel@lists.xenproject.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Aug 28, 2024 at 04:25:30PM GMT, Yosry Ahmed wrote:
-> On Tue, Aug 27, 2024 at 4:52 PM Shakeel Butt <shakeel.butt@linux.dev> wrote:
-> >
-[...]
-> > +
-> > +       /* Ignore KMALLOC_NORMAL cache to avoid circular dependency. */
-> > +       if ((s->flags & KMALLOC_TYPE) == SLAB_KMALLOC)
-> > +               return true;
+Hello:
+
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Fri, 23 Aug 2024 03:11:09 +0900 you wrote:
+> During the list_for_each_entry_rcu iteration call of xenvif_flush_hash,
+> kfree_rcu does not exist inside the rcu read critical section, so if
+> kfree_rcu is called when the rcu grace period ends during the iteration,
+> UAF occurs when accessing head->next after the entry becomes free.
 > 
-> Taking a step back here, why do we need this? Which circular
-> dependency are we avoiding here?
+> Therefore, to solve this, you need to change it to list_for_each_entry_safe.
+> 
+> [...]
 
-commit 494c1dfe855ec1f70f89552fce5eadf4a1717552
-Author: Waiman Long <longman@redhat.com>
-Date:   Mon Jun 28 19:37:38 2021 -0700
+Here is the summary with links:
+  - [net] net/xen-netback: prevent UAF in xenvif_flush_hash()
+    https://git.kernel.org/netdev/net-next/c/0fa5e94a1811
 
-    mm: memcg/slab: create a new set of kmalloc-cg-<n> caches
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-    There are currently two problems in the way the objcg pointer array
-    (memcg_data) in the page structure is being allocated and freed.
 
-    On its allocation, it is possible that the allocated objcg pointer
-    array comes from the same slab that requires memory accounting. If this
-    happens, the slab will never become empty again as there is at least
-    one object left (the obj_cgroup array) in the slab.
-
-    When it is freed, the objcg pointer array object may be the last one
-    in its slab and hence causes kfree() to be called again. With the
-    right workload, the slab cache may be set up in a way that allows the
-    recursive kfree() calling loop to nest deep enough to cause a kernel
-    stack overflow and panic the system.
-    ...
 
