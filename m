@@ -1,238 +1,155 @@
-Return-Path: <linux-kernel+bounces-307625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB83C965089
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 22:12:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C02D965084
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 22:12:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F9AD1F26789
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 20:12:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B162D1C21E64
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 20:12:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C9081BB680;
-	Thu, 29 Aug 2024 20:12:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BB2B1BA883;
+	Thu, 29 Aug 2024 20:12:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="kcwI/nRg"
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05olkn2050.outbound.protection.outlook.com [40.92.90.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ixiFMVt8"
+Received: from mail-pf1-f196.google.com (mail-pf1-f196.google.com [209.85.210.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60BD81BAEF1;
-	Thu, 29 Aug 2024 20:12:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.90.50
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724962336; cv=fail; b=hAlVtWy31JGGNVOsSxEKvihp5Fj/Rhrp3EsQYhPDruVSOJ6fUtmp81TD7n/h/eqt81i8jSeE/pm7rQrICV+r1WJsh2jNPUa6imX9IbywHuTblD5jmr6yHxZTMJ+FubkzfR38/nsR1rzzH+JoWZbTYGlHa33x/M9e/OmGFILHO7A=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724962336; c=relaxed/simple;
-	bh=mXaUltMQOqY6mOy3v5upBPfZp2TJ2N/EvBax6MVebpE=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=YZ0uZ+DdRFky2iWfuULLh+N52+Lty44Qw8EK1Eeicu/mBFj1Jtt7Ggn2hVCJQYz3ep5sTG1Dn12E1btXynsrq9fM2jZbgM4IKTaBGvOmYgekSm0qLUpbpwjkT8aldcj7DkoniHeVjYvCSePLPQt8Plg+WDcHH51F9h5XDmj5Lrg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=kcwI/nRg; arc=fail smtp.client-ip=40.92.90.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=DL5TdZkEEE0o71YDKGcCWXi2914ym+vSHVEitAvv/DX/YlvUo7bGzGksngbDNDGDc0zYN4plVkrC+51On5oYjqQDEDOYz/VOx/jY8Ug63K39hYjjfRYD9Ix0gGslvG8e/CzpxKSbwtEL0oiUgcWOPIZl1x2wZthZeikW1L894Y0eO1bepmzeczcTi0LFJnTm1N3OAo5SmMGclfpmmROpU+pEvZm0V//6mDBthfK9m2++adYai4o+roOoq2Oe5E+6YLtSX1lB83qCpFEQsqHbyaf8Kg8dEDO4veRhR9R5VaIyFjJlvFG5G1A2miYkgv/cJnd0qJ5LIP4fCuneEn26Hg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=aZw/Lw/cxn36AmgX3V4Ar93G+6lP7C8ph2DovvJqq10=;
- b=unZS/+3F+80XtLBbxpHTZh1XastT9o9/fgc6rb8FDWa/d32eg+6xjzYF2XZJKVBAkH/3WDTfbJvMl9XwT5H++tW4degEOQTu6GS1gluGl35lAw07jJzMpiXgSxXzPTc2y2egeYudl8vzRNf5lM40pVLci7iXlfebxvyKdo3cym5jLb28ew7SGZP+rbky+yB9jMzT5vo8W+5zdtfxmnqB2VJqaZOTE6vLmFU+0itQFz1vbUhMueWHgwc0LzuIepL1dXKOnmU982Lt4kTFmVPm0jCRhXH2s6o28Sim3rQ5txokdTDtuIMeF2U8m8SUCacKnxxni/+Fh4J08f800XLeSQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aZw/Lw/cxn36AmgX3V4Ar93G+6lP7C8ph2DovvJqq10=;
- b=kcwI/nRg/gyABaQilh86E6rdekkhquJyfJHGYNl2U5r5b0Blj0kN6YQDIACVxwPByLNLd4JiFJdvybkaaaWftsjNJotlCOIu+S0izKgBEM5rwsGGXlFXsvsKqchHSwnwe3Rr2k63STJzh1DpHDGlct00HDO/YHmH7XAQYMN7ajTkDrVPxIhNdCfSGcXTlV05stSIlgACXYfk8UBlBKxRE7za8+uIBbF2L7y/N5Apvg0T8qp5j1YC9C6oruBmyBkdZQPdeqQBIjHOho9tF0uvgP0Nm1mc8ZL6qLW3yQ0HvZOUjK6RSAZA5sAfVEu6mYDqw9F5F3WadjCk2xtPMAIk6g==
-Received: from AM6PR03MB5848.eurprd03.prod.outlook.com (2603:10a6:20b:e4::10)
- by GV1PR03MB10409.eurprd03.prod.outlook.com (2603:10a6:150:163::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.28; Thu, 29 Aug
- 2024 20:12:10 +0000
-Received: from AM6PR03MB5848.eurprd03.prod.outlook.com
- ([fe80::4b97:bbdb:e0ac:6f7]) by AM6PR03MB5848.eurprd03.prod.outlook.com
- ([fe80::4b97:bbdb:e0ac:6f7%4]) with mapi id 15.20.7897.021; Thu, 29 Aug 2024
- 20:12:10 +0000
-From: Juntong Deng <juntong.deng@outlook.com>
-To: ast@kernel.org,
-	daniel@iogearbox.net,
-	john.fastabend@gmail.com,
-	andrii@kernel.org,
-	martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	memxor@gmail.com,
-	snorcht@gmail.com
-Cc: bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH bpf-next v4 1/2] bpf: Make the pointer returned by iter next method valid
-Date: Thu, 29 Aug 2024 21:11:17 +0100
-Message-ID:
- <AM6PR03MB584869F8B448EA1C87B7CDA399962@AM6PR03MB5848.eurprd03.prod.outlook.com>
-X-Mailer: git-send-email 2.39.2
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-TMN: [ITCKKKO8MRpVsLi+PvMuhIoOXkvwX773]
-X-ClientProxiedBy: LO4P123CA0217.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:1a6::6) To AM6PR03MB5848.eurprd03.prod.outlook.com
- (2603:10a6:20b:e4::10)
-X-Microsoft-Original-Message-ID:
- <20240829201117.25056-1-juntong.deng@outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B6B71B8E80
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 20:12:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.196
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724962322; cv=none; b=oBGhlysABFBp6yqQWt1mySlrT3z8UmWstOnJYtQwm+8IS1abvjlXv7fXO9mmxyvyZJZvHgGeABSbRX+vtuwwqJ8S4H1svMSlWWlVf8kTHyioAfNKPx2LzBCHOKEZIcusomsLyTxmvYHg4bRCUvl4Yeu4el8rcuuVblc/m4fmYNM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724962322; c=relaxed/simple;
+	bh=bg3niV7bz5Zl9USpbgTTH3hyFvXVp5gg0sizqQaLu6g=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=OjjaNOfyn0OpYPaigHNyylWxKzZCZM0YUQeKCVV8CBo1osyLnzy6/4Wj1b4SYRRl/JlG6+uq/d0jHRa5MQG4dtNmP8g8cQPUHj1Pt/oLEQWbS1ngUW8Zq4dVdI27d11GnR0ZD3v9UAHYBDlPLceXBVLG+XkVAu33GJ/qXFrL6Vk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=ixiFMVt8; arc=none smtp.client-ip=209.85.210.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f196.google.com with SMTP id d2e1a72fcca58-715e3e03831so1016257b3a.2
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 13:12:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1724962320; x=1725567120; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=x24EhIgNe8xtya4+W0q16hyJ5+Ru2f7HMLYEbdNojMQ=;
+        b=ixiFMVt8/rRkS01jplzBcjd6M/mMo4v3mLZjCFhVRt4vq46v3xQJl4Ouv0jnUvqixS
+         kJLizVcOCqe/RWga93lyMgb4ip3D5mv+s6qmAuryBVV3V9JamzBaYwXJjhMd4QhNIw3c
+         U/Mwc1F5xwAAQD+IJeUz6422HjhF0wsECflA0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724962320; x=1725567120;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=x24EhIgNe8xtya4+W0q16hyJ5+Ru2f7HMLYEbdNojMQ=;
+        b=qjRLmUC/G+hzprFczFgt2lqkDzPoYSLvtynF4pXLlDkrUu76Up6PC5q83dM76dp8jh
+         rlgHTayA7eMAKqHvfUS7xuAWID1zCSOHWp8JA98wBrlXHLmUOCHKxQH8COIVSxyIDSX6
+         b2uiVLrDitRQbdjTXzYvGeZV6+jHeze8MOciQu9ZnVhM47nRd3eTIwzJCg/oirzfFFjI
+         YqeVZWmfvQ/+y7PoeQhtgfAlpDqiO/QYSg3QJzTOhhagY9MrT3AAReioYHv+nfVfaJov
+         DPzm21qsPWO5buyqeCH60Ol4HrKX1Ne54LXlIFH9H7b6c+46gq0ddePJcYdJbfn35ZoP
+         CAmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV3d9kGYukMtruTN+aCHb8/eSDNrRV+dSSRH0clQM+LvaE2MkxLXxBORPFuueCg2svjHD7PavAE8LQLvOc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywa0u4rHqNpwbPYCeUNClm9770tJjUswHlLqGAYyCs866vFU5AV
+	4t6XBE4GmYVeQQHmxfCXr5XHqMalN4IZm6AdFoyz8hvaWnZVJtFA+SbPVlIr0xQ42VHB6HpYeOT
+	U/ROEmrw=
+X-Google-Smtp-Source: AGHT+IFTL/qrxW22ZvcQ3tu3WutlO2t4RvbRVlSo2L9vJfLPpFPQttIOYpZLFTyT8+teTTJnwS97Jg==
+X-Received: by 2002:a05:6a21:9218:b0:1c4:8da5:c665 with SMTP id adf61e73a8af0-1cce0feabb6mr4004249637.11.1724962319911;
+        Thu, 29 Aug 2024 13:11:59 -0700 (PDT)
+Received: from htcheong-p620.tpe.corp.google.com ([2401:fa00:1:17:8388:bd61:f13b:7b88])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-715e5577263sm1525694b3a.21.2024.08.29.13.11.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Aug 2024 13:11:59 -0700 (PDT)
+From: Terry Cheong <htcheong@chromium.org>
+Date: Fri, 30 Aug 2024 04:11:53 +0800
+Subject: [PATCH v3] ALSA: hda/realtek: add patch for internal mic in Lenovo
+ V145
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM6PR03MB5848:EE_|GV1PR03MB10409:EE_
-X-MS-Office365-Filtering-Correlation-Id: 83bf9d14-d9d0-42b7-bad0-08dcc866dd02
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|5072599009|8060799006|461199028|19110799003|15080799006|3412199025|440099028;
-X-Microsoft-Antispam-Message-Info:
-	zUQmB4QdBN5XDo+ZXOUC4dR+E40cNKbwHaS6fA+qu1zmVQy/p+39woRSZdZACflf+v6r0iTH4n6ep1BnFBFiwPgN33vOd76PtqPaejt8YZj91udp+1AjM/65nOo6jpeQnTzizYlcLe8iuFyKH2s54Lsd9ClHINxbELAS6RfoIBAm4ySjNI22y2C2jSmqPZgpvjdQO3VUMSYN/1+wMSQSdl0C1FW/yUtMSvZ4t2rv/t+wQVyYH9I8WQioOzTFEtWh2iWCj8h5qFe/5ET5d1mrfhKUeUGCtAroYOGHZrmFokyxE9IkvUj8+9m2i/XHrAisSWFapiWC6xh9xvFWIVGhUQ8pkwCDtBG6qsjZRvPX0vjUoamYWGXfB8gbA0KRHZe8wTVMkeeyznOF0URlYVl4dDbI5AQSMD4KpQnxP1gg4365slGxQMAY8CFsx0NgERsaBQerABm9bEzmD3c4BAA8Z0JiQIKcYzg0xpQFYTFOcDYrpRP06BuUOkZqzxvBJqunxUCqHKe9kQAIEEV7fU8JifossSmPhVJU/wNDLdSKmImqeYFuTcfsa5FXUM2HMBOhacA4UWw2AAmmNPm2CDBntiXxc3XOtTq3EEda2pnJJcbFcCa5Xp2Lx/7HHX9sezEZ0woBlN0BQLaiAfq/hOFnyzP7HzMRwuKBxgNuPdfOkRabR107Gc1qZ6JWTuWiNmxjzlGpvGgdm4J7BYItOdjq3g==
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?6GwBDZUBwqcbi0Vepn3q6LyKvM3EMykVSOhJDRHjWURReXIz/8wFomPl0dyC?=
- =?us-ascii?Q?OGiC3JpW20058lbCrzlfDAOf/Ts580OUSrwGBVq1tiiE96B6zY5QG5dd5JcP?=
- =?us-ascii?Q?xRh5FlhwT90OMjNqWLT9VckdyP6b11X3qR9k2UWDANqXVUDXRFmESiljBl4I?=
- =?us-ascii?Q?YOHeHeYnOTKQT+AdmH3xmRZIz8e5Uimh0eYWfUhzeYe6wP8XQL2Wx2J9+m5e?=
- =?us-ascii?Q?OAG2ifw4QdRS8CFD2EoJxF6iibi0TeM2BG+ckW0vKzZw9UfCzpij4FYlYkIp?=
- =?us-ascii?Q?VpDU88PUXiKmZZx0eu1wZwduzNMMyg2Tvsq4XECXbUEHLyw9GD23Cd27Lmk/?=
- =?us-ascii?Q?3rRrWIyd2yaH1lPbgbk2zNHAt+7/24YR4UnC1qISD6GhQCJqm+n4/AE9kG1h?=
- =?us-ascii?Q?pLTwIZSWJrq4RCEADb8/FBowVxfHidPeKX1B9MAhjlWViIcpnZljQn6rGVaK?=
- =?us-ascii?Q?o1WIbT/jOFLEMcbw1ZzJMHdG65vtvbr0s8U9u1SuXAGeVnbdA8CWqAAJTPPN?=
- =?us-ascii?Q?u7OYGUTc6pUd0pnG35CGOIt9XB3ASFXn/gaBptZI0MpBBdev9pSkfw64frHC?=
- =?us-ascii?Q?ByIF1Gmvqo1grkDiwnMV0SmX7NA/RpTymcTXN13E+OBZ/lEbARjxBcMgkrfu?=
- =?us-ascii?Q?37CvHEZsEnawBazsgSGgzCNU5CW3raiwndX1acRvYodmVaBKzuTPsH/5AjGJ?=
- =?us-ascii?Q?jcBZXnDWPByDW+aWn+fyBEun9l/ryZ26nUOPyuWOXYp01frVFyGIE6Z2pwpW?=
- =?us-ascii?Q?SLw/oz8BxoWOKXpUIdLc5sqJ5EMwCUEXuUWIwYMKP/+YZVtmP0tRnyybuAFu?=
- =?us-ascii?Q?W580BU7fHj6xuCaS1+D8jBU4ayXziBC2unFSDTqZfTUlbwG4Z+5If7CgY3U2?=
- =?us-ascii?Q?z3b+w33QgUV5PliyQntK2Ar3IBX+sRNTdA1czrJFaVCeTEAMSqa+tQ1s9ViE?=
- =?us-ascii?Q?LYnX1K2SXnXUhOK/6+A5f4ujdQ6ovcX+DoZ6inUNW6a20Hs+24XVuIrGcwJR?=
- =?us-ascii?Q?trKhAqgXOWuIjlMNGXY1tmjmYh0QMCgkTF8qMKvj4+XOLlLjb5mlG5+Dbc53?=
- =?us-ascii?Q?sNjcF89kp1ScOQsy9t3aKVsTxT5JuXwQv9+9AdR6CjNJLjceG4FsrAXo72jU?=
- =?us-ascii?Q?uy8SZchoJ9eYan0gBKA1P5AcL44DxIpOnT63LAN9J9QYiUVwYyWJDCVpFCjP?=
- =?us-ascii?Q?RsxLdfYe+WjJX73BYl/4hu1AlCluPOW35oBIjX5jkjE2JMbBtNgeNWRbFOwT?=
- =?us-ascii?Q?XithSAanpMAaKqTcH8p4?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 83bf9d14-d9d0-42b7-bad0-08dcc866dd02
-X-MS-Exchange-CrossTenant-AuthSource: AM6PR03MB5848.eurprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Aug 2024 20:12:10.3593
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR03MB10409
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240830-lenovo-v145-fixes-v3-1-f7b7265068fa@chromium.org>
+X-B4-Tracking: v=1; b=H4sIAAjW0GYC/4WNQQ6CMBBFr0JmbU3bAQVX3sO4oO0ITYSSVhsN4
+ e4OLF1oZvX+z38zQ6LoKcGpmCFS9smHkQF3Bdi+HTsS3jGDlrqUtW7EncaQg8iqrMTNvyiJRlo
+ l29IZ21TAuynSVvDscmXufXqE+N5eZLWmv2xZCT5Ep+hQKzR4tn0Mg38O+xA7WIVZ/5VolhwVt
+ rayxqB2X5JlWT69BDnG+gAAAA==
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc: Steve Kendall <skend@chromium.org>, linux-sound@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Terry Cheong <htcheong@chromium.org>
+X-Mailer: b4 0.13.0
 
-Currently we cannot pass the pointer returned by iter next method as
-argument to KF_TRUSTED_ARGS or KF_RCU kfuncs, because the pointer
-returned by iter next method is not "valid".
+Lenovo V145 is having phase inverted dmic but simply applying inverted
+dmic fixups does not work. Chaining up verb fixes for ALC283 enables
+inverting dmic fixup to work properly.
 
-This patch sets the pointer returned by iter next method to be valid.
-
-This is based on the fact that if the iterator is implemented correctly,
-then the pointer returned from the iter next method should be valid.
-
-This does not make NULL pointer valid. If the iter next method has
-KF_RET_NULL flag, then the verifier will ask the ebpf program to
-check NULL pointer.
-
-KF_RCU_PROTECTED iterator is a special case, the pointer returned by
-iter next method should only be valid within RCU critical section,
-so it should be with MEM_RCU, not PTR_TRUSTED.
-
-Another special case is bpf_iter_num_next, which returns a pointer with
-base type PTR_TO_MEM. PTR_TO_MEM should not be combined with type flag
-PTR_TRUSTED (PTR_TO_MEM already means the pointer is valid).
-
-The pointer returned by iter next method of other types of iterators
-is with PTR_TRUSTED.
-
-In addition, this patch adds get_iter_from_state to help us get the
-current iterator from the current state.
-
-Signed-off-by: Juntong Deng <juntong.deng@outlook.com>
+Signed-off-by: Terry Cheong <htcheong@chromium.org>
 ---
-v3 -> v4: Eliminate the != PTR_TO_MEM part.
+Changes in v3:
+- Place PCI quirk in order in the quirk table.
+- Fixed a typo in the model name for the patch.
+- Link to v2: https://lore.kernel.org/r/20240829-lenovo-v145-fixes-v2-1-713ac5cbb32d@chromium.org
 
-v2 -> v3: Move modifications to check_kfunc_call. Handle PTR_TO_MEM case
-and add corresponding test case. Add get_iter_from_state.
+Changes in v2:
+- Corrected description for the patch.
+- Link to v1: https://lore.kernel.org/r/20240829-lenovo-v145-fixes-v1-1-133d1e6813b3@chromium.org
+---
+ sound/pci/hda/patch_realtek.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-v1 -> v2: Handle KF_RCU_PROTECTED case and add corresponding test cases.
+diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
+index 588738ce7380..ff62702a8226 100644
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -7538,6 +7538,7 @@ enum {
+ 	ALC236_FIXUP_HP_GPIO_LED,
+ 	ALC236_FIXUP_HP_MUTE_LED,
+ 	ALC236_FIXUP_HP_MUTE_LED_MICMUTE_VREF,
++	ALC236_FIXUP_LENOVO_INV_DMIC,
+ 	ALC298_FIXUP_SAMSUNG_AMP,
+ 	ALC298_FIXUP_SAMSUNG_AMP2,
+ 	ALC298_FIXUP_SAMSUNG_HEADPHONE_VERY_QUIET,
+@@ -9161,6 +9162,12 @@ static const struct hda_fixup alc269_fixups[] = {
+ 		.type = HDA_FIXUP_FUNC,
+ 		.v.func = alc236_fixup_hp_mute_led_micmute_vref,
+ 	},
++	[ALC236_FIXUP_LENOVO_INV_DMIC] = {
++		.type = HDA_FIXUP_FUNC,
++		.v.func = alc_fixup_inv_dmic,
++		.chained = true,
++		.chain_id = ALC283_FIXUP_INT_MIC,
++	},
+ 	[ALC298_FIXUP_SAMSUNG_AMP] = {
+ 		.type = HDA_FIXUP_FUNC,
+ 		.v.func = alc298_fixup_samsung_amp,
+@@ -10742,6 +10749,7 @@ static const struct snd_pci_quirk alc269_fixup_tbl[] = {
+ 	SND_PCI_QUIRK(0x17aa, 0x38f9, "Thinkbook 16P Gen5", ALC287_FIXUP_CS35L41_I2C_2),
+ 	SND_PCI_QUIRK(0x17aa, 0x38fa, "Thinkbook 16P Gen5", ALC287_FIXUP_CS35L41_I2C_2),
+ 	SND_PCI_QUIRK(0x17aa, 0x3902, "Lenovo E50-80", ALC269_FIXUP_DMIC_THINKPAD_ACPI),
++	SND_PCI_QUIRK(0x17aa, 0x3913, "Lenovo 145", ALC236_FIXUP_LENOVO_INV_DMIC),
+ 	SND_PCI_QUIRK(0x17aa, 0x3977, "IdeaPad S210", ALC283_FIXUP_INT_MIC),
+ 	SND_PCI_QUIRK(0x17aa, 0x3978, "Lenovo B50-70", ALC269_FIXUP_DMIC_THINKPAD_ACPI),
+ 	SND_PCI_QUIRK(0x17aa, 0x3bf8, "Quanta FL1", ALC269_FIXUP_PCM_44K),
+@@ -10994,6 +11002,7 @@ static const struct hda_model_fixup alc269_fixup_models[] = {
+ 	{.id = ALC623_FIXUP_LENOVO_THINKSTATION_P340, .name = "alc623-lenovo-thinkstation-p340"},
+ 	{.id = ALC255_FIXUP_ACER_HEADPHONE_AND_MIC, .name = "alc255-acer-headphone-and-mic"},
+ 	{.id = ALC285_FIXUP_HP_GPIO_AMP_INIT, .name = "alc285-hp-amp-init"},
++	{.id = ALC236_FIXUP_LENOVO_INV_DMIC, .name = "alc236-fixup-lenovo-inv-mic"},
+ 	{}
+ };
+ #define ALC225_STANDARD_PINS \
 
- kernel/bpf/verifier.c | 26 ++++++++++++++++++++++----
- 1 file changed, 22 insertions(+), 4 deletions(-)
+---
+base-commit: 86987d84b968b69a610fd00ab9006c13db193b4e
+change-id: 20240829-lenovo-v145-fixes-90c10a4dbc95
 
-diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-index f32e3b9bb4e5..f1d764384305 100644
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -8148,6 +8148,15 @@ static int widen_imprecise_scalars(struct bpf_verifier_env *env,
- 	return 0;
- }
- 
-+static struct bpf_reg_state *get_iter_from_state(struct bpf_verifier_state *cur_st,
-+						 struct bpf_kfunc_call_arg_meta *meta)
-+{
-+	int iter_frameno = meta->iter.frameno;
-+	int iter_spi = meta->iter.spi;
-+
-+	return &cur_st->frame[iter_frameno]->stack[iter_spi].spilled_ptr;
-+}
-+
- /* process_iter_next_call() is called when verifier gets to iterator's next
-  * "method" (e.g., bpf_iter_num_next() for numbers iterator) call. We'll refer
-  * to it as just "iter_next()" in comments below.
-@@ -8232,12 +8241,10 @@ static int process_iter_next_call(struct bpf_verifier_env *env, int insn_idx,
- 	struct bpf_verifier_state *cur_st = env->cur_state, *queued_st, *prev_st;
- 	struct bpf_func_state *cur_fr = cur_st->frame[cur_st->curframe], *queued_fr;
- 	struct bpf_reg_state *cur_iter, *queued_iter;
--	int iter_frameno = meta->iter.frameno;
--	int iter_spi = meta->iter.spi;
- 
- 	BTF_TYPE_EMIT(struct bpf_iter);
- 
--	cur_iter = &env->cur_state->frame[iter_frameno]->stack[iter_spi].spilled_ptr;
-+	cur_iter = get_iter_from_state(cur_st, meta);
- 
- 	if (cur_iter->iter.state != BPF_ITER_STATE_ACTIVE &&
- 	    cur_iter->iter.state != BPF_ITER_STATE_DRAINED) {
-@@ -8265,7 +8272,7 @@ static int process_iter_next_call(struct bpf_verifier_env *env, int insn_idx,
- 		if (!queued_st)
- 			return -ENOMEM;
- 
--		queued_iter = &queued_st->frame[iter_frameno]->stack[iter_spi].spilled_ptr;
-+		queued_iter = get_iter_from_state(queued_st, meta);
- 		queued_iter->iter.state = BPF_ITER_STATE_ACTIVE;
- 		queued_iter->iter.depth++;
- 		if (prev_st)
-@@ -12853,6 +12860,17 @@ static int check_kfunc_call(struct bpf_verifier_env *env, struct bpf_insn *insn,
- 			regs[BPF_REG_0].btf = desc_btf;
- 			regs[BPF_REG_0].type = PTR_TO_BTF_ID;
- 			regs[BPF_REG_0].btf_id = ptr_type_id;
-+
-+			if (is_iter_next_kfunc(&meta)) {
-+				struct bpf_reg_state *cur_iter;
-+
-+				cur_iter = get_iter_from_state(env->cur_state, &meta);
-+
-+				if (cur_iter->type & MEM_RCU) /* KF_RCU_PROTECTED */
-+					regs[BPF_REG_0].type |= MEM_RCU;
-+				else
-+					regs[BPF_REG_0].type |= PTR_TRUSTED;
-+			}
- 		}
- 
- 		if (is_kfunc_ret_null(&meta)) {
+Best regards,
 -- 
-2.39.2
+Terry Cheong <htcheong@chromium.org>
 
 
