@@ -1,282 +1,307 @@
-Return-Path: <linux-kernel+bounces-306386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3350963E42
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:21:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25B56963E46
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:23:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 06404B20D62
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:21:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A515E1F26A2D
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:23:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFE1F18C32E;
-	Thu, 29 Aug 2024 08:21:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E7E618C033;
+	Thu, 29 Aug 2024 08:23:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rGhs1Edu"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="z4T8T6D6"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6FB418C02B
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 08:21:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A376173332
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 08:23:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724919681; cv=none; b=DM428hmBC1RMXdb4wcWULw3TVqu5f/ah3t4pODff7numVlD0IvaDSJ7UYTRdxAwL/OatOveI7K9TGxLduZ3lmqyGsdb8Bro03iF12WO/uN/WYUeoMeYFgL3Pv+mKHMyHTn0JpQ/2Dtb9tcsRwFPiY9ZjQSwTGCWBEi0x7nvMeUg=
+	t=1724919802; cv=none; b=UAEFo6XdQlqNYniHBUhlDwLxyJoHncNF3o6nrPXh6/qRmCCO9yk66QPkp7n6SZaMbbrqV8sDfJzXByiHGsWK1xzS7+igF0DArPCoolhJKXpbYI0ONqbBC6Dxrw1hDDWtgDf/WtNqNvDO44U0ITf/BPIOkmQu8BT2sgqQD5X7mZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724919681; c=relaxed/simple;
-	bh=D945pissAzYJ1WSZ4r3fmdjGbNimiMhFB6YLYYkLGPU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=XCLUezB7kiL1hf7Q7hYvpxToRX0TGdTe5MV4cjLKDvt26O7eodkhRTMvnwWsu5iS8LyJwZ8VQTxZyGglfdJmGDwvP6oom9aemV7Q7gYCZYfdZDOQdS9ZJd4b9ymgWhqsqZbyz3Wp6hrdYgOHhZyd/D6I0Y/pe3r5877ehA8ejNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rGhs1Edu; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-5333b2fbedaso568298e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 01:21:19 -0700 (PDT)
+	s=arc-20240116; t=1724919802; c=relaxed/simple;
+	bh=VLdwL20LiNzTUaWtt93FFxTZ648rvn76IDWLN5/vv4Q=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=k8YYZ7LSSETP4flHEg9f7jHKBMXfn4BGJ4luI7YNA/xrQ1ctsnEpp6JgnqGqm0NeI/AoO3fhRI7TvpCkuQgqsug/nyYJKORlnMV3qQxvj0ks4pydOxpSIA3IchtRt+s2tRgIVP/5wbQm5H+BkM1OmkNyNvnYlyMJaJmvuLgVG2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=z4T8T6D6; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e165fc5d94fso831067276.2
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 01:23:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724919678; x=1725524478; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=l4vkvoTso6h1gNffXtkAXfIEyKfOljt6J/EQ+f9eh4k=;
-        b=rGhs1EduQInRqQlHgN+R/iEaO67j3BjjOwYx6Rq+iNivrielhtt8y3rsOpgywYL3tr
-         A2dwPtr3kU345Z15pZ37qMGu+uAAaB6I28QKJvOY3yn9AyrrGhvS8L9lDJs+E2VDBctE
-         DmZ/h/bdkdEnOYWPqF8z1q5NJUywlQF5GuUfItu5wPS0Y4FJa9V/Vilje2LurdAlg1S6
-         nUminPONDBlmE8WVNgRN6daCnmKXBF8DQvKJXBKRRIdZ7Rdk98oful+42wlO/a+PiZqU
-         +b2wHzfdFEuwNZty/SF5rZyzDM10Qdq9nwyiXio2AoETpKr31GpQf8RGVsRuRP1JBJCa
-         iSYw==
+        d=google.com; s=20230601; t=1724919798; x=1725524598; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=9RdvbeG3hnzyWF9MND8CckF4Y5Hzjn0WZIgh7L/jyIU=;
+        b=z4T8T6D6KC13PPDfmjB7neTCdgeqwD9FwvSPoKagXvtKa6BjOLVnSvUiKfjCP0P3SV
+         ypJOa3LBZp0c1KaEf+FXz+fwF9h+Pi2FG+a+WCdqYIuXbPSVUXxZxQwiGOje9e5edFST
+         2uKa8ZnUadl+CQEfoo9FPzpby3Fu3eciLW+bz4ZTKVYRzNv6ZtOovTGHMcJdYNR+JhEp
+         yP9AOghkhKqwb5rMBu92LIEMGehW498jROFd/6WA0qxWpbMvT7uFzVzCkOuTWcfwKI7G
+         PFDJFON/4Sd99R4tkbCuoElp6O7xYmn82HHbIYbjBsP8ZvgL7YCgKRkw7D3DH4sycYGD
+         hZ1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724919678; x=1725524478;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=l4vkvoTso6h1gNffXtkAXfIEyKfOljt6J/EQ+f9eh4k=;
-        b=v3oHPGEh8k3ntoVvKPb3ofZlaYj07eP1VLSTDW/TxQX/AT165wHRouG0DgJI+BBG0c
-         qkK5supP44GMwPdT363rzrY1Uqz3/wKEzsc4BCnCoX0a2YOPnKRPD0ZzgyJsgNwBw4RM
-         sseivWwQ+EY2ysFqxQTeFJjS2DAIRTcXuaz0FN7L9IpjY7iueF/DZHudZpZmKiumRd+0
-         hASAQTFwaKrxzUUXM0dDOlxnDqEwGvX2SctJ2LG1/M1h8M7hVkH9VMrUWyqPDoK2KI3p
-         CCqVT9YE33FUinUligHeFgOdo7QBvtzO610w3/u0TK/voz47Ru6PV4nUrRGLDfmNkcWp
-         0LGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXCAibKDeC8LSsIYWPekjQ0zDWbLSh6PL4IK3oAI3ctwUYgdOYX5hYS5G+u/0QEUqEAqtHM+7FHT33pBKM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2J4JN1dk2XCjx75bpvh7jaBwvSmX3cMYyegK5t35YOm+I7L6a
-	xZxJI0tCkOcEu3Sb1O72Z0fGtfqshMGr8RWurP93N+Q97D03r10GtQCgsgDSvR8=
-X-Google-Smtp-Source: AGHT+IE29xdrMuG56sjGZ0HIT6/edkCuXIp0/EK146elrMyoVzNezfgtU6FXrZp8xyU6P6Ohzvmgow==
-X-Received: by 2002:a05:6512:3084:b0:530:c323:46a8 with SMTP id 2adb3069b0e04-5353e56935emr1131789e87.23.1724919677229;
-        Thu, 29 Aug 2024 01:21:17 -0700 (PDT)
-Received: from umbar.lan ([192.130.178.90])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-535407ac333sm90243e87.70.2024.08.29.01.21.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 01:21:16 -0700 (PDT)
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Thu, 29 Aug 2024 11:21:14 +0300
-Subject: [PATCH 2/2] phy: add NXP PTN3222 eUSB2 to USB2 redriver
+        d=1e100.net; s=20230601; t=1724919798; x=1725524598;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=9RdvbeG3hnzyWF9MND8CckF4Y5Hzjn0WZIgh7L/jyIU=;
+        b=oVrmHxNqffKe2OgmEyI9lN5HywZ+HqD2vpzrt5Gtcna5kJ9/EpU4gUNqwYkOeY0E52
+         1tDsA3JaM7YHh1gBhRJRciDuRq1+zLKl0m+l1BGIzTFRFIfb3vT6u2zUQhNuyHxeErQj
+         Mn0ihYnQPqVmw0lXNLoXQQd+lvH3TjbhlvaTGPVoUpskP1XEgXBeXBUFLzAj53x45ruA
+         CkdpvG8z8sQ/fj73wCIUcbzMptpX7JZPxFca0W6sEeRQzHfDGfOkyxkCOGGO4DkCyklJ
+         w1HrFujbGlqIWMqDop+FurqL0VMjwtn7Bg/YgReAVxRwU+8GL/UunHs/v/EhVG/PAGsP
+         0QLw==
+X-Forwarded-Encrypted: i=1; AJvYcCU8xvnquG5ncTFIV1rAXqi8wvRtCyOYAy6WtybEpw+HIIsIJslZKb5aBLEMzIg7VEVJDb/ip6WoEhp2RUE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YysS4rypW/Ekkk+nCF/58DFzpVthbMYjZIzNvfQPZscqF1Ydtet
+	wOha7uYv8/3NZjaIaCR1d/VVDWxOgRBTX5dNyp5a9PxNp/yvkWU6qEu80/Gyfj73Xbc7SKMicDg
+	lEsoNql6XH9dHsQ==
+X-Google-Smtp-Source: AGHT+IFokD/yVvPfvQHwIqtYzdfKDhst22uRMPQK2UkcQgpj0CXoQ3GfhlgIXYvGU9+Xsj5TZTk5fiV0WBwvs3w=
+X-Received: from aliceryhl.c.googlers.com ([fda3:e722:ac3:cc00:28:9cb1:c0a8:35bd])
+ (user=aliceryhl job=sendgmr) by 2002:a25:c54f:0:b0:e11:5f9f:f069 with SMTP id
+ 3f1490d57ef6-e1a5adf5550mr10086276.8.1724919798172; Thu, 29 Aug 2024 01:23:18
+ -0700 (PDT)
+Date: Thu, 29 Aug 2024 08:22:45 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIANUv0GYC/33PTW7DIBAF4KtErEvFzwAmq94j6mIMYxvVDZWJn
+ FaR716STVzZ6vKNNN+bubFCU6LCjocbm2hOJeVzDe7lwMKA5554ijUzJRQILYCXAWO+8oDjyMs
+ Fwwf3QXqHoK2MntW9r4m69P0wT+81D6lc8vTzqJjlffqfNksueSeMIexAoApvfc79SK8hf7I7N
+ 6s1YfYIVYngWkDdQbTSbgj9JNz+FZoLHqUMDi21pMWGgBWh/B4BlVBoLbSiUYSwIcyTaITdI0x 9RNkYQtsoL82WsCtC7RK2EuANOtLUCur+EMuy/ALYkZ/hAgIAAA==
+X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
+X-Developer-Signature: v=1; a=openpgp-sha256; l=7498; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=VLdwL20LiNzTUaWtt93FFxTZ648rvn76IDWLN5/vv4Q=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBm0C/g26QBldwF4R1q5+2D0JMs4Ht23FBu5pV6l
+ uyQHbWnFZGJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZtAv4AAKCRAEWL7uWMY5
+ RlULEACXdQc0K9R587GDlUGJswtbNuo3QR+1aYblBU+3AtdqidLh+s8iLwdgJBfj3406ogldHQA
+ Nx+FfEa0P0zLSDzKyvlqTuHP1LC0N9OsB91bdYBUGvZxxQwLWhXd8ZFnflmHrCZuiPpzEwfSYWG
+ RnIFUctqaLrWG2l1hgX/vPPgamUrwtTx3lJGEwvpKjhIddol6WStWONtUyVHDZvSBgQZq2uKd2v
+ Y6lRRlEY45oMxj5xOu5LcfOZ4WQWCaKKkSZ/W+RyxLhf2WUzYTrBH0XqfXtB80Q6nRxFkyWjzUB
+ k4/4YRxL8b07XYi0x7yjXx37fUmQf0kiUBSrnzzUA616le7RTI4g7Esz2rWYVMew35/j5dPue3R
+ 9p/mk+UVbOysEcOCvaWp5Jsf3qhesQMmHWlOgaSKf21ByeGxVilaUDt401PmClMAvuVqe4Psh6K
+ Hm6hpkKmtoCyKilxgqPHG2OY9LU1+YsFEZiBh+6AY4BvAKwK3n8YdhjwyM8JEZ4XhojHj0WQVp2
+ DYffxzTOac0CYc+LqsAGdUJ/6nlL/ndyyT/PXariyjX0/pqgcDWF4yT/qTivSAHy8XlhH9tEqMm
+ mYf0MDOIaoFh86FhXUGZ9I2SN6PCrB1xChyw19cMSZw6zTPY8l+3aNalTpi6B1/PtqRmMFB7L4I lXuvSdLH+/IJPrw==
+X-Mailer: b4 0.13.0
+Message-ID: <20240829-shadow-call-stack-v7-1-2f62a4432abf@google.com>
+Subject: [PATCH v7] rust: support for shadow call stack sanitizer
+From: Alice Ryhl <aliceryhl@google.com>
+To: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Ard Biesheuvel <ardb@kernel.org>, Jamie Cunliffe <Jamie.Cunliffe@arm.com>, 
+	Sami Tolvanen <samitolvanen@google.com>, Nathan Chancellor <nathan@kernel.org>, 
+	Conor Dooley <conor@kernel.org>, Kees Cook <kees@kernel.org>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
+	Marc Zyngier <maz@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Mark Brown <broonie@kernel.org>, 
+	Nick Desaulniers <ndesaulniers@google.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@samsung.com>, Valentin Obst <kernel@valentinobst.de>, 
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, rust-for-linux@vger.kernel.org, 
+	Kees Cook <kees@kernel.org>, Alice Ryhl <aliceryhl@google.com>
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240829-nxp-ptn3222-v1-2-46906bc4747a@linaro.org>
-References: <20240829-nxp-ptn3222-v1-0-46906bc4747a@linaro.org>
-In-Reply-To: <20240829-nxp-ptn3222-v1-0-46906bc4747a@linaro.org>
-To: Vinod Koul <vkoul@kernel.org>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: Konrad Dybcio <konradybcio@kernel.org>, linux-phy@lists.infradead.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5103;
- i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=D945pissAzYJ1WSZ4r3fmdjGbNimiMhFB6YLYYkLGPU=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBm0C96yL9zJFlSohV/brIn5g/vjD2TJHC0kAhFW
- jYzqRi5OTCJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZtAvegAKCRCLPIo+Aiko
- 1Vm3B/wJ/0cuoDCWshKIwTvNfPHBhzR0GbOXGUMhB/IwUwxTi8GSEfG6IBQXeV++iccQuMUP4H5
- g5gvY7gXht9cWO/4kQuwz29pVs76HUOubsW5Mp2al5Wcp16KdfcGIMqeuOKu8LUCjL6Mde0+rYX
- 7mW22OkDaP3H3dWjs3b1srd1Zw6WTmwC6SpfJChgVIc+XxCDXhWL8E1RZZKawx65drhCCMGX/j/
- 0BrIsW9zyGvnPfSfQFZoZ6fcmeO30dXzD9Jyg8ZKNjN1ySDT2zTPDTo0GtSFKzI0wytcixMZtrd
- ygP+tZIE4nUpscxhIr0AjAHh8ubBVnKAaS2rq2XPwnW7UoNf
-X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
- fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-The NXP PTN3222 is the single-port eUSB2 to USB2 redriver that performs
-translation between eUSB2 and USB2 signalling schemes. It supports all
-three data rates: Low Speed, Full Speed and High Speed.
+Add all of the flags that are needed to support the shadow call stack
+(SCS) sanitizer with Rust, and updates Kconfig to allow only
+configurations that work.
 
-The reset state enables autonegotiation of the PHY role and of the data
-rate, so no additional programming is required.
+The -Zfixed-x18 flag is required to use SCS on arm64, and requires rustc
+version 1.80.0 or greater. This restriction is reflected in Kconfig.
 
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+When CONFIG_DYNAMIC_SCS is enabled, the build will be configured to
+include unwind tables in the build artifacts. Dynamic SCS uses the
+unwind tables at boot to find all places that need to be patched. The
+-Cforce-unwind-tables=y flag ensures that unwind tables are available
+for Rust code.
+
+In non-dynamic mode, the -Zsanitizer=shadow-call-stack flag is what
+enables the SCS sanitizer. Using this flag requires rustc version 1.82.0
+or greater on the targets used by Rust in the kernel. This restriction
+is reflected in Kconfig.
+
+It is possible to avoid the requirement of rustc 1.80.0 by using
+-Ctarget-feature=+reserve-x18 instead of -Zfixed-x18. However, this flag
+emits a warning during the build, so this patch does not add support for
+using it and instead requires 1.80.0 or greater.
+
+The dependency is placed on `select HAVE_RUST` to avoid a situation
+where enabling Rust silently turns off the sanitizer. Instead, turning
+on the sanitizer results in Rust being disabled. We generally do not
+want changes to CONFIG_RUST to result in any mitigations being changed
+or turned off.
+
+At the time of writing, rustc 1.82.0 only exists via the nightly release
+channel. There is a chance that the -Zsanitizer=shadow-call-stack flag
+will end up needing 1.83.0 instead, but I think it is small.
+
+Reviewed-by: Sami Tolvanen <samitolvanen@google.com>
+Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
+Reviewed-by: Kees Cook <kees@kernel.org>
+Acked-by: Will Deacon <will@kernel.org>
+Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 ---
- drivers/phy/Kconfig           |  11 ++++
- drivers/phy/Makefile          |   1 +
- drivers/phy/phy-nxp-ptn3222.c | 119 ++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 131 insertions(+)
+This patch depends on RUSTC_VERSION:
+https://lore.kernel.org/rust-for-linux/20240808221138.873750-1-ojeda@kernel.org/
+---
+Changes in v7:
+- Add comment to `config RUSTC_SUPPORTS_[ARM64|RISCV]`
+- Pick up tags from reviewers.
+- Link to v6: https://lore.kernel.org/r/20240826-shadow-call-stack-v6-1-495a7e3eb0ef@google.com
 
-diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
-index dfab1c66b3e5..cb06a7f79740 100644
---- a/drivers/phy/Kconfig
-+++ b/drivers/phy/Kconfig
-@@ -82,6 +82,17 @@ config PHY_AIROHA_PCIE
- 	  This driver create the basic PHY instance and provides initialize
- 	  callback for PCIe GEN3 port.
+Changes in v6:
+- Move Kconfig requirements into arch/*/Kconfig.
+- List non-dynamic SCS as supported on 1.82. This reflects newly added
+  things in rustc.
+- Link to v5: https://lore.kernel.org/r/20240806-shadow-call-stack-v5-1-26dccb829154@google.com
+
+Changes in v5:
+- Rebase series on v6.11-rc2.
+- The first patch is no longer included as it was merged in v6.11-rc2.
+- The commit message is rewritten from scratch.
+- Link to v4: https://lore.kernel.org/r/20240729-shadow-call-stack-v4-0-2a664b082ea4@google.com
+
+Changes in v4:
+- Move `depends on` to CONFIG_RUST.
+- Rewrite commit messages to include more context.
+- Link to v3: https://lore.kernel.org/r/20240704-shadow-call-stack-v3-0-d11c7a6ebe30@google.com
+
+Changes in v3:
+- Use -Zfixed-x18.
+- Add logic to reject unsupported rustc versions.
+- Also include a fix to be backported.
+- Link to v2: https://lore.kernel.org/rust-for-linux/20240305-shadow-call-stack-v2-1-c7b4a3f4d616@google.com/
+
+Changes in v2:
+- Add -Cforce-unwind-tables flag.
+- Link to v1: https://lore.kernel.org/rust-for-linux/20240304-shadow-call-stack-v1-1-f055eaf40a2c@google.com/
+---
+ Makefile            |  1 +
+ arch/arm64/Kconfig  | 14 +++++++++++++-
+ arch/arm64/Makefile |  3 +++
+ arch/riscv/Kconfig  |  9 ++++++++-
+ init/Kconfig        |  1 -
+ 5 files changed, 25 insertions(+), 3 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index 68ebd6d6b444..2b384a72ff39 100644
+--- a/Makefile
++++ b/Makefile
+@@ -927,6 +927,7 @@ ifdef CONFIG_SHADOW_CALL_STACK
+ ifndef CONFIG_DYNAMIC_SCS
+ CC_FLAGS_SCS	:= -fsanitize=shadow-call-stack
+ KBUILD_CFLAGS	+= $(CC_FLAGS_SCS)
++KBUILD_RUSTFLAGS += -Zsanitizer=shadow-call-stack
+ endif
+ export CC_FLAGS_SCS
+ endif
+diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+index a2f8ff354ca6..827497df6fa3 100644
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -231,7 +231,7 @@ config ARM64
+ 	select HAVE_FUNCTION_ARG_ACCESS_API
+ 	select MMU_GATHER_RCU_TABLE_FREE
+ 	select HAVE_RSEQ
+-	select HAVE_RUST if CPU_LITTLE_ENDIAN
++	select HAVE_RUST if RUSTC_SUPPORTS_ARM64
+ 	select HAVE_STACKPROTECTOR
+ 	select HAVE_SYSCALL_TRACEPOINTS
+ 	select HAVE_KPROBES
+@@ -265,6 +265,18 @@ config ARM64
+ 	help
+ 	  ARM 64-bit (AArch64) Linux support.
  
-+config PHY_NXP_PTN3222
-+	tristate "NXP PTN3222 1-port eUSB2 to USB2 redriver"
-+	depends on I2C
-+	depends on OF
-+	select GENERIC_PHY
-+	help
-+	  Enable this to support NXP PTN3222 1-port eUSB2 to USB2 Redriver.
-+	  This redriver performs translation between eUSB2 and USB2 signalling
-+	  schemes. It supports all three USB 2.0 data rates: Low Speed, Full
-+	  Speed and High Speed.
++config RUSTC_SUPPORTS_ARM64
++       def_bool y
++       depends on CPU_LITTLE_ENDIAN
++       # Shadow call stack is only supported on certain rustc versions.
++       #
++       # When using the UNWIND_PATCH_PAC_INTO_SCS option, rustc version 1.80+ is
++       # required due to use of the -Zfixed-x18 flag.
++       #
++       # Otherwise, rustc version 1.82+ is required due to use of the
++       # -Zsanitizer=shadow-call-stack flag.
++       depends on !SHADOW_CALL_STACK || RUSTC_VERSION >= 108200 || RUSTC_VERSION >= 108000 && UNWIND_PATCH_PAC_INTO_SCS
 +
- source "drivers/phy/allwinner/Kconfig"
- source "drivers/phy/amlogic/Kconfig"
- source "drivers/phy/broadcom/Kconfig"
-diff --git a/drivers/phy/Makefile b/drivers/phy/Makefile
-index 5fcbce5f9ab1..b64247046575 100644
---- a/drivers/phy/Makefile
-+++ b/drivers/phy/Makefile
-@@ -11,6 +11,7 @@ obj-$(CONFIG_PHY_XGENE)			+= phy-xgene.o
- obj-$(CONFIG_PHY_PISTACHIO_USB)		+= phy-pistachio-usb.o
- obj-$(CONFIG_USB_LGM_PHY)		+= phy-lgm-usb.o
- obj-$(CONFIG_PHY_AIROHA_PCIE)		+= phy-airoha-pcie.o
-+obj-$(CONFIG_PHY_NXP_PTN3222)		+= phy-nxp-ptn3222.o
- obj-y					+= allwinner/	\
- 					   amlogic/	\
- 					   broadcom/	\
-diff --git a/drivers/phy/phy-nxp-ptn3222.c b/drivers/phy/phy-nxp-ptn3222.c
-new file mode 100644
-index 000000000000..429a91910f14
---- /dev/null
-+++ b/drivers/phy/phy-nxp-ptn3222.c
-@@ -0,0 +1,119 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2024, Linaro Limited
-+ */
+ config CLANG_SUPPORTS_DYNAMIC_FTRACE_WITH_ARGS
+ 	def_bool CC_IS_CLANG
+ 	# https://github.com/ClangBuiltLinux/linux/issues/1507
+diff --git a/arch/arm64/Makefile b/arch/arm64/Makefile
+index f6bc3da1ef11..b058c4803efb 100644
+--- a/arch/arm64/Makefile
++++ b/arch/arm64/Makefile
+@@ -57,9 +57,11 @@ KBUILD_AFLAGS	+= $(call cc-option,-mabi=lp64)
+ ifneq ($(CONFIG_UNWIND_TABLES),y)
+ KBUILD_CFLAGS	+= -fno-asynchronous-unwind-tables -fno-unwind-tables
+ KBUILD_AFLAGS	+= -fno-asynchronous-unwind-tables -fno-unwind-tables
++KBUILD_RUSTFLAGS += -Cforce-unwind-tables=n
+ else
+ KBUILD_CFLAGS	+= -fasynchronous-unwind-tables
+ KBUILD_AFLAGS	+= -fasynchronous-unwind-tables
++KBUILD_RUSTFLAGS += -Cforce-unwind-tables=y -Zuse-sync-unwind=n
+ endif
+ 
+ ifeq ($(CONFIG_STACKPROTECTOR_PER_TASK),y)
+@@ -114,6 +116,7 @@ endif
+ 
+ ifeq ($(CONFIG_SHADOW_CALL_STACK), y)
+ KBUILD_CFLAGS	+= -ffixed-x18
++KBUILD_RUSTFLAGS += -Zfixed-x18
+ endif
+ 
+ ifeq ($(CONFIG_CPU_BIG_ENDIAN), y)
+diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+index 0f3cd7c3a436..7ffdb3bdfd3f 100644
+--- a/arch/riscv/Kconfig
++++ b/arch/riscv/Kconfig
+@@ -172,7 +172,7 @@ config RISCV
+ 	select HAVE_REGS_AND_STACK_ACCESS_API
+ 	select HAVE_RETHOOK if !XIP_KERNEL
+ 	select HAVE_RSEQ
+-	select HAVE_RUST if 64BIT
++	select HAVE_RUST if RUSTC_SUPPORTS_RISCV
+ 	select HAVE_SAMPLE_FTRACE_DIRECT
+ 	select HAVE_SAMPLE_FTRACE_DIRECT_MULTI
+ 	select HAVE_STACKPROTECTOR
+@@ -202,6 +202,13 @@ config RISCV
+ 	select UACCESS_MEMCPY if !MMU
+ 	select ZONE_DMA32 if 64BIT
+ 
++config RUSTC_SUPPORTS_RISCV
++       def_bool y
++       depends on 64BIT
++       # Shadow call stack requires rustc version 1.82+ due to use of the
++       # -Zsanitizer=shadow-call-stack flag.
++       depends on !SHADOW_CALL_STACK || RUSTC_VERSION >= 108200
 +
-+#include <linux/gpio/consumer.h>
-+#include <linux/i2c.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/phy/phy.h>
-+#include <linux/regmap.h>
-+#include <linux/regulator/consumer.h>
-+
-+#define NUM_SUPPLIES 2
-+
-+struct ptn3222 {
-+	struct i2c_client *client;
-+	struct phy *phy;
-+	struct gpio_desc *reset_gpio;
-+	struct regulator_bulk_data supplies[NUM_SUPPLIES];
-+};
-+
-+static int ptn3222_init(struct phy *phy)
-+{
-+	struct ptn3222 *ptn3222 = phy_get_drvdata(phy);
-+	int ret;
-+
-+	ret = regulator_bulk_enable(NUM_SUPPLIES, ptn3222->supplies);
-+	if (ret)
-+		return ret;
-+
-+	gpiod_set_value_cansleep(ptn3222->reset_gpio, 0);
-+
-+	return 0;
-+}
-+
-+static int ptn3222_exit(struct phy *phy)
-+{
-+	struct ptn3222 *ptn3222 = phy_get_drvdata(phy);
-+
-+	gpiod_set_value_cansleep(ptn3222->reset_gpio, 1);
-+
-+	return regulator_bulk_disable(NUM_SUPPLIES, ptn3222->supplies);
-+}
-+
-+static const struct phy_ops ptn3222_ops = {
-+	.init		= ptn3222_init,
-+	.exit		= ptn3222_exit,
-+	.owner		= THIS_MODULE,
-+};
-+
-+static int ptn3222_probe(struct i2c_client *client)
-+{
-+	struct device *dev = &client->dev;
-+	struct phy_provider *phy_provider;
-+	struct ptn3222 *ptn3222;
-+	int ret;
-+
-+	ptn3222 = devm_kzalloc(dev, sizeof(*ptn3222), GFP_KERNEL);
-+	if (!ptn3222)
-+		return -ENOMEM;
-+
-+	ptn3222->client = client;
-+
-+	ptn3222->reset_gpio = devm_gpiod_get_optional(dev, "reset",
-+						      GPIOD_OUT_HIGH);
-+	if (IS_ERR(ptn3222->reset_gpio))
-+		return dev_err_probe(dev, PTR_ERR(ptn3222->reset_gpio),
-+				     "unable to acquire reset gpio\n");
-+
-+	ptn3222->supplies[0].supply = "vdd3v3";
-+	ptn3222->supplies[0].init_load_uA = 11000;
-+	ptn3222->supplies[1].supply = "vdd1v8";
-+	ptn3222->supplies[1].init_load_uA = 55000;
-+
-+	ret = devm_regulator_bulk_get(dev,
-+				      NUM_SUPPLIES,
-+				      ptn3222->supplies);
-+	if (ret)
-+		return ret;
-+
-+	ptn3222->phy = devm_phy_create(dev, dev->of_node, &ptn3222_ops);
-+	if (IS_ERR(ptn3222->phy)) {
-+		dev_err(dev, "failed to create PHY: %d\n", ret);
-+		return PTR_ERR(ptn3222->phy);
-+	}
-+
-+	phy_set_drvdata(ptn3222->phy, ptn3222);
-+
-+	phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
-+
-+	return PTR_ERR_OR_ZERO(phy_provider);
-+}
-+
-+static const struct i2c_device_id ptn3222_table[] = {
-+	{ "ptn3222" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(i2c, ptn3222_table);
-+
-+static const struct of_device_id ptn3222_of_table[] = {
-+	{ .compatible = "nxp,ptn3222" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, ptn3222_of_table);
-+
-+static struct i2c_driver ptn3222_driver = {
-+	.driver = {
-+		.name = "ptn3222",
-+		.of_match_table = ptn3222_of_table,
-+	},
-+	.probe = ptn3222_probe,
-+	.id_table = ptn3222_table,
-+};
-+
-+module_i2c_driver(ptn3222_driver);
-+
-+MODULE_DESCRIPTION("NXP PTN3222 eUSB2 Redriver driver");
-+MODULE_LICENSE("GPL");
+ config CLANG_SUPPORTS_DYNAMIC_FTRACE
+ 	def_bool CC_IS_CLANG
+ 	# https://github.com/ClangBuiltLinux/linux/issues/1817
+diff --git a/init/Kconfig b/init/Kconfig
+index 38c1cfcce821..2d3d5caee1e0 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -1909,7 +1909,6 @@ config RUST
+ 	depends on !MODVERSIONS
+ 	depends on !GCC_PLUGIN_RANDSTRUCT
+ 	depends on !RANDSTRUCT
+-	depends on !SHADOW_CALL_STACK
+ 	depends on !DEBUG_INFO_BTF || PAHOLE_HAS_LANG_EXCLUDE
+ 	help
+ 	  Enables Rust support in the kernel.
 
+---
+base-commit: 12f2c9d5c2bef419700514ca627e3a5c27f380d9
+change-id: 20240304-shadow-call-stack-9c197a4361d9
+
+Best regards,
 -- 
-2.39.2
+Alice Ryhl <aliceryhl@google.com>
 
 
