@@ -1,149 +1,138 @@
-Return-Path: <linux-kernel+bounces-306551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0CB9964062
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 11:40:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 310ED964068
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 11:41:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3D3A1C24688
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 09:40:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBB3928194B
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 09:41:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76F7C18EFF1;
-	Thu, 29 Aug 2024 09:39:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DDE818FC93;
+	Thu, 29 Aug 2024 09:39:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GLA3aMAO"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="VXYyxIys"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 026BF18E74E;
-	Thu, 29 Aug 2024 09:39:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CE1218FDA5
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 09:39:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724924345; cv=none; b=sq0S/WK8N8KGK91W/7pxZmVS+xH3hY+EJAhL63tJ7CIVynFRejzej4N4lrori55k0TAnCL4g/NchRMuwAkkJkPUuC2SC+/uTeYkw7KmYSpg35lE1JblBbnCq/Lg1NMph5Y9Z7wgEZ+ugAseQ7ht2S1qQlD0vutOz7DF3lbAxzuU=
+	t=1724924366; cv=none; b=H+mnpeepy1WDT9Grx8NKWtCd8x76jRPblC6uReCeTBJ+KU3cySdUKEZ6Vq4aopS0cvv7TNFv6T6BaJj7UK1X2EcK8URy+MfLq8pD0q6RVDIjtl1TPr391h633oZjnxwIbm1fTCWeRG92oSngrYau/xjLZ0CLQFZXmdDA+KKaIzE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724924345; c=relaxed/simple;
-	bh=QWSike9VpwQyStGczi0sxlL099ZlneJb2gi1J/Ddo8A=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=bgPpbcrZ4bX5Ov5nM/OvMEeGHiPFW0ycuV/DFu1kJcQQRpVQF7B3x8XQ0Wfr3US9Af/O4sEdCbcZT31nlPuriWvlcztLvB8ll61ynOu+m805C+pZzztwepLBBDe/+8L8jlmbhUOp+c4DcEMgIK1+SKKbYcMT3NVcXAuartMdloI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GLA3aMAO; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2f4f8742138so5214361fa.0;
-        Thu, 29 Aug 2024 02:39:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724924342; x=1725529142; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2hbF3uMnM7NmwPcRt6ZaNxjqp4u1ebyZqTFRyY9sGTo=;
-        b=GLA3aMAO+Iqu28/in5dzl3Jqsfz7AiBrvre5Ksq+No/6Qv3+aB4xVuzt1zgQgSMwxq
-         UW+o1Vf5hlllLVeJ95hBXcYZVSaxAI0tUpJeZ5eXChtscJ3eYnLGjaEc+aNRhXBA/7cQ
-         bbTWp5tgKyz26kJWu+oQMBXUC3/0BVBEy5SNHEjlE+53wJrNByukduiknZjqfg02Ne4p
-         7NCentAH4IHd5inCj6gm9+Hxtm5a0nFYhO0mkHYXEWqdjFLrLmVKXofVNXuWQ+L8k0Gt
-         pVz/ifRBKK7Y8LyMuhgUkFdi/AylwjQ4CGa20PIMF69y8i444966A1TIHYxYlNiPI8lq
-         Urvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724924342; x=1725529142;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2hbF3uMnM7NmwPcRt6ZaNxjqp4u1ebyZqTFRyY9sGTo=;
-        b=LyIAW2F6zWb7GExMjvoGQ8aWK0JXb2kjtE8J//XQdH1JlksVli6N4kw9Uqn4D2y+Zb
-         yvrs3oY6QLyM8+lFUHz+L/PF7eY8S7tc4qUBBFcdtpVbSGdEwHleZ+ltekeFtI1TSVoT
-         kn5H32iwAvGOEM8afo4wCyT6NFWwuBLzD2JuyQpgogHpoytyDD1i1zZwj+FdcVQrlWUy
-         NE4q4txQsxaVaJjN9jIcSEGxp2tC9WhenTdFgW3F9BpYoacKr1abjPF4ZDtCSzwDztq5
-         DiUjk75uDOFYnfTYKx9EKeMVP7Hnj/P4v8ZpUNj1mZ8MLxnPk+PfpDnz5UUSf1QjXwSk
-         W9QA==
-X-Forwarded-Encrypted: i=1; AJvYcCVFfxHTHauRzsldkO8Zw4W2X+yOfDnXBrmNz9XHVvbRHAMy6hJ63E5DY4ny51AHo5b7+JhJPBdqC0mU@vger.kernel.org, AJvYcCVVra0aSOgZhGwP6h2CXP0G4jbqq+3o7hLhjeZeA4/LQsoVLOAqX2T5sPrxrvPYvROy28XBnwAKP/YRfEA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2V1iz89+wvh/L06JoXGCbdC1v9niP/pw5X+wIFsjVvI/4cD6a
-	XQ3idfIEwJt9YwiTaE8vV8EVpBLLlVC7bDt5DXqvjfnLmDg+XaDW
-X-Google-Smtp-Source: AGHT+IEl3gdYEee1AFWa2qjbOMcMGHCyHZVZXt92+u4wIHzgP73YdKmvKxD+7CNkAiMz6DGvnkoN2A==
-X-Received: by 2002:a2e:be89:0:b0:2ef:2450:81f3 with SMTP id 38308e7fff4ca-2f6105b5720mr17354741fa.6.1724924341444;
-        Thu, 29 Aug 2024 02:39:01 -0700 (PDT)
-Received: from [192.168.1.105] ([178.176.75.17])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f614f37dc3sm1316491fa.59.2024.08.29.02.38.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 29 Aug 2024 02:39:00 -0700 (PDT)
-Subject: Re: [PATCH] usb: xHCI: add XHCI_RESET_ON_RESUME quirk for Phytium
- xHCI host
-To: WangYuli <wangyuli@uniontech.com>, mathias.nyman@intel.com,
- gregkh@linuxfoundation.org, bhelgaas@google.com
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pci@vger.kernel.org, guanwentao@uniontech.com, zhanjun@uniontech.com,
- Chen Baozi <chenbaozi@phytium.com.cn>,
- Wang Zhimin <wangzhimin1179@phytium.com.cn>,
- Chen Zhenhua <chenzhenhua@phytium.com.cn>,
- Wang Yinfeng <wangyinfeng@phytium.com.cn>,
- Jiakun Shuai <shuaijiakun1288@phytium.com.cn>
-References: <59E000092FD56E43+20240829073005.304698-1-wangyuli@uniontech.com>
-From: Sergei Shtylyov <sergei.shtylyov@gmail.com>
-Message-ID: <99754b01-51a0-29d3-6022-4e25130ff36a@gmail.com>
-Date: Thu, 29 Aug 2024 12:38:58 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+	s=arc-20240116; t=1724924366; c=relaxed/simple;
+	bh=mPEgUwqXJ+dLMm0555Ct6+WFU/Cz4/yQ7cT5iaJEEXE=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:References; b=P7aSJqP7WZSaGi7Co/2YGjc2HN4bzgs/KxQiAGBxgw0PL8Pgz47ADQ0P2M8FTUKrE/PnQz1uAIhwUXp3WiSR9ktOc29zQwBxIMbnufqRrdkXgaMwUWonB7ef33XUxdJsNZHU9PKclto1JbDAqTe7D2at29Yxe13srOzCheuKPnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=VXYyxIys; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240829093921epoutp03db35132e02443e32ae1ac0e5f382b817~wKZFJk69n0443304433epoutp03M
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 09:39:21 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240829093921epoutp03db35132e02443e32ae1ac0e5f382b817~wKZFJk69n0443304433epoutp03M
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1724924361;
+	bh=GZRN+8ZynbevAb3kkWyb73pK4GPrzyCiUbupj7z9a7Q=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=VXYyxIyswHqhpsrMVIBPxbyNenM7F4alERcnsi9S/rSsOGi1TFIjM15ugJ7l8UnZw
+	 XbljEtYd8Q1EH9Ufes4syYrAPnKvYfArEqUhdO2vv1MWuTriqVM9+aHysOdFcw14Eq
+	 bnV0Lp3qQQnC6yfyVGCzJgqcz5j2QC/jJsDGM9lo=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+	epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+	20240829093920epcas1p4120a49f57f2f0f8a529955adbca34e73~wKZEk3TuM0337203372epcas1p4S;
+	Thu, 29 Aug 2024 09:39:20 +0000 (GMT)
+Received: from epsmgec1p1.samsung.com (unknown [182.195.38.243]) by
+	epsnrtp1.localdomain (Postfix) with ESMTP id 4WvbpJ3v3Wz4x9Pv; Thu, 29 Aug
+	2024 09:39:20 +0000 (GMT)
+Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
+	epsmgec1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	93.C4.08992.8C140D66; Thu, 29 Aug 2024 18:39:20 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240829093920epcas1p1cf45ac0cd7d4ed8cf39ff5f1d1b4fe00~wKZEBz55X2152721527epcas1p1V;
+	Thu, 29 Aug 2024 09:39:20 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240829093920epsmtrp10c5e4f30ba25b718b9f3ef5263e1e95b~wKZEA5Lr32611826118epsmtrp1x;
+	Thu, 29 Aug 2024 09:39:20 +0000 (GMT)
+X-AuditID: b6c32a33-96dfa70000002320-4f-66d041c87b90
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	43.8B.08456.7C140D66; Thu, 29 Aug 2024 18:39:19 +0900 (KST)
+Received: from localhost.localdomain (unknown [10.253.98.171]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240829093919epsmtip25f86e920d8cfa8dbce588cc615df2238~wKZDshxHy1298212982epsmtip2j;
+	Thu, 29 Aug 2024 09:39:19 +0000 (GMT)
+From: Seunghwan Baek <sh8267.baek@samsung.com>
+To: linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
+	martin.petersen@oracle.com, James.Bottomley@HansenPartnership.com,
+	bvanassche@acm.org, avri.altman@wdc.com, alim.akhtar@samsung.com
+Cc: grant.jung@samsung.com, jt77.jang@samsung.com, junwoo80.lee@samsung.com,
+	dh0421.hwang@samsung.com, jangsub.yi@samsung.com, sh043.lee@samsung.com,
+	cw9316.lee@samsung.com, sh8267.baek@samsung.com, wkon.kim@samsung.com
+Subject: [PATCH v1 0/1] Set SDEV_OFFLINE when ufs shutdown.
+Date: Thu, 29 Aug 2024 18:39:12 +0900
+Message-Id: <20240829093913.6282-1-sh8267.baek@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrKKsWRmVeSWpSXmKPExsWy7bCmvu4JxwtpBos7ZSwezNvGZvHy51U2
+	i2kffjJbzDjVxmqx79pJdotff9ezW2zs57Do2DqZyWLH8zPsFrv+NjNZXN41h82i+/oONovl
+	x/8xWTT92cdice3MCVaLzZe+sTgIeFy+4u0xbdIpNo+PT2+xePRtWcXo8XmTnEf7gW6mALao
+	bJuM1MSU1CKF1Lzk/JTMvHRbJe/geOd4UzMDQ11DSwtzJYW8xNxUWyUXnwBdt8wcoLOVFMoS
+	c0qBQgGJxcVK+nY2RfmlJakKGfnFJbZKqQUpOQVmBXrFibnFpXnpenmpJVaGBgZGpkCFCdkZ
+	m3vmshZMYKp4d2MNWwPjNcYuRg4OCQETid6dyV2MXBxCAjsYJfav/8QK4XxilPi/9xwjhPON
+	UaJp4nHmLkZOsI4vfY/YIBJ7GSX6rr5ignA+M0r8bjnGBlLFJqAn8ar9MFiViMBRRolb2x6A
+	zWIWuA+05eAfRpAqYQFriUsrtrCBXMIioCpxel84SJgXKHx/00cWiHXyEqs3HGAG6ZUQ+Mou
+	8fveLKiEi8SuEwegbGGJV8e3sEPYUhIv+9ug7GKJhRsnsUA0tzBKXF8OsVhCwF6iubUZbDGz
+	gKbE+l36IGFmAT6Jd197WCEhwyvR0SYEUa0qcWrDVqhOaYnrzQ2sELaHxLn/c8BWCQnEShza
+	vpJ9AqPMLIShCxgZVzGKpRYU56anJhsWGMKjJjk/dxMjOP1pGe9gvDz/n94hRiYOxkOMEhzM
+	SiK8J46fTRPiTUmsrEotyo8vKs1JLT7EaAoMo4nMUqLJ+cAEnFcSb2hiaWBiZmRiYWxpbKYk
+	znvmSlmqkEB6YklqdmpqQWoRTB8TB6dUA9P0/4+a+i9M7tt35k37NXb/9teMDUYH39zb4v00
+	ddK3esEsc4YdqyZP83M2n/PkgPukZ5X/U96vX8vorNe79WNKwbPPi528VQN/OJVeNvkV8CV7
+	vsSnayvt3I+wf39ocW7+Yx5Pln8q2V/q2IQs8jmY3lzq2bxDYMOMXw8Mj7SZWdqqi5Vxtp2b
+	uuXLXbNmpe1RM+POea4uEBT591nrabi+5ZfejRNvrlkQELXmwpYJuVOqSitXfFcVlnV+f/9s
+	yOLViyp+KmSlmhRO1qxOCz+fLuw+2cwuwUfwX6ePjJmo98xKzbDQxq5YzrfhB528bCSLPr19
+	w7TVbUY5051j78K2dx3fPaNv7j3H9GzHb9OVWIozEg21mIuKEwFPISTvCAQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrLLMWRmVeSWpSXmKPExsWy7bCSvO5xxwtpBls2mVo8mLeNzeLlz6ts
+	FtM+/GS2mHGqjdVi37WT7Ba//q5nt9jYz2HRsXUyk8WO52fYLXb9bWayuLxrDptF9/UdbBbL
+	j/9jsmj6s4/F4tqZE6wWmy99Y3EQ8Lh8xdtj2qRTbB4fn95i8ejbsorR4/MmOY/2A91MAWxR
+	XDYpqTmZZalF+nYJXBmbe+ayFkxgqnh3Yw1bA+M1xi5GTg4JAROJL32P2LoYuTiEBHYzSvya
+	3cMEkZCWeHzgJVARB5AtLHH4cDFEzUdGiYXfIJrZBPQkXrUfZgOxRQTOMkocnVgAYjMLvGaU
+	6LoQAWILC1hLXFqxhQ1kDouAqsTpfeEgYV6g8P1NH1kgVslLrN5wgHkCI88CRoZVjJKpBcW5
+	6bnFhgVGeanlesWJucWleel6yfm5mxjBIaqltYNxz6oPeocYmTgYDzFKcDArifCeOH42TYg3
+	JbGyKrUoP76oNCe1+BCjNAeLkjjvt9e9KUIC6YklqdmpqQWpRTBZJg5OqQamaR73Oe6UqfvV
+	+sQ35Dw6OcFUue5tYvmr2vzN4lJFd74HHz7IcvqJnJjalH2Fr8yXJq5PPxAYu+TO7qYkoxez
+	78ef+nRDeb7S/+y0W9Wa1hyGS3JKpnQucJbW2DF5XcdVjqtflkiIF8ySfPd+ynFx/kiPG+KF
+	sUenLfftL9JeE2gqa63+7Urol6dGu2If9Pyo0Ds1vdyodpuZ5DrZuNXebYUHFY5N63hy80m5
+	ybfkvb/KJ/z7vkhe+5/7qt2Kj1p+fymOLmqP877pOMHNP/3J7ojq3OfbXNw3TdFS0ZA9EePx
+	cVWVgHXgaYMr31fdTJZ7yKV67IaFw+OW526/ZTR4arWDYjWlu1UWmN3+/3GGEktxRqKhFnNR
+	cSIAJNBEEMACAAA=
+X-CMS-MailID: 20240829093920epcas1p1cf45ac0cd7d4ed8cf39ff5f1d1b4fe00
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240829093920epcas1p1cf45ac0cd7d4ed8cf39ff5f1d1b4fe00
+References: <CGME20240829093920epcas1p1cf45ac0cd7d4ed8cf39ff5f1d1b4fe00@epcas1p1.samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <59E000092FD56E43+20240829073005.304698-1-wangyuli@uniontech.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
 
-On 8/29/24 10:30 AM, WangYuli wrote:
+When ufs shutdown, set SDEV_OFFLINE instead of SDEV_QUIESCE for all lus
+except device wlun.
 
-> The resume operation of Phytium Px210 xHCI host would failed
+Seunghwan Baek (1):
+  ufs: core: set SDEV_OFFLINE when ufs shutdown.
 
-   Fail?
+ drivers/ufs/core/ufshcd.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-> to restore state. Use the XHCI_RESET_ON_RESUME quirk to skip
-> it and reset the controller after resume.
-> 
-> Co-developed-by: Chen Baozi <chenbaozi@phytium.com.cn>
-> Signed-off-by: Chen Baozi <chenbaozi@phytium.com.cn>
-> Co-developed-by: Wang Zhimin <wangzhimin1179@phytium.com.cn>
-> Signed-off-by: Wang Zhimin <wangzhimin1179@phytium.com.cn>
-> Co-developed-by: Chen Zhenhua <chenzhenhua@phytium.com.cn>
-> Signed-off-by: Chen Zhenhua <chenzhenhua@phytium.com.cn>
-> Co-developed-by: Wang Yinfeng <wangyinfeng@phytium.com.cn>
-> Signed-off-by: Wang Yinfeng <wangyinfeng@phytium.com.cn>
-> Co-developed-by: Jiakun Shuai <shuaijiakun1288@phytium.com.cn>
-> Signed-off-by: Jiakun Shuai <shuaijiakun1288@phytium.com.cn>
-> Signed-off-by: WangYuli <wangyuli@uniontech.com>
-[...]
+-- 
+2.17.1
 
-> diff --git a/drivers/usb/host/xhci-pci.c b/drivers/usb/host/xhci-pci.c
-> index b5705ed01d83..af967644489c 100644
-> --- a/drivers/usb/host/xhci-pci.c
-> +++ b/drivers/usb/host/xhci-pci.c
-> @@ -55,6 +55,8 @@
->  #define PCI_DEVICE_ID_INTEL_ALDER_LAKE_PCH_XHCI		0x51ed
->  #define PCI_DEVICE_ID_INTEL_ALDER_LAKE_N_PCH_XHCI	0x54ed
->  
-> +#define PCI_DEVICE_ID_PHYTIUM_XHCI			0xdc27
-> +
->  /* Thunderbolt */
->  #define PCI_DEVICE_ID_INTEL_MAPLE_RIDGE_XHCI		0x1138
->  #define PCI_DEVICE_ID_INTEL_ALPINE_RIDGE_2C_XHCI	0x15b5
-> @@ -407,6 +409,10 @@ static void xhci_pci_quirks(struct device *dev, struct xhci_hcd *xhci)
->  	if (pdev->vendor == PCI_VENDOR_ID_VIA)
->  		xhci->quirks |= XHCI_RESET_ON_RESUME;
->  
-> +	if (pdev->vendor == PCI_VENDOR_ID_PHYTIUM ||
-
-   Hm, ||, not &&?
-
-> +	    pdev->device == PCI_DEVICE_ID_PHYTIUM_XHCI)
-> +		xhci->quirks |= XHCI_RESET_ON_RESUME;
-> +
->  	/* See https://bugzilla.kernel.org/show_bug.cgi?id=79511 */
->  	if (pdev->vendor == PCI_VENDOR_ID_VIA &&
->  			pdev->device == 0x3432)
-[...]
-
-MBR, Sergey
 
