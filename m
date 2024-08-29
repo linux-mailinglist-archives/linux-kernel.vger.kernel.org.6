@@ -1,153 +1,609 @@
-Return-Path: <linux-kernel+bounces-307636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E69499650A2
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 22:17:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B55B9650A3
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 22:17:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25CC71C22B5D
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 20:17:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13322284C61
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 20:17:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 269A41BAED3;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A99D1BAEDD;
 	Thu, 29 Aug 2024 20:17:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="H2LTMSq8"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FZIqLTQY"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06F2926296
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 20:17:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE93D1B5EC1
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 20:17:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724962656; cv=none; b=T3Iw0Ntu2NpIUAhfWiJ/UJaLpkVzhHvr5ngjsQ8rB9MHzYFAeiIJwRppcdZYENcL7GssyucQquUNYQbL+WwbsmScYag3D/Edikc7S4uqa1mPCh0vYaP5Pu6NPfiXhc9YasCAL1RQ7U71ABiSW2Ag537dQmlNdzZjntzzcfY20Fw=
+	t=1724962656; cv=none; b=WBQcGreGoYpJzLf++45Wa/GIGE3Z8umhltegXNF1241KZSKiquS9KBw/qMFGp3iIQWmhSiMLe/h9rKDPYxdFcsolxLGSPGbCwohySGLQ8JamvGIPHHi6YC93LTVbl1MYuyMIFgsyKt/dLaWltZZ7EBLz70zsSp9UalEM5RAKkX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1724962656; c=relaxed/simple;
-	bh=CrkWyT8pe3Nd1uhQnHymqD0o3bjBUQXEIDkpFvPBmdY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=n5xjidEGxREIYW1jWvFcKia79hk/cAg5Cn7+XVxTmIgJIGLj4XQCEK0ksOC0zm8mmIov/a36FS372ZG7XX20KF0x9yEZ+IyeM+kL13/sOpc5I5WHoeOMGimgg9T+Da6zopp1Tg7v8hKq5+N0JGDn7NOgBy0bnOoYeW3/+EUoQ8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=H2LTMSq8; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-201fed75b38so13475ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 13:17:34 -0700 (PDT)
+	bh=bmhug5e31gczYnSrrQ/ZrUmZfDtHNN+92ZTU+nY1Euw=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=rW8sjusdCtyyzTv8UfYgLpSPX4skcA5zUS0yQPw341ZussUzwyAcBlyG+ROKyAes8+4vJ0Mu4mOhmVvTfMLhKOy9psA208OF1bNocuDFoEfbxcB/LCNVvewMb6B4E8kXCfpSu6gS0+uKd6PtrEjp7rg1eChzgckVmv70rO32tPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FZIqLTQY; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4280bca3960so9380495e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 13:17:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724962654; x=1725567454; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VJMs50eYovIDOFEhpZInzBfPSvFGV4+H7LoK3B/OWoE=;
-        b=H2LTMSq8WsQI5lNdjj7Ij3SHv5kzH8w4fbKvT4qH7Zyxt9VS41Etu/YjMO/zHH6tZG
-         2eKnwUR3sqJ/JXu5VNrBtLk+dHYWxbLTR0ePpCMr02zmFhM/gd53U8Dxzdpno4i7jXI8
-         0OQCj+hxie00ZMhm0zl6gq8MaEnyIHgSXp1XtvIby6F8w0X64WkNRcAY/gv7qzwCIs4L
-         1rQYhAPtAJPt0TbhuEhs4MVT0ci+NDwsvnb3HRrdgEWoXnudaSeeEYEqDgvXExm+8UrZ
-         zjXRc2/R/1odr2OJsCFiGQfuH4TKOX09rWQZPuARIf6v4W5tNksmR1a3PmqkN1fdmcFq
-         Wfdg==
+        d=linaro.org; s=google; t=1724962651; x=1725567451; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=b76Wbr7PFqXYp0RH7MReormvqHDR4gkLWHSdXWuSZbs=;
+        b=FZIqLTQY7Z/rP8pGKqGzRXIQjhJqhnbx2FFkbg7CKBoXD8IQyu1YswsNIHYm+poPrJ
+         qofWIqvIGjzIWj7axt3jelaakoZ8j285X+UA1c9MM5SNtRgOWyx4zjslEVNYd6DbbXtN
+         QQUdLakxsY0eNsJ6WZoWjHbJXnjuZYUlGv0uTOr16KnclzvlwOXdORkjDZAbN22+0nsO
+         bURKgYmlppYqimw1NZYvhJf58gq3UrFz24cv7QiIHabe1qkzHByrgW59X143cjE8uGDL
+         ob27zijObY3lPNv/CYRh0p6opE5EfTeeEsiW8EbMQZKo4I9GkjnUw17yUpfWCQyfxY+j
+         4oVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724962654; x=1725567454;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VJMs50eYovIDOFEhpZInzBfPSvFGV4+H7LoK3B/OWoE=;
-        b=oqNogzc3475zGxyVD0c4dn+Xk3FEkI7pCbwRW0dCnOBe8hmSHOAu7AS2pyeve8zj9m
-         4I3XSKjye72WOvZBiaxcjTwIcoc6LyhPxuDpmhjm7DOqfXnICrWKQl5bTwgrvba+f+iG
-         6jRCpc/IVoOxQMzLhbs4rZvGQ/Go0XdDj0LSlZIWseF2cWDTx0xQP/7Dvb/3+CGOqqbF
-         lo5YZ+tNuVjpFGQYKyDgwz+JGKO3ZdWA0Gx/xX1EXURIcEkwM8bq1vggrHBgPYYCGoGm
-         /k8V2GVF4dz6q7497Y7BiTPaRyHQ67nHrHfSxRn0iN/A1zO27SAUoY7u0XkxIyPRBGBK
-         7tyA==
-X-Forwarded-Encrypted: i=1; AJvYcCUxyw+3ZBdwGwiAGCUKz1spUCNsZcwZOIT3QYTDtatjw8xmlOW2fVUXwOOqBMF0MRqu0AS7OjkCRvM4OWc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzxmiTzSE/9BxO4WoaBZkM9UjlpSb1kWVjB/l51g/gUXNV1FHP
-	aNu7ielyKCJvR7ZuxtMLyQS9o8L8SHYSyN4H+2bEZh9IQucQzcu3126hxalJRnWcd3N4mSdvv89
-	YN6mugNKsbBX8zjV2b65n0EsWT28GyyPUr52M
-X-Google-Smtp-Source: AGHT+IFkkYHj2L1ALDI9BMs5KndvjNqvefCuumyrWxnld/zPA5GPvJU/HkeNTbD8gfSM9TDCAZllylLFiNeb3cTLltY=
-X-Received: by 2002:a17:902:e54f:b0:1fa:f738:62fd with SMTP id
- d9443c01a7336-20524bca3acmr576955ad.7.1724962653789; Thu, 29 Aug 2024
- 13:17:33 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724962651; x=1725567451;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=b76Wbr7PFqXYp0RH7MReormvqHDR4gkLWHSdXWuSZbs=;
+        b=e3YI737C3btSz1nXX+nfn+6LWGUEVtSM/8yBbSNo7/u2xmM3i9/TXvURXWNXiZwLAk
+         LsBqQr9VBoKmTGamcFegiH3oPD05A+qqYjkJQCYgxG9q2Wygo3K/yUwfv4nMbHfgDKYv
+         /tonrm83hUO0sCUT+3LX6zjtcfRuLV3hd9acjqQ5ti3pWan7PlQ1Npd59hcZKnNfKfie
+         g2csCP9WtwkKiI7qRaltbSglZA8drdCxCsS6X+8Y5zn4Be6vHdOvVup/ReAFkLlyqIEy
+         n2S2pSVbAf1WBIKzAbmJUw6gO5e8hxKu3KXcTWg+lxf3/hFpoKEpoiW7COAjtRT164al
+         czow==
+X-Forwarded-Encrypted: i=1; AJvYcCUuv7Nl1pyc3NKMkEWJ5Fd13xDaMiom//lw7X3+vetjS5Bk1WOTfrJjvq525VKsggghOhoDsQTRgOqT/3c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2tAJimkhLOn4DS/3J3oiYEsz0epsfITxSVDOkYbAMevBStuzB
+	iKPjyVAsgI1bUMMzP+cFy/p3nDDqirRpRO0IT4awJL70twqIc/M7QRSiIJ/mh8E=
+X-Google-Smtp-Source: AGHT+IGs6CVUbEG3Pn+UUbtTNtWRUcvb5/ocLwuYt472TmOUUmU/PQ3QeMve8wCMJL5Ptm5n5wA3sA==
+X-Received: by 2002:a05:600c:3ca1:b0:428:23c8:1e54 with SMTP id 5b1f17b1804b1-42bb025c135mr36378015e9.18.1724962650816;
+        Thu, 29 Aug 2024 13:17:30 -0700 (PDT)
+Received: from ubuntu-vm.. (51-148-40-55.dsl.zen.co.uk. [51.148.40.55])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3749ee76c84sm2230588f8f.45.2024.08.29.13.17.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Aug 2024 13:17:30 -0700 (PDT)
+From: Adhemerval Zanella <adhemerval.zanella@linaro.org>
+To: "Jason A . Donenfeld" <Jason@zx2c4.com>,
+	Theodore Ts'o <tytso@mit.edu>,
+	linux-kernel@vger.kernel.org,
+	linux-crypto@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-arch@vger.kernel.org,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Eric Biggers <ebiggers@kernel.org>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>
+Subject: [PATCH v2] aarch64: vdso: Wire up getrandom() vDSO implementation
+Date: Thu, 29 Aug 2024 20:17:14 +0000
+Message-ID: <20240829201728.2825-1-adhemerval.zanella@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ZroIIXkmErNGZjQO@x1> <e26941f9-f86c-4f2e-b812-20c49fb2c0d3@redhat.com>
-In-Reply-To: <e26941f9-f86c-4f2e-b812-20c49fb2c0d3@redhat.com>
-From: Ian Rogers <irogers@google.com>
-Date: Thu, 29 Aug 2024 13:17:13 -0700
-Message-ID: <CAP-5=fXFH8aqxzCVAgRRdZufUdiC2UMBApEeSnak3yhZ_CXNyA@mail.gmail.com>
-Subject: Re: [PATCH 1/1] perf tests pmu: Initialize all fields of test_pmu variable
-To: Veronika Molnarova <vmolnaro@redhat.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
-	James Clark <james.clark@arm.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Kan Liang <kan.liang@linux.intel.com>, Michael Petlan <mpetlan@redhat.com>, 
-	Namhyung Kim <namhyung@kernel.org>, Radostin Stoyanov <rstoyano@redhat.com>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 12, 2024 at 7:05=E2=80=AFAM Veronika Molnarova <vmolnaro@redhat=
-.com> wrote:
->
->
->
-> On 8/12/24 15:03, Arnaldo Carvalho de Melo wrote:
-> > Instead of explicitely initializing just the .name and .alias_name,
-> > use struct member named initialization of just the non-null -name field=
-,
-> > the compiler will initialize all the other non-explicitely initialized
-> > fields to NULL.
-> >
-> > This makes the code more robust, avoiding the error recently fixed when
-> > the .alias_name was used and contained a random value.
-> >
-> > Cc: Adrian Hunter <adrian.hunter@intel.com>
-> > Cc: Ian Rogers <irogers@google.com>
-> > Cc: James Clark <james.clark@arm.com>
-> > Cc: Jiri Olsa <jolsa@kernel.org>
-> > Cc: Kan Liang <kan.liang@linux.intel.com>
-> > Cc: Michael Petlan <mpetlan@redhat.com>
-> > Cc: Namhyung Kim <namhyung@kernel.org>
-> > Cc: Radostin Stoyanov <rstoyano@redhat.com>
-> > Cc: Veronika Molnarova <vmolnaro@redhat.com>
-> > Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-> > ---
-> >  tools/perf/tests/pmu.c | 6 +++---
-> >  1 file changed, 3 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/tools/perf/tests/pmu.c b/tools/perf/tests/pmu.c
-> > index a4730b5dc0d9259d..be18506f6a242546 100644
-> > --- a/tools/perf/tests/pmu.c
-> > +++ b/tools/perf/tests/pmu.c
-> > @@ -458,10 +458,10 @@ static int test__name_cmp(struct test_suite *test=
- __maybe_unused, int subtest __
-> >   */
-> >  static int test__pmu_match(struct test_suite *test __maybe_unused, int=
- subtest __maybe_unused)
-> >  {
-> > -     struct perf_pmu test_pmu;
-> > -     test_pmu.alias_name =3D NULL;
-> > +     struct perf_pmu test_pmu =3D {
-> > +             .name =3D "pmuname",
-> > +     };
-> >
-> > -     test_pmu.name =3D "pmuname";
-> >       TEST_ASSERT_EQUAL("Exact match", perf_pmu__match(&test_pmu, "pmun=
-ame"),      true);
-> >       TEST_ASSERT_EQUAL("Longer token", perf_pmu__match(&test_pmu, "lon=
-gertoken"), false);
-> >       TEST_ASSERT_EQUAL("Shorter token", perf_pmu__match(&test_pmu, "pm=
-u"),        false);
->
-> Reviewed-by: Veronika Molnarova <vmolnaro@redhat.com>
->
-> Thanks for the rework,
-> Veronika
+Hook up the generic vDSO implementation to the aarch64 vDSO data page.
+The _vdso_rng_data required data is placed within the _vdso_data vvar
+page, by using a offset larger than the vdso_data.
 
-This seems like a simple enough fix for a test that it could be
-cherry-picked into perf-tools for v6.11, I'm not seeing it currently:
-https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools.git/log/too=
-ls/perf/tests/pmu.c?h=3Dperf-tools
+The vDSO function requires a ChaCha20 implementation that does not
+write to the stack, and that can do an entire ChaCha20 permutation.
+The one provided is based on the current chacha-neon-core.S and uses NEON
+on the permute operation. The fallback for chips that do not support
+NEON issues the syscall.
 
-Thanks,
-Ian
+This also passes the vdso_test_chacha test along with
+vdso_test_getrandom. The vdso_test_getrandom bench-single result on
+Neoverse-N1 shows:
+
+   vdso: 25000000 times in 0.746506464 seconds
+   libc: 25000000 times in 8.849179444 seconds
+syscall: 25000000 times in 8.818726425 seconds
+
+Changes from v1:
+- Fixed style issues and typos.
+- Added fallback for systems without NEON support.
+- Avoid use of non-volatile vector registers in neon chacha20.
+- Use c-getrandom-y for vgetrandom.c.
+- Fixed TIMENS vdso_rnd_data access.
+
+Signed-off-by: Adhemerval Zanella <adhemerval.zanella@linaro.org>
+---
+ arch/arm64/Kconfig                         |   1 +
+ arch/arm64/include/asm/vdso.h              |   6 +
+ arch/arm64/include/asm/vdso/getrandom.h    |  49 ++++++
+ arch/arm64/include/asm/vdso/vsyscall.h     |  10 ++
+ arch/arm64/kernel/vdso.c                   |   6 -
+ arch/arm64/kernel/vdso/Makefile            |  11 +-
+ arch/arm64/kernel/vdso/vdso                |   1 +
+ arch/arm64/kernel/vdso/vdso.lds.S          |   4 +
+ arch/arm64/kernel/vdso/vgetrandom-chacha.S | 168 +++++++++++++++++++++
+ arch/arm64/kernel/vdso/vgetrandom.c        |  15 ++
+ lib/vdso/getrandom.c                       |   1 +
+ tools/arch/arm64/vdso                      |   1 +
+ tools/include/linux/compiler.h             |   4 +
+ tools/testing/selftests/vDSO/Makefile      |   5 +-
+ 14 files changed, 273 insertions(+), 9 deletions(-)
+ create mode 100644 arch/arm64/include/asm/vdso/getrandom.h
+ create mode 120000 arch/arm64/kernel/vdso/vdso
+ create mode 100644 arch/arm64/kernel/vdso/vgetrandom-chacha.S
+ create mode 100644 arch/arm64/kernel/vdso/vgetrandom.c
+ create mode 120000 tools/arch/arm64/vdso
+
+diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+index a2f8ff354ca6..7f7424d1b3b8 100644
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -262,6 +262,7 @@ config ARM64
+ 	select TRACE_IRQFLAGS_NMI_SUPPORT
+ 	select HAVE_SOFTIRQ_ON_OWN_STACK
+ 	select USER_STACKTRACE_SUPPORT
++	select VDSO_GETRANDOM
+ 	help
+ 	  ARM 64-bit (AArch64) Linux support.
+ 
+diff --git a/arch/arm64/include/asm/vdso.h b/arch/arm64/include/asm/vdso.h
+index 4305995c8f82..18407b757c95 100644
+--- a/arch/arm64/include/asm/vdso.h
++++ b/arch/arm64/include/asm/vdso.h
+@@ -16,6 +16,12 @@
+ 
+ #ifndef __ASSEMBLY__
+ 
++enum vvar_pages {
++	VVAR_DATA_PAGE_OFFSET,
++	VVAR_TIMENS_PAGE_OFFSET,
++	VVAR_NR_PAGES,
++};
++
+ #include <generated/vdso-offsets.h>
+ 
+ #define VDSO_SYMBOL(base, name)						   \
+diff --git a/arch/arm64/include/asm/vdso/getrandom.h b/arch/arm64/include/asm/vdso/getrandom.h
+new file mode 100644
+index 000000000000..fca66ba49d4c
+--- /dev/null
++++ b/arch/arm64/include/asm/vdso/getrandom.h
+@@ -0,0 +1,49 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++
++#ifndef __ASM_VDSO_GETRANDOM_H
++#define __ASM_VDSO_GETRANDOM_H
++
++#ifndef __ASSEMBLY__
++
++#include <asm/vdso.h>
++#include <asm/unistd.h>
++#include <vdso/datapage.h>
++
++/**
++ * getrandom_syscall - Invoke the getrandom() syscall.
++ * @buffer:	Destination buffer to fill with random bytes.
++ * @len:	Size of @buffer in bytes.
++ * @flags:	Zero or more GRND_* flags.
++ * Returns:	The number of random bytes written to @buffer, or a negative value indicating an error.
++ */
++static __always_inline ssize_t getrandom_syscall(void *_buffer, size_t _len, unsigned int _flags)
++{
++	register void *buffer asm ("x0") = _buffer;
++	register size_t len asm ("x1") = _len;
++	register unsigned int flags asm ("x2") = _flags;
++	register long ret asm ("x0");
++	register long nr asm ("x8") = __NR_getrandom;
++
++	asm volatile(
++	"       svc #0\n"
++	: "=r" (ret)
++	: "r" (buffer), "r" (len), "r" (flags), "r" (nr)
++	: "memory");
++
++	return ret;
++}
++
++static __always_inline const struct vdso_rng_data *__arch_get_vdso_rng_data(void)
++{
++	/*
++	 * If a task belongs to a time namespace then a namespace the real
++	 * VVAR page is mapped with the VVAR_TIMENS_PAGE_OFFSET.
++	 */
++	if (IS_ENABLED(CONFIG_TIME_NS) && _vdso_data->clock_mode == VDSO_CLOCKMODE_TIMENS)
++		return (void*)&_vdso_rng_data + VVAR_TIMENS_PAGE_OFFSET * PAGE_SIZE;
++	return &_vdso_rng_data;
++}
++
++#endif /* !__ASSEMBLY__ */
++
++#endif /* __ASM_VDSO_GETRANDOM_H */
+diff --git a/arch/arm64/include/asm/vdso/vsyscall.h b/arch/arm64/include/asm/vdso/vsyscall.h
+index f94b1457c117..2a87f0e1b144 100644
+--- a/arch/arm64/include/asm/vdso/vsyscall.h
++++ b/arch/arm64/include/asm/vdso/vsyscall.h
+@@ -2,8 +2,11 @@
+ #ifndef __ASM_VDSO_VSYSCALL_H
+ #define __ASM_VDSO_VSYSCALL_H
+ 
++#define __VDSO_RND_DATA_OFFSET  480
++
+ #ifndef __ASSEMBLY__
+ 
++#include <asm/vdso.h>
+ #include <linux/timekeeper_internal.h>
+ #include <vdso/datapage.h>
+ 
+@@ -21,6 +24,13 @@ struct vdso_data *__arm64_get_k_vdso_data(void)
+ }
+ #define __arch_get_k_vdso_data __arm64_get_k_vdso_data
+ 
++static __always_inline
++struct vdso_rng_data *__arm64_get_k_vdso_rnd_data(void)
++{
++	return (void*)vdso_data + __VDSO_RND_DATA_OFFSET;
++}
++#define __arch_get_k_vdso_rng_data __arm64_get_k_vdso_rnd_data
++
+ static __always_inline
+ void __arm64_update_vsyscall(struct vdso_data *vdata, struct timekeeper *tk)
+ {
+diff --git a/arch/arm64/kernel/vdso.c b/arch/arm64/kernel/vdso.c
+index 89b6e7840002..706c9c3a7a50 100644
+--- a/arch/arm64/kernel/vdso.c
++++ b/arch/arm64/kernel/vdso.c
+@@ -34,12 +34,6 @@ enum vdso_abi {
+ 	VDSO_ABI_AA32,
+ };
+ 
+-enum vvar_pages {
+-	VVAR_DATA_PAGE_OFFSET,
+-	VVAR_TIMENS_PAGE_OFFSET,
+-	VVAR_NR_PAGES,
+-};
+-
+ struct vdso_abi_info {
+ 	const char *name;
+ 	const char *vdso_code_start;
+diff --git a/arch/arm64/kernel/vdso/Makefile b/arch/arm64/kernel/vdso/Makefile
+index d11da6461278..50246a38d6bd 100644
+--- a/arch/arm64/kernel/vdso/Makefile
++++ b/arch/arm64/kernel/vdso/Makefile
+@@ -9,7 +9,7 @@
+ # Include the generic Makefile to check the built vdso.
+ include $(srctree)/lib/vdso/Makefile
+ 
+-obj-vdso := vgettimeofday.o note.o sigreturn.o
++obj-vdso := vgettimeofday.o note.o sigreturn.o vgetrandom.o vgetrandom-chacha.o
+ 
+ # Build rules
+ targets := $(obj-vdso) vdso.so vdso.so.dbg
+@@ -40,13 +40,22 @@ CFLAGS_REMOVE_vgettimeofday.o = $(CC_FLAGS_FTRACE) -Os $(CC_FLAGS_SCS) \
+ 				$(RANDSTRUCT_CFLAGS) $(GCC_PLUGINS_CFLAGS) \
+ 				$(CC_FLAGS_LTO) $(CC_FLAGS_CFI) \
+ 				-Wmissing-prototypes -Wmissing-declarations
++CFLAGS_REMOVE_vgetrandom.o = $(CC_FLAGS_FTRACE) -Os $(CC_FLAGS_SCS) \
++			     $(RANDSTRUCT_CFLAGS) $(GCC_PLUGINS_CFLAGS) \
++			     $(CC_FLAGS_LTO) $(CC_FLAGS_CFI) \
++			     -Wmissing-prototypes -Wmissing-declarations
+ 
+ CFLAGS_vgettimeofday.o = -O2 -mcmodel=tiny -fasynchronous-unwind-tables
++CFLAGS_vgetrandom.o = -O2 -mcmodel=tiny -fasynchronous-unwind-tables
+ 
+ ifneq ($(c-gettimeofday-y),)
+   CFLAGS_vgettimeofday.o += -include $(c-gettimeofday-y)
+ endif
+ 
++ifneq ($(c-getrandom-y),)
++  CFLAGS_vgetrandom.o += -include $(c-getrandom-y)
++endif
++
+ targets += vdso.lds
+ CPPFLAGS_vdso.lds += -P -C -U$(ARCH)
+ 
+diff --git a/arch/arm64/kernel/vdso/vdso b/arch/arm64/kernel/vdso/vdso
+new file mode 120000
+index 000000000000..233c7a26f6e5
+--- /dev/null
++++ b/arch/arm64/kernel/vdso/vdso
+@@ -0,0 +1 @@
++../../../arch/arm64/kernel/vdso
+\ No newline at end of file
+diff --git a/arch/arm64/kernel/vdso/vdso.lds.S b/arch/arm64/kernel/vdso/vdso.lds.S
+index 45354f2ddf70..f204a9ddc833 100644
+--- a/arch/arm64/kernel/vdso/vdso.lds.S
++++ b/arch/arm64/kernel/vdso/vdso.lds.S
+@@ -11,7 +11,9 @@
+ #include <linux/const.h>
+ #include <asm/page.h>
+ #include <asm/vdso.h>
++#include <asm/vdso/vsyscall.h>
+ #include <asm-generic/vmlinux.lds.h>
++#include <vdso/datapage.h>
+ 
+ OUTPUT_FORMAT("elf64-littleaarch64", "elf64-bigaarch64", "elf64-littleaarch64")
+ OUTPUT_ARCH(aarch64)
+@@ -19,6 +21,7 @@ OUTPUT_ARCH(aarch64)
+ SECTIONS
+ {
+ 	PROVIDE(_vdso_data = . - __VVAR_PAGES * PAGE_SIZE);
++	PROVIDE(_vdso_rng_data = _vdso_data + __VDSO_RND_DATA_OFFSET);
+ #ifdef CONFIG_TIME_NS
+ 	PROVIDE(_timens_data = _vdso_data + PAGE_SIZE);
+ #endif
+@@ -102,6 +105,7 @@ VERSION
+ 		__kernel_gettimeofday;
+ 		__kernel_clock_gettime;
+ 		__kernel_clock_getres;
++		__kernel_getrandom;
+ 	local: *;
+ 	};
+ }
+diff --git a/arch/arm64/kernel/vdso/vgetrandom-chacha.S b/arch/arm64/kernel/vdso/vgetrandom-chacha.S
+new file mode 100644
+index 000000000000..9ebf12a09c65
+--- /dev/null
++++ b/arch/arm64/kernel/vdso/vgetrandom-chacha.S
+@@ -0,0 +1,168 @@
++// SPDX-License-Identifier: GPL-2.0
++
++#include <linux/linkage.h>
++#include <asm/cache.h>
++#include <asm/assembler.h>
++
++	.text
++
++#define state0		v0
++#define state1		v1
++#define state2		v2
++#define state3		v3
++#define copy0		v4
++#define copy1		v5
++#define copy2		v6
++#define copy3		v7
++#define copy3_d		d7
++#define one_d		d16
++#define one_q		q16
++#define tmp		v17
++#define rot8		v18
++
++/*
++ * ARM64 ChaCha20 implementation meant for vDSO.  Produces a given positive
++ * number of blocks of output with nonce 0, taking an input key and 8-bytes
++ * counter.  Importantly does not spill to the stack.
++ *
++ * void __arch_chacha20_blocks_nostack(uint8_t *dst_bytes,
++ *				       const uint8_t *key,
++ * 				       uint32_t *counter,
++ *				       size_t nblocks)
++ *
++ * 	x0: output bytes
++ *	x1: 32-byte key input
++ *	x2: 8-byte counter input/output
++ *	x3: number of 64-byte block to write to output
++ */
++SYM_FUNC_START(__arch_chacha20_blocks_nostack)
++
++	/* copy0 = "expand 32-byte k" */
++	adr_l		x8, CTES
++	ld1		{copy0.4s}, [x8]
++	/* copy1,copy2 = key */
++	ld1		{ copy1.4s, copy2.4s }, [x1]
++	/* copy3 = counter || zero nonce  */
++	ldr		copy3_d, [x2]
++
++	adr_l		x8, ONE
++	ldr		one_q, [x8]
++
++	adr_l		x10, ROT8
++	ld1		{rot8.4s}, [x10]
++.Lblock:
++	/* copy state to auxiliary vectors for the final add after the permute.  */
++	mov		state0.16b, copy0.16b
++	mov		state1.16b, copy1.16b
++	mov		state2.16b, copy2.16b
++	mov		state3.16b, copy3.16b
++
++	mov		w4, 20
++.Lpermute:
++	/*
++	 * Permute one 64-byte block where the state matrix is stored in the four NEON
++	 * registers state0-state3.  It performs matrix operations on four words in parallel,
++	 * but requires shuffling to rearrange the words after each round.
++	 */
++
++.Ldoubleround:
++	/* state0 += state1, state3 = rotl32(state3 ^ state0, 16) */
++	add		state0.4s, state0.4s, state1.4s
++	eor		state3.16b, state3.16b, state0.16b
++	rev32		state3.8h, state3.8h
++
++	/* state2 += state3, state1 = rotl32(state1 ^ state2, 12) */
++	add		state2.4s, state2.4s, state3.4s
++	eor		tmp.16b, state1.16b, state2.16b
++	shl		state1.4s, tmp.4s, #12
++	sri		state1.4s, tmp.4s, #20
++
++	/* state0 += state1, state3 = rotl32(state3 ^ state0, 8) */
++	add		state0.4s, state0.4s, state1.4s
++	eor		state3.16b, state3.16b, state0.16b
++	tbl		state3.16b, {state3.16b}, rot8.16b
++
++	/* state2 += state3, state1 = rotl32(state1 ^ state2, 7) */
++	add		state2.4s, state2.4s, state3.4s
++	eor		tmp.16b, state1.16b, state2.16b
++	shl		state1.4s, tmp.4s, #7
++	sri		state1.4s, tmp.4s, #25
++
++	/* state1[0,1,2,3] = state1[1,2,3,0] */
++	ext		state1.16b, state1.16b, state1.16b, #4
++	/* state2[0,1,2,3] = state2[2,3,0,1] */
++	ext		state2.16b, state2.16b, state2.16b, #8
++	/* state3[0,1,2,3] = state3[1,2,3,0] */
++	ext		state3.16b, state3.16b, state3.16b, #12
++
++	/* state0 += state1, state3 = rotl32(state3 ^ state0, 16) */
++	add		state0.4s, state0.4s, state1.4s
++	eor		state3.16b, state3.16b, state0.16b
++	rev32		state3.8h, state3.8h
++
++	/* state2 += state3, state1 = rotl32(state1 ^ state2, 12) */
++	add		state2.4s, state2.4s, state3.4s
++	eor		tmp.16b, state1.16b, state2.16b
++	shl		state1.4s, tmp.4s, #12
++	sri		state1.4s, tmp.4s, #20
++
++	/* state0 += state1, state3 = rotl32(state3 ^ state0, 8) */
++	add		state0.4s, state0.4s, state1.4s
++	eor		state3.16b, state3.16b, state0.16b
++	tbl		state3.16b, {state3.16b}, rot8.16b
++
++	/* state2 += state3, state1 = rotl32(state1 ^ state2, 7) */
++	add		state2.4s, state2.4s, state3.4s
++	eor		tmp.16b, state1.16b, state2.16b
++	shl		state1.4s, tmp.4s, #7
++	sri		state1.4s, tmp.4s, #25
++
++	/* state1[0,1,2,3] = state1[3,0,1,2] */
++	ext		state1.16b, state1.16b, state1.16b, #12
++	/* state2[0,1,2,3] = state2[2,3,0,1] */
++	ext		state2.16b, state2.16b, state2.16b, #8
++	/* state3[0,1,2,3] = state3[1,2,3,0] */
++	ext		state3.16b, state3.16b, state3.16b, #4
++
++	subs		w4, w4, #2
++	b.ne		.Ldoubleround
++
++	/* output0 = state0 + state0 */
++	add		state0.4s, state0.4s, copy0.4s
++	/* output1 = state1 + state1 */
++	add		state1.4s, state1.4s, copy1.4s
++	/* output2 = state2 + state2 */
++	add		state2.4s, state2.4s, copy2.4s
++	/* output2 = state3 + state3 */
++	add		state3.4s, state3.4s, copy3.4s
++	st1		{ state0.4s - state3.4s }, [x0]
++
++	/* ++copy3.counter */
++	add		copy3_d, copy3_d, one_d
++
++	/* output += 64, --nblocks */
++	add		x0, x0, 64
++	subs		x3, x3, #1
++	b.ne		.Lblock
++
++	/* counter = copy3.counter */
++	str		copy3_d, [x2]
++
++	/* Zero out the potentially sensitive regs, in case nothing uses these again. */
++	eor		state0.16b, state0.16b, state0.16b
++	eor		state1.16b, state1.16b, state1.16b
++	eor		state2.16b, state2.16b, state2.16b
++	eor		state3.16b, state3.16b, state3.16b
++	eor		copy1.16b, copy1.16b, copy1.16b
++	eor		copy2.16b, copy2.16b, copy2.16b
++	ret
++SYM_FUNC_END(__arch_chacha20_blocks_nostack)
++
++        .section        ".rodata", "a", %progbits
++        .align          L1_CACHE_SHIFT
++
++CTES:	.word		1634760805, 857760878, 	2036477234, 1797285236
++ONE:    .xword		1, 0
++ROT8:	.word		0x02010003, 0x06050407, 0x0a09080b, 0x0e0d0c0f
++
++emit_aarch64_feature_1_and
+diff --git a/arch/arm64/kernel/vdso/vgetrandom.c b/arch/arm64/kernel/vdso/vgetrandom.c
+new file mode 100644
+index 000000000000..0833d25f3121
+--- /dev/null
++++ b/arch/arm64/kernel/vdso/vgetrandom.c
+@@ -0,0 +1,15 @@
++// SPDX-License-Identifier: GPL-2.0
++
++typeof(__cvdso_getrandom) __kernel_getrandom;
++
++ssize_t __kernel_getrandom(void *buffer, size_t len, unsigned int flags, void *opaque_state, size_t opaque_len)
++{
++	asm goto (
++	ALTERNATIVE("b %[fallback]", "nop", RM64_HAS_FPSIMD) : : : : fallback);
++	return __cvdso_getrandom(buffer, len, flags, opaque_state, opaque_len);
++
++fallback:
++	if (unlikely(opaque_len == ~0UL && !buffer && !len && !flags))
++		return -ENOSYS;
++	return getrandom_syscall(buffer, len, flags);
++}
+diff --git a/lib/vdso/getrandom.c b/lib/vdso/getrandom.c
+index 938ca539aaa6..7c9711248d9b 100644
+--- a/lib/vdso/getrandom.c
++++ b/lib/vdso/getrandom.c
+@@ -5,6 +5,7 @@
+ 
+ #include <linux/array_size.h>
+ #include <linux/minmax.h>
++#include <linux/mm.h>
+ #include <vdso/datapage.h>
+ #include <vdso/getrandom.h>
+ #include <vdso/unaligned.h>
+diff --git a/tools/arch/arm64/vdso b/tools/arch/arm64/vdso
+new file mode 120000
+index 000000000000..233c7a26f6e5
+--- /dev/null
++++ b/tools/arch/arm64/vdso
+@@ -0,0 +1 @@
++../../../arch/arm64/kernel/vdso
+\ No newline at end of file
+diff --git a/tools/include/linux/compiler.h b/tools/include/linux/compiler.h
+index 6f7f22ac9da5..4366da278033 100644
+--- a/tools/include/linux/compiler.h
++++ b/tools/include/linux/compiler.h
+@@ -2,6 +2,8 @@
+ #ifndef _TOOLS_LINUX_COMPILER_H_
+ #define _TOOLS_LINUX_COMPILER_H_
+ 
++#ifndef __ASSEMBLY__
++
+ #include <linux/compiler_types.h>
+ 
+ #ifndef __compiletime_error
+@@ -224,4 +226,6 @@ static __always_inline void __write_once_size(volatile void *p, void *res, int s
+ 	__asm__ ("" : "=r" (var) : "0" (var))
+ #endif
+ 
++#endif /* __ASSEMBLY__ */
++
+ #endif /* _TOOLS_LINUX_COMPILER_H */
+diff --git a/tools/testing/selftests/vDSO/Makefile b/tools/testing/selftests/vDSO/Makefile
+index e21e78aae24d..29b4ac928e0b 100644
+--- a/tools/testing/selftests/vDSO/Makefile
++++ b/tools/testing/selftests/vDSO/Makefile
+@@ -1,6 +1,6 @@
+ # SPDX-License-Identifier: GPL-2.0
+ uname_M := $(shell uname -m 2>/dev/null || echo not)
+-ARCH ?= $(shell echo $(uname_M) | sed -e s/i.86/x86/ -e s/x86_64/x86/)
++ARCH ?= $(shell echo $(uname_M) | sed -e s/i.86/x86/ -e s/x86_64/x86/ -e s/aarch64.*/arm64/)
+ 
+ TEST_GEN_PROGS := vdso_test_gettimeofday
+ TEST_GEN_PROGS += vdso_test_getcpu
+@@ -10,7 +10,7 @@ ifeq ($(ARCH),$(filter $(ARCH),x86 x86_64))
+ TEST_GEN_PROGS += vdso_standalone_test_x86
+ endif
+ TEST_GEN_PROGS += vdso_test_correctness
+-ifeq ($(uname_M),x86_64)
++ifeq ($(uname_M), $(filter x86_64 aarch64, $(uname_M)))
+ TEST_GEN_PROGS += vdso_test_getrandom
+ TEST_GEN_PROGS += vdso_test_chacha
+ endif
+@@ -41,5 +41,6 @@ $(OUTPUT)/vdso_test_getrandom: CFLAGS += -isystem $(top_srcdir)/tools/include \
+ $(OUTPUT)/vdso_test_chacha: $(top_srcdir)/tools/arch/$(ARCH)/vdso/vgetrandom-chacha.S
+ $(OUTPUT)/vdso_test_chacha: CFLAGS += -idirafter $(top_srcdir)/tools/include \
+                                       -idirafter $(top_srcdir)/arch/$(ARCH)/include \
++                                      -idirafter $(top_srcdir)/arch/$(ARCH)/include/generated \
+                                       -idirafter $(top_srcdir)/include \
+                                       -D__ASSEMBLY__ -Wa,--noexecstack
+-- 
+2.43.0
+
 
