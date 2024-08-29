@@ -1,396 +1,128 @@
-Return-Path: <linux-kernel+bounces-306483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 483A1963FA0
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 11:14:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B261B963FA4
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 11:14:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9FC3AB22D85
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 09:14:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4A751C245DC
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 09:14:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23EA218CBFD;
-	Thu, 29 Aug 2024 09:14:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B46C18CC12;
+	Thu, 29 Aug 2024 09:14:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CnDll4y5"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kbGJ7y83"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04FE0219E0;
-	Thu, 29 Aug 2024 09:14:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D5A418CBF3
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 09:14:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724922867; cv=none; b=InLROD6H5ZPfd/myxZrjWBiNPMuRqHSTs+67neaaNKUfHHz1Y7serSluIMQ+wbYkG6rMWLNWA8X0UMolxdsoiTqKf/bs0H/rH/aZAne+nVEI8H3EHDsy0rz7ciSda86YiYGAx9XKv8RT5UycSWVkVqZRAO3npYyCtCnRXiO94gw=
+	t=1724922889; cv=none; b=CCXaLdaGJHb1+l7zaNFmR5JVIGbt8wpMlXOYjvS2Cs00yDSD3THWhKXRZnrPhorVskrM6xNdo3FHFdBUIGrRAYU+JQJq7aqKRs+ifNQcL2dem5AEN1A3ld8u1CzgTg5Kh4bzTA1vs3YP9jwcK+Upbh4qJ/m2+mC/RFAcG+brFYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724922867; c=relaxed/simple;
-	bh=MIucME3XFCXsnzBhP7FlwveOTqx5FsNFuqAvEHh3UDE=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=HOOg7inr4wPMq0wwaEn+yRIUd/Z3jIDZ/UhPYHC0ZGRDZDiC13bI2XR//QGDS8frQPKzFbjykZgWybBK+OW/Jxkv8PrS8hj1QMYaTWlkdYux5LbwS85j+12MseNnrHZ8CQedn2YvWXQi6khHNeiYhjoUTsJR6jP4prV8rMBOmxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CnDll4y5; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724922865; x=1756458865;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=MIucME3XFCXsnzBhP7FlwveOTqx5FsNFuqAvEHh3UDE=;
-  b=CnDll4y5GihHccJtD9/exmvIblANo02mzPCJBDNNrd5NV7u1kEXzp4Jb
-   GdKY8nmpVAGMsa78dXpYJQRGzk/HMfT5vqzK13QYKnYIdnZkcObC/VC4H
-   h8dWeDd3ilcxk/X4YWOgJ2ktMv5Aj1cohjmAwARvxPF87V3t3KHEMDPc0
-   kO6iTY2CenZenCuISc5QrKtfP/6U0CPUvW2e3lIZB1hNsyZ7qwsEIquSz
-   pTOsvlbbnBN4xUl347cqZQ8dMC6j8+UTldc7gE/fm9CZhwlg3MqzydLrd
-   yINGFUhx3YBSdEJOOKHaAr7VXNb+7kd0tyquRgJW4ZHKSYN41hitLpus3
-   A==;
-X-CSE-ConnectionGUID: ztH2MmWKRqu8BMF/56Me6Q==
-X-CSE-MsgGUID: g4kZhM6ATDSta7yy2y5xow==
-X-IronPort-AV: E=McAfee;i="6700,10204,11178"; a="26401239"
-X-IronPort-AV: E=Sophos;i="6.10,185,1719903600"; 
-   d="scan'208";a="26401239"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 02:14:24 -0700
-X-CSE-ConnectionGUID: vo80wCHYScO5Rfw0u/NZeg==
-X-CSE-MsgGUID: Fb3GwusgR922JNAfKf/Acw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,185,1719903600"; 
-   d="scan'208";a="67885617"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.245.59])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 02:14:22 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Thu, 29 Aug 2024 12:14:18 +0300 (EEST)
-To: Tero Kristo <tero.kristo@linux.intel.com>
-cc: Hans de Goede <hdegoede@redhat.com>, srinivas.pandruvada@linux.intel.com, 
-    platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 2/3] platform/x86/intel-uncore-freq: Add support for
- efficiency latency control
-In-Reply-To: <20240828153657.1296410-3-tero.kristo@linux.intel.com>
-Message-ID: <14a0bfc9-fdbf-660c-f842-40ae82a2fc0e@linux.intel.com>
-References: <20240828153657.1296410-1-tero.kristo@linux.intel.com> <20240828153657.1296410-3-tero.kristo@linux.intel.com>
+	s=arc-20240116; t=1724922889; c=relaxed/simple;
+	bh=8x8g1e5x/vlcO20rV1E4Hnvc0w1vqyXS46cdQ7b4SyM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mqn0kGF4c39ev0j5v/b1bQO+yrigBs7ifyYgPGJwnQg7T+NMWmmqytkoCOW/rE8LSywepndO+q/4Dr0W/Se+kBq19jqR3cTPG+EYCeEvKvIQjtITScQWb98/NdWFSC9jl5GDaxwiqeZp9IC+aGSG1IKULFfEilpY6KC8fur1zSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kbGJ7y83; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-42bb8c6e250so453755e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 02:14:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724922886; x=1725527686; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=L6Km23SekStR6cqhQyfp1JKUgaAiDVZuA409pMvIc/U=;
+        b=kbGJ7y83gS6BzwroIpDOnz4hDdUthgdzD9yMiSJr3SwyJqMgMlcABdeda9MXLm+73u
+         G12+ZKoqvrQ3w1VMsTstIptot8RyFKjf4bgeApH3rGubUgtzrHy9YhBgX76Fnpd4FfFa
+         qLpbNr+ZXQOnOHIUj2JgMjCi6e3cWk4EgY8sBUfqJjXZoW5zDT1+iUg1/qjjCOUGKxA6
+         jv3XtmFhLT0Rof/4ge9zL97lNP452EK+Y8qaUi8R5k1vXS/OfjfWr69rQdaVIgQgp9DX
+         jXLmXWXnKwt8qbsb/t9QtC7ZwxXvVERtKSJyRnRLg+GQaSbgE1neupL3CVKxQxwHZCul
+         gX1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724922886; x=1725527686;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=L6Km23SekStR6cqhQyfp1JKUgaAiDVZuA409pMvIc/U=;
+        b=rAFKT+EGKgFR0WIK5XtFp8QyJWq2xF8p8+l4JiFew83BlNkYLrJRl8NSdOpjnIc8qW
+         cLV6bGgyBNierSbdeBrvbBplXxZ3KxMi7/OFjFK730PWRVHeLBwyZxQsCiFqUyyBLGQw
+         7myvxmrhm5fMRV8bE5NXOGbJJL09EDeFH5Z/Ftgt/ZgN4A6xuKqro4PbB1huyUDaA061
+         jXumYcNL/maO+8KVIjTD4AFE8Iy/5q/3OKodtAZDnA8KP3/61wXXAwhCKQWKnhwZ2Bux
+         sHEXa5x4lh5QlUXB/jGZOdPd4kOo8EHV1xxPcaPuw2t2zRcTsuwzWed6g7y+B8qQqn9N
+         0KqA==
+X-Forwarded-Encrypted: i=1; AJvYcCXfFd3QPNf8FUv0r7opl7WYwvVBkNzdaWsajKnqp5b43DfBXEG2gdpR7pisUrVNy6km0tDl5Z9y7K4BZbM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2bhUfe2YJC3qvczD56DuUsgDEr37NIYGlCU30fa16mC3VQ9tu
+	gZsz8rS6a7bvkHpK1RnpcEyGM+he5395jkTdDCDpUUwAqjhnCOvk2Z3s8orcrYk=
+X-Google-Smtp-Source: AGHT+IFs5vufPyvUpn6eMaWbjuz60f0gm2UsD8ZCjTHIvs2WILqyr59d1WjjUYCqBNLm5s2UJUeBYw==
+X-Received: by 2002:adf:fe8b:0:b0:371:9426:d534 with SMTP id ffacd0b85a97d-3749b549687mr1435576f8f.18.1724922886387;
+        Thu, 29 Aug 2024 02:14:46 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ba639d440sm44969225e9.13.2024.08.29.02.14.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Aug 2024 02:14:45 -0700 (PDT)
+Date: Thu, 29 Aug 2024 12:14:41 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Jon Hunter <jonathanh@nvidia.com>,
+	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Ajit Pandey <quic_ajipan@quicinc.com>,
+	Imran Shaik <quic_imrashai@quicinc.com>,
+	Taniya Das <quic_tdas@quicinc.com>,
+	Jagadeesh Kona <quic_jkona@quicinc.com>,
+	kernel test robot <lkp@intel.com>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH] clk: qcom: clk-alpha-pll: Replace divide operator with
+ comparison
+Message-ID: <feb9dcf0-0249-41b9-bad0-c988ad2e45db@stanley.mountain>
+References: <20240813094035.974317-1-quic_skakitap@quicinc.com>
+ <4d314b61-7483-4ceb-ac72-10dbd7e4522a@linaro.org>
+ <7733a4ca-330b-4127-af12-33f376fbbc47@nvidia.com>
+ <kh4diauo5u63mldchmd66pbnqxwnbqfoqcpxsw6wwocbadygvz@3diccu2xt4kj>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-22318661-1724922858=:1289"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <kh4diauo5u63mldchmd66pbnqxwnbqfoqcpxsw6wwocbadygvz@3diccu2xt4kj>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Wed, Aug 28, 2024 at 11:44:20PM +0300, Dmitry Baryshkov wrote:
+> > > > Reported-by: kernel test robot <lkp@intel.com>
+> > > > Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > > > Closes: https://lore.kernel.org/r/202408110724.8pqbpDiD-lkp@intel.com/
+> 
+> this Closes tag must come after lkp's Reported-by. Please also add
+> Closes with the link to Dan's report.
+> 
 
---8323328-22318661-1724922858=:1289
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+No, this one is okay.  What happens is with some Smatch warnings, the bot
+sends the email to me, I look it over and either discard or forward it on so
+we get two Reported-bys for one email.
 
-On Wed, 28 Aug 2024, Tero Kristo wrote:
+> > 
+> > There is also the above smatch warning that was reported.
+> 
+> And the Smatch warning too should be a part of the commit message.
+> 
+> Last, but not least, as it is a fix, there should be a Fixes: tag and
+> optionally a cc:stable.
+> 
 
-> Add efficiency latency control support to the TPMI uncore driver. This
-> defines two new threshold values for controlling uncore frequency, low
-> threshold and high threshold. When CPU utilization is below low threshold=
-,
-> the user configurable floor latency control frequency can be used by the
-> system. When CPU utilization is above high threshold, the uncore frequenc=
-y
-> is increased in 100MHz steps until power limit is reached.
->=20
-> Signed-off-by: Tero Kristo <tero.kristo@linux.intel.com>
-> ---
-> v2:
->   * Converted a long sequence of if (...)'s to a switch
->=20
->  .../uncore-frequency-common.h                 |   4 +
->  .../uncore-frequency/uncore-frequency-tpmi.c  | 158 +++++++++++++++++-
->  2 files changed, 160 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/platform/x86/intel/uncore-frequency/uncore-frequency=
--common.h b/drivers/platform/x86/intel/uncore-frequency/uncore-frequency-co=
-mmon.h
-> index 4c245b945e4e..b5c7311bfa05 100644
-> --- a/drivers/platform/x86/intel/uncore-frequency/uncore-frequency-common=
-=2Eh
-> +++ b/drivers/platform/x86/intel/uncore-frequency/uncore-frequency-common=
-=2Eh
-> @@ -70,6 +70,10 @@ enum uncore_index {
->  =09UNCORE_INDEX_MIN_FREQ,
->  =09UNCORE_INDEX_MAX_FREQ,
->  =09UNCORE_INDEX_CURRENT_FREQ,
-> +=09UNCORE_INDEX_EFF_LAT_CTRL_LOW_THRESHOLD,
-> +=09UNCORE_INDEX_EFF_LAT_CTRL_HIGH_THRESHOLD,
-> +=09UNCORE_INDEX_EFF_LAT_CTRL_HIGH_THRESHOLD_ENABLE,
-> +=09UNCORE_INDEX_EFF_LAT_CTRL_FREQ,
->  };
-> =20
->  int uncore_freq_common_init(int (*read)(struct uncore_data *data, unsign=
-ed int *value,
-> diff --git a/drivers/platform/x86/intel/uncore-frequency/uncore-frequency=
--tpmi.c b/drivers/platform/x86/intel/uncore-frequency/uncore-frequency-tpmi=
-=2Ec
-> index 9fa3037c03d1..50b28b4b1fc0 100644
-> --- a/drivers/platform/x86/intel/uncore-frequency/uncore-frequency-tpmi.c
-> +++ b/drivers/platform/x86/intel/uncore-frequency/uncore-frequency-tpmi.c
-> @@ -30,6 +30,7 @@
-> =20
->  #define=09UNCORE_MAJOR_VERSION=09=090
->  #define=09UNCORE_MINOR_VERSION=09=092
-> +#define UNCORE_ELC_SUPPORTED_VERSION=092
->  #define UNCORE_HEADER_INDEX=09=090
->  #define UNCORE_FABRIC_CLUSTER_OFFSET=098
-> =20
-> @@ -46,6 +47,7 @@ struct tpmi_uncore_struct;
->  /* Information for each cluster */
->  struct tpmi_uncore_cluster_info {
->  =09bool root_domain;
-> +=09bool elc_supported;
->  =09u8 __iomem *cluster_base;
->  =09struct uncore_data uncore_data;
->  =09struct tpmi_uncore_struct *uncore_root;
-> @@ -75,6 +77,10 @@ struct tpmi_uncore_struct {
->  /* Bit definitions for CONTROL register */
->  #define UNCORE_MAX_RATIO_MASK=09=09=09=09GENMASK_ULL(14, 8)
->  #define UNCORE_MIN_RATIO_MASK=09=09=09=09GENMASK_ULL(21, 15)
-> +#define UNCORE_EFF_LAT_CTRL_RATIO_MASK=09=09=09GENMASK_ULL(28, 22)
-> +#define UNCORE_EFF_LAT_CTRL_LOW_THRESHOLD_MASK=09=09GENMASK_ULL(38, 32)
-> +#define UNCORE_EFF_LAT_CTRL_HIGH_THRESHOLD_ENABLE=09BIT(39)
-> +#define UNCORE_EFF_LAT_CTRL_HIGH_THRESHOLD_MASK=09=09GENMASK_ULL(46, 40)
-> =20
->  /* Helper function to read MMIO offset for max/min control frequency */
->  static void read_control_freq(struct tpmi_uncore_cluster_info *cluster_i=
-nfo,
-> @@ -89,6 +95,48 @@ static void read_control_freq(struct tpmi_uncore_clust=
-er_info *cluster_info,
->  =09=09*value =3D FIELD_GET(UNCORE_MIN_RATIO_MASK, control) * UNCORE_FREQ=
-_KHZ_MULTIPLIER;
->  }
-> =20
-> +/* Helper function to read efficiency latency control values over MMIO *=
-/
-> +static int read_eff_lat_ctrl(struct uncore_data *data, unsigned int *val=
-, enum uncore_index index)
-> +{
-> +=09struct tpmi_uncore_cluster_info *cluster_info;
-> +=09u64 ctrl;
-> +
-> +=09cluster_info =3D container_of(data, struct tpmi_uncore_cluster_info, =
-uncore_data);
-> +=09if (cluster_info->root_domain)
-> +=09=09return -ENODATA;
-> +
-> +=09if (!cluster_info->elc_supported)
-> +=09=09return -EOPNOTSUPP;
-> +
-> +=09ctrl =3D readq(cluster_info->cluster_base + UNCORE_CONTROL_INDEX);
-> +
-> +=09switch (index) {
-> +=09case UNCORE_INDEX_EFF_LAT_CTRL_LOW_THRESHOLD:
-> +=09=09*val =3D FIELD_GET(UNCORE_EFF_LAT_CTRL_LOW_THRESHOLD_MASK, ctrl);
-> +=09=09*val *=3D 100;
-> +=09=09*val =3D DIV_ROUND_UP(*val, FIELD_MAX(UNCORE_EFF_LAT_CTRL_LOW_THRE=
-SHOLD_MASK));
-> +=09=09break;
-> +
-> +=09case UNCORE_INDEX_EFF_LAT_CTRL_HIGH_THRESHOLD:
-> +=09=09*val =3D FIELD_GET(UNCORE_EFF_LAT_CTRL_HIGH_THRESHOLD_MASK, ctrl);
-> +=09=09*val *=3D 100;
-> +=09=09*val =3D DIV_ROUND_UP(*val, FIELD_MAX(UNCORE_EFF_LAT_CTRL_HIGH_THR=
-ESHOLD_MASK));
+To be fair, at the time no one thought this was a Fix, just a cleanup.
 
-I wonder if DIV_ROUND_CLOSEST() would be more appropriate in these two=20
-cases, rounding up isn't well justified as I think this wants to round it=
-=20
-back to the original number to deal with the minor divergences due to=20
-precision loss during conversions?
+regards,
+dan carpenter
 
-Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
-
---=20
- i.
-
-> +=09=09break;
-> +
-> +=09case UNCORE_INDEX_EFF_LAT_CTRL_HIGH_THRESHOLD_ENABLE:
-> +=09=09*val =3D FIELD_GET(UNCORE_EFF_LAT_CTRL_HIGH_THRESHOLD_ENABLE, ctrl=
-);
-> +=09=09break;
-> +=09case UNCORE_INDEX_EFF_LAT_CTRL_FREQ:
-> +=09=09*val =3D FIELD_GET(UNCORE_EFF_LAT_CTRL_RATIO_MASK, ctrl) * UNCORE_=
-FREQ_KHZ_MULTIPLIER;
-> +=09=09break;
-> +
-> +=09default:
-> +=09=09return -EOPNOTSUPP;
-> +=09}
-> +
-> +=09return 0;
-> +}
-> +
->  #define UNCORE_MAX_RATIO=09FIELD_MAX(UNCORE_MAX_RATIO_MASK)
-> =20
->  /* Helper for sysfs read for max/min frequencies. Called under mutex loc=
-ks */
-> @@ -137,6 +185,82 @@ static int uncore_read_control_freq(struct uncore_da=
-ta *data, unsigned int *valu
->  =09return 0;
->  }
-> =20
-> +/* Helper function for writing efficiency latency control values over MM=
-IO */
-> +static int write_eff_lat_ctrl(struct uncore_data *data, unsigned int val=
-, enum uncore_index index)
-> +{
-> +=09struct tpmi_uncore_cluster_info *cluster_info;
-> +=09u64 control;
-> +
-> +=09cluster_info =3D container_of(data, struct tpmi_uncore_cluster_info, =
-uncore_data);
-> +
-> +=09if (cluster_info->root_domain)
-> +=09=09return -ENODATA;
-> +
-> +=09if (!cluster_info->elc_supported)
-> +=09=09return -EOPNOTSUPP;
-> +
-> +=09switch (index) {
-> +=09case UNCORE_INDEX_EFF_LAT_CTRL_LOW_THRESHOLD:
-> +=09=09if (val > 100)
-> +=09=09=09return -EINVAL;
-> +=09=09break;
-> +
-> +=09case UNCORE_INDEX_EFF_LAT_CTRL_HIGH_THRESHOLD:
-> +=09=09if (val > 100)
-> +=09=09=09return -EINVAL;
-> +=09=09break;
-> +
-> +=09case UNCORE_INDEX_EFF_LAT_CTRL_HIGH_THRESHOLD_ENABLE:
-> +=09=09if (val > 1)
-> +=09=09=09return -EINVAL;
-> +=09=09break;
-> +
-> +=09case UNCORE_INDEX_EFF_LAT_CTRL_FREQ:
-> +=09=09val /=3D UNCORE_FREQ_KHZ_MULTIPLIER;
-> +=09=09if (val > FIELD_MAX(UNCORE_EFF_LAT_CTRL_RATIO_MASK))
-> +=09=09=09return -EINVAL;
-> +=09=09break;
-> +
-> +=09default:
-> +=09=09return -EOPNOTSUPP;
-> +=09}
-> +
-> +=09control =3D readq(cluster_info->cluster_base + UNCORE_CONTROL_INDEX);
-> +
-> +=09switch (index) {
-> +=09case UNCORE_INDEX_EFF_LAT_CTRL_LOW_THRESHOLD:
-> +=09=09val *=3D FIELD_MAX(UNCORE_EFF_LAT_CTRL_LOW_THRESHOLD_MASK);
-> +=09=09val /=3D 100;
-> +=09=09control &=3D ~UNCORE_EFF_LAT_CTRL_LOW_THRESHOLD_MASK;
-> +=09=09control |=3D FIELD_PREP(UNCORE_EFF_LAT_CTRL_LOW_THRESHOLD_MASK, va=
-l);
-> +=09=09break;
-> +
-> +=09case UNCORE_INDEX_EFF_LAT_CTRL_HIGH_THRESHOLD:
-> +=09=09val *=3D FIELD_MAX(UNCORE_EFF_LAT_CTRL_HIGH_THRESHOLD_MASK);
-> +=09=09val /=3D 100;
-> +=09=09control &=3D ~UNCORE_EFF_LAT_CTRL_HIGH_THRESHOLD_MASK;
-> +=09=09control |=3D FIELD_PREP(UNCORE_EFF_LAT_CTRL_HIGH_THRESHOLD_MASK, v=
-al);
-> +=09=09break;
-> +
-> +=09case UNCORE_INDEX_EFF_LAT_CTRL_HIGH_THRESHOLD_ENABLE:
-> +=09=09control &=3D ~UNCORE_EFF_LAT_CTRL_HIGH_THRESHOLD_ENABLE;
-> +=09=09control |=3D FIELD_PREP(UNCORE_EFF_LAT_CTRL_HIGH_THRESHOLD_ENABLE,=
- val);
-> +=09=09break;
-> +
-> +=09case UNCORE_INDEX_EFF_LAT_CTRL_FREQ:
-> +=09=09control &=3D ~UNCORE_EFF_LAT_CTRL_RATIO_MASK;
-> +=09=09control |=3D FIELD_PREP(UNCORE_EFF_LAT_CTRL_RATIO_MASK, val);
-> +=09=09break;
-> +
-> +=09default:
-> +=09=09break;
-> +=09}
-> +
-> +=09writeq(control, cluster_info->cluster_base + UNCORE_CONTROL_INDEX);
-> +
-> +=09return 0;
-> +}
-> +
->  /* Helper function to write MMIO offset for max/min control frequency */
->  static void write_control_freq(struct tpmi_uncore_cluster_info *cluster_=
-info, unsigned int input,
->  =09=09=09      unsigned int index)
-> @@ -156,7 +280,7 @@ static void write_control_freq(struct tpmi_uncore_clu=
-ster_info *cluster_info, un
->  =09writeq(control, (cluster_info->cluster_base + UNCORE_CONTROL_INDEX));
->  }
-> =20
-> -/* Callback for sysfs write for max/min frequencies. Called under mutex =
-locks */
-> +/* Helper for sysfs write for max/min frequencies. Called under mutex lo=
-cks */
->  static int uncore_write_control_freq(struct uncore_data *data, unsigned =
-int input,
->  =09=09=09=09     enum uncore_index index)
->  {
-> @@ -234,6 +358,33 @@ static int uncore_read(struct uncore_data *data, uns=
-igned int *value, enum uncor
->  =09case UNCORE_INDEX_CURRENT_FREQ:
->  =09=09return uncore_read_freq(data, value);
-> =20
-> +=09case UNCORE_INDEX_EFF_LAT_CTRL_LOW_THRESHOLD:
-> +=09case UNCORE_INDEX_EFF_LAT_CTRL_HIGH_THRESHOLD:
-> +=09case UNCORE_INDEX_EFF_LAT_CTRL_HIGH_THRESHOLD_ENABLE:
-> +=09case UNCORE_INDEX_EFF_LAT_CTRL_FREQ:
-> +=09=09return read_eff_lat_ctrl(data, value, index);
-> +
-> +=09default:
-> +=09=09break;
-> +=09}
-> +
-> +=09return -EOPNOTSUPP;
-> +}
-> +
-> +/* Callback for sysfs write for TPMI uncore data. Called under mutex loc=
-ks. */
-> +static int uncore_write(struct uncore_data *data, unsigned int value, en=
-um uncore_index index)
-> +{
-> +=09switch (index) {
-> +=09case UNCORE_INDEX_EFF_LAT_CTRL_LOW_THRESHOLD:
-> +=09case UNCORE_INDEX_EFF_LAT_CTRL_HIGH_THRESHOLD:
-> +=09case UNCORE_INDEX_EFF_LAT_CTRL_HIGH_THRESHOLD_ENABLE:
-> +=09case UNCORE_INDEX_EFF_LAT_CTRL_FREQ:
-> +=09=09return write_eff_lat_ctrl(data, value, index);
-> +
-> +=09case UNCORE_INDEX_MIN_FREQ:
-> +=09case UNCORE_INDEX_MAX_FREQ:
-> +=09=09return uncore_write_control_freq(data, value, index);
-> +
->  =09default:
->  =09=09break;
->  =09}
-> @@ -291,7 +442,7 @@ static int uncore_probe(struct auxiliary_device *auxd=
-ev, const struct auxiliary_
->  =09=09return -EINVAL;
-> =20
->  =09/* Register callbacks to uncore core */
-> -=09ret =3D uncore_freq_common_init(uncore_read, uncore_write_control_fre=
-q);
-> +=09ret =3D uncore_freq_common_init(uncore_read, uncore_write);
->  =09if (ret)
->  =09=09return ret;
-> =20
-> @@ -409,6 +560,9 @@ static int uncore_probe(struct auxiliary_device *auxd=
-ev, const struct auxiliary_
-> =20
->  =09=09=09cluster_info->uncore_root =3D tpmi_uncore;
-> =20
-> +=09=09=09if (TPMI_MINOR_VERSION(pd_info->ufs_header_ver) >=3D UNCORE_ELC=
-_SUPPORTED_VERSION)
-> +=09=09=09=09cluster_info->elc_supported =3D true;
-> +
->  =09=09=09ret =3D uncore_freq_add_entry(&cluster_info->uncore_data, 0);
->  =09=09=09if (ret) {
->  =09=09=09=09cluster_info->cluster_base =3D NULL;
->=20
---8323328-22318661-1724922858=:1289--
 
