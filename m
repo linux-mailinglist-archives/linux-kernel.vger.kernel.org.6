@@ -1,91 +1,122 @@
-Return-Path: <linux-kernel+bounces-307107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AD89964833
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:25:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A0A8964835
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:25:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 119BF1F223DA
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 14:25:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D42021F226F3
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 14:25:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FB2B1AE84C;
-	Thu, 29 Aug 2024 14:25:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89E941AE850;
+	Thu, 29 Aug 2024 14:25:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="d8lHUvKm"
-Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AVs5bQmA"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B8751A76C1
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 14:24:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47D431AD9E0;
+	Thu, 29 Aug 2024 14:25:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724941500; cv=none; b=rGvdq+7Pxy11fKLYO7ur7tv+0amveaIcUW3dRwRQ2pRPoZ1hUfBlEvvpesdhFSsXQzKVRZO2uTiA26kzEseQjmoks0AhkLxQ1VaFef4J44IdQwupNWeqJnK3Pf/cI6upJv65JX513rUN0JFYBkDerw/hFe/YBaMIJJ0BHN5EVuE=
+	t=1724941528; cv=none; b=cEgWH2H83ARH9vShpNQXSmrEtkVHpsZVbSpmI21v4nGRaZiQhlUi62GLNfREY2o+iXD52aBUqyiXXd2QYbhm+FOSX8zHOz+A6eCl4Iyg3S0Qmc+IvU5Yv39lAI8FTLOyjsb+Ym9tZb4peSwpKW/I5DZGdAyyBKVyQOGgZNXAmW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724941500; c=relaxed/simple;
-	bh=n8olwhAyvGIBu+ixAeLQGoRfqSJdXwVMscwROp79R1Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=biVzVCeCdLW/T8pWETFzNbiSPFGrJakjPqNjqY/sCd1rIL8HvV5c/v/vzOKX0E4mxrEhg3wnWiztQ3ePg+TG/ywLkjha/v3zDK5Ds0pNt2ubvCmWHnxlQWVzslSQJ38aAHrQM9C7WccjjBvZXbcj0Kx+Hlyeecd/yrUzWKMSeng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=d8lHUvKm; arc=none smtp.client-ip=95.215.58.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <4c2c6b24-aee1-495f-ab47-662e1e818f4b@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1724941496;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4bjuMojYk0Mfw4UQTElf/K+iWHCGHyxVpLzKL0LF+2Q=;
-	b=d8lHUvKmV+VKcyz1W/qDC/BKHy8AUSznJO9kEtiZ7GQEXB1e6u543nQ3iv4bUTWvAmNtVv
-	jiJGT9en4Ato0ZKcOhBQ9dWN1L9IZZrvquYRCzjeMypaz1iVs+l+checkeoJeptrXp0fJD
-	VLypxmSZKgyd6YlI9JLmcV6vjR7P3eU=
-Date: Thu, 29 Aug 2024 10:24:52 -0400
+	s=arc-20240116; t=1724941528; c=relaxed/simple;
+	bh=pmpXx4w9dxou5IsStm5ec7v78pKORIo2DWzAXHY4A5Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BXdbnYkm6snCJwh9zR00B4cOD8+jLDZGz6/OMV1IspkIkhOv9PR8FYgYli0L2vOHGDlDvskvhj8qNwQCOmbIukl5Iy0ZgqULArPO8EaUBv/kb3/e9g5G36gizB0GPMfzR8dSCL9hUkaGtYC582Yoqa4O64LZuEV2saY4PjQZGDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AVs5bQmA; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a867a564911so84898866b.2;
+        Thu, 29 Aug 2024 07:25:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724941524; x=1725546324; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=bHIamUgRteSKTv9SPXNPrLb0bteIcDQ+F/Vqmsjb9r0=;
+        b=AVs5bQmAwlR/3Dce6kFmBfZt0t8b1GRmDjH0Cdt0PCzJ6987U3zFFwRNM640Fk5ISM
+         UEiMGtUt3Amy3P7u1mEJedJxKDYu+qgQWzTecc3R09gh8lICkdNCyUbuFCRTCliXEBjC
+         +lby00l1pw2QqvzpvcYJJmYFKthQCNQF/mLk7IUQxKgFkCJVNDPWZaNZe2UHfy9Ztqid
+         5Gp1PxbdDseB72LmpGYD+ubKNRKWr0a0UyKaoDZ7yUorgNjzwpeFmsJ77ZGO8J7pgyfy
+         5c4zzGmE/AYdpAGfqU55POgkytPYw7TbJMwhyL83gQRmchyqJ7GxK3I3bjHM32SAvu76
+         MDvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724941524; x=1725546324;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bHIamUgRteSKTv9SPXNPrLb0bteIcDQ+F/Vqmsjb9r0=;
+        b=IIMVW66jqU6fiBP2Whlr0uMwH3IdeIFsPKiDimGUTrMpWvCCvFE8hT7zdy2g/wzCfF
+         h818XX96rJ7diBM/JE10C95mkcOLTF+5HC5kZWWl+ixsTNIzMrOONKhCznwqbFznDw/l
+         JGFx1kVbPyuuu/TrBP+VodyqAvK5e/H6c5lOm2jeoLZJC4AYVogroT+W5RF0xBQrPZfB
+         EOqoCbLLpzppxsHv1Krupy8XWf/CAbam49/BdbGqfjOT1RF0Ls+ipTuFjo5VU0qeWpc3
+         MUXVdUQnpFUfYi+pDYPWKfNGHyJEm/HjJqAbiKDYmAF/DxUu/Us+nncN7WXedOrF71S5
+         HlKg==
+X-Forwarded-Encrypted: i=1; AJvYcCVFMTZNa4gOGQAd5XrM414t62owelTLJn7zKIpZkFWLOpu//TVAFmcSInUMM7p6W7QF8G+WkNM2TtKruGHyReA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyronOSvzYNTp2Szswev051riC/Ong5Wu1syj/rvGZAlHdbwZUE
+	vTzFSWJg1W7/gSI+7wxJDhtjz97t0yVKbtIdiaKjieicphJRBO3W
+X-Google-Smtp-Source: AGHT+IEso7NR7+70OF2jSG2lmed0gLupdrNT7UPyH4N8sCFANVEgU1M5xJwyO1HHGwLAfyS2m7BgAg==
+X-Received: by 2002:a05:6402:50ca:b0:5a1:c43:82ca with SMTP id 4fb4d7f45d1cf-5c21ed8c755mr2655750a12.26.1724941524265;
+        Thu, 29 Aug 2024 07:25:24 -0700 (PDT)
+Received: from gi4n.. (nat241-51.uni-goettingen.de. [134.76.51.241])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8988feb0cfsm85710066b.8.2024.08.29.07.25.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Aug 2024 07:25:23 -0700 (PDT)
+From: Gianfranco Trad <gianf.trad@gmail.com>
+To: jstultz@google.com,
+	tglx@linutronix.de,
+	sboyd@kernel.org,
+	anna-maria@linutronix.de,
+	frederic@kernel.org,
+	shuah@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	Gianfranco Trad <gianf.trad@gmail.com>
+Subject: [PATCH] Improve timer_create failure message
+Date: Thu, 29 Aug 2024 16:25:15 +0200
+Message-ID: <20240829142515.29773-1-gianf.trad@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v3] dma: Trace API
-To: Christoph Hellwig <hch@lst.de>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
- Robin Murphy <robin.murphy@arm.com>, iommu@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <20240826203240.2234615-1-sean.anderson@linux.dev>
- <20240829041912.GB4408@lst.de>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Sean Anderson <sean.anderson@linux.dev>
-In-Reply-To: <20240829041912.GB4408@lst.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-On 8/29/24 00:19, Christoph Hellwig wrote:
-> I'd change the subject to
-> 
-> dma-mapping: add tracing for dma-mapping API calls
+Improve timer_create failure message to give more information to the user.
 
-OK
+Signed-off-by: Gianfranco Trad <gianf.trad@gmail.com>
+---
+ tools/testing/selftests/timers/alarmtimer-suspend.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-> On Mon, Aug 26, 2024 at 04:32:40PM -0400, Sean Anderson wrote:
->> When debugging drivers, it can often be useful to trace when memory gets
->> (un)mapped for DMA (and can be accessed by the device). Add some
->> tracepoints for this purpose.
->> 
->> We use unsigned long long instead of phys_addr_t and dma_addr_t (and
->> similarly %llx instead of %pa) because libtraceevent can't handle
->> typedefs.
-> 
-> and a __u64 would seem like the better type here.
+diff --git a/tools/testing/selftests/timers/alarmtimer-suspend.c b/tools/testing/selftests/timers/alarmtimer-suspend.c
+index ad52e608b88e..74acdb87d4f4 100644
+--- a/tools/testing/selftests/timers/alarmtimer-suspend.c
++++ b/tools/testing/selftests/timers/alarmtimer-suspend.c
+@@ -28,6 +28,7 @@
+ #include <signal.h>
+ #include <stdlib.h>
+ #include <pthread.h>
++#include <errno.h>
+ #include "../kselftest.h"
+ 
+ #define CLOCK_REALTIME			0
+@@ -142,8 +143,8 @@ int main(void)
+ 
+ 		alarmcount = 0;
+ 		if (timer_create(alarm_clock_id, &se, &tm1) == -1) {
+-			printf("timer_create failed, %s unsupported?\n",
+-					clockstring(alarm_clock_id));
++			printf("timer_create failed, %s unsupported?: %s\n",
++					clockstring(alarm_clock_id), strerror(errno));
+ 			break;
+ 		}
+ 
+-- 
+2.43.0
 
-libtraceevent can't handle typedefs, including u64.
-
-> otherwise this looks fine to me.  I can do the tweaks as I'll apply
-> the patch if needed.
-> 
-
---Sean
 
