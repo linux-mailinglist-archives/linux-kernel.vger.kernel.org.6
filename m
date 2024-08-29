@@ -1,216 +1,205 @@
-Return-Path: <linux-kernel+bounces-306980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A8F5964661
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:23:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A9DE964746
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:53:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E4E81F213B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:23:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBA871F22480
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:53:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C079D1A76A8;
-	Thu, 29 Aug 2024 13:23:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D18951AE05B;
+	Thu, 29 Aug 2024 13:53:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KzmwHnfp"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=earth.li header.i=@earth.li header.b="SpXzNTJw"
+Received: from the.earth.li (the.earth.li [93.93.131.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 096BA1A4ADE;
-	Thu, 29 Aug 2024 13:23:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.7
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724937788; cv=fail; b=boP0zsk773We5lUkTuzMllKBoHSzZunBy7MvsVkAVu4XRCqSBhURbOijGNKwucSDFJEwjhTHWdsl9UPz2yJgducDnOqUNb2Fhz9l1cSAxLSix11z3xAkfiAX3pamZsEI4mVyDLXCTKGZe8k/rOtIxyXNhpyV44uBI5/RPUwUO2E=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724937788; c=relaxed/simple;
-	bh=UUf/3/h9dJkPb+XlVt8ZrMZDbmm+W5t9luut96q1JMs=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=cCaIi82VtU4CHU3Itxjy6/kWUTSPx5+2Aao23bOWf4PunBG1rJSVnca/WD9GvqWlWOtVipRApjclR+40UZH7hWns4eUEwMDCuBgSmEdGdcc3wS8DiS6aLZH7RZsuTfFJR/XSRMPbYyihhIKP1UEE5CJ7JZe1f82TF5PRYsm8Ewk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KzmwHnfp; arc=fail smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724937787; x=1756473787;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=UUf/3/h9dJkPb+XlVt8ZrMZDbmm+W5t9luut96q1JMs=;
-  b=KzmwHnfppBSlAKqMVCvHyobkE2mK3DU4e6p86YZ04FhE7Vjsb2LUsdL0
-   whEX8aEamF1hnmdSbO5ceE6p8KLqpuk33JKlcqp6gcHHeawz0sVR2PkDC
-   xJSqoe3Jn9jjt6bVDiAs2HF9CbqyX1WQT5RP4fRu2DhqzX/ap+2yGIjQb
-   oJTdAe2I+MJ40SRh/j/9de3AqKa50vyIsD6j0I39Qvgou9F9A50Hy/p4d
-   4izRTMBKUHGqJyza8s/n76xgn0/JBPqFt/cSxFTRQjsKi9E4tuzM+Jt5F
-   02ZQO4ajTmT67SgcGwNNhcwa0kwMBnCBDVbyCN0Cm3JZJPQFpOUYOd8YT
-   g==;
-X-CSE-ConnectionGUID: EhdXFfD5S5O6LN/J36prsA==
-X-CSE-MsgGUID: wZmVvvCkS1ilUjy63lMzmg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11179"; a="48914824"
-X-IronPort-AV: E=Sophos;i="6.10,185,1719903600"; 
-   d="scan'208";a="48914824"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 06:23:06 -0700
-X-CSE-ConnectionGUID: 19ZAj+IqTx6vaf3pcR2ATQ==
-X-CSE-MsgGUID: GVkaVVf2QE+CsZ+JB1bK8A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,185,1719903600"; 
-   d="scan'208";a="94304946"
-Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
-  by orviesa002.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 29 Aug 2024 06:23:06 -0700
-Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
- ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 29 Aug 2024 06:23:05 -0700
-Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
- orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Thu, 29 Aug 2024 06:23:05 -0700
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (104.47.56.176)
- by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 29 Aug 2024 06:23:05 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=OYTwVnhm8BN75fPgJ8gEVceOlf2prYG9/6xgKuESDveaxar6dZZPes3pJ2/sgzE7wOEWLKcvOjtYzS+slWEQM77PswV00In3322XVijMyohFfXeMd6s56a1JaIsmHwf1d4Z7onnkyguxvE26jELw9QbNQIwEqXJzaaI+j5x0zAmXcfIVi0lFOjrwdELzLxtW9qVoreUBM7dCpipEEhDLtH9GSCJ2peY5F67bsUSunnRbbVhyYkk4UuMiUeixeVuFtoPS30+9AQFEIWJw2mcALYV9CxmVytQXR6EJTi33SCttUIuorXxzF54BOC3fVQFPTeq3UlrbiWR9lt5XpndERw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=iSBVbXtOwMsAw05aeTq+WaU77QBd3YQhgSirxy3Ieso=;
- b=MKhnjGZZpGwz3dxcTwRXZAQHX4FzRS53BtR/qI6dpKgIpB7gfQP6OrfiT0Lwy2byYDGsCSWgytDKLyQtxIVObhIKkfPtvg5v66im0CXs3gGRuUIjgTujuLLi8njJROZYz93fHZpb53kB03BxSbiSN4sp41QbKCtIOl7g92AOSoh7hnM6abq0nI+oNGFPsm+dlECLs+kGK81ecp3HSunf5xTkDnKyS3bf2Sq7ajmVqoORTMlPxY3fyTpkn/txyRa39eghw02DfIFoy8/WDFjSMhuY2ey2GUGqTwya+25bLy6XgFSHQ4cL3jNuzg8iuNJD895/cnPnFwk6mX7KQsFvcw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from CY8PR11MB6985.namprd11.prod.outlook.com (2603:10b6:930:57::6)
- by CO1PR11MB4804.namprd11.prod.outlook.com (2603:10b6:303:6f::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.20; Thu, 29 Aug
- 2024 13:23:03 +0000
-Received: from CY8PR11MB6985.namprd11.prod.outlook.com
- ([fe80::77ac:889c:cfd9:b9f5]) by CY8PR11MB6985.namprd11.prod.outlook.com
- ([fe80::77ac:889c:cfd9:b9f5%4]) with mapi id 15.20.7897.027; Thu, 29 Aug 2024
- 13:23:03 +0000
-Date: Thu, 29 Aug 2024 21:22:55 +0800
-From: Aaron Lu <aaron.lu@intel.com>
-To: "Huang, Kai" <kai.huang@intel.com>
-CC: "jarkko@kernel.org" <jarkko@kernel.org>, "dave.hansen@linux.intel.com"
-	<dave.hansen@linux.intel.com>, "linux-sgx@vger.kernel.org"
-	<linux-sgx@vger.kernel.org>, "Luo, Zhimin" <zhimin.luo@intel.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"x86@kernel.org" <x86@kernel.org>
-Subject: Re: [PATCH] x86/sgx: Fix deadloop in __sgx_alloc_epc_page()
-Message-ID: <ZtB2L2yOHP-Um5pp@ziqianlu-kbl>
-References: <20240829023800.1671210-1-aaron.lu@intel.com>
- <66b93a394bbeb6cc23860efe61a1771ee57b86e5.camel@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <66b93a394bbeb6cc23860efe61a1771ee57b86e5.camel@intel.com>
-X-ClientProxiedBy: SG2PR02CA0121.apcprd02.prod.outlook.com
- (2603:1096:4:188::21) To CY8PR11MB6985.namprd11.prod.outlook.com
- (2603:10b6:930:57::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D67C61AE024;
+	Thu, 29 Aug 2024 13:52:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.93.131.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724939582; cv=none; b=Ua0XUBMVdzwYAV5OaUbmpZWoCIF8G9NAKwEGzHyz9UP7NCgVcIEmv40xTP1AW0dsOXDT0VeCxzednkvvxad2QT4bqgEOTJSsaa8ixvPKl1azLdG9VQQpMqQWVydOuvrtqq3MFnAZfZLuBOTB0Sc2iyEPxSYJjRk5ljDaAoNPMOE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724939582; c=relaxed/simple;
+	bh=TS8/vjAK45qFX9WJoJ/dilPjrHp5NM1aNV5VZoirYWo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AND3lPaOCJqGAgcAi3c4Fez6N2PJebhTl4oMoqiNDegwpXfN1bBoSx2dqtnWW+f6Vo2rqHScUzx6MDPyVSC8tLFdvLAd6Bt51Z5Nfm7svTZkyQFLTFTNQswxW+Jspudlkf2Ri9IkPR8cYym+mKeO4cHHt+MUgsT1gYht/KeJzvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li; spf=pass smtp.mailfrom=earth.li; dkim=pass (2048-bit key) header.d=earth.li header.i=@earth.li header.b=SpXzNTJw; arc=none smtp.client-ip=93.93.131.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=earth.li
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=earth.li;
+	s=the; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:
+	Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=4SsUxAHHD2XiSfMK9a212e44ANeEU+e+fE9aWYn+bJE=; b=SpXzNTJw16lQvy4BiXl4M+gO1C
+	X/YJoIDkFgrEqq5d8KnaDYzUPu/62gk0yYm0gxbcTncsHvpJqc9JLwd4JFlqCPah1H+So/oi4HnOg
+	dmqJAIZfYwV8dZdQKqDev1dK+qHEsmGi2dKR0ha1UxnwMdi9dA1dCsR7GLquKrGGsZy24oZqVVMZD
+	78RtG2CnBczWuj57uGcmkjy7nqpfrR0T2CZBNiSzxCThAftLWAUSz6S/Yq9U+21Fe0DSNYMCZ9n9I
+	psZThcU/wEKQ4w5K/cFHaE970E8T/NnaDHK/ncPwoSSz4b41lqdcDOct1rqa7jk9DqW3dl8sGpuww
+	prZbRpdw==;
+Received: from noodles by the.earth.li with local (Exim 4.96)
+	(envelope-from <noodles@earth.li>)
+	id 1sjf80-00BZY2-0U;
+	Thu, 29 Aug 2024 14:23:56 +0100
+Date: Thu, 29 Aug 2024 14:23:56 +0100
+From: Jonathan McDowell <noodles@earth.li>
+To: ross.philipson@oracle.com
+Cc: Ard Biesheuvel <ardb@kernel.org>, kernel test robot <lkp@intel.com>,
+	linux-kernel@vger.kernel.org, x86@kernel.org,
+	linux-integrity@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-crypto@vger.kernel.org, kexec@lists.infradead.org,
+	linux-efi@vger.kernel.org, iommu@lists.linux-foundation.org,
+	oe-kbuild-all@lists.linux.dev, dpsmith@apertussolutions.com,
+	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+	dave.hansen@linux.intel.com, mjg59@srcf.ucam.org,
+	James.Bottomley@hansenpartnership.com, peterhuewe@gmx.de,
+	jarkko@kernel.org, jgg@ziepe.ca, luto@amacapital.net,
+	nivedita@alum.mit.edu, herbert@gondor.apana.org.au,
+	davem@davemloft.net, corbet@lwn.net, ebiederm@xmission.com,
+	dwmw2@infradead.org, baolu.lu@linux.intel.com,
+	kanth.ghatraju@oracle.com
+Subject: Re: [PATCH v10 20/20] x86/efi: EFI stub DRTM launch support for
+ Secure Launch
+Message-ID: <ZtB2bP1Mx3zTr9e5@earth.li>
+References: <20240826223835.3928819-21-ross.philipson@oracle.com>
+ <202408290030.FEbUhHbr-lkp@intel.com>
+ <CAMj1kXGVn85ht_srwhYXDnKffPFX=B2+Cnv-8EAocwoHi__OoQ@mail.gmail.com>
+ <6b214ad2-d448-4f5f-85e9-93cd38e0e035@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY8PR11MB6985:EE_|CO1PR11MB4804:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9f744887-0ce4-4b7f-5e3b-08dcc82db607
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?dJ8dwIuwP3kuxLI7GW4Y6qJOpq0ZE3cUIjxSVYfdjUgfFDVYiq0lCMnmBxi1?=
- =?us-ascii?Q?8DDrWXpyD1P/H5Dha0fRNjbf2Pvisk9rKlCK/dakdJl3VboJCZC7Hb9DJ4nE?=
- =?us-ascii?Q?JFew0aoTA+v+PJKQZ/w7C8nBDjUsUdMAs8polbagVkBBg88YX9aoGlEo4byy?=
- =?us-ascii?Q?UPaQlzumDpQrUiETyrRtukMKFjVsMlaJ4iUUbq3HMzNF7ndZ7KxIE/P7sGP/?=
- =?us-ascii?Q?RqBygwvs9LmzNfiuVVKgYk5nfwGh7E6vyojxDfO9Vw/hK35pXUY6V/fkFpu+?=
- =?us-ascii?Q?j140KcTCbTDoM4dGt4pulE8Wp7QtoAMrR1sfZ7ZpOyogppDux+gklPcqIRKw?=
- =?us-ascii?Q?L/alCAc1NctAD1RrhTA0BwPbWTBxfLe1Azvgajaz2EtRQjKAKhafeiNtTesg?=
- =?us-ascii?Q?4JUI8LiukMsenXbMTmUQmuqgq0TI/j8TG3+okd90VrmgT9sW9paDireBtT/l?=
- =?us-ascii?Q?WkG+3MIQANjQ26kzRCoCpTQKNVXDUOHXQ8IEGEPquI4X1iIWghM1ngCNopPm?=
- =?us-ascii?Q?xcUF3a9oc5DaGgjJ0qN5IChLaKfoV+iE0w8gvBSTiTbUtVYXjmC4yven2rBD?=
- =?us-ascii?Q?qn6e9cTQWraPL2avIKfy3K/2vtYcS9NCMaT50C8tMmfne5ShdRJXmurn65AW?=
- =?us-ascii?Q?MzH23vtMgTxjLalBKEL+Kd/iARoFtlzi9trrDDfMIChJCoWZgAafRJ2ZTFyQ?=
- =?us-ascii?Q?dWgK5euvNKfGetE8FokORCZwbkNLFxCze/jkgK2zZSC/IYJpGsZ6VLI4e3ls?=
- =?us-ascii?Q?YN0iX0vOauKhYrmhYso3Zrr+NPUWEiRbYRIMZ1FSmrFOT6Xs78pBUHHudR97?=
- =?us-ascii?Q?8N4OvVhASMsoNM0G2uXGZYTgEdfqmHyyK00+ZFL0eAaIdVzoG/5xKtdtMf0j?=
- =?us-ascii?Q?46aTVsNJ9iCTBT6zaXKsQvDUdj3p83qqbblRY0nhPy4r+fY/ddp8qoGlVKGl?=
- =?us-ascii?Q?K3efV6E+u6YXJA58eUSlkO8BgT1O4CM9PL9ruqSMD7dD5G5NFQNAQ7IlqOqV?=
- =?us-ascii?Q?oVHV6YvT90BVHbSwuyx/rkev6zTriYYfAQDJiczzuTEuQo2wfUdQy+c5NyYy?=
- =?us-ascii?Q?bkxHkn3XGAqcOIO7qi+z3yQvO+2aioaRU+HpaMs8EBSzHYYmst/TsGo4uoDA?=
- =?us-ascii?Q?mjxacEbMA0IGJQr88UyS2sHsFSxvoo/2/jG7G+HPg5k+PT74OmFUUn+X3Rds?=
- =?us-ascii?Q?tmlDjxm793YdQxj748fsUzNiAmcSVsjNX+c8MoZunoWBYIOI/WKvmX/kQE9O?=
- =?us-ascii?Q?lsq+ikYWPmKzDurzL3WFyUKl+6nyCQI5SdR8ewLnTOWXsN2p4p9Z2Dolc5oJ?=
- =?us-ascii?Q?Xrubm7ZinETeaNywI27YTCeOVqf7EMVh0S0d4C9BlSTGVw=3D=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY8PR11MB6985.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?MM8kkSndsHKQV27uBVuDj/Il5RFjbDIvRvs/2b5k9P2dapaUf1E0XOn/z4Nh?=
- =?us-ascii?Q?/BqfZa+iocjKErFZE79whi/WHNylpPGIeQfKDGQgrvF10+14nd1o4LBwuR6S?=
- =?us-ascii?Q?B6fa/Dyh+7u/78S+XgMC1hyLhulMtm3KUogF7RSK5SqxK3M7L6Gedrg+s9Bk?=
- =?us-ascii?Q?p7rTxacYeposHSPU8GnYrYGiki7kgeufTCavMVyitAmQfLN0sbvXmzZ78elO?=
- =?us-ascii?Q?UfhC48Mx+3lzfAX0auTliasXtIO6osC23fgW7RbHO/HxYoomeW6WuWK0Me2O?=
- =?us-ascii?Q?9cGp9GmeIo3XwATixte/GAv7TrdJA8JUBB0tLxgLKmaYioqouC5m/OkGyY8d?=
- =?us-ascii?Q?InZpwYEdXBIoScffQh0azWyQfzOHgHYd10frvMpOYhk82DKLu6B6ExHAjUta?=
- =?us-ascii?Q?OHQCl665buLLs/eVxaO7C2abYfAqL+XRKuQO9WgSgLO5n8zoE9bxYWXrE94t?=
- =?us-ascii?Q?VqToOkQDWClKwTmYn2UNOBOCLFg8sKkgXVtSxESQmzroYuwLiO3/3mFenqgW?=
- =?us-ascii?Q?1EvywyE204vOujL7h+DZgdNjZswGagB1BceyHOJxsjK71Chdc/ROMI9ITiAF?=
- =?us-ascii?Q?tqRG07Yf+Svn0Wj9nnQrv+v8gGDEMTOKZE3b0F4zevrtnLAIttpY9oBXQ+Vb?=
- =?us-ascii?Q?mSDgoa+rYZ3HHf6v19VH32b072GXjA/goz1UDUDyOtHfKSdKU5//DXnIihxi?=
- =?us-ascii?Q?JpnrfAr4bfiLLVsiciZfHaRPwOrIJsV/GqS7ePUkqj6StyR40uTqD34NW+Uy?=
- =?us-ascii?Q?AGSY0LehkcW1qjM46AguyTcULfCmKTnLeY/DL0oky1M8eueQZpbj8D9VcOTO?=
- =?us-ascii?Q?K/VnaVR0UKH0oqiWtK1fhYz3XRk5I8VZkiw1bLGd7O4Q7oYf1DzaN0D7o6b3?=
- =?us-ascii?Q?uEGiX7Dqn5jiRrrtvuUgNLE1JHoltjGA/hbRMGXyPucUqRwQJBrLv06Zs33r?=
- =?us-ascii?Q?7M89GJePq8kKQ/IfHMmmmODwmMFbzYBjBCrb65voseK3hCh0oExwjV2/vm59?=
- =?us-ascii?Q?FAJ2BBexkjlmQJRXTKkYugPeErOqyrwxkk3RFfw5ic3t/iWah5rPq2uVTSoj?=
- =?us-ascii?Q?3452+is+iKId40LOBF0sqB5gr2b3wYqFOpZdOyx03GaMIXB8Qv8g8h62K+DO?=
- =?us-ascii?Q?LN2LG7i5BXJwWgfZb1/CBAG7HTeF6ZEOLz5NcC7tzTUPFVyKgw3+gLQV3vbZ?=
- =?us-ascii?Q?laxL6TP5i+d6452JFUqLqVtIzohh1kZobE5SoRwnmHvrYAnpdr/wAbJvsDik?=
- =?us-ascii?Q?jHNR+R2OE/RGOapxV34EtxdXgkL7tV5a1xI2xHochtFQQCeZoARxQVTjwCdG?=
- =?us-ascii?Q?Pp/HQZzitEQtTSu7syYFL71t8M0Rgcy76/jfYMJaTC8tNvx6276ecQOkyDId?=
- =?us-ascii?Q?hVPuUKK6+i+S9y5J+oorw/tSwRR5dMU0x7OnlaLpLDl77k3VC6lI78jDwXpD?=
- =?us-ascii?Q?kypwmUt+ZDwLhW7OCEDLUNtLLvcwBM6yB62zoEEPXowG3jDb9iBb97oTIRst?=
- =?us-ascii?Q?PZEE9PpKmTKQzzKe44Yg4+d8uGwZ7Uo2mnogi9o9Uvqyym9a22xqfDYgIYTC?=
- =?us-ascii?Q?6cxgK7e/bynb7s/tqJXhD9acTfvMT+E544LdgoZD?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9f744887-0ce4-4b7f-5e3b-08dcc82db607
-X-MS-Exchange-CrossTenant-AuthSource: CY8PR11MB6985.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Aug 2024 13:23:03.3680
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: +sjWvaVnEQwM6bTgSz/u/L/z14nhpvcwYJAepQ7sVBJPANSseJpKBHAf1W9sLsAXXwakgMSfums5ZUhUmUyJwA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR11MB4804
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6b214ad2-d448-4f5f-85e9-93cd38e0e035@oracle.com>
 
-On Thu, Aug 29, 2024 at 03:56:39PM +0800, Huang, Kai wrote:
-> Actually run spell check this time ...
-> 
-> On Thu, 2024-08-29 at 10:38 +0800, Aaron Lu wrote:
-> > When current node doesn't have a EPC section configured by firmware and
-> 
-> "current node" -> "the current node"
-> 
-> "a EPC section" -> "an EPC section"
-> 
-> > all other EPC sections memory are used up, CPU can stuck inside the
-> 
-> "EPC sections memory" -> "EPC sections"
-> 
-> "can stuck" -> "can get stuck"
-> 
-> > while loop in __sgx_alloc_epc_page() forever and soft lockup will happen.
-> > Note how nid_of_current will never equal to nid in that while loop because
-> > nid_of_current is not set in sgx_numa_mask.
+On Wed, Aug 28, 2024 at 01:19:16PM -0700, ross.philipson@oracle.com wrote:
+> On 8/28/24 10:14 AM, Ard Biesheuvel wrote:
+> > On Wed, 28 Aug 2024 at 19:09, kernel test robot <lkp@intel.com> wrote:
+> > > 
+> > > Hi Ross,
+> > > 
+> > > kernel test robot noticed the following build warnings:
+> > > 
+> > > [auto build test WARNING on tip/x86/core]
+> > > [also build test WARNING on char-misc/char-misc-testing char-misc/char-misc-next char-misc/char-misc-linus herbert-cryptodev-2.6/master efi/next linus/master v6.11-rc5]
+> > > [cannot apply to herbert-crypto-2.6/master next-20240828]
+> > > [If your patch is applied to the wrong git tree, kindly drop us a note.
+> > > And when submitting patch, we suggest to use '--base' as documented in
+> > > https://urldefense.com/v3/__https://git-scm.com/docs/git-format-patch*_base_tree_information__;Iw!!ACWV5N9M2RV99hQ!KhkZK77BXRIR4F24tKkUeIlIrdqXtUW2vcnDV74c_5BmrQBQaQ4FqcDKKv9LB3HQUocTGkrmIxuz-LAC$ ]
+> > > 
+> > > url:    https://urldefense.com/v3/__https://github.com/intel-lab-lkp/linux/commits/Ross-Philipson/Documentation-x86-Secure-Launch-kernel-documentation/20240827-065225__;!!ACWV5N9M2RV99hQ!KhkZK77BXRIR4F24tKkUeIlIrdqXtUW2vcnDV74c_5BmrQBQaQ4FqcDKKv9LB3HQUocTGkrmI7Z6SQKy$
+> > > base:   tip/x86/core
+> > > patch link:    https://urldefense.com/v3/__https://lore.kernel.org/r/20240826223835.3928819-21-ross.philipson*40oracle.com__;JQ!!ACWV5N9M2RV99hQ!KhkZK77BXRIR4F24tKkUeIlIrdqXtUW2vcnDV74c_5BmrQBQaQ4FqcDKKv9LB3HQUocTGkrmIzWfs1XZ$
+> > > patch subject: [PATCH v10 20/20] x86/efi: EFI stub DRTM launch support for Secure Launch
+> > > config: i386-randconfig-062-20240828 (https://urldefense.com/v3/__https://download.01.org/0day-ci/archive/20240829/202408290030.FEbUhHbr-lkp@intel.com/config__;!!ACWV5N9M2RV99hQ!KhkZK77BXRIR4F24tKkUeIlIrdqXtUW2vcnDV74c_5BmrQBQaQ4FqcDKKv9LB3HQUocTGkrmIwkYG0TY$ )
 > > 
-> > Also worth mentioning is that it's perfectly fine for firmware to not
-> > seup an EPC section on a node. Setting an EPC section on each node can
-> > be good for performance but that's not a requirement functionality wise.
 > > 
+> > This is a i386 32-bit build, which makes no sense: this stuff should
+> > just declare 'depends on 64BIT'
 > 
-> [...]
+> Our config entry already has 'depends on X86_64' which in turn depends on
+> 64BIT. I would think that would be enough. Do you think it needs an explicit
+> 'depends on 64BIT' in our entry as well?
 
-Thank you Kai for your detailed review, will reword the changelog
-according to your suggestions when sending the next version.
+The error is in x86-stub.c, which is pre-existing and compiled for 32
+bit as well, so you need more than a "depends" here.
+
+> > > compiler: clang version 18.1.5 (https://urldefense.com/v3/__https://github.com/llvm/llvm-project__;!!ACWV5N9M2RV99hQ!KhkZK77BXRIR4F24tKkUeIlIrdqXtUW2vcnDV74c_5BmrQBQaQ4FqcDKKv9LB3HQUocTGkrmI2SDLdTN$  617a15a9eac96088ae5e9134248d8236e34b91b1)
+> > > reproduce (this is a W=1 build): (https://urldefense.com/v3/__https://download.01.org/0day-ci/archive/20240829/202408290030.FEbUhHbr-lkp@intel.com/reproduce__;!!ACWV5N9M2RV99hQ!KhkZK77BXRIR4F24tKkUeIlIrdqXtUW2vcnDV74c_5BmrQBQaQ4FqcDKKv9LB3HQUocTGkrmI5MJDdIG$ )
+> > > 
+> > > If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> > > the same patch/commit), kindly add following tags
+> > > | Reported-by: kernel test robot <lkp@intel.com>
+> > > | Closes: https://urldefense.com/v3/__https://lore.kernel.org/oe-kbuild-all/202408290030.FEbUhHbr-lkp@intel.com/__;!!ACWV5N9M2RV99hQ!KhkZK77BXRIR4F24tKkUeIlIrdqXtUW2vcnDV74c_5BmrQBQaQ4FqcDKKv9LB3HQUocTGkrmI-MitiqR$
+> > > 
+> > > sparse warnings: (new ones prefixed by >>)
+> > > > > drivers/firmware/efi/libstub/x86-stub.c:945:41: sparse: sparse: non size-preserving pointer to integer cast
+> > >     drivers/firmware/efi/libstub/x86-stub.c:953:65: sparse: sparse: non size-preserving pointer to integer cast
+> > > > > drivers/firmware/efi/libstub/x86-stub.c:980:70: sparse: sparse: non size-preserving integer to pointer cast
+> > >     drivers/firmware/efi/libstub/x86-stub.c:1014:45: sparse: sparse: non size-preserving integer to pointer cast
+> > > 
+> > > vim +945 drivers/firmware/efi/libstub/x86-stub.c
+> > > 
+> > >     927
+> > >     928  static bool efi_secure_launch_update_boot_params(struct slr_table *slrt,
+> > >     929                                                   struct boot_params *boot_params)
+> > >     930  {
+> > >     931          struct slr_entry_intel_info *txt_info;
+> > >     932          struct slr_entry_policy *policy;
+> > >     933          struct txt_os_mle_data *os_mle;
+> > >     934          bool updated = false;
+> > >     935          int i;
+> > >     936
+> > >     937          txt_info = slr_next_entry_by_tag(slrt, NULL, SLR_ENTRY_INTEL_INFO);
+> > >     938          if (!txt_info)
+> > >     939                  return false;
+> > >     940
+> > >     941          os_mle = txt_os_mle_data_start((void *)txt_info->txt_heap);
+> > >     942          if (!os_mle)
+> > >     943                  return false;
+> > >     944
+> > >   > 945          os_mle->boot_params_addr = (u64)boot_params;
+> > >     946
+> > >     947          policy = slr_next_entry_by_tag(slrt, NULL, SLR_ENTRY_ENTRY_POLICY);
+> > >     948          if (!policy)
+> > >     949                  return false;
+> > >     950
+> > >     951          for (i = 0; i < policy->nr_entries; i++) {
+> > >     952                  if (policy->policy_entries[i].entity_type == SLR_ET_BOOT_PARAMS) {
+> > >     953                          policy->policy_entries[i].entity = (u64)boot_params;
+> > >     954                          updated = true;
+> > >     955                          break;
+> > >     956                  }
+> > >     957          }
+> > >     958
+> > >     959          /*
+> > >     960           * If this is a PE entry into EFI stub the mocked up boot params will
+> > >     961           * be missing some of the setup header data needed for the second stage
+> > >     962           * of the Secure Launch boot.
+> > >     963           */
+> > >     964          if (image) {
+> > >     965                  struct setup_header *hdr = (struct setup_header *)((u8 *)image->image_base +
+> > >     966                                              offsetof(struct boot_params, hdr));
+> > >     967                  u64 cmdline_ptr;
+> > >     968
+> > >     969                  boot_params->hdr.setup_sects = hdr->setup_sects;
+> > >     970                  boot_params->hdr.syssize = hdr->syssize;
+> > >     971                  boot_params->hdr.version = hdr->version;
+> > >     972                  boot_params->hdr.loadflags = hdr->loadflags;
+> > >     973                  boot_params->hdr.kernel_alignment = hdr->kernel_alignment;
+> > >     974                  boot_params->hdr.min_alignment = hdr->min_alignment;
+> > >     975                  boot_params->hdr.xloadflags = hdr->xloadflags;
+> > >     976                  boot_params->hdr.init_size = hdr->init_size;
+> > >     977                  boot_params->hdr.kernel_info_offset = hdr->kernel_info_offset;
+> > >     978                  efi_set_u64_form(boot_params->hdr.cmd_line_ptr, boot_params->ext_cmd_line_ptr,
+> > >     979                                   &cmdline_ptr);
+> > >   > 980                  boot_params->hdr.cmdline_size = strlen((const char *)cmdline_ptr);
+> > >     981          }
+> > >     982
+> > >     983          return updated;
+> > >     984  }
+> > >     985
+> > > 
+> > > --
+> > > 0-DAY CI Kernel Test Service
+> > > https://urldefense.com/v3/__https://github.com/intel/lkp-tests/wiki__;!!ACWV5N9M2RV99hQ!KhkZK77BXRIR4F24tKkUeIlIrdqXtUW2vcnDV74c_5BmrQBQaQ4FqcDKKv9LB3HQUocTGkrmIy5kGTJf$
+> > > 
+> 
+> 
+
+J.
+
+-- 
+   101 things you can't have too   |  .''`.  Debian GNU/Linux Developer
+     much of : 23 - Red Dwarf.     | : :' :  Happy to accept PGP signed
+                                   | `. `'   or encrypted mail - RSA
+                                   |   `-    key on the keyservers.
 
