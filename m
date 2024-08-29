@@ -1,229 +1,118 @@
-Return-Path: <linux-kernel+bounces-307621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0743A96507F
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 22:07:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42282965082
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 22:10:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A58EC1F2628B
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 20:07:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C43AF281415
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 20:10:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1542D1BA883;
-	Thu, 29 Aug 2024 20:07:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC3561BA891;
+	Thu, 29 Aug 2024 20:10:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gWWG29MC"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JHnp7tBX"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2C131BA287
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 20:06:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC26A1BA28A
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 20:10:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724962019; cv=none; b=KbyyzSt7fa3y1aKakc+Jt/8nCrc90dant7uq9znAOZJsPtdG1o9V9Bm73qtFMPiqB7I7vOf2IqGkJdTdx1xcDGM8Q3Vs0KkccSMeRmOmufZoFsv0hpORFpQQnS/TX4v7WcFHOmmwCvl8OC1r+D8iLQyUbvg9BTCFnH6KfLqCSds=
+	t=1724962235; cv=none; b=CRRrM+6uI9uKFUNdouTCIZ1mH9h2RmGi8AZNUKoWJ7timmuowD33DFjWwoh+SWnvq+Ffr1qZtD2JYTf6oxr6KO7H80Wj+WtomalPHHknlLL8V8kK2ChPAqujugLOzjbBDqd5qwBjLh2rAu8eXg79f+L/VFm9cb4DSGwkUA7KNCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724962019; c=relaxed/simple;
-	bh=9ZAG4xVxK2s1NUjwNxY2G84N9pLAuVSOCrY6odqnKBg=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=G7FRsdRnB+DXbF0v8Y8MVFlP60p6cmydToVSFxGR8LKvMJzEfCTgkoXEiIALRjNNtdV8rrZEm1SkB8xf9IIs4kJlzNwKq+6gx4+M29OHOSO4/cETJQoTOGhGzQaLfqOuOrEv4wL0bb7CEOeOid4PWvoFGemrNr7qkXBPtbCRmbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gWWG29MC; arc=none smtp.client-ip=209.85.215.201
+	s=arc-20240116; t=1724962235; c=relaxed/simple;
+	bh=5KVDQSRJqn1uLOrwPqOnPp59IExMMYu9Go6kY04yP5E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Uuwzf2Pb/VRzK29yN1sRuUBxFTPplBaw5e3p25Sj8s2cOAGM4OIP1Ftw0fv7HJm9kQWN853XB3uX47vEahM/RHiD573d1NpOXp5YxR23isIQMCEBMK3ZpkOntViMemUW2JU4pfqVV7K0NqOlYweCIFlKIuAXG8KhML8TMFRxxR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JHnp7tBX; arc=none smtp.client-ip=209.85.214.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-7d235d55c41so469342a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 13:06:57 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-20353e5de9cso48205ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 13:10:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724962017; x=1725566817; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=h0tAXdbF9s5aVrX2D9yJymXJxFJA/BG13Aebp2mvni4=;
-        b=gWWG29MCg6sYMqf7MzyDxk6ysK5JnvU1JkRCgIQUNMuyoERsO4sKJc4aR/JFcc2lfQ
-         jOpUXAAs1PJ1er7wR9+2aNiqp/qBs6/8bBLuR3poCLBdeAVLQOwYLTh7Kkp9jVkad7En
-         Ur6vuArPtTquPe+aZEYuHqbGO3dYKtdZfG44FJLrpX5310UDDeCtzbJEg4bcGMJRXADL
-         BJ/O9gKrqTZzZZcz2xIW32FY5YUPo30n1YKcp93KEyv+BZLd4+HCpleItvRng4rZEaB7
-         x/rmWnSLXrAs2CDegOAbqg+b7BNc0UcoTotN3/thoWqSzJBZTp04uy6nzcLx1wI5UHvy
-         lKIw==
+        d=google.com; s=20230601; t=1724962232; x=1725567032; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5KVDQSRJqn1uLOrwPqOnPp59IExMMYu9Go6kY04yP5E=;
+        b=JHnp7tBXqmcw9d2ybPEhuJbzHspZn6y79KTFnWRZhAYoCX9VSD7uwNzTxvLu5CSdC6
+         fs+DZkaeuz9T3XzIAbW8Vf9d/1BSjH+KhFlZ2zCS+VtcCfEcdOfzv+Cpci/TRdXDp22K
+         GzNqBj9uWk2oxMO4qQp4fu2ynndCEYNQelI1sQCV2xTzFJBHhPki+yNf37vhDIrX15U7
+         Irfe1mNd8bXxMfqce6Suv7nwm5MEdBx+unOwZQYYKmPH7rH220WRFM4q8UfRL1/sd9g4
+         IMT8kTrSzmsIfX6NC8SBA9uKwMh/tTWC/nxTNYaeAuXU8ZTqq1hp9QPH/pRzSHCGKBtQ
+         tLkg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724962017; x=1725566817;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=h0tAXdbF9s5aVrX2D9yJymXJxFJA/BG13Aebp2mvni4=;
-        b=LluThywsVtWK7YcWcLmCrMLs4A/M0QjT0Bwm/WtfbU06sFP31oC4cwkNyALoMFkMGg
-         n+eJb8axK1xhhmJkhLIkJpqmwZd/hy5Sr6WdoBrqtiVn+eu4IpmPSeNvAf3buoNCWMR+
-         TOQZ9VOYlQGlHePwk7sS4WxK2IU04BDV+j/P/4VjsTYGNN+6ZOtOdQVl4SaAGdUQbXws
-         0JXjpaSmsM2GejkUQ0oWmhX/v0VLedg1IsQiG62Z64uSsJCkFcxlbdaU+sQE4Tdmobok
-         uy7lrI3zKImDQ8M+3qZ89wcA5Z9sewVbPnuh0VLpMNSPmTwCFCFuqT7pILRgJxBrYvph
-         0DkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUy5rxe4iitXRhY6bKCwWFycn+wl9A8A0hiTkcj64CZSvk/OrzbfcNjjMNiAGTpXWxBvI8MtbDlHQ9zqEo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvKlE5gb3B03UtgkZ1P0PBTvpqeYRvacGsEo9hIQlGRcGDqiVF
-	rSnDjdx99D8+Gs5ZnjUnI0HVsLgGsMl8bfBtYw4tTN+D+alcV+Zy9hUkj7N5F0YiC+FJJGeMx8T
-	StA==
-X-Google-Smtp-Source: AGHT+IHvuOtDnHgaKGMG7YaufVXKF5bZJUCSaLhF0tkNOnDRLtlvFWPo0p053FxGCu89mhSEyHod1HWgecQ=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:90a:5304:b0:2c2:5b8a:ef9c with SMTP id
- 98e67ed59e1d1-2d85616d60cmr8985a91.2.1724962016945; Thu, 29 Aug 2024 13:06:56
- -0700 (PDT)
-Date: Thu, 29 Aug 2024 13:06:55 -0700
-In-Reply-To: <20240829191135.2041489-5-vipinsh@google.com>
+        d=1e100.net; s=20230601; t=1724962232; x=1725567032;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5KVDQSRJqn1uLOrwPqOnPp59IExMMYu9Go6kY04yP5E=;
+        b=PZ+pITTemavuEVSdFgLa5rIzPKc2UKHxNw0r9TwQaFEN217zovYSNlSirDu5Gs9S7Z
+         TctQrWBhvLcP4gwae2Zm996cjGWjQu95T2sJwD7K84uZHCMlUBBwXa5rpt5JV/VrzfyF
+         Tl9F5/+FYLPIo87rsPfVqQr/y5yjcQgwgD8KGdrtLeKBoTZzuItjFc43utEHAMdp7P6i
+         R7VZb3HqAldpEraa/rxw6IfDmEjYBmtGJu1YcB6wyK8/1h7lL27SmClR0bsiRxuqnLXa
+         HWKb1AGIIDbskxnLVlZev15cBrNbmM0aMgHRSNDAcsyJfB1i0gZHi4UVSahhZubchRKQ
+         C6Og==
+X-Forwarded-Encrypted: i=1; AJvYcCUiE+uTpgF+thGv13RbYjQroMo0Y7tfHLY/oLQM9XWnqAlUx67/kcb4EVF287YKuZFqjNHpmN9ME0/nHxA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVBdsdEyspClE61oLzf7C+8nhXwjSfMtcr5ddIv/kAaofMEjiQ
+	vnuPaJYm9YvYEL8/2KAK1bK9dim37arnmq32cBS8sFkNZeZD2wzRYbfLG4ePZc4NSecH8Nu6Iti
+	3MxMIUH+ve60avfPsxTC1ZVLAeEPB/uld71hp
+X-Google-Smtp-Source: AGHT+IFQRNbNGLHbbGCo2uMEpZQ8l/Z8Qfl7lbbo3l69mIFsmK7QVww06v7HFuoldRojF6blnNbqjyk2g2kuM7Aop/A=
+X-Received: by 2002:a17:903:2282:b0:1fb:19fb:a1f0 with SMTP id
+ d9443c01a7336-2052388c8f1mr664215ad.4.1724962231569; Thu, 29 Aug 2024
+ 13:10:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240829191135.2041489-1-vipinsh@google.com> <20240829191135.2041489-5-vipinsh@google.com>
-Message-ID: <ZtDU3x9t66BnpPt_@google.com>
-Subject: Re: [PATCH v2 4/4] KVM: x86/mmu: Recover TDP MMU NX huge pages using
- MMU read lock
-From: Sean Christopherson <seanjc@google.com>
-To: Vipin Sharma <vipinsh@google.com>
-Cc: pbonzini@redhat.com, dmatlack@google.com, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+References: <CANikGpeQuBKj89rTkaAs5ADrz0+YLQ54g-0CshYzE3h06G0U5g@mail.gmail.com>
+ <202408281719.8BBA257@keescook>
+In-Reply-To: <202408281719.8BBA257@keescook>
+From: Jann Horn <jannh@google.com>
+Date: Thu, 29 Aug 2024 22:09:51 +0200
+Message-ID: <CAG48ez3bxCBtWbMG7eooSivNQtb+kTixk6Z2EaEQbmLPB+G=bg@mail.gmail.com>
+Subject: Re: BUG: null pointer dereference in seccomp
+To: Juefei Pu <juefei.pu@email.ucr.edu>
+Cc: Kees Cook <kees@kernel.org>, luto@amacapital.net, wad@chromium.org, 
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
+	bpf@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 29, 2024, Vipin Sharma wrote:
-> @@ -1806,7 +1832,7 @@ void kvm_tdp_mmu_recover_nx_huge_pages(struct kvm *kvm)
->  	struct kvm_mmu_page *sp;
->  	bool flush = false;
->  
-> -	lockdep_assert_held_write(&kvm->mmu_lock);
-> +	lockdep_assert_held_read(&kvm->mmu_lock);
->  	/*
->  	 * Zapping TDP MMU shadow pages, including the remote TLB flush, must
->  	 * be done under RCU protection, because the pages are freed via RCU
-> @@ -1815,8 +1841,11 @@ void kvm_tdp_mmu_recover_nx_huge_pages(struct kvm *kvm)
->  	rcu_read_lock();
->  
->  	for ( ; to_zap; --to_zap) {
-> -		if (list_empty(&kvm->arch.tdp_mmu_possible_nx_huge_pages))
-> +		spin_lock(&kvm->arch.tdp_mmu_pages_lock);
-> +		if (list_empty(&kvm->arch.tdp_mmu_possible_nx_huge_pages)) {
-> +			spin_unlock(&kvm->arch.tdp_mmu_pages_lock);
->  			break;
-> +		}
->  
->  		/*
->  		 * We use a separate list instead of just using active_mmu_pages
-> @@ -1832,16 +1861,29 @@ void kvm_tdp_mmu_recover_nx_huge_pages(struct kvm *kvm)
->  		WARN_ON_ONCE(!sp->role.direct);
->  
->  		/*
-> -		 * Unaccount and do not attempt to recover any NX Huge Pages
-> -		 * that are being dirty tracked, as they would just be faulted
-> -		 * back in as 4KiB pages. The NX Huge Pages in this slot will be
-> +		 * Unaccount the shadow page before zapping its SPTE so as to
-> +		 * avoid bouncing tdp_mmu_pages_lock more than is necessary.
-> +		 * Clearing nx_huge_page_disallowed before zapping is safe, as
-> +		 * the flag doesn't protect against iTLB multi-hit, it's there
-> +		 * purely to prevent bouncing the gfn between an NX huge page
-> +		 * and an X small spage. A vCPU could get stuck tearing down
-> +		 * the shadow page, e.g. if it happens to fault on the region
-> +		 * before the SPTE is zapped and replaces the shadow page with
-> +		 * an NX huge page and get stuck tearing down the child SPTEs,
-> +		 * but that is a rare race, i.e. shouldn't impact performance.
-> +		 */
-> +		unaccount_nx_huge_page(kvm, sp);
-> +		spin_unlock(&kvm->arch.tdp_mmu_pages_lock);
-> +
-> +		/*
-> +		 * Don't bother zapping shadow pages if the memslot is being
-> +		 * dirty logged, as the relevant pages would just be faulted back
-> +		 * in as 4KiB pages. Potential NX Huge Pages in this slot will be
->  		 * recovered, along with all the other huge pages in the slot,
->  		 * when dirty logging is disabled.
->  		 */
-> -		if (kvm_mmu_sp_dirty_logging_enabled(kvm, sp))
-> -			unaccount_nx_huge_page(kvm, sp);
-> -		else
-> -			flush |= kvm_tdp_mmu_zap_sp(kvm, sp);
-> +		if (!kvm_mmu_sp_dirty_logging_enabled(kvm, sp))
-> +			flush |= tdp_mmu_zap_possible_nx_huge_page(kvm, sp);
->  		WARN_ON_ONCE(sp->nx_huge_page_disallowed);
->  
->  		if (need_resched() || rwlock_needbreak(&kvm->mmu_lock)) {
+On Thu, Aug 29, 2024 at 2:38=E2=80=AFAM Kees Cook <kees@kernel.org> wrote:
+> On Tue, Aug 27, 2024 at 09:09:49PM -0700, Juefei Pu wrote:
+> > Hello,
+> > We found the following null-pointer-dereference issue using syzkaller
+> > on Linux v6.10.
+>
+> In seccomp! Yikes.
+>
+> > Unfortunately, the syzkaller failed to generate a reproducer.
+>
+> That's a bummer.
+>
+> > But at least we have the report:
+> >
+> > Oops: general protection fault, probably for non-canonical address
+> > 0xdffffc0000000006: 0000 [#1] PREEMPT SMP KASAN PTI
+> > KASAN: null-ptr-deref in range [0x0000000000000030-0x0000000000000037]
+> > CPU: 0 PID: 4493 Comm: systemd-journal Not tainted 6.10.0 #13
+> > Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04=
+/01/2014
+> > RIP: 0010:__bpf_prog_run include/linux/filter.h:691 [inline]
 
-Tsk, tsk.  There's a cond_resched_rwlock_write() lurking here.
+So, the issue can't be that we went through the seccomp filter setup
+path properly and the bpf_prog was never actually installed, because
+in that case we would've crashed in seccomp_cache_prepare_bitmap().
 
-Which is a decent argument/segue for my main comment: I would very, very strongly
-prefer to have a single flow for the control logic.  Almost all of the code is
-copy+pasted to the TDP MMU, and there unnecessary and confusing differences between
-the two flows.  E.g. the TDP MMU does unaccount_nx_huge_page() preemptively, while
-the shadow MMU does not.
+I'm pretty confused how we could've possibly gotten into this situation...
 
-The TDP MMU has a few extra "locks" (rcu_read_lock() + tdp_mmu_pages_lock), but
-I don't see any harm in taking those in the shadow MMU flow.  KVM holds a spinlock
-and so RCU practically is meaningless, and tdp_mmu_pages_lock will never be
-contended since it's only ever taken under mmu_lock.
-
-If we _really_ wanted to bury tdp_mmu_pages_lock in the TDP MMU, it could be
-passed in as an optional paramter.  I'm not super opposed to that, it just looks
-ugly, and I'm not convinced it's worth the effort.  Maybe a middle ground would
-be to provide a helper so that tdp_mmu_pages_lock can stay 64-bit only, but this
-code doesn't need #ifdefs?
-
-Anyways, if the helper is __always_inline, there shouldn't be an indirect call
-to recover_page().  Completely untested, but this is the basic gist.
-
----
-typedef bool (*nx_recover_page_t)(struct kvm *kvm, struct kvm_mmu_page *sp,
-				  struct list_head *invalid_pages);
-
-static __always_inline void kvm_recover_nx_huge_pages(struct kvm *kvm,
-						      bool shared,
-						      spinlock_t *list_lock;
-						      struct list_head *pages,
-						      unsigned long nr_pages,
-						      nx_recover_page_t recover_page)
-{
-	unsigned int ratio = READ_ONCE(nx_huge_pages_recovery_ratio);
-	unsigned long to_zap = ratio ? DIV_ROUND_UP(nr_pages, ratio) : 0;
-	struct kvm_mmu_page *sp;
-	LIST_HEAD(invalid_list);
-	int rcu_idx;
-	bool flush;
-
-	kvm_lockdep_assert_mmu_lock_held(kvm, shared);
-
-	rcu_idx = srcu_read_lock(&kvm->srcu);
-	rcu_read_lock();
-
-	for ( ; to_zap; --to_zap) {
-		spin_lock(&kvm->arch.tdp_mmu_pages_lock);
-		if (list_empty(pages)) {
-			spin_unlock(&kvm->arch.tdp_mmu_pages_lock);
-			break;
-		}
-
-		sp = list_first_entry(pages, struct kvm_mmu_page,
-				      possible_nx_huge_page_link);
-		WARN_ON_ONCE(!sp->nx_huge_page_disallowed);
-		WARN_ON_ONCE(!sp->role.direct);
-
-		unaccount_nx_huge_page(kvm, sp);
-		spin_unlock(&kvm->arch.tdp_mmu_pages_lock);
-
-		if (!kvm_mmu_sp_dirty_logging_enabled(kvm, sp))
-			flush |= recover_page(kvm, sp, &invalid_list);
-
-		WARN_ON_ONCE(sp->nx_huge_page_disallowed);
-
-		if (need_resched() || rwlock_needbreak(&kvm->mmu_lock)) {
-			kvm_mmu_remote_flush_or_zap(kvm, &invalid_list, flush);
-
-			rcu_read_unlock();
-
-			if (shared)
-				cond_resched_rwlock_read(&kvm->mmu_lock);
-			else
-				cond_resched_rwlock_write(&kvm->mmu_lock);
-
-			rcu_read_lock();
-		}
-	}
-
-	kvm_mmu_remote_flush_or_zap(kvm, &invalid_list, flush);
-
-	rcu_read_unlock();
-	srcu_read_unlock(&kvm->srcu, rcu_idx);
-}
+What kind of test setup are you using - is this QEMU in TCG mode or in
+KVM mode? Can you share your vmlinux binary, so we can see if there's
+a clue left in the register state of the crash?
 
