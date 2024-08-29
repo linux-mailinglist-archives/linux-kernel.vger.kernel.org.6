@@ -1,102 +1,130 @@
-Return-Path: <linux-kernel+bounces-306719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FC70964281
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:02:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C759E96428B
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:03:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFC601F27D0D
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 11:02:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CD961F21CE6
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 11:03:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 582DA190661;
-	Thu, 29 Aug 2024 11:02:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A69A190666;
+	Thu, 29 Aug 2024 11:03:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V/vzyJ+0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="Ll0+hVF2"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 969F718A6D1;
-	Thu, 29 Aug 2024 11:02:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83847647;
+	Thu, 29 Aug 2024 11:03:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724929346; cv=none; b=M4yNHsApfN3ihvC512F/yhTgyUrHwoG3+LsH9t5/JHcSEY6SAGq89P27rMbnefHpTFoiO3YmpgWc7bOGfsTmhHIvm38vLn1NV/LChWBS320mngkZGXJ9GsPrG3A285PIgFGsGGHGax0ZoiJPl7xgEIefG+TKPPeftLIo/tr8F4E=
+	t=1724929424; cv=none; b=QaI3b5e05J7AgKPCmAUoRrG3eDVHFFyLQnVHZ6IWj1TGm3jStp0V2UtdEw0OdB2je+k0DDX5Kcm5SqWvgpqibz4NT6PGFa0n8qgzDRQksRfCKXJOPd9UxhiLGp26Kjk5YLz5A3Ul5o+1iYymlNVyudT/qPgsWQAgNuBGaE9hjrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724929346; c=relaxed/simple;
-	bh=u+LH04eT4qocxpQHoAB733TwPibGYYZSu7w3tJjRL9M=;
+	s=arc-20240116; t=1724929424; c=relaxed/simple;
+	bh=cMMmqrOPuJixgn6uYhJgA7YIfMsfKtFXFvMsFxMdAQo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d9RqFjL+u53bIVXJZlhau8r0/5rWZ0kqpFtalRsXAt9xcCa2J+nbJH5S2LwukurepeMxJ/cwGQ99A4DOIaji+eNzHEZ9a0wxW4N85oFEpT4rwaVXMWZyRBg+PVz2sxTgAlO8cHv+xLcYTKPnG9bTkm83S2MEVHKKY/uR0YwA77s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V/vzyJ+0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E5AAC4CEC1;
-	Thu, 29 Aug 2024 11:02:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724929346;
-	bh=u+LH04eT4qocxpQHoAB733TwPibGYYZSu7w3tJjRL9M=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=lIq6mbMMSowBZm9g8sB9B88oJe44iqKCwQubzSe4TiGSu1n5f5ETDruoihB5vRgjGoAJKxD7io2Fo0dxrErpZnKuOzaHvVsfK2GDrIroFDX/x5D/OfSAHgJl2hYRSUdF0OmyDZWOsidFFlqg2Fe7UkMCdF+w9lExyOeqjdlzKDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=Ll0+hVF2; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1724929418;
+	bh=cMMmqrOPuJixgn6uYhJgA7YIfMsfKtFXFvMsFxMdAQo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=V/vzyJ+0vfSOtFN7JvSOXt/w3m6hz/Zc4Hn+UXN1HajC0sev+5Kn+EzZLVb3+W9Cd
-	 MzBL6PbpoOxZYWW0L/ufw2rdIP8h6rD79pxue2D257zFUsyNf+RV5LvFXKYDLlLpL8
-	 idgyqxbosUWkYDwhWNogHsNbyUoBvApSSZLlIwRjO+ToYbk+6rZMhz4IRAoZLSkwrD
-	 WPhciWjihwtg4t+z082d5NnzdlgaBfp+/w1C+n3x2TtPPEDDF0YuqRy2ZYb/CDDbkR
-	 Wgzcmc7Rl4Rtur0A/xRyTY5AhH+rHqjd7hEcf3ThVvFzs0ZHCIuXxTVkE5+qcnNr3u
-	 ZaaA4sl9fq+5A==
-Date: Thu, 29 Aug 2024 12:02:21 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Dev Jain <dev.jain@arm.com>
-Cc: shuah@kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kselftest@vger.kernel.org, Catalin.Marinas@arm.com,
-	will@kernel.org, ryan.roberts@arm.com, Anshuman.Khandual@arm.com,
-	aneesh.kumar@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] selftests/arm64: Fix build warnings for abi
-Message-ID: <3699c056-693b-4313-a750-2e777b48ed46@sirena.org.uk>
-References: <20240827051851.3738533-1-dev.jain@arm.com>
- <6e5588d9-c22c-4a94-afce-1274c888403e@sirena.org.uk>
- <5241c418-d5af-46ca-8188-7b67e1640f88@arm.com>
+	b=Ll0+hVF2qwnAW8cafLp4b0o0ZcuN1r4LXG7OMreX2rtwOJBXYy9U+jGf/GM3h+Tlp
+	 Ssy8jZdhpCvL5jOAWgNds7L7ZZhC7zJWbOYU9+Q0R5zTAVmkvTXIohSt4PRyrRzPVl
+	 5OYKuwt3XMbuoCTORs0J76dzUrli0PrX9YQE5psU=
+Date: Thu, 29 Aug 2024 13:03:38 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Jose Fernandez <jose.fernandez@linux.dev>
+Cc: Christian Heusel <christian@heusel.eu>, 
+	Nathan Chancellor <nathan@kernel.org>, Masahiro Yamada <masahiroy@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, Peter Jung <ptr1337@cachyos.org>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] kbuild: add debug package to pacman PKGBUILD
+Message-ID: <5f02a2e0-342d-472c-8a13-dc369391492d@t-8ch.de>
+References: <20240824220756.73091-1-jose.fernandez@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="X1ArkKO1t1w+4Ebb"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <5241c418-d5af-46ca-8188-7b67e1640f88@arm.com>
-X-Cookie: Go 'way!  You're bothering me!
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240824220756.73091-1-jose.fernandez@linux.dev>
 
+On 2024-08-24 16:07:56+0000, Jose Fernandez wrote:
+> Add a new debug package to the PKGBUILD for the pacman-pkg target. The
+> debug package includes the non-stripped vmlinux file with debug symbols
+> for kernel debugging and profiling. The file is installed at
+> /usr/src/debug/${pkgbase}, with a symbolic link at
+> /usr/lib/modules/$(uname -r)/build/vmlinux. The debug package is built
+> by default.
+> 
+> Signed-off-by: Jose Fernandez <jose.fernandez@linux.dev>
+> Reviewed-by: Peter Jung <ptr1337@cachyos.org>
 
---X1ArkKO1t1w+4Ebb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Acked-by: Thomas Weißschuh <linux@weissschuh.net>
 
-On Thu, Aug 29, 2024 at 11:55:33AM +0530, Dev Jain wrote:
-> On 8/28/24 16:10, Mark Brown wrote:
+Thanks!
 
-> > > -		ksft_exit_fail_msg("raise(SIGSTOP)", strerror(errno));
-> > > +		ksft_exit_fail_perror("raise(SIGSTOP)");
-
-> > The idea with these is to include the error code as well so adding the
-> > %s would be better.
-
-> ksft_exit_fail_perror() can do that thing for us.
-
-Oh, sorry - I missed that it was changing to _perror() as well as
-removing the argument.  Yes, that's fine.
-
---X1ArkKO1t1w+4Ebb
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbQVTwACgkQJNaLcl1U
-h9BrlQf5AUdYWbXTssiOT5pOTsakKSPbq3tQm+3ChArNFJqdk785whqJi24zKtNo
-mXh8gCiYf+OkPd07Pako3zPfc8AJFILorStbgnukS/2tElGWr42kGdpqvGXGHBlD
-gt4JxM/cZLZA2pSpCpcMHZez9dXtk6Ozz4jeRCyiu7mS2oi5TjrCd5S3ndkwCjKn
-E7SF6yey+AofPWk44dlnEx2Dii8pe6JIhVLtKTZEJ5LzNK0I7RAu9asYGvuKb1Rc
-VOG0M1WtCHFrakOJE5w9eEzpOj5NoMLXe6WRxyLqgYlbhtSt5QWUbFzmk/KrFh9o
-bVk9V5yK7bcPqShuqyK36PHqbgDppw==
-=MjqY
------END PGP SIGNATURE-----
-
---X1ArkKO1t1w+4Ebb--
+> ---
+> v2->v3:
+> - Remove unnecessary mkdir -p "$pkgdir/usr/src/debug/${pkgbase}"
+> - Use the new _prologue() function [1]
+> - Add symbolic link to /usr/lib/modules/$(uname -r)/build/vmlinux
+> - Remove the dependency on the headers package
+> v1->v2:
+> - Use the new PACMAN_EXTRAPACKAGES [2] variable to allow users to disable the
+> debug package if desired, instead of always including it.
+> 
+> [1] https://lore.kernel.org/lkml/20240816141844.1217356-1-masahiroy@kernel.org/
+> [2] https://lore.kernel.org/lkml/20240813185900.GA140556@thelio-3990X/T/
+> 
+>  scripts/package/PKGBUILD | 15 ++++++++++++++-
+>  1 file changed, 14 insertions(+), 1 deletion(-)
+> 
+> diff --git a/scripts/package/PKGBUILD b/scripts/package/PKGBUILD
+> index 839cd5e634d2..f83493838cf9 100644
+> --- a/scripts/package/PKGBUILD
+> +++ b/scripts/package/PKGBUILD
+> @@ -5,7 +5,7 @@
+>  pkgbase=${PACMAN_PKGBASE:-linux-upstream}
+>  pkgname=("${pkgbase}")
+>  
+> -_extrapackages=${PACMAN_EXTRAPACKAGES-headers api-headers}
+> +_extrapackages=${PACMAN_EXTRAPACKAGES-headers api-headers debug}
+>  for pkg in $_extrapackages; do
+>  	pkgname+=("${pkgbase}-${pkg}")
+>  done
+> @@ -111,6 +111,19 @@ _package-api-headers() {
+>  	${MAKE} headers_install INSTALL_HDR_PATH="${pkgdir}/usr"
+>  }
+>  
+> +_package-debug(){
+> +	pkgdesc="Non-stripped vmlinux file for the ${pkgdesc} kernel"
+> +
+> +	local debugdir="${pkgdir}/usr/src/debug/${pkgbase}"
+> +	local builddir="${pkgdir}/usr/${MODLIB}/build"
+> +
+> +	_prologue
+> +
+> +	install -Dt "${debugdir}" -m644 vmlinux
+> +	mkdir -p "${builddir}"
+> +	ln -sr "${debugdir}/vmlinux" "${builddir}/vmlinux"
+> +}
+> +
+>  for _p in "${pkgname[@]}"; do
+>  	eval "package_$_p() {
+>  		$(declare -f "_package${_p#$pkgbase}")
+> 
+> base-commit: df829331cf5cccb2a1fdd7560eabfcec49f9b990
+> -- 
+> 2.46.0
+> 
 
