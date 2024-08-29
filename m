@@ -1,161 +1,148 @@
-Return-Path: <linux-kernel+bounces-307646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B36F29650BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 22:26:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 496A29650BF
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 22:26:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E62491C22C70
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 20:26:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F287F2857B7
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 20:26:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 846421BAEC8;
-	Thu, 29 Aug 2024 20:25:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FC931BAEF3;
+	Thu, 29 Aug 2024 20:26:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="eWSxQOtA";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Aw2yiIrM"
-Received: from fout7-smtp.messagingengine.com (fout7-smtp.messagingengine.com [103.168.172.150])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="oKZfZYdO"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C10B41BAEC5
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 20:25:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA1F31B5813;
+	Thu, 29 Aug 2024 20:26:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724963156; cv=none; b=BNbvfjk9dBMveqhacryuqgoS3RR3y8Ee7KEU0RZAH4/4Db31f7ywH3l9C1IhwVzEiqbBJ3mYOFPgPCxs6s8igjK7q25rmg7sov0IsASPOBrv0onQQalgSfEwS+rQYJO8yrgX5PWyEpnWR9pkF8M4jXsxjS+vBW9kOnUyaYOFHe0=
+	t=1724963169; cv=none; b=ZOse57gL9D4uiwhy+WAs8Odfk7DQKLtAby1gp13refucNRjD5f+vwwr3eNg7OLxvMe1FUgDXYjC4JbsfCiUsJpqCWqp9Q4XVrGecfbXloGCzErHUWpMJxmWvTIHWA8ivw5lThO+4XuUOHnmuLL+mZ33JPYkLh1S7rKSSqJqM8hg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724963156; c=relaxed/simple;
-	bh=hLOXJqLw+nrMzttY9OwrwacidposqDabmfTUh9DbRuI=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=AaOtucqSgPYpmGyAuYQ3dkOgL8zr4P881NMMMP8k4rOEYVlUTSmBvPq7X4LGe7OWkM+mvr05EIbQCaC8tN9uRWLJLiJT1aI5WfzLFQtG1tP7junqA27uxXgUirolc/LZzOJq7QHeBMaJYoedCZJ57BTRPzC4yRxw1/BV/1o2YEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=eWSxQOtA; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Aw2yiIrM; arc=none smtp.client-ip=103.168.172.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-04.internal (phl-compute-04.nyi.internal [10.202.2.44])
-	by mailfout.nyi.internal (Postfix) with ESMTP id ECF2A1387F34;
-	Thu, 29 Aug 2024 16:25:52 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-04.internal (MEProxy); Thu, 29 Aug 2024 16:25:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1724963152;
-	 x=1725049552; bh=RqNxdmkgXgvaXl6yDrU5g8iCj93w+09GrKsSBMcpsOE=; b=
-	eWSxQOtAs7vZ/MBf4b6lS36tOtwE4fxu8+dScNQZxGjFpQzYY8SzceWA9Bys/x1C
-	gTGNOAm5jJNtpGUM6l0r/a4Kx2g/u5rlC6LKi2yJVG9SuZsC9EnHcYHyPFnNI70N
-	UexD8KOtRvzhrDP7nmODoLzKETJFbtmwh+fBzcqiq4dUMwlibR97JfPW5pXt9NrV
-	eD97L5eIqOCkBF8BEaz3nC7txuDRnTG32kq97KKisdS0jSSz409k38lh/n2DWdVL
-	yU9DfLuUsWFvgq8fCWrAH5G1lqE95hL1RhJp2MuRrNyUZ3xAFCoZiqJt2gDvRmrM
-	Ihp8TOGXI35LAzwQzHPW3w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1724963152; x=
-	1725049552; bh=RqNxdmkgXgvaXl6yDrU5g8iCj93w+09GrKsSBMcpsOE=; b=A
-	w2yiIrMMxlMI7qFHlWM53lsfgS6AJN7UV7wxV4YOuGwvzYtJ7cYRA8kA9bbhLK6L
-	C98JTdm2lvISWhH/QIP2r3wCsN3fgTSClM6emEZQRDOaLJP3qKMVfse2TFIGZJjP
-	WFwsA9gqHwC7hbwK58d61SMXGJuNk8ZgTUHxJaNfTvfCNN0og+kFQyyC7GdvEbaq
-	r4sF5EfUOG4Bf5ztZHmLg7qGGilRZowG6u8erHnZEiPUadOsOBYN01fuRO5ahyv1
-	7dApQ9rOPzw8wlpAgNVKjlomuzU/v3prfQZWFZLwgo5G7xIDNT+1oknHlcv1IFFU
-	Pl62UWadjdrDlkdc8dXIQ==
-X-ME-Sender: <xms:UNnQZkwSwo8HO20VoZ3naTdgMkF63P1cBmYrBMnFWjveYFrLgmIJ9g>
-    <xme:UNnQZoQuGKCpAQ7gUkcWpkTtn67wFTQeTO49cTNRcYy4iPkHzHZapxl3K6MmxVfXX
-    xtlElGenmOheKA3B1c>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudefgedgudegkecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
-    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
-    druggvqeenucggtffrrghtthgvrhhnpedvvedtgeelvedtveejtdeijeefvdevheefveel
-    leekiefguefgtddvudetteegteenucffohhmrghinhepiiigvdgtgedrtghomhdpkhgvrh
-    hnvghlrdhorhhgpdhllhhvmhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgr
-    rhgrmhepmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtth
-    hopeefpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehnrghthhgrnheskhgvrhhn
-    vghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrh
-    hnvghlrdhorhhgpdhrtghpthhtohepjhgrshhonhesiiigvdgtgedrtghomh
-X-ME-Proxy: <xmx:UNnQZmW-JjWYMnYpYe7alEkjqvosG3bptmRZG27RNBQHNVhPrmiMmQ>
-    <xmx:UNnQZig7jdDP1TUyKHQifa_UNoXzd3MNVI3ZY8bp9BSiFDZPF2IBeg>
-    <xmx:UNnQZmDkayRXazOgVrSai9OMM-xIXsJsO5vUOUzI0LQyeXslD8Iafw>
-    <xmx:UNnQZjIZhbqtorbjVC9Wm4i3QSK0D1kM4XYXN7JFJPM42-GMBJXK8g>
-    <xmx:UNnQZpMdaxMns7U1XTbPOK9Uuo7Y2ymupknVnKOsFMra2Fvg2hTMgMED>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 9EA06222006F; Thu, 29 Aug 2024 16:25:52 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1724963169; c=relaxed/simple;
+	bh=86RPtIL+msArvWiZ8omd1lm+QQ09MUZ0+jCaU7IO3Dk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j6DC0sH7u/sdXNnANX5IcD5cQFQB5MrYffOe3ymMGZeElxeNOJVThl0lwhJJpjMcTItmwmT/MirOdgNz3oE1kYVdYXGAuE/xvTWcHPcTaZTsX2ItsZ2xbCDYHrkG1QyQwkUCWhMfO64GKquj9smrRHhOtTMlHqSTHCOG+pv89jA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=oKZfZYdO; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724963168; x=1756499168;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=86RPtIL+msArvWiZ8omd1lm+QQ09MUZ0+jCaU7IO3Dk=;
+  b=oKZfZYdOyrUuq7HwvrEkakHg6nsCx4dA8eL1H78/duK9dFkxlegQFaAv
+   whA5+GZ4JjJDNRB/o0OoK0OKrDHEZgoc1AJp+NNg2lG9yzJwwB5xXO80C
+   +a9dslVn5cE2XzvUqMWFSa8j0dDaGDP+RDPbbpaZ1IoEmVCkw7Lo3WNE2
+   mPFsL4QqcaW28ELbu8xTKbI7cWZLzkBVy1tDUPnnnXn/nj2nxISlU9W6q
+   EN15pMqyoX8wHVQ2tZIpcrbwldR58S0Wk+328SymTutXKgA7HC/eMZ10O
+   PosansJdvn05kFxYbi/kQm64Ve1QZvs1z9L0uQzJTYuKqb6sOzXQs6MRd
+   A==;
+X-CSE-ConnectionGUID: nOxfFtozSv2P32YyqqYNTA==
+X-CSE-MsgGUID: KHCKNrKcR8efyZ9Kk1P8GQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11179"; a="27462709"
+X-IronPort-AV: E=Sophos;i="6.10,186,1719903600"; 
+   d="scan'208";a="27462709"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 13:26:07 -0700
+X-CSE-ConnectionGUID: LyJTEhqnR0KpyPumG70D+g==
+X-CSE-MsgGUID: c+lPvE3ORMWZcsJnV3/Y3g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,186,1719903600"; 
+   d="scan'208";a="94514568"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 13:26:04 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sjliS-000000039Rk-4Beb;
+	Thu, 29 Aug 2024 23:26:01 +0300
+Date: Thu, 29 Aug 2024 23:26:00 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Vasileios Amoiridis <vassilisamir@gmail.com>
+Cc: jic23@kernel.org, lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, ang.iglesiasg@gmail.com,
+	linus.walleij@linaro.org, biju.das.jz@bp.renesas.com,
+	javier.carrasco.cruz@gmail.com, semen.protsenko@linaro.org,
+	579lpy@gmail.com, ak@it-klinger.de, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	christophe.jaillet@wanadoo.fr
+Subject: Re: [PATCH v4 4/7] iio: pressure: bmp280: Use sleep and forced mode
+ for oneshot captures
+Message-ID: <ZtDZWCgE-zRriyQ4@smile.fi.intel.com>
+References: <20240828205128.92145-1-vassilisamir@gmail.com>
+ <20240828205128.92145-5-vassilisamir@gmail.com>
+ <ZtBqNAYlZSEhd_20@smile.fi.intel.com>
+ <20240829191344.GC3493@vamoiridPC>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Thu, 29 Aug 2024 22:25:32 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Jason A . Donenfeld" <Jason@zx2c4.com>, linux-kernel@vger.kernel.org
-Cc: "Nathan Chancellor" <nathan@kernel.org>
-Message-Id: <f7069edc-a152-425f-afb1-8df326d0131c@app.fastmail.com>
-In-Reply-To: <ZtCZF_yaHnECJyZ1@zx2c4.com>
-References: <YmX7z+BirkA3VAfW@zx2c4.com> <ZtCZF_yaHnECJyZ1@zx2c4.com>
-Subject: Re: odd endianness toolchains for crosstool
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240829191344.GC3493@vamoiridPC>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Thu, Aug 29, 2024, at 17:51, Jason A. Donenfeld wrote:
-> On Mon, Apr 25, 2022 at 03:39:27AM +0200, Jason A. Donenfeld wrote:
->
->
-> I decided to give it another look, seeing if I could replace my musl.cc
-> compilers with your crosstool ones.
->
-> The actual changes required weren't so bad:
->
->     https://git.zx2c4.com/wireguard-linux/commit/?h=update-toolchain
->
-> But there's not universal success:
->
->     x86_64 - good
->     i386 - good
->     arm - good
->     armeb - MISSING
->     aarch64 - good
->     aarch64_be - MISSING
->     mips - BROKEN (doesn't like -EB)
->     mipsel - MISSING
->     mips64 - BROKEN (doesn't like -EB)
->     mips64el - MISSING
->     powerpc64 - BROKEN (wrong powerpc ABI)
->     powerpc64le - MISSING
->     powerpc - BROKEN (builds but some binaries segfault)
->     m68k - good
->     riscv64 - good
->     riscv32 - good
->     s390 - BROKEN (should be called "s390x" instead)
->     um - kinda broken (but not crosstool's problem)
->
-> To try these, I've been running:
->
->     ARCH=aarch64 make -C tools/testing/selftests/wireguard/qemu -j$(nproc)
->
-> or similar, against this tree:
->
->     $ git clone -b update-toolchain https://git.zx2c4.com/wireguard-linux/
->
-> So it looks like it's not quite there, but not bad either. Just FYI in
-> case you're interested.
+On Thu, Aug 29, 2024 at 09:13:44PM +0200, Vasileios Amoiridis wrote:
+> On Thu, Aug 29, 2024 at 03:31:48PM +0300, Andy Shevchenko wrote:
+> > On Wed, Aug 28, 2024 at 10:51:24PM +0200, Vasileios Amoiridis wrote:
 
-I wonder if the ones you list as missing all work with Nathan's clang
-builds from https://mirrors.edge.kernel.org/pub/tools/llvm/ instead.
+...
 
-As far as I can tell, the main missing bit here is libgcc, which
-is not always built along with gcc for all possible targets.
-The llvm replacement for libgcc is https://compiler-rt.llvm.org/,
-and you may have to build that in addition to musl when you try it.
+> > int bmp280_chip_config(struct bmp280_data *data)
+> > 
+> > >  				BMP280_OSRS_TEMP_MASK |
+> > >  				BMP280_OSRS_PRESS_MASK |
+> > >  				BMP280_MODE_MASK,
+> > > -				osrs | BMP280_MODE_NORMAL);
+> > > +				osrs | BMP280_MODE_SLEEP);
+> > >  	if (ret) {
+> > >  		dev_err(data->dev, "failed to write ctrl_meas register\n");
+> > >  		return ret;
+> > 
+> > This _feels_ like a separate change. I haven't found anything explicitly
+> > describing it in the commit message. Did I miss it?
+> 
+> Well this change is because before, the sensor was by default in
+> NORMAL_MODE so whenever we were writing a different setting (Output
+> data rate, oversampling ratio) to the sensor, the NORMAL_MODE was
+> chosen. There was no idea of SLEEP or FORCED MODE.
+> 
+> While now, since this commits adds the idea of SLEEP_MODE
+> by default (FORCED_MODE for oneshot captures, and NORMAL_MODE for
+> buffer/trigger) we need to keep the sensor in SLEEP_MODE as well
+> when we change its configuration.
+> 
+> I believe it belongs to this commit. Maybe though, I should mention
+> this change explicitly in the commit message?
 
-I don't know if compiler-rt also works with gcc, but if it does,
-that should fix most of the ones that you report as failing above.
-The only one that won't work at all is um because the x86 toolchain
-is already unable to build a kernel for that.
+Yes, please.
 
-      Arnd
+...
+
+> > And in programming hardware we quite often operate with power-of-2 things, so I
+> > recommend to have 8 per line,
+> > 
+> > 	static const int time_conv_press[] = {
+> > 		0, 1050, 1785, 3045, 5670, 10920, 21420, 42420,		/* 0-7 */
+> > 		84420,							/* 8 */
+> > 	};
+> 
+> I was not aware of this convention, I can do it.
+
+It's rather a common sense to easy maintain this and see exactly how many
+(decimal) values are supplied. With hex values we usually make them fixed-width
+and hence easier to count (however also makes sense to keep power-of-2 in mind).
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
