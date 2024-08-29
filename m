@@ -1,212 +1,305 @@
-Return-Path: <linux-kernel+bounces-306192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4BA5963AFB
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:10:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8B85963AFD
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:10:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E53D1C23DAD
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 06:10:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19A4D1C23FCA
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 06:10:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA79816B754;
-	Thu, 29 Aug 2024 06:08:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DCAF249EB;
+	Thu, 29 Aug 2024 06:09:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ktl5uYVH"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ja3mITm4"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B50215C142
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 06:08:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724911700; cv=none; b=f1QTQqm9IjS3AfcChQLn2KihFn2Qd1YnT09eemuasYYD1ymN3D9LbF1XOJkZ8Eesco92+KG7vhXEUxi8Dfn82+DfyFacntQbaUQYi3kF9VFBrB/TzCh2zyK24oCczIzCBXCwDqToa0fYjQDVdR3EgHlDKzq/D7sNoDfVEqABl1Q=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724911700; c=relaxed/simple;
-	bh=ga+jYeH1TU6uNqm5JY3Rm7iQDELtJjgqOfvTKzzVqXk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LQIEy9T48eX8WTbPSDi66H86+d1pqERRipadV7I83qcvSyW0FcDlG2guCrr8ZuC+cQTmNv2CdJg8bEVTxQtsGIFdO/Jq20J9d5AxhShwh/xR8mqwAHTwtFyAw8mE9UoR+MsIdhRU3l4HRWt58mYJM66XymfKQkLZ9ZpzVOl0QYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ktl5uYVH; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724911697;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XF95Iuxjl7jZwsQ+wprRFd/8JK8pjee56X/zTcOwmHQ=;
-	b=Ktl5uYVH23UyjpZUK9gbIoXTFTPitK+IkgUD3PncEGuXTJKcGmQXFTGMWeG+yzJmOsCwEy
-	suFCtfVOO8CKYqUWtf+J7W0NCzbvURDi4ZfphYmiCYEgVNo8ae+lz5CjY8j2q6T42nP2pV
-	vecy0eMn/0ltPjtRBqFh49Bt982m1wM=
-Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
- [209.85.208.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-662-KhYdan2wOxmDZGYTbJ0nDA-1; Thu, 29 Aug 2024 02:08:13 -0400
-X-MC-Unique: KhYdan2wOxmDZGYTbJ0nDA-1
-Received: by mail-ed1-f69.google.com with SMTP id 4fb4d7f45d1cf-5bee75ca694so212186a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 23:08:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724911691; x=1725516491;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XF95Iuxjl7jZwsQ+wprRFd/8JK8pjee56X/zTcOwmHQ=;
-        b=BazLZz65pFF7B+iYI0kccpzcK/bUta/5FYpjSt9C7/1etbqa8WpwWxmcFqS1qiFksf
-         Pk+6fMhbETnXFbXdY5oYjrW6vOqGUaez8DsiiSBp0CsOuf25V9viegL1aBx7nEE5XMIu
-         Pj26GeWFDdQ+waxrNd/f0SxcLuWI/0vPkspw4fwNc5gcNlqgyNVTKr5uKu72oUfzLngw
-         BwTwId/KLxB2DRXy5AuDh+v2yh6yBCBpAih2DXKLPRhafP6V4G1CUAyB8sPpVnm+DuwB
-         VpKPjc0n371nIYqgskr0JtR/Fgp1zPf+iA5Z1AgUBKsVgO2LnlKgIcnVr8icRp/6WWoD
-         KtXw==
-X-Forwarded-Encrypted: i=1; AJvYcCVOmrtR2+WOxIqwysJhL8fFhp+Y/vjkrtgzhOFXSFZEkyW7Kef13OIEvyX6u8tWWFuInVNRxj8AvuCAt+g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIeFGY97iH8SQnuFXQDBt6CRoQKaEKTvOZoXY6W4MkEo91G32Q
-	js33RpoyQRyIrIxtptlxl1rbpREvNYQHq9BNJAR3eRpKPkmVHxk33v7fU3ly/kjCeFXT2MiAIp8
-	t3ZO/vSiucKhAYUxk08LD+q7jyyVn6KCgYm+N4Y5vX/3JcvSEyUuIQO8FDyz9iQ==
-X-Received: by 2002:a05:6402:5214:b0:5c0:c061:1ca1 with SMTP id 4fb4d7f45d1cf-5c21ed96c98mr1441312a12.23.1724911690744;
-        Wed, 28 Aug 2024 23:08:10 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IECQPpZhHJB3j7Rn9Va2KKM/cbroeKIYc6cgbC2BR3FpqVVTtWx6hi0AaPMJLfN4p9+jBOZdA==
-X-Received: by 2002:a05:6402:5214:b0:5c0:c061:1ca1 with SMTP id 4fb4d7f45d1cf-5c21ed96c98mr1441239a12.23.1724911689645;
-        Wed, 28 Aug 2024 23:08:09 -0700 (PDT)
-Received: from redhat.com ([2a02:14f:1ed:a269:8195:851e:f4b1:ff5d])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c226ccfe8fsm276741a12.62.2024.08.28.23.08.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2024 23:08:09 -0700 (PDT)
-Date: Thu, 29 Aug 2024 02:08:04 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Jason Wang <jasowang@redhat.com>
-Cc: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>, dtatulea@nvidia.com,
-	bilbao@vt.edu, xuanzhuo@linux.alibaba.com, eperezma@redhat.com,
-	cratiu@nvidia.com, lingshan.zhu@intel.com,
-	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Carlos Bilbao <cbilbao@digitalocean.com>
-Subject: Re: [PATCH] vdpa: Set speed and duplex of mlx5_vnet to UNKNOWN
-Message-ID: <20240829020710-mutt-send-email-mst@kernel.org>
-References: <20240828181625.7831-1-carlos.bilbao.osdev@gmail.com>
- <CACGkMEs2wDLBq3_5KDOHou3g8Cxhm9Dx8eXy7JnX0R8ZYqinZA@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 674AB14A0A8;
+	Thu, 29 Aug 2024 06:09:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.16
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724911762; cv=fail; b=DkQKsDbx9b5ryv+zphGwa0rjBcvxIu4Ig6HBuH4al3sVGXohn/b1jOnmycRTpVEI53xMBsgsVZQ4Vm/ga1x2f9ll1fi8Bu9ZriUPs6O7EEvbNP0lmpw6/jVvicFJ2+By99jSaYojGjTOnEnnMgn/QtboLAHmS+liMtaPLpZ/BCs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724911762; c=relaxed/simple;
+	bh=yzWjJbxWXDVPOmlPeXbC5/kC8N0jkizfs6sSzv11fag=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=s/fWIBFPe1vJYFvesTzBmFfe++MoG0aH0AJNULpwMqSNMQUZv7fb5PNvuP6L6kov42/TqvXF6tmhrLDQdTjD5VvW5oyhLgfm1XB5hp09fXglE5E6xmNXuyY3sl7U7Ab4NXKqZThwdY8U1V6CvIuGv/d6+9nN9IrWjJsm40EuQUo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ja3mITm4; arc=fail smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724911760; x=1756447760;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=yzWjJbxWXDVPOmlPeXbC5/kC8N0jkizfs6sSzv11fag=;
+  b=Ja3mITm4t5ZsK+truk1rUqC1j+Wv7PKdSlJYxfhemxUmEars7M3ygGnP
+   BIWvV6h0jZl77NJM5dh3TINPF+oZBoVUR3b4VlWU88Uzu9vfYUxP0Hd8q
+   dK0oYmmUIbmy+jEL9FvxrmMjeJCesTYqr/8yk06itOx3Z6S5UpJ27zWql
+   gVVRvo2RWhwqCWnVJeL9enfsHhy95H6zvOswzJpFRQtCRw1Mi36XHiyuQ
+   9mL1LWk/aYqsT5sl0dpQ5cvD12CWEKCayIPeqUggVyu3p9vNNZ7u6j8KA
+   0cEAsh6aHbSkdTW+9mcRZ6B0MhMQabhEtJ/CRQ8m9/FxBDNTR1xNtrP2E
+   w==;
+X-CSE-ConnectionGUID: h2pVb2v1QFWdL0cqP1WNzQ==
+X-CSE-MsgGUID: Qe+3SkfpQCCsWv1Vf1FRKw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11178"; a="23612976"
+X-IronPort-AV: E=Sophos;i="6.10,184,1719903600"; 
+   d="scan'208";a="23612976"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2024 23:09:19 -0700
+X-CSE-ConnectionGUID: 9x4KIUI1QxyD7SEr+VcYtQ==
+X-CSE-MsgGUID: oHv8yDetQF2Jk6/X9QosxQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,184,1719903600"; 
+   d="scan'208";a="63656909"
+Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
+  by fmviesa010.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 28 Aug 2024 23:09:03 -0700
+Received: from fmsmsx611.amr.corp.intel.com (10.18.126.91) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Wed, 28 Aug 2024 23:09:01 -0700
+Received: from fmsmsx603.amr.corp.intel.com (10.18.126.83) by
+ fmsmsx611.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Wed, 28 Aug 2024 23:09:00 -0700
+Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Wed, 28 Aug 2024 23:09:00 -0700
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.40) by
+ edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Wed, 28 Aug 2024 23:09:00 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ZeaJoqorR+ESxx9Rrc3uh5umYlKsweuVExaikM7vZmztD3bOX2rz2kAOkRTPMCmcV1auN4mdKeyors+Ji67V95lb8yCC8mwaARyzH4j5szChuSVsffV6mYK5xqgAHtlssk9mbvICYgZfLNmHGGYS0p7hMQ/bhjm2YyFAPjh4DTDe+Eg58iz/K5BbaQC+X2WJJ4Lv6HIuIrvRlyNInEsoKLOlSv3dffG5EI7xmIgI3Cp4NykfgaMGN+aOw7WuJYe+pk3IM/G3+T3Ugmy+0b1BDw+0IYZCTvKUKMp0P88KXrvvbnp9iDI+oHgH58apVgJ4s7jarGD7y5QNWY90H/xIiA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=HBkKzo4Px2B4/7Dvq7RfzBNzk+18xre+Zn55YtKpcjc=;
+ b=g9nlTyzkphIyOjruHICBdaRsNkPxL7nSZyZDnrrprO6lERGGtatuweP9M/P9LeSiuwaRuZfhjWD7XvEw9WcyjbBwtm9vr3hGyKABaiT5MjjqnaSCuW7uEZAcEfLmW+d01hIb59OnaZZKu0EowbJkr46uNz4MMKQ/v2Oy2Sp/M2CKwchnIoLmNkeEz0ga/YAo6oXM6wXgHIGrU5rfLOXwy1atScGy3YyUDJ5qxPHxI8MSrbbV4C4vZY9DSr3iWuvFe5MZBAk8ZR9Woef5LpoH54A1jvN3dXGwgTG+W46ZaGmwWDsgT887YqCl6DHekRr2MCS0BPPqzSaGCZ3aX7d3TA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from IA0PR11MB7185.namprd11.prod.outlook.com (2603:10b6:208:432::20)
+ by SA2PR11MB4969.namprd11.prod.outlook.com (2603:10b6:806:111::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.28; Thu, 29 Aug
+ 2024 06:08:58 +0000
+Received: from IA0PR11MB7185.namprd11.prod.outlook.com
+ ([fe80::dd3b:ce77:841a:722b]) by IA0PR11MB7185.namprd11.prod.outlook.com
+ ([fe80::dd3b:ce77:841a:722b%4]) with mapi id 15.20.7897.027; Thu, 29 Aug 2024
+ 06:08:58 +0000
+From: "Kasireddy, Vivek" <vivek.kasireddy@intel.com>
+To: Huan Yang <link@vivo.com>, Sumit Semwal <sumit.semwal@linaro.org>,
+	=?iso-8859-1?Q?Christian_K=F6nig?= <christian.koenig@amd.com>, Gerd Hoffmann
+	<kraxel@redhat.com>, "linux-media@vger.kernel.org"
+	<linux-media@vger.kernel.org>, "dri-devel@lists.freedesktop.org"
+	<dri-devel@lists.freedesktop.org>, "linaro-mm-sig@lists.linaro.org"
+	<linaro-mm-sig@lists.linaro.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+CC: "opensource.kernel@vivo.com" <opensource.kernel@vivo.com>
+Subject: RE: [PATCH v4 1/5] udmabuf: direct map pfn when first page fault
+Thread-Topic: [PATCH v4 1/5] udmabuf: direct map pfn when first page fault
+Thread-Index: AQHa9G+T11uuaSJPXEe+DfxssxyDrLI9NGNw
+Date: Thu, 29 Aug 2024 06:08:58 +0000
+Message-ID: <IA0PR11MB718571990B58A16756C15E2FF8962@IA0PR11MB7185.namprd11.prod.outlook.com>
+References: <20240822084342.1574914-1-link@vivo.com>
+ <20240822084342.1574914-2-link@vivo.com>
+In-Reply-To: <20240822084342.1574914-2-link@vivo.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: IA0PR11MB7185:EE_|SA2PR11MB4969:EE_
+x-ms-office365-filtering-correlation-id: 07dabf3f-7eb7-41aa-80fa-08dcc7f111f4
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|376014|366016|38070700018;
+x-microsoft-antispam-message-info: =?iso-8859-1?Q?mHE0qKRHyBG4Ubcsz3bd2Vn9qceqwNcqlTNOjNuOs4mijE5vtCnAK8c9Nh?=
+ =?iso-8859-1?Q?mb96xl0ISjI+b8OkgcLv5+3so/jwstVda4aRnhMzultPowSRXuITPUQLZA?=
+ =?iso-8859-1?Q?SlikYz4SzmQ3MUcH3BUVcRCqbgKtQ5Qa3wsmCVv3YhHGy3uughUvFUwQLh?=
+ =?iso-8859-1?Q?Mnp7XUg0KaD+9DZV4tFk377cIvwINoiSfDgTcam/JT1+qGUg1Nk1zb9HNz?=
+ =?iso-8859-1?Q?DyfurejkjLPQGzRH78LPsgzPfgPqNZm2LkFs0ADYTLvXI4K9nZAjXDgSYf?=
+ =?iso-8859-1?Q?KphcqV4MWvYewvGrnkkmLUUV+yuvQ02sEubOsqpinQkNRNH1Kxmnpfye4s?=
+ =?iso-8859-1?Q?1XE9gy4XWRVHd+LnGMCfTlcm5pCaU9/ARBDMbPV2YQdzGREDSQd+IaNp9y?=
+ =?iso-8859-1?Q?Kt8biDDQM42r3bH1/sCYuKG3wqYUbp0mO3KmBLAYvb0xqWhsKNXGxhE/o5?=
+ =?iso-8859-1?Q?nkFVLTZGcWAuYqPqFpXmd9T5L3Xy3B1sQWVSs5PXAu/vSQuAmeVTxNRZhe?=
+ =?iso-8859-1?Q?Jy+JkEN3pmIDZI2WNQ5Z81jWGNVK4uXEb4WUQ+Xg1w9UzoNY4+NVMnBrOc?=
+ =?iso-8859-1?Q?SLhF85DDbyuiGwPSNOuq0F5/rC+NjtF1QS8mWPzmLGYjPGn8TVcxXb0R/z?=
+ =?iso-8859-1?Q?W9ZyyISVSE/T9wiVjnsj5N9WgT5r4ohqlyUh3ZvjOd2ornMb4Psm7uxsW7?=
+ =?iso-8859-1?Q?XnJTlToleg/eMai2MG0+q9M1ACbtklJXATkPoHN7lvGsPPjeaZILDl34o7?=
+ =?iso-8859-1?Q?xFXa6s8BQYnDqPwElClbBX1b4ysdrSgB0UOeLdTMLH/dyC/qosMbZ7v8OX?=
+ =?iso-8859-1?Q?MH3eKVA2HaLO6SFQpQmvc7uG5mIpHn+OMMynqUkM4EH00QtMWzCBiVmCTf?=
+ =?iso-8859-1?Q?B4h0bzB4m3oXZy9RLvM7ayKiPnmyBES9F7IwUC1RsgXChMw7/MixSgXBO/?=
+ =?iso-8859-1?Q?tgvLf74BmC/7/NcbSvx7b6C0p3SEBaoUIKebaPSWrJ8nKqfwxpNpPR1Iq5?=
+ =?iso-8859-1?Q?MHaDvyY+wMDzOFc/gceI69ra4vwmswk4zniBnRoiNLe5izXkFc72koloPR?=
+ =?iso-8859-1?Q?oPgh8p3ewB3fiJhGxykOVXdOdzMWaJkwVytbXycl0aHtYRXHBmd5wIQHST?=
+ =?iso-8859-1?Q?MY5QWRTyONL7xGTt6txzurE2GZ8qHKNBOG+grda7SPL8X+X8oJ1x4CqflX?=
+ =?iso-8859-1?Q?tgPE33lS2opr8183cwMcJ/QsRwL6PcHjYHA1+DOotF5VVl+jSGarthsdlh?=
+ =?iso-8859-1?Q?mlZ8OAN3dEdloRQhSkypJLt3Smfy3EzZ7851xGuROvfPslqQ1PLRcuIVSb?=
+ =?iso-8859-1?Q?YZCRAMafSWfzmUAudo+5xwvLKbl3PpNvWazJ5n+7s1wF3JRb1LyeGDkubK?=
+ =?iso-8859-1?Q?9fn9wQuusOvlwEzBx5iwyIlaXQ0YeJSngRaaihOrvL1hX2RvgyC9R3dSLM?=
+ =?iso-8859-1?Q?Penh1fHHuLQiL+0AV2XoNig2D4khLAsymQV06g=3D=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA0PR11MB7185.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?ktxW1WDAF0aLGqlFna9+DytN84iqiZw09Wd5LyNejWcPYaVetqUlYv4XYu?=
+ =?iso-8859-1?Q?leteIh8SrKq0t/Bz6IGuSRR4PaobaCLHFNDIJk9kuS0pKm8P2w5r2ep95W?=
+ =?iso-8859-1?Q?BhN+E4GUm5kaTnfRGYNbKxr6YY60l1nqSaHeWtfLFjn6V1aw8bC74jTTfn?=
+ =?iso-8859-1?Q?2F3fvMg34kL87KsM5cHvI/s1G7t1xw8p7FLrJCUv5Y5hX7K4cv4Vf+hYtR?=
+ =?iso-8859-1?Q?ePxH0xRoY7VrQfeAK8F/TezgKfStRibsaf5bGqFtqgDyOtCI8KAB19jWNs?=
+ =?iso-8859-1?Q?Z3az67mtQiZktEWHquWAGMSF8YEAjSpKRQ3vvHlw5nNb2dFma++HDD9Rsm?=
+ =?iso-8859-1?Q?1ywad5BtvhXQHzR2kVye8e6wI190Qe48FEoE0KTQTC/w5d+M8Qj+GphEgh?=
+ =?iso-8859-1?Q?scKd48aeKdpHxGJlH6g5yaSgczF4w78Tx9SGCg2Ai9CJImfpM2nvcDab9p?=
+ =?iso-8859-1?Q?3PjyJ+Impd3WYilxuEpslZpCwQAaVQlTVxAPlCtJhZ6nqxAP2fPH/Fh2r+?=
+ =?iso-8859-1?Q?saVaETzKFe3TnH3xSeZOwFkpgQB7Fp0ZTdETeBFfvU6p+Q6Xb9k1535NJu?=
+ =?iso-8859-1?Q?mwjrDC71GULr8QDbc3X6H0WenPbNkL95Ivsd32h/xT9xanx+Lnb/BnMY2R?=
+ =?iso-8859-1?Q?PwseZXj+a3xPu80l1sAF0ipgMRjgjdfrN+OXjWjzEQYJl4AhOrCcWszapZ?=
+ =?iso-8859-1?Q?3vU/Te9SK3qbAXYwzagScAXk15fYQuMpMQDHjJxg4xnUOVyIc1S+HNf3/B?=
+ =?iso-8859-1?Q?8pjjOQztnrdFKNtns+eAYMN4fXXinSsEB+n2OAe86Mjwrqdy48EjRzInX4?=
+ =?iso-8859-1?Q?iI3kkRPOWnGRYXwYFel9ueYfOwWlmtbWnWgzdNCczGzGQfyUx9CYM1OGeF?=
+ =?iso-8859-1?Q?viKpQOrgWLDmJoENYz7nJjNQnuUsYz5btV46bjRlGoouqFWWVCIGEr1rcN?=
+ =?iso-8859-1?Q?92e0NQUf0yOfQOLBxPdjDCl8wbMQ5+q7fWdGDGMIaMtEwLpcNgCTYtKzF4?=
+ =?iso-8859-1?Q?0F0ldd//baksWLSf7egH3hjAHfMcE0GmH1BQkrwaSsAQ7grm2flS4TvYL6?=
+ =?iso-8859-1?Q?XkIhM27KuI+3YkaIwTfbdje5Z2voP9HUBzP3gSsp/EjLmdXSKwft1QgaS1?=
+ =?iso-8859-1?Q?/j0/dLa+ScZtPBmWwZIwDuibI+XjR2D73JaBzUeaAbtWMlJ/wTju909qAa?=
+ =?iso-8859-1?Q?9pgCpxfCu+9xCL9ZVXlrgbAPgu8OQgXrO5A7tuQfwfvklWvdCDt5W8MNNR?=
+ =?iso-8859-1?Q?0em3ignb4zYgEmzb14xON0Yw2coAcCRQyMvnAXifNY5nCGOsCFcE8NLjPG?=
+ =?iso-8859-1?Q?HaUaSVZE1cp4Uxqcw3dR2xSZI2Daw6a0gERtzCeAlbJuSAbdJif2I/WfHM?=
+ =?iso-8859-1?Q?5PG5WYqP5foI75iF6kfhKGWhbVtoCmljZkast9xqWkp7JwvXl249fpfs7j?=
+ =?iso-8859-1?Q?imCJBazqmvmnIc1N8z6dK3lK2XmMfnEv4PngBIE/v4EAfO2nit9LBqpHAN?=
+ =?iso-8859-1?Q?MRfMA/eNLGB/nz+jdYZ62uhwlF9x/P0COOGK06kn9GLqXe1DwWV+pmW7m8?=
+ =?iso-8859-1?Q?YyhSDTTZYHDOGiDfJLZli44bjSSn+C/iew+1oow/AwHy/LHxq8qWjilExP?=
+ =?iso-8859-1?Q?lorthOEGqM4EUrH1kUuPwKnPveKcqeTKr3?=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CACGkMEs2wDLBq3_5KDOHou3g8Cxhm9Dx8eXy7JnX0R8ZYqinZA@mail.gmail.com>
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: IA0PR11MB7185.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 07dabf3f-7eb7-41aa-80fa-08dcc7f111f4
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Aug 2024 06:08:58.1999
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: IW5kKhgiCcDOcIrpDofdLViujldQBj2/4OhXE60X0iWGoervHuJ4z2Qzmw4/Hhtbbh4ycjfXAjzlEDdSzweeB6THsJq78kB9DaUOp7cb87c=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR11MB4969
+X-OriginatorOrg: intel.com
 
-On Thu, Aug 29, 2024 at 12:49:24PM +0800, Jason Wang wrote:
-> On Thu, Aug 29, 2024 at 2:16 AM Carlos Bilbao
-> <carlos.bilbao.osdev@gmail.com> wrote:
-> >
-> > From: Carlos Bilbao <cbilbao@digitalocean.com>
-> >
-> > mlx5_vdpa vDPA devices currently don't support reporting or setting the
-> > speed and duplex and hence should be UNKNOWN instead of zero.
-> >
-> > Signed-off-by: Carlos Bilbao <cbilbao@digitalocean.com>
-> > ---
-> >  drivers/vdpa/mlx5/net/mlx5_vnet.c |  7 +++++++
-> >  drivers/vdpa/vdpa.c               | 23 +++++++++++++++++++++++
-> >  include/uapi/linux/vdpa.h         |  2 ++
-> >  3 files changed, 32 insertions(+)
-> >
-> > diff --git a/drivers/vdpa/mlx5/net/mlx5_vnet.c b/drivers/vdpa/mlx5/net/mlx5_vnet.c
-> > index fa78e8288ebb..319f5c6121de 100644
-> > --- a/drivers/vdpa/mlx5/net/mlx5_vnet.c
-> > +++ b/drivers/vdpa/mlx5/net/mlx5_vnet.c
-> > @@ -3795,6 +3795,13 @@ static int mlx5_vdpa_dev_add(struct vdpa_mgmt_dev *v_mdev, const char *name,
-> >         init_rwsem(&ndev->reslock);
-> >         config = &ndev->config;
-> >
-> > +       /*
-> > +        * mlx5_vdpa vDPA devices currently don't support reporting or
-> > +        * setting the speed or duplex.
-> > +        */
-> > +       config->speed  = SPEED_UNKNOWN;
-> > +       config->duplex = DUPLEX_UNKNOWN;
-> > +
-> >         if (add_config->mask & BIT_ULL(VDPA_ATTR_DEV_NET_CFG_MTU)) {
-> >                 err = config_func_mtu(mdev, add_config->net.mtu);
-> >                 if (err)
-> > diff --git a/drivers/vdpa/vdpa.c b/drivers/vdpa/vdpa.c
-> > index 4dbd2e55a288..abde23e0041d 100644
-> > --- a/drivers/vdpa/vdpa.c
-> > +++ b/drivers/vdpa/vdpa.c
-> > @@ -15,6 +15,7 @@
-> >  #include <net/genetlink.h>
-> >  #include <linux/mod_devicetable.h>
-> >  #include <linux/virtio_ids.h>
-> > +#include <uapi/linux/ethtool.h>
-> >
-> >  static LIST_HEAD(mdev_head);
-> >  /* A global mutex that protects vdpa management device and device level operations. */
-> > @@ -919,6 +920,22 @@ static int vdpa_dev_net_status_config_fill(struct sk_buff *msg, u64 features,
-> >         return nla_put_u16(msg, VDPA_ATTR_DEV_NET_STATUS, val_u16);
-> >  }
-> >
-> > +static int vdpa_dev_net_speed_config_fill(struct sk_buff *msg, u64 features,
-> > +                                       struct virtio_net_config *config)
-> > +{
-> > +       __le32 speed = cpu_to_le32(SPEED_UNKNOWN);
-> > +
-> > +       return nla_put(msg, VDPA_ATTR_DEV_NET_CFG_SPEED, sizeof(speed), &speed);
-> > +}
-> > +
-> > +static int vdpa_dev_net_duplex_config_fill(struct sk_buff *msg, u64 features,
-> > +                                       struct virtio_net_config *config)
-> > +{
-> > +       u8 duplex = DUPLEX_UNKNOWN;
-> > +
-> > +       return nla_put(msg, VDPA_ATTR_DEV_NET_CFG_DUPLEX, sizeof(duplex), &duplex);
-> > +}
-> > +
-> >  static int vdpa_dev_net_config_fill(struct vdpa_device *vdev, struct sk_buff *msg)
-> >  {
-> >         struct virtio_net_config config = {};
-> > @@ -941,6 +958,12 @@ static int vdpa_dev_net_config_fill(struct vdpa_device *vdev, struct sk_buff *ms
-> >         if (vdpa_dev_net_status_config_fill(msg, features_device, &config))
-> >                 return -EMSGSIZE;
-> >
-> > +       if (vdpa_dev_net_speed_config_fill(msg, features_device, &config))
-> > +               return -EMSGSIZE;
-> > +
-> > +       if (vdpa_dev_net_duplex_config_fill(msg, features_device, &config))
-> > +               return -EMSGSIZE;
-> > +
-> >         return vdpa_dev_net_mq_config_fill(msg, features_device, &config);
-> >  }
-> >
-> > diff --git a/include/uapi/linux/vdpa.h b/include/uapi/linux/vdpa.h
-> > index 842bf1201ac4..1c64ee0dd7b1 100644
-> > --- a/include/uapi/linux/vdpa.h
-> > +++ b/include/uapi/linux/vdpa.h
-> > @@ -43,6 +43,8 @@ enum vdpa_attr {
-> >         VDPA_ATTR_DEV_NET_STATUS,               /* u8 */
-> >         VDPA_ATTR_DEV_NET_CFG_MAX_VQP,          /* u16 */
-> >         VDPA_ATTR_DEV_NET_CFG_MTU,              /* u16 */
-> > +       VDPA_ATTR_DEV_NET_CFG_SPEED,            /* u32 */
-> > +       VDPA_ATTR_DEV_NET_CFG_DUPLEX,           /* u8 */
-> 
-> This should be an independent patch as it allows vdpa tool to
-> provision speed and duplex.
+Hi Huan,
 
-or same patch, but document this more clearly:
-when subj starts with mlx5 I expect it only affects mlx5.
+> Subject: [PATCH v4 1/5] udmabuf: direct map pfn when first page fault
+>=20
+> The current udmabuf mmap uses a page fault to populate the vma.
+>=20
+> However, the current udmabuf has already obtained and pinned the folio
+> upon completion of the creation.This means that the physical memory has
+> already been acquired, rather than being accessed dynamically.
+>=20
+> As a result, the page fault has lost its purpose as a demanding
+> page. Due to the fact that page fault requires trapping into kernel mode
+> and filling in when accessing the corresponding virtual address in mmap,
+> when creating a large size udmabuf, this represents a considerable
+> overhead.
+>=20
+> This patch fill vma area with pfn when the first page fault trigger, so,
+> any other access will not enter page fault.
+>=20
+> Suggested-by: Vivek Kasireddy <vivek.kasireddy@intel.com>
+> Signed-off-by: Huan Yang <link@vivo.com>
+> ---
+>  drivers/dma-buf/udmabuf.c | 26 ++++++++++++++++++++++++--
+>  1 file changed, 24 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/dma-buf/udmabuf.c b/drivers/dma-buf/udmabuf.c
+> index 047c3cd2ceff..0e33d25310ec 100644
+> --- a/drivers/dma-buf/udmabuf.c
+> +++ b/drivers/dma-buf/udmabuf.c
+> @@ -43,7 +43,8 @@ static vm_fault_t udmabuf_vm_fault(struct vm_fault
+> *vmf)
+>  	struct vm_area_struct *vma =3D vmf->vma;
+>  	struct udmabuf *ubuf =3D vma->vm_private_data;
+>  	pgoff_t pgoff =3D vmf->pgoff;
+> -	unsigned long pfn;
+> +	unsigned long addr, end, pfn;
+> +	vm_fault_t ret;
+>=20
+>  	if (pgoff >=3D ubuf->pagecount)
+>  		return VM_FAULT_SIGBUS;
+> @@ -51,7 +52,28 @@ static vm_fault_t udmabuf_vm_fault(struct vm_fault
+> *vmf)
+>  	pfn =3D folio_pfn(ubuf->folios[pgoff]);
+>  	pfn +=3D ubuf->offsets[pgoff] >> PAGE_SHIFT;
+>=20
+> -	return vmf_insert_pfn(vma, vmf->address, pfn);
+> +	ret =3D vmf_insert_pfn(vma, vmf->address, pfn);
+> +	if (ret & VM_FAULT_ERROR)
+> +		return ret;
+> +
+> +	/* pre fault */
+> +	pgoff =3D vma->vm_pgoff;
+> +	end =3D vma->vm_end;
+> +	addr =3D vma->vm_start;
+> +
+> +	for (; addr < end; pgoff++, addr +=3D PAGE_SIZE) {
+Although unlikely, I think we should also check for pgoff < ubuf->pagecount=
+.
 
+> +		if (addr =3D=3D vmf->address)
+> +			continue;
+> +
+> +		pfn =3D folio_pfn(ubuf->folios[pgoff]);
+> +
+> +		pfn +=3D ubuf->offsets[pgoff] >> PAGE_SHIFT;
+> +
+> +		if (vmf_insert_pfn(vma, addr, pfn) & VM_FAULT_ERROR)
+Shouldn't you store the return value of vmf_insert_pfn in ret? Otherwise, w=
+e'll
+return success when the above call fails.
 
+Anyway, I am wondering if it is more optimal to just iterate over pages ins=
+tead
+of addresses. Something like below:
 
-> But a fundamental question is if we need such provisioning?
++       unsigned long nr_pages =3D vma_pages(vma);
++       unsigned long addr =3D vma->vm_start;
 
-why not?
+-       if (pgoff >=3D ubuf->pagecount)
+-               return VM_FAULT_SIGBUS;
++       WARN_ON(nr_pages !=3D ubuf->pagecount);
 
-> Thanks
-> 
-> >
-> >         VDPA_ATTR_DEV_NEGOTIATED_FEATURES,      /* u64 */
-> >         VDPA_ATTR_DEV_MGMTDEV_MAX_VQS,          /* u32 */
-> > --
-> > 2.34.1
-> >
+-       pfn =3D folio_pfn(ubuf->folios[pgoff]);
+-       pfn +=3D ubuf->offsets[pgoff] >> PAGE_SHIFT;
++       for (pg =3D 0; pg < nr_pages && pg < ubuf->pagecount; pg++) {
++               pfn =3D folio_pfn(ubuf->folios[pg]);
++               pfn +=3D ubuf->offsets[pg] >> PAGE_SHIFT;
+
+-       return vmf_insert_pfn(vma, vmf->address, pfn);
++               ret =3D vmf_insert_pfn(vma, addr, pfn);
++               addr +=3D PAGE_SIZE;
++ }
+
+Thanks,
+Vivek
+
+> +			break;
+> +	}
+> +
+> +	return ret;
+>  }
+>=20
+>  static const struct vm_operations_struct udmabuf_vm_ops =3D {
+> --
+> 2.45.2
 
 
