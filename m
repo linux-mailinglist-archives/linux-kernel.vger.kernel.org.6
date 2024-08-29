@@ -1,128 +1,207 @@
-Return-Path: <linux-kernel+bounces-306484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B261B963FA4
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 11:14:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF44C963FAD
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 11:16:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4A751C245DC
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 09:14:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F21CD1C244A4
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 09:16:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B46C18CC12;
-	Thu, 29 Aug 2024 09:14:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18EF218CC19;
+	Thu, 29 Aug 2024 09:16:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kbGJ7y83"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="s5+59voF"
+Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D5A418CBF3
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 09:14:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0BDC18C33A
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 09:16:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724922889; cv=none; b=CCXaLdaGJHb1+l7zaNFmR5JVIGbt8wpMlXOYjvS2Cs00yDSD3THWhKXRZnrPhorVskrM6xNdo3FHFdBUIGrRAYU+JQJq7aqKRs+ifNQcL2dem5AEN1A3ld8u1CzgTg5Kh4bzTA1vs3YP9jwcK+Upbh4qJ/m2+mC/RFAcG+brFYU=
+	t=1724922991; cv=none; b=sCllBa4yiFlWgvF2pa6tRb0he5irjZfzhEzgCvbk31scGoqETwSCGUR26GBoEFQ7WMqgwDTiCx7+JsH95cAhBIOV1koWnYivcQM6m1sSXcEVbhXul37XllRYFzsXIXjB6hFl0KPU87J5XUZQoOOMLQuFUS7FUih8STqtjigVuVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724922889; c=relaxed/simple;
-	bh=8x8g1e5x/vlcO20rV1E4Hnvc0w1vqyXS46cdQ7b4SyM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mqn0kGF4c39ev0j5v/b1bQO+yrigBs7ifyYgPGJwnQg7T+NMWmmqytkoCOW/rE8LSywepndO+q/4Dr0W/Se+kBq19jqR3cTPG+EYCeEvKvIQjtITScQWb98/NdWFSC9jl5GDaxwiqeZp9IC+aGSG1IKULFfEilpY6KC8fur1zSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kbGJ7y83; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-42bb8c6e250so453755e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 02:14:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724922886; x=1725527686; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=L6Km23SekStR6cqhQyfp1JKUgaAiDVZuA409pMvIc/U=;
-        b=kbGJ7y83gS6BzwroIpDOnz4hDdUthgdzD9yMiSJr3SwyJqMgMlcABdeda9MXLm+73u
-         G12+ZKoqvrQ3w1VMsTstIptot8RyFKjf4bgeApH3rGubUgtzrHy9YhBgX76Fnpd4FfFa
-         qLpbNr+ZXQOnOHIUj2JgMjCi6e3cWk4EgY8sBUfqJjXZoW5zDT1+iUg1/qjjCOUGKxA6
-         jv3XtmFhLT0Rof/4ge9zL97lNP452EK+Y8qaUi8R5k1vXS/OfjfWr69rQdaVIgQgp9DX
-         jXLmXWXnKwt8qbsb/t9QtC7ZwxXvVERtKSJyRnRLg+GQaSbgE1neupL3CVKxQxwHZCul
-         gX1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724922886; x=1725527686;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=L6Km23SekStR6cqhQyfp1JKUgaAiDVZuA409pMvIc/U=;
-        b=rAFKT+EGKgFR0WIK5XtFp8QyJWq2xF8p8+l4JiFew83BlNkYLrJRl8NSdOpjnIc8qW
-         cLV6bGgyBNierSbdeBrvbBplXxZ3KxMi7/OFjFK730PWRVHeLBwyZxQsCiFqUyyBLGQw
-         7myvxmrhm5fMRV8bE5NXOGbJJL09EDeFH5Z/Ftgt/ZgN4A6xuKqro4PbB1huyUDaA061
-         jXumYcNL/maO+8KVIjTD4AFE8Iy/5q/3OKodtAZDnA8KP3/61wXXAwhCKQWKnhwZ2Bux
-         sHEXa5x4lh5QlUXB/jGZOdPd4kOo8EHV1xxPcaPuw2t2zRcTsuwzWed6g7y+B8qQqn9N
-         0KqA==
-X-Forwarded-Encrypted: i=1; AJvYcCXfFd3QPNf8FUv0r7opl7WYwvVBkNzdaWsajKnqp5b43DfBXEG2gdpR7pisUrVNy6km0tDl5Z9y7K4BZbM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2bhUfe2YJC3qvczD56DuUsgDEr37NIYGlCU30fa16mC3VQ9tu
-	gZsz8rS6a7bvkHpK1RnpcEyGM+he5395jkTdDCDpUUwAqjhnCOvk2Z3s8orcrYk=
-X-Google-Smtp-Source: AGHT+IFs5vufPyvUpn6eMaWbjuz60f0gm2UsD8ZCjTHIvs2WILqyr59d1WjjUYCqBNLm5s2UJUeBYw==
-X-Received: by 2002:adf:fe8b:0:b0:371:9426:d534 with SMTP id ffacd0b85a97d-3749b549687mr1435576f8f.18.1724922886387;
-        Thu, 29 Aug 2024 02:14:46 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ba639d440sm44969225e9.13.2024.08.29.02.14.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 02:14:45 -0700 (PDT)
-Date: Thu, 29 Aug 2024 12:14:41 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Jon Hunter <jonathanh@nvidia.com>,
-	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Ajit Pandey <quic_ajipan@quicinc.com>,
-	Imran Shaik <quic_imrashai@quicinc.com>,
-	Taniya Das <quic_tdas@quicinc.com>,
-	Jagadeesh Kona <quic_jkona@quicinc.com>,
-	kernel test robot <lkp@intel.com>,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH] clk: qcom: clk-alpha-pll: Replace divide operator with
- comparison
-Message-ID: <feb9dcf0-0249-41b9-bad0-c988ad2e45db@stanley.mountain>
-References: <20240813094035.974317-1-quic_skakitap@quicinc.com>
- <4d314b61-7483-4ceb-ac72-10dbd7e4522a@linaro.org>
- <7733a4ca-330b-4127-af12-33f376fbbc47@nvidia.com>
- <kh4diauo5u63mldchmd66pbnqxwnbqfoqcpxsw6wwocbadygvz@3diccu2xt4kj>
+	s=arc-20240116; t=1724922991; c=relaxed/simple;
+	bh=WPrVwuty4BPa6p9mEHIR0PaWDPFbGQKLmCggXhFxPkE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cLimjT4afuStH+tHsfV2kq9wm8ADK0g1DhXPyRNpN/Z9RW2Ez+a1cvVdJC3ZCAh4Zkiv9T1m0dH7sUqN5JvcQNZsK4jH0uJ23CzszOR46P6Kn7aEZW96MVSQopCtxZDnVxCz/99a9AFiCQk0oi4t8GYRiHBeZ07OncoPwR5H10w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=s5+59voF; arc=none smtp.client-ip=91.218.175.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <939877af-d726-421e-af71-ccf4b2ec33ea@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1724922986;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=AfAceVyfYMvpGPfpOzZ0gGILHs9xQf3lHbqa/aSXEZE=;
+	b=s5+59voFYFpQOfSg9X9HSvlLYrOcBULonyLEBVsb9u90kspJRMAs5pv29Vx8v+OkypfrS2
+	mN6+0Mczctc7yxTqV66y3lA/4Y8KKgrUtTsxciKspYvqI6jiOpOLvJEHvNTLPPRoJe6xnB
+	0++cCrfVBKg3ehmtn24wBFs088cnOgs=
+Date: Thu, 29 Aug 2024 10:16:22 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <kh4diauo5u63mldchmd66pbnqxwnbqfoqcpxsw6wwocbadygvz@3diccu2xt4kj>
+Subject: Re: [PATCH] Add provision to busyloop for events in ep_poll.
+To: Naman Gulati <namangulati@google.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ netdev@vger.kernel.org
+Cc: Stanislav Fomichev <sdf@fomichev.me>, linux-kernel@vger.kernel.org,
+ skhawaja@google.com, Joe Damato <jdamato@fastly.com>,
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+References: <20240828181011.1591242-1-namangulati@google.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+In-Reply-To: <20240828181011.1591242-1-namangulati@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Aug 28, 2024 at 11:44:20PM +0300, Dmitry Baryshkov wrote:
-> > > > Reported-by: kernel test robot <lkp@intel.com>
-> > > > Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > > > Closes: https://lore.kernel.org/r/202408110724.8pqbpDiD-lkp@intel.com/
+On 28/08/2024 19:10, Naman Gulati wrote:
+> NAPI busypolling in ep_busy_loop loops on napi_poll and checks for new
+> epoll events after every napi poll. Checking just for epoll events in a
+> tight loop in the kernel context delivers latency gains to applications
+> that are not interested in napi busypolling with epoll.
 > 
-> this Closes tag must come after lkp's Reported-by. Please also add
-> Closes with the link to Dan's report.
+> This patch adds an option to loop just for new events inside
+> ep_busy_loop, guarded by the EPIOCSPARAMS ioctl that controls epoll napi
+> busypolling.
 > 
+> A comparison with neper tcp_rr shows that busylooping for events in
+> epoll_wait boosted throughput by ~3-7% and reduced median latency by
+> ~10%.
+> 
+> To demonstrate the latency and throughput improvements, a comparison was
+> made of neper tcp_rr running with:
+>      1. (baseline) No busylooping
+>      2. (epoll busylooping) enabling the epoll busy looping on all epoll
+>      fd's
+>      3. (userspace busylooping) looping on epoll_wait in userspace
+>      with timeout=0
+> 
+> Stats for two machines with 100Gbps NICs running tcp_rr with 5 threads
+> and varying flows:
+> 
+> Type                Flows   Throughput             Latency (μs)
+>                               (B/s)      P50   P90    P99   P99.9   P99.99
+> baseline            15	    272145      57.2  71.9   91.4  100.6   111.6
+> baseline            30	    464952	66.8  78.8   98.1  113.4   122.4
+> baseline            60	    695920	80.9  118.5  143.4 161.8   174.6
+> epoll busyloop      15	    301751	44.7  70.6   84.3  95.4    106.5
+> epoll busyloop      30	    508392	58.9  76.9   96.2  109.3   118.5
+> epoll busyloop      60	    745731	77.4  106.2  127.5 143.1   155.9
+> userspace busyloop  15	    279202	55.4  73.1   85.2  98.3    109.6
+> userspace busyloop  30	    472440	63.7  78.2   96.5  112.2   120.1
+> userspace busyloop  60	    720779	77.9  113.5  134.9 152.6   165.7
+> 
+> Per the above data epoll busyloop outperforms baseline and userspace
+> busylooping in both throughput and latency. As the density of flows per
+> thread increased, the median latency of all three epoll mechanisms
+> converges. However epoll busylooping is better at capturing the tail
+> latencies at high flow counts.
+> 
+> Signed-off-by: Naman Gulati <namangulati@google.com>
+> ---
+>   fs/eventpoll.c                 | 53 ++++++++++++++++++++++++++--------
+>   include/uapi/linux/eventpoll.h |  3 +-
+>   2 files changed, 43 insertions(+), 13 deletions(-)
+> 
+> diff --git a/fs/eventpoll.c b/fs/eventpoll.c
+> index f53ca4f7fcedd..6cba79261817a 100644
+> --- a/fs/eventpoll.c
+> +++ b/fs/eventpoll.c
+> @@ -232,7 +232,10 @@ struct eventpoll {
+>   	u32 busy_poll_usecs;
+>   	/* busy poll packet budget */
+>   	u16 busy_poll_budget;
+> -	bool prefer_busy_poll;
+> +	/* prefer to busypoll in napi poll */
+> +	bool napi_prefer_busy_poll;
+> +	/* avoid napi poll when busy looping and poll only for events */
+> +	bool event_poll_only;
+>   #endif
+>   
+>   #ifdef CONFIG_DEBUG_LOCK_ALLOC
+> @@ -430,6 +433,24 @@ static bool ep_busy_loop_end(void *p, unsigned long start_time)
+>   	return ep_events_available(ep) || busy_loop_ep_timeout(start_time, ep);
+>   }
+>   
+> +/**
+> + * ep_event_busy_loop - loop until events available or busy poll
+> + * times out.
+> + *
+> + * @ep: Pointer to the eventpoll context.
+> + *
+> + * Return: true if events available, false otherwise.
+> + */
+> +static bool ep_event_busy_loop(struct eventpoll *ep)
+> +{
+> +	unsigned long start_time = busy_loop_current_time();
+> +
+> +	while (!ep_busy_loop_end(ep, start_time))
+> +		cond_resched();
+> +
+> +	return ep_events_available(ep);
+> +}
+> +
+>   /*
+>    * Busy poll if globally on and supporting sockets found && no events,
+>    * busy loop will return if need_resched or ep_events_available.
+> @@ -440,23 +461,29 @@ static bool ep_busy_loop(struct eventpoll *ep, int nonblock)
+>   {
+>   	unsigned int napi_id = READ_ONCE(ep->napi_id);
+>   	u16 budget = READ_ONCE(ep->busy_poll_budget);
+> -	bool prefer_busy_poll = READ_ONCE(ep->prefer_busy_poll);
+> +	bool event_poll_only = READ_ONCE(ep->event_poll_only);
+>   
+>   	if (!budget)
+>   		budget = BUSY_POLL_BUDGET;
+>   
+> -	if (napi_id >= MIN_NAPI_ID && ep_busy_loop_on(ep)) {
+> +	if (!ep_busy_loop_on(ep))
+> +		return false;
+> +
+> +	if (event_poll_only) {
+> +		return ep_event_busy_loop(ep);
+> +	} else if (napi_id >= MIN_NAPI_ID) {
 
-No, this one is okay.  What happens is with some Smatch warnings, the bot
-sends the email to me, I look it over and either discard or forward it on so
-we get two Reported-bys for one email.
+There is no need to use 'else if' in this place, in case of
+event_poll_only == true the program flow will not reach this part.
 
-> > 
-> > There is also the above smatch warning that was reported.
-> 
-> And the Smatch warning too should be a part of the commit message.
-> 
-> Last, but not least, as it is a fix, there should be a Fixes: tag and
-> optionally a cc:stable.
-> 
+> +		bool napi_prefer_busy_poll = READ_ONCE(ep->napi_prefer_busy_poll);
+> +
+>   		napi_busy_loop(napi_id, nonblock ? NULL : ep_busy_loop_end,
+> -			       ep, prefer_busy_poll, budget);
+> +				ep, napi_prefer_busy_poll, budget);
+>   		if (ep_events_available(ep))
+>   			return true;
+>   		/*
+> -		 * Busy poll timed out.  Drop NAPI ID for now, we can add
+> -		 * it back in when we have moved a socket with a valid NAPI
+> -		 * ID onto the ready list.
+> -		 */
+> +		* Busy poll timed out.  Drop NAPI ID for now, we can add
+> +		* it back in when we have moved a socket with a valid NAPI
+> +		* ID onto the ready list.
+> +		*/
 
-To be fair, at the time no one thought this was a Fix, just a cleanup.
+I believe this change is accidental, right?
 
-regards,
-dan carpenter
+>   		ep->napi_id = 0;
+> -		return false;
+>   	}
+>   	return false;
+>   }
+
+[...]
 
 
