@@ -1,125 +1,374 @@
-Return-Path: <linux-kernel+bounces-307832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33932965388
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 01:39:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 853EB965390
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 01:40:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6AEFF1C22938
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 23:39:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4AC41C229CE
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 23:40:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60CEE18EFD4;
-	Thu, 29 Aug 2024 23:39:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8A3418EFDA;
+	Thu, 29 Aug 2024 23:40:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AXrtE5sl"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VVpQsx2c"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFEF6187843
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 23:39:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 914F1187843
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 23:40:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724974752; cv=none; b=icgDweiLiKMX1KBX5qVJHaRcakSOApRw08bW9HHKlK+JZpXAZiYBQzI/n+4Q6wlWjjqEbVVfQeEwJGCHuavQeCtENcfGcErR6zx/XtRk1BSfyUHXzpFF0seMU9mpgnVGLhMBOvKH87e531WNhcpu0kQMpe8sKL0eQRXK7owKw7I=
+	t=1724974833; cv=none; b=EMnt+IO6+z2n1eqt42xzlfz50WR9PB/kxEiN0jqYxzwQ1OUgIdGL1WtC4jCA0mNHFTutDrsXtJ2WZ/lumpbnzq2HJ0w/Nx7e16WnDz+NGYKZT5pDFifg8e15BTwgT5FTVdpXB5t2Pe2GppJox1Zi97hzXrMtkQXEv6vPQWzeayk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724974752; c=relaxed/simple;
-	bh=qIGudN197udaEzSbHat6mP5MvNd2krek/aPMD3IFuqE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QsQ1q+xdAaHPVxu38EN7xMVJOYUeNkuVIYvUvdTRupEmkfPXmC4HRPBvfs4tKLmypJxX5ZZKIWrVczAIR9YnakYd3UdPshg87Qfjd9FNuwr2E16VaJC2SGsZUL8g7kPemi9IWpszJ5xZ3dJmOM9mgNuBlAO0VyWp0L0l06ptCZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AXrtE5sl; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1724974833; c=relaxed/simple;
+	bh=CpHenLQGeHWJ3I89Oj0vMd6dOYNQ5tgX7FxaCCd0QLs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=D3osirNpouQpMMct1o799L9VLbuSPunMfR2x8L2fhoEMoSCl3so7LI1AnMMl/W2H/VtPbsBl5PwGZwmHajLL5qK1CUiqwhhZ1Tf/mRi99txHAiWMUQueo2HsBS6w0xCdt8jnwEFCET0jcfWdV0Deei1O0dkUwJwvNEBofkQUJh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VVpQsx2c; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724974749;
+	s=mimecast20190719; t=1724974829;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=kUhLKrM3AgJQLzPb7rc4PbVNqaVvI00+ASUmxqGhgYY=;
-	b=AXrtE5slPF/sXR2FIRW4FiSHzA3hbWNOoyjdFzUo90fhL3Sxhgp8T2/btKuMJHte8NLybc
-	9Rh4R6v5jHZfwCJlVX2Za7eOeCH3Z1s+9TIePfNPBEffOdRvXpaUbArfOcp91rZ6lEmTuG
-	wUBvAjRLYZcMwo0euqK91s+SP3fT8O4=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+	bh=BY7SH++AtttjQGWLu1s22uVFr5kdBWS1qBh1vIRVlGw=;
+	b=VVpQsx2c8rxB7rDTpgyw4JIToYWeAKlzp1gssIQ7wS+u4l0cHyjaGVVDQ78TWiuFp2wnMn
+	kGTToN+6IhstJxqc701Jcpz4zh8O3kyFCB0LpNPp5TQMLRHSpOUlXM1wjc2TlhiSX3Lia/
+	yt/+WhwW+G0V4JcFkXGttWVPFastIZo=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-627-cgrT47EbOtuIbCb5Eotv5w-1; Thu,
- 29 Aug 2024 19:39:06 -0400
-X-MC-Unique: cgrT47EbOtuIbCb5Eotv5w-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-248-jB1zItyFPeidQh0z-TUJqg-1; Thu,
+ 29 Aug 2024 19:40:26 -0400
+X-MC-Unique: jB1zItyFPeidQh0z-TUJqg-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 16B561955D5A;
-	Thu, 29 Aug 2024 23:39:04 +0000 (UTC)
-Received: from [10.2.16.9] (unknown [10.2.16.9])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id E6CC219560A3;
-	Thu, 29 Aug 2024 23:39:00 +0000 (UTC)
-Message-ID: <ac341b58-9447-4759-a231-0d23efe7af72@redhat.com>
-Date: Thu, 29 Aug 2024 19:39:00 -0400
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B7FF01955D48;
+	Thu, 29 Aug 2024 23:40:24 +0000 (UTC)
+Received: from localhost (unknown [10.22.32.86])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 051B11955BE3;
+	Thu, 29 Aug 2024 23:40:23 +0000 (UTC)
+Date: Thu, 29 Aug 2024 20:40:22 -0300
+From: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>
+To: Tomas Glozar <tglozar@redhat.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+	linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	jkacur@redhat.com
+Subject: Re: [PATCH] tracing/timerlat: Check tlat_var for NULL in
+ timerlat_fd_release
+Message-ID: <ZtEG5gOxv8UlTbzS@uudg.org>
+References: <20240820130001.124768-1-tglozar@redhat.com>
+ <20240823125426.404f2705@gandalf.local.home>
+ <20240823145211.34ccda61@gandalf.local.home>
+ <CAP4=nvQnW5vS5CQBZtKp-BdjYxNFbq26P36uRy3RhCenHEG_YA@mail.gmail.com>
+ <20240826132620.1618d201@gandalf.local.home>
+ <CAP4=nvTR9EuA5WhGweSaoeptEw0n0w5exr8gq6zfqGhGNt3zpg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] sched: fix warning in sched_setaffinity
-To: Josh Don <joshdon@google.com>, Ingo Molnar <mingo@redhat.com>,
- Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
- linux-kernel@vger.kernel.org
-References: <20240829220427.2764399-1-joshdon@google.com>
-Content-Language: en-US
-From: Waiman Long <longman@redhat.com>
-In-Reply-To: <20240829220427.2764399-1-joshdon@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAP4=nvTR9EuA5WhGweSaoeptEw0n0w5exr8gq6zfqGhGNt3zpg@mail.gmail.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-On 8/29/24 18:04, Josh Don wrote:
-> Commit 8f9ea86fdf99b added some logic to sched_setaffinity that included
-> a WARN when a per-task affinity assignment races with a cpuset update.
->
-> Specifically, we can have a race where a cpuset update results in the
-> task affinity no longer being a subset of the cpuset. That's fine; we
-> have a fallback to instead use the cpuset mask. However, we have a WARN
-> set up that will trigger if the cpuset mask has no overlap at all with
-> the requested task affinity. This shouldn't be a warning condition; its
-> trivial to create this condition.
->
-> Reproduced the warning by the following setup:
->
-> - $PID inside a cpuset cgroup
-> - another thread repeatedly switching the cpuset cpus from 1-2 to just 1
-> - another thread repeatedly setting the $PID affinity (via taskset) to 2
->
-> Fixes: 8f9ea86fdf99b ("sched: Always preserve the user requested cpumask")
-> Signed-off-by: Josh Don <joshdon@google.com>
-> ---
->   kernel/sched/syscalls.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/kernel/sched/syscalls.c b/kernel/sched/syscalls.c
-> index 4fae3cf25a3a..3a88f7c0cb69 100644
-> --- a/kernel/sched/syscalls.c
-> +++ b/kernel/sched/syscalls.c
-> @@ -1321,7 +1321,7 @@ int __sched_setaffinity(struct task_struct *p, struct affinity_context *ctx)
->   			bool empty = !cpumask_and(new_mask, new_mask,
->   						  ctx->user_mask);
->   
-> -			if (WARN_ON_ONCE(empty))
-> +			if (empty)
->   				cpumask_copy(new_mask, cpus_allowed);
->   		}
->   		__set_cpus_allowed_ptr(p, ctx);
+On Tue, Aug 27, 2024 at 04:34:39PM +0200, Tomas Glozar wrote:
+> po 26. 8. 2024 v 19:27 odesílatel Steven Rostedt <rostedt@goodmis.org> napsal:
+> >
+> > Yeah, I think I finally found the real issue. I don't think we need the ref
+> > counting. The problem is the creating and killing of the threads via the
+> > start and stop callbacks. That's not their purpose. The purpose of stop
+> > and start callbacks is when tracing_on is set to off and back on again. I
+> > think this is what is racing with the close.
+> >
+> 
+> I believe I discovered the exact mechanism of the bug. Since rtla is
+> killed with SIGTERM, it leaves the timerlat tracer active and its
+> timerlatu processes running. The rtla from the next iteration of the
+> while loop in the reproducer deactivates the timerlat tracer,
+> triggering the killing of the timerlatu processes. However, this
+> killing is asynchronous, and while the processes are gradually dying
+> one by one and closing their fds, the rtla from the next iteration is
+> already activating the timerlat tracer again. One of the timerlatu
+> processes does not die fast enough to release the fd before the
+> tlat_var is cleared in osnoise_workload_start, triggering the panic.
 
-Taking out the WARN_ON_ONCE() should be fine.
+With this in mind I tried a simpler approach. I used a kernel without any
+extra patches from Steven or ourselves, just used the code below. Not
+saying it is a definitive solution, but as a proof of concept I have two
+boxes running the loop used to reproduce the problem and so far not a
+single problem. The patch:
 
-Acked-by: Waiman Long <longman@redhat.com>
+diff --git a/kernel/trace/trace_osnoise.c b/kernel/trace/trace_osnoise.c
+index 66a871553d4a1..331c69bc7b0d4 100644
+--- a/kernel/trace/trace_osnoise.c
++++ b/kernel/trace/trace_osnoise.c
+@@ -2239,8 +2239,11 @@ static ssize_t osnoise_options_write(struct file *filp, const char __user *ubuf,
+ 	 */
+ 	mutex_lock(&trace_types_lock);
+ 	running = osnoise_has_registered_instances();
+-	if (running)
++	if (running) {
+ 		stop_per_cpu_kthreads();
++		mutex_unlock(&trace_types_lock);
++		return -EBUSY;
++	}
+ 
+ 	mutex_lock(&interface_lock);
+ 	/*
+@@ -2579,7 +2582,8 @@ static int timerlat_fd_release(struct inode *inode, struct file *file)
+ 	osn_var = per_cpu_ptr(&per_cpu_osnoise_var, cpu);
+ 	tlat_var = per_cpu_ptr(&per_cpu_timerlat_var, cpu);
+ 
+-	hrtimer_cancel(&tlat_var->timer);
++	if (tlat_var->kthread)
++		hrtimer_cancel(&tlat_var->timer);
+ 	memset(tlat_var, 0, sizeof(*tlat_var));
+ 
+ 	osn_var->sampling = 0;
+---
 
+In short, do not start new instances if the old one still registered. And
+only cancel the timer if the timerlat per cpu var has not been zeroed-out.
+
+Again, not a final patch but a simpler approach to protect start/stop
+races.
+
+Luis
+
+> 
+> You can see the bug in action in this detailed trace I got today, with
+> the use of in-kernel trace_printk together with bpftrace and
+> bpf_trace_printk and captured using ftrace_dump_on_oops (running the
+> same reproducer on a 8 CPU KVM system):
+> [  103.227679]     rtla-2325      2..... 98242607us :
+> osnoise_workload_start: tlat_var_reset: cpu=0,
+> tlat_var=0000000034996efa
+> [  103.227844]     rtla-2325      2..... 98242607us :
+> osnoise_workload_start: tlat_var_reset: cpu=1,
+> tlat_var=0000000062d1f520
+> [  103.228009]     rtla-2325      2..... 98242607us :
+> osnoise_workload_start: tlat_var_reset: cpu=2,
+> tlat_var=0000000002e262d8
+> [  103.228173]     rtla-2325      2..... 98242607us :
+> osnoise_workload_start: tlat_var_reset: cpu=3,
+> tlat_var=00000000b9d3a280
+> [  103.228349]     rtla-2325      2..... 98242607us :
+> osnoise_workload_start: tlat_var_reset: cpu=4,
+> tlat_var=000000000fba7a6e
+> [  103.228510]     rtla-2325      2..... 98242608us :
+> osnoise_workload_start: tlat_var_reset: cpu=5,
+> tlat_var=000000008ed0b87f
+> [  103.228670]     rtla-2325      2..... 98242608us :
+> osnoise_workload_start: tlat_var_reset: cpu=6,
+> tlat_var=00000000a02fe267
+> [  103.228831]     rtla-2325      2..... 98242608us :
+> osnoise_workload_start: tlat_var_reset: cpu=7,
+> tlat_var=000000008e1d5095
+> [  103.228992]     rtla-2327      3...11 98256551us :
+> bpf_trace_printk: rtla pid 2325 forks into 2328
+> [  103.229156]     rtla-2327      3...11 98256873us :
+> bpf_trace_printk: rtla pid 2325 forks into 2329
+> [  103.229325]     rtla-2327      3...11 98257124us :
+> bpf_trace_printk: rtla pid 2325 forks into 2330
+> [  103.229489]     rtla-2327      3...11 98257353us :
+> bpf_trace_printk: rtla pid 2325 forks into 2331
+> [  103.229651]     rtla-2327      3...11 98257574us :
+> bpf_trace_printk: rtla pid 2325 forks into 2332
+> [  103.229810]     rtla-2327      3...11 98257801us :
+> bpf_trace_printk: rtla pid 2325 forks into 2333
+> [  103.229968]     rtla-2327      3...11 98258008us :
+> bpf_trace_printk: rtla pid 2325 forks into 2334
+> [  103.230124]     rtla-2327      3...11 98258216us :
+> bpf_trace_printk: rtla pid 2325 forks into 2335
+> [  103.230293]     bash-2094      0d..31 102987914us :
+> bpf_trace_printk: rtla pid 2325 received signal 2
+> [  103.230452]     bash-2094      0d..31 102987915us :
+> bpf_trace_printk: ...from bash pid 2094
+> [  103.230609]     bash-2094      0d..31 102990000us :
+> bpf_trace_printk: rtla pid 2325 received signal 15
+> [  103.230766]     bash-2094      0d..31 102990001us :
+> bpf_trace_printk: ...from bash pid 2094
+> [  103.230922]     rtla-2325      2...21 102990010us :
+> bpf_trace_printk: rtla pid 2325 exiting
+> [  103.231079]     rtla-2327      3...21 102990503us :
+> bpf_trace_printk: rtla pid 2327 exiting
+> [  103.231242]     rtla-2337      3d..31 103232021us :
+> bpf_trace_printk: timerlatu/0 pid 2328 received signal 9
+> [  103.231399]     rtla-2337      3d..31 103232022us :
+> bpf_trace_printk: ...from rtla pid 2337
+> [  103.231554]     rtla-2337      3d..31 103232024us :
+> bpf_trace_printk: timerlatu/1 pid 2329 received signal 9
+> [  103.231711]     rtla-2337      3d..31 103232025us :
+> bpf_trace_printk: ...from rtla pid 2337
+> [  103.231866]     rtla-2337      3d..31 103232029us :
+> bpf_trace_printk: timerlatu/2 pid 2330 received signal 9
+> [  103.232022]     rtla-2337      3d..31 103232030us :
+> bpf_trace_printk: ...from rtla pid 2337
+> [  103.232178]     rtla-2337      3dN.31 103232031us :
+> bpf_trace_printk: timerlatu/3 pid 2331 received signal 9
+> [  103.232347]     rtla-2337      3dN.31 103232031us :
+> bpf_trace_printk: ...from rtla pid 2337
+> [  103.232506]     rtla-2337      3dN.31 103232034us :
+> bpf_trace_printk: timerlatu/4 pid 2332 received signal 9
+> [  103.232685]     rtla-2337      3dN.31 103232034us :
+> bpf_trace_printk: ...from rtla pid 2337
+> [  103.232846]     rtla-2337      3dN.31 103232039us :
+> bpf_trace_printk: timerlatu/5 pid 2333 received signal 9
+> [  103.233010]     rtla-2337      3dN.31 103232039us :
+> bpf_trace_printk: ...from rtla pid 2337
+> [  103.233171]     rtla-2337      3dN.31 103232042us :
+> bpf_trace_printk: timerlatu/6 pid 2334 received signal 9
+> [  103.233357]     rtla-2337      3dN.31 103232042us :
+> bpf_trace_printk: ...from rtla pid 2337
+> [  103.233517]     rtla-2337      3dN.31 103232046us :
+> bpf_trace_printk: timerlatu/7 pid 2335 received signal 9
+> [  103.233678]     rtla-2337      3dN.31 103232046us :
+> bpf_trace_printk: ...from rtla pid 2337
+> [  103.233835] timerlat-2331      3...21 103232701us :
+> bpf_trace_printk: timerlatu/3 pid 2331 exiting
+> [  103.233995] timerlat-2329      1...21 103232704us :
+> bpf_trace_printk: timerlatu/1 pid 2329 exiting
+> [  103.234155] timerlat-2331      3....1 103232705us :
+> timerlat_fd_release: timerlat_fd_release: cpu=3,
+> tlat_var=000000000fba7a6e, osn_var->pid=2331
+> [  103.234357] timerlat-2329      1....1 103232706us :
+> timerlat_fd_release: timerlat_fd_release: cpu=1,
+> tlat_var=0000000002e262d8, osn_var->pid=2329
+> [  103.234508] timerlat-2334      6...21 103232821us :
+> bpf_trace_printk: timerlatu/6 pid 2334 exiting
+> [  103.234657] timerlat-2334      6....1 103232826us :
+> timerlat_fd_release: timerlat_fd_release: cpu=6,
+> tlat_var=000000008e1d5095, osn_var->pid=2334
+> [  103.234813] timerlat-2330      2...21 103232850us :
+> bpf_trace_printk: timerlatu/2 pid 2330 exiting
+> [  103.234966] timerlat-2330      2....1 103232853us :
+> timerlat_fd_release: timerlat_fd_release: cpu=2,
+> tlat_var=00000000b9d3a280, osn_var->pid=2330
+> [  103.235122] timerlat-2333      5...21 103232856us :
+> bpf_trace_printk: timerlatu/5 pid 2333 exiting
+> [  103.235291] timerlat-2333      5....1 103232858us :
+> timerlat_fd_release: timerlat_fd_release: cpu=5,
+> tlat_var=00000000a02fe267, osn_var->pid=2333
+> [  103.235452] timerlat-2332      4...21 103232861us :
+> bpf_trace_printk: timerlatu/4 pid 2332 exiting
+> [  103.235610] timerlat-2332      4....1 103232864us :
+> timerlat_fd_release: timerlat_fd_release: cpu=4,
+> tlat_var=000000008ed0b87f, osn_var->pid=2332
+> [  103.235769] timerlat-2335      7...21 103232867us :
+> bpf_trace_printk: timerlatu/7 pid 2335 exiting
+> [  103.235932] timerlat-2335      7....1 103232869us :
+> timerlat_fd_release: timerlat_fd_release: cpu=7,
+> tlat_var=000000003113e297, osn_var->pid=2335
+> [  103.236103]     rtla-2337      3..... 103234109us :
+> osnoise_workload_start: tlat_var_reset: cpu=0,
+> tlat_var=0000000034996efa
+> [  103.236316]     rtla-2337      3..... 103234109us :
+> osnoise_workload_start: tlat_var_reset: cpu=1,
+> tlat_var=0000000062d1f520
+> [  103.236473]     rtla-2337      3..... 103234109us :
+> osnoise_workload_start: tlat_var_reset: cpu=2,
+> tlat_var=0000000002e262d8
+> [  103.236630]     rtla-2337      3..... 103234110us :
+> osnoise_workload_start: tlat_var_reset: cpu=3,
+> tlat_var=00000000b9d3a280
+> [  103.236797]     rtla-2337      3..... 103234110us :
+> osnoise_workload_start: tlat_var_reset: cpu=4,
+> tlat_var=000000000fba7a6e
+> [  103.236972]     rtla-2337      3..... 103234110us :
+> osnoise_workload_start: tlat_var_reset: cpu=5,
+> tlat_var=000000008ed0b87f
+> [  103.237144]     rtla-2337      3..... 103234110us :
+> osnoise_workload_start: tlat_var_reset: cpu=6,
+> tlat_var=00000000a02fe267
+> [  103.237345]     rtla-2337      3..... 103234110us :
+> osnoise_workload_start: tlat_var_reset: cpu=7,
+> tlat_var=000000008e1d5095
+> [  103.237516] timerlat-2328      0...21 103234149us :
+> bpf_trace_printk: timerlatu/0 pid 2328 exiting
+> [  103.237690] timerlat-2328      0....1 103234152us :
+> timerlat_fd_release: timerlat_fd_release: cpu=0,
+> tlat_var=0000000062d1f520, osn_var->pid=0
+> [  103.237871] ---------------------------------
+> [  103.238053] CR2: 0000000000000010
+> 
+> On the kernel side, I'm using similar trace_printk debug prints as you
+> did; the bpftrace program used is this:
+> uretprobe:libc:fork
+> /strncmp(comm, "rtla", 5) == 0 && retval != 0/
+> {
+>         debugf("rtla pid %d forks into %d", pid, retval)
+> }
+> tracepoint:signal:signal_generate
+> /strncmp(args->comm, "rtla", 5) == 0 || strncmp(args->comm,
+> "timerlatu", 9) == 0/ {
+>         debugf("%s pid %d received signal %d", args->comm, args->pid,
+> args->sig);
+>         debugf("...from %s pid %d", comm, pid);
+> }
+> tracepoint:sched:sched_process_exit
+> /strncmp(args->comm, "rtla", 5) == 0 || strncmp(args->comm,
+> "timerlatu", 9) == 0/ {
+>         debugf("%s pid %d exiting", args->comm, args->pid)
+> }
+> 
+> > Anyway, the start and stop should probably just pause the threads and not
+> > kill them an start them again. That is, the osnoise_workload_start() should
+> > be called by the init callbacks and the osnoise_workload_stop should be
+> > called by reset callback.
+> >
+> > The start and stop callbacks should just pause and restart the the threads.
+> >
+> 
+> I'm not sure if that fits into the design of timerlat. At least for
+> timerlat with user workload, each activation of the timerlat tracer
+> implies the creation of a new user workload, not the re-activation of
+> a lingering one (that might be an entirely different program). A
+> timerlat tracer is tightly associated with its threads: if the threads
+> exit, the timer itself ceases to have meaning. Of course also rtla
+> should make sure there are no lingering timerlatu processes.
+> 
+> I think waiting on the threads to actually exit in stop_kthread() is
+> the proper solution:
+> 
+> /*
+>  * stop_kthread - stop a workload thread
+>  */
+> static void stop_kthread(unsigned int cpu){
+>     struct task_struct *kthread;
+> 
+>     kthread = per_cpu(per_cpu_osnoise_var, cpu).kthread;
+>     if (kthread) {
+>         if (test_bit(OSN_WORKLOAD, &osnoise_options)) {
+>             kthread_stop(kthread);
+>         } else {
+>             /*
+>              * This is a user thread waiting on the timerlat_fd. We need
+>              * to close all users, and the best way to guarantee this is
+>              * by killing the thread. NOTE: this is a purpose specific file.
+>              */
+>             kill_pid(kthread->thread_pid, SIGKILL, 1);
+>             /* ^^ here wait until kthread (actually the user workload) exits */
+>             put_task_struct(kthread);
+>         }
+>         per_cpu(per_cpu_osnoise_var, cpu).kthread = NULL;
+>     }
+> 
+> There might even be another bug, not sure if calling put_task_struct
+> on a task that is still exiting is sane.
+> 
+> Tomas
+> 
+---end quoted text---
 
 
