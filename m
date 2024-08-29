@@ -1,191 +1,197 @@
-Return-Path: <linux-kernel+bounces-307028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68108964703
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:41:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D5C6D964706
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:42:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26C9A2812C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:41:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DB312821E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:42:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B25631AED5D;
-	Thu, 29 Aug 2024 13:41:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="N095giUz"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E4AC1B011E;
+	Thu, 29 Aug 2024 13:41:12 +0000 (UTC)
+Received: from CHN02-SH0-obe.outbound.protection.partner.outlook.cn (mail-sh0chn02on2111.outbound.protection.partner.outlook.cn [139.219.146.111])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67EDE1AE860;
-	Thu, 29 Aug 2024 13:41:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724938862; cv=none; b=slOIzN75wduJdaNsY2DLeEMEXlrMrsnbh0GtAgb8INVH7Z7hEnPFBLLYN6eZd4oLLwVyTylkD3BndbrVAqDtqarSMLrgmsA/SfUQIeIkEU/XrFWAOqUZxcYWcExE/vil2oNTsJE1unOsQA/zLwNzqStw3tOGez0tsSRJ4oYivL8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724938862; c=relaxed/simple;
-	bh=7OF/1Q+Bgf6uvmsLyNLfEaKaJz4+VhCfNN5LRsUusQg=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MXBrAWiH2vC4SBGgPSDyCzmnbSPnkeRt+yqJ/Lj8xtn2T9a5BRbqegctPpa8ixaDw3N0CSKjYb2Y53bq3MMfKVTujycOICFEmj6VC7vhSzWP5h6pmGwSNWO3Z1fybM4ILrD2Vbval+kdB6ehwnEoh8OaTq/Dxy9nG0kbu3e0FxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=N095giUz; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47T8WkXR030353;
-	Thu, 29 Aug 2024 13:40:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	lOn9U/uwJF+sEn9lfBTyTqUFLrypSYD0f8j/KzWz7Uo=; b=N095giUzra50D9rL
-	6p0R69wld4jroYX36GUuD9Skb8FA22Y/XgDL8h3dgH8jZMySV8SlY0Bdvzc5G/LD
-	HD1zto30bRUzDDYNBk9XC8gn6Kb8APe7GnG1Zt873kk298UYCoS7tbj1sBbsjyVt
-	Pe3WmEODYvgGE8gNExgen8Vajk+0p3W5X6+SJ1B5adf3OlpQ9EO2bKwOQ5fqqwH0
-	KvkF15B7BEM5BBl1p/pqOaXTBHR0+EnhyDW3HZltPayW55NJsc5hGG7o8vmfgl62
-	TOz5aMECNaVoh3kHyQ/jix+Rfp4JNxtiBt9mK/nMbiP4cXQcV8S0aQ5Z+ismEojp
-	R3Nt2w==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 419puudbu4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 29 Aug 2024 13:40:57 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47TDevHS025789
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 29 Aug 2024 13:40:57 GMT
-Received: from hu-gokulsri-blr.qualcomm.com (10.80.80.8) by
- nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 29 Aug 2024 06:40:53 -0700
-From: Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>
-To: <andersson@kernel.org>, <krzk+dt@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <quic_viswanat@quicinc.com>, <quic_mmanikan@quicinc.com>,
-        <quic_varada@quicinc.com>, <quic_srichara@quicinc.com>,
-        <quic_gokulsri@quiconc.com>
-Subject: [PATCH V2 4/4] arm64: dts: qcom: ipq9574: add nodes to bring up q6
-Date: Thu, 29 Aug 2024 19:10:21 +0530
-Message-ID: <20240829134021.1452711-5-quic_gokulsri@quicinc.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 311391AC451;
+	Thu, 29 Aug 2024 13:41:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.146.111
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724938871; cv=fail; b=fo+1HQ5J3wkJHIkG2cT7MJnCI2pS4+viKe4IMWGmrAZVgQ6560QWTB0zFzw1aVTgyYQZqmvsZ/Z3NMQTVa8oJkrOKUjjrq+COCxUq2Np/CgEwUdRzZ5qDsujPp5D9whqhRub72tlGwNzkF9GkQhFbcOSuvktzKhMvCxRtoSjnk0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724938871; c=relaxed/simple;
+	bh=NyASlf1LMHnBfDXXip972vGq2WQEhQ9ssXj+eR2xgmI=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=QKD0mxUZsEfPqd561N67IVIlc6DAllUu/sZTXryvX5Cetgh8acPD0xZE4IOThJIaa3tZyOWViJ144hL7bTdx9XNfaLeTBcvQFYoK0WEFkhyAig22Y0Q0ddRR0Cir/FY95Oq0CEEnsrEysngHQTsC1YgHWXKmib2aj7QrVELMLuI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.146.111
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=RhSuZH4s57Fu1l6XYoJb8XRtGULElyZspI6VO20VH2jfcaz4vCBGQ1UykmceOKNxw4EQQkDxJPhNj8Fh/NNDEWfETTfNxjCXv9ZQFO3ZuYapmGo06YJXJDG1J7NmgpGOaXPGfYyLRVL7Fv/YN7m7LdNxmJqAudG/3ljEhJ0onKBoeZOlJkloo14t4UF/1JhfRXpm3ZKSdkINtXNY20cQ2xqawNhsSYrg2hYOO1kgGhpPCnoc+OWJhXMACO+Pw9kIlIoFZn4HQevT5ov1Qqvj5feydGoksqx1EJ7pf1yT7XeqpG1zTdYY6Wh4W9BfmvmZcyIWwUc5lUzPd7mXyZV+ZA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=CnYGrjHFd3PvE/A1cQgsfLrHi0OkCmeIGAE8NNvlSUA=;
+ b=eaH/uNpg0p+8IN2TWV5KPZ1vFUfwRtTeycn1GGJvaNyi+EO+gzKJfeSzHztpoQJMM6bhuojVSf97AQVbNH/59PK2cKIpd2cNlJzvS1tMB50dGomkFRvyeVJ6lvmm8kBul30+AY0rYyYgWTcAj5vyWC7pbWYxkJfOwVxGzeOyBu1G7dmrj7ybk2gPOa3ktNy+muLGRR/rta/0bq80YbAxzPLhMRwrto29YovnD6Kn2c88E6YbcYfJiHZhBVyKQxuF3cpnczvRVQa7w0vppKbnjaGg8JV1cLGP4jiiHtzOpJmcJV9s9R5zIR0fLe7hrpBzurkGXvoSCa4U/v2xhEzhTg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=starfivetech.com; dmarc=pass action=none
+ header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=starfivetech.com;
+Received: from NTZPR01MB1018.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c510:b::7) by NTZPR01MB1002.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c510:b::13) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.24; Thu, 29 Aug
+ 2024 13:40:56 +0000
+Received: from NTZPR01MB1018.CHNPR01.prod.partner.outlook.cn
+ ([fe80::e1c4:5bb3:adc:97f5]) by NTZPR01MB1018.CHNPR01.prod.partner.outlook.cn
+ ([fe80::e1c4:5bb3:adc:97f5%3]) with mapi id 15.20.7897.021; Thu, 29 Aug 2024
+ 13:40:56 +0000
+From: ende.tan@starfivetech.com
+To: netdev@vger.kernel.org
+Cc: andrew@lunn.ch,
+	alexandre.torgue@foss.st.com,
+	joabreu@synopsys.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	mcoquelin.stm32@gmail.com,
+	linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	leyfoon.tan@starfivetech.com,
+	minda.chen@starfivetech.com,
+	endeneer@gmail.com,
+	Tan En De <ende.tan@starfivetech.com>
+Subject: [net-next,v3,1/1] net: stmmac: Batch set RX OWN flag and other flags
+Date: Thu, 29 Aug 2024 21:40:43 +0800
+Message-Id: <20240829134043.323855-1-ende.tan@starfivetech.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240829134021.1452711-1-quic_gokulsri@quicinc.com>
-References: <20240829134021.1452711-1-quic_gokulsri@quicinc.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: BJXPR01CA0069.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c211:12::36) To NTZPR01MB1018.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c510:b::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: EIil7okAnoHqQnKZD2verxxYU8xkG7-a
-X-Proofpoint-ORIG-GUID: EIil7okAnoHqQnKZD2verxxYU8xkG7-a
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-29_02,2024-08-29_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- impostorscore=0 adultscore=0 malwarescore=0 suspectscore=0 bulkscore=0
- clxscore=1015 mlxlogscore=837 mlxscore=0 phishscore=0 lowpriorityscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408290094
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: NTZPR01MB1018:EE_|NTZPR01MB1002:EE_
+X-MS-Office365-Filtering-Correlation-Id: 71698778-d297-4cce-5db7-08dcc8303590
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|41320700013|1800799024|52116014|7416014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	5jM23HdLLZ92EzBUocYc9vNQj+h1M9/AfovCUGqGyAEGPh4koNNjPduy4s2SbviRO9lgsp639cK4nY1sbIOCz1wRQwxrMQVpAMZubjBfXEApxWno4lMiekcD3PcPeNldEPBxcyGVFcFRxVD1jXAzFWP7B8+uvJjk4tlWrFxMDzqZIMeFd2MlvhIJ/P6nKIcBBToOhbTVLF5b7YxV9Zs8brf9X90ap2Ygsqjkv1n3gfedKgoOubThGjkgdmkwq/eXc8LMglAgvKrrDU9HO4t0DGmxe1Z8BQrHTHo1UbxrMnHut6mZFUUwFXyeMNMqqJQPwWqv/DKQvKxMkJ28pxyxT8gpT54nJnFE6dqlSNU3n44G67Gux+Llf4ypHCWJqirNg+IHhQ0PsofmpfsdMx047m1pzqMh2q/2bUscRflAX7NiDmIe2Ofx+SfxGcj1ksEdmL8Ux/K9naYFOIofSBiNW+7DePK0MMzUxM/PboS9bKI+d4Fjjqp78OUCnWmuda8DgjtBWVqskhW2xzFfBa3SxSEViErv6RWUxwDVwrJS85m3KmtwxD8DI5wk87DjfXquk49YHaQO8mgD3fOofhR1r1194mp8iomLJ1/BqQNFzY6bMQbkmCTyPyTT/LLx3X5G
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:NTZPR01MB1018.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230040)(366016)(41320700013)(1800799024)(52116014)(7416014)(38350700014);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?Kb8RZkyKCh8vr9pGSdPcGDGO/uKqO83vxeR8zLXcB5skwlaRlx9fk0Jwqgdb?=
+ =?us-ascii?Q?75mmJvvP9df+yvOtU26x3gRynIv7F4zSCs7AvvpwpPJcWoRLgnj8RBBcgiAy?=
+ =?us-ascii?Q?mJDCUvJO25x8XHWdm2OIWCrkA21rgmZBT5VPLAns9CfkgJsWuZgy/27ZddH5?=
+ =?us-ascii?Q?nylcvtSbgugGBfLzC3brOj3sUcWmt+06+1M8VYXlM4gd7PjM3dcswFP323lg?=
+ =?us-ascii?Q?PVwKxujTd1aC1HYej2kY1l0Yarqv/NxWPcyvaaAotgIncYS9LRGSt+GvUllI?=
+ =?us-ascii?Q?EIivdFgCEgb/jQ/iKs35lqY7rt8Iob8Vb+cFpsSkjwW3xdDKUfqNPNBBzMPC?=
+ =?us-ascii?Q?RzWp0h3FRH7zka9Od2d8P0qKEMQkCPF1m5VWQhqXvpWfZVGE+ZOIUbLBA0Bn?=
+ =?us-ascii?Q?qA+DwK7MTPchFV9T4qWzakLV4E4uFm7d2YqCWDUGF3Oid/5YIut+nTErHJn2?=
+ =?us-ascii?Q?MelCmYM2/ga4ZnlFd1pAe/uC2QGVb27xljOwviQSDYoVCJIP4FZ/IMAT6hG7?=
+ =?us-ascii?Q?RoVIfentrVs8PzA+DK8PGcxvr99NB/6oezthpmIXwKnq+iGz3KRxv2lA9zK/?=
+ =?us-ascii?Q?YWFwN2D++FjZ4IuYPu5zBxX9fD96Y1oa9hM3FsivfYPqpUrJl6Zsc/Sw1vQu?=
+ =?us-ascii?Q?tLbzEVeV/8FlN3wcqsiUstJofUoLeLmAqSGbz3vw2nObzlmrTli/uA4siJgP?=
+ =?us-ascii?Q?+smy8MQgznt0Cdv3itt+wyIiDeDRwCcuKPFVVu5bTdMoGdgOMcY/JOm1IIqW?=
+ =?us-ascii?Q?5pNommJz6yEhmO9NqUbRvLrIAZJKN8hXkytc1vLXzQ1mMaJqyrAeFeMQspaY?=
+ =?us-ascii?Q?m0C1Foua2aqikkzGT5x5nEAbu/r5AyXyOIZl5DYttmqVk41w2Mvyi7sjrUIE?=
+ =?us-ascii?Q?VtmGm/H6zRkVIogQHLp/HNM1wGVQur6fNJ7a7s4Ey8kpyQ0nHROYBi/6KMby?=
+ =?us-ascii?Q?9B4OpNqFAfvfEeA+D6BVS8ly6QCQK28MwMjvnmm3JHPCa4Z3xm+Jm7Eu4uR0?=
+ =?us-ascii?Q?ezm3LFBv5Wjt7Nya+fnW5l5gMlgU7JJgE0RYqHLcuMTswWhblXzKW2B344B2?=
+ =?us-ascii?Q?ci2APA2V07UYCjGvOHKB7BUuWBJae4a4HAYYMwmEXlEpw1x8klyvaCrZsOLn?=
+ =?us-ascii?Q?xa3awFkjSwQfmbn7iYs7lMF6sWzM5zC3z1+V+i9w6u3pBJVpcrPXtKhVIulV?=
+ =?us-ascii?Q?qHeFUzJtUDp6F5Pozs8YedcWsoaPbPurFgNhATqgiyHRyGM7MzKIyhFVb0Ra?=
+ =?us-ascii?Q?b3rHK47Rqt/RcL9zG3TDLSXbwqBESXKtnlazPKepFNh5Zn1i5r0+I3XtLhT5?=
+ =?us-ascii?Q?SDvwsSfayStrAwyhXCNBcVDIiLx8PwSyeFU0WHqwoOixAKy4gJQAXxyuvGJF?=
+ =?us-ascii?Q?SLAaIkDGrK6t4r3WTa1C6VYaTB6co3s6TVlHtvhNuT/OK7YTpJFmub8vwCgk?=
+ =?us-ascii?Q?yRPyzSQlmqk5jvvoQlS0qz0utQuXZmlJyMiCZhZkhBneHBO3SR3T2P/GInKB?=
+ =?us-ascii?Q?ytYfStZ8KqpQLAvQH2wnyjJR0U/JGeILiGyfmuFe15B8b7gmOfe2Bilwlhvf?=
+ =?us-ascii?Q?+rA8AblKKut5NHES8394DaNa2PIuuSrxyL9FcvOsgCOFV1Z0bU6MTocpH5Y9?=
+ =?us-ascii?Q?NQ=3D=3D?=
+X-OriginatorOrg: starfivetech.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 71698778-d297-4cce-5db7-08dcc8303590
+X-MS-Exchange-CrossTenant-AuthSource: NTZPR01MB1018.CHNPR01.prod.partner.outlook.cn
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Aug 2024 13:40:56.3563
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Cno8RSzYdfJgjjGwxyeyvitahmZVvy4ALSK7Sot2VQsWT7DkqcwIKG8dyESujY03EMfgmATo8OTmVPPV5u+Wya3jc3dbDnHOi9q3+DHivKA=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: NTZPR01MB1002
 
-From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+From: Tan En De <ende.tan@starfivetech.com>
 
-Enable nodes required for q6 remoteproc bring up.
+Minimize access to the RX descriptor by collecting all the flags in a
+local variable and then updating the descriptor at once.
 
-Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-Signed-off-by: Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>
+Signed-off-by: Tan En De <ende.tan@starfivetech.com>
 ---
-changes since v1: Addressed comments by Krzysztof
-	- updated the order of items to 'qcom,smem-states' keeping
-	  'stop' first based on changes to binding documentation.
+v3:
+- Use local variable to batch set the descriptor flags.
+- This reduces the number of accesses to the descriptor.
+v2: https://patchwork.kernel.org/project/netdevbpf/patch/20240821060307.46350-1-ende.tan@starfivetech.com/
+- Avoid introducing a new function just to set the interrupt-on-completion
+  bit, as it is wasteful to do so.
+- Delegate the responsibility of calling dma_wmb() from main driver code
+  to set_rx_owner() callbacks (i.e. let callbacks to manage the low-level
+  ordering/barrier rather than cluttering up the main driver code).
+v1: https://patchwork.kernel.org/project/netdevbpf/patch/20240814092438.3129-1-ende.tan@starfivetech.com/
+---
+ drivers/net/ethernet/stmicro/stmmac/dwmac4_descs.c   | 6 ++++--
+ drivers/net/ethernet/stmicro/stmmac/dwxgmac2_descs.c | 6 ++++--
+ 2 files changed, 8 insertions(+), 4 deletions(-)
 
- arch/arm64/boot/dts/qcom/ipq9574.dtsi | 58 +++++++++++++++++++++++++++
- 1 file changed, 58 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/ipq9574.dtsi b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-index 08a82a5cf667..2d55f0697225 100644
---- a/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-+++ b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-@@ -213,6 +213,11 @@ smem@4aa00000 {
- 			hwlocks = <&tcsr_mutex 3>;
- 			no-map;
- 		};
-+
-+		q6_region: wcnss@4ab00000 {
-+			reg = <0x0 0x4ab00000 0x0 0x2b00000>;
-+			no-map;
-+		};
- 	};
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac4_descs.c b/drivers/net/ethernet/stmicro/stmmac/dwmac4_descs.c
+index 1c5802e0d7f4..dfcbe7036988 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac4_descs.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac4_descs.c
+@@ -186,10 +186,12 @@ static void dwmac4_set_tx_owner(struct dma_desc *p)
  
- 	soc: soc@0 {
-@@ -756,6 +761,35 @@ frame@b128000 {
- 				status = "disabled";
- 			};
- 		};
-+
-+		q6v5_wcss: remoteproc@cd00000 {
-+			compatible = "qcom,ipq9574-wcss-sec-pil";
-+			reg = <0x0cd00000 0x4040>;
-+			firmware-name = "ath11k/IPQ9574/hw1.0/q6_fw.mdt";
-+			interrupts-extended = <&intc GIC_SPI 325 IRQ_TYPE_EDGE_RISING>,
-+					      <&wcss_smp2p_in 0 IRQ_TYPE_NONE>,
-+					      <&wcss_smp2p_in 1 IRQ_TYPE_NONE>,
-+					      <&wcss_smp2p_in 2 IRQ_TYPE_NONE>,
-+					      <&wcss_smp2p_in 3 IRQ_TYPE_NONE>;
-+			interrupt-names = "wdog",
-+					  "fatal",
-+					  "ready",
-+					  "handover",
-+					  "stop-ack";
-+
-+			qcom,smem-states = <&wcss_smp2p_out 1>,
-+					   <&wcss_smp2p_out 0>;
-+			qcom,smem-state-names = "stop",
-+						"shutdown";
-+			memory-region = <&q6_region>;
-+
-+			glink-edge {
-+				interrupts = <GIC_SPI 321 IRQ_TYPE_EDGE_RISING>;
-+				label = "rtr";
-+				qcom,remote-pid = <1>;
-+				mboxes = <&apcs_glb 8>;
-+			};
-+		};
- 	};
+ static void dwmac4_set_rx_owner(struct dma_desc *p, int disable_rx_ic)
+ {
+-	p->des3 |= cpu_to_le32(RDES3_OWN | RDES3_BUFFER1_VALID_ADDR);
++	u32 flags = cpu_to_le32(RDES3_OWN | RDES3_BUFFER1_VALID_ADDR);
  
- 	thermal-zones {
-@@ -987,4 +1021,28 @@ timer {
- 			     <GIC_PPI 4 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
- 			     <GIC_PPI 1 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
- 	};
+ 	if (!disable_rx_ic)
+-		p->des3 |= cpu_to_le32(RDES3_INT_ON_COMPLETION_EN);
++		flags |= cpu_to_le32(RDES3_INT_ON_COMPLETION_EN);
 +
-+	wcss: wcss-smp2p {
-+		compatible = "qcom,smp2p";
-+		qcom,smem = <435>, <428>;
++	p->des3 |= flags;
+ }
+ 
+ static int dwmac4_get_tx_ls(struct dma_desc *p)
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_descs.c b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_descs.c
+index fc82862a612c..0c7ea939f787 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_descs.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_descs.c
+@@ -56,10 +56,12 @@ static void dwxgmac2_set_tx_owner(struct dma_desc *p)
+ 
+ static void dwxgmac2_set_rx_owner(struct dma_desc *p, int disable_rx_ic)
+ {
+-	p->des3 |= cpu_to_le32(XGMAC_RDES3_OWN);
++	u32 flags = cpu_to_le32(XGMAC_RDES3_OWN);
+ 
+ 	if (!disable_rx_ic)
+-		p->des3 |= cpu_to_le32(XGMAC_RDES3_IOC);
++		 flags |= cpu_to_le32(XGMAC_RDES3_IOC);
 +
-+		interrupt-parent = <&intc>;
-+		interrupts = <GIC_SPI 322 IRQ_TYPE_EDGE_RISING>;
-+
-+		mboxes = <&apcs_glb 9>;
-+
-+		qcom,local-pid = <0>;
-+		qcom,remote-pid = <1>;
-+
-+		wcss_smp2p_out: master-kernel {
-+			qcom,entry-name = "master-kernel";
-+			#qcom,smem-state-cells = <1>;
-+		};
-+
-+		wcss_smp2p_in: slave-kernel {
-+			qcom,entry-name = "slave-kernel";
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+		};
-+	};
- };
++	p->des3 |= flags;
+ }
+ 
+ static int dwxgmac2_get_tx_ls(struct dma_desc *p)
 -- 
 2.34.1
 
