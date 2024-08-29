@@ -1,208 +1,92 @@
-Return-Path: <linux-kernel+bounces-307149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17EEA96492F
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:54:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B7F3964935
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:55:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F4591F21F10
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 14:54:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB3F2282E5E
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 14:55:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F29A31B250C;
-	Thu, 29 Aug 2024 14:54:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D70B11B151F;
+	Thu, 29 Aug 2024 14:54:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="P3Y2ld7a"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p8xU/3LE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 242D41B143D
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 14:54:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E5AE1946DF;
+	Thu, 29 Aug 2024 14:54:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724943273; cv=none; b=ayh3+zoBXcAGi2kM1NFopCsAfm22uVczpdM6dph/MnYIRysID1sgNBB7Wk0XIwL2jTUqMmE7q3JA5rogc1mQpNXVfiM/sywKRWPwV2PGcVX1nCHTCWleqju9uaxuue/Q/bjSiJ+2z66f8LMFntcjc1cKX09SXjJ5it0MKdO4NGQ=
+	t=1724943284; cv=none; b=U8E2KNA4l/6mzrCll6gg/HkZatppcqrUdcjsq1jlzJWJIKy14BABglbdIoC26d3IPU3G5RWd4D3pP+iUstIk9CepHKKgF5OZfTXUHDmbJ4YRGnQUQ6BrKyNclgwkvMIYhDq6bEqr2aZ6jOUBGPbleZ0pMXYFX/DcTc3YjYVBg6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724943273; c=relaxed/simple;
-	bh=WVKIpxyvSxvXJXDMoFBBlYcfXvBhD3sx8jPRqfscME4=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=dF9DhsqbaIgtMjfToECf0ZGopKESVJIaA+DhzK/+yOTqEzKuuhsT4X8ObvpqKTgCygQS81LVyvUWhzMZ5ALd7F0Zuw9FgIZOI+b4oLRAtEfK981+uxaeI1THYL6LCuH/9JNAsLnne9dNU74Dzj3rsUIzisJ3pg5sSI1A38+ihk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=P3Y2ld7a; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3719753d365so575337f8f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 07:54:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724943269; x=1725548069; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=65MyFHHTA1PsDIlSg/rTxhPf0z2KfhQQqeQtyDirckk=;
-        b=P3Y2ld7aIaUHGUKaIZe0OKdtYu4rmb+u7+FJ7DbG5ZviJ4GcTuvoPr+ES6nRtK33Yd
-         J4VHJefA4zslFj1sMyEyKQJ7Bd+QT36NomumuyFCrzP0W8CE8PSihp6bNzbf4pMWDuVe
-         kiBcZ+xAmPti7jZYEHD+e+OOw2ITU5JDmLgweOr07LSe3nYIPY8lgmTPE+ZJfKcRRUZm
-         mxp/xVf2bhlKLPZtaweRxUStw8SXG/Nbf02pfF4JtyrF3emLtm+BEDfAHnwhqIOViUfo
-         9Uy2LbG5/HJM0OJA7fx2afLdJpO07sTg4FWpFR6EpzzHFtdCquPSipc2PnA3EqZiYv5w
-         K3eQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724943269; x=1725548069;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=65MyFHHTA1PsDIlSg/rTxhPf0z2KfhQQqeQtyDirckk=;
-        b=PjI69/Qn87gOwtLpZnFtAauN94NuLEZdSGAbyoHsuIGC12VruopGjFJTZDUX66HISa
-         7iyRcdoKQyAf4R7NjBmzCySGovMBRoimyQTA9/VrINTdFMDXufjCSCgTOZX7xgxuQK6T
-         oE00QWUWpf6nCJkUk8Kv8gWhUGRamhQX5uaNYo9gDHSzX/+SD8d0z58HZztyg3kjh/Oa
-         uAJl0+OGiRLFv4bVfln1LclJA68eSPgQqRKl2E76aE4WqEJ8rrtwQQEBa8KXsw6Hy7ym
-         HDvV8809tF/+rjMEZhgm6gpWbZrVvgfFBlFl6BkldPdCauRRY0sdUIPqvehmgsxOQt55
-         nuTw==
-X-Forwarded-Encrypted: i=1; AJvYcCVHHFoZr5mlCP9C+FYd9bMg/48I8n0XvFKcNNpSinFM0oQ8J4643TKCzGBuMTOONY+y1IO0XA0FaaG03p4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZvDonL41VAq6dikQbYbAlT2vAjVvGDAKxePbAmWxqzt/j7AB3
-	EkcY4+nGiedsKAIapICs2bHOoXSsoxoqkNP/uuFsyiYoi2kiE52+KxgZH5vxBkc=
-X-Google-Smtp-Source: AGHT+IHZH6stL4551rGqzrB66QW6+0W2V+BEhTdVDMA/uaumsNpkCQJsZo6bnlAOMG7WaWFSPvBr0g==
-X-Received: by 2002:a05:600c:3596:b0:426:61e8:fb35 with SMTP id 5b1f17b1804b1-42bb02812aamr25983165e9.4.1724943268906;
-        Thu, 29 Aug 2024 07:54:28 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:12f5:c9c:a0e1:6915? ([2a01:e0a:982:cbb0:12f5:c9c:a0e1:6915])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bb6a10353sm17740285e9.1.2024.08.29.07.54.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 29 Aug 2024 07:54:28 -0700 (PDT)
-Message-ID: <8d630ba4-8f6d-427d-bfa3-8eeba002517c@linaro.org>
-Date: Thu, 29 Aug 2024 16:54:27 +0200
+	s=arc-20240116; t=1724943284; c=relaxed/simple;
+	bh=+sNg+YIf6L4RPCJMyrcdmq8e0Kse/YJQU+JIPqKDrvw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f+CygdIWKLRxsKYAflA8eL016dZ5y17IDlGfDz7f7jYl5giibi+2ntW4pWrdXuPV6SwcNikjFHN08GGRtC7xKAShLDVOXRPmL/uyc3fNQR4aJ6EFx2J0t2loA+pKh49XZ40jWOTOT84u4xq+gSsEJIMhjOCxIgNXRuxAdbMccHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p8xU/3LE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6786C4CEC1;
+	Thu, 29 Aug 2024 14:54:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724943283;
+	bh=+sNg+YIf6L4RPCJMyrcdmq8e0Kse/YJQU+JIPqKDrvw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=p8xU/3LED0Aj2cHDv6bMWaHr8zJ6N76RkR0/X0l2hg07zlLNSXw1j0YyMMg7uPLQG
+	 MDmppvy0sTpegp9RCsHmSIBTmDJZp0PJm8D8F376hV2MC3764Zu8CqdVTRxT2dWOx0
+	 wCHFjn+sXMOLO2ycATpovWsudPXu9TT8ono1A5GAhANLffdao4aCYPO51BiZqdZypJ
+	 TW+dh2iMXqqTPTT1sbY/3fCDZ70Ot5MGstMqRWRugofNiQbGHY8XN9YtyLQs2RpFyJ
+	 sKzG0SKpcxJRj1EZzl/1U4YGIR6CyyDMQqPKoFieA4R1wxGZFmkgygYB2iaiSKncRx
+	 Uh3EoBRyK6giw==
+Date: Thu, 29 Aug 2024 11:54:39 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>, Jiri Olsa <jolsa@kernel.org>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH 1/1] tools build: Remove leftover libcap tests that
+ prevents fast path feature detection from working
+Message-ID: <ZtCLrySDaZNJAEQB@x1>
+References: <Zs-gjOGFWtAvIZit@x1>
+ <CAP-5=fX-Viz40=J+WQTT8PUDQ+Wtsj1sjA5ZPTxXY4eZo2eXUA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: neil.armstrong@linaro.org
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH v6 RESED 1/2] dma: replace zone_dma_bits by zone_dma_limit
-To: Robin Murphy <robin.murphy@arm.com>, Baruch Siach <baruch@tkos.co.il>,
- Christoph Hellwig <hch@lst.de>, Marek Szyprowski <m.szyprowski@samsung.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-Cc: iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- linux-s390@vger.kernel.org, =?UTF-8?B?UGV0ciBUZXNhxZnDrWs=?=
- <petr@tesarici.cz>, Ramon Fried <ramon@neureality.ai>,
- Elad Nachman <enachman@marvell.com>,
- linux-arm-msm <linux-arm-msm@vger.kernel.org>
-References: <cover.1723359916.git.baruch@tkos.co.il>
- <17c067618b93e5d71f19c37826d54db4299621a3.1723359916.git.baruch@tkos.co.il>
- <1a0c7282-63e0-4add-8e38-3abe3e0a8e2f@linaro.org>
- <1a7ab0db-646d-4975-9974-7b911990055a@arm.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <1a7ab0db-646d-4975-9974-7b911990055a@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAP-5=fX-Viz40=J+WQTT8PUDQ+Wtsj1sjA5ZPTxXY4eZo2eXUA@mail.gmail.com>
 
-Hi Robin,
+On Wed, Aug 28, 2024 at 11:32:06PM -0700, Ian Rogers wrote:
+> On Wed, Aug 28, 2024 at 3:11 PM Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
+> > I noticed that the fast path feature detection was failing:
 
-On 29/08/2024 16:38, Robin Murphy wrote:
-> On 2024-08-29 2:42 pm, Neil Armstrong wrote:
->> Hi,
->>
->> On 11/08/2024 09:09, Baruch Siach wrote:
->>> From: Catalin Marinas <catalin.marinas@arm.com>
->>>
->>> Hardware DMA limit might not be power of 2. When RAM range starts above
->>> 0, say 4GB, DMA limit of 30 bits should end at 5GB. A single high bit
->>> can not encode this limit.
->>>
->>> Use plain address for DMA zone limit.
->>>
->>> Since DMA zone can now potentially span beyond 4GB physical limit of
->>> DMA32, make sure to use DMA zone for GFP_DMA32 allocations in that case.
->>>
->>> Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
->>> Co-developed-by: Baruch Siach <baruch@tkos.co.il>
->>> Signed-off-by: Baruch Siach <baruch@tkos.co.il>
->>> ---
->>>   arch/arm64/mm/init.c       | 30 +++++++++++++++---------------
->>>   arch/powerpc/mm/mem.c      |  5 ++++-
->>>   arch/s390/mm/init.c        |  2 +-
->>>   include/linux/dma-direct.h |  2 +-
->>>   kernel/dma/direct.c        |  6 +++---
->>>   kernel/dma/pool.c          |  4 ++--
->>>   kernel/dma/swiotlb.c       |  6 +++---
->>>   7 files changed, 29 insertions(+), 26 deletions(-)
->>>
->>
->> <snip>
->>
->> This change breaks the Qualcomm SM8550-HDK boot since next-20240826.
->> It doesn't affect SM8550-QRD or other similar SoCs like SM8650 or SM8450.
->> The last CI run on next-20240828 can be found at:
->> https://git.codelinaro.org/linaro/qcomlt/ci/staging/cdba-tester/-/pipelines/100936
->>
->> SM8550-HDK boot log:
->> https://git.codelinaro.org/linaro/qcomlt/ci/staging/cdba-tester/-/jobs/165617
->>
-> [...]
-> 
-> Yeah, a 35-bit ZONE_DMA is sure to make stuff go wrong:
-> 
->> [    0.000000] Zone ranges:
->> [    0.000000]   DMA      [mem 0x0000000080000000-0x0000000affffffff]
->> [    0.000000]   DMA32    empty
->> [    0.000000]   Normal   empty
-> 
-> Compared to before:
-> 
-> [    0.000000]   DMA      [mem 0x0000000080000000-0x00000000ffffffff]
-> [    0.000000]   DMA32    empty
-> [    0.000000]   Normal   [mem 0x0000000100000000-0x0000000affffffff]
-> 
-> This'll be because the SoC DT is describing a general non-restrictive range:
->          dma-ranges = <0 0 0 0 0x10 0>;
-> 
-> Which proves we need more information than {acpi,of}_dma_get_max_cpu_address() are currently able to give us, because what zone_dma_limit actually wants to be is the *minimum* of the lowest highest CPU address of any DMA range, and the lowest CPU address of any DMA range + 2^32. I was thinking it had all ended up looking a bit too easy... :)
-> 
-> I think v1 of the fix[1] might actually work out for this, albeit still for the wrong reasons - if so, I concede that maybe at this point it might be safest to go back to that one as a quick short-term fix (with a big fat comment to say so) rather than try to rush the proper solution or revert everything.
+> >   $ cat /tmp/build/perf-tools-next/feature/test-all.make.output
+> >   /usr/bin/ld: cannot find -lcap: No such file or directory
+> >   collect2: error: ld returned 1 exit status
+> >   $
 
-Indeed v1 patches makes boot work again:
-[    0.000000] Zone ranges:
-[    0.000000]   DMA      [mem 0x0000000080000000-0x00000000ffffffff]
-[    0.000000]   DMA32    empty
-[    0.000000]   Normal   [mem 0x0000000100000000-0x0000000affffffff]
+> > The patch removing the dependency (Fixes tag below) didn't remove the
+> > detection of libcap, and as the fast path feature detection (test-all.c)
+> > had -lcap in its Makefile link list of libraries to link, it was failing
+> > when libcap-devel is not available, fix it by removing those leftover
+> > files.
 
-Please add my:
-Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8550-HDK
+> Isn't the feature test still in use by bpftool:
+> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/bpf/bpftool/Makefile?h=perf-tools-next#n103
+> I'd deliberately not followed up in removing it because of this.
 
-Thanks,
-Neil
+Right, I just reverted that patch, documenting in the revert text that
+bpftool uses it, etc.
 
-> 
-> Thanks,
-> Robin.
-> 
-> [1] https://lore.kernel.org/linux-arm-kernel/731d204f5f556ad61bbaf004b1d984f83c90b4f5.1724748249.git.baruch@tkos.co.il/
+Thanks a lot!
 
+- Arnaldo
 
