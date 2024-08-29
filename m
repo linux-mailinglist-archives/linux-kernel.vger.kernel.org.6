@@ -1,140 +1,219 @@
-Return-Path: <linux-kernel+bounces-307020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B721964749
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:54:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BF119646AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:33:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 517E7B29855
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:39:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6119B1C20D77
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:33:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFED619408D;
-	Thu, 29 Aug 2024 13:37:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="OXv9i1KY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6D2B1B5EBB;
+	Thu, 29 Aug 2024 13:27:55 +0000 (UTC)
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE5081AE854;
-	Thu, 29 Aug 2024 13:37:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 033831AE84C;
+	Thu, 29 Aug 2024 13:27:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724938674; cv=none; b=ipmVKFD2dXGk2zLRJQRurM1ACorChXK52GfgvaGvBr4NZvHvt3BaX5WLOhDn8CiNypSNo5hcU2aWu14Rs+31OKJRZD5CqDdQd6TvCoAE44zQmlXkytBZP4IMi0YBquoXOIcsNQ71Q4gWvy9jVdEJuY76otuPN9cyzpiAu/7kq9c=
+	t=1724938075; cv=none; b=pTw2YfKDoP9xfAyRmZWq9szbeJPmAMgV34CzCiN8ibPUdktMyszuq/0xJjVe5i+v7wqcpwB8VF9BSAOXqG/2tkCFsnlWNLXFHvOI+BPrT+iZ78ZSpheJ/K5krW27htvE/OimiAKffOSReENlbQjmMtLkOUsrMBfGhfVd4tlpJCo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724938674; c=relaxed/simple;
-	bh=5j+pCu/063iK1q0f2lIBnWsUUADZMQILRbJ/J12nbOo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HNr4wvf+j5GSyZ4m7V97b0MkNT06PwcqaVWTfYAIPCDNy2dqiwnNbtFawPggLhndVszNrgTKH2MuzqxjGzAtPX6MXMvavt3OF2wq/un7DwEaakM7eKu2h4qTvIZ8lvLZnQA1zALJSMSEuZK0o7Cq9Pvn8F6fT3XZheos8/7qHDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=OXv9i1KY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A00B4C4CEC7;
-	Thu, 29 Aug 2024 13:37:52 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="OXv9i1KY"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1724938670;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DgOsAY+IzUzI2LVe8MyPw3usnxayg4MxSPg3sYPdlME=;
-	b=OXv9i1KY5QeZZTYveePJOryfkIKWmKvFq3/LUkOyROXCUcvRHQ8fi89gGDI9UUGydvSqLA
-	J6g+Jez3wfR4VBLZZmsAd0xZPFSr8K6ccj+mgODzlLL4xYT1RrwlPL0NOMx4W3CpwkyRGY
-	b5+AUQWIwtbVTeUwyglJrSj3QPZ6tL8=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id ba520353 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Thu, 29 Aug 2024 13:37:50 +0000 (UTC)
-Date: Thu, 29 Aug 2024 15:37:42 +0200
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: Xi Ruoyao <xry111@xry111.site>
-Cc: Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>,
-	linux-crypto@vger.kernel.org, loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Jinyang He <hejinyang@loongson.cn>,
-	Tiezhu Yang <yangtiezhu@loongson.cn>, Arnd Bergmann <arnd@arndb.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>
-Subject: Re: [PATCH v5] LoongArch: vDSO: Wire up getrandom() vDSO
- implementation
-Message-ID: <ZtB5pqfp0Lg6lzz6@zx2c4.com>
-References: <20240829125656.19017-1-xry111@xry111.site>
- <ZtB3RczHN00XDO52@zx2c4.com>
+	s=arc-20240116; t=1724938075; c=relaxed/simple;
+	bh=6LM37PaL2W80lbU4UvB+TGFDJbbj3kS8Xb/o/IuByWg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=noyWGmwKh1LlD5vTz3rGt/jEbCPfXdA1S0DQpVS2FusQmMegbXJty9lIxBwQeEULjfZG73owp6WGt+XokLGzghmI21O8CoqrX6WTT8S+xDU/FtTLrzGYgBrtOIn/KU4P1HvCkybN3uOTGdFw6L97ovXhUctgIcJ+r+XDlqrLWJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4Wvhqg2snbz1xwG6;
+	Thu, 29 Aug 2024 21:25:51 +0800 (CST)
+Received: from kwepemg500017.china.huawei.com (unknown [7.202.181.81])
+	by mail.maildlp.com (Postfix) with ESMTPS id 85BF21A0188;
+	Thu, 29 Aug 2024 21:27:49 +0800 (CST)
+Received: from huawei.com (10.175.127.227) by kwepemg500017.china.huawei.com
+ (7.202.181.81) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 29 Aug
+ 2024 21:27:48 +0800
+From: Li Lingfeng <lilingfeng3@huawei.com>
+To: <trondmy@kernel.org>, <anna@kernel.org>
+CC: <jlayton@kernel.org>, <linux-nfs@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <yukuai1@huaweicloud.com>,
+	<houtao1@huawei.com>, <yi.zhang@huawei.com>, <yangerkun@huawei.com>,
+	<lilingfeng@huaweicloud.com>, <lilingfeng3@huawei.com>
+Subject: [PATCH v2] nfs: protect nfs41_impl_id by rcu
+Date: Thu, 29 Aug 2024 21:37:43 +0800
+Message-ID: <20240829133743.1008788-1-lilingfeng3@huawei.com>
+X-Mailer: git-send-email 2.31.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ZtB3RczHN00XDO52@zx2c4.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemg500017.china.huawei.com (7.202.181.81)
 
-On Thu, Aug 29, 2024 at 03:27:33PM +0200, Jason A. Donenfeld wrote:
-> One small question just occurred to me:
-> 
-> > +static __always_inline const struct vdso_rng_data *__arch_get_vdso_rng_data(
-> > +	void)
-> > +{
-> > +	return (const struct vdso_rng_data *)(
-> > +		get_vdso_data() +
-> > +		VVAR_LOONGARCH_PAGES_START * PAGE_SIZE +
-> > +		offsetof(struct loongarch_vdso_data, rng_data));
-> > +}
-> 
-> Did you test this in a TIMENS? On x86, I had to deal with the page
-> offsets switching around depending on whether there was a TIMENS. I
-> tested this in my test harness with some basic code like:
-> 
->        if (argc == 1) {
->                if (unshare(CLONE_NEWTIME))
->                        panic("unshare(CLONE_NEWTIME)");
->                if (!fork()) {
->                        if (execl(argv[0], argv[0], "now-in-timens"))
->                                panic("execl");
->                }
->                wait(NULL);
->                poweroff();
->        }
-> 
-> Because unlike other namespaces, the time one only becomes active after
-> fork/exec.
-> 
-> But maybe loongarch is more organized and you don't need any special
-> handling in __arch_get_vdso...data() functions like I needed on x86.
-> Just thought I should check.
+When performing exchange id call, a new nfs41_impl_id will be allocated to
+store some information from server. The pointers to the old and new
+nfs41_impl_ids are swapped, and the old one will be freed.
 
-Normal results:
+However, UAF may be triggered as follows:
 
-   vdso: 25000000 times in 0.287330836 seconds
-   libc: 25000000 times in 4.480710835 seconds
-syscall: 25000000 times in 4.411098048 seconds
+After T2 has got a pointer to the nfs41_impl_id, the nfs41_impl_id is
+freed by T1 before it is used.
+         T1                                           T2
+nfs4_proc_exchange_id
+ _nfs4_proc_exchange_id
+  nfs4_run_exchange_id
+   kzalloc // alloc nfs41_impl_id-B
+   rpc_run_task
+                                nfs_show_stats
+                                 show_implementation_id
+                                  impl_id = nfss->nfs_client->cl_implid
+                                  // get alloc nfs41_impl_id-A
+  swap(clp->cl_implid, resp->impl_id)
+  rpc_put_task
+   ...
+    nfs4_exchange_id_release
+     kfree // free nfs41_impl_id-A
+                                  impl_id->name // UAF
 
-After applying
+Fix this issue by using rcu to protect the nfs41_impl_id.
 
-diff --git a/arch/x86/include/asm/vdso/getrandom.h b/arch/x86/include/asm/vdso/getrandom.h
-index ff5334ad32a0..5cb1b318ebe3 100644
---- a/arch/x86/include/asm/vdso/getrandom.h
-+++ b/arch/x86/include/asm/vdso/getrandom.h
-@@ -32,8 +32,6 @@ static __always_inline ssize_t getrandom_syscall(void *buffer, size_t len, unsig
+Signed-off-by: Li Lingfeng <lilingfeng3@huawei.com>
+---
+v1->v2:
+  Free nfs41_impl_id by call_rcu in nfs4_shutdown_client to resolve
+  warning.
+ fs/nfs/nfs4client.c       | 10 +++++++++-
+ fs/nfs/nfs4proc.c         | 12 ++++++++++--
+ fs/nfs/super.c            | 12 +++++++++---
+ include/linux/nfs_fs_sb.h |  2 +-
+ include/linux/nfs_xdr.h   |  1 +
+ 5 files changed, 30 insertions(+), 7 deletions(-)
 
- static __always_inline const struct vdso_rng_data *__arch_get_vdso_rng_data(void)
- {
--	if (IS_ENABLED(CONFIG_TIME_NS) && __vdso_data->clock_mode == VDSO_CLOCKMODE_TIMENS)
--		return (void *)&__vdso_rng_data + ((void *)&__timens_vdso_data - (void *)&__vdso_data);
- 	return &__vdso_rng_data;
+diff --git a/fs/nfs/nfs4client.c b/fs/nfs/nfs4client.c
+index 83378f69b35e..1aee1cfb6f1f 100644
+--- a/fs/nfs/nfs4client.c
++++ b/fs/nfs/nfs4client.c
+@@ -281,6 +281,13 @@ static void nfs4_destroy_callback(struct nfs_client *clp)
+ 		nfs_callback_down(clp->cl_mvops->minor_version, clp->cl_net);
  }
+ 
++static void nfs4_free_impl_id_rcu(struct rcu_head *head)
++{
++	struct nfs41_impl_id *impl_id = container_of(head, struct nfs41_impl_id, __rcu_head);
++
++	kfree(impl_id);
++}
++
+ static void nfs4_shutdown_client(struct nfs_client *clp)
+ {
+ 	if (__test_and_clear_bit(NFS_CS_RENEWD, &clp->cl_res_state))
+@@ -293,7 +300,8 @@ static void nfs4_shutdown_client(struct nfs_client *clp)
+ 	rpc_destroy_wait_queue(&clp->cl_rpcwaitq);
+ 	kfree(clp->cl_serverowner);
+ 	kfree(clp->cl_serverscope);
+-	kfree(clp->cl_implid);
++	if (clp->cl_implid)
++		call_rcu(&clp->cl_implid->__rcu_head, nfs4_free_impl_id_rcu);
+ 	kfree(clp->cl_owner_id);
+ }
+ 
+diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
+index b8ffbe52ba15..6bb820bd205e 100644
+--- a/fs/nfs/nfs4proc.c
++++ b/fs/nfs/nfs4proc.c
+@@ -8866,13 +8866,21 @@ struct nfs41_exchange_id_data {
+ 	struct nfs41_exchange_id_args args;
+ };
+ 
++static void nfs4_free_impl_id_rcu(struct rcu_head *head)
++{
++	struct nfs41_impl_id *impl_id = container_of(head, struct nfs41_impl_id, __rcu_head);
++
++	kfree(impl_id);
++}
++
+ static void nfs4_exchange_id_release(void *data)
+ {
+ 	struct nfs41_exchange_id_data *cdata =
+ 					(struct nfs41_exchange_id_data *)data;
+ 
+ 	nfs_put_client(cdata->args.client);
+-	kfree(cdata->res.impl_id);
++	if (cdata->res.impl_id)
++		call_rcu(&cdata->res.impl_id->__rcu_head, nfs4_free_impl_id_rcu);
+ 	kfree(cdata->res.server_scope);
+ 	kfree(cdata->res.server_owner);
+ 	kfree(cdata);
+@@ -9034,7 +9042,7 @@ static int _nfs4_proc_exchange_id(struct nfs_client *clp, const struct cred *cre
+ 
+ 	swap(clp->cl_serverowner, resp->server_owner);
+ 	swap(clp->cl_serverscope, resp->server_scope);
+-	swap(clp->cl_implid, resp->impl_id);
++	resp->impl_id = rcu_replace_pointer(clp->cl_implid, resp->impl_id, 1);
+ 
+ 	/* Save the EXCHANGE_ID verifier session trunk tests */
+ 	memcpy(clp->cl_confirm.data, argp->verifier.data,
+diff --git a/fs/nfs/super.c b/fs/nfs/super.c
+index 97b386032b71..6097dbe8e334 100644
+--- a/fs/nfs/super.c
++++ b/fs/nfs/super.c
+@@ -612,13 +612,19 @@ static void show_pnfs(struct seq_file *m, struct nfs_server *server)
+ 
+ static void show_implementation_id(struct seq_file *m, struct nfs_server *nfss)
+ {
+-	if (nfss->nfs_client && nfss->nfs_client->cl_implid) {
+-		struct nfs41_impl_id *impl_id = nfss->nfs_client->cl_implid;
++	struct nfs_client *clp = nfss->nfs_client;
++	struct nfs41_impl_id *impl_id;
++
++	if (!clp)
++		return;
++	rcu_read_lock();
++	impl_id = rcu_dereference(clp->cl_implid);
++	if (impl_id)
+ 		seq_printf(m, "\n\timpl_id:\tname='%s',domain='%s',"
+ 			   "date='%llu,%u'",
+ 			   impl_id->name, impl_id->domain,
+ 			   impl_id->date.seconds, impl_id->date.nseconds);
+-	}
++	rcu_read_unlock();
+ }
+ #else
+ #if IS_ENABLED(CONFIG_NFS_V4)
+diff --git a/include/linux/nfs_fs_sb.h b/include/linux/nfs_fs_sb.h
+index 1df86ab98c77..29c98c9df42f 100644
+--- a/include/linux/nfs_fs_sb.h
++++ b/include/linux/nfs_fs_sb.h
+@@ -102,7 +102,7 @@ struct nfs_client {
+ 	bool			cl_preserve_clid;
+ 	struct nfs41_server_owner *cl_serverowner;
+ 	struct nfs41_server_scope *cl_serverscope;
+-	struct nfs41_impl_id	*cl_implid;
++	struct nfs41_impl_id __rcu *cl_implid;
+ 	/* nfs 4.1+ state protection modes: */
+ 	unsigned long		cl_sp4_flags;
+ #define NFS_SP4_MACH_CRED_MINIMAL  1	/* Minimal sp4_mach_cred - state ops
+diff --git a/include/linux/nfs_xdr.h b/include/linux/nfs_xdr.h
+index 45623af3e7b8..b3c96ea2a64b 100644
+--- a/include/linux/nfs_xdr.h
++++ b/include/linux/nfs_xdr.h
+@@ -1374,6 +1374,7 @@ struct nfs41_impl_id {
+ 	char				domain[NFS4_OPAQUE_LIMIT + 1];
+ 	char				name[NFS4_OPAQUE_LIMIT + 1];
+ 	struct nfstime4			date;
++	struct rcu_head			__rcu_head;
+ };
+ 
+ #define MAX_BIND_CONN_TO_SESSION_RETRIES 3
+-- 
+2.31.1
 
-the results are:
-
-   vdso: 25000000 times in 4.403789593 seconds
-   libc: 25000000 times in 4.466771093 seconds
-syscall: 25000000 times in 4.428145416 seconds
-
-The difference is that when it finds the shared data in the wrong place,
-it thinks the RNG is uninitialized, so it always falls back to the
-syscall, hence all three times being the same.
-
-If you're unsure how timens handling works on loongarch, try this test
-yourself and see what you get.
-
-Jason
 
