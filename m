@@ -1,227 +1,193 @@
-Return-Path: <linux-kernel+bounces-306056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5673896389E
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 05:06:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85E159638A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 05:09:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D632D1F22916
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 03:06:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA6511C2459E
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 03:09:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FE5A4D8C6;
-	Thu, 29 Aug 2024 03:06:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9659482EF;
+	Thu, 29 Aug 2024 03:09:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R/Q1ulfC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="d4oC/oMh"
+Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01on2052.outbound.protection.outlook.com [40.107.215.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A08F14A00;
-	Thu, 29 Aug 2024 03:06:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724900798; cv=none; b=sf5/RbMbEAq4afphrje0DjV1xL6neJ/edCrtfUhHDumiXLmb2ubfNY0ugH9hGcDfwq22Ng/BJJCE56y8Zo03rKOpsG5/paCTe/09/dSgtTiJldJ1KW1o68gv4LEcYH4FkUrB7Voy+YmNJfDT52RWe4EAJc7AeZiASvUMnCQmS10=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724900798; c=relaxed/simple;
-	bh=V51tZLE6chfQqVtSs/q+YZUu4GgCPe8BR7V7YnYADVc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UfYoLo7M3EX4TCGG9zmwA5UqtlNBm7C1bzYsPls3yJbvha7nkzFkN87Zr0IhxK0slDpwGwpRnFblr523h1+ZLwjAlbMvm2OGR+05TRQ6DG6P9XGx5+WrSb+x+8I1mNpX4PxAn2qlOY1xA4h18ud1g6lym2AfIV6bs5Iv27B5DT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R/Q1ulfC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D383FC4CEC0;
-	Thu, 29 Aug 2024 03:06:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724900798;
-	bh=V51tZLE6chfQqVtSs/q+YZUu4GgCPe8BR7V7YnYADVc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=R/Q1ulfCYH77cN7NSaau2Bh8FRTX9GiM6zpuXJyHVhlz36ylE4JGkY1vvHM/M8doH
-	 2xhGyM+JrkWwJxIg0ESf8zBZ8zwjzU4JqYrqXaM89W4snq7vvI4FnX3sahVYUJ5X7D
-	 e3dPFTPrLl1twrv+GJFSOFvVZX3hoWeDapI6iVZloGDmiGI1oYynZ8QCy+CueTORbE
-	 LA0S0zMHBwft8ZBLUq+OvBceA+WUjL9a1f1W/K8yppefR78l44xrGk6oqxDPvixm9i
-	 hwf1iMIpc0sOOyxK5jGSGUOUsu59YAIs2oqIf1VCxVSnfazxZ6fO3/CZkgNt0Ywj+h
-	 ZmKW3k90V8dHQ==
-Date: Wed, 28 Aug 2024 22:06:36 -0500
-From: Rob Herring <robh@kernel.org>
-To: Nikunj Kela <quic_nkela@quicinc.com>
-Cc: andersson@kernel.org, konradybcio@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, rafael@kernel.org, viresh.kumar@linaro.org,
-	herbert@gondor.apana.org.au, davem@davemloft.net,
-	sudeep.holla@arm.com, andi.shyti@kernel.org, tglx@linutronix.de,
-	will@kernel.org, joro@8bytes.org, jassisinghbrar@gmail.com,
-	lee@kernel.org, linus.walleij@linaro.org, amitk@kernel.org,
-	thara.gopinath@gmail.com, broonie@kernel.org,
-	wim@linux-watchdog.org, linux@roeck-us.net, robin.murphy@arm.com,
-	cristian.marussi@arm.com, rui.zhang@intel.com, lukasz.luba@arm.com,
-	vkoul@kernel.org, quic_gurus@quicinc.com, agross@kernel.org,
-	bartosz.golaszewski@linaro.org, quic_rjendra@quicinc.com,
-	robimarko@gmail.com, linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-crypto@vger.kernel.org,
-	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-i2c@vger.kernel.org, iommu@lists.linux.dev,
-	linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org,
-	linux-spi@vger.kernel.org, linux-watchdog@vger.kernel.org,
-	kernel@quicinc.com, quic_psodagud@quicinc.com,
-	quic_tsoni@quicinc.com, quic_shazhuss@quicinc.com,
-	Praveen Talari <quic_ptalari@quicinc.com>
-Subject: Re: [PATCH 18/22] dt-bindings: spi: document support for SA8255p
-Message-ID: <20240829030636.GA2208587-robh@kernel.org>
-References: <20240828203721.2751904-1-quic_nkela@quicinc.com>
- <20240828203721.2751904-19-quic_nkela@quicinc.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3831F18030;
+	Thu, 29 Aug 2024 03:08:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.52
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724900939; cv=fail; b=ZkCuWhAsF9Q83bqybyUYBbZHtqQcqDwfvo8TZcDG+Fpze+3glEMVFQh7gTvWE08sM14WF2Lcw+D3FaPBmb4nvoQ0OBfn6D6mkSlQoDrnIAd18ruU6zt7t6FcnjblKct7uCHGL1TQe4od2w3BUmuK4rpvUboHrY7AHWi3d4cGAsU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724900939; c=relaxed/simple;
+	bh=JF49wZ8dBUxQkoXszbw3+zT/9szycx3wHjh8pOb08pE=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=KUTKDDE5SmaHnytImX3F1yOkm5koddDwJyyxOayY+tjxrQrnK0yejAEA3LEPLGNrZ4RidMN4mGw+4URGbxSVO9Sj1MJsLfCg2WPEbdQfWwRPv+jaJ08/YyIfV7N7HpnTH8MUrIaapoFJ7jQxvPdOZHOnJOU00HkXSv9BTnKmn6g=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=d4oC/oMh; arc=fail smtp.client-ip=40.107.215.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=legrlMgXe9dNCUtfvhNJLam8tj+955MtkYJSAOnjPlxPMRHVcY6gbn0SbOI1N1hIGkXhy+NzFmrO0RAbhlUCHPa0yA5vbK03OM0dQozDTR2FkNzqFh2P/eX06IWrptO5WLDN0hUgAv1Z8rrX9DojGdQl8gCtF/XNgMmFAtaVBGI7ikVdc9mOIBH8BllVJ6M/5U7B1XYcmFpztCBAzC4bjm0dUMeGjnZcWd+k/q8JYPvaiMrD2TWMF8SyGQYUUOmH1e8Hh1ZezunO/fbXSbuywOVif88YF/mJEobRpNXHHTBpdcTw2lSrdsJk+Gp9rALeg3es2/03Y6U6yIvOj5K4CA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=IGg4Cm0Nx005NjxkppQTOlx3gN1PN+UZabH6kOweOps=;
+ b=dRr/nffymX5m9fAfH8gsQGl8r1Xe4JNkFEM3cQoc/e2FUl2LaEp+Dc9JzrXP96wfRgxT2Tx4F/UPSEjx30BQ6VNqyM18hrP79ktcLa2G/4C74Z0ax435vvzIAyqckblp6c9mgCJ7CYTHo8Sc7kALcsLcI+QEW29lehj83MOPLE3yAOWDfEYrGYdm2vVCRwjLPDfsZemIkkDOTsbOdha6rMZppcPFPbzEZKLvntfYEPit33d4KOQhWB+K+Yi7c63Ym3HPRBt7oXli+yuuIJvb4Zq7QkkIs0ntk48V/XtQqcCxb34QstSYfSBAB8jKQCSh5karT4/VK3KFkPrTyX0DDA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=IGg4Cm0Nx005NjxkppQTOlx3gN1PN+UZabH6kOweOps=;
+ b=d4oC/oMhp6Ra7NrjjXb+ZCEBT2j3PxW5sPyWv9nVlVjoOMA465+MwhTjRoNOOFVIlURJ35SzOjdxnUgVVtyFICkt33xzAY1c53Gbmvz6MLcIQt7YSqAHOgeUTWOJqo0PEOBVZkFoBE+Vce2U9jnQAACd2m+u1oAxRXf2fktz/W2SbOHHD5kzB8g8XlrTLMlpAgpCOKQqswjaU9t4nbjYH6WJvjjpYBfpcX3hU7Fp0Xa5B06h/iFg2+S91llW2HmabcHqTllA4f5q/TmQTejY9s9OG+gzFb+uPQAOlGjsJyenclgW15bebHyZYChZlEOKioorTt/ULPFFLcL7BmG36A==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from TYZPR06MB5709.apcprd06.prod.outlook.com (2603:1096:400:283::14)
+ by TY0PR06MB5836.apcprd06.prod.outlook.com (2603:1096:400:31f::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.26; Thu, 29 Aug
+ 2024 03:08:54 +0000
+Received: from TYZPR06MB5709.apcprd06.prod.outlook.com
+ ([fe80::bc46:cc92:c2b6:cd1a]) by TYZPR06MB5709.apcprd06.prod.outlook.com
+ ([fe80::bc46:cc92:c2b6:cd1a%4]) with mapi id 15.20.7897.027; Thu, 29 Aug 2024
+ 03:08:54 +0000
+From: Yuesong Li <liyuesong@vivo.com>
+To: elder@kernel.org,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	horms@kernel.org,
+	lihongbo22@huawei.com
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	opensource.kernel@vivo.com,
+	Yuesong Li <liyuesong@vivo.com>
+Subject: [PATCH net-next v2] net: ipa: make use of dev_err_cast_probe()
+Date: Thu, 29 Aug 2024 11:07:39 +0800
+Message-Id: <20240829030739.1899011-1-liyuesong@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TY2PR01CA0013.jpnprd01.prod.outlook.com
+ (2603:1096:404:a::25) To TYZPR06MB5709.apcprd06.prod.outlook.com
+ (2603:1096:400:283::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240828203721.2751904-19-quic_nkela@quicinc.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TYZPR06MB5709:EE_|TY0PR06MB5836:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2708e744-f6d9-4688-dcfd-08dcc7d7ea3f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|376014|52116014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?bAnrYBwMIq1KWIHKgKuitROpOQZagwT/e0Pm9+8dX+wRBMW9hIfoSmfzHkZw?=
+ =?us-ascii?Q?eUKx6shkklKTD1h+fZkqaRXHSEcvPe+XSEu6JrBgxXse1/x0jBuS79TTJiQs?=
+ =?us-ascii?Q?90VPBgw4HUXORud9jWkar39zBVGG6Xvjp/wVn3DceXxjVjox+85T6+ysxq7u?=
+ =?us-ascii?Q?Nj36ZsSZNgJXVOpUX0L8ISxoLnCLdTM9u15kLNJSgbFA0ms214sK5CuD4PHH?=
+ =?us-ascii?Q?NShvn1J3bz8fP5HNHEXTu6ImhY67U6FHPDRUeYYPEIBehnz9MUIA7mpKr+wK?=
+ =?us-ascii?Q?72DMELkzbgEYKK+qBurTcpA5EYxnCApYGl91h5kxXDqkW7coBuvD9Yq9ntZ4?=
+ =?us-ascii?Q?eHdknYR0ItnjFB4dUZMKfFswTNVXwq6KmEpGSl/peBQHzw99VUk6+fubvatY?=
+ =?us-ascii?Q?M1uSc02ADMLiKw9GnlMcGcFg1AcEQB4e8txJR4HvbWmfKZT2RpHpGPX6gYBg?=
+ =?us-ascii?Q?IXkJtf8inaq7cEe4AoHX/1iw/Nk8QrWcVzubx37DOfZdOfAQMSXZoFWwSYp3?=
+ =?us-ascii?Q?izj4AhnLdLPp7o3P/zYWA/Qe3tq3SZCl3osYcKsftWRfNwTSU34383kXc5mm?=
+ =?us-ascii?Q?J4EBFo8DLY32vZU9Q7/jX1dK+98gh6QBJ8Vij25YpOLKZH4jx5Xg2hccSHVg?=
+ =?us-ascii?Q?ntERdneRqOUboPkx6Q19Pe437MAHZDXWEp/devk1E7mYMI0jumMz0XmuTpLX?=
+ =?us-ascii?Q?uFDS3rZoqQRWehcguXkOZaQx+iu8XivsFO4M7KYdq6KxpIbLuUUZCPmHjP7w?=
+ =?us-ascii?Q?Gtsw6AUKPvaNJaeE72i/2Vl14KuDVVt+gnXcVxQweyUgeb5o7s9iIDb9d1LE?=
+ =?us-ascii?Q?HXjZeT53IvKG1g3Pj+o5aD5o+3oPogJHT3kvg1P5AvblKKPp78W3o1a1V8im?=
+ =?us-ascii?Q?KRRUxhuvWO7kDPi08DBHja7/JPdl8p0PWRwWxhdK+lSkobRBj+lyZ4yc0YhO?=
+ =?us-ascii?Q?OZ0WWLdvylRc9Jxy1LmwZ1sI3y/Y6p/yhMzv5YG1s/JB+HS5oXOEqKRJQJRh?=
+ =?us-ascii?Q?rQtA7wdQCupD/MMP3H6M0Bp6FoAZslxDWF0YBf9QC8uaZ0sMd3JnPHc047r9?=
+ =?us-ascii?Q?czcdqfo4hfHEEzCmrBzVaNEFHOjYM8DNpxH5WePrmg3GDIIQxGTWctdAVu7j?=
+ =?us-ascii?Q?iYefsOrlvlbwSadJzzlKG7Bke4XJAS99/VKTqQg3Qkn06ko/kr2HfHyijUtD?=
+ =?us-ascii?Q?hi0L++TEefELLZGBVsVtnhZXYGmaos2QNKiZX1x6KuyP+SIxO4Lyk6Iy1Yf2?=
+ =?us-ascii?Q?SlWglXm3wmPcWHrCGg/I9F+ENU/smj4i5T4evsWw2KuODXP+tKexdo0IBTu9?=
+ =?us-ascii?Q?LtQ1XjCpOCYUwOHKFyHxEarQnPhTqzulDq9VUuPF5pbR6SOV6Xf/1WjQptKx?=
+ =?us-ascii?Q?yuX2khs=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR06MB5709.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?FmvbWrdk0R1dFolHTwnD27LRUm6eCgybkJ3EvGnwiF4Tz67qptU6mT0ZUa23?=
+ =?us-ascii?Q?e/EaLrjK8ptK826jiplvNR4l5EcEa4XqT8q1V0fwetSufrnJiwPGa22EJy9k?=
+ =?us-ascii?Q?vy+vP9JsZAQ4glr8+Q7BFK+AqmkrGDlA0yDpxfAvr4nwxlMaLuYRT7tcB6aE?=
+ =?us-ascii?Q?+duLNkeDcnA3AmZmOodY0UjrbgiVdHB2zl6FouV2Ncpv7Tn4syXACgUZB9pm?=
+ =?us-ascii?Q?5YNtxK8VZ5wdlFJfPa/hm5uAxBpS2AZ/c/j8GK87IE84Nk3ojgVjDeqyFZG4?=
+ =?us-ascii?Q?3WNjyzJ9L6opt7mOYpheFFPDiPzotCQe6ncEX/uieS1gVrxLruil+g+q4aMm?=
+ =?us-ascii?Q?59MFc2IatIA3CyHhDjW4yVuMVSaBvJzN1uJdxMJW635RZM5mJdzRimw+3gWl?=
+ =?us-ascii?Q?Qo6dGCnC43luJL7NFQYhDgtPF+mkuJCmOVF38C4mco9fIB6LzZ82FWlV0OIu?=
+ =?us-ascii?Q?9KEeOCT/8N9QgQWBxXgRHEjWFK/iGz+yRIKEaM1D1W+NwG7u+gjZIz0Wvfeu?=
+ =?us-ascii?Q?M0JX9SgsKpSs9LkzHgiZiyuU27eLWO5rYaK5yOMJo9SqKDnd4jLla0KSKRL6?=
+ =?us-ascii?Q?yNBixOJicyZanD7dQUf9FBOO5Jhi2+39K2I0JXWLYWX5hkGt7+cYUAPclhFN?=
+ =?us-ascii?Q?zoKA1wfJBIkIiF8Gn3Jw2/6hnKFit/EBihunOrK9wb8SZnIr1dF3dyIRTXzK?=
+ =?us-ascii?Q?8KdOTW3R4BKxtndwlWxoKeLL8yRlFEaopLVRoz3zPtjRbd5miO8k+zmgM+xc?=
+ =?us-ascii?Q?WyMc+Y06qvE26CuJ1ogbL5Bks8HEf6d6+uR+LY6aXngJqivBE6fwbumMhbdc?=
+ =?us-ascii?Q?NRTYf1Q2U8VbSH5CvrJiX5HJoF7X8lfFgBWxQL+92ldELkLplWmeKnkB6X6W?=
+ =?us-ascii?Q?yNHOZOZMhiG3bO5Zn71UmQx2OkAkTyb4SJiKq8HF2xKZ7REhdMriaS1gJ/u9?=
+ =?us-ascii?Q?y1lUobPb/2t+5DEOf+sli9LrKhPEhVdbq8J5BVjkJ0zNhdQgHinxk7DBYBwW?=
+ =?us-ascii?Q?AzKDA57gaxti2w0RudV28ZAO6C2xkLJe2aPEgv2Yz172UTXclQKG9jKT5A1W?=
+ =?us-ascii?Q?5D0Ns+cBR+PaaehotTSYj2VMUYDdO8BUjnDOnORlchhAyyA04/iNuwYVNRbP?=
+ =?us-ascii?Q?36TBO2SdVmtVMbVKO4GV8OoFwYLVJ09tKS+qq28TAqMDg8NcBApsJGG9mHUV?=
+ =?us-ascii?Q?+dIO/PdUViF5sbTr7nBGBhKoMS1Y6NdqHDtCZjx3s7GTGWD8itOh16MX9haF?=
+ =?us-ascii?Q?nsKz0WmGzskZFF94BsAAgWIE/+6swLStbHGKYhGBQyJ38GVhV+nfCWEemIRB?=
+ =?us-ascii?Q?orJFjqByrJGGcWfL4ovvONkrOoEZrswiB20pjb9Iwe7+RL52u1yQHIxqAdZB?=
+ =?us-ascii?Q?ZNbrE+v+QCjcjpbP3yMwx/z8KHW/w1bW9QcLJ+rKf5WN9CQ/mb+yscKlj3EJ?=
+ =?us-ascii?Q?44SqvrAjSMQARB4jGLWTIBvoVVomqI5pupBtwpr2rG9T5F2h6mENRHpHPuZP?=
+ =?us-ascii?Q?63HHwLUrGEoUa7iN7tFZRL6IgbzGe0f0mptLr4m/iemmN41rGqPBGbjLKtty?=
+ =?us-ascii?Q?Pm2VuDatTZKccEUdAar14F2Oyqg6zAcDmmJGYmqu?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2708e744-f6d9-4688-dcfd-08dcc7d7ea3f
+X-MS-Exchange-CrossTenant-AuthSource: TYZPR06MB5709.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Aug 2024 03:08:54.3522
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: CaoJffzNIwRGuiKVUX9OZbPNVBA9wHcAKWeYY0CIUpJSKWw2ChdaC4PvI7CEr9e/sbZdQ5lfAU+eMZB7BgLPrw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY0PR06MB5836
 
-On Wed, Aug 28, 2024 at 01:37:17PM -0700, Nikunj Kela wrote:
-> Add compatible representing spi support on SA8255p.
-> 
-> Clocks and interconnects are being configured in firmware VM
-> on SA8255p platform, therefore making them optional.
-> 
-> CC: Praveen Talari <quic_ptalari@quicinc.com>
-> Signed-off-by: Nikunj Kela <quic_nkela@quicinc.com>
-> ---
->  .../bindings/spi/qcom,spi-geni-qcom.yaml      | 64 +++++++++++++++----
->  1 file changed, 53 insertions(+), 11 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/spi/qcom,spi-geni-qcom.yaml b/Documentation/devicetree/bindings/spi/qcom,spi-geni-qcom.yaml
-> index 2e20ca313ec1..74ea7c4f2451 100644
-> --- a/Documentation/devicetree/bindings/spi/qcom,spi-geni-qcom.yaml
-> +++ b/Documentation/devicetree/bindings/spi/qcom,spi-geni-qcom.yaml
-> @@ -25,10 +25,41 @@ description:
->  
->  allOf:
->    - $ref: /schemas/spi/spi-controller.yaml#
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: qcom,sa8255p-geni-spi
-> +    then:
-> +      required:
-> +        - power-domains
-> +        - power-domain-names
+Using dev_err_cast_probe() to simplify the code.
 
-blank line
+Signed-off-by: Yuesong Li <liyuesong@vivo.com>
+Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
+---
+v2: https://lore.kernel.org/all/20240828160728.GR1368797@kernel.org/
+  - fix patch name
+  - drop the {} and fix the alignment
+---
+ drivers/net/ipa/ipa_power.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-> +      properties:
-> +        power-domains:
-> +          minItems: 2
-> +          maxItems: 2
+diff --git a/drivers/net/ipa/ipa_power.c b/drivers/net/ipa/ipa_power.c
+index 65fd14da0f86..3c239c3545e5 100644
+--- a/drivers/net/ipa/ipa_power.c
++++ b/drivers/net/ipa/ipa_power.c
+@@ -242,11 +242,9 @@ ipa_power_init(struct device *dev, const struct ipa_power_data *data)
+ 	int ret;
+ 
+ 	clk = clk_get(dev, "core");
+-	if (IS_ERR(clk)) {
+-		dev_err_probe(dev, PTR_ERR(clk), "error getting core clock\n");
+-
+-		return ERR_CAST(clk);
+-	}
++	if (IS_ERR(clk))
++		return dev_err_cast_probe(dev, clk,
++					  "error getting core clock\n");
+ 
+ 	ret = clk_set_rate(clk, data->core_clock_rate);
+ 	if (ret) {
+-- 
+2.34.1
 
-Drop maxItems as 2 is already the max (with my change below).
-
-Add blank line here.
-
-> +    else:
-> +      required:
-> +        - clocks
-> +        - clock-names
-
-blank line
-
-> +      properties:
-> +        power-domains:
-> +          maxItems: 1
-
-blank line
-
-> +        interconnects:
-> +          minItems: 2
-> +          maxItems: 3
-
-blank line
-
-> +        interconnect-names:
-> +          minItems: 2
-> +          items:
-> +            - const: qup-core
-> +            - const: qup-config
-> +            - const: qup-memory
->  
->  properties:
->    compatible:
-> -    const: qcom,geni-spi
-> +    enum:
-> +      - qcom,geni-spi
-> +      - qcom,sa8255p-geni-spi
->  
->    clocks:
->      maxItems: 1
-> @@ -45,15 +76,10 @@ properties:
->        - const: rx
->  
->    interconnects:
-> -    minItems: 2
-> -    maxItems: 3
-> +    description: phandles of interconnect bw provider
->  
->    interconnect-names:
-> -    minItems: 2
-> -    items:
-> -      - const: qup-core
-> -      - const: qup-config
-> -      - const: qup-memory
-> +    description: names of interconnects
-
-No, keep all properties defined at the top-level and then add 
-constraints in if/then schemas.
-
->  
->    interrupts:
->      maxItems: 1
-> @@ -61,15 +87,18 @@ properties:
->    operating-points-v2: true
->  
->    power-domains:
-> -    maxItems: 1
-> +    $ref: "/schemas/power/power-domain.yaml#/properties/power-domains"
-
-Do you see an example of this anywhere else? No. You need:
-
-minItems: 1
-maxItems: 2
-
-> +
-> +  power-domain-names:
-> +    items:
-> +      - const: power
-> +      - const: perf
->  
->    reg:
->      maxItems: 1
->  
->  required:
->    - compatible
-> -  - clocks
-> -  - clock-names
->    - interrupts
->    - reg
->  
-> @@ -116,3 +145,16 @@ examples:
->          #address-cells = <1>;
->          #size-cells = <0>;
->      };
-> +
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +
-> +    spi@888000 {
-> +        compatible = "qcom,sa8255p-geni-spi";
-> +        reg = <0x888000 0x4000>;
-> +        interrupts = <GIC_SPI 584 IRQ_TYPE_LEVEL_HIGH>;
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +        power-domains = <&scmi10_pd 16>, <&scmi10_dvfs 16>;
-> +        power-domain-names = "power", "perf";
-> +    };
-> -- 
-> 2.34.1
-> 
 
