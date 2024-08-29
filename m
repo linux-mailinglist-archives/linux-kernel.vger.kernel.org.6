@@ -1,138 +1,148 @@
-Return-Path: <linux-kernel+bounces-307127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 370AE9648BA
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:40:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0AF99648B8
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:39:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF67228156D
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 14:40:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F15301C22D3E
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 14:39:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 451B21B012A;
-	Thu, 29 Aug 2024 14:39:54 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EA881B143B;
-	Thu, 29 Aug 2024 14:39:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 332C41B1404;
+	Thu, 29 Aug 2024 14:39:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="LM3hr3H+"
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 645F61B012C
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 14:39:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724942393; cv=none; b=OUXXaEcchNlB6RPjB/09NR+56RWIu8UwwP8HpSProgdFbBv4BJuG2uJDKXCqn4xNco4u8xgfxNH5B0xgpl2MvexXuPZ5PpiMXovQIgX9PC7hh5amMvBjdbHFquHP24h/CnFenp9Pk9y8By1tSfCodluPt9FtlGgAL33niIjrH4E=
+	t=1724942385; cv=none; b=u26uwNgU88dVnzoIWOfJNEUq7CyuTd44UiWzTqEUfgUSFnWmswjfoaZBm888R9tr2cuKxBPoUe04XkaU29SBQv4/0Ueip++n98Rd5lH/P2ee1v2aBTjSiGGrQ1Cg05PQloLc3R++uzySR9eKeesh6BE4LenT6BHH3/tuyzD+hj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724942393; c=relaxed/simple;
-	bh=HBjPQ7htFePlvgPXIVgV4omFwKv/gvrtPNO0yF79XDs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TyDb7VF9tlOmMncNfkW1Iz6jkIky5gO9/t2/OkkMiwTfY8lm/juI39wJT4L2SmfXWLJ4XHEHwnY9oL3GmEENMs94dAmBX9U8utxSH2WSCpjhC+vjVpXHp51KmwKAwpcH4DzzuX+Ha5ve23LGqtLe/kxPiPuNxnBF05sWNMU76a4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C1F9BDA7;
-	Thu, 29 Aug 2024 07:40:16 -0700 (PDT)
-Received: from [10.57.16.245] (unknown [10.57.16.245])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A801D3F66E;
-	Thu, 29 Aug 2024 07:39:13 -0700 (PDT)
-Message-ID: <1a7ab0db-646d-4975-9974-7b911990055a@arm.com>
-Date: Thu, 29 Aug 2024 15:38:50 +0100
+	s=arc-20240116; t=1724942385; c=relaxed/simple;
+	bh=cp+zB7tKJc1mu7PWarcDKT9nIFFxk2Iar1il4LvBW60=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fj2k8lUzgFj4QxnqOsKLrxkoKn7UxWA+JdGs+uLpa/e+5iFnoo/2YcBF3xHPBpQ+te9kU7x3dUlhHP0mxr/nSRW4KkrDAWX/uYdI+TA2ghhK1UwzYW7evCZPBqhomt6c76kn/6/dRi2LjwUY9mtRwgdmzIvmk65FJITTOXi8oEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=LM3hr3H+; arc=none smtp.client-ip=185.125.188.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-ot1-f69.google.com (mail-ot1-f69.google.com [209.85.210.69])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 72A073F63C
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 14:39:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1724942381;
+	bh=pkgEy8dNYJhtYxqa1erl6UdbvivyKkm8FEs1QuDoV2E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type;
+	b=LM3hr3H+jvjiIlW1B4Z7mKj85KtgRuzFrj48ZOD2EYMbDMfueIZD/u99rIbnujGjU
+	 4ArHJacK3DGyidZl3pEF1RoKhN6G7r/n8ls6p4/+2UsRU0iR7MpWVvd/MNhuu+wH45
+	 7wtNFXeBbw9OqDH60Ej4qj3lP+g7HFGh5rx44Ienjc4OMWZMeOPhlWMV3o9Zt4HgAC
+	 rZJJlPjjUHdFSYJ1D4+gOEQyndbH68acmdLGX1aZnSt1EWUjzrnFMDgMxwt8vUUPTD
+	 AOm9fEqERxfZydHoZOWrf8LsKpjIi2/xqGrpKpSA5TxEHL79wMarPt9j1vL/aaFN89
+	 n/4Cz9Uhu3oYQ==
+Received: by mail-ot1-f69.google.com with SMTP id 46e09a7af769-70f5e0c3b79so919499a34.1
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 07:39:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724942380; x=1725547180;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pkgEy8dNYJhtYxqa1erl6UdbvivyKkm8FEs1QuDoV2E=;
+        b=ZyoE3xX+QIC1njUgsc9fQeJvLV0IzebMfAA3joXpLr0bE+ttPedPzuPYmJV0z0VgGs
+         eW7v7ej8gfTsWwezVDWg9Bew+05c239ksVclehkp9OGbL2LxwfBAYOAnuJyp59kLmyV/
+         cOTfFAWCh23Bhei8uIGFUsikPgj95A8grbitEJczqJj53EHKKkUFQtASzBe4hClVagv9
+         qfUq6yalZgWBX9IHbiNNTefq16dVjGfaPmJWw+k+HvLflpRjkjs1AbptgLA3CJJQDvNm
+         PRfWIUw09mZWtBBkdFHPATxDp/BZNV7OSRWTxW2MOebWu4t8b6qIFm3CEnKZ+DMa8iHu
+         scVw==
+X-Forwarded-Encrypted: i=1; AJvYcCXc1LEWotovy1XyOIP1Z8NggBUXl6aJtikBvWIIWAklNTIQYhhCDeRbh3L5uKIU4sHnQEmzOVFlTMEWJxI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6EAgeZptPi6v0dKP1l/76/9D+gvSkY21BTa2Q2c+qyARAZcOV
+	0bz3q0jAz5AJgPdW7RTARkTG0aFa+hzajmhvTwyjE65Nx3k6xWuUC5mMjb5B07rwjC9ona9ffDl
+	Rul6SbMrPmls6AGyi9honJxR8ZRq6dD03qbt177alg76tCLFTEuSWkJanamz8+2KVaMJ76OepAU
+	j3EludgdeHdYyJ2HNxbW7eTiT3LKkIYeHg87DeMo0TAEqbeecn4cHo
+X-Received: by 2002:a05:6359:4590:b0:1ac:f577:db25 with SMTP id e5c5f4694b2df-1b603be30afmr414526555d.6.1724942380275;
+        Thu, 29 Aug 2024 07:39:40 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE3lTy/0SzqBHDrVLeVHxS/eYo35QPfix7ei9UvZx0OmEC+gCIjR8LYO4jLas5BaQdIa5J2xOT/6k3Kf7u/ABc=
+X-Received: by 2002:a05:6359:4590:b0:1ac:f577:db25 with SMTP id
+ e5c5f4694b2df-1b603be30afmr414523255d.6.1724942379980; Thu, 29 Aug 2024
+ 07:39:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 RESED 1/2] dma: replace zone_dma_bits by zone_dma_limit
-To: neil.armstrong@linaro.org, Baruch Siach <baruch@tkos.co.il>,
- Christoph Hellwig <hch@lst.de>, Marek Szyprowski <m.szyprowski@samsung.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-Cc: iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- linux-s390@vger.kernel.org, =?UTF-8?B?UGV0ciBUZXNhxZnDrWs=?=
- <petr@tesarici.cz>, Ramon Fried <ramon@neureality.ai>,
- Elad Nachman <enachman@marvell.com>,
- linux-arm-msm <linux-arm-msm@vger.kernel.org>
-References: <cover.1723359916.git.baruch@tkos.co.il>
- <17c067618b93e5d71f19c37826d54db4299621a3.1723359916.git.baruch@tkos.co.il>
- <1a0c7282-63e0-4add-8e38-3abe3e0a8e2f@linaro.org>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <1a0c7282-63e0-4add-8e38-3abe3e0a8e2f@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20240108120824.122178-1-aleksandr.mikhalitsyn@canonical.com>
+ <20240108120824.122178-3-aleksandr.mikhalitsyn@canonical.com>
+ <CAJfpegtixg+NRv=hUhvkjxFaLqb_Vhb6DSxmRNxXD-GHAGiHGg@mail.gmail.com>
+ <CAEivzxeva5ipjihSrMa4u=uk9sDm9DNg9cLoYg0O6=eU2jLNQQ@mail.gmail.com>
+ <CAJfpegsqPz+8iDVZmmSHn09LZ9fMwyYzb+Kib4258y8jSafsYQ@mail.gmail.com>
+ <20240829-hurtig-vakuum-5011fdeca0ed@brauner> <CAJfpegsVY97_5mHSc06mSw79FehFWtoXT=hhTUK_E-Yhr7OAuQ@mail.gmail.com>
+In-Reply-To: <CAJfpegsVY97_5mHSc06mSw79FehFWtoXT=hhTUK_E-Yhr7OAuQ@mail.gmail.com>
+From: Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+Date: Thu, 29 Aug 2024 16:39:29 +0200
+Message-ID: <CAEivzxdPmLZ7rW1aUtqxzJEP0_ScGTnP2oRhJO2CRWS8fb3OLQ@mail.gmail.com>
+Subject: Re: [PATCH v1 2/9] fs/fuse: add FUSE_OWNER_UID_GID_EXT extension
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Christian Brauner <brauner@kernel.org>, mszeredi@redhat.com, stgraber@stgraber.org, 
+	linux-fsdevel@vger.kernel.org, Seth Forshee <sforshee@kernel.org>, 
+	Amir Goldstein <amir73il@gmail.com>, Bernd Schubert <bschubert@ddn.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2024-08-29 2:42 pm, Neil Armstrong wrote:
-> Hi,
-> 
-> On 11/08/2024 09:09, Baruch Siach wrote:
->> From: Catalin Marinas <catalin.marinas@arm.com>
->>
->> Hardware DMA limit might not be power of 2. When RAM range starts above
->> 0, say 4GB, DMA limit of 30 bits should end at 5GB. A single high bit
->> can not encode this limit.
->>
->> Use plain address for DMA zone limit.
->>
->> Since DMA zone can now potentially span beyond 4GB physical limit of
->> DMA32, make sure to use DMA zone for GFP_DMA32 allocations in that case.
->>
->> Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
->> Co-developed-by: Baruch Siach <baruch@tkos.co.il>
->> Signed-off-by: Baruch Siach <baruch@tkos.co.il>
->> ---
->>   arch/arm64/mm/init.c       | 30 +++++++++++++++---------------
->>   arch/powerpc/mm/mem.c      |  5 ++++-
->>   arch/s390/mm/init.c        |  2 +-
->>   include/linux/dma-direct.h |  2 +-
->>   kernel/dma/direct.c        |  6 +++---
->>   kernel/dma/pool.c          |  4 ++--
->>   kernel/dma/swiotlb.c       |  6 +++---
->>   7 files changed, 29 insertions(+), 26 deletions(-)
->>
-> 
-> <snip>
-> 
-> This change breaks the Qualcomm SM8550-HDK boot since next-20240826.
-> It doesn't affect SM8550-QRD or other similar SoCs like SM8650 or SM8450.
-> The last CI run on next-20240828 can be found at:
-> https://git.codelinaro.org/linaro/qcomlt/ci/staging/cdba-tester/-/pipelines/100936
-> 
-> SM8550-HDK boot log:
-> https://git.codelinaro.org/linaro/qcomlt/ci/staging/cdba-tester/-/jobs/165617
-> 
-[...]
+On Thu, Aug 29, 2024 at 2:30=E2=80=AFPM Miklos Szeredi <miklos@szeredi.hu> =
+wrote:
+>
+> On Thu, 29 Aug 2024 at 14:08, Christian Brauner <brauner@kernel.org> wrot=
+e:
+>
+> > Fwiw, that's what the patchset is doing. It's only supported if the
+> > server sets "default_permissions".
+>
+> My specific issue is with FUSE_EXT_OWNER_UID_GID, which I think is
+> unnecessary.  Just fill the header with the mapped uid/gid values,
+> which most servers already use for creating the file with the correct
+> st_uid/st_gid and not for checking permission.  When the mapped values
+> are unavailable, set the uid/gid in the header -1.  Should be better
+> than sending nonsense values to userspace, no?
 
-Yeah, a 35-bit ZONE_DMA is sure to make stuff go wrong:
+Hi Miklos,
 
-> [    0.000000] Zone ranges:
-> [    0.000000]   DMA      [mem 0x0000000080000000-0x0000000affffffff]
-> [    0.000000]   DMA32    empty
-> [    0.000000]   Normal   empty
+yeah, we have a discussion like that while discussing cephfs idmapped mount=
+s.
+And yes, it's a really good question and it's not obvious at all which
+solution is the best.
+( I believe that I have replied on that question already there:
+https://lore.kernel.org/all/CAEivzxeva5ipjihSrMa4u=3Duk9sDm9DNg9cLoYg0O6=3D=
+eU2jLNQQ@mail.gmail.com/
+)
 
-Compared to before:
+A main argument against mapping uid/gid values in fuse header is
+consistency. We can map these
+values in symlink/mknod/mkdir/create/tmpfile. But we don't have access
+to idmapping information in
+lookup, read, write, etc. What should we do for these inode operations
+then? Send an unmapped uid/gid?
+But then it is an inconsistency - in one inode ops we have mapped
+values, in another ones - we have unmapped ones.
 
-[    0.000000]   DMA      [mem 0x0000000080000000-0x00000000ffffffff]
-[    0.000000]   DMA32    empty
-[    0.000000]   Normal   [mem 0x0000000100000000-0x0000000affffffff]
+>When the mapped values
+> are unavailable, set the uid/gid in the header -1.  Should be better
+> than sending nonsense values to userspace, no?
 
-This'll be because the SoC DT is describing a general non-restrictive range:
-		dma-ranges = <0 0 0 0 0x10 0>;
+So, your point is to set uid/gid to -1 for FUSE_{READ,WRITE,LOOKUP,RELEASE,=
+...}?
 
-Which proves we need more information than 
-{acpi,of}_dma_get_max_cpu_address() are currently able to give us, 
-because what zone_dma_limit actually wants to be is the *minimum* of the 
-lowest highest CPU address of any DMA range, and the lowest CPU address 
-of any DMA range + 2^32. I was thinking it had all ended up looking a 
-bit too easy... :)
+Kind regards,
+Alex
 
-I think v1 of the fix[1] might actually work out for this, albeit still 
-for the wrong reasons - if so, I concede that maybe at this point it 
-might be safest to go back to that one as a quick short-term fix (with a 
-big fat comment to say so) rather than try to rush the proper solution 
-or revert everything.
-
-Thanks,
-Robin.
-
-[1] 
-https://lore.kernel.org/linux-arm-kernel/731d204f5f556ad61bbaf004b1d984f83c90b4f5.1724748249.git.baruch@tkos.co.il/
+>
+> Thanks,
+> Miklos
 
