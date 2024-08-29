@@ -1,49 +1,100 @@
-Return-Path: <linux-kernel+bounces-305963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34E85963728
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 03:01:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EDE8596372A
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 03:01:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C2B10B23D99
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 01:01:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 895E7B23D06
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 01:01:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA4B2168DA;
-	Thu, 29 Aug 2024 01:00:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFD1517BD5;
+	Thu, 29 Aug 2024 01:01:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TB4cYiz2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Pt4jjeis"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DE602BAEB;
-	Thu, 29 Aug 2024 01:00:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A958522A
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 01:01:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724893235; cv=none; b=h1MvalHtNnF/rURTA+pRosMUPH9XUAy2gIgnNBPfKiPuYSi92ZJh5lGJE1tdjLUTpDQ4OcO71C816zbxmi2+c033+UHFcpdDTd3u9RL2wPWIX2Obl53snrs3Z1M7iXSZxcixpVow54QvIDRk/NykB3b5ZaC/YScf5iIilhhx4Ig=
+	t=1724893267; cv=none; b=n6asIp3CV/mcY2aE5130SxNY3pR4kfgQGSjt8DXNJ74Q6tf0Z/7E45PPXObQZvN/7e2Zr3ydHWz7ValYjD8t+XEBETJHqClwU+XOVonzVDKSrnbOo0bho8874cKxoM8BnpIntQxMHZJZpUPSpJjsOoeOJUN530Br70sD/XOxVTI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724893235; c=relaxed/simple;
-	bh=5/+Fw1Dfro7if1IVlV6dOLSMIl4q+fSi+7fIjJrxyu8=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=jjhWMk0g3Ie9AKVYnKkRNyphTbAbgVis8CguW+kJU4FeeNNXaL/5CrT9Kmlni5JOgReA1pQMXTqlbFBhUlTtJ73F7FB2SC24OrcfCokOqPQhWoX1iOyoqhNmaMjvg/dRcddIbXLhTm2a4SD5pQymMHSpAwk5/1c2RcQ0wun776U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TB4cYiz2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7676DC4CEC6;
-	Thu, 29 Aug 2024 01:00:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724893234;
-	bh=5/+Fw1Dfro7if1IVlV6dOLSMIl4q+fSi+7fIjJrxyu8=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=TB4cYiz2cda7012vWyxL7j5dOk/iPTtCEGao+p54LHVLZ6dkcJ+QXODDzwHwLndSr
-	 vyQDSWQ43BHdqlu1+2c2cEB1EfoZrdhm248a8jwQGQq1tJBWUld61ip9CR33KLFSxf
-	 VNpL9T9lxYomTkUhN9v7tK6cjaD/+xzaGmDZ7Cqy02TJdzvMlzUdKeO2P9jmHjc6xX
-	 4Z/KwhFf4H8kCnWAiD6sdK2LE2qe1PNBQoocKvp6xnZe/CGHL7dUFj6jREvfiFAEyv
-	 OlpMgXyxalTzxJbzTTKNAV88ujlaV78+wgnlChxm2UiiBnkDg7oJCHYJR4eyj+wgoy
-	 OmP2z3sV/XWyQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB01D3809A80;
-	Thu, 29 Aug 2024 01:00:35 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1724893267; c=relaxed/simple;
+	bh=bqXZXf9yz0O0dscvtWAbabQB1rBVFzVxRvi6wERMx4I=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=uytxMiVTYRYYDd27LDGU1v/RY06yNWrJKPlAczwivdI+snnBzbz9jQsjwAEymTTbQ5yzU/202gZqx9pOJKqGNiBx++KTVuAwWdHqO67gBjyjzwGpCLM9QFKncd5lA0yQJKSYUgXG3GTpwAKLE7FSQX1oRy+48mEv+V3n9TSrAQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Pt4jjeis; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724893266; x=1756429266;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=bqXZXf9yz0O0dscvtWAbabQB1rBVFzVxRvi6wERMx4I=;
+  b=Pt4jjeiscMgQkIpMHhoUBhmdNSGtJSCSE5oM5QefK2ZgJfpG+HKeDp3T
+   Ts1efBKLfgmxkNfxVVxp6j+Cc2t2SnTkgT+4mZ28fZzE3jcr70Nhq84Jl
+   H33OPYVNwDGY6+QJXm/Uhwy3Wwsz+R0aZZgdq7K2BTg4Dy6g+cbl6eihp
+   sPzFGVTaEdaz/FZA1UKSqh4eXktZdiZ6M5Ei/7kNZcyZ4M2s0YlBYJRPA
+   uNdGbOs1plS/UPqBaCxavve+rU4Z3Ng7Ee9e0VMasCdEaMm8fWmhZxT7e
+   oWLMmyJZ3pmlmKe7GPMYHW5wZy50/FY7yK0fm6DSyHoZj1tTnwmJRBpOu
+   Q==;
+X-CSE-ConnectionGUID: fKljMjrzREOKt9Ic+XIJ0Q==
+X-CSE-MsgGUID: B/LQGfWyS1qk/8h5Im4bzw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11178"; a="27252255"
+X-IronPort-AV: E=Sophos;i="6.10,184,1719903600"; 
+   d="scan'208";a="27252255"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2024 18:01:05 -0700
+X-CSE-ConnectionGUID: Vt5u9kM9Qg+mclWo6seLcg==
+X-CSE-MsgGUID: 6ryyHb03RB60OhrcaW+uZw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,184,1719903600"; 
+   d="scan'208";a="68239384"
+Received: from jf5300-b11a338t.jf.intel.com ([10.242.51.6])
+  by orviesa005.jf.intel.com with ESMTP; 28 Aug 2024 18:01:04 -0700
+From: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
+To: 21cnbao@gmail.com
+Cc: akpm@linux-foundation.org,
+	baolin.wang@linux.alibaba.com,
+	chrisl@kernel.org,
+	david@redhat.com,
+	hanchuanhua@oppo.com,
+	hannes@cmpxchg.org,
+	hch@infradead.org,
+	hughd@google.com,
+	kaleshsingh@google.com,
+	kasong@tencent.com,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	mhocko@suse.com,
+	minchan@kernel.org,
+	nphamcs@gmail.com,
+	ryan.roberts@arm.com,
+	ryncsn@gmail.com,
+	senozhatsky@chromium.org,
+	shakeel.butt@linux.dev,
+	shy828301@gmail.com,
+	surenb@google.com,
+	v-songbaohua@oppo.com,
+	willy@infradead.org,
+	xiang@kernel.org,
+	ying.huang@intel.com,
+	yosryahmed@google.com,
+	zhengtangquan@oppo.com,
+	wajdi.k.feghali@intel.com,
+	vinodh.gopal@intel.com,
+	kanchana.p.sridhar@intel.com
+Subject: Re: [PATCH v7 2/2] mm: support large folios swap-in for sync io devices
+Date: Wed, 28 Aug 2024 18:01:03 -0700
+Message-Id: <20240829010103.7705-1-kanchana.p.sridhar@intel.com>
+X-Mailer: git-send-email 2.27.0
+In-Reply-To: <CAGsJ_4wGK6pu+KNhYjpWgydp6DyjH5tE=9+mje3UyrXdFJOuNw@mail.gmail.com>
+References: <CAGsJ_4wGK6pu+KNhYjpWgydp6DyjH5tE=9+mje3UyrXdFJOuNw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,48 +102,18 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v4] net: netvsc: Update default VMBus channels
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172489323438.1482642.16270022738691881910.git-patchwork-notify@kernel.org>
-Date: Thu, 29 Aug 2024 01:00:34 +0000
-References: <1724735791-22815-1-git-send-email-ernis@linux.microsoft.com>
-In-Reply-To: <1724735791-22815-1-git-send-email-ernis@linux.microsoft.com>
-To: Erni Sri Satya Vennela <ernis@linux.microsoft.com>
-Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
- decui@microsoft.com, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, linux-hyperv@vger.kernel.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org, ernis@microsoft.com
 
-Hello:
+Hi Shakeel,
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+We submitted an RFC patchset [1] with the Intel In-Memory Analytics
+Accelerator (Intel IAA) sometime back. This introduces a new 'canned-by_n'
+compression algorithm in the IAA crypto driver.
 
-On Mon, 26 Aug 2024 22:16:31 -0700 you wrote:
-> Change VMBus channels macro (VRSS_CHANNEL_DEFAULT) in
-> Linux netvsc from 8 to 16 to align with Azure Windows VM
-> and improve networking throughput.
-> 
-> For VMs having less than 16 vCPUS, the channels depend
-> on number of vCPUs. For greater than 16 vCPUs,
-> set the channels to maximum of VRSS_CHANNEL_DEFAULT and
-> number of physical cores / 2 which is returned by
-> netif_get_num_default_rss_queues() as a way to optimize CPU
-> resource utilization and scale for high-end processors with
-> many cores.
-> Maximum number of channels are by default set to 64.
-> 
-> [...]
+Relative to software compressors, we could get a 10X improvement in zram
+write latency and 7X improvement in zram read latency.
 
-Here is the summary with links:
-  - [v4] net: netvsc: Update default VMBus channels
-    https://git.kernel.org/netdev/net-next/c/646f071d315b
+[1] https://lore.kernel.org/all/cover.1714581792.git.andre.glover@linux.intel.com/
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Thanks,
+Kanchana
 
