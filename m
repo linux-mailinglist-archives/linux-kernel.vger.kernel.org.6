@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-307748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53D31965264
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 23:53:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D460E965265
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 23:53:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EDD37B22FEF
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 21:53:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 138A01C2138E
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 21:53:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D14F1BB688;
-	Thu, 29 Aug 2024 21:52:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 443CB1BBBDC;
+	Thu, 29 Aug 2024 21:52:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XDKjhoAC"
-Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aaQdqw9M"
+Received: from mail-oo1-f51.google.com (mail-oo1-f51.google.com [209.85.161.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46E641BA88A
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 21:52:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 057DF1BAEE1
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 21:52:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724968372; cv=none; b=ECiJRfN1EEI3gxLTTYWXWtvZzVGHob+pML7V186ipLQlVZAivjqcfztd1PBJBNr+HdDmTpMApt6GuWY0YTPkDXp4yE9L3oaf3IIJCIim97WEaer45fTYWlkkcBrIICtEQGrguMnwRHPvOvWMVk8CGYbrcOuZifB0MxseJ0jLn34=
+	t=1724968375; cv=none; b=NrfwNvoHW6xS5puSnihAjPTHWcPTfjvoqTaOJ/s1HlJurubIwPHE4Kq10KHaW8D2/Tv7khEPy9+E7rp7Bhjayte/sK0ceES2hx/o6SbW5fErUxff6uXAKKkBsR2ZPkcBjUyOwI4CtCoLK47I9X4F1gvwdLIEpcW5AZnjnTR67Pc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724968372; c=relaxed/simple;
-	bh=jU760OJwbR9fRPYvKdp3bAl6q9zIVKUFCUiMFyEVD7Q=;
+	s=arc-20240116; t=1724968375; c=relaxed/simple;
+	bh=KRjJjuoUUfTIWldRXultJqzCLzEmodZUEBmzS8PrfyY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=s2DhBXAQbjNc+S0vqzf0Bqo99pjcIsRpZHZSJqfcxfVcXHJUyZQ0Idkicxbfk9Qz1m0gOOZ4dckcyhIsG8oouePYD68bfH4sqDN1DzPn1GdVVYZaberradBUcefS7UTSKqTUA6DvSgACnRTnsRmgy1LfPwMfweOoLnjM+vPYrhc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XDKjhoAC; arc=none smtp.client-ip=209.85.210.54
+	 MIME-Version; b=BLMdB6U5OkgbpGwsBJD0oDj5hJvPOnOtNxCqKYOh7cFBaDWz6+nhbE60Hf2eU8uquT8sL4zH709Y/+FHbKtwfs9SAGlUPBz7aZ1ncTGV/MBsvLHDGVqEhUDVLL8hYi4NSqq/GAxkKv3FnjBK99dSZtn9rIvYDj/mczd2aC+CsyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aaQdqw9M; arc=none smtp.client-ip=209.85.161.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-70930972e19so510002a34.3
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 14:52:51 -0700 (PDT)
+Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-5dc93fa5639so709396eaf.1
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 14:52:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724968370; x=1725573170; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1724968373; x=1725573173; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=69BLrci8h2uTitvESztrQSBwSpGSo97sp/z053MaEPc=;
-        b=XDKjhoAC83aIHXJvAsqAxf0z7HOb5FyNqnkSDxY9S1ruLSPdlkrio3eHU0W+9g1l++
-         swPMox1TEMlEKycC8HuXKhSrntEILqO6MAcRUp9r8hxmCYwYQ/uSC++5je5TDoy877ov
-         5iCE3s3NU8/Pgi7jlPQBCJRoHQfvQGfYpMrjIPbUo+eufC4fnYf+Y8rduySLxmHo0TwW
-         GPtI/H/F/LctMN5Mogp5DcCGxa81nvWrorje1VtkITkbQm8hUlCBafuCW6mDIsGH9OTs
-         vI28GkYS2Wn7SthgL+z1UMZI2Y1sDS0HtZlgwDE+U/DLB8VtWZGJ3QiHzMbmubvzKxDz
-         rtlQ==
+        bh=zRLMPwvKQt3Fm+472wogPuvTaJti/5yUeUAEHMi0T1Y=;
+        b=aaQdqw9MF3Be6FCTDPKp2V0mSOZqDEnGGlDQP734uQ4NDVRDRys8XTIL84rGhExIn7
+         BBMHL9e+2su08c68riWMNZweJ2KHsDBZB6bupbR7olFjfBq3YsCMwNWARTjE7j3bXk4N
+         5nlW0c1v9EkM1qDH6nJKUOEIMhcor1AgJMORkJupWrQf/opnPumuNZNfMvq/qhjSfIm1
+         jds4lSWkS4zHxHnBHaJM/y7Qu/EJNjDX4tY73j4m6dBsxYuPu9jup/VFOxVuvOp88N/P
+         vzP+ctQpL30PzlBf4x/am7H6iyGVjta3p1c+vgh6tApu7YmxEqvNARJf80wMJN3qsgBV
+         ZXnw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724968370; x=1725573170;
+        d=1e100.net; s=20230601; t=1724968373; x=1725573173;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=69BLrci8h2uTitvESztrQSBwSpGSo97sp/z053MaEPc=;
-        b=qiZFPeP1ygG0W9hk6S2RKulOc/aguDIx4UwkhoTgp7LFj4rRNm5vDWIpHWQ850nPBg
-         OE4aNb04LNeFf+vcwiL0tSbcnezgOMc4lnWFIOLNAT+9vhZw2mztXJ0uEadHbPmjAAOm
-         CSUOLutzlepsaPgG/mzaHwH7hRzpdF8LlARFaE4jNmiVv7UlnB1vwgov5fWAO4+ExH3B
-         Ne7Cgpzf0gn5GbbG630u6SKSOHBvycEjGlQeS+18qV4ijuF3VYET1DPULkTzQPGB+Eah
-         WsPqmZFr8Xyhas0mFjOsZ5/WcwvP3xXffM2scufKpU2kKLRjZJHFAjBrVPQFSXOyL1Fr
-         0V6Q==
-X-Gm-Message-State: AOJu0Yz5f5X09tGbbIZgw7wiNc5CLLPhGYSJnWU+YktKLIeORxweV6DJ
-	N5LKTlz0j9paiM1rRyeFzfS8JSl05sE+0lSrEVPmLu8Sc803VnGoT01h/w==
-X-Google-Smtp-Source: AGHT+IH2rAoCzKieGURg0hEYXUEFMYscZLTq0dHlouR7C/XTDPs+NEDDfKhc1cHTJv8eT6BXCLxtxA==
-X-Received: by 2002:a05:6358:910d:b0:1b1:ac7f:51d5 with SMTP id e5c5f4694b2df-1b603cb548dmr515038355d.22.1724968370066;
-        Thu, 29 Aug 2024 14:52:50 -0700 (PDT)
+        bh=zRLMPwvKQt3Fm+472wogPuvTaJti/5yUeUAEHMi0T1Y=;
+        b=AOjk0Gu443RqZNzH2i4Wh8p32pLxs5VszP5SyRpsWvPBmMtJKiKWDqwmWx/HZxlScI
+         /WBmmf84xuDtTfanCPLZb/G9gKCeOZMUmGzwcrKt4cv1M8ghxZwen7PlW5tljbw1VmoJ
+         z/7FvFN4Xp70fnDKh8uJJQUdI7mr/ryW7PelxZYlsreaVhjs1UgrdmTfd14bYH1jNY4m
+         jn3Th0g47mKwm+0tV226j9fIF8PduhhcSJ85ymirWLL2WlkTsDVnA06o4IEcgqwYGTWV
+         Bd/f24f7LffBnoqtQpjXurSL1o0wCpB7c1HUONj1/7TKHdOBkUVAGk04vZvrX0eBQnTC
+         Cu0A==
+X-Gm-Message-State: AOJu0Yy4RgPXYgg6N5M7gXu6HaJNf7JeXmzA/FW5cQEPnR3N1AomkhK1
+	69Efcw6MgrNzT6M0CC/wFfAdziMCb+FL4Lsojc+JPjr0VuieqoU5MMmdmQ==
+X-Google-Smtp-Source: AGHT+IHReHz5dkOTT0E3ySn9+cM7bJ/Nx1/8UlkAX6jCOafZzdoUXXv/EWl/dSX8evhDJKm++nRTGQ==
+X-Received: by 2002:a05:6358:9107:b0:1ac:f2bb:8aa6 with SMTP id e5c5f4694b2df-1b603cc8d4amr518379555d.21.1724968372848;
+        Thu, 29 Aug 2024 14:52:52 -0700 (PDT)
 Received: from daehojeong-desktop.mtv.corp.google.com ([2a00:79e0:2e14:7:a1e7:73eb:e77e:3e2b])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7d22e9d512asm1705653a12.78.2024.08.29.14.52.49
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7d22e9d512asm1705653a12.78.2024.08.29.14.52.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 14:52:49 -0700 (PDT)
+        Thu, 29 Aug 2024 14:52:52 -0700 (PDT)
 From: Daeho Jeong <daeho43@gmail.com>
 To: linux-kernel@vger.kernel.org,
 	linux-f2fs-devel@lists.sourceforge.net,
 	kernel-team@android.com
 Cc: Daeho Jeong <daehojeong@google.com>
-Subject: [PATCH 2/7] f2fs: read summary blocks with the correct amount for migration_granularity
-Date: Thu, 29 Aug 2024 14:52:37 -0700
-Message-ID: <20240829215242.3641502-2-daeho43@gmail.com>
+Subject: [PATCH 3/7] f2fs: add reserved_segments sysfs node
+Date: Thu, 29 Aug 2024 14:52:38 -0700
+Message-ID: <20240829215242.3641502-3-daeho43@gmail.com>
 X-Mailer: git-send-email 2.46.0.469.g59c65b2a67-goog
 In-Reply-To: <20240829215242.3641502-1-daeho43@gmail.com>
 References: <20240829215242.3641502-1-daeho43@gmail.com>
@@ -86,82 +86,48 @@ Content-Transfer-Encoding: 8bit
 
 From: Daeho Jeong <daehojeong@google.com>
 
-Now we do readahead for a full section by not considering
-migration_granularity and it triggers unnecessary read. So, make it read
-with the correct amount.
+For the fine tuning of GC behavior, add reserved_segments sysfs node.
 
 Signed-off-by: Daeho Jeong <daehojeong@google.com>
 ---
- fs/f2fs/gc.c | 33 ++++++++++++++++++++-------------
- 1 file changed, 20 insertions(+), 13 deletions(-)
+ Documentation/ABI/testing/sysfs-fs-f2fs | 6 ++++++
+ fs/f2fs/sysfs.c                         | 2 ++
+ 2 files changed, 8 insertions(+)
 
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index 46e3bc26b78a..b5d3fd40b17a 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -1708,24 +1708,33 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
- 	struct blk_plug plug;
- 	unsigned int segno = start_segno;
- 	unsigned int end_segno = start_segno + SEGS_PER_SEC(sbi);
-+	unsigned int sec_end_segno;
- 	int seg_freed = 0, migrated = 0;
- 	unsigned char type = IS_DATASEG(get_seg_entry(sbi, segno)->type) ?
- 						SUM_TYPE_DATA : SUM_TYPE_NODE;
- 	unsigned char data_type = (type == SUM_TYPE_DATA) ? DATA : NODE;
- 	int submitted = 0;
- 
--	if (__is_large_section(sbi))
--		end_segno = rounddown(end_segno, SEGS_PER_SEC(sbi));
-+	if (__is_large_section(sbi)) {
-+		sec_end_segno = rounddown(end_segno, SEGS_PER_SEC(sbi));
- 
--	/*
--	 * zone-capacity can be less than zone-size in zoned devices,
--	 * resulting in less than expected usable segments in the zone,
--	 * calculate the end segno in the zone which can be garbage collected
--	 */
--	if (f2fs_sb_has_blkzoned(sbi))
--		end_segno -= SEGS_PER_SEC(sbi) -
-+		/*
-+		 * zone-capacity can be less than zone-size in zoned devices,
-+		 * resulting in less than expected usable segments in the zone,
-+		 * calculate the end segno in the zone which can be garbage
-+		 * collected
-+		 */
-+		if (f2fs_sb_has_blkzoned(sbi))
-+			sec_end_segno -= SEGS_PER_SEC(sbi) -
- 					f2fs_usable_segs_in_sec(sbi, segno);
- 
-+		if (gc_type == BG_GC)
-+			end_segno = start_segno + sbi->migration_granularity;
+diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
+index cad6c3dc1f9c..4fcd0f824bde 100644
+--- a/Documentation/ABI/testing/sysfs-fs-f2fs
++++ b/Documentation/ABI/testing/sysfs-fs-f2fs
+@@ -763,3 +763,9 @@ Date:		November 2023
+ Contact:	"Chao Yu" <chao@kernel.org>
+ Description:	It controls to enable/disable IO aware feature for background discard.
+ 		By default, the value is 1 which indicates IO aware is on.
 +
-+		if (end_segno > sec_end_segno)
-+			end_segno = sec_end_segno;
-+	}
-+
- 	sanity_check_seg_type(sbi, get_seg_entry(sbi, segno)->type);
++What:		/sys/fs/f2fs/<disk>/reserved_segments
++Date:		August 2024
++Contact:	"Daeho Jeong" <daehojeong@google.com>
++Description:	In order to fine tune GC behavior, we can control the number of
++		reserved segments.
+diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+index fee7ee45ceaa..2ed773132f40 100644
+--- a/fs/f2fs/sysfs.c
++++ b/fs/f2fs/sysfs.c
+@@ -969,6 +969,7 @@ SM_INFO_GENERAL_RW_ATTR(min_fsync_blocks);
+ SM_INFO_GENERAL_RW_ATTR(min_seq_blocks);
+ SM_INFO_GENERAL_RW_ATTR(min_hot_blocks);
+ SM_INFO_GENERAL_RW_ATTR(min_ssr_sections);
++SM_INFO_GENERAL_RW_ATTR(reserved_segments);
  
- 	/* readahead multi ssa blocks those have contiguous address */
-@@ -1762,9 +1771,6 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
- 
- 		if (get_valid_blocks(sbi, segno, false) == 0)
- 			goto freed;
--		if (gc_type == BG_GC && __is_large_section(sbi) &&
--				migrated >= sbi->migration_granularity)
--			goto skip;
- 		if (!PageUptodate(sum_page) || unlikely(f2fs_cp_error(sbi)))
- 			goto skip;
- 
-@@ -1803,7 +1809,8 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
- 
- 		if (__is_large_section(sbi))
- 			sbi->next_victim_seg[gc_type] =
--				(segno + 1 < end_segno) ? segno + 1 : NULL_SEGNO;
-+				(segno + 1 < sec_end_segno) ?
-+					segno + 1 : NULL_SEGNO;
- skip:
- 		f2fs_put_page(sum_page, 0);
- 	}
+ /* DCC_INFO ATTR */
+ DCC_INFO_RW_ATTR(max_small_discards, max_discards);
+@@ -1138,6 +1139,7 @@ static struct attribute *f2fs_attrs[] = {
+ 	ATTR_LIST(min_seq_blocks),
+ 	ATTR_LIST(min_hot_blocks),
+ 	ATTR_LIST(min_ssr_sections),
++	ATTR_LIST(reserved_segments),
+ 	ATTR_LIST(max_victim_search),
+ 	ATTR_LIST(migration_granularity),
+ 	ATTR_LIST(dir_level),
 -- 
 2.46.0.469.g59c65b2a67-goog
 
