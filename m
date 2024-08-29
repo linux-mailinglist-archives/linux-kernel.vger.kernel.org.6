@@ -1,122 +1,247 @@
-Return-Path: <linux-kernel+bounces-306663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA6F19641D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 12:31:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5DAE9641D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 12:32:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34B62B22153
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:31:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB53F1C21069
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:32:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C159318F2F1;
-	Thu, 29 Aug 2024 10:22:12 +0000 (UTC)
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73F4C16C6BF;
+	Thu, 29 Aug 2024 10:22:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="JMEkVWG5"
+Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7B2618E75A;
-	Thu, 29 Aug 2024 10:22:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15B1618E763
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 10:22:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724926932; cv=none; b=WAMhCC9w+5JeIIPXlsRTVDpYw5tyXKQQ+AEVMci3uLmVqEvUt/7bmVslX6MW/6T9SfyNCPKMj3DbBbEZWWUaQTxercc2J+FfszKInJeswI0qCFQ9E/NOHPGBRHngiY73LId8+ngNPHij6dSfdZc0T65aUIKUI4PB+7zPNyqXndk=
+	t=1724926973; cv=none; b=YeRE+Nmkp+Bu62f/oouBNlaOViZGFpzr71Z8Yd05zhnPikUntEjI8qWgjp774eoHDF8BoIwihg4SDSYKms0ugeenzPTGOTflJGy4mn52Rl3Xjra+vDTHg3W+UHUcYH9izZYTsiNaTkpmWRPPA2g6xT9QHKlGpfmAfV6m5bvQ9vM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724926932; c=relaxed/simple;
-	bh=mxxzQWZfgZ32+twWj89CW548vDxQf8EC0zzzg9UaSNI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=b9KYlcIqzStX3+SNzKZP6VB6lhVeMtSOC5Aplt6sCa8+32R7sFzc7pj9f7Ia3m5tZawVs4DvzLIPXma1xFFPm+UfOT4oyB32XWHMymwJHFpQBJmnAwg+ckqZDmuODV4dOQzN4mLFndoiDVS3XvI5RQkF5qkAqOSgQX82stMgWG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e1651f48c31so525763276.0;
-        Thu, 29 Aug 2024 03:22:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724926929; x=1725531729;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dy/eI0Q3PUx3vxxIGNbAvRLE3QuQXFyslX3VdRYQ4/o=;
-        b=v+tG9zWtHUv/CN5vI9oyV+Y6ejdB7/sCUliVKgBqaG+tS1UmnO/3iXJE33WWHrJL6i
-         gkucVZ+OLQote6L/ICW5QUP7QYiS3DeW/vEA0cPOtTK5EIrnGuuCgeSRfcsKyR0RAfYI
-         msvkmBhGgxI4IHTKARiTS74SFaxQeCLdRB9/0fMY5/04xq8ROabcYOe75hjNAoXd5keo
-         a1e1pAMVXIhNxh7f55bNbfuIyv2GTJk/My67DRLUdCmmYy8OoXCEOV0Z5lwesqsOJjh6
-         hRUsdlypWQOu4qLrx432kNtfF8eHmGPOLgP9NZwRBB4mqeYGPdoL3seEIcdJ7Smpy2T5
-         0gGg==
-X-Forwarded-Encrypted: i=1; AJvYcCVR6SuoZJrrengLiGOx1AnCdcxXKxtlfv1kyOl5DTRGDJZk9uPD3267XJEFevkfJXWX2QDJkTYIZjeeODV9UBP2AtE=@vger.kernel.org, AJvYcCWLIdFEjYFoArr7RA6lpWSkw4Fs5P6A2uX5hUsYl8nV4hThMB1nq9KrtGOa+x0RjEAoCJ87KbwHx6u4@vger.kernel.org, AJvYcCWX+QNhTrlmi9YT9od5clACaW3YpB35Xq4BFcPy4Z06bRhpKhsm9I1TyuqcSg+SniI5U1fLCFcTXtd/4n+p@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCrb10d3YBJRGN/GVZ840Y4mIwFTcMheUgTn43KJjyIrslv31Q
-	lDdflxDUSEHpYx4mtXx1aHBddNxv6l0clN077bgGcmX6pc4O4F2PAnfsWyKG
-X-Google-Smtp-Source: AGHT+IHftTh4BcNHEhmt9KR/wd50l47Hw7EY06C8nuoVDoywkQ/YK+ptOtCScktB16Co7a7AvDznSg==
-X-Received: by 2002:a05:6902:18c5:b0:e16:19f7:96df with SMTP id 3f1490d57ef6-e1a5ab38cafmr2873035276.10.1724926928989;
-        Thu, 29 Aug 2024 03:22:08 -0700 (PDT)
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com. [209.85.128.181])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e1a6268329csm182643276.31.2024.08.29.03.22.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 29 Aug 2024 03:22:08 -0700 (PDT)
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6b4412fac76so4550027b3.1;
-        Thu, 29 Aug 2024 03:22:08 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVvJvJ1fxfRqwIGCdeXa4KMsPdC2+Aw3V3uEzKCzXAfL+hBm9LXYfmgl+wLnMTiALH50Gqt+OXERxNeQ8FzCxHiJDg=@vger.kernel.org, AJvYcCWGCUVHz7w/vmpgYPTFj1q5nF1ZhDzeImcKChHxFT6mKX3H0J3FG93dW3oHRkx8Ohl+B3GsgT9+N4B1@vger.kernel.org, AJvYcCWzvXg71AjnOufcktdGFGljGQv9OjaeBMONuTnnyAjC7JvKVT3IsKYrP4qdMbTY5cmieF+LTI6JLXN5z8/j@vger.kernel.org
-X-Received: by 2002:a05:690c:438e:b0:648:bca0:1e71 with SMTP id
- 00721157ae682-6d277c6f47bmr17823907b3.35.1724926928634; Thu, 29 Aug 2024
- 03:22:08 -0700 (PDT)
+	s=arc-20240116; t=1724926973; c=relaxed/simple;
+	bh=bVZjBgNb9nbUJptCIOwajoH4ZadeC8lo1tvciIt//1Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Li7CQWIVTsW5cVxU9BRV+g2WtwMntrcP+1bhSvxQP3r41FkTGsBuXRqprqUjcI0rlBYGfmZ74W8+uBmOkS4tw5vCQlEFdE1Mq8Hmko8j0dZ/fvAvCXRUZANd2oTnahDuNFIWpEJm9YQd4yYU9hA3mOJLlVzJ2DaCP/tE7/3QESw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=JMEkVWG5; arc=none smtp.client-ip=91.218.175.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <04184aa1-475e-4e1f-9e05-21f59a0787d3@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1724926969;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BeXP/I/R6N2GYfmlVPMCyFOGmNMCy0mtZ6IMfVDw82Y=;
+	b=JMEkVWG5RNQACW2Dd+dJxsAmVLhiC/UgUfSTI25Hhun5DJPY2lp24MKERDeT3ThXBVcTXN
+	AVvd3aTpImBn3qTems827j2NKJ24bO+w8vkv70DhN0pNv3brpuXUqxWK8iCvWIzTZfbrpY
+	8FYONAT9oSPLfXznE/j55xatOhRhK9Q=
+Date: Thu, 29 Aug 2024 18:22:18 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240828124134.188864-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240828124134.188864-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20240828124134.188864-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 29 Aug 2024 12:21:56 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWJm2VQxZGVedc71UiRVsVsA2JMMik+NKp3hsRaSKMNRg@mail.gmail.com>
-Message-ID: <CAMuHMdWJm2VQxZGVedc71UiRVsVsA2JMMik+NKp3hsRaSKMNRg@mail.gmail.com>
-Subject: Re: [PATCH v4 2/9] arm64: dts: renesas: Add initial SoC DTSI for
- RZ/V2H(P) SoC
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] docs/zh_CN: add the translation of kbuild/gcc-plugins.rst
+To: Dongliang Mu <dzm91@hust.edu.cn>, Alex Shi <alexs@kernel.org>,
+ Yanteng Si <siyanteng@loongson.cn>, Jonathan Corbet <corbet@lwn.net>,
+ Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling
+ <morbo@google.com>, Justin Stitt <justinstitt@google.com>
+Cc: hust-os-kernel-patches@googlegroups.com, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+References: <20240828074305.314666-1-dzm91@hust.edu.cn>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: YanTeng Si <si.yanteng@linux.dev>
+In-Reply-To: <20240828074305.314666-1-dzm91@hust.edu.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Aug 28, 2024 at 2:41=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.c=
-om> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+
+
+
+在 2024/8/28 15:42, Dongliang Mu 写道:
+> Finish the translation of kbuild/gcc-plugins.rst and move gcc-plugins
+> from TODO to the main body.
 >
-> Add initial SoC DTSI for Renesas RZ/V2H(P) ("R9A09G057") SoC, below are
-> the list of blocks added:
-> - EXT CLKs
-> - 4X CA55
-> - SCIF
-> - PFC
-> - CPG
-> - SYS
-> - GIC
-> - ARMv8 Timer
+> Update to commit 3832d1fd84b6 ("docs/core-api: expand Fedora instructions
+> for GCC plugins")
 >
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Signed-off-by: Dongliang Mu <dzm91@hust.edu.cn>
 > ---
-> v3->v4
-> - Sorted nodes by nodename
-> - Used hexadecimal values for clocks and resets
+>   .../translations/zh_CN/kbuild/gcc-plugins.rst | 126 ++++++++++++++++++
+>   .../translations/zh_CN/kbuild/index.rst       |   2 +-
+>   2 files changed, 127 insertions(+), 1 deletion(-)
+>   create mode 100644 Documentation/translations/zh_CN/kbuild/gcc-plugins.rst
+>
+> diff --git a/Documentation/translations/zh_CN/kbuild/gcc-plugins.rst b/Documentation/translations/zh_CN/kbuild/gcc-plugins.rst
+> new file mode 100644
+> index 000000000000..214945a4ecf3
+> --- /dev/null
+> +++ b/Documentation/translations/zh_CN/kbuild/gcc-plugins.rst
+> @@ -0,0 +1,126 @@
+> +.. SPDX-License-Identifier: GPL-2.0
+> +
+> +.. include:: ../disclaimer-zh_CN.rst
+> +
+> +:Original: Documentation/kbuild/gcc-plugins.rst
+> +:Translator: 慕冬亮 Dongliang Mu <dzm91@hust.edu.cn>
+> +
+> +================
+> +GCC 插件基础设施
+> +================
+> +
+> +
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-devel for v6.12.
+> +介绍
+> +============
+Please trim the length of the equal sign line.
+> +
+> +GCC 插件是为编译器提供额外功能的可加载模块 [1]_。它们对于运行时插装和静态分析非常有用。
+> +我们可以在编译过程中通过回调 [2]_，GIMPLE [3]_，IPA [4]_ 和 RTL Passes [5]_
+> +（译者注：Pass 是编译器所采用的一种结构化技术，用于完成编译对象的分析、优化或转换等功能）
+> +来分析、修改和添加更多的代码。
+> +
+> +内核的 GCC 插件基础设施支持构建树外模块、交叉编译和在单独的目录中构建。插件源文件必须由
+> +C++ 编译器编译。
+> +
+> +目前 GCC 插件基础设施只支持一些架构。搜索 "select HAVE_GCC_PLUGINS" 来查找支持
+> +GCC 插件的架构。
+> +
+> +这个基础设施是从 grsecurity [6]_  和 PaX [7]_ 移植过来的。
+> +
+> +--
+> +
+> +.. [1] https://gcc.gnu.org/onlinedocs/gccint/Plugins.html
+> +.. [2] https://gcc.gnu.org/onlinedocs/gccint/Plugin-API.html#Plugin-API
+> +.. [3] https://gcc.gnu.org/onlinedocs/gccint/GIMPLE.html
+> +.. [4] https://gcc.gnu.org/onlinedocs/gccint/IPA.html
+> +.. [5] https://gcc.gnu.org/onlinedocs/gccint/RTL.html
+> +.. [6] https://grsecurity.net/
+> +.. [7] https://pax.grsecurity.net/
+> +
+> +
 
-Gr{oetje,eeting}s,
+> +目的
+> +=======
 
-                        Geert
+I will continue reviewing later or tomorrow.
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Thank,
+Yanteng
+> +
+> +GCC 插件的设计目的是提供一个场所，用于试验 GCC 或 Clang 上游没有的潜在编译器功能。
+> +一旦它们的实用性得到验证，目标就是将这些功能添加到 GCC（和 Clang）的上游，然后在
+> +所有支持的 GCC 版本都支持这些功能后，再将它们从内核中移除。
+> +
+> +具体来说，新插件应该只实现上游编译器（GCC 和 Clang）不支持的功能。
+> +
+> +当 Clang 中存在 GCC 中不存在的某项功能时，应努力将该功能上传到上游 GCC（而不仅仅
+> +是作为内核专用的 GCC 插件），以使整个生态都能从中受益。
+> +
+> +类似的，如果 GCC 插件提供的功能在 Clang 中 **不** 存在，但该功能被证明是有用的，也应
+> +努力将该功能上传到 GCC（和 Clang）。
+> +
+> +在上游 GCC 提供了某项功能后，该插件将无法在相应的 GCC 版本（以及更高版本）下编译。
+> +一旦所有内核支持的 GCC 版本都提供了该功能，该插件将从内核中移除。
+> +
+> +
+> +文件
+> +=====
+> +
+> +**$(src)/scripts/gcc-plugins**
+> +
+> +	这是 GCC 插件的目录。
+> +
+> +**$(src)/scripts/gcc-plugins/gcc-common.h**
+> +
+> +	这是 GCC 插件的兼容性头文件。
+> +	应始终包含它，而不是单独的 GCC 头文件。
+> +
+> +**$(src)/scripts/gcc-plugins/gcc-generate-gimple-pass.h,
+> +$(src)/scripts/gcc-plugins/gcc-generate-ipa-pass.h,
+> +$(src)/scripts/gcc-plugins/gcc-generate-simple_ipa-pass.h,
+> +$(src)/scripts/gcc-plugins/gcc-generate-rtl-pass.h**
+> +
+> +	这些头文件可以自动生成 GIMPLE、SIMPLE_IPA、IPA 和 RTL passes 的注册结构。
+> +	与手动创建结构相比，它们更受欢迎。
+> +
+> +
+> +用法
+> +=====
+> +
+> +你必须为你的 GCC 版本安装 GCC 插件头文件，以 Ubuntu 上的 gcc-10 为例::
+> +
+> +	apt-get install gcc-10-plugin-dev
+> +
+> +或者在 Fedora 上::
+> +
+> +	dnf install gcc-plugin-devel libmpc-devel
+> +
+> +或者在 Fedora 上使用包含插件的交叉编译器时::
+> +
+> +	dnf install libmpc-devel
+> +
+> +在内核配置中启用 GCC 插件基础设施与一些你想使用的插件::
+> +
+> +	CONFIG_GCC_PLUGINS=y
+> +	CONFIG_GCC_PLUGIN_LATENT_ENTROPY=y
+> +	...
+> +
+> +运行 gcc（本地或交叉编译器），确保能够检测到插件头文件::
+> +
+> +	gcc -print-file-name=plugin
+> +	CROSS_COMPILE=arm-linux-gnu- ${CROSS_COMPILE}gcc -print-file-name=plugin
+> +
+> +"plugin" 这个词意味着它们没有被检测到::
+> +
+> +	plugin
+> +
+> +完整的路径则表示插件已经被检测到::
+> +
+> +       /usr/lib/gcc/x86_64-redhat-linux/12/plugin
+> +
+> +编译包括插件在内的最小工具集::
+> +
+> +	make scripts
+> +
+> +或者直接在内核中运行 make，使用循环复杂性 GCC 插件编译整个内核。
+> +
+> +
+> +4. 如何添加新的 GCC 插件
+> +==============================
+> +
+> +GCC 插件位于 scripts/gcc-plugins/。你需要将插件源文件放在 scripts/gcc-plugins/ 目录下。
+> +子目录创建并不支持，你必须添加在 scripts/gcc-plugins/Makefile、scripts/Makefile.gcc-plugins
+> +和相关的 Kconfig 文件中。
+> diff --git a/Documentation/translations/zh_CN/kbuild/index.rst b/Documentation/translations/zh_CN/kbuild/index.rst
+> index d906a4e88d0f..b51655d981f6 100644
+> --- a/Documentation/translations/zh_CN/kbuild/index.rst
+> +++ b/Documentation/translations/zh_CN/kbuild/index.rst
+> @@ -13,6 +13,7 @@
+>       :maxdepth: 1
+>   
+>       headers_install
+> +    gcc-plugins
+>   
+>   TODO:
+>   
+> @@ -24,7 +25,6 @@ TODO:
+>   - modules
+>   - issues
+>   - reproducible-builds
+> -- gcc-plugins
+>   - llvm
+>   
+>   .. only::  subproject and html
+
 
