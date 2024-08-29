@@ -1,244 +1,381 @@
-Return-Path: <linux-kernel+bounces-307251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A414964AD2
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 17:59:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 315EC964AE4
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 18:01:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D7551C231A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:59:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 93301B24AE9
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:00:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19A681B3F19;
-	Thu, 29 Aug 2024 15:58:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02C5E1B3F08;
+	Thu, 29 Aug 2024 16:00:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="DMaX7AdE"
-Received: from TY3P286CU002.outbound.protection.outlook.com (mail-japaneastazon11010004.outbound.protection.outlook.com [52.101.229.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fprjFwCB"
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68D7E1B3720;
-	Thu, 29 Aug 2024 15:58:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.229.4
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724947136; cv=fail; b=ahjiAy14KQaTPD5G0sl3UDjTraFvtiN5Iy1oy0C+oxvaJCxpRrBkr83XQmMX9NBM+ps3B0A3jg4bTri1yEr9NoCp5MbTdE+J8K1sxrW/ebFYu+jTzS8RgxZ8WdZjYk+WOfBvpwddmltMyREMbW5a1+WgLqQi/gfRWA9jHaElzDk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724947136; c=relaxed/simple;
-	bh=jVWc/YfvRiiH3Dg03dd9YX2oZ4m5qk5n2o6H15KBhPI=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=WSq52Qtz4mxpVdshVgSCISc9VcFW26Q9KJDKQfX/7BbwO7AHtTs0KkH0H/vEOpcJ59PqbJOXInXkYDoL7OuHHxnp19ZRFQLtmshb3CmlN1xe26u+tDcDYRUJIxfihAjCcIVkZsBpstQDT2acX4u6bGTLBv3pqQ0A6GlyiHzN0iE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=DMaX7AdE; arc=fail smtp.client-ip=52.101.229.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=t7NCWwWM05g345yY06PJnxNLF5vND+dcR9FxXfCFS6yvEKERmYi5HIzePlYYTrlwiYazi5cm0WGkTfwRkYlCk84dckN46TUXDDPpgcsio3u7jdtr8s8sBfPu1z9eAQfZckvcNvm0TDs1eNqv9ihFmn+wHSR7/svPaVAOaAfMD2Ii7qirA+OnRjyBnuNZzv6eIg1IawzZYgAwkpr+RbpW4xldfe32rhyT2vI7DQnOJx9KVEooTtUyFqtbWjRuDe32/fM8mZA6VEn9PCfcVzBwiTOLOvZoGIOYFy9w03mtqVRRSZJJThK2t790ZXfQvvbx8XALeMM1RC860b2jFdtDWA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jVWc/YfvRiiH3Dg03dd9YX2oZ4m5qk5n2o6H15KBhPI=;
- b=eiRkR/VCw5UF9AFGbX73Xt8Z1l+qScZA0AXsdW+HhQyop9deZ4iZqDs0db9KLRMmfgUAMvs6st2RvknAEQ/QvWdWy9c7prMgnKeH+ohqOvaerpq6oqb5Il1Ny26pkurg63am493PnvEFj9n1Ab5se7ee24I5bWy6G4qkKqP2eFg6na8LiSWpeSxMcABqVbasBT7ygWLUh7d4gHKwZJ0WHm9fXU4TDHRKNJyLvKj3VVUTs2vhfURG+shiYO0WvHVPuqqStn85ogSc97SIwJt0lJsPgMSqqYVC5nud4wqVJf8fk2i/X/BbMmmeN/DRX8uv2MDExhBwvvkn4tyODMPRJg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jVWc/YfvRiiH3Dg03dd9YX2oZ4m5qk5n2o6H15KBhPI=;
- b=DMaX7AdEnF9q8I7E2KGfNvjHM3ujRHc048ZrgNSIf01WntGfj96PncxIAwX3pWhQVOFGdVH5UwLUCpaX1Ray2JFm28IYbkcbBLqtl1aQhR8A83Q0F2nIkONhzOzE7y8HRBCHsxeIzXeBDW0Yal+jh5v8Kz8/PaIK++Ab97neUqs=
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
- by OSZPR01MB8084.jpnprd01.prod.outlook.com (2603:1096:604:165::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.20; Thu, 29 Aug
- 2024 15:58:47 +0000
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::86ef:ca98:234d:60e1]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::86ef:ca98:234d:60e1%6]) with mapi id 15.20.7897.027; Thu, 29 Aug 2024
- 15:58:47 +0000
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>, Claudiu.Beznea
-	<claudiu.beznea@tuxon.dev>
-CC: "mturquette@baylibre.com" <mturquette@baylibre.com>, "sboyd@kernel.org"
-	<sboyd@kernel.org>, "wim@linux-watchdog.org" <wim@linux-watchdog.org>,
-	"linux@roeck-us.net" <linux@roeck-us.net>, "ulf.hansson@linaro.org"
-	<ulf.hansson@linaro.org>, "linux-renesas-soc@vger.kernel.org"
-	<linux-renesas-soc@vger.kernel.org>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-watchdog@vger.kernel.org"
-	<linux-watchdog@vger.kernel.org>, "linux-pm@vger.kernel.org"
-	<linux-pm@vger.kernel.org>, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: RE: [PATCH v2 2/3] clk: renesas: r9a08g045: Mark the watchdog and
- always-on PM domains as IRQ safe
-Thread-Topic: [PATCH v2 2/3] clk: renesas: r9a08g045: Mark the watchdog and
- always-on PM domains as IRQ safe
-Thread-Index: AQHa+VN+VAarWIT5GkaeuagNwroQfLI+L94AgAA1iOA=
-Date: Thu, 29 Aug 2024 15:58:47 +0000
-Message-ID:
- <TY3PR01MB11346BBAEB9DBB9C6A969DEC386962@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-References: <20240828140602.1006438-1-claudiu.beznea.uj@bp.renesas.com>
- <20240828140602.1006438-3-claudiu.beznea.uj@bp.renesas.com>
- <CAMuHMdUcstyRDfaQ0Y=1NHgBYuRWjC0vuJj2j8USCTsEE1qKVA@mail.gmail.com>
-In-Reply-To:
- <CAMuHMdUcstyRDfaQ0Y=1NHgBYuRWjC0vuJj2j8USCTsEE1qKVA@mail.gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|OSZPR01MB8084:EE_
-x-ms-office365-filtering-correlation-id: 6b745eba-d763-460f-e977-08dcc84377c3
-x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|7416014|376014|366016|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?R0xUd0xYR3RTcDFOeHZLbTBiOUpxTnd1dDYxUEJUSFBwMVhrOGVpMXlvZngy?=
- =?utf-8?B?akRKV2FrTkg4QXBFMVEwQVJaNmxTcUZDODJYelpHc0taMC9OOU1XcFF6YlZK?=
- =?utf-8?B?MjZORzNVN3pvcDFuV2Q4a09HaC9CVzRTcmpkdHBVV1d1SlhZSW82UW0xVmV0?=
- =?utf-8?B?WFV3eDZMdWZCTFEwQ0dSd2lHV0YrM2ZsZGJpeCtTZi9YamRKYklGbWExY2xx?=
- =?utf-8?B?eXJUY0svYWtxOVN0QmYxVnN1S0ExQWppc01nVTJZY00yYk41UW1yZEYyaFR3?=
- =?utf-8?B?cnJtRkliUVN5MkdELzM3K25lVENyQ2xYVnU5SnROU2s5ZTlEcEQ2R0oxL2RM?=
- =?utf-8?B?d1NreTI5MTlKZ1ExMFo1KzNPa3RWZVhENXZOaTArMlJ5MmNxSVdtUERCT1JT?=
- =?utf-8?B?Q2I0Qmc4andwTXJPSXpTalRxUzFwTGxGL2hEemtHTjIxNDFMREFpbi9PMEF0?=
- =?utf-8?B?VGxaalNGM0pENUlYVTVrZms4Y3RkdkZZMVl5TllPWno5NXBJUmNIYjNIWVdZ?=
- =?utf-8?B?b292dVBXWjFmMmFnWmVDWU9TNy84UGhyemk5WllLaGQ3UUw1RzE4YnFlVDUx?=
- =?utf-8?B?Z0ZtQ3EzM3pVYzlSclUzUzFYZGp2MUs1OHEyaFNUYzRrbFJJZGpTR3p6UmV4?=
- =?utf-8?B?Vmc0dS9KeVBmdDIxd3BxWEpYSEREdEFqTDV0bWRtWGZFV0xhVkxXandqcTZv?=
- =?utf-8?B?blkyMi9ORzJqclZxZk1UMnpINnRvY0ljMUV5VmgxeVZ6aWpBVVZ0YVFpR1cx?=
- =?utf-8?B?YThuNlFGLzhEc3E0aW44czNXM3dha25CNTBtaEtqdWFWdlpGYWdBaTZiaTJr?=
- =?utf-8?B?bldHZzJRZThyWHRnQURMTjZud1V3MXhleG9YdDBWcGpSSGhIUWx5dk56U0h4?=
- =?utf-8?B?ZkZqUGFqU3dldWpJN3NWMTd0UTNsdHo4SW9COTkrSTlRMlJhWVJBdkp5WGh1?=
- =?utf-8?B?RnFHaExZWlVCTUdhdG9tY0VVclE3NnR2bS9LcXJWZ04xb1NueVJlYS9INHBO?=
- =?utf-8?B?Z1FGVGpTNmEwNVB4SFBvbzUxeDVQMk1mRjJlTTIrQ2NLYkE5RjluNWhaNTlG?=
- =?utf-8?B?YlQwMkVXYzAyS0RWdFI1YlhIS2FDOTZoejIrMlQ2SFhIN3RZSFl0ME5VUWE4?=
- =?utf-8?B?bnlPS3pkN003MXBGWU0yVTBlLzE1cm1XK3IzRkdOVTd0SWdHcnpKaGFGUkp5?=
- =?utf-8?B?L1c1b3pkMFlOUWQ0cTFIdlVNcEkxVGo5SXVXQkZSVnNrR1BlYmU2YVpwSlNp?=
- =?utf-8?B?VE1BcVFKU3ZneHBpSVVxcCs0TXl3bkFOR211TzFSZGJxZFZkbzNjRmlhTy82?=
- =?utf-8?B?azNQTDJDWTNVRFFmRE5JTEY4MkNSMkVoVWVnUDNNeXE1NlExek5lckM3ejlG?=
- =?utf-8?B?VURSd2MvY0NXT1JKRkROa3Jza2ZDU0tWQ2NObFk0V09YcFBJazRaV2IxZldY?=
- =?utf-8?B?MnBlRDBJSkdkUHFqT3BEaWxRTkFDbHBFSjZtQlJRb2wrWGI3QWxhalg0bHpv?=
- =?utf-8?B?MXFYQXllRmovVEJXOE5QRzhEOXhoRk1TL05lSHBjWEpiTVQ0ekZYK0Zxajhw?=
- =?utf-8?B?T1ZrQjF1QXMvMFNBSmljZ3BvU0xOSWtsOC9DWEJNaEhPdHZmN2JKRThPTnNZ?=
- =?utf-8?B?SnEzYVdmWWp4VnhEZCtmdEJXalRIaVlUK0dLcWNrK2FVR1gxSCtlYkhjaVFz?=
- =?utf-8?B?dlV0UWxxNGQwUnV0ZDE0Zml0OE14MWc4Vnd1R0lmcnBxWU5ITHFXa2lIcUxZ?=
- =?utf-8?B?QVpLL1R3SGlGcWdTb0ZNUVpEU3Z3UkV3a3BRbWQrcVF3Umxlb1VlZ1NNZkNR?=
- =?utf-8?B?bjNJRGM1a0EwTjVsMEhaTkVQNWVMMTNaVm1xeTBsd3MxalI0VUFzekRQb1JF?=
- =?utf-8?B?WTJ2bVhLVDFVZllTTHhmNm5jbkFWT0k3VzlPeHdDWU1rVkE9PQ==?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?ejRUUE13SWp5NVFuWEtScCtkdzhBRitYSDY3WnBmUnYxNmx1R3p5cjdjbXZt?=
- =?utf-8?B?VnVBbUp0eGdEbDVycUpjU05DbTRidkhYRmgrVm92QzIxQlMxYkdIN0pia1hQ?=
- =?utf-8?B?WXB3WEE3QjBJWWtvK2lQRmw4Nzc0dml5Ny9NTjlGeVJtOUhMWGovMmt5T1FC?=
- =?utf-8?B?SUxYNlFxSXJ0Nk55MGp4dXh4aWlKOTZKS2FMREFKazdzWVJTdG5SdnRqK0tr?=
- =?utf-8?B?WTNLVy9sdHQ2amFkVVZXZ0VJU2MrZ1NSY0xlTFFLNHM4WWQvWTZMRmt2K1lm?=
- =?utf-8?B?ZU1FVlVwZUxBd0lrYjJ5ZmNFNWRiM1B1TnppejROZ1B5a0tFRnNHTEE3dVJx?=
- =?utf-8?B?dXJtVnNVbFhydHV2eXRkdHlZcnNHQ2J4V21UUjN1RTB6NlUvdENTbzhCYkEy?=
- =?utf-8?B?KzR6UzE4ci9DZFJ1WGNSYXJkdnRlWmcrVWQ1Y1YwUnNld29zQi92NC90dEM1?=
- =?utf-8?B?TkgzOUlXNWpyMkdzWkVpb0I5ZzhrZ0xlRG9uUE1kUFF2VFBKTFMyNGczM054?=
- =?utf-8?B?cTBrbHR0R3orN2hlRkhWMlBOaGh3cXk1MkZhWGgweG95TkVNU2RaY0FmeWJL?=
- =?utf-8?B?UnJjeEZROXA2TlZMenk0Y0Q1T28xNno2V2RNM1FGeUNoak9KR1BBdzVDOTcv?=
- =?utf-8?B?NUliMGlPc2pLSUFEYUVjby9Ha3NrL2NicTZ0WHhFY25GUm1pb3h3a1pIVk52?=
- =?utf-8?B?dkpHMkVJRkJ1anJWRjhIRWFmeHUwV0Y3RjVONWFyTTluSU5uWUN0c3ZmYjhC?=
- =?utf-8?B?NHhQSGRMcjJRRjJxNmI3TzNiWG4vT3RnSnQ3U2RLZEdyN1drZkpmbXRzTnc5?=
- =?utf-8?B?MHl4UkJoSHRZNVVSa3AwNWFoanU2bjVIRHZOS2FZREcybThSMUhBUit1S1Zz?=
- =?utf-8?B?eWEwN016aUlnVE5xY2xDNUdZZEV5cWhwNEFMUDVCbHBKYWhubFhIZVJFMlZh?=
- =?utf-8?B?eWhKN2NrMHp4TWxzQWxZenkzTmRyd3VvVk9lc3dtWkVMTEJtalV5TUxlNmo3?=
- =?utf-8?B?TlZHY29KRUZGcy9veTladHpmczBqVjRhNklmallzaTFtOC9VYlZ6MHJ5bUFv?=
- =?utf-8?B?bmZ6S3ZHVmFPUDhYQUEwcG5IY1RtVUpIT2Q3WDBkazhCdVdMMHNKTVdWK2hu?=
- =?utf-8?B?OTkxZFFnU3AxUHRDSFRxV2s3Y3dXT1plUkJhQS8vWUo0S3NoSE1wZHZzQkVI?=
- =?utf-8?B?bXU3UDdjMm0xY3Rjb2o1Q3ZOalJuT1I2ajhkVncrREtsaHA2QVF0Syt5cWow?=
- =?utf-8?B?Vng4VGxJOGUzUTR0QjZMci9BUGpDcGRzWWVHSmI4M2ZoT0dXdTIyQWxpNENo?=
- =?utf-8?B?ZXVja1d4UTYxTzZQdnB6elpVQ0V4YmxjamRyYlN2R1F0Tm5kbDRJS09mcGg3?=
- =?utf-8?B?K2FVOVpGaXE5VUU3eEZMUzRhUXpzcXlGdEF2MlRaSWpDNU92YUszK3RrRjlF?=
- =?utf-8?B?QUpyWEpUNHh0K3BnNWRJZDF5dEpLWWpPbWV3ZEtGK0V2Z3lMWVgwRjcvbFVZ?=
- =?utf-8?B?RTFxQTZRdEx3UElvYUMxSmM3MU53TjBkTEJjRENENDlZVWlYS0EwUzd0L3gw?=
- =?utf-8?B?djcyTmRaWGs4V0wwdFMzTWFERG9oRzZnTVZaWE1JSWpLTkFHVXE1TzdNMVVi?=
- =?utf-8?B?T2FqYkZzNzVscTdFd0p3OW11RXNMMHRTSlVGQjc5QnNUcHZNeURlSXhWdXhL?=
- =?utf-8?B?Q2dUUHoxd0s2QlZEMjFzTVZVOGprSy9xR2FXaHN2Sk9vMC9oODdFaWxsa1VI?=
- =?utf-8?B?K0ZaNFROMnpxMjhKRDhoVHJBN1VBRitGSzJOVlh2QUo1MVZFOFdGMjk0Yjdk?=
- =?utf-8?B?V3BuOUYyU2lzYVYwWDR4ZkxPRkhvTjZvcXE0Z3Y4bXBuOXZjK3EyNzN0cElv?=
- =?utf-8?B?eHV5V2VMUUhQVGJSbGkzc2RMOHF6T0JoZFVlWjB6MHM2bk1kMTE0WWV5TEhT?=
- =?utf-8?B?YnlERWVieENWazlkQnJHU2YrVVFBMzBDM0tWMTc1bmdpS2ltZGl5M0hhTVFo?=
- =?utf-8?B?MGhiUDZ4aFNmK2ZCaUJkMzdGSWpJRTRTZ2pLVkM2eHVoUVI0NFQzelJOeEh4?=
- =?utf-8?B?TmhoNXlLZEZCUVk5S09mVFhadEtydzlxNDEzc0djSjFTaENuTGpyc082T3B4?=
- =?utf-8?B?TWp4NWRsdGNtK0hZWEhLems4SzVqZVE1Y0RLRG9oYkxicURqVU5VYlkyT2Fl?=
- =?utf-8?B?dmc9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A45F1B2EFF
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 16:00:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724947253; cv=none; b=Ief9ZeO10pwQP2AhcUjsA92XsZ7ENQWB3B7Hh20aCuhcy6KRr/YNy8YhnTDhgupoJuhf0fVVygGI9gYP/zG/eqbOlV1emhHOKpWJb3jGJUR0uG+y4Jrg8EQHIN/1zdKZa04y0pi4BOKCLY2afvq+KhmpxRmJpx8GWl7iUk2zXNo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724947253; c=relaxed/simple;
+	bh=ypIsJu61Ac+yhRwX3ww92z0cl8iaGYbjNqCLC5CdVOI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HjQeJCBpxONB9SpGEp9VyYzKImj6cnaHTtu52mVEyNDb1OvMsUTHjC9HYtkqiAZBWDofa2E4EZQgZb1kb5uhxHDW5I9ZKN7n+VZXzdEQVHZUMikudetUDBbbqw0unywWCjWSU07upIYtyhC2EzZ3AgfKmUTzqmDr7shpaiHQTVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fprjFwCB; arc=none smtp.client-ip=209.85.160.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-45029af1408so228401cf.1
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 09:00:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1724947251; x=1725552051; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=faZRfuIh6tyx/STII3KFiHR3ZroVBJPLCECLO13IVSA=;
+        b=fprjFwCB7g52s2Z2TZl91/VxZtg5LCEJWAW3ndF+JaQ08MHpOlr7ZLA2ERkyZPZ9AO
+         nqIoNQq0hWWK0TFqwUCiJpAe6U05ho97bXLfMxE1VD36ijdb+Aeedf7+OsdWfUKfsgxC
+         /2c2npnnFMSSmi+Xhd8fjVhOxzEgZTuhvFXAe51OoxG6WNdPNiPkk+qgUu/P9Mmfpa1g
+         6ZY5Y4Oa1iYXnlNhJp0AAZj9xkcb5c23lzyOzGIhBFVfW/Cb3n8u2KocKTlB+ljzL9zk
+         vBIWoR4MBwpa727/s3f4Wd0Gc607tFPlFpoku0TULjmyerC+RTR4zsNXnxnPrsaidLQh
+         j7xg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724947251; x=1725552051;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=faZRfuIh6tyx/STII3KFiHR3ZroVBJPLCECLO13IVSA=;
+        b=ZrluqIkmFV0Zi5qgIkOtYbY3CDaGQSWQUTtWqJz1MlUQgK1Mwxq8zm0nPdKR2HnV43
+         MjsBPFjk91fH5kssNGq1/CHKep0GHROaN4FMgWoxlYqBNDaSEYUeokdbXIqmjegnlHD0
+         VK+NoNNJesl/604D5jsJcy2JKyH5bHSe6RVtTY/jb1ZI5DYsc7w/orszeqfGg2x6o/lU
+         XeBKYjOb5WYSZ4xNZkE+qn8LESRBLjtfl3cQGkHZoslfzeVffrJ6sG4mbNekZns9/3me
+         loeLPWTUjlaR3Knk+nzExeBSloHK7T6R3C0dG4E0oeEr81sHUgshDPejxmCZJePZ8nOn
+         y0NQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX8emcTgGUBrjKr4G74agTHS0mQe3ePo/U3JzknIYuScMR2xlm+DaXoYNi+UyQSX9d4uOyA6E7MVF+iE4U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxvy06Aok5E792xAejqQPOB38vYGE3m6CAWcRRddzBtczrf4CBS
+	C/2rSm7EWm1+pVDqa7BwHWBsb1/fNimLvv4LKDmNdr5QOQIPp4kGp52AxE2AIRXYCAXMkBjvggI
+	7ivWwh/YlsV6lZCJ9V0EaC8BcccGJyY4mChzv
+X-Google-Smtp-Source: AGHT+IGClq65i5Muaoi1TfggLqS1pEc+H5xQXkuciLf9CNJ+ANij1+dnSrrj3ldpiRigHV4bJA1zM0r7w8EHkaU6qQY=
+X-Received: by 2002:a05:622a:83cc:b0:447:e847:486 with SMTP id
+ d75a77b69052e-45681509806mr3139301cf.3.1724947250230; Thu, 29 Aug 2024
+ 09:00:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6b745eba-d763-460f-e977-08dcc84377c3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Aug 2024 15:58:47.7284
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: vQ4AOn2+gUaSZG0uefDIJB3pWvr6dUVTn4ulKobjqKxzKjI8JXn96ZB+igJFUNBAIsKF2Q8yCCdkSXrCEKxFrwrm5LuXw5mvxY/RIyZqRRE=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSZPR01MB8084
+References: <20240809072532.work.266-kees@kernel.org> <20240809073309.2134488-4-kees@kernel.org>
+In-Reply-To: <20240809073309.2134488-4-kees@kernel.org>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Thu, 29 Aug 2024 09:00:37 -0700
+Message-ID: <CAJuCfpFXTDnqZphJ1z37KkqMt5nuOqaoWMJMRBOkA8Dnf1Dh2g@mail.gmail.com>
+Subject: Re: [PATCH 4/5] alloc_tag: Track fixed vs dynamic sized kmalloc calls
+To: Kees Cook <kees@kernel.org>
+Cc: Vlastimil Babka <vbabka@suse.cz>, Kent Overstreet <kent.overstreet@linux.dev>, 
+	Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>, 
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org, 
+	"GONG, Ruiqi" <gongruiqi@huaweicloud.com>, Jann Horn <jannh@google.com>, 
+	Matteo Rizzo <matteorizzo@google.com>, jvoisin <julien.voisin@dustri.org>, 
+	Xiu Jianfeng <xiujianfeng@huawei.com>, linux-kernel@vger.kernel.org, 
+	linux-hardening@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-SGkgR2VlcnQsDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogR2VlcnQg
-VXl0dGVyaG9ldmVuIDxnZWVydEBsaW51eC1tNjhrLm9yZz4NCj4gU2VudDogVGh1cnNkYXksIEF1
-Z3VzdCAyOSwgMjAyNCAxOjQ1IFBNDQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggdjIgMi8zXSBjbGs6
-IHJlbmVzYXM6IHI5YTA4ZzA0NTogTWFyayB0aGUgd2F0Y2hkb2cgYW5kIGFsd2F5cy1vbiBQTSBk
-b21haW5zIGFzIElSUQ0KPiBzYWZlDQo+IA0KPiBIaSBDbGF1ZGl1LA0KPiANCj4gT24gV2VkLCBB
-dWcgMjgsIDIwMjQgYXQgNDowNuKAr1BNIENsYXVkaXUgPGNsYXVkaXUuYmV6bmVhQHR1eG9uLmRl
-dj4gd3JvdGU6DQo+ID4gRnJvbTogQ2xhdWRpdSBCZXpuZWEgPGNsYXVkaXUuYmV6bmVhLnVqQGJw
-LnJlbmVzYXMuY29tPg0KPiA+DQo+ID4gSWYgdGhlIHdhdGNoZG9nIGlzIHBhcnQgb2YgYSBkZWRp
-Y2F0ZWQgcG93ZXIgZG9tYWluIChhcyBpdCBtYXkgYmUgb24NCj4gPiBSWi9HM1MpIHRoZSB3YXRj
-aGRvZyBQTSBkb21haW4gbmVlZCB0byBiZSBwb3dlcmVkIG9uIGluIHRoZSB3YXRjaGRvZw0KPiA+
-IHJlc3RhcnQgaGFuZGxlci4gQ3VycmVudGx5LCBvbmx5IHRoZSBjbG9ja3MgYXJlIGVuYWJsZWQg
-aW4gdGhlDQo+ID4gd2F0Y2hkb2cgcmVzdGFydCBoYW5kbGVyLiBUbyBiZSBhYmxlIHRvIGFsc28g
-cG93ZXIgb24gdGhlIFBNIGRvbWFpbiB3ZQ0KPiA+IG5lZWQgdG8gY2FsbCBwbV9ydW50aW1lX3Jl
-c3VtZV9hbmRfZ2V0KCkgb24gdGhlIHdhdGNoZG9nIHJlc3RhcnQNCj4gPiBoYW5kbGVyLCBtYXJr
-IHRoZSB3YXRjaGRvZyBkZXZpY2UgYXMgSVJRIHNhZmUgYW5kIHJlZ2lzdGVyIHRoZQ0KPiA+IHdh
-dGNoZG9nIFBNIGRvbWFpbiB3aXRoIEdFTlBEX0ZMQUdfSVJRX1NBRkUuDQo+ID4NCj4gPiBSZWdp
-c3RlciB3YXRjaGRvZyBQTSBkb21haW4gYXMgSVJRIHNhZmUuIEFsb25nIHdpdGggaXQgdGhlIGFs
-d2F5cy1vbg0KPiA+IFBNIGRvbWFpbiAocGFyZW50IG9mIHRoZSB3YXRjaGRvZyBkb21haW4pIHdh
-cyBtYXJrZWQgYXMgSVJRIHNhZmUuDQo+ID4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBDbGF1ZGl1IEJl
-em5lYSA8Y2xhdWRpdS5iZXpuZWEudWpAYnAucmVuZXNhcy5jb20+DQo+ID4gLS0tDQo+ID4NCj4g
-PiBDaGFuZ2VzIGluIHYyOg0KPiA+IC0gY2hhbmdlZCBwYXRjaCB0aXRsZTsgaXQgd2FzICJjbGs6
-IHJlbmVzYXM6IHJ6ZzJsLWNwZzogTWFyaw0KPiA+ICAgd2F0Y2hkb2cgYW5kIGFsd2F5cy1vbiBQ
-TSBkb21haW5zIGFzIElSUSBzYWZlIg0KPiANCj4gVGhhbmtzIGZvciB0aGUgdXBkYXRlIQ0KPiAN
-Cj4gPiAtLS0gYS9kcml2ZXJzL2Nsay9yZW5lc2FzL3I5YTA4ZzA0NS1jcGcuYw0KPiA+ICsrKyBi
-L2RyaXZlcnMvY2xrL3JlbmVzYXMvcjlhMDhnMDQ1LWNwZy5jDQo+ID4gQEAgLTI1OSw3ICsyNTks
-NyBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IHJ6ZzJsX2NwZ19wbV9kb21haW5faW5pdF9kYXRhIHI5
-YTA4ZzA0NV9wbV9kb21haW5zW10gPSB7DQo+ID4gICAgICAgICAvKiBLZWVwIGFsd2F5cy1vbiBk
-b21haW4gb24gdGhlIGZpcnN0IHBvc2l0aW9uIGZvciBwcm9wZXIgZG9tYWlucyByZWdpc3RyYXRp
-b24uICovDQo+ID4gICAgICAgICBERUZfUEQoImFsd2F5cy1vbiIsICAgICBSOUEwOEcwNDVfUERf
-QUxXQVlTX09OLA0KPiA+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgREVGX1JFR19D
-T05GKDAsIDApLA0KPiA+IC0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgR0VOUERfRkxB
-R19BTFdBWVNfT04pLA0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgR0VOUERf
-RkxBR19BTFdBWVNfT04gfA0KPiA+ICsgR0VOUERfRkxBR19JUlFfU0FGRSksDQo+ID4gICAgICAg
-ICBERUZfUEQoImdpYyIsICAgICAgICAgICBSOUEwOEcwNDVfUERfR0lDLA0KPiA+ICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgREVGX1JFR19DT05GKENQR19CVVNfQUNQVV9NU1RPUCwg
-QklUKDMpKSwNCj4gPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIEdFTlBEX0ZMQUdf
-QUxXQVlTX09OKSwgQEAgLTI3MCw3DQo+ID4gKzI3MCw4IEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3Qg
-cnpnMmxfY3BnX3BtX2RvbWFpbl9pbml0X2RhdGEgcjlhMDhnMDQ1X3BtX2RvbWFpbnNbXSA9IHsN
-Cj4gPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIERFRl9SRUdfQ09ORihDUEdfQlVT
-X1JFRzFfTVNUT1AsIEdFTk1BU0soMywgMCkpLA0KPiA+ICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgR0VOUERfRkxBR19BTFdBWVNfT04pLA0KPiA+ICAgICAgICAgREVGX1BEKCJ3ZHQw
-IiwgICAgICAgICAgUjlBMDhHMDQ1X1BEX1dEVDAsDQo+ID4gLSAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICBERUZfUkVHX0NPTkYoQ1BHX0JVU19SRUcwX01TVE9QLCBCSVQoMCkpLCAwKSwN
-Cj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIERFRl9SRUdfQ09ORihDUEdfQlVT
-X1JFRzBfTVNUT1AsIEJJVCgwKSksDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICBHRU5QRF9GTEFHX0lSUV9TQUZFKSwNCj4gPiAgICAgICAgIERFRl9QRCgic2RoaTAiLCAgICAg
-ICAgIFI5QTA4RzA0NV9QRF9TREhJMCwNCj4gPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgIERFRl9SRUdfQ09ORihDUEdfQlVTX1BFUklfQ09NX01TVE9QLCBCSVQoMCkpLCAwKSwNCj4g
-PiAgICAgICAgIERFRl9QRCgic2RoaTEiLCAgICAgICAgIFI5QTA4RzA0NV9QRF9TREhJMSwNCj4g
-DQo+IENhbid0IHlvdSBqdXN0IGRvIHRoaXMgZm9yIGFsbCBkb21haW5zIChlLmcuIGluIHJ6ZzJs
-X2NwZ19wZF9zZXR1cCgpKSwgaW5zdGVhZCBvZiBsaW1pdGluZyB0aGlzIHRvIHRoZQ0KPiB3ZHQw
-IGFuZCBhbHdheXMtb24gZG9tYWlucz8NCg0KTm90IHN1cmUsIHRoYXQgd2lsbCBtYWtlIGFsbCBQ
-TSBjYWxscyBmb3IgYWxsIGRvbWFpbnMgd2l0aCBpbnRlcnJ1cHQgZGlzYWJsZWQ/Pw0KDQpDaGVl
-cnMsDQpCaWp1DQo=
+On Fri, Aug 9, 2024 at 12:33=E2=80=AFAM Kees Cook <kees@kernel.org> wrote:
+>
+> For slab allocations, record whether the call site is using a fixed
+> size (i.e. compile time constant) or a dynamic size. Report the results
+> in /proc/allocinfo.
+>
+> Improvements needed:
+> - examine realloc routines for needed coverage
+>
+> Signed-off-by: Kees Cook <kees@kernel.org>
+> ---
+> Cc: Suren Baghdasaryan <surenb@google.com>
+> Cc: Kent Overstreet <kent.overstreet@linux.dev>
+> Cc: Vlastimil Babka <vbabka@suse.cz>
+> Cc: Christoph Lameter <cl@linux.com>
+> Cc: Pekka Enberg <penberg@kernel.org>
+> Cc: David Rientjes <rientjes@google.com>
+> Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Roman Gushchin <roman.gushchin@linux.dev>
+> Cc: Hyeonggon Yoo <42.hyeyoo@gmail.com>
+> Cc: linux-mm@kvack.org
+> ---
+>  include/linux/alloc_tag.h | 30 ++++++++++++++++++++++++++----
+>  include/linux/slab.h      | 16 ++++++++--------
+>  lib/alloc_tag.c           |  8 ++++++++
+>  mm/Kconfig                |  8 ++++++++
+>  4 files changed, 50 insertions(+), 12 deletions(-)
+>
+> diff --git a/include/linux/alloc_tag.h b/include/linux/alloc_tag.h
+> index 8c61ccd161ba..f5d8c5849b82 100644
+> --- a/include/linux/alloc_tag.h
+> +++ b/include/linux/alloc_tag.h
+> @@ -20,6 +20,19 @@ struct alloc_tag_counters {
+>         u64 calls;
+>  };
+>
+> +#ifdef CONFIG_SLAB_PER_SITE
+> +struct alloc_meta {
+> +       /* 0 means non-slab, SIZE_MAX means dynamic, and everything else =
+is fixed-size. */
+> +       size_t sized;
+> +};
+> +#define ALLOC_META_INIT(_size) {               \
+> +               .sized =3D (__builtin_constant_p(_size) ? (_size) : SIZE_=
+MAX), \
+> +       }
+> +#else
+> +struct alloc_meta { };
+> +#define ALLOC_META_INIT(_size) { }
+> +#endif
+> +
+>  /*
+>   * An instance of this structure is created in a special ELF section at =
+every
+>   * allocation callsite. At runtime, the special section is treated as
+> @@ -27,6 +40,7 @@ struct alloc_tag_counters {
+>   */
+>  struct alloc_tag {
+>         struct codetag                  ct;
+> +       struct alloc_meta               meta;
+>         struct alloc_tag_counters __percpu      *counters;
+>  } __aligned(8);
+>
+> @@ -74,19 +88,21 @@ static inline struct alloc_tag *ct_to_alloc_tag(struc=
+t codetag *ct)
+>   */
+>  DECLARE_PER_CPU(struct alloc_tag_counters, _shared_alloc_tag);
+>
+> -#define DEFINE_ALLOC_TAG(_alloc_tag)                                    =
+       \
+> +#define DEFINE_ALLOC_TAG(_alloc_tag, _meta_init)                        =
+       \
+>         static struct alloc_tag _alloc_tag __used __aligned(8)           =
+       \
+>         __section("alloc_tags") =3D {                                    =
+         \
+>                 .ct =3D CODE_TAG_INIT,                                   =
+         \
+> +               .meta =3D _meta_init,                                    =
+         \
+>                 .counters =3D &_shared_alloc_tag };
+>
+>  #else /* ARCH_NEEDS_WEAK_PER_CPU */
+>
+> -#define DEFINE_ALLOC_TAG(_alloc_tag)                                    =
+       \
+> +#define DEFINE_ALLOC_TAG(_alloc_tag, _meta_init)                        =
+       \
+>         static DEFINE_PER_CPU(struct alloc_tag_counters, _alloc_tag_cntr)=
+;      \
+>         static struct alloc_tag _alloc_tag __used __aligned(8)           =
+       \
+>         __section("alloc_tags") =3D {                                    =
+         \
+>                 .ct =3D CODE_TAG_INIT,                                   =
+         \
+> +               .meta =3D _meta_init,                                    =
+         \
+>                 .counters =3D &_alloc_tag_cntr };
+>
+>  #endif /* ARCH_NEEDS_WEAK_PER_CPU */
+> @@ -191,7 +207,7 @@ static inline void alloc_tag_sub(union codetag_ref *r=
+ef, size_t bytes)
+>
+>  #else /* CONFIG_MEM_ALLOC_PROFILING */
+>
+> -#define DEFINE_ALLOC_TAG(_alloc_tag)
+> +#define DEFINE_ALLOC_TAG(_alloc_tag, _meta_init)
+>  static inline bool mem_alloc_profiling_enabled(void) { return false; }
+>  static inline void alloc_tag_add(union codetag_ref *ref, struct alloc_ta=
+g *tag,
+>                                  size_t bytes) {}
+> @@ -210,8 +226,14 @@ static inline void alloc_tag_sub(union codetag_ref *=
+ref, size_t bytes) {}
+>
+>  #define alloc_hooks(_do_alloc)                                         \
+>  ({                                                                     \
+> -       DEFINE_ALLOC_TAG(_alloc_tag);                                   \
+> +       DEFINE_ALLOC_TAG(_alloc_tag, { });                              \
+>         alloc_hooks_tag(&_alloc_tag, _do_alloc);                        \
+>  })
+>
+> +#define alloc_sized_hooks(_do_alloc, _size, ...)                       \
+> +({                                                                     \
+> +       DEFINE_ALLOC_TAG(_alloc_tag, ALLOC_META_INIT(_size));           \
+> +       alloc_hooks_tag(&_alloc_tag, _do_alloc(_size, __VA_ARGS__));    \
+> +})
+> +
+>  #endif /* _LINUX_ALLOC_TAG_H */
+> diff --git a/include/linux/slab.h b/include/linux/slab.h
+> index 86cb61a0102c..314d24c79e05 100644
+> --- a/include/linux/slab.h
+> +++ b/include/linux/slab.h
+> @@ -541,7 +541,7 @@ static_assert(PAGE_SHIFT <=3D 20);
+>   */
+>  void *kmem_cache_alloc_noprof(struct kmem_cache *cachep,
+>                               gfp_t flags) __assume_slab_alignment __mall=
+oc;
+> -#define kmem_cache_alloc(...)                  alloc_hooks(kmem_cache_al=
+loc_noprof(__VA_ARGS__))
+> +#define kmem_cache_alloc(...)          alloc_hooks(kmem_cache_alloc_nopr=
+of(__VA_ARGS__))
+
+nit: seems like an unnecessary churn.
+
+>
+>  void *kmem_cache_alloc_lru_noprof(struct kmem_cache *s, struct list_lru =
+*lru,
+>                             gfp_t gfpflags) __assume_slab_alignment __mal=
+loc;
+> @@ -685,7 +685,7 @@ static __always_inline __alloc_size(1) void *kmalloc_=
+noprof(size_t size, gfp_t f
+>         }
+>         return __kmalloc_noprof(size, flags);
+>  }
+> -#define kmalloc(...)                           alloc_hooks(kmalloc_nopro=
+f(__VA_ARGS__))
+> +#define kmalloc(size, ...)     alloc_sized_hooks(kmalloc_noprof, size, _=
+_VA_ARGS__)
+>
+>  #define kmem_buckets_alloc(_b, _size, _flags)  \
+>         alloc_hooks(__kmalloc_node_noprof(PASS_BUCKET_PARAMS(_size, _b), =
+_flags, NUMA_NO_NODE))
+> @@ -708,7 +708,7 @@ static __always_inline __alloc_size(1) void *kmalloc_=
+node_noprof(size_t size, gf
+>         }
+>         return __kmalloc_node_noprof(PASS_BUCKET_PARAMS(size, NULL), flag=
+s, node);
+>  }
+> -#define kmalloc_node(...)                      alloc_hooks(kmalloc_node_=
+noprof(__VA_ARGS__))
+> +#define kmalloc_node(size, ...)                alloc_sized_hooks(kmalloc=
+_node_noprof, size, __VA_ARGS__)
+>
+>  /**
+>   * kmalloc_array - allocate memory for an array.
+> @@ -726,7 +726,7 @@ static inline __alloc_size(1, 2) void *kmalloc_array_=
+noprof(size_t n, size_t siz
+>                 return kmalloc_noprof(bytes, flags);
+>         return kmalloc_noprof(bytes, flags);
+>  }
+> -#define kmalloc_array(...)                     alloc_hooks(kmalloc_array=
+_noprof(__VA_ARGS__))
+> +#define kmalloc_array(...)             alloc_hooks(kmalloc_array_noprof(=
+__VA_ARGS__))
+
+ditto.
+
+>
+>  /**
+>   * krealloc_array - reallocate memory for an array.
+> @@ -761,8 +761,8 @@ void *__kmalloc_node_track_caller_noprof(DECL_BUCKET_=
+PARAMS(size, b), gfp_t flag
+>                                          unsigned long caller) __alloc_si=
+ze(1);
+>  #define kmalloc_node_track_caller_noprof(size, flags, node, caller) \
+>         __kmalloc_node_track_caller_noprof(PASS_BUCKET_PARAMS(size, NULL)=
+, flags, node, caller)
+> -#define kmalloc_node_track_caller(...)         \
+> -       alloc_hooks(kmalloc_node_track_caller_noprof(__VA_ARGS__, _RET_IP=
+_))
+> +#define kmalloc_node_track_caller(size, ...)           \
+> +       alloc_sized_hooks(kmalloc_node_track_caller_noprof, size, __VA_AR=
+GS__, _RET_IP_)
+>
+>  /*
+>   * kmalloc_track_caller is a special version of kmalloc that records the
+> @@ -807,13 +807,13 @@ static inline __alloc_size(1) void *kzalloc_noprof(=
+size_t size, gfp_t flags)
+>  {
+>         return kmalloc_noprof(size, flags | __GFP_ZERO);
+>  }
+> -#define kzalloc(...)                           alloc_hooks(kzalloc_nopro=
+f(__VA_ARGS__))
+> +#define kzalloc(size, ...)                     alloc_sized_hooks(kzalloc=
+_noprof, size, __VA_ARGS__)
+>  #define kzalloc_node(_size, _flags, _node)     kmalloc_node(_size, (_fla=
+gs)|__GFP_ZERO, _node)
+>
+>  void *__kvmalloc_node_noprof(DECL_BUCKET_PARAMS(size, b), gfp_t flags, i=
+nt node) __alloc_size(1);
+>  #define kvmalloc_node_noprof(size, flags, node)        \
+>         __kvmalloc_node_noprof(PASS_BUCKET_PARAMS(size, NULL), flags, nod=
+e)
+> -#define kvmalloc_node(...)                     alloc_hooks(kvmalloc_node=
+_noprof(__VA_ARGS__))
+> +#define kvmalloc_node(size, ...)               alloc_sized_hooks(kvmallo=
+c_node_noprof, size, __VA_ARGS__)
+>
+>  #define kvmalloc(_size, _flags)                        kvmalloc_node(_si=
+ze, _flags, NUMA_NO_NODE)
+>  #define kvmalloc_noprof(_size, _flags)         kvmalloc_node_noprof(_siz=
+e, _flags, NUMA_NO_NODE)
+> diff --git a/lib/alloc_tag.c b/lib/alloc_tag.c
+> index 81e5f9a70f22..6d2cb72bf269 100644
+> --- a/lib/alloc_tag.c
+> +++ b/lib/alloc_tag.c
+> @@ -78,6 +78,14 @@ static void alloc_tag_to_text(struct seq_buf *out, str=
+uct codetag *ct)
+>
+>         seq_buf_printf(out, "%12lli %8llu ", bytes, counter.calls);
+>         codetag_to_text(out, ct);
+> +#ifdef CONFIG_SLAB_PER_SITE
+> +       seq_buf_putc(out, ' ');
+> +       seq_buf_printf(out, "size:%s(%zu) slab:%s",
+> +                               tag->meta.sized =3D=3D 0 ? "non-slab" :
+
+"non-slab" term sounds overly specific and we might extend this to
+some other allocations as well in the future. I would suggest
+"unknown" instead.
+
+> +                                       tag->meta.sized =3D=3D SIZE_MAX ?=
+ "dynamic" : "fixed",
+> +                               tag->meta.sized =3D=3D SIZE_MAX ? 0 : tag=
+->meta.sized,
+> +                               tag->meta.cache ? "ready" : "unused");
+
+I don't see "struct alloc_meta" having a "cache" member...
+
+Since you are changing the format of this file, you want to also bump
+up the file version inside print_allocinfo_header().
+
+
+> +#endif
+>         seq_buf_putc(out, ' ');
+>         seq_buf_putc(out, '\n');
+>  }
+> diff --git a/mm/Kconfig b/mm/Kconfig
+> index b72e7d040f78..855c63c3270d 100644
+> --- a/mm/Kconfig
+> +++ b/mm/Kconfig
+> @@ -296,6 +296,14 @@ config SLAB_BUCKETS
+>
+>           If unsure, say Y.
+>
+> +config SLAB_PER_SITE
+> +       bool "Separate slab allocations by call size"
+> +       depends on !SLUB_TINY
+> +       default SLAB_FREELIST_HARDENED
+> +       select SLAB_BUCKETS
+> +       help
+> +         Track sizes of kmalloc() call sites.
+> +
+>  config SLUB_STATS
+>         default n
+>         bool "Enable performance statistics"
+> --
+> 2.34.1
+>
 
