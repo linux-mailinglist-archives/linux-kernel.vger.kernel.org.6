@@ -1,154 +1,110 @@
-Return-Path: <linux-kernel+bounces-306729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A09619642A1
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:06:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C89739642A4
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:06:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3C726B2446C
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 11:06:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FAB61F211A7
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 11:06:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C76B1917C8;
-	Thu, 29 Aug 2024 11:06:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19F79191F63;
+	Thu, 29 Aug 2024 11:06:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jx1/cSWh"
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kH3l1iD+"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14BC8190674
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 11:06:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAA3C190696;
+	Thu, 29 Aug 2024 11:06:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724929572; cv=none; b=LFqvKlkHJaDTYt/iX4SQzWD/PTEUnpbL91z8CjvUK8zMqy+b7KI8Oxcv2vlc01O/aDGI79KBcFMkeY9T0XURoQFWPq2tT04epi2T3aSNVVmz5VecpfDiTygCrIDXTMvKDl9BN8sTvoIXYW9oNE/lrS4t9PHa9thD12+f0S4dipA=
+	t=1724929587; cv=none; b=UzmPksyv18bGKDBLEGHKbMpXTuxezW2PtV++XDUP+Km+iefbw/vlWLIU7xJNZjU1EIyIXct4c6H8ZN1Aawj/oTW6kmQVQJ5p4hDWTjzUvR4vm+n+hhPoWLAuHBw0ozUnGm+yO91NUtNk6o9y+T0zLhL0TaAIhnvOPZYTu8qOGmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724929572; c=relaxed/simple;
-	bh=J2pPoDRPRmOasyOJN+OGb9bL40+UGELwegWmDFLPkBs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Lwz58HFKTqJw3UivnRfz80CaVdSAT9dSA0pZxM/isFBXoH37QBqlW/6p96RnOEkC4bnGge2bgw9vGfXXn80e+XcJuO/YJ4fuidq0tB+6WLQKnzdyxA7+KD4sPkaq+BtE9L5eboNdJnGC/qglnwtDXjS9dnvvoyX6mfQozZVOHmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jx1/cSWh; arc=none smtp.client-ip=209.85.128.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-68518bc1407so6622967b3.2
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 04:06:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724929570; x=1725534370; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=t00GbWajI0fY42GgBRY0b15sJ+hM+PSIwwNAsxYr2Mg=;
-        b=jx1/cSWhOniCG/UudIRPcK/xsClHxqCXS9CI3ENoS/0bPtk32wzsHUa8v+jj9/Dhl4
-         3Jy/7/Hb2RobFuWUk38XGPw4EluPa9XvvjZyCeRGj2F7IV0z0DxkU9j5RebXLPqOf3ZU
-         mQ5egA3K0+P4l6YRHNwI1dqTt5k2b/fCBqSdICDFFuBLKw05e+8daGTqIs1fP+Ar9jjj
-         DRjOMu+hiDl4092xGoiYTSWfQde9YK25w7w1OPkhHnMVycrWCKiTiO+kEpaAgIrF23iX
-         SYgUCFHlbnBi8RpY1mhXVgAg/8pOSyKnHnIJRTRhdrRiHc6Q/nm51wrADjnYJUey6DuI
-         4PqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724929570; x=1725534370;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=t00GbWajI0fY42GgBRY0b15sJ+hM+PSIwwNAsxYr2Mg=;
-        b=Zko5bjys5R61GfrnfpeaMh/diXQoYsFdq6Yhwoe+VFzLJkfm53D2CGiYLg4p7CTjV9
-         Z+7CsOgA8Jt6sZSuxfaR97ylSKS4J3pF5Dv9iuOY9jD0FvehQuQXT2C0+j+FLfKXC6hJ
-         NSVJwvTND17eZvjj8I/bteKZuxi4TJkYhrpfzFzRYks51RzGau37bhByopIY8xNzPznn
-         IF9NPEf1R/ypr4ncd+S3oKj3gMXvY4ChzxW9MgXyI/K4mo/xEjBbh5CLfwF9XvfB7+/V
-         lCnc8U6TXadVmdSiwOZxZEVow9IiJW+WYQvW3ZJc8Noe3yUZPwQLGibVfh96S8QeyZLO
-         w/6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUBGnSfre6GgkjpvrwxdrXil4JcF4dKcBY0kHSI5jTzVkjo3FFPTSX10qstoVomR+rCbL42e5p2OjVcXPE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8wLv4zi9klAY7Lwj8X6R95xfCgPibmtwYDU9xqP6afgTM2MC6
-	rPwzlgNysfYWBDwdoKXv8R1uUbnWZI3tM8udXLoTITNOsG71M0afz9Ln1vVhTKDwvG3F/Z8+ooc
-	P9dmb/FU3Yb/mZ1BZCJOm5CsE+1pVTzkZB6cjSA==
-X-Google-Smtp-Source: AGHT+IFIHaboJ6IIfGbmUtGfNnqOp+c8jA6Hk5SaKD8wA7zMol9LODyzVqgOo6qMWeJVq2ejhZvuGsmKKNXu0fxcXgU=
-X-Received: by 2002:a05:690c:3391:b0:6b5:71b2:13da with SMTP id
- 00721157ae682-6d277777516mr24559917b3.32.1724929569807; Thu, 29 Aug 2024
- 04:06:09 -0700 (PDT)
+	s=arc-20240116; t=1724929587; c=relaxed/simple;
+	bh=fXFHWvDEFQpHCXW8wDIY3+3Ei0yEnEq0foY/LnXdYnQ=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=p3aEcbfc0WEqOPgH0SeZ6KZ2RknPnnKiw3nf+ybszW3kcYuZPUWBZx0xrXhgTjugqW481HdK+FM88U7ac5oENYjyyKiLPdLKWRU9vLp9zi2coBPLUIOGhEjl73TXYMXhRHhRIP/mGdFFJljc4qc209ur3iSwpZHJJvvYhXF1DBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kH3l1iD+; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724929585; x=1756465585;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=fXFHWvDEFQpHCXW8wDIY3+3Ei0yEnEq0foY/LnXdYnQ=;
+  b=kH3l1iD+K8adSCUvyeBbt2gkoCxc3ovz6GhAEuqMzRkWm9D6D8rTMBY7
+   XCqRefOGJSpkakDdDyp7E5BM7M2I4bgvuX1CZY7pAGxf1/uNw8SZpVI4L
+   I8Voq2EX3HlP1AHZpNBrwm5UnkAQmC8AQ0uoKWHJhEqA6Ps4yswEqj57N
+   o3XoYCFH1HJQK9uND8iDEuy2YFndiP29qZrfRtMTeOqSVePDwkmrA7hw0
+   0ntnIiIlGK+ol57minRWHDgd9jLiXCkCsbX+rso0k8T84Gpn1p3/ET4IT
+   +/g/MxrkhqGZAkSuJSfVbgoTmU71daAKLVcUOlSuiIJL6/2oJ4UfGPX+a
+   A==;
+X-CSE-ConnectionGUID: gEqLwi/sRWOVEnFfWay/nA==
+X-CSE-MsgGUID: QBv2k5dOQgmYyjwPnLheAg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11178"; a="23675259"
+X-IronPort-AV: E=Sophos;i="6.10,185,1719903600"; 
+   d="scan'208";a="23675259"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 04:06:24 -0700
+X-CSE-ConnectionGUID: VsFVoFL9St+s/000ymnpJA==
+X-CSE-MsgGUID: x/xOIDQdSWeVcnRQO/O+6w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,185,1719903600"; 
+   d="scan'208";a="63368439"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.245.59])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 04:06:21 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Thu, 29 Aug 2024 14:06:17 +0300 (EEST)
+To: Xi Pardee <xi.pardee@linux.intel.com>
+cc: irenic.rajneesh@gmail.com, david.e.box@linux.intel.com, 
+    Hans de Goede <hdegoede@redhat.com>, platform-driver-x86@vger.kernel.org, 
+    LKML <linux-kernel@vger.kernel.org>, linux-pm@vger.kernel.org
+Subject: Re: [PATCH v2 07/11] platform/x86:intel/pmc: Check return value of
+ ioremap
+In-Reply-To: <20240828222932.1279508-8-xi.pardee@linux.intel.com>
+Message-ID: <b3665329-dbe9-d78d-a988-b7c346b069de@linux.intel.com>
+References: <20240828222932.1279508-1-xi.pardee@linux.intel.com> <20240828222932.1279508-8-xi.pardee@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240829-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-8-v1-0-bdb05b4b5a2e@linaro.org>
- <20240829-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-8-v1-5-bdb05b4b5a2e@linaro.org>
-In-Reply-To: <20240829-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-8-v1-5-bdb05b4b5a2e@linaro.org>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Thu, 29 Aug 2024 14:05:59 +0300
-Message-ID: <CAA8EJpqJxF4fOaFT6Uu=D5A35HdEDYRhgkkT0TdZ+ckDS95Nag@mail.gmail.com>
-Subject: Re: [PATCH 05/21] drm/msm/dpu: polish log for resource allocation
-To: Jun Nie <jun.nie@linaro.org>
-Cc: Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, linux-arm-msm@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 
-On Thu, 29 Aug 2024 at 13:19, Jun Nie <jun.nie@linaro.org> wrote:
->
-> Add resource allocation type info.
->
-> Signed-off-by: Jun Nie <jun.nie@linaro.org>
+On Wed, 28 Aug 2024, Xi Pardee wrote:
+
+> Check the return value of ioremap operation and return ENOMEM when
+> the operation fails for better error handling.
+> 
+> Signed-off-by: Xi Pardee <xi.pardee@linux.intel.com>
 > ---
->  drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c | 23 +++++++++++++++++++----
->  1 file changed, 19 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c
-> index 15b42a6683639..e219d706610c2 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c
-> @@ -778,6 +778,21 @@ void dpu_rm_release_all_sspp(struct dpu_global_state *global_state,
->                 ARRAY_SIZE(global_state->sspp_to_crtc_id), crtc_id);
->  }
->
-> +static char *dpu_hw_blk_type_name[] = {
-> +       [DPU_HW_BLK_TOP] = "blk_top",
-> +       [DPU_HW_BLK_SSPP] = "blk_sspp",
-> +       [DPU_HW_BLK_LM] = "blk_lm",
-> +       [DPU_HW_BLK_CTL] = "blk_ctl",
-> +       [DPU_HW_BLK_PINGPONG] = "blk_pingpong",
-> +       [DPU_HW_BLK_INTF] = "blk_intf",
-> +       [DPU_HW_BLK_WB] = "blk_wb",
-> +       [DPU_HW_BLK_DSPP] = "blk_dspp",
-> +       [DPU_HW_BLK_MERGE_3D] = "blk_merge_3d",
-> +       [DPU_HW_BLK_DSC] = "blk_dsc",
-> +       [DPU_HW_BLK_CDM] = "blk_cdm",
-
-Drop blk_, upcase all abbreviations.
-
-> +       [DPU_HW_BLK_MAX] = "blk_none",
-> +};
+>  drivers/platform/x86/intel/pmc/ssram_telemetry.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/platform/x86/intel/pmc/ssram_telemetry.c b/drivers/platform/x86/intel/pmc/ssram_telemetry.c
+> index 73c727042ca6..f625d39d1aa3 100644
+> --- a/drivers/platform/x86/intel/pmc/ssram_telemetry.c
+> +++ b/drivers/platform/x86/intel/pmc/ssram_telemetry.c
+> @@ -84,6 +84,9 @@ pmc_core_ssram_get_pmc(struct pmc_dev *pmcdev, unsigned int pmc_idx, u32 offset)
+>  	ssram_base = ssram_pcidev->resource[0].start;
+>  	tmp_ssram = ioremap(ssram_base, SSRAM_HDR_SIZE);
+>  
+> +	if (!tmp_ssram)
+> +		return -ENOMEM;
 > +
->  int dpu_rm_get_assigned_resources(struct dpu_rm *rm,
->         struct dpu_global_state *global_state, uint32_t enc_id,
->         enum dpu_hw_blk_type type, struct dpu_hw_blk **blks, int blks_size)
-> @@ -828,13 +843,13 @@ int dpu_rm_get_assigned_resources(struct dpu_rm *rm,
->                         continue;
->
->                 if (num_blks == blks_size) {
-> -                       DPU_ERROR("More than %d resources assigned to enc %d\n",
-> -                                 blks_size, enc_id);
-> +                       DPU_ERROR("More than %d %s assigned to enc %d\n",
-> +                                 blks_size, dpu_hw_blk_type_name[type], enc_id);
->                         break;
->                 }
->                 if (!hw_blks[i]) {
-> -                       DPU_ERROR("Allocated resource %d unavailable to assign to enc %d\n",
-> -                                 type, enc_id);
-> +                       DPU_ERROR("%s unavailable to assign to enc %d\n",
-> +                                 dpu_hw_blk_type_name[type], enc_id);
->                         break;
->                 }
->                 blks[num_blks++] = hw_blks[i];
->
-> --
-> 2.34.1
->
+>  	if (pmc_idx != PMC_IDX_MAIN) {
+>  		/*
+>  		 * The secondary PMC BARS (which are behind hidden PCI devices)
 
+Is this a fix to the current code? And should have Fixes tag and go 
+first because of that?
 
 -- 
-With best wishes
-Dmitry
+ i.
+
 
