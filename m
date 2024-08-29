@@ -1,107 +1,89 @@
-Return-Path: <linux-kernel+bounces-307326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36597964BDA
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 18:43:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 15B13964BE2
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 18:44:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8BDF2830B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:43:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6A242841F5
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:44:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 544751B5832;
-	Thu, 29 Aug 2024 16:43:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B92AA1B5836;
+	Thu, 29 Aug 2024 16:44:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="DmgY2XiA"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PD23EhSq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 288A21B531B;
-	Thu, 29 Aug 2024 16:43:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F190D1B5EBE;
+	Thu, 29 Aug 2024 16:44:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724949795; cv=none; b=bpumWXi/vKgeTWDY9Gv/AhN8a/qoV+aeFu72Z96YYBOiZ2CEZOUeaLvi71HPGzjRS1GAMy+s/k4IfGh68H/M4G0rkiUMkNt1MaRcxezD/z4uQOUQ+NMJCDeDaXcallx2l3Toezi2Qcs4TN/lhuvlHDt9kjsJrMLWUrAmfDy1xSA=
+	t=1724949859; cv=none; b=RG9vhXnlLk3xG4fPGFvgn7SLx4J7B5wtlPrw1Q0FOw5S1AtTQ533w4ua0iwGAKOquZrVGHO3livqYuo/gFmhHdYP08h++T0Crko2yz/Mpy5fGZ6yb8jVlLVLZg9vhQ0j5quvAotP2BBxsVuQ++Gn/in5CE3302HBfCJNacDCHsI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724949795; c=relaxed/simple;
-	bh=SOPsnkhwPhbTqIhL+AfAja6IVOaQyvZoZM6IJCh1A80=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TW8jAgHD5DnXGl5scMKGB00EPU9pkLkf67YlIly9nX0skuQIHVReBFhC4CTxipYoQuIiTFi9gwQrE8x/j5NYUuTmzTrDTgYqAnaQhL/cgyXxdUbTnzU+xrM/tw4uTyApMw9DdMpeNpPc1KtVh6pwoaFVV12xfxL1O7VL0DITP4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=DmgY2XiA; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1724949794; x=1756485794;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=SOPsnkhwPhbTqIhL+AfAja6IVOaQyvZoZM6IJCh1A80=;
-  b=DmgY2XiAQhoXG1mtW1bjEGcLOfZLfsG9Nc476DDkqXPZqIieYXv2pSmT
-   MbbNe4L3adTtziJd5F/TJstUmsGhWJPIcLZhC131cqtmDiHHmz03RyOw9
-   ryn5wNo1FZaCj0gqgMi8E0B4z/I7zXMORSiud1fBdpdMgET5rzMGGeR3H
-   3MKAuRT1S0Yctme5ZXvHNnSMk1g4w3BZoIo7cdgv/8zBliYaW5+RdVR5o
-   MPMswkOOucfyXOGeLDTw+63DCnbSCM4GlrmZxMdcJ0cKhZw3t973mrjBF
-   4yDHXw36TMNkBF1rsu+TzpOeTYzufZvAAgfxcFbz0f3HZ3V4iWYswEFK/
-   w==;
-X-CSE-ConnectionGUID: isCbYj0aQvu8z3ziIW0jJQ==
-X-CSE-MsgGUID: CE2geJv7Sk+v0FgbadjtoQ==
-X-IronPort-AV: E=Sophos;i="6.10,186,1719903600"; 
-   d="scan'208";a="262007773"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 29 Aug 2024 09:43:13 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Thu, 29 Aug 2024 09:42:51 -0700
-Received: from ryan-Precision-3630-Tower.microchip.com (10.10.85.11) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Thu, 29 Aug 2024 09:42:51 -0700
-From: <Ryan.Wanner@microchip.com>
-To: <mturquette@baylibre.com>, <sboyd@kernel.org>,
-	<nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
-	<claudiu.beznea@tuxon.dev>
-CC: <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, Ryan Wanner <Ryan.Wanner@microchip.com>
-Subject: [PATCH 3/3] clk: at91: clk-sam9x60-pll: increase maximum amount of plls
-Date: Thu, 29 Aug 2024 09:42:27 -0700
-Message-ID: <cd134c8d9e68c79b798e91f8cce427169b9e6184.1724948760.git.Ryan.Wanner@microchip.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1724948760.git.Ryan.Wanner@microchip.com>
-References: <cover.1724948760.git.Ryan.Wanner@microchip.com>
+	s=arc-20240116; t=1724949859; c=relaxed/simple;
+	bh=zv4qrl6Jy/6yhSQ5CBr6vZy+qjLwUITn7De5Wk8i6wU=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=RhHOOyFQGgA01pUrWB6HRcsJOU5WXdaiNGcSnR+WYKOok+P/dG3KanKWXLVO6eYxTxKy0WbJeK42Lia+WF4QGad9IsC1RiyacrylgbznFDKuL2gqSMx1XqXaJvMkVUl6u7m70aEfmd3sV0navZjtwKPhvWzsC+0rYPVTr547nNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PD23EhSq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4D9AC4CEC1;
+	Thu, 29 Aug 2024 16:44:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724949858;
+	bh=zv4qrl6Jy/6yhSQ5CBr6vZy+qjLwUITn7De5Wk8i6wU=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=PD23EhSq1N3X9DefKcjA3yXC+fuUonH7eegXxaJePpP0WRJDP8gp+KGQzlWmm6i6w
+	 nWkxnbp9gO1p9iRD1ROkp3K0kwnbZiA3YIxGXSOJc+SM78+10m0nL0Iqe9L8hEOf5Y
+	 w8FW7IGD6tlnBU5rfbAcur/HlxTE0QH72ROvgPuVL4i8vvlFxjsg+g1W49ytEPSTD6
+	 ASPmSzAmOR/G+Sr5Sa5uVeB/uyAaDAAGEM7gLSDiQmlrP348DhU+JXDUOSbWC6dWlQ
+	 pz4xevnJPlrpsEDlFEriUmYNqw8zqDyhxRoPGjI6rV1GBkeod1kg7ssYbzxQN5N8me
+	 j9ZwtH1vgQJSg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 29 Aug 2024 19:44:13 +0300
+Message-Id: <D3SJOVADFM48.JNOIOZJ0J6OE@kernel.org>
+Cc: <x86@kernel.org>, <linux-sgx@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, "Zhimin Luo" <zhimin.luo@intel.com>
+Subject: Re: [PATCH] x86/sgx: Fix deadloop in __sgx_alloc_epc_page()
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Aaron Lu" <aaron.lu@intel.com>, "Dave Hansen"
+ <dave.hansen@linux.intel.com>
+X-Mailer: aerc 0.18.2
+References: <20240829023800.1671210-1-aaron.lu@intel.com>
+In-Reply-To: <20240829023800.1671210-1-aaron.lu@intel.com>
 
-From: Ryan Wanner <Ryan.Wanner@microchip.com>
+On Thu Aug 29, 2024 at 5:38 AM EEST, Aaron Lu wrote:
+> When current node doesn't have a EPC section configured by firmware and
+> all other EPC sections memory are used up, CPU can stuck inside the
+> while loop in __sgx_alloc_epc_page() forever and soft lockup will happen.
+> Note how nid_of_current will never equal to nid in that while loop becaus=
+e
+                                                     ~~~~
 
-Increase maximum amount of PLLs to 9 to support SAMA7D65 SoC PLL
-requirements.
+Oh *that* while loop ;-) Please be more specific.
 
-Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
----
- drivers/clk/at91/clk-sam9x60-pll.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> nid_of_current is not set in sgx_numa_mask.
+>
+> Also worth mentioning is that it's perfectly fine for firmware to not
+> seup an EPC section on a node. Setting an EPC section on each node can
+> be good for performance but that's not a requirement functionality wise.
 
-diff --git a/drivers/clk/at91/clk-sam9x60-pll.c b/drivers/clk/at91/clk-sam9x60-pll.c
-index fda041102224..cefd9948e103 100644
---- a/drivers/clk/at91/clk-sam9x60-pll.c
-+++ b/drivers/clk/at91/clk-sam9x60-pll.c
-@@ -23,7 +23,7 @@
- #define UPLL_DIV		2
- #define PLL_MUL_MAX		(FIELD_GET(PMC_PLL_CTRL1_MUL_MSK, UINT_MAX) + 1)
- 
--#define PLL_MAX_ID		7
-+#define PLL_MAX_ID		9
- 
- struct sam9x60_pll_core {
- 	struct regmap *regmap;
--- 
-2.43.0
+This lacks any description of what is done to __sgx_alloc_epc_page().
 
+>
+> Fixes: 901ddbb9ecf5 ("x86/sgx: Add a basic NUMA allocation scheme to sgx_=
+alloc_epc_page()")
+> Reported-by: Zhimin Luo <zhimin.luo@intel.com>
+> Tested-by: Zhimin Luo <zhimin.luo@intel.com>
+> Signed-off-by: Aaron Lu <aaron.lu@intel.com>
+
+BR, Jarkko
 
