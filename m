@@ -1,141 +1,109 @@
-Return-Path: <linux-kernel+bounces-307818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8A97965339
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 00:59:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FA2996533C
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 01:04:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA05D1C2139A
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 22:59:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 490AB1C2201C
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 23:04:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E0D51BA876;
-	Thu, 29 Aug 2024 22:59:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B460C18E37E;
+	Thu, 29 Aug 2024 23:04:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="iTJlKGwE"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fYYY2L4e"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C35F118B479
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 22:59:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 869CB18A6D2;
+	Thu, 29 Aug 2024 23:04:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724972370; cv=none; b=fj3974S3nysNDdWldsdUi2x+YTx244mbrjYfkLAZJUSjbw/INllwyjNJpppu7QK3N4evguD20iTfg/1cJ/lhU5KvhxzHOuSVs97kB2iyfRnvMQbPtOQctaeyf5ggACOowMTC6fC4vtySYFMRKiSKSH50OMR+U61RFrOWsEIGxEE=
+	t=1724972681; cv=none; b=LeXBvZb80czJFGGFOeJZWhQC3yQ95IJOkieSv+nf8YA02DUjaAVbqbwSfGc4hrkJHsdvH/s2uSomTB12SVAF2jeoNtSKR/lB1OjyJjj7M1kB8fMh7ujiaLRk79FFyKYqVdn5A6fdpmswXEvf/UwQrqiN+9EHSpBcDXD/eF4cyWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724972370; c=relaxed/simple;
-	bh=Bk9nvcNPuYQCoPoIErsrsyNLN3loPMb8Zblzi2Foa6k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WwCvPSELUooJFPtkc2DEv8yELdoVpLpkJJZ8bitls9/nIx43YS59OT5AFgQK+FynQkMY1QI6Oul96HzIW/tCWeZZLoJUDXm9piwg7C6FqceQPAksJEBAEjYPVMeXywxiB62K5ZaUcXBKYNKG8XEhOBSodhXIQHJaIC+wHNPs+68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=iTJlKGwE; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5343eeb4973so1861026e87.2
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 15:59:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1724972367; x=1725577167; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uVsb5vloMAD1GdpMiG4rd0u1mzBdAZQfDwkldS8oXjs=;
-        b=iTJlKGwEy3AiC3tzBdTEKk+j49kT3dDHGiLv/doa4rzzqvaO/7I+5iVr2jTkcromyW
-         IXAPXAnoZe24TjiWiSH/ABd+bQ+p9vxMXY6nW+mgsByHYc7RDXhtuvOyCZkAdM2Q5seb
-         64cm8uc6IVHjxtMej32C5Ou96bgoZBagChTsk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724972367; x=1725577167;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uVsb5vloMAD1GdpMiG4rd0u1mzBdAZQfDwkldS8oXjs=;
-        b=jQCQImI9enVki+pJjzt4BQY3OAIMcU3JBVfVqYFTTyO1g4WEedIe1X4xSgTSjKY1t4
-         6t/FN5HfUWmh5+wEo+lt72qYZtxtw8KV8fACJMwx5JjIkl2+r1HkZId792ajVnchYkOu
-         R4j5t8QReUlb/+pKxXa/ou6X/EJIWyqWjnfh4Li+emrax4//kD7g9tGnDFcGWMso3my2
-         3SyV8GBYXxGXVB/XDd9Z4O2CvI5U78+vBjUFiNnRz+Ya6PsfYbtdY+hCsxenaolBcUM0
-         atggk3iA7RFTbMGQ28O6S0y042x6WADnP/3jv11kYE4d9m1owkAHyOAIKMkfTaejp6jh
-         0K/g==
-X-Forwarded-Encrypted: i=1; AJvYcCV5QVyukmgzlhEL8Ir0iIOscsqB7KCBuAuCBzwUiA9Cc/ebedJcmlb33fw9vsGiZm+Z6R+yH5esXg+X4/Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYlZyg0BbtybdHVLqvjzmJ/i60HVVjic9Vo3SxzBsJksGDRDWB
-	mKgefk0gb7Zyh+baNvhv/98cvAgJGMux4OwVXonGSfLF1t6hUSaJ9V5K8KIEw5VgMWdX4cZH2lP
-	Fout1FDO9I+obSekqLLdxIs2zpTs1RyF6Y3v9mi1C86aEk9LrEA==
-X-Google-Smtp-Source: AGHT+IGdWMNOyEphrsPzqoD48h8mU45+hovuNUAzyuuz1RE9w9iKv6BseGfwi82INKvOJD1d4bt2ThiBjobdgBRgiOM=
-X-Received: by 2002:a05:6512:32c8:b0:52c:9ae0:beed with SMTP id
- 2adb3069b0e04-53546bfbf9dmr72183e87.52.1724972366622; Thu, 29 Aug 2024
- 15:59:26 -0700 (PDT)
+	s=arc-20240116; t=1724972681; c=relaxed/simple;
+	bh=xxKz9PCxVQJGKzd3KrLHagUw7YiCjOLdR1D0sByscmA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ArGURY9N5TmQ5kWqdYjp1DizsTf/LS8ZhIBoX/K3kejweedawNxi5gh3SXiOKNxj6o2h5gTCGQP71mcbqIImHnbqGJtMNMWUDMnamlwoM5Q66Sm7p2vxl9w7vtzp0hQ3ji0w1t6+OgatOBS1Dj1iUAYItGIPDDA1eC9FS11tBVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fYYY2L4e; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724972679; x=1756508679;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=xxKz9PCxVQJGKzd3KrLHagUw7YiCjOLdR1D0sByscmA=;
+  b=fYYY2L4e1V07AoyWKKWgUdY5bwfTlE3sK0Xn37GWPyKzfD35L6M2hDOG
+   ij1+pWRbWGEllgSAxS+9mvt3TZLQtB9Fc6Za6ujblvPACiNj7+s52KVjk
+   oVryv75MJAzrCa1F01Atjw5wV3P3REuBhDqicZ2z9FxOMZO2WWs+iDouE
+   E23Wg24usUsysbq19Ltko5Lf+ZwIxsV4hvpL4tTFloLZjipsXzvCT9kzi
+   1lxtNEG/l7We5GlCSDjLdADsp2nrhRiXsCOA/ImdhGija8XEZSGbcJL8Y
+   o6lv0Bz8kVHa4XzcaWq0QA2KaaP9D9sPqwN+hjNLnTlG92w8EVA3lnC+D
+   A==;
+X-CSE-ConnectionGUID: i9lOqrZZQeCjANDk9aZAWA==
+X-CSE-MsgGUID: PIRpRCtISziPPU+nrb1v7w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11179"; a="23787287"
+X-IronPort-AV: E=Sophos;i="6.10,187,1719903600"; 
+   d="scan'208";a="23787287"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 16:04:38 -0700
+X-CSE-ConnectionGUID: zZrwyE/lRvChSnynhLhZ3g==
+X-CSE-MsgGUID: 27Uof+B2QCmlHWAXj6GV2Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,187,1719903600"; 
+   d="scan'208";a="101234744"
+Received: from bpinto-mobl1.amr.corp.intel.com (HELO desk) ([10.125.65.120])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 16:04:39 -0700
+Date: Thu, 29 Aug 2024 16:04:29 -0700
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	linux-kernel@vger.kernel.org, x86@kernel.org,
+	Robert Gill <rtgill82@gmail.com>,
+	Jari Ruusu <jariruusu@protonmail.com>,
+	Brian Gerst <brgerst@gmail.com>,
+	"Linux regression tracking (Thorsten Leemhuis)" <regressions@leemhuis.info>,
+	antonio.gomez.iglesias@linux.intel.com,
+	daniel.sneddon@linux.intel.com, stable@vger.kernel.org
+Subject: Re: [PATCH v5] x86/entry_32: Use stack segment selector for VERW
+ operand
+Message-ID: <20240829230429.bksowrtyj7qqwtsh@desk>
+References: <20240711-fix-dosemu-vm86-v5-1-e87dcd7368aa@linux.intel.com>
+ <cdcc5b91-321b-4e33-9a86-829b8f632ae6@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240829085131.1361701-1-wenst@chromium.org> <20240829085131.1361701-3-wenst@chromium.org>
- <ZtBtqPB2MgwUCsM3@smile.fi.intel.com>
-In-Reply-To: <ZtBtqPB2MgwUCsM3@smile.fi.intel.com>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Fri, 30 Aug 2024 07:59:15 +0900
-Message-ID: <CAGXv+5GBgWqz2_WaSLdQzd6dzK-vSHyMYPpQRWzCj7vt3u8EoQ@mail.gmail.com>
-Subject: Re: [PATCH v2 02/10] regulator: core: Fix regulator_is_supported_voltage()
- kerneldoc return value
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cdcc5b91-321b-4e33-9a86-829b8f632ae6@intel.com>
 
-On Thu, Aug 29, 2024 at 9:46=E2=80=AFPM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
->
-> On Thu, Aug 29, 2024 at 04:51:22PM +0800, Chen-Yu Tsai wrote:
-> > The kerneldoc for regulator_is_supported_voltage() states that the
-> > return value is a boolean. That is not correct, as it could return an
-> > error number if the check failed.
-> >
-> > Fix the description by expanding it to cover the valid return values an=
-d
-> > error conditions. The description is also converted to a proper "Return=
-"
-> > section.
->
-> ...
->
-> > - * Returns a boolean.
-> > + * Return: 1 if the voltage range is supported, 0 if not, or a negativ=
-e error
-> > + *      number if @regulator's voltage can't be changed and voltage re=
-adback
-> > + *      failed.
->
-> Not sure why you have TABs in the following lines, but I think you have c=
-hecked
-> the rendered files (html, man, pdf) and all look good.
+On Thu, Aug 29, 2024 at 03:28:13PM -0700, Dave Hansen wrote:
+> On 7/11/24 15:03, Pawan Gupta wrote:
+> > +/*
+> > + * Safer version of CLEAR_CPU_BUFFERS that uses %ss to reference VERW operand
+> > + * mds_verw_sel. This ensures VERW will not #GP for an arbitrary user %ds.
+> > + */
+> > +.macro CLEAR_CPU_BUFFERS_SAFE
+> > +	ALTERNATIVE "", __stringify(verw %ss:_ASM_RIP(mds_verw_sel)), X86_FEATURE_CLEAR_CPU_BUF
+> > +.endm
+> 
+> One other thing...
+> 
+> Instead of making a "_SAFE" variant, let's just make the 32-bit version
+> always safe.
 
-It seems that the kernel-doc tool isn't properly trimming the leading
-whitespace for RST output. However it is doing it correctly for manpage
-output. And for html, pdf and all the other outputs that go through
-Sphinx, the latter reformats stuff and seems to drop the extra whitespace.
+That sounds good to me.
 
-I looked at the kernel-doc a bit, but wasn't able to immediately spot where
-the problem was.
+> Also, is there any downside to using %ss: on 64-bit?  If not, let's just
+> update the one and only CLEAR_CPU_BUFFERS use %ss:.
 
-> Alternatively it might be written as
->
->  * Return:
->  * 1 if the voltage range is supported, 0 if not, or a negative error num=
-ber
->  * if @regulator's voltage can't be changed and voltage readback failed.
->
-> which should be the same in the render.
-
-The RST output then has extra empty lines. *shrugs*
-
-
-ChenYu
-
->
-> (Also similar applies to the other patch(es))
->
-> --
-> With Best Regards,
-> Andy Shevchenko
->
->
+A quick test after adding %ss: on 64-bit doesn't show any significant
+latency difference. I will revise the patch.
 
