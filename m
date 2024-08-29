@@ -1,155 +1,148 @@
-Return-Path: <linux-kernel+bounces-307158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A4EB964957
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 17:01:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EA9E964952
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 17:00:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E4BD1C229E5
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:01:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC0111F23567
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:00:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C8481B1429;
-	Thu, 29 Aug 2024 15:01:14 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0DF91B14EF;
+	Thu, 29 Aug 2024 15:00:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="GWmagH0U"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 162EA36B0D;
-	Thu, 29 Aug 2024 15:01:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44E1A3A1A8
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 15:00:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724943673; cv=none; b=tgStRduWG5wD/69Dw5PwBhwONn3lUzfmaxTqCRRxZOtj8YTzSLXGIrPciaG8K5MCaX8ajHS/RWoLO98zW6h+242gPvS9rIwPrbB908nNRZSwlmH7bNh7f4J9tLzVa0QTsTAiOay4gRsXp2NqRb0P9B/pqG3XCZzVzfM876ciqZ4=
+	t=1724943625; cv=none; b=r3v3T1Cm2TrxTEb/rFVi5f5t0TRNNQOh1nDkkLF+ZujNcf2vAZBY6hkDU3aN/oCAo1vw2NubhE0Y57JdqcaAhj5FLvOPnEvQHEoX5yUxP9UPE4zPiLYL2oHNmf67AC3w3ePieaOR5UICB9W4HK9rpTf0ktU08+43KGoxPD0lfzc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724943673; c=relaxed/simple;
-	bh=yxT/CITz2Ev+XRlXd/JOk8lr2Jz4zNqFFvpl/UT9/tQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TloShmt8ouALh+lWDAY5+Pod21bLa731GqLKD/LuSs7c+FKIslEtl1B2cFp0oJ+SVZjUYALvt7+jvyaq1fW59ZQhG5OyhEPHwcJvHEMWRUs1iKw8EP1Ujf/gj4Gg+jTfOoIbCBFuPYHkGjf4d04meXLGKnG+ulKtKbZvv96GgT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4WvkxW5xyLz9sTX;
-	Thu, 29 Aug 2024 17:01:03 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id CjnhSQGtSteZ; Thu, 29 Aug 2024 17:01:03 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4Wvkwf6YQGz9sSX;
-	Thu, 29 Aug 2024 17:00:18 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id CF1CB8B794;
-	Thu, 29 Aug 2024 17:00:18 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id Ebp-7Axw5H8e; Thu, 29 Aug 2024 17:00:18 +0200 (CEST)
-Received: from [192.168.234.40] (unknown [192.168.234.40])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 398B98B764;
-	Thu, 29 Aug 2024 17:00:18 +0200 (CEST)
-Message-ID: <0085b19d-bb87-45bc-8a74-7464316f86a1@csgroup.eu>
-Date: Thu, 29 Aug 2024 17:00:17 +0200
+	s=arc-20240116; t=1724943625; c=relaxed/simple;
+	bh=sVn91xrolhVEEiy6TWS8+uyci7ep+YQUPghYPzFMyK0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KMYjvd+ucMAsiRtsFKZ0P7FAxsLeMhAYVix2aU+AN7eMCpicmfGNtumtQa2gXhgD0y8Ql+UozOwvcKa61Lm1ea/Wd2rINn4y1Z5lN1GgOwtJZiNMkZV9GBZNLg4XX+B3xGYNhgl3CZTifpeUray0DZy3ye46U2w8YdtJhezpX4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=GWmagH0U; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-428e3129851so7194335e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 08:00:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1724943621; x=1725548421; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=nabzqbq3d4n7upoEt7nD8rDZUukL6YPjVtAA5PPRGA4=;
+        b=GWmagH0UtvPlHZx8+UT/ZyeEkQ/MGhryAEjiHzcMr4euf9W+kS5q6wZXu+rX8vqysM
+         bC5dH31v9OH+7cFCZhCzPDYkgk4jml7ejONpPCXkQA18YBkbm1UxhQmRfSBdQp5ZoXMe
+         JJN1AWpPuUGQZsJymBNiWBstfC5PW6HR9psoKUtFayWf9lrfkRXJuCDEylpnnLx7HnOW
+         VCTzrQk3rfcNTSC/Ekpf3txiMmcTWYBOlV2eunmi55VlNCyTt2IyWK2lJw5HfEZEN9ev
+         kf8RRLKSxW3KNrGEwclpou3MG79FOX2Hm14FsEYgCcjLTDnBurIDZcL7zqFFhtf0hYF0
+         hA7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724943621; x=1725548421;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nabzqbq3d4n7upoEt7nD8rDZUukL6YPjVtAA5PPRGA4=;
+        b=lWUteEzBnqg8FxtZBFkn2AYy+Ai/VQYclDxuMNFE+ztQgeYGoLreQQDXSUyPl8wHpC
+         8jp7NlUgd1+NV7eTxBlQSN0aTVhlInUpvuzVv4RkHQWmMt3JWEQP/P1PtcntyoJRKuKf
+         L22H+erWmWPuLnE/+e+erzmHFyng+gu1z8YzkLIxCFpst/UACVfIHvtdByBgBsO7A0KC
+         /KzBcZEDTSQ5Y2IJnkcs4nZmXZYZw+xLRtbKTTMabjfiFcE8uHSZeRj1jVM8LHnEYkB8
+         BrXyr6nSeNQsE/skEm0DhzrrWGT6TUZTKH7+llYBohRI+6I6lusvvIiCyIPGYeW6fNJP
+         mIRw==
+X-Forwarded-Encrypted: i=1; AJvYcCXfZEtSl1pQZrH+EpZb+aI40469aYHu8FbMKfxESR0oIjb/1BGv7fMDya+B3kVenlBn9+MSZfpJvGTCQT4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YznBuK8FxhhMvnmLpDMtKwSIubHlUP0JmjsaLYYG3fbd1S0Oifu
+	2njsWje2qReNO7mvUAQRm4eS8QCkkHkPSZ8T2j56dwi6NjVMZ2zWA8AqOneIQg8=
+X-Google-Smtp-Source: AGHT+IFGM3zEq1G1Y27SykyTrp93FIcWQs50mww6UNMM9UAx7l9nMYelCvutFX66Xd9aJmaFkviA7w==
+X-Received: by 2002:a05:600c:3b10:b0:427:d8f2:5dee with SMTP id 5b1f17b1804b1-42bb01bb04dmr27517565e9.15.1724943621333;
+        Thu, 29 Aug 2024 08:00:21 -0700 (PDT)
+Received: from localhost (109-81-82-19.rct.o2.cz. [109.81.82.19])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3749ee4ab0bsm1629466f8f.16.2024.08.29.08.00.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Aug 2024 08:00:20 -0700 (PDT)
+Date: Thu, 29 Aug 2024 17:00:19 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Zhongkun He <hezhongkun.hzk@bytedance.com>
+Cc: akpm@linux-foundation.org, hannes@cmpxchg.org, roman.gushchin@linux.dev,
+	shakeel.butt@linux.dev, muchun.song@linux.dev,
+	lizefan.x@bytedance.com, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org
+Subject: Re: [External] Re: [RFC PATCH 0/2] Add disable_unmap_file arg to
+ memory.reclaim
+Message-ID: <ZtCNA3iKd0_mH8Bf@tiehlicka>
+References: <20240829101918.3454840-1-hezhongkun.hzk@bytedance.com>
+ <ZtBMO1owCU3XmagV@tiehlicka>
+ <CACSyD1Ok62n-SF8fGrDQq_JC4SUSvFb-6QjgjnkD9=JacCJiYg@mail.gmail.com>
+ <ZtBglyqZz_uGDnOS@tiehlicka>
+ <CACSyD1NWVe9gjo15xsPnh-JUEsacawf47uoiu439tRO7K+ov5g@mail.gmail.com>
+ <ZtB5Vn69L27oodEq@tiehlicka>
+ <CACSyD1Ny8OFxZkVPaskpnTDXgWZLBNK04GwjynT2a0ahUwKcAw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] random: vDSO: Redefine PAGE_SIZE and PAGE_MASK
-To: Vincenzo Frascino <vincenzo.frascino@arm.com>,
- Arnd Bergmann <arnd@arndb.de>, "Jason A . Donenfeld" <Jason@zx2c4.com>
-Cc: Theodore Ts'o <tytso@mit.edu>, Andy Lutomirski <luto@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
- linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- Linux-Arch <linux-arch@vger.kernel.org>
-References: <b8f8fb6d1d10386c74f2d8826b737a74c60b76b2.1724743492.git.christophe.leroy@csgroup.eu>
- <defab86b7fb897c88a05a33b62ccf38467dda884.1724747058.git.christophe.leroy@csgroup.eu>
- <Zs2RCfMgfNu_2vos@zx2c4.com>
- <cb66b582-ba63-4a5a-9df8-b07288f1f66d@app.fastmail.com>
- <0f9255f1-5860-408c-8eaa-ccb4dd3747fa@csgroup.eu>
- <17437f43-9d1f-4263-888e-573a355cb0b5@arm.com>
- <272cb38a-c0e3-4e6e-89ce-b503c75c2c33@csgroup.eu>
- <bab7286c-e27e-450a-8bb6-e5b09063a033@arm.com>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <bab7286c-e27e-450a-8bb6-e5b09063a033@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACSyD1Ny8OFxZkVPaskpnTDXgWZLBNK04GwjynT2a0ahUwKcAw@mail.gmail.com>
 
-Hi Vincenzo,
-
-Le 29/08/2024 à 14:01, Vincenzo Frascino a écrit :
-> Hi Christophe,
+On Thu 29-08-24 22:30:09, Zhongkun He wrote:
+> On Thu, Aug 29, 2024 at 9:36 PM Michal Hocko <mhocko@suse.com> wrote:
+[...]
+> > Seeing this my main question is whether we should focus on swappiness
+> > behavior more than adding a very strange and very targetted reclaim
+> > mode. After all we have a mapped memory and executables protection in
+> > place. So in the end this is more about balance between anon vs. file
+> > LRUs.
+> >
 > 
-> On 27/08/2024 18:14, Christophe Leroy wrote:
->>
->>
->> Le 27/08/2024 à 18:05, Vincenzo Frascino a écrit :
->>> Hi Christophe,
->>>
->>> On 27/08/2024 11:49, Christophe Leroy wrote:
->>>
->>> ...
+> I  have a question about the swappiness, if set the swappiness=0, we can only
+> reclaim the file pages. but we do not have an option to disable the reclaim from
+> file pages because there are faster storages for the swap without IO, like zram
+> and zswap.  I wonder if we can give it a try in this direction.
+
+I do not think we should give any guarantee that 200 will only reclaim
+anon pages. But having that heavily anon oriented makes sense and I
+thought this was an existing semantic.
+
+[...]
+> > > The delay of the task becomes more serious because reading data will
+> > > be slower.  Hot pages will thrash repeatedly between the memory and
+> > > the disk.
+> >
+> > Doesn't refault stats and IO cost aspect of the reclaim when balancing
+> > LRUs dealing with this situation already? Why it doesn't work in your
+> > case? Have you tried to investigate that?
 > 
-> ...
+> OK, I'll try to reproduce the problem again. but IIUC, we could not reclaim
+> pages from one side. Please see this 'commit d483a5dd009  ("mm:
+> vmscan: limit the range of LRU type balancing")'  [1]
 > 
->>>
->>> Could you please clarify where minmax is needed? I tried to build Jason's master
->>> tree for x86, commenting the header and it seems building fine. I might be
->>> missing something.
->>
->> Without it:
->>
->>    VDSO32C arch/powerpc/kernel/vdso/vgetrandom-32.o
->> In file included from /home/chleroy/linux-powerpc/lib/vdso/getrandom.c:11,
->>                   from <command-line>:
-> ...
+> Unless this condition is met:
+> sc->file_is_tiny =
+>             file + free <= total_high_wmark &&
+>             !(sc->may_deactivate & DEACTIVATE_ANON) &&
+>             anon >> sc->priority;
+
+There have been some changes in this area where swappiness was treated
+differently so it would make sense to investigate with the current mm
+tree.
+
+> [1]: https://lore.kernel.org/all/20200520232525.798933-15-hannes@cmpxchg.org/T/#u
 > 
->>
->>
->>>
->>>> Same for ARRAY_SIZE(->reserved) by the way, easy to do opencode, we also have it
->>>> only once
->>>>
->>>
->>> I have a similar issue to figure out why linux/array_size.h and
->>> uapi/linux/random.h are needed. It seems that I can build the object without
->>> them. Could you please explain?
->>
->> Without linux/array_size.h:
->>
->>    VDSO32C arch/powerpc/kernel/vdso/vgetrandom-32.o
->> In file included from <command-line>:
->> /home/chleroy/linux-powerpc/lib/vdso/getrandom.c: In function
->> '__cvdso_getrandom_data':
->> /home/chleroy/linux-powerpc/lib/vdso/getrandom.c:89:40: error: implicit
-> If this is the case, those headers should be defined for the powerpc
-> implementation only. The generic implementation should be interpreted as the
-> minimum common denominator in between all the architectures for what concerns
-> the headers.
-> 
+> > --
+> > Michal Hocko
+> > SUSE Labs
 
-Sorry, I disagree. You can't rely on necessary headers being included 
-indirectly by other arch specific headers. getrandom.c uses 
-ARRAY_SIZE(), it must include the header that defines ARRAY_SIZE().
-
-At the moment, on x86 you get linux/array.h by change through the 
-following chain, that the reason why the build doesn't break:
-
-In file included from ./include/linux/kernel.h:16,
-                  from ./include/linux/cpumask.h:11,
-                  from ./arch/x86/include/asm/cpumask.h:5,
-                  from ./arch/x86/include/asm/msr.h:11,
-                  from ./arch/x86/include/asm/vdso/gettimeofday.h:19,
-                  from ./include/vdso/datapage.h:164,
-                  from 
-arch/x86/entry/vdso/../../../../lib/vdso/getrandom.c:9,
-
- From my point of view you can't expect such a chain from each architecture.
-
-Christophe
+-- 
+Michal Hocko
+SUSE Labs
 
