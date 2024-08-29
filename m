@@ -1,147 +1,215 @@
-Return-Path: <linux-kernel+bounces-305957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 528EA96370F
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 02:50:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B20396370C
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 02:50:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11562286158
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 00:50:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA91B1F24E26
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 00:49:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C9651B7F4;
-	Thu, 29 Aug 2024 00:49:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F7A815AC4;
+	Thu, 29 Aug 2024 00:49:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nqU1Bx7Z"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="j19TwASp"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8DBCDDC5
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 00:49:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E64D0610B;
+	Thu, 29 Aug 2024 00:49:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724892592; cv=none; b=HNyDE6PlmIKUl4RJjr8eE0jfjjwOevdOFmDETiq6Mi0Gm0g+kVGV/rQvpVc5vMlb3H7e5jBOo3udfk30ClHIUr7zvTJmiNV0w5yuDNT2avMxjrPlhshQe/D2QN0H5VKQ4jm2x7FrbWEf8RiKTjdeo86gUHoPj/xLFZD/Aix/X+w=
+	t=1724892591; cv=none; b=FwJJMqAGwAx7CC1C62o1d5g+BpLMUdOsMCbPLr9yNfeUH+OlqrCzg3YGejktSkPxUZFHLl7jD8v1yaRWrthfwTvetzeX5in0uJb/lmK46acknIur4WPvMRWkHXQ/hACMc1gba2yj+bCpC5OqWW9aDw3mg7MHobe4O8lY52w2JMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724892592; c=relaxed/simple;
-	bh=U4veOOUlCcB/bJrp/tF/bns+tvPzVcDIUb4yeIgaxd0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BhvqPw1GFYPvqaE1vNeoRPJ2y53WPod2fSCeohWYsPg0KFsSQp34+ySFdTttWTwhsRdTO1qOSvsLaocHoOwalSvykGsVKZTS9U8GbvCtZBCD5N1UwCk6/uoNdYe2U09e6tistVu/eBzDlUfbRLQ69kl+JJ5mkN/U2doEEVhRMwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nqU1Bx7Z; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5343617fdddso135062e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 17:49:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724892589; x=1725497389; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YgNhr2hOvaIzUB9HOdlqFWv+1peGGJauE+dQeJtfJwg=;
-        b=nqU1Bx7Z9Ewj4pVsb6Kd0ttmLNtzDPIZ7EaypoDriFwv8sxszA33HdF+RbZDncVU/b
-         UfL7UEQJWF2Y/dCNyN0DYeWvHFv41uCzdSha2ozYw/TEopu+3volfGyaOwVnBT1iCtI0
-         seO8sJWpHPF6rocHy35KSQTrwTYAqpYUM5xR8NOL7BuybnyKCLjbsEp0L5K1iJkr71/v
-         qWXsbGA0ynIIRl0OPJ5Q0Ip1QrPa1Jgg2O5OOXH46ajYwfRGVcHQz32gGQWqL0vjiObs
-         UhxGw9eRumidFonF//2aIsF5fJ1vbcVH+de4dnVUu/nTSB88ktICKEmEWtUIvfuKcUqe
-         TPFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724892589; x=1725497389;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YgNhr2hOvaIzUB9HOdlqFWv+1peGGJauE+dQeJtfJwg=;
-        b=rt45reW292kapXuXjJ6AYSyxzEtz0R231nxs08Vp8Q+YpzD+jFY1BClAXiwH2xYbrI
-         CDKrnyPFLSz3yjpLdcmQwNg5DKixRhFGPGWNbywWuFD3Xw/IX5ukZ8vKhC0L+TXQxqp5
-         Ysd9p0ZgHYW+7cgI4uhpGZmD0YtBPYS7dbCQ8DAXt1MVUmxVl/uwHrnlynxp8PXN5WE9
-         nRvGDHu1whWrQaukVZT2Vw8lU4A9frmdIPyDmJjum7P3MaVqaFa3tRD1hxWfg3ZbYQT1
-         +5C/sDU7TnouFdc9tL8HFve5Ibpb1BnanNv0gbCQZRqrnP1iqvsVel3iQI2kG8YBgBBz
-         PJvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXf935rhq6yFQRGtcDDKiu3eLGMh+oAQSthAk531enZWd4nsKgcadASjw8u96ne3GKQebig2/G3rQ/HsYk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwyIwkufe3HnPCLQvzI5d0wXWVzUBXhlhecK9k8aIQBk6BCFkwD
-	z3GccFpF8yvYAqcV1pmfrd9Wr29tptmy6PwiiqcLU1jgWCWy8LBULZ0fnaIZ4yhKCHef+kTi4V/
-	EgURI9UWJdx4q0C7S8cD85eNBRbyuGmaKoqsH
-X-Google-Smtp-Source: AGHT+IFbLJO1WrEKaTu56WQixgXfjvPLXB5l+59RZUZ1w2d/9xDAjb08PsiI9Y3aJjgbC9IsdbZBpL9Av59w0rMtU9M=
-X-Received: by 2002:a05:6512:220f:b0:533:483f:9562 with SMTP id
- 2adb3069b0e04-5353e5acc64mr700179e87.42.1724892588520; Wed, 28 Aug 2024
- 17:49:48 -0700 (PDT)
+	s=arc-20240116; t=1724892591; c=relaxed/simple;
+	bh=xOiW6B4LLIcBerkPMQAR6l5SYJ2sZW1RjziIMwAZwYQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=SulUaNiBgttgbax3yLTTgy7oarpdEGHlXeUC9YhJR8WbkMwy8HwVDHgzIY9Lu2kTRqQa9umYcxzTK5GpfuvRFL/2St6++w78l+LqR2cxrJvfDh6O8OJyMIQ65kJtfZf9UGnX6JImFpduZzrUau0COiPaGRucZkHjTujGlLNopIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=j19TwASp; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1724892585;
+	bh=328Prx/KK8v+a7H8wqcR70si4uCIzGzfuIJ25nYD0JE=;
+	h=Date:From:To:Cc:Subject:From;
+	b=j19TwASp/C2+yyA+WVoLHzfjKw0wsTJGLXnw3gerYydrASkWCGa1u7NpF4fpuRuCf
+	 +DqEqXBU9323ufBF9mPmkrwZHa3VAKzTKF0ETKVjWnmEyiEyoVlTEg6lriq4ytM2Ls
+	 yW2NwVe/C11BUleFwTXAI1VKkNgSKik4/DdLqZ2dCgfXc/TsyS+2PA6s9NxdGBvpi9
+	 Wt3x/V7YIL77XZH4+20s6W2G1d31KFrfaDDeQ/M9iWQS3L+XnQKnQBGVJeiJV2J6jr
+	 lB4bDQg8BXig9Iyjja4Y/q8zDFhc0vVZ07nJSXQdzI5sVilkpzZK4HgcfYorWNpnGJ
+	 GfkT96jpC/VgA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WvN3C6Bxvz4wxJ;
+	Thu, 29 Aug 2024 10:49:43 +1000 (AEST)
+Date: Thu, 29 Aug 2024 10:49:43 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Dave Airlie <airlied@redhat.com>, Daniel Vetter
+ <daniel.vetter@ffwll.ch>, Jani Nikula <jani.nikula@linux.intel.com>, Joonas
+ Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi
+ <rodrigo.vivi@intel.com>
+Cc: Imre Deak <imre.deak@intel.com>, DRI <dri-devel@lists.freedesktop.org>,
+ Intel Graphics <intel-gfx@lists.freedesktop.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the drm tree with the drm-intel-fixes
+ tree
+Message-ID: <20240829104943.5f4b2ab3@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240827235228.1591842-1-shakeel.butt@linux.dev>
- <CAJD7tkYPzsr8YYOXP10Z0BLAe0E36fqO3yxV=gQaVbUMGhM2VQ@mail.gmail.com> <txl7l7vp6qy3udxlgmjlsrayvnj7sizjaopftyxnzlklza3n32@geligkrhgnvu>
-In-Reply-To: <txl7l7vp6qy3udxlgmjlsrayvnj7sizjaopftyxnzlklza3n32@geligkrhgnvu>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Wed, 28 Aug 2024 17:49:12 -0700
-Message-ID: <CAJD7tkY88cAnGFy2zAcjaU_8AC_P5CwZo0PSjr0JRDQDu308Wg@mail.gmail.com>
-Subject: Re: [PATCH v2] memcg: add charging of already allocated slab objects
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Michal Hocko <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	Muchun Song <muchun.song@linux.dev>, Vlastimil Babka <vbabka@suse.cz>, 
-	David Rientjes <rientjes@google.com>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, 
-	Eric Dumazet <edumazet@google.com>, "David S . Miller" <davem@davemloft.net>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Meta kernel team <kernel-team@meta.com>, 
-	cgroups@vger.kernel.org, netdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/GZwGiN5L/uBJl1ACUbLZkS3";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/GZwGiN5L/uBJl1ACUbLZkS3
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 28, 2024 at 5:20=E2=80=AFPM Shakeel Butt <shakeel.butt@linux.de=
-v> wrote:
->
-> On Wed, Aug 28, 2024 at 04:25:30PM GMT, Yosry Ahmed wrote:
-> > On Tue, Aug 27, 2024 at 4:52=E2=80=AFPM Shakeel Butt <shakeel.butt@linu=
-x.dev> wrote:
-> > >
-> [...]
-> > > +
-> > > +       /* Ignore KMALLOC_NORMAL cache to avoid circular dependency. =
-*/
-> > > +       if ((s->flags & KMALLOC_TYPE) =3D=3D SLAB_KMALLOC)
-> > > +               return true;
-> >
-> > Taking a step back here, why do we need this? Which circular
-> > dependency are we avoiding here?
->
-> commit 494c1dfe855ec1f70f89552fce5eadf4a1717552
-> Author: Waiman Long <longman@redhat.com>
-> Date:   Mon Jun 28 19:37:38 2021 -0700
->
->     mm: memcg/slab: create a new set of kmalloc-cg-<n> caches
->
->     There are currently two problems in the way the objcg pointer array
->     (memcg_data) in the page structure is being allocated and freed.
->
->     On its allocation, it is possible that the allocated objcg pointer
->     array comes from the same slab that requires memory accounting. If th=
-is
->     happens, the slab will never become empty again as there is at least
->     one object left (the obj_cgroup array) in the slab.
->
->     When it is freed, the objcg pointer array object may be the last one
->     in its slab and hence causes kfree() to be called again. With the
->     right workload, the slab cache may be set up in a way that allows the
->     recursive kfree() calling loop to nest deep enough to cause a kernel
->     stack overflow and panic the system.
->     ...
+Hi all,
 
-Thanks for the reference, this makes sense.
+Today's linux-next merge of the drm tree got conflicts in:
 
-Wouldn't it be easier to special case the specific slab cache used for
-the objcg vector or use a dedicated cache for it instead of using
-kmalloc caches to begin with?
+  drivers/gpu/drm/i915/display/intel_dp_mst.c
+  drivers/gpu/drm/i915/display/intel_dp_mst.h
 
-Anyway, I am fine with any approach you and/or the slab maintainers
-prefer, as long as we make things clear. If you keep the following
-approach as-is, please expand the comment or refer to the commit you
-just referenced.
+between commit:
 
-Personally, I prefer either explicitly special casing the slab cache
-used for the objcgs vector, explicitly tagging KMALLOC_NORMAL
-allocations, or having a dedicated documented helper that finds the
-slab cache kmalloc type (if any) or checks if it is a KMALLOC_NORMAL
-cache.
+  a2ccc33b88e2 ("drm/i915/dp_mst: Fix MST state after a sink reset")
+
+from the drm-intel-fixes tree and commit:
+
+  e44bc451aa4b ("drm/i915/dp_mst: Ensure link parameters are up-to-date for=
+ a disabled link")
+
+from the drm tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/gpu/drm/i915/display/intel_dp_mst.c
+index 17978a1f9ab0,45d2230d1801..000000000000
+--- a/drivers/gpu/drm/i915/display/intel_dp_mst.c
++++ b/drivers/gpu/drm/i915/display/intel_dp_mst.c
+@@@ -1999,42 -2033,32 +2033,72 @@@ bool intel_dp_mst_crtc_needs_modeset(st
+  	return false;
+  }
+ =20
+ +/*
+ + * intel_dp_mst_verify_dpcd_state - verify the MST SW enabled state wrt. =
+the DPCD
+ + * @intel_dp: DP port object
+ + *
+ + * Verify if @intel_dp's MST enabled SW state matches the corresponding D=
+PCD
+ + * state. A long HPD pulse - not long enough to be detected as a disconne=
+cted
+ + * state - could've reset the DPCD state, which requires tearing
+ + * down/recreating the MST topology.
+ + *
+ + * Returns %true if the SW MST enabled and DPCD states match, %false
+ + * otherwise.
+ + */
+ +bool intel_dp_mst_verify_dpcd_state(struct intel_dp *intel_dp)
+ +{
+ +	struct intel_display *display =3D to_intel_display(intel_dp);
+ +	struct intel_connector *connector =3D intel_dp->attached_connector;
+ +	struct intel_digital_port *dig_port =3D dp_to_dig_port(intel_dp);
+ +	struct intel_encoder *encoder =3D &dig_port->base;
+ +	int ret;
+ +	u8 val;
+ +
+ +	if (!intel_dp->is_mst)
+ +		return true;
+ +
+ +	ret =3D drm_dp_dpcd_readb(intel_dp->mst_mgr.aux, DP_MSTM_CTRL, &val);
+ +
+ +	/* Adjust the expected register value for SST + SideBand. */
+ +	if (ret < 0 || val !=3D (DP_MST_EN | DP_UP_REQ_EN | DP_UPSTREAM_IS_SRC))=
+ {
+ +		drm_dbg_kms(display->drm,
+ +			    "[CONNECTOR:%d:%s][ENCODER:%d:%s] MST mode got reset, removing top=
+ology (ret=3D%d, ctrl=3D0x%02x)\n",
+ +			    connector->base.base.id, connector->base.name,
+ +			    encoder->base.base.id, encoder->base.name,
+ +			    ret, val);
+ +
+ +		return false;
+ +	}
+ +
+ +	return true;
+ +}
+++
++ /**
++  * intel_dp_mst_prepare_probe - Prepare an MST link for topology probing
++  * @intel_dp: DP port object
++  *
++  * Prepare an MST link for topology probing, programming the target
++  * link parameters to DPCD. This step is a requirement of the enumaration
++  * of path resources during probing.
++  */
++ void intel_dp_mst_prepare_probe(struct intel_dp *intel_dp)
++ {
++ 	int link_rate =3D intel_dp_max_link_rate(intel_dp);
++ 	int lane_count =3D intel_dp_max_lane_count(intel_dp);
++ 	u8 rate_select;
++ 	u8 link_bw;
++=20
++ 	if (intel_dp->link_trained)
++ 		return;
++=20
++ 	if (intel_mst_probed_link_params_valid(intel_dp, link_rate, lane_count))
++ 		return;
++=20
++ 	intel_dp_compute_rate(intel_dp, link_rate, &link_bw, &rate_select);
++=20
++ 	intel_dp_link_training_set_mode(intel_dp, link_rate, false);
++ 	intel_dp_link_training_set_bw(intel_dp, link_bw, rate_select, lane_count,
++ 				      drm_dp_enhanced_frame_cap(intel_dp->dpcd));
++=20
++ 	intel_mst_set_probed_link_params(intel_dp, link_rate, lane_count);
++ }
+diff --cc drivers/gpu/drm/i915/display/intel_dp_mst.h
+index 9e4c7679f1c3,fba76454fa67..000000000000
+--- a/drivers/gpu/drm/i915/display/intel_dp_mst.h
++++ b/drivers/gpu/drm/i915/display/intel_dp_mst.h
+@@@ -27,6 -27,6 +27,7 @@@ int intel_dp_mst_atomic_check_link(stru
+  				   struct intel_link_bw_limits *limits);
+  bool intel_dp_mst_crtc_needs_modeset(struct intel_atomic_state *state,
+  				     struct intel_crtc *crtc);
+ +bool intel_dp_mst_verify_dpcd_state(struct intel_dp *intel_dp);
++ void intel_dp_mst_prepare_probe(struct intel_dp *intel_dp);
+ =20
+  #endif /* __INTEL_DP_MST_H__ */
+
+--Sig_/GZwGiN5L/uBJl1ACUbLZkS3
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbPxacACgkQAVBC80lX
+0GwxrggAnkLvdxxVwdkUUWqdiK/6bWQEkakrEP+8xcWxlqAEESdHL1g7diwE1iKr
+WZhYYl5i7us55wxcjS9mlDzLgNWKs8Y9TYbu/aG4vtNW+JT76X2z9ST/gnBQamjF
+AaAc/hr4a+OBv089w0p8enHXqEEHuuTQpVyxUAjcqXjX3jqly9v7UNl6dYQKzN1G
+CfcZdkMq4KV6TsKRIwTiCGH2NuW/fifHG433B0ZOm059gP6VbMIs3ShS/PeruIBm
+3XKX2VKgO2H+KM8CH58IkE+8cU7Rk+OQBnXPMPeaNu83y0UAzkV9jTLLJPxOL0Ty
+cfATNAdbIDG9gPMYF4msXYb4ovuQpg==
+=RssE
+-----END PGP SIGNATURE-----
+
+--Sig_/GZwGiN5L/uBJl1ACUbLZkS3--
 
