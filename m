@@ -1,95 +1,129 @@
-Return-Path: <linux-kernel+bounces-306380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB377963E2F
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:16:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9159963E44
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:22:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A79C32817D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:16:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2BDDCB20C83
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:22:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C10D1547C7;
-	Thu, 29 Aug 2024 08:16:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1DB218C030;
+	Thu, 29 Aug 2024 08:22:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="aqQsQk0p"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="Q9Z2J8aW"
+Received: from out162-62-58-211.mail.qq.com (out162-62-58-211.mail.qq.com [162.62.58.211])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5031A18A6A4
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 08:16:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DCCD18C022;
+	Thu, 29 Aug 2024 08:22:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724919363; cv=none; b=D1oJYc4hiZhcWqezyUSBpk4nVhdTr3slsvL9ar/ZAZGb4XXWYqfo5S3SeiAdF7yIdT0DJy+nHkoEk13QIsFjjj8sfvGebZcM9+boIinZMyGH9+poSSdiS2z8L7gkXI17JGzyk0+GoUM1uxYtoxrxP2yE4cf+NC3zI2uFtdEHq9w=
+	t=1724919746; cv=none; b=DctCz0QNCtHtnFGX/GN2BwvhvN+M8f/JG/DPouEllCkVAsP99qYEbMY6NjWE8lweoE5BN2aZMDmL4JsubojHkjgWZc3XaxTbOWWziouRAZzrLiVr4A/ZhaGI0Ue+d9542bDPTq3xouHmDyJZGqA+P72BAf/ocV3AZud1ZaBIKXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724919363; c=relaxed/simple;
-	bh=hgfPFlygVsmSFU8MWVbrkM+wiYsy1kjSdCReS4KohoQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Dafwmh94AkFMOQTncJY8HjUnKGFx8dhFRWgH6MEzEF9cMHKar6vDMDud5DYURv82cXlmMPkySa6RWAj7TvecmCv/ckCxQFRxOppj7FmAoL2sHDMSZ+Vek3Z0lPUfy7NonFJd3LRqzp7jbV24TxDWCuRgWH1xbHgSkZUXluc5coc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=aqQsQk0p; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-53345dcd377so484583e87.2
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 01:16:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1724919360; x=1725524160; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=hgfPFlygVsmSFU8MWVbrkM+wiYsy1kjSdCReS4KohoQ=;
-        b=aqQsQk0p9Nab8BUKB75HE+esk41HM5t2XSaJumkuHRagsJCuwC1wty3l2nZYo0RGQh
-         EkdyWy1j5nbcuGWm3jIugjK3xce7gPlKBe4zootSVCLUN6RSNzx7J7bCL24lABWoAQ1j
-         xc6y0iYsxE2UMMNRXMTSJfkr6O5vb9zTVu/L0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724919360; x=1725524160;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hgfPFlygVsmSFU8MWVbrkM+wiYsy1kjSdCReS4KohoQ=;
-        b=mACi8bFLWagtW7JssQVHvaJwRIyl+ofVLxlYp9RtAcOBHHVAUSNVzIdX1FwXSHByCH
-         mEY2fiuGeR9LCIXVnWkgtT/YKWgBy8hVFh6jrNqqN1c2+L9teVmF1Xe4LL6AQ24W7msy
-         UAka51bFdzzekH4GZnGL33eiIBXEo2JM7/b7/X0MaPjHGDCLcWeCGBnadcr/RosQoaXZ
-         DHNFSSRlJcMoNe0u51E7vsMdUPlRsEAmO+DF+ZCUOzDcDCQ1bZv9Y9FHLn2yz7MR8C8S
-         8iqoygjBsmuaBDLzpkzx7+lZqQyMSTeFuMLr1wqAcvoNq5Xv24GNUphiWUKgI4swXlZo
-         q22A==
-X-Forwarded-Encrypted: i=1; AJvYcCWQbWLLg/0cHRmqWlFXf+TlCV/h5i9Jg6ZJTvGSkMr0dgxddDTx/PrlaWRxN09G3Cj5qxk0isD3gL3RRUU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOxY24FGV+y3m4B0u9sDrlYOIdxku/4NXJIKTE7/Q12s+X8hCC
-	VA1Z89RAh8kdgIKNElqgz1pFHIvFS99PzTwtVe0LZRZ+RdvPf3qEp9E+E6X9fo5/oEbRRa81bD4
-	RkUFIn4yjWRFt/ax7c/SAXG9kau+9t4DVBW+9/g==
-X-Google-Smtp-Source: AGHT+IGWS0LzVgGYASD5Jl73txQdZXI+e7fJCODjI9BM0dxAVFMbrbV6HBv0du/zkBXGadfSyri58PzSUbwtmzXp02k=
-X-Received: by 2002:a05:6512:b06:b0:533:4b38:3983 with SMTP id
- 2adb3069b0e04-5353e54d9bamr1037899e87.20.1724919360260; Thu, 29 Aug 2024
- 01:16:00 -0700 (PDT)
+	s=arc-20240116; t=1724919746; c=relaxed/simple;
+	bh=bVjOsFHlUAm9nepEgGhZ++5jXEtWJ/2Y9LASG1bvx2w=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=UfW67UfKGlJDxbQIplh5x6gCF73TjYhjktDWTMwSfyaOpYAG+mZXs8dOoIDmUNRCVM5sOwn2S6p9AWRqE9c6OwZl5YuQ4XYvGa2IG5uBNzehkp+7/g+svCaCHRWuaUfMJKt3cXd/3JwPb11Dph0JLNGJFHUN/ERZGQJSOTR8/i8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=Q9Z2J8aW; arc=none smtp.client-ip=162.62.58.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1724919431;
+	bh=G6OG4H1WLyacS5PMKfxonqfaFSFAIEY1UFXEdN/73bE=;
+	h=From:To:Cc:Subject:Date;
+	b=Q9Z2J8aWWKkioeEIgjxZTApApfKju9NwR0N69UzSWsb+awbbV677oqP1/PGuolpJu
+	 DpoZeFb9BKOBm+PG4lQU6aqFNcFnslYdE3nia5+oqphfm6dqT1bdU2xAwx17tJjRuS
+	 PeqF9k8fEh3m6xMomPpnBaurKiH2LQeR2RncPaxM=
+Received: from localhost.localdomain ([114.246.200.160])
+	by newxmesmtplogicsvrszc13-0.qq.com (NewEsmtp) with SMTP
+	id 44912C98; Thu, 29 Aug 2024 16:17:09 +0800
+X-QQ-mid: xmsmtpt1724919429tbzim1qcm
+Message-ID: <tencent_466225AA599BA49627FB26F707EE17BC5407@qq.com>
+X-QQ-XMAILINFO: NBOcPERDMH3ANhqjOvm1DeQFsdKqp07qfgxDzpB49ygQAEIA/97qtGiz20yUf0
+	 5C2YwHKUUE2IrBmFNS4CDIoihaZV4Er+1oWFqqlB/x/ozWqOLziTEr2oRiDL1xNGZ45L4+sTx1Zi
+	 lpCj1j2Yp4WLHPbHlOtxhf2UuS0s9p3iQnQqCdHa0SNeoCxI+vbKnJueLAioqu1+jSyi485CgAj+
+	 tO3VLjYe1hixv4sc2zQvOnbVlMHR1ojGVR7Zcp9vR3nkdPZJNzjDXutgc6T9axSDlJzyS0oOkvI4
+	 aD8Nc7MCUy93YaC71YZH1syiqD6WSaLNQ3VLvpDlStjj67pzjT0banP77UMgZHmrAro00moEmKxv
+	 LEz9qfP9iyZDXXIozcSBKhan3xb4PS1hhU+6RNfEYAJIyvhsefXu8chq/GsRK/UnovpGBNZrmzbg
+	 XXLXO0CQfbRqSyAGzpes7ZPjsLpSCJhVFBQtmtkVy2gCbFtySg0IjOSkmQkD0BOGrY79MZtTxQ2N
+	 pUgDf36mfWFr0nRERytAywNnzLF3YyAbDfOVGyT4X92J66LI3bFKnmfA+mw6oaCNgXN57nnekVOC
+	 51xk/yYQ0j/6NQeyXvKBsg3HTmCQZJha0UF29hA9DDGqNaidlhR7oJzqtLjWiUSDg6x4W0w92v2W
+	 Fq1eaZlaPFSLZdyiqZlaCj2FzOjaBUY4MQYNLnxvBNNUtIKxJ9KhJPmT0YBVtL8M9Hw1GhGWKSgj
+	 VLUa+BbHP6QpZVH46tjumJlWwVCxIcX/pANi+SCz8Bvr0P7r/88u5LoGvAUFBLV1bFWHeCvCTMmk
+	 i5fFV3i5XY5EoZ5jqzsM0+L3mErlqdF6NdwPG3ZzzQcQFlp4xgV2Lyw/qqjW69ylVBKT3WZSwtpd
+	 x16CrP8/YiCQfzjwMOYxvDzJKOKOYkjB5ucTttsxW90ObFDWgpRdTrLc8QA4qaA1xTNEMLKIbIm+
+	 JcHBeR3P/9KnEgKlYGUFhFHJVmx9t/F53rXaaEBxXJ08k3+2h7TFR//zYsVgm+UEmgYmzV0y5ykC
+	 kh/0XqA3Qn8t3txI9T9VRAkLCQpy6a/PR0gXRLmsBRAPrMBM89v3qCfDyPpmzAI5BLzRHWug==
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+From: Jiawei Ye <jiawei.ye@foxmail.com>
+To: ajay.kathat@microchip.com,
+	claudiu.beznea@tuxon.dev,
+	kvalo@kernel.org,
+	alexis.lothore@bootlin.com
+Cc: linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] wifi: wilc1000: fix potential RCU dereference issue in wilc_parse_join_bss_param
+Date: Thu, 29 Aug 2024 08:17:09 +0000
+X-OQ-MSGID: <20240829081709.35856-1-jiawei.ye@foxmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240105152129.196824-1-aleksandr.mikhalitsyn@canonical.com>
- <20240105152129.196824-3-aleksandr.mikhalitsyn@canonical.com>
- <CAJfpegsttFdeZnahAFQS=jG_uaw6XMHFfw7WKgAhujLaNszcsw@mail.gmail.com> <CAEivzxc4=p63Wgp_i+J7YVw=LrKTt_HfC5fAL=vGT9AXjUgqaw@mail.gmail.com>
-In-Reply-To: <CAEivzxc4=p63Wgp_i+J7YVw=LrKTt_HfC5fAL=vGT9AXjUgqaw@mail.gmail.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Thu, 29 Aug 2024 10:15:48 +0200
-Message-ID: <CAJfpegu2=ozU9LdceA+NP9gmaLFdx9TbhOAqAsN=1SNihu=PyA@mail.gmail.com>
-Subject: Re: [PATCH v1 2/3] fuse: use GFP_KERNEL_ACCOUNT for allocations in fuse_dev_alloc
-To: Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-Cc: mszeredi@redhat.com, Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Christian Brauner <brauner@kernel.org>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Shakeel Butt <shakeel.butt@linux.dev>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Thu, 18 Jul 2024 at 12:01, Aleksandr Mikhalitsyn
-<aleksandr.mikhalitsyn@canonical.com> wrote:
+In the `wilc_parse_join_bss_param` function, the TSF field of the `ies`
+structure is accessed after the RCU read-side critical section is
+unlocked. According to RCU usage rules, this is illegal. Reusing this
+pointer can lead to unpredictable behavior, including accessing memory
+that has been updated or causing use-after-free issues.
 
-> I have also added Christian because he might be interested in
-> accounting for struct super_block.
+This possible bug was identified using a static analysis tool developed
+by myself, specifically designed to detect RCU-related issues.
 
-IMO doing it in the VFS as well makes much more sense than just the
-fuse specific parts.
+To address this, the TSF value is now stored in a local variable
+`ies_tsf` before the RCU lock is released. The `param->tsf_lo` field is
+then assigned using this local variable, ensuring that the TSF value is
+safely accessed.
 
-Thanks,
-Miklos
+Fixes: 205c50306acf ("wifi: wilc1000: fix RCU usage in connect path")
+Signed-off-by: Jiawei Ye <jiawei.ye@foxmail.com>
+---
+ drivers/net/wireless/microchip/wilc1000/hif.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/wireless/microchip/wilc1000/hif.c b/drivers/net/wireless/microchip/wilc1000/hif.c
+index 3c48e1a57b24..bba53307b960 100644
+--- a/drivers/net/wireless/microchip/wilc1000/hif.c
++++ b/drivers/net/wireless/microchip/wilc1000/hif.c
+@@ -384,6 +384,7 @@ wilc_parse_join_bss_param(struct cfg80211_bss *bss,
+ 	struct wilc_join_bss_param *param;
+ 	u8 rates_len = 0;
+ 	int ies_len;
++	u64 ies_tsf;
+ 	int ret;
+ 
+ 	param = kzalloc(sizeof(*param), GFP_KERNEL);
+@@ -399,6 +400,7 @@ wilc_parse_join_bss_param(struct cfg80211_bss *bss,
+ 		return NULL;
+ 	}
+ 	ies_len = ies->len;
++	ies_tsf = ies->tsf;
+ 	rcu_read_unlock();
+ 
+ 	param->beacon_period = cpu_to_le16(bss->beacon_interval);
+@@ -454,7 +456,7 @@ wilc_parse_join_bss_param(struct cfg80211_bss *bss,
+ 				    IEEE80211_P2P_ATTR_ABSENCE_NOTICE,
+ 				    (u8 *)&noa_attr, sizeof(noa_attr));
+ 	if (ret > 0) {
+-		param->tsf_lo = cpu_to_le32(ies->tsf);
++		param->tsf_lo = cpu_to_le32(ies_tsf);
+ 		param->noa_enabled = 1;
+ 		param->idx = noa_attr.index;
+ 		if (noa_attr.oppps_ctwindow & IEEE80211_P2P_OPPPS_ENABLE_BIT) {
+
 
