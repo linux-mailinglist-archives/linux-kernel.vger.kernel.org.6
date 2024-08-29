@@ -1,139 +1,113 @@
-Return-Path: <linux-kernel+bounces-306610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD205964129
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 12:18:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8D40964153
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 12:20:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BB222888C5
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:18:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0CBD5B2591A
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:20:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CE4E19066C;
-	Thu, 29 Aug 2024 10:16:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFA1819413F;
+	Thu, 29 Aug 2024 10:17:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="CFScTE9Q"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y3j2YPlk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75CE5190485;
-	Thu, 29 Aug 2024 10:16:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37035194081;
+	Thu, 29 Aug 2024 10:17:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724926592; cv=none; b=QRclQo5FKtJSQBu/LNbouAnHpMweIHywzPOIYVeRAcECMGdbDakGRU7VENUEtaoMRiyXATcaQG3vwmhVxF7vRf8sxtDdH3zFV6TW/4Se318SkhHfUTgk5QWnDWdQ9bHKIqA/F+x3r6MQIkxe18hoNJaBb4nU3IMavc+yooUkIl8=
+	t=1724926625; cv=none; b=J0JpMKEQedoZfyvKhbF1LRtf/wq8J6ASXptJkoekyd+64bYUrzVEaSsYE0Cs5W7r6OCFtCRwrG/AmSE6fKXUpDaNaWAVIOfcHc4iNRIE1cF5IrD16xusCvmfPKUjmCKHWPiKxLB5doH5E2hO/MjXAFz5AECKrIt30VM3HGu36zI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724926592; c=relaxed/simple;
-	bh=/LU6fryYn2sVSl/rTPdmvhFTh+vk4wxWRyKtICXy3mk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Mb2rjI5OOmnVFTzlDvYlXDvZTjkifqMWZXRIPaiPW4p8v42faHJcf3a25QeNTtXkiw1M+SwBQXYn6U8V1o5Ea3siOVVc5rmApxpzo7ktPHC34DusUbXoC0EYhcS5Qg9xIzAL+HtzgcQ7Nxngu4uuqLIWNLHpXG7JPWJSh7NW5WU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=CFScTE9Q; arc=none smtp.client-ip=212.227.17.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
-	s=s31663417; t=1724926574; x=1725531374; i=wahrenst@gmx.net;
-	bh=H+7yYy6PjlWDok5bWZPfuzjYnyw163BFGochPgRoawE=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=CFScTE9Q/bwa9rkMNxUwVgPo4bmEfKTOyqORUtCaCQa+lDNScrTq1wkTiJMvYNil
-	 zQLJDp+WePijIjOnqhEAngS0ZS9E1F/GIj5PjFXQ27ilCY8jFmEdCjh/l4ab812up
-	 lz9Cm68oG28qi4kCIlfi585tLGzM8QBsQn8Zaw/NU2pbrsNZefG8YKlydgxXZNHp2
-	 m3zNy4baAdyFg3HNuUFkzXiOysR59nX5XHucwidWg/6RjGZ+voUr6ZWfZbug8AvHl
-	 3eGH+9SmGw2tajVdp8XeJ9ifa38sSSHjabuS6gnEW6Yuo6wunk4NIcA9NdXQmSVL7
-	 C4SmADy+bwwOp+1Bow==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.1.127] ([37.4.248.43]) by mail.gmx.net (mrgmx104
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1Mv2xU-1rst5S1wG0-00tofn; Thu, 29
- Aug 2024 12:16:14 +0200
-Message-ID: <fce999af-3613-4704-81a8-048159288b59@gmx.net>
-Date: Thu, 29 Aug 2024 12:16:13 +0200
+	s=arc-20240116; t=1724926625; c=relaxed/simple;
+	bh=OPy596UFuUNgIYpD1Xx8R1sbYfsep1TcTlYPrJFlXNA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WiVaDM5fFjj41iOyd1HIilvO2r/dABpZkpL88XTRnARLDyCo8Dg3zct1MI8jlBSJtZDA38PPhz1yaXy+nuKZhau6HrZO7gAHNBfPn/XxFGH98yjlNw0B3Jxx5B32sHEnBiaZGTt31jrYcYCQGPbQGi3ek49zZQyLSQZNtA9YfqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y3j2YPlk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25ACAC4CEC3;
+	Thu, 29 Aug 2024 10:17:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724926624;
+	bh=OPy596UFuUNgIYpD1Xx8R1sbYfsep1TcTlYPrJFlXNA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Y3j2YPlkHTFy3hAMbNpM8FV26zWcYsCgzJtam1W9gNjEkikHp8VOTYk4DKEZ7iYez
+	 nkWdGKFi2Kj0XqQruhimKIs5JV6U6wOmHlk1yfr3KcCPSSi0C4krcNQ4iMqHQsNwKx
+	 mKzwkDmcoxmw8jdbvNdoPVjYt9kLQCnEuYBuEitw+SVGj5x047frVxZmwcH6eeO6Yd
+	 9l+Ox4V4YtKrn8kZ7YIXqQoZmWX4yBzrUihqa/LEB1L44qwBZckZWx8q2ag8+j7dUq
+	 GrjhMjMkFUt3Bz+riXaoxpgkNJiW5LK0K8oBzoj/Cn4kcSqKj888KKgdHQMgUt3mpm
+	 ymqQbzIYncmBw==
+Date: Thu, 29 Aug 2024 13:17:01 +0300
+From: Leon Romanovsky <leon@kernel.org>
+To: Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>
+Cc: Shen Lichuan <shenlichuan@vivo.com>, jgg@ziepe.ca,
+	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+	opensource.kernel@vivo.com
+Subject: Re: [PATCH v1] RDMA/sw/rdmavt/mr: Convert to use ERR_CAST()
+Message-ID: <20240829101701.GC26654@unreal>
+References: <20240828082720.33231-1-shenlichuan@vivo.com>
+ <e8cb7488-aea2-4829-9942-dd55b127c25e@cornelisnetworks.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/5] i2c: imx-lpi2c: improve i2c driver probe priority
-To: carlos.song@nxp.com, aisheng.dong@nxp.com, andi.shyti@kernel.org,
- shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
- festevam@gmail.com
-Cc: linux-i2c@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240829093722.2714921-1-carlos.song@nxp.com>
- <20240829093722.2714921-4-carlos.song@nxp.com>
-Content-Language: en-US
-From: Stefan Wahren <wahrenst@gmx.net>
-In-Reply-To: <20240829093722.2714921-4-carlos.song@nxp.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:SRnNv4qabiDdwcVkDlCU2V8o6ns6tVenwj4ys2jeomh9FZF5x0T
- ei1sPoIylr0SxOMpGM3etirdEIMZ4BhM8MxW/EmkvbqHLzfga5cBaJvIgIEF5MYFFnfYSbJ
- twN5P9qvqyINQxRsweJ7r3mWH2BhFG57jyENImO88XZSI284Ubqfix7Ceag5zfC4eJ2iL9d
- U7/taYniSg/luTvhqttpw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:gFLkRigh9WI=;lOYWjUXUOCsaf3gLRTYolEcp7vj
- uM59YuGB9kBH3IJ2PmChVm9L3YhYurzzk2u1/8kRNYsyNi2vA8/mE3VN9aRB0tw7Hh6Fl8G6O
- GHDI45V+TVtuoi1sFqlsdRGC42iWyQKHJXfvHVtjQ8i3c1IumVZic6oqI80DHxYfisbOtiVxC
- kRFobdwGiz2N/2BsED4rbSbrdU8tRFrd7/VBB0UQL2pXaruRAoWRbGt6QJXF7r0nA6h70FMwR
- cNhlZF1t9US7KN6yUZW0PyTVMs/oFcN2wOtSpC1Y1dpZb+uKeXHZKz3656PbwF8J/UKeb44Xx
- bPEQSwCrCKswavi+kOGLJAhQnxtMmfV11JXYd0HPdHt+twD//uhnh2q8moDZ8AjkiU2TXNr3A
- AeBxqGlGFoBhjF4eesV/ZUw+FRoMGQUFzNDwZ/XM+HVKtB9uGKB4KqM9TjZD9f2yzBKmzoYLb
- TkDeJTdouyi16G964WIUTsMbORX5+QtplfP+QhHtT25iEAuLHhvqcxruH2H85BiXJ+cBQnrp0
- bGsNqtYNHEU/YXFeTvtZEnjZSikON49+CzySG9lusQ5yPIDDi2+Cdi1F2ZFkfXrSl9ARxOa9n
- 6Gw+mJGySXKcUTnzH/R6ZexqohvjHhOoj7aApqATjgjfR3UZ8RabJokmCjxN171Lun3aNWEol
- cj7Rnf+zz4dzOFjWXazpcZLpy4IIVjG44wiC1ejkbc6KQ03kR6qUz61s3Gid66Py4asj9SaJL
- wE3yDOX6wE4LEbwvinN8Zbj4pEb0aRSA7wfXxYmXZgYpHuKZphvNxf47jYUmT0ab6GzN1jfWh
- W6TT/NXMDmJKGUaVXEhGocyQ==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e8cb7488-aea2-4829-9942-dd55b127c25e@cornelisnetworks.com>
 
-Hi Carlos,
+On Wed, Aug 28, 2024 at 12:06:17PM -0400, Dennis Dalessandro wrote:
+> On 8/28/24 4:27 AM, Shen Lichuan wrote:
+> > As opposed to open-code, using the ERR_CAST macro clearly indicates that 
+> > this is a pointer to an error value and a type conversion was performed.
+> > 
+> > Signed-off-by: Shen Lichuan <shenlichuan@vivo.com>
+> > ---
+> >  drivers/infiniband/sw/rdmavt/mr.c | 6 +++---
+> >  1 file changed, 3 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/drivers/infiniband/sw/rdmavt/mr.c b/drivers/infiniband/sw/rdmavt/mr.c
+> > index 7a9afd5231d5..5ed5cfc2b280 100644
+> > --- a/drivers/infiniband/sw/rdmavt/mr.c
+> > +++ b/drivers/infiniband/sw/rdmavt/mr.c
+> > @@ -348,13 +348,13 @@ struct ib_mr *rvt_reg_user_mr(struct ib_pd *pd, u64 start, u64 length,
+> >  
+> >  	umem = ib_umem_get(pd->device, start, length, mr_access_flags);
+> >  	if (IS_ERR(umem))
+> > -		return (void *)umem;
+> > +		return ERR_CAST(umem);
+> >  
+> >  	n = ib_umem_num_pages(umem);
+> >  
+> >  	mr = __rvt_alloc_mr(n, pd);
+> >  	if (IS_ERR(mr)) {
+> > -		ret = (struct ib_mr *)mr;
+> > +		ret = ERR_CAST(mr);
+> >  		goto bail_umem;
+> >  	}
+> >  
+> > @@ -542,7 +542,7 @@ struct ib_mr *rvt_alloc_mr(struct ib_pd *pd, enum ib_mr_type mr_type,
+> >  
+> >  	mr = __rvt_alloc_mr(max_num_sg, pd);
+> >  	if (IS_ERR(mr))
+> > -		return (struct ib_mr *)mr;
+> > +		return ERR_CAST(mr);
+> >  
+> >  	return &mr->ibmr;
+> >  }
+> 
+> I don't think this is really necessary. You are not making the code more
+> readable. It doesn't simplify things. So I'm not going to Ack it, but I won't
+> Nak either.
 
-Am 29.08.24 um 11:37 schrieb carlos.song@nxp.com:
-> From: Carlos Song <carlos.song@nxp.com>
->
-> Some i2c devices such as PMICs need i2c bus available early.
-> Use subsys_initcall to improve i2c driver probe priority.
-thanks for providing this patch.
+I will take it because ERR_CAST is slightly better way to return error pointers.
 
-Please try to be more specific, which devices/platform has been effected
-by this issue. It would be nice to provide to kind of
-link/reference/discussion.
+Thanks
 
-Best regards
->
-> Signed-off-by: Carlos Song <carlos.song@nxp.com>
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
->   drivers/i2c/busses/i2c-imx-lpi2c.c | 12 +++++++++++-
->   1 file changed, 11 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/i2c/busses/i2c-imx-lpi2c.c b/drivers/i2c/busses/i2c=
--imx-lpi2c.c
-> index 0159ade235ef..210d505db76d 100644
-> --- a/drivers/i2c/busses/i2c-imx-lpi2c.c
-> +++ b/drivers/i2c/busses/i2c-imx-lpi2c.c
-> @@ -1487,7 +1487,17 @@ static struct platform_driver lpi2c_imx_driver =
-=3D {
->   	},
->   };
->
-> -module_platform_driver(lpi2c_imx_driver);
-> +static int __init lpi2c_imx_init(void)
-> +{
-> +	return platform_driver_register(&lpi2c_imx_driver);
-> +}
-> +subsys_initcall(lpi2c_imx_init);
-> +
-> +static void __exit lpi2c_imx_exit(void)
-> +{
-> +	platform_driver_unregister(&lpi2c_imx_driver);
-> +}
-> +module_exit(lpi2c_imx_exit);
->
->   MODULE_AUTHOR("Gao Pan <pandy.gao@nxp.com>");
->   MODULE_DESCRIPTION("I2C adapter driver for LPI2C bus");
-
+> 
+> -Denny
 
