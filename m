@@ -1,113 +1,84 @@
-Return-Path: <linux-kernel+bounces-306458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA0EE963F46
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:56:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A7DF963EFD
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:48:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82F8728198D
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:56:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17D9FB22CA3
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:48:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A1B318D63E;
-	Thu, 29 Aug 2024 08:55:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="ewCNwA1v"
-Received: from smtpbg156.qq.com (smtpbg156.qq.com [15.184.82.18])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90F0918C34D;
+	Thu, 29 Aug 2024 08:47:59 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FFAD18CBF4;
-	Thu, 29 Aug 2024 08:55:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=15.184.82.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47E5615666A
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 08:47:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724921739; cv=none; b=V/x4Icm3auGmD8LsxQIvmfXi6q3Xd/7794GbWLkWPMpvQGwZd1WqIcO+DhbFp1b0i5T7o47VzxUGTgrpgeiPZfdHFOoDoQNbmqFRxFFKpBNZ3b9c6RuBiPr4new7PmjdVE5M/YcuNjrhYuTvzztDNaMeQr/DV7QBGM/8ChLfFIo=
+	t=1724921279; cv=none; b=shYvkfPlheU/Z4E/ZCTJ+diG3MqCv8XhSlH0REQFDiaesXm9aC+VBfJaX51tmLmOO1v1WEXTRkJHmRkAaYam/aTnpyahZedCw2qX5+YgqVZbn8BsGtUDaTQK9qtdTmGsRhmWVrfmRepUU2BD7rbnNuBbu/cS4JmVa+B0ZYiNDF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724921739; c=relaxed/simple;
-	bh=irF/Exbh8tNHJyA0mbYDXwJY+Vdp/Xe4uxYhxNaFg+0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ur9vnrOiUbRdeZiHnThtW4gnywGoZpQoDrX/WJZ3h7fs1xb7IpZLlCRKiZUWzwyCle8FKnr46KtonMn4tTXbcoroeLHKLWTf5q+T+w+doRJNhTVgk+65vbcM0nWc4Bhkxckb5uP3sVM9I736WaUA0KqQ+wynTTugA/SzaS8WvRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=ewCNwA1v; arc=none smtp.client-ip=15.184.82.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1724921724;
-	bh=9f8xxWjXOiiRlGB1TNKCMEUgG8ygajsw78osxDrP6mo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=ewCNwA1v0P6AUtz7JJ2x90ZkLRpIpohUy/hc5Boh0sLyqEJGR9D41dFsSVOJZh2wl
-	 Zb0Q+0XwmPLGKl4H54/nJ0i2tHHkvX+XBQ8JueykrYp7RWiCKInrpo531KW0fLwtqY
-	 nXmxqbgYVL9rk7tbZdtuHVLL3XE3FIsG1qAEL7aY=
-X-QQ-mid: bizesmtpsz15t1724921721tj1qhz
-X-QQ-Originating-IP: MFmiqbLlMzHklrZhjHSs0ONeA9dWI0dP6A0aey/qloU=
-Received: from [10.20.53.89] ( [113.57.152.160])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Thu, 29 Aug 2024 16:55:19 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 3019131951402270349
-Message-ID: <A2BAFE2C814CDA13+6d47d76e-f0be-4380-bc98-9bd303ac52d6@uniontech.com>
-Date: Thu, 29 Aug 2024 16:55:19 +0800
+	s=arc-20240116; t=1724921279; c=relaxed/simple;
+	bh=68BG5uiEx3FsWZGMHxYsCWxXUTRCeyAjNYiFWt8yWjQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=FHCtHkZfH09W9Hrqpyof6r6TqalKCDNb/jghd7Pe8aFiY9Y5AJe6LSBypeWgKMdtq04O/oIRx+1lcRdbpr6GmEsUgKbMPV9/Ey67Oxahs2MKyhyuhtABklnxn83Y8NFDKUDh1GkX86ukT6kBWJMzAwQonMF19VX6iRpP3w14OpM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4WvZfk2lWJz1j7hn;
+	Thu, 29 Aug 2024 16:47:42 +0800 (CST)
+Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
+	by mail.maildlp.com (Postfix) with ESMTPS id AD57A1A0188;
+	Thu, 29 Aug 2024 16:47:54 +0800 (CST)
+Received: from huawei.com (10.90.53.73) by kwepemh500013.china.huawei.com
+ (7.202.181.146) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 29 Aug
+ 2024 16:47:54 +0800
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+To: <linux-kernel@vger.kernel.org>, <dave@nullcore.net>
+CC: <ruanjinjie@huawei.com>
+Subject: [PATCH -next RESEND] uts: Use KMEM_CACHE_USERCOPY() helper
+Date: Thu, 29 Aug 2024 16:55:52 +0800
+Message-ID: <20240829085552.157119-1-ruanjinjie@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] usb: xHCI: add XHCI_RESET_ON_RESUME quirk for Phytium
- xHCI host
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: mathias.nyman@intel.com, bhelgaas@google.com, linux-usb@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
- guanwentao@uniontech.com, zhanjun@uniontech.com,
- Chen Baozi <chenbaozi@phytium.com.cn>,
- Wang Zhimin <wangzhimin1179@phytium.com.cn>,
- Chen Zhenhua <chenzhenhua@phytium.com.cn>,
- Wang Yinfeng <wangyinfeng@phytium.com.cn>,
- Jiakun Shuai <shuaijiakun1288@phytium.com.cn>
-References: <59E000092FD56E43+20240829073005.304698-1-wangyuli@uniontech.com>
- <2024082944-say-caution-befe@gregkh>
-From: WangYuli <wangyuli@uniontech.com>
-Autocrypt: addr=wangyuli@uniontech.com; keydata=
- xjMEZoEsiBYJKwYBBAHaRw8BAQdAyDPzcbPnchbIhweThfNK1tg1imM+5kgDBJSKP+nX39DN
- IVdhbmdZdWxpIDx3YW5neXVsaUB1bmlvbnRlY2guY29tPsKJBBMWCAAxFiEEa1GMzYeuKPkg
- qDuvxdofMEb0C+4FAmaBLIgCGwMECwkIBwUVCAkKCwUWAgMBAAAKCRDF2h8wRvQL7g0UAQCH
- 3mrGM0HzOaARhBeA/Q3AIVfhS010a0MZmPTRGVfPbwD/SrncJwwPAL4GiLPEC4XssV6FPUAY
- 0rA68eNNI9cJLArOOARmgSyJEgorBgEEAZdVAQUBAQdA88W4CTLDD9fKwW9PB5yurCNdWNS7
- VTL0dvPDofBTjFYDAQgHwngEGBYIACAWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCZoEsiQIb
- DAAKCRDF2h8wRvQL7sKvAP4mBvm7Zn1OUjFViwkma8IGRGosXAvMUFyOHVcl1RTgFQEAuJkU
- o9ERi7qS/hbUdUgtitI89efbY0TVetgDsyeQiwU=
-In-Reply-To: <2024082944-say-caution-befe@gregkh>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpsz:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemh500013.china.huawei.com (7.202.181.146)
 
+Use KMEM_CACHE_USERCOPY() macro to simplify code.
 
-On 2024/8/29 16:46, Greg KH wrote:
-> Please read the top of this file, there's no need to add this id to this
-> file as you are only using it in one .c file.
+Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+---
+ kernel/utsname.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
-Thanks for review.
-
-More files using PCI_VENDOR_ID_PHYTIUM will appear,though maybe not in 
-the USB subsystem.
-
-These patches are on their way and I won't keep you waiting too long.
-
-However,if I temporarily delete this line and use a raw hexadecimal 
-value in xhci-pci.c,I'll need to modify xhci-pci.c again soon.
-
-If you think it is more reasonable and acceptable,I'll send a patch-v2 
-immediately to avoid breaking the rules for pci_ids.
-
->
-> thanks,
->
-> greg k-h
->
-Thanks,
+diff --git a/kernel/utsname.c b/kernel/utsname.c
+index b1ac3ca870f2..b9917ea6142d 100644
+--- a/kernel/utsname.c
++++ b/kernel/utsname.c
+@@ -168,10 +168,5 @@ const struct proc_ns_operations utsns_operations = {
+ 
+ void __init uts_ns_init(void)
+ {
+-	uts_ns_cache = kmem_cache_create_usercopy(
+-			"uts_namespace", sizeof(struct uts_namespace), 0,
+-			SLAB_PANIC|SLAB_ACCOUNT,
+-			offsetof(struct uts_namespace, name),
+-			sizeof_field(struct uts_namespace, name),
+-			NULL);
++	uts_ns_cache = KMEM_CACHE_USERCOPY(uts_namespace, SLAB_PANIC | SLAB_ACCOUNT, name);
+ }
 -- 
-WangYuli
+2.34.1
 
 
