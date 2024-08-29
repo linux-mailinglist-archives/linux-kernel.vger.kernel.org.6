@@ -1,223 +1,159 @@
-Return-Path: <linux-kernel+bounces-306323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEBA7963D4B
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 09:41:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16C9F963D56
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 09:41:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4060E1F255E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 07:41:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C98F3284022
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 07:41:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 320581891AC;
-	Thu, 29 Aug 2024 07:41:03 +0000 (UTC)
-Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8D50189F39;
+	Thu, 29 Aug 2024 07:41:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HmHgo8oe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C61F5588E
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 07:40:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACF3718786F;
+	Thu, 29 Aug 2024 07:41:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724917262; cv=none; b=jPS4f6CrIAsg06Mc9esWkmLGV0+vkQR3PLQMW07zVkhfMzmIKDS0DbT8WM9R6D7oo7WNKD7XMsGbMrPgiflok7FUkW6T7AUGiYowz3j8KjwhdQYzuFd59agDyQ16Bx6jXvICbPSKlL51d45//fiSPrvhPxkfweKIHE39CTCERzY=
+	t=1724917271; cv=none; b=e7AJEgSo5tm5rapNpXPiq0bYyq1rv/9KHaJowxW/DznO9AfEMeiWp1Zled0yULxxh2ikMmGSOedqc07wHMvhS9hDCTpR6VY/nBCnbAU/TwwxzByFQAELsMiFvb5Y91fYVn7fe3QJuFXIaSLoyRpGYUcgP61NufmcsnmTKlrUA5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724917262; c=relaxed/simple;
-	bh=clUOSNy1tnYZXYJ2rQjtl1YSvWtxyFyfj9AFS+QpEE0=;
-	h=CC:Subject:To:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=cHY300mB3RZW0eqPseqMa9HZA1AR5sYsLhlyzbYCWI7XnfP2hJHdCHBF5u+KmWD0NOA+EcQCiRhQ5WFbzwhaL2Csl9Pdme8Yla3YJrSSQbbCrjIoeFe9xWqUMeZdTluyDhpkZ6zdidwpmxoPZr0rJGskLnIlksEhnKdZ1MfO2vY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4WvY9R35lhz1S9NC;
-	Thu, 29 Aug 2024 15:40:43 +0800 (CST)
-Received: from kwepemd200014.china.huawei.com (unknown [7.221.188.8])
-	by mail.maildlp.com (Postfix) with ESMTPS id 6E2971A0188;
-	Thu, 29 Aug 2024 15:40:56 +0800 (CST)
-Received: from [10.67.121.177] (10.67.121.177) by
- kwepemd200014.china.huawei.com (7.221.188.8) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Thu, 29 Aug 2024 15:40:55 +0800
-CC: <yangyicong@hisilicon.com>, <linuxppc-dev@lists.ozlabs.org>,
-	<bp@alien8.de>, <dave.hansen@linux.intel.com>, <mingo@redhat.com>,
-	<linux-arm-kernel@lists.infradead.org>, <mpe@ellerman.id.au>,
-	<peterz@infradead.org>, <tglx@linutronix.de>, <sudeep.holla@arm.com>,
-	<will@kernel.org>, <catalin.marinas@arm.com>, <x86@kernel.org>,
-	<linux-kernel@vger.kernel.org>, <dietmar.eggemann@arm.com>,
-	<gregkh@linuxfoundation.org>, <rafael@kernel.org>,
-	<jonathan.cameron@huawei.com>, <prime.zeng@hisilicon.com>,
-	<linuxarm@huawei.com>, <xuwei5@huawei.com>, <guohanjun@huawei.com>
-Subject: Re: [PATCH v5 3/4] arm64: topology: Support SMT control on ACPI based
- system
-To: Pierre Gondois <pierre.gondois@arm.com>
-References: <20240806085320.63514-1-yangyicong@huawei.com>
- <20240806085320.63514-4-yangyicong@huawei.com>
- <a998c723-7451-439a-9c88-7c8b5c1b890b@arm.com>
-From: Yicong Yang <yangyicong@huawei.com>
-Message-ID: <00e6110a-462a-c117-0292-e88b57d27a05@huawei.com>
-Date: Thu, 29 Aug 2024 15:40:54 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.5.1
+	s=arc-20240116; t=1724917271; c=relaxed/simple;
+	bh=aHZMkQDzCqEolSJErzNW13s9Sq63WuDyOLBXJI90a54=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RWeDd6v6+wrQkI99gawchgq7zkYqreTk+yRhGJHSl8UIrjThHMiF+VxvG62RMbVwD92pb2454WLnKAnN95U2+KmiBc8hPYsa2JjBVXF5V4rK0230/a3TM0PO/uFAHIKHBBIPJ7+xgqbRw6W7ys/0VXjE/McalA4bZeKR/a9vncA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HmHgo8oe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A786EC4CEC1;
+	Thu, 29 Aug 2024 07:41:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724917270;
+	bh=aHZMkQDzCqEolSJErzNW13s9Sq63WuDyOLBXJI90a54=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HmHgo8oeaXn2wJ2b8iG4fKRTTh3kbaFTECgCXQluuoDp9Z/yKxoWGT+nTuasWhKUr
+	 RLuPXenYmL5vn0aS8dkmbw2FkK/cR+XkKbSyXvI0q5pmXFsppFFmrVh0bgWvd8eZcQ
+	 W8TazyJCh7G/CjGu7UecXPhhKFG2rd30GY03ytCHs36M41xAze3KHS+LiPMfQB4A7Q
+	 w1O9fgbHWPdwGAl178vTeFuHoH73A6dJoLlC36EDXLnrgCX8x6B3keLiJmCIUmm59a
+	 kCiRxH1SoIjDS7EfuBYeLR2R8No/h99KuWvC4iV1X9sk7ONiZjIrMbynWk+w/cb+gF
+	 pekQrcJWJNslw==
+Date: Thu, 29 Aug 2024 09:41:06 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Nikunj Kela <quic_nkela@quicinc.com>
+Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, rafael@kernel.org, viresh.kumar@linaro.org, 
+	herbert@gondor.apana.org.au, davem@davemloft.net, sudeep.holla@arm.com, andi.shyti@kernel.org, 
+	tglx@linutronix.de, will@kernel.org, joro@8bytes.org, jassisinghbrar@gmail.com, 
+	lee@kernel.org, linus.walleij@linaro.org, amitk@kernel.org, 
+	thara.gopinath@gmail.com, broonie@kernel.org, wim@linux-watchdog.org, linux@roeck-us.net, 
+	robin.murphy@arm.com, cristian.marussi@arm.com, rui.zhang@intel.com, 
+	lukasz.luba@arm.com, vkoul@kernel.org, quic_gurus@quicinc.com, agross@kernel.org, 
+	bartosz.golaszewski@linaro.org, quic_rjendra@quicinc.com, robimarko@gmail.com, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-crypto@vger.kernel.org, arm-scmi@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org, iommu@lists.linux.dev, 
+	linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, linux-spi@vger.kernel.org, 
+	linux-watchdog@vger.kernel.org, kernel@quicinc.com, quic_psodagud@quicinc.com, 
+	quic_tsoni@quicinc.com, quic_shazhuss@quicinc.com, 
+	Praveen Talari <quic_ptalari@quicinc.com>
+Subject: Re: [PATCH 17/22] dt-bindings: serial: document support for SA8255p
+Message-ID: <esl3zcntkewslcredif54venyopwgj2niruoeqcvbhqmbyt5qc@odixl23o7omk>
+References: <20240828203721.2751904-1-quic_nkela@quicinc.com>
+ <20240828203721.2751904-18-quic_nkela@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <a998c723-7451-439a-9c88-7c8b5c1b890b@arm.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemd200014.china.huawei.com (7.221.188.8)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240828203721.2751904-18-quic_nkela@quicinc.com>
 
-Hi Pierre,
-
-On 2024/8/27 23:40, Pierre Gondois wrote:
-> Hello Yicong,
-> IIUC we are looking for the maximum number of threads a CPU can have
-> in the platform. But is is actually possible to have a platform with
-> CPUs not having the same number of threads ?
+On Wed, Aug 28, 2024 at 01:37:16PM -0700, Nikunj Kela wrote:
+> Add compatibles representing UART support on SA8255p.
 > 
-
-I was thinking of the heterogenous platforms, for example part of the
-cores have SMT and others don't (I don't have any though, but there
-should be some such platforms for arm64).
-
-> For instance kernel/cpu.c::cpu_smt_num_threads_valid() will check
-> that the number of threads is either 1 or cpu_smt_max_threads (as
-> CONFIG_SMT_NUM_THREADS_DYNAMIC is not enabled for arm64). However
-> a (hypothetical) platform with:
-> - CPU0: 2 threads
-> - CPU1: 4 threads
-> should not be able to set the number of threads to 2, as
-> 1 < 2 < cpu_smt_max_threads (cf. cpu_smt_num_threads_valid()).
+> Clocks and interconnects are being configured in the firmware VM
+> on SA8255p platform, therefore making them optional.
 > 
-
-It's a bit more complex. If we enable/disable the SMT using on/off control
-then we won't have this problem. We'll online all the CPUs on enabling and
-offline CPUs which is not primary thread and don't care about the thread
-number of each core.
-
-Control using thread number is introduced by CONFIG_SMT_NUM_THREADS_DYNAMIC
-and only enabled on powerpc. I think this interface is not enough to handle
-the hypothetical we assumed, since it assumes the homogenous platform that
-all the CPUs have the same thread number. But this should be fine for
-the platforms with SMT(with same thread number) and non-SMT cores, since it do
-indicates the real thread number of the SMT cores.
-
-> So if there is an assumption that all the CPUs have the same number of
-> threads, it should be sufficient to count the number of threads for one
-> CPU right ?
+> CC: Praveen Talari <quic_ptalari@quicinc.com>
+> Signed-off-by: Nikunj Kela <quic_nkela@quicinc.com>
+> ---
+>  .../serial/qcom,serial-geni-qcom.yaml         | 58 ++++++++++++++++---
+>  1 file changed, 51 insertions(+), 7 deletions(-)
 > 
+> diff --git a/Documentation/devicetree/bindings/serial/qcom,serial-geni-qcom.yaml b/Documentation/devicetree/bindings/serial/qcom,serial-geni-qcom.yaml
+> index dd33794b3534..dcd43e1353ec 100644
+> --- a/Documentation/devicetree/bindings/serial/qcom,serial-geni-qcom.yaml
+> +++ b/Documentation/devicetree/bindings/serial/qcom,serial-geni-qcom.yaml
+> @@ -13,11 +13,42 @@ maintainers:
+>  allOf:
+>    - $ref: /schemas/serial/serial.yaml#
 
-Naturally and conveniently I may think use of the threads number of CPU0 (boot
-cpu) in such a solution. But this will be wrong if CPU0 is non-SMT on a heterogenous
-platform :(
+Please move entire allOf: to the place after "required:" block.
 
-> In the other (unlikely) case (i.e. CPUs can have various number of threads),
-> I think we should either:
-> - use your method and check that all the CPUs have the same number of threads
-> - get the number of threads for one CPU and check that all the CPUs are
->    identical using the ACPI_PPTT_ACPI_IDENTICAL tag
+>  
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - qcom,sa8255p-geni-uart
+> +              - qcom,sa8255p-geni-debug-uart
+> +    then:
+> +      required:
+> +        - power-domains
+> +        - power-domain-names
+> +      properties:
+> +        power-domains:
+> +          minItems: 2
+> +          maxItems: 2
+> +    else:
+> +      required:
+> +        - clocks
+> +        - clock-names
+> +      properties:
+> +        power-domains:
+> +          maxItems: 1
+> +        interconnects:
+> +          maxItems: 2
+> +        interconnect-names:
+> +          items:
+> +            - const: qup-core
+> +            - const: qup-config
+> +
+>  properties:
+>    compatible:
+>      enum:
+>        - qcom,geni-uart
+>        - qcom,geni-debug-uart
+> +      - qcom,sa8255p-geni-uart
+> +      - qcom,sa8255p-geni-debug-uart
 
-I think this won't be simpler since we still need to iterate all the CPUs to see
-if they have the same hetero_id (checked how we're using this ACPI tag in
-arm_acpi_register_pmu_device()). We could already know if they're identical by
-comparing the thread number and do the update if necessary.
+Not compatible with the old ones? Well, it is impossible. Generic
+compatible like "qcom,geni-uart" means ALL DEVICES forever will be
+compatible, because otherwise it just does not make any sense.  Of
+course "all devices forever will be compatible" is impossible as well,
+thus DT maintainers are suggesting SoC-specific compatibles all the
+time, but if developers decide that they know the future, you should
+keep it, right?
 
-> - have a per-cpu cpu_smt_max_threads value ?
+>  
+>    clocks:
+>      maxItems: 1
+> @@ -26,12 +57,10 @@ properties:
+>      const: se
+>  
+>    interconnects:
+> -    maxItems: 2
+> +    description: phandles of interconnect bw provider
 
-This should be unnecessary in currently stage if there's no platforms
-with several kind cores have different thread number like in your assumption
-and enable CONFIG_SMT_NUM_THREADS_DYNAMIC on such platforms. Otherwise using
-a global cpu_smt_max_threads to enable the SMT control should be enough.
-Does it make sense?
+Constraints must stay in top-level.
 
-Thanks,
-Yicong
+Best regards,
+Krzysztof
 
-> 
-> Same comment for the DT patch. If there is an assumption that all CPUs have
-> the same number of threads, then update_smt_num_threads() could only be called
-> once I suppose,
-> 
-> Regards,
-> Pierre
-> 
-> 
-> On 8/6/24 10:53, Yicong Yang wrote:
->> From: Yicong Yang <yangyicong@hisilicon.com>
->>
->> For ACPI we'll build the topology from PPTT and we cannot directly
->> get the SMT number of each core. Instead using a temporary xarray
->> to record the SMT number of each core when building the topology
->> and we can know the largest SMT number in the system. Then we can
->> enable the support of SMT control.
->>
->> Signed-off-by: Yicong Yang <yangyicong@hisilicon.com>
->> ---
->>   arch/arm64/kernel/topology.c | 24 ++++++++++++++++++++++++
->>   1 file changed, 24 insertions(+)
->>
->> diff --git a/arch/arm64/kernel/topology.c b/arch/arm64/kernel/topology.c
->> index 1a2c72f3e7f8..f72e1e55b05e 100644
->> --- a/arch/arm64/kernel/topology.c
->> +++ b/arch/arm64/kernel/topology.c
->> @@ -15,8 +15,10 @@
->>   #include <linux/arch_topology.h>
->>   #include <linux/cacheinfo.h>
->>   #include <linux/cpufreq.h>
->> +#include <linux/cpu_smt.h>
->>   #include <linux/init.h>
->>   #include <linux/percpu.h>
->> +#include <linux/xarray.h>
->>     #include <asm/cpu.h>
->>   #include <asm/cputype.h>
->> @@ -43,11 +45,16 @@ static bool __init acpi_cpu_is_threaded(int cpu)
->>    */
->>   int __init parse_acpi_topology(void)
->>   {
->> +    int thread_num, max_smt_thread_num = 1;
->> +    struct xarray core_threads;
->>       int cpu, topology_id;
->> +    void *entry;
->>         if (acpi_disabled)
->>           return 0;
->>   +    xa_init(&core_threads);
->> +
->>       for_each_possible_cpu(cpu) {
->>           topology_id = find_acpi_cpu_topology(cpu, 0);
->>           if (topology_id < 0)
->> @@ -57,6 +64,20 @@ int __init parse_acpi_topology(void)
->>               cpu_topology[cpu].thread_id = topology_id;
->>               topology_id = find_acpi_cpu_topology(cpu, 1);
->>               cpu_topology[cpu].core_id   = topology_id;
->> +
->> +            entry = xa_load(&core_threads, topology_id);
->> +            if (!entry) {
->> +                xa_store(&core_threads, topology_id,
->> +                     xa_mk_value(1), GFP_KERNEL);
->> +            } else {
->> +                thread_num = xa_to_value(entry);
->> +                thread_num++;
->> +                xa_store(&core_threads, topology_id,
->> +                     xa_mk_value(thread_num), GFP_KERNEL);
->> +
->> +                if (thread_num > max_smt_thread_num)
->> +                    max_smt_thread_num = thread_num;
->> +            }
->>           } else {
->>               cpu_topology[cpu].thread_id  = -1;
->>               cpu_topology[cpu].core_id    = topology_id;
->> @@ -67,6 +88,9 @@ int __init parse_acpi_topology(void)
->>           cpu_topology[cpu].package_id = topology_id;
->>       }
->>   +    cpu_smt_set_num_threads(max_smt_thread_num, max_smt_thread_num);
->> +
->> +    xa_destroy(&core_threads);
->>       return 0;
->>   }
->>   #endif
-> 
-> .
 
