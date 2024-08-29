@@ -1,279 +1,511 @@
-Return-Path: <linux-kernel+bounces-307396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2978964CFC
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 19:39:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DB20C964CFE
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 19:40:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F16D1F22CED
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 17:39:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60B241F21A77
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 17:40:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F8BD1B7904;
-	Thu, 29 Aug 2024 17:39:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8A611B78F6;
+	Thu, 29 Aug 2024 17:40:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="iQXwmBqT";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="lHOsBi8Z";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="iQXwmBqT";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="lHOsBi8Z"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f+9B65ki"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 512FD4D8AD;
-	Thu, 29 Aug 2024 17:39:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F0FB1B5ECE;
+	Thu, 29 Aug 2024 17:40:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724953176; cv=none; b=s5OWsSlVW0FcUbr4lhry3Kc7Tf1msK8NXZyjgzNmMgI7SnSJe6DzdFu3DMJb7B7trnjlttsWhEXX5OisvfhfiOC6jZYEJ3g79AuYXmCdbIkIDupA97E3G3pySxEUxUSqOG1CMCxoaCT7McGA82137EjPpA+NISj4KXfwDVb7zjc=
+	t=1724953203; cv=none; b=lVVs5ody9d48P1qf5lfT8C4eeYjpQAe1luy/gx2Cxj4Yhwk05k/GCQPfssPf/OGZdhHxyCqj4f/Zyz07DhJHncoI8Evzb/IGl9Z/2CMlCN1orfl0nV3C64zSOPT9nGKbADVZZN8/SEeNLbH2HOEo/mc22kkkpPjkA6sgexXiKKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724953176; c=relaxed/simple;
-	bh=m0bNnA/F1PUbxFYlW3mu2ORO/RgzKqGUvIV3bXnYGDg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bt3oHpHdKssG5XCtSyuFiB8kvmj3IgGs+ZocUhC0bNvX7JFk1gs2Z/f2C7lzCycKcJWPUHXmfRvqWNDMQhNdi/uaH9Bz56TNVruh3KuSQ0elQektcwDzKnUXr60mvaMU9rMGT9+b0pgqM/40Vcrw5laBwvfAU1RWqSLLa+IO7UM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=iQXwmBqT; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=lHOsBi8Z; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=iQXwmBqT; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=lHOsBi8Z; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 7308A1F454;
-	Thu, 29 Aug 2024 17:39:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1724953172; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=knYaAgVRYgshjI/uTZOG3uXVzF6WdqSQAdgmVYbAPhg=;
-	b=iQXwmBqTb6gtNnQLpZcv6wOaz9oWVyOmrqO+nCgQdragRwcUpFPDngzsUVg//UQPbksLIs
-	LPSnbyRRy4EZKP3NbrWGbwcLVrlLVwZPwGztnJh6tu7dyDJRzd8F4kSRU2ppsgJo2SisZ4
-	PwxcKcfZYaRauiu0DfCd0M000f24too=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1724953172;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=knYaAgVRYgshjI/uTZOG3uXVzF6WdqSQAdgmVYbAPhg=;
-	b=lHOsBi8ZqDK3eBDaqyO3bHzw7Buj+HXZBcKAx8nd5xkil7TVzehaH3n8VvfmSaX6hm7TC+
-	+acazPPRYDFZpjCA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1724953172; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=knYaAgVRYgshjI/uTZOG3uXVzF6WdqSQAdgmVYbAPhg=;
-	b=iQXwmBqTb6gtNnQLpZcv6wOaz9oWVyOmrqO+nCgQdragRwcUpFPDngzsUVg//UQPbksLIs
-	LPSnbyRRy4EZKP3NbrWGbwcLVrlLVwZPwGztnJh6tu7dyDJRzd8F4kSRU2ppsgJo2SisZ4
-	PwxcKcfZYaRauiu0DfCd0M000f24too=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1724953172;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=knYaAgVRYgshjI/uTZOG3uXVzF6WdqSQAdgmVYbAPhg=;
-	b=lHOsBi8ZqDK3eBDaqyO3bHzw7Buj+HXZBcKAx8nd5xkil7TVzehaH3n8VvfmSaX6hm7TC+
-	+acazPPRYDFZpjCA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4E47F13408;
-	Thu, 29 Aug 2024 17:39:32 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 16mzElSy0GY4DwAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Thu, 29 Aug 2024 17:39:32 +0000
-Message-ID: <a21841c4-6d40-42cb-88cb-eee5f80ccf11@suse.cz>
-Date: Thu, 29 Aug 2024 19:39:32 +0200
+	s=arc-20240116; t=1724953203; c=relaxed/simple;
+	bh=FJZdOA7Q0uPGc88oS6ZR10j6KaxkBtmgc09InDkmcIc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R+FpLIGSi+u2AwKtfdnX6/Vr5zlKEhhckw+fg96KUg/v4c2xEDtD4FhuXhT45fMdzobIilHGYf80aDMpQKecioSBIeUGdhwhVYYDerw+jNO83YLa3EJsccAWFUPFkXNg6Bhi7YcGMN4hN5tUemjqwpAobkRac9oFVmeWN7qVDXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f+9B65ki; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38FD9C4CEC1;
+	Thu, 29 Aug 2024 17:40:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724953203;
+	bh=FJZdOA7Q0uPGc88oS6ZR10j6KaxkBtmgc09InDkmcIc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=f+9B65ki0D1IZzWGAGfVWOm/e2z7BGD3HPyL6kLl2jZ6bE18vDuZTbvrB0gojnnoc
+	 w6TiDAtWYNv2ZmzHGyJxl8tBOY8JlCLFhEtVdX/I+OpYTI5UJ2VB7ms6qxwFNMrTXM
+	 ouJCNK3XA/jBOyCeJ3LtGu5MIVHvxI999URnXH9VKCz3fjAMkfodm4rFhBX7Gf1Znf
+	 UyCK2wrLlls4W5z5kUOkVz/XiSXsO4Jrg4SpC+1gqwQ1fOeWPd7+ZVZANdppG1mw0N
+	 D0cmWLRdctG+AQsmK7tHz2Yyp6FMV5GLGirJwX7Itwqb9izrleggZSE8QyvfjsBHsM
+	 ITqUNk/SC0MUg==
+Date: Thu, 29 Aug 2024 23:09:59 +0530
+From: Vinod Koul <vkoul@kernel.org>
+To: Christian Bruel <christian.bruel@foss.st.com>
+Cc: kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, mcoquelin.stm32@gmail.com,
+	alexandre.torgue@foss.st.com, p.zabel@pengutronix.de,
+	linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	fabrice.gasnier@foss.st.com
+Subject: Re: [PATCH v4 2/5] phy: stm32: Add support for STM32MP25 COMBOPHY.
+Message-ID: <ZtCyb7AzLmuUoBGT@vaman>
+References: <20240828143452.1407532-1-christian.bruel@foss.st.com>
+ <20240828143452.1407532-3-christian.bruel@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] memcg: add charging of already allocated slab objects
-Content-Language: en-US
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Muchun Song <muchun.song@linux.dev>, David Rientjes <rientjes@google.com>,
- Hyeonggon Yoo <42.hyeyoo@gmail.com>, Eric Dumazet <edumazet@google.com>,
- "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Meta kernel team <kernel-team@meta.com>,
- cgroups@vger.kernel.org, netdev@vger.kernel.org
-References: <20240827235228.1591842-1-shakeel.butt@linux.dev>
- <9fb06d9b-dec5-4300-acef-bbce51a9a0c1@suse.cz>
- <mvxyevmpzwatlt7z4fdjakvuixmp5hcqmvo3467kzlgp2xkbgf@xumnm2y6xxrg>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <mvxyevmpzwatlt7z4fdjakvuixmp5hcqmvo3467kzlgp2xkbgf@xumnm2y6xxrg>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_TLS_ALL(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[linux-foundation.org,cmpxchg.org,kernel.org,linux.dev,google.com,gmail.com,davemloft.net,redhat.com,kvack.org,vger.kernel.org,meta.com];
-	RCPT_COUNT_TWELVE(0.00)[17];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[]
-X-Spam-Score: -2.80
-X-Spam-Flag: NO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240828143452.1407532-3-christian.bruel@foss.st.com>
 
-On 8/29/24 18:10, Shakeel Butt wrote:
-> On Thu, Aug 29, 2024 at 11:42:10AM GMT, Vlastimil Babka wrote:
->> On 8/28/24 01:52, Shakeel Butt wrote:
->> > At the moment, the slab objects are charged to the memcg at the
->> > allocation time. However there are cases where slab objects are
->> > allocated at the time where the right target memcg to charge it to is
->> > not known. One such case is the network sockets for the incoming
->> > connection which are allocated in the softirq context.
->> > 
->> > Couple hundred thousand connections are very normal on large loaded
->> > server and almost all of those sockets underlying those connections get
->> > allocated in the softirq context and thus not charged to any memcg.
->> > However later at the accept() time we know the right target memcg to
->> > charge. Let's add new API to charge already allocated objects, so we can
->> > have better accounting of the memory usage.
->> > 
->> > To measure the performance impact of this change, tcp_crr is used from
->> > the neper [1] performance suite. Basically it is a network ping pong
->> > test with new connection for each ping pong.
->> > 
->> > The server and the client are run inside 3 level of cgroup hierarchy
->> > using the following commands:
->> > 
->> > Server:
->> >  $ tcp_crr -6
->> > 
->> > Client:
->> >  $ tcp_crr -6 -c -H ${server_ip}
->> > 
->> > If the client and server run on different machines with 50 GBPS NIC,
->> > there is no visible impact of the change.
->> > 
->> > For the same machine experiment with v6.11-rc5 as base.
->> > 
->> >           base (throughput)     with-patch
->> > tcp_crr   14545 (+- 80)         14463 (+- 56)
->> > 
->> > It seems like the performance impact is within the noise.
->> > 
->> > Link: https://github.com/google/neper [1]
->> > Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
->> > ---
->> > v1: https://lore.kernel.org/all/20240826232908.4076417-1-shakeel.butt@linux.dev/
->> > Changes since v1:
->> > - Correctly handle large allocations which bypass slab
->> > - Rearrange code to avoid compilation errors for !CONFIG_MEMCG builds
->> > 
->> > RFC: https://lore.kernel.org/all/20240824010139.1293051-1-shakeel.butt@linux.dev/
->> > Changes since the RFC:
->> > - Added check for already charged slab objects.
->> > - Added performance results from neper's tcp_crr
->> > 
->> >  include/linux/slab.h            |  1 +
->> >  mm/slub.c                       | 51 +++++++++++++++++++++++++++++++++
->> >  net/ipv4/inet_connection_sock.c |  5 ++--
->> >  3 files changed, 55 insertions(+), 2 deletions(-)
->> 
->> I can take the v3 in slab tree, if net people ack?
+On 28-08-24, 16:34, Christian Bruel wrote:
+> Addition of the COMBOPHY driver found on STM32MP25 platforms
 > 
-> Thanks.
+> This single lane PHY is shared (exclusive) between the USB3 and PCIE
+> controllers.
+> Supports 5Gbit/s for PCIE gen2 or 2.5Gbit/s for PCIE gen1.
 > 
->> 
->> BTW, will this be also useful for Linus's idea of charging struct files only
->> after they exist? But IIRC there was supposed to be also a part where we
->> have a way to quickly determine if we're not over limit (while allowing some
->> overcharge to make it quicker).
->>
+> Supports wakeup-source capability to wakeup system using remote-wakeup
+> capable USB device
 > 
-> Do you have link to those discussions or pointers to the code? From what
-> you have described, I think this should work. We have the relevant gfp
-> flags to control the charging behavior (with some caveats).
-
-I think this was the last part of the discussion, and in the cover letter of
-that there are links to the older threads for more context
-
-https://lore.kernel.org/all/CAHk-%3DwhgFtbTxCAg2CWQtDj7n6CEyzvdV1wcCj2qpMfpw0%3Dm1A@mail.gmail.com/
-
->> Because right now this just overcharges unconditionally, but that's
->> understandable when the irq context creating the socket can't know the memcg
->> upfront. In the open() situation this is different.
->> 
+> Signed-off-by: Christian Bruel <christian.bruel@foss.st.com>
+> ---
+>  drivers/phy/st/Kconfig              |  11 +
+>  drivers/phy/st/Makefile             |   1 +
+>  drivers/phy/st/phy-stm32-combophy.c | 607 ++++++++++++++++++++++++++++
+>  3 files changed, 619 insertions(+)
+>  create mode 100644 drivers/phy/st/phy-stm32-combophy.c
 > 
-> For networking we deliberately overcharges in the irq context (if
-> needed) and the course correct in the task context. However networking
-> stack is very robust due to mechanisms like backoff, retransmit to handle
-> situations like packet drops, allocation failures, congestion etc. Other
-> subsystem are not that robust against ENOMEM. Once I have more detail I
-> can follow up on the struct files case.
+> diff --git a/drivers/phy/st/Kconfig b/drivers/phy/st/Kconfig
+> index 3fc3d0781fb8..304614b6dabf 100644
+> --- a/drivers/phy/st/Kconfig
+> +++ b/drivers/phy/st/Kconfig
+> @@ -33,6 +33,17 @@ config PHY_STIH407_USB
+>  	  Enable this support to enable the picoPHY device used by USB2
+>  	  and USB3 controllers on STMicroelectronics STiH407 SoC families.
+>  
+> +config PHY_STM32_COMBOPHY
+> +	tristate "STMicroelectronics COMBOPHY driver for STM32MP25"
+> +	depends on ARCH_STM32 || COMPILE_TEST
+> +	select GENERIC_PHY
+> +	help
+> +	  Enable this to support the COMBOPHY device used by USB3 or PCIe
+> +	  controllers on STMicroelectronics STM32MP25 SoC.
+> +	  This driver controls the COMBOPHY block to generate the PCIe 100Mhz
+> +	  reference clock from either the external clock generator or HSE
+> +	  internal SoC clock source.
+> +
+>  config PHY_STM32_USBPHYC
+>  	tristate "STMicroelectronics STM32 USB HS PHY Controller driver"
+>  	depends on ARCH_STM32 || COMPILE_TEST
+> diff --git a/drivers/phy/st/Makefile b/drivers/phy/st/Makefile
+> index c862dd937b64..cb80e954ea9f 100644
+> --- a/drivers/phy/st/Makefile
+> +++ b/drivers/phy/st/Makefile
+> @@ -3,4 +3,5 @@ obj-$(CONFIG_PHY_MIPHY28LP) 		+= phy-miphy28lp.o
+>  obj-$(CONFIG_PHY_ST_SPEAR1310_MIPHY)	+= phy-spear1310-miphy.o
+>  obj-$(CONFIG_PHY_ST_SPEAR1340_MIPHY)	+= phy-spear1340-miphy.o
+>  obj-$(CONFIG_PHY_STIH407_USB)		+= phy-stih407-usb.o
+> +obj-$(CONFIG_PHY_STM32_COMBOPHY)	+= phy-stm32-combophy.o
+>  obj-$(CONFIG_PHY_STM32_USBPHYC) 	+= phy-stm32-usbphyc.o
+> diff --git a/drivers/phy/st/phy-stm32-combophy.c b/drivers/phy/st/phy-stm32-combophy.c
+> new file mode 100644
+> index 000000000000..7cd4193b0277
+> --- /dev/null
+> +++ b/drivers/phy/st/phy-stm32-combophy.c
+> @@ -0,0 +1,607 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * STMicroelectronics COMBOPHY STM32MP25 Controller driver.
+> + *
+> + * Copyright (C) 2024 STMicroelectronics
+> + * Author: Christian Bruel <christian.bruel@foss.st.com>
+> + */
+> +
+> +#include <linux/clk.h>
+> +#include <linux/mfd/syscon.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/phy/phy.h>
+> +#include <linux/pm_runtime.h>
+> +#include <linux/regmap.h>
+> +#include <linux/reset.h>
+> +#include <dt-bindings/phy/phy.h>
+> +
+> +#define SYSCFG_COMBOPHY_CR1 0x4C00
+> +#define SYSCFG_COMBOPHY_CR2 0x4C04
+> +#define SYSCFG_COMBOPHY_CR4 0x4C0C
+> +#define SYSCFG_COMBOPHY_CR5 0x4C10
+> +#define SYSCFG_COMBOPHY_SR  0x4C14
 
-Ack. Agreed with Roman that it would be a separate followup change.
+Lowercase hex values please
 
-> thanks,
-> Shakeel
-> 
-> 
+> +#define SYSCFG_PCIEPRGCR    0x6080
+> +
+> +/* SYSCFG PCIEPRGCR */
+> +#define STM32MP25_PCIEPRGCR_EN	  BIT(0)
+> +#define STM32MP25_PCIEPRG_IMPCTRL_OHM     GENMASK(3, 1)
+> +#define STM32MP25_PCIEPRG_IMPCTRL_VSWING  GENMASK(5, 4)
+> +
+> +/* SYSCFG SYSCFG_COMBOPHY_SR */
+> +#define STM32MP25_PIPE0_PHYSTATUS BIT(1)
+> +
+> +/* SYSCFG CR1 */
+> +#define SYSCFG_COMBOPHY_CR1_REFUSEPAD BIT(0)
+> +#define SYSCFG_COMBOPHY_CR1_MPLLMULT GENMASK(7, 1)
+> +#define SYSCFG_COMBOPHY_CR1_REFCLKSEL GENMASK(16, 8)
+> +#define SYSCFG_COMBOPHY_CR1_REFCLKDIV2 BIT(17)
+> +#define SYSCFG_COMBOPHY_CR1_REFSSPEN BIT(18)
+> +#define SYSCFG_COMBOPHY_CR1_SSCEN BIT(19)
+> +
+> +/* SYSCFG CR4 */
+> +#define SYSCFG_COMBOPHY_CR4_RX0_EQ GENMASK(2, 0)
+> +
+> +#define MPLLMULT_19_2 (0x02u << 1)
+> +#define MPLLMULT_20   (0x7Du << 1)
+> +#define MPLLMULT_24   (0x68u << 1)
+> +#define MPLLMULT_25   (0x64u << 1)
+> +#define MPLLMULT_26   (0x60u << 1)
+> +#define MPLLMULT_38_4 (0x41u << 1)
+> +#define MPLLMULT_48   (0x6Cu << 1)
+> +#define MPLLMULT_50   (0x32u << 1)
+> +#define MPLLMULT_52   (0x30u << 1)
+> +#define MPLLMULT_100  (0x19u << 1)
+> +
+> +#define REFCLKSEL_0   0
+> +#define REFCLKSEL_1   (0x108u << 8)
+> +
+> +#define REFCLDIV_0    0
+> +
+> +/* SYSCFG CR2 */
+> +#define SYSCFG_COMBOPHY_CR2_MODESEL GENMASK(1, 0)
+> +#define SYSCFG_COMBOPHY_CR2_ISO_DIS BIT(15)
+> +
+> +#define COMBOPHY_MODESEL_PCIE 0
+> +#define COMBOPHY_MODESEL_USB  3
+> +
+> +/* SYSCFG CR5 */
+> +#define SYSCFG_COMBOPHY_CR5_COMMON_CLOCKS BIT(12)
+> +
+> +#define COMBOPHY_SUP_ANA_MPLL_LOOP_CTL 0xC0
+> +#define COMBOPHY_PROP_CNTRL GENMASK(7, 4)
+> +
+> +struct stm32_combophy {
+> +	struct phy *phy;
+> +	struct regmap *regmap;
+> +	struct device *dev;
+> +	void __iomem *base;
+> +	struct reset_control *phy_reset;
+> +	struct clk *phy_clk;
+> +	struct clk *pad_clk;
+> +	struct clk *ker_clk;
+> +	unsigned int type;
+> +	bool is_init;
+> +	int irq_wakeup;
+> +};
+> +
+> +struct clk_impedance  {
+> +	u32 microohm;
+> +	u32 vswing[4];
+> +};
+> +
+> +/*
+> + * lookup table to hold the settings needed for a ref clock frequency
+> + * impedance, the offset is used to set the IMP_CTL and DE_EMP bit of the
+> + * PRG_IMP_CTRL register
+> + */
+> +static const struct clk_impedance imp_lookup[] = {
+> +	{ 6090000, { 442000, 564000, 684000, 802000 } },
+> +	{ 5662000, { 528000, 621000, 712000, 803000 } },
+> +	{ 5292000, { 491000, 596000, 700000, 802000 } },
+> +	{ 4968000, { 558000, 640000, 722000, 803000 } },
+> +	{ 4684000, { 468000, 581000, 692000, 802000 } },
+> +	{ 4429000, { 554000, 613000, 717000, 803000 } },
+> +	{ 4204000, { 511000, 609000, 706000, 802000 } },
+> +	{ 3999000, { 571000, 648000, 726000, 803000 } }
+> +};
+> +
+> +static int stm32_impedance_tune(struct stm32_combophy *combophy)
+> +{
+> +	u8 imp_size = ARRAY_SIZE(imp_lookup);
+> +	u8 vswing_size = ARRAY_SIZE(imp_lookup[0].vswing);
+> +	u8 imp_of, vswing_of;
+> +	u32 max_imp = imp_lookup[0].microohm;
+> +	u32 min_imp = imp_lookup[imp_size - 1].microohm;
 
+table is ordered, pls mention that in comments somewhere
+
+> +	u32 max_vswing = imp_lookup[imp_size - 1].vswing[vswing_size - 1];
+> +	u32 min_vswing = imp_lookup[0].vswing[0];
+> +	u32 val;
+> +
+> +	if (!of_property_read_u32(combophy->dev->of_node, "st,output-micro-ohms", &val)) {
+> +		if (val < min_imp || val > max_imp) {
+> +			dev_err(combophy->dev, "Invalid value %u for output ohm\n", val);
+> +			return -EINVAL;
+> +		}
+> +
+> +		for (imp_of = 0 ; imp_of < ARRAY_SIZE(imp_lookup); imp_of++)
+> +			if (imp_lookup[imp_of].microohm <= val)
+> +				break;
+> +
+> +		dev_dbg(combophy->dev, "Set %u micro-ohms output impedance\n",
+> +			imp_lookup[imp_of].microohm);
+> +
+> +		regmap_update_bits(combophy->regmap, SYSCFG_PCIEPRGCR,
+> +				   STM32MP25_PCIEPRG_IMPCTRL_OHM,
+> +				   FIELD_PREP(STM32MP25_PCIEPRG_IMPCTRL_OHM, imp_of));
+> +	} else {
+> +		regmap_read(combophy->regmap, SYSCFG_PCIEPRGCR, &val);
+> +		imp_of = FIELD_GET(STM32MP25_PCIEPRG_IMPCTRL_OHM, val);
+> +	}
+> +
+> +	if (!of_property_read_u32(combophy->dev->of_node, "st,output-vswing-microvolt", &val)) {
+> +		if (val < min_vswing || val > max_vswing) {
+> +			dev_err(combophy->dev, "Invalid value %u for output vswing\n", val);
+> +			return -EINVAL;
+> +		}
+> +
+> +		for (vswing_of = 0 ; vswing_of < ARRAY_SIZE(imp_lookup[imp_of].vswing); vswing_of++)
+> +			if (imp_lookup[imp_of].vswing[vswing_of] >= val)
+> +				break;
+> +
+> +		dev_dbg(combophy->dev, "Set %u microvolt swing\n",
+> +			 imp_lookup[imp_of].vswing[vswing_of]);
+> +
+> +		regmap_update_bits(combophy->regmap, SYSCFG_PCIEPRGCR,
+> +				   STM32MP25_PCIEPRG_IMPCTRL_VSWING,
+> +				   FIELD_PREP(STM32MP25_PCIEPRG_IMPCTRL_VSWING, vswing_of));
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int stm32_combophy_pll_init(struct stm32_combophy *combophy)
+> +{
+> +	int ret;
+> +	u32 refclksel, pllmult, propcntrl, val;
+> +	u32 clk_rate;
+> +
+> +	if (combophy->pad_clk)
+> +		clk_rate = clk_get_rate(combophy->pad_clk);
+> +	else
+> +		clk_rate = clk_get_rate(combophy->ker_clk);
+> +
+> +	reset_control_assert(combophy->phy_reset);
+> +
+> +	dev_dbg(combophy->dev, "%s pll init rate %d\n",
+> +		combophy->pad_clk ? "External" : "Ker", clk_rate);
+> +
+> +	/*
+> +	 * vddcombophy is interconnected with vddcore. Isolation bit should be unset
+> +	 * before using the ComboPHY.
+> +	 */
+> +	regmap_update_bits(combophy->regmap, SYSCFG_COMBOPHY_CR2,
+> +			   SYSCFG_COMBOPHY_CR2_ISO_DIS, SYSCFG_COMBOPHY_CR2_ISO_DIS);
+> +
+> +	if (combophy->type != PHY_TYPE_PCIE)
+> +		regmap_update_bits(combophy->regmap, SYSCFG_COMBOPHY_CR1,
+> +				   SYSCFG_COMBOPHY_CR1_REFSSPEN, SYSCFG_COMBOPHY_CR1_REFSSPEN);
+> +
+> +	if (combophy->type == PHY_TYPE_PCIE && !combophy->pad_clk)
+> +		regmap_update_bits(combophy->regmap, SYSCFG_PCIEPRGCR,
+> +				   STM32MP25_PCIEPRGCR_EN, STM32MP25_PCIEPRGCR_EN);
+> +
+> +	if (of_property_read_bool(combophy->dev->of_node, "st,ssc-on")) {
+> +		dev_dbg(combophy->dev, "Enabling clock with SSC\n");
+> +		regmap_update_bits(combophy->regmap, SYSCFG_COMBOPHY_CR1,
+> +				   SYSCFG_COMBOPHY_CR1_SSCEN, SYSCFG_COMBOPHY_CR1_SSCEN);
+> +	}
+> +
+> +	if (!of_property_read_u32(combophy->dev->of_node, "st,rx-equalizer", &val)) {
+> +		dev_dbg(combophy->dev, "Set RX equalizer %u\n", val);
+> +		if (val > SYSCFG_COMBOPHY_CR4_RX0_EQ) {
+> +			dev_err(combophy->dev, "Invalid value %u for rx0 equalizer\n", val);
+> +			return -EINVAL;
+> +		}
+> +
+> +		regmap_update_bits(combophy->regmap, SYSCFG_COMBOPHY_CR4,
+> +			   SYSCFG_COMBOPHY_CR4_RX0_EQ, val);
+> +	}
+> +
+> +	if (combophy->type == PHY_TYPE_PCIE) {
+> +		ret = stm32_impedance_tune(combophy);
+> +		if (ret) {
+> +			reset_control_deassert(combophy->phy_reset);
+> +			goto out;
+> +		}
+> +
+> +		regmap_update_bits(combophy->regmap, SYSCFG_COMBOPHY_CR1,
+> +				   SYSCFG_COMBOPHY_CR1_REFUSEPAD,
+> +				   combophy->pad_clk ? SYSCFG_COMBOPHY_CR1_REFUSEPAD : 0);
+> +	}
+> +
+> +	switch (clk_rate) {
+> +	case 100000000:
+> +		pllmult = MPLLMULT_100;
+> +		refclksel = REFCLKSEL_0;
+> +		propcntrl = 0x8u << 4;
+> +		break;
+> +	case 19200000:
+> +		pllmult = MPLLMULT_19_2;
+> +		refclksel = REFCLKSEL_1;
+> +		propcntrl = 0x8u << 4;
+> +		break;
+> +	case 25000000:
+> +		pllmult = MPLLMULT_25;
+> +		refclksel = REFCLKSEL_0;
+> +		propcntrl = 0xEu << 4;
+> +		break;
+> +	case 24000000:
+> +		pllmult = MPLLMULT_24;
+> +		refclksel = REFCLKSEL_1;
+> +		propcntrl = 0xEu << 4;
+> +		break;
+> +	case 20000000:
+> +		pllmult = MPLLMULT_20;
+> +		refclksel = REFCLKSEL_0;
+> +		propcntrl = 0xEu << 4;
+> +		break;
+> +	default:
+> +		dev_err(combophy->dev, "Invalid rate 0x%x\n", clk_rate);
+> +		reset_control_deassert(combophy->phy_reset);
+> +		ret = -EINVAL;
+> +		goto out;
+> +	};
+> +
+> +	regmap_update_bits(combophy->regmap, SYSCFG_COMBOPHY_CR1,
+> +			   SYSCFG_COMBOPHY_CR1_REFCLKDIV2, REFCLDIV_0);
+> +	regmap_update_bits(combophy->regmap, SYSCFG_COMBOPHY_CR1,
+> +			   SYSCFG_COMBOPHY_CR1_REFCLKSEL, refclksel);
+> +	regmap_update_bits(combophy->regmap, SYSCFG_COMBOPHY_CR1,
+> +			   SYSCFG_COMBOPHY_CR1_MPLLMULT, pllmult);
+> +
+> +	/*
+> +	 * Force elasticity buffer to be tuned for the reference clock as
+> +	 * the separated clock model is not supported
+> +	 */
+> +	regmap_update_bits(combophy->regmap, SYSCFG_COMBOPHY_CR5,
+> +			   SYSCFG_COMBOPHY_CR5_COMMON_CLOCKS, SYSCFG_COMBOPHY_CR5_COMMON_CLOCKS);
+> +
+> +	reset_control_deassert(combophy->phy_reset);
+> +
+> +	ret = regmap_read_poll_timeout(combophy->regmap, SYSCFG_COMBOPHY_SR, val,
+> +				       !(val & STM32MP25_PIPE0_PHYSTATUS),
+> +				       10, 1000);
+> +	if (ret) {
+> +		dev_err(combophy->dev, "timeout, cannot lock PLL\n");
+> +		goto out;
+> +	}
+> +
+> +	if (combophy->type == PHY_TYPE_PCIE) {
+> +		val = readl_relaxed(combophy->base + COMBOPHY_SUP_ANA_MPLL_LOOP_CTL);
+> +		val &= ~COMBOPHY_PROP_CNTRL;
+> +		val |= propcntrl;
+> +		writel_relaxed(val, combophy->base + COMBOPHY_SUP_ANA_MPLL_LOOP_CTL);
+> +	}
+> +
+> +	return 0;
+> +
+> +out:
+> +	if (combophy->type == PHY_TYPE_PCIE && !combophy->pad_clk)
+> +		regmap_update_bits(combophy->regmap, SYSCFG_PCIEPRGCR,
+> +				   STM32MP25_PCIEPRGCR_EN, 0);
+> +
+> +	if (combophy->type != PHY_TYPE_PCIE)
+> +		regmap_update_bits(combophy->regmap, SYSCFG_COMBOPHY_CR1,
+> +				   SYSCFG_COMBOPHY_CR1_REFSSPEN, 0);
+> +
+> +	regmap_update_bits(combophy->regmap, SYSCFG_COMBOPHY_CR2,
+> +			   SYSCFG_COMBOPHY_CR2_ISO_DIS, 0);
+> +
+> +	return ret;
+> +}
+> +
+> +static struct phy *stm32_combophy_xlate(struct device *dev,
+> +					const struct of_phandle_args *args)
+> +{
+> +	struct stm32_combophy *combophy = dev_get_drvdata(dev);
+> +	unsigned int type;
+> +
+> +	if (args->args_count != 1) {
+> +		dev_err(dev, "invalid number of cells in 'phy' property\n");
+> +		return ERR_PTR(-EINVAL);
+> +	}
+> +
+> +	type = args->args[0];
+> +	if (type != PHY_TYPE_USB3 && type != PHY_TYPE_PCIE) {
+> +		dev_err(dev, "unsupported device type: %d\n", type);
+> +		return ERR_PTR(-EINVAL);
+> +	}
+> +
+> +	if (combophy->pad_clk && type != PHY_TYPE_PCIE) {
+> +		dev_err(dev, "Invalid use of clk_pad for USB3 mode\n");
+> +		return ERR_PTR(-EINVAL);
+> +	}
+> +
+> +	combophy->type = type;
+> +
+> +	return combophy->phy;
+> +}
+> +
+> +static int stm32_combophy_set_mode(struct stm32_combophy *combophy)
+> +{
+> +	int type = combophy->type;
+> +	u32 val;
+> +
+> +	switch (type) {
+> +	case PHY_TYPE_PCIE:
+> +		dev_dbg(combophy->dev, "setting PCIe ComboPHY\n");
+> +		val = COMBOPHY_MODESEL_PCIE;
+> +		break;
+> +	case PHY_TYPE_USB3:
+> +		dev_dbg(combophy->dev, "setting USB3 ComboPHY\n");
+> +		val = COMBOPHY_MODESEL_USB;
+> +		break;
+> +	default:
+> +		dev_err(combophy->dev, "Invalid PHY mode %d\n", type);
+> +		return -EINVAL;
+> +	}
+> +
+> +	return regmap_update_bits(combophy->regmap, SYSCFG_COMBOPHY_CR2,
+> +				  SYSCFG_COMBOPHY_CR2_MODESEL, val);
+> +}
+> +
+> +static int stm32_combophy_enable_clocks(struct stm32_combophy *combophy)
+> +{
+> +	int ret;
+> +
+> +	ret = clk_prepare_enable(combophy->phy_clk);
+> +	if (ret) {
+> +		dev_err(combophy->dev, "Core clock enable failed %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	ret = clk_prepare_enable(combophy->ker_clk);
+> +	if (ret) {
+> +		dev_err(combophy->dev, "ker_usb3pcie clock enable failed %d\n", ret);
+> +		clk_disable_unprepare(combophy->phy_clk);
+> +		return ret;
+> +	}
+> +
+> +	if (combophy->pad_clk) {
+> +		ret = clk_prepare_enable(combophy->pad_clk);
+> +		if (ret) {
+> +			dev_err(combophy->dev, "External clock enable failed %d\n", ret);
+> +			clk_disable_unprepare(combophy->ker_clk);
+> +			clk_disable_unprepare(combophy->phy_clk);
+> +			return ret;
+> +		}
+> +	}
+
+Can you use bulk_prepare for this?
+
+-- 
+~Vinod
 
