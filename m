@@ -1,305 +1,698 @@
-Return-Path: <linux-kernel+bounces-306973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C774D96464E
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:18:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 320B7964650
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:19:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 10E47B27ED2
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:18:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0FC41F22758
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:19:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C2C61AB515;
-	Thu, 29 Aug 2024 13:18:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0BF61A76B7;
+	Thu, 29 Aug 2024 13:18:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HWsdz9HH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sXgZs3d6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ED3119005B;
-	Thu, 29 Aug 2024 13:18:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61B201974EA;
+	Thu, 29 Aug 2024 13:18:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724937508; cv=none; b=G+dnb1YuUNaHoeGHMWCqmsyDk0tERXMM+iWd+OER+kLdSBUeXDh0P3gra5to5+cndo3h3jMSYiFcIyM75hkTK0IwF+VaRBmjFHjZvBNdRu89ZZSSiVPFWW5Pyh7gbuar676p8sKl5FdPF1qCq3wFc4OCOkUP/onXs3eXXg+V9I4=
+	t=1724937519; cv=none; b=DVLEwATBNRESzu0nxG0s9FBra5TgKOFLpMBoEDfaDchpWvRZzM1+x3y3359zYeCsYWYhtgtdsyATT5niMa5ryoWaRPDXuXeSU/QaJEjt3nzYxUH0a0so8n9U68QIBf7qURXspUNR5qFjOn1E7V5QosLozqY5foP1iorQtTaYD0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724937508; c=relaxed/simple;
-	bh=BVRVuYX+Z7tmSeesL23NgAc31YLWeo3n7+at9NzUXJQ=;
+	s=arc-20240116; t=1724937519; c=relaxed/simple;
+	bh=xP7mLaBTQIVKu6v+SpT/VXgaUAjecAaatqPfgxOuI10=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=E4WCfDSs/rHWjPgx1fw4yWF0K1Iio/zgDU2+jMrKVEU+4BdSJa/IOcOPfRCfEjys3ROvXI0QbHOl5T/Z98r/TvvKfuaj+IuIydUTbPM+XvvWzvuMhKpfp0EEXO6WJA0jQ5SsEuraOneEgSFk0mTBR9f7INkcfNESzLE2KNJeP9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HWsdz9HH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6B0EC4CEC9;
-	Thu, 29 Aug 2024 13:18:27 +0000 (UTC)
+	 To:Cc:Content-Type; b=ooFxuJZD+OTyOhNvlBt1p5xpzLC1VMxNdhHvBwv/JfLJyxY9MZ7pao/xabVe7d5G3jPYS5e11iWaswn1yuIVSOaQO8yc7sIMCRyrcGitgMjsdBnNs6JvhjtTuPtx4QJ4HFUjRJNaTachhIRlulPBqR5HRkeh6asTObi8oqR0TVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sXgZs3d6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC70BC4CEC3;
+	Thu, 29 Aug 2024 13:18:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724937507;
-	bh=BVRVuYX+Z7tmSeesL23NgAc31YLWeo3n7+at9NzUXJQ=;
+	s=k20201202; t=1724937519;
+	bh=xP7mLaBTQIVKu6v+SpT/VXgaUAjecAaatqPfgxOuI10=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=HWsdz9HHxmxeZdXpHeU8qqIWD5WhMgFg5F10ksh/dVVZbZ6QxmpnDgO1xwgQwNIqO
-	 Hq+vE4SEh0CrnhzLn3nVBXdPQ005w9hV9UjGulnBR4TchTRWDxalWRHGkgU1+75ztd
-	 g+0UadN1+mkPxX0mrJDg0n4Bpm89muLAsdI4ilPYVGSbA+J2/muxVqjrpEhvTB3Q+A
-	 Ewjm7fEN5Oly2BZfTU9FyZfXWLyepmq7CKh4UhH5GzG0Ta3hg6JqRkj1VVBST2Y+d5
-	 lGBfnQk6nAft/OLUmrZGfkydWYqAxfbKNdOOSNca2+ohlwxlhC36H42MeVIzowAiuG
-	 m6l2D08Jgbi7Q==
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5334879ba28so890194e87.3;
-        Thu, 29 Aug 2024 06:18:27 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUM91pfkzB5qXxPmJqBv0iOlo0uhjnDJ0FPLC6IX5l35jct/tV87rJBdiKAFYnmljEjVHQfLoDbjbcS@vger.kernel.org, AJvYcCVK2Q4XeGlEuDmWV/UWrD1devPX/DfC6q3w0+p/9e5lGxDBkdL7tke8KbC25/peb8BynSxqHcD5@vger.kernel.org, AJvYcCVc5mTwr2GPTC4gmZKaAk8ZuHihgQ05fbULdOP0l5SxroALRImsOoGs9TSQZfCzZZY6WyvwNGL34T+O@vger.kernel.org, AJvYcCW+bOycm2hg+hDCJd5E7YcTORwgdaNjh4txxrw24Z5UHVa216PpvXhYL10D6meOUML+K5IGLdww4rkbAcZU@vger.kernel.org, AJvYcCW2Opj9dyGl0AA0gPjlLVN87erqMTjWZHYmjLg9jW0Eou3ZPm6bbIvlJFi+vKIvl+LfmXLJ90t+7Wi2mQ==@vger.kernel.org, AJvYcCXwNFdLbVI06TboGNoIrtmthmVoWCCdI67v0n+agVQonFMXSE1mm0xWUS2EXUYzn79E5JGtZUN/nYvm@vger.kernel.org, AJvYcCXx27I5TufDfe08XeUdKXuoKNEqFq6AlLl8WHUs9l5ad2J+WWTG6nBNA/h4IFEJJydIt1vyl36sj4s7Zg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTzQW/8RwgeVGTO7rkOcJbcCLa342JHlaaYj4mYYSBAV8AUUy7
-	ABezfPV5Ke26cndLXZQPEQkldeEoFcNtn214EiAJsqSLDq3t8QDetGF3O3nwhgrCJ6wbT9aI0Zm
-	9oDL/nYXp1CytYtwte/6/6FmMGQ==
-X-Google-Smtp-Source: AGHT+IFctTEg7Rr6bZidsqCIt8DCoy/MV1ZFUit4qcXz6Zq+RHhM4qKEvQskUwtce+oES60wD9gdCSyG0cqSSkCaZ14=
-X-Received: by 2002:a05:6512:401d:b0:533:4722:ebb0 with SMTP id
- 2adb3069b0e04-5353e548f6fmr2127035e87.6.1724937505925; Thu, 29 Aug 2024
- 06:18:25 -0700 (PDT)
+	b=sXgZs3d6HEWjtAs4U8B12CpfK6y6PU7NXOKhF/UVf53SHaFyY2Eoybe0Uj9xb6yIr
+	 MVWos8+uOCp3/J92qoAPIEnflTIbFP3R3Ttz6Xwdz92nVd4BopM561bzNqS4Og2Ksv
+	 EiE4W9YK0mq2d87TFafu16WJQ5bqWZJ5VVS5EwOHuMazCcTuKtHGbdby5YyVjwROjI
+	 4GGKuU1+BPxn9G37nByaENJH2GLZflbM4fweU2EIG7umbQiEklGRpPiE46CQ2ilRhc
+	 AYodP8Rq+Z13HlizlBf1sss2btlAyykCnALJ4zGGgqeU4w2mpMH2+pHOvapAezS5EY
+	 01KF0yv3IAzyw==
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5bed68129a7so908130a12.2;
+        Thu, 29 Aug 2024 06:18:38 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUpw3xWkWk8+CNQcjw3/jPRZh81MGKjgHllBnMpEbN0GH6/dBKAbPdqp0GQNWWU3rxbkq8KckY5TLG9QUI=@vger.kernel.org, AJvYcCUrBjIA7cPiPXvp8Usy8m7tKICe8ZAhO0DjhyMcd+0DsHk4rEhKIMXPzbLxYQW9ON+8mlE3JgNIfZqEtACb@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2JjaVxodGuZquLoDVAMz7G9/hsyvWnyrGb84wMg9PnS5fX5zE
+	WdQADdAEwXLLXPuvd1crlt3Juz7CkrZdIxOuVbgkqSsurKVskfqYZ/G+e8j4W/xdsv30nmmzY1h
+	rM0DFVYwr6RnJ3U7C37N40X9VsOA=
+X-Google-Smtp-Source: AGHT+IHK656LsBHW+daI5TCjWU9J0pIHnhH9xybeCQ3hrNJk4OKwUbY+Gt8nIsaJK+igczUwFLMerGK+4yJYfym2s0U=
+X-Received: by 2002:a05:6402:278c:b0:5c0:a8c0:3960 with SMTP id
+ 4fb4d7f45d1cf-5c21ed31e90mr2308421a12.4.1724937517348; Thu, 29 Aug 2024
+ 06:18:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1724159867.git.andrea.porta@suse.com> <5ca13a5b01c6c737f07416be53eb05b32811da21.1724159867.git.andrea.porta@suse.com>
- <20240821001618.GA2309328-robh@kernel.org> <ZsWi86I1KG91fteb@apocalypse>
- <CAL_JsqKN0ZNMtq+_dhurwLR+FL2MBOmWujp7uy+5HzXxUb_qDQ@mail.gmail.com> <ZtBJ0jIq-QrTVs1m@apocalypse>
-In-Reply-To: <ZtBJ0jIq-QrTVs1m@apocalypse>
-From: Rob Herring <robh@kernel.org>
-Date: Thu, 29 Aug 2024 08:18:12 -0500
-X-Gmail-Original-Message-ID: <CAL_Jsq+_-m3cjTRsFZ0RwVpot3Pdcr1GWt-qiiFC8kQvsmV7VQ@mail.gmail.com>
-Message-ID: <CAL_Jsq+_-m3cjTRsFZ0RwVpot3Pdcr1GWt-qiiFC8kQvsmV7VQ@mail.gmail.com>
-Subject: Re: [PATCH 04/11] of: address: Preserve the flags portion on 1:1
- dma-ranges mapping
-To: Andrea della Porta <andrea.porta@suse.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
-	Linus Walleij <linus.walleij@linaro.org>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Derek Kiernan <derek.kiernan@amd.com>, 
-	Dragan Cvetic <dragan.cvetic@amd.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Nicolas Ferre <nicolas.ferre@microchip.com>, 
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Saravana Kannan <saravanak@google.com>, Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, netdev@vger.kernel.org, linux-pci@vger.kernel.org, 
-	linux-arch@vger.kernel.org, Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>, 
-	Stefan Wahren <wahrenst@gmx.net>
+References: <20240829125656.19017-1-xry111@xry111.site>
+In-Reply-To: <20240829125656.19017-1-xry111@xry111.site>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Thu, 29 Aug 2024 21:18:21 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H5Srpno_m+_dPS=Z-sdRrdXS3xEoG8tEaAB=8QqswTK9w@mail.gmail.com>
+Message-ID: <CAAhV-H5Srpno_m+_dPS=Z-sdRrdXS3xEoG8tEaAB=8QqswTK9w@mail.gmail.com>
+Subject: Re: [PATCH v5] LoongArch: vDSO: Wire up getrandom() vDSO implementation
+To: Xi Ruoyao <xry111@xry111.site>
+Cc: "Jason A . Donenfeld" <Jason@zx2c4.com>, WANG Xuerui <kernel@xen0n.name>, linux-crypto@vger.kernel.org, 
+	loongarch@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	Jinyang He <hejinyang@loongson.cn>, Tiezhu Yang <yangtiezhu@loongson.cn>, 
+	Arnd Bergmann <arnd@arndb.de>, Thomas Gleixner <tglx@linutronix.de>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 29, 2024 at 5:13=E2=80=AFAM Andrea della Porta
-<andrea.porta@suse.com> wrote:
+Hi, Ruoyao,
+
+On Thu, Aug 29, 2024 at 8:58=E2=80=AFPM Xi Ruoyao <xry111@xry111.site> wrot=
+e:
 >
-> Hi Rob,
-
-BTW, I noticed your email replies set "reply-to" to everyone in To and
-Cc. The result (with Gmail) is my reply lists everyone twice (in both
-To and Cc). "reply-to" is just supposed to be the 1 address you want
-replies sent to instead of the "from" address.
-
-> On 16:29 Mon 26 Aug     , Rob Herring wrote:
-> > On Wed, Aug 21, 2024 at 3:19=E2=80=AFAM Andrea della Porta
-> > <andrea.porta@suse.com> wrote:
-> > >
-> > > Hi Rob,
-> > >
-> > > On 19:16 Tue 20 Aug     , Rob Herring wrote:
-> > > > On Tue, Aug 20, 2024 at 04:36:06PM +0200, Andrea della Porta wrote:
-> > > > > A missing or empty dma-ranges in a DT node implies a 1:1 mapping =
-for dma
-> > > > > translations. In this specific case, rhe current behaviour is to =
-zero out
-> > > >
-> > > > typo
-> > >
-> > > Fixed, thanks!
-> > >
-> > > >
-> > > > > the entire specifier so that the translation could be carried on =
-as an
-> > > > > offset from zero.  This includes address specifier that has flags=
- (e.g.
-> > > > > PCI ranges).
-> > > > > Once the flags portion has been zeroed, the translation chain is =
-broken
-> > > > > since the mapping functions will check the upcoming address speci=
-fier
-> > > >
-> > > > What does "upcoming address" mean?
-> > >
-> > > Sorry for the confusion, this means "address specifier (with valid fl=
-ags) fed
-> > > to the translating functions and for which we are looking for a trans=
-lation".
-> > > While this address has some valid flags set, it will fail the transla=
-tion step
-> > > since the ranges it is matched against have flags zeroed out by the 1=
-:1 mapping
-> > > condition.
-> > >
-> > > >
-> > > > > against mismatching flags, always failing the 1:1 mapping and its=
- entire
-> > > > > purpose of always succeeding.
-> > > > > Set to zero only the address portion while passing the flags thro=
-ugh.
-> > > >
-> > > > Can you point me to what the failing DT looks like. I'm puzzled how
-> > > > things would have worked for anyone.
-> > > >
-> > >
-> > > The following is a simplified and lightly edited) version of the resu=
-lting DT
-> > > from RPi5:
-> > >
-> > >  pci@0,0 {
-> > >         #address-cells =3D <0x03>;
-> > >         #size-cells =3D <0x02>;
-> > >         ......
-> > >         device_type =3D "pci";
-> > >         compatible =3D "pci14e4,2712\0pciclass,060400\0pciclass,0604"=
-;
-> > >         ranges =3D <0x82000000 0x00 0x00   0x82000000 0x00 0x00   0x0=
-0 0x600000>;
-> > >         reg =3D <0x00 0x00 0x00   0x00 0x00>;
-> > >
-> > >         ......
-> > >
-> > >         rp1@0 {
-> >
-> > What does 0 represent here? There's no 0 address in 'ranges' below.
-> > Since you said the parent is a PCI-PCI bridge, then the unit-address
-> > would have to be the PCI devfn and you are missing 'reg' (or omitted
-> > it).
+> Hook up the generic vDSO implementation to the LoongArch vDSO data page
+> by providing the required __arch_chacha20_blocks_nostack,
+> __arch_get_k_vdso_rng_data, and getrandom_syscall implementations.
 >
-> There's no reg property because the registers for RP1 are addressed
-> starting at 0x40108000 offset from BAR1. The devicetree specs says
-> that a missing reg node should not have any unit address specified
-> (and AFAIK there's no other special directives for simple-bus specified
-> in dt-bindings).
-> I've added @0 just to get rid of the following warning:
+> Also enable the vDSO getrandom tests for LoongArch: create the symlink
+> to the arch/loongarch/vdso directory, and correctly set the ARCH
+> variable for LoongArch.
 >
->  Warning (unit_address_vs_reg): /fragment@0/__overlay__/rp1: node has
->  a reg or ranges property, but no unit name
-
-It's still wrong as dtc only checks the unit-address is correct in a
-few cases with known bus types.
-
-> coming from make W=3D1 CHECK_DTBS=3Dy broadcom/rp1.dtbo.
-> This is the exact same approach used by Bootlin patchset from:
+> Signed-off-by: Xi Ruoyao <xry111@xry111.site>
+> ---
 >
-> https://lore.kernel.org/all/20240808154658.247873-2-herve.codina@bootlin.=
-com/
-
-It is not. First, that has a node for the PCI device (i.e. the
-LAN966x). You do not. You only have a PCI-PCI bridge and that is
-wrong.
-
-BTW, you should Cc Herve and others that are working on this feature.
-It is by no means fully sorted as you have found.
-
-> replied here below for convenience:
+> Cc: linux-crypto@vger.kernel.org
+> Cc: loongarch@lists.linux.dev
+> Cc: linux-kernel@vger.kernel.org
+> Cc: Jinyang He <hejinyang@loongson.cn>
+> Cc: Tiezhu Yang <yangtiezhu@loongson.cn>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
 >
-> +       pci-ep-bus@0 {
-> +               compatible =3D "simple-bus";
-> +               #address-cells =3D <1>;
-> +               #size-cells =3D <1>;
+> Passed vdso_test_getrandom and vdso_test_chacha tests.  Benchmark
+> results:
+>
+> vdso_test_getrandom bench-single:
+>
+>        vdso: 25000000 times in 0.499490289 seconds
+>        libc: 25000000 times in 6.963829873 seconds
+>     syscall: 25000000 times in 6.983413486 seconds
+>
+> vdso_test_getrandom bench-multi:
+>        vdso: 25000000 x 256 times in 28.703710823 seconds
+>        libc: 25000000 x 256 times in 356.835801784 seconds
+>        syscall: 25000000 x 256 times in 338.525837197 seconds
+>
+> [v4]->v5:
+> - Rebase onto crng/random.git:
+>   - Remove two selftest patches.
+>   - Remove __arch_chacha20_blocks_nostack forward declaration.
+> - Squash the remaining selftest patch into the vDSO getrandom
+>   implementation patch.
+> - Remove ifdef CONFIG_VDSO_GETRANDOM and $(CONFIG_VDSO_GETRANDOM) as
+>   they are always true in arch/loongarch.
+> - Remove asm-offsets.c change which has been already unneeded in v4.
+> - Add comment about rematerializing the constant in the assembly code.
+> - Add prototype for __vdso_getrandom to silence a -Wmissing-prototype
+>   warning.
+>
+> [v3]->v4:
+> - Remove LSX implementation, which isn't much faster than the generic
+>   implementaion.
+> - Rebase onto crng/random.git:
+>   - Define __arch_get_k_vdso_rng_data instead of using inline asm to
+>     provide the _vdso_rng_data symbol in a magic way.
+>   - Remove memset.S.
+>   - Use c-getrandom-y to easily include the generic C code.
+>   - The benchmark results seem better than v3, maybe related to the TLS
+>     refactoring in random.git.
+> - Add patches for selftests.
+>
+> [v2]->v3:
+> - Add a generic LoongArch implementation for which LSX isn't needed.
+>
+> v1->v2:
+> - Properly send the series to the list.
+>
+> [v4]:https://lore.kernel.org/all/20240827132018.88854-1-xry111@xry111.sit=
+e/
+> [v3]:https://lore.kernel.org/all/20240816110717.10249-1-xry111@xry111.sit=
+e/
+> [v2]:https://lore.kernel.org/all/20240815133357.35829-1-xry111@xry111.sit=
+e/
+>
+>  arch/loongarch/Kconfig                      |   1 +
+>  arch/loongarch/include/asm/vdso/getrandom.h |  44 ++++
+>  arch/loongarch/include/asm/vdso/vdso.h      |   6 +
+>  arch/loongarch/include/asm/vdso/vsyscall.h  |   8 +
+>  arch/loongarch/kernel/asm-offsets.c         |   1 +
+>  arch/loongarch/kernel/vdso.c                |   2 +
+>  arch/loongarch/vdso/Makefile                |   7 +-
+>  arch/loongarch/vdso/vdso.lds.S              |   1 +
+>  arch/loongarch/vdso/vgetrandom-chacha.S     | 242 ++++++++++++++++++++
+>  arch/loongarch/vdso/vgetrandom.c            |  15 ++
+>  tools/arch/loongarch/vdso                   |   1 +
+>  tools/testing/selftests/vDSO/Makefile       |   4 +-
+>  12 files changed, 329 insertions(+), 3 deletions(-)
+>  create mode 100644 arch/loongarch/include/asm/vdso/getrandom.h
+>  create mode 100644 arch/loongarch/vdso/vgetrandom-chacha.S
+>  create mode 100644 arch/loongarch/vdso/vgetrandom.c
+>  create mode 120000 tools/arch/loongarch/vdso
+>
+> diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
+> index 70f169210b52..14821c2aba5b 100644
+> --- a/arch/loongarch/Kconfig
+> +++ b/arch/loongarch/Kconfig
+> @@ -190,6 +190,7 @@ config LOONGARCH
+>         select TRACE_IRQFLAGS_SUPPORT
+>         select USE_PERCPU_NUMA_NODE_ID
+>         select USER_STACKTRACE_SUPPORT
+> +       select VDSO_GETRANDOM
+>         select ZONE_DMA32
+>
+>  config 32BIT
+> diff --git a/arch/loongarch/include/asm/vdso/getrandom.h b/arch/loongarch=
+/include/asm/vdso/getrandom.h
+> new file mode 100644
+> index 000000000000..04c991f6921d
+> --- /dev/null
+> +++ b/arch/loongarch/include/asm/vdso/getrandom.h
+> @@ -0,0 +1,44 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (C) 2024 Xi Ruoyao <xry111@xry111.site>. All Rights Reserve=
+d.
+> + */
+> +#ifndef __ASM_VDSO_GETRANDOM_H
+> +#define __ASM_VDSO_GETRANDOM_H
 > +
-> +               /*
-> +                * map @0xe2000000 (32MB) to BAR0 (CPU)
-> +                * map @0xe0000000 (16MB) to BAR1 (AMBA)
-> +                */
-> +               ranges =3D <0xe2000000 0x00 0x00 0x00 0x2000000
+> +#ifndef __ASSEMBLY__
+> +
+> +#include <asm/unistd.h>
+> +#include <asm/vdso/vdso.h>
+> +
+> +static __always_inline ssize_t getrandom_syscall(void *_buffer,
+> +                                                size_t _len,
+> +                                                unsigned int _flags)
+> +{
+> +       register long ret asm("a0");
+> +       register long nr asm("a7") =3D __NR_getrandom;
+> +       register void *buffer asm("a0") =3D _buffer;
+> +       register size_t len asm("a1") =3D _len;
+> +       register unsigned int flags asm("a2") =3D _flags;
+> +
+> +       asm volatile(
+> +       "      syscall 0\n"
+> +       : "+r" (ret)
+> +       : "r" (nr), "r" (buffer), "r" (len), "r" (flags)
+> +       : "$t0", "$t1", "$t2", "$t3", "$t4", "$t5", "$t6", "$t7", "$t8",
+> +         "memory");
+> +
+> +       return ret;
+> +}
+> +
+> +static __always_inline const struct vdso_rng_data *__arch_get_vdso_rng_d=
+ata(
+> +       void)
+As I said before, no line break needed, because there is no 80
+characters limit now.
 
-The 0 parent address here matches the unit-address, so all good in this cas=
-e.
+> +{
+> +       return (const struct vdso_rng_data *)(
+> +               get_vdso_data() +
+> +               VVAR_LOONGARCH_PAGES_START * PAGE_SIZE +
+> +               offsetof(struct loongarch_vdso_data, rng_data));
+> +}
+The same, we don't need so many lines.
 
-> +                         0xe0000000 0x01 0x00 0x00 0x1000000>;
+> +
+> +#endif /* !__ASSEMBLY__ */
+> +
+> +#endif /* __ASM_VDSO_GETRANDOM_H */
+> diff --git a/arch/loongarch/include/asm/vdso/vdso.h b/arch/loongarch/incl=
+ude/asm/vdso/vdso.h
+> index 5a12309d9fb5..e31ac7474513 100644
+> --- a/arch/loongarch/include/asm/vdso/vdso.h
+> +++ b/arch/loongarch/include/asm/vdso/vdso.h
+> @@ -4,6 +4,9 @@
+>   * Copyright (C) 2020-2022 Loongson Technology Corporation Limited
+>   */
 >
-> Also, I think it's not possible to know the devfn in advance, since the
-> DT part is pre-compiled as an overlay while the devfn number is coming fr=
-om
-> bus enumeration.
-
-No. devfn is fixed unless you are plugging in a card in different
-slots. The bus number is the part that is not known and assigned by
-the OS, but you'll notice that is omitted.
-
-In any case, the RP1 node should be generated, so its devfn is irrelevant.
-
-> Since the registers for sub-peripherals will start (as stated in ranges
-> property) from 0xc040000000, I'd be inclined to use rp1@c040000000 as the
-> node name and address unit. Is it feasible?
-
-Yes, but that would be in nodes underneath ranges. Above, it is the
-parent bus we are talking about.
-
-> > >                 #address-cells =3D <0x02>;
-> > >                 #size-cells =3D <0x02>;
-> > >                 compatible =3D "simple-bus";
-> >
-> > The parent is a PCI-PCI bridge. Child nodes have to be PCI devices and
-> > "simple-bus" is not a PCI device.
+> +#ifndef _ASM_VDSO_VDSO_H
+> +#define _ASM_VDSO_VDSO_H
+> +
+>  #ifndef __ASSEMBLY__
 >
-> The simple-bus is needed to automatically traverse and create platform
-> devices in of_platform_populate(). It's true that RP1 is a PCI device,
-> but sub-peripherals of RP1 are platform devices so I guess this is
-> unavoidable right now.
-
-You are missing the point. A PCI-PCI bridge does not have a
-simple-bus. However, I think it's just what you pasted here that's
-wrong. From the looks of the RP1 driver and the overlay, it should be
-correct.
-
-It would also help if you dumped out what "lspci -tvnn" prints.
-
-> > The assumption so far with all of this is that you have some specific
-> > PCI device (and therefore a driver). The simple-buses under it are
-> > defined per BAR. Not really certain if that makes sense in all cases,
-> > but since the address assignment is dynamic, it may have to. I'm also
-> > not completely convinced we should reuse 'simple-bus' here or define
-> > something specific like 'pci-bar-bus' or something.
+>  #include <asm/asm.h>
+> @@ -16,6 +19,7 @@ struct vdso_pcpu_data {
 >
-> Good point. Labeling a new bus for this kind of 'appliance' could be
-> beneficial to unify the dt overlay approach, and I guess it could be
-> adopted by the aforementioned Bootlin's Microchip patchset too.
-> However, since the difference with simple-bus would be basically non
-> existent, I believe that this could be done in a future patch due to
-> the fact that the dtbo is contained into the driver itself, so we do
-> not suffer from the proliferation that happens when dtb are managed
-> outside.
+>  struct loongarch_vdso_data {
+>         struct vdso_pcpu_data pdata[NR_CPUS];
+> +       struct vdso_rng_data rng_data;
+>  };
+>
+>  /*
+> @@ -63,3 +67,5 @@ static inline unsigned long get_vdso_data(void)
+>  }
+>
+>  #endif /* __ASSEMBLY__ */
+> +
+> +#endif
+> diff --git a/arch/loongarch/include/asm/vdso/vsyscall.h b/arch/loongarch/=
+include/asm/vdso/vsyscall.h
+> index 5de615383a22..b1273ce6f140 100644
+> --- a/arch/loongarch/include/asm/vdso/vsyscall.h
+> +++ b/arch/loongarch/include/asm/vdso/vsyscall.h
+> @@ -8,6 +8,7 @@
+>  #include <vdso/datapage.h>
+>
+>  extern struct vdso_data *vdso_data;
+> +extern struct vdso_rng_data *vdso_rng_data;
+>
+>  /*
+>   * Update the vDSO data page to keep in sync with kernel timekeeping.
+> @@ -19,6 +20,13 @@ struct vdso_data *__loongarch_get_k_vdso_data(void)
+>  }
+>  #define __arch_get_k_vdso_data __loongarch_get_k_vdso_data
+>
+> +static __always_inline
+> +struct vdso_rng_data *__loongarch_get_k_vdso_rng_data(void)
+> +{
+> +       return vdso_rng_data;
+> +}
+> +#define __arch_get_k_vdso_rng_data __loongarch_get_k_vdso_rng_data
+> +
+>  /* The asm-generic header needs to be included after the definitions abo=
+ve */
+>  #include <asm-generic/vdso/vsyscall.h>
+>
+> diff --git a/arch/loongarch/kernel/asm-offsets.c b/arch/loongarch/kernel/=
+asm-offsets.c
+> index bee9f7a3108f..ab258878d551 100644
+> --- a/arch/loongarch/kernel/asm-offsets.c
+> +++ b/arch/loongarch/kernel/asm-offsets.c
+> @@ -14,6 +14,7 @@
+>  #include <asm/ptrace.h>
+>  #include <asm/processor.h>
+>  #include <asm/ftrace.h>
+> +#include <asm/vdso/vdso.h>
+>
+>  static void __used output_ptreg_defines(void)
+>  {
+> diff --git a/arch/loongarch/kernel/vdso.c b/arch/loongarch/kernel/vdso.c
+> index 90dfccb41c14..2af05ba5f121 100644
+> --- a/arch/loongarch/kernel/vdso.c
+> +++ b/arch/loongarch/kernel/vdso.c
+> @@ -22,6 +22,7 @@
+>  #include <vdso/helpers.h>
+>  #include <vdso/vsyscall.h>
+>  #include <vdso/datapage.h>
+> +#include <generated/asm-offsets.h>
+>  #include <generated/vdso-offsets.h>
+>
+>  extern char vdso_start[], vdso_end[];
+> @@ -37,6 +38,7 @@ static union {
+>  static struct page *vdso_pages[] =3D { NULL };
+>  struct vdso_data *vdso_data =3D generic_vdso_data.data;
+>  struct vdso_pcpu_data *vdso_pdata =3D loongarch_vdso_data.vdata.pdata;
+> +struct vdso_rng_data *vdso_rng_data =3D &loongarch_vdso_data.vdata.rng_d=
+ata;
+>
+>  static int vdso_mremap(const struct vm_special_mapping *sm, struct vm_ar=
+ea_struct *new_vma)
+>  {
+> diff --git a/arch/loongarch/vdso/Makefile b/arch/loongarch/vdso/Makefile
+> index d724d46b07c8..19249d4b3542 100644
+> --- a/arch/loongarch/vdso/Makefile
+> +++ b/arch/loongarch/vdso/Makefile
+> @@ -4,7 +4,8 @@
+>  # Include the generic Makefile to check the built vdso.
+>  include $(srctree)/lib/vdso/Makefile
+>
+> -obj-vdso-y :=3D elf.o vgetcpu.o vgettimeofday.o sigreturn.o
+> +obj-vdso-y :=3D elf.o vgetcpu.o vgettimeofday.o sigreturn.o vgetrandom.o=
+ \
+> +              vgetrandom-chacha.o
+>
+>  # Common compiler flags between ABIs.
+>  ccflags-vdso :=3D \
+> @@ -29,6 +30,10 @@ ifneq ($(c-gettimeofday-y),)
+>    CFLAGS_vgettimeofday.o +=3D -include $(c-gettimeofday-y)
+>  endif
+>
+> +ifneq ($(c-getrandom-y),)
+> +  CFLAGS_vgetrandom.o +=3D -include $(c-getrandom-y)
+> +endif
+> +
+>  # VDSO linker flags.
+>  ldflags-y :=3D -Bsymbolic --no-undefined -soname=3Dlinux-vdso.so.1 \
+>         $(filter -E%,$(KBUILD_CFLAGS)) -nostdlib -shared \
+> diff --git a/arch/loongarch/vdso/vdso.lds.S b/arch/loongarch/vdso/vdso.ld=
+s.S
+> index 56ad855896de..2c965a597d9e 100644
+> --- a/arch/loongarch/vdso/vdso.lds.S
+> +++ b/arch/loongarch/vdso/vdso.lds.S
+> @@ -63,6 +63,7 @@ VERSION
+>                 __vdso_clock_gettime;
+>                 __vdso_gettimeofday;
+>                 __vdso_rt_sigreturn;
+> +               __vdso_getrandom;
+I also said before that keep  __vdso_rt_sigreturn be the last one.
 
-It's an ABI, so we really need to decide first.
-
-> > >                 ranges =3D <0xc0 0x40000000   0x01 0x00 0x00   0x00 0=
-x400000>;
-> > >                 dma-ranges =3D <0x10 0x00   0x43000000 0x10 0x00   0x=
-10 0x00>;
-> > >                 ......
-> > >         };
-> > >  };
-> > >
-> > > The pci@0,0 bridge node is automatically created by virtue of
-> > > CONFIG_PCI_DYNAMIC_OF_NODES, and has no dma-ranges, hence it implies =
-1:1 dma
-> > > mappings (flags for this mapping are set to zero).  The rp1@0 node ha=
+>         local: *;
+>         };
+>  }
+> diff --git a/arch/loongarch/vdso/vgetrandom-chacha.S b/arch/loongarch/vds=
+o/vgetrandom-chacha.S
+> new file mode 100644
+> index 000000000000..7e86a50f6e85
+> --- /dev/null
+> +++ b/arch/loongarch/vdso/vgetrandom-chacha.S
+> @@ -0,0 +1,242 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) 2024 Xi Ruoyao <xry111@xry111.site>. All Rights Reserve=
+d.
+> + */
+> +
+> +#include <asm/asm.h>
+> +#include <asm/regdef.h>
+> +#include <linux/linkage.h>
+> +
+> +.text
+> +
+> +/* Salsa20 quarter-round */
+> +.macro QR      a b c d
+> +       add.w           \a, \a, \b
+> +       xor             \d, \d, \a
+> +       rotri.w         \d, \d, 16
+> +
+> +       add.w           \c, \c, \d
+> +       xor             \b, \b, \c
+> +       rotri.w         \b, \b, 20
+> +
+> +       add.w           \a, \a, \b
+> +       xor             \d, \d, \a
+> +       rotri.w         \d, \d, 24
+> +
+> +       add.w           \c, \c, \d
+> +       xor             \b, \b, \c
+> +       rotri.w         \b, \b, 25
+> +.endm
+> +
+> +/*
+> + * Very basic LoongArch implementation of ChaCha20. Produces a given pos=
+itive
+> + * number of blocks of output with a nonce of 0, taking an input key and
+> + * 8-byte counter. Importantly does not spill to the stack. Its argument=
 s
-> > > dma-ranges with flags set (0x43000000). Since 0x43000000 !=3D 0x00 an=
-y translation
-> > > will fail.
-> >
-> > It's possible that we should fill in 'dma-ranges' when making these
-> > nodes rather than supporting missing dma-ranges here.
+> + * are:
+> + *
+> + *     a0: output bytes
+> + *     a1: 32-byte key input
+> + *     a2: 8-byte counter input/output
+> + *     a3: number of 64-byte blocks to write to output
+> + */
+> +SYM_FUNC_START(__arch_chacha20_blocks_nostack)
+> +
+> +/* We don't need a frame pointer */
+> +#define s9             fp
+> +
+> +#define output         a0
+> +#define key            a1
+> +#define counter                a2
+> +#define nblocks                a3
+> +#define i              a4
+> +#define state0         s0
+> +#define state1         s1
+> +#define state2         s2
+> +#define state3         s3
+> +#define state4         s4
+> +#define state5         s5
+> +#define state6         s6
+> +#define state7         s7
+> +#define state8         s8
+> +#define state9         s9
+> +#define state10                a5
+> +#define state11                a6
+> +#define state12                a7
+> +#define state13                t0
+> +#define state14                t1
+> +#define state15                t2
+> +#define cnt_lo         t3
+> +#define cnt_hi         t4
+> +#define copy0          t5
+> +#define copy1          t6
+> +#define copy2          t7
+> +
+> +/* Reuse i as copy3 */
+> +#define copy3          i
+> +
+> +       /*
+> +        * The ABI requires s0-s9 saved, and sp aligned to 16-byte.
+> +        * This does not violate the stack-less requirement: no sensitive=
+ data
+> +        * is spilled onto the stack.
+> +        */
+> +       PTR_ADDI        sp, sp, (-SZREG * 10) & STACK_ALIGN
+> +       REG_S           s0, sp, 0
+> +       REG_S           s1, sp, SZREG
+> +       REG_S           s2, sp, SZREG * 2
+> +       REG_S           s3, sp, SZREG * 3
+> +       REG_S           s4, sp, SZREG * 4
+> +       REG_S           s5, sp, SZREG * 5
+> +       REG_S           s6, sp, SZREG * 6
+> +       REG_S           s7, sp, SZREG * 7
+> +       REG_S           s8, sp, SZREG * 8
+> +       REG_S           s9, sp, SZREG * 9
+> +
+> +       li.w            copy0, 0x61707865
+> +       li.w            copy1, 0x3320646e
+> +       li.w            copy2, 0x79622d32
+> +
+> +       ld.w            cnt_lo, counter, 0
+> +       ld.w            cnt_hi, counter, 4
+> +
+> +.Lblock:
+> +       /* state[0,1,2,3] =3D "expand 32-byte k" */
+> +       move            state0, copy0
+> +       move            state1, copy1
+> +       move            state2, copy2
+> +       li.w            state3, 0x6b206574
+> +
+> +       /* state[4,5,..,11] =3D key */
+> +       ld.w            state4, key, 0
+> +       ld.w            state5, key, 4
+> +       ld.w            state6, key, 8
+> +       ld.w            state7, key, 12
+> +       ld.w            state8, key, 16
+> +       ld.w            state9, key, 20
+> +       ld.w            state10, key, 24
+> +       ld.w            state11, key, 28
+> +
+> +       /* state[12,13] =3D counter */
+> +       move            state12, cnt_lo
+> +       move            state13, cnt_hi
+> +
+> +       /* state[14,15] =3D 0 */
+> +       move            state14, zero
+> +       move            state15, zero
+> +
+> +       li.w            i, 10
+> +.Lpermute:
+> +       /* odd round */
+> +       QR              state0, state4, state8, state12
+> +       QR              state1, state5, state9, state13
+> +       QR              state2, state6, state10, state14
+> +       QR              state3, state7, state11, state15
+> +
+> +       /* even round */
+> +       QR              state0, state5, state10, state15
+> +       QR              state1, state6, state11, state12
+> +       QR              state2, state7, state8, state13
+> +       QR              state3, state4, state9, state14
+> +
+> +       addi.w          i, i, -1
+> +       bnez            i, .Lpermute
+> +
+> +       /*
+> +        * copy[3] =3D "expa", materialize it here because copy[3] shares=
+ the
+> +        * same register with i which just became dead.
+> +        */
+> +       li.w            copy3, 0x6b206574
+> +
+> +       /* output[0,1,2,3] =3D copy[0,1,2,3] + state[0,1,2,3] */
+> +       add.w           state0, state0, copy0
+> +       add.w           state1, state1, copy1
+> +       add.w           state2, state2, copy2
+> +       add.w           state3, state3, copy3
+> +       st.w            state0, output, 0
+> +       st.w            state1, output, 4
+> +       st.w            state2, output, 8
+> +       st.w            state3, output, 12
+> +
+> +       /* from now on state[0,1,2,3] are scratch registers  */
+> +
+> +       /* state[0,1,2,3] =3D lo32(key) */
+> +       ld.w            state0, key, 0
+> +       ld.w            state1, key, 4
+> +       ld.w            state2, key, 8
+> +       ld.w            state3, key, 12
+> +
+> +       /* output[4,5,6,7] =3D state[0,1,2,3] + state[4,5,6,7] */
+> +       add.w           state4, state4, state0
+> +       add.w           state5, state5, state1
+> +       add.w           state6, state6, state2
+> +       add.w           state7, state7, state3
+> +       st.w            state4, output, 16
+> +       st.w            state5, output, 20
+> +       st.w            state6, output, 24
+> +       st.w            state7, output, 28
+> +
+> +       /* state[0,1,2,3] =3D hi32(key) */
+> +       ld.w            state0, key, 16
+> +       ld.w            state1, key, 20
+> +       ld.w            state2, key, 24
+> +       ld.w            state3, key, 28
+> +
+> +       /* output[8,9,10,11] =3D state[0,1,2,3] + state[8,9,10,11] */
+> +       add.w           state8, state8, state0
+> +       add.w           state9, state9, state1
+> +       add.w           state10, state10, state2
+> +       add.w           state11, state11, state3
+> +       st.w            state8, output, 32
+> +       st.w            state9, output, 36
+> +       st.w            state10, output, 40
+> +       st.w            state11, output, 44
+> +
+> +       /* output[12,13,14,15] =3D state[12,13,14,15] + [cnt_lo, cnt_hi, =
+0, 0] */
+> +       add.w           state12, state12, cnt_lo
+> +       add.w           state13, state13, cnt_hi
+> +       st.w            state12, output, 48
+> +       st.w            state13, output, 52
+> +       st.w            state14, output, 56
+> +       st.w            state15, output, 60
+> +
+> +       /* ++counter  */
+> +       addi.w          cnt_lo, cnt_lo, 1
+> +       sltui           state0, cnt_lo, 1
+> +       add.w           cnt_hi, cnt_hi, state0
+> +
+> +       /* output +=3D 64 */
+> +       PTR_ADDI        output, output, 64
+> +       /* --nblocks */
+> +       PTR_ADDI        nblocks, nblocks, -1
+> +       bnez            nblocks, .Lblock
+> +
+> +       /* counter =3D [cnt_lo, cnt_hi] */
+> +       st.w            cnt_lo, counter, 0
+> +       st.w            cnt_hi, counter, 4
+> +
+> +       /*
+> +        * Zero out the potentially sensitive regs, in case nothing uses =
+these
+> +        * again. As at now copy[0,1,2,3] just contains "expand 32-byte k=
+" and
+> +        * state[0,...,9] are s0-s9 those we'll restore in the epilogue, =
+so we
+> +        * only need to zero state[11,...,15].
+> +        */
+> +       move            state10, zero
+> +       move            state11, zero
+> +       move            state12, zero
+> +       move            state13, zero
+> +       move            state14, zero
+> +       move            state15, zero
+> +
+> +       REG_L           s0, sp, 0
+> +       REG_L           s1, sp, SZREG
+> +       REG_L           s2, sp, SZREG * 2
+> +       REG_L           s3, sp, SZREG * 3
+> +       REG_L           s4, sp, SZREG * 4
+> +       REG_L           s5, sp, SZREG * 5
+> +       REG_L           s6, sp, SZREG * 6
+> +       REG_L           s7, sp, SZREG * 7
+> +       REG_L           s8, sp, SZREG * 8
+> +       REG_L           s9, sp, SZREG * 9
+> +       PTR_ADDI        sp, sp, -((-SZREG * 10) & STACK_ALIGN)
+> +
+> +       jr              ra
+> +SYM_FUNC_END(__arch_chacha20_blocks_nostack)
+> diff --git a/arch/loongarch/vdso/vgetrandom.c b/arch/loongarch/vdso/vgetr=
+andom.c
+> new file mode 100644
+> index 000000000000..68e44b3f1d49
+> --- /dev/null
+> +++ b/arch/loongarch/vdso/vgetrandom.c
+> @@ -0,0 +1,15 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (C) 2024 Xi Ruoyao <xry111@xry111.site>. All Rights Reserve=
+d.
+> + */
+> +#include <linux/types.h>
+> +
+> +ssize_t __vdso_getrandom(void *buffer, size_t len, unsigned int flags,
+> +                        void *opaque_state, size_t opaque_len);
+Please see commit 42874e4eb35bdfc54f8514685e50434098ba4f6, it is
+better to avoid such hacks.
+
+> +
+> +ssize_t __vdso_getrandom(void *buffer, size_t len, unsigned int flags,
+> +                        void *opaque_state, size_t opaque_len)
+> +{
+> +       return __cvdso_getrandom(buffer, len, flags, opaque_state,
+> +                                opaque_len);
+Again, no line breaks needed.
+
+
+Huacai
+
+> +}
+> diff --git a/tools/arch/loongarch/vdso b/tools/arch/loongarch/vdso
+> new file mode 120000
+> index 000000000000..ebda43a82db7
+> --- /dev/null
+> +++ b/tools/arch/loongarch/vdso
+> @@ -0,0 +1 @@
+> +../../../arch/loongarch/vdso
+> \ No newline at end of file
+> diff --git a/tools/testing/selftests/vDSO/Makefile b/tools/testing/selfte=
+sts/vDSO/Makefile
+> index e21e78aae24d..606ce5f5c2a4 100644
+> --- a/tools/testing/selftests/vDSO/Makefile
+> +++ b/tools/testing/selftests/vDSO/Makefile
+> @@ -1,6 +1,6 @@
+>  # SPDX-License-Identifier: GPL-2.0
+>  uname_M :=3D $(shell uname -m 2>/dev/null || echo not)
+> -ARCH ?=3D $(shell echo $(uname_M) | sed -e s/i.86/x86/ -e s/x86_64/x86/)
+> +ARCH ?=3D $(shell echo $(uname_M) | sed -e s/i.86/x86/ -e s/x86_64/x86/ =
+-e /loongarch/s/[0-9]//g)
 >
-> I really think that filling dma-ranges for dynamically created pci
-> nodes would be the correct approach.
-> However, IMHO this does not imply that we could let inconsistent
-> address (64 bit addr with 32 flag bit set) laying around the
-> translation chain, and fixing that is currently working fine. I'd
-> be then inclined to say the proposed change is outside the scope
-> of the present patchset and to postpone it to a future patch.
-
-Okay, but let's fix it with a test case. There's already a test case
-for all this in the DT unittest which can be extended.
-
-Rob
+>  TEST_GEN_PROGS :=3D vdso_test_gettimeofday
+>  TEST_GEN_PROGS +=3D vdso_test_getcpu
+> @@ -10,7 +10,7 @@ ifeq ($(ARCH),$(filter $(ARCH),x86 x86_64))
+>  TEST_GEN_PROGS +=3D vdso_standalone_test_x86
+>  endif
+>  TEST_GEN_PROGS +=3D vdso_test_correctness
+> -ifeq ($(uname_M),x86_64)
+> +ifeq ($(uname_M),$(filter $(uname_M),x86_64 loongarch64))
+>  TEST_GEN_PROGS +=3D vdso_test_getrandom
+>  TEST_GEN_PROGS +=3D vdso_test_chacha
+>  endif
+>
+> base-commit: ec309dd126280ca4ef4087e02246a6f61f36c8d1
+> --
+> 2.46.0
+>
 
