@@ -1,136 +1,106 @@
-Return-Path: <linux-kernel+bounces-306866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00ECD9644BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 14:39:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85F0D9644AE
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 14:36:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82D0AB24527
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 12:39:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2EF521F260A2
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 12:36:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 221951B3753;
-	Thu, 29 Aug 2024 12:34:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HuVBptxK"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8CB01B372E;
-	Thu, 29 Aug 2024 12:34:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 552E61A4ADE;
+	Thu, 29 Aug 2024 12:33:59 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB5571A2C3C
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 12:33:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724934873; cv=none; b=cOQKIu+RYkWoQ2H4X95oPWa/sNAD/yXCOpulRJc1P8W7PJ3iN3lOEjxxW2D8yTlsIkpT/6jHzdIxNUjrtIvro0625YXrRw0IRmjwo0MUPPQlZvPRSnBGj6PpLk3wFxqombVeh0ZqYCOiJNOy7ttQVrcTnyqc8BPKm5HAFYc5AQc=
+	t=1724934838; cv=none; b=AMh3AI773CK4N60NNcXBhjYWwkRd8kKyjHvYwIcsWsvKU7dQiqaJY+17GTp6kCZvHLd6t4WlN7J6h48ubOcq2nRhifXr5YrmVcSJsfYrNDjlrCexagTeRiTmpQEEQk5wxUwebmRhST6uW10q9dKsyiEQjpQr1WpsqZ3kmSbRXHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724934873; c=relaxed/simple;
-	bh=DZB7qu5vEbhhjIgEPoBTWvmR4XZ7sUV9Q0Y4Fzdk7mM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dYKxxaByI15SDHXhGurageJzX6lRyeoxkCHvpCmixYj1rbKESEFSiZ+w5CB8kYN8sVGbrgUe9J9dphUjVA/x4cLqknGdFJR3ZLGvb+CUxU7PLJDxBXxd3YcJDevMWoHurG2tLZg5tFREtKsVx1Hm5qrJUHsmjzkMg/hSQH886Y8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HuVBptxK; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724934872; x=1756470872;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=DZB7qu5vEbhhjIgEPoBTWvmR4XZ7sUV9Q0Y4Fzdk7mM=;
-  b=HuVBptxKX8mExIGk1nBdU3JrDWm7wZjiscdhiQsTEarmC1W5l4Wn28hN
-   eSlQUD7ULC6+SwJXqdtxTOX2N2Fh3xxeoew85YYpKXryFvszPq4eklgIM
-   IuzTPUcjAFEESCmRK4kvnikeTbM7y7KmuSV2frTedwblTv+Pob/BHuH1F
-   NSPk0rNJ3E8rbLZbfWYTcdeqhkU20OyBFMw80iCrMKfoUe5x8lLtSjaO+
-   +Vh8QTAa4/uCN+Z23/2VT8ymIBpFVayPiFyzmzFlXIh85U365gPcFR7SW
-   79ErN6tyUP3uVyiGxS0UeafZFuCz15KRjRbkXzDHpmqlAm1QeWSuVH1Z9
-   g==;
-X-CSE-ConnectionGUID: oYiugDbXRaeHJwhCLGoNJg==
-X-CSE-MsgGUID: obmswvnuSxuVPqm2qaylsg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11179"; a="46038230"
-X-IronPort-AV: E=Sophos;i="6.10,185,1719903600"; 
-   d="scan'208";a="46038230"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 05:34:32 -0700
-X-CSE-ConnectionGUID: hAX0QOYZTZejBkNl5KPLEg==
-X-CSE-MsgGUID: NAeMWS/2S+WpkI7vWtw85Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,185,1719903600"; 
-   d="scan'208";a="63188515"
-Received: from newjersey.igk.intel.com ([10.102.20.203])
-  by fmviesa006.fm.intel.com with ESMTP; 29 Aug 2024 05:34:29 -0700
-From: Alexander Lobakin <aleksander.lobakin@intel.com>
-To: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: Alexander Lobakin <aleksander.lobakin@intel.com>,
-	David Ahern <dsahern@kernel.org>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
-	nex.sw.ncis.osdt.itp.upstreaming@intel.com,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next v5 5/5] netdev_features: remove NETIF_F_ALL_FCOE
-Date: Thu, 29 Aug 2024 14:33:40 +0200
-Message-ID: <20240829123340.789395-6-aleksander.lobakin@intel.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240829123340.789395-1-aleksander.lobakin@intel.com>
-References: <20240829123340.789395-1-aleksander.lobakin@intel.com>
+	s=arc-20240116; t=1724934838; c=relaxed/simple;
+	bh=Rejae07MO26NNA/KXYCKtW6yuzjuQL6t3j3weNlO29g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pjCk5NfFtjXfuYdtq+hWZKYvXCGyO1C+8ftk1HG/8qe6rbPMW9Hv9roAYnZfNcNqByf59NnNHvf4mK8/twQqSOzxEwR9Mp4belN8a6DHO6o7SkAwEIHuCn7ap46rgpCHGM0jH5eHnxsrThKfUdnCn7+9R6+gm7qFybHrss+3f40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4721ADA7
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 05:34:22 -0700 (PDT)
+Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id D03F23F762
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 05:33:55 -0700 (PDT)
+Date: Thu, 29 Aug 2024 13:33:45 +0100
+From: Liviu Dudau <liviu.dudau@arm.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Russell King <linux@armlinux.org.uk>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] ARM: versatile: fix OF node leak in CPUs prepare
+Message-ID: <ZtBqqXWvVWDtaeE8@e110455-lin.cambridge.arm.com>
+References: <20240826054934.10724-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240826054934.10724-1-krzysztof.kozlowski@linaro.org>
 
-NETIF_F_ALL_FCOE is used only in vlan_dev.c, 2 times. Now that it's only
-2 bits, open-code it and remove the definition from netdev_features.h.
+On Mon, Aug 26, 2024 at 07:49:33AM +0200, Krzysztof Kozlowski wrote:
+> Machine code is leaking OF node reference from of_find_matching_node()
+> in realview_smp_prepare_cpus().
+> 
+> Fixes: 5420b4b15617 ("ARM: realview: add an DT SMP boot method")
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Suggested-by: Jakub Kicinski <kuba@kernel.org>
-Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
----
- include/linux/netdev_features.h | 2 --
- net/8021q/vlan_dev.c            | 5 +++--
- 2 files changed, 3 insertions(+), 4 deletions(-)
+Acked-by: Liviu Dudau <liviu.dudau@arm.com>
 
-diff --git a/include/linux/netdev_features.h b/include/linux/netdev_features.h
-index 37af2c6e7caf..66e7d26b70a4 100644
---- a/include/linux/netdev_features.h
-+++ b/include/linux/netdev_features.h
-@@ -209,8 +209,6 @@ static inline int find_next_netdev_feature(u64 feature, unsigned long start)
- #define NETIF_F_ALL_TSO 	(NETIF_F_TSO | NETIF_F_TSO6 | \
- 				 NETIF_F_TSO_ECN | NETIF_F_TSO_MANGLEID)
- 
--#define NETIF_F_ALL_FCOE	(NETIF_F_FCOE_CRC | NETIF_F_FSO)
--
- /* List of features with software fallbacks. */
- #define NETIF_F_GSO_SOFTWARE	(NETIF_F_ALL_TSO | NETIF_F_GSO_SCTP |	     \
- 				 NETIF_F_GSO_UDP_L4 | NETIF_F_GSO_FRAGLIST)
-diff --git a/net/8021q/vlan_dev.c b/net/8021q/vlan_dev.c
-index 09b46b057ab2..458040e8a0e0 100644
---- a/net/8021q/vlan_dev.c
-+++ b/net/8021q/vlan_dev.c
-@@ -564,7 +564,7 @@ static int vlan_dev_init(struct net_device *dev)
- 			   NETIF_F_FRAGLIST | NETIF_F_GSO_SOFTWARE |
- 			   NETIF_F_GSO_ENCAP_ALL |
- 			   NETIF_F_HIGHDMA | NETIF_F_SCTP_CRC |
--			   NETIF_F_ALL_FCOE;
-+			   NETIF_F_FCOE_CRC | NETIF_F_FSO;
- 
- 	if (real_dev->vlan_features & NETIF_F_HW_MACSEC)
- 		dev->hw_features |= NETIF_F_HW_MACSEC;
-@@ -576,7 +576,8 @@ static int vlan_dev_init(struct net_device *dev)
- 	if (dev->features & NETIF_F_VLAN_FEATURES)
- 		netdev_warn(real_dev, "VLAN features are set incorrectly.  Q-in-Q configurations may not work correctly.\n");
- 
--	dev->vlan_features = real_dev->vlan_features & ~NETIF_F_ALL_FCOE;
-+	dev->vlan_features = real_dev->vlan_features &
-+			     ~(NETIF_F_FCOE_CRC | NETIF_F_FSO);
- 	dev->hw_enc_features = vlan_tnl_features(real_dev);
- 	dev->mpls_features = real_dev->mpls_features;
- 
+I think Sudeep is going to take the series through his tree, but he might
+be on holiday at this time.
+
+Best regards,
+Liviu
+
+> 
+> ---
+> 
+> Not Cc-ing stable as this should have almost no impact, except code
+> correctness.
+> ---
+>  arch/arm/mach-versatile/platsmp-realview.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/arm/mach-versatile/platsmp-realview.c b/arch/arm/mach-versatile/platsmp-realview.c
+> index 6965a1de727b..d38b2e174257 100644
+> --- a/arch/arm/mach-versatile/platsmp-realview.c
+> +++ b/arch/arm/mach-versatile/platsmp-realview.c
+> @@ -70,6 +70,7 @@ static void __init realview_smp_prepare_cpus(unsigned int max_cpus)
+>  		return;
+>  	}
+>  	map = syscon_node_to_regmap(np);
+> +	of_node_put(np);
+>  	if (IS_ERR(map)) {
+>  		pr_err("PLATSMP: No syscon regmap\n");
+>  		return;
+> -- 
+> 2.43.0
+> 
+
 -- 
-2.46.0
-
+====================
+| I would like to |
+| fix the world,  |
+| but they're not |
+| giving me the   |
+ \ source code!  /
+  ---------------
+    ¯\_(ツ)_/¯
 
