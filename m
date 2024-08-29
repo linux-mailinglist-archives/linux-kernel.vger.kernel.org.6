@@ -1,238 +1,238 @@
-Return-Path: <linux-kernel+bounces-307401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF066964D29
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 19:45:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D3FD7964D27
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 19:44:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F0A51F23B63
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 17:45:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61D431F22568
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 17:44:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29DC51B7915;
-	Thu, 29 Aug 2024 17:44:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 498381B5EC9;
+	Thu, 29 Aug 2024 17:44:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZsgoJASn"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aIJKuEHl"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C568418E031;
-	Thu, 29 Aug 2024 17:44:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 661BE1B5EA1;
+	Thu, 29 Aug 2024 17:44:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724953496; cv=none; b=LtR6yuFWVxOAdnfVwfJuv/pp51lTjtXhQCd5SYusWDzOyPDlTVSzpOtZYamnMWjOrAqDMtLFDzAfSrFlmtu/K5jy0hQQqk6KjZ9UJEiRJuRd44l6v0kC5U1OVdGT7E6+OeBZNapCo93glrqg8I0gcbb4SX1C1sSQiAvc0IO6p2A=
+	t=1724953479; cv=none; b=RkHz/Flp2Czd/2oveq835W2xDM9JVusKouhJ3XB0+xjYSDE7S83obHR3mlozEWwVHaJTdQRcjuTzS769oiZM0iukW+qi7bgycQ7Mj835zKLcIVwJVLiXQIoLeVVfAFNt9qar9P3wYHTLF1jj3RJkeTeXHkOSiXubBTDCgWpfG6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724953496; c=relaxed/simple;
-	bh=iCs7CK4S1ECvvxh+VL6Q0ELw/ddpVArlblT3R3I64Jc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LEHOsqlMvtKYFlKQNpa0BQyFxz73FVOoUS/HX6yWJg4goq628CMQN2QgV1hhot3UlaxZOPurXlOj4h7JSj3fDzA559Wf8GyVuHeQi6hNLS2BYNj8LSeUxiz4jgjJAxIgRROFuK96QNn7OuiBqWMgvEknqLFbzjzmsQh1qZfxQwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZsgoJASn; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-202089e57d8so7438495ad.0;
-        Thu, 29 Aug 2024 10:44:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724953494; x=1725558294; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=LRPGfBMGZzpvPkj/HqPh800wLxA7h+m99bFRb1aqa/o=;
-        b=ZsgoJASnvK8sljRdyLhtSLdoUuBRx2ZsEakbbziyq68IDkCKk44VQgOZ0VRKQAsPHI
-         GJt+JAu6DHBmDpKicbVKDl9bUplhk2YbMCyFLJP1NGkOrv5OL3afYG0hxtF42QFDgiVJ
-         eMdVZJcGKBjvTkc4JmzSxaxwwXxlHg4MlxxWISGtEGpHxCVDVIU+vor2ORuT7OtOEdkS
-         gIdpV2oesiybXOB7um8M1eP1xGZe4LL5EAsC+vamrcS++cdZyZ3AGVC97yks4o5pG5Bv
-         sLBBFY8a4qoCwtDYgJVSMP3LQxy3v4nszZYZ9p7Br0qruaVMDHGEu5AEGuAtbQlh1rvI
-         Gtfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724953494; x=1725558294;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LRPGfBMGZzpvPkj/HqPh800wLxA7h+m99bFRb1aqa/o=;
-        b=ahfIQnmu5MBamKbiWyiqTmIws7c+11Fx94VJ4vmLy2U9ONdIIzYSsKRB7oiBQWb52g
-         MjLII1rrXatRwBnMFioSxEqSyDLgnSVHxrk8Gk253uCT9BV3ajIYPvShboUYM8ZlnYam
-         ruqiuOmZLpmiywPr/QBIwmMYL8HEHoFtT5fWjit0wiKA2vtJBhF/4BoWWypYQ1qRXhGX
-         OgUiQvWLraKScImJhqEG60DV/5khN5gjrCNM7uCMvCdhOJTR/sXx7i01ux6phmktaKx0
-         hklV/LlFaIxTx3tQWt2TAKhLfdA7osQ5jz3eSvWryM9XXeTY0rs29K75GITyk1ipMgzg
-         robQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXIbY9o/mIWgayA/kq3/t2brn5WgpFZ7Un1hO+PW0v8pLEAJFpA7Bs0+9/oKNfNKN0r8vZV0yPZkg7pF7M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YynUfCMieyneO2p4WFuMphDMZjLC9PN1Llb/Aqu74Ej8WgPj9aW
-	67yO/8Z+KNoN9Qcf0fAFgxBqtBnnxhQEJuSc/bNUeVvB0LIAWAU/
-X-Google-Smtp-Source: AGHT+IFWvCE+TxB4cBY4LyUs2M3RnA+2kHuup3XTetabP3uNyeOUqA4NGlbr3xcEbFr4QmhuNdkzmA==
-X-Received: by 2002:a17:902:e74a:b0:1fe:d72d:13e1 with SMTP id d9443c01a7336-205168e4310mr31015465ad.30.1724953493746;
-        Thu, 29 Aug 2024 10:44:53 -0700 (PDT)
-Received: from fedora.. ([106.219.166.11])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-205152b1546sm14075635ad.18.2024.08.29.10.44.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 10:44:53 -0700 (PDT)
-From: Riyan Dhiman <riyandhiman14@gmail.com>
-To: lpieralisi@kernel.org,
-	guohanjun@huawei.com,
-	sudeep.holla@arm.com,
-	rafael@kernel.org
-Cc: linux-acpi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Riyan Dhiman <riyandhiman14@gmail.com>
-Subject: [PATCH v2] ACPI: arm64: Fix some parenthesis alignment coding style issues
-Date: Thu, 29 Aug 2024 23:13:30 +0530
-Message-ID: <20240829174329.3917-3-riyandhiman14@gmail.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1724953479; c=relaxed/simple;
+	bh=OeICkt69Q7l7jMzcCZkaAIW3lOqEG7Hp8jq5sAQ3Q0g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kCzoCQNLJyD7i4oX+Nb3XEm4/iaiW0hCmYjexJDlkaw5NP0t8cjQWzsFSPsRiomsmegc77MssTn287de9JXf8xKGhEyXIEW4AqrCVuVy1co9e20S0X8Y+dLvsO9fpHUtDK4ny6TgpvXVnhg72diFaD+WrHV3sAeVxm2n9//6iog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aIJKuEHl; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724953478; x=1756489478;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=OeICkt69Q7l7jMzcCZkaAIW3lOqEG7Hp8jq5sAQ3Q0g=;
+  b=aIJKuEHlGePEh/WUPVpKR1z8IW+QdFC86WhgSinMfPC5BiFcVGrfWDgc
+   1vAlR7RzFZnD75zz4SquKveED7XSC+9aRasJ/KgLPILZRoIMEpCaTcKVK
+   0n9oEQOYXaKXaMFtqjzcxht4JeNfyBPEj85lhJSmOpauMWu/5Pd9KPeuZ
+   /pqqVg/xmlGsUWOzNaw7PLmps0biV7PTLF/ceCA81URMEw9fWNz00hlF6
+   qk6MtT9WpCplG+bZuO5cMjkFNzwblAkRP1YN93K4KUMsg7Co9dfAFQKI5
+   EOtcQF+RVKX0BjVE8tZtwRgp8gGC2xE52v7HTc4Dxlzq3caUqdR0MadDO
+   g==;
+X-CSE-ConnectionGUID: 2WNe8LJJQRiDzTyQqAa9Ww==
+X-CSE-MsgGUID: mwllGqfYQDy8bjB+Cp92Xg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11179"; a="34232538"
+X-IronPort-AV: E=Sophos;i="6.10,186,1719903600"; 
+   d="scan'208";a="34232538"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 10:44:36 -0700
+X-CSE-ConnectionGUID: FxpRN4OETXa62Xjcxo95RA==
+X-CSE-MsgGUID: 1G6AMos7TaKBcxMKjbSvHQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,186,1719903600"; 
+   d="scan'208";a="63844429"
+Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
+  by fmviesa010.fm.intel.com with ESMTP; 29 Aug 2024 10:44:34 -0700
+Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sjjCB-0000ZO-0k;
+	Thu, 29 Aug 2024 17:44:31 +0000
+Date: Fri, 30 Aug 2024 01:43:41 +0800
+From: kernel test robot <lkp@intel.com>
+To: Haifeng Xu <haifeng.xu@shopee.com>, viro@zeniv.linux.org.uk,
+	brauner@kernel.org, jack@suse.cz
+Cc: oe-kbuild-all@lists.linux.dev, tytso@mit.edu, yi.zhang@huaweicloud.com,
+	yukuai1@huaweicloud.com, tj@kernel.org, linux-ext4@vger.kernel.org,
+	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Haifeng Xu <haifeng.xu@shopee.com>
+Subject: Re: [PATCH] buffer: Associate the meta bio with blkg from buffer page
+Message-ID: <202408300119.UQ0zNU1f-lkp@intel.com>
+References: <20240828033224.146584-1-haifeng.xu@shopee.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240828033224.146584-1-haifeng.xu@shopee.com>
 
-Adhere to Linux kernel coding style.
+Hi Haifeng,
 
-Issue reported by checkpatch:
-- CHECK: Alignment should match open parenthesis
+kernel test robot noticed the following build errors:
 
-It has no functional changes.
+[auto build test ERROR on brauner-vfs/vfs.all]
+[also build test ERROR on linus/master v6.11-rc5 next-20240829]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Signed-off-by: Riyan Dhiman <riyandhiman14@gmail.com>
----
- drivers/acpi/arm64/amba.c |  5 ++---
- drivers/acpi/arm64/apmt.c |  4 ++--
- drivers/acpi/arm64/iort.c | 22 +++++++++++-----------
- 3 files changed, 15 insertions(+), 16 deletions(-)
+url:    https://github.com/intel-lab-lkp/linux/commits/Haifeng-Xu/buffer-Associate-the-meta-bio-with-blkg-from-buffer-page/20240828-113409
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
+patch link:    https://lore.kernel.org/r/20240828033224.146584-1-haifeng.xu%40shopee.com
+patch subject: [PATCH] buffer: Associate the meta bio with blkg from buffer page
+config: x86_64-buildonly-randconfig-002-20240829 (https://download.01.org/0day-ci/archive/20240830/202408300119.UQ0zNU1f-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240830/202408300119.UQ0zNU1f-lkp@intel.com/reproduce)
 
-diff --git a/drivers/acpi/arm64/amba.c b/drivers/acpi/arm64/amba.c
-index 1350083bce5f..8d27d86ee052 100644
---- a/drivers/acpi/arm64/amba.c
-+++ b/drivers/acpi/arm64/amba.c
-@@ -33,8 +33,7 @@ static void amba_register_dummy_clk(void)
- 	clk_register_clkdev(amba_dummy_clk, "apb_pclk", NULL);
- }
- 
--static int amba_handler_attach(struct acpi_device *adev,
--				const struct acpi_device_id *id)
-+static int amba_handler_attach(struct acpi_device *adev, const struct acpi_device_id *id)
- {
- 	struct acpi_device *parent = acpi_dev_parent(adev);
- 	struct amba_device *dev;
-@@ -94,7 +93,7 @@ static int amba_handler_attach(struct acpi_device *adev,
- 	ret = amba_device_add(dev, &iomem_resource);
- 	if (ret) {
- 		dev_err(&adev->dev, "%s(): amba_device_add() failed (%d)\n",
--		       __func__, ret);
-+			__func__, ret);
- 		goto err_free;
- 	}
- 
-diff --git a/drivers/acpi/arm64/apmt.c b/drivers/acpi/arm64/apmt.c
-index bb010f6164e5..74e8dc33241b 100644
---- a/drivers/acpi/arm64/apmt.c
-+++ b/drivers/acpi/arm64/apmt.c
-@@ -48,7 +48,7 @@ static int __init apmt_init_resources(struct resource *res,
- 		trigger = (trigger == ACPI_APMT_OVFLW_IRQ_FLAGS_MODE_LEVEL) ?
- 			ACPI_LEVEL_SENSITIVE : ACPI_EDGE_SENSITIVE;
- 		irq = acpi_register_gsi(NULL, node->ovflw_irq, trigger,
--						ACPI_ACTIVE_HIGH);
-+					ACPI_ACTIVE_HIGH);
- 
- 		if (irq <= 0) {
- 			pr_warn("APMT could not register gsi hwirq %d\n", irq);
-@@ -132,7 +132,7 @@ static int __init apmt_init_platform_devices(void)
- 
- 	while (offset < end) {
- 		apmt_node = ACPI_ADD_PTR(struct acpi_apmt_node, apmt,
--				 offset);
-+					 offset);
- 
- 		fwnode = acpi_alloc_fwnode_static();
- 		if (!fwnode)
-diff --git a/drivers/acpi/arm64/iort.c b/drivers/acpi/arm64/iort.c
-index 1b39e9ae7ac1..369a3b506711 100644
---- a/drivers/acpi/arm64/iort.c
-+++ b/drivers/acpi/arm64/iort.c
-@@ -374,7 +374,7 @@ static struct acpi_iort_node *iort_node_get_id(struct acpi_iort_node *node,
- 	struct acpi_iort_id_mapping *map;
- 
- 	if (!node->mapping_offset || !node->mapping_count ||
--				     index >= node->mapping_count)
-+	    index >= node->mapping_count)
- 		return NULL;
- 
- 	map = ACPI_ADD_PTR(struct acpi_iort_id_mapping, node,
-@@ -388,7 +388,7 @@ static struct acpi_iort_node *iort_node_get_id(struct acpi_iort_node *node,
- 	}
- 
- 	parent = ACPI_ADD_PTR(struct acpi_iort_node, iort_table,
--			       map->output_reference);
-+			      map->output_reference);
- 
- 	if (map->flags & ACPI_IORT_ID_SINGLE_MAPPING) {
- 		if (node->type == ACPI_IORT_NODE_NAMED_COMPONENT ||
-@@ -1128,8 +1128,8 @@ static void iort_iommu_msi_get_resv_regions(struct device *dev,
- 
- 	for (i = 0; i < fwspec->num_ids; i++) {
- 		its_node = iort_node_map_id(iommu_node,
--					fwspec->ids[i],
--					NULL, IORT_MSI_TYPE);
-+					    fwspec->ids[i],
-+					    NULL, IORT_MSI_TYPE);
- 		if (its_node)
- 			break;
- 	}
-@@ -1429,7 +1429,7 @@ static void __init acpi_iort_register_irq(int hwirq, const char *name,
- 
- 	if (irq <= 0) {
- 		pr_err("could not register gsi hwirq %d name [%s]\n", hwirq,
--								      name);
-+		       name);
- 		return;
- 	}
- 
-@@ -1561,7 +1561,7 @@ static void __init arm_smmu_v3_dma_configure(struct device *dev,
-  * set numa proximity domain for smmuv3 device
-  */
- static int  __init arm_smmu_v3_set_proximity(struct device *dev,
--					      struct acpi_iort_node *node)
-+					     struct acpi_iort_node *node)
- {
- 	struct acpi_iort_smmu_v3 *smmu;
- 
-@@ -1622,7 +1622,7 @@ static void __init arm_smmu_init_resources(struct resource *res,
- 	trigger = IORT_IRQ_TRIGGER_MASK(glb_irq[0]);
- 
- 	acpi_iort_register_irq(hw_irq, "arm-smmu-global", trigger,
--				     &res[num_res++]);
-+			       &res[num_res++]);
- 
- 	/* Context IRQs */
- 	ctx_irq = ACPI_ADD_PTR(u64, node, smmu->context_interrupt_offset);
-@@ -1727,9 +1727,9 @@ struct iort_dev_config {
- 				  struct acpi_iort_node *node);
- 	int (*dev_count_resources)(struct acpi_iort_node *node);
- 	void (*dev_init_resources)(struct resource *res,
--				     struct acpi_iort_node *node);
-+				   struct acpi_iort_node *node);
- 	int (*dev_set_proximity)(struct device *dev,
--				    struct acpi_iort_node *node);
-+				 struct acpi_iort_node *node);
- 	int (*dev_add_platdata)(struct platform_device *pdev);
- };
- 
-@@ -1878,13 +1878,13 @@ static void __init iort_enable_acs(struct acpi_iort_node *iort_node)
- 				continue;
- 
- 			parent = ACPI_ADD_PTR(struct acpi_iort_node,
--					iort_table,  map->output_reference);
-+					      iort_table,  map->output_reference);
- 			/*
- 			 * If we detect a RC->SMMU mapping, make sure
- 			 * we enable ACS on the system.
- 			 */
- 			if ((parent->type == ACPI_IORT_NODE_SMMU) ||
--				(parent->type == ACPI_IORT_NODE_SMMU_V3)) {
-+			    (parent->type == ACPI_IORT_NODE_SMMU_V3)) {
- 				pci_request_acs();
- 				acs_enabled = true;
- 				return;
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408300119.UQ0zNU1f-lkp@intel.com/
+
+All error/warnings (new ones prefixed by >>):
+
+   fs/buffer.c: In function 'submit_bh_wbc':
+>> fs/buffer.c:2826:29: error: implicit declaration of function 'mem_cgroup_css_from_folio'; did you mean 'mem_cgroup_from_obj'? [-Werror=implicit-function-declaration]
+    2826 |                 memcg_css = mem_cgroup_css_from_folio(folio);
+         |                             ^~~~~~~~~~~~~~~~~~~~~~~~~
+         |                             mem_cgroup_from_obj
+>> fs/buffer.c:2826:27: warning: assignment to 'struct cgroup_subsys_state *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+    2826 |                 memcg_css = mem_cgroup_css_from_folio(folio);
+         |                           ^
+   In file included from include/linux/array_size.h:5,
+                    from include/linux/kernel.h:16,
+                    from fs/buffer.c:22:
+>> fs/buffer.c:2827:42: error: 'memory_cgrp_subsys_on_dfl_key' undeclared (first use in this function); did you mean 'misc_cgrp_subsys_on_dfl_key'?
+    2827 |                 if (cgroup_subsys_on_dfl(memory_cgrp_subsys) &&
+         |                                          ^~~~~~~~~~~~~~~~~~
+   include/linux/compiler.h:19:53: note: in definition of macro 'likely_notrace'
+      19 | #define likely_notrace(x)       __builtin_expect(!!(x), 1)
+         |                                                     ^
+   include/linux/jump_label.h:511:56: note: in expansion of macro 'static_key_enabled'
+     511 | #define static_branch_likely(x)         likely_notrace(static_key_enabled(&(x)->key))
+         |                                                        ^~~~~~~~~~~~~~~~~~
+   include/linux/cgroup.h:95:9: note: in expansion of macro 'static_branch_likely'
+      95 |         static_branch_likely(&ss ## _on_dfl_key)
+         |         ^~~~~~~~~~~~~~~~~~~~
+   fs/buffer.c:2827:21: note: in expansion of macro 'cgroup_subsys_on_dfl'
+    2827 |                 if (cgroup_subsys_on_dfl(memory_cgrp_subsys) &&
+         |                     ^~~~~~~~~~~~~~~~~~~~
+   fs/buffer.c:2827:42: note: each undeclared identifier is reported only once for each function it appears in
+    2827 |                 if (cgroup_subsys_on_dfl(memory_cgrp_subsys) &&
+         |                                          ^~~~~~~~~~~~~~~~~~
+   include/linux/compiler.h:19:53: note: in definition of macro 'likely_notrace'
+      19 | #define likely_notrace(x)       __builtin_expect(!!(x), 1)
+         |                                                     ^
+   include/linux/jump_label.h:511:56: note: in expansion of macro 'static_key_enabled'
+     511 | #define static_branch_likely(x)         likely_notrace(static_key_enabled(&(x)->key))
+         |                                                        ^~~~~~~~~~~~~~~~~~
+   include/linux/cgroup.h:95:9: note: in expansion of macro 'static_branch_likely'
+      95 |         static_branch_likely(&ss ## _on_dfl_key)
+         |         ^~~~~~~~~~~~~~~~~~~~
+   fs/buffer.c:2827:21: note: in expansion of macro 'cgroup_subsys_on_dfl'
+    2827 |                 if (cgroup_subsys_on_dfl(memory_cgrp_subsys) &&
+         |                     ^~~~~~~~~~~~~~~~~~~~
+>> fs/buffer.c:2828:42: error: 'io_cgrp_subsys_on_dfl_key' undeclared (first use in this function); did you mean 'misc_cgrp_subsys_on_dfl_key'?
+    2828 |                     cgroup_subsys_on_dfl(io_cgrp_subsys)) {
+         |                                          ^~~~~~~~~~~~~~
+   include/linux/compiler.h:19:53: note: in definition of macro 'likely_notrace'
+      19 | #define likely_notrace(x)       __builtin_expect(!!(x), 1)
+         |                                                     ^
+   include/linux/jump_label.h:511:56: note: in expansion of macro 'static_key_enabled'
+     511 | #define static_branch_likely(x)         likely_notrace(static_key_enabled(&(x)->key))
+         |                                                        ^~~~~~~~~~~~~~~~~~
+   include/linux/cgroup.h:95:9: note: in expansion of macro 'static_branch_likely'
+      95 |         static_branch_likely(&ss ## _on_dfl_key)
+         |         ^~~~~~~~~~~~~~~~~~~~
+   fs/buffer.c:2828:21: note: in expansion of macro 'cgroup_subsys_on_dfl'
+    2828 |                     cgroup_subsys_on_dfl(io_cgrp_subsys)) {
+         |                     ^~~~~~~~~~~~~~~~~~~~
+>> fs/buffer.c:2829:70: error: 'io_cgrp_subsys' undeclared (first use in this function); did you mean 'misc_cgrp_subsys'?
+    2829 |                         blkcg_css = cgroup_e_css(memcg_css->cgroup, &io_cgrp_subsys);
+         |                                                                      ^~~~~~~~~~~~~~
+         |                                                                      misc_cgrp_subsys
+   cc1: some warnings being treated as errors
+
+
+vim +2826 fs/buffer.c
+
+  2778	
+  2779	static void submit_bh_wbc(blk_opf_t opf, struct buffer_head *bh,
+  2780				  enum rw_hint write_hint,
+  2781				  struct writeback_control *wbc)
+  2782	{
+  2783		const enum req_op op = opf & REQ_OP_MASK;
+  2784		struct bio *bio;
+  2785	
+  2786		BUG_ON(!buffer_locked(bh));
+  2787		BUG_ON(!buffer_mapped(bh));
+  2788		BUG_ON(!bh->b_end_io);
+  2789		BUG_ON(buffer_delay(bh));
+  2790		BUG_ON(buffer_unwritten(bh));
+  2791	
+  2792		/*
+  2793		 * Only clear out a write error when rewriting
+  2794		 */
+  2795		if (test_set_buffer_req(bh) && (op == REQ_OP_WRITE))
+  2796			clear_buffer_write_io_error(bh);
+  2797	
+  2798		if (buffer_meta(bh))
+  2799			opf |= REQ_META;
+  2800		if (buffer_prio(bh))
+  2801			opf |= REQ_PRIO;
+  2802	
+  2803		bio = bio_alloc(bh->b_bdev, 1, opf, GFP_NOIO);
+  2804	
+  2805		fscrypt_set_bio_crypt_ctx_bh(bio, bh, GFP_NOIO);
+  2806	
+  2807		bio->bi_iter.bi_sector = bh->b_blocknr * (bh->b_size >> 9);
+  2808		bio->bi_write_hint = write_hint;
+  2809	
+  2810		__bio_add_page(bio, bh->b_page, bh->b_size, bh_offset(bh));
+  2811	
+  2812		bio->bi_end_io = end_bio_bh_io_sync;
+  2813		bio->bi_private = bh;
+  2814	
+  2815		/* Take care of bh's that straddle the end of the device */
+  2816		guard_bio_eod(bio);
+  2817	
+  2818		if (wbc) {
+  2819			wbc_init_bio(wbc, bio);
+  2820			wbc_account_cgroup_owner(wbc, bh->b_page, bh->b_size);
+  2821		} else if (buffer_meta(bh)) {
+  2822			struct folio *folio;
+  2823			struct cgroup_subsys_state *memcg_css, *blkcg_css;
+  2824	
+  2825			folio = page_folio(bh->b_page);
+> 2826			memcg_css = mem_cgroup_css_from_folio(folio);
+> 2827			if (cgroup_subsys_on_dfl(memory_cgrp_subsys) &&
+> 2828			    cgroup_subsys_on_dfl(io_cgrp_subsys)) {
+> 2829				blkcg_css = cgroup_e_css(memcg_css->cgroup, &io_cgrp_subsys);
+  2830				bio_associate_blkg_from_css(bio, blkcg_css);
+  2831			}
+  2832		}
+  2833	
+  2834		submit_bio(bio);
+  2835	}
+  2836	
+
 -- 
-2.46.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
