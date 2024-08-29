@@ -1,109 +1,100 @@
-Return-Path: <linux-kernel+bounces-307392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92E01964CEE
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 19:36:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AC16964CF7
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 19:38:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50A48285B0C
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 17:36:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBA11282D3E
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 17:38:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 109D21B78FF;
-	Thu, 29 Aug 2024 17:36:46 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F30C1B5EC9;
+	Thu, 29 Aug 2024 17:38:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ld6bonTJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D21E13A8F0;
-	Thu, 29 Aug 2024 17:36:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BACD21B6546;
+	Thu, 29 Aug 2024 17:38:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724953005; cv=none; b=NgFI8Ft76b2lf10EW311YRBWW7tQ+ttt76yzVaLmt/Iuv77mblc0kujcp5NhDNgisKgL30vL1oQ5BODsQ+yjn9nzdUq0bW2tBZcOAKrv6dV58iYyDJGhVIESetDxOfoS045/v0d28NkZ9v+qXftgPcrgNCRjWmG5XRw+BJ5vFxA=
+	t=1724953127; cv=none; b=mcoRFQUv0O3QK+IgfBU17Tz3ynStwrE3gIaDV2NHM0hULMuCU6Q6h5cFcYbvdKiFG0oEBFFvB5ZZ2KHxqjWrmlsYhUo4LYCfu2ZJ76mifLyFwi6Vl5EqXAbAvOs71kJ7TKNFJuwzdCaCZfFFjiMJb5lbJn2xt8Ufqqpvs+WUGvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724953005; c=relaxed/simple;
-	bh=yCViMBF3htzQW2k40xveDOOEPO0zJOEzLhNmFYttUwg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GEqwkgI40foio9Bm0BjB9rL1DYpG+zNHB2hfRRV1yZU/DnOXUw0EKVgTqQe3bbZsJlTPc7ukqUTmSzz42fE7grhoRueoSLmUSv82/cj66f7FD3qhPShcLkPrtGsvbbbkIEnH3eck62WXm7gXvSf+6bbzp74tXGua/zo8CPmR0m4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4WvpP538xwz9sS8;
-	Thu, 29 Aug 2024 19:36:41 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id 71Z_VYkOft16; Thu, 29 Aug 2024 19:36:41 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4WvpP528mSz9sRs;
-	Thu, 29 Aug 2024 19:36:41 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 317CB8B794;
-	Thu, 29 Aug 2024 19:36:41 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id MDymf6ryo8rr; Thu, 29 Aug 2024 19:36:41 +0200 (CEST)
-Received: from [192.168.234.66] (unknown [192.168.234.66])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 3CA178B764;
-	Thu, 29 Aug 2024 19:36:39 +0200 (CEST)
-Message-ID: <e5a36d98-c880-4d33-954a-2a05240ef02f@csgroup.eu>
-Date: Thu, 29 Aug 2024 19:36:38 +0200
+	s=arc-20240116; t=1724953127; c=relaxed/simple;
+	bh=aMlOb4pNYgyhx21tb5RrxMoj5116RIgx1YGUw9c22aA=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=kzzTU9U+ftGVi36FLXN+DBzIIDF8yZdaMkan2QCXOg3fKW9y+dcRQ++GWMkasbUz1PVfjrOUEDzvX6UyLOuFIxN87fPQLFuP+oyGZxM9tYCHzEM8CsrUTB/oPqKw34zkxL89rDT87IeKAMrnO0KjVuC3Fb7mYm+MbkVmWs7+nKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ld6bonTJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B35CAC4CEC7;
+	Thu, 29 Aug 2024 17:38:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724953127;
+	bh=aMlOb4pNYgyhx21tb5RrxMoj5116RIgx1YGUw9c22aA=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=ld6bonTJVeaDlfa76gVLsOXyqEbHWhkQXuWze08HLOUpHeXVdt/7E+a4qgMN8h/lP
+	 q+cf2XZNbTN/tGRHRjFDs1NPouI/znr/E1wa9t9uF2q5RHyZuc36XeSsODPghjZv8f
+	 M3ZodOB2WJoMcAwoRnF1Zvx2i6vVBp//NOaEDSw0De7j47K4Omd16clvbVqKXBvhPK
+	 hwr0UKmgxPV8Y2Zt76acLHczbgKBIbzjyswXgDlqLoefouXmoeIUaQz1QJxcyDcLjL
+	 Q1xvIeqEOmmkIlV/TmNWy1b53staXjVd8/J0z7Iy54Yra8UGtyU/xIGBNIE9GLYtrR
+	 +DVdmYA4UaTeA==
+From: Mark Brown <broonie@kernel.org>
+To: Daniel Mack <daniel@zonque.org>, 
+ Haojian Zhuang <haojian.zhuang@gmail.com>, 
+ Robert Jarzmik <robert.jarzmik@free.fr>, 
+ linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Yang Ruibin <11162571@vivo.com>
+Cc: opensource.kernel@vivo.com
+In-Reply-To: <20240829033511.1917015-1-11162571@vivo.com>
+References: <20240829033511.1917015-1-11162571@vivo.com>
+Subject: Re: [PATCH v2] drivers: spi: Insert the missing
+ pci_dev_put()before return
+Message-Id: <172495312546.812311.690393310730563993.b4-ty@kernel.org>
+Date: Thu, 29 Aug 2024 18:38:45 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 05/17] vdso: Avoid call to memset() by getrandom
-To: Segher Boessenkool <segher@kernel.crashing.org>,
- Ard Biesheuvel <ardb@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, "Jason A . Donenfeld" <Jason@zx2c4.com>,
- Eric Biggers <ebiggers@kernel.org>, Michael Ellerman <mpe@ellerman.id.au>,
- Nicholas Piggin <npiggin@gmail.com>, Naveen N Rao <naveen@kernel.org>,
- Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>, Theodore Ts'o <tytso@mit.edu>,
- Andrew Morton <akpm@linux-foundation.org>,
- Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Vincenzo Frascino <vincenzo.frascino@arm.com>, shuah <shuah@kernel.org>,
- linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>,
- linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org
-References: <cover.1724309198.git.christophe.leroy@csgroup.eu>
- <5deb67090b214f0e6eae96b7c406546d1a16f89b.1724309198.git.christophe.leroy@csgroup.eu>
- <20240827180819.GB2049@sol.localdomain>
- <20240827225330.GC29862@gate.crashing.org> <Zs8HirKLk-SrwTIu@zx2c4.com>
- <fc19bf63-d519-46e2-be70-80202c85ff92@app.fastmail.com>
- <20240828124519.GE29862@gate.crashing.org>
- <CAMj1kXGmDmxy75eP=rf_fzKmg0g_FeKV43jk2G_gibnKZBtVww@mail.gmail.com>
- <20240828162025.GG29862@gate.crashing.org>
- <CAMj1kXHZPfr2Sz78UrgsdX-2uBp0D1sCnznQnz5ZyMdiJq6rAA@mail.gmail.com>
- <20240828172538.GI29862@gate.crashing.org>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <20240828172538.GI29862@gate.crashing.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-37811
 
-
-
-Le 28/08/2024 à 19:25, Segher Boessenkool a écrit :
+On Thu, 29 Aug 2024 11:35:11 +0800, Yang Ruibin wrote:
+> Increase the reference count by calling pci_get_slot(), and remember to
+> decrement the reference count by calling pci_dev_put().
 > 
->> Not sure about static binaries, though: do those even use the VDSO?
-> 
-> With "static binary" people usually mean "a binary not using any DSOs",
-> I think the VDSO is a DSO, also in this respect?  As always, -static
-> builds are *way* less problematic (and faster and smaller :-) )
 > 
 
-AFAIK on powerpc even static binaries use the vDSO, otherwise signals 
-don't work.
+Applied to
 
-Christophe
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+
+Thanks!
+
+[1/1] drivers: spi: Insert the missing pci_dev_put()before return
+      commit: 8a0ec8c2d736961ff556e9d331decda9048fe0f1
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
