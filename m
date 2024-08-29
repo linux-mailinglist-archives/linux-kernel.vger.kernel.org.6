@@ -1,91 +1,103 @@
-Return-Path: <linux-kernel+bounces-307075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94D88964791
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:06:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D3829647B5
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:14:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C69DD1C24E35
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 14:06:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 68744B2839C
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 14:07:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BCD31B29BB;
-	Thu, 29 Aug 2024 14:04:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D46DD1B012A;
+	Thu, 29 Aug 2024 14:05:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pWksMAGx";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="a2ymgWm1"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b="aqh0TVv8"
+Received: from mail.cybernetics.com (mail.cybernetics.com [72.215.153.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 196211AE87B;
-	Thu, 29 Aug 2024 14:04:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6B9C2BD19
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 14:05:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=72.215.153.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724940274; cv=none; b=LTUGSuJ0hKUjaKfu8OoE/0jIOtpcSWHCkF5MF1PQiZlNc0OJf559arCokcG9p9SOrkaDiQmbys8s4ghkg0Uitxld5994E5o+iarA8TktGe6utmpnlTimFbi/2+jdfOTOD6XCQEIJ+IaoX0pGB87N8CV6z3d8+C6hlOio2zfd6Gw=
+	t=1724940339; cv=none; b=HevdLFVlMoIHjn3CoeWcPPPN3dC8YEjv1vu7D8o211stHyA/u0ugo1zhQ77ypdUECgEI09roIuhMOr3JM2U4gCMaDWF47HpkkzXg4Plso+dh7Lz17o3M7JaFXfjcWUD2YHXlQWy9uYCPoafamXlZEjoZ96WscPuEzJ1mfzBMxlw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724940274; c=relaxed/simple;
-	bh=Iy3rr4lTi7gvxiZbkZ8fGrFuuRZAf0GwZeBS02I6fhI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=s/3DteTq53Xjc9tNe+sBmasqfnkKvq/k+ygHi7y65oKoUCklwBET8Wrz2YAVaibmxtN2UIe45tEEJ1plUBO6aBOWAT5xXjZDHF/yBQ6H4bWr5XXpMXNq1PDafHJLTU4CF6x4MG01qPCnVZK4U3DfH3OR6kdy/YxscPIhrchyE1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pWksMAGx; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=a2ymgWm1; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1724940271;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Iy3rr4lTi7gvxiZbkZ8fGrFuuRZAf0GwZeBS02I6fhI=;
-	b=pWksMAGxGdVbcQ+BGtxY7ybXr6LbJ5KARkSear+fdAiDnvtCwVcAwHpIuI8i3Pn8BpE3pV
-	q8nu9SjBr3aDcoqaBoLNDos/SlHFS2R5ykfK9TX3BlBGRu1jEbxa5TMGIrIW9hkKYtME/3
-	D3h+Tf0x2s1jWhxR/xCijCuLv8xQpI6qGHEHXWah6oG7hC2Qz+RjEYplrLcrzXkYHogw2F
-	jGGxHzAHiAoiSokJ4hNBrXNBNOAeW7MR4YBLUqzSOgosOHUvfi469ACq8KmQQcjL0ZQejn
-	mafZXr6ZTEXDWMIX9kRhfpekclTn2dEErCQfemKabDxzSQeiHWNzpehqaKaRVw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1724940271;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Iy3rr4lTi7gvxiZbkZ8fGrFuuRZAf0GwZeBS02I6fhI=;
-	b=a2ymgWm1IofddEW390AKixeeMdlX5IA5hk7CDAhBJ33JH0RiPeMVmpo7b5t8dMgZO6DiW7
-	uaqpv0jMxsjhYZDw==
-To: Huacai Chen <chenhuacai@kernel.org>, maobibo <maobibo@loongson.cn>
-Cc: Tianrui Zhao <zhaotianrui@loongson.cn>, WANG Xuerui <kernel@xen0n.name>,
- kvm@vger.kernel.org, loongarch@lists.linux.dev,
- linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
- x86@kernel.org, Song Gao <gaosong@loongson.cn>
-Subject: Re: [PATCH v7 3/3] irqchip/loongson-eiointc: Add extioi virt
- extension support
-In-Reply-To: <CAAhV-H6zBgaTpirE30_q8pxrZ_zkeNWe_696PNZqCWugC+FKrw@mail.gmail.com>
-References: <20240823063943.2618675-1-maobibo@loongson.cn>
- <20240823063943.2618675-4-maobibo@loongson.cn>
- <CAAhV-H7t0Bn=iK7UygG6ym=hsCJqZAFVJHqDupm7mL9rVAm0GA@mail.gmail.com>
- <b2722073-a74d-0540-18bb-ae6f450ef123@loongson.cn>
- <CAAhV-H6zBgaTpirE30_q8pxrZ_zkeNWe_696PNZqCWugC+FKrw@mail.gmail.com>
-Date: Thu, 29 Aug 2024 16:04:31 +0200
-Message-ID: <87ikvja0i8.ffs@tglx>
+	s=arc-20240116; t=1724940339; c=relaxed/simple;
+	bh=WS7AE2lZ80ktgxKFgI1HSIZKX9yTyxehsQ541Zemgss=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=qHDWnZ748+tWTNoaHeCwxKgZPuJTCkZb+wnm60xFOYm9LCPOApMJEGmnZedXUO6tjCP/+qfedcr0lg/NtIuGMH5ep6kymeAo+8UrCWctYt5+9eKmEMkZDNBZwj2UcQxz5rcDk2RMmi42WdFZiL9XDVNeKFRa4ZpjxQgDjjM0H0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com; spf=pass smtp.mailfrom=cybernetics.com; dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b=aqh0TVv8; arc=none smtp.client-ip=72.215.153.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cybernetics.com
+X-ASG-Debug-ID: 1724939577-1cf439709d530220001-xx1T2L
+Received: from cybernetics.com ([10.10.4.126]) by mail.cybernetics.com with ESMTP id LgcrnbZSKlfGqkXR; Thu, 29 Aug 2024 09:53:19 -0400 (EDT)
+X-Barracuda-Envelope-From: tonyb@cybernetics.com
+X-Barracuda-RBL-Trusted-Forwarder: 10.10.4.126
+X-ASG-Whitelist: Client
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=cybernetics.com; s=mail;
+	bh=Fn9M4a8qPT1jW0s9JHYJms7eiaAIoJs0KI1NmmFglss=;
+	h=Content-Transfer-Encoding:Content-Type:Subject:From:Cc:To:Content-Language:
+	MIME-Version:Date:Message-ID; b=aqh0TVv8DopVDHFyZSPRh8FeqaPijV5iAejsBrDE2c/+M
+	zaCc5AiCQD5oRyyZod0ZrLb8RkACPAy3W25dMSPCQVQ1uprwoTxkW2Vqw7ZfVxz266AmF1qWoKWAK
+	vbO5ZwxOnSwHp0uplHQqZ8IzzJ3PuxiBB5EHjMcU5Vng7vxbw=
+Received: from [10.157.2.224] (HELO [192.168.200.1])
+  by cybernetics.com (CommuniGate Pro SMTP 7.1.1)
+  with ESMTPS id 13430318; Thu, 29 Aug 2024 09:51:25 -0400
+Message-ID: <d65e598f-4d3e-4092-bc39-16b636181708@cybernetics.com>
+X-Barracuda-RBL-Trusted-Forwarder: 10.157.2.224
+Date: Thu, 29 Aug 2024 09:51:25 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier
+ <nicolas@fjasle.eu>, Daniel Gomez <da.gomez@samsung.com>,
+ linux-kbuild@vger.kernel.org,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From: Tony Battersby <tonyb@cybernetics.com>
+Subject: [PATCH] kbuild: remove recent dependency on "truncate" program
+Content-Type: text/plain; charset=UTF-8
+X-ASG-Orig-Subj: [PATCH] kbuild: remove recent dependency on "truncate" program
+Content-Transfer-Encoding: 7bit
+X-Barracuda-Connect: UNKNOWN[10.10.4.126]
+X-Barracuda-Start-Time: 1724939599
+X-Barracuda-URL: https://10.10.4.122:443/cgi-mod/mark.cgi
+X-Barracuda-BRTS-Status: 0
+X-Virus-Scanned: by bsmtpd at cybernetics.com
+X-Barracuda-Scan-Msg-Size: 939
 
-On Thu, Aug 29 2024 at 20:29, Huacai Chen wrote:
-> On Thu, Aug 29, 2024 at 9:46=E2=80=AFAM maobibo <maobibo@loongson.cn> wro=
-te:
->> > I think qemu hasn't release with v-eiointc? So we still have a chance
->> > to modify qemu and this driver to simplify registers:
->> It is already merged in qemu mainline, code is frozen and qemu 9.1 will
->> release soon. Once it is merged in mainline and even if code is not
->> frozen, I will modify it only if it is bug.
-> If Thomas think the register definition is OK, then I have no objections.
+Remove the recently-added dependency on the truncate program for
+building the kernel.  truncate is not available when building the kernel
+under Yocto.  It could be added, but it would be better just to avoid
+the unnecessary dependency.
 
-No objections
+Fixes: 1472464c6248 ("kbuild: avoid scripts/kallsyms parsing /dev/null")
+Signed-off-by: Tony Battersby <tonyb@cybernetics.com>
+---
+ scripts/link-vmlinux.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/scripts/link-vmlinux.sh b/scripts/link-vmlinux.sh
+index 070a319140e8..c27b4e969f20 100755
+--- a/scripts/link-vmlinux.sh
++++ b/scripts/link-vmlinux.sh
+@@ -215,7 +215,7 @@ kallsymso=
+ strip_debug=
+ 
+ if is_enabled CONFIG_KALLSYMS; then
+-	truncate -s0 .tmp_vmlinux.kallsyms0.syms
++	true > .tmp_vmlinux.kallsyms0.syms
+ 	kallsyms .tmp_vmlinux.kallsyms0.syms .tmp_vmlinux0.kallsyms
+ fi
+ 
+
+base-commit: 3e9bff3bbe1355805de919f688bef4baefbfd436
+-- 
+2.25.1
+
 
