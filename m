@@ -1,114 +1,148 @@
-Return-Path: <linux-kernel+bounces-307339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35F3D964C18
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 18:53:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B2A3964C1B
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 18:53:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 94A02B23AC2
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:53:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D95A1C2373D
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:53:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A0C91B5EAF;
-	Thu, 29 Aug 2024 16:52:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KIh9HtIn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B9411B5823;
+	Thu, 29 Aug 2024 16:53:22 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 747241B5EA6;
-	Thu, 29 Aug 2024 16:52:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADE581B1405
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 16:53:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724950369; cv=none; b=WO//I6zUAsrMP79oJtUmswUawnvmPIM6H5yxJwFS3OlsJocbJcPA/vnVaLZKQLYIbrfodDjlJGM4mn4ongUCRD4Oi5k/BR77sCk9rDg0MJ6j246CXNUPRkQWQVsJf/ELv+BHUiQFnGH6tBxD5yoTolqpS6qUz6jAr5/efXQLqEE=
+	t=1724950402; cv=none; b=F/pu55hZDFhdwRkGiWhLiZfZxFAnoMD2fhwFB0IkPhtlquT/9aQvyTiqy0Ryxa5rUJOUN3lgUjqFVGPKphaNhWjU3j3TrgFrYWzn5EaW95Kx6w1sDMiHlGO0F5s1hFqPTDkYmV3Hr9uBxNszB93lMiQCmZIEBw2Tqe+gmVj0UWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724950369; c=relaxed/simple;
-	bh=hnufhCbXjNCAMLwQDuHCdh0s0iVsisj6beB30jVpEi4=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=OvPhqGT1vLv7JkwHG3i4KiMlstwW5V7ufpB0BJ+K2Ib5+QhA5BcwgFad+DRbK3fTWTu/oObU5RWj3oe8DHKAFpR2rTT69SKcyuiFVGnk5BE7236ETz2Z50ZesyjlcVPArWNYVd9TCNfrJK9LpFX4sw3+fJaM9FPtalyYAC1ud0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KIh9HtIn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67AB4C4CEC1;
-	Thu, 29 Aug 2024 16:52:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724950369;
-	bh=hnufhCbXjNCAMLwQDuHCdh0s0iVsisj6beB30jVpEi4=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=KIh9HtIn3Xk+UPaYoDfruElplumKEor5QZulYQepcz5AEw4bKg8rbC9Y3djnXLsH/
-	 WszTsGl93p2DWQLlM3/Jze6uqsP2vZ6D6NPcSfSMP4/4yh5UPsGjrjgtWnHlaRVjSr
-	 6CU4Qug5zBAxyxqQPliiu0u+k56SxOVOt8BoHPvufSlarplUUuZ3x7eGkaimyeOBw2
-	 QM5DugDCC8nA6HOFlOg8d0rpa29Sz4Y4h9H5FjRgUeED4BmyJvgqGDNmojAhEdx5ho
-	 qximeILAZnDl6VWUQhDAYxcqL5s12k2SWEjovr0prd6AVEuIZNsKuU/M6eginunv/E
-	 80umz9rKbU+Sg==
-From: Mark Brown <broonie@kernel.org>
-To: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, Chen-Yu Tsai <wens@csie.org>, 
- Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Samuel Holland <samuel@sholland.org>, Maxime Ripard <mripard@kernel.org>, 
- =?utf-8?q?Cl=C3=A9ment_P=C3=A9ron?= <peron.clem@gmail.com>, 
- Marcus Cooper <codekipper@gmail.com>, 
- Matteo Martelli <matteomartelli3@gmail.com>
-Cc: linux-sound@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
-In-Reply-To: <20240801-asoc-fix-sun4i-i2s-v2-1-a8e4e9daa363@gmail.com>
-References: <20240801-asoc-fix-sun4i-i2s-v2-1-a8e4e9daa363@gmail.com>
-Subject: Re: [PATCH v2] ASoC: sunxi: sun4i-i2s: fix LRCLK polarity in i2s
- mode
-Message-Id: <172495036615.681615.13022036067408318288.b4-ty@kernel.org>
-Date: Thu, 29 Aug 2024 17:52:46 +0100
+	s=arc-20240116; t=1724950402; c=relaxed/simple;
+	bh=0oKOG1inFNenjW3THv8ilJlWnxV5ZD2iXnnNpWukEBk=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=vEuSRfxLrt2GdBYYtb5WrmMipkePCkvqOQy5TDRgzXAw6gFxG/yNPkv/y7sNZp9U+zyxpLYJtUIXI2j7DNiUQJjx0XYwwVT7C9TuyACxqFwsxFe70TIE0ntLuEqk91DyGHjkINqPDVddOyt3iXPmIJBx2+jjJSFwDRM9rOW/k1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-824c925d120so92613439f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 09:53:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724950400; x=1725555200;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/BvFh4ndpSTJeKsROL2z+JLa5B9vKHfCjmHGQdFDneA=;
+        b=VCqt9Exr5VHUeIsXZlfIYV1EQ9brCP1/KD5awWXGJRTsEm7LDHC7qxU36kASuYg5Rm
+         lUVgOzsGHloVS21G41iH6+1G9PC3bPwAV0SPdTNCRuB3L7Hsvw5sTyaVGOxEagXCFm3Y
+         TjgO+NjjJ3s/o/Gfq3UVMsPKUWVS02roCv5i3Q+t/lxPE7GKQveiDsIJRoPRH+I+JmR6
+         rNPHH6nqWlgoZ7U9x1oJmmOBuVgNx1aJYSaRIvBE0QXkrm9ZRLnsEPoRqQTLEjhIzzh6
+         Hpn4Uvqbo13PdPK5O5tfc+v1FI0i4jbDEBATrj/XZMaCipxeNC4FAmCfkpSoTdlWHS6W
+         VJgg==
+X-Forwarded-Encrypted: i=1; AJvYcCU630dDHbiZT5KcbK0azOetXb3iwE47Yxj/c4BXGvqx5pN8xHU7/Ziw+n+qSxrK/LHL69oam+NiCUn3lSU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyR2bD4WrvBdUXCQV3wg1+vzTX20sEqtBkWcIQ3SCpmY3gwXOSy
+	qK4Va4zCHeV1VV+cbAh8edU1axlPTDM6yIwPrU78x48r9wUmtj2xCe7KrxKeS4Y0RayKbPB2qfn
+	y+YqOGbZRr+bx2Tebvt4/BqhpZO/tZ23SJFQsWDi+A22LUWxeeFdj2RY=
+X-Google-Smtp-Source: AGHT+IHF04MiPKHvS0qCkvfitYymrc11DsbiSg2cSsiR8bXwNGg5PRs4wUJNvgMlI+cUgd5L7sdOrnNc0/WmenJieWjiwwzV/vIE
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-37811
+X-Received: by 2002:a05:6638:37a8:b0:4be:d44b:de24 with SMTP id
+ 8926c6da1cb9f-4cecff9b544mr112344173.2.1724950399706; Thu, 29 Aug 2024
+ 09:53:19 -0700 (PDT)
+Date: Thu, 29 Aug 2024 09:53:19 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000d47d440620d54f15@google.com>
+Subject: [syzbot] [kernel?] KCSAN: data-race in pcpu_alloc_noprof /
+ pcpu_balance_workfn (2)
+From: syzbot <syzbot+6d392a44667baa45bb5a@syzkaller.appspotmail.com>
+To: bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, 
+	linux-kernel@vger.kernel.org, mingo@redhat.com, 
+	syzkaller-bugs@googlegroups.com, tglx@linutronix.de, x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 01 Aug 2024 14:07:19 +0200, Matteo Martelli wrote:
-> This fixes the LRCLK polarity for sun8i-h3 and sun50i-h6 in i2s mode
-> which was wrongly inverted.
-> 
-> The LRCLK was being set in reversed logic compared to the DAI format:
-> inverted LRCLK for SND_SOC_DAIFMT_IB_NF and SND_SOC_DAIFMT_NB_NF; normal
-> LRCLK for SND_SOC_DAIFMT_IB_IF and SND_SOC_DAIFMT_NB_IF. Such reversed
-> logic applies properly for DSP_A, DSP_B, LEFT_J and RIGHT_J modes but
-> not for I2S mode, for which the LRCLK signal results reversed to what
-> expected on the bus. The issue is due to a misinterpretation of the
-> LRCLK polarity bit of the H3 and H6 i2s controllers. Such bit in this
-> case does not mean "0 => normal" or "1 => inverted" according to the
-> expected bus operation, but it means "0 => frame starts on low edge" and
-> "1 => frame starts on high edge" (from the User Manuals).
-> 
-> [...]
+Hello,
 
-Applied to
+syzbot found the following issue on:
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+HEAD commit:    d5d547aa7b51 Merge tag 'random-6.11-rc6-for-linus' of git:..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=164c067b980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=6fafac02e339cc84
+dashboard link: https://syzkaller.appspot.com/bug?extid=6d392a44667baa45bb5a
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-Thanks!
+Unfortunately, I don't have any reproducer for this issue yet.
 
-[1/1] ASoC: sunxi: sun4i-i2s: fix LRCLK polarity in i2s mode
-      commit: 3e83957e8dd7433a69116780d9bad217b00913ea
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/e636aa58c364/disk-d5d547aa.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/f5ecd0d96afa/vmlinux-d5d547aa.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/fe7d474f148f/bzImage-d5d547aa.xz
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+6d392a44667baa45bb5a@syzkaller.appspotmail.com
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+==================================================================
+BUG: KCSAN: data-race in pcpu_alloc_noprof / pcpu_balance_workfn
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+read-write to 0xffffffff88bb27ac of 4 bytes by task 3354 on cpu 0:
+ pcpu_update_empty_pages mm/percpu.c:602 [inline]
+ pcpu_chunk_populated mm/percpu.c:1531 [inline]
+ pcpu_balance_populated mm/percpu.c:2062 [inline]
+ pcpu_balance_workfn+0x94e/0xa60 mm/percpu.c:2212
+ process_one_work kernel/workqueue.c:3231 [inline]
+ process_scheduled_works+0x483/0x9a0 kernel/workqueue.c:3312
+ worker_thread+0x526/0x6e0 kernel/workqueue.c:3389
+ kthread+0x1d1/0x210 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x60 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+read to 0xffffffff88bb27ac of 4 bytes by task 6821 on cpu 1:
+ pcpu_alloc_noprof+0x9a7/0x10c0 mm/percpu.c:1894
+ bpf_map_alloc_percpu+0xad/0x210 kernel/bpf/syscall.c:466
+ prealloc_init+0x19f/0x470 kernel/bpf/hashtab.c:341
+ htab_map_alloc+0x630/0x8e0 kernel/bpf/hashtab.c:576
+ map_create+0x83c/0xb90 kernel/bpf/syscall.c:1333
+ __sys_bpf+0x667/0x7a0 kernel/bpf/syscall.c:5692
+ __do_sys_bpf kernel/bpf/syscall.c:5817 [inline]
+ __se_sys_bpf kernel/bpf/syscall.c:5815 [inline]
+ __x64_sys_bpf+0x43/0x50 kernel/bpf/syscall.c:5815
+ x64_sys_call+0x2625/0x2d60 arch/x86/include/generated/asm/syscalls_64.h:322
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xc9/0x1c0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-Thanks,
-Mark
+value changed: 0x00000001 -> 0x00000004
 
+Reported by Kernel Concurrency Sanitizer on:
+CPU: 1 UID: 0 PID: 6821 Comm: syz.4.1651 Not tainted 6.11.0-rc5-syzkaller-00081-gd5d547aa7b51 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+==================================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
