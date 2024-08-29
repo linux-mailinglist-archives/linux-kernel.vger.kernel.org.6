@@ -1,191 +1,274 @@
-Return-Path: <linux-kernel+bounces-306086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEBC49638EC
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 05:47:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1019A9638F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 05:50:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 95D541F24644
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 03:47:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 64840B23468
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 03:50:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBF01130499;
-	Thu, 29 Aug 2024 03:46:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 936CF5C8EF;
+	Thu, 29 Aug 2024 03:50:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="dz46H/nF"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="WjZ5RqJW"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7270C481B1;
-	Thu, 29 Aug 2024 03:46:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D0332837F;
+	Thu, 29 Aug 2024 03:50:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724903209; cv=none; b=IziG4R9stsc+r0YapuI438yux4Z8QzXiha3jxQffFtt+0cl7Ohltsd8IxqwDNGZTm5aLftjlg5RI9wyWVfKmCCevkX9+yaI3vu8QTDz1cRJ4BcRtAibUW9mOk+PM0EmiJqR/OsIpRzPdYWrOwbLgYptNG8h6KEF+kk8mPwy32L8=
+	t=1724903420; cv=none; b=cMxG7kzluXjSERedLA1mLywtYxL29inqo9RBHaxdSmzdjmjUQg0XPk9y7O7juZHCaKL/mkWWRDRI4SsMlg4l6q0Of/ZMkRuItlvQHaHafA7opln+6mJGDCLiXXrh1SWes4VXpNJB1XI+j3zMkWnzgfpgcpZDb5OhBB+o/ObLkyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724903209; c=relaxed/simple;
-	bh=8coHe4tWKmWd6KiL93fDuNTrzXjGfDja0Fu3WG9a6AY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=N1n5i5g5J21EGB+BJc2xCR6ujlcjjkRRqK/sWPV6/Rfcj3pUe+WK8ExWJM4uDAmVc9Fz+sfE2ZcgJ+iAWkG4qVcTpXyvKKfaxw0dimtpO95STrYZ6Q4oKdg1EbwjjQdkxMpnsRP5CMjhPb25KBYoo2FdU0nds0LOeW7RMt6O/2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=dz46H/nF; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1724903201;
-	bh=YkNIh8pmguQ+pL3J+DT+WdJ5jztxp5xvsfFYQSUAA8s=;
-	h=Date:From:To:Cc:Subject:From;
-	b=dz46H/nFFrIQl6ECXV7SPRSlhktGTNa2HXQ7EM45UhLcYEDfr4YwN9uDWHA1/13S/
-	 v1JjlEFWRignypUc8SLnLKrcNOgRZ+xWUOj4cROoRNSqmC9Ds30u7x5T84qPOS7A3d
-	 odzU2ldQBNmlbVIVuvQnZ3LFyI4g7KOVfQ2Z/Akk+OjKm/LHjEhDqHc+dD6Pmxz8+9
-	 Yv9qTB6/c1aPM3DaTfFUdTkXBBACLnlsl3jDNZxDH0WW/URQep9EUtgo8KSRZZvABg
-	 7uIiUnVFcKMnEHZualezPRPm2d1hyePDPdu1M9Vp1etuqlqIz0VMnyLOhZuhnnuSvz
-	 zOUdmpoPEU2xg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WvRzM59rRz4wyR;
-	Thu, 29 Aug 2024 13:46:39 +1000 (AEST)
-Date: Thu, 29 Aug 2024 13:46:38 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Daniel Vetter <daniel.vetter@ffwll.ch>, Jani Nikula
- <jani.nikula@linux.intel.com>, Joonas Lahtinen
- <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>
-Cc: Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI
- <dri-devel@lists.freedesktop.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the drm-intel tree
-Message-ID: <20240829134638.7f9f1bf5@canb.auug.org.au>
+	s=arc-20240116; t=1724903420; c=relaxed/simple;
+	bh=Zzc+E1krSSiVjAXzuC8/ShAtDkryCze1UZI/tgs7UsE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=EH9P3QiHPFcyWW6MTnp2x42CtfNuMa0bku9ItbGT/3K688LxX1Nccpjvwdq9Hpdfc2kdpPHtAjjMwhQoucO3G4z/mqRc/xVSjuomt6r6J1ys/B0GJZayjrNAzSSlrQ1jMMmIRM7tgspbpRnQEg0bD95M0vtmsc0MqKySor5kFnk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=WjZ5RqJW; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 47T3nTG113106097, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
+	t=1724903369; bh=Zzc+E1krSSiVjAXzuC8/ShAtDkryCze1UZI/tgs7UsE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:
+	 Content-Transfer-Encoding:Content-Type;
+	b=WjZ5RqJW+hyVdlQSn+s6xKed6UiSYKiRpXirQLckLGpe6xDchdwFYQrM0Sx5Nv3Fd
+	 EeZoHP+yNufx0WHC8b59O6Ulr9SzUwNQp6nvDanD8ZP1iTvYnOfatkw5q+XbA2C88p
+	 DW4tDqqjfPR1LIKAyUNDAMWA1xeOuD1p1XEbutIIBgnZMQRJj5t+NyiKu3Dk+upitq
+	 YiAHU5B/Y5RMWomZyUrgu+SBUYBUOCt7cuErmyfpuewoNzkxJKOZ4jfm9BuotXLe7x
+	 cpqN+AArH08u3G0UBVIUxQffeMpuDdzz+WCpCbbswcGiFNTyjI0I0J3ggPIBeQexMF
+	 FWoEm9Sp1uVxA==
+Received: from mail.realtek.com (rtexh36505.realtek.com.tw[172.21.6.25])
+	by rtits2.realtek.com.tw (8.15.2/3.02/5.92) with ESMTPS id 47T3nTG113106097
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 29 Aug 2024 11:49:29 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXH36505.realtek.com.tw (172.21.6.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 29 Aug 2024 11:49:29 +0800
+Received: from RTDOMAIN (172.21.210.74) by RTEXMBS04.realtek.com.tw
+ (172.21.6.97) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.35; Thu, 29 Aug
+ 2024 11:49:29 +0800
+From: Justin Lai <justinlai0215@realtek.com>
+To: <kuba@kernel.org>
+CC: <davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
+        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <andrew@lunn.ch>, <jiri@resnulli.us>, <horms@kernel.org>,
+        <rkannoth@marvell.com>, <jdamato@fastly.com>, <pkshih@realtek.com>,
+        <larry.chiu@realtek.com>, "Justin
+ Lai" <justinlai0215@realtek.com>
+Subject: [PATCH net-next v29 00/13] Add Realtek automotive PCIe driver
+Date: Thu, 29 Aug 2024 11:48:19 +0800
+Message-ID: <20240829034832.139345-1-justinlai0215@realtek.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/WOIHjkppi+5a8RAku601sb6";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: RTEXH36506.realtek.com.tw (172.21.6.27) To
+ RTEXMBS04.realtek.com.tw (172.21.6.97)
 
---Sig_/WOIHjkppi+5a8RAku601sb6
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+This series includes adding realtek automotive ethernet driver
+and adding rtase ethernet driver entry in MAINTAINERS file.
 
-Hi all,
+This ethernet device driver for the PCIe interface of
+Realtek Automotive Ethernet Switch,applicable to
+RTL9054, RTL9068, RTL9072, RTL9075, RTL9068, RTL9071.
 
-After merging the drm-intel tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+v1 -> v2:
+- Remove redundent debug message.
+- Modify coding rule.
+- Remove other function codes not related to netdev.
 
-drivers/gpu/drm/i915/display/intel_dp_mst.c:2118:6: error: redefinition of =
-'intel_dp_mst_verify_dpcd_state'
- 2118 | bool intel_dp_mst_verify_dpcd_state(struct intel_dp *intel_dp)
-      |      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-drivers/gpu/drm/i915/display/intel_dp_mst.c:2048:6: note: previous definiti=
-on of 'intel_dp_mst_verify_dpcd_state' with type 'bool(struct intel_dp *)' =
-{aka '_Bool(struct intel_dp *)'}
- 2048 | bool intel_dp_mst_verify_dpcd_state(struct intel_dp *intel_dp)
-      |      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+v2 -> v3:
+- Remove SR-IOV function - We will add the SR-IOV function together when
+uploading the vf driver in the future.
+- Remove other unnecessary code and macro.
 
-Caused by commit
+v3 -> v4:
+- Remove function prototype - Our driver does not use recursion, so we
+have reordered the code and removed the function prototypes.
+- Define macro precisely - Improve macro code readability to make the
+source code cleaner.
 
-  594cf78dc36f ("drm/i915/dp_mst: Fix MST state after a sink reset")
+v4 -> v5:
+- Modify ethtool function - Remove some unnecessary code.
+- Don't use inline function - Let the compiler decide.
 
-interacting with my merge of the drm tree and commit
+v5 -> v6:
+- Some old macro definitions have been removed and replaced with the
+lastest usage.
+- Replace s32 with int to ensure consistency.
+- Clearly point out the objects of the service and remove unnecessary
+struct.
 
-  a2ccc33b88e2 ("drm/i915/dp_mst: Fix MST state after a sink reset")
+v6 -> v7:
+- Split this driver into multiple patches.
+- Reorganize this driver code and remove redundant code to make this
+driver more concise.
 
-from the drm-intel-fixes tree.
+v7 -> v8:
+- Add the function to calculate time mitigation and the function to
+calculate packet number mitigation. Users can use these two functions
+to calculate the reg value that needs to be set for the mitigation value
+they want to set.
+- This device is usually used in automotive embedded systems. The page
+pool api will use more memory in receiving packets and requires more
+verification, so we currently do not plan to use it in this patch.
 
-I have applied the following patch for today.
+v8 -> v9:
+- Declare functions that are not extern as static functions and increase
+the size of the character array named name in the rtase_int_vector struct
+to correct the build warning noticed by the kernel test robot.
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Thu, 29 Aug 2024 11:24:26 +1000
-Subject: [PATCH] fix up for "drm/i915/dp_mst: Fix MST state after a sink re=
-set"
+v9 -> v10:
+- Currently we change to use the page pool api. However, when we allocate
+more than one page to an rx buffer, it will cause system errors
+in some cases. Therefore, we set the rx buffer to fixed size with 3776
+(PAGE_SIZE - SKB_DATA_ALIGN(sizeof(skb_shared_info) )), and the maximum
+value of mtu is set to 3754(rx buffer size - VLAN_ETH_HLEN - ETH_FCS_LEN).
+- When ndo_tx_timeout is called, it will dump some device information,
+which can be used for debugging.
+- When the mtu is greater than 1500, the device supports checksums
+but not TSO.
+- Fix compiler warnning.
 
-interacting with "Merge branch 'drm-next' of
-https://gitlab.freedesktop.org/drm/kernel.git" from linux-next and
-"drm/i915/dp_mst: Fix MST state after a sink reset" from drm-intel-fixes.
+v10 -> v11:
+- Added error handling of rtase_init_ring().
+- Modify the error related to asymmetric pause in rtase_get_settings.
+- Fix compiler error.
 
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/gpu/drm/i915/display/intel_dp_mst.c | 40 ---------------------
- 1 file changed, 40 deletions(-)
+v11 -> v12:
+- Use pm_sleep_ptr and related macros.
+- Remove multicast filter limit.
+- Remove VLAN support and CBS offload functions.
+- Remove redundent code.
+- Fix compiler warnning.
 
-diff --git a/drivers/gpu/drm/i915/display/intel_dp_mst.c b/drivers/gpu/drm/=
-i915/display/intel_dp_mst.c
-index 639190ee6ff9..696b6ee52014 100644
---- a/drivers/gpu/drm/i915/display/intel_dp_mst.c
-+++ b/drivers/gpu/drm/i915/display/intel_dp_mst.c
-@@ -2102,43 +2102,3 @@ void intel_dp_mst_prepare_probe(struct intel_dp *int=
-el_dp)
-=20
- 	intel_mst_set_probed_link_params(intel_dp, link_rate, lane_count);
- }
--
--/*
-- * intel_dp_mst_verify_dpcd_state - verify the MST SW enabled state wrt. t=
-he DPCD
-- * @intel_dp: DP port object
-- *
-- * Verify if @intel_dp's MST enabled SW state matches the corresponding DP=
-CD
-- * state. A long HPD pulse - not long enough to be detected as a disconnec=
-ted
-- * state - could've reset the DPCD state, which requires tearing
-- * down/recreating the MST topology.
-- *
-- * Returns %true if the SW MST enabled and DPCD states match, %false
-- * otherwise.
-- */
--bool intel_dp_mst_verify_dpcd_state(struct intel_dp *intel_dp)
--{
--	struct intel_display *display =3D to_intel_display(intel_dp);
--	struct intel_connector *connector =3D intel_dp->attached_connector;
--	struct intel_digital_port *dig_port =3D dp_to_dig_port(intel_dp);
--	struct intel_encoder *encoder =3D &dig_port->base;
--	int ret;
--	u8 val;
--
--	if (!intel_dp->is_mst)
--		return true;
--
--	ret =3D drm_dp_dpcd_readb(intel_dp->mst_mgr.aux, DP_MSTM_CTRL, &val);
--
--	/* Adjust the expected register value for SST + SideBand. */
--	if (ret < 0 || val !=3D (DP_MST_EN | DP_UP_REQ_EN | DP_UPSTREAM_IS_SRC)) {
--		drm_dbg_kms(display->drm,
--			    "[CONNECTOR:%d:%s][ENCODER:%d:%s] MST mode got reset, removing topo=
-logy (ret=3D%d, ctrl=3D0x%02x)\n",
--			    connector->base.base.id, connector->base.name,
--			    encoder->base.base.id, encoder->base.name,
--			    ret, val);
--
--		return false;
--	}
--
--	return true;
--}
---=20
-2.45.2
+v12 -> v13:
+- Fixed the compiler warning of unuse rtase_suspend() and rtase_resume()
+when there is no define CONFIG_PM_SLEEP.
 
---=20
-Cheers,
-Stephen Rothwell
+v13 -> v14:
+- Remove unuse include.
+- call eth_hw_addr_random() to generate random MAC and set device flag
+- use pci_enable_msix_exact() instead of pci_enable_msix_range()
+- If dev->dma_mask is non-NULL, dma_set_mask_and_coherent with a 64-bit
+mask will never fail, so remove the part that determines the 32-bit mask.
+- set dev->pcpu_stat_type before register_netdev() and core will allocate
+stats.
+- call NAPI instance at the right location
 
---Sig_/WOIHjkppi+5a8RAku601sb6
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+v14 -> v15:
+- In rtase_open, when the request interrupt fails, all request interrupts
+are freed.
+- When calling netif_device_detach, there is no need to call
+netif_stop_queue.
+- Call netif_tx_disable() instead of stop_queue(), it takes the tx lock so
+there is no need to worry about the packets being transmitted.
+- In rtase_tx_handler, napi budget is no longer used, but a customized
+tx budget is used.
+- Use the start / stop macros from include/net/netdev_queues.h.
+- Remove redundent code.
 
------BEGIN PGP SIGNATURE-----
+v15 -> v16:
+- Re-upload v15 patch set
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbP7x4ACgkQAVBC80lX
-0Gyc3Qf6A3438OWDi6RFB8pKamL2K6zFpTJn9cMKyeu+48r4l2obwL7q5erbv2k8
-IB913X06Z+1BdaXVsczGWTICLcjJFk5V0ZXx/B74K+l8JFjgKpBSWEIlCwEwEa29
-UXonpxqo/W91KlzDJj7HfH5eoVtJC4HbKX6VCsAOvq4hkJiVUNf7Y5e1yjA7qx5u
-BNW6yETUxKIm/z0PmJbc2MZg8u2DQA+OYUvpeELlCanOSN4vdwQpauX17+LO5ru2
-DsYgPkRoi1x/SK6VtmsbUTq2TV4pDNn+qP+qh7bBZKai+guBsdcN5kbywxh+wGLI
-1m157ZOiVLFEM23zP60XmdW7u5fhbg==
-=0TRq
------END PGP SIGNATURE-----
+v16 -> v17:
+- Prefix the names of some rtase-specific macros, structs, and enums.
+- Fix the abnormal problem when returning page_pool resources.
 
---Sig_/WOIHjkppi+5a8RAku601sb6--
+v17 -> v18:
+- Limit the width of each line to 80 colums.
+- Use reverse xmas tree order.
+- Modify the error handling of rtase_alloc_msix and rtase_alloc_interrupt.
+
+v18 -> v19:
+- Use dma_wmb() instead of wmb() to ensure the order of access
+instructions for a memory shared by DMA and CPU.
+- Add error message when allocate dma memory fails.
+- Add .get_eth_mac_stats function to report hardware information.
+- Remove .get_ethtool_stats function.
+- In rtase_tx_csum, when the packet is not ipv6 or ipv4, a warning will
+no longer be issued.
+
+v19 -> v20:
+- Modify the description of switch architecture.
+
+v20 -> v21:
+- Remove the 16b packet statistics and 32b byte statistics report.
+- Remove all parts that use struct net_device_stats stats, and instead
+store the necessary counter fields in struct rtase_private.
+- Modify the handling method of allocation failure in rtase_alloc_desc().
+- Remove redundant conditionals and parentheses.
+- Keep the message in the single line.
+- Assign the required feature to dev->feature and dev->hw_feature at once.
+- Single statement does not need to use braces.
+
+v21 -> v22:
+- Fix the warning when building the driver.
+
+v22 -> v23:
+- Remove the execute bit setting.
+
+v23 -> v24:
+- Remove netpoll handler.
+
+v24 -> v25:
+- Re-upload v24 patch set
+
+v25 -> v26:
+- rtase_start_xmit(): don't increment tx_dropped in case of
+NETDEV_TX_BUSY.
+- Modify the rx allocate flow, build_skb() should be rx_handler().
+- Remove leading underscores in the macro name.
+
+v26 -> v27:
+- Modify the placement of dma_rmb().
+
+v27 -> v28:
+- Remove rtase_get_drvinfo().
+- Simplify the setup of rx_pause and tx_pause in rtase_get_pauseparam().
+- Add alloc_fail to count the memory allocation failed.
+- Remove the messages about rx memory allocation failed.  
+
+v28 -> v29:
+- Remove the error message while build_skb() return error.
+
+Justin Lai (13):
+  rtase: Add support for a pci table in this module
+  rtase: Implement the .ndo_open function
+  rtase: Implement the rtase_down function
+  rtase: Implement the interrupt routine and rtase_poll
+  rtase: Implement hardware configuration function
+  rtase: Implement .ndo_start_xmit function
+  rtase: Implement a function to receive packets
+  rtase: Implement net_device_ops
+  rtase: Implement pci_driver suspend and resume function
+  rtase: Implement ethtool function
+  rtase: Add a Makefile in the rtase folder
+  realtek: Update the Makefile and Kconfig in the realtek folder
+  MAINTAINERS: Add the rtase ethernet driver entry
+
+ MAINTAINERS                                   |    7 +
+ drivers/net/ethernet/realtek/Kconfig          |   19 +
+ drivers/net/ethernet/realtek/Makefile         |    1 +
+ drivers/net/ethernet/realtek/rtase/Makefile   |   10 +
+ drivers/net/ethernet/realtek/rtase/rtase.h    |  340 +++
+ .../net/ethernet/realtek/rtase/rtase_main.c   | 2288 +++++++++++++++++
+ 6 files changed, 2665 insertions(+)
+ create mode 100644 drivers/net/ethernet/realtek/rtase/Makefile
+ create mode 100644 drivers/net/ethernet/realtek/rtase/rtase.h
+ create mode 100644 drivers/net/ethernet/realtek/rtase/rtase_main.c
+
+-- 
+2.34.1
+
 
