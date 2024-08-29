@@ -1,171 +1,269 @@
-Return-Path: <linux-kernel+bounces-306260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A45BD963C08
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:57:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2A4B963C22
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:58:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BAB651C2376A
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 06:57:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19CE61C22312
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 06:58:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E32916B754;
-	Thu, 29 Aug 2024 06:56:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29412166F17;
+	Thu, 29 Aug 2024 06:58:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="D2246czU"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="CbJYpCa6"
+Received: from TY3P286CU002.outbound.protection.outlook.com (mail-japaneastazon11010071.outbound.protection.outlook.com [52.101.229.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF05812F399
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 06:56:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724914614; cv=none; b=ToJJ66Drese/sL9Q/KuGIz8hOsDtnjhioV5XtvLYPuQ9RJL/uCgvyDah5Z4aXkwv7SkLUSBewb2ZuwbIxTkdQHJmEsVb2CTl7xw0yXgQYkDqNtRj9BQSiZ8OJ8Uiul8GWQW8qwdZrtR9arLgsmPTxdabBVWjxen/gDoHkIllUMs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724914614; c=relaxed/simple;
-	bh=En+aku83y5SuC94GfVDdlZsm9Cjo7uaGjUNgLOYqw9k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XGml2QJOqYtDozBs06OUM13I8ojYNzL+Gifzb2IgoG9yGwZLcOiv5BgRYFppnPWhqJn9wTB6x5hoC1afqA5jwi2mWZPj2gBFQzeGeVlxamMsvT9y05q7ikFpOmXqtxquSgBAPtN6WYd2LqVUhPmijXZV8BALdqhZjD7huY7CiqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=D2246czU; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 9765540E01C5;
-	Thu, 29 Aug 2024 06:56:49 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id g6A0xYLpyh2V; Thu, 29 Aug 2024 06:56:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1724914605; bh=1ZXApR1+GZ1FH426Qf5vWIUp5KFywe0qhwO5Now6BX8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=D2246czUypOpmivyIDZ59Jqub8rq+tD6rIyMhO/A9zuBFeGpcK2DhXWUmblvhkrxb
-	 0XJj1tfAYysIMd3bMUG2/+uyb7DTHkBOLkcWVpukhgPLZmi9XfgykPlxVeoHPR9nXC
-	 Z9o8Glg/cb1dH78xuRsr3BeF4JbJWoOhc1WWLW33B1fQ07MdsJvgyMAyBo8Z8+UMPm
-	 l/sDDCuSXg5NZk0mZdNsa7RztIUFJ0bmEGL9dAXCIbMO2T++J6sbQyN1+Q+zAClR2e
-	 nb/PSRPkjujlfvikkJe9YKZOBHvbMxND71x/EtCHmuVSnAn/wzt4mgAHnV4g0jrct3
-	 vMcUkD6392zvnsNGnXWlo274PX0Zk/HmkXgwiFLFG3JNFjpQd6vRMVWeXsbDPzk+ei
-	 1uWhPhfeAmY+hS/YGiOrYLZdGz53pMDmuIL6ybs1aHrsSoK06Oa5mnxllw3+7grQgF
-	 BTl2IUYKrnelGVgbkwLlmPesrnW0DZA068L71wugmK7b3UH6fzSM3L7MP6j3T37Cru
-	 tXA4w6viXKq7jQSoZcT3U0WCnIJyRKXhGX5HhHsypwA/dUqsGhZnoTH7oBzZwfJxn6
-	 zAAfwyNB1F2P6MQ/Xoiefax+it9UdUHXOyS896WNX1L7APTE54Gx0mV7Da3YyCX374
-	 BPUuEzSnD4lKlE35I1rHwCsY=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 061D340E0169;
-	Thu, 29 Aug 2024 06:56:36 +0000 (UTC)
-Date: Thu, 29 Aug 2024 08:56:36 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Michael Roth <michael.roth@amd.com>,
-	Ashish Kalra <ashish.kalra@amd.com>
-Subject: Re: [PATCH v2 0/7] Provide support for RMPREAD and a segmented RMP
-Message-ID: <20240829065636.GBZtAbpOVh0lHr7VxG@fat_crate.local>
-References: <cover.1722368407.git.thomas.lendacky@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A243A17740;
+	Thu, 29 Aug 2024 06:58:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.229.71
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724914720; cv=fail; b=rXWXGePGatbNii62bfyg5HF9id0Z3Bjr3zsk+8rUbQ744yQBTrgEieMv2kwlMNNQfkhHwZmXLwklQBEXplC9NHwfrmEFFRwkK3bm/xqnzwYBQ/CPUW0wb6TEufQlocfQl0tEGkBsmpksAYEGbxFtoIQP8J9Ri2APmWB1XbFtlBM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724914720; c=relaxed/simple;
+	bh=PIo8jawdLjpR3EubrIWCM2BZbcbpDr0YUBJ0vvNkgqQ=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Jxs2BE05nACum7s1mTOsV0YJoHsFZdEjj9kSHthX+whtV2EXvDDqtCv1k5wPClfcGYAnmXaYE/+pjFKjaii2E17o6sNX1AYZbtXHoNEl0Azb7neoOvf89ADO8PuC3GZnLCiJUHc3Sygenfvg9VuRcZpJBY1rFrXgBZ0u0QkaLN0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=CbJYpCa6; arc=fail smtp.client-ip=52.101.229.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=dgY9kcjlUrTKZgTczaRkYZ+F0r9DpYgdj2ByWeLEDOKC6SfLSXp7/9FE08KaiQXj122rYsH9NTOvbN3g0lB/1Pw2X5GYo+r8FAvHySi3Ju2GzEyU+hYAi9At8rUqY68kdkJtCnyDNfrM2QPgl7amfi+VZLZSWPyffHrDaLZduD9Af0AbxIy/8ObBybkIEJxFVXkPl/5aLzawjvnPLivlSp/D8ERxd+hK1dep5gywdDKaPR7HhtjJqWfg031/RNSU1lbawQe40qGwPoDVPP9XESV2KvlryLluq2aDlpwZ3m4o5l8dMINbgt7xRirHbmGNheitWGMCQkYPnCBB5Hg/VA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=aVZR16mASjFYBmUQR7gJS7/8y1FsREGstxTbpoai2u0=;
+ b=Ggty6jvIhk+DBohw+CmRgmD9/f0boOkyQWULF+YutBKTc51WZFAyCWYDwenQL9zUKYQ3tgfUsuiOTvgyVaVsycMOZYabr0CC2zSQJS9bSleq0UPUeNc/J/238nElx+98SG/zJ/BHfv0SR2tafwDXjXHceI/vHPlZLH5oFbmBMD84wSCl10J3H3dPbKSE6+CuQZY7r3oZvaS2OtHqTAMKTbir8SmuZCq7T8i3Z24uERN4Sa0PYNCYL4cmFMQQcmqHbaIwznt+0IAffkRrp87rEM2DF46bxxELiG7/USGG+oGzi/tK30C1xKIG5ZGhgr4u5bqUOF7YQa6EWVmQzI02sw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=aVZR16mASjFYBmUQR7gJS7/8y1FsREGstxTbpoai2u0=;
+ b=CbJYpCa62RDQGgu3lcWpBcXA3nA3hp63i3BmNCfNKVClGMraznstNr/x+VqVhEq15/DKPS4ZIQU8q7btLp/rGkd41JwDHDQo/njxyUpKVTcupWJ9JTtUWwL9xrO3EkGiJM8A3P1TEQlob7/lpEGvDlkdm64ct1GV0ngxkYaYdFQ=
+Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
+ by OS3PR01MB6005.jpnprd01.prod.outlook.com (2603:1096:604:d3::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.28; Thu, 29 Aug
+ 2024 06:58:32 +0000
+Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
+ ([fe80::86ef:ca98:234d:60e1]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
+ ([fe80::86ef:ca98:234d:60e1%6]) with mapi id 15.20.7897.027; Thu, 29 Aug 2024
+ 06:58:32 +0000
+From: Biju Das <biju.das.jz@bp.renesas.com>
+To: Wang Jianzheng <wangjianzheng@vivo.com>, Geert Uytterhoeven
+	<geert+renesas@glider.be>, Linus Walleij <linus.walleij@linaro.org>, "open
+ list:PIN CONTROLLER - RENESAS" <linux-renesas-soc@vger.kernel.org>, "open
+ list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, open list
+	<linux-kernel@vger.kernel.org>
+CC: "opensource.kernel@vivo.com" <opensource.kernel@vivo.com>
+Subject: RE: [PATCH 5/5] pinctrl: renesas: Use devm_clk_get_enabled() helpers
+Thread-Topic: [PATCH 5/5] pinctrl: renesas: Use devm_clk_get_enabled() helpers
+Thread-Index: AQHa+d/YnlzWQQZNrEG/k6dIbnJRf7I9zNew
+Date: Thu, 29 Aug 2024 06:58:32 +0000
+Message-ID:
+ <TY3PR01MB113468218C44791CAD67E7D9C86962@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+References: <20240829065018.36863-1-wangjianzheng@vivo.com>
+In-Reply-To: <20240829065018.36863-1-wangjianzheng@vivo.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=bp.renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|OS3PR01MB6005:EE_
+x-ms-office365-filtering-correlation-id: 6c9c224d-3ebe-4421-1876-08dcc7f7fecd
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|376014|366016|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?f/j5oo+3ed8zGfVkIDdpeNlwWO6AV6QkewoqfXzWwCmZREaZJcuN44PGiZDz?=
+ =?us-ascii?Q?sMyPorJSA2qzKIZ++6FjJowo8j+BVpvflVPNTVqyChOtd4lP1g1UsIA4H2nU?=
+ =?us-ascii?Q?3L7r4dNspQ3iVBOUyjlgTQOvbCEtJjhS0SyXx82LuJQ5IZ2pscSudsL9h9pw?=
+ =?us-ascii?Q?DVwVCHBVRdklOBqhYryon8SI5CznjYqCjFUj15Uwh1lEYvihDRSH5zEyIkX6?=
+ =?us-ascii?Q?3fzYZjxCkJpZb+c3lw9nakxbUzxgyCQ2mkFGYdk7FZAHHy4lEho9J7Uf+R/G?=
+ =?us-ascii?Q?ntSOjkAhGShjj5fQVb3bjd0AhaztcFvb+Sv7mup66Vv/AiLPrTJ12touJQWq?=
+ =?us-ascii?Q?onvyixrzRwA4JV3QrLHn1v4t9z2CisDxx0ptw0EUv6zzhQExVX3ybIljGeb7?=
+ =?us-ascii?Q?mrTEAMR0Rtpt9chTakcDbgH2OTsK5OEB4FnQTbuPag6ats+qeBg32StAPnCO?=
+ =?us-ascii?Q?HeWvud/Pzs49os5yBFGEb36s+Bm5nLCM3b+mwUCxsws4D52vwWr0KLt2WfZa?=
+ =?us-ascii?Q?53PDxer5ehOWCcJK5jrYvIvzwrrHk4sWFfCLutuklC+FEaKv8T8XUPwUwLuz?=
+ =?us-ascii?Q?Zp2N0Fn8hj/W2J5ima/uGIqwh8jZ5iBwRzKYr70ADMLnZgEyKf+9ikVOPcOs?=
+ =?us-ascii?Q?DddgWFUZvSznR3riSH5VLO53uCxhlWr9d4QdRb6JV3XruseYNIRmaefde1vJ?=
+ =?us-ascii?Q?y2zjOeQCHwMVNSWiXHW3ybZswCDlrWIhFt7XC1eXTFN+XtIRhZQMgjYvyPmE?=
+ =?us-ascii?Q?GhtYRTt21eh3JslIQZ1NqqeF2/17UWRSn1boHKNZ/6L6k5nqX1G+fWzb8r5r?=
+ =?us-ascii?Q?DIN594qqDFWUwWcCC3rQ2Hji2UBTxTs4AwdhTwNZYD+msPLJUuOfH4xWtCBR?=
+ =?us-ascii?Q?iXvd3+T3ZlhqQftnj7T0K/kurQBwohObtCmKFCuRFqHv812zb94pawjdgQmY?=
+ =?us-ascii?Q?PqyWgGenXrJ7J53GU7n+WqA0W7UDDha1aRs29Qt+F/mrBtnFppNxs0SL76G5?=
+ =?us-ascii?Q?5aCeZol+p0zFqHEU/z2vqpEo/HknOriTTrfD9JWjctEHWpaxPDt0EjztFON/?=
+ =?us-ascii?Q?RWAw0a8CW9T5c9eNcwmZ/GmtHnzmqR0mD+WMbh0c4KdqvBU7WhQH25yA3BAG?=
+ =?us-ascii?Q?cW7pLgQ7YwAQy78/KYtdR/Typ2YS5TWqwSskv7E4K8RiLXYUtoow9GwV/xOl?=
+ =?us-ascii?Q?/+lLsTpynvIFzIwB1/VK+uS8xqsgdf/9HuTr90l0M4YHNg3EMLpCty7ooXBy?=
+ =?us-ascii?Q?LYJXO4wzp9ueIzEIx/8H+lC6vBxOit9080qxqn9uQXGYJ42l3zgjyDjupQTV?=
+ =?us-ascii?Q?8zMy2tsbAulmXLhRY0X2G+mFq536RYRtcx3w1X+XPntjJQ3WxY2wkHI/HOqO?=
+ =?us-ascii?Q?omugQnKkgRl9qrqBD7gcz/MucmcWK5Ks8/cXPqmnA9YZaI2Uwg=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?7j0MzeWjCRbLgowW5BufNzFnVq4cj1qZFyyHiK6F/KLjfFGlvc0ywp3OJgfD?=
+ =?us-ascii?Q?vY59YbMJ5WQ4+H3eJoBOpVw/pSvDkMwjhXNXBuKVT5rMNBhxnEfOkrs0tmdC?=
+ =?us-ascii?Q?Ctkg7hLodTTITtRLWeRhFTQb/3PrcoBWG7cAQ1g55nVaRIOJ2NDShm23D257?=
+ =?us-ascii?Q?72fL1KEggz2s+urxHQyVZ1m9+yxI0VSMXIRqTDrlOKH4N1h3TLJTckX7ISwu?=
+ =?us-ascii?Q?0vPO2hmJijviJc96AndZOeWcx7ZgBuiXYPHrGY4wFVkAnAffJBvTp14Jgy6D?=
+ =?us-ascii?Q?iqvm0B8zETBFXMg00tUnk1zQaS2+2L/BPSLxmT/MFIN07U8SfibwJfjQkXNB?=
+ =?us-ascii?Q?lbtY3zrDGou8CkopkM2YxLOSCB8Fo4rk/WAyOdGpOoZYhANE82l9w2NHXDsd?=
+ =?us-ascii?Q?hO6gtLf+90ylORjOHO5Q5jag+dkxubU7bh0k94yoBfw2J//CC8CAb09zUOoC?=
+ =?us-ascii?Q?Rgji0uYtYJQfERdgaFMchkDbWhFOqSZkN7P9GjoIG4ZZOoME+tU5CHRkSxMl?=
+ =?us-ascii?Q?ZG5revaRUCtezrcs5h2CK+zwZms7egAjtWgCTtrJS79qaSOU7FC73viqLzHF?=
+ =?us-ascii?Q?4bCGQqbIxt3X+lQjfSJeOOj1phc8PAKrb9/sUxJ2+pzg9n6XOaxotEsiP6Rs?=
+ =?us-ascii?Q?Qx5GJJzhF84YfbqzGWYGBjaS8SekTkrEAYlS1Uiu3L9SI7J6CP9PpgmwbLzR?=
+ =?us-ascii?Q?cGvXIXpQSQu1dNVP/FuLQVZOvflLbL+EeF+1FILqKEcXy4led0dQqZM3yTGK?=
+ =?us-ascii?Q?XHVy67ufCAKGLtELYfmaILYk6+gUJ02cERAI+HB+iBQIw9zw39WcFWGUD076?=
+ =?us-ascii?Q?qFFH28YwdS2rSO4FRymID7eeY+iboM6UBwmthTv+qY6bIkeDf3+9BVe3n5Pw?=
+ =?us-ascii?Q?BC0Axdx0/D0vZpZNg6roZcN8Gpj+a6Iiu87sro+NFT0HuYx1Z9yfqbGQPf30?=
+ =?us-ascii?Q?h/R3E2bD9VUACZETbY7suDg6oaW95B5bsstV4E56Y6x5cJwNVguh5K39rhIJ?=
+ =?us-ascii?Q?CUp+zmFqTkWVdFHOll8GnYounO9TzctiCUmG5NbaZ/uU/1NmlFHQpVkYrXgf?=
+ =?us-ascii?Q?Cul7zz0cdCXTOlS8P4RoKS0cqQsxE8brAJjz0CSfW3IhEfVSP256qMWYbLB+?=
+ =?us-ascii?Q?gpNbI1PSByX0r6e5txyxSvYJ8v436bpZwAUxTXbMYS9QZeKC5mKWYW+kjYcn?=
+ =?us-ascii?Q?LCfwPgnYpaods3grLUabZ45gZKrbOL3tlaJJ9VWYuZzYJ8MqKaBtLy6eivre?=
+ =?us-ascii?Q?k4QzVLX1c5YXCtbGzrZ55Q6SgpghJDGWECPyRsbGeFyrgHQ+RVl6cVP9lCnY?=
+ =?us-ascii?Q?t7+4wxdgDfWcj6YBK1QgpmekBYkrRW+b5p0zE5N7Ny9vUjc7JDbAuVcaaJ5f?=
+ =?us-ascii?Q?wZODLQPh02m6s1pjcjA3dgRZuLx6PE+/3QpUuTbOrmHIXRI4b5IfvO3nkIY6?=
+ =?us-ascii?Q?i4jpzMM3yOPAr5/zk1IvOf5G7GSkAUfBLebx1+3H3HNflUhMciW1HJhsu/Zs?=
+ =?us-ascii?Q?zgGABeLN6fsECw5/y8++RhBiHiQqFqOfx+q/ra69XtkjzMffzHAkG15BpCcP?=
+ =?us-ascii?Q?q9kfe+xfW0ZgnuqaDmd+hKZ51gl8yNkFglJw99nDwHURPzwfBqZt2y2CMrpx?=
+ =?us-ascii?Q?ig=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <cover.1722368407.git.thomas.lendacky@amd.com>
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6c9c224d-3ebe-4421-1876-08dcc7f7fecd
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Aug 2024 06:58:32.4922
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: FY4BZDyGkTqmG1tr0ZqfBVei4vqa7bgXXMY7/1sioXZGTn0eku1MkKhDBjWze3HUwVesrsvDc6zxqrxjkPzi3JDgWi88tU69immu1P+RTjs=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS3PR01MB6005
 
-On Tue, Jul 30, 2024 at 02:40:00PM -0500, Tom Lendacky wrote:
-> This series adds SEV-SNP support for a new instruction to read an RMP
-> entry and for a segmented RMP table.
-> 
-> The RMPREAD instruction is used to return information related to an RMP
-> entry in an architecturally defined format.
-> 
-> RMPREAD support is detected via CPUID 0x8000001f_EAX[21].
-> 
-> Segmented RMP support is a new way of representing the layout of an RMP
-> table. Initial RMP table support required the RMP table to be contiguous
-> in memory. RMP accesses from a NUMA node on which the RMP doesn't reside
-> can take longer than accesses from a NUMA node on which the RMP resides.
-> Segmented RMP support allows the RMP entries to be located on the same
-> node as the memory the RMP is covering, potentially reducing latency
-> associated with accessing an RMP entry associated with the memory. Each
-> RMP segment covers a specific range of system physical addresses.
-> 
-> Segmented RMP support is detected and established via CPUID and MSRs.
-> 
-> CPUID:
->   - 0x8000001f_EAX[23]
->     - Indicates support for segmented RMP
-> 
->   - 0x80000025_EAX
->     - [5:0]   : Minimum supported RMP segment size
->     - [11:6]  : Maximum supported RMP segment size
-> 
->   - 0x80000025_EBX
->     - [9:0]   : Number of cacheable RMP segment definitions
->     - [10]    : Indicates if the number of cacheable RMP segments is
->                 a hard limit
-> 
-> MSR:
->   - 0xc0010132 (RMP_BASE)
->     - Is identical to current RMP support
-> 
->   - 0xc0010133 (RMP_END)
->     - Should be in reset state if segment RMP support is active
-> 
->       For kernels that do not support segmented RMP, being in reset
->       state allows the kernel to disable SNP support if the non-segmented
->       RMP has not been allocated.
-> 
->   - 0xc0010136 (RMP_CFG)
->     - [0]    : Indicates if segmented RMP is enabled
->     - [13:8] : Contains the size of memory covered by an RMP segment
->                (expressed as a power of 2)
-> 
-> The RMP segment size defined in the RMP_CFG MSR applies to all segments
-> of the RMP. Therefore each RMP segment covers a specific range of system
-> physical addresses. For example, if the RMP_CFG MSR value is 0x2401, then
-> the RMP segment coverage value is 0x24 => 36, meaning the size of memory
-> covered by an RMP segment is 64GB (1 << 36). So the first RMP segment
-> covers physical addresses from 0 to 0xF_FFFF_FFFF, the second RMP segment
-> covers physical addresses from 0x10_0000_0000 to 0x1F_FFFF_FFFF, etc.
-> 
-> When a segmented RMP is enabled, RMP_BASE points to the RMP bookkeeping
-> area as it does today (16K in size). However, instead of RMP entries
-> beginning immediately after the bookkeeping area, there is a 4K RMP
-> segment table. Each entry in the table is 8-bytes in size:
-> 
->   - [19:0]  : Mapped size (in GB)
->               The mapped size can be less than the defined segment size.
->               A value of zero, indicates that no RMP exists for the range
->               of system physical addresses associated with this segment.
->     [51:20] : Segment physical address
->               This address is left shift 20-bits (or just masked when
->               read) to form the physical address of the segment (1MB
->               alignment).
+Hi Wang,
 
-I could very well use that nicely gathered together info on segmented RMP if
-it were, say, in a section in
+Thanks for the patch.
 
-Documentation/arch/x86/amd-memory-encryption.rst
+> -----Original Message-----
+> From: Wang Jianzheng <wangjianzheng@vivo.com>
+> Sent: Thursday, August 29, 2024 7:50 AM
+> Subject: [PATCH 5/5] pinctrl: renesas: Use devm_clk_get_enabled() helpers
+>=20
+> The devm_clk_get_enabled() helpers:
+>     - call devm_clk_get()
+>     - call clk_prepare_enable() and register what is needed in order to
+>      call clk_disable_unprepare() when needed, as a managed resource.
+>=20
+> This simplifies the code and avoids the calls to clk_disable_unprepare().
+>=20
+> Signed-off-by: Wang Jianzheng <wangjianzheng@vivo.com>
+> ---
+>  drivers/pinctrl/renesas/pinctrl-rzn1.c | 24 ++++--------------------
+>  1 file changed, 4 insertions(+), 20 deletions(-)
+>=20
+> diff --git a/drivers/pinctrl/renesas/pinctrl-rzn1.c b/drivers/pinctrl/ren=
+esas/pinctrl-rzn1.c
+> index 39af1fe79c84..6a3616944b37 100644
+> --- a/drivers/pinctrl/renesas/pinctrl-rzn1.c
+> +++ b/drivers/pinctrl/renesas/pinctrl-rzn1.c
+> @@ -869,12 +869,9 @@ static int rzn1_pinctrl_probe(struct platform_device=
+ *pdev)
+>  		return PTR_ERR(ipctl->lev2);
+>  	ipctl->lev2_protect_phys =3D (u32)res->start + 0x400;
+>=20
+> -	ipctl->clk =3D devm_clk_get(&pdev->dev, NULL);
 
-for example.
+> +	ipctl->clk =3D devm_clk_get_enabled(&pdev->dev, NULL);
 
-:-)
+Now the clk can be local. Please drop clk from struct rzn1_pinctrl.
 
-Thx.
+>  	if (IS_ERR(ipctl->clk))
+>  		return PTR_ERR(ipctl->clk);
+> -	ret =3D clk_prepare_enable(ipctl->clk);
+> -	if (ret)
+> -		return ret;
+>=20
+>  	ipctl->dev =3D &pdev->dev;
+>  	rzn1_pinctrl_desc.name =3D dev_name(&pdev->dev); @@ -884,7 +881,7 @@ st=
+atic int
+> rzn1_pinctrl_probe(struct platform_device *pdev)
+>  	ret =3D rzn1_pinctrl_probe_dt(pdev, ipctl);
+>  	if (ret) {
+>  		dev_err(&pdev->dev, "fail to probe dt properties\n");
 
--- 
-Regards/Gruss,
-    Boris.
+		Replace dev_err-->dev_err_probe.
 
-https://people.kernel.org/tglx/notes-about-netiquette
+		use struct device *dev =3D &pdev->dev and=20
+		replace all occurrences of &pdev->dev->dev as separate patch.
+
+Cheers,
+Biju
+
+> -		goto err_clk;
+> +		return ret;
+>  	}
+>=20
+>  	platform_set_drvdata(pdev, ipctl);
+> @@ -893,28 +890,16 @@ static int rzn1_pinctrl_probe(struct platform_devic=
+e *pdev)
+>  					     ipctl, &ipctl->pctl);
+>  	if (ret) {
+>  		dev_err(&pdev->dev, "could not register rzn1 pinctrl driver\n");
+> -		goto err_clk;
+> +		return ret;
+>  	}
+>=20
+>  	ret =3D pinctrl_enable(ipctl->pctl);
+>  	if (ret)
+> -		goto err_clk;
+> +		return ret;
+>=20
+>  	dev_info(&pdev->dev, "probed\n");
+>=20
+>  	return 0;
+> -
+> -err_clk:
+> -	clk_disable_unprepare(ipctl->clk);
+> -
+> -	return ret;
+> -}
+> -
+> -static void rzn1_pinctrl_remove(struct platform_device *pdev) -{
+> -	struct rzn1_pinctrl *ipctl =3D platform_get_drvdata(pdev);
+> -
+> -	clk_disable_unprepare(ipctl->clk);
+>  }
+>=20
+>  static const struct of_device_id rzn1_pinctrl_match[] =3D { @@ -925,7 +9=
+10,6 @@ MODULE_DEVICE_TABLE(of,
+> rzn1_pinctrl_match);
+>=20
+>  static struct platform_driver rzn1_pinctrl_driver =3D {
+>  	.probe	=3D rzn1_pinctrl_probe,
+> -	.remove_new =3D rzn1_pinctrl_remove,
+>  	.driver	=3D {
+>  		.name		=3D "rzn1-pinctrl",
+>  		.of_match_table	=3D rzn1_pinctrl_match,
+> --
+> 2.34.1
+>=20
+
 
