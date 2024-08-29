@@ -1,105 +1,262 @@
-Return-Path: <linux-kernel+bounces-306894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CB8396451E
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 14:47:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B657964521
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 14:48:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D9E4FB26FE5
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 12:47:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 226DF28A9C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 12:48:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3597B1AE034;
-	Thu, 29 Aug 2024 12:40:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FED01AD41B;
+	Thu, 29 Aug 2024 12:40:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ANB8b3DX"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Rmto/kos"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B85E31922F6;
-	Thu, 29 Aug 2024 12:40:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B344C1AD410;
+	Thu, 29 Aug 2024 12:40:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724935216; cv=none; b=KiL1GUfnBSc7XFdKhGMW1BIT3U09TsmvaJjcAdFHgCZ7pg5S/5/MGyl1/GrMkmD6mxfQieN681qrX5V/FY2YoCYs9QVkI5lP++BYL747MUr/RPWhlrJSSangpnnA+oL+O200C3fweBFbdRRdkSzO+EovtOCvg2og0WV1TyVhJCM=
+	t=1724935244; cv=none; b=UKiAefiExuO1WT0uUIhT5rFKXve9m5o4yszEz/k64J1IEZk0/ifWdKF4lBt7092VDCUrB+T/awF+mcrYlq3STHzgphe/N8PS4N/67Vkbxv0d9l/c6DiSmVusMfsQ+7QQ52q4/AfB6kjiberGvebqou/5+6FNUFra0oADAerBM4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724935216; c=relaxed/simple;
-	bh=OxyNOWqYblzSsIhBilpGz1H4mBDUCbZxa1dHdXt7J5Q=;
+	s=arc-20240116; t=1724935244; c=relaxed/simple;
+	bh=wmAiMv8iFX2iP9iqdAASYAK9Od2cxK6C9fjvHe/Y1hg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uVbRI7ZB3M4iSO6FKfKp9+b59jqDioEXHYeSfNZyF9TGHt4lI8XOh48E49AHUqXWJeGdfOZl2aAbHZg9nA2bPXlT6GBrHTlptDs64uzHqGkaL3aHGsBJLj5tzq05WQcsJFQPe2Mo2zztOb2rfBjZunFy9uN/CUx40YZ7SwfHXdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=ANB8b3DX; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 74C086AF;
-	Thu, 29 Aug 2024 14:39:04 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1724935144;
-	bh=OxyNOWqYblzSsIhBilpGz1H4mBDUCbZxa1dHdXt7J5Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ANB8b3DXtpOz2L+6pW3HiwbKpsEgpBUHvyFJehxbg0a5AAo8pIdI5xnv9dY+LaevI
-	 hlcxihjNXIvCaxOCe2J5cbbj+KVVbTeELz2wKO8oAy5KcTSvNTCv4QGC9Ps2bAu/FU
-	 tgTzG1nS7rNWWe+DboMhO2Ty3cHa2jw/20ZtWnE4=
-Date: Thu, 29 Aug 2024 15:39:42 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Benjamin Bara <bbara93@gmail.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Alexander Stein <alexander.stein@ew.tq-group.com>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Benjamin Bara <benjamin.bara@skidata.com>
-Subject: Re: [PATCH v2 2/2] media: i2c: imx290: Remove CHIP_ID reg definition
-Message-ID: <20240829123942.GC12951@pendragon.ideasonboard.com>
-References: <20240828-imx290-avail-v2-0-bd320ac8e8fa@skidata.com>
- <20240828-imx290-avail-v2-2-bd320ac8e8fa@skidata.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=HOG/VtDTfVTFviEb/5Fl/ag/QpRdT/7lhbdu1NQGpC8nrpzjF1et9Vskv6hKTw0ABqWLon+/cQMQk6oa8v2GOe5OWiOM6MSpJXZG0PbuDRKflnDLJm8WwoEX/SPdblAzmUDRECxtqNLcfoZqpSs7lq/dRO9+I5i++06fqXMM3o0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Rmto/kos; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724935243; x=1756471243;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=wmAiMv8iFX2iP9iqdAASYAK9Od2cxK6C9fjvHe/Y1hg=;
+  b=Rmto/kosu2Cf8DLLBDtiLJAe10RObVDH6hGdES4cmRAHHRVpD6zgxHXr
+   GlAtl83ZFSi+zVUokwy6cxP41Q2jZZYyyKpAJVI8aDdKqjB1ZUjWKqsZh
+   09iYEzQcqPHuPJuYfuRzFX0CHLBeLwbGXXAMVvne74mF4Ny9gOj6Jq1RG
+   E7b6MrDDzbgM1Q5xqUKWxZWv0YB85q54nO3bWs8z9JAX5zWGgeRxko27e
+   BJWq1Co9JII2Am20JxzziSLuC6T6i/O4ywAbYTUo/2zsSs25w+stUTxiv
+   8LOOtqYxbVWPvXSA3kMhnvbCDS8Dxw5O9ugrT7Rq8AWdIOmWtiKNQqUfl
+   g==;
+X-CSE-ConnectionGUID: uDcfz38WS1Ghwhk5atyJ+w==
+X-CSE-MsgGUID: YU1SC9SDRZSP65ofPsydPA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11179"; a="23097877"
+X-IronPort-AV: E=Sophos;i="6.10,185,1719903600"; 
+   d="scan'208";a="23097877"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 05:40:42 -0700
+X-CSE-ConnectionGUID: uGnejs3eQe2GpvIOVeqVEw==
+X-CSE-MsgGUID: pZm0N95LQ9C+rizzCk9fXg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,185,1719903600"; 
+   d="scan'208";a="67707488"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 05:40:38 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sjeS3-00000002zmk-0hlp;
+	Thu, 29 Aug 2024 15:40:35 +0300
+Date: Thu, 29 Aug 2024 15:40:34 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Vasileios Amoiridis <vassilisamir@gmail.com>
+Cc: jic23@kernel.org, lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, ang.iglesiasg@gmail.com,
+	linus.walleij@linaro.org, biju.das.jz@bp.renesas.com,
+	javier.carrasco.cruz@gmail.com, semen.protsenko@linaro.org,
+	579lpy@gmail.com, ak@it-klinger.de, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	christophe.jaillet@wanadoo.fr
+Subject: Re: [PATCH v4 6/7] iio: pressure: bmp280: Add data ready trigger
+ support
+Message-ID: <ZtBsQg_JIcY4F-0h@smile.fi.intel.com>
+References: <20240828205128.92145-1-vassilisamir@gmail.com>
+ <20240828205128.92145-7-vassilisamir@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240828-imx290-avail-v2-2-bd320ac8e8fa@skidata.com>
+In-Reply-To: <20240828205128.92145-7-vassilisamir@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Hi Benjamin,
-
-Thank you for the patch.
-
-On Wed, Aug 28, 2024 at 08:13:08PM +0200, Benjamin Bara wrote:
-> This register is not described in the public available imx290 datasheet.
-> Additionally, a read returns '0x07d0' for an imx327lqr and also for an
-> imx462, which means it cannot be used to distinguish between those two
-> imx290 derivatives.
+On Wed, Aug 28, 2024 at 10:51:26PM +0200, Vasileios Amoiridis wrote:
+> The BMP3xx and BMP5xx sensors have an interrupt pin which can be used as
+> a trigger for when there are data ready in the sensor for pick up.
 > 
-> Signed-off-by: Benjamin Bara <benjamin.bara@skidata.com>
+> This use case is used along with NORMAL_MODE in the sensor, which allows
+> the sensor to do consecutive measurements depending on the ODR rate value.
+> 
+> The trigger pin can be configured to be open-drain or push-pull and either
+> rising or falling edge.
+> 
+> No support is added yet for interrupts for FIFO, WATERMARK and out of range
+> values.
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
+> Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
 > ---
-> introduced in v2
-> ---
->  drivers/media/i2c/imx290.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/media/i2c/imx290.c b/drivers/media/i2c/imx290.c
-> index 2a869576600c..48502ba19cdc 100644
-> --- a/drivers/media/i2c/imx290.c
-> +++ b/drivers/media/i2c/imx290.c
-> @@ -80,7 +80,6 @@
->  #define IMX290_ADBIT2					CCI_REG8(0x317c)
->  #define IMX290_ADBIT2_10BIT				0x12
->  #define IMX290_ADBIT2_12BIT				0x00
-> -#define IMX290_CHIP_ID					CCI_REG16_LE(0x319a)
->  #define IMX290_ADBIT3					CCI_REG8(0x31ec)
->  #define IMX290_ADBIT3_10BIT				0x37
->  #define IMX290_ADBIT3_12BIT				0x0e
-> 
+>  drivers/iio/pressure/bmp280-core.c | 231 ++++++++++++++++++++++++++++-
+>  drivers/iio/pressure/bmp280.h      |  21 +++
+>  2 files changed, 250 insertions(+), 2 deletions(-)
+
+...
+
+> +static int __bmp280_trigger_probe(struct iio_dev *indio_dev,
+> +				  const struct iio_trigger_ops *trigger_ops,
+> +				  int (*int_config)(struct bmp280_data *data),
+> +				  irq_handler_t irq_thread_handler)
+> +{
+> +	struct bmp280_data *data = iio_priv(indio_dev);
+
+With
+
+	struct device *dev = data->dev;
+
+you may shorten some lines below and collapse a few.
+
+> +	struct fwnode_handle *fwnode;
+> +	int ret, irq, irq_type;
+
+Why irq_type is signed?
+
+Also try to make that returned variable is closer to the end of the definition
+block. And it might be worth to follow reversed xmas tree order (longer lines
+first).
+
+> +	struct irq_data *desc;
+> +
+> +	irq = fwnode_irq_get(dev_fwnode(data->dev), 0);
+> +	if (irq < 0)
+> +		return dev_err_probe(data->dev, irq, "No interrupt found.\n");
+> +
+> +	desc = irq_get_irq_data(irq);
+> +	irq_type = irqd_get_trigger_type(desc);
+
+So, altogether it may be written as
+
+	irq_type = irqd_get_trigger_type(irq_get_irq_data(irq));
+
+And looking further, we have a helper for that:
+irq_get_trigger_type(). Why not use it?
+
+> +	switch (irq_type) {
+> +	case IRQF_TRIGGER_RISING:
+> +		data->trig_active_high = true;
+> +		break;
+> +	case IRQF_TRIGGER_FALLING:
+> +		data->trig_active_high = false;
+> +		break;
+> +	default:
+> +		return dev_err_probe(data->dev, -EINVAL,
+> +				     "Invalid interrupt type specified.\n");
+> +	}
+> +
+> +	data->trig_open_drain =
+> +		fwnode_property_read_bool(fwnode, "int-open-drain");
+> +
+> +	ret = int_config(data);
+> +	if (ret)
+> +		return ret;
+> +
+> +	data->trig = devm_iio_trigger_alloc(data->dev, "%s-dev%d",
+> +					    indio_dev->name,
+> +					    iio_device_id(indio_dev));
+> +	if (!data->trig)
+> +		return -ENOMEM;
+> +
+> +	data->trig->ops = trigger_ops;
+> +	iio_trigger_set_drvdata(data->trig, data);
+> +
+> +	ret = devm_request_threaded_irq(data->dev, irq, NULL,
+> +					irq_thread_handler, IRQF_ONESHOT,
+> +					indio_dev->name, indio_dev);
+> +	if (ret)
+> +		return dev_err_probe(data->dev, ret, "request irq failed.\n");
+> +
+> +	ret = devm_iio_trigger_register(data->dev, data->trig);
+> +	if (ret)
+> +		return dev_err_probe(data->dev, ret,
+> +				     "iio trigger register failed.\n");
+> +
+> +	indio_dev->trig = iio_trigger_get(data->trig);
+> +
+> +	return 0;
+> +}
+
+...
+
+> +static int bmp380_int_config(struct bmp280_data *data)
+> +{
+> +	int pin_drive_cfg = FIELD_PREP(BMP380_INT_CTRL_OPEN_DRAIN,
+> +				       data->trig_open_drain);
+> +	int pin_level_cfg = FIELD_PREP(BMP380_INT_CTRL_LEVEL,
+> +				       data->trig_active_high);
+> +	int ret, int_cfg = pin_drive_cfg | pin_level_cfg;
+> +
+> +	ret = regmap_update_bits(data->regmap, BMP380_REG_INT_CONTROL,
+> +				 BMP380_INT_CTRL_SETTINGS_MASK, int_cfg);
+> +	if (ret) {
+> +		dev_err(data->dev, "Could not set interrupt settings\n");
+
+> +		return ret;
+> +	}
+> +
+> +	return ret;
+
+One of them is redundant or the last one should be return 0, but why not just
+leave one of them?
+
+> +}
+
+...
+
+> +static int bmp580_int_config(struct bmp280_data *data)
+> +{
+> +	int ret, int_cfg = FIELD_PREP(BMP580_INT_CONFIG_OPEN_DRAIN,
+> +				      data->trig_open_drain) |
+> +			   FIELD_PREP(BMP580_INT_CONFIG_LEVEL,
+> +				      data->trig_active_high);
+> +
+> +	ret = regmap_update_bits(data->regmap, BMP580_REG_INT_CONFIG,
+> +				 BMP580_INT_CONFIG_MASK, int_cfg);
+> +	if (ret) {
+> +		dev_err(data->dev, "Could not set interrupt settings\n");
+> +		return ret;
+> +	}
+> +
+> +	ret = regmap_set_bits(data->regmap, BMP580_REG_INT_SOURCE,
+> +			      BMP580_INT_SOURCE_DRDY);
+> +	if (ret) {
+> +		dev_err(data->dev, "Could not set interrupt source\n");
+> +		return ret;
+> +	}
+> +
+> +	return 0;
+
+So far you have three different styles in the same patch for this!
+Choose one and be consistent with it.
+
+> +}
+
+...
+
+> +	int (*trigger_probe)(struct iio_dev *indio_dev);
+>  	irqreturn_t (*trigger_handler)(int irq, void *p);
+
+Yeah, at some point this can be changed to
+
+	irq_handler_t trigger_handler;
 
 -- 
-Regards,
+With Best Regards,
+Andy Shevchenko
 
-Laurent Pinchart
+
 
