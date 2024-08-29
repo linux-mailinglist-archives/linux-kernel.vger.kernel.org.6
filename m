@@ -1,551 +1,210 @@
-Return-Path: <linux-kernel+bounces-307798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F20D96531A
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 00:49:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBCF596531C
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 00:50:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33C271C20DFB
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 22:49:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59F411F22DAB
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 22:50:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 587ED1B81D1;
-	Thu, 29 Aug 2024 22:49:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A1E51BA888;
+	Thu, 29 Aug 2024 22:50:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xuCz2mN7"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="B/RJtR3/"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2084.outbound.protection.outlook.com [40.107.223.84])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 840BA1898E5
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 22:49:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724971780; cv=none; b=PzIHnAfiIbyH4XnAEjSmAJ1x/0xGE0O+z3K/3bL7R2yPRQsCOsi38v1gCwEm5mVW88DJ+KEi+R+8WW1edryfRizareeUK6kLxoRTXUWt1gi/G4l6FyNP0Wgv3IduX4P0ptk8zX+ckNS34Lwhrwa5z2N9GIpmRk7m1EuthfC1lO0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724971780; c=relaxed/simple;
-	bh=8ojtP0lwSVd5Cb2bEN6VTPc/7MYxkEqMdEfy5msFlCo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DH7dqzNOBumtA5WSWsSO61u4eC86/064BiPCGK9XWRQtx5EzXQue0ZY4SPgLVO+3HRO9rsw8YtT/s/0SGxvQ9SfxfbtoW6Ax0vNzij0G9nqGRHL9Jll37maydj/cR2XaryFV/FsetS01IcVTCQgEF6Nz9UQVYq5BpTcNTh3SyZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xuCz2mN7; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-533496017f8so1553558e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 15:49:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724971776; x=1725576576; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Gq/4ntOkZ/DICPG1Q0id1sEfKK6qdlL2j10qZC1Qx0U=;
-        b=xuCz2mN7dfGBgBNMFGJ7IMUR/iJ3cSKTCaammLrMBiFQ/1/+Nrjnz/EvUtOwn1GGmq
-         iQiawPVsZbIOSvLHSP6ABOCa0j61GPL+W3M/JpinDc0Qp14YZwIZcebAZE9Nh8AsxZq0
-         vGmKC7m6dK0br36N7cKRr1H87vGcU0WoOvuFI5zt6L6uhRw1LH70dIE5xdMYBtDX7Rcf
-         6QBW5goqTFss6g5QOwGfIFnzj+V4Olcj2cDGnOqPXW3KuLq2cLfYMly77fDnQ12NfNwP
-         gtU3PqEwVU3pm5vUN0Gq5ZFs0NAuZPquNC9STftl9fEVG8AX6sgYR9Idpq+M0ReJeEbg
-         SJXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724971776; x=1725576576;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Gq/4ntOkZ/DICPG1Q0id1sEfKK6qdlL2j10qZC1Qx0U=;
-        b=VaoT816HSvNG/JGvjHeI3f+6t5c5zyntZ+aX8ea6KBj2BqW0AGJi9MhF2zthE7tF3N
-         EhjpYdcsGxrxt3CxZBc66c+1EGB75i326QR3k9l/5KD93FTxVCNoZp5vTmxXyDv5YybW
-         oYlzpb7i64vEb0Y+iog9z4lk1CrZOdXSHxhe4hfA3LkQKn9nGgjlvdQkcv5mzE0OhKWF
-         +v2QIOYjC508B3PAo5IVQposUxXwQcUObsfU5mdAAZxknijtu0+UBC3aygMPj8PORp9e
-         /1lGD6Em0r0lI0aqdwVuGcKwqJpEzzgLOI/aRipEhIVObObYoSYcTCSJoTnqdAWGZKlK
-         l1YQ==
-X-Gm-Message-State: AOJu0YwMejOTIifalnvHSf3xaiFlIsqffFXHLEBj7FIJIx6GYsT6hYHc
-	AmFSL4rQzn3hdU5rEkjOrE/XmT5bC4bxZYpm1blIXFzCMuLSjhSRry79TIylk+tKqehHF6phW/M
-	0VmpwUKGqYXEk9bQ29sHu4hWTKiQKyGSOh8iW
-X-Google-Smtp-Source: AGHT+IFXVMafGDZCChXBYhsmR5k/msl2gc7lJQAP+3qeoy5DQFb6dUs87pNaZBLDlpRCKMDyrVH/XRc3bIgNDaHgwWc=
-X-Received: by 2002:ac2:4e06:0:b0:534:3cdc:dbfe with SMTP id
- 2adb3069b0e04-53546b2b9f3mr54178e87.28.1724971775619; Thu, 29 Aug 2024
- 15:49:35 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07C291898E5;
+	Thu, 29 Aug 2024 22:50:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.84
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724971833; cv=fail; b=W9LJaonuBWjiS+hYoXV9JycKsMn8Qvv/sRMe0ZpXfilA9tVqrdDhjdW+vTSB+fuXnmWFm2nt/c+qhr8c332vCqG8iZAvPFuMkCa3XjQwrEeIzwPACkD4taTsvbtZwvt6hCvcxVvEBBtl/st0Vjmj/qQpAFuXr6M26JGSxRn2ScQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724971833; c=relaxed/simple;
+	bh=zsj97ac5XjOD+TTTMzWUr4KttOyCgnz6UQjW/RpVXoY=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DKdx2SyHhQRYytz0rb2K0XP2AF03zoaH0gK/6qVV+RmpCds7l1o7c/K0MAccKRbnIvthwQPLwzp0oe+LTtd2uGpPEN4p7rfyGzKl3o/feXKXkSVLBGzx3Vdt1ovKYW9acVmaG7irjV3j6ko0hsAeZiQTgU/4hHQ4cXdQ5k4FxzA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=B/RJtR3/; arc=fail smtp.client-ip=40.107.223.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=lv1qcMaC5F8zxXJpZAFOq0lAkf1iFELDbOhHIXBllJohEjP6g6d6lc4g+brevurDpkTAxxX606jsvgaePPqltPAqNRXxMzPZT/OaBVHWBxWMlfET8MPewWpLKeUvrhJHubQ7g612wkH0czTQan5aSLFY484l2yUWvpMlySHY7emUsiQxsgA3micGiEHznF8dx9EgBRsZXAnUjSMVHXB3xXsbMsl2O+AeUhIGf1reZav7SSsCIcberK11iTG2uT0EtT28aL61zIK88F4o0AnzrjE1oB7GIFaKk0llJVMjvNJ3I4h+/B06M6frC3ZBPNxYGkeGKHMSG+iAo2kAjZX8CA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=4Syyan/nrs9fEO5gwC8WhVkKwLnJATutM5IdxtUo/QI=;
+ b=E5TWXc7oLU9YhYk4PVvoU5VityvxhJI+hkIpBzQgS5r35Q3Vz9aF8HcZIDRJWIkSIC0Pt+TV8dgqjMNnKtzE8GW6rWsSAwEFeFzgZBFuoNdFu/2wuaHZtZ3wXvcJYzDF1WrIdGEdaVCWACV/T11MyjRkUiuRm3ZoYvdQD11yF6h6Ne9Q+khTFZMCRrypPyufirLWOJmeg/Hrjqg5CbxoYnJFy/h7hiIWDig3P4dNYWP2psLoyablCdZ/WyFc1pa42W6tAPGTlnIm+UQZy+R0RhLAA1rBIanH+sn+iZ7SEGh8kgsrdS5fAoOdfVkS2EBL/stHoHcQszE3pdjG1ngwLQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4Syyan/nrs9fEO5gwC8WhVkKwLnJATutM5IdxtUo/QI=;
+ b=B/RJtR3/zt5+aCqEnpwcxfkuV9aoOUEbtT3I85TNvD0YXiqP8Ca/GdwnlR+K7Ix2A3Ur8UxBPWBu5+8qqPN30gdo5+MwyhwcHeKdyOA9AchsY760UN/zPXfKVrL/WZyWjUBqPlLzXCinw7EwlcKHeSuRlEamZn+9xCfSPoqB5zOJoHLNYH1ZjDuzE3Qgk3L/g+bOF4uO1wpdDZ3ZlL/husybhC9iQgF2Ezf+wqOUcMXB1iTAQBHg5xPldsuwYhWUfCZEJOy/xgMVJ+xpSlHpesC5YQ2AzeA6SJFpgHir5KH3WnEVFVBkhlcKibtbUCbotaVC+DA8FFdv9htrUl41ZQ==
+Received: from PH8PR20CA0003.namprd20.prod.outlook.com (2603:10b6:510:23c::16)
+ by SJ2PR12MB8953.namprd12.prod.outlook.com (2603:10b6:a03:544::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.20; Thu, 29 Aug
+ 2024 22:50:26 +0000
+Received: from SN1PEPF000397B5.namprd05.prod.outlook.com
+ (2603:10b6:510:23c:cafe::22) by PH8PR20CA0003.outlook.office365.com
+ (2603:10b6:510:23c::16) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.24 via Frontend
+ Transport; Thu, 29 Aug 2024 22:50:26 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ SN1PEPF000397B5.mail.protection.outlook.com (10.167.248.59) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7918.13 via Frontend Transport; Thu, 29 Aug 2024 22:50:26 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 29 Aug
+ 2024 15:50:11 -0700
+Received: from drhqmail202.nvidia.com (10.126.190.181) by
+ drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Thu, 29 Aug 2024 15:50:10 -0700
+Received: from Asurada-Nvidia (10.127.8.13) by mail.nvidia.com
+ (10.126.190.181) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
+ Transport; Thu, 29 Aug 2024 15:50:10 -0700
+Date: Thu, 29 Aug 2024 15:50:08 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: Will Deacon <will@kernel.org>
+CC: <joro@8bytes.org>, <jgg@nvidia.com>, <thierry.reding@gmail.com>,
+	<vdumpa@nvidia.com>, <jonathanh@nvidia.com>, <linux-kernel@vger.kernel.org>,
+	<iommu@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-tegra@vger.kernel.org>, Robin Murphy <robin.murphy@arm.com>
+Subject: Re: [PATCH v13 06/10] iommu/arm-smmu-v3: Add
+ acpi_smmu_acpi_probe_model for impl
+Message-ID: <ZtD7IBiG1BGQres3@Asurada-Nvidia>
+References: <cover.1724453781.git.nicolinc@nvidia.com>
+ <8a2629bb98cabb1be72b32c120bb5ed0114b21bc.1724453781.git.nicolinc@nvidia.com>
+ <20240827130233.GF4772@willie-the-truck>
+ <3256d9ce-2c10-4cdd-b4c4-358f2c30a9a3@arm.com>
+ <Zs38ZK3XERYMgXmC@Asurada-Nvidia>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240829212705.6714-1-kanchana.p.sridhar@intel.com>
-In-Reply-To: <20240829212705.6714-1-kanchana.p.sridhar@intel.com>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Thu, 29 Aug 2024 15:48:58 -0700
-Message-ID: <CAJD7tkaqp_3YbK_qsq+v2=Q0r4xwTG9PbbPYjQdpTBu_Z7K5_A@mail.gmail.com>
-Subject: Re: [PATCH v6 0/3] mm: ZSWAP swap-out of mTHP folios
-To: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, hannes@cmpxchg.org, 
-	nphamcs@gmail.com, chengming.zhou@linux.dev, usamaarif642@gmail.com, 
-	ryan.roberts@arm.com, ying.huang@intel.com, 21cnbao@gmail.com, 
-	akpm@linux-foundation.org, nanhai.zou@intel.com, wajdi.k.feghali@intel.com, 
-	vinodh.gopal@intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <Zs38ZK3XERYMgXmC@Asurada-Nvidia>
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN1PEPF000397B5:EE_|SJ2PR12MB8953:EE_
+X-MS-Office365-Filtering-Correlation-Id: 700774ed-b164-4be0-cac4-08dcc87cf93d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|376014|82310400026|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?/pN+xVFi1Z3213Z4fXkiEioeG7en++9SuFn2FH+DTE1m6IlBVLhrvqjj8SeM?=
+ =?us-ascii?Q?gatgAKYSs5gQo5QJ5smZbXCioRL7YCUrjt3hH/9EFv2tjecIfWstMFqBQ2xN?=
+ =?us-ascii?Q?8d17p+jemMMoWeby832SWDIVbWFfWFu9cLqbUDt6hoCQiEOU4aVcnMPqcsfJ?=
+ =?us-ascii?Q?GWeKAdfkXv+jIOFImD/dzWEmyYF7r6EWk3Mq0imRfMbFBfxO0kKTbSaQSLMG?=
+ =?us-ascii?Q?+pJqRCXGilxLDX4r7LqJTkBAjpCVvC+zCE0FZ5WkR5VkJYxHdrehO7GHjUE+?=
+ =?us-ascii?Q?2bFU91WLGMu8AJuzNGaZSYNaQ07Zx3TIbc0EQQwK8JeI5CFVt7IHN/mzN1/1?=
+ =?us-ascii?Q?GULY1SzRQHKzt9onqhPRZNyBYp0kw1BCGcOoGHMpkl5AMivxTP4kMz0zvTqa?=
+ =?us-ascii?Q?tLEOSHsTGQ4WRGw+naYJaUpVA1mmSbSAHdKXj7cJA7jlCmdkvXR9aKAL6PrU?=
+ =?us-ascii?Q?76VAGQ+dfleSc+iEYd951NvZZItO0C/Uq5G0trMtRYP1L8Ho990e1VQ9F5WJ?=
+ =?us-ascii?Q?75eU08F+l/aV16gZnl/Ib7I6ldzk2ZDfdtHtH/QvXkdaTQwqpeDig1G2kyzA?=
+ =?us-ascii?Q?ZLqU4O+3SY1KI0WgnkYQfvDnBqHaojua3jXESmy/+s+6WAXubw6zT2wpaNtj?=
+ =?us-ascii?Q?fcok6nuhKe3wAi4RSD0C+iHCnd+RaDxJJqSY/lF4/S2wrUfxd5uQcbpTrhg9?=
+ =?us-ascii?Q?u0GSU7D7ajotFW0N477o7pmceUp1E7x9obG/Qvs51TiBR6IWij1g1Uhg7B/L?=
+ =?us-ascii?Q?s/wJGKUMEQK6ZQ4HMUyyPSY/ckIxUE51m5dZkKIIDV5jJysrpTVOYVNQ+Ahc?=
+ =?us-ascii?Q?SmNGVXeZT3DbYtqpioi24AUP0pkDGFXjpLf6WwiL7JEp8zcvM6bo4UZ+dBFR?=
+ =?us-ascii?Q?p3MaC/f7EM1h6EmWGPH/xpUN4+dh1vun27gOmg16MGLQiUhNLDQQ3Z0WzGm+?=
+ =?us-ascii?Q?R0FxIbhovGKzqyWFcycL5lXTDH5GJv/qClRxN9Fh+8AZ2hddz2mlqD+8ernP?=
+ =?us-ascii?Q?VykXmkypiwyeaBegOwf4QUWi0rUrqQHS5Epu2E3w/OYwke2/9R8SvR+KaoTF?=
+ =?us-ascii?Q?WcwMii1DCpc0nUqYfvDYQWJGaoEF3BHPbKMwKpxQcQ9lwP/hUmHM+6gPGNhx?=
+ =?us-ascii?Q?PtYcm/X8j/wh2/gvD78jDo11+MpDu/RkzDyPRNDOHZ+cacJOchEMiTbiqID9?=
+ =?us-ascii?Q?61ES3wcW2KJ3LrEgcCEOXsFenR0LZOT7optKFENi3FJT00/AiUF8fpILpP1F?=
+ =?us-ascii?Q?e0SlqdBAP5Qsrfs8qXTBB8U5OnhrRF4UutX235ZcOzb0M5s0YCZVTcU/80na?=
+ =?us-ascii?Q?wu8P5MuYcL5EbmhDdOMo0NJWCdbguZQCkxGiTdWTR/jxQKDn4mqFUdatO2FW?=
+ =?us-ascii?Q?MEGFy3DqhBRwXyRLoFrAgWapHLkb6Urj+AWvzb+R4svjxrJomiWEL3l6Fz0F?=
+ =?us-ascii?Q?o8iMTRT4w6d7CpsDkr4xrqYQ/a8b41ra?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(376014)(82310400026)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Aug 2024 22:50:26.1437
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 700774ed-b164-4be0-cac4-08dcc87cf93d
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SN1PEPF000397B5.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB8953
 
-On Thu, Aug 29, 2024 at 2:27=E2=80=AFPM Kanchana P Sridhar
-<kanchana.p.sridhar@intel.com> wrote:
->
-> Hi All,
->
-> This patch-series enables zswap_store() to accept and store mTHP
-> folios. The most significant contribution in this series is from the
-> earlier RFC submitted by Ryan Roberts [1]. Ryan's original RFC has been
-> migrated to v6.11-rc3 in patch 2/4 of this series.
->
-> [1]: [RFC PATCH v1] mm: zswap: Store large folios without splitting
->      https://lore.kernel.org/linux-mm/20231019110543.3284654-1-ryan.rober=
-ts@arm.com/T/#u
->
-> Additionally, there is an attempt to modularize some of the functionality
-> in zswap_store(), to make it more amenable to supporting any-order
-> mTHPs. For instance, the function zswap_store_entry() stores a zswap_entr=
-y
-> in the xarray. Likewise, zswap_delete_stored_offsets() can be used to
-> delete all offsets corresponding to a higher order folio stored in zswap.
->
-> For accounting purposes, the patch-series adds per-order mTHP sysfs
-> "zswpout" counters that get incremented upon successful zswap_store of
-> an mTHP folio:
->
-> /sys/kernel/mm/transparent_hugepage/hugepages-*kB/stats/zswpout
->
-> A new config variable CONFIG_ZSWAP_STORE_THP_DEFAULT_ON (off by default)
-> will enable/disable zswap storing of (m)THP. When disabled, zswap will
-> fallback to rejecting the mTHP folio, to be processed by the backing
-> swap device.
->
-> This patch-series is a precursor to ZSWAP compress batching of mTHP
-> swap-out and decompress batching of swap-ins based on swapin_readahead(),
-> using Intel IAA hardware acceleration, which we would like to submit in
-> subsequent RFC patch-series, with performance improvement data.
->
-> Thanks to Ying Huang for pre-posting review feedback and suggestions!
->
-> Thanks also to Nhat, Yosry and Barry for their helpful feedback, data
-> reviews and suggestions!
->
-> Changes since v5:
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> 1) Rebased to mm-unstable as of 8/29/2024,
->    commit 9287e4adbc6ab8fa04d25eb82e097fed877a4642.
-> 2) Added CONFIG_ZSWAP_STORE_THP_DEFAULT_ON (off by default) to
->    enable/disable zswap_store() of mTHP folios. Thanks Nhat for the
->    suggestion to add a knob by which users can enable/disable this
->    change. Nhat, I hope this is along the lines of what you were
->    thinking.
-> 3) Added vm-scalability usemem data with 4K folios with
->    CONFIG_ZSWAP_STORE_THP_DEFAULT_ON off, that I gathered to make sure
->    there is no regression with this change.
-> 4) Added data with usemem with 64K and 2M THP for an alternate view of
->    before/after, as suggested by Yosry, so we can understand the impact
->    of when mTHPs are split into 4K folios in shrink_folio_list()
->    (CONFIG_THP_SWAP off) vs. not split (CONFIG_THP_SWAP on) and stored
->    in zswap. Thanks Yosry for this suggestion.
->
-> Changes since v4:
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> 1) Published before/after data with zstd, as suggested by Nhat (Thanks
->    Nhat for the data reviews!).
-> 2) Rebased to mm-unstable from 8/27/2024,
->    commit b659edec079c90012cf8d05624e312d1062b8b87.
-> 3) Incorporated the change in memcontrol.h that defines obj_cgroup_get() =
-if
->    CONFIG_MEMCG is not defined, to resolve build errors reported by kerne=
-l
->    robot; as per Nhat's and Michal's suggestion to not require a separate
->    patch to fix the build errors (thanks both!).
-> 4) Deleted all same-filled folio processing in zswap_store() of mTHP, as
->    suggested by Yosry (Thanks Yosry!).
-> 5) Squashed the commits that define new mthp zswpout stat counters, and
->    invoke count_mthp_stat() after successful zswap_store()s; into a singl=
-e
->    commit. Thanks Yosry for this suggestion!
->
-> Changes since v3:
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> 1) Rebased to mm-unstable commit 8c0b4f7b65fd1ca7af01267f491e815a40d77444=
-.
->    Thanks to Barry for suggesting aligning with Ryan Roberts' latest
->    changes to count_mthp_stat() so that it's always defined, even when TH=
-P
->    is disabled. Barry, I have also made one other change in page_io.c
->    where count_mthp_stat() is called by count_swpout_vm_event(). I would
->    appreciate it if you can review this. Thanks!
->    Hopefully this should resolve the kernel robot build errors.
->
-> Changes since v2:
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> 1) Gathered usemem data using SSD as the backing swap device for zswap,
->    as suggested by Ying Huang. Ying, I would appreciate it if you can
->    review the latest data. Thanks!
-> 2) Generated the base commit info in the patches to attempt to address
->    the kernel test robot build errors.
-> 3) No code changes to the individual patches themselves.
->
-> Changes since RFC v1:
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->
-> 1) Use sysfs for zswpout mTHP stats, as per Barry Song's suggestion.
->    Thanks Barry!
-> 2) Addressed some of the code review comments that Nhat Pham provided in
->    Ryan's initial RFC [1]:
->    - Added a comment about the cgroup zswap limit checks occuring once pe=
-r
->      folio at the beginning of zswap_store().
->      Nhat, Ryan, please do let me know if the comments convey the summary
->      from the RFC discussion. Thanks!
->    - Posted data on running the cgroup suite's zswap kselftest.
-> 3) Rebased to v6.11-rc3.
-> 4) Gathered performance data with usemem and the rebased patch-series.
->
->
-> Regression Testing:
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> I ran vm-scalability usemem 70 processes without mTHP, i.e., only 4K
-> folios with mm-unstable and with this patch-series. The main goal was
-> to make sure that there is no functional or performance regression
-> wrt the earlier zswap behavior for 4K folios,
-> CONFIG_ZSWAP_STORE_THP_DEFAULT_ON is not set, and zswap_store() of 4K
-> pages goes through the newly added code path [zswap_store(),
-> zswap_store_page()].
->
-> The data indicates there is no regression.
->
->  ------------------------------------------------------------------------=
-------
->                      mm-unstable 8-28-2024                        zswap-m=
-THP v6
->                                               CONFIG_ZSWAP_STORE_THP_DEFA=
-ULT_ON
->                                                                      is n=
-ot set
->  ------------------------------------------------------------------------=
-------
->  ZSWAP compressor        zstd     deflate-                     zstd    de=
-flate-
->                                        iaa                               =
-   iaa
->  ------------------------------------------------------------------------=
-------
->  Throughput (KB/s)    110,775      113,010               111,550        1=
-21,937
->  sys time (sec)      1,141.72       954.87              1,131.95         =
-828.47
->  memcg_high           140,500      153,737               139,772        1=
-34,129
->  memcg_swap_high            0            0                     0         =
-     0
->  memcg_swap_fail            0            0                     0         =
-     0
->  pswpin                     0            0                     0         =
-     0
->  pswpout                    0            0                     0         =
-     0
->  zswpin                   675          690                   682         =
-   684
->  zswpout            9,552,298   10,603,271             9,566,392      9,2=
-67,213
->  thp_swpout                 0            0                     0         =
-     0
->  thp_swpout_                0            0                     0         =
-     0
->   fallback
->  pgmajfault             3,453        3,468                 3,841         =
- 3,487
->  ZSWPOUT-64kB-mTHP        n/a          n/a                     0         =
-     0
->  SWPOUT-64kB-mTHP           0            0                     0         =
-     0
->  ------------------------------------------------------------------------=
-------
->
->
-> Performance Testing:
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> Testing of this patch-series was done with the v6.11-rc3 mainline, withou=
-t
-> and with this patch-series, on an Intel Sapphire Rapids server,
-> dual-socket 56 cores per socket, 4 IAA devices per socket.
->
-> The system has 503 GiB RAM, with 176GiB ZRAM (35% of available RAM) as th=
-e
-> backing swap device for ZSWAP. zstd is configured as the ZRAM compressor.
-> Core frequency was fixed at 2500MHz.
->
-> The vm-scalability "usemem" test was run in a cgroup whose memory.high
-> was fixed at 40G. The is no swap limit set for the cgroup. Following a
-> similar methodology as in Ryan Roberts' "Swap-out mTHP without splitting"
-> series [2], 70 usemem processes were run, each allocating and writing 1G =
-of
-> memory:
->
->     usemem --init-time -w -O -n 70 1g
->
-> The vm/sysfs mTHP stats included with the performance data provide detail=
-s
-> on the swapout activity to ZSWAP/swap.
->
-> Other kernel configuration parameters:
->
->     ZSWAP Compressors : zstd, deflate-iaa
->     ZSWAP Allocator   : zsmalloc
->     SWAP page-cluster : 2
->
-> In the experiments where "deflate-iaa" is used as the ZSWAP compressor,
-> IAA "compression verification" is enabled. Hence each IAA compression
-> will be decompressed internally by the "iaa_crypto" driver, the crc-s
-> returned by the hardware will be compared and errors reported in case of
-> mismatches. Thus "deflate-iaa" helps ensure better data integrity as
-> compared to the software compressors.
->
-> Throughput is derived by averaging the individual 70 processes' throughpu=
-ts
-> reported by usemem. sys time is measured with perf. All data points are
-> averaged across 3 runs.
->
-> Case 1: Baseline with CONFIG_THP_SWAP turned off, and mTHP is split in re=
-claim.
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D
->
-> In this scenario, the "before" is CONFIG_THP_SWAP set to off, that result=
-s in
-> 64K/2M (m)THP to be split, and only 4K folios processed by zswap.
->
-> The "after" is CONFIG_THP_SWAP set to on, and this patch-series, that res=
-ults
-> in 64K/2M (m)THP to not be split, and processed by zswap.
->
->  64KB mTHP (cgroup memory.high set to 40G):
->  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->
->  ------------------------------------------------------------------------=
--------
->                        v6.11-rc3 mainline              zswap-mTHP     Cha=
-nge wrt
->                                  Baseline                               B=
-aseline
->                         CONFIG_THP_SWAP=3DN       CONFIG_THP_SWAP=3DY
->  ------------------------------------------------------------------------=
--------
->  ZSWAP compressor       zstd     deflate-        zstd    deflate-  zstd d=
-eflate-
->                                       iaa                     iaa        =
-    iaa
->  ------------------------------------------------------------------------=
--------
->  Throughput (KB/s)   136,113      140,044     140,363     151,938    3%  =
-     8%
->  sys time (sec)       986.78       951.95      954.85      735.47    3%  =
-    23%
->  memcg_high          124,183      127,513     138,651     133,884
->  memcg_swap_high           0            0           0           0
->  memcg_swap_fail     619,020      751,099           0           0
->  pswpin                    0            0           0           0
->  pswpout                   0            0           0           0
->  zswpin                  656          569         624         639
->  zswpout           9,413,603   11,284,812   9,453,761   9,385,910
->  thp_swpout                0            0           0           0
->  thp_swpout_               0            0           0           0
->   fallback
->  pgmajfault            3,470        3,382       4,633       3,611
->  ZSWPOUT-64kB            n/a          n/a     590,768     586,521
->  SWPOUT-64kB               0            0           0           0
->  ------------------------------------------------------------------------=
--------
->
->
->  2MB PMD-THP/2048K mTHP (cgroup memory.high set to 40G):
->  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D
->
->  ------------------------------------------------------------------------=
-------
->                        v6.11-rc3 mainline              zswap-mTHP    Chan=
-ge wrt
->                                  Baseline                              Ba=
-seline
->                         CONFIG_THP_SWAP=3DN       CONFIG_THP_SWAP=3DY
->  ------------------------------------------------------------------------=
-------
->  ZSWAP compressor       zstd    deflate-        zstd    deflate-  zstd de=
-flate-
->                                      iaa                     iaa         =
-   iaa
->  ------------------------------------------------------------------------=
-------
->  Throughput (KB/s)    164,220    172,523      165,005     174,536  0.5%  =
-    1%
->  sys time (sec)        855.76     686.94       801.72      676.65    6%  =
-    1%
->  memcg_high            14,628     16,247       14,951      16,096
->  memcg_swap_high            0          0            0           0
->  memcg_swap_fail       18,698     21,114            0           0
->  pswpin                     0          0            0           0
->  pswpout                    0          0            0           0
->  zswpin                   663        665        5,333         781
->  zswpout            8,419,458  8,992,065    8,546,895   9,355,760
->  thp_swpout                 0          0            0           0
->  thp_swpout_           18,697     21,113            0           0
->   fallback
->  pgmajfault             3,439      3,496        8,139       3,582
->  ZSWPOUT-2048kB           n/a        n/a       16,684      18,270
->  SWPOUT-2048kB              0          0            0           0
->  ------------------------------------------------------------------------=
------
->
-> We see improvements overall in throughput and sys time for zstd and
-> deflate-iaa, when comparing before (THP_SWAP=3DN) vs. after (THP_SWAP=3DY=
-).
->
->
-> Case 2: Baseline with CONFIG_THP_SWAP enabled.
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->
-> In this scenario, the "before" represents zswap rejecting mTHP, and the m=
-THP
-> being stored by the backing swap device.
->
-> The "after" represents data with this patch-series, that results in 64K/2=
-M
-> (m)THP being processed by zswap.
->
->  64KB mTHP (cgroup memory.high set to 40G):
->  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->
->  ------------------------------------------------------------------------=
-------
->                      v6.11-rc3 mainline              zswap-mTHP      Chan=
-ge wrt
->                                Baseline                                Ba=
-seline
->  ------------------------------------------------------------------------=
-------
->  ZSWAP compressor       zstd   deflate-        zstd    deflate-   zstd de=
-flate-
->                                     iaa                     iaa          =
-   iaa
->  ------------------------------------------------------------------------=
-------
->  Throughput (KB/s)   161,496    156,343     140,363     151,938   -13%   =
-   -3%
->  sys time (sec)       771.68     802.08      954.85      735.47   -24%   =
-    8%
->  memcg_high          111,223    110,889     138,651     133,884
->  memcg_swap_high           0          0           0           0
->  memcg_swap_fail           0          0           0           0
->  pswpin                   16         16           0           0
->  pswpout           7,471,472  7,527,963           0           0
->  zswpin                  635        605         624         639
->  zswpout               1,509      1,478   9,453,761   9,385,910
->  thp_swpout                0          0           0           0
->  thp_swpout_               0          0           0           0
->   fallback
->  pgmajfault            3,616      3,430       4,633       3,611
->  ZSWPOUT-64kB            n/a        n/a     590,768     586,521
->  SWPOUT-64kB         466,967    470,498           0           0
->  ------------------------------------------------------------------------=
-------
->
->  2MB PMD-THP/2048K mTHP (cgroup memory.high set to 40G):
->  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D
->
->  ------------------------------------------------------------------------=
-------
->                       v6.11-rc3 mainline              zswap-mTHP     Chan=
-ge wrt
->                                 Baseline                               Ba=
-seline
->  ------------------------------------------------------------------------=
-------
->  ZSWAP compressor       zstd    deflate-        zstd    deflate-  zstd de=
-flate-
->                                      iaa                     iaa         =
-   iaa
->  ------------------------------------------------------------------------=
-------
->  Throughput (KB/s)    192,164    194,643     165,005     174,536  -14%   =
-  -10%
->  sys time (sec)        823.55     830.42      801.72      676.65    3%   =
-   19%
->  memcg_high            16,054     15,936      14,951      16,096
->  memcg_swap_high            0          0           0           0
->  memcg_swap_fail            0          0           0           0
->  pswpin                     0          0           0           0
->  pswpout            8,629,248  8,628,907           0           0
->  zswpin                   560        645       5,333         781
->  zswpout                1,416      1,503   8,546,895   9,355,760
->  thp_swpout            16,854     16,853           0           0
->  thp_swpout_                0          0           0           0
->   fallback
->  pgmajfault             3,341      3,574       8,139       3,582
->  ZSWPOUT-2048kB           n/a        n/a      16,684      18,270
->  SWPOUT-2048kB         16,854     16,853           0           0
->  ------------------------------------------------------------------------=
-------
->
-> In the "Before" scenario, when zswap does not store mTHP, only allocation=
-s
-> count towards the cgroup memory limit. However, in the "After" scenario,
-> with the introduction of zswap_store() mTHP, both, allocations as well as
-> the zswap compressed pool usage from all 70 processes are counted towards
-> the memory limit. As a result, we see higher swapout activity in the
-> "After" data. Hence, more time is spent doing reclaim as the zswap cgroup
-> charge leads to more frequent memory.high breaches.
->
-> This causes degradation in throughput and sys time with zswap mTHP, more =
-so
-> in case of zstd than deflate-iaa. Compress latency could play a part in
-> this - when there is more swapout activity happening, a slower compressor
-> would cause allocations to stall for any/all of the 70 processes.
+Hi Will,
 
-We are basically comparing zram with zswap in this case, and it's not
-fair because, as you mentioned, the zswap compressed data is being
-accounted for while the zram compressed data isn't. I am not really
-sure how valuable these test results are. Even if we remove the cgroup
-accounting from zswap, we won't see an improvement, we should expect a
-similar performance to zram.
+On Tue, Aug 27, 2024 at 09:18:47AM -0700, Nicolin Chen wrote:
+> On Tue, Aug 27, 2024 at 04:57:48PM +0100, Robin Murphy wrote:
+> > > > -static void acpi_smmu_get_options(u32 model, struct arm_smmu_device *smmu)
+> > > > +static int acpi_smmu_iort_probe_model(struct acpi_iort_node *node,
+> > > > +                                  struct arm_smmu_device *smmu)
+> > > >   {
+> > > > -    switch (model) {
+> > > > +    struct acpi_iort_smmu_v3 *iort_smmu =
+> > > > +            (struct acpi_iort_smmu_v3 *)node->node_data;
+> > > > +
+> > > > +    switch (iort_smmu->model) {
+> > > >      case ACPI_IORT_SMMU_V3_CAVIUM_CN99XX:
+> > > >              smmu->options |= ARM_SMMU_OPT_PAGE0_REGS_ONLY;
+> > > >              break;
+> > > >      case ACPI_IORT_SMMU_V3_HISILICON_HI161X:
+> > > >              smmu->options |= ARM_SMMU_OPT_SKIP_PREFETCH;
+> > > >              break;
+> > > > +    case ACPI_IORT_SMMU_V3_GENERIC:
+> > > > +            break;
+> > > > +    default:
+> > > > +            dev_err(smmu->dev, "Unknown/unsupported IORT model!\n");
+> > > > +            return -ENXIO;
+> > > 
+> > > We probably don't want this 'default' case, otherwise the driver will
+> > > need to be updated every time there's a new model.
+> > 
+> > ...although the intent is very strongly that there should never be any
+> > new models, because by now hardware should really not be failing to
+> > implement SMMU_IIDR correctly. In some ways, having this might help
+> > further discourage people from abusing the mechanism and making random
+> > stuff up in their firmware :/
+> 
+> I don't have a strong feeling about this, though Robin's point was
+> my intention here.
+> 
+> Apart from this "default case", I typo-ed the function name in the
+> patch subject and commit message. Also, there's a missed kdoc line
+> in struct tegra241_cmdqv (PATCH-8).
+> 
+> So, I prepared a v14:
+> https://github.com/nicolinc/iommufd/commits/vcmdq_in_kernel-v14
+> v14 changelog (attaching git-diff at the EOM):
+>  * Rebased on Will's for-joerg/arm-smmu/updates
+>  * Added a missed kdoc for "dev" in struct tegra241_cmdqv
+>  * Dropped the default case in acpi_smmu_iort_probe_model()
+>    (did this before seeing Robin's mail here.)
+> 
+> Let's see what makes the best for you, Will.
 
-I think the test results that are really valuable are case 1, where
-zswap users are currently disabling CONFIG_THP_SWAP, and get to enable
-it after this series.
+I just sent v14 by keeping the default case, given Robin's remarks
+here. If you'd like to remove the default case, please feel free!
 
-If we really want to compare CONFIG_THP_SWAP on before and after, it
-should be with SSD because that's a more conventional setup. In this
-case the users that have CONFIG_THP_SWAP=3Dy only experience the
-benefits of zswap with this series. You mentioned experimenting with
-usemem to keep the memory allocated longer so that you're able to have
-a fair test with the small SSD swap setup. Did that work?
-
-I am hoping Nhat or Johannes would shed some light on whether they
-usually have CONFIG_THP_SWAP enabled or not with zswap. I am trying to
-figure out if any reasonable setups enable CONFIG_THP_SWAP with zswap.
-Otherwise the testing results from case 1 should be sufficient.
-
->
-> In my opinion, even though the test set up does not provide an accurate
-> way for a direct before/after comparison (because of zswap usage being
-> counted in cgroup, hence towards the memory.high), it still seems
-> reasonable for zswap_store to support (m)THP, so that further performance
-> improvements can be implemented.
-
-This is only referring to the results of case 2, right?
-
-Honestly, I wouldn't want to merge mTHP swapout support on its own
-just because it enables further performance improvements without
-having actual patches for them. But I don't think this captures the
-results accurately as it dismisses case 1 results (which I think are
-more reasonable).
-
-Thnaks
+Thank you
+Nicolin
 
