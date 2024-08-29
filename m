@@ -1,254 +1,106 @@
-Return-Path: <linux-kernel+bounces-307101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EBA8964822
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:24:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53FD7964817
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:23:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4BDDFB2CCFB
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 14:23:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 873BB1C23DC1
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 14:23:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8CE01AE864;
-	Thu, 29 Aug 2024 14:19:53 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62ED11B0136;
+	Thu, 29 Aug 2024 14:20:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="dSB9dCN4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A65542A96;
-	Thu, 29 Aug 2024 14:19:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EA771B0126;
+	Thu, 29 Aug 2024 14:20:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724941193; cv=none; b=U2Cbzs9f3zWdXrcWHaWcs5AjZjmXQF/W6Irjb1FR85NIwQzk9sT6bMw+Py2aWElh0LHoM22aAZv8jUrd4xQC8UqRoqFY3+NjIQ1ssRTF97p/9EsUFOGZMcFfVFFwYHXPSHzIrVQnp3iN3dWE+UpB2YdvMIosI4YJZyY5ZpjlAZo=
+	t=1724941205; cv=none; b=qwXGnVntFynI1r2QyHtdT8jtP5cLlPDcyCuA4TY18j5jscfhkO5NNLbedoPWC/vXDpn0RbcVZGnp+LahF/dQXMgC5NGoevY/nwzOU/tal1SQKt2ZQCqEuyCEF/u7ekr/iC49R8AtIuimwxYOyLltMQVZ0q8W2F1CzZCkr72dltk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724941193; c=relaxed/simple;
-	bh=cQ+Yytpsq6B15Gxw8y+wWSg9HZED+7ysWVFrZmzZZR8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rA1k7mKJItxZczOWDtEotvw5gt5dnETlYalkfoQz0MfktLz8ffgQaG/Ll6N6TyvtEpewDl5zUNNU0ZFcnWiqdgYwBausbZ9aEoHysA/AhVcAk1BHvklDw3JVImU2Ri14vRIssXj7nhPhrLFzBIpc/5FuvCsQjTl46+nvd+5YR3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Wvk1h4S3xz4f3jtv;
-	Thu, 29 Aug 2024 22:19:36 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 9F1741A018D;
-	Thu, 29 Aug 2024 22:19:46 +0800 (CST)
-Received: from [10.67.108.244] (unknown [10.67.108.244])
-	by APP4 (Coremail) with SMTP id gCh0CgCHr4WBg9Bm7Pw6DA--.21461S3;
-	Thu, 29 Aug 2024 22:19:46 +0800 (CST)
-Message-ID: <eb37b77d-58ed-4b79-a942-7c249cb5050b@huaweicloud.com>
-Date: Thu, 29 Aug 2024 22:19:45 +0800
+	s=arc-20240116; t=1724941205; c=relaxed/simple;
+	bh=9LIHWMYk6A2f3m6rYGEUezKh0BKXqU2up9GjjGnfSaM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GWe0PBbF5Cq8toQjSSkA9tiIJCrhOHyLYwJV/OMwgVXUrgrOpoZQzWslkOE/cc9rSryt6A7rU0DQOeTDUo5/EnmoRTfDj5hd/I/T7DTASz2ukFcKe+5Ph0P24CJYdq/bf2zpaz5FwoWEnScGRl0vVrIoX9Qx8JBvpC3bF3xXYP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=dSB9dCN4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A7E4C4CEC1;
+	Thu, 29 Aug 2024 14:20:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1724941205;
+	bh=9LIHWMYk6A2f3m6rYGEUezKh0BKXqU2up9GjjGnfSaM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dSB9dCN4V0hEq/R6bCXcvzOQcaiT29JpwIyHInnCqeaVAHQLbtbbCpNpRbLzoRo1u
+	 mnNf/9Ht13R3U2vsiZfTzUCv2yAPinoIOzBoGgm77zIlcA7aaih+jiLS90DRHfJqqX
+	 6ox/eiwgAenXj5y56bzLJAsNxhs5aBxX+3Z+kKKg=
+Date: Thu, 29 Aug 2024 16:20:01 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Alexander Lobakin <aleksander.lobakin@intel.com>
+Cc: Wang Yugui <wangyugui@e16-tech.com>, stable@vger.kernel.org,
+	patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+	torvalds@linux-foundation.org, akpm@linux-foundation.org,
+	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
+	allen.lkml@gmail.com, broonie@kernel.org
+Subject: Re: [PATCH 6.6 000/341] 6.6.48-rc1 review
+Message-ID: <2024082941-outthink-rimless-f5aa@gregkh>
+References: <20240827143843.399359062@linuxfoundation.org>
+ <20240828223526.7E07.409509F4@e16-tech.com>
+ <a1d51ba9-a76b-4356-ad1f-6554b3253e07@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/2] perf/core: Fix incorrect time diff in tick adjust
- period
-Content-Language: en-US
-To: "Liang, Kan" <kan.liang@linux.intel.com>,
- Adrian Hunter <adrian.hunter@intel.com>, peterz@infradead.org
-Cc: mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
- mark.rutland@arm.com, alexander.shishkin@linux.intel.com, jolsa@kernel.org,
- irogers@google.com, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240821134227.577544-1-luogengkun@huaweicloud.com>
- <20240821134227.577544-3-luogengkun@huaweicloud.com>
- <c5b73b4f-b257-4847-a213-741889d89159@linux.intel.com>
- <c1b2a1b6-8b6d-40b4-84d4-d007c024fc84@intel.com>
- <e15110af-c2f2-47ff-99fd-649cf5b46e46@linux.intel.com>
- <30884874-848a-40ef-9e02-7cdb7b1a029a@intel.com>
- <63bcac23-e650-41c8-9c9e-93e258355777@linux.intel.com>
-From: Luo Gengkun <luogengkun@huaweicloud.com>
-In-Reply-To: <63bcac23-e650-41c8-9c9e-93e258355777@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCHr4WBg9Bm7Pw6DA--.21461S3
-X-Coremail-Antispam: 1UD129KBjvJXoW3Wr1xAFy5AFyfJrWfCrWfXwb_yoWxAF47pr
-	WkAF15trWkJr18ur1jyw1ktry8tw1kJw1DWF15Ga4xAwn8trn2qF47XF1Y9r1qyrs7JFyj
-	ya1jqry7urWjqFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
-	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
-	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8
-	ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
-	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
-	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1
-	7KsUUUUUU==
-X-CM-SenderInfo: 5oxrwvpqjn3046kxt4xhlfz01xgou0bp/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a1d51ba9-a76b-4356-ad1f-6554b3253e07@intel.com>
 
+On Wed, Aug 28, 2024 at 04:45:12PM +0200, Alexander Lobakin wrote:
+> From: Wang Yugui <wangyugui@e16-tech.com>
+> Date: Wed, 28 Aug 2024 22:35:27 +0800
+> 
+> > Hi,
+> > 
+> >> This is the start of the stable review cycle for the 6.6.48 release.
+> >> There are 341 patches in this series, all will be posted as a response
+> >> to this one.  If anyone has any issues with these being applied, please
+> >> let me know.
+> >>
+> >> Responses should be made by Thu, 29 Aug 2024 14:37:36 +0000.
+> >> Anything received after that time might be too late.
+> >>
+> >> The whole patch series can be found in one patch at:
+> >> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.48-rc1.gz
+> >> or in the git tree and branch at:
+> >> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
+> >> and the diffstat can be found below.
+> > 
+> > We need a patch
+> > 	upsteam:  0a04ff09bcc39e0044190ffe9f00f998f13647c
+> > 	From: Alexander Lobakin <aleksander.lobakin@intel.com>
+> > 	Subject: tools: move alignment-related macros to new <linux/align.h>
+> > to fix the new build error.
+> > 	tools/include/linux/bitmap.h: In function 'bitmap_zero':
+> > 	tools/include/linux/bitmap.h:28:29: warning: implicit declaration of
+> > 	function 'ALIGN' [-Wimplicit-function-declaration]
+> >  #define bitmap_size(nbits) (ALIGN(nbits, BITS_PER_LONG) / BITS_PER_BYTE)
+> 
+> Patch 29/341 and its dependencies 26-28 is an improvement, not a fix. Do
+> we need it in the LTS kernels? I'm fine with that, just asking as
+> usually LTSes only receive critical fixes :>
 
-On 2024/8/29 21:46, Liang, Kan wrote:
->
-> On 2024-08-27 9:10 p.m., Adrian Hunter wrote:
->> On 27/08/24 23:06, Liang, Kan wrote:
->>>
->>> On 2024-08-27 1:16 p.m., Adrian Hunter wrote:
->>>> On 27/08/24 19:42, Liang, Kan wrote:
->>>>>
->>>>> On 2024-08-21 9:42 a.m., Luo Gengkun wrote:
->>>>>> Perf events has the notion of sampling frequency which is implemented in
->>>>>> software by dynamically adjusting the counter period so that samples occur
->>>>>> at approximately the target frequency.  Period adjustment is done in 2
->>>>>> places:
->>>>>>   - when the counter overflows (and a sample is recorded)
->>>>>>   - each timer tick, when the event is active
->>>>>> The later case is slightly flawed because it assumes that the time since
->>>>>> the last timer-tick period adjustment is 1 tick, whereas the event may not
->>>>>> have been active (e.g. for a task that is sleeping).
->>>>>>
->>>>> Do you have a real-world example to demonstrate how bad it is if the
->>>>> algorithm doesn't take sleep into account?
->>>>>
->>>>> I'm not sure if introducing such complexity in the critical path is
->>>>> worth it.
->>>>>
->>>>>> Fix by using jiffies to determine the elapsed time in that case.
->>>>>>
->>>>>> Signed-off-by: Luo Gengkun <luogengkun@huaweicloud.com>
->>>>>> ---
->>>>>>   include/linux/perf_event.h |  1 +
->>>>>>   kernel/events/core.c       | 11 ++++++++---
->>>>>>   2 files changed, 9 insertions(+), 3 deletions(-)
->>>>>>
->>>>>> diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
->>>>>> index 1a8942277dda..d29b7cf971a1 100644
->>>>>> --- a/include/linux/perf_event.h
->>>>>> +++ b/include/linux/perf_event.h
->>>>>> @@ -265,6 +265,7 @@ struct hw_perf_event {
->>>>>>   	 * State for freq target events, see __perf_event_overflow() and
->>>>>>   	 * perf_adjust_freq_unthr_context().
->>>>>>   	 */
->>>>>> +	u64				freq_tick_stamp;
->>>>>>   	u64				freq_time_stamp;
->>>>>>   	u64				freq_count_stamp;
->>>>>>   #endif
->>>>>> diff --git a/kernel/events/core.c b/kernel/events/core.c
->>>>>> index a9395bbfd4aa..86e80e3ef6ac 100644
->>>>>> --- a/kernel/events/core.c
->>>>>> +++ b/kernel/events/core.c
->>>>>> @@ -55,6 +55,7 @@
->>>>>>   #include <linux/pgtable.h>
->>>>>>   #include <linux/buildid.h>
->>>>>>   #include <linux/task_work.h>
->>>>>> +#include <linux/jiffies.h>
->>>>>>   
->>>>>>   #include "internal.h"
->>>>>>   
->>>>>> @@ -4120,7 +4121,7 @@ static void perf_adjust_freq_unthr_events(struct list_head *event_list)
->>>>>>   {
->>>>>>   	struct perf_event *event;
->>>>>>   	struct hw_perf_event *hwc;
->>>>>> -	u64 now, period = TICK_NSEC;
->>>>>> +	u64 now, period, tick_stamp;
->>>>>>   	s64 delta;
->>>>>>   
->>>>>>   	list_for_each_entry(event, event_list, active_list) {
->>>>>> @@ -4148,6 +4149,10 @@ static void perf_adjust_freq_unthr_events(struct list_head *event_list)
->>>>>>   		 */
->>>>>>   		event->pmu->stop(event, PERF_EF_UPDATE);
->>>>>>   
->>>>>> +		tick_stamp = jiffies64_to_nsecs(get_jiffies_64());
->>>>> Seems it only needs to retrieve the time once at the beginning, not for
->>>>> each event.
->>>>>
->>>>> There is a perf_clock(). It's better to use it for the consistency.
->>>> perf_clock() is much slower, and for statistical sampling it doesn't
->>>> have to be perfect.
->>> Because of rdtsc?
->> Yes
-> OK. I'm not worry about it too much as long as it's only invoked once in
-> each tick.
->
->>> If it is only used here, it should be fine. What I'm worried about is
->>> that someone may use it with other timestamp in perf later. Anyway, it's
->>> not a big deal.
->>>
->>> The main concern I have is that do we really need the patch?
->> The current code is wrong.
->>
->>> It seems can only bring us a better guess of the period for the sleep
->>> test. Then we have to do all the calculate for each tick.
->> Or any workload that sleeps periodically.
->>
->> Another option is to remove the period adjust on tick entirely.
->> Although arguably the calculation at a tick is better because
->> it probably covers a longer period.
-> Or we may remove the period adjust on overflow.
->
-> As my understanding, the period adjust on overflow is to handle the case
-> while the overflow happens very frequently (< 2 ticks). It is mainly
-> caused by the very low start period (1).
-> I'm working on a patch to set a larger start period, which should
-> minimize the usage of the period adjust on overflow.
-I think it's hard to choose a nice initial period, it may require a lot 
-of testing, good luck.
->
-> Anyway, based on the current code, I agree that adding a new
-> freq_tick_stamp should be required. But it doesn't need to read the time
-> for each event. I think reading the time once at the beginning should be
-> good enough for the period adjust/estimate algorithm.
+It's to fix a build issue due to other commits wanting to use ALIGN in
+tools/
 
-That's a good idea, do you think it's appropriate to move this line here?
+I've queued it up now, thanks!
 
-
-Thanks,
-
-Gengkun
-
-@@ -4126,6 +4126,8 @@ perf_adjust_freq_unthr_context(struct 
-perf_event_context *ctx, bool unthrottle)
-
-         raw_spin_lock(&ctx->lock);
-
-+       tick_stamp = jiffies64_to_nsecs(get_jiffies_64());
-+
-         list_for_each_entry_rcu(event, &ctx->event_list, event_entry) {
-                 if (event->state != PERF_EVENT_STATE_ACTIVE)
-                         continue;
-@@ -4152,7 +4154,6 @@ perf_adjust_freq_unthr_context(struct 
-perf_event_context *ctx, bool unthrottle)
-                  */
-                 event->pmu->stop(event, PERF_EF_UPDATE);
-
--               tick_stamp = jiffies64_to_nsecs(get_jiffies_64());
-                 period = tick_stamp - hwc->freq_tick_stamp;
-                 hwc->freq_tick_stamp = tick_stamp;
-
->
-> Thanks,
-> Kan
->
->>> Thanks,
->>> Kan
->>>>> Thanks,
->>>>> Kan
->>>>>> +		period = tick_stamp - hwc->freq_tick_stamp;
->>>>>> +		hwc->freq_tick_stamp = tick_stamp;
->>>>>> +
->>>>>>   		now = local64_read(&event->count);
->>>>>>   		delta = now - hwc->freq_count_stamp;
->>>>>>   		hwc->freq_count_stamp = now;
->>>>>> @@ -4157,9 +4162,9 @@ static void perf_adjust_freq_unthr_events(struct list_head *event_list)
->>>>>>   		 * reload only if value has changed
->>>>>>   		 * we have stopped the event so tell that
->>>>>>   		 * to perf_adjust_period() to avoid stopping it
->>>>>> -		 * twice.
->>>>>> +		 * twice. And skip if it is the first tick adjust period.
->>>>>>   		 */
->>>>>> -		if (delta > 0)
->>>>>> +		if (delta > 0 && likely(period != tick_stamp))
->>>>>>   			perf_adjust_period(event, period, delta, false);>
->>>>>>   		event->pmu->start(event, delta > 0 ? PERF_EF_RELOAD : 0);
->>>>
->>
-
+greg k-h
 
