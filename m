@@ -1,125 +1,116 @@
-Return-Path: <linux-kernel+bounces-306382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B9BA963E38
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:21:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A54F2963E39
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:21:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 662F01C211CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:21:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62B48285A35
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:21:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED75718C02E;
-	Thu, 29 Aug 2024 08:20:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LvYl67KD"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5663518C028;
+	Thu, 29 Aug 2024 08:21:09 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B678D18C021;
-	Thu, 29 Aug 2024 08:20:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3B88189BAF
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 08:21:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724919653; cv=none; b=Wubq5vDtxgJe0UiT8lQPYHtQ6OCkaDt/Kmawetvv2oQcUC1s/31op75WCrD5vAg9/Qt4LbmPYbmOS+VKxsNjBYQLyJEp8951EPTKWDxpmQzheAdEjW9eE9mmQG2b2JiuHLHlkx2T7Rr2Kl9etpzn4LhFOF8LronFdTaMss1eBkY=
+	t=1724919668; cv=none; b=H8wmDtF4Imx+0YD3+bpwwTa5NrtTPci/daMZLegHPyzYK7wopWQohItCPzDHoe5tzyVJndcshhirkU2LzfV788RIa/YZiy6XLaJ6eTOJn0i3nclwt391FRFTm/o2wuwFC62JBr24YdDaKNekOO2/8Ed5oPaNVTFeVA0ew1EK9OY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724919653; c=relaxed/simple;
-	bh=FJgsYlILKYE6AZml0b+hyh4/86XwcodMKNhsDQGUxJw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HUOZElGyUFHPmlThCMfnLlIK14V4+9IuiFzlalIO+/JYAYBpQh7J80ufWF6RoXXsAIFUKnqUhHe+PEcPaQksntiUE4kk11bCTYY9t/udiIeVL57JaUB5+u79k3ZDQIhtJv/MQhcLwoO1qzuWoolgM57v8tkTADNTZ2OslQ6l44E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LvYl67KD; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42bb72a5e0bso2506295e9.1;
-        Thu, 29 Aug 2024 01:20:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724919650; x=1725524450; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nyWujZXUph0LpAdyIQjvJMmkqt6sQ3l3/uAnrfaVN6A=;
-        b=LvYl67KDW8kubIiJZOof15lBR9RFHCdVspnAC+pBPk8NvsV63atcwRlwYisDjtRyol
-         hhOjLsEG5Z8qJ7y+sOyt2w37QVZfTyBFQOus4cTNROAFLJz5qDzY/tlE+ASJcbTXmb7m
-         56QPNd96FPQwaG83Nd9asAj42w50/jCgfCISPY+81Bo2VLjb5dXuY7HMJHkNuaLPPAW3
-         /bwlIb4msb+Ap5dm1L0+gP894tUgtFrLkpnrw1bWLIGI/0xV8VAM0OKTcY4SJJNqjKT/
-         AhiWA/UER6/oEBcqHdusnJvQVxqS7KgvB1OtIgYrlxw6Y+EOMOyERkh+vS5AzG9DIfpe
-         YtuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724919650; x=1725524450;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nyWujZXUph0LpAdyIQjvJMmkqt6sQ3l3/uAnrfaVN6A=;
-        b=AOGFIHLS7cT0FN4FJj7TYFBV/QHXi2bRTeerty0mVmtGEPeA2YxIUBJPnDO5uU8/kb
-         XmwXlSF7qJcAVgxI4b7K2ugLxzbjxLahbpyikpfw3ZcV+x+e7GVJxpUE9UbH8y4IAPUJ
-         f6gjqxyCaQXiePayvISxlycS89qf/Gz3s+uyde0tGmEhedo1NfGG/rSTyCwdatJFCECY
-         pp7oEs639XlgQO+BxkGAYnGHboKiSd0PRKh/wr/GJCNkzQHYkKHTcAyg8V8nNQVGfg+B
-         yXbWw4Lx34yjxhpTLGa70DgNXmCFnA/1b1HI46sWFX48uYjT6wqwXReTMajEgsP1DXrE
-         EPig==
-X-Forwarded-Encrypted: i=1; AJvYcCVLU5ke2qXTv5rtFCMLtjF64Ef3/ESH6WcfY5xXHR0CazN1GTzPF4brEDXanspvlxzkRARfmwIG@vger.kernel.org, AJvYcCXWEXtuarRfdHqQfQhoaSqrkF3YeATWfflh/gA86OP0O6VbK4LToO1C5cz90wO3ICVlkXuJaWpIQ1gzNfI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy21sK14Ge/tpk8k0Pyd0y8aUCnfiEqhmJBaBCrRo0Ix+NngfKq
-	mUofnktU2FsIJ56FGJJpkTspi48aAOf7kcEmLYTLbzH+Hgf1DJ/c
-X-Google-Smtp-Source: AGHT+IFYa2f9NUTllmq3w8T8mdv55B6znRTNYxVksHlaze70fPmQwiMF+jdriFc0E5XQyL+UPsGOMg==
-X-Received: by 2002:a05:600c:5102:b0:425:80d5:b8b2 with SMTP id 5b1f17b1804b1-42bb01bd7f2mr14006675e9.16.1724919649482;
-        Thu, 29 Aug 2024 01:20:49 -0700 (PDT)
-Received: from localhost ([81.168.73.77])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3749ee73fa0sm784667f8f.43.2024.08.29.01.20.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 01:20:48 -0700 (PDT)
-Date: Thu, 29 Aug 2024 09:20:48 +0100
-From: Martin Habets <habetsm.xilinx@gmail.com>
-To: Shen Lichuan <shenlichuan@vivo.com>
-Cc: ecree.xilinx@gmail.com, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
-	linux-net-drivers@amd.com, linux-kernel@vger.kernel.org,
-	opensource.kernel@vivo.com
-Subject: Re: [PATCH v2] sfc: Convert to use ERR_CAST()
-Message-ID: <20240829081951.GA67561@gmail.com>
-Mail-Followup-To: Shen Lichuan <shenlichuan@vivo.com>,
-	ecree.xilinx@gmail.com, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
-	linux-net-drivers@amd.com, linux-kernel@vger.kernel.org,
-	opensource.kernel@vivo.com
-References: <20240829021253.3066-1-shenlichuan@vivo.com>
+	s=arc-20240116; t=1724919668; c=relaxed/simple;
+	bh=wQpaqsmGCnU/TFoZpBi5VCR+n1hl3U0nPDby7/smhoU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=e4Lm9WXrNdVpaEPp+rKc9bUYnwDygptITwOTE/p85eiHV03TU1fBh+WNk7VqSyBG5pQaq/agn0prgK+Xp2OndXZv3tNgYXVJhOl7LyrJzmqYXMbOak4v0+x3mRBmWSwKWt6tW5XytNzs7xA2bhWHlae1HJSkVNSmEMNBbW3Uans=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4WvYyH3cdxz20n0B;
+	Thu, 29 Aug 2024 16:16:07 +0800 (CST)
+Received: from dggpemf100008.china.huawei.com (unknown [7.185.36.138])
+	by mail.maildlp.com (Postfix) with ESMTPS id D6C571A016C;
+	Thu, 29 Aug 2024 16:20:57 +0800 (CST)
+Received: from [10.174.177.243] (10.174.177.243) by
+ dggpemf100008.china.huawei.com (7.185.36.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 29 Aug 2024 16:20:57 +0800
+Message-ID: <dfeb5f5f-2b21-4b8f-bb8b-7170ef001773@huawei.com>
+Date: Thu, 29 Aug 2024 16:20:56 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240829021253.3066-1-shenlichuan@vivo.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [linux-next:master] [mm] f1295af16a: ltp.madvise11.fail
+Content-Language: en-US
+To: kernel test robot <oliver.sang@intel.com>
+CC: <oe-lkp@lists.linux.dev>, <lkp@intel.com>, Linux Memory Management List
+	<linux-mm@kvack.org>, Andrew Morton <akpm@linux-foundation.org>, David
+ Hildenbrand <david@redhat.com>, Miaohe Lin <linmiaohe@huawei.com>, Jonathan
+ Cameron <Jonathan.Cameron@huawei.com>, Naoya Horiguchi
+	<nao.horiguchi@gmail.com>, Oscar Salvador <osalvador@suse.de>,
+	<linux-kernel@vger.kernel.org>, <ltp@lists.linux.it>
+References: <202408291314.bdbfa468-oliver.sang@intel.com>
+From: Kefeng Wang <wangkefeng.wang@huawei.com>
+In-Reply-To: <202408291314.bdbfa468-oliver.sang@intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ dggpemf100008.china.huawei.com (7.185.36.138)
 
-On Thu, Aug 29, 2024 at 10:12:53AM +0800, Shen Lichuan wrote:
-> As opposed to open-code, using the ERR_CAST macro clearly indicates that
-> this is a pointer to an error value and a type conversion was performed.
-> 
-> Signed-off-by: Shen Lichuan <shenlichuan@vivo.com>
-> Reviewed-by: Jacob Keller <jacob.e.keller@intel.com>
 
-Reviewed-by: Martin Habets <habetsm.xilinx@gmail.com>
 
-> ---
-> v1 -> v2: Removed the superfluous comment.
+On 2024/8/29 16:13, kernel test robot wrote:
 > 
->  drivers/net/ethernet/sfc/tc_counters.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/net/ethernet/sfc/tc_counters.c b/drivers/net/ethernet/sfc/tc_counters.c
-> index c44088424323..a421b0123506 100644
-> --- a/drivers/net/ethernet/sfc/tc_counters.c
-> +++ b/drivers/net/ethernet/sfc/tc_counters.c
-> @@ -249,7 +249,7 @@ struct efx_tc_counter_index *efx_tc_flower_get_counter_index(
->  					       &ctr->linkage,
->  					       efx_tc_counter_id_ht_params);
->  			kfree(ctr);
-> -			return (void *)cnt; /* it's an ERR_PTR */
-> +			return ERR_CAST(cnt);
->  		}
->  		ctr->cnt = cnt;
->  		refcount_set(&ctr->ref, 1);
-> -- 
-> 2.17.1
+> Hello,
+> 
+> kernel test robot noticed "ltp.madvise11.fail" on:
+> 
+> commit: f1295af16abee075de68400c58550cffacc29eb1 ("mm: migrate: add isolate_folio_to_list()")
+
+
+f1295af16abee075de68400c58550cffacc29eb1 tags/next-20240828~164^2~86
+
+on next-20240828, it was fixed in the next patch,
+
+f1295af16abe mm: migrate: add isolate_folio_to_list()
+4e3a04695e25 mm-migrate-add-isolate_folio_to_list-fix // this should fix 
+the issue.
+
+or please test next-20240829
+
+Thanks.
+
+> https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git master
+> 
+> in testcase: ltp
+> version: ltp-x86_64-14c1f76-1_20240824
+> with following parameters:
+> 
+> 	disk: 1HDD
+> 	fs: btrfs
+> 	test: syscalls-01/madvise11
+> 
+> 
+> 
+> compiler: gcc-12
+> test machine: 4 threads 1 sockets Intel(R) Core(TM) i3-3220 CPU @ 3.30GHz (Ivy Bridge) with 8G memory
+> 
+> (please refer to attached dmesg/kmsg for entire log/backtrace)
+> 
+> 
+> 
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <oliver.sang@intel.com>
+> | Closes: https://lore.kernel.org/oe-lkp/202408291314.bdbfa468-oliver.sang@intel.com
 > 
 
