@@ -1,192 +1,646 @@
-Return-Path: <linux-kernel+bounces-306965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA02296461E
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:16:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91B5A96459C
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 14:58:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61B35283D5D
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:16:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB5171F29969
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 12:58:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E72221AD3F2;
-	Thu, 29 Aug 2024 13:14:59 +0000 (UTC)
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA01219309C;
+	Thu, 29 Aug 2024 12:58:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="hcTCr9ga"
+Received: from xry111.site (xry111.site [89.208.246.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B42A71AC429;
-	Thu, 29 Aug 2024 13:14:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A156B18C35B;
+	Thu, 29 Aug 2024 12:58:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724937299; cv=none; b=Wchnb51scD9doYH+nPFLKIE32wQ+kzorylN2ggXfHmuaBpePvHibavKTGcZobxgrwWd0cg0nVE0nV3EBlNpIpNqwo/jSG3UeIMcwFZqERR041Bx5ksweqyKo+65flYPhJ/ZzYGDm/3usNoyQyYHr8K40L5dzGPqJV4G7p2/waQY=
+	t=1724936298; cv=none; b=MPuC4F6Xghuv60pfAMBgsNF+EuqqItBujz9sjk5kkKsqp+mPIeD30uWIH8/s4g0YeAZrwXvM7TrDeXZwtjGLIHoqmbwvWsOXpmRbc2icbVU8hDehta2ybFqC0RqErSHX7hCfYrv9PokvOhDRel6FxvndlbhdMOPt2CxS7nhHPlI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724937299; c=relaxed/simple;
-	bh=3U1uR4RuV3esL0UNoYBOSSQTnZHiAlsJQXfvRBLuWtU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=HFMOA0suhgs23DKOFejyGSwaIrHd8l4+1ZwmDbGXOzymRukjCg8OzdgW/lQye3ECcZlg1Yb9vnqTq6hj1btSEaM8/BX/+grnQ5WhdOUlBJJ46b2+WNT8mZR6exV1UPZTzhzUl/gPnxMA6nLyu9x0VyptANtGaLoiF3xtQxsXQ3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.29])
-	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4WvglM1GZxz9v7Hm;
-	Thu, 29 Aug 2024 20:37:03 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.27])
-	by mail.maildlp.com (Postfix) with ESMTP id 33E3F140B3E;
-	Thu, 29 Aug 2024 20:56:13 +0800 (CST)
-Received: from [10.48.41.179] (unknown [10.48.41.179])
-	by APP2 (Coremail) with SMTP id GxC2BwDntcLkb9Bmo_4oAg--.14990S2;
-	Thu, 29 Aug 2024 13:56:12 +0100 (CET)
-Message-ID: <3fbe1092-d0be-4e30-96a7-4ec72d65b013@huaweicloud.com>
-Date: Thu, 29 Aug 2024 20:56:02 +0800
+	s=arc-20240116; t=1724936298; c=relaxed/simple;
+	bh=hNKu2Wzm5D+Pfqt9sfH62oJ93NopedSXYf2+Hh48+48=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MwnkjQylkeVf4pNAQ9xxGgEbdyuk3C9OLNSIHesGE2QfEaUpd2VtTid3RHzw72m6xDjzQbe0RPO39HFOxXOv1GT+lOCkGuvBdML3AON4IHPjwx0l40ebrjGEucyx1ok/qwbxYrS3dUfUKz2WAwUOudSngziLC2Zn2ROL95Ca7G8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=hcTCr9ga; arc=none smtp.client-ip=89.208.246.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xry111.site;
+	s=default; t=1724936288;
+	bh=hNKu2Wzm5D+Pfqt9sfH62oJ93NopedSXYf2+Hh48+48=;
+	h=From:To:Cc:Subject:Date:From;
+	b=hcTCr9gaz2RK27B/i92ZXUiooI032V0S1egf6VWN+pp07uPZp654zGWyXjiSL+Fa1
+	 KQuCXxIFjmtZgSVbUnFXvZEKxNk7uMWYd2DMqN4e4DHEWiKoP2Qd+mdgGR623cTEM5
+	 Iq6LyKG3AbUGrrKCb3RvKxWrU+xqZGPRguBN31Go=
+Received: from stargazer.. (unknown [113.200.174.10])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (P-384) server-digest SHA384)
+	(Client did not present a certificate)
+	(Authenticated sender: xry111@xry111.site)
+	by xry111.site (Postfix) with ESMTPSA id 0413866F26;
+	Thu, 29 Aug 2024 08:58:04 -0400 (EDT)
+From: Xi Ruoyao <xry111@xry111.site>
+To: "Jason A . Donenfeld" <Jason@zx2c4.com>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>
+Cc: Xi Ruoyao <xry111@xry111.site>,
+	linux-crypto@vger.kernel.org,
+	loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Jinyang He <hejinyang@loongson.cn>,
+	Tiezhu Yang <yangtiezhu@loongson.cn>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>
+Subject: [PATCH v5] LoongArch: vDSO: Wire up getrandom() vDSO implementation
+Date: Thu, 29 Aug 2024 20:56:55 +0800
+Message-ID: <20240829125656.19017-1-xry111@xry111.site>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: WARNING in process_measurement
-To: Xingyu Li <xli399@ucr.edu>, zohar@linux.ibm.com,
- roberto.sassu@huawei.com, dmitry.kasatkin@gmail.com,
- eric.snowberg@oracle.com, paul@paul-moore.com, jmorris@namei.org,
- serge@hallyn.com, linux-integrity@vger.kernel.org,
- linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
- Yu Hao <yhao016@ucr.edu>
-References: <CALAgD-4hkHVcCq2ycdwnA2hYDBMqijLUOfZgvf1WfFpU-8+42w@mail.gmail.com>
- <CALAgD-7JpFBhb1L+NXL9WoQP4hWbmfwsnWmePsER4SCud-BE9A@mail.gmail.com>
-Content-Language: en-US
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-In-Reply-To: <CALAgD-7JpFBhb1L+NXL9WoQP4hWbmfwsnWmePsER4SCud-BE9A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:GxC2BwDntcLkb9Bmo_4oAg--.14990S2
-X-Coremail-Antispam: 1UD129KBjvJXoW3GF1kCw1kKw13CrW3JrWrXwb_yoW7CF4rpF
-	10gFyUGr4vqr1xZr1DJr15Ar4UKw4Yya1UXws7Gry8AFy5W3WDXF18JrW7Gr98Jr15ZFy3
-	tFn8Xw48tw1UGaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvmb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
-	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
-	MIIYY7kG6xAYrwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2I
-	x0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2
-	z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnU
-	UI43ZEXa7IU5lksDUUUUU==
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAKBGbP2XkFlQACsX
 
-On 8/29/2024 12:53 PM, Xingyu Li wrote:
-> The above syzkaller reproducer needs additional support. And here is
-> the C reproducer:
-> https://gist.github.com/freexxxyyy/c3d1ccb8104af6b0d51ed50c29b363d3
+Hook up the generic vDSO implementation to the LoongArch vDSO data page
+by providing the required __arch_chacha20_blocks_nostack,
+__arch_get_k_vdso_rng_data, and getrandom_syscall implementations.
 
-Hi Xingyu
+Also enable the vDSO getrandom tests for LoongArch: create the symlink
+to the arch/loongarch/vdso directory, and correctly set the ARCH
+variable for LoongArch.
 
-do you have a .config for testing?
+Signed-off-by: Xi Ruoyao <xry111@xry111.site>
+---
 
-Thanks
+Cc: linux-crypto@vger.kernel.org
+Cc: loongarch@lists.linux.dev
+Cc: linux-kernel@vger.kernel.org
+Cc: Jinyang He <hejinyang@loongson.cn>
+Cc: Tiezhu Yang <yangtiezhu@loongson.cn>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
 
-Roberto
+Passed vdso_test_getrandom and vdso_test_chacha tests.  Benchmark
+results:
 
-> On Sat, Aug 24, 2024 at 10:23 PM Xingyu Li <xli399@ucr.edu> wrote:
->>
->> Hi,
->>
->> We found a bug in Linux 6.10. This is likely a mutex corruption bug,
->> where the mutex's internal state has been compromised, leading to an
->> integrity check failure. The bug occurs in
->> https://elixir.bootlin.com/linux/v6.10/source/security/integrity/ima/ima_main.c#L269.
->>
->> The bug report and syzkaller reproducer are as follows:
->>
->> Bug report:
->>
->> DEBUG_LOCKS_WARN_ON(lock->magic != lock)
->> WARNING: CPU: 0 PID: 8057 at kernel/locking/mutex.c:587
->> __mutex_lock_common kernel/locking/mutex.c:587 [inline]
->> WARNING: CPU: 0 PID: 8057 at kernel/locking/mutex.c:587
->> __mutex_lock+0xc2d/0xd50 kernel/locking/mutex.c:752
->> Modules linked in:
->> CPU: 0 PID: 8057 Comm: cron Not tainted 6.10.0 #13
->> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
->> RIP: 0010:__mutex_lock_common kernel/locking/mutex.c:587 [inline]
->> RIP: 0010:__mutex_lock+0xc2d/0xd50 kernel/locking/mutex.c:752
->> Code: 04 20 84 c0 0f 85 13 01 00 00 83 3d fc e5 23 04 00 0f 85 e9 f4
->> ff ff 48 c7 c7 60 70 4c 8b 48 c7 c6 e0 70 4c 8b e8 83 f4 54 f6 <0f> 0b
->> e9 cf f4 ff ff 0f 0b e9 dc f8 ff ff 0f 0b e9 5b f5 ff ff 48
->> RSP: 0018:ffffc9000aa77380 EFLAGS: 00010246
->> RAX: 26a6b2d2d0cdac00 RBX: 0000000000000000 RCX: ffff8880241e5a00
->> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
->> RBP: ffffc9000aa774d0 R08: ffffffff8155a25a R09: 1ffff1100c74519a
->> R10: dffffc0000000000 R11: ffffed100c74519b R12: dffffc0000000000
->> R13: ffff888020efc330 R14: 0000000000000000 R15: 1ffff9200154eeb8
->> FS:  00007f902ffb1840(0000) GS:ffff888063a00000(0000) knlGS:0000000000000000
->> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->> CR2: 00007f902fb7e06a CR3: 0000000018c3c000 CR4: 0000000000350ef0
->> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
->> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
->> Call Trace:
->>   <TASK>
->>   process_measurement+0x536/0x1ff0 security/integrity/ima/ima_main.c:269
->>   ima_file_check+0xec/0x170 security/integrity/ima/ima_main.c:572
->>   security_file_post_open+0x51/0xb0 security/security.c:2982
->>   do_open fs/namei.c:3656 [inline]
->>   path_openat+0x2c0b/0x3580 fs/namei.c:3813
->>   do_filp_open+0x22d/0x480 fs/namei.c:3840
->>   do_sys_openat2+0x13a/0x1c0 fs/open.c:1413
->>   do_sys_open fs/open.c:1428 [inline]
->>   __do_sys_openat fs/open.c:1444 [inline]
->>   __se_sys_openat fs/open.c:1439 [inline]
->>   __x64_sys_openat+0x243/0x290 fs/open.c:1439
->>   do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->>   do_syscall_64+0x7e/0x150 arch/x86/entry/common.c:83
->>   entry_SYSCALL_64_after_hwframe+0x67/0x6f
->> RIP: 0033:0x7f903019a167
->> Code: 25 00 00 41 00 3d 00 00 41 00 74 47 64 8b 04 25 18 00 00 00 85
->> c0 75 6b 44 89 e2 48 89 ee bf 9c ff ff ff b8 01 01 00 00 0f 05 <48> 3d
->> 00 f0 ff ff 0f 87 95 00 00 00 48 8b 4c 24 28 64 48 2b 0c 25
->> RSP: 002b:00007fff194600a0 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
->> RAX: ffffffffffffffda RBX: 0000564dd2fb9cf0 RCX: 00007f903019a167
->> RDX: 0000000000000000 RSI: 00007f902fb7e103 RDI: 00000000ffffff9c
->> RBP: 00007f902fb7e103 R08: 0000000000000008 R09: 0000000000000001
->> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
->> R13: 0000564dd2fb9cf0 R14: 0000000000000001 R15: 0000000000000000
->>   </TASK>
->>
->>
->> Syzkaller reproducer:
->> # {Threaded:false Repeat:true RepeatTimes:0 Procs:1 Slowdown:1
->> Sandbox: SandboxArg:0 Leak:false NetInjection:false NetDevices:false
->> NetReset:false Cgroups:false BinfmtMisc:false CloseFDs:false
->> KCSAN:false DevlinkPCI:false NicVF:false USB:false VhciInjection:false
->> Wifi:false IEEE802154:true Sysctl:true Swap:false UseTmpDir:true
->> HandleSegv:true Trace:false LegacyOptions:{Collide:false Fault:false
->> FaultCall:0 FaultNth:0}}
->> r0 = openat$ptmx(0xffffffffffffff9c, 0x0, 0x141040, 0x0)
->> ioctl$TIOCSETD(r0, 0x5423, 0x0)
->> mmap$IORING_OFF_CQ_RING(&(0x7f0000ffc000/0x4000)=nil, 0x4000, 0x2,
->> 0x20031, 0xffffffffffffffff, 0x8000000)
->> mmap$IORING_OFF_SQ_RING(&(0x7f0000ff4000/0xc000)=nil, 0xc000, 0xe,
->> 0x12, 0xffffffffffffffff, 0x0)
->> openat$sndseq(0xffffffffffffff9c, 0x0, 0x902)
->> write$syz_spec_18446744072532934322_80(0xffffffffffffffff,
->> &(0x7f0000000000)="2b952480c7ca55097d1707935ba64b20f3026c03d658026b81bf264340512b3cb4e01afda2de754299ea7a113343ab7b9bda2fc0a2e2cdbfecbca0233a0772b12ebde5d98a1203cb871672dff7e4c86ec1dccef0a76312fbe8d45dc2bd0f8fc2ebeb2a6be6a300916c5281da2c1ef64d66267091b82429976c019da3645557ed1d439c5a637f6bf58c53bc414539dd87c69098d671402586b631f9ac5c2fe9cedc281a6f005b5c4d1dd5ed9be400",
->> 0xb4)
->> r1 = syz_open_dev$sg(&(0x7f00000003c0), 0x0, 0x8000)
->> ioctl$syz_spec_1724254976_2866(r1, 0x1, &(0x7f0000000080)={0x0, 0x2,
->> [0x85, 0x8, 0x15, 0xd]})
->> ioctl$KDGKBDIACR(0xffffffffffffffff, 0x4bfa, 0x0)
->>
->>
->> --
->> Yours sincerely,
->> Xingyu
-> 
-> 
-> 
+vdso_test_getrandom bench-single:
+
+       vdso: 25000000 times in 0.499490289 seconds
+       libc: 25000000 times in 6.963829873 seconds
+    syscall: 25000000 times in 6.983413486 seconds
+
+vdso_test_getrandom bench-multi:
+       vdso: 25000000 x 256 times in 28.703710823 seconds
+       libc: 25000000 x 256 times in 356.835801784 seconds
+       syscall: 25000000 x 256 times in 338.525837197 seconds
+
+[v4]->v5:
+- Rebase onto crng/random.git:
+  - Remove two selftest patches.
+  - Remove __arch_chacha20_blocks_nostack forward declaration.
+- Squash the remaining selftest patch into the vDSO getrandom
+  implementation patch.
+- Remove ifdef CONFIG_VDSO_GETRANDOM and $(CONFIG_VDSO_GETRANDOM) as
+  they are always true in arch/loongarch.
+- Remove asm-offsets.c change which has been already unneeded in v4.
+- Add comment about rematerializing the constant in the assembly code.
+- Add prototype for __vdso_getrandom to silence a -Wmissing-prototype
+  warning.
+
+[v3]->v4:
+- Remove LSX implementation, which isn't much faster than the generic
+  implementaion.
+- Rebase onto crng/random.git:
+  - Define __arch_get_k_vdso_rng_data instead of using inline asm to
+    provide the _vdso_rng_data symbol in a magic way.
+  - Remove memset.S.
+  - Use c-getrandom-y to easily include the generic C code.
+  - The benchmark results seem better than v3, maybe related to the TLS
+    refactoring in random.git.
+- Add patches for selftests.
+
+[v2]->v3:
+- Add a generic LoongArch implementation for which LSX isn't needed.
+
+v1->v2:
+- Properly send the series to the list.
+
+[v4]:https://lore.kernel.org/all/20240827132018.88854-1-xry111@xry111.site/
+[v3]:https://lore.kernel.org/all/20240816110717.10249-1-xry111@xry111.site/
+[v2]:https://lore.kernel.org/all/20240815133357.35829-1-xry111@xry111.site/
+
+ arch/loongarch/Kconfig                      |   1 +
+ arch/loongarch/include/asm/vdso/getrandom.h |  44 ++++
+ arch/loongarch/include/asm/vdso/vdso.h      |   6 +
+ arch/loongarch/include/asm/vdso/vsyscall.h  |   8 +
+ arch/loongarch/kernel/asm-offsets.c         |   1 +
+ arch/loongarch/kernel/vdso.c                |   2 +
+ arch/loongarch/vdso/Makefile                |   7 +-
+ arch/loongarch/vdso/vdso.lds.S              |   1 +
+ arch/loongarch/vdso/vgetrandom-chacha.S     | 242 ++++++++++++++++++++
+ arch/loongarch/vdso/vgetrandom.c            |  15 ++
+ tools/arch/loongarch/vdso                   |   1 +
+ tools/testing/selftests/vDSO/Makefile       |   4 +-
+ 12 files changed, 329 insertions(+), 3 deletions(-)
+ create mode 100644 arch/loongarch/include/asm/vdso/getrandom.h
+ create mode 100644 arch/loongarch/vdso/vgetrandom-chacha.S
+ create mode 100644 arch/loongarch/vdso/vgetrandom.c
+ create mode 120000 tools/arch/loongarch/vdso
+
+diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
+index 70f169210b52..14821c2aba5b 100644
+--- a/arch/loongarch/Kconfig
++++ b/arch/loongarch/Kconfig
+@@ -190,6 +190,7 @@ config LOONGARCH
+ 	select TRACE_IRQFLAGS_SUPPORT
+ 	select USE_PERCPU_NUMA_NODE_ID
+ 	select USER_STACKTRACE_SUPPORT
++	select VDSO_GETRANDOM
+ 	select ZONE_DMA32
+ 
+ config 32BIT
+diff --git a/arch/loongarch/include/asm/vdso/getrandom.h b/arch/loongarch/include/asm/vdso/getrandom.h
+new file mode 100644
+index 000000000000..04c991f6921d
+--- /dev/null
++++ b/arch/loongarch/include/asm/vdso/getrandom.h
+@@ -0,0 +1,44 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Copyright (C) 2024 Xi Ruoyao <xry111@xry111.site>. All Rights Reserved.
++ */
++#ifndef __ASM_VDSO_GETRANDOM_H
++#define __ASM_VDSO_GETRANDOM_H
++
++#ifndef __ASSEMBLY__
++
++#include <asm/unistd.h>
++#include <asm/vdso/vdso.h>
++
++static __always_inline ssize_t getrandom_syscall(void *_buffer,
++						 size_t _len,
++						 unsigned int _flags)
++{
++	register long ret asm("a0");
++	register long nr asm("a7") = __NR_getrandom;
++	register void *buffer asm("a0") = _buffer;
++	register size_t len asm("a1") = _len;
++	register unsigned int flags asm("a2") = _flags;
++
++	asm volatile(
++	"      syscall 0\n"
++	: "+r" (ret)
++	: "r" (nr), "r" (buffer), "r" (len), "r" (flags)
++	: "$t0", "$t1", "$t2", "$t3", "$t4", "$t5", "$t6", "$t7", "$t8",
++	  "memory");
++
++	return ret;
++}
++
++static __always_inline const struct vdso_rng_data *__arch_get_vdso_rng_data(
++	void)
++{
++	return (const struct vdso_rng_data *)(
++		get_vdso_data() +
++		VVAR_LOONGARCH_PAGES_START * PAGE_SIZE +
++		offsetof(struct loongarch_vdso_data, rng_data));
++}
++
++#endif /* !__ASSEMBLY__ */
++
++#endif /* __ASM_VDSO_GETRANDOM_H */
+diff --git a/arch/loongarch/include/asm/vdso/vdso.h b/arch/loongarch/include/asm/vdso/vdso.h
+index 5a12309d9fb5..e31ac7474513 100644
+--- a/arch/loongarch/include/asm/vdso/vdso.h
++++ b/arch/loongarch/include/asm/vdso/vdso.h
+@@ -4,6 +4,9 @@
+  * Copyright (C) 2020-2022 Loongson Technology Corporation Limited
+  */
+ 
++#ifndef _ASM_VDSO_VDSO_H
++#define _ASM_VDSO_VDSO_H
++
+ #ifndef __ASSEMBLY__
+ 
+ #include <asm/asm.h>
+@@ -16,6 +19,7 @@ struct vdso_pcpu_data {
+ 
+ struct loongarch_vdso_data {
+ 	struct vdso_pcpu_data pdata[NR_CPUS];
++	struct vdso_rng_data rng_data;
+ };
+ 
+ /*
+@@ -63,3 +67,5 @@ static inline unsigned long get_vdso_data(void)
+ }
+ 
+ #endif /* __ASSEMBLY__ */
++
++#endif
+diff --git a/arch/loongarch/include/asm/vdso/vsyscall.h b/arch/loongarch/include/asm/vdso/vsyscall.h
+index 5de615383a22..b1273ce6f140 100644
+--- a/arch/loongarch/include/asm/vdso/vsyscall.h
++++ b/arch/loongarch/include/asm/vdso/vsyscall.h
+@@ -8,6 +8,7 @@
+ #include <vdso/datapage.h>
+ 
+ extern struct vdso_data *vdso_data;
++extern struct vdso_rng_data *vdso_rng_data;
+ 
+ /*
+  * Update the vDSO data page to keep in sync with kernel timekeeping.
+@@ -19,6 +20,13 @@ struct vdso_data *__loongarch_get_k_vdso_data(void)
+ }
+ #define __arch_get_k_vdso_data __loongarch_get_k_vdso_data
+ 
++static __always_inline
++struct vdso_rng_data *__loongarch_get_k_vdso_rng_data(void)
++{
++	return vdso_rng_data;
++}
++#define __arch_get_k_vdso_rng_data __loongarch_get_k_vdso_rng_data
++
+ /* The asm-generic header needs to be included after the definitions above */
+ #include <asm-generic/vdso/vsyscall.h>
+ 
+diff --git a/arch/loongarch/kernel/asm-offsets.c b/arch/loongarch/kernel/asm-offsets.c
+index bee9f7a3108f..ab258878d551 100644
+--- a/arch/loongarch/kernel/asm-offsets.c
++++ b/arch/loongarch/kernel/asm-offsets.c
+@@ -14,6 +14,7 @@
+ #include <asm/ptrace.h>
+ #include <asm/processor.h>
+ #include <asm/ftrace.h>
++#include <asm/vdso/vdso.h>
+ 
+ static void __used output_ptreg_defines(void)
+ {
+diff --git a/arch/loongarch/kernel/vdso.c b/arch/loongarch/kernel/vdso.c
+index 90dfccb41c14..2af05ba5f121 100644
+--- a/arch/loongarch/kernel/vdso.c
++++ b/arch/loongarch/kernel/vdso.c
+@@ -22,6 +22,7 @@
+ #include <vdso/helpers.h>
+ #include <vdso/vsyscall.h>
+ #include <vdso/datapage.h>
++#include <generated/asm-offsets.h>
+ #include <generated/vdso-offsets.h>
+ 
+ extern char vdso_start[], vdso_end[];
+@@ -37,6 +38,7 @@ static union {
+ static struct page *vdso_pages[] = { NULL };
+ struct vdso_data *vdso_data = generic_vdso_data.data;
+ struct vdso_pcpu_data *vdso_pdata = loongarch_vdso_data.vdata.pdata;
++struct vdso_rng_data *vdso_rng_data = &loongarch_vdso_data.vdata.rng_data;
+ 
+ static int vdso_mremap(const struct vm_special_mapping *sm, struct vm_area_struct *new_vma)
+ {
+diff --git a/arch/loongarch/vdso/Makefile b/arch/loongarch/vdso/Makefile
+index d724d46b07c8..19249d4b3542 100644
+--- a/arch/loongarch/vdso/Makefile
++++ b/arch/loongarch/vdso/Makefile
+@@ -4,7 +4,8 @@
+ # Include the generic Makefile to check the built vdso.
+ include $(srctree)/lib/vdso/Makefile
+ 
+-obj-vdso-y := elf.o vgetcpu.o vgettimeofday.o sigreturn.o
++obj-vdso-y := elf.o vgetcpu.o vgettimeofday.o sigreturn.o vgetrandom.o \
++              vgetrandom-chacha.o
+ 
+ # Common compiler flags between ABIs.
+ ccflags-vdso := \
+@@ -29,6 +30,10 @@ ifneq ($(c-gettimeofday-y),)
+   CFLAGS_vgettimeofday.o += -include $(c-gettimeofday-y)
+ endif
+ 
++ifneq ($(c-getrandom-y),)
++  CFLAGS_vgetrandom.o += -include $(c-getrandom-y)
++endif
++
+ # VDSO linker flags.
+ ldflags-y := -Bsymbolic --no-undefined -soname=linux-vdso.so.1 \
+ 	$(filter -E%,$(KBUILD_CFLAGS)) -nostdlib -shared \
+diff --git a/arch/loongarch/vdso/vdso.lds.S b/arch/loongarch/vdso/vdso.lds.S
+index 56ad855896de..2c965a597d9e 100644
+--- a/arch/loongarch/vdso/vdso.lds.S
++++ b/arch/loongarch/vdso/vdso.lds.S
+@@ -63,6 +63,7 @@ VERSION
+ 		__vdso_clock_gettime;
+ 		__vdso_gettimeofday;
+ 		__vdso_rt_sigreturn;
++		__vdso_getrandom;
+ 	local: *;
+ 	};
+ }
+diff --git a/arch/loongarch/vdso/vgetrandom-chacha.S b/arch/loongarch/vdso/vgetrandom-chacha.S
+new file mode 100644
+index 000000000000..7e86a50f6e85
+--- /dev/null
++++ b/arch/loongarch/vdso/vgetrandom-chacha.S
+@@ -0,0 +1,242 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) 2024 Xi Ruoyao <xry111@xry111.site>. All Rights Reserved.
++ */
++
++#include <asm/asm.h>
++#include <asm/regdef.h>
++#include <linux/linkage.h>
++
++.text
++
++/* Salsa20 quarter-round */
++.macro	QR	a b c d
++	add.w		\a, \a, \b
++	xor		\d, \d, \a
++	rotri.w		\d, \d, 16
++
++	add.w		\c, \c, \d
++	xor		\b, \b, \c
++	rotri.w		\b, \b, 20
++
++	add.w		\a, \a, \b
++	xor		\d, \d, \a
++	rotri.w		\d, \d, 24
++
++	add.w		\c, \c, \d
++	xor		\b, \b, \c
++	rotri.w		\b, \b, 25
++.endm
++
++/*
++ * Very basic LoongArch implementation of ChaCha20. Produces a given positive
++ * number of blocks of output with a nonce of 0, taking an input key and
++ * 8-byte counter. Importantly does not spill to the stack. Its arguments
++ * are:
++ *
++ *	a0: output bytes
++ *	a1: 32-byte key input
++ *	a2: 8-byte counter input/output
++ *	a3: number of 64-byte blocks to write to output
++ */
++SYM_FUNC_START(__arch_chacha20_blocks_nostack)
++
++/* We don't need a frame pointer */
++#define s9		fp
++
++#define output		a0
++#define key		a1
++#define counter		a2
++#define nblocks		a3
++#define i		a4
++#define state0		s0
++#define state1		s1
++#define state2		s2
++#define state3		s3
++#define state4		s4
++#define state5		s5
++#define state6		s6
++#define state7		s7
++#define state8		s8
++#define state9		s9
++#define state10		a5
++#define state11		a6
++#define state12		a7
++#define state13		t0
++#define state14		t1
++#define state15		t2
++#define cnt_lo		t3
++#define cnt_hi		t4
++#define copy0		t5
++#define copy1		t6
++#define copy2		t7
++
++/* Reuse i as copy3 */
++#define copy3		i
++
++	/*
++	 * The ABI requires s0-s9 saved, and sp aligned to 16-byte.
++	 * This does not violate the stack-less requirement: no sensitive data
++	 * is spilled onto the stack.
++	 */
++	PTR_ADDI	sp, sp, (-SZREG * 10) & STACK_ALIGN
++	REG_S		s0, sp, 0
++	REG_S		s1, sp, SZREG
++	REG_S		s2, sp, SZREG * 2
++	REG_S		s3, sp, SZREG * 3
++	REG_S		s4, sp, SZREG * 4
++	REG_S		s5, sp, SZREG * 5
++	REG_S		s6, sp, SZREG * 6
++	REG_S		s7, sp, SZREG * 7
++	REG_S		s8, sp, SZREG * 8
++	REG_S		s9, sp, SZREG * 9
++
++	li.w		copy0, 0x61707865
++	li.w		copy1, 0x3320646e
++	li.w		copy2, 0x79622d32
++
++	ld.w		cnt_lo, counter, 0
++	ld.w		cnt_hi, counter, 4
++
++.Lblock:
++	/* state[0,1,2,3] = "expand 32-byte k" */
++	move		state0, copy0
++	move		state1, copy1
++	move		state2, copy2
++	li.w		state3, 0x6b206574
++
++	/* state[4,5,..,11] = key */
++	ld.w		state4, key, 0
++	ld.w		state5, key, 4
++	ld.w		state6, key, 8
++	ld.w		state7, key, 12
++	ld.w		state8, key, 16
++	ld.w		state9, key, 20
++	ld.w		state10, key, 24
++	ld.w		state11, key, 28
++
++	/* state[12,13] = counter */
++	move		state12, cnt_lo
++	move		state13, cnt_hi
++
++	/* state[14,15] = 0 */
++	move		state14, zero
++	move		state15, zero
++
++	li.w		i, 10
++.Lpermute:
++	/* odd round */
++	QR		state0, state4, state8, state12
++	QR		state1, state5, state9, state13
++	QR		state2, state6, state10, state14
++	QR		state3, state7, state11, state15
++
++	/* even round */
++	QR		state0, state5, state10, state15
++	QR		state1, state6, state11, state12
++	QR		state2, state7, state8, state13
++	QR		state3, state4, state9, state14
++
++	addi.w		i, i, -1
++	bnez		i, .Lpermute
++
++	/*
++	 * copy[3] = "expa", materialize it here because copy[3] shares the
++	 * same register with i which just became dead.
++	 */
++	li.w		copy3, 0x6b206574
++
++	/* output[0,1,2,3] = copy[0,1,2,3] + state[0,1,2,3] */
++	add.w		state0, state0, copy0
++	add.w		state1, state1, copy1
++	add.w		state2, state2, copy2
++	add.w		state3, state3, copy3
++	st.w		state0, output, 0
++	st.w		state1, output, 4
++	st.w		state2, output, 8
++	st.w		state3, output, 12
++
++	/* from now on state[0,1,2,3] are scratch registers  */
++
++	/* state[0,1,2,3] = lo32(key) */
++	ld.w		state0, key, 0
++	ld.w		state1, key, 4
++	ld.w		state2, key, 8
++	ld.w		state3, key, 12
++
++	/* output[4,5,6,7] = state[0,1,2,3] + state[4,5,6,7] */
++	add.w		state4, state4, state0
++	add.w		state5, state5, state1
++	add.w		state6, state6, state2
++	add.w		state7, state7, state3
++	st.w		state4, output, 16
++	st.w		state5, output, 20
++	st.w		state6, output, 24
++	st.w		state7, output, 28
++
++	/* state[0,1,2,3] = hi32(key) */
++	ld.w		state0, key, 16
++	ld.w		state1, key, 20
++	ld.w		state2, key, 24
++	ld.w		state3, key, 28
++
++	/* output[8,9,10,11] = state[0,1,2,3] + state[8,9,10,11] */
++	add.w		state8, state8, state0
++	add.w		state9, state9, state1
++	add.w		state10, state10, state2
++	add.w		state11, state11, state3
++	st.w		state8, output, 32
++	st.w		state9, output, 36
++	st.w		state10, output, 40
++	st.w		state11, output, 44
++
++	/* output[12,13,14,15] = state[12,13,14,15] + [cnt_lo, cnt_hi, 0, 0] */
++	add.w		state12, state12, cnt_lo
++	add.w		state13, state13, cnt_hi
++	st.w		state12, output, 48
++	st.w		state13, output, 52
++	st.w		state14, output, 56
++	st.w		state15, output, 60
++
++	/* ++counter  */
++	addi.w		cnt_lo, cnt_lo, 1
++	sltui		state0, cnt_lo, 1
++	add.w		cnt_hi, cnt_hi, state0
++
++	/* output += 64 */
++	PTR_ADDI	output, output, 64
++	/* --nblocks */
++	PTR_ADDI	nblocks, nblocks, -1
++	bnez		nblocks, .Lblock
++
++	/* counter = [cnt_lo, cnt_hi] */
++	st.w		cnt_lo, counter, 0
++	st.w		cnt_hi, counter, 4
++
++	/*
++	 * Zero out the potentially sensitive regs, in case nothing uses these
++	 * again. As at now copy[0,1,2,3] just contains "expand 32-byte k" and
++	 * state[0,...,9] are s0-s9 those we'll restore in the epilogue, so we
++	 * only need to zero state[11,...,15].
++	 */
++	move		state10, zero
++	move		state11, zero
++	move		state12, zero
++	move		state13, zero
++	move		state14, zero
++	move		state15, zero
++
++	REG_L		s0, sp, 0
++	REG_L		s1, sp, SZREG
++	REG_L		s2, sp, SZREG * 2
++	REG_L		s3, sp, SZREG * 3
++	REG_L		s4, sp, SZREG * 4
++	REG_L		s5, sp, SZREG * 5
++	REG_L		s6, sp, SZREG * 6
++	REG_L		s7, sp, SZREG * 7
++	REG_L		s8, sp, SZREG * 8
++	REG_L		s9, sp, SZREG * 9
++	PTR_ADDI	sp, sp, -((-SZREG * 10) & STACK_ALIGN)
++
++	jr		ra
++SYM_FUNC_END(__arch_chacha20_blocks_nostack)
+diff --git a/arch/loongarch/vdso/vgetrandom.c b/arch/loongarch/vdso/vgetrandom.c
+new file mode 100644
+index 000000000000..68e44b3f1d49
+--- /dev/null
++++ b/arch/loongarch/vdso/vgetrandom.c
+@@ -0,0 +1,15 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Copyright (C) 2024 Xi Ruoyao <xry111@xry111.site>. All Rights Reserved.
++ */
++#include <linux/types.h>
++
++ssize_t __vdso_getrandom(void *buffer, size_t len, unsigned int flags,
++			 void *opaque_state, size_t opaque_len);
++
++ssize_t __vdso_getrandom(void *buffer, size_t len, unsigned int flags,
++			 void *opaque_state, size_t opaque_len)
++{
++	return __cvdso_getrandom(buffer, len, flags, opaque_state,
++				 opaque_len);
++}
+diff --git a/tools/arch/loongarch/vdso b/tools/arch/loongarch/vdso
+new file mode 120000
+index 000000000000..ebda43a82db7
+--- /dev/null
++++ b/tools/arch/loongarch/vdso
+@@ -0,0 +1 @@
++../../../arch/loongarch/vdso
+\ No newline at end of file
+diff --git a/tools/testing/selftests/vDSO/Makefile b/tools/testing/selftests/vDSO/Makefile
+index e21e78aae24d..606ce5f5c2a4 100644
+--- a/tools/testing/selftests/vDSO/Makefile
++++ b/tools/testing/selftests/vDSO/Makefile
+@@ -1,6 +1,6 @@
+ # SPDX-License-Identifier: GPL-2.0
+ uname_M := $(shell uname -m 2>/dev/null || echo not)
+-ARCH ?= $(shell echo $(uname_M) | sed -e s/i.86/x86/ -e s/x86_64/x86/)
++ARCH ?= $(shell echo $(uname_M) | sed -e s/i.86/x86/ -e s/x86_64/x86/ -e /loongarch/s/[0-9]//g)
+ 
+ TEST_GEN_PROGS := vdso_test_gettimeofday
+ TEST_GEN_PROGS += vdso_test_getcpu
+@@ -10,7 +10,7 @@ ifeq ($(ARCH),$(filter $(ARCH),x86 x86_64))
+ TEST_GEN_PROGS += vdso_standalone_test_x86
+ endif
+ TEST_GEN_PROGS += vdso_test_correctness
+-ifeq ($(uname_M),x86_64)
++ifeq ($(uname_M),$(filter $(uname_M),x86_64 loongarch64))
+ TEST_GEN_PROGS += vdso_test_getrandom
+ TEST_GEN_PROGS += vdso_test_chacha
+ endif
+
+base-commit: ec309dd126280ca4ef4087e02246a6f61f36c8d1
+-- 
+2.46.0
 
 
