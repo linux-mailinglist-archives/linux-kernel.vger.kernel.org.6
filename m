@@ -1,125 +1,157 @@
-Return-Path: <linux-kernel+bounces-306030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B003696383C
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 04:35:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AAFAC96383F
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 04:37:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E003B221FA
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 02:35:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1952AB22790
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 02:37:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA47829424;
-	Thu, 29 Aug 2024 02:35:23 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE2BF3C482;
+	Thu, 29 Aug 2024 02:36:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="vsqOzIQO"
+Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 114E618030
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 02:35:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DF721798C
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 02:36:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724898923; cv=none; b=rsaCN2pPghwQcAOCYOzH+8ZignLCphnvGbBP8a6t17SyKs5I7GwbyFDjOsyx6eLYw2N0tV44gAiotU5YyZfnYjKD4GSsPUUk4r4uwXVT/I7Dq3kBv8HXcW0jsF5CBFAc9n2aPIjnZjsOxOynZlWocn4J7a90lGJMJbm9fZ3JHC0=
+	t=1724899009; cv=none; b=VjOwT0A4a5QB/tefLaXDf5mH1CjAHI6rYZhYYSyLKD/tEbC8tAtpPPzlS6/7ZjfJJykWcIQWquv7qLQ1B9VwkA9DVq7aIAI1ADv0bgw+//LxHhrXCjrGQr88ucK/TY2av3+I8nWjn6j17w68p+yR2CDZGxT/5PAUU+eaaVM32yo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724898923; c=relaxed/simple;
-	bh=y+h5dyw+YngnrKeGh+K2Fvi/STeV6H5VdXWvXOtEnL4=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=YQohyycDNMnC2Cb4tIqaF0yybBmZCwJyckllHnXuS9Jw04/ZmMVBWfxb8ghd9BVhO+jOeqT/UVvM3Gt20iG6CWMMDU2E7dNtQ+B+ukVdLkEuzZItfo/jhF4X5t+T4NpOZ9jX/+02n1D/DQkUPieat0dfedq1Hb1OQdJTCs9L1aI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-82a06d2546fso23927039f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 19:35:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724898921; x=1725503721;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=o8g53F8AoJegYTu1dXHj7MrsHau951myOfgBYZu1ow0=;
-        b=YPrMc8dWAzYa9+47SBZgB6vpZFcWWp4FTMmdvSqIy8O4JofQomAxVRq/5Ih1qjjASs
-         hdrwZFMlSWeNjjQRC4wTM2Bkm7vllYku+pHQH1ZXtia29t22PJ8xMX9ay2URoZYwhI7f
-         lxxJ4+VV58HWAipM1T3sBMW06MJViw2hXNLn/8fLUHfyP9MsGC6nTP5o7HAEBv3Sq3js
-         RJ4rqf3wQpFP5w11QNN4Xvy59DApvZXBQupcDTgoTsX1m8GcocBRIr9wHZXHPQrBoYlV
-         4MkL4h066JdFVPpjjX0Meydah6u+9rQPT3U6ZpV3fD/h++VGG4ukE94KAIBWd2vtNixr
-         5vfw==
-X-Gm-Message-State: AOJu0Yy0DWolQTxj0aIcBO9zh1xl8LF1CeB43aZzGNeNWCz6WZYYbIzc
-	22WRLlfieLNbSrS5roPGEgpg4STKOSibp03GeZ/o5/NbFpskrpxQ7oVjTlENtOGrv5qrQd3M/j5
-	vk6sq6nefJwQdoK34YdPhl9+GSYHs/Wu7UginuKw/cjSwLyi/p63HZeA=
-X-Google-Smtp-Source: AGHT+IFDH7OroQ+RFgwXRNKTzCe5KkLxk5frpKopaaalWrn4DJX3tUF/DN7RiBr0lhUBLNqW7Zrnq2OPlXnfQRXbyKaJIoiAimIf
+	s=arc-20240116; t=1724899009; c=relaxed/simple;
+	bh=bGlQAlKtPj4qnjGq3CAst/qDUBkSaSOOIVGCqBBJ/L4=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=YHTsMZYHiuWuPyqpl2fpepz8FeWBlDURQENUkqu4DZmMNueH7WtPJn5xOcrAoqYd1oTYulNc3a/z4aogFMLClE2Ta4a5HL6DDKl6/ZqpjFbbz7CWASCmOoBeLoueBjStV82VE6xDj4NuG4W9OSdF12DQ7BiY4s6jZJVsuwPMCZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=vsqOzIQO; arc=none smtp.client-ip=91.218.175.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Content-Type: text/plain;
+	charset=us-ascii
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1724899005;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bGlQAlKtPj4qnjGq3CAst/qDUBkSaSOOIVGCqBBJ/L4=;
+	b=vsqOzIQOPmUD/dI//siE4+IIQngQgXxQBpdpB7E/BzqliMg1RHeAWk5x8XpoV96GvDofCS
+	Y29CW/+TU573wsCN6urLZsB1zRwanhC84C4aE2tiG1Z/svyHG5ZrK7Oyf0Kkzr2vEMAfdm
+	r6jlMDdK5S140QjzXQ26lhat3rHG19o=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:148e:b0:397:2946:c83c with SMTP id
- e9e14a558f8ab-39f378fdc9dmr1112775ab.4.1724898921217; Wed, 28 Aug 2024
- 19:35:21 -0700 (PDT)
-Date: Wed, 28 Aug 2024 19:35:21 -0700
-In-Reply-To: <0000000000008851fe0620c5f51c@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000007910280620c95389@google.com>
-Subject: Re: [syzbot] Re: [syzbot] [btrfs?] kernel BUG in __extent_writepage_io
- (2)
-From: syzbot <syzbot+ba3c0273042a898c230e@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
+Subject: Re: [PATCH v1] memcg: add charging of already allocated slab objects
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Muchun Song <muchun.song@linux.dev>
+In-Reply-To: <a5rzw7uuf7pgrhhut7keoy66c6u4rgiuxx2qmwywbvl2iktfku@23dzxczejcet>
+Date: Thu, 29 Aug 2024 10:36:01 +0800
+Cc: Roman Gushchin <roman.gushchin@linux.dev>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Johannes Weiner <hannes@cmpxchg.org>,
+ Michal Hocko <mhocko@kernel.org>,
+ Vlastimil Babka <vbabka@suse.cz>,
+ David Rientjes <rientjes@google.com>,
+ Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+ Eric Dumazet <edumazet@google.com>,
+ "David S . Miller" <davem@davemloft.net>,
+ Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>,
+ Linux Memory Management List <linux-mm@kvack.org>,
+ LKML <linux-kernel@vger.kernel.org>,
+ Meta kernel team <kernel-team@meta.com>,
+ cgroups@vger.kernel.org,
+ netdev <netdev@vger.kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <97F404E9-C3C2-4BD2-9539-C40237E71B2B@linux.dev>
+References: <20240826232908.4076417-1-shakeel.butt@linux.dev>
+ <Zs1CuLa-SE88jRVx@google.com>
+ <yiyx4fh6dklqpexfstkzp3gf23hjpbjujci2o6gs7nb4sutzvb@b5korjrjio3m>
+ <EA5F7851-B519-4570-B299-8A096A09D6E7@linux.dev>
+ <a5rzw7uuf7pgrhhut7keoy66c6u4rgiuxx2qmwywbvl2iktfku@23dzxczejcet>
+To: Shakeel Butt <shakeel.butt@linux.dev>
+X-Migadu-Flow: FLOW_OUT
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
 
-***
 
-Subject: Re: [syzbot] [btrfs?] kernel BUG in __extent_writepage_io (2)
-Author: lizhi.xu@windriver.com
+> On Aug 29, 2024, at 03:03, Shakeel Butt <shakeel.butt@linux.dev> =
+wrote:
+>=20
+> Hi Muchun,
+>=20
+> On Wed, Aug 28, 2024 at 10:36:06AM GMT, Muchun Song wrote:
+>>=20
+>>=20
+>>> On Aug 28, 2024, at 01:23, Shakeel Butt <shakeel.butt@linux.dev> =
+wrote:
+>>>=20
+> [...]
+>>>>=20
+>>>> Does it handle the case of a too-big-to-be-a-slab-object =
+allocation?
+>>>> I think it's better to handle it properly. Also, why return false =
+here?
+>>>>=20
+>>>=20
+>>> Yes I will fix the too-big-to-be-a-slab-object allocations. I =
+presume I
+>>> should just follow the kfree() hanlding on !folio_test_slab() i.e. =
+that
+>>> the given object is the large or too-big-to-be-a-slab-object.
+>>=20
+>> Hi Shakeel,
+>>=20
+>> If we decide to do this, I suppose you will use =
+memcg_kmem_charge_page
+>> to charge big-object. To be consistent, I suggest renaming =
+kmem_cache_charge
+>> to memcg_kmem_charge to handle both slab object and big-object. And I =
+saw
+>> all the functions related to object charging is moved to memcontrol.c =
+(e.g.
+>> __memcg_slab_post_alloc_hook), so maybe we should also do this for
+>> memcg_kmem_charge?
+>>=20
+>=20
+> If I understand you correctly, you are suggesting to handle the =
+general
+> kmem charging and slab's large kmalloc (size > KMALLOC_MAX_CACHE_SIZE)
+> together with memcg_kmem_charge(). However that is not possible due to
+> slab path updating NR_SLAB_UNRECLAIMABLE_B stats while no updates for
+> this stat in the general kmem charging path (__memcg_kmem_charge_page =
+in
+> page allocation code path).
+>=20
+> Also this general kmem charging path is used by many other users like
+> vmalloc, kernel stack and thus we can not just plainly stuck updates =
+to
+> NR_SLAB_UNRECLAIMABLE_B in that path.
 
-#syz test
+Sorry, maybe I am not clear . To make sure we are on the same page, let
+me clarify my thought. In your v2, I thought if we can rename
+kmem_cache_charge() to memcg_kmem_charge() since kmem_cache_charge()
+already has handled both big-slab-object (size > KMALLOC_MAX_CACHE_SIZE)
+and small-slab-object cases. You know, we have a function of
+memcg_kmem_charge_page() which could be used for charging =
+big-slab-object
+but not small-slab-object. So I thought maybe memcg_kmem_charge() is a
+good name for it to handle both cases. And if we do this, how about =
+moving
+this new function to memcontrol.c since all memcg charging functions are
+moved to memcontrol.c instead of slub.c.
 
-diff --git a/fs/btrfs/extent_map.c b/fs/btrfs/extent_map.c
-index 744e8952abb0..c81b23d0d73e 100644
---- a/fs/btrfs/extent_map.c
-+++ b/fs/btrfs/extent_map.c
-@@ -262,6 +262,7 @@ static void try_merge_map(struct btrfs_inode *inode, struct extent_map *em)
- 			em->len += merge->len;
- 			em->block_len += merge->block_len;
- 			em->block_start = merge->block_start;
-+			printk("em: %p, blockstart: %llu, mblockstart: %llu, %s\n", em, em->block_start, merge->block_start, __func__);
- 			em->generation = max(em->generation, merge->generation);
- 			em->flags |= EXTENT_FLAG_MERGED;
- 
-@@ -393,7 +394,11 @@ static int add_extent_mapping(struct btrfs_inode *inode,
- 	if (ret)
- 		return ret;
- 
-+	printk("em: %p, blockstart: %llu, em refs: %d, %s\n", 
-+		em, em->block_start, refcount_read(&em->refs), __func__);
- 	setup_extent_mapping(inode, em, modified);
-+	printk("setuped, em: %p, blockstart: %llu, em refs: %d, %s\n", 
-+		em, em->block_start, refcount_read(&em->refs), __func__);
- 
- 	if (!btrfs_is_testing(fs_info) && is_fstree(btrfs_root_id(root)))
- 		percpu_counter_inc(&fs_info->evictable_extent_maps);
-@@ -643,6 +648,8 @@ int btrfs_add_extent_mapping(struct btrfs_inode *inode,
- 			}
- 			free_extent_map(existing);
- 		}
-+	} else if (!ret) {
-+		ASSERT(em->block_start != EXTENT_MAP_HOLE);
- 	}
- 
- 	ASSERT(ret == 0 || ret == -EEXIST);
-diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index 3a2b902b2d1f..b588381458df 100644
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -6972,7 +6972,9 @@ struct extent_map *btrfs_get_extent(struct btrfs_inode *inode,
- 	}
- 
- 	write_lock(&em_tree->lock);
-+	printk("em: %p, blockstart: %llu, start: %llu, len: %llu, %s\n", em, em->block_start, start, len, __func__);
- 	ret = btrfs_add_extent_mapping(inode, &em, start, len);
-+	printk("ret: %d, em: %p, blockstart: %llu, start: %llu, len: %llu, %s\n", ret, em, em->block_start, start, len, __func__);
- 	write_unlock(&em_tree->lock);
- out:
- 	btrfs_free_path(path);
+Muchun,
+Thanks.
+
+>=20
+> Thanks for taking a look.
+> Shakeel
+
 
