@@ -1,110 +1,110 @@
-Return-Path: <linux-kernel+bounces-306941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C07A49645C5
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:06:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADD8E9645CE
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:07:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 650F8B26474
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:06:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65A1C288449
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:07:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CD731A3BDC;
-	Thu, 29 Aug 2024 13:06:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E3A61AB505;
+	Thu, 29 Aug 2024 13:07:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="d+yqaTmR"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="JukeghlL"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5360413634C;
-	Thu, 29 Aug 2024 13:06:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23F901A76A8
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 13:07:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724936807; cv=none; b=DNrM06L6yWqxo47HgHXSl/9xV/ip7Mmv5/1myz3I5YPLYlPOCouu+FWQ/PfXt7nIvWjUdKxJm5MMQDTktBUXDTdwji4AzSNib2duKw+v6jFS1d/Zlho0DJpqH/K/pRD+L/9pmZQcVSggGVH+AEN2sGkyRnEN86PHsN+6UV/FsO8=
+	t=1724936842; cv=none; b=EcBM3dFxd9iTyXtn9d6/lV60Evy6ViSaw9s7VFTTFHeeGueldXBZJpGi7qMyZnpjbAd2U81Bch362+MlQBDJUM69xUe4Wd5IMYLQKjFylX1dHakwgnZscrb2p1SqWeOLVXgE/4y4BKxICprxzz3Gwd58vE7QSZW0EOtpG+aLhHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724936807; c=relaxed/simple;
-	bh=xB0LBGqlJ52aBrcdBnczCdjyguxfZpNBrvU61Gt4yCg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xc6EptBeeY9G+ryns/I2xD23gpR38HczN+59lNiuFktB1oc2XajiNBKCt9LHcmhEy26rqxmlFtOubzVLqtrND/ePgsDiJO518M9wEWWe1h8q7vdSVFECw0jzBwzxhad7OzmTPc8vNU7L07sm8bJ9VPzzHgppk/+1ujmYtEsgkgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=d+yqaTmR; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724936806; x=1756472806;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=xB0LBGqlJ52aBrcdBnczCdjyguxfZpNBrvU61Gt4yCg=;
-  b=d+yqaTmRLBHEl+XvGQFiK1LLk45ykHCrV2CxoHzfsSKhl5JOD1HaPxms
-   96PBS6WHjvPtl/7QKNKjBYBxPBrBpJkdkgKqrveccJkV6sSb6+ISNUL3Z
-   PbjotF3m7VTi0tJ/U7R0Oki0oedvHX+OxVKJlmLQoi0g+mf+ENQnZzAil
-   8IH1xr5HPUC4pipunYCdqixIObaj3A7YQUF6h1XZNOXzUTYq6kYm7JRKy
-   PqjCpOflOFAraFhdUXcJRMn0dk4kbQ5Ou0NraXT8iK/+B6tQGtco3IEB7
-   zLzzd5V2on4IOqK9+VE88p/y+4BJKM+xngAoYvqC/HubNxnG6xTaLY6l0
-   Q==;
-X-CSE-ConnectionGUID: Fp2s0bIGRCuKVnGD8zS7qA==
-X-CSE-MsgGUID: EaOnhFK7THKS9S1JWxsSYQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11179"; a="41028398"
-X-IronPort-AV: E=Sophos;i="6.10,185,1719903600"; 
-   d="scan'208";a="41028398"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 06:06:45 -0700
-X-CSE-ConnectionGUID: elcsTg68QYys47l41cX07Q==
-X-CSE-MsgGUID: o8L8lHO7QhKysbX9+bWEsg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,185,1719903600"; 
-   d="scan'208";a="68235663"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 06:06:43 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id D825E11F843;
-	Thu, 29 Aug 2024 16:06:40 +0300 (EEST)
-Date: Thu, 29 Aug 2024 13:06:40 +0000
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Benjamin Bara <bbara93@gmail.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Alexander Stein <alexander.stein@ew.tq-group.com>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Benjamin Bara <benjamin.bara@skidata.com>
-Subject: Re: [PATCH v2 0/2] media: i2c: imx290: check for availability in
- probe()
-Message-ID: <ZtByYFI7kVFfRdtW@kekkonen.localdomain>
-References: <20240828-imx290-avail-v2-0-bd320ac8e8fa@skidata.com>
+	s=arc-20240116; t=1724936842; c=relaxed/simple;
+	bh=vhpdpTfvOWpq4BkpAeiQWNqUpz5BcVonWLnhkaxRaQc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DqMLDOa53C0LJF2G+We/c9TFBdMOFFSYftNjsAUks2H2xEr6+MDglJa/xXmzfoA4+T3Q5rHhGmAoLPKQsMvOpW/DEnP5BmaOxk87yipwpEITs54qliHTeVi5WYft2UL1bHDEx072rLxknbIp37EWP5K2We/r61k0bYtNvGOi1rM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=JukeghlL; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5353d0b7463so1134712e87.3
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 06:07:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1724936839; x=1725541639; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=y0TbsUu6WIFtUI0I/cmrO4B5vqQGbNpEnL8oQNR8OvE=;
+        b=JukeghlLBK/lzpMdmTmuX0QRHVNvXFFbvE1U9X4DdctwndIWNfKsPJ7RcRRXTm1fFQ
+         9zSqUWJuIoiQTWXn69t1NvhjTYIEmq1LYIDAiObJuQRerDSCPXsoprl3E8i5G5UZSR4l
+         pNkcrCCVehg+uobEn5JdIjRNz0c/vb5CAOcfA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724936839; x=1725541639;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=y0TbsUu6WIFtUI0I/cmrO4B5vqQGbNpEnL8oQNR8OvE=;
+        b=hoHxTyIvKk+mjECn6fBzQwFnYQR+pt10QJTkR9r/EIVFWmXxWIcrJNNHdNTOrqZh7j
+         JNJKlcD803bg8nZyAao5Xs50sTBw+Xg93WqnuXolSMdR+cn2vkO6GUM8X84D3x7A7mK2
+         8MHzP0cTcKN09GQYZm8pbkLQqwynu69s3szRmfT4wtn9DuNFueD2mI+s7jlYrWGyc7x3
+         etZ+KoNgL0UcbdzZhsiTLb+ytQzsjQZttS+ev3/dvQdPy3bdwfFlL1zEBlVJIjooCtev
+         3jDiUYETP1h+4DNlvwkvoqhfC3Ti2gBavFYdxQrHMW8sj+9CZQFA5DJ4sFJ1kqk0/+UV
+         mIEQ==
+X-Gm-Message-State: AOJu0YwC9eOsqFIpQvg4+uxac6ks+JtkF6+bAHp2AX8+CSGm2gFAf9Xl
+	JFL+B97thpu0Ih7r2KtqS9D2eni2BnnXesSXn3Fo0jIRReHy9/F/RKAk9AXRglWwhGQn2SeUPEa
+	d3atqW6NF2KRfEn7tdbttYdZiPaLeQxmRJ+hTpQ==
+X-Google-Smtp-Source: AGHT+IGSRqyXut7tytiqq+Fv/FSdxZOLBx6kvkri+Nl7nKT6LJzc0hkeK3IT0QDDU6jjqcTAQkTG+kIWkupBmiQV4tM=
+X-Received: by 2002:a05:6512:4003:b0:533:4620:ebec with SMTP id
+ 2adb3069b0e04-5353e543459mr2692053e87.3.1724936838878; Thu, 29 Aug 2024
+ 06:07:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240828-imx290-avail-v2-0-bd320ac8e8fa@skidata.com>
+References: <20240709111918.31233-1-hreitz@redhat.com> <CAJfpegv6T_5fFCEMcHWgLQy5xT8Dp-O5KVOXiKsh2Gd-AJHwcg@mail.gmail.com>
+ <19017a78-b14a-4998-8ebb-f3ffdbfae5b8@redhat.com>
+In-Reply-To: <19017a78-b14a-4998-8ebb-f3ffdbfae5b8@redhat.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Thu, 29 Aug 2024 15:07:05 +0200
+Message-ID: <CAJfpegs0Y3bmsw3jThaV+PboQEsWWoQYBLZwkqx9sLMAdqCa6Q@mail.gmail.com>
+Subject: Re: [PATCH 0/2] virtio-fs: Add 'file' mount option
+To: Hanna Czenczek <hreitz@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, virtualization@lists.linux.dev, 
+	Miklos Szeredi <mszeredi@redhat.com>, German Maglione <gmaglione@redhat.com>, 
+	Stefan Hajnoczi <stefanha@redhat.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Vivek Goyal <vgoyal@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Benjamin,
+On Thu, 29 Aug 2024 at 14:37, Hanna Czenczek <hreitz@redhat.com> wrote:
 
-On Wed, Aug 28, 2024 at 08:13:06PM +0200, Benjamin Bara wrote:
-> Hi!
-> 
-> This series introduces i2c communication with the imx290 sensor during
-> probe s.t. the v4l2 subdev is not initialized when the chip is not
-> reachable.
-> 
-> The datasheets show that INCKSEL* registers have a different default
-> value after reset on imx290[1] and imx327[2], however I am not sure if
-> this is a sufficient identification option - therefore I just removed
-> the current CHIP_ID register for now.
+> I honestly have no idea how to go about it on a technical level,
+> though.  Na=C3=AFvely, I think we=E2=80=99d need to split off the tail of
+> fuse_fill_super_common() (everything starting from the
+> fuse_get_root_inode() call) into a separate function, which in case of
+> virtio-fs we=E2=80=99d call once we get the FUSE_INIT reply.  (For
+> non-virtio-fs, we could just call it immediately after
+> fuse_fill_super_common().)
 
-It seems your Sob line and From: do not match. Could you fix that, please?
+Yes, except I'm not sure it needs to be split, that depends on whether
+sending a request relies on any initialization in that function or
+not.
 
-The patches are otherwise here
-<URL:https://git.linuxtv.org/sailus/media_tree.git/log/?h=devel>.
+> But we can=E2=80=99t return from fuse_fill_super() until that root node i=
+s set
+> up, can we?  If so, we=E2=80=98d need to await that FUSE_INIT reply in th=
+at
+> function.  Can we do that?
 
--- 
-Kind regards,
+Sure, just need to send FUSE_INIT with fuse_simple_request() instead
+of fuse_simple_background().
 
-Sakari Ailus
+Thanks,
+Miklos
 
