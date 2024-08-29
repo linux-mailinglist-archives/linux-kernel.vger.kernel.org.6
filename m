@@ -1,127 +1,158 @@
-Return-Path: <linux-kernel+bounces-306543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3F6F96404A
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 11:36:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB710964058
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 11:38:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D77FB253DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 09:36:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B4B02821A6
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 09:38:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1502A189F58;
-	Thu, 29 Aug 2024 09:36:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C31218DF9F;
+	Thu, 29 Aug 2024 09:37:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="x91onVNV"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="TtWb0uEK"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B70CD18C93E
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 09:36:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 776FA18CC01;
+	Thu, 29 Aug 2024 09:37:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724924193; cv=none; b=mYdoWzVeR6LFYNeVuab26YhPbCh6Ud06Nl0ZZrRiwFj0CVgKrBp/gFzUxjd6DSEFing5tIx0s33Fapoe+ba9y2q5YTMTvtEqN64eWf+hAx+zlxbK7XxidGxsE2DlcqLh/Q7HIHeb7IR2r9OXyLyyTs5anYIs/EaGAshJlFJy45c=
+	t=1724924227; cv=none; b=SwB/7S3YzSi6vQ3cro3ZE8LYkmICps9X9X4guqJjboMP4fML8mZAwP8vr1uu/+6LvnLl56bukKRnGlYMKPc5TQ5PzEsYFEDFQLbBL9ihtjz2dWCO4HmFPyeTGZiOXJwLN8tJTpN32o9OSUh24/PNexoHv31LmJ0VRzbrcWZbAUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724924193; c=relaxed/simple;
-	bh=OdebDuPQOqyUSdwo9L6QAINi3eIPyAO8PkAC9Mve2c8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t4dYeO8WOGkU8wbtHASoh0BZwrn7PK5A5H2TjTep9pwz5LzAi7/Upz8s74dsH5xx3v+sUJlJNHSTypMsRCFyLg46YddICJfTxdT9tSpMdgKRdIlO+5DkwJ7zAd0SmL6YDzuAMSxW5+s319rHr8YCN3324CPH75FKTQ+fHOjbgeE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=x91onVNV; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42bac9469e8so3839565e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 02:36:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724924190; x=1725528990; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=PJlINwL4Wf3pK+iotBJLCyDenaMFyH3DfD8vme55AUY=;
-        b=x91onVNVGuzwg9874Z98NtXeDfeV7vlB4H4kxs1NvgYfv/PtiLZrdvS6m0jw8oLKlQ
-         TGQdl/vGcESvry7zNR7NDTcmoS8gV8L7VXPG1n9574EVPZLz9Zklm4NHcSGTfuyhxKh7
-         HJI98yMXkGVQ/2g/yu57TH+zOikNgxIE6hgdE8P2i5l9ujn0ejhkUcdeIh6i689F75Fh
-         s/6zTerVzu1br71qotrLvJLkNTWhL6l0hLkJK1sW2IncF5+Trj9M7dWMSz4BHwLfIFlG
-         KZizNbA8ESZTm+QpJ0YBsoe2QrlBACrnMo7nNJz3ERsG4uQKd2airZOooJlDpTk0KnBl
-         Gy2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724924190; x=1725528990;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PJlINwL4Wf3pK+iotBJLCyDenaMFyH3DfD8vme55AUY=;
-        b=D8rKll735Agq4W/sUmVKlDEp16Fwuxl5d4RtzX9IcuW1q0448fJl2zFrO5apLauXm4
-         /T/lwFDju5xBJUN78qIS+Fucbr6IxoBhU8CRyOHHFcxaTHI2Wn2z0vg2RVfvtKvXmJq4
-         8iW/xEehL711FG7JpzeXr/baDQWuNHb/26/iNgahI3WrUmhihxWwRPzKrHiO8w4C/Xpq
-         gja9V+xEOTTGGxWEKeA7XLNnGdS3I2FHMELk4P0Eacj91zuG56nu6rt/1AdFBGydVZV0
-         BP6Girq+kdeH6cBJsOI06jfYKwCAQJFRGcXQNdpzsTytXO9u73ojmIPhRSrQPpXAG3RY
-         7/Dw==
-X-Forwarded-Encrypted: i=1; AJvYcCXr5CAVAojpCwsLH9r/6SeTV1G43BEWhaqlUZ4u4W9dOFwtFABnw6ZouwklzopvjD0tHJSxU65feJQX4YQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8qiunJoyTkgXhYemTB2Df4L+GBsgRR91ZGTHgh2uZHQlNq5mq
-	Qv8wUitiQ5SHCsqtBxycnAN2u5OebAUZtygJav0v5h0Ax7O4NBP0pqbUAgnX54Y=
-X-Google-Smtp-Source: AGHT+IE7qHvZQxiSgfO84hLqZwHWJv06PT+glwCYHz0VtH1NqDTym+WIBEgpem7s5zZ6uZ6KJAhe2Q==
-X-Received: by 2002:a05:600c:5110:b0:428:e866:3933 with SMTP id 5b1f17b1804b1-42bb0263389mr16217335e9.22.1724924190011;
-        Thu, 29 Aug 2024 02:36:30 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bb01d300csm20901905e9.15.2024.08.29.02.36.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 02:36:29 -0700 (PDT)
-Date: Thu, 29 Aug 2024 12:36:25 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Philipp Hortmann <philipp.g.hortmann@gmail.com>
-Cc: Manisha Singh <masingh.linux@gmail.com>,
-	florian.c.schilhabel@googlemail.com, gregkh@linuxfoundation.org,
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] staging: rtl8712: Fix style issues in rtl871x_io.c
-Message-ID: <daecc634-4faf-4dcb-b03b-f57f24673a88@stanley.mountain>
-References: <20240828204552.26790-2-masingh.linux@gmail.com>
- <607b86cd-d89a-4072-af36-ce2ce5c1f7fe@gmail.com>
+	s=arc-20240116; t=1724924227; c=relaxed/simple;
+	bh=82dXXvsSl7nPh9Mffs92ox5LvO9dlBIZwoU8wTP4E+k=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=n7wtxXtvWkDbEaDjFHwoUel460JDv/rjgEGpJ8ks9FpDS+bqTD6d5d2mpxdXKfwPa7DerxWT1TWjecFSzX7So1Uki88XmGi9SF/Zo3fGA4X38yAFOTluSCWz4m2GIySXuFKTUIx4c4LygYO9Hxy7abiLFp7TIXm04PrU0mcwzn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=TtWb0uEK; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=jcqQxRHrqDjRY4a9TzNalCHQ68bmxc540U58wjv9teQ=; b=TtWb0uEKIw0Mj8XzbE3gO9QHuR
+	g9vDx2FiuikCPQTi7W4x2rSeoOAD6AA5v9w74JPY3znHo47/Ies6n2PtD8Hwjfe1A8GSoIoMCxJgQ
+	CjF51T9+/dwHsNyi+ONAtiHTfdYuP+e2fiASStiQsXynvBKMjANLLwBMjx15LeEe7m1PX7PuMlCQE
+	PfXFuu1+09cMOgQQiTBv3QnMbxwokOyp7pSV1JsZLIxANUusFkt7It/FEXtOVmkvO9wIh/7SEIAyU
+	kQ+z3MSy/mKbBaWdpkvJwnu5nC44lZjCk+nQwy+OHvd7dlehZIC6cfFXwcF90LGSFoEgjEEQSDPUb
+	TBh9deTQ==;
+Received: from i5e861916.versanet.de ([94.134.25.22] helo=phil.lan)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1sjbaG-0002nq-Mv; Thu, 29 Aug 2024 11:36:52 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: Detlev Casanova <detlev.casanova@collabora.com>,
+	linux-kernel@vger.kernel.org
+Cc: Heiko Stuebner <heiko@sntech.de>,
+	devicetree@vger.kernel.org,
+	Rob Herring <robh@kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Elaine Zhang <zhangqing@rock-chips.com>,
+	Sugar Zhang <sugar.zhang@rock-chips.com>,
+	linux-rockchip@lists.infradead.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	kernel@collabora.com,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Conor Dooley <conor+dt@kernel.org>
+Subject: Re: [PATCH v7 1/3] dt-bindings: clock, reset: Add support for rk3576
+Date: Thu, 29 Aug 2024 11:36:47 +0200
+Message-ID: <172492351370.1695089.7443506809997782331.b4-ty@sntech.de>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <0102019199a76766-f3a2b53f-d063-458b-b0d1-dfbc2ea1893c-000000@eu-west-1.amazonses.com>
+References: <20240828154243.57286-1-detlev.casanova@collabora.com> <0102019199a76766-f3a2b53f-d063-458b-b0d1-dfbc2ea1893c-000000@eu-west-1.amazonses.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <607b86cd-d89a-4072-af36-ce2ce5c1f7fe@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 28, 2024 at 11:08:31PM +0200, Philipp Hortmann wrote:
-> > diff --git a/drivers/staging/rtl8712/rtl871x_io.c b/drivers/staging/rtl8712/rtl871x_io.c
-> > index 6789a4c98564..6311ac15c581 100644
-> > --- a/drivers/staging/rtl8712/rtl871x_io.c
-> > +++ b/drivers/staging/rtl8712/rtl871x_io.c
-> > @@ -48,10 +48,10 @@ static uint _init_intf_hdl(struct _adapter *padapter,
-> >   	set_intf_funs = &(r8712_usb_set_intf_funs);
-> >   	set_intf_ops = &r8712_usb_set_intf_ops;
-> >   	init_intf_priv = &r8712_usb_init_intf_priv;
-> > -	pintf_priv = pintf_hdl->pintfpriv = kmalloc(sizeof(struct intf_priv),
-> > -						    GFP_ATOMIC);
-> > +	pintf_priv = kmalloc(sizeof(struct intf_priv), GFP_ATOMIC);
-> >   	if (!pintf_priv)
-> >   		goto _init_intf_hdl_fail;
+On Wed, 28 Aug 2024 15:42:50 +0000, Detlev Casanova wrote:
+> Add clock and reset ID defines for rk3576.
 > 
-> By pushing the below statement after the "if (!pintf_priv)" you change the
-> logic. Is this really wanted? Why do you think it is better? I would avoid
-> this and it would be a separate patch anyhow.
+> Compared to the downstream bindings written by Elaine, this uses
+> continous gapless IDs starting at 0. Thus all numbers are
+> different between downstream and upstream, but names are kept
+> exactly the same.
 > 
-> > +	pintf_hdl->pintfpriv = pintf_priv;
+> [...]
 
-I liked moving it.  And I feel like it should be done in this patch, not as a
-separate patch.  But it should have some justification as you say.  The commit
-message could say something like:
+Applied, thanks!
 
-    Checkpatch complains that we should avoid multiple assignments on the same
-    line for readability purposes.  Generally, we would allocate, check and then
-    assign.  It doesn't matter what is assigned to "pintf_hdl->pintfpriv" on the
-    error path.  For example, on subsequent error paths "pintf_hdl->pintfpriv"
-    is a freed pointer.  So this code is okay as-is and it's also okay to move
-    the pintf_hdl->pintfpriv = pintf_priv assignment after the NULL check.
+[1/3] dt-bindings: clock, reset: Add support for rk3576
+      commit: 49c04453db81fc806906e26ef9fc53bdb635ff39
+[2/3] clk: rockchip: Add new pll type pll_rk3588_ddr
+      commit: e781bffc296766b55dbd048890d558655031e8d1
+[3/3] clk: rockchip: Add clock controller for the RK3576
+      commit: cc40f5baa91bb7b031f5622e11a4e443cb771527
 
-(Notice how I sold this as one thing, moving the "pintf_hdl->pintfpriv"
-assignment, not silencing checkpatch and then moving it.  Notice how I avoided
-using the word "also".)
 
-regards,
-dan carpenter
+general remark, please take a look at your mail setup.
+Amazon seems to break the generated message-ids.
 
+Your cover-letter is
+  0102019199a75f9b-aab57db6-806a-474b-8295-e5be5a99d424-000000@eu-west-1.amazonses.com
+
+while the patch (1-3) mails say
+  In-Reply-To: <20240828154243.57286-1-detlev.casanova@collabora.com>
+
+So that amazon thing somehow broke the message-ids in your mails.
+
+
+I've also dropped the whole module part.
+
+As always that Android GKI madness was cause for issues.
+The driver claims to be buildable as module, but it looks like nobody
+tried that:
+
+First build-failure:
+--------------------
+
+../drivers/clk/rockchip/clk-rk3576.c:1800:36: warning: ‘struct platform_device’ declared inside parameter list will not be visible outside of this definition or declaration
+ 1800 | static int clk_rk3576_probe(struct platform_device *pdev)
+      |                                    ^~~~~~~~~~~~~~~
+../drivers/clk/rockchip/clk-rk3576.c: In function ‘clk_rk3576_probe’:
+../drivers/clk/rockchip/clk-rk3576.c:1802:38: error: invalid use of undefined type ‘struct platform_device’
+ 1802 |         struct device_node *np = pdev->dev.of_node;
+      |                                      ^~
+
+...
+
+missing platform_device header
+
+Second build-failure, after fixing the whole module madnes:
+-----------------------------------------------------------
+
+  MODPOST Module.symvers
+ERROR: modpost: missing MODULE_LICENSE() in drivers/clk/rockchip/rst-rk3576.o
+ERROR: modpost: "rk3576_rst_init" [drivers/clk/rockchip/clk-rk3576.ko] undefined!
+make[3]: *** [../scripts/Makefile.modpost:145: Module.symvers] Fehler 1
+
+
+
+So when applying the series, I simply removed the whole module-part and made
+the init look like rk3588 for now.
+
+
+Somehow I always get the impression the whole "clock as a module" thing
+is just there so Rockchip can ship something completely out of tree on
+Android devices.
+
+
+
+Best regards,
+-- 
+Heiko Stuebner <heiko@sntech.de>
 
