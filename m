@@ -1,112 +1,116 @@
-Return-Path: <linux-kernel+bounces-306666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE1969641DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 12:32:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19BE09641DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 12:32:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58EDF1F23780
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:32:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D4421C21F95
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:32:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0597E18EFCB;
-	Thu, 29 Aug 2024 10:23:37 +0000 (UTC)
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A648D19007F;
+	Thu, 29 Aug 2024 10:24:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="VHQLXZNd"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 260DB139D04;
-	Thu, 29 Aug 2024 10:23:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18CC319007E
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 10:23:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724927016; cv=none; b=QcwrfIN0nBSMyO4SP8BwNdqQi5vsVtfRZaTACNrvBIeQE5McdtUrTzuvSLTD5/6Q+PZ2xQXtuNIyx/VzuFREkjTSmAZQhZZfwWPyz0My5fkm49rwxWUQNQYNVwrI5dSJT5zetbkVgooEQetdQn34F0/3t7yvDIlavHh6H/YceFg=
+	t=1724927040; cv=none; b=hHaidtZnyRs8YTFxEE+TifJ7DKChOXOLc/x3yMV1UDR5N1h0MYsUlUq0X4qOhZiecrAhCQGzd/vDzGJBjc3IQJLrqhFLIkO2Z1AhTSTf7iRN0BvaezjoYsII6JnzJf/qsh7EEnDlYdIleFs7ZHnIt5jgGwyBdSSp4OcPBhc2Pag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724927016; c=relaxed/simple;
-	bh=+qDbg+b+y5JPeSs8m4Me+sOY+xkF+2YmvqCcX1UxhzM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=obnHj8eWOP6Xjggl80n1S6FBnSaXnKnmTNUBTes1yNZMZu5G2GpDgmD7mqkQUqahqO4ITRMcp/b71apMP0IXe9oc2O6heRVf6MHztAmBZGyPYGX4YUETVzZ4EqiYITAWmmU8I71qi/s9ERlhIZIx0a6rLOyP1KpQYE0VJpsuEdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6c130ffa0adso5132367b3.3;
-        Thu, 29 Aug 2024 03:23:34 -0700 (PDT)
+	s=arc-20240116; t=1724927040; c=relaxed/simple;
+	bh=GrWjMJP0u1Qa6slxrzSDez4NRlE7jWHP1Zjfq2IioTY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LG4TBoXh2s2K9OfVgXm96B776e8NxK5UVa91F9zNErcYpONInR0YJVqdM7q5cYlxKlR6YSml4gARDIScFZGQcK7IfXavE7N+KHGotYac5/h1I4RKDc/Dq4mu1siXsqg4iZrycn7Xi3ToiDv8UFvxk8qeuTotlWtCV7+nTnuzPio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=VHQLXZNd; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-42bb72a5e0bso3526405e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 03:23:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1724927036; x=1725531836; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=FpM6Nu+nGTdBDOnlln+7hjSWR827MYH0jprVOFPNg7w=;
+        b=VHQLXZNdFBFJ2lSpTYE0HCEyo321MAWCK5fVXrn65OI/JrXf7+T0ny50klupC6AFSL
+         9ypkGfggB6oSn+hURnsQjvJlhQG8p/5X0cHi27ouFVKpwY7z3ghewgKhDiq4w1hkebKg
+         HDFnaJZAaLKTlWAyS/6Ll0MDSqAnWBnDs6OQ/ZFPqnmaNLte4Ql8NNGqNT4/cL+/C9Sp
+         YZsbDOTDNx2Q5GbwHccEOS2vYnrib2BUBruLE0DDcwk130JAWYivgyl7mn9x2HR+jYBC
+         +nlFRUeitfID0vhsnI1IYbXbxRW2lmnP34xEGHiciL2Ubje5MLw5eInqTh0fTP6we2HU
+         yy6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724927013; x=1725531813;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=P4Ftb0GocyJ/C8uBCYxnTAY1Zw5Um4gDWJu7PBY5uXk=;
-        b=t+D955Rp9SJDfdKbJR3OHOcNs1E6bqT/NsefW+8FjRQjkljW/xYeyXC0soiC6tR/3f
-         QJH86JfmN2TZtymGbDENbUytyIyRUarS3v/5PU45kz9XP3lJC77tJDU3POWS75MXojVG
-         +QLyM45/TNlZl1zfBHF+hGLAULJYoNmQqOWK74Zv9uHBE25XRx2Ayl2Gl/bW7dDf8U8i
-         ky67BA5YQ7hJ2mEG6Mwqxr9ylxpt17s7q518Ae2RrdVOT/tj8UMEW95/sHLCXpwvAl5J
-         B1Kc9FTR0b4G50oh+LDAyd+KAwxz8tsdWGFXoE0ANo/9PxCsDG+GlV+534PHlLLkKR07
-         aecQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUGIBYFdH7GMk94uSUmaZkVbRqqoNtDyM5Pr43J94lggWUQ46xKWBHHEOh39MdPyFGQCpTO46jgJg5bw58k@vger.kernel.org, AJvYcCW0b4MWUqRrID2jzB+JzB3M+l+Y+ALpdR2g4GBJICxMrfgBGNJV7ha9g9JAC/U47+Z1g9uHHDvce7GN@vger.kernel.org, AJvYcCX6+1FLqlPGViyWF6vRik/+qyKhv9fJOwbRjMLIuqWk3YZHFzsmTk6flOsY++WW7UknoWOMxG6JC2HntF6nZwI3gUo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxy6X3MmVpd+B+ajXFeUCJ0VlI7YXTo7IZKQt6ImTAVWJeo691D
-	qF41ko5ipOeK44N2jOu+pTlTWvTB0s3Dg4/0qSIaQyUaFtANY7prF552dqgq
-X-Google-Smtp-Source: AGHT+IGyighw6No7L96K8frTmLaNWWTGSBdL6kHmKHLPilAjCIR10vBLGUnUuLxcVde7xiqCqPSHAw==
-X-Received: by 2002:a05:690c:3582:b0:632:77ca:dafd with SMTP id 00721157ae682-6d276404ademr24911117b3.10.1724927013403;
-        Thu, 29 Aug 2024 03:23:33 -0700 (PDT)
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com. [209.85.128.181])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6d2d5ea6909sm1807707b3.131.2024.08.29.03.23.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 29 Aug 2024 03:23:33 -0700 (PDT)
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6ca1d6f549eso5915257b3.0;
-        Thu, 29 Aug 2024 03:23:33 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW3rDKJdOiHuU7Xjg4l96MuAnlsmPQhRpQVRVbikWNN35b+pZWS3x5Wk0/HRLzvr1r3piMVkFjCOYF6@vger.kernel.org, AJvYcCWQdK6UQIhCAQWSDE1vg7myyX5XLDf0QF9ReHGeh9LHWKq3OcFJiCRwGdkhO3ZJQCx1guvU5RLtsYXm069s@vger.kernel.org, AJvYcCWas0owmq0iyxTBnUNt3lNnOr3AvJPN1e1TwpQXh4kh20R7/Xo4fA3AOcL6CB7fhtMSM0VJqkjYJmg3rsCOkjKgog0=@vger.kernel.org
-X-Received: by 2002:a05:690c:fd6:b0:64b:52e8:4ae3 with SMTP id
- 00721157ae682-6d275e337f4mr26567347b3.3.1724927012999; Thu, 29 Aug 2024
- 03:23:32 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724927036; x=1725531836;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FpM6Nu+nGTdBDOnlln+7hjSWR827MYH0jprVOFPNg7w=;
+        b=Kxp1JwCaZBdNs1dnZqU5kDH+z7IfLnmA3bK9BeXY2QHQW8HUFzWINYtfA5+YWXju2z
+         8r2LgpQfpbNz20EwtG+NaGpagonmMparKGLpVkauCUETDmtdJ7jw5+I/tjVP2JrmGscl
+         nIEVCZO2UzhSOpLaHCjkN/FYvRTrq1Aq1d520RjeKzvyHHnWhkB1TVDXJCUZzV8s20Ht
+         S1D1voApPAzEoHn/oxHKoktDludAHpiYwZMEv5Vq20h+zACAuO1k6+/5bbAlNNkS6aWW
+         Mm2qxl8YUBeAoO+VGy9KWLecO0dwjIAMSHA/4rz3nAuyXYLmBMAisIZQNRWVjBt3gLwZ
+         oKPA==
+X-Forwarded-Encrypted: i=1; AJvYcCW2cvwZ1uGFWmwUTtY4XAeEA7Ns9nwyuJZITj9VvW49CDGgw7GKcFYU3miOzgmTcS9GrB7l6uiZQIOmqEc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVyflkUjoH+Vlv+2FR3U4WbS8uu0gIXv7A4WD06+MLjEOC7+fu
+	/gtr1x5wpWV+2b8vVcSaZaXL+PPy1KC3RfpjBPmw3R7g2L7Qua1DkLbpTaKiXmw=
+X-Google-Smtp-Source: AGHT+IEdDHd3BL09vforgTUgQS7bf4tn7UQrs3kUPM7WXz9LrzDjlxo2BxV8RIwgmi0hvVyJFs4B7Q==
+X-Received: by 2002:a05:600c:45d4:b0:428:36e:be59 with SMTP id 5b1f17b1804b1-42bb01b4453mr17782455e9.11.1724927036327;
+        Thu, 29 Aug 2024 03:23:56 -0700 (PDT)
+Received: from localhost (109-81-82-19.rct.o2.cz. [109.81.82.19])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3749ef7e09esm1022710f8f.86.2024.08.29.03.23.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Aug 2024 03:23:56 -0700 (PDT)
+Date: Thu, 29 Aug 2024 12:23:55 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Zhongkun He <hezhongkun.hzk@bytedance.com>
+Cc: akpm@linux-foundation.org, hannes@cmpxchg.org, roman.gushchin@linux.dev,
+	shakeel.butt@linux.dev, muchun.song@linux.dev,
+	lizefan.x@bytedance.com, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org
+Subject: Re: [RFC PATCH 0/2] Add disable_unmap_file arg to memory.reclaim
+Message-ID: <ZtBMO1owCU3XmagV@tiehlicka>
+References: <20240829101918.3454840-1-hezhongkun.hzk@bytedance.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240828124134.188864-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240828124134.188864-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20240828124134.188864-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 29 Aug 2024 12:23:21 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUP69GUWqs93Nbh7CyEgub3G8EXXX9EnHwwSi=i19kJnw@mail.gmail.com>
-Message-ID: <CAMuHMdUP69GUWqs93Nbh7CyEgub3G8EXXX9EnHwwSi=i19kJnw@mail.gmail.com>
-Subject: Re: [PATCH v4 4/9] arm64: dts: renesas: r9a09g057: Add OSTM0-OSTM7 nodes
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240829101918.3454840-1-hezhongkun.hzk@bytedance.com>
 
-On Wed, Aug 28, 2024 at 2:41=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.c=
-om> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Add OSTM0-OSTM7 nodes to RZ/V2H(P) ("R9A09G057") SoC DTSI.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> ---
-> v3->v4
-> - Used hexadecimal values for clocks and resets
-> - Sorted nodes based on nodes index
+On Thu 29-08-24 18:19:16, Zhongkun He wrote:
+> This patch proposes augmenting the memory.reclaim interface with a
+> disable_unmap_file argument that will skip the mapped pages in
+> that reclaim attempt.
+> 
+> For example:
+> 
+> echo "2M disable_unmap_file" > /sys/fs/cgroup/test/memory.reclaim
+> 
+> will perform reclaim on the test cgroup with no mapped file page.
+> 
+> The memory.reclaim is a useful interface. We can carry out proactive
+> memory reclaim in the user space, which can increase the utilization
+> rate of memory. 
+> 
+> In the actual usage scenarios, we found that when there are sufficient
+> anonymous pages, mapped file pages with a relatively small proportion
+> would still be reclaimed. This is likely to cause an increase in
+> refaults and an increase in task delay, because mapped file pages
+> usually include important executable codes, data, and shared libraries,
+> etc. According to the verified situation, if we can skip this part of
+> the memory, the task delay will be reduced.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-devel for v6.12.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Do you have examples of workloads where this is demonstrably helps and
+cannot be tuned via swappiness?
+-- 
+Michal Hocko
+SUSE Labs
 
