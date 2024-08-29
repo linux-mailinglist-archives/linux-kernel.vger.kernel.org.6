@@ -1,264 +1,146 @@
-Return-Path: <linux-kernel+bounces-306962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F2CD96460F
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:15:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03FBA9645F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:12:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BCAA3B24855
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:15:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFA0E2894A4
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:12:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76C3E1B0123;
-	Thu, 29 Aug 2024 13:13:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E82D1A3BCE;
+	Thu, 29 Aug 2024 13:12:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="c6VyC+39"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="cC025rxp"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 217791A7062
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 13:13:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AA161A3BCF
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 13:12:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724937203; cv=none; b=tIiiooS6S+d8ci/MViT1azKprxnCwClY5749DiMnxsDzQc3FOis62uoLcRd/tEE5m8jbyeQ/TkaHzQxwZrtG3BzN/awBiW7md9TwNdKX7IVIf6mtw27ndIpN1WS2H/zvYdhdZkuBm67coZA3HItXZITGkbhmTnD2UbEwDFZ+NG4=
+	t=1724937144; cv=none; b=m7rix+RhL5p5HRrVVeGu//qZ91khYtGcgJUOzZyrL/1XG86HgWYCJyRnI5MqsijIGi7if6/VkineKlAypY/F5Id2HNxxZ6mFbfJsR6s2C5uT+WfWEGpPrjW88rFj0+tU/Arc4diRZZO4WuwGfW5lltTts/xV5yPDm4N4qIBUuwg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724937203; c=relaxed/simple;
-	bh=0L8vN7Z5mU6GUGAu+SGn6arcn3NkZa7mF5sCgHhz5AY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=gAyo3jxN3OnVEVi3ee97zmBjCYqrVt1M21anGEEW0XBxVGLFVDX+p3vb4PHcqAJm+oaAyeD9BUTVA4XSPNGn8PrI8ksXCrBXpDdWOZkNj6xsxoiIfBS/fpLXT4zgozaneKWZGDUc79Pou3AFzGstku4IFJGBCnuT5zFAP/cPl1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=c6VyC+39; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-20230059241so5505705ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 06:13:21 -0700 (PDT)
+	s=arc-20240116; t=1724937144; c=relaxed/simple;
+	bh=A/ukJ4jBr8jJQwS6YKUvYcuWgw8ce4anDS07GtBUeqA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lpm76skR7SXMCKKj6oYawTNUiuuATcrzKaARD76eQSFjeeYcqNVBwhBbUfo2KE2OQYENI0eywLRd6jbyXFiVPLDo+Ync0q1rxs2a32AFqCu1Cv7n0+d67UQ2CyjF4SsNb9sjY+U4+6ZJDIPT+n/UsKx6r/6YJIIG4luPIJvjkAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=cC025rxp; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2d439572aeaso476469a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 06:12:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1724937201; x=1725542001; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PCqHkNfsdp0hrimdEM7KiFJuq1/lUKdseFAqTrtspZc=;
-        b=c6VyC+39I54k2m6MfY9zsHt77g5pFuvX6ctu7ZkaEO66Hwds/OiS3JiKRmFVUePTeO
-         lO0cAB2AKNmJI9HbtLZRl5VBW9QZwZmyy063EMQbH39PN4T2Q8uZeGXd8zodaSzTwWR4
-         zDk6RXYqfZLOrbFQvMFA4jw83DZsSIfi6WeHU=
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1724937143; x=1725541943; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=8qX/f6dofDtGfqoUjh7wF0DGgkcB4Ol606CTys8bLCc=;
+        b=cC025rxp2s0f9GU8p4vFM6gK/4CEuAH6aoyzZVG8TzaHQKelvBm+U9hT0BRgzwgDR+
+         kABSDebTyiEq/IJ11jRgRMkAdcrQmWqqTKbHsLB+XyWVgv3aXDNwND1ac5zT49GaBQuy
+         We/n4Is49FIPa2ssOupls8mNrbPnHleE+x9mLiZLokPnEDhe7PtVSRycuXJ7noZrlLMl
+         DhM5WSSCbQZN4QsYUVw4ELdyVw0v9f+3TcrcQAbz1tg35HcgpY/XHlUebzmx2sO7uGjX
+         IwpeXFw3oHa77o5TM3pEqgZvJaug/Km4747KQweRsFHIFJ5sFLqVG5ii0gLQxQidO2B/
+         NIow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724937201; x=1725542001;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PCqHkNfsdp0hrimdEM7KiFJuq1/lUKdseFAqTrtspZc=;
-        b=AXxLRlGBib87sQoMMUImB3nxN+zDdBD90WKyHhd2fw/WI3X8Vocl0OtEbV+XrzQdJ1
-         Va94dqMZ0L5RYsmnHQfoZGPdSl2vGr+AW+ktuL5Y3B6lxtJ6r8uW8o1uHbwtEjpOACmC
-         DxcKUgH7BlfnX2AOiApRHy6iM9i2CwizI5oyfRG9G7qzv8HijA3prTO2JgtDIgWME6Pq
-         G7OkFVNkPSLIi2ZDGjK9HuXfoQDBTiEoBd7JXqKVHn8UCYrYKldQBNRHEBRh+WvI57Pe
-         H2t8cozWKUmpwVgxYbsC9dVnsBMcHW62quKo0guQC4d/py3/HxJd3GRzJyx5n4sOzleH
-         b4sA==
-X-Forwarded-Encrypted: i=1; AJvYcCWdVYZzpJp6uSsUbNx0zLNz2kx8xB7uFfL8qDW0HpOcqSF63Ggv0/POO6Lu1BflSeHB5O0JeAp4wnvIraU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+Mhu0oL9HIpznzQpK2R94XCViqW43eVZi7ZwhnbedRuWZ4YVi
-	amxT85rndTr9OJW2XO7wl+zK2P0UJKo/VqmdKsHoVW3qYbGbFDy2tpWVUe2+qZs=
-X-Google-Smtp-Source: AGHT+IFAQmZRTQuLJSgAof5JbEL5kQEBY3Ia8dWCEJbF82Axvc0yD6suQQ96GHf2y+oqmB4/3JkcbA==
-X-Received: by 2002:a17:902:dacf:b0:202:859:f85 with SMTP id d9443c01a7336-2050c3d6af6mr31252725ad.24.1724937201013;
-        Thu, 29 Aug 2024 06:13:21 -0700 (PDT)
-Received: from localhost.localdomain ([2620:11a:c019:0:65e:3115:2f58:c5fd])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-205152b13c9sm10991065ad.62.2024.08.29.06.13.19
+        d=1e100.net; s=20230601; t=1724937143; x=1725541943;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8qX/f6dofDtGfqoUjh7wF0DGgkcB4Ol606CTys8bLCc=;
+        b=s8EYfLCKqrLObheftINHoHiZyl6WjVzgcLF6uhzmA9myV4xU0GA7aFI0A6QO7lx8wz
+         I1h59z3E+L60WeVMoRmUz+hdRUS9VMC2Ye1cfef/LVBDAAxBMeL3nPHjBUJNJf/hzmkP
+         02cA06kSFmkf97w1c+MA0NDrQDWnQeL2wloX8HtSGoeOu39d4O9UHUdcTnHIzRPlqnkO
+         dKoIvkE7c/STD9URjPIKxihorQIyAjagmWETjYlJGAof5P5kvXbKpeyMjuPCyLUD/IVb
+         ONXBpf6gJ9QEclkXw+78dEH0GBrIQKF5Ya/LQKO7sZQLk6HRBUMZ3CjfL+GHk8wzlT0u
+         4ipA==
+X-Forwarded-Encrypted: i=1; AJvYcCXwe8rK6+LXL45gQx5TZyphldWwLHeS5Xn0E2L41aOpp8fkT42Tixgw02W0evgN5uEC4kptTqsrxYdNSGk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxlLiIFIVnzZNt4m5p5HtIwnSH2psmZi+yGPs7zjaMn7Z2dNg1q
+	b3IsO3626/xCIZJOu63yoV+VjksNATzPVuK+YMKGmI+t7x9wjhOCfiJpRSNmA3s=
+X-Google-Smtp-Source: AGHT+IE5og1QyFjbYL+fjlxeemY0chdVMvPBO6yd0H47y0vJ8/ygu0YjmhWpP08sTZ8j5BBHBY/dlw==
+X-Received: by 2002:a17:90b:c12:b0:2cb:5829:a491 with SMTP id 98e67ed59e1d1-2d85c7d28c3mr2403333a91.20.1724937142595;
+        Thu, 29 Aug 2024 06:12:22 -0700 (PDT)
+Received: from dread.disaster.area (pa49-179-0-65.pa.nsw.optusnet.com.au. [49.179.0.65])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20515542376sm10955575ad.204.2024.08.29.06.12.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 06:13:20 -0700 (PDT)
-From: Joe Damato <jdamato@fastly.com>
-To: netdev@vger.kernel.org
-Cc: edumazet@google.com,
-	amritha.nambiar@intel.com,
-	sridhar.samudrala@intel.com,
-	sdf@fomichev.me,
-	bjorn@rivosinc.com,
-	hch@infradead.org,
-	willy@infradead.org,
-	willemdebruijn.kernel@gmail.com,
-	skhawaja@google.com,
-	kuba@kernel.org,
-	Joe Damato <jdamato@fastly.com>,
-	Martin Karsten <mkarsten@uwaterloo.ca>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Daniel Jurgens <danielj@nvidia.com>,
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH net-next 5/5] netdev-genl: Support setting per-NAPI config values
-Date: Thu, 29 Aug 2024 13:12:01 +0000
-Message-Id: <20240829131214.169977-6-jdamato@fastly.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240829131214.169977-1-jdamato@fastly.com>
-References: <20240829131214.169977-1-jdamato@fastly.com>
+        Thu, 29 Aug 2024 06:12:22 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1sjewk-00GwzF-1j;
+	Thu, 29 Aug 2024 23:12:18 +1000
+Date: Thu, 29 Aug 2024 23:12:18 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Michal Hocko <mhocko@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christoph Hellwig <hch@lst.de>, Yafang Shao <laoar.shao@gmail.com>,
+	jack@suse.cz, Christian Brauner <brauner@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, linux-bcachefs@vger.kernel.org,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Michal Hocko <mhocko@suse.com>
+Subject: Re: [PATCH 1/2 v2] bcachefs: do not use PF_MEMALLOC_NORECLAIM
+Message-ID: <ZtBzstXltxowPOhR@dread.disaster.area>
+References: <20240826085347.1152675-2-mhocko@kernel.org>
+ <20240827061543.1235703-1-mhocko@kernel.org>
+ <Zs6jFb953AR2Raec@dread.disaster.area>
+ <ylycajqc6yx633f4sh5g3mdbco7zrjdc5bg267sox2js6ok4qb@7j7zut5drbyy>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ylycajqc6yx633f4sh5g3mdbco7zrjdc5bg267sox2js6ok4qb@7j7zut5drbyy>
 
-Add support to set per-NAPI defer_hard_irqs and gro_flush_timeout.
+On Thu, Aug 29, 2024 at 06:02:32AM -0400, Kent Overstreet wrote:
+> On Wed, Aug 28, 2024 at 02:09:57PM GMT, Dave Chinner wrote:
+> > On Tue, Aug 27, 2024 at 08:15:43AM +0200, Michal Hocko wrote:
+> > > From: Michal Hocko <mhocko@suse.com>
+> > > 
+> > > bch2_new_inode relies on PF_MEMALLOC_NORECLAIM to try to allocate a new
+> > > inode to achieve GFP_NOWAIT semantic while holding locks. If this
+> > > allocation fails it will drop locks and use GFP_NOFS allocation context.
+> > > 
+> > > We would like to drop PF_MEMALLOC_NORECLAIM because it is really
+> > > dangerous to use if the caller doesn't control the full call chain with
+> > > this flag set. E.g. if any of the function down the chain needed
+> > > GFP_NOFAIL request the PF_MEMALLOC_NORECLAIM would override this and
+> > > cause unexpected failure.
+> > > 
+> > > While this is not the case in this particular case using the scoped gfp
+> > > semantic is not really needed bacause we can easily pus the allocation
+> > > context down the chain without too much clutter.
+> > > 
+> > > Acked-by: Christoph Hellwig <hch@lst.de>
+> > > Signed-off-by: Michal Hocko <mhocko@suse.com>
+> > 
+> > Looks good to me.
+> > 
+> > Reviewed-by: Dave Chinner <dchinner@redhat.com>
+> 
+> Reposting what I wrote in the other thread:
 
-Signed-off-by: Joe Damato <jdamato@fastly.com>
-Reviewed-by: Martin Karsten <mkarsten@uwaterloo.ca>
-Tested-by: Martin Karsten <mkarsten@uwaterloo.ca>
----
- Documentation/netlink/specs/netdev.yaml | 11 ++++++
- include/uapi/linux/netdev.h             |  1 +
- net/core/netdev-genl-gen.c              | 14 ++++++++
- net/core/netdev-genl-gen.h              |  1 +
- net/core/netdev-genl.c                  | 45 +++++++++++++++++++++++++
- tools/include/uapi/linux/netdev.h       |  1 +
- 6 files changed, 73 insertions(+)
+I've read the thread. I've heard what you have had to say. Like
+several other people, I think your position is just not practical or
+reasonable.
 
-diff --git a/Documentation/netlink/specs/netdev.yaml b/Documentation/netlink/specs/netdev.yaml
-index 290894962ac4..cb7049a1d6d8 100644
---- a/Documentation/netlink/specs/netdev.yaml
-+++ b/Documentation/netlink/specs/netdev.yaml
-@@ -631,6 +631,17 @@ operations:
-             - rx-bytes
-             - tx-packets
-             - tx-bytes
-+    -
-+      name: napi-set
-+      doc: Set configurable NAPI instance settings.
-+      attribute-set: napi
-+      flags: [ admin-perm ]
-+      do:
-+        request:
-+          attributes:
-+            - id
-+            - defer-hard-irqs
-+            - gro-flush-timeout
- 
- mcast-groups:
-   list:
-diff --git a/include/uapi/linux/netdev.h b/include/uapi/linux/netdev.h
-index b088a34e9254..4c5bfbc85504 100644
---- a/include/uapi/linux/netdev.h
-+++ b/include/uapi/linux/netdev.h
-@@ -188,6 +188,7 @@ enum {
- 	NETDEV_CMD_QUEUE_GET,
- 	NETDEV_CMD_NAPI_GET,
- 	NETDEV_CMD_QSTATS_GET,
-+	NETDEV_CMD_NAPI_SET,
- 
- 	__NETDEV_CMD_MAX,
- 	NETDEV_CMD_MAX = (__NETDEV_CMD_MAX - 1)
-diff --git a/net/core/netdev-genl-gen.c b/net/core/netdev-genl-gen.c
-index 8350a0afa9ec..5ddb5d926850 100644
---- a/net/core/netdev-genl-gen.c
-+++ b/net/core/netdev-genl-gen.c
-@@ -74,6 +74,13 @@ static const struct nla_policy netdev_qstats_get_nl_policy[NETDEV_A_QSTATS_SCOPE
- 	[NETDEV_A_QSTATS_SCOPE] = NLA_POLICY_MASK(NLA_UINT, 0x1),
- };
- 
-+/* NETDEV_CMD_NAPI_SET - set */
-+static const struct nla_policy netdev_napi_set_nl_policy[NETDEV_A_NAPI_GRO_FLUSH_TIMEOUT + 1] = {
-+	[NETDEV_A_NAPI_ID] = { .type = NLA_U32, },
-+	[NETDEV_A_NAPI_DEFER_HARD_IRQS] = { .type = NLA_S32 },
-+	[NETDEV_A_NAPI_GRO_FLUSH_TIMEOUT] = { .type = NLA_U64 },
-+};
-+
- /* Ops table for netdev */
- static const struct genl_split_ops netdev_nl_ops[] = {
- 	{
-@@ -151,6 +158,13 @@ static const struct genl_split_ops netdev_nl_ops[] = {
- 		.maxattr	= NETDEV_A_QSTATS_SCOPE,
- 		.flags		= GENL_CMD_CAP_DUMP,
- 	},
-+	{
-+		.cmd		= NETDEV_CMD_NAPI_SET,
-+		.doit		= netdev_nl_napi_set_doit,
-+		.policy		= netdev_napi_set_nl_policy,
-+		.maxattr	= NETDEV_A_NAPI_GRO_FLUSH_TIMEOUT,
-+		.flags		= GENL_ADMIN_PERM | GENL_CMD_CAP_DO,
-+	},
- };
- 
- static const struct genl_multicast_group netdev_nl_mcgrps[] = {
-diff --git a/net/core/netdev-genl-gen.h b/net/core/netdev-genl-gen.h
-index 4db40fd5b4a9..b70cb0f20acb 100644
---- a/net/core/netdev-genl-gen.h
-+++ b/net/core/netdev-genl-gen.h
-@@ -28,6 +28,7 @@ int netdev_nl_queue_get_dumpit(struct sk_buff *skb,
- 			       struct netlink_callback *cb);
- int netdev_nl_napi_get_doit(struct sk_buff *skb, struct genl_info *info);
- int netdev_nl_napi_get_dumpit(struct sk_buff *skb, struct netlink_callback *cb);
-+int netdev_nl_napi_set_doit(struct sk_buff *skb, struct genl_info *info);
- int netdev_nl_qstats_get_dumpit(struct sk_buff *skb,
- 				struct netlink_callback *cb);
- 
-diff --git a/net/core/netdev-genl.c b/net/core/netdev-genl.c
-index 2eee95d05fe0..43dd30eadbc6 100644
---- a/net/core/netdev-genl.c
-+++ b/net/core/netdev-genl.c
-@@ -299,6 +299,51 @@ int netdev_nl_napi_get_dumpit(struct sk_buff *skb, struct netlink_callback *cb)
- 	return err;
- }
- 
-+static int
-+netdev_nl_napi_set_config(struct napi_struct *napi, struct genl_info *info)
-+{
-+	u64 gro_flush_timeout = 0;
-+	int defer = 0;
-+
-+	if (info->attrs[NETDEV_A_NAPI_DEFER_HARD_IRQS]) {
-+		defer = nla_get_s32(info->attrs[NETDEV_A_NAPI_DEFER_HARD_IRQS]);
-+		if (defer < 0)
-+			return -EINVAL;
-+		napi_set_defer_hard_irqs(napi, defer);
-+	}
-+
-+	if (info->attrs[NETDEV_A_NAPI_GRO_FLUSH_TIMEOUT]) {
-+		gro_flush_timeout = nla_get_u64(info->attrs[NETDEV_A_NAPI_GRO_FLUSH_TIMEOUT]);
-+		napi_set_gro_flush_timeout(napi, gro_flush_timeout);
-+	}
-+
-+	return 0;
-+}
-+
-+int netdev_nl_napi_set_doit(struct sk_buff *skb, struct genl_info *info)
-+{
-+	struct napi_struct *napi;
-+	u32 napi_id;
-+	int err;
-+
-+	if (GENL_REQ_ATTR_CHECK(info, NETDEV_A_NAPI_ID))
-+		return -EINVAL;
-+
-+	napi_id = nla_get_u32(info->attrs[NETDEV_A_NAPI_ID]);
-+
-+	rtnl_lock();
-+
-+	napi = napi_by_id(napi_id);
-+	if (napi)
-+		err = netdev_nl_napi_set_config(napi, info);
-+	else
-+		err = -EINVAL;
-+
-+	rtnl_unlock();
-+
-+	return err;
-+}
-+
- static int
- netdev_nl_queue_fill_one(struct sk_buff *rsp, struct net_device *netdev,
- 			 u32 q_idx, u32 q_type, const struct genl_info *info)
-diff --git a/tools/include/uapi/linux/netdev.h b/tools/include/uapi/linux/netdev.h
-index b088a34e9254..4c5bfbc85504 100644
---- a/tools/include/uapi/linux/netdev.h
-+++ b/tools/include/uapi/linux/netdev.h
-@@ -188,6 +188,7 @@ enum {
- 	NETDEV_CMD_QUEUE_GET,
- 	NETDEV_CMD_NAPI_GET,
- 	NETDEV_CMD_QSTATS_GET,
-+	NETDEV_CMD_NAPI_SET,
- 
- 	__NETDEV_CMD_MAX,
- 	NETDEV_CMD_MAX = (__NETDEV_CMD_MAX - 1)
+I don't care about the purity or the safety of the API - the
+practical result of PF_MEMALLOC_NORECLAIM is that __GFP_NOFAIL
+allocation can now fail and that will cause unexpected kernel
+crashes.  Keeping existing code and API semantics working correctly
+(i.e. regression free) takes precedence over new functionality or
+API features that people want to introduce.
+
+That's all there is to it. This is not a hill you need to die on.
+
+-Dave.
 -- 
-2.25.1
-
+Dave Chinner
+david@fromorbit.com
 
