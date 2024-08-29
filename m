@@ -1,101 +1,104 @@
-Return-Path: <linux-kernel+bounces-306412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BBD3963EB6
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:35:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2893D963EBD
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:36:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 99253B22B80
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:35:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D793E282424
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:36:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC2BB15C137;
-	Thu, 29 Aug 2024 08:35:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 264D518C33A;
+	Thu, 29 Aug 2024 08:36:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="cah3Mpc5"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="G0W1zO6t"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51450189912;
-	Thu, 29 Aug 2024 08:35:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E1C7189912;
+	Thu, 29 Aug 2024 08:35:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724920518; cv=none; b=cFk8bM3MDnMU6lnfPzhh4UDVeN1iukY8wCsPmQNQ7DjHt+fUxkiqWJ1KaFjwpcncUSgHlECx+1OlUUlGfsy0mYX0qN67xB+lwLjhOik8xOBIh4qYrosl7Wbtwwi+Hsj0QVYiXAli+HP8Y9qSHPrbjJe139tYN7CRbiIYgHgBLGI=
+	t=1724920559; cv=none; b=fKrnifP+T38n72qXcJV97Y0HDEXhZ9nCakfKE2SYw5zeM0Fco/9BQzwiHFch0/AdKnjbm8vqWy57M7/Yv5CNEtF4KgN6QQPg6YT6DdajdUbBRgXypSCftAGqHKOMmUDHbkV9fzYDZWBpb2sgEs6d47A3ArurNmfKjAFWBK4wqgI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724920518; c=relaxed/simple;
-	bh=6iZ8iIGBRLFC4519kTdXtS0rAGmtcKBdcw8S6IFTyEI=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=N+ZlqV4xezEliP6zfKTCqhKerU7hvP1fnHgM/EmIHDmzmccP+nH5BkO9cKmbJKtg8NeDB797hu9K89JhLMsvcude07wVj/r+1P6jzIjq1FT1V29ThgL99e+qzFUZX1H/TDfMqCAP9Xx/pGEDeBF46iAj53SfHHDPhW6F1bcaDA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=cah3Mpc5; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 07C2540E01C5;
-	Thu, 29 Aug 2024 08:35:14 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id g_I6YJdYLlmn; Thu, 29 Aug 2024 08:35:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1724920509; bh=CPJhcm4WSc5DpBeeH7qgshS/p1SRpirWBGGJlu0SQk4=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=cah3Mpc5nSYpGQMyejkNsp95hkl/X+s6B5xBrgHTfPCNNQHp02ZSXOUI3HjjX9DhW
-	 vEjexwCY727LS3YMNoK0hQUMyonR7aCZ6D039tIZEc0OGBucSwndlYqbguDZ5gi4V1
-	 qhZLMvXyyeZMQu6daP0guN8Y1oKm6wakJjFYxPGOxJLNxtRkK+Z+Ex/igPHquHI7Wj
-	 Ddds+DrEZRos0kyn+w1xjqjEOWO/CswZhHip6siwbkvvkLWV5HCiPMzsqyHYzuUJoT
-	 L5qAqTd7VSvRgD2Z1lZm5t9usfqnAZaWvE1uVf4Va1N3vBI82FN068qKydf+GuJidM
-	 XA1OKDiXNXqX6CU65lFshs7FVcU81qS2symUlsmgah/jJijv/Tf0+WDNXM80jUmtfG
-	 Nlfq/D7c6dvsjCzZq6aRE4X0n+UsndkhJQiIm0XIRUG9GGVUW/RgrPl5RQ3h7s4yoL
-	 3HIXB4MRZm3S3Yac4tzt6ibF8iW4XM+Ll3t856HohJIhipSd1Bm0aYJr6hm2CmI2vW
-	 WVddYO2iPSadIGgueMUoLwBneHPNBouJQPv+xtq6+hv0CCXnB9obYO8ytEQsrQei75
-	 OGA2vtzuB2ZuJwSvSswy6ChUfr7Bf8mfj7ZWYX5nRoa/YrU7DDUXMabC788QCRKSqU
-	 s0hrlESh+O3tj6sHBKJoGii4=
-Received: from [127.0.0.1] (business-24-134-159-81.pool2.vodafone-ip.de [24.134.159.81])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 51BEC40E016A;
-	Thu, 29 Aug 2024 08:34:53 +0000 (UTC)
-Date: Thu, 29 Aug 2024 10:34:49 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Ashish Kalra <Ashish.Kalra@amd.com>, seanjc@google.com, pbonzini@redhat.com,
- dave.hansen@linux.intel.com, tglx@linutronix.de, mingo@redhat.com,
- x86@kernel.org
-CC: hpa@zytor.com, peterz@infradead.org, linux-kernel@vger.kernel.org,
- kvm@vger.kernel.org, thomas.lendacky@amd.com, michael.roth@amd.com,
- kexec@lists.infradead.org, linux-coco@lists.linux.dev
-Subject: Re: [PATCH] x86/sev: Fix host kdump support for SNP
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20240827203804.4989-1-Ashish.Kalra@amd.com>
-References: <20240827203804.4989-1-Ashish.Kalra@amd.com>
-Message-ID: <87475131-856C-44DC-A27A-84648294F094@alien8.de>
+	s=arc-20240116; t=1724920559; c=relaxed/simple;
+	bh=kYfR6vntvOP/ZNvvFwoIJHJ0pNxEGNa4BCttNEffydw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=C7xCvwNw6XOzirKDE6Lmy29yAsSjE/qdbbyosheAFz3ZErcO0KGy6my7tiCLv9LeJ0+RDU4rm5t5koMWGKssAQaJ4jASCuA5Eh6Er8f+YkVbfgaIa1X92yrqtEodh1KKl7gQ9z1e+Wujf0Fm2WFSozxs4/l4CjnSVAi0EoO4DTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=G0W1zO6t; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 5E6B7E0003;
+	Thu, 29 Aug 2024 08:35:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1724920554;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=F8/ITs5ZwIVyovjR2zQIGYV49XbmpSZY/DEuv5GceYc=;
+	b=G0W1zO6tjw7DOdqAwN4v9iW7SlKaQ3FqxPe+/hoOcJ4aiysVXd9dL8/pBKOFkTix9E8cvv
+	skCOKDtLmOHM8jd2n0rhHa+O5UI7GkItQ9pqfexs8eaK1R4vQ729ogQKRxJjnjKgnvpZuU
+	yK3l0PjMn/xf6Zm3K61PrXwGpdvZBYlew1o7EK4gBzzwGJtZYZnHiRgQMDtDYYSJx91hqb
+	/JxH+IBhV+PfM2j27pMQgKU7Ix6BLnw98B545utC2DZ8eKAEOm9TSDhCl8lD5UfvhEx9OI
+	goF14YLFuNIgmAXqM+WAXEYDVlRONprF0PClcMPQCt+bAV+c4uULJHqpFgM0dA==
+Date: Thu, 29 Aug 2024 10:35:52 +0200
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: Diogo Jahchan Koike <djahchankoike@gmail.com>
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+ <pabeni@redhat.com>, Christophe Leroy <christophe.leroy@csgroup.eu>,
+ syzbot+ec369e6d58e210135f71@syzkaller.appspotmail.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [patch net-next v4] ethtool: pse-pd: move pse validation into
+ set
+Message-ID: <20240829103552.09f22f98@device-28.home>
+In-Reply-To: <20240828174340.593130-2-djahchankoike@gmail.com>
+References: <20240828174340.593130-2-djahchankoike@gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-On August 27, 2024 10:38:04 PM GMT+02:00, Ashish Kalra <Ashish=2EKalra@amd=
-=2Ecom> wrote:
->From: Ashish Kalra <ashish=2Ekalra@amd=2Ecom>
->
->With active SNP VMs, SNP_SHUTDOWN_EX invoked during panic notifiers cause=
-s
->crashkernel boot failure with the following signature:
+Hi Diogo,
 
-Why would SNP_SHUTDOWN be allowed *at all* if there are active SNP guests =
-and there's potential to lose guest data in the process?!
+On Wed, 28 Aug 2024 14:43:17 -0300
+Diogo Jahchan Koike <djahchankoike@gmail.com> wrote:
 
-I don't think you want to be on the receiving end of those customer suppor=
-t calls at your cloud provider=2E=2E=2E
+> Move validation into set, removing .set_validate operation as its current
+> implementation holds the rtnl lock for acquiring the PHY device, defeating
+> the intended purpose of checking before grabbing the lock.
 
---=20
-Sent from a small device: formatting sucks and brevity is inevitable=2E 
+[...] 
+
+>  static int
+> -ethnl_set_pse_validate(struct ethnl_req_info *req_info, struct genl_info *info)
+> +ethnl_set_pse_validate(struct phy_device *phydev, struct genl_info *info)
+>  {
+>  	struct nlattr **tb = info->attrs;
+> -	struct phy_device *phydev;
+> -
+> -	phydev = ethnl_req_get_phydev(req_info, tb[ETHTOOL_A_PSE_HEADER],
+> -				      info->extack);
+> +	
+   ^^^
+You have an extra white space here. Make sure you run your patch through
+the checkpatch script to detect this kind of issues.
+
+The rest looks good to me. For the next version,
+
+Reviewed-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+
+Thanks,
+
+Maxime
 
