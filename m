@@ -1,138 +1,164 @@
-Return-Path: <linux-kernel+bounces-307616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 522ED965066
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 21:59:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6681796506A
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 22:01:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0871F1F24719
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 19:59:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C19A01F247DE
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 20:01:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18F401BA26E;
-	Thu, 29 Aug 2024 19:57:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A0391BA870;
+	Thu, 29 Aug 2024 20:01:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Uj62fJaO";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="smnTD1qI"
-Received: from fout7-smtp.messagingengine.com (fout7-smtp.messagingengine.com [103.168.172.150])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dNJ5CPdc"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6487D1B5813;
-	Thu, 29 Aug 2024 19:57:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B896214A0B2
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 20:01:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724961446; cv=none; b=W7BibrBHHFGpJMHhbZ/oHO5qOuG/cNGbkbfSAA6Jyv6CvfySk93+Eo5UC7RvxcczlEXzWo5szRi48OEyo0B1lqyGgBw1BwMjFbgSJXM+Ba5DUS5R1yOGiisB6oSRXDSGqVGo1TioD7Li5NBhirScDftXPsKE/HjoYJPn3Aiy9qw=
+	t=1724961682; cv=none; b=bI8rxatJRT/MuiKuT5UgHE5WciF45r3y2R/lSnEz1/WdbYISJAFFyQi9uJmOL7lAeAf41hQ0AaA6SacHfrxSokJiPVNkW51/JUNDdzcY57qKCGu5hgMTb0f2P8ISNccSfZYUjZBVVsNVk3bNXu+NjOomyaewS/2lzA2134sozVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724961446; c=relaxed/simple;
-	bh=w5h0FOioO/iwBrzuMZxmdnXFQ//IzHTfU2X2gorK1b0=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=NrU4gWsUqS+mgiCRldrKSaHWC6UaR7NfKUvua7RYBsTzRe1UPujgkFOQlEUUeQYFqfye18z+rjxmddhGd+e93BAj7BModr4OpzWKLPmuQZFBAX+aB4X8yKhbLzVPaTVVbzhwD0oD5d1UbOEAEhtB1ORvz8bCVvhYNSb/hyBziIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Uj62fJaO; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=smnTD1qI; arc=none smtp.client-ip=103.168.172.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-04.internal (phl-compute-04.nyi.internal [10.202.2.44])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 6FC9C1383A46;
-	Thu, 29 Aug 2024 15:57:23 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-04.internal (MEProxy); Thu, 29 Aug 2024 15:57:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1724961443;
-	 x=1725047843; bh=6e+N05Fhw7yeM+JJ3iUAtFs9O+udW7eiEJhW+TG7NNU=; b=
-	Uj62fJaOkFjK7yY1wwRmwTzei2hA2EIOwznWBBPHdDNDn2uqLnmjwryRPKwYgYhb
-	Og+8jwMDsfF4+xF2i/XnCNROU9Aehbj+C5wBPTd/CeK3/OxIzuULWWvf1PX0K4JV
-	/EUkthXUWX1OQJ4Bu8K1s09EV5LZVrPyvDz1H+lY0xYmLOhzrHx83hovg6DUE/xz
-	ynOUcWkAXPNFc6sEdaZSEoKoYBoeAZ9ozQIavb3kt28cubvPhTfVGlVx2+mIFj3G
-	4atPenoBuKlC/FmUIpWKpXWlcWQ9sey+OK8eFFQkvl+ZdvgrA0JttAU6k1BtgVWC
-	24CEPQW1Nd2rIxpD5reBfg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1724961443; x=
-	1725047843; bh=6e+N05Fhw7yeM+JJ3iUAtFs9O+udW7eiEJhW+TG7NNU=; b=s
-	mnTD1qIHE0QQTy63dO4iDSKHq6j/yzaMDAuyqZFKYAxq9WMjGxX421SOs3urIMgp
-	JeVyBb+LBwVy89HDlBzT2P4fnOLYca0YgoBnfJyPFv0vjA3W05cTR/fIuu2HhiQo
-	azFfuuVK9g1rwZezRMecw7+zzCxVisH2oJ5R+i8jMdcIF6qSUSp5BrzqbzUE1iql
-	IWiH+4V2/OuZHov0Lsa1ezMRWyEKjn3dugJENChaY3J6bzx5kqoaI0LdD5WMLRm4
-	GUVTJRqcczg+RfuklNq1fdC7To2wnXd6ySs2U9xBTMUZd3VWzDgzzstWVnhU2vEt
-	axwpjq4x9uoNcW/KSsjQA==
-X-ME-Sender: <xms:o9LQZps_sigBReXozr8vNHfPsXnB2gKzg0OoU8uWFlAnbW9ZMZSgBg>
-    <xme:o9LQZidz5M2PgF_l6CpXpzK1wUH989tvgcCuk9TVrBIbrZg_ZzYB83xBAp-AVSz2o
-    sqlbUxeETaTrxxwEBc>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudefgedgudegvdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
-    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
-    druggvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteef
-    gffgvedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopeef
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehprghulhhmtghksehkvghrnhgvlh
-    drohhrghdprhgtphhtthhopehlihhnuhigqdgrrhgthhesvhhgvghrrdhkvghrnhgvlhdr
-    ohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlh
-    drohhrgh
-X-ME-Proxy: <xmx:o9LQZsxpDtuMz6AUISdH3kkNkpuIc3esJiYvfjrS630UdTYnMNqd8w>
-    <xmx:o9LQZgPAI-3iAOyyDB5fAyROXe3OuHP9Su4eAh8EqNWCIc9N1BitaA>
-    <xmx:o9LQZp83w-8IgKksnaRdNbBsvC0MhdGz3VKy6v_Ggmx-8qkEikkJyQ>
-    <xmx:o9LQZgUlkiPm7mCgNvrDmeTvaYAa1rIFWE5A9amAA6-I2ivphNNDTg>
-    <xmx:o9LQZrL5e68Eppbw4SGy-aGhXZF-CMj4O5gzJLEcagZ6YEWoJpVCPmKI>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 2E054222006F; Thu, 29 Aug 2024 15:57:23 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1724961682; c=relaxed/simple;
+	bh=PMHLABp3MzC3BY1kwsZKSYYX95t3aAZeY2Evqq7KAMI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q5a/XLgLD5mX2awwtKZGKDZUDXcY17fOG3RbPx0JpAQX+9E13vv0eouvQ7v3wQALJcj/Ftb1QMKxvLMWdlIZX+YRk8axL6Ab+WHjhVv3XVkTTQ5/HMAmP7YU/xmFXgfXAQ49abKI+Gx7bLBjQFkt7ff1jiatH61gTQvOrDBwqEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dNJ5CPdc; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724961679;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=a6YgJDRtCG6NqNHvxBGwLph56rsiY6btQEOiIVWjksU=;
+	b=dNJ5CPdc+6sUvDd4NHF+mL7Q6DMtjQ+UODMboqtOyvTxZqF4UakKnCtHcJ+LdXwUr9EgYT
+	E2+OCi2C2NNZHD/odLYP2RwonbJYHbUd3Kaa76ZMb2SmyUiP7Rz1O24CJp7ZHUe/EY3mVe
+	n5qNXFr3kTJdCn2QIZ/9C3r/fYgzeYU=
+Received: from mail-oo1-f72.google.com (mail-oo1-f72.google.com
+ [209.85.161.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-517-DsrhZO2UMhObV1eIDn54hw-1; Thu, 29 Aug 2024 16:01:18 -0400
+X-MC-Unique: DsrhZO2UMhObV1eIDn54hw-1
+Received: by mail-oo1-f72.google.com with SMTP id 006d021491bc7-5df993bfe56so1098299eaf.1
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 13:01:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724961677; x=1725566477;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=a6YgJDRtCG6NqNHvxBGwLph56rsiY6btQEOiIVWjksU=;
+        b=NLmWyFGfeh6am+TUqhx8fgEzeYz4qHSn3bpJVXJuP4X+yc9Sr1YCRoyXSWS/bbpOyr
+         mXCh/dovTETL3jwRMUi/YJAsU/W5ztWPXmQM5nwTCGLWWAsqQn5zObWvOWexRv5wS2KG
+         x23Uozq2jWbBGpn2wtthVW/Lb6oX09J3FSdww4qFQj53UrfkmiVkp4xWDyDBTVE4uo09
+         NIVYuwsd4OjKC1bCCuJ9H2feCDUq3hVndvy+n7Yhd/VJunwLLhP2hFJTjuO/An6PnKiJ
+         V0QXzl6KvE05aRe3p2T8kacGUNuhv8aHqkLQQ9Uqo/qv8+t6zM8CiUYo1IWz+tN/qT3R
+         9+FQ==
+X-Gm-Message-State: AOJu0Yw6qz/D58UDzh4n6c1jU6kWdRbJwuqt+9CVer/KM+y97a7zp+v5
+	j43wa+TGE0Tr5S0W57XySNtmIQsqQdEpx8Ymxlri65Xxd6wZNs0neC2wtYO7YV3TYSQpJkONpBL
+	Uh8i9eNlIE0JSVG4ordTFoAMq8huogV6zkS9sj/DC129nYskeDXjctV0ZKB7Gkg==
+X-Received: by 2002:a05:6820:168d:b0:5df:81ed:2655 with SMTP id 006d021491bc7-5dfacd7a869mr90154eaf.1.1724961677309;
+        Thu, 29 Aug 2024 13:01:17 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGK7ZWE97qlIasXgZMNuMbAVeGSN/jRz09m4SD8T+Wcq60efkSETyErTr9KSiO3wUuWWJ5s/g==
+X-Received: by 2002:a05:6820:168d:b0:5df:81ed:2655 with SMTP id 006d021491bc7-5dfacd7a869mr90109eaf.1.1724961676881;
+        Thu, 29 Aug 2024 13:01:16 -0700 (PDT)
+Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5dfa04e8aadsm341894eaf.28.2024.08.29.13.01.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Aug 2024 13:01:16 -0700 (PDT)
+Date: Thu, 29 Aug 2024 16:01:09 -0400
+From: Peter Xu <peterx@redhat.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	Gavin Shan <gshan@redhat.com>,
+	Catalin Marinas <catalin.marinas@arm.com>, x86@kernel.org,
+	Ingo Molnar <mingo@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Alistair Popple <apopple@nvidia.com>, kvm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Sean Christopherson <seanjc@google.com>,
+	Oscar Salvador <osalvador@suse.de>,
+	Jason Gunthorpe <jgg@nvidia.com>, Borislav Petkov <bp@alien8.de>,
+	Zi Yan <ziy@nvidia.com>, Axel Rasmussen <axelrasmussen@google.com>,
+	Yan Zhao <yan.y.zhao@intel.com>, Will Deacon <will@kernel.org>,
+	Kefeng Wang <wangkefeng.wang@huawei.com>,
+	Alex Williamson <alex.williamson@redhat.com>
+Subject: Re: [PATCH v2 07/19] mm/fork: Accept huge pfnmap entries
+Message-ID: <ZtDThWS16Kv0QKR1@x1n>
+References: <20240826204353.2228736-1-peterx@redhat.com>
+ <20240826204353.2228736-8-peterx@redhat.com>
+ <78d77162-11df-4437-b70b-fa04f868a494@redhat.com>
+ <ZtC9ThIs7aSK7gdK@x1n>
+ <32a451ee-6836-4d4d-814c-752c15415aae@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Thu, 29 Aug 2024 21:56:52 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>
-Message-Id: <f209bf4d-1d14-404b-8bff-8d6d2854d704@app.fastmail.com>
-In-Reply-To: <1bb58d8d-4a2a-4728-a8f3-9295145dbbb0@paulmck-laptop>
-References: <3ca4590a-8256-42d1-89ca-f337ae6f755c@paulmck-laptop>
- <b3512703-bab3-4999-ac20-b1b874fcfcc3@app.fastmail.com>
- <289c7e10-06df-435b-a30d-c2a5bc4eea29@paulmck-laptop>
- <9242c5c2-2011-45bf-8679-3f918323788e@app.fastmail.com>
- <1bb58d8d-4a2a-4728-a8f3-9295145dbbb0@paulmck-laptop>
-Subject: Re: 16-bit store instructions &c?
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <32a451ee-6836-4d4d-814c-752c15415aae@redhat.com>
 
-On Thu, Aug 29, 2024, at 15:37, Paul E. McKenney wrote:
-> My plan is to submit a pull request for the remaining three 8-bit
-> cmpxchg() emulation commits into the upcoming merge window.  In the
-> meantime, I will create similar patches for 16-bit cmpxchg() and perhaps
-> also both 8-bit and 16-bit xchg().  I will obviously CC both you and
-> Russell on the full set.  And if there are hardware-incompatibility
-> complaints, we can deal with them, whether by dropping the offending
-> pieces of my patches or by whatever other adjustments make sense.
->
-> Does that seem like a reasonable approach, or is there a better way?
+On Thu, Aug 29, 2024 at 09:44:01PM +0200, David Hildenbrand wrote:
+> On 29.08.24 20:26, Peter Xu wrote:
+> > On Thu, Aug 29, 2024 at 05:10:42PM +0200, David Hildenbrand wrote:
+> > > On 26.08.24 22:43, Peter Xu wrote:
+> > > > Teach the fork code to properly copy pfnmaps for pmd/pud levels.  Pud is
+> > > > much easier, the write bit needs to be persisted though for writable and
+> > > > shared pud mappings like PFNMAP ones, otherwise a follow up write in either
+> > > > parent or child process will trigger a write fault.
+> > > > 
+> > > > Do the same for pmd level.
+> > > > 
+> > > > Signed-off-by: Peter Xu <peterx@redhat.com>
+> > > > ---
+> > > >    mm/huge_memory.c | 29 ++++++++++++++++++++++++++---
+> > > >    1 file changed, 26 insertions(+), 3 deletions(-)
+> > > > 
+> > > > diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> > > > index e2c314f631f3..15418ffdd377 100644
+> > > > --- a/mm/huge_memory.c
+> > > > +++ b/mm/huge_memory.c
+> > > > @@ -1559,6 +1559,24 @@ int copy_huge_pmd(struct mm_struct *dst_mm, struct mm_struct *src_mm,
+> > > >    	pgtable_t pgtable = NULL;
+> > > >    	int ret = -ENOMEM;
+> > > > +	pmd = pmdp_get_lockless(src_pmd);
+> > > > +	if (unlikely(pmd_special(pmd))) {
+> > > 
+> > > I assume I have to clean up your mess here as well?
+> > 
+> > Can you leave meaningful and explicit comment?  I'll try to address.
+> 
+> Sorry Peter, but I raised all that as reply to v1. For example, I stated
+> that vm_normal_page_pmd() already *exist* and why these pmd_special() checks
+> should be kept there.
 
-There is one thing I'd really like to see happen here, and that is
-changing the architectures so they only define the fixed-length
-__arch_xchg{8,16,32,64} and __arch_cmpxchg{8,16,32,64} helpers,
-ideally as inline functions to have type checking on the pointer.
+We discussed the usage of pmd_page() but I don't think this is clear you
+suggest it to be used there.  IOW, copy_huge_pmd() doesn't use
+vm_normal_page_pmd() yet so far and I'm not sure whether it's always safe.
 
-If we make the xchg()/cmpxchg() functiuons handle all sizes
-across architectures, that just ends up cementing the type
-agnostic macros, so I feel it would be better to have
-fixed-size helpers as the generic API so we can phase out the
-use of the existing macros on smaller-than-u32 arguments.
+E.g. at least one thing I spot is vm_normal_page_pmd() returns NULL for
+huge zeropage pmd but here in fork() we need to take a ref with
+mm_get_huge_zero_folio().
 
-The macro is still needed to allow dealing with both integer
-and pointer objects, as well as a mix of 'int' and 'long'
-arguments on 64-bit, but for normal fixed-size objects I
-think we can best use the same method as the current
-xchg64()/cmpxchg64().
+> 
+> I hear you, you're not interested in cleaning that up. So at this point it's
+> easier for me to clean it up myself.
 
-    Arnd
+It might be easier indeed you provide a patch that you think the best.
+
+Then I'll leave that to you, and I'll send the solo fixup patch to be
+squashed soon to the list.
+
+-- 
+Peter Xu
 
 
