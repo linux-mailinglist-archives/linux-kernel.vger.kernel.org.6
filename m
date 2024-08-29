@@ -1,101 +1,296 @@
-Return-Path: <linux-kernel+bounces-306235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60ABF963BB9
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:35:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A17FE963BBF
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:36:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CCD01F240A4
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 06:35:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3052C1F233CA
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 06:36:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2FA2158A08;
-	Thu, 29 Aug 2024 06:35:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC0581662F1;
+	Thu, 29 Aug 2024 06:36:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="y1mYvQev"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="Jwud5f1H"
+Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2070.outbound.protection.outlook.com [40.107.255.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD144145341;
-	Thu, 29 Aug 2024 06:35:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724913333; cv=none; b=CCmV8R8sqkLVq1KNE6piUkdomVgINTzgouDU1QGtb7fwKlKuJYECI9eFL9ZNtu1JrFBD5brW337qftoTsjE+tmGUgi/wKIQiJ/wNyR8Z+Xgx2U+nxOTkRD+OqyGewROhRjDbrki898PIh7alYS6PDNWDFRJmaB2hyu6kpwBJaW4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724913333; c=relaxed/simple;
-	bh=t90JfksRc0HI8cmA7zBIYjjycQs+kItSj0Ln5dk6f64=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rJ6KPd/vN4tzkA3Bde31UZJvhCdGLJGdbSz2BZ4v9Nw5ogCYq29+miMCxrNZ2QcybKPCWFtZpVgWXR7OPjxRoWKZCTp+TSDWdacTIbEyD73QnW7H5TOlcDzF8cxH7qDKJo0wYxuzHUVDD1UnYnjjx3DQ9ZwkoE0XfzlON9Chxkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=y1mYvQev; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EEADDC4CEC1;
-	Thu, 29 Aug 2024 06:35:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1724913332;
-	bh=t90JfksRc0HI8cmA7zBIYjjycQs+kItSj0Ln5dk6f64=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=y1mYvQevdIzvwgIWl6zzQjBN2dMtekoP47ZTDpia+eWyV9DRk74Uc3XucMHPkZAOS
-	 8lBLRjC9EqvGSxHVlQJHnlyEVp+f2IP5YX6+WUiW3lm8fn6wycSFqOsAwRweHTPnJy
-	 Ds7rC1I81k9BK8uwo6tIcvH3YSpC/rpoJfsuToJw=
-Date: Thu, 29 Aug 2024 08:35:29 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Wedson Almeida Filho <wedsonaf@gmail.com>
-Cc: rust-for-linux@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/1] Retiring from the Rust for Linux project
-Message-ID: <2024082923-unthawed-fracture-6e1b@gregkh>
-References: <20240828211117.9422-1-wedsonaf@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49E5F159565;
+	Thu, 29 Aug 2024 06:35:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.70
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724913361; cv=fail; b=W/TMP6uPlE7+mw578+0Xj8owv7wTxB3Ro23FYRv0YL9tByx8VOfjoHWaihlY37iRZYu1OsLVPybsdhr698szaA7eCnN2/uvUC5b5OI7jUTV696LuP+jdsa+Kg+LO6av2Rx45fTlZShAhXhIx83jzdrlNQHtg7eWfHPoOKPKHbS8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724913361; c=relaxed/simple;
+	bh=4P4CYhshO45V+prUmZGWWKOlNur2xK0yKTs/9MT97BA=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=a7NDmD3Ifbwz0oEvt2L1VCkDLKnONMvodnBf8vceNPjUkIo92d5dBw0PzXzmuBM/0zEPWXF0h4lypgR2t6H64M7aTNJP8WOoDMwnrmqYlcm277tvaEfxQfEY0gZ7PP2lswgTqrnO9z1NQ8odgq8h9iwHLsg0x2OUw/4x9KnHG68=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=Jwud5f1H; arc=fail smtp.client-ip=40.107.255.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Oura1+KcdqqZW1roXYNJ4Ns4tdeXWpQ1t0RmmTiAMHeUg+nDjeHXln8Y3XPPv9SJ5YB7QD+V/UNSSqTRH5RHQ/Cgudj854JmDY/J7E5vJQ5uBtARel+qBcTPFz2K4ogrhs0uQ816FUaNolmilcn4D7dbcqOwVCuckhftCPW/iu1pwlUE4XxLvdGGDD05e/VV+8BioRaycPq1ISupzmBlwZ5FcMQwpEO3m19oBJMui3PDHSa2/+XnZ4MwWHz1i0PjA1nh3vy+zSHBrUwKm7yxwLmfeWhrklRi2TKYeAucIoBoSxuD1KQjT4036i2Hyn2hCYJHyOv8OFYT51prRbuInQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=xXiArJkHOVeBjnw6LhYxjtGhJW300DCEkuMmQ8RyAlo=;
+ b=VGl7oPMXFF8yvhJ/VLevc/LDTCS86WREp/mdmSDIRyzMTz2xfzYVooITWI5rzKUIq9O+ci0HH10lOqyDhvkml2ecqRuFPkWulRnWhf5li+3sWtlIv7K/93iIwAFknZmCL5W0IzG1W91VuZRU4T77mbk3xMgzifxIuUwGnLPY8cxJLVVpcfnJWU/wn3DdRDMfTIcogPz+QI0a/YjSNQfHv/QP+TgSm2/J4Px3cDWyNggGs+dsGbhj6YeSG6jLCqNwQ8+jtUli+PZGP5DkonA5DCondPPE8c4bK7yjyW7Ksvymm7tjB0A7HAsWLf+o9p+m9zebjrET30jiGPOw6rmmoQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=xXiArJkHOVeBjnw6LhYxjtGhJW300DCEkuMmQ8RyAlo=;
+ b=Jwud5f1HQjr8OsZeLcCXSWQTwUd23eYixhL4TCKcGGsJCHkE9epVzWS7as9tIMBM0ZmJLeTsBKcbWO2A/hKq9A+Q0VjzQplOvZcRRIqyw8s9uq2LJuIUmb6ua2lEeLmLJZ9HquSoJJ/AFu05CvubMIY/d/kTP3tApd4M0H0oIvWlUu7kh72qkQnSbBv46lVYnWWfVj/M/OVQErcPBAv2m8k4trwm4A+ivNPU9Kj24N26hwlKuJUw0o57uqPnKL03CWzp+eDoEfJQimwyRjM5vKoJG7JJHYezTSN1ATU/oCJZ3QNEO/Aq+LgYcyHJb+BAfs6ey7TW4N3DNPFjM/v/Jg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from PUZPR06MB5676.apcprd06.prod.outlook.com (2603:1096:301:f8::10)
+ by SEZPR06MB5689.apcprd06.prod.outlook.com (2603:1096:101:9d::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.26; Thu, 29 Aug
+ 2024 06:35:53 +0000
+Received: from PUZPR06MB5676.apcprd06.prod.outlook.com
+ ([fe80::a00b:f422:ac44:636f]) by PUZPR06MB5676.apcprd06.prod.outlook.com
+ ([fe80::a00b:f422:ac44:636f%6]) with mapi id 15.20.7897.021; Thu, 29 Aug 2024
+ 06:35:53 +0000
+Message-ID: <34b3b1e9-353c-4a31-9e09-d4ba5d28eb51@vivo.com>
+Date: Thu, 29 Aug 2024 14:35:48 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/5] udmabuf: direct map pfn when first page fault
+To: "Kasireddy, Vivek" <vivek.kasireddy@intel.com>,
+ Sumit Semwal <sumit.semwal@linaro.org>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Gerd Hoffmann <kraxel@redhat.com>,
+ "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ "linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: "opensource.kernel@vivo.com" <opensource.kernel@vivo.com>
+References: <20240822084342.1574914-1-link@vivo.com>
+ <20240822084342.1574914-2-link@vivo.com>
+ <IA0PR11MB718571990B58A16756C15E2FF8962@IA0PR11MB7185.namprd11.prod.outlook.com>
+From: Huan Yang <link@vivo.com>
+In-Reply-To: <IA0PR11MB718571990B58A16756C15E2FF8962@IA0PR11MB7185.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SI1PR02CA0026.apcprd02.prod.outlook.com
+ (2603:1096:4:1f4::11) To PUZPR06MB5676.apcprd06.prod.outlook.com
+ (2603:1096:301:f8::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240828211117.9422-1-wedsonaf@gmail.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PUZPR06MB5676:EE_|SEZPR06MB5689:EE_
+X-MS-Office365-Filtering-Correlation-Id: 15ad7da7-6f12-4989-73e4-08dcc7f4d498
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|52116014|366016|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?N3V3MzAwSHR2b2srYmV6eWdwSkI2Z0FmNWl5Y3lTYVd4bElBMFo2RkpVMVNz?=
+ =?utf-8?B?ckUzNmVjamVjM0wrTGtVQXpEako3MVRvZDc1bDdjV2ZuRWpteS9vVzR1Tkdh?=
+ =?utf-8?B?d3ZOTDNHQzhsR3dCOTFQUVV2blFoYkJxMUxsVVFTZTYzSUtFdEYzRFVWaFJt?=
+ =?utf-8?B?Vjg2VzhnOW9NVS9ac29JNDUvZjlhc2xHRHprb1JzUlQzZWMrVFVDT2taZVdy?=
+ =?utf-8?B?cUxJbGFmV2I1MHJSNzhEazgxeVdMOXJ0VXM5UUp3S1p5KzZGOWVjb2VjbHFE?=
+ =?utf-8?B?a05Lb2JRMFIyRUFGY2hMblB1eE9lQ2pVN1M3OUE5U3Ywb3ZiQUR6aHJrSUJE?=
+ =?utf-8?B?VXhsK2RPaS9WbGFlRGRFelZJMEYzdmFBWk5wazNSNW4wZUM5c2NvSHdmTUxE?=
+ =?utf-8?B?c1RHekgwOHRSRjJDTHNmVjViem1sSEJxdW9wNjJPbFVwN2ZqTU9KbXhaYzNC?=
+ =?utf-8?B?UXJHeGhyTk41VVpxNzlUQ25XSFZ6alAwSUg0Z2N4MVdRMnVDdW5LN0hiblJl?=
+ =?utf-8?B?N0VUbHNZOGZGOTJ4bUQxc3dTbDBxM0llSmNPQnppKzF5QjhlaGF5S0QwK2Yv?=
+ =?utf-8?B?YWdXTHNLeXZ2ODBYTHJwVUNFS25NYnFXYXhwMjN3TDZPaHVibCsrVVcwMTR1?=
+ =?utf-8?B?NUtGaC9teFZNRVEwV05jeCtTV2Rjb0hwWSt3cThId25pN2ZRZVJoWTQ5UUFk?=
+ =?utf-8?B?WXd3aU9qZ1hMTkhzSXVOQmpCWGVjZlBrL24vQlh1V3ROdVhxei9vN0IrN3Fk?=
+ =?utf-8?B?ZUhqNElqK1UrZDF1L3FUV0RVa05VZlY1ZXRZU2VnSnBrZXF3MFFCejNzdUVt?=
+ =?utf-8?B?d2NvcXhacUROQUlwSlFWK0NpZmxEbmxZL1NKVVpMUE5PazlneHJ1U2xieVUw?=
+ =?utf-8?B?a0FHb2pJQUM5dHhsb3hPaURmQjJLajQxUzVVRTB0eUM3blBOR3lCalhmNmZh?=
+ =?utf-8?B?aVNFTE12WXhiTjhGS1hGMU8yVnF2NDNZZ3dCNzdpcU90c3VQb29INkxhR05J?=
+ =?utf-8?B?dFYxMW5qYTcxL3RHNkQxVkNRSitwNGFNdkw5bWhNWjdoT3V4alNQS09iaksy?=
+ =?utf-8?B?MUlUUlFjTWYrdHVKaUhNVmN6UUZMdlNEZytuUVBleXRWUHZCM1hjUko5cmRo?=
+ =?utf-8?B?clpENHN4cEwwUnRWNHlOUi92dDcyVVZMcUJoKzF5ZHJSMTN5Q2g1WFBoTDVs?=
+ =?utf-8?B?TjZqaVJxRE81QU51NWhNUmJUMWFoN3ZEUThOY2tEWnRHZDQ0Y0xRQ0tsUG1t?=
+ =?utf-8?B?M3RESldDRTAwU0tETk12T0hnSWpQT0o2MmRFQ1I1QVV5QnpRRysxcWRYb3N2?=
+ =?utf-8?B?YTkwUmNwK2pHWnNVL0hCcEhsQzVBTTFaOVYrKzc2Rkt5OUE5RkdRNzlFY04x?=
+ =?utf-8?B?V2NLUHBxZ3FIcHR5SnpNeXB5NXllR1R0N2k4WlRQNnpnN1NjVDM2RUZ4NFZ6?=
+ =?utf-8?B?MXpKUVBHNTdsVE1yZVA5bGxQTWdVeVhWQVpsSnlWWi9hUytkK2Era24xZDhR?=
+ =?utf-8?B?emJ6TENXNElzRkI5T3B2WmVraWQ3Z0pmZTZaZkl1cWRsZFhSTkNBMy81NHJi?=
+ =?utf-8?B?TWl4bHRhQlVXcHUza2RSSnd1V2dXZ2xBRktJeWNOVVdhL20xWDFEdFJpekFV?=
+ =?utf-8?B?VU53eDFuTndadFY4bDlDOTFaMmQzWGZhUXNOWGdmblUrdDJuMEUrdnh3MkYz?=
+ =?utf-8?B?RENGVjlXNFRvMkNYVjdiSHZhSjlxYVRnMFFiaVVQQllSNVNKWlVpalI3OTR6?=
+ =?utf-8?B?dXRMQjJQSFRmMk44d2lPMERUU2ZIZHhtaWg4YlozTng4Q0VmVE9ubDdBaG5h?=
+ =?utf-8?B?MUo5aWR4VVJXdUR5aHkyREN4Rmx2a2l0QjJQSGNTWmVodG43TG94SnludVNn?=
+ =?utf-8?B?ZnFOakZWVVQxelQ0ZDBSTkhSbS8zM1A4bGhobkZPeEk4eEE9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PUZPR06MB5676.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Q0VVS01Xd3dtcnFXSHN5ckdHQUlDckZoZ3BUR1h6WWZmYUpFUWtwWHh3eDgr?=
+ =?utf-8?B?TlQwWVFjUmo4bkQ1ZlYrTkg5WU90d3dxTUV6OGNDbEp6Tjk3eUM1UCtTNFY1?=
+ =?utf-8?B?ZUZaWTQxOW5SWmxJalFkakJRTVBHbWU2L2lpTUxBQ1J0SSt4K0NwOXNaT2li?=
+ =?utf-8?B?dFBGQlpVNFllZWpibG1CZlR2Q0ZXbmZzOEtoaEhvQWpQZW11SE1kSFgralM0?=
+ =?utf-8?B?dlNVUE9oRkRqWDVoR2tzRWJXTFNRNE5wMnZKOXBRYkpmV2E3eDJ2a3VvU1NX?=
+ =?utf-8?B?Q1MybXpXK3M0emFUdXcyWk15SGxXeFNpSFgxWVo4K2J4RjVGaENkM2FVYW94?=
+ =?utf-8?B?ZVFXbXVCdFBBVzZ2UVRVMUx0YnRUdW5qbVh6SjZjNS9Ca0Y2ZVNXMmtWRlhF?=
+ =?utf-8?B?RUxQWlhjcTFmbm5GUDdaUzRMVThJWm1JV3I4amxYL3dIS1g1MlExaTZvSW5L?=
+ =?utf-8?B?c0JQd0pDVWZSdU5oMTZzYmEyYTd3NG1wNzVvdlJXejQ3NG9vWXltWDgxYXpO?=
+ =?utf-8?B?T0F1dXh2OWw2TFREZUNadkdTcGg3SlZ2WEl4Wmh1UWVET3d5RFpSdkdOREE1?=
+ =?utf-8?B?MmlQT2srQ241aFYvc0J1ZitxRUJDNlE3S1ZPcW1JaUc1YVplOVJhYkxCcVli?=
+ =?utf-8?B?SER4Ym56V1FHMmFvUUtQTTlQRmNOL3ZvcnczRnRydjhBNVRyUnRhS0ZMT2xx?=
+ =?utf-8?B?YWxKV1I0dVF2eXoxMDBRT0V3aHAvOEhKTXBTem1qUk5FRlR4NXRPTDZxcHpm?=
+ =?utf-8?B?QmVxMmdjWGF1NTArUzFTY0hlSFNKUjlYNzFlR21LN2RzYmlsYzhUK2VNd09j?=
+ =?utf-8?B?bTl6Wlo4eUUwdEY3cHdVMGZ5SHZaa2xna0hBOE4ybG15dkxpak5lWjVocGU3?=
+ =?utf-8?B?QytUcXhmRitJZ1FzRFdVRWk5T0dTL0ZIdWY4MzNERmliQlhQT0xhQ1VlQnQ1?=
+ =?utf-8?B?ZUhKZk5QNExXVVl1cXNtTmdtSXdrZFFNTmpxalBpRWtZR3FLbngyWTFtMzM5?=
+ =?utf-8?B?T2M0NXB0bVdoVHhTY0E2QURuN0dpbTNORW9YVEFyNjR3L1oyeGhQNm9iL1kv?=
+ =?utf-8?B?eDMySGZSb2JtRlhBeFJnZFJtOTgvUTFuNDBVNnhtOHYwMmRtWkNDbUxMN3pl?=
+ =?utf-8?B?NHRGdlFrRUoxSW1OTnYwU0hjalJ2MHhJTVhjd1NoVUZDNUU5UjI0aDNFbUJZ?=
+ =?utf-8?B?RFA4TDJUT1p1ODhxV1Fvak4zYm9yUTlZb24yNnpuWEJsaGU2VzRZWnBxQ2Uz?=
+ =?utf-8?B?NHB1TXlsdk4rNlVJak94MEVGTkthWW1MamMyNWtSaExiaGtwUE1qWG5lbVE0?=
+ =?utf-8?B?aDgrRXNLMVNPSE01V1BjNitJamxXbmRVQTBYdlNneW1ZTUFldC9lZnNhenFY?=
+ =?utf-8?B?WlFLVHpSeEZ2eHJsbWZwMklTbEFyZkJsa2g4aHVXZGw2OXYybzE2MGpKbGRo?=
+ =?utf-8?B?WWJyUTJKaG9yb0p0aitPWEtnVXNNWmlGaWthNGNEY1dBNExzRlhFMWtmdTAv?=
+ =?utf-8?B?R2FFYTFzS2xSRTdwRitTVkJMbHptN1JkTU84a3VTamVMbGg1RWZtVFJkczU0?=
+ =?utf-8?B?NjlvKzhHakp6ckpKSHorL2NFS0VQdEo1bmNqaFhOd3V0bnAwV0ozVmZVUkdQ?=
+ =?utf-8?B?S21ybE94cFoxTnhhZW1EV0k2cjhiNDN3WGZoelJJanNLVVRHV2pZSkc0R1Bi?=
+ =?utf-8?B?NW9JZnR4dkg4TkppbzR0YlFnRFlURytwb0VJd0pIVmhFc3BrYk10VExNdnpQ?=
+ =?utf-8?B?Um9mRVdyRDE2UngvVmtwVm05bHlaNnhHMmJ0R0g4OEwydm1PeDEvV21kUHF2?=
+ =?utf-8?B?UmpGaC9pNmgzTGtsbjNCZVUxWlZKZU04bFplMU5QNkJWeGtJazRHRGhPa2VJ?=
+ =?utf-8?B?cHhkcmJyMTJ3dEdqa213cEVNN0lBR3B0dDBrbmhFNk45cEMvSDRwa2gxL1Zi?=
+ =?utf-8?B?YWFLTHQwQnhuOFJDL0UwQ0dmRVJMSTdRZCtiVmZrNkhaUDU2U0MwWG53S2pa?=
+ =?utf-8?B?RWVST1pUemYvYy8va3JuOVhBblQwVk5YdFBZSFcwc3AvU0lLMlRkZUNSZHpM?=
+ =?utf-8?B?UmVSU3pqN0dLMTJ0NzY1ck93Q3JXVmtxZlVvQzFENHhuNGJLWGMwNFplTHNE?=
+ =?utf-8?Q?ZNx67JLVh4wKlioPZ1I3vDYvk?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 15ad7da7-6f12-4989-73e4-08dcc7f4d498
+X-MS-Exchange-CrossTenant-AuthSource: PUZPR06MB5676.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Aug 2024 06:35:53.4901
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: C1AloCbfy0kp04An7g0dy6ACtqxv6H+vFtry7O4CjFA7nbwEPy4FZqqbb2vUdik3b0e8P/IKC0sBkQNF/Wp/Nw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR06MB5689
 
-On Wed, Aug 28, 2024 at 06:11:16PM -0300, Wedson Almeida Filho wrote:
-> Hey folks,
-> 
-> This is as short a series as one can be: just removing myself as maintainer of
-> the Rust for Linux project.
-> 
-> I am retiring from the project. After almost 4 years, I find myself lacking the
-> energy and enthusiasm I once had to respond to some of the nontechnical
-> nonsense, so it's best to leave it up to those who still have it in them.
-> 
-> To the Rust for Linux team: thank you, you are great. It was a pleasure working
-> with you all; the times we spent discussing technical issues, finding ways to
-> address soundness holes, etc. were something I always enjoyed and looked
-> forward to. I count myself lucky to have collaborated with such a talended and
-> friendly group.
-> 
-> I wish all the success to the project.
-> 
-> I truly believe the future of kernels is with memory-safe languages. I am no
-> visionary but if Linux doesn't internalize this, I'm afraid some other kernel
-> will do to it what it did to Unix.
 
-Sad to see you go, we wouldn't have been able come this far without you.
+在 2024/8/29 14:08, Kasireddy, Vivek 写道:
+> Hi Huan,
+>
+>> Subject: [PATCH v4 1/5] udmabuf: direct map pfn when first page fault
+>>
+>> The current udmabuf mmap uses a page fault to populate the vma.
+>>
+>> However, the current udmabuf has already obtained and pinned the folio
+>> upon completion of the creation.This means that the physical memory has
+>> already been acquired, rather than being accessed dynamically.
+>>
+>> As a result, the page fault has lost its purpose as a demanding
+>> page. Due to the fact that page fault requires trapping into kernel mode
+>> and filling in when accessing the corresponding virtual address in mmap,
+>> when creating a large size udmabuf, this represents a considerable
+>> overhead.
+>>
+>> This patch fill vma area with pfn when the first page fault trigger, so,
+>> any other access will not enter page fault.
+>>
+>> Suggested-by: Vivek Kasireddy <vivek.kasireddy@intel.com>
+>> Signed-off-by: Huan Yang <link@vivo.com>
+>> ---
+>>   drivers/dma-buf/udmabuf.c | 26 ++++++++++++++++++++++++--
+>>   1 file changed, 24 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/dma-buf/udmabuf.c b/drivers/dma-buf/udmabuf.c
+>> index 047c3cd2ceff..0e33d25310ec 100644
+>> --- a/drivers/dma-buf/udmabuf.c
+>> +++ b/drivers/dma-buf/udmabuf.c
+>> @@ -43,7 +43,8 @@ static vm_fault_t udmabuf_vm_fault(struct vm_fault
+>> *vmf)
+>>   	struct vm_area_struct *vma = vmf->vma;
+>>   	struct udmabuf *ubuf = vma->vm_private_data;
+>>   	pgoff_t pgoff = vmf->pgoff;
+>> -	unsigned long pfn;
+>> +	unsigned long addr, end, pfn;
+>> +	vm_fault_t ret;
+>>
+>>   	if (pgoff >= ubuf->pagecount)
+>>   		return VM_FAULT_SIGBUS;
+>> @@ -51,7 +52,28 @@ static vm_fault_t udmabuf_vm_fault(struct vm_fault
+>> *vmf)
+>>   	pfn = folio_pfn(ubuf->folios[pgoff]);
+>>   	pfn += ubuf->offsets[pgoff] >> PAGE_SHIFT;
+>>
+>> -	return vmf_insert_pfn(vma, vmf->address, pfn);
+>> +	ret = vmf_insert_pfn(vma, vmf->address, pfn);
+>> +	if (ret & VM_FAULT_ERROR)
+>> +		return ret;
+>> +
+>> +	/* pre fault */
+>> +	pgoff = vma->vm_pgoff;
+>> +	end = vma->vm_end;
+>> +	addr = vma->vm_start;
+>> +
+>> +	for (; addr < end; pgoff++, addr += PAGE_SIZE) {
+> Although unlikely, I think we should also check for pgoff < ubuf->pagecount.
+Ohh, yes.
+>
+>> +		if (addr == vmf->address)
+>> +			continue;
+>> +
+>> +		pfn = folio_pfn(ubuf->folios[pgoff]);
+>> +
+>> +		pfn += ubuf->offsets[pgoff] >> PAGE_SHIFT;
+>> +
+>> +		if (vmf_insert_pfn(vma, addr, pfn) & VM_FAULT_ERROR)
+> Shouldn't you store the return value of vmf_insert_pfn in ret? Otherwise, we'll
+> return success when the above call fails.
 
-But good news, now you have more time to actually write more code, we
-all know maintainers don't get much time to do that!  :)
+If anything wrong in there, let it report when it true access and then 
+report. Not in there.
 
-Again, thanks for all of the work and effort you have done here, it is
-greatly appreciated.
+It's pre-fault, 'this' page's fault is already dealed success. No reason 
+to report in it's fault.
 
-> Lastly, I'll leave a small, 3min 30s, sample for context here:
-> https://youtu.be/WiPp9YEBV0Q?t=1529 -- and to reiterate, no one is trying force
-> anyone else to learn Rust nor prevent refactorings of C code.
+>
+> Anyway, I am wondering if it is more optimal to just iterate over pages instead
+> of addresses. Something like below:
+>
+> +       unsigned long nr_pages = vma_pages(vma);
+> +       unsigned long addr = vma->vm_start;
+>
+> -       if (pgoff >= ubuf->pagecount)
+> -               return VM_FAULT_SIGBUS;
+> +       WARN_ON(nr_pages != ubuf->pagecount);
+>
+> -       pfn = folio_pfn(ubuf->folios[pgoff]);
+> -       pfn += ubuf->offsets[pgoff] >> PAGE_SHIFT;
+> +       for (pg = 0; pg < nr_pages && pg < ubuf->pagecount; pg++) {
+> +               pfn = folio_pfn(ubuf->folios[pg]);
+> +               pfn += ubuf->offsets[pg] >> PAGE_SHIFT;
+>
+> -       return vmf_insert_pfn(vma, vmf->address, pfn);
+> +               ret = vmf_insert_pfn(vma, addr, pfn);
+> +               addr += PAGE_SIZE;
+> + }
 
-No one sane ever thought that.
+Maybe mmap with a offset? just start from 0 not too good.
 
-thanks again for all of your effort, I suggest adding an entry to the
-CREDITS file for the work that you have done as is traditional for when
-maintainers step down.
+This seems clear, but is it not good to handle insert pfn error elsewhere?
 
-thanks,
-
-greg k-h
+>
+> Thanks,
+> Vivek
+>
+>> +			break;
+>> +	}
+>> +
+>> +	return ret;
+>>   }
+>>
+>>   static const struct vm_operations_struct udmabuf_vm_ops = {
+>> --
+>> 2.45.2
 
