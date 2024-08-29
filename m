@@ -1,160 +1,242 @@
-Return-Path: <linux-kernel+bounces-306781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84DD496437C
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:51:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87149964380
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:51:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A55381C247F6
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 11:51:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0ACC11F230F2
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 11:51:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89C51192B61;
-	Thu, 29 Aug 2024 11:50:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3CF0192B61;
+	Thu, 29 Aug 2024 11:51:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="NEbT+z78"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JxToPF9N"
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3FCF191F89
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 11:50:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41E8416C6BF
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 11:51:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724932252; cv=none; b=XWmhvGd34q9znG4oJ2nGC4lVbRlX51iJsrq4Jb9pUi7BPUDnknWoJi2klKjYOPxVOBMr33QyfBPeR+juLYfSz2E6S7hqtD5hID6EICzIs/OUoSk4HoVtlqHzBYY5AVarZ0l227J4ynmju1vt7iLQIsUh8LhdX/2TFOdMhAjjGHw=
+	t=1724932306; cv=none; b=h2ExKPh6I8nevfkzDr9oMaqsXowDBz0ig2j92b6p2KyIBVXT2UQu/3OklurPaNDwPFx1Nhh76idcWt7LIutKYwE73uJK7VTZKofrEkYllLknJhdQZKRr543RjDMF6X2naEGJX0siadyRWIRlTitDRS0ip9u2wjwIh5zXvmoidb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724932252; c=relaxed/simple;
-	bh=ucQRYpAs/iuundAbzq8GmfWweMsIUzDVz8dEo1q63/4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nT0MfjBzXyQ0E6dZRPArKrWc9goDqJBkYfKm6G7pytCQ2mH/GcKzIZpN7kukxKA1pb944i4DRa94gNl1khgWwIVbNlXDvdLnJCy4Fg50x5Ya93/abRLBelZLl4LNlOP3K1pNWpai1MD7hZtIUo1BcX/X3VUqTdFj8+eY73142ww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=NEbT+z78; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4280bca3960so4919455e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 04:50:50 -0700 (PDT)
+	s=arc-20240116; t=1724932306; c=relaxed/simple;
+	bh=sbSDLBD7brxIdwmoafO/MhBWjafiSDS+QDNe4Zevel8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MB0/XgT8fN2zI9IrgYmR7CIAWxiB7gyDKxvHt9Hrbr04gAJbMCgdUd8lU85x5KRafE34QVJuxPqdk+fh6wJnuEKmqFsTjKa5WTYOdA3tiy1w9fFOOBsEjJMJE3Wxp9a3m1Oh+r5Z5ZB82N5Bt3xITsRAxTzcm3A6pgg3nvZX2NU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JxToPF9N; arc=none smtp.client-ip=209.85.128.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-691bb56eb65so5621257b3.0
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 04:51:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1724932249; x=1725537049; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=DIO5qiw4yauFIXiZ7VjLTOR2SQbB7twhVj/N0jkHHp0=;
-        b=NEbT+z78FJ79qKhmAiGBKlEL6X02cyjjqNBWYDxmgCrHxer1GxfAcbrmmArdmnJtCS
-         /G9+YKKf7MD3saqkxmTAgVaUF5cqMAqxgoBafZ5EHly9ffo8PhEWBExzI2sT7eK7RPjs
-         N4lPHTzmRIA2adpT17aoErbEpU9mC1YLA7Bc2TUTaZ1j8vK/Ax7wk13YyOBREFmu41j/
-         MF+32dF4lUvRqgZh60F2WhfMxZNHO4wkIoCSCxDCMVEz4LqmJtjtr2T+jTmDS3Db/HsP
-         yXedrlAmmICl2L1L7AycFapRNtf477/iyS/oB7sU9qEIXTO1jaq07zM4omBo1QP/Qc9Y
-         K3RQ==
+        d=linaro.org; s=google; t=1724932303; x=1725537103; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ADjazXa2UYYZoyIa934Wbzo/pDx1HciCmyz3zetZEmw=;
+        b=JxToPF9NSAiHhSVtJieNpLW6UmYd5zniuZ06ucWz4Rna7pV0JGEHSk3QrPoool1chs
+         f6gvAq6DDEb55QgLfgqlsCurA1JHRPlR7sUf27djIQMaXE2nsu7TWIIbHSm91UwxGK62
+         Wd811RzaeJZSvNhyU9xW1qG/8/70/e9SxDDtAg4aB0qrfP+PFwnE6xWG1YDey+uqD78p
+         WPr5nWoZ2o154lEEHuMF+dvYcRi07F90zNhXqB1atYG2SA0eMigkscelSUh3k6Qf8XJX
+         UC5GrTp28eh5KQ0miyCFk0iZ8KPxfgq0ZZi7oBpou2da2XwZtHYBoL51yQQLE0lRavOD
+         CmCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724932249; x=1725537049;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DIO5qiw4yauFIXiZ7VjLTOR2SQbB7twhVj/N0jkHHp0=;
-        b=unpQNoCGSAkuWe1mxH9xVWNxraUdTK2qoZ1pUF0AnxdZMM6PMZwRNkLzzhxFjbL04I
-         H0EfLHfLOFmBGlV0Yu1HA3Pk5yWhO2PSWRZ7U+1Xp9RlVmh+d+9OEfTYaXW4ZgualuR8
-         9pb8JXwev44DAYmqP/po7WIGj6TbU6wqM1XE61ujIsxRBiA85ZxzK8dFlRgg01JZfE7L
-         A23JsutyECfglh2eOpZFCQe+C3rADrzRxrCwc8HYz528J70szGJwv7ysAAtmtZgwXJMc
-         1dTQaarJ0MMCtl6+ZzXjCve6fbRX/v9a71WmQ111DGGhUx2ZU+jBqzbff6KqBzmd807n
-         eS3g==
-X-Forwarded-Encrypted: i=1; AJvYcCXJ/yKkz+1tUms65fJhgLhkorQighf/ESHbxA16yIUdRV8EkjMxHcuLG1RMezO4fdHbSJcMnWFS8E2XWJM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZkWwvOCmw5hVeXQQ+yR79GbmVw1dGKL33boIGo5hbfDaYzJtg
-	4wzJJoU3aItMEVpP5xYsc19EKiQETDMJqP9cz+6Ttvbvfv++2+lRDnZR1Q1dUuo=
-X-Google-Smtp-Source: AGHT+IEmpkM9Gew6lNJX7xRAVX0JcsJ0hRG43Yp3mQUWq5l3vmuNVuzZ82AG7V3Prs/kjd7q1ANG1A==
-X-Received: by 2002:a05:600c:4f07:b0:426:6138:34b3 with SMTP id 5b1f17b1804b1-42bb023cdeemr21431665e9.5.1724932248954;
-        Thu, 29 Aug 2024 04:50:48 -0700 (PDT)
-Received: from localhost (109-81-82-19.rct.o2.cz. [109.81.82.19])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bb87f7fccsm7945595e9.46.2024.08.29.04.50.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 04:50:48 -0700 (PDT)
-Date: Thu, 29 Aug 2024 13:50:47 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: Zhongkun He <hezhongkun.hzk@bytedance.com>
-Cc: akpm@linux-foundation.org, hannes@cmpxchg.org, roman.gushchin@linux.dev,
-	shakeel.butt@linux.dev, muchun.song@linux.dev,
-	lizefan.x@bytedance.com, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org
-Subject: Re: [External] Re: [RFC PATCH 0/2] Add disable_unmap_file arg to
- memory.reclaim
-Message-ID: <ZtBglyqZz_uGDnOS@tiehlicka>
-References: <20240829101918.3454840-1-hezhongkun.hzk@bytedance.com>
- <ZtBMO1owCU3XmagV@tiehlicka>
- <CACSyD1Ok62n-SF8fGrDQq_JC4SUSvFb-6QjgjnkD9=JacCJiYg@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1724932303; x=1725537103;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ADjazXa2UYYZoyIa934Wbzo/pDx1HciCmyz3zetZEmw=;
+        b=ghzvZ5BA5i8vZ6NPdXjXOAqyuMzxD/3fN9l8Kao/DKrRd0Jb65LkAaCtPrySKdKlIQ
+         BQEDUGO5v3jM9eNNYuw+elyZlywDOj7X9xT3vqa7uLdmYsOdyG5/VZ8otILSFwbYMfFs
+         +Aag+oYu3xHBVgxI82duDv+2YNi4LM/CglPknMCf8/u/2lKjRX2awlRnvU3NWDDwK89W
+         MhIou045z+OmaulS/iOBzPQ2+L3lEu7OMFQgQLBR/ezH7qWqYLSjnqRWDziAse98QjVN
+         ro2Q4++sgQYWB/MUFKp3+k/Wk9ltfixjGPU3qaoU01d+1yfv5ZJR1WRaItAEAoYJgDrO
+         5l4A==
+X-Forwarded-Encrypted: i=1; AJvYcCVaufMVo6/4xn05k7O7RzR4oUGloNsPOFRHvcr6lwsD1XrAQjyJtAtH+Tv70euZ+04b1fDJJispm5JrXis=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxto8eTu5ENEEukJ/qbhvQgkI7E4QmHE3QgLVA5R9qJldbdTpyB
+	a7inuKBjuctQ/WqXCpCLQZkyFuYeCZWybY91feJmWwxOVJnfsgHGlxcZIoUpmc/7zA7SRpqnuh6
+	xt9v/stJhjnDhc8REotgauOhhlwnYtJPq/6UJmg==
+X-Google-Smtp-Source: AGHT+IHM1biX7BPGHYNLG30VmvjSr6bvRec9+xxWR0NidjjN7pSt1m9npJbRC3W75m5/3m4thgqZi2aUNr67Rb7+mIo=
+X-Received: by 2002:a05:690c:6e10:b0:6b9:d327:9ad6 with SMTP id
+ 00721157ae682-6d277a78f56mr33393267b3.33.1724932303041; Thu, 29 Aug 2024
+ 04:51:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CACSyD1Ok62n-SF8fGrDQq_JC4SUSvFb-6QjgjnkD9=JacCJiYg@mail.gmail.com>
+References: <20240829-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-8-v1-0-bdb05b4b5a2e@linaro.org>
+ <20240829-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-8-v1-18-bdb05b4b5a2e@linaro.org>
+In-Reply-To: <20240829-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-8-v1-18-bdb05b4b5a2e@linaro.org>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Thu, 29 Aug 2024 14:51:32 +0300
+Message-ID: <CAA8EJpoj6vs1JsDWgqof9Ogt-0Zq6hUpuaK42YwByDGrpUopnw@mail.gmail.com>
+Subject: Re: [PATCH 18/21] drm/msm/dpu: blend pipes by left and right
+To: Jun Nie <jun.nie@linaro.org>
+Cc: Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, linux-arm-msm@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu 29-08-24 18:37:07, Zhongkun He wrote:
-> On Thu, Aug 29, 2024 at 6:24 PM Michal Hocko <mhocko@suse.com> wrote:
-> >
-> > On Thu 29-08-24 18:19:16, Zhongkun He wrote:
-> > > This patch proposes augmenting the memory.reclaim interface with a
-> > > disable_unmap_file argument that will skip the mapped pages in
-> > > that reclaim attempt.
-> > >
-> > > For example:
-> > >
-> > > echo "2M disable_unmap_file" > /sys/fs/cgroup/test/memory.reclaim
-> > >
-> > > will perform reclaim on the test cgroup with no mapped file page.
-> > >
-> > > The memory.reclaim is a useful interface. We can carry out proactive
-> > > memory reclaim in the user space, which can increase the utilization
-> > > rate of memory.
-> > >
-> > > In the actual usage scenarios, we found that when there are sufficient
-> > > anonymous pages, mapped file pages with a relatively small proportion
-> > > would still be reclaimed. This is likely to cause an increase in
-> > > refaults and an increase in task delay, because mapped file pages
-> > > usually include important executable codes, data, and shared libraries,
-> > > etc. According to the verified situation, if we can skip this part of
-> > > the memory, the task delay will be reduced.
-> >
-> > Do you have examples of workloads where this is demonstrably helps and
-> > cannot be tuned via swappiness?
-> 
-> Sorry, I put the test workload in the second patch. Please have a look.
+On Thu, 29 Aug 2024 at 13:21, Jun Nie <jun.nie@linaro.org> wrote:
+>
+> Blend pipes by left and right. The first 2 pipes are for
+> left half screen and the later 2 pipes are for right in quad
+> pipe case.
+>
+> Signed-off-by: Jun Nie <jun.nie@linaro.org>
+> ---
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c    | 13 +++++++++++--
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c | 10 +++++++---
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.c  | 19 +++++++++++++++++--
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.h  |  4 +++-
+>  4 files changed, 38 insertions(+), 8 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+> index 3b3cd17976082..8fd56f8f2851f 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+> @@ -574,8 +574,17 @@ static void _dpu_crtc_blend_setup(struct drm_crtc *crtc)
+>                         mixer[i].mixer_op_mode,
+>                         ctl->idx - CTL_0);
+>
+> -               ctl->ops.setup_blendstage(ctl, mixer[i].hw_lm->idx,
+> -                       &stage_cfg);
+> +               /*
+> +                * call dpu_hw_ctl_setup_blendstage() to blend layers per stage cfg.
+> +                * There is 4 mixers at most. The first 2 are for the left half, and
+> +                * the later 2 are for the right half.
+> +                */
+> +               if (cstate->num_mixers == 4 && i >= 2)
+> +                       ctl->ops.setup_blendstage(ctl, mixer[i].hw_lm->idx,
+> +                               &stage_cfg, true);
+> +               else
+> +                       ctl->ops.setup_blendstage(ctl, mixer[i].hw_lm->idx,
+> +                               &stage_cfg, false);
+>         }
+>  }
+>
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
+> index 76793201b984e..5d927f23e35b2 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
+> @@ -2049,9 +2049,13 @@ static void dpu_encoder_helper_reset_mixers(struct dpu_encoder_phys *phys_enc)
+>                 if (phys_enc->hw_ctl->ops.update_pending_flush_mixer)
+>                         phys_enc->hw_ctl->ops.update_pending_flush_mixer(ctl, hw_mixer[i]->idx);
+>
+> -               /* clear all blendstages */
+> -               if (phys_enc->hw_ctl->ops.setup_blendstage)
+> -                       phys_enc->hw_ctl->ops.setup_blendstage(ctl, hw_mixer[i]->idx, NULL);
+> +               /* clear all blendstages in both left and right */
+> +               if (phys_enc->hw_ctl->ops.setup_blendstage) {
+> +                       phys_enc->hw_ctl->ops.setup_blendstage(ctl,
+> +                               hw_mixer[i]->idx, NULL, false);
+> +                       phys_enc->hw_ctl->ops.setup_blendstage(ctl,
+> +                               hw_mixer[i]->idx, NULL, true);
+> +               }
+>         }
+>  }
+>
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.c
+> index 602dfad127c2a..2072d18520326 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.c
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.c
+> @@ -478,12 +478,13 @@ static const struct ctl_blend_config ctl_blend_config[][2] = {
+>  };
+>
+>  static void dpu_hw_ctl_setup_blendstage(struct dpu_hw_ctl *ctx,
+> -       enum dpu_lm lm, struct dpu_hw_stage_cfg *stage_cfg)
+> +       enum dpu_lm lm, struct dpu_hw_stage_cfg *stage_cfg, bool right)
+>  {
+>         struct dpu_hw_blk_reg_map *c = &ctx->hw;
+>         u32 mix, ext, mix_ext;
+>         u32 mixercfg[5] = { 0 };
+>         int i, j;
+> +       int pipe_start, pipe_end;
+>         int stages;
+>         int pipes_per_stage;
+>
+> @@ -502,13 +503,27 @@ static void dpu_hw_ctl_setup_blendstage(struct dpu_hw_ctl *ctx,
+>         if (!stage_cfg)
+>                 goto exit;
+>
+> +       /*
+> +        * For quad pipe case, blend pipes in right side separately. Otherwise,
+> +        * all content is on the left half by defaut (no splitting case).
+> +        */
+> +       if (!right) {
 
-I have missed those as they are not threaded to the cover letter. You
-can either use --in-reply-to when sending patches separately from the
-cover letter or use can use --compose/--cover-leter when sending patches
-through git-send-email
+I think the approach to set PIPES_PER_STAGE to 4 is incorrect. It
+complicates the code too much. Instead please use two separate
+instances, each one representing a single LM pair and corresponding
+set of SW pipes. Yes, you'd have to iterate over them manually.
+However I think it's also going to make code simpler.
 
-> Even if there are sufficient anonymous pages and a small number of
-> page cache and mapped file pages, mapped file pages will still be reclaimed.
-> Here is an example of anonymous pages being sufficient but mapped
-> file pages still being reclaimed:
-> Swappiness has been set to the maximum value.
-> 
-> cat memory.stat | grep -wE 'anon|file|file_mapped'
-> anon 3406462976
-> file 332967936
-> file_mapped 300302336
-> 
-> echo 1g > memory.reclaim swappiness=200 > memory.reclaim
-> cat memory.stat | grep -wE 'anon|file|file_mapped'
-> anon 2613276672
-> file 52523008
-> file_mapped 30982144
+> +               pipe_start = 0;
+> +               pipe_end = pipes_per_stage == PIPES_PER_STAGE ? 2 : 1;
 
-This seems to be 73% (ano) vs 27% (file) balance. 90% of the 
-file LRU seems to be mapped which matches 90% of file LRU reclaimed
-memory to be mapped. So the reclaim is proportional there.
+pipe_end = pipes_per_stage
 
-But I do understand that this is still unexpected when swappiness=200
-should make reclaim anon oriented. Is this MGLRU or regular LRU
-implementation?
+> +       } else {
+> +               pipe_start = 2;
+> +               pipe_end = PIPES_PER_STAGE;
 
-Is this some artificial workload or something real world?
+So, the right part always has 2 pipes? What if the
+DPU_MIXER_SOURCESPLIT isn't supported?
 
 
--- 
-Michal Hocko
-SUSE Labs
+> +       }
+> +
+> +       DRM_DEBUG_ATOMIC("blend lm %d on the %s side\n", lm - LM_0,
+> +                        right ? "right" : "left");
+>         for (i = 0; i <= stages; i++) {
+>                 /* overflow to ext register if 'i + 1 > 7' */
+>                 mix = (i + 1) & 0x7;
+>                 ext = i >= 7;
+>                 mix_ext = (i + 1) & 0xf;
+>
+> -               for (j = 0 ; j < pipes_per_stage; j++) {
+> +               for (j = pipe_start; j < pipe_end; j++) {
+>                         enum dpu_sspp_multirect_index rect_index =
+>                                 stage_cfg->multirect_index[i][j];
+>                         enum dpu_sspp pipe = stage_cfg->stage[i][j];
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.h
+> index 557ec9a924f81..2dac7885fc5e7 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.h
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.h
+> @@ -25,6 +25,8 @@ struct dpu_hw_ctl;
+>  /**
+>   * struct dpu_hw_stage_cfg - blending stage cfg
+>   * @stage : SSPP_ID at each stage
+> + *          The first 2 in PIPES_PER_STAGE(4) are for the first SSPP.
+> + *          The 3rd/4th in PIPES_PER_STAGE(4) are for the 2nd SSPP.
+>   * @multirect_index: index of the rectangle of SSPP.
+>   */
+>  struct dpu_hw_stage_cfg {
+> @@ -243,7 +245,7 @@ struct dpu_hw_ctl_ops {
+>          * @cfg       : blend stage configuration
+>          */
+>         void (*setup_blendstage)(struct dpu_hw_ctl *ctx,
+> -               enum dpu_lm lm, struct dpu_hw_stage_cfg *cfg);
+> +               enum dpu_lm lm, struct dpu_hw_stage_cfg *cfg, bool right);
+>
+>         void (*set_active_pipes)(struct dpu_hw_ctl *ctx,
+>                 unsigned long *fetch_active);
+>
+> --
+> 2.34.1
+>
+
+
+--
+With best wishes
+Dmitry
 
