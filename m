@@ -1,58 +1,60 @@
-Return-Path: <linux-kernel+bounces-307272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B113B964B2C
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 18:13:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC660964B33
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 18:14:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6430B1F2705C
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:13:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC00A1C20D02
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:14:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF8BB1B29D2;
-	Thu, 29 Aug 2024 16:13:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7154C1B582D;
+	Thu, 29 Aug 2024 16:13:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HxQMC6M2"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="W1d8MuIA"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E53C41B0132
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 16:13:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28C0F1B3B1D
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 16:13:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724947999; cv=none; b=dctwJYw04jInzFeUlGGlxidFn8KuppBbdWIQJN+Dt9oPXKAruBDyDQBwiSn4gleXU30ZiuqbTrR+WnloowqdQCoiQu+XC2baWo6S4yJE5xG/9fxr8M970B80azLj9SCi+UsI7s7w9GwcTE/+UmLHoAzqGtTrAZage+sh0+JP1sA=
+	t=1724948003; cv=none; b=t8VAo1yIbXz5V4IMdqCSFPquNjXkVeiXxi7Pm8ZA3x11Eq0bDCSALxUkMpYbLfv2RSZi/DFAPd1857N/FjtP/2I43BMHuIrEzMrEZo4QqQXAbOX2Meu/1/4BmmBIlZRJlf5D4saTlSAdpOCGQjJliTZ8upENKhXqS1Rdi3JS1pA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724947999; c=relaxed/simple;
-	bh=kkmk67njSj3RYt5xQQFMEzZ1Ur9x+vmFtoczjMZFm9w=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WmkPsiwg2DkElkeqrvhEr54X+cjX/f1naq7ScK4s7mIby2/mFomeoF2xR7IJvcMR9Q8ISemyvPlScc3ZgkT+I0Nupr5VZNXWaPrwe6AzOvCiMfZdg/fdSx6O7OpuANQEWltxlffc55k9I4iU9s8G1KIldN8OmQtht72CBPXAfy8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HxQMC6M2; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1724948003; c=relaxed/simple;
+	bh=Pby3DcZyp14RhAJleSoL2znXIzFMNtZrCFUDqVhutQM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=JFR2pHMGMejIYw8Zy5kDBz4CMBJkO91OXNagWfrceGZSjIBt1NkcEOSrwUGEfx6+S92Dkp7UehOWJZMfc0lejf/FDdyF9Ylvn8EuitIpckQ7CnGIT6V4RSxdVKTKqSEwiFSsz3Kt5IYfv9FLZR2f+UDWSBgt83ogy2nqoP9NoEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=W1d8MuIA; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724947996;
+	s=mimecast20190719; t=1724948001;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=COFAXD9yJzZM407zOzOxKIdk87f2SuuzWb/JWLyEDEQ=;
-	b=HxQMC6M2KeYOcAEnm4drUXxUnL/BbBX7Ecjm1+d3G2YuU6onMtELNLVW0oja2jVPOyxS/T
-	7xarifghFP7H69q3UtwxPSGkvYQthjU2tKkeg6tgEWPS2lVJ/seWZgRQ5S9QuAbkjdZw6T
-	wkAllD99tNBT6yOyTO0JWgngbsCi3Zk=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BHimdIgejLVZPp9ejvAk3wHq7yXS/6u29ozuQ5c+vvI=;
+	b=W1d8MuIApR606c3QXmmERhptHV5pNCk/9pSt4LVVZbKfsM3loyQ0U6NejYTQj6I7bvcN1X
+	//zJRpmiIwaMTo2cULr1Xvo2HRxhgXGACO9jXH9LCxXrQj4aRJEnyTLJGf5ZCQJO+DdSV+
+	zMdYc+HjaTSEEgm928k9OB5jdbkij5g=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-445-OabU_tjOOj-RCPzIQMtzlg-1; Thu,
- 29 Aug 2024 12:13:12 -0400
-X-MC-Unique: OabU_tjOOj-RCPzIQMtzlg-1
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-682-Dyel0zHIPsOwWpnsL2v1sA-1; Thu,
+ 29 Aug 2024 12:13:17 -0400
+X-MC-Unique: Dyel0zHIPsOwWpnsL2v1sA-1
 Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E07301954B1F;
-	Thu, 29 Aug 2024 16:13:10 +0000 (UTC)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5BF2F1956048;
+	Thu, 29 Aug 2024 16:13:15 +0000 (UTC)
 Received: from laptop.redhat.com (unknown [10.39.194.81])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id A448A19560AA;
-	Thu, 29 Aug 2024 16:13:05 +0000 (UTC)
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 47AE619560AA;
+	Thu, 29 Aug 2024 16:13:11 +0000 (UTC)
 From: Eric Auger <eric.auger@redhat.com>
 To: eric.auger.pro@gmail.com,
 	eric.auger@redhat.com,
@@ -67,9 +69,11 @@ To: eric.auger.pro@gmail.com,
 	alexandre.torgue@foss.st.com,
 	joabreu@synopsys.com
 Cc: msalter@redhat.com
-Subject: [RFC PATCH 0/5] vfio: platform: reset: Introduce tegra234 mgbe reset module
-Date: Thu, 29 Aug 2024 18:11:04 +0200
-Message-ID: <20240829161302.607928-1-eric.auger@redhat.com>
+Subject: [RFC PATCH 1/5] vfio_platform: Introduce vfio_platform_get_region helper
+Date: Thu, 29 Aug 2024 18:11:05 +0200
+Message-ID: <20240829161302.607928-2-eric.auger@redhat.com>
+In-Reply-To: <20240829161302.607928-1-eric.auger@redhat.com>
+References: <20240829161302.607928-1-eric.auger@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,56 +83,83 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-We introduce a new vfio platform reset module for the tegra234
-Multi-Gigabit Ethernet (MGBE).
+Reset modules need to access some specific regions. It may
+easier and safer to refer to those regions using their
+name instead of relying on their index.
 
-This reset driver is more complex than previous ones because some
-resources need to be prepared and released (clocks and reset). The
-existing infrastructure was too simplistic to do that. So this series
-extends the original single reset function to an ops struct enhanced
-with optional open/close callbacks.
+So let's introduce a helper that looks for the
+struct vfio_platform_region with a given name.
 
-There the reset and clocks are handled. the functions are
-called on open_device/close_device callback. That's questionable
-whether this should be called in init/release instead but memory
-regions cannot be ioremapped at that time since
-vfio_platform_regions_init is called on .opendevice.
+Signed-off-by: Eric Auger <eric.auger@redhat.com>
 
-The actual reset toggles the mac reset, disable mac interrupts,
-stop DMA requests and do a SW reset.
+---
 
-The reset code is inspired of the native driver:
-net/ethernet/stmicro/stmmac/dwxgmac2_dma.c and
-net/ethernet/stmicro/stmmac/dwmac-tegra.c
+I don't know if reg names described in binding yaml are guaranteed to
+appear in the listed order. I guess no, hence the reg-names.
+In my case, for the host tegra234 dt node, regs I even observe regs that
+are not documented in the yaml:
+mac, xpcs, macsec-base, hypervisor whereas yaml only describes
+hypervisor, mac, xpcs
+---
+ drivers/vfio/platform/vfio_platform_common.c  | 14 ++++++++++++++
+ drivers/vfio/platform/vfio_platform_private.h |  5 +++++
+ 2 files changed, 19 insertions(+)
 
-This series can be found at:
-https://github.com/eauger/linux/tree/tegra234-mgbe-reset-module-rfc
-
-The qemu series to test with can be found at
-https://github.com/eauger/qemu/tree/tegra234-mgbe-rfc
-
-Best Regards
-
-Eric
-
-
-Eric Auger (5):
-  vfio_platform: Introduce vfio_platform_get_region helper
-  vfio_platform: reset: Prepare for additional reset ops
-  vfio_platform: reset: Introduce new open and close callbacks
-  vfio-platform: Add a new handle to store reset data
-  vfio/platform: Add tegra234-mgbe vfio platform reset module
-
- drivers/vfio/platform/reset/Kconfig           |   7 +
- drivers/vfio/platform/reset/Makefile          |   2 +
- .../platform/reset/vfio_platform_amdxgbe.c    |   7 +-
- .../reset/vfio_platform_calxedaxgmac.c        |   7 +-
- .../reset/vfio_platform_tegra234_mgbe.c       | 245 ++++++++++++++++++
- drivers/vfio/platform/vfio_platform_common.c  |  78 ++++--
- drivers/vfio/platform/vfio_platform_private.h |  43 ++-
- 7 files changed, 358 insertions(+), 31 deletions(-)
- create mode 100644 drivers/vfio/platform/reset/vfio_platform_tegra234_mgbe.c
-
+diff --git a/drivers/vfio/platform/vfio_platform_common.c b/drivers/vfio/platform/vfio_platform_common.c
+index e53757d1d095..6861f977fd5b 100644
+--- a/drivers/vfio/platform/vfio_platform_common.c
++++ b/drivers/vfio/platform/vfio_platform_common.c
+@@ -153,6 +153,7 @@ static int vfio_platform_regions_init(struct vfio_platform_device *vdev)
+ 		vdev->regions[i].addr = res->start;
+ 		vdev->regions[i].size = resource_size(res);
+ 		vdev->regions[i].flags = 0;
++		vdev->regions[i].name = res->name;
+ 
+ 		switch (resource_type(res)) {
+ 		case IORESOURCE_MEM:
+@@ -188,6 +189,19 @@ static int vfio_platform_regions_init(struct vfio_platform_device *vdev)
+ 	return -EINVAL;
+ }
+ 
++struct vfio_platform_region*
++vfio_platform_get_region(struct vfio_platform_device *vdev, const char *name)
++{
++	int i;
++
++	for (i = 0; i < vdev->num_regions; i++) {
++		if (!strcmp(vdev->regions[i].name, name))
++			return &vdev->regions[i];
++	}
++	return NULL;
++}
++EXPORT_SYMBOL_GPL(vfio_platform_get_region);
++
+ static void vfio_platform_regions_cleanup(struct vfio_platform_device *vdev)
+ {
+ 	int i;
+diff --git a/drivers/vfio/platform/vfio_platform_private.h b/drivers/vfio/platform/vfio_platform_private.h
+index 8d8fab516849..20d67634bc41 100644
+--- a/drivers/vfio/platform/vfio_platform_private.h
++++ b/drivers/vfio/platform/vfio_platform_private.h
+@@ -37,6 +37,7 @@ struct vfio_platform_region {
+ 	resource_size_t		size;
+ 	u32			flags;
+ 	u32			type;
++	const char		*name;
+ #define VFIO_PLATFORM_REGION_TYPE_MMIO	1
+ #define VFIO_PLATFORM_REGION_TYPE_PIO	2
+ 	void __iomem		*ioaddr;
+@@ -104,6 +105,10 @@ int vfio_platform_set_irqs_ioctl(struct vfio_platform_device *vdev,
+ void __vfio_platform_register_reset(struct vfio_platform_reset_node *n);
+ void vfio_platform_unregister_reset(const char *compat,
+ 				    vfio_platform_reset_fn_t fn);
++
++struct vfio_platform_region *
++vfio_platform_get_region(struct vfio_platform_device *vdev, const char *name);
++
+ #define vfio_platform_register_reset(__compat, __reset)		\
+ static struct vfio_platform_reset_node __reset ## _node = {	\
+ 	.owner = THIS_MODULE,					\
 -- 
 2.41.0
 
