@@ -1,152 +1,153 @@
-Return-Path: <linux-kernel+bounces-306718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F6C496427F
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:01:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1712A964296
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:05:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA9241F27CDF
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 11:01:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE6771F262B1
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 11:05:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7BD419049B;
-	Thu, 29 Aug 2024 11:01:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25F2119148A;
+	Thu, 29 Aug 2024 11:05:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zKOZwvn3"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HL1vgj10"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 303C118A6D1
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 11:01:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1D4518F2C1;
+	Thu, 29 Aug 2024 11:05:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724929296; cv=none; b=UvL8owHWTE+HNYr8usnyeBNervswRxYjvB17T7NAZT2fCUKuJTwO0z4pTtoAw28R0hUhwYmcy8lEO1PoIKgfRw+pXAyyhWhCjq8W/lIrLaxuEXPDdkAEykSbC2/EPyVauiMcPyuh/Vvsgj8NhRwdtHU2sA9uGTHEb2mebYOCkKs=
+	t=1724929523; cv=none; b=G1ELFUwQrGxUOzOyBTTri5q+61XHSKT2DYS2P/M6X9qJkCBKDI3W5sT6H1nnYtfhMGMGuGe3243C5es2mBZ1DusXOiTq0bhQ+5jYotkVjDr0TOhq8VGgbwICfqh4uDmQ9MwSjjOQzUupiUrRkKAHu2DMp4lHTCCyT+qZU0F7wY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724929296; c=relaxed/simple;
-	bh=rEt764ey+j26paKgat0kweJNpYMJCZhhUHP1+vvgiQI=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=K7Gdc/el5R8pqU1Zupk3MAND5jzNsgmxSQ679LfDzkZ/7bB3j5XRr344jiW4GsQj4MyT7/1qSgEVFd9IRbNTkfQeaBOnl/kNocHruJA3e/uKyLWmci+0PlbbP6In+DnpG/qBxTAbrXeOB+wPlV5Wi3Yf4uXdmFZOjXRnxCE6uDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zKOZwvn3; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-42bb7298bdeso5141795e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 04:01:34 -0700 (PDT)
+	s=arc-20240116; t=1724929523; c=relaxed/simple;
+	bh=ANsBIa2TdUYJmIfErVq94w5VFjOAUaSvlwr8O3efTQM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kZOj0NaU0kaQapNNuiH6OrgU7ujjF/TUFBj3bSVCWdlWHN61rnOQi9pZtvxyUfWYHr0keWAqyF5ykElWyq6yUxaXYEeB2cOt20z1uPtYsxgd0d/HglT73JMxK27JXsYdAIPyhfQvLr8a4442ktlkSWkMhMsfZ7rEhLT/BnGaa+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HL1vgj10; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-71431524f33so419884b3a.1;
+        Thu, 29 Aug 2024 04:05:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724929293; x=1725534093; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=bXo6HubkCKATDdKmpK9Rg0frF1Oj5dEqDFqJTWbwDPA=;
-        b=zKOZwvn3zKOx04CJNUX90TAhu53KOwECWNKVpICJK14wuXotfBV1bewPCIFMKkREj4
-         aeXP/2FH3xIWkjeSSGwDdfxUDSoJvyj+icp8Fta/QlrwGKgyzs2wFAdWSaG+CczyWyKA
-         iWwBkXuddh/KVgpRt9VKP5w30inwP4Q42fdunlOlPu8nNYSYTDUbdLm4Amt747ieOfu8
-         H/FyfcGACc+cwkCgw7wrS4mNwoxekgaD74MT1ybyta1J4Z+EK3lSNhXoCJUzIWNwb3eS
-         05sfs9biODtTk/3LEYz+NO0eDBvAnCxk/A1VDblh8RjZF/DkSHInfytmaiZvlVvZFCUt
-         us5w==
+        d=gmail.com; s=20230601; t=1724929521; x=1725534321; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gsCX4I75Bt35ZXKA3R7bksaicVq4gEOUFqU0ER8sKQo=;
+        b=HL1vgj10vF4+lPPraju8eTYEXAMQDUxLlK14dvkOOVFVJFe19+2c4ZK4IycHRbOWCF
+         MjFN7EsuAJEumxeIv2tEoB7hTJ/Z4VF76RaT6CeqIeUDm1FNzQw3vKmrEP6IFN89zqoN
+         iDdKBwkSxiaKm83rwQnz4A/rlUYFXLdrRC8Wrhxbo3x3LuzExzCB8cKSg1hY1sA+veqN
+         gYvF7Mm900jGK4aq2gsZaJS5HXP8mOP4l4Gt9STTOcthakx0wSG/dwMlUBAOXbuzRpAG
+         QcQPZdYRhSF9fbmdMjWeWGxE1G6ci/Lx8v+/76aNPHIGoFC8iStSnBc8gmaI28EJCEoC
+         TwWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724929293; x=1725534093;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=bXo6HubkCKATDdKmpK9Rg0frF1Oj5dEqDFqJTWbwDPA=;
-        b=FyFViyPOql8vN8nO4GdyYPilwC5TvrXfnfkfoJJrfso9TEN6to4d+OqVp2OcNliaZ3
-         EKKH8sTkFy94mdW1x0ivDLZYxRRIYHBn56RlHq6D4yWgZIg9JBpSwnAHdQby/WVgTEss
-         Wu7qpCivX5WE5qH0Ua9hJ/Ou5j0sjMkH5qACaHBsl2HS792RLGKgoMYqGCaPwwOHueMU
-         bgOtuG0EsDwHl+5kZaO/SawrmoqBXfNKrk6Ex9qRkEP2b37kvP3kGiEw5NTJIVVjiB3e
-         i+rWPsHbLrycmWdN8Y7Dg9tCZwmBX/YQO7sHwOHvhSI4QWX4ySgkgjd1LEOeNJg+kivJ
-         DR+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCX+QgEGj/GgVS75IIgOuVaJOXrciXsf2BWfLrJMBk5BNVRXgNijefy/pqShDAjObKK4ekZiK8qYZcD9QtM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIUk+8YQgAnJhoXpACB+zFlMNVtydz2w8RsTvmEPSCt1Ru6/Zn
-	zCzQHFbP+PBEnP8NotZqu7HsbtwaHllDgxHoObXlEQ3XlSX4cnjp8kzrorhzYaQ=
-X-Google-Smtp-Source: AGHT+IEGRHFHlM0ZIqrANJERtt9IfqKCUYiVh/PmrfILo/hL0bRzQIewiOrQKcnbyufRBxVZ5itMFg==
-X-Received: by 2002:a05:600c:4f42:b0:426:6b14:1839 with SMTP id 5b1f17b1804b1-42bb0136dadmr25924465e9.0.1724929292917;
-        Thu, 29 Aug 2024 04:01:32 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:12f5:c9c:a0e1:6915? ([2a01:e0a:982:cbb0:12f5:c9c:a0e1:6915])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42b9d9561b1sm57733065e9.0.2024.08.29.04.01.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 29 Aug 2024 04:01:32 -0700 (PDT)
-Message-ID: <2da89096-a68e-4b9e-ae45-87ccc76c9c72@linaro.org>
-Date: Thu, 29 Aug 2024 13:01:31 +0200
+        d=1e100.net; s=20230601; t=1724929521; x=1725534321;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gsCX4I75Bt35ZXKA3R7bksaicVq4gEOUFqU0ER8sKQo=;
+        b=Pim0e7z0O5Rd8ArSsE3G0Zq2Uo/7RWjQv5cCtqCOGmzPY+MQrqXeMLUfxgo3cAEEY2
+         9orIgANCKiXZ0Yav4/LlBIpBwgkKOCIOIwq6dORMHBhNg0ud1efqYrQXwJp4u+iF4cle
+         cgun+WbHv6HRrknei5idlXzzhlLJSKvnJa1dHYsTlhkAEY+sPL1fROOpYYjAGwG/0cEw
+         6wu8bZMo4rzrcKuWPU4FZqxgAUoPkIL11o+rPeXTIDYkn6PDUPSBc4OWTjj90lyNRp52
+         HvEPbZ3T19rbTQaP5LeNdaWyASU12EKApuFvcqI0SOM6+qUqh3Cm8hefx26LEDg77DrD
+         rR9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUMbWuP35hx3xKnosfx6Xvq4gsZdDuLhTjxa+y1R55rl1yVf6rkabcoc38uo159R9Ri6Q7y6+PECbrM@vger.kernel.org, AJvYcCWj8zbT12PGiYCbeM6Tn7Zmo4B6PJRJYfZmykjAy1K9sDrHRJMExnYL971dbiiOun4Hcjn26wyqEascJrhK@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxCjs/l8SBUZpuu/h74JSRGiqF/bw7ixYGCa5GLxsjYukFwwoC
+	JO2PVbs6E9dtJF4LLO+GCMcAAyj+BX4QpZQm/g2avN0Hw/a0gG9h
+X-Google-Smtp-Source: AGHT+IG5uHzBuuTpBUgVsDRXpGnCV/Y6SAkTlghqjk76zLB5VEdpH82AMuT/Q0uG81tPW1Uzq1lrfA==
+X-Received: by 2002:a05:6a00:1806:b0:714:2069:d90e with SMTP id d2e1a72fcca58-715dfc7a4fbmr3076028b3a.26.1724929521137;
+        Thu, 29 Aug 2024 04:05:21 -0700 (PDT)
+Received: from localhost.localdomain ([59.188.211.160])
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-715e5576cc7sm906671b3a.32.2024.08.29.04.05.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Aug 2024 04:05:20 -0700 (PDT)
+From: Nick Chan <towinchenmi@gmail.com>
+To: Hector Martin <marcan@marcan.st>,
+	Sven Peter <sven@svenpeter.dev>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	asahi@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Cc: ~postmarketos/upstreaming@lists.sr.ht,
+	Nick Chan <towinchenmi@gmail.com>
+Subject: [PATCH RESEND 0/3] Add AIC support for A7-A11 SoCs
+Date: Thu, 29 Aug 2024 19:02:14 +0800
+Message-ID: <20240829110436.46052-1-towinchenmi@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: neil.armstrong@linaro.org
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH v2] drm/panel: novatek-nt35950: transition to mipi_dsi
- wrapped functions
-To: Doug Anderson <dianders@chromium.org>,
- Tejas Vipin <tejasvipin76@gmail.com>
-Cc: maarten.lankhorst@linux.intel.com, mripard@kernel.org,
- tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch,
- quic_jesszhan@quicinc.com, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20240828182210.565861-1-tejasvipin76@gmail.com>
- <CAD=FV=V71VzJk81YALO4ufohL0a4EQuqZVXavbpM=bqHgsf0sw@mail.gmail.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <CAD=FV=V71VzJk81YALO4ufohL0a4EQuqZVXavbpM=bqHgsf0sw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 28/08/2024 21:26, Doug Anderson wrote:
-> Hi,
-> 
-> On Wed, Aug 28, 2024 at 11:26 AM Tejas Vipin <tejasvipin76@gmail.com> wrote:
->>
->> Changes the novatek-nt35950 panel to use multi style functions for
->> improved error handling.
->>
->> Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
->> Signed-off-by: Tejas Vipin <tejasvipin76@gmail.com>
->> ---
->> Changes in v2:
->>      - Style changes
->>      - Fixed changes in logic
->>
->> v1: https://lore.kernel.org/all/20240824084422.202946-1-tejasvipin76@gmail.com/
->> ---
->>   drivers/gpu/drm/panel/panel-novatek-nt35950.c | 211 ++++++------------
->>   1 file changed, 66 insertions(+), 145 deletions(-)
-> 
-> Reviewed-by: Douglas Anderson <dianders@chromium.org>
-> 
-> Neil: Let me know if you want to land this or you want me to land it. Thanks!
-> 
-> -Doug
+Resend to correct dt-bindings issues pointed out by Rob.
 
-I was already applying stuff so I applied it !
+Hi,
 
-Thanks
-Neil
+This series is a second attempt at adding support for A7-A11 SoCs to
+Linux, it is based on a previous attempt, which you can find at [1].
+However, there have been quite a bit of changes.
+
+First, the boot process has changed, now, the boot process includes
+a "1337" version of checkra1n [2], a custom PongoOS binary [3], and
+a modified version of m1n1 [4]. The kernel is appended to m1n1 and loaded
+by it.
+
+This attempt also supports SMP, which has uncovered some differences
+in the A7-A11 AIC. Namely, although A11 supported fast IPI, it only
+supported "global" fast IPIs via SYS_IMP_APL_IPI_RR_GLOBAL_EL1,
+and SYS_IMP_APL_IPI_RR_LOCAL_EL1 does not exist on A11. As a result,
+there are now three feature levels:
+
+A7 - A10: No fast IPI
+A11: "Global" fast IPI
+M1: Global and Local fast IPI
+
+Each feature level is strictly an extension of the previous, for example,
+M1 will also work with the A7-A10 compatible. As a result, the
+modifications only includes if'ing out of features, in order to make
+the existing driver work on older SoCs.
+
+The A10(X) contains P-core and E-core pairs where only one core in each
+pair may be active at one time, controlled by CPU frequency. A RFC patch
+will be posted to disable 32-bit executable support on A10(X), as it only
+supported 16KB page size anyways. However, such a patch is not required
+to run AArch64 Linux on A10. At worst, any attempt to run 32-bit
+executables will result in the process crashing.
+
+Initial device trees will be posted in a later patch series, likely when
+the AIC modifications are accepted.
+
+Asahi Linux downstream kernel note:
+These patches will not work with the Asahi Linux downstream kernel,
+as these earlier SoCs do not support state retention across deep WFI,
+which results in the CPUs going back to RVBAR on cpuidle.
+
+[1]: https://lore.kernel.org/asahi/20221007200022.22844-1-konrad.dybcio@somainline.org/
+[2]: https://checkra.in/1337
+[3]: https://github.com/asdfugil/pongoOS/tree/mini
+[4]: https://github.com/asdfugil/m1n1-idevice
+
+Nick Chan (3):
+  dt-bindings: apple,aic: Document A7-A11 compatibles
+  irqchip/apple-aic: Only access IPI sysregs when use_fast_ipi is true
+  irqchip/apple-aic: Add a new "Global fast IPIs only" feature level
+
+ .../interrupt-controller/apple,aic.yaml       |  8 ++-
+ drivers/irqchip/irq-apple-aic.c               | 49 ++++++++++++++-----
+ 2 files changed, 43 insertions(+), 14 deletions(-)
+
+-- 
+2.46.0
+
 
