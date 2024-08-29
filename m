@@ -1,196 +1,175 @@
-Return-Path: <linux-kernel+bounces-306431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6519963EFC
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:47:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D539D963EFB
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:47:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25B061F252C6
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:47:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 101BE1C24347
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:47:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C72D718A921;
-	Thu, 29 Aug 2024 08:47:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6073E18C03F;
+	Thu, 29 Aug 2024 08:47:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="I/zNwuxh"
-Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2085.outbound.protection.outlook.com [40.107.117.85])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="UtP2Ozji"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1A9823BF
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 08:47:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.85
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724921249; cv=fail; b=K6FNe93q6tQM0JN6pILZ2O3wDQM5JlqAA5P61mmU7HN1MA8bJRblJHyK2f7x5WCfSegYBCajX28ENS+5ZPf8FbmxvHd+Uqgtu6tj+kmfK7NmoC3vK9ZGgxJ8eKpTV3eTFWjEnPErFEkndrX9EspMwFhub0fO3jfsJXbGkIY2iZ8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724921249; c=relaxed/simple;
-	bh=Db8F2+s1yV8lQfxRAQbe4yI1DMxp934GqUtcZyY5Mc0=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=j63v2kDfAfcKcFHcve4FohmyV6zEmwLoq5e+txlnsY8apkW+vxxysofW3hbXVfUpB/Lpx6mkxd2BR8d0MTGypcraa/yBF9RC4vG4wcXJaMLiezddD0Y/3S6FID0w6w2cwDv7mnoDtPgO7HiWQTO+HkOyfp04qHnoYrj3qhmgbNI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=I/zNwuxh; arc=fail smtp.client-ip=40.107.117.85
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=eo2rNVowKfOj8Ezv3VDhMtAjioyTNa5L6cS2sH3Hg2gXz7QHQqHWTmLApYiP0C/U+zOMlHunY6Scd5ssgAKxCVpsqdkoqjC9WBNT39+9NZeG6O/JaMAfuIJ681wLP8mvmmng/RPjI24LkA3mN1dPtdpj5i+uJYcT7bn5pxkme6ecxEuD8M5G9zaoWbV3hyFqgxS2AVR87VqW9CvB+iSBjwjKvtUyuocBH3haH8o3phwUAeaf6FWbdsfWHOR5kt9S/lfIeTsM9l3aU+nUueCYD+cSYgR054/FMG7QL8v7sr//ZIEMRQuFWgENXi+zW3kWmliINxn70TCT8tmygTX0vA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=b500lignV8qxF1i6AiXm6NJohaiRaqtiMNSYa1YkGLE=;
- b=DNgmUu0oL/TVdRKmSYmvX5s7gueXuM7WxVnTSAnez30xeuKBnEKANlDU9FADtZhjYffrKnoEZKhqzOHyIuBmwe7ARM930S+3TUAi+d7pGa9B46K3V2PjVIEG1GSvlLgNGB3EDm5sHjIeS4D5F1OQ4iyd6J7nAKptGWMPxawtlUM95/zi8m0zPv9O7wmURFMlR5qmBfEr9taXJNPdmRIPRjA9GBmgfQ8craoTx1k6ZFQIDOLdiPZNl4GJMMuOSoBXx0F3vwF8urQ5tyhooPTJwyH9snAmLn/m6NQzvZCSE1YlMCFmgbsTpZbGDh4pKVnT6BhD5qqg2fRhTJ6DzCSAVA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=b500lignV8qxF1i6AiXm6NJohaiRaqtiMNSYa1YkGLE=;
- b=I/zNwuxh51psqZwioXC8oCmpfXOoVtnEMoj8PbjfmqfVLoa0Vl5i+TElIEEubygqkT72W7Sc6WO40dRge4NGCZjUvtV2tfzEXA65N0bsAiJpZRiky2fs8cDo5YrlIJGRK/5TnTwkVqGQEsYRB0RmSDJdK/6kkdDTN4V+hIM3+psYrQqRaMFojf0vtzBacYDY4pYsVCh1928cL/opzZeO2FRfW59MBg5dv6CQrQDxSNM/fkG3YBmBSP5sblgQmUg8AJgzbP5xA4DTGcXyjDJ9xaebXxlsWYmv/rpZ/ub9eIf8BSxIVC3yxWKv9om+Hb9niJOn1QYiwx6CgI47WOc9VA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SEZPR06MB5899.apcprd06.prod.outlook.com (2603:1096:101:e3::16)
- by KL1PR06MB5942.apcprd06.prod.outlook.com (2603:1096:820:de::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.27; Thu, 29 Aug
- 2024 08:47:22 +0000
-Received: from SEZPR06MB5899.apcprd06.prod.outlook.com
- ([fe80::8bfc:f1ee:8923:77ce]) by SEZPR06MB5899.apcprd06.prod.outlook.com
- ([fe80::8bfc:f1ee:8923:77ce%3]) with mapi id 15.20.7897.027; Thu, 29 Aug 2024
- 08:47:21 +0000
-From: Shen Lichuan <shenlichuan@vivo.com>
-To: jgross@suse.com,
-	sstabellini@kernel.org
-Cc: oleksandr_tyshchenko@epam.com,
-	xen-devel@lists.xenproject.org,
-	linux-kernel@vger.kernel.org,
-	opensource.kernel@vivo.com,
-	Shen Lichuan <shenlichuan@vivo.com>
-Subject: [PATCH v1] xen/xenbus: Convert to use ERR_CAST()
-Date: Thu, 29 Aug 2024 16:47:10 +0800
-Message-Id: <20240829084710.30312-1-shenlichuan@vivo.com>
-X-Mailer: git-send-email 2.17.1
-Content-Type: text/plain
-X-ClientProxiedBy: TYXPR01CA0065.jpnprd01.prod.outlook.com
- (2603:1096:403:a::35) To SEZPR06MB5899.apcprd06.prod.outlook.com
- (2603:1096:101:e3::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBA334A00
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 08:47:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724921239; cv=none; b=fwK9XfoRYQzC4SQgJzOnmE8ScMCm4PotYmsXuMJktwBzSMW8Ghc3quS8Wm6g7EKRCrCbB5ZQFF7qCcBvL6UECKGHNonGaqwpI7G/aDCkLPwGZh+htpsSnI9isxvvL4nlzCvLEZgeRVSn3WR71P/EelnpVRyhgQxLfjjxp0OnEyA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724921239; c=relaxed/simple;
+	bh=DE5eD6fBGtl09HSN1M4cY+wEm2tkos4cgqP558LNINc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EqdHCW2x7jojg7Grvw83BLBzieLbz0bz3k6f2i1ITS5SHSVKllZ1+esFTbfsvua7cgVAIJtsy2jb0DbQxleKD5HNjKQeBO1d0PHYIB4YTAIABUTAOaJsgQV01+GRcD8cz6sfVp/4waNnmwJEBU3tVgi9aj1ul30wHK3oGuZyTEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=UtP2Ozji; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3719753d365so289333f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 01:47:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1724921235; x=1725526035; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=pV88tQPYEjmTGdra4jfjErhOhEutScS5mgpOhtY7sAw=;
+        b=UtP2OzjiLlZz9jX9IRIcJPBk5MCYpfIzUxHuM/PzQGm5rTbvRUfLz5XaDcuA6RvKqo
+         9l3qmzCpi8i1LThg9SbHTo1Gi/0HDPpU9Lp0Fl7ixovgf5Z7EeVcGsnVeRGCrXE8jgh/
+         hnjYf41FoJtoS8g4tm6NsnCb/prHOa7uATWnLXZiTMtDEAlxBLiAtOdipdpLg2gwSE3X
+         14A0Nmileuk+ljFSPILUw/VxqDa+zLnjCHvrtjfo69h/WCAnUfyhcb42p0OtVXqnOp5F
+         nMiIyOUMrjbuXL6fOCs32FO9F0A6m2ShXolZI+1fdTEGmD7XM3ineP1nkQvpwn0JhnHi
+         LAMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724921235; x=1725526035;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pV88tQPYEjmTGdra4jfjErhOhEutScS5mgpOhtY7sAw=;
+        b=kMlPT3A2dk6Egq09bKoqePVpLohkI9HABEicwaOsQFrE4YH1Mx5wfsAA8obCcLIVA3
+         72kYLqZeZndM/z99Xg5QMVaUSjHpF3XPz907FxMa+uo5ZOuhjZaZYCcet57sZTrbSvhV
+         MfARuxVDLojZvkiOeFsSu2JLiPd+2pQRm6XAZhBZXgcRt0IHA6+bU/6LEcX1Ya5fH/aF
+         SF9ddpP4T6MF8+XQGrh+nJ8V7S59eRz73eHJoW2nxJ+evi6oO83Fi5uxi93l8ENDF62a
+         0flkKj2ylY/CJAVlBePxHRYLsDusbF3+ZXtMpAmmf6DBrDlre5jQClLbJQH2raix7r6G
+         Y1jQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU7XI/UgNLXCc7yRL7Zrdi+pRPK3vwgglLFimeBDBhcO594cv0meyRJRWsGJ0gG360drlrxwC+S5F4lOUw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzvS7ApBHS5+l2GahLiWQdWcMY0M0wSDgHJ56rfwLsSQSBFnd/K
+	1M+qZMwJQJC0LAKkUT0ERJkYTPUOMgl3ru4ysR//7mkDNKUJhnko3A8LNvxma6c=
+X-Google-Smtp-Source: AGHT+IHa1l1ogCO5wxXtuxGcwpTgRvNDt3KxZijBrqo1yk38aHa5tWESUd9a63ASwkmO09IzlVpSng==
+X-Received: by 2002:adf:e5d1:0:b0:368:5858:826e with SMTP id ffacd0b85a97d-3749b585ab4mr1408154f8f.59.1724921234763;
+        Thu, 29 Aug 2024 01:47:14 -0700 (PDT)
+Received: from blmsp ([2001:4091:a245:802f:3a47:b29:5530:28a2])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3749ee40d3csm848957f8f.2.2024.08.29.01.47.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Aug 2024 01:47:14 -0700 (PDT)
+Date: Thu, 29 Aug 2024 10:47:13 +0200
+From: Markus Schneider-Pargmann <msp@baylibre.com>
+To: Nishanth Menon <nm@ti.com>
+Cc: Kevin Hilman <khilman@baylibre.com>, Tero Kristo <kristo@kernel.org>, 
+	Santosh Shilimkar <ssantosh@kernel.org>, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Vibhore Vardhan <vibhore@ti.com>, Dhruva Gole <d-gole@ti.com>, 
+	Akashdeep Kaur <a-kaur@ti.com>
+Subject: Re: [PATCH v10 3/4] firmware: ti_sci: Introduce Power Management Ops
+Message-ID: <rowimkyghjzuwt5hmwgl24oyyyjpth2zpvljc2mnyp5h5o7fyg@tdsdtsvwxfbx>
+References: <20240814-lpm-constraints-firmware-msp-v10-0-bee4314bbdc8@baylibre.com>
+ <20240814-lpm-constraints-firmware-msp-v10-3-bee4314bbdc8@baylibre.com>
+ <20240826164346.e73vfvd4jzezlbc7@cherisher>
+ <56kmiba5cr7re6rdzak5g72pprwfgvme5v4tq6rovrxrd6kefe@5mx5xxdfs7dp>
+ <20240829032423.ou3hqw2sq5wj2ue6@oversight>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SEZPR06MB5899:EE_|KL1PR06MB5942:EE_
-X-MS-Office365-Filtering-Correlation-Id: 63fe6e8c-0a55-4558-9ec8-08dcc807326e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|52116014|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?UN2IgSzRleQMV/lTtKTy3h4lLJjcNNKEXVsMktMZs8RgRzLFHcKxJE90kWpH?=
- =?us-ascii?Q?wfiecmm1WFrEz6cfiG+oev5nExyNUmSSFu4U7ONUllBHTiJycKq4qIGdSciV?=
- =?us-ascii?Q?F/VZlcUNWzZtWZ0nhDRswXWOF54HNOTu6ota68ACvLucQYrqBNcbjRHR79BP?=
- =?us-ascii?Q?nUlArXeYfOomG2kQ+gfcgbCKnHWcNfLYHIIWrWBjW/mE/O/mBMqImYTbYhLK?=
- =?us-ascii?Q?b3VNNOoOWp8xPl8OTMbYhpgu4k1f8qIO5XF39J9dAkWH+bqtmdwyOashTQsu?=
- =?us-ascii?Q?RcEYURi98JpfsOnME9+83uNESUOKKwLhzL25TCI1X7g2vFSv780wp7pLP76x?=
- =?us-ascii?Q?kg1IUx9fedK2Mmj8OVar1Kmjm7GkeMXHX5V5880gDf+VeBf/JZmVieZKEUL+?=
- =?us-ascii?Q?05QgR783kT4ApMvPzjLIuL4o9UZqYgyrljFpdivmJgXlOsbOjc8Izi/CvcTo?=
- =?us-ascii?Q?dYkQXKztln797a+CN+wecvIVpBgseKEAd4EQxa/J3N8/0oxrkyZmD2E9N68I?=
- =?us-ascii?Q?TrD6sfxLRn3JVnJ/b8Glc5wx5/KqAcF0Ro1nOzQ3lSDuDiAudiSlHaCGMXIt?=
- =?us-ascii?Q?/wU7CRq5z9w6pNFBPxt4bNbXxneAN1vXxa4Kd5FPQZmhBuc99EeFju/pP6B9?=
- =?us-ascii?Q?LoVQX3zQGGv2k8mfogYF9/HI3A1HvwEfRTUZoTYyzePQDXQEZN6JWLqjaSSl?=
- =?us-ascii?Q?mok/xHi6rg0K4HQNzj5RMnnf5+PRYef0XAsgaEseNQuhHgY/zLDuO0LLVFz/?=
- =?us-ascii?Q?7l4sm02LevJ6Yo/wd65CSZFCQg1ictQGk8ZmyGwLJfPSFXAZJMjZPjb7ivVW?=
- =?us-ascii?Q?ZScwV9PbsghfJOHXPgqIjsdCl7gxAx2pzVk46S7Rk64qq+PRy+DNs8Nhoy2s?=
- =?us-ascii?Q?m32SJI8WQDkzoeCeQ5DrgT/lOe+snt4zX6a8rmJ8xv/HNC2Zm5Wqe7kEp1IH?=
- =?us-ascii?Q?NVL3XYCZkPkvmy8kIVHrqybtts9c7xnVnTfljmoirjVZ9UlE6q6wx0XX87TG?=
- =?us-ascii?Q?8Zml+uH18l/1PZSIa64AFs5Q3zuHSn5so7N17W502QrVLnvdImUxKMKI4+2L?=
- =?us-ascii?Q?9zD8w2W+76vDCnnDl6Nzyp0yiYHKhSkNhBaE3uAYuFwLtQ/et3L9i9qdmABd?=
- =?us-ascii?Q?TNscYJhGlNvTP5HL01GOAkXgJl9VMDEHPkJLz3TDhfX6Dj6oikDCXEKKZFKf?=
- =?us-ascii?Q?+wn5xs9QWV0FNrXopiowIDMZZEfi0oW//CNX22AX3alIgks4PiE6yt6yNAvb?=
- =?us-ascii?Q?xuoZhd50SaTRDvQrrDpX/zFUuwJZkE5KnzxS4qZzV48DB+WFB2eCaO4VtyGK?=
- =?us-ascii?Q?hs4cfpBq7FSs4g7FIx0F58UX2H0ye1YPNQTAHq0b2xc75Bgfnu61yIpCfjor?=
- =?us-ascii?Q?6MIDBjyp0kCR/5CBC/bnG02du/U0KjxsGwH5AfoPZgiExUVdsg=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5899.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(52116014)(366016)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?FiDEyz4/tF4XmV+wGadzZRYjXgJo1ij+XkYDx9eZqACUv0PwjwxxDK1cc5pz?=
- =?us-ascii?Q?lTaKGQvZffH4axVNXU/kxRrmtKRJ2+YBw5Ue+UslKLZYbsHGVdAPtvNr1AZF?=
- =?us-ascii?Q?S0EdvnIKhP+Nc4JSBkbAM/upgBzccc3079EmCsheNg6Npa3CSf84XwFLD/sx?=
- =?us-ascii?Q?S0qXXSG9wJsO0+XY4A22PLiqTrh0eO/a+iVVZEna/Zlt1zb/g8O0c4nsL5Vg?=
- =?us-ascii?Q?yP3WppxpgfIffN4sEnpFdqq89Y61O2U0FXZTFjH3T1qKn7JjkT5C3+DNvkC7?=
- =?us-ascii?Q?00cudv7pBE0yrYa1HOFqxK30mXUiDyoatIXqx0wXVxoCNAztbzmTROwbviB9?=
- =?us-ascii?Q?dBbGNl6XnY+Q7rQxmbQcgwTmRSHt2eROGe5TiX+opByqZY1V6jVGjFmXIp8+?=
- =?us-ascii?Q?DArKNw1AIBSRNxiMJcjtk1APr8H9myBeqhVnzb+4OU0KHSlOCr4kmka3Xe2P?=
- =?us-ascii?Q?TMcyGen/V2VQSjGW8Eu/cjt/9ECiMDuSjIAwfGD5rFmRfY0imgRVQP8waiz6?=
- =?us-ascii?Q?cnIbLnGx7zoLL6ZDa+6JjeDMHYBsxunzBqDSy19Jz6tJJClSF1yMOdNgpr/S?=
- =?us-ascii?Q?HvtMbwZGHjTy9Tg0ViJc6aZ+xcStohy4fYUdEi/ENTfVR4U3xgnPn5fwWsyQ?=
- =?us-ascii?Q?Mt1hZg7c/H3xUEraqOHeCUZiX4JafX4ewNN2ZDEx3awvlj9AQ5YiZaTjrr4B?=
- =?us-ascii?Q?3A2tzA6vgIjt0q79OM7a74vmXOHX/hkHuLOCjiEzYtx3nBbhwQTQuemy6DqH?=
- =?us-ascii?Q?72C4d6yCDUghYSY8jsydbvvxt4u2bQ/BuVovxvgCwAFNqPVuo5Elf9Wyye6G?=
- =?us-ascii?Q?LdJ/spPmbL+rdPkdxfJOAmNFAnW/1xNSUIC53XMg8lSxIA03lrIfShYwYYPO?=
- =?us-ascii?Q?ymypckXmNOykgwdr67o6VNOAMEXQMXBkQ3qSe9r4qibCOlWJkPv6dh44Qt+Y?=
- =?us-ascii?Q?c+TRtrPN/pKQ/uM8TyhtbHWOO6n6NTg9SFkg5iHzJw4GgbKI3XUKsdwAmqNJ?=
- =?us-ascii?Q?QglRXq8BA5BJYzV5/6jVWl9vuiz2VRR+Eycu8KCYuEHFwyw45pExc15N6yup?=
- =?us-ascii?Q?gdMc/muFxJKFQxwTf2xNSdE4jjc0kTR80/LSNDGSDXcM/DWvkve043iyf8pN?=
- =?us-ascii?Q?hyRxf5nYXnCzJ6mHbFTL1IBYoxb9PfbgS6EWorFCVF3zaLUi9em0jGVH7xkY?=
- =?us-ascii?Q?2DqROqCRajtcyq5vlsa1hdrtpRYemD0736sc53xV0hjjM7s/jpgONmSJx9pg?=
- =?us-ascii?Q?zaMoCybJ93L6T2PY1ZBgmd6p22xy2UZmfmpmGHgpMUFIOjdesbygvoN61oSL?=
- =?us-ascii?Q?7ulfMv1jht5LcOoUI8Z2TAHyrXYscgpDsfE7NIB4nD5wPOvrx0yL2INZFC32?=
- =?us-ascii?Q?uHVb3g5mAPCJ/RDbRrQaVgKaOQ/o3UROwu5EnA2RYkwlHN3RtGVXzoOtVl4W?=
- =?us-ascii?Q?kNPpGpGiIJU9aFa58taQqXZNC8ophbB8CFWYbYAVeJMY+JPh1qDiow39OsZo?=
- =?us-ascii?Q?U1kCP2g0g4nlLQPC8F46JMBlK9u/3zFIUBV2fbAqr7PBgArXeml/88skWyq/?=
- =?us-ascii?Q?TfaXGnravaTz1KZyoSxmU83U9mmVS25DQbyawJm2?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 63fe6e8c-0a55-4558-9ec8-08dcc807326e
-X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5899.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Aug 2024 08:47:21.8505
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: pz1Kgi5kucEOMF5kVu7zr+srHI/G97KRb5Zpw6SAfCp2ox1vir7CBfvNsIhMUcVlWzTf7ltqFq6nigwLMvH2vg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR06MB5942
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240829032423.ou3hqw2sq5wj2ue6@oversight>
 
-Use ERR_CAST() as it is designed for casting an error pointer to 
-another type.
+Hi Nishanth,
 
-This macro utilizes the __force and __must_check modifiers, which instruct 
-the compiler to verify for errors at the locations where it is employed.
+On Wed, Aug 28, 2024 at 10:24:23PM GMT, Nishanth Menon wrote:
+> On 21:54-20240828, Markus Schneider-Pargmann wrote:
+> > Hi Nishanth,
+> > 
+> > thanks for your review. I will integrate fixes for all your comments
+> > into the next version.
+> > 
+> > On Mon, Aug 26, 2024 at 11:43:46AM GMT, Nishanth Menon wrote:
+> > > On 08:39-20240814, Kevin Hilman wrote:
+> > > [...]
+> > > > diff --git a/include/linux/soc/ti/ti_sci_protocol.h b/include/linux/soc/ti/ti_sci_protocol.h
+> > > > index 1f1871e23f76..4ba9e520a28f 100644
+> > > > --- a/include/linux/soc/ti/ti_sci_protocol.h
+> > > > +++ b/include/linux/soc/ti/ti_sci_protocol.h
+> > > > @@ -199,6 +199,47 @@ struct ti_sci_clk_ops {
+> > > >  #define TISCI_MSG_VALUE_IO_ENABLE			1
+> > > >  #define TISCI_MSG_VALUE_IO_DISABLE			0
+> > > >  
+> > > > +/* TISCI LPM wake up sources */
+> > > > +#define TISCI_MSG_VALUE_LPM_WAKE_SOURCE_WKUP_I2C0	0x00
+> > > > +#define TISCI_MSG_VALUE_LPM_WAKE_SOURCE_WKUP_UART0	0x10
+> > > > +#define TISCI_MSG_VALUE_LPM_WAKE_SOURCE_MCU_GPIO0	0x20
+> > > > +#define TISCI_MSG_VALUE_LPM_WAKE_SOURCE_WKUP_ICEMELTER0	0x30
+> > > > +#define TISCI_MSG_VALUE_LPM_WAKE_SOURCE_WKUP_TIMER0	0x40
+> > > > +#define TISCI_MSG_VALUE_LPM_WAKE_SOURCE_WKUP_TIMER1	0x41
+> > > > +#define TISCI_MSG_VALUE_LPM_WAKE_SOURCE_WKUP_RTC0	0x50
+> > > > +#define TISCI_MSG_VALUE_LPM_WAKE_SOURCE_RESET		0x60
+> > > > +#define TISCI_MSG_VALUE_LPM_WAKE_SOURCE_USB0		0x70
+> > > > +#define TISCI_MSG_VALUE_LPM_WAKE_SOURCE_USB1		0x71
+> > > > +#define TISCI_MSG_VALUE_LPM_WAKE_SOURCE_MAIN_IO		0x80
+> > > > +#define TISCI_MSG_VALUE_LPM_WAKE_SOURCE_MCU_IO		0x81
+> > > 
+> > > ^^ I assume these are daisy chain sources. - will these remain OR do we
+> > > have to consider the wake sources SoC dependent? If so, the
+> > > sci_protocol.h will be SoC agnostic..
+> > 
+> > These are all wakeup sources from LPM for the AM62 family of SoCs, not
+> > only daisy chain sources. The currently defined wakeup sources are
+> > relevant for am62x/a/p but will also be reused for others where
+> > possible. Otherwise these can be extended in the future for other wakeup
+> > sources.
+> > 
+> 
+> OK -> I should have been clear, but, I think you also caught on it
+> when you said am62x/a/p extended for future wakeup sources - sure..
+> with 32 bits you can indeed reach a large range.. BUT:
+> 
+> MAIN_DOMAIN, MCU_DOMAIN are specific to a SoC part architecture, it is
+> not a generic K3 SoC family architecture concept - the power domains
+> will vary depending on device - same with the list of peripherals used
+> as wakeup source - is WKUP_I2C0 always present in all devices with
+> wakeup, Do all K3 devices have USB0 and 1 always? We should not bet on
+> that.
+> 
+> ti_sci_protocol.h is meant as a generic SoC family level header. I see
+> these as possibly hardware specific description.
+> 
+> Lastly, I do not see the macros used either in the patch series.. I
+> understand the ti_sci_protocol.h is meant to standardize stuff in
+> other driver (I tried searching to see if some other series used
+> it[1], but I could not find a reference)..
+> 
+> So, wondering: Is DT the right place for that - With a DT header ABI
+> header that is shared between driver and dt? I don't understand the
+> modelling of how wakeup_reason is getting used from this series, so I
+> cannot comment better..
 
-Signed-off-by: Shen Lichuan <shenlichuan@vivo.com>
----
- drivers/xen/xenbus/xenbus_xs.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Thanks for explaining. So should I add the header already with this
+series although it is unused right now, or should we add it together
+with the first actual user later on, so there is no unused header in the
+meantime?
 
-diff --git a/drivers/xen/xenbus/xenbus_xs.c b/drivers/xen/xenbus/xenbus_xs.c
-index 028a182bcc9e..d32c726f7a12 100644
---- a/drivers/xen/xenbus/xenbus_xs.c
-+++ b/drivers/xen/xenbus/xenbus_xs.c
-@@ -427,12 +427,12 @@ char **xenbus_directory(struct xenbus_transaction t,
- 
- 	path = join(dir, node);
- 	if (IS_ERR(path))
--		return (char **)path;
-+		return ERR_CAST(path);
- 
- 	strings = xs_single(t, XS_DIRECTORY, path, &len);
- 	kfree(path);
- 	if (IS_ERR(strings))
--		return (char **)strings;
-+		return ERR_CAST(strings);
- 
- 	return split(strings, len, num);
- }
-@@ -465,7 +465,7 @@ void *xenbus_read(struct xenbus_transaction t,
- 
- 	path = join(dir, node);
- 	if (IS_ERR(path))
--		return (void *)path;
-+		return ERR_CAST(path);
- 
- 	ret = xs_single(t, XS_READ, path, len);
- 	kfree(path);
--- 
-2.17.1
+Best
+Markus
 
+> 
+> [1] https://lore.kernel.org/all/?q=TISCI_MSG_VALUE_LPM_WAKE_SOURCE_MAIN_IO
+> -- 
+> Regards,
+> Nishanth Menon
+> Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
 
