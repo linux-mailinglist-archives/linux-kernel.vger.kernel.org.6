@@ -1,93 +1,107 @@
-Return-Path: <linux-kernel+bounces-307358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1A22964C5D
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 19:00:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C8D8964CA2
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 19:08:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B99C1F220F2
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 17:00:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 112FB282932
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 17:08:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 042CC1B8EB5;
-	Thu, 29 Aug 2024 16:58:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 704821B6545;
+	Thu, 29 Aug 2024 17:08:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="RdakdhlT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="GTRwDYmV"
+Received: from smtp.smtpout.orange.fr (smtp-30.smtpout.orange.fr [80.12.242.30])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4144B1B5EDA
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 16:58:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 876231B5ECA;
+	Thu, 29 Aug 2024 17:08:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724950715; cv=none; b=MXDWhpteFoFj/4aqBCQtqGXHkVVmqfXrlDCDcZmEbaGpRAT2aCHL+QmdZlyNBjD5WUkozmB2iy4RHRLy4BGR93ja+LnNtw29hTVDkMk0hXr54mrih7SyxJpzDZsRhlINfF4Ade1DwpRDUbinqNJa5ZvmQRQIn7aCz5izGu4+p3c=
+	t=1724951317; cv=none; b=SXx9nznRk2E7zmZ/XrBSCa9qZK0OotFWYLLd4iD+2mZggc/kn6fmC4seboyPVLJn3KseYp9G7pf7MwKLGPVfqfJQSwWVGvxbqGmw09XR+pJsoUq0J4VJrjVkKslBlSMlUjKovclhtyjSu1+cplmzPdGvF8/Jn5zfM7Kg1Td19f4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724950715; c=relaxed/simple;
-	bh=pekwcQ8/RWaQOHU+/KJilF5YGUx4SDuVTZoD0o/aQH4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H0r+dD6mOcAEj1x+Zy7waeshV3jfYZ8cnuAyNfpPnTOdhkmPCl66EDDno3QQjPajcsDT2QxXRCLcTvL9BhSaczS+Uquy2Hm16FmOk5neQAagU5G8m/Jchlw0CPSkQcAqqJvG8BKG7OybHWJh69FhgfIBg8O1YXZmBo3xvZ/A+wY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=RdakdhlT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31FC5C4CEC1;
-	Thu, 29 Aug 2024 16:58:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1724950714;
-	bh=pekwcQ8/RWaQOHU+/KJilF5YGUx4SDuVTZoD0o/aQH4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RdakdhlT6al2PPds7eU3pZzTu1GObu2GQlKFYGv6GZYfRswtVbMOFdz8v/qNSbwH8
-	 E1P9wJoIO/nBIYCmWYNm8SUtqNHrILzpP6eTvJA3OBYqeLn7Eiq3PrwH1SfOlIS/DG
-	 8SuoFvyyDSPOLNpwaRd4ZLBqrfTwHqGW3Xm1V2Lo=
-Date: Thu, 29 Aug 2024 18:58:31 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Willem de Bruijn <willemb@google.com>
-Cc: Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>, cve@kernel.org,
-	linux-kernel@vger.kernel.org, Tao Liu <thomas.liu@ucloud.cn>
-Subject: Re: CVE-2022-48936: gso: do not skip outer ip header in case of ipip
- and net_failover
-Message-ID: <2024082958-distress-outmatch-ab28@gregkh>
-References: <2024082224-CVE-2022-48936-9302@gregkh>
- <z3hh3yrf5wym3obgol6obh3dkmqoc3rwbkj23qcmadf63b47h2@nn2232wngans>
- <2024082854-reassign-uniformed-2c2f@gregkh>
- <jsnwzpmezgju7r7nkcauaicthkzizsqglb6p43zq25cdvdgbgt@dlkgwkch52qi>
- <CA+FuTSeHvADR5qbWnzRpYtpvNcvYrAeXAj8LYczUFLKREDwfpQ@mail.gmail.com>
+	s=arc-20240116; t=1724951317; c=relaxed/simple;
+	bh=nCsfZR0DC6lf6gcln2KJvvNw1BZHYsRdAEITqq8RUd4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cJSVSuFXm1H2Lfwa0IL36dNxKqVuvZ/wAxXE9kA08t+ThNPL8KHHVW5BY2ti+McF1a7BS4LYSmzrTmR5SDAGpFek38K54NgByHJ6rw0cl+Ewbk0uR3SjrV79zrLee8LjfrRrox8hEcZBXRf06gkuSrhEkfrj4eBptQN9Y3D2CJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=GTRwDYmV; arc=none smtp.client-ip=80.12.242.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id jiUCsyvkeaZQfjiUCsKfCa; Thu, 29 Aug 2024 18:59:06 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1724950746;
+	bh=U0rARhUcsMEGaXLPrLb2Io5v6VQIJivXpcySQ5zqyt0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=GTRwDYmVWu7ZmIc/5J4OSl7GuXt7Xblb9X4HcsI+x0+SKyL48fTUgSpTx5YVyuMBE
+	 J2VR0vAwQh1ZDrZSg0ZMlba+knOddlqLh3MXtYlqJJd1itWWDhlRC11LSAESVZup8d
+	 Nm70Lb8SYQvYErTVKwOJScy3VEEjfZXN0q4ZzJUdrQvMFRRC6wFj3ltkL1cn6KpKLq
+	 GCMEEJxVu+MdwcjK5qTEBHsDKqoB70SkjXQ8xY/959AWEmtBMFG6AUwuILcC3T3Qye
+	 NKEW1xOzgHNPL7Z5dHeLuNd4SpkycbaH+5+hBDwq9lomeHalSUgK7vUiD9lgbZZ8pW
+	 m7QlII75+HiXQ==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Thu, 29 Aug 2024 18:59:06 +0200
+X-ME-IP: 90.11.132.44
+Message-ID: <c2464c65-836d-4609-b40b-2e3df4012688@wanadoo.fr>
+Date: Thu, 29 Aug 2024 18:59:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] clk: qcom: Fix error checking for
+ devm_clk_hw_get_clk()
+To: Yan Zhen <yanzhen@vivo.com>, andersson@kernel.org,
+ mturquette@baylibre.com, sboyd@kernel.org
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, opensource.kernel@vivo.com
+References: <20240827025252.3512746-1-yanzhen@vivo.com>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20240827025252.3512746-1-yanzhen@vivo.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+FuTSeHvADR5qbWnzRpYtpvNcvYrAeXAj8LYczUFLKREDwfpQ@mail.gmail.com>
 
-On Thu, Aug 29, 2024 at 12:53:34PM -0400, Willem de Bruijn wrote:
-> On Thu, Aug 29, 2024 at 12:18 PM Michal Koutný <mkoutny@suse.com> wrote:
-> >
-> > On Wed, Aug 28, 2024 at 09:30:08AM GMT, Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
-> > > > What is the security issue here?
-> > >
-> > > This was assigned as part of the import of the Linux kernel GSD entries
-> > > into CVEs as required by the CVE board of directors (hence the 2022
-> > > date).  If you don't feel this should be assigned a CVE, just let me
-> > > know and I will be glad to reject it.
-> >
-> > The address of original author bounces back. Willem, could you please
-> > help explaining context of the change? (~the questions in my previous
-> > message).
+Le 27/08/2024 à 04:52, Yan Zhen a écrit :
+> The devm_clk_hw_get_clk() function returns error pointers.
+> It never returns NULL.  Update the check accordingly.
 > 
-> I don't know why this has a CVE.
+> Fixes: 8737ec830ee3 ("clk: qcom: common: Add interconnect clocks support")'
+> Signed-off-by: Yan Zhen <yanzhen@vivo.com>
+> ---
 > 
-> The patch reports that the negative effect is a drop due to a corrupted packet.
+> Changes in v3:
+> - Providing a "fixes" tag blaming the commit.
 > 
-> According to the CVE report this requires both user input with
-> virtio_net_hdr, which is privileged, and a tunnel device configured,
-> which again is privileged.
+>   drivers/clk/qcom/common.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
 > 
+> diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
+> index 33cc1f73c69d..5a9e653916ea 100644
+> --- a/drivers/clk/qcom/common.c
+> +++ b/drivers/clk/qcom/common.c
+> @@ -273,8 +273,8 @@ static int qcom_cc_icc_register(struct device *dev,
+>   		icd[i].slave_id = desc->icc_hws[i].slave_id;
+>   		hws = &desc->clks[desc->icc_hws[i].clk_id]->hw;
+>   		icd[i].clk = devm_clk_hw_get_clk(dev, hws, "icc");
+> -		if (!icd[i].clk)
+> -			return dev_err_probe(dev, -ENOENT,
+> +		if (IS_ERR(icd[i].clk))
+> +			return dev_err_probe(dev, PTR_ERR(icd[i].clk),
+>   					     "(%d) clock entry is null\n", i);
 
-Ok, should it be rejected then?  If so, just let me know.
+Nitpick: Maybe the message could be updated as-well?
 
-thanks,
+CJ
 
-greg k-h
+>   		icd[i].name = clk_hw_get_name(hws);
+>   	}
+
 
