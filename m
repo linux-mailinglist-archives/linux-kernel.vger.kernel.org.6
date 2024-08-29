@@ -1,145 +1,88 @@
-Return-Path: <linux-kernel+bounces-307145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDFA2964912
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:52:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AA0496491E
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:53:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B050284454
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 14:52:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 88243B24C68
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 14:53:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 674171B1403;
-	Thu, 29 Aug 2024 14:51:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 224761B143D;
+	Thu, 29 Aug 2024 14:53:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BzEBG0Bc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X8G+dVg5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A847E1AE84C;
-	Thu, 29 Aug 2024 14:51:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 574F818C331;
+	Thu, 29 Aug 2024 14:53:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724943102; cv=none; b=IxmIsYRWW3rFwxdm/J7Ap0SsW9mnr+s/NGnv5rO5/Q7n70SRWm79dwzaHwI6qhvp8/RBT89AmbAou4fPCCnTJJZMGBJEOrTOEDg4lVYx8nj6T2fhYNnCp5CYJRxu0Rtj3GSg2DA/6JIxA9x0U5Xta6jJbxqGnss59WFSiKALQkw=
+	t=1724943185; cv=none; b=BgMli6XcIjJgQ4RTMgcsqdH3BNEWASHCxDTPJlT4zfgPnjOGV0bASCwrSVOb1M1w6urEFNjwalnr7W3+rS9OrPS0uSslKP/+QLr+Uj5+692oHWDZiFHPOIiqqXLQRC4hDsNbEDuHWSv/YOltKjncbkxyxwZcVmEy4QeSf5VEMI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724943102; c=relaxed/simple;
-	bh=qTnDyzEcne5+cOMjbnWs7xjxVNKWuYlyKpsjIOtxtCE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=e4roMDBLsbAJVcI+z6a5dYPX3Ha1G/zSDtWFMbCWt2q9TBFjOBJt7TZAlYnaBgtfK0HFPHcLyG1YwJN57ydX+IeaaxNvkO6dcoyL/mIXOrwt3GVcU/MnzkBETQKLZ3bk8MHQwOnRpvXPa4u0hLW65wxKu1ANwWHTUzLZldt4pRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BzEBG0Bc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4CD2C4CEC1;
-	Thu, 29 Aug 2024 14:51:40 +0000 (UTC)
+	s=arc-20240116; t=1724943185; c=relaxed/simple;
+	bh=y+XTkh4W6BCVe6ik0oYvCZEaUAHuGkmtcSWc6t/13pM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=NsJDuKqTUNZUJ0DG4tX+EQ0nwNuVIYCgYIscQ5jo8MG/+ljF899zJAzlj0VT1u1C/K8wXBdtN5ufIEOn9zlt4Rqgq2pgDSRpxy+D9XqWkU2M3Jy7AfSGM9PtFq1+gOvBy6/5TC1TriHSU1K81aP+g9nFQoGoP4o0FyVEZ48giQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X8G+dVg5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17E1EC4CEC1;
+	Thu, 29 Aug 2024 14:53:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724943101;
-	bh=qTnDyzEcne5+cOMjbnWs7xjxVNKWuYlyKpsjIOtxtCE=;
-	h=Date:From:To:Cc:Subject:From;
-	b=BzEBG0BclTNaB7UAV8QmAdVBBvyaQaK8vIxq3n28+2MDof1iGFB+DpWXh5FMwehAH
-	 DkjngAQAUNFz7FKNvn/Fndpmfbdb83B7lcg5E1vVWXF4qt0vZ40t6+O4irNDj8dxsE
-	 cJfSPF4qdKPLgUxy9vQQyMYg3kohx9Ve6+oSu5HVwwiwarE38PxgIYQQBw6AEwQMKs
-	 M3kyq46fNryvilaOVAU0c1tIzidO9oxZOKRpCrZWcLaTmnMRD7cNCJwlOlcfuyfBie
-	 j7UuH+aFyEn+VamWi9vg2AKs2KJ71egkIXeXobmfKQU0m7An5USwrgkQl+t3H2jm4I
-	 PpB36CdnDhNRw==
-Date: Thu, 29 Aug 2024 11:51:37 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>, Jiri Olsa <jolsa@kernel.org>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org
-Subject: [PATCH 1/1] Revert "tools build: Remove leftover libcap tests that
- prevents fast path feature detection from working"
-Message-ID: <ZtCK-WIpBaUM8-q3@x1>
+	s=k20201202; t=1724943184;
+	bh=y+XTkh4W6BCVe6ik0oYvCZEaUAHuGkmtcSWc6t/13pM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=X8G+dVg5hG0VsWhvjV1Bhu+X4Or6heyfFNsIJ+80TqLiiTTs1OfhsA00FJqOtvaqu
+	 J4g3t4P06hzxXdCukDVuKuD30FBBpHB9gQx2OrNzSE+PFSlhVJQ8cDwBN47l0H7owQ
+	 OOoAZSC2J9e6gtbpil3KF0QaCN1kask14kqMy+Tb0HZWFzs04rETSeVYw44CCP4cWD
+	 pojvEgjcse4JRXUiISGbdPyJNVk8X79Tejr+0M3RmI56Jv314/PxKJpgQcvrOncO/6
+	 jQwA5+l6VR63bWbQro2LKETwmRRsLZfI81QTjeX/QHxu3nPiJHrV9Tfdil4afotQwL
+	 uVP9GF1lbfGZQ==
+Date: Thu, 29 Aug 2024 07:53:03 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Breno Leitao <leitao@debian.org>
+Cc: fw@strlen.de, davem@davemloft.net, edumazet@google.com,
+ pabeni@redhat.com, Pablo Neira Ayuso <pablo@netfilter.org>, Jozsef
+ Kadlecsik <kadlec@netfilter.org>, David Ahern <dsahern@kernel.org>, Shuah
+ Khan <shuah@kernel.org>, rbc@meta.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org, "open
+ list:NETFILTER" <coreteam@netfilter.org>, "open list:KERNEL SELFTEST
+ FRAMEWORK" <linux-kselftest@vger.kernel.org>
+Subject: Re: [PATCH nf-next v3 1/2] netfilter: Make IP_NF_IPTABLES_LEGACY
+ selectable
+Message-ID: <20240829075303.775fce1d@kernel.org>
+In-Reply-To: <ZtBIgekUyptmCqRa@gmail.com>
+References: <20240827145242.3094777-1-leitao@debian.org>
+	<20240827145242.3094777-2-leitao@debian.org>
+	<20240828074240.2abaa74c@kernel.org>
+	<Zs88pbEadxLWLLbn@gmail.com>
+	<20240828114123.3c85a9a5@kernel.org>
+	<ZtBIgekUyptmCqRa@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Ian pointed out that the libcap feature test is also used by bpftool, so
-we can't remove it just because perf stopped using it, revert the
-removal of the feature test.
+On Thu, 29 Aug 2024 03:08:01 -0700 Breno Leitao wrote:
+> > There are various configs in the tree. Grep for the configs you convert
+> > from select to depends on, they will all need updating.  
+> 
+> I am looking at all files that depend on these Kconfig options, and
+> there are a lot of tests.
+> 
+> Thinking more about the problem, it doesn't seem to be a good idea to
+> change dependency from all NF modules to NF_IPTABLES_LEGACY. In other
+> words, the `s/selects/depends on/` is the part that is causing all this
+> hassle, and it seems unnecessary.
+> 
+> That said, I would suggest we do not change the dependency, and keep the
+> "select NF_IPTABLES_LEGACY", and keep NF_IPTABLES_LEGACY user selectable.
 
-Since both perf and libcap uses the fast path feature detection
-(tools/build/feature/test-all.c), probably the best thing is to keep
-libcap-devel when building perf even it not being used there.
-
-This reverts commit 47b3b6435e4bfb61ae8ffc63a11bd3c310f69acf.
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Ian Rogers <irogers@google.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/build/feature/Makefile      |  6 +++++-
- tools/build/feature/test-libcap.c | 20 ++++++++++++++++++++
- 2 files changed, 25 insertions(+), 1 deletion(-)
- create mode 100644 tools/build/feature/test-libcap.c
-
-diff --git a/tools/build/feature/Makefile b/tools/build/feature/Makefile
-index b873fc58804e2f38..12796808f07a8c0d 100644
---- a/tools/build/feature/Makefile
-+++ b/tools/build/feature/Makefile
-@@ -25,6 +25,7 @@ FILES=                                          \
-          test-libbfd-liberty-z.bin              \
-          test-cplus-demangle.bin                \
-          test-cxa-demangle.bin                  \
-+         test-libcap.bin			\
-          test-libelf.bin                        \
-          test-libelf-getphdrnum.bin             \
-          test-libelf-gelf_getnote.bin           \
-@@ -111,7 +112,7 @@ all: $(FILES)
- __BUILD = $(CC) $(CFLAGS) -MD -Wall -Werror -o $@ $(patsubst %.bin,%.c,$(@F)) $(LDFLAGS)
-   BUILD = $(__BUILD) > $(@:.bin=.make.output) 2>&1
-   BUILD_BFD = $(BUILD) -DPACKAGE='"perf"' -lbfd -ldl
--  BUILD_ALL = $(BUILD) -fstack-protector-all -O2 -D_FORTIFY_SOURCE=2 -ldw -lelf -lnuma -lelf -lslang $(FLAGS_PERL_EMBED) $(FLAGS_PYTHON_EMBED) -DPACKAGE='"perf"' -lbfd -ldl -lz -llzma -lzstd
-+  BUILD_ALL = $(BUILD) -fstack-protector-all -O2 -D_FORTIFY_SOURCE=2 -ldw -lelf -lnuma -lelf -lslang $(FLAGS_PERL_EMBED) $(FLAGS_PYTHON_EMBED) -DPACKAGE='"perf"' -lbfd -ldl -lz -llzma -lzstd -lcap
- 
- __BUILDXX = $(CXX) $(CXXFLAGS) -MD -Wall -Werror -o $@ $(patsubst %.bin,%.cpp,$(@F)) $(LDFLAGS)
-   BUILDXX = $(__BUILDXX) > $(@:.bin=.make.output) 2>&1
-@@ -139,6 +140,9 @@ $(OUTPUT)test-fortify-source.bin:
- $(OUTPUT)test-bionic.bin:
- 	$(BUILD)
- 
-+$(OUTPUT)test-libcap.bin:
-+	$(BUILD) -lcap
-+
- $(OUTPUT)test-libelf.bin:
- 	$(BUILD) -lelf
- 
-diff --git a/tools/build/feature/test-libcap.c b/tools/build/feature/test-libcap.c
-new file mode 100644
-index 0000000000000000..d2a2e152195f976b
---- /dev/null
-+++ b/tools/build/feature/test-libcap.c
-@@ -0,0 +1,20 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include <sys/capability.h>
-+#include <linux/capability.h>
-+
-+int main(void)
-+{
-+	cap_flag_value_t val;
-+	cap_t caps = cap_get_proc();
-+
-+	if (!caps)
-+		return 1;
-+
-+	if (cap_get_flag(caps, CAP_SYS_ADMIN, CAP_EFFECTIVE, &val) != 0)
-+		return 1;
-+
-+	if (cap_free(caps) != 0)
-+		return 1;
-+
-+	return 0;
-+}
--- 
-2.46.0
-
+Good idea, sounds much simpler!
 
