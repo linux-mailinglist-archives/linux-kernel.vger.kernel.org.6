@@ -1,252 +1,112 @@
-Return-Path: <linux-kernel+bounces-307235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA8FD964A93
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 17:50:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D27D964AA7
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 17:52:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 697B51F2482E
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:50:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB7211F243A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:52:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BC7A1B3F1D;
-	Thu, 29 Aug 2024 15:50:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF86F1B4C44;
+	Thu, 29 Aug 2024 15:51:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gUs8ZMi7"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="yTb/OPZQ"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73E781B3F01
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 15:50:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A2BC1B3B1D
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 15:51:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724946624; cv=none; b=UYQiZOf2TB2sNJRd5OkuREsv0wUZwu4vrwHbTkpbYH3UgE9LnTflZdOpaHgKUnQPJm79/5kjex7R5RbCaOkagbpmrox/vqwPs6SQUfVrl6A1V1T9mGvT3wqNDevVsLFca0AGKSBd9kt9ZoM+vDm8Z1UFIyLlDOY42HdGh8O9884=
+	t=1724946683; cv=none; b=UqAvRiHeVIIBJYg4W6dFAos4CruU2JwUyrQ6F3bfP0RGxykFB4Fty3TqzmKKaTmcm5ojbiuhLuGfhHCDStjirwMz7E+u1O5bXdaTuKsY6Obu4IVoXLEhDeGtwoPRIToLNfl86cd9RbTbQYj2IZanynkUyNqZUvhLsDs4CRaa5z4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724946624; c=relaxed/simple;
-	bh=Mt9oXi+cRCWoO6vQGhdRGWzq9CIvR1tzuQnaO9MknOs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YOHe7TMc7EKeLBbqhcSL8Cp2VrVikscJG8/RFLHILhyWZshtl/I7lsPuzsw1kyMaqJz46zQeivg4Gk5LyPK9+D4KEScV8fD7V1CfiYTm0PDYjONEU7xG8hxxPBMFtfXB5D/4mQ/gUk3owf73KfHVWQmpcRj3dXgumSWdQSoGXvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gUs8ZMi7; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-427fc9834deso82045e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 08:50:22 -0700 (PDT)
+	s=arc-20240116; t=1724946683; c=relaxed/simple;
+	bh=nDu/Qung/abakY0tFCNkQeANmw4UpVnF+Ix+JtUHdCY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Z/92hfzc2fjg3K0y+16qPaJ7Zi/SC1Qjxms4JBricnrTjGf3YSJKAIngTGsesNDnnzCfYRR6qOYbHTv8lMPD4UtHOJJpsdWOviMuFWeWl+cPDcaRE05ovLOHjzEfn5LyAiEm73OFfwgsXesjsCtd4vM4jy1pWtN5L7ECCVa8tS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=yTb/OPZQ; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5bec4c3ace4so139336a12.3
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 08:51:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724946621; x=1725551421; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fLlpduslb3Nup0YapZ+XHfrA6gZyOTFlQOWFXdv5DXc=;
-        b=gUs8ZMi7jXTd4cfM/PBUaLz8mz7C7e3reZdlerpK1iO7rHIPga2vd6Ssgn7nPx8zMS
-         IV8CDwfH47dgml7+u3K+8puZIXGQTgKX1BjtneYVklIbxrpAzIprwptaRVIDqX7L99sV
-         it/DBDNSdjGDwhepA1uy5z7IlaVqQJKjqom7dDQN+ueWmROMuHSjFUzUa8vykgX2CwfQ
-         iUD6G/rPqap+8MABhmuXRwIYsBzHjwxBJmLK0IrcRfnPJbDa56O4rgpPG/SlMJFwU1U+
-         idXClpcoDq/rNaeMw3xkGbyanMaLeqd1o9zoGkNtcbQ0STw2kCUCEfDWQfwj/HHnQtEo
-         Rxbw==
+        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1724946680; x=1725551480; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wo6F4DAHD7vgQXQVkup216t7O3I64JdYrUKFA8taWwo=;
+        b=yTb/OPZQx3azJrRxWbt+GZ5PVpR5qAMb2CcLctm+T79XWMm7v1DzzfddyLZq4CbupS
+         qKuk5fHI3MQuTJwJ0+FM0HX4F3+MJAOQi7NEkqUoOhwBF0jacn7knLnUfzF/ntxWirS6
+         fTTsj9ecgheV4Wrfm6Buqr7KZH8jK7NpVXybixz68jlyELHpWdWao6+kvGNguHpmsb/m
+         M85KtiVHzugaY6ZmQmqICp3nv/Enl3M75lBw9pk2GebH05A10S3x1sOyJTjtE7OwtKBk
+         nZwg9pCk+XODwjVYC/z9AB5jIORwbStI6HyCHAN1AMggyYvOD4tgr9j4cXP090J9At6/
+         BWug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724946621; x=1725551421;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fLlpduslb3Nup0YapZ+XHfrA6gZyOTFlQOWFXdv5DXc=;
-        b=tVv99lGo+QyJbEhOaYDmYdD1w2SW/y6lTdEzV4RCcDrsDRxAFwZZ3aG9Eui0B9ihhQ
-         263iNrToCcp0zVaydiAS41W8AsVxq0hnKiY8d514b4tzBvcX6kCIOz/WD1d7dNMoeJnE
-         kN1qi7moQH2iykCBYSHP0PAONnEOFqlB3NHuseDs1bPYlbj4ZwKGHI0l+wcEQjDj0BlC
-         ZZ4mg17QiTJmEU5CEg178J28AROtfkOSe3SPPHMpSrB95jAabgIIYcBJlMVU+CVdI/or
-         S1GDU8ak/q9ygLd7NK4EWxZLaWytWxMqFzfaz8BnUPqvntJTC25Wym5rApDd9/heTQez
-         ylgg==
-X-Forwarded-Encrypted: i=1; AJvYcCWggT4l9cittjVg+J2v5ChtAOqmno7+JM0R3yW2qscsrEnKXG82133DF6WBLi/kq50VftaTPOUeEMEjpY0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwU2HA29JZG8zTvH0F0JgNOV0AOo8ohkneyoCtydDRDdwhRx8WN
-	pzR2XqyMIMjpp0eBsshVanLs+u+Ntf8Pf3Qy4pkfcKa7kieW/6xiIYR0BiY6bYIF2OL3nJUsqN+
-	UhADwHFxQ3mPlDM8/JlOLFUf2kbqTiRSij/S6
-X-Google-Smtp-Source: AGHT+IHQhDGF7YPprlvR4k07dqcjERElj7mv89A99GAbXZwAJdXs2wLoqYZVZqW9oM+scb9rMPKMaXRZYIrBdd69EVk=
-X-Received: by 2002:a05:600c:3d16:b0:426:5d89:896d with SMTP id
- 5b1f17b1804b1-42bb5fcc333mr1360945e9.1.1724946620213; Thu, 29 Aug 2024
- 08:50:20 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724946680; x=1725551480;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wo6F4DAHD7vgQXQVkup216t7O3I64JdYrUKFA8taWwo=;
+        b=ktEcpWjDW5gsjpR9XU1TZ50BA4c2xCp+AdvhWxte+lemWCSuJ+kC+VAqSha2tBWVq5
+         E77DEwUXQIfHBC7DmNUem0Q/J75TMMzDESzSXLdFhpNoFYLzACncFtuRU9qdNxukkxnY
+         g3Hma6toHHga2TuLLteieoz36Pb9lT4xRMseIzQoy7qwtOoVW3QXzVGQwoJXxE+BdDI4
+         oi+USIarSGe93ywl2e2UpMp8dEsJzn2RpMPbiHSxxkJnKEoyH88WyWe57BXLTWF/hd8G
+         KgTo/D9iddBP1NFFTdTcFR4YjAm7reRtlZuJdwraJc6Y5uQyQU5B9fT9zlhH5zW7m99X
+         yVgA==
+X-Forwarded-Encrypted: i=1; AJvYcCW7sAYg+oDQq0EfqJDhcoaplyxYGl+5lUDjpviLw/nJqr/0QShpehpg7A+D6AtNkTTVHqT3c8HrFUKXD5k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwaT8CYnr5xvYMyl6idWIakrFjrwBlpazpbdL8+oe/qnLJwklnv
+	HIMowteA6c5Ju1Gu0YrJ7Bk7fomaglqaS78WMIX52ATJKb6rDeSv40MJNa7t+RA=
+X-Google-Smtp-Source: AGHT+IG7mYT+8MRbo4XobdrNXyXcPtZnp88K8wVmpVeqCVOOISsvXievrKS52UYHHKj057dSJAGNLQ==
+X-Received: by 2002:a05:6402:26d4:b0:5a2:7cfe:2371 with SMTP id 4fb4d7f45d1cf-5c21ed8e6b1mr1903574a12.3.1724946680192;
+        Thu, 29 Aug 2024 08:51:20 -0700 (PDT)
+Received: from fedora.fritz.box (aftr-82-135-80-228.dynamic.mnet-online.de. [82.135.80.228])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a89892223dbsm92288866b.202.2024.08.29.08.51.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Aug 2024 08:51:19 -0700 (PDT)
+From: Thorsten Blum <thorsten.blum@toblux.com>
+To: kent.overstreet@linux.dev
+Cc: linux-bcachefs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Thorsten Blum <thorsten.blum@toblux.com>
+Subject: [PATCH] bcachefs: Remove duplicate included headers
+Date: Thu, 29 Aug 2024 17:49:50 +0200
+Message-ID: <20240829154949.109402-2-thorsten.blum@toblux.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CANikGpeQuBKj89rTkaAs5ADrz0+YLQ54g-0CshYzE3h06G0U5g@mail.gmail.com>
- <202408281719.8BBA257@keescook>
-In-Reply-To: <202408281719.8BBA257@keescook>
-From: Jann Horn <jannh@google.com>
-Date: Thu, 29 Aug 2024 17:49:42 +0200
-Message-ID: <CAG48ez26ot6z0swcqrR7Z6Eho73BObz-5zO4ts=Qqtn78ZUBYQ@mail.gmail.com>
-Subject: Re: BUG: null pointer dereference in seccomp
-To: Kees Cook <kees@kernel.org>
-Cc: Juefei Pu <juefei.pu@email.ucr.edu>, luto@amacapital.net, wad@chromium.org, 
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
-	bpf@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 29, 2024 at 2:38=E2=80=AFAM Kees Cook <kees@kernel.org> wrote:
-> On Tue, Aug 27, 2024 at 09:09:49PM -0700, Juefei Pu wrote:
-> > Hello,
-> > We found the following null-pointer-dereference issue using syzkaller
-> > on Linux v6.10.
->
-> In seccomp! Yikes.
->
-> > Unfortunately, the syzkaller failed to generate a reproducer.
->
-> That's a bummer.
->
-> > But at least we have the report:
-> >
-> > Oops: general protection fault, probably for non-canonical address
-> > 0xdffffc0000000006: 0000 [#1] PREEMPT SMP KASAN PTI
-> > KASAN: null-ptr-deref in range [0x0000000000000030-0x0000000000000037]
-> > CPU: 0 PID: 4493 Comm: systemd-journal Not tainted 6.10.0 #13
-> > Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04=
-/01/2014
-> > RIP: 0010:__bpf_prog_run include/linux/filter.h:691 [inline]
->
-> This doesn't look like a NULL deref, this looks like a corrupted
-> pointer: 0xdffffc0000000006.
+The header files dirent_format.h and disk_groups_format.h are included
+twice. Remove the redundant includes and the following warnings reported
+by make includecheck:
 
-No, it really is a NULL deref - in a non-KASAN build, you'd see a page
-fault at virtual address 0x30. KASAN builds with inline
-instrumentation cause a GPF on NULL deref because they try to first
-check the KASAN shadow mapping for that address, and applying the
-shadow address calculation to NULL (or addresses in the low address
-space half) gives non-canonical addresses.
+  disk_groups_format.h is included more than once
+  dirent_format.h is included more than once
 
-This line directly below the oops message is supposed to point this
-out (it works by decoding the faulting instruction, calculating the
-effective address of the access, and then having KASAN calculate
-backwards from the shadow address what the original address could have
-been):
+Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+---
+ fs/bcachefs/bcachefs_format.h | 2 --
+ 1 file changed, 2 deletions(-)
 
-KASAN: null-ptr-deref in range [0x0000000000000030-0x0000000000000037]
+diff --git a/fs/bcachefs/bcachefs_format.h b/fs/bcachefs/bcachefs_format.h
+index 14ce726bf5a3..b97fd0f75831 100644
+--- a/fs/bcachefs/bcachefs_format.h
++++ b/fs/bcachefs/bcachefs_format.h
+@@ -499,8 +499,6 @@ struct bch_sb_field {
+ #include "disk_groups_format.h"
+ #include "extents_format.h"
+ #include "ec_format.h"
+-#include "dirent_format.h"
+-#include "disk_groups_format.h"
+ #include "inode_format.h"
+ #include "journal_seq_blacklist_format.h"
+ #include "logged_ops_format.h"
+-- 
+2.46.0
 
-> Is prog bad or dfunc bad? I assume the
-> former, as dfunc is hard-coded below...
->
->                 ret =3D dfunc(ctx, prog->insnsi, prog->bpf_func);
->
-> > RIP: 0010:bpf_prog_run include/linux/filter.h:698 [inline]
->
->         return __bpf_prog_run(prog, ctx, bpf_dispatcher_nop_func);
->
-> > RIP: 0010:bpf_prog_run_pin_on_cpu include/linux/filter.h:715 [inline]
->
->         ret =3D bpf_prog_run(prog, ctx);
->
-> > RIP: 0010:seccomp_run_filters+0x17a/0x3f0 kernel/seccomp.c:426
->
->                 u32 cur_ret =3D bpf_prog_run_pin_on_cpu(f->prog, sd);
->
-> > Code: 00 00 e8 99 36 d2 ff 0f 1f 44 00 00 e8 cf 58 ff ff 48 8d 5d 48
-> > 48 83 c5 30 48 89 e8 48 c1 e8 03 48 b9 00 00 00 00 00 fc ff df <80> 3c
-> > 08 00 74 08 48 89 ef e8 c8 63 62 00 4c 8b 5d 00 48 8b 3c 24
-> > RSP: 0018:ffffc90002cb7be0 EFLAGS: 00010206
-> > RAX: 0000000000000006 RBX: 0000000000000048 RCX: dffffc0000000000
-> > RDX: 0000000000000000 RSI: 00000000000002a4 RDI: ffffffff8b517360
-> > RBP: 0000000000000030 R08: ffffffff8191f8eb R09: 1ffff11004039e86
-> > R10: dffffc0000000000 R11: ffffffffa00016d0 R12: 000000007fff0000
-> > R13: ffff88801f84a800 R14: ffffc90002cb7df0 R15: 000000007fff0000
-> > FS:  00007f897e849900(0000) GS:ffff888063a00000(0000) knlGS:00000000000=
-00000
-> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > CR2: 00007f897d771b08 CR3: 00000000195fe000 CR4: 0000000000350ef0
-> > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> > Call Trace:
-> >  <TASK>
-> >  __seccomp_filter+0x46f/0x1c70 kernel/seccomp.c:1222
-> >  syscall_trace_enter+0xa4/0x140 kernel/entry/common.c:52
-> >  syscall_enter_from_user_mode_work include/linux/entry-common.h:168 [in=
-line]
-> >  syscall_enter_from_user_mode include/linux/entry-common.h:198 [inline]
-> >  do_syscall_64+0x5d/0x150 arch/x86/entry/common.c:79
-> >  entry_SYSCALL_64_after_hwframe+0x67/0x6f
->
-> Has anything changed in BPF in this area lately?
->
-> > RIP: 0033:0x7f897ed171e4
-> > Code: 84 00 00 00 00 00 44 89 54 24 0c e8 36 58 f9 ff 44 8b 54 24 0c
-> > 44 89 e2 48 89 ee 41 89 c0 bf 9c ff ff ff b8 01 01 00 00 0f 05 <48> 3d
-> > 00 f0 ff ff 77 34 44 89 c7 89 44 24 0c e8 68 58 f9 ff 8b 44
-> > RSP: 002b:00007ffd4ae74a60 EFLAGS: 00000293 ORIG_RAX: 0000000000000101
-> > RAX: ffffffffffffffda RBX: 00005627cd785ed0 RCX: 00007f897ed171e4
-> > RDX: 0000000000290000 RSI: 00007f897f010d0a RDI: 00000000ffffff9c
-> > RBP: 00007f897f010d0a R08: 0000000000000000 R09: 0034353132303865
-> > R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000290000
-> > R13: 00007ffd4ae74d20 R14: 0000000000000000 R15: 00007ffd4ae74e28
-> >  </TASK>
-> > Modules linked in:
-> > ---[ end trace 0000000000000000 ]---
-> > RIP: 0010:__bpf_prog_run include/linux/filter.h:691 [inline]
-> > RIP: 0010:bpf_prog_run include/linux/filter.h:698 [inline]
-> > RIP: 0010:bpf_prog_run_pin_on_cpu include/linux/filter.h:715 [inline]
-> > RIP: 0010:seccomp_run_filters+0x17a/0x3f0 kernel/seccomp.c:426
-> > Code: 00 00 e8 99 36 d2 ff 0f 1f 44 00 00 e8 cf 58 ff ff 48 8d 5d 48
-> > 48 83 c5 30 48 89 e8 48 c1 e8 03 48 b9 00 00 00 00 00 fc ff df <80> 3c
-> > 08 00 74 08 48 89 ef e8 c8 63 62 00 4c 8b 5d 00 48 8b 3c 24
-> > RSP: 0018:ffffc90002cb7be0 EFLAGS: 00010206
-> > RAX: 0000000000000006 RBX: 0000000000000048 RCX: dffffc0000000000
-> > RDX: 0000000000000000 RSI: 00000000000002a4 RDI: ffffffff8b517360
-> > RBP: 0000000000000030 R08: ffffffff8191f8eb R09: 1ffff11004039e86
-> > R10: dffffc0000000000 R11: ffffffffa00016d0 R12: 000000007fff0000
-> > R13: ffff88801f84a800 R14: ffffc90002cb7df0 R15: 000000007fff0000
-> > FS:  00007f897e849900(0000) GS:ffff888063a00000(0000) knlGS:00000000000=
-00000
-> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > CR2: 00007f521f8ca000 CR3: 00000000195fe000 CR4: 0000000000350ef0
-> > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> > ----------------
-> > Code disassembly (best guess):
-> >    0: 00 00                 add    %al,(%rax)
-> >    2: e8 99 36 d2 ff       call   0xffd236a0
-> >    7: 0f 1f 44 00 00       nopl   0x0(%rax,%rax,1)
-> >    c: e8 cf 58 ff ff       call   0xffff58e0
-> >   11: 48 8d 5d 48           lea    0x48(%rbp),%rbx
-
-This LEA looks like it's calculating the address of prog->insnsi.
-
-> >   15: 48 83 c5 30           add    $0x30,%rbp
-> >   19: 48 89 e8             mov    %rbp,%rax
-> >   1c: 48 c1 e8 03           shr    $0x3,%rax
-> >   20: 48 b9 00 00 00 00 00 movabs $0xdffffc0000000000,%rcx
-> >   27: fc ff df
-> > * 2a: 80 3c 08 00           cmpb   $0x0,(%rax,%rcx,1) <-- trapping inst=
-ruction
-
-Here you can see - the access happens at rax+rcx, which is
-(rbp>>3)+0xdffffc0000000000. rbp is the actual pointer that will be
-accessed; this shift-right-and-add-0xdffffc0000000000 pattern is how
-inline KASAN instrumentation determines the shadow address.
-
-> >   2e: 74 08                 je     0x38
-
-Normally we jump over the next two instructions, if the KASAN shadow
-is 0 (which means fully accessible)...
-
-> >   30: 48 89 ef             mov    %rbp,%rdi
-> >   33: e8 c8 63 62 00       call   0x626400
-
-... continue here:
-
-> >   38: 4c 8b 5d 00           mov    0x0(%rbp),%r11
-
-And here's the actual access to rbp, which is probably loading the
-prog->bpf_func.
-
-> >   3c: 48 8b 3c 24           mov    (%rsp),%rdi
->
-> What's the movabs? I don't have anything like that in my vmlinux binary
-> output. Is this KASAN perhaps?
-
-Yes, inline KASAN.
-
-
->
-> Regardless, I don't see how prog could be NULL. :( It shouldn't be
-> possible without some kind of major refcounting bug.
 
