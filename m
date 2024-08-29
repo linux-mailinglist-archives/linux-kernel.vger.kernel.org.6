@@ -1,142 +1,123 @@
-Return-Path: <linux-kernel+bounces-307118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16B40964885
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:33:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95EEB9648C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:41:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B52951F27A82
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 14:33:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D62BFB24244
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 14:41:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 840EF1B012C;
-	Thu, 29 Aug 2024 14:32:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E12231B012B;
+	Thu, 29 Aug 2024 14:41:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="pUIn2GP9"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DNJ4Ibd5"
+Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 472941A76B7;
-	Thu, 29 Aug 2024 14:32:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55478197A99;
+	Thu, 29 Aug 2024 14:41:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724941977; cv=none; b=dkI6EZJi2FMFRY35fFxQZr0HdpACUlpOtBU4lxgftw9Lc6T/Y2gJWXJiMw+pL6SBSkDeflbL38pT2+gkg77kNMaVcMqQT8RXyPLgS/ZeLVtBipaSi/ixmQn6Gej+uqjo/FWxDCybUG5ruOCAg1tYdm4zABme2mZ3Q2l9C+Cc18Y=
+	t=1724942478; cv=none; b=pcOh8fjs/TjESwfcjVu3A5zb1HLg0++tw2FXaABCo3hieP1UfmGPVrMGkI0GVenXyeOYaaq0tYnpD5mTOv2IcVkd5IENyuu99Qhoo3/iTWGSoO3MUtW+nbH/8zQvtTpsQD7qZeWkfNXVsVRHVMXzGfCcQhlE4s/UzoP3k5iywwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724941977; c=relaxed/simple;
-	bh=Eb2ZPuL+3koYo3fJiQg7r+u2ELH+/JY4bfYIJUUyklQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=PM66MnWmM2MU+RigcYj5UkO6MJaNRxzocFXkS9c8pdfGutOI6Dp6B8+bcJz6ieP12HE0FmrKOp3jACKBxXrPMNyGs0STdI/wxGs1h/hGBXl6S7+O8aHjsJBus/gXCRikXegUgvLhPIfzhwk9MNAXxb9zB6i3TCPblLyzNysSi/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=pUIn2GP9; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47T8OgEF010887;
-	Thu, 29 Aug 2024 14:32:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	zqodGm77Krj1I3ICwjAgMZxw71umf4G4EfC6q1kQGnc=; b=pUIn2GP9ddnHQMb4
-	T2kX9Iqau3GZVC3a1ozrr4tFfUrgabfm+3+wAGdeP5QVJSSAGQnR7i6mRTiM7laZ
-	fyOpIFF+8NbM7EwE5mWqAcOMPx31DasKVQJSR6mc0st9dwYqzZHbugtrQfgptnYP
-	uLRcmPmzIl6SeMJfsTHakblCSOb1fPj040sgiC/7RqQdMaAE+/V97UYzcxNga84x
-	eU4GY0imdLwyQmiqV6/GQrPbaXO2Wpo+8fwbl/0YVTaz97VQ3Ypq/5Raz3bwVyfv
-	qC/kSEpO64eDMPm1AytzMMHI5Kw3YrV8rGhozJUbK9QQSJ+T01ifJmTOm5bPzwK6
-	YS7fFA==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 419pv0nkr7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 29 Aug 2024 14:32:22 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47TEWLm9000806
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 29 Aug 2024 14:32:21 GMT
-Received: from [10.110.28.107] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 29 Aug
- 2024 07:32:17 -0700
-Message-ID: <b263cd16-b5c2-4dd8-a6fc-7d6861338bcb@quicinc.com>
-Date: Thu, 29 Aug 2024 07:32:16 -0700
+	s=arc-20240116; t=1724942478; c=relaxed/simple;
+	bh=MnHHEGxsondQXOfnrl6ZHPEYA+iRed56Kho9qhoBvEM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VN5YJm2q5ASOK3LMK4w5NXycpcYyXP5EzXpg0V+JVzShQjBL3lUCQWyKVQYKuzVFvZaNXJb4CBkl8qJ8BkdM+Xdxrt4UsXyqcpbKKLfPW5hLmVi/hEg2QCkbKtKyJMrdDzcYJOT7KXNPSd8LlKR2D0nJfuzQa5OmjYURAYBviYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DNJ4Ibd5; arc=none smtp.client-ip=209.85.166.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-39d380d4ffcso2722005ab.0;
+        Thu, 29 Aug 2024 07:41:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724942475; x=1725547275; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=kZX0ZNUhjjtpPJ5y9WyzEvD5KDhmXlzPYE4GEmpGplo=;
+        b=DNJ4Ibd544BaIhIMwFXJXv5I3vd/+qYSb/GQGi5KYXzHUvnNJw+D+wcctR6VxjPUaw
+         D57u7TOs1lRID5SkvVSLx4lO70QSjMyMHQKE50MSmNqXXQ+YgYWJtn8awhUrzXhoqXto
+         Gjfc5BuM2y9SqaiwUb9BRHxqqC8rXYYgT8aAxEsdzAM03nnkI8IxeKlmEIiAeNvmUPJh
+         qPZ01nIO79z+j8R7nxzG8xkKtsXJbaEnOdc6r4O2yBJ5p04zDZdmcFQvLOoshezfbMyE
+         Qh6Yal7N8uD/g6F/PU2zBK2HdYmRM3EAPwrTwhHVoa/d/I+7jvXXqOfLkM2negh9BETF
+         J/aA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724942475; x=1725547275;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kZX0ZNUhjjtpPJ5y9WyzEvD5KDhmXlzPYE4GEmpGplo=;
+        b=tmPy2Lv4d477D40vCHV9K9jnnqrLZ2Kscgy/IuID3oqFWbkEYBVa+1vXLSwyBbuXj1
+         IlZ6Gty50WZ1fer0vmPna02MwMw8pNVIbsbVz2WfFip8xK3NzZKNWEFOXRi6xVeZtYak
+         qPwQCUjX/VHVKyivhKkWNlLEzOPW/SB3PDSlZBv0JLZdKFLrJX38uz8tHhKq5Pn+pZ/q
+         DjuHGB8p1Tm5J/Du4rWswl8F0E+dSIozMZQBRhLaxADirEn1MewCWDf9/yFhPJy6BwzC
+         9P+FGvANpB4IJMccYod2o3ObIeWSdGjrKssC3tjwMc5PrGdyL0QWFWmvj0xTNvgzEyxe
+         WuFg==
+X-Forwarded-Encrypted: i=1; AJvYcCVyEzu7akfSZRUGBJDDnUZvPJlpHyrBrMHtQnNszwMOZ3OtAdNmnQdwyjCRk5zlcHsZU12H57+8e5D9TGk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNDrOvzxrpdogeKdhwiSD+AMrT/KY7LYNUS6psdsokTuqjmYLY
+	36UoIV++7ZgzzH6FB1+Gn/JnslofnpYhw1fX6I3XRMQFnKGAwq0XZhKU7A==
+X-Google-Smtp-Source: AGHT+IHPDsSbMw1O5nv4rlHNJGEzMDKNIIzlxIoKkmMJcyf7j7giGN7H2QLT7jtVQV5tbrhY/TNFzA==
+X-Received: by 2002:a05:6a00:2d17:b0:70d:2621:57fe with SMTP id d2e1a72fcca58-715dfc0370dmr3464892b3a.11.1724941991295;
+        Thu, 29 Aug 2024 07:33:11 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-715e55b9b9esm1223511b3a.95.2024.08.29.07.33.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Aug 2024 07:33:09 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+From: Guenter Roeck <linux@roeck-us.net>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-hwmon@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] hwmon fixes for v6.11-rc6
+Date: Thu, 29 Aug 2024 07:33:08 -0700
+Message-ID: <20240829143308.1398637-1-linux@roeck-us.net>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/22] arm64: qcom: Introduce SA8255p Ride platform
-Content-Language: en-US
-To: Krzysztof Kozlowski <krzk@kernel.org>, <andersson@kernel.org>,
-        <konradybcio@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <rafael@kernel.org>, <viresh.kumar@linaro.org>,
-        <herbert@gondor.apana.org.au>, <davem@davemloft.net>,
-        <sudeep.holla@arm.com>, <andi.shyti@kernel.org>, <tglx@linutronix.de>,
-        <will@kernel.org>, <joro@8bytes.org>, <jassisinghbrar@gmail.com>,
-        <lee@kernel.org>, <linus.walleij@linaro.org>, <amitk@kernel.org>,
-        <thara.gopinath@gmail.com>, <broonie@kernel.org>,
-        <wim@linux-watchdog.org>, <linux@roeck-us.net>
-CC: <robin.murphy@arm.com>, <cristian.marussi@arm.com>, <rui.zhang@intel.com>,
-        <lukasz.luba@arm.com>, <vkoul@kernel.org>, <quic_gurus@quicinc.com>,
-        <agross@kernel.org>, <bartosz.golaszewski@linaro.org>,
-        <quic_rjendra@quicinc.com>, <robimarko@gmail.com>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-        <linux-crypto@vger.kernel.org>, <arm-scmi@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-i2c@vger.kernel.org>,
-        <iommu@lists.linux.dev>, <linux-gpio@vger.kernel.org>,
-        <linux-serial@vger.kernel.org>, <linux-spi@vger.kernel.org>,
-        <linux-watchdog@vger.kernel.org>, <kernel@quicinc.com>,
-        <quic_psodagud@quicinc.com>, <quic_tsoni@quicinc.com>,
-        <quic_shazhuss@quicinc.com>
-References: <20240828203721.2751904-1-quic_nkela@quicinc.com>
- <11c897d7-ea9c-4474-81f6-1fc2198d289d@kernel.org>
-From: Nikunj Kela <quic_nkela@quicinc.com>
-In-Reply-To: <11c897d7-ea9c-4474-81f6-1fc2198d289d@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: fv5TpYAMjB7nkZE4j2aSXpV4D3dEfStr
-X-Proofpoint-ORIG-GUID: fv5TpYAMjB7nkZE4j2aSXpV4D3dEfStr
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-29_03,2024-08-29_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- mlxlogscore=999 bulkscore=0 impostorscore=0 phishscore=0 clxscore=1015
- mlxscore=0 spamscore=0 suspectscore=0 malwarescore=0 adultscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408290100
+Content-Transfer-Encoding: 8bit
 
+Hi Linus,
 
-On 8/29/2024 12:57 AM, Krzysztof Kozlowski wrote:
-> On 28/08/2024 22:36, Nikunj Kela wrote:
->> This series enables the support for SA8255p Qualcomm SoC and Ride
->> platform. This platform uses SCMI power, reset, performance, sensor
->> protocols for resources(e.g. clocks, regulator, interconnect, phy etc.)
->> management. SA8255p is a virtual platforms that uses Qualcomm smc/hvc
->> transport driver.
->>
-> Who is supposed to merge it? The Cc-list is quite enormous and I got now
-> 20 bounces:
->
-> "    Too many recipients to the message"
->
-> at least drop some non-maintainer related, I counted 5-7 Qualcomm ones
-> which should not be needed.
->
-> Best regards,
-> Krzysztof
+Please pull hwmon fixes for Linux v6.11-rc6 from signed tag:
 
-Hi Krzysztof,
-
-I ran maintainers script to get all the emails. I kept maintainers,
-reviewers and "in file" ones in addition to some Qualcomm leads. I will
-drop "in file" and Qualcomm leads in next version.
+    git://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git hwmon-for-v6.11-rc6
 
 Thanks,
+Guenter
+------
 
--Nikunj
+The following changes since commit 5be63fc19fcaa4c236b307420483578a56986a37:
 
+  Linux 6.11-rc5 (2024-08-25 19:07:11 +1200)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git tags/hwmon-for-v6.11-rc6
+
+for you to fetch changes up to 7bbc079531fc38d401e1c4088d4981435a8828e3:
+
+  hwmon: (pt5161l) Fix invalid temperature reading (2024-08-26 20:58:05 -0700)
+
+----------------------------------------------------------------
+hwmon fixes for v6.11-rc6
+
+- pt5161l: Fix invalid temperature reading of bad ADC values
+
+- asus-ec-sensors: Remove unsupported VRM temperature from X570-E GAMING
+
+----------------------------------------------------------------
+Cosmo Chou (1):
+      hwmon: (pt5161l) Fix invalid temperature reading
+
+Ross Brown (1):
+      hwmon: (asus-ec-sensors) remove VRM temp X570-E GAMING
+
+ drivers/hwmon/asus-ec-sensors.c | 2 +-
+ drivers/hwmon/pt5161l.c         | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
