@@ -1,83 +1,109 @@
-Return-Path: <linux-kernel+bounces-306077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 877E19638D7
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 05:34:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 41F249638C7
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 05:27:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0A533B22AC4
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 03:34:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE5B2B22AED
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 03:27:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C90644CDEC;
-	Thu, 29 Aug 2024 03:34:39 +0000 (UTC)
-Received: from cavan.codon.org.uk (cavan.codon.org.uk [176.126.240.207])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 113804C3D0;
+	Thu, 29 Aug 2024 03:27:07 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1099200CB;
-	Thu, 29 Aug 2024 03:34:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.126.240.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D932DDA6;
+	Thu, 29 Aug 2024 03:27:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724902479; cv=none; b=IPIiJt5q8CP4xkKUUhQilQClBFDXSvkZ5IfrwVyplrSa2NGhH2zotVdReW7glQCOxqCfvnxcYaOohuAcdJWoIpCKLGnzgJKI9PwTkoAK32C8XeJ+AzQsMF3mCtHUuqRiEXO39TkpYgLQZcm1zawBZxMUW9K+xTIiDp/QLj+gcrk=
+	t=1724902026; cv=none; b=u0BCOFGRm7yFuGL+BdNIWC2bfSvZna8bCDvLNLQnpUSipSX4d3tOj73RJiPCufG9Rb7Gwf4bwMfIa0/GvhyUKrfNPiodJobl/YXHozDejjZiVmT6/NjGiIWo3NeXQqILlBh1MrDswFfW2MQZtrFL+629lLF7L9DdbApgGb6pX2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724902479; c=relaxed/simple;
-	bh=qHdRA0U04mt92W2CO9LLoiFZR6iRhXsbHyIqb5u5k2w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xz7bO5/MxuWbMeYjw/UMvlayDSnLWKkOF8xDWFA4IE8cR68v539ePbox/uv6X1hqDruPAxi9mMPiaubkj93eCjwGxVXtOq7/cq1hdf56DowOrQwP0zyj52VDoAwAZgcxmV7rSXnBnfztOLvCWUqhZAlj/nahQOrElChE48CAh6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=srcf.ucam.org; spf=pass smtp.mailfrom=codon.org.uk; arc=none smtp.client-ip=176.126.240.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=srcf.ucam.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codon.org.uk
-Received: by cavan.codon.org.uk (Postfix, from userid 1000)
-	id 1FEBF407E6; Thu, 29 Aug 2024 04:25:26 +0100 (BST)
-Date: Thu, 29 Aug 2024 04:25:26 +0100
-From: Matthew Garrett <mjg59@srcf.ucam.org>
-To: Andy Lutomirski <luto@amacapital.net>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	"Daniel P. Smith" <dpsmith@apertussolutions.com>,
-	"Eric W. Biederman" <ebiederm@xmission.com>,
-	Eric Biggers <ebiggers@kernel.org>,
-	Ross Philipson <ross.philipson@oracle.com>,
-	linux-kernel@vger.kernel.org, x86@kernel.org,
-	linux-integrity@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-crypto@vger.kernel.org, kexec@lists.infradead.org,
-	linux-efi@vger.kernel.org, iommu@lists.linux-foundation.org,
-	mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-	dave.hansen@linux.intel.com, ardb@kernel.org,
-	James.Bottomley@hansenpartnership.com, peterhuewe@gmx.de,
-	jarkko@kernel.org, jgg@ziepe.ca, nivedita@alum.mit.edu,
-	herbert@gondor.apana.org.au, davem@davemloft.net, corbet@lwn.net,
-	dwmw2@infradead.org, baolu.lu@linux.intel.com,
-	kanth.ghatraju@oracle.com, andrew.cooper3@citrix.com,
-	trenchboot-devel@googlegroups.com
-Subject: Re: [PATCH v9 06/19] x86: Add early SHA-1 support for Secure Launch
- early measurements
-Message-ID: <Zs/qJsKu3StL3Wzt@srcf.ucam.org>
-References: <20240531010331.134441-1-ross.philipson@oracle.com>
- <20240531010331.134441-7-ross.philipson@oracle.com>
- <20240531021656.GA1502@sol.localdomain>
- <874jaegk8i.fsf@email.froward.int.ebiederm.org>
- <5b1ce8d3-516d-4dfd-a976-38e5cee1ef4e@apertussolutions.com>
- <87ttflli09.ffs@tglx>
- <CALCETrXQ7rChWLDqTG0+KY7rsfajSPguMnHO1G4VJi_mgwN9Zw@mail.gmail.com>
+	s=arc-20240116; t=1724902026; c=relaxed/simple;
+	bh=ZpZR9epJcdcp1YBej++duiEWeU1hJTKjIBNMmpppcvk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=PwZWfuCa3mIGxpRfmmokhAAuTEB09CEeijefEHDzoJl4JCrB+lGI/ffJqEwkR4f+48rG6c8Cw9dtrs9dZ7hZStb8IaDU/L3G+Fv0BlZeBFwR/qE/Q47t2odNcA9mgpRVjh2reh42fbhhly8qaLmr2x6FMVCypLlkxl4mhCYI6HU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4WvRWm3J4Bz18MpC;
+	Thu, 29 Aug 2024 11:26:12 +0800 (CST)
+Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
+	by mail.maildlp.com (Postfix) with ESMTPS id 85A8C1401F2;
+	Thu, 29 Aug 2024 11:27:01 +0800 (CST)
+Received: from [10.67.109.254] (10.67.109.254) by
+ kwepemh500013.china.huawei.com (7.202.181.146) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 29 Aug 2024 11:27:00 +0800
+Message-ID: <b5b7346d-83ea-846a-1187-3d39ee5177f3@huawei.com>
+Date: Thu, 29 Aug 2024 11:26:59 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALCETrXQ7rChWLDqTG0+KY7rsfajSPguMnHO1G4VJi_mgwN9Zw@mail.gmail.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+Subject: Re: [PATCH net-next v2 00/13] net: Simplified with scoped function
+Content-Language: en-US
+To: Andrew Lunn <andrew@lunn.ch>
+CC: <woojung.huh@microchip.com>, <f.fainelli@gmail.com>, <olteanv@gmail.com>,
+	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <linus.walleij@linaro.org>, <alsi@bang-olufsen.dk>,
+	<justin.chen@broadcom.com>, <sebastian.hesselbarth@gmail.com>,
+	<alexandre.torgue@foss.st.com>, <joabreu@synopsys.com>,
+	<mcoquelin.stm32@gmail.com>, <wens@csie.org>, <jernej.skrabec@gmail.com>,
+	<samuel@sholland.org>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
+	<ansuelsmth@gmail.com>, <UNGLinuxDriver@microchip.com>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<bcm-kernel-feedback-list@broadcom.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-sunxi@lists.linux.dev>,
+	<linux-stm32@st-md-mailman.stormreply.com>, <krzk@kernel.org>,
+	<jic23@kernel.org>
+References: <20240828032343.1218749-1-ruanjinjie@huawei.com>
+ <6092e318-ae0c-44f6-89fa-989a384921b7@lunn.ch>
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+In-Reply-To: <6092e318-ae0c-44f6-89fa-989a384921b7@lunn.ch>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemh500013.china.huawei.com (7.202.181.146)
 
-On Wed, Aug 28, 2024 at 08:17:05PM -0700, Andy Lutomirski wrote:
 
-> Ross et al, can you confirm that your code actually, at least by
-> default and with a monstrous warning to anyone who tries to change the
-> default, caps SHA1 PCRs if SHA256 is available?  And then can we maybe
-> all stop hassling the people trying to develop this series about the
-> fact that they're doing their best with the obnoxious system that the
-> TPM designers gave them?
 
-Presumably this would be dependent upon non-SHA1 banks being enabled?
+On 2024/8/28 22:32, Andrew Lunn wrote:
+> On Wed, Aug 28, 2024 at 11:23:30AM +0800, Jinjie Ruan wrote:
+>> Simplify with scoped for each OF child loop and __free(), as well as
+>> dev_err_probe().
+>>
+>> Changes in v2:
+>> - Subject prefix: next -> net-next.
+>> - Split __free() from scoped for each OF child loop clean.
+>> - Fix use of_node_put() instead of __free() for the 5th patch.
+> 
+> I personally think all these __free() are ugly and magical. Can it
+> somehow be made part of of_get_child_by_name()? Add an
+> of_get_child_by_name_func_ref() which holds a reference to the node
+> for the scope of the function?
+
+Yes, that is a good idea, and the __free() doesn't look as readable as
+or_each_*child_of_node_scoped().
+
+> 
+> for_each_available_child_of_node_scoped() is fine. Once you have fixed
+> all the reverse christmas tree, please submit them. But i would like
+> to see alternatives to __free(), once which are less ugly.
+
+Thank you!
+
+> 
+> 	Andrew
+> 
+> ---
+> pw-bot: cr
+> 
 
