@@ -1,122 +1,94 @@
-Return-Path: <linux-kernel+bounces-306929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5688B96459E
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 14:58:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 835479645A7
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:01:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14A8A286A48
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 12:58:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D214B25860
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:01:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80DD1192B7C;
-	Thu, 29 Aug 2024 12:58:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C61A1A3BAA;
+	Thu, 29 Aug 2024 13:01:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="zwADjAuP"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="hZml8b7s"
+Received: from xry111.site (xry111.site [89.208.246.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6676518C35B;
-	Thu, 29 Aug 2024 12:58:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53180194A67;
+	Thu, 29 Aug 2024 13:01:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724936307; cv=none; b=B96uwu/ASG20eBsL0qDM3pqtuIP3vvy1o8VUmEKxXrAMos/O3rHDMe7SyLeiS4CWd7gZkYTkIl0j9jYXpEv88QmP7vxa34uGtcWB0aIO1x8enrEu+5rW0Bb6u+G1+JD92bv8s++obRndEEw1yd8BdoerSfaH9DHnKwPqLs+dimU=
+	t=1724936474; cv=none; b=iGTNeFjY1XN5suuuJQ+W6x6BdKZO0Tn3uH205m0WECL/RMm9nLsNFLAi1Y/9zKQoLEULxZWdhgDvyRGk1p1BizX7PnhsTLXuBzMRZPNYCrnGdTCt1Oe60UHsTHr8msCF80M3+mGwY+zgORAe/rD9hWa9kW7XcV3+ayy8ypaNu2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724936307; c=relaxed/simple;
-	bh=+PkUDybrY7h/5JAutPmUn6loGA2FCGqTdsMcANWYMlY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ptU3RRj8L40dkSQyyngy59CHv8rl2ybBfxDyELmFh9P17KEuAxG9PcQEvwW5Ok9QF19AQlL9ejIEXDcQS1kQzwGUMejgeh27GdBuXnFffrNpbCKeecIqPnXIrCkyTpLMyX0CXvRz7MJ4C1lTOdyH1lYqMmLo5sD9Z/4M+HC52xw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=zwADjAuP; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=2DMaGcBrCtwhweR0eYxljcor73ra0w4g90JZuCsAVrU=; b=zwADjAuPKsULeSQNlxljgFSZUn
-	ft8C0DIQHCrrdse/KJcTUbRLPe7qqo1muAzpgqjwJ0+LKIcmPyTfVnRLoSdj2LsDQpmEah/jrS7S6
-	9McE3p9dLIAsu/yIZWxqRZZ+IQKWrdbIcKlfqZOwWWQ/QK4DaoRfSZE240bSyLRAH0Sk=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sjejG-0062HZ-GT; Thu, 29 Aug 2024 14:58:22 +0200
-Date: Thu, 29 Aug 2024 14:58:22 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Wang Jianzheng <wangjianzheng@vivo.com>
-Cc: Gregory Clement <gregory.clement@bootlin.com>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	"moderated list:ARM/Marvell Kirkwood and Armada 370, 375, 38x,..." <linux-arm-kernel@lists.infradead.org>,
-	"open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	opensource.kernel@vivo.com
-Subject: Re: [PATCH 3/5] pinctrl: mvebu: Use devm_clk_get_enabled() helpers
-Message-ID: <3c446336-c1f6-499c-8fcd-4c49f5be863e@lunn.ch>
-References: <20240829064900.19909-1-wangjianzheng@vivo.com>
+	s=arc-20240116; t=1724936474; c=relaxed/simple;
+	bh=iaMzCBEFcBuOTA+Y95+j3XbqrzZqHRO9KGANgwR72TM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=u6FUyBxz5ImHWbRgA0rXtS97hv2YhXXKkYE9nGJ/majjXT2Qk8NIlTjbdUK5ZCILqiI1mx/H8qQWnvSmtfug94WHAj4a7QMFz70YQpHIEobxaOtpdd4iZOZHzr9iJkVa7SOjnSeTTcT0HesT4zmlc6h/A7FVN+6Z2tZUzaVVVE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=hZml8b7s; arc=none smtp.client-ip=89.208.246.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xry111.site;
+	s=default; t=1724936472;
+	bh=iaMzCBEFcBuOTA+Y95+j3XbqrzZqHRO9KGANgwR72TM=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=hZml8b7sduKqpX99GPbiyEbdduetVWMi15jkP5eLw5gIltZfa/5amtHeKjj3BOTiP
+	 XwAkN3nSVfWSoxIIS3VbsFcAuHRE0SIdcwMnvR7M5eyLggPt6lb+phqhvIRsWYzXLh
+	 7eXOF91OGPhj0LeW120knkNkvnV15f1ZGr3s7S3Y=
+Received: from [192.168.124.6] (unknown [113.200.174.10])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-384) server-digest SHA384)
+	(Client did not present a certificate)
+	(Authenticated sender: xry111@xry111.site)
+	by xry111.site (Postfix) with ESMTPSA id 695BE66F26;
+	Thu, 29 Aug 2024 09:01:08 -0400 (EDT)
+Message-ID: <5fc8fc031c338f438fcd4aa5eaeb26b60d869405.camel@xry111.site>
+Subject: Re: [PATCH v5] LoongArch: vDSO: Wire up getrandom() vDSO
+ implementation
+From: Xi Ruoyao <xry111@xry111.site>
+To: "Jason A . Donenfeld" <Jason@zx2c4.com>, Huacai Chen
+ <chenhuacai@kernel.org>,  WANG Xuerui <kernel@xen0n.name>
+Cc: linux-crypto@vger.kernel.org, loongarch@lists.linux.dev, 
+ linux-kernel@vger.kernel.org, Jinyang He <hejinyang@loongson.cn>, Tiezhu
+ Yang <yangtiezhu@loongson.cn>, Arnd Bergmann <arnd@arndb.de>, Thomas
+ Gleixner <tglx@linutronix.de>, Christophe Leroy
+ <christophe.leroy@csgroup.eu>
+Date: Thu, 29 Aug 2024 21:01:05 +0800
+In-Reply-To: <20240829125656.19017-1-xry111@xry111.site>
+References: <20240829125656.19017-1-xry111@xry111.site>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240829064900.19909-1-wangjianzheng@vivo.com>
 
-On Thu, Aug 29, 2024 at 02:48:59PM +0800, Wang Jianzheng wrote:
-> The devm_clk_get_enabled() helpers:
->     - call devm_clk_get()
->     - call clk_prepare_enable() and register what is needed in order to
->      call clk_disable_unprepare() when needed, as a managed resource.
-> 
-> This simplifies the code and avoids the calls to clk_disable_unprepare().
-> 
-> Signed-off-by: Wang Jianzheng <wangjianzheng@vivo.com>
-> ---
->  drivers/pinctrl/mvebu/pinctrl-dove.c | 45 +++++++++-------------------
->  1 file changed, 14 insertions(+), 31 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/mvebu/pinctrl-dove.c b/drivers/pinctrl/mvebu/pinctrl-dove.c
-> index dce601d99372..1c2a292ebbd9 100644
-> --- a/drivers/pinctrl/mvebu/pinctrl-dove.c
-> +++ b/drivers/pinctrl/mvebu/pinctrl-dove.c
-> @@ -767,7 +767,7 @@ static int dove_pinctrl_probe(struct platform_device *pdev)
->  	struct resource fb_res;
->  	struct mvebu_mpp_ctrl_data *mpp_data;
->  	void __iomem *base;
-> -	int i, ret;
-> +	int i;
->  
->  	pdev->dev.platform_data = (void *)device_get_match_data(&pdev->dev);
->  
-> @@ -775,25 +775,20 @@ static int dove_pinctrl_probe(struct platform_device *pdev)
->  	 * General MPP Configuration Register is part of pdma registers.
->  	 * grab clk to make sure it is ticking.
->  	 */
-> -	clk = devm_clk_get(&pdev->dev, NULL);
-> +	clk = devm_clk_get_enabled(&pdev->dev, NULL);
->  	if (IS_ERR(clk)) {
->  		dev_err(&pdev->dev, "Unable to get pdma clock");
->  		return PTR_ERR(clk);
->  	}
-> -	clk_prepare_enable(clk);
->  
->  	base = devm_platform_get_and_ioremap_resource(pdev, 0, &mpp_res);
-> -	if (IS_ERR(base)) {
-> -		ret = PTR_ERR(base);
-> -		goto err_probe;
-> -	}
-> +	if (IS_ERR(base))
-> +		return PTR_ERR(base);
+On Thu, 2024-08-29 at 20:56 +0800, Xi Ruoyao wrote:
+> diff --git a/arch/loongarch/kernel/asm-offsets.c b/arch/loongarch/kernel/=
+asm-offsets.c
 
-It appears that in patch 3 you add all these goto err_probe, and now
-you delete them?
+Oops stupid I.  Please remove this hunk applying the patch.
 
-Please reverse the order of these two patches!
+I'll remove this in v6 if needed.
 
-    Andrew
+> index bee9f7a3108f..ab258878d551 100644
+> --- a/arch/loongarch/kernel/asm-offsets.c
+> +++ b/arch/loongarch/kernel/asm-offsets.c
+> @@ -14,6 +14,7 @@
+> =C2=A0#include <asm/ptrace.h>
+> =C2=A0#include <asm/processor.h>
+> =C2=A0#include <asm/ftrace.h>
+> +#include <asm/vdso/vdso.h>
+> =C2=A0
+> =C2=A0static void __used output_ptreg_defines(void)
+> =C2=A0{
 
----
-pw-bot: cr
+--=20
+Xi Ruoyao <xry111@xry111.site>
+School of Aerospace Science and Technology, Xidian University
 
