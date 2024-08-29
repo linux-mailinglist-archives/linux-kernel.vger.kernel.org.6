@@ -1,120 +1,178 @@
-Return-Path: <linux-kernel+bounces-306561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 521F296407E
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 11:46:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8508E964088
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 11:50:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85AA81C24337
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 09:46:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F2481F2304E
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 09:50:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62BF918DF8E;
-	Thu, 29 Aug 2024 09:46:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DDD418E021;
+	Thu, 29 Aug 2024 09:49:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="UmgVhiUn"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mwL6pv6i"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA5B516D300;
-	Thu, 29 Aug 2024 09:46:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ABF818DF77
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 09:49:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724924780; cv=none; b=VBK9pnlRrv4JZZIb3G+Y088HQEu+7uxONGbYgzKf4XOwzeHcCeIFhRUWWIS3+Dq1wpiTAY+xBypynWNbjBGmso1aQza1IU/bpWLYWQ5xRT6JHWuK5bETFp6o08f5defeOJFgRKkgxylaGBzalT0Zu2HsuWc5+/r8fbOvvk43eIs=
+	t=1724924994; cv=none; b=PdTjqt5QYvvvdrV3lniHjZTYQvij35MCjDj1t1Ag6CfWAQVOeCvdOoYcqja0MUemrb2hU5B3+xjFiJaNqvQqZyWLS/IAd6/AIDjN5sNGYaDvR1dlcZaQ8GwJ7RCfK8+P9FxH75SknBCiDXd0Opf/m2QdixGfLSh5KWr6y8wY09I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724924780; c=relaxed/simple;
-	bh=ocJ8W/+M0Xz6OUD7zGhNMsK/xqBmqnD22uG+2O4i6zY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nGXZstaQm7uUZKZqfcm0AVhqv8EiprzU44ksSVKd2Z7nkOFCwGDikq2HHFtHvQDjmGRsOdPEXj++iNoCa7DsVnlgdTLKI/Yrti5bdqQM97AQCYTXsmJxo2kski5FYqNyiTDW+E5tTmqWL9NR96060Ugdv+lbo6YjaRY4NND8t8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=UmgVhiUn; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 5CD3D6AF;
-	Thu, 29 Aug 2024 11:45:08 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1724924708;
-	bh=ocJ8W/+M0Xz6OUD7zGhNMsK/xqBmqnD22uG+2O4i6zY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UmgVhiUnCSV2IzZHzRmXGnHfFK7bDFSnfuuOjoMteR7bPl/Msml6Ppb/PPfzlEBO7
-	 X3Z1uURAsbZ0Ep70kPPT4OEfDzIQAX8CsuYHNXxvTR3xubUCWDuJbyv5fux2oB6Asa
-	 ZuuGaKIN1wBu8rqJVAXHeZX2BenWnle8bo/lW3ow=
-Date: Thu, 29 Aug 2024 12:45:46 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: Liao Chen <liaochen4@huawei.com>,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"hverkuil-cisco@xs4all.nl" <hverkuil-cisco@xs4all.nl>,
-	"mchehab@kernel.org" <mchehab@kernel.org>,
-	"thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-	"jonathanh@nvidia.com" <jonathanh@nvidia.com>,
-	"jacopo@jmondi.org" <jacopo@jmondi.org>,
-	"sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>,
-	"tomi.valkeinen@ideasonboard.com" <tomi.valkeinen@ideasonboard.com>
-Subject: Re: [PATCH -next 1/3] media: v4l2-subdev: enable module autoloading
-Message-ID: <20240829094546.GA12951@pendragon.ideasonboard.com>
-References: <20240829075417.526459-1-liaochen4@huawei.com>
- <20240829075417.526459-2-liaochen4@huawei.com>
- <TY3PR01MB11346459841445E77A5FBA37B86962@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+	s=arc-20240116; t=1724924994; c=relaxed/simple;
+	bh=7Gh5rIZZaUQp/+KXCB7wUzIP4BFWrquNWB5FRNG0+Y0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=nBmG3T0MENs0S//vEoQ1HoF//i1WFx0XFDVQrGjSwbxyM80oEcmOqvEZsQknSjZwhSwwiug8AU1VRHawIDK+xPOFhhfMo8aqqzL8kMXpuh5W5q8Fhc8kYLdzJ/3OcS8HoezOjeQljzXnUcNhwhF3YjaMdgyrRjXxtjLiR6YGCnw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mwL6pv6i; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a7a843bef98so36953466b.2
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 02:49:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724924991; x=1725529791; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=5ijbc1FBmZqLQmOrVie/CTDt0zfKTwvY0WB9RmnQpeQ=;
+        b=mwL6pv6iu7qpALKWlu4I4pRtLCBede1mtX62LeZOOsPXO8xSPyVGMKtMw1kiwIXpNj
+         q9KlbYMBDyz2uWFD/Ghg0zhzQFTDl0DBmw8KxbN2DZf4xC+uN2CHqJYQRItXPwUQktuA
+         c9OaAGvh1kjgJTZ12xAiCV8Nafr+GrAU3nsDSYUgJJXGSoIvNAeoRk4Z7VI0jXFB16M5
+         a39YfPhn4gtm5DbBHhQxn4QJy4a3Ahu9fKWiY2gQiBJ3Fy2JQjQ+BQcWVf5ItUH1qavc
+         kGbPSyfUbJh60HYv1oEl7bKHeqN9B1HiaNdGbq8yHnrB/SBX/VW15v+tBJW4gICV8wRu
+         ye7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724924991; x=1725529791;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5ijbc1FBmZqLQmOrVie/CTDt0zfKTwvY0WB9RmnQpeQ=;
+        b=CF5hrWpGU783Qr1z4mgbUFbtM0rSDgtW9xDgSlVLiuaOJvPF1I/yDucrLaVi2lxFa1
+         Hl+1LUd8enQNTjVHMNtYjHN5FpKxgv/Y9nwOgsngHAKXxV98j0TGibB/aoWTgFkPPt3p
+         vJDVFkqjxk5admzxN+P/ocWXF/odGBOXGEDI5a/ktMDSQ/ivvEKFOFngiPyCH56IJm57
+         +boHkCXWNhOE35pPjeiO2eYwprEsvS0N0c5DkvIJHJJvUQPqGBZbPgKF810dDgrQjILB
+         fkwzVvoqJix7hgNWQcF2+rQsbPZsrdPnZp1ccVic+LWbxpkh+4rqzgMXm0LYPv8Ktwde
+         mAdw==
+X-Forwarded-Encrypted: i=1; AJvYcCVpfM6L+4XrSNmDBVvJ7S4ubNWSweKiclu6C8wuI04OCAwFPhc41JIFKKQ+dEESQ8JOB/O+rXYVoxHKhYk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwupG8pdwoOZV0yMxx8O78WMNdQyxg23jBe5lnE5v+wLb6BaQz9
+	IEg9mszLDE19CW9XnDSZDQFNN6auUa/zU6TkXe6DzDp7J/ql0V0pmHDqtE/O+MM=
+X-Google-Smtp-Source: AGHT+IGqCHgwIkeJ3Y2sXZ8IUAgugHtlAhdcUpgiEZufWlSzBa0418AQyUq1POIX2NuOp3xuZSwusA==
+X-Received: by 2002:a17:906:6a1b:b0:a86:f960:411d with SMTP id a640c23a62f3a-a897f7832dcmr182989366b.2.1724924990682;
+        Thu, 29 Aug 2024 02:49:50 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a898908f62bsm56746466b.91.2024.08.29.02.49.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Aug 2024 02:49:50 -0700 (PDT)
+Date: Thu, 29 Aug 2024 12:49:46 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: oe-kbuild@lists.linux.dev, Yan Zhen <yanzhen@vivo.com>,
+	davem@davemloft.net, chuck.lever@oracle.com, jlayton@kernel.org,
+	trondmy@kernel.org, anna@kernel.org, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com
+Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev, neilb@suse.de,
+	okorniev@redhat.com, Dai.Ngo@oracle.com, tom@talpey.com,
+	linux-nfs@vger.kernel.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, opensource.kernel@vivo.com,
+	Yan Zhen <yanzhen@vivo.com>
+Subject: Re: [PATCH v3] sunrpc: Fix error checking for d_hash_and_lookup()
+Message-ID: <a8cb00eb-8b39-49ab-a9d8-a68a7d7f4423@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <TY3PR01MB11346459841445E77A5FBA37B86962@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+In-Reply-To: <20240828044355.590260-1-yanzhen@vivo.com>
 
-On Thu, Aug 29, 2024 at 08:27:06AM +0000, Biju Das wrote:
-> Hi Liao Chen,
-> On Thursday, August 29, 2024 8:54 AM, Liao Chen wrote:
-> > Subject: [PATCH -next 1/3] media: v4l2-subdev: enable module autoloading
-> 
-> Commit header is wrong.
+Hi Yan,
 
-Indeed, it should be
+kernel test robot noticed the following build warnings:
 
-media: i2c: mt9v111: Enable module autoloading
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-> > Add MODULE_DEVICE_TABLE(), so modules could be properly autoloaded based on the alias from
-> > of_device_id table.
+url:    https://github.com/intel-lab-lkp/linux/commits/Yan-Zhen/sunrpc-Fix-error-checking-for-d_hash_and_lookup/20240828-124615
+base:   git://git.linux-nfs.org/projects/trondmy/linux-nfs.git linux-next
+patch link:    https://lore.kernel.org/r/20240828044355.590260-1-yanzhen%40vivo.com
+patch subject: [PATCH v3] sunrpc: Fix error checking for d_hash_and_lookup()
+config: i386-randconfig-141-20240829 (https://download.01.org/0day-ci/archive/20240829/202408290616.Ke1JxTcE-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
 
-Please also reflow the commit message to 72 columns. With those issues
-fixed,
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+| Closes: https://lore.kernel.org/r/202408290616.Ke1JxTcE-lkp@intel.com/
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+smatch warnings:
+net/sunrpc/rpc_pipe.c:1310 rpc_gssd_dummy_populate() warn: passing zero to 'ERR_CAST'
 
-> > 
-> > Signed-off-by: Liao Chen <liaochen4@huawei.com>
-> > ---
-> >  drivers/media/i2c/mt9v111.c | 1 +
-> >  1 file changed, 1 insertion(+)
-> > 
-> > diff --git a/drivers/media/i2c/mt9v111.c b/drivers/media/i2c/mt9v111.c index
-> > b0b98ed3c150..b6a2623798c5 100644
-> > --- a/drivers/media/i2c/mt9v111.c
-> > +++ b/drivers/media/i2c/mt9v111.c
-> > @@ -1265,6 +1265,7 @@ static const struct of_device_id mt9v111_of_match[] = {
-> >  	{ .compatible = "aptina,mt9v111", },
-> >  	{ /* sentinel */ },
-> 
-> Nit: Comma can be dropped from terminator entry as a separate patch.
-> 
-> Cheers,
-> Biju
-> 
-> >  };
-> > +MODULE_DEVICE_TABLE(of, mt9v111_of_match);
-> > 
-> >  static struct i2c_driver mt9v111_driver = {
-> >  	.driver = {
+vim +/ERR_CAST +1310 net/sunrpc/rpc_pipe.c
+
+4b9a445e3eeb8bd Jeff Layton   2013-11-14  1297  static struct dentry *
+4b9a445e3eeb8bd Jeff Layton   2013-11-14  1298  rpc_gssd_dummy_populate(struct dentry *root, struct rpc_pipe *pipe_data)
+4b9a445e3eeb8bd Jeff Layton   2013-11-14  1299  {
+4b9a445e3eeb8bd Jeff Layton   2013-11-14  1300  	int ret = 0;
+4b9a445e3eeb8bd Jeff Layton   2013-11-14  1301  	struct dentry *gssd_dentry;
+4b9a445e3eeb8bd Jeff Layton   2013-11-14  1302  	struct dentry *clnt_dentry = NULL;
+4b9a445e3eeb8bd Jeff Layton   2013-11-14  1303  	struct dentry *pipe_dentry = NULL;
+4b9a445e3eeb8bd Jeff Layton   2013-11-14  1304  	struct qstr q = QSTR_INIT(files[RPCAUTH_gssd].name,
+4b9a445e3eeb8bd Jeff Layton   2013-11-14  1305  				  strlen(files[RPCAUTH_gssd].name));
+4b9a445e3eeb8bd Jeff Layton   2013-11-14  1306  
+4b9a445e3eeb8bd Jeff Layton   2013-11-14  1307  	/* We should never get this far if "gssd" doesn't exist */
+                                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+4b9a445e3eeb8bd Jeff Layton   2013-11-14  1308  	gssd_dentry = d_hash_and_lookup(root, &q);
+cf4564e657c6275 Yan Zhen      2024-08-28  1309  	if (IS_ERR_OR_NULL(gssd_dentry))
+cf4564e657c6275 Yan Zhen      2024-08-28 @1310  		return ERR_CAST(gssd_dentry);
+
+The callers are not expecting a NULL return from rpc_gssd_dummy_populate() so
+this will lead to a crash.
+
+The comments to d_hash_and_lookup() say it returns NULL if the file doesn't
+exist and the error pointers if the filename is invalid.  Neither one should be
+possible here according to the comments on line 1307.  So we're debating about
+how to handle impossible situations.
+
+4b9a445e3eeb8bd Jeff Layton   2013-11-14  1311  
+4b9a445e3eeb8bd Jeff Layton   2013-11-14  1312  	ret = rpc_populate(gssd_dentry, gssd_dummy_clnt_dir, 0, 1, NULL);
+4b9a445e3eeb8bd Jeff Layton   2013-11-14  1313  	if (ret) {
+4b9a445e3eeb8bd Jeff Layton   2013-11-14  1314  		pipe_dentry = ERR_PTR(ret);
+4b9a445e3eeb8bd Jeff Layton   2013-11-14  1315  		goto out;
+4b9a445e3eeb8bd Jeff Layton   2013-11-14  1316  	}
+4b9a445e3eeb8bd Jeff Layton   2013-11-14  1317  
+4b9a445e3eeb8bd Jeff Layton   2013-11-14  1318  	q.name = gssd_dummy_clnt_dir[0].name;
+4b9a445e3eeb8bd Jeff Layton   2013-11-14  1319  	q.len = strlen(gssd_dummy_clnt_dir[0].name);
+4b9a445e3eeb8bd Jeff Layton   2013-11-14  1320  	clnt_dentry = d_hash_and_lookup(gssd_dentry, &q);
+cf4564e657c6275 Yan Zhen      2024-08-28  1321  	if (IS_ERR_OR_NULL(clnt_dentry)) {
+b7ade38165ca000 Vasily Averin 2020-06-01  1322  		__rpc_depopulate(gssd_dentry, gssd_dummy_clnt_dir, 0, 1);
+4b9a445e3eeb8bd Jeff Layton   2013-11-14  1323  		pipe_dentry = ERR_PTR(-ENOENT);
+4b9a445e3eeb8bd Jeff Layton   2013-11-14  1324  		goto out;
+4b9a445e3eeb8bd Jeff Layton   2013-11-14  1325  	}
+4b9a445e3eeb8bd Jeff Layton   2013-11-14  1326  
+e2f0c83a9de331d Jeff Layton   2013-12-05  1327  	ret = rpc_populate(clnt_dentry, gssd_dummy_info_file, 0, 1, NULL);
+e2f0c83a9de331d Jeff Layton   2013-12-05  1328  	if (ret) {
+e2f0c83a9de331d Jeff Layton   2013-12-05  1329  		__rpc_depopulate(gssd_dentry, gssd_dummy_clnt_dir, 0, 1);
+e2f0c83a9de331d Jeff Layton   2013-12-05  1330  		pipe_dentry = ERR_PTR(ret);
+e2f0c83a9de331d Jeff Layton   2013-12-05  1331  		goto out;
+e2f0c83a9de331d Jeff Layton   2013-12-05  1332  	}
+e2f0c83a9de331d Jeff Layton   2013-12-05  1333  
+4b9a445e3eeb8bd Jeff Layton   2013-11-14  1334  	pipe_dentry = rpc_mkpipe_dentry(clnt_dentry, "gssd", NULL, pipe_data);
+e2f0c83a9de331d Jeff Layton   2013-12-05  1335  	if (IS_ERR(pipe_dentry)) {
+e2f0c83a9de331d Jeff Layton   2013-12-05  1336  		__rpc_depopulate(clnt_dentry, gssd_dummy_info_file, 0, 1);
+3396f92f8be606e Jeff Layton   2013-12-05  1337  		__rpc_depopulate(gssd_dentry, gssd_dummy_clnt_dir, 0, 1);
+e2f0c83a9de331d Jeff Layton   2013-12-05  1338  	}
+4b9a445e3eeb8bd Jeff Layton   2013-11-14  1339  out:
+4b9a445e3eeb8bd Jeff Layton   2013-11-14  1340  	dput(clnt_dentry);
+4b9a445e3eeb8bd Jeff Layton   2013-11-14  1341  	dput(gssd_dentry);
+4b9a445e3eeb8bd Jeff Layton   2013-11-14  1342  	return pipe_dentry;
+4b9a445e3eeb8bd Jeff Layton   2013-11-14  1343  }
 
 -- 
-Regards,
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
-Laurent Pinchart
 
