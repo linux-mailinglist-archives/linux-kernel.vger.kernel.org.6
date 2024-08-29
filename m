@@ -1,107 +1,89 @@
-Return-Path: <linux-kernel+bounces-307542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86E8A964EC2
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 21:24:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB30C964EBF
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 21:24:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0968DB2175A
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 19:24:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88AEA281A0B
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 19:24:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E48351B9B41;
-	Thu, 29 Aug 2024 19:24:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 673701B8E8A;
+	Thu, 29 Aug 2024 19:24:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RUYdJCwt"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G7Dlz9TB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B144D1B9B33;
-	Thu, 29 Aug 2024 19:24:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A69A63AC28;
+	Thu, 29 Aug 2024 19:24:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724959473; cv=none; b=iw4zYkp6nVGAvpEqsldUIAgmLnHjAb6ARrm5ueWxABfhn8r0lQ4dJzBfD2azk1iVryWFsWcUKqryt9vwrMqAeXI7hbSB4lFAs+DyYrxEscCZi9y2IeOQYlBNpG/y4YqVN03d0S1f+RWUyhudalPonCaRVyKs7idwPB+E4jfLbog=
+	t=1724959468; cv=none; b=StK3oa2PoGNGiKS153R54dRoFUINnCxftj3caynicK9dOua92ZDZMCc1jWWssW/Z0TIPvXbF/gHlia/jewzMGpH9tgN/rYWecOAZKjjRtmIbzbcWeiPxXYXjSgHLbrK9QClEBfsyjz1FgnsZv+cN7P1juJ3wyt5nsNq5ce+lfUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724959473; c=relaxed/simple;
-	bh=BmFEeWRoTKmrRXWSutrOaYv0xbNIQ74TxBbzWKgjmLw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ep+7vnNpwNtIQaWevT80bkVqre4gF5b+csJgB3YVJdOzXg+5I9A7nhkmop/t3Z9Q9khAqc/Fm6tmw2OEAeNW8kCteMVHV2it1IfRnOK2vhHm+G9IpG/o6veQSYb4jbC/cQzJGORm9OoEnJda8Mi7RjpXE8wmthS8UmkQQWkYgLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RUYdJCwt; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-37196229343so706819f8f.0;
-        Thu, 29 Aug 2024 12:24:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724959469; x=1725564269; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BmFEeWRoTKmrRXWSutrOaYv0xbNIQ74TxBbzWKgjmLw=;
-        b=RUYdJCwt/u956eZU3V1cyhuwOI8iM6HWc0eFdqosBAHZl/6eMFdGSI6lvVvV2pZDiP
-         eLolEyMaC2uauRt5JEEdn0eQwEdxjMT+hMMh/czKb7RPCD6Oy3rjDbg9v/eKDd4yhC2d
-         EEySCsy0LaU6GdQ648sIzAPy3lvkq+ioahkxITd3k6xCPHJBlUwDDa/DzLUm92Npkw6j
-         1BRECUJUiAIzJy8LYuYq1KAEIAJUSanFRbZpltLFQNjK72hxNi4g7KAWlD7FbeVks0Df
-         nDTaxJc+rWlG9ns0Dspob1xO/a8T3MC9gKuX0qtyw5fISphhfBjgXTcPgZXhxIcpVQbJ
-         eMvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724959469; x=1725564269;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BmFEeWRoTKmrRXWSutrOaYv0xbNIQ74TxBbzWKgjmLw=;
-        b=Jx2TRsruJlXOxssPrlkRIbHFVoQneWij1vtNiwjS8FR2GuqDUqWGfAp9dIFqy2CgnJ
-         zSex2wLQopPirgHsPsiuDEjOs5HqFgMeHW2XcIpXjIVQjM4KN4bl+EG5yhjMfdVTARyl
-         M3qmLIyCzdvaigMaL4jhTgimde8/BqtzrTUEuZ0WMkl8xTNKvBegUoa2KMPMarChFeWj
-         qfaPSiNSXQod2vl7zOiiXV+u+ifVn8HAdIGvNfggicDAhv0T7uyKqpsXdRJURyJ0JNJe
-         MKq0jzhHU9CxNWnuZ4ZgVB4IRv0/38CRmmcSdTFtxDITcmCuYWJIjmy8kXwI78UbtSxW
-         tnUg==
-X-Forwarded-Encrypted: i=1; AJvYcCUJog4NtmwPTDhczeY3iZwpYP80Dga08njHtjPEcjbx6kdVOfccIRvwOylka/nVcnzre8CQzxbTf0ZPty1c@vger.kernel.org, AJvYcCXhp1XU/2PwSWBqojp0nta7NRLQoVr7+uoRPQN8uUojXQpI2Y8T9jH7ZMmGzdVCwZizn8U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwoXcxIV7r+I9ILGorQdh1qFhlm+B/o877/zIiNXFlmh0qXXhmY
-	XVjvsitvov+MkOEd0CUIJin0hShqwZWelpmp+qYzWmgqUkJ9v6ITvsrxG3tVpOZkuYjYjNF1LEN
-	sohqU2FbRq5u/sfk9hFwOki/qgsU=
-X-Google-Smtp-Source: AGHT+IHOkEO16tIXxM5kBfCPn575boZ5jVxseMjoaohbBQ6j6UJ1g0BXSfTd5JZCM80of12ANtAKGQEsyphT9T8sK4k=
-X-Received: by 2002:adf:f691:0:b0:371:8dbf:8c1b with SMTP id
- ffacd0b85a97d-3749b56154fmr2842662f8f.34.1724959468964; Thu, 29 Aug 2024
- 12:24:28 -0700 (PDT)
+	s=arc-20240116; t=1724959468; c=relaxed/simple;
+	bh=uTglyPOiv1StxvS2A3Sp8Hit9OuSpBd4jENxkIcloxE=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=XHn5m7Gxbjlj1pFyPu5Pg/kVd70GmIidRi0i+fZIsfH+LjnwTQrstUuFasDyn2NjP345+zfFIVGOUKf+weA7+ElocFv9jX7k9x5DhAhtqeqU8xyjXyRy5vYeuQA/ZNjSnGNJfkRMnPA1N4o5PpjKGOmQkw9D2etwhTJsF83VBQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G7Dlz9TB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35E57C4CEC1;
+	Thu, 29 Aug 2024 19:24:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724959468;
+	bh=uTglyPOiv1StxvS2A3Sp8Hit9OuSpBd4jENxkIcloxE=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=G7Dlz9TB8nEzWinXJWcSgeTS87cAEgVVA9VJSWyfWJqSXfGGRGzcPb5Y0dST73ScL
+	 q0thvY1iM9n+z9w7WsZo0rQ/akN5SAJkaUSArWvpopb5ADG0abzaB3wjZ2AZB6pKQH
+	 R7AKK5r9CXuokOgotN7DfWX/0RQizI4znTa0AGhTxZaa/ULRdPG7pzbsD+tKizpZmJ
+	 5eG7P3zs/8lQHobaCwPxRyfwidrvnq3jKdJb2X3mjSiVoTsJDABu7GQM0C67uyXZwY
+	 k8cgzvJyLrg7NdrnOPHbNHI0P7CpA6wrtaXzfjS73+3MiQHBMP/UcQSPRyYlWUDFXI
+	 6nNe2GVKlCfqQ==
+Message-ID: <78b5aa6efc5b3ca4151f503367a9bd3a.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAK7LNATb8dbhvdSgiNEMkdsgg93q4ZUGUxReZYNjOV3fDPnfyQ@mail.gmail.com>
- <20240828181028.4166334-1-legion@kernel.org>
-In-Reply-To: <20240828181028.4166334-1-legion@kernel.org>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Thu, 29 Aug 2024 12:24:17 -0700
-Message-ID: <CAADnVQL4Cy-F_=RJy_=3v97mfaMRWGp54xN-t9QzOqY3+hoghg@mail.gmail.com>
-Subject: Re: [PATCH v3] bpf: Remove custom build rule
-To: Alexey Gladkov <legion@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
-	Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>, Masahiro Yamada <masahiroy@kernel.org>, 
-	Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Oleg Nesterov <oleg@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <NTZPR01MB0956E46297168E8E21D6F17F9F962@NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn>
+References: <20240826080430.179788-1-xingyu.wu@starfivetech.com> <20240826080430.179788-2-xingyu.wu@starfivetech.com> <ba3077ef4b155649812fd8be75f131e7.sboyd@kernel.org> <NTZPR01MB0956E46297168E8E21D6F17F9F962@NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn>
+Subject: RE: [PATCH v7 1/2] clk: starfive: jh7110-sys: Add notifier for PLL0 clock
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Hal Feng <hal.feng@starfivetech.com>, linux-kernel@vger.kernel.org <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org <linux-clk@vger.kernel.org>
+To: Conor Dooley <conor@kernel.org>, Emil Renner Berthing <emil.renner.berthing@canonical.com>, Michael Turquette <mturquette@baylibre.com>, Xingyu Wu <xingyu.wu@starfivetech.com>
+Date: Thu, 29 Aug 2024 12:24:25 -0700
+User-Agent: alot/0.10
 
-On Wed, Aug 28, 2024 at 11:11=E2=80=AFAM Alexey Gladkov <legion@kernel.org>=
- wrote:
->
-> --- /dev/null
-> +++ b/kernel/bpf/btf_iter.c
-> @@ -0,0 +1,2 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +#include "../../tools/lib/bpf/btf_iter.c"
+Quoting Xingyu Wu (2024-08-28 22:42:43)
+> On 29/08/2024 04:19, Stephen Boyd wrote:
+> >=20
+> > Quoting Xingyu Wu (2024-08-26 01:04:29)
+> > > Add notifier function for PLL0 clock. In the function, the cpu_root
+> > > clock should be operated by saving its current parent and setting a
+> > > new safe parent (osc clock) before setting the PLL0 clock rate. After
+> > > setting PLL0 rate, it should be switched back to the original parent =
+clock.
+> > >
+> > > Fixes: e2c510d6d630 ("riscv: dts: starfive: Add cpu scaling for JH7110
+> > > SoC")
+> > > Reviewed-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+> > > Signed-off-by: Xingyu Wu <xingyu.wu@starfivetech.com>
+> > > ---
+> >=20
+> > What is the urgency of this patch? I can't tell from the commit text, s=
+o I'm
+> > assuming it can bake in clk-next for a few weeks.
+>=20
+> Hi Stephen,
+>=20
+> This is urgent. Without this patch, Cpufreq does not work and the CPU can=
+'t work in the best frequency of 1.5GHz. This patch can improve the perform=
+ance of the visionfive-2 board.
+>=20
 
-These files are licensed as
-// SPDX-License-Identifier: (LGPL-2.1 OR BSD-2-Clause)
-in libbpf directory.
-Pls use that.
-
-Pls keep acks/reviews-bys/tested-by when you respin.
-
-Thanks
-
-pw-bot: cr
+Ok. I'll apply it to clk-fixes then.
 
