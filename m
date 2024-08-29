@@ -1,172 +1,111 @@
-Return-Path: <linux-kernel+bounces-307050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9307796474E
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:54:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8160796474B
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:54:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46EB11F22739
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:54:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B48531C23B17
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:54:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9AD71AC883;
-	Thu, 29 Aug 2024 13:54:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 006BB1AD9CD;
+	Thu, 29 Aug 2024 13:54:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SubGUyCe"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jaVBywgb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5349218A6BA
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 13:54:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3392D19306A;
+	Thu, 29 Aug 2024 13:54:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724939675; cv=none; b=RIwBwCvz5TO9blX9A9nidOYQVMQ+0dYp+u3PS50Jd2dOvNdvqRit7Z4JR6XsXBur15EKM5CIZKX5XZcjm6ZNY77FjYDQycPz9VLVS4Qox0zq+vXlBsQ5RdFJ6E1ifJkHRRkQyVI8fubLl0k6o7CuIbyY8trct5+ER0m4VyIFIKI=
+	t=1724939644; cv=none; b=fIkFUUBQuZLoo0ZnjPDTn+aVgas7VxUBEG1BTkmyIsZUDxaaKqhSe6Gy3eRCoYwxh+gqvHy4KCeRR7T8jJ3jWmJCz7TqYwkTMK6+qVQqXCy1MPrUhpQqEuyoF/1XRzdFJp4qYHoKkSjkyhLpu+fB5onrmgPKEUL9s17E+qCpy14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724939675; c=relaxed/simple;
-	bh=Rq+yNcUwPWx41zQSO5KmqMvIsQRScXdlmsTqVPKSxf0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=P42fZkaW8luqw2lZZFHk4bSJrEVJQ1vesOMVXv98xP9Pn8mfZdTh9OCzSBKNBXB0/GWFHjlcok3eOaIlaDa6aDI8b4+lORyHXz8/W6qtfkrQkNhQ7jJxkoFy14cqMoOtzKeEeMpwZaps+Mg6DqGHzRjgD03CEvjq7bxHxXdgkWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SubGUyCe; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724939672;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=vX4yi4Z2CPW0eHhvuU5h0SjR1OL4/r7rT7T4GvJLHuA=;
-	b=SubGUyCeSOS7qbafiRU4i9Ov4/tOK9fWsjL72SXWTN+1cLH+jdjs6O6MTbP78O7bDjaA9w
-	tmfanBzfBICNkdAtm4vyxRVJYii8QDCygiGKpRn6fGzY+roSPnPUOIJKAG2htUA16//Anr
-	prPzwLB23+f9O2rHb+mvyEcqAjMhHGI=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-203-y2zAJ-lJPRiKUMMPommj5Q-1; Thu,
- 29 Aug 2024 09:54:29 -0400
-X-MC-Unique: y2zAJ-lJPRiKUMMPommj5Q-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 531E51955BF1;
-	Thu, 29 Aug 2024 13:54:26 +0000 (UTC)
-Received: from vschneid-thinkpadt14sgen2i.remote.csb (unknown [10.39.194.25])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 16B9519560AA;
-	Thu, 29 Aug 2024 13:54:20 +0000 (UTC)
-From: Valentin Schneider <vschneid@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: "Paul E. McKenney" <paulmck@kernel.org>,
-	Chen Yu <yu.c.chen@intel.com>,
-	mingo@redhat.com,
-	peterz@infradead.org,
-	juri.lelli@redhat.com,
-	vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com,
-	rostedt@goodmis.org,
-	bsegall@google.com,
-	mgorman@suse.de,
-	kprateek.nayak@amd.com,
-	wuyun.abel@bytedance.com,
-	youssefesmat@chromium.org,
-	tglx@linutronix.de,
-	efault@gmx.de
-Subject: [PATCH] sched/fair: Properly deactivate sched_delayed task upon class change
-Date: Thu, 29 Aug 2024 15:53:53 +0200
-Message-ID: <20240829135353.1524260-1-vschneid@redhat.com>
+	s=arc-20240116; t=1724939644; c=relaxed/simple;
+	bh=BmMRbA2qEwzOz1sUZJsVWPr0HWKMM6RYtc1oRFXePTk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=daye4VqG6DLbRsq3PLFAKIMJBJmGaihD65pf351mnVFdgIzCwGF+Xy0aeNXdZOaS4TAcKG/FkrZg/D1mHINR1xs5hgyVVsBiN1PvnyipDnTPsPN11N/0noCd+cEBez9/jaBOSOFeEkPrYojN6KS4zbKhqlvutc4sGlqp6uCW3e8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jaVBywgb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06A9AC4CEC3;
+	Thu, 29 Aug 2024 13:54:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724939643;
+	bh=BmMRbA2qEwzOz1sUZJsVWPr0HWKMM6RYtc1oRFXePTk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jaVBywgbBNmKGTFi8oYt1lGWqsq4cAZiAXT/EsqdGc5SXMsQQl9to7z+/aBvP/jSb
+	 UAafbTtcm0PhLMBmuHniDyL/dRQuk8cO5KrBQOHS3SUo905du5581wZHArgN0iWSTx
+	 AS0Wy5ulmT8yC8hN474vrlaY79ZNh2/A73toc6uXSFwCOv0zAoAOfVu3Tdy/OjjL32
+	 MmCcmzmjrPgoMyxJ3Qaxg74yxdEjgI56UFzYDwQbn2L7CCNmtNSprde6AsKvmRcK/3
+	 rSlPoxmuBgmq9dYnUbGqCnDiQxWVXRh1FM2yY61XQnGlBz2R4qZWs8ATLECn/yquP3
+	 4mQpYMLQKV0Tw==
+Date: Thu, 29 Aug 2024 14:53:58 +0100
+From: Simon Horman <horms@kernel.org>
+To: longli@linuxonhyperv.com
+Cc: Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
+	Ajay Sharma <sharmaajay@microsoft.com>,
+	Konstantin Taranov <kotaranov@microsoft.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	linux-rdma@vger.kernel.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Long Li <longli@microsoft.com>,
+	stable@vger.kernel.org
+Subject: Re: [PATCH net] RDMA/mana_ib: use the correct page size for mapping
+ user-mode doorbell page
+Message-ID: <20240829135358.GA2923441@kernel.org>
+References: <1724875569-12912-1-git-send-email-longli@linuxonhyperv.com>
+ <1724875569-12912-2-git-send-email-longli@linuxonhyperv.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1724875569-12912-2-git-send-email-longli@linuxonhyperv.com>
 
-__sched_setscheduler() goes through an enqueue/dequeue cycle like so:
+On Wed, Aug 28, 2024 at 01:06:09PM -0700, longli@linuxonhyperv.com wrote:
+> From: Long Li <longli@microsoft.com>
+> 
+> When mapping doorbell page from user-mode, the driver should use the system
+> page size as the doorbell is allocated via mmap() from user-mode.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: 0266a177631d ("RDMA/mana_ib: Add a driver for Microsoft Azure Network Adapter")
+> Signed-off-by: Long Li <longli@microsoft.com>
+> ---
+>  drivers/infiniband/hw/mana/main.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/infiniband/hw/mana/main.c b/drivers/infiniband/hw/mana/main.c
+> index f68f54aea820..b26c4ebec2e0 100644
+> --- a/drivers/infiniband/hw/mana/main.c
+> +++ b/drivers/infiniband/hw/mana/main.c
+> @@ -511,13 +511,13 @@ int mana_ib_mmap(struct ib_ucontext *ibcontext, struct vm_area_struct *vma)
+>  	      PAGE_SHIFT;
+>  	prot = pgprot_writecombine(vma->vm_page_prot);
+>  
+> -	ret = rdma_user_mmap_io(ibcontext, vma, pfn, gc->db_page_size, prot,
+> +	ret = rdma_user_mmap_io(ibcontext, vma, pfn, PAGE_SIZE, prot,
+>  				NULL);
+>  	if (ret)
+>  		ibdev_dbg(ibdev, "can't rdma_user_mmap_io ret %d\n", ret);
+>  	else
+>  		ibdev_dbg(ibdev, "mapped I/O pfn 0x%llx page_size %u, ret %d\n",
+> -			  pfn, gc->db_page_size, ret);
+> +			  pfn, PAGE_SIZE, ret);
 
-  flags := DEQUEUE_SAVE | DEQUEUE_MOVE | DEQUEUE_NOCLOCK;
-  prev_class->dequeue_task(rq, p, flags);
-  new_class->enqueue_task(rq, p, flags);
+This is not a full review, but according to both clang-18 and gcc-14,
+this patch should also update the format specifier from %u to %lu.
 
-when prev_class := fair_sched_class, this is followed by:
-
-  dequeue_task(rq, p, DEQUEUE_NOCLOCK | DEQUEUE_SLEEP);
-
-the idea being that since the task has switched classes, we need to drop
-the sched_delayed logic and have that task be deactivated per its previous
-dequeue_task(..., DEQUEUE_SLEEP).
-
-Unfortunately, this leaves the task on_rq. This is missing the tail end of
-dequeue_entities() that issues __block_task(), which __sched_setscheduler()
-won't have done due to not using DEQUEUE_DELAYED - not that it should, as
-it is pretty much a fair_sched_class specific thing.
-
-Make switched_from_fair() properly deactivate sched_delayed tasks upon
-class changes via __block_task(), as if a
-  dequeue_task(..., DEQUEUE_DELAYED)
-had been issued.
-
-Fixes: 2e0199df252a ("sched/fair: Prepare exit/cleanup paths for delayed_dequeue")
-Reported-by: "Paul E. McKenney" <paulmck@kernel.org>
-Reported-by: Chen Yu <yu.c.chen@intel.com>
-Signed-off-by: Valentin Schneider <vschneid@redhat.com>
----
- kernel/sched/fair.c | 25 +++++++++++++++++--------
- 1 file changed, 17 insertions(+), 8 deletions(-)
-
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index fea057b311f69..3a3286df282fc 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -5456,6 +5456,13 @@ static void clear_buddies(struct cfs_rq *cfs_rq, struct sched_entity *se)
- 
- static __always_inline void return_cfs_rq_runtime(struct cfs_rq *cfs_rq);
- 
-+static inline void finish_delayed_dequeue_entity(struct sched_entity *se)
-+{
-+	se->sched_delayed = 0;
-+	if (sched_feat(DELAY_ZERO) && se->vlag > 0)
-+		se->vlag = 0;
-+}
-+
- static bool
- dequeue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
- {
-@@ -5531,11 +5538,8 @@ dequeue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
- 	if ((flags & (DEQUEUE_SAVE | DEQUEUE_MOVE)) != DEQUEUE_SAVE)
- 		update_min_vruntime(cfs_rq);
- 
--	if (flags & DEQUEUE_DELAYED) {
--		se->sched_delayed = 0;
--		if (sched_feat(DELAY_ZERO) && se->vlag > 0)
--			se->vlag = 0;
--	}
-+	if (flags & DEQUEUE_DELAYED)
-+		finish_delayed_dequeue_entity(se);
- 
- 	if (cfs_rq->nr_running == 0)
- 		update_idle_cfs_rq_clock_pelt(cfs_rq);
-@@ -13107,11 +13111,16 @@ static void switched_from_fair(struct rq *rq, struct task_struct *p)
- 	 * and we cannot use DEQUEUE_DELAYED.
- 	 */
- 	if (p->se.sched_delayed) {
-+		/* First, dequeue it from its new class' structures */
- 		dequeue_task(rq, p, DEQUEUE_NOCLOCK | DEQUEUE_SLEEP);
--		p->se.sched_delayed = 0;
-+		/*
-+		 * Now, clean up the fair_sched_class side of things
-+		 * related to sched_delayed being true and that wasn't done
-+		 * due to the generic dequeue not using DEQUEUE_DELAYED.
-+		 */
-+		finish_delayed_dequeue_entity(&p->se);
- 		p->se.rel_deadline = 0;
--		if (sched_feat(DELAY_ZERO) && p->se.vlag > 0)
--			p->se.vlag = 0;
-+		__block_task(rq, p);
- 	}
- }
- 
--- 
-2.43.0
-
+>  
+>  	return ret;
+>  }
+> -- 
+> 2.17.1
+> 
+> 
 
