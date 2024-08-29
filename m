@@ -1,102 +1,205 @@
-Return-Path: <linux-kernel+bounces-307084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6BC99647BC
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:14:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A89F96483A
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:27:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64B65286A48
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 14:14:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6B16FB2CB64
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 14:20:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CEBD1AC89F;
-	Thu, 29 Aug 2024 14:14:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6C141B29D0;
+	Thu, 29 Aug 2024 14:18:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="jhyYiY7A"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GTr1oZ1+"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9601C192B71;
-	Thu, 29 Aug 2024 14:14:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E42D41B14E1
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 14:18:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724940880; cv=none; b=f1Y8qugytK6HsHbvHotbQOGIKIT+10EypxH3zYSTZchIy0yN790T2HDWG2GafKCCciJ04hIBwJB1y4tPH32+YEtZhpee72Uhce0lOyHHxKBI0CtS1IVFt3iho6krgTTV2Arlu2qwVJdRN733rU5i029j0V6FANs3cHoGODcoHnU=
+	t=1724941137; cv=none; b=X68Fdp5yhHySh53b97aiol7Q7lO7Mqc7BtWucfH/0xW5prK7MpvFsMZ9x4UIU4Gd24XIVtna7XiiqlTN5RCzSDxBhNdTodDAW0JmfBlflO+ibA88Dqmo6VuvjF1mLJfNA3DvIumJaDuYWS0vemSUvwrg4p2YCqyus3j92v7vC1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724940880; c=relaxed/simple;
-	bh=HJNd/dS8m5R+pV/28hX/PbxnytWLOjhdv6lhnypUDIM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y+7hEfH4MBMwWhPrJAOWlgisdyktAIyJP4iKR0BYYdOB7lbsS7I1J9V8Fwc7UmIORTIUh581MlktM2bjgnV7cidw8wrG9vahcbOHF3qw0z05UWwz0+1a4Q6gZXc4apg1uoNMuXcFyyfxo/gnFmFgqvDXnCG4XYAtOqxPlC6Pbsg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=jhyYiY7A; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id EE20440E0169;
-	Thu, 29 Aug 2024 14:14:35 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id PPqk9XZueheh; Thu, 29 Aug 2024 14:14:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1724940871; bh=NvPb2hh41oj+GB2wAGSBqKTolwm3KBz6DrPiss3p0fA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jhyYiY7AB6QXnLgtQN+qI65yiqX++U1JbFI/DPfg4JEA2Ouk9ccc3Dc5K91upUPhc
-	 MzXY4kSWdHhmPLX9VntuznCckL3An6OAGd+8DEFLo17F8z2pk4eGfMN4kbnVJyHpih
-	 /S94pBKc6fR6R8IxPNWNRK0YJzJaPvpypbU6CJVgp1urCHcWC+LNV054HZ568FjwvO
-	 ApKqr9iu+Wo8b1ysW3+5+87FEr/jJrNROyZvRAqRM+LLWto8bpJhh+dpdmZ2ORZDfp
-	 1oo/XaYSwROa+Wt65vjNceC1oVItuYpa571/ah65Z84XWJQX0N0Q2N2FfzRINQFi81
-	 1Gxj+4ZZtVE/V84zFMG3oeEwLcd5k5sAppo2Q0/BcJJl2j0ibRC4BklorNuvzFKVyE
-	 GJZFhfMtv3Hh92CgZP3m4u3Qb1B/3Gh5VAN58OZatnGoBj1Sa+BrSZh1K11ckizdXz
-	 PSLBxj1XZfPNtJFzEshUqbHFgVeAyKl63dzcXjG4FUUyDdgvetSwvgStLgdJDkyejP
-	 8lUrPSg4GvykbgWPTbgpKcp3dTdzMhlk6kS5dxBws5BMRdzLo0zeQ8eqbgdFt4XYB1
-	 LgWcbjmQ0w1L8vy6JVTZEUUy1Y7gVJ4MJaCbXunCIw3CR8HpROeVbUpOqmZoJm2rj3
-	 KSt4nRgM8wF6pYhpyn3SBV78=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 8C44740E0277;
-	Thu, 29 Aug 2024 14:14:22 +0000 (UTC)
-Date: Thu, 29 Aug 2024 16:14:15 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Yazen Ghannam <yazen.ghannam@amd.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, linux-edac@vger.kernel.org,
-	linux-kernel@vger.kernel.org, tony.luck@intel.com, x86@kernel.org,
-	avadhut.naik@amd.com, john.allen@amd.com,
-	boris.ostrovsky@oracle.com
-Subject: Re: [PATCH] x86/MCE: Prevent CPU offline for SMCA CPUs with non-core
- banks
-Message-ID: <20240829141415.GDZtCCN89eyjycV0uf@fat_crate.local>
-References: <20240821140017.330105-1-yazen.ghannam@amd.com>
- <87jzg4g8dm.ffs@tglx>
- <20240826132057.GA449322@yaz-khff2.amd.com>
- <9D26E333-B33C-4FD4-9A8F-6F9DC1EC6527@alien8.de>
- <20240827134706.GA719384@yaz-khff2.amd.com>
- <7D571DAA-E399-4580-98B3-8A6E7085CB54@alien8.de>
- <20240829140305.GA448036@yaz-khff2.amd.com>
+	s=arc-20240116; t=1724941137; c=relaxed/simple;
+	bh=bN72jrToXfY+vJucKr9xb19mZvJ9IN7YKnm5yOK/+sI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=IMxhSVRQbIN4xuYJluREJwPfD5ln+e8jW4ergX45Vkw9COShuSIvdPcViOnw7d/bXaEwiaKxnms1yxUI1057xXsv2k4jB1rhV0+Xgtf6hVtCjtVroFycakc3K5flLKOwkpPUIuZA0XXBJ9XTKVhVGaRBD/OE+qfuZ8gKh7IhxFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GTr1oZ1+; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724941134;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=UljbUeQcl4wkbV7mOtS08F4hh+nFyo1TBvQFl+wrPVQ=;
+	b=GTr1oZ1+CXZ1z5Px+lKUi7YYVqezPajX5yTxyBPLc0fufRnrHl8+W+K9CBbmiLwd/GJCrn
+	TXpnyY2JKL/WBFGVLSqd1AU+XByE9xqui8aLQjtsJwfeWbRuFzVHC0XfFOxa9RspbbsiXf
+	inIXMyeVgPlPAMX3iCY3Z9HZ6PU4acg=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-190-Q4ELMlyvNzWGHG5kLyN48g-1; Thu, 29 Aug 2024 10:18:50 -0400
+X-MC-Unique: Q4ELMlyvNzWGHG5kLyN48g-1
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-42808efc688so7399385e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 07:18:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724941129; x=1725545929;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UljbUeQcl4wkbV7mOtS08F4hh+nFyo1TBvQFl+wrPVQ=;
+        b=ded9qGwceUjyuIws2ZggJYr8j7AOcRQUeFBK23ulyND5LmSGCoVDA95L65wqfBKBtv
+         QqQSShzlUr0E9AMSXxeBaT/6hYTlHOGJs6uoJ1SyRelPvhwGSL+Hj+weknyAQsOQeEEq
+         9yELDpcjBEToa4OISBtyVhjTo8R+M627Us93GcZjWbNpZ/YqCClD4tn4T4M8lDV/fxDh
+         xVSBv/RKSNpdNcgHfbxCvgGZvysy/UDzMXJNumPRTnFmI3hBADUc18n2ZRQ8iKQ+G6k2
+         BM4ba+pbi6CGNhqNmU0V9Pt1oa4Otx+98qGH45JIZwX11T6qGuBCbIGGyQg9FAUIYmpJ
+         Dmxw==
+X-Forwarded-Encrypted: i=1; AJvYcCWHkxNup0rP5uM77FXQyj3JLR8Ef6qjhGon4RMdSd3yV4iFp1nrtZ4E6+uTpzGFBQATrp8npFjtLdEOpSI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywc755zOtLAOl94CgWZ+N7cx8rnJe+FSjCGL+6+9hPFJgwuL7j/
+	MjM3vq313lxHf+1R/gwcnUcDamW5QpWvi8tgXO8QmGZqrzC5vv7FBeC+hGoJ7pTdd6Yr/yET0E/
+	RbS0+1YP4tpsIZruTQ/yP4wphjjsDOhLAI0PNRoLyZPt55s4qUnntIan+K8vbIQ==
+X-Received: by 2002:a05:600c:470f:b0:428:9ba:39f with SMTP id 5b1f17b1804b1-42bb024d9d6mr24548575e9.11.1724941128523;
+        Thu, 29 Aug 2024 07:18:48 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHaWAd/dk5mVFnN9RDmi+8yHhRiBHqeSEZqBrS5gu6xo2wvJc2Dt1Hm0EPgbT3w2rGsknEV9A==
+X-Received: by 2002:a05:600c:470f:b0:428:9ba:39f with SMTP id 5b1f17b1804b1-42bb024d9d6mr24548445e9.11.1724941127865;
+        Thu, 29 Aug 2024 07:18:47 -0700 (PDT)
+Received: from eisenberg.muc.redhat.com (nat-pool-muc-t.redhat.com. [149.14.88.26])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ba63abebdsm52670425e9.27.2024.08.29.07.18.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Aug 2024 07:18:47 -0700 (PDT)
+From: Philipp Stanner <pstanner@redhat.com>
+To: Jens Axboe <axboe@kernel.dk>,
+	Wu Hao <hao.wu@intel.com>,
+	Tom Rix <trix@redhat.com>,
+	Moritz Fischer <mdf@kernel.org>,
+	Xu Yilun <yilun.xu@intel.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Alvaro Karsz <alvaro.karsz@solid-run.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	=?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Damien Le Moal <dlemoal@kernel.org>,
+	Hannes Reinecke <hare@suse.de>,
+	John Garry <john.g.garry@oracle.com>,
+	Philipp Stanner <pstanner@redhat.com>
+Cc: linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-fpga@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	virtualization@lists.linux.dev
+Subject: [PATCH v5 0/7] PCI: Remove pcim_iounmap_regions()
+Date: Thu, 29 Aug 2024 16:16:19 +0200
+Message-ID: <20240829141844.39064-1-pstanner@redhat.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240829140305.GA448036@yaz-khff2.amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 29, 2024 at 10:03:05AM -0400, Yazen Ghannam wrote:
-> Do you think we should we continue to pursue this or no?
+OK, so unfortunately it seems very challenging to reconcile the merge
+conflict pointed up by Serge between net-next and pci-devres regarding
+"ethernet: stmicro": A patch that applies to the net-next tree does not
+apply anymore to pci-devres (and vice versa).
 
-You mean the kernel should prevent those folks from shooting themselves in the
-foot?
+So I actually think that it would be best if we just drop the portation
+of "ethernet: stmicro" for now and port it as the last user in v6.13.
 
-How would that patch look like?
+Then we can also remove pcim_iounmap_regions() completely.
+
+That should then be trivial.
+
+Changes in v5:
+  - Patch "ethernet: cavium": Re-add accidentally removed
+    pcim_iounmap_region(). (Me)
+  - Add Jens's Reviewed-by to patch "block: mtip32xx". (Jens)
+
+Changes in v4:
+  - Drop the "ethernet: stmicro: [...] patch since it doesn't apply to
+    net-next, and making it apply to that prevents it from being
+    applyable to PCI ._. (Serge, me)
+  - Instead, deprecate pcim_iounmap_regions() and keep "ethernet:
+    stimicro" as the last user for now.
+  - ethernet: cavium: Use PTR_ERR_OR_ZERO(). (Andy)
+  - vdpa: solidrun (Bugfix) Correct wrong printf string (was "psnet" instead of
+    "snet"). (Christophe)
+  - vdpa: solidrun (Bugfix): Add missing blank line. (Andy)
+  - vdpa: solidrun (Portation): Use PTR_ERR_OR_ZERO(). (Andy)
+  - Apply Reviewed-by's from Andy and Xu Yilun.
+
+Changes in v3:
+  - fpga/dfl-pci.c: remove now surplus wrapper around
+    pcim_iomap_region(). (Andy)
+  - block: mtip32xx: remove now surplus label. (Andy)
+  - vdpa: solidrun: Bugfix: Include forgotten place where stack UB
+    occurs. (Andy, Christophe)
+  - Some minor wording improvements in commit messages. (Me)
+
+Changes in v2:
+  - Add a fix for the UB stack usage bug in vdap/solidrun. Separate
+    patch, put stable kernel on CC. (Christophe, Andy).
+  - Drop unnecessary pcim_release_region() in mtip32xx (Andy)
+  - Consequently, drop patch "PCI: Make pcim_release_region() a public
+    function", since there's no user anymore. (obsoletes the squash
+    requested by Damien).
+  - vdap/solidrun:
+    • make 'i' an 'unsigned short' (Andy, me)
+    • Use 'continue' to simplify loop (Andy)
+    • Remove leftover blank line
+  - Apply given Reviewed- / acked-bys (Andy, Damien, Bartosz)
+
+
+Important things first:
+This series is based on [1] and [2] which Bjorn Helgaas has currently
+queued for v6.12 in the PCI tree.
+
+This series shall remove pcim_iounmap_regions() in order to make way to
+remove its brother, pcim_iomap_regions().
+
+@Bjorn: Feel free to squash the PCI commits.
+
+Regards,
+P.
+
+[1] https://lore.kernel.org/all/20240729093625.17561-4-pstanner@redhat.com/
+[2] https://lore.kernel.org/all/20240807083018.8734-2-pstanner@redhat.com/
+
+Philipp Stanner (7):
+  PCI: Deprecate pcim_iounmap_regions()
+  fpga/dfl-pci.c: Replace deprecated PCI functions
+  block: mtip32xx: Replace deprecated PCI functions
+  gpio: Replace deprecated PCI functions
+  ethernet: cavium: Replace deprecated PCI functions
+  vdpa: solidrun: Fix UB bug with devres
+  vdap: solidrun: Replace deprecated PCI functions
+
+ drivers/block/mtip32xx/mtip32xx.c             | 18 +++---
+ drivers/fpga/dfl-pci.c                        | 16 ++---
+ drivers/gpio/gpio-merrifield.c                | 14 ++---
+ .../net/ethernet/cavium/common/cavium_ptp.c   |  7 +--
+ drivers/pci/devres.c                          |  8 ++-
+ drivers/vdpa/solidrun/snet_main.c             | 59 ++++++++-----------
+ include/linux/pci.h                           |  1 +
+ 7 files changed, 53 insertions(+), 70 deletions(-)
 
 -- 
-Regards/Gruss,
-    Boris.
+2.46.0
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
