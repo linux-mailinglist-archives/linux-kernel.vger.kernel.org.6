@@ -1,161 +1,169 @@
-Return-Path: <linux-kernel+bounces-306804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6994E9643DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 14:04:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DECFB9643E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 14:05:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 738E81C24AB2
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 12:04:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A6671F23192
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 12:05:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 091451AAE1E;
-	Thu, 29 Aug 2024 12:03:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EB841946DF;
+	Thu, 29 Aug 2024 12:05:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MC4Ha6/I"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="i2duJyNK"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 489621A7048
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 12:03:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39120191F82
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 12:05:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724933029; cv=none; b=RO5XrQgAZS+aMHuhgW23VsAi4EL9rjAUIri9Cwh5cCTvgYac4c2Z+3pEO2xIRIdznUr9hCJJpC7qYYJ5Bh1bi6h9CTGurLT/uWY1oq5FCREbI3aCwDax0Dyz5MuFHyXbXtnK/N3SHEYuf59iIBYic4wuQAtimh9EnnUy2mVnJMo=
+	t=1724933113; cv=none; b=MMoY1/qwDGSU1iMuriNHpcsPv2GrNSVweOAQF8qdNezOBhQwsSBL+RsprzpBLUeRud4ApcVWx+sa5whC8XUtKVPDHCx8Tb0P4Cty14kpmL75Yi6uvmif736C/Mpe1sP/kmsl7FGYAgbhOx7NYpjyIMlWX2kE+g1L7iNaOZ+sEiM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724933029; c=relaxed/simple;
-	bh=IiT/7XdGpwOAYkfqzZDNl4dNAydDKPXTLIEuORrxYhQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=o35ZXpQdFXjIBBMLFssnf7GQIKZujyHh0e1ujAczF2JkiSpdYZruoZFkAcL75MbTqZd62JxdPCoDBHWnBvCEd3zs1fOpg9qpA7EfjJ4WdxWkkhGuivUr9Wovx8D/fM23oR2PrmWhwMp1+83uYO5Q4wxbb1xFnBddsLBeGzLTICw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MC4Ha6/I; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5bed72ff2f2so579408a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 05:03:47 -0700 (PDT)
+	s=arc-20240116; t=1724933113; c=relaxed/simple;
+	bh=nBoN1yavaittbk+d7DraufNBYnZMycnA9WfuTETAQTE=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=dt+uu1lMesXKeDSoX5/7mnm7wU1B71MnWSw6ZYW6S5BhRMUxLOL1JiZRusM9hfA9GjciKtU8bbo1YuhRZmqszCzq59voRq+rAU2A8QG4Pnxx7cp8HmBW6XDSP9vhX3KCL0qHzhJtihTGM9VSTenfs6sPx0MpqcqOL2Np9W0Huss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--sachinparekh.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=i2duJyNK; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--sachinparekh.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e1159fb1669so932653276.2
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 05:05:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724933026; x=1725537826; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=8WFVzg8S2FkM/1Y3tdKbJ56OWov2xX96GR1Lfbg8fec=;
-        b=MC4Ha6/I/+klpz3Aa3rVCz8CRGtwyhELZJGk3tWUft05gB54/X6SWjmPwrUu6Sa3BI
-         p9uOtXirYoY9ZTuxV8ZB3WnVlrhotY6d4mmJrPz3QEKxcUyI3a+J1FnMy4EVMBLe9CnF
-         8TtLu90fMLzSb76Ec1YntlbsI7gWVZSq/x6Xw4o7rfOondiSsps+Bq1a62qAve5y73Ow
-         Vw7ddxIYiC/jGmSegcs7rZDc7hYYRgTvPRogMguKZlEFu73Z0o85KcCiZP7xoAczOU+/
-         P5V0BnxbeEte03DEkrBiKB+1RoUYbqnh1zCZSJ0jdRXhLWQTBqNAyBz1jdb/zTmk7ot9
-         3eZg==
+        d=google.com; s=20230601; t=1724933111; x=1725537911; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=L0mys/2tQCcs3OTEBY7NrCgOPWFXZx1s1qQWQxRmqLc=;
+        b=i2duJyNKlHbR6KfftaGr+4v9eiegyxy3iCCRt/BppemE1yuyn3LMdFEDbL4bLTvRIA
+         Id133M30G4Ce7/YZK7hHED7mRQ90YsjMaWDEAYWt+e0Dcoeo3JV0+LExIkNQ/f487rnM
+         eL0m+GxDFhrTsBYNa2w1WBpzxWi0uN4yZN9Kf72Yi4b9M7qjp8sGDJVjcflafTpdmSOi
+         lK1Q+a5uqtLvRZ4ltX5GJP9kSPfwmO0jj7gPtUeD+se9m3JAtk3ZCqWRLpGIO6jg7yUX
+         iWbq1PzmPjPCGKvk8jFAoBux7S4gUCIPElB+T+yx0zDLunzrwxIlcW3qZaRQzyeDeOUU
+         ZeyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724933026; x=1725537826;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8WFVzg8S2FkM/1Y3tdKbJ56OWov2xX96GR1Lfbg8fec=;
-        b=j3Z2wdgwhMs3o7/oDOvtfIJimWuqKjvAS3VBXpRf3e8xKdE0YxE8ORFYJnRkjDdYCu
-         fGTPerTDwbktYTFrkyYOZYgVUYsYfORh2JvCvSgEUb5Ok1V0RnHNy1tWXzDzN4ckxvGH
-         O9m35bXTK3j1KTky3hDntPCnfqU5awNSBf5/Ff9xXCK8xfs2BbWdalS6gTQXJ7B43+nf
-         TVAJL5KEUS9iVM6S0+uCYnprNhVVv2FJWPNlAm9Q/zud7MgGUiRB13Rnn7o+75nsNDHj
-         sP65s8bYFWnGDHVZ5osdXxXJoBpim1DUR6WM0LP2kSbExKTo6MnxHeEyFlgdmBReAitC
-         Qavw==
-X-Forwarded-Encrypted: i=1; AJvYcCX1AdfNUAjfQwt4j+M3PmOy5f4Mqpr3U9CEX2DY727X7iI78To92aiNbGMvceNhDK+h1ctoc4M6HHq39zU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyjDRErnSfCQovwk6pLHhIPwyC8EP8dROlNTe12HoR+Rf0QBeeN
-	WxOIJAVc3Ta6HISbuPlu/Zv7wpYixYs+bRcL9KmQuhuSbRkuZm9tQwL+PWvW+Mg=
-X-Google-Smtp-Source: AGHT+IE4jYrN5qNJdIEWQ9cfqJ0nV9CeNwDdJdqgr8BDx/r8cyuysG9jf28++tcnzqg979iJuIA10w==
-X-Received: by 2002:a05:6402:2690:b0:5bf:1301:84cd with SMTP id 4fb4d7f45d1cf-5c21ed41db7mr2265735a12.12.1724933025307;
-        Thu, 29 Aug 2024 05:03:45 -0700 (PDT)
-Received: from [127.0.1.1] ([82.79.186.176])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8988feaf1esm71455766b.7.2024.08.29.05.03.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 05:03:41 -0700 (PDT)
-From: Abel Vesa <abel.vesa@linaro.org>
-Date: Thu, 29 Aug 2024 15:03:28 +0300
-Subject: [PATCH] arm64: dts: qcom: x1e80100: Fix PHY for DP2
+        d=1e100.net; s=20230601; t=1724933111; x=1725537911;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=L0mys/2tQCcs3OTEBY7NrCgOPWFXZx1s1qQWQxRmqLc=;
+        b=Dfb3N6/N4uTXBPhkbk65f/HgTbM73+IZpixy+y4efy9hJNfEeXZzaqZaFPJjnxYNPX
+         enQAQ6vb0cS4nvOxaOQ0IIoVMaULGKkTQhPAcIEsaKLmf/MHm2fdbCxWImyakcyPGd4U
+         JQvVVjQZW7LYIy+2pwhMxxvor2JlKo0Z1J016NxMzk0UjO9X7tjn+QZ55B6VOBV6G9fw
+         BnMEn7mVywvZN5J+KXtwELQDP7AJaEGvEmYcYTcIbFpwRVivGBKuCuSpoIovo8cvoqkw
+         G270Nop8lc2a9DczNIeMDODPOkgb33P0ARJfE7zObeZKkiILBNYCQzUlPLx7/D8errot
+         xnhA==
+X-Forwarded-Encrypted: i=1; AJvYcCWdh67AwIKF9KNA35g/NwaWyGgpvVCS08a/CIMzLdZUcgdd1C4L4ewuyibOtT8cIWRAfZtqsoyekpvDnds=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzo/cyd4MeV+oa8Ar7MIirf3GQtZptHWAa/SAxvs/k3gKQkhWqR
+	yN8BG6h7UkgKLhWqVv9RZHNcU4KcVE4NxXtBuGJ40KFwy9mXW/tFo/GtLA+yazEXaYBkyQTAEM/
+	LYixQvDgdd+OtxSS12bVg0Rr/2A==
+X-Google-Smtp-Source: AGHT+IEIajcciXNXA9eAeI82KfBygYUO7hs4LPpXBbMDBnoip8dz1YA1Le2XY66UJM87v8KnyRRyKfiIMLUeWk2hEcQ=
+X-Received: from sachinparekh.c.googlers.com ([fda3:e722:ac3:cc00:4f:4b78:c0a8:596d])
+ (user=sachinparekh job=sendgmr) by 2002:a25:29c4:0:b0:e0b:cce3:45c7 with SMTP
+ id 3f1490d57ef6-e1a5ae0d8e5mr3845276.9.1724933111089; Thu, 29 Aug 2024
+ 05:05:11 -0700 (PDT)
+Date: Thu, 29 Aug 2024 12:05:04 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240829-x1e80100-dts-dp2-use-qmpphy-ss2-v1-1-9ba3dca61ccc@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAI9j0GYC/x3NMQ7CMAxA0atUnrHkuAyBqyCGkLjEAyHEFLWqe
- neijm/5fwOTpmJwHTZo8lPTd+lwpwFiDuUpqKkbmPhMni+4OPHkiDB9DVNlnE3w86o1r2jGGB8
- SfRyTDxygV2qTSZfjcLvv+x+z8EF2cQAAAA==
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Rajendra Nayak <quic_rjendra@quicinc.com>, 
- Sibi Sankar <quic_sibis@quicinc.com>
-Cc: Johan Hovold <johan@kernel.org>, linux-arm-msm@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Abel Vesa <abel.vesa@linaro.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2027; i=abel.vesa@linaro.org;
- h=from:subject:message-id; bh=IiT/7XdGpwOAYkfqzZDNl4dNAydDKPXTLIEuORrxYhQ=;
- b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBm0GOXEUZrTrvQFJW8jT+U2HIkjX7DATO58nHCH
- OXgRpEMr0CJAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCZtBjlwAKCRAbX0TJAJUV
- ViI/D/4+ugElrcNjA9rT9GWrMG3EgLtGC8J05PGh+sITG8cmptByrsZZGT26uMHjui+lFygjYEO
- TTCmLTQHcwhcOC/O8F8t2bCHiCZ+zo+O48W6pejBPUiqSH3aNoJB6UI50FMNhSeiQwzpUYCIzkr
- edZUq0qKjqNGcVq535hKInCejCxbt+EsXGUY9KdQdxsehTgqdbXj9Ioi8FCfQPqATs2ceLpvUY4
- hsfSX7ax2RZSoQoX4le4K8W7KjlZexwlGXxAvpDG3m/FepN/qoC3kfNFVw6tx2zwnj1EXUTWHHQ
- vmIo0lFqH+Cm/l/lZkSAJtTH+p69fa0YubhGnEl053zNcAbKzletXRMMnw48xPW+nfi7nkfM6tG
- c00dZL1AXsQa7FxWWBs+XEiw3wP72Y8xgpWrobsphyeobPeV4X37osx09IWBvVzPO6QqS0XelPS
- f+J6i+9Tc/thj4toMNaPN+X4bV7Np/k4fEdcC+vyEcp3FJ/Cvs28fC7ZtoZpejjgcw4hVQywWrK
- tpdPKNJkyuBYwrkLp7jz4bu7aEMGS8kVXeeZa2OrTXjvq3ctu8gCE2oMR32YmxNwyyzwzmy2aVS
- 0tq0LacPLBsk1UpDVluVqHfiiyvoOpFxQ95BvyCfeLrl0WJYSsQqGy/ukDWLDc13EGAHIOb58bG
- Q79jFyt3RJFfowg==
-X-Developer-Key: i=abel.vesa@linaro.org; a=openpgp;
- fpr=6AFF162D57F4223A8770EF5AF7BF214136F41FAE
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.46.0.295.g3b9ea8a38a-goog
+Message-ID: <20240829120504.2976612-1-sachinparekh@google.com>
+Subject: [RFC PATCH] driver core: platform: Call iommu_release_device in dma_cleanup
+From: Sachin Parekh <sachinparekh@google.com>
+To: gregkh@linuxfoundation.org, rafael@kernel.org, will@kernel.org, 
+	robin.murphy@arm.com
+Cc: sachinparekh@google.com, lokeshvutla@google.com, 
+	linux-kernel@vger.kernel.org, iommu@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-The actual PHY used by MDSS DP2 is the USB SS2 QMP one. So switch to it
-instead. This is needed to get external DP support on boards like CRD
-where the 3rd Type-C USB port (right-hand side) is connected to DP2.
+Installing a kernel module that has an iommu node in its
+device tree increments corresponding iommu kernel module
+reference count during driver_register.
+Removing the same kernel module doesn't decrement the
+iommu reference count resulting in error while
+removing the iommu kernel module
 
-Fixes: 1940c25eaa63 ("arm64: dts: qcom: x1e80100: Add display nodes")
-Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+    $ modprobe arm-smmu-v3
+    $ modprobe test_module
+    $ modprobe -r test_module
+    $ modprobe -r arm-smmu-v3
+    modprobe: can't unload module arm_smmu_v3: Resource temporarily unavailable
+
+Cause:
+    platform_driver_register
+        ...
+        -> platform_dma_configure
+            ...
+            -> iommu_probe_device (Increments reference count)
+
+    platform_driver_unregister
+        ...
+        -> platform_dma_cleanup
+            ...
+            -> No corresponding iommu_release_device call
+
+Fix:
+    Call iommu_release_device in platform_dma_cleanup to remove the
+    iommu from the corresponding kernel module
+
+Signed-off-by: Sachin Parekh <sachinparekh@google.com>
 ---
- arch/arm64/boot/dts/qcom/x1e80100.dtsi | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/base/platform.c | 3 +++
+ drivers/iommu/iommu.c   | 3 +--
+ include/linux/iommu.h   | 1 +
+ 3 files changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-index 6abff8258674..197f9028de31 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-+++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-@@ -4715,14 +4715,14 @@ mdss_dp2: displayport-controller@ae9a000 {
+diff --git a/drivers/base/platform.c b/drivers/base/platform.c
+index 4c3ee6521ba5..c8125325a5e9 100644
+--- a/drivers/base/platform.c
++++ b/drivers/base/platform.c
+@@ -1467,6 +1467,9 @@ static void platform_dma_cleanup(struct device *dev)
  
- 				assigned-clocks = <&dispcc DISP_CC_MDSS_DPTX2_LINK_CLK_SRC>,
- 						  <&dispcc DISP_CC_MDSS_DPTX2_PIXEL0_CLK_SRC>;
--				assigned-clock-parents = <&mdss_dp2_phy 0>,
--							 <&mdss_dp2_phy 1>;
-+				assigned-clock-parents = <&usb_1_ss2_qmpphy QMP_USB43DP_DP_LINK_CLK>,
-+							 <&usb_1_ss2_qmpphy QMP_USB43DP_DP_VCO_DIV_CLK>;
+ 	if (!drv->driver_managed_dma)
+ 		iommu_device_unuse_default_domain(dev);
++
++	if (dev_of_node(dev))
++		iommu_release_device(dev);
+ }
  
- 				operating-points-v2 = <&mdss_dp2_opp_table>;
+ static const struct dev_pm_ops platform_dev_pm_ops = {
+diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+index ed6c5cb60c5a..495f548fd4b9 100644
+--- a/drivers/iommu/iommu.c
++++ b/drivers/iommu/iommu.c
+@@ -92,7 +92,6 @@ static const char * const iommu_group_resv_type_string[] = {
  
- 				power-domains = <&rpmhpd RPMHPD_MMCX>;
+ static int iommu_bus_notifier(struct notifier_block *nb,
+ 			      unsigned long action, void *data);
+-static void iommu_release_device(struct device *dev);
+ static struct iommu_domain *
+ __iommu_group_domain_alloc(struct iommu_group *group, unsigned int type);
+ static int __iommu_attach_device(struct iommu_domain *domain,
+@@ -663,7 +662,7 @@ static void __iommu_group_remove_device(struct device *dev)
+ 	iommu_group_put(group);
+ }
  
--				phys = <&mdss_dp2_phy>;
-+				phys = <&usb_1_ss2_qmpphy QMP_USB43DP_DP_PHY>;
- 				phy-names = "dp";
+-static void iommu_release_device(struct device *dev)
++void iommu_release_device(struct device *dev)
+ {
+ 	struct iommu_group *group = dev->iommu_group;
  
- 				#sound-dai-cells = <0>;
-@@ -4910,8 +4910,8 @@ dispcc: clock-controller@af00000 {
- 				 <&usb_1_ss0_qmpphy QMP_USB43DP_DP_VCO_DIV_CLK>,
- 				 <&usb_1_ss1_qmpphy QMP_USB43DP_DP_LINK_CLK>, /* dp1 */
- 				 <&usb_1_ss1_qmpphy QMP_USB43DP_DP_VCO_DIV_CLK>,
--				 <&mdss_dp2_phy 0>, /* dp2 */
--				 <&mdss_dp2_phy 1>,
-+				 <&usb_1_ss2_qmpphy QMP_USB43DP_DP_LINK_CLK>, /* dp2 */
-+				 <&usb_1_ss2_qmpphy QMP_USB43DP_DP_VCO_DIV_CLK>,
- 				 <&mdss_dp3_phy 0>, /* dp3 */
- 				 <&mdss_dp3_phy 1>;
- 			power-domains = <&rpmhpd RPMHPD_MMCX>;
-
----
-base-commit: b18bbfc14a38b5234e09c2adcf713e38063a7e6e
-change-id: 20240829-x1e80100-dts-dp2-use-qmpphy-ss2-cbec8c3d8a2a
-
-Best regards,
+diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+index 04cbdae0052e..2f9cb7d9dadf 100644
+--- a/include/linux/iommu.h
++++ b/include/linux/iommu.h
+@@ -1049,6 +1049,7 @@ void dev_iommu_priv_set(struct device *dev, void *priv);
+ 
+ extern struct mutex iommu_probe_device_lock;
+ int iommu_probe_device(struct device *dev);
++void iommu_release_device(struct device *dev);
+ 
+ int iommu_dev_enable_feature(struct device *dev, enum iommu_dev_features f);
+ int iommu_dev_disable_feature(struct device *dev, enum iommu_dev_features f);
 -- 
-Abel Vesa <abel.vesa@linaro.org>
+2.46.0.295.g3b9ea8a38a-goog
 
 
