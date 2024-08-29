@@ -1,142 +1,130 @@
-Return-Path: <linux-kernel+bounces-306158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6D91963A0E
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 07:55:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E760963A1A
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 07:57:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92F81282F8A
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 05:55:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A187D1C21A86
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 05:57:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAC45148FF7;
-	Thu, 29 Aug 2024 05:55:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FD1715B98D;
+	Thu, 29 Aug 2024 05:56:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iN9vLDkE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OdAvFojR"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07FBAA92D;
-	Thu, 29 Aug 2024 05:55:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B718815B57B
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 05:56:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724910937; cv=none; b=giZM/KmLxPZTqcVGlkgG9bk0nqS3KoX4b9RR++kxCXcF+HlDNvptQ3qAAVmShlJpSQ6lhlvwp5LA+/YfbwbxismT396RsW1H/YjhxUGRI49U/dzFHFYNLcbAqWkOSefFGyp90d5C5A7Zl0w3pBlh5RkgObU03PrkFaXj1MOmVg0=
+	t=1724910976; cv=none; b=cq9GMvF6gZ1KR46ujdMQc7hQAXYfVAeu7wbUVaU6yGctTD7zmT5MeWQaLDJotK75hRtXF6iNbfHx1gCTxYv2/nOGD5BneaFrgH/idVjM0Isc/BSajwAA1bGhdazB6/onVkD5CoHH0/ikCQgSouaL7E9mSfrMRoK62M/jVP6IlMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724910937; c=relaxed/simple;
-	bh=m0sLqD4F0XmyIjQ3fdzvKm3ZYLx6AYwrt92vuNrEF9o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=u/rlLhOffFrEMUn7B6JyD5AZqi0KM5Dl6skPOfwhhQbVJn75E+A5DKwhvrcZx/1Hr1rrM7IPlnHXvGCjD7kAG+I/8sNk9/Q1EU9x4zx4QzMjopZmMqU3F9QF9iebXmhATkfgGM9XxbZw0ifk01NjJvkzcY5BACSYDmnwaDDRRDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iN9vLDkE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF87DC4CEC1;
-	Thu, 29 Aug 2024 05:55:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724910936;
-	bh=m0sLqD4F0XmyIjQ3fdzvKm3ZYLx6AYwrt92vuNrEF9o=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=iN9vLDkEGIKs5wvc2//iMWzAoF5AyH3kz73yetKq7C8V1KNLTEmEeBt1E0EIIyv8B
-	 fy074g6lhgTW4YBOeThJwYaR/8enw0A9Zd39GcWk4qMMIjEdqZ2RrOq2kT2F3RO2zG
-	 C/5/x59WXfb4h1nPTUmfwhUfv08I6m9DXSOlLhf21tqXz3b36vIlO90ZJeNGt7eku2
-	 qUh5ifNk5mwSjJYslHt+d911ANBCzTzLWBwXV27VSD3Yk1fwqJx/Mk2VWRyYZB1COK
-	 333kZSD8tXK1Ux+7H0+mMKa5uhC9wtq3cr6k3wZ0w0Tg7tC8t6ydkO1gWw88roxhZu
-	 yfq9PK1dYX3iQ==
-Message-ID: <0f328688-99e1-41c0-9300-c7ff847ebabc@kernel.org>
-Date: Thu, 29 Aug 2024 07:55:32 +0200
+	s=arc-20240116; t=1724910976; c=relaxed/simple;
+	bh=DkM87PgupUqOVr1MKYRG5uAeLJQosGBM/rYSsJnV5Dg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=doZhsFHgDPNFRziKB+M7bAf4Z3SY/AfHevCanJ19MNJZ/v9T9D8gFHFE1fq/8K6kkt9Bjn+vPHcha2svWh/xKJeGtUYGkfS2ww25lHNJAQE53q5QfS++SlqaNP+ICg6FVhMX4GRG5g4fqv4yrT0DbZrlRSqWpdJfISqVgUqZyL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OdAvFojR; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2f3e071eb64so2914801fa.1
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 22:56:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724910973; x=1725515773; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=REb9QwYqCwNcM0/u5f0z7eG80lM1IACg6W8vp2NUNSM=;
+        b=OdAvFojR4Yxa1Vht9wVS2WOdvLewT5qBQLZdMapdSRSnZ/6eQ4fuEtNpyhTfHA7LXZ
+         jmQktL8k8v0F1CTwkZR2MTvtcbUiyRdimo0XSUvHgLO0WZAWsNlIPtQatqOnI+E3UfSt
+         k41aN0MxP5TbUYELdQfj/lA9Wjuq+q4jVcIF+3DEw2hbEeww/sESoUCtf5d9/OcmoHEN
+         J+0zwdjVXUtBQ2nA0aFLJOD0XzAPCA+j2X17FTwVAwTKdr+bcASF7MYW452fsFQ9DTjS
+         bmh9x2eEXZrB2rhB4T1nwdMlRQCowH/+Hj5bc1VtOAL+8YBJnntMa1sktBx9kUYaxevP
+         Hq3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724910973; x=1725515773;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=REb9QwYqCwNcM0/u5f0z7eG80lM1IACg6W8vp2NUNSM=;
+        b=R3RV0bNQtJXfs3HZHwmi1dt0b8ZP4B6mp8p84xL2Rdk1OyBsyX2yYhaOXeQsGtd6Ve
+         SVPaaLo6Gq3co5ioyt22z0NiDVXUc6BBdm2itDMZSRmWLvgx35/MWatVAfCofecO8o8u
+         bjszge7cYopqqKiiogfOj3ys7crXgzWLX08pchER9J3RbxE/58/gUJYtni/CgiEMuY+g
+         A5+PBnZAbfrqdLlqxdXrwbStou8WKhh+85T5QmFehJofUAYndqfW6M7Hu4IQ74yTkQpq
+         qGuHUePBDn198kb/UAmVhDtbtgkVhBJG2qiaaMLgHyTlxvvbhEnlu+XcmKvfqLxurDDH
+         jmUA==
+X-Forwarded-Encrypted: i=1; AJvYcCUt/6v8AYuevNOisupOof2kJoO+AXTlbg5jrb31SfBfGLyXHZJQFcgYCBXSBe4cxwBv/l6pnJE8zhLhwRE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsWFbhVoy9fGhEEKKVE/9qFXbety3ZEQtkINkaBIJLOhhyrFvD
+	KFdcwvTW/AgYNlvnyZTbisPI3rKTjcJJkpBsEixg3EeZKueAx6bFy8e6QIN7GQc=
+X-Google-Smtp-Source: AGHT+IF/7IaW8TH3k5xG0pABz3d3jlS9jSXgHIfutb16x9nJiddV9N2toKH+9UXsTyU+Op4Srk6DGg==
+X-Received: by 2002:a2e:a987:0:b0:2ef:226e:e150 with SMTP id 38308e7fff4ca-2f6108930d5mr16453911fa.32.1724910972049;
+        Wed, 28 Aug 2024 22:56:12 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f6151828b2sm835111fa.108.2024.08.28.22.56.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Aug 2024 22:56:11 -0700 (PDT)
+Date: Thu, 29 Aug 2024 08:56:09 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Chukun Pan <amadeus@jmu.edu.cn>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Rob Herring <robh@kernel.org>, linux-arm-msm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 1/4] arm64: dts: qcom: ipq6018: add 1.2GHz CPU
+ Frequency
+Message-ID: <f3g2tvddqyt5vjt6x7h6oirtm2ighnesu2pmtn2br6jpbxf5zr@tprelogpljuh>
+References: <20240821101025.858961-1-amadeus@jmu.edu.cn>
+ <20240821101025.858961-2-amadeus@jmu.edu.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/2] dt-bindings: rtc: Add support for SD2405AL.
-To: gomba007@gmail.com, Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org,
- csokas.bence@prolan.hu
-References: <20240828-rtc-sd2405al-v5-0-9e3f8fa5ea6b@gmail.com>
- <20240828-rtc-sd2405al-v5-2-9e3f8fa5ea6b@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240828-rtc-sd2405al-v5-2-9e3f8fa5ea6b@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240821101025.858961-2-amadeus@jmu.edu.cn>
 
-On 28/08/2024 10:22, Tóth János via B4 Relay wrote:
-> From: Tóth János <gomba007@gmail.com>
+On Wed, Aug 21, 2024 at 06:10:22PM GMT, Chukun Pan wrote:
+> Some IPQ6000 SoCs (fused)[1] have CPU frequencies up to 1.2GHz,
+> so add this frequency.
+
+opp-supported-hw is selected for all IPQ6000. Please add more details
+here. Is 1.2 GHz really to be enabled for all IPQ6000?
+
 > 
-> Add the necessary documentation for SD2405AL.
+> [1] Usually the SBL version is BOOT.XF.0.3-00086-IPQ60xxLZB-1
 > 
-> Signed-off-by: Tóth János <gomba007@gmail.com>
+> Signed-off-by: Chukun Pan <amadeus@jmu.edu.cn>
 > ---
+>  arch/arm64/boot/dts/qcom/ipq6018.dtsi | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/ipq6018.dtsi b/arch/arm64/boot/dts/qcom/ipq6018.dtsi
+> index 8edd535a188f..1b584d9aadd1 100644
+> --- a/arch/arm64/boot/dts/qcom/ipq6018.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/ipq6018.dtsi
+> @@ -119,6 +119,13 @@ opp-1056000000 {
+>  			clock-latency-ns = <200000>;
+>  		};
+>  
+> +		opp-1200000000 {
+> +			opp-hz = /bits/ 64 <1200000000>;
+> +			opp-microvolt = <850000>;
+> +			opp-supported-hw = <0x4>;
+> +			clock-latency-ns = <200000>;
+> +		};
+> +
+>  		opp-1320000000 {
+>  			opp-hz = /bits/ 64 <1320000000>;
+>  			opp-microvolt = <862500>;
+> -- 
+> 2.25.1
+> 
 
-The patch is trivial but I don't understand why opting out of automated
-testing. People still make mistakes in for example white-spaces, so no
-review from me, sorry.
-
-<form letter>
-Please use scripts/get_maintainers.pl to get a list of necessary people
-and lists to CC. It might happen, that command when run on an older
-kernel, gives you outdated entries. Therefore please be sure you base
-your patches on recent Linux kernel.
-
-Tools like b4 or scripts/get_maintainer.pl provide you proper list of
-people, so fix your workflow. Tools might also fail if you work on some
-ancient tree (don't, instead use mainline) or work on fork of kernel
-(don't, instead use mainline). Just use b4 and everything should be
-fine, although remember about `b4 prep --auto-to-cc` if you added new
-patches to the patchset.
-
-You missed at least devicetree list (maybe more), so this won't be
-tested by automated tooling. Performing review on untested code might be
-a waste of time.
-
-Please kindly resend and include all necessary To/Cc entries.
-</form letter>
-
-Best regards,
-Krzysztof
-
+-- 
+With best wishes
+Dmitry
 
