@@ -1,53 +1,54 @@
-Return-Path: <linux-kernel+bounces-306544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB55696404D
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 11:37:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E99EE964049
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 11:36:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 09984B24E46
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 09:37:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 756061F22133
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 09:36:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61B1A18E041;
-	Thu, 29 Aug 2024 09:36:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 404E618D652;
+	Thu, 29 Aug 2024 09:36:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="aD4oHENr"
-Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Gpw5Ch0n"
+Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3E5C18C347
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 09:36:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A1D818C331
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 09:36:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724924194; cv=none; b=JJwqJBQABLcmUXNZIEX+YhcPh0n2+7da8H9aILjpaQa7cpakPdmNMMxY76SGEp7jc2FlwDFSLv41AW8HbBGUPVM9S68a7iozXd32Dd8Kj4bRXcjFW2JZPYxzj0DhWm0Gi5lmO+k1l7PAqr4eCqEhODzV7/7djN+c5eamckYmLQU=
+	t=1724924193; cv=none; b=kZjQQZa6kkVWNkPry0fpEIFmOkBwNc6FnttnEMMf7ovb9+oBtkYhfswLCxVakiAavEs33SoPaBInJMMUwaHp64IGSCg+UGNGbkkNTEcdurDBghBgEm625SODPynQbh/ndPw2LPEPvc643RbhEhBF7N5DJPkcQS5ARqHRexVieeM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724924194; c=relaxed/simple;
-	bh=TbBY6d84E93X0IdxbWSbuH/kntpclkyP62KmMGF76f0=;
+	s=arc-20240116; t=1724924193; c=relaxed/simple;
+	bh=ndunQUYw+gswknTIT5gi1+QsGDbvBM8seRo44IhhR6s=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=p74B/ZdzJ0a5Z7K/G8urS6nxaDmEuplucfKa31YzbQiNIK0qKuagenEh1C9Jb/O/e4hvo7SvZx05cKMEt39aJolKFa3zUE3XXJVYlRIcgEZ6NLLSi5YK7vemG0Oaik2AJpW2t1iHOqEfSzlMY32+QOovOVKX0HnnKEDzVhyVHnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=aD4oHENr; arc=none smtp.client-ip=115.124.30.133
+	 MIME-Version; b=Ar23KOOPJrhLdfN9h09NVW2IbT4G2lnawnRXG55SfuFHr8H2h2o1LnulNF1SP2nNPqekxdobdiW8C9ml1xbx9UgHmUtz6gBwj4gZjfWJKS1bjSLB5eBNzRBgktG3D7sQTWMuDg7sRTH170GDjKwGb1tdbyVhFGQJrl09RJeuYqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Gpw5Ch0n; arc=none smtp.client-ip=115.124.30.112
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
 DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
 	d=linux.alibaba.com; s=default;
-	t=1724924186; h=From:To:Subject:Date:Message-ID:MIME-Version;
-	bh=+i9bke+dv7gUZ0sfSGuLFZ4LcNRqr3hz6pZCGKufCWI=;
-	b=aD4oHENrFR2hRfHjieXFG2KmAzYNQ32DaeNf4SPNqzSqxUKqNjA5O+eqSi3myATDJb0xOUhQSQTZnE5Dae4y+NPZUqsQcmUzw6xXvCxnACo/LchtNoZdef9WRh7sHcBabp/c2yLqLG3YerM6kNoJYtgIMYuk4xtHZFgL0VW45YY=
-Received: from x31i01179.sqa.na131.tbsite.net(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WDsbb.._1724924185)
+	t=1724924188; h=From:To:Subject:Date:Message-ID:MIME-Version;
+	bh=WFALRtmc27/bRzAmppskIsqzQWQtld5IICtjifhlIPM=;
+	b=Gpw5Ch0nkgsUe2jE7ioAE1giPRDYc6XQ12WKfHERGPzmeE+XyoNO+30Rs+nmV2x3As7/2OqdcroXBQgeMXHXVG5/lzsvOjDzwNqAwR2iqPfLPS7gQ9zM0GLCDRfc11JPU8PiQtNe1/VTGKgzjEwYq1fH3LniVmdUOJ5M/RDTH+w=
+Received: from x31i01179.sqa.na131.tbsite.net(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WDsbb.e_1724924186)
           by smtp.aliyun-inc.com;
-          Thu, 29 Aug 2024 17:36:25 +0800
+          Thu, 29 Aug 2024 17:36:27 +0800
 From: Gao Xiang <hsiangkao@linux.alibaba.com>
 To: linux-erofs@lists.ozlabs.org
 Cc: LKML <linux-kernel@vger.kernel.org>,
 	Gao Xiang <hsiangkao@linux.alibaba.com>
-Subject: [PATCH RESEND 1/4] erofs: add file-backed mount support
-Date: Thu, 29 Aug 2024 17:36:14 +0800
-Message-ID: <20240829093617.2396538-1-hsiangkao@linux.alibaba.com>
+Subject: [PATCH RESEND 2/4] erofs: support unencoded inodes for fileio
+Date: Thu, 29 Aug 2024 17:36:15 +0800
+Message-ID: <20240829093617.2396538-2-hsiangkao@linux.alibaba.com>
 X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20240829092614.2382457-1-hsiangkao@linux.alibaba.com>
+In-Reply-To: <20240829093617.2396538-1-hsiangkao@linux.alibaba.com>
 References: <20240829092614.2382457-1-hsiangkao@linux.alibaba.com>
+ <20240829093617.2396538-1-hsiangkao@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,367 +57,467 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-It actually has been around for years: For containers and other sandbox
-use cases, there will be thousands (and even more) of authenticated
-(sub)images running on the same host, unlike OS images.
+Since EROFS only needs to handle read requests in simple contexts,
+Just directly use vfs_iocb_iter_read() for data I/Os.
 
-Of course, all scenarios can use the same EROFS on-disk format, but
-bdev-backed mounts just work well for OS images since golden data is
-dumped into real block devices.  However, it's somewhat hard for
-container runtimes to manage and isolate so many unnecessary virtual
-block devices safely and efficiently [1]: they just look like a burden
-to orchestrators and file-backed mounts are preferred indeed.  There
-were already enough attempts such as Incremental FS, the original
-ComposeFS and PuzzleFS acting in the same way for immutable fses.  As
-for current EROFS users, ComposeFS, containerd and Android APEXs will
-be directly benefited from it.
-
-On the other hand, previous experimental feature "erofs over fscache"
-was once also intended to provide a similar solution (inspired by
-Incremental FS discussion [2]), but the following facts show file-backed
-mounts will be a better approach:
- - Fscache infrastructure has recently been moved into new Netfslib
-   which is an unexpected dependency to EROFS really, although it
-   originally claims "it could be used for caching other things such as
-   ISO9660 filesystems too." [3]
-
- - It takes an unexpectedly long time to upstream Fscache/Cachefiles
-   enhancements.  For example, the failover feature took more than
-   one year, and the deamonless feature is still far behind now;
-
- - Ongoing HSM "fanotify pre-content hooks" [4] together with this will
-   perfectly supersede "erofs over fscache" in a simpler way since
-   developers (mainly containerd folks) could leverage their existing
-   caching mechanism entirely in userspace instead of strictly following
-   the predefined in-kernel caching tree hierarchy.
-
-After "fanotify pre-content hooks" lands upstream to provide the same
-functionality, "erofs over fscache" will be removed then (as an EROFS
-internal improvement and EROFS will not have to bother with on-demand
-fetching and/or caching improvements anymore.)
-
-[1] https://github.com/containers/storage/pull/2039
-[2] https://lore.kernel.org/r/CAOQ4uxjbVxnubaPjVaGYiSwoGDTdpWbB=w_AeM6YM=zVixsUfQ@mail.gmail.com
-[3] https://docs.kernel.org/filesystems/caching/fscache.html
-[4] https://lore.kernel.org/r/cover.1723670362.git.josef@toxicpanda.com
-Closes: https://github.com/containers/composefs/issues/144
 Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
 ---
-RESEND:
- - incorrect patch merging in [PATCH 2/4];
+ fs/erofs/Makefile   |   1 +
+ fs/erofs/data.c     |  50 ++++++++++++-
+ fs/erofs/fileio.c   | 179 ++++++++++++++++++++++++++++++++++++++++++++
+ fs/erofs/inode.c    |  17 +++--
+ fs/erofs/internal.h |   7 +-
+ fs/erofs/zdata.c    |  46 ++----------
+ 6 files changed, 249 insertions(+), 51 deletions(-)
+ create mode 100644 fs/erofs/fileio.c
 
- fs/erofs/Kconfig    | 17 +++++++++++
- fs/erofs/data.c     | 35 ++++++++++++---------
- fs/erofs/inode.c    |  5 ++-
- fs/erofs/internal.h | 11 +++++--
- fs/erofs/super.c    | 74 +++++++++++++++++++++++++++++----------------
- 5 files changed, 99 insertions(+), 43 deletions(-)
-
-diff --git a/fs/erofs/Kconfig b/fs/erofs/Kconfig
-index 7dcdce660cac..1428d0530e1c 100644
---- a/fs/erofs/Kconfig
-+++ b/fs/erofs/Kconfig
-@@ -74,6 +74,23 @@ config EROFS_FS_SECURITY
- 
- 	  If you are not using a security module, say N.
- 
-+config EROFS_FS_BACKED_BY_FILE
-+	bool "File-backed EROFS filesystem support"
-+	depends on EROFS_FS
-+	default y
-+	help
-+	  This allows EROFS to use filesystem image files directly, without
-+	  the intercession of loopback block devices or likewise. It is
-+	  particularly useful for container images with numerous blobs and
-+	  other sandboxes, where loop devices behave intricately.  It can also
-+	  be used to simplify error-prone lifetime management of unnecessary
-+	  virtual block devices.
-+
-+	  Note that this feature, along with ongoing fanotify pre-content
-+	  hooks, will eventually replace "EROFS over fscache."
-+
-+	  If you don't want to enable this feature, say N.
-+
- config EROFS_FS_ZIP
- 	bool "EROFS Data Compression Support"
- 	depends on EROFS_FS
+diff --git a/fs/erofs/Makefile b/fs/erofs/Makefile
+index 097d672e6b14..4331d53c7109 100644
+--- a/fs/erofs/Makefile
++++ b/fs/erofs/Makefile
+@@ -7,4 +7,5 @@ erofs-$(CONFIG_EROFS_FS_ZIP) += decompressor.o zmap.o zdata.o zutil.o
+ erofs-$(CONFIG_EROFS_FS_ZIP_LZMA) += decompressor_lzma.o
+ erofs-$(CONFIG_EROFS_FS_ZIP_DEFLATE) += decompressor_deflate.o
+ erofs-$(CONFIG_EROFS_FS_ZIP_ZSTD) += decompressor_zstd.o
++erofs-$(CONFIG_EROFS_FS_BACKED_BY_FILE) += fileio.o
+ erofs-$(CONFIG_EROFS_FS_ONDEMAND) += fscache.o
 diff --git a/fs/erofs/data.c b/fs/erofs/data.c
-index 1b7eba38ba1e..0fb31c588ae0 100644
+index 0fb31c588ae0..b4c07ce7a294 100644
 --- a/fs/erofs/data.c
 +++ b/fs/erofs/data.c
-@@ -59,8 +59,12 @@ void *erofs_bread(struct erofs_buf *buf, erofs_off_t offset,
+@@ -132,7 +132,7 @@ int erofs_map_blocks(struct inode *inode, struct erofs_map_blocks *map)
+ 	if (map->m_la >= inode->i_size) {
+ 		/* leave out-of-bound access unmapped */
+ 		map->m_flags = 0;
+-		map->m_plen = 0;
++		map->m_plen = map->m_llen;
+ 		goto out;
+ 	}
  
- void erofs_init_metabuf(struct erofs_buf *buf, struct super_block *sb)
+@@ -197,8 +197,13 @@ static void erofs_fill_from_devinfo(struct erofs_map_dev *map,
+ 				    struct erofs_device_info *dif)
  {
--	if (erofs_is_fscache_mode(sb))
--		buf->mapping = EROFS_SB(sb)->s_fscache->inode->i_mapping;
-+	struct erofs_sb_info *sbi = EROFS_SB(sb);
-+
-+	if (erofs_is_fileio_mode(sbi))
-+		buf->mapping = file_inode(sbi->fdev)->i_mapping;
-+	else if (erofs_is_fscache_mode(sb))
-+		buf->mapping = sbi->s_fscache->inode->i_mapping;
- 	else
- 		buf->mapping = sb->s_bdev->bd_mapping;
- }
-@@ -189,10 +193,22 @@ int erofs_map_blocks(struct inode *inode, struct erofs_map_blocks *map)
- 	return err;
+ 	map->m_bdev = NULL;
+-	if (dif->file && S_ISBLK(file_inode(dif->file)->i_mode))
+-		map->m_bdev = file_bdev(dif->file);
++	map->m_fp = NULL;
++	if (dif->file) {
++		if (S_ISBLK(file_inode(dif->file)->i_mode))
++			map->m_bdev = file_bdev(dif->file);
++		else
++			map->m_fp = dif->file;
++	}
+ 	map->m_daxdev = dif->dax_dev;
+ 	map->m_dax_part_off = dif->dax_part_off;
+ 	map->m_fscache = dif->fscache;
+@@ -215,6 +220,7 @@ int erofs_map_dev(struct super_block *sb, struct erofs_map_dev *map)
+ 	map->m_daxdev = EROFS_SB(sb)->dax_dev;
+ 	map->m_dax_part_off = EROFS_SB(sb)->dax_part_off;
+ 	map->m_fscache = EROFS_SB(sb)->s_fscache;
++	map->m_fp = EROFS_SB(sb)->fdev;
+ 
+ 	if (map->m_deviceid) {
+ 		down_read(&devs->rwsem);
+@@ -250,6 +256,42 @@ int erofs_map_dev(struct super_block *sb, struct erofs_map_dev *map)
+ 	return 0;
  }
  
-+static void erofs_fill_from_devinfo(struct erofs_map_dev *map,
-+				    struct erofs_device_info *dif)
++/*
++ * bit 30: I/O error occurred on this folio
++ * bit 0 - 29: remaining parts to complete this folio
++ */
++#define EROFS_ONLINEFOLIO_EIO			(1 << 30)
++
++void erofs_onlinefolio_init(struct folio *folio)
 +{
-+	map->m_bdev = NULL;
-+	if (dif->file && S_ISBLK(file_inode(dif->file)->i_mode))
-+		map->m_bdev = file_bdev(dif->file);
-+	map->m_daxdev = dif->dax_dev;
-+	map->m_dax_part_off = dif->dax_part_off;
-+	map->m_fscache = dif->fscache;
++	union {
++		atomic_t o;
++		void *v;
++	} u = { .o = ATOMIC_INIT(1) };
++
++	folio->private = u.v;	/* valid only if file-backed folio is locked */
 +}
 +
- int erofs_map_dev(struct super_block *sb, struct erofs_map_dev *map)
- {
- 	struct erofs_dev_context *devs = EROFS_SB(sb)->devs;
- 	struct erofs_device_info *dif;
-+	erofs_off_t startoff, length;
- 	int id;
- 
- 	map->m_bdev = sb->s_bdev;
-@@ -212,29 +228,20 @@ int erofs_map_dev(struct super_block *sb, struct erofs_map_dev *map)
- 			up_read(&devs->rwsem);
- 			return 0;
- 		}
--		map->m_bdev = dif->bdev_file ? file_bdev(dif->bdev_file) : NULL;
--		map->m_daxdev = dif->dax_dev;
--		map->m_dax_part_off = dif->dax_part_off;
--		map->m_fscache = dif->fscache;
-+		erofs_fill_from_devinfo(map, dif);
- 		up_read(&devs->rwsem);
- 	} else if (devs->extra_devices && !devs->flatdev) {
- 		down_read(&devs->rwsem);
- 		idr_for_each_entry(&devs->tree, dif, id) {
--			erofs_off_t startoff, length;
--
- 			if (!dif->mapped_blkaddr)
- 				continue;
++void erofs_onlinefolio_split(struct folio *folio)
++{
++	atomic_inc((atomic_t *)&folio->private);
++}
 +
- 			startoff = erofs_pos(sb, dif->mapped_blkaddr);
- 			length = erofs_pos(sb, dif->blocks);
--
- 			if (map->m_pa >= startoff &&
- 			    map->m_pa < startoff + length) {
- 				map->m_pa -= startoff;
--				map->m_bdev = dif->bdev_file ?
--					      file_bdev(dif->bdev_file) : NULL;
--				map->m_daxdev = dif->dax_dev;
--				map->m_dax_part_off = dif->dax_part_off;
--				map->m_fscache = dif->fscache;
-+				erofs_fill_from_devinfo(map, dif);
- 				break;
- 			}
- 		}
++void erofs_onlinefolio_end(struct folio *folio, int err)
++{
++	int orig, v;
++
++	do {
++		orig = atomic_read((atomic_t *)&folio->private);
++		v = (orig - 1) | (err ? EROFS_ONLINEFOLIO_EIO : 0);
++	} while (atomic_cmpxchg((atomic_t *)&folio->private, orig, v) != orig);
++
++	if (v & ~EROFS_ONLINEFOLIO_EIO)
++		return;
++	folio->private = 0;
++	folio_end_read(folio, !(v & EROFS_ONLINEFOLIO_EIO));
++}
++
+ static int erofs_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
+ 		unsigned int flags, struct iomap *iomap, struct iomap *srcmap)
+ {
+@@ -399,7 +441,7 @@ static ssize_t erofs_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ }
+ 
+ /* for uncompressed (aligned) files and raw access for other files */
+-const struct address_space_operations erofs_raw_access_aops = {
++const struct address_space_operations erofs_aops = {
+ 	.read_folio = erofs_read_folio,
+ 	.readahead = erofs_readahead,
+ 	.bmap = erofs_bmap,
+diff --git a/fs/erofs/fileio.c b/fs/erofs/fileio.c
+new file mode 100644
+index 000000000000..6191336b42b6
+--- /dev/null
++++ b/fs/erofs/fileio.c
+@@ -0,0 +1,179 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/*
++ * Copyright (C) 2024, Alibaba Cloud
++ */
++#include "internal.h"
++#include <trace/events/erofs.h>
++
++struct erofs_fileio_rq {
++	struct bio_vec bvecs[BIO_MAX_VECS];
++	struct bio bio;
++	struct kiocb iocb;
++};
++
++struct erofs_fileio {
++	struct erofs_map_blocks map;
++	struct erofs_map_dev dev;
++	struct erofs_fileio_rq *rq;
++};
++
++static void erofs_fileio_ki_complete(struct kiocb *iocb, long ret)
++{
++	struct erofs_fileio_rq *rq =
++			container_of(iocb, struct erofs_fileio_rq, iocb);
++	struct folio_iter fi;
++
++	DBG_BUGON(rq->bio.bi_end_io);
++	if (ret > 0) {
++		if (ret != rq->bio.bi_iter.bi_size) {
++			bio_advance(&rq->bio, ret);
++			zero_fill_bio(&rq->bio);
++		}
++		ret = 0;
++	}
++	bio_for_each_folio_all(fi, &rq->bio) {
++		DBG_BUGON(folio_test_uptodate(fi.folio));
++		erofs_onlinefolio_end(fi.folio, ret);
++	}
++	kfree(rq);
++}
++
++static void erofs_fileio_rq_submit(struct erofs_fileio_rq *rq)
++{
++	struct iov_iter iter;
++	int ret;
++
++	if (!rq)
++		return;
++	rq->iocb.ki_pos = rq->bio.bi_iter.bi_sector << 9;
++	rq->iocb.ki_ioprio = get_current_ioprio();
++	rq->iocb.ki_complete = erofs_fileio_ki_complete;
++	rq->iocb.ki_flags = (rq->iocb.ki_filp->f_mode & FMODE_CAN_ODIRECT) ?
++				IOCB_DIRECT : 0;
++	iov_iter_bvec(&iter, ITER_DEST, rq->bvecs, rq->bio.bi_vcnt,
++		      rq->bio.bi_iter.bi_size);
++	ret = vfs_iocb_iter_read(rq->iocb.ki_filp, &rq->iocb, &iter);
++	if (ret != -EIOCBQUEUED)
++		erofs_fileio_ki_complete(&rq->iocb, ret);
++}
++
++static struct erofs_fileio_rq *erofs_fileio_rq_alloc(struct erofs_map_dev *mdev)
++{
++	struct erofs_fileio_rq *rq = kzalloc(sizeof(*rq), GFP_KERNEL);
++
++	if (!rq)
++		return NULL;
++	bio_init(&rq->bio, NULL, rq->bvecs, BIO_MAX_VECS, REQ_OP_READ);
++	rq->iocb.ki_filp = mdev->m_fp;
++	return rq;
++}
++
++static int erofs_fileio_scan_folio(struct erofs_fileio *io, struct folio *folio)
++{
++	struct inode *inode = folio_inode(folio);
++	struct erofs_map_blocks *map = &io->map;
++	unsigned int cur = 0, end = folio_size(folio), len;
++	loff_t pos = folio_pos(folio), ofs;
++	struct iov_iter iter;
++	struct bio_vec bv;
++	int err = 0;
++
++	erofs_onlinefolio_init(folio);
++	while (cur < end) {
++		if (!in_range(pos + cur, map->m_la, map->m_llen)) {
++			map->m_la = pos + cur;
++			map->m_llen = end - cur;
++			err = erofs_map_blocks(inode, map);
++			if (err)
++				break;
++		}
++
++		ofs = folio_pos(folio) + cur - map->m_la;
++		len = min_t(loff_t, map->m_llen - ofs, end - cur);
++		if (map->m_flags & EROFS_MAP_META) {
++			struct erofs_buf buf = __EROFS_BUF_INITIALIZER;
++			void *src;
++
++			src = erofs_read_metabuf(&buf, inode->i_sb,
++						 map->m_pa + ofs, EROFS_KMAP);
++			if (IS_ERR(src)) {
++				err = PTR_ERR(src);
++				break;
++			}
++			bvec_set_folio(&bv, folio, len, cur);
++			iov_iter_bvec(&iter, ITER_DEST, &bv, 1, len);
++			if (copy_to_iter(src, len, &iter) != len) {
++				erofs_put_metabuf(&buf);
++				err = -EIO;
++				break;
++			}
++			erofs_put_metabuf(&buf);
++		} else if (!(map->m_flags & EROFS_MAP_MAPPED)) {
++			folio_zero_segment(folio, cur, cur + len);
++		} else {
++			erofs_onlinefolio_split(folio);
++			if (io->rq && (map->m_pa + ofs != io->dev.m_pa ||
++				       map->m_deviceid != io->dev.m_deviceid)) {
++io_retry:
++				erofs_fileio_rq_submit(io->rq);
++				io->rq = NULL;
++			}
++
++			if (!io->rq) {
++				io->dev = (struct erofs_map_dev) {
++					.m_pa = io->map.m_pa + ofs,
++					.m_deviceid = io->map.m_deviceid,
++				};
++				err = erofs_map_dev(inode->i_sb, &io->dev);
++				if (err)
++					break;
++				io->rq = erofs_fileio_rq_alloc(&io->dev);
++				if (!io->rq) {
++					err = -ENOMEM;
++					break;
++				}
++				io->rq->bio.bi_iter.bi_sector = io->dev.m_pa >> 9;
++			}
++			if (!bio_add_folio(&io->rq->bio, folio, len, cur))
++				goto io_retry;
++			io->dev.m_pa += len;
++		}
++		cur += len;
++	}
++	erofs_onlinefolio_end(folio, err);
++	return err;
++}
++
++static int erofs_fileio_read_folio(struct file *file, struct folio *folio)
++{
++	struct erofs_fileio io = {};
++	int err;
++
++	trace_erofs_read_folio(folio, false);
++	err = erofs_fileio_scan_folio(&io, folio);
++	erofs_fileio_rq_submit(io.rq);
++	return err;
++}
++
++static void erofs_fileio_readahead(struct readahead_control *rac)
++{
++	struct inode *inode = rac->mapping->host;
++	struct erofs_fileio io = {};
++	struct folio *folio;
++	int err;
++
++	trace_erofs_readpages(inode, readahead_index(rac),
++			      readahead_count(rac), false);
++	while ((folio = readahead_folio(rac))) {
++		err = erofs_fileio_scan_folio(&io, folio);
++		if (err && err != -EINTR)
++			erofs_err(inode->i_sb, "readahead error at folio %lu @ nid %llu",
++				  folio->index, EROFS_I(inode)->nid);
++	}
++	erofs_fileio_rq_submit(io.rq);
++}
++
++const struct address_space_operations erofs_fileio_aops = {
++	.read_folio = erofs_fileio_read_folio,
++	.readahead = erofs_fileio_readahead,
++};
 diff --git a/fs/erofs/inode.c b/fs/erofs/inode.c
-index 419432be3223..d05b9e59f122 100644
+index d05b9e59f122..4a902e6e69a5 100644
 --- a/fs/erofs/inode.c
 +++ b/fs/erofs/inode.c
-@@ -258,7 +258,10 @@ static int erofs_fill_inode(struct inode *inode)
+@@ -258,11 +258,14 @@ static int erofs_fill_inode(struct inode *inode)
  	}
  
  	mapping_set_large_folios(inode->i_mapping);
--	if (erofs_inode_is_data_compressed(vi->datalayout)) {
-+	if (erofs_is_fileio_mode(EROFS_SB(inode->i_sb))) {
-+		/* XXX: data I/Os will be implemented in the following patches */
-+		err = -EOPNOTSUPP;
-+	} else if (erofs_inode_is_data_compressed(vi->datalayout)) {
+-	if (erofs_is_fileio_mode(EROFS_SB(inode->i_sb))) {
+-		/* XXX: data I/Os will be implemented in the following patches */
+-		err = -EOPNOTSUPP;
+-	} else if (erofs_inode_is_data_compressed(vi->datalayout)) {
++	if (erofs_inode_is_data_compressed(vi->datalayout)) {
  #ifdef CONFIG_EROFS_FS_ZIP
++#ifdef CONFIG_EROFS_FS_BACKED_BY_FILE
++		if (erofs_is_fileio_mode(EROFS_SB(inode->i_sb))) {
++			err = -EOPNOTSUPP;
++			goto out_unlock;
++		}
++#endif
  		DO_ONCE_LITE_IF(inode->i_blkbits != PAGE_SHIFT,
  			  erofs_info, inode->i_sb,
+ 			  "EXPERIMENTAL EROFS subpage compressed block support in use. Use at your own risk!");
+@@ -271,10 +274,14 @@ static int erofs_fill_inode(struct inode *inode)
+ 		err = -EOPNOTSUPP;
+ #endif
+ 	} else {
+-		inode->i_mapping->a_ops = &erofs_raw_access_aops;
++		inode->i_mapping->a_ops = &erofs_aops;
+ #ifdef CONFIG_EROFS_FS_ONDEMAND
+ 		if (erofs_is_fscache_mode(inode->i_sb))
+ 			inode->i_mapping->a_ops = &erofs_fscache_access_aops;
++#endif
++#ifdef CONFIG_EROFS_FS_BACKED_BY_FILE
++		if (erofs_is_fileio_mode(EROFS_SB(inode->i_sb)))
++			inode->i_mapping->a_ops = &erofs_fileio_aops;
+ #endif
+ 	}
+ out_unlock:
 diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
-index 45dc15ebd870..9bf4fb1cfa09 100644
+index 9bf4fb1cfa09..9bc4dcfd06d7 100644
 --- a/fs/erofs/internal.h
 +++ b/fs/erofs/internal.h
-@@ -49,7 +49,7 @@ typedef u32 erofs_blk_t;
- struct erofs_device_info {
- 	char *path;
- 	struct erofs_fscache *fscache;
--	struct file *bdev_file;
-+	struct file *file;
- 	struct dax_device *dax_dev;
- 	u64 dax_part_off;
+@@ -372,6 +372,7 @@ struct erofs_map_dev {
+ 	struct erofs_fscache *m_fscache;
+ 	struct block_device *m_bdev;
+ 	struct dax_device *m_daxdev;
++	struct file *m_fp;
+ 	u64 m_dax_part_off;
  
-@@ -130,6 +130,7 @@ struct erofs_sb_info {
+ 	erofs_off_t m_pa;
+@@ -380,7 +381,8 @@ struct erofs_map_dev {
  
- 	struct erofs_sb_lz4_info lz4;
- #endif	/* CONFIG_EROFS_FS_ZIP */
-+	struct file *fdev;
- 	struct inode *packed_inode;
- 	struct erofs_dev_context *devs;
- 	struct dax_device *dax_dev;
-@@ -190,9 +191,15 @@ struct erofs_sb_info {
- #define set_opt(opt, option)	((opt)->mount_opt |= EROFS_MOUNT_##option)
- #define test_opt(opt, option)	((opt)->mount_opt & EROFS_MOUNT_##option)
+ extern const struct super_operations erofs_sops;
  
-+static inline bool erofs_is_fileio_mode(struct erofs_sb_info *sbi)
-+{
-+	return IS_ENABLED(CONFIG_EROFS_FS_BACKED_BY_FILE) && sbi->fdev;
-+}
-+
- static inline bool erofs_is_fscache_mode(struct super_block *sb)
- {
--	return IS_ENABLED(CONFIG_EROFS_FS_ONDEMAND) && !sb->s_bdev;
-+	return IS_ENABLED(CONFIG_EROFS_FS_ONDEMAND) &&
-+			!erofs_is_fileio_mode(EROFS_SB(sb)) && !sb->s_bdev;
+-extern const struct address_space_operations erofs_raw_access_aops;
++extern const struct address_space_operations erofs_aops;
++extern const struct address_space_operations erofs_fileio_aops;
+ extern const struct address_space_operations z_erofs_aops;
+ extern const struct address_space_operations erofs_fscache_access_aops;
+ 
+@@ -411,6 +413,9 @@ int erofs_map_dev(struct super_block *sb, struct erofs_map_dev *dev);
+ int erofs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+ 		 u64 start, u64 len);
+ int erofs_map_blocks(struct inode *inode, struct erofs_map_blocks *map);
++void erofs_onlinefolio_init(struct folio *folio);
++void erofs_onlinefolio_split(struct folio *folio);
++void erofs_onlinefolio_end(struct folio *folio, int err);
+ struct inode *erofs_iget(struct super_block *sb, erofs_nid_t nid);
+ int erofs_getattr(struct mnt_idmap *idmap, const struct path *path,
+ 		  struct kstat *stat, u32 request_mask,
+diff --git a/fs/erofs/zdata.c b/fs/erofs/zdata.c
+index 424f656cd765..350612f32ac6 100644
+--- a/fs/erofs/zdata.c
++++ b/fs/erofs/zdata.c
+@@ -122,42 +122,6 @@ static bool erofs_folio_is_managed(struct erofs_sb_info *sbi, struct folio *fo)
+ 	return fo->mapping == MNGD_MAPPING(sbi);
  }
  
- enum {
-diff --git a/fs/erofs/super.c b/fs/erofs/super.c
-index aae3fd15899a..8e92ad3fbead 100644
---- a/fs/erofs/super.c
-+++ b/fs/erofs/super.c
-@@ -10,6 +10,7 @@
- #include <linux/fs_context.h>
- #include <linux/fs_parser.h>
- #include <linux/exportfs.h>
-+#include <linux/backing-dev.h>
- #include "xattr.h"
- 
- #define CREATE_TRACE_POINTS
-@@ -161,7 +162,7 @@ static int erofs_init_device(struct erofs_buf *buf, struct super_block *sb,
- 	struct erofs_sb_info *sbi = EROFS_SB(sb);
- 	struct erofs_fscache *fscache;
- 	struct erofs_deviceslot *dis;
--	struct file *bdev_file;
-+	struct file *file;
- 
- 	dis = erofs_read_metabuf(buf, sb, *pos, EROFS_KMAP);
- 	if (IS_ERR(dis))
-@@ -183,13 +184,17 @@ static int erofs_init_device(struct erofs_buf *buf, struct super_block *sb,
- 			return PTR_ERR(fscache);
- 		dif->fscache = fscache;
- 	} else if (!sbi->devs->flatdev) {
--		bdev_file = bdev_file_open_by_path(dif->path, BLK_OPEN_READ,
--						sb->s_type, NULL);
--		if (IS_ERR(bdev_file))
--			return PTR_ERR(bdev_file);
--		dif->bdev_file = bdev_file;
--		dif->dax_dev = fs_dax_get_by_bdev(file_bdev(bdev_file),
--				&dif->dax_part_off, NULL, NULL);
-+		file = erofs_is_fileio_mode(sbi) ?
-+				filp_open(dif->path, O_RDONLY, 0) :
-+				bdev_file_open_by_path(dif->path,
-+						BLK_OPEN_READ, sb->s_type, NULL);
-+		if (IS_ERR(file))
-+			return PTR_ERR(file);
-+
-+		dif->file = file;
-+		if (!erofs_is_fileio_mode(sbi))
-+			dif->dax_dev = fs_dax_get_by_bdev(file_bdev(file),
-+					&dif->dax_part_off, NULL, NULL);
- 	}
- 
- 	dif->blocks = le32_to_cpu(dis->blocks);
-@@ -566,15 +571,16 @@ static void erofs_set_sysfs_name(struct super_block *sb)
- {
- 	struct erofs_sb_info *sbi = EROFS_SB(sb);
- 
--	if (erofs_is_fscache_mode(sb)) {
--		if (sbi->domain_id)
--			super_set_sysfs_name_generic(sb, "%s,%s",sbi->domain_id,
--						     sbi->fsid);
--		else
--			super_set_sysfs_name_generic(sb, "%s", sbi->fsid);
--		return;
--	}
--	super_set_sysfs_name_id(sb);
-+	if (sbi->domain_id)
-+		super_set_sysfs_name_generic(sb, "%s,%s", sbi->domain_id,
-+					     sbi->fsid);
-+	else if (sbi->fsid)
-+		super_set_sysfs_name_generic(sb, "%s", sbi->fsid);
-+	else if (erofs_is_fileio_mode(sbi))
-+		super_set_sysfs_name_generic(sb, "%s",
-+					     bdi_dev_name(sb->s_bdi));
-+	else
-+		super_set_sysfs_name_id(sb);
- }
- 
- static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
-@@ -589,14 +595,15 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
- 	sb->s_op = &erofs_sops;
- 
- 	sbi->blkszbits = PAGE_SHIFT;
--	if (erofs_is_fscache_mode(sb)) {
-+	if (!sb->s_bdev) {
- 		sb->s_blocksize = PAGE_SIZE;
- 		sb->s_blocksize_bits = PAGE_SHIFT;
- 
--		err = erofs_fscache_register_fs(sb);
--		if (err)
--			return err;
+-/*
+- * bit 30: I/O error occurred on this folio
+- * bit 0 - 29: remaining parts to complete this folio
+- */
+-#define Z_EROFS_FOLIO_EIO			(1 << 30)
 -
-+		if (erofs_is_fscache_mode(sb)) {
-+			err = erofs_fscache_register_fs(sb);
-+			if (err)
-+				return err;
-+		}
- 		err = super_setup_bdi(sb);
- 		if (err)
- 			return err;
-@@ -693,11 +700,24 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
- static int erofs_fc_get_tree(struct fs_context *fc)
- {
- 	struct erofs_sb_info *sbi = fc->s_fs_info;
-+	int ret;
+-static void z_erofs_onlinefolio_init(struct folio *folio)
+-{
+-	union {
+-		atomic_t o;
+-		void *v;
+-	} u = { .o = ATOMIC_INIT(1) };
+-
+-	folio->private = u.v;	/* valid only if file-backed folio is locked */
+-}
+-
+-static void z_erofs_onlinefolio_split(struct folio *folio)
+-{
+-	atomic_inc((atomic_t *)&folio->private);
+-}
+-
+-static void z_erofs_onlinefolio_end(struct folio *folio, int err)
+-{
+-	int orig, v;
+-
+-	do {
+-		orig = atomic_read((atomic_t *)&folio->private);
+-		v = (orig - 1) | (err ? Z_EROFS_FOLIO_EIO : 0);
+-	} while (atomic_cmpxchg((atomic_t *)&folio->private, orig, v) != orig);
+-
+-	if (v & ~Z_EROFS_FOLIO_EIO)
+-		return;
+-	folio->private = 0;
+-	folio_end_read(folio, !(v & Z_EROFS_FOLIO_EIO));
+-}
+-
+ #define Z_EROFS_ONSTACK_PAGES		32
  
- 	if (IS_ENABLED(CONFIG_EROFS_FS_ONDEMAND) && sbi->fsid)
- 		return get_tree_nodev(fc, erofs_fc_fill_super);
+ /*
+@@ -965,7 +929,7 @@ static int z_erofs_scan_folio(struct z_erofs_decompress_frontend *f,
+ 	int err = 0;
  
--	return get_tree_bdev(fc, erofs_fc_fill_super);
-+	ret = get_tree_bdev(fc, erofs_fc_fill_super);
-+#ifdef CONFIG_EROFS_FS_BACKED_BY_FILE
-+	if (ret == -ENOTBLK) {
-+		if (!fc->source)
-+			return invalf(fc, "No source specified");
-+		sbi->fdev = filp_open(fc->source, O_RDONLY, 0);
-+		if (IS_ERR(sbi->fdev))
-+			return PTR_ERR(sbi->fdev);
-+
-+		return get_tree_nodev(fc, erofs_fc_fill_super);
-+	}
-+#endif
-+	return ret;
+ 	tight = (bs == PAGE_SIZE);
+-	z_erofs_onlinefolio_init(folio);
++	erofs_onlinefolio_init(folio);
+ 	do {
+ 		if (offset + end - 1 < map->m_la ||
+ 		    offset + end - 1 >= map->m_la + map->m_llen) {
+@@ -1024,7 +988,7 @@ static int z_erofs_scan_folio(struct z_erofs_decompress_frontend *f,
+ 			if (err)
+ 				break;
+ 
+-			z_erofs_onlinefolio_split(folio);
++			erofs_onlinefolio_split(folio);
+ 			if (f->pcl->pageofs_out != (map->m_la & ~PAGE_MASK))
+ 				f->pcl->multibases = true;
+ 			if (f->pcl->length < offset + end - map->m_la) {
+@@ -1044,7 +1008,7 @@ static int z_erofs_scan_folio(struct z_erofs_decompress_frontend *f,
+ 			tight = (bs == PAGE_SIZE);
+ 		}
+ 	} while ((end = cur) > 0);
+-	z_erofs_onlinefolio_end(folio, err);
++	erofs_onlinefolio_end(folio, err);
+ 	return err;
  }
  
- static int erofs_fc_reconfigure(struct fs_context *fc)
-@@ -727,8 +747,8 @@ static int erofs_release_device_info(int id, void *ptr, void *data)
- 	struct erofs_device_info *dif = ptr;
+@@ -1147,7 +1111,7 @@ static void z_erofs_fill_other_copies(struct z_erofs_decompress_backend *be,
+ 			cur += len;
+ 		}
+ 		kunmap_local(dst);
+-		z_erofs_onlinefolio_end(page_folio(bvi->bvec.page), err);
++		erofs_onlinefolio_end(page_folio(bvi->bvec.page), err);
+ 		list_del(p);
+ 		kfree(bvi);
+ 	}
+@@ -1302,7 +1266,7 @@ static int z_erofs_decompress_pcluster(struct z_erofs_decompress_backend *be,
  
- 	fs_put_dax(dif->dax_dev, NULL);
--	if (dif->bdev_file)
--		fput(dif->bdev_file);
-+	if (dif->file)
-+		fput(dif->file);
- 	erofs_fscache_unregister_cookie(dif->fscache);
- 	dif->fscache = NULL;
- 	kfree(dif->path);
-@@ -801,6 +821,8 @@ static void erofs_kill_sb(struct super_block *sb)
- 	erofs_fscache_unregister_fs(sb);
- 	kfree(sbi->fsid);
- 	kfree(sbi->domain_id);
-+	if (sbi->fdev)
-+		fput(sbi->fdev);
- 	kfree(sbi);
- 	sb->s_fs_info = NULL;
- }
-@@ -903,7 +925,7 @@ static int erofs_statfs(struct dentry *dentry, struct kstatfs *buf)
- 	buf->f_namelen = EROFS_NAME_LEN;
- 
- 	if (uuid_is_null(&sb->s_uuid))
--		buf->f_fsid = u64_to_fsid(erofs_is_fscache_mode(sb) ? 0 :
-+		buf->f_fsid = u64_to_fsid(!sb->s_bdev ? 0 :
- 				huge_encode_dev(sb->s_bdev->bd_dev));
- 	else
- 		buf->f_fsid = uuid_to_fsid(sb->s_uuid.b);
+ 		DBG_BUGON(z_erofs_page_is_invalidated(page));
+ 		if (!z_erofs_is_shortlived_page(page)) {
+-			z_erofs_onlinefolio_end(page_folio(page), err);
++			erofs_onlinefolio_end(page_folio(page), err);
+ 			continue;
+ 		}
+ 		if (pcl->algorithmformat != Z_EROFS_COMPRESSION_LZ4) {
 -- 
 2.43.5
 
