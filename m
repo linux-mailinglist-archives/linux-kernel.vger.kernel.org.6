@@ -1,132 +1,330 @@
-Return-Path: <linux-kernel+bounces-307458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA70F964DD0
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 20:38:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06509964DCF
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 20:38:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E9D51F22E57
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 18:38:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0047B2165A
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 18:38:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EF181B9B45;
-	Thu, 29 Aug 2024 18:37:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9313C1B9B33;
+	Thu, 29 Aug 2024 18:37:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aHrCZCM/"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EFNfuBWg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F23BB1B8EBD
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 18:37:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97D3C1B9B21;
+	Thu, 29 Aug 2024 18:37:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724956675; cv=none; b=X4s7xCmDtp88gUJ1cJQG7AKfScNgaGygaTrkJRj6XZOKJyNlBSo1aN2rrvja9oeFTuq3HzHsFFBNy1FRGsUziHIZYNydz/mDa7+pK/TEUBtyqgC/N7RgI+X3vByjJcFA33DXZSkcrL1KYutxE/79AfBAryApZVruGYzvh+wicBE=
+	t=1724956673; cv=none; b=S7vQYu6drYZS1jLEAYJDuGidDXV/NjD8H+vR8edfHQp+/0nM2qUcarX+ryWqzFvnUaJ0lt8/JkMoFlnObK3XdN3x4/GYNX4r4L1WzY4JoGZ3VRK2dhKtkMrTGbUENn9++UotjN1JGl5a8TJ7BxizExjNka7qdQmwqOMplG/GwiM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724956675; c=relaxed/simple;
-	bh=clzzPvj3fGxThoMYcayjVCLtB/1hnsi9t1c+TqRgB+g=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=bSqUBdIWAFAf8tHs9pqqdFYtR8MbBO/r8681NXZi4wPgtWFG9BAirNo3u+yna73OjyIzx2KSDX3CMWqfg6DDGy3NVo/BLOYr3MpEur7lCjGxnXVy09RmwIBIV0C2/t4mgZoNmHBSGNW/ZkLekN+gJjXQFwh+kftNd6S8psZ0S40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aHrCZCM/; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724956673; x=1756492673;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=clzzPvj3fGxThoMYcayjVCLtB/1hnsi9t1c+TqRgB+g=;
-  b=aHrCZCM/ASyxj7gih+fJQK7Z+x9qbSXO+RKzIun2QehZx0EixcfAmhsl
-   R7q0ChXCSFE4xmOqPrSJqofcxwm9b6Yq7T3THVBrRUEHm4DColYq/KXbX
-   da9Dd5VsIN7VAD+AcvI7dEhaSNuWMVcWojaun6LKrbY8Rn7Uov891MIYg
-   2CctqkM8+ZNV5fec11uXUx6UzCm5inOUUnLyqeab8CSvoP1dylRGBJZVu
-   pJNX7IsRYWThBx2haU0q0oOo51FnSbAAO0ScXk6WzsczZ4sxSsMPCYkAh
-   Zds6E8fwqkjYTEgXTuTLp19xV6wGpagMwUgMa5cSjmg81dksYZlBKy7VU
-   g==;
-X-CSE-ConnectionGUID: jPSCHJaWQF+BdJpy6uaiqQ==
-X-CSE-MsgGUID: Wfh0QmXrQyCNRgFqrFaGwg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11179"; a="23717544"
-X-IronPort-AV: E=Sophos;i="6.10,186,1719903600"; 
-   d="scan'208";a="23717544"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 11:37:43 -0700
-X-CSE-ConnectionGUID: Yji/QOXNS4GM/OSmTxt2Ew==
-X-CSE-MsgGUID: z0CDDVojSuWX0uXbvG9YHg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,186,1719903600"; 
-   d="scan'208";a="68565385"
-Received: from hrotuna-mobl2.ger.corp.intel.com (HELO localhost) ([10.245.246.43])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 11:37:39 -0700
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Nathan Chancellor <nathan@kernel.org>, Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>
-Cc: Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling
- <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
- intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, Joonas Lahtinen
- <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
- Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
- Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH v1 0/2] drm/i915/fence: A couple of build fixes
-In-Reply-To: <20240829182255.GA1468662@thelio-3990X>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20240829155950.1141978-1-andriy.shevchenko@linux.intel.com>
- <87cylrwahb.fsf@intel.com> <ZtCnhXwtO-gd1fMf@smile.fi.intel.com>
- <ZtC5oXSzUuuIgLiQ@smile.fi.intel.com>
- <20240829182255.GA1468662@thelio-3990X>
-Date: Thu, 29 Aug 2024 21:37:34 +0300
-Message-ID: <87a5gvw4y9.fsf@intel.com>
+	s=arc-20240116; t=1724956673; c=relaxed/simple;
+	bh=5HQ56DnZm01JlMtuqxoBg8Kdzw4Qreqv0MmJ/xI2OUc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=V86qUpKSs5n9yLE5q3R2Jy+WygBd7i9lMsOlYs00rnxYzejnLUR+p4t3A2Yhxbi43QVNeuJRWkP3g6cOcvWQCQ8ZzGM0mWPdoidQW9AHYlmP/ffMfMLVAhwq+L0GhJO9oK0NmVttL6EsZvasK9PKBz1QVStTtFWRDNroU+JR3Yw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EFNfuBWg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC7B1C4CEC1;
+	Thu, 29 Aug 2024 18:37:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724956673;
+	bh=5HQ56DnZm01JlMtuqxoBg8Kdzw4Qreqv0MmJ/xI2OUc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=EFNfuBWgWsjVm+IBgiE5BYYh3/DMcE7xBCELmRTVGUDeKpUlExQNXzYAv4Kx2VDf3
+	 WaefWA2jaF1yEO4Yypj/YMr7W64YoJFSj4f0C7Fnh4JX8C/Kk34G7BZ9i9NgKm9gBh
+	 oHpeYJ2roT5iLeVkdTjleNGdwRDtw6e13Sqd8B2gIn0pKOoTJB6hVLUTjT1u28BFbM
+	 Kj1Fofk6CpG+1FIGHI+Ewbr54KODXnBLo24oFvVjxXzO/R+bL9e2rdLJMfRHJ9N75U
+	 vrrKHET/k5f778b62TC8KlGKenJQnFcdE/fmwmfh0SimHCU2BgkCWX1TMCjbICf9sZ
+	 SgWCalOZfGJ0w==
+From: Andrii Nakryiko <andrii@kernel.org>
+To: linux-trace-kernel@vger.kernel.org,
+	peterz@infradead.org,
+	oleg@redhat.com
+Cc: rostedt@goodmis.org,
+	mhiramat@kernel.org,
+	bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	jolsa@kernel.org,
+	paulmck@kernel.org,
+	willy@infradead.org,
+	surenb@google.com,
+	akpm@linux-foundation.org,
+	linux-mm@kvack.org,
+	Andrii Nakryiko <andrii@kernel.org>
+Subject: [PATCH v4 2/8] uprobes: protected uprobe lifetime with SRCU
+Date: Thu, 29 Aug 2024 11:37:35 -0700
+Message-ID: <20240829183741.3331213-3-andrii@kernel.org>
+X-Mailer: git-send-email 2.43.5
+In-Reply-To: <20240829183741.3331213-1-andrii@kernel.org>
+References: <20240829183741.3331213-1-andrii@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-On Thu, 29 Aug 2024, Nathan Chancellor <nathan@kernel.org> wrote:
-> On Thu, Aug 29, 2024 at 09:10:41PM +0300, Andy Shevchenko wrote:
->> On Thu, Aug 29, 2024 at 07:53:25PM +0300, Andy Shevchenko wrote:
->> > On Thu, Aug 29, 2024 at 07:38:08PM +0300, Jani Nikula wrote:
->> > > On Thu, 29 Aug 2024, Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
->> > > > With CONFIG_WERROR=y and `make W=1` build fails on my x86_64 machine.
->> > > > This is due to some unused functions. Hence these quick fixes.
->> > > 
->> > > Since when have we been getting the warnings for static inlines?
->
-> Since commit 6863f5643dd7 ("kbuild: allow Clang to find unused static
-> inline functions for W=1 build"). clang warns about unused static inline
-> functions in .c files, unlike GCC (they both do not warn for functions
-> coming from .h files). This difference is worked around for the normal
-> build by adding '__maybe_unused' to the definition of 'inline' but
-> Masahiro wanted to disable it for W=1 to allow this difference to find
-> unused/dead code. There have not been too many complaints as far as I am
-> aware but I can see how it is surprising.
+To avoid unnecessarily taking a (brief) refcount on uprobe during
+breakpoint handling in handle_swbp for entry uprobes, make find_uprobe()
+not take refcount, but protect the lifetime of a uprobe instance with
+RCU. This improves scalability, as refcount gets quite expensive due to
+cache line bouncing between multiple CPUs.
 
-Heh, I was just going to reply citing the same commit.
+Specifically, we utilize our own uprobe-specific SRCU instance for this
+RCU protection. put_uprobe() will delay actual kfree() using call_srcu().
 
-I occasionally build with clang myself, and we do enable most W=1 by
-default in the drm subsystem, so I was wondering why I hadn't hit
-this. The crucial difference is that we lack -DKBUILD_EXTRA_WARN1 which
-W=1 adds.
+For now, uretprobe and single-stepping handling will still acquire
+refcount as necessary. We'll address these issues in follow up patches
+by making them use SRCU with timeout.
 
-I see there's no subdir-cppflags-y, but I don't see any harm in us
-adding -Wundef and -DKBUILD_EXTRA_WARN1 to subdir-ccflags-y. After we
-fix the fallout, of course. Do you?
+Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+---
+ kernel/events/uprobes.c | 94 +++++++++++++++++++++++------------------
+ 1 file changed, 54 insertions(+), 40 deletions(-)
 
-I don't much like the __maybe_unused stuff, but I guess it's fine as a
-stopgap measure, and then we can grep for that when running out of
-things to do. :p
-
-The TL;DR is,
-
-Reviewed-by: Jani Nikula <jani.nikula@intel.com>
-
-on the series.
-
-BR,
-Jani.
-
+diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+index 147561c19d57..3e3595753e2c 100644
+--- a/kernel/events/uprobes.c
++++ b/kernel/events/uprobes.c
+@@ -41,6 +41,8 @@ static struct rb_root uprobes_tree = RB_ROOT;
+ 
+ static DEFINE_RWLOCK(uprobes_treelock);	/* serialize rbtree access */
+ 
++DEFINE_STATIC_SRCU(uprobes_srcu);
++
+ #define UPROBES_HASH_SZ	13
+ /* serialize uprobe->pending_list */
+ static struct mutex uprobes_mmap_mutex[UPROBES_HASH_SZ];
+@@ -59,6 +61,7 @@ struct uprobe {
+ 	struct list_head	pending_list;
+ 	struct uprobe_consumer	*consumers;
+ 	struct inode		*inode;		/* Also hold a ref to inode */
++	struct rcu_head		rcu;
+ 	loff_t			offset;
+ 	loff_t			ref_ctr_offset;
+ 	unsigned long		flags;
+@@ -617,6 +620,13 @@ static inline bool uprobe_is_active(struct uprobe *uprobe)
+ 	return !RB_EMPTY_NODE(&uprobe->rb_node);
+ }
+ 
++static void uprobe_free_rcu(struct rcu_head *rcu)
++{
++	struct uprobe *uprobe = container_of(rcu, struct uprobe, rcu);
++
++	kfree(uprobe);
++}
++
+ static void put_uprobe(struct uprobe *uprobe)
+ {
+ 	if (!refcount_dec_and_test(&uprobe->ref))
+@@ -638,7 +648,7 @@ static void put_uprobe(struct uprobe *uprobe)
+ 	delayed_uprobe_remove(uprobe, NULL);
+ 	mutex_unlock(&delayed_uprobe_lock);
+ 
+-	kfree(uprobe);
++	call_srcu(&uprobes_srcu, &uprobe->rcu, uprobe_free_rcu);
+ }
+ 
+ static __always_inline
+@@ -680,33 +690,25 @@ static inline int __uprobe_cmp(struct rb_node *a, const struct rb_node *b)
+ 	return uprobe_cmp(u->inode, u->offset, __node_2_uprobe(b));
+ }
+ 
+-static struct uprobe *__find_uprobe(struct inode *inode, loff_t offset)
++/*
++ * Assumes being inside RCU protected region.
++ * No refcount is taken on returned uprobe.
++ */
++static struct uprobe *find_uprobe_rcu(struct inode *inode, loff_t offset)
+ {
+ 	struct __uprobe_key key = {
+ 		.inode = inode,
+ 		.offset = offset,
+ 	};
+-	struct rb_node *node = rb_find(&key, &uprobes_tree, __uprobe_cmp_key);
+-
+-	if (node)
+-		return try_get_uprobe(__node_2_uprobe(node));
+-
+-	return NULL;
+-}
++	struct rb_node *node;
+ 
+-/*
+- * Find a uprobe corresponding to a given inode:offset
+- * Acquires uprobes_treelock
+- */
+-static struct uprobe *find_uprobe(struct inode *inode, loff_t offset)
+-{
+-	struct uprobe *uprobe;
++	lockdep_assert(srcu_read_lock_held(&uprobes_srcu));
+ 
+ 	read_lock(&uprobes_treelock);
+-	uprobe = __find_uprobe(inode, offset);
++	node = rb_find(&key, &uprobes_tree, __uprobe_cmp_key);
+ 	read_unlock(&uprobes_treelock);
+ 
+-	return uprobe;
++	return node ? __node_2_uprobe(node) : NULL;
+ }
+ 
+ /*
+@@ -1080,10 +1082,10 @@ register_for_each_vma(struct uprobe *uprobe, struct uprobe_consumer *new)
+ 			goto free;
+ 		/*
+ 		 * We take mmap_lock for writing to avoid the race with
+-		 * find_active_uprobe() which takes mmap_lock for reading.
++		 * find_active_uprobe_rcu() which takes mmap_lock for reading.
+ 		 * Thus this install_breakpoint() can not make
+-		 * is_trap_at_addr() true right after find_uprobe()
+-		 * returns NULL in find_active_uprobe().
++		 * is_trap_at_addr() true right after find_uprobe_rcu()
++		 * returns NULL in find_active_uprobe_rcu().
+ 		 */
+ 		mmap_write_lock(mm);
+ 		vma = find_vma(mm, info->vaddr);
+@@ -1885,9 +1887,13 @@ static void prepare_uretprobe(struct uprobe *uprobe, struct pt_regs *regs)
+ 		return;
+ 	}
+ 
++	/* we need to bump refcount to store uprobe in utask */
++	if (!try_get_uprobe(uprobe))
++		return;
++
+ 	ri = kmalloc(sizeof(struct return_instance), GFP_KERNEL);
+ 	if (!ri)
+-		return;
++		goto fail;
+ 
+ 	trampoline_vaddr = uprobe_get_trampoline_vaddr();
+ 	orig_ret_vaddr = arch_uretprobe_hijack_return_addr(trampoline_vaddr, regs);
+@@ -1914,11 +1920,7 @@ static void prepare_uretprobe(struct uprobe *uprobe, struct pt_regs *regs)
+ 		}
+ 		orig_ret_vaddr = utask->return_instances->orig_ret_vaddr;
+ 	}
+-	/*
+-	 * uprobe's refcnt is positive, held by caller, so it's safe to
+-	 * unconditionally bump it one more time here
+-	 */
+-	ri->uprobe = get_uprobe(uprobe);
++	ri->uprobe = uprobe;
+ 	ri->func = instruction_pointer(regs);
+ 	ri->stack = user_stack_pointer(regs);
+ 	ri->orig_ret_vaddr = orig_ret_vaddr;
+@@ -1929,8 +1931,9 @@ static void prepare_uretprobe(struct uprobe *uprobe, struct pt_regs *regs)
+ 	utask->return_instances = ri;
+ 
+ 	return;
+- fail:
++fail:
+ 	kfree(ri);
++	put_uprobe(uprobe);
+ }
+ 
+ /* Prepare to single-step probed instruction out of line. */
+@@ -1945,9 +1948,14 @@ pre_ssout(struct uprobe *uprobe, struct pt_regs *regs, unsigned long bp_vaddr)
+ 	if (!utask)
+ 		return -ENOMEM;
+ 
++	if (!try_get_uprobe(uprobe))
++		return -EINVAL;
++
+ 	xol_vaddr = xol_get_insn_slot(uprobe);
+-	if (!xol_vaddr)
+-		return -ENOMEM;
++	if (!xol_vaddr) {
++		err = -ENOMEM;
++		goto err_out;
++	}
+ 
+ 	utask->xol_vaddr = xol_vaddr;
+ 	utask->vaddr = bp_vaddr;
+@@ -1955,12 +1963,15 @@ pre_ssout(struct uprobe *uprobe, struct pt_regs *regs, unsigned long bp_vaddr)
+ 	err = arch_uprobe_pre_xol(&uprobe->arch, regs);
+ 	if (unlikely(err)) {
+ 		xol_free_insn_slot(current);
+-		return err;
++		goto err_out;
+ 	}
+ 
+ 	utask->active_uprobe = uprobe;
+ 	utask->state = UTASK_SSTEP;
+ 	return 0;
++err_out:
++	put_uprobe(uprobe);
++	return err;
+ }
+ 
+ /*
+@@ -2043,7 +2054,8 @@ static int is_trap_at_addr(struct mm_struct *mm, unsigned long vaddr)
+ 	return is_trap_insn(&opcode);
+ }
+ 
+-static struct uprobe *find_active_uprobe(unsigned long bp_vaddr, int *is_swbp)
++/* assumes being inside RCU protected region */
++static struct uprobe *find_active_uprobe_rcu(unsigned long bp_vaddr, int *is_swbp)
+ {
+ 	struct mm_struct *mm = current->mm;
+ 	struct uprobe *uprobe = NULL;
+@@ -2056,7 +2068,7 @@ static struct uprobe *find_active_uprobe(unsigned long bp_vaddr, int *is_swbp)
+ 			struct inode *inode = file_inode(vma->vm_file);
+ 			loff_t offset = vaddr_to_offset(vma, bp_vaddr);
+ 
+-			uprobe = find_uprobe(inode, offset);
++			uprobe = find_uprobe_rcu(inode, offset);
+ 		}
+ 
+ 		if (!uprobe)
+@@ -2202,13 +2214,15 @@ static void handle_swbp(struct pt_regs *regs)
+ {
+ 	struct uprobe *uprobe;
+ 	unsigned long bp_vaddr;
+-	int is_swbp;
++	int is_swbp, srcu_idx;
+ 
+ 	bp_vaddr = uprobe_get_swbp_addr(regs);
+ 	if (bp_vaddr == uprobe_get_trampoline_vaddr())
+ 		return uprobe_handle_trampoline(regs);
+ 
+-	uprobe = find_active_uprobe(bp_vaddr, &is_swbp);
++	srcu_idx = srcu_read_lock(&uprobes_srcu);
++
++	uprobe = find_active_uprobe_rcu(bp_vaddr, &is_swbp);
+ 	if (!uprobe) {
+ 		if (is_swbp > 0) {
+ 			/* No matching uprobe; signal SIGTRAP. */
+@@ -2224,7 +2238,7 @@ static void handle_swbp(struct pt_regs *regs)
+ 			 */
+ 			instruction_pointer_set(regs, bp_vaddr);
+ 		}
+-		return;
++		goto out;
+ 	}
+ 
+ 	/* change it in advance for ->handler() and restart */
+@@ -2259,12 +2273,12 @@ static void handle_swbp(struct pt_regs *regs)
+ 	if (arch_uprobe_skip_sstep(&uprobe->arch, regs))
+ 		goto out;
+ 
+-	if (!pre_ssout(uprobe, regs, bp_vaddr))
+-		return;
++	if (pre_ssout(uprobe, regs, bp_vaddr))
++		goto out;
+ 
+-	/* arch_uprobe_skip_sstep() succeeded, or restart if can't singlestep */
+ out:
+-	put_uprobe(uprobe);
++	/* arch_uprobe_skip_sstep() succeeded, or restart if can't singlestep */
++	srcu_read_unlock(&uprobes_srcu, srcu_idx);
+ }
+ 
+ /*
 -- 
-Jani Nikula, Intel
+2.43.5
+
 
