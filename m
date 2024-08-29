@@ -1,70 +1,81 @@
-Return-Path: <linux-kernel+bounces-306891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 553E1964513
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 14:46:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 415DF964516
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 14:47:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FD441C22964
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 12:46:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F219228A41C
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 12:47:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CBF01AD412;
-	Thu, 29 Aug 2024 12:39:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B0861B14E4;
+	Thu, 29 Aug 2024 12:39:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="20KMQELy"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YFQNDcYs"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0369191F8B;
-	Thu, 29 Aug 2024 12:39:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D6DC1B142E;
+	Thu, 29 Aug 2024 12:39:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724935171; cv=none; b=kL1O/QfBv6C0hrTTHDcn3OmfupXDKvZLAB+waGC7TY9puPy8abionymjN9v8bTopsDHX1ZvGJtuCNYNj5HZabYWZxjvbS5+p1tu0lqJuSEopRCi2ByiB2t1kjcGVN/Ri0Oifmu/Z7Utp8jkrUQE6gffTwQXuPgPLsLoesRgymgw=
+	t=1724935182; cv=none; b=X/OAB6ruS9qdLg+EZZxGiDz7fW2UObedz9QNHZ6+W4ky5zt2v37dY/zEsKYo4tia15dI3gJWfBnAbhQGevhb7z/DrAkoxG9GxqzEXIb90xoHN0zHRWml71SaY64aYN8g0qPfyjpv7x/XovA/7XjwWztXUyW2M7tYm1QpX9d0iMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724935171; c=relaxed/simple;
-	bh=t45kKgaqNgp+zoCbiE0yFAUGsdMB8opYG+4Ni0FrW20=;
+	s=arc-20240116; t=1724935182; c=relaxed/simple;
+	bh=ansrGg2gRw5S54Bj6yl3JQ3JRLuEDaTk9+RDLMKVcek=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sSeOdF+nFXYOy9pjDsYenI5h4KpMnU30hqb7ytNfOlAa3azGRs1vXYNR8fI4n6sFVKuDahrZlwpc/wLIhti3UnGpbCBzlpBT9pqA+Y0YO2zriI/e865by9C3Cqi/pHwprI+UGYWg77fm0R1l1xaKj2YE6Z/hQGh3rrAfHZjTfys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=20KMQELy; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=+QyTeQW/As9IjRzVOrP1/IZ7Jkku9UOdmdk9zFQWvDM=; b=20KMQELyV/A1PdZDXK1xNzAzDD
-	yEKZShA/slL4ITbRl/MDrnlwoljjq5bv44f4wQcfBH67lWv9obxeK0rVT25FuDKpmpCx3AkVT4zEx
-	2vzJT+sjP4HMw7ZOKajAJMEajW9AheAL2BzfXrKFZzoMj5Xfdeck5vT6dBHd4FKPkxKo=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sjeQU-00621R-6Z; Thu, 29 Aug 2024 14:38:58 +0200
-Date: Thu, 29 Aug 2024 14:38:58 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	woojung.huh@microchip.com, f.fainelli@gmail.com, olteanv@gmail.com,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, linus.walleij@linaro.org, alsi@bang-olufsen.dk,
-	justin.chen@broadcom.com, sebastian.hesselbarth@gmail.com,
-	alexandre.torgue@foss.st.com, joabreu@synopsys.com,
-	mcoquelin.stm32@gmail.com, wens@csie.org, jernej.skrabec@gmail.com,
-	samuel@sholland.org, hkallweit1@gmail.com, linux@armlinux.org.uk,
-	ansuelsmth@gmail.com, UNGLinuxDriver@microchip.com,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	bcm-kernel-feedback-list@broadcom.com,
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-	linux-stm32@st-md-mailman.stormreply.com, krzk@kernel.org,
-	jic23@kernel.org
-Subject: Re: [PATCH net-next v2 08/13] net: mdio: mux-mmioreg: Simplified
- with dev_err_probe()
-Message-ID: <df7418a8-1626-4207-b23e-7f0dc3d83164@lunn.ch>
-References: <20240828032343.1218749-1-ruanjinjie@huawei.com>
- <20240828032343.1218749-9-ruanjinjie@huawei.com>
- <20240828134814.0000569d@Huawei.com>
- <c696926d-748f-1969-f684-727d495c4a12@huawei.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gNz2yCMkIyngD9UoVj6AY4PCXbz7BhDpyj7iEigB8xQin8vDv43QZ7WFAL8hX8gNJrq+Ux7AE5qQJva2l5a0lYPYB9hFYM13kfnj4MizLydh1Lq2gpTC/Asvamzd0YkYCi9k2Xah4/SM691qwwbnvoSIU+AxTStyf7PiozcC0K0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YFQNDcYs; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724935181; x=1756471181;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ansrGg2gRw5S54Bj6yl3JQ3JRLuEDaTk9+RDLMKVcek=;
+  b=YFQNDcYsC28Mvqv8OcNuVGuO/woigtSOLyoVBZTGYuNvMTX64wfzh7xc
+   0G3CQxdTvEybt0kkkwJmfx2qj38+pijyQ5bUsVnl1dV9CxfMDJlw0uZNM
+   xIrIbWPIrBhy2vne4n0FpJGJfsXsngxtELOhM2fgpLebS5KQtcbcIy9d0
+   lqQ9xbUOmsGQx4cGNQNUinLs+JDStCF5GuAwAKCex/Z1Mbt0+Pgiuabw7
+   +Gw4knlbI3SnQqqMrioiwHdMiPcyas2vL5e7xk5ipvmlSYGGzrAZZ19MN
+   u1eRAUABnIfaelju+oZ6WF9Q4CSZqqQ8YM7HmuV/FVXnUmoVXCkKAX/Sf
+   w==;
+X-CSE-ConnectionGUID: bQ3wkMBqTKmrwh87m82y7A==
+X-CSE-MsgGUID: nXvzeLfSQ+yzf3yvPI/jIA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11179"; a="23475560"
+X-IronPort-AV: E=Sophos;i="6.10,185,1719903600"; 
+   d="scan'208";a="23475560"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 05:39:41 -0700
+X-CSE-ConnectionGUID: /O3uFiTWRtCKYZvmPuL/vA==
+X-CSE-MsgGUID: 2d/wuqYtT628Lf0Z3Nvmmw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,185,1719903600"; 
+   d="scan'208";a="67945625"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 05:39:39 -0700
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id 0896511F843;
+	Thu, 29 Aug 2024 15:39:36 +0300 (EEST)
+Date: Thu, 29 Aug 2024 12:39:35 +0000
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Benjamin Bara <bbara93@gmail.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Alexander Stein <alexander.stein@ew.tq-group.com>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Benjamin Bara <benjamin.bara@skidata.com>
+Subject: Re: [PATCH v2 1/2] media: i2c: imx290: Check for availability in
+ probe()
+Message-ID: <ZtBsB1iqm4PhbfnH@kekkonen.localdomain>
+References: <20240828-imx290-avail-v2-0-bd320ac8e8fa@skidata.com>
+ <20240828-imx290-avail-v2-1-bd320ac8e8fa@skidata.com>
+ <ZtAdvtkjr0XNbvmu@kekkonen.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,22 +84,15 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <c696926d-748f-1969-f684-727d495c4a12@huawei.com>
+In-Reply-To: <ZtAdvtkjr0XNbvmu@kekkonen.localdomain>
 
-> >> +		if ((u32)reg & ~s->mask)
-> >> +			return dev_err_probe(&pdev->dev, -ENODEV,
-> >> +					     "mdio-mux child node %pOF has a 'reg' value with unmasked bits\n",
-> > I'd align these super long ones as. 
-> > 			     "mdio-mux child node %pOF has a 'reg' value with unmasked bits\n",
-> > It is ugly but then so are > 100 char lines.
-> 
-> It seems that this kind string > 100 char is fine for patch check script.
+On Thu, Aug 29, 2024 at 07:05:34AM +0000, Sakari Ailus wrote:
+> the next time. I'll wrap the line this time.
 
-Strings like this can ignore the 80 char limit because developers are
-going to grep for it when it shows up in their kernel log. If it gets
-broken in odd places, grep will not find it.
+Based on the other review comments I'll wait for v2.
 
-I would also say the indentation is correct as is, level with &pdev.
+Thanks.
 
-	Andrew
+-- 
+Sakari Ailus
 
