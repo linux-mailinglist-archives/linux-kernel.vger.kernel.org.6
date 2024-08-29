@@ -1,164 +1,132 @@
-Return-Path: <linux-kernel+bounces-306946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFE709645D2
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:09:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 717B69645D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:09:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A672B1F27648
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:09:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D79DAB26A89
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:09:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EC321A4F06;
-	Thu, 29 Aug 2024 13:09:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="y6DKYe1B";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0+ogEiSf"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B11851A4ADE;
+	Thu, 29 Aug 2024 13:09:48 +0000 (UTC)
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C08E91946CA;
-	Thu, 29 Aug 2024 13:08:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4819B446D1;
+	Thu, 29 Aug 2024 13:09:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724936941; cv=none; b=O7o1TYS6Mjwdqxpn1dfW+vMNmZwWAvFJOQS5co1WvzUmWod5Fd3eI2HchurZWM8oD2owz6GcrREjHDUAVLmV7wLV84jF6XmCc8z6ol00LZDIg1omtIaqf4iQoyr7jxdfQXwrzi9cv+VodV0sDlkxn0ZZ2ihd/xoYlOddNy//xcg=
+	t=1724936988; cv=none; b=JttLhQNCTzG051P07bNHivLIaed+BgpVcdYvfMUruNaqi5wEqFuDMgAur4AdWfGLjbXGZRNb1+mTZqn/AhDrppX+meHNJYBnrczICjaEWfBLgYte60aJPDWQHRwbzR1lLTVgm2KdZYHRtrwQQCs5qLRn2Cd9both4iHcP+83TWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724936941; c=relaxed/simple;
-	bh=/YcGSJSFqAmJKaRaXk1qyozjgO4RWkKRcPvMEGIUug4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=r1vcrqZ8MYjw/4GclYkAouEMnwV1b/HNpcqR0drKxfSNf7/dZVb0PoQQpLUl7KX4sc6mTIczVdfj3LiI2SofjNoxdfj3ur2EeS0khQezqAoY+Kf1WnklDGED+doPij8OsHLlDnZ8HMLlry5hhNwvFXmhRGYlw0Fxtwi+mKxlTkw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=y6DKYe1B; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0+ogEiSf; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1724936937;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ieTWdV07NbZ9ssB6zICmV4vVPLCi22h5v9KXYRgJRfI=;
-	b=y6DKYe1BhMBKW41WL4EOd63wZnaD0fJ1IpF6wrr5Q4Vn1uE4xO4sMCucVnUA/J06x1lmOJ
-	Sjn0tKydI7oN/f0SjMQ1GbD/3Pebu/FCaGg1C2qdGooBYK6j1Xa4K2uCgZR5fuRuR30DHT
-	AXnGpKreUpDsFOtPeNEBp/p4z15HgumgwA1fno/rvX6oLwF5niUdKkQ/4JYtfvy1cczDlv
-	LLhpkmAj5qFoSUS42XTBgX0gGST+c8khK3OWFmP6OOtRVtLHTX+WgLVd8BbIJoD7mpckv4
-	xp5KDSKSAuOd99pgycNAO47RHs47CPOSqHT1ZZPHyRfE8mgRfrhsb1Rp3wBxEw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1724936937;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ieTWdV07NbZ9ssB6zICmV4vVPLCi22h5v9KXYRgJRfI=;
-	b=0+ogEiSfY2/9fY30bXDJSxyQ0l/lS2woiv32ZEitRAJVeGgiruE4wgvuBWpYN+84/UpiOs
-	bSrO+tnV8JmgG8AQ==
-To: Nick Chan <towinchenmi@gmail.com>, Hector Martin <marcan@marcan.st>,
- Sven Peter <sven@svenpeter.dev>, Alyssa Rosenzweig <alyssa@rosenzweig.io>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, asahi@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org
-Cc: ~postmarketos/upstreaming@lists.sr.ht, Nick Chan
- <towinchenmi@gmail.com>, Konrad Dybcio <konrad.dybcio@somainline.org>
-Subject: Re: [PATCH RESEND 2/3] irqchip/apple-aic: Only access IPI sysregs
- when use_fast_ipi is true
-In-Reply-To: <20240829110436.46052-3-towinchenmi@gmail.com>
-References: <20240829110436.46052-1-towinchenmi@gmail.com>
- <20240829110436.46052-3-towinchenmi@gmail.com>
-Date: Thu, 29 Aug 2024 15:08:57 +0200
-Message-ID: <87zfova32u.ffs@tglx>
+	s=arc-20240116; t=1724936988; c=relaxed/simple;
+	bh=txHBaIr/umD1HwUz5m1du7i9/LqWw7leQCsHXtL/9Yw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=f/VgkcffdFXoCKyawd0s2SYIuRzDC4O81wwCzmQXs2SA2nRrWbPEm/UvWvlVZEeszgefdCuljByHcQzIKXcfxfbYEMxse8MMt0Ace6+vh+Q4l2ezNnyU/zHzGj04odlokOhjEmfxwBlw3vF195Z7ERTVsijk/hKFf/V3ZpqjlcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-6c1ed19b25fso5956757b3.2;
+        Thu, 29 Aug 2024 06:09:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724936985; x=1725541785;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Qvqa0cXkstoBgirkQOfefdgYYuuDi0dJfHzpUKpVE68=;
+        b=stLcV+kwHOxP4lFsJXQp+Y/XLNllp8DdasgH0ZU909YK818nivmP7mEH2a9rtxfWL4
+         LMbR5Ta0WV6orJBY30VXBaGOCbtsYFNe/vfdZ+N6Y8H0/UGuT6GpnOZtsr0p8UgHaP02
+         CPX/KN0Zpo+WLVLUKV5CG1Wnf5qO1VmNp66+ksBY6j4obnSKqju4CkLvpiNGQa3Knr/Q
+         Q6GCcH4RF6Emf+IDtlCWJAM+6flCxfhNUBX1K6GTaa9B7Yddc7RfFUdx9FZ9yROPyg2p
+         onhJY1pEcCQdIlhXpLSgt1qG5mJqj52b1CUhEtXhCI2kz3tw+qvhSuf1hImiEueqXjYG
+         uHYg==
+X-Forwarded-Encrypted: i=1; AJvYcCWQ6bkG1NrKrPy4iRSaR9/QbwrQCWk6MrQQzOoFcCKTQM3Lt4ioJqKXDO1exoPUwezUZhd3uyu3DB3VdKAH@vger.kernel.org, AJvYcCXMHh0RKQZO/NQ75+X3sFKdur7FranoyrEugN5lh9cHjsRE8EN5lDte5RqmVGaCkQ8WcvrzPlNB+oNcoGPQIHrmE7k=@vger.kernel.org, AJvYcCXr5jO1JcPPLMOITMGDTcE9q6tFQglMxO47dkdnJfl7AOitX9/5n7YUSmLKyoWkgXmuI4tdgHQS6C8Z@vger.kernel.org
+X-Gm-Message-State: AOJu0YwN4nTYWHpxdZ8Ix07C97JeDWJFYSX+602fMnEay4mME7NDULa0
+	xbnkHcF6aLhjPfpQiCku70RzjINKmjzplQj8qOU6I/Ol5EX0B6TXoRusRFXr
+X-Google-Smtp-Source: AGHT+IE8lamDYHvoPg7A6e/Y+e4ffqovBO5BL4dPNSGK8RyzJJXDe9pTms6AYnXblLpl0AGaqArwiw==
+X-Received: by 2002:a05:690c:d93:b0:664:db79:b275 with SMTP id 00721157ae682-6d2728ff11fmr33205917b3.0.1724936984888;
+        Thu, 29 Aug 2024 06:09:44 -0700 (PDT)
+Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com. [209.85.219.178])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6d2d57dedb5sm2326957b3.95.2024.08.29.06.09.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 29 Aug 2024 06:09:44 -0700 (PDT)
+Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e164caa76e4so629119276.1;
+        Thu, 29 Aug 2024 06:09:44 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWB4R5Tzfui9LKY4k4yI4621jLliIz1wXqCmmOPx9u6Mo8FGGNLoY8yPui6SExfFU+CeCF2dWZHsNj/oye1Lp3ULmk=@vger.kernel.org, AJvYcCWudMGASONKqe1jtCah46LI8W2zs+h6J3aQ8bU+Zq6coUIELRbtJeiOAlRSmLTWCyO79N7nRhiB3Ibyj5Nc@vger.kernel.org, AJvYcCXxP+Nv7uklzE5W2qOoVP/JJIjvXCx7SaqVohB7cgKrg1aoHTrYEjnkDL29ZQIHfYCcZcbgnvJJODTN@vger.kernel.org
+X-Received: by 2002:a05:6902:218a:b0:e11:6ebe:ce8f with SMTP id
+ 3f1490d57ef6-e1a5ab57421mr2743647276.7.1724936984336; Thu, 29 Aug 2024
+ 06:09:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20240827131722.89359-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240827131722.89359-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20240827131722.89359-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 29 Aug 2024 15:09:32 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdU739fyGhF4WGo-REEus82h0VVz+jQtgXk5qUaTqvu6hg@mail.gmail.com>
+Message-ID: <CAMuHMdU739fyGhF4WGo-REEus82h0VVz+jQtgXk5qUaTqvu6hg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] pinctrl: renesas: rzg2l: Introduce single macro for
+ digital noise filter configuration
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-renesas-soc@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 29 2024 at 19:02, Nick Chan wrote:
-> Starting from the A11 (T8015) SoC, Apple introuced system registers for
-> fast IPI and UNCORE PMC control. These sysregs do not exist on earlier
-> A7-A10 SoCs and trying to access them results in an instant crash.
+Hi Prabhakar,
+
+Thanks for your patch!
+
+On Tue, Aug 27, 2024 at 3:17=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.c=
+om> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 >
-> Restrict sysreg access within the AIC driver to configurations where
-> use_fast_ipi is true to allow AIC to function properly on A7-A10 SoCs.
+> When enabling the digital noise filter for the pins, it is necessary to
+> configure both the noise filter stages (via the FILNUM register) and the
+> sampling interval (via the FILCLKSEL register). To simplify this process,
+> we introduce a single macro for configuring the digital noise filter.
 
-use_fast_ipi is an implementation detail and does not mean anything
-here. It's sufficient to say:
+Currently the pin control tables just declare which pins support
+digital noise filter configuration, but the driver does not support
+configuring the digital noise filters yet, right?
 
-   Only access system registers on SoCs which provide them.
+So I'd reword the paragraph above to something like:
 
-Hmm?
+    Support for enabling the digital noise filter, and support for
+    configuring the noise filter stages (via the FILNUM register) and the
+    sampling interval (via the FILCLKSEL register) are related: a pin
+    supports either all or none of them.  Hence simplify declaring digital
+    noise filter support for a pin by using a single feature flag instead o=
+f
+    three separate flags.
 
-> While at it, remove the IPI-always-ack path on aic_handle_fiq.
+> This patch removes the PIN_CFG_FILNUM and PIN_CFG_FILCLKSEL configuration
+> macros and renames PIN_CFG_FILONOFF to PIN_CFG_NF.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-It's not while at it. It's part of handling this correctly.
+For the actual patch contents:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-> If we are able to reach there, we are on an IPI-capable system and
-> should be using one of the IPI-capable compatibles, anyway.
+Gr{oetje,eeting}s,
 
-'we' can't reach that code ever.
+                        Geert
 
-https://www.kernel.org/doc/html/latest/process/maintainer-tip.html#changelog
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@somainline.org>
-> Signed-off-by: Nick Chan <towinchenmi@gmail.com>
-
-This Signed-off-by chain is invalid. If Konrad authored the patch then
-you need to have a 'From: Konrad ...' line at the top of the change log.
-
-If you worked together on this then this needs a Co-developed-by
-tag. See Documentation/process/...
-
->  
-> -	if (read_sysreg_s(SYS_IMP_APL_IPI_SR_EL1) & IPI_SR_PENDING) {
-> -		if (static_branch_likely(&use_fast_ipi)) {
-> -			aic_handle_ipi(regs);
-> -		} else {
-> -			pr_err_ratelimited("Fast IPI fired. Acking.\n");
-> -			write_sysreg_s(IPI_SR_PENDING, SYS_IMP_APL_IPI_SR_EL1);
-> -		}
-> +	if (static_branch_likely(&use_fast_ipi) &&
-> +	    (read_sysreg_s(SYS_IMP_APL_IPI_SR_EL1) & IPI_SR_PENDING)) {
-> +		aic_handle_ipi(regs);
->  	}
->  
->  	if (TIMER_FIRING(read_sysreg(cntp_ctl_el0)))
-> @@ -574,8 +571,9 @@ static void __exception_irq_entry aic_handle_fiq(struct pt_regs *regs)
->  					  AIC_FIQ_HWIRQ(irq));
->  	}
->  
-> -	if (FIELD_GET(UPMCR0_IMODE, read_sysreg_s(SYS_IMP_APL_UPMCR0_EL1)) == UPMCR0_IMODE_FIQ &&
-> -			(read_sysreg_s(SYS_IMP_APL_UPMSR_EL1) & UPMSR_IACT)) {
-> +	if (static_branch_likely(&use_fast_ipi) &&
-> +	    (FIELD_GET(UPMCR0_IMODE, read_sysreg_s(SYS_IMP_APL_UPMCR0_EL1)) == UPMCR0_IMODE_FIQ) &&
-> +	    (read_sysreg_s(SYS_IMP_APL_UPMSR_EL1) & UPMSR_IACT)) {
->  		/* Same story with uncore PMCs */
->  		pr_err_ratelimited("Uncore PMC FIQ fired. Masking.\n");
->  		sysreg_clear_set_s(SYS_IMP_APL_UPMCR0_EL1, UPMCR0_IMODE,
-> @@ -811,7 +809,8 @@ static int aic_init_cpu(unsigned int cpu)
->  	/* Mask all hard-wired per-CPU IRQ/FIQ sources */
->  
->  	/* Pending Fast IPI FIQs */
-> -	write_sysreg_s(IPI_SR_PENDING, SYS_IMP_APL_IPI_SR_EL1);
-> +	if (static_branch_likely(&use_fast_ipi))
-> +		write_sysreg_s(IPI_SR_PENDING, SYS_IMP_APL_IPI_SR_EL1);
->  
->  	/* Timer FIQs */
->  	sysreg_clear_set(cntp_ctl_el0, 0, ARCH_TIMER_CTRL_IT_MASK);
-> @@ -832,8 +831,9 @@ static int aic_init_cpu(unsigned int cpu)
->  			   FIELD_PREP(PMCR0_IMODE, PMCR0_IMODE_OFF));
->  
->  	/* Uncore PMC FIQ */
-> -	sysreg_clear_set_s(SYS_IMP_APL_UPMCR0_EL1, UPMCR0_IMODE,
-> -			   FIELD_PREP(UPMCR0_IMODE, UPMCR0_IMODE_OFF));
-> +	if (static_branch_likely(&use_fast_ipi))
-> +		sysreg_clear_set_s(SYS_IMP_APL_UPMCR0_EL1, UPMCR0_IMODE,
-> +				   FIELD_PREP(UPMCR0_IMODE, UPMCR0_IMODE_OFF));
-
-Please see the bracket rules in the tip maintainers doc.
-
-Thanks,
-
-        tglx
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
