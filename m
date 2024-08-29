@@ -1,62 +1,55 @@
-Return-Path: <linux-kernel+bounces-307002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 496299646DF
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:38:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F4539646AE
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:34:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B8DBEB2BA31
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:33:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F07A4284509
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:34:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F6B41AD9E5;
-	Thu, 29 Aug 2024 13:27:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80AD01AE864;
+	Thu, 29 Aug 2024 13:28:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="EpXra3FX"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="LlrpPLFY"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BB331AD410;
-	Thu, 29 Aug 2024 13:27:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 923291AE866;
+	Thu, 29 Aug 2024 13:28:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724938069; cv=none; b=Ku0tUBph8iYYyj6IcgVps8S7djMC5LH+kIDnhtdr3cmGTEmOgXEm3R2Gg8utHJFZNB1HqkAq6NlsTcYGqDu1Sl8zmgoS44LZ/sGhMb6ippV7K1W6CeojZUd1oAjEZrwnjxOcwd99/9SIAF+EQd9Ep9zlgjp4RZxqPZX26MmOycE=
+	t=1724938083; cv=none; b=ZYHeBRPFZ8wks2kQSd7jIGLnB+AOaRz59Ls+IypGFOMR2isuFkiJ0aqMCANnGglLsDA95dt8MTHRZkVJTxja7xPsFHokXkcv6nfbpb/69GZhtffcAFkD08Q4Mmh3ECbaaHlBMLhN5QLKoSi86JUCgfLMynvQWcdWeUZDZJAmU4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724938069; c=relaxed/simple;
-	bh=LUsbM8CohYpsuFyB+hZrpQ8iet1wK/qnP6ARKmCHLJs=;
+	s=arc-20240116; t=1724938083; c=relaxed/simple;
+	bh=BCz8KQT3nNiku5vwtOuMR0szTCOE3r+CGyVRcDkjTcg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t5q1mmyCCmnNGPI0GgThn2yTlQNGk2mfwuESj12sIiJD9ozycdFGls2GXWz8vChe7RXhbATeOgvt+8fqByCSzVB+cU0mnd/wBteyzohTKlgJOxGq+/elJwzrecECDI+g2FLSMB+iesFAuBKLtgM5X2jXT442aWzx+Rgzu1UpMaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=EpXra3FX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0257CC4CEC1;
-	Thu, 29 Aug 2024 13:27:47 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="EpXra3FX"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1724938066;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WlCLoCiqnGVD1bl9+OZsTIXM2oG7ARmd4+f6I8UiZkE=;
-	b=EpXra3FXZb7rX7Jwos+s8/FmDE+H8viWFPpOFVm7qCUsSKsGEttv4bdIr70XvxOxCGxROD
-	qRv8jE4BsXhfs2j9B0DCRFypKHgVsOgBVskRuMG1sbqvFH1SmWz+MakNU8Nsx5Y1/r180C
-	B8G1QkDRlu1LO6H7evWnkvLudVamTF0=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id ba4c5ba7 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Thu, 29 Aug 2024 13:27:46 +0000 (UTC)
-Date: Thu, 29 Aug 2024 15:27:33 +0200
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: Xi Ruoyao <xry111@xry111.site>
-Cc: Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>,
-	linux-crypto@vger.kernel.org, loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Jinyang He <hejinyang@loongson.cn>,
-	Tiezhu Yang <yangtiezhu@loongson.cn>, Arnd Bergmann <arnd@arndb.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>
-Subject: Re: [PATCH v5] LoongArch: vDSO: Wire up getrandom() vDSO
- implementation
-Message-ID: <ZtB3RczHN00XDO52@zx2c4.com>
-References: <20240829125656.19017-1-xry111@xry111.site>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gZ3GXNNF99S5OYq28wBDJkP/lF64zo/HmrJw0lAGCP1osbAX50j/r22Bt2PL3Zaudg77AYPol/bTAKg9OKsA9PVkEa8EZEWoxd/LHA+SptDGmRPyMab+RFN7TJQM+/aEaMJJb2QsyxBYk70HJcBw06Pe/LTlwHj4rCqLMVyyr/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=LlrpPLFY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BFEFC4CEC1;
+	Thu, 29 Aug 2024 13:28:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1724938082;
+	bh=BCz8KQT3nNiku5vwtOuMR0szTCOE3r+CGyVRcDkjTcg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LlrpPLFYXygagotx7+N3+XIHWOWL2VFPduet7kczz/2iJ9fThHKNWsTVHHAuNy7cV
+	 KsMx6E0k8j89Oski9nKCEFc50wozYAaGfbSdoDeDqyTK9X/z1Nf/DVTm8H1M69L7D5
+	 auX3BearRXImb8/wNcQhR7sBCjf3iBV37huQSWx0=
+Date: Thu, 29 Aug 2024 09:28:01 -0400
+From: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+To: Abel Vesa <abel.vesa@linaro.org>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
+	conor+dt@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de, festevam@gmail.com, 
+	abelvesa@kernel.org, peng.fan@nxp.com, Wei Fang <wei.fang@nxp.com>, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [Patch v3 0/4] add NETCMIX block control support on i.MX95
+Message-ID: <20240829-ambrosial-smart-wombat-fb571e@lemur>
+References: <20240829011849.364987-1-wei.fang@nxp.com>
+ <172491778768.2521946.17064463983702008243.b4-ty@linaro.org>
+ <ZtAo+B0XOE558+93@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,40 +58,32 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240829125656.19017-1-xry111@xry111.site>
+In-Reply-To: <ZtAo+B0XOE558+93@linaro.org>
 
-One small question just occurred to me:
+On Thu, Aug 29, 2024 at 10:53:28AM GMT, Abel Vesa wrote:
+> > [1/4] dt-bindings: clock: add i.MX95 NETCMIX block control
+> >       commit: 4b78b54762dbfc2f22f28655fa3cf6f5d50de197
+> > [2/4] dt-bindings: clock: add RMII clock selection
+> >       commit: b4f62001ccd3fa953769ccbd313c9a7a4f5f8f3d
+> > [3/4] clk: imx95: enable the clock of NETCMIX block control
+> >       commit: 42dc425fa8b5be982bcc2025d5bf30be8b26da86
+> > [4/4] arm64: dts: imx95: Add NETCMIX block control support
+> >       (no commit info)
+> 
+> For some reason, b4 ty thinks it's OK to mention this 4th patch as
+> applied, while it is obviously not.
+> 
+> I only applied the first 3 patches.
 
-> +static __always_inline const struct vdso_rng_data *__arch_get_vdso_rng_data(
-> +	void)
-> +{
-> +	return (const struct vdso_rng_data *)(
-> +		get_vdso_data() +
-> +		VVAR_LOONGARCH_PAGES_START * PAGE_SIZE +
-> +		offsetof(struct loongarch_vdso_data, rng_data));
-> +}
+Sorry for the confusion.
 
-Did you test this in a TIMENS? On x86, I had to deal with the page
-offsets switching around depending on whether there was a TIMENS. I
-tested this in my test harness with some basic code like:
+It's because you did "b4 am" on the entire series. We couldn't find the
+matching commit for 4/4, but this often happens because maintainers tweak the
+title or the patch contents, so we can't always assume that the patch wasn't
+applied just because we can't find the exact match.
 
-       if (argc == 1) {
-               if (unshare(CLONE_NEWTIME))
-                       panic("unshare(CLONE_NEWTIME)");
-               if (!fork()) {
-                       if (execl(argv[0], argv[0], "now-in-timens"))
-                               panic("execl");
-               }
-               wait(NULL);
-               poweroff();
-       }
+If you know you're going to apply a subset, it's best to run "b4 am -P 1-3" so
+that b4 knows for a fact that you only intended to apply a subset.
 
-Because unlike other namespaces, the time one only becomes active after
-fork/exec.
-
-But maybe loongarch is more organized and you don't need any special
-handling in __arch_get_vdso...data() functions like I needed on x86.
-Just thought I should check.
-
-Jason
+-K
 
