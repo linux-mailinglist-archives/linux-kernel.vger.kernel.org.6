@@ -1,169 +1,120 @@
-Return-Path: <linux-kernel+bounces-306827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C9F496443A
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 14:18:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A2F596443F
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 14:19:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 38766B26835
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 12:18:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1731CB23D1F
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 12:19:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B24C318DF99;
-	Thu, 29 Aug 2024 12:18:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F068195F28;
+	Thu, 29 Aug 2024 12:19:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="Q89Cjwd9"
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Vb2E+z62"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AFAB1922FA
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 12:18:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59A5B44C77
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 12:19:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724933895; cv=none; b=o3QqcSPQN/qVs0MgBpWVzEpwqG334r14R3YxF/P4uPKJnwt1FLxt7Khzex+CqNQdhBGIBLkM9MBpUjGhhhKdAlTminKCkjk9WtiGpIq/RGiuGniZ+xuqsS3wT67dTWRJo3PfTiBBYfISdku5VQjRlgctNl4WRDKOLhKqZeCYkbE=
+	t=1724933981; cv=none; b=INyV2+NORFAB1/4/HeJBy4K8wdSExieBRLt46M4k4It0Q0DsiTdbs60feGq6jGJqLNg0SFHTIYe5cTgO+1Gcfl1MYKXu+vRLYeLsZJ7Yc4+STXf1HXXkg/ImwCNpMVjbsVWcUsclfV0tYERUGFDywCaXdOUg93ABZNGYdaTF0UU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724933895; c=relaxed/simple;
-	bh=nPbtzIWPtGgZ8ddKgweGtAo97LnSRzhBtcpnzjo9y6I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rA1VDJ4A9SHQ/ef0jncjsgTE24URoEVHNnmBK0p/AWKAcImCg4MN6LD1QKZydv80qS4IfB3p1jhfNYeeJ9CLDUR/IsB21rr9mJWo9nR1uJKzYsHqsI32HLZRVhze7bV3A6Yb4gBdE1sov6mmYsyasZzPtkvdN2o3FknChpoDKfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=Q89Cjwd9; arc=none smtp.client-ip=185.125.188.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-oi1-f197.google.com (mail-oi1-f197.google.com [209.85.167.197])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 2992F3F664
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 12:18:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1724933888;
-	bh=agyuHbgeN5G+Glllc9xwF5iz8tsF/j2Kakno2rsBnCU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type;
-	b=Q89Cjwd9UEkV2vBPQIVfAPD2T/0vHSPCJMuj8bd1H7/Yh7KaQu9XssPRKrHTNI6JM
-	 qzYw5A9IiSkUJzxKEAMUPCEA3veAvNPdXAAsAtBQX+R2nv7/0DF8Iy6tA5I3UC2f5x
-	 2dsqq9ht5C2YQ36A2UFcF9UkjDsOj1nXZRqT4XulH8Ye1UhtBxn4l31mUAMy/nwTni
-	 MnOOvSmlLwQy9kHkwWr0M58sAbhwOvPkH5m+/Kj8ZTaiwWWjMt+dt8M3hdr07aRgp1
-	 sALjFP2cwZHMJY2iVVZIZuiiI8ZtsUzEm5xBWSZkt239ha2S0HAh45sVS7j6dW+J8l
-	 pBZ7U64i2w5tw==
-Received: by mail-oi1-f197.google.com with SMTP id 5614622812f47-3db18cf7be8so708130b6e.1
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 05:18:08 -0700 (PDT)
+	s=arc-20240116; t=1724933981; c=relaxed/simple;
+	bh=mY8Dgd+cyNhrpv+N1nPy7rifO7MGwoUjGwjPCFQ5g1c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LAJ5DpXhMVSXrh8kUmEROBEjby0iixH+0k3E+JQGmfGhBWhfeyOpY8uFBnJutE90HgN218G5hgffX4T/HZAyMZuwiCV4sMpvtlqrti3yEmxI/H6Q0qrlsc4M4ixG292n2ocZWmzc5xxExxRUP6SOBuW3cBEqttI4ykeWB5QUEZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Vb2E+z62; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724933979;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wSkQSupYh8srGReshPqFouB6VAGU7iib2jvE4nu45yM=;
+	b=Vb2E+z62TlDAznLJuT/imuSvsgmYB6h2suIwpWPHIh5q1iLPkXVgw1dZdEdXKjZn/eFGzg
+	2uz0xYyzH1UEyKYgCPhRgnhQR2RlCkaAEhE3JVfHyn0QtIaPkHdRjOlurYt5cYl1AWdQhp
+	yGiDcWZfV2V4CUPkbOU26ElwNnzvDAg=
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
+ [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-91-Xyw9-EQpN9eJRPd18ZOUZA-1; Thu, 29 Aug 2024 08:19:38 -0400
+X-MC-Unique: Xyw9-EQpN9eJRPd18ZOUZA-1
+Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-a86975f70a2so45139166b.3
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 05:19:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724933887; x=1725538687;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=agyuHbgeN5G+Glllc9xwF5iz8tsF/j2Kakno2rsBnCU=;
-        b=geEx/MFoo6ysOqodgmNsQLsGf/caCgPHuXiOZDb7lzAqYTXTjBvpjs2R7J+A2nvCBA
-         /AbuO6/33GPXNXYtHEd+pLMKqcHsjoKIXJwXrPXZ4SyRp+GWTl4ehHMgZQP6aknLKGF0
-         XRZVM1Nu6HMx3dbm2LaJq2ydv0KaevSsw4Yn/9G0xTAmIT9vpiIz+6pLU257xGYFKZG+
-         IySo+4TiyhQR2+qMauuEQ2nBv3jXbnm030NOL8uwcfzAZ7w+lGGHoboyuhTPxtwHIQXE
-         6x+IgOJSo1SRdfSkDw4lQ7WA0BUSwaa8kIUKz/lTrdkaHigl0ERjsWGgugP/fi4BJi8s
-         RT/w==
-X-Forwarded-Encrypted: i=1; AJvYcCVkRdm6kp8GX0x44WOzL3QYFa5TOpun2AWYvhdD1crXOJsVpaedneoQwfyd5B433ksfZX8mNQyGczdaglo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHlvXNcqtrnOWFrkTKOYggKnfd/kb/NecBHHJ6DeBEfmiAxkbq
-	AE9MK8bfb3QpHO7hRcu3pTGt11dc/EzPkejjQsF0uLZwHS8PNCqO1ABYneXKn/Npd7c1TJCFyDW
-	0TQeDRjs2plk2z0YwPOzVcvkjLG5ClDF8MOcMkEARW9R9F/mhMmPj0rlJAB2WzMZUWGatOlFkjl
-	llJmx1AoosdXLuAulBZ3ztIaz5BQ1VWSzUihrvzVfKmLLj000Rtrke
-X-Received: by 2002:a05:6808:3a0d:b0:3df:dad:10e1 with SMTP id 5614622812f47-3df0dad14b9mr387491b6e.13.1724933886881;
-        Thu, 29 Aug 2024 05:18:06 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFGhWDrBHdruJc4RhJ06FsFQi5d5GDa/1GlsVFtFype7PVLTCKgslSYz+vhfd3O4egbh57iMWClm03kaSZZmS8=
-X-Received: by 2002:a05:6808:3a0d:b0:3df:dad:10e1 with SMTP id
- 5614622812f47-3df0dad14b9mr387457b6e.13.1724933886565; Thu, 29 Aug 2024
- 05:18:06 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724933977; x=1725538777;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wSkQSupYh8srGReshPqFouB6VAGU7iib2jvE4nu45yM=;
+        b=bLrsQmY6nMMC64+mG/nmiWIRBt7rxq8hhDHHa32blLMpzc+g7F60CSqjDDrebqlRRv
+         FiDH0hvBAT3o8eOBqD52qDv/tj+0dpUQS59bibBm7BF11WogHmujLxcyfIMPdQbRJugE
+         nstRjbHtHw5uxbHMwA2+SmoPj2rcu36G/oUSwm+SU0oGqWgsLbSO8PN9AhuCFyi6/4kI
+         wN/X9Nya+NYEvIn0yoIPGWrhDvvo/ZaEh3z++ojON4DUmFJxVJP8B4jq/jLVuzkF6PE6
+         SzvFeNvc30QOMSIdUV6wB1p8b8SXEgCY22DWUXbDMqyao3rFwb74J5aB4hGtDsDh3ZYQ
+         QOvg==
+X-Forwarded-Encrypted: i=1; AJvYcCUReCNNgA/fIWFAcuj0LMZpOMv9qJYa2mait5lJW7fGq8ipN+OYWQKRV+CHM6XLyHjel6iK2adh7jAiUM8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhQpmnbdw8tnyrnRBMkfarCGOlwNlt/g1jrMgjXmBepMuFADAC
+	pxOElzmD4PgT05ElSifkfnxvpQiU8BCtZEwS73w21cNSZEq3pjzMS18XEgsDb1sgteZ0btlwjIL
+	5YcZ4l5naZTBYoHC173ZghfP3Q5RGk+GoHzuqSN5dfb62eHS6tt+9If2/KWtCSA==
+X-Received: by 2002:a17:907:9712:b0:a86:78fd:1df0 with SMTP id a640c23a62f3a-a897f930bbdmr199686366b.34.1724933977000;
+        Thu, 29 Aug 2024 05:19:37 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGG9hsNF/FyU7NjcehPXdOC7KV+W3lxtyv+s5kfZUVe/jX8oMQoKUdOVwW1ijqi1fRaZigcQw==
+X-Received: by 2002:a17:907:9712:b0:a86:78fd:1df0 with SMTP id a640c23a62f3a-a897f930bbdmr199676666b.34.1724933976116;
+        Thu, 29 Aug 2024 05:19:36 -0700 (PDT)
+Received: from redhat.com ([2a02:14f:1ed:a269:8195:851e:f4b1:ff5d])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a89891968f4sm72412366b.106.2024.08.29.05.19.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Aug 2024 05:19:34 -0700 (PDT)
+Date: Thu, 29 Aug 2024 08:19:31 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Luigi Leonardi <luigi.leonardi@outlook.com>
+Cc: sgarzare@redhat.com, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	marco.pinn95@gmail.com, netdev@vger.kernel.org, pabeni@redhat.com,
+	stefanha@redhat.com, virtualization@lists.linux.dev
+Subject: Re: [PATCH net-next v4 0/2] vsock: avoid queuing on intermediate
+ queue if possible
+Message-ID: <20240829081906-mutt-send-email-mst@kernel.org>
+References: <tblrar34qivcwsvai7z5fepxhi4irknbyne5xqqoqowwf3nwt5@kyd2nmqghews>
+ <DU2P194MB21741755B3D4CC5FE4A55F4E9A962@DU2P194MB2174.EURP194.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240108120824.122178-1-aleksandr.mikhalitsyn@canonical.com>
- <20240108120824.122178-3-aleksandr.mikhalitsyn@canonical.com>
- <CAJfpegtixg+NRv=hUhvkjxFaLqb_Vhb6DSxmRNxXD-GHAGiHGg@mail.gmail.com>
- <CAEivzxeva5ipjihSrMa4u=uk9sDm9DNg9cLoYg0O6=eU2jLNQQ@mail.gmail.com>
- <CAJfpegsqPz+8iDVZmmSHn09LZ9fMwyYzb+Kib4258y8jSafsYQ@mail.gmail.com> <20240829-hurtig-vakuum-5011fdeca0ed@brauner>
-In-Reply-To: <20240829-hurtig-vakuum-5011fdeca0ed@brauner>
-From: Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-Date: Thu, 29 Aug 2024 14:17:55 +0200
-Message-ID: <CAEivzxf1TLUeR_j8h5LfkmLOAKzrenK55bw9Qj4OV0=7Dkx9=w@mail.gmail.com>
-Subject: Re: [PATCH v1 2/9] fs/fuse: add FUSE_OWNER_UID_GID_EXT extension
-To: Christian Brauner <brauner@kernel.org>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, mszeredi@redhat.com, stgraber@stgraber.org, 
-	linux-fsdevel@vger.kernel.org, Seth Forshee <sforshee@kernel.org>, 
-	Amir Goldstein <amir73il@gmail.com>, Bernd Schubert <bschubert@ddn.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DU2P194MB21741755B3D4CC5FE4A55F4E9A962@DU2P194MB2174.EURP194.PROD.OUTLOOK.COM>
 
-On Thu, Aug 29, 2024 at 2:08=E2=80=AFPM Christian Brauner <brauner@kernel.o=
-rg> wrote:
->
-> On Thu, Aug 29, 2024 at 10:24:42AM GMT, Miklos Szeredi wrote:
-> > On Thu, 18 Jul 2024 at 21:12, Aleksandr Mikhalitsyn
-> > <aleksandr.mikhalitsyn@canonical.com> wrote:
-> >
-> > > This was a first Christian's idea when he originally proposed a
-> > > patchset for cephfs [2]. The problem with this
-> > > approach is that we don't have an idmapping provided in all
-> > > inode_operations, we only have it where it is supposed to be.
-> > > To workaround that, Christian suggested applying a mapping only when
-> > > we have mnt_idmap, but if not just leave uid/gid as it is.
-> > > This, of course, leads to inconsistencies between different
-> > > inode_operations, for example ->lookup (idmapping is not applied) and
-> > > ->symlink (idmapping is applied).
-> > > This inconsistency, really, is not a big deal usually, but... what if
-> > > a server does UID/GID-based permission checks? Then it is a problem,
-> > > obviously.
-> >
-> > Is it even sensible to do UID/GID-based permission checks in the
-> > server if idmapping is enabled?
+On Thu, Aug 29, 2024 at 01:00:37PM +0200, Luigi Leonardi wrote:
+> Hi All,
+> 
+> It has been a while since the last email and this patch has not been merged yet.
+> This is just a gentle ping :)
+> 
+> Thanks,
+> Luigi
 
-Dear friends,
 
->
-> It really makes no sense.
+ok I can queue it for next. Next time pls remember to CC all
+maintainers. Thanks!
 
-+
 
->
-> >
-> > If not, then we should just somehow disable that configuration (i.e.
-> > by the server having to opt into idmapping), and then we can just use
-> > the in_h.[ugi]d for creates, no?
->
-> Fwiw, that's what the patchset is doing. It's only supported if the
-> server sets "default_permissions".
+> >Hi Michael,
+> >this series is marked as "Not Applicable" for the net-next tree:
+> >https://patchwork.kernel.org/project/netdevbpf/patch/20240730-pinna-v4-2-5c9179164db5@outlook.com/
+> 
+> >Actually this is more about the virtio-vsock driver, so can you queue
+> >this on your tree?
+> 
+> >Thanks,
+> >Stefano
 
-Yeah. Thanks, Christian!
-
-That's what we have:
-
-+++ b/fs/fuse/inode.c
-@@ -1345,6 +1345,12 @@ static void process_init_reply(struct
-fuse_mount *fm, struct fuse_args *args,
-                 fm->sb->s_export_op =3D &fuse_export_fid_operations;
-             if (flags & FUSE_OWNER_UID_GID_EXT)
-                 fc->owner_uid_gid_ext =3D 1;
-+            if (flags & FUSE_ALLOW_IDMAP) {
-+                if (fc->owner_uid_gid_ext && fc->default_permissions)
-+                    fm->sb->s_iflags &=3D ~SB_I_NOIDMAP;
-+                else
-+                    ok =3D false;
-+            }
-         } else {
-             ra_pages =3D fc->max_read / PAGE_SIZE;
-
-So idmapped mounts can be enabled ONLY if "default_permissions" mode
-is set. At the same time,
-some fuse servers (glusterfs), even when "default_permissions" is set,
-still have some UID/GID-based checks.
-So, they effectively duplicate permission checking logic in the
-userspace. We can not do anything with that, but only
-fix fuse servers to stop doing so. See also my PoC for glusterfs-fuse
-idmapped mounts support:
-https://github.com/mihalicyn/glusterfs/commit/ab3ec2c7cbe22618cba9cc94a52a4=
-92b1904d0b2
-
-Kind regards,
-Alex
 
