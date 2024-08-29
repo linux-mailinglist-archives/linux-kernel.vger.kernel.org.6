@@ -1,115 +1,59 @@
-Return-Path: <linux-kernel+bounces-307315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4A74964BAC
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 18:26:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DE7A964BB3
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 18:27:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4A0C1C22F52
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:26:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12B901F21D10
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:27:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8F5A1B5803;
-	Thu, 29 Aug 2024 16:26:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67D7F1B5808;
+	Thu, 29 Aug 2024 16:27:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Uzt6An6g"
-Received: from mail-ej1-f68.google.com (mail-ej1-f68.google.com [209.85.218.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J3aSAJAm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36AFB1B4C38
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 16:26:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4366A1B3B32;
+	Thu, 29 Aug 2024 16:27:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724948796; cv=none; b=Wwi0fplzWPae/yDBwEu1tilKEoipY+AcbcUD6XLygUC1NcpCJlk1sbOTx+r7j13/XxPAOD+XPHC68BnR68ei5y3A03heWbFc5XZ5ssQqhYnXg5ye4VIGWl59ecuZ65605O426Bdw0DfEzrHurgjmwolI0ECVeBZgnLOEAb69gAg=
+	t=1724948832; cv=none; b=X1AOIxd4SUUepJCXXC21gvRCtitEJ3s94xWP96Yt9OGbXvraZ7gCoZLoco2Pi8NL6uL+HdWXebYQCpuW3RE67LVMRt1s6dD/YpxIXY2g0Z9lX+b8CHpjmgbx2jI/FPf1vrLranvDFyrxX2cZi4XXlMcYH3F0F6tEcMRhQa/d2U8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724948796; c=relaxed/simple;
-	bh=wSMdYTDqsWlQtbEdlbCGxNPCwqGfc+W3ysTZG1vl+OQ=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uk6fsxcJrHqoO0j7scqT6SMNh62/T3CU4vjPCmDuogUnNfiavMRFfohVZHz8BWURaL2B7geHykGyCGgsEZW8qGvJ8NE9iU6/CteV1kToCk6DnwDaAiwZyD7ypZohDdGw6WY6scWW5PQuOvR+C5abwZTQrwKfVxKJaKv3kdOZjj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Uzt6An6g; arc=none smtp.client-ip=209.85.218.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f68.google.com with SMTP id a640c23a62f3a-a7a81bd549eso93587566b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 09:26:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1724948792; x=1725553592; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=KAvkMSrr0+E1+zBJdqJA8C79vOak/KYTC8lNAgyE4gY=;
-        b=Uzt6An6gBIvN5jPZ7Ou5DG93I5TQ6WK/NbjscB4fbSKzW6qYhXxgiVVgogJ/x4oP7p
-         6VmahSFm6j9L9ejkaUuGWlTuSdjS2bI5zccDeWpLU0fvNVuKWWSYkP8dLTLcswiaJC4h
-         OJ4ywXg75Jkr9IFyb4ZiMrZ/DwJ//NVB/Ib1dtTOrzOKxY9wUpMGHNoZBO7FTssUrZkE
-         B4U7ywuU0anUNNdemgt0F75DZyqTHOSmfFIOwTbtf3pPafVVtqnQIlwlA05bvjVAL7w+
-         y3KIFZNi4+lbJkmdtzsymNb/ZJZ1Lzp9KgOX0ZR61md4o9hdIJOAdy1q9l6cKzmtXYMd
-         njog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724948792; x=1725553592;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KAvkMSrr0+E1+zBJdqJA8C79vOak/KYTC8lNAgyE4gY=;
-        b=IXhf4zQFfORIm1ZzkjXsGN61SkdFplp7qU0X0yVNlCAmZfJfbIo8hUmkjVsoCl/b49
-         Yxj5jKxMCAALYX5qvhBEWg3nzjTIU926KJPuJCfbwYwTJ3Doj5fRRimuyB3hduK8nm9u
-         VFBqrtHDK4MW7soOp1nvpBMbegC8MJApJzQkk1kiPKz39P8cmGma81nZ6h97uJd4SWq5
-         hUYy8a32T1Apx8sN3Zm4DpVftG/UTxNgLJni8Bk9QC7v/OiEtUfDB5nClCN0Y/gRdbuU
-         vV0IId8THqitYKMInAE3vnrhiR3vFYbZUCP5tHMC0gACWoGB83f8CrYwYi/MDRMvVZ2g
-         7Ikw==
-X-Forwarded-Encrypted: i=1; AJvYcCXj+QCDwQLKl+QYJaN+ohR2uKVsK04+zec5Q4rrGGnMDKJmnPQ6dRW8J+EI0sN+6h/x1eJ9sACSTAXg2Os=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXKW3APtNKl28/GISx1+frujRsbiujhhVGmZn8YaDtL5YBfY9U
-	AhGNOQz9fiRRzPdJbxq/HYdbu6i9qFqsdoPA7YjNTRboPnAkT/9VrvKX7Wv6Qug=
-X-Google-Smtp-Source: AGHT+IEyrUorcYaQDgmA8P7OeuK7+S76r1iJ4LhiWcyAFpkkq9s+nW06xAxw2EESujKhpFv3Xbz3ZA==
-X-Received: by 2002:a17:906:f5a6:b0:a86:9644:2a60 with SMTP id a640c23a62f3a-a897f78928amr287181666b.6.1724948791972;
-        Thu, 29 Aug 2024 09:26:31 -0700 (PDT)
-Received: from localhost (host-80-182-198-72.retail.telecomitalia.it. [80.182.198.72])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8989021f3bsm96587466b.85.2024.08.29.09.26.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 09:26:31 -0700 (PDT)
-From: Andrea della Porta <andrea.porta@suse.com>
-X-Google-Original-From: Andrea della Porta <aporta@suse.de>
-Date: Thu, 29 Aug 2024 18:26:38 +0200
-To: Rob Herring <robh@kernel.org>
-Cc: Andrea della Porta <andrea.porta@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
-	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-	Stefan Wahren <wahrenst@gmx.net>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH 04/11] of: address: Preserve the flags portion on 1:1
- dma-ranges mapping
-Message-ID: <ZtChPt4cD8PzfEkF@apocalypse>
-References: <cover.1724159867.git.andrea.porta@suse.com>
- <5ca13a5b01c6c737f07416be53eb05b32811da21.1724159867.git.andrea.porta@suse.com>
- <20240821001618.GA2309328-robh@kernel.org>
- <ZsWi86I1KG91fteb@apocalypse>
- <CAL_JsqKN0ZNMtq+_dhurwLR+FL2MBOmWujp7uy+5HzXxUb_qDQ@mail.gmail.com>
- <ZtBJ0jIq-QrTVs1m@apocalypse>
- <CAL_Jsq+_-m3cjTRsFZ0RwVpot3Pdcr1GWt-qiiFC8kQvsmV7VQ@mail.gmail.com>
+	s=arc-20240116; t=1724948832; c=relaxed/simple;
+	bh=rUK7cYrfp3ANOIDU3rLaYOEYkyvnUKtRN7aNsL8GQDU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ys7E0kmPQI/y7CRyNF4qNS7bJx0s2bYP0acBo513NG57ata5eTT3I7eT/vpji96EtT+c7ZBCSoW0k4Zli2ukjc8uWO2+L5s2WmBha4NjbRAGdD84W4yYD1Lje3m/CTV0+nD7Uy3FrdUHBf5Aoun378uEq27/spZu7KnCIzzi95o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J3aSAJAm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD8BFC4CEC2;
+	Thu, 29 Aug 2024 16:27:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724948832;
+	bh=rUK7cYrfp3ANOIDU3rLaYOEYkyvnUKtRN7aNsL8GQDU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=J3aSAJAmkUXpSwt1M+icllnaM5UhiPpzeCpja5FEKOILNoHE1faNT1islB9c6BLzx
+	 Zr7sVdo+BZ4PvsEmCsflfnl/qt3C5gEGlRvHzB7aZnS43ZI7rtlS009Xm50T1zpjS7
+	 MsYc70pcCEDEQCWonNnsm73gyxnunmxfdf4vsX7Pf8t2XT5S/mYPo3/g9S/qBPhODn
+	 GTFv2MbII2PA9H8Gk3xTFxcEzSf+1rE3nhDSUhQEvpON0zhy0S85i1P4OjXiNKaw0m
+	 6tB2Psy+e0FKIiWS5xvXYoKDy478U2Ao5kbQ82ypDGhDa6jj5mflzN35tq91Lsx2jO
+	 L2iAgG//6rHqw==
+Date: Thu, 29 Aug 2024 17:27:05 +0100
+From: Lee Jones <lee@kernel.org>
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	jdelvare@suse.com, linux@roeck-us.net, dmitry.torokhov@gmail.com,
+	pavel@ucw.cz, ukleinek@debian.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-input@vger.kernel.org,
+	linux-leds@vger.kernel.org
+Subject: Re: [PATCH v6 3/7] leds: add driver for LEDs from qnap-mcu devices
+Message-ID: <20240829162705.GR6858@google.com>
+References: <20240825203235.1122198-1-heiko@sntech.de>
+ <20240825203235.1122198-4-heiko@sntech.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -119,282 +63,356 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAL_Jsq+_-m3cjTRsFZ0RwVpot3Pdcr1GWt-qiiFC8kQvsmV7VQ@mail.gmail.com>
+In-Reply-To: <20240825203235.1122198-4-heiko@sntech.de>
 
-Hi Rob,
+On Sun, 25 Aug 2024, Heiko Stuebner wrote:
 
-On 08:18 Thu 29 Aug     , Rob Herring wrote:
-> On Thu, Aug 29, 2024 at 5:13 AM Andrea della Porta
-> <andrea.porta@suse.com> wrote:
-> >
-> > Hi Rob,
+> This adds a driver that connects to the qnap-mcu mfd driver and provides
+> access to the LEDs on it.
 > 
-> BTW, I noticed your email replies set "reply-to" to everyone in To and
-> Cc. The result (with Gmail) is my reply lists everyone twice (in both
-> To and Cc). "reply-to" is just supposed to be the 1 address you want
-> replies sent to instead of the "from" address.
-
-IIUC you're probably referring to Mail-Reply-To, that address only one recipient
-at a time (i.e. you want to reply only to the author). Reply-To is a catch-all
-that will work as a fallback when you hit either reply or reply-all in your client.
-In fact, neither Reply-To nor Mail-Reply-To are included in my emails, the
-interesting one being Mail-Followup-To, that should override any of the above
-mentioned headers (including To: and Cc:) for the reply all function. How these
-headers are interpreted depends solely on the mail client, I'm afraid.
-Is it possible that your client is mistakenly merging both Mail-Followup-To 
-plus To and Cc lists?
-Anyway, I've disabled Mail-followup-To as it's added by mutt, can you please
-confirm that this mail now works for you? Hopefully it will not clobber the
-recipent list too much, since AFAIK that header was purposely invented to avoid
-such inconsistencies.
-
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> ---
+>  MAINTAINERS                  |   1 +
+>  drivers/leds/Kconfig         |  11 ++
+>  drivers/leds/Makefile        |   1 +
+>  drivers/leds/leds-qnap-mcu.c | 226 +++++++++++++++++++++++++++++++++++
+>  4 files changed, 239 insertions(+)
+>  create mode 100644 drivers/leds/leds-qnap-mcu.c
 > 
-> > On 16:29 Mon 26 Aug     , Rob Herring wrote:
-> > > On Wed, Aug 21, 2024 at 3:19 AM Andrea della Porta
-> > > <andrea.porta@suse.com> wrote:
-> > > >
-> > > > Hi Rob,
-> > > >
-> > > > On 19:16 Tue 20 Aug     , Rob Herring wrote:
-> > > > > On Tue, Aug 20, 2024 at 04:36:06PM +0200, Andrea della Porta wrote:
-> > > > > > A missing or empty dma-ranges in a DT node implies a 1:1 mapping for dma
-> > > > > > translations. In this specific case, rhe current behaviour is to zero out
-> > > > >
-> > > > > typo
-> > > >
-> > > > Fixed, thanks!
-> > > >
-> > > > >
-> > > > > > the entire specifier so that the translation could be carried on as an
-> > > > > > offset from zero.  This includes address specifier that has flags (e.g.
-> > > > > > PCI ranges).
-> > > > > > Once the flags portion has been zeroed, the translation chain is broken
-> > > > > > since the mapping functions will check the upcoming address specifier
-> > > > >
-> > > > > What does "upcoming address" mean?
-> > > >
-> > > > Sorry for the confusion, this means "address specifier (with valid flags) fed
-> > > > to the translating functions and for which we are looking for a translation".
-> > > > While this address has some valid flags set, it will fail the translation step
-> > > > since the ranges it is matched against have flags zeroed out by the 1:1 mapping
-> > > > condition.
-> > > >
-> > > > >
-> > > > > > against mismatching flags, always failing the 1:1 mapping and its entire
-> > > > > > purpose of always succeeding.
-> > > > > > Set to zero only the address portion while passing the flags through.
-> > > > >
-> > > > > Can you point me to what the failing DT looks like. I'm puzzled how
-> > > > > things would have worked for anyone.
-> > > > >
-> > > >
-> > > > The following is a simplified and lightly edited) version of the resulting DT
-> > > > from RPi5:
-> > > >
-> > > >  pci@0,0 {
-> > > >         #address-cells = <0x03>;
-> > > >         #size-cells = <0x02>;
-> > > >         ......
-> > > >         device_type = "pci";
-> > > >         compatible = "pci14e4,2712\0pciclass,060400\0pciclass,0604";
-> > > >         ranges = <0x82000000 0x00 0x00   0x82000000 0x00 0x00   0x00 0x600000>;
-> > > >         reg = <0x00 0x00 0x00   0x00 0x00>;
-> > > >
-> > > >         ......
-> > > >
-> > > >         rp1@0 {
-> > >
-> > > What does 0 represent here? There's no 0 address in 'ranges' below.
-> > > Since you said the parent is a PCI-PCI bridge, then the unit-address
-> > > would have to be the PCI devfn and you are missing 'reg' (or omitted
-> > > it).
-> >
-> > There's no reg property because the registers for RP1 are addressed
-> > starting at 0x40108000 offset from BAR1. The devicetree specs says
-> > that a missing reg node should not have any unit address specified
-> > (and AFAIK there's no other special directives for simple-bus specified
-> > in dt-bindings).
-> > I've added @0 just to get rid of the following warning:
-> >
-> >  Warning (unit_address_vs_reg): /fragment@0/__overlay__/rp1: node has
-> >  a reg or ranges property, but no unit name
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 0fbd2d953da4..4dff0e237f22 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -18657,6 +18657,7 @@ F:	drivers/media/tuners/qm1d1c0042*
+>  QNAP MCU DRIVER
+>  M:	Heiko Stuebner <heiko@sntech.de>
+>  S:	Maintained
+> +F:	drivers/leds/leds-qnap-mcu.c
+>  F:	drivers/mfd/qnap-mcu.c
+>  F:	include/linux/qnap-mcu.h
+>  
+> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+> index 8d9d8da376e4..9a337478dd80 100644
+> --- a/drivers/leds/Kconfig
+> +++ b/drivers/leds/Kconfig
+> @@ -580,6 +580,17 @@ config LEDS_PCA995X
+>  	  LED driver chips accessed via the I2C bus. Supported
+>  	  devices include PCA9955BTW, PCA9952TW and PCA9955TW.
+>  
+> +config LEDS_QNAP_MCU
+> +	tristate "LED Support for QNAP MCU controllers"
+> +	depends on LEDS_CLASS
+> +	depends on MFD_QNAP_MCU
+> +	help
+> +	  This option enables support for LEDs available on embedded
+> +	  controllers used in QNAP NAS devices.
+> +
+> +	  This driver can also be built as a module. If so, the module
+> +	  will be called qnap-mcu-leds.
+> +
+>  config LEDS_WM831X_STATUS
+>  	tristate "LED support for status LEDs on WM831x PMICs"
+>  	depends on LEDS_CLASS
+> diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+> index 18afbb5a23ee..c6f74865d729 100644
+> --- a/drivers/leds/Makefile
+> +++ b/drivers/leds/Makefile
+> @@ -79,6 +79,7 @@ obj-$(CONFIG_LEDS_PCA995X)		+= leds-pca995x.o
+>  obj-$(CONFIG_LEDS_PM8058)		+= leds-pm8058.o
+>  obj-$(CONFIG_LEDS_POWERNV)		+= leds-powernv.o
+>  obj-$(CONFIG_LEDS_PWM)			+= leds-pwm.o
+> +obj-$(CONFIG_LEDS_QNAP_MCU)		+= leds-qnap-mcu.o
+>  obj-$(CONFIG_LEDS_REGULATOR)		+= leds-regulator.o
+>  obj-$(CONFIG_LEDS_SC27XX_BLTC)		+= leds-sc27xx-bltc.o
+>  obj-$(CONFIG_LEDS_SUN50I_A100)		+= leds-sun50i-a100.o
+> diff --git a/drivers/leds/leds-qnap-mcu.c b/drivers/leds/leds-qnap-mcu.c
+> new file mode 100644
+> index 000000000000..0723ec52e4c5
+> --- /dev/null
+> +++ b/drivers/leds/leds-qnap-mcu.c
+> @@ -0,0 +1,226 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +
+
+Superfluous line.
+
+> +/*
+> + * Driver for LEDs found on QNAP MCU devices
+> + *
+> + * Copyright (C) 2024 Heiko Stuebner <heiko@sntech.de>
+> + */
+> +
+> +#include <linux/leds.h>
+> +#include <linux/mfd/qnap-mcu.h>
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/slab.h>
+> +#include <uapi/linux/uleds.h>
+> +
+> +enum qnap_mcu_err_led_mode {
+> +	QNAP_MCU_ERR_LED_ON = 0,
+> +	QNAP_MCU_ERR_LED_OFF = 1,
+> +	QNAP_MCU_ERR_LED_BLINK_FAST = 2,
+> +	QNAP_MCU_ERR_LED_BLINK_SLOW = 3,
+> +};
+> +
+> +struct qnap_mcu_err_led {
+> +	struct qnap_mcu *mcu;
+> +	struct led_classdev cdev;
+> +	char name[LED_MAX_NAME_SIZE];
+> +	u8 num;
+> +	u8 mode;
+> +};
+> +
+> +static inline struct qnap_mcu_err_led *
+> +		cdev_to_qnap_mcu_err_led(struct led_classdev *led_cdev)
+> +{
+> +	return container_of(led_cdev, struct qnap_mcu_err_led, cdev);
+> +}
+> +
+> +static int qnap_mcu_err_led_set(struct led_classdev *led_cdev,
+> +				enum led_brightness value)
+
+'value' is a terrible variable name.
+
+Please describe the data.  'brightness' seems appropriate.
+
+> +{
+> +	struct qnap_mcu_err_led *err_led = cdev_to_qnap_mcu_err_led(led_cdev);
+> +	u8 cmd[] = { 0x40, 0x52, 0x30 + err_led->num, 0x30 };
+
+Really not fan of these magic values being used raw like this.
+
+> +	/* Don't disturb a possible set blink-mode if LED is already on */
+
+Why not save cycles and return if blink mode is already enabled?
+
+> +	if (value == 0)
+> +		err_led->mode = QNAP_MCU_ERR_LED_OFF;
+> +	else if (err_led->mode == QNAP_MCU_ERR_LED_OFF)
+> +		err_led->mode = QNAP_MCU_ERR_LED_ON;
+
+Then you can do:
+
+	err_led->mode = value ? QNAP_MCU_ERR_LED_ON : QNAP_MCU_ERR_LED_OFF;
+
+> +	cmd[3] = 0x30 + err_led->mode;
+> +
+> +	return qnap_mcu_exec_with_ack(err_led->mcu, cmd, sizeof(cmd));
+> +}
+> +
+> +static int qnap_mcu_err_led_blink_set(struct led_classdev *led_cdev,
+> +				      unsigned long *delay_on,
+> +				      unsigned long *delay_off)
+> +{
+> +	struct qnap_mcu_err_led *err_led = cdev_to_qnap_mcu_err_led(led_cdev);
+> +	u8 cmd[] = { 0x40, 0x52, 0x30 + err_led->num, 0x30 };
+> +
+> +	/* LED is off, nothing to do */
+> +	if (err_led->mode == QNAP_MCU_ERR_LED_OFF)
+> +		return 0;
+> +
+> +	if (*delay_on < 500) {
+
+Setting delay_on based on the current value of delay_on sounds sketchy.
+
+> +		*delay_on = 100;
+> +		*delay_off = 100;
+> +		err_led->mode = QNAP_MCU_ERR_LED_BLINK_FAST;
+> +	} else {
+> +		*delay_on = 500;
+> +		*delay_off = 500;
+> +		err_led->mode = QNAP_MCU_ERR_LED_BLINK_SLOW;
+> +	}
+
+How do you change from a fast to a slow blinking LED and back again?
+
+> +	cmd[3] = 0x30 + err_led->mode;
+> +
+> +	return qnap_mcu_exec_with_ack(err_led->mcu, cmd, sizeof(cmd));
+> +}
+> +
+> +static int qnap_mcu_register_err_led(struct device *dev, struct qnap_mcu *mcu, int num)
+
+What's num?  I should be able to answer that by the nomenclature.
+
+> +{
+> +	struct qnap_mcu_err_led *err_led;
+> +	int ret;
+> +
+> +	err_led = devm_kzalloc(dev, sizeof(*err_led), GFP_KERNEL);
+> +	if (!err_led)
+> +		return -ENOMEM;
+> +
+> +	err_led->mcu = mcu;
+> +	err_led->num = num;
+> +	err_led->mode = QNAP_MCU_ERR_LED_OFF;
+> +
+> +	snprintf(err_led->name, LED_MAX_NAME_SIZE, "hdd%d:red:status", num + 1);
+
+scnprintf()?
+
+> +	err_led->cdev.name = err_led->name;
+> +
+> +	err_led->cdev.brightness_set_blocking = qnap_mcu_err_led_set;
+> +	err_led->cdev.blink_set = qnap_mcu_err_led_blink_set;
+> +	err_led->cdev.brightness = 0;
+> +	err_led->cdev.max_brightness = 1;
+> +
+> +	ret = devm_led_classdev_register(dev, &err_led->cdev);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "failed to register hdd led %d", num);
+
+"HDD LED"
+
+> +	return qnap_mcu_err_led_set(&err_led->cdev, 0);
+> +}
+> +
+> +enum qnap_mcu_usb_led_mode {
+> +	QNAP_MCU_USB_LED_ON = 1,
+> +	QNAP_MCU_USB_LED_OFF = 3,
+> +	QNAP_MCU_USB_LED_BLINK = 2,
+> +};
+> +
+> +struct qnap_mcu_usb_led {
+> +	struct qnap_mcu *mcu;
+> +	struct led_classdev cdev;
+> +	u8 mode;
+> +};
+> +
+> +static inline struct qnap_mcu_usb_led *
+> +		cdev_to_qnap_mcu_usb_led(struct led_classdev *led_cdev)
+> +{
+> +	return container_of(led_cdev, struct qnap_mcu_usb_led, cdev);
+> +}
+> +
+> +static int qnap_mcu_usb_led_set(struct led_classdev *led_cdev,
+> +				enum led_brightness value)
+> +{
+> +	struct qnap_mcu_usb_led *usb_led = cdev_to_qnap_mcu_usb_led(led_cdev);
+> +	u8 cmd[] = { 0x40, 0x43, 0 };
+> +
+> +	/*
+> +	 * If the led is off, turn it on. Otherwise don't disturb
+
+"LED"
+
+> +	 * a possible set blink-mode.
+> +	 */
+> +	if (value == 0)
+> +		usb_led->mode = QNAP_MCU_USB_LED_OFF;
+> +	else if (usb_led->mode == QNAP_MCU_USB_LED_OFF)
+> +		usb_led->mode = QNAP_MCU_USB_LED_ON;
+
+Same suggestions as above.
+
+> +	/* byte 3 is shared between the usb led target and setting the mode */
+
+"Byte" for two reasons.  Firstly because it's the correct capitalisation
+of Byte and secondly because it's the start of a sentence.
+
+"USB" and "LED" throughout please.
+
+> +	cmd[2] = 0x44 | usb_led->mode;
+> +
+> +	return qnap_mcu_exec_with_ack(usb_led->mcu, cmd, sizeof(cmd));
+> +}
+> +
+> +static int qnap_mcu_usb_led_blink_set(struct led_classdev *led_cdev,
+> +				      unsigned long *delay_on,
+> +				      unsigned long *delay_off)
+> +{
+> +	struct qnap_mcu_usb_led *usb_led = cdev_to_qnap_mcu_usb_led(led_cdev);
+> +	u8 cmd[] = { 0x40, 0x43, 0 };
+> +
+> +	/* LED is off, nothing to do */
+> +	if (usb_led->mode == QNAP_MCU_USB_LED_OFF)
+> +		return 0;
+> +
+> +	*delay_on = 250;
+> +	*delay_off = 250;
+> +	usb_led->mode = QNAP_MCU_USB_LED_BLINK;
+> +
+> +	/* byte 3 is shared between the usb led target and setting the mode */
+> +	cmd[2] = 0x44 | usb_led->mode;
+> +
+> +	return qnap_mcu_exec_with_ack(usb_led->mcu, cmd, sizeof(cmd));
+> +}
+> +
+> +static int qnap_mcu_register_usb_led(struct device *dev, struct qnap_mcu *mcu)
+> +{
+> +	struct qnap_mcu_usb_led *usb_led;
+> +	int ret;
+> +
+> +	usb_led = devm_kzalloc(dev, sizeof(*usb_led), GFP_KERNEL);
+> +	if (!usb_led)
+> +		return -ENOMEM;
+> +
+> +	usb_led->mcu = mcu;
+> +	usb_led->mode = QNAP_MCU_USB_LED_OFF;
+> +	usb_led->cdev.name = "usb:blue:disk";
+> +	usb_led->cdev.brightness_set_blocking = qnap_mcu_usb_led_set;
+> +	usb_led->cdev.blink_set = qnap_mcu_usb_led_blink_set;
+> +	usb_led->cdev.brightness = 0;
+> +	usb_led->cdev.max_brightness = 1;
+> +
+> +	ret = devm_led_classdev_register(dev, &usb_led->cdev);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "failed to register usb led");
+> +
+> +	return qnap_mcu_usb_led_set(&usb_led->cdev, 0);
+> +}
+> +
+> +static int qnap_mcu_leds_probe(struct platform_device *pdev)
+> +{
+> +	struct qnap_mcu *mcu = dev_get_drvdata(pdev->dev.parent);
+> +	const struct qnap_mcu_variant *variant = qnap_mcu_get_variant_data(mcu);
+
+Grab this from platform_data.
+
+> +	int ret, i;
+> +
+> +	for (i = 0; i < variant->num_drives; i++) {
+
+You can use:
+
+	for (int i = 0; ..
+
+> +		ret = qnap_mcu_register_err_led(&pdev->dev, mcu, i);
+> +		if (ret)
+> +			return dev_err_probe(&pdev->dev, ret,
+> +					"failed to register error led %d\n", i);
+> +	}
+> +
+> +	if (variant->usb_led) {
+> +		ret = qnap_mcu_register_usb_led(&pdev->dev, mcu);
+> +		if (ret)
+> +			return dev_err_probe(&pdev->dev, ret,
+> +					"failed to register usb led %d\n", i);
+
+The 'i' here looks like a copy/paste error.
+
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static struct platform_driver qnap_mcu_leds_driver = {
+> +	.probe = qnap_mcu_leds_probe,
+> +	.driver = {
+> +		.name = "qnap-mcu-leds",
+> +	},
+> +};
+> +module_platform_driver(qnap_mcu_leds_driver);
+> +
+> +MODULE_ALIAS("platform:qnap-mcu-leds");
+> +MODULE_AUTHOR("Heiko Stuebner <heiko@sntech.de>");
+> +MODULE_DESCRIPTION("QNAP MCU LEDs driver");
+> +MODULE_LICENSE("GPL");
+> -- 
+> 2.43.0
 > 
-> It's still wrong as dtc only checks the unit-address is correct in a
-> few cases with known bus types.
 
-Sorry, I don't follow you on this, I'm probably missing something. Could
-you please add some details?
-
-> 
-> > coming from make W=1 CHECK_DTBS=y broadcom/rp1.dtbo.
-> > This is the exact same approach used by Bootlin patchset from:
-> >
-> > https://lore.kernel.org/all/20240808154658.247873-2-herve.codina@bootlin.com/
-> 
-> It is not. First, that has a node for the PCI device (i.e. the
-> LAN966x). You do not. You only have a PCI-PCI bridge and that is
-> wrong.
-
-I'm a little confused now, but I think the confusion is generated by
-the label node names I've chosen that are, admittedly, a bit sloppy.
-I'll try to make some clarity, please see below.
-
-> 
-> BTW, you should Cc Herve and others that are working on this feature.
-> It is by no means fully sorted as you have found.
-
-Sure, just added, thanks for the heads up.
-
-> 
-> > replied here below for convenience:
-> >
-> > +       pci-ep-bus@0 {
-> > +               compatible = "simple-bus";
-> > +               #address-cells = <1>;
-> > +               #size-cells = <1>;
-> > +
-> > +               /*
-> > +                * map @0xe2000000 (32MB) to BAR0 (CPU)
-> > +                * map @0xe0000000 (16MB) to BAR1 (AMBA)
-> > +                */
-> > +               ranges = <0xe2000000 0x00 0x00 0x00 0x2000000
-> 
-> The 0 parent address here matches the unit-address, so all good in this case.
-
-Just to be sure, the parent address being the triple zeros in the ranges property,
-right?
-
-> 
-> > +                         0xe0000000 0x01 0x00 0x00 0x1000000>;
-> >
-> > Also, I think it's not possible to know the devfn in advance, since the
-> > DT part is pre-compiled as an overlay while the devfn number is coming from
-> > bus enumeration.
-> 
-> No. devfn is fixed unless you are plugging in a card in different
-> slots. The bus number is the part that is not known and assigned by
-> the OS, but you'll notice that is omitted.
-> 
-> In any case, the RP1 node should be generated, so its devfn is irrelevant.
-
-Which is a possibility, since the driver should possibly work also with RP1
-mounted on a PCI card, one day. But as you pointed out, since this is automatically
-generated, should not be a concern.
-
-> 
-> > Since the registers for sub-peripherals will start (as stated in ranges
-> > property) from 0xc040000000, I'd be inclined to use rp1@c040000000 as the
-> > node name and address unit. Is it feasible?
-> 
-> Yes, but that would be in nodes underneath ranges. Above, it is the
-> parent bus we are talking about.
-
-Right.
-
-> 
-> > > >                 #address-cells = <0x02>;
-> > > >                 #size-cells = <0x02>;
-> > > >                 compatible = "simple-bus";
-> > >
-> > > The parent is a PCI-PCI bridge. Child nodes have to be PCI devices and
-> > > "simple-bus" is not a PCI device.
-> >
-> > The simple-bus is needed to automatically traverse and create platform
-> > devices in of_platform_populate(). It's true that RP1 is a PCI device,
-> > but sub-peripherals of RP1 are platform devices so I guess this is
-> > unavoidable right now.
-> 
-> You are missing the point. A PCI-PCI bridge does not have a
-> simple-bus. However, I think it's just what you pasted here that's
-> wrong. From the looks of the RP1 driver and the overlay, it should be
-> correct.
-
-Trying to clarify: at first I thought of my rp1 node (in the dtso) as the pci
-endpoint device, but I now see that it should be intended as just the bus 
-attached to the real endpoint device (which is the dynamically generated dev@0,0).
-In this sense, rp1 is probably a really wrong name, let's say we use the same 
-name from Bootlin, i.e. pci-ep-bus. The DT tree would then be:
-
-pci@0,0         <- auto generated, this represent the pci bridge
-  dev@0,0       <- auto generated, this represent the pci ednpoint device, a.k.a. the RP1
-    pci-ep-bus  <- added from dtbo, this is the simple-bus to which peripherals are attached
-
-this view is much like Bootlin's approach, also my pci-ep-bus node now would look
-like this:
- ...
- pci-ep-bus@0 {
-	ranges = <0xc0 0x40000000
-                  0x01 0x00 0x00000000
-                  0x00 0x00400000>;
-	...
- };
-
-and also the correct unit address here is 0 again, since the parent address in
-ranges is 0x01 0x00 0x00000000 (0x01 is the flags and in this case represent
-BAR1, I assume that for the unit address I should use only the address part that
-is 0, right?).
-
-> 
-> It would also help if you dumped out what "lspci -tvnn" prints.
-> 
-
-Here it is:
-
-localhost:~ # lspci -tvnn
--[0002:00]---00.0-[01]----00.0  Raspberry Pi Ltd RP1 PCIe 2.0 South Bridge [1de4:0001]
-
-> > > The assumption so far with all of this is that you have some specific
-> > > PCI device (and therefore a driver). The simple-buses under it are
-> > > defined per BAR. Not really certain if that makes sense in all cases,
-> > > but since the address assignment is dynamic, it may have to. I'm also
-> > > not completely convinced we should reuse 'simple-bus' here or define
-> > > something specific like 'pci-bar-bus' or something.
-> >
-> > Good point. Labeling a new bus for this kind of 'appliance' could be
-> > beneficial to unify the dt overlay approach, and I guess it could be
-> > adopted by the aforementioned Bootlin's Microchip patchset too.
-> > However, since the difference with simple-bus would be basically non
-> > existent, I believe that this could be done in a future patch due to
-> > the fact that the dtbo is contained into the driver itself, so we do
-> > not suffer from the proliferation that happens when dtb are managed
-> > outside.
-> 
-> It's an ABI, so we really need to decide first.
-
-Okay. How should we proceed?
-
-> 
-> > > >                 ranges = <0xc0 0x40000000   0x01 0x00 0x00   0x00 0x400000>;
-> > > >                 dma-ranges = <0x10 0x00   0x43000000 0x10 0x00   0x10 0x00>;
-> > > >                 ......
-> > > >         };
-> > > >  };
-> > > >
-> > > > The pci@0,0 bridge node is automatically created by virtue of
-> > > > CONFIG_PCI_DYNAMIC_OF_NODES, and has no dma-ranges, hence it implies 1:1 dma
-> > > > mappings (flags for this mapping are set to zero).  The rp1@0 node has
-> > > > dma-ranges with flags set (0x43000000). Since 0x43000000 != 0x00 any translation
-> > > > will fail.
-> > >
-> > > It's possible that we should fill in 'dma-ranges' when making these
-> > > nodes rather than supporting missing dma-ranges here.
-> >
-> > I really think that filling dma-ranges for dynamically created pci
-> > nodes would be the correct approach.
-> > However, IMHO this does not imply that we could let inconsistent
-> > address (64 bit addr with 32 flag bit set) laying around the
-> > translation chain, and fixing that is currently working fine. I'd
-> > be then inclined to say the proposed change is outside the scope
-> > of the present patchset and to postpone it to a future patch.
-> 
-> Okay, but let's fix it with a test case. There's already a test case
-> for all this in the DT unittest which can be extended.
-
-I'm taking a look at the unittest framework right now.
-
-Many thanks,
-Andrea
-
-> 
-> Rob
+-- 
+Lee Jones [李琼斯]
 
