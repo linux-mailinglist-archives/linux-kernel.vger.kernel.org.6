@@ -1,70 +1,176 @@
-Return-Path: <linux-kernel+bounces-306087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0A469638F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 05:48:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20730963900
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 05:51:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4AE64B2329A
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 03:48:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BEC9B1F2487B
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 03:51:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6089B52F88;
-	Thu, 29 Aug 2024 03:48:28 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D65112D766;
+	Thu, 29 Aug 2024 03:51:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="mSAgSlQ+"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F123E2837F;
-	Thu, 29 Aug 2024 03:48:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9634873176;
+	Thu, 29 Aug 2024 03:51:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724903308; cv=none; b=T+NeaTliOBJEgFtbFWo7x9lZAYeFHt5uV/yJ0+3R905eCJH8tMna9bWMQE+tFtASQdF24V/kAJTmbDr/YNadEcHn8XFCgdd+jQG7zdQ5aAfam/YeRc2HuGwpdPFO+f6CwgwT+YJp78t3QskK0NSnlnzdmB3VG1At5QdbCcc4JFU=
+	t=1724903480; cv=none; b=lsfLtV3Gog92Bfgqf+iWF+Mp+3pAVLeL3eDq5s9LrQKrLw5gtHFcVkOla5rnbaWSF8aSp5O57iFlIZTi3ufvobNhMgGb+GJlfoLqSXXsYbK4CffzYpcbLR6qtxvZCho82EM+hH7DTRqVE2kRqRLBlf9Fvnemn0bI+Z5L1Iq9Riw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724903308; c=relaxed/simple;
-	bh=d1v+IFWEguBYxwg1tMtkP8YpTI6g6V2Vr6vGF081P1I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j7mgWuUxtMTnI2FtBEvPXqIQc/cmaR9yAWjjSkVboG0F7aveafLijHVHtpCm7IXFEDrGxg4KP81e8PKKv3eNMRB/tQzp0Eikv5HtC48YzTLj9kzOEtzOpAyoTSFg44ZcI1pVKnqRFEeERk4HeNvs1bwZq8szQGHmS/YDwF2wHNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 338FD68AFE; Thu, 29 Aug 2024 05:48:22 +0200 (CEST)
-Date: Thu, 29 Aug 2024 05:48:22 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Christoph Hellwig <hch@infradead.org>, Christoph Hellwig <hch@lst.de>,
-	Chandan Babu R <chandan.babu@oracle.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 2/5] xfs: move the tagged perag lookup helpers to
- xfs_icache.c
-Message-ID: <20240829034822.GA3974@lst.de>
-References: <20240821063901.650776-1-hch@lst.de> <20240821063901.650776-3-hch@lst.de> <20240821163407.GH865349@frogsfrogsfrogs> <Zs7DoMzcyh7QbfUb@infradead.org> <20240828161004.GG1977952@frogsfrogsfrogs>
+	s=arc-20240116; t=1724903480; c=relaxed/simple;
+	bh=vzqvxFl3bgMoEVE6JsDbJKaHQIJiWe8yJ/JpRH0nHog=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Ldh0r4QLYQtjpM32J9Bm8HhLTdoe1u8x1JylkgkaJ+zA7k0dQiu7QC51hE6C9eFz1VGXPyv+pws+27UkL8FmRjU4QhrmOrSyqdgKTMy7bY6Y+IJq0AhOjpuysRL+gwv5/EH+uSZjkTakgovy+FnT712RvACKOE4wai6e57DzUfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=mSAgSlQ+; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 47T3oqdfF3106897, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
+	t=1724903452; bh=vzqvxFl3bgMoEVE6JsDbJKaHQIJiWe8yJ/JpRH0nHog=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Transfer-Encoding:Content-Type;
+	b=mSAgSlQ+ieBF+FKAfOphwY5xihSKrDNOYLGkSeyqE6tIa9aGp+ruZ+YScDTZFTgCA
+	 zPLav9DURDLBC3fm5f6Vdf97QZqQU6P74MT/YgN1QYiBBX8DZ7MsfrYJQyB3E32VEK
+	 VG56PHSFIUDJCjZueKTuCM6h9xYzPZRGLXlUEU/Pr8LPmkFT4G2X7FHad9ApTMFfSx
+	 PgtW+KzSTIRblW+v6h3U+0pZ/unV0oXDKpmqT5cJHTOPWuBxFSK1C3cljMbmOVzRdz
+	 NdEVEn37r2WbkiwmZBaHhcNfQT3DieDeyrTjjxpLH4J4JW7fzoOYWsZn09aMHoZCZ1
+	 U5KCgg2Rp9gaw==
+Received: from mail.realtek.com (rtexh36505.realtek.com.tw[172.21.6.25])
+	by rtits2.realtek.com.tw (8.15.2/3.02/5.92) with ESMTPS id 47T3oqdfF3106897
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 29 Aug 2024 11:50:52 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXH36505.realtek.com.tw (172.21.6.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 29 Aug 2024 11:50:52 +0800
+Received: from RTDOMAIN (172.21.210.74) by RTEXMBS04.realtek.com.tw
+ (172.21.6.97) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.35; Thu, 29 Aug
+ 2024 11:50:52 +0800
+From: Justin Lai <justinlai0215@realtek.com>
+To: <kuba@kernel.org>
+CC: <davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
+        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <andrew@lunn.ch>, <jiri@resnulli.us>, <horms@kernel.org>,
+        <rkannoth@marvell.com>, <jdamato@fastly.com>, <pkshih@realtek.com>,
+        <larry.chiu@realtek.com>, "Justin
+ Lai" <justinlai0215@realtek.com>
+Subject: [PATCH net-next v29 04/13] rtase: Implement the interrupt routine and rtase_poll
+Date: Thu, 29 Aug 2024 11:48:23 +0800
+Message-ID: <20240829034832.139345-5-justinlai0215@realtek.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240829034832.139345-1-justinlai0215@realtek.com>
+References: <20240829034832.139345-1-justinlai0215@realtek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240828161004.GG1977952@frogsfrogsfrogs>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: RTEXH36505.realtek.com.tw (172.21.6.25) To
+ RTEXMBS04.realtek.com.tw (172.21.6.97)
 
-On Wed, Aug 28, 2024 at 09:10:04AM -0700, Darrick J. Wong wrote:
-> > tags for garbage collection of zoned rtgs, but I'd rather build the
-> > right abstraction when we get to that.  That will probably also
-> > include sorting out the current mess with the ICI vs IWALK flags.
-> 
-> Or converting pag_ici_root to an xarray, and then we can make all of
-> them use the same mark symbols. <shrug>
+1. Implement rtase_interrupt to handle txQ0/rxQ0, txQ4~txQ7 interrupts,
+and implement rtase_q_interrupt to handle txQ1/rxQ1, txQ2/rxQ2 and
+txQ3/rxQ3 interrupts.
+2. Implement rtase_poll to call ring_handler to process the tx or
+rx packet of each ring. If the returned value is budget,it means that
+there is still work of a certain ring that has not yet been completed.
 
-Maybe we could, but someone intentionally separated them out (and than
-someone, not sure if the same persons were involved, was very sloppy
-about the separation) so I'll need to look a bit more at the history.
-And maybe think about a better way of doing this.
+Signed-off-by: Justin Lai <justinlai0215@realtek.com>
+---
+ .../net/ethernet/realtek/rtase/rtase_main.c   | 69 +++++++++++++++++++
+ 1 file changed, 69 insertions(+)
+
+diff --git a/drivers/net/ethernet/realtek/rtase/rtase_main.c b/drivers/net/ethernet/realtek/rtase/rtase_main.c
+index 7f683c246003..6e7f30b015eb 100644
+--- a/drivers/net/ethernet/realtek/rtase/rtase_main.c
++++ b/drivers/net/ethernet/realtek/rtase/rtase_main.c
+@@ -571,6 +571,75 @@ static void rtase_hw_start(const struct net_device *dev)
+ 	rtase_enable_hw_interrupt(tp);
+ }
+ 
++/*  the interrupt handler does RXQ0 and TXQ0, TXQ4~7 interrutp status
++ */
++static irqreturn_t rtase_interrupt(int irq, void *dev_instance)
++{
++	const struct rtase_private *tp;
++	struct rtase_int_vector *ivec;
++	u32 status;
++
++	ivec = dev_instance;
++	tp = ivec->tp;
++	status = rtase_r32(tp, ivec->isr_addr);
++
++	rtase_w32(tp, ivec->imr_addr, 0x0);
++	rtase_w32(tp, ivec->isr_addr, status & ~RTASE_FOVW);
++
++	if (napi_schedule_prep(&ivec->napi))
++		__napi_schedule(&ivec->napi);
++
++	return IRQ_HANDLED;
++}
++
++/*  the interrupt handler does RXQ1&TXQ1 or RXQ2&TXQ2 or RXQ3&TXQ3 interrupt
++ *  status according to interrupt vector
++ */
++static irqreturn_t rtase_q_interrupt(int irq, void *dev_instance)
++{
++	const struct rtase_private *tp;
++	struct rtase_int_vector *ivec;
++	u16 status;
++
++	ivec = dev_instance;
++	tp = ivec->tp;
++	status = rtase_r16(tp, ivec->isr_addr);
++
++	rtase_w16(tp, ivec->imr_addr, 0x0);
++	rtase_w16(tp, ivec->isr_addr, status);
++
++	if (napi_schedule_prep(&ivec->napi))
++		__napi_schedule(&ivec->napi);
++
++	return IRQ_HANDLED;
++}
++
++static int rtase_poll(struct napi_struct *napi, int budget)
++{
++	const struct rtase_int_vector *ivec;
++	const struct rtase_private *tp;
++	struct rtase_ring *ring;
++	int total_workdone = 0;
++
++	ivec = container_of(napi, struct rtase_int_vector, napi);
++	tp = ivec->tp;
++
++	list_for_each_entry(ring, &ivec->ring_list, ring_entry)
++		total_workdone += ring->ring_handler(ring, budget);
++
++	if (total_workdone >= budget)
++		return budget;
++
++	if (napi_complete_done(napi, total_workdone)) {
++		if (!ivec->index)
++			rtase_w32(tp, ivec->imr_addr, ivec->imr);
++		else
++			rtase_w16(tp, ivec->imr_addr, ivec->imr);
++	}
++
++	return total_workdone;
++}
++
+ static int rtase_open(struct net_device *dev)
+ {
+ 	struct rtase_private *tp = netdev_priv(dev);
+-- 
+2.34.1
 
 
