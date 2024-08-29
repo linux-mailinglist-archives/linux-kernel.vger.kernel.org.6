@@ -1,116 +1,127 @@
-Return-Path: <linux-kernel+bounces-306383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A54F2963E39
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:21:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB07F963E3E
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:21:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62B48285A35
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:21:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83706285C05
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:21:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5663518C028;
-	Thu, 29 Aug 2024 08:21:09 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AC8518C030;
+	Thu, 29 Aug 2024 08:21:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BUPBTci4"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3B88189BAF
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 08:21:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78D2518C000
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 08:21:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724919668; cv=none; b=H8wmDtF4Imx+0YD3+bpwwTa5NrtTPci/daMZLegHPyzYK7wopWQohItCPzDHoe5tzyVJndcshhirkU2LzfV788RIa/YZiy6XLaJ6eTOJn0i3nclwt391FRFTm/o2wuwFC62JBr24YdDaKNekOO2/8Ed5oPaNVTFeVA0ew1EK9OY=
+	t=1724919680; cv=none; b=WdMcUDpFBGkkrvlQ7a1elkiN6Rv0bGF6ImemFRSLk9658PrWw99kCs2yoWXB08VMp1vvV/Be8gA/Ld5IXGVlHJmkrKgPOOZg/C20PDmyEUKmk0jqKVme5xJeWUmzzyqE0MLSX7OwQSG8AF9FEot8jbv0tdiGuoJ3uKmtv1FIKvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724919668; c=relaxed/simple;
-	bh=wQpaqsmGCnU/TFoZpBi5VCR+n1hl3U0nPDby7/smhoU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=e4Lm9WXrNdVpaEPp+rKc9bUYnwDygptITwOTE/p85eiHV03TU1fBh+WNk7VqSyBG5pQaq/agn0prgK+Xp2OndXZv3tNgYXVJhOl7LyrJzmqYXMbOak4v0+x3mRBmWSwKWt6tW5XytNzs7xA2bhWHlae1HJSkVNSmEMNBbW3Uans=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4WvYyH3cdxz20n0B;
-	Thu, 29 Aug 2024 16:16:07 +0800 (CST)
-Received: from dggpemf100008.china.huawei.com (unknown [7.185.36.138])
-	by mail.maildlp.com (Postfix) with ESMTPS id D6C571A016C;
-	Thu, 29 Aug 2024 16:20:57 +0800 (CST)
-Received: from [10.174.177.243] (10.174.177.243) by
- dggpemf100008.china.huawei.com (7.185.36.138) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 29 Aug 2024 16:20:57 +0800
-Message-ID: <dfeb5f5f-2b21-4b8f-bb8b-7170ef001773@huawei.com>
-Date: Thu, 29 Aug 2024 16:20:56 +0800
+	s=arc-20240116; t=1724919680; c=relaxed/simple;
+	bh=K04IwqvP4QHiJEyRnXObSNOLM29xMbSAUjAHbtkAsYI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=G5zJhelRNTjhiHFC2KpRwa+mo2JVm9KhrdACBZMsFd52R70jzZyKEMNA+YQJoCJBd87JXnSZLpQIOXIAs+cfXKqhxto3ogvEqZczqaDSGBimK8uZJRt5tRDFDtWILgtNuHcYhqrF7fvtkrb3hd5pHrGi06CTiGZewiwSc4MG86s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BUPBTci4; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-53346132348so455144e87.2
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 01:21:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724919676; x=1725524476; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=GFe2h6mCzOZVtHkC8fLtufQDeRDZfA2dn2/r0ffaHpg=;
+        b=BUPBTci4WQ5xBMLDPt2ESwhL6Frxnj7OUK6Ac6rqWLc46k0c/XeZedQTt16AitvD1t
+         9uWp3KAbyqIlYiAxn8KBSCQjoQZc1fdgLrYnKaOGUxD5epZcFmxiG5KQQM48jzXZIFZY
+         kadRaAgT2Sxi/upvaDq9upyq+yxWzGEUKf/9dK9E2DeEcmlLjG4bQNliQ8R76wC1H3cX
+         tuGTkmjqyMeEvZGhhBOTqZ2U57TFsMYncyOOJFrFpZzsUF5mQ/L3Wz47jpQpicTM1yyI
+         wbnCc0fjlsIE0XOjQwfGvYrAIt6SMfDOHKZ7p24X70lDmPh+4c/RQ0x/CEIEu4iDXD28
+         ZC7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724919676; x=1725524476;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GFe2h6mCzOZVtHkC8fLtufQDeRDZfA2dn2/r0ffaHpg=;
+        b=pc4gBfn5gqpml5Tudf1jzgPSaI3YEnAyRhfgDesYnvuExXrY+Jlpxqz8zSUlPZGs82
+         zX8mZvEo2ubb3uJnfd1xlbxkpz8JF0+4XJ6q3fcvVN4U+CLja81lyNjS1Fdnx0LzHvgN
+         W81vyDWcBa0btJPgdhb2KKlE3no6j8jFBRGElEM1U58kdu3arZtCGNiN+IhPJyoO6G/F
+         Ot9vHBM1kaOTzTP+8389r7N1o2Gl59GFeY2wf1LjaEZYi0oHAw4dPdv1Xb1VwSUMT9ph
+         Zi3nOtL7qku7drnzxsYCQXY9RDC7x3VOWjJMl4IO8zvuNy3Thf1GDi+/UShHuCfIEejo
+         R0xA==
+X-Forwarded-Encrypted: i=1; AJvYcCXpCpFfshybrESKUxw98Nk8j0n5g3/U56Oi1MWPiE5G1+ss1qlvxmMnGk/USwmfE0netdMARu9XQ8W0Rqc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFy1IH2MmEpQwu81yLDcoFNzvg+hgsST9hIcsHQdOlGG+YSM6Q
+	cLqeEc6dgKpg2lu4eQGPYeMi1nbIc+qd+FIvzwWzka3ufQ7oXMi0ga7x2HmYya8=
+X-Google-Smtp-Source: AGHT+IEPILolNaXIOtWPkvXuhIpXtzFYlASE1vDaxS6koISyxcfo0zqXADbPzOyD6IgDr8l2GxgKuw==
+X-Received: by 2002:a05:6512:1047:b0:52f:368:5018 with SMTP id 2adb3069b0e04-5353e5b8400mr1383456e87.43.1724919675693;
+        Thu, 29 Aug 2024 01:21:15 -0700 (PDT)
+Received: from umbar.lan ([192.130.178.90])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-535407ac333sm90243e87.70.2024.08.29.01.21.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Aug 2024 01:21:15 -0700 (PDT)
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Subject: [PATCH 0/2] phy: add NXP PTN3222 eUSB2 to USB2 redriver
+Date: Thu, 29 Aug 2024 11:21:12 +0300
+Message-Id: <20240829-nxp-ptn3222-v1-0-46906bc4747a@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [linux-next:master] [mm] f1295af16a: ltp.madvise11.fail
-Content-Language: en-US
-To: kernel test robot <oliver.sang@intel.com>
-CC: <oe-lkp@lists.linux.dev>, <lkp@intel.com>, Linux Memory Management List
-	<linux-mm@kvack.org>, Andrew Morton <akpm@linux-foundation.org>, David
- Hildenbrand <david@redhat.com>, Miaohe Lin <linmiaohe@huawei.com>, Jonathan
- Cameron <Jonathan.Cameron@huawei.com>, Naoya Horiguchi
-	<nao.horiguchi@gmail.com>, Oscar Salvador <osalvador@suse.de>,
-	<linux-kernel@vger.kernel.org>, <ltp@lists.linux.it>
-References: <202408291314.bdbfa468-oliver.sang@intel.com>
-From: Kefeng Wang <wangkefeng.wang@huawei.com>
-In-Reply-To: <202408291314.bdbfa468-oliver.sang@intel.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- dggpemf100008.china.huawei.com (7.185.36.138)
+X-B4-Tracking: v=1; b=H4sIAHkv0GYC/x3MQQqAIBBA0avErBN0dKFdJVpkTTUbE40QxLsnL
+ d/i/wqZElOGaaiQ6OXMd+hQ4wDbtYaTBO/dgBKNtOhEKFHEJ2hEFFp6760iZw1BL2Kig8t/m5f
+ WPumVoaZdAAAA
+To: Vinod Koul <vkoul@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Konrad Dybcio <konradybcio@kernel.org>, linux-phy@lists.infradead.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=899;
+ i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
+ bh=K04IwqvP4QHiJEyRnXObSNOLM29xMbSAUjAHbtkAsYI=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBm0C96KQtgq+QiXli2xwJUwFJy8O7goNK1HIODP
+ lY3r0kLuBiJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZtAvegAKCRCLPIo+Aiko
+ 1ZMnCACDncFx7nCwNWfmvqHMShy3DZWvjWLncWqZDdAO1QUzJKiblMhF+iGdU6GZBmgsByotc8Q
+ JMy/HDJ6vKDhZgisrtSOUtduyBZeqVrGKsA+THoHnXLLKN/+v2CZX2rxIf4j/02ihV/WM0fRlNu
+ SjyDO2bfO+3fI+PEZChomkscaXBHIfr4sqlCvdvBPjCLAw9we5ZcN5UxiUlE+zv+lEo0ESehC/s
+ 1zCJyYiCoOZ327Na+V9X7uCm081EMRSxz42mtCBDZQ0iJmsP/tqon/XrNXcb6vHdVXLH38pa/Hs
+ hcZKkszSDJhRFw8kRw49dLrXg7OMTydk4dLXHX8ATT5l09tK
+X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
+ fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
+The NXP PTN3222 is the single-port eUSB2 to USB2 redriver that performs
+translation between eUSB2 and USB2 signalling schemes. It supports all
+three data rates: Low Speed, Full Speed and High Speed.
 
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
+Dmitry Baryshkov (2):
+      dt-bindings: phy: add NXP PTN3222 eUSB2 to USB2 redriver
+      phy: add NXP PTN3222 eUSB2 to USB2 redriver
 
-On 2024/8/29 16:13, kernel test robot wrote:
-> 
-> 
-> Hello,
-> 
-> kernel test robot noticed "ltp.madvise11.fail" on:
-> 
-> commit: f1295af16abee075de68400c58550cffacc29eb1 ("mm: migrate: add isolate_folio_to_list()")
+ .../devicetree/bindings/phy/nxp,ptn3222.yaml       |  55 ++++++++++
+ drivers/phy/Kconfig                                |  11 ++
+ drivers/phy/Makefile                               |   1 +
+ drivers/phy/phy-nxp-ptn3222.c                      | 119 +++++++++++++++++++++
+ 4 files changed, 186 insertions(+)
+---
+base-commit: 195a402a75791e6e0d96d9da27ca77671bc656a8
+change-id: 20240829-nxp-ptn3222-30bbb81e984e
 
+Best regards,
+-- 
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-f1295af16abee075de68400c58550cffacc29eb1 tags/next-20240828~164^2~86
-
-on next-20240828, it was fixed in the next patch,
-
-f1295af16abe mm: migrate: add isolate_folio_to_list()
-4e3a04695e25 mm-migrate-add-isolate_folio_to_list-fix // this should fix 
-the issue.
-
-or please test next-20240829
-
-Thanks.
-
-> https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git master
-> 
-> in testcase: ltp
-> version: ltp-x86_64-14c1f76-1_20240824
-> with following parameters:
-> 
-> 	disk: 1HDD
-> 	fs: btrfs
-> 	test: syscalls-01/madvise11
-> 
-> 
-> 
-> compiler: gcc-12
-> test machine: 4 threads 1 sockets Intel(R) Core(TM) i3-3220 CPU @ 3.30GHz (Ivy Bridge) with 8G memory
-> 
-> (please refer to attached dmesg/kmsg for entire log/backtrace)
-> 
-> 
-> 
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <oliver.sang@intel.com>
-> | Closes: https://lore.kernel.org/oe-lkp/202408291314.bdbfa468-oliver.sang@intel.com
-> 
 
