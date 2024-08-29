@@ -1,180 +1,128 @@
-Return-Path: <linux-kernel+bounces-307816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 746B0965336
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 00:55:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F28CA965337
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 00:56:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97FAC1C21B59
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 22:55:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FA661C21F54
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 22:56:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BB4C1BF325;
-	Thu, 29 Aug 2024 22:52:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69E121BA891;
+	Thu, 29 Aug 2024 22:54:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LvedgY2D"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dQfssIQ9"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4A611BE854;
-	Thu, 29 Aug 2024 22:52:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B3C51B5824
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 22:54:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724971966; cv=none; b=q+Ec9tWP/YzgLAKshcaYZf/Ydxb7cD+veBl0A7rXtdJ/8m8Dq4d25dR1cMEIjNF4fYqLMw4IK9te3UCjWSb2EfPUaDAnsf9jZ9aTxIRIaZw6YmH6wV8l37Ja+Jxd2vSY7L3lER1lI6BSvgIlvBvBObnvDLNbaY61Sut2xP8AZVU=
+	t=1724972052; cv=none; b=FGU0rLH3jo95POADHjfp8xuhsEKqiWR6OGQtgJ1g/ISxbKsyw9bH00/bVJsG4OfdoOB9g4u/6VjTsz19ocJPd9MzM9V8e6hBNV5XAJtqy5lcSDLAiJP6d/4G8a9bkwwV7I1CJt9cCFpwlGhx3GgSAKltkrGVczKUox2zmacTPyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724971966; c=relaxed/simple;
-	bh=I0V/mXYSyqAaEqRosYfRH9ZnCyLxtliSkutcjvFE7bE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bQyxzsGRWfXz6SRkczCi+ut9HZvGgKZkqk26cWSW+NMB6UX6n/A0gFiH0Czy92ez83TJ1yh++1ex5HY9iRQP0/IlNCbq+3DGHfY4hyAGoZ6Wubrs/HBVF/+hu9D+Qq2OQMCVDU/HGKh64uhONezrzholeyEAzhCE5wlb22enOH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LvedgY2D; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724971965; x=1756507965;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=I0V/mXYSyqAaEqRosYfRH9ZnCyLxtliSkutcjvFE7bE=;
-  b=LvedgY2DMUOso6YKj/gO0zaSx0wTFMekO5Oqm4/nvU5/DSQ6kdBwBsCW
-   WtV9nBTaXPCMEzLinFq15ba8crhOhzOd9QWgvoVBiLncVwSiWm7oRVEyk
-   nk7dWfTMk1h4DULUbxMi28Pu1DR1AzcksMnh/mI8m8+KIpv81ZKNC6RCb
-   iSCgGqNvgJMG8/Cq4E9/11uB19bNwFzXe/Fx+rMwHinxVJGKWR217dtVJ
-   ddLUYd9+WDVd+AMJrcWLbMgk07mVazGAzHfhkxKlWakrpBxH501WoLmzJ
-   dfUD0CPJD53N21LDVoh0BDN4CyLyIRp15CEgM+QU3OKTzYqTIvZ410aoW
-   A==;
-X-CSE-ConnectionGUID: LoawZaj6RkCzdZ+LmRkm9A==
-X-CSE-MsgGUID: Ie6v+o++RvWhy7tl2PHsQQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11179"; a="27479176"
-X-IronPort-AV: E=Sophos;i="6.10,186,1719903600"; 
-   d="scan'208";a="27479176"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 15:52:41 -0700
-X-CSE-ConnectionGUID: BcpweYAKS1Kin8ptnRCQRA==
-X-CSE-MsgGUID: vHblY/NITC28FsoqGqp+dw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,186,1719903600"; 
-   d="scan'208";a="63415152"
-Received: from rchatre-mobl4.amr.corp.intel.com (HELO rchatre-mobl4.intel.com) ([10.125.111.220])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 15:52:41 -0700
-From: Reinette Chatre <reinette.chatre@intel.com>
-To: fenghua.yu@intel.com,
-	shuah@kernel.org,
-	tony.luck@intel.com,
-	peternewman@google.com,
-	babu.moger@amd.com,
-	ilpo.jarvinen@linux.intel.com
-Cc: maciej.wieczor-retman@intel.com,
-	reinette.chatre@intel.com,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 6/6] selftests/resctrl: Keep results from first test run
-Date: Thu, 29 Aug 2024 15:52:32 -0700
-Message-ID: <772813207becd105d309de43d1ab03e52bbd3091.1724970211.git.reinette.chatre@intel.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <cover.1724970211.git.reinette.chatre@intel.com>
-References: <cover.1724970211.git.reinette.chatre@intel.com>
+	s=arc-20240116; t=1724972052; c=relaxed/simple;
+	bh=nVnhVzWYQHtGHoruFFT/Mwn1FzMrGxJJQ7+rGWuMUoE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jV6Pe3uT19Zor1zTSTFzHn4NDG6A4Dz5n6QRxlMMxJJvYTm2oXQQV+vFVvwSYcHXpsT/3fDjPD+RrUUqJU5gXgzE/jf/MNkwAoCRe6Se9ahnumQfIyDX9XA7dJMLfWbkyPzUD84LfLI7dU0bLYR891cMaINRAhi9xH0ObDHlS8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dQfssIQ9; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42bb9d719d4so3908735e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 15:54:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1724972049; x=1725576849; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tT/N7885nHKfty/eDWE+p2zE6nTWtJgYs5jLN0H8wTs=;
+        b=dQfssIQ9MBewrlFYWcVcJcqqLpiKH7h5eKoI6J/jQgicb8Xe6bvzOSutkQKLbVAyIb
+         QbAH0+4biBrItCmWfEnGbKwhCpQ2J9x1EHp+M4fit9i7chThqllImFpn8Z9c3RSeIXnl
+         H6UMGiHbfyEe9pL6ZviuMNQMuVJFvbqXvU3j7P7vbzVsf9depsji3YSPlY4XozjqOfS6
+         2Etv4t6U4ZjflUGAe3lVqAAC3Z9+01rS/eBGWI87ealrVn3CnAo5/CF3s8Z0MdubuL91
+         IiDimgEUEsryE6tPmabzDh9OdRvV9jUYr1jfaCS/JmXUkqj5YNhddlhKg0MvHz9VDy1e
+         cRCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724972049; x=1725576849;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tT/N7885nHKfty/eDWE+p2zE6nTWtJgYs5jLN0H8wTs=;
+        b=pYSTSZHya359ZQAj03FZElonbNmt+zQ25V5I1T++lmUQPRkiHyyiSNGxex3Er9oIdn
+         swfudkDzKe8ByPHGabHoKwduD/9QuP5ZP1wTBvyTS3w6tlNkMdc5WyG4JaqnPH75KvMd
+         fbcpR/zZh3DaVgNMzKHg+iVdk1JySL0Ay9B60Awh9DDKLTEWcyKKPO63PnaBO3wO21eR
+         vGIetIhrzNxZlK+FYnU1O4h67rRg0CvNPKAdZVEeMsAKCWwDklROgpdabUrwhw33gVQI
+         T3PXPiesfvHYBdBT7NLZv/bqn6RR0Wx77TRwDLMtkbMjohBd7Aiiz1koWp2ermlCX+n+
+         /kTA==
+X-Forwarded-Encrypted: i=1; AJvYcCWuXu80blyG/G4HDDr6wno8gAkHl5YjCBO3MnxAnww5g8VzxdfwH1QnJ7COY6ECJwP7JOZrZS+Y9nfnmS0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUl1qK48ZeL69GdvnlLAdVyCHIJuvKUePimaU0DXv33jfZxypO
+	VMzqdg+STIj5VIZbvyTMhe7Y6fACQNte1fSCuLzpHlBQ2aSvR9DkDHumZivYlN34saOspQbq1/6
+	PKHezAH8BcUlklgGGJCOBMNRbzMqPHCw1SIbj
+X-Google-Smtp-Source: AGHT+IGhqfbnmkqeuTCD7bZKUdym4y9AL8tm7CgZ4nVvzkL1/icn0ir93wqM4ghcuzeFcJOcDO9xHxShdQCRi0L0i5k=
+X-Received: by 2002:adf:f58e:0:b0:371:a844:d32c with SMTP id
+ ffacd0b85a97d-3749b57c4f1mr2996255f8f.39.1724972048738; Thu, 29 Aug 2024
+ 15:54:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <6f65e3a6-5f1a-4fda-b406-17598f4a72d5@leemhuis.info>
+ <ZsiLElTykamcYZ6J@casper.infradead.org> <02D2DA66-4A91-4033-8B98-ED25FC2E0CD6@gmail.com>
+ <CAKEwX=N-10A=C_Cp_m8yxfeTigvmZp1v7TrphcrHuRkHJ8837g@mail.gmail.com>
+ <A512FD59-63DF-48D3-BCB3-83DF8505E7E0@gmail.com> <oophwj3aj2fnfi57ebzjuc536iltilmcpoucyms6nfk2alwvtr@pdj4cn4rvpdn>
+ <3D1B8F1F-2C41-4CCD-A5D7-41CF412F99DE@gmail.com> <CAJD7tkbF2Cx4uRCJAN=EKDLkVC=CApiLAsYt4ZN9YcVUJZp_5g@mail.gmail.com>
+ <EE83D424-A546-410D-B5ED-6E9631746ACF@gmail.com> <CAJD7tkZ01PPYMzcTyX_cwr836jGonJT=fwT3ovc4ixW44keRgg@mail.gmail.com>
+ <ZtD2McWko3uobU-B@casper.infradead.org>
+In-Reply-To: <ZtD2McWko3uobU-B@casper.infradead.org>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Thu, 29 Aug 2024 15:53:32 -0700
+Message-ID: <CAJD7tkYJ9KNQkpPxWQpGj0SnofSq5-mLzDnChCqTtJPGrhzY-A@mail.gmail.com>
+Subject: Re: [regression] oops on heavy compilations ("kernel BUG at
+ mm/zswap.c:1005!" and "Oops: invalid opcode: 0000")
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Piotr Oniszczuk <piotr.oniszczuk@gmail.com>, Pedro Falcato <pedro.falcato@gmail.com>, 
+	Nhat Pham <nphamcs@gmail.com>, 
+	Linux regressions mailing list <regressions@lists.linux.dev>, LKML <linux-kernel@vger.kernel.org>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Linux-MM <linux-mm@kvack.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The resctrl selftests drop the results from every first test run
-to avoid (per comment) "inaccurate due to monitoring setup transition
-phase" data. Previously inaccurate data resulted from workloads needing
-some time to "settle" and also the measurements themselves to
-account for earlier measurements to measure across needed timeframe.
+On Thu, Aug 29, 2024 at 3:29=E2=80=AFPM Matthew Wilcox <willy@infradead.org=
+> wrote:
+>
+> On Thu, Aug 29, 2024 at 02:54:25PM -0700, Yosry Ahmed wrote:
+> > Looking at the zswap commits between 6.8 and 6.9, ignoring cleanups
+> > and seemingly irrelevant patches (e.g. swapoff fixups), I think the
+> > some likely candidates could be the following, but this is not really
+> > based on any scientific methodology:
+> >
+> > 44c7c734a5132 mm/zswap: split zswap rb-tree
+> > c2e2ba770200b mm/zswap: only support zswap_exclusive_loads_enabled
+> > a230c20e63efe mm/zswap: zswap entry doesn't need refcount anymore
+> > 8409a385a6b41 mm/zswap: improve with alloc_workqueue() call
+> > 0827a1fb143fa mm/zswap: invalidate zswap entry when swap entry free
+> >
+> > I also noticed that you are using z3fold as the zpool. Is the problem
+> > reproducible with zsmalloc? I wouldn't be surprised if there's a
+> > z3fold bug somewhere.
+>
+> You're assuming that it's a zswap/zsmalloc/... bug.  If it's a random
+> scribble, as suggested by Takero Funaki:
+>
+> https://lore.kernel.org/linux-mm/CAPpoddere2g=3DkkMzrxuJ1KCG=3D0Hg1-1v=3D=
+ppg4dON9wK=3DpKq2uQ@mail.gmail.com/
+>
+> then focusing on zswap will not be fruitful.
 
-commit da50de0a92f3 ("selftests/resctrl: Calculate resctrl FS derived mem
-bw over sleep(1) only")
+IIUC that was for the initial bug report. Piotr reported a different
+problem for v6.9 in the same thread, a soft lockup. They look
+unrelated to me. Also the patch that Takero found through bisection
+landed in v6.10, so it cannot be the cause of the soft lockups.
 
-ensured that measurements accurately measure just the time frame of
-interest. The default "fill_buf" benchmark since separated the buffer
-prepare phase from the benchmark run phase reducing the need for the
-tests themselves to accommodate the benchmark's "settle" time.
-
-With these enhancements there are no remaining portions needing
-to "settle" and the first test run can contribute to measurements.
-
-Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
----
- tools/testing/selftests/resctrl/cmt_test.c |  5 ++---
- tools/testing/selftests/resctrl/mba_test.c |  6 +++---
- tools/testing/selftests/resctrl/mbm_test.c | 10 +++-------
- 3 files changed, 8 insertions(+), 13 deletions(-)
-
-diff --git a/tools/testing/selftests/resctrl/cmt_test.c b/tools/testing/selftests/resctrl/cmt_test.c
-index f09d5dfab38c..85cb93d525b8 100644
---- a/tools/testing/selftests/resctrl/cmt_test.c
-+++ b/tools/testing/selftests/resctrl/cmt_test.c
-@@ -99,14 +99,13 @@ static int check_results(struct resctrl_val_param *param, size_t span, int no_of
- 		}
- 
- 		/* Field 3 is llc occ resc value */
--		if (runs > 0)
--			sum_llc_occu_resc += strtoul(token_array[3], NULL, 0);
-+		sum_llc_occu_resc += strtoul(token_array[3], NULL, 0);
- 		runs++;
- 	}
- 	fclose(fp);
- 
- 	return show_results_info(sum_llc_occu_resc, no_of_bits, span,
--				 MAX_DIFF, MAX_DIFF_PERCENT, runs - 1, true);
-+				 MAX_DIFF, MAX_DIFF_PERCENT, runs, true);
- }
- 
- static void cmt_test_cleanup(void)
-diff --git a/tools/testing/selftests/resctrl/mba_test.c b/tools/testing/selftests/resctrl/mba_test.c
-index 204b9ac4b108..dddf9bc04cfa 100644
---- a/tools/testing/selftests/resctrl/mba_test.c
-+++ b/tools/testing/selftests/resctrl/mba_test.c
-@@ -88,14 +88,14 @@ static bool show_mba_info(unsigned long *bw_imc, unsigned long *bw_resc)
- 		 * The first run is discarded due to inaccurate value from
- 		 * phase transition.
- 		 */
--		for (runs = NUM_OF_RUNS * allocation + 1;
-+		for (runs = NUM_OF_RUNS * allocation;
- 		     runs < NUM_OF_RUNS * allocation + NUM_OF_RUNS ; runs++) {
- 			sum_bw_imc += bw_imc[runs];
- 			sum_bw_resc += bw_resc[runs];
- 		}
- 
--		avg_bw_imc = sum_bw_imc / (NUM_OF_RUNS - 1);
--		avg_bw_resc = sum_bw_resc / (NUM_OF_RUNS - 1);
-+		avg_bw_imc = sum_bw_imc / NUM_OF_RUNS;
-+		avg_bw_resc = sum_bw_resc / NUM_OF_RUNS;
- 		if (avg_bw_imc < THROTTLE_THRESHOLD || avg_bw_resc < THROTTLE_THRESHOLD) {
- 			ksft_print_msg("Bandwidth below threshold (%d MiB).  Dropping results from MBA schemata %u.\n",
- 					THROTTLE_THRESHOLD,
-diff --git a/tools/testing/selftests/resctrl/mbm_test.c b/tools/testing/selftests/resctrl/mbm_test.c
-index 734bfa4f42b3..bbacba4ec195 100644
---- a/tools/testing/selftests/resctrl/mbm_test.c
-+++ b/tools/testing/selftests/resctrl/mbm_test.c
-@@ -22,17 +22,13 @@ show_bw_info(unsigned long *bw_imc, unsigned long *bw_resc, size_t span)
- 	int runs, ret, avg_diff_per;
- 	float avg_diff = 0;
- 
--	/*
--	 * Discard the first value which is inaccurate due to monitoring setup
--	 * transition phase.
--	 */
--	for (runs = 1; runs < NUM_OF_RUNS ; runs++) {
-+	for (runs = 0; runs < NUM_OF_RUNS ; runs++) {
- 		sum_bw_imc += bw_imc[runs];
- 		sum_bw_resc += bw_resc[runs];
- 	}
- 
--	avg_bw_imc = sum_bw_imc / 4;
--	avg_bw_resc = sum_bw_resc / 4;
-+	avg_bw_imc = sum_bw_imc / NUM_OF_RUNS;
-+	avg_bw_resc = sum_bw_resc / NUM_OF_RUNS;
- 	avg_diff = (float)labs(avg_bw_resc - avg_bw_imc) / avg_bw_imc;
- 	avg_diff_per = (int)(avg_diff * 100);
- 
--- 
-2.46.0
-
+Piotr never confirmed if reverting patch Takero found fixes the
+initial problem on v6.10 though, that would be useful.
 
