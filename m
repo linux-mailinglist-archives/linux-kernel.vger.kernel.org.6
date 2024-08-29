@@ -1,180 +1,102 @@
-Return-Path: <linux-kernel+bounces-307083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 289E39647BA
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:14:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6BC99647BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:14:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0CCABB21EA7
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 14:13:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64B65286A48
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 14:14:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18B1D1AD9DE;
-	Thu, 29 Aug 2024 14:13:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CEBD1AC89F;
+	Thu, 29 Aug 2024 14:14:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oKDPeKAx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="jhyYiY7A"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47DD01922F1;
-	Thu, 29 Aug 2024 14:13:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9601C192B71;
+	Thu, 29 Aug 2024 14:14:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724940788; cv=none; b=G3mR0A5T3gJP97r90VlaFX7H/v/3t8uqHIwc91SFjl2iz9DPLxHpkHQCii/jzb4+6cqXXExovJvdiwirApEQRJk/5w9V29YGjb6pGulwkFaa0T1Ut8qGcZ3XNt7xjBZ6dBi5cOJFTmz0VyqZ+SPK/BOv+6kB/hKVFP+w6sFt6eI=
+	t=1724940880; cv=none; b=f1Y8qugytK6HsHbvHotbQOGIKIT+10EypxH3zYSTZchIy0yN790T2HDWG2GafKCCciJ04hIBwJB1y4tPH32+YEtZhpee72Uhce0lOyHHxKBI0CtS1IVFt3iho6krgTTV2Arlu2qwVJdRN733rU5i029j0V6FANs3cHoGODcoHnU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724940788; c=relaxed/simple;
-	bh=wikrjUYm6ht0GXMRmrfI/hwREovczAOww8garv3xPv8=;
+	s=arc-20240116; t=1724940880; c=relaxed/simple;
+	bh=HJNd/dS8m5R+pV/28hX/PbxnytWLOjhdv6lhnypUDIM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F/0lvtU508BHEoJM4Xw2d32UwRc8USVq3F/eWFhdx9dlYzZlMnrcZaBaGcvrgVVYbnE6zO1LDZ7pgAW7X954NG0eH5Tz89T4/HGmfffrfg0/ApBcIDRxIGZeidu+2pOkEswqdiY1l3AL6kZoyRKfzuwtJ+hZ/A1wRQp67YawCxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oKDPeKAx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFEA8C4CEC1;
-	Thu, 29 Aug 2024 14:13:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724940787;
-	bh=wikrjUYm6ht0GXMRmrfI/hwREovczAOww8garv3xPv8=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=oKDPeKAxdZLRgN1V/SVFNSCRYhgfPF5RA0Gj5HmDRrG+gL6UgkfIzBb6D7Ijd/M4C
-	 Br3JPw7wxd9safB9mZVVSMnP1iY3vo5ymjAdk7PvJmvuWTqWBjVgoNUig3Jkx+3zPb
-	 z1etPw8+SgHqqCu75Ms6RLYabTuQ3YrvgKGDuH1N4+qsu63nocdNPdoNRlr/B3xJLC
-	 3PejvV17X7dyhkEjdq18kAzz9KTHIH4Wkly2PQ0xGUXsp7NJSiV7+TgHE2JQ/23xzT
-	 th2if/PMOPwCUpSLMeLlQeemwmjC67oNfqMzlWDFLDjOQqDCR29N8/jVr/b8NazfPw
-	 BRYGC4OidyFOg==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 7A0C9CE0D9C; Thu, 29 Aug 2024 07:13:07 -0700 (PDT)
-Date: Thu, 29 Aug 2024 07:13:07 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Valentin Schneider <vschneid@redhat.com>
-Cc: Chen Yu <yu.c.chen@intel.com>, Peter Zijlstra <peterz@infradead.org>,
-	linux-kernel@vger.kernel.org, sfr@canb.auug.org.au,
-	linux-next@vger.kernel.org, kernel-team@meta.com
-Subject: Re: [BUG almost bisected] Splat in dequeue_rt_stack() and build error
-Message-ID: <cc537207-68a3-4dda-a8ec-6dda2fc1985d@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <xhsmhcyltogin.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <a19308ed-7252-4119-b891-2a61791bb6e5@paulmck-laptop>
- <xhsmha5gwome6.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <Zs8pqJjIYOFuPDiH@chenyu5-mobl2>
- <xhsmh7cc0ogza.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <5ea3658b-5aec-4969-92c5-49a2d23171c3@paulmck-laptop>
- <xhsmh4j74o6l9.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <8094db32-5c81-4537-8809-ddfe92a0ac6c@paulmck-laptop>
- <4b93e5cf-c71e-4c64-9369-4ab3f43d9693@paulmck-laptop>
- <xhsmh1q27o2us.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y+7hEfH4MBMwWhPrJAOWlgisdyktAIyJP4iKR0BYYdOB7lbsS7I1J9V8Fwc7UmIORTIUh581MlktM2bjgnV7cidw8wrG9vahcbOHF3qw0z05UWwz0+1a4Q6gZXc4apg1uoNMuXcFyyfxo/gnFmFgqvDXnCG4XYAtOqxPlC6Pbsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=jhyYiY7A; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id EE20440E0169;
+	Thu, 29 Aug 2024 14:14:35 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id PPqk9XZueheh; Thu, 29 Aug 2024 14:14:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1724940871; bh=NvPb2hh41oj+GB2wAGSBqKTolwm3KBz6DrPiss3p0fA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jhyYiY7AB6QXnLgtQN+qI65yiqX++U1JbFI/DPfg4JEA2Ouk9ccc3Dc5K91upUPhc
+	 MzXY4kSWdHhmPLX9VntuznCckL3An6OAGd+8DEFLo17F8z2pk4eGfMN4kbnVJyHpih
+	 /S94pBKc6fR6R8IxPNWNRK0YJzJaPvpypbU6CJVgp1urCHcWC+LNV054HZ568FjwvO
+	 ApKqr9iu+Wo8b1ysW3+5+87FEr/jJrNROyZvRAqRM+LLWto8bpJhh+dpdmZ2ORZDfp
+	 1oo/XaYSwROa+Wt65vjNceC1oVItuYpa571/ah65Z84XWJQX0N0Q2N2FfzRINQFi81
+	 1Gxj+4ZZtVE/V84zFMG3oeEwLcd5k5sAppo2Q0/BcJJl2j0ibRC4BklorNuvzFKVyE
+	 GJZFhfMtv3Hh92CgZP3m4u3Qb1B/3Gh5VAN58OZatnGoBj1Sa+BrSZh1K11ckizdXz
+	 PSLBxj1XZfPNtJFzEshUqbHFgVeAyKl63dzcXjG4FUUyDdgvetSwvgStLgdJDkyejP
+	 8lUrPSg4GvykbgWPTbgpKcp3dTdzMhlk6kS5dxBws5BMRdzLo0zeQ8eqbgdFt4XYB1
+	 LgWcbjmQ0w1L8vy6JVTZEUUy1Y7gVJ4MJaCbXunCIw3CR8HpROeVbUpOqmZoJm2rj3
+	 KSt4nRgM8wF6pYhpyn3SBV78=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 8C44740E0277;
+	Thu, 29 Aug 2024 14:14:22 +0000 (UTC)
+Date: Thu, 29 Aug 2024 16:14:15 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Yazen Ghannam <yazen.ghannam@amd.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org, tony.luck@intel.com, x86@kernel.org,
+	avadhut.naik@amd.com, john.allen@amd.com,
+	boris.ostrovsky@oracle.com
+Subject: Re: [PATCH] x86/MCE: Prevent CPU offline for SMCA CPUs with non-core
+ banks
+Message-ID: <20240829141415.GDZtCCN89eyjycV0uf@fat_crate.local>
+References: <20240821140017.330105-1-yazen.ghannam@amd.com>
+ <87jzg4g8dm.ffs@tglx>
+ <20240826132057.GA449322@yaz-khff2.amd.com>
+ <9D26E333-B33C-4FD4-9A8F-6F9DC1EC6527@alien8.de>
+ <20240827134706.GA719384@yaz-khff2.amd.com>
+ <7D571DAA-E399-4580-98B3-8A6E7085CB54@alien8.de>
+ <20240829140305.GA448036@yaz-khff2.amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <xhsmh1q27o2us.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+In-Reply-To: <20240829140305.GA448036@yaz-khff2.amd.com>
 
-On Thu, Aug 29, 2024 at 03:50:03PM +0200, Valentin Schneider wrote:
-> On 29/08/24 03:28, Paul E. McKenney wrote:
-> > On Wed, Aug 28, 2024 at 11:39:19AM -0700, Paul E. McKenney wrote:
-> >>
-> >> The 500*TREE03 run had exactly one failure that was the dreaded
-> >> enqueue_dl_entity() failure, followed by RCU CPU stall warnings.
-> >>
-> >> But a huge improvement over the prior state!
-> >>
-> >> Plus, this failure is likely unrelated (see earlier discussions with
-> >> Peter).  I just started a 5000*TREE03 run, just in case we can now
-> >> reproduce this thing.
-> >
-> > And we can now reproduce it!  Again, this might an unrelated bug that
-> > was previously a one-off (OK, OK, a two-off!).  Or this series might
-> > have made it more probably.  Who knows?
-> >
-> > Eight of those 5000 runs got us this splat in enqueue_dl_entity():
-> >
-> >       WARN_ON_ONCE(on_dl_rq(dl_se));
-> >
-> > Immediately followed by this splat in __enqueue_dl_entity():
-> >
-> >       WARN_ON_ONCE(!RB_EMPTY_NODE(&dl_se->rb_node));
-> >
-> > These two splats always happened during rcutorture's testing of
-> > RCU priority boosting.  This testing involves spawning a CPU-bound
-> > low-priority real-time kthread for each CPU, which is intended to starve
-> > the non-realtime RCU readers, which are in turn to be rescued by RCU
-> > priority boosting.
-> >
-> 
-> Thanks!
-> 
-> > I do not entirely trust the following rcutorture diagnostic, but just
-> > in case it helps...
-> >
-> > Many of them also printed something like this as well:
-> >
-> > [  111.279575] Boost inversion persisted: No QS from CPU 3
-> >
-> > This message means that rcutorture has decided that RCU priority boosting
-> > has failed, but not because a low-priority preempted task was blocking
-> > the grace period, but rather because some CPU managed to be running
-> > the same task in-kernel the whole time without doing a context switch.
-> > In some cases (but not this one), this was simply a side-effect of
-> > RCU's grace-period kthread being starved of CPU time.  Such starvation
-> > is a surprise in this case because this kthread is running at higher
-> > real-time priority than the kthreads that are intended to force RCU
-> > priority boosting to happen.
-> >
-> > Again, I do not entirely trust this rcutorture diagnostic, just in case
-> > it helps.
-> >
-> >                                                       Thanx, Paul
-> >
-> > ------------------------------------------------------------------------
-> >
-> > [  287.536845] rcu-torture: rcu_torture_boost is stopping
-> > [  287.536867] ------------[ cut here ]------------
-> > [  287.540661] WARNING: CPU: 4 PID: 132 at kernel/sched/deadline.c:2003 enqueue_dl_entity+0x50d/0x5c0
-> > [  287.542299] Modules linked in:
-> > [  287.542868] CPU: 4 UID: 0 PID: 132 Comm: kcompactd0 Not tainted 6.11.0-rc1-00051-gb32d207e39de #1701
-> > [  287.544335] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.16.0-0-gd239552ce722-prebuilt.qemu.org 04/01/2014
-> > [  287.546337] RIP: 0010:enqueue_dl_entity+0x50d/0x5c0
-> > [  287.603245]  ? __warn+0x7e/0x120
-> > [  287.603752]  ? enqueue_dl_entity+0x54b/0x5c0
-> > [  287.604405]  ? report_bug+0x18e/0x1a0
-> > [  287.604978]  ? handle_bug+0x3d/0x70
-> > [  287.605523]  ? exc_invalid_op+0x18/0x70
-> > [  287.606116]  ? asm_exc_invalid_op+0x1a/0x20
-> > [  287.606765]  ? enqueue_dl_entity+0x54b/0x5c0
-> > [  287.607420]  dl_server_start+0x31/0xe0
-> > [  287.608013]  enqueue_task_fair+0x218/0x680
-> > [  287.608643]  activate_task+0x21/0x50
-> > [  287.609197]  attach_task+0x30/0x50
-> > [  287.609736]  sched_balance_rq+0x65d/0xe20
-> > [  287.610351]  sched_balance_newidle.constprop.0+0x1a0/0x360
-> > [  287.611205]  pick_next_task_fair+0x2a/0x2e0
-> > [  287.611849]  __schedule+0x106/0x8b0
-> 
-> 
-> Assuming this is still related to switched_from_fair(), since this is hit
-> during priority boosting then it would mean rt_mutex_setprio() gets
-> involved, but that uses the same set of DQ/EQ flags as
-> __sched_setscheduler().
-> 
-> I don't see any obvious path in
-> 
-> dequeue_task_fair()
-> `\
->   dequeue_entities()
-> 
-> that would prevent dl_server_stop() from happening when doing the
-> class-switch dequeue_task()... I don't see it in the TREE03 config, but can
-> you confirm CONFIG_CFS_BANDWIDTH isn't set in that scenario?
-> 
-> I'm going to keep digging but I'm not entirely sure yet whether this is
-> related to the switched_from_fair() hackery or not, I'll send the patch I
-> have as-is and continue digging for a bit.
+On Thu, Aug 29, 2024 at 10:03:05AM -0400, Yazen Ghannam wrote:
+> Do you think we should we continue to pursue this or no?
 
-Makes sense to me, thank you, and glad that the diagnostics helped.
+You mean the kernel should prevent those folks from shooting themselves in the
+foot?
 
-Looking forward to further fixes.  ;-)
+How would that patch look like?
 
-							Thanx, Paul
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
