@@ -1,78 +1,161 @@
-Return-Path: <linux-kernel+bounces-305938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B31069636A9
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 02:07:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A88919636AF
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 02:08:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E65FE1C23D10
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 00:07:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 539AA1F2243D
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 00:08:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20FD44689;
-	Thu, 29 Aug 2024 00:07:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C39B84A18;
+	Thu, 29 Aug 2024 00:08:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LmZLwx+P"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XSco76Ez"
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62A9879C4;
-	Thu, 29 Aug 2024 00:06:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0B95DDA6;
+	Thu, 29 Aug 2024 00:08:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724890019; cv=none; b=UggxDBgRnjbDxFWqA0lPNu3AFbdAYw+c+i2ODYWZeAb9DMdteckblkynyzyGLDHooOsnNG75+2eTx41OfyCguhnQE/fmgQyygRKp8LuCSXV1PZ90hmA2TSpjJBiBXNUqSWunsigfwdoG2xRHQgk3mdX9F+WRz0b4f1gKoWomAJI=
+	t=1724890122; cv=none; b=ennSxGGWBlTzjAydmZuiNHxKbcEO6I0GDi7wW9xGtxpikp14g2AwoNy0xBah0/6VpUdVbPOpFtyvCHoFafXfz1o5TjzF25dYDDogGOqScrSXAzldkX8FjLxFFAMF0S1E9qIlYd/8orkmYsBlx4TSqyG4wVDWC6xwGh1+sG2wWcU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724890019; c=relaxed/simple;
-	bh=0KBomtwl5htJf2KliDq8qRkg58AM7cR5JxLbBwVmD/M=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=F5HGjBtrFBioSFNWEmCnMqvvhTcoIwXgK4iQ1I65bQZLX2fwVKtjKcRSHpDAHPPSdmz7wvioEEf6EADhW1vXolNFPrb4I+Qwc6mI8KqRtm8sqrY1P5gzDZeE5jgrZFfIWG614PJstrSxAL8ixGik8y7Rjqx1HeQCloSx9JDiQFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LmZLwx+P; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9796EC4CEC0;
-	Thu, 29 Aug 2024 00:06:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724890019;
-	bh=0KBomtwl5htJf2KliDq8qRkg58AM7cR5JxLbBwVmD/M=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=LmZLwx+POZ+ZZEuXHKVyWVVwSDgrJjSJCUR3aUrxypd4Z4wK+wbPf9EJE/+P7brK+
-	 SxbhLDYEJtEpBdkHd8ZwKsdkFWzDjPHxwjPdbkJNS2jfBZv5jzatoqnUiz0zEG28tw
-	 hjUYhdxihOCJgq/u8k3cQcEl7ih41Mn0OJWPBDGbgcpU1aJFA1pEtVgtDBWDmAU/l3
-	 SHsHnTvjwc7rGXVGqyuHpCidavb1xuTXQKYBS481Y30pxpCGAw1EwM2rQcFNZH6mAD
-	 r6TnzILRj+UQJyfdOrc8aBAzwzd0JC9nICmjlULt7mfWsJxiVe4VWmakJOCcMTOr0t
-	 Sn0irpBpH5afg==
-Date: Wed, 28 Aug 2024 17:06:57 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Jeongjun Park <aha310510@gmail.com>
-Cc: Paolo Abeni <pabeni@redhat.com>, wei.liu@kernel.org, paul@xen.org,
- davem@davemloft.net, edumazet@google.com, madhuparnabhowmik04@gmail.com,
- xen-devel@lists.xenproject.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net] net/xen-netback: prevent UAF in xenvif_flush_hash()
-Message-ID: <20240828170657.5f493cc6@kernel.org>
-In-Reply-To: <CAO9qdTGHJw-SUFH9D16N5wSn4KmaMUcX+GVFuEFu+jqMb3HU1g@mail.gmail.com>
-References: <20240822181109.2577354-1-aha310510@gmail.com>
-	<fd2a06d5-370f-4e07-af84-cab089b82a4b@redhat.com>
-	<CAO9qdTGHJw-SUFH9D16N5wSn4KmaMUcX+GVFuEFu+jqMb3HU1g@mail.gmail.com>
+	s=arc-20240116; t=1724890122; c=relaxed/simple;
+	bh=4mrOInaGgcSsyPxSOv0jBWUB2KmSNACrUTxiR3RHI8c=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Gma87mcH4Sv3RO0o4ThicWXf7QYJnAs0pKyESwtztXiZwc+CgOLInOBzzS/0JrQykIj63XtRJHoIquBiUE9F66E841vHi4iMqF0isxQXbdrXoQJYh+Ny7G4wRQPpJSf4Nd0KRJ84h20hEpFs7OB/2zcUZEhaF6PCTNxPZsJw0HA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XSco76Ez; arc=none smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-7cd8803fe0aso33440a12.0;
+        Wed, 28 Aug 2024 17:08:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724890120; x=1725494920; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=JwAJcNFbkfNLCvJ5Fy89lTRAKt+aTy//gJLU+v3KL2o=;
+        b=XSco76EzxOpoj5WUGpaHpjzM7jf/JR8W3fucYk8dQscHkQAV7djvjR+rN2asIaa2DJ
+         XK9pf0xnQdQaIEvtDTJREEfHxm64nKpcm04yBOzmpH7pui5JMDtod9i23Pwtoalm+KP/
+         qkxIbnNrsgGwMNp9DaMtuaxSwBXgKHQTmg5E63uLql+HZDmY98J9ZqYVY6e1v6j3/zFS
+         h+Zm4uFG2coWR4I4PzHiUv03T2Zm2IoGYdrnQMeXxuXpBMjERZELQmQA70gsm1WNhC19
+         rcdnL+mbHa6VHRw01ifv081wCFz5EB694s0KmvUd1favY9oY5644PB0GOVpzlhId5qNz
+         HlVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724890120; x=1725494920;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=JwAJcNFbkfNLCvJ5Fy89lTRAKt+aTy//gJLU+v3KL2o=;
+        b=a+2sb7XSOjnl9tL0ggwbkT9uggB/9EcUY6+Erq7dcD2cTv4HNOEcvZh1CEMaSiI+h+
+         iXkyhws5Ts2Skkp3EAZbEwP+euE2sdUdU+uQdZO64yFxeTxpShLW5Z0NnUomr6vd2vtx
+         sJ264uro3XDlIE1/9qdLR9D8qLzUUlqYHwXFV3D36I9lUKlhJ1Fii2iIS9J9COvu8oyn
+         RcCu8cwyn4wc0J+yMSz0WkTXbgxKKR3Yqgi919qnXjHd+Ea+KWeSdFQDR2mWHFZhdePX
+         cxjWOm73MSyIvCRHWr0jPZHj8ddSkZ1YqQChCnrlYMSdNZ5ZETsl4S6nCQkcaEhDVx0o
+         VCyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU1Dla9MMPJQZqGorqqlkrffOt4wYgwNwejpKMxVBwGzUHJfysdy3dVX42uRqVC8okVKC66C1BH8Q==@vger.kernel.org, AJvYcCVp8GrZKjeMfnOTqLmTi2qF06hCoEd7b3sy/k43698I5ePa5dLwt3B6Sx/lVpFZP/5pzxDFg7TTogNkYSMy@vger.kernel.org, AJvYcCXQB2wzlQe1YyAZj5606oJMd0SOAds+xfs2bgUpdvM1bAt3NvXbuAARe4PqJIZh8ITF99Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YylTWUoL933GaveNFHgRIWryEfy+yMHK+fsDZiOE7ulhT73Ny7x
+	/gaRWik5POstl/B+JSRHJ4ZMVC3VkBuj356LjW10j0VbxWgaURwC
+X-Google-Smtp-Source: AGHT+IEz7DDxbFAT6mOeyMJDiHUnKBgQmO3DPznwmp0JxhvgeNKaIO5s8gmnsuyfvmHr4oyLGnrb9w==
+X-Received: by 2002:a05:6a20:e196:b0:1c4:9100:6a1b with SMTP id adf61e73a8af0-1cce101dfdfmr998580637.30.1724890119797;
+        Wed, 28 Aug 2024 17:08:39 -0700 (PDT)
+Received: from [192.168.0.235] ([38.34.87.7])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-205152b3343sm482175ad.30.2024.08.28.17.08.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Aug 2024 17:08:39 -0700 (PDT)
+Message-ID: <2b92648adb162a1c6202ba447277a37902d0b407.camel@gmail.com>
+Subject: Re: [PATCH 1/1] pahole: Add option to obtain a vmlinux matching the
+ running kernel
+From: Eduard Zingerman <eddyz87@gmail.com>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Alan Maguire <alan.maguire@oracle.com>, Andrii Nakryiko
+ <andrii@kernel.org>,  Jiri Olsa <jolsa@kernel.org>,
+ dwarves@vger.kernel.org, bpf@vger.kernel.org, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>
+Date: Wed, 28 Aug 2024 17:08:34 -0700
+In-Reply-To: <Zs977_n0rkleEl94@x1>
+References: <Zs977_n0rkleEl94@x1>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 
-On Wed, 28 Aug 2024 21:52:12 +0900 Jeongjun Park wrote:
-> > The loop runs with irq disabled, the RCU critical section extends over
-> > it, uninterrupted.  
-> 
-> Basically, list_for_each_entry_rcu is specified to be used under the protection
-> of rcu_read_lock(), but this is not the case with xenvif_new_hash(). If it is
-> used without the protection of rcu_read_lock(), kfree is called immediately
-> after the grace period ends after the call to kfree_rcu() inside
-> list_for_each_entry_rcu, so the entry is released, and a UAF occurs when
-> fetching with ->next thereafter.
+On Wed, 2024-08-28 at 16:35 -0300, Arnaldo Carvalho de Melo wrote:
 
-You cut off and didn't answer Paolo's question whether you have a splat
-/ saw this actually cause a crash or a KASAN warning.
+[...]
+
+Tested-by: Eduard Zingerman <eddyz87@gmail.com>
+
+> @@ -3707,6 +3716,21 @@ int main(int argc, char *argv[])
+>  		goto out;
+>  	}
+> =20
+> +	if (show_running_kernel_vmlinux) {
+> +		const char *vmlinux =3D vmlinux_path__find_running_kernel();
+> +
+> +		if (vmlinux) {
+> +			fprintf(stdout, "%s\n", vmlinux);
+> +			rc =3D EXIT_SUCCESS;
+> +		} else {
+> +			fputs("pahole: couldn't find a vmlinux that matches the running kerne=
+l\n"
+> +			      "HINT: Maybe you're inside a container or missing a debuginfo p=
+ackage?\n",
+> +			      stderr);
+> +		}
+
+Nitpick: when run with valgrind this reports a leak for 'vmlinux':
+
+    =3D=3D186=3D=3D Memcheck, a memory error detector
+    =3D=3D186=3D=3D Copyright (C) 2002-2024, and GNU GPL'd, by Julian Sewar=
+d et al.
+    =3D=3D186=3D=3D Using Valgrind-3.23.0 and LibVEX; rerun with -h for cop=
+yright info
+    =3D=3D186=3D=3D Command: /home/eddy/work/dwarves-fork/build/pahole --ru=
+nning_kernel_vmlinux
+    =3D=3D186=3D=3D=20
+    vmlinux
+    =3D=3D186=3D=3D=20
+    =3D=3D186=3D=3D HEAP SUMMARY:
+    =3D=3D186=3D=3D     in use at exit: 8 bytes in 1 blocks
+    =3D=3D186=3D=3D   total heap usage: 15 allocs, 14 frees, 21,408 bytes a=
+llocated
+    =3D=3D186=3D=3D=20
+    =3D=3D186=3D=3D 8 bytes in 1 blocks are definitely lost in loss record =
+1 of 1
+    =3D=3D186=3D=3D    at 0x4843866: malloc (vg_replace_malloc.c:446)
+    =3D=3D186=3D=3D    by 0x4A8F9AE: strdup (strdup.c:42)
+    =3D=3D186=3D=3D    by 0x48755EC: vmlinux_path__find_running_kernel (dwa=
+rves.c:2718)
+    =3D=3D186=3D=3D    by 0x40ABBD: main (pahole.c:3720)
+    =3D=3D186=3D=3D=20
+    =3D=3D186=3D=3D LEAK SUMMARY:
+    =3D=3D186=3D=3D    definitely lost: 8 bytes in 1 blocks
+    =3D=3D186=3D=3D    indirectly lost: 0 bytes in 0 blocks
+    =3D=3D186=3D=3D      possibly lost: 0 bytes in 0 blocks
+    =3D=3D186=3D=3D    still reachable: 0 bytes in 0 blocks
+    =3D=3D186=3D=3D         suppressed: 0 bytes in 0 blocks
+
+While technically this is not a problem, maybe add a call to free()
+just to avoid noise in valgrind output?
+(Note that 'const' qualifier is no longer needed for
+ vmlinux_path__find_running_kernel, as it returns strdup result).
+
+> +
+> +		return rc;
+> +	}
+> +
+>  	if (languages.str && parse_languages())
+>  		return rc;
+> =20
+
+
 
