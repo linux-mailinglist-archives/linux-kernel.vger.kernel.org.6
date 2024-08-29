@@ -1,87 +1,184 @@
-Return-Path: <linux-kernel+bounces-306147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 742579639E9
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 07:33:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BC9429639EB
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 07:34:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A4400B23AC3
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 05:33:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0EB54B220A2
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 05:34:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4ED91494B2;
-	Thu, 29 Aug 2024 05:33:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B6C8146A63;
+	Thu, 29 Aug 2024 05:34:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tE4nHiaV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GTQc4JN9"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BF19EAD5;
-	Thu, 29 Aug 2024 05:33:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1686A92D;
+	Thu, 29 Aug 2024 05:34:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724909607; cv=none; b=WDk7yJmhs6W5GTxFXf6KSpzg2m8r4q3242sluYZGfYT8ByksX7O+w/dI8dA147a6hbwSdPMQpxRGv9UWyvKR4+UxFlM3ptZAR9mBW5pZt0K0VUNJdTRV67A4RcwjSS/+uLEYuEOR04c2BRG6LBq7t/PdL+oXY/ZZuyCo8V7AeUs=
+	t=1724909688; cv=none; b=VEX01bkuPInfkdbZb2s7TBFHJab1t5kfvdrwMa4xMa0PKIgwO2uDUhGxBbVBEcyizDSAih//vypVpl5vijpK/MrPZFATxLRWDJ9AGCbh73bXybngt+CDuCUyeDBUUnHRfMblLhX/4xo3f6Y2IC0/QTw0sTmFe04jla3v+eRlO6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724909607; c=relaxed/simple;
-	bh=tGOvwmXOs76XhqKtvRUyCxm5Pa342IrbVlP8rxGktWA=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=rUkU0ki+V+edNd+RzuWbOnA1rYlPRUKubWBRtZQqu9vHtjZ9+UsSlX7fjlvYFoPG+mgOVnMM7nVEYFoTVn7GhC7318IzAp45j7t3mByVUj8behs3kVutrJhXsYaONOyERQDRJdWLmrAhmLl5vtTYlfTCjKVg3MZHwWgS0NGjmFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tE4nHiaV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7007FC4CEC1;
-	Thu, 29 Aug 2024 05:33:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724909606;
-	bh=tGOvwmXOs76XhqKtvRUyCxm5Pa342IrbVlP8rxGktWA=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=tE4nHiaVZ2oLjNi0Rwfz8L79JoWj5SM87XU55S/OKhRgfte7lOJ80D1T91wtry5Qe
-	 XtB3qvIj3vWYkk8X779kTZPIKHm3NYz6c42ftvsclrjJwBT3JG+LxxYf1wMHti7PcV
-	 a4m3Y9pXNwOCYAVNaw9nOHDl4hmXI0s25C9WfLBf3vfkqVD0mGrACq4O5nFf3Yd4sD
-	 zSgys6pmRcnOBlaNndeXW+G5PBHZj8wNE4VUzL9Jsx8z4OHgtq+D8JQvS+edsGtKIE
-	 8bhDWuGQvQBbWCCNqI6at8SBZ2RO/7bcVhjaCoNBTSQHGdwTUx/F6pblKuMwc0sIx5
-	 HGA5GrqnH/m4Q==
-Date: Wed, 28 Aug 2024 22:33:23 -0700
-From: Kees Cook <kees@kernel.org>
-To: Xingyu Li <xli399@ucr.edu>
-CC: mcgrof@kernel.org, j.granados@samsung.com, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, Yu Hao <yhao016@ucr.edu>,
- "Paul E. McKenney" <paulmck@kernel.org>, Waiman Long <longman@redhat.com>,
- Sven Eckelmann <sven@narfation.org>, Thomas Gleixner <tglx@linutronix.de>,
- anna-maria@linutronix.de, frederic@kernel.org, netdev@vger.kernel.org,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Tejun Heo <tj@kernel.org>, Kuniyuki Iwashima <kuniyu@amazon.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: BUG: WARNING in retire_sysctl_set
-User-Agent: K-9 Mail for Android
-In-Reply-To: <CALAgD-6CptEMjtkwEfSZyzPMwhbJ_965cCSb5B9pRcgxjD_Zkg@mail.gmail.com>
-References: <CALAgD-4uup-u-7rVLpFqKWqeVVVnf5-88vqHOKD-TnGeYmHbQw@mail.gmail.com> <202408281812.3F765DF@keescook> <CALAgD-6CptEMjtkwEfSZyzPMwhbJ_965cCSb5B9pRcgxjD_Zkg@mail.gmail.com>
-Message-ID: <BA3EA925-5E5E-4791-B820-83A238A2E458@kernel.org>
+	s=arc-20240116; t=1724909688; c=relaxed/simple;
+	bh=qOzLTC5TwIPs6fH5v8BJWFxwitFWVkLCRunEOqdsgiA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ro0jtzSaGwaYKbxu0zPD8uOuhnQgH2crM3rO3pdWHBwHJg9rf+8m8GqwdZKuLMEd9YMD1a4knePcwBWahG29o7u60LVOj48uxZbY5P9oNarKcsiOUI462sbigyPTq9r/uQNLvubVgXd6hPBU2j3d2PJPSF1TW/dPtTrD5K23Liw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GTQc4JN9; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2f3e071eb64so2709281fa.1;
+        Wed, 28 Aug 2024 22:34:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724909685; x=1725514485; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6duK+y0NIbCZnrZY/SKwmfpA9Y/EZSnO7EgAhUfZetE=;
+        b=GTQc4JN9v9AOwMi/eLCkvPoPG3k4ndAbZggJM6PEo1xR3TDtwp7o7vR7aZOm63i2jL
+         vlqjffxMldKf9jf9k8/uKIdp7QXmLqG1yVBKTGQ2nwXVP+zdybRZbAgiEVt+1sL+W46p
+         ZjUVMJExC4PsjBmOLuTSpXN3O0NpNXXquXu6rXPcNMmMdxntHeqVtiu2PbwCbCHBnty+
+         QHF0XjUPljhCU9pMWSO27YsYR75s3FZEX4q0ZID55Y6+7DLt+Bj4Ljbhl0rk9XTnTT/W
+         buNKd0+1Uiexen/9qhzIxMNJXHkicbCR3mNi9CFeWHMwVWgJ4r+rXyIkxrvA9MiZ6PGj
+         c90A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724909685; x=1725514485;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6duK+y0NIbCZnrZY/SKwmfpA9Y/EZSnO7EgAhUfZetE=;
+        b=uGnQQTmDNZcmry1AwWcc2NnMH08hIWeXwnf76ds38YX7sKkQwxh9HhJKCYsiAqRts+
+         eB8dDKxFS6gK2T0dMKgAfeNsg1JQAPacOfEjeFevh4FdJppqqe1TUVzWWUjl3stLz02H
+         MPjZVuMaShWIIbBnrw7bIcckeFT07lcd1DT5bDGvMkHqv/n/j7SELIDNX3nNJSxdr9pF
+         YFFvyoY5+rvQYHFF/JPX7QLIIjtX7OaplncFr+JwmC32KKYj0tGpE/gqXIhECTEi2GQn
+         kZO5i9iCI2wSxrRL7mveHmHDpzn1CAaPF2deB2EmuLf0KFmM/XmKvncEijs+JyJAsSoQ
+         lXkA==
+X-Forwarded-Encrypted: i=1; AJvYcCXAfZ4nhJ8/3C0wvzI6byy4Gyv0HJeeKSniyAlBTmiEOqXuxFLgEWjB2TeNW5jMOu5m3kMuUIoW6oKi@vger.kernel.org, AJvYcCXXMgHXxsywKrxKGwgg7D774JR50Mo3B7H/7NmZOqGotGzHGWkyRaRWBjOXQUCiAkN9VB9NIIwN1coLlgQ6@vger.kernel.org
+X-Gm-Message-State: AOJu0YyemjFjgVrqA0jdzhJVSspNnjiQxO6ZCAwd8dFn/TMaWyK4HdDH
+	IiJ+8iTh+x/AjJBw7wn0F8oWQ9o/ha0tmiU6pmFYJ5NA0LVicVEkkjXq06Jtp1F6jW3715lpJA+
+	wfb8Ag/GSQlvQiMX3VGhFvAKptNDT075G
+X-Google-Smtp-Source: AGHT+IGf+cGnsxc6Gp6hnAijFaiDpUZ4HnMX13sJkmsDz2H4U99wyfT8oNOb7C15TJldrMxAMyWKHPV57Es9pFVsl0o=
+X-Received: by 2002:a05:6512:4003:b0:533:4620:ebec with SMTP id
+ 2adb3069b0e04-5353e543459mr1238678e87.3.1724909683984; Wed, 28 Aug 2024
+ 22:34:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
+References: <20240828184018.3097386-1-andriy.shevchenko@linux.intel.com>
+ <20240828184018.3097386-6-andriy.shevchenko@linux.intel.com> <20240829045334.GT1532424@black.fi.intel.com>
+In-Reply-To: <20240829045334.GT1532424@black.fi.intel.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Thu, 29 Aug 2024 08:34:07 +0300
+Message-ID: <CAHp75VfCpoTVxxNJewTDmYjFtX378QMoNuRv-KGiFSgop-_d-w@mail.gmail.com>
+Subject: Re: [PATCH v1 5/5] pinctrl: intel: Introduce for_each_intel_gpio_group()
+ helper
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Andy Shevchenko <andy@kernel.org>, 
+	Linus Walleij <linus.walleij@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
+On Thu, Aug 29, 2024 at 7:53=E2=80=AFAM Mika Westerberg
+<mika.westerberg@linux.intel.com> wrote:
+> On Wed, Aug 28, 2024 at 09:38:38PM +0300, Andy Shevchenko wrote:
+> > Introduce a helper macro for_each_intel_gpio_group().
+> > With that in place, update users.
+> >
+> > It reduces the C code base as well as shrinks the binary:
+> >
+> >   add/remove: 0/0 grow/shrink: 1/8 up/down: 37/-106 (-69)
+> >   Total: Before=3D15611, After=3D15542, chg -0.44%
 
+...
 
-On August 28, 2024 10:02:00 PM PDT, Xingyu Li <xli399@ucr=2Eedu> wrote:
->In fact, the bugs that I report are fuzzed by the syzkaller templates
->that we generated, but not those from the syzkaller official
->templates=2E We want to find bugs that do not have the corresponding
->official syzkaller template=2E
->I also checked to make sure that the bugs I reported did not occur on syz=
-bot=2E
+> > +#define for_each_intel_gpio_group(pctrl, community, grp)              =
+               \
+> > +     for (unsigned int __i =3D 0;                                     =
+                 \
+> > +          __i < pctrl->ncommunities && (community =3D &pctrl->communit=
+ies[__i]);       \
+> > +          __i++)                                                      =
+               \
+> > +             for (unsigned int __j =3D 0;                             =
+                 \
+> > +                  __j < community->ngpps && (grp =3D &community->gpps[=
+__j]);           \
+> > +                  __j++)                                              =
+               \
+> > +                     if (grp->gpio_base =3D=3D INTEL_GPIO_BASE_NOMAP) =
+{} else
+> > +
+>
+> This looks absolutely grotesque. I hope that you can debug this still
+> after couple of months has passed because I cannot ;-)
 
-That's excellent that you've developed better templates! Can you submit th=
-ese to syzkaller upstream? Then the automated fuzzing CI dashboard will ben=
-efit (and save you the work of running and reporting the new finds)=2E
+Yes, I can.
 
--Kees
+> I wonder if there is a way to make it more readable by adding some sort
+> of helpers? Or perhaps we don't need to make the whole thing as macro
+> and just provide helpers we can use in the otherwise open-coded callers.
+
+Yes, I can split it into two for-loops. But note, each of them a quite
+standard how we define for_each macro with and without conditional,
+see the jernel full of them (PCI, GPIOLIB, i915, ...).
+
+...
+
+> > -     for (i =3D 0; i < pctrl->ncommunities; i++) {
+> > -             const struct intel_community *comm =3D &pctrl->communitie=
+s[i];
+> > -             int j;
+> > +     for_each_intel_gpio_group(pctrl, c, gpp) {
+> > +             if (offset >=3D gpp->gpio_base && offset < gpp->gpio_base=
+ + gpp->size) {
+> > +                     if (community)
+> > +                             *community =3D c;
+> > +                     if (padgrp)
+> > +                             *padgrp =3D gpp;
+> >
+> > -             for (j =3D 0; j < comm->ngpps; j++) {
+> > -                     const struct intel_padgroup *pgrp =3D &comm->gpps=
+[j];
+> > -
+> > -                     if (pgrp->gpio_base =3D=3D INTEL_GPIO_BASE_NOMAP)
+> > -                             continue;
+> > -
+> > -                     if (offset >=3D pgrp->gpio_base &&
+> > -                         offset < pgrp->gpio_base + pgrp->size) {
+> > -                             int pin;
+> > -
+> > -                             pin =3D pgrp->base + offset - pgrp->gpio_=
+base;
+> > -                             if (community)
+> > -                                     *community =3D comm;
+> > -                             if (padgrp)
+> > -                                     *padgrp =3D pgrp;
+> > -
+> > -                             return pin;
+> > -                     }
+>
+> Because I think this open-coded one is still at least readable. Of
+> course if there is duplication we should try to get rid of it but not in
+> expense of readability IMHO.
+
+The result I think is more readable as it's pretty clear from the
+macro name what is iterating over. It also hides unneeded detail, i.e.
+iterator variable.
+
+>
+> > +                     return gpp->base + offset - gpp->gpio_base;
+> >               }
+> >       }
+
 
 --=20
-Kees Cook
+With Best Regards,
+Andy Shevchenko
 
