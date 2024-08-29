@@ -1,245 +1,163 @@
-Return-Path: <linux-kernel+bounces-307331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1ECB964BE6
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 18:45:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F4E8964BE9
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 18:45:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 362E21F22C76
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:45:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70581B24739
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:45:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B93CD1B5837;
-	Thu, 29 Aug 2024 16:44:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F4141B6524;
+	Thu, 29 Aug 2024 16:45:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L7iIbi0+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="X9Ny6i14"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D57651B4C58;
-	Thu, 29 Aug 2024 16:44:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE4941B5ED0
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 16:45:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724949895; cv=none; b=W8a5z/3WABavSv/lsCuRR57dTmzXVIs3/LrMsWERFmMlND5WqlnzFWYiHtTZPf+BQk0UBKJi4sZ5Klew/9u8lYTOyv6siT4YtcLoaXpiOcvc+LTq0/EfLirlqlvDmMoIZXJTukHv41DNXOizxY+xUBw9jkuLEcOouaIXRPLwXbc=
+	t=1724949906; cv=none; b=o2iAC8kocPuCOXUzl1UZkjpGxALYZMQWRivWg9m8tUujV8EqcrIBlmNhLzMYTXHlPIFABdV0Cg1fOZrzZoFUIIdwmG5MaiOZD2A7J/d2xoMZyTUoys0HnWF6hnz0N9ffKJY67xCSViwD+w7by9ISSCLxO6heg77dt5+XPHS/v80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724949895; c=relaxed/simple;
-	bh=OMsOLBdAsSGlf4aitflcY78wVc+gfDKPy/epnfUGNfE=;
+	s=arc-20240116; t=1724949906; c=relaxed/simple;
+	bh=dGeqRNL0k3U8r1FrAdMByEIRpBqjUiADntTeyo3O/II=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TKSGGP8SbTknKzCrNrD6FduV9FKUonxY1Q2adkq8L6AIGDbfx7NBroYcvu7udi44QopH0BTXKNaTueYkpo7//ZI/sXTL0G0KWsX37oLaj0kfPOdJ+KxXPQ7BCDdyhLjFFwZPWe7p/9UmBY4ckq/AHYsUXOW+B9dvh2Aaol/fqEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L7iIbi0+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D008C4CEC1;
-	Thu, 29 Aug 2024 16:44:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724949895;
-	bh=OMsOLBdAsSGlf4aitflcY78wVc+gfDKPy/epnfUGNfE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=L7iIbi0+kkKXOsu1mXRZ4FOTjZwDzCcoThaO3gUYPUIOHToB3KaSIV6gJLAoKvcFP
-	 /qh5/vKTzlaksp5IKAUn+6OPtBCKaUFJViqhMo681z34OuCj/d3jYnqRjUc/rAr+Sr
-	 EXl1gBptTJE/7FytpitmpThOUGkA7k4+TjresSyFq/3Frv14hDzn7xeOT+181Owv3A
-	 qycizKgULOL9iaM+453afn0Y+nPxQDwfW8QbLDi6EjHy0kz5RIZLQCH2wR8xSzGkxV
-	 exg06hklD+k5v0Jm98im+sFPh8sPARra//zyjFOSosgjPv0EaNIxi+N0uzQTpmqKlT
-	 OIfaSZYDza2Fg==
-Date: Thu, 29 Aug 2024 17:44:50 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Christian Bruel <christian.bruel@foss.st.com>
-Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, mcoquelin.stm32@gmail.com,
-	alexandre.torgue@foss.st.com, p.zabel@pengutronix.de,
-	linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	fabrice.gasnier@foss.st.com
-Subject: Re: [PATCH v4 1/5] dt-bindings: phy: Add STM32MP25 COMBOPHY bindings
-Message-ID: <20240829-manifesto-tray-65443d6e7e6e@spud>
-References: <20240828143452.1407532-1-christian.bruel@foss.st.com>
- <20240828143452.1407532-2-christian.bruel@foss.st.com>
- <20240828-handsfree-overarch-cd1af26cb0c5@spud>
- <005a2f7d-ab46-46c8-a0cc-b343685caf7c@foss.st.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fpzRsaahNlARqb1OvbSeeNn0zDR2OYa0cze9+i3XFSF3LsjM/T8IE1ehl0PhKjzprwdfriOfBqxmwg9Xij5IyNN+FdkzwUe/lOp2EsculgMNK8dZl6noK84CmLV4gqOexrsoy9JqK7iOcBSzAnjlWiKa5DM16TEDsi6AQJCXE7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=X9Ny6i14; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-71434174201so767240b3a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 09:45:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724949904; x=1725554704; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=JgFyhyb1uCXggxvp1V3dzxUi9b48dUBBRni4XLoofMY=;
+        b=X9Ny6i14XwJOBiLYDxqUfKgu0lfFEZEUAxILPgPSI64ddQVFe5VCQgHneUc8MNxe7g
+         MAxjmTuEAD07zKlkpGcRJMgTJY5PgenG4nSUJOk9h+ZX1jA/wp3b38nt1zrAPMVSLANm
+         BwohNZKQaMuTTlY4AtlECp0dMENVwsFyu/Pyv7CNtolu8c3O97DrCMMReDbxKnhCC3RC
+         +RDyctSYisJHAvsbFlQzPPN6bELtDQSYzPlP+vTCOJRAVlRD+EaTz7ko6rfqgRG8QWzO
+         CBLdpvWLMTuWlTAMKUYonA3r4AlD1d3mn5X1gOT2g95aHadjJMRxFBOsyvRZordFUafp
+         j08A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724949904; x=1725554704;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JgFyhyb1uCXggxvp1V3dzxUi9b48dUBBRni4XLoofMY=;
+        b=aM+QkSLNnb6lz/ECXuO1OTivUK3ceu8oqRo2fDnVbwYM3P6wFAxb3YMn2NNo0Onmd9
+         +L61WyTBgVJlqz1KwWegGdiN/YcUP693Sf6rqsrpnIwFKfuyrxNyUM84g8Vo6Ls54luf
+         bRIUpNI00YnsjI+cTT/RmBW89tIpX5OOJgkcCgQIK5ZTpAhsKc6CdKBJL/K6M5Ikmens
+         651Ee5o3kULTWseRVAUlt8JAAkyONIRZpat8vSuMt1NdcOFSrHAv2659tMxWjRyD/fpj
+         I405CdMBBQTXU6mQ4d2218xf+rZndZihMy9L/F+g3a6NjWdrV4VSlSOtRwp/nibwoYue
+         IRvA==
+X-Forwarded-Encrypted: i=1; AJvYcCXkkZ22alTdbuYuSk+WxD+ikYaqGMipwTCLz/3yqfOv3865tKW95bv6bU+yX8We8UvkE/92AMofpcZWscs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQun3GhGIBF5bvck6yfmZIbQXUk+0u3otJQLmro/4VFZ/468+k
+	oYDgku08uGvKjoXpfVpShqgsLY3kqyRLmTr6sfZJwGTfNqg36XV0Wh5k7ciLEw==
+X-Google-Smtp-Source: AGHT+IF+STfTZn8+OCUAmOtpGVosHxp16FTi1c3m1cVFQLchpyX4nrTzvfScbQwBAr1n+NG6sH0CPA==
+X-Received: by 2002:a05:6a00:a01:b0:70d:3420:9309 with SMTP id d2e1a72fcca58-715dfbc885amr4708301b3a.17.1724949904214;
+        Thu, 29 Aug 2024 09:45:04 -0700 (PDT)
+Received: from thinkpad ([117.213.99.68])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7d22e9be18esm1448578a12.73.2024.08.29.09.45.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Aug 2024 09:45:03 -0700 (PDT)
+Date: Thu, 29 Aug 2024 22:14:55 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: lpieralisi@kernel.org, kw@linux.com, bhelgaas@google.com,
+	robh@kernel.org, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Subject: Re: [PATCH v2] PCI: qcom-ep: Enable controller resources like PHY
+ only after refclk is available
+Message-ID: <20240829164455.ts2j46dfxwp3pa2f@thinkpad>
+References: <20240829053720.gmblrai2hkd73el3@thinkpad>
+ <20240829123808.GA56247@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="d1nrqP5TuJn4PExU"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <005a2f7d-ab46-46c8-a0cc-b343685caf7c@foss.st.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240829123808.GA56247@bhelgaas>
 
+On Thu, Aug 29, 2024 at 07:38:08AM -0500, Bjorn Helgaas wrote:
+> On Thu, Aug 29, 2024 at 11:07:20AM +0530, Manivannan Sadhasivam wrote:
+> > On Wed, Aug 28, 2024 at 03:59:45PM -0500, Bjorn Helgaas wrote:
+> > > On Wed, Aug 28, 2024 at 07:31:08PM +0530, Manivannan Sadhasivam wrote:
+> > > > qcom_pcie_enable_resources() is called by qcom_pcie_ep_probe() and it
+> > > > enables the controller resources like clocks, regulator, PHY. On one of the
+> > > > new unreleased Qcom SoC, PHY enablement depends on the active refclk. And
+> > > > on all of the supported Qcom endpoint SoCs, refclk comes from the host
+> > > > (RC). So calling qcom_pcie_enable_resources() without refclk causes the
+> > > > whole SoC crash on the new SoC.
+> > > > 
+> > > > qcom_pcie_enable_resources() is already called by
+> > > > qcom_pcie_perst_deassert() when PERST# is deasserted, and refclk is
+> > > > available at that time.
+> > > > 
+> > > > Hence, remove the unnecessary call to qcom_pcie_enable_resources() from
+> > > > qcom_pcie_ep_probe() to prevent the crash.
+> > > > 
+> > > > Fixes: 869bc5253406 ("PCI: dwc: ep: Fix DBI access failure for drivers requiring refclk from host")
+> > > > Tested-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > > > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > > > ---
+> > > > 
+> > > > Changes in v2:
+> > > > 
+> > > > - Changed the patch description to mention the crash clearly as suggested by
+> > > >   Bjorn
+> > > 
+> > > Clearly mentioning the crash as rationale for the change is *part* of
+> > > what I was looking for.
+> > > 
+> > > The rest, just as important, is information about what sort of crash
+> > > this is, because I hope and suspect the crash is recoverable, and we
+> > > *should* recover from it because PERST# may occur at arbitrary times,
+> > > so trying to avoid it is never going to be reliable.
+> > 
+> > I did mention 'whole SoC crash' which typically means unrecoverable
+> > state as the SoC would crash (not just the driver). On Qcom SoCs,
+> > this will also lead the SoC to boot into EDL (Emergency Download)
+> > mode so that the users can collect dumps on the crash.
+> 
+> IIUC we're talking about an access to a PHY register, and the access
+> requires Refclk from the host.  I assume the SoC accesses the register
+> by doing an MMIO load.  If nothing responds, I assume the SoC would
+> take a machine check or similar because there's no data to complete
+> the load instruction.  So I assume again that the Linux on the SoC
+> doesn't know how to recover from such a machine check?  If that's the
+> scenario, is the machine check unrecoverable in principle, or is it
+> potentially recoverable but nobody has done the work to do it?  My
+> guess would be the latter, because the former would mean that it's
+> impossible to build a robust endpoint around this SoC.  But obviously
+> this is all complete speculation on my part.
+> 
 
---d1nrqP5TuJn4PExU
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Atleast on Qcom SoCs, doing a MMIO read without enabling the resources would
+result in a NoC (Network On Chip) error, which then end up as an exception to
+the Trustzone and Trustzone will finally convert it to a SoC crash so that the
+users could take a crash dump and do the analysis on why the crash has happened.
 
-On Thu, Aug 29, 2024 at 01:06:53PM +0200, Christian Bruel wrote:
-> On 8/28/24 18:11, Conor Dooley wrote:
-> > On Wed, Aug 28, 2024 at 04:34:48PM +0200, Christian Bruel wrote:
-> > > Document the bindings for STM32 COMBOPHY interface, used to support
-> > > the PCIe and USB3 stm32mp25 drivers.
-> > > Following entries can be used to tune caracterisation parameters
-> > >   - st,output-micro-ohms and st,output-vswing-microvolt bindings entr=
-ies
-> > > to tune the impedance and voltage swing using discrete simulation res=
-ults
-> > >   - st,rx-equalizer register to set the internal rx equalizer filter =
-value.
-> > >=20
-> > > Signed-off-by: Christian Bruel <christian.bruel@foss.st.com>
-> > > ---
-> > >   .../bindings/phy/st,stm32mp25-combophy.yaml   | 128 +++++++++++++++=
-+++
-> > >   1 file changed, 128 insertions(+)
-> > >   create mode 100644 Documentation/devicetree/bindings/phy/st,stm32mp=
-25-combophy.yaml
-> > >=20
-> > > diff --git a/Documentation/devicetree/bindings/phy/st,stm32mp25-combo=
-phy.yaml b/Documentation/devicetree/bindings/phy/st,stm32mp25-combophy.yaml
-> > > new file mode 100644
-> > > index 000000000000..8d4a40b94507
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/phy/st,stm32mp25-combophy.yaml
-> > > @@ -0,0 +1,128 @@
-> > > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> > > +%YAML 1.2
-> > > +---
-> > > +$id: http://devicetree.org/schemas/phy/st,stm32mp25-combophy.yaml#
-> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > +
-> > > +title: STMicroelectronics STM32MP25 USB3/PCIe COMBOPHY
-> > > +
-> > > +maintainers:
-> > > +  - Christian Bruel <christian.bruel@foss.st.com>
-> > > +
-> > > +description:
-> > > +  Single lane PHY shared (exclusive) between the USB3 and PCIe contr=
-ollers.
-> > > +  Supports 5Gbit/s for USB3 and PCIe gen2 or 2.5Gbit/s for PCIe gen1.
-> > > +
-> > > +properties:
-> > > +  compatible:
-> > > +    const: st,stm32mp25-combophy
-> > > +
-> > > +  reg:
-> > > +    maxItems: 1
-> > > +
-> > > +  "#phy-cells":
-> > > +    const: 1
-> > > +
-> > > +  clocks:
-> > > +    minItems: 2
-> > > +    items:
-> > > +      - description: apb Bus clock mandatory to access registers.
-> > > +      - description: ker Internal RCC reference clock for USB3 or PC=
-Ie
-> > > +      - description: pad Optional on board clock input for PCIe only=
-=2E Typically an
-> > > +                     external 100Mhz oscillator wired on dedicated C=
-LKIN pad. Used as reference
-> > > +                     clock input instead of the ker
-> > > +
-> > > +  clock-names:
-> > > +    minItems: 2
-> > > +    items:
-> > > +      - const: apb
-> > > +      - const: ker
-> > > +      - const: pad
-> > > +
-> > > +  resets:
-> > > +    maxItems: 1
-> > > +
-> > > +  reset-names:
-> > > +    const: phy
-> > > +
-> > > +  power-domains:
-> > > +    maxItems: 1
-> > > +
-> > > +  wakeup-source: true
-> > > +
-> > > +  interrupts:
-> > > +    maxItems: 1
-> > > +    description: interrupt used for wakeup
-> > > +
-> > > +  access-controllers:
-> > > +    minItems: 1
-> > > +    maxItems: 2
-> > Can you please describe the items here?
->=20
-> I can specialize the description: "Phandle to the rifsc firewall device t=
-o check access right."
+I know that it may sound strange to developers coming from x86 world :)
 
-Right, but there are potentially two access controllers here. You need
-to describe which is which, so that people can hook them up in the
-correct order. In what case are there two? Your dts patch only has one.
+But this NoC error is something NVidia has also reported before, so I wouldn't
+assume that this is a Qcom specific issue but rather for SoCs depending on
+refclk from host.
 
-> otherwise described in access-controllers/access-controllers.yaml, see al=
-so bindings/bus/st,stm32mp25-rifsc.yaml
->=20
-> >=20
-> > > +  st,syscfg:
-> > > +    $ref: /schemas/types.yaml#/definitions/phandle
-> > > +    description: Phandle to the SYSCON entry required for configurin=
-g PCIe
-> > > +      or USB3.
-> > Why is a phandle required for this lookup, rather than doing it by
-> > compatible?
->=20
-> the phandle is used to select the sysconf SoC configuration register
-> depending on the PCIe/USB3 mode (selected by=A0xlate function), so it's n=
-ot
-> like a lookup here.
+For building a robust endpoint, SoCs should generate refclk by themselves.
 
-If "syscon_regmap_lookup_by_phandle()" is not a lookup, then I do not
-know what is. An example justification for it would be that there are
-multiple combophys on the same soc, each using a different sysconf
-region. Your dts suggests that is not the case though, since you have
-st,syscfg =3D <&syscfg>; in it, rather than st,syscfg =3D <&syscfg0>;.
+- Mani
 
-> This sysconf register is also used for other settings
-> such as the PLL, Reference clock selection, ...
->=20
-> >=20
-> > > +
-> > > +  st,ssc-on:
-> > > +    type: boolean
-> > flag, not boolean, for presence based stuff. And in the driver,
-> > s/of_property_read_bool/of_property_present/.
->=20
-> ok
->=20
-> >=20
-> > > +    description:
-> > > +      A boolean property whose presence indicates that the SSC for c=
-ommon clock
-> > > +      needs to be set.
-> > And what, may I ask, does "SSC" mean? "Common clock" is also a bit of a
-> > "linuxism", what does this actually do in the hardware block?
->=20
-> SSC for Spread Spectrum Clocking. It is an hardware setting for the 100Mh=
-z PCIe reference common clock,
-
-Ah, so not really a "common clock" linuxism at all.
-
-> I will rephrase the description
-
-How is someone supposed to decide between on and off? Is it always on
-for PCIe, or only on in some configurations? Or maybe only (or always?) on
-if the pad clock is provided?
-
-Cheers,
-Conor.
-
---d1nrqP5TuJn4PExU
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZtClggAKCRB4tDGHoIJi
-0mz4AQCOLJVTuu1biezoFWNlwB78dkF2W3NgTHnu4EeKe/fVegEA8PVCgbv2TNfb
-/QSr9nkfPam8mQ4ZKijx7IvnTCm3LgQ=
-=SvVH
------END PGP SIGNATURE-----
-
---d1nrqP5TuJn4PExU--
+-- 
+மணிவண்ணன் சதாசிவம்
 
