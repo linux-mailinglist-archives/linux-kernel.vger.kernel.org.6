@@ -1,132 +1,129 @@
-Return-Path: <linux-kernel+bounces-306634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DC5196418D
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 12:24:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15CE296418C
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 12:24:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 049362874D4
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:24:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B34211F21084
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:24:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23CA81AC89F;
-	Thu, 29 Aug 2024 10:19:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69612191F89;
+	Thu, 29 Aug 2024 10:19:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="kcsav2lU"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uk+IUGBj"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94ED6191F9E
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 10:19:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F6031ABECB
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 10:19:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724926772; cv=none; b=EgJ1Aby/zHDYidRmLEW1K2BzYVCkpfkg3iNfzCByaLdPqFr6tIUqF1UQvPWcM10uDn3VEYnqHIl6GUeNfT3nFNMoDCUKQyX5Dc3mKfm0i76FB+HJaOM/ThTcPUsCtUPA9BsQODz+Kwl0vPXUZzSV0sFB0BKv/U3H5knke0mppYM=
+	t=1724926770; cv=none; b=dzG+mmu4U9qvDE5Y6go/LlyPaznpA9Yj06YTu7ZQS0MLvLUtDZgOjPmVLYpW87cMpGSgReFBP6/0onFPWHlg9/ncFntJEhW1N6iiWaQ67oIr+dBGU2bAw5jNMzV+Adh3f1IOyKWt5zUqHp0nxej+Okx6VWKnLhbWjc9KRPlGKaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724926772; c=relaxed/simple;
-	bh=5nWr5B4GB85GsqmJ7v3ZXbQ1xAh3wVALIRZsyahieU8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SbAXkqvS5I2o0uB6401k6TXvCa09BK9ODXZsm5TAAFLDFZz35vnJlFA0reKuZ3XGyHJli5Od8F+rL0QeZ6/YMaeYpiZRq2PtYyFt/0FaQfCPCfIj2hN0XGHsbzdI3OguldNMmcnUZ2wRJxloAcOjXi+N+4dYgDEOsOV5YOHVwok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=kcsav2lU; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-7141b04e7a3so424365b3a.3
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 03:19:30 -0700 (PDT)
+	s=arc-20240116; t=1724926770; c=relaxed/simple;
+	bh=JiZQWXIRJ3HjYCLl7hFrsgGpcmSL/PwTn6gBZKW5NnI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g4GA/YYNvPbOYrI4pRBsQW4In6GnWPoGxsCsnyq+7mEAJrN33pbrwDmgRnU0WR1oC1xFrRboV3fR5p5TqmQD/IeF0SySyreUsY+aZslKAYqjEQgrWhmA6AU1zLWm7h/JMAxJAsx9Eo+Q1lHHDJ44lmlKj5DyusMVb6keNPMlj9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uk+IUGBj; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-533521cd1c3so561161e87.1
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 03:19:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1724926770; x=1725531570; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=FLZw23XkOzc6bRGw9yd5cNf3epruUgLmmmKcBkgtqCw=;
-        b=kcsav2lUrWDyb8LpJPy9Ee941GeoUyUnXpZPm7OMhcj/ULGc799ipXdv2OG1HAxGct
-         18Y0wTujY5jzQTPtjObv0LkhscboHIp3HSq47nDG+oHjOGDWvYRutexGGg1da/aXIPco
-         8A8MV1ftJuGAG1Ak0KyPBJHSETezczsq0GVxTmPBjEvBQl5WXVWysD83IpaU09M91ykF
-         28mtezrZoiKvGN2fWrdmRKBbdnfZiFRvXFWbEnG+JWfZQbKPPaGrvyYBBM5ZGLf/+B6W
-         eF9MIEIXs3bRFnvkWr720KQHfJB2OJ3muM1FrZ69hN141XOWT/ACMrXv5AnIC0pxpCoa
-         W4Ww==
+        d=linaro.org; s=google; t=1724926767; x=1725531567; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=dsgEl12pS5/oK+D6m4jiXUFGwYqDk87JRvruFRHJCvw=;
+        b=uk+IUGBj5vZH3cUlq2z+8waWEcJdBbudsV6P5FOXvr7So1vE7L2e7qHSw1N5JsuKCQ
+         QlW0/hRw8G4d/Sa3gISoaOm5JS9YG5HQInI8cnMdPtR1GEPrn7g4ial+4H9w6Wx3KtVD
+         433zVeHCx6YnUt9yCdFwxG7RvrxCsC0tm1JQoFLC5lSMpF04b17ngzA+T8tKoUH42SEE
+         IuaBWpMZFwbDgUoAqhfXCniT/ZIRZWcaVPKLPRUoY3TAsc75Q4VvNvxCZoU5rEYPhXx9
+         rprx8+ECE+/26gBj0bkBrX8diJyx57P0yEOaWTC88DssIYeTx81ErBOqc6DzTfwL9pkd
+         jd3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724926770; x=1725531570;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FLZw23XkOzc6bRGw9yd5cNf3epruUgLmmmKcBkgtqCw=;
-        b=BSXakAaVyIoCUHfnYHngKIAZhZmgmm0FfAg6I5buzlAVAi8z8lPjieDzYeBCtMxNp4
-         nSVj0qFLS/VB7QZ9lCGIowOVafKBdW/L+IcSkeUT2B5P43WwqS0thowVRnJQX9fiqcd6
-         H2bKxdhjxJAJEIS4qV4GH9GJz0NsJqxA1WPxGhN+gOp0sJcQR9Gjrnfa+HgL5IJeUI/d
-         W/ayYIytJ3PjmCMyTZeQ1B3kAjtMaHHfAUOV63e5XIG5jRfMsJgn4saHPsHtksu0LOhE
-         XOdZt8Avotq0lbdFXp054x9qELZPsESRz4sgeqAtuMiV2gocO2l8rhvdQ5ah9oVDpzc1
-         PqFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXcto/3K7WqiI1CdhVHvkCVjVVxEXi3g1E50O2gnR46otdp9Upc0mR+pPxxHBfsphTrs5EVjLrLlz44tFM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTbeQ2riqUbGLpj3lnY7Ic3R32LY1qhQuDdXxrW/chtqi2350x
-	Ouw4YRuDMyUaka/CIBpBmWgUClER6fuGzYAMZ4EgxKMp4Ir2e+ri5TtiaMM2A3bz4GHy9+WJgYC
-	8
-X-Google-Smtp-Source: AGHT+IFIKkW/GME2WB37S6Icf1LvrURHazG/BMTTIoPk3O0B5HuY8rq4leOo17BgMXHb3gk5eadxCg==
-X-Received: by 2002:a05:6a20:e687:b0:1c0:e925:f3e1 with SMTP id adf61e73a8af0-1cce10f41f6mr2121458637.50.1724926769821;
-        Thu, 29 Aug 2024 03:19:29 -0700 (PDT)
-Received: from n37-034-248.byted.org ([180.184.51.40])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7d22e9d4ee3sm785119a12.83.2024.08.29.03.19.24
+        d=1e100.net; s=20230601; t=1724926767; x=1725531567;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dsgEl12pS5/oK+D6m4jiXUFGwYqDk87JRvruFRHJCvw=;
+        b=GCE857SuL/wAtE5FYSsDcdI7AAgI+aF+QfSXtlaCE8AOlfxWiDrJDnZVkdL7BfjbKf
+         /ki/o0Ns/BehGPAFeGiI6keK17HfvbRBh/Rc991HaFx087CTTzCtd5nof7kuAGKma6PV
+         3eDMoyOZHfhZBB/I9qce3K6+g8cA8TWprOMcruiB9Xbv9eHJ3ngbB39ZZ2I4TR94tL6y
+         ybxSaRA2s5mvkrY+0EDWrJnj129FSgUH1aTg32tS6zoxJp1gR33YLFpxEL1Kcw/A7oaG
+         c098uOb0Z5gG+YqiGWN31R9DsYNPqw18v9XawZsgdoyjtsYvsAbvqYSWlm12g0ZZJjMb
+         K6Zw==
+X-Forwarded-Encrypted: i=1; AJvYcCW5QXH7LEzlrw5r+zKTt7e8DPLDPPNcCTukEYQ3oVw0J6d1qL4aZcGYpUqxnKhkQRAP7XqEaNxZaeKT1Bw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yybzg3Oobn0gvGpLClyq0wySla7ofUV6wGr39oLM7RJ9/Lp2/GJ
+	t8/oLBB56SIQW8iIRjCiPsD3a8N6HmkYNsFX0NOIQX1cY+ov3fcakYcaUvOxL4U=
+X-Google-Smtp-Source: AGHT+IFI/J4pmYQEU4+SHn18VCyisudN4k2godV3tyoAlPi2LbLETrSD6LA/Lou8PXucHxARCjq3Jg==
+X-Received: by 2002:a05:6512:234b:b0:530:b773:b4ce with SMTP id 2adb3069b0e04-5353e575f40mr2138577e87.33.1724926766646;
+        Thu, 29 Aug 2024 03:19:26 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53540827af9sm116406e87.170.2024.08.29.03.19.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 03:19:28 -0700 (PDT)
-From: Zhongkun He <hezhongkun.hzk@bytedance.com>
-To: akpm@linux-foundation.org,
-	hannes@cmpxchg.org,
-	mhocko@kernel.org
-Cc: roman.gushchin@linux.dev,
-	shakeel.butt@linux.dev,
-	muchun.song@linux.dev,
-	lizefan.x@bytedance.com,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	cgroups@vger.kernel.org,
-	Zhongkun He <hezhongkun.hzk@bytedance.com>
-Subject: [RFC PATCH 0/2] Add disable_unmap_file arg to memory.reclaim
-Date: Thu, 29 Aug 2024 18:19:16 +0800
-Message-Id: <20240829101918.3454840-1-hezhongkun.hzk@bytedance.com>
-X-Mailer: git-send-email 2.20.1
+        Thu, 29 Aug 2024 03:19:26 -0700 (PDT)
+Date: Thu, 29 Aug 2024 13:19:24 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: neil.armstrong@linaro.org
+Cc: Vinod Koul <vkoul@kernel.org>, 
+	Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH 2/2] phy: add NXP PTN3222 eUSB2 to USB2 redriver
+Message-ID: <izr7linltwo4kbpp4dtls7bahvk4a2hwtqaz3fyuktjuiudqly@ivulir54ktxk>
+References: <20240829-nxp-ptn3222-v1-0-46906bc4747a@linaro.org>
+ <20240829-nxp-ptn3222-v1-2-46906bc4747a@linaro.org>
+ <79a643de-9808-4866-9e41-8bd5ab55ffed@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <79a643de-9808-4866-9e41-8bd5ab55ffed@linaro.org>
 
-This patch proposes augmenting the memory.reclaim interface with a
-disable_unmap_file argument that will skip the mapped pages in
-that reclaim attempt.
+On Thu, Aug 29, 2024 at 10:30:49AM GMT, neil.armstrong@linaro.org wrote:
+> On 29/08/2024 10:21, Dmitry Baryshkov wrote:
+> > The NXP PTN3222 is the single-port eUSB2 to USB2 redriver that performs
+> > translation between eUSB2 and USB2 signalling schemes. It supports all
+> > three data rates: Low Speed, Full Speed and High Speed.
+> > 
+> > The reset state enables autonegotiation of the PHY role and of the data
+> > rate, so no additional programming is required.
+> > 
+> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > ---
+> >   drivers/phy/Kconfig           |  11 ++++
+> >   drivers/phy/Makefile          |   1 +
+> >   drivers/phy/phy-nxp-ptn3222.c | 119 ++++++++++++++++++++++++++++++++++++++++++
+> >   3 files changed, 131 insertions(+)
 
-For example:
+> > +
+> > +	ptn3222->supplies[0].supply = "vdd3v3";
+> > +	ptn3222->supplies[0].init_load_uA = 11000;
+> > +	ptn3222->supplies[1].supply = "vdd1v8";
+> > +	ptn3222->supplies[1].init_load_uA = 55000;
+> > +
+> > +	ret = devm_regulator_bulk_get(dev,
+> > +				      NUM_SUPPLIES,
+> > +				      ptn3222->supplies);
+> 
+> Suggestion only, you could switch to devm_regulator_bulk_get_const()
 
-echo "2M disable_unmap_file" > /sys/fs/cgroup/test/memory.reclaim
+Good idea, I'll take a look.
 
-will perform reclaim on the test cgroup with no mapped file page.
-
-The memory.reclaim is a useful interface. We can carry out proactive
-memory reclaim in the user space, which can increase the utilization
-rate of memory. 
-
-In the actual usage scenarios, we found that when there are sufficient
-anonymous pages, mapped file pages with a relatively small proportion
-would still be reclaimed. This is likely to cause an increase in
-refaults and an increase in task delay, because mapped file pages
-usually include important executable codes, data, and shared libraries,
-etc. According to the verified situation, if we can skip this part of
-the memory, the task delay will be reduced.
-
-IMO,it is difficult to balance the priorities of various pages in the
-kernel, there are too many scenarios to consider. However, for the
-scenario of proactive memory reclaim in user space, we can make a
-simple judgment in this case.
-
-Zhongkun He (2):
-  mm: vmscan: modify the semantics of scan_control.may_unmap to
-    UNMAP_ANON and UNMAP_FILE
-  mm: memcg: add disbale_unmap_file arg to memory.reclaim
-
- include/linux/swap.h |  1 +
- mm/memcontrol.c      |  9 ++++--
- mm/vmscan.c          | 65 ++++++++++++++++++++++++++++++++++----------
- 3 files changed, 59 insertions(+), 16 deletions(-)
+> 
+> > +	if (ret)
+> > +		return ret;
+> > +
 
 -- 
-2.20.1
-
+With best wishes
+Dmitry
 
