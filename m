@@ -1,102 +1,128 @@
-Return-Path: <linux-kernel+bounces-306669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD88B9641E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 12:33:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C7989641F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 12:34:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C1DB1C24978
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:33:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 189F91F21D11
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:34:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B509C191F67;
-	Thu, 29 Aug 2024 10:24:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dT0MBt47"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C7C51AC45D;
+	Thu, 29 Aug 2024 10:24:52 +0000 (UTC)
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9DCF18C002;
-	Thu, 29 Aug 2024 10:24:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5518B191F77;
+	Thu, 29 Aug 2024 10:24:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724927070; cv=none; b=pKI+plfyQq3hdU79XlNVr1eX9J+FNVl0hD+0+DcEIgYfgxvWTq6pmelPEwZkD3B1EuN8Cp857rxs4V0Zac1WWzIIMlTy3KQ8UHwd0+BuNRqYl0WpiHvPtmeV2nqBUodkc//9Za6qSU57dF2i0/XgsAMpwfWzCGO3dFabpWAFTFw=
+	t=1724927091; cv=none; b=J4fEEvnYXy5gwhiGxc7Gys+snJbljN2avs8fozLYmka7sYMwW0U7+RlV4CiswskNdxqy/QbwdRI04/d6UqIi+RqdL4XV5rwjklRqULdWBI+vp/v3O2kp4DlLSbh7p5sR4NUnve+Xz/j9EWt3q5iQW/UiiirQN0SwVzvyvi3H9F8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724927070; c=relaxed/simple;
-	bh=KFzZ7tzLmYuzSz+hkkc2eI64IphWnGj6Q8jk+FPw+o0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S76g1dsLuAZhja5uQSqRKPdIiCXWYiQPvz+q27Wf6ADENC1ePNEhwSTSNimyIyyEJlDyVWae7XcJGAAiGo+8NGTvVKMvXTC4zX7qJxx4UI9k7eU5jIeQufKTu2IQmLDNs46MLBjiwmEd+zEUG/4YAYKptYq6uY1khwTN6ORGhFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dT0MBt47; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB496C4CEC1;
-	Thu, 29 Aug 2024 10:24:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724927069;
-	bh=KFzZ7tzLmYuzSz+hkkc2eI64IphWnGj6Q8jk+FPw+o0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dT0MBt47DKts1mzBujAxSixJIsNsWkvGiWxMj8DYMx+4xwQqeks46qt3nztV9Ms16
-	 RhFfKe4eJ/WVXwVrV3xb70fgUPw8gl+Hy3fNKe2om7CCpUjd4NkmvFveYI0XBiYTTI
-	 M6+NLKndA27mXNbDs6KzbUZXb0ulq6sEHWGKFQfjGf7QilC1KJKzcrHJhG6GNeHQTn
-	 xmsdsvYWfuINdOEH+6QsHFtid5ituC0dAXtuWROtc6nU+O+4lNT3RtFzsbh6poYbTS
-	 m6mADEY7ZgzN1c8CtyLAPxtdZcYwSOo1lLKiJmDtG3fJ7T0DqhhiGVMG11LSuxAvL3
-	 b4cjs2c65xx8w==
-Date: Thu, 29 Aug 2024 13:24:25 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: longli@microsoft.com
-Cc: Jason Gunthorpe <jgg@ziepe.ca>, Ajay Sharma <sharmaajay@microsoft.com>,
-	Konstantin Taranov <kotaranov@microsoft.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	linux-rdma@vger.kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH net] RDMA/mana_ib: fix a bug in calculating the wrong
- page table index when 64kb page table is used
-Message-ID: <20240829102425.GD26654@unreal>
-References: <1724875569-12912-1-git-send-email-longli@linuxonhyperv.com>
+	s=arc-20240116; t=1724927091; c=relaxed/simple;
+	bh=CrZuEFjs0oh/loGv98oYdzcd9BgLu2m5MLcI7KM5rkg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iodCEwUmbBNi8oFyx68A6kqQkx8qNF+ybpJbrpne4alr2slbfogDWvBRSNl1WRRHS7+fMywLLyawEjTgk2OpTrPSmW55T1II5uaxOTDqEm4Z1cAcJTzfKWvVnFcPmQ+hIaCPa+2LbNF5G1DznM3BbjYbhj65zmi7c7YggMD3Gos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6b99988b6ceso5964667b3.0;
+        Thu, 29 Aug 2024 03:24:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724927089; x=1725531889;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pBVnO5vvxjVG4RJOP3x4LvFPwIHgsUoA5vb+xybuyJw=;
+        b=G58FQGMX5hy0DlYUb8L/7p//FSeRn5UhIWcMYH6UusE1pMy/fCTTAUv9B+cx/M7Sy6
+         u6KYo9vtKeE2Aoce+M/CGEhRHIFlwgJkrrb7hq9cSJqUUHybL/Dwia0e866fjY2DNjFl
+         52LTO402qqo4UeHLV9GTLYDLqhDkfjwM//qFrZ5D85Pa19E8EIDUJmtHrSxnJIyiv4oV
+         mp7mXoWJMytFtbtVeD7ZIpKESdNSOQGGkITR0ojSDgQnrNVnE7xUp/Dr37omwsq0Owsp
+         gxpXDk2JD8WUQ6qiFP64lz8UmWWKthhy1/LgEszCo7rTuqwCx0K/90gvRuACh8PWTlNL
+         5dHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU4BtbAflkx8Jd4/KU825dwcRQ8uxmYEXCT87beLPBWO6ut5e+OzFhZb99q9Xozv/iJs53D/pTyNcTKvitF@vger.kernel.org, AJvYcCVj+hgs9KhsPkapQStSM535FvpdqUzoE4s1hgzZsL2SWaBgreidXfdWoa1QgX8piMZJqXKUjEkx2ptadzs6Z8BQXzE=@vger.kernel.org, AJvYcCWmXzs3YUf3sD6pjGrbVhdMg+8BmDundOJerQ+Zq2VPwnoTw+cfiPUbfk43mFro+sfML0s7Fh3lP/nm@vger.kernel.org
+X-Gm-Message-State: AOJu0YwzMNx3YArAkB1UB+lMt2lf7vWoERGT3UoiYMcgByhSmI0WqfJC
+	hD5hqI1Hw8XFqSW90vNmP3rluMBEN8yKfIe1Lf0xsUHmxSWIfw2pS61PcttY
+X-Google-Smtp-Source: AGHT+IFTRsgRubtqJUAYejSeX6BOcxx2HYBlN50lfF0VPE/2Ofx/jQgoM1k9FpNjhSe89g3RLZHGGw==
+X-Received: by 2002:a05:690c:10c:b0:62c:e9f8:8228 with SMTP id 00721157ae682-6d2769e21fdmr20539127b3.25.1724927088581;
+        Thu, 29 Aug 2024 03:24:48 -0700 (PDT)
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com. [209.85.128.180])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6d2d4485725sm1842607b3.74.2024.08.29.03.24.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 29 Aug 2024 03:24:47 -0700 (PDT)
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6b99988b6ceso5964347b3.0;
+        Thu, 29 Aug 2024 03:24:47 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUwa5l07QrrwA34Nlh+LzEUtwjlrxr4RWNzTXA4aIsDVdTpaKOwSyYC/J1hEZCnH5qma2Ssq8poXP0DwTcG@vger.kernel.org, AJvYcCVVj0nCTQs0iV9ZMXM40DKVXF9MrJ+faFlCa+29hZt8kp4peiDS4fcE3EDNjlm1UONgMbdI1Knb6g3s@vger.kernel.org, AJvYcCWJ5zAyf0X14VchhK7hyOJD/iGSZ5bw4nkNrUrz9L4+/fh+kL34fHEWAFib67eHTH34F3TFxpbJG5L1Jdc6vKuKDfQ=@vger.kernel.org
+X-Received: by 2002:a05:690c:f8c:b0:64b:2665:f92c with SMTP id
+ 00721157ae682-6d275d3e359mr27822147b3.8.1724927086853; Thu, 29 Aug 2024
+ 03:24:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1724875569-12912-1-git-send-email-longli@linuxonhyperv.com>
+References: <20240828124134.188864-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240828124134.188864-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20240828124134.188864-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 29 Aug 2024 12:24:35 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUNGBYCsxK60eTF7wSWS2LtAwOPO2-PvD_OMHx8dC8r9Q@mail.gmail.com>
+Message-ID: <CAMuHMdUNGBYCsxK60eTF7wSWS2LtAwOPO2-PvD_OMHx8dC8r9Q@mail.gmail.com>
+Subject: Re: [PATCH v4 5/9] arm64: dts: renesas: r9a09g057: Add RIIC0-RIIC8 nodes
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 28, 2024 at 01:06:08PM -0700, longli@linuxonhyperv.com wrote:
-> From: Long Li <longli@microsoft.com>
-> 
-> MANA hardware uses 4k page size. When calculating the page table index,
-> it should use the hardware page size, not the system page size.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 0266a177631d ("RDMA/mana_ib: Add a driver for Microsoft Azure Network Adapter")
-> Signed-off-by: Long Li <longli@microsoft.com>
+On Wed, Aug 28, 2024 at 2:41=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.c=
+om> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Add RIIC0-RIIC8 nodes to RZ/V2H(P) ("R9A09G057") SoC DTSI.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 > ---
->  drivers/infiniband/hw/mana/main.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> v3->v4
+> - Used hexadecimal values for clocks and resets
+> - Sorted nodes based on nodes index
 
-These two patches are RDMA ones, please fix the target tree, rephrase
-the commit title to simplify it and resend.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-devel for v6.12.
 
-Thanks
+> --- a/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
+> @@ -201,6 +201,195 @@ ostm7: timer@12c03000 {
+>                         status =3D "disabled";
+>                 };
+>
+> +               i2c0: i2c@14400400 {
 
-> 
-> diff --git a/drivers/infiniband/hw/mana/main.c b/drivers/infiniband/hw/mana/main.c
-> index d13abc954d2a..f68f54aea820 100644
-> --- a/drivers/infiniband/hw/mana/main.c
-> +++ b/drivers/infiniband/hw/mana/main.c
-> @@ -383,7 +383,7 @@ static int mana_ib_gd_create_dma_region(struct mana_ib_dev *dev, struct ib_umem
->  
->  	create_req->length = umem->length;
->  	create_req->offset_in_page = ib_umem_dma_offset(umem, page_sz);
-> -	create_req->gdma_page_type = order_base_2(page_sz) - PAGE_SHIFT;
-> +	create_req->gdma_page_type = order_base_2(page_sz) - MANA_PAGE_SHIFT;
->  	create_req->page_count = num_pages_total;
->  
->  	ibdev_dbg(&dev->ib_dev, "size_dma_region %lu num_pages_total %lu\n",
-> -- 
-> 2.17.1
-> 
+[...]
+
+I'll move all of this below the scif node while applying.
+
+>                 scif: serial@11c01400 {
+>                         compatible =3D "renesas,scif-r9a09g057";
+>                         reg =3D <0 0x11c01400 0 0x400>;
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
