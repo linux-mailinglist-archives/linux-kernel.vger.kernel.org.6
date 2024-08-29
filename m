@@ -1,107 +1,218 @@
-Return-Path: <linux-kernel+bounces-306131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99DA29639B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 07:00:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B6F49639BA
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 07:02:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C475E1C2354B
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 05:00:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DB0F1F258BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 05:02:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0C9A1487D1;
-	Thu, 29 Aug 2024 05:00:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C300148FF7;
+	Thu, 29 Aug 2024 05:02:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TOk0ZZks"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=ucr.edu header.i=@ucr.edu header.b="jCxuQaGO";
+	dkim=pass (1024-bit key) header.d=ucr.edu header.i=@ucr.edu header.b="kROzuzpj"
+Received: from mx-lax3-1.ucr.edu (mx-lax3-1.ucr.edu [169.235.156.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA6C1481CE;
-	Thu, 29 Aug 2024 05:00:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0629C38F83
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 05:02:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=169.235.156.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724907638; cv=none; b=ojC93OmUtaCgxAlkB7WgTj9cYH3Vw3/dukt8qWvCPZoCBszABwIWyQrrJSEXm/McCPpTypxuUVOgVu6GRb0S8jftgiTKZZSnqr4WKB3npX6GlxcgtQEz7exwAdFzyPYaGBJ+KqoeZeP5rSt58KOIkWZaeaVBL+Gspnn0V8zgL9k=
+	t=1724907734; cv=none; b=XoRlQBcaWyAqR5LfCQ2yjpnT4vpG381jvF8t0bQcOHv55GQPS7rAQiYK5zhlqnUtBFkqxzVbNwwtMBQ14rqSsUim9BLrsFCAdRV7yWARZqgJlLOGHz6q7R4uf/4spM5HxKMewOMmDXMgxheXUDpm+JgP6GKqiQQELv+5qF1W7Zs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724907638; c=relaxed/simple;
-	bh=83/fKrNVuC1X4pmCI4/kp0Fd1fZEJFnYRelSbFykTjI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CluR/mopVf7P3EzbCaxKY1jIsN1ZmV316/eoTyBbA/j8Srhd7t7x8EMBblT4DQ34Gthf17gcBGo5FLpLe+xAkMoQLUCQde5dNUxkX4wfOoqWFLrKTbBIZmtw86X9u2Qr1HcJ7jBh0O0sz+jhgdsaNOgwd8yYtUs2zs9jYiOW9A0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TOk0ZZks; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724907637; x=1756443637;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=83/fKrNVuC1X4pmCI4/kp0Fd1fZEJFnYRelSbFykTjI=;
-  b=TOk0ZZksDQ5GGsLjOqAeE9DMMQKqGazMTyMJl+glh+MxAoO8UkNrqPo5
-   UHEb0bvZSK8ubNTaAjiUr+eMftxL8B74Obv7id/4lq8DQT8aj6flp5WBq
-   mYbyW90BjMBX1LRgXe4k48zCXY4YKqdlazO/IBl4lIFmZIOoXrvjqjH0A
-   1/h4pZENyaryRt6k2aUduy2yBoN4gvXKh4SZPNu9026fnwfdvCRIWWh/e
-   SxqlR5XC0ycky47FdqbEmEw0QeE2Anm87Eng7FjGBh3FofcFVG0EKonu+
-   LTJuEYXRYV0mCX4XCw5NvFCVtauUZv9LsRbDiLfZs2cLs5CWKzfD0K8o2
-   w==;
-X-CSE-ConnectionGUID: PTY7apmUSw+0D6sM36Obww==
-X-CSE-MsgGUID: CBn+oSrHQOW46aMNTLduEg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11178"; a="23663063"
-X-IronPort-AV: E=Sophos;i="6.10,184,1719903600"; 
-   d="scan'208";a="23663063"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2024 22:00:36 -0700
-X-CSE-ConnectionGUID: rSF4E554Rxe99H4zZBEkRg==
-X-CSE-MsgGUID: +JOX/46yRqucWe2L9TZuFA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,184,1719903600"; 
-   d="scan'208";a="68118938"
-Received: from bergbenj-mobl1.ger.corp.intel.com (HELO tlindgre-MOBL1) ([10.245.246.198])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2024 22:00:32 -0700
-Date: Thu, 29 Aug 2024 08:00:23 +0300
-From: Tony Lindgren <tony.lindgren@linux.intel.com>
-To: Nikolay Borisov <nik.borisov@suse.com>
-Cc: Rick Edgecombe <rick.p.edgecombe@intel.com>, seanjc@google.com,
-	pbonzini@redhat.com, kvm@vger.kernel.org, kai.huang@intel.com,
-	isaku.yamahata@gmail.com, xiaoyao.li@intel.com,
-	linux-kernel@vger.kernel.org,
-	Isaku Yamahata <isaku.yamahata@intel.com>
-Subject: Re: [PATCH 17/25] KVM: TDX: create/free TDX vcpu structure
-Message-ID: <ZtAAZzBCIuZ3jsuA@tlindgre-MOBL1>
-References: <20240812224820.34826-1-rick.p.edgecombe@intel.com>
- <20240812224820.34826-18-rick.p.edgecombe@intel.com>
- <4fcff880-30e2-44f8-aa45-6444a3eaa398@suse.com>
+	s=arc-20240116; t=1724907734; c=relaxed/simple;
+	bh=i1fPbDH24oD861Jt9OCb/DWqJTwDV3i0koPkmGEspoE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SKFgvR5zp+cPhXG3GUfaGu5rYvtXMiyCC70EivTbFmM7f15LExoRcao+SvcyD+lmh/oH5+xser2zHMmnG1nfEIWeN88n6orolqGPhbL8/tsgo0h5zvm8EsJVBtxlBU5Xnx6+KtAn2rJS0ht5Ypj7ykiKTcScHuQDy848xY7myxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ucr.edu; spf=pass smtp.mailfrom=ucr.edu; dkim=pass (2048-bit key) header.d=ucr.edu header.i=@ucr.edu header.b=jCxuQaGO; dkim=pass (1024-bit key) header.d=ucr.edu header.i=@ucr.edu header.b=kROzuzpj; arc=none smtp.client-ip=169.235.156.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ucr.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucr.edu
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=ucr.edu; i=@ucr.edu; q=dns/txt; s=selector3;
+  t=1724907733; x=1756443733;
+  h=dkim-signature:x-google-dkim-signature:
+   x-forwarded-encrypted:x-gm-message-state:
+   x-google-smtp-source:mime-version:references:in-reply-to:
+   from:date:message-id:subject:to:cc:content-type:
+   content-transfer-encoding:x-cse-connectionguid:
+   x-cse-msgguid;
+  bh=i1fPbDH24oD861Jt9OCb/DWqJTwDV3i0koPkmGEspoE=;
+  b=jCxuQaGOvnQsbp4Z4BAtTpS2gJFICCVTJKIPH3ADMkmuSNp8Q+9FriAd
+   dEIrkAmqsa2Wcr4l3oC8/m2C9YhP5CtyXokIQro83QNwPebf5Kj95vXX8
+   bBscgpwj43LH2HbHJZWtcBNN7UxyIk0AsMAhyvrropRA2qu1c2qibURTc
+   ZxHm9FBABnpfPkdm7m6tZi7p9O4PiVavJj6O4syVGk9OH6ToxklSuayVu
+   yXx5dufkMsBronCK7GLYwFyPj6lObbaORotD/MK+A77c/DjL2rZhwetoR
+   ediyBbQyZfzhnM/ViC9Ccdo1S9nCq9MQR+WxJPG4KeWWw4eP8h0Pbwq+h
+   Q==;
+X-CSE-ConnectionGUID: kqckWKVwSnaDjfX3KbMA+w==
+X-CSE-MsgGUID: HQXnlz8gSeuhNquaWK7THg==
+Received: from mail-io1-f72.google.com ([209.85.166.72])
+  by smtp-lax3-1.ucr.edu with ESMTP/TLS/TLS_AES_256_GCM_SHA384; 28 Aug 2024 22:02:12 -0700
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-81f99a9111fso33019439f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 22:02:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ucr.edu; s=rmail; t=1724907731; x=1725512531; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Eh1bQD5cI+vzw09T28H0NLKYRrXU4Y8237RYtEC1S8U=;
+        b=kROzuzpj5DUG5SUceOpR0EqADP69cbJmcJhdgSndQPO7JTAiebxbc6tOFYrF0F1LZf
+         eg4jh4DJ6mYW9Evxz23zcuvnBmLa7QdbEkPtra26nyBkaF/Ujmhprdd/GHLh9WeQ0sYd
+         dZRXXjnLABzEwBKOiDIQOiq0zPoOVKSYx80kw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724907731; x=1725512531;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Eh1bQD5cI+vzw09T28H0NLKYRrXU4Y8237RYtEC1S8U=;
+        b=mKNWIqq8gfHx9e+kpW8iWDsTNp6pa9NL9Z2BOwtuKYLzUYeUMQQa0MRXIm0GM1QdJt
+         jziMmvJ2RSOGg2ZO1ZwYrZrInCgh0k+87g7fNCBkW97JI9BOOPW+M7DVZuYBJ5EKo3ee
+         r4Jrf1AMBU8jh6oUDY2OUHXGG6Re1ZgNsJy3n9PFd8wy8rYSfjA//6cT5Rqea8MGNEnz
+         HtJWR9yV7LW+nlBqEU1M9Qmju4yzGDq8/h8YgFH5Afcu6E9dSsIijlQHKV0EVZDJNNPd
+         Ts15KJga42RRa3JgFyHQdfvZMFfnaZoaJGeC2V6Qma9183AKrXYlN1AxNGxJdek3tTHY
+         SU8g==
+X-Forwarded-Encrypted: i=1; AJvYcCW+GW9VLzbXp9JFXMyiTPTolGjnjMlpm/2+K21eubj+OwuWZ4PoNXZjBs3kepbQ+D8EBK9TnBPoQgVXUeI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDIZYrW1Q4lN0Lc1rBEmYU2RYw+rfOrW0/etmEH7ApysCLTm5X
+	TGRGRUDp7k0goM7hlC1Btg6KnrC18kYj8+XpZ9DApKEI/jiOuO1nKQWd958wqOXdBIITJn78fXr
+	SHvo3S7Eza2phBkAKtphZHYP+5YLDA7Qix7jU/R5HHJ1zce03eHww+J3eJjOhRIZDVbs5UU+E/4
+	gc+8PDkiPChR3nIEbt6cw698XkxMs1L1QdhONsGg==
+X-Received: by 2002:a05:6e02:1607:b0:39b:649:f5e2 with SMTP id e9e14a558f8ab-39f3780c2fbmr25136205ab.13.1724907731278;
+        Wed, 28 Aug 2024 22:02:11 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEaa+ZsQ9KdlcFxh7JYAL/9GdYzaBFZJcCvNC82sLT8U3GwPSZuhQbgd/2qDHiM5i4hiGxTkqh+ZedpnYzpgEg=
+X-Received: by 2002:a05:6e02:1607:b0:39b:649:f5e2 with SMTP id
+ e9e14a558f8ab-39f3780c2fbmr25135865ab.13.1724907730838; Wed, 28 Aug 2024
+ 22:02:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <4fcff880-30e2-44f8-aa45-6444a3eaa398@suse.com>
+References: <CALAgD-4uup-u-7rVLpFqKWqeVVVnf5-88vqHOKD-TnGeYmHbQw@mail.gmail.com>
+ <202408281812.3F765DF@keescook>
+In-Reply-To: <202408281812.3F765DF@keescook>
+From: Xingyu Li <xli399@ucr.edu>
+Date: Wed, 28 Aug 2024 22:02:00 -0700
+Message-ID: <CALAgD-6CptEMjtkwEfSZyzPMwhbJ_965cCSb5B9pRcgxjD_Zkg@mail.gmail.com>
+Subject: Re: BUG: WARNING in retire_sysctl_set
+To: Kees Cook <kees@kernel.org>
+Cc: mcgrof@kernel.org, j.granados@samsung.com, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, Yu Hao <yhao016@ucr.edu>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Waiman Long <longman@redhat.com>, 
+	Sven Eckelmann <sven@narfation.org>, Thomas Gleixner <tglx@linutronix.de>, anna-maria@linutronix.de, 
+	frederic@kernel.org, netdev@vger.kernel.org, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Tejun Heo <tj@kernel.org>, 
+	Kuniyuki Iwashima <kuniyu@amazon.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 19, 2024 at 07:46:13PM +0300, Nikolay Borisov wrote:
-> On 13.08.24 г. 1:48 ч., Rick Edgecombe wrote:
-> > From: Isaku Yamahata <isaku.yamahata@intel.com>
-> > --- a/arch/x86/kvm/vmx/tdx.c
-> > +++ b/arch/x86/kvm/vmx/tdx.c
-> > @@ -377,6 +377,47 @@ int tdx_vm_init(struct kvm *kvm)
-> >   	return 0;
-> >   }
-> > +int tdx_vcpu_create(struct kvm_vcpu *vcpu)
-> > +{
-> > +	struct kvm_tdx *kvm_tdx = to_kvm_tdx(vcpu->kvm);
-> > +
-> > +	/* TDX only supports x2APIC, which requires an in-kernel local APIC. */
-> > +	if (!vcpu->arch.apic)
-> > +		return -EINVAL;
-> 
-> nit: Use kvm_apic_present()
+This has been mentioned
+a few times already[3][4]; have you seen these replies?
 
-Thanks will do a patch for this.
+Sorry, I did not see this email
+https://lore.kernel.org/netdev/CANn89iK6rq0XWO5-R5CzA5YAv2ygaTA=3D=3DEVh+O7=
+4VHGDBNqUoA@mail.gmail.com/.
+And I received this reply
+https://lore.kernel.org/all/20240829011805.92574-1-kuniyu@amazon.com/
+just 8 minutes before your response.
+Previously, I did not have the experience to send emails about bug
+reporting. Later, I will take care that I only send bug reports with
+reproducer or with a patch.
 
-Regards,
+but only have
+reproducers for 4 of them[2].
 
-Tony
+Your search words may ignore some of my emails. In fact, it has 16 bug
+reports with the C reproducer(previously, some of them is only given a
+syzkaller reproducer, and I just checked to confirm that C reproducer
+is given for each bug).
+
+https://lore.kernel.org/all/CALAgD-4M6bv53fpWnb2vdu4kxnCe_7H3kbOvs3DBAd8DeR=
+HYuw@mail.gmail.com/
+https://lore.kernel.org/all/CALAgD-5cKJnWRsS_2rjL1P9pC0dbNX66b8x09p=3DDUx1k=
+D+p6PQ@mail.gmail.com/
+https://lore.kernel.org/all/CALAgD-7TsMdA7rjxfpheXc=3DMNqikEXY9TZNxJt4z9vm6=
+Yfs5qQ@mail.gmail.com/
+https://lore.kernel.org/all/CALAgD-6miPB6F2=3D89m90HzEGT4dmCX_ws1r26w7Vr8rt=
+D8Z96Q@mail.gmail.com/
+https://lore.kernel.org/all/CALAgD-6Uy-2kVrj05SeCiN4wZu75Vq5-TCEsiUGzYwzjO4=
++Ahg@mail.gmail.com/
+https://lore.kernel.org/all/CALAgD-5myPieAa_9BY6RVfBjWT_8g48+S0CX7c=3DEihMz=
+dwakxw@mail.gmail.com/
+https://lore.kernel.org/all/CALAgD-718DVmcVHtgSFGKbgr0ePoUjN2ST=3DgBtdYtGX5=
+GUqBQg@mail.gmail.com/
+https://lore.kernel.org/all/CALAgD-5kt+F6S1aAwRhKMKb0KwFGzfJCWyHguotEvJGBBB=
+vFkA@mail.gmail.com/
+https://lore.kernel.org/all/CALAgD-7JNKw5m0wpGAN+ezCL-qn7LcTL5vgyBmQZKbf5BT=
+NUCw@mail.gmail.com/
+https://lore.kernel.org/all/CALAgD-6MJC+D0DzxLOpVvCbYzHE-r1YzNORtpOh-f+hgEk=
+Mjzg@mail.gmail.com/
+https://lore.kernel.org/all/CALAgD-7hbfOzovnPqVqo6bqb1nHZ2WciUOTsz0Dtwsgr+y=
+x04w@mail.gmail.com/
+https://lore.kernel.org/all/CALAgD-4hkHVcCq2ycdwnA2hYDBMqijLUOfZgvf1WfFpU-8=
++42w@mail.gmail.com/
+https://lore.kernel.org/all/CALAgD-6gJ4W1rPj=3DCWG7bFUPpEJnUjEhQd3uvH=3D7C=
+=3DaGKb=3DCUQ@mail.gmail.com/
+https://lore.kernel.org/all/CALAgD-7C3t=3DvRTvpnVvsZ_1YhgiiynDaX_ud0O6pxSBn=
+3suADQ@mail.gmail.com/
+https://lore.kernel.org/all/CALAgD-4b_yFdN4fwPxpXEpJkcxEwXBxRHeQjeA3x3rMX4J=
+pUwA@mail.gmail.com/
+https://lore.kernel.org/all/CALAgD-58VEomA47Srga5H-p6cZa0zPj+y3E1se0rHb3gj4=
+UvyA@mail.gmail.com/
+
+
+There
+are hundreds like them (many with reproducers) already at:
+https://syzkaller.appspot.com/upstream
+
+In fact, the bugs that I report are fuzzed by the syzkaller templates
+that we generated, but not those from the syzkaller official
+templates. We want to find bugs that do not have the corresponding
+official syzkaller template.
+I also checked to make sure that the bugs I reported did not occur on syzbo=
+t.
+
+
+
+On Wed, Aug 28, 2024 at 6:26=E2=80=AFPM Kees Cook <kees@kernel.org> wrote:
+>
+> Hi,
+>
+> On Wed, Aug 28, 2024 at 02:16:34PM -0700, Xingyu Li wrote:
+> > We found a bug in Linux 6.10. It is possibly a logic   bug.
+> > The bug report is as follows, but unfortunately there is no generated
+> > syzkaller reproducer.
+>
+> I see you've sent 44 reports like this recently[1], but only have
+> reproducers for 4 of them[2].
+>
+> Without reproducers these reports aren't very helpful. There
+> are hundreds like them (many with reproducers) already at:
+> https://syzkaller.appspot.com/upstream
+>
+> Please only send these kind of reports if you have a fix for them
+> (preferred) or a reproducer for an actual problem. This has been mentione=
+d
+> a few times already[3][4]; have you seen these replies?
+>
+> -Kees
+>
+> [1] https://lore.kernel.org/all/?q=3Df%3Axli399%40
+> [2] https://lore.kernel.org/all/?q=3Df%3Axli399%40+%22The+reproducer%22
+> [3] https://lore.kernel.org/netdev/CANn89iK6rq0XWO5-R5CzA5YAv2ygaTA=3D=3D=
+EVh+O74VHGDBNqUoA@mail.gmail.com/
+> [4] https://lore.kernel.org/all/20240829011805.92574-1-kuniyu@amazon.com/
+>
+> --
+> Kees Cook
+
+
+
+--
+Yours sincerely,
+Xingyu
 
