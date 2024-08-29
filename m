@@ -1,86 +1,117 @@
-Return-Path: <linux-kernel+bounces-307468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9001F964DE6
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 20:41:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DB86964E05
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 20:46:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2FB61C222F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 18:41:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5029B1C20627
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 18:46:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E3401B86CB;
-	Thu, 29 Aug 2024 18:41:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D1121BB68F;
+	Thu, 29 Aug 2024 18:44:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="hAJNVeDC"
-Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
+	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="c0/2YIdR"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD3941B375C
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 18:41:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 408BF1B9B2E;
+	Thu, 29 Aug 2024 18:44:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724956875; cv=none; b=tMaEu66gvwjWbNQazI0WP3LE92wVWyRzyPWQn2YAaTE1z9bD/rPM9ieEtS8MEXFbkZY13oE6QdrtwcEz/EH1UHG7czWr4O160rX9ec6LJR3QkmxlW5SZw3Wy1zDor9vZV2FK8Z1Ih1zZjTnFrzRb5AzXVaAhpxknbWTILJQpuzs=
+	t=1724957072; cv=none; b=bs/85R3QPXoJQv44q+/xMoSyzwTp9XYPNspSHwGkeLaZgYz/mz0/dfdi2sfCtPn35Dv9+NilbfR94NDRsXF29xbWVhfEz2rKZ9f5QGRuXk3zr+CI5KW4nWUvXr69r8vYuZon8g3E6Rb4FJVVsXwGMZmmql6z1XexmxszQWAkEaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724956875; c=relaxed/simple;
-	bh=y3CKx9yPAClsfMxRC+2fQN6G4AoThcuox7GNcLSnyH0=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ihZ81uZBZqoCOxxpZ1+GZZWDHWhXaiuuHck0mODpDxc9PHTrU6hjqeUv3HQ6x4/4+KagK2VYhupSikSUUPec2UhFXd1tNIMNSCejmXKt/9ns97Rv6a1prlRoD6bqywEeEjmuoBMJ6hW9d6WAIGLQhBjAdqIAyq9yImV2HfqwFuA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=hAJNVeDC; arc=none smtp.client-ip=185.70.43.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1724956870; x=1725216070;
-	bh=DK8G/oV0NQnHR6ELSMxXz1prgv5XgJZSEeMYPgII70Q=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=hAJNVeDCD2Ibocs524Es1RBzLtEu6p/DFCxnmWQVebyrqlyqvTC/wArdcakGsd3Wj
-	 2v6n6SNW2+JHKjZIjbzYpgT0ps6+BjXRIthfF9lCwC9yNuRlOLoZDMqvrnQ851oiC5
-	 /umMKZjamxVlxhm6Rk8QGrjk2W2suooALsK6KhtgEbC7Eq1928cWiVE/1FmR1N9YLf
-	 b6N9vEXBzGyQL6OAZdrAQpskKpFg4hF8Iuxnm5YaVXzHB0I+O9S1lvQw0OLcmYqGPY
-	 N99qaUvtT3BleZTXcXVg0Kxuw/koc46IUNjTwPS8AFXRFg18WPu2KgfI+V3Jsu/GLa
-	 9TAGXfqtXZDFw==
-Date: Thu, 29 Aug 2024 18:41:05 +0000
-To: Danilo Krummrich <dakr@kernel.org>, ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@samsung.com, aliceryhl@google.com, akpm@linux-foundation.org
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: daniel.almeida@collabora.com, faith.ekstrand@collabora.com, boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v6 16/26] rust: treewide: switch to the kernel `Vec` type
-Message-ID: <d98c810e-6fbb-4e90-9689-109d7194d1b5@proton.me>
-In-Reply-To: <20240816001216.26575-17-dakr@kernel.org>
-References: <20240816001216.26575-1-dakr@kernel.org> <20240816001216.26575-17-dakr@kernel.org>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 9ad2676be0af3915e5f3da50ea6a3fbfab4633de
+	s=arc-20240116; t=1724957072; c=relaxed/simple;
+	bh=1mP2WXzEu1T/V/DU7z3r3MxyDUKhG9ynlkh8+4AbtME=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LF5ZWmtBfp2+Bsen8x0YfeEqE2CYqXD49KvZr8FTHKP55dd3YXQiUVjxJaOuOrf9TOVVj8AFOCEMibC+gX5sSoxDQkLNaBIZ7z+PSzj3l58l9Ln3cvY/gxiMfMukS7UObWNhrvlGWPaE3MUgrVOBouQ671DcbCxZO+xI8v21wro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=c0/2YIdR; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
+ id 643a3073f4df1198; Thu, 29 Aug 2024 20:44:21 +0200
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 8C87A6A8C15;
+	Thu, 29 Aug 2024 20:44:20 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1724957061;
+	bh=1mP2WXzEu1T/V/DU7z3r3MxyDUKhG9ynlkh8+4AbtME=;
+	h=From:Subject:Date;
+	b=c0/2YIdROc3cN9g2CZaXyrxHRLW2qD1BhRyJp7w+ie3BFOb4wV5GHwzHJByLZ7JzH
+	 SpJfLsJsDA1lGzpjnKqbq/HGtilLWsjjIJ1az8G4/hfvhaHe84a9TtQA/mTGU1jGz1
+	 a93fGdc70rNcrmSRZ5FcIYnYhqIIj5ip8/+NIZQkeej9fSozZDq60CdYleBa99Z0Qx
+	 lDBFEHmNi8IyV4wfcNQ3mPX/sEwfMNhA6eQ10NQiqNYhfl4t6Z3efrR2sR557Ce1JT
+	 f0I9Ge1SBBLjRABTQof981KfZhR0cS/Shb1sQBfb1qsVJjSAiZ3a1NWXvVuvFoVf2z
+	 szvGS+JtjvJOQ==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux ACPI <linux-acpi@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Bob Moore <robert.moore@intel.com>,
+ Saket Dumbre <saket.dumbre@intel.com>
+Subject: [PATCH v1 16/20] ACPICA: Avoid warning for Dump Functions
+Date: Thu, 29 Aug 2024 20:41:07 +0200
+Message-ID: <1951739.taCxCBeP46@rjwysocki.net>
+In-Reply-To: <5819337.DvuYhMxLoT@rjwysocki.net>
+References: <5819337.DvuYhMxLoT@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddrudefgedguddvjecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpeeltdeikeekkeevieektefggfetueetfeejveejgeduledvudehieeuvdeiheeiveenucffohhmrghinhepghhithhhuhgsrdgtohhmnecukfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgepudenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhjfiesrhhjfiihshhotghkihdrnhgvthdpnhgspghrtghpthhtohepgedprhgtphhtthhopehlihhnuhigqdgrtghpihesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehrohgsvghrthdrmhhoohhrvgesihhnthgvlhdrtghomhdprhgtphhtthhopehsrghkvghtrdguuhhmsghrvgesihhnthgvlhdrtghomh
+X-DCC--Metrics: v370.home.net.pl 1024; Body=4 Fuz1=4 Fuz2=4
 
-On 16.08.24 02:10, Danilo Krummrich wrote:
-> Now that we got the kernel `Vec` in place, convert all existing `Vec`
-> users to make use of it.
->=20
-> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+From: Adam Lackorzynski <adam@l4re.org>
 
-Reviewed-by: Benno Lossin <benno.lossin@proton.me>
+ACPICA commit 6031b34b5dbabfaaebe80e57e8e415790b51d285
 
+Only include the functions acpi_rs_dump_resource_list()
+and acpi_rs_dump_irq_list() if ACPI_DEBUGGER is defined, as
+specified in the header.
+
+This avoids a compiler warning by adding the ifdef for ACPI_DEBUGGER.
+
+Link: https://github.com/acpica/acpica/commit/6031b34b
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 ---
-Cheers,
-Benno
+ drivers/acpi/acpica/rsdump.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-> ---
->  rust/kernel/str.rs            | 12 +++++-------
->  rust/kernel/sync/locked_by.rs |  2 +-
->  rust/kernel/types.rs          |  2 +-
->  rust/kernel/uaccess.rs        | 17 +++++++----------
->  rust/macros/lib.rs            |  6 +++---
->  samples/rust/rust_minimal.rs  |  4 ++--
->  6 files changed, 19 insertions(+), 24 deletions(-)
+diff --git a/drivers/acpi/acpica/rsdump.c b/drivers/acpi/acpica/rsdump.c
+index 611bc71c193f..5b7d7074ce4f 100644
+--- a/drivers/acpi/acpica/rsdump.c
++++ b/drivers/acpi/acpica/rsdump.c
+@@ -48,6 +48,7 @@ static void acpi_rs_dump_address_common(union acpi_resource_data *resource);
+ static void
+ acpi_rs_dump_descriptor(void *resource, struct acpi_rsdump_info *table);
+ 
++#ifdef ACPI_DEBUGGER
+ /*******************************************************************************
+  *
+  * FUNCTION:    acpi_rs_dump_resource_list
+@@ -160,6 +161,7 @@ void acpi_rs_dump_irq_list(u8 *route_table)
+ 					   prt_element, prt_element->length);
+ 	}
+ }
++#endif
+ 
+ /*******************************************************************************
+  *
+-- 
+2.43.0
+
+
+
 
 
