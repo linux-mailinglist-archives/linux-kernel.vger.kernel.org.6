@@ -1,101 +1,74 @@
-Return-Path: <linux-kernel+bounces-306921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EC36964587
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 14:56:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2565D9645A1
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:00:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C6FF288756
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 12:56:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D83612841C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:00:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCC5F1B252F;
-	Thu, 29 Aug 2024 12:51:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="QwRunH3d"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 974B21A4B70;
+	Thu, 29 Aug 2024 13:00:25 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4BC51AED2B
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 12:51:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B21059474;
+	Thu, 29 Aug 2024 13:00:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724935886; cv=none; b=opnYTQrC0iuMPl+sS8M/kJck0GCsKOcYAorcbWeHxdua1AXGTbvKeWrLwvqeHvHAkDxZUGtlJjjAsyJX6fFSvo/2cualDV75ibuWYbtGpUT3xNkaZhgv1vZmtXN+jQ840/G/c6SEAqZqsU4ahIXO/UylpIgp+YpZTJCH1BS+xNs=
+	t=1724936425; cv=none; b=tnVqOLT9kfsurMp1+5dPdfpF6pCjatUsmargDo53XvLETuT09oqobb9JraN+62i0dVq8getRigu75GmYR8ZSzCCZYEUQXY4VQ4gMWzZRJCE8+QkjKyyvu8mYYMOhpRGLRJOgizQQSh0fx9G8bsYXvHPPIneLiS6J3S0wkhvkvwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724935886; c=relaxed/simple;
-	bh=WvIh75HCo2tYMdsZFViH6VthgjnEOjnp14oyUQnCulE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EAj9VVL1rMaxhsIPPgNqoaCtgSwonEJeHTE9FISH8g6lTALgpWb/AQ8RLzsr+anUAqTcrxe6/RtCGahGevKpxq+JV3OJh2O1/3NrmFCoMD0n2zgOKQPiHFgE1eqWCMB2smvh8nBxEQH+M9hJ/Xl8eU9rXgI5/gsd07zW9vQvd50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=QwRunH3d; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a8682bb5e79so74234266b.2
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 05:51:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1724935883; x=1725540683; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=hsNGyCj5N2FtoYDe5eEGsZ02+EpjC129Fhp5l7VQCho=;
-        b=QwRunH3diqjqc5nPit0TG6SmTlejWOpTWDVR0mT5U0bdC4SeQCJtaSjXmbQeSWkMN5
-         nSgeESsKrn0bZjp8K44dd7FN9O6WLDS16W94M56Npm2yM5MK7wO8O4rGI3OggbcPSLEQ
-         X1g98CH05dNO03VrLtHZC39sMGXkEo767A0y0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724935883; x=1725540683;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hsNGyCj5N2FtoYDe5eEGsZ02+EpjC129Fhp5l7VQCho=;
-        b=RNb6U9GsyZV9YB8AHv5HSo1jolzPLHLBayuQGAbD+gAfqsiGDoaW34+5HdYvgt/LVJ
-         FeESccGwcn8DOEe/sXD+Wk0iH9fwPw24di3cy0Kyi6v0bfAh6RegbxvtVqOBwnS2+gnC
-         brYywo6Evi7YMWDUWj+AO//sX/5k4bb43j/0+PgqtZ89cQKp0UlWO1EI+KPmbscTDSxp
-         9I4zh9U0nHgQbgLBjdaAQQgKg5D1kmf/wj1hZSD0VmUCz1ooEQv0Cj18Xkh7EH5AKOav
-         sesA3hbdz85cwOg0x+afcJqXoaMmx/Oh8L0wg2u8m48PAuTSCfTgkNcn368tyF4Su4dB
-         /dtw==
-X-Forwarded-Encrypted: i=1; AJvYcCVknx5lClDuaw9oEVKEPuAFWt7NXRE9YGR5+kVhpepc5WMxZ6T1bioUm01q+5zHQ4lknk5pffoFlzVrp3k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzCNG2gxMGYh7L5jmlIgITIeoa+uJIGMvB5G2m2H+A5/BVWXPt
-	nhlHooRxtGIBiYLWQPa3/fVU+sbBGqKKeBEnUz5KXN8iDShHGJ/IrfWcyensWZT0m3IfGWP7jOP
-	XvUcbK3tPFlEswTpOBbYa+Bt7Zrh4JCWYYUmdFDgTm8hF1IPi
-X-Google-Smtp-Source: AGHT+IGNoEVJRggsb/Cm7mPyai2RQf0bn+sMsw8cB9ojaB5L7XqeyhlKde4HK2f09lC4D/OD0DaBtj+TtEPkJ3+Ct90=
-X-Received: by 2002:a17:907:7f20:b0:a7a:9c1c:1890 with SMTP id
- a640c23a62f3a-a897fa63911mr202369466b.55.1724935883036; Thu, 29 Aug 2024
- 05:51:23 -0700 (PDT)
+	s=arc-20240116; t=1724936425; c=relaxed/simple;
+	bh=v2uX9VQQznerOWwXP1oDdxYI+qCOJQJftPXGm0R8W98=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=VGfuLNxXUMCZwt0SNRMBAhCQp7mdnl6DgV3JxVCDbUkKkAcbD690bvokmCK3Q5SkiifCSp51B13NH/XkE72p0iW6uR2i1L2D6VaUQk/EVtReVBLDs1M5/zt/YRZ4KYa6n6klDqT9c7XTUlx5Z5iWV2/lKZW+D2D2Q6HgvMevtbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4WvhFz638Jz1j7gs;
+	Thu, 29 Aug 2024 21:00:07 +0800 (CST)
+Received: from dggpemm500020.china.huawei.com (unknown [7.185.36.49])
+	by mail.maildlp.com (Postfix) with ESMTPS id 5ADCE1A0188;
+	Thu, 29 Aug 2024 21:00:20 +0800 (CST)
+Received: from huawei.com (10.67.174.77) by dggpemm500020.china.huawei.com
+ (7.185.36.49) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 29 Aug
+ 2024 21:00:20 +0800
+From: Liao Chen <liaochen4@huawei.com>
+To: <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <sakari.ailus@linux.intel.com>, <jacopo@jmondi.org>, <mchehab@kernel.org>,
+	<laurent.pinchart@ideasonboard.com>, <biju.das.jz@bp.renesas.com>
+Subject: [PATCH -next 0/2] media: i2c: mt9v111: workaround 
+Date: Thu, 29 Aug 2024 12:52:01 +0000
+Message-ID: <20240829125203.539977-1-liaochen4@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240722101443.10768-1-feilv@asrmicro.com> <CAOQ4uxhP03BHK8gDmeySxkacGvy9BToZkb5nTgaegWxJPAuG8A@mail.gmail.com>
- <CAJfpegtPOgowkK5EHxNZnuHDo9AZTbF2-zxMc99rvWL44rdMXQ@mail.gmail.com>
- <CAOQ4uxiYGsKzMZ73=WLZqseU=ibboFtPfqpeGtmFWYY3uxjMvw@mail.gmail.com> <CAOQ4uxi-BuKU-AbyydVB2c8z0DiPP-Ednu+bN3JB2Cqf7rZamA@mail.gmail.com>
-In-Reply-To: <CAOQ4uxi-BuKU-AbyydVB2c8z0DiPP-Ednu+bN3JB2Cqf7rZamA@mail.gmail.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Thu, 29 Aug 2024 14:51:11 +0200
-Message-ID: <CAJfpegt=BLfdb5GRbsOHheStve8S57V9XRDN_cNKcxst2dKZzw@mail.gmail.com>
-Subject: Re: [PATCH V2] ovl: fsync after metadata copy-up via mount option "fsync=strict"
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Fei Lv <feilv@asrmicro.com>, linux-unionfs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, lianghuxu@asrmicro.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ dggpemm500020.china.huawei.com (7.185.36.49)
 
-On Thu, 29 Aug 2024 at 12:29, Amir Goldstein <amir73il@gmail.com> wrote:
+Hi all, 
 
-> But maybe we can ignore crash safety of metacopy on ubifs, because
-> 1. the ubifs users may not be using this feature
-> 2. ubifs may be nice and takes care of ordering O_TMPFILE
->     metadata updates before exposing the link
->
-> Then we can do the following:
-> IF (metacopy_enabled)
->     fsync only in ovl_copy_up_file()
-> ELSE
->     fsync only in ovl_copy_up_metadata()
->
-> Let me know what you think.
+This patchset enables module autoloading feature of mt9v111 module and 
+cleans the code up.
 
-Sounds like a good compromise.
+Liao Chen (2):
+  media: i2c: mt9v111: Add missing MODULE_DEVICE_TABLE
+  media: i2c: mt9v111: drop redundant comma
 
-Thanks,
-Miklos
+ drivers/media/i2c/mt9v111.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+-- 
+2.34.1
+
 
