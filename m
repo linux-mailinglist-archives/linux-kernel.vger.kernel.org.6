@@ -1,238 +1,148 @@
-Return-Path: <linux-kernel+bounces-307400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3FD7964D27
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 19:44:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 817CF964D2D
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 19:46:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61D431F22568
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 17:44:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AAB451C229A1
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 17:46:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 498381B5EC9;
-	Thu, 29 Aug 2024 17:44:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A55C1B7912;
+	Thu, 29 Aug 2024 17:46:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aIJKuEHl"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jBmrQgFf"
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 661BE1B5EA1;
-	Thu, 29 Aug 2024 17:44:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54FE34D8C1;
+	Thu, 29 Aug 2024 17:46:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724953479; cv=none; b=RkHz/Flp2Czd/2oveq835W2xDM9JVusKouhJ3XB0+xjYSDE7S83obHR3mlozEWwVHaJTdQRcjuTzS769oiZM0iukW+qi7bgycQ7Mj835zKLcIVwJVLiXQIoLeVVfAFNt9qar9P3wYHTLF1jj3RJkeTeXHkOSiXubBTDCgWpfG6k=
+	t=1724953606; cv=none; b=OnIGbLBY3sevng+A6xEYtflWfzTZdvrbde4cNTGf/XFImqSDmzmT0i9e60pvZfengV6C9C0YmZq8sDHzH0OPVtGWUYudABqaucRKGcNH2AFe7HvhPkOJgH6TaEvYdrHyoncYbWuoGtxDetCM6SwIQOQTV5+9gsCmGHizNzcNyLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724953479; c=relaxed/simple;
-	bh=OeICkt69Q7l7jMzcCZkaAIW3lOqEG7Hp8jq5sAQ3Q0g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kCzoCQNLJyD7i4oX+Nb3XEm4/iaiW0hCmYjexJDlkaw5NP0t8cjQWzsFSPsRiomsmegc77MssTn287de9JXf8xKGhEyXIEW4AqrCVuVy1co9e20S0X8Y+dLvsO9fpHUtDK4ny6TgpvXVnhg72diFaD+WrHV3sAeVxm2n9//6iog=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aIJKuEHl; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724953478; x=1756489478;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=OeICkt69Q7l7jMzcCZkaAIW3lOqEG7Hp8jq5sAQ3Q0g=;
-  b=aIJKuEHlGePEh/WUPVpKR1z8IW+QdFC86WhgSinMfPC5BiFcVGrfWDgc
-   1vAlR7RzFZnD75zz4SquKveED7XSC+9aRasJ/KgLPILZRoIMEpCaTcKVK
-   0n9oEQOYXaKXaMFtqjzcxht4JeNfyBPEj85lhJSmOpauMWu/5Pd9KPeuZ
-   /pqqVg/xmlGsUWOzNaw7PLmps0biV7PTLF/ceCA81URMEw9fWNz00hlF6
-   qk6MtT9WpCplG+bZuO5cMjkFNzwblAkRP1YN93K4KUMsg7Co9dfAFQKI5
-   EOtcQF+RVKX0BjVE8tZtwRgp8gGC2xE52v7HTc4Dxlzq3caUqdR0MadDO
-   g==;
-X-CSE-ConnectionGUID: 2WNe8LJJQRiDzTyQqAa9Ww==
-X-CSE-MsgGUID: mwllGqfYQDy8bjB+Cp92Xg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11179"; a="34232538"
-X-IronPort-AV: E=Sophos;i="6.10,186,1719903600"; 
-   d="scan'208";a="34232538"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 10:44:36 -0700
-X-CSE-ConnectionGUID: FxpRN4OETXa62Xjcxo95RA==
-X-CSE-MsgGUID: 1G6AMos7TaKBcxMKjbSvHQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,186,1719903600"; 
-   d="scan'208";a="63844429"
-Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 29 Aug 2024 10:44:34 -0700
-Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sjjCB-0000ZO-0k;
-	Thu, 29 Aug 2024 17:44:31 +0000
-Date: Fri, 30 Aug 2024 01:43:41 +0800
-From: kernel test robot <lkp@intel.com>
-To: Haifeng Xu <haifeng.xu@shopee.com>, viro@zeniv.linux.org.uk,
-	brauner@kernel.org, jack@suse.cz
-Cc: oe-kbuild-all@lists.linux.dev, tytso@mit.edu, yi.zhang@huaweicloud.com,
-	yukuai1@huaweicloud.com, tj@kernel.org, linux-ext4@vger.kernel.org,
-	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Haifeng Xu <haifeng.xu@shopee.com>
-Subject: Re: [PATCH] buffer: Associate the meta bio with blkg from buffer page
-Message-ID: <202408300119.UQ0zNU1f-lkp@intel.com>
-References: <20240828033224.146584-1-haifeng.xu@shopee.com>
+	s=arc-20240116; t=1724953606; c=relaxed/simple;
+	bh=ZMBy5eAWVQgtRSJGMBG/W2K5iiRKUnOw/zCQQXcVzsI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cP1EbMSJMTTjhx6/ZsT+a4viD79oCboe4wMDTA+QH5CT42nsnnqzRP/wlyLEWcxffYvrAW2CnSXt2B1U2rcPLHUZzZz2XEcIVoEoklWVZixJi9/iz0nMowfHt9KxvTe/LyTyqw69VnwOULqKMukvulGQPn6Ad6O3OurlTjnP4rU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jBmrQgFf; arc=none smtp.client-ip=209.85.128.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-6b47ff8a59aso8886977b3.2;
+        Thu, 29 Aug 2024 10:46:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724953604; x=1725558404; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eGO/t8uRBuQfP2zrjVa2XCS1Wb1wQnZ1r+LJpc9VPdc=;
+        b=jBmrQgFfzRSKx7tvpyZ/2Na1wgLjqfbjGY8JeSmFcKDOyidAtijs4yiAZhpwKayuOB
+         c36kWfV1fU3DYsKpL7I+oZKamKyZUfpCyM142Kz6rVc/9sVdpsUEGJVlt2UFY5AgDhyC
+         O7FfDdU4MMw6JGIu2AivEz3JdlM+NzjMwdkpunVI1N3a4JVyVm9X1A9wQv0NTV6AO+kC
+         tiPML9Vu7fs9Yq5kASJbFQwxA84aC8CxldgbAAcwob0FxCeid8xNA0jHhx/vjFtHyIJX
+         h41Amd3tejkBCg7YjYgZfWkECBlakRQI1NsaCaHmn6ZoN4tzBNjxdk1lUmi9xaH0nXp5
+         bGyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724953604; x=1725558404;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eGO/t8uRBuQfP2zrjVa2XCS1Wb1wQnZ1r+LJpc9VPdc=;
+        b=qalxaGtSsylICLKVQ01U0XvIaK3RQSH/l23APqG2/AeB4dJQApIekE7hZUG3q9kQrS
+         O0CtAox4HiEhUTXUgQU9YSowCdWLaaOUOs6GNzcEhjv0W0pNQJ/sNHmKU0n2/xd+uPK3
+         WfGa/pcVlYCBD75HnkQs6fbSoH70QI8MYmqURDJM6J0izSlDdLTMDu19CrCzPBZaPPxj
+         jGt58ZnrgMhwnQGsdgXXIzqx1RtlEuWmbLcJQYss3KFzEAtg6xtnSulAApENc7PWC6UQ
+         eD0iLEWBhZEbV4kttathbSroQzNDXrebdatBh1/QmobAnnb3I0iRqE40SxXHe1LpkJ2v
+         BP2w==
+X-Forwarded-Encrypted: i=1; AJvYcCXv+WX6y6R+utEbaFbHcs+QZDNxho7FTkUHMA8T+SY1upzrBIjtN070+0rWPuAN5GPd+zHxQecwOAo2bEY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrXyvENw1+mB5x3P1BbFQ3phO5kzmYNq3or/g9DkOQTXTO+ngv
+	mZbWhu+s0h5ANPRw7oIvcVsfqmLk4JLbGltL46HI/kJAazJqeMZRDnHeddG6wWXHM3ODdj4PGT7
+	cqq0OD6bWUYTOfukNAXv+iiulkuE=
+X-Google-Smtp-Source: AGHT+IF/uLElLdnKtZT4of9DxbtwDzdB24Ok4hY8XDtGl79o2KGVVFZdFItH72gPaypIGX/poSIgL+WYa1qM3RJn7IM=
+X-Received: by 2002:a05:690c:6608:b0:6b3:a6ff:769b with SMTP id
+ 00721157ae682-6d272708f30mr43782317b3.0.1724953604023; Thu, 29 Aug 2024
+ 10:46:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240828033224.146584-1-haifeng.xu@shopee.com>
+References: <20240828204135.6543-1-rosenp@gmail.com> <cabb111b-37b4-493c-ad6c-c237c7091bf6@intel.com>
+In-Reply-To: <cabb111b-37b4-493c-ad6c-c237c7091bf6@intel.com>
+From: Rosen Penev <rosenp@gmail.com>
+Date: Thu, 29 Aug 2024 10:46:33 -0700
+Message-ID: <CAKxU2N_fHp1oWxau3VG7dFK+sdwqDUkzYvFbfjBCdg_VvobrVQ@mail.gmail.com>
+Subject: Re: [PATCH net-next] net: ag71xx: disable napi interrupts during probe
+To: Jacob Keller <jacob.e.keller@intel.com>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com, 
+	kuba@kernel.org, pabeni@redhat.com, linux@armlinux.org.uk, 
+	linux-kernel@vger.kernel.org, o.rempel@pengutronix.de, p.zabel@pengutronix.de
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Haifeng,
+On Wed, Aug 28, 2024 at 2:05=E2=80=AFPM Jacob Keller <jacob.e.keller@intel.=
+com> wrote:
+>
+>
+>
+> On 8/28/2024 1:41 PM, Rosen Penev wrote:
+> > From: Sven Eckelmann <sven@narfation.org>
+> >
+> > ag71xx_probe is registering ag71xx_interrupt as handler for gmac0/gmac1
+> > interrupts. The handler is trying to use napi_schedule to handle the
+> > processing of packets. But the netif_napi_add for this device is
+> > called a lot later in ag71xx_probe.
+> >
+> > It can therefore happen that a still running gmac0/gmac1 is triggering =
+the
+> > interrupt handler with a bit from AG71XX_INT_POLL set in
+> > AG71XX_REG_INT_STATUS. The handler will then call napi_schedule and the
+> > napi code will crash the system because the ag->napi is not yet
+> > initialized.
+> >
+> > The gmcc0/gmac1 must be brought in a state in which it doesn't signal a
+> > AG71XX_INT_POLL related status bits as interrupt before registering the
+> > interrupt handler. ag71xx_hw_start will take care of re-initializing th=
+e
+> > AG71XX_REG_INT_ENABLE.
+> >
+> > Signed-off-by: Sven Eckelmann <sven@narfation.org>
+> > Signed-off-by: Rosen Penev <rosenp@gmail.com>
+> > ---
+>
+> The description reads like a bug fix, so I would expect this to be
+> targeted to net and have a Fixes tag indicating what commit introduced
+> the issue, maybe:
+>
+> Fixes: d51b6ce441d3 ("net: ethernet: add ag71xx driver")
+>
+> The change seems reasonable to me otherwise.
+OTOH there are currently no dual GMAC users upstream. Just single.
 
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on brauner-vfs/vfs.all]
-[also build test ERROR on linus/master v6.11-rc5 next-20240829]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Haifeng-Xu/buffer-Associate-the-meta-bio-with-blkg-from-buffer-page/20240828-113409
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
-patch link:    https://lore.kernel.org/r/20240828033224.146584-1-haifeng.xu%40shopee.com
-patch subject: [PATCH] buffer: Associate the meta bio with blkg from buffer page
-config: x86_64-buildonly-randconfig-002-20240829 (https://download.01.org/0day-ci/archive/20240830/202408300119.UQ0zNU1f-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240830/202408300119.UQ0zNU1f-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408300119.UQ0zNU1f-lkp@intel.com/
-
-All error/warnings (new ones prefixed by >>):
-
-   fs/buffer.c: In function 'submit_bh_wbc':
->> fs/buffer.c:2826:29: error: implicit declaration of function 'mem_cgroup_css_from_folio'; did you mean 'mem_cgroup_from_obj'? [-Werror=implicit-function-declaration]
-    2826 |                 memcg_css = mem_cgroup_css_from_folio(folio);
-         |                             ^~~~~~~~~~~~~~~~~~~~~~~~~
-         |                             mem_cgroup_from_obj
->> fs/buffer.c:2826:27: warning: assignment to 'struct cgroup_subsys_state *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
-    2826 |                 memcg_css = mem_cgroup_css_from_folio(folio);
-         |                           ^
-   In file included from include/linux/array_size.h:5,
-                    from include/linux/kernel.h:16,
-                    from fs/buffer.c:22:
->> fs/buffer.c:2827:42: error: 'memory_cgrp_subsys_on_dfl_key' undeclared (first use in this function); did you mean 'misc_cgrp_subsys_on_dfl_key'?
-    2827 |                 if (cgroup_subsys_on_dfl(memory_cgrp_subsys) &&
-         |                                          ^~~~~~~~~~~~~~~~~~
-   include/linux/compiler.h:19:53: note: in definition of macro 'likely_notrace'
-      19 | #define likely_notrace(x)       __builtin_expect(!!(x), 1)
-         |                                                     ^
-   include/linux/jump_label.h:511:56: note: in expansion of macro 'static_key_enabled'
-     511 | #define static_branch_likely(x)         likely_notrace(static_key_enabled(&(x)->key))
-         |                                                        ^~~~~~~~~~~~~~~~~~
-   include/linux/cgroup.h:95:9: note: in expansion of macro 'static_branch_likely'
-      95 |         static_branch_likely(&ss ## _on_dfl_key)
-         |         ^~~~~~~~~~~~~~~~~~~~
-   fs/buffer.c:2827:21: note: in expansion of macro 'cgroup_subsys_on_dfl'
-    2827 |                 if (cgroup_subsys_on_dfl(memory_cgrp_subsys) &&
-         |                     ^~~~~~~~~~~~~~~~~~~~
-   fs/buffer.c:2827:42: note: each undeclared identifier is reported only once for each function it appears in
-    2827 |                 if (cgroup_subsys_on_dfl(memory_cgrp_subsys) &&
-         |                                          ^~~~~~~~~~~~~~~~~~
-   include/linux/compiler.h:19:53: note: in definition of macro 'likely_notrace'
-      19 | #define likely_notrace(x)       __builtin_expect(!!(x), 1)
-         |                                                     ^
-   include/linux/jump_label.h:511:56: note: in expansion of macro 'static_key_enabled'
-     511 | #define static_branch_likely(x)         likely_notrace(static_key_enabled(&(x)->key))
-         |                                                        ^~~~~~~~~~~~~~~~~~
-   include/linux/cgroup.h:95:9: note: in expansion of macro 'static_branch_likely'
-      95 |         static_branch_likely(&ss ## _on_dfl_key)
-         |         ^~~~~~~~~~~~~~~~~~~~
-   fs/buffer.c:2827:21: note: in expansion of macro 'cgroup_subsys_on_dfl'
-    2827 |                 if (cgroup_subsys_on_dfl(memory_cgrp_subsys) &&
-         |                     ^~~~~~~~~~~~~~~~~~~~
->> fs/buffer.c:2828:42: error: 'io_cgrp_subsys_on_dfl_key' undeclared (first use in this function); did you mean 'misc_cgrp_subsys_on_dfl_key'?
-    2828 |                     cgroup_subsys_on_dfl(io_cgrp_subsys)) {
-         |                                          ^~~~~~~~~~~~~~
-   include/linux/compiler.h:19:53: note: in definition of macro 'likely_notrace'
-      19 | #define likely_notrace(x)       __builtin_expect(!!(x), 1)
-         |                                                     ^
-   include/linux/jump_label.h:511:56: note: in expansion of macro 'static_key_enabled'
-     511 | #define static_branch_likely(x)         likely_notrace(static_key_enabled(&(x)->key))
-         |                                                        ^~~~~~~~~~~~~~~~~~
-   include/linux/cgroup.h:95:9: note: in expansion of macro 'static_branch_likely'
-      95 |         static_branch_likely(&ss ## _on_dfl_key)
-         |         ^~~~~~~~~~~~~~~~~~~~
-   fs/buffer.c:2828:21: note: in expansion of macro 'cgroup_subsys_on_dfl'
-    2828 |                     cgroup_subsys_on_dfl(io_cgrp_subsys)) {
-         |                     ^~~~~~~~~~~~~~~~~~~~
->> fs/buffer.c:2829:70: error: 'io_cgrp_subsys' undeclared (first use in this function); did you mean 'misc_cgrp_subsys'?
-    2829 |                         blkcg_css = cgroup_e_css(memcg_css->cgroup, &io_cgrp_subsys);
-         |                                                                      ^~~~~~~~~~~~~~
-         |                                                                      misc_cgrp_subsys
-   cc1: some warnings being treated as errors
-
-
-vim +2826 fs/buffer.c
-
-  2778	
-  2779	static void submit_bh_wbc(blk_opf_t opf, struct buffer_head *bh,
-  2780				  enum rw_hint write_hint,
-  2781				  struct writeback_control *wbc)
-  2782	{
-  2783		const enum req_op op = opf & REQ_OP_MASK;
-  2784		struct bio *bio;
-  2785	
-  2786		BUG_ON(!buffer_locked(bh));
-  2787		BUG_ON(!buffer_mapped(bh));
-  2788		BUG_ON(!bh->b_end_io);
-  2789		BUG_ON(buffer_delay(bh));
-  2790		BUG_ON(buffer_unwritten(bh));
-  2791	
-  2792		/*
-  2793		 * Only clear out a write error when rewriting
-  2794		 */
-  2795		if (test_set_buffer_req(bh) && (op == REQ_OP_WRITE))
-  2796			clear_buffer_write_io_error(bh);
-  2797	
-  2798		if (buffer_meta(bh))
-  2799			opf |= REQ_META;
-  2800		if (buffer_prio(bh))
-  2801			opf |= REQ_PRIO;
-  2802	
-  2803		bio = bio_alloc(bh->b_bdev, 1, opf, GFP_NOIO);
-  2804	
-  2805		fscrypt_set_bio_crypt_ctx_bh(bio, bh, GFP_NOIO);
-  2806	
-  2807		bio->bi_iter.bi_sector = bh->b_blocknr * (bh->b_size >> 9);
-  2808		bio->bi_write_hint = write_hint;
-  2809	
-  2810		__bio_add_page(bio, bh->b_page, bh->b_size, bh_offset(bh));
-  2811	
-  2812		bio->bi_end_io = end_bio_bh_io_sync;
-  2813		bio->bi_private = bh;
-  2814	
-  2815		/* Take care of bh's that straddle the end of the device */
-  2816		guard_bio_eod(bio);
-  2817	
-  2818		if (wbc) {
-  2819			wbc_init_bio(wbc, bio);
-  2820			wbc_account_cgroup_owner(wbc, bh->b_page, bh->b_size);
-  2821		} else if (buffer_meta(bh)) {
-  2822			struct folio *folio;
-  2823			struct cgroup_subsys_state *memcg_css, *blkcg_css;
-  2824	
-  2825			folio = page_folio(bh->b_page);
-> 2826			memcg_css = mem_cgroup_css_from_folio(folio);
-> 2827			if (cgroup_subsys_on_dfl(memory_cgrp_subsys) &&
-> 2828			    cgroup_subsys_on_dfl(io_cgrp_subsys)) {
-> 2829				blkcg_css = cgroup_e_css(memcg_css->cgroup, &io_cgrp_subsys);
-  2830				bio_associate_blkg_from_css(bio, blkcg_css);
-  2831			}
-  2832		}
-  2833	
-  2834		submit_bio(bio);
-  2835	}
-  2836	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+>
+> >  drivers/net/ethernet/atheros/ag71xx.c | 6 ++++++
+> >  1 file changed, 6 insertions(+)
+> >
+> > diff --git a/drivers/net/ethernet/atheros/ag71xx.c b/drivers/net/ethern=
+et/atheros/ag71xx.c
+> > index 0674a042e8d3..435c4b19acdd 100644
+> > --- a/drivers/net/ethernet/atheros/ag71xx.c
+> > +++ b/drivers/net/ethernet/atheros/ag71xx.c
+> > @@ -1855,6 +1855,12 @@ static int ag71xx_probe(struct platform_device *=
+pdev)
+> >       if (!ag->mac_base)
+> >               return -ENOMEM;
+> >
+> > +     /* ensure that HW is in manual polling mode before interrupts are
+> > +      * activated. Otherwise ag71xx_interrupt might call napi_schedule
+> > +      * before it is initialized by netif_napi_add.
+> > +      */
+> > +     ag71xx_int_disable(ag, AG71XX_INT_POLL);
+> > +
+> >       ndev->irq =3D platform_get_irq(pdev, 0);
+> >       err =3D devm_request_irq(&pdev->dev, ndev->irq, ag71xx_interrupt,
+> >                              0x0, dev_name(&pdev->dev), ndev);
 
