@@ -1,155 +1,139 @@
-Return-Path: <linux-kernel+bounces-306913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF4DB964558
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 14:53:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 88AE096455B
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 14:53:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9559628204A
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 12:53:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44F9028676A
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 12:53:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B04B1B8E86;
-	Thu, 29 Aug 2024 12:45:16 +0000 (UTC)
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6E4D1B0104;
+	Thu, 29 Aug 2024 12:45:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PxiNpTYC"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 432241B86E2;
-	Thu, 29 Aug 2024 12:45:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 902EB1B8E94
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 12:45:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724935516; cv=none; b=XjTwGwR9MqKDDrGu+QqTxiGwDuPRdcRQpXwwcwaSf8XQQIO97taKgisCfL1oz3R8ZH+MCK02EVaWKLwKR1JMG1uBO60ZCvi5iKYu5fez0lHJqC1RjPYdFI83DnkHDnox64FqjeUkBIrXcwRHVQTV8aDPw08wez0LupAZj/1EH5o=
+	t=1724935527; cv=none; b=jUiRXUDVXIMFtixMHtDt2wFdQpcEJyng7chOZ4gWLc9aGpYkgGNF0+VYJYTglZzBw+VJI13S0eGHaBT+6OAluK5d0dDrfclbCkMEnYsq38Nq4t5Cp9qRSFuvdmjRhDBx+WE+4ER/IX/KOzpNMRTBS1/t2EMAPxECMJr5xNPTugY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724935516; c=relaxed/simple;
-	bh=+LwzQuOMskdYCQNrSv2N8XSkkE9ud0IF6wQLEtd6zEI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=S1z0z01CxJ68bbILITEWcZ3jnIdyjYzR7jxLdNunK+jEtXvr4eY2HzVWQfNRNjfkmsrHDBbP17tYech0vM6NWnJquWnhvBFpMRhGaCM4eiHwhTf24lzgbRZMfnEm08s7gtxWHsxnFQXar33wLT9oLyaD535Fjz2W5OZPZhLFMrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6b44dd520ceso6144917b3.0;
-        Thu, 29 Aug 2024 05:45:14 -0700 (PDT)
+	s=arc-20240116; t=1724935527; c=relaxed/simple;
+	bh=NXTqYoaWa5ODrmReOn7m+hsJ3VAZOfcmaKGZMjn0eDY=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=UDKgLp2wn0WUlk3PI2PhQCPBTBnnXJn1osg6YWBlS7NrSUyvXDE5D5qnAgvpse2eKn0eVBn730WFo4BvBC505LxZ6hRaedwr2ZgexHBMPcL/0G8sf8fSNgZBPS1huns8RDSAQzByE/sWh5WZ6TkZ+xIjCvamthmxfdCu4ENRq/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PxiNpTYC; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-37193ef72a4so415140f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 05:45:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724935524; x=1725540324; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Fw7GLxhLCO6fbROkpV/yXnp/I8CJLgF4HIAvHSYpAZM=;
+        b=PxiNpTYC3OeBKpnlW/+QhjhGNiHvRIJZ0q9qK7ZbjHioO3fDCMmznf2otxK6qkoj0p
+         VAMYsZKr290BYU1pVI2TVSQwucFtXAIGKBChg0FDz6NMGmRimrhmmlGAfIySKJVzuvNY
+         hqIKVInyuSjeUNbnKitaR/uqYHYMT+QKPw1bfDTXp3dEkQHR9fen1N5S2W1klpu0PObH
+         559cdhgHmtRsXZ0Do/mVVrQ0VCPrNvbuoDbHuk/abMgWCCeQbqc/EqAHYWf7tTZnpcq+
+         0ylj4EimOQ/F1p6wbLTl4QxJPa8vDYPG9r5bmrYiVVos+2zQEPJT+pq7CEoeWEn4LDyv
+         6WrA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724935513; x=1725540313;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FUjTeXLSWnZkbY07LBWpQrBCxuH3GeKukadOEJ6jzwk=;
-        b=vyjUe4OkIk2GTJnx906gfWHqvrtkq+Y+JGthwrsEfCYwE+VQRrqKCJ/0uLXG6/XCBf
-         xzkagx34jL9I04tPaqUMx9U78IartBee7MkSXAxBNX5C+3sGOln0wm96wscYvO0/9wi5
-         1cxLgDi3kFuxK8XRrlCbHHsvQb6am5ikCx6vIslcOCwGrjsUHZcA1CCjvUzHhyl+XNJ6
-         VMrCCig6qahkt5JBVhhhBM7IBwXqJKLPJN03v4GR8fp08+X8tAWLGspla0bzLJmioCl3
-         VkFqr9tSs0OlfboePn4LGNa9gCKrIxacfbFzrWlzUUFlBKypUWFJkjBfrfvsWRQ1P10k
-         bRsw==
-X-Forwarded-Encrypted: i=1; AJvYcCUQTWyLnmkwG1xfQr2txqJCpQuwA2icvp9M2xKbhUxtorBQPRthMvDAH/hw1znKNV5HTBcVpM1pGDPJUs6J@vger.kernel.org, AJvYcCUZ2gtzm26QBLvSDcsDXf2gIqwys/V6cSQXhmQ86ElyAXcVWs9nDo+SbOTDrnyfwROIrumrLkFdcZY=@vger.kernel.org, AJvYcCV3apZ6EPvMwliVH7CejwY0WPmLxLSNRUV/LWf7VXxNKX96p7BV2gGwo4+Cc6gBDhfsGzVpoKdC+eLhMy8bNh4=@vger.kernel.org, AJvYcCVyM8qbxkxyELp7bcDZ+p7ALF0r0DqQpAwg4vBHP3NcKz+crf6M2BAg/esOYKk2yZcslUPPicD0UYo=@vger.kernel.org, AJvYcCW2781C6aljG4CKgz2TGgNuKMmBcUcWGB1284y2qW3dvWTYEUKn5ZvCCyB1ML2wAHXV94Qygcgi85FwzXbWlTzlN2g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxiWGeXmNIV0OzPdugm9ONtpF58PARNvjZdBjE1PMmpzK0nsseU
-	+QzZP0RbT86E0aj2wrsuyJfBG6SrPlBtfSXMIGmzZPBc4rCCjW2C2fOkmTgj
-X-Google-Smtp-Source: AGHT+IFAUogVjLo5+Zp77g4oRb2MIRnJj1pAtGZjSCI45VAEcUBNrrEcqVTZ6GHyebCbxY4AzWC+8g==
-X-Received: by 2002:a05:690c:d0f:b0:65f:cdc6:e25d with SMTP id 00721157ae682-6d277f514c7mr26523757b3.45.1724935512917;
-        Thu, 29 Aug 2024 05:45:12 -0700 (PDT)
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com. [209.85.219.175])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6d2d39c8c93sm2245847b3.28.2024.08.29.05.45.12
+        d=1e100.net; s=20230601; t=1724935524; x=1725540324;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Fw7GLxhLCO6fbROkpV/yXnp/I8CJLgF4HIAvHSYpAZM=;
+        b=Dl8dSHdREsn13ud1cvtH6nDQDzparldHkWPywIPbVc/BnZ/H7eTdrA3A5Vnnztigtg
+         BaUlAIGc4TxTHjHfIlhm5UVQSm3DAhkIOMHKf8YfDB5pvItfFPqd3IuTemJ0ptSY0z9J
+         vowAqqzlSlRA/FrBRDq1O0upDIYlDDSepyp8hXDgC+72VvU9QKx0gnbaVjbs6oY1SwMW
+         FIpUKEa579sFJAx2EAQrPCvqJozPjjxDOi0rYg4tjchqFEXp43Dv3q4erQ28NkKkiwgt
+         INV1L2QKq22vZNII2Sm+QdVjOhGGwzHFQ4jh3AHIlU8upowDqk6qxTleMmT3joeNYibV
+         iAyg==
+X-Forwarded-Encrypted: i=1; AJvYcCVFi7xH5xZPZb+NQGGnTVDbN57r1722sjgb+iNJE/jOJihDm4fQMo9668IXN1NeJ47uv8EMdZK7YE51LFk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzlKTxTUQ/NzTcWiRmXQQt6SEbCSPX6bZrnxR7hIRxoQ0M4k9/F
+	ymJ9LakQDZvK5Kv9AD/lS6pvnut+cY6bhPjL2N8vdzPaihhjmz4gq5aDyptRgQg=
+X-Google-Smtp-Source: AGHT+IHev3K3SVQgkLP2RgPaTq1Lxy2HYm4oMTRmYoYyUw2Nw6EW3ANpfnFU/wTxuFK1F2XWUw2zgQ==
+X-Received: by 2002:a5d:5988:0:b0:367:9ce3:1667 with SMTP id ffacd0b85a97d-3749b543c5dmr2788225f8f.15.1724935523424;
+        Thu, 29 Aug 2024 05:45:23 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:12f5:c9c:a0e1:6915? ([2a01:e0a:982:cbb0:12f5:c9c:a0e1:6915])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3749efbf86esm1347152f8f.116.2024.08.29.05.45.22
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 29 Aug 2024 05:45:12 -0700 (PDT)
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e115c8aa51fso673409276.1;
-        Thu, 29 Aug 2024 05:45:12 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU0/1Vfys8UijhdRthkzC3PLqnXF88YcngRpeVFyERj4+37oDbwS1HWiHbixh5laCVgQv0RcrduUfKEDdM1vkNRFVw=@vger.kernel.org, AJvYcCUEK2+MkUCenraSKZKsPxT6DSQMPHboY4pmjn66LOIOM0ziOfUJZFUuh9C/J9V7IihIur4He2JyArx5sPOK@vger.kernel.org, AJvYcCUHHbq1tfolJidAoW06SpTFQk2Bxp/UG+npzQsVN6xI4ckXlUEvHcMpzBWFpBrc/UgVipHHD0J7wOn0yQLpRZw=@vger.kernel.org, AJvYcCWTVqIVjj4x1jQunyb9Xomf5+cOupHfJ9J53ZhSTGWY+G6SwUrXdqEiBf2VfdhydcD1/2gV5TDyFZM=@vger.kernel.org, AJvYcCXniaAFKPeMtJBfoJtUuUBfRqgQOy8N+ahngXKyatGOgXKPOgsnWgtHa/L1LCPD0L5jr7TjmR9M4A0=@vger.kernel.org
-X-Received: by 2002:a05:6902:2b0f:b0:e11:6f62:2290 with SMTP id
- 3f1490d57ef6-e1a5ab89aafmr3001251276.24.1724935512448; Thu, 29 Aug 2024
- 05:45:12 -0700 (PDT)
+        Thu, 29 Aug 2024 05:45:23 -0700 (PDT)
+Message-ID: <70e1197d-b3be-4986-bae0-80e08c8a0eae@linaro.org>
+Date: Thu, 29 Aug 2024 14:45:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240828140602.1006438-1-claudiu.beznea.uj@bp.renesas.com> <20240828140602.1006438-3-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20240828140602.1006438-3-claudiu.beznea.uj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 29 Aug 2024 14:45:00 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUcstyRDfaQ0Y=1NHgBYuRWjC0vuJj2j8USCTsEE1qKVA@mail.gmail.com>
-Message-ID: <CAMuHMdUcstyRDfaQ0Y=1NHgBYuRWjC0vuJj2j8USCTsEE1qKVA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] clk: renesas: r9a08g045: Mark the watchdog and
- always-on PM domains as IRQ safe
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, wim@linux-watchdog.org, 
-	linux@roeck-us.net, ulf.hansson@linaro.org, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-watchdog@vger.kernel.org, linux-pm@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+From: neil.armstrong@linaro.org
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH v2 12/17] arm64: dts: qcom: sm8450: change labels to
+ lower-case
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, cros-qcom-dts-watchers@chromium.org
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240829-dts-qcom-label-v2-0-5deaada3e6b2@linaro.org>
+ <20240829-dts-qcom-label-v2-12-5deaada3e6b2@linaro.org>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20240829-dts-qcom-label-v2-12-5deaada3e6b2@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Claudiu,
-
-On Wed, Aug 28, 2024 at 4:06=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev> =
-wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->
-> If the watchdog is part of a dedicated power domain (as it may be on
-> RZ/G3S) the watchdog PM domain need to be powered on in the watchdog
-> restart handler. Currently, only the clocks are enabled in the watchdog
-> restart handler. To be able to also power on the PM domain we need to
-> call pm_runtime_resume_and_get() on the watchdog restart handler, mark
-> the watchdog device as IRQ safe and register the watchdog PM domain
-> with GENPD_FLAG_IRQ_SAFE.
->
-> Register watchdog PM domain as IRQ safe. Along with it the always-on
-> PM domain (parent of the watchdog domain) was marked as IRQ safe.
->
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+On 29/08/2024 14:34, Krzysztof Kozlowski wrote:
+> DTS coding style expects labels to be lowercase.  No functional impact.
+> Verified with comparing decompiled DTB (dtx_diff and fdtdump+diff).
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 > ---
->
-> Changes in v2:
-> - changed patch title; it was "clk: renesas: rzg2l-cpg: Mark
->   watchdog and always-on PM domains as IRQ safe"
+>   arch/arm64/boot/dts/qcom/sm8450.dtsi | 160 +++++++++++++++++------------------
+>   1 file changed, 80 insertions(+), 80 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sm8450.dtsi b/arch/arm64/boot/dts/qcom/sm8450.dtsi
+> index 9bafb3b350ff..4126224c1679 100644
+> --- a/arch/arm64/boot/dts/qcom/sm8450.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sm8450.dtsi
+<snip>
 
-Thanks for the update!
-
-> --- a/drivers/clk/renesas/r9a08g045-cpg.c
-> +++ b/drivers/clk/renesas/r9a08g045-cpg.c
-> @@ -259,7 +259,7 @@ static const struct rzg2l_cpg_pm_domain_init_data r9a=
-08g045_pm_domains[] =3D {
->         /* Keep always-on domain on the first position for proper domains=
- registration. */
->         DEF_PD("always-on",     R9A08G045_PD_ALWAYS_ON,
->                                 DEF_REG_CONF(0, 0),
-> -                               GENPD_FLAG_ALWAYS_ON),
-> +                               GENPD_FLAG_ALWAYS_ON | GENPD_FLAG_IRQ_SAF=
-E),
->         DEF_PD("gic",           R9A08G045_PD_GIC,
->                                 DEF_REG_CONF(CPG_BUS_ACPU_MSTOP, BIT(3)),
->                                 GENPD_FLAG_ALWAYS_ON),
-> @@ -270,7 +270,8 @@ static const struct rzg2l_cpg_pm_domain_init_data r9a=
-08g045_pm_domains[] =3D {
->                                 DEF_REG_CONF(CPG_BUS_REG1_MSTOP, GENMASK(=
-3, 0)),
->                                 GENPD_FLAG_ALWAYS_ON),
->         DEF_PD("wdt0",          R9A08G045_PD_WDT0,
-> -                               DEF_REG_CONF(CPG_BUS_REG0_MSTOP, BIT(0)),=
- 0),
-> +                               DEF_REG_CONF(CPG_BUS_REG0_MSTOP, BIT(0)),
-> +                               GENPD_FLAG_IRQ_SAFE),
->         DEF_PD("sdhi0",         R9A08G045_PD_SDHI0,
->                                 DEF_REG_CONF(CPG_BUS_PERI_COM_MSTOP, BIT(=
-0)), 0),
->         DEF_PD("sdhi1",         R9A08G045_PD_SDHI1,
-
-Can't you just do this for all domains (e.g. in rzg2l_cpg_pd_setup()),
-instead of limiting this to the wdt0 and always-on domains?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
 
