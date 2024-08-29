@@ -1,303 +1,159 @@
-Return-Path: <linux-kernel+bounces-306407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FB9F963EA5
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:33:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 860C5963EAD
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:33:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E027A1F252B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:33:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B81451C24357
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:33:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEFA218D63C;
-	Thu, 29 Aug 2024 08:30:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2790B18FC77;
+	Thu, 29 Aug 2024 08:31:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hZUzzT2X"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="DmObrtII"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4E0E18CBE6
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 08:30:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CDEC18F2F1
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 08:30:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724920257; cv=none; b=k6nY2UqPBznGZBItcvsV3dLy6FthHCP1YSA9LkXmsvfM2mXJObVRruSqqcBmKLbKNf0lwhkESna5jlZ2YaLsn8oepdjikhJ5Yq2pWSOUfYqXtQNwK94/J1MBCXgLjtV4jmBb/duIhReMnYWMlimgMf9n3wzLfrPrTepcrMA8Oq8=
+	t=1724920262; cv=none; b=ltWwdHSF3wEq6LN2jVyOXEuT5t+lkjas+yBcFW7Rs93R5jd3w1hnautzm+By+XCsbP5S/JyyMPPm2tp4ejwiGVMBwlwmg7dTmxM3K/LNJcodbMjkvM8UkN5t632+qdfq6CfAkOldWWUcaNI6UYq165xRLxX2YR0HUDNVmKSzC5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724920257; c=relaxed/simple;
-	bh=zsRlTwTVxlGdUebG4U9l/6351oc6rYJx9FuwhzGC6rE=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=gDwrv4hAQDbr/r+e+DNUUfGAjsjg2io6BrdV0nTHXaikGkWFvLbX9PdCxV2Gf6QKkUf+tvCWFtiZNnv0XxZhVKxgh+lXKfe6vXzcbA17Ydr9ujseFQd/OHzV8aemd2tocIKWQoSSf55XWDVZDssQduPqIJZ6DLNJR6wwN1eY4JU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hZUzzT2X; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-427fc97a88cso3409145e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 01:30:53 -0700 (PDT)
+	s=arc-20240116; t=1724920262; c=relaxed/simple;
+	bh=Ga5XTB33oVuVAsb+XJ/AOaHLIiGbefqAQCifoS2rQFo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YpcsutcOsll25kgtzRX2+cx5CVHk5b4juWKhY5L1K1UAroJJWu4EL7je8jKEx+DWT2T07kfni6QHFqzwkNBkl6EgaSsfwS8PhiQYhPrRMr8G4V2QRKNzziatRQlZita3G+1FVXeE8beRB2QLC6AZzMkMqJ7cFSTMInIH1oRHKy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=DmObrtII; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-371afae614aso236080f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 01:30:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724920252; x=1725525052; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/fW71FS0lmTuV1wHWmHmOLHgNUvex8iYSoVrr1nHB6s=;
-        b=hZUzzT2X/mV4DMzsi9yoJEMQUFCpeE07A4XhcJXheGoBBL1/ZgA3di7X9fwYJCU+dF
-         uFpI6mqw4CNrdw4BzMCalI/nAv42Al5cHcqcgllmZmSTr5YmsrHvqWdvfIHih4D9vW3N
-         T+7+nalypG5mCyIQXZoyYtTCWpiAd/A4kMCYVi/QEb5F/JRD8b6wHzzWs6+bHWoLX5rO
-         y5DidyEd89N4QJUsp8Mh5XhmZx2693yJoNxS93xz3TJmyBLmpZMCfs101Jqggtvmeg1C
-         VGIDWXCqG+nB2fydzx7IuAEiqyQJBJpOZQ4jafwrX3CvuAEi2ttyqgHheNYiv2/6b15b
-         D3vg==
+        d=suse.com; s=google; t=1724920258; x=1725525058; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=mhnlNgvuSYKooCUA3K3P7Rvv1F/ipLIuFC4LArX03WU=;
+        b=DmObrtIIa+JA+/TmFBGnFhEdaNkDj2b6d9lVqBEEOv4eMqze6ZtF+YQFfsakr9Q0K5
+         rJWh0MWisLShoQOWAtSxLS9q9fgmFgi3mR/KsmvVd2mPYHasZFyP1TR6dA2PPN2lfz1y
+         xPOwC4RRgsd47YG4AylP7Dgdyuk/0XN4UdDOl39sK9N11mBacTkyk9aeQeuLmkPhxBtp
+         dyZCok1u9sWSLMmz6jEKLDhyLjSEYkjGUy4FOpRco1wbADk4evSJ3md9AHnVdcDVwRn4
+         o240asg9iMAitTeFEcWcm9AhT3hDMVcVXMJfLuDKmyF2nLgoKm0GJyWkYE9OKY94atG/
+         4UxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724920252; x=1725525052;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=/fW71FS0lmTuV1wHWmHmOLHgNUvex8iYSoVrr1nHB6s=;
-        b=YtdgyilbmgPNtSDQpUxEVX8yN3Y1XRixPDHPUjMFErObAHXSxrDjxZdCXxJuqsNRcl
-         2oPyfT0jwDGn2Bs2HR87OPGp2pKCntah6IYCWBMBaLYOofwZU+V9d8BZqJMYkh7P8OZB
-         nsi1n9sjFPpk3gm/vMGhe+1z8ESj2+TooMD94EzWHUep1jWkCaI0XUZAxIDR46b45RpR
-         ArXXkL5V+4tMyjpRzd87vbkz1SAJh+v5B5A2MZkQvMcxhyVVTg3zButvGEydsiVTLxTg
-         +wTea0SHmSoFmpEdDKWfJ46aoJ1LU4sbQmN0aK7hkC61oyfysnvGQdIeZlag9UIwBxcu
-         G2nw==
-X-Forwarded-Encrypted: i=1; AJvYcCUjN5ANOGAZv1mFbWsBNWBWfOvwj99RdZ1ma2fQr3Dfjb3oWVmY3ARlk13jMxISoUgj/l1lmc3ntbkJSKY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4pCfPIp/uc07w6jnn3ZZmbeGojc9gKSzfjIp+SXEaBhpJHfb1
-	G4Bp4BKth2ypJUfpaG8jD4mSDuAYftXqJmm191nhGhCXYWuCPrdjEKGDEfeyxnE=
-X-Google-Smtp-Source: AGHT+IHGuznT7s9K3x5HeSkF7fCIjIIH9qT4bN2dkHvKGxtIsO2SxucelcGw+Ke16+3q8DaHNkERJA==
-X-Received: by 2002:a05:600c:5110:b0:426:6696:9e50 with SMTP id 5b1f17b1804b1-42bb02591d1mr12515665e9.14.1724920251352;
-        Thu, 29 Aug 2024 01:30:51 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:12f5:c9c:a0e1:6915? ([2a01:e0a:982:cbb0:12f5:c9c:a0e1:6915])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ba639652esm44084155e9.2.2024.08.29.01.30.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 29 Aug 2024 01:30:50 -0700 (PDT)
-Message-ID: <79a643de-9808-4866-9e41-8bd5ab55ffed@linaro.org>
-Date: Thu, 29 Aug 2024 10:30:49 +0200
+        d=1e100.net; s=20230601; t=1724920258; x=1725525058;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mhnlNgvuSYKooCUA3K3P7Rvv1F/ipLIuFC4LArX03WU=;
+        b=f7H2K9FUWvsDxh0EtdmuieJTyxHOGbNqntD/+Azc2M3J4Q0ULHcYq+oV6HdyvpPPy1
+         vhly9r+Tjh6Fxrf2DMuWz8x+1zUxU3GhiQdHqhCMNbpT/bi0lNguQmHVz0HMevaNt6bK
+         OgG/OC7D1SZgMEUMKuihHfriLakDO3hwyxy6hMpBmAQURoZHbmIlBBH+KGqghCX26GJR
+         ZRyPfiXCXq2CN6MX8Hrzijq96SYQcVLX3+FQftmCrJTdSrP0c5j68/FT/s0NYcC/VWJG
+         joJlu18Rw6sZkmzgtO6Cx+a0BrvTHBlE0DPzluwk/8B62Ro63xJRtNaUwvrtE4gpoD+L
+         1Qjg==
+X-Forwarded-Encrypted: i=1; AJvYcCXCaMoUO6Wi35Iu86qks25gNdKUepCnkFvPt9CVId/zITAeNKYYFkkFc7Xtp0rcBRniD9CB3j/jrusEaHY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YygMVp55szthlntVtHkK2IjejBNCbGGy3bcU/Li5bjh0eRMyUoi
+	msOXPQ2p9YqXGMZWJ5kkvtlKLnk4Ob3uC6+lk/5sU4nEWxGGk+y+I8oFHjqm7YE=
+X-Google-Smtp-Source: AGHT+IH7DF9ylXdsuqLih7sACGDNUKmPe9OYfvQtJgi5uGMLK6sqxI9YIz1ijmJ7+1Xtw2Y0sxRMNg==
+X-Received: by 2002:adf:ecd0:0:b0:371:8a49:f206 with SMTP id ffacd0b85a97d-3749b54ece3mr1331552f8f.30.1724920258302;
+        Thu, 29 Aug 2024 01:30:58 -0700 (PDT)
+Received: from localhost (109-81-82-19.rct.o2.cz. [109.81.82.19])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3749eeabbc1sm802650f8f.63.2024.08.29.01.30.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Aug 2024 01:30:57 -0700 (PDT)
+Date: Thu, 29 Aug 2024 10:30:56 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Charlie Jenkins <charlie@rivosinc.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Richard Henderson <richard.henderson@linaro.org>,
+	Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+	Matt Turner <mattst88@gmail.com>, Vineet Gupta <vgupta@kernel.org>,
+	Russell King <linux@armlinux.org.uk>, Guo Ren <guoren@kernel.org>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+	Helge Deller <deller@gmx.de>, Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Yoshinori Sato <ysato@users.sourceforge.jp>,
+	Rich Felker <dalias@libc.org>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	"David S. Miller" <davem@davemloft.net>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Muchun Song <muchun.song@linux.dev>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Shuah Khan <shuah@kernel.org>, linux-arch@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org,
+	linux-snps-arc@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org,
+	loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
+	linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+	sparclinux@vger.kernel.org, linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH RFC v2 0/4] mm: Introduce MAP_BELOW_HINT
+Message-ID: <ZtAxwJFH_hAh1BPG@tiehlicka>
+References: <20240829-patches-below_hint_mmap-v2-0-638a28d9eae0@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: neil.armstrong@linaro.org
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH 2/2] phy: add NXP PTN3222 eUSB2 to USB2 redriver
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: Konrad Dybcio <konradybcio@kernel.org>, linux-phy@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org
-References: <20240829-nxp-ptn3222-v1-0-46906bc4747a@linaro.org>
- <20240829-nxp-ptn3222-v1-2-46906bc4747a@linaro.org>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20240829-nxp-ptn3222-v1-2-46906bc4747a@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240829-patches-below_hint_mmap-v2-0-638a28d9eae0@rivosinc.com>
 
-On 29/08/2024 10:21, Dmitry Baryshkov wrote:
-> The NXP PTN3222 is the single-port eUSB2 to USB2 redriver that performs
-> translation between eUSB2 and USB2 signalling schemes. It supports all
-> three data rates: Low Speed, Full Speed and High Speed.
+On Thu 29-08-24 00:15:57, Charlie Jenkins wrote:
+> Some applications rely on placing data in free bits addresses allocated
+> by mmap. Various architectures (eg. x86, arm64, powerpc) restrict the
+> address returned by mmap to be less than the 48-bit address space,
+> unless the hint address uses more than 47 bits (the 48th bit is reserved
+> for the kernel address space).
 > 
-> The reset state enables autonegotiation of the PHY role and of the data
-> rate, so no additional programming is required.
+> The riscv architecture needs a way to similarly restrict the virtual
+> address space. On the riscv port of OpenJDK an error is thrown if
+> attempted to run on the 57-bit address space, called sv57 [1].  golang
+> has a comment that sv57 support is not complete, but there are some
+> workarounds to get it to mostly work [2].
 > 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->   drivers/phy/Kconfig           |  11 ++++
->   drivers/phy/Makefile          |   1 +
->   drivers/phy/phy-nxp-ptn3222.c | 119 ++++++++++++++++++++++++++++++++++++++++++
->   3 files changed, 131 insertions(+)
+> These applications work on x86 because x86 does an implicit 47-bit
+> restriction of mmap() address that contain a hint address that is less
+> than 48 bits.
 > 
-> diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
-> index dfab1c66b3e5..cb06a7f79740 100644
-> --- a/drivers/phy/Kconfig
-> +++ b/drivers/phy/Kconfig
-> @@ -82,6 +82,17 @@ config PHY_AIROHA_PCIE
->   	  This driver create the basic PHY instance and provides initialize
->   	  callback for PCIe GEN3 port.
->   
-> +config PHY_NXP_PTN3222
-> +	tristate "NXP PTN3222 1-port eUSB2 to USB2 redriver"
-> +	depends on I2C
-> +	depends on OF
-> +	select GENERIC_PHY
-> +	help
-> +	  Enable this to support NXP PTN3222 1-port eUSB2 to USB2 Redriver.
-> +	  This redriver performs translation between eUSB2 and USB2 signalling
-> +	  schemes. It supports all three USB 2.0 data rates: Low Speed, Full
-> +	  Speed and High Speed.
-> +
->   source "drivers/phy/allwinner/Kconfig"
->   source "drivers/phy/amlogic/Kconfig"
->   source "drivers/phy/broadcom/Kconfig"
-> diff --git a/drivers/phy/Makefile b/drivers/phy/Makefile
-> index 5fcbce5f9ab1..b64247046575 100644
-> --- a/drivers/phy/Makefile
-> +++ b/drivers/phy/Makefile
-> @@ -11,6 +11,7 @@ obj-$(CONFIG_PHY_XGENE)			+= phy-xgene.o
->   obj-$(CONFIG_PHY_PISTACHIO_USB)		+= phy-pistachio-usb.o
->   obj-$(CONFIG_USB_LGM_PHY)		+= phy-lgm-usb.o
->   obj-$(CONFIG_PHY_AIROHA_PCIE)		+= phy-airoha-pcie.o
-> +obj-$(CONFIG_PHY_NXP_PTN3222)		+= phy-nxp-ptn3222.o
->   obj-y					+= allwinner/	\
->   					   amlogic/	\
->   					   broadcom/	\
-> diff --git a/drivers/phy/phy-nxp-ptn3222.c b/drivers/phy/phy-nxp-ptn3222.c
-> new file mode 100644
-> index 000000000000..429a91910f14
-> --- /dev/null
-> +++ b/drivers/phy/phy-nxp-ptn3222.c
-> @@ -0,0 +1,119 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2024, Linaro Limited
-> + */
-> +
-> +#include <linux/gpio/consumer.h>
-> +#include <linux/i2c.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/phy/phy.h>
-> +#include <linux/regmap.h>
-> +#include <linux/regulator/consumer.h>
-> +
-> +#define NUM_SUPPLIES 2
-> +
-> +struct ptn3222 {
-> +	struct i2c_client *client;
-> +	struct phy *phy;
-> +	struct gpio_desc *reset_gpio;
-> +	struct regulator_bulk_data supplies[NUM_SUPPLIES];
-> +};
-> +
-> +static int ptn3222_init(struct phy *phy)
-> +{
-> +	struct ptn3222 *ptn3222 = phy_get_drvdata(phy);
-> +	int ret;
-> +
-> +	ret = regulator_bulk_enable(NUM_SUPPLIES, ptn3222->supplies);
-> +	if (ret)
-> +		return ret;
-> +
-> +	gpiod_set_value_cansleep(ptn3222->reset_gpio, 0);
-> +
-> +	return 0;
-> +}
-> +
-> +static int ptn3222_exit(struct phy *phy)
-> +{
-> +	struct ptn3222 *ptn3222 = phy_get_drvdata(phy);
-> +
-> +	gpiod_set_value_cansleep(ptn3222->reset_gpio, 1);
-> +
-> +	return regulator_bulk_disable(NUM_SUPPLIES, ptn3222->supplies);
-> +}
-> +
-> +static const struct phy_ops ptn3222_ops = {
-> +	.init		= ptn3222_init,
-> +	.exit		= ptn3222_exit,
-> +	.owner		= THIS_MODULE,
-> +};
-> +
-> +static int ptn3222_probe(struct i2c_client *client)
-> +{
-> +	struct device *dev = &client->dev;
-> +	struct phy_provider *phy_provider;
-> +	struct ptn3222 *ptn3222;
-> +	int ret;
-> +
-> +	ptn3222 = devm_kzalloc(dev, sizeof(*ptn3222), GFP_KERNEL);
-> +	if (!ptn3222)
-> +		return -ENOMEM;
-> +
-> +	ptn3222->client = client;
-> +
-> +	ptn3222->reset_gpio = devm_gpiod_get_optional(dev, "reset",
-> +						      GPIOD_OUT_HIGH);
-> +	if (IS_ERR(ptn3222->reset_gpio))
-> +		return dev_err_probe(dev, PTR_ERR(ptn3222->reset_gpio),
-> +				     "unable to acquire reset gpio\n");
-> +
-> +	ptn3222->supplies[0].supply = "vdd3v3";
-> +	ptn3222->supplies[0].init_load_uA = 11000;
-> +	ptn3222->supplies[1].supply = "vdd1v8";
-> +	ptn3222->supplies[1].init_load_uA = 55000;
-> +
-> +	ret = devm_regulator_bulk_get(dev,
-> +				      NUM_SUPPLIES,
-> +				      ptn3222->supplies);
+> Instead of implicitly restricting the address space on riscv (or any
+> current/future architecture), a flag would allow users to opt-in to this
+> behavior rather than opt-out as is done on other architectures. This is
+> desirable because it is a small class of applications that do pointer
+> masking.
 
-Suggestion only, you could switch to devm_regulator_bulk_get_const()
+IIRC this has been discussed at length when 5-level page tables support
+has been proposed for x86. Sorry I do not have a link handy but lore
+should help you. Linus was not really convinced and in the end vetoed it
+and prefer that those few applications that benefit from greater address
+space would do that explicitly than other way around.
 
-> +	if (ret)
-> +		return ret;
-> +
-> +	ptn3222->phy = devm_phy_create(dev, dev->of_node, &ptn3222_ops);
-> +	if (IS_ERR(ptn3222->phy)) {
-> +		dev_err(dev, "failed to create PHY: %d\n", ret);
-> +		return PTR_ERR(ptn3222->phy);
-> +	}
-> +
-> +	phy_set_drvdata(ptn3222->phy, ptn3222);
-> +
-> +	phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
-> +
-> +	return PTR_ERR_OR_ZERO(phy_provider);
-> +}
-> +
-> +static const struct i2c_device_id ptn3222_table[] = {
-> +	{ "ptn3222" },
-> +	{ }
-> +};
-> +MODULE_DEVICE_TABLE(i2c, ptn3222_table);
-> +
-> +static const struct of_device_id ptn3222_of_table[] = {
-> +	{ .compatible = "nxp,ptn3222" },
-> +	{ }
-> +};
-> +MODULE_DEVICE_TABLE(of, ptn3222_of_table);
-> +
-> +static struct i2c_driver ptn3222_driver = {
-> +	.driver = {
-> +		.name = "ptn3222",
-> +		.of_match_table = ptn3222_of_table,
-> +	},
-> +	.probe = ptn3222_probe,
-> +	.id_table = ptn3222_table,
-> +};
-> +
-> +module_i2c_driver(ptn3222_driver);
-> +
-> +MODULE_DESCRIPTION("NXP PTN3222 eUSB2 Redriver driver");
-> +MODULE_LICENSE("GPL");
-> 
-
-Apart that, it looks fine, please add my:
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+-- 
+Michal Hocko
+SUSE Labs
 
