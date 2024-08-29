@@ -1,195 +1,101 @@
-Return-Path: <linux-kernel+bounces-307169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C27F964961
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 17:04:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8EC5964969
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 17:05:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9CA1281D1E
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:04:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D6D21F23384
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:05:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0634D1B252F;
-	Thu, 29 Aug 2024 15:02:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BF9C1B29D0;
+	Thu, 29 Aug 2024 15:04:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="t7Q+lTir";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="rwz+63Hb";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="t7Q+lTir";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="rwz+63Hb"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="ZXO7HL9v"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73EF81B1402;
-	Thu, 29 Aug 2024 15:02:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E1A41AC8A0;
+	Thu, 29 Aug 2024 15:04:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724943761; cv=none; b=lI/WOgARajJ5fuhXJlddJ/bP2XqGzG+fA/oKv033jVW6I52uNLGq/t8QYpe49XtRtYZgybBCd3dr/RBFEoAO4w9HOL2Evx8tIRAhMPXnQQDZQoKjZvDOS2PTG793U/sAaJ1VZWqNDORLpWEhk22Z0mFm/+303Ko/GoZE6GFSz1I=
+	t=1724943869; cv=none; b=eEvMRx5uM6BSCnjiJ5fG31mavh46HhKdGrSGQP5+eQKrClnx1Tl0KdxFsQFqoUeuN+mD+SqQ3/lRAWOmCa8gJ96Z5JRBL6kwnYjljppICISFsbKU9vJUNucNZHSa5v7RmPaTbvuqAnlSyWzGp6ux845quU4BijVe+WDjQ14Jrz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724943761; c=relaxed/simple;
-	bh=UAusvvbdg2IQoqzAbue98/Thju9MJrWBSf3WwhkcI8w=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DD5obwTdMfUd+jFz8mYLk84GouJ5ResNsyyj5Q9sMEASlN09SmJkr0GT04Fev18odXb+AoXxN2/J4xiiCqtYSjUsAhjTxE7vFcq2n3bdWPfMvUxt8cagQ4kQNNZ7+VqV6454U4vto8J5WXlGvQOm7lx/ES8vQdF3h/xa2rnli8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=t7Q+lTir; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=rwz+63Hb; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=t7Q+lTir; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=rwz+63Hb; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	s=arc-20240116; t=1724943869; c=relaxed/simple;
+	bh=lP7O8YnthRSL3opjjOPeri6/0jjOp8ue8AR4MTD9/DI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cqhIJmXifd3m+dY0toDDwMl94pqGch8g3LxLkxXwdE3odrFN+jdednSzu1GoYd8Pl9G3BnKYUEgQjzTqK+CKeDdvq6XZJIG4mf8xxYtWpdXvlWh+0JlyEKnTVxXTztAwVj+mUa6qjxfwdv7U2sp4rp6fUn3S5YERBCWeNo5xKxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=ZXO7HL9v; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id D879040E0277;
+	Thu, 29 Aug 2024 15:04:25 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id eGyWPI7l-Okp; Thu, 29 Aug 2024 15:04:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1724943862; bh=YfvEj90/YGTqFstXw+WygwIyDmoZvVGd7EjPYBPVmmI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZXO7HL9vBgsg3vVGUgx+5tUa1K02Cy5YiW87naLs7rQWruNBSeAPNX84S5dPpx16Q
+	 Phc0unvnj/pAXRoTrl8gKXNmjc28NiQa7Gx7IuKoEwyxMsXo7PCayGQ11aa5YiS41q
+	 LH4lBzFE8o/V46xa8cGFGKVfepmKo6lAW1qiI7QW08SFGBPDqWtsmgmC7/qcS8vVB2
+	 9jnAbgFEnu/gu2+aAsJgU/noo9i0vUolxyTqDWbJ63DBSJ8wxGpD9r/lSDe/+o7dmk
+	 fWipX/QOAaR6LFBXcrGJhzluk01T2RK+pFO8Mle3AgYYbD3g/b9FcW34EUgt8pzwIw
+	 VZQgQtSceacb0xUyCqqsrbOEABhkSLE42a6pr40MSN9PhUSQEc0OjzIFAgyX62if/9
+	 BdnlIykYUe3hxsiWLWDvRYG157aTgZfWpom0KXvuJk5W2T5Fp595xq7hbkwkcuVyeh
+	 QYEOmfNQXpjszVN5KE+N9v2D08w6K8xi7+YfX+hu6vbxjroa1gG90yD6FeS0K0v9uQ
+	 4ey8hLyMvDTt2KComHRs7C3FoW1XOH1gCNLx5LB3wUnGKfP7BPJTsnWNiWXYHG01bG
+	 WHnpNP+RGVdn/9KHkVmplmyFVp5E1H8+8B5SkDKpVvIah6dWJjHrs02ssUIu+EHhgo
+	 bo49QgY29hvKGw7zGc5MgNO0=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 896721F443;
-	Thu, 29 Aug 2024 15:02:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1724943757; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=v1gVNaVflu1aaLfA3dtbtuJKp3oDtSRODV3UNOm1x0s=;
-	b=t7Q+lTirUErNsRTdew3ChXTsUzuPnHqt3vF9/Q8fsKFjFxI1qwAqFhRLW/QGxtUIfBMaeQ
-	9YtZW999N2rkqDpLDc9MCOci05FX6HuV1P2D8bsPrfMBM/AVSNu3flE9auf6MGo7rmJU1+
-	7caQ/De6ijZ+ZnWR/7BwyeHffH5Rzo8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1724943757;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=v1gVNaVflu1aaLfA3dtbtuJKp3oDtSRODV3UNOm1x0s=;
-	b=rwz+63HbUzKoyNpwequD4NsnVhCLdQDlIrGK9i5M9RI6S9CluDln4SMXmozC6+qC4W0im2
-	QL8Jq+VTqyfLG3DQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=t7Q+lTir;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=rwz+63Hb
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1724943757; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=v1gVNaVflu1aaLfA3dtbtuJKp3oDtSRODV3UNOm1x0s=;
-	b=t7Q+lTirUErNsRTdew3ChXTsUzuPnHqt3vF9/Q8fsKFjFxI1qwAqFhRLW/QGxtUIfBMaeQ
-	9YtZW999N2rkqDpLDc9MCOci05FX6HuV1P2D8bsPrfMBM/AVSNu3flE9auf6MGo7rmJU1+
-	7caQ/De6ijZ+ZnWR/7BwyeHffH5Rzo8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1724943757;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=v1gVNaVflu1aaLfA3dtbtuJKp3oDtSRODV3UNOm1x0s=;
-	b=rwz+63HbUzKoyNpwequD4NsnVhCLdQDlIrGK9i5M9RI6S9CluDln4SMXmozC6+qC4W0im2
-	QL8Jq+VTqyfLG3DQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 60457139B0;
-	Thu, 29 Aug 2024 15:02:37 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id qMQ0Fo2N0GboYAAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Thu, 29 Aug 2024 15:02:37 +0000
-Date: Thu, 29 Aug 2024 17:03:21 +0200
-Message-ID: <87y14fv0au.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Terry Cheong <htcheong@chromium.org>
-Cc: Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] ALSA: hda/realtek: add patch for internal mic in Lenovo V145
-In-Reply-To: <20240829-lenovo-v145-fixes-v2-1-713ac5cbb32d@chromium.org>
-References: <20240829-lenovo-v145-fixes-v2-1-713ac5cbb32d@chromium.org>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id CD3DC40E0275;
+	Thu, 29 Aug 2024 15:04:06 +0000 (UTC)
+Date: Thu, 29 Aug 2024 17:04:01 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Ashish Kalra <Ashish.Kalra@amd.com>, pbonzini@redhat.com,
+	dave.hansen@linux.intel.com, tglx@linutronix.de, mingo@redhat.com,
+	x86@kernel.org, hpa@zytor.com, peterz@infradead.org,
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+	thomas.lendacky@amd.com, michael.roth@amd.com,
+	kexec@lists.infradead.org, linux-coco@lists.linux.dev
+Subject: Re: [PATCH] x86/sev: Fix host kdump support for SNP
+Message-ID: <20240829150401.GGZtCN4ZtVyqjYHbpD@fat_crate.local>
+References: <20240827203804.4989-1-Ashish.Kalra@amd.com>
+ <87475131-856C-44DC-A27A-84648294F094@alien8.de>
+ <ZtCKqD_gc6wnqu-P@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Rspamd-Queue-Id: 896721F443
-X-Spam-Score: -5.51
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-5.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,chromium.org:email]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZtCKqD_gc6wnqu-P@google.com>
 
-On Wed, 28 Aug 2024 22:20:18 +0200,
-Terry Cheong wrote:
-> 
-> Lenovo V145 is having phase inverted dmic but simply applying inverted
-> dmic fixups does not work. Chaining up verb fixes for ALC283 enables
-> inverting dmic fixup to work properly.
-> 
-> Signed-off-by: Terry Cheong <htcheong@chromium.org>
-> ---
-> Changes in v2:
-> - Corrected description for the patch
-> - Link to v1: https://lore.kernel.org/r/20240829-lenovo-v145-fixes-v1-1-133d1e6813b3@chromium.org
-> ---
->  sound/pci/hda/patch_realtek.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
-> 
-> diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
-> index 588738ce7380..bbda235ea96c 100644
-> --- a/sound/pci/hda/patch_realtek.c
-> +++ b/sound/pci/hda/patch_realtek.c
-> @@ -7538,6 +7538,7 @@ enum {
->  	ALC236_FIXUP_HP_GPIO_LED,
->  	ALC236_FIXUP_HP_MUTE_LED,
->  	ALC236_FIXUP_HP_MUTE_LED_MICMUTE_VREF,
-> +	ALC236_FIXUP_LENOVO_INV_DMIC,
->  	ALC298_FIXUP_SAMSUNG_AMP,
->  	ALC298_FIXUP_SAMSUNG_AMP2,
->  	ALC298_FIXUP_SAMSUNG_HEADPHONE_VERY_QUIET,
-> @@ -9161,6 +9162,12 @@ static const struct hda_fixup alc269_fixups[] = {
->  		.type = HDA_FIXUP_FUNC,
->  		.v.func = alc236_fixup_hp_mute_led_micmute_vref,
->  	},
-> +	[ALC236_FIXUP_LENOVO_INV_DMIC] = {
-> +		.type = HDA_FIXUP_FUNC,
-> +		.v.func = alc_fixup_inv_dmic,
-> +		.chained = true,
-> +		.chain_id = ALC283_FIXUP_INT_MIC,
-> +	},
->  	[ALC298_FIXUP_SAMSUNG_AMP] = {
->  		.type = HDA_FIXUP_FUNC,
->  		.v.func = alc298_fixup_samsung_amp,
-> @@ -10707,6 +10714,7 @@ static const struct snd_pci_quirk alc269_fixup_tbl[] = {
->  	SND_PCI_QUIRK(0x17aa, 0x3855, "Legion 7 16ITHG6", ALC287_FIXUP_LEGION_16ITHG6),
->  	SND_PCI_QUIRK(0x17aa, 0x3865, "Lenovo 13X", ALC287_FIXUP_CS35L41_I2C_2),
->  	SND_PCI_QUIRK(0x17aa, 0x3866, "Lenovo 13X", ALC287_FIXUP_CS35L41_I2C_2),
-> +	SND_PCI_QUIRK(0x17aa, 0x3913, "Lenovo 145", ALC236_FIXUP_LENOVO_INV_DMIC),
->  	SND_PCI_QUIRK(0x17aa, 0x3869, "Lenovo Yoga7 14IAL7", ALC287_FIXUP_YOGA9_14IAP7_BASS_SPK_PIN),
->  	SND_PCI_QUIRK(0x17aa, 0x386e, "Legion Y9000X 2022 IAH7 / Yoga Pro 7 14ARP8",  ALC287_FIXUP_LENOVO_14ARP8_LEGION_IAH7),
->  	SND_PCI_QUIRK(0x17aa, 0x386f, "Legion Pro 7/7i", ALC287_FIXUP_LENOVO_LEGION_7),
+On Thu, Aug 29, 2024 at 07:50:16AM -0700, Sean Christopherson wrote:
+> Because if the host is panicking, guests are hosed regardless.
 
-The quirk table is sorted in PCI SSID order.
-Could you try to put the entry at the right position?
+Are they?
 
+I read "active SNP VMs"...
 
-thanks,
+I guess if it reaches svm_emergency_disable() we're hosed anyway and that's
+what you mean but I'm not sure...
 
-Takashi
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
