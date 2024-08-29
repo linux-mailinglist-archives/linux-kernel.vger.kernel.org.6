@@ -1,152 +1,152 @@
-Return-Path: <linux-kernel+bounces-306717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1615396427D
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:01:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F6C496427F
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:01:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 76CC3B26A69
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 11:01:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA9241F27CDF
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 11:01:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76B6919067C;
-	Thu, 29 Aug 2024 11:01:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7BD419049B;
+	Thu, 29 Aug 2024 11:01:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="e1SPA6Zm"
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05olkn2022.outbound.protection.outlook.com [40.92.90.22])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zKOZwvn3"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D03B5189F3E;
-	Thu, 29 Aug 2024 11:01:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.90.22
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724929269; cv=fail; b=V2AwBpoM34NljWs3ZW6LLZIlQJbmLn4iMasPSKK/uZT+UUShrsiQ+6gC0DfeWdJFrFcnkEiTXl2jzF9jUmKzenx/rK+0OEtp7y2Ocs68RMeBaR6A8TnMxHbUPE6RgToDHJ238FBdkTk+kiFBmVmV2QNf1aKCfZGQ7ezBh7Ag4H0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724929269; c=relaxed/simple;
-	bh=8uPp23xD+y4ayX2+x75nIBCekbV5cto4cyMLZn8ntF4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=fzwdtZDrzMFzBPLSAJNRp8HPZo1m7soHTbmBaaIdQyax8aoPamUzbzGyZWFQLMLZTEEFXO+EkQztc2mioWZQ8rdWRqHFgfHEgNwxGZdvo3Ny6AUnmaAvi50Bfmml12hlZq4U9H5W4TkjJrDhFBn2UQGzLaL6FvI/vFNIb7dPPv0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=e1SPA6Zm; arc=fail smtp.client-ip=40.92.90.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Ygq/wVETJjWzhvX4RkZrx6P4Gj/tHLOd4gcebqSENPI/9Xb7Dc992URc8qLGmkUO1Mfpaw0jczT8pl+tziPsifdf2s4xrF+U0ycvIdnjmxm3UwIaDgRLxohlndsvpwCFoRNInclgRzBs/y/6KKp/EkY9x8mHI2KwwkGqSBc6VCTxUX5U/H5rMThxQ1gKrUZt82IlDl0SHbMRYaP5UQIXUAqtDEt6S20hAACY9OhgS4L3slel8ixqAZ5bgWBviAh2izYBF0NqhWpclQsiUVXt1VelQbf8fZKY4nRf/KIaS353iBi2a+tzRFdj6dxyym1gBBDpg50lH7xgwrGZWiAVkA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8uPp23xD+y4ayX2+x75nIBCekbV5cto4cyMLZn8ntF4=;
- b=fcTyFRDLDskSIuSnHZ496OZZftNLP07thCUnBWGjNrRt+LxJcCaqO20wXDd0dh5NBK1w0YExLnU1TPvg+oqfnTJ+vzJZOkOkAL/GVIjITYiWEa+ToUjsLDhfFXXQ4xQ0zu4iO0Kf8M2snP7/wEj923Tn9+EcAAb1U5ARKyL9z4KIMxwMHLJgXez2KjjeGCFD0ir4mK6HuvL4S5Eb+QicVA1pucLKk9BdACIhZ1WXy2UqfvMPpkYrWl/wzLZaDcfeHtvf+WaXWl51UdMvx5Oh17dgbAvyr+RyLY5gAoBlT5Kd6mp1KVVhNQx+DE4h+wvTB4zZIS7x29SOuclqB44JpA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8uPp23xD+y4ayX2+x75nIBCekbV5cto4cyMLZn8ntF4=;
- b=e1SPA6Zm3iwFIJ0t/L73wIT08+o4phNVFOIwZXpHcUHpYFtzw+n29ef1e4OqBdNxp5TarxFGi7uAQOAzIhNChPyq/abXo6M9EEGBXjcdg0XCRAPgcU3x/1rknBL4uK4PNoGvb+zVPWG2tmD1jsTzhScEgJ884X5QKGTmVOAk31dUwqcO34tXZYZ5ip3Vq7nMH0G1whwkQJKKzR+j0DgIiyO5wIeQ9/72dzw8FsjPdt82LToGCIjTIf4p7+ookirxW8KRmebC4YcNiqks7dEduoSOtwJ6iX6VIRnqCmt5UDrP4ZHXtKpSNKRdI1FZCKyE+WuzaFRTVaxiAC1errIU/g==
-Received: from AS2P194MB2170.EURP194.PROD.OUTLOOK.COM (2603:10a6:20b:642::8)
- by AM9P194MB1394.EURP194.PROD.OUTLOOK.COM (2603:10a6:20b:3a0::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.27; Thu, 29 Aug
- 2024 11:01:05 +0000
-Received: from AS2P194MB2170.EURP194.PROD.OUTLOOK.COM
- ([fe80::3d63:e123:2c2f:c930]) by AS2P194MB2170.EURP194.PROD.OUTLOOK.COM
- ([fe80::3d63:e123:2c2f:c930%3]) with mapi id 15.20.7897.027; Thu, 29 Aug 2024
- 11:01:05 +0000
-From: Luigi Leonardi <luigi.leonardi@outlook.com>
-To: sgarzare@redhat.com,
-	mst@redhat.com
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	luigi.leonardi@outlook.com,
-	marco.pinn95@gmail.com,
-	netdev@vger.kernel.org,
-	pabeni@redhat.com,
-	stefanha@redhat.com,
-	virtualization@lists.linux.dev
-Subject: Re: [PATCH net-next v4 0/2] vsock: avoid queuing on intermediate queue if possible
-Date: Thu, 29 Aug 2024 13:00:37 +0200
-Message-ID:
- <DU2P194MB21741755B3D4CC5FE4A55F4E9A962@DU2P194MB2174.EURP194.PROD.OUTLOOK.COM>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <tblrar34qivcwsvai7z5fepxhi4irknbyne5xqqoqowwf3nwt5@kyd2nmqghews>
-References: <tblrar34qivcwsvai7z5fepxhi4irknbyne5xqqoqowwf3nwt5@kyd2nmqghews>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-TMN: [/YiQgoA9GBkBc6e8GivfADJ82SQ14uS0]
-X-ClientProxiedBy: MI2P293CA0012.ITAP293.PROD.OUTLOOK.COM
- (2603:10a6:290:45::10) To DU2P194MB2174.EURP194.PROD.OUTLOOK.COM
- (2603:10a6:10:492::9)
-X-Microsoft-Original-Message-ID:
- <20240829110037.10934-1-luigi.leonardi@outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 303C118A6D1
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 11:01:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724929296; cv=none; b=UvL8owHWTE+HNYr8usnyeBNervswRxYjvB17T7NAZT2fCUKuJTwO0z4pTtoAw28R0hUhwYmcy8lEO1PoIKgfRw+pXAyyhWhCjq8W/lIrLaxuEXPDdkAEykSbC2/EPyVauiMcPyuh/Vvsgj8NhRwdtHU2sA9uGTHEb2mebYOCkKs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724929296; c=relaxed/simple;
+	bh=rEt764ey+j26paKgat0kweJNpYMJCZhhUHP1+vvgiQI=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=K7Gdc/el5R8pqU1Zupk3MAND5jzNsgmxSQ679LfDzkZ/7bB3j5XRr344jiW4GsQj4MyT7/1qSgEVFd9IRbNTkfQeaBOnl/kNocHruJA3e/uKyLWmci+0PlbbP6In+DnpG/qBxTAbrXeOB+wPlV5Wi3Yf4uXdmFZOjXRnxCE6uDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zKOZwvn3; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-42bb7298bdeso5141795e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 04:01:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724929293; x=1725534093; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bXo6HubkCKATDdKmpK9Rg0frF1Oj5dEqDFqJTWbwDPA=;
+        b=zKOZwvn3zKOx04CJNUX90TAhu53KOwECWNKVpICJK14wuXotfBV1bewPCIFMKkREj4
+         aeXP/2FH3xIWkjeSSGwDdfxUDSoJvyj+icp8Fta/QlrwGKgyzs2wFAdWSaG+CczyWyKA
+         iWwBkXuddh/KVgpRt9VKP5w30inwP4Q42fdunlOlPu8nNYSYTDUbdLm4Amt747ieOfu8
+         H/FyfcGACc+cwkCgw7wrS4mNwoxekgaD74MT1ybyta1J4Z+EK3lSNhXoCJUzIWNwb3eS
+         05sfs9biODtTk/3LEYz+NO0eDBvAnCxk/A1VDblh8RjZF/DkSHInfytmaiZvlVvZFCUt
+         us5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724929293; x=1725534093;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=bXo6HubkCKATDdKmpK9Rg0frF1Oj5dEqDFqJTWbwDPA=;
+        b=FyFViyPOql8vN8nO4GdyYPilwC5TvrXfnfkfoJJrfso9TEN6to4d+OqVp2OcNliaZ3
+         EKKH8sTkFy94mdW1x0ivDLZYxRRIYHBn56RlHq6D4yWgZIg9JBpSwnAHdQby/WVgTEss
+         Wu7qpCivX5WE5qH0Ua9hJ/Ou5j0sjMkH5qACaHBsl2HS792RLGKgoMYqGCaPwwOHueMU
+         bgOtuG0EsDwHl+5kZaO/SawrmoqBXfNKrk6Ex9qRkEP2b37kvP3kGiEw5NTJIVVjiB3e
+         i+rWPsHbLrycmWdN8Y7Dg9tCZwmBX/YQO7sHwOHvhSI4QWX4ySgkgjd1LEOeNJg+kivJ
+         DR+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCX+QgEGj/GgVS75IIgOuVaJOXrciXsf2BWfLrJMBk5BNVRXgNijefy/pqShDAjObKK4ekZiK8qYZcD9QtM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyIUk+8YQgAnJhoXpACB+zFlMNVtydz2w8RsTvmEPSCt1Ru6/Zn
+	zCzQHFbP+PBEnP8NotZqu7HsbtwaHllDgxHoObXlEQ3XlSX4cnjp8kzrorhzYaQ=
+X-Google-Smtp-Source: AGHT+IEGRHFHlM0ZIqrANJERtt9IfqKCUYiVh/PmrfILo/hL0bRzQIewiOrQKcnbyufRBxVZ5itMFg==
+X-Received: by 2002:a05:600c:4f42:b0:426:6b14:1839 with SMTP id 5b1f17b1804b1-42bb0136dadmr25924465e9.0.1724929292917;
+        Thu, 29 Aug 2024 04:01:32 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:12f5:c9c:a0e1:6915? ([2a01:e0a:982:cbb0:12f5:c9c:a0e1:6915])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42b9d9561b1sm57733065e9.0.2024.08.29.04.01.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 29 Aug 2024 04:01:32 -0700 (PDT)
+Message-ID: <2da89096-a68e-4b9e-ae45-87ccc76c9c72@linaro.org>
+Date: Thu, 29 Aug 2024 13:01:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS2P194MB2170:EE_|AM9P194MB1394:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1b1bb33e-3d7e-4100-691e-08dcc819dfeb
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|5072599009|8060799006|19110799003|461199028|15080799006|440099028|3412199025|4302099013|1602099012|1710799026;
-X-Microsoft-Antispam-Message-Info:
-	ZrMGjl/lw8Hx5WUDtxzP675NwtZP9CIkVLNnxWqsijKTma7nyHZ9LATMSQoqdE/s1XUooS4oAxu9s+bjdBf3rbjrmj/1MvGjTYIRVf8jm+NxmTUTf0QsLZIYI/OmWvogi07hZUBGmeGoVgvppNDf6nRvgI43WQcOEzNj7P9QrPZIqABoWkDrVX0Cafrh2l2Lii4iSQjpWT1pdQlp56KhTGS9oKS7c/y/r6tN4VBQHoH+5HdBywmP+c7fYTRsmknjVDISJTRGgxnWEQOHY0ig7n/B09LCLNoC2WsuCBK9pd2plJSxtNs1X+tLcjxoCuZU0N0y1mMjz/9OS3xdO2j+c0qYaa/v6iNOW7CkF/+PVY2TIZTZ1egHtEQLc/Ngv6iRbVygRnhgOQVIyNoY8t/VsFNdlIhLH/tMVHNipyF6EMpDec76X3i3LFM/7jaPETm5p+CSmpWl9GV0VH9xjESkaUeRUCTth9xqL+OPFN9LAmpKyeazNJVryCtEas2akx4jEHtUPKF+D0PFBemi0hjPaDwxOA22uzb0H0EXkorn9alXaPJxi/3Q9dYuLXm+XXC4zmcBTgVkhDYAQ3q4iMxu8phYYp9ZBR1eYvx+UnXPfvcGqVI7h4dt39HbkoDEBBJyAn9q5w0pp/2hOnPjl0v2tphy9vsKLvdDl1ICCByaAQ8FtUFbcx26fFbdCIWOanNCGm5oJs0SBX0QCGaPPuNKRnt/CKsClHc5Qc5svSryb48PgbVXPAPGi/H/pSHutfGh3mkwI9apXUpSvQcinNYvA0Dg0BrKitA2hCh9iq4mCcrtpRkFKYDXBUVzP69DaHZxN9qi050O85mm22a8aYE7sK/qjVOiniM0BYDY2Vfg756B6F+VtzP64BRXuBNJwCG3wMJVKca58ohyhhGOXhBrtA==
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?gL2WMwzDnz5q466eslKtSFsynsZ1clOw52WReURJMOrJ7KGIzqj99WoJmUx8?=
- =?us-ascii?Q?CYVPlJSSHIWE1XvzFI/GCZUuD5BpsoEDMUYxVE27synmZKzrOz/t5c4rDBGz?=
- =?us-ascii?Q?HS32YxqmEyFnOvuQPLaqFuPzAS/4NDo5gaIVIFliiTkbrhoMxGITI5FW1lCv?=
- =?us-ascii?Q?aiAaq3g8+dFA2EGqAPQvo6PHR9yxIg3KFqCzGMPjemki8ZtTMJ/x+wN9ByBg?=
- =?us-ascii?Q?04QR9zJNgdGxIBaauCLBzZhPJAY+yOyBd/TiCA9gb5Gt9EG05R63pj35aeQY?=
- =?us-ascii?Q?gm5mV/YXWlvgZs7Bun8ckvJXOc9hZsidMjVnVxufof2aW74KLesLtOLsOdiM?=
- =?us-ascii?Q?Yt+m2PErbrxM0vSmAfoMu3q7mZMvt/spn3FeWCXR0xJ9hq+GxzUABeeKeGOh?=
- =?us-ascii?Q?oD19QajZNcKfBJz0v8XmHf3Q23Hz4FNqcQuvCvcjav7yd2iK3D0xRcNuIOWI?=
- =?us-ascii?Q?qBuX1F5BREewtsVoevAY5fMiUpSE/IhwMxaEVa73l4PHPQQMPQPszbgFwtzG?=
- =?us-ascii?Q?yNYXZmGB6YoS8RX5kYjLWmZmerZ5TjmZrT1GMwU4dJc7PfoBbjEk3a7pliz2?=
- =?us-ascii?Q?rvOe5o8A7Z184KzEnGuixj7y0AGc/xEL+4SXQ1o0EImSd2oZ+be5AZ4Db4AA?=
- =?us-ascii?Q?eRvXLLfoe0ATsBF44LrnCg8yiCi7EQnp3nlI5nJtXIVfg1irHY8kzIEB0SqI?=
- =?us-ascii?Q?LdjXCscSNFBcNY545po9KdiTVRW7lkQEto/UAgPlIew+wk6U6EuZGkoVDuQk?=
- =?us-ascii?Q?jgszkMlh9wJFrbxQUk0rEERT+L55VBgDVrJWqrFPwqtaOinaMS6Tq7ZeBCQh?=
- =?us-ascii?Q?V7otCmGF3S8Rt/HVF3o7Qg+AF+y0z/g6kFP9CNQtKodRHm4QQ+8ukxH5vIAa?=
- =?us-ascii?Q?7XbtC/jjqGofV7NTTGbOWNahYBF1DZIqO/aTgESq/581Z5sChns1ihQEpA3w?=
- =?us-ascii?Q?wY+4eWuaV5B/YHnCmul7XICPr7RXD6wX3zhC0PxfILEQ2LOktEv8RQt8ohoz?=
- =?us-ascii?Q?RhlFz5C8RaXfC4/IWEQm5XC3jGmj5YtKIoPOlRjMoM5vl+ummiAiZdb6X+Va?=
- =?us-ascii?Q?mfrZ+UUJ6VsW+9gwOdi3TJIz5BuJRo5jL/PpZp2LCGHzwtREEtqRr3St5sWB?=
- =?us-ascii?Q?N+5BMg7etOJ7/wzWnlioyYSR7I3SDMgWOFtZ1S/m+qWtNyp0fXLuNeo2qUNk?=
- =?us-ascii?Q?BtH8HNbxyW2nNEZLdoLm5jgBdmFtqHiTqjetX0ypO3pHOi2S6FhzF2UdtinP?=
- =?us-ascii?Q?44RakcIbSk0lCQyaxiNS?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1b1bb33e-3d7e-4100-691e-08dcc819dfeb
-X-MS-Exchange-CrossTenant-AuthSource: DU2P194MB2174.EURP194.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Aug 2024 11:01:05.1268
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9P194MB1394
+User-Agent: Mozilla Thunderbird
+From: neil.armstrong@linaro.org
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH v2] drm/panel: novatek-nt35950: transition to mipi_dsi
+ wrapped functions
+To: Doug Anderson <dianders@chromium.org>,
+ Tejas Vipin <tejasvipin76@gmail.com>
+Cc: maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+ tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch,
+ quic_jesszhan@quicinc.com, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+References: <20240828182210.565861-1-tejasvipin76@gmail.com>
+ <CAD=FV=V71VzJk81YALO4ufohL0a4EQuqZVXavbpM=bqHgsf0sw@mail.gmail.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <CAD=FV=V71VzJk81YALO4ufohL0a4EQuqZVXavbpM=bqHgsf0sw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi All,
+On 28/08/2024 21:26, Doug Anderson wrote:
+> Hi,
+> 
+> On Wed, Aug 28, 2024 at 11:26 AM Tejas Vipin <tejasvipin76@gmail.com> wrote:
+>>
+>> Changes the novatek-nt35950 panel to use multi style functions for
+>> improved error handling.
+>>
+>> Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+>> Signed-off-by: Tejas Vipin <tejasvipin76@gmail.com>
+>> ---
+>> Changes in v2:
+>>      - Style changes
+>>      - Fixed changes in logic
+>>
+>> v1: https://lore.kernel.org/all/20240824084422.202946-1-tejasvipin76@gmail.com/
+>> ---
+>>   drivers/gpu/drm/panel/panel-novatek-nt35950.c | 211 ++++++------------
+>>   1 file changed, 66 insertions(+), 145 deletions(-)
+> 
+> Reviewed-by: Douglas Anderson <dianders@chromium.org>
+> 
+> Neil: Let me know if you want to land this or you want me to land it. Thanks!
+> 
+> -Doug
 
-It has been a while since the last email and this patch has not been merged yet.
-This is just a gentle ping :)
+I was already applying stuff so I applied it !
 
-Thanks,
-Luigi
-
->Hi Michael,
->this series is marked as "Not Applicable" for the net-next tree:
->https://patchwork.kernel.org/project/netdevbpf/patch/20240730-pinna-v4-2-5c9179164db5@outlook.com/
-
->Actually this is more about the virtio-vsock driver, so can you queue
->this on your tree?
-
->Thanks,
->Stefano
+Thanks
+Neil
 
