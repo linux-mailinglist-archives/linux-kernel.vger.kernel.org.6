@@ -1,138 +1,110 @@
-Return-Path: <linux-kernel+bounces-306942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF22D9645C8
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:07:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C07A49645C5
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:06:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96C971F26C55
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:07:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 650F8B26474
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:06:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4E8E1AB507;
-	Thu, 29 Aug 2024 13:06:54 +0000 (UTC)
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CD731A3BDC;
+	Thu, 29 Aug 2024 13:06:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="d+yqaTmR"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1B9D18E025;
-	Thu, 29 Aug 2024 13:06:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5360413634C;
+	Thu, 29 Aug 2024 13:06:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724936814; cv=none; b=C+n/1QyewJsRqJv0w3zqz0BqZEN1RYTqXzob1MCE0oUO4anp+atzmGI6E8+oeP03F/2dlCoqr62whg8zA44rj0KUqAMx+ztLjblvWdfJizyA/oGaOehDqiPcQwzTJ84+CVjKQZURRPvSPX5MVL9Mtz3UHfvQan6D9+/z96WYV04=
+	t=1724936807; cv=none; b=DNrM06L6yWqxo47HgHXSl/9xV/ip7Mmv5/1myz3I5YPLYlPOCouu+FWQ/PfXt7nIvWjUdKxJm5MMQDTktBUXDTdwji4AzSNib2duKw+v6jFS1d/Zlho0DJpqH/K/pRD+L/9pmZQcVSggGVH+AEN2sGkyRnEN86PHsN+6UV/FsO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724936814; c=relaxed/simple;
-	bh=sCExCUfHMdEGWx2OjrtVjO6q8U6FER4U1oOTYm/bWCk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GROZVogEH9kOSyf8sTX91wk0NnGnrNjoE89Sk0c6o1M7YiOzt4s1ItWSUHxP4HHpeEn6Tw6YeT2tJFz0zeqFH9YX7K30q8JiFi/+eK1zyZCfwykynGulu/8eI/HrDGaKSKTovfaxVgboPpvNqs63WoMlHNKlVzjKhZSDEWAEhFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42bac9469e8so5595095e9.3;
-        Thu, 29 Aug 2024 06:06:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724936811; x=1725541611;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Na+pfHlILNHK+EXFKBw4Ty4J48ZbVmHFdbNMmjF4Iuk=;
-        b=GBkbt+Uke1AlMc86OitjNrgQ53+lw1pghQt4uZnc89qW7fNG3glafGuIvfSBmHxg4Q
-         wggB/y1w8YDreq4IGXoebeNP8uUlvi8s79pbbhRUr6ZF3MR7OqfxSfiTBaomL9J1IGoC
-         dYee8fQC1bzbKF4b7x+hHeAkJGdH2iemLPONdAun/pGuXsQh5pjvatzxllz4DNtJGIe5
-         xW2c4OELFJJpTq4FwJWzJvQysl8L326XrWOTlyxKjjaaNJjM/k5IN2zXzxR243za8xWV
-         FEZOeuFm2fvHoTOPSVT9QwLRlDU1URLp/y0wjWsq2O7CGfpMsp3lLEj3SzNPygsVYd04
-         lPIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUIUQaZtckiGh/AB7+C/OZCGODqdocgQm6JTxuv10c1FyKsw4ap5WHbaaI15DwGmby53FdHzw+BmWvs@vger.kernel.org
-X-Gm-Message-State: AOJu0YzS4V5Qn571WQDYm2vME18s8sDfso/rpiUNK7tyFHZfDLk/2z8L
-	SHL752fbJOl5cQFVFs9dllP3DhFcdKlrUbWjvUbV5aLcw7uTBzei3HXv+A==
-X-Google-Smtp-Source: AGHT+IGQmQ0uYKWJeLBuzzbNV7xa+1/fgPAfaaVLvtbeq7rB6vK7sXMofMLU7ErAroX/3dT4ZDN+mg==
-X-Received: by 2002:a05:600c:474c:b0:426:61ef:ec36 with SMTP id 5b1f17b1804b1-42bb01ca00bmr23806595e9.0.1724936810229;
-        Thu, 29 Aug 2024 06:06:50 -0700 (PDT)
-Received: from localhost.localdomain (109-81-82-19.rct.o2.cz. [109.81.82.19])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42baa08d9f9sm39006215e9.32.2024.08.29.06.06.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 06:06:49 -0700 (PDT)
-From: Michal Hocko <mhocko@kernel.org>
-To: linux-fsdevel@vger.kernel.org,
-	linux-raid@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Song Liu <song@kernel.org>,
-	Yu Kuai <yukuai3@huawei.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Michal Hocko <mhocko@suse.com>
-Subject: [PATCH] fs: drop GFP_NOFAIL mode from alloc_page_buffers
-Date: Thu, 29 Aug 2024 15:06:40 +0200
-Message-ID: <20240829130640.1397970-1-mhocko@kernel.org>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1724936807; c=relaxed/simple;
+	bh=xB0LBGqlJ52aBrcdBnczCdjyguxfZpNBrvU61Gt4yCg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xc6EptBeeY9G+ryns/I2xD23gpR38HczN+59lNiuFktB1oc2XajiNBKCt9LHcmhEy26rqxmlFtOubzVLqtrND/ePgsDiJO518M9wEWWe1h8q7vdSVFECw0jzBwzxhad7OzmTPc8vNU7L07sm8bJ9VPzzHgppk/+1ujmYtEsgkgw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=d+yqaTmR; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724936806; x=1756472806;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=xB0LBGqlJ52aBrcdBnczCdjyguxfZpNBrvU61Gt4yCg=;
+  b=d+yqaTmRLBHEl+XvGQFiK1LLk45ykHCrV2CxoHzfsSKhl5JOD1HaPxms
+   96PBS6WHjvPtl/7QKNKjBYBxPBrBpJkdkgKqrveccJkV6sSb6+ISNUL3Z
+   PbjotF3m7VTi0tJ/U7R0Oki0oedvHX+OxVKJlmLQoi0g+mf+ENQnZzAil
+   8IH1xr5HPUC4pipunYCdqixIObaj3A7YQUF6h1XZNOXzUTYq6kYm7JRKy
+   PqjCpOflOFAraFhdUXcJRMn0dk4kbQ5Ou0NraXT8iK/+B6tQGtco3IEB7
+   zLzzd5V2on4IOqK9+VE88p/y+4BJKM+xngAoYvqC/HubNxnG6xTaLY6l0
+   Q==;
+X-CSE-ConnectionGUID: Fp2s0bIGRCuKVnGD8zS7qA==
+X-CSE-MsgGUID: EaOnhFK7THKS9S1JWxsSYQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11179"; a="41028398"
+X-IronPort-AV: E=Sophos;i="6.10,185,1719903600"; 
+   d="scan'208";a="41028398"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 06:06:45 -0700
+X-CSE-ConnectionGUID: elcsTg68QYys47l41cX07Q==
+X-CSE-MsgGUID: o8L8lHO7QhKysbX9+bWEsg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,185,1719903600"; 
+   d="scan'208";a="68235663"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 06:06:43 -0700
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id D825E11F843;
+	Thu, 29 Aug 2024 16:06:40 +0300 (EEST)
+Date: Thu, 29 Aug 2024 13:06:40 +0000
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Benjamin Bara <bbara93@gmail.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Alexander Stein <alexander.stein@ew.tq-group.com>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Benjamin Bara <benjamin.bara@skidata.com>
+Subject: Re: [PATCH v2 0/2] media: i2c: imx290: check for availability in
+ probe()
+Message-ID: <ZtByYFI7kVFfRdtW@kekkonen.localdomain>
+References: <20240828-imx290-avail-v2-0-bd320ac8e8fa@skidata.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240828-imx290-avail-v2-0-bd320ac8e8fa@skidata.com>
 
-From: Michal Hocko <mhocko@suse.com>
+Hi Benjamin,
 
-There is only one called of alloc_page_buffers and it doesn't require
-__GFP_NOFAIL so drop this allocation mode.
+On Wed, Aug 28, 2024 at 08:13:06PM +0200, Benjamin Bara wrote:
+> Hi!
+> 
+> This series introduces i2c communication with the imx290 sensor during
+> probe s.t. the v4l2 subdev is not initialized when the chip is not
+> reachable.
+> 
+> The datasheets show that INCKSEL* registers have a different default
+> value after reset on imx290[1] and imx327[2], however I am not sure if
+> this is a sufficient identification option - therefore I just removed
+> the current CHIP_ID register for now.
 
-Signed-off-by: Michal Hocko <mhocko@suse.com>
----
- drivers/md/md-bitmap.c      | 2 +-
- fs/buffer.c                 | 5 +----
- include/linux/buffer_head.h | 3 +--
- 3 files changed, 3 insertions(+), 7 deletions(-)
+It seems your Sob line and From: do not match. Could you fix that, please?
 
-while looking at GFP_NOFAIL users I have encountered this left over.
+The patches are otherwise here
+<URL:https://git.linuxtv.org/sailus/media_tree.git/log/?h=devel>.
 
-diff --git a/drivers/md/md-bitmap.c b/drivers/md/md-bitmap.c
-index 08232d8dc815..db5330d97348 100644
---- a/drivers/md/md-bitmap.c
-+++ b/drivers/md/md-bitmap.c
-@@ -360,7 +360,7 @@ static int read_file_page(struct file *file, unsigned long index,
- 	pr_debug("read bitmap file (%dB @ %llu)\n", (int)PAGE_SIZE,
- 		 (unsigned long long)index << PAGE_SHIFT);
- 
--	bh = alloc_page_buffers(page, blocksize, false);
-+	bh = alloc_page_buffers(page, blocksize);
- 	if (!bh) {
- 		ret = -ENOMEM;
- 		goto out;
-diff --git a/fs/buffer.c b/fs/buffer.c
-index e55ad471c530..f1381686d325 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -958,12 +958,9 @@ struct buffer_head *folio_alloc_buffers(struct folio *folio, unsigned long size,
- }
- EXPORT_SYMBOL_GPL(folio_alloc_buffers);
- 
--struct buffer_head *alloc_page_buffers(struct page *page, unsigned long size,
--				       bool retry)
-+struct buffer_head *alloc_page_buffers(struct page *page, unsigned long size)
- {
- 	gfp_t gfp = GFP_NOFS | __GFP_ACCOUNT;
--	if (retry)
--		gfp |= __GFP_NOFAIL;
- 
- 	return folio_alloc_buffers(page_folio(page), size, gfp);
- }
-diff --git a/include/linux/buffer_head.h b/include/linux/buffer_head.h
-index 14acf1bbe0ce..7e903457967a 100644
---- a/include/linux/buffer_head.h
-+++ b/include/linux/buffer_head.h
-@@ -199,8 +199,7 @@ void folio_set_bh(struct buffer_head *bh, struct folio *folio,
- 		  unsigned long offset);
- struct buffer_head *folio_alloc_buffers(struct folio *folio, unsigned long size,
- 					gfp_t gfp);
--struct buffer_head *alloc_page_buffers(struct page *page, unsigned long size,
--		bool retry);
-+struct buffer_head *alloc_page_buffers(struct page *page, unsigned long size);
- struct buffer_head *create_empty_buffers(struct folio *folio,
- 		unsigned long blocksize, unsigned long b_state);
- void end_buffer_read_sync(struct buffer_head *bh, int uptodate);
 -- 
-2.46.0
+Kind regards,
 
+Sakari Ailus
 
