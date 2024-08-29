@@ -1,51 +1,52 @@
-Return-Path: <linux-kernel+bounces-306540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DDE6964040
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 11:35:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D53E096400F
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 11:29:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 148861F2157E
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 09:35:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E3481C247B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 09:29:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E77C18CBFA;
-	Thu, 29 Aug 2024 09:35:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B92FD18CC1E;
+	Thu, 29 Aug 2024 09:28:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="Jq2XZ2Wv"
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="DjMjMcwz"
 Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE9FB1547C8;
-	Thu, 29 Aug 2024 09:35:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5663618CC00;
+	Thu, 29 Aug 2024 09:28:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724924144; cv=none; b=NNj76QkHJE6RjGQ+I6/tqNJWKTLnOzk+H0LM/BQgpQg0NF2CwL//WbzJ6or5w20fm2MxeTFIy6yGl48AZzf7MmAuTc/mYzVgGKysLwWfZjVh6PTDWJw9cxObfI+63nQS3STMvqQUNXgWgjcNPNUtOj83/chM2g0eQSYVAlREa74=
+	t=1724923694; cv=none; b=HW/g8VI378ygentrpeMDmTGWKwqR4vEzXUxZIoHgeQURSzkTLl0z0qNl92QqanEiKlXj76/pbXLL8Zs6wVEC86Ho3c410EXZfKb5e9nYf4wQMrkmucE4KZkyn+erwJqKGZPAG/cA4UUvWpzu9S1Qes/TNjv0NZQg9COoCSMLwkE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724924144; c=relaxed/simple;
-	bh=H9lfUPv3T1mST3tzbqShCdPOuFcAKP3xRCkh/nwpKwM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VbscrmygXeqz3bU389JY6S8m2QegVnsfrBaPZCjKGMrDFZu3CYmOoruH09lFOz5HRL62WOu/msdawZuqd5oW2xadjARn0NYKvAmwJpoKb9uXTgOhcjQ72kAHYznOWqB7jovNGdX8zTLGwuRDirweO0Qyy1VZS4nwZvElTPFHa6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=Jq2XZ2Wv; arc=none smtp.client-ip=178.21.23.139
+	s=arc-20240116; t=1724923694; c=relaxed/simple;
+	bh=trcBH8zzl6PsP1oY6MIhqNhFu0NHretoyOUcqxJsYhU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=d2hujbS+cdm6yNrvMU1hI4aHZZ93yukKcZL+TfHFGWyRyw5L67tYQcaGIMg7TW9rFsKUgNjRd0M6qb1Df/H7YohKo6lg9Vz0O3+Gsi5rEG6d7JIGghYAq6+8KDBZvx3pvfYe9AxZen72flak0xJ48vaAi5d5zzUakzJyvzODMN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=DjMjMcwz; arc=none smtp.client-ip=178.21.23.139
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
 Received: from localhost (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 6A1724157B;
-	Thu, 29 Aug 2024 11:27:55 +0200 (CEST)
+	by disroot.org (Postfix) with ESMTP id 9F6EF41A6C;
+	Thu, 29 Aug 2024 11:28:09 +0200 (CEST)
 X-Virus-Scanned: SPAM Filter at disroot.org
 Received: from layka.disroot.org ([127.0.0.1])
 	by localhost (disroot.org [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id BgBux_5UOXgm; Thu, 29 Aug 2024 11:27:54 +0200 (CEST)
+	with ESMTP id 6iUDRcUzv1u4; Thu, 29 Aug 2024 11:28:09 +0200 (CEST)
 From: Yao Zi <ziyao@disroot.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1724923674; bh=H9lfUPv3T1mST3tzbqShCdPOuFcAKP3xRCkh/nwpKwM=;
-	h=From:To:Cc:Subject:Date;
-	b=Jq2XZ2WvwoOnB6Q/RKRhl9eBW6tXwK6poVcZiFavSh9HX2vyeZhJCqp0V12JOgMEp
-	 Y9XDP4ECZvXkBPjktrReKakwSa30mOpNX6TVBYsPbMPqFwSdl0tJf8PVjE/cMGFun1
-	 VfsEQATb/r/EDTUyFZiYfyZiH8Uf60RgzW+P4AlJP//1gbhh6OW0hlW7+0uON+nyLt
-	 9HmOsGKWzpFWa4bHHQZ23F92rpFG8HoI8Zh4kDJgBHxPw+kBjbZnzBLz2/7C3jZrhG
-	 IiUsd4HImvLCEYXDWtr+8AtB4rIZ2OSjAZXqWICiyIfnXvoS8kop/FZHsIrWs5zzbf
-	 UeMHGrvhitAUQ==
+	t=1724923688; bh=trcBH8zzl6PsP1oY6MIhqNhFu0NHretoyOUcqxJsYhU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=DjMjMcwz3Ra0Kmbxa/w+MBM1cJfUwQHkdSmKxX+jBFbzIra1V4SXmV/l/hdI2yLRF
+	 +E/ZwPyIDKAt9qj766VeoAqoxPAZ6+8pGizSx2lLL0ysIjKlAF+8SqGuXCQ63HSJ6S
+	 IvVB2N1nKS51n7ZkUXNxwflQeB5/ZnHSUTGWjbSRrYGYppP67lf6KD96BrUEy08Ze1
+	 xma2MUKJGU4H0OK+oJOPYV843Lfw0ITxV8jYC1dllpbrucNpHxHIKAc2d5k6uEsQHY
+	 M/36B5XpAZQbBcRePxewtflumjUL24kei1LiLZfJ7DcWRg7x4T8Kr+StDFlkEazLUi
+	 ONQ8WbYD4Rdow==
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
@@ -66,10 +67,13 @@ To: Rob Herring <robh@kernel.org>,
 	linux-kernel@vger.kernel.org,
 	linux-serial@vger.kernel.org
 Cc: Celeste Liu <CoelacanthusHex@gmail.com>,
-	Yao Zi <ziyao@disroot.org>
-Subject: [PATCH v4 0/4] Add initial support for Rockchip RK3528 SoC
-Date: Thu, 29 Aug 2024 09:27:01 +0000
-Message-ID: <20240829092705.6241-1-ziyao@disroot.org>
+	Yao Zi <ziyao@disroot.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v4 1/4] dt-bindings: serial: snps-dw-apb-uart: Document Rockchip RK3528
+Date: Thu, 29 Aug 2024 09:27:02 +0000
+Message-ID: <20240829092705.6241-2-ziyao@disroot.org>
+In-Reply-To: <20240829092705.6241-1-ziyao@disroot.org>
+References: <20240829092705.6241-1-ziyao@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,45 +82,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Rockchip RK3528 is a quad-core ARM Cortex-A53 SoC designed for
-multimedia application. This series add a basic device tree with CPU,
-interrupts and UART nodes for it and is able to boot into a kernel with
-only UART console.
+Rockchip RK3528 comes with a snps-dw-apb-uart compatible UART. Document
+it in dt-bindings.
 
-Has been tested on Radxa E20C board[1] with vendor U-boot, successfully
-booted into initramfs with this log[2].
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+Signed-off-by: Yao Zi <ziyao@disroot.org>
+---
+ Documentation/devicetree/bindings/serial/snps-dw-apb-uart.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-[1]: https://docs.radxa.com/en/e/e20c
-[2]: https://gist.github.com/ziyao233/b74523a1e3e8bf36286a572e008ca319
-
-Changed from v3:
-- move mmio devices into soc node
-https://lore.kernel.org/all/20240814155014.18097-1-ziyao@disroot.org/
-
-Changed from v2:
-- fix fixed-clock nodename
-https://lore.kernel.org/all/20240811140725.64866-1-ziyao@disroot.org/
-
-Changed from v1:
-- fix stdout-path
-- style improvements
-https://lore.kernel.org/all/20240803125510.4699-2-ziyao@disroot.org/
-
-Yao Zi (4):
-  dt-bindings: serial: snps-dw-apb-uart: Document Rockchip RK3528
-  dt-bindings: arm: rockchip: Add Radxa E20C board
-  arm64: dts: rockchip: Add base DT for rk3528 SoC
-  arm64: dts: rockchip: Add Radxa e20c board
-
- .../devicetree/bindings/arm/rockchip.yaml     |   5 +
- .../bindings/serial/snps-dw-apb-uart.yaml     |   1 +
- arch/arm64/boot/dts/rockchip/Makefile         |   1 +
- .../boot/dts/rockchip/rk3528-radxa-e20c.dts   |  22 ++
- arch/arm64/boot/dts/rockchip/rk3528.dtsi      | 189 ++++++++++++++++++
- 5 files changed, 218 insertions(+)
- create mode 100644 arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts
- create mode 100644 arch/arm64/boot/dts/rockchip/rk3528.dtsi
-
+diff --git a/Documentation/devicetree/bindings/serial/snps-dw-apb-uart.yaml b/Documentation/devicetree/bindings/serial/snps-dw-apb-uart.yaml
+index 4cdb0dcaccf3..4573044be189 100644
+--- a/Documentation/devicetree/bindings/serial/snps-dw-apb-uart.yaml
++++ b/Documentation/devicetree/bindings/serial/snps-dw-apb-uart.yaml
+@@ -48,6 +48,7 @@ properties:
+               - rockchip,rk3328-uart
+               - rockchip,rk3368-uart
+               - rockchip,rk3399-uart
++              - rockchip,rk3528-uart
+               - rockchip,rk3568-uart
+               - rockchip,rk3588-uart
+               - rockchip,rv1108-uart
 -- 
 2.46.0
 
