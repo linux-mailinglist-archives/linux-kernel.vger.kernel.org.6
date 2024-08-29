@@ -1,111 +1,123 @@
-Return-Path: <linux-kernel+bounces-307469-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96C71964DE7
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 20:42:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A31C964DFD
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 20:45:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CC6D1F232C0
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 18:42:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBD01284ABD
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 18:45:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8E1D1B8E80;
-	Thu, 29 Aug 2024 18:42:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E20191BA287;
+	Thu, 29 Aug 2024 18:44:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="fFV3fCAd"
-Received: from mail-40134.protonmail.ch (mail-40134.protonmail.ch [185.70.40.134])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="Z23Br0Bc"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 766191B375A
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 18:42:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 566E01B8E8A;
+	Thu, 29 Aug 2024 18:44:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724956922; cv=none; b=VeAv1+IIu9FArL8W9TkJmcubdEvOJsah3Ro4tCrxyO/klT5SsKaEZ09fFv0We8FX1qyQWQISzmoimEEFyYdqD0A7dosyHjFR/Yg/n5xPReoSuOFzkZt+7EJPPSApyzGdR2RA/WDATp2Pudwp0aYFjEjPO5Q53yu+B7yYmWuHd2U=
+	t=1724957070; cv=none; b=jSFBoyr2R5of7qQ/lavLNgEyR+WtpDAhrzHsqjznzqr3vjmlZnhrF9qkXGz5Ocg0J/fuhZADVhHL/HP02Us7OA0Yw0NmkUgwU5Vfafktsnur6lhZ44i2Idaxs24ZaoYrRYIhoxOk40NXXI7R/Vj0rYPdM3hnj2KDCn8Krs6WsCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724956922; c=relaxed/simple;
-	bh=Ri8Iq+XNnt2qpzFKTpza6I6CURiGsYsRcbTM0MWfmg8=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=t1GSPNwE4QMUsQsmmCwGoN/7Zm48CkK69Q+736ZPpQcshB1gf9MjWgem7FPSoQZmFRtKddynmKWfZPcwuUZdlKL6y1HJBuk5ADSAXHo4rjnGSJdDPTIReQ5iAEExX7s3PavpcKHogkuU7FE3HAfCDu+Sls9yciSoghCrRm9kP4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=fFV3fCAd; arc=none smtp.client-ip=185.70.40.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1724956912; x=1725216112;
-	bh=i4KVoHC/rTR85PP8ETqYzox9jgCZ/yEP3hbtTkzO924=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=fFV3fCAd2JCDywKRm0nBUrpg9pLzHjZjlKURxQwDT1clwRMsPHZH64UDHYVj5Dl6Z
-	 V5w4B/mYo8oY1GqGsrufC2ynGrxnEFT3etPzBZtGgpeXjcGSMCTZz56lTX0Fw11jJ8
-	 t0imqDxXjw22c47TBinoK7Lhq6IVpYPDL71c2u6aS4ZWkUQNpOR0a8chl3SCOdGpwx
-	 eRqDo07yOBa4z2Y15Kyi/JZ9/CQzvAHc0krkM7G1JGMim0Zqwfd2I8gCedqfcth9RN
-	 nuTF0hBFylrmjmISrR+vm2UghpBgJACWmymtLESdCSA/5mQc0IP6+EN3M9XqAxp25b
-	 wNKihpoZgARuA==
-Date: Thu, 29 Aug 2024 18:41:49 +0000
-To: Danilo Krummrich <dakr@kernel.org>, ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@samsung.com, aliceryhl@google.com, akpm@linux-foundation.org
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: daniel.almeida@collabora.com, faith.ekstrand@collabora.com, boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v6 20/26] rust: error: check for config `test` in `Error::name`
-Message-ID: <31c429a4-9cf4-4cd1-98fe-4be75ffadc50@proton.me>
-In-Reply-To: <20240816001216.26575-21-dakr@kernel.org>
-References: <20240816001216.26575-1-dakr@kernel.org> <20240816001216.26575-21-dakr@kernel.org>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: e7003a03934d6c259a79677b7b24467c965d107b
+	s=arc-20240116; t=1724957070; c=relaxed/simple;
+	bh=cTDGQeXn/UXpQxaDF8475FgHbDNwc6X4AJq9LfX0Yjc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BfZxiHenDMWFuCd/VzzzLot+1WTWyRmJDj+WsUUpbtgd/UucJybPFR0pYjq08kM2DzP/cyxql86doKYcN4gZg92SpHiO+jS46JuJjYmkp3tA7e2FfeB7MgrAjXIf0sZOek1Exqye2uJlerT3tyuGK78TIn5o9XOSWH9g5glGoW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=Z23Br0Bc reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
+ id 57492ccb5a3ae04f; Thu, 29 Aug 2024 20:44:20 +0200
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id A261F6A8C15;
+	Thu, 29 Aug 2024 20:44:19 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1724957060;
+	bh=cTDGQeXn/UXpQxaDF8475FgHbDNwc6X4AJq9LfX0Yjc=;
+	h=From:Subject:Date;
+	b=Z23Br0BcK3m8UW6G9Z9P2x69EMd2HAfBTeYDHNX0hjQcAaVu4HlFCZMTro2DT8WOe
+	 A0x7sBt945qkQulNN0TR2h1dbDwoXjAAnxSYwm9X+8kOz9c2GXn2yYohDWduudRFia
+	 beULqzudr303bMNDirZsRFswYUCUny87t7vBI1FC80RefJoucFw/ClxAP0mu7RiocB
+	 K9ufOxXQu30138nj3UJfo1GVKn4lIfE2KvyTHjFLkLYxRe6si9Dw+o3yr+dwcDubwJ
+	 px0bQAlMGKQkwrJsPO76c9M4E3oTXXvMxrk5og07lSdw45PbZrf6FYVFv0YfTcTnee
+	 4yDm6+EkuXaWg==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux ACPI <linux-acpi@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Bob Moore <robert.moore@intel.com>,
+ Saket Dumbre <saket.dumbre@intel.com>
+Subject:
+ [PATCH v1 17/20] ACPICA: HMAT: Add extended linear address mode to MSCIS
+Date: Thu, 29 Aug 2024 20:41:57 +0200
+Message-ID: <46631863.fMDQidcC6G@rjwysocki.net>
+In-Reply-To: <5819337.DvuYhMxLoT@rjwysocki.net>
+References: <5819337.DvuYhMxLoT@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddrudefgedguddvjecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpeeltdeikeekkeevieektefggfetueetfeejveejgeduledvudehieeuvdeiheeiveenucffohhmrghinhepghhithhhuhgsrdgtohhmnecukfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhjfiesrhhjfiihshhotghkihdrnhgvthdpnhgspghrtghpthhtohepgedprhgtphhtthhopehlihhnuhigqdgrtghpihesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehrohgsvghrthdrmhhoohhrvgesihhnthgvlhdrtghomhdprhgtphhtthhopehsrghkvghtrdguuhhmsghrvgesihhnthgvlhdrtghomh
+X-DCC--Metrics: v370.home.net.pl 1024; Body=4 Fuz1=4 Fuz2=4
 
-On 16.08.24 02:11, Danilo Krummrich wrote:
-> Additional to `testlib` also check for `test` in `Error::name`. This is
-> required by a subsequent patch that (indirectly) uses `Error` in test
-> cases.
->=20
-> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+From: Dave Jiang <dave.jiang@intel.com>
 
-Reviewed-by: Benno Lossin <benno.lossin@proton.me>
+ACPICA commit aaa08569b81aa4d9ff59f91f00e589e98d499e6c
 
+Redefine the 2 reserved bytes at offset 28 of Memory Side Cache Information
+Structure as "Address Mode" and add defines of the new value.
+
+    * 0 - Reserved (Unkown Address Mode)
+    * 1 - Extended-linear (N direct-map aliases linearly mapped)
+    * 2..65535 - Reserved (Unknown Address Mode)
+
+Link: https://github.com/acpica/acpica/commit/aaa08569
+Signed-off-by: Dave Jiang <dave.jiang@intel.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 ---
-Cheers,
-Benno
+ include/acpi/actbl1.h | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-> ---
->  rust/kernel/error.rs | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->=20
-> diff --git a/rust/kernel/error.rs b/rust/kernel/error.rs
-> index 2d012cc3881a..7adf889b9526 100644
-> --- a/rust/kernel/error.rs
-> +++ b/rust/kernel/error.rs
-> @@ -140,7 +140,7 @@ pub(crate) fn to_ptr<T>(self) -> *mut T {
->      }
->=20
->      /// Returns a string representing the error, if one exists.
-> -    #[cfg(not(testlib))]
-> +    #[cfg(not(any(test, testlib)))]
->      pub fn name(&self) -> Option<&'static CStr> {
->          // SAFETY: Just an FFI call, there are no extra safety requireme=
-nts.
->          let ptr =3D unsafe { bindings::errname(-self.0) };
-> @@ -157,7 +157,7 @@ pub fn name(&self) -> Option<&'static CStr> {
->      /// When `testlib` is configured, this always returns `None` to avoi=
-d the dependency on a
->      /// kernel function so that tests that use this (e.g., by calling [`=
-Result::unwrap`]) can still
->      /// run in userspace.
-> -    #[cfg(testlib)]
-> +    #[cfg(any(test, testlib))]
->      pub fn name(&self) -> Option<&'static CStr> {
->          None
->      }
-> --
-> 2.46.0
->=20
+diff --git a/include/acpi/actbl1.h b/include/acpi/actbl1.h
+index 89f0df489dc3..199afc2cd122 100644
+--- a/include/acpi/actbl1.h
++++ b/include/acpi/actbl1.h
+@@ -1796,7 +1796,7 @@ struct acpi_hmat_cache {
+ 	u32 reserved1;
+ 	u64 cache_size;
+ 	u32 cache_attributes;
+-	u16 reserved2;
++	u16 address_mode;
+ 	u16 number_of_SMBIOShandles;
+ };
+ 
+@@ -1808,6 +1808,9 @@ struct acpi_hmat_cache {
+ #define ACPI_HMAT_WRITE_POLICY          (0x0000F000)
+ #define ACPI_HMAT_CACHE_LINE_SIZE       (0xFFFF0000)
+ 
++#define ACPI_HMAT_CACHE_MODE_UNKNOWN            (0)
++#define ACPI_HMAT_CACHE_MODE_EXTENDED_LINEAR    (1)
++
+ /* Values for cache associativity flag */
+ 
+ #define ACPI_HMAT_CA_NONE                     (0)
+-- 
+2.43.0
+
+
+
 
 
