@@ -1,134 +1,226 @@
-Return-Path: <linux-kernel+bounces-307749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D460E965265
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 23:53:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37CBE96525B
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 23:53:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 138A01C2138E
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 21:53:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AACFC1F251F9
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 21:52:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 443CB1BBBDC;
-	Thu, 29 Aug 2024 21:52:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7D611BAED3;
+	Thu, 29 Aug 2024 21:52:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aaQdqw9M"
-Received: from mail-oo1-f51.google.com (mail-oo1-f51.google.com [209.85.161.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="iAANN7Tb"
+Received: from EUR03-DBA-obe.outbound.protection.outlook.com (mail-dbaeur03on2071.outbound.protection.outlook.com [40.107.104.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 057DF1BAEE1
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 21:52:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724968375; cv=none; b=NrfwNvoHW6xS5puSnihAjPTHWcPTfjvoqTaOJ/s1HlJurubIwPHE4Kq10KHaW8D2/Tv7khEPy9+E7rp7Bhjayte/sK0ceES2hx/o6SbW5fErUxff6uXAKKkBsR2ZPkcBjUyOwI4CtCoLK47I9X4F1gvwdLIEpcW5AZnjnTR67Pc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724968375; c=relaxed/simple;
-	bh=KRjJjuoUUfTIWldRXultJqzCLzEmodZUEBmzS8PrfyY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BLMdB6U5OkgbpGwsBJD0oDj5hJvPOnOtNxCqKYOh7cFBaDWz6+nhbE60Hf2eU8uquT8sL4zH709Y/+FHbKtwfs9SAGlUPBz7aZ1ncTGV/MBsvLHDGVqEhUDVLL8hYi4NSqq/GAxkKv3FnjBK99dSZtn9rIvYDj/mczd2aC+CsyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aaQdqw9M; arc=none smtp.client-ip=209.85.161.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-5dc93fa5639so709396eaf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 14:52:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724968373; x=1725573173; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zRLMPwvKQt3Fm+472wogPuvTaJti/5yUeUAEHMi0T1Y=;
-        b=aaQdqw9MF3Be6FCTDPKp2V0mSOZqDEnGGlDQP734uQ4NDVRDRys8XTIL84rGhExIn7
-         BBMHL9e+2su08c68riWMNZweJ2KHsDBZB6bupbR7olFjfBq3YsCMwNWARTjE7j3bXk4N
-         5nlW0c1v9EkM1qDH6nJKUOEIMhcor1AgJMORkJupWrQf/opnPumuNZNfMvq/qhjSfIm1
-         jds4lSWkS4zHxHnBHaJM/y7Qu/EJNjDX4tY73j4m6dBsxYuPu9jup/VFOxVuvOp88N/P
-         vzP+ctQpL30PzlBf4x/am7H6iyGVjta3p1c+vgh6tApu7YmxEqvNARJf80wMJN3qsgBV
-         ZXnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724968373; x=1725573173;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zRLMPwvKQt3Fm+472wogPuvTaJti/5yUeUAEHMi0T1Y=;
-        b=AOjk0Gu443RqZNzH2i4Wh8p32pLxs5VszP5SyRpsWvPBmMtJKiKWDqwmWx/HZxlScI
-         /WBmmf84xuDtTfanCPLZb/G9gKCeOZMUmGzwcrKt4cv1M8ghxZwen7PlW5tljbw1VmoJ
-         z/7FvFN4Xp70fnDKh8uJJQUdI7mr/ryW7PelxZYlsreaVhjs1UgrdmTfd14bYH1jNY4m
-         jn3Th0g47mKwm+0tV226j9fIF8PduhhcSJ85ymirWLL2WlkTsDVnA06o4IEcgqwYGTWV
-         Bd/f24f7LffBnoqtQpjXurSL1o0wCpB7c1HUONj1/7TKHdOBkUVAGk04vZvrX0eBQnTC
-         Cu0A==
-X-Gm-Message-State: AOJu0Yy4RgPXYgg6N5M7gXu6HaJNf7JeXmzA/FW5cQEPnR3N1AomkhK1
-	69Efcw6MgrNzT6M0CC/wFfAdziMCb+FL4Lsojc+JPjr0VuieqoU5MMmdmQ==
-X-Google-Smtp-Source: AGHT+IHReHz5dkOTT0E3ySn9+cM7bJ/Nx1/8UlkAX6jCOafZzdoUXXv/EWl/dSX8evhDJKm++nRTGQ==
-X-Received: by 2002:a05:6358:9107:b0:1ac:f2bb:8aa6 with SMTP id e5c5f4694b2df-1b603cc8d4amr518379555d.21.1724968372848;
-        Thu, 29 Aug 2024 14:52:52 -0700 (PDT)
-Received: from daehojeong-desktop.mtv.corp.google.com ([2a00:79e0:2e14:7:a1e7:73eb:e77e:3e2b])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7d22e9d512asm1705653a12.78.2024.08.29.14.52.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 14:52:52 -0700 (PDT)
-From: Daeho Jeong <daeho43@gmail.com>
-To: linux-kernel@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net,
-	kernel-team@android.com
-Cc: Daeho Jeong <daehojeong@google.com>
-Subject: [PATCH 3/7] f2fs: add reserved_segments sysfs node
-Date: Thu, 29 Aug 2024 14:52:38 -0700
-Message-ID: <20240829215242.3641502-3-daeho43@gmail.com>
-X-Mailer: git-send-email 2.46.0.469.g59c65b2a67-goog
-In-Reply-To: <20240829215242.3641502-1-daeho43@gmail.com>
-References: <20240829215242.3641502-1-daeho43@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4E9F1B3F0A;
+	Thu, 29 Aug 2024 21:52:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.104.71
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724968370; cv=fail; b=qq5yOiJPkX1WeL6TbMaBI2MKtmAqM/X6tc5MUzfUcitFcfh9F3r3YV+dNG2PNQ1g9M3D7PSTLkGt6cIXGBlphSYNWbxqOTosfsc/hQG7AczKYurc4NWd6JINgUhwqVrI2W3YQs2Ih39wxJENgtEqWNP1v5uzh/a+zkroceixd/c=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724968370; c=relaxed/simple;
+	bh=oEX5DDCNIVL4HOus70dVqQ2Rr/qAgBNstiFSFW0UfdY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=taPMKU0kDvu0xQDtqabgyygDA2NTNcOUYygFiMCp1gZZJKtqu4W4HhVWaShu+6Bkug+4Oo3PGdzeTHX0gy/xyQHwE7acYLJyP1ZRhLlR4A3fQc1/1LtfhRyY++eeqNeZYT5OmqE7yhZ20OR0krYp61En4e3UbkTS45Rvl1l0Z5w=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=iAANN7Tb; arc=fail smtp.client-ip=40.107.104.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=UYfoILCK+3XTXjYSWUmdk24hGF1w+llMLCmPV7V8RCA1yJeU+Yg/xH+jtAMWTJN1x33bdIuVLCzI2bcIEJ3Dt6PqiETuq9fPtYtma14had7MhGDFjjH3JIMc5sIsKVPNnD+Kp/xfGvQW1vNa+VY2uJsGVs9O4NpRHVvY4X16ymQe5/KINFzx/S6H/Jr3S7l9Q+Z8bnef0SsXHj3TQXE3p0vTTC4jbKr3sx0HL4nEk5hR/W9tXVHVODckkqpUtmKBfJQArMig3Ssv1fkKxoUsgrbljz00EWawJbNN35GBmzNH4A+C11WSp9NSDIyGyZAZthVJBA9bVe9o/F50TFbIbA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=P0guAulJjqBgpHqmvWDNYmduydg0ErAUpqQUCsPn3ho=;
+ b=ZVzgiD7fXwhtCKMbFbOhnjRuj4/mEudd1nbDfaJW+m/yoWdu91poYZpwH679pYQ6Dl5JuhcE4HtPwyafUlMqkhnUw3yQTtc/+uF6QLqACd9Pmb5X/+eXwbOKhO9D3ngs30QMHlIaZNWuWVpy7V0l180JvJTQnSD5pjCKOLspPIL0zLydx77pXLmOESZoRVLDAGfOJF+9YRJNZUPADIJxL/ZWyEHZrSvBYi0Ph/uCfp7owBU6Y28c5MOSPFx751BkA141pP4C+wfa2upBnFYZWgDf8PLvCO4KsmW9u3SbDsMJISWHGbXtLbdC/PtR1SrSs+Jqzmy46tq6QxV29NwT4w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=P0guAulJjqBgpHqmvWDNYmduydg0ErAUpqQUCsPn3ho=;
+ b=iAANN7TbDFx9wOUfKp//Lo/ivgRnl34LIEBaerpl+f9r6NeLPj7/NoaoSnC0yLzu2fxyMdhJJnUDyenND2XuHCTqJJ9nDlJxFrcF0USJTNM02JPIr0yAVug4s67/UA5iMnIXLscKEuX8Ozc61cEigGeBNj9tStmiTGMyAYwqzrLokEfrL8g/oa1LmnOY21cF4RYtUMayXOUXVxbIiAF1KNglg9KL1Tj8HpoKtFUJy1eDdcK1yK+TIf3vm34K9CC4TvLhM3nkt127aNqPjgHVv2WZy95TLiRU6mfEezZr71LSAXNr58qjNqyWuolDuFs/KXSrhtFh4WswZsQTBBSFgg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by DU4PR04MB10362.eurprd04.prod.outlook.com (2603:10a6:10:563::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.28; Thu, 29 Aug
+ 2024 21:52:45 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%4]) with mapi id 15.20.7897.027; Thu, 29 Aug 2024
+ 21:52:45 +0000
+Date: Thu, 29 Aug 2024 17:52:39 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Robin Gong <yibin.gong@nxp.com>
+Subject: Re: [PATCH] Input: snvs_pwrkey - use devm_clk_get_optional_enabled()
+Message-ID: <ZtDtp5WPPJiTB0Yu@lizhi-Precision-Tower-5810>
+References: <ZtDDGMaOFlMYjOrt@google.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZtDDGMaOFlMYjOrt@google.com>
+X-ClientProxiedBy: BYAPR06CA0005.namprd06.prod.outlook.com
+ (2603:10b6:a03:d4::18) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|DU4PR04MB10362:EE_
+X-MS-Office365-Filtering-Correlation-Id: aa87ff31-9c55-4f33-a62a-08dcc874ea74
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|52116014|376014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?b8+BHiYWMvsdD6usfVrKm8j3hf+3ubT1Qfjy47L5J/kS8Dq/cqvIXzEDcTjl?=
+ =?us-ascii?Q?hcYgYIISHkIU4Exf1HzKeFvmF5MDLG5H6t5OlovMTsfYN7EYyPbaMgAgO/Q2?=
+ =?us-ascii?Q?fzWHUKAc6bmN+YEFXDWTetawNWFyAvu3oFPUaYiHLaSJXmz9mnKlneoRVXcK?=
+ =?us-ascii?Q?/RCJRXNG5rCS2AdzwO75PhRFIY3e3zu2wXhTE2xcnz76GBch4cO5HzSOW9wL?=
+ =?us-ascii?Q?nrsReT0UeKHeDXag+Yo6uo0Q9eghx6gkxfcLkMbrEOzsfOSQIbzhNneUMbv7?=
+ =?us-ascii?Q?1c51TrIa8v9uzUI6zzLnJOx4jhLEWOwu5reOge2orYg+h3Q46gePWATQz5mJ?=
+ =?us-ascii?Q?m8LOIXwksRKnaZoOlqcII6o7WlvShUHcvwGqS99Ku+QRxVJBqmlnhf1BHWQY?=
+ =?us-ascii?Q?Vn3LUMKtjMzCUnzT2pLwAs1ngx1Aq/HIs1dYz4qeBsIi51AjDUJahjh/LreN?=
+ =?us-ascii?Q?Uc9y8QW/UpAVX1s5BcgwUKJWovOzkEqCgwwSaDvS6n0f5yGUNJk2Mmn8T52z?=
+ =?us-ascii?Q?eel6mpby/tgMn3FF6SiGbx9hS7E8TvKzqCbWcsB0XIEOkbu+nfcTDm70MInk?=
+ =?us-ascii?Q?bRZr/qaNZWGbX/pkHjcfpgFZEqb1+ORTZKGSyf82xMLAa4VBYX6fWjZa9Qkd?=
+ =?us-ascii?Q?JjiUo9mAgyDV16CN9IinO/MiZBJovdAgbAZ5OBY5wbN0H94n0XnAsTdZN6Dx?=
+ =?us-ascii?Q?VOoEcY84FJVSl1FFEFcoc9YQlY8IZgDLuGb4GkaGhnKyaR1QwtKrJEjN5RCn?=
+ =?us-ascii?Q?xR54TIAallA/N8Us8Vi9IS8m1Vv53ltV5wTrMBRGxCXHZlwkQTU43/MXoOCn?=
+ =?us-ascii?Q?wxdIPOCuvMS/XEwN0uFdM+ygr4IctxpFG5Qq4oMoZuL2ApgL1Z7yuSLj4jRp?=
+ =?us-ascii?Q?KbUWHkQQ6LSJ2HjbkhvHF33H6EYxKWZckxGHOw9asfITKqrdqG4KNxEWnnkg?=
+ =?us-ascii?Q?O1jcSTo+cZHRaXWsEgtBvBNvwXOHz6xZh8qQf4vln4pXOu5WwUmNL473STig?=
+ =?us-ascii?Q?cL4uDS8uXobcbZEzXX2oJxSSdvVkSIbPAjC5otpKp3IU2j1w+u/XZBO4wliv?=
+ =?us-ascii?Q?5Zae8qokzZ9ekeoXtnxsW2FbUP8lBkorzaNMO0i5F+fMrFLcOi9wPzZOM0Bq?=
+ =?us-ascii?Q?rKUiBC/WimSjYiOwF+4b2qrbeD9j52lPvVXLEB9xNRJsjOpSAabDSEIHbzXv?=
+ =?us-ascii?Q?q0Mbwogs/r3CuN0udjU/gjto/qv6NrGjr7GXHRpOdskHR4MFCQF8Pk1qJjnY?=
+ =?us-ascii?Q?spqBnhEBwf7G8tmRiF8kjsMHeyl/QwoWzxKou7V5QJQ4TgIeO89CTlZb/22e?=
+ =?us-ascii?Q?RmNvGq/0DlBrvyF5G8xHn8WuU2GNKHrBIuevvuIovBbDr4+k4YBfqMLJQyEU?=
+ =?us-ascii?Q?pDuc4GeYE8eecbfuAFlZRMqmSdqOLGX7/8bRLk02xx2DWjA21Q=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(376014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?UjwJ60xX+P6nF3PMFc0T8D7o7BML+Sr9/9sSbZ24nUg1bsLzEFg/Q/PNNHb8?=
+ =?us-ascii?Q?Im5KuhpGho05TnDtVGb/RshfMZmAb6Vfict21jxfD9NaFXusbZe7rFccmPP7?=
+ =?us-ascii?Q?JP/QELy/mczRglx3exr6w95kXgLi3pqARR41U3muPXFgZivKX7jOmBGKNXap?=
+ =?us-ascii?Q?z7hetySorRXKO68gXsBMZGaUdUWMO9gv7bXHs8z2P3N72WIjid94piRmJCQP?=
+ =?us-ascii?Q?QO8nMydAbUB1PH58H9ZhKFk5zLeKgvJTCwadfOm7Dq5HbjY5lYUu09p82eBy?=
+ =?us-ascii?Q?uAhBup4WXsjntByRrpIIbVU/j/KrG9KFyjnjnafvp8XGwGtKQ0o5zTrDfyL7?=
+ =?us-ascii?Q?bSOol7z6svzd7eUMUkKRQM3io/050L+4gyYPHzL0ID+GT55X7xoJX6k7X6IG?=
+ =?us-ascii?Q?dpGrfFUP32OpxgCGKT3Hb+mXwuJxp/fsVXnQaFStoOFOsDY178DmFGsXwlc/?=
+ =?us-ascii?Q?DWBU4jrrORLOw9biGaVWFh+WEnbnz6OuGHSLG3MA4kEiWCEa180if8FAPOnW?=
+ =?us-ascii?Q?H0jSEUMi+0v5vHtmhyXR7xpiWMtxCusElwxo0htKlbbkr0ICImLXh1caWh/l?=
+ =?us-ascii?Q?lpR/xccKvrG6eVvAicryJy7xwprrrEx0GQn4+X2A1wWOZngiwKzoA47Ch2U5?=
+ =?us-ascii?Q?83zYb7NpriyXbg1IY2D5vJYsiPAOtPLrvTVhu/4gh7gGPai+KWetEV4efSgs?=
+ =?us-ascii?Q?0mGn60vBoh4VNFktJG+rn0f4Xn5VdpftJxa95fBZfhLHEDksOAmHPGUPIXNA?=
+ =?us-ascii?Q?kttVvF4ct6OF8ogbXe94Avjadeafr9Jx3ScanbD6bU2uZfh59/n1jj+KlWxB?=
+ =?us-ascii?Q?ZqGYXxeawyyIFC/O6Xjb16Z7HbKRswiq83/7Gpv/Ei3N8MSLDNBCAIkPG5it?=
+ =?us-ascii?Q?gGdHqwZK4GazgR3+mfRKm6kVwRfOyXFS9DKx9HvFlRg2fpR2SyNsGFiUZBZi?=
+ =?us-ascii?Q?02qddtbCH9/6cydU/DaOi7p22/PR5g9988HZLEDQoZtTe60/SvfiXgdqmC01?=
+ =?us-ascii?Q?hIpB466lA6aVcRKj/a2rrCTyoGLRWntQcuJBiUYvB23lVTIpbmxvmxg/pY8C?=
+ =?us-ascii?Q?R/XCV9DLRtHsiGipy6qax4nq8ntn3Cx2OzW383wLEmfYksJkr+Gyble3uwhe?=
+ =?us-ascii?Q?YDR1NKv4O5Qy8PcBN+7lnoGW/FIX9iC6ntBGYkJzh7uEBUQyk16sHFCZF2F+?=
+ =?us-ascii?Q?T0M5pNnu3iw2XSz1WtcakkxZVn7TOdHPS3Kw8FDYoPSBa4m2/r+TZcNGmoVr?=
+ =?us-ascii?Q?JHtZ2GD99sxwYuEO0GKpk+bXqll6K2jlhb71BYZQLuwxIBB3focWXF/FW7BN?=
+ =?us-ascii?Q?KFZlRqnPV6mK1fxknSfjFXFaer0j8sq6svgQQLXN/AQLY96Ukga4w6bPIG+R?=
+ =?us-ascii?Q?m0JWMzm8nPgQei4xDOPSwdCQ5yV4w2LKQ8hkp1nAhlVBlCXJt3JzoMwE4T3F?=
+ =?us-ascii?Q?DLJQIp4zDCBEEWaFEq0Unr96tVlu9N/XteSUptaRk6FCNyr7F6Sc8Gvwq1bs?=
+ =?us-ascii?Q?npB+5fSRI3DwCk0EzNmUvoGfoI81rDAiqE0s4JyIcGpWl/nB38IRo4qg4NXn?=
+ =?us-ascii?Q?gPo0c9aBBLti+OrRgbc=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: aa87ff31-9c55-4f33-a62a-08dcc874ea74
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Aug 2024 21:52:45.5847
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: kKjTosemqM+SerEGD2mHzXDvjSSsgep4gMhcoUuLc+r39iaz0bmJXkefJj4WPjQMC9Bf/wn2nla1UI9PDrDY/w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU4PR04MB10362
 
-From: Daeho Jeong <daehojeong@google.com>
+On Thu, Aug 29, 2024 at 11:51:04AM -0700, Dmitry Torokhov wrote:
+> Switch to using devm_clk_get_optional_enabled() helper instead of
+> acquiring the clock with devm_clk_get_optional(), enabling it, and
+> defining and installing a custom devm action to call clk_disable().
+>
+> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-For the fine tuning of GC behavior, add reserved_segments sysfs node.
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
 
-Signed-off-by: Daeho Jeong <daehojeong@google.com>
----
- Documentation/ABI/testing/sysfs-fs-f2fs | 6 ++++++
- fs/f2fs/sysfs.c                         | 2 ++
- 2 files changed, 8 insertions(+)
-
-diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
-index cad6c3dc1f9c..4fcd0f824bde 100644
---- a/Documentation/ABI/testing/sysfs-fs-f2fs
-+++ b/Documentation/ABI/testing/sysfs-fs-f2fs
-@@ -763,3 +763,9 @@ Date:		November 2023
- Contact:	"Chao Yu" <chao@kernel.org>
- Description:	It controls to enable/disable IO aware feature for background discard.
- 		By default, the value is 1 which indicates IO aware is on.
-+
-+What:		/sys/fs/f2fs/<disk>/reserved_segments
-+Date:		August 2024
-+Contact:	"Daeho Jeong" <daehojeong@google.com>
-+Description:	In order to fine tune GC behavior, we can control the number of
-+		reserved segments.
-diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-index fee7ee45ceaa..2ed773132f40 100644
---- a/fs/f2fs/sysfs.c
-+++ b/fs/f2fs/sysfs.c
-@@ -969,6 +969,7 @@ SM_INFO_GENERAL_RW_ATTR(min_fsync_blocks);
- SM_INFO_GENERAL_RW_ATTR(min_seq_blocks);
- SM_INFO_GENERAL_RW_ATTR(min_hot_blocks);
- SM_INFO_GENERAL_RW_ATTR(min_ssr_sections);
-+SM_INFO_GENERAL_RW_ATTR(reserved_segments);
- 
- /* DCC_INFO ATTR */
- DCC_INFO_RW_ATTR(max_small_discards, max_discards);
-@@ -1138,6 +1139,7 @@ static struct attribute *f2fs_attrs[] = {
- 	ATTR_LIST(min_seq_blocks),
- 	ATTR_LIST(min_hot_blocks),
- 	ATTR_LIST(min_ssr_sections),
-+	ATTR_LIST(reserved_segments),
- 	ATTR_LIST(max_victim_search),
- 	ATTR_LIST(migration_granularity),
- 	ATTR_LIST(dir_level),
--- 
-2.46.0.469.g59c65b2a67-goog
-
+> ---
+>  drivers/input/keyboard/snvs_pwrkey.c | 24 +-----------------------
+>  1 file changed, 1 insertion(+), 23 deletions(-)
+>
+> diff --git a/drivers/input/keyboard/snvs_pwrkey.c b/drivers/input/keyboard/snvs_pwrkey.c
+> index ad8660be0127..f7b5f1e25c80 100644
+> --- a/drivers/input/keyboard/snvs_pwrkey.c
+> +++ b/drivers/input/keyboard/snvs_pwrkey.c
+> @@ -100,11 +100,6 @@ static irqreturn_t imx_snvs_pwrkey_interrupt(int irq, void *dev_id)
+>  	return IRQ_HANDLED;
+>  }
+>
+> -static void imx_snvs_pwrkey_disable_clk(void *data)
+> -{
+> -	clk_disable_unprepare(data);
+> -}
+> -
+>  static void imx_snvs_pwrkey_act(void *pdata)
+>  {
+>  	struct pwrkey_drv_data *pd = pdata;
+> @@ -141,28 +136,12 @@ static int imx_snvs_pwrkey_probe(struct platform_device *pdev)
+>  		dev_warn(&pdev->dev, "KEY_POWER without setting in dts\n");
+>  	}
+>
+> -	clk = devm_clk_get_optional(&pdev->dev, NULL);
+> +	clk = devm_clk_get_optional_enabled(&pdev->dev, NULL);
+>  	if (IS_ERR(clk)) {
+>  		dev_err(&pdev->dev, "Failed to get snvs clock (%pe)\n", clk);
+>  		return PTR_ERR(clk);
+>  	}
+>
+> -	error = clk_prepare_enable(clk);
+> -	if (error) {
+> -		dev_err(&pdev->dev, "Failed to enable snvs clock (%pe)\n",
+> -			ERR_PTR(error));
+> -		return error;
+> -	}
+> -
+> -	error = devm_add_action_or_reset(&pdev->dev,
+> -					 imx_snvs_pwrkey_disable_clk, clk);
+> -	if (error) {
+> -		dev_err(&pdev->dev,
+> -			"Failed to register clock cleanup handler (%pe)\n",
+> -			ERR_PTR(error));
+> -		return error;
+> -	}
+> -
+>  	pdata->wakeup = of_property_read_bool(np, "wakeup-source");
+>
+>  	pdata->irq = platform_get_irq(pdev, 0);
+> @@ -204,7 +183,6 @@ static int imx_snvs_pwrkey_probe(struct platform_device *pdev)
+>  	error = devm_request_irq(&pdev->dev, pdata->irq,
+>  			       imx_snvs_pwrkey_interrupt,
+>  			       0, pdev->name, pdev);
+> -
+>  	if (error) {
+>  		dev_err(&pdev->dev, "interrupt not available.\n");
+>  		return error;
+> --
+> 2.46.0.469.g59c65b2a67-goog
+>
+>
+> --
+> Dmitry
 
