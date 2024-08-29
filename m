@@ -1,72 +1,133 @@
-Return-Path: <linux-kernel+bounces-306569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DD8C964098
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 11:53:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AB0739640A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 11:54:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 082431F23359
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 09:53:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DB101F217C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 09:54:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F74F18E02F;
-	Thu, 29 Aug 2024 09:52:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5B2618DF87;
+	Thu, 29 Aug 2024 09:54:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="1ap/4Jyg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="kZ/EL1fj"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F70C18E35C;
-	Thu, 29 Aug 2024 09:52:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 265EE148838;
+	Thu, 29 Aug 2024 09:54:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724925168; cv=none; b=YXwurUIzWU2hw3WYa5Px9dqFkVtOzb3CTpGrCn9dhS0dbB57RwwnrcYj1w+j3QhwMU/eTuI5vEeOdLoV4GRvAzEcAyxx+C2bXL9nbSkBj41/bCO/KCXU4NIt1WnjoqF8Xh0hDcf52L/K1a6wPqqtraxbo/uZKk2SZ2HljvlV8gU=
+	t=1724925263; cv=none; b=o7fij5EbFXbnLovHUz/vs4VPkIU9Mpz5GFKZ64yi0KQGfY5oC5e2YNpVGh8ghgK+dU/FYshKW6bNwsgxJ7qnY1zD+DLHdM0I0q9suKr2s2lxd15EiFgIdtFjGZwaqPlFq5qAAAXTPfeHbGAYZ61i/1V55L5phX4hT5GLiIYdz7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724925168; c=relaxed/simple;
-	bh=ZD+PKoNjtTmRUZd3sHzBLSEyax3hi9ZSO7ExYklpmgI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dr+Uv2X85cy9ZbT0UYPmY33ZLDGqGKX1EtWE9ZPZGCHofoPWUgZJvNO+pEVMAC2E3Tmg3PMuXqaB5BB+HkqYs8cuwYRDJjE+syC3kFd7l/EymTEiagCsK6+2EybdUCGaZTKvteBdwTob7pznEwZIQpGMar1rlus0ziqv7+pv56Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=1ap/4Jyg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAB31C4CEC3;
-	Thu, 29 Aug 2024 09:52:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1724925168;
-	bh=ZD+PKoNjtTmRUZd3sHzBLSEyax3hi9ZSO7ExYklpmgI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=1ap/4JygV+NokZ1sTKXGMc2jbqGbfWl3/x/nsc89Mh0E3LXiZsvNNh787AgBA0pqw
-	 WwW2dfMIlVaYVZfMDD/7vbnFURyOvJ4GfEaDhGT0g9RyYz7E+tcpORgluVZ/EpH8Gf
-	 ucsQxr7GYEdJqgoab0XT/Hy8q9hblOQ+dqevKm9M=
-Date: Thu, 29 Aug 2024 11:52:45 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Gabriel Tassinari <gabrieldtassinari@gmail.com>
-Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
-	~lkcamp/patches@lists.sr.ht
-Subject: Re: [PATCH v3] staging: rtl8192e: Fix parenthesis alignment in
- rtl_core.c:325
-Message-ID: <2024082931-barrier-unknowing-e9f3@gregkh>
-References: <20240826214853.21003-1-gabrieldtassinari@gmail.com>
+	s=arc-20240116; t=1724925263; c=relaxed/simple;
+	bh=Gk17cpiqIhML5adE8yFx9OsBS/qqAMi2cjj/Day63Xg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=VJtO7LDN+u3ANVTyuRiTC9MWa7iEriMdkOrrBlypqBq8rX4jH9Xn3JTHiJlw2wmChjyklvmCMZq7UO5NNeR6mY9u43wEgxhQGB4NoCczW8tbFvn3AOcfMXc8Ka8BunSvpf7mrfs27vLbo6lqw6BOe9jbc6cWwJah6ZgUnY5U6aU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=kZ/EL1fj; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1724925261; x=1756461261;
+  h=from:date:subject:mime-version:content-transfer-encoding:
+   message-id:to:cc;
+  bh=Gk17cpiqIhML5adE8yFx9OsBS/qqAMi2cjj/Day63Xg=;
+  b=kZ/EL1fjw0i/UennDpGt46+6WZmRMcAKov3og4/NGlOjrPq33WYmkRlZ
+   fOyEXu2g1QtaNzMz+8c4ZJnN4rCbsXu/5Ew+QPAFsjswibIUu1fIK/Hig
+   Ov9iLykUuDg2fBldxKWUww7NnpXEad5IPMzFXk4oRuS4wPkpFKBkunD2M
+   v/UJccjZpc9R8lveV4dF7d+0Ef84FPMsmRQW92B/CgucROTSkHPQVSNl8
+   zRsC0j7oIA5PRwPyv+bhqVd4P9Z769r34sdNFHAQdFyYK08wAaRLqFtYY
+   XksJne9SduCoB+mQF50XZ88dSDy6Hk8h1JoxsZzop/r/0bI8TYTt9rjom
+   A==;
+X-CSE-ConnectionGUID: G6KB1Yj2TT6z492XstGQ6w==
+X-CSE-MsgGUID: Yzs25oY3SjaweLI6DgflTw==
+X-IronPort-AV: E=Sophos;i="6.10,185,1719903600"; 
+   d="scan'208";a="31043205"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 29 Aug 2024 02:54:20 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Thu, 29 Aug 2024 02:53:35 -0700
+Received: from [127.0.0.1] (10.10.85.11) by chn-vm-ex03.mchp-main.com
+ (10.10.85.151) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
+ Transport; Thu, 29 Aug 2024 02:53:32 -0700
+From: =?utf-8?q?Jens_Emil_Schulz_=C3=98stergaard?=
+	<jensemil.schulzostergaard@microchip.com>
+Date: Thu, 29 Aug 2024 11:52:54 +0200
+Subject: [PATCH net] net: microchip: vcap: Fix use-after-free error in
+ kunit test
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240826214853.21003-1-gabrieldtassinari@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-ID: <20240829-fix_use_after_free-v1-1-1507e307507f@microchip.com>
+X-B4-Tracking: v=1; b=H4sIAPVE0GYC/x2MQQqDMBQFrxL+uoEkSlCvIiXY9EX/JsqPiiDev
+ aHLgZm5qUAYhQZ1k+DkwmuuYF+K4jLlGZq/lckZ15rOeZ34CkdBmNIOCUkAjU/TRhO9t66nGm6
+ Cav2nI2Xs9H6eHyZ5qfhpAAAA
+To: Lars Povlsen <lars.povlsen@microchip.com>, Steen Hegelund
+	<Steen.Hegelund@microchip.com>, Daniel Machon <daniel.machon@microchip.com>,
+	<UNGLinuxDriver@microchip.com>, "David S. Miller" <davem@davemloft.net>,
+	"Eric Dumazet" <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
+ Abeni <pabeni@redhat.com>
+CC: Steen Hegelund <steen.hegelund@microchip.com>, Dan Carpenter
+	<error27@gmail.com>, <linux-arm-kernel@lists.infradead.org>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	=?utf-8?q?Jens_Emil_Schulz_=C3=98stergaard?=
+	<jensemil.schulzostergaard@microchip.com>
+X-Mailer: b4 0.15-dev
 
-On Mon, Aug 26, 2024 at 06:48:53PM -0300, Gabriel Tassinari wrote:
-> fix parenthesis alignment in _rtl92e_qos_handle_probe_response to
-> silence checkpatch warning:
-> 
-> CHECK: Alignment should match open parenthesis
-> 
-> Signed-off-by: Gabriel Tassinari <gabrieldtassinari@gmail.com>
+This is a clear use-after-free error. We remove it, and rely on checking
+the return code of vcap_del_rule.
 
-Please do not put line numbers in the subject line.
+Reported-by: Dan Carpenter <error27@gmail.com>
+Closes: https://lore.kernel.org/kernel-janitors/7bffefc6-219a-4f71-baa0-ad4526e5c198@kili.mountain/
+Fixes: c956b9b318d9 ("net: microchip: sparx5: Adding KUNIT tests of key/action values in VCAP API")
+Signed-off-by: Jens Emil Schulz Østergaard <jensemil.schulzostergaard@microchip.com>
+---
+ drivers/net/ethernet/microchip/vcap/vcap_api_kunit.c | 14 ++------------
+ 1 file changed, 2 insertions(+), 12 deletions(-)
 
-thanks,
+diff --git a/drivers/net/ethernet/microchip/vcap/vcap_api_kunit.c b/drivers/net/ethernet/microchip/vcap/vcap_api_kunit.c
+index 51d9423b08a6..f2a5a36fdacd 100644
+--- a/drivers/net/ethernet/microchip/vcap/vcap_api_kunit.c
++++ b/drivers/net/ethernet/microchip/vcap/vcap_api_kunit.c
+@@ -1442,18 +1442,8 @@ static void vcap_api_encode_rule_test(struct kunit *test)
+ 	vcap_enable_lookups(&test_vctrl, &test_netdev, 0, 0,
+ 			    rule->cookie, false);
+ 
+-	vcap_free_rule(rule);
+-
+-	/* Check that the rule has been freed: tricky to access since this
+-	 * memory should not be accessible anymore
+-	 */
+-	KUNIT_EXPECT_PTR_NE(test, NULL, rule);
+-	ret = list_empty(&rule->keyfields);
+-	KUNIT_EXPECT_EQ(test, true, ret);
+-	ret = list_empty(&rule->actionfields);
+-	KUNIT_EXPECT_EQ(test, true, ret);
+-
+-	vcap_del_rule(&test_vctrl, &test_netdev, id);
++	ret = vcap_del_rule(&test_vctrl, &test_netdev, id);
++	KUNIT_EXPECT_EQ(test, 0, ret);
+ }
+ 
+ static void vcap_api_set_rule_counter_test(struct kunit *test)
 
-greg k-h
+---
+base-commit: 4186c8d9e6af57bab0687b299df10ebd47534a0a
+change-id: 20240826-fix_use_after_free-eb34c0c66129
+
+Best regards,
+-- 
+Jens Emil Schulz Østergaard <jensemil.schulzostergaard@microchip.com>
+
 
