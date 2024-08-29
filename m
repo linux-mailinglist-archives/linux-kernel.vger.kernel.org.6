@@ -1,214 +1,101 @@
-Return-Path: <linux-kernel+bounces-307382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62ADD964CBC
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 19:28:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6246964CC4
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 19:30:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18F812841F6
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 17:28:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 127321C22549
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 17:30:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 007601B78E0;
-	Thu, 29 Aug 2024 17:28:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B7F31B6555;
+	Thu, 29 Aug 2024 17:30:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gaZ4j7Jd"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XukKEq6r"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C97EC146A96;
-	Thu, 29 Aug 2024 17:28:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FF5640870;
+	Thu, 29 Aug 2024 17:30:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724952518; cv=none; b=qJmDaxWorMdwsvZaOTE+kEj8jsLDSRkTw7XfwFyOZnRcZJEgeLxLk+NEpgl763Fg6dcWPofdpFhhd6lwXwgsjksayaa8zMqrdlzuRD6ZcAzSRXi7FYHGImkKuk1xHpMfyD6pf0QtzUNZASA+Ub4thAvnNglZMmPjZUwOVXpnvVE=
+	t=1724952627; cv=none; b=iB74GBGERT9QfZK9M99vNOrjEP6kk/nhvcPwfpdLBJC7NAt2B7O+JJ3WeXkmBNduEQXYasMnSK8lDtTkRgajHmnIxlu2kAuetqzzEA+5TOM3GRIhO9YHhwa+lcvbJfzeO3G8FyOSJ2Faecm1FQigPdQeRnu7pKmtdpToSWEFb2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724952518; c=relaxed/simple;
-	bh=KJKoUfWUoMAHUQHg5Fy0b3Mzd2sRhvl7cmJ2Y9HGAoA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Sw5OrMEd4qiUzHwsAckaTAoLFsk75iou5ETZiq9G890dDbGHf2Ug1MJwpkNqzsLrMulUewcQzNulYSAkHGg9l2ZD7Z/OtJJHpiRN5G/GNt/BzyNemKox6F8nLBq3NpyUmhW/QtkTob/fsUWY7XKsFrVmg/4OG0nUbMWIq0c6jok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gaZ4j7Jd; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-7c6b4222fe3so575448a12.3;
-        Thu, 29 Aug 2024 10:28:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724952516; x=1725557316; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sHtTBbzeYQ0PhvAJXeu6V6EJfe+INUGk7sZpaNX20bs=;
-        b=gaZ4j7JdqeP+aTOB9mDQtq39X2oloBwWLt+kLzILOiIeQbPUHwRXvBMxj15gnG0FX5
-         m464HLDoMtTAfbcu/F0UUUAS39H9INmvEzC2JKLAvl+6fFtI4ButbfAAEwZ5HfQyDbMj
-         r/pUp+INcUxdFeQNS1EPKBaY7wWKjzqLImuoqXxxPTxLWU5sWF1nk+Jzss5DUy5W1AxW
-         Osn9cx8+kKWw/m8yIszPeC8DzTNF6gnmIvFCvUfLNc2x33J565oFRF/fo1PdgrMBCMIk
-         t7nJpeRl4N5+9HVD1A/Vghjlb2oot1wQXfRBqK8uwsU80ZXZ5qXS+dXB4jToV+xHdfCl
-         QbIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724952516; x=1725557316;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sHtTBbzeYQ0PhvAJXeu6V6EJfe+INUGk7sZpaNX20bs=;
-        b=lEgjVuweoZEoEjmsx0hSFFbrH/YreakorPex8zmzxWN2Z0cQYx1aHkWZFrxVw9JCtx
-         zDcM0AtMc5rV4TaI8AMEMcZQHONuSwdCfInpGnfTcCFKx+ReL+VmbfZKiqAZpEwGaJx7
-         VjeeEby+M0uNwHQieKJ5VtnlluXq5H/cRQgymvS2KsDI4I+3M8UfKRSkn0P6GcSvwHlb
-         oau3IB98X3YgQjqqYVRxJ5LU9fr1S3JHFzhZ1ZhW26lrkdj1UB25nATLc+X+uitbTwKs
-         HHgJcLeYMvmV2yGy8+JnN48gRHcCAyq/znIKhFgpZQ+giT3IBI2taFdUzbG/vJ6H3Te1
-         aB3w==
-X-Forwarded-Encrypted: i=1; AJvYcCVPZUnImHgpR74XKEQ8S4Nn5rpBG52gyo3trKUqVBMT1OlALzd1dYmaFFxwAByNl9Y/deUAQRvWQs+is207SROk9Skd@vger.kernel.org, AJvYcCWOpX7dmDRwg3+Bw0hxmONeZtD6mSDLWA8cdzCtSwsctL4r2jRWnySFt70BNuiKIqz/LIc=@vger.kernel.org, AJvYcCX0wO1Itl5KJnOHdpu7WfJHyr0l2tVtU/RD2Z+G06yBlKmvtkzJ16PVfvkSLxVsh8GWgBdX/cLOd0qTZkpP@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzh/m1RYN3Ox7QNTdmUCtmn34OMi3UFrHEEKI/FTmcvnJ7Zr2RJ
-	SD4w9HBUaV2UyuxWiosopK4OgkaLRsjDuq+WHQZPr0seqUFzFa9/lQfPxh8k49Fd6VbTfFXqQuY
-	pX3KXVyWGkwS12XchF7Tdx+9BKXw=
-X-Google-Smtp-Source: AGHT+IHFSsyIXZBp/wN1WeIfBQIX6SXXWbfTEQ+vV3dVVPuTZikp/jdnt41Q1uEUqofGNYCJ3J6pvEG0iPugoozqPs8=
-X-Received: by 2002:a17:90b:4b45:b0:2d3:ba42:775c with SMTP id
- 98e67ed59e1d1-2d85618168dmr4248026a91.1.1724952515912; Thu, 29 Aug 2024
- 10:28:35 -0700 (PDT)
+	s=arc-20240116; t=1724952627; c=relaxed/simple;
+	bh=kWuFHoupUeoLMSNjGVbiL4lpeHmH38kYHoBuArnwaN0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=m+N5VvOkUSLg5jRkSWa8jNPsWgBiphluAKYl9x5ejCuVtGYXkdwvQPJPl8o8Gocn0JiY2Zv38LUV29WZS+3Z5H1L+56iROctAfo6BoFCGHnNWcJTd76SoNwj9Cw8EKlKkpY+RsxgTvWK8HN7EuLhAKJ51jpmLs/yQy0DSkZglIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XukKEq6r; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40616C4CEC5;
+	Thu, 29 Aug 2024 17:30:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724952627;
+	bh=kWuFHoupUeoLMSNjGVbiL4lpeHmH38kYHoBuArnwaN0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=XukKEq6rmbwer+gAM2hmk7PLHsNHFve0Qwe270Q5CSsT7IXjwB8BJved+AhZtpNgZ
+	 tAgxvr4SeWS2yfqRBj9dSsMFEZcd90OiBqQJZEJu5Vm3v7r1cKhRrEcFOyXcgQaYml
+	 cMhsneue2jS/4xeO8PHk7UWD7fme7sdsIG1YPVHzqDVBwfUkt/hzUK9ocPvIsdaReW
+	 PGCn+UsOT/cAqOsx5f07vahH8fhM+KOacZ0Rxiucs3DY2BNTDgizahi/6yuU4bEWm2
+	 CTMwRdFzsrthPc0+nV9EFO8eh8VBeEC08143R/XY6FOEdCBTkNbklmXoxpWNIjhGnf
+	 QA8X4Fa6wxQKg==
+From: Vinod Koul <vkoul@kernel.org>
+To: Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Keguang Zhang <keguang.zhang@gmail.com>
+Cc: linux-mips@vger.kernel.org, dmaengine@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Conor Dooley <conor.dooley@microchip.com>, 
+ Jiaxun Yang <jiaxun.yang@flygoat.com>
+In-Reply-To: <20240607-loongson1-dma-v8-0-f9992d257250@gmail.com>
+References: <20240607-loongson1-dma-v8-0-f9992d257250@gmail.com>
+Subject: Re: [PATCH v8 0/2] Add support for Loongson1 APB DMA
+Message-Id: <172495262390.385951.6697848658942844877.b4-ty@kernel.org>
+Date: Thu, 29 Aug 2024 23:00:23 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240813203409.3985398-1-andrii@kernel.org> <20240828125418.07c3c63e08dc688e62fef4d2@kernel.org>
-In-Reply-To: <20240828125418.07c3c63e08dc688e62fef4d2@kernel.org>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Thu, 29 Aug 2024 10:28:24 -0700
-Message-ID: <CAEf4BzbHuHPuLHT5E619crJ1Gdvr8LnQpR7w=vrx8Gb6NHAeZA@mail.gmail.com>
-Subject: Re: [PATCH v3] uprobes: turn trace_uprobe's nhit counter to be
- per-CPU one
-To: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Andrii Nakryiko <andrii@kernel.org>, linux-trace-kernel@vger.kernel.org, 
-	rostedt@goodmis.org, peterz@infradead.org, oleg@redhat.com, 
-	bpf@vger.kernel.org, linux-kernel@vger.kernel.org, jolsa@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
-On Tue, Aug 27, 2024 at 8:55=E2=80=AFPM Masami Hiramatsu <mhiramat@kernel.o=
-rg> wrote:
->
-> On Tue, 13 Aug 2024 13:34:09 -0700
-> Andrii Nakryiko <andrii@kernel.org> wrote:
->
-> > trace_uprobe->nhit counter is not incremented atomically, so its value
-> > is questionable in when uprobe is hit on multiple CPUs simultaneously.
-> >
-> > Also, doing this shared counter increment across many CPUs causes heavy
-> > cache line bouncing, limiting uprobe/uretprobe performance scaling with
-> > number of CPUs.
-> >
-> > Solve both problems by making this a per-CPU counter.
-> >
->
-> Looks good to me. Let me pick it to linux-trace probes/for-next.
->
 
-Thanks! I just checked linux-trace repo, doesn't seem like this was
-applied yet, is that right? Or am I checking in the wrong place?
+On Fri, 07 Jun 2024 20:12:22 +0800, Keguang Zhang wrote:
+> Add the driver and dt-binding document for Loongson1 APB DMA.
+> 
+> Changes in v8:
+> - Change 'interrupts' property to an items list
+> - Link to v7: https://lore.kernel.org/r/20240329-loongson1-dma-v7-0-37db58608de5@gmail.com
+> 
+> Changes in v7:
+> - Change the comptible to 'loongson,ls1*-apbdma' (suggested by Huacai Chen)
+> - Update the title and description part accordingly
+> - Rename the file to loongson,ls1b-apbdma.yaml
+> - Add a compatible string for LS1A
+> - Delete minItems of 'interrupts'
+> - Change patterns of 'interrupt-names' to const
+> - Rename the file to loongson1-apb-dma.c to keep the consistency
+> - Update Kconfig and Makefile accordingly
+> - Link to v6: https://lore.kernel.org/r/20240316-loongson1-dma-v6-0-90de2c3cc928@gmail.com
+> 
+> [...]
 
-> Thank you,
->
->
-> > Reviewed-by: Oleg Nesterov <oleg@redhat.com>
-> > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
-> > ---
-> >  kernel/trace/trace_uprobe.c | 24 +++++++++++++++++++++---
-> >  1 file changed, 21 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
-> > index c98e3b3386ba..c3df411a2684 100644
-> > --- a/kernel/trace/trace_uprobe.c
-> > +++ b/kernel/trace/trace_uprobe.c
-> > @@ -17,6 +17,7 @@
-> >  #include <linux/string.h>
-> >  #include <linux/rculist.h>
-> >  #include <linux/filter.h>
-> > +#include <linux/percpu.h>
-> >
-> >  #include "trace_dynevent.h"
-> >  #include "trace_probe.h"
-> > @@ -62,7 +63,7 @@ struct trace_uprobe {
-> >       char                            *filename;
-> >       unsigned long                   offset;
-> >       unsigned long                   ref_ctr_offset;
-> > -     unsigned long                   nhit;
-> > +     unsigned long __percpu          *nhits;
-> >       struct trace_probe              tp;
-> >  };
-> >
-> > @@ -337,6 +338,12 @@ alloc_trace_uprobe(const char *group, const char *=
-event, int nargs, bool is_ret)
-> >       if (!tu)
-> >               return ERR_PTR(-ENOMEM);
-> >
-> > +     tu->nhits =3D alloc_percpu(unsigned long);
-> > +     if (!tu->nhits) {
-> > +             ret =3D -ENOMEM;
-> > +             goto error;
-> > +     }
-> > +
-> >       ret =3D trace_probe_init(&tu->tp, event, group, true, nargs);
-> >       if (ret < 0)
-> >               goto error;
-> > @@ -349,6 +356,7 @@ alloc_trace_uprobe(const char *group, const char *e=
-vent, int nargs, bool is_ret)
-> >       return tu;
-> >
-> >  error:
-> > +     free_percpu(tu->nhits);
-> >       kfree(tu);
-> >
-> >       return ERR_PTR(ret);
-> > @@ -362,6 +370,7 @@ static void free_trace_uprobe(struct trace_uprobe *=
-tu)
-> >       path_put(&tu->path);
-> >       trace_probe_cleanup(&tu->tp);
-> >       kfree(tu->filename);
-> > +     free_percpu(tu->nhits);
-> >       kfree(tu);
-> >  }
-> >
-> > @@ -815,13 +824,21 @@ static int probes_profile_seq_show(struct seq_fil=
-e *m, void *v)
-> >  {
-> >       struct dyn_event *ev =3D v;
-> >       struct trace_uprobe *tu;
-> > +     unsigned long nhits;
-> > +     int cpu;
-> >
-> >       if (!is_trace_uprobe(ev))
-> >               return 0;
-> >
-> >       tu =3D to_trace_uprobe(ev);
-> > +
-> > +     nhits =3D 0;
-> > +     for_each_possible_cpu(cpu) {
-> > +             nhits +=3D per_cpu(*tu->nhits, cpu);
-> > +     }
-> > +
-> >       seq_printf(m, "  %s %-44s %15lu\n", tu->filename,
-> > -                     trace_probe_name(&tu->tp), tu->nhit);
-> > +                trace_probe_name(&tu->tp), nhits);
-> >       return 0;
-> >  }
-> >
-> > @@ -1512,7 +1529,8 @@ static int uprobe_dispatcher(struct uprobe_consum=
-er *con, struct pt_regs *regs)
-> >       int ret =3D 0;
-> >
-> >       tu =3D container_of(con, struct trace_uprobe, consumer);
-> > -     tu->nhit++;
-> > +
-> > +     this_cpu_inc(*tu->nhits);
-> >
-> >       udd.tu =3D tu;
-> >       udd.bp_addr =3D instruction_pointer(regs);
-> > --
-> > 2.43.5
-> >
->
->
-> --
-> Masami Hiramatsu (Google) <mhiramat@kernel.org>
->
+Applied, thanks!
+
+[1/2] dt-bindings: dma: Add Loongson-1 APB DMA
+      commit: 7ea270bb93e4ce165bb4f834c29c05e9815b6ca8
+[2/2] dmaengine: Loongson1: Add Loongson-1 APB DMA driver
+      commit: e06c432312148ddb550ec55b004e32671657ea23
+
+Best regards,
+-- 
+~Vinod
+
+
 
