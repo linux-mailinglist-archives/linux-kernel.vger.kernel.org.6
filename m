@@ -1,80 +1,84 @@
-Return-Path: <linux-kernel+bounces-306218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF9B8963B5C
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:25:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B36F963B62
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:26:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BBA2285B99
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 06:25:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4876A286350
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 06:26:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65D591581F3;
-	Thu, 29 Aug 2024 06:24:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XJx0XCpo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C6411547E4;
-	Thu, 29 Aug 2024 06:24:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41E12154C15;
+	Thu, 29 Aug 2024 06:26:26 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51F661537C6;
+	Thu, 29 Aug 2024 06:26:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724912670; cv=none; b=nxbhNn/4y3nQxy676xKalmjUiwwW10i2BHAKCst4axoPGxuQPai2xBJCvZLHh3+VsSC0sPtzQIRFcMfUobwlkI/GcKbw1JyFQ33uSn028sQJvYvfq1pox9+KtoULD6TEbORNn4buT+nT/6EHtL55f8w0kJPF2mS2rBr7aVcq6rI=
+	t=1724912785; cv=none; b=EKaEOXukpb0Jas8RvVhI6snlb9wPxCvoD6cV5j7LlJIN6XsNLe6sybKQVazBgw61eJVqR/xquEbpU8OXbQtLJzKyfoljx+vArmZitowyEchln4fGtj5/aUe95Hi5zD+7KRQQaknruvKbZAhtSPaorJsyL1g+/Ti6HoxrJzDauH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724912670; c=relaxed/simple;
-	bh=ulAcHw74Q+tiKNpuxivzK4jpkzIcYckUBh6qezE7LUA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QDT0dev0XONdFy2VVhfQd24hxi22Pw+LTY+e3ScToszxQvMqYY9CGiiVR56qJQBDKpqyk9MwEE1x89Q/Fbd26A/RJid8l4+hbHQi/RgD33Q5fQ8qmK0M0ihdc0S/Fb3PePdWFG27YF8WZ4BRtYHoDVnltzoKjcPZ2vKgkPUQK1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XJx0XCpo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 667ABC4CEC1;
-	Thu, 29 Aug 2024 06:24:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724912670;
-	bh=ulAcHw74Q+tiKNpuxivzK4jpkzIcYckUBh6qezE7LUA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XJx0XCpofs9ieyBEV/PfMjMgFiSOBsH8YQBG4XDcCXWX8U625TazmJFw51z00Jxcu
-	 BfTQZVh7yCtTYWo5pPTeWsc46L7i+Otg8CSBr0F9OCAAS7AThnsPl5VHMR2ioHplQ6
-	 Qd6g946RwV+7fbFg9JAibhuU0zP4tx771s0LFoYPH7x4nzazEs90gi8l76wVBS8pU+
-	 L2UW0gWQMs9QY3KNlt+TYPjWFJr+vxiI0CCgusq/ZxcGz7vRptZALzbFN/33pNzumO
-	 Vj/blE6KnyvnOoU2YpC5Z190W27NklrRsJYGee6gP4W3CcJWvZvDsPF+M/QDDZObJD
-	 w2OOEyntncPhw==
-Date: Thu, 29 Aug 2024 08:24:26 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
-Subject: Re: [PATCH v2 1/1] dt-bindings: misc: fsl,qoriq-mc: remove ref for
- msi-parent
-Message-ID: <kasyt62uhb7cijyrmbs7zelwgjtted6p4ynsy2s47e2ycniicb@szosg55aejjh>
-References: <20240828163417.1130252-1-Frank.Li@nxp.com>
+	s=arc-20240116; t=1724912785; c=relaxed/simple;
+	bh=JXCgKpx+2hkiE/L2Q7X9a44fo4EAOPoARJxkEVGsU4c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=keb4CmbsM6/GyZNECLYLl8yo9AwYyWzLu4NGsIIpeVbxrcTMVpYt+ohUEqBu1hFFPXiDPmjaeBOVOacLkx6W31CCKL8S14uB2DWO5+pRI3zai5GnrUSW+jnEmujYq7q4NDfmCtdZygP8uBhUBk6bYeIxzB8QmgzF9V8NWtK3A2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AC3FADA7;
+	Wed, 28 Aug 2024 23:26:48 -0700 (PDT)
+Received: from [10.162.41.23] (e116581.arm.com [10.162.41.23])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2783E3F66E;
+	Wed, 28 Aug 2024 23:26:18 -0700 (PDT)
+Message-ID: <5241c418-d5af-46ca-8188-7b67e1640f88@arm.com>
+Date: Thu, 29 Aug 2024 11:55:33 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240828163417.1130252-1-Frank.Li@nxp.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] selftests/arm64: Fix build warnings for abi
+To: Mark Brown <broonie@kernel.org>
+Cc: shuah@kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kselftest@vger.kernel.org, Catalin.Marinas@arm.com, will@kernel.org,
+ ryan.roberts@arm.com, Anshuman.Khandual@arm.com, aneesh.kumar@kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240827051851.3738533-1-dev.jain@arm.com>
+ <6e5588d9-c22c-4a94-afce-1274c888403e@sirena.org.uk>
+Content-Language: en-US
+From: Dev Jain <dev.jain@arm.com>
+In-Reply-To: <6e5588d9-c22c-4a94-afce-1274c888403e@sirena.org.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Aug 28, 2024 at 12:34:13PM -0400, Frank Li wrote:
-> msi-parent is standard property. Needn't ref to phandle. Add maxItems: 1
-> for it.
-> 
-> Fix below warning:
->   arch/arm64/boot/dts/freescale/fsl-ls1088a-ten64.dtb: fsl-mc@80c000000: msi-parent:0: [16, 0] is too long
-> 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
-> Change from v1 to v2
-> - add maxItems: 1 for msi-parent
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+On 8/28/24 16:10, Mark Brown wrote:
+> On Tue, Aug 27, 2024 at 10:48:51AM +0530, Dev Jain wrote:
+>
+>> -		ksft_exit_fail_msg("PTRACE_TRACEME", strerror(errno));
+>> +		ksft_exit_fail_perror("PTRACE_TRACEME");
+>>   
+>>   	if (raise(SIGSTOP))
+>> -		ksft_exit_fail_msg("raise(SIGSTOP)", strerror(errno));
+>> +		ksft_exit_fail_perror("raise(SIGSTOP)");
+> The idea with these is to include the error code as well so adding the
+> %s would be better.
 
-Best regards,
-Krzysztof
+ksft_exit_fail_perror() can do that thing for us.
 
+>
+>>   	for (i = 9; i < ARRAY_SIZE(gpr_in); i++) {
+>>   		if (gpr_in[i] != gpr_out[i]) {
+>> -			ksft_print_msg("%s SVE VL %d mismatch in GPR %d: %llx != %llx\n",
+>> +			ksft_print_msg("%s SVE VL %d mismatch in GPR %d: %lx != %lx\n",
+>>   				       cfg->name, sve_vl, i,
+>>   				       gpr_in[i], gpr_out[i]);
+>>   			errors++;
+> This is a different pattern of warning, it'd be easier to review if each
+> patch only followed one pattern.  There's no code overlap between the
+> changes.
 
