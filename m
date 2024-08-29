@@ -1,247 +1,212 @@
-Return-Path: <linux-kernel+bounces-306370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 571FB963E1A
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:12:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEEA5963E1C
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:12:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5E6C1F23FF5
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:12:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D44581C240EE
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:12:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76BB318A6BE;
-	Thu, 29 Aug 2024 08:12:03 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C9D118A920;
+	Thu, 29 Aug 2024 08:12:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AhHAI6c8"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BF2E1514DC
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 08:11:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC981189F31
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 08:12:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724919122; cv=none; b=CXf06PXRIK31adBpv65QpI8V09ROHnXDb+OVBdkxmjFYqBRctsqPZkqPEx4FJ+YvW/jx4LHqMaJP5kYcAzH2WZrJmEn4hUitNiQknjH3RUwp7KGfbAsvfhx8TTWGQsTRn8Xx4laut44C3R9XFHJC11zZIr9Lw2r14Ex4acbpPjQ=
+	t=1724919143; cv=none; b=sUAKsYSZ20BcnOSxYwlwKtr4tPHMTh5VWXZLlozZyaH3olY9WD47NPPh3Kzfto7qt7m27+p+fdoeF0wUTADp2u2E4DVDS/mPlJyJ/LRoRDGYWZ10ntvvOcmCFHDQZ6r0skKdbXDdF+ngXDgmV4j696MfnbjIYUIcFp7XgCaIra0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724919122; c=relaxed/simple;
-	bh=YTlZoCOFWXBTATzNh5Ribu+cRAXjrjgjBxeducUmgCg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=iUCerIcY0RjgeXlHBl8vR/9MiGC4KT05H0cMufr6xJnB1oHn1D9ixKatQFmFpIka2an4FS8F3fOacpfuiNNqLLEkWD8T3UQ74YWa1eril/yYxDm3CLFs0/Xr3NkwF90XisEnb4s4kJH2AUw3NLFQm9mfqnz90Rsnz9Ccck6aat0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 54b60bb465de11efa216b1d71e6e1362-20240829
-X-CTIC-Tags:
-	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NO_NAME, HR_CTE_8B, HR_CTT_MISS
-	HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME, HR_SJ_LANG
-	HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM, HR_SJ_PHRASE, HR_SJ_PHRASE_LEN
-	HR_SJ_PRE_RE, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT, HR_TO_NO_NAME
-	DN_TRUSTED, SRC_TRUSTED, SA_TRUSTED, SA_EXISTED, SN_TRUSTED
-	SN_EXISTED, SPF_NOPASS, DKIM_NOPASS, DMARC_NOPASS, CIE_BAD
-	CIE_GOOD, CIE_GOOD_SPF, GTI_FG_BS, GTI_RG_INFO, GTI_C_BU
-	AMN_T1, AMN_GOOD, AMN_C_TI, AMN_C_BU, ABX_MISS_RDNS
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.38,REQID:ce9c4b22-c925-4fd2-952f-fa40832ff2b2,IP:15,
-	URL:0,TC:0,Content:0,EDM:0,RT:0,SF:-3,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:12
-X-CID-INFO: VERSION:1.1.38,REQID:ce9c4b22-c925-4fd2-952f-fa40832ff2b2,IP:15,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:-3,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:12
-X-CID-META: VersionHash:82c5f88,CLOUDID:63e1b3db4a4e3506366ec8e9954b823e,BulkI
-	D:240822220608SXRKO8Y3,BulkQuantity:1,Recheck:0,SF:64|66|100|17|19|42|25|1
-	01|74|102,TC:nil,Content:0|-5,EDM:-3,IP:-2,URL:0,File:nil,RT:nil,Bulk:40,Q
-	S:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI
-X-UUID: 54b60bb465de11efa216b1d71e6e1362-20240829
-X-User: yaolu@kylinos.cn
-Received: from localhost.localdomain [(111.48.58.10)] by mailgw.kylinos.cn
-	(envelope-from <yaolu@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 1307947314; Thu, 29 Aug 2024 16:11:45 +0800
-From: Lu Yao <yaolu@kylinos.cn>
-To: mario.limonciello@amd.com
-Cc: Hawking.Zhang@amd.com,
-	Jun.Ma2@amd.com,
-	Tim.Huang@amd.com,
-	Xinhui.Pan@amd.com,
-	alexander.deucher@amd.com,
-	amd-gfx@lists.freedesktop.org,
-	andrealmeid@igalia.com,
-	candice.li@amd.com,
-	christian.koenig@amd.com,
-	hamza.mahfooz@amd.com,
-	jesse.zhang@amd.com,
-	kenneth.feng@amd.com,
-	kevinyang.wang@amd.com,
-	lijo.lazar@amd.com,
-	linux-kernel@vger.kernel.org,
-	sunil.khatri@amd.com,
-	victorchengchi.lu@amd.com,
-	yaolu@kylinos.cn,
-	dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH] drm/amdgpu: fix OLAND card ip_init failed during kdump caputrue kernel boot
-Date: Thu, 29 Aug 2024 16:11:41 +0800
-Message-Id: <20240829081141.134471-1-yaolu@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <5dcd603a-7d62-439d-9a07-9d7d9324e0b6@amd.com>
-References: <5dcd603a-7d62-439d-9a07-9d7d9324e0b6@amd.com>
+	s=arc-20240116; t=1724919143; c=relaxed/simple;
+	bh=SwcEWDSUdMV5ukDNPOjMI1oD9VsgTl4jG4xNQ+Vg6KY=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QFp9Pj8x7HVwo9o7lwEyNCMnaOTq58C3cnzMHG+6A40qxXVL4HhY9EXsL8JZlQUCWZKk9bfcMXqq6yO7tyYe4Oe/dlN4rF2aPQLl8yGKbkhJzUmAhV6Ftk/j7/XNh75pvrKXK+5eA52jL49CifXAJ5ktrHmg5wfO2+9fs24U3DY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AhHAI6c8; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5343e75c642so459426e87.2
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 01:12:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724919140; x=1725523940; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gy/6guuz7idIpkVI/MLnSgp3SDDwAbobV8+omG5Ebjs=;
+        b=AhHAI6c8ckqoGtPF3Fj/OphkOeb1o2TkwygjhtK2zxUTwbfJpdCDkO161eD/bdmFlo
+         UF4KK1PD9AwKNYHfujyVuOwmxjSPECuA3wCDySy+iXDd0w5tf34s52yhriU6peUJxv44
+         QL811FN4OHUDyXCAFeOirAsLxHzhP8jwjHATsmTFMmQ0Fnbwb48PgpcCJHmzEAe8Ic+I
+         Z88Z+XqIviMdCTNECWJTutYbNuiv/JpE5hryUNmwepGi6aTq5/nwmsZEmavsbVirO6J9
+         57taD6Rc1gQl+BIsRiHAYT9exALkgeMLDfQ0LMMOG1/esre3R10Uv73tzBfC+H/37Lnu
+         5aHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724919140; x=1725523940;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gy/6guuz7idIpkVI/MLnSgp3SDDwAbobV8+omG5Ebjs=;
+        b=w3kom6tzX3kOpag22PtCZ8/H3V4BwDF/uWv+9CmQf0ZB1PPW5ln3ZENvyj7zxTdbrm
+         izH7a0/H3GQbYDsPxpxNeFEOxpdQWuuJ3KgilBkDD4zuI9J0t8mv94KlaqxnXiaxwxks
+         qnB3G2EH6HOL4WdDb+c6RZCAQdfJk7msjcHc0HmKnYQiMRof0KIRHMmG90/wW/XEpTSn
+         hZf7F49Lu4LePovsljrPqfB7d82ZiFj2ml10g3jZW2Z4avgODaw1JUrgizDuifgRTGF/
+         T9Fcwi8FyK2sQRIhlOWEm9kHIRhAOOH1rLCArVC8xqDyZQ82mbwiNhGTZtiG3G31R+2J
+         WQlg==
+X-Forwarded-Encrypted: i=1; AJvYcCVyvmKhNGdE24Q4o5i8BaEuaPvNvQc55qycUsfls3hf2zWxyDbWKlTHE4XNuO8q1CxYucSSaL1g/ltkIdA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqJXvhevXyg4BFDg6CKXXJFZkFYj1Bj8dqWf1bfgGA7c+nIJKl
+	t1bJili8qPL1Aat4++Iy6E7xg+nyFKbDzfAlWH1UfcmYffYmplBh
+X-Google-Smtp-Source: AGHT+IF2g4rxh2v8IQWftNJuiEP0QcG43IxLAxXGGYSGojBTNn/K9uXK81bYx7P448zKtBIyqyNFbA==
+X-Received: by 2002:a05:6512:ad3:b0:52e:9b92:4999 with SMTP id 2adb3069b0e04-5353e545f45mr1261010e87.2.1724919138914;
+        Thu, 29 Aug 2024 01:12:18 -0700 (PDT)
+Received: from pc636 (84-217-131-213.customers.ownit.se. [84.217.131.213])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-535408277a1sm87592e87.129.2024.08.29.01.12.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Aug 2024 01:12:18 -0700 (PDT)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date: Thu, 29 Aug 2024 10:12:16 +0200
+To: Baoquan He <bhe@redhat.com>
+Cc: "Uladzislau Rezki (Sony)" <urezki@gmail.com>, linux-mm@kvack.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Christoph Hellwig <hch@infradead.org>,
+	Michal Hocko <mhocko@suse.com>,
+	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
+Subject: Re: [PATCH] mm: vmalloc: Refactor vm_area_alloc_pages() function
+Message-ID: <ZtAtYAARL2gx8De5@pc636>
+References: <20240827190916.34242-1-urezki@gmail.com>
+ <Zs/vkLWrRNRkSvwC@MiWiFi-R3L-srv>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zs/vkLWrRNRkSvwC@MiWiFi-R3L-srv>
 
-On 2024/8/22 22:05, Mario Limonciello wrote:
-> On 7/23/2024 04:42, Lu Yao wrote:
->> [Why]
->> When running kdump test on a machine with R7340 card, a hang is caused due
->> to the failure of 'amdgpu_device_ip_init()', error message as follows:
->>
->>    '[drm:amdgpu_device_ip_init [amdgpu]] *ERROR* hw_init of IP block <si_dpm> failed -22'
->>    '[drm:uvd_v3_1_hw_init [amdgpu]] *ERROR* amdgpu: UVD Firmware validate fail (-22).'
->>    '[drm:amdgpu_device_ip_init [amdgpu]] *ERROR* hw_init of IP block <uvd_v3_1> failed -22'
->>    'amdgpu 0000:01:00.0: amdgpu: amdgpu_device_ip_init failed'
->>    'amdgpu 0000:01:00.0: amdgpu: Fatal error during GPU init'
->>
->> This is because the caputrue kernel does not power off when it starts, 
->
-> Presumably you mean:
-> s/caputrue/capture/ 
-Oh, you're right. It's a mistake.
->
->> cause hardware status does not reset.
->>
->> [How]
->> Add 'is_kdump_kernel()' judgment.
->> For 'si_dpm' block, use disable and then enable.
->> For 'uvd_v3_1' block, skip loading during the initialization phase.
->>
->> Signed-off-by: Lu Yao <yaolu@kylinos.cn>
->> ---
->> During test, I first modified the 'amdgpu_device_ip_hw_init_phase*', make
->> it does not end directly when a block hw_init failed.
->>
->> After analysis, 'si_dpm' block failed at 'si_dpm_enable()->
->> amdgpu_si_is_smc_running()', calling 'si_dpm_disable()' before can resolve.
->> 'uvd_v3_1' block failed at 'uvd_v3_1_hw_init()->uvd_v3_1_fw_validate()',
->> read mmUVD_FW_STATUS value is 0x27220102, I didn't find out why. But for
->> caputrue kernel, UVD is not required. Therefore, don't added this block. 
->
-> Hmm, a few thoughs.
->
-> 1) Although you used this for the R7340, these concepts you're identifying probably make sense on most AMD GPUs.  SUch checks might be better to uplevel to earlier in IP discovery code.
->
-> 2) I'd actually argue we don't want to have the kdump capture kernel do ANY hardware init.  You're going to lose hardware state which "could" be valuable information for debugging a problem that caused a panic.
->
-So, maybe  should skip all the  ip_block hw_init functions when kdump?
-> That being said, I'm not really sure what framebuffer can drive the display across a kexec if you don't load amdgpu.  What actually happens if you blacklist amdgpu in the capture kernel?
->
-> What happens with your patch in place?
->
-> At least for me I'd like to see a kernel log from both cases.
->
+On Thu, Aug 29, 2024 at 11:48:32AM +0800, Baoquan He wrote:
+> On 08/27/24 at 09:09pm, Uladzislau Rezki (Sony) wrote:
+> > The aim is to simplify and making the vm_area_alloc_pages()
+> > function less confusing as it became more clogged nowadays:
+> > 
+> > - eliminate a "bulk_gfp" variable and do not overwrite a gfp
+> >   flag for bulk allocator;
+> > - drop __GFP_NOFAIL flag for high-order-page requests on upper
+> >   layer. It becomes less spread between levels when it comes to
+> >   __GFP_NOFAIL allocations;
+> > - add a comment about a fallback path if high-order attempt is
+> >   unsuccessful because for such cases __GFP_NOFAIL is dropped;
+> > - fix a typo in a commit message.
+> > 
+> > Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
+> > ---
+> >  mm/vmalloc.c | 37 +++++++++++++++++--------------------
+> >  1 file changed, 17 insertions(+), 20 deletions(-)
+> > 
+> > diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> > index 3f9b6bd707d2..57862865e808 100644
+> > --- a/mm/vmalloc.c
+> > +++ b/mm/vmalloc.c
+> > @@ -3531,8 +3531,6 @@ vm_area_alloc_pages(gfp_t gfp, int nid,
+> >  		unsigned int order, unsigned int nr_pages, struct page **pages)
+> >  {
+> >  	unsigned int nr_allocated = 0;
+> > -	gfp_t alloc_gfp = gfp;
+> > -	bool nofail = gfp & __GFP_NOFAIL;
+> >  	struct page *page;
+> >  	int i;
+> >  
+> > @@ -3543,9 +3541,6 @@ vm_area_alloc_pages(gfp_t gfp, int nid,
+> >  	 * more permissive.
+> >  	 */
+> >  	if (!order) {
+> > -		/* bulk allocator doesn't support nofail req. officially */
+> > -		gfp_t bulk_gfp = gfp & ~__GFP_NOFAIL;
+> > -
+> >  		while (nr_allocated < nr_pages) {
+> >  			unsigned int nr, nr_pages_request;
+> >  
+> > @@ -3563,12 +3558,11 @@ vm_area_alloc_pages(gfp_t gfp, int nid,
+> >  			 * but mempolicy wants to alloc memory by interleaving.
+> >  			 */
+> >  			if (IS_ENABLED(CONFIG_NUMA) && nid == NUMA_NO_NODE)
+> > -				nr = alloc_pages_bulk_array_mempolicy_noprof(bulk_gfp,
+> > +				nr = alloc_pages_bulk_array_mempolicy_noprof(gfp,
+> >  							nr_pages_request,
+> >  							pages + nr_allocated);
+> > -
+> >  			else
+> > -				nr = alloc_pages_bulk_array_node_noprof(bulk_gfp, nid,
+> > +				nr = alloc_pages_bulk_array_node_noprof(gfp, nid,
+> >  							nr_pages_request,
+> >  							pages + nr_allocated);
+> >  
+> > @@ -3582,30 +3576,24 @@ vm_area_alloc_pages(gfp_t gfp, int nid,
+> >  			if (nr != nr_pages_request)
+> >  				break;
+> >  		}
+> > -	} else if (gfp & __GFP_NOFAIL) {
+> > -		/*
+> > -		 * Higher order nofail allocations are really expensive and
+> > -		 * potentially dangerous (pre-mature OOM, disruptive reclaim
+> > -		 * and compaction etc.
+> > -		 */
+> > -		alloc_gfp &= ~__GFP_NOFAIL;
+> >  	}
+> >  
+> >  	/* High-order pages or fallback path if "bulk" fails. */
+> >  	while (nr_allocated < nr_pages) {
+> > -		if (!nofail && fatal_signal_pending(current))
+> > +		if (!(gfp & __GFP_NOFAIL) && fatal_signal_pending(current))
+> >  			break;
+> >  
+> >  		if (nid == NUMA_NO_NODE)
+> > -			page = alloc_pages_noprof(alloc_gfp, order);
+> > +			page = alloc_pages_noprof(gfp, order);
+> >  		else
+> > -			page = alloc_pages_node_noprof(nid, alloc_gfp, order);
+> > +			page = alloc_pages_node_noprof(nid, gfp, order);
+> > +
+> >  		if (unlikely(!page))
+> >  			break;
+> >  
+> >  		/*
+> >  		 * Higher order allocations must be able to be treated as
+> > -		 * indepdenent small pages by callers (as they can with
+> > +		 * independent small pages by callers (as they can with
+> >  		 * small-page vmallocs). Some drivers do their own refcounting
+> >  		 * on vmalloc_to_page() pages, some use page->mapping,
+> >  		 * page->lru, etc.
+> > @@ -3666,7 +3654,16 @@ static void *__vmalloc_area_node(struct vm_struct *area, gfp_t gfp_mask,
+> >  	set_vm_area_page_order(area, page_shift - PAGE_SHIFT);
+> >  	page_order = vm_area_page_order(area);
+> >  
+> > -	area->nr_pages = vm_area_alloc_pages(gfp_mask | __GFP_NOWARN,
+> > +	/*
+> > +	 * Higher order nofail allocations are really expensive and
+>            ~~~~~~~~~~~~
+> Seems we use both higher-order and high-order to describe the
+> non 0-order pages in many places. I personally would take high-order,
+> higher-order seems to be a little confusing because it's not explicit
+> what is compared with and lower.
+> 
+> Surely this is not an issue to this patch, I see a lot of 'higher order'
+> in kernel codes.
+> 
+I agree. It sounds like hard to figure out the difference between both.
+Are you willing send the patch? If not, i can send it out :)
 
-After add 'initcall_blacklist=amdgpu_init' in KDUMP_CMDLINE_APPEND,  kernel logs are as follow:
+> For this patch,
+> 
+> Reviewed-by: Baoquan He <bhe@redhat.com>
+> 
+Thanks!
 
-[    4.085602][ 0]   nvme0n1: p1 p2 p3 p4 p5 p6
-[    4.157927][ 0]  [drm] radeon kernel modesetting enabled.
-[    4.163383][ 0]  radeon 0000:01:00.0: SI support disabled by module param
-[    5.387012][ 0]  initcall amdgpu_init blacklisted
-[    6.613733][ 0]  initcall amdgpu_init blacklisted
-[    7.859320][ 0]  mtsnd build info: e3fc429
-[    8.687512][ 0]  EXT4-fs (nvme0n1p3): orphan cleanup on readonly fs
-[    8.694035][ 0]  EXT4-fs (nvme0n1p3): mounted filesystem 75c1e96b-cef8-4ed3-86ea-45010c7b859c ro with ordered data mode. Quota mode: none.
-[    9.309862][ 0]  device-mapper: core: CONFIG_IMA_DISABLE_HTABLE is disabled. Duplicate IMA measurements will not be recorded in the IMA log.
-[    9.325236][ 0]  device-mapper: uevent: version 1.0.3
-[    9.330946][ 0]  systemd[1]: Starting modprobe@fuse.service - Load Kernel Module fuse...
-[    9.341512][ 0]  device-mapper: ioctl: 4.48.0-ioctl (2023-03-01) initialised: dm-devel@redhat.com
-[    9.380944][ 0]  fuse: init (API version 7.39)
-[    9.390196][ 0]  loop: module loaded
-[    9.486957][ 0]  lp: driver loaded but no devices found
-[    9.494904][ 0]  EXT4-fs (nvme0n1p3): re-mounted 75c1e96b-cef8-4ed3-86ea-45010c7b859c r/w. Quota mode: none.
-[    9.505931][ 0]  systemd[1]: Starting systemd-udev-trigger.service - Coldplug All udev Devices...
-[    9.518899][ 0]  ppdev: user-space parallel port driver
-[    9.524908][ 0]  systemd[1]: Started systemd-journald.service - Journal Service.
-[    9.574209][ 0]  systemd-journald[350]: Received client request to flush runtime journal.
-[   10.118484][ 0]  snd_hda_intel 0000:00:1f.3: Unknown capability 0
-[   11.590124][ 0]  hdaudio hdaudioC0D2: Unable to configure, disabling
-[   23.892640][ 0]  reboot: Restarting system
-
-After with my patch in place:
-
-[    4.074629][ 0]   nvme0n1: p1 p2 p3 p4 p5 p6
-[    4.146956][ 0]  [drm] radeon kernel modesetting enabled.
-[    4.152409][ 0]  radeon 0000:01:00.0: SI support disabled by module param
-[    5.379207][ 0]  [drm] amdgpu kernel modesetting enabled.
-[    5.384909][ 0]  amdgpu: Virtual CRAT table created for CPU
-[    5.390514][ 0]  amdgpu: Topology: Add CPU node
-[    5.395225][ 0]  [drm] initializing kernel modesetting (OLAND 0x1002:0x6611 0x1642:0x1869 0x87).
-[    5.404040][ 0]  [drm] register mmio base: 0xA1600000
-[    5.409118][ 0]  [drm] register mmio size: 262144
-[    5.413864][ 0]  [drm] add ip block number 0 <si_common>
-[    5.419207][ 0]  [drm] add ip block number 1 <gmc_v6_0>
-[    5.424448][ 0]  [drm] add ip block number 2 <si_ih>
-[    5.429427][ 0]  [drm] add ip block number 3 <gfx_v6_0>
-[    5.434668][ 0]  [drm] add ip block number 4 <si_dma>
-[    5.439733][ 0]  [drm] add ip block number 5 <si_dpm>
-[    5.444803][ 0]  [drm] add ip block number 6 <dce_v6_0>
-[    5.450051][ 0]  amdgpu 0000:01:00.0: amdgpu: Fetched VBIOS from VFCT
-[    5.456517][ 0]  amdgpu: ATOM BIOS: 113-RADEONI6910-B03-BT
-[    5.462023][ 0]  kfd kfd: amdgpu: OLAND  not supported in kfd
-[    5.467857][ 0]  amdgpu 0000:01:00.0: vgaarb: deactivate vga console
-[    5.474239][ 0]  amdgpu 0000:01:00.0: amdgpu: Trusted Memory Zone (TMZ) feature not supported
-[    5.482781][ 0]  amdgpu 0000:01:00.0: amdgpu: PCIE atomic ops is not supported
-[    5.490242][ 0]  [drm] PCIE gen 3 link speeds already enabled
-[    5.496017][ 0]  [drm] vm size is 64 GB, 2 levels, block size is 10-bit, fragment size is 9-bit
-[    5.504778][ 0]  amdgpu 0000:01:00.0: amdgpu: VRAM: 1024M 0x000000F400000000 - 0x000000F43FFFFFFF (1024M used)
-[    5.514812][ 0]  amdgpu 0000:01:00.0: amdgpu: GART: 1024M 0x000000FF00000000 - 0x000000FF3FFFFFFF
-[    5.523710][ 0]  [drm] Detected VRAM RAM=1024M, BAR=1024M
-[    5.529133][ 0]  [drm] RAM width 32bits GDDR5
-[    5.533532][ 0]  [drm] amdgpu: 1024M of VRAM memory ready
-[    5.538963][ 0]  [drm] amdgpu: 225M of GTT memory ready.
-[    5.544293][ 0]  [drm] GART: num cpu pages 262144, num gpu pages 262144
-[    5.550950][ 0]  amdgpu 0000:01:00.0: amdgpu: PCIE GART of 1024M enabled (table at 0x000000F400E00000).
-[    5.560859][ 0]  [drm] Internal thermal controller with fan control
-[    5.567163][ 0]  [drm] amdgpu: dpm initialized
-[    5.571642][ 0]  [drm] AMDGPU Display Connectors
-[    5.576278][ 0]  [drm] Connector 0:
-[    5.579782][ 0]  [drm]   HDMI-A-1
-[    5.583108][ 0]  [drm]   HPD2  
-[    5.586088][ 0]  [drm]   DDC: 0x1950 0x1950 0x1951 0x1951 0x1952 0x1952 0x1953 0x1953
-[    5.593937][ 0]  [drm]   Encoders:
-[    5.597353][ 0]  [drm]     DFP1: INTERNAL_UNIPHY
-[    5.601985][ 0]  [drm] Connector 1:
-[    5.605488][ 0]  [drm]   VGA-1
-[    5.608553][ 0]  [drm]   DDC: 0x194c 0x194c 0x194d 0x194d 0x194e 0x194e 0x194f 0x194f
-[    5.616400][ 0]  [drm]   Encoders:
-[    5.619807][ 0]  [drm]     CRT1: INTERNAL_KLDSCP_DAC1
-[    5.985857][ 0]  amdgpu 0000:01:00.0: amdgpu: SE 1, SH per SE 1, CU per SH 6, active_cu_number 6
-[    6.346743][ 0]  [drm] Initialized amdgpu 3.54.0 20150101 for 0000:01:00.0 on minor 0
-[    6.433683][ 0]  fbcon: amdgpudrmfb (fb0) is primary device
-[    6.439260][ 0]  Console: switching to colour frame buffer device 240x67
-[    6.454578][ 0]  amdgpu 0000:01:00.0: [drm] fb0: amdgpudrmfb frame buffer device
-[    6.816426][ 0]  mtsnd build info: e3fc429
-[    7.827506][ 0]  EXT4-fs (nvme0n1p3): orphan cleanup on readonly fs
-[    7.834021][ 0]  EXT4-fs (nvme0n1p3): mounted filesystem 75c1e96b-cef8-4ed3-86ea-45010c7b859c ro with ordered data mode. Quota mode: none.
-[    8.502847][ 0]  device-mapper: core: CONFIG_IMA_DISABLE_HTABLE is disabled. Duplicate IMA measurements will not be recorded in the IMA log.
-[    8.517899][ 0]  systemd[1]: Starting modprobe@fuse.service - Load Kernel Module fuse...
-[    8.526044][ 0]  device-mapper: uevent: version 1.0.3
-[    8.531923][ 0]  systemd[1]: Starting modprobe@loop.service - Load Kernel Module loop...
-[    8.545910][ 0]  systemd[1]: systemd-fsck-root.service - File System Check on Root Device was skipped because of an unmet condition check (ConditionPathExists=!/run/initramfs/fsck-root).
-[    8.564367][ 0]  fuse: init (API version 7.39)
-[    8.568872][ 0]  device-mapper: ioctl: 4.48.0-ioctl (2023-03-01) initialised: dm-devel@redhat.com
-[    8.581889][ 0]  systemd[1]: Starting systemd-journald.service - Journal Service...
-[    8.591857][ 0]  loop: module loaded
-[    8.639020][ 0]  lp: driver loaded but no devices found
-[    8.662288][ 0]  systemd[1]: systemd-tpm2-setup-early.service - TPM2 SRK Setup (Early) was skipped because of an unmet condition check (ConditionSecurity=measured-uki).
-[    8.685851][ 0]  ppdev: user-space parallel port driver
-[    8.697866][ 0]  EXT4-fs (nvme0n1p3): re-mounted 75c1e96b-cef8-4ed3-86ea-45010c7b859c r/w. Quota mode: none.
-[    9.362160][ 0]  snd_hda_intel 0000:00:1f.3: Unknown capability 0
-[    9.716497][ 0]  hdaudio hdaudioC0D2: Unable to configure, disabling
-[   20.101499][ 0]  reboot: Restarting system
-
-Compared with the blacklist method, amdgpu driver initialization can be completed after adding patch.
-From the external observation, more startup animation can be shown (of course, this is meaningless, because it will restart immediately).
+--
+Uladzislau Rezki
 
