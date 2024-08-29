@@ -1,181 +1,96 @@
-Return-Path: <linux-kernel+bounces-306316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29346963D28
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 09:36:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97302963D35
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 09:37:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D11E91F24DF2
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 07:35:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 545AC2826E5
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 07:37:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1892018801C;
-	Thu, 29 Aug 2024 07:35:51 +0000 (UTC)
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D54CA1898EF;
+	Thu, 29 Aug 2024 07:36:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dD1LiOHQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 483271547E3;
-	Thu, 29 Aug 2024 07:35:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9368446D1;
+	Thu, 29 Aug 2024 07:36:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724916950; cv=none; b=GSJn6NcVOmIU8QTzz8hdSbMirTAS7ohBTBOfmAR4AANttf5OACpDOVGgOGf1YruzUFHQh8LtKZgalGZjIP4qPDARQlf+cYceDTk9jYFc2liiqEv/G7EuX/yfZ6EXjl5Moy/i07yymGtEbLlr1fBJzLNBeyN8LukcAAygOPILH94=
+	t=1724917019; cv=none; b=ksNxp0p0XBpFwmQhOGTaNEyASVmGRHab0RTknItl0uaAJCaFZwiiMuumttqZkpgvu90OO6SCKdzVrUkDdpVazss7/FjSE9nUOtX2sWKtXU4bs4n5kPPYRSKJ6OP9j1mLv3TpCiZ2ycr0rdP1EoHFmWdi2bOF0P6FR6IfeVhbpqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724916950; c=relaxed/simple;
-	bh=p1Vkr19hJTLTUTOcWLPszfgqyG1Shl0iGFNL6olCzvY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iL0ZxWJbrbqxGlKlQovw0v8awrQvDMFpQ3ovISxLPsi7TedEcA2aIPWvDO7tBAP0SNONbPOBpNT/Tf3Q3km71eCKpxptwlERSoqOHx2KH0wMZTKQg9iPeeLlg00VTPJUA9OWOOM8A+d7Qbj0asjbZEaGH9ffFExc/bIVDuaGjh8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-68d30057ae9so3644187b3.1;
-        Thu, 29 Aug 2024 00:35:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724916946; x=1725521746;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=x83lbO5k5wF7aHs57NGdCI/bHwczCBu9jTua8FtGuno=;
-        b=SYYMrR0L5gp6HhsXz/2h/Q4vgsw/9uGlfPuNNj2RncfOzywTu3ub9JOQug4+D12VKD
-         RAluPU4IVnQGbgidj71ebkyLAm5qrH/VFxDx4z+OI3HJL2n9TVJxCFX4UAM6CijSexLt
-         FzMJaBaJQCoH/vVX/cRy8DzDEK8rFASUKNUZwrtrnLEhl6cAGt9Pt1BPkrs749n9I6j9
-         63B8bxr+KjynoTdG5d98rNlCF2jB0pLhFveRXIN0sowt0SILpix90gv174D5ID4EGVAt
-         7agMxnzww1y3UMGGx15P1JR6la3bdllJhc7frDLHl/ZHGRw7LmaB5W5cIe3WOWrHhd61
-         i/Nw==
-X-Forwarded-Encrypted: i=1; AJvYcCVaawwnwVW0vVy1HSvoYzAlib005sJGzgDhtYfTnNmENGrm9Ry0LMyxkD+RXeNsmzTC/6lKmBvwVFKI@vger.kernel.org, AJvYcCW8ZsXWJ57Z9QMl24RnZPvhbn0YmQS8pEgXdkj97+Y+qD17yC/n6pceo/lCwYTGJMMJbHeUJvTGxAdO38uOD6U2/e8=@vger.kernel.org, AJvYcCXz7XKUF1KWyt7BEgNkHtg8JBjqy1bjAxNIwCfgT6+c3S+dXr0o3b+p9IgwogOaE+MnjYwG/R40KyW3UPMO@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxb7wXXBcLRys11NHW2TvjxDGkXxW3SI0KLFeI59ml277I/d7JC
-	IP3QReM1VataC6lYHc85+R4HZLBNnP6bHOeEH46rmDOiPs/ttwEtA5AKv4xf
-X-Google-Smtp-Source: AGHT+IH51bdYEaF5ndhYSc6OscP4HZXA92NHn6kzW6asWqH8eXYS8Xe4udQGsUM8sl7bi87ouFS4pA==
-X-Received: by 2002:a05:690c:8:b0:664:a85d:47c6 with SMTP id 00721157ae682-6d277879970mr22345207b3.33.1724916946494;
-        Thu, 29 Aug 2024 00:35:46 -0700 (PDT)
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com. [209.85.128.170])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6d2d4485725sm1399267b3.74.2024.08.29.00.35.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 29 Aug 2024 00:35:46 -0700 (PDT)
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-690aabe2600so3178647b3.0;
-        Thu, 29 Aug 2024 00:35:46 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUk3LOurcilPtvNoLkESfMH8zHGtMEvntjqshKk9V3KBlxXN0Nefkf512J82R7mQJWvkNOHPmoU0AI5GmQv@vger.kernel.org, AJvYcCV3cNblrInOCXn/A5a8vSU/KrASOJUc6FZxenKaK+Fzk+7imkBxe7r5BxJ0qO457WJf/L+regyx7K/v@vger.kernel.org, AJvYcCVw0S9nmwxYlceAKdmecqip2nisEXXiZrmDFVsrZ7AiAZ16lvCTWll4HUJKywWktjrXeWRwy0xEJNVaHtaQcv/aeP8=@vger.kernel.org
-X-Received: by 2002:a05:690c:fd6:b0:65f:a0e5:8324 with SMTP id
- 00721157ae682-6d27595e993mr25362827b3.4.1724916945699; Thu, 29 Aug 2024
- 00:35:45 -0700 (PDT)
+	s=arc-20240116; t=1724917019; c=relaxed/simple;
+	bh=VOH2tbPjus1K+75hQUURlDdBew1XrlSa96G/dSLpMow=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UI1eMbxcXb3Cnb8AuqAguLshLqRr1ncvKPEJYNk0T6B2Cwy7Zbxe3Ot/TtG0dc0QWoVlIRVe8kbjdUjOxASbj1UXA/nG6oNwswsmM5oUC4H6hpSbAoCTcHxB3hx5w/ihwzJa+e2C6q+mkpb528pmvPL7J5p9FxeNg7skBobtlhE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dD1LiOHQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC624C4CEC1;
+	Thu, 29 Aug 2024 07:36:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724917018;
+	bh=VOH2tbPjus1K+75hQUURlDdBew1XrlSa96G/dSLpMow=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dD1LiOHQKYJ6888/AHJiuZt4q+YDLS8tlWv3rQvWYJx8GUybwuQaK0L93vtObjNL6
+	 Exihm/meEN55jt4IbbMphTx5yW0U3HTyJJ32Pxy2QI6T0gUOlFzcwu3iEjwnOGC340
+	 b5fVEiQDvnCDCkGL73Ti/NvI9w5WjRrN9c78fXXfcb232cJImJGb9ueVfPDpkYkfyj
+	 XtEQhW7bVF53SttpSF+T0EC/GkP3JNk0fFFhWr/qS6KViQYCFkkk1qbN6LojkpVoEX
+	 IG7E3Ch9wYjhG5pgY2+dU2vw8Vwdmi24GTp2ZyOvmX3HoMBjI5RGvPUEarU8wGkZM6
+	 2/IWW77o49yig==
+Date: Thu, 29 Aug 2024 09:36:54 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Nikunj Kela <quic_nkela@quicinc.com>
+Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, rafael@kernel.org, viresh.kumar@linaro.org, 
+	herbert@gondor.apana.org.au, davem@davemloft.net, sudeep.holla@arm.com, andi.shyti@kernel.org, 
+	tglx@linutronix.de, will@kernel.org, joro@8bytes.org, jassisinghbrar@gmail.com, 
+	lee@kernel.org, linus.walleij@linaro.org, amitk@kernel.org, 
+	thara.gopinath@gmail.com, broonie@kernel.org, wim@linux-watchdog.org, linux@roeck-us.net, 
+	robin.murphy@arm.com, cristian.marussi@arm.com, rui.zhang@intel.com, 
+	lukasz.luba@arm.com, vkoul@kernel.org, quic_gurus@quicinc.com, agross@kernel.org, 
+	bartosz.golaszewski@linaro.org, quic_rjendra@quicinc.com, robimarko@gmail.com, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-crypto@vger.kernel.org, arm-scmi@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org, iommu@lists.linux.dev, 
+	linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, linux-spi@vger.kernel.org, 
+	linux-watchdog@vger.kernel.org, kernel@quicinc.com, quic_psodagud@quicinc.com, 
+	quic_tsoni@quicinc.com, quic_shazhuss@quicinc.com
+Subject: Re: [PATCH 14/22] dt-bindings: arm-smmu: document the support on
+ SA8255p
+Message-ID: <ompfueg7civ5spjdumkhd7qgx4cnvjcftznf3z3q5duuxppt5d@fao7zx4oxfm3>
+References: <20240828203721.2751904-1-quic_nkela@quicinc.com>
+ <20240828203721.2751904-15-quic_nkela@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240828124134.188864-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20240828124134.188864-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <28106585-59d1-42c4-af56-89820b15bdfb@kernel.org> <CA+V-a8tGBQTNLEBBKTi0Gy47CsdFpQKQkwP02omSWTt8DveqGA@mail.gmail.com>
- <606dc93b-9433-46bf-8c38-1d07b3677abb@kernel.org>
-In-Reply-To: <606dc93b-9433-46bf-8c38-1d07b3677abb@kernel.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 29 Aug 2024 09:35:33 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVGZKCQ7FKsN7mR6ER7sc=P8qv=+eukFyHZt1VGYN7-GA@mail.gmail.com>
-Message-ID: <CAMuHMdVGZKCQ7FKsN7mR6ER7sc=P8qv=+eukFyHZt1VGYN7-GA@mail.gmail.com>
-Subject: Re: [PATCH v4 1/9] dt-bindings: soc: renesas: Document RZ/V2H EVK board
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>, Magnus Damm <magnus.damm@gmail.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240828203721.2751904-15-quic_nkela@quicinc.com>
 
-Good mornin' Krzysztof,
+On Wed, Aug 28, 2024 at 01:37:13PM -0700, Nikunj Kela wrote:
+> Add compatible for smmu representing support on SA8255p.
+> 
+> Signed-off-by: Nikunj Kela <quic_nkela@quicinc.com>
+> ---
+>  Documentation/devicetree/bindings/iommu/arm,smmu.yaml | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
 
-On Thu, Aug 29, 2024 at 8:00=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.or=
-g> wrote:
-> On 28/08/2024 22:09, Lad, Prabhakar wrote:
-> > On Wed, Aug 28, 2024 at 3:34=E2=80=AFPM Krzysztof Kozlowski <krzk@kerne=
-l.org> wrote:
-> >> On 28/08/2024 14:41, Prabhakar wrote:
-> >>> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >>> Add "renesas,rzv2h-evk" which targets the Renesas RZ/V2H ("R9A09G057"=
-)
-> >>> EVK board.
-> >>>
-> >>> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com=
->
-> >>> Acked-by: Rob Herring (Arm) <robh@kernel.org>
-> >>> ---
-> >>> Hi Rob, I have restored your Ack with the below change, I hope that's=
- OK.
-> >>>
-> >>> Cheers, Prabhakar
-> >>>
-> >>> v1->v4
-> >>> - Updated 'renesas,gp-evk # GP-EVK' -> 'renesas,rzv2h-evk # RZ/V2H EV=
-K'
-> >>> - Updated commit message
-> >>>
-> >>> v1: https://patchwork.kernel.org/project/linux-renesas-soc/patch/2024=
-0724094707.569596-2-prabhakar.mahadev-lad.rj@bp.renesas.com/
-> >>> ---
-> >>>  Documentation/devicetree/bindings/soc/renesas/renesas.yaml | 2 ++
-> >>>  1 file changed, 2 insertions(+)
-> >>>
-> >>> diff --git a/Documentation/devicetree/bindings/soc/renesas/renesas.ya=
-ml b/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
-> >>> index d582992aaf0e..b7acb65bdecd 100644
-> >>> --- a/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
-> >>> +++ b/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
-> >>> @@ -527,6 +527,8 @@ properties:
-> >>>
-> >>>        - description: RZ/V2H(P) (R9A09G057)
-> >>>          items:
-> >>> +          - enum:
-> >>> +              - renesas,rzv2h-evk # RZ/V2H EVK
-> >>>            - enum:
-> >>
-> >> This is unusual pattern for me, but maybe I miss here something. Commi=
-t
-> >> message does not explain why EXISTING boards needs to be changed. What
-> >> does it mean "rzv2h-evk targets evk board"? How does this work?
-> >>
-> > This commit is not changing the existing boards. The entries below the
-> > addition are the RZ/V2H(P) SoC variants. Here we are just adding the
-> > board entry which is based on RZ/V2H SoC [0].
->
-> Then it is even more surprising to see there entries which were not
-> boards. What's in this file in such case?
+Your subjects contain quite redundant/excessive information. In the same
+time they lack information about device. 
 
-Before this patch, the entry that is being modified just contained
-SoC variants and a fallback SoC type.
-This patch documents the compatible value for the first board based
-on an SoC of this type.
+1. s/document the support on/add/
+2. s/SA8255p/SA8255p SMMU-or-whatever-device-it-is/
 
-> Which DTS file it matches?
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-The one that is introduced in patch 3/9  in this series.
+Best regards,
+Krzysztof
 
-> > In the board DTS file it will be used as "compatible =3D
-> > "renesas,rzv2h-evk", "renesas,r9a09g057h44", "renesas,r9a09g057";",
-> > see [1].
-> >
-> >                ^^                              ^^
-> >                  ^^
-> >
-> >               Board variant             SoC  variant
-> >     Generic RZ/V2H SoC
-> >
-> >> You have EVK board and now it is not valid anymore?
-> >>
-> > No this is not the case.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
