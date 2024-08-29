@@ -1,123 +1,166 @@
-Return-Path: <linux-kernel+bounces-306983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D82D2964665
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:25:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9B8A96466B
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:27:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 837371F2281B
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:25:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66FAC282CB4
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:27:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E3A71A7AE4;
-	Thu, 29 Aug 2024 13:25:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8383C1AB512;
+	Thu, 29 Aug 2024 13:26:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ap6/COmG"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dukqpTLw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B442A192B6F;
-	Thu, 29 Aug 2024 13:25:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB92D446D1;
+	Thu, 29 Aug 2024 13:26:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724937919; cv=none; b=JSZ3U1M9nRuQ6AboPA4zIIvCXiNLFW3cdifwUUF4Ueea263mbzBvbOmY0huC4mzPSJWuq+lgYYZOKDMEIvuVLbB2+4TYB0iUp7lbXm4Cy5Jpxun98LBTHmlEnt3h3/ncp+FHgkey+X+AWw1UwiLnU7g1i5ZIl63ICbfOoRM8cAo=
+	t=1724938010; cv=none; b=WvD5KUPM13GLL+uBhRQggvfuXvOqU2RGt1lUForAMI72NUO6ZShdarjZPBUPTpk6OilrB7nD9oFGh5sJ1Z1ggxDN/OsUA+yZsBAVHpttS2F+VRjAgHxpDvqC09KQzFrSHWpfZh/ExoLVbRmI8rtL5Wwone/iMIAAq9O+4KtiA1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724937919; c=relaxed/simple;
-	bh=n77bCPZhEhpA7pX7XHjUFUHJCMPAurXbxUj+f9Jyqa4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JG4P5eF/JkBq2j4PJMGYyW4VEYO2fnjCN8N817xGz7qxmMye7UMPnT8gX3Tc1AAb5MpiKWJ1EItKr4FDwd67RWsa4/hdDNekWtRFAjTz4WTQp2uLqcSqWGvSYf+xUG0FHdOYQCqQQvOonsolqUy0tzWOqVgztSVmnSPT9ALqY8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ap6/COmG; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724937918; x=1756473918;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=n77bCPZhEhpA7pX7XHjUFUHJCMPAurXbxUj+f9Jyqa4=;
-  b=Ap6/COmG0Vk7rqFXWDN9mrUqEXm/BdBpyJIxOdZqVgHkdopxI2OZ6Bt/
-   olfpCRy/Mx+tKXgGulf788nOkWWBU+ZDAohES6OQZfisSnCnW9MWSy0ig
-   KxqWazMV2nTT8QLhalfR8VENGCDU0qZdyrFvqT3vsBOR2TAIZstV2dYNP
-   rPrz7A1fn1p2wi4GUQe556wP1lXKS+Ousyy3lJQ9cGJGjSM+JEcBh5H+Y
-   ryQf+A5YjGWDlByN6Fff1fnP+luYk2TRaxhPCqTOe+PO1lwCT5FgD9hTL
-   G34lY4b0k2llqm9+AueI4kNbTAkGHim3dy6tVxzsudn210GsMMrY5Db5f
-   w==;
-X-CSE-ConnectionGUID: 6kMD3vlqTm6GyU9yFYOVrw==
-X-CSE-MsgGUID: EIi7kagJQOii18LAEAsXAQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11179"; a="34185220"
-X-IronPort-AV: E=Sophos;i="6.10,185,1719903600"; 
-   d="scan'208";a="34185220"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 06:25:18 -0700
-X-CSE-ConnectionGUID: CMR8G9PlQnG+jJscNPSPbg==
-X-CSE-MsgGUID: 6p7D2YcFRryMDkc3Pk+Z9w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,185,1719903600"; 
-   d="scan'208";a="68462912"
-Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.240.26]) ([10.124.240.26])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 06:25:15 -0700
-Message-ID: <4eb4a26e-ebad-478e-9635-93f7fbed103b@intel.com>
-Date: Thu, 29 Aug 2024 21:25:11 +0800
+	s=arc-20240116; t=1724938010; c=relaxed/simple;
+	bh=+mHl9ArgxM2tIFp0DloJtxCG50oMRZe3Ta3hKO0rY6o=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=NJnXXtj3YWI2WzTa/Lj3Aa4TV8jeMFZKAMz8OEmOLJQ6yHNTCuikQzvAR8op9Xz/mjQGq5Mj2Ot4idFiH+Kw/Wxi3FPxxCswd9jHhQOUEw2XYEOPEJStf/rkHm91ibxzzauK/grv4RvLSCDZDlUbDwviB9cPzfPNJJ2E8GbRcbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dukqpTLw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0034C4CEC1;
+	Thu, 29 Aug 2024 13:26:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724938010;
+	bh=+mHl9ArgxM2tIFp0DloJtxCG50oMRZe3Ta3hKO0rY6o=;
+	h=From:Subject:Date:To:Cc:From;
+	b=dukqpTLwxypLzpR03ubtrJ2JSZfTTvjxkzqs26GWfSwGtxRXfo2HHBaMPgHKeTH8p
+	 oZK3I3LO+3q9cJbYnxCY+wa+Ymley+XmtbnPGdcLkpwEpDgkvnjRcdxfvnTCviTCPZ
+	 V8adp0hgm9YItl+ufj/c1yXhlOvBqmptgTezO8uBkNaUpz9KMAFslV2Rmpm+7p+49D
+	 2uPO0QMvFeKrzdZw8O5XT+q7i8QM38tyjrw8MeqPy5XdHfoSMq/huAqQTfrXKCwUKo
+	 OW7lYLlv4unvINmW2h6cBbPCjB7Jn9L6MPzxdf0qe0u/4/jClaAm0tooPT6mIVDhwj
+	 i6j4dTADyq3jQ==
+From: Jeff Layton <jlayton@kernel.org>
+Subject: [PATCH v3 00/13] nfsd: implement the "delstid" draft
+Date: Thu, 29 Aug 2024 09:26:38 -0400
+Message-Id: <20240829-delstid-v3-0-271c60806c5d@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 02/25] KVM: TDX: Define TDX architectural definitions
-To: Rick Edgecombe <rick.p.edgecombe@intel.com>, seanjc@google.com,
- pbonzini@redhat.com, kvm@vger.kernel.org
-Cc: kai.huang@intel.com, isaku.yamahata@gmail.com,
- tony.lindgren@linux.intel.com, linux-kernel@vger.kernel.org,
- Isaku Yamahata <isaku.yamahata@intel.com>,
- Sean Christopherson <sean.j.christopherson@intel.com>
-References: <20240812224820.34826-1-rick.p.edgecombe@intel.com>
- <20240812224820.34826-3-rick.p.edgecombe@intel.com>
-Content-Language: en-US
-From: Xiaoyao Li <xiaoyao.li@intel.com>
-In-Reply-To: <20240812224820.34826-3-rick.p.edgecombe@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAA530GYC/1WMQQ6CMBBFr0K6tqYzBUJdeQ/jok5HaCRgWtJoC
+ He3kGhw+X7+e7OIHDxHcSpmETj56Mchgz4Ugjo7tCy9yyxQYakaqKTjPk7eSaPRqNqAdQAiv5+
+ B7/61lS7XzJ2P0xjeWzjBun4b9a+RQCpJiEDaEZTkzg8OA/fHMbRijSTcibgTMYvc2FtFirUh+
+ hOXZfkARtoEV9gAAAA=
+To: Chuck Lever <chuck.lever@oracle.com>, Neil Brown <neilb@suse.de>, 
+ Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
+ Tom Talpey <tom@talpey.com>, Trond Myklebust <trondmy@kernel.org>, 
+ Anna Schumaker <anna@kernel.org>, Olga Kornievskaia <okorniev@redhat.com>, 
+ Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+ Jonathan Corbet <corbet@lwn.net>
+Cc: Tom Haynes <loghyr@gmail.com>, linux-kernel@vger.kernel.org, 
+ linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+ linux-doc@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3818; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=+mHl9ArgxM2tIFp0DloJtxCG50oMRZe3Ta3hKO0rY6o=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBm0HcSS9PQ3BborrNALBRZf62j2hkBYPTAjow+R
+ B3wUBfLluCJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZtB3EgAKCRAADmhBGVaC
+ FfZ0EACaFwp7Sr56f/PkvkhWpccCIzN8zgZyQqpMPKlE2ll/qZSB9tBXtUZEtcNMPoRkB437Nke
+ FxTHayXGvj/mgV0wQHOaWQRUFYyOMYVMID4NdlnFgaivy9UrZxNCiWmTT1tpoReaV73rdJwcbE3
+ iT8l3AMb/83E3NpJb/6jEdNHGQKJNQZ8P2r1S50rxMJYtyJpHl0rhU4+iv3IHD3uqFYawwqe7+X
+ 6BhuKhBmY605BrFGCmjjai1YN0F8moC4oQjTtoNSxNFj/t5creW8Z2oN8CpAFd346EJAUFrUs/o
+ A9KZlejrmorYd9DfXmnjRxmLboEPOWy5/HdRxKSUEzFc0Z6BNujg4hcpUgjSV6DPbdsxg8RHd3T
+ RlEvG23n9PfVG6A3HXErMYrBHq/f9wKnZJxeIfTG9GHCJfwihp562vpZfnqqat63rnEh/vepGs+
+ qEE++TXU776BV9CC9VaeyEmvpKA+2U3C/Uj1n2beJ/KRSJV2XjHFGe/pt70YVI5ZgExwD/0PBiy
+ YQzaQPoBrxnFjxPWeoskSaFDUnFbfLyF4OnunNiXFQyPgi1KcE8fmtR/4L0a5SuNUCmWYRzr9Yf
+ Mchf4WOteaWGF6hQDoLOSxxDUcOVBpEV8NgBZ0H6HXrQdcA4p+dEn6k1lMZJNSK/KWrPkFmAL6k
+ tK+osl/Iaac0lHA==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-On 8/13/2024 6:47 AM, Rick Edgecombe wrote:
-> +/*
-> + * TD_PARAMS is provided as an input to TDH_MNG_INIT, the size of which is 1024B.
-> + */
-> +struct td_params {
-> +	u64 attributes;
-> +	u64 xfam;
-> +	u16 max_vcpus;
-> +	u8 reserved0[6];
-> +
-> +	u64 eptp_controls;
-> +	u64 exec_controls;
+The first couple of patches are prep patches from Neil, with some small
+cleanups. The first patch should probably go to mainline for v6.11
+since it fixes a bug.
 
-TDX 1.5 renames 'exec_controls' to 'config_flags', maybe we need update 
-it to match TDX 1.5 since the minimum supported TDX module of linux 
-starts from 1.5.
+The OPEN_ARGUMENTS and OPEN_XOR_DELEG patches are pretty straightforward
+and have survived some local testing. The delegated timestamp patches
+took a few tries to get right, but seem to work. That part is hard to
+test since it requires 2 clients. It would be nice to have pynfs tests
+for that.
 
-Besides, TDX 1.5 defines more fields that was reserved in TDX 1.0, but 
-most of them are not used by current TDX enabling patches. If we update 
-TD_PARAMS to match with TDX 1.5, should we add them as well?
+The main question I have about this series is the change to make nfs4.h
+include the autogenerated headers. Does anyone have issues with that?
+I'd especially appreciate feedback on the basic scheme from Chuck, Trond
+and Anna.
 
-This leads to another topic that defining all the TDX structure in this 
-patch seems unfriendly for review. It seems better to put the 
-introduction of definition and its user in a single patch.
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+Changes in v3:
+- fix includes in nfs4xdr_gen.c
+- drop ATTR_CTIME_DLG flag (just use ATTR_DELEG instead)
+- proper handling for SETATTR (maybe? Outstanding q about stateid here)
+- incorporate Neil's patches for handling non-delegation leases
+- always return times from CB_GETATTR instead of from local vfs_getattr
+- fix potential races vs. mgtimes by moving ctime handling into VFS layer
+- Link to v2: https://lore.kernel.org/r/20240826-delstid-v2-0-e8ab5c0e39cc@kernel.org
 
-> +	u16 tsc_frequency;
-> +	u8  reserved1[38];
-> +
-> +	u64 mrconfigid[6];
-> +	u64 mrowner[6];
-> +	u64 mrownerconfig[6];
-> +	u64 reserved2[4];
-> +
-> +	union {
-> +		DECLARE_FLEX_ARRAY(struct tdx_cpuid_value, cpuid_values);
-> +		u8 reserved3[768];
-> +	};
-> +} __packed __aligned(1024);
+Changes in v2:
+- rebase onto Chuck's lkxdrgen branch, and reworked how autogenerated
+  code is included
+- declare nfsd_open_arguments as a global, so it doesn't have to be
+  set up on the stack each time
+- delegated timestamp support has been added
+- Link to v1: https://lore.kernel.org/r/20240816-delstid-v1-0-c221c3dc14cd@kernel.org
+
+---
+Jeff Layton (11):
+      nfsd: drop the ncf_cb_bmap field
+      nfsd: drop the nfsd4_fattr_args "size" field
+      nfsd: have nfsd4_deleg_getattr_conflict pass back write deleg pointer
+      nfsd: add pragma public to delegated timestamp types
+      nfsd: fix reported change attr on a write delegation
+      nfs_common: make nfs4.h include generated nfs4_1.h
+      nfsd: add support for FATTR4_OPEN_ARGUMENTS
+      nfsd: implement OPEN_ARGS_SHARE_ACCESS_WANT_OPEN_XOR_DELEGATION
+      fs: handle delegated timestamps in setattr_copy_mgtime
+      nfsd: add support for delegated timestamps
+      nfsd: handle delegated timestamps in SETATTR
+
+NeilBrown (2):
+      nfsd: fix nfsd4_deleg_getattr_conflict in presence of third party lease
+      nfsd: untangle code in nfsd4_deleg_getattr_conflict()
+
+ {fs/nfsd => Documentation/sunrpc/xdr}/nfs4_1.x     |   2 +
+ MAINTAINERS                                        |   1 +
+ fs/attr.c                                          |  28 ++-
+ fs/inode.c                                         |  74 +++++++
+ fs/nfsd/Makefile                                   |   2 +-
+ fs/nfsd/nfs4callback.c                             |  43 +++-
+ fs/nfsd/nfs4proc.c                                 |  29 ++-
+ fs/nfsd/nfs4state.c                                | 241 ++++++++++++++-------
+ fs/nfsd/nfs4xdr.c                                  | 117 ++++++++--
+ fs/nfsd/nfs4xdr_gen.c                              |  12 +-
+ fs/nfsd/nfsd.h                                     |   5 +-
+ fs/nfsd/state.h                                    |   6 +-
+ fs/nfsd/xdr4cb.h                                   |  10 +-
+ include/linux/fs.h                                 |   2 +
+ include/linux/nfs4.h                               |   7 +-
+ include/linux/nfs_xdr.h                            |   5 -
+ .../linux/sunrpc/xdrgen/nfs4_1.h                   |  14 +-
+ include/linux/time64.h                             |   5 +
+ include/uapi/linux/nfs4.h                          |   7 +-
+ 19 files changed, 469 insertions(+), 141 deletions(-)
+---
+base-commit: 30e4927dc0506504ddbfed51698bc5f37b17343a
+change-id: 20240815-delstid-93290691ad11
+
+Best regards,
+-- 
+Jeff Layton <jlayton@kernel.org>
 
 
