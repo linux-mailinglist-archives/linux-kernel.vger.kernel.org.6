@@ -1,98 +1,103 @@
-Return-Path: <linux-kernel+bounces-306976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99AF6964653
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:20:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D342296465B
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:21:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 431401F268F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:20:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37402B28CCE
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:21:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1446E1A76A8;
-	Thu, 29 Aug 2024 13:20:25 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A710D1AB500;
+	Thu, 29 Aug 2024 13:21:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="XxD0rm7L"
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4085D15E5C0
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 13:20:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66DC51A4ADE
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 13:21:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724937624; cv=none; b=U6mIdMHNEU9xXZNRqO38TS6+Od7gRWjkKASc4z12AI14cA+Sh/Vqa6qh6SlQs+eqffmsX6td/j5mGC4OxKys1kuzkaxLoPrOXv+vtoSNjU3Yra3XOsLw6qeJ5AxpORSgiWzxsKv8XkLkUAFewxXeAl+eAzWO7DrtrBZ35WcMamg=
+	t=1724937705; cv=none; b=D37ZSkIy29XrBEKt5ukUJvxJfaFm1UEeVWLebXS9bB9eqtGQuzngLCveaeh7npPrLXQ6y7URyqaAsTkBpQQ3qIUOJCu7H2MNZQBXgFLrmVT9VAUOSBWx1Kn3RML87KlZLVU5J64r7shWkZJKeb93oGaJl4x+zKs3KyxScOipTxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724937624; c=relaxed/simple;
-	bh=u4Jwcjg0J4HxizWCBJ/zviCp0rb0Bomjp1TKp/Pptyc=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=iEUv2x08s6gC4JHRkuN3P3a2CV8N8zEZoFGc3/nqeRFnhE23EOOU5AASsiHrJse4K7zDvXsJtFFZ7m2DrHTUb7fih9lzfScAqCxJsPTrnLRk+tat8jwqkgbGl5w7G50ZtbXoKYZD0gMQURYgbe+OeEH999M5Isp7FwrIOIh5obA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-8223c3509a9so62921639f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 06:20:23 -0700 (PDT)
+	s=arc-20240116; t=1724937705; c=relaxed/simple;
+	bh=hdV4rZzJMRAJBVUYw2ja547l7Uw/TfehnV91g5CT5jM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=G0R2qNcpgJiErvNsB/zs6y/wo+hhVhnDI3zPNtmoLqwdOfVZQZBr47Pu5WIGg8CPY0WER5RVDNIo47p4i069tzyi2/Bj+AeBvJmzMk0FflHBDA9X5iqu1S2ri8QFAnH9rBSjOT90V3d92XWkmWMnWtfCwBsgAhx5I1Hy2ewfhtU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=XxD0rm7L; arc=none smtp.client-ip=209.85.219.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e13cda45037so686805276.3
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 06:21:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1724937702; x=1725542502; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=17X032zDJy+/0wMUgmzbwhIMKf3z2lFl5ldVJ4sPDf0=;
+        b=XxD0rm7LkOJAUwXzSkLZwRdHMjy+qM0ZOIWLviQVXMMT74B3prBKxtMy+JEoamWEBm
+         6HypZTVcDb1nRr9nptpDfzz9dfqDQ1onIG1goU7zLNnCE0YBL7gwOyGjmap1eMCyY74i
+         v31jstwuVtK23YqSv5tmT2ZCMecR7tCEqnhFs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724937622; x=1725542422;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=QeC0kzAHEyICaLkgHVFtFpFDH7/QjbTxOzJqwfIJku4=;
-        b=s4UtoM+xRNIjC8oLHVjPSY9AEKgmBfnsuiuuAanDWOzFQ62gTny5K3YvqJOyrGl1UY
-         f74xq5MBPrpMBY9YCZGUezLBNic+f9byo2ipzZdAMWlUV3XsNOtqWgqK7QKbWCZ8Jt3C
-         Kng8kuWw1oNsA03iVC0tAjYqi6SimuyJRs0lBKuwRSEIbrtHMa3r/UmSN0av3FVSJmhB
-         YO/s0qktq+KaethBkDqbLPA5hn8Kca++58VxACXlpr7hLy8SYOi4PT66yIf6Kh4Tp9fn
-         EPI+kz5W+7AwlS7o5fXu2AXURcMkauqS+tRToBESo6ISFc3CHdmE/btsoLdp9kVpV1/v
-         Amdg==
-X-Forwarded-Encrypted: i=1; AJvYcCU5gcWMrq2jzJK1TLoabwAN/lAMCvISo4BZQKHdY188R7D1E0DZ3IWUmFiI43ByLz6nEYNSKX0oDZexugk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YycFSqXa3SFnXntjIS5wF5W7hro4q6f4OoVPxvf3498Tv4ZlEw4
-	PSr2ZJQIUAJ/Nr9GlkzBcWxteUPJ7A8CI4gupDl7HyG7y+ghvgE7CHiX2KupVt6eI1Ll8WreVLC
-	NiJruDeROCNqYdjyH9pbYFRX5PpbX45E2/MIaBDqL2v+ay1QnOKwOtj8=
-X-Google-Smtp-Source: AGHT+IHawIXQAkKBbELYy+9M47m1A7QIHjdfsr04WmeswNZ+EYgpg1TqyJH4So61MDZLu15Oxhegv485ZfG9Hn2RM0biX4oMLJnF
+        d=1e100.net; s=20230601; t=1724937702; x=1725542502;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=17X032zDJy+/0wMUgmzbwhIMKf3z2lFl5ldVJ4sPDf0=;
+        b=QYL/m4tWcsDlgJcS5ZcyI0k+G2C6TJGFresKGodGpjK//B60wxza8rc0n/7Gm79JgR
+         RluMU8o8bthrzhMniNipCBR4xYBVy+sQ6qIkXDEafiVh+6fXs4ioZeKGWb66HYOEwcjs
+         1i0IUB0MERNgoS5L59Mgk3Dg9tgHsMlkbXcWy6tbZF4lIroPmf7TX0jrqM0zS35gMmjU
+         aEGiYRTy2QAB6nuZcb3Er/pZfCzQq5p6XwhbEt95KAOy7XktWTbw9i8eB5dc24tg3epa
+         Z5zc+kIJ5lbLR2vmTPb83nqP1zc5nmbH6jWvcqTBLpLRPXeC08gKcoQ1F63kQib6/Pbd
+         kt+Q==
+X-Gm-Message-State: AOJu0YwIW6f6icnCT9+97w/2wMfik4HOVrhUByv7KUcXMWEplcQkpc79
+	21Ndw0p1GCWaxrCT9DELz09TgyeaD+iNN4A8mhMBBKOMIiKPhSJ+ApoZG/Q/Fr5CcKgLXBTVh0P
+	K+JYYn+xMnzEh1a/sW5LNOxA5BAM74vgc0+4kFA==
+X-Google-Smtp-Source: AGHT+IGFmmq4KYWULCCzqEFKek25OxK9x8oLjmoZmu8m4Sd2SvnaVWUH+kbP/SjW5Ho91ld6gT2dR61FWiPYKjgvHmQ=
+X-Received: by 2002:a05:690c:2f0a:b0:6b0:d9bc:5a29 with SMTP id
+ 00721157ae682-6d277a7927emr26497587b3.32.1724937702395; Thu, 29 Aug 2024
+ 06:21:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1543:b0:397:5d37:61fa with SMTP id
- e9e14a558f8ab-39f377df2cdmr2071625ab.2.1724937622365; Thu, 29 Aug 2024
- 06:20:22 -0700 (PDT)
-Date: Thu, 29 Aug 2024 06:20:22 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000003db80e0620d256fb@google.com>
-Subject: [syzbot] Monthly v9fs report (Aug 2024)
-From: syzbot <syzbot+listba218e48000a259e73d2@syzkaller.appspotmail.com>
-To: asmadeus@codewreck.org, ericvh@kernel.org, linux-kernel@vger.kernel.org, 
-	lucho@ionkov.net, syzkaller-bugs@googlegroups.com, v9fs@lists.linux.dev
+References: <20240709111918.31233-1-hreitz@redhat.com> <CAJfpegv6T_5fFCEMcHWgLQy5xT8Dp-O5KVOXiKsh2Gd-AJHwcg@mail.gmail.com>
+ <19017a78-b14a-4998-8ebb-f3ffdbfae5b8@redhat.com> <CAJfpegs0Y3bmsw3jThaV+PboQEsWWoQYBLZwkqx9sLMAdqCa6Q@mail.gmail.com>
+ <b82dd5f9-a214-4a13-b500-38b07f1e9761@redhat.com>
+In-Reply-To: <b82dd5f9-a214-4a13-b500-38b07f1e9761@redhat.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Thu, 29 Aug 2024 15:21:30 +0200
+Message-ID: <CAJfpeguO_jt=fR+kMkmbJDtbD9f-+fAafkmS+CbE0qE_Z2wFug@mail.gmail.com>
+Subject: Re: [PATCH 0/2] virtio-fs: Add 'file' mount option
+To: Hanna Czenczek <hreitz@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, virtualization@lists.linux.dev, 
+	Miklos Szeredi <mszeredi@redhat.com>, German Maglione <gmaglione@redhat.com>, 
+	Stefan Hajnoczi <stefanha@redhat.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Vivek Goyal <vgoyal@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello v9fs maintainers/developers,
+On Thu, 29 Aug 2024 at 15:11, Hanna Czenczek <hreitz@redhat.com> wrote:
 
-This is a 31-day syzbot report for the v9fs subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/v9fs
+> Hm, I thought we set some things in fuse_mount and fuse_conn in there tha=
+t are then queried by fuse_send_init()...  Maybe the only thing fuse_send_i=
+nit() needs is fm->sb->s_bdi->ra_pages for max_readahead.
 
-During the period, 1 new issues were detected and 0 were fixed.
-In total, 3 issues are still open and 32 have been fixed so far.
+Yes, that definitely needs special treatment.
 
-Some of the still happening issues:
+> Sounds simple.  Do you think semantically it=E2=80=99s find to block here=
+?  We=E2=80=99d only do it for virtio-fs, so a denial-of-service may not be=
+ of concern here.
 
-Ref Crashes Repro Title
-<1> 3115    Yes   WARNING in v9fs_fid_get_acl
-                  https://syzkaller.appspot.com/bug?extid=a83dc51a78f0f4cf20da
-<2> 17      Yes   WARNING: refcount bug in p9_req_put (3)
-                  https://syzkaller.appspot.com/bug?extid=d99d2414db66171fccbb
-<3> 2       Yes   WARNING in v9fs_begin_writeback
-                  https://syzkaller.appspot.com/bug?extid=0b74d367d6e80661d6df
+It should be okay.  AFAIK all network filesystems block mount(2) until
+setup is complete.
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
-
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
-
-You may send multiple commands in a single email message.
+Thanks,
+Miklos
 
