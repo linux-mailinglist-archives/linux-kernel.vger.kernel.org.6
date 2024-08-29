@@ -1,249 +1,167 @@
-Return-Path: <linux-kernel+bounces-306396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A215963E62
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:27:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5636963E69
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:29:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2EC9B1C2218F
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:27:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DEF62888E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:29:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0134218C343;
-	Thu, 29 Aug 2024 08:27:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F32E18C33E;
+	Thu, 29 Aug 2024 08:29:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="HLY00qBJ"
-Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Nl+dGyMr"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9D1518C327
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 08:27:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F217418C025;
+	Thu, 29 Aug 2024 08:29:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724920043; cv=none; b=mUIrqEh8w2fSDj9blVZdXTmP/kP7t+C4xw+20ei8zRYXMXV083ebn0VleCG++KvqOiYpixGGqVnL7NA8hmLTxeggPmEWxpGNwx/TP/lVl20Ii1UXYRoE4VRcZHtwEENbILNvTbhF4Pz1/SeyzoGmB0mHqI+tY1N1rMUyVxvBm7M=
+	t=1724920159; cv=none; b=TJalwBBeTa8CPCO3VmDVx4FDEHDA25fZO9XAvMdPv3r7hSLQFx1U0TVa1mvXbXB0IQBB2/UeiroZ3WroVVqF1Tnv18HAvGyr+6cByelWkROAQK6shECXBTjk6uLZRRVqGbAVQ5jAONTJcAdwpemG1ZVS/GVIKcGnt4dn1vmOFPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724920043; c=relaxed/simple;
-	bh=q8RkWOZsduoG5UpfLU23VXt2DfOskuBrY0U7O8AaMVY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=apicFnVH9RZejl0+qhHD0Z3Axf5PpulmM3zuuEKahd7ekNcDX8QisdNX7BNAGuPaEEjP8EpFSnOGDpIxuBD1D1XyIx0b5P0cpadGbqNl/MZ75wuGaWXFyfV5CSs8mogqjEqUlGdT8D+XIf8V/udFJZ0/yOlQEHeLStgOHkhHfrg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=HLY00qBJ; arc=none smtp.client-ip=91.218.175.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <b6bf22e9-0d01-4e6b-bd06-4eaef73e76ce@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1724920033;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=z4IX81RoSKRpORtKKtqo9Xgk/NT1kzOnZwSCBhIj1Ng=;
-	b=HLY00qBJ6iPhp2xVu0Y9eupsVbgG6O7AjHJ495bKmIS7vShSXXSwXIJDq2laxzFRx/LVhQ
-	toplZU6gnnHWzNKQh45m4ClYJDYNVcYSVv1w3/1eAX+k8eJ01p++HAJx0qEiawKIq8b2jC
-	lbMALXq5vLx/30c10htibuyIPgzhD9Y=
-Date: Thu, 29 Aug 2024 16:27:06 +0800
+	s=arc-20240116; t=1724920159; c=relaxed/simple;
+	bh=E22UVlKfybQ6Tmjaw6PPYSMUlg5345khqFSuT+Vhx8M=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kNYKYQJp+0YFi0PpbR6x3Cdc9K8SiQzPuuNeMZEgcmHQxoQ8Bs0mnDiAuz7OhX1VAfi8OacE9WjccJuwsQJJt0s+WkMY1Ei5TZ/JVI7KZZStmX/HIfsrLvq2hrlwR5sIUmyqhnRbVmDbR5Jj/T+sp/6fo2nDJaiLxnqAjweNDXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Nl+dGyMr; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47T8QcaV000605;
+	Thu, 29 Aug 2024 08:29:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=7ry3tTO1NvxIQ0xDSdkI6D
+	BGk1wEMGklt9PYcx1cDHY=; b=Nl+dGyMrwrKC+czRz5w4HQUwS06UGUWeL7aIJJ
+	rZm3pqlVgrDs3DbdSLMoFT153pMx6jl12Kd+wsscicg2Z54O2f5XaS+8Dt4FLscR
+	r6J+QYNEClp79f8ETxOg25rr6JqiSociVJX+SUIhiWR2kTodE6f03MzRGGVnHCPW
+	IGElkGcv2GZXxEVo7m3sQImQQvw8fcaZczGG7tF2PwKzY7u3yYxyga8GEhgbfANy
+	/IA3QTb5KBlMFeHsC8RIJYykmbRJUUyM1QdM7iBV9Jus1wYTWwPub4NFlFtrB8w5
+	Ce0b5D9Y8O+q7YqidVRnl+FBmbFJbRq3RuQu8O8p3lbchr2w==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 419puw4h9t-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 29 Aug 2024 08:29:01 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47T8Sx8C007272
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 29 Aug 2024 08:28:59 GMT
+Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 29 Aug 2024 01:28:52 -0700
+From: Varadarajan Narayanan <quic_varada@quicinc.com>
+To: <andersson@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <konradybcio@kernel.org>, <catalin.marinas@arm.com>, <will@kernel.org>,
+        <djakov@kernel.org>, <richardcochran@gmail.com>,
+        <geert+renesas@glider.be>, <dmitry.baryshkov@linaro.org>,
+        <neil.armstrong@linaro.org>, <arnd@arndb.de>,
+        <nfraprado@collabora.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-pm@vger.kernel.org>, <netdev@vger.kernel.org>
+CC: Varadarajan Narayanan <quic_varada@quicinc.com>,
+        Kathiravan Thirumoorthy
+	<quic_kathirav@quicinc.com>
+Subject: [PATCH v5 0/8] Add NSS clock controller support for Qualcomm IPQ5332
+Date: Thu, 29 Aug 2024 13:58:22 +0530
+Message-ID: <20240829082830.56959-1-quic_varada@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] sched: psi: fix bogus pressure spikes from aggregation
- race
-To: Johannes Weiner <hannes@cmpxchg.org>, bugzilla-daemon@kernel.org
-Cc: Suren Baghdasaryan <surenb@google.com>,
- Peter Zijlstra <peterz@infradead.org>, Shakeel Butt <shakeelb@google.com>,
- linux-kernel@vger.kernel.org
-References: <bug-219194-14699@https.bugzilla.kernel.org/>
- <20240826181900.GA3214@cmpxchg.org> <20240827121851.GB438928@cmpxchg.org>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Chengming Zhou <chengming.zhou@linux.dev>
-In-Reply-To: <20240827121851.GB438928@cmpxchg.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: gByXCS-HlPuas1kMDGT_fDzgQ9_XjdC5
+X-Proofpoint-GUID: gByXCS-HlPuas1kMDGT_fDzgQ9_XjdC5
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-29_02,2024-08-29_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011
+ priorityscore=1501 malwarescore=0 bulkscore=0 mlxscore=0
+ lowpriorityscore=0 phishscore=0 mlxlogscore=999 suspectscore=0
+ adultscore=0 spamscore=0 impostorscore=0 classifier=spam adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2408290062
 
-On 2024/8/27 20:18, Johannes Weiner wrote:
-> Sending a proper patch. Peter, can you please take this?
-> 
-> ---
-> 
-> Brandon reports sporadic, non-sensical spikes in cumulative pressure
-> time (total=) when reading cpu.pressure at a high rate. This is due to
-> a race condition between reader aggregation and tasks changing states.
-> 
-> While it affects all states and all resources captured by PSI, in
-> practice it most likely triggers with CPU pressure, since scheduling
-> events are so frequent compared to other resource events.
-> 
-> The race context is the live snooping of ongoing stalls during a
-> pressure read. The read aggregates per-cpu records for stalls that
-> have concluded, but will also incorporate ad-hoc the duration of any
-> active state that hasn't been recorded yet. This is important to get
-> timely measurements of ongoing stalls. Those ad-hoc samples are
-> calculated on-the-fly up to the current time on that CPU; since the
-> stall hasn't concluded, it's expected that this is the minimum amount
-> of stall time that will enter the per-cpu records once it does.
-> 
-> The problem is that the path that concludes the state uses a CPU clock
-> read that is not synchronized against aggregators; the clock is read
-> outside of the seqlock protection. This allows aggregators to race and
-> snoop a stall with a longer duration than will actually be recorded.
-> 
-> With the recorded stall time being less than the last snapshot
-> remembered by the aggregator, a subsequent sample will underflow and
-> observe a bogus delta value, resulting in an erratic jump in pressure.
-> 
-> Fix this by moving the clock read of the state change into the seqlock
-> protection. This ensures no aggregation can snoop live stalls past the
-> time that's recorded when the state concludes.
-> 
-> Reported-by: Brandon Duffany <brandon@buildbuddy.io>
-> Link: https://bugzilla.kernel.org/show_bug.cgi?id=219194
-> Fixes: df77430639c9 ("psi: Reduce calls to sched_clock() in psi")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
+Add bindings, driver and devicetree node for networking sub system clock
+controller on IPQ5332. Some of the nssnoc clocks present in GCC driver is
+enabled by default and its RCG is configured by bootloaders, so enable
+those clocks in driver probe.
 
-Good catch!
+Signed-off-by: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
+---
+Changes in v5:
+- Rebased on next-20240821
+- Addressed review comments
+- Dropped 'const qualifier' patches
+- Dropped 'clk: qcom: ipq5332: enable few nssnoc clocks in driver probe'
+- Enabled icc-clk for NSSCC
+- Update ICC master/slave list
+- In dt-bindings of nsscc
+	Mark #power-domain-cells as false (as it is not applicable)
+	Add #interconnect-cells
+- Link to v4: https://lore.kernel.org/lkml/20240122-ipq5332-nsscc-v4-0-19fa30019770@quicinc.com/
 
-Reviewed-by: Chengming Zhou <chengming.zhou@linux.dev>
+Changes in v4:
+- Rebased on next-20240122
+- Fixed the missing space on the nsscc node
+- Link to v3: https://lore.kernel.org/linux-arm-msm/20231211-ipq5332-nsscc-v3-0-ad13bef9b137@quicinc.com/
 
-Maybe another solution is to check the race happened on the read side,
-then return delta as 0, right?
+Changes in v3:
+- Collected the tags
+- Dropped the dt-binding patch 3/9
+- Cleaned up the header file inclusion and updated the module
+  description in the driver
+- Used the decimal number instead of hex in the NSSCC node
+- Link to v2: https://lore.kernel.org/r/20231121-ipq5332-nsscc-v2-0-a7ff61beab72@quicinc.com
 
-Thanks.
+Changes in v2:
+- Change logs are in respective patches
+- Link to v1: https://lore.kernel.org/r/20231030-ipq5332-nsscc-v1-0-6162a2c65f0a@quicinc.com
 
-> ---
->   kernel/sched/psi.c | 26 ++++++++++++--------------
->   1 file changed, 12 insertions(+), 14 deletions(-)
-> 
-> diff --git a/kernel/sched/psi.c b/kernel/sched/psi.c
-> index 020d58967d4e..84dad1511d1e 100644
-> --- a/kernel/sched/psi.c
-> +++ b/kernel/sched/psi.c
-> @@ -769,12 +769,13 @@ static void record_times(struct psi_group_cpu *groupc, u64 now)
->   }
->   
->   static void psi_group_change(struct psi_group *group, int cpu,
-> -			     unsigned int clear, unsigned int set, u64 now,
-> +			     unsigned int clear, unsigned int set,
->   			     bool wake_clock)
->   {
->   	struct psi_group_cpu *groupc;
->   	unsigned int t, m;
->   	u32 state_mask;
-> +	u64 now;
->   
->   	lockdep_assert_rq_held(cpu_rq(cpu));
->   	groupc = per_cpu_ptr(group->pcpu, cpu);
-> @@ -789,6 +790,7 @@ static void psi_group_change(struct psi_group *group, int cpu,
->   	 * SOME and FULL time these may have resulted in.
->   	 */
->   	write_seqcount_begin(&groupc->seq);
-> +	now = cpu_clock(cpu);
->   
->   	/*
->   	 * Start with TSK_ONCPU, which doesn't have a corresponding
-> @@ -899,18 +901,15 @@ void psi_task_change(struct task_struct *task, int clear, int set)
->   {
->   	int cpu = task_cpu(task);
->   	struct psi_group *group;
-> -	u64 now;
->   
->   	if (!task->pid)
->   		return;
->   
->   	psi_flags_change(task, clear, set);
->   
-> -	now = cpu_clock(cpu);
-> -
->   	group = task_psi_group(task);
->   	do {
-> -		psi_group_change(group, cpu, clear, set, now, true);
-> +		psi_group_change(group, cpu, clear, set, true);
->   	} while ((group = group->parent));
->   }
->   
-> @@ -919,7 +918,6 @@ void psi_task_switch(struct task_struct *prev, struct task_struct *next,
->   {
->   	struct psi_group *group, *common = NULL;
->   	int cpu = task_cpu(prev);
-> -	u64 now = cpu_clock(cpu);
->   
->   	if (next->pid) {
->   		psi_flags_change(next, 0, TSK_ONCPU);
-> @@ -936,7 +934,7 @@ void psi_task_switch(struct task_struct *prev, struct task_struct *next,
->   				break;
->   			}
->   
-> -			psi_group_change(group, cpu, 0, TSK_ONCPU, now, true);
-> +			psi_group_change(group, cpu, 0, TSK_ONCPU, true);
->   		} while ((group = group->parent));
->   	}
->   
-> @@ -974,7 +972,7 @@ void psi_task_switch(struct task_struct *prev, struct task_struct *next,
->   		do {
->   			if (group == common)
->   				break;
-> -			psi_group_change(group, cpu, clear, set, now, wake_clock);
-> +			psi_group_change(group, cpu, clear, set, wake_clock);
->   		} while ((group = group->parent));
->   
->   		/*
-> @@ -986,7 +984,7 @@ void psi_task_switch(struct task_struct *prev, struct task_struct *next,
->   		if ((prev->psi_flags ^ next->psi_flags) & ~TSK_ONCPU) {
->   			clear &= ~TSK_ONCPU;
->   			for (; group; group = group->parent)
-> -				psi_group_change(group, cpu, clear, set, now, wake_clock);
-> +				psi_group_change(group, cpu, clear, set, wake_clock);
->   		}
->   	}
->   }
-> @@ -997,8 +995,8 @@ void psi_account_irqtime(struct rq *rq, struct task_struct *curr, struct task_st
->   	int cpu = task_cpu(curr);
->   	struct psi_group *group;
->   	struct psi_group_cpu *groupc;
-> -	u64 now, irq;
->   	s64 delta;
-> +	u64 irq;
->   
->   	if (static_branch_likely(&psi_disabled))
->   		return;
-> @@ -1011,7 +1009,6 @@ void psi_account_irqtime(struct rq *rq, struct task_struct *curr, struct task_st
->   	if (prev && task_psi_group(prev) == group)
->   		return;
->   
-> -	now = cpu_clock(cpu);
->   	irq = irq_time_read(cpu);
->   	delta = (s64)(irq - rq->psi_irq_time);
->   	if (delta < 0)
-> @@ -1019,12 +1016,15 @@ void psi_account_irqtime(struct rq *rq, struct task_struct *curr, struct task_st
->   	rq->psi_irq_time = irq;
->   
->   	do {
-> +		u64 now;
-> +
->   		if (!group->enabled)
->   			continue;
->   
->   		groupc = per_cpu_ptr(group->pcpu, cpu);
->   
->   		write_seqcount_begin(&groupc->seq);
-> +		now = cpu_clock(cpu);
->   
->   		record_times(groupc, now);
->   		groupc->times[PSI_IRQ_FULL] += delta;
-> @@ -1223,11 +1223,9 @@ void psi_cgroup_restart(struct psi_group *group)
->   	for_each_possible_cpu(cpu) {
->   		struct rq *rq = cpu_rq(cpu);
->   		struct rq_flags rf;
-> -		u64 now;
->   
->   		rq_lock_irq(rq, &rf);
-> -		now = cpu_clock(cpu);
-> -		psi_group_change(group, cpu, 0, 0, now, true);
-> +		psi_group_change(group, cpu, 0, 0, true);
->   		rq_unlock_irq(rq, &rf);
->   	}
->   }
+---
+Kathiravan Thirumoorthy (6):
+  dt-bindings: clock: ipq5332: add definition for GPLL0_OUT_AUX clock
+  clk: qcom: ipq5332: add gpll0_out_aux clock
+  dt-bindings: clock: add Qualcomm IPQ5332 NSSCC clock and reset
+    definitions
+  clk: qcom: add NSS clock Controller driver for Qualcomm IPQ5332
+  arm64: dts: qcom: ipq5332: add support for the NSSCC
+  arm64: defconfig: build NSS Clock Controller driver for Qualcomm
+    IPQ5332
+
+Varadarajan Narayanan (2):
+  dt-bindings: interconnect: Update master/slave id list
+  clk: qcom: ipq5332: Add couple of more interconnects
+
+ .../bindings/clock/qcom,ipq5332-nsscc.yaml    |   64 +
+ arch/arm64/boot/dts/qcom/ipq5332.dtsi         |   28 +
+ arch/arm64/configs/defconfig                  |    1 +
+ drivers/clk/qcom/Kconfig                      |    9 +
+ drivers/clk/qcom/Makefile                     |    1 +
+ drivers/clk/qcom/gcc-ipq5332.c                |   16 +
+ drivers/clk/qcom/nsscc-ipq5332.c              | 1049 +++++++++++++++++
+ include/dt-bindings/clock/qcom,ipq5332-gcc.h  |    1 +
+ .../dt-bindings/clock/qcom,ipq5332-nsscc.h    |   86 ++
+ .../dt-bindings/interconnect/qcom,ipq5332.h   |    4 +
+ 10 files changed, 1259 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,ipq5332-nsscc.yaml
+ create mode 100644 drivers/clk/qcom/nsscc-ipq5332.c
+ create mode 100644 include/dt-bindings/clock/qcom,ipq5332-nsscc.h
+
+-- 
+2.34.1
+
 
