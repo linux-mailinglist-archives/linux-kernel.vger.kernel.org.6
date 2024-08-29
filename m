@@ -1,89 +1,98 @@
-Return-Path: <linux-kernel+bounces-307037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DADC7964722
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:47:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5570C964752
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:57:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8622D1F235E9
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:47:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 006A0B2F939
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:48:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B0911AED4B;
-	Thu, 29 Aug 2024 13:47:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B41B1AD5E6;
+	Thu, 29 Aug 2024 13:47:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="HXP2NqvT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="rSO0/ESR"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89CB51AE86C;
-	Thu, 29 Aug 2024 13:47:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39ADB18A6BA;
+	Thu, 29 Aug 2024 13:47:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724939231; cv=none; b=hE3NT1omVyg51WTEgZYiyyaaGCStzSLmNa6ho5IVHNrYa+8z4zl1Ui2MzMIUko1QocdOuaqESBd1k6fY7eIzvAfFBqyD/1FryHq2pPBGiaWFQwBpPywsLlMGAtlC7p8eMVmEgqDM0k7GN/W90xQrogMlQY/yadxurCuu+SA0Q2Y=
+	t=1724939261; cv=none; b=VB+Dre+NjO4eSBp+Vs32ZWf+ZHURNJOqFdQU5Qn60K4gJavkof6FQ83XjBULwrUGuRu/8Pebsz792EfaZO3c5yFECswWmMBTYHJOHqN14sEKODsjQdkzzLpskwMaEzWM+qw6lvc88+s8ShyeN6uY5CemVqpy0/kMdE2+h6u4lW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724939231; c=relaxed/simple;
-	bh=5prqHuey4cnxotk8J/OPRkleI+Nv7YerIbInSFCxGDE=;
+	s=arc-20240116; t=1724939261; c=relaxed/simple;
+	bh=wPiEcD9mSr7N0UPxqrFBrrpYVDcBrR8iPmNv8z1Fb8o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QlGtqVHmS1mqzV333qawoLs5iWGu7u/kNn7qw6GenxeP76vPcn9xLDZTaU6NtY5MISpA8Imk8NuMwq+UOdtAoIIJdBoGCEjxHZ6Ll4b6cWq4JTxA1SH7xFeuVQWjP+qSb1l2BxGG7q3BPPWufFNTTAWBfgnEIXBXUhqTgizSXXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=HXP2NqvT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4974EC4CEC1;
-	Thu, 29 Aug 2024 13:47:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1724939230;
-	bh=5prqHuey4cnxotk8J/OPRkleI+Nv7YerIbInSFCxGDE=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=T/xeMZgPZ0H70Cdm2jpO7L6T6sk8za18Z3HorOf1Wk5XfQXvkL72QwaNXsMWWrTUVJL3zJG6wTNxkpmZap7WOlBnJ4VSazVmvQI3VwUHlxilQFbnFndHLvtHrAZxA45crCQ9liFQMKcXjW16LYgbMVjhRH9M+pVghql8fIEM354=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=rSO0/ESR; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 23853226;
+	Thu, 29 Aug 2024 15:46:30 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1724939190;
+	bh=wPiEcD9mSr7N0UPxqrFBrrpYVDcBrR8iPmNv8z1Fb8o=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HXP2NqvTqxl5kOhvt0ahADCD9lXWTKaSXFuy9Tc9W45UHc7XRmUZQTmM0+ih5echt
-	 1mSeRtrlszhRIRFL+EJzbg2q2PICKtJmmiASqiDDUFxIc8aFUpdpqmvu90TYuqFgGD
-	 1SWZ6cLgoaNh9oaJxkr2COsefP/sdBCUBjrJIDAw=
-Date: Thu, 29 Aug 2024 15:47:07 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Pavel Machek <pavel@denx.de>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org,
-	kuba@kernel.org, linan122@huawei.com, dsterba@suse.com,
-	song@kernel.org, tglx@linutronix.de, viro@zeniv.linux.org.uk,
-	christian.brauner@ubuntu.com, keescook@chromium.org
-Subject: Re: [PATCH 6.1 000/321] 6.1.107-rc1 review
-Message-ID: <2024082937-grandpa-sliceable-40ce@gregkh>
-References: <20240827143838.192435816@linuxfoundation.org>
- <ZtBdhPWRqJ6vJPu3@duo.ucw.cz>
+	b=rSO0/ESRJQl/Ta/pvR5KElqvD+Fhx0zBDB65zeT05gupP9USFGFU4taaI07wahF8e
+	 GkstIL4C/wSSPYeZSs4OovmUhuiK6iW5ahBaGDinTSGKIuE8vah2Ll8kh17N1gTufI
+	 MGc4KvmZU1lzbVkMbHygLCAg67daEscfSZHBnggo=
+Date: Thu, 29 Aug 2024 16:47:08 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Liao Chen <liaochen4@huawei.com>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	sakari.ailus@linux.intel.com, jacopo@jmondi.org, mchehab@kernel.org,
+	biju.das.jz@bp.renesas.com
+Subject: Re: [PATCH -next 1/2] media: i2c: mt9v111: Enable module autoloading
+Message-ID: <20240829134708.GF12951@pendragon.ideasonboard.com>
+References: <20240829125203.539977-1-liaochen4@huawei.com>
+ <20240829125203.539977-2-liaochen4@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ZtBdhPWRqJ6vJPu3@duo.ucw.cz>
+In-Reply-To: <20240829125203.539977-2-liaochen4@huawei.com>
 
-On Thu, Aug 29, 2024 at 01:37:40PM +0200, Pavel Machek wrote:
-> Hi!
-> 
-> > This is the start of the stable review cycle for the 6.1.107 release.
-> > There are 321 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> 
-> I believe these have problems:
-> 
-> > Jakub Kicinski <kuba@kernel.org>
-> >     net: don't dump stack on queue timeout
-> 
-> This does not fix bug and will cause surprises for people parsing
-> logs, as changelog explains
+Hi Liao,
 
-And as the changelog explains, this fixes one of the most reported
-syzbot issues around, and as such, qualifies for a stable tree
-inclusion.  Please be more through in your reviews.  Same goes for the
-others "reported" here.
+Thank you for the patch.
 
-greg k-h
+On Thu, Aug 29, 2024 at 12:52:02PM +0000, Liao Chen wrote:
+> Add MODULE_DEVICE_TABLE(), so modules could be properly autoloaded based
+> on the alias from of_device_id table.
+> 
+> Signed-off-by: Liao Chen <liaochen4@huawei.com>
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+Sakari, I expect you will merge this series through your tree.
+
+> ---
+>  drivers/media/i2c/mt9v111.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/media/i2c/mt9v111.c b/drivers/media/i2c/mt9v111.c
+> index b0b98ed3c150..b6a2623798c5 100644
+> --- a/drivers/media/i2c/mt9v111.c
+> +++ b/drivers/media/i2c/mt9v111.c
+> @@ -1265,6 +1265,7 @@ static const struct of_device_id mt9v111_of_match[] = {
+>  	{ .compatible = "aptina,mt9v111", },
+>  	{ /* sentinel */ },
+>  };
+> +MODULE_DEVICE_TABLE(of, mt9v111_of_match);
+>  
+>  static struct i2c_driver mt9v111_driver = {
+>  	.driver = {
+
+-- 
+Regards,
+
+Laurent Pinchart
 
