@@ -1,237 +1,171 @@
-Return-Path: <linux-kernel+bounces-306351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29FFA963DD5
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 09:58:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBA77963DE3
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 09:59:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FAD11F25FCA
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 07:58:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45E001F2318D
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 07:59:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38207189F41;
-	Thu, 29 Aug 2024 07:58:02 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EE48189F4B;
+	Thu, 29 Aug 2024 07:59:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="CZtfE2m1"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AD061B813;
-	Thu, 29 Aug 2024 07:57:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9C6D1B813
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 07:59:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724918281; cv=none; b=gRqJRl8zdYuqlylS4TIcg8wWaOua6xuQHqhzDzptCKp5iWj9sb621vdtkAOG2iO5Vqg9zrfjEt0cWRdEytvRUYLhljaYpTYWE7/bYxeN6Wk0gz/XCuvZhkW0x+dUU/q5FqeJnKbQvtKkC0+QayBHh3Sh5MyobDFXei3W2Znx71k=
+	t=1724918350; cv=none; b=Rju3wvvOpAkma9IAb5kCy3UHxDi50C8WXxxPT51YuG6WQKwV+Prh3SFVGQcaAkYGDzoWKn4+AnfmJIwVuECDn4hdaHDrTJjTaU7Nb36qL8YlsdDfkBsFzdOGUbEA9ELXtS4bc0RxsvbeqTP6STgygNNBsFiJeTbOvqq9+B59LSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724918281; c=relaxed/simple;
-	bh=ywXiJuCIAp+FUwvoN7xFnuVKXf104lA4QjU/swyqYXw=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=ibvoC413FwRB4NVKODoDRVsIxkZJNvLB8X7x4vHSzv9E2tPjlFAk5rD36+DmEXG2kwz68J1VfOrLatSG4HYkJhPfi4lEfwbNpUICMs+/gU82q3NfFcyGYMB2L/1UW9jME7oleemqikosSuMjk2442i+HV6BOZ57sY+1sxn3gBXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WvYXz5LzHz4f3lg5;
-	Thu, 29 Aug 2024 15:57:39 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 45D861A1122;
-	Thu, 29 Aug 2024 15:57:55 +0800 (CST)
-Received: from [10.174.176.73] (unknown [10.174.176.73])
-	by APP4 (Coremail) with SMTP id gCh0CgBHboQBKtBmD7khDA--.8899S3;
-	Thu, 29 Aug 2024 15:57:55 +0800 (CST)
-Subject: Re: [PATCH 2/4] block: fix ordering between checking BLK_MQ_S_STOPPED
- and adding requests to hctx->dispatch
-To: Muchun Song <muchun.song@linux.dev>, Yu Kuai <yukuai1@huaweicloud.com>
-Cc: Muchun Song <songmuchun@bytedance.com>, Ming Lei <ming.lei@redhat.com>,
- Jens Axboe <axboe@kernel.dk>,
- "open list:BLOCK LAYER" <linux-block@vger.kernel.org>,
- LKML <linux-kernel@vger.kernel.org>, "yukuai (C)" <yukuai3@huawei.com>
-References: <20240811101921.4031-1-songmuchun@bytedance.com>
- <20240811101921.4031-3-songmuchun@bytedance.com> <ZsKtllxojkTe3mpY@fedora>
- <CAMZfGtWxE9z4GgmpEBXzwsy_HAyOOZ85+2HUyqE-9+n1f2aPJA@mail.gmail.com>
- <786a8d94-884c-8a31-151d-fdc82e1a0a63@huaweicloud.com>
- <3AC15539-1B9B-4996-A150-8CAB214159E5@linux.dev>
- <d044b53b-4917-778d-0f77-c99da8f03769@huaweicloud.com>
- <0AC85BFB-F887-4512-887D-A2E7D36D9C52@linux.dev>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <0506fba7-dcff-d58a-ebfc-703cba565d97@huaweicloud.com>
-Date: Thu, 29 Aug 2024 15:57:53 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1724918350; c=relaxed/simple;
+	bh=ISm5ntBSyRBtS44vfURV3RiQumBNWuZaV6guM8smmW0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AFcmMDrb7+CA9sEdwZotoae91hhplyjytsEce2sfaszZz9xwDXpIHrw5TTstd1FNCbn1ej/KyMticcec0VpN++2jlnddMt5S3atiRJ+9X6Bx5EJUW0oisLCZ27YICqauzs51Ai3YwFdGUFWq41AJ3PrpAcRCBJH563KM4Cb6f4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=CZtfE2m1; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2f50f1d864fso3914831fa.1
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 00:59:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1724918347; x=1725523147; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=6elqEmMP4Fqdb/aWp7gByX3m8OcBQtHxRmlqmcr7txg=;
+        b=CZtfE2m1jwNh6+FsnH+oZnpR2Ya96oguOsWuPl2SBenkV2wTFqD5Bb2oevEylbbD9+
+         k0BbHfTG7XmhUdQ6CEeFf72IgYxwWgx6MmSLLxIvtgsK61QpcLA/E5diX17E6IYBlD4K
+         PXNCn5T+tm9YN5Smc5gSJCpjUPF7i8oEp+Jkqv7zaoBq9gvJPV4RKXdGvOSE/+ZWAvtT
+         c7gZgSn0x/9QoG1f11tcGgTAmZ+9+HHU8BV9MWKyUv+oFdRvUj+XX1Xv2kZgCNsIqPZc
+         lr/KrAKBwipmCvq7wFPBn37kkeeXyFMyCYTEPWlgIv2yC2I4l49NBpGXMC9KB05uQmCp
+         tyUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724918347; x=1725523147;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6elqEmMP4Fqdb/aWp7gByX3m8OcBQtHxRmlqmcr7txg=;
+        b=bxsRWPDMNkc5u4UQEJ91M6pLF2RlsoROSgkK+9KTr013A/digy4UB8fGC24HEypyka
+         hGwsAHomcmUHLZYJyNjNCSrYjaj6Khp9onwXxCbmQoHnoVwKsYp4QtKXyFdK9XBvuG/e
+         6tTyXJoX36RYYTXJOOm65eZ0PiWU6tOWJ2aShXH1BUmDo/qVHjly3iuQ2QzFaot0dB1y
+         AZ4EF0MgDpZCITskl3wNKMExRhxhaKq+4Jq/3nqNoNIMFvC+T14pH3iSq6/aRmmIb4OP
+         LG0vig87JIzTzwGj/Z+CRn9/D8VfnkncJcY26yCp7V5U1thH9Ht2tR50HgFWyfLqh/rF
+         G2zA==
+X-Forwarded-Encrypted: i=1; AJvYcCW+TfHF1VIrQF5+cg0AIdvcip4xx5d9Zt+r++Mtj7n6914/f7qYkepQAGBeCrBlFHnEHo5h4EV7MZQ/YzA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZuDmnxU7ZDOXhDJsxCgt+BC4fyXTmfra+LH11zaMBLCMvuiMz
+	gDwMEItEcWE1daKiw1Un6SpAuodrVBPHsp3sMmj0+0+g4WsHcVZHKDbxmQXsq1Q=
+X-Google-Smtp-Source: AGHT+IEknpoiPwNIZCUWqC5wlzEu9yh+Rxh2v4jcs1wvi/j58/8VhBs0RUuviEJZYalHd8CSAHV62w==
+X-Received: by 2002:a05:651c:1990:b0:2ef:2b05:2ab3 with SMTP id 38308e7fff4ca-2f610392703mr13785621fa.10.1724918346154;
+        Thu, 29 Aug 2024 00:59:06 -0700 (PDT)
+Received: from localhost (cst2-173-13.cust.vodafone.cz. [31.30.173.13])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c226c7c2aesm382119a12.51.2024.08.29.00.59.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Aug 2024 00:59:05 -0700 (PDT)
+Date: Thu, 29 Aug 2024 09:59:04 +0200
+From: Andrew Jones <ajones@ventanamicro.com>
+To: Nick Hu <nick.hu@sifive.com>
+Cc: greentime.hu@sifive.com, zong.li@sifive.com, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@ucw.cz>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Conor Dooley <conor.dooley@microchip.com>, 
+	Samuel Holland <samuel.holland@sifive.com>, Sunil V L <sunilvl@ventanamicro.com>, linux-pm@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] riscv: Add stimecmp save and restore
+Message-ID: <20240829-fb7bda6b46302b65b2f89d20@orel>
+References: <20240829033904.477200-1-nick.hu@sifive.com>
+ <20240829033904.477200-2-nick.hu@sifive.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <0AC85BFB-F887-4512-887D-A2E7D36D9C52@linux.dev>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgBHboQBKtBmD7khDA--.8899S3
-X-Coremail-Antispam: 1UD129KBjvJXoW3Ar15Zr4fGr4xXr4rCrW5GFg_yoW7tw47pa
-	18Ja1jkw4UJr4Utw12vr4xKr15tr43CrW7WryfGry3uwn09r1Fqr40yr15uFWxCr4DCr47
-	tw4UXrZ7XF4kZr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvC14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
-	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCYjI0SjxkI62AI1cAE67vI
-	Y487MxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r
-	1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CE
-	b7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0x
-	vE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAI
-	cVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2Kf
-	nxnUUI43ZEXa7VUbSfO7UUUUU==
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240829033904.477200-2-nick.hu@sifive.com>
 
-Hi,
-
-在 2024/08/27 15:31, Muchun Song 写道:
+On Thu, Aug 29, 2024 at 11:38:59AM GMT, Nick Hu wrote:
+> If the HW support the SSTC extension, we should save and restore the
+> stimecmp register while cpu non retention suspend.
 > 
+> Signed-off-by: Nick Hu <nick.hu@sifive.com>
+> ---
+>  arch/riscv/include/asm/suspend.h |  4 ++++
+>  arch/riscv/kernel/suspend.c      | 13 +++++++++++++
+>  2 files changed, 17 insertions(+)
 > 
->> On Aug 26, 2024, at 16:53, Yu Kuai <yukuai1@huaweicloud.com> wrote:
->>
->> Hi,
->>
->> 在 2024/08/26 16:35, Muchun Song 写道:
->>>> On Aug 22, 2024, at 11:54, Yu Kuai <yukuai1@huaweicloud.com> wrote:
->>>>
->>>> Hi,
->>>>
->>>> 在 2024/08/19 11:49, Muchun Song 写道:
->>>>> On Mon, Aug 19, 2024 at 10:28 AM Ming Lei <ming.lei@redhat.com> wrote:
->>>>>>
->>>>>> Hi Muchun,
->>>>>>
->>>>>> On Sun, Aug 11, 2024 at 06:19:19PM +0800, Muchun Song wrote:
->>>>>>> Supposing the following scenario with a virtio_blk driver.
->>>>>>>
->>>>>>> CPU0                                                                CPU1
->>>>>>>
->>>>>>> blk_mq_try_issue_directly()
->>>>>>>      __blk_mq_issue_directly()
->>>>>>>          q->mq_ops->queue_rq()
->>>>>>>              virtio_queue_rq()
->>>>>>>                  blk_mq_stop_hw_queue()
->>>>>>>                                                                      virtblk_done()
->>>>>>>      blk_mq_request_bypass_insert()                                      blk_mq_start_stopped_hw_queues()
->>>>>>>          /* Add IO request to dispatch list */   1) store                    blk_mq_start_stopped_hw_queue()
->>>>>>>                                                                                  clear_bit(BLK_MQ_S_STOPPED)                 3) store
->>>>>>>      blk_mq_run_hw_queue()                                                       blk_mq_run_hw_queue()
->>>>>>>          if (!blk_mq_hctx_has_pending())                                             if (!blk_mq_hctx_has_pending())         4) load
->>>>>>>              return                                                                      return
->>>>>>>          blk_mq_sched_dispatch_requests()                                            blk_mq_sched_dispatch_requests()
->>>>>>>              if (blk_mq_hctx_stopped())          2) load                                 if (blk_mq_hctx_stopped())
->>>>>>>                  return                                                                      return
->>>>>>>              __blk_mq_sched_dispatch_requests()                                          __blk_mq_sched_dispatch_requests()
->>>>>>>
->>>>>>> The full memory barrier should be inserted between 1) and 2), as well as between
->>>>>>> 3) and 4) to make sure that either CPU0 sees BLK_MQ_S_STOPPED is cleared or CPU1
->>>>>>> sees dispatch list or setting of bitmap of software queue. Otherwise, either CPU
->>>>>>> will not re-run the hardware queue causing starvation.
->>>>>>
->>>>>> Yeah, it is one kind of race which is triggered when adding request into
->>>>>> ->dispatch list after returning STS_RESOURCE. We were troubled by lots of
->>>>>> such kind of race.
->>>>> Yes. I saw the similar fix for BLK_MQ_S_SCHED_RESTART.
->>>>>>
->>>>>> stopping queue is used in very less drivers, and its only purpose should
->>>>>> be for throttling hw queue in case that low level queue is busy. There seems
->>>>>> more uses of blk_mq_stop_hw_queues(), but most of them should be replaced
->>>>>> with blk_mq_quiesce_queue().
->>>>>>
->>>>>> IMO, fixing this kind of issue via memory barrier is too tricky to
->>>>>> maintain cause WRITE/READ dependency is very hard to follow. I'd suggest to
->>>>>> make memory barrier solution as the last resort, and we can try to figure
->>>>>> out other easier & more reliable way first.
->>>>> I do agree it is hard to maintain the dependencies in the future. We should
->>>>> propose an easy-maintainable solution. But I thought it is a long-term issue
->>>>> throughout different stable linux distros. Adding a mb is the easy way to fix
->>>>> the problem (the code footprint is really small), so it will be very
->>>>> easy for others
->>>>> to backport those bug fixes to different stable linux distros. Therefore, mb
->>>>> should be an interim solution. Then, we could improve it based on the solution
->>>>> you've proposed below. What do you think?
->>>>
->>>> I'll agree with Ming, let's figure out a better fix first. Easy to backport to stables is not first consideration.
->>> Hi Kuai,
->>> All right. I usually focus on MM, it seems there is a gap between MM and BLock.
->>> Anyway, let's figure out if there is any good solution.
->>>>> Thanks,
->>>>> Muchun.
->>>>>>
->>>>>> One idea I thought of is to call blk_mq_request_bypass_insert()(or rename
->>>>>> & export it) before calling blk_mq_stop_hw_queue() in driver, then
->>>>>> return new status code STS_STOP_DISPATCH for notifying blk-mq to stop
->>>>>> dispatch simply.
->>>>
->>>> New status code look good to me, however, I wonder can we just remove
->>>> the problematic blk_mq_stop_hw_queue(), and replace it by handling the
->>>> new status from block layer?
->>>>
->>>> - Passing the new status to blk_mq_run_dispatch_ops, and quiesce with
->>> I didn't fully understand your suggestion. Let me ask some questions.
->>> blk_mq_stop_hw_queue() is usually called in blk_mq_ops->queue_rq path,
->>> it'll be easy for this case to pass the new status to blk_mq_run_dispatch_ops.
->>> Should we remove blk_mq_stop_hw_queues() as well? How to pass the new
->>> status to blk_mq_run_dispatch_ops in this case?
->>
->> For queue_rq from dispatch path, it can be removed. However, it is
->> called from remove path as well, I don't check yet if it can be removed
->> there, that's another story.
-> 
-> The reason why I asked this question is that blk_mq_stop_hw_queues() also needs
-> to be fixed. See my patch 3.
+> diff --git a/arch/riscv/include/asm/suspend.h b/arch/riscv/include/asm/suspend.h
+> index 4ffb022b097f..ffaac2efabb5 100644
+> --- a/arch/riscv/include/asm/suspend.h
+> +++ b/arch/riscv/include/asm/suspend.h
+> @@ -16,6 +16,10 @@ struct suspend_context {
+>  	unsigned long envcfg;
+>  	unsigned long tvec;
+>  	unsigned long ie;
+> +#if __riscv_xlen < 64
+> +	unsigned long stimecmph;
+> +#endif
 
-I just reviewed that patch, please check following.
-> 
->>
->> And just add a return value for dispatch_ops to pass status.
->>
->> Thanks,
->> Kuai
->>
->>>> the new status, if no request is inflight, unquiesce immediately;
->>> Actually, I didn't understand how to avoid the above race. May you elaborate
->>> the scenario?
-> 
-> Sorry for repeating, I didn't get your point here. May you elaborate
-> your suggestion? Thanks very much.
+I'm not sure the reduction in struct size is worth the #ifdeffery. If we
+just always add stimecmph, then we can also change the #ifdef's below to
+if's, i.e. if (__riscv_xlen < 64), which should still remove the code from
+64-bit builds.
 
-// dispatch path, replace stop queue with quiesce queue;
-if (__blk_mq_run_dispatch_ops() != STS_STOP_DISPATCH)
-        return;
+Or maybe we need something like
 
-blk_mq_quiesce_queue();
-/* other context already stop dispatch */
-if (test_and_set_bit(QUEUE_FLAG_STOP_DISPATCH, &q->queue_flags)) {
-        blk_mq_unquiesce_queue();
-        return;
-}
+#if __riscv_xlen < 64
+#define csrh_write(r, v) csr_write(r, v)
+#else
+#define csrh_write(r, v)
+#endif
 
-/*
-  * IO is done before stopping dispatch, hence can't let IO complete to
-  * unquiesce queue.
-  */
-if (!blk_mq_inflight() && test_and_clear_bit(QUEUE_FLAG_STOP_DISPATCH, 
-&q->queue_flags))
-        blk_mq_unquiesce_queue();
-
-// complete path
-if (test_and_clear_bit(QUEUE_FLAG_STOP_DISPATCH, &q->queue_flags))
-        blk_mq_unquiesce_queue();
+in asm/csr.h and then use it for all the *h csrs, but keep the #if in
+the struct.
 
 Thanks,
-Kuai
+drew
 
+> +	unsigned long stimecmp;
+>  #ifdef CONFIG_MMU
+>  	unsigned long satp;
+>  #endif
+> diff --git a/arch/riscv/kernel/suspend.c b/arch/riscv/kernel/suspend.c
+> index c8cec0cc5833..3afd86e1abf7 100644
+> --- a/arch/riscv/kernel/suspend.c
+> +++ b/arch/riscv/kernel/suspend.c
+> @@ -19,6 +19,12 @@ void suspend_save_csrs(struct suspend_context *context)
+>  	context->tvec = csr_read(CSR_TVEC);
+>  	context->ie = csr_read(CSR_IE);
+>  
+> +	if (riscv_has_extension_unlikely(RISCV_ISA_EXT_SSTC)) {
+> +		context->stimecmp = csr_read(CSR_STIMECMP);
+> +#if __riscv_xlen < 64
+> +		context->stimecmph = csr_read(CSR_STIMECMPH);
+> +#endif
+> +	}
+>  	/*
+>  	 * No need to save/restore IP CSR (i.e. MIP or SIP) because:
+>  	 *
+> @@ -42,6 +48,13 @@ void suspend_restore_csrs(struct suspend_context *context)
+>  	csr_write(CSR_TVEC, context->tvec);
+>  	csr_write(CSR_IE, context->ie);
+>  
+> +	if (riscv_has_extension_unlikely(RISCV_ISA_EXT_SSTC)) {
+> +		csr_write(CSR_STIMECMP, context->stimecmp);
+> +#if __riscv_xlen < 64
+> +		csr_write(CSR_STIMECMPH, context->stimecmph);
+> +#endif
+> +	}
+> +
+>  #ifdef CONFIG_MMU
+>  	csr_write(CSR_SATP, context->satp);
+>  #endif
+> -- 
+> 2.34.1
 > 
->>> Muhcun,
->>> Thanks.
->>>> - unquiesce is any IO is done afterwards;
->>> .
-> 
-> 
-> .
-> 
-
 
