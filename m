@@ -1,89 +1,120 @@
-Return-Path: <linux-kernel+bounces-307541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB30C964EBF
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 21:24:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E02C964EC3
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 21:25:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88AEA281A0B
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 19:24:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0727B21AD2
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 19:25:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 673701B8E8A;
-	Thu, 29 Aug 2024 19:24:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EC8C1B8EA8;
+	Thu, 29 Aug 2024 19:25:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G7Dlz9TB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="E4tHo9dC"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A69A63AC28;
-	Thu, 29 Aug 2024 19:24:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAA8E1B654B
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 19:24:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724959468; cv=none; b=StK3oa2PoGNGiKS153R54dRoFUINnCxftj3caynicK9dOua92ZDZMCc1jWWssW/Z0TIPvXbF/gHlia/jewzMGpH9tgN/rYWecOAZKjjRtmIbzbcWeiPxXYXjSgHLbrK9QClEBfsyjz1FgnsZv+cN7P1juJ3wyt5nsNq5ce+lfUg=
+	t=1724959499; cv=none; b=qpa3K4+pUrcK9qv07+GGEiZxpYaBveO6On11jg9fqLdT6TCDje5c3Ci44i7gSB9u1Yp6LlSSEUYVKck8DGuFwMUZdDU8GyQPknnF0HnnyueQEvvEze1Px0tcY3nh5vRg1itNJGn8LStFBkmS2XkVXqXLGKIfm+P8gwn6zEAxiNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724959468; c=relaxed/simple;
-	bh=uTglyPOiv1StxvS2A3Sp8Hit9OuSpBd4jENxkIcloxE=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=XHn5m7Gxbjlj1pFyPu5Pg/kVd70GmIidRi0i+fZIsfH+LjnwTQrstUuFasDyn2NjP345+zfFIVGOUKf+weA7+ElocFv9jX7k9x5DhAhtqeqU8xyjXyRy5vYeuQA/ZNjSnGNJfkRMnPA1N4o5PpjKGOmQkw9D2etwhTJsF83VBQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G7Dlz9TB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35E57C4CEC1;
-	Thu, 29 Aug 2024 19:24:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724959468;
-	bh=uTglyPOiv1StxvS2A3Sp8Hit9OuSpBd4jENxkIcloxE=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=G7Dlz9TB8nEzWinXJWcSgeTS87cAEgVVA9VJSWyfWJqSXfGGRGzcPb5Y0dST73ScL
-	 q0thvY1iM9n+z9w7WsZo0rQ/akN5SAJkaUSArWvpopb5ADG0abzaB3wjZ2AZB6pKQH
-	 R7AKK5r9CXuokOgotN7DfWX/0RQizI4znTa0AGhTxZaa/ULRdPG7pzbsD+tKizpZmJ
-	 5eG7P3zs/8lQHobaCwPxRyfwidrvnq3jKdJb2X3mjSiVoTsJDABu7GQM0C67uyXZwY
-	 k8cgzvJyLrg7NdrnOPHbNHI0P7CpA6wrtaXzfjS73+3MiQHBMP/UcQSPRyYlWUDFXI
-	 6nNe2GVKlCfqQ==
-Message-ID: <78b5aa6efc5b3ca4151f503367a9bd3a.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1724959499; c=relaxed/simple;
+	bh=XUsJEwS8qMaPfo7+tnpNvdtkNqTWxZqP5ZD8QQ4imn8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Cknhjr8XheuXUKm2gF1ST/uMcbQDBDuUs216rbfUe78Ukh6LZRv38Rf9iNDHvqhoCm0vYxpuIhkUYH7AtnDscSU8/IfNCDDnBdjpobljtumA+KWEe9QDInEj47LGHj7/ujSZXXpquYOqRpB6T/5N6A1E396B36hrmeuogSc4iB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=E4tHo9dC; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724959497; x=1756495497;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=XUsJEwS8qMaPfo7+tnpNvdtkNqTWxZqP5ZD8QQ4imn8=;
+  b=E4tHo9dC1EDLeoC7DINSuJ65tYYN0F2ocJgFRvfsuNiXh6tNBCpacQ4L
+   XbQm+s8b5IPovcf4uqzOz536bAhirSwTGHGoW/YmKheb4xw8yWzVxIep6
+   Ps+O5onipJrq8AKsxLc0mJ8p6UlzXt+sbFocXSY2gDT8AT6Emd4C0SpXK
+   qzcmxQM9tOSsXxLB6jXDhnE/urg8gLJhDcy/5U0xzhOv+DLNX8c8WGmXf
+   c3VC4XWEd4NpKV3CaDLyC01LkfngRCQbJ05yWFoKPmKWoyOkKPdbJZ+UZ
+   FofF+XLQXhI3xwEBBUw1qczcNy1Hy4eOK6jBLIzemOJ3UB9SpMbyRSICh
+   Q==;
+X-CSE-ConnectionGUID: /AbWSNIVT2yUBiPAfPHKvQ==
+X-CSE-MsgGUID: pTtg++7GQq6btPK9uKi4Rw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11179"; a="23097064"
+X-IronPort-AV: E=Sophos;i="6.10,186,1719903600"; 
+   d="scan'208";a="23097064"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 12:24:57 -0700
+X-CSE-ConnectionGUID: ymixQ/tGT8uCgmevhBcwcg==
+X-CSE-MsgGUID: GLzP+IwqSkCGG2EAboxM1Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,186,1719903600"; 
+   d="scan'208";a="68063838"
+Received: from joseju8x-mobl.amr.corp.intel.com (HELO dsneddon-desk.sneddon.lan) ([10.125.49.4])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 12:24:56 -0700
+From: Daniel Sneddon <daniel.sneddon@linux.intel.com>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org (maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT))
+Cc: pawan.kumar.gupta@linux.intel.com,
+	Daniel Sneddon <daniel.sneddon@linux.intel.com>,
+	"Shanavas . K . S" <shanavasks@gmail.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	linux-kernel@vger.kernel.org (open list:X86 ARCHITECTURE (32-BIT AND 64-BIT))
+Subject: [PATCH v2] x86/bugs: Add missing NO_SSB flag
+Date: Thu, 29 Aug 2024 12:24:37 -0700
+Message-Id: <20240829192437.4074196-1-daniel.sneddon@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <NTZPR01MB0956E46297168E8E21D6F17F9F962@NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn>
-References: <20240826080430.179788-1-xingyu.wu@starfivetech.com> <20240826080430.179788-2-xingyu.wu@starfivetech.com> <ba3077ef4b155649812fd8be75f131e7.sboyd@kernel.org> <NTZPR01MB0956E46297168E8E21D6F17F9F962@NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn>
-Subject: RE: [PATCH v7 1/2] clk: starfive: jh7110-sys: Add notifier for PLL0 clock
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Hal Feng <hal.feng@starfivetech.com>, linux-kernel@vger.kernel.org <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org <linux-clk@vger.kernel.org>
-To: Conor Dooley <conor@kernel.org>, Emil Renner Berthing <emil.renner.berthing@canonical.com>, Michael Turquette <mturquette@baylibre.com>, Xingyu Wu <xingyu.wu@starfivetech.com>
-Date: Thu, 29 Aug 2024 12:24:25 -0700
-User-Agent: alot/0.10
+Content-Transfer-Encoding: 8bit
 
-Quoting Xingyu Wu (2024-08-28 22:42:43)
-> On 29/08/2024 04:19, Stephen Boyd wrote:
-> >=20
-> > Quoting Xingyu Wu (2024-08-26 01:04:29)
-> > > Add notifier function for PLL0 clock. In the function, the cpu_root
-> > > clock should be operated by saving its current parent and setting a
-> > > new safe parent (osc clock) before setting the PLL0 clock rate. After
-> > > setting PLL0 rate, it should be switched back to the original parent =
-clock.
-> > >
-> > > Fixes: e2c510d6d630 ("riscv: dts: starfive: Add cpu scaling for JH7110
-> > > SoC")
-> > > Reviewed-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-> > > Signed-off-by: Xingyu Wu <xingyu.wu@starfivetech.com>
-> > > ---
-> >=20
-> > What is the urgency of this patch? I can't tell from the commit text, s=
-o I'm
-> > assuming it can bake in clk-next for a few weeks.
->=20
-> Hi Stephen,
->=20
-> This is urgent. Without this patch, Cpufreq does not work and the CPU can=
-'t work in the best frequency of 1.5GHz. This patch can improve the perform=
-ance of the visionfive-2 board.
->=20
+The Moorefield and Lightning Mountain Atom processors are
+missing the NO_SSB flag in the vulnerabilities whitelist.
+This will cause unaffected parts to incorrectly be reported
+as vulnerable. Add the missing flag.
 
-Ok. I'll apply it to clk-fixes then.
+These parts are currently out of service and were verified
+internally with archived documentation that they need the
+NO_SSB flag.
+
+Reported-by: Shanavas.K.S <shanavasks@gmail.com>
+Closes: https://lore.kernel.org/lkml/CAEJ9NQdhh+4GxrtG1DuYgqYhvc0hi-sKZh-2niukJ-MyFLntAA@mail.gmail.com/
+Signed-off-by: Daniel Sneddon <daniel.sneddon@linux.intel.com>
+---
+V1->V2
+	Added Reported-by and Closes tags
+	Added note re: missing public documentation
+
+ arch/x86/kernel/cpu/common.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index d4e539d4e158..be307c9ef263 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -1165,8 +1165,8 @@ static const __initconst struct x86_cpu_id cpu_vuln_whitelist[] = {
+ 
+ 	VULNWL_INTEL(INTEL_CORE_YONAH,		NO_SSB),
+ 
+-	VULNWL_INTEL(INTEL_ATOM_AIRMONT_MID,	NO_L1TF | MSBDS_ONLY | NO_SWAPGS | NO_ITLB_MULTIHIT),
+-	VULNWL_INTEL(INTEL_ATOM_AIRMONT_NP,	NO_L1TF | NO_SWAPGS | NO_ITLB_MULTIHIT),
++	VULNWL_INTEL(INTEL_ATOM_AIRMONT_MID,	NO_SSB | NO_L1TF | NO_SWAPGS | NO_ITLB_MULTIHIT | MSBDS_ONLY),
++	VULNWL_INTEL(INTEL_ATOM_AIRMONT_NP,	NO_SSB | NO_L1TF | NO_SWAPGS | NO_ITLB_MULTIHIT),
+ 
+ 	VULNWL_INTEL(INTEL_ATOM_GOLDMONT,	NO_MDS | NO_L1TF | NO_SWAPGS | NO_ITLB_MULTIHIT | NO_MMIO),
+ 	VULNWL_INTEL(INTEL_ATOM_GOLDMONT_D,	NO_MDS | NO_L1TF | NO_SWAPGS | NO_ITLB_MULTIHIT | NO_MMIO),
+-- 
+2.25.1
+
 
