@@ -1,540 +1,228 @@
-Return-Path: <linux-kernel+bounces-306696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A96DF964234
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 12:50:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F638964235
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 12:50:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDB4A1C2141E
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:50:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17DD82846C4
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:50:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 374F418E37F;
-	Thu, 29 Aug 2024 10:50:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B95118E379;
+	Thu, 29 Aug 2024 10:50:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Z8bj8y11"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UJVRhtbc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEFAE14B950;
-	Thu, 29 Aug 2024 10:50:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 424A618E349;
+	Thu, 29 Aug 2024 10:50:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724928604; cv=none; b=IyAu4qQd5P2rO8qTuzBM7tMIAsVxiOMXqDK8CQcit6USzlo1atNLQy2M3TKABOI0FBq1xTVo24aHzO77lUoueL+qo1gGSWPs0Et/Q6zA7rFWBrzGQDc6aKrAEfzwa2C0HK9uKwNV4LKwYGgCqAeupTMx6vXEJ9rNyHq3bzvBEPU=
+	t=1724928633; cv=none; b=afLkGjaGCcWj3OQAiaPo3z43nscoWyoIR4qdmq+SmAaiTsrRzMEhye7Tpe0cSjh1TKCBf3whc6uxpFubhPdZbWppOPfg+88bI9dKXrfG27jqaKrTX1L5pwcgg68sZc7TE558xLyg/tmMaayWMb+xgeJwibp0ybJ/Wl8aDg2buHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724928604; c=relaxed/simple;
-	bh=zhVfqPiUM+P743D4H7DjFZxEY87SP/S2JyLRZ7voctU=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=hkmMWF4yAkHT9e+Afcu5zz5J0oncMTo5GZIfL5F2fnL8Q/HS/aX/QoSasmq/i/UteoE49yzbFoKnW2ZE/A0RB9eSLxm3si7jDLNoTnQi1v15+ljSNAW5xwyWgE6kCZx7Ucgf5AqLI4kaOJ6kQ3PA34wKeZ5iDckgCctE3eTDS10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Z8bj8y11; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724928603; x=1756464603;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=zhVfqPiUM+P743D4H7DjFZxEY87SP/S2JyLRZ7voctU=;
-  b=Z8bj8y115kVmMsI5VNPBXcSaa2s1U8NTGQiLzJApvffd+66EMIDV58QO
-   /SXLUow1WTSCxZoL7HcZwg92E1HOWcKOnsk83gjSzMk7JEiC6pT9u22Tg
-   efT/IptMahQDfIbZqRPmRC3XhT1PILn43hxhWKT33zEwSzSzcPVBp1kOf
-   9+g+bWgF1698awAd9iem+njghoTK4phyHTyyUZ8J/mJ6BYnT+7BS5C8cc
-   hnEzPovztGy4RUjai0ZAqAB92ozc4JBR/ax8MddY+YVsq0vf1nWw11llQ
-   GbRcQGyTSCUkVdbex2AJheG0xFx3BkrbljA1RGUHpJu6XK5Vsu2n0TAdt
-   g==;
-X-CSE-ConnectionGUID: mwyRZ7mcRHW6pTsd+altBg==
-X-CSE-MsgGUID: hkEnYTx0Qq+qOsKGalJL6g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11178"; a="34167815"
-X-IronPort-AV: E=Sophos;i="6.10,185,1719903600"; 
-   d="scan'208";a="34167815"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 03:50:02 -0700
-X-CSE-ConnectionGUID: WMWq/P6tR/i6TY51Y1ETFQ==
-X-CSE-MsgGUID: qJ8P+zFfQuSCSPCPC4eELg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,185,1719903600"; 
-   d="scan'208";a="94275855"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.245.59])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 03:49:58 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Thu, 29 Aug 2024 13:49:54 +0300 (EEST)
-To: Xi Pardee <xi.pardee@linux.intel.com>
-cc: irenic.rajneesh@gmail.com, david.e.box@linux.intel.com, 
-    Hans de Goede <hdegoede@redhat.com>, platform-driver-x86@vger.kernel.org, 
-    LKML <linux-kernel@vger.kernel.org>, linux-pm@vger.kernel.org
-Subject: Re: [PATCH v2 01/11] platform/x86:intel/pmc: Move PMC Core related
- functions
-In-Reply-To: <20240828222932.1279508-2-xi.pardee@linux.intel.com>
-Message-ID: <e4f44ead-b0a4-d42d-d3ba-85fa8f133305@linux.intel.com>
-References: <20240828222932.1279508-1-xi.pardee@linux.intel.com> <20240828222932.1279508-2-xi.pardee@linux.intel.com>
+	s=arc-20240116; t=1724928633; c=relaxed/simple;
+	bh=Uql726xIJ+4rKJaaAS27uC1FGWVNTLRQ+xdIbfVwdyQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KfQavlbtKMZ14CjIWPdg+HwV57hmKeHfBzJOkU7I2xDimyRlANfKHDNdWR2aI+mo14hc5rt8oAi4nozlGUE17mBYzH/Cs8RaZKJnduLPKGbIbcji5ERsU4VZIm2zxsi+KjvCV9IX/LjEXkvBEU9gXZY4YW25fR7vKOYHkiHgNeE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UJVRhtbc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9E04C4CEC3;
+	Thu, 29 Aug 2024 10:50:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724928632;
+	bh=Uql726xIJ+4rKJaaAS27uC1FGWVNTLRQ+xdIbfVwdyQ=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=UJVRhtbcgLdX5fpTjMXIDQGuXzf/PusLurwCP71emN83sAxffYPqyu6Febp6IQ6jA
+	 Kb1uvJc09DHzdt0Wlp7gIf50a67++3EVsmVRpTcDiLPH0WPPJc2a/08+tcMDFkBu9h
+	 Cunw2aa2IHv8RKHNRcwnCaLXNNoSZDoRy8X/ieeObe4m7KiExq+t4ZtQijKFWLo16t
+	 88PVKiSIcBX5Po1e+qKr++aAn2JKLTGV/GCPkvIqmgZe38E7uMlYKr8P08/W/OdIIB
+	 tSh/PCRH60Jshu/rS+tB8qE6+jV/VCchoUIetxzn9NhO957WGlIzKvMMrlcHIG2O3L
+	 784asazz2tG3w==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 6B3DBCE0EDF; Thu, 29 Aug 2024 03:50:32 -0700 (PDT)
+Date: Thu, 29 Aug 2024 03:50:32 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Xingyu Li <xli399@ucr.edu>
+Cc: frederic@kernel.org, neeraj.upadhyay@kernel.org, joel@joelfernandes.org,
+	josh@joshtriplett.org, boqun.feng@gmail.com, urezki@gmail.com,
+	rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
+	jiangshanlai@gmail.com,
+	"qiang.zhang1211@gmail.com" <qiang.zhang1211@gmail.com>,
+	rcu@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Yu Hao <yhao016@ucr.edu>
+Subject: Re: WARNING in rcu_core
+Message-ID: <4928af5b-ee52-4bbd-991f-c3a69ef844e3@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <CALAgD-7hbfOzovnPqVqo6bqb1nHZ2WciUOTsz0Dtwsgr+yx04w@mail.gmail.com>
+ <92758b9c-6934-4796-9822-28c78bee2ccc@paulmck-laptop>
+ <CALAgD-7kZ4JjLfT+VH_DFOq63OqBQ8Kc6-GEqrn0C-gr88j-aw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-1690604502-1724928594=:1289"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CALAgD-7kZ4JjLfT+VH_DFOq63OqBQ8Kc6-GEqrn0C-gr88j-aw@mail.gmail.com>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Wed, Aug 28, 2024 at 09:48:44PM -0700, Xingyu Li wrote:
+> To assist, here is the C reproducer:
+> https://gist.github.com/freexxxyyy/33a53d3af6d0808b84224debb1e8ec1a
 
---8323328-1690604502-1724928594=:1289
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+To assist who?  ;-)
 
-On Wed, 28 Aug 2024, Xi Pardee wrote:
+This sort of report is usually a bug in RCU usage, as you say, likely
+a use-after-free bug.  What happens when you run with KASAN, for example?
 
-> Move functions that implements PMC Core feature from core_ssram.c
-> to core.c. This patch is a preparation step to introduce a new
-> SSRAM Telemetry driver for the SSRAM device.
->=20
-> Signed-off-by: Xi Pardee <xi.pardee@linux.intel.com>
+							Thanx, Paul
 
-Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
-
-> ---
->  drivers/platform/x86/intel/pmc/core.c       | 168 +++++++++++++++++++
->  drivers/platform/x86/intel/pmc/core.h       |   8 +
->  drivers/platform/x86/intel/pmc/core_ssram.c | 173 --------------------
->  3 files changed, 176 insertions(+), 173 deletions(-)
->=20
-> diff --git a/drivers/platform/x86/intel/pmc/core.c b/drivers/platform/x86=
-/intel/pmc/core.c
-> index 01ae71c6df59..630ce2087552 100644
-> --- a/drivers/platform/x86/intel/pmc/core.c
-> +++ b/drivers/platform/x86/intel/pmc/core.c
-> @@ -1604,6 +1604,173 @@ static const struct dev_pm_ops pmc_core_pm_ops =
-=3D {
->  =09SET_LATE_SYSTEM_SLEEP_PM_OPS(pmc_core_suspend, pmc_core_resume)
->  };
-> =20
-> +static u32 pmc_core_find_guid(struct pmc_info *list, const struct pmc_re=
-g_map *map)
-> +{
-> +=09for (; list->map; ++list)
-> +=09=09if (list->map =3D=3D map)
-> +=09=09=09return list->guid;
-> +
-> +=09return 0;
-> +}
-> +
-> +static int pmc_core_get_lpm_req(struct pmc_dev *pmcdev, struct pmc *pmc)
-> +{
-> +=09struct telem_endpoint *ep;
-> +=09const u8 *lpm_indices;
-> +=09int num_maps, mode_offset =3D 0;
-> +=09int ret, mode, i;
-> +=09int lpm_size;
-> +=09u32 guid;
-> +
-> +=09lpm_indices =3D pmc->map->lpm_reg_index;
-> +=09num_maps =3D pmc->map->lpm_num_maps;
-> +=09lpm_size =3D LPM_MAX_NUM_MODES * num_maps;
-> +
-> +=09guid =3D pmc_core_find_guid(pmcdev->regmap_list, pmc->map);
-> +=09if (!guid)
-> +=09=09return -ENXIO;
-> +
-> +=09ep =3D pmt_telem_find_and_register_endpoint(pmcdev->ssram_pcidev, gui=
-d, 0);
-> +=09if (IS_ERR(ep)) {
-> +=09=09dev_dbg(&pmcdev->pdev->dev, "couldn't get telem endpoint %ld",
-> +=09=09=09PTR_ERR(ep));
-> +=09=09return -EPROBE_DEFER;
-> +=09}
-> +
-> +=09pmc->lpm_req_regs =3D devm_kzalloc(&pmcdev->pdev->dev,
-> +=09=09=09=09=09 lpm_size * sizeof(u32),
-> +=09=09=09=09=09 GFP_KERNEL);
-> +=09if (!pmc->lpm_req_regs) {
-> +=09=09ret =3D -ENOMEM;
-> +=09=09goto unregister_ep;
-> +=09}
-> +
-> +=09/*
-> +=09 * PMC Low Power Mode (LPM) table
-> +=09 *
-> +=09 * In telemetry space, the LPM table contains a 4 byte header followe=
-d
-> +=09 * by 8 consecutive mode blocks (one for each LPM mode). Each block
-> +=09 * has a 4 byte header followed by a set of registers that describe t=
-he
-> +=09 * IP state requirements for the given mode. The IP mapping is platfo=
-rm
-> +=09 * specific but the same for each block, making for easy analysis.
-> +=09 * Platforms only use a subset of the space to track the requirements
-> +=09 * for their IPs. Callers provide the requirement registers they use =
-as
-> +=09 * a list of indices. Each requirement register is associated with an
-> +=09 * IP map that's maintained by the caller.
-> +=09 *
-> +=09 * Header
-> +=09 * +----+----------------------------+----------------------------+
-> +=09 * |  0 |      REVISION              |      ENABLED MODES         |
-> +=09 * +----+--------------+-------------+-------------+--------------+
-> +=09 *
-> +=09 * Low Power Mode 0 Block
-> +=09 * +----+--------------+-------------+-------------+--------------+
-> +=09 * |  1 |     SUB ID   |     SIZE    |   MAJOR     |   MINOR      |
-> +=09 * +----+--------------+-------------+-------------+--------------+
-> +=09 * |  2 |           LPM0 Requirements 0                           |
-> +=09 * +----+---------------------------------------------------------+
-> +=09 * |    |                  ...                                    |
-> +=09 * +----+---------------------------------------------------------+
-> +=09 * | 29 |           LPM0 Requirements 27                          |
-> +=09 * +----+---------------------------------------------------------+
-> +=09 *
-> +=09 * ...
-> +=09 *
-> +=09 * Low Power Mode 7 Block
-> +=09 * +----+--------------+-------------+-------------+--------------+
-> +=09 * |    |     SUB ID   |     SIZE    |   MAJOR     |   MINOR      |
-> +=09 * +----+--------------+-------------+-------------+--------------+
-> +=09 * | 60 |           LPM7 Requirements 0                           |
-> +=09 * +----+---------------------------------------------------------+
-> +=09 * |    |                  ...                                    |
-> +=09 * +----+---------------------------------------------------------+
-> +=09 * | 87 |           LPM7 Requirements 27                          |
-> +=09 * +----+---------------------------------------------------------+
-> +=09 *
-> +=09 */
-> +=09mode_offset =3D LPM_HEADER_OFFSET + LPM_MODE_OFFSET;
-> +=09pmc_for_each_mode(i, mode, pmcdev) {
-> +=09=09u32 *req_offset =3D pmc->lpm_req_regs + (mode * num_maps);
-> +=09=09int m;
-> +
-> +=09=09for (m =3D 0; m < num_maps; m++) {
-> +=09=09=09u8 sample_id =3D lpm_indices[m] + mode_offset;
-> +
-> +=09=09=09ret =3D pmt_telem_read32(ep, sample_id, req_offset, 1);
-> +=09=09=09if (ret) {
-> +=09=09=09=09dev_err(&pmcdev->pdev->dev,
-> +=09=09=09=09=09"couldn't read Low Power Mode requirements: %d\n", ret);
-> +=09=09=09=09devm_kfree(&pmcdev->pdev->dev, pmc->lpm_req_regs);
-> +=09=09=09=09goto unregister_ep;
-> +=09=09=09}
-> +=09=09=09++req_offset;
-> +=09=09}
-> +=09=09mode_offset +=3D LPM_REG_COUNT + LPM_MODE_OFFSET;
-> +=09}
-> +
-> +unregister_ep:
-> +=09pmt_telem_unregister_endpoint(ep);
-> +
-> +=09return ret;
-> +}
-> +
-> +int pmc_core_ssram_get_lpm_reqs(struct pmc_dev *pmcdev)
-> +{
-> +=09int ret, i;
-> +
-> +=09if (!pmcdev->ssram_pcidev)
-> +=09=09return -ENODEV;
-> +
-> +=09for (i =3D 0; i < ARRAY_SIZE(pmcdev->pmcs); ++i) {
-> +=09=09if (!pmcdev->pmcs[i])
-> +=09=09=09continue;
-> +
-> +=09=09ret =3D pmc_core_get_lpm_req(pmcdev, pmcdev->pmcs[i]);
-> +=09=09if (ret)
-> +=09=09=09return ret;
-> +=09}
-> +
-> +=09return 0;
-> +}
-> +
-> +const struct pmc_reg_map *pmc_core_find_regmap(struct pmc_info *list, u1=
-6 devid)
-> +{
-> +=09for (; list->map; ++list)
-> +=09=09if (devid =3D=3D list->devid)
-> +=09=09=09return list->map;
-> +
-> +=09return NULL;
-> +}
-> +
-> +int pmc_core_pmc_add(struct pmc_dev *pmcdev, u64 pwrm_base,
-> +=09=09     const struct pmc_reg_map *reg_map, int pmc_index)
-> +{
-> +=09struct pmc *pmc =3D pmcdev->pmcs[pmc_index];
-> +
-> +=09if (!pwrm_base)
-> +=09=09return -ENODEV;
-> +
-> +=09/* Memory for primary PMC has been allocated in core.c */
-> +=09if (!pmc) {
-> +=09=09pmc =3D devm_kzalloc(&pmcdev->pdev->dev, sizeof(*pmc), GFP_KERNEL)=
-;
-> +=09=09if (!pmc)
-> +=09=09=09return -ENOMEM;
-> +=09}
-> +
-> +=09pmc->map =3D reg_map;
-> +=09pmc->base_addr =3D pwrm_base;
-> +=09pmc->regbase =3D ioremap(pmc->base_addr, pmc->map->regmap_length);
-> +
-> +=09if (!pmc->regbase) {
-> +=09=09devm_kfree(&pmcdev->pdev->dev, pmc);
-> +=09=09return -ENOMEM;
-> +=09}
-> +
-> +=09pmcdev->pmcs[pmc_index] =3D pmc;
-> +
-> +=09return 0;
-> +}
-> +
->  static const struct acpi_device_id pmc_core_acpi_ids[] =3D {
->  =09{"INT33A1", 0}, /* _HID for Intel Power Engine, _CID PNP0D80*/
->  =09{ }
-> @@ -1623,5 +1790,6 @@ static struct platform_driver pmc_core_driver =3D {
-> =20
->  module_platform_driver(pmc_core_driver);
-> =20
-> +MODULE_IMPORT_NS(INTEL_PMT_TELEMETRY);
->  MODULE_LICENSE("GPL v2");
->  MODULE_DESCRIPTION("Intel PMC Core Driver");
-> diff --git a/drivers/platform/x86/intel/pmc/core.h b/drivers/platform/x86=
-/intel/pmc/core.h
-> index ea04de7eb9e8..9a1cc01f31d9 100644
-> --- a/drivers/platform/x86/intel/pmc/core.h
-> +++ b/drivers/platform/x86/intel/pmc/core.h
-> @@ -24,6 +24,11 @@ struct telem_endpoint;
->  #define MAX_NUM_PMC=09=09=093
->  #define S0IX_BLK_SIZE=09=09=094
-> =20
-> +/* PCH query */
-> +#define LPM_HEADER_OFFSET=091
-> +#define LPM_REG_COUNT=09=0928
-> +#define LPM_MODE_OFFSET=09=091
-> +
->  /* Sunrise Point Power Management Controller PCI Device ID */
->  #define SPT_PMC_PCI_DEVICE_ID=09=09=090x9d21
->  #define SPT_PMC_BASE_ADDR_OFFSET=09=090x48
-> @@ -589,6 +594,9 @@ extern void pmc_core_punit_pmt_init(struct pmc_dev *p=
-mcdev, u32 guid);
->  extern void pmc_core_set_device_d3(unsigned int device);
-> =20
->  extern int pmc_core_ssram_init(struct pmc_dev *pmcdev, int func);
-> +extern const struct pmc_reg_map *pmc_core_find_regmap(struct pmc_info *l=
-ist, u16 devid);
-> +extern int pmc_core_pmc_add(struct pmc_dev *pmcdev, u64 pwrm_base,
-> +=09=09=09    const struct pmc_reg_map *reg_map, int pmc_index);
-> =20
->  int spt_core_init(struct pmc_dev *pmcdev);
->  int cnp_core_init(struct pmc_dev *pmcdev);
-> diff --git a/drivers/platform/x86/intel/pmc/core_ssram.c b/drivers/platfo=
-rm/x86/intel/pmc/core_ssram.c
-> index 1bde86c54eb9..0a2bfca5ff41 100644
-> --- a/drivers/platform/x86/intel/pmc/core_ssram.c
-> +++ b/drivers/platform/x86/intel/pmc/core_ssram.c
-> @@ -24,142 +24,8 @@
->  #define SSRAM_IOE_OFFSET=090x68
->  #define SSRAM_DEVID_OFFSET=090x70
-> =20
-> -/* PCH query */
-> -#define LPM_HEADER_OFFSET=091
-> -#define LPM_REG_COUNT=09=0928
-> -#define LPM_MODE_OFFSET=09=091
-> -
->  DEFINE_FREE(pmc_core_iounmap, void __iomem *, iounmap(_T));
-> =20
-> -static u32 pmc_core_find_guid(struct pmc_info *list, const struct pmc_re=
-g_map *map)
-> -{
-> -=09for (; list->map; ++list)
-> -=09=09if (list->map =3D=3D map)
-> -=09=09=09return list->guid;
-> -
-> -=09return 0;
-> -}
-> -
-> -static int pmc_core_get_lpm_req(struct pmc_dev *pmcdev, struct pmc *pmc)
-> -{
-> -=09struct telem_endpoint *ep;
-> -=09const u8 *lpm_indices;
-> -=09int num_maps, mode_offset =3D 0;
-> -=09int ret, mode, i;
-> -=09int lpm_size;
-> -=09u32 guid;
-> -
-> -=09lpm_indices =3D pmc->map->lpm_reg_index;
-> -=09num_maps =3D pmc->map->lpm_num_maps;
-> -=09lpm_size =3D LPM_MAX_NUM_MODES * num_maps;
-> -
-> -=09guid =3D pmc_core_find_guid(pmcdev->regmap_list, pmc->map);
-> -=09if (!guid)
-> -=09=09return -ENXIO;
-> -
-> -=09ep =3D pmt_telem_find_and_register_endpoint(pmcdev->ssram_pcidev, gui=
-d, 0);
-> -=09if (IS_ERR(ep)) {
-> -=09=09dev_dbg(&pmcdev->pdev->dev, "couldn't get telem endpoint %ld",
-> -=09=09=09PTR_ERR(ep));
-> -=09=09return -EPROBE_DEFER;
-> -=09}
-> -
-> -=09pmc->lpm_req_regs =3D devm_kzalloc(&pmcdev->pdev->dev,
-> -=09=09=09=09=09 lpm_size * sizeof(u32),
-> -=09=09=09=09=09 GFP_KERNEL);
-> -=09if (!pmc->lpm_req_regs) {
-> -=09=09ret =3D -ENOMEM;
-> -=09=09goto unregister_ep;
-> -=09}
-> -
-> -=09/*
-> -=09 * PMC Low Power Mode (LPM) table
-> -=09 *
-> -=09 * In telemetry space, the LPM table contains a 4 byte header followe=
-d
-> -=09 * by 8 consecutive mode blocks (one for each LPM mode). Each block
-> -=09 * has a 4 byte header followed by a set of registers that describe t=
-he
-> -=09 * IP state requirements for the given mode. The IP mapping is platfo=
-rm
-> -=09 * specific but the same for each block, making for easy analysis.
-> -=09 * Platforms only use a subset of the space to track the requirements
-> -=09 * for their IPs. Callers provide the requirement registers they use =
-as
-> -=09 * a list of indices. Each requirement register is associated with an
-> -=09 * IP map that's maintained by the caller.
-> -=09 *
-> -=09 * Header
-> -=09 * +----+----------------------------+----------------------------+
-> -=09 * |  0 |      REVISION              |      ENABLED MODES         |
-> -=09 * +----+--------------+-------------+-------------+--------------+
-> -=09 *
-> -=09 * Low Power Mode 0 Block
-> -=09 * +----+--------------+-------------+-------------+--------------+
-> -=09 * |  1 |     SUB ID   |     SIZE    |   MAJOR     |   MINOR      |
-> -=09 * +----+--------------+-------------+-------------+--------------+
-> -=09 * |  2 |           LPM0 Requirements 0                           |
-> -=09 * +----+---------------------------------------------------------+
-> -=09 * |    |                  ...                                    |
-> -=09 * +----+---------------------------------------------------------+
-> -=09 * | 29 |           LPM0 Requirements 27                          |
-> -=09 * +----+---------------------------------------------------------+
-> -=09 *
-> -=09 * ...
-> -=09 *
-> -=09 * Low Power Mode 7 Block
-> -=09 * +----+--------------+-------------+-------------+--------------+
-> -=09 * |    |     SUB ID   |     SIZE    |   MAJOR     |   MINOR      |
-> -=09 * +----+--------------+-------------+-------------+--------------+
-> -=09 * | 60 |           LPM7 Requirements 0                           |
-> -=09 * +----+---------------------------------------------------------+
-> -=09 * |    |                  ...                                    |
-> -=09 * +----+---------------------------------------------------------+
-> -=09 * | 87 |           LPM7 Requirements 27                          |
-> -=09 * +----+---------------------------------------------------------+
-> -=09 *
-> -=09 */
-> -=09mode_offset =3D LPM_HEADER_OFFSET + LPM_MODE_OFFSET;
-> -=09pmc_for_each_mode(i, mode, pmcdev) {
-> -=09=09u32 *req_offset =3D pmc->lpm_req_regs + (mode * num_maps);
-> -=09=09int m;
-> -
-> -=09=09for (m =3D 0; m < num_maps; m++) {
-> -=09=09=09u8 sample_id =3D lpm_indices[m] + mode_offset;
-> -
-> -=09=09=09ret =3D pmt_telem_read32(ep, sample_id, req_offset, 1);
-> -=09=09=09if (ret) {
-> -=09=09=09=09dev_err(&pmcdev->pdev->dev,
-> -=09=09=09=09=09"couldn't read Low Power Mode requirements: %d\n", ret);
-> -=09=09=09=09devm_kfree(&pmcdev->pdev->dev, pmc->lpm_req_regs);
-> -=09=09=09=09goto unregister_ep;
-> -=09=09=09}
-> -=09=09=09++req_offset;
-> -=09=09}
-> -=09=09mode_offset +=3D LPM_REG_COUNT + LPM_MODE_OFFSET;
-> -=09}
-> -
-> -unregister_ep:
-> -=09pmt_telem_unregister_endpoint(ep);
-> -
-> -=09return ret;
-> -}
-> -
-> -int pmc_core_ssram_get_lpm_reqs(struct pmc_dev *pmcdev)
-> -{
-> -=09int ret, i;
-> -
-> -=09if (!pmcdev->ssram_pcidev)
-> -=09=09return -ENODEV;
-> -
-> -=09for (i =3D 0; i < ARRAY_SIZE(pmcdev->pmcs); ++i) {
-> -=09=09if (!pmcdev->pmcs[i])
-> -=09=09=09continue;
-> -
-> -=09=09ret =3D pmc_core_get_lpm_req(pmcdev, pmcdev->pmcs[i]);
-> -=09=09if (ret)
-> -=09=09=09return ret;
-> -=09}
-> -
-> -=09return 0;
-> -}
-> -
->  static void
->  pmc_add_pmt(struct pmc_dev *pmcdev, u64 ssram_base, void __iomem *ssram)
->  {
-> @@ -203,50 +69,11 @@ pmc_add_pmt(struct pmc_dev *pmcdev, u64 ssram_base, =
-void __iomem *ssram)
->  =09intel_vsec_register(pcidev, &info);
->  }
-> =20
-> -static const struct pmc_reg_map *pmc_core_find_regmap(struct pmc_info *l=
-ist, u16 devid)
-> -{
-> -=09for (; list->map; ++list)
-> -=09=09if (devid =3D=3D list->devid)
-> -=09=09=09return list->map;
-> -
-> -=09return NULL;
-> -}
-> -
->  static inline u64 get_base(void __iomem *addr, u32 offset)
->  {
->  =09return lo_hi_readq(addr + offset) & GENMASK_ULL(63, 3);
->  }
-> =20
-> -static int
-> -pmc_core_pmc_add(struct pmc_dev *pmcdev, u64 pwrm_base,
-> -=09=09 const struct pmc_reg_map *reg_map, int pmc_index)
-> -{
-> -=09struct pmc *pmc =3D pmcdev->pmcs[pmc_index];
-> -
-> -=09if (!pwrm_base)
-> -=09=09return -ENODEV;
-> -
-> -=09/* Memory for primary PMC has been allocated in core.c */
-> -=09if (!pmc) {
-> -=09=09pmc =3D devm_kzalloc(&pmcdev->pdev->dev, sizeof(*pmc), GFP_KERNEL)=
-;
-> -=09=09if (!pmc)
-> -=09=09=09return -ENOMEM;
-> -=09}
-> -
-> -=09pmc->map =3D reg_map;
-> -=09pmc->base_addr =3D pwrm_base;
-> -=09pmc->regbase =3D ioremap(pmc->base_addr, pmc->map->regmap_length);
-> -
-> -=09if (!pmc->regbase) {
-> -=09=09devm_kfree(&pmcdev->pdev->dev, pmc);
-> -=09=09return -ENOMEM;
-> -=09}
-> -
-> -=09pmcdev->pmcs[pmc_index] =3D pmc;
-> -
-> -=09return 0;
-> -}
-> -
->  static int
->  pmc_core_ssram_get_pmc(struct pmc_dev *pmcdev, int pmc_idx, u32 offset)
->  {
->=20
-
---=20
- i.
-
---8323328-1690604502-1724928594=:1289--
+> On Sun, Aug 25, 2024 at 8:26 AM Paul E. McKenney <paulmck@kernel.org> wrote:
+> >
+> > On Sat, Aug 24, 2024 at 10:30:23PM -0700, Xingyu Li wrote:
+> > > Hi,
+> > >
+> > > We found a bug in Linux 6.10. It is probably a use-after-free bug.
+> > > Its error message "ODEBUG: active_state not available (active state
+> > > 0)" indicates that the object in question (rcu_head) is in an
+> > > unexpected state. The expected states are typically something like
+> > > STATE_RCU_HEAD_QUEUED or STATE_RCU_HEAD_READY, but the object is
+> > > instead in state 0, which generally means it has either not been
+> > > initialized correctly or has been freed and is being accessed again.
+> > >
+> > > The bug report and syzkaller reproducer are as follows.
+> >
+> > One way to track this is to trace call_rcu(), for example, using the
+> > rcu_callback() trace event.  The resulting trace messages would likely
+> > need to be fished out of a kernel core dump.
+> >
+> > Someone more familiar with tracing and core dumps might be able to give
+> > more specific advice.
+> >
+> >                                                         Thanx, Paul
+> >
+> > > Bug report:
+> > >
+> > > ODEBUG: active_state not available (active state 0) object:
+> > > ffffea0000a3f710 object type: rcu_head hint: 0x0
+> > > WARNING: CPU: 0 PID: 0 at lib/debugobjects.c:517 debug_print_object
+> > > lib/debugobjects.c:514 [inline]
+> > > WARNING: CPU: 0 PID: 0 at lib/debugobjects.c:517
+> > > debug_object_active_state+0x2b0/0x360 lib/debugobjects.c:954
+> > > Modules linked in:
+> > > CPU: 0 PID: 0 Comm: swapper/0 Not tainted 6.10.0 #13
+> > > Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
+> > > RIP: 0010:debug_print_object lib/debugobjects.c:514 [inline]
+> > > RIP: 0010:debug_object_active_state+0x2b0/0x360 lib/debugobjects.c:954
+> > > Code: d7 95 fd 4d 8b 0c 24 48 c7 c7 a0 61 a9 8b 48 c7 c6 60 5e a9 8b
+> > > 48 89 ea 8b 4c 24 04 49 89 d8 41 57 e8 24 1b f7 fc 48 83 c4 08 <0f> 0b
+> > > ff 05 88 0c c6 0a 48 83 c4 28 5b 41 5c 41 5d 41 5e 41 5f 5d
+> > > RSP: 0018:ffffc90000007ba0 EFLAGS: 00010296
+> > > RAX: de43a67fd8b9f500 RBX: ffffea0000a3f710 RCX: ffffffff8d893bc0
+> > > RDX: 0000000000000101 RSI: 0000000000000000 RDI: 0000000000000000
+> > > RBP: ffffffff8ba96360 R08: ffffffff8155a25a R09: 1ffff1100c74519a
+> > > R10: dffffc0000000000 R11: ffffed100c74519b R12: ffffffff8b4de5c0
+> > > R13: 0000000000000005 R14: dffffc0000000000 R15: 0000000000000000
+> > > FS:  0000000000000000(0000) GS:ffff888063a00000(0000) knlGS:0000000000000000
+> > > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > > CR2: 000055555e016868 CR3: 000000000d932000 CR4: 0000000000350ef0
+> > > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> > > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> > > Call Trace:
+> > >  <IRQ>
+> > >  debug_rcu_head_unqueue kernel/rcu/rcu.h:236 [inline]
+> > >  rcu_do_batch kernel/rcu/tree.c:2527 [inline]
+> > >  rcu_core+0xa5c/0x17f0 kernel/rcu/tree.c:2809
+> > >  handle_softirqs+0x272/0x750 kernel/softirq.c:554
+> > >  __do_softirq kernel/softirq.c:588 [inline]
+> > >  invoke_softirq kernel/softirq.c:428 [inline]
+> > >  __irq_exit_rcu+0xf0/0x1b0 kernel/softirq.c:637
+> > >  irq_exit_rcu+0x5/0x20 kernel/softirq.c:649
+> > >  instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1043 [inline]
+> > >  sysvec_apic_timer_interrupt+0xa0/0xc0 arch/x86/kernel/apic/apic.c:1043
+> > >  </IRQ>
+> > >  <TASK>
+> > >  asm_sysvec_apic_timer_interrupt+0x16/0x20 arch/x86/include/asm/idtentry.h:702
+> > > RIP: 0010:native_irq_disable arch/x86/include/asm/irqflags.h:37 [inline]
+> > > RIP: 0010:arch_local_irq_disable arch/x86/include/asm/irqflags.h:72 [inline]
+> > > RIP: 0010:default_idle+0xb/0x10 arch/x86/kernel/process.c:743
+> > > Code: 07 76 e7 48 89 07 49 c7 c0 08 00 00 00 4d 29 c8 4c 01 c7 4c 29
+> > > c2 e9 72 ff ff ff cc cc cc cc 66 90 0f 00 2d c7 a4 4e 00 fb f4 <fa> c3
+> > > 0f 1f 00 e9 eb ff ff ff 66 2e 0f 1f 84 00 00 00 00 00 90 65
+> > > RSP: 0018:ffffffff8d807d68 EFLAGS: 000002c2
+> > > RAX: de43a67fd8b9f500 RBX: ffffffff816928eb RCX: 0000000000022a19
+> > > RDX: 0000000000000001 RSI: ffffffff8b4c89c0 RDI: ffffffff8ba956e0
+> > > RBP: ffffffff8d807eb8 R08: ffff888063a37d0b R09: 1ffff1100c746fa1
+> > > R10: dffffc0000000000 R11: ffffed100c746fa2 R12: 1ffffffff1b00fc6
+> > > R13: 1ffffffff1b12778 R14: 0000000000000000 R15: dffffc0000000000
+> > >  default_idle_call+0x6e/0xa0 kernel/sched/idle.c:117
+> > >  cpuidle_idle_call kernel/sched/idle.c:191 [inline]
+> > >  do_idle+0x22b/0x5c0 kernel/sched/idle.c:332
+> > >  cpu_startup_entry+0x3d/0x60 kernel/sched/idle.c:430
+> > >  rest_init+0x2db/0x300 init/main.c:747
+> > >  start_kernel+0x486/0x500 init/main.c:1103
+> > >  x86_64_start_reservations+0x26/0x30 arch/x86/kernel/head64.c:507
+> > >  x86_64_start_kernel+0x5c/0x60 arch/x86/kernel/head64.c:488
+> > >  common_startup_64+0x13e/0x147
+> > >  </TASK>
+> > > ----------------
+> > > Code disassembly (best guess), 1 bytes skipped:
+> > >    0: 76 e7                 jbe    0xffffffe9
+> > >    2: 48 89 07             mov    %rax,(%rdi)
+> > >    5: 49 c7 c0 08 00 00 00 mov    $0x8,%r8
+> > >    c: 4d 29 c8             sub    %r9,%r8
+> > >    f: 4c 01 c7             add    %r8,%rdi
+> > >   12: 4c 29 c2             sub    %r8,%rdx
+> > >   15: e9 72 ff ff ff       jmp    0xffffff8c
+> > >   1a: cc                   int3
+> > >   1b: cc                   int3
+> > >   1c: cc                   int3
+> > >   1d: cc                   int3
+> > >   1e: 66 90                 xchg   %ax,%ax
+> > >   20: 0f 00 2d c7 a4 4e 00 verw   0x4ea4c7(%rip)        # 0x4ea4ee
+> > >   27: fb                   sti
+> > >   28: f4                   hlt
+> > > * 29: fa                   cli <-- trapping instruction
+> > >   2a: c3                   ret
+> > >   2b: 0f 1f 00             nopl   (%rax)
+> > >   2e: e9 eb ff ff ff       jmp    0x1e
+> > >   33: 66 2e 0f 1f 84 00 00 cs nopw 0x0(%rax,%rax,1)
+> > >   3a: 00 00 00
+> > >   3d: 90                   nop
+> > >   3e: 65                   gs
+> > >
+> > >
+> > > Syzkaller reproducer:
+> > > # {Threaded:true Repeat:true RepeatTimes:0 Procs:1 Slowdown:1
+> > > Sandbox:none SandboxArg:0 Leak:false NetInjection:true NetDevices:true
+> > > NetReset:true Cgroups:true BinfmtMisc:true CloseFDs:true KCSAN:false
+> > > DevlinkPCI:false NicVF:false USB:true VhciInjection:false Wifi:false
+> > > IEEE802154:true Sysctl:false Swap:false UseTmpDir:true HandleSegv:true
+> > > Trace:false LegacyOptions:{Collide:false Fault:false FaultCall:0
+> > > FaultNth:0}}
+> > > openat$ptmx(0xffffffffffffff9c, &(0x7f0000000340), 0x183401, 0x0)
+> > > ioctl$TCSETSF(0xffffffffffffffff, 0x5404, 0x0)
+> > > syz_open_dev$evdev(&(0x7f0000000000), 0x8000207, 0x20c40)
+> > > ioctl$TCSETSF2(0xffffffffffffffff, 0x402c542d,
+> > > &(0x7f0000000080)={0xffffffff, 0x6, 0x200009, 0x5, 0x1,
+> > > "4e0040029e35bca140d58427392b336889f0cc", 0x2, 0x101})
+> > > r0 = syz_open_dev$sg(&(0x7f0000000200), 0x140000000000, 0x8000)
+> > > ioctl$syz_spec_1724254976_2866(r0, 0x1, &(0x7f0000000080)={0x0, 0x2,
+> > > [0x85, 0x8, 0x15, 0xd]})
+> > > ioctl$syz_spec_18446744073163555329_24(0xffffffffffffffff, 0xc0104320, 0x0)
+> > > ioctl$syz_spec_18446744072138818634_137(0xffffffffffffffff, 0x402c542d, 0x0)
+> > >
+> > > --
+> > > Yours sincerely,
+> > > Xingyu
+> > >
+> 
+> 
+> 
+> -- 
+> Yours sincerely,
+> Xingyu
 
