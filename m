@@ -1,141 +1,151 @@
-Return-Path: <linux-kernel+bounces-306141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7746C9639D4
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 07:20:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B036F9639D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 07:23:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37AC528314E
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 05:20:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68AFA283998
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 05:23:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71BC5149011;
-	Thu, 29 Aug 2024 05:20:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ACA1149C55;
+	Thu, 29 Aug 2024 05:22:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ucr.edu header.i=@ucr.edu header.b="Cmrrb9/+";
-	dkim=pass (1024-bit key) header.d=ucr.edu header.i=@ucr.edu header.b="g20h9r+k"
-Received: from mx6.ucr.edu (mx.ucr.edu [138.23.62.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vlI9PySF"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6043047A76
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 05:20:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=138.23.62.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE7B63AC28
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 05:22:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724908818; cv=none; b=sGHD9ZjP6G+XLcLRRjTWQ/i1CXyYxIugMczAD694kVUu/QwLPoM0xwIgmbqVXVMHnrT+vIiz5yRyxi1bVdLgZR4hCjG0qfWvUzMItymYrSEoAiISiN2KACG4H8fY3Uzfn7q2brEJPVaIsxayZjqPOBMiAJScD4YzfUJm7YUQFTI=
+	t=1724908971; cv=none; b=dIJr2LTdlz5Xuo14CXdvCkvM8N5xs7DPJKsNcbYohCUasvysOqPJcaR+0+TUhRRHzNYfeUEBEex9u+hZpfAt8OrGRIkiqgZvHllVsW4RaTHCtCeap0pwGADOJE+s3vOlwC4ew25AcOL1Jih4LABFbZ+3XQx9GvyRube8zhbfsNY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724908818; c=relaxed/simple;
-	bh=Ia45hZSXNQ+K+dqO1AXNRzWvtG8wWud4WxNi7CoqRdU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hmPX5DiEE4gtBZB8U4gnIpDyGhn36Ab4OQd6QCZY/E4Yl/2OCKd0jS1pw5OYR5TQR4GrgUcSFKn5xZip/sl8xL3DRidG9ZUfQGrb+v0+4LPPEA+g4MnSMUXTDRFDcvf4/HOAqyrjmQDI3l/zuahfpmRJSDpLbdA8ZtskJysdW7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ucr.edu; spf=pass smtp.mailfrom=ucr.edu; dkim=pass (2048-bit key) header.d=ucr.edu header.i=@ucr.edu header.b=Cmrrb9/+; dkim=pass (1024-bit key) header.d=ucr.edu header.i=@ucr.edu header.b=g20h9r+k; arc=none smtp.client-ip=138.23.62.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ucr.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucr.edu
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=ucr.edu; i=@ucr.edu; q=dns/txt; s=selector3;
-  t=1724908817; x=1756444817;
-  h=dkim-signature:x-google-dkim-signature:
-   x-forwarded-encrypted:x-gm-message-state:
-   x-google-smtp-source:mime-version:references:in-reply-to:
-   from:date:message-id:subject:to:cc:content-type:
-   content-transfer-encoding:x-cse-connectionguid:
-   x-cse-msgguid;
-  bh=Ia45hZSXNQ+K+dqO1AXNRzWvtG8wWud4WxNi7CoqRdU=;
-  b=Cmrrb9/+ECoOqBZLhfF9VXR+RMPfhP+6OFAhZ0hjt2sLs+Ge2rbXudxi
-   yXPfaagM0HaTBtBv5JCFNB4VAx4DafqDA2Ub/TpBAfAR4AuCyiE2qK+4I
-   ygzA36jvYIXcCV3EgKOPWyvQxuIWhht0VRVWzgn7gK1ujNq1i70QJvqL9
-   zcquYXuMSIp2ATIKdYjhIi3PjRa7AAOK8AGXvxLFZoVZ2m9lVPSuPsKsT
-   e/UZsmwCoylxDx1lfh8tF1krgLtED9nKnXT/RKKsJbnvXd3HDbiyUaVVb
-   OCtmBXwTHWLU9n2cFe9LJ9J+laqoBG65Rc6JJ7Pvy5KxXeqgbHWNtEAx/
-   g==;
-X-CSE-ConnectionGUID: IvFe6iNOSWm0OKFvUn9RUw==
-X-CSE-MsgGUID: HWbZEps8TUiZaZ91Uob71A==
-Received: from mail-il1-f199.google.com ([209.85.166.199])
-  by smtpmx6.ucr.edu with ESMTP/TLS/TLS_AES_256_GCM_SHA384; 28 Aug 2024 22:20:17 -0700
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-39d465cd6ccso2725155ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 22:20:16 -0700 (PDT)
+	s=arc-20240116; t=1724908971; c=relaxed/simple;
+	bh=P7HOOEvtNGDAiMJzLRD2WDAyfVxZnPo3dCEuHop7FfQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j7rbF1X8W56FwtYKHRROocTs3fjj4k7C9c/560Lf9gDWxmcaGq4sA05XtTuKRBE5i+J9c66BlISKVkV6ZkAx4TydMixkJqaEX71Qtz44guaqGo6+K+J2sJ3IzU0O5DpUO+vs/6ZynzThK+1gPooqQFsUL5SLt7e1rbebzOI+s3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vlI9PySF; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2021c03c13aso2112035ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 22:22:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ucr.edu; s=rmail; t=1724908815; x=1725513615; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Oihb+ZEx28nXHc0pAbgch0ZW5vY7lh30JIgO8BQjJuM=;
-        b=g20h9r+kHYr9ncP5VuZl81agnzqYsGQWhRGskvA2AlXn+VbdPgREtfS7qjJ1xtF7Sr
-         nGsf8oqnL8l7X03OE72GFa91hFF9O+rObVSkigALFUpQPE1VbTAuD9HRW0d4cpwPXa5w
-         XydAwBH89moRlLQDCyaSFA0mdHD3y03GA/Pvc=
+        d=linaro.org; s=google; t=1724908969; x=1725513769; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=ZDgdHWYH1oig4dSwiHeHzpXMKQW0khYZoM6E0qTtEXo=;
+        b=vlI9PySFgkawCCIeOlfvcl4bM1ZgUbOkbSoD8pVlTC2jn90KrxFkUkCkagAKP9hkko
+         UCxmh6YReJbD87WqLnE1le3qivHFwPlpQDYx7Peleepr32ru/OKfpM3crTZZCKbd0uUd
+         +vfFVA0Ulh5mVAkpeuVEppFUA3H9F2zwh/ayIdzbJTSr+JsiUY1QzvkuHZS36uk6+vp6
+         Hyb43h8L6lce7ZqiPFG3x9vYojpkxz9NCL8SsFpyaxkVPR3hEM+JkYN6XbzGdjoIzC1l
+         Dn42NobOnVz+ni0XAMQcOcnpxPg7P9c+dv7+wtVKvEMuz3QBq/YBckp+gVlsdjwICujW
+         Ll4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724908815; x=1725513615;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Oihb+ZEx28nXHc0pAbgch0ZW5vY7lh30JIgO8BQjJuM=;
-        b=ArWh+Byv2nl0kISbeGjikd88df4tF/lJ8KHeY8JmmAEJQ+p1pqsOKsGQzpaJv/PnaV
-         vqsXu9+HMNsL5dfYD8V83t4oQNBHa6zWqsGWEV4PDUcEYhHDgsJ3JHHj/3Xwn69nquUR
-         a8jphUwPFUmnWDNSUZG27ujKrRCeWyK1NQuN5NOtkqQGeo/V7vMSgjfv8vDmPH+GXcvJ
-         i85uFg4Clea54PHZ2ElQzCoqkLWQ5tVG1ZxFxDd2vgC+tnTzHD+0fnnuNQS/SnSdJxhu
-         gzPmKCfdidBnlBu9x7xscV7eQE4D3QcnQ5PZNbGcUtaS4urgIExjDV0kBV3nff2opvvx
-         poMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXjlnMv8D0GtmUs0vhZrLpAcgdE/fk8k9nglvXJ3FvIm/m8QPdzuyP+dVcAg8trRYPozvkBMykwXGc6h7c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxY8zLk4xUX8YVDS0BPDooc2CXZMldHLWGoXRLKi59KGk6SfPrG
-	cI6KHL/hN7kWuQyI5XL9rH8RD7kHWP4KxTmhK7FUDbIAvKfn5R3g5b9pfQ277XwuDYx49ypYJc1
-	WKtgzAGekzxkot8K6hQ0a5G36xN11a9USddXub4HSUsGsg2V6phM5a9RGXzFmtvB2VnBAe4/OGx
-	d7rUiivEBmJpfnFDERWWXa5aRri4+BC4YiG47RIOZDriTRKBhKNUo=
-X-Received: by 2002:a05:6e02:184c:b0:39b:389d:f7ce with SMTP id e9e14a558f8ab-39f378ec19fmr20753055ab.2.1724908815351;
-        Wed, 28 Aug 2024 22:20:15 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHtw1BOlLUaOKprgVjlL/LtyLeM1+0tuUpnn+kK49YRBERx/P+NDQeXjxtE+TO094UecuMe95yJy/8UvktdhKw=
-X-Received: by 2002:a05:6e02:184c:b0:39b:389d:f7ce with SMTP id
- e9e14a558f8ab-39f378ec19fmr20752935ab.2.1724908815041; Wed, 28 Aug 2024
- 22:20:15 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724908969; x=1725513769;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZDgdHWYH1oig4dSwiHeHzpXMKQW0khYZoM6E0qTtEXo=;
+        b=ojCrza9EDPpBdcquLY45/vMrH//1FhtL9r3ul5mw+PGFFywR0YhB1lCWTGX5i9o86/
+         lWHUoT7d40vuCGfhqmSQGLxz4ex3730VCp5qQfVOJKDRJEpeefPb9rfJvp5ymLtTKc6F
+         Dvmqbq/C+hGdOaaZxbhJWxJINX9rNp2lEmIaU+JfkZm3eXygBgGSe/E6thJ/iof0X+Vy
+         o/VkRTJzXpRC3A+VDa3S8vcQVEs8iTvxY3cdbSe2BHhZrHUzMbTbXNSl3IqjL2/ZjbRR
+         AYxNRJ+KBE88Jz2OGeqvBr0T2yiWpF1NOYSxXCRoiBeQE1SLDmXHTTw2IDR8q0OxcY5S
+         g2og==
+X-Forwarded-Encrypted: i=1; AJvYcCU3VebU3OlAaIlMwxPXExTKNuv21EceK17tgj1Seoj66xyNKx5r/cx7WwWfPuks59N4cpKbmkXPy1sX5AA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0oqYlCu3Xy4hZy+B07u16WWZOZYi4rYREIW3XeqSPqzUg8EPH
+	fvMN4R0hCtlwO4u1X+ZukA+VHyDAZzb5qUaaG+ZhNegnisgnDc3qxWG0kX47dg==
+X-Google-Smtp-Source: AGHT+IGFYqZRfiCAN5Gu8li5QXL0zz3A9Z9M4Ui2rLUctazsHD5wv1P4f8Dq5/JP9OmBK4gw1xQOUA==
+X-Received: by 2002:a17:902:e952:b0:1fc:4acb:3670 with SMTP id d9443c01a7336-20516734701mr5981245ad.12.1724908969104;
+        Wed, 28 Aug 2024 22:22:49 -0700 (PDT)
+Received: from thinkpad ([120.56.198.191])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-205155560e9sm3467045ad.282.2024.08.28.22.22.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Aug 2024 22:22:48 -0700 (PDT)
+Date: Thu, 29 Aug 2024 10:52:44 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+	lukas@wunner.de, mika.westerberg@linux.intel.com,
+	Hsin-Yi Wang <hsinyi@chromium.org>
+Subject: Re: [PATCH v5 3/4] PCI: Decouple D3Hot and D3Cold handling for
+ bridges
+Message-ID: <20240829052244.6jekalgshzlbz5hp@thinkpad>
+References: <20240828155217.jccpmcgvizqomj4x@thinkpad>
+ <20240828210705.GA37859@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CALAgD-6Uy-2kVrj05SeCiN4wZu75Vq5-TCEsiUGzYwzjO4+Ahg@mail.gmail.com>
- <Zs_gT7g9Dv-QAxfj@google.com>
-In-Reply-To: <Zs_gT7g9Dv-QAxfj@google.com>
-From: Xingyu Li <xli399@ucr.edu>
-Date: Wed, 28 Aug 2024 22:20:04 -0700
-Message-ID: <CALAgD-5-8YjG=uOk_yAy_U8Dy9myRvC+pAiVe0R+Yt+xmEuCxQ@mail.gmail.com>
-Subject: Re: BUG: general protection fault in get_mem_cgroup_from_objcg
-To: Roman Gushchin <roman.gushchin@linux.dev>
-Cc: hannes@cmpxchg.org, mhocko@kernel.org, shakeel.butt@linux.dev, 
-	muchun.song@linux.dev, cgroups@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Yu Hao <yhao016@ucr.edu>, Juefei Pu <jpu007@ucr.edu>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240828210705.GA37859@bhelgaas>
 
-Hi,
+On Wed, Aug 28, 2024 at 04:07:05PM -0500, Bjorn Helgaas wrote:
+> On Wed, Aug 28, 2024 at 09:22:17PM +0530, Manivannan Sadhasivam wrote:
+> > On Tue, Aug 20, 2024 at 08:45:59PM -0500, Bjorn Helgaas wrote:
+> > > On Fri, Aug 02, 2024 at 11:25:02AM +0530, Manivannan Sadhasivam via B4 Relay wrote:
+> > > > From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > > > 
+> > > > Currently, there is no proper distinction between D3Hot and D3Cold while
+> > > > handling the power management for PCI bridges. For instance,
+> > > > pci_bridge_d3_allowed() API decides whether it is allowed to put the
+> > > > bridge in D3, but it doesn't explicitly specify whether D3Hot or D3Cold
+> > > > is allowed in a scenario. This often leads to confusion and may be prone
+> > > > to errors.
+> > > > 
+> > > > So let's split the D3Hot and D3Cold handling where possible. The current
+> > > > pci_bridge_d3_allowed() API is now split into pci_bridge_d3hot_allowed()
+> > > > and pci_bridge_d3cold_allowed() APIs and used in relevant places.
+> > > 
+> > > s/So let's split/Split/
+> > > 
+> > > > Also, pci_bridge_d3_update() API is now renamed to
+> > > > pci_bridge_d3cold_update() since it was only used to check the possibility
+> > > > of D3Cold.
+> > > > 
+> > > > Note that it is assumed that only D3Hot needs to be checked while
+> > > > transitioning the bridge during runtime PM and D3Cold in other places. In
+> > > > the ACPI case, wakeup is now only enabled if both D3Hot and D3Cold are
+> > > > allowed for the bridge.
+> > > > 
+> > > > Still, there are places where just 'd3' is used opaquely, but those are
+> > > > hard to distinguish, hence left for future cleanups.
+> > > 
+> > > The spec does use "D3Hot/D3Cold" (with Hot/Cold capitalized and
+> > > subscripted), but most Linux doc and comments use "D3hot" and
+> > > "D3cold", so I think we should stick with the Linux convention (it's
+> > > not 100%, but it's a pretty big majority).
+> > > 
+> > > > -	if (pci_dev->bridge_d3_allowed)
+> > > > +	if (pci_dev->bridge_d3cold_allowed && pci_dev->bridge_d3hot_allowed)
+> > > 
+> > > Much of this patch is renames that could be easily reviewed.  But
+> > > there are a few things like this that are not simple renames.  Can you
+> > > split out these non-rename things to their own patch(es) with their
+> > > own explanations?
+> > 
+> > I can, but I do not want these cleanups/refactoring to delay merging
+> > the patch 4. Are you OK if I just send it standalone and work on the
+> > refactoring as a separate series?
+> 
+> You mean to send patch 4/4 standalone, and do the rest separately?
+> That sounds reasonable to me.
 
-Here is the kernel config file:
-https://gist.github.com/TomAPU/64f5db0fe976a3e94a6dd2b621887cdd
+Ack, thanks.
 
-how long does it take to reproduce?
-Juefei will follow on this, and I just CC'ed him.
+- Mani
 
-
-On Wed, Aug 28, 2024 at 7:43=E2=80=AFPM Roman Gushchin <roman.gushchin@linu=
-x.dev> wrote:
->
-> On Wed, Aug 28, 2024 at 04:09:49PM -0700, Xingyu Li wrote:
-> > Hi,
-> >
-> > We found a bug in Linux 6.10 using syzkaller. It is possibly a  null
-> > pointer dereference bug.
-> > The reprodcuer is
-> > https://gist.github.com/freexxxyyy/315733cb1dc3bc8cbe055b457c1918c0
->
-> Hello,
->
-> thank you for the report. Can you, please, share the kernel config file?
-> Also, how long does it take to reproduce?
->
-> Thanks!
-
-
-
---
-Yours sincerely,
-Xingyu
+-- 
+மணிவண்ணன் சதாசிவம்
 
