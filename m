@@ -1,84 +1,156 @@
-Return-Path: <linux-kernel+bounces-307312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 725D9964B9F
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 18:24:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36FCC964BA2
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 18:25:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DACF1F21BB6
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:24:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF2511F2177A
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:25:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAFEE1B3720;
-	Thu, 29 Aug 2024 16:24:49 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B19551B0117;
-	Thu, 29 Aug 2024 16:24:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 682021B4C30;
+	Thu, 29 Aug 2024 16:25:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NtBxUhC0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E8741B143B;
+	Thu, 29 Aug 2024 16:25:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724948689; cv=none; b=lI4dkRsnaO1zJjzt1r8Zs2GInkgwjuIk0G5IA0S4mJQVGql9L3KOMU0ZN8evJDBxLdsTdMPMMIsNdAhdcz96L7G/T5QmCILX26g/psgkqUvawaYJ4fyUNwJMAeMhLbLt2lak4coZ/4/RdBuocAZoT6lFT34eF6oxKqoIJ++b0z8=
+	t=1724948704; cv=none; b=etu6JywDWsztMLp2yOvFCy2zNL/mM3lU1J8y4FOrunRD4uc0fLRxVc+r0rQRRsCKSMGzD5wKzL2SSAdlxP1D2nWqxlMVbpfGEIUWuqnaPFMY5dyinZxiYDU9MhkBEmW9u5HatiL5XZEnv7QVcc+k2aP6AkoCPRD4EFFp9Oz+ucg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724948689; c=relaxed/simple;
-	bh=8xb0icPtltMAc+V6b/uJsv3r2//xNmKDMQYZoNJARcc=;
+	s=arc-20240116; t=1724948704; c=relaxed/simple;
+	bh=aIRMgxzY9VHypLBoBhrhOUcrNQ0EeIWs2yI9DRC/ANs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vz857mHUuI+2iXhYwtbDrSCwDIZfB+ED2xfatSxZzJFjxfunWVvB1RLslC7BqI4XZPah4yPyXOtHl6r+VB30X9sidq/qGDu3+oJtbeTPo7AS29ajdqYHuW//Auhk8/1U67PxbtHTiOj7LMlxmoZF2jMzR0sUQ9pFUMbxUP/6uE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 30F81106F;
-	Thu, 29 Aug 2024 09:25:13 -0700 (PDT)
-Received: from bogus (e107155-lin.cambridge.arm.com [10.1.198.42])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 387293F762;
-	Thu, 29 Aug 2024 09:24:45 -0700 (PDT)
-Date: Thu, 29 Aug 2024 17:24:42 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Aleksandr Mishin <amishin@t-argos.ru>
-Cc: Fu Wei <fu.wei@linaro.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Hanjun Guo <guohanjun@huawei.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	<linux-acpi@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>
-Subject: Re: [PATCH] acpi/arm64: Adjust error handling procedure in
- gtdt_parse_timer_block()
-Message-ID: <ZtCgyuQ4IRr9Mx8x@bogus>
-References: <20240827101239.22020-1-amishin@t-argos.ru>
- <ZtCfKEIfJW7X8UWg@bogus>
+	 Content-Type:Content-Disposition:In-Reply-To; b=uWPHoTPAnldfONR80Rn+GnPniOkaqI7nzYoFkxIG0qPQ+CgFuKABsRJT9F5IimUcM8lYpmrEfirPoVkLUPMvFVzV540VCUEy4XKD5M+QBiMyMvcRkHotbsCXXpNbRyx/1WzNWIV9W3tH4P81a3S8SSl6NIVZJK8B1xzcWNoq0nc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NtBxUhC0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8EBFC4CEC1;
+	Thu, 29 Aug 2024 16:25:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724948704;
+	bh=aIRMgxzY9VHypLBoBhrhOUcrNQ0EeIWs2yI9DRC/ANs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NtBxUhC0Ppo4OIgaJyKp95Z3pSCFKfWD4JbRHlPulBv/E3I8b7UuamuCHDbbhziIz
+	 Vrtm82pn4dFOh1V3jxUsh8LybIGOwvSPahmM+MBjoRzt+dXtuXWl1dEbVef5oiM61N
+	 D+u13Gz+eRYIIJ+Eys8mCwzXUu8TqUjB3FH/tuyCxTLMKa9FqaLab3YuNY3iK4u7AJ
+	 eo4fguoIPqKtseZRtdwruROD/tMpVTUWQyiDXcgXsTDRHstLeo93IXGMLEAt9NQQcU
+	 tDLU6c5loqM6bAMsgBHxJ1uvyXbHtwYJc+s9jExAaYR0TKbEXP2hyHJpcppLs+bgSd
+	 eXCP4N2Fd/row==
+Date: Thu, 29 Aug 2024 17:24:58 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Daniel Golle <daniel@makrotopia.org>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Christian Marangi <ansuelsmth@gmail.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Robert Marko <robimarko@gmail.com>,
+	Russell King <rmk+kernel@armlinux.org.uk>, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v2 1/2] dt-bindings: net: marvell,aquantia: add
+ properties to override MDI_CFG
+Message-ID: <20240829-karate-fidgeting-1cff7773e213@spud>
+References: <1cdfd174d3ac541f3968dfe9bd14d5b6b28e4ac6.1724885333.git.daniel@makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="VC6WfCv/B70e6pcU"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZtCfKEIfJW7X8UWg@bogus>
+In-Reply-To: <1cdfd174d3ac541f3968dfe9bd14d5b6b28e4ac6.1724885333.git.daniel@makrotopia.org>
 
-On Thu, Aug 29, 2024 at 05:17:44PM +0100, Sudeep Holla wrote:
-> On Tue, Aug 27, 2024 at 01:12:39PM +0300, Aleksandr Mishin wrote:
-> > In case of error in gtdt_parse_timer_block() invalid 'gtdt_frame'
-> > will be used in 'do {} while (i-- >= 0 && gtdt_frame--);' statement block
-> > because do{} block will be executed even if 'i == 0'.
-> > 
-> > Adjust error handling procedure by replacing 'i-- >= 0' with 'i-- > 0'.
-> > 
-> > Found by Linux Verification Center (linuxtesting.org) with SVACE.
-> >
-> 
-> (For some reason I don't see the original email in my inbox, might have
-> got blocked 🙁). Anyways LGTM,
-> 
-> Acked-by: Aleksandr Mishin <amishin@t-argos.ru>
 
-Sorry I messed up, I meant
+--VC6WfCv/B70e6pcU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Acked-by: Sudeep Holla <sudeep.holla@arm.com>
+On Wed, Aug 28, 2024 at 11:51:49PM +0100, Daniel Golle wrote:
+> Usually the MDI pair order reversal configuration is defined by
+> bootstrap pin MDI_CFG. Some designs, however, require overriding the MDI
+> pair order and force either normal or reverse order.
+>=20
+> Add mutually exclusive properties 'marvell,force-mdi-order-normal' and
+> 'marvell,force-mdi-order-reverse' for that purpose.
+>=20
+> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+> ---
+> v2: enforce mutually exclusive relationship of the two new properties in
+>     dt-schema.
+>=20
+>  .../bindings/net/marvell,aquantia.yaml           | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/net/marvell,aquantia.yaml =
+b/Documentation/devicetree/bindings/net/marvell,aquantia.yaml
+> index 9854fab4c4db0..03b0cff239f70 100644
+> --- a/Documentation/devicetree/bindings/net/marvell,aquantia.yaml
+> +++ b/Documentation/devicetree/bindings/net/marvell,aquantia.yaml
+> @@ -22,6 +22,12 @@ description: |
+> =20
+>  allOf:
+>    - $ref: ethernet-phy.yaml#
+> +  - if:
+> +      required:
+> +        - marvell,force-mdi-order-normal
+> +    then:
+> +      properties:
+> +        marvell,force-mdi-order-reverse: false
 
--- 
-Regards,
-Sudeep
+Ordinarily, when there are property related constraints in here, the
+allOf is moved after the property definitions, since it is odd to talk
+about rules for properties prior to defining them. If you resend, please
+move these down. Otherwise,
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+
+Thanks,
+Conor.
+
+> =20
+>  select:
+>    properties:
+> @@ -48,6 +54,16 @@ properties:
+>    firmware-name:
+>      description: specify the name of PHY firmware to load
+> =20
+> +  marvell,force-mdi-order-normal:
+> +    type: boolean
+> +    description:
+> +      force normal order of MDI pairs, overriding MDI_CFG bootstrap pin.
+> +
+> +  marvell,force-mdi-order-reverse:
+> +    type: boolean
+> +    description:
+> +      force reverse order of MDI pairs, overriding MDI_CFG bootstrap pin.
+> +
+>    nvmem-cells:
+>      description: phandle to the firmware nvmem cell
+>      maxItems: 1
+> --=20
+> 2.46.0
+
+--VC6WfCv/B70e6pcU
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZtCg2gAKCRB4tDGHoIJi
+0tnvAQCDBKHcbN/YG2e1cKXa0oPfS+icXiqepZZXx+QJBrrJGQD9EOsgRZ4KAYzH
+3PWvuEgEZuNBrh8pVJ3APVi1azlqsAA=
+=oi4j
+-----END PGP SIGNATURE-----
+
+--VC6WfCv/B70e6pcU--
 
