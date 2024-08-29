@@ -1,105 +1,128 @@
-Return-Path: <linux-kernel+bounces-306596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EFDB9640F8
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 12:09:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2847F9640FD
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 12:10:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E2F8FB2523B
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:09:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A01C0B22575
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:10:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E61F515E5C0;
-	Thu, 29 Aug 2024 10:09:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1C1F18E042;
+	Thu, 29 Aug 2024 10:10:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WWCODiJe"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="N80c+WHA"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8345518E02F
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 10:09:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9834718A6D4
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 10:10:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724926170; cv=none; b=d+QnOEDPccN95LG8P7E6pBTWoKPwtUjA8wW0mLGpCt+5UNHRB0bmOMwojRhDrWdykOQxIRA4tTl6ggchAO6jMsT3vSzrUhOY13D2OAN4fSpfcqVOek+FJ8BH+Ak6yJjJR6P7UXgCJaH23nPb28/GWf1b9hRLsK7x7M3SPb/1YNM=
+	t=1724926228; cv=none; b=JpVdMmaplu3H5g02X1OgsTTlF5AsmD1wZjosx6gVPXkwWzg++6eQ/FxJJzHiKpTbJMDtLfw6O9vK0aVZaafXa1rjQrXR/oivhZvf7pUm+ynSTVuUlL67CCHqacl1++26F+OdoUSoD8bWlyMbfmspoygKvbOmnVYHNEUwgnOZ2FY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724926170; c=relaxed/simple;
-	bh=92ByrN5d8Lg+NWMwH/cCUk3v7BuRdfpvo/q/AI3YNyM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DPeNrxREx4XKJMqbgvMaA04pZJ1/7PUlWFird6WitI6htnjIF+zxEdjOg/jG7TwNQ0bSudXU6IYb8PiAmBKR7u3IiOpsyWy79yBJB23Nrg3a5P7h36hN54BCCaC/sJdTICsJL1Q1XkLPntvbBD33QUjO7sbbG3vjmjQehOqSCtc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WWCODiJe; arc=none smtp.client-ip=209.85.208.171
+	s=arc-20240116; t=1724926228; c=relaxed/simple;
+	bh=Lt/9ND4lk2gsg2G4bm2hpuneDuZWchDQV3zw1+AFHoo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uX6RMtbMUkAscECiiVe1TDc5K9BHsZ93/Ve1i2krURmVCpyRQZz5IkmSQ5KPkfDZJ14XZNUMaBRqFJ1AkjEJGvnO72a8eHouslGVwY9mXaZADmcvpjYPV++zqGlz8r71SYmHEUlcQnnZ7/kR85zdKLxRFctsZ6v7L62YUufvi3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=N80c+WHA; arc=none smtp.client-ip=209.85.218.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2f4f24263acso7088881fa.0
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 03:09:28 -0700 (PDT)
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a83597ce5beso81141266b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 03:10:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724926167; x=1725530967; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=f7u53BKBtP5gVlCvhU9dT3HNJftitXcbCrItbMCuXjo=;
-        b=WWCODiJeUr2A9k7V1Im4ivCTA4Cve50pJxskiKfiQc5kqG7fLaxj1xYfELiqeWjNLF
-         45cs6Jr820gA8iDrGQhSbikfKievZKAvbNo2HCDH6+j1Jw/abyZmkNcxQFCWpCUEvFVX
-         7JVs78zVn/0UNGNWh9L3qOsO3fptKDFXyCJx/RU/3iP9snXmUNLXpPExRvK9qav7vLwz
-         q2xOL9WRTXwAj+sJzeseweM9zBpLfRCEn1rs0nARU/t1W0KIoP+9psdpemaJVuy0o3SZ
-         +xzh8lBZKRNCaOOA/z/zChuVLBHxuvuY1dvP+kEb/iWkuoHAkompg2MHYMNqk8eO/VYT
-         SjSQ==
+        d=linaro.org; s=google; t=1724926224; x=1725531024; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=x88YAxOWPM6Vm2Gaxr6swuFJGR/lRbnBdiJSpLORFsA=;
+        b=N80c+WHAPfZQua9L7jxqTPEQYmzuAn/Me3xpn/usPwy99sFXFU/IBtiNmtZV9OjVwi
+         NKJgUABSWjP/OQkfRiuoob1elcgffh3GEI8XohAKehZ0ErmKsbKwl1l2afVFruKVE/Sz
+         9gCTxO12KDcTIbTHEwNJ7zlfZHsVxU+hsJy7QJ8F7fsoSrcR+ikwbU/ZGYT3MzqtplfS
+         yflhLxdoPXgJA9/+OMmDSdA9ntdVPp+BIraeU3ybB8+qP9MHulXgIgv11dekIYssPt0F
+         2R3yq4up4X9dw1rS3QOSo5xVms+1r3o7qkopBZtfNdFmk8FfrMGNFUYJql1gx3XRCo2E
+         +snw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724926167; x=1725530967;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=f7u53BKBtP5gVlCvhU9dT3HNJftitXcbCrItbMCuXjo=;
-        b=QGeur0iUm8Xc/R8mTPxafENHpMECBKHgG7/kgswfXfwM3cGdEvc3juQZOn+iO7yZSy
-         YIsY5Olm2iOetZqCmSEj30NXSWiR0JeqfLPRzmuzXgWUZ93hLozaOwAUL2X0E6bqbAFJ
-         bo+m6gHMQTbg4sAufP2ryp4qLjW3MsPrm/WZE27TZQs7qtwPTznb+ZpaLle8y4n4bYOn
-         joUcA737DxBci++OCK7ZHSifh94bZELrg7O3InxZisMGd2tRV4Fp31dVkhcI5Jvo58j0
-         ZqUa6LBELHlQG/8jEz9Y/yb7XjcXnvcbzqoH2R9zloSYMgQ2M2zt+DkyRxw8kgt/Q88F
-         0htA==
-X-Forwarded-Encrypted: i=1; AJvYcCXrbcNQ4B8kdzkzJQsxW1JgFTm2RSrJ+f9LCcRf5foHEJs/4HBUyW+RNAwIehZTeftFPOOi3t53EKk+QhU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFL0wH1Xs0Js3oJsSBAmxTt0ARrkZbYkH88IYGoYLMzJG9V+LN
-	3HR3q8piWexeuyMQqAU5DieffqSdrT3gHcXbiX7eJJBhAi1BgDURWVURQzE3Wds=
-X-Google-Smtp-Source: AGHT+IGWt0QjEbulCmHcESGmd3m1Dusiu+1cC98QtVv2Lvh3qTNPkofKZb5d7J1AVPjx0jBydRHytQ==
-X-Received: by 2002:a2e:5119:0:b0:2f3:ee58:eaf with SMTP id 38308e7fff4ca-2f6106de016mr17131721fa.23.1724926165948;
-        Thu, 29 Aug 2024 03:09:25 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f615194f2fsm1365101fa.134.2024.08.29.03.09.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 03:09:25 -0700 (PDT)
-Date: Thu, 29 Aug 2024 13:09:23 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] regulator: qcom_spmi: Use of_property_read_bool()
-Message-ID: <6cqvluvuogkrx77x5q2neobxa4bu5tfxocdbdd6hlydqqqj2j4@opaxs554ehxs>
-References: <20240828130056.3481050-1-robh@kernel.org>
- <20240828130056.3481050-2-robh@kernel.org>
+        d=1e100.net; s=20230601; t=1724926224; x=1725531024;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=x88YAxOWPM6Vm2Gaxr6swuFJGR/lRbnBdiJSpLORFsA=;
+        b=o+eJI3Z8vftQL8/ROtzFg9BrfXMlxyd2SNhvtSZXg90FSRp5aWwi7HAQ/gwJjoLmra
+         rAOHOsDQfLi1NmrVQlFag1FXToIpAOmPTa0FyVtcLBwX3+yvx38ng1rbOX4BPABAOzmU
+         9N3j4QmGrIyzEBsT6jOekIutKwuGYfwtgy9owdFtb7dJxKhnH+4cC4V7Tsu4MPRCUTqE
+         nd0uMhkj3aR3Z9iWVi09yBQ6lKGn68IrHIFU99+0qb0IJWuLbvjVbYXvGgatzN7y3qVZ
+         28oNlon2Umx3yYoBQFherzQBKmIo+uD+F1f09n1N8AYSyxh0Wk9xU/8aMi70sUyTrUIU
+         ltdw==
+X-Forwarded-Encrypted: i=1; AJvYcCUEEHMf+NrHGimr7vZxz0NzEI4A1twdRS4j7b8Nxk9U2ne9mRs0BE0/Bp/cruPMyZuRYi8drw9+2Izvzbg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEt+yJmF4f7CSz9U3nyp2VzZGj2VR1ipBKgypU2Q9mDUJsexEy
+	rmPof5ZKz4aJ12q24Z5eyR8kroUfWC09dfjRCq003WMEIYq5qXmjCTY4WHUs298=
+X-Google-Smtp-Source: AGHT+IFNZz/FqMD/n7Lr2gtCtPCnz6hc+vHB01WkC69OIprExbTP7zO8xXE9q+kqD8YaMxA/hnBEXg==
+X-Received: by 2002:a17:907:9407:b0:a6f:5609:954f with SMTP id a640c23a62f3a-a898c41445bmr156461566b.12.1724926223712;
+        Thu, 29 Aug 2024 03:10:23 -0700 (PDT)
+Received: from [192.168.0.25] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8988feb32asm58908166b.23.2024.08.29.03.10.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 29 Aug 2024 03:10:23 -0700 (PDT)
+Message-ID: <c3ee4cd4-a4a6-421c-9114-fba5ecc365da@linaro.org>
+Date: Thu, 29 Aug 2024 11:10:22 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240828130056.3481050-2-robh@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 0/4] Enable shared SE support over I2C
+To: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>,
+ konrad.dybcio@linaro.org, andersson@kernel.org, andi.shyti@kernel.org,
+ linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
+Cc: quic_vdadhani@quicinc.com
+References: <20240829092418.2863659-1-quic_msavaliy@quicinc.com>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <20240829092418.2863659-1-quic_msavaliy@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 28, 2024 at 08:00:55AM GMT, Rob Herring (Arm) wrote:
-> Use of_property_read_bool() to read boolean properties rather than
-> of_find_property(). This is part of a larger effort to remove callers
-> of of_find_property() and similar functions. of_find_property() leaks
-> the DT property pointer which is a problem for dynamically allocated
-> nodes which may be freed.
+On 29/08/2024 10:24, Mukesh Kumar Savaliya wrote:
+> This Series adds support to share QUP based I2C SE between subsystems.
+> Each subsystem should have its own GPII which interacts between SE and
+> GSI DMA HW engine.
 > 
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> Subsystem must acquire Lock over the SE on GPII channel so that it
+> gets uninterrupted control till it unlocks the SE. It also makes sure
+> the commonly shared TLMM GPIOs are not touched which can impact other
+> subsystem or cause any interruption. Generally, GPIOs are being
+> unconfigured during suspend time.
+> 
+> GSI DMA engine is capable to perform requested transfer operations
+> from any of the SE in a seamless way and its transparent to the
+> subsystems. Make sure to enable “qcom,shared-se” flag only while
+> enabling this feature. I2C client should add in its respective parent
+> node.
+> 
 > ---
->  drivers/regulator/qcom_spmi-regulator.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
+> Mukesh Kumar Savaliya (4):
+>    dt-bindindgs: i2c: qcom,i2c-geni: Document shared flag
+>    dma: gpi: Add Lock and Unlock TRE support to access SE exclusively
+>    soc: qcom: geni-se: Export function geni_se_clks_off()
+>    i2c: i2c-qcom-geni: Enable i2c controller sharing between two
+>      subsystems
+> 
+>   .../bindings/i2c/qcom,i2c-geni-qcom.yaml      |  4 ++
+>   drivers/dma/qcom/gpi.c                        | 37 ++++++++++++++++++-
+>   drivers/i2c/busses/i2c-qcom-geni.c            | 29 +++++++++++----
+>   drivers/soc/qcom/qcom-geni-se.c               |  4 +-
+>   include/linux/dma/qcom-gpi-dma.h              |  6 +++
+>   include/linux/soc/qcom/geni-se.h              |  3 ++
+>   6 files changed, 74 insertions(+), 9 deletions(-)
 > 
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+In the cover letter please give an example of Serial Engine sharing.
 
--- 
-With best wishes
-Dmitry
+
 
