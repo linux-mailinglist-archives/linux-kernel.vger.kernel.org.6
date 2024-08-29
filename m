@@ -1,159 +1,204 @@
-Return-Path: <linux-kernel+bounces-306409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 860C5963EAD
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:33:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40ADF963EB0
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:34:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B81451C24357
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:33:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C465E1F263B2
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:34:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2790B18FC77;
-	Thu, 29 Aug 2024 08:31:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91FA818C026;
+	Thu, 29 Aug 2024 08:34:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="DmObrtII"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fgB+Lh0w"
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CDEC18F2F1
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 08:30:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40C2B15AD9E
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 08:34:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724920262; cv=none; b=ltWwdHSF3wEq6LN2jVyOXEuT5t+lkjas+yBcFW7Rs93R5jd3w1hnautzm+By+XCsbP5S/JyyMPPm2tp4ejwiGVMBwlwmg7dTmxM3K/LNJcodbMjkvM8UkN5t632+qdfq6CfAkOldWWUcaNI6UYq165xRLxX2YR0HUDNVmKSzC5Q=
+	t=1724920445; cv=none; b=SvKadM2idac2PW7YHmF1/+ovJPtFqgMcs3JIQLvAMiSROFUxh/QdeFad93ZH7Lq8MdLDDjVrSma5dRI8ttAlRQCWNcEe+kSWdOrwZe+MhfDTDSO1zrGksXZFKNhNDKWQdOJNxcmXv+UmMNmBzfMQOEkWgzIoDZQHDxdvZEG3NpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724920262; c=relaxed/simple;
-	bh=Ga5XTB33oVuVAsb+XJ/AOaHLIiGbefqAQCifoS2rQFo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YpcsutcOsll25kgtzRX2+cx5CVHk5b4juWKhY5L1K1UAroJJWu4EL7je8jKEx+DWT2T07kfni6QHFqzwkNBkl6EgaSsfwS8PhiQYhPrRMr8G4V2QRKNzziatRQlZita3G+1FVXeE8beRB2QLC6AZzMkMqJ7cFSTMInIH1oRHKy0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=DmObrtII; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-371afae614aso236080f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 01:30:59 -0700 (PDT)
+	s=arc-20240116; t=1724920445; c=relaxed/simple;
+	bh=xnO6Vk/kr83JqD3+FgZr+ybVhaKA2iYaHmoGntXHCUI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VIe3o/3zcePhyKvU/5hTtH11azNnPH3Qvle80Wl8wX6Ctx4ztQsiUir3dRdyh0fi7ItrMEx/gNFI6M82VNqON7Aq8ldFCEpW0IsUe6e1i3k3Gsit+iL//0JRBzb7QcOUBVPdupydPn3r5OZFUcb6Zujvh0SR41Hlv43maAEpDUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fgB+Lh0w; arc=none smtp.client-ip=209.85.128.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-6b44dd520ceso4180237b3.0
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 01:34:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1724920258; x=1725525058; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=mhnlNgvuSYKooCUA3K3P7Rvv1F/ipLIuFC4LArX03WU=;
-        b=DmObrtIIa+JA+/TmFBGnFhEdaNkDj2b6d9lVqBEEOv4eMqze6ZtF+YQFfsakr9Q0K5
-         rJWh0MWisLShoQOWAtSxLS9q9fgmFgi3mR/KsmvVd2mPYHasZFyP1TR6dA2PPN2lfz1y
-         xPOwC4RRgsd47YG4AylP7Dgdyuk/0XN4UdDOl39sK9N11mBacTkyk9aeQeuLmkPhxBtp
-         dyZCok1u9sWSLMmz6jEKLDhyLjSEYkjGUy4FOpRco1wbADk4evSJ3md9AHnVdcDVwRn4
-         o240asg9iMAitTeFEcWcm9AhT3hDMVcVXMJfLuDKmyF2nLgoKm0GJyWkYE9OKY94atG/
-         4UxQ==
+        d=gmail.com; s=20230601; t=1724920442; x=1725525242; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=nZH8C/6+CJkUjQ49MDGAsBNiI4/0rHnzfSpqasFYyAQ=;
+        b=fgB+Lh0wZxyTq7CQJjJKH2ef1eDI+7bc1DEBAfL6qX5OlM00JUVg4g5c98AmkhuZWM
+         Y2imeY6VFJmu06XkdRTbobKbVJvsBzyP9oxzC+vceO/oIapuCxp5PBTJdXWC+XDuhNSp
+         Cot5T2oxdm7B011pOml4BDyIr95TkSn9RrjezQNEScruLEswEU0//BKVd6+j5X19RPq1
+         ZCZQWZjNH1+V6ox3/TvvLFM9kda8V+LFsmp/N3w5+XH/1HtNacz/AZqTWABRVfNHbQ8q
+         4V8/nJiIy1KFMrJJlRfURxaAki9pkryrddyjmXyQjixk7mFxyy6C3XIAYdKY2WM5NsOu
+         tFvw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724920258; x=1725525058;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mhnlNgvuSYKooCUA3K3P7Rvv1F/ipLIuFC4LArX03WU=;
-        b=f7H2K9FUWvsDxh0EtdmuieJTyxHOGbNqntD/+Azc2M3J4Q0ULHcYq+oV6HdyvpPPy1
-         vhly9r+Tjh6Fxrf2DMuWz8x+1zUxU3GhiQdHqhCMNbpT/bi0lNguQmHVz0HMevaNt6bK
-         OgG/OC7D1SZgMEUMKuihHfriLakDO3hwyxy6hMpBmAQURoZHbmIlBBH+KGqghCX26GJR
-         ZRyPfiXCXq2CN6MX8Hrzijq96SYQcVLX3+FQftmCrJTdSrP0c5j68/FT/s0NYcC/VWJG
-         joJlu18Rw6sZkmzgtO6Cx+a0BrvTHBlE0DPzluwk/8B62Ro63xJRtNaUwvrtE4gpoD+L
-         1Qjg==
-X-Forwarded-Encrypted: i=1; AJvYcCXCaMoUO6Wi35Iu86qks25gNdKUepCnkFvPt9CVId/zITAeNKYYFkkFc7Xtp0rcBRniD9CB3j/jrusEaHY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YygMVp55szthlntVtHkK2IjejBNCbGGy3bcU/Li5bjh0eRMyUoi
-	msOXPQ2p9YqXGMZWJ5kkvtlKLnk4Ob3uC6+lk/5sU4nEWxGGk+y+I8oFHjqm7YE=
-X-Google-Smtp-Source: AGHT+IH7DF9ylXdsuqLih7sACGDNUKmPe9OYfvQtJgi5uGMLK6sqxI9YIz1ijmJ7+1Xtw2Y0sxRMNg==
-X-Received: by 2002:adf:ecd0:0:b0:371:8a49:f206 with SMTP id ffacd0b85a97d-3749b54ece3mr1331552f8f.30.1724920258302;
-        Thu, 29 Aug 2024 01:30:58 -0700 (PDT)
-Received: from localhost (109-81-82-19.rct.o2.cz. [109.81.82.19])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3749eeabbc1sm802650f8f.63.2024.08.29.01.30.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 01:30:57 -0700 (PDT)
-Date: Thu, 29 Aug 2024 10:30:56 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: Charlie Jenkins <charlie@rivosinc.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Richard Henderson <richard.henderson@linaro.org>,
-	Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-	Matt Turner <mattst88@gmail.com>, Vineet Gupta <vgupta@kernel.org>,
-	Russell King <linux@armlinux.org.uk>, Guo Ren <guoren@kernel.org>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	WANG Xuerui <kernel@xen0n.name>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-	Helge Deller <deller@gmx.de>, Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Yoshinori Sato <ysato@users.sourceforge.jp>,
-	Rich Felker <dalias@libc.org>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	"David S. Miller" <davem@davemloft.net>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Muchun Song <muchun.song@linux.dev>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Shuah Khan <shuah@kernel.org>, linux-arch@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org,
-	linux-snps-arc@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org,
-	loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
-	linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-	sparclinux@vger.kernel.org, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH RFC v2 0/4] mm: Introduce MAP_BELOW_HINT
-Message-ID: <ZtAxwJFH_hAh1BPG@tiehlicka>
-References: <20240829-patches-below_hint_mmap-v2-0-638a28d9eae0@rivosinc.com>
+        d=1e100.net; s=20230601; t=1724920442; x=1725525242;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nZH8C/6+CJkUjQ49MDGAsBNiI4/0rHnzfSpqasFYyAQ=;
+        b=Oc2gu9G9nRIAujA0H0ROAp2pS9Brlk+D9wOqv2QMq8GasxM0tCTSMvCJGPSI0WUYAd
+         M2V1XxClH4M3ZSpqjgGtEPvDEU8ntNzTSWibC1Q/UaLCf3wvzIdhNwHEnsKjZPth8Svu
+         pO90prK6Dhh4VjBZpqOj3JqQ2Xs6Oxmy26rqo8MDjGtghK374mkjFydXS3m7hG8z+JOb
+         xJzKwrg5cA2Fpejl+WdzhLVGX0X2Dl/7xAzRtwLrEmRSu9cHCgzANw/FRMoebirzbTks
+         XM10vMKwl+CLnSyP1maYxRaIGoPoyFvZCkZKGZabycXKT1pVKqXyNVduSA4mTE7Jj3jt
+         m+YA==
+X-Forwarded-Encrypted: i=1; AJvYcCUzXSaiYo+kq0PpMk9lnqmWEjmofley+FeEpDCqYCvjAr5fL9qZMl8LxYa+3rtunI/yQEN3Hn5pYZHm1VQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9t7QdjJ+U/iUP8kTliQ24qMHI0Q+EShH2s3gm9gDKqe5kstsP
+	rwBjkeylX7HQfkeyKA4Rwd+uq+mzGkGfMxWf6SAHWgbGAScOcRW5mccOKU8aC7mMEfstjY8HEWh
+	tZH4Q8N+cTW9bEKUZ2HpeDG/EXr0=
+X-Google-Smtp-Source: AGHT+IFIIJBgW3DmgTVJDmDJspPS4/uQxe5thXeBxoW8qdyKIaXW/D3gCaAHqkLJr6InbrRLPMRAFDNFKsLa8HWjQDk=
+X-Received: by 2002:a05:690c:a96:b0:664:5957:f7a with SMTP id
+ 00721157ae682-6d27620cb1fmr23909667b3.15.1724920442069; Thu, 29 Aug 2024
+ 01:34:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240829-patches-below_hint_mmap-v2-0-638a28d9eae0@rivosinc.com>
+References: <c844faa0-343a-46f4-a54f-0fd65f4d4679@leemhuis.info>
+ <BN9PR11MB5276CA2E1922D9FD6B9F2ECF8C962@BN9PR11MB5276.namprd11.prod.outlook.com>
+ <CAOcK=CN3-v=dgMC9XTbh-h0zaD01uatOZKjvSF7ocofTCOGp7Q@mail.gmail.com>
+ <CAOcK=CPi1TokgySF77X+zuQ10kxfsfCXekYVanPhF51+Ow1XRg@mail.gmail.com> <CAOcK=CM4Poawy2AN3f6C2ooPdoT=dg4J9Bg1Fu=gsFjvkrBpQw@mail.gmail.com>
+In-Reply-To: <CAOcK=CM4Poawy2AN3f6C2ooPdoT=dg4J9Bg1Fu=gsFjvkrBpQw@mail.gmail.com>
+From: Markus Rathgeb <maggu2810@gmail.com>
+Date: Thu, 29 Aug 2024 10:33:50 +0200
+Message-ID: <CAOcK=COEd0njBPGhJ8idaLbaqvATr_zSB1O9dyzwi+fbU8GhqA@mail.gmail.com>
+Subject: Re: [regression] usb and thunderbould are misbehaving or broken due
+ to iommu/vt-d change
+To: "Tian, Kevin" <kevin.tian@intel.com>
+Cc: Linux regressions mailing list <regressions@lists.linux.dev>, Lu Baolu <baolu.lu@linux.intel.com>, 
+	Will Deacon <will@kernel.org>, David Woodhouse <dwmw2@infradead.org>, Joerg Roedel <joro@8bytes.org>, 
+	"iommu@lists.linux.dev" <iommu@lists.linux.dev>, LKML <linux-kernel@vger.kernel.org>, 
+	Jacob Pan <jacob.jun.pan@linux.intel.com>, Adam Williamson <awilliam@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu 29-08-24 00:15:57, Charlie Jenkins wrote:
-> Some applications rely on placing data in free bits addresses allocated
-> by mmap. Various architectures (eg. x86, arm64, powerpc) restrict the
-> address returned by mmap to be less than the 48-bit address space,
-> unless the hint address uses more than 47 bits (the 48th bit is reserved
-> for the kernel address space).
-> 
-> The riscv architecture needs a way to similarly restrict the virtual
-> address space. On the riscv port of OpenJDK an error is thrown if
-> attempted to run on the 57-bit address space, called sv57 [1].  golang
-> has a comment that sv57 support is not complete, but there are some
-> workarounds to get it to mostly work [2].
-> 
-> These applications work on x86 because x86 does an implicit 47-bit
-> restriction of mmap() address that contain a hint address that is less
-> than 48 bits.
-> 
-> Instead of implicitly restricting the address space on riscv (or any
-> current/future architecture), a flag would allow users to opt-in to this
-> behavior rather than opt-out as is done on other architectures. This is
-> desirable because it is a small class of applications that do pointer
-> masking.
+With respect to my previous comment I tested to fix it myself (I am
+not a kernel hacker and do not know anything about iommu etc.).
 
-IIRC this has been discussed at length when 5-level page tables support
-has been proposed for x86. Sorry I do not have a link handy but lore
-should help you. Linus was not really convinced and in the end vetoed it
-and prefer that those few applications that benefit from greater address
-space would do that explicitly than other way around.
+After applying the following change to the v6.11-rc5 it seems to fix my problem.
+I can connect, disconnect and connect the dock and USB is working and
+no DMAR error.
+
+
+
+
+From 5f621c079f0f8bce9895ae05a9cd81b001a58089 Mon Sep 17 00:00:00 2001
+From: Markus Rathgeb <maggu2810@gmail.com>
+Date: Thu, 29 Aug 2024 09:37:17 +0200
+Subject: [PATCH] fix: iommu/vt-d: Add helper to flush caches for context
+ change
+
+Signed-off-by: Markus Rathgeb <maggu2810@gmail.com>
+---
+ drivers/iommu/intel/iommu.c | 7 +++++--
+ drivers/iommu/intel/iommu.h | 3 ++-
+ drivers/iommu/intel/pasid.c | 4 ++--
+ 3 files changed, 9 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
+index 9ff8b83c19a3..e92e06e604b2 100644
+--- a/drivers/iommu/intel/iommu.c
++++ b/drivers/iommu/intel/iommu.c
+@@ -1944,6 +1944,7 @@ static void domain_context_clear_one(struct
+device_domain_info *info, u8 bus, u8
+ {
+     struct intel_iommu *iommu = info->iommu;
+     struct context_entry *context;
++    u16 did_old;
+
+     spin_lock(&iommu->lock);
+     context = iommu_context_addr(iommu, bus, devfn, 0);
+@@ -1952,10 +1953,12 @@ static void domain_context_clear_one(struct
+device_domain_info *info, u8 bus, u8
+         return;
+     }
+
++    did_old = context_domain_id(context);
++
+     context_clear_entry(context);
+     __iommu_flush_cache(iommu, context, sizeof(*context));
+     spin_unlock(&iommu->lock);
+-    intel_context_flush_present(info, context, true);
++    intel_context_flush_present(info, context, did_old, true);
+ }
+
+ static int domain_setup_first_level(struct intel_iommu *iommu,
+@@ -4269,7 +4272,7 @@ static int context_flip_pri(struct
+device_domain_info *info, bool enable)
+
+     if (!ecap_coherent(iommu->ecap))
+         clflush_cache_range(context, sizeof(*context));
+-    intel_context_flush_present(info, context, true);
++    intel_context_flush_present(info, context,
+context_domain_id(context), true);
+     spin_unlock(&iommu->lock);
+
+     return 0;
+diff --git a/drivers/iommu/intel/iommu.h b/drivers/iommu/intel/iommu.h
+index b67c14da1240..0a4ce98faa60 100644
+--- a/drivers/iommu/intel/iommu.h
++++ b/drivers/iommu/intel/iommu.h
+@@ -988,7 +988,7 @@ static inline int context_domain_id(struct context_entry *c)
+     return((c->hi >> 8) & 0xffff);
+ }
+
+-static inline void context_clear_entry(struct context_entry *context)
++static inline void     context_clear_entry(struct context_entry *context)
+ {
+     context->lo = 0;
+     context->hi = 0;
+@@ -1154,6 +1154,7 @@ void cache_tag_flush_range_np(struct dmar_domain
+*domain, unsigned long start,
+
+ void intel_context_flush_present(struct device_domain_info *info,
+                  struct context_entry *context,
++                 u16 did,
+                  bool affect_domains);
+
+ #ifdef CONFIG_INTEL_IOMMU_SVM
+diff --git a/drivers/iommu/intel/pasid.c b/drivers/iommu/intel/pasid.c
+index 5792c817cefa..cb4bbb45ac2a 100644
+--- a/drivers/iommu/intel/pasid.c
++++ b/drivers/iommu/intel/pasid.c
+@@ -694,7 +694,7 @@ static void device_pasid_table_teardown(struct
+device *dev, u8 bus, u8 devfn)
+     context_clear_entry(context);
+     __iommu_flush_cache(iommu, context, sizeof(*context));
+     spin_unlock(&iommu->lock);
+-    intel_context_flush_present(info, context, false);
++    intel_context_flush_present(info, context,
+context_domain_id(context), false);
+ }
+
+ static int pci_pasid_table_teardown(struct pci_dev *pdev, u16 alias,
+void *data)
+@@ -885,10 +885,10 @@ static void __context_flush_dev_iotlb(struct
+device_domain_info *info)
+  */
+ void intel_context_flush_present(struct device_domain_info *info,
+                  struct context_entry *context,
++                 u16 did,
+                  bool flush_domains)
+ {
+     struct intel_iommu *iommu = info->iommu;
+-    u16 did = context_domain_id(context);
+     struct pasid_entry *pte;
+     int i;
 
 -- 
-Michal Hocko
-SUSE Labs
+2.46.0
 
