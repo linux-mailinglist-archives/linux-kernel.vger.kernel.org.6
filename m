@@ -1,126 +1,112 @@
-Return-Path: <linux-kernel+bounces-306592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E61F9640ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 12:08:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E06399640F1
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 12:08:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EEC09283727
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:08:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7AF22B249C5
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:08:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7187D18E028;
-	Thu, 29 Aug 2024 10:07:58 +0000 (UTC)
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F3C518E046;
+	Thu, 29 Aug 2024 10:08:09 +0000 (UTC)
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E33DD4A00;
-	Thu, 29 Aug 2024 10:07:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4091E18CC1E;
+	Thu, 29 Aug 2024 10:08:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724926078; cv=none; b=RaMplrminwsqtRyH0m2n34yQBPZ0fp4J0a+v/tawxOtXlQz2SrzwlQHam0phV2F7Bg4pNXNOavZPNTMHGCQ47vUDoyllV8/tregoBAH9ttKHF//jlRHW7Q8hXqxDnuzKghGuAI+18vOs8YD6QVS+lH73RkWhz26MuQaoRKHeZZk=
+	t=1724926088; cv=none; b=h/1jdFjklUW6ePX7XxXgA3DISDuAp+ZVcYgThxidb4WIrL9OyM76I+5NlGAKYgo9muShiFU+jLMC32Hc8ts74pjsioY/SAKzF6P8ZTsNzEN2LXEdkmcEGfCD82u+qqyA166YHrLkz/FbxT1VHuJu578ZwLbF8zDohCr9p/eGZ7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724926078; c=relaxed/simple;
-	bh=34SMnDpz2sOkKhVTCiD5hAHJS3njg+Xu9HXU10mjVNQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=npj89V/+VGGqR2n+/z4swg8Y4ARzfvRHHLmEj8BWL/icL+h/fZSoqqkcAyW7TdRVqxKcxUcjTMujnF8aJrDtY0yfXox496blaYcv7L4XjOPMn6tCRKPS6d8a/fIpzb/ZNgSPbmZtZTmCEu5xOq2DaSdG53ZB9kW6NJq/KVIVQUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	s=arc-20240116; t=1724926088; c=relaxed/simple;
+	bh=v7npGnWVI06jQB/GP+WqmHASzHtfMK63ymHNNGaUS9Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oFJqTEfxBWYlTw7dIEhoRPeMpGBO1HZ+BjEwCAKVXLrCy/So5bJet+9QX2oa+ezOJf09CouJyA1WiHvjCUWaIQPZHbQF07Pooq/aqhV+JgOzBwNAmB6QVlPXh7BqRhmYR7YO483tm/fA72Fmj0yHUWEBwv7JymzgJgSLxL5j/Sg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-6b4432b541aso4871547b3.1;
-        Thu, 29 Aug 2024 03:07:55 -0700 (PDT)
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5334adf7249so645506e87.3;
+        Thu, 29 Aug 2024 03:08:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724926074; x=1725530874;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=agM2uieBOGDHR7oA4CvBCTPuHqTNsiUN2AfPhgc69q4=;
-        b=jmB8nnmKooN9CaFD67ul6wZPap/iNPRd270zqJIpcaqFw36LtftVHbIilm4oLO0Wdp
-         cXckJP7pM5d3tN5Mai/927hvQXeAHlP24/Qj8oIuaUXo9EvgU40c+L93ReAhW9dNM0vF
-         38zWan2/k/5EgP3YbrN6AeD4vL1nsTHbtb+4E3XyI34YK0dLWIQ4EtasQBUb5u4vPO1z
-         urkLOzDlJ7nhK5y8Pt/N1EHMVoM5J1I/OIi1vg2BrxzVcU+DZUbRA04DNxPB4FpVr545
-         5uFWvEUa7TLX539dQpNCDPXjqdlB+CG2eeHYr9Kc/VDLtDtQahUI2u8ydBaip29Cy/Fd
-         iZ4g==
-X-Forwarded-Encrypted: i=1; AJvYcCUSuIYQ0LUfKVDnf+3VEgC+6NhkwTTS1s25wNpeCnW/FeXnncOxv7tmMvv99EW2+gBvAPkodKHJeUU6cXyE@vger.kernel.org, AJvYcCUnGRLwtF1e2iyseCbGcuNnohZtYOSM0UUvTHKIAOI/xlPVxdgGhqHgtpaE3DQLrnZ4RWb7TRsEdDYt@vger.kernel.org, AJvYcCV2Xn+wdECbPTB8RZhUlpop8wpRxyT52DRgxoMQxvualSqD36+bp9LoW/4sj80cchYxYqaE1LXXsIUE/n9yLyo=@vger.kernel.org, AJvYcCW4r0uT1/szO8XgzKf+FyUQG0jdIBV25Sku7yy9OkO4JGg/URNlgnKBM+dJKEqnIrRMjzKvFqBO3HfwmUfWxzs5EEc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9/RPticklKb67yqT9TJRAdqU6pRmOyEGkyjzF0ozJIeDmHo1Q
-	KwylGFdMPFzrJCj6mE/Fi9zK2AhclCLXG2II+M9w3FwqxX55jOhBWIZZOduk
-X-Google-Smtp-Source: AGHT+IGpGMFWeVqqx+ZaqEkEnBkoAa8xh12uYIUlSBhuIZoCsK6tepIXrfrEQHnONZNLDe2HO5Qc0Q==
-X-Received: by 2002:a05:690c:6509:b0:6b2:1b65:4c0d with SMTP id 00721157ae682-6d276404956mr24390297b3.10.1724926074375;
-        Thu, 29 Aug 2024 03:07:54 -0700 (PDT)
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com. [209.85.128.170])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6d2d39c72c1sm1783607b3.24.2024.08.29.03.07.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 29 Aug 2024 03:07:53 -0700 (PDT)
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6b4432b541aso4871407b3.1;
-        Thu, 29 Aug 2024 03:07:53 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCULIosyf1XranRO/NecnPwrnDNAFIb+04W0nwTu8BwqNJ5TfbE+8phQ08Iprn5rAcycZa8cY14X42VTl0EJlofXEvY=@vger.kernel.org, AJvYcCV7j+ma8k4eaAEJZ/Tsp0Gz1xyX0eJdQ2qDP2r0MqsI8NE/6rxpZ83RrEcA7bGHxNxE6iQ0PEFsaY5HL21Xyvg=@vger.kernel.org, AJvYcCVf+99xgukgvRBuPdWO5ZwW/sDe6BGLonWF6uNt/42/6/c4v7ZdAzi3qgXF7NvVxY5QvQ4qVWSJE+zC@vger.kernel.org, AJvYcCW8U1XxxS3vPkPaqiseGmk+m3t31Mk9L/8J0l+ludtmOWpIkTJAyXy2XbSnWYBPdBqtJK73yf1AcKMF6ttQ@vger.kernel.org
-X-Received: by 2002:a05:690c:10c:b0:6c1:4068:cd45 with SMTP id
- 00721157ae682-6d27804aeb9mr20404287b3.38.1724926073635; Thu, 29 Aug 2024
- 03:07:53 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724926085; x=1725530885;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=68VfpIe/gY3b5Zsqxl5bIsvzSythZF52J8UjEnejXGE=;
+        b=XCjImMkft1QWJvHeR+XzkO47uOooNgeVvZXJrZncHO+3wurLG/Mp/itLAGg3tbc5Gi
+         ppqThxJRUoUR3FevnIgew26tSmQweyFBCnkCnnbGHTwaB4a0rhnN4Fj/QrX88anXYd34
+         y/Os9loT5b6PLTBu2wgrOpKBn5CzHI6It3vAwCXBH7qSp6hINn5ewPIQhZE0AkwIuZzF
+         QlZstIOUcFX5kanIRZrFwYtqbG30SdkRbzuWJ9l4cRlmdxRLfGZu7LHy2Ad3FrlK4vvO
+         YwNym/Iy8VeM4WEGXCqzZi0fEmydqM220GuFXcNjaiSA/T2l4IuFg1K8TQL8DvnCynKh
+         4/uA==
+X-Forwarded-Encrypted: i=1; AJvYcCUobM+cTW6kP56gbxZQWGYOgnvzCK0Mj3Ryr4hGoGZMnYiPrUvru7OeeFqdZ88bNTUe3TTEWih5@vger.kernel.org, AJvYcCUv3zcQBPDpy8b73zXUi7ByDTOZVgVwyZaoLQntjadPcAydm0Zg+RncDOv6PsE8Lw5uE61wR5hHX370jOnEts2m@vger.kernel.org, AJvYcCWWvIFXh31M4xE1sL2cQjBwUg/c40+zjEjkbFSOxFwoYDABTjw8zkXjh9ueH3neAjIznDaYQ+hDkSeptjn2z2KE@vger.kernel.org, AJvYcCXdaea2AwDn06d39g+CK60AjUClll0WF3CSDDbRe4TwsXtm92aLP98e600c2ws9e5U3pnGnDAJBEQLCAcc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz779Lk9kpY/UGZUFh/dUa7yPoqYXzkwr4jWo5+d/6c/wqZVor8
+	lINScQZpb0Uu2nsbKi2Di5E0zOUMvZuYPEl6hQ0ZNeLNxMYv3REh3wvYKA==
+X-Google-Smtp-Source: AGHT+IFmz+YxnGXgxNh++Tsg0uingdtxTTovmvly65eI0+SFc9ZOa//xepAe3YbevHsB4xnK70BHgQ==
+X-Received: by 2002:a05:6512:10d6:b0:52c:90b6:170f with SMTP id 2adb3069b0e04-5353e56eab0mr1847296e87.29.1724926084638;
+        Thu, 29 Aug 2024 03:08:04 -0700 (PDT)
+Received: from gmail.com (fwdproxy-lla-113.fbsv.net. [2a03:2880:30ff:71::face:b00c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a89891d6dc3sm58031766b.156.2024.08.29.03.08.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Aug 2024 03:08:04 -0700 (PDT)
+Date: Thu, 29 Aug 2024 03:08:01 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: fw@strlen.de, davem@davemloft.net, edumazet@google.com,
+	pabeni@redhat.com, Pablo Neira Ayuso <pablo@netfilter.org>,
+	Jozsef Kadlecsik <kadlec@netfilter.org>,
+	David Ahern <dsahern@kernel.org>, Shuah Khan <shuah@kernel.org>,
+	rbc@meta.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	netfilter-devel@vger.kernel.org,
+	"open list:NETFILTER" <coreteam@netfilter.org>,
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>
+Subject: Re: [PATCH nf-next v3 1/2] netfilter: Make IP_NF_IPTABLES_LEGACY
+ selectable
+Message-ID: <ZtBIgekUyptmCqRa@gmail.com>
+References: <20240827145242.3094777-1-leitao@debian.org>
+ <20240827145242.3094777-2-leitao@debian.org>
+ <20240828074240.2abaa74c@kernel.org>
+ <Zs88pbEadxLWLLbn@gmail.com>
+ <20240828114123.3c85a9a5@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240806210623.183842-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240806210623.183842-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20240806210623.183842-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 29 Aug 2024 12:07:41 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUW8FjgNb9J4hsfZOk3EbXMmihemm2BkO4pLAaZ-QGNiw@mail.gmail.com>
-Message-ID: <CAMuHMdUW8FjgNb9J4hsfZOk3EbXMmihemm2BkO4pLAaZ-QGNiw@mail.gmail.com>
-Subject: Re: [PATCH v4 1/2] dt-bindings: watchdog: renesas,wdt: Document
- RZ/V2H(P) SoC
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck <linux@roeck-us.net>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Magnus Damm <magnus.damm@gmail.com>, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-watchdog@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
-	Conor Dooley <conor.dooley@microchip.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240828114123.3c85a9a5@kernel.org>
 
-Hi Prabhakar,
+Hello Jakub,
 
-Thanks for your patch!
+On Wed, Aug 28, 2024 at 11:41:23AM -0700, Jakub Kicinski wrote:
+> On Wed, 28 Aug 2024 08:05:09 -0700 Breno Leitao wrote:
+> > On Wed, Aug 28, 2024 at 07:42:40AM -0700, Jakub Kicinski wrote:
+> > > On Tue, 27 Aug 2024 07:52:40 -0700 Breno Leitao wrote:  
+> > > > +++ b/tools/testing/selftests/net/config  
+> > > 
+> > > You gotta check all the configs, net is now fine, but bpf still breaks.
+> > > There may be more configs we don't use in CI.  
+> > 
+> > Sure, how can I find which configs I should care about?
+> 
+> There are various configs in the tree. Grep for the configs you convert
+> from select to depends on, they will all need updating.
 
-On Tue, Aug 6, 2024 at 11:06=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.c=
-om> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Add support for the Watchdog Timer (WDT) hardware found in the Renesas
-> RZ/V2H(P) SoC to the `renesas,wdt` device tree bindings. The RZ/V2H(P)
-> SoC features a WDT that is compatible with existing Renesas watchdog
-> drivers.
+I am looking at all files that depend on these Kconfig options, and
+there are a lot of tests.
 
-Your patch "watchdog: Add Watchdog Timer driver for RZ/V2H(P)"
-contradicts the last sentence, so please drop the latter.
+Thinking more about the problem, it doesn't seem to be a good idea to
+change dependency from all NF modules to NF_IPTABLES_LEGACY. In other
+words, the `s/selects/depends on/` is the part that is causing all this
+hassle, and it seems unnecessary.
 
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+That said, I would suggest we do not change the dependency, and keep the
+"select NF_IPTABLES_LEGACY", and keep NF_IPTABLES_LEGACY user selectable.
 
-> --- a/Documentation/devicetree/bindings/watchdog/renesas,wdt.yaml
-> +++ b/Documentation/devicetree/bindings/watchdog/renesas,wdt.yaml
-
-With the above fixed:
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+This will make the patch safer, while fixing the problem.
 
