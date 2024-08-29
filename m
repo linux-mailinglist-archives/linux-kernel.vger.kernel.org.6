@@ -1,95 +1,199 @@
-Return-Path: <linux-kernel+bounces-307555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26529964F01
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 21:35:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9875E964F05
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 21:35:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1A9D2820B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 19:35:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FD8A281DDC
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 19:35:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 506FE1B8E93;
-	Thu, 29 Aug 2024 19:35:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gmqA0UN9"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C3DB1B9B40;
+	Thu, 29 Aug 2024 19:35:54 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C9871B6527
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 19:34:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 606BC1AE046
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 19:35:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724960101; cv=none; b=ZGB2q9HBVIVwj8aI86eyfJgpHVWe1KfUk7FH4FzULJqchy7UiuiofIQVY9sPhEZ4yc6QG9KYHlJa0r9Z0oGjf0w+V7LPtm8r0GQgjA+wyuj1emBzTnrMmcPMNKzWfYkSpUlmsfke8/z2jFRvVjf+6yVsyLdIzUrkI2O1nmPYcIo=
+	t=1724960153; cv=none; b=Od3BOLe4YS22oM4p4WxUjgChz1Onx7Ja4Y69RPNHnc7rVCtkQprFBgSgxbxxpB65uktUZOC5zxPEu7jA/D65lV4BEfWJzsASrN/cK/tan8DnlyC6akGbqGcnhx+17x+EZIki5h0S7ZZRXYYD/XL/UljUC1qLRCDl8tHWnOlDVXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724960101; c=relaxed/simple;
-	bh=RIc3uiEi5hFUHQ+W+Ywrw8vY95ZuV8nWSKks7hk1ptA=;
+	s=arc-20240116; t=1724960153; c=relaxed/simple;
+	bh=DKOoPQzVVaJtEe1bbHlHfP2Zo4nE/kjdZiCkf5ZdWEQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Si5Jg9yQ/i8K2NpspoOvuHdM4kSsAWVTXuf2GAWnJzZGiSUv1X0KaC9kLSkrePBEgjq376a+4N7s+S2OeWkF6QwmSh9COB81B3l18EWd7uGGqmq1ym3fpm+hVldcozgGQa+duI/330ip+/9DWwlu2fyWEHnHB25IB00CQeAEMXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gmqA0UN9; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4280bca3960so9102765e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 12:34:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724960098; x=1725564898; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ul9VUTXGL81P74c3MJMKeDU2A/cBzh0fq7mXGOHoEnI=;
-        b=gmqA0UN9zkLhmy9+B6w9Y8hmJKzsvE7NPr2250rs0l1X7qZy+fo1lerYFj9blaWaUM
-         dVLQu/WGOFsLyFEw0bS1u1pejSe+Bjorlni07abG4Psv2HAHgKpDx0utW+az1B7cOaWx
-         8z2NBJgjpBSW4QAgZ7wnD/nn7q/LelOeb4sodFxVWbmXkagWO+jA4R39MiUXy8KEkBix
-         HTu9tZURUEdav0A9ebkP4kJuw9K8c+ILmisI2PVFxY8rN4yjKS9fJAdY7VrcRUrzPSUY
-         AUQxn/5CLUC/z+0YPcwmL0kglxL7MTcuqIz54sTYNtBa/oYB+RuKfR1IsLDPFmZpunRM
-         fHZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724960098; x=1725564898;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ul9VUTXGL81P74c3MJMKeDU2A/cBzh0fq7mXGOHoEnI=;
-        b=ObdRDnihH60m1APagiQANAs1SAGbnnVl7+Edctx4kCtU6+qmUASJy9/554hjtwVmZn
-         upDkL+wCiHNNjxUp5QUcBMS4Q5SPtY47tP8xwV6SuXtH6x9qTf7SRqegExQGPkkp7+al
-         I2BME2eulY/PlBm4zGjOV7mL22fecnwJMKMMeHuuqCpL4qmpAAuS8y0tHbuKq1UDNb3G
-         yRohFvwjkX8TKECy+yAlHK4rdVowPKlqTv0HHJODCPmoxiguOjsh9lnV36nxPZQqFnkN
-         sq0kO8TE+J1q+TiLKiM2I23yUDb9AsRccmlZQo2vjLxyOhQzYi4GJ9sBuQQpaOcymw+W
-         YuVw==
-X-Forwarded-Encrypted: i=1; AJvYcCWSmo3iS5Uv7y/1Oqx6Nkax7Gv2Swc6uvN5TdN2feM76fnUwft75369t4nRuGKxEGDCmnxWRa9DatQaz9U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyoTvm29DeObkss9ABqM2J2qssGrwcxG4ilrU8xWRGq92o0O7Kr
-	cWq9X0n+TUoyK27e1YROillN7PNeRzF1r2D1JAiqyiQ3nhHgaFwHTqkGR0L57pY=
-X-Google-Smtp-Source: AGHT+IFLxHgN97pV0OZjL8rF5iTzoHIZcryvQw+TfQUbmMgFaxMAn0TsMg6LRyCZTDhCZXw9gtnqlQ==
-X-Received: by 2002:a05:6000:144a:b0:371:8af5:473d with SMTP id ffacd0b85a97d-3749b52ebc1mr3061727f8f.12.1724960098181;
-        Thu, 29 Aug 2024 12:34:58 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3749ef7e933sm2136404f8f.87.2024.08.29.12.34.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 12:34:57 -0700 (PDT)
-Date: Thu, 29 Aug 2024 22:34:53 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Philipp Hortmann <philipp.g.hortmann@gmail.com>
-Cc: Manisha Singh <masingh.linux@gmail.com>,
-	florian.c.schilhabel@googlemail.com, gregkh@linuxfoundation.org,
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] staging: rtl8712: Fix style issues in rtl871x_io.c
-Message-ID: <497fbcd8-2984-4be5-b877-1dec6a8d7bba@stanley.mountain>
-References: <20240828204552.26790-2-masingh.linux@gmail.com>
- <607b86cd-d89a-4072-af36-ce2ce5c1f7fe@gmail.com>
- <daecc634-4faf-4dcb-b03b-f57f24673a88@stanley.mountain>
- <01183b3b-b8af-4451-8b52-e7acd0b4a9a5@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=neVQ0P0vXEcP6juUaM1FRtIncblY7gNG/TtzqPB4/bSICC5UeMjM1DWcMtXEJr9Pfbp9kxPBearZSFFBCsNRFH1XjbXsvJPzKALPmq7FQgru61OIHkG9XI3RRwET7Qy5Xwj8KdIxng/aft5BrbXFs1tlfNfUqj0SjNDuTXahJ54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1sjkvl-0005NZ-98; Thu, 29 Aug 2024 21:35:41 +0200
+Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1sjkvk-003z1W-GO; Thu, 29 Aug 2024 21:35:40 +0200
+Received: from pengutronix.de (pd9e5994e.dip0.t-ipconnect.de [217.229.153.78])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 2471832D54F;
+	Thu, 29 Aug 2024 19:35:40 +0000 (UTC)
+Date: Thu, 29 Aug 2024 21:35:39 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Simon Horman <horms@kernel.org>
+Cc: "Rob Herring (Arm)" <robh@kernel.org>, 
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, linux-can@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: can: cc770: Simplify parsing DT properties
+Message-ID: <20240829-spiked-amigurumi-bloodhound-d94a6c-mkl@pengutronix.de>
+References: <20240828131902.3632167-1-robh@kernel.org>
+ <20240828161624.GS1368797@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="gupfvblu2pdoqihu"
 Content-Disposition: inline
-In-Reply-To: <01183b3b-b8af-4451-8b52-e7acd0b4a9a5@gmail.com>
+In-Reply-To: <20240828161624.GS1368797@kernel.org>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-No no.  The v3 is also fine.  Let's not stress too much about minor things.
 
-regards,
-dan carpenter
+--gupfvblu2pdoqihu
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On 28.08.2024 17:16:24, Simon Horman wrote:
+> On Wed, Aug 28, 2024 at 08:19:02AM -0500, Rob Herring (Arm) wrote:
+> > Use of the typed property accessors is preferred over of_get_property().
+> > The existing code doesn't work on little endian systems either. Replace
+> > the of_get_property() calls with of_property_read_bool() and
+> > of_property_read_u32().
+> >=20
+> > Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+>=20
+> ...
+>=20
+> > diff --git a/drivers/net/can/cc770/cc770_platform.c b/drivers/net/can/c=
+c770/cc770_platform.c
+> > index 13bcfba05f18..9993568154f8 100644
+> > --- a/drivers/net/can/cc770/cc770_platform.c
+> > +++ b/drivers/net/can/cc770/cc770_platform.c
+> > @@ -71,16 +71,9 @@ static int cc770_get_of_node_data(struct platform_de=
+vice *pdev,
+> >  				  struct cc770_priv *priv)
+> >  {
+> >  	struct device_node *np =3D pdev->dev.of_node;
+> > -	const u32 *prop;
+> > -	int prop_size;
+> > -	u32 clkext;
+> > -
+> > -	prop =3D of_get_property(np, "bosch,external-clock-frequency",
+> > -			       &prop_size);
+> > -	if (prop && (prop_size =3D=3D  sizeof(u32)))
+> > -		clkext =3D *prop;
+> > -	else
+> > -		clkext =3D CC770_PLATFORM_CAN_CLOCK; /* default */
+> > +	u32 clkext =3D CC770_PLATFORM_CAN_CLOCK, clkout =3D 0;
+>=20
+> Marc,
+>=20
+> Could you clarify if reverse xmas tree ordering - longest line to shortest
+> - of local variables is desired for can code? If so, I'm flagging that the
+> above now doesn't follow that scheme.
+
+If you touch the code, and noting speaks against it, please make it
+reverse xmas.
+
+>=20
+> > +
+> > +	of_property_read_u32(np, "bosch,external-clock-frequency", &clkext);
+> >  	priv->can.clock.freq =3D clkext;
+> > =20
+> >  	/* The system clock may not exceed 10 MHz */
+>=20
+> ...
+>=20
+> > @@ -109,20 +102,16 @@ static int cc770_get_of_node_data(struct platform=
+_device *pdev,
+> >  	if (of_property_read_bool(np, "bosch,polarity-dominant"))
+> >  		priv->bus_config |=3D BUSCFG_POL;
+> > =20
+> > -	prop =3D of_get_property(np, "bosch,clock-out-frequency", &prop_size);
+> > -	if (prop && (prop_size =3D=3D sizeof(u32)) && *prop > 0) {
+> > -		u32 cdv =3D clkext / *prop;
+> > -		int slew;
+> > +	of_property_read_u32(np, "bosch,clock-out-frequency", &clkout);
+> > +	if (clkout > 0) {
+> > +		u32 cdv =3D clkext / clkout;
+> > +		u32 slew;
+> > =20
+> >  		if (cdv > 0 && cdv < 16) {
+> >  			priv->cpu_interface |=3D CPUIF_CEN;
+> >  			priv->clkout |=3D (cdv - 1) & CLKOUT_CD_MASK;
+> > =20
+> > -			prop =3D of_get_property(np, "bosch,slew-rate",
+> > -					       &prop_size);
+> > -			if (prop && (prop_size =3D=3D sizeof(u32))) {
+> > -				slew =3D *prop;
+> > -			} else {
+> > +			if (of_property_read_u32(np, "bosch,slew-rate", &slew)) {
+> >  				/* Determine default slew rate */
+> >  				slew =3D (CLKOUT_SL_MASK >>
+> >  					CLKOUT_SL_SHIFT) -
+>=20
+> Rob,
+>=20
+> The next few lines look like this:
+>=20
+> 					((cdv * clkext - 1) / 8000000);
+> 				if (slew < 0)
+> 					slew =3D 0;
+>=20
+> But slew is now unsigned, so this check will always be false.
+>=20
+> Flagged by Smatch and Coccinelle.
+
+Good finding.
+
+Thanks,
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--gupfvblu2pdoqihu
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmbQzYgACgkQKDiiPnot
+vG+0xgf+Jd7TG+Bgy8pVLY4i+WWleeGEDIMUYt57JUHFQe+1FkA3sMA3umuEW2Rd
+gH/GlB7jRhCrO69ecd5AjZD33ca3D83E1h/FJbL3vEA9EZp873WzdKcBQL0Gm86O
+Kq43+bAKDLOEsSM5N6jd2QqGKfJ8r4EOBG/pMkEj/VeaKZCHOAy+JwhfiYbjtNNk
+X2a0EcUJ6gITsBSJ5fRlfviiJsoT7OyMBpmBtuSa/oSaBAnG6wHPNdM/01pxJJZ/
+vPfNSnApWhaLBpS2/zdbjFdxy2v0kjb16Y7E2+pT6dVS5ctInkuHVFQDJqEXZ0BR
+h+ZwrjjjS2q9uHe31ZdblhSNUp7iQg==
+=o3cU
+-----END PGP SIGNATURE-----
+
+--gupfvblu2pdoqihu--
 
