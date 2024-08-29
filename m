@@ -1,235 +1,107 @@
-Return-Path: <linux-kernel+bounces-306691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF3C2964225
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 12:45:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB925964226
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 12:46:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5113A1F23D58
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:45:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E4CAB225B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:46:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 476F818E378;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8712018E749;
 	Thu, 29 Aug 2024 10:45:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="Qtb05jqg"
-Received: from EUR03-DBA-obe.outbound.protection.outlook.com (mail-dbaeur03olkn2040.outbound.protection.outlook.com [40.92.58.40])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Um8DtmAE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 559E818C939;
-	Thu, 29 Aug 2024 10:45:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.58.40
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724928345; cv=fail; b=X2ZudPebi75/sx2JIYz41dhjgD5htoZ/H/h24F2TGFXeZ8coQ10ZGEoRH9UhKh+oeEnqLuh1kYxA0ehBToPCH+2xPo1N7IYOZwUyw1NB8MxLw4BH1aJ62+nl7DX7hLG8BjZXmYWwHv20J3uXIunDGVCaMwEZJ9rUg+NGU4l6rT0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B600E18DF9E;
+	Thu, 29 Aug 2024 10:45:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724928345; cv=none; b=mAU/bDIPrzCenuEyrOSRmgJc1kZrhbHtqCtm/TdGdpbHbEGa0yOB8IIyNWEUPhtodCsuvM+LiKs7Nyj6LQ0hi8tMyY68p72Aw6pryKCMaUQIj3rCwDXcpd1ydEt6rTQRp7sUCStWZBMCzMl4E99tGvi4/KnMbDGkSJj85tH92Uk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1724928345; c=relaxed/simple;
-	bh=SsU5TiSazmIsIGTL502aPX8RKWwfURI4jhsLqsNlafs=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=H46TXMAuHiki1svMUPHGBlH4z7i4wtlYe1KUXPT8SXJXyUI+LyCcY6ROnzs07PWHm7KkSyj1TjcGgSIGXBBfyV9IRF8Qij+6MjULnYOCqjo8D1aBwXqfPope7VWjwpwbr+dna0d2MoTjDNyvt/pIZtGpT6AHy4qEjpceoNMkTkE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=Qtb05jqg; arc=fail smtp.client-ip=40.92.58.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ZzfOdVYcH6vyyWRjL4h7D4by+IpfGN/PmaEndhRv9t1ex2IVBo+0lDbM1V304DYihLGp7o37H9Ag9PeDW7Ln1PkLVYo467Dgy/e1jETx+fDSnvjg8bK7jPd5x0hZPV/RJKtuXUBQBDpnJYtxh7Eu8A7Oz7CWfINmzEpQicOxjyhgUoK7ZHjR2akxC3ooHCAVaoIBywtGjSAllyIDYAtBK2C8rXEvTT/3jEfnBgJJW4FPiLB0IAzyaUO0r9EJJkohqDBwEz5e0bhU+ZJBsUEfwSPoym7aYTy4nxKi5zXDIHf79qOxT3QM7n94C2/O0Lx3oZww1PNyVr0Gnfr5H/dzsA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XKtAnvN5Q8nw1TcGbnd42A7HAqg+l0BRyJgDP1K2ivs=;
- b=rWdw4sPmSRSqBAxALwuvFyf7SPGprIZL967nZvvfVc0Ho16MtvnEKiQ2iZFEp0JxVtk/O3BnACngvfjjbeOZeYLBopRdO13cs30sl2aI7qqM73+Sw4GkMLvQHm6GzGGg5qgMktOWLh1RHCsY8DvcDJGqZAk0iAa7hqVWNT7uweh/PIYLsur5qABha3sVL0A2zXo4bJGbG29/FWz8qnbpQwfORHiXnniStOg7m26kw1Wq13DERj4/UGrtfwTfcc+bhCyKiJ7U7jgB7lPvNIXxxCK07q+2B0rgdAOuRDSKsr26uE+cqKlJ2OyriXpdJlWne24j5ppIbKZyGDmOfF+wSA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XKtAnvN5Q8nw1TcGbnd42A7HAqg+l0BRyJgDP1K2ivs=;
- b=Qtb05jqgQIbM1qyKs0DSg24uimhSgQbZV+/vtyEQAAlYas4XnWQ985ZTrTNIaCJzWR4rJM9FXFxCMXDjaxDzOML6IOjIHVEQGSlkf/8FaVFmhyI1ebchBcf77RZtrDLfHMISSFQXAIvKobMaujMnXI2XgVNnwdN0lNhoF/aYgNZ169kpO7qJ0hBx6m9RvVR6eFjGkEsPR021Qh/i8G3kLO/pCR3vqYQvrdl+veisCmyUV564AY6GEHAj5FsI9So9rJiHW9vLi+s14wbh35ZKpXDvo7x/VjX8rmu2+l20yGnh4fPXPaALa54S6USugGl5RCp4BK0M3TETGp5uZZ7/tQ==
-Received: from AM6PR03MB5848.eurprd03.prod.outlook.com (2603:10a6:20b:e4::10)
- by DU0PR03MB9125.eurprd03.prod.outlook.com (2603:10a6:10:464::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.27; Thu, 29 Aug
- 2024 10:45:40 +0000
-Received: from AM6PR03MB5848.eurprd03.prod.outlook.com
- ([fe80::4b97:bbdb:e0ac:6f7]) by AM6PR03MB5848.eurprd03.prod.outlook.com
- ([fe80::4b97:bbdb:e0ac:6f7%4]) with mapi id 15.20.7897.021; Thu, 29 Aug 2024
- 10:45:40 +0000
-From: Juntong Deng <juntong.deng@outlook.com>
-To: ast@kernel.org,
-	daniel@iogearbox.net,
-	john.fastabend@gmail.com,
-	andrii@kernel.org,
-	martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	memxor@gmail.com,
-	snorcht@gmail.com
-Cc: bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH bpf-next v3 1/2] bpf: Make the pointer returned by iter next method valid
-Date: Thu, 29 Aug 2024 11:44:48 +0100
-Message-ID:
- <AM6PR03MB58482E9A154910D06A9E58B499962@AM6PR03MB5848.eurprd03.prod.outlook.com>
-X-Mailer: git-send-email 2.39.2
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-TMN: [aSHynv4Qu2AjAaYQrRnDG2vKLmEasP5m]
-X-ClientProxiedBy: LO2P265CA0494.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:13a::19) To AM6PR03MB5848.eurprd03.prod.outlook.com
- (2603:10a6:20b:e4::10)
-X-Microsoft-Original-Message-ID:
- <20240829104448.10473-1-juntong.deng@outlook.com>
+	bh=A/QKc2MrbmwJbDL/DthXdVG+GBJuw1/3/+l7jGI5be0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XlTMzH8wkh44075IBD50FgSuOi/GVMERopUieaVyUsqBZPLJ4qnbjXmPrKBGLNXTleYlIu5v8OTSFLnv7SReXjE1LUR05wUPZ89oe2oC2E+qBTNCC09KkI1u2FgUskQtFFKW9SINt3cIsC8/pzkont2SUewX13SEhuEXMKx/xGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Um8DtmAE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 396B3C4CEC1;
+	Thu, 29 Aug 2024 10:45:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724928345;
+	bh=A/QKc2MrbmwJbDL/DthXdVG+GBJuw1/3/+l7jGI5be0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Um8DtmAESFlzw486oMqlHQ0EKsmbV0SiNoio2evtguegr/UM7Ckp0j4061ObjT9nl
+	 RJZ8el9Gp3sDAcIT+5rCDpZQDBZbSDjh8U7Z7yh41ExKW8S4hBhk93hllsClx+e23H
+	 LluvhL7wRlgNS1MmefbbPZTteZjPldP8waADy7bnVVhd79Pqkuvfkn/3KjnTmyzKjR
+	 SKnryW4bclss3yQ6LbO2IfsYYZWbE5w/9BKlC71BGfgKIJ138KXsB3pgZaL3O7SAqX
+	 jdCpg1SWIFMcoftrRjAF4J8gas6QXiNrt6HP6vXtcez3ga0qkUzuq9sacbo+Ysvezd
+	 L6ptve883Vbrw==
+Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-3db23a60850so275078b6e.0;
+        Thu, 29 Aug 2024 03:45:45 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV8vpZ6vfixKFHWbVMb1bZu+97kyJZs/Y6J1esZ8Xxq32xlTzJCdln2QcnmZkfEGO8bSIj437bNABdu@vger.kernel.org, AJvYcCW5512/5xXlkf+LDfzK4C7r5zlAHzlA+pTZ6bnPQisLa2WrngK4JUJyVMvADsJ2UIoU1GhM7RSHOZSpVQ==@vger.kernel.org, AJvYcCXE9TZKuvufFGRtBMWJcVsAN1U8RLGBUBlCBXrokr3arH+6oh4GhxP9pWzLlfdINdZoV7ybsi7zkB43eu36@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4WvGHSaaMtT7u+uWdaAnRcIerBILah/1ZHMIhd+FyXBt6CaQr
+	0TtgDEwwMuKiEXEdI4FgKb6EkXA6rEu4vHhHZyGPSMmTvfwaw2yK4OoxQNqe3u3sIiWxZ06434n
+	9PPPT5jUhYK9KDoilyfW6LRt+ZRY=
+X-Google-Smtp-Source: AGHT+IGMsrYYnwtpwOmbtg5dmwFYoofWlGAmRSaV8uF0Jhfe6l4Il0TpT/g6xHJdibzsNJ9IFXIGTJRMCR1hhnUQevA=
+X-Received: by 2002:a05:6808:309e:b0:3db:16a3:748a with SMTP id
+ 5614622812f47-3df05ec405bmr2360705b6e.32.1724928344538; Thu, 29 Aug 2024
+ 03:45:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM6PR03MB5848:EE_|DU0PR03MB9125:EE_
-X-MS-Office365-Filtering-Correlation-Id: ad212cb0-a006-4917-95a0-08dcc817b854
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|8060799006|19110799003|15080799006|5072599009|461199028|440099028|3412199025;
-X-Microsoft-Antispam-Message-Info:
-	q7KEb6zTffpZXbrJkmL/IZG943dCEF154brD3SM/AB7JWzdtIwahEEREfwxWniB7SU0IZU3NTGZhQAFzI7e0GmSgQVROGxIWc9cJ8lgrGroAXg4MxEnrcMX23cyvWqk4RDhu1PLi731+Z/nFYCaQuSb+ZotGXXIsP6xem+hvJLHLli+jLpY07befeYGli3iENngU5zl9jfEmXMvr7ah91TKYuCoWmYIZ0iR4Q5iYsdwY1628IqWTFx1oiCkBCcFDeZUObfCDisAQarqsz4xPFKHszuAOtK0I1Phd4cWAYsmAY+ZCs/pjqtMAIKuY9FjxuS+Pi6UFa99BGkp5e3L8nhlH3XY3pMOijTsj2S/qgMxpl2X9hlzSCr+Z3YoIEMz6vqqiZRF3+VweVsnON2qtyhyIbh+7JfTOVPvZMtZAZ+CIDuAf7CbfikN/sf2oKK8dROKAZwyoC3uojd1I53PO5JGOAA0s0cPWneIa1ADtLBERxm30etBSWQRJifc6x4yqsXJfbjGBnNXBScbbR4JFz7+jxUX2/oLZiU2z4yz2L+R+itYNybk785MjyUHM33L0Pez9kZkTahAW1Xp27p1/sQATiBDVdXkfJY+Dzqz7iHNHQWVbnU/keMRHS3ZbowmiVJF9m63DUZV91mqmxFdJXj3FazNFPPQfHxINoRKIvXKsUpiMI4GFDyFh2RSW+OybpcuDcUGa68+mcGSaCiTWlw==
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?mn5LEr/iYeznO07AzrBYVYnZlBWhBd0WO6q6hSC6aBPdC9KjJogPlO5v+PQa?=
- =?us-ascii?Q?5jNC9TMKI25znhtP0AklORq01k91baX17s8xmjk7KZiU9XSNmyZmGE5X667H?=
- =?us-ascii?Q?rR5gvLaKLBmG3eTlGpUPkhtODua8U8V+EKvZp1ZU2rRB6J8sJdKkn05OieCQ?=
- =?us-ascii?Q?X4KbbRqguaGBDEf4MfprjvH3xX2ABvsvWkCdV1DpPQVLAKoleltL6xF4YqOK?=
- =?us-ascii?Q?9AS51dwF2AQdLzPSu2p2r282mBNl1IJo5u3OSEgXJFRnujBNUYTXB3kHjBJN?=
- =?us-ascii?Q?b8FPqE0JkecFmBFJZCS5lgscUcP0WYsrPETFfTG/G3Y/w10lFdNCgL/yXss9?=
- =?us-ascii?Q?tKOp4xjcRJW2ZwP+WqKEVjcneLNq3gfSfB864OXahXGPfPWzGvcWdiTJNM6n?=
- =?us-ascii?Q?J6ctgzo+9Mc1GCjHB+nGNYxxf+cqUZG0jO7Pj1m8Vx3pk91cF93bAhhA/gRT?=
- =?us-ascii?Q?WnOXRc27PsOb44v4c34JUhr0c7MeBZRqaEfbHV04D/q0Ho82O9dm0oT1yvW/?=
- =?us-ascii?Q?DzkBwWMCTCPrrD9NlKbUfIePy76TRc2pcS7wrYQ6ukwe2efoL/o124PyvUZG?=
- =?us-ascii?Q?wOeTYEmA06rm5tHa73Gm+63OVWX7CMSw/k318mnLc6/VsMF/hRFyem9YCASH?=
- =?us-ascii?Q?QM00D6lAee5bv53w8F1OcT7pssNHyIhhPIecwr38sun5CdaaPoZeC6NB7BZM?=
- =?us-ascii?Q?Sjc5jDH19bzQUi2nWFikNCBqD1n7yMmIaz/X26IG4qDxq3AmBc1X0LaebKCI?=
- =?us-ascii?Q?LO64wciIqc9nPoaBawJ9TNzaxwJi8to4DY6LCMpycK56haJIk4tHfgOz1DU6?=
- =?us-ascii?Q?Mke63oViyl7qcqE7mgcv7+VSnIpCBsb2NsCPOh7HuFEuAPlmJGZJHYVGcX43?=
- =?us-ascii?Q?lB+Xu/XCZAS42vm1YU265rvKczWxjb5iRWHfKxN+8fPssA8g4gZ8Fmxkyj5b?=
- =?us-ascii?Q?hcahyBTdJ03y6jg5zK70fEN0kvWozvH3e2ipfy99nuakvNmr5KDJCsze27Cw?=
- =?us-ascii?Q?jgEmz4uiczKd0WgQUkaNiFUJCNJ6ngIVXYQ+WzFg3V/HfzXFjgEkKJ+sRhlk?=
- =?us-ascii?Q?fO6Imjrakizy2FORC+K/F5cDZAOnTfy8Hx+XESZVI5LufmFYtjaRM/ew4E6H?=
- =?us-ascii?Q?rrfzA8wbV23cEG2L6LeX4K+O8bUi4HHFDUeBij3Ujl8l7MPqcdqsafii6zSQ?=
- =?us-ascii?Q?0HZ4LUsRYKWY+mpyj+cpBnWk20jXk/1b4f4bTNmPFJe+Q+zYQC4GZmDRnj+w?=
- =?us-ascii?Q?5/IEKrkDHBP7ttnsZ+wu?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ad212cb0-a006-4917-95a0-08dcc817b854
-X-MS-Exchange-CrossTenant-AuthSource: AM6PR03MB5848.eurprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Aug 2024 10:45:40.3641
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR03MB9125
+References: <20240819142945.327808-1-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20240819142945.327808-1-andriy.shevchenko@linux.intel.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 29 Aug 2024 12:45:33 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0jGxdR_0UsxgvLDfM3=GGTmB5NbtE-yK49CB8gwQ2o_ig@mail.gmail.com>
+Message-ID: <CAJZ5v0jGxdR_0UsxgvLDfM3=GGTmB5NbtE-yK49CB8gwQ2o_ig@mail.gmail.com>
+Subject: Re: [PATCH v2 0/5] gpiolib: Add and utilise for_each_gpio_property_name()
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, linux-gpio@vger.kernel.org, 
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Mika Westerberg <mika.westerberg@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Currently we cannot pass the pointer returned by iter next method as
-argument to KF_TRUSTED_ARGS or KF_RCU kfuncs, because the pointer
-returned by iter next method is not "valid".
+On Mon, Aug 19, 2024 at 4:29=E2=80=AFPM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> There are a few of duplication of the same for-loop against GPIO
+> suffixes. This series addresses that along with proposal to eliminate
+> the exported gpio_suffix_count by converting the array to be
+> NULL-terminated.
+>
+> v2:
+> - fixed a rebase issue (LKP)
 
-This patch sets the pointer returned by iter next method to be valid.
+All patches in this set look good to me:
 
-This is based on the fact that if the iterator is implemented correctly,
-then the pointer returned from the iter next method should be valid.
+Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-This does not make NULL pointer valid. If the iter next method has
-KF_RET_NULL flag, then the verifier will ask the ebpf program to
-check NULL pointer.
-
-KF_RCU_PROTECTED iterator is a special case, the pointer returned by
-iter next method should only be valid within RCU critical section,
-so it should be with MEM_RCU, not PTR_TRUSTED.
-
-Another special case is bpf_iter_num_next, which returns a pointer with
-base type PTR_TO_MEM. PTR_TO_MEM should not be combined with type flag
-PTR_TRUSTED (PTR_TO_MEM already means the pointer is valid).
-
-The pointer returned by iter next method of other types of iterators
-is with PTR_TRUSTED.
-
-In addition, this patch adds get_iter_from_state to help us get the
-current iterator from the current state.
-
-Signed-off-by: Juntong Deng <juntong.deng@outlook.com>
----
-v2 -> v3: Move modifications to check_kfunc_call. Handle PTR_TO_MEM case
-and add corresponding test case. Add get_iter_from_state.
-
-v1 -> v2: Handle KF_RCU_PROTECTED case and add corresponding test cases
-
- kernel/bpf/verifier.c | 25 +++++++++++++++++++++----
- 1 file changed, 21 insertions(+), 4 deletions(-)
-
-diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-index f32e3b9bb4e5..bc146671742c 100644
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -8148,6 +8148,15 @@ static int widen_imprecise_scalars(struct bpf_verifier_env *env,
- 	return 0;
- }
- 
-+static struct bpf_reg_state *get_iter_from_state(struct bpf_verifier_state *cur_st,
-+						 struct bpf_kfunc_call_arg_meta *meta)
-+{
-+	int iter_frameno = meta->iter.frameno;
-+	int iter_spi = meta->iter.spi;
-+
-+	return &cur_st->frame[iter_frameno]->stack[iter_spi].spilled_ptr;
-+}
-+
- /* process_iter_next_call() is called when verifier gets to iterator's next
-  * "method" (e.g., bpf_iter_num_next() for numbers iterator) call. We'll refer
-  * to it as just "iter_next()" in comments below.
-@@ -8232,12 +8241,10 @@ static int process_iter_next_call(struct bpf_verifier_env *env, int insn_idx,
- 	struct bpf_verifier_state *cur_st = env->cur_state, *queued_st, *prev_st;
- 	struct bpf_func_state *cur_fr = cur_st->frame[cur_st->curframe], *queued_fr;
- 	struct bpf_reg_state *cur_iter, *queued_iter;
--	int iter_frameno = meta->iter.frameno;
--	int iter_spi = meta->iter.spi;
- 
- 	BTF_TYPE_EMIT(struct bpf_iter);
- 
--	cur_iter = &env->cur_state->frame[iter_frameno]->stack[iter_spi].spilled_ptr;
-+	cur_iter = get_iter_from_state(cur_st, meta);
- 
- 	if (cur_iter->iter.state != BPF_ITER_STATE_ACTIVE &&
- 	    cur_iter->iter.state != BPF_ITER_STATE_DRAINED) {
-@@ -8265,7 +8272,7 @@ static int process_iter_next_call(struct bpf_verifier_env *env, int insn_idx,
- 		if (!queued_st)
- 			return -ENOMEM;
- 
--		queued_iter = &queued_st->frame[iter_frameno]->stack[iter_spi].spilled_ptr;
-+		queued_iter = get_iter_from_state(queued_st, meta);
- 		queued_iter->iter.state = BPF_ITER_STATE_ACTIVE;
- 		queued_iter->iter.depth++;
- 		if (prev_st)
-@@ -12860,6 +12867,16 @@ static int check_kfunc_call(struct bpf_verifier_env *env, struct bpf_insn *insn,
- 			/* For mark_ptr_or_null_reg, see 93c230e3f5bd6 */
- 			regs[BPF_REG_0].id = ++env->id_gen;
- 		}
-+
-+		if (is_iter_next_kfunc(&meta) && base_type(regs[BPF_REG_0].type) != PTR_TO_MEM) {
-+			struct bpf_reg_state *cur_iter = get_iter_from_state(env->cur_state, &meta);
-+
-+			if (cur_iter->type & MEM_RCU) /* KF_RCU_PROTECTED */
-+				regs[BPF_REG_0].type |= MEM_RCU;
-+			else
-+				regs[BPF_REG_0].type |= PTR_TRUSTED;
-+		}
-+
- 		mark_btf_func_reg_size(env, BPF_REG_0, sizeof(void *));
- 		if (is_kfunc_acquire(&meta)) {
- 			int id = acquire_reference_state(env, insn_idx);
--- 
-2.39.2
-
+> Andy Shevchenko (5):
+>   gpiolib: Introduce for_each_gpio_property_name() helper
+>   gpiolib: swnode: Unify return code variable name
+>   gpiolib: swnode: Introduce swnode_gpio_get_reference() helper
+>   gpiolib: swnode: Make use of for_each_gpio_property_name()
+>   gpiolib: Replace gpio_suffix_count with NULL-terminated array
+>
+>  drivers/gpio/gpiolib-acpi.c   | 21 ++----------
+>  drivers/gpio/gpiolib-of.c     | 25 +++------------
+>  drivers/gpio/gpiolib-swnode.c | 60 ++++++++++++++++-------------------
+>  drivers/gpio/gpiolib.c        |  3 +-
+>  drivers/gpio/gpiolib.h        | 16 ++++++++--
+>  5 files changed, 49 insertions(+), 76 deletions(-)
+>
+> --
+> 2.43.0.rc1.1336.g36b5255a03ac
+>
+>
 
