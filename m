@@ -1,72 +1,88 @@
-Return-Path: <linux-kernel+bounces-307504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8284A964E3F
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 20:52:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A7EC964E43
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 20:58:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 402402828F3
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 18:52:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A965B21A8D
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 18:58:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CD5D1B8E88;
-	Thu, 29 Aug 2024 18:52:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B70081B6542;
+	Thu, 29 Aug 2024 18:58:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b3KbXqaC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hvn/24yo"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58ABC1494B2;
-	Thu, 29 Aug 2024 18:52:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 739881B0120;
+	Thu, 29 Aug 2024 18:57:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724957562; cv=none; b=LZbe/Y7zrWHxddgquZIl8rZZPIqRSuMO392eH1F5SrCPTcemQLLOG9nFB7FVOYKcZ+67asMoUJodlgp8Lvmxw/n0A2XAAuowX6+Ijii2h0QK6QLoRFStoTeZEJl13CipZWbApXt9neQfaweasddOSAB0QHpBRtSkeToJRt02udU=
+	t=1724957880; cv=none; b=NZgNSA0cClDyFUvLT364gpypRqflkCLcMujbzkM1Yo2JDLZPydDCixeFgvsX19B8URY3bmYsXzs3x5Hh+urwjAyaXkUimltXp6Q1R+1vLEyMpH4F4Dd6Hl3jHso8swRwC308Ki1Te9fTUlVNoLj9mKMIqbW//QmJg5pD817OnAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724957562; c=relaxed/simple;
-	bh=sji9qUHLrqHNW9BPEl5XCsnv+ETqRB6bWthNHqjS8ks=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DFdCyrQ4Bf3euJjXvXuE/CyouwzgK3syY0widik7Q/ebjy3tUUUJ9nChWgA1+YJ/1m6igJVs7of7OuMFJ2XMcGqsCWt3AVitRR1050JmaUq+Wwb0ya+QfBcW3SgjIHBCs8JJ9tNr+jXDbil2jQdVcFP9v4HJEXeGKz8kIBZPJ7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b3KbXqaC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9460BC4CEC1;
-	Thu, 29 Aug 2024 18:52:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724957561;
-	bh=sji9qUHLrqHNW9BPEl5XCsnv+ETqRB6bWthNHqjS8ks=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=b3KbXqaCwxgQIesaGWz0wsMeMBDUv0yytXgal8R6jeuHVlZqaBLT7/9XFox2ERjcO
-	 9NVN1CkLl68ZV88Z4sPzema+0lLKi1WA0TmWgzLPOTzGmjZUBvGNn/SWT4SddOhTM/
-	 M9sBWFbm8vqMVWXfc2IyB/nXdMXuukiAfzykL9RE+2IEQYu4Sl60FNcfnXl3jHkDw5
-	 Ocg2HPMWl1idVHFtmWIgFAmHBkn1nmp6dIMj3hy7bcQmvFQjkKk/DDY3fMlWOhTpma
-	 a7pVUtKxtUJPC5laEA4kBh0oL8DdIeF14K4KeeysXWVQTM83Rs8F9Nm1lC9kZ64g5Y
-	 ae33sp3w6Xy9g==
-Date: Thu, 29 Aug 2024 13:52:40 -0500
-From: Rob Herring <robh@kernel.org>
-To: Nikunj Kela <quic_nkela@quicinc.com>
-Cc: andersson@kernel.org, konradybcio@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, rafael@kernel.org, viresh.kumar@linaro.org,
-	herbert@gondor.apana.org.au, davem@davemloft.net,
-	sudeep.holla@arm.com, andi.shyti@kernel.org, tglx@linutronix.de,
-	will@kernel.org, joro@8bytes.org, jassisinghbrar@gmail.com,
-	lee@kernel.org, linus.walleij@linaro.org, amitk@kernel.org,
-	thara.gopinath@gmail.com, broonie@kernel.org,
-	wim@linux-watchdog.org, linux@roeck-us.net, robin.murphy@arm.com,
-	cristian.marussi@arm.com, rui.zhang@intel.com, lukasz.luba@arm.com,
-	vkoul@kernel.org, quic_gurus@quicinc.com, agross@kernel.org,
-	bartosz.golaszewski@linaro.org, quic_rjendra@quicinc.com,
-	robimarko@gmail.com, linux-arm-msm@vger.kernel.org,
+	s=arc-20240116; t=1724957880; c=relaxed/simple;
+	bh=/kIdD3v9PL35nwxm6CuWpYZdRCoiMQcuUVF75ZnSC2Y=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=umGdDvcF74Rrl+GfgwnPi4ruhrKHgZzMPutPMZl5Ng6N3//4Anw2tFyLJ8P/Zjl09xp8lTirhjAUQuqTsDQWo0FNRd6CDzwp/Dz6EGuCgf8Abbh6Gz+xKX8oQr2GEq1ux5gX3n8HFYJ9+moWqiArUgo88HAOB1rY5CHc85Wo83c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hvn/24yo; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a86883231b4so115970866b.3;
+        Thu, 29 Aug 2024 11:57:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724957876; x=1725562676; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7UZoDEfc6CPKoWrLjn6mASVFpzP1uqbEEK2Alllrf7A=;
+        b=hvn/24yo0cPyX1P2ZJBURiKBtoqIeQV+mPpO9m0XF93dmKhKong+ulMKyERyE9lX8M
+         Jju7I5j4GkZLd3FOtnHZ+Nwne9xfHnbzbyxNtRuGAec/h+qflFZxVIWTkxt+gak+eu7G
+         g9Kfeogduxg68sKpAKz/YnRKQliw9dSpoXLdT7kQOK1eLnZPX4OZ7osZY0WHX9iLYukJ
+         dVRPdqSVDuXcBaSjPOzhpBNgs7EAIE8+r/K15NtKfbRtACvrQ9MNuIV6RB9vQxdWScNU
+         mK8rMAFrsUIzcBJONreOXpXqKHhTk5EMiCHPQLsMsRolyNFFvq1N4NzVH4ENgiktL3N7
+         mYPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724957876; x=1725562676;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7UZoDEfc6CPKoWrLjn6mASVFpzP1uqbEEK2Alllrf7A=;
+        b=U/gqJdv0w2TMrjEbkJmJbW/yNoAFeK2I2GCom39HWEqEpAmtvo+lO8Sz3qbmJAHugS
+         Xz6bBbvLruQbmhm6wis3FZUqdDqAY6b7biuaRmNRBm0oxChr2a6ZXhElthsf3Gz59FdO
+         2jXfNeToVkjb/yp51OE4oGhWlSbpZeE4FaIKidt7Ud/FzqfAiZqCJsw5C1c00nB8PV3p
+         SK5uRxE1MpY5Oq0sG81+lqQgtqVmFS8xk/p3K043Heytkrz18+QKx6srUo6gMi2APAEO
+         iEYDGIZOJH3P3qB5V397Tx3zPh+Gb18KfMO0hMHWHoqRBJCMasbUZRiGzqno7mlr1yRL
+         rU/A==
+X-Forwarded-Encrypted: i=1; AJvYcCVbSxPXHuPnYwL3czjHA7Q6P4Z3ZB19+xjpaQqQtGQ//nQGngnYxR1KiwkHTKbZvES132xlavEl0gD/@vger.kernel.org, AJvYcCWifEjjrgkqF11a6PB640q4rTMx8iyTzdB10w6g4HAgFQB4R4DCmFk9QmPszVU0uvJbAhQh7cpEYYgf@vger.kernel.org, AJvYcCXU7WE0uXc58jCokuxGubl0kVLEbQZgXTDbHjRBMMGwJyhwIrzXCKJCJ//R7Ij4B2eePAevlWfHBkajMcRM@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgV0M+QZzIw1iMZHXpGff34hPGuNz/f/5vSNFiDdZENeTfJG6b
+	Bi477ubWb0wiXVGZqB+u6UOSbkrzJQC2o/8/KCgOZuVCFT1k8MqQ
+X-Google-Smtp-Source: AGHT+IEImtgET40/r9Zokthw3/Oe/03HXIKcIgIm5jMXppV4ADkjPViqN9kcofe9QI9MSv9JQjAAMA==
+X-Received: by 2002:a17:907:7252:b0:a7d:a080:baa with SMTP id a640c23a62f3a-a897f8f77f9mr308939666b.34.1724957875909;
+        Thu, 29 Aug 2024 11:57:55 -0700 (PDT)
+Received: from vamoiridPC ([2a04:ee41:82:7577:f22f:934f:9b88:e7ce])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a898922710csm109846166b.223.2024.08.29.11.57.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Aug 2024 11:57:55 -0700 (PDT)
+From: Vasileios Amoiridis <vassilisamir@gmail.com>
+X-Google-Original-From: Vasileios Amoiridis <vamoirid@vamoiridPC>
+Date: Thu, 29 Aug 2024 20:57:53 +0200
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Vasileios Amoiridis <vassilisamir@gmail.com>, jic23@kernel.org,
+	lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, ang.iglesiasg@gmail.com,
+	linus.walleij@linaro.org, biju.das.jz@bp.renesas.com,
+	javier.carrasco.cruz@gmail.com, semen.protsenko@linaro.org,
+	579lpy@gmail.com, ak@it-klinger.de, linux-iio@vger.kernel.org,
 	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-crypto@vger.kernel.org,
-	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-i2c@vger.kernel.org, iommu@lists.linux.dev,
-	linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org,
-	linux-spi@vger.kernel.org, linux-watchdog@vger.kernel.org,
-	kernel@quicinc.com, quic_psodagud@quicinc.com,
-	quic_tsoni@quicinc.com, quic_shazhuss@quicinc.com
-Subject: Re: [PATCH 21/22] ARM: dt: GIC: add extended SPI specifier
-Message-ID: <20240829185240.GA914553-robh@kernel.org>
-References: <20240828203721.2751904-1-quic_nkela@quicinc.com>
- <20240828203721.2751904-22-quic_nkela@quicinc.com>
+	christophe.jaillet@wanadoo.fr
+Subject: Re: [PATCH v4 1/7] iio: pressure: bmp280: Use bulk read for humidity
+ calibration data
+Message-ID: <20240829185753.GA3493@vamoiridPC>
+References: <20240828205128.92145-1-vassilisamir@gmail.com>
+ <20240828205128.92145-2-vassilisamir@gmail.com>
+ <ZtBkNu0luJyT1emw@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,34 +91,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240828203721.2751904-22-quic_nkela@quicinc.com>
+In-Reply-To: <ZtBkNu0luJyT1emw@smile.fi.intel.com>
 
-On Wed, Aug 28, 2024 at 01:37:20PM -0700, Nikunj Kela wrote:
-> Add interrupt specifier for extended SPI interrupts.
+On Thu, Aug 29, 2024 at 03:06:14PM +0300, Andy Shevchenko wrote:
+> On Wed, Aug 28, 2024 at 10:51:21PM +0200, Vasileios Amoiridis wrote:
+> > Convert individual reads to a bulk read for the humidity calibration data.
+> 
+> ...
+> 
+> > +	calib->H2 = get_unaligned_le16(&data->bme280_humid_cal_buf[H2]);
+> > +	calib->H3 = data->bme280_humid_cal_buf[H3];
+> > +	tmp_1 = get_unaligned_be16(&data->bme280_humid_cal_buf[H4]);
+> > +	tmp_2 = FIELD_GET(BME280_COMP_H4_GET_MASK_UP, tmp_1);
+> > +	h4_upper = FIELD_PREP(BME280_COMP_H4_PREP_MASK_UP, tmp_2);
+> > +	h4_lower = FIELD_GET(BME280_COMP_H4_MASK_LOW,
+> 
+> > +			get_unaligned_be16(&data->bme280_humid_cal_buf[H4]));
+> 
+> Either I don't understand the side effects, or this is the same as tmp_1. No?
+> 
 
-What's an "extended SPI"? Is this a GIC spec thing? If so, what version?
+Hi Andy,
 
+Thanks again for taking the time to review this!
+
+This is the same as tmp1, and I didn't notice that I should change it.
+Thanks for pointing it out.
+
+Cheers,
+Vasilis
+> > +	calib->H4 = sign_extend32(h4_upper | h4_lower, 11);
+> > +	calib->H5 = sign_extend32(FIELD_GET(BME280_COMP_H5_MASK,
+> > +			get_unaligned_le16(&data->bme280_humid_cal_buf[H5])), 11);
+> > +	calib->H6 = data->bme280_humid_cal_buf[H6];
 > 
-> Qualcomm SA8255p platform uses extended SPI for SCMI 'a2p' doorbells.
-> 
-> Signed-off-by: Nikunj Kela <quic_nkela@quicinc.com>
-> ---
->  include/dt-bindings/interrupt-controller/arm-gic.h | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/include/dt-bindings/interrupt-controller/arm-gic.h b/include/dt-bindings/interrupt-controller/arm-gic.h
-> index 35b6f69b7db6..9c06248446b7 100644
-> --- a/include/dt-bindings/interrupt-controller/arm-gic.h
-> +++ b/include/dt-bindings/interrupt-controller/arm-gic.h
-> @@ -12,6 +12,7 @@
->  
->  #define GIC_SPI 0
->  #define GIC_PPI 1
-> +#define GIC_ESPI 2
->  
->  /*
->   * Interrupt specifier cell 2.
 > -- 
-> 2.34.1
+> With Best Regards,
+> Andy Shevchenko
+> 
 > 
 
