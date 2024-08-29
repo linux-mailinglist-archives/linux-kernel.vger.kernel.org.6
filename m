@@ -1,117 +1,143 @@
-Return-Path: <linux-kernel+bounces-307219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8996964A35
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 17:38:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6058964A48
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 17:40:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 522C71F23CCF
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:38:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E94201C24531
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:40:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 334501B3728;
-	Thu, 29 Aug 2024 15:38:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B82E1B4C40;
+	Thu, 29 Aug 2024 15:39:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jx/2mGOy"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="cz5wRa62"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 004413A1B5;
-	Thu, 29 Aug 2024 15:38:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B05251B3733;
+	Thu, 29 Aug 2024 15:39:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724945908; cv=none; b=E6z6Vwu+jeyLWmigSpdbIiWyj9AhzH3KtC1mnxRKgRtjFM+H7MVTGOkYX+6lwL51szUyVUj/StPV64U1od5Ahf5atv5/Fwd866cNeMae20jEJ6QpfbuA1c1DMIV4EjamDq1CmwS6ZAhhmHu/BInlxaJDrq+IVko++2rJQKBU4Kw=
+	t=1724945986; cv=none; b=hNH/4HMq9JM2T/C5CmxLW0bCiy5MV4aOVRXTkvXoWXhkPTph0388r6ambWc7rQHTxiebpsazF6xtLmQhHjNzn5zAh/xgfPnf03qo9vc5XdiIoPUB9GQRrxd+ucLY2pG/RiHXcnek6BCasVkmQ3DgLgbZNDyMjO/LTF/+vTUzj8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724945908; c=relaxed/simple;
-	bh=PaGGy67adiFibLvbBmxtYZHei3cfHIB+Imlr125VfVc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GBbz/N5wv9/MssD+bjMbNsj1iO8cqwY3Z8A+I+jiPaBIOrET9tg2IUaPHR0k9QUekiCBEOLBD4h79cN0FDb4LpuDolSa0Jzyr8rpkwm3Hf7T+r/0E6GoNHKccacCR7VuOO03Z4Lh5uY+z+QKF39Jort+yXJDPCsY9dfO5rzuZCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jx/2mGOy; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3718cd91185so474836f8f.2;
-        Thu, 29 Aug 2024 08:38:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724945905; x=1725550705; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bFDS4ecO1nncemRhrwENZOBI9sm9ekDPuxSh94IQTKc=;
-        b=jx/2mGOyeJgTTo1wPukLjvIf8s2ubJfoeqxPjiw60XfWPjhWvI9GJcUq7B6JLedKJp
-         8sTFbPJ6LGSFmdD33VFRomtzLuNnsHToS84xV/yYrcVR2k2JoEswg01lCMJIuxX0BrcT
-         Bh9S/9mhXqDPgnal+x6KOmpjg3HzEWvfhLjq7TTzGbk9/LD10aYuxFF4CM9yw5M9j7ru
-         LnKSDBiZs75TtuyfBw+01rTUQ1szasOfh3HcMB1F8dJ3Agv9hyHHmtQsC5ICrZ+gdq0J
-         UcdGYS+UNQGr/2kMqcMjAkfIvyciJnt/BD0zw/U1hOb3uEyzrvRJtEytPDCBc2JhjtSm
-         mccg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724945905; x=1725550705;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bFDS4ecO1nncemRhrwENZOBI9sm9ekDPuxSh94IQTKc=;
-        b=O6MWupTQEROEqixkNdGhQBBYQX4NB3O1D9bQAQZrgb1QcM8cZYxvk0QEcPcmmio5DI
-         R8Kqvu3QmTEquEQRGPTLopFytjf5QnxKpBCwrww7uzsJHgMp4FgDRNiittbqE/9zeqXa
-         EkItAa0vTG29FJCSyOmJG5PT3FTkPXTvzWYFc4UwQr/ia3ZUU7Il0pOwt7jbeCVrv264
-         dzT7+5axPyC10JIO5/q7jW0sgMHWTIeNJzt7J4shphkHaUcKy8E5/FpJuqvXCQstfJhi
-         hjWZvPfMd1kS7/bTpxhqf4AJgMst2syqONH1SsFKCgjm0SCJgZVq0Dlhb7NAWSla0SOz
-         E4/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWkakZDox7GHmy2V7wTt8YEQ5vcGtcUkVe8qArp+o0xbImgfeFNstyKT3SLi7cz8q36JKGs09idB0LS4NE=@vger.kernel.org, AJvYcCXzAMtW0gWBkMHXwCYmpR8QCRDLrOQXL8CijKDAMm6lQVuCQpxXUR5sVYBMHYIAUIF8TepPxvrSjr46mds=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZDOOaNLWthC6fR3Arj2VdGrsMqOY/WAsGz5yflXuMC11pmgES
-	/SRoUCAcak+Ndu6beoNULjCVC5zBi4tQnJ6ZaHeol9c2551IBsse
-X-Google-Smtp-Source: AGHT+IGKu/6RwCKb3MWUCxKB2PMCOXK/MKElurLFEQ6l6Sj9iBASNOCQZvBFzEn11nGNMEQpZvH7ZQ==
-X-Received: by 2002:a05:6000:acc:b0:366:f469:a8d with SMTP id ffacd0b85a97d-3749b557a2cmr2421975f8f.35.1724945904636;
-        Thu, 29 Aug 2024 08:38:24 -0700 (PDT)
-Received: from localhost (p200300e41f29d300f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f29:d300:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3749efb37efsm1709686f8f.109.2024.08.29.08.38.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 08:38:24 -0700 (PDT)
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Tomasz Maciej Nowak <tmn505@terefe.re>
-Cc: devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Tomasz Maciej Nowak <tmn505@gmail.com>
-Subject: Re: [PATCH v2] ARM: tegra: wire up two front panel LEDs on TrimSlice
-Date: Thu, 29 Aug 2024 17:38:22 +0200
-Message-ID: <172494589680.1304567.741368873322088967.b4-ty@nvidia.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240822184555.20353-1-tmn505@terefe.re>
-References: <20240822184555.20353-1-tmn505@terefe.re>
+	s=arc-20240116; t=1724945986; c=relaxed/simple;
+	bh=irlj6udq+ajkTOZDEaMhoHi3gHxomUq9PIygsVw5x/E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Bvsa4IZr59UdvwpDD0uOjwNRP8xVoV05P1WFdYVDlkmJKglwkd+bZu/vW/dh1G8CahqSnfT1xS1MQX4Zs2osGaiNbesdLuCMh9LzKboxjkyr2awY9vZ/8aj5sBhYZEAEC9rnRYwZFcPHVQ9UlB4ncdmifY90m5ksbMcSODaQDtU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=cz5wRa62; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47T8iLKF019432;
+	Thu, 29 Aug 2024 15:39:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	+oZZN423x3H8FcKjymhNN5um5bqyqXeBRwGPv3NzEfU=; b=cz5wRa62qjH8a5jV
+	7KkORyfpxFDnzfftfFP/PECkCs+D//aVBf0ez7mtdGCRq/4bA3izvRuLicMgvraT
+	/pr4/nmcAMeRtgCYgHQ6tQQ3hBLiITAsyGMf3cfewFd/Q4SNWAURhUa0QgJzxrIu
+	5nnCBuY2xq2OcniNEtDhG8efy3lG3OUMjG8hFikG+x46D5jDTbBXb69CccXEReTY
+	LDLB55/ztC0UrTN/3ZwjAac+zWWDeAUrxtJP4kMRB2U4wjWrVg2lOfiw6QNWuA1q
+	TYfbpTsi0NI7wicV6EA3efdjs84QBnVeGjqUy+QUHUOQf8znKuSs14Vy/GTDbNFk
+	+acI+Q==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 419putntxy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 29 Aug 2024 15:39:11 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47TFdAdg021485
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 29 Aug 2024 15:39:10 GMT
+Received: from [10.110.28.107] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 29 Aug
+ 2024 08:39:06 -0700
+Message-ID: <e8e9cdcf-63c8-4bfa-aacc-d99338c7f8fa@quicinc.com>
+Date: Thu, 29 Aug 2024 08:39:06 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 14/22] dt-bindings: arm-smmu: document the support on
+ SA8255p
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: <andersson@kernel.org>, <konradybcio@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <rafael@kernel.org>,
+        <viresh.kumar@linaro.org>, <herbert@gondor.apana.org.au>,
+        <davem@davemloft.net>, <sudeep.holla@arm.com>, <andi.shyti@kernel.org>,
+        <tglx@linutronix.de>, <will@kernel.org>, <joro@8bytes.org>,
+        <jassisinghbrar@gmail.com>, <lee@kernel.org>,
+        <linus.walleij@linaro.org>, <amitk@kernel.org>,
+        <thara.gopinath@gmail.com>, <broonie@kernel.org>,
+        <wim@linux-watchdog.org>, <linux@roeck-us.net>, <robin.murphy@arm.com>,
+        <cristian.marussi@arm.com>, <rui.zhang@intel.com>,
+        <lukasz.luba@arm.com>, <vkoul@kernel.org>, <quic_gurus@quicinc.com>,
+        <agross@kernel.org>, <bartosz.golaszewski@linaro.org>,
+        <quic_rjendra@quicinc.com>, <robimarko@gmail.com>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+        <linux-crypto@vger.kernel.org>, <arm-scmi@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-i2c@vger.kernel.org>,
+        <iommu@lists.linux.dev>, <linux-gpio@vger.kernel.org>,
+        <linux-serial@vger.kernel.org>, <linux-spi@vger.kernel.org>,
+        <linux-watchdog@vger.kernel.org>, <kernel@quicinc.com>,
+        <quic_psodagud@quicinc.com>, <quic_tsoni@quicinc.com>,
+        <quic_shazhuss@quicinc.com>
+References: <20240828203721.2751904-1-quic_nkela@quicinc.com>
+ <20240828203721.2751904-15-quic_nkela@quicinc.com>
+ <ompfueg7civ5spjdumkhd7qgx4cnvjcftznf3z3q5duuxppt5d@fao7zx4oxfm3>
+Content-Language: en-US
+From: Nikunj Kela <quic_nkela@quicinc.com>
+In-Reply-To: <ompfueg7civ5spjdumkhd7qgx4cnvjcftznf3z3q5duuxppt5d@fao7zx4oxfm3>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: SpEicdg2VgDAFzoy96fzPwPyuZgqW6b8
+X-Proofpoint-ORIG-GUID: SpEicdg2VgDAFzoy96fzPwPyuZgqW6b8
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-29_04,2024-08-29_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 phishscore=0 adultscore=0 priorityscore=1501
+ impostorscore=0 malwarescore=0 suspectscore=0 spamscore=0 bulkscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408290109
 
-From: Thierry Reding <treding@nvidia.com>
 
+On 8/29/2024 12:36 AM, Krzysztof Kozlowski wrote:
+> On Wed, Aug 28, 2024 at 01:37:13PM -0700, Nikunj Kela wrote:
+>> Add compatible for smmu representing support on SA8255p.
+>>
+>> Signed-off-by: Nikunj Kela <quic_nkela@quicinc.com>
+>> ---
+>>  Documentation/devicetree/bindings/iommu/arm,smmu.yaml | 3 +++
+>>  1 file changed, 3 insertions(+)
+>>
+> Your subjects contain quite redundant/excessive information. In the same
+> time they lack information about device. 
+>
+> 1. s/document the support on/add/
+> 2. s/SA8255p/SA8255p SMMU-or-whatever-device-it-is/
+>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>
+> Best regards,
+> Krzysztof
 
-On Thu, 22 Aug 2024 20:41:02 +0200, Tomasz Maciej Nowak wrote:
-> Pins responsible for controlling these LEDs need to have tristate
-> control removed if we want them as GPIOs. This change alings with pinmux
-> configuration of "dte" pin group in downstream kernel[1].
-> These LEDs had no function assigned on vendor kernel and there is no
-> label on the case, the only markings are on PCB which are part of node
-> names (ds1 marking is on power LED controlled by PMIC), so generic term
-> is assigned as the function.
-> 
-> [...]
+Okay. I thought arm-smmu tag already indicate which device this patch is
+for but would put SMMU explicitly in the subject.
 
-Applied, thanks!
+Thanks,
 
-[1/1] ARM: tegra: wire up two front panel LEDs on TrimSlice
-      (no commit info)
+-Nikunj
 
-Best regards,
--- 
-Thierry Reding <treding@nvidia.com>
 
