@@ -1,68 +1,68 @@
-Return-Path: <linux-kernel+bounces-306440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F619963F12
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:52:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F13C963F13
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:52:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6094D1C243C8
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:52:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BFADBB22D85
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:52:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ACFA18DF69;
-	Thu, 29 Aug 2024 08:52:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B97B818DF8E;
+	Thu, 29 Aug 2024 08:52:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Eyfp9BRf"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Bg8mwNou"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDADE18D637
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 08:51:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A270018DF61
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 08:52:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724921521; cv=none; b=ppX35NVA8vw/v9Gzx/R05bVNv70L2GL1QDcJuNw7bLWBAy3+CGWPoB8b2PG6b03dJO3kMwSFtkYx3FFvWGdr/GRsrubOOrl/QlyNldGMDk+T10cuhXihnPfcnhzZZW5/K0WRbb+nQ+zCvT8OYnF3e1ADQdHdUL4Cv8GWUXFqP5Y=
+	t=1724921523; cv=none; b=rYELlCBRkGqXjW9aG5Dym47GsoWZb8AP628oSgR8EpVkw9TWtUch5WkXsndHhZpn+sbPwKZQI9cbQt18VfEIJHeUqdk/7u4SeLqcC33mC3dfA+FqAHi5OkqCjEfyzQmgOdFZLigUaWZhF0ptfAVOTtSk/Cw8aRJiywKgFfV2X4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724921521; c=relaxed/simple;
-	bh=tqMRQFMDM2g5ylg72XuZPc55O8LFCWQRKQrBNgYLaSg=;
+	s=arc-20240116; t=1724921523; c=relaxed/simple;
+	bh=Ys1aolYt/lRZW5Vi+ayqWyuwyr8HYv3CS6ogA9snSlE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=D+lP85WM1pCmW+f7Zbx8KdKNRRY55kmK+NCtT5Dka25YvUwItT8Oh9ixHuh6URAvtAXNTyu2luE2+GY59JcZvu5NFe6lD8HOvjV5EKXQLwLSDG/rK0HCI0SJBUQqbbF3es+05Lq+fw8XCStBHulhvi8PoHU8kryV08xkugLJLrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Eyfp9BRf; arc=none smtp.client-ip=209.85.214.181
+	 MIME-Version; b=uOgo1GQgl461i7fDtoonvM7igE1qNIJA70qA2IHsMMPcaJ0MRHlqgD4hFPIThq1Uk0tQ6Xxpkae7aJLlefyrMcTquq7nkX8eM/bzhu2wRGcYEedsH/3VNWOdGYY9Ae8YFRzt7T4NDa6PC4nK1eF9cUHuVPoKdw/DAnwkqgxS3YU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Bg8mwNou; arc=none smtp.client-ip=209.85.214.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-20202df1c2fso10765285ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 01:51:59 -0700 (PDT)
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-202146e93f6so4030415ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 01:52:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1724921519; x=1725526319; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1724921521; x=1725526321; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+qPNG8Y3Tb15rLUaBWAZZ/ecrzt8HqGuiaoxCHg7qJs=;
-        b=Eyfp9BRfbe6waEGhjePicwTbLKxm+gYGF8q2CfVwk6oEqWHB39rpuw9LKemfTsk041
-         iENmVbwkCNRLwl4eaZfgl4cVfGDg/EgfSKuitgZ0isIMN8fLd5sHK86VZsNEfRQ5LGPw
-         0ljKqBo8mCenzgBeK7VL05/qC+jrg5v/3kioE=
+        bh=sgPHavE7K4ClGYJgJpC5pW6t6qCTjxay4H8VAVIO8qM=;
+        b=Bg8mwNouhDF9cgTRMOhyAeugDG4VMvpQ/awtMEiHV1S6R8nUEiqxvwiuoSz4nw/6LP
+         O28qK1t3cXnvSP4gDRDibJDkQqhArhVjH3cSh2cfRGiVqcoeeCgtSEfGDkIB1/30bq5a
+         z+LOIrNL/GDc6GAoWfQolg8Ov0QxVm7O1iirA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724921519; x=1725526319;
+        d=1e100.net; s=20230601; t=1724921521; x=1725526321;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=+qPNG8Y3Tb15rLUaBWAZZ/ecrzt8HqGuiaoxCHg7qJs=;
-        b=JtKnLWAAh5playqZSC1e3kV/dbadYiEbH2+O5Rn31p/tKIdABrk1oRqwQlcq764dR2
-         au9vfvgLpc3ESRoYjroRzHiIeKwsn4fHTwjDPcYBznS7bfeepz3IdV2RacZ1oaXFH1zM
-         ycSmlgbjmws+bSYjr5m7H5cmGF7cI4uLLL7cVc5vtfmNY+eG4m4Nfys9k2rIjsDJUbZL
-         rIBt1q37o3fPbeJhZeMmGVVuxuzUFeZsMGMpI7eQtMFxsF7ldeAqY4N9dUNf4BBmoz1H
-         scg3836Wq1rvYm805r4hes3PK6hxrR4okpiHwR6NUZf0gDoaqUb67XCu859PFx8W8NFh
-         xFXg==
-X-Forwarded-Encrypted: i=1; AJvYcCX4OL4+I46YOtA0zufjvdBGIoNqK7gPQMuRzMjkvZ47rPlH2KAlx/yaoRYP7FrYy1nZGbaYaBCRvur8hl8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzD6NtNRXD1POTcKaVNXgR5R3iCqyXYxitaCxncPJL85bDXjIJ+
-	o4Yp9aFznP/LsCjxvkFYDblN4AaI/vjI8NjBaGdP2M8fslgeRJUD+8nklH/qvw==
-X-Google-Smtp-Source: AGHT+IHniIg70zN8Mcbn6SOTtRLOmATPMt3xZKk81frTkXYpYHX5zq7/IMrglokTZFmgklGCVG2ZMA==
-X-Received: by 2002:a17:902:c402:b0:1fd:6ca4:f987 with SMTP id d9443c01a7336-2051675f88amr16164665ad.15.1724921519210;
-        Thu, 29 Aug 2024 01:51:59 -0700 (PDT)
+        bh=sgPHavE7K4ClGYJgJpC5pW6t6qCTjxay4H8VAVIO8qM=;
+        b=gpiqrlPlmlm35Jx7z7tD9hbA7YNXvE6DEnvKuasGJQIw8TIxYDkSI4ykGvu0IZqbfs
+         55X9VCnbNypX4/GB7ctS9mSX1n78iVv2BhcVU9a7FahOzOg+fPXhlhuWMmUscV/P7N9h
+         egcC9ElE2VwgqpBwTDeRrjYTgDjViH+P1Mn5Q1ubCprxJRKY8xFUiDBS4KKZY8rQR1ly
+         1bb3kZcijrKSrP66DsvS12LmdacZkhBKC2IAmKQwtvfMJqj1TY3JAGsJ1faM4ywEs/US
+         8w7yPPqJAJiRLkdYTxeETCkDK+hX/bKjGAqd6fPPIlGMy3vpE4fv+Oi1khubkGz1zKgD
+         0/Sw==
+X-Forwarded-Encrypted: i=1; AJvYcCWVkdCksqYrpZ4hWDxd7sss70m1RWX+bL2m00wG0VtOXIesrf90WYh2foB5uWRk3xn8XrVq9ok+hKJjufs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxp2+yUruOJfJk2NlCa0iG/vJgI27s0bA6v/BSHl3MIFN9UIkye
+	/fSQUzcHImqSBvm5Py6Img6tY1Nnq4oxtJM7bSYbwHkRrAnudmNoiC4HweHMvA==
+X-Google-Smtp-Source: AGHT+IHNUXOidI2Jf1faocA3YuPGFcSZUSZSENW9FgWaOxjFlPiWIkyXqvj6UuCHYbxvh0ZYtCh0GA==
+X-Received: by 2002:a17:902:d4c2:b0:1fd:a0b9:2be7 with SMTP id d9443c01a7336-2050c33e3eamr25630315ad.13.1724921520981;
+        Thu, 29 Aug 2024 01:52:00 -0700 (PDT)
 Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:fbe5:6d6c:1cc7:23f3])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20515543fbdsm6924165ad.218.2024.08.29.01.51.57
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20515543fbdsm6924165ad.218.2024.08.29.01.51.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 01:51:58 -0700 (PDT)
+        Thu, 29 Aug 2024 01:52:00 -0700 (PDT)
 From: Chen-Yu Tsai <wenst@chromium.org>
 To: Mark Brown <broonie@kernel.org>,
 	Liam Girdwood <lgirdwood@gmail.com>
@@ -70,9 +70,9 @@ Cc: Chen-Yu Tsai <wenst@chromium.org>,
 	linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v2 05/10] regulator: of: Fix incorrectly formatted kerneldoc "Return" sections
-Date: Thu, 29 Aug 2024 16:51:25 +0800
-Message-ID: <20240829085131.1361701-6-wenst@chromium.org>
+Subject: [PATCH v2 06/10] regulator: fixed: Fix incorrectly formatted kerneldoc "Return" section
+Date: Thu, 29 Aug 2024 16:51:26 +0800
+Message-ID: <20240829085131.1361701-7-wenst@chromium.org>
 X-Mailer: git-send-email 2.46.0.295.g3b9ea8a38a-goog
 In-Reply-To: <20240829085131.1361701-1-wenst@chromium.org>
 References: <20240829085131.1361701-1-wenst@chromium.org>
@@ -84,12 +84,12 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-kernel-doc complains about missing "Return" section for many documented
-functions in the regulator OF-specific code. These all have descriptions
+kernel-doc complains about missing "Return" section for kerneldoc of
+of_get_fixed_voltage_config(). The kerneldoc has a description
 about the return values, just not in the format kernel-doc wants.
 
-Convert these to use the proper "Return:" section header. The existing
-descriptions have been reworded and moved around to fit the grammar and
+Convert it to use the proper "Return:" section header. The existing
+description have been reworded and moved around to fit the grammar and
 formatting.
 
 Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
@@ -99,57 +99,27 @@ Changes since v1:
 - Added articles ("the", "a") to the description based on surrounding
   and function implementation context
 - s/alloc/allocation/
-- s/error code/error number/
 ---
- drivers/regulator/of_regulator.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ drivers/regulator/fixed.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/regulator/of_regulator.c b/drivers/regulator/of_regulator.c
-index d557f7b1ec7c..dfa9f42d4629 100644
---- a/drivers/regulator/of_regulator.c
-+++ b/drivers/regulator/of_regulator.c
-@@ -338,8 +338,10 @@ static int of_get_regulation_constraints(struct device *dev,
+diff --git a/drivers/regulator/fixed.c b/drivers/regulator/fixed.c
+index cb93e5cdcfa9..c3de9c783d26 100644
+--- a/drivers/regulator/fixed.c
++++ b/drivers/regulator/fixed.c
+@@ -158,8 +158,10 @@ static int reg_fixed_get_irqs(struct device *dev,
   * @desc: regulator description
   *
-  * Populates regulator_init_data structure by extracting data from device
-- * tree node, returns a pointer to the populated structure or NULL if memory
+  * Populates fixed_voltage_config structure by extracting data from device
+- * tree node, returns a pointer to the populated structure of NULL if memory
 - * alloc fails.
 + * tree node.
 + *
-+ * Return: Pointer to a populated &struct regulator_init_data or NULL if
++ * Return: Pointer to a populated &struct fixed_voltage_config or %NULL if
 + *	   memory allocation fails.
   */
- struct regulator_init_data *of_get_regulator_init_data(struct device *dev,
- 					  struct device_node *node,
-@@ -391,7 +393,7 @@ static void devm_of_regulator_put_matches(struct device *dev, void *res)
-  * in place and an additional of_node reference is taken for each matched
-  * regulator.
-  *
-- * Returns the number of matches found or a negative error code on failure.
-+ * Return: The number of matches found or a negative error number on failure.
-  */
- int of_regulator_match(struct device *dev, struct device_node *node,
- 		       struct of_regulator_match *matches,
-@@ -619,7 +621,7 @@ static bool of_coupling_find_node(struct device_node *src,
-  * - all coupled regulators have the same number of regulator_dev phandles
-  * - all regulators are linked to each other
-  *
-- * Returns true if all conditions are met.
-+ * Return: True if all conditions are met; false otherwise.
-  */
- bool of_check_coupling_data(struct regulator_dev *rdev)
- {
-@@ -690,8 +692,8 @@ bool of_check_coupling_data(struct regulator_dev *rdev)
-  *	  "regulator-coupled-with" property
-  * @index: Index in phandles array
-  *
-- * Returns the regulator_dev pointer parsed from DTS. If it has not been yet
-- * registered, returns NULL
-+ * Return: Pointer to the &struct regulator_dev parsed from DTS, or %NULL if
-+ *	   it has not yet been registered.
-  */
- struct regulator_dev *of_parse_coupled_regulator(struct regulator_dev *rdev,
- 						 int index)
+ static struct fixed_voltage_config *
+ of_get_fixed_voltage_config(struct device *dev,
 -- 
 2.46.0.295.g3b9ea8a38a-goog
 
