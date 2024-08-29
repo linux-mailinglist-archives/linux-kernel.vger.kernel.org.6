@@ -1,139 +1,193 @@
-Return-Path: <linux-kernel+bounces-307139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2364F9648EE
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:47:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97AA39648F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:48:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FBA11C22797
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 14:47:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 190A61F21C0D
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 14:48:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3E161B250D;
-	Thu, 29 Aug 2024 14:46:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E45AE1B151F;
+	Thu, 29 Aug 2024 14:47:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Q0bLCT/9";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="EtZIN4q1"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sCUb42z8"
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A55931B1401;
-	Thu, 29 Aug 2024 14:46:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45A6618D65D
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 14:47:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724942783; cv=none; b=O6TAvNF7GFmgDoje3n8b2+vS2cJJzxfp4/2TTfFzwNPqRGr1p4K7EHbxYYAyhRGSLg+XU8wyNYR6RxjTkVMgMZY4lU4goB11AdayPelZRPLGEwTLfeaxElrwJGpekZr5Wf2ueVq2HfqXfCvt87fjmb6A39xnyR/gNQ+WMwHMZSo=
+	t=1724942848; cv=none; b=Q9Gia3hJ2MCThvh5xlwI6bwk4cMrq7xFazgyKugnIw8/xOTbFHtTZVkskbp+z2m8gB0hv4vEqsuPm7wVlPMG2IwvnRTZcZZriDtRgdpVhOw2Btta3Gp5WdbmHm6pXj+siNPV4WuGDmBNMZhaauuxMoVic98xBJpJ2xCbmLNdgKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724942783; c=relaxed/simple;
-	bh=SL8jUwSn4pyzmILjnoyQuZItYZkNCsokx3+ePrFrEmE=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=So54IQZ83oJALil1BZuWG4W4KF14Q95m7qq5LQNg0st7L8MIbx4zokUxwcXRa1vXuAxUp6Rx6+jlLuCKjRf1i+O2Jb16fOrq+PXmT3k313wA2u4amuF+nKBUiVcxrc8Nwv4swJGyFCWdlU09Zq2h3hEcXR/LrgXlsUnUbWCqQHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Q0bLCT/9; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=EtZIN4q1; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 29 Aug 2024 14:46:19 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1724942779;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6e77kthwKCJKs7mvJV35ELYZo/db7mzAreQUgy63BbY=;
-	b=Q0bLCT/918IjyIXj+3x2l+6S+3hHny9lcwqqRaxpo6ZvzgGxQc1j4RmcqsSAnK64vyzXrc
-	kWTHBO6hemdB1oecAjm99ydIiEp6UHdS71lLeqDLdQJqLE6drQpwM4R4gX8lbNNBQMNWws
-	sDfC0NuJ0Rlx8QmK/z2Orz+g+eszxNyxyXfxPTRqjj3/Z6vstvt8xAk727AOKUAmDaHr91
-	zxidoUOfiSPibsAvu0CJu3MuQJfKg7KMykSNWXG5apzjc77IuN43ezJXEx7HgfpmkAgUWN
-	1FXwAslSmgu/XgFS+wB/gL3oAVBe+ZZuJynhdUSFuC+h2t+WR4kO8oXxvZGc9Q==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1724942779;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6e77kthwKCJKs7mvJV35ELYZo/db7mzAreQUgy63BbY=;
-	b=EtZIN4q1cbDEL+Yvq4tFo5gE3LBkNJu6NkMbSVWwngCGHtULRKKydjesSDfzbGgv3QiDoW
-	f8kbY/Ckafn88MCw==
-From: "tip-bot2 for Jeff Xie" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/core] genirq/proc: Correctly set file permissions for
- affinity control files
-Cc: Jeff Xie <jeff.xie@linux.dev>, Thomas Gleixner <tglx@linutronix.de>,
- x86@kernel.org, linux-kernel@vger.kernel.org, maz@kernel.org
-In-Reply-To: <20240825131911.107119-1-jeff.xie@linux.dev>
-References: <20240825131911.107119-1-jeff.xie@linux.dev>
+	s=arc-20240116; t=1724942848; c=relaxed/simple;
+	bh=2wEme4/XiIxv+XC7IKX+UEP3LoIr+uA9GwuBXw2L62Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jDvohWSEvOhUaYinZvdFlxcYWia9CSoD07jykhmQWf0bBswQdhRrpU85FDfCfThXM3CJq9Lbrm1Jln5Lz8pEzR3kFTgdnwZCenl8oPXDIlWXsukF/ch4rJGXLJw5fE84uwD/ljmD88sZ/j1rUncJHkxQS0+dHZDpsqhGJlg7RVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sCUb42z8; arc=none smtp.client-ip=209.85.128.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-68d30057ae9so7223287b3.1
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 07:47:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724942845; x=1725547645; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=P/vkim+xummqOk2H9b+74Hhqn660ITeM09qY2Omx2bI=;
+        b=sCUb42z8vNA3J5MeggF6wBq5FlGHw3OoHnWXuf+tZ4KAckNpJ+VQ8rT2/EwQPJw0Gk
+         O2RGjkGTazpYQqV7Uld0/mv4z0bwdAEB30rTQW9iN/CBsDxxCmyyTJvv3dVILPWmOI1K
+         OSH/Bs5LCkDuyuSbMHM7PGWda3tOlSaxa1LJfVxywlQAZY+yCgKV2ZIgrjUjXhiNOImE
+         OSQoC6mD2wQf4I2fSA06D8w1LhJYjVudqqwuvwfhbse/hg0RCBcB/ykqH84lr32nwDVz
+         gpKYvej8qQxCQLMebIvTtkYGiteKT0wWxIoIrUVqzufLKnk7+YpHcCmAKTWF6ohyAI52
+         NOTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724942845; x=1725547645;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=P/vkim+xummqOk2H9b+74Hhqn660ITeM09qY2Omx2bI=;
+        b=pcPiOqfxE9f3Kan4agHjE5zcT+m8KUj+Ut4mYgmXZmeWDoi0qLm2f7W2k//h/TxhCt
+         E1Y0Ok6r2+ZmqN2JJS9+QgMiE9phJhmWVjMFxBfneLheqdDgTa5u0vXXPfPqoUhfXvii
+         wZiBCxsN2hHfQUwxohA455Ulqse7tS+diGgXdRHM5S76yg4VN4m+Cc5dFuHH2B5yA/DW
+         joJ+XBoXUhCrWlioZrDGhYUFb0PFJeP11yT0CY+ut2VguG1XujxXT2OtPfKLA9Cp+9DQ
+         uhGtVvUmWECI0mgQ7QIh3bLlxHkGqG2oEbZT5XIPoA/PnyXyHEVGwoAgqucJQeJl7U3W
+         2AOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX1DoKoYoDy9/vvO0lXcyoXR5+QGrEAZeWiDE1Z9vVPtWoHqG9wOF/R84/sUGzCJj2jbCSG1xP33yQGJps=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6tpeBDTjnbA1a4+Ga21+EjOVWxvAvhAeCq+XbMO2L2cK+QAMJ
+	zDpEXjgZ8R2N2WO4KpKVOJCNfaR9k3m/WlaoLHogkxnEZnt9ZH8mbGJ5BhSby6RATtHU82c4rAW
+	FK7mL7odLcn3E1Kqvh4jfuSUvPtzVs6TEJmoI+Q==
+X-Google-Smtp-Source: AGHT+IFHAtMxCb+GcwQvbb/tvHuVYvN/sUzIggHVFuoFNFPiNhIN+TbyVH/OKH+M77ZtiY09qXR7uD8wMI4GqyNRYMQ=
+X-Received: by 2002:a05:690c:7604:b0:6d3:98b1:e3bc with SMTP id
+ 00721157ae682-6d398b1e4e3mr2993127b3.32.1724942845200; Thu, 29 Aug 2024
+ 07:47:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172494277939.2215.420047136899839963.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+References: <20240828140602.1006438-1-claudiu.beznea.uj@bp.renesas.com> <20240828140602.1006438-4-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20240828140602.1006438-4-claudiu.beznea.uj@bp.renesas.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 29 Aug 2024 16:46:49 +0200
+Message-ID: <CAPDyKFrGGKU034C81Q_1AvwVLobKXrwbkgGXL83HgJW68-h+Sg@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] watchdog: rzg2l_wdt: Power on the watchdog domain
+ in the restart handler
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: geert+renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org, 
+	wim@linux-watchdog.org, linux@roeck-us.net, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-watchdog@vger.kernel.org, linux-pm@vger.kernel.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-The following commit has been merged into the irq/core branch of tip:
+On Wed, 28 Aug 2024 at 16:06, Claudiu <claudiu.beznea@tuxon.dev> wrote:
+>
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>
+> On RZ/G3S the watchdog can be part of a software-controlled PM domain. In
+> this case, the watchdog device need to be powered on in
+> struct watchdog_ops::restart API. This can be done though
+> pm_runtime_resume_and_get() API if the watchdog PM domain and watchdog
+> device are marked as IRQ safe. We mark the watchdog PM domain as IRQ safe
+> with GENPD_FLAG_IRQ_SAFE when the watchdog PM domain is registered and the
+> watchdog device though pm_runtime_irq_safe().
+>
+> Before commit e4cf89596c1f ("watchdog: rzg2l_wdt: Fix 'BUG: Invalid wait
+> context'") pm_runtime_get_sync() was used in watchdog restart handler
+> (which is similar to pm_runtime_resume_and_get() except the later one
+> handles the runtime resume errors).
+>
+> Commit e4cf89596c1f ("watchdog: rzg2l_wdt: Fix 'BUG: Invalid wait
+> context'") dropped the pm_runtime_get_sync() and replaced it with
+> clk_prepare_enable() to avoid invalid wait context due to genpd_lock()
+> in genpd_runtime_resume() being called from atomic context. But
+> clk_prepare_enable() doesn't fit for this either (as reported by
+> Ulf Hansson) as clk_prepare() can also sleep (it just not throw invalid
+> wait context warning as it is not written for this).
+>
+> Because the watchdog device is marked now as IRQ safe (though this patch)
+> the irq_safe_dev_in_sleep_domain() call from genpd_runtime_resume() returns
+> 1 for devices not registering an IRQ safe PM domain for watchdog (as the
+> watchdog device is IRQ safe, PM domain is not and watchdog PM domain is
+> always-on), this being the case for RZ/G3S with old device trees and
+> the rest of the SoCs that use this driver, we can now drop also the
+> clk_prepare_enable() calls in restart handler and rely on
+> pm_runtime_resume_and_get().
+>
+> Thus, drop clk_prepare_enable() and use pm_runtime_resume_and_get() in
+> watchdog restart handler.
+>
+> Acked-by: Guenter Roeck <linux@roeck-us.net>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Commit-ID:     c7718e5c76d49b5bb394265383ae51f766d5dd3a
-Gitweb:        https://git.kernel.org/tip/c7718e5c76d49b5bb394265383ae51f766d5dd3a
-Author:        Jeff Xie <jeff.xie@linux.dev>
-AuthorDate:    Sun, 25 Aug 2024 21:19:11 +08:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Thu, 29 Aug 2024 16:41:42 +02:00
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
 
-genirq/proc: Correctly set file permissions for affinity control files
+Kind regards
+Uffe
 
-The kernel already knows at the time of interrupt allocation whether
-affinity of an interrupt can be controlled by userspace or not.
-
-It still creates all related procfs control files with read/write
-permissions. That's inconsistent and non-intuitive for system
-administrators and tools.
-
-Therefore set the file permissions to read-only for such interrupts.
-
-[ tglx: Massage change log, fixed UP build ]
-
-Signed-off-by: Jeff Xie <jeff.xie@linux.dev>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/20240825131911.107119-1-jeff.xie@linux.dev
----
- kernel/irq/proc.c |  9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/irq/proc.c b/kernel/irq/proc.c
-index 8cccdf4..9b3b12a 100644
---- a/kernel/irq/proc.c
-+++ b/kernel/irq/proc.c
-@@ -362,8 +362,13 @@ void register_irq_proc(unsigned int irq, struct irq_desc *desc)
- 		goto out_unlock;
- 
- #ifdef CONFIG_SMP
-+	umode_t umode = S_IRUGO;
-+
-+	if (irq_can_set_affinity_usr(desc->irq_data.irq))
-+		umode |= S_IWUSR;
-+
- 	/* create /proc/irq/<irq>/smp_affinity */
--	proc_create_data("smp_affinity", 0644, desc->dir,
-+	proc_create_data("smp_affinity", umode, desc->dir,
- 			 &irq_affinity_proc_ops, irqp);
- 
- 	/* create /proc/irq/<irq>/affinity_hint */
-@@ -371,7 +376,7 @@ void register_irq_proc(unsigned int irq, struct irq_desc *desc)
- 			irq_affinity_hint_proc_show, irqp);
- 
- 	/* create /proc/irq/<irq>/smp_affinity_list */
--	proc_create_data("smp_affinity_list", 0644, desc->dir,
-+	proc_create_data("smp_affinity_list", umode, desc->dir,
- 			 &irq_affinity_list_proc_ops, irqp);
- 
- 	proc_create_single_data("node", 0444, desc->dir, irq_node_proc_show,
+> ---
+>
+> Changes in v2:
+> - adjusted patch description and comment from code
+> - collected tags
+>
+> Changes since RFC:
+> - use pm_runtime_resume_and_get() and pm_runtime_irq_safe()
+> - drop clock prepare in probe
+>
+>  drivers/watchdog/rzg2l_wdt.c | 20 ++++++++++++++++++--
+>  1 file changed, 18 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/watchdog/rzg2l_wdt.c b/drivers/watchdog/rzg2l_wdt.c
+> index 2a35f890a288..11bbe48160ec 100644
+> --- a/drivers/watchdog/rzg2l_wdt.c
+> +++ b/drivers/watchdog/rzg2l_wdt.c
+> @@ -12,6 +12,7 @@
+>  #include <linux/module.h>
+>  #include <linux/of.h>
+>  #include <linux/platform_device.h>
+> +#include <linux/pm_domain.h>
+>  #include <linux/pm_runtime.h>
+>  #include <linux/reset.h>
+>  #include <linux/units.h>
+> @@ -166,8 +167,22 @@ static int rzg2l_wdt_restart(struct watchdog_device *wdev,
+>         struct rzg2l_wdt_priv *priv = watchdog_get_drvdata(wdev);
+>         int ret;
+>
+> -       clk_prepare_enable(priv->pclk);
+> -       clk_prepare_enable(priv->osc_clk);
+> +       /*
+> +        * In case of RZ/G3S the watchdog device may be part of an IRQ safe power
+> +        * domain that is currently powered off. In this case we need to power
+> +        * it on before accessing registers. Along with this the clocks will be
+> +        * enabled. We don't undo the pm_runtime_resume_and_get() as the device
+> +        * need to be on for the reboot to happen.
+> +        *
+> +        * For the rest of SoCs not registering a watchdog IRQ safe power
+> +        * domain it is safe to call pm_runtime_resume_and_get() as the
+> +        * irq_safe_dev_in_sleep_domain() call in genpd_runtime_resume()
+> +        * returns non zero value and the genpd_lock() is avoided, thus, there
+> +        * will be no invalid wait context reported by lockdep.
+> +        */
+> +       ret = pm_runtime_resume_and_get(wdev->parent);
+> +       if (ret)
+> +               return ret;
+>
+>         if (priv->devtype == WDT_RZG2L) {
+>                 ret = reset_control_deassert(priv->rstc);
+> @@ -275,6 +290,7 @@ static int rzg2l_wdt_probe(struct platform_device *pdev)
+>
+>         priv->devtype = (uintptr_t)of_device_get_match_data(dev);
+>
+> +       pm_runtime_irq_safe(&pdev->dev);
+>         pm_runtime_enable(&pdev->dev);
+>
+>         priv->wdev.info = &rzg2l_wdt_ident;
+> --
+> 2.39.2
+>
 
