@@ -1,150 +1,134 @@
-Return-Path: <linux-kernel+bounces-306460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7F56963F51
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:59:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D8E8963F52
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 11:00:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 795C9284708
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:59:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 146831F22C22
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 09:00:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13A7A18C93A;
-	Thu, 29 Aug 2024 08:59:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94FCC18C926;
+	Thu, 29 Aug 2024 09:00:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F85IMiYW"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="LPcz7wVC"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCF731598EC;
-	Thu, 29 Aug 2024 08:59:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B05AF148838
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 09:00:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724921973; cv=none; b=KnTy8XXOa44toQbI+QcA3OmEs45sjjOXsf6ttE0A6xDUNlf4CqmI1wiWI0ym5M7LVYU8NI9Q5UllXiH2838K9GMP15aN7//4i7YaBXLpYRkMRqKQ1w7DZEKjiJ0FyvWleq7HQI3r2UzIjesS/fv6CDx+F3QMGEe/Gv3d5SNkv3s=
+	t=1724922040; cv=none; b=fJwKnJdMPFql87xlyUYdNxqXQokSxvmNuWhuV7+CNNElN48C0YZQq4WcTnqJ0Taie+7UvdSV5hm3q6N5a4N/HnWsyyHTJ3BwmdzSqQiqgUcrRDVR5hg1txaArE0WNe/NLlX/3xzpi85aCDo5/aZtxu8dpBXzLCyvepRVj+sZqN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724921973; c=relaxed/simple;
-	bh=HiFJRMLEOLaJ/ISVWB5bBJ6f8o08CYKL4cJqx3/c2AY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Kn8VFjFLwKpCVees/vU1rtRwAhqRItIdpu703a28ZwivLickYtDPSWMNw6o9Dj2SSP0vI4YDIYIQV6/DXOIfPAKt6t0B6hWO85ST13EbvW9HNRs4ELJlOQVpTshHfnni1tMmgjHHGgFV7/n7OV1e17ax65r6nwN7JU1qwCv/LgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F85IMiYW; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a83562f9be9so30540866b.0;
-        Thu, 29 Aug 2024 01:59:31 -0700 (PDT)
+	s=arc-20240116; t=1724922040; c=relaxed/simple;
+	bh=81+YZ0KSh/IunsDPFB8A4sOGy/yTbcZFpSn1SUKBv40=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tuPleibdsa5A0DlcSuBBWiCM1zhv1aVLwfuuwMojI1MaLEjFgfjQ8DDRFvDWEQuSNVi7DTFHEYOCZCbeY7uEwmMS5AkFjFs1oqPI+/ATp69F0L39HkxWRC7qJEoM1tvSZGIM0ze3nVkguvCNTaOXerNjRI2JBQ3B5F67z1wkIks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=LPcz7wVC; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-371a6fcd863so282118f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 02:00:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724921970; x=1725526770; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=L6PI0kxazoYvMEvipE5JZuGWwfX9pSjfbWTsIhMOBvU=;
-        b=F85IMiYWxCrGcwsSyKL569U3JANBeoOQzPABi2GRhEH8C7Wr7p5HeS0RhOSwj17ftn
-         SPVAN8ParqV+TP+va6WCxUQxau0sSLchsrFibQWgY8M9ylky2QW69n+Exqn9hY8hSI+5
-         NMPi2ZdEVoYzQkaPYucUQm4XJur547urrX651IRyBjQpnTBaSS6tHKDlPvH9pz+2xP1R
-         akLxggqwRBZZrCppeIcsooe4MrXrffw50ILOdjd5jh7x65G2qQEhnSkIdN9AIyqlu2Tg
-         lPhNZqPyaVoIXPMSXwnTQxqQp2Um+h4GLrrI0QE5/98dYTIP+2PJTRkeLcKQoPLYC90b
-         kL6Q==
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1724922037; x=1725526837; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=BeNRcsK1VBAVknVZMYL7LYgNLSYxmT3BPkThGqZl++4=;
+        b=LPcz7wVCXxAEh/X7Dpx2orLhRCXd9wIodZLGIH6UtELSMsgOsBEGHqFkiIfZ04Q4Sw
+         N5HKYXmq3QOv8scndLkxfKXzhKNHW4SYWNpGUIoOMPOfh811290g3fB6mJDgtEtvYig/
+         lJwkrorpQPsd/zGkNcs5Th2iOQPTjfNXceE233Pih8bxVWjjFDvb1W145SnPvEx5n+9x
+         r86budCFqHIMXlXjbBaPZDW/yM6Ee50no7oB+Vy49gsUMjK+7amNyOpDwlUT2kvQ8fED
+         u5t9ropchpihgUrFgGP107L6wSBhMLwk+0GQZhY/NozcFPnfriSsmzIedaCpOKb5j4V0
+         0cEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724921970; x=1725526770;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=L6PI0kxazoYvMEvipE5JZuGWwfX9pSjfbWTsIhMOBvU=;
-        b=h9adQ/icRbyT7Q95v9BQSjmMDi8IH4bO+CDSNjCiIlBgJavVJ26I80G25jQaevr/di
-         naot/FH5fKtIQ+29D+myFnEcT7UJlXns7JMM3FyJxVibd5MCVyMgvKzO0wMwwsx3RhWc
-         Q6p4Q8kHwd/CGcnnAC8w76SceTbUi1E0BO4bGv8TZdyw6MWzUVON8urMTvX8vjaE2f0F
-         YKUrY4iwdDEaNP7Xbp6P61DlHk7uvpJd+X2r6NLxfDYhDQD8S57vLisN/eulAvuMFEha
-         IZ4rdbvXfuVVWPL6/Jzbt5Rx+QHVs8FRu/AAvcKbAqJPeC7n9XOBPTxLqrKGNXbGoFo0
-         9yRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUmgwc1nsC3yCawC3aSVrFf7uTX9nP8gLhlv0u2+k6DC1byhx0IY6lBdINV3omH6CKl7FBqGiGtmwEKQYU=@vger.kernel.org, AJvYcCV/0cSXT4VFAmwS6Hw6KrZPASNU/7Om8ngYZY3pnc+dYDl18AnC1goV0Ldu84uzlxCWzaMDfR09zDs=@vger.kernel.org, AJvYcCVcfnNPRO9lFf/Eam/b4fcxfXdvqGfjVIpdY4njbUnjr/eMmYoRSmKoDd0qE+BCYibZ8BSiwzSHWENwvAE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsQTDFO5pcgwPRVC4KxSTon1x+smkwSqJZpTkvDW+peoo3+WGU
-	ilLjiCMAp45Fa6X+xXqgbQUnHa/1wjfjNUPPBRchmyVZ3O7CqFBY
-X-Google-Smtp-Source: AGHT+IGA+xSc4gOYa291tfiNRKlp4DGRPrBqM2Xy44MLdhpGqleWR77etW1w7LBDLk1s7sYiod2NXQ==
-X-Received: by 2002:a17:907:1b0d:b0:a86:808c:59b with SMTP id a640c23a62f3a-a897fad76a2mr154374066b.69.1724921969366;
-        Thu, 29 Aug 2024 01:59:29 -0700 (PDT)
-Received: from orome (p200300e41f29d300f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f29:d300:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8988ff289fsm51379766b.2.2024.08.29.01.59.28
+        d=1e100.net; s=20230601; t=1724922037; x=1725526837;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BeNRcsK1VBAVknVZMYL7LYgNLSYxmT3BPkThGqZl++4=;
+        b=kWYlslaJ7SlHfkJd+fIrye58ji/Clud7IOX0q6yyD+mxuQv0mXE0E+S+X0+0y6gEyD
+         ihAPYqC2BqLSBx6IMIoYnIt7CpCHKd/olE87HGTH6TCMXA+8261vjhGOviDn+u0cGXBr
+         Z55aioBXrUNF81eL1ifjvxhGYQ/QWqLQTc1VYSsZaksoXZ67F8QzVIJDFlrRSvwT0L6T
+         wfZcO5fOGDXxKlQVX7aBDohOAOHn2k/6epOnBG3afEf/ICTkfKl1zQq5u5nLsspskdD4
+         5lcYQldUFUPDQMBcA5gOG7+QtNf9xd7OLwlw6zNEcUQdH+2bnFK0CI3KYZRTi3aXZ/dX
+         WFxA==
+X-Forwarded-Encrypted: i=1; AJvYcCUPyOZIDPeMcQRVy0c4Hal0nwzaWa7y2tMA611CaIfNmM30jrGi/PztbkMIcEvfQQ9gRJ1iVTBmF38UstM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwzvskLWfnxVWJEwM/XNRo2mvQaVOATtN6HG0yvUQdrpfjON1L5
+	4FN9QNa8YTMTNZ3C1RXKHz6JVhV4WXfwx5JPkgeJRr43Q6PsHq1Elb3/5gyDPOA=
+X-Google-Smtp-Source: AGHT+IFDn/Gg69njG25mI4d4sEhZazC4fYygfh318ZFGyBPM6YU+PgABbs6EeHt9ufd4I3vB2nPnxQ==
+X-Received: by 2002:a5d:51c9:0:b0:368:4218:a3d with SMTP id ffacd0b85a97d-3749b54fe8bmr1391056f8f.37.1724922036607;
+        Thu, 29 Aug 2024 02:00:36 -0700 (PDT)
+Received: from alex-rivos.ba.rivosinc.com (amontpellier-656-1-456-62.w92-145.abo.wanadoo.fr. [92.145.124.62])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3749efb15b8sm860971f8f.105.2024.08.29.02.00.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 01:59:28 -0700 (PDT)
-Date: Thu, 29 Aug 2024 10:59:27 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
-	Mikko Perttunen <mperttunen@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, linux-pm@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 1/4] drm/tegra: gr3d: Convert into
- dev_pm_domain_attach|detach_list()
-Message-ID: <ztizdqpyd7uyp32dn3t4kv4j2s3s43woeqfnekuqxvurngac7u@kycydobqnacz>
-References: <20240723144610.564273-1-ulf.hansson@linaro.org>
- <20240723144610.564273-2-ulf.hansson@linaro.org>
- <4455ntyh3v5kk6p2hlprcdc3twy5lgwcihl6fg7akxxlxixr6f@vrpesypllh3o>
- <CAPDyKFosYtG=6KtDFeNq-XJ9DO0fbFK-bcpR7G8cVH2Zn2az3A@mail.gmail.com>
+        Thu, 29 Aug 2024 02:00:36 -0700 (PDT)
+From: Alexandre Ghiti <alexghiti@rivosinc.com>
+To: Atish Patra <atishp@atishpatra.org>,
+	Anup Patel <anup@brainfault.org>,
+	Will Deacon <will@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	linux-riscv@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: Alexandre Ghiti <alexghiti@rivosinc.com>,
+	Andrea Parri <parri.andrea@gmail.com>,
+	Nam Cao <namcao@linutronix.de>
+Subject: [PATCH -fixes v2] drivers: perf: Fix smp_processor_id() use in preemptible code
+Date: Thu, 29 Aug 2024 11:00:34 +0200
+Message-Id: <20240829090034.15777-1-alexghiti@rivosinc.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="ibwrqajl24chkuz2"
-Content-Disposition: inline
-In-Reply-To: <CAPDyKFosYtG=6KtDFeNq-XJ9DO0fbFK-bcpR7G8cVH2Zn2az3A@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 
+As reported in [1], the use of smp_processor_id() in
+pmu_sbi_device_probe() must be protected by disabling the preemption, so
+simply use get_cpu()/put_cpu() instead.
 
---ibwrqajl24chkuz2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Reported-by: Andrea Parri <parri.andrea@gmail.com>
+Reported-by: Nam Cao <namcao@linutronix.de>
+Closes: https://lore.kernel.org/linux-riscv/20240820074925.ReMKUPP3@linutronix.de/ [1]
+Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+---
 
-On Wed, Aug 28, 2024 at 05:26:40PM GMT, Ulf Hansson wrote:
-> On Wed, 28 Aug 2024 at 17:06, Thierry Reding <thierry.reding@gmail.com> w=
-rote:
-> >
-> > On Tue, Jul 23, 2024 at 04:46:07PM GMT, Ulf Hansson wrote:
-> > > Rather than hooking up the PM domains through devm_pm_opp_attach_genp=
-d()
-> > > and manage the device-link, let's avoid the boilerplate-code by conve=
-rting
-> > > into dev_pm_domain_attach|detach_list.
-> > >
-> > > Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-> > > ---
-> > >  drivers/gpu/drm/tegra/gr3d.c | 46 ++++++++++------------------------=
---
-> > >  1 file changed, 13 insertions(+), 33 deletions(-)
-> >
-> > Applied to drm-misc-next, thanks.
->=20
-> Please drop this from your tree. I already have a patch [1] that you
-> have acked, which is a newer version of $subject patch.
->=20
-> Sorry if this was unclear.
+Changes in v2:
+- Do not disable the preemption in static_key_enable() (Will)
 
-Ugh... indeed. Sorry, I was confusing these. Unfortunately I had pushed
-to drm-misc-next already, so I can't drop, but I can revert.
+ drivers/perf/riscv_pmu_sbi.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-Thierry
+diff --git a/drivers/perf/riscv_pmu_sbi.c b/drivers/perf/riscv_pmu_sbi.c
+index 31a17a56eb3b..febd8e74a72f 100644
+--- a/drivers/perf/riscv_pmu_sbi.c
++++ b/drivers/perf/riscv_pmu_sbi.c
+@@ -1373,11 +1373,16 @@ static int pmu_sbi_device_probe(struct platform_device *pdev)
+ 
+ 	/* SBI PMU Snapsphot is only available in SBI v2.0 */
+ 	if (sbi_v2_available) {
++		int cpu;
++
+ 		ret = pmu_sbi_snapshot_alloc(pmu);
+ 		if (ret)
+ 			goto out_unregister;
+ 
+-		ret = pmu_sbi_snapshot_setup(pmu, smp_processor_id());
++		cpu = get_cpu();
++		ret = pmu_sbi_snapshot_setup(pmu, cpu);
++		put_cpu();
++
+ 		if (ret) {
+ 			/* Snapshot is an optional feature. Continue if not available */
+ 			pmu_sbi_snapshot_free(pmu);
+-- 
+2.39.2
 
---ibwrqajl24chkuz2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmbQOG8ACgkQ3SOs138+
-s6HvFBAAhZckjGsjgRiVBP+auG6ca3V5rM1e+ILa1kfqoYUIC6YMarx0II2oqHLw
-7+V2yQo6jViop3GggvSGI9+z9b8+HmnLgsLfWqYpem+oCRChoipAWyX/eRoxatgD
-TW8F1BbE7mZVT6ZaoNuNpv/E8oYQj/AmTp7Nu1QpiTh1z5kaC2OruqEdQqqMTyPB
-jX4qhifFDokbT7LNkIVn5nPRZjXgJSgz2gq68bSalTBb3D4r0WwlClBKDSWhFW2E
-4Uv3Qr4KXnyp3NLJQaDaoIW//RuY3rqnI/+s6pHKmfJXb8VkXK5r0BpXs+hBEOnw
-nVksiZ07gL5KSkCYdeVhuoCB8CVpuvSAkNqJ38C+nE7Q+SK7s0Lsi/7VE4OP2PWJ
-J2JNY6mxkFL/muUEEjMM91sFjK6wLoeMBlfHqclA7iu43WGp8TbsxC+NI188WZl6
-o8GyQWcmcMTs+TB5iytma2jjQW1WKYubdiyyoCHREXsz197fUH2xDCXX3g2vSIdf
-ezAsnaAOJpZ9fHJXP3Z3RyZBZDVzBcZUrKkcg/RW3d3kCKUj9N8yMK+wFG8KbgwJ
-QDjZy1mQPKnI13em60gu3Fk1sI5tDgxra1Lzl2tfIbrUDrkSKIQaC1YzYWV3GYwp
-BEjnsexeJLhmghBq5GA9RBNWwXA2ZZUoR1xwPOK1PvkDekgp0Qo=
-=KvWf
------END PGP SIGNATURE-----
-
---ibwrqajl24chkuz2--
 
