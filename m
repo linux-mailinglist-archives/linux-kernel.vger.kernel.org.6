@@ -1,201 +1,218 @@
-Return-Path: <linux-kernel+bounces-307043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAB7396476D
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:02:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A37FB964730
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:51:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6165BB28C48
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:50:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C42F81C22AB8
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:51:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8AD41ABED0;
-	Thu, 29 Aug 2024 13:50:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 332321AC44F;
+	Thu, 29 Aug 2024 13:51:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UNgSIzLy"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="b0R9G5tw"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48EA126AE6
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 13:50:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34D0A19306A
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 13:51:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724939412; cv=none; b=sDcfoZIredKXk6QYc6kQWOPF89iQeW95gIi8V/wMnyiQCIGeEmdfCF7WLjgf0BOiXJkKTuQwXogjdIos85xYHzyAR0MtJNsQUVkyraMbJXexSTf6ES8OU0/3eaieUyxMRo0Y2wjlT+c8/yww8JD0aZiBuVXYZBTKgSFAmp/SZNw=
+	t=1724939471; cv=none; b=mcMNGpyfK6DDLUddUHttV6TKX1AZZZpQiedqF1hiUMBlyoWG4FxWNkzEQEwuC3J1dLf1NZ+8mucVonzKQMovTfQlARVHW7KsLeD3amDyxAg8cWM+tMT0AryaiyEMtDwtPQAot9mXwMbNZmWnUFKJTAJMsJOgq77YZqnw0HgBPAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724939412; c=relaxed/simple;
-	bh=Zqnxe60NX0J45tBi8upIuccnsXnVk32jl9i7ZxtGV1c=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ikiIzKxZIgxwhQwKL87Lrrb/3XmRngKmKSsEDs9duMc2VQ3zgzO1S80vat+dh30Vz2kCdqRis99iCTUC/oxvWoWkofIwkeZbeBUSZMzzNbX0hNAeZpq3RkOy37ndd8vUAbQhpN1QQA4auhV2vGbSKY/1+Ic9fCbI6nIR/5S+Y0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UNgSIzLy; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724939410;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dqxAkUsCZdsmGpFV5oP8e7LMXSQ2NdK7SdPznVjJ+cM=;
-	b=UNgSIzLyR9s6/Mx1vxQttxFLl8rSoWQoU12CPkrH8bis6xh0UmXGNSHfM/VMuZ/14O+elZ
-	nIAIdaRa1SK4Z8gRpb2o17Tsz+FH5Vt3n8fzXBWMgwyVUUbEKbcerhU0myt+iVpT11HM/X
-	Sgs6xFMgiJAKhoj4M8KP0gXdOEOxxXM=
-Received: from mail-yw1-f200.google.com (mail-yw1-f200.google.com
- [209.85.128.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-77-Pbvko2f0OeaYO3YuAUNbHQ-1; Thu, 29 Aug 2024 09:50:09 -0400
-X-MC-Unique: Pbvko2f0OeaYO3YuAUNbHQ-1
-Received: by mail-yw1-f200.google.com with SMTP id 00721157ae682-6cf78470a56so15305887b3.3
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 06:50:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724939408; x=1725544208;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dqxAkUsCZdsmGpFV5oP8e7LMXSQ2NdK7SdPznVjJ+cM=;
-        b=mvjMPuGurjVM2ZCd0LGUN8ugvSfJuT2vAxaWgVDwEueOazWU/IDrKveYW35slGgKcp
-         KqzV7djPVlzkx3KxeU0a2E0G59V6DTojhCnS/6tMFwTSkpuDw/T1UdNiMz/xXlSqybyW
-         AixZd4Zm3pNO5jbbFwWzcepYxzYAFYOO9dNr4ZYPIyCenvLRj2e6XXuTGws3pTqtFV6s
-         ldVGEHkdPeqme0SnPvvwCb3qjiCuM4j49priM49GJzeYsX8uq5tE2lJnvlF+ErTwvQs/
-         NZRCJlB0x42HoOXVwOVhHZggRq8wjEimMLZ9dMCgMPFILgtXWS3DdeZSx4L60im8MpTs
-         KZgA==
-X-Forwarded-Encrypted: i=1; AJvYcCWsu2gzIHxxAlV6u0de15tsnQNUn0Tufjd7bJlRjY+M2tNGeavJ1USjAgoT+Ha1qDtZkU2+A7Q9+TIcr0k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyglBh3nphA2/3gXq+yGB6LFQeIihcssfyNSGGZNQmBHBbPiBlS
-	D98fT3zxPO09E20Z633aCZpzuYGjPBWbr6+JY0cehTEkZZdyTHhWgTwXPgjcRQIEyZM0wCTLfDB
-	pNAs80rLm8xSj2ulPsU594yL1jweTTMJBCHNA+viEgQwoQ0HUZUSo/PtK1aCX4g==
-X-Received: by 2002:a05:6902:2503:b0:e0b:b2a7:d145 with SMTP id 3f1490d57ef6-e1a5af293bamr2336888276.55.1724939408345;
-        Thu, 29 Aug 2024 06:50:08 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFG51/7pj3/Y34+vI76qM8cIEt41NGzhy/buW5H9XX6T2WeO9FmOTiIamrB3RsEcZ+JljzQvA==
-X-Received: by 2002:a05:6902:2503:b0:e0b:b2a7:d145 with SMTP id 3f1490d57ef6-e1a5af293bamr2336867276.55.1724939407888;
-        Thu, 29 Aug 2024 06:50:07 -0700 (PDT)
-Received: from vschneid-thinkpadt14sgen2i.remote.csb (213-44-141-166.abo.bbox.fr. [213.44.141.166])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a806d8e806sm51155185a.135.2024.08.29.06.50.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 06:50:06 -0700 (PDT)
-From: Valentin Schneider <vschneid@redhat.com>
-To: paulmck@kernel.org
-Cc: Chen Yu <yu.c.chen@intel.com>, Peter Zijlstra <peterz@infradead.org>,
- linux-kernel@vger.kernel.org, sfr@canb.auug.org.au,
- linux-next@vger.kernel.org, kernel-team@meta.com
-Subject: Re: [BUG almost bisected] Splat in dequeue_rt_stack() and build error
-In-Reply-To: <4b93e5cf-c71e-4c64-9369-4ab3f43d9693@paulmck-laptop>
-References: <c83028db-55ad-45b3-a27a-842ed665a882@paulmck-laptop>
- <103b1710-39ca-40d0-947d-fdac32d6e6a0@paulmck-laptop>
- <xhsmhcyltogin.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <a19308ed-7252-4119-b891-2a61791bb6e5@paulmck-laptop>
- <xhsmha5gwome6.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <Zs8pqJjIYOFuPDiH@chenyu5-mobl2>
- <xhsmh7cc0ogza.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <5ea3658b-5aec-4969-92c5-49a2d23171c3@paulmck-laptop>
- <xhsmh4j74o6l9.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <8094db32-5c81-4537-8809-ddfe92a0ac6c@paulmck-laptop>
- <4b93e5cf-c71e-4c64-9369-4ab3f43d9693@paulmck-laptop>
-Date: Thu, 29 Aug 2024 15:50:03 +0200
-Message-ID: <xhsmh1q27o2us.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+	s=arc-20240116; t=1724939471; c=relaxed/simple;
+	bh=4QljaFl3Vsm9a0816zRPEctRjY+migg2Hk0Qnd+JvBg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=nhWDlgUcMDtPZn8+kwwPP2sGaqgm6UCH5r5IAdfQ17VsBweUk88R8R7sJrZC1gDWkxjo3nLQzSiHUTYSF+qY1x15lhqeY//uVSreYFYa3i0Rkt9pNNzwM2PSS7qC4KzbIo62ySgBQHfDpyBd6z4hS5o4U66eLIv9ClDrxED9U7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=b0R9G5tw; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47T1d1iZ032155;
+	Thu, 29 Aug 2024 13:50:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:date:mime-version:subject:to:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=a
+	+3jydTIUFLbIFPPVLalUu4+A0e3T4wDvZ2z6IvdjXs=; b=b0R9G5twXU7gFydIO
+	aXf8wA33gDoJSrR4LktpwVubpkZgYEHBLgLk6V+iqAAoWSWPO/PWlNOR+ABUyxPI
+	LJB3I0Pn+Ztg+QF12O476P9ShwFfBz0664LsSQDb+2p80wKBnVw4stX2jHeWspq0
+	oW7hGo9EzOq5KuibsaNSL2xqsY6jcb/ZIL1XExVD8wZ07nPZ3oBo2rR+BsKGsSY5
+	TC65xPHjl4hSuDFAafDbDsDksHkwaIYfqN1etuePb9vgEKZrHMAxHhKTn62dS6oR
+	o5Hb8HSLVPw6Np0BxaVMemBBkukqd1J6BR9VhtsvFuOXySuD3xfr1bvkNxEYdrAU
+	cYBOA==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 419q8u87hw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 29 Aug 2024 13:50:42 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 47TDlOxk019521;
+	Thu, 29 Aug 2024 13:50:42 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 419q8u87hu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 29 Aug 2024 13:50:41 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 47TAFKCk030966;
+	Thu, 29 Aug 2024 13:50:41 GMT
+Received: from smtprelay07.dal12v.mail.ibm.com ([172.16.1.9])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 417t8150nx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 29 Aug 2024 13:50:41 +0000
+Received: from smtpav05.dal12v.mail.ibm.com (smtpav05.dal12v.mail.ibm.com [10.241.53.104])
+	by smtprelay07.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 47TDoeQE44171692
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 29 Aug 2024 13:50:40 GMT
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 8AA0D58056;
+	Thu, 29 Aug 2024 13:50:40 +0000 (GMT)
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 147FC58052;
+	Thu, 29 Aug 2024 13:50:37 +0000 (GMT)
+Received: from [9.171.43.86] (unknown [9.171.43.86])
+	by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 29 Aug 2024 13:50:36 +0000 (GMT)
+Message-ID: <4afe5232-78ae-42a0-9b6d-669cc7f6b051@linux.ibm.com>
+Date: Thu, 29 Aug 2024 19:20:35 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-
-On 29/08/24 03:28, Paul E. McKenney wrote:
-> On Wed, Aug 28, 2024 at 11:39:19AM -0700, Paul E. McKenney wrote:
->>
->> The 500*TREE03 run had exactly one failure that was the dreaded
->> enqueue_dl_entity() failure, followed by RCU CPU stall warnings.
->>
->> But a huge improvement over the prior state!
->>
->> Plus, this failure is likely unrelated (see earlier discussions with
->> Peter).  I just started a 5000*TREE03 run, just in case we can now
->> reproduce this thing.
->
-> And we can now reproduce it!  Again, this might an unrelated bug that
-> was previously a one-off (OK, OK, a two-off!).  Or this series might
-> have made it more probably.  Who knows?
->
-> Eight of those 5000 runs got us this splat in enqueue_dl_entity():
->
->       WARN_ON_ONCE(on_dl_rq(dl_se));
->
-> Immediately followed by this splat in __enqueue_dl_entity():
->
->       WARN_ON_ONCE(!RB_EMPTY_NODE(&dl_se->rb_node));
->
-> These two splats always happened during rcutorture's testing of
-> RCU priority boosting.  This testing involves spawning a CPU-bound
-> low-priority real-time kthread for each CPU, which is intended to starve
-> the non-realtime RCU readers, which are in turn to be rescued by RCU
-> priority boosting.
->
-
-Thanks!
-
-> I do not entirely trust the following rcutorture diagnostic, but just
-> in case it helps...
->
-> Many of them also printed something like this as well:
->
-> [  111.279575] Boost inversion persisted: No QS from CPU 3
->
-> This message means that rcutorture has decided that RCU priority boosting
-> has failed, but not because a low-priority preempted task was blocking
-> the grace period, but rather because some CPU managed to be running
-> the same task in-kernel the whole time without doing a context switch.
-> In some cases (but not this one), this was simply a side-effect of
-> RCU's grace-period kthread being starved of CPU time.  Such starvation
-> is a surprise in this case because this kthread is running at higher
-> real-time priority than the kthreads that are intended to force RCU
-> priority boosting to happen.
->
-> Again, I do not entirely trust this rcutorture diagnostic, just in case
-> it helps.
->
->                                                       Thanx, Paul
->
-> ------------------------------------------------------------------------
->
-> [  287.536845] rcu-torture: rcu_torture_boost is stopping
-> [  287.536867] ------------[ cut here ]------------
-> [  287.540661] WARNING: CPU: 4 PID: 132 at kernel/sched/deadline.c:2003 enqueue_dl_entity+0x50d/0x5c0
-> [  287.542299] Modules linked in:
-> [  287.542868] CPU: 4 UID: 0 PID: 132 Comm: kcompactd0 Not tainted 6.11.0-rc1-00051-gb32d207e39de #1701
-> [  287.544335] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.16.0-0-gd239552ce722-prebuilt.qemu.org 04/01/2014
-> [  287.546337] RIP: 0010:enqueue_dl_entity+0x50d/0x5c0
-> [  287.603245]  ? __warn+0x7e/0x120
-> [  287.603752]  ? enqueue_dl_entity+0x54b/0x5c0
-> [  287.604405]  ? report_bug+0x18e/0x1a0
-> [  287.604978]  ? handle_bug+0x3d/0x70
-> [  287.605523]  ? exc_invalid_op+0x18/0x70
-> [  287.606116]  ? asm_exc_invalid_op+0x1a/0x20
-> [  287.606765]  ? enqueue_dl_entity+0x54b/0x5c0
-> [  287.607420]  dl_server_start+0x31/0xe0
-> [  287.608013]  enqueue_task_fair+0x218/0x680
-> [  287.608643]  activate_task+0x21/0x50
-> [  287.609197]  attach_task+0x30/0x50
-> [  287.609736]  sched_balance_rq+0x65d/0xe20
-> [  287.610351]  sched_balance_newidle.constprop.0+0x1a0/0x360
-> [  287.611205]  pick_next_task_fair+0x2a/0x2e0
-> [  287.611849]  __schedule+0x106/0x8b0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] powerpc/pci: restore LSI mappings on card present
+ state change
+To: Oleksandr Ocheretnyi <oocheret@cisco.com>, xe-linux-external@cisco.com,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Naveen N Rao <naveen@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Sam Ravnborg <sam@ravnborg.org>, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org
+References: <20240827165738.1083422-1-oocheret@cisco.com>
+Content-Language: en-US
+From: krishna kumar <krishnak@linux.ibm.com>
+In-Reply-To: <20240827165738.1083422-1-oocheret@cisco.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: kW1vDl35JfHWQ3ie-6t96PKSIaohLPkB
+X-Proofpoint-ORIG-GUID: DKI4L79Go83gBxnv02tt_RQ1MpoQlA-2
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-29_02,2024-08-29_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ lowpriorityscore=0 clxscore=1011 bulkscore=0 phishscore=0 mlxscore=0
+ malwarescore=0 mlxlogscore=999 spamscore=0 priorityscore=1501 adultscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408290093
 
 
-Assuming this is still related to switched_from_fair(), since this is hit
-during priority boosting then it would mean rt_mutex_setprio() gets
-involved, but that uses the same set of DQ/EQ flags as
-__sched_setscheduler().
+On 8/27/24 22:27, Oleksandr Ocheretnyi wrote:
+> Commit 450be4960a0f ("powerpc/pci: Remove LSI mappings on device
+> teardown") frees irq descriptors on PCIe hotplug link change event
+> (Link Down), but the disposed mappings are not restored back on PCIe
+> hotplug link change event (Card present).
+>
+> This change restores IRQ mappings disposed earlier when pcieport
+> link's gone down. So, the call pci_read_irq_line is invoked again
+> on pcieport's state change (Card present).
 
-I don't see any obvious path in
+Few things are important to know regarding these change-sets:
 
-dequeue_task_fair()
-`\
-  dequeue_entities()
+1. The commit (450be4960aof) addressed an issue where the removal
+or hot-unplug of an LSI passthroughed IO adapter was not working on
+pseries machines. This was due to interrupt resources not getting cleaned
+up before removal. Since there were no pcibios_* hooks for the interrupt
+cleanup, the interrupt-related resource cleanup has been addressed using
+the notifier framework and an explicit call of ppc_pci_intx_release().
 
-that would prevent dl_server_stop() from happening when doing the
-class-switch dequeue_task()... I don't see it in the TREE03 config, but can
-you confirm CONFIG_CFS_BANDWIDTH isn't set in that scenario?
+2. Does without your current patch and after hot-plug operation, device is
+not working (io not happening or interrupt not getting generated) correctly ?
 
-I'm going to keep digging but I'm not entirely sure yet whether this is
-related to the switched_from_fair() hackery or not, I'll send the patch I
-have as-is and continue digging for a bit.
+3. There is already a pcibios_* hook available for creating the interrupt
+mapping. Here's a snippet -
+
+  /*
+   * Called after device has been added to bus and
+   * before sysfs has been created.
+   */
+
+void (*pcibios_bus_add_device)(struct pci_dev *pdev);
+
+Above function calls - below function to restore the irq mapping.
+
+/* Read default IRQs and fixup if necessary */
+   pci_read_irq_line(dev);
+
+4. Does the above pcibios_* hook not sufficient for enabling the interrupt
+mapping or does it not getting invoked during hot-plug operation ?
+
+>
+> Fixes 450be4960a0f ("powerpc/pci: Remove LSI mappings on device teardown")
+> Signed-off-by: Oleksandr Ocheretnyi <oocheret@cisco.com>
+> ---
+>   arch/powerpc/kernel/pci-common.c | 30 ++++++++++++++++++++----------
+>   1 file changed, 20 insertions(+), 10 deletions(-)
+>
+> diff --git a/arch/powerpc/kernel/pci-common.c b/arch/powerpc/kernel/pci-common.c
+> index eac84d687b53..a0e7cab2baa7 100644
+> --- a/arch/powerpc/kernel/pci-common.c
+> +++ b/arch/powerpc/kernel/pci-common.c
+> @@ -390,22 +390,32 @@ static void ppc_pci_intx_release(struct kref *kref)
+>   	kfree(vi);
+>   }
+>   
+> +static int pci_read_irq_line(struct pci_dev *pci_dev);
+> +
+>   static int ppc_pci_unmap_irq_line(struct notifier_block *nb,
+>   			       unsigned long action, void *data)
+>   {
+>   	struct pci_dev *pdev = to_pci_dev(data);
+>   
+> -	if (action == BUS_NOTIFY_DEL_DEVICE) {
+> -		struct pci_intx_virq *vi;
+> -
+> -		mutex_lock(&intx_mutex);
+> -		list_for_each_entry(vi, &intx_list, list_node) {
+> -			if (vi->virq == pdev->irq) {
+> -				kref_put(&vi->kref, ppc_pci_intx_release);
+> -				break;
+> +	switch (action) {
+> +		case BUS_NOTIFY_DEL_DEVICE:
+> +			{
+> +				struct pci_intx_virq *vi;
+> +
+> +				mutex_lock(&intx_mutex);
+> +				list_for_each_entry(vi, &intx_list, list_node) {
+> +					if (vi->virq == pdev->irq) {
+> +						kref_put(&vi->kref, ppc_pci_intx_release);
+> +						break;
+> +					}
+> +				}
+> +				mutex_unlock(&intx_mutex);
+>   			}
+> -		}
+> -		mutex_unlock(&intx_mutex);
+> +			break;
+> +
+> +		case BUS_NOTIFY_ADD_DEVICE:
+> +			pci_read_irq_line(pdev);
+> +			break;
+
+The above code is fine only if my aforementioned points do not hold.
+
+>   	}
+>   
+>   	return NOTIFY_DONE;
+
+
+Best Regards,
+
+Krishna
 
 
