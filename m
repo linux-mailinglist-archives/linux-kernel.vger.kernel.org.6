@@ -1,132 +1,81 @@
-Return-Path: <linux-kernel+bounces-306269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AA9F963C4C
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 09:12:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75712963CA1
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 09:21:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 658FC286C31
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 07:12:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A920F1C23D9E
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 07:21:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D3DE176249;
-	Thu, 29 Aug 2024 07:12:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JudAdnL8"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4107516D306;
+	Thu, 29 Aug 2024 07:21:04 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1778716F84C;
-	Thu, 29 Aug 2024 07:12:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 206201537D8
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 07:21:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724915549; cv=none; b=eT16ILS9nrjABLuz5cgzdr+dFbL2kUOOJpByPnRrwT6XoaNyhV1ilP7cBZiL/BZwXSvo5SJpGCXY/PMVsYZkceANqngV1wmvQamBCcaYJDtDOvptXP0aD1na1On2mN+Lw0+3Lo9KhCUIjNvXZaaQ0j6bBMpPY6uQiQhpS0i+cak=
+	t=1724916063; cv=none; b=JKu8zoaMrQelLqeb50vs0x5sNAYh/y8xq/lyoxYTmVfQ7f6HAfaesgGcxntDzn0Pw1xI2ZEBRlAg2ZP3hwKL90g6R2r1F1xqPgWlMGV9pQslVY7+RlHpw4QIS50SRV2rgFtk7ikcjMX/4ysDWvFelT/neTVxb3HaOdGGB94K2uw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724915549; c=relaxed/simple;
-	bh=9co1P+gsEElJWQz3aCKdVbHmq5v0U0eVe5GCFZD2reI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gYiHVf4jrEvDQhO1ZBfo5kKYqb+5KOX+m3Iqrn2mNkr+GhdCQM6jNJo2xetRgvpct7RgXTf0KiuARmrEG9kccRRhNxPj9veq7bNdiAR9wDWym9WE1evJchoWa/YSRz3m2nw+zBAdYikbZZt4WZULdmu/3O8/pB86Vmvvchmk5R4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JudAdnL8; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2f409c87b07so3822541fa.0;
-        Thu, 29 Aug 2024 00:12:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724915546; x=1725520346; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=inpQImvFciw23meNvL+FEqOxB3sls+T0q/wERHsKE/k=;
-        b=JudAdnL8VJXE/Eu5EoM9XaHtQOArvKNDo1rULGUwz0dj5Q6HKtEAY0FimzeIJaTWxm
-         qs4TSiJndjgfWnk1DD5XcmCmcgwhtW0DgajAHE0r0IHYDP9UusG+HAVq0pFeADfCLoLu
-         6huHrGGKLOSA8SPH08VAWF1G3+KaIPJEBeSoKAJNl+da5YgWZkotAnFBF1/vbmsuXPEz
-         +aKv6eRpEfDCf3lNgpXDYyEfMxiqgJuSY0Bcg9p509nngXGXtoozBBcgaiS9BPFJk/ji
-         n3UbYjZL2dC/HTTUVTDJecKE1oDvaaCHDvS7+YLYErXmkXbdCVQa2guxWDbZbLII3ZM0
-         PArQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724915546; x=1725520346;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=inpQImvFciw23meNvL+FEqOxB3sls+T0q/wERHsKE/k=;
-        b=mAEPk43nLGGFSyA6EcZrgwyIzE+eOAlZhnEqeKEiiFuIDOQPs0p7DNRN0ct7WRVp0T
-         ScdT4YDF9JjvJPU16pGUNNrRwHnGRTuDK1RQ/Nj4hsPKTtu3WnI0EplvVEhqpM2gtl8K
-         KKG7fuNtv2DT6BDavubPLppJf0GIssbvOo3fSh8+QoDtFQTbPssme1hAqcVe7pSQpo1O
-         P+hPCF3kT03iLpBLJdAk/DAsm4u9G6F73y/pStn0OVc5b4gzu1/NlxK2XBp7kZV3tY4Q
-         ZZ8MokLB+yewD3UDspaRMgRx/y9WUwqKeU+YLS5bh/7Y8FgZ98Lr/FkjD1OcToz9vzwU
-         oMHA==
-X-Forwarded-Encrypted: i=1; AJvYcCU36LGaoJ+wNECBbabnYM3a2oTupyM9T11ltgaOJDU5498mi8DfNy1ZHVrXAQKWu8TU22EQNWhY9//rsUXv@vger.kernel.org, AJvYcCWmIywlEsPbQE7a/U30d1M0DY+92DF5TLUvHusg/CV3EDyWw4H2s5oYXkhwHOelrk3EtcN5K99XcIM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPJUI55M0vr5I/o92bxzl8gQVq3gscxCWWcGWPNaYoe4mHUg/Z
-	Kcopw+9WFL9DdjxswHhZQbXbbRbUsybqHVyDTTtzmRPcR+HoiJVx
-X-Google-Smtp-Source: AGHT+IF/pJrZaVpF46AkrbMNGYnsIaOXPPC3Awfu015A0Ff7UAu6377Hna1afmai4OTU01axuyJk7w==
-X-Received: by 2002:a05:6512:4003:b0:533:4b70:8722 with SMTP id 2adb3069b0e04-5353e54d8f4mr1114983e87.15.1724915545275;
-        Thu, 29 Aug 2024 00:12:25 -0700 (PDT)
-Received: from mobilestation ([178.176.56.174])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53540841332sm75157e87.203.2024.08.29.00.12.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 00:12:24 -0700 (PDT)
-Date: Thu, 29 Aug 2024 10:12:21 +0300
-From: Serge Semin <fancer.lancer@gmail.com>
-To: Mrinmay Sarkar <quic_msarkar@quicinc.com>
-Cc: manivannan.sadhasivam@linaro.org, vkoul@kernel.org, 
-	quic_shazhuss@quicinc.com, quic_nitegupt@quicinc.com, quic_ramkri@quicinc.com, 
-	quic_nayiluri@quicinc.com, quic_krichai@quicinc.com, quic_vbadigan@quicinc.com, 
-	Cai Huoqing <cai.huoqing@linux.dev>, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 0/2] Fix unmasking interrupt bit and remove watermark
- interrupt enablement
-Message-ID: <xadu7yiqbwwywemcmgfpz2x637dutntik7mdii4xp2vyipq4he@4gmbreitlui7>
-References: <1724674261-3144-1-git-send-email-quic_msarkar@quicinc.com>
+	s=arc-20240116; t=1724916063; c=relaxed/simple;
+	bh=F6ixXcWm1B5CRF3PDXJ+Oi92nsM7xHKJShplgRVMaoI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qTAgEJS/oLEGKuWsN3D6sXVTN7M3m2Tz2HWjjHE1KUO5kMBwcsM2KoNfXhKncpspsBhkCVxm7SzjaJZsEaOOuEzSTMq76c2EY5w2NNzmeLy8oKgsSCTc9gZuOqMo9XLHpAqQD64Mj1BTLE5G7zJfDFebSY9bzEBbOwvhoGHXaRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4WvXjZ0D3kz147Hx;
+	Thu, 29 Aug 2024 15:20:02 +0800 (CST)
+Received: from dggpemm500020.china.huawei.com (unknown [7.185.36.49])
+	by mail.maildlp.com (Postfix) with ESMTPS id 571DF14035F;
+	Thu, 29 Aug 2024 15:20:51 +0800 (CST)
+Received: from huawei.com (10.67.174.77) by dggpemm500020.china.huawei.com
+ (7.185.36.49) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 29 Aug
+ 2024 15:20:51 +0800
+From: Liao Chen <liaochen4@huawei.com>
+To: <linux-kernel@vger.kernel.org>
+CC: <kabel@kernel.org>, <liaochen4@huawei.com>
+Subject: [PATCH -next] platform: cznic: turris-omnia-mcu: enable module autoloading
+Date: Thu, 29 Aug 2024 07:12:35 +0000
+Message-ID: <20240829071235.524082-1-liaochen4@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1724674261-3144-1-git-send-email-quic_msarkar@quicinc.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ dggpemm500020.china.huawei.com (7.185.36.49)
 
-On Mon, Aug 26, 2024 at 05:40:59PM +0530, Mrinmay Sarkar wrote:
-> This patch series reset STOP_INT_MASK and ABORT_INT_MASK bit and unmask
-> these interrupt for HDMA.
-> 
-> and also remove enablement of local watermark interrupt enable(LWIE)
-> and remote watermarek interrupt enable(RWIE) bit to avoid unnecessary
-> watermark interrupt event.
-> 
-> Testing
-> -------
-> 
-> Tested on Qualcomm SA8775P Platform.
-> 
-> V3 -> V4:
-> - convert IRQs unmasking in a clearer way as suggested by Serge.
+Add MODULE_DEVICE_TABLE(), so modules could be properly autoloaded
+based on the alias from of_device_id table.
 
-Thanks for submitting the update. The patches have already been merged
-in, but anyway here is my tag:
+Signed-off-by: Liao Chen <liaochen4@huawei.com>
+---
+ drivers/platform/cznic/turris-omnia-mcu-base.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Reviewed-by: Serge Semin <fancer.lancer@gmail.com>
+diff --git a/drivers/platform/cznic/turris-omnia-mcu-base.c b/drivers/platform/cznic/turris-omnia-mcu-base.c
+index 58f9afae2867..d6a84dce0fef 100644
+--- a/drivers/platform/cznic/turris-omnia-mcu-base.c
++++ b/drivers/platform/cznic/turris-omnia-mcu-base.c
+@@ -396,6 +396,7 @@ static const struct of_device_id of_omnia_mcu_match[] = {
+ 	{ .compatible = "cznic,turris-omnia-mcu" },
+ 	{}
+ };
++MODULE_DEVICE_TABLE(of, of_omnia_mcu_match);
+ 
+ static struct i2c_driver omnia_mcu_driver = {
+ 	.probe		= omnia_mcu_probe,
+-- 
+2.34.1
 
--Serge(y)
-
-> 
-> V2 -> V3:
-> - convert 'STOP, ABORT' to 'stop, abort' as suggested by Serge
-> - Added Reviewed-by tag
-> 
-> V1 -> V2:
-> - Modified commit message and added Fixes, CC tag as suggested by Mani
-> - reanme done to STOP
-> - rename DW_HDMA_V0_LIE -> DW_HDMA_V0_LWIE and DW_HDMA_V0_RIE -> DW_HDMA_V0_RWIE
-> 
-> Mrinmay Sarkar (2):
->   dmaengine: dw-edma: Fix unmasking STOP and ABORT interrupts for HDMA
->   dmaengine: dw-edma: Do not enable watermark interrupts for HDMA
-> 
->  drivers/dma/dw-edma/dw-hdma-v0-core.c | 26 ++++++++------------------
->  1 file changed, 8 insertions(+), 18 deletions(-)
-> 
-> -- 
-> 2.7.4
-> 
 
