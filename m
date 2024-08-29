@@ -1,207 +1,106 @@
-Return-Path: <linux-kernel+bounces-306485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF44C963FAD
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 11:16:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9011A963FB3
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 11:17:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F21CD1C244A4
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 09:16:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFA481C21865
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 09:17:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18EF218CC19;
-	Thu, 29 Aug 2024 09:16:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FB6D18CC19;
+	Thu, 29 Aug 2024 09:17:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="s5+59voF"
-Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=mary.guillemard@collabora.com header.b="N6zHy7ZL"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0BDC18C33A
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 09:16:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724922991; cv=none; b=sCllBa4yiFlWgvF2pa6tRb0he5irjZfzhEzgCvbk31scGoqETwSCGUR26GBoEFQ7WMqgwDTiCx7+JsH95cAhBIOV1koWnYivcQM6m1sSXcEVbhXul37XllRYFzsXIXjB6hFl0KPU87J5XUZQoOOMLQuFUS7FUih8STqtjigVuVA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724922991; c=relaxed/simple;
-	bh=WPrVwuty4BPa6p9mEHIR0PaWDPFbGQKLmCggXhFxPkE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cLimjT4afuStH+tHsfV2kq9wm8ADK0g1DhXPyRNpN/Z9RW2Ez+a1cvVdJC3ZCAh4Zkiv9T1m0dH7sUqN5JvcQNZsK4jH0uJ23CzszOR46P6Kn7aEZW96MVSQopCtxZDnVxCz/99a9AFiCQk0oi4t8GYRiHBeZ07OncoPwR5H10w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=s5+59voF; arc=none smtp.client-ip=91.218.175.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <939877af-d726-421e-af71-ccf4b2ec33ea@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1724922986;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AfAceVyfYMvpGPfpOzZ0gGILHs9xQf3lHbqa/aSXEZE=;
-	b=s5+59voFYFpQOfSg9X9HSvlLYrOcBULonyLEBVsb9u90kspJRMAs5pv29Vx8v+OkypfrS2
-	mN6+0Mczctc7yxTqV66y3lA/4Y8KKgrUtTsxciKspYvqI6jiOpOLvJEHvNTLPPRoJe6xnB
-	0++cCrfVBKg3ehmtn24wBFs088cnOgs=
-Date: Thu, 29 Aug 2024 10:16:22 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3E9E14B075
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 09:17:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724923029; cv=pass; b=PsjP3Sq56XA2dKBWDmk+wcBCyCLA3EcQpAA/e28djtW+CHizANSSroxVLjGI3zqy5A2FUYPe7OUGkjG+lgsmnNJPhWu4Ra+H4E71kdUnMfF1TPArSkhk/dyDJPwcvqgQBQmivV/9R5sik4EIf/f8AYEtXn8GG8fx8OPbhacse2E=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724923029; c=relaxed/simple;
+	bh=FwLn3vo9l0ipkn1zqf2I9qKaLSkhmuBVTLGl/bNKB0A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TVaUw+ob+HariCxjdZdkYoXoIa34OX1Kr0QTyUDImqsZ7D2abxO5WafdoOZvOCuanSrFF8TjRKsjO85C+X06v4hCoqq5Gz7MmSsFK/3BVTUBtkSl7okQVeKZT+9k4fIgkJ2PhKrM7JxES+DCVqITCZKIGmKRf55L5Q7c+nFTF5c=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=mary.guillemard@collabora.com header.b=N6zHy7ZL; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Delivered-To: kernel@collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1724923011; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=TN9cOLTYbMygpuY6e8KQYylACjN/X5nN3Kx71sHXSuKKJGI7ZZovk6OJ5xqvgT3SwEml9g8B56TWWpcFY7v2IwMKr2nYkK+SjVI6a6ljuqoDvr+JPhhwJ4IaqVpcwrIGmVAUh95NQJF7Wk/M6z4ANAdaVhH5zkIvs/rgxGaMyi0=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1724923011; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=CeqtPq4Of6cCwgfNO/CZrPsYGQ8HjCTe8pSeUG4g1Wk=; 
+	b=kUDjKMIV42uXa02GpdOttvE9Url0zEjz073WUxLR+V7jHn2MQVwI8HJHtCAcwdLdaYyoWOwZKINH6efmV0uRhl49VBaWAkGWfNXHsVNribZy0kKr0sLT/r1OfpT78XSYIvKKID1WVxrcIPqRmmJTnTdV+n+5fL+jMw5mwhLbwrs=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=mary.guillemard@collabora.com;
+	dmarc=pass header.from=<mary.guillemard@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1724923011;
+	s=zohomail; d=collabora.com; i=mary.guillemard@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
+	bh=CeqtPq4Of6cCwgfNO/CZrPsYGQ8HjCTe8pSeUG4g1Wk=;
+	b=N6zHy7ZLVZDeyQq5h9ClfGGR2SuOLv0olPbL55MI+lW/I2D+F19xPWWYvGQnXyru
+	99gp04E15dFLPC/zQSXXFQ8T6qJajBxZrPa7RiypbB5KZcZHshw+iXPT5vzggvlwew8
+	Xv8Y4vbFuAYJrT09S8+DxhQrVycQF80HriZVF9K4=
+Received: by mx.zohomail.com with SMTPS id 1724923010315143.8140512201934;
+	Thu, 29 Aug 2024 02:16:50 -0700 (PDT)
+Date: Thu, 29 Aug 2024 11:16:45 +0200
+From: Mary Guillemard <mary.guillemard@collabora.com>
+To: Mihail Atanassov <mihail.atanassov@arm.com>
+Cc: linux-kernel@vger.kernel.org, kernel@collabora.com,
+	Christopher Healy <healych@amazon.com>,
+	Boris Brezillon <boris.brezillon@collabora.com>,
+	Steven Price <steven.price@arm.com>,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	dri-devel@lists.freedesktop.org, nd@arm.com
+Subject: Re: [PATCH v3] drm/panthor: Add DEV_QUERY_TIMESTAMP_INFO dev query
+Message-ID: <ZtA8fRsMgP_5Xihv@kuroko.kudu-justice.ts.net>
+References: <20240819112508.67988-2-mary.guillemard@collabora.com>
+ <4538ba23-ee8b-4e15-8857-d653d581bc18@arm.com>
+ <Zs7d2-NHTy-A_oLL@kuroko.kudu-justice.ts.net>
+ <ee2c315c-b15b-4ac7-8cea-c331a60a3374@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] Add provision to busyloop for events in ep_poll.
-To: Naman Gulati <namangulati@google.com>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- netdev@vger.kernel.org
-Cc: Stanislav Fomichev <sdf@fomichev.me>, linux-kernel@vger.kernel.org,
- skhawaja@google.com, Joe Damato <jdamato@fastly.com>,
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-References: <20240828181011.1591242-1-namangulati@google.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-In-Reply-To: <20240828181011.1591242-1-namangulati@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ee2c315c-b15b-4ac7-8cea-c331a60a3374@arm.com>
+X-ZohoMailClient: External
 
-On 28/08/2024 19:10, Naman Gulati wrote:
-> NAPI busypolling in ep_busy_loop loops on napi_poll and checks for new
-> epoll events after every napi poll. Checking just for epoll events in a
-> tight loop in the kernel context delivers latency gains to applications
-> that are not interested in napi busypolling with epoll.
+On Wed, Aug 28, 2024 at 11:09:09AM +0100, Mihail Atanassov wrote:
+> Do you have a link you can share with the userspace side of things? Assuming
+> userland has been reviewed and is ready for merging, and the small nitpick
+> above fixed,
 > 
-> This patch adds an option to loop just for new events inside
-> ep_busy_loop, guarded by the EPIOCSPARAMS ioctl that controls epoll napi
-> busypolling.
+> Reviewed-by: Mihail Atanassov <mihail.atanassov@arm.com>
 > 
-> A comparison with neper tcp_rr shows that busylooping for events in
-> epoll_wait boosted throughput by ~3-7% and reduced median latency by
-> ~10%.
-> 
-> To demonstrate the latency and throughput improvements, a comparison was
-> made of neper tcp_rr running with:
->      1. (baseline) No busylooping
->      2. (epoll busylooping) enabling the epoll busy looping on all epoll
->      fd's
->      3. (userspace busylooping) looping on epoll_wait in userspace
->      with timeout=0
-> 
-> Stats for two machines with 100Gbps NICs running tcp_rr with 5 threads
-> and varying flows:
-> 
-> Type                Flows   Throughput             Latency (μs)
->                               (B/s)      P50   P90    P99   P99.9   P99.99
-> baseline            15	    272145      57.2  71.9   91.4  100.6   111.6
-> baseline            30	    464952	66.8  78.8   98.1  113.4   122.4
-> baseline            60	    695920	80.9  118.5  143.4 161.8   174.6
-> epoll busyloop      15	    301751	44.7  70.6   84.3  95.4    106.5
-> epoll busyloop      30	    508392	58.9  76.9   96.2  109.3   118.5
-> epoll busyloop      60	    745731	77.4  106.2  127.5 143.1   155.9
-> userspace busyloop  15	    279202	55.4  73.1   85.2  98.3    109.6
-> userspace busyloop  30	    472440	63.7  78.2   96.5  112.2   120.1
-> userspace busyloop  60	    720779	77.9  113.5  134.9 152.6   165.7
-> 
-> Per the above data epoll busyloop outperforms baseline and userspace
-> busylooping in both throughput and latency. As the density of flows per
-> thread increased, the median latency of all three epoll mechanisms
-> converges. However epoll busylooping is better at capturing the tail
-> latencies at high flow counts.
-> 
-> Signed-off-by: Naman Gulati <namangulati@google.com>
-> ---
->   fs/eventpoll.c                 | 53 ++++++++++++++++++++++++++--------
->   include/uapi/linux/eventpoll.h |  3 +-
->   2 files changed, 43 insertions(+), 13 deletions(-)
-> 
-> diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-> index f53ca4f7fcedd..6cba79261817a 100644
-> --- a/fs/eventpoll.c
-> +++ b/fs/eventpoll.c
-> @@ -232,7 +232,10 @@ struct eventpoll {
->   	u32 busy_poll_usecs;
->   	/* busy poll packet budget */
->   	u16 busy_poll_budget;
-> -	bool prefer_busy_poll;
-> +	/* prefer to busypoll in napi poll */
-> +	bool napi_prefer_busy_poll;
-> +	/* avoid napi poll when busy looping and poll only for events */
-> +	bool event_poll_only;
->   #endif
->   
->   #ifdef CONFIG_DEBUG_LOCK_ALLOC
-> @@ -430,6 +433,24 @@ static bool ep_busy_loop_end(void *p, unsigned long start_time)
->   	return ep_events_available(ep) || busy_loop_ep_timeout(start_time, ep);
->   }
->   
-> +/**
-> + * ep_event_busy_loop - loop until events available or busy poll
-> + * times out.
-> + *
-> + * @ep: Pointer to the eventpoll context.
-> + *
-> + * Return: true if events available, false otherwise.
-> + */
-> +static bool ep_event_busy_loop(struct eventpoll *ep)
-> +{
-> +	unsigned long start_time = busy_loop_current_time();
-> +
-> +	while (!ep_busy_loop_end(ep, start_time))
-> +		cond_resched();
-> +
-> +	return ep_events_available(ep);
-> +}
-> +
->   /*
->    * Busy poll if globally on and supporting sockets found && no events,
->    * busy loop will return if need_resched or ep_events_available.
-> @@ -440,23 +461,29 @@ static bool ep_busy_loop(struct eventpoll *ep, int nonblock)
->   {
->   	unsigned int napi_id = READ_ONCE(ep->napi_id);
->   	u16 budget = READ_ONCE(ep->busy_poll_budget);
-> -	bool prefer_busy_poll = READ_ONCE(ep->prefer_busy_poll);
-> +	bool event_poll_only = READ_ONCE(ep->event_poll_only);
->   
->   	if (!budget)
->   		budget = BUSY_POLL_BUDGET;
->   
-> -	if (napi_id >= MIN_NAPI_ID && ep_busy_loop_on(ep)) {
-> +	if (!ep_busy_loop_on(ep))
-> +		return false;
-> +
-> +	if (event_poll_only) {
-> +		return ep_event_busy_loop(ep);
-> +	} else if (napi_id >= MIN_NAPI_ID) {
+> -- 
+> Mihail Atanassov <mihail.atanassov@arm.com>
+>
+Hi Mihail,
 
-There is no need to use 'else if' in this place, in case of
-event_poll_only == true the program flow will not reach this part.
+Userland patches can be found here [1]. They were tested on OpenCL
+conformance tests and piglit with G52 (with panfrost patches [2])
+and G610 (with those patches).
+ 
+[1]https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/30553
+[2]https://lore.kernel.org/all/20240819080224.24914-1-mary.guillemard@collabora.com/
 
-> +		bool napi_prefer_busy_poll = READ_ONCE(ep->napi_prefer_busy_poll);
-> +
->   		napi_busy_loop(napi_id, nonblock ? NULL : ep_busy_loop_end,
-> -			       ep, prefer_busy_poll, budget);
-> +				ep, napi_prefer_busy_poll, budget);
->   		if (ep_events_available(ep))
->   			return true;
->   		/*
-> -		 * Busy poll timed out.  Drop NAPI ID for now, we can add
-> -		 * it back in when we have moved a socket with a valid NAPI
-> -		 * ID onto the ready list.
-> -		 */
-> +		* Busy poll timed out.  Drop NAPI ID for now, we can add
-> +		* it back in when we have moved a socket with a valid NAPI
-> +		* ID onto the ready list.
-> +		*/
-
-I believe this change is accidental, right?
-
->   		ep->napi_id = 0;
-> -		return false;
->   	}
->   	return false;
->   }
-
-[...]
+--
+Mary
 
 
