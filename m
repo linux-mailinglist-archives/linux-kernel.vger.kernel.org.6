@@ -1,218 +1,196 @@
-Return-Path: <linux-kernel+bounces-306120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 055A7963977
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 06:42:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 019DE963979
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 06:47:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8810F286EE6
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 04:42:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 740D6B23969
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 04:47:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8FEF146A63;
-	Thu, 29 Aug 2024 04:41:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6FA9145323;
+	Thu, 29 Aug 2024 04:47:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ucr.edu header.i=@ucr.edu header.b="UeUh0dlL";
-	dkim=pass (1024-bit key) header.d=ucr.edu header.i=@ucr.edu header.b="outCnuJv"
-Received: from mx5.ucr.edu (mx.ucr.edu [138.23.62.67])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ESW1iQoe"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25F9F487B0
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 04:41:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=138.23.62.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27B7C1C6A5;
+	Thu, 29 Aug 2024 04:46:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724906511; cv=none; b=tuzrqqBWOtGa0lpdJ+v8Zx/8f1bVD5/5J/ViDJPLLLLMTnWEaJ3pjmcZk5yrnIkg2bE3PIl391KPM8L6lfn9KTII4DgXbN7JUVan0zv+6GRgU3624WseR/IS6dWMYOdD+iWvfjbs2oGFmkC8rpy385YYF5mNqd+Oz6HLCDGn1k0=
+	t=1724906820; cv=none; b=tRVd57ixy4z2PFjPwIqtdlX4qL2S+JCHZMA0uOBlmqSgW760GC2fq8lwLtjUMxnVrpIucdYzknMX63Aw/YYEPCm0cTnVpb+KURuAoHafMToi10wJ+d5jw5uTKG2D0gE4IxdSKmxUr9doPZ6OcTouTHrpfD61S2NXxOcH084XSuY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724906511; c=relaxed/simple;
-	bh=N55K+lqbtokbpeHPyQLp1yp/8pY1FCalwIwiCLBpKkA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=Rt/rEMOD/3wTkXi0DozJa1zrDeoPdFBqs939T5d1hOTUOBcFTpmG/5VMXNesFqQy7mQsJaSL0JfmJ+z1UaMsKmFOPMBte6wwlMIYgonAFehiakWkjcwFkEKtd059R1BBqHyJ+ALMItTjV/7sK1OerCCXO3AGdJx755rtVE7aOgI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ucr.edu; spf=pass smtp.mailfrom=ucr.edu; dkim=pass (2048-bit key) header.d=ucr.edu header.i=@ucr.edu header.b=UeUh0dlL; dkim=pass (1024-bit key) header.d=ucr.edu header.i=@ucr.edu header.b=outCnuJv; arc=none smtp.client-ip=138.23.62.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ucr.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucr.edu
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=ucr.edu; i=@ucr.edu; q=dns/txt; s=selector3;
-  t=1724906511; x=1756442511;
-  h=dkim-signature:x-google-dkim-signature:
-   x-forwarded-encrypted:x-gm-message-state:
-   x-google-smtp-source:mime-version:references:in-reply-to:
-   from:date:message-id:subject:to:content-type:
-   content-transfer-encoding:x-cse-connectionguid:
-   x-cse-msgguid;
-  bh=N55K+lqbtokbpeHPyQLp1yp/8pY1FCalwIwiCLBpKkA=;
-  b=UeUh0dlL92YARZtuZ1bsH4S4Hw3aTDEZ6UHDh/GAbLXlmmhC9Y7OEOQy
-   hHaUyJl+qOTvUBgpYBr7UWU3Ue+Fs7FDHZXShW3CLbs1WBVhAK2qeuNeX
-   Hp+bEAU68VJK5gOpF5RU8gfaP3jmrd2+iJmBP7UE6kmJVxUutgHS0Wgbq
-   BBHi87blj5W7AFKtMfTBNZXw3ptMvX580lWGOKMC4Qvseaws1BQd+GqPB
-   367ZZQTnWOkW1hihCJzpAT+OwwwKjv4Zp81gNElZORRn2sVHBUzvprSZP
-   reIGVto2uBnFXD4vr1oRTQdAN10vGZe2XnGc5kNS31eTDp4ID4DOSh8J+
-   w==;
-X-CSE-ConnectionGUID: ee5sJiUOTx6phWqQkeJzEw==
-X-CSE-MsgGUID: WRtwkC/2SrKMIp4KhX21jA==
-Received: from mail-io1-f71.google.com ([209.85.166.71])
-  by smtpmx5.ucr.edu with ESMTP/TLS/TLS_AES_256_GCM_SHA384; 28 Aug 2024 21:41:50 -0700
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-827878b9901so31998039f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 21:41:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ucr.edu; s=rmail; t=1724906508; x=1725511308; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6j+Tr1fFva5Li+Ga0XiTnVTvMJm0cBj4PqOZtjjYmfc=;
-        b=outCnuJvJZtv8IjELxrklFJTPUTaynOo0xw/23R3MgHCWo6u1khV97v+Q8V53siYa1
-         9MIGM6+VT7kIrXmXKycP581PttcTx9WlHfGy7gFJpDdrqbBQ6IL7neBhfKTI+119uqbl
-         3ekswwf/zfHkFrBdy9ByNrmuRXtxOHA170UQ8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724906508; x=1725511308;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6j+Tr1fFva5Li+Ga0XiTnVTvMJm0cBj4PqOZtjjYmfc=;
-        b=B3+WkykN0Z9mEn5bfCdgHnJcLR6HexYFHMaHlda75cHAdAqoVvvghzesjex6uqa8F5
-         XEC/Ky2wIz2eO75cO0Cz00WYKs7oFSePmJDJbsG3IYNSJWuva1JPRHjnQseegKksB5RM
-         vjXGA/IIbPuAiTrXvKiJm344KYismh/s1XLZj2nHRTwwe5SzQZ01bjrHFpxhJbl1yVlM
-         Efd7OEyiOiu5jY5uFHTeFTRl+JH/R5IDyPQ3qJqDvFtwfuo9A53yhyXFdi7rFywrGFT1
-         0mExmUgyCyW0Vrydn5ezl+xj63mk8ee7U0X5BcmKddc+yrnbx1Z6Pp2FreBaVzUqqAGm
-         Ieow==
-X-Forwarded-Encrypted: i=1; AJvYcCVs+8ui2B5cgTzSnVOdrMXPUf8VYa2VvXuGH8GAZJ9jmGuY9s+QqLPXF2liu/PrCCnwW6sDy/O+fVXwSEo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzgUpThATP7rypVlRyFtAy3Ku1UhxdhBF6cIQjblW4O6JXi3dVd
-	6aa3YBS7igHXsuVfWOtx8K5TfQ3hbEbHMOfCiazaH9PNiuNyRH5tUkglyOYT2GtUew3+TzU1e+6
-	+tfHBi5jfeMA1NTvAPYbVCLZBvdBuqXVCEIQYZmnVb+VTrct7OPao/1oj9E3deLXoVgK8fq035D
-	XrisCvbHwIvvi/rbgmwuZaU/BV8OsexbtYyFvE4g==
-X-Received: by 2002:a05:6e02:1a45:b0:375:ab93:5062 with SMTP id e9e14a558f8ab-39f377ce3aamr23072795ab.2.1724906508418;
-        Wed, 28 Aug 2024 21:41:48 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH0J3dNTe+2qV9lkdosRKxuXnkdEpRNntNeKXq+3Q4rNxHOZTihRQyUG0HNWH5h/RZ0JCROzgSHDqHxfuZ05CM=
-X-Received: by 2002:a05:6e02:1a45:b0:375:ab93:5062 with SMTP id
- e9e14a558f8ab-39f377ce3aamr23072685ab.2.1724906508006; Wed, 28 Aug 2024
- 21:41:48 -0700 (PDT)
+	s=arc-20240116; t=1724906820; c=relaxed/simple;
+	bh=5sWYPQy7sEAZSI9ZuRk1mgK23u8xpfpeSeDYU9LitWc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e66Eyu5TnUBVyMwFngA+dw9tCMK0YCKFVw1wFnFQh/8n0IwjkHI2hqQNNHRDO+dg9U9pgh9HUlOgH8gBFVHudFxmqpHVhThysgWKN9HY1gO1YW57j/xSSh8BQKBBQwTXCaKsFkUNSxv/HJodPdpf8GOwJl1EVDyu62nFJXZ68yM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ESW1iQoe; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724906818; x=1756442818;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=5sWYPQy7sEAZSI9ZuRk1mgK23u8xpfpeSeDYU9LitWc=;
+  b=ESW1iQoeC7L32p/ba3z+4eK/lkW9xE5/IrGRCyG21hzG/6waCdGFn3a1
+   dEz9F1arGWzj2xoXQvxhDFm5rQl8FpwO2bt8coaFhZ8EQObXOYbGwXlCh
+   BZSMcyK1GblSp07lrFmd44ZuVW58ve8Kpdqm7cdTFAdUV9wGHiRGtgV3Y
+   1UuG3LcWNuNcokvAwOwv1vRAIonkYzPe/G6yPdsVHie4gwqOUknvARkAa
+   Qb3wzJs7iRCB/9Xre6mXmR7QulelKPU2ANfsRZ8+4dQ5HoP6WfeV6seKG
+   wdL9lgP9nTMg6lG1DRF9q7HmTS4vMbpmOuf0majMkzhCpgfkLYnmHWh4n
+   A==;
+X-CSE-ConnectionGUID: FAyIxdIPTvahyWjo9um3Hw==
+X-CSE-MsgGUID: u6qfPsT6RWKjHeZQFrVoVA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11178"; a="34632546"
+X-IronPort-AV: E=Sophos;i="6.10,184,1719903600"; 
+   d="scan'208";a="34632546"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2024 21:46:57 -0700
+X-CSE-ConnectionGUID: DfmaGlAlSrqrCFoNJwVcYw==
+X-CSE-MsgGUID: u+zwJInJSManvHchCcWbYg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,184,1719903600"; 
+   d="scan'208";a="94257077"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa001.fm.intel.com with ESMTP; 28 Aug 2024 21:46:55 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1001)
+	id F220E118; Thu, 29 Aug 2024 07:46:53 +0300 (EEST)
+Date: Thu, 29 Aug 2024 07:46:53 +0300
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Andy Shevchenko <andy@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v1 3/5] pinctrl: intel: Add __intel_gpio_get_direction()
+ helper
+Message-ID: <20240829044653.GR1532424@black.fi.intel.com>
+References: <20240828184018.3097386-1-andriy.shevchenko@linux.intel.com>
+ <20240828184018.3097386-4-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CALAgD-58VEomA47Srga5H-p6cZa0zPj+y3E1se0rHb3gj4UvyA@mail.gmail.com>
-In-Reply-To: <CALAgD-58VEomA47Srga5H-p6cZa0zPj+y3E1se0rHb3gj4UvyA@mail.gmail.com>
-From: Xingyu Li <xli399@ucr.edu>
-Date: Wed, 28 Aug 2024 21:41:37 -0700
-Message-ID: <CALAgD-61-PHPuazoRmBRe7KFDTrnr4mwn5vg8fU2rRMjWUw2kA@mail.gmail.com>
-Subject: Re: BUG: general protection fault in batadv_bla_del_backbone_claims
-To: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com, 
-	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Yu Hao <yhao016@ucr.edu>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240828184018.3097386-4-andriy.shevchenko@linux.intel.com>
 
-Here is the C reproducer:
-https://gist.github.com/freexxxyyy/b5d77fc4396caf3b79d88fb2a12ef0ff
+On Wed, Aug 28, 2024 at 09:38:36PM +0300, Andy Shevchenko wrote:
+> Add __intel_gpio_get_direction() helper which provides all possible
+> physical states of the pad.
+> 
+> With that done, update current users and make the respective checks
+> consistent.
+> 
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+>  drivers/pinctrl/intel/pinctrl-intel.c | 48 ++++++++++++++++++++++++---
+>  1 file changed, 43 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
+> index 2a3d44f35348..3a135cfe435f 100644
+> --- a/drivers/pinctrl/intel/pinctrl-intel.c
+> +++ b/drivers/pinctrl/intel/pinctrl-intel.c
+> @@ -70,6 +70,12 @@
+>  #define PADCFG0_PMODE_SHIFT		10
+>  #define PADCFG0_PMODE_MASK		GENMASK(13, 10)
+>  #define PADCFG0_PMODE_GPIO		0
+> +#define PADCFG0_GPIODIS_SHIFT		8
+> +#define PADCFG0_GPIODIS_MASK		GENMASK(9, 8)
+> +#define PADCFG0_GPIODIS_NONE		0
+> +#define PADCFG0_GPIODIS_OUTPUT		1
+> +#define PADCFG0_GPIODIS_INPUT		2
+> +#define PADCFG0_GPIODIS_FULL		3
+>  #define PADCFG0_GPIORXDIS		BIT(9)
+>  #define PADCFG0_GPIOTXDIS		BIT(8)
+>  #define PADCFG0_GPIORXSTATE		BIT(1)
+> @@ -429,6 +435,37 @@ static int intel_pinmux_set_mux(struct pinctrl_dev *pctldev,
+>  	return 0;
+>  }
+>  
+> +/**
+> + * enum - possible pad physical configurations
+> + *
 
-On Fri, Aug 23, 2024 at 7:10=E2=80=AFPM Xingyu Li <xli399@ucr.edu> wrote:
->
-> Hello,
->
-> We found the following issue using syzkaller on Linux v6.10.
->
-> It seems to be a null pointer dereference bug
-> Need to check the `fi=3D=3DNULL` before 'fi->fib_dead' on line 1587 of
-> net/ipv4/fib_trie.c
->
-> The bug report is:
->
-> Oops: general protection fault, probably for non-canonical address
-> 0xdffffc0000000008: 0000 [#1] PREEMPT SMP KASAN PTI
-> KASAN: null-ptr-deref in range [0x0000000000000040-0x0000000000000047]
-> CPU: 0 PID: 9032 Comm: syz.0.15 Not tainted 6.10.0 #13
-> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/0=
-1/2014
-> RIP: 0010:fib_table_lookup+0x709/0x1790 net/ipv4/fib_trie.c:1587
-> Code: 38 f3 75 4c e8 38 b9 15 f8 49 be 00 00 00 00 00 fc ff df eb 05
-> e8 27 b9 15 f8 48 8b 44 24 20 48 8d 58 44 48 89 d8 48 c1 e8 03 <42> 8a
-> 04 30 84 c0 0f 85 76 03 00 00 0f b6 1b 31 ff 89 de e8 df bb
-> RSP: 0018:ffffc90004acf020 EFLAGS: 00010203
-> RAX: 0000000000000008 RBX: 0000000000000044 RCX: ffff88801db88000
-> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-> RBP: ffffc90004acf170 R08: ffffffff897b97ee R09: 1ffffffff221f8b0
-> R10: dffffc0000000000 R11: fffffbfff221f8b1 R12: 1ffff11003b1bbe6
-> R13: ffff88801d8ddf20 R14: dffffc0000000000 R15: ffff88801d8ddf30
-> FS:  0000000000000000(0000) GS:ffff888063a00000(0000) knlGS:0000000000000=
-000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007f0cfb3b48d0 CR3: 000000001811e000 CR4: 0000000000350ef0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  <TASK>
->  __inet_dev_addr_type+0x2e9/0x510 net/ipv4/fib_frontend.c:225
->  inet_addr_type_dev_table net/ipv4/fib_frontend.c:267 [inline]
->  fib_del_ifaddr+0x1114/0x14b0 net/ipv4/fib_frontend.c:1320
->  fib_inetaddr_event+0xcc/0x1f0 net/ipv4/fib_frontend.c:1448
->  notifier_call_chain kernel/notifier.c:93 [inline]
->  blocking_notifier_call_chain+0x126/0x1d0 kernel/notifier.c:388
->  __inet_del_ifa+0x87a/0x1020 net/ipv4/devinet.c:437
->  inet_del_ifa net/ipv4/devinet.c:474 [inline]
->  inetdev_destroy net/ipv4/devinet.c:327 [inline]
->  inetdev_event+0x664/0x1590 net/ipv4/devinet.c:1633
->  notifier_call_chain kernel/notifier.c:93 [inline]
->  raw_notifier_call_chain+0xe0/0x180 kernel/notifier.c:461
->  call_netdevice_notifiers_extack net/core/dev.c:2030 [inline]
->  call_netdevice_notifiers net/core/dev.c:2044 [inline]
->  unregister_netdevice_many_notify+0xd65/0x16d0 net/core/dev.c:11219
->  unregister_netdevice_many net/core/dev.c:11277 [inline]
->  unregister_netdevice_queue+0x2ff/0x370 net/core/dev.c:11156
->  unregister_netdevice include/linux/netdevice.h:3119 [inline]
->  __tun_detach+0x6ad/0x15e0 drivers/net/tun.c:685
->  tun_detach drivers/net/tun.c:701 [inline]
->  tun_chr_close+0x104/0x1b0 drivers/net/tun.c:3500
->  __fput+0x24a/0x8a0 fs/file_table.c:422
->  task_work_run+0x239/0x2f0 kernel/task_work.c:180
->  exit_task_work include/linux/task_work.h:38 [inline]
->  do_exit+0xa13/0x2560 kernel/exit.c:876
->  do_group_exit+0x1fd/0x2b0 kernel/exit.c:1025
->  get_signal+0x1697/0x1730 kernel/signal.c:2909
->  arch_do_signal_or_restart+0x92/0x7f0 arch/x86/kernel/signal.c:310
->  exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
->  exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
->  __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
->  syscall_exit_to_user_mode+0x95/0x280 kernel/entry/common.c:218
->  do_syscall_64+0x8a/0x150 arch/x86/entry/common.c:89
->  entry_SYSCALL_64_after_hwframe+0x67/0x6f
-> RIP: 0033:0x7f38fcb809b9
-> Code: Unable to access opcode bytes at 0x7f38fcb8098f.
-> RSP: 002b:00007ffca268d598 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-> RAX: 0000000000000002 RBX: 00007f38fcd45f80 RCX: 00007f38fcb809b9
-> RDX: 0000000020000080 RSI: 0000000000000001 RDI: 0000000000000003
-> RBP: 00007f38fcbf4f70 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-> R13: 00007f38fcd45f80 R14: 00007f38fcd45f80 R15: 0000000000000d01
->  </TASK>
-> Modules linked in:
-> ---[ end trace 0000000000000000 ]---
-> RIP: 0010:fib_table_lookup+0x709/0x1790 net/ipv4/fib_trie.c:1587
-> Code: 38 f3 75 4c e8 38 b9 15 f8 49 be 00 00 00 00 00 fc ff df eb 05
-> e8 27 b9 15 f8 48 8b 44 24 20 48 8d 58 44 48 89 d8 48 c1 e8 03 <42> 8a
-> 04 30 84 c0 0f 85 76 03 00 00 0f b6 1b 31 ff 89 de e8 df bb
-> RSP: 0018:ffffc90004acf020 EFLAGS: 00010203
-> RAX: 0000000000000008 RBX: 0000000000000044 RCX: ffff88801db88000
-> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-> RBP: ffffc90004acf170 R08: ffffffff897b97ee R09: 1ffffffff221f8b0
-> R10: dffffc0000000000 R11: fffffbfff221f8b1 R12: 1ffff11003b1bbe6
-> R13: ffff88801d8ddf20 R14: dffffc0000000000 R15: ffff88801d8ddf30
-> FS:  0000000000000000(0000) GS:ffff888063a00000(0000) knlGS:0000000000000=
-000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007f2a89116b60 CR3: 00000000202c2000 CR4: 0000000000350ef0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
->
->
-> --
-> Yours sincerely,
-> Xingyu
+Start with capital letter as others:
 
+enum - Possible..
 
+Also I think we should follow the structs and drop the empty line here
+(well and for other enums, I don't know how they got there ;-) but it
+looks better without.
 
---=20
-Yours sincerely,
-Xingyu
+Other than this, looks good to me.
+
+> + * @PAD_CONNECT_NONE:	pad is fully disconnected
+> + * @PAD_CONNECT_INPUT:	pad is in input only mode
+> + * @PAD_CONNECT_OUTPUT:	pad is in output only mode
+> + * @PAD_CONNECT_FULL:	pad is fully connected
+> + */
+> +enum {
+> +	PAD_CONNECT_NONE	= 0,
+> +	PAD_CONNECT_INPUT	= 1,
+> +	PAD_CONNECT_OUTPUT	= 2,
+> +	PAD_CONNECT_FULL	= PAD_CONNECT_INPUT | PAD_CONNECT_OUTPUT,
+> +};
+> +
+> +static int __intel_gpio_get_direction(u32 value)
+> +{
+> +	switch ((value & PADCFG0_GPIODIS_MASK) >> PADCFG0_GPIODIS_SHIFT) {
+> +	case PADCFG0_GPIODIS_FULL:
+> +		return PAD_CONNECT_NONE;
+> +	case PADCFG0_GPIODIS_OUTPUT:
+> +		return PAD_CONNECT_INPUT;
+> +	case PADCFG0_GPIODIS_INPUT:
+> +		return PAD_CONNECT_OUTPUT;
+> +	case PADCFG0_GPIODIS_NONE:
+> +		return PAD_CONNECT_FULL;
+> +	default:
+> +		return PAD_CONNECT_FULL;
+> +	};
+> +}
+> +
+>  static u32 __intel_gpio_set_direction(u32 value, bool input, bool output)
+>  {
+>  	if (input)
+> @@ -937,7 +974,7 @@ static int intel_gpio_get(struct gpio_chip *chip, unsigned int offset)
+>  		return -EINVAL;
+>  
+>  	padcfg0 = readl(reg);
+> -	if (!(padcfg0 & PADCFG0_GPIOTXDIS))
+> +	if (__intel_gpio_get_direction(padcfg0) & PAD_CONNECT_OUTPUT)
+>  		return !!(padcfg0 & PADCFG0_GPIOTXSTATE);
+>  
+>  	return !!(padcfg0 & PADCFG0_GPIORXSTATE);
+> @@ -990,10 +1027,10 @@ static int intel_gpio_get_direction(struct gpio_chip *chip, unsigned int offset)
+>  	if (padcfg0 & PADCFG0_PMODE_MASK)
+>  		return -EINVAL;
+>  
+> -	if (padcfg0 & PADCFG0_GPIOTXDIS)
+> -		return GPIO_LINE_DIRECTION_IN;
+> +	if (__intel_gpio_get_direction(padcfg0) & PAD_CONNECT_OUTPUT)
+> +		return GPIO_LINE_DIRECTION_OUT;
+>  
+> -	return GPIO_LINE_DIRECTION_OUT;
+> +	return GPIO_LINE_DIRECTION_IN;
+>  }
+>  
+>  static int intel_gpio_direction_input(struct gpio_chip *chip, unsigned int offset)
+> @@ -1690,7 +1727,8 @@ EXPORT_SYMBOL_NS_GPL(intel_pinctrl_get_soc_data, PINCTRL_INTEL);
+>  
+>  static bool __intel_gpio_is_direct_irq(u32 value)
+>  {
+> -	return (value & PADCFG0_GPIROUTIOXAPIC) && (value & PADCFG0_GPIOTXDIS) &&
+> +	return (value & PADCFG0_GPIROUTIOXAPIC) &&
+> +	       (__intel_gpio_get_direction(value) == PAD_CONNECT_INPUT) &&
+>  	       (__intel_gpio_get_gpio_mode(value) == PADCFG0_PMODE_GPIO);
+>  }
+>  
+> -- 
+> 2.43.0.rc1.1336.g36b5255a03ac
 
