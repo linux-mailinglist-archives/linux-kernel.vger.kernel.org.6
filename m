@@ -1,88 +1,131 @@
-Return-Path: <linux-kernel+bounces-307611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2C32965058
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 21:58:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2236196505B
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 21:58:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FBEF283734
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 19:58:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9FEAFB24A1F
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 19:58:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53F361BFDF1;
-	Thu, 29 Aug 2024 19:51:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AF711C174F;
+	Thu, 29 Aug 2024 19:53:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TyGwZxJ9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BHup4ZAb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DE041B9B4E;
-	Thu, 29 Aug 2024 19:51:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9472E1B81DF;
+	Thu, 29 Aug 2024 19:53:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724961110; cv=none; b=OyTvbrrA12KoM/uVi40QH6+nSwm4j9xBTNtH2NBV3zGAIJ3KmYMruO0/kWrlzDAMlSIcE5pGFlqzSlvL7SmnyLo99K0wZTkdp1wvRwOW4rgA4DrjgVfRqmAeBjjIumWGBO/MiRUdYxWMH/poHBzmgbNe12R/t4B1OV1gI3Mc2X8=
+	t=1724961196; cv=none; b=Wa0L5MnKOTauqwHquT1aOXBjFtoH6tFU3MNI8Q7WeZnil9ksLyMzdFi6YvB3uMUj6eGo99zA/SBWWfOBDLhyPQ2MhwiF1RyVcSAbBokDC/SjFC6BEaZUiAFHzeOpAauqr7/nYEVVqg9/JUscDU0D3QTZT9Sbhb4VYHwGB6IkfpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724961110; c=relaxed/simple;
-	bh=cfIKT9eNvoU1qh4Xk0i3IXhcZ1HonaBRt9s9t/j3xCc=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=BFwjXqFBJPKMQ0K9MEzfLD7gcX82bxMl8CLQBrtgdbcvu/eS2hZErTP7zCUMPINVb0UXdS6r63IAqqwP1DkoYRHx1N6Z5pNhKh8XQmhZDbuMBAL4kmbvIlOAWoHca4mpfdiws0K6qLchAS2qMPZEDmm6DsUgj5CH+0Mfudy2OdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TyGwZxJ9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0FD5C4CEC1;
-	Thu, 29 Aug 2024 19:51:49 +0000 (UTC)
+	s=arc-20240116; t=1724961196; c=relaxed/simple;
+	bh=Uhx4a7Uk/gjBqwkYG9zbgHA+zupE9eLvr42o54btdDs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rHmy0YOl347B7f7senahkcYdyje9BmGBW7+chetZlRDqjYphHAbwGTpqvn/QaGeXk18iLxIwBYsloXShOs5vtf4LRIdGOFjb6Ct501ampXVdiS4R25L5++tmyYMaHR+WE60OZt5R6FhjR7f1ZX9m2/N3XYp3Q3MnOhw5A/N1wKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BHup4ZAb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF792C4CEC2;
+	Thu, 29 Aug 2024 19:53:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724961110;
-	bh=cfIKT9eNvoU1qh4Xk0i3IXhcZ1HonaBRt9s9t/j3xCc=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=TyGwZxJ9/DMvX+cYxpJttg81315XS4eoXgWV7JZhXzBnSh1mDZf/b0FKuFqAnS8n7
-	 BqRSk3IAOExnm0CPflxQ/k1Stfe0gF8BFdMmyakZO/O5M3AlJiMXwexsoGjtU5//RH
-	 zULZlWNTFOwFIXcO6JZ6BNy2uDyH3zvxMu0sJ6iP0wKgCbJB4MWGUqQnyJK80Vr+NX
-	 JdeR8Pi0r2plSPEw0LsHxsYY/3CqigmxDQUwYS2ieUZY3nzwSjOdcCydapPbTMPlpd
-	 HsSbt8b6N6wn06PTZPCNgnpD9PhGgbDlhuPS4+6SypASxUfJpfr2X5H2GcpRjedcYx
-	 q3JgGtykB0lWQ==
-Date: Thu, 29 Aug 2024 21:51:47 +0200 (CEST)
-From: Jiri Kosina <jikos@kernel.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-cc: Charles Wang <charles.goodix@gmail.com>, 
-    Benjamin Tissoires <bentiss@kernel.org>, 
-    Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org, 
-    linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2 next] HID: hid-goodix: Fix type promotion bug in
- goodix_hid_get_raw_report()
-In-Reply-To: <a04cfa63-de06-4d09-af80-a567f2db8f12@stanley.mountain>
-Message-ID: <nycvar.YFH.7.76.2408292151350.12664@cbobk.fhfr.pm>
-References: <a04cfa63-de06-4d09-af80-a567f2db8f12@stanley.mountain>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+	s=k20201202; t=1724961196;
+	bh=Uhx4a7Uk/gjBqwkYG9zbgHA+zupE9eLvr42o54btdDs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BHup4ZAbQIDszLesnjFkYonoXAAftcq6rYOyspG92WaM2EGDWuUulXiOwWmnHKBrj
+	 befMozd3bzj1DGALLm9cBef/F1q3NXtlPG3eG9BAFiDNFGbdwqzvJw3Gjcs27yjjWr
+	 v8AjqcwRbBrycdt3sSWfpbrXxTB5hyZM22LaWSSW3f+4Kp1pULbPBbXRjniMTdUPhA
+	 j5vz+N6Q3pIFAvYvD1/klmf4IhUgBewiL7Md2HWT1HhvCxpAftRm9et1xXkHpWsn/E
+	 nqU3rplNQbiLrzmcpr3jSx3FT3eRZpO8fH2acDn64WnjO/HPq1GMv3eqhBh4t2yB2i
+	 ZEQPejuJrD8dw==
+Date: Thu, 29 Aug 2024 14:53:14 -0500
+From: Rob Herring <robh@kernel.org>
+To: Daniel Golle <daniel@makrotopia.org>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Christian Marangi <ansuelsmth@gmail.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Robert Marko <robimarko@gmail.com>,
+	Russell King <rmk+kernel@armlinux.org.uk>, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v2 1/2] dt-bindings: net: marvell,aquantia: add
+ properties to override MDI_CFG
+Message-ID: <20240829195314.GA916906-robh@kernel.org>
+References: <1cdfd174d3ac541f3968dfe9bd14d5b6b28e4ac6.1724885333.git.daniel@makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1cdfd174d3ac541f3968dfe9bd14d5b6b28e4ac6.1724885333.git.daniel@makrotopia.org>
 
-On Thu, 29 Aug 2024, Dan Carpenter wrote:
-
-> The issue is GOODIX_HID_PKG_LEN_SIZE is defined as sizeof(u16) which is
-> type size_t.  However, goodix_hid_check_ack_status() returns negative
-> error codes or potentially a positive but invalid length which is too
-> small.  So when we compare "if ((response_data_len <=
-> GOODIX_HID_PKG_LEN_SIZE)" then negative error codes are type promoted to
-> size_t and counted as a positive large value and treated as valid.
+On Wed, Aug 28, 2024 at 11:51:49PM +0100, Daniel Golle wrote:
+> Usually the MDI pair order reversal configuration is defined by
+> bootstrap pin MDI_CFG. Some designs, however, require overriding the MDI
+> pair order and force either normal or reverse order.
 > 
-> It would have been easy enough to add some casting to avoid the type
-> promotion, however this patch takes a more thourough approach and moves
-> the length check into goodix_hid_check_ack_status().  Now the function
-> only return negative error codes or zero on success and the length
-> pointer is never set to an invalid length.
+> Add mutually exclusive properties 'marvell,force-mdi-order-normal' and
+> 'marvell,force-mdi-order-reverse' for that purpose.
 > 
-> Fixes: 75e16c8ce283 ("HID: hid-goodix: Add Goodix HID-over-SPI driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+> ---
+> v2: enforce mutually exclusive relationship of the two new properties in
+>     dt-schema.
+> 
+>  .../bindings/net/marvell,aquantia.yaml           | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/net/marvell,aquantia.yaml b/Documentation/devicetree/bindings/net/marvell,aquantia.yaml
+> index 9854fab4c4db0..03b0cff239f70 100644
+> --- a/Documentation/devicetree/bindings/net/marvell,aquantia.yaml
+> +++ b/Documentation/devicetree/bindings/net/marvell,aquantia.yaml
+> @@ -22,6 +22,12 @@ description: |
+>  
+>  allOf:
+>    - $ref: ethernet-phy.yaml#
+> +  - if:
+> +      required:
+> +        - marvell,force-mdi-order-normal
+> +    then:
+> +      properties:
+> +        marvell,force-mdi-order-reverse: false
+>  
+>  select:
+>    properties:
+> @@ -48,6 +54,16 @@ properties:
+>    firmware-name:
+>      description: specify the name of PHY firmware to load
+>  
+> +  marvell,force-mdi-order-normal:
+> +    type: boolean
+> +    description:
+> +      force normal order of MDI pairs, overriding MDI_CFG bootstrap pin.
+> +
+> +  marvell,force-mdi-order-reverse:
+> +    type: boolean
+> +    description:
+> +      force reverse order of MDI pairs, overriding MDI_CFG bootstrap pin.
 
-Good catch Dan, applied, thanks!
+Why 2 properties for 1 setting? Just do something like this:
 
--- 
-Jiri Kosina
-SUSE Labs
+marvell,mdi-cfg-order = <0|1>;
 
+1 means reverse, 0 means normal (or vise-versa). Not present then means 
+use MDI_CFG setting. Then the binding naturally avoids nonsensical 
+combinations of properties without the schema having to enforce it.
+
+Feel free to tweak the naming/values. I would make 0 and 1 align with 
+MDI_CFG states, but I don't know what those are.
+
+Rob
 
