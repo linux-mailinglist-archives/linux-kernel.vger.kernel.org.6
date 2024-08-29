@@ -1,167 +1,142 @@
-Return-Path: <linux-kernel+bounces-306780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73E3C964379
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:48:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FD4696438A
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:52:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B889284F91
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 11:48:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D68C2B22EF7
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 11:52:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA09B1922FE;
-	Thu, 29 Aug 2024 11:48:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBA09192B7C;
+	Thu, 29 Aug 2024 11:52:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="A9oCCWZ0"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="SXfQvmlq"
+Received: from out162-62-58-211.mail.qq.com (out162-62-58-211.mail.qq.com [162.62.58.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 316BE158A08;
-	Thu, 29 Aug 2024 11:48:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17187190679
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 11:52:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724932101; cv=none; b=ARjxL2AwhyZFqwJ2XlkmkDlurmPH5V8J7/DCX0sl+m7ND3CHrDoBh7ZXzres34t/smiI5tlw3uHyJANzCznKOOLJDLutWP1NVk3hx/hNfwOAkhWa8+/b59lKiMKIrQQ6HufRW7AGlzBp6k/a1EEztZ8JO0w+QoFy2P11a1g1fIE=
+	t=1724932359; cv=none; b=uMm0V7XuYtNK/fyTnrDsi7uqpAvakA3yH8vgvSxjtfN+9MTVvjMSWS5gXRnjW5LcyI8Kqkm/iuJZtazIN7LXaRrCxEN/Bwo2Rmsd07sB3UE6rlskW+H8zMSAzvtOdhUwz+yih0ntUqLOWxnjj4mpYn+CAeteUXx7ugQa09aPwP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724932101; c=relaxed/simple;
-	bh=PKIpyjsxqUq9LCmmiN9UPASYcMURKMudkEnTTHDPPrk=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=AS0KYWJloh4tKMeJQMFR0AcHGbthyiNAotB2voVl1JUG7w/54kaaqIOPMaX5Q7XhhB48EDc7ag9nXyH/N2N7KzZlRdXnhfjRwwmEGmWdFqenjNKkgssXY7k5R7GEweFzzpkxpdLq+mhE4fYc54BwOSwfVQboMbwCAzLIDdndwdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=A9oCCWZ0; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47T8kbne007615;
-	Thu, 29 Aug 2024 11:48:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:message-id:mime-version:subject:to; s=
-	qcppdkim1; bh=/a16wfpwV0d9vmdxYgIj4FXXje+unPpkQKR3N+wGiDU=; b=A9
-	oCCWZ0idtVRaxQjCLpubDqkpHRXyYMh4KiGFuMLsQwOqCQUMKFTP0nHdJb29rhcm
-	OBFBmdl3x5Q76g4UU3bRM1i4pUmByegv/AVx49v9EThmB4vz+2wNzxF215LtoTRj
-	RxOAeSNrxf7YJ1LISuRDCDYstTxruh+/EPdWQfGbDqoCEMaDa0Soq6hK/ZCRPuRU
-	Z+2AM47Uvj3tQCqSh6QzJZTW+6Lggpn0QBoghGSW7JaKXz7FsQcBIrXMjVQhON3q
-	ZhQz/E9ZIdf3Im2XATHuZkoyHQ9MpLVwvbh2JFVYqsdMeO1RIqxkiHcxe9LCy0M3
-	OxZy4LzQ59QFVqiBRrcQ==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 419pv0d3vr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 29 Aug 2024 11:48:13 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47TBmCwY008149
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 29 Aug 2024 11:48:12 GMT
-Received: from hu-sachgupt-hyd.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 29 Aug 2024 04:48:07 -0700
-From: Sachin Gupta <quic_sachgupt@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konrad.dybcio@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <quic_nitirawa@quicinc.com>,
-        <quic_bhaskarv@quicinc.com>, <quic_narepall@quicinc.com>,
-        <quic_rampraka@quicinc.com>, <quic_sartgarg@quicinc.com>,
-        <quic_mapa@quicinc.com>, <quic_cang@quicinc.com>,
-        <quic_nguyenb@quicinc.com>
-Subject: [PATCH V2] arm64: dts: qcom: Add SD Card node for qcm6490-idp
-Date: Thu, 29 Aug 2024 17:17:48 +0530
-Message-ID: <20240829114748.9661-1-quic_sachgupt@quicinc.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1724932359; c=relaxed/simple;
+	bh=DSfj3DMcj5FnLCzR1eApVAgMxL/m9qF4qtAhqVIOcnA=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=W3yhT4Y+0S3TCx/7RGDej/dpe3ZPkUHTvbOFfXy7KsrIDqOwsDrUY+a1nYkGsev98+NzMS318iIYN/dob//u1JXF9lmP61q2gY+j7xDHhDzkiv8Gro4BiRkrZrI5QhLUYRLYMT79hHXbOAFJ5lwNdP2ly6iGxgYcta6xWoX/spY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=SXfQvmlq; arc=none smtp.client-ip=162.62.58.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1724932351; bh=I/6b/6trAgjGdtT/pGMgbHHJchrXPV/+fKWvr2SL+ak=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=SXfQvmlqWpMflrbbp1VW5vUM6S2HbrQaPInKlG6j3zrvHKchVCKhS7kPL6PnXo9mC
+	 3cTOo3c72Ir20RQe8QVPDKhrHhmFBzz7NbYK73CkMUQL/kFkwMI0sav7Ugc8uW7KcD
+	 c19q42E2DahWK/ZNJsp8iEi/xXfPQZ170s5hvZ0g=
+Received: from pek-lxu-l1.wrs.com ([111.198.224.50])
+	by newxmesmtplogicsvrsza10-0.qq.com (NewEsmtp) with SMTP
+	id C4811C1E; Thu, 29 Aug 2024 19:49:08 +0800
+X-QQ-mid: xmsmtpt1724932148tma8z4nyw
+Message-ID: <tencent_82C82F756FE496A0E9E2EE16CC747ADE6C0A@qq.com>
+X-QQ-XMAILINFO: Ny9b0zP53WzJ15C4Y0VWrNcxXIKsGFqqcMuoFuEz/TbGdGopp9LK8OeSr/nSaX
+	 /hZJ08Q2TIl7UtBFtvaRC1KM0M9DpFP+GY3RtpXMqrZPdyIohRhljOyyqFM+VJcGFPqLtmW+x3St
+	 8qqlAn5pTozXoM0QzgtTQ6eqRDUtTUOs2U86dEpzB3LqhCDl8/z8TN/fm2XuC2UVhsDzla52y2Nk
+	 d7UDS3XlvnbMf0yGVwHQlhc3Ja9Zh97f1ZHtJkBrB7ljPmKo31qnFsEEFg+G4C/xKtM1i5qY3xIF
+	 hfGgM6vV2xbQvy0uwS4PcWG3x4axmjM7+cOzosLsRF/FSbZmB0BFUgsEljFyBLTgaIOYA5SylLtg
+	 pBH0WBkJsXE9LS72ETc0KrO70wLENDAylB+0cS8uizfcYyq2aMyHhwkgl8AAk2mzoTrVMfbKdYqo
+	 fxOzjKFJ47x/GGFYOTGn5c5yfYI65pBWU7hwCKOFgKDlaJE+pSqhJtG5lBLtpmVcAnZw3ab/MzI2
+	 /u/ZITeeFDyPn2bNbOO2ANE4OqCdY048uv9cGjrNS5A5T/t6onGrZR6e1VASIhUp2WChNEVtsOuZ
+	 V8DdHWb8egUdxrerFF1nk9HS3d7hZSt9zy4ECuj41ycxbGv24anrjmhQACvwGpRiz036ckoI0St8
+	 ZZCpgzWi1ujuMAXKoziNXv8JA5pwqydqk4zQC2xHe6yHt1LrG817Tf69Lp81tp+21vyOrC7lFx2h
+	 aqoAJEhOIyoeVatbCo8IC/Iw5it6CrLQsWQPNeRP1q3Y+p+Tns/+4gfyaYpzqsBPK8sQAMQjCcIz
+	 4Gp59u5/kSt/R8hH06Taq2kJThXEk6pXB5Ea98zKlxubNrZlYd270Jl+yCNmMJm1noBOxWLqSA3n
+	 RFp1gzINRQTm93eIMuyEI3PazMDEW4M2cP9jguOlwu3Cs9xyv30nI=
+X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+ba3c0273042a898c230e@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [btrfs?] kernel BUG in __extent_writepage_io (2)
+Date: Thu, 29 Aug 2024 19:49:07 +0800
+X-OQ-MSGID: <20240829114907.755362-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <0000000000008851fe0620c5f51c@google.com>
+References: <0000000000008851fe0620c5f51c@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: GziDcUs6dsytFflLm2-TJ23FoknG0Gay
-X-Proofpoint-ORIG-GUID: GziDcUs6dsytFflLm2-TJ23FoknG0Gay
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-29_02,2024-08-29_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 clxscore=1015
- priorityscore=1501 impostorscore=0 suspectscore=0 lowpriorityscore=0
- malwarescore=0 spamscore=0 mlxlogscore=665 mlxscore=0 bulkscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408290085
+Content-Transfer-Encoding: 8bit
 
-Add SD Card node for Qualcomm qcm6490-idp Board.
+#syz test
 
-Signed-off-by: Sachin Gupta <quic_sachgupt@quicinc.com>
----
-
-Changes from v1:
- - Define sd_cd node. (Thanks Dmitry)
----
- arch/arm64/boot/dts/qcom/qcm6490-idp.dts | 33 ++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/qcm6490-idp.dts b/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
-index a0668f767e4b..95d5cf2d9bcd 100644
---- a/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
-+++ b/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
-@@ -641,6 +641,21 @@
- 	status = "okay";
- };
+diff --git a/fs/btrfs/extent_map.c b/fs/btrfs/extent_map.c
+index 10ac5f657e38..4e2c30acca67 100644
+--- a/fs/btrfs/extent_map.c
++++ b/fs/btrfs/extent_map.c
+@@ -384,6 +384,8 @@ static void try_merge_map(struct btrfs_inode *inode, struct extent_map *em)
+ 		free_extent_map(merge);
+ 		dec_evictable_extent_maps(inode);
+ 	}
++	printk("em: %p, blockstart: %llu, mblockstart: %llu, %s\n", em,
++		extent_map_block_start(em), em->flags & EXTENT_FLAG_MERGED, __func__);
+ }
  
-+&sdc2_clk {
-+	bias-disable;
-+	drive-strength = <16>;
-+};
-+
-+&sdc2_cmd {
-+	bias-pull-up;
-+	drive-strength = <10>;
-+};
-+
-+&sdc2_data {
-+	bias-pull-up;
-+	drive-strength = <10>;
-+};
-+
- &sdhc_1 {
- 	non-removable;
- 	no-sd;
-@@ -655,12 +670,30 @@
- &tlmm {
- 	gpio-reserved-ranges = <32 2>, /* ADSP */
- 			       <48 4>; /* NFC */
-+
-+	sd_cd: sd-cd-state {
-+		pins = "gpio91";
-+		function = "gpio";
-+		bias-pull-up;
-+	};
- };
+ /*
+@@ -493,7 +495,11 @@ static int add_extent_mapping(struct btrfs_inode *inode,
+ 	if (ret)
+ 		return ret;
  
- &uart5 {
- 	status = "okay";
- };
++	printk("em: %p, blockstart: %llu, em refs: %d, %s\n",
++		em, extent_map_block_start(em), refcount_read(&em->refs), __func__);
+ 	setup_extent_mapping(inode, em, modified);
++	printk("setuped, em: %p, blockstart: %llu, em refs: %d, %s\n",
++		em, extent_map_block_start(em), refcount_read(&em->refs), __func__);
  
-+&sdhc_2 {
-+	status = "okay";
-+
-+	pinctrl-0 = <&sdc2_clk>, <&sdc2_cmd>, <&sdc2_data>, <&sd_cd>;
-+	pinctrl-1 = <&sdc2_clk_sleep>, <&sdc2_cmd_sleep>, <&sdc2_data_sleep>, <&sd_cd>;
-+
-+	vmmc-supply = <&vreg_l9c_2p96>;
-+	vqmmc-supply = <&vreg_l6c_2p96>;
-+
-+	cd-gpios = <&tlmm 91 GPIO_ACTIVE_LOW>;
-+};
-+
- &usb_1 {
- 	status = "okay";
- };
--- 
-2.17.1
+ 	if (!btrfs_is_testing(fs_info) && is_fstree(btrfs_root_id(root)))
+ 		percpu_counter_inc(&fs_info->evictable_extent_maps);
+@@ -743,6 +749,11 @@ int btrfs_add_extent_mapping(struct btrfs_inode *inode,
+ 			}
+ 			free_extent_map(existing);
+ 		}
++	} else if (!ret) {
++		if (em->flags & EXTENT_FLAG_MERGED)
++			ASSERT(extent_map_block_start(em) != EXTENT_MAP_HOLE);
++		else
++			return -EINVAL;
+ 	}
+ 
+ 	ASSERT(ret == 0 || ret == -EEXIST);
+diff --git a/fs/btrfs/extent_map.h b/fs/btrfs/extent_map.h
+index 5154a8f1d26c..a84ef0c7d601 100644
+--- a/fs/btrfs/extent_map.h
++++ b/fs/btrfs/extent_map.h
+@@ -154,6 +154,7 @@ static inline u64 extent_map_block_start(const struct extent_map *em)
+ 	if (em->disk_bytenr < EXTENT_MAP_LAST_BYTE) {
+ 		if (extent_map_is_compressed(em))
+ 			return em->disk_bytenr;
++		printk("em: %p, disk byte nr: %llu, offset: %llu, %s\n", em, em->disk_bytenr, em->offset, __func__);
+ 		return em->disk_bytenr + em->offset;
+ 	}
+ 	return em->disk_bytenr;
+diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+index b1b6564ab68f..45f3b31aacc3 100644
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -6958,7 +6958,9 @@ struct extent_map *btrfs_get_extent(struct btrfs_inode *inode,
+ 	}
+ 
+ 	write_lock(&em_tree->lock);
++	printk("em: %p, blockstart: %llu, start: %llu, len: %llu, %s\n", em, extent_map_block_start(em), start, len, __func__);
+ 	ret = btrfs_add_extent_mapping(inode, &em, start, len);
++	printk("ret: %d, em: %p, blockstart: %llu, start: %llu, len: %llu, %s\n", ret, em, extent_map_block_start(em), start, len, __func__);
+ 	write_unlock(&em_tree->lock);
+ out:
+ 	btrfs_free_path(path);
 
 
