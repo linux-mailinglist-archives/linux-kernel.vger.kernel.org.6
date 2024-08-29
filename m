@@ -1,118 +1,155 @@
-Return-Path: <linux-kernel+bounces-306423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89614963EE4
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:44:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 910F8963EEF
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:44:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42B6E281C4C
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:44:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 01C0CB2319E
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:44:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3ECB18C35B;
-	Thu, 29 Aug 2024 08:44:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7107318C90F;
+	Thu, 29 Aug 2024 08:44:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="CUzmpdSI"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C33DD189B9D;
-	Thu, 29 Aug 2024 08:43:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TqEahd06"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1453515C13B;
+	Thu, 29 Aug 2024 08:44:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724921040; cv=none; b=Lhf3EgtxvgoUK6jd9fCTQvNbgdM0kRzjfWXLHplSfdCZF7VJHZdm+TX+QDtpekbD6Ik/m9MnJXwXWTbjpxO2yWUrTsN4jxXVB8qcVPkq3SzhFL4BYgSQiWij0xS0IuUQ5p58SmARgVcR1OrH6bPVq/yKzJmxici0FHI77w+ydFc=
+	t=1724921071; cv=none; b=ubEJstXktQfWXMDg7DkqHuINdIKzFbVfpL89QUN3yxnE9yRMh7WSgtJYyNnJ+9t68w4RQrQU1fO937HHIZJ8/l5b4WaCBcS1E9FBbxhUMZL3sYwemjB1uuCTGCP2ykrY6C6HzZZEML5ZR3YiePOWwE4Z0dJTRaE+ezrNVMUDqv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724921040; c=relaxed/simple;
-	bh=2C0YSL35AO+qbcMzCggkTk7ZR8ZizdAacVd9eprVcDc=;
+	s=arc-20240116; t=1724921071; c=relaxed/simple;
+	bh=rS7qG8284LsPMVDZT3Wk6pL1xkn6e7lfFskZ9IfThig=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=njN54YkREeZ/+Yt6FLXa3VT0NhfrEVBNi/wHNsQLHO+jExaqeSHzttfLJeIw7AGE/fIbuBZCG28lMkx2daXtBRP7tgqW0+5ukq5j/esHaROV/GlGf3/8M2yByeyTev7FGZkRrD5UUJnFnosGu072EmjbXJ9NFiPEW8R7h1VUMMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=CUzmpdSI; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1099)
-	id 6046720B7165; Thu, 29 Aug 2024 01:43:58 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 6046720B7165
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1724921038;
-	bh=fjV6bhL7oCv81jbrq2vTPTnkfRQIIJK+sztlGGSrG8k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CUzmpdSI1zlx3cq7BX+BJ7Dm1eXC8AHcvb6LDRcURXH+u16/YY6K3479uaaZ1Ns61
-	 EOuoYo1u3cOAcGQ3+tFgnvrbiz+vRWZYV/WdlG5yFFQcpGz2bUySIFxs8ytLDaHH5Q
-	 uecQynjJUXgLimk4Wukte6jJXUTDVzagcxHMuWgI=
-Date: Thu, 29 Aug 2024 01:43:58 -0700
-From: Souradeep Chakrabarti <schakrabarti@linux.microsoft.com>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
-	decui@microsoft.com, davem@davemloft.net, edumazet@google.com,
-	pabeni@redhat.com, longli@microsoft.com, yury.norov@gmail.com,
-	leon@kernel.org, cai.huoqing@linux.dev, ssengar@linux.microsoft.com,
-	vkuznets@redhat.com, tglx@linutronix.de,
-	linux-hyperv@vger.kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
-	schakrabarti@microsoft.com
-Subject: Re: [PATCH V2 net] net: mana: Fix error handling in
- mana_create_txq/rxq's NAPI cleanup
-Message-ID: <20240829084358.GA15997@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-References: <1724406269-10868-1-git-send-email-schakrabarti@linux.microsoft.com>
- <20240827132637.31b7eb36@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=NRj8UyvQTdR/tZ6CdVspcX25wjhWKzfFTBiJCWgJp77T1LGO8Z7JgsJK1RPLVUqPKBu3mNRIjZnRIucgRZWPadr8QVoRgJYHD8pKWI6XMOpzy+Cm6h3ebBUpXlSQSvDiiOKqbDaCWucdZOFHzEzhY5sWSj5TRanlC8eZFhQ+otg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TqEahd06; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-371aa511609so248692f8f.1;
+        Thu, 29 Aug 2024 01:44:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724921068; x=1725525868; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=qkYEbPeyDZMPuncnqwYBTt8dp21NOhBXd/4fbCM70QY=;
+        b=TqEahd06PUZsD0+MsTe19Sh65SWlINq6cgOJE7DCRng4oWChKojK0Pwy0SVtGAKFTW
+         cA6yAbH5Z8gKQicMZSYfBEwiydQGC6PnxikfVcB/NqFkoQBhRecqJ4e9wE64CuiuJoC1
+         J9Gu8ZFI3HNEsWMv4t6eEaWN696X6QJj0p/0u2Oa0nx8+MJqS1DacKfNFcNCK9lJVeoW
+         3MN/owOHNWmj6eO7RZZvMAr0OpHf7esC01ktzwIamnXEv2Zqf+sHEPpkkQAOS6JN7DPt
+         2BAtQPJzp/i0MtLdZONRrCZVSHpGih0Medv/RdiKDDKqLlqmXX8He1w6s1GpbZ9a+ijg
+         4H1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724921068; x=1725525868;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qkYEbPeyDZMPuncnqwYBTt8dp21NOhBXd/4fbCM70QY=;
+        b=KCU3G6NL4Xh4fi4PK7Hb5jB+kuxPv5HHZnR6h592doF9JA1ngB7MzG2frLRTBxVxcr
+         2NJWr0jBSQ3ZfIoLlIJBurHKrrfcOcap+Fe4b9eMZKA4gQFtY4oTwE3n0A56M096H22M
+         Px6eRMD/1q7oDIWIofut7nSe0L3XIHMzl3ph5UxSdfcJROpAWMJmFwdTFd8k3TpLJL7f
+         kAhp2VcFSyThFCPcbeYR9Joi7baAQLWxkxcx6rYHY7ki7pkQ+0NQCgXLOLMLJvjtXjFG
+         44tQqgi7expoGlnQp1zK0/9Yo77cFlSeaQejbXdZcD7Dv1mdEC8hdEx+2b4YGbkwbHhy
+         /Rrg==
+X-Forwarded-Encrypted: i=1; AJvYcCVssR18l3SmQGGNklrGwZMCJFRekJgckZUvYJbSPp13vrElrAc88S84PzOuKUU4bjg9OLF53+zuaGhQ8Rs=@vger.kernel.org, AJvYcCVusMsq3GeY401s42giufhsviRL42lSyFILXivWVi4X8SF1aLN0jV2sv/DNlJtdtK5RS0Ty015i+szD@vger.kernel.org, AJvYcCWCqAl32kDK7zKPkTrIg+Y9gZrYT3UbYJbaG/SfuDUyvPJFulPu+K5MtiXwSlwKkdt9YecfhUN3e1UHaKlT@vger.kernel.org, AJvYcCXtU+/62miLw44pBPC3EBfi/EzCozx3eh7DEkrl7nt2h1+aArXMMCPfMcBZOWCGSXClR7hKtqfNuu7y@vger.kernel.org
+X-Gm-Message-State: AOJu0YwvskqLh5EEkexP6icQZfK6RJjnV2u93YS3xkX8IW9CretfkqWw
+	JFydt8xlBOEChiskZMp911gCiAr/5gCwWDu7DsLEHQU+hIyGYyz+2mWhKPBT
+X-Google-Smtp-Source: AGHT+IEMouz3ROOjSErGJywXdM5Mfn+/P48p3QNwwTCNoCWFYKxG5dcA1+1v8UKm8OgVo7achmy9aQ==
+X-Received: by 2002:adf:c04a:0:b0:366:eb61:b47 with SMTP id ffacd0b85a97d-3749b52fa73mr1316866f8f.8.1724921067626;
+        Thu, 29 Aug 2024 01:44:27 -0700 (PDT)
+Received: from orome (p200300e41f29d300f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f29:d300:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3749ee71650sm836764f8f.40.2024.08.29.01.44.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Aug 2024 01:44:27 -0700 (PDT)
+Date: Thu, 29 Aug 2024 10:44:25 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/3] dt-bindings: i2c: nvidia,tegra20-i2c: minor cleanups
+Message-ID: <kjoc55okpq2h3t3olnsfegp2jalgo3mr636eqg5tndmjc2t5de@7dy7du53p53y>
+References: <20240820-dt-bindings-i2c-nvidia-v1-0-2763e9a9a1b0@linaro.org>
+ <rzf7wiv7hvalx4svnnxxsu7z2ciprujxfdwbr7te7cqtmi6xkc@757xhotlbren>
+ <36769d45-d827-41bf-befc-e7b0e95f199e@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="jastyiiobfjmpo6r"
+Content-Disposition: inline
+In-Reply-To: <36769d45-d827-41bf-befc-e7b0e95f199e@linaro.org>
+
+
+--jastyiiobfjmpo6r
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240827132637.31b7eb36@kernel.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 27, 2024 at 01:26:37PM -0700, Jakub Kicinski wrote:
-> On Fri, 23 Aug 2024 02:44:29 -0700 Souradeep Chakrabarti wrote:
-> > @@ -2023,14 +2024,17 @@ static void mana_destroy_rxq(struct mana_port_context *apc,
-> >  
-> >  	napi = &rxq->rx_cq.napi;
-> >  
-> > -	if (validate_state)
-> > -		napi_synchronize(napi);
-> > +	if (napi->dev == apc->ndev) {
-> >  
-> > -	napi_disable(napi);
-> > +		if (validate_state)
-> > +			napi_synchronize(napi);
-> >  
-> > -	xdp_rxq_info_unreg(&rxq->xdp_rxq);
-> > +		napi_disable(napi);
-> >  
-> > -	netif_napi_del(napi);
-> > +		netif_napi_del(napi);
-> > +	}
-> > +
-> > +	xdp_rxq_info_unreg(&rxq->xdp_rxq);
-> 
-> Please don't use internal core state as a crutch for your cleanup.
-> 
-> IDK what "validate_state" stands for, but it gives you all the info you
-> need on Rx. On Rx NAPI registration happens as the last stage of rxq
-> activation, once nothing can fail. And the "cleanup" path calls destroy
-> with validate_state=false. The only other caller passes true.
-> 
-> So you can rewrite this as:
-> 
-> 	if (validate_state) { /* rename it maybe? */
-> 		napi_disable(napi);
-> 		...
-> 	}
-> 	xdp_rxq_info_unreg(&rxq->xdp_rxq);
-> 
-> You can take similar approach with Tx. Pass a bool which tells the
-> destroy function whether NAPI has been registered.
-Thanks Jakub for the suggestion. I have changed the implementation
-in the V3. I have added a new txq and rxq structure attribute to check
-that per queue napi is initialized.
-The use of a local flag like validate_state will not be possible with
-current design of txq destroy function, as it uses the hole vport
-and loops for all the queues for that port.
--
-Souradeep
-> -- 
-> pw-bot: cr
+On Tue, Aug 27, 2024 at 04:21:01PM GMT, Krzysztof Kozlowski wrote:
+> On 27/08/2024 16:03, Thierry Reding wrote:
+> > On Tue, Aug 20, 2024 at 10:44:23AM GMT, Krzysztof Kozlowski wrote:
+> >> Simple cleanups for nvidia I2C.
+> >>
+> >> Best regards,
+> >> Krzysztof
+> >>
+> >> ---
+> >> Krzysztof Kozlowski (3):
+> >>       dt-bindings: i2c: nvidia,tegra20-i2c: combine same if:then: clau=
+ses
+> >>       dt-bindings: i2c: nvidia,tegra20-i2c: restrict also clocks in if=
+:then:
+> >>       dt-bindings: i2c: nvidia,tegra20-i2c: define power-domains top-l=
+evel
+> >>
+> >>  .../bindings/i2c/nvidia,tegra20-i2c.yaml           | 27 ++++++++++++-=
+---------
+> >>  1 file changed, 15 insertions(+), 12 deletions(-)
+> >=20
+> > It wasn't clear who you wanted to pick these up, so I've applied them to
+> > the Tegra tree. Shout if anybody wants to take them through a different
+> > tree.
+>=20
+> They target I2C and I think they were merged by Andi:
+> https://lore.kernel.org/all/dkcfnidl3xgvspiusp3zftgdftyvlbxahlbumjdfl7dvx=
+gmdmr@nomisqfu2mwb/
+
+Indeed, I hadn't seen Andi's reply in the patch tracker, so had assumed
+people were waiting for me to pick them into the Tegra tree.
+
+I'll drop them.
+
+Thanks,
+Thierry
+
+--jastyiiobfjmpo6r
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmbQNOkACgkQ3SOs138+
+s6FlIw//WEBpF+XgLGpAPoRUyXeGZ+6XkpqogCwhLKJFsPluWlH67WvmK61MvjtY
+9Ig+xBiy2ANhZJV9vaudWnIDHte6/amh37rz7fRazi8+UVbDEiUZu5fo0JgEJsnK
+YLTRkcGmJr4IBuVm3sVI2+HjdtAnt9Ba9YPoXOansKbN/+hr74mnJwDZgJwOdTOD
+so9yGsXZ6dB8fn1iqM+SMxHSDs1k3FcyZ3bYtpRmHEZEBtYOE7H/RLWnCwQF5GKV
+GxjXAeNe1nqxO0yf+Y/XgDn1xiGN/42MF8VBglU1d+IaFNHb644BT0iO2GGjXsis
+yUJjqTMfgrYqsQu0zFGWgNLgbPlvILi5CbEKlH8pT/9wi9Jc7sj1mVe7fVFOhXPJ
+7l5G2zKgKvkokxlmaE4EqYHMWQQRzG9Hz+d3+JpEoEO1sf0TWOhLwUp4/N6ZAv0/
+lN3azsZKuip9S6T+W4O9UKiP0yRip2dF0IZI/gdDswkNJv8TU2n5JQaR5jEJWdtw
+9ReDs2E7NlKm/m6cK9OtbKCWQRc2DcuKntw8MB40XlqL5gtFolHTxk2XzSfjpj9y
+VmSklk8guoGOQB7+X3yVisA1jB0NNc1F7XVV9N8dSp0INDxx6a2qQLXXvoasYz+l
+QSB7TEk6xgsOJyuiBy2GaELJOXi9KnrUOZZiDCx5fC4K0YfatCw=
+=O9ev
+-----END PGP SIGNATURE-----
+
+--jastyiiobfjmpo6r--
 
