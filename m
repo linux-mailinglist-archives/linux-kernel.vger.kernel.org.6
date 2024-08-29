@@ -1,62 +1,79 @@
-Return-Path: <linux-kernel+bounces-307229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2761F964A74
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 17:47:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F0D7964A83
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 17:49:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D08F91F24375
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:47:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35E201F23EE3
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:49:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D84D1B375C;
-	Thu, 29 Aug 2024 15:47:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A8AF1B140E;
+	Thu, 29 Aug 2024 15:48:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lwHGbfry"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XoYQSrCn"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3C6246B91;
-	Thu, 29 Aug 2024 15:47:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA50C1AB512;
+	Thu, 29 Aug 2024 15:48:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724946424; cv=none; b=lvzeL1J5Kunjw/LeOCQ3bldUQj5rMz/B3kgY4zYO5oWo4MlL/eIuiyWclesKLlRjs9lWGcoay7/Iq2ESxvbU5B+QmTiVntftpjHMQhiMqtc1we/WQayM7VTADwajkcoXQoNPVM6ZToUwrWvDrhKsZg3YPEHATuJKBgpUI1NZ43M=
+	t=1724946509; cv=none; b=HfDtqJ+1HBDNG74a2P7dAFu385i+8eaN3zUYBumv/CadT4n3+ZSPN3dOsTT4Ps0n8I9/HF5kkY6NH4IbtollahgORsXDIAl8xF8m7lY3wuXK1i/Ew6KPkJIsCKECkRaWO2bgVldYtW3KC8jUA7UNRK8CrmpWWjafA61FtpBDcCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724946424; c=relaxed/simple;
-	bh=U2cO3Y3eW0lQ0P74rSCozMZbvUMOSpflSpyK9zSbO78=;
+	s=arc-20240116; t=1724946509; c=relaxed/simple;
+	bh=jGZZqTWQLlQS7zdXBaSb3hal0F8Dbilk+yGJqrIgH9Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F+FHqqTd/ZA6TMLQyONU4Q62/keDh+LqljfrwLU/G6uJvzwjSWqsjAsL8OZTbyZdPbGiOAszia8PItZmktBgWhXtQ37gHj7PzmU2zcwfw5qa7E1FIN+GYDZc0O+y1A1Px0/vvxDwTrKvcPqKut3/Vesd37j99hCs6NxNPnX+CY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lwHGbfry; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84673C4CEC1;
-	Thu, 29 Aug 2024 15:47:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724946424;
-	bh=U2cO3Y3eW0lQ0P74rSCozMZbvUMOSpflSpyK9zSbO78=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lwHGbfryA5pNISl2VdFb/CZPZ6GmuYLxUjN5YgaH1cb6ii/dBL3MjgSj4oOGCsvvu
-	 wHgna8VDhocU1eEpAIeLQ+T3NpacVqdP5x1DU5Ut7nG0JHHAt4xwUChOsYO5loQq8p
-	 cj35odTMzWwnv0r39n4gJP62cgoBdFRoN3WGGpYq29wI3TDu+60nrGGrbvC+nlpQ72
-	 s3t837McFO9ZoTGtyhXuFMZZahgQxztMeTV4Zb9UjoMpuHwfnoq+yPyjXswCURQh50
-	 97wIfEn+FjjkbO4UpnAkratAG1zzFbXDUHNZ54qUmEOefVY2AnHz6xgfDluKLR2Eo8
-	 6j5SpY3Pu0rLg==
-Date: Thu, 29 Aug 2024 16:46:59 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Angelo Dureghello <adureghello@baylibre.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Olivier Moysan <olivier.moysan@foss.st.com>,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, dlechner@baylibre.com
-Subject: Re: [PATCH RFC 4/8] dt-bindings: iio: dac: add adi axi-dac bus
- property
-Message-ID: <20240829-stopwatch-morality-a933abb4d688@spud>
-References: <20240829-wip-bl-ad3552r-axi-v0-v1-0-b6da6015327a@baylibre.com>
- <20240829-wip-bl-ad3552r-axi-v0-v1-4-b6da6015327a@baylibre.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=o//GNSVaC4WrDE6MOqg1356fa0kMi+wgQfSg0UcGf6ckWkxwtUoMORTw42EntKb50fP5LAKLR8CX95Kv2Q/ChGPSGgStjF6Pzhnl942d59DuJPi7vctpDQruHaJhZ9/ASKHRdSTUPhKrFUmrnFlyoNbotPv4IcnaamyYnIWFwK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XoYQSrCn; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-371bb8322b2so547731f8f.0;
+        Thu, 29 Aug 2024 08:48:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724946505; x=1725551305; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=XRpLyEmngmNsO1BlLrJr9uLhRTF0emdGC9GU+ntEPy8=;
+        b=XoYQSrCnP2aqjUR7JNuEQ/Af6gc8oK/uXjhggehM1uG1dfO19ZUpmzplxsEy9F4f+j
+         Q3KzYBnL/EYMvKBgEyOUi+TXZT3c4pp/FftPmrAWKfCsT8eCrF6eiQxeB17qAuOZYAKW
+         Mpo0uXnLfQ5Eu19AbfkDfKKSEzZr1HKXbRUYJkDe/be9IrmSqSUv9SSwSyX8ExG9ygXg
+         CxI1yhqK6ww9Gr+BWQoBCS/hZ3W/t/qM6t436+zKsxEA0nnY5OIrePGv4f2diAdNF3hA
+         UHI9XRkjuFcBsdBK090dKZGeyZ1Ist20F9MmTDhmdOl9nNhfOqXzemMMGBkWXcS5NzYl
+         1ZJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724946505; x=1725551305;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XRpLyEmngmNsO1BlLrJr9uLhRTF0emdGC9GU+ntEPy8=;
+        b=FXgjC2vEjC7L23ZvB5k9X1Z6MJOT508/Wj50Mh4aRTxCOM+RFgU+b3skTrFWaI2Mus
+         RA7Zd+byXnXhK1eGoyhT7yccA0pBDi7ZuV+bn6tyVt8X3LzhB11t4EP1JJPllMhC0z5H
+         /QyriW4Chm3B3+hVCqeC53SbgKmQRTUIzWNZ3QOLZYu4IV3KKWHWSgSp6ypsgi5b0FSZ
+         qjKtKWJLv7Y2LUrgAB9Busu9dbe3oMIWdmcWKmKRigCgMddgThyDBENZmmY00c/5i4Bf
+         2dSKS/zD+CEbyPCI7fz0MVFFmbr0TT3LsFsCAFBM5RBdBEVTdYiZBo8lUluEtqo67OAG
+         48rA==
+X-Forwarded-Encrypted: i=1; AJvYcCUZhN7Tzr/gzPJG+0Scg0owDRQ6oC4xZBLetQ9vwjzfX6fyhM0ce4dnZ9fn40UGixXgW5pcWRukZ/vuZso=@vger.kernel.org, AJvYcCUdqNYmQ6XP5OnXPmWptz4FWc7juiuWNcJ1YiR7PDGwluAAaZTKeNyzSqExOBpXoMJ/0OHtuWrHlkOOCA0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2vtRPFGut8TsCibF0sbOrwiHuuVxPZ0pwFImHoWVgm+P2fAvQ
+	sWts8Fkid1mDfReM8Lpjwm82voERc8AH1guf7V7y7C4T4LGucB81
+X-Google-Smtp-Source: AGHT+IGHCUQwA6BDdTVYfWxrUiljUYvRhArRrCkCd9PaG0NPrjy8Vb6jJpV0ZVxb4oWoGgNm4GroJA==
+X-Received: by 2002:adf:f302:0:b0:362:23d5:3928 with SMTP id ffacd0b85a97d-3749c1da581mr1592529f8f.17.1724946504464;
+        Thu, 29 Aug 2024 08:48:24 -0700 (PDT)
+Received: from orome (p200300e41f29d300f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f29:d300:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ba63abe97sm54625005e9.24.2024.08.29.08.48.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Aug 2024 08:48:24 -0700 (PDT)
+Date: Thu, 29 Aug 2024 17:48:22 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Kunwu Chan <kunwu.chan@linux.dev>
+Cc: mperttunen@nvidia.com, airlied@gmail.com, daniel@ffwll.ch, 
+	dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Kunwu Chan <chentao@kylinos.cn>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH] gpu: host1x: Make host1x_context_device_bus_type constant
+Message-ID: <7lfoxxbtscgfsy6rttfea2vfmv6nf3xzzfv3tczd5sd27utwyv@vmrhr5j4ng4f>
+References: <20240823080724.148423-1-kunwu.chan@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,82 +81,56 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="FtoiXBdIW3OmYFeF"
+	protocol="application/pgp-signature"; boundary="5discxhm4f5xyvaj"
 Content-Disposition: inline
-In-Reply-To: <20240829-wip-bl-ad3552r-axi-v0-v1-4-b6da6015327a@baylibre.com>
+In-Reply-To: <20240823080724.148423-1-kunwu.chan@linux.dev>
 
 
---FtoiXBdIW3OmYFeF
+--5discxhm4f5xyvaj
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 29, 2024 at 02:32:02PM +0200, Angelo Dureghello wrote:
-> From: Angelo Dureghello <adureghello@baylibre.com>
+On Fri, Aug 23, 2024 at 04:07:24PM GMT, Kunwu Chan wrote:
+> From: Kunwu Chan <chentao@kylinos.cn>
 >=20
-> Add bus property.
-
-RFC it may be, but you do need to explain what this bus-type actually
-describes for commenting on the suitability of the method to be
-meaningful.
-
+> Since commit d492cc2573a0 ("driver core: device.h: make struct
+> bus_type a const *"), the driver core can properly handle constant
+> struct bus_type, move the host1x_context_device_bus_type variable
+> to be a constant structure as well, placing it into read-only memory
+> which can not be modified at runtime.
 >=20
-> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Suggested-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Signed-off-by: Kunwu Chan <chentao@kylinos.cn>
 > ---
->  Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml | 9 +++++++++
->  1 file changed, 9 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml b=
-/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml
-> index a55e9bfc66d7..a7ce72e1cd81 100644
-> --- a/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml
-> +++ b/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml
-> @@ -38,6 +38,15 @@ properties:
->    clocks:
->      maxItems: 1
+>  drivers/gpu/host1x/context_bus.c   | 2 +-
+>  include/linux/host1x_context_bus.h | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
 
-You mentioned about new compatible strings, does the one currently
-listed in this binding support both bus types?
+Applied, thanks.
 
-Making the bus type decision based on compatible only really makes sense
-if they're different versions of the IP, but not if they're different
-configuration options for a given version.
+Thierry
 
-> +  bus-type:
-
-If, as you mentioned, there are multiple bus types, a non-flag property
-does make sense. However, I am really not keen on these "forced" numerical
-properties at all, I'd much rather see strings used here.
-
-Thanks,
-Conor.
-
-> +    maxItems: 1
-> +    description: |
-> +      Configure bus type:
-> +        - 0: none
-> +        - 1: qspi
-> +    enum: [0, 1]
-> +    default: 0
-> +
->    '#io-backend-cells':
->      const: 0
-> =20
->=20
-> --=20
-> 2.45.0.rc1
->=20
-
---FtoiXBdIW3OmYFeF
+--5discxhm4f5xyvaj
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZtCX8wAKCRB4tDGHoIJi
-0pmkAP4uV+pw1FeyYtkjnBsCgD0EHjgDRKD2ZRXw3NnI0rsCbQD/XQbICb7bCchB
-DM48Rzx7rHwTgNFWlNQBQtTWhOPzFg0=
-=NY/t
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmbQmEYACgkQ3SOs138+
+s6EysxAArYfkVMvVVYkvw+kpGNUhX00DpSW9J4CclmMg2h0PH57jkGiYPx9H5IGF
+m/WyoeY+RVH12s7H6BOhnEKRcNKxurXUBztLZt9R3KQQVwiLt+EqhoHALqGp6C+N
+vpZGnCUpSkUa7tHz3iAaxd8H1GRLinlmnLK8zCDSXnYNcRc4M5S2CjmOYK2WKyaF
+KJFtrn4WVQqH1zqQCX2bINPlnVq5lw7S5Lr4qMwHjwM1CvnmHfuEgH8tTLT7AllG
+6N+nxtnvgKol4ETOSFMvFk85wiIyrxsQqgg51xdfp0cFDRzdyBmV7ogyAlOI1p07
+9h7Jd5l4XuaTGPBhEnpnShUutL9YQoDOylHI+ylC/ZObe7HDj/gj1O1ORae43zRe
+G5bi6fG6Cmi03WnKQSjRniTl+ROLBdodVkfx8xqDhiixC8dqxAbV3HK9jJb9c0Bs
+PBV4Pq2B47GFSF73Z5YpsU3y6jfzLPX5ySV9KRWLBCatnEMpcg/GXHeIh+vNoTNf
+eiS644a2C6Zln+b4zaMMlQKjp0pknEFc1JCCW3TUzSmvegZkhLVkewNub624iT0b
+i707owNNxXf1jx7qQ2YPUSM1JhDFiiJ7VcaD+LrzHmjxQTde8kd0+7laEGpGFxSB
+yaMY0hd+mDtshIqzv9WLfJQV4+9wyzqW1Zkoh3fMztdeJCkgfGI=
+=kU8E
 -----END PGP SIGNATURE-----
 
---FtoiXBdIW3OmYFeF--
+--5discxhm4f5xyvaj--
 
