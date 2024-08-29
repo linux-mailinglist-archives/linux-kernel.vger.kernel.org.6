@@ -1,377 +1,261 @@
-Return-Path: <linux-kernel+bounces-307793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2393696530D
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 00:36:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB3F8965313
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 00:38:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87E1CB22E58
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 22:36:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 734BE284277
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 22:38:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF51C1BAEC7;
-	Thu, 29 Aug 2024 22:35:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51D9C1BAECC;
+	Thu, 29 Aug 2024 22:38:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="WjUG9m2U"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2061.outbound.protection.outlook.com [40.107.220.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=digitalocean.com header.i=@digitalocean.com header.b="DOgxxYEn"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D5FB1BBBFB;
-	Thu, 29 Aug 2024 22:35:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.61
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724970913; cv=fail; b=YY0MR7VLR3Jijy8OPf1X9fMaLSboV/Z/S23qy+GhnlvzqCFla5Pv7m4z/Mk0Q7HG+qJrPalRGZIeSTtvSIN+2gvRyb1aRl+I5vDo/W3qf9q1nLj/6BUFTjDVyuF1e6sCtZgMbbjVGUvgiKIOlkv+E0/HFOadMYMOKme7gNwSp6M=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724970913; c=relaxed/simple;
-	bh=MtZNAa02R/e7t9ydmerHspqYloiShOtLul5KdViY9Xo=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=e44BNTwEY6RzW+lHSJj+PebFQZSq+gkYlsxDMxr+pdrkqG0S3Z7Vcc3VO2anRcr9Zi6HF9SwVKLHzwHDhlsFGJ5ihdknUTOTksu2TdDhiIyT5stCktZvOQx2jr2Irt2aEw+epFAP2tIj5dzwt3JZxAGisHEAYrAqvq6XEMsFK7Q=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=WjUG9m2U; arc=fail smtp.client-ip=40.107.220.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jZhoI3nAp8XDIIF5YIF3PJLfWBNiF+RcMEIGiA26EaWUAlpK8sSuKJPy3zKkypjEm6fuszAlyYNdP2D7b1tyJFig6is+GpyssiHtn0ylfhpRkb6+emLcLZoSM1USa69muEEk0lQFkq3B/oPrYGLeJsHDgVQwZzDc3yCni6+1CtzCUFBAd6vsh+fg6mzwOxVJtFYXReMU41BQEWy8wROSeiUtFnrhjkTn1F06qezJykGbSEjp3+0UDEqP5C9d4nsrmww9cO32ZtW/Jg4/hxsiQQ1Zju7HEvZfkGqSgYR/e320boa+48uugIo7nxiFzhgBoyu1P1vbdU03yKD3uaTybQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YdUMkm7gMnk4eyRTHNDijRNKnh0SqusRiylazFFsU5g=;
- b=gsfSjIjfwhjPnsHn7v8XUoHOxLzJW0MBw4OR6uQ7PjWERt58oe5/47mAbaW86sMjOaTUluGHFQiTBIRiIpDP+SxG54MolIVXoVv4VBKawnU83vhNvNTk4tIrzGvS8JihAypBsfrLLw46XfYVPMtwx6biRGXjANPmMtYXViqmZJBZakRzuaTejszU244Bx7YAUkn2iZS0U5QcDXCcODdXy0ovFSVDftXwKn3W5uaB1BQcpKmn+bbg6rutDeCyEFftBpKADAZStQ0mIIxgFJvLns5+7LERulH3p0YP52meKSmuhzppkMVXHd5adJH8mP+7jy1RQMI4UWfkhXNHRTGd/A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YdUMkm7gMnk4eyRTHNDijRNKnh0SqusRiylazFFsU5g=;
- b=WjUG9m2U7zFTxywKO1J4zn8WIrQsKD0zmSRFKlrb5jbr7oGfZia9+bABTsKLLKqlFlhxS7A2Cizogu48Q/Hbt4ErJw8p1bUvzntNWtVw/Oeam4xYM14wjRPE2557vZFlvUgBT9H4bTCX3oJr/BmJ35KrwytvtcmWfAmhu5w2JufBrR47jRJF3MYo6kV7FmcTRNgmihuGhzCy5xh/idmuLytejU89p8zrf83j5lX9o27Io/nO6YEaaIOwMnC1yI05Wnj3FDOqxVd73Rd+RPRBuihI7dSCGXdIZzTjXU5HIs8dZ4zbiX4bqR7S1vqj8xr7F99IYJghKFRX86zj0Qvp3g==
-Received: from CH2PR14CA0009.namprd14.prod.outlook.com (2603:10b6:610:60::19)
- by IA1PR12MB7565.namprd12.prod.outlook.com (2603:10b6:208:42f::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.28; Thu, 29 Aug
- 2024 22:35:04 +0000
-Received: from CH3PEPF0000000F.namprd04.prod.outlook.com
- (2603:10b6:610:60:cafe::53) by CH2PR14CA0009.outlook.office365.com
- (2603:10b6:610:60::19) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.28 via Frontend
- Transport; Thu, 29 Aug 2024 22:35:04 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- CH3PEPF0000000F.mail.protection.outlook.com (10.167.244.40) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7918.13 via Frontend Transport; Thu, 29 Aug 2024 22:35:04 +0000
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 29 Aug
- 2024 15:34:54 -0700
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail204.nvidia.com
- (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 29 Aug
- 2024 15:34:54 -0700
-Received: from Asurada-Nvidia.nvidia.com (10.127.8.13) by mail.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Thu, 29 Aug 2024 15:34:53 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: <will@kernel.org>
-CC: <robin.murphy@arm.com>, <joro@8bytes.org>, <jgg@nvidia.com>,
-	<thierry.reding@gmail.com>, <vdumpa@nvidia.com>, <jonathanh@nvidia.com>,
-	<linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-tegra@vger.kernel.org>
-Subject: [PATCH v14 10/10] iommu/tegra241-cmdqv: Limit CMDs for VCMDQs of a guest owned VINTF
-Date: Thu, 29 Aug 2024 15:34:39 -0700
-Message-ID: <8160292337059b91271045800e5c62f7295e2c24.1724970714.git.nicolinc@nvidia.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1724970714.git.nicolinc@nvidia.com>
-References: <cover.1724970714.git.nicolinc@nvidia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FADF18A927
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 22:38:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724971115; cv=none; b=B0a/larqCiBcQRjrjt0e74UWOGDuCvl7z9/e5TRq3ebS8LfPYf+0920oJItZDKcJc+Nz8b/tW7giE2K1KolfPrcLZHm7y/WxWT7a18vIW9JDlrUWwEpFv0TJf9QjqwEkobnZ1bpf8JnsOb528KrAwOY9NG4iXTSlhXMEOiB/qBE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724971115; c=relaxed/simple;
+	bh=ULs1eNO5Gtq22RBbYQ8qaF/dLffxu0QFA0DwjhJE7g8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jo10qSuEET6l+NKZ9LmrKCwhq8UtgUPe2XEQlVK6o47/cpQO5twLDQxxmpHzvsiQk9dVYGvB5gVM+xyXdcwFUKkGmabzbL9hiC4HnrlRbFS+sI9PDXKS92p4T5JdvbYZqbF+fx3o/mkbqqtJXfD3ReWVKcDDKHICARs3YmIh6qU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=digitalocean.com; spf=pass smtp.mailfrom=digitalocean.com; dkim=pass (1024-bit key) header.d=digitalocean.com header.i=@digitalocean.com header.b=DOgxxYEn; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=digitalocean.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digitalocean.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-7141b04e7b5so736293b3a.2
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 15:38:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=digitalocean.com; s=google; t=1724971113; x=1725575913; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=I6JxLN6jgWh31KN7TEo/vEC+PoZGe47rz1RImVm+TU4=;
+        b=DOgxxYEn9uSOZOppxPE7It31SO5AV7xxIclWRIOxbOU47uz3smxrQ3dXvHc7BUPRKQ
+         bV7LCS+w2q/E18LODOrWElmSHHrsLuEwxEsPQeZd14kR6QbKlZb8wR8zgroohR/+Jvtl
+         wA/WG7wki2YrLlvO5EQs9ch+/RyrNplENG4OE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724971113; x=1725575913;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=I6JxLN6jgWh31KN7TEo/vEC+PoZGe47rz1RImVm+TU4=;
+        b=rSPMWSl4C5PEbmnkiaH3PFxAZrXeDfLcytm7kZioQMKvV1bPpxQ9yIetO9b4V5QOsb
+         7Nc5A/26pEaxJsD0t6h66jUf+Zy6bcHRDrSAkgip05SA1LruEYxF62Ks0uUeob8Y4Zi3
+         ScNwaomzgSZ6+zuhAtsOL0hZ4vRehzvfkJYPXWT8Jsd3KKncl3dvTrexLGbXxKI9t7Bh
+         6TgSpuA6zLW/F48C0LFTUZB2cSYPu47Ib5wv2m9ALw8EPPK4iA2pX/wNoxWVQqD+S4JD
+         674J4YZJ2Kq+ADDvWifFvTN7JuSs4cQwGME5G2KdFEgSzgleg7eQy378al2Bfbfs4kl6
+         51mg==
+X-Forwarded-Encrypted: i=1; AJvYcCVCsrPGka9yM2O95+6OiUIzpEgBc2P2zdu9iUCWvx4E+9DS6aiszUylk0I8y2AfJPix58g10FHEY9YJQhM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz81G6XFMS0WY5FSU0eWqHxws8FHXUvyKH5LUqCw1HVwD3GY9WE
+	iDi2swJayoqNnsZhY2hMktwySGDNk0qg7/KgT8Ml4AU517bF+TMSYB5fDX3+nNk=
+X-Google-Smtp-Source: AGHT+IGXLH/kJOGdNBNyfNCznDW7lIkDKiLgby/nl6dKJoyW0rD/UQl6UGhWKYr21yk4uySVrnP9qQ==
+X-Received: by 2002:a05:6a21:3981:b0:1c4:7a11:9ef1 with SMTP id adf61e73a8af0-1cce100ebccmr4454504637.15.1724971112580;
+        Thu, 29 Aug 2024 15:38:32 -0700 (PDT)
+Received: from ?IPV6:2603:8080:7400:36da:b4f6:16b8:9118:2c1a? ([2603:8080:7400:36da:b4f6:16b8:9118:2c1a])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-715e55a692fsm1620721b3a.60.2024.08.29.15.38.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 29 Aug 2024 15:38:32 -0700 (PDT)
+Message-ID: <5415a7ac-68a4-46fd-9ac4-35400385818f@digitalocean.com>
+Date: Thu, 29 Aug 2024 17:38:29 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PEPF0000000F:EE_|IA1PR12MB7565:EE_
-X-MS-Office365-Filtering-Correlation-Id: 60e8dffd-fae6-4f79-e501-08dcc87ad3ae
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?belr1NGC4Dntzg5x8UBYtDSXw7K3/ncXlW9dcX2tZTYmXst+PTdoQgbz5w1A?=
- =?us-ascii?Q?/Xl3h6Yd0lI4pbehLMmkerU35MQ5ToHZGgCqLDSv/GspP7Uf3xwPF6VWdPxS?=
- =?us-ascii?Q?2Tsqp2uFwM+7NNMGYlkTqCe1izEZnaSvp0zxKDST08S/654kZEwkAyhgo15i?=
- =?us-ascii?Q?O3sx3DSFIMoYdpoGZjwXCPyBljqcyCVviDnqpLs6Mmp9EtkwQqYTqfh+A1dG?=
- =?us-ascii?Q?rAM8gkwgN9lb1vZtL+xM92Zj1/w09VIVYVtc1KTEQxupHRTnf+FF/gftfjLS?=
- =?us-ascii?Q?BkvzsA/avAi9wI6im7FtfsdGz0iQKRc9fkeUdEcpLou8mW2YbKlheTmBrwQ9?=
- =?us-ascii?Q?5QC91/gHoq3MxkWJnG38jhh5qVg6TJ4NTZ1725PJjPwiA5VYGQopsloQlvUZ?=
- =?us-ascii?Q?LcFUGcD+R58PiYP584ClnNg4ZgRRxUi6qgsKUClXn3fWm488VqjwrY1nApT9?=
- =?us-ascii?Q?z7YO91ZL7qGSidEIZLIXxBkrzbbteTLlxnPy9CzxHdLLDNfJ4bMxN8o8zvjv?=
- =?us-ascii?Q?sQC5vNcrT9jW0/PGLZz+mgT5YlBygKc/LzpNUe2azc2OVFGBZu1Hjb2oy67v?=
- =?us-ascii?Q?BOx9yWGuclPkq+pA/TCU52WJ46H9GxYTMmY8jpmcYoNZSXkSmcyt1n3s6Jkl?=
- =?us-ascii?Q?czDxDCwVG2OERYEHwcXm0Zv25DkYgR40R+CQeyLSxYAXmSVaTKX9p1C7m/yq?=
- =?us-ascii?Q?a5CMVxS5mNGIysPM/Q0FuOGI3lJ6vRFddHOPHa1kuuFcGo4Nm3l2Tgsmg+lC?=
- =?us-ascii?Q?QXsKhF8LR/tU0qbPn+zPR28ANNF+lmvEr2NpZc5ji3dfrfPvvWBZEtxt4rZq?=
- =?us-ascii?Q?4FvyULdNeTpSEOHFx4S5hl+1yl0Pobqv0d29JPQoVDhTdXXapXzuYbzFBOWO?=
- =?us-ascii?Q?F8bOlAibJ8ho+okhuERpNpuEO/+7iSMfEzU9FUu9RHjClzskJu/HXCjL+0ne?=
- =?us-ascii?Q?nw5DyKvUCsfsG7ObvkVlNyA78cjPNNXX43qzyo7Y2g2OkBy2MpD+f4Z2R9IV?=
- =?us-ascii?Q?vpqLW9IrIWLa9LnID7NjLUdwQaJtzo+iKbMC+TTKbgkcAdZldEDCPryA2+N7?=
- =?us-ascii?Q?TXFp6+cjSWzOg6LaVZEz65r7LuO7GdH1jOuujkQo8bcIwaD7y9+X9SfB6dID?=
- =?us-ascii?Q?n9qUrznoWiL//4L0ec2nC8hUhSyd8gPkG3i8RlG7TYj5tLhAlgbIDJHvdRrX?=
- =?us-ascii?Q?+3oAsqtzwldiaYS9dPh5xM5RVmgFopSrg/L1QO/GzgS1XcEv/DehLNe+L8kN?=
- =?us-ascii?Q?TJHJ4R/s4uTGcA+abxhVbYEXqOMkvvKau5QkbZf0qcUpcmBDXtdX4gmHcXNU?=
- =?us-ascii?Q?X+xdRdUcxLvWQZpZaJULOLEc+4HqeYJnHYyHhcwGpjg/cVTooYZioqQkpxCl?=
- =?us-ascii?Q?AYRB8JCktjYQ0PDjjvyReKDNXP8WkNaCDwnjG+Igl6CydXvsACqjo4iB1Q34?=
- =?us-ascii?Q?nN+lTCiopt6EB12R51lvXgGDIG7ychUW?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Aug 2024 22:35:04.1381
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 60e8dffd-fae6-4f79-e501-08dcc87ad3ae
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH3PEPF0000000F.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB7565
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] vdpa: Add support to update speed/duplex in
+ vDPA/mlx5_vnet
+To: Dragos Tatulea <dtatulea@nvidia.com>,
+ Carlos Bilbao <carlos.bilbao.osdev@gmail.com>, mst@redhat.com,
+ jasowang@redhat.com
+Cc: bilbao@vt.edu, xuanzhuo@linux.alibaba.com, eperezma@redhat.com,
+ cratiu@nvidia.com, lingshan.zhu@intel.com, virtualization@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+References: <20240829161620.38679-1-carlos.bilbao.osdev@gmail.com>
+ <20240829161620.38679-3-carlos.bilbao.osdev@gmail.com>
+ <c15d3682-05ee-437c-b51c-d6a824252d76@nvidia.com>
+Content-Language: en-US
+From: Carlos Bilbao <cbilbao@digitalocean.com>
+In-Reply-To: <c15d3682-05ee-437c-b51c-d6a824252d76@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-When VCMDQs are assigned to a VINTF owned by a guest (HYP_OWN bit unset),
-only TLB and ATC invalidation commands are supported by the VCMDQ HW. So,
-implement the new cmdq->supports_cmd op to scan the input cmd in order to
-make sure that it is supported by the selected queue.
+Hello,
 
-Note that the guest VM shouldn't have HYP_OWN bit being set regardless of
-guest kernel driver writing it or not, i.e. the hypervisor running in the
-host OS should wire this bit to zero when trapping a write access to this
-VINTF_CONFIG register from a guest kernel.
+On 8/29/24 4:07 PM, Dragos Tatulea wrote:
+> (resending as I accidentally replied only to Carlos)
+>
+> On 29.08.24 18:16, Carlos Bilbao wrote:
+>> From: Carlos Bilbao <cbilbao@digitalocean.com>
+>>
+>> Include support to update the vDPA configuration fields of speed and
+>> duplex (as needed by VHOST_VDPA_SET_CONFIG). This includes function
+>> mlx5_vdpa_set_config() as well as changes in vdpa.c to fill the initial
+>> values to UNKNOWN. Also add a warning message for when
+>> mlx5_vdpa_get_config() receives offset and length out of bounds.
+>>
+>> Signed-off-by: Carlos Bilbao <cbilbao@digitalocean.com>
+>> ---
+>>  drivers/vdpa/mlx5/net/mlx5_vnet.c | 34 ++++++++++++++++++++++++++++++-
+>>  drivers/vdpa/vdpa.c               | 27 ++++++++++++++++++++++++
+>>  include/uapi/linux/vdpa.h         |  2 ++
+>>  3 files changed, 62 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/vdpa/mlx5/net/mlx5_vnet.c b/drivers/vdpa/mlx5/net/mlx5_vnet.c
+>> index c47009a8b472..a44bb2072eec 100644
+>> --- a/drivers/vdpa/mlx5/net/mlx5_vnet.c
+>> +++ b/drivers/vdpa/mlx5/net/mlx5_vnet.c
+>> @@ -3221,12 +3221,44 @@ static void mlx5_vdpa_get_config(struct vdpa_device *vdev, unsigned int offset,
+>>  
+>>  	if (offset + len <= sizeof(struct virtio_net_config))
+>>  		memcpy(buf, (u8 *)&ndev->config + offset, len);
+>> +	else
+>> +		mlx5_vdpa_warn(mvdev, "Offset and length out of bounds\n");
+>>  }
+>>  
+>>  static void mlx5_vdpa_set_config(struct vdpa_device *vdev, unsigned int offset, const void *buf,
+>>  				 unsigned int len)
+>>  {
+>> -	/* not supported */
+>> +	struct mlx5_vdpa_dev *mvdev = to_mvdev(vdev);
+>> +	struct mlx5_vdpa_net *ndev = to_mlx5_vdpa_ndev(mvdev);
+>> +
+>> +	if (offset + len > sizeof(struct virtio_net_config)) {
+>> +		mlx5_vdpa_warn(mvdev, "Offset and length out of bounds\n");
+>> +		return;
+>> +	}
+>> +
+>> +	/*
+>> +	 * Note that this will update the speed/duplex configuration fields
+>> +	 * but the hardware support to actually perform this change does
+>> +	 * not exist yet.
+>> +	 */
+>> +	switch (offset) {
+>> +	case offsetof(struct virtio_net_config, speed):
+>> +		if (len == sizeof(((struct virtio_net_config *) 0)->speed))
+>> +			memcpy(&ndev->config.speed, buf, len);
+>> +		else
+>> +			mlx5_vdpa_warn(mvdev, "Invalid length for speed.\n");
+>> +		break;
+>> +
+>> +	case offsetof(struct virtio_net_config, duplex):
+>> +		if (len == sizeof(((struct virtio_net_config *)0)->duplex))
+>> +			memcpy(&ndev->config.duplex, buf, len);
+>> +		else
+>> +			mlx5_vdpa_warn(mvdev, "Invalid length for duplex.\n");
+>> +		break;
+>> +
+>> +	default:
+>> +		mlx5_vdpa_warn(mvdev, "Configuration field not supported.\n");
+> This will trigger noise in dmesg because there is a MAC configuration here.
+>> +	}
+> I would prefer that the .set_config remains a stub TBH. Setting the fields here is
+> misleading: the user might deduce that the configuration worked when they read the
+> values and see that they were updated.
 
-Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
-Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
----
- drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c   | 28 ++++++++-------
- drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h   |  3 +-
- .../iommu/arm/arm-smmu-v3/tegra241-cmdqv.c    | 34 ++++++++++++++++++-
- 3 files changed, 51 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-index 9cd0e8fd78eb..bd05fe6a98ac 100644
---- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-+++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-@@ -346,12 +346,13 @@ static int arm_smmu_cmdq_build_cmd(u64 *cmd, struct arm_smmu_cmdq_ent *ent)
- 	return 0;
- }
- 
--static struct arm_smmu_cmdq *arm_smmu_get_cmdq(struct arm_smmu_device *smmu)
-+static struct arm_smmu_cmdq *arm_smmu_get_cmdq(struct arm_smmu_device *smmu,
-+					       struct arm_smmu_cmdq_ent *ent)
- {
- 	struct arm_smmu_cmdq *cmdq = NULL;
- 
- 	if (smmu->impl_ops && smmu->impl_ops->get_secondary_cmdq)
--		cmdq = smmu->impl_ops->get_secondary_cmdq(smmu);
-+		cmdq = smmu->impl_ops->get_secondary_cmdq(smmu, ent);
- 
- 	return cmdq ?: &smmu->cmdq;
- }
-@@ -897,7 +898,7 @@ static int __arm_smmu_cmdq_issue_cmd(struct arm_smmu_device *smmu,
- 	}
- 
- 	return arm_smmu_cmdq_issue_cmdlist(
--		smmu, arm_smmu_get_cmdq(smmu), cmd, 1, sync);
-+		smmu, arm_smmu_get_cmdq(smmu, ent), cmd, 1, sync);
- }
- 
- static int arm_smmu_cmdq_issue_cmd(struct arm_smmu_device *smmu,
-@@ -913,10 +914,11 @@ static int arm_smmu_cmdq_issue_cmd_with_sync(struct arm_smmu_device *smmu,
- }
- 
- static void arm_smmu_cmdq_batch_init(struct arm_smmu_device *smmu,
--				     struct arm_smmu_cmdq_batch *cmds)
-+				     struct arm_smmu_cmdq_batch *cmds,
-+				     struct arm_smmu_cmdq_ent *ent)
- {
- 	cmds->num = 0;
--	cmds->cmdq = arm_smmu_get_cmdq(smmu);
-+	cmds->cmdq = arm_smmu_get_cmdq(smmu, ent);
- }
- 
- static void arm_smmu_cmdq_batch_add(struct arm_smmu_device *smmu,
-@@ -931,13 +933,13 @@ static void arm_smmu_cmdq_batch_add(struct arm_smmu_device *smmu,
- 	if (force_sync || unsupported_cmd) {
- 		arm_smmu_cmdq_issue_cmdlist(smmu, cmds->cmdq, cmds->cmds,
- 					    cmds->num, true);
--		arm_smmu_cmdq_batch_init(smmu, cmds);
-+		arm_smmu_cmdq_batch_init(smmu, cmds, cmd);
- 	}
- 
- 	if (cmds->num == CMDQ_BATCH_ENTRIES) {
- 		arm_smmu_cmdq_issue_cmdlist(smmu, cmds->cmdq, cmds->cmds,
- 					    cmds->num, false);
--		arm_smmu_cmdq_batch_init(smmu, cmds);
-+		arm_smmu_cmdq_batch_init(smmu, cmds, cmd);
- 	}
- 
- 	index = cmds->num * CMDQ_ENT_DWORDS;
-@@ -1205,7 +1207,7 @@ static void arm_smmu_sync_cd(struct arm_smmu_master *master,
- 		},
- 	};
- 
--	arm_smmu_cmdq_batch_init(smmu, &cmds);
-+	arm_smmu_cmdq_batch_init(smmu, &cmds, &cmd);
- 	for (i = 0; i < master->num_streams; i++) {
- 		cmd.cfgi.sid = master->streams[i].id;
- 		arm_smmu_cmdq_batch_add(smmu, &cmds, &cmd);
-@@ -2056,7 +2058,7 @@ static int arm_smmu_atc_inv_master(struct arm_smmu_master *master,
- 
- 	arm_smmu_atc_inv_to_cmd(ssid, 0, 0, &cmd);
- 
--	arm_smmu_cmdq_batch_init(master->smmu, &cmds);
-+	arm_smmu_cmdq_batch_init(master->smmu, &cmds, &cmd);
- 	for (i = 0; i < master->num_streams; i++) {
- 		cmd.atc.sid = master->streams[i].id;
- 		arm_smmu_cmdq_batch_add(master->smmu, &cmds, &cmd);
-@@ -2071,7 +2073,9 @@ int arm_smmu_atc_inv_domain(struct arm_smmu_domain *smmu_domain,
- 	struct arm_smmu_master_domain *master_domain;
- 	int i;
- 	unsigned long flags;
--	struct arm_smmu_cmdq_ent cmd;
-+	struct arm_smmu_cmdq_ent cmd = {
-+		.opcode = CMDQ_OP_ATC_INV,
-+	};
- 	struct arm_smmu_cmdq_batch cmds;
- 
- 	if (!(smmu_domain->smmu->features & ARM_SMMU_FEAT_ATS))
-@@ -2094,7 +2098,7 @@ int arm_smmu_atc_inv_domain(struct arm_smmu_domain *smmu_domain,
- 	if (!atomic_read(&smmu_domain->nr_ats_masters))
- 		return 0;
- 
--	arm_smmu_cmdq_batch_init(smmu_domain->smmu, &cmds);
-+	arm_smmu_cmdq_batch_init(smmu_domain->smmu, &cmds, &cmd);
- 
- 	spin_lock_irqsave(&smmu_domain->devices_lock, flags);
- 	list_for_each_entry(master_domain, &smmu_domain->devices,
-@@ -2176,7 +2180,7 @@ static void __arm_smmu_tlb_inv_range(struct arm_smmu_cmdq_ent *cmd,
- 			num_pages++;
- 	}
- 
--	arm_smmu_cmdq_batch_init(smmu, &cmds);
-+	arm_smmu_cmdq_batch_init(smmu, &cmds, cmd);
- 
- 	while (iova < end) {
- 		if (smmu->features & ARM_SMMU_FEAT_RANGE_INV) {
-diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
-index 4deb40cfe2e1..4d5af5ac8a63 100644
---- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
-+++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
-@@ -642,7 +642,8 @@ struct arm_smmu_strtab_cfg {
- struct arm_smmu_impl_ops {
- 	int (*device_reset)(struct arm_smmu_device *smmu);
- 	void (*device_remove)(struct arm_smmu_device *smmu);
--	struct arm_smmu_cmdq *(*get_secondary_cmdq)(struct arm_smmu_device *smmu);
-+	struct arm_smmu_cmdq *(*get_secondary_cmdq)(
-+		struct arm_smmu_device *smmu, struct arm_smmu_cmdq_ent *ent);
- };
- 
- /* An SMMUv3 instance */
-diff --git a/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c b/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
-index 5ac3032ee6dd..9eb9d959f3e5 100644
---- a/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
-+++ b/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
-@@ -142,6 +142,7 @@ struct tegra241_vcmdq {
-  * struct tegra241_vintf - Virtual Interface
-  * @idx: Global index in the CMDQV
-  * @enabled: Enable status
-+ * @hyp_own: Owned by hypervisor (in-kernel)
-  * @cmdqv: Parent CMDQV pointer
-  * @lvcmdqs: List of logical VCMDQ pointers
-  * @base: MMIO base address
-@@ -150,6 +151,7 @@ struct tegra241_vintf {
- 	u16 idx;
- 
- 	bool enabled;
-+	bool hyp_own;
- 
- 	struct tegra241_cmdqv *cmdqv;
- 	struct tegra241_vcmdq **lvcmdqs;
-@@ -301,8 +303,21 @@ static irqreturn_t tegra241_cmdqv_isr(int irq, void *devid)
- 
- /* Command Queue Function */
- 
-+static bool tegra241_guest_vcmdq_supports_cmd(struct arm_smmu_cmdq_ent *ent)
-+{
-+	switch (ent->opcode) {
-+	case CMDQ_OP_TLBI_NH_ASID:
-+	case CMDQ_OP_TLBI_NH_VA:
-+	case CMDQ_OP_ATC_INV:
-+		return true;
-+	default:
-+		return false;
-+	}
-+}
-+
- static struct arm_smmu_cmdq *
--tegra241_cmdqv_get_cmdq(struct arm_smmu_device *smmu)
-+tegra241_cmdqv_get_cmdq(struct arm_smmu_device *smmu,
-+			struct arm_smmu_cmdq_ent *ent)
- {
- 	struct tegra241_cmdqv *cmdqv =
- 		container_of(smmu, struct tegra241_cmdqv, smmu);
-@@ -328,6 +343,10 @@ tegra241_cmdqv_get_cmdq(struct arm_smmu_device *smmu)
- 	vcmdq = vintf->lvcmdqs[lidx];
- 	if (!vcmdq || !READ_ONCE(vcmdq->enabled))
- 		return NULL;
-+
-+	/* Unsupported CMD goes for smmu->cmdq pathway */
-+	if (!arm_smmu_cmdq_supports_cmd(&vcmdq->cmdq, ent))
-+		return NULL;
- 	return &vcmdq->cmdq;
- }
- 
-@@ -406,12 +425,22 @@ static int tegra241_vintf_hw_init(struct tegra241_vintf *vintf, bool hyp_own)
- 	tegra241_vintf_hw_deinit(vintf);
- 
- 	/* Configure and enable VINTF */
-+	/*
-+	 * Note that HYP_OWN bit is wired to zero when running in guest kernel,
-+	 * whether enabling it here or not, as !HYP_OWN cmdq HWs only support a
-+	 * restricted set of supported commands.
-+	 */
- 	regval = FIELD_PREP(VINTF_HYP_OWN, hyp_own);
- 	writel(regval, REG_VINTF(vintf, CONFIG));
- 
- 	ret = vintf_write_config(vintf, regval | VINTF_EN);
- 	if (ret)
- 		return ret;
-+	/*
-+	 * As being mentioned above, HYP_OWN bit is wired to zero for a guest
-+	 * kernel, so read it back from HW to ensure that reflects in hyp_own
-+	 */
-+	vintf->hyp_own = !!(VINTF_HYP_OWN & readl(REG_VINTF(vintf, CONFIG)));
- 
- 	for (lidx = 0; lidx < vintf->cmdqv->num_lvcmdqs_per_vintf; lidx++) {
- 		if (vintf->lvcmdqs && vintf->lvcmdqs[lidx]) {
-@@ -493,6 +522,9 @@ static int tegra241_vcmdq_alloc_smmu_cmdq(struct tegra241_vcmdq *vcmdq)
- 	q->q_base = q->base_dma & VCMDQ_ADDR;
- 	q->q_base |= FIELD_PREP(VCMDQ_LOG2SIZE, q->llq.max_n_shift);
- 
-+	if (!vcmdq->vintf->hyp_own)
-+		cmdq->supports_cmd = tegra241_guest_vcmdq_supports_cmd;
-+
- 	return arm_smmu_cmdq_init(smmu, cmdq);
- }
- 
--- 
-2.43.0
+Well, people might already assume that the values are updated because there
+is an ioctl available to user space (VHOST_VDPA_SET_CONFIG) that doesn't
+warn or return an error - or at least I did.
+
+But, I understand your concern. I propose that we at least return an error
+in the ioctl if the requested config updated is not supported. We could
+also structure this patch so that it can be used when or if hardware
+support becomes available in the future.
+
+Is there a way to query the hardware capabilities of the card, e.g., MSRs
+or other methods? Do you recommend any technical manual?
+
+Or, if the ioctl uses, for example, /dev/vhost-vdpa-2, does its speed and
+duplex settings correspond to those of the tap device it links to? This
+information can be checked and changed using the definitions in
+include/uapi/linux/ethtool.h.
+
+Thank you for taking the time to read and answer me.
+
+
+>
+> Thanks,
+> dragos
+>>  }
+>>  
+>>  static u32 mlx5_vdpa_get_generation(struct vdpa_device *vdev)
+>> diff --git a/drivers/vdpa/vdpa.c b/drivers/vdpa/vdpa.c
+>> index 4dbd2e55a288..b920e4405f6d 100644
+>> --- a/drivers/vdpa/vdpa.c
+>> +++ b/drivers/vdpa/vdpa.c
+>> @@ -15,6 +15,7 @@
+>>  #include <net/genetlink.h>
+>>  #include <linux/mod_devicetable.h>
+>>  #include <linux/virtio_ids.h>
+>> +#include <uapi/linux/ethtool.h>
+>>  
+>>  static LIST_HEAD(mdev_head);
+>>  /* A global mutex that protects vdpa management device and device level operations. */
+>> @@ -919,6 +920,22 @@ static int vdpa_dev_net_status_config_fill(struct sk_buff *msg, u64 features,
+>>  	return nla_put_u16(msg, VDPA_ATTR_DEV_NET_STATUS, val_u16);
+>>  }
+>>  
+>> +static int vdpa_dev_net_speed_config_fill(struct sk_buff *msg, u64 features,
+>> +					struct virtio_net_config *config)
+>> +{
+>> +	__le32 speed = cpu_to_le32(SPEED_UNKNOWN);
+>> +
+>> +	return nla_put(msg, VDPA_ATTR_DEV_NET_CFG_SPEED, sizeof(speed), &speed);
+>> +}
+>> +
+>> +static int vdpa_dev_net_duplex_config_fill(struct sk_buff *msg, u64 features,
+>> +					struct virtio_net_config *config)
+>> +{
+>> +	u8 duplex = DUPLEX_UNKNOWN;
+>> +
+>> +	return nla_put(msg, VDPA_ATTR_DEV_NET_CFG_DUPLEX, sizeof(duplex), &duplex);
+>> +}
+>> +
+>>  static int vdpa_dev_net_config_fill(struct vdpa_device *vdev, struct sk_buff *msg)
+>>  {
+>>  	struct virtio_net_config config = {};
+>> @@ -940,6 +957,16 @@ static int vdpa_dev_net_config_fill(struct vdpa_device *vdev, struct sk_buff *ms
+>>  
+>>  	if (vdpa_dev_net_status_config_fill(msg, features_device, &config))
+>>  		return -EMSGSIZE;
+>> +	/*
+>> +	 * mlx5_vdpa vDPA devicess currently do not support the
+>> +	 * VIRTIO_NET_F_SPEED_DUPLEX feature, which reports speed and
+>> +	 * duplex; hence these are set to UNKNOWN for now.
+>> +	 */
+>> +	if (vdpa_dev_net_speed_config_fill(msg, features_device, &config))
+>> +		return -EMSGSIZE;
+>> +
+>> +	if (vdpa_dev_net_duplex_config_fill(msg, features_device, &config))
+>> +		return -EMSGSIZE;
+>>  
+>>  	return vdpa_dev_net_mq_config_fill(msg, features_device, &config);
+>>  }
+>> diff --git a/include/uapi/linux/vdpa.h b/include/uapi/linux/vdpa.h
+>> index 842bf1201ac4..1c64ee0dd7b1 100644
+>> --- a/include/uapi/linux/vdpa.h
+>> +++ b/include/uapi/linux/vdpa.h
+>> @@ -43,6 +43,8 @@ enum vdpa_attr {
+>>  	VDPA_ATTR_DEV_NET_STATUS,		/* u8 */
+>>  	VDPA_ATTR_DEV_NET_CFG_MAX_VQP,		/* u16 */
+>>  	VDPA_ATTR_DEV_NET_CFG_MTU,		/* u16 */
+>> +	VDPA_ATTR_DEV_NET_CFG_SPEED,		/* u32 */
+>> +	VDPA_ATTR_DEV_NET_CFG_DUPLEX,		/* u8 */
+>>  
+>>  	VDPA_ATTR_DEV_NEGOTIATED_FEATURES,	/* u64 */
+>>  	VDPA_ATTR_DEV_MGMTDEV_MAX_VQS,		/* u32 */
+
+
+Thanks, Carlos
 
 
