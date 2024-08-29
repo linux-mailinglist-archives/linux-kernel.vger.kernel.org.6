@@ -1,115 +1,115 @@
-Return-Path: <linux-kernel+bounces-306363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 150A9963E03
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:07:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC634963E07
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:07:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C181E282742
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:07:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2AECA1C224A2
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:07:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BAE818A6D4;
-	Thu, 29 Aug 2024 08:07:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C5C518A947;
+	Thu, 29 Aug 2024 08:07:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="B2ztr2RN"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZCWcbbvv"
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE90316EB50
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 08:07:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D60818A925;
+	Thu, 29 Aug 2024 08:07:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724918845; cv=none; b=MziuDzP97/Qpegq1sFYNddaPM4yaQefixdn2ViBiucITt9Tqc/HQRBmKbQV1DVVtCETXRIPZQ1j6iFqoqmDIb9Z4j4iwgplXzBQWUAiZAEPEcUT0Ql9GegA+kgx58glluVON9jvnI2CFYGyvzihNHxxUNIA9P/KYgHPpLyWbPNA=
+	t=1724918848; cv=none; b=he/Jvk9KP63ZVyaKbfAWbeRjcnQUjUYKw0Nwx7B3dFbAIwczrIhmDXC9gWEBxnRQ0Bm+GthcfaOU4gl4F3/ZUstCmoLMGQUhkJapip56v5w4q9Yx4pz1i6LA+Rj0sk1EwdRfPetWXSoJUwevwDYFYQCHrvoKip8uu5Cxla6RlrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724918845; c=relaxed/simple;
-	bh=auFqkUNyv2Fd/0ioi9ZUc3h7ws94RlEFh6JNyRARyKY=;
+	s=arc-20240116; t=1724918848; c=relaxed/simple;
+	bh=6D9s2PHaOeXO0+gGj2oPHhq3N9H2yBwvLb6+qVDuqZY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TE1eesM8s42ifGMQoFh9rCws0kJuyxIx3STJ6AWz5t394F/AlnwDONKawRddk455islHDhNSeSZFyua/1bOXrLGmyQtD4NrUBHSJctM1jqv4t/i+sozqh8NgOK0+Z5TGmCcsydJZYKmN1sQ+BRPHQZthTSVvltwvciklgpjM99M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=B2ztr2RN; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-53345dcd377so473436e87.2
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 01:07:23 -0700 (PDT)
+	 To:Cc:Content-Type; b=qgte7xeX1qIhCMahZtV+rRxj1apty4pVw4B5xMQuGK3K8DBVmRh+u4ll3heStH1wAuCG12/S7PyoW77XCcG0OD0GvyageYtIDDgQ7QTfZcn4VIMZz2XT0+WRyJwpQ8DzYQwELZzfuFqx8FWpbr38pTB68TAUQW9YI2OBwYOFkOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZCWcbbvv; arc=none smtp.client-ip=209.85.128.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-68d30057ae9so3860617b3.1;
+        Thu, 29 Aug 2024 01:07:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1724918842; x=1725523642; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1724918846; x=1725523646; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=rWHF4NxXib0BaVbETNyvLLP+DsSB41nEJXFZk7mMGog=;
-        b=B2ztr2RNb1FOIIFk5ylbH/TWX/1Dz7k0DJGuomatkMfKZmeVQimHbB/+7mtji6pdFN
-         smmiFiDsyozV9HyfoTfklN/Cr2sfFtQy+vTi9OfAPm2gHBJm04rVh714oCbrnZHPh4+D
-         cZTxXMyVrQbqtWrz+ueHBogQzo+pL+QLp+9RI=
+        bh=6D9s2PHaOeXO0+gGj2oPHhq3N9H2yBwvLb6+qVDuqZY=;
+        b=ZCWcbbvvV+bwptQZpd2WNo+rEIzdSCjE7XyZ2xwm1eexR61NzjJbqQDzwkP6Fd0Mt/
+         J/Ql5yRsW4fMQxu910jfoVn83Nz4xEYkuPkJL/NM7yvmwkphhAsacyEMuMYJMAUCkSsM
+         Us6q+VLr95uCGD8rqmoLOyfqmkYf2oKphEK5UMZEDGWTTT1v/TL2RZrcXJsK9l8qqYBU
+         O+WqIFYyAyh2NYG3eEl5TcCdhKhJOWEmen7hytJvJOauvjUZLY+WSeqNyWZzcsqGFoLc
+         Kihg3SwyEmifEn8pXll4eF6f8qR7F8mND+wwXS1B1zfRDqCFawPHfsgFAoS6YVb4CEpJ
+         ITag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724918842; x=1725523642;
+        d=1e100.net; s=20230601; t=1724918846; x=1725523646;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=rWHF4NxXib0BaVbETNyvLLP+DsSB41nEJXFZk7mMGog=;
-        b=vO+L/n6/6YFrGSB+vgRZLuR4RawbdiCw9PIkddlNKEXmrX/tG45ZhyKxCKNwKErdae
-         U0nUtfv/oKdM/3tmHV5INN/CeepBjiP0kmpcirTycjPkvv0Mpiabk8JIQv5+SnbIWqra
-         X+cql0KZAcYoTEgdcC5mcjZTITizqYshSxVN5dViBLOYPGe4H/llRKyx4S7mD/0NKgJb
-         gtfk5dpitvonypfWWxgTqbOpTgAdpchEVP1dJIQpkSKZ2VKkk88HltOIcJciQOVp7aJF
-         yO6SO4BghRDNYblNkhQSaS5oXvQd4JgpYg8j+aMC/JWqk5V+K4gFpDzAcYFZ3lGB+jFF
-         pGRQ==
-X-Gm-Message-State: AOJu0YyRaKJjayigCWxZBCVgtBzEnVoXv8kxO7gjiWocifiB6XIjKj12
-	/rV+vSXY6FrgoDhzGATlG2Ft3EH+dYOhVgIrufc9ClRo+/A3zM6bzQfj7B6rwDUTPB72sp4HF8k
-	QuJG/hGOvoveXH0swHMjWlpoV8PRu0IIhxMz9Rg==
-X-Google-Smtp-Source: AGHT+IGNbDJ14S2lYWoqQ5dAM0S0xuzu3UKx1UZtVenRD205hOgag/lAWnB20MTVkCtylH29xVj9OadK/FnKaKfGoUk=
-X-Received: by 2002:a05:6512:6c7:b0:533:4676:c21c with SMTP id
- 2adb3069b0e04-5353e5ae666mr1221299e87.44.1724918841596; Thu, 29 Aug 2024
- 01:07:21 -0700 (PDT)
+        bh=6D9s2PHaOeXO0+gGj2oPHhq3N9H2yBwvLb6+qVDuqZY=;
+        b=LCu8BLFH0f7hagbIN+q5FwjdOexb76gCdXUdsERsC7xiTOvg+79PYW7B9Zktr4Oqgm
+         iorfRJbkg7Gpn2dSg9L76BM0fxUnG5hlzIPdxzuzw70XjcUSynrpvwXxYsA7dM14aE5E
+         BAebmm4or31wHXJgrQgDMvnxk7nlN17yYuwK5D9cYmnLgQbUtziLssLyRevUXw4G52Se
+         42qbsGrRtJliIu2Msjt5cI6EWinPVJDcgmvqXEza7Jj/66870c4IZMfVZYuoeuA81gw5
+         BUjin4fnCGIJkQtQD1cR0DalIaFJv9kCKa6lA5a8ZyzJ0uNrrN6ShSGZaHlZ+HdjGoKN
+         TmPA==
+X-Forwarded-Encrypted: i=1; AJvYcCW3+oIcP4tOfAjj56KsF/9iy6g82pM59Lo8PaOJAkrytb9XaqB48B/icLwdwSRWGXOusCQp3ExElmgV@vger.kernel.org, AJvYcCWOUTsT4nhD7Ohe1wHk/qnUwoaklGhXs8+rfW0J4XY6N1hAw2HrM4TDjHnwpWnegdnVq3o4j6H1Pc6BKhJe@vger.kernel.org, AJvYcCXN3hIKEqQGXDjjSmHyRBJDsUQpo1QgXje1KoJXd0Erfu9M6dymM8+c2zZ/hZJuUl5UBu58ofYMbkD4@vger.kernel.org
+X-Gm-Message-State: AOJu0YzomkzBS8WEb2Dxp9460Zjk0Z48XtojbEiMDfbE7P6CGS6VNczU
+	TyEcuPolueOqqlWhHBm7oRBN5+mmouja+2rEKPjRVsTriOejEBiZdRgF8rvCJ+2FNTlcTZLKxUG
+	YOzhJF3KGJOL49yg9OlsAreTeFNQ=
+X-Google-Smtp-Source: AGHT+IGI+aiI64QeCszkUSpdOS1NlRrB8CzhcK6/Tl8ikOKP0qadNbGrBXByMOplW48ZmJTnXiN3tu7FN/K4wcAWEYs=
+X-Received: by 2002:a05:690c:6608:b0:6b3:a6ff:769b with SMTP id
+ 00721157ae682-6d272708f30mr24127897b3.0.1724918845847; Thu, 29 Aug 2024
+ 01:07:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240709111918.31233-1-hreitz@redhat.com>
-In-Reply-To: <20240709111918.31233-1-hreitz@redhat.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Thu, 29 Aug 2024 10:07:10 +0200
-Message-ID: <CAJfpegv6T_5fFCEMcHWgLQy5xT8Dp-O5KVOXiKsh2Gd-AJHwcg@mail.gmail.com>
-Subject: Re: [PATCH 0/2] virtio-fs: Add 'file' mount option
-To: Hanna Czenczek <hreitz@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, virtualization@lists.linux.dev, 
-	Miklos Szeredi <mszeredi@redhat.com>, German Maglione <gmaglione@redhat.com>, 
-	Stefan Hajnoczi <stefanha@redhat.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Vivek Goyal <vgoyal@redhat.com>
+References: <20240815150255.3996258-1-tmaimon77@gmail.com> <2f21322a2412684c6aa7bb7d817e861c.sboyd@kernel.org>
+In-Reply-To: <2f21322a2412684c6aa7bb7d817e861c.sboyd@kernel.org>
+From: Tomer Maimon <tmaimon77@gmail.com>
+Date: Thu, 29 Aug 2024 11:07:14 +0300
+Message-ID: <CAP6Zq1hxwb3eWakPJecWXbt6_JqOmph-72bRn6pztxy1KiuF+Q@mail.gmail.com>
+Subject: Re: [PATCH RESEND v27 0/3] Introduce Nuvoton Arbel NPCM8XX BMC SoC
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: benjaminfair@google.com, joel@jms.id.au, krzysztof.kozlowski+dt@linaro.org, 
+	mturquette@baylibre.com, p.zabel@pengutronix.de, robh+dt@kernel.org, 
+	tali.perry1@gmail.com, venture@google.com, yuenn@google.com, 
+	openbmc@lists.ozlabs.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 9 Jul 2024 at 13:19, Hanna Czenczek <hreitz@redhat.com> wrote:
->
-> Hi,
->
-> We want to be able to mount filesystems that just consist of one regular
-> file via virtio-fs, i.e. no root directory, just a file as the root
-> node.
->
-> While that is possible via FUSE itself (through the 'rootmode' mount
-> option, which is automatically set by the fusermount help program to
-> match the mount point's inode mode), there is no virtio-fs option yet
-> that would allow changing the rootmode from S_IFDIR to S_IFREG.
->
-> To do that, this series introduces a new 'file' mount option that does
-> precisely that.  Alternatively, we could provide the same 'rootmode'
-> option that FUSE has, but as laid out in patch 1's commit description,
-> that option is a bit cumbersome for virtio-fs (in a way that it is not
-> for FUSE), and its usefulness as a more general option is limited.
+Hi Stephen,
 
-I wonder if this is needed at all for virtiofs, which could easily do
-the FUSE_INIT request synchronously with mount(2) and the server could
-just tell the client the root mode explicitly in the FUSE_INIT reply,
-or could just fetch it with a separate FUSE_GETATTR.
+Sure.
 
-Why regular fuse doesn't do this?  That's because a single threaded
-server can only be supported if the mount(2) syscall returns before
-any request need processing.  Virtiofs doesn't suffer from this at
-all, AFAICS.
+Thanks a lot,
 
-Does this make sense?
+Tomer
 
-Thanks,
-Miklos
+On Wed, 28 Aug 2024 at 23:54, Stephen Boyd <sboyd@kernel.org> wrote:
+>
+> Quoting Tomer Maimon (2024-08-15 08:02:52)
+> > This patchset adds clock support for the Nuvoton
+> > Arbel NPCM8XX Board Management controller (BMC) SoC family.
+> >
+> > The NPCM8xx clock controller is created using the auxiliary device framework
+> > and set up in the npcm reset driver since the NPCM8xx clock is using the
+> > same register region.
+> >
+> > This patchset cover letter is based from the initial support for NPCM8xx BMC to
+> > keep tracking the version history.
+> >
+> > This patchset was tested on the Arbel NPCM8XX evaluation board.
+> >
+> > No changes since version 26, only tested in kernel 6.11.rc1
+>
+> Thanks for working on this! I'm waiting for Philipp to review/ack the
+> reset driver part. Until then I don't think I can apply this series to
+> the clk tree. I'll add a review tag to the clk driver patch in case that
+> helps.
 
