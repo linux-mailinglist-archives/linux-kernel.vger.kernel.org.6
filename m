@@ -1,66 +1,77 @@
-Return-Path: <linux-kernel+bounces-307304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADF4A964B89
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 18:21:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A71D1964B91
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 18:22:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 113E5B21F6C
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:21:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC6031C20DF8
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:22:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34A7C1B5838;
-	Thu, 29 Aug 2024 16:20:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66CD81B6547;
+	Thu, 29 Aug 2024 16:21:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="qHFy6zh3"
-Received: from out-184.mta1.migadu.com (out-184.mta1.migadu.com [95.215.58.184])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CoARXOaD"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 250901B3F1F
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 16:20:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5DAF1B5325;
+	Thu, 29 Aug 2024 16:21:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724948440; cv=none; b=XXv3+K//o+O3GW3Y4r91hqpY7k5jYBSdE41vp/UybblgDvSI5Pq5vM8+bhKjSkyF8QF4BvVF83yfvUvTvjZlRUVRGSd8mDEpR7Tx90iVWJlCQn9iUMZqVP0Uokg25xrMairmmlMc470pAWAN/dgnDduypsiZwxGzflklzB+8Lxw=
+	t=1724948495; cv=none; b=BLye7u37lMJ1Fhs5Zjg6/lnotqpXJm2PX2E/KdNYW2+SP+lhKEN+fIa6Lz1yrhKUdW7sjp4zXSu2xqgRgcraXYVWQ6H9n601UMQSE6M6nPfN3kd6TaN3nG0pMkMW0u0lF80LrdJo9RR/ypGHpCVb87PAn27d/617bi2e5014Ip8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724948440; c=relaxed/simple;
-	bh=7U6Nmbh114G96KtGYBVDLAbK4d6lfvn2XssOHsbTrO4=;
+	s=arc-20240116; t=1724948495; c=relaxed/simple;
+	bh=QSD0KfHL5nBVjCs5CyKPuF0Hu/LItF1ebis/Y0+ARtE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tDLATdPTsl8FXmz/7L2wYHGwQ098WY1doDZixmVA1eRI46HVgbJXq7dBoP9SCMur25CXwWxpXoaQTZFDCyzyl3XxdvJYLbQm3z+UgtsFzy2lpBX3gT/HYq0w8opX2kcxbeq87VkFg3T1Eay9EI2fufKaX0UmCDWV93A4lMAj4B4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=qHFy6zh3; arc=none smtp.client-ip=95.215.58.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Thu, 29 Aug 2024 16:20:28 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1724948436;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TqnxVaBjgZfealincCR2Zh7tFE8qlNsIgLvhONXdZ1c=;
-	b=qHFy6zh3aSVycnfwMPa+TGK1S86Y8eGqQ+lER+GugiPaxKDt1qqI5UdERHZKWVvCiRP0uJ
-	mAc/ne4Mph2X8TNL/fp/s9L8udkV8DXLIkPNwe4JgfQchKfQE2x81o0YNdAjhxdcFzEtRz
-	eepH/wLlvDilwHkme1dwivldLtoMDfI=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Roman Gushchin <roman.gushchin@linux.dev>
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Vlastimil Babka <vbabka@suse.cz>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Michal Hocko <mhocko@kernel.org>,
-	Muchun Song <muchun.song@linux.dev>,
-	David Rientjes <rientjes@google.com>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
-	Eric Dumazet <edumazet@google.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	Meta kernel team <kernel-team@meta.com>, cgroups@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH v2] memcg: add charging of already allocated slab objects
-Message-ID: <ZtCfzHNUSVjGsXGS@google.com>
-References: <20240827235228.1591842-1-shakeel.butt@linux.dev>
- <9fb06d9b-dec5-4300-acef-bbce51a9a0c1@suse.cz>
- <mvxyevmpzwatlt7z4fdjakvuixmp5hcqmvo3467kzlgp2xkbgf@xumnm2y6xxrg>
+	 Content-Type:Content-Disposition:In-Reply-To; b=HREtMqugwx1znK7376Rs0BY5cDsNHw3BXgKCGUxExXPdc75QnU0MvL9coYezjgOr7aaYVwLdR6PXZX+jDWiYoatO69JF2MsNt70OmFM5hEkezSvFtGL/WzQXEYYzFzeLscSCM6sbHREqlWBuFq+UB4M5YY+nxS9laqP+P/F9fbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CoARXOaD; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724948493; x=1756484493;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=QSD0KfHL5nBVjCs5CyKPuF0Hu/LItF1ebis/Y0+ARtE=;
+  b=CoARXOaDXvSxzo5PFlyYg6jyW5xR47lo+6Da/LT7bPo8kyF+dc1vAnHR
+   m8RauvLq0C0Owqo210V3hw948HykysylRgRdUc8/8fPxoCn3pcmlGkuKF
+   NU+wDpJxynLnEFzjhpzQhACjdKdiKWiit80loWmE010eXip9DM8jw8Mbj
+   35W1W2g7TVj7btBBWowhYakfLwkE7lMYibkgAgEuLFk82lD4AfgjGB66S
+   rcoGE49Z92WBBw4aCcuofvp1XHo/BwM9jRL3e2G4Vj5cngxyWebv7Q/ZG
+   E2kDzUtmvmMOqHSpOwQZujzILKSNwfjPnqunQSxXw2Fh/wqN4bDyX+Mim
+   g==;
+X-CSE-ConnectionGUID: KeyKL/QhQbaVHwapqPTZ+A==
+X-CSE-MsgGUID: a5J9g5BGTgOJguCRlRoaIg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11179"; a="23725567"
+X-IronPort-AV: E=Sophos;i="6.10,186,1719903600"; 
+   d="scan'208";a="23725567"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 09:21:32 -0700
+X-CSE-ConnectionGUID: baVme5SvQhCgxvjuylVrYg==
+X-CSE-MsgGUID: SRL9VVpyRRKKuQttzYY6tg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,186,1719903600"; 
+   d="scan'208";a="94368725"
+Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
+  by orviesa002.jf.intel.com with ESMTP; 29 Aug 2024 09:21:30 -0700
+Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sjhtm-0000So-29;
+	Thu, 29 Aug 2024 16:21:26 +0000
+Date: Fri, 30 Aug 2024 00:20:59 +0800
+From: kernel test robot <lkp@intel.com>
+To: Haifeng Xu <haifeng.xu@shopee.com>, viro@zeniv.linux.org.uk,
+	brauner@kernel.org, jack@suse.cz
+Cc: oe-kbuild-all@lists.linux.dev, tytso@mit.edu, yi.zhang@huaweicloud.com,
+	yukuai1@huaweicloud.com, tj@kernel.org, linux-ext4@vger.kernel.org,
+	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Haifeng Xu <haifeng.xu@shopee.com>
+Subject: Re: [PATCH] buffer: Associate the meta bio with blkg from buffer page
+Message-ID: <202408300007.m9sHEOXo-lkp@intel.com>
+References: <20240828033224.146584-1-haifeng.xu@shopee.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,78 +80,124 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <mvxyevmpzwatlt7z4fdjakvuixmp5hcqmvo3467kzlgp2xkbgf@xumnm2y6xxrg>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20240828033224.146584-1-haifeng.xu@shopee.com>
 
-On Thu, Aug 29, 2024 at 09:10:53AM -0700, Shakeel Butt wrote:
-> On Thu, Aug 29, 2024 at 11:42:10AM GMT, Vlastimil Babka wrote:
-> > On 8/28/24 01:52, Shakeel Butt wrote:
-> > > At the moment, the slab objects are charged to the memcg at the
-> > > allocation time. However there are cases where slab objects are
-> > > allocated at the time where the right target memcg to charge it to is
-> > > not known. One such case is the network sockets for the incoming
-> > > connection which are allocated in the softirq context.
-> > > 
-> > > Couple hundred thousand connections are very normal on large loaded
-> > > server and almost all of those sockets underlying those connections get
-> > > allocated in the softirq context and thus not charged to any memcg.
-> > > However later at the accept() time we know the right target memcg to
-> > > charge. Let's add new API to charge already allocated objects, so we can
-> > > have better accounting of the memory usage.
-> > > 
-> > > To measure the performance impact of this change, tcp_crr is used from
-> > > the neper [1] performance suite. Basically it is a network ping pong
-> > > test with new connection for each ping pong.
-> > > 
-> > > The server and the client are run inside 3 level of cgroup hierarchy
-> > > using the following commands:
-> > > 
-> > > Server:
-> > >  $ tcp_crr -6
-> > > 
-> > > Client:
-> > >  $ tcp_crr -6 -c -H ${server_ip}
-> > > 
-> > > If the client and server run on different machines with 50 GBPS NIC,
-> > > there is no visible impact of the change.
-> > > 
-> > > For the same machine experiment with v6.11-rc5 as base.
-> > > 
-> > >           base (throughput)     with-patch
-> > > tcp_crr   14545 (+- 80)         14463 (+- 56)
-> > > 
-> > > It seems like the performance impact is within the noise.
-> > > 
-> > > Link: https://github.com/google/neper [1]
-> > > Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
-> > > ---
-> > > v1: https://lore.kernel.org/all/20240826232908.4076417-1-shakeel.butt@linux.dev/
-> > > Changes since v1:
-> > > - Correctly handle large allocations which bypass slab
-> > > - Rearrange code to avoid compilation errors for !CONFIG_MEMCG builds
-> > > 
-> > > RFC: https://lore.kernel.org/all/20240824010139.1293051-1-shakeel.butt@linux.dev/
-> > > Changes since the RFC:
-> > > - Added check for already charged slab objects.
-> > > - Added performance results from neper's tcp_crr
-> > > 
-> > >  include/linux/slab.h            |  1 +
-> > >  mm/slub.c                       | 51 +++++++++++++++++++++++++++++++++
-> > >  net/ipv4/inet_connection_sock.c |  5 ++--
-> > >  3 files changed, 55 insertions(+), 2 deletions(-)
-> > 
-> > I can take the v3 in slab tree, if net people ack?
-> 
-> Thanks.
-> 
-> > 
-> > BTW, will this be also useful for Linus's idea of charging struct files only
-> > after they exist? But IIRC there was supposed to be also a part where we
-> > have a way to quickly determine if we're not over limit (while allowing some
-> > overcharge to make it quicker).
+Hi Haifeng,
 
-It should work and speed up the case when we can drop the object before charging.
-I'd suggest to implement it in a separate change though.
+kernel test robot noticed the following build errors:
 
-Thanks!
+[auto build test ERROR on brauner-vfs/vfs.all]
+[also build test ERROR on linus/master v6.11-rc5 next-20240829]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Haifeng-Xu/buffer-Associate-the-meta-bio-with-blkg-from-buffer-page/20240828-113409
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
+patch link:    https://lore.kernel.org/r/20240828033224.146584-1-haifeng.xu%40shopee.com
+patch subject: [PATCH] buffer: Associate the meta bio with blkg from buffer page
+config: alpha-defconfig (https://download.01.org/0day-ci/archive/20240830/202408300007.m9sHEOXo-lkp@intel.com/config)
+compiler: alpha-linux-gcc (GCC) 13.3.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240830/202408300007.m9sHEOXo-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408300007.m9sHEOXo-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   fs/buffer.c: In function 'submit_bh_wbc':
+   fs/buffer.c:2826:29: error: implicit declaration of function 'mem_cgroup_css_from_folio'; did you mean 'mem_cgroup_from_obj'? [-Werror=implicit-function-declaration]
+    2826 |                 memcg_css = mem_cgroup_css_from_folio(folio);
+         |                             ^~~~~~~~~~~~~~~~~~~~~~~~~
+         |                             mem_cgroup_from_obj
+   fs/buffer.c:2826:27: warning: assignment to 'struct cgroup_subsys_state *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+    2826 |                 memcg_css = mem_cgroup_css_from_folio(folio);
+         |                           ^
+>> fs/buffer.c:2827:21: error: implicit declaration of function 'cgroup_subsys_on_dfl' [-Werror=implicit-function-declaration]
+    2827 |                 if (cgroup_subsys_on_dfl(memory_cgrp_subsys) &&
+         |                     ^~~~~~~~~~~~~~~~~~~~
+>> fs/buffer.c:2827:42: error: 'memory_cgrp_subsys' undeclared (first use in this function)
+    2827 |                 if (cgroup_subsys_on_dfl(memory_cgrp_subsys) &&
+         |                                          ^~~~~~~~~~~~~~~~~~
+   fs/buffer.c:2827:42: note: each undeclared identifier is reported only once for each function it appears in
+   fs/buffer.c:2828:42: error: 'io_cgrp_subsys' undeclared (first use in this function)
+    2828 |                     cgroup_subsys_on_dfl(io_cgrp_subsys)) {
+         |                                          ^~~~~~~~~~~~~~
+>> fs/buffer.c:2829:37: error: implicit declaration of function 'cgroup_e_css'; did you mean 'cgroup_exit'? [-Werror=implicit-function-declaration]
+    2829 |                         blkcg_css = cgroup_e_css(memcg_css->cgroup, &io_cgrp_subsys);
+         |                                     ^~~~~~~~~~~~
+         |                                     cgroup_exit
+>> fs/buffer.c:2829:59: error: invalid use of undefined type 'struct cgroup_subsys_state'
+    2829 |                         blkcg_css = cgroup_e_css(memcg_css->cgroup, &io_cgrp_subsys);
+         |                                                           ^~
+   cc1: some warnings being treated as errors
+
+
+vim +/cgroup_subsys_on_dfl +2827 fs/buffer.c
+
+  2778	
+  2779	static void submit_bh_wbc(blk_opf_t opf, struct buffer_head *bh,
+  2780				  enum rw_hint write_hint,
+  2781				  struct writeback_control *wbc)
+  2782	{
+  2783		const enum req_op op = opf & REQ_OP_MASK;
+  2784		struct bio *bio;
+  2785	
+  2786		BUG_ON(!buffer_locked(bh));
+  2787		BUG_ON(!buffer_mapped(bh));
+  2788		BUG_ON(!bh->b_end_io);
+  2789		BUG_ON(buffer_delay(bh));
+  2790		BUG_ON(buffer_unwritten(bh));
+  2791	
+  2792		/*
+  2793		 * Only clear out a write error when rewriting
+  2794		 */
+  2795		if (test_set_buffer_req(bh) && (op == REQ_OP_WRITE))
+  2796			clear_buffer_write_io_error(bh);
+  2797	
+  2798		if (buffer_meta(bh))
+  2799			opf |= REQ_META;
+  2800		if (buffer_prio(bh))
+  2801			opf |= REQ_PRIO;
+  2802	
+  2803		bio = bio_alloc(bh->b_bdev, 1, opf, GFP_NOIO);
+  2804	
+  2805		fscrypt_set_bio_crypt_ctx_bh(bio, bh, GFP_NOIO);
+  2806	
+  2807		bio->bi_iter.bi_sector = bh->b_blocknr * (bh->b_size >> 9);
+  2808		bio->bi_write_hint = write_hint;
+  2809	
+  2810		__bio_add_page(bio, bh->b_page, bh->b_size, bh_offset(bh));
+  2811	
+  2812		bio->bi_end_io = end_bio_bh_io_sync;
+  2813		bio->bi_private = bh;
+  2814	
+  2815		/* Take care of bh's that straddle the end of the device */
+  2816		guard_bio_eod(bio);
+  2817	
+  2818		if (wbc) {
+  2819			wbc_init_bio(wbc, bio);
+  2820			wbc_account_cgroup_owner(wbc, bh->b_page, bh->b_size);
+  2821		} else if (buffer_meta(bh)) {
+  2822			struct folio *folio;
+  2823			struct cgroup_subsys_state *memcg_css, *blkcg_css;
+  2824	
+  2825			folio = page_folio(bh->b_page);
+  2826			memcg_css = mem_cgroup_css_from_folio(folio);
+> 2827			if (cgroup_subsys_on_dfl(memory_cgrp_subsys) &&
+  2828			    cgroup_subsys_on_dfl(io_cgrp_subsys)) {
+> 2829				blkcg_css = cgroup_e_css(memcg_css->cgroup, &io_cgrp_subsys);
+  2830				bio_associate_blkg_from_css(bio, blkcg_css);
+  2831			}
+  2832		}
+  2833	
+  2834		submit_bio(bio);
+  2835	}
+  2836	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
