@@ -1,325 +1,429 @@
-Return-Path: <linux-kernel+bounces-307345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE2C9964C35
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 18:55:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B6CC964C3B
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 18:57:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36F941F21A5F
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:55:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F1E81C2343B
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:57:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 775151B5ED1;
-	Thu, 29 Aug 2024 16:55:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5ED71B5EBF;
+	Thu, 29 Aug 2024 16:56:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="jIJ7uCgy"
-Received: from BN1PR04CU002.outbound.protection.outlook.com (mail-eastus2azon11020073.outbound.protection.outlook.com [52.101.56.73])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fjt8WVC9"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F0E81AC8A9;
-	Thu, 29 Aug 2024 16:55:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.56.73
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724950512; cv=fail; b=BWSf/N0bXskjVPmKAmxXGBAAMQqEW0aSznkxKS5dbQTDs5dJ7i9K0qMU7CRyIh+XXCVF+VzRqD8AioRjM+GxZvnmY5xlqP/WPNXH4YlfSR9c6yvf8S4P6oaWaQ9uQsx7A54jVP1ri4LQGauZ1BOurladn8PhI9BgzQfmAWTptvY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724950512; c=relaxed/simple;
-	bh=oOUXNxdotTaPkCwFd7L2sAXsf4TGA5xo9OcviAtqMrU=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=E3gQcwJ5xad3g6besOdiJiukN1nnozn9Vd1+rj0lLagaTzJ9ib1AfvXqejCuL7gw3+VNHnAGq6dOEE09TBIZITn+JCLfBs0dLY+YdSKlwis9FINsaEzVS4Dvq8XHOIbjpKrSDnkE+RuXNul4DVWX27gfeoW5qqWwjqkbxxIX81E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com; spf=pass smtp.mailfrom=microsoft.com; dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b=jIJ7uCgy; arc=fail smtp.client-ip=52.101.56.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microsoft.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=yoITmMWv7cCPtBgg/sYyvE3zORrBs6CB0oX3hlH6neeB0F/qF+w78xZTin9SwFpfwxyd/KqU4ypJYYJBXaPIUwZN53kuMVE7OrLwbz5OefwxdJHrD0ouliFPJZKtd1lwb4kZSgonxeeoPsBGOSO0zuL/leeEBLMwcJ3yH1jr/44S79jUgwUIfH2VF102SxRTGdLxZjzUbeetCHZl1c/3/0tnVCahMQ1Ufv6HzCdK+qDNvZXr4HbcVILunVCLZA9te39e5WCcijeVxTX2Xzwsxjocgc0OBfO8V+K8pGTNdYZpR3vuwBl6OJ0X9X7NM2vIVI0fsVXnBgNH660Ct1Cj/A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=v91GYhsoC493RE3LbCWVUcrocpGgDNZDDw5hg7EKfDA=;
- b=QNwzmCqDXEEblGUGL9vHhqC51Zq8CQdqoRwJ01w10mpHUR0U4RJqf1YXcjZHOV8goYUYt37gZiwlinBloF/5AGmntxv3RVHzQl4IBRfqdSzzpvrnxKjDFPbXA5VyYsYMRguReGUvEM+YB/+JWFe5xfrk5qUrW6/Ki3vcRNJ97mKbP6dTJhOvn1JNWQ/t5H5aizG+i9MOwcyuS8QMgUewac0SQowL1plkJyOOHSYU24IYl0vMeRoDFUBPT8iABTmmNkSwlwRr9EzdDxcdOnMdDEpRp83QF/LupJql4SqSb8DvDkHnvgwuXLuvElMA7BVWcLDOuWYJ/Z8dczDenwc/Cg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microsoft.com; dmarc=pass action=none
- header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=v91GYhsoC493RE3LbCWVUcrocpGgDNZDDw5hg7EKfDA=;
- b=jIJ7uCgytn+FDqteuqNC5PlOJkJqhnWwtir3cMhIgoBHFVH5wLZ2QnYytvCphfhy+hrKUPLswQIPbpJZTfyF5ddH7GfKjcmsu7XNi0lqIdZxNmEdiRDh27Pqd3V7qx8TurGTH2oNHkvzQR/YLj9ciDIWX6olseIVE+I323yDQ+Q=
-Received: from PH7PR21MB3260.namprd21.prod.outlook.com (2603:10b6:510:1d8::15)
- by IA1PR21MB3497.namprd21.prod.outlook.com (2603:10b6:208:3e2::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.8; Thu, 29 Aug
- 2024 16:55:06 +0000
-Received: from PH7PR21MB3260.namprd21.prod.outlook.com
- ([fe80::a4dd:601a:6a96:9ef0]) by PH7PR21MB3260.namprd21.prod.outlook.com
- ([fe80::a4dd:601a:6a96:9ef0%3]) with mapi id 15.20.7918.006; Thu, 29 Aug 2024
- 16:55:06 +0000
-From: Haiyang Zhang <haiyangz@microsoft.com>
-To: Souradeep Chakrabarti <schakrabarti@linux.microsoft.com>, KY Srinivasan
-	<kys@microsoft.com>, "wei.liu@kernel.org" <wei.liu@kernel.org>, Dexuan Cui
-	<decui@microsoft.com>, "davem@davemloft.net" <davem@davemloft.net>, Long Li
-	<longli@microsoft.com>, "ssengar@linux.microsoft.com"
-	<ssengar@linux.microsoft.com>, "linux-hyperv@vger.kernel.org"
-	<linux-hyperv@vger.kernel.org>, "netdev@vger.kernel.org"
-	<netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-rdma@vger.kernel.org"
-	<linux-rdma@vger.kernel.org>
-CC: Souradeep Chakrabarti <schakrabarti@microsoft.com>,
-	"stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: RE: [PATCH V3 net] net: mana: Fix error handling in
- mana_create_txq/rxq's NAPI cleanup
-Thread-Topic: [PATCH V3 net] net: mana: Fix error handling in
- mana_create_txq/rxq's NAPI cleanup
-Thread-Index: AQHa+e6j7hVwv/g+nkyjJvATfz6ZwbI+dEBA
-Date: Thu, 29 Aug 2024 16:55:06 +0000
-Message-ID:
- <PH7PR21MB32601A9B8D75C164AF9B18C2CA962@PH7PR21MB3260.namprd21.prod.outlook.com>
-References:
- <1724920610-15546-1-git-send-email-schakrabarti@linux.microsoft.com>
-In-Reply-To:
- <1724920610-15546-1-git-send-email-schakrabarti@linux.microsoft.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=11a9a28f-548d-44f0-aae3-bac4d2dc5096;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ContentBits=0;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=true;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Method=Standard;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=Internal;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2024-08-29T16:54:05Z;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=microsoft.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PH7PR21MB3260:EE_|IA1PR21MB3497:EE_
-x-ms-office365-filtering-correlation-id: ad6d0147-94ff-4594-f62e-08dcc84b5598
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|376014|366016|1800799024|38070700018|921020;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?0WIj6lKd9zIk/db8JJvRpYs2LPTQZrMeUnpcJS2tavk7kt+1J8DmI1Nx3B5M?=
- =?us-ascii?Q?4NUzEMXS4b/n+OoLpyql17UBmt5zAJK6n6PjXEluPB5LYxF1y4Jzg2swb2tS?=
- =?us-ascii?Q?2d8Nx3Jp9TS3JrKuLLEy5N0NE8lDZ627M/0kDxifdEk/VreIZ+9k7KqYjrg6?=
- =?us-ascii?Q?UeGB9PMxqqs+N1U+LnBy3AYauhHRr9jIiXXnhyax7DYwGyHgMiAey9NHQwhZ?=
- =?us-ascii?Q?SWU0JpCe/Q8QMT/mKn6pwQGhONjabBoqDc0qPYWSCO93pyCscAQNTvxM9xB3?=
- =?us-ascii?Q?eOchnYlDzVHblmzlIgZyxKtrzOx/qMcSwxnkS7usMAUY2sxRGKIKw3eOVego?=
- =?us-ascii?Q?48xRQUJUmwr5wmM2/EPU4bbbTJ9sXwP/bcSL+ditzwLWlC+wKk+0OY+1aibp?=
- =?us-ascii?Q?jKDSvvfUdK/QLRcKXprXp/xqWHU3N45EafUKvrkXlBb7+hFV6ssThGQbv/4l?=
- =?us-ascii?Q?BXWaF8/0G6zJVxnza5V3E0z6ar+9mNmZjovQULANuoeoKWS4JK1Um51P3bxW?=
- =?us-ascii?Q?USDYRNdfa+5r2/euWIyvC2uglwqZzSjcrv67sm64nCmpd9l46ZkQ8NQM4czm?=
- =?us-ascii?Q?5W9HQ+pbS77xyFt70ki1QHrFgmYUxi4l0spKcKXAT5oRAeIJ1J2S2N6N/1ly?=
- =?us-ascii?Q?AbjNUOYugdJ00ZQ9oSvCNipcgxI8oQkPTSTwi+KUW1DG1mcyAYm3uSugkJdW?=
- =?us-ascii?Q?YgdgyCqbf7+ISt7VGVbD6/GXP0u1GUS2LldWI7nrZtMq8kCdIl5o4TJaUXmM?=
- =?us-ascii?Q?Jf2VBXSdKaJ40+O+5fpYakL5s4CEINEy97Nf8m3tdg1S3mjXzyg50QnKOWlu?=
- =?us-ascii?Q?s/0cTNbtm98Kuv6DCBLHstLs+CvL9JeUzytE1KRf+mqJ1HmjrQG/erxF48/p?=
- =?us-ascii?Q?acaKC2IYAL7geQHQF7/TNRC4gLjAX9Hf0Rs7D9qIy4NtoMZ9AqmvkCf0PCO0?=
- =?us-ascii?Q?Ed5t8Ivjhaf8ifJrjU67nudZP+tJUWA8hvbO7EXJHpicKwrB63aOowYtKS30?=
- =?us-ascii?Q?vvAb4quDPvoPmcvGb4Xiry5oOSJBIn5VvYiuYtZMbYFjIg1FFEHyU0zlWobQ?=
- =?us-ascii?Q?sFTekDRTMINOI3zOm0fFDQAsyby6ZiaNjocwJp6HhXAUPB7HFURLewXwZhvq?=
- =?us-ascii?Q?CmDt137w+J/1iruHMTUU07H9DIV+ijf6gUjQz8WRwjnI3gq2q2BoRo6ziCm7?=
- =?us-ascii?Q?voGcU3xNxFPoHc8zgX4FjG6r/Pqz9jylOGVF30wKqN2VbPtxi9J2kD6SsSN6?=
- =?us-ascii?Q?ICAhGnMry89ulkzeILmdM9NPWnKFfyGp3XOJ/jum74nm51tPZ5TsTlF9OmC0?=
- =?us-ascii?Q?oT3QmEC6m/GtSZWi3RIugV+0Q1xCqnnYSHhbtWQRpPnU86CN/PrLYtdvcQ3u?=
- =?us-ascii?Q?ep2SuEn8lUaiA7C+3Q+0oitpHEPr2WqH9pxVJz4I0WjKCuqC1IaFw8Edweth?=
- =?us-ascii?Q?3ckriQ0uK1Y=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR21MB3260.namprd21.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(38070700018)(921020);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?kebdvRvPDNpXg97bOU+LKQ1/PXCL4O0i40j7LC5G2ZlIJC2QAFhWIydhstNB?=
- =?us-ascii?Q?rwAk8OWY8JP3ZOaKTUs6asazjD7li5mXABRdOBWbUu8tTxYFr1go+EQ1n5UB?=
- =?us-ascii?Q?760HcnCWFoBzG1olt3IyVchcDKYqkO0si3HMYF50bhMNFkT483oG+lAKq2+H?=
- =?us-ascii?Q?fjufH3DyWbXiVYp0WR3ifTA7DQd1FeUp949TeGOlvFv9fw5NwZ3TkH6tH0cB?=
- =?us-ascii?Q?PfzZcLZJLB11bMeD1zSlkZ3nd+IlOJVc7GRgzuAeXRRWfuMgClrfXL8hCJGA?=
- =?us-ascii?Q?9RLjDJ8yV0j6PjDXtNVvxZJDcYzKF2XjyJu6cqDPKQodGsIzJ9XQduCkfOIe?=
- =?us-ascii?Q?PNp4dtSMhUVy2AxjvtNzdCr//e9S1+qh+zqBYqYVPQuz4niEfUQp870fWEX+?=
- =?us-ascii?Q?IXWn1gHXMzVqZg9obCeBCqe9lnR8O1gdyhI59RZl+7z2rDs3MW0G3QO8reN3?=
- =?us-ascii?Q?m/7U+ij3tuMe1dgbB7UTjQAwdYB+2fNu//H9ysltLAy1s9lBVfIG9A2YUl1j?=
- =?us-ascii?Q?L5/2dq3+k+H40QIT3PI8bsLO6AZX5g6jH+A2FKPe7oeHbK4GZPhMPy7ldW+7?=
- =?us-ascii?Q?V3SZddUA/Nc8zBYky+rdKmkgRfOcAHlHtpX13sEOGOepsAznxwJrcN5lwvYe?=
- =?us-ascii?Q?VkemPrRMWe64Yrr2npy/UmlvA0TUWs/t/nNx7BubmLMvDCMaCO40Sg8V5gtT?=
- =?us-ascii?Q?G+SqinZkIrD+0tc6Eo4GrPeww7MFy7eMfeSPHKY/y1o0wctP1LCBXgPy1QMR?=
- =?us-ascii?Q?PnhnUKg0G2yp3aav/hQOCqhOeC1FIrYjpgz9JiMUrWW8ol7YeGgV4HBNMbgU?=
- =?us-ascii?Q?WUfvKgcVptQiMFi5jMK0JOmdRdaPWaZDs1wzxtVwNp9buuMiZMusHmdakrmd?=
- =?us-ascii?Q?VyDarmScHjpSZ7O9IpYsNIls8cy+5MqrLkOO14lfLZ4iIJjTNOJz+71Rstuu?=
- =?us-ascii?Q?x4uKwWhhtseAFZQ3FBN2cNpj2EDxAE+MZQe+SFnkhgvPhPUhiZszp4jeO02k?=
- =?us-ascii?Q?4DH6maU/GeDwm4PT1EyA3NqAzlFska+Lj/WfUBi5+naFSGpQ8llz+DNMBM/R?=
- =?us-ascii?Q?JV8OCqJizz4ameSBCpbOkrmJuIZ7QEJQUx7tbPNFJvpq1YySKHMK8XXxHysa?=
- =?us-ascii?Q?ANdxeOlRQOPxfsPI71QqX77GogyueVe+Gp5lIWHNpZ4lPoQHGtlidkvxXp/v?=
- =?us-ascii?Q?LmDNj20ewere78QnYoF1o2OtzXKTrvExOyozOD9fn4YuVe9q7N8xX3Yu89M6?=
- =?us-ascii?Q?dwgnduSa8ckv+xX8VTQ8KxST9vEKuGGenN3jDq9Ia6xEfLhFq+od5XEEBiM6?=
- =?us-ascii?Q?/BWIClmc+Mpbl074YK0XK+oyidowuoXATM6vKLqpTsmG8fWBzDCD3kil9Nkm?=
- =?us-ascii?Q?UIne08nHF7ESiX+p1Q9Oqg0r52AFJz0YKHNhC90Tn9JfV7qqHyK4RaDEfrb3?=
- =?us-ascii?Q?wWd7cN1K6ZJldSIRYs1uIzzDr5qgjS6QuKrBszmt/y87sUrkWrj1EFF01UtU?=
- =?us-ascii?Q?0TzJDUhhd7AAyZ1QBI03gjkGLXetrEmLkQXpFEIdMHe9X+AUXlMnNG15ipQY?=
- =?us-ascii?Q?kwc2OObd6bxiSEpIQAwdZFUkLitMU37BECj6AWp/?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36B4F1B5832
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 16:56:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724950616; cv=none; b=s5FSuLofJAGCYnKoqJBuLqy4yFRbs2zX7zxBYaZaqim7m7B2vjim+awIoPZy5MgmtWVHzuENH7I3LlfUZjOIpMxpiQ4h+UP1s9kcWj+4zlLKLDUw9Qu8eVoZUrRxnkvqDZh/cEyqgacgWB/nu6E9Hnm25RlUIYNd6O1N2eOKZUo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724950616; c=relaxed/simple;
+	bh=/ub3L2kK+K2jf5lLrtmCxIf3zW7bd3LddAqnISUAFxI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SR6J1hHQIRmva4yDM5S2unoew8M6av7KCtEkbFyiE7eA3qyBrT9/NcFeP4igHTM543IQrAsNpvgMX+En+lF39Su/ZI72IGdfMw9aKypQ7O1QHk4GbvzpSg3mBYXGYvjfIDMKlH2sahEXSwPGfQIzUlHlEnOL0AZ1PQyzfvr8OAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fjt8WVC9; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724950613;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=WPfeJ9iInySc4M0GDUTsyxt4nEunRxFuq3mNL7lmknw=;
+	b=fjt8WVC9WVvcSTMBojxe2eKzF7hW34C1SgShbQfqOuD1cplmd4yZLcUxaWmvbuEtyo9BzA
+	5WKjWFVq/y/jMbMt5Cofhhfnha/mN2H5fwqzKCcO0wuVJtvkmdURS2Ww3k9zAL5WttUds2
+	JcMi31XxFn0L8OFuK9HMh0NjHpKGwyk=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-412-WI0M_D3PMuyydDrWwMCecQ-1; Thu,
+ 29 Aug 2024 12:56:51 -0400
+X-MC-Unique: WI0M_D3PMuyydDrWwMCecQ-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C8ECA1955BE7;
+	Thu, 29 Aug 2024 16:56:47 +0000 (UTC)
+Received: from t14s.redhat.com (unknown [10.39.193.245])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 2BC2D1955F66;
+	Thu, 29 Aug 2024 16:56:28 +0000 (UTC)
+From: David Hildenbrand <david@redhat.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org,
+	cgroups@vger.kernel.org,
+	x86@kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	David Hildenbrand <david@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Tejun Heo <tj@kernel.org>,
+	Zefan Li <lizefan.x@bytedance.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	=?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Andy Lutomirski <luto@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>
+Subject: [PATCH v1 00/17] mm: MM owner tracking for large folios (!hugetlb) + CONFIG_NO_PAGE_MAPCOUNT
+Date: Thu, 29 Aug 2024 18:56:03 +0200
+Message-ID: <20240829165627.2256514-1-david@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR21MB3260.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ad6d0147-94ff-4594-f62e-08dcc84b5598
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Aug 2024 16:55:06.3329
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: y5cEakG01NZjvHl9V5+Sc2oXmtLMXp4jz8l4ltgs0UII0BGcfBNhKmqePtAdUHH67adjA/hIBhT9D9Ag78twUA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR21MB3497
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+
+RMAP overhaul and optimizations, PTE batching, large mapcount,
+folio_likely_mapped_shared() introduction and optimizations, page_mapcount
+cleanups and preparations ... it's been quite some work to get to this
+point.
+
+Next up is being able to identify -- without false positives, without
+page-mapcounts and without page table/rmap scanning -- whether a
+large folio is "mapped exclusively" into a single MM, and using that
+information to implement Copy-on-Write reuse and to improve
+folio_likely_mapped_shared() for large folios.
+
+... and based on that, finally introducing a kernel config option that
+let's us not use+maintain per-page mapcounts in large folios, improving
+performance of (un)map operations today, taking one step towards
+supporting large folios  > PMD_SIZE, and preparing for the bright future
+where we might no longer have a mapcount per page at all.
+
+The bigger picture was presented at LSF/MM [1].
+
+This series is effectively a follow-up on my early work from last
+year [2], which proposed a precise way to identify whether a large folio is
+"mapped shared" into multiple MMs or "mapped exclusively" into a single MM.
+
+While that advanced approach has been simplified and optimized in the
+meantime, let's start with something simpler first -- "certainly mapped
+exclusive" vs. ""maybe mapped shared" -- so we can start learning about
+the effects and TODOs that some of the implied changes of losing
+per-page mapcounts has.
+
+I have plans to exchange the simple approach used in this series at some
+point by the advanced approach, but one important thing to learn if the
+imprecision in the simple approach is relevant in practice.
+
+64BIT only, and unless enabled in kconfig, this series should for now
+not have any impact.
 
 
+1) Patch Organization
+=====================
 
-> -----Original Message-----
-> From: Souradeep Chakrabarti <schakrabarti@linux.microsoft.com>
-> Sent: Thursday, August 29, 2024 4:37 AM
-> To: KY Srinivasan <kys@microsoft.com>; Haiyang Zhang
-> <haiyangz@microsoft.com>; wei.liu@kernel.org; Dexuan Cui
-> <decui@microsoft.com>; davem@davemloft.net; Long Li
-> <longli@microsoft.com>; ssengar@linux.microsoft.com; linux-
-> hyperv@vger.kernel.org; netdev@vger.kernel.org; linux-
-> kernel@vger.kernel.org; linux-rdma@vger.kernel.org
-> Cc: Souradeep Chakrabarti <schakrabarti@microsoft.com>; Souradeep
-> Chakrabarti <schakrabarti@linux.microsoft.com>; stable@vger.kernel.org
-> Subject: [PATCH V3 net] net: mana: Fix error handling in
-> mana_create_txq/rxq's NAPI cleanup
->=20
-> Currently napi_disable() gets called during rxq and txq cleanup,
-> even before napi is enabled and hrtimer is initialized. It causes
-> kernel panic.
->=20
-> ? page_fault_oops+0x136/0x2b0
->   ? page_counter_cancel+0x2e/0x80
->   ? do_user_addr_fault+0x2f2/0x640
->   ? refill_obj_stock+0xc4/0x110
->   ? exc_page_fault+0x71/0x160
->   ? asm_exc_page_fault+0x27/0x30
->   ? __mmdrop+0x10/0x180
->   ? __mmdrop+0xec/0x180
->   ? hrtimer_active+0xd/0x50
->   hrtimer_try_to_cancel+0x2c/0xf0
->   hrtimer_cancel+0x15/0x30
->   napi_disable+0x65/0x90
->   mana_destroy_rxq+0x4c/0x2f0
->   mana_create_rxq.isra.0+0x56c/0x6d0
->   ? mana_uncfg_vport+0x50/0x50
->   mana_alloc_queues+0x21b/0x320
->   ? skb_dequeue+0x5f/0x80
->=20
-> Cc: stable@vger.kernel.org
-> Fixes: e1b5683ff62e ("net: mana: Move NAPI from EQ to CQ")
-> Signed-off-by: Souradeep Chakrabarti <schakrabarti@linux.microsoft.com>
-> Reviewed-by: Haiyang Zhang <haiyangz@microsoft.com>
-> Reviewed-by: Shradha Gupta <shradhagupta@linux.microsoft.com>
-> ---
-> V3 -> V2:
-> Instead of using napi internal attribute, using an atomic
-> attribute to verify napi is initialized for a particular txq / rxq.
->=20
-> V2 -> V1:
-> Addressed the comment on cleaning up napi for the queues,
-> where queue creation was successful.
-> ---
->  drivers/net/ethernet/microsoft/mana/mana_en.c | 30 ++++++++++++-------
->  include/net/mana/mana.h                       |  4 +++
->  2 files changed, 24 insertions(+), 10 deletions(-)
->=20
-> diff --git a/drivers/net/ethernet/microsoft/mana/mana_en.c
-> b/drivers/net/ethernet/microsoft/mana/mana_en.c
-> index 39f56973746d..bd303c89cfa6 100644
-> --- a/drivers/net/ethernet/microsoft/mana/mana_en.c
-> +++ b/drivers/net/ethernet/microsoft/mana/mana_en.c
-> @@ -1872,10 +1872,12 @@ static void mana_destroy_txq(struct
-> mana_port_context *apc)
->=20
->  	for (i =3D 0; i < apc->num_queues; i++) {
->  		napi =3D &apc->tx_qp[i].tx_cq.napi;
-> -		napi_synchronize(napi);
-> -		napi_disable(napi);
-> -		netif_napi_del(napi);
-> -
-> +		if (atomic_read(&apc->tx_qp[i].txq.napi_initialized)) {
-> +			napi_synchronize(napi);
-> +			napi_disable(napi);
-> +			netif_napi_del(napi);
-> +			atomic_set(&apc->tx_qp[i].txq.napi_initialized, 0);
-> +		}
->  		mana_destroy_wq_obj(apc, GDMA_SQ, apc->tx_qp[i].tx_object);
->=20
->  		mana_deinit_cq(apc, &apc->tx_qp[i].tx_cq);
-> @@ -1931,6 +1933,7 @@ static int mana_create_txq(struct mana_port_context
-> *apc,
->  		txq->ndev =3D net;
->  		txq->net_txq =3D netdev_get_tx_queue(net, i);
->  		txq->vp_offset =3D apc->tx_vp_offset;
-> +		atomic_set(&txq->napi_initialized, 0);
->  		skb_queue_head_init(&txq->pending_skbs);
->=20
->  		memset(&spec, 0, sizeof(spec));
-> @@ -1997,6 +2000,7 @@ static int mana_create_txq(struct mana_port_context
-> *apc,
->=20
->  		netif_napi_add_tx(net, &cq->napi, mana_poll);
->  		napi_enable(&cq->napi);
-> +		atomic_set(&txq->napi_initialized, 1);
->=20
->  		mana_gd_ring_cq(cq->gdma_cq, SET_ARM_BIT);
->  	}
-> @@ -2023,14 +2027,18 @@ static void mana_destroy_rxq(struct
-> mana_port_context *apc,
->=20
->  	napi =3D &rxq->rx_cq.napi;
->=20
-> -	if (validate_state)
-> -		napi_synchronize(napi);
-> +	if (atomic_read(&rxq->napi_initialized)) {
->=20
-> -	napi_disable(napi);
-> +		if (validate_state)
-> +			napi_synchronize(napi);
->=20
-> -	xdp_rxq_info_unreg(&rxq->xdp_rxq);
-> +		napi_disable(napi);
->=20
-> -	netif_napi_del(napi);
-> +		netif_napi_del(napi);
-> +		atomic_set(&rxq->napi_initialized, 0);
-> +	}
-> +
-> +	xdp_rxq_info_unreg(&rxq->xdp_rxq);
->=20
->  	mana_destroy_wq_obj(apc, GDMA_RQ, rxq->rxobj);
->=20
-> @@ -2199,6 +2207,7 @@ static struct mana_rxq *mana_create_rxq(struct
-> mana_port_context *apc,
->  	rxq->num_rx_buf =3D RX_BUFFERS_PER_QUEUE;
->  	rxq->rxq_idx =3D rxq_idx;
->  	rxq->rxobj =3D INVALID_MANA_HANDLE;
-> +	atomic_set(&rxq->napi_initialized, 0);
->=20
->  	mana_get_rxbuf_cfg(ndev->mtu, &rxq->datasize, &rxq->alloc_size,
->  			   &rxq->headroom);
-> @@ -2286,6 +2295,8 @@ static struct mana_rxq *mana_create_rxq(struct
-> mana_port_context *apc,
->=20
->  	napi_enable(&cq->napi);
->=20
-> +	atomic_set(&rxq->napi_initialized, 1);
-> +
->  	mana_gd_ring_cq(cq->gdma_cq, SET_ARM_BIT);
->  out:
->  	if (!err)
-> @@ -2336,7 +2347,6 @@ static void mana_destroy_vport(struct
-> mana_port_context *apc)
->  		rxq =3D apc->rxqs[rxq_idx];
->  		if (!rxq)
->  			continue;
-> -
->  		mana_destroy_rxq(apc, rxq, true);
+Patch #1 -> #4: make more room on 64BIT in order-1 folios
 
-Also, this line removal is not necessary.
+Patch #5 -> #7: prepare for MM owner tracking of large folios
 
+Patch #8: implement a simple MM owner tracking approach for large folios
+
+patch #9: simple optimization
+
+Patch #10: COW reuse for PTE-mapped anon THP
+
+Patch #11 -> #17: introduce and implement CONFIG_NO_PAGE_MAPCOUNT
+
+
+2) MM owner tracking
+====================
+
+Similar to my advanced approach [2], we assign each MM a unique 20-bit ID
+("MM ID"), to be able to squeeze more information in our folios.
+
+Each large folios can store two MM-ID+mapcount combination:
+* mm0_id + mm0_mapcount
+* mm1_id + mm1_mapcount
+
+Combined with the large mapcount, we can reliably identify whether one
+of these MMs is the current owner (-> owns all mappings) or even holds
+all folio references (-> owns all mappings, and all references are from
+mappings).
+
+Stored MM IDs can only change if the corresponding mapcount is logically
+0, and if the folio is currently "mapped exclusively".
+
+As long as only two MMs map folio pages at a time, we can reliably identify
+whether a large folio is "mapped shared" or "mapped exclusively". The
+approach is precise.
+
+Any MM mapping the folio while two other MMs are already mapping the folio,
+will lead to a "mapped shared" detection even after all other MMs stopped
+mapping the folio and it is actually "mapped exclusively": we can have
+false positives but never false negatives when detecting "mapped shared".
+
+So that's where the approach gets imprecise.
+
+For now, we use a bit-spinlock to sync the large mapcount + MM IDs + MM
+mapcounts, and make sure we do keep the machinery fast, to not degrade
+(un)map performance too much: for example, we make sure to only use a
+single atomic (when grabbing the bit-spinlock), like we would already
+perform when updating the large mapcount.
+
+In the future, we might be able to use an arch_spin_lock(), but that's
+future work.
+
+
+3) CONFIG_NO_PAGE_MAPCOUNT
+==========================
+
+patch #11 -> #17 spell out and document what exactly is affected when
+not maintaining the per-page mapcounts in large folios anymore.
+
+For example, as we cannot maintain folio->_nr_pages_mapped anymore when
+(un)mapping pages, we'll account a complete folio as mapped if a
+single page is mapped.
+
+As another example, we might now under-estimate the USS (Unique Set Size)
+of a process, but never over-estimate it.
+
+With a more elaborate approach for MM-owner tracking like #1, some things
+could be improved (e.g., USS to some degree), but somethings just cannot be
+handled like we used to without these per-page mapcounts (e.g.,
+folio->_nr_pages_mapped).
+
+
+4) Performance
+==============
+
+The following kernel config combinations are possible:
+
+* Base: CONFIG_PAGE_MAPCOUNT
+  -> (existing) page-mapcount tracking
+* MM-ID: CONFIG_MM_ID && CONFIG_PAGE_MAPCOUNT
+  -> page-mapcount + MM-ID tracking
+* No-Mapcount: CONFIG_MM_ID && CONFIG_NO_PAGE_MAPCOUNT
+  -> MM-ID tracking
+
+
+I run my PTE-mapped-THP microbenchmarks [3] and vm-scalability on a machine
+with two NUMA nodes, with a 10-core Intel(R) Xeon(R) Silver 4210R CPU @
+2.40GHz and 16 GiB of memory each.
+
+4.1) PTE-mapped-THP microbenchmarks
+-----------------------------------
+
+All benchmarks allocate 1 GiB of THPs of a given size, to then fork()/
+munmap/... PMD-sized THPs are mapped by PTEs first.
+
+Numbers are increase (+) / reduction (-) in runtime. Reduction (-) is
+good. "Base" is the baseline.
+
+munmap: munmap() the allocated memory.
+
+Folio Size |  MM-ID | No-Mapcount
+--------------------------------
+    16 KiB |   2 % |        -8 %
+    32 KiB |   3 % |        -9 %
+    64 KiB |   4 % |       -16 %
+   128 KiB |   3 % |       -17 %
+   256 KiB |   1 % |       -23 %
+   512 KiB |   1 % |       -26 %
+  1024 KiB |   0 % |       -29 %
+  2048 KiB |   0 % |       -31 %
+
+-> 32-128 with MM-ID are a bit unexpected: we would expect to see the worst
+   case with the smallest size (16 KiB). But for these sizes also the STDEV
+   is between 1% and 2%, in contrast to the others (< 1 %). Maybe some
+   weird interaction with PCP/buddy.
+
+fork: fork()
+
+Folio Size |  MM-ID | No-Mapcount
+--------------------------------
+    16 KiB |    4 % |       -9 %
+    32 KiB |    1 % |      -12 %
+    64 KiB |    0 % |      -15 %
+   128 KiB |    0 % |      -15 %
+   256 KiB |    0 % |      -16 %
+   512 KiB |    0 % |      -16 %
+  1024 KiB |    0 % |      -17 %
+  2048 KiB |   -1 % |      -21 %
+
+-> Slight slowdown with MM-ID for the smallest folio size (more what we
+expect in contrast to munmap()).
+
+cow-byte: fork() and keep the child running. write one byte to each
+  individual page, measuring the duration of all writes.
+
+Folio Size |  MM-ID | No-Mapcount
+--------------------------------
+    16 KiB |    0 % |        0 %
+    32 KiB |    0 % |        0 %
+    64 KiB |    0 % |        0 %
+   128 KiB |    0 % |        0 %
+   256 KiB |    0 % |        0 %
+   512 KiB |    0 % |        0 %
+  1024 KiB |    0 % |        0 %
+  2048 KiB |    0 % |        0 %
+
+-> All other overhead dominates even when effectively unmapping
+   single pages of large folios when replacing them by a copy during write
+   faults. No change, which is great!
+
+reuse-byte: fork() and wait until the child quit. write one byte to each
+  individual page, measuring the duration of all writes.
+
+Folio Size |  MM-ID | No-Mapcount
+--------------------------------
+    16 KiB |  -66 % |      -66 %
+    32 KiB |  -65 % |      -65 %
+    64 KiB |  -64 % |      -64 %
+   128 KiB |  -64 % |      -64 %
+   256 KiB |  -64 % |      -64 %
+   512 KiB |  -64 % |      -64 %
+  1024 KiB |  -64 % |      -64 %
+  2048 KiB |  -64 % |      -64 %
+
+-> No surprise, we reuse all pages instead of copying them.
+
+child-reuse-bye: fork() and unmap the memory in the parent. write one byte
+  to each individual page in the child, measuring the duration of all writes.
+
+Folio Size |  MM-ID | No-Mapcount
+--------------------------------
+    16 KiB |  -66 % |      -66 %
+    32 KiB |  -65 % |      -65 %
+    64 KiB |  -64 % |      -64 %
+   128 KiB |  -64 % |      -64 %
+   256 KiB |  -64 % |      -64 %
+   512 KiB |  -64 % |      -64 %
+  1024 KiB |  -64 % |      -64 %
+  2048 KiB |  -64 % |      -64 %
+
+-> Same thing, we reuse all pages instead of copying them.
+
+
+For 4 KiB, there is no change in any benchmark, as expected.
+
+
+4.2) vm-scalability
+-------------------
+
+For now I only ran anon COW tests. I use 1 GiB per child process and use
+one child per core (-> 20).
+
+case-anon-cow-rand: random writes
+
+There is effectively no change (<0.6% throughput difference).
+
+case-anon-cow-seq: sequential writes
+
+MM-ID has up to 2% *lower* throughout than Base, not really correlating to
+folio size. The difference is almost as large as the STDEV (1% - 2%),
+though. It looks like there is a very slight effective slowdown.
+
+No-Mapcount has up to 3% *higher* throughput than Base, not really
+correlating to the folio size. However, also here the difference is almost
+as large as the STDEV (up to 2%). It looks like there is a very slight
+effective speedup.
+
+In summary, no earth-shattering slowdown with MM-ID (and we just recently
+optimized folio->_nr_pages_mapped to give us some speedup :) ), and
+another nice improvement with No-Mapcount.
+
+
+I did a bunch of cross-compiles and the build bots turned out very helpful
+over the last months. I did quite some testing with LTP and selftests,
+but x86-64 only.
+
+To keep the CC list short, adding only relevant maintainers (CCed on all
+patches, sorry ;) ).
+
+Related things on my long TODO list:
+* Replace the "entire mapcount" by a "pmd mapcount" and a "pud mapcount",
+  to prepare for handling folios > PMD size. Maybe we'll have to keep it for
+  hugetlb, we'll see.
+* Make hugetlb play along, and possibly use the same mapcount scheme. PMD
+  page table sharing doesn't play along and needs some thought. There might
+  be ways, but it's a bit more involved.
+* Make AnonExclusive a per-folio flag. It's complicated.
+
+[1] https://lwn.net/Articles/974223/
+[2] https://lore.kernel.org/linux-mm/a9922f58-8129-4f15-b160-e0ace581bcbe@redhat.com/T/
+[3] https://gitlab.com/davidhildenbrand/scratchspace/-/raw/main/pte-mapped-folio-benchmarks.c
+
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc: Tejun Heo <tj@kernel.org>
+Cc: Zefan Li <lizefan.x@bytedance.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: "Michal Koutný" <mkoutny@suse.com>
+Cc: Jonathan Corbet <corbet@lwn.net> 
+Cc: Andy Lutomirski <luto@kernel.org> 
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+
+David Hildenbrand (17):
+  mm: factor out large folio handling from folio_order() into
+    folio_large_order()
+  mm: factor out large folio handling from folio_nr_pages() into
+    folio_large_nr_pages()
+  mm/rmap: use folio_large_nr_pages() in add/remove functions
+  mm: let _folio_nr_pages overlay memcg_data in first tail page
+  mm/rmap: pass dst_vma to page_try_dup_anon_rmap() and
+    page_dup_file_rmap()
+  mm/rmap: pass vma to __folio_add_rmap()
+  mm/rmap: abstract large mapcount operations for large folios
+    (!hugetlb)
+  mm/rmap: initial MM owner tracking for large folios (!hugetlb)
+  bit_spinlock: __always_inline (un)lock functions
+  mm: COW reuse support for PTE-mapped THP with CONFIG_MM_ID
+  mm: CONFIG_NO_PAGE_MAPCOUNT to prepare for not maintain per-page
+    mapcounts in large folios
+  mm: remove per-page mapcount dependency in
+    folio_likely_mapped_shared() (CONFIG_NO_PAGE_MAPCOUNT)
+  fs/proc/page: remove per-page mapcount dependency for /proc/kpagecount
+    (CONFIG_NO_PAGE_MAPCOUNT)
+  fs/proc/task_mmu: remove per-page mapcount dependency for
+    PM_MMAP_EXCLUSIVE (CONFIG_NO_PAGE_MAPCOUNT)
+  fs/proc/task_mmu: remove per-page mapcount dependency for "mapmax"
+    (CONFIG_NO_PAGE_MAPCOUNT)
+  fs/proc/task_mmu: remove per-page mapcount dependency for
+    smaps/smaps_rollup (CONFIG_NO_PAGE_MAPCOUNT)
+  mm: stop maintaining the per-page mapcount of large folios
+    (CONFIG_NO_PAGE_MAPCOUNT)
+
+ .../admin-guide/cgroup-v1/memory.rst          |   4 +
+ Documentation/admin-guide/cgroup-v2.rst       |  10 +-
+ Documentation/admin-guide/mm/pagemap.rst      |  16 +-
+ Documentation/filesystems/proc.rst            |  28 ++-
+ Documentation/mm/transhuge.rst                |  39 +++-
+ arch/x86/entry/vdso/vdso32/fake_32bit_build.h |   1 +
+ fs/proc/internal.h                            |  33 +++
+ fs/proc/page.c                                |  18 +-
+ fs/proc/task_mmu.c                            |  41 +++-
+ include/linux/bit_spinlock.h                  |   8 +-
+ include/linux/mm.h                            |  60 +++--
+ include/linux/mm_types.h                      |  57 ++++-
+ include/linux/page-flags.h                    |  41 ++++
+ include/linux/rmap.h                          | 213 ++++++++++++++++--
+ kernel/fork.c                                 |  36 +++
+ mm/Kconfig                                    |  31 +++
+ mm/huge_memory.c                              |  16 +-
+ mm/internal.h                                 |  33 ++-
+ mm/memory.c                                   |  97 ++++++--
+ mm/page_alloc.c                               |  18 +-
+ mm/page_owner.c                               |   2 +-
+ mm/rmap.c                                     |  97 ++++++--
+ 22 files changed, 781 insertions(+), 118 deletions(-)
+
+-- 
+2.46.0
 
 
