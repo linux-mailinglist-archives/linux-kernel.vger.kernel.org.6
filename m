@@ -1,186 +1,288 @@
-Return-Path: <linux-kernel+bounces-307534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C16F3964EA4
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 21:18:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D3133964EA8
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 21:20:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 405A71F21E62
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 19:18:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 545391F238AF
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 19:20:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10C291B86ED;
-	Thu, 29 Aug 2024 19:18:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C1691B8E85;
+	Thu, 29 Aug 2024 19:20:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QuMvUGDb"
-Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com [209.85.221.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AsQugL+e"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5C0C1AE846;
-	Thu, 29 Aug 2024 19:18:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABFCE15C120;
+	Thu, 29 Aug 2024 19:20:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724959107; cv=none; b=eOQH5/wMvWyHDx0XdalL3GC4onL7AWU3ViyL1zq3Ny37Nnsql2Bw3V1VNBGcfOsOTX6bV0zy4AMq1Iik10boDgztVChgRlio2PrD0PLJuk2s/sCLZCxk669Ec40yNlat/iyrJfeiK2wLnmDM+FrRAwcpxy9rzwTlVs5QebThO0Y=
+	t=1724959204; cv=none; b=stY3o+zYdyDmJtRwaoIGoBzjZoFJOA7FFMwpb/P4ra0c2gItGNr5v5gwso+vYpfrKV1w88TQSDbd/Qv9PGYwuElWNyVnYvAvryWYVv24gxXS/w0rhYGhGgfE/4qZySc7cmU5b+iG4DYJ+qvUkJxeaeQT8SNAi5c9Qk+bm0h7rJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724959107; c=relaxed/simple;
-	bh=Bfl3X5+OnlYa8Tsu/RDj1/uV8IyVSiTBFiRpVKRHdUY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iPRqwmrDE8saI0lI9QbIMCj53jwKevzi5+BCoNcDKlgikjk1zrMmLrVkhQlCGgoKdacb5+QerODdnYZmCTTDyYUOs/kndZIwxT5KX7T3wkaHuypkoDfXRX7aI38JpIk27KDCaPdy5h6JjzpkroYGsS+G5h9PGyz/RuswJrZDm1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QuMvUGDb; arc=none smtp.client-ip=209.85.221.170
+	s=arc-20240116; t=1724959204; c=relaxed/simple;
+	bh=C2Ywd8aEuPBFjcUmfmPFUWScoJ69+USMtPOY55wndc0=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Mvz3NvPn9r7oouR7FNOVTuqfr5apQrBGiZTrJiZxTKsiqAYjgVncQ0Rx6zl9KAylh5h5xklxCZPbwBFQYuaT6EgtV3fMhKUJLPWoqLDnV7zxMUE2mCVMY3sL3AAWtHtCs63a7n6e43fXHIXI14rD/SvslsP/u7B6SsbkqORq8Rw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AsQugL+e; arc=none smtp.client-ip=209.85.208.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-4fce700765aso316939e0c.2;
-        Thu, 29 Aug 2024 12:18:25 -0700 (PDT)
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2f50966c448so11013011fa.2;
+        Thu, 29 Aug 2024 12:20:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724959104; x=1725563904; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9JkqGVwZ2J/+2kgurqnclJ7nnN7Z9znEYkfxsvyobCA=;
-        b=QuMvUGDbzw6B/gNk6nMwkg/gulgWFBptypY1x7wwgPhe/7zAhP8jkp3sFSUnrR4BYe
-         Rt3Dm1Zne2JXzM1fAWfBaqp6rADgEkhLaIwyQpo/1hKPf3cl6mtgzy1tED4H62L4cP0T
-         pnNtnCZGceXD9BDyNvNQpx3k/HfI3jcJ4TV6BA9rO7cAQdJmcKuZI6nrtNpmw/Kcu+nz
-         XBKIQBHPsfKypF/aF36JybPuNCuwF+kgb5/NtabioYRkqwpLJWa9fIPMDunrwpmi/rOr
-         7rh4Cvha7hh6GHxygQJsVj5coajeFIv/bxNrzAQCCFi9e/8gOaoGIuoRuI8pGSx2iDnS
-         VV/g==
+        d=gmail.com; s=20230601; t=1724959201; x=1725564001; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=XCnS5FSw7TMJ/OXfihwq0KTpadDAzKSgwFWbwVheRb4=;
+        b=AsQugL+ekZhoZXl4EVtG1mGRmnt7RNxzAJho9JQLN51ifPyrxTmGWtKJTbhuUpBiIS
+         LHBglX0dpfpv5PFnZLTJatuNsuHEU5yxq/qLpUB6rXmaoOXi/vIJ/WZdtY1KxwB8Eujd
+         /pOXL/9MhXV370pnRr4G8p1O8WrU1c6Cadc+u46FXfG0QYOBreFGQ2cvTmhRRNY49VkM
+         amQIn2X4PDoqYcW0qllLm6VlkCApt7ahpDJTQF6P/WFsEKs5WqJ/ZeR93piZgXk+xIw1
+         c38PBKGzpg4ysOlTIpInVycX91C9zOf1/S9Juhog8KyZutnaybFDY5WqJp9M/Nz1hl6m
+         YvfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724959104; x=1725563904;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9JkqGVwZ2J/+2kgurqnclJ7nnN7Z9znEYkfxsvyobCA=;
-        b=SllRBlpz9Y69HJm5iXaAPPL92KqHpkhjba8dHzfWKOs7m7sawa3caFtdnq0FqJ7ytX
-         YZxAfp1yjSO9AvyTWKXwF9lTeRVRtrP9BL+owZIqAiLMS0/sbpeBjn2VVa/xgEx/pVTI
-         x/vecFYqVKFEElAXlYgPnDNbd12dfSXmMD7PGZt8MmzgAXEdWOJIlohgXLW04ENd5cnJ
-         gf3r7anxd9WflMXOjiakffee+5pDQlw2Sn/jOvdvusfZGzLyEx1/Kz5QkwuA54ooAr+i
-         7b3flz0JRAZsq2BQwUqFxomnZcQjoS6o/YSM2nc2b38fVMe4zUATddOYcdFyta1qi+xp
-         qV3g==
-X-Forwarded-Encrypted: i=1; AJvYcCVtqTps88uYvyXkpm7jVzJYJL4KY+As/NH4p8c0QmbvU6canlYn4Bj8lG58ZOUknJXejguQqEAcGDNgwY08@vger.kernel.org, AJvYcCWE8raP8IgDX+rJQa6hktLp1i4i1MNFFBIyJVAg10+bju+ujFtbNgjcqgTgopxXpoAfRMBo2+P5T1FpMUhF2ZQ04nk=@vger.kernel.org, AJvYcCXUXd3g7TntjAIDt0OJzm22lxgvfHtZIFA6tv70NNQHSXKrdY3o8g/QsdCpLha1wEpQjY3NeO8OTBtO@vger.kernel.org
-X-Gm-Message-State: AOJu0YxnLiAEjaL6bU/cxhEZ1Vq2dZ0XtP49SLcAFaGkH4hJRKW54RzQ
-	jw8OkhQXt44J3Sg3bd9Y/QUvAkGrqwf1iI0XvthAfo6lkX08fTKX6E6vupPxEgAvqUz01P4lSYx
-	LOv8WHSUgGHhPwZZea31BMv5OC78=
-X-Google-Smtp-Source: AGHT+IHt7UDuSj5pm8LnzOWtjWbPFfnpw2JDNvyyuEtnENLmFrNE/DrgG2NXJBGp5zXDTggsD1Ni9vazMSjN8Xx9Qc8=
-X-Received: by 2002:a05:6122:da8:b0:4f6:ad39:dab1 with SMTP id
- 71dfb90a1353d-4ffe4a7e888mr4435149e0c.5.1724959104344; Thu, 29 Aug 2024
- 12:18:24 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724959201; x=1725564001;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XCnS5FSw7TMJ/OXfihwq0KTpadDAzKSgwFWbwVheRb4=;
+        b=j/okbhusujUrtuZcvVjV5AWh+ddjuyvBirVSV788ibkRpXgXORpXFREl95T6FPyKqu
+         KTiY5SaFk3pzOOyjv/bUvwRx8cpfPbFECr71L2aRGqFwqojRnFvbO6ubgFf89blBfo24
+         Bb4WeH5+Z3FOAIHIch8lXyk1iRNao5n5r8SZPNoNU08cr9Z1xn5KXRUaWlwQ8scYWA7B
+         JF7WiIPdWqmlu0sMYa1NGvD2uYGNpIxE/PJriMvP05PU6OPE3jTn81dIABBmN5YuFh8W
+         Ha+5X/PbAyCL/iVEYO0xnIoEo4oDA6xXT55OAnMLliu1cLiow2/lqNL4Geow15qCihgz
+         Ugqw==
+X-Forwarded-Encrypted: i=1; AJvYcCU6Dl4gxMv6N+3n1kshBLcr3bFkPhVq0JOLuC77SKd4LEFaGS9jKEav2j4XdaVXvtVPlVwXL5KVz2wIbKgX@vger.kernel.org, AJvYcCUxBkBDJxM6fR1FnINPW+dPk3KyisLOw+7bCMHwR8F/00ZggxrGGXpjQ/NeiGcaYe6xMAMIS0Heztmz@vger.kernel.org, AJvYcCWMX9/abxuY/Bdo1Ca+AMLZ4oqxC+ustkyRrctRBdfkOVN/btubyS3CdaYXFN+Vh59in0iaowong8a0@vger.kernel.org
+X-Gm-Message-State: AOJu0YzpwE9sRsgd8pB+tKj/EYmxmVvTax7zk26W4q6rdWePfxsUVU8w
+	UdlIM1rTI/xTPF2gJc3ktz2Hgcf0w7dMztoJ2/doDZ+6YJe4oc2XvPNsZ6xA
+X-Google-Smtp-Source: AGHT+IEuz0kNDOVzjnxAD+FDporBf7yDu94yPDfedBAR9V+NN+eMedrksZ1TjqtxSa77Cknr5xq/hA==
+X-Received: by 2002:a2e:4609:0:b0:2ef:3126:390d with SMTP id 38308e7fff4ca-2f61054aaf9mr26135871fa.42.1724959199831;
+        Thu, 29 Aug 2024 12:19:59 -0700 (PDT)
+Received: from vamoiridPC ([2a04:ee41:82:7577:f22f:934f:9b88:e7ce])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c226c74184sm1046971a12.32.2024.08.29.12.19.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Aug 2024 12:19:59 -0700 (PDT)
+From: Vasileios Amoiridis <vassilisamir@gmail.com>
+X-Google-Original-From: Vasileios Amoiridis <vamoirid@vamoiridPC>
+Date: Thu, 29 Aug 2024 21:19:57 +0200
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Vasileios Amoiridis <vassilisamir@gmail.com>, jic23@kernel.org,
+	lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, ang.iglesiasg@gmail.com,
+	linus.walleij@linaro.org, biju.das.jz@bp.renesas.com,
+	javier.carrasco.cruz@gmail.com, semen.protsenko@linaro.org,
+	579lpy@gmail.com, ak@it-klinger.de, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	christophe.jaillet@wanadoo.fr
+Subject: Re: [PATCH v4 6/7] iio: pressure: bmp280: Add data ready trigger
+ support
+Message-ID: <20240829191957.GE3493@vamoiridPC>
+References: <20240828205128.92145-1-vassilisamir@gmail.com>
+ <20240828205128.92145-7-vassilisamir@gmail.com>
+ <ZtBsQg_JIcY4F-0h@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240827131722.89359-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20240827131722.89359-3-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdVQ-hy7aW-rs5eTLSOULF_GHVV=NHvjCLhPW3XS3Y=+8Q@mail.gmail.com>
-In-Reply-To: <CAMuHMdVQ-hy7aW-rs5eTLSOULF_GHVV=NHvjCLhPW3XS3Y=+8Q@mail.gmail.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Thu, 29 Aug 2024 20:17:54 +0100
-Message-ID: <CA+V-a8tNy8OCg3iBrpRLDJ8Ee-wa7npTGggm_K6-a+aW8DBgUw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] pinctrl: renesas: rzg2l: Move pinconf_to_config_argument()
- call outside of switch cases
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-renesas-soc@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZtBsQg_JIcY4F-0h@smile.fi.intel.com>
 
-Hi Geert,
+On Thu, Aug 29, 2024 at 03:40:34PM +0300, Andy Shevchenko wrote:
+> On Wed, Aug 28, 2024 at 10:51:26PM +0200, Vasileios Amoiridis wrote:
+> > The BMP3xx and BMP5xx sensors have an interrupt pin which can be used as
+> > a trigger for when there are data ready in the sensor for pick up.
+> > 
+> > This use case is used along with NORMAL_MODE in the sensor, which allows
+> > the sensor to do consecutive measurements depending on the ODR rate value.
+> > 
+> > The trigger pin can be configured to be open-drain or push-pull and either
+> > rising or falling edge.
+> > 
+> > No support is added yet for interrupts for FIFO, WATERMARK and out of range
+> > values.
+> 
+> > Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
+> > ---
+> >  drivers/iio/pressure/bmp280-core.c | 231 ++++++++++++++++++++++++++++-
+> >  drivers/iio/pressure/bmp280.h      |  21 +++
+> >  2 files changed, 250 insertions(+), 2 deletions(-)
+> 
+> ...
+> 
+> > +static int __bmp280_trigger_probe(struct iio_dev *indio_dev,
+> > +				  const struct iio_trigger_ops *trigger_ops,
+> > +				  int (*int_config)(struct bmp280_data *data),
+> > +				  irq_handler_t irq_thread_handler)
+> > +{
+> > +	struct bmp280_data *data = iio_priv(indio_dev);
+> 
+> With
+> 
+> 	struct device *dev = data->dev;
+> 
+> you may shorten some lines below and collapse a few.
+> 
 
-Thank you for the review.
+ACK.
 
-On Thu, Aug 29, 2024 at 2:15=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
-k.org> wrote:
->
-> Hi Prabhakar,
->
-> Thanks for your patch!
->
-> On Tue, Aug 27, 2024 at 3:17=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail=
-.com> wrote:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > Refactor the `rzg2l_pinctrl_pinconf_set()` function by moving the call =
-to
-> > `arg =3D pinconf_to_config_argument(_configs[i])` to the beginning of t=
-he
-> > loop. Previously, this call was redundantly made in each case of the
-> > switch statement.
->
-> This is not 100% true: the PIN_CONFIG_BIAS_* cases do not
-> call pinconf_to_config_argument(). But I agree that calling it
-> unconditionally doesn't harm.
->
-Ok, I'll update the commit description to below:
+> > +	struct fwnode_handle *fwnode;
+> > +	int ret, irq, irq_type;
+> 
+> Why irq_type is signed?
+> 
 
-Refactor the `rzg2l_pinctrl_pinconf_set()` function by moving the call to
-`arg =3D pinconf_to_config_argument(_configs[i])` to the beginning of the
-loop. Previously, this call was redundantly made in most cases within the
-switch statement.
+True, this can be made u32.
 
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> > --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-> > +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-> > @@ -1395,7 +1395,6 @@ static int rzg2l_pinctrl_pinconf_set(struct pinct=
-rl_dev *pctldev,
-> >                         break;
-> >
-> >                 case PIN_CONFIG_OUTPUT_ENABLE:
-> > -                       arg =3D pinconf_to_config_argument(_configs[i])=
-;
-> >                         if (!(cfg & PIN_CFG_OEN))
-> >                                 return -EINVAL;
-> >                         if (!pctrl->data->oen_write)
->
-> Missed opportunity for simplification:
->
->                 case PIN_CONFIG_POWER_SOURCE:
-> -                       settings.power_source =3D
-> pinconf_to_config_argument(_configs[i]);
-> +                       settings.power_source =3D arg;
->                         break;
->
-And while at it I'll replace as above and below in the v2.
+> Also try to make that returned variable is closer to the end of the definition
+> block. And it might be worth to follow reversed xmas tree order (longer lines
+> first).
+> 
+> > +	struct irq_data *desc;
+> > +
+> > +	irq = fwnode_irq_get(dev_fwnode(data->dev), 0);
+> > +	if (irq < 0)
+> > +		return dev_err_probe(data->dev, irq, "No interrupt found.\n");
+> > +
+> > +	desc = irq_get_irq_data(irq);
+> > +	irq_type = irqd_get_trigger_type(desc);
+> 
+> So, altogether it may be written as
+> 
+> 	irq_type = irqd_get_trigger_type(irq_get_irq_data(irq));
+> 
+> And looking further, we have a helper for that:
+> irq_get_trigger_type(). Why not use it?
+> 
+
+I was not aware of that, I can definitely change it.
+
+> > +	switch (irq_type) {
+> > +	case IRQF_TRIGGER_RISING:
+> > +		data->trig_active_high = true;
+> > +		break;
+> > +	case IRQF_TRIGGER_FALLING:
+> > +		data->trig_active_high = false;
+> > +		break;
+> > +	default:
+> > +		return dev_err_probe(data->dev, -EINVAL,
+> > +				     "Invalid interrupt type specified.\n");
+> > +	}
+> > +
+> > +	data->trig_open_drain =
+> > +		fwnode_property_read_bool(fwnode, "int-open-drain");
+> > +
+> > +	ret = int_config(data);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	data->trig = devm_iio_trigger_alloc(data->dev, "%s-dev%d",
+> > +					    indio_dev->name,
+> > +					    iio_device_id(indio_dev));
+> > +	if (!data->trig)
+> > +		return -ENOMEM;
+> > +
+> > +	data->trig->ops = trigger_ops;
+> > +	iio_trigger_set_drvdata(data->trig, data);
+> > +
+> > +	ret = devm_request_threaded_irq(data->dev, irq, NULL,
+> > +					irq_thread_handler, IRQF_ONESHOT,
+> > +					indio_dev->name, indio_dev);
+> > +	if (ret)
+> > +		return dev_err_probe(data->dev, ret, "request irq failed.\n");
+> > +
+> > +	ret = devm_iio_trigger_register(data->dev, data->trig);
+> > +	if (ret)
+> > +		return dev_err_probe(data->dev, ret,
+> > +				     "iio trigger register failed.\n");
+> > +
+> > +	indio_dev->trig = iio_trigger_get(data->trig);
+> > +
+> > +	return 0;
+> > +}
+> 
+> ...
+> 
+> > +static int bmp380_int_config(struct bmp280_data *data)
+> > +{
+> > +	int pin_drive_cfg = FIELD_PREP(BMP380_INT_CTRL_OPEN_DRAIN,
+> > +				       data->trig_open_drain);
+> > +	int pin_level_cfg = FIELD_PREP(BMP380_INT_CTRL_LEVEL,
+> > +				       data->trig_active_high);
+> > +	int ret, int_cfg = pin_drive_cfg | pin_level_cfg;
+> > +
+> > +	ret = regmap_update_bits(data->regmap, BMP380_REG_INT_CONTROL,
+> > +				 BMP380_INT_CTRL_SETTINGS_MASK, int_cfg);
+> > +	if (ret) {
+> > +		dev_err(data->dev, "Could not set interrupt settings\n");
+> 
+> > +		return ret;
+> > +	}
+> > +
+> > +	return ret;
+> 
+> One of them is redundant or the last one should be return 0, but why not just
+> leave one of them?
+> 
+
+I can just leave one of them, true!
+
+> > +}
+> 
+> ...
+> 
+> > +static int bmp580_int_config(struct bmp280_data *data)
+> > +{
+> > +	int ret, int_cfg = FIELD_PREP(BMP580_INT_CONFIG_OPEN_DRAIN,
+> > +				      data->trig_open_drain) |
+> > +			   FIELD_PREP(BMP580_INT_CONFIG_LEVEL,
+> > +				      data->trig_active_high);
+> > +
+> > +	ret = regmap_update_bits(data->regmap, BMP580_REG_INT_CONFIG,
+> > +				 BMP580_INT_CONFIG_MASK, int_cfg);
+> > +	if (ret) {
+> > +		dev_err(data->dev, "Could not set interrupt settings\n");
+> > +		return ret;
+> > +	}
+> > +
+> > +	ret = regmap_set_bits(data->regmap, BMP580_REG_INT_SOURCE,
+> > +			      BMP580_INT_SOURCE_DRDY);
+> > +	if (ret) {
+> > +		dev_err(data->dev, "Could not set interrupt source\n");
+> > +		return ret;
+> > +	}
+> > +
+> > +	return 0;
+> 
+> So far you have three different styles in the same patch for this!
+> Choose one and be consistent with it.
+> 
+> > +}
+> 
+> ...
+> 
+> > +	int (*trigger_probe)(struct iio_dev *indio_dev);
+> >  	irqreturn_t (*trigger_handler)(int irq, void *p);
+> 
+> Yeah, at some point this can be changed to
+> 
+> 	irq_handler_t trigger_handler;
+> 
+
+I can definitely try that in a separate patch, thanks for pointing
+all these out!
 
 Cheers,
-Prabhakar
+Vasilis
 
-> > @@ -1432,8 +1429,6 @@ static int rzg2l_pinctrl_pinconf_set(struct pinct=
-rl_dev *pctldev,
-> >                         break;
-> >
-> >                 case PIN_CONFIG_DRIVE_STRENGTH:
-> > -                       arg =3D pinconf_to_config_argument(_configs[i])=
-;
-> > -
-> >                         if (!(cfg & PIN_CFG_IOLH_A) || hwcfg->drive_str=
-ength_ua)
-> >                                 return -EINVAL;
-> >
->
->                 case PIN_CONFIG_DRIVE_STRENGTH_UA:
->                         ...
-> -                       settings.drive_strength_ua =3D
-> pinconf_to_config_argument(_configs[i]);
-> +                       settings.drive_strength_ua =3D arg;
->                         break;
->
-> The rest LGTM.
->
-> Gr{oetje,eeting}s,
->
->                         Geert
->
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
-8k.org
->
-> In personal conversations with technical people, I call myself a hacker. =
-But
-> when I'm talking to journalists I just say "programmer" or something like=
- that.
->                                 -- Linus Torvalds
+> -- 
+> With Best Regards,
+> Andy Shevchenko
+> 
+> 
 
