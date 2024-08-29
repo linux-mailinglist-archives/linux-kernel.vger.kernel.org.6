@@ -1,279 +1,189 @@
-Return-Path: <linux-kernel+bounces-307753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B9AC965269
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 23:54:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52613965272
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 23:55:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC2151F24D71
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 21:54:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7745B1C24754
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 21:55:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 546C01BD00C;
-	Thu, 29 Aug 2024 21:53:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99B6E1BA270;
+	Thu, 29 Aug 2024 21:55:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L+W6o+mP"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pCNwoaNv"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBF6C1BC099
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 21:52:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19D9018A950
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 21:55:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724968382; cv=none; b=iWVG8KVNYouC+arIB8AaMTFrzbLNznDcuBRXTDLAMiJsUkQaSfS6/RneO59qUlSiB8RXRLEhQXDf2yIAvEvq9uPCYOQQ8fissu7EfC2XsGVuHKFTboJ+rf0bo8YE+vdwQw3j54OG14PtHH2qFeL1w2hIx++MdZBw9vmMlWq1ovk=
+	t=1724968505; cv=none; b=r2RnvS8HkylC6H8Br8zig/q/w4hd/znzxGdablyApSwQcpW/TXZQO7Lr8R2DhNfTygqCMHKtfeZ5qWQ7Y2F9SDTK/X8yg3LidHWt0f9avqd9pn0wJCXfw0Cikndwfah5zOjrZevpRyiXzAcxfUPaCkephabh0t0gQbAhT96iVto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724968382; c=relaxed/simple;
-	bh=WsmpqkX3sqNeJt/fB1E9rdpVafKoB2ITTscUB7OlpAs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=vFWAkzEhV5rxRgN+F++NxxPYEe5sax/6+FGfVe+Q5E0aYzq9H6noe83lXL+W86uf7nzAvHLhio0GKYqpVa7+490XLMOmqQedD6THrYQV0E86Q/rfQ08PvLySDBUzUq84pZqkj+peh3K+anoJc1cQtQFyz3g/lkxc0HNlJ7EBXow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L+W6o+mP; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-715e64ea7d1so931322b3a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 14:52:59 -0700 (PDT)
+	s=arc-20240116; t=1724968505; c=relaxed/simple;
+	bh=X2J1Zruavdx6XZtyjF3WfuYLy3+4x0oPlle13EcoFtA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=V+OzvOpvgK0jaPM8z6rFAc6CdjD2L9Sgs3DowZpQ4JaVnTWyGkQDSdWPPGA6KhBS8MuisI+Gs0tZgXbdw9JLQ9yDDyoBeaHFald5bZzhBwl83ygv9vZdRGdkAgZVO5Fb6ZXVIdHVO0Pf8QZOwP+KHtjGVq2Qp0RyjABjEYLe64s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pCNwoaNv; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5bec4fc82b0so3839128a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 14:55:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724968379; x=1725573179; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1724968502; x=1725573302; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=7Lbaah111wuAwM01PbzQxCw0HL6ZCiCPf+qhy2mwy+w=;
-        b=L+W6o+mPn8zpTHI/6YleYmBMXSdEuMXUU31ol9Z9i8jtUQk6dYF9wlxcEmTaWWM5av
-         TwQBAgRjsjndIbUZcO6q+LMNaqGrGkvKoRWTS2DBB60ZOCHeylJhMvVIH2t8phsTPX5G
-         nK0nTshbTNg6D6ygWbWiVlOmn7xrq6+FTz/LHwGrHQSDVHU0po/mvYfqP2DCxkmbuAkJ
-         rG+8F/RbQEce7/PIRMky6lokWsrmALg0H3aI6JHWh0+F5cIX1qVgQNrxDqJ82BZfqttf
-         JPDZVzIj+d6/0wXfmjq8mQlUFUsR2sCfYWk28fLiiKANsrmMWwBnl7K1lwJEdVNHEBwo
-         YD0Q==
+        bh=X2J1Zruavdx6XZtyjF3WfuYLy3+4x0oPlle13EcoFtA=;
+        b=pCNwoaNvvFbEmCawc+MIWpeuoWlwq4VdGmP2ELk36yv4WfFYZ8sTtqqnOkf7n/bdjr
+         LIhhd+YVFPuRIe9T2+eaR7xqwGBwuwuaTrbLlkB7d6iBprZjt2WaNOg9IWAYUWZBzJ/V
+         2NgFAV5QFjUtVLvJbGc0AeBWGd608vFU8IVh/GLntVObnN0oEsxdO89as+cmI3vseTFW
+         Tmy5w+24CAMuECNEcifo8F349rzosQ68fN1ub4qesco3c6mCNfyYAtJ85LYS+YRbfKxh
+         /4jdINgCttUtxgZmE2yu/NNcvwMzDDl4cw+APrqBGVgTu8xH5qyE26IIOMj5JuAD0FUR
+         3Y2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724968379; x=1725573179;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1724968502; x=1725573302;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=7Lbaah111wuAwM01PbzQxCw0HL6ZCiCPf+qhy2mwy+w=;
-        b=s1BWydlI3n9AxpkN5o+uq2LVdnGVSdncstPBjR2yPmhLI7GGk2GfPGQ12l0g5Z6SOs
-         GFKPbKlJOHD9/j1T/BcgMm/b/mW/UgclrfRmDDxz6j/U+nazSCpCJX4ssuW8oV1isli2
-         7Ng/89su2flayzFRk61pA/xKGB4ns8+nb/GEt0KBZwltvZQSRYUBgr+38+QGjdoXrVqa
-         F/if0wP5U5YNPeWljnZcbMg0P88rCau9rTOkGSv3uRNjcms7Wacl7jOMyKcr97iaIf5v
-         yJ6L5qOWhpAU7OdwrgcNjEyWxUD4EIHd9p4wEuQTpAv1HORlLIXp3fRWimuDvKtA2d7R
-         uKHQ==
-X-Gm-Message-State: AOJu0YxLmc9HeJEJD70Shkh2tVIYba9zY7peRz5PA9T+zPDlIr2rWIbm
-	b20S3uqK5bs1SfJ41OSJmKMsB8J3sU8h+IxjbTvIyMGVll4+d9Pto8Bg+g==
-X-Google-Smtp-Source: AGHT+IFLRqSB1/22xDRiHykjWNu41egh2fpOLOTNqn8YYnKw+U7sZvls915pHWBgE73Lrr84BhSk2Q==
-X-Received: by 2002:a05:6a21:1698:b0:1cc:e9bc:2567 with SMTP id adf61e73a8af0-1cce9bc27d9mr2088942637.24.1724968378824;
-        Thu, 29 Aug 2024 14:52:58 -0700 (PDT)
-Received: from daehojeong-desktop.mtv.corp.google.com ([2a00:79e0:2e14:7:a1e7:73eb:e77e:3e2b])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7d22e9d512asm1705653a12.78.2024.08.29.14.52.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 14:52:58 -0700 (PDT)
-From: Daeho Jeong <daeho43@gmail.com>
-To: linux-kernel@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net,
-	kernel-team@android.com
-Cc: Daeho Jeong <daehojeong@google.com>
-Subject: [PATCH 7/7] f2fs: add valid block ratio not to do excessive GC for one time GC
-Date: Thu, 29 Aug 2024 14:52:42 -0700
-Message-ID: <20240829215242.3641502-7-daeho43@gmail.com>
-X-Mailer: git-send-email 2.46.0.469.g59c65b2a67-goog
-In-Reply-To: <20240829215242.3641502-1-daeho43@gmail.com>
-References: <20240829215242.3641502-1-daeho43@gmail.com>
+        bh=X2J1Zruavdx6XZtyjF3WfuYLy3+4x0oPlle13EcoFtA=;
+        b=knHS1I4kByfcTQMigJNshyd18LyP/4V8O4K/OwedTvwa9/1ojwbxaXIMJTDvSaDt7+
+         VJQVTPEdAR0nnXpZmpxTTjkEy7UJCqxUdtOZtprzb9C81bgkk6RR25zi42v6KolpK2m9
+         W59Tvb+uM5BUD9HLMU6dFNoRR/EqAfxyLwLIcyCIgYS3by7hk+Wabyt/3kg1RsU2BPj/
+         jv5ZuBr80vJPkjTobSDgPNk68Ovffv1M4LKY1G4oMXP17afJ+Z0lqRwxJiiUs5E9VLzh
+         JOQPI5hIdT9nV7NYARCbS1TKHUKOtNtC+ZupkOsWPyY76bfdEBs1X/pwEpxUZOT9XcaU
+         Sorw==
+X-Forwarded-Encrypted: i=1; AJvYcCWzDLicbnCOIb5RoSGUv3/4GGN5VWtWokbk4RPO7ljP1BLX0hI3fQdyxMm0vgl7iCpgpQVv9bCMwWV4Mp8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxgv9W7uMg6HrVYJYwFFZ1bZ0cYLBOawW877NnPumRLUh438ouM
+	awmNS2u/W+GK2usRrV2F2X9/adhEtxoCTCrQTVsJ22LqGptVVarPxHWMZBw2SIbYEGoysEWgpaS
+	81c0fDXkphGmIcNF6/Kad1QNOmZLdvtXf3odo
+X-Google-Smtp-Source: AGHT+IH4ZiYY7Gh1I4yhkeVflwkseKNXmSds8HXCeIwpuTOHYtBHBjH+rd6088PWHQ/1mRdQhrMjnIDBUnNE0bVXLxU=
+X-Received: by 2002:a17:906:f5aa:b0:a86:96da:afb with SMTP id
+ a640c23a62f3a-a89a2584293mr20082666b.10.1724968501505; Thu, 29 Aug 2024
+ 14:55:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <BD22A15A-9216-4FA0-82DF-C7BBF8EE642E@gmail.com>
+ <6f65e3a6-5f1a-4fda-b406-17598f4a72d5@leemhuis.info> <ZsiLElTykamcYZ6J@casper.infradead.org>
+ <02D2DA66-4A91-4033-8B98-ED25FC2E0CD6@gmail.com> <CAKEwX=N-10A=C_Cp_m8yxfeTigvmZp1v7TrphcrHuRkHJ8837g@mail.gmail.com>
+ <A512FD59-63DF-48D3-BCB3-83DF8505E7E0@gmail.com> <oophwj3aj2fnfi57ebzjuc536iltilmcpoucyms6nfk2alwvtr@pdj4cn4rvpdn>
+ <3D1B8F1F-2C41-4CCD-A5D7-41CF412F99DE@gmail.com> <CAJD7tkbF2Cx4uRCJAN=EKDLkVC=CApiLAsYt4ZN9YcVUJZp_5g@mail.gmail.com>
+ <EE83D424-A546-410D-B5ED-6E9631746ACF@gmail.com>
+In-Reply-To: <EE83D424-A546-410D-B5ED-6E9631746ACF@gmail.com>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Thu, 29 Aug 2024 14:54:25 -0700
+Message-ID: <CAJD7tkZ01PPYMzcTyX_cwr836jGonJT=fwT3ovc4ixW44keRgg@mail.gmail.com>
+Subject: Re: [regression] oops on heavy compilations ("kernel BUG at
+ mm/zswap.c:1005!" and "Oops: invalid opcode: 0000")
+To: Piotr Oniszczuk <piotr.oniszczuk@gmail.com>
+Cc: Pedro Falcato <pedro.falcato@gmail.com>, Nhat Pham <nphamcs@gmail.com>, 
+	Matthew Wilcox <willy@infradead.org>, 
+	Linux regressions mailing list <regressions@lists.linux.dev>, LKML <linux-kernel@vger.kernel.org>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Linux-MM <linux-mm@kvack.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Daeho Jeong <daehojeong@google.com>
+On Thu, Aug 29, 2024 at 8:51=E2=80=AFAM Piotr Oniszczuk
+<piotr.oniszczuk@gmail.com> wrote:
+>
+>
+>
+> > Wiadomo=C5=9B=C4=87 napisana przez Yosry Ahmed <yosryahmed@google.com> =
+w dniu 27.08.2024, o godz. 20:48:
+> >
+> > On Sun, Aug 25, 2024 at 9:24=E2=80=AFAM Piotr Oniszczuk
+> > <piotr.oniszczuk@gmail.com> wrote:
+> >>
+> >>
+> >>
+> >>> Wiadomo=C5=9B=C4=87 napisana przez Pedro Falcato <pedro.falcato@gmail=
+.com> w dniu 25.08.2024, o godz. 17:05:
+> >>>
+> >>> Also, could you try a memtest86 on your machine, to shake out potenti=
+al hardware problems?
+> >>
+> >>
+> >> I found less time consuming way to trigger issue: 12c24t cross compile=
+ of llvm with =E2=80=9Eonly 16G=E2=80=9D of ram - as this triggers many hea=
+vy swappings (top swap usage gets 8-9G out of 16G swap part)
+> >>
+> >> With such setup - on 6.9.12 - i=E2=80=99m getting not available system=
+ (due cpu soft lockup) just in 1..3h
+> >> (usually first or second compile iteration; i wrote simple scrip compi=
+ling in loop + counting interations)
+> >
+> > Are we sure that the soft lockup problem is related to the originally
+> > reported problem? It seems like in v6.10 you hit a BUG in zswap
+> > (corruption?), and in v6.9 you hit a soft lockup with a zswap lock
+> > showing up in the splat. Not sure how they are relevant.
+>
+> If so then i=E2=80=99m interpreting this as:
+>
+> a\ 2 different bugs
+>
+> or
+>
+> b\ 6.10 issue is result of 6.9 bug
+>
+> In such case i think we may:
+>
+> 1. fix 6.9 first (=3Dget it stable for let say 30h continuous compil.)
+> 2. apply fix to 6.10 then test stability on 6.10
+>
+> >
+> > Is the soft lockup reproducible in v6.10 as well?
+> >
+> > Since you have a narrow window (6.8.2 to 6.9) and a reproducer for the
+> > soft lockup problem, can you try bisecting?
+> >
+> > Thanks!
+>
+>
+>
+> May you pls help me with reducing amount of work here?
+>
+> 1. by narrowing # of bisect iternations?
 
-We need to introduce a valid block ratio threshold not to trigger
-excessive GC for zoned deivces. The initial value of it is 95%. So, F2FS
-will stop the thread from intiating GC for sections having valid blocks
-exceeding the ratio.
+My information about the good (v6.8) and bad (v6.9) versions come from
+your report. I am not sure how I can help narrow down the number of
+bisect iterations. Do you mind elaborating?
 
-Signed-off-by: Daeho Jeong <daehojeong@google.com>
----
- Documentation/ABI/testing/sysfs-fs-f2fs |  8 ++++++++
- fs/f2fs/f2fs.h                          |  2 +-
- fs/f2fs/gc.c                            | 15 +++++++++++----
- fs/f2fs/gc.h                            |  2 ++
- fs/f2fs/segment.c                       |  6 ++++--
- fs/f2fs/segment.h                       |  1 +
- fs/f2fs/sysfs.c                         |  2 ++
- 7 files changed, 29 insertions(+), 7 deletions(-)
+> On my side each iteration is like
+> -build arch pkg
+> -install on builder
+> -compile till first hang (2..3h probably for bad) or 20h (for good)
+> this means days and i=E2=80=99m a bit short with time as all this is my h=
+obby (so competes with all rest of my life...)
+>
+> or
+>
+> 2. Ideally will be to have list of revert 6.9 commit candidates (starting=
+ from most probable falling commit)
+> i=E2=80=99ll revert and test
 
-diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
-index 265baec879fd..2d3e42af0e63 100644
---- a/Documentation/ABI/testing/sysfs-fs-f2fs
-+++ b/Documentation/ABI/testing/sysfs-fs-f2fs
-@@ -783,3 +783,11 @@ Contact:	"Daeho Jeong" <daehojeong@google.com>
- Description:	If the percentage of free sections over total sections is under this
- 		number, F2FS boosts garbage collection for zoned devices through the
- 		background GC thread. the default number is "25".
-+
-+What:		/sys/fs/f2fs/<disk>/gc_valid_thresh_ratio
-+Date:		August 2024
-+Contact:	"Daeho Jeong" <daehojeong@google.com>
-+Description:	It controls the valid block ratio threshold not to trigger excessive GC
-+		for zoned deivces. The initial value of it is 95(%). F2FS will stop the
-+		background GC thread from intiating GC for sections having valid blocks
-+		exceeding the ratio.
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index ee1fafc65e95..8220b3189780 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -3918,7 +3918,7 @@ void f2fs_destroy_garbage_collection_cache(void);
- /* victim selection function for cleaning and SSR */
- int f2fs_get_victim(struct f2fs_sb_info *sbi, unsigned int *result,
- 			int gc_type, int type, char alloc_mode,
--			unsigned long long age);
-+			unsigned long long age, bool one_time);
- 
- /*
-  * recovery.c
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index 6b79c43a57e3..feb80345aca3 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -196,6 +196,7 @@ int f2fs_start_gc_thread(struct f2fs_sb_info *sbi)
- 		return -ENOMEM;
- 
- 	gc_th->urgent_sleep_time = DEF_GC_THREAD_URGENT_SLEEP_TIME;
-+	gc_th->valid_thresh_ratio = DEF_GC_THREAD_VALID_THRESH_RATIO;
- 
- 	if (f2fs_sb_has_blkzoned(sbi)) {
- 		gc_th->min_sleep_time = DEF_GC_THREAD_MIN_SLEEP_TIME_ZONED;
-@@ -396,6 +397,10 @@ static inline unsigned int get_gc_cost(struct f2fs_sb_info *sbi,
- 	if (p->alloc_mode == SSR)
- 		return get_seg_entry(sbi, segno)->ckpt_valid_blocks;
- 
-+	if (p->one_time_gc && (get_valid_blocks(sbi, segno, true) >=
-+		BLKS_PER_SEC(sbi) * sbi->gc_thread->valid_thresh_ratio / 100))
-+		return UINT_MAX;
-+
- 	/* alloc_mode == LFS */
- 	if (p->gc_mode == GC_GREEDY)
- 		return get_valid_blocks(sbi, segno, true);
-@@ -770,7 +775,7 @@ static int f2fs_gc_pinned_control(struct inode *inode, int gc_type,
-  */
- int f2fs_get_victim(struct f2fs_sb_info *sbi, unsigned int *result,
- 			int gc_type, int type, char alloc_mode,
--			unsigned long long age)
-+			unsigned long long age, bool one_time)
- {
- 	struct dirty_seglist_info *dirty_i = DIRTY_I(sbi);
- 	struct sit_info *sm = SIT_I(sbi);
-@@ -787,6 +792,7 @@ int f2fs_get_victim(struct f2fs_sb_info *sbi, unsigned int *result,
- 	p.alloc_mode = alloc_mode;
- 	p.age = age;
- 	p.age_threshold = sbi->am.age_threshold;
-+	p.one_time_gc = one_time;
- 
- retry:
- 	select_policy(sbi, gc_type, type, &p);
-@@ -1698,13 +1704,14 @@ static int gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
- }
- 
- static int __get_victim(struct f2fs_sb_info *sbi, unsigned int *victim,
--			int gc_type)
-+			int gc_type, bool one_time)
- {
- 	struct sit_info *sit_i = SIT_I(sbi);
- 	int ret;
- 
- 	down_write(&sit_i->sentry_lock);
--	ret = f2fs_get_victim(sbi, victim, gc_type, NO_CHECK_TYPE, LFS, 0);
-+	ret = f2fs_get_victim(sbi, victim, gc_type, NO_CHECK_TYPE,
-+			LFS, 0, one_time);
- 	up_write(&sit_i->sentry_lock);
- 	return ret;
- }
-@@ -1908,7 +1915,7 @@ int f2fs_gc(struct f2fs_sb_info *sbi, struct f2fs_gc_control *gc_control)
- 		goto stop;
- 	}
- retry:
--	ret = __get_victim(sbi, &segno, gc_type);
-+	ret = __get_victim(sbi, &segno, gc_type, gc_control->one_time);
- 	if (ret) {
- 		/* allow to search victim from sections has pinned data */
- 		if (ret == -ENODATA && gc_type == FG_GC &&
-diff --git a/fs/f2fs/gc.h b/fs/f2fs/gc.h
-index e8195eb4ca6d..59872daf88ee 100644
---- a/fs/f2fs/gc.h
-+++ b/fs/f2fs/gc.h
-@@ -25,6 +25,7 @@
- #define DEF_GC_THREAD_CANDIDATE_RATIO		20	/* select 20% oldest sections as candidates */
- #define DEF_GC_THREAD_MAX_CANDIDATE_COUNT	10	/* select at most 10 sections as candidates */
- #define DEF_GC_THREAD_AGE_WEIGHT		60	/* age weight */
-+#define DEF_GC_THREAD_VALID_THRESH_RATIO	95	/* do not GC over 95% valid block ratio for one time GC */
- #define DEFAULT_ACCURACY_CLASS			10000	/* accuracy class */
- 
- #define LIMIT_INVALID_BLOCK	40 /* percentage over total user space */
-@@ -65,6 +66,7 @@ struct f2fs_gc_kthread {
- 	/* for gc control for zoned devices */
- 	unsigned int no_zoned_gc_percent;
- 	unsigned int boost_zoned_gc_percent;
-+	unsigned int valid_thresh_ratio;
- };
- 
- struct gc_inode_list {
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 78c3198a6308..26f5abc62461 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -3052,7 +3052,8 @@ static int get_ssr_segment(struct f2fs_sb_info *sbi, int type,
- 	sanity_check_seg_type(sbi, seg_type);
- 
- 	/* f2fs_need_SSR() already forces to do this */
--	if (!f2fs_get_victim(sbi, &segno, BG_GC, seg_type, alloc_mode, age)) {
-+	if (!f2fs_get_victim(sbi, &segno, BG_GC, seg_type,
-+				alloc_mode, age, false)) {
- 		curseg->next_segno = segno;
- 		return 1;
- 	}
-@@ -3079,7 +3080,8 @@ static int get_ssr_segment(struct f2fs_sb_info *sbi, int type,
- 	for (; cnt-- > 0; reversed ? i-- : i++) {
- 		if (i == seg_type)
- 			continue;
--		if (!f2fs_get_victim(sbi, &segno, BG_GC, i, alloc_mode, age)) {
-+		if (!f2fs_get_victim(sbi, &segno, BG_GC, i,
-+					alloc_mode, age, false)) {
- 			curseg->next_segno = segno;
- 			return 1;
- 		}
-diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-index bfc01a521cb9..43db2d3e8c85 100644
---- a/fs/f2fs/segment.h
-+++ b/fs/f2fs/segment.h
-@@ -188,6 +188,7 @@ struct victim_sel_policy {
- 	unsigned int min_segno;		/* segment # having min. cost */
- 	unsigned long long age;		/* mtime of GCed section*/
- 	unsigned long long age_threshold;/* age threshold */
-+	bool one_time_gc;		/* one time GC */
- };
- 
- struct seg_entry {
-diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-index 647f6660f4df..d9d47c0698d1 100644
---- a/fs/f2fs/sysfs.c
-+++ b/fs/f2fs/sysfs.c
-@@ -962,6 +962,7 @@ GC_THREAD_RW_ATTR(gc_max_sleep_time, max_sleep_time);
- GC_THREAD_RW_ATTR(gc_no_gc_sleep_time, no_gc_sleep_time);
- GC_THREAD_RW_ATTR(gc_no_zoned_gc_percent, no_zoned_gc_percent);
- GC_THREAD_RW_ATTR(gc_boost_zoned_gc_percent, boost_zoned_gc_percent);
-+GC_THREAD_RW_ATTR(gc_valid_thresh_ratio, valid_thresh_ratio);
- 
- /* SM_INFO ATTR */
- SM_INFO_RW_ATTR(reclaim_segments, rec_prefree_segments);
-@@ -1121,6 +1122,7 @@ static struct attribute *f2fs_attrs[] = {
- 	ATTR_LIST(gc_no_gc_sleep_time),
- 	ATTR_LIST(gc_no_zoned_gc_percent),
- 	ATTR_LIST(gc_boost_zoned_gc_percent),
-+	ATTR_LIST(gc_valid_thresh_ratio),
- 	ATTR_LIST(gc_idle),
- 	ATTR_LIST(gc_urgent),
- 	ATTR_LIST(reclaim_segments),
--- 
-2.46.0.469.g59c65b2a67-goog
+Looking at the zswap commits between 6.8 and 6.9, ignoring cleanups
+and seemingly irrelevant patches (e.g. swapoff fixups), I think the
+some likely candidates could be the following, but this is not really
+based on any scientific methodology:
 
+44c7c734a5132 mm/zswap: split zswap rb-tree
+c2e2ba770200b mm/zswap: only support zswap_exclusive_loads_enabled
+a230c20e63efe mm/zswap: zswap entry doesn't need refcount anymore
+8409a385a6b41 mm/zswap: improve with alloc_workqueue() call
+0827a1fb143fa mm/zswap: invalidate zswap entry when swap entry free
+
+I also noticed that you are using z3fold as the zpool. Is the problem
+reproducible with zsmalloc? I wouldn't be surprised if there's a
+z3fold bug somewhere.
+
+>
+> i=E2=80=99ll really appreciate help here=E2=80=A6.
+>
 
