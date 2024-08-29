@@ -1,98 +1,110 @@
-Return-Path: <linux-kernel+bounces-306971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54828964644
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:17:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD928964646
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:18:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11F58282DA0
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:17:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67A021F215C1
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:18:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 852D21A76AB;
-	Thu, 29 Aug 2024 13:17:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3123A1A7047;
+	Thu, 29 Aug 2024 13:18:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Qgrwq2c9";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="j//U24tI"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PcF8wSsy"
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F774197556;
-	Thu, 29 Aug 2024 13:17:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 192B118CC16
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 13:18:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724937460; cv=none; b=HZ0gcgiUJCvqV78zB8z+bMhNisgXZMzt7XfXtCQiE3TnMhijIwiAjbzXpb+Huk+E8v7ygGlYKYj5rOy1600wrR12J1h/zlbvDpshciVrXL+yirfYj1hgbJp3g+Bbq25TfgUEjIavaCPLFfr3ly51feccKjVltG+WxlUFCGBCMJE=
+	t=1724937490; cv=none; b=gKwlbsUKw704jP8wborggwGO0o6idpp1dUT00GASj8dYpxWu9NpuN+OFj4b+WTwBFeCdus7t7G+FmdKqa+q6quS1bmNgcSmnS9L31/eo4uuLB5T/huJUc3ZATm3HjXNamGPIPl9ZozlJt5fkL/6+9ef7jxQ7y9btwRDUPKV6NXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724937460; c=relaxed/simple;
-	bh=mJUfGvnKfFlfYGBHRUQNB0hYyo1uxmZU2xj4XUEsfpg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=XBZadvDXqrx2fRvYVCbYlRzPxoJC0P+mOjSizibU7QlCgy8FF4eIqVDTuOdLxD4um309URbaYcfUBM/HICqUTOpPe0KJph0pQLr7Z6BFthWY0H1vPvESXXV1ZfywvV/V/xhsmhEDpxNsZoht/tBenxDr7TGxdHbjdJ+NXKnfAsg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Qgrwq2c9; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=j//U24tI; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1724937457;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=youFcPf87GqwsFGdI3PQ8XPzwTZN5iwwAfKfN2vKR4U=;
-	b=Qgrwq2c9q4LNAMc5RqPXshTZgIHMNDcJJU/4pLIJr8BTNH/Ipw5qRiXSy3mdnAAfwSE+B4
-	BZmC/hZv1Socip+Jx3qfRQrYPGPZbAj3jw1vDIuva20w2sSWXW5KJewV5AnNegq9WvrY4b
-	3O0zDj/i8BjbcgO3Ool3cFNlWqC0dZYVvP1GwlTo1kfB0uCZL9JRu0jLHXIYEEu5VfCjir
-	ourg+oU7ZYgMpN6Cnu4Bx6m/k7CYQTG9ADZDmZPNOj0Jo0HvKkU/gcWLPZTgNwxzvMNyP9
-	/0EtyItUXzVf1aFMEyWOXOXCSsq3Qd2s3wDgze/BGucjUjiuSS+rmo37xsvh0w==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1724937457;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=youFcPf87GqwsFGdI3PQ8XPzwTZN5iwwAfKfN2vKR4U=;
-	b=j//U24tIqkO/Au/Dzblw+G1ghH5gA/RjwnGzD+tFBR3LirNK/M3GMvTroI+YKQXUTXWC7D
-	0pXD/t8kj75YvRAA==
-To: Yangtao Li <frank.li@vivo.com>, rafael@kernel.org
-Cc: Jonathan.Cameron@huawei.com, amitk@kernel.org, anarsoul@gmail.com,
- angelogioacchino.delregno@collabora.com, daniel.lezcano@linaro.org,
- frank.li@vivo.com, jernej.skrabec@gmail.com, krzk@kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-sunxi@lists.linux.dev,
- rui.zhang@intel.com, samuel@sholland.org, tiny.windzz@gmail.com,
- u.kleine-koenig@pengutronix.de, wens@csie.org
-Subject: Re: [PATCH v5 02/22] thermal/drivers/sun8i: convert to use
- devm_request*_irq_probe()
-In-Reply-To: <20240829032145.2851567-1-frank.li@vivo.com>
-References: <CAJZ5v0iB5arngPxxduafyZ+hbxqTRLXm_5iwNoEcQcqVyCdCYw@mail.gmail.com>
- <20240829032145.2851567-1-frank.li@vivo.com>
-Date: Thu, 29 Aug 2024 15:17:37 +0200
-Message-ID: <87ttf3a2oe.ffs@tglx>
+	s=arc-20240116; t=1724937490; c=relaxed/simple;
+	bh=2MmB29rKAnws/xNhn07vrihc2y1nGw1w7I0eW9HsGug=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XA+YfQ6qut+3EwuTIZq8EVVaDt1xQnIG3gziV0FRhCXFDUgC51VjJhVWz05DhAXyc+DX89IWSAZGfCOVX9NSgbukejl0nXJA3Cx33h70au4zto7aFDGAY3r8PXpj+cmlUMzp7FPaA18jNa/LRxFeTL1u+vBbVaFwgVSisqaWpMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PcF8wSsy; arc=none smtp.client-ip=209.85.219.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e13c23dbabdso617852276.3
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 06:18:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724937488; x=1725542288; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=2aU20A/u0/XqGV84fVcWPLj9pv6NSG1S9p41dOwNq+0=;
+        b=PcF8wSsy6MyQMDPJmaqjZe/Pa39niYNCS9QJITC3Fd7n30oC8LTvXdeYH/fYd5AROc
+         0xL7mKnIdCIAGLuqIxwnKMbSY8eoncGFlm6QgSy50yasMF7kQgNHSahR7kfRlX0xD7Ww
+         ZdX4wUSRUfDcuTGDoPvO53dWC2xsEScaYc/4tbkUFjPofSAj4XE3Mf3PY8hdkWMGF/U6
+         e7fxqihfUv8JiOw+fw2MBnskELUjQqoFaXOHENODcO9DtSbUmMKEA282Xq2BrY6th0A2
+         Oi//lLc37IqroMCPiWmF0s6b73DDrzF4TXWVd4YyO5DcPxBwcb4y0CkjsZPJSTdsAgXn
+         3GeA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724937488; x=1725542288;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2aU20A/u0/XqGV84fVcWPLj9pv6NSG1S9p41dOwNq+0=;
+        b=v7c6B3JSPkhiBcOlG7Bjbkja2VQkouR5gHeSap77x5ryzA331TYR5IrxDkdCMQdRZW
+         onT7c42wMUTZm7XsiBnYhuL1gttnbttXE1B7fFBfc5WIpawZLnD2Qd3lHtpWE+Qt/yMJ
+         PbPL0VlmZ7zG0jnOTsmqDQBg0oubYyrLNzD4VJssDdyZNCm1my2CoUoaURzdz5SOhwn/
+         lPu5GigPR6ctgkxLr8oZ7QXsZtLeu4bnV63Cbn8GDyY9NZuuwD8zRGmUZKEPL7A9cfmg
+         DH0N9p2xksWCviJCm87ntXBEm3YUD24RJul5iIxXw2usFhicbcMqHMX7NNFOBtwixHhK
+         6T4A==
+X-Gm-Message-State: AOJu0YyEf4dWjmhG7hoHETEDPxKCpiqkntJEYUfXj4vckmQXHGuLNZPB
+	FZhDX2mIrjsdGPgtU7a+9UK6IpsX/y2JhOx4GkGV5nNSjucA0jOO
+X-Google-Smtp-Source: AGHT+IG++QYfkH8TebRveL61VPS95T5xn3u95IDwNWUjukvfa5j03w/Yi+1m9KwL1YwY0GoCQ8d+5Q==
+X-Received: by 2002:a05:6902:2504:b0:e0b:e1da:e711 with SMTP id 3f1490d57ef6-e1a5af0b737mr2669350276.40.1724937487874;
+        Thu, 29 Aug 2024 06:18:07 -0700 (PDT)
+Received: from localhost (c-71-203-131-184.hsd1.fl.comcast.net. [71.203.131.184])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e1a626e58e5sm231749276.40.2024.08.29.06.18.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Aug 2024 06:18:07 -0700 (PDT)
+Date: Thu, 29 Aug 2024 06:18:06 -0700
+From: Yury Norov <yury.norov@gmail.com>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: linux-kernel@vger.kernel.org, Chen Yu <yu.c.chen@intel.com>,
+	Leonardo Bras <leobras@redhat.com>, Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>
+Subject: Re: [PATCH v2 0/2] sched/topology: optimize topology_span_sane()
+Message-ID: <ZtB1Di1ysJjSZgTc@yury-ThinkPad>
+References: <20240807190522.432388-1-yury.norov@gmail.com>
+ <ZrzcozFadC5xQdUq@yury-ThinkPad>
+ <Zs8vmpwY2Dt9s0Ei@yury-ThinkPad>
+ <97643a07-bc9d-41d5-8e3c-e251f510129b@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <97643a07-bc9d-41d5-8e3c-e251f510129b@wanadoo.fr>
 
-On Wed, Aug 28 2024 at 21:21, Yangtao Li wrote:
->> It is not clear to me what the purpose of sending these patches is.
->> 
->> Because the devm_request_threaded_irq_probe() definition is not there 
->> in the current -rc kernels AFAICS, it looks like they are sent in 
->> order to collect tags from people.  If so, there should be a cover 
->> letter making that clear.
->> 
->> As it stands, it is also unclear how you want them to be merged.
->> 
->> Moreover, sending the series without patch [01/22] to linux-pm has not 
->> been helpful.
->
-> Could you please merge the entire series into the pm branch? 
-> Also, do I need to send a new version?
+On Thu, Aug 29, 2024 at 08:11:41AM +0200, Christophe JAILLET wrote:
+> Le 28/08/2024 à 16:09, Yury Norov a écrit :
+> > Ping again?
+> > 
+> 
+> Hi,
+> 
+> The covert letter is v2, but the patch below it are without v2.
+> 
+> In patch 1/2, the Suggested-by: tags in v1 have been removed in this new
+> version :(.
 
-There are review comments in this thread which you have to address, no?
-
-Thanks,
-
-        tglx
+My bad. I'll send v3.
 
