@@ -1,176 +1,153 @@
-Return-Path: <linux-kernel+bounces-306205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A512963B1D
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:16:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31527963B21
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:18:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D7DC1C21DAB
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 06:16:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A0B32B20F99
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 06:18:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B3A714AD22;
-	Thu, 29 Aug 2024 06:16:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9F9514C59C;
+	Thu, 29 Aug 2024 06:17:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="ak6SdMF1"
-Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="L3Z4eUpr"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B08E4963C
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 06:16:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66AE345014;
+	Thu, 29 Aug 2024 06:17:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724912180; cv=none; b=o4OnCRP+F6w+ILvSO9fztx9Ou4uipvy/brevHz3h6cpLqG+kwO+gewJJZ+R4ta1nBpqnzeqGCP416BxVpLkRr/RLxhznJ1cEeY3WjUOy+k1im+5jdNVVhDe3zEMPMaswuUpwXQrM3Mz/5XChNW1/CgStVugux0E161ZTkCIhwRc=
+	t=1724912277; cv=none; b=YHH/qsDtkoRROwbVjToCaNblCJ8ljjhQkiwXTolBVzAghc3zRPiBCCMVscliUb/G/oSrmueNemEkvOXGNdaE//KQMgHhe2PacDXh816hmgPXaG9GkDkksD8N2LP/BO17vM018ABdke/+4R/fqBDTIq5q2Tm7RIy8YxtLp+f4DXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724912180; c=relaxed/simple;
-	bh=TD/d27Q2fNPvJ6OBiRM0NjLejuEOHNoymox6NIv2/N8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ctBzIP1UCMCewdZ7jx9u3bDCJ3BUvn/JU3ysHOn777HSeD8GDAdFJGLNfSiJ0WWE4mFVYmrH+pQew8nFWcs/ipuoamPokko9qElgstc52PWSMVKCVYSbx7MXfs9CFewMKUnynx/bJAkuB/A/MkE4qQlPCVLMACYi+sJnnbWu22Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=ak6SdMF1; arc=none smtp.client-ip=209.85.167.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-oi1-f179.google.com with SMTP id 5614622812f47-3df02c407c4so173685b6e.1
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 23:16:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1724912178; x=1725516978; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9y4ddcKIVUQCa1/ea3XcOqcG2GLAb+NeoR2FFMnflVY=;
-        b=ak6SdMF1oo2wvYIyEJTeje80H9Ld5YHkAzrKiHZthDpdEhjX7RaBsekhBf22SqPRsA
-         nxR12KOBlXOyUQL6KvXiMNApBg2FZcRegmEFPlbK24FSlr2Ve8h81E1x86/6M522YKm/
-         f0KVMXXKM5qQ5NX6lUHpNPLqcP0IBDnQtatqZcv2ezPpC+/uA8AFFTXFBHuL0EOqfW3i
-         mBjfFN9Fh4Z4FUh0AVtv3fXCJ5XbU2RvPjv99yYJI9FGbEkXDEQcXo57k0NYKJjBynMc
-         lSe9OXNuZRvHElBwLBHzIX+9qr2OKHutj/36ux9ZkIYpGn3KRacWy+VooVdLivpvtnuZ
-         Kdcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724912178; x=1725516978;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9y4ddcKIVUQCa1/ea3XcOqcG2GLAb+NeoR2FFMnflVY=;
-        b=WmwBNrIC16l3XfiSHmzpfrTEcdAXqhJ5emSvCW0j5Jk4GtV/tqNClroFmaMCCJ1Vox
-         l/D1hvkQSaoyK8MjKs/TzQlf1DfDSH5MQ/u5Xst3/P+IgUIJKsnt9aW/MrGgDaBTpCHW
-         NjLg7CcLwBY0b8HYMgDEZGC5DFOXewMXFsDW9oxbkyfndSawDTPEV5oQDNIjQ2JHu/6x
-         zqK6tthS5ZlonG82bs93tR6I1sfurISbithgzsX5HY2zE0N4ROxmNICWI93+eerVbTiT
-         Y/+ufniwsbqayHFzXPWwo+VverM47j+Lvvi9KkZQnBM/kbVJfYA19aWcxuIGJvA+MI5K
-         Atjg==
-X-Forwarded-Encrypted: i=1; AJvYcCX8TfzUCCExMkkVcBKWiEhSfr5pFJgOBgYZwLvUKtL/G/aFfW8WyFNh7uhwEgeES4LU1ss7tIswJxSw+38=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yww1FQwNH44USQUGaKMGDO+jz4lyM0WeR3z0uh0XYjdr67omUzu
-	Shq+GHxmZ6Df1hDqUB5YMkZFnOlVIjSYkHOgQpM9jn9/uAmh/HKB8ONCCzSHdA/x8FXUjW87KJv
-	mrzGGQwLqXYMhpMLXKy/5RUDx2mRZAgr5HmKHag==
-X-Google-Smtp-Source: AGHT+IEE4wRUW1rNC4WHXpmToVacLhp7JtdVm9GWj68DauHvAo1uUeyA1+SsT9HZgMVr7s8RUG+CLOtF61Epupbl4tY=
-X-Received: by 2002:a05:6808:1241:b0:3de:218f:b60 with SMTP id
- 5614622812f47-3df05c480afmr1690639b6e.17.1724912177961; Wed, 28 Aug 2024
- 23:16:17 -0700 (PDT)
+	s=arc-20240116; t=1724912277; c=relaxed/simple;
+	bh=6RzSrv3nyFuhiKzG5BP3qCVTA/Grb69zizAwthqsJEs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=CAePkcoDyIjAc4Go8/3uI36QtmpZkeTpzKnWHukekOl57me/6bzLmWTa1DSAzDdJvvfmixT4unV/ayKvu68HvYXqymwsahDpzsl75U7G6EcN7iLZhaFpWCT6fkmN41SYv1DN1g++nsMpzKAHUT6u6y/BMOxvx59FMvSl+HT54dU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=L3Z4eUpr; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47T6HV1q054780;
+	Thu, 29 Aug 2024 01:17:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1724912251;
+	bh=fnhuBR25tOtm6jBNJ0bOgimcMKg7qyAIojAku3kruEc=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=L3Z4eUprXD7YUdSkcNFy8hxBfzjN8NrY3Q1WgAWllUfzCMM9638lihZyWduviwW77
+	 046oaK3cPf3Cr1AKUQTK3sn/3+yzMC4i71mrXtbxeCnEm4WB+PRESR/NTWZKEfbOzX
+	 sGROUxxO4C6Din3SBKlVCwiZ9ICqD8g8f9FWDuus=
+Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47T6HVnO052987
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 29 Aug 2024 01:17:31 -0500
+Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 29
+ Aug 2024 01:17:31 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 29 Aug 2024 01:17:31 -0500
+Received: from [172.24.227.151] (uda0510294.dhcp.ti.com [172.24.227.151])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47T6HQa9007117;
+	Thu, 29 Aug 2024 01:17:27 -0500
+Message-ID: <99c874f1-3d85-43b2-a3a0-40e1e0c25696@ti.com>
+Date: Thu, 29 Aug 2024 11:47:25 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240829033904.477200-1-nick.hu@sifive.com> <20240829033904.477200-2-nick.hu@sifive.com>
- <CAK9=C2XSrxXGB-PKKi0sLQq7L1Ovucb73Bc9tOnxwWTxux_D7g@mail.gmail.com>
-In-Reply-To: <CAK9=C2XSrxXGB-PKKi0sLQq7L1Ovucb73Bc9tOnxwWTxux_D7g@mail.gmail.com>
-From: Nick Hu <nick.hu@sifive.com>
-Date: Thu, 29 Aug 2024 14:16:07 +0800
-Message-ID: <CAKddAkBwL+n7fK6ugCpNeCv3dryaPJTS1qAM9E6VHb1QkSKd=g@mail.gmail.com>
-Subject: Re: [PATCH 1/2] riscv: Add stimecmp save and restore
-To: Anup Patel <apatel@ventanamicro.com>
-Cc: greentime.hu@sifive.com, zong.li@sifive.com, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@ucw.cz>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Andrew Jones <ajones@ventanamicro.com>, 
-	Conor Dooley <conor.dooley@microchip.com>, Samuel Holland <samuel.holland@sifive.com>, 
-	Sunil V L <sunilvl@ventanamicro.com>, linux-pm@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] remoteproc: Use iommu_paging_domain_alloc()
+To: Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Lu Baolu
+	<baolu.lu@linux.intel.com>, <andersson@kernel.org>,
+        <afd@ti.com>, <nm@ti.com>, <hnagalla@ti.com>
+CC: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+        Robin
+ Murphy <robin.murphy@arm.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Kevin Tian
+	<kevin.tian@intel.com>, <linux-remoteproc@vger.kernel.org>,
+        <iommu@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+        Jason Gunthorpe
+	<jgg@nvidia.com>
+References: <20240812072811.9737-1-baolu.lu@linux.intel.com>
+ <ZsdktJEqR9BOgivK@p14s>
+Content-Language: en-US
+From: Beleswar Prasad Padhi <b-padhi@ti.com>
+In-Reply-To: <ZsdktJEqR9BOgivK@p14s>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Hi Anup,
+Hi All,
 
-On Thu, Aug 29, 2024 at 1:18=E2=80=AFPM Anup Patel <apatel@ventanamicro.com=
-> wrote:
+On 22/08/24 21:47, Mathieu Poirier wrote:
+> Hi Baolu,
 >
-> On Thu, Aug 29, 2024 at 9:09=E2=80=AFAM Nick Hu <nick.hu@sifive.com> wrot=
-e:
-> >
-> > If the HW support the SSTC extension, we should save and restore the
-> > stimecmp register while cpu non retention suspend.
-> >
-> > Signed-off-by: Nick Hu <nick.hu@sifive.com>
+> Sorry for the late reply, this slipped through the cracks.
+>
+> On Mon, Aug 12, 2024 at 03:28:11PM +0800, Lu Baolu wrote:
+> > An iommu domain is allocated in rproc_enable_iommu() and is attached to
+> > rproc->dev.parent in the same function.
+> > 
+> > Use iommu_paging_domain_alloc() to make it explicit.
+> > 
+> > Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+> > Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+> > Link: https://lore.kernel.org/r/20240610085555.88197-13-baolu.lu@linux.intel.com
 > > ---
-> >  arch/riscv/include/asm/suspend.h |  4 ++++
-> >  arch/riscv/kernel/suspend.c      | 13 +++++++++++++
-> >  2 files changed, 17 insertions(+)
-> >
-> > diff --git a/arch/riscv/include/asm/suspend.h b/arch/riscv/include/asm/=
-suspend.h
-> > index 4ffb022b097f..ffaac2efabb5 100644
-> > --- a/arch/riscv/include/asm/suspend.h
-> > +++ b/arch/riscv/include/asm/suspend.h
-> > @@ -16,6 +16,10 @@ struct suspend_context {
-> >         unsigned long envcfg;
-> >         unsigned long tvec;
-> >         unsigned long ie;
-> > +#if __riscv_xlen < 64
-> > +       unsigned long stimecmph;
-> > +#endif
-> > +       unsigned long stimecmp;
-> >  #ifdef CONFIG_MMU
-> >         unsigned long satp;
-> >  #endif
-> > diff --git a/arch/riscv/kernel/suspend.c b/arch/riscv/kernel/suspend.c
-> > index c8cec0cc5833..3afd86e1abf7 100644
-> > --- a/arch/riscv/kernel/suspend.c
-> > +++ b/arch/riscv/kernel/suspend.c
-> > @@ -19,6 +19,12 @@ void suspend_save_csrs(struct suspend_context *conte=
-xt)
-> >         context->tvec =3D csr_read(CSR_TVEC);
-> >         context->ie =3D csr_read(CSR_IE);
-> >
-> > +       if (riscv_has_extension_unlikely(RISCV_ISA_EXT_SSTC)) {
-> > +               context->stimecmp =3D csr_read(CSR_STIMECMP);
-> > +#if __riscv_xlen < 64
-> > +               context->stimecmph =3D csr_read(CSR_STIMECMPH);
-> > +#endif
-> > +       }
+> >  drivers/remoteproc/remoteproc_core.c | 6 +++---
+> >  1 file changed, 3 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> > index f276956f2c5c..eb66f78ec8b7 100644
+> > --- a/drivers/remoteproc/remoteproc_core.c
+> > +++ b/drivers/remoteproc/remoteproc_core.c
+> > @@ -109,10 +109,10 @@ static int rproc_enable_iommu(struct rproc *rproc)
+> >  		return 0;
+> >  	}
+> >  
+> > -	domain = iommu_domain_alloc(dev->bus);
+> > -	if (!domain) {
+> > +	domain = iommu_paging_domain_alloc(dev);
 >
-> The suspend save/restore is enabled for the NoMMU kernel as well
-> (which runs in M-mode) so it is better to save/restore stimecmp CSR
-> only for MMU enabled kernels (just like satp CSR).
+> I'm a little hesitant here.  Function iommu_domain_alloc() passes NULL two the
+> second argument of __iommu_domain_alloc() while iommu_paging_domain_alloc()
+> provides a 'dev'.  I don't have any HW to test on and I am not familiar enough
+> with the IOMMU subsystem to confidently more forward.
 >
-Good point. Will update that in the next version.
-Thanks for the feedback.
+> I am asking the Qualcomm (Bjorn and friends) and TI crew (Beleswar, Andrew,
+> Nishanth and Hari) to test this patch on their IOMMU devices and get back to me
+> with a "Tested-by".
 
-> >         /*
-> >          * No need to save/restore IP CSR (i.e. MIP or SIP) because:
-> >          *
-> > @@ -42,6 +48,13 @@ void suspend_restore_csrs(struct suspend_context *co=
-ntext)
-> >         csr_write(CSR_TVEC, context->tvec);
-> >         csr_write(CSR_IE, context->ie);
-> >
-> > +       if (riscv_has_extension_unlikely(RISCV_ISA_EXT_SSTC)) {
-> > +               csr_write(CSR_STIMECMP, context->stimecmp);
-> > +#if __riscv_xlen < 64
-> > +               csr_write(CSR_STIMECMPH, context->stimecmph);
-> > +#endif
-> > +       }
-> > +
-> >  #ifdef CONFIG_MMU
-> >         csr_write(CSR_SATP, context->satp);
-> >  #endif
-> > --
+
+Just a heads-up. Currently, I am seeing boot failures while booting 
+remotecores in TI's IOMMU devices with mainline kernel. Working on the 
+the fix, once it is done, will apply the above patch and test it ASAP.
+
+Thanks,
+Beleswar
+
+>
+> Thanks,
+> Mathieu
+>
+> > +	if (IS_ERR(domain)) {
+> >  		dev_err(dev, "can't alloc iommu domain\n");
+> > -		return -ENOMEM;
+> > +		return PTR_ERR(domain);
+> >  	}
+> >  
+> >  	iommu_set_fault_handler(domain, rproc_iommu_fault, rproc);
+> > -- 
 > > 2.34.1
-> >
-> >
+> > 
 >
-> Regards,
-> Anup
-
-Regards,
-Nick
 
