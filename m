@@ -1,152 +1,119 @@
-Return-Path: <linux-kernel+bounces-307080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F02296479C
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:08:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24BAC9647A2
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:10:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92B631C24C88
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 14:08:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDD6C1F23789
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 14:10:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 228751AC44F;
-	Thu, 29 Aug 2024 14:07:58 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 061F542A96;
-	Thu, 29 Aug 2024 14:07:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D1E61AD9E0;
+	Thu, 29 Aug 2024 14:10:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="WI+Z8a48"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BBAD18E750;
+	Thu, 29 Aug 2024 14:10:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724940477; cv=none; b=l80I3blWofJbaGc9N/Vkp/ArHd/m844YS1hruAI3TrGA5QaWInh3nH1InkYL45ABjtCpZzFrtWZos4mLwShNkFytFtxYtvd3tjwpnYxYbKnBRX+t59EoVrvugnSOhAcJucYGxXNQoWwr94kltINXt83vuxyHDbrWRiGnu+4qpK0=
+	t=1724940610; cv=none; b=J5BsxnuArn3KOIICDVQJeshgkFxj6snTGsojLw3ZU8X+ijhzYMfniDo1DFI7HVcl0ErSIAB1V3BmAiOb1/3fCwQRTZFjjpq0lDkTJcNxkbRPYo4j+QtkovbubfZLzvtTOunwj9EgOoBgv5DyZDxRrSqt87dPS9GHrTarFozrA6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724940477; c=relaxed/simple;
-	bh=N6jQY7dJIu7Wj1NSW9NfuGVgak4WVqzj8Hx2bsm+JK4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Rn4rxaZdbhdXWhDTH2c/4Q+hYmtwjqqvKxpTSTR4A614A4cx/zmicGrSNSdcVXbkXItU4erMUmeHR5hM8tpOwmiyEx7jKbOzSdjNsGB6sQnoMW17Ja3O8M4uQsiby+0eoZRANzYnypYy8EbRe+r19A8G9a8lNd7rh9aJGRW5kfc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 97650DA7;
-	Thu, 29 Aug 2024 07:08:20 -0700 (PDT)
-Received: from [10.1.196.72] (e119884-lin.cambridge.arm.com [10.1.196.72])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 72DE93F66E;
-	Thu, 29 Aug 2024 07:07:52 -0700 (PDT)
-Message-ID: <632b8da1-c165-4d17-804f-4edf1438d55a@arm.com>
-Date: Thu, 29 Aug 2024 15:07:50 +0100
+	s=arc-20240116; t=1724940610; c=relaxed/simple;
+	bh=qTwOLDyuIJZS5WYFmgDfv4KEXGvXw9UoAMyimnM+OxA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qPsOiYosZx3yzuuT/9UeLIkRgzI/rzdFFGKtoo8Hp3n0hsccirz3nsHMneH3aawuk5y5sMky0S9RFxV9Jhk4nFMPQQeeXdK1ENo7mCjSElcFLIVM6wMueBhEkcfAN9ovLpMsJs+CU78DamIWCVw2VRLyg35TLt12PbrBFC6oCoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=WI+Z8a48; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id C69EA40003;
+	Thu, 29 Aug 2024 14:10:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1724940605;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=u9iP8bCRJqK47kKnLBPXwytzrpV7PSNInp4gC39oES4=;
+	b=WI+Z8a48GHLNMFT578dHsj4QyDLRExsKUPQ0TLHA88ybm6R1hCzAbfVmFQIgGU/6+QQbsX
+	3/sZAA+/5d99NWipDtt1/z5DVbTuY1wKqgpLOp/tOdqpqSdHIQjSyjp5aPwVFO+di9F7/3
+	XROqjXnbN61hjhIQGYPGlSvEqfTUOyXmVTmuYy3j177iPLiPq2dpSzxL7T7X5hm8uR4xgw
+	oq+us58dKDlVcEGHCXdlLWWbzKQKB6hHFBwxrrm02m5lTHTBOJ0LNJG9bobClegUNwYvPg
+	eJjXUZalKMzEaz8TJp/jEIILgeyIvZHRFjaBj4uiexGxa50xV0BGWWHtjLGD/Q==
+Date: Thu, 29 Aug 2024 16:10:03 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Dharma Balasubiramani <dharma.b@microchip.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: clock: Add SAMA7D65 PMC compatible string
+Message-ID: <20240829141003278e9ec2@mail.local>
+References: <20240829-sama7d65-next-v1-1-53d4e50b550d@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] random: vDSO: Redefine PAGE_SIZE and PAGE_MASK
-To: LEROY Christophe <christophe.leroy2@cs-soprasteria.com>,
- Arnd Bergmann <arnd@arndb.de>, "Jason A . Donenfeld" <Jason@zx2c4.com>
-Cc: Theodore Ts'o <tytso@mit.edu>, Andy Lutomirski <luto@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- "x86@kernel.org" <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
- Linux-Arch <linux-arch@vger.kernel.org>
-References: <b8f8fb6d1d10386c74f2d8826b737a74c60b76b2.1724743492.git.christophe.leroy@csgroup.eu>
- <defab86b7fb897c88a05a33b62ccf38467dda884.1724747058.git.christophe.leroy@csgroup.eu>
- <Zs2RCfMgfNu_2vos@zx2c4.com>
- <cb66b582-ba63-4a5a-9df8-b07288f1f66d@app.fastmail.com>
- <0f9255f1-5860-408c-8eaa-ccb4dd3747fa@csgroup.eu>
- <17437f43-9d1f-4263-888e-573a355cb0b5@arm.com>
- <85efc7c5-40c8-4c89-b65f-dd13536fb8c7@cs-soprasteria.com>
-Content-Language: en-US
-From: Vincenzo Frascino <vincenzo.frascino@arm.com>
-In-Reply-To: <85efc7c5-40c8-4c89-b65f-dd13536fb8c7@cs-soprasteria.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240829-sama7d65-next-v1-1-53d4e50b550d@microchip.com>
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-Hi Christophe,
+On 29/08/2024 15:08:45+0530, Dharma Balasubiramani wrote:
+> Add the `microchip,sama7d65-pmc` compatible string to the existing binding,
+> since the SAMA7D65 PMC shares the same properties and clock requirements
+> as the SAMA7G5.
 
-On 27/08/2024 18:38, LEROY Christophe wrote:
-> Hi Vicenzo,
-> 
-> Le 27/08/2024 à 18:05, Vincenzo Frascino a écrit :
->> Hi Christophe,
->>
->> On 27/08/2024 11:49, Christophe Leroy wrote:
->>
->> ...
->>
->>
->>
->> I agree with Arnd here. uapi/linux/mman.h can cause us problems in the long run.
->>
->> I am attaching a patch to provide my view on how to minimize the headers
->> included and use only the vdso/ namespace. Please, before using the code,
->> consider that I conducted very limited testing.
->>
->> Note: It should apply clean on Jason's tree.
->>
->> Let me know your thoughts.
->>
-> 
-> Your patch looks nice, maybe a bit too much. For instance getrandom.c 
-> can include directly asm/vdso/page.h instead of creating vdso/page.h
-> 
-> Or create a vdso/page.h that only use CONFIG_PAGE_SHIFT and doesn't 
-> include anything from architectures.
-> 
+Shouldn't you rather use a fallback if you currently have no driver
+change?
 
-IMHO there should be only one place per architecture where PAGE_SIZE and
-PAGE_MASK are defined. This makes sure that if there is a problem, we do not
-have multiple places to look into.
-
-The indirection helps to keep consistent the namespace and allows for future
-extension. Similar logic has been used during my original vDSO headers
-definition and implementation.
-
-> We should also keep PROT_READ and PROT_WRITE in getrandom.c , that's 
-> better for readability. Same for MAP_DROPPABLE | MAP_ANONYMOUS. I can't 
-> see the benefit of hiding them in a header.
 > 
-
-The idea is not to make the code unreadable but to defer to the architecture the
-decision of prot and flags avoiding the inclusion of headers coming from the
-uapi namespace.
-
-> I can't see which header provides you with min_t() or ARRAY_SIZE().
+> Signed-off-by: Dharma Balasubiramani <dharma.b@microchip.com>
+> ---
+>  Documentation/devicetree/bindings/clock/atmel,at91rm9200-pmc.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
-
-Good point, this needs to be addressed by my patch, I will extend it, do some
-more testing and post it again next week.
-
-> I think you should also work on removing headers included by 
-> arch/x86/include/asm/vdso/gettimeofday.h which is included by 
-> include/vdso/datapage.h :
+> diff --git a/Documentation/devicetree/bindings/clock/atmel,at91rm9200-pmc.yaml b/Documentation/devicetree/bindings/clock/atmel,at91rm9200-pmc.yaml
+> index c9eb60776b4d..885d47dd5724 100644
+> --- a/Documentation/devicetree/bindings/clock/atmel,at91rm9200-pmc.yaml
+> +++ b/Documentation/devicetree/bindings/clock/atmel,at91rm9200-pmc.yaml
+> @@ -43,6 +43,7 @@ properties:
+>                - atmel,sama5d4-pmc
+>                - microchip,sam9x60-pmc
+>                - microchip,sam9x7-pmc
+> +              - microchip,sama7d65-pmc
+>                - microchip,sama7g5-pmc
+>            - const: syscon
+>  
+> @@ -90,6 +91,7 @@ allOf:
+>              enum:
+>                - microchip,sam9x60-pmc
+>                - microchip,sam9x7-pmc
+> +              - microchip,sama7d65-pmc
+>                - microchip,sama7g5-pmc
+>      then:
+>        properties:
 > 
->    #include <uapi/linux/time.h>
->    #include <asm/vgtod.h>
->    #include <asm/vvar.h>
->    #include <asm/unistd.h>
->    #include <asm/msr.h>
->    #include <asm/pvclock.h>
->    #include <clocksource/hyperv_timer.h>
+> ---
+> base-commit: b18bbfc14a38b5234e09c2adcf713e38063a7e6e
+> change-id: 20240829-sama7d65-next-a91d089b56a3
 > 
-> As a comparison, the one from powerpc only includes the following one so 
-> it pulls a lot less non-vdso headers:
+> Best regards,
+> -- 
+> Dharma Balasubiramani <dharma.b@microchip.com>
 > 
->    #include <asm/vdso/timebase.h>
->    #include <asm/barrier.h>
->    #include <asm/unistd.h>
->    #include <uapi/linux/time.h>
-> 
-> Christophe
-
-This does not seem a concern, in fact I believe that the generic vDSO library
-should not mandate to the architecture how to organize headers. As far as the
-requirements are satisfied each architecture should be able to define its own
-naming and conventions independently.
 
 -- 
-Regards,
-Vincenzo
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
