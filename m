@@ -1,79 +1,162 @@
-Return-Path: <linux-kernel+bounces-306628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EE4F96417F
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 12:23:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C39B3964187
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 12:23:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A75A2825B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:23:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E875C1C245A2
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:23:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A08C18E779;
-	Thu, 29 Aug 2024 10:19:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D9101A76B7;
+	Thu, 29 Aug 2024 10:19:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oMaiiNQB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BtKSMlW7"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83C1B18E054;
-	Thu, 29 Aug 2024 10:19:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F0ED1917E1
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 10:19:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724926744; cv=none; b=qo8cXSpHUvxwrhZijDsZCbizrOI3fdOM3dXDs3xorOUjyW4FzY3nzEiK9S62hpOqxAtk5nu0eeCKyri0luMXzjFfUQCYvze2bqM2Clkg9OEjBl8Zdff/Gvn3vjDbTGrjgvwtdBmI/CVptmS0RBqJUQgzcvn2IE4hST3KasuyELM=
+	t=1724926760; cv=none; b=Llm0DQCMWPubdnWOlumg+Ag2iWCz9C76FqSZezKTv7C85kVg235/5gXqDUKchdNWqPJUU3ZMRuCbq3crxK5cPvIEEz2T/ptL7i9fIRxvYGGh/PKe6lzZavm1I0HlE0TP2zdm2E75/4xZ1NjkPfK4QFgIuyde+/RVCi58E653CGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724926744; c=relaxed/simple;
-	bh=8DXjijzihEJwOPH4EIhRSVH7VG3ypMorm/szPlzyyQc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=qtc7DFkv72Qo34MW8+UKwRcitq6xCDs7zHAbL8+xTMJuG+DxC9lL5yeCwF4h3QtUJ11EFarv39S6maUjPbhe+v2rIenwytlW1w4cu/IBnO1H7YWSJJMNgrE9H3NW7zK/7XNXP0aDO8WV8uHLJviU6tVXtnXAm0kmk6aght/1OOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oMaiiNQB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E519C4CEC1;
-	Thu, 29 Aug 2024 10:19:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724926744;
-	bh=8DXjijzihEJwOPH4EIhRSVH7VG3ypMorm/szPlzyyQc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=oMaiiNQBY3ZnCP6n7HG0Jj3Db3Mb5aeas3MFWG9Y0HStCSG81+hBhlC+/8zrTc84I
-	 c+8DEoD9Ta6LLPLQPpoqULhplZ+4nZb/ZalGeWZpDp5t/iYdze3pBjDXEsCuGo4izq
-	 uZsSBtslKkDgEG78alArN0Ara4dsN1s7jQanfFjdufUYdjwQJ4Fgd7+sW4+sMBqOCG
-	 OD5LbujgjBDg7m1ViCUjaPrR59KzkTWppky+zKV3BnB2HmI8BWSmhF7inYoC3+9fak
-	 KPH9etqgdHX3ELhNnU8B/HI6PczW/uBcz3k2NGA4yGz7ziwlQoC7zm8RVP84ZktSd1
-	 9Fq6BBIWdlvtQ==
-From: Leon Romanovsky <leon@kernel.org>
-To: dennis.dalessandro@cornelisnetworks.com, jgg@ziepe.ca, 
- Shen Lichuan <shenlichuan@vivo.com>
-Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, 
- opensource.kernel@vivo.com
-In-Reply-To: <20240828082720.33231-1-shenlichuan@vivo.com>
-References: <20240828082720.33231-1-shenlichuan@vivo.com>
-Subject: Re: [PATCH v1] RDMA/sw/rdmavt/mr: Convert to use ERR_CAST()
-Message-Id: <172492674035.35050.7005076935196268603.b4-ty@kernel.org>
-Date: Thu, 29 Aug 2024 13:19:00 +0300
+	s=arc-20240116; t=1724926760; c=relaxed/simple;
+	bh=NgBGaohZSn2ujQXQ1kODfi5bvv65HVMuTRh6A6bGzVU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=loVHdGZ5I8fXm5COhNNmQPXCXZUqgBfkppv6icg4LyzUxD1JHdBKBS3iGP6ynK7O9EYP0Mzg74no7kTgLyN1BYSMGTVNbjdiW3+y8QoY9bNlcrRUy2RAd53lYBB4ak1fuRmA2TeJUMq3/VQMHh+SktScYJdkP4o7nGF9A0S0lw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BtKSMlW7; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a8677ae5a35so47054466b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 03:19:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724926756; x=1725531556; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nopjZOiXiccCurmPDi4lhpMiSpQ7X9/bOex7t+lHZIA=;
+        b=BtKSMlW7XZr4Lm1FTEzEuYL3fXKE5eGRH61E/NLz/rpLx/sioXTyJ/Vv+Sld6sa5em
+         WtDUuSRBQxVlacSJy3uvHA9QNDUGOuuEyItOE74V4vPIOP1Dlcztc0j0mjfqbp1diBpz
+         TqchM1et8b7eomaF4CZy7d+P9Kgy2smIRv2iGUIBPSpXxUvDi4m54TkkovYAeeDO58u+
+         uMAZD0c0DTrJ3OkVUqgNgm/2IQmhEl9ruCh+TN1hM1Rw4Ru5DFOkLaOGQni+/5ntlqvy
+         0V/o495Llx+KAYfGyfpHhYX/XtRfsqSIiXxaj2O2MW9bWq9MhNMp40EUkUFODN5Ul3Km
+         SPuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724926756; x=1725531556;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nopjZOiXiccCurmPDi4lhpMiSpQ7X9/bOex7t+lHZIA=;
+        b=cnYX4wKiZwWC+0m/W0nRUQ0iwfn9Bb2bs8feiTSXzEGR38AN5b/ImX1m8LqvrWeDHL
+         iicDCirJJP1aJOJ7gEfJf5M8AR1G7VsPs2pPVqan81zQB4ww2WWzhxaXEEnL5/Zsvnk7
+         TbqITIb2AL7wnXB46HBB73JgERqrZQOsD7undFzjm68YJEmn4qZhn3v7PFgqP6MYQ35m
+         3Llul6fmcCZoSM+9NnCwOWdFhxrLgqOH+98XetwMwilEluzKFE7ov6ioH8jItPEk6CbD
+         GUgk52D18DAms+qzwjJ3aFm3+RLbsn96B298OW98qmFpUKHsTHpJLv3N16A5fGGCA2yc
+         xYiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUq854SBEKldxs0Kyr+i0R3LnuD7TK78JCfGR4IcdzburE087RfM3CzsqzHEMJBi7Et/sfUZnEg5Me3Wss=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvOqlzf2zKAQ9NK3qzfynYIqB4OTbL2ftyKxLZUE603nJAOpFO
+	jKN17o48dSJPQn5CtBz/qml1jiIhcgpWeoOWtzA1QcTsO+BiWp9d6nuBVLlXtEs=
+X-Google-Smtp-Source: AGHT+IETKZnM5+V8q/IAwppa+3QG8CZq/4HYaD9qYC2EdM3dOtcZyyhQ65wHS4u5dtwJxEHeX73Mvw==
+X-Received: by 2002:a17:907:7216:b0:a86:bb5f:ebbd with SMTP id a640c23a62f3a-a897fad70f8mr137210866b.63.1724926755889;
+        Thu, 29 Aug 2024 03:19:15 -0700 (PDT)
+Received: from [192.168.0.25] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8988fefb60sm60432366b.43.2024.08.29.03.19.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 29 Aug 2024 03:19:15 -0700 (PDT)
+Message-ID: <45298600-beaf-438f-979a-3cb9e207a32e@linaro.org>
+Date: Thu, 29 Aug 2024 11:19:14 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 3/4] soc: qcom: geni-se: Export function
+ geni_se_clks_off()
+To: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>,
+ konrad.dybcio@linaro.org, andersson@kernel.org, andi.shyti@kernel.org,
+ linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
+Cc: quic_vdadhani@quicinc.com
+References: <20240829092418.2863659-1-quic_msavaliy@quicinc.com>
+ <20240829092418.2863659-4-quic_msavaliy@quicinc.com>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <20240829092418.2863659-4-quic_msavaliy@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-37811
 
-
-On Wed, 28 Aug 2024 16:27:20 +0800, Shen Lichuan wrote:
-> As opposed to open-code, using the ERR_CAST macro clearly indicates that
-> this is a pointer to an error value and a type conversion was performed.
+On 29/08/2024 10:24, Mukesh Kumar Savaliya wrote:
+> Currently driver provides geni_se_resources_off() function to turn
+> off SE resources like clocks, pinctrl. But we don't have function to
+> control clock separately, hence export function geni_se_clks_off()
+> to turn off clocks separately without disturbing GPIO.
 > 
+> The client drivers like i2c requires this function for use case where
+> i2c SE is shared between two subsystems.
 > 
+> Signed-off-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
 
-Applied, thanks!
+Suggest:
 
-[1/1] RDMA/sw/rdmavt/mr: Convert to use ERR_CAST()
-      https://git.kernel.org/rdma/rdma/c/8f1f60b21b9603
+Currently the driver provides a function called 
+geni_serial_resources_off() to turn off resources like clocks and 
+pinctrl. We don't have a function to control clocks separately hence, 
+export the function geni_se_clks_off() to turn off clocks separately 
+without disturbing GPIO.
 
-Best regards,
--- 
-Leon Romanovsky <leon@kernel.org>
+Client drivers like I2C require this function for use-cases where the 
+I2C SE is shared between two subsystems.
 
+> ---
+>   drivers/soc/qcom/qcom-geni-se.c  | 4 +++-
+>   include/linux/soc/qcom/geni-se.h | 3 +++
+>   2 files changed, 6 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/soc/qcom/qcom-geni-se.c b/drivers/soc/qcom/qcom-geni-se.c
+> index 2e8f24d5da80..20166c8fc919 100644
+> --- a/drivers/soc/qcom/qcom-geni-se.c
+> +++ b/drivers/soc/qcom/qcom-geni-se.c
+> @@ -1,5 +1,6 @@
+>   // SPDX-License-Identifier: GPL-2.0
+>   // Copyright (c) 2017-2018, The Linux Foundation. All rights reserved.
+> +// Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
+>   
+>   /* Disable MMIO tracing to prevent excessive logging of unwanted MMIO traces */
+>   #define __DISABLE_TRACE_MMIO__
+> @@ -482,13 +483,14 @@ void geni_se_config_packing(struct geni_se *se, int bpw, int pack_words,
+>   }
+>   EXPORT_SYMBOL_GPL(geni_se_config_packing);
+>   
+> -static void geni_se_clks_off(struct geni_se *se)
+> +void geni_se_clks_off(struct geni_se *se)
+>   {
+>   	struct geni_wrapper *wrapper = se->wrapper;
+>   
+>   	clk_disable_unprepare(se->clk);
+>   	clk_bulk_disable_unprepare(wrapper->num_clks, wrapper->clks);
+>   }
+> +EXPORT_SYMBOL_GPL(geni_se_clks_off);
+>
+
+Does it make sense to have geni_se_clks_off() exported without having 
+geni_se_clks_on() similarly exported ?
+
+Two exported functions already appear to wrapper this functionality for you.
+
+geni_se_resources_off -> gensi_se_clks_off
+geni_se_resources_on -> gensi_se_clks_on
+
+Seems like a usage violation to have geni_se_resources_on() switch the 
+clocks on but then have something else directly call gensi_se_clks_off() 
+without going through geni_se_resources_off();
+
+?
+
+---
+bod
 
