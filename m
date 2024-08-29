@@ -1,226 +1,189 @@
-Return-Path: <linux-kernel+bounces-306750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81F6B9642F4
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:28:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 789189642F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:29:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DBFADB219E9
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 11:28:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AC831C222BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 11:29:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E94C87E59A;
-	Thu, 29 Aug 2024 11:28:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 945DD191F77;
+	Thu, 29 Aug 2024 11:28:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XKbG4lhl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="SdtYhD6L"
+Received: from HK2PR02CU002.outbound.protection.outlook.com (mail-eastasiaazon11010066.outbound.protection.outlook.com [52.101.128.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1377222339;
-	Thu, 29 Aug 2024 11:28:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724930896; cv=none; b=Difqg17OQChNtL61/MdssnjV0a4s9nvHtb+uL2AmpSY/dUpMke/yf9ALXKk1pkWzdwihMUAp41bEu09JwOJ9pM/oVb+8fvqigFGIlfwVgcApwQ82xM3WRIlh66M5V1G/915crypdIaGt780qss3uRAO/g+wzSfdwhR/d89c0QuI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724930896; c=relaxed/simple;
-	bh=CW83ZEIpkPz52PNovqYIVdDMJHBmM0F3hp75/bBTlUI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TebuVoE1c0IoumT2aYEbf+rgt8fnerJrCZ1HQ8S3g1zr9OOjFcowTYkFxaMjPF0sjzhbiiNuIDbxHBs/wjcG64uUlv0f64oNV/3NYZPFVuaV6Unax+oxcXutzL+WR50zybI2hQxdKQsG8gBUsjlHNXYBbhc+lubV7Aeaf2v0hJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XKbG4lhl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2BEEC4CEC6;
-	Thu, 29 Aug 2024 11:28:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724930895;
-	bh=CW83ZEIpkPz52PNovqYIVdDMJHBmM0F3hp75/bBTlUI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=XKbG4lhlp7ELKxPWqB5DcmWwqaLwt0frVjrqzpKPRXfymI1MhZiP0G5nCBGJ5Bg4t
-	 sgnbUPzCNBrw/sz7rxcT9Ltnh6RwgkHVzO2Qv0Ty53i/hKu4/lztP+bdk1PgeQ3ofK
-	 kY9psR6NhY4hxdYyNwbas4HdFeXTjosHu2ugl2msQMUcbqHFA81Bde23EUc/n+DNdy
-	 oEjtEbg1QYtlvh8p6jVEjzQiaEXTc5QFNh3/LSXCN2ZFnuXnwofPkJQh1u08BelvAH
-	 9B43XWN4HC4/0mJFPQEvrHOI8eNuH3Wy7btmLmKgRJkiZmlG5P4e7OEDNFpuHPNcmp
-	 QXcoqUC6l+fdA==
-Received: by mail-oi1-f177.google.com with SMTP id 5614622812f47-3db157d3bb9so325542b6e.2;
-        Thu, 29 Aug 2024 04:28:15 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU18bKe8/yDyyl8zizpCp+HoemfksCcAsCv+uUpdyUybAMaLJMVVFlBUfEr7+KDr5IRNlJimtmtQ3/P@vger.kernel.org, AJvYcCVx4QTcQ6BnC7bKiV1cPyQDnZWFLzYFn0P29/4tAcvTO3Bl29ABjhVelmGALmf4egUgb6eTV1dVtYHA5qmr@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQUhqlzWyKyGsGb7M4U1MuU5wBdaBBgFQCkSGbZlMj90+e55jG
-	si3mAiErrheKw8SgPbemY95xg0cV69pcDj3V5eOazh0bDI0x1Mp5UwGh30oiOUmw4kJUxJf0a6g
-	9qYPxh1VN6qvQ9v+nPqARqnGdqGQ=
-X-Google-Smtp-Source: AGHT+IGz5F+qmlvaiKD6trNVX8aBlX43dl81V4HoKG0dddBlHdfJlg7ZRaq9zYgsOxqBnmAWOCmUVysjX+v1FckoXUU=
-X-Received: by 2002:a05:6808:169e:b0:3dd:4376:db2c with SMTP id
- 5614622812f47-3df05db003emr2649869b6e.9.1724930894959; Thu, 29 Aug 2024
- 04:28:14 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67DF822339;
+	Thu, 29 Aug 2024 11:28:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.128.66
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724930937; cv=fail; b=AahxYI9nZb4mhcxFfaRdPH21Ko/EN5TYHku9Wts9MS/Tor2fBibgQ5KtDHKoem0SC5uwUEUVWp+8TfSVs0Iiwe/PUjq35b/q73BNSmmcByjo8Ot7M+7UDBFW3j1swQl/K5SMA01ibXvLvsLtkIceHiHieS7CSiYnRJSe+2Gzp/M=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724930937; c=relaxed/simple;
+	bh=vL++GPCsZroY/ZjVwBMGgQJYHkv49yy3HVcU5lgeIlU=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=eFeh6/UzNZfNDlDKpOz6ULpONUoQNDH9PODZtSzofAYOozsVPIT59sgYbZ9R7o1uUWtkZ3K8d1mAwUhggw1KtULThPkRmU5SzUOYKbg3JpsRodMdG/C8aFb/j8ltKyRY+NXQ3zgzKj1btDO9A1OepZ4+dW9nifrGxMk3Q/HK9vA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=SdtYhD6L; arc=fail smtp.client-ip=52.101.128.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ZcBRU5zXY/A2IXglcrDqzW1AbKmOJI2sqW8g2X0gSGrxmlaUZBtmwyZGkJEBOxvWMSajJwAcYoXHeizXYjDDCds6xfZlJVJt6/a8w1+ZLF+4h7VqxGC4BT1x2R0Z0Xrt8Drtgbm8nep46zEmoV+0oustcbxYRDsjLBaHAmBjyUaSjS7k+cNHvO4x9LTGobfb1eXYhFCZc81sZx2siwqQI9ZIX218lxwpdozgErfSWhPAX+LAYYNDbQMLAWCefC46jibugQEOLcwk7HfHKxRrW/AStpzaRgoO/kX9SjEEv9EWPKoDkSLFGY3HZhyDqfTYINxjoNGq5E0IYk5goN3lIg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=bI/AWi3BmnGtWg+SuNmDC+TgzdLsm9n1q2LtAcNwpcg=;
+ b=AD3TbR94qtSqus8NQXHPRF1yyBsfI08Cn9Gb0nQmRIKXXFg4G5fCyMPgVc9HPZoJzMuFMrzsXHDl6lUooyZtO3Aqurp6LrPZlIiDikjP+mP6bPf0FbDKhKTMv9aVnfqI1FzrhLTf+WhqeBxJrsi0CDfsCHv3FxYHtVlIA76432pshVwb3Mg69I8sGS3qKn8ZjZo3X1WVwblu9h0A8d1McdOXCkEvYuQujWUxNDOV0vSYRvsBdXmmsA16D4G+axab2TqlYrKWAxcb7MZunOMfAzygWHDM8n5dPtPY4wg6MFZ4WBrKulAuOh1imgS5KlediB8M/U908+bUrhlvvnX8uQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=bI/AWi3BmnGtWg+SuNmDC+TgzdLsm9n1q2LtAcNwpcg=;
+ b=SdtYhD6LVejHez5Y+r2VCfW/0NcXtgcupDsy4LuXbfvPrx0hzw8I2py2gBKP997dL/4cmCpFKR7af947zxr6owYJO+mNWEI5kPewYUr6C7yaox6lK9NyLLCWlno8pDo3wa3vFR6SbStGCjd6h/ly9XjtA20Fe4ZfHXN1g5RP3+/AZGTSAK7n0nIe4VkPW0/Q06Y4GhqjaxG2/EGP41ZC7tDf7U1dWXc77miabY0IA6O9t/fmqTKjVSZd+vipOrT5jr2U5AyiJx7w1VDGRzIkMCl33yzQpIA7pM7M4LUiNTPSkSi45j49/0Dh9RPWpqiSAQbdE35GPqgbfBLG2mjSNA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from KL1PR0601MB4113.apcprd06.prod.outlook.com (2603:1096:820:31::7)
+ by OSQPR06MB7156.apcprd06.prod.outlook.com (2603:1096:604:293::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.26; Thu, 29 Aug
+ 2024 11:28:51 +0000
+Received: from KL1PR0601MB4113.apcprd06.prod.outlook.com
+ ([fe80::7e85:dad0:3f7:78a1]) by KL1PR0601MB4113.apcprd06.prod.outlook.com
+ ([fe80::7e85:dad0:3f7:78a1%4]) with mapi id 15.20.7897.027; Thu, 29 Aug 2024
+ 11:28:51 +0000
+From: Yan Zhen <yanzhen@vivo.com>
+To: pawell@cadence.com,
+	gregkh@linuxfoundation.org
+Cc: linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	opensource.kernel@vivo.com,
+	Yan Zhen <yanzhen@vivo.com>
+Subject: [PATCH v1] usb: gadget: udc: cdns2: Simplify with dev_err_probe()
+Date: Thu, 29 Aug 2024 19:28:22 +0800
+Message-Id: <20240829112822.3193428-1-yanzhen@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TYCP301CA0090.JPNP301.PROD.OUTLOOK.COM
+ (2603:1096:405:7b::17) To KL1PR0601MB4113.apcprd06.prod.outlook.com
+ (2603:1096:820:31::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240826101648.95654-1-cleger@rivosinc.com>
-In-Reply-To: <20240826101648.95654-1-cleger@rivosinc.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 29 Aug 2024 13:28:04 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0jDzZDhorU+zE+dh+wd0cim9n2XQYZbMUDhyQ=DgDhNYw@mail.gmail.com>
-Message-ID: <CAJZ5v0jDzZDhorU+zE+dh+wd0cim9n2XQYZbMUDhyQ=DgDhNYw@mail.gmail.com>
-Subject: Re: [PATCH v2] ACPI: CPPC: Fix MASK_VAL() usage
-To: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
-	Robert Moore <robert.moore@intel.com>, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, acpica-devel@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: KL1PR0601MB4113:EE_|OSQPR06MB7156:EE_
+X-MS-Office365-Filtering-Correlation-Id: e6f5837b-4b39-4d44-0fd9-08dcc81dc172
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|52116014|376014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?D8SVcthjcsnoNX4vKbDO4NcxyXsFF64TIRNyJz/XLZN1tCHY0zsj5mmjpVqs?=
+ =?us-ascii?Q?66MP0JdQWZTPR/r6djCg5xpV5elko9UkuGfBA4zyVGnjebNwOiWyusdO72Ci?=
+ =?us-ascii?Q?wxZh2a0P0ufUrzM0gHqQPzRujNNFhlySdcd0DEqfZ17qmCqwgYBiRw7upydt?=
+ =?us-ascii?Q?IU4NeIjdOA2pZ2uTi/J6Ik1PgTLy3XL8Fh5tyAkfQkco/LYNDQ8H56yIr80E?=
+ =?us-ascii?Q?OD+JmWWPWJKupCJQRfe8Uo0Ih+RtWqwcoXaoEmETDOtLwkjtKzUy+Pk2JvIw?=
+ =?us-ascii?Q?2ppj4sebRirL+H9XHe1sHsHWuiork+sDOo/R1EOqZEctuiT+ZUHi1zepOD7U?=
+ =?us-ascii?Q?CDmbczGDtz44FPpij+clH8Lf6Ib2FuScLvQ3uV4EWX3u4gO+gcgM7WDriFkN?=
+ =?us-ascii?Q?dp9H6uWx2ZennSZ5KA3pybcOiYn3fCAZt2c5Gu+LFAWnFvbQhJGnqqeNeaJK?=
+ =?us-ascii?Q?mWyhpNpZEEcKAt+YqZyBFPBgkYTMZpQlM2lWWRKZYHZh1KwRCpKZ2BzBi8xv?=
+ =?us-ascii?Q?OIUb8E/N9WMt2wb8duX7tD2buxvBR+Mf3b2ugDR3Uf9cU8SpKTBTILW6lsKp?=
+ =?us-ascii?Q?/n0/p1mW4JpCDCK6VYQYMnv8yCLOq71H7XszxY2ExAqoVgbpHTKi9WnZ4+K5?=
+ =?us-ascii?Q?XNVMQv/z5s+OP0yrU8877EFH1AXcu6JtnRSOm+oAJ6byv66V1HbVQfRu9ZvB?=
+ =?us-ascii?Q?IV1LrrYWs7KsGOIvzZUT/6F6/K61T/PtsEWWgEDgFhPz2pc/qLR+6S5ewY6z?=
+ =?us-ascii?Q?gc8t+rfKQvd1+NlbcEXEgx9Pmu/7C63NC7gM1eMS55+WSC7lC9pjUnl9Cf3i?=
+ =?us-ascii?Q?NgxrZHvCRT7yaWj3yV9Z2ee9LXVeg4AlkKDMI0KNHw78p9k4IjVT5vIgIli5?=
+ =?us-ascii?Q?oA9G+sZRGO4RJLlZagi7AUFnT8jqnTcIEpFXtKRbZsuiAU/wu8dKam+wC8dl?=
+ =?us-ascii?Q?YhWwOeBQa35z8mLoARSnv3eMlHGa3dFCghryPfQieVdTWkUyhuqNakmT+gVa?=
+ =?us-ascii?Q?hpqC3En/2tkRCVFgVzHM89rLW1vwka6hmMARu4vBMU3NUJd7aFuOA5+8XMty?=
+ =?us-ascii?Q?QVMitRDwj/r+2VDKcJeR8g2Z6AvMzAGqbQ0kHE+GroVdGxTSRV/OX8Rsqrr1?=
+ =?us-ascii?Q?cNQNtoRCsQq4fNiV4nPjLZBbYw3UHWCG+549rB/mHwlVBqHFyy9MGNWWJhm4?=
+ =?us-ascii?Q?u+8Qc3kMNpimogn2aSPrV4eakBNUxbCOMzWN2oCzRNZPmkHB8EESfThrW0ki?=
+ =?us-ascii?Q?GVzaCgYOXUtWlhDhwCH0NNA9XfZHWQVdhcj0aM7GXnno2pPVgVQu3idibBeK?=
+ =?us-ascii?Q?6E+GeJ01umgdS/Tli49lyXg9nQegNYP3CvFEIgnErY6EtHpAORB/bgUynGxe?=
+ =?us-ascii?Q?/6qQexRGhUNW0fWbm1MKXoW5jCtK73DZPjOjO5bIqcLQVm4vKg=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR0601MB4113.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(376014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?lb99nUuv8TotkcJcDN7BCW4I7Z+XPiGTxXUMS1H/7LLVj/VjVTd9MAE4i+dV?=
+ =?us-ascii?Q?IlIH0w+obN56BdO/R3Kr+Js77bYmASnvQQIOMjgBTddf6n9lGvFpzba9ojDx?=
+ =?us-ascii?Q?pVcMPLcccYJO60swXhMZD4h68QQhRaHKW0CIdkgPpDP5eVBovFmkHbi6psPg?=
+ =?us-ascii?Q?X+GfAN1R68xCzDWU6Ua3lW59qBQiXzqGVfw1etn9p7EwWU9gMuh2snrfmCbi?=
+ =?us-ascii?Q?ggSKkGjp8OmHlwgbAl59iaSE+TYQMyzMiYXCVK/ESsNvUSypR7bsGZuK6Wds?=
+ =?us-ascii?Q?jOEgE7+xD6+jpkQFTJxWGb5p+dBXb7HQv+O9BlQwq/qzg0aoCTi0al2rNWbw?=
+ =?us-ascii?Q?orlts/i3RQjTUMSR3nT9/qwN7XcsDltAX+SXXQ7wn50tmevkvQ/mgpR3p9fB?=
+ =?us-ascii?Q?s31bw9r14tYOTjRR/sZ9PX5ZU4DQqZwU6s62dOve2S7tyATRYRTKKNHU2p+z?=
+ =?us-ascii?Q?eoZ1tb0dqvaZRZ7o3eIo8j2ZE8XrQ701EWEy9RzJngJcf2QFLPZq0nhVv5HW?=
+ =?us-ascii?Q?Twl9RYNMiEa9njvlfjH8FBJvnMMpnmhqptpI8z6Lj2tHjUBV6jmy58XCwiOO?=
+ =?us-ascii?Q?2E2wIbWz+8pr5NUO7D9mz/xeM+rSg3TXAqKDSEJu1DBKTjW+s3NaqKfpJyhr?=
+ =?us-ascii?Q?2YrmrSE7gpET9vDeEEYoKZTB6z74bYostqF7OMEdGOZy48K7YVvw2gY9l/7u?=
+ =?us-ascii?Q?VLBi5atX3PovrQ4cixVpBbWGPiBCr7ADzEW2OJ4arRXw69LgfWYrU6NkpUJe?=
+ =?us-ascii?Q?s9ucJO4p5kYRLM8uZhe9QXi9ojlpUYNx+r1vYzhZui92tDSWZYJeswJpC999?=
+ =?us-ascii?Q?b0551xSubwcmldNimTANN5WOPR6AP63iboRzZRw3d3r/INeTGFsyBc2/HFDQ?=
+ =?us-ascii?Q?3v5/lASVnXXI00A/OJVqyXkYllbY88HxDPtWmN6abyCFw7DatpL4wUREE1o2?=
+ =?us-ascii?Q?IvdIU0zvyFl413jaEVq19iMMgpi9ZoHL+95CjjsT8+jcIrnGutjkZG23RcLa?=
+ =?us-ascii?Q?HUqZR/LM4VRob8/wLcbTqhHT96Uw3lJUZSvfyS4nShAzwlxvvq2UqeoF78+R?=
+ =?us-ascii?Q?hnJE6Ng+ECcDEnNUl3w8aN9oIyluCrCa+NQOlZcmo6uAbgQ188fUKi/L2CLh?=
+ =?us-ascii?Q?gDdLyffT6hJimtWRitKsvp1GdG08vuSYTZ1rJjA2Z0nzCYLhP2OCs3wZALE4?=
+ =?us-ascii?Q?lYW8CKOfsZX/Lm2AiEgTkIxYC7jLFxM8nTthdIVAxvL/m3JLTLs3nLVIbgB/?=
+ =?us-ascii?Q?0wm24Ksbi4rWln7rncY08m4T78V9vwCAG3MxCiGunXufydMm9kHQaiFzE9Tx?=
+ =?us-ascii?Q?SE766pX90HgZZ039WQuu1YRH/Gy5InsUUslny5cQD9sHyOPIdBllljtLjpzt?=
+ =?us-ascii?Q?eBdbc6ZJWqGLcLX3SQMkPPdPq48mbvLms6roHE7D3FC6ofHobTaCUFjMzX+r?=
+ =?us-ascii?Q?PigvDSEzsjTFCm2zNJTgim7+ZAIEBtxqWZ4xZ4COBwHBrYbG9lojoL9Yag/j?=
+ =?us-ascii?Q?9CRhJPrrAEy9A2HshKFZwztFihxFpXXtxHslHULF3cS4b2lH6vWJZXin1Z86?=
+ =?us-ascii?Q?ybO2uvWg9TCvCGNO6fI91q+653yMPhszifGOV3q1?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e6f5837b-4b39-4d44-0fd9-08dcc81dc172
+X-MS-Exchange-CrossTenant-AuthSource: KL1PR0601MB4113.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Aug 2024 11:28:51.4053
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: rBlvp3dEEiwrnNmxLUkxLej3UN544L6WfcB8oC0BYqGiYcy2GjVAWF72z58FzAN37JVHtAm/xsXmKxPwjOx0Cw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSQPR06MB7156
 
-On Mon, Aug 26, 2024 at 12:32=E2=80=AFPM Cl=C3=A9ment L=C3=A9ger <cleger@ri=
-vosinc.com> wrote:
->
-> MASK_VAL() was added as a way to handle bit_offset and bit_width for
-> registers located in system memory address space. However, while suited
-> for reading, it does not work for writing and result in corrupted
-> registers when writing values with bit_offset > 0. Moreover, when a
-> register is collocated with another one at the same address but with a
-> different mask, the current code results in the other registers being
-> overwritten with 0s. The write procedure for SYSTEM_MEMORY registers
-> should actually read the value, mask it, update it and write it with the
-> updated value. Moreover, since registers can be located in the same
-> word, we must take care of locking the access before doing it. We should
-> potentially use a global lock since we don't know in if register
-> addresses aren't shared with another _CPC package but better not
-> encourage vendors to do so. Assume that registers can use the same word
-> inside a _CPC package and thus, use a per _CPC package lock.
->
-> Fixes: 2f4a4d63a193 ("ACPI: CPPC: Use access_width over bit_width for sys=
-tem memory accesses")
-> Signed-off-by: Cl=C3=A9ment L=C3=A9ger <cleger@rivosinc.com>
->
-> ---
-> v2:
->  - Remove label and unlock the spinlock earlier.
->
->  drivers/acpi/cppc_acpi.c | 43 ++++++++++++++++++++++++++++++++++++----
->  include/acpi/cppc_acpi.h |  2 ++
->  2 files changed, 41 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/acpi/cppc_acpi.c b/drivers/acpi/cppc_acpi.c
-> index 1d857978f5f4..4a47e08704d9 100644
-> --- a/drivers/acpi/cppc_acpi.c
-> +++ b/drivers/acpi/cppc_acpi.c
-> @@ -170,8 +170,11 @@ show_cppc_data(cppc_get_perf_ctrs, cppc_perf_fb_ctrs=
-, wraparound_time);
->  #define GET_BIT_WIDTH(reg) ((reg)->access_width ? (8 << ((reg)->access_w=
-idth - 1)) : (reg)->bit_width)
->
->  /* Shift and apply the mask for CPC reads/writes */
-> -#define MASK_VAL(reg, val) (((val) >> (reg)->bit_offset) &              =
-       \
-> +#define MASK_VAL_READ(reg, val) (((val) >> (reg)->bit_offset) &         =
-                       \
->                                         GENMASK(((reg)->bit_width) - 1, 0=
-))
-> +#define MASK_VAL_WRITE(reg, prev_val, val)                              =
-               \
-> +       ((((val) & GENMASK(((reg)->bit_width) - 1, 0)) << (reg)->bit_offs=
-et) |          \
-> +       ((prev_val) & ~(GENMASK(((reg)->bit_width) - 1, 0) << (reg)->bit_=
-offset)))      \
->
->  static ssize_t show_feedback_ctrs(struct kobject *kobj,
->                 struct kobj_attribute *attr, char *buf)
-> @@ -857,6 +860,7 @@ int acpi_cppc_processor_probe(struct acpi_processor *=
-pr)
->
->         /* Store CPU Logical ID */
->         cpc_ptr->cpu_id =3D pr->id;
-> +       spin_lock_init(&cpc_ptr->rmw_lock);
->
->         /* Parse PSD data for this CPU */
->         ret =3D acpi_get_psd(cpc_ptr, handle);
-> @@ -1062,7 +1066,7 @@ static int cpc_read(int cpu, struct cpc_register_re=
-source *reg_res, u64 *val)
->         }
->
->         if (reg->space_id =3D=3D ACPI_ADR_SPACE_SYSTEM_MEMORY)
-> -               *val =3D MASK_VAL(reg, *val);
-> +               *val =3D MASK_VAL_READ(reg, *val);
->
->         return 0;
->  }
-> @@ -1071,9 +1075,11 @@ static int cpc_write(int cpu, struct cpc_register_=
-resource *reg_res, u64 val)
->  {
->         int ret_val =3D 0;
->         int size;
-> +       u64 prev_val;
->         void __iomem *vaddr =3D NULL;
->         int pcc_ss_id =3D per_cpu(cpu_pcc_subspace_idx, cpu);
->         struct cpc_reg *reg =3D &reg_res->cpc_entry.reg;
-> +       struct cpc_desc *cpc_desc;
->
->         size =3D GET_BIT_WIDTH(reg);
->
-> @@ -1106,8 +1112,34 @@ static int cpc_write(int cpu, struct cpc_register_=
-resource *reg_res, u64 val)
->                 return acpi_os_write_memory((acpi_physical_address)reg->a=
-ddress,
->                                 val, size);
->
-> -       if (reg->space_id =3D=3D ACPI_ADR_SPACE_SYSTEM_MEMORY)
-> -               val =3D MASK_VAL(reg, val);
-> +       if (reg->space_id =3D=3D ACPI_ADR_SPACE_SYSTEM_MEMORY) {
-> +               cpc_desc =3D per_cpu(cpc_desc_ptr, cpu);
-> +               if (!cpc_desc) {
-> +                       pr_debug("No CPC descriptor for CPU:%d\n", cpu);
-> +                       return -ENODEV;
-> +               }
-> +
-> +               spin_lock(&cpc_desc->rmw_lock);
-> +               switch (size) {
-> +               case 8:
-> +                       prev_val =3D readb_relaxed(vaddr);
-> +                       break;
-> +               case 16:
-> +                       prev_val =3D readw_relaxed(vaddr);
-> +                       break;
-> +               case 32:
-> +                       prev_val =3D readl_relaxed(vaddr);
-> +                       break;
-> +               case 64:
-> +                       prev_val =3D readq_relaxed(vaddr);
-> +                       break;
-> +               default:
-> +                       spin_unlock(&cpc_desc->rmw_lock);
-> +                       return -EFAULT;
-> +               };
-> +               val =3D MASK_VAL_WRITE(reg, prev_val, val);
-> +               val |=3D prev_val;
-> +       }
->
->         switch (size) {
->         case 8:
-> @@ -1134,6 +1166,9 @@ static int cpc_write(int cpu, struct cpc_register_r=
-esource *reg_res, u64 val)
->                 break;
->         }
->
-> +       if (reg->space_id =3D=3D ACPI_ADR_SPACE_SYSTEM_MEMORY)
-> +               spin_unlock(&cpc_desc->rmw_lock);
-> +
->         return ret_val;
->  }
->
-> diff --git a/include/acpi/cppc_acpi.h b/include/acpi/cppc_acpi.h
-> index 930b6afba6f4..e1720d930666 100644
-> --- a/include/acpi/cppc_acpi.h
-> +++ b/include/acpi/cppc_acpi.h
-> @@ -64,6 +64,8 @@ struct cpc_desc {
->         int cpu_id;
->         int write_cmd_status;
->         int write_cmd_id;
-> +       /* Lock used for RMW operations in cpc_write() */
-> +       spinlock_t rmw_lock;
->         struct cpc_register_resource cpc_regs[MAX_CPC_REG_ENT];
->         struct acpi_psd_package domain_info;
->         struct kobject kobj;
-> --
+Use dev_err_probe() to simplify the error path and unify a 
+message template.
 
-Applied as 6.12 material, thanks!
+Using this helper is totally fine even if err is known to never 
+be -EPROBE_DEFER.
+
+The benefit compared to a normal dev_err() is the standardized format
+of the error code, it being emitted symbolically and the fact that
+the error code is returned which allows more compact error paths.
+
+Signed-off-by: Yan Zhen <yanzhen@vivo.com>
+---
+ drivers/usb/gadget/udc/cdns2/cdns2-pci.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/usb/gadget/udc/cdns2/cdns2-pci.c b/drivers/usb/gadget/udc/cdns2/cdns2-pci.c
+index 50c3d0974d9b..0e904085d968 100644
+--- a/drivers/usb/gadget/udc/cdns2/cdns2-pci.c
++++ b/drivers/usb/gadget/udc/cdns2/cdns2-pci.c
+@@ -35,10 +35,8 @@ static int cdns2_pci_probe(struct pci_dev *pdev,
+ 		return -EINVAL;
+ 
+ 	ret = pcim_enable_device(pdev);
+-	if (ret) {
+-		dev_err(&pdev->dev, "Enabling PCI device has failed %d\n", ret);
+-		return ret;
+-	}
++	if (ret)
++		return dev_err_probe(&pdev->dev, ret, "Enabling PCI device has failed\n");
+ 
+ 	pci_set_master(pdev);
+ 
+-- 
+2.34.1
+
 
