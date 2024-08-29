@@ -1,270 +1,203 @@
-Return-Path: <linux-kernel+bounces-307041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 755A9964729
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:49:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8F44964727
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:48:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B39D1C214C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:49:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 198AD1C22D4E
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:48:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 795941AED52;
-	Thu, 29 Aug 2024 13:48:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 750631AE85B;
+	Thu, 29 Aug 2024 13:48:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KpmVy7Tu"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k61X5c2r"
+Received: from mail-oo1-f45.google.com (mail-oo1-f45.google.com [209.85.161.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A28561AE875
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 13:48:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E82CF19005B;
+	Thu, 29 Aug 2024 13:48:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724939302; cv=none; b=SHfUkF8fR1r5id9yb+UfDXrZR2vy679xnq4Gd8r6J67NTG8feZdWwGju/+yX1hm4RiBZiL+Uy2TlCrIzC1GWD7x0swDgQAorhWdtMbQBQQqEVQ6+ROv4onoe/lORDDEq+eElVFdkLmkeNhOwEcSaOGtxeyhmcAS4ULVngWkGxdo=
+	t=1724939297; cv=none; b=fnE64bPC6xNjTrGj8MLTTRJ4+Wt7NqM8cIXj2aB9/eBTXt5n/bVAkLkVBW9oMN83MLAIgIiUv8YkSm3kguaDkCe3ipvsKP3KayIMEJ7z6QIxPztrKEigMfjt83jcAWcXuQfyBm+UwGhOVw615IA5//Wtx4Ewj60oh3tlyiWB8t4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724939302; c=relaxed/simple;
-	bh=NQQnb0mdQeAwDkJ+tt4TlODZAXkhpqHEUsXC5mfDlpY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GqPcFnUEBXWx/b8rowUM7L7boMHWcBf7BkLCqcOxu509f2cwvy4wIUoo+AsAiN5K7bYBTrVn/2tRQBVG4AbM2CJR1E2h684Zt8bFwSQF7y/hducZq6PcS2Zai8SEzCzI2/QPq7HfvbbI8vhc/XDrqn5SEPnEpxRAqCr3uDLs3yU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KpmVy7Tu; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5bed05c0a2fso738867a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 06:48:20 -0700 (PDT)
+	s=arc-20240116; t=1724939297; c=relaxed/simple;
+	bh=bMd2+0+v0C0vkmvZ0a7gm12/MK8cw71SBn03PAdEUug=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=D7DJD6jgFscx7APGEdeEQYrpPTJLHgLI7B16HeO53gSIJz+YlYuL78CBO1ThQ+YlzCwiOz0SoWVvTKjdnsphsdRmsRQDTnUWrBlo6wMdtkWftn4FrxwJSjdRdbHC707zddrS0bCpVog4SrvedS1Q184B6tO+pIbTJpVzrtjTaNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k61X5c2r; arc=none smtp.client-ip=209.85.161.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-5d5f9d68805so350579eaf.3;
+        Thu, 29 Aug 2024 06:48:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724939299; x=1725544099; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FX0mRihea/eOEM2bDEgw+c6t5XaEtyKuY95MXVEKelY=;
-        b=KpmVy7Tu2peYaio1zvfTuJHnB71af+Zf9WiJqJm3w+IzsoHCf7VDJpPYXNkxM12j6F
-         ZRNSzbVD9BFIohfBOdrpO4Wh2Ev6ydGeaKoK50MWcoMN7P+n3ggtYFqOR9ZO4DhzXAYQ
-         Qs3Mea+CD50a/6F9wI/0a/ODtimx96pyrtpaw4gAYsZAU5hCSLe9kr29mxFj9VEUxp24
-         N+tMgcSd8b9R9N4nudwaE1iQE5jRFcidHUNQFc8mOYSU1IUU1xBn4kcYHB8MnksB8txC
-         rY1MqtDfum+ha/O9RqTzrz0wRuUgCs5rJQmQnXtntC6EFbEvgukQ+aOCh+Qw9TT6E4Z2
-         1LqA==
+        d=gmail.com; s=20230601; t=1724939295; x=1725544095; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fij7bmUZ1BwtygZobmPkPFaBK/SFCbQ/kLne1FVouMA=;
+        b=k61X5c2rvs8K5UvKAvgH4VejKek9yM4p4frWdj2yth6Vt8L6IRq1l3nz34hw8x2K3B
+         HZU7iUWDAH4rhR0EiFdszrxK5vHMb2aSfHrXpdn3WAJDaJAVgdiYdtVYSV84Gtwa5pJ4
+         U4xKb3YvXvT2x2hPAQuNeOmklDzm0Y/3KWZZHdMuhsYWSoySIhaLwkqnJ9BCHv9fO+Yb
+         6wHA5QPFke6e0Y4CseYkwBxq0dc6e87QDw56pkR5YBiGsEtljM19ULU6t4QNzjwSPCwQ
+         UH6Ih8PFt7M1PZs+daku1pzDndf1FiPhfa5iSnm1ybj4fysQYtzr4jiBZlWYYNgzecK/
+         zP3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724939299; x=1725544099;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FX0mRihea/eOEM2bDEgw+c6t5XaEtyKuY95MXVEKelY=;
-        b=KLVbYsBetivhmzk4VqxH9N7Ow/ZEWf+7HPDpF0/yCBtc1frLZoOMrxZN7aJgVKRj7p
-         jZr0kYDfVZ00PnM4IHA4Io32ZijDF/CZpzEj95MKkSP999LxMDh+pnjCZDaXP8jZ5gbl
-         EoBQpwPTY1TTndvQWD7Ak5ywAtukh7GcPSHGi+3VufhOoWoyZrkQndQ6sBYnDtf+7bxW
-         PPxYZFno6Y6nq8ZI2R1emIQwdEAa6c2omNLGfxHUm1J7pMMNFuejvROOEAy1va4Q4640
-         kV1b/KtjIsBcARJEttUaKOVIyDQLvXq/1DTfpU7YV8uGMRaBlR3SRQztkJf1iE0t/d0T
-         /axg==
-X-Forwarded-Encrypted: i=1; AJvYcCUq2f9lC5w82PAenmuv6cT9Rpfjn1pKRFLgeTANJpR+BnwsogTAzITfuWliL+SvoF30aihyBH2pxGdE/2w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlY5LCbv0i3MBFOoB8Jh2b1nNambnMAzoDNPjjphemGwHu8Oqp
-	vZquY/RCvkIneoJGshNRvXs95mkaaC+iVA23LeSFha4NtKTGSZatDcQCLTWGaL23Ie+6LF3O9Ku
-	F/d7kUoLIVDPBLehfyxapAuk3ly2A20C8RHAg
-X-Google-Smtp-Source: AGHT+IGOcNivpXC/CzP/IIjuKIi++oFey5BdxjtnXe4zrPEbUPeXOUx6YPCBPe6Qf6xI0C1S7VAQTOs7xTi/4dP00Pg=
-X-Received: by 2002:a05:6402:27d2:b0:5be:f295:a1a5 with SMTP id
- 4fb4d7f45d1cf-5c21ed406e6mr2789211a12.10.1724939297891; Thu, 29 Aug 2024
- 06:48:17 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724939295; x=1725544095;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fij7bmUZ1BwtygZobmPkPFaBK/SFCbQ/kLne1FVouMA=;
+        b=X23h2Vr33wpgA/AE/GkkJpyg0AbgBVTQkuVo+llDGwzoHXP0wy3sdMJwdA5gzlluV2
+         yyAYf4dIZRzABdNIN6j7M7F9H6LB2E3W8GWlvZtOWQAzxHw2GvHY55SaQisW/ak2P7nJ
+         SAURXw4kCYgkOIc2ohJDnvuJmZmh6iY+KzMoN2Fytf/4D4OCcowXVOXfqUSSN+I2gQ4+
+         FgDGhazVfTwSitSUbsWjxNH/x9sRUGdZ1JgOeOVbsBu0cb+bhmb44AfranDJIkS/VryC
+         ut37X88Xq8sLHS6fHpM0fP/LPmRLbJUxYckDqOU4MiEPC9gsA+jHrBYBlAuFCZsW5odg
+         G3XQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUv/XhwPxgCXJhk+yUM1jmImf45qRlreQD2DpwI8lFDwzk6g1JJQoqa2j0TljiQ4goFvryqJXXiM0syy0cF@vger.kernel.org, AJvYcCXUBAdwzS9Cb5bJ4yvM4YLjlolFfcXKdV0MdI2twWysDnkJt01Ns8VvTM9OnXeit55zvh7fsp0KaJaw@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFPBjqZIN/TqBFx0X4KMXVCY+BFbPcjmlg90mkzFNdEuGgaw1e
+	BHML3O0glwySrDPyegYStArsLbAdH6DyLYReOiHv25TnWQyX63Sv
+X-Google-Smtp-Source: AGHT+IGCpp26qT5ACYfhkp4StVnu7Amwf484YTNlNSrglEKytGqqjoOG91Qqwhfb8r2kOPo+eK2/Zw==
+X-Received: by 2002:a05:6359:4c10:b0:1a5:6b71:dde6 with SMTP id e5c5f4694b2df-1b603bebb88mr396283355d.3.1724939294686;
+        Thu, 29 Aug 2024 06:48:14 -0700 (PDT)
+Received: from [192.168.0.122] ([59.188.211.160])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7d22e66d8f4sm1236270a12.0.2024.08.29.06.48.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 29 Aug 2024 06:48:14 -0700 (PDT)
+Message-ID: <18007fe0-cc5d-4887-ab41-ed4cf8217b60@gmail.com>
+Date: Thu, 29 Aug 2024 21:48:10 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240829131214.169977-1-jdamato@fastly.com> <20240829131214.169977-4-jdamato@fastly.com>
-In-Reply-To: <20240829131214.169977-4-jdamato@fastly.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Thu, 29 Aug 2024 15:48:05 +0200
-Message-ID: <CANn89iKUqF5bO_Ca+qrfO_gsfWmutpzFL-ph5mQd86_2asW9dg@mail.gmail.com>
-Subject: Re: [PATCH net-next 3/5] net: napi: Make gro_flush_timeout per-NAPI
-To: Joe Damato <jdamato@fastly.com>
-Cc: netdev@vger.kernel.org, amritha.nambiar@intel.com, 
-	sridhar.samudrala@intel.com, sdf@fomichev.me, bjorn@rivosinc.com, 
-	hch@infradead.org, willy@infradead.org, willemdebruijn.kernel@gmail.com, 
-	skhawaja@google.com, kuba@kernel.org, Martin Karsten <mkarsten@uwaterloo.ca>, 
-	"David S. Miller" <davem@davemloft.net>, Paolo Abeni <pabeni@redhat.com>, Jiri Pirko <jiri@resnulli.us>, 
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Lorenzo Bianconi <lorenzo@kernel.org>, 
-	Breno Leitao <leitao@debian.org>, Johannes Berg <johannes.berg@intel.com>, 
-	Alexander Lobakin <aleksander.lobakin@intel.com>, Heiner Kallweit <hkallweit1@gmail.com>, 
-	open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND 2/3] irqchip/apple-aic: Only access IPI sysregs
+ when use_fast_ipi is true
+Content-Language: en-MW
+To: Thomas Gleixner <tglx@linutronix.de>, Hector Martin <marcan@marcan.st>,
+ Sven Peter <sven@svenpeter.dev>, Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, asahi@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+Cc: ~postmarketos/upstreaming@lists.sr.ht,
+ Konrad Dybcio <konrad.dybcio@somainline.org>
+References: <20240829110436.46052-1-towinchenmi@gmail.com>
+ <20240829110436.46052-3-towinchenmi@gmail.com> <87zfova32u.ffs@tglx>
+From: Nick Chan <towinchenmi@gmail.com>
+In-Reply-To: <87zfova32u.ffs@tglx>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Aug 29, 2024 at 3:13=E2=80=AFPM Joe Damato <jdamato@fastly.com> wro=
-te:
->
-> Allow per-NAPI gro_flush_timeout setting.
->
-> The existing sysfs parameter is respected; writes to sysfs will write to
-> all NAPI structs for the device and the net_device gro_flush_timeout
-> field.  Reads from sysfs will read from the net_device field.
->
-> The ability to set gro_flush_timeout on specific NAPI instances will be
-> added in a later commit, via netdev-genl.
->
-> Signed-off-by: Joe Damato <jdamato@fastly.com>
-> Reviewed-by: Martin Karsten <mkarsten@uwaterloo.ca>
-> Tested-by: Martin Karsten <mkarsten@uwaterloo.ca>
-> ---
->  include/linux/netdevice.h | 26 ++++++++++++++++++++++++++
->  net/core/dev.c            | 32 ++++++++++++++++++++++++++++----
->  net/core/net-sysfs.c      |  2 +-
->  3 files changed, 55 insertions(+), 5 deletions(-)
->
-> diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
-> index 7d53380da4c0..d00024d9f857 100644
-> --- a/include/linux/netdevice.h
-> +++ b/include/linux/netdevice.h
-> @@ -372,6 +372,7 @@ struct napi_struct {
->         int                     rx_count; /* length of rx_list */
->         unsigned int            napi_id;
->         int                     defer_hard_irqs;
-> +       unsigned long           gro_flush_timeout;
->         struct hrtimer          timer;
->         struct task_struct      *thread;
->         /* control-path-only fields follow */
-> @@ -557,6 +558,31 @@ void napi_set_defer_hard_irqs(struct napi_struct *n,=
- int defer);
->   */
->  void netdev_set_defer_hard_irqs(struct net_device *netdev, int defer);
->
 
-Same remark :  dev->gro_flush_timeout is no longer read in the fast path.
 
-Please move gro_flush_timeout out of net_device_read_txrx and update
-Documentation/networking/net_cachelines/net_device.rst
+On 29/8/2024 21:08, Thomas Gleixner wrote:
+> On Thu, Aug 29 2024 at 19:02, Nick Chan wrote:
+>> Starting from the A11 (T8015) SoC, Apple introuced system registers for
+>> fast IPI and UNCORE PMC control. These sysregs do not exist on earlier
+>> A7-A10 SoCs and trying to access them results in an instant crash.
+>>
+>> Restrict sysreg access within the AIC driver to configurations where
+>> use_fast_ipi is true to allow AIC to function properly on A7-A10 SoCs.
+> 
+> use_fast_ipi is an implementation detail and does not mean anything
+> here. It's sufficient to say:
+> 
+>    Only access system registers on SoCs which provide them.
+> 
+> Hmm?
+Seems like a good idea. Will be in v2. Though if the commit message
+is that generic, do you think it's correct to squash the third patch
+into this commit? It is also preventing sysreg access on SoC that
+do not provide them.
 
-> +/**
-> + * napi_get_gro_flush_timeout - get the gro_flush_timeout
-> + * @n: napi struct to get the gro_flush_timeout from
-> + *
-> + * Returns the per-NAPI value of the gro_flush_timeout field.
-> + */
-> +unsigned long napi_get_gro_flush_timeout(const struct napi_struct *n);
-> +
-> +/**
-> + * napi_set_gro_flush_timeout - set the gro_flush_timeout for a napi
-> + * @n: napi struct to set the gro_flush_timeout
-> + * @timeout: timeout value to set
-> + *
-> + * napi_set_gro_flush_timeout sets the per-NAPI gro_flush_timeout
-> + */
-> +void napi_set_gro_flush_timeout(struct napi_struct *n, unsigned long tim=
-eout);
-> +
-> +/**
-> + * netdev_set_gro_flush_timeout - set gro_flush_timeout for all NAPIs of=
- a netdev
-> + * @netdev: the net_device for which all NAPIs will have their gro_flush=
-_timeout set
-> + * @timeout: the timeout value to set
-> + */
-> +void netdev_set_gro_flush_timeout(struct net_device *netdev,
-> +                                 unsigned long timeout);
-> +
->  /**
->   * napi_complete_done - NAPI processing complete
->   * @n: NAPI context
-> diff --git a/net/core/dev.c b/net/core/dev.c
-> index f7baff0da057..3f7cb1085efa 100644
-> --- a/net/core/dev.c
-> +++ b/net/core/dev.c
-> @@ -6234,6 +6234,29 @@ void netdev_set_defer_hard_irqs(struct net_device =
-*netdev, int defer)
->  }
->  EXPORT_SYMBOL_GPL(netdev_set_defer_hard_irqs);
->
-> +unsigned long napi_get_gro_flush_timeout(const struct napi_struct *n)
-> +{
-> +       return READ_ONCE(n->gro_flush_timeout);
-> +}
-> +EXPORT_SYMBOL_GPL(napi_get_gro_flush_timeout);
-> +
-> +void napi_set_gro_flush_timeout(struct napi_struct *n, unsigned long tim=
-eout)
-> +{
-> +       WRITE_ONCE(n->gro_flush_timeout, timeout);
-> +}
-> +EXPORT_SYMBOL_GPL(napi_set_gro_flush_timeout);
-> +
-> +void netdev_set_gro_flush_timeout(struct net_device *netdev,
-> +                                 unsigned long timeout)
-> +{
-> +       struct napi_struct *napi;
-> +
-> +       WRITE_ONCE(netdev->gro_flush_timeout, timeout);
-> +       list_for_each_entry(napi, &netdev->napi_list, dev_list)
-> +               napi_set_gro_flush_timeout(napi, timeout);
-> +}
-> +EXPORT_SYMBOL_GPL(netdev_set_gro_flush_timeout);
-> +
->  bool napi_complete_done(struct napi_struct *n, int work_done)
->  {
->         unsigned long flags, val, new, timeout =3D 0;
-> @@ -6251,12 +6274,12 @@ bool napi_complete_done(struct napi_struct *n, in=
-t work_done)
->
->         if (work_done) {
->                 if (n->gro_bitmask)
-> -                       timeout =3D READ_ONCE(n->dev->gro_flush_timeout);
-> +                       timeout =3D napi_get_gro_flush_timeout(n);
->                 n->defer_hard_irqs_count =3D napi_get_defer_hard_irqs(n);
->         }
->         if (n->defer_hard_irqs_count > 0) {
->                 n->defer_hard_irqs_count--;
-> -               timeout =3D READ_ONCE(n->dev->gro_flush_timeout);
-> +               timeout =3D napi_get_gro_flush_timeout(n);
->                 if (timeout)
->                         ret =3D false;
->         }
-> @@ -6391,7 +6414,7 @@ static void busy_poll_stop(struct napi_struct *napi=
-, void *have_poll_lock,
->
->         if (flags & NAPI_F_PREFER_BUSY_POLL) {
->                 napi->defer_hard_irqs_count =3D napi_get_defer_hard_irqs(=
-napi);
-> -               timeout =3D READ_ONCE(napi->dev->gro_flush_timeout);
-> +               timeout =3D napi_get_gro_flush_timeout(napi);
->                 if (napi->defer_hard_irqs_count && timeout) {
->                         hrtimer_start(&napi->timer, ns_to_ktime(timeout),=
- HRTIMER_MODE_REL_PINNED);
->                         skip_schedule =3D true;
-> @@ -6673,6 +6696,7 @@ void netif_napi_add_weight(struct net_device *dev, =
-struct napi_struct *napi,
->         hrtimer_init(&napi->timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL_PINN=
-ED);
->         napi->timer.function =3D napi_watchdog;
->         napi_set_defer_hard_irqs(napi, READ_ONCE(dev->napi_defer_hard_irq=
-s));
-> +       napi_set_gro_flush_timeout(napi, READ_ONCE(dev->gro_flush_timeout=
-));
->         init_gro_hash(napi);
->         napi->skb =3D NULL;
->         INIT_LIST_HEAD(&napi->rx_list);
-> @@ -11054,7 +11078,7 @@ void netdev_sw_irq_coalesce_default_on(struct net=
-_device *dev)
->         WARN_ON(dev->reg_state =3D=3D NETREG_REGISTERED);
->
->         if (!IS_ENABLED(CONFIG_PREEMPT_RT)) {
-> -               dev->gro_flush_timeout =3D 20000;
-> +               netdev_set_gro_flush_timeout(dev, 20000);
->                 netdev_set_defer_hard_irqs(dev, 1);
->         }
->  }
-> diff --git a/net/core/net-sysfs.c b/net/core/net-sysfs.c
-> index 8272f0144d81..ff545a422b1f 100644
-> --- a/net/core/net-sysfs.c
-> +++ b/net/core/net-sysfs.c
-> @@ -408,7 +408,7 @@ NETDEVICE_SHOW_RW(tx_queue_len, fmt_dec);
->
->  static int change_gro_flush_timeout(struct net_device *dev, unsigned lon=
-g val)
->  {
-> -       WRITE_ONCE(dev->gro_flush_timeout, val);
-> +       netdev_set_gro_flush_timeout(dev, val);
->         return 0;
->  }
->
-> --
-> 2.25.1
->
+> 
+>> While at it, remove the IPI-always-ack path on aic_handle_fiq.
+> 
+> It's not while at it. It's part of handling this correctly.
+In v2 it will be mentioned as as part of the sysreg access restriction.
+
+> 
+>> If we are able to reach there, we are on an IPI-capable system and
+>> should be using one of the IPI-capable compatibles, anyway.
+> 
+> 'we' can't reach that code ever.
+> 
+> https://www.kernel.org/doc/html/latest/process/maintainer-tip.html#changelog
+Acked. In v2 the commit message will not impersonate the code anymore.
+
+> 
+> 
+>> Signed-off-by: Konrad Dybcio <konrad.dybcio@somainline.org>
+>> Signed-off-by: Nick Chan <towinchenmi@gmail.com>
+> 
+> This Signed-off-by chain is invalid. If Konrad authored the patch then
+> you need to have a 'From: Konrad ...' line at the top of the change log.
+> 
+> If you worked together on this then this needs a Co-developed-by
+> tag. See Documentation/process/...
+This patch was entirely made by Konrad, but now that changes are requested,
+it will be a Co-developed-by in v2.
+
+> 
+>>  
+>> -	if (read_sysreg_s(SYS_IMP_APL_IPI_SR_EL1) & IPI_SR_PENDING) {
+>> -		if (static_branch_likely(&use_fast_ipi)) {
+>> -			aic_handle_ipi(regs);
+>> -		} else {
+>> -			pr_err_ratelimited("Fast IPI fired. Acking.\n");
+>> -			write_sysreg_s(IPI_SR_PENDING, SYS_IMP_APL_IPI_SR_EL1);
+>> -		}
+>> +	if (static_branch_likely(&use_fast_ipi) &&
+>> +	    (read_sysreg_s(SYS_IMP_APL_IPI_SR_EL1) & IPI_SR_PENDING)) {
+>> +		aic_handle_ipi(regs);
+>>  	}
+>>  
+>>  	if (TIMER_FIRING(read_sysreg(cntp_ctl_el0)))
+>> @@ -574,8 +571,9 @@ static void __exception_irq_entry aic_handle_fiq(struct pt_regs *regs)
+>>  					  AIC_FIQ_HWIRQ(irq));
+>>  	}
+>>  
+>> -	if (FIELD_GET(UPMCR0_IMODE, read_sysreg_s(SYS_IMP_APL_UPMCR0_EL1)) == UPMCR0_IMODE_FIQ &&
+>> -			(read_sysreg_s(SYS_IMP_APL_UPMSR_EL1) & UPMSR_IACT)) {
+>> +	if (static_branch_likely(&use_fast_ipi) &&
+>> +	    (FIELD_GET(UPMCR0_IMODE, read_sysreg_s(SYS_IMP_APL_UPMCR0_EL1)) == UPMCR0_IMODE_FIQ) &&
+>> +	    (read_sysreg_s(SYS_IMP_APL_UPMSR_EL1) & UPMSR_IACT)) {
+>>  		/* Same story with uncore PMCs */
+>>  		pr_err_ratelimited("Uncore PMC FIQ fired. Masking.\n");
+>>  		sysreg_clear_set_s(SYS_IMP_APL_UPMCR0_EL1, UPMCR0_IMODE,
+>> @@ -811,7 +809,8 @@ static int aic_init_cpu(unsigned int cpu)
+>>  	/* Mask all hard-wired per-CPU IRQ/FIQ sources */
+>>  
+>>  	/* Pending Fast IPI FIQs */
+>> -	write_sysreg_s(IPI_SR_PENDING, SYS_IMP_APL_IPI_SR_EL1);
+>> +	if (static_branch_likely(&use_fast_ipi))
+>> +		write_sysreg_s(IPI_SR_PENDING, SYS_IMP_APL_IPI_SR_EL1);
+>>  
+>>  	/* Timer FIQs */
+>>  	sysreg_clear_set(cntp_ctl_el0, 0, ARCH_TIMER_CTRL_IT_MASK);
+>> @@ -832,8 +831,9 @@ static int aic_init_cpu(unsigned int cpu)
+>>  			   FIELD_PREP(PMCR0_IMODE, PMCR0_IMODE_OFF));
+>>  
+>>  	/* Uncore PMC FIQ */
+>> -	sysreg_clear_set_s(SYS_IMP_APL_UPMCR0_EL1, UPMCR0_IMODE,
+>> -			   FIELD_PREP(UPMCR0_IMODE, UPMCR0_IMODE_OFF));
+>> +	if (static_branch_likely(&use_fast_ipi))
+>> +		sysreg_clear_set_s(SYS_IMP_APL_UPMCR0_EL1, UPMCR0_IMODE,
+>> +				   FIELD_PREP(UPMCR0_IMODE, UPMCR0_IMODE_OFF));
+> 
+> Please see the bracket rules in the tip maintainers doc.
+Acked. Brackets will be added to function references in commit message
+of v2.
+
+> 
+> Thanks,
+> 
+>         tglx
+
+Nick Chan
 
