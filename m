@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-306650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A535F9641B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 12:28:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07EE59641B8
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 12:29:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5491628B847
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:28:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C5591F21986
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:29:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99A7E19580B;
-	Thu, 29 Aug 2024 10:20:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2C741B373D;
+	Thu, 29 Aug 2024 10:21:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="F5tdnCNT"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WUluBwWQ"
+Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 280041B29A6
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 10:20:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBEE21B372B
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 10:21:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724926858; cv=none; b=nfKtxnu4Z9zwQzGSCIRPWdl7Ze2w7DvA8AYICHWAwD2jo52i/b1r/juBbBVpOctD+SxaSsg3ENP+i8XmudvrQ2y8MfHurZW56hUdgRB0ODU/fnjlJYetN+GXnIHsPaNrK7gfxgY+USaPYl235y2NDHQHp1WV4fcpMGUaqqM8lmA=
+	t=1724926866; cv=none; b=JAZPM7ORDoYZNtGwNGhDaAx+xyDQQnTW4cFNNNik4IMI5amd2vdCKL31W4xCujKEtf3LpRxtsW6Km6I3STFYlYViKAo3y+nukQXUbh27ageLY7ICGCKxXIcPa4u9GaGPkC4WP9D7td5qR0p89CP5WrSoIvlCrcPPvMzoYei7kU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724926858; c=relaxed/simple;
-	bh=iBBFvuh42T8eyN/dYK/D5D18dlzaCweeyM10rWmhUYM=;
+	s=arc-20240116; t=1724926866; c=relaxed/simple;
+	bh=7i2tZ6lsHlQvWtNNIv33X2jDrdBkZS2b+kzYUWO0fMI=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=AvsTVa9NBLyAM64t3Is5uQBV2FldRiBI3KyMB09swzYi8w9LowxSSGdB0mphnwApI+c8yLtIxkzlQZ4GinclYisGwWfhioapj1t5QgeIWFbqOpXQL1e2JHF0Ua3n4B7/6EpuKJjL7ITOzF1+yjxoA2XG5X7qI0uxMVuhH0PK/b8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=F5tdnCNT; arc=none smtp.client-ip=209.85.210.176
+	 In-Reply-To:To:Cc; b=iJoG2mVsXMw2+kbMB0SUnx+BNpTsH50j1xulvZaE118ObukDELYLP/7JCovzOFqfHm5M/EabQpXxYHzy5D+c3IEyALbD7i/JT3341EPR1OKkq/dbFMJhpta+hcVmcWOdJNd0NQmg9dsqhWjoEZ3FuWFWcWsv0UQ2J9BpLPx5IfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WUluBwWQ; arc=none smtp.client-ip=209.85.210.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-7143165f23fso393485b3a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 03:20:57 -0700 (PDT)
+Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-7093d565310so398863a34.2
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 03:21:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724926856; x=1725531656; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1724926864; x=1725531664; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=F0uRNpfIp2lpV9SgGo9NPsUI/ImMZPWVqx5nn2wZId8=;
-        b=F5tdnCNT9Ka4olhUMvASpHI7BAgLVtIu7SaRk62I5SUvaGbaVkzMClyTFhOJODC/GX
-         2Fo28hxYeOXpmSd+JgYStgALoWNx3GteEdVw1mGa/Pd/EuDZcjh0hCHrJi9J5njr978I
-         nhLcrLcaHo36akETW8xvkVqrYGFy94QFlEi7R993xEgNj5hEYDUjxmn4BBGMzQPLTI4k
-         IRU56nS/0wZdZZ6YRdNu6cjBXVqg7zgMIhVn387wdx9oR1c9YdmFZINidf2w2PY8TSme
-         b7/MlNbJ5n8P/WpgURFRcUWs+Iyg/pC0UajInFyaggHRitEXYuXJRQT6DYRctyUdqShC
-         Vs1w==
+        bh=o0J6gfSiKm4ic0mw9uPw89ZXyvCtsR339YQWgX+0uvc=;
+        b=WUluBwWQuKl3L7zihiyNF+8srfOxSXs+Poyn6oa/M+Pj3r6SFeQhvlI9lFPQ4soNYX
+         btnPK2shJvaR0XpyGTA1cCiCrPlFm/7FyiGUNMenelPJPsushoB93raU53+nngMzgrBC
+         cmPnfkgp6MBjiU3HUD2MBF0FQH3Yqo6vDlt51Pum7OxLlnpVxoiYmMZh9hovgHRtAU0l
+         AA6azOfR62SH0t/1KcQXrYl+IKMeP8OMcKQ+EHP3VzqoSSN9eP+Lpol+QHfvEyZGVNTp
+         sawi4/uRM5xEP7DBLjcEdAOOPWvmbHolPrMAefC5SZCmP8XkvtIcE9U1997EpCZu+G8q
+         4w9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724926856; x=1725531656;
+        d=1e100.net; s=20230601; t=1724926864; x=1725531664;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=F0uRNpfIp2lpV9SgGo9NPsUI/ImMZPWVqx5nn2wZId8=;
-        b=h2P+9bHcChLSQT3D2VCS8K2FeolUyfZIfkzayYdkKIsGBDJ5uWOIfOT8QEiFB3qbQa
-         wvVmw+ooR8ag+02rVeFSo/b+ayyVb93kTY5pMDTsUkgBo30TnlTlqUxEgVTCUANebBZ+
-         Cba5hZhqFrtK02RmlNTkol5yv14effwPYp4HDnY1DzQgwjjSUebAiUYogX5DDxcf6GTj
-         yaNzmNcS+9ziTcu7wUgzpv17qVh3MnM2wfZ1OK/dnyHlGqAtI24dGgxv3XUJ60PsA/Rb
-         9g4avR1LvBP1TDb9nj/508+iKjygz8OfqyLpeGFIGI8RzjEGST1UzwsobegO5BJkyPdi
-         Ryng==
-X-Forwarded-Encrypted: i=1; AJvYcCU5uRL6K7+2SFYPo/IcoYhdNhJxVJkyumQcFuKhTg/ZYORmOhcDn2+3NustazB/KchMAYvx9ZboqyBrIjs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxw5MmaW/51yesi0yrwulFpvs/y8ZQNwDkzma14EMELMbmh26BI
-	AoXGnpqgGFEi4TP297d8t6qGXoU/+S+wpVfpqOmKOVpoAg0GEdxoiAJkHnmnTNI=
-X-Google-Smtp-Source: AGHT+IEQnZ7U6OXJ59JaU5lRHIu343sdAHqmwh5ITZdY+IPrw4gsbPdHxDGzOKFTJbJ7zQsi41Jqkg==
-X-Received: by 2002:a05:6a00:10c1:b0:70d:244b:cad9 with SMTP id d2e1a72fcca58-715dfcc0ba3mr2510462b3a.28.1724926856440;
-        Thu, 29 Aug 2024 03:20:56 -0700 (PDT)
+        bh=o0J6gfSiKm4ic0mw9uPw89ZXyvCtsR339YQWgX+0uvc=;
+        b=NH99o4I1N8ktjbHiqk1L/Lh3coeitb+ojOisrx7WjyCUe0ZdVWRnxmLqQeJIDPC9TH
+         zNFNwGym4BklxUQVy+h07tH+5YJQKS9TkGfnZJGIHbQpXAUXtqNM+inrXzgEzrbHDh5w
+         YrieO4yq/kRg9GM2Q0aG3/p9CR2CqhV5g2Sai1qnNDJ/ArQPOM31Po+ei5zI/imoCLj0
+         UnKEoZ09uy9knMnaQGk3kiU5oz6Y0Ht/GTj+B1quuXb9uXTsVs4u8cmGL130yz3OYYcv
+         qb+zsvjst02Ene/C08IM6J/aegJEy3dt15nof5+2AOthMG2ZVFUa8wH7wdpw0mzIf9zw
+         Vqqw==
+X-Forwarded-Encrypted: i=1; AJvYcCUlF7vkEHVE0PPRKGOw1xbR/ePKLSeF9pL4+YjeagTQsA6H8V86k9bBMMWsCtNcuUzVwSg3H28A1v4Ov1M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+aKRTIxlcJsXXJEoN72FN7ZvzYTxkqWpKchI2/xjdI1aHEeg+
+	xT4dR2RtpRz5EImijHZXsb6ISgcDRtOzLEGxrUzPPZ85N9akSt3VWYuJ8+BUt7E=
+X-Google-Smtp-Source: AGHT+IEYeU8b0tKShp/1tqe/umI4hz9GnzhkBvnni3VPNx3JknLCkXdWH7K2aDAgRImHXjGCDUx1wg==
+X-Received: by 2002:a05:6359:4c83:b0:1b5:a037:f238 with SMTP id e5c5f4694b2df-1b603a23841mr290344855d.0.1724926863890;
+        Thu, 29 Aug 2024 03:21:03 -0700 (PDT)
 Received: from [127.0.1.1] ([112.65.12.167])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7d22e9d4df4sm891684a12.82.2024.08.29.03.20.48
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7d22e9d4df4sm891684a12.82.2024.08.29.03.20.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 03:20:55 -0700 (PDT)
+        Thu, 29 Aug 2024 03:21:03 -0700 (PDT)
 From: Jun Nie <jun.nie@linaro.org>
-Date: Thu, 29 Aug 2024 18:17:42 +0800
-Subject: [PATCH 13/21] drm/msm/dpu: Support quad pipe in header files
+Date: Thu, 29 Aug 2024 18:17:43 +0800
+Subject: [PATCH 14/21] drm/msm/dpu: Support quad-pipe in SSPP checking
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,7 +77,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240829-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-8-v1-13-bdb05b4b5a2e@linaro.org>
+Message-Id: <20240829-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-8-v1-14-bdb05b4b5a2e@linaro.org>
 References: <20240829-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-8-v1-0-bdb05b4b5a2e@linaro.org>
 In-Reply-To: <20240829-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-8-v1-0-bdb05b4b5a2e@linaro.org>
 To: Rob Clark <robdclark@gmail.com>, 
@@ -91,117 +91,190 @@ Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
  freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
  Jun Nie <jun.nie@linaro.org>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1724926736; l=4530;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1724926736; l=6676;
  i=jun.nie@linaro.org; s=20240403; h=from:subject:message-id;
- bh=iBBFvuh42T8eyN/dYK/D5D18dlzaCweeyM10rWmhUYM=;
- b=ljxhEuqO0d+83B1jOB9X07XgeIfQ83dErzf8WVk3l5RtHzfq5go+VT1T9rPgHJOT3eTMcu4NQ
- Jtog/FbpINjCKsHZzsDiLWeqW1wQsnLRf7/8HNDlzHujPsKNJEnA+Ti
+ bh=7i2tZ6lsHlQvWtNNIv33X2jDrdBkZS2b+kzYUWO0fMI=;
+ b=C6t5JxSLHz+r3FxGXyme5vAaHho61+PC/rRPPm+gGMljnzAh5OkDyqUlIUQJKDLPB5ANtLE6L
+ 1Q7bIVmclZrBssFJaeh+hTvIJjBVyUs/Yjv5HDdU8jFVZlVYwrE8yD5
 X-Developer-Key: i=jun.nie@linaro.org; a=ed25519;
  pk=MNiBt/faLPvo+iJoP1hodyY2x6ozVXL8QMptmsKg3cc=
 
-Support 4 pipes and their configs at most. They are for 2 SSPP
-and their multi-rect mode. Because one SSPP can co-work with
-2 mixer at most, 2 pair of mixer are needed for 2 SSPP in quad-
-pipe case. So 2 mixer configs are needed in quad-pipe case.
+Support quad-pipe in SSPP checking with unified method
 
 Signed-off-by: Jun Nie <jun.nie@linaro.org>
 ---
- drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h |  2 +-
- drivers/gpu/drm/msm/disp/dpu1/dpu_hw_sspp.h | 11 ++++++++++-
- drivers/gpu/drm/msm/disp/dpu1/dpu_plane.h   | 30 +++++++++++++++++++++--------
- 3 files changed, 33 insertions(+), 10 deletions(-)
+ drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c | 108 ++++++++++++++----------------
+ 1 file changed, 51 insertions(+), 57 deletions(-)
 
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h
-index a2eff36a2224c..424725303ccad 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h
-@@ -32,7 +32,7 @@
- #define DPU_MAX_PLANES			4
- #endif
- 
--#define PIPES_PER_STAGE			2
-+#define PIPES_PER_STAGE			4
- #ifndef DPU_MAX_DE_CURVES
- #define DPU_MAX_DE_CURVES		3
- #endif
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_sspp.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_sspp.h
-index fc54625ae5d4f..ae6beff2c294b 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_sspp.h
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_sspp.h
-@@ -143,11 +143,20 @@ struct dpu_hw_pixel_ext {
-  *             such as decimation, flip etc to program this field
-  * @dest_rect: destination ROI.
-  * @rotation: simplified drm rotation hint
-+ * @visible: mark this cfg is valid
-+ * @mxcfg_id: mixer config ID for left or right half screen.
-+ *             We have single SSPP, dual SSPP, single SSPP+multi_rect or dual
-+ *             SSPP+multi_rect case. mxcfg_id mark current pipe will use
-+ *             which mixer cfg. The first mxcfg is for the left half of screen,
-+ *             the 2nd mxcfg is for the right half screen. The heading cfg may
-+ *             be skipped by pipe with the first mxcfg_id = 1 if the plane is
-+ *             only displayed in the right side, thus SSPP goes to later mixers.
-  */
- struct dpu_sw_pipe_cfg {
- 	struct drm_rect src_rect;
- 	struct drm_rect dst_rect;
--	unsigned int rotation;
-+	unsigned int rotation, mxcfg_id;
-+	bool visible;
- };
- 
- /**
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.h
-index e225d5baceb09..9e79cf9eba264 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.h
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.h
-@@ -14,14 +14,30 @@
- #include "dpu_hw_mdss.h"
- #include "dpu_hw_sspp.h"
- 
-+/**
-+ * Max number of mixer configs. Because we support 4 pipes at most,
-+ * the 4 pipes are with 2 SSPP and their multi-rect mode. While one
-+ * SSPP can co-work with 2 mixer at most, then 2 pair of mixer are
-+ * needed for 2 SSPP in quad-pipe case. Thus 2 mixer configs are
-+ * needed in quad-pipe case.
-+ */
-+#define MIX_CFGS_IN_CRTC 2
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
+index 4df7cfed4d230..78bf8f0292f62 100644
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
+@@ -738,12 +738,40 @@ static int dpu_plane_check_inline_rotation(struct dpu_plane *pdpu,
+ static int dpu_plane_atomic_check_pipe(struct dpu_plane *pdpu,
+ 		struct dpu_sw_pipe *pipe,
+ 		struct dpu_sw_pipe_cfg *pipe_cfg,
+-		const struct msm_format *fmt,
+-		const struct drm_display_mode *mode)
++		const struct drm_display_mode *mode,
++		struct drm_plane_state *new_plane_state)
+ {
+ 	uint32_t min_src_size;
+ 	struct dpu_kms *kms = _dpu_plane_get_kms(&pdpu->base);
+ 	int ret;
++	const struct msm_format *fmt;
++	uint32_t supported_rotations;
++	const struct dpu_sspp_cfg *pipe_hw_caps;
++	const struct dpu_sspp_sub_blks *sblk;
 +
- /**
-  * struct dpu_plane_state: Define dpu extension of drm plane state object
-  * @base:	base drm plane state object
-  * @aspace:	pointer to address space for input/output buffers
-- * @pipe:	software pipe description
-- * @r_pipe:	software pipe description of the second pipe
-- * @pipe_cfg:	software pipe configuration
-- * @r_pipe_cfg:	software pipe configuration for the second pipe
-+ * @pipe:	software pipe description. Some or all of fields in array can
-+ *		be in use per topology. The heading fields are used first,
-+ *		and the later fields is invalid if visible field of pipe_cfg
-+ *		is not set. For example, the visible fields of pipe_cfg are set
-+ *		in the first 2 pipe_cfg fields, and the mxcfg_id for them are
-+ *		0 and 1. That means the first pipe is for left half screen and
-+ *		the 2nd pipe is for right half. The visible field of the 3rd
-+ *		pipe_cfg is not set, which means the 3rd and 4th pipe are not
-+ *		in use.
-+ * @pipe_cfg:	software pipe configuration. The 4 fields are for SSPP and their
-+		parallel rect as above pipes.
-  * @stage:	assigned by crtc blender
-  * @needs_qos_remap: qos remap settings need to be updated
-  * @multirect_index: index of the rectangle of SSPP
-@@ -34,10 +50,8 @@
- struct dpu_plane_state {
- 	struct drm_plane_state base;
- 	struct msm_gem_address_space *aspace;
--	struct dpu_sw_pipe pipe;
--	struct dpu_sw_pipe r_pipe;
--	struct dpu_sw_pipe_cfg pipe_cfg;
--	struct dpu_sw_pipe_cfg r_pipe_cfg;
-+	struct dpu_sw_pipe pipe[PIPES_PER_STAGE];
-+	struct dpu_sw_pipe_cfg pipe_cfg[PIPES_PER_STAGE];
- 	enum dpu_stage stage;
- 	bool needs_qos_remap;
- 	bool pending;
++	pipe_hw_caps = pipe->sspp->cap;
++	sblk = pipe->sspp->cap->sblk;
++
++	/*
++	 * We already have verified scaling against platform limitations.
++	 * Now check if the SSPP supports scaling at all.
++	 */
++	if (!sblk->scaler_blk.len &&
++	    ((drm_rect_width(&new_plane_state->src) >> 16 !=
++	      drm_rect_width(&new_plane_state->dst)) ||
++	     (drm_rect_height(&new_plane_state->src) >> 16 !=
++	      drm_rect_height(&new_plane_state->dst))))
++		return -ERANGE;
++
++	fmt = msm_framebuffer_format(new_plane_state->fb);
++
++	supported_rotations = DRM_MODE_REFLECT_MASK | DRM_MODE_ROTATE_0;
++
++	if (pipe_hw_caps->features & BIT(DPU_SSPP_INLINE_ROTATION))
++		supported_rotations |= DRM_MODE_ROTATE_90;
++
++	pipe_cfg->rotation = drm_rotation_simplify(new_plane_state->rotation,
++						   supported_rotations);
+ 
+ 	min_src_size = MSM_FORMAT_IS_YUV(fmt) ? 2 : 1;
+ 
+@@ -886,8 +914,7 @@ static int dpu_plane_atomic_check_nopipe(struct drm_plane *plane,
+ 	return 0;
+ }
+ 
+-static int dpu_plane_is_multirect_parallel_capable(struct dpu_sw_pipe *pipe,
+-						   struct dpu_sw_pipe_cfg *pipe_cfg,
++static int dpu_plane_is_multirect_parallel_capable(struct dpu_sw_pipe_cfg *pipe_cfg,
+ 						   const struct msm_format *fmt,
+ 						   uint32_t max_linewidth)
+ {
+@@ -916,49 +943,19 @@ static int dpu_plane_atomic_check_pipes(struct drm_plane *plane,
+ 		drm_atomic_get_new_plane_state(state, plane);
+ 	struct dpu_plane *pdpu = to_dpu_plane(plane);
+ 	struct dpu_plane_state *pstate = to_dpu_plane_state(new_plane_state);
+-	struct dpu_sw_pipe *pipe = &pstate->pipe;
+-	struct dpu_sw_pipe *r_pipe = &pstate->r_pipe;
+-	const struct msm_format *fmt;
+-	struct dpu_sw_pipe_cfg *pipe_cfg = &pstate->pipe_cfg;
+-	struct dpu_sw_pipe_cfg *r_pipe_cfg = &pstate->r_pipe_cfg;
+-	uint32_t supported_rotations;
+-	const struct dpu_sspp_cfg *pipe_hw_caps;
+-	const struct dpu_sspp_sub_blks *sblk;
+-	int ret = 0;
+-
+-	pipe_hw_caps = pipe->sspp->cap;
+-	sblk = pipe->sspp->cap->sblk;
+-
+-	/*
+-	 * We already have verified scaling against platform limitations.
+-	 * Now check if the SSPP supports scaling at all.
+-	 */
+-	if (!sblk->scaler_blk.len &&
+-	    ((drm_rect_width(&new_plane_state->src) >> 16 !=
+-	      drm_rect_width(&new_plane_state->dst)) ||
+-	     (drm_rect_height(&new_plane_state->src) >> 16 !=
+-	      drm_rect_height(&new_plane_state->dst))))
+-		return -ERANGE;
+-
+-	fmt = msm_framebuffer_format(new_plane_state->fb);
+-
+-	supported_rotations = DRM_MODE_REFLECT_MASK | DRM_MODE_ROTATE_0;
+-
+-	if (pipe_hw_caps->features & BIT(DPU_SSPP_INLINE_ROTATION))
+-		supported_rotations |= DRM_MODE_ROTATE_90;
+-
+-	pipe_cfg->rotation = drm_rotation_simplify(new_plane_state->rotation,
+-						   supported_rotations);
+-	r_pipe_cfg->rotation = pipe_cfg->rotation;
+-
+-	ret = dpu_plane_atomic_check_pipe(pdpu, pipe, pipe_cfg, fmt,
+-					  &crtc_state->adjusted_mode);
+-	if (ret)
+-		return ret;
++	struct dpu_sw_pipe *pipe;
++	struct dpu_sw_pipe_cfg *pipe_cfg;
++	int ret = 0, i;
+ 
+-	if (drm_rect_width(&r_pipe_cfg->src_rect) != 0) {
+-		ret = dpu_plane_atomic_check_pipe(pdpu, r_pipe, r_pipe_cfg, fmt,
+-						  &crtc_state->adjusted_mode);
++	for (i = 0; i < PIPES_PER_STAGE; i++) {
++		pipe = &pstate->pipe[i];
++		pipe_cfg = &pstate->pipe_cfg[i];
++		if (!pipe_cfg->visible || !pipe->sspp)
++			break;
++		DPU_DEBUG_PLANE(pdpu, "pipe %d is in use, validate it\n", i);
++		ret = dpu_plane_atomic_check_pipe(pdpu, pipe, pipe_cfg,
++						  &crtc_state->adjusted_mode,
++						  new_plane_state);
+ 		if (ret)
+ 			return ret;
+ 	}
+@@ -975,10 +972,10 @@ static int dpu_plane_atomic_check(struct drm_plane *plane,
+ 	struct dpu_plane *pdpu = to_dpu_plane(plane);
+ 	struct dpu_plane_state *pstate = to_dpu_plane_state(new_plane_state);
+ 	struct dpu_kms *dpu_kms = _dpu_plane_get_kms(plane);
+-	struct dpu_sw_pipe *pipe = &pstate->pipe;
+-	struct dpu_sw_pipe *r_pipe = &pstate->r_pipe;
+-	struct dpu_sw_pipe_cfg *pipe_cfg = &pstate->pipe_cfg;
+-	struct dpu_sw_pipe_cfg *r_pipe_cfg = &pstate->r_pipe_cfg;
++	struct dpu_sw_pipe *pipe = &pstate->pipe[0];
++	struct dpu_sw_pipe *r_pipe = &pstate->pipe[1];
++	struct dpu_sw_pipe_cfg *pipe_cfg = &pstate->pipe_cfg[0];
++	struct dpu_sw_pipe_cfg *r_pipe_cfg = &pstate->pipe_cfg[1];
+ 	const struct drm_crtc_state *crtc_state = NULL;
+ 
+ 	if (new_plane_state->crtc)
+@@ -1033,13 +1030,10 @@ static int dpu_plane_atomic_check(struct drm_plane *plane,
+ 			return -E2BIG;
+ 		}
+ 
+-		/*
+-		 * Use multirect for wide plane. We do not support dynamic
+-		 * assignment of SSPPs, so we know the configuration.
+-		 */
+ 		pipe->multirect_index = DPU_SSPP_RECT_0;
+ 		pipe->multirect_mode = DPU_SSPP_MULTIRECT_PARALLEL;
+ 
++		r_pipe->sspp = pipe->sspp;
+ 		r_pipe->multirect_index = DPU_SSPP_RECT_1;
+ 		r_pipe->multirect_mode = DPU_SSPP_MULTIRECT_PARALLEL;
+ 	}
+@@ -1056,7 +1050,7 @@ static int dpu_plane_virtual_atomic_check(struct drm_plane *plane,
+ 		drm_atomic_get_old_plane_state(state, plane);
+ 	struct dpu_plane_state *pstate = to_dpu_plane_state(plane_state);
+ 	struct drm_crtc_state *crtc_state;
+-	int ret;
++	int ret, i;
+ 
+ 	if (plane_state->crtc)
+ 		crtc_state = drm_atomic_get_new_crtc_state(state,
+@@ -1071,8 +1065,8 @@ static int dpu_plane_virtual_atomic_check(struct drm_plane *plane,
+ 		 * resources are freed by dpu_crtc_assign_plane_resources(),
+ 		 * but clean them here.
+ 		 */
+-		pstate->pipe.sspp = NULL;
+-		pstate->r_pipe.sspp = NULL;
++		for (i = 0; i < PIPES_PER_STAGE; i++)
++			pstate->pipe[i].sspp = NULL;
+ 
+ 		return 0;
+ 	}
 
 -- 
 2.34.1
