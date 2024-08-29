@@ -1,134 +1,146 @@
-Return-Path: <linux-kernel+bounces-307558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C699964F18
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 21:38:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38DBA964F24
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 21:39:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50C601C20F81
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 19:38:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C4FE1C231D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 19:39:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4EDF1BA860;
-	Thu, 29 Aug 2024 19:38:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D94D31BA861;
+	Thu, 29 Aug 2024 19:38:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Vyqjdfwa"
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L3mEuNux"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC8471BA285
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 19:38:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81B021BA27A;
+	Thu, 29 Aug 2024 19:38:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724960311; cv=none; b=ToCZyQfwTVlLE37PE+KHU51CsFkVAjJKEeodzn2IAnd/jGq1N1vRV8GaDGi2YhZcu9HEMsZ+55lbAsv/Xa5beytF1hXtrQ4VFdVml3QRgMUA6MvOx8fKcEDmK1ew0HXuma36ozhS22AixBSoAmh+xLk8nA4s+Nh1YFu/OG2tcxM=
+	t=1724960326; cv=none; b=jBTsOTfnVqCdck/bKP4yOJkOamD8aXz3nEo5ivAeLf4SToy2f0OVR+wRhg5ZxdSI73kFmefiU9Fs4noKpPBVIGY7nN/JHqku/MA08Zj81RgfRhzZt+ys0jZ8ALLy23Psl10t8TGsGwwhyqyuTNRF8eLoJfQRY4bm0Wty7/W44ns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724960311; c=relaxed/simple;
-	bh=4ASADOnCoqNrKV+beHl14a4vrTkq7UjCX+g5PUIp7tg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hQSFj+Q+wSQKJzaEWI2lV91ml9mFgLXoeeXy8czX1xVy4aeBYtdqXSIUA6TeDxkIFq9Cf/daU9CRU4slTt4ZuLgiY5WaoZP4hB1vDasinuuxhyK+wKmdKY5q1Y9pXFOBnkpmVUVEP6+vSQOuYPFGmZ/trCvR0IBZR46HF5PcBbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Vyqjdfwa; arc=none smtp.client-ip=209.85.160.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4567fe32141so78751cf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 12:38:27 -0700 (PDT)
+	s=arc-20240116; t=1724960326; c=relaxed/simple;
+	bh=hebVdy+s+YrVltWauBOkobHWnNyoTs+qfCBTlv+hLAo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SFx5yoIw5E6PC3WHvs6UtyorYLsFNn3YxH3e8aRejnWTBXtLqZZ7YjA7CUWFpoFWKj91Hl9jZlXiQAE4uDIv30XWrDHAMNxbZiMGX2TVGRyyQx14Gwbq4XKf/tfu6KwIV2uEqEdf/DMt0rjsdAOGrcCnEbbJqJNcgfwGJqvHg58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L3mEuNux; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-428178fc07eso8728925e9.3;
+        Thu, 29 Aug 2024 12:38:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724960307; x=1725565107; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=1ZUAgIcTyrR43pe3gP0emMAssjHjCGemTU8nsF1ejxc=;
-        b=VyqjdfwarXMeB4Y4INlQGUPhZkirtCNWsnj7M3szpM9Xkt7avb/e7YL2r2AdYlJkCS
-         /Bpf7hR7X6IlL1U00gOg9VKWrTicKAP4a4yqJWgpfD21VBRGI411IWdBSUD/5Y7hsg9E
-         wiVrzRVTIUriossLHYwrF3NOTBlUA3fP1JfXXgA9ryu2/FdUqqHMT8zgBxP1tTSWZWlL
-         QCyKGDNZFHsNdIEwBTf7SgOpdzJpSQ9AKGvSvwmWIzeVHSp0cwe2o0wB9IAFaHfCkgXB
-         wDw8hEMaWDSzGdgfIQ/2EvAJXL3hA9d/YHiz5Hi5yCNbiwnKJ3rLPdpN++PpwyVTZWmo
-         hrMA==
+        d=gmail.com; s=20230601; t=1724960323; x=1725565123; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ogr8Tw/YsnQo+Rnr5GAEvkNZlIOjmvoteGA1lmUBC+k=;
+        b=L3mEuNuxbKT7uwroQcLMld8WoLV1iANpSVuMh2+NhbdQwyvu50RgWg5P6gtkb3OF5b
+         H7uYgtk0NKb52Qk7UsJYKW6h/dZSe2VcRH5gpjSBrjG2duqgET3ji024ujmbOJ2S1gLg
+         WrLY43m7Fa5mhiIYin6IQ0XC8tMuOYv0tWbjwfrBLl+vePzrrcB0whe+8dGBgJg9FHuo
+         RFNB92KBP6FFrRfYVnBc+oiv+XjFNBSrK5eFY/tWywCA21jsJvITWhwj2ScPCgnPQb5C
+         OuXHs2lgfMERtNDFEigh47aMI1XTCnmCf2Gg8wqOV1Cw7whh6Rw+99vVc/a788eEb9Ic
+         OWdg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724960307; x=1725565107;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1724960323; x=1725565123;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=1ZUAgIcTyrR43pe3gP0emMAssjHjCGemTU8nsF1ejxc=;
-        b=egN6dWfG+Q7700Ua4V+Sf69+H7rlhIVtK2+F1f/UAycF9y0EAW38MPcj520L6gfMl8
-         xBPoyRucAnYqt6ItGjrfjJKFm08tGXKydiH8sfkFDL4A/w2+REDKPE2zP8ehpZMbhYNP
-         vxQ5xwSZ2ITHbywyVAqjsEWCYIX7+4GfO7YqePtAvbtRIB5J1YnytZaVHAHOXuyxtCNr
-         9m6WK9y/0BS+gM9a76UAdBt96+WRzlvAsFv9oxS1ckaaEfHoQAR12VcWY8o6bThiL3nV
-         sBp6kpZ5XGE8fL9YmJeFHdI8FltAd+bqTTwJII3rk8Gx7mvMVTphx/LuH2biQGsrF7Nf
-         xP6g==
-X-Forwarded-Encrypted: i=1; AJvYcCWA/Tyzr37FI7L1ExuSW2ZI2Rqz5ximN/XEJULvv9guElrtMbd3qJihyWcr0c4PlMEVNEfJXU8y6ZHOlD4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJ056VvJiZJVDsC9WX5EY1X7yfmh8aO85LIlksWj24yvwZkvOM
-	bpv9smvPUGRf8t4gG9gvG7CaDBc+bSLkPSYxlpt3gspHIPmjTwWe/rtbfiVTy8f1Th+D1W8YI53
-	oYcO2RvVVhHM+6U9+2Ozq8lUBVQPRxRjpCNll
-X-Google-Smtp-Source: AGHT+IEckjBQSLEDMwf1jYHRwORJ2ZVKtBH36SKJpIYMP8NrCeogwJVm7Q7nebuPSmPKh9r8A+fJeiK+617lAC3ocsU=
-X-Received: by 2002:a05:622a:281:b0:447:e59b:54eb with SMTP id
- d75a77b69052e-4568aacd777mr496041cf.26.1724960306474; Thu, 29 Aug 2024
- 12:38:26 -0700 (PDT)
+        bh=ogr8Tw/YsnQo+Rnr5GAEvkNZlIOjmvoteGA1lmUBC+k=;
+        b=FjFjvQ2Oyb4iYbgqZGz0Up5YVCftKJ6umT1D7CnCTcYLvPm+6ObLTKqi+5RDozqS8V
+         mE6tyh+Pwd4jq0BouQxBmiOM8zrUuJBrQ9VO1ewWQCrUhtNyOD95OZLnuW5lLFWkFw8k
+         JfYdeiiib5g2psMh35CavOvCygHxjYOij1mG3RFxA4E7nGPS/OFChQ6ECxpCwp4k3GgX
+         2GVA0XzeImZ9f7pS+CjhFKNIUVVS9f7HgTFMRF6hT076OXEtzD7w/bPK3K3A68iXbvez
+         Kh2G9hUSjXi8EeAOZy59vi+dAPgUE85ACeNw2/ZR64onmSKrzrh2neFVx8+KqvUYRsaD
+         Eiuw==
+X-Forwarded-Encrypted: i=1; AJvYcCU8BvR4MMNTc5p4xiyF1ZjMgjy9NOCpVbFY8IUMgjJtTcLbj2lu0TDbzJVI8wR9CJn4kLCXgMZL/hdZ@vger.kernel.org, AJvYcCUcJcxi1/KGXfJkk0OmavIvp6WPc+1wAb8BrZxM0RujYK4BUd0t5DFxuWyOM7FXHT4ydXQktRwnGfj7UfZNHXORypw=@vger.kernel.org, AJvYcCUsg0R+WVQ/dN7akhw4kmFRhuP5g/bFHJZsrVBTb0Av8A7ZyBw3FDMfrLekRoO6i7wtIFvFfTRNg0risqxc@vger.kernel.org
+X-Gm-Message-State: AOJu0YypKi/Z7hsQHaCerrhy+zMsXtyyBL/gn4eEwHVK5wfl2MCE+WNl
+	Dc0Xek26JRAeQ+KpwdgWZvP6rR+O8AvD+M/xS54efgmXMK2wfXMm
+X-Google-Smtp-Source: AGHT+IGfX9YZvxz52A4heYVnDRHmqC+CdgQwnBVJMJlm+EAhHUroXy92OfFjaNDev9wxHqTAWKpt7g==
+X-Received: by 2002:a05:600c:4ece:b0:42b:a356:a75c with SMTP id 5b1f17b1804b1-42bb0309905mr32769505e9.21.1724960322538;
+        Thu, 29 Aug 2024 12:38:42 -0700 (PDT)
+Received: from prasmi.home ([2a00:23c8:2500:a01:a26f:c074:4086:5001])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3749efb2c91sm2140049f8f.102.2024.08.29.12.38.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Aug 2024 12:38:41 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-watchdog@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v5 0/2] Add Watchdog Timer driver for Renesas RZ/V2H(P) SoC
+Date: Thu, 29 Aug 2024 20:38:29 +0100
+Message-Id: <20240829193831.80768-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240829060126.2792671-1-almasrymina@google.com> <20240829060126.2792671-4-almasrymina@google.com>
-In-Reply-To: <20240829060126.2792671-4-almasrymina@google.com>
-From: Mina Almasry <almasrymina@google.com>
-Date: Thu, 29 Aug 2024 12:38:13 -0700
-Message-ID: <CAHS8izMCZbynEQQ3rPs2QaEbD51ew7VK0sMziBTayCi2yEZ_EA@mail.gmail.com>
-Subject: Re: [PATCH net-next v23 03/13] netdev: support binding dma-buf to netdevice
-To: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-alpha@vger.kernel.org, 
-	linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org, 
-	sparclinux@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	linux-arch@vger.kernel.org, bpf@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-media@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org
-Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Donald Hunter <donald.hunter@gmail.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Richard Henderson <richard.henderson@linaro.org>, Ivan Kokshaysky <ink@jurassic.park.msu.ru>, 
-	Matt Turner <mattst88@gmail.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
-	Andreas Larsson <andreas@gaisler.com>, Jesper Dangaard Brouer <hawk@kernel.org>, 
-	Ilias Apalodimas <ilias.apalodimas@linaro.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Steffen Klassert <steffen.klassert@secunet.com>, 
-	Herbert Xu <herbert@gondor.apana.org.au>, David Ahern <dsahern@kernel.org>, 
-	Willem de Bruijn <willemdebruijn.kernel@gmail.com>, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>, 
-	Magnus Karlsson <magnus.karlsson@intel.com>, 
-	Maciej Fijalkowski <maciej.fijalkowski@intel.com>, Jonathan Lemon <jonathan.lemon@gmail.com>, 
-	Shuah Khan <shuah@kernel.org>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, 
-	Sumit Semwal <sumit.semwal@linaro.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Pavel Begunkov <asml.silence@gmail.com>, David Wei <dw@davidwei.uk>, Jason Gunthorpe <jgg@ziepe.ca>, 
-	Yunsheng Lin <linyunsheng@huawei.com>, Shailend Chand <shailend@google.com>, 
-	Harshitha Ramamurthy <hramamurthy@google.com>, Shakeel Butt <shakeel.butt@linux.dev>, 
-	Jeroen de Borst <jeroendb@google.com>, Praveen Kaligineedi <pkaligineedi@google.com>, 
-	Bagas Sanjaya <bagasdotme@gmail.com>, Christoph Hellwig <hch@infradead.org>, 
-	Nikolay Aleksandrov <razor@blackwall.org>, Taehee Yoo <ap420073@gmail.com>, 
-	Willem de Bruijn <willemb@google.com>, Kaiyuan Zhang <kaiyuanz@google.com>, 
-	Daniel Vetter <daniel.vetter@ffwll.ch>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-> +#include <linux/list.h>
->  #include <uapi/linux/netdev.h>
->
-...
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
->
-> +#include <linux/list.h>
->  #include <uapi/linux/netdev.h>
->
+Hi All,
 
-Darn, I went too overboard with sorting of includes. ynl-regen.sh
-wants these in the reverse order, which is unsorted. I'll fix it in
-the next iteration, and I added this check as well to my presubmits.
+This patch series aims to add WDT support to Renesas RZ/V2H(P) SoC.
 
-BTW I submitted 2 iterations already this week, Sunday and Wednesday.
-This is easily fixable and I can resend before the end of the week,
-but if I'm stressing NIPA too much with reposts of this large series I
-can wait until next week. Sorry about that.
+v4->v5
+- Updated commit description for patch 1/2
+- Collated RB tags from Geert and Guenter
+
+v3->v4
+- Simplified calculation of max_hw_heartbeat_ms
+- Turn on the clocks first before reset operation in start & restart
+  callbacks
+- Added checks in restart callback before turning ON clocks/resets
+- Dropped udelay after every ping operation
+- Added comments
+
+v2->v3
+- Fixed dependency, ARCH_R9A09G011->ARCH_R9A09G057
+- Added dependency for PM
+- Added delay after de-assert operation as clks are halted temporarily
+  after de-assert operation
+- Clearing WDTSR register
+
+v1->v2
+- Included RB tag for binding patch
+- Fixed review comments from Claudiu
+- Stopped using PM runtime calls in restart handler
+- Dropped rstc deassert from probe
+
+Cheers,
+Prabhakar
+
+Lad Prabhakar (2):
+  dt-bindings: watchdog: renesas,wdt: Document RZ/V2H(P) SoC
+  watchdog: Add Watchdog Timer driver for RZ/V2H(P)
+
+ .../bindings/watchdog/renesas,wdt.yaml        |  17 +-
+ drivers/watchdog/Kconfig                      |   9 +
+ drivers/watchdog/Makefile                     |   1 +
+ drivers/watchdog/rzv2h_wdt.c                  | 272 ++++++++++++++++++
+ 4 files changed, 298 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/watchdog/rzv2h_wdt.c
 
 -- 
-Thanks,
-Mina
+2.34.1
+
 
