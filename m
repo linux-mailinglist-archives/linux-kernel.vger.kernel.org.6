@@ -1,162 +1,132 @@
-Return-Path: <linux-kernel+bounces-306631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C39B3964187
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 12:23:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DC5196418D
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 12:24:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E875C1C245A2
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:23:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 049362874D4
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:24:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D9101A76B7;
-	Thu, 29 Aug 2024 10:19:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23CA81AC89F;
+	Thu, 29 Aug 2024 10:19:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BtKSMlW7"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="kcsav2lU"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F0ED1917E1
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 10:19:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94ED6191F9E
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 10:19:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724926760; cv=none; b=Llm0DQCMWPubdnWOlumg+Ag2iWCz9C76FqSZezKTv7C85kVg235/5gXqDUKchdNWqPJUU3ZMRuCbq3crxK5cPvIEEz2T/ptL7i9fIRxvYGGh/PKe6lzZavm1I0HlE0TP2zdm2E75/4xZ1NjkPfK4QFgIuyde+/RVCi58E653CGQ=
+	t=1724926772; cv=none; b=EgJ1Aby/zHDYidRmLEW1K2BzYVCkpfkg3iNfzCByaLdPqFr6tIUqF1UQvPWcM10uDn3VEYnqHIl6GUeNfT3nFNMoDCUKQyX5Dc3mKfm0i76FB+HJaOM/ThTcPUsCtUPA9BsQODz+Kwl0vPXUZzSV0sFB0BKv/U3H5knke0mppYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724926760; c=relaxed/simple;
-	bh=NgBGaohZSn2ujQXQ1kODfi5bvv65HVMuTRh6A6bGzVU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=loVHdGZ5I8fXm5COhNNmQPXCXZUqgBfkppv6icg4LyzUxD1JHdBKBS3iGP6ynK7O9EYP0Mzg74no7kTgLyN1BYSMGTVNbjdiW3+y8QoY9bNlcrRUy2RAd53lYBB4ak1fuRmA2TeJUMq3/VQMHh+SktScYJdkP4o7nGF9A0S0lw4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BtKSMlW7; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a8677ae5a35so47054466b.0
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 03:19:17 -0700 (PDT)
+	s=arc-20240116; t=1724926772; c=relaxed/simple;
+	bh=5nWr5B4GB85GsqmJ7v3ZXbQ1xAh3wVALIRZsyahieU8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SbAXkqvS5I2o0uB6401k6TXvCa09BK9ODXZsm5TAAFLDFZz35vnJlFA0reKuZ3XGyHJli5Od8F+rL0QeZ6/YMaeYpiZRq2PtYyFt/0FaQfCPCfIj2hN0XGHsbzdI3OguldNMmcnUZ2wRJxloAcOjXi+N+4dYgDEOsOV5YOHVwok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=kcsav2lU; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-7141b04e7a3so424365b3a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 03:19:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724926756; x=1725531556; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=nopjZOiXiccCurmPDi4lhpMiSpQ7X9/bOex7t+lHZIA=;
-        b=BtKSMlW7XZr4Lm1FTEzEuYL3fXKE5eGRH61E/NLz/rpLx/sioXTyJ/Vv+Sld6sa5em
-         WtDUuSRBQxVlacSJy3uvHA9QNDUGOuuEyItOE74V4vPIOP1Dlcztc0j0mjfqbp1diBpz
-         TqchM1et8b7eomaF4CZy7d+P9Kgy2smIRv2iGUIBPSpXxUvDi4m54TkkovYAeeDO58u+
-         uMAZD0c0DTrJ3OkVUqgNgm/2IQmhEl9ruCh+TN1hM1Rw4Ru5DFOkLaOGQni+/5ntlqvy
-         0V/o495Llx+KAYfGyfpHhYX/XtRfsqSIiXxaj2O2MW9bWq9MhNMp40EUkUFODN5Ul3Km
-         SPuw==
+        d=bytedance.com; s=google; t=1724926770; x=1725531570; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FLZw23XkOzc6bRGw9yd5cNf3epruUgLmmmKcBkgtqCw=;
+        b=kcsav2lUrWDyb8LpJPy9Ee941GeoUyUnXpZPm7OMhcj/ULGc799ipXdv2OG1HAxGct
+         18Y0wTujY5jzQTPtjObv0LkhscboHIp3HSq47nDG+oHjOGDWvYRutexGGg1da/aXIPco
+         8A8MV1ftJuGAG1Ak0KyPBJHSETezczsq0GVxTmPBjEvBQl5WXVWysD83IpaU09M91ykF
+         28mtezrZoiKvGN2fWrdmRKBbdnfZiFRvXFWbEnG+JWfZQbKPPaGrvyYBBM5ZGLf/+B6W
+         eF9MIEIXs3bRFnvkWr720KQHfJB2OJ3muM1FrZ69hN141XOWT/ACMrXv5AnIC0pxpCoa
+         W4Ww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724926756; x=1725531556;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nopjZOiXiccCurmPDi4lhpMiSpQ7X9/bOex7t+lHZIA=;
-        b=cnYX4wKiZwWC+0m/W0nRUQ0iwfn9Bb2bs8feiTSXzEGR38AN5b/ImX1m8LqvrWeDHL
-         iicDCirJJP1aJOJ7gEfJf5M8AR1G7VsPs2pPVqan81zQB4ww2WWzhxaXEEnL5/Zsvnk7
-         TbqITIb2AL7wnXB46HBB73JgERqrZQOsD7undFzjm68YJEmn4qZhn3v7PFgqP6MYQ35m
-         3Llul6fmcCZoSM+9NnCwOWdFhxrLgqOH+98XetwMwilEluzKFE7ov6ioH8jItPEk6CbD
-         GUgk52D18DAms+qzwjJ3aFm3+RLbsn96B298OW98qmFpUKHsTHpJLv3N16A5fGGCA2yc
-         xYiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUq854SBEKldxs0Kyr+i0R3LnuD7TK78JCfGR4IcdzburE087RfM3CzsqzHEMJBi7Et/sfUZnEg5Me3Wss=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyvOqlzf2zKAQ9NK3qzfynYIqB4OTbL2ftyKxLZUE603nJAOpFO
-	jKN17o48dSJPQn5CtBz/qml1jiIhcgpWeoOWtzA1QcTsO+BiWp9d6nuBVLlXtEs=
-X-Google-Smtp-Source: AGHT+IETKZnM5+V8q/IAwppa+3QG8CZq/4HYaD9qYC2EdM3dOtcZyyhQ65wHS4u5dtwJxEHeX73Mvw==
-X-Received: by 2002:a17:907:7216:b0:a86:bb5f:ebbd with SMTP id a640c23a62f3a-a897fad70f8mr137210866b.63.1724926755889;
-        Thu, 29 Aug 2024 03:19:15 -0700 (PDT)
-Received: from [192.168.0.25] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8988fefb60sm60432366b.43.2024.08.29.03.19.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 29 Aug 2024 03:19:15 -0700 (PDT)
-Message-ID: <45298600-beaf-438f-979a-3cb9e207a32e@linaro.org>
-Date: Thu, 29 Aug 2024 11:19:14 +0100
+        d=1e100.net; s=20230601; t=1724926770; x=1725531570;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FLZw23XkOzc6bRGw9yd5cNf3epruUgLmmmKcBkgtqCw=;
+        b=BSXakAaVyIoCUHfnYHngKIAZhZmgmm0FfAg6I5buzlAVAi8z8lPjieDzYeBCtMxNp4
+         nSVj0qFLS/VB7QZ9lCGIowOVafKBdW/L+IcSkeUT2B5P43WwqS0thowVRnJQX9fiqcd6
+         H2bKxdhjxJAJEIS4qV4GH9GJz0NsJqxA1WPxGhN+gOp0sJcQR9Gjrnfa+HgL5IJeUI/d
+         W/ayYIytJ3PjmCMyTZeQ1B3kAjtMaHHfAUOV63e5XIG5jRfMsJgn4saHPsHtksu0LOhE
+         XOdZt8Avotq0lbdFXp054x9qELZPsESRz4sgeqAtuMiV2gocO2l8rhvdQ5ah9oVDpzc1
+         PqFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXcto/3K7WqiI1CdhVHvkCVjVVxEXi3g1E50O2gnR46otdp9Upc0mR+pPxxHBfsphTrs5EVjLrLlz44tFM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTbeQ2riqUbGLpj3lnY7Ic3R32LY1qhQuDdXxrW/chtqi2350x
+	Ouw4YRuDMyUaka/CIBpBmWgUClER6fuGzYAMZ4EgxKMp4Ir2e+ri5TtiaMM2A3bz4GHy9+WJgYC
+	8
+X-Google-Smtp-Source: AGHT+IFIKkW/GME2WB37S6Icf1LvrURHazG/BMTTIoPk3O0B5HuY8rq4leOo17BgMXHb3gk5eadxCg==
+X-Received: by 2002:a05:6a20:e687:b0:1c0:e925:f3e1 with SMTP id adf61e73a8af0-1cce10f41f6mr2121458637.50.1724926769821;
+        Thu, 29 Aug 2024 03:19:29 -0700 (PDT)
+Received: from n37-034-248.byted.org ([180.184.51.40])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7d22e9d4ee3sm785119a12.83.2024.08.29.03.19.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Aug 2024 03:19:28 -0700 (PDT)
+From: Zhongkun He <hezhongkun.hzk@bytedance.com>
+To: akpm@linux-foundation.org,
+	hannes@cmpxchg.org,
+	mhocko@kernel.org
+Cc: roman.gushchin@linux.dev,
+	shakeel.butt@linux.dev,
+	muchun.song@linux.dev,
+	lizefan.x@bytedance.com,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	cgroups@vger.kernel.org,
+	Zhongkun He <hezhongkun.hzk@bytedance.com>
+Subject: [RFC PATCH 0/2] Add disable_unmap_file arg to memory.reclaim
+Date: Thu, 29 Aug 2024 18:19:16 +0800
+Message-Id: <20240829101918.3454840-1-hezhongkun.hzk@bytedance.com>
+X-Mailer: git-send-email 2.20.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 3/4] soc: qcom: geni-se: Export function
- geni_se_clks_off()
-To: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>,
- konrad.dybcio@linaro.org, andersson@kernel.org, andi.shyti@kernel.org,
- linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
-Cc: quic_vdadhani@quicinc.com
-References: <20240829092418.2863659-1-quic_msavaliy@quicinc.com>
- <20240829092418.2863659-4-quic_msavaliy@quicinc.com>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <20240829092418.2863659-4-quic_msavaliy@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 29/08/2024 10:24, Mukesh Kumar Savaliya wrote:
-> Currently driver provides geni_se_resources_off() function to turn
-> off SE resources like clocks, pinctrl. But we don't have function to
-> control clock separately, hence export function geni_se_clks_off()
-> to turn off clocks separately without disturbing GPIO.
-> 
-> The client drivers like i2c requires this function for use case where
-> i2c SE is shared between two subsystems.
-> 
-> Signed-off-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
+This patch proposes augmenting the memory.reclaim interface with a
+disable_unmap_file argument that will skip the mapped pages in
+that reclaim attempt.
 
-Suggest:
+For example:
 
-Currently the driver provides a function called 
-geni_serial_resources_off() to turn off resources like clocks and 
-pinctrl. We don't have a function to control clocks separately hence, 
-export the function geni_se_clks_off() to turn off clocks separately 
-without disturbing GPIO.
+echo "2M disable_unmap_file" > /sys/fs/cgroup/test/memory.reclaim
 
-Client drivers like I2C require this function for use-cases where the 
-I2C SE is shared between two subsystems.
+will perform reclaim on the test cgroup with no mapped file page.
 
-> ---
->   drivers/soc/qcom/qcom-geni-se.c  | 4 +++-
->   include/linux/soc/qcom/geni-se.h | 3 +++
->   2 files changed, 6 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/soc/qcom/qcom-geni-se.c b/drivers/soc/qcom/qcom-geni-se.c
-> index 2e8f24d5da80..20166c8fc919 100644
-> --- a/drivers/soc/qcom/qcom-geni-se.c
-> +++ b/drivers/soc/qcom/qcom-geni-se.c
-> @@ -1,5 +1,6 @@
->   // SPDX-License-Identifier: GPL-2.0
->   // Copyright (c) 2017-2018, The Linux Foundation. All rights reserved.
-> +// Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
->   
->   /* Disable MMIO tracing to prevent excessive logging of unwanted MMIO traces */
->   #define __DISABLE_TRACE_MMIO__
-> @@ -482,13 +483,14 @@ void geni_se_config_packing(struct geni_se *se, int bpw, int pack_words,
->   }
->   EXPORT_SYMBOL_GPL(geni_se_config_packing);
->   
-> -static void geni_se_clks_off(struct geni_se *se)
-> +void geni_se_clks_off(struct geni_se *se)
->   {
->   	struct geni_wrapper *wrapper = se->wrapper;
->   
->   	clk_disable_unprepare(se->clk);
->   	clk_bulk_disable_unprepare(wrapper->num_clks, wrapper->clks);
->   }
-> +EXPORT_SYMBOL_GPL(geni_se_clks_off);
->
+The memory.reclaim is a useful interface. We can carry out proactive
+memory reclaim in the user space, which can increase the utilization
+rate of memory. 
 
-Does it make sense to have geni_se_clks_off() exported without having 
-geni_se_clks_on() similarly exported ?
+In the actual usage scenarios, we found that when there are sufficient
+anonymous pages, mapped file pages with a relatively small proportion
+would still be reclaimed. This is likely to cause an increase in
+refaults and an increase in task delay, because mapped file pages
+usually include important executable codes, data, and shared libraries,
+etc. According to the verified situation, if we can skip this part of
+the memory, the task delay will be reduced.
 
-Two exported functions already appear to wrapper this functionality for you.
+IMO,it is difficult to balance the priorities of various pages in the
+kernel, there are too many scenarios to consider. However, for the
+scenario of proactive memory reclaim in user space, we can make a
+simple judgment in this case.
 
-geni_se_resources_off -> gensi_se_clks_off
-geni_se_resources_on -> gensi_se_clks_on
+Zhongkun He (2):
+  mm: vmscan: modify the semantics of scan_control.may_unmap to
+    UNMAP_ANON and UNMAP_FILE
+  mm: memcg: add disbale_unmap_file arg to memory.reclaim
 
-Seems like a usage violation to have geni_se_resources_on() switch the 
-clocks on but then have something else directly call gensi_se_clks_off() 
-without going through geni_se_resources_off();
+ include/linux/swap.h |  1 +
+ mm/memcontrol.c      |  9 ++++--
+ mm/vmscan.c          | 65 ++++++++++++++++++++++++++++++++++----------
+ 3 files changed, 59 insertions(+), 16 deletions(-)
 
-?
+-- 
+2.20.1
 
----
-bod
 
