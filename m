@@ -1,108 +1,140 @@
-Return-Path: <linux-kernel+bounces-307089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBF079647D2
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:18:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A6E09647FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:21:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4165B280EE8
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 14:18:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 728DFB2B5A1
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 14:18:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1CE01B1418;
-	Thu, 29 Aug 2024 14:17:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74B601B0134;
+	Thu, 29 Aug 2024 14:18:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="2Sd/gkXb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="DKZih9YA"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0D5D19309C;
-	Thu, 29 Aug 2024 14:17:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2881C1AD9E7;
+	Thu, 29 Aug 2024 14:18:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724941040; cv=none; b=NtNP7+147G54gbX8uBtAKUgUz7UNSr3uctnEES1AtmLguYPVZBg4zwcNEU8qeYhHZKnfAJkzQa2Cz8VOe5Wsdosx2ECBPAy5KBjAkaSDDYzRzFD0NVjeH90V2aBNq6NzthrpHzyFFshjTa7fR/3Zd/R8cclOQ8v2RXxzLWIlJ4k=
+	t=1724941090; cv=none; b=XyVaDL6xw8Woi7ghH4f7XZJHY2hIsYXNEIEOASSiSiPt8MzY0hQ6GxBCbq9Ny3oEBpKA4LXTbjqOkUPhHhtXdeIkp5nluT9ZWN4Hmu+iQvee46lgjIyG1BTaBwCzoQQcuIG2hI/JRh8VzZvPap6AzjMgMApOCmwvfObCbUvy7k8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724941040; c=relaxed/simple;
-	bh=j/rNjIEUKeyPjudOzlF1BHdfKpEzw0uEXfFIlVr4Brk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g+3miqfHjhQ5GYLiBjokR8Uy1cL7wBui/JxIq2r3ljayf2LzXNniCn/NvNTHS8AsGOkVjD3XfBk2GpLswctf0gxsd/CyxawYAGAUuaQMmXgYfiabLGqnNeflAvSgtiBFeDwSzPEWXYlOHL1L/FUWzc0KF2cibJVCfc2hSUjB0XU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=2Sd/gkXb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6700C4CEC3;
-	Thu, 29 Aug 2024 14:17:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1724941039;
-	bh=j/rNjIEUKeyPjudOzlF1BHdfKpEzw0uEXfFIlVr4Brk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=2Sd/gkXb5X6teaRdaPuUjogPVNlSigSRb9MAxOF9RZZGqfeoM3Il14NSjwUnszeLJ
-	 BPGA4h5xDwx+fevGcqTdqv7yqzIlkmox10OFh7qwPrhOuIOu3f7w84GpGQU70alvnv
-	 DgcSME1oEZG+NcgTC5iZF/bkxm9y64i8mq73LZx4=
-Date: Thu, 29 Aug 2024 16:17:16 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org,
-	rcu <rcu@vger.kernel.org>, "Paul E. McKenney" <paulmck@kernel.org>,
-	Zhen Lei <thunder.leizhen@huawei.com>
-Subject: Re: [PATCH 6.1 000/321] 6.1.107-rc1 review
-Message-ID: <2024082907-removable-alto-536a@gregkh>
-References: <20240827143838.192435816@linuxfoundation.org>
- <CA+G9fYuS47-zRgv9GY3XO54GN_4EHPFe7jGR50ZoChEYeN0ihg@mail.gmail.com>
+	s=arc-20240116; t=1724941090; c=relaxed/simple;
+	bh=t+RKO9TNWxY4HrBdBWb9BA8+VLsmoITn4UlYlIT7srY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=MfLaDi/bGUE9OU7itVdbrTB9FKBXWRxcufyA4egl4FAxlIPelyvs94Kt4jMlULYWcwUOMAt1MI4svsXSusU0JOkXlVGGTo7KKnypE+ytVGOyHq0GYlTGM8p5tZq4RD8H/jvGupoU35IW2qa/ioce9r14HcGWVvRNhXvF57sw9VU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=DKZih9YA; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47T8qot9013831;
+	Thu, 29 Aug 2024 14:17:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	t+RKO9TNWxY4HrBdBWb9BA8+VLsmoITn4UlYlIT7srY=; b=DKZih9YAEWADMmXQ
+	sdVY89ixeiTr1iAWqukECdtYmZU3kK9mfKqDrNlx/2MVx07VTIMwYLUdAekmAwsY
+	idKsx1qQdliqNzMmL9RdIXevrNeCfsoOIu/ELTc56mEmrWjf8bp7ZM12e/GI96Ej
+	DaSElKuQYHRAdPzjCAJIT0bHx6RK176n9KnCyta/tsltRB8wTbcScppbSRTcVubo
+	j99yRUOew5+8MtfigQ8/CLlhRpcCeCY/3hx7u7J9A04mimYzRX4/Qhb9YlYA2RQK
+	n/OXRIp5JXMJRqhqv0LSHxthi6XoKGt/pFOZp7J5QLRmghU7c6sH5h4ksvCOZnOx
+	pIT7gw==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 419pv15ejs-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 29 Aug 2024 14:17:26 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47TEHPsx001357
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 29 Aug 2024 14:17:25 GMT
+Received: from [10.110.28.107] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 29 Aug
+ 2024 07:17:21 -0700
+Message-ID: <d15927f9-bd00-4e32-9c25-535c69fe56f6@quicinc.com>
+Date: Thu, 29 Aug 2024 07:17:20 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+G9fYuS47-zRgv9GY3XO54GN_4EHPFe7jGR50ZoChEYeN0ihg@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 11/22] pinctrl: qcom: sa8775p: Add support for SA8255p SoC
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: <andersson@kernel.org>, <konradybcio@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <rafael@kernel.org>,
+        <viresh.kumar@linaro.org>, <herbert@gondor.apana.org.au>,
+        <davem@davemloft.net>, <sudeep.holla@arm.com>, <andi.shyti@kernel.org>,
+        <tglx@linutronix.de>, <will@kernel.org>, <joro@8bytes.org>,
+        <jassisinghbrar@gmail.com>, <lee@kernel.org>,
+        <linus.walleij@linaro.org>, <amitk@kernel.org>,
+        <thara.gopinath@gmail.com>, <broonie@kernel.org>,
+        <wim@linux-watchdog.org>, <linux@roeck-us.net>, <robin.murphy@arm.com>,
+        <cristian.marussi@arm.com>, <rui.zhang@intel.com>,
+        <lukasz.luba@arm.com>, <vkoul@kernel.org>, <quic_gurus@quicinc.com>,
+        <agross@kernel.org>, <bartosz.golaszewski@linaro.org>,
+        <quic_rjendra@quicinc.com>, <robimarko@gmail.com>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+        <linux-crypto@vger.kernel.org>, <arm-scmi@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-i2c@vger.kernel.org>,
+        <iommu@lists.linux.dev>, <linux-gpio@vger.kernel.org>,
+        <linux-serial@vger.kernel.org>, <linux-spi@vger.kernel.org>,
+        <linux-watchdog@vger.kernel.org>, <kernel@quicinc.com>,
+        <quic_psodagud@quicinc.com>, <quic_tsoni@quicinc.com>,
+        <quic_shazhuss@quicinc.com>
+References: <20240828203721.2751904-1-quic_nkela@quicinc.com>
+ <20240828203721.2751904-12-quic_nkela@quicinc.com>
+ <erlzqkxrogk24ugfahfsxrramay6tfhljnxrcfcuhe24pla7k3@lytnz3kmszyj>
+Content-Language: en-US
+From: Nikunj Kela <quic_nkela@quicinc.com>
+In-Reply-To: <erlzqkxrogk24ugfahfsxrramay6tfhljnxrcfcuhe24pla7k3@lytnz3kmszyj>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 5ZcCT-ksT85jhXv9aplZcsONon_gYS75
+X-Proofpoint-ORIG-GUID: 5ZcCT-ksT85jhXv9aplZcsONon_gYS75
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-29_03,2024-08-29_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ suspectscore=0 clxscore=1011 lowpriorityscore=0 mlxscore=0 bulkscore=0
+ mlxlogscore=999 impostorscore=0 malwarescore=0 spamscore=0 phishscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408290098
 
-On Tue, Aug 27, 2024 at 11:37:42PM +0530, Naresh Kamboju wrote:
-> On Tue, 27 Aug 2024 at 20:47, Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > This is the start of the stable review cycle for the 6.1.107 release.
-> > There are 321 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> >
-> > Responses should be made by Thu, 29 Aug 2024 14:37:36 +0000.
-> > Anything received after that time might be too late.
-> >
-> > The whole patch series can be found in one patch at:
-> >         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.107-rc1.gz
-> > or in the git tree and branch at:
-> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
-> > and the diffstat can be found below.
-> >
-> > thanks,
-> >
-> > greg k-h
-> 
-> The tinyconfig builds failed due to following build warnings / errors on the
-> stable-rc linux-6.1.y and linux-6.6.y
-> 
-> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-> 
-> Build error:
-> -------
-> In file included from /kernel/rcu/update.c:49:
-> /kernel/rcu/rcu.h: In function 'debug_rcu_head_callback':
-> /kernel/rcu/rcu.h:218:17: error: implicit declaration of function
-> 'kmem_dump_obj'; did you mean 'mem_dump_obj'?
-> [-Werror=implicit-function-declaration]
->   218 |                 kmem_dump_obj(rhp);
->       |                 ^~~~~~~~~~~~~
->       |                 mem_dump_obj
-> cc1: some warnings being treated as errors
 
-Also now fixed here, thanks.
+On 8/29/2024 12:29 AM, Krzysztof Kozlowski wrote:
+> On Wed, Aug 28, 2024 at 01:37:10PM -0700, Nikunj Kela wrote:
+>> SA8255p platform uses the same TLMM block as used in SA8775p,
+>> though the pins are split between Firmware VM and Linux VM.
+>> let's add SA8255p specific compatible.
+> The change suggests devices are fully compatible, but above description
+> does not.
+>
+> This looks conflicting.
+>
+> Best regards,
+> Krzysztof
 
-greg k-h
+Hi Krzysztof,
+
+Thanks for reviewing patches. TLMM HW block is exactly same as used in
+SA8775p however ownership of pins can be split between firmware VM and
+Linux VM. It is upto devices to decide what pins they want to use in
+what VM. I will extend the subject with same description as used in DT
+binding.
+
+Regards,
+
+-Nikunj
+
 
