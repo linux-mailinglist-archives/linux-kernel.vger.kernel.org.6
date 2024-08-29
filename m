@@ -1,128 +1,178 @@
-Return-Path: <linux-kernel+bounces-307250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65F39964ACD
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 17:58:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0E50964ACA
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 17:58:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E4271C231A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:58:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94E72284262
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:58:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6D7E1B4C21;
-	Thu, 29 Aug 2024 15:58:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67B521B3F14;
+	Thu, 29 Aug 2024 15:58:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lLMaJwCv"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Uk9ICepu"
+Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com [209.85.210.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75FEA1B29AA;
-	Thu, 29 Aug 2024 15:58:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F3A51B3F07;
+	Thu, 29 Aug 2024 15:58:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724947124; cv=none; b=m/Q3jrV5G8fQM3wX8eHKQGdcNinBSx+QxfuPH7fCnLQO4Tizqwl2QQuJd0uCau9yMJciZGTJMYivEkiTFBSRZK2aGj0TR5zGCS/CXnMTaPs2phSzf0dFqZ47qP9T7sbwjaU/jOkeJD/qAa44VLi9OhddWrypQEC/4kKQwCGkVR0=
+	t=1724947117; cv=none; b=hrZ8TKc1tdTMJmtQOCbiy8j6wUsZQKD0TuKbBy2+xQk4+5NMzzxxXHnteEtUPYa4coNC/UI2XJD6HovuVK/9JdTQBT8XuvtYsQqy9IXqyRe+3pdI+EhLqMNm7qY3LTEG2D8FgyslsIp8nV6d40M0n3XP0yJenJFULI356bivGBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724947124; c=relaxed/simple;
-	bh=f7QkdqLQNpv165OxQ70XV8bsOdIVoKcfW1VXLeNbzt0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=feYTvddsc62LYTaBTB2ZKzh+BNFdO5s1gPYil/SaxYBlprPMN+tQw2jRmS9jqKd4ME7F+eZCY64okVPg4tnHCC5QVBHnDzyRyzZplzlcPNf/yi329HItp3+8xJ3DXQqA6W2Eje7Tdayaa7TmMjP9hTH4peAxABURG3KoLp2pqSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lLMaJwCv; arc=none smtp.client-ip=209.85.214.174
+	s=arc-20240116; t=1724947117; c=relaxed/simple;
+	bh=lcW1Fr8nT1yLudggBf7OO8h3Q4/x1DlPqjN6rek0GGU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U96rersoA0WpNu9QrKGAgfjI+3ZWgLYbG0UdGgDfvIYZ8H0o4F++nWLJpBLmPMZvmBMZ3s3sMRv6UbRy1ryKBglPFYEap32Vsyrwlk2MeQW54wCRutkQE10FQFR7F0abwHTepcatrLDx3ODIvUDiLTNy6TKHkJ5PVNh+LJvX3b8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Uk9ICepu; arc=none smtp.client-ip=209.85.210.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-201fba05363so7252845ad.3;
-        Thu, 29 Aug 2024 08:58:39 -0700 (PDT)
+Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-70968db52d0so769812a34.3;
+        Thu, 29 Aug 2024 08:58:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724947118; x=1725551918; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=lhPD/kfMojMsiZuoWrSaNbTJbgUBxkxmEH5S95zw+WE=;
-        b=lLMaJwCvs4lF4AtBJaKobMlzDjjx/vQ2s3PEanVHnouSyd7FFvbvdEex7WtR8HobuD
-         Hx4qhyaXJbG1JFqbnTPdyEHVj3LFKugbzAqajRS6i1WClsohtGPSIA4wSMETiXGywamR
-         OlO+ZSeMbzkaqeKPyCiIamaEd5FkrXVWeivm5HhSdG91FLNaB05rJfFjpeJ9qcD/X54N
-         I/z+zt1uIH7HJwr7X/K08gdqzqXMbOeCZc3VgambNSgJ//b5C4TIdVdb5/4hbTG1n21F
-         yy+cjQOa0LiYTGMDHr+jSeWbuw7tZNEpX3LCJB2iw1wgxswUisiFd1zAbuEk8k+x4K8x
-         EJDQ==
+        d=gmail.com; s=20230601; t=1724947115; x=1725551915; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=y8SUS2sti1DatQX5oI9Q4F22VsksxpH0yRfWZTktViQ=;
+        b=Uk9ICeputHQHlzzrUQqYXr0MCBEmJg2cl8UqSXVLDCMVJC4kpRa0Hbno256MO9X0vy
+         cCsGzlO4BsFPgiDrtfffkcA4X8j49y8ygrqYmRDa7Gg6ioTYwCKz8ebqUt3AQ8aCsTh8
+         56Itf0/LSud0utjrSiS3DdX9nUvQoT8KgvloAsZE59zyhdt/3H4uOLxvG9o9JVyecDkT
+         NunImLvtoQs9bHH6ACLV6+U2zXQMJxxpk5Jrd4GJWPY+zulLL6kfB/ens/lRbxn3glZ+
+         JIeavxBLWCo95Va8sYBffZWYt87ZugLqecq/gK3skrAysqd7hle63ksjfRwQ2nTdyrLX
+         /1CQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724947118; x=1725551918;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lhPD/kfMojMsiZuoWrSaNbTJbgUBxkxmEH5S95zw+WE=;
-        b=oI/wulStuNGPoLfYqAsamYxa0YxpSeuT/43SvY90nN3Sch+Gwy3dk9fCjwb5+gHOMy
-         4llkgvqFymDjnITdpupEhIE3mPxSiltEJGRU9aLsqLIuLVLH1pkNyfXpBxjHoPUfmNFR
-         pydyijHAgS+aFVR3ZjHX2Bg8rov6LZu490XZdcbOGmfthvnrwo/TVz+JmWPFZzsyRh5N
-         YPDDNgNTcJT9IEQssrmSmfZ9C1mfS+XUTBFLGiBlePt0PeLFRmMju2g1LqR6t8vfRHuO
-         imOi+hSpi/WSje6p9aPnc3QCJ9zUzAo7fhupqRNh5RIKIJugUqkEgL6P6fVSLdLTmXmz
-         BlmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVzi6FI/+7XUpGJpskTeHzizl5vFTF8lnUvNAOrZ8aPYBAo+8Sde2ee4obfAP/tMq5A/JPaz6M48j16w2U=@vger.kernel.org, AJvYcCWlu4eS44dyM0lDOrBBBBFZaRgo/7YS+oCmutNrztCBu+jKd27vx94GAm0xJixMkebLR4oIr6sROenNgTk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLRhCnvn6iootwpQoT6npwiFtYuiMgGqCZ6hkNZaFrYA7pz9/r
-	hP4QUsZP0pWv5TLwBFrrCPrW8u3T4sV6HCMgID5RGbeJYDyhTX5Z
-X-Google-Smtp-Source: AGHT+IG1iOySf3RBBJ3oZsxcckYR+heTF1O3pcq0NqbDD6cG8BqQV54k0HoaRzIYQMYUSXNS5l1OAA==
-X-Received: by 2002:a17:902:d2ce:b0:202:4b65:65c0 with SMTP id d9443c01a7336-2050c3a9497mr33986965ad.32.1724947118265;
-        Thu, 29 Aug 2024 08:58:38 -0700 (PDT)
-Received: from five231003 ([2405:201:c006:3236:1c28:fa2a:bb62:6e9])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-205152b3546sm13110165ad.17.2024.08.29.08.58.31
+        d=1e100.net; s=20230601; t=1724947115; x=1725551915;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=y8SUS2sti1DatQX5oI9Q4F22VsksxpH0yRfWZTktViQ=;
+        b=dSCwl5Ur4MfT/mfj3JFtcPBO5MCsNtiFRXTDVbcEYCyTFKk7WL71+HXeFJya+8UMwk
+         ISjmVgQeBQBSddJvojgYRfleqPf1OYLsJyK/SstHxF1B+82Mpn3CfJS7fS/q0eTVPdG1
+         8Ewolnz6p9+UuL8jmbX8xMKA0jngiEuEp3YIkmvd8oQBe2zsCF8/BINhRJZr/AyjigbO
+         FMhYgtp00CGHOPyGcdvLLqoZNvxA8MY01aIuRW61Lp6GdxLC+GP2ESjLljD4sBra8Lse
+         puJqEQM2+Ok1TmcVbK6pWkEgvQJi7iK42y2ecA9Yo19HlVCK/OUiWrW3ecF+kLc4ncyM
+         ObZw==
+X-Forwarded-Encrypted: i=1; AJvYcCVuzJkn9FL/njTIjDkZdq3GQhGP/zaTJJkNG3Oy0j7eX6svxbE14jMLAoRCUmvpIGAWzd4DzjhDOtZtXs8m@vger.kernel.org, AJvYcCWwmWFjVEYmsAQodAYyrdwO2Xt1qyRAdIyMYwG8pncoP+9t9NP6E4Jc5/RrV/oTUXb9s/q9p6oEs+pQn31c@vger.kernel.org, AJvYcCWysfLIWiJRPCaaH99bvr7HLqdgHZ6Y14SFcqQryXz2WBWyUY3pQnR8zawQ8wfMLkSM+cTj0b0vjAk/rm0j@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywj8f0b6DoJATrtobApKXNmTy1IYgByvdqALNpLigVMWE7wh96T
+	qPMpsolWLg6WZK000NQB35tmcQEx/cYxZCE8PmdOvVU8PUs6RyJM
+X-Google-Smtp-Source: AGHT+IEmKmJPQO4B38zaWzkb0S8/l+pJwy1vmcrxzdHGLGAZ7Yzv7ADKfo+OZVemW5ah5PWd2mY+XQ==
+X-Received: by 2002:a05:6359:4592:b0:1a6:799b:b06c with SMTP id e5c5f4694b2df-1b603f1598cmr461914955d.23.1724947115153;
+        Thu, 29 Aug 2024 08:58:35 -0700 (PDT)
+Received: from eaf ([2800:40:39:2b6:7cb1:da28:8837:b7fb])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7d22e9be476sm1356974a12.69.2024.08.29.08.58.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 08:58:37 -0700 (PDT)
-Date: Thu, 29 Aug 2024 21:28:28 +0530
-From: Kousik Sanagavarapu <five231003@gmail.com>
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: andrew@lunn.ch, sebastian.hesselbarth@gmail.com,
-	gregory.clement@bootlin.com, herve.codina@bootlin.com,
-	qiang.zhao@nxp.com, christophe.leroy@csgroup.eu,
-	thierry.reding@gmail.com, jonathanh@nvidia.com, nm@ti.com,
-	ssantosh@kernel.org, petlozup@nvidia.com, pshete@nvidia.com,
-	ruanjinjie@huawei.com, christophe.jaillet@wanadoo.fr,
-	ulf.hansson@linaro.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	linux-tegra@vger.kernel.org, krzk@kernel.org, jic23@kernel.org
-Subject: Re: [PATCH -next 8/8] soc: ti: knav_qmss_queue: Simplify with scoped
- for each OF child loop
-Message-ID: <ZtCapIwWZolY7oMH@five231003>
+        Thu, 29 Aug 2024 08:58:34 -0700 (PDT)
+Date: Thu, 29 Aug 2024 12:58:29 -0300
+From: Ernesto =?utf-8?Q?A=2E_Fern=C3=A1ndez?= <ernesto.mnd.fernandez@gmail.com>
+To: Brian Masney <bmasney@redhat.com>,
+	Jeffrey Hugo <quic_jhugo@quicinc.com>
+Cc: herbert@gondor.apana.org.au, davem@davemloft.net,
+	quic_omprsing@quicinc.com, neil.armstrong@linaro.org,
+	quic_bjorande@quicinc.com, linux-arm-msm@vger.kernel.org,
+	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] crypto: qcom-rng: fix support for ACPI-based systems
+Message-ID: <20240829155829.GA6489@eaf>
+References: <20240829012005.382715-1-bmasney@redhat.com>
+ <20240829012005.382715-3-bmasney@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240827114607.4019972-9-ruanjinjie@huawei.com>
+In-Reply-To: <20240829012005.382715-3-bmasney@redhat.com>
 
-Jinjie Ruan <ruanjinjie@huawei.com> writes:
-> @@ -1080,17 +1080,13 @@ static int knav_queue_setup_regions(struct knav_device *kdev,
+Hi,
+
+thanks for the patch. I have one doubt:
+
+On Wed, Aug 28, 2024 at 09:20:05PM -0400, Brian Masney wrote:
+> The qcom-rng driver supports both ACPI and device tree based systems.
+> ACPI support was broken when the hw_random interface support was added.
+> Let's go ahead and fix this by checking has_acpi_companion().
+> 
+> This fix was boot tested on a Qualcomm Amberwing server.
+> 
+> Fixes: f29cd5bb64c2 ("crypto: qcom-rng - Add hw_random interface support")
+> Signed-off-by: Brian Masney <bmasney@redhat.com>
+> ---
+>  drivers/crypto/qcom-rng.c | 36 ++++++++++++++++++++----------------
+>  1 file changed, 20 insertions(+), 16 deletions(-)
+> 
+> diff --git a/drivers/crypto/qcom-rng.c b/drivers/crypto/qcom-rng.c
+> index 4ed545001b77..470062cb258c 100644
+> --- a/drivers/crypto/qcom-rng.c
+> +++ b/drivers/crypto/qcom-rng.c
+> @@ -176,6 +176,21 @@ static struct rng_alg qcom_rng_alg = {
+>  	}
+>  };
+>  
+> +static struct qcom_rng_match_data qcom_prng_match_data = {
+> +	.skip_init = false,
+
+So with acpi, skip_init will be set to false now, right? But before
+f29cd5bb64c2 broke it, skip_init used to be set to true. Was that wrong
+before, or now?
+
+Ernesto
+
+> +	.hwrng_support = false,
+> +};
+> +
+> +static struct qcom_rng_match_data qcom_prng_ee_match_data = {
+> +	.skip_init = true,
+> +	.hwrng_support = false,
+> +};
+> +
+> +static struct qcom_rng_match_data qcom_trng_match_data = {
+> +	.skip_init = true,
+> +	.hwrng_support = true,
+> +};
+> +
+>  static int qcom_rng_probe(struct platform_device *pdev)
 >  {
->  	struct device *dev = kdev->dev;
->  	struct knav_region *region;
-> -	struct device_node *child;
->  	u32 temp[2];
->  	int ret;
+>  	struct qcom_rng *rng;
+> @@ -196,7 +211,11 @@ static int qcom_rng_probe(struct platform_device *pdev)
+>  	if (IS_ERR(rng->clk))
+>  		return PTR_ERR(rng->clk);
 >  
-> -	for_each_child_of_node(regions, child) {
-> +	for_each_child_of_node_scoped(regions, child) {
-
-Are you sure using *_scoped() is better here?  Since it seems that we
-need the memory pointed to by "child" in cases where we don't go into an
-error path.
-
->  		region = devm_kzalloc(dev, sizeof(*region), GFP_KERNEL);
-> -		if (!region) {
-> -			of_node_put(child);
-> -			dev_err(dev, "out of memory allocating region\n");
-> -			return -ENOMEM;
-> -		}
-> +		if (!region)
-> +			return dev_err_probe(dev, -ENOMEM, "out of memory allocating region\n");
+> -	rng->match_data = (struct qcom_rng_match_data *)of_device_get_match_data(&pdev->dev);
+> +	if (has_acpi_companion(&pdev->dev))
+> +		rng->match_data = &qcom_prng_match_data;
+> +	else
+> +		rng->match_data =
+> +			(struct qcom_rng_match_data *)of_device_get_match_data(&pdev->dev);
 >  
->  		region->name = knav_queue_find_name(child);
->  		of_property_read_u32(child, "id", &region->id);
-
-Similarly in most of the other cases in this series where a similar
-change is done.
-
-Also FYI, as for dev_err_probe(), I think I covered all of them in this
-file and a patch for it is currently sitting in ti-drivers-soc-next.
-
-Thanks
+>  	qcom_rng_dev = rng;
+>  	ret = crypto_register_rng(&qcom_rng_alg);
+> @@ -231,21 +250,6 @@ static void qcom_rng_remove(struct platform_device *pdev)
+>  	qcom_rng_dev = NULL;
+>  }
+>  
+> -static struct qcom_rng_match_data qcom_prng_match_data = {
+> -	.skip_init = false,
+> -	.hwrng_support = false,
+> -};
+> -
+> -static struct qcom_rng_match_data qcom_prng_ee_match_data = {
+> -	.skip_init = true,
+> -	.hwrng_support = false,
+> -};
+> -
+> -static struct qcom_rng_match_data qcom_trng_match_data = {
+> -	.skip_init = true,
+> -	.hwrng_support = true,
+> -};
+> -
+>  static const struct acpi_device_id __maybe_unused qcom_rng_acpi_match[] = {
+>  	{ .id = "QCOM8160", .driver_data = 1 },
+>  	{}
+> -- 
+> 2.46.0
+> 
 
