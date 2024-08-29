@@ -1,111 +1,151 @@
-Return-Path: <linux-kernel+bounces-307411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11CBA964D49
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 19:54:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51D08964D4C
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 19:55:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAE2C1F24827
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 17:54:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E1242851C7
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 17:55:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D65BC1B81AA;
-	Thu, 29 Aug 2024 17:54:13 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 080F91B6541
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 17:54:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91E631B790B;
+	Thu, 29 Aug 2024 17:54:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dexz7Chh"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C4531494AF;
+	Thu, 29 Aug 2024 17:54:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724954053; cv=none; b=ppQL0Qdjxk4DXb9xa808ENsJRoURObXSoMcFWmvp7BbJ3ZgvA5lOI4GPvISsamkKBVeXYUsrOsK9O7yLggIaIdULYg276dn0oHBQvb26zOpDlOcXUaITvkt6BDG0mTyqNR8+K74OokxNueqgxkrOjQ+WdRM01RiUJuGmp830RsE=
+	t=1724954095; cv=none; b=SHUGjYoQ7bSMBmtOqcyEoz/iYtSia2P16Ds+ZPFlApVR77+IPYSpuRgJgwxR1t1qMD4kJg7GCNeCU2TXkibPerApJLipXb9wgxSob88sWjWT9KcHNOOS8sh1OZ7+XBIjx1A47soeqgFj8UKVSGZ60vaCHdGY9C8dmO0epSCgJy4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724954053; c=relaxed/simple;
-	bh=GGWbhfZVHj/Ty1krQn+9GMsuBPdkuoRKWI7iXvq5Qys=;
+	s=arc-20240116; t=1724954095; c=relaxed/simple;
+	bh=6Khe1Neiw9tuKrXREYEfFg2NaNle6Uh1ofP2W4NM7Bw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FPwpO4fykgtrdm5ZrZVskAHOYxC10ccVKmRpH9JP7+WJeBbC2Kkcw5RfvK+KXSIb6BkRRDN2qpl0io81CaWy7zuSDIy93TNIIY8EbVWEftrZwLltV5GeGbkXUlYsRM2SjtxrewuchOCaGPZkfGn5XVcYb1xBcAvFi9FI+R8sX18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 680EA1480;
-	Thu, 29 Aug 2024 10:54:35 -0700 (PDT)
-Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 722D93F762;
-	Thu, 29 Aug 2024 10:54:07 -0700 (PDT)
-Date: Thu, 29 Aug 2024 18:54:01 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Will Deacon <will@kernel.org>, Puranjay Mohan <puranjay@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	"Madhavan T. Venkataraman" <madvenka@linux.microsoft.com>,
-	Kalesh Singh <kaleshsingh@google.com>,
-	chenqiwu <qiwuchen55@gmail.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	puranjay12@gmail.com
-Subject: Re: [PATCH] arm64: stacktrace: fix the usage of
- ftrace_graph_ret_addr()
-Message-ID: <ZtCz2IiskUTVu6Xu@J2N7QTR9R3>
-References: <20240618162342.28275-1-puranjay@kernel.org>
- <ZnHHHmEv-oqaXmq0@J2N7QTR9R3>
- <20240619124318.GA3410@willie-the-truck>
- <20240624161741.2a16d904@gandalf.local.home>
+	 Content-Type:Content-Disposition:In-Reply-To; b=KAOoG4SE0WR28LfhKuNydE/s8GkgpiWVRGo5FcDlD64TlP6B6Qe8t1Y6PJKEik40qLonznK46IiWSCVKi9C/k7n2f4hBj2+eAG7wluC+a8NATI/OgDDvrAa6eotAj2SFxpvcT7xyyN/sytMtVKBG5Jeh1JuvzHg3pdeQGxgwoCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dexz7Chh; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-202089e57d8so7496815ad.0;
+        Thu, 29 Aug 2024 10:54:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724954094; x=1725558894; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=9H93aDw819CNA8Rn93FJxufdWXEVb9gVql9Y6eK3prM=;
+        b=Dexz7Chhb0hIW+4vT05ndAMJudlUl5A+trCzmaR+kylQPLoKU2uh3UYFkZRLGRtTbU
+         UTJEyxr+rJ51Whdeq/z2NPcRiQ3OTEoORoSCqGMpPBpZo1gCQdGpRN6s3Mo/oiFQ1ehL
+         vNVn9l6BQgEemlI0WP6Dollx6ikorZCqHgTn9NCM+xh1/aaB0sFB6QjWdJBLbQ8mnEqx
+         a5p0rU75quc0pf90/IfrHFNvZwCO+NggGRwtB/UneeBKse0C/l6xv7XI0zcWPV8nWM+a
+         mWbc1qZi+r5DV6H1j/Mu/jJA3vD2S1b9UCu7vUHU6lasY6ZyzW8YtvCYzW4d2v5dRrXz
+         3d3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724954094; x=1725558894;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9H93aDw819CNA8Rn93FJxufdWXEVb9gVql9Y6eK3prM=;
+        b=SlQGedMt2gnGH9BmKXhitGHvvLOtv1IY6ae/OnaWJ5+1uvS9kTjl3jW55gtd581gqn
+         EjJykMHSDU1MssTDDXyL2ueAnt/wO4BGPmtrfmckbzmIP5yoZ5nMnIDLrhOUlYHMO3t8
+         HhNwjzuusm9GJmeUbGc6F0NIpwOmvEJd2oBDKm7i3J45/xMguo0HRD8l+D4glMyuH74f
+         4ZE1eG4Pexix2vvmAWCrtiVK21yXSLmaZtm7ktZM+uR4yjiT5ZgMS0HHUBZQb3SF5EIj
+         6t910nAU7jVDFsFCx93j2oBZ8aas00GoDW+UkTkzsJMMHh1+pfeWUN6MS9WiWVey9AkG
+         I45w==
+X-Forwarded-Encrypted: i=1; AJvYcCWqtJ9NHxNoyPzOot2DEVtTh+3B8BqIJDGAo+W5rwRIszbNFov49JExX3TrCrHPRKYZgQ16vvtbA3jbJEQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkqAdavr4KXIaveIrTQ9gHrhLjlDAHPoeobFNp3d8jRQtvnm1E
+	CrGulNfJp2nuLPVwTCvwAFqXgGF9iWhq5pKyEkORulxfzye8yQVI
+X-Google-Smtp-Source: AGHT+IGXUm962Pa4QKEelupXKV8GhxE5BUtECBV2PARpi/DPXDrFmnKOEdCMoB910uxCwZJyNm7QVw==
+X-Received: by 2002:a17:902:e548:b0:201:ec22:8335 with SMTP id d9443c01a7336-2050ea64455mr40648505ad.30.1724954093554;
+        Thu, 29 Aug 2024 10:54:53 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:2ed6:5fae:d35c:9c2d])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-205152d6966sm14196545ad.115.2024.08.29.10.54.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Aug 2024 10:54:53 -0700 (PDT)
+Date: Thu, 29 Aug 2024 10:54:50 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Cc: linux-input@vger.kernel.org,
+	Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
+	Andreas Kemnade <andreas@kemnade.info>,
+	linux-kernel@vger.kernel.org,
+	Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>
+Subject: Re: [PATCH 01/18] Input: zforce_ts - use devm_add_action_or_reset()
+Message-ID: <ZtC16tRKASOqXEk9@google.com>
+References: <20240824055047.1706392-1-dmitry.torokhov@gmail.com>
+ <20240824055047.1706392-2-dmitry.torokhov@gmail.com>
+ <11576391.MucGe3eQFb@diego>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20240624161741.2a16d904@gandalf.local.home>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <11576391.MucGe3eQFb@diego>
 
-Hi Steve,
-
-On Mon, Jun 24, 2024 at 04:17:41PM -0400, Steven Rostedt wrote:
-> On Wed, 19 Jun 2024 13:43:18 +0100
-> Will Deacon <will@kernel.org> wrote:
-> 
-> > > Catalin, Will, do you have any preference?  
+On Sat, Aug 24, 2024 at 01:13:28PM +0200, Heiko Stübner wrote:
+> Am Samstag, 24. August 2024, 07:50:25 CEST schrieb Dmitry Torokhov:
+> > From: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
 > > 
-> > I think it makes most sense if this patch travels together with
-> > 29c1c24a2707 ("function_graph: Fix up ftrace_graph_ret_addr()"), so that
-> > would be via Steve's tree. In which case:
+> > If devm_add_action() fails we are explicitly calling the cleanup to free
+> > the resources allocated. Lets use the helper devm_add_action_or_reset()
+> > and return directly in case of error, as we know that the cleanup
+> > function has been already called by the helper if there was any error.
+> > 
+> > Signed-off-by: Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>
 > 
-> That makes sense to me. I'll go around pulling in all the updates to the
-> arch code here (with the respective acks).
+> mistmatch between From and first Signed-off-by
 
-Are you still planning to pick this up? On next-20240829 the ftrace
-tests blow up (as below) due to having the core ftrace change to
-ftrace_graph_ret_addr() but lacking the arm64 fix.
+Yeah, I got this patch a while ago...
 
-Splat on next-20240829:
+> 
+> Other than that:
+> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
 
-  [2] Basic test for tracers
-  ------------[ cut here ]------------
-  WARNING: CPU: 0 PID: 198 at arch/arm64/kernel/stacktrace.c:112 arch_stack_walk+0x1d0/0x350
-  Modules linked in:
-  CPU: 0 UID: 0 PID: 198 Comm: ftracetest Not tainted 6.11.0-rc5-next-20240829 #1
-  Hardware name: linux,dummy-virt (DT)
-  pstate: 604000c5 (nZCv daIF +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-  pc : arch_stack_walk+0x1d0/0x350
-  lr : arch_stack_walk+0x1c4/0x350
-  sp : ffff800080003e10
-  x29: ffff800080003e10 x28: ffff800080003fe0 x27: ffff800080003eb8
-  x26: ffff000003813600 x25: ffff800080004000 x24: ffff80008002ebd8
-  x23: ffff800080003ed8 x22: ffff800080023c78 x21: ffff80008002ebd8
-  x20: ffff800080003f40 x19: ffff800080003f30 x18: 0000000082000000
-  x17: 0000000000000000 x16: ffff800080000000 x15: 00003d0900000000
-  x14: 00000000000c3500 x13: 0000000000000000 x12: 0001f4e457e39c1c
-  x11: ffff800082f06ca8 x10: ffff800080003f30 x9 : ffff80008002ebd8
-  x8 : ffff800080003db8 x7 : 7fffffffffffffff x6 : 0000000006dd7418
-  x5 : 0000000000000023 x4 : ffff800080003e88 x3 : ffff800080003fe0
-  x2 : ffff80008002ebd8 x1 : 0000000000000000 x0 : ffff80008002ebd8
-  Call trace:
-   arch_stack_walk+0x1d0/0x350
-   return_address+0x40/0x80
-   trace_hardirqs_on+0x8c/0x190
-   handle_softirqs+0xf0/0x400
-  ---[ end trace 0000000000000000 ]---
+Is this for this patch only or for the whole series?
 
-Mark.
+> 
+> > Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> > ---
+> >  drivers/input/touchscreen/zforce_ts.c | 5 +----
+> >  1 file changed, 1 insertion(+), 4 deletions(-)
+> > 
+> > diff --git a/drivers/input/touchscreen/zforce_ts.c b/drivers/input/touchscreen/zforce_ts.c
+> > index fdf2d1e770c8..ffbd55c6e1d4 100644
+> > --- a/drivers/input/touchscreen/zforce_ts.c
+> > +++ b/drivers/input/touchscreen/zforce_ts.c
+> > @@ -803,15 +803,12 @@ static int zforce_probe(struct i2c_client *client)
+> >  		udelay(100);
+> >  	}
+> >  
+> > -	ret = devm_add_action(&client->dev, zforce_reset, ts);
+> > +	ret = devm_add_action_or_reset(&client->dev, zforce_reset, ts);
+> >  	if (ret) {
+> >  		dev_err(&client->dev, "failed to register reset action, %d\n",
+> >  			ret);
+> >  
+> >  		/* hereafter the regulator will be disabled by the action */
+> > -		if (!IS_ERR(ts->reg_vdd))
+> > -			regulator_disable(ts->reg_vdd);
+> > -
+> >  		return ret;
+> >  	}
+> >  
+> > 
+> 
+> 
+> 
+> 
+
+Thanks.
+
+-- 
+Dmitry
 
