@@ -1,145 +1,100 @@
-Return-Path: <linux-kernel+bounces-307779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A4409652E5
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 00:28:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91AD39652E8
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 00:29:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 94D29B21992
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 22:28:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C553E1C20F89
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 22:29:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F28021BA891;
-	Thu, 29 Aug 2024 22:28:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70FCA1BA88A;
+	Thu, 29 Aug 2024 22:29:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Vmy1efiq"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="iRnLKAC4"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB18C18B479;
-	Thu, 29 Aug 2024 22:28:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F397C1B5EDB;
+	Thu, 29 Aug 2024 22:29:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724970512; cv=none; b=gwTNLx0W725wbZMfqjeMQL9sFwQtYfbCYYb0kbeUYhxKca7xCPqV4b2lfrlh71E/gd/3q+M1NMie1CSAyTnmdGQ5X3cGc8NmayZNabpQNO84MIDd+38WsXnqLie+LMh5Au+WA5IZgu957bd9aSobEYSa8TTUBv3IAJMl89pdqmI=
+	t=1724970552; cv=none; b=AwRmxhtDLCy4DuZZVqpx5HkqQZwxCaYOs41INhUeoyW/6MD5laBwBTqozYcsttmyw0sfCJwmEugDafMUaQXKurQ7T9D6qInasPSjLOnV7bxw98raWv+7BqwknqvZ8WREsasmowTluzzOGKbng4PbAbzPWedo+sBKKtWxLoJ7FDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724970512; c=relaxed/simple;
-	bh=5M1IUUNg5S9d49y9YbG87ORtIP7QlBO/RTZSYPuiWs0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=m0/2a+60rcT2QC2/lqPP0aN7JIOaFvXX2ab9wBp97gjdMzbyJg0PKVsr7gy9J1d87YIgoULMwA7cxkAOGqkvP7df74Bh7MUoIfBwhUm8jGpxkevXByV/dNWfAjXoSPUh9riwsWuF5O9xGvZNZxHgKpLPyyyN6mZ65RXHZbGuus8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Vmy1efiq; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724970509; x=1756506509;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=5M1IUUNg5S9d49y9YbG87ORtIP7QlBO/RTZSYPuiWs0=;
-  b=Vmy1efiqE+KtlIXhPRGoVFJlu2ZAue/amNrYrqJ7eU6KwmSpwDbKq6zX
-   DtMQJECjXpHyV+X0YGvadZX0tDnsPwhdg76o18ISKoirZo+mUV96N3BVh
-   taCnIq363UeLAh9JSED7n2Spo7XBz8JPUC56bhbJQDxYXgiShiH1wzICH
-   v2ai7IWDKorJoRLPyQnUz/P72AMCXOZfYMIdlphQja1ea48OToa+s3MLM
-   nKybILcmNN2N1zZ54ZUriGveHtNOC+0LTbcgkzcbHLrUI5NBJxXA/O7JF
-   2G2HHXlYx8v8e3QXRAEUd/m5QpqW8/X+tLdxycBPOdluehwmNB7nalg8s
-   w==;
-X-CSE-ConnectionGUID: H1c+sUGmSISL0dyH1AvFYA==
-X-CSE-MsgGUID: 06OuzOMuRLC5IwkTrfUKOQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11179"; a="48980319"
-X-IronPort-AV: E=Sophos;i="6.10,186,1719903600"; 
-   d="scan'208";a="48980319"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 15:28:29 -0700
-X-CSE-ConnectionGUID: qYw4vOKuQzuKx7GshPMq8A==
-X-CSE-MsgGUID: qDzVw0jNTImtVwc3rondRg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,186,1719903600"; 
-   d="scan'208";a="68522895"
-Received: from tfalcon-desk.amr.corp.intel.com (HELO [10.124.220.59]) ([10.124.220.59])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 15:28:28 -0700
-Message-ID: <cdcc5b91-321b-4e33-9a86-829b8f632ae6@intel.com>
-Date: Thu, 29 Aug 2024 15:28:13 -0700
+	s=arc-20240116; t=1724970552; c=relaxed/simple;
+	bh=Tw5rg3SsYeGdNH8H/SojvzU2mY4Enp6rJZHNecxbN/w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oQBcTe6NQRCqPo9GHxL1b0cbop44YKZnz5SrSD+1fk7Zrg2OEtA4VUEL1CANpG297e1bTa8H/wBRRVB3rzM9Ji9L2GxwJsCNzY1ZvjgshLlJdRQ3QoD62NEKTTefAKNSV6FqvDG14DEI3VIh97jvX/WkhTQi96V2Q+JF0fTeG9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=iRnLKAC4; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=lb1pyj5zxbGFHDqjyX82l5HJgvNKijLaWdmPvU8hETY=; b=iRnLKAC4B8wm5XBnfdv0OVgM/d
+	cEEof1zWyfZzKsn0z3w44QW/32Zhgbp812aBTx+jhTo+SftWEQApD0+ZV+zNUGEWAShj/Vw2N8APd
+	BiwXdVrkHv1Qp8VeZ0AkV+9CB6Q2ARQARu80xwEvI6Bc+QqUo9kej01g5gZEcEdB6OlMafb9uy2r9
+	m+bB++s/vJjuRvxLRhC/NhftzSfzj4lu6tJfEQRVAZhpHm85EhddPn4mJAk4s9E8IpqkpiyL6lEkj
+	/qzv/vZTrSa37pIunplwVC0J1ymXvsPyufqiCrCu0UZGrHONGNZBBtOBhmLEZYRKL2tlsihuSU3TR
+	c+J0Mcbg==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1sjndZ-00000002aLf-1Xma;
+	Thu, 29 Aug 2024 22:29:05 +0000
+Date: Thu, 29 Aug 2024 23:29:05 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Yosry Ahmed <yosryahmed@google.com>
+Cc: Piotr Oniszczuk <piotr.oniszczuk@gmail.com>,
+	Pedro Falcato <pedro.falcato@gmail.com>,
+	Nhat Pham <nphamcs@gmail.com>,
+	Linux regressions mailing list <regressions@lists.linux.dev>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Johannes Weiner <hannes@cmpxchg.org>, Linux-MM <linux-mm@kvack.org>
+Subject: Re: [regression] oops on heavy compilations ("kernel BUG at
+ mm/zswap.c:1005!" and "Oops: invalid opcode: 0000")
+Message-ID: <ZtD2McWko3uobU-B@casper.infradead.org>
+References: <6f65e3a6-5f1a-4fda-b406-17598f4a72d5@leemhuis.info>
+ <ZsiLElTykamcYZ6J@casper.infradead.org>
+ <02D2DA66-4A91-4033-8B98-ED25FC2E0CD6@gmail.com>
+ <CAKEwX=N-10A=C_Cp_m8yxfeTigvmZp1v7TrphcrHuRkHJ8837g@mail.gmail.com>
+ <A512FD59-63DF-48D3-BCB3-83DF8505E7E0@gmail.com>
+ <oophwj3aj2fnfi57ebzjuc536iltilmcpoucyms6nfk2alwvtr@pdj4cn4rvpdn>
+ <3D1B8F1F-2C41-4CCD-A5D7-41CF412F99DE@gmail.com>
+ <CAJD7tkbF2Cx4uRCJAN=EKDLkVC=CApiLAsYt4ZN9YcVUJZp_5g@mail.gmail.com>
+ <EE83D424-A546-410D-B5ED-6E9631746ACF@gmail.com>
+ <CAJD7tkZ01PPYMzcTyX_cwr836jGonJT=fwT3ovc4ixW44keRgg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5] x86/entry_32: Use stack segment selector for VERW
- operand
-To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
- Robert Gill <rtgill82@gmail.com>, Jari Ruusu <jariruusu@protonmail.com>,
- Brian Gerst <brgerst@gmail.com>,
- "Linux regression tracking (Thorsten Leemhuis)" <regressions@leemhuis.info>,
- antonio.gomez.iglesias@linux.intel.com, daniel.sneddon@linux.intel.com,
- stable@vger.kernel.org
-References: <20240711-fix-dosemu-vm86-v5-1-e87dcd7368aa@linux.intel.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20240711-fix-dosemu-vm86-v5-1-e87dcd7368aa@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJD7tkZ01PPYMzcTyX_cwr836jGonJT=fwT3ovc4ixW44keRgg@mail.gmail.com>
 
-On 7/11/24 15:03, Pawan Gupta wrote:
-> +/*
-> + * Safer version of CLEAR_CPU_BUFFERS that uses %ss to reference VERW operand
-> + * mds_verw_sel. This ensures VERW will not #GP for an arbitrary user %ds.
-> + */
-> +.macro CLEAR_CPU_BUFFERS_SAFE
-> +	ALTERNATIVE "", __stringify(verw %ss:_ASM_RIP(mds_verw_sel)), X86_FEATURE_CLEAR_CPU_BUF
-> +.endm
+On Thu, Aug 29, 2024 at 02:54:25PM -0700, Yosry Ahmed wrote:
+> Looking at the zswap commits between 6.8 and 6.9, ignoring cleanups
+> and seemingly irrelevant patches (e.g. swapoff fixups), I think the
+> some likely candidates could be the following, but this is not really
+> based on any scientific methodology:
+> 
+> 44c7c734a5132 mm/zswap: split zswap rb-tree
+> c2e2ba770200b mm/zswap: only support zswap_exclusive_loads_enabled
+> a230c20e63efe mm/zswap: zswap entry doesn't need refcount anymore
+> 8409a385a6b41 mm/zswap: improve with alloc_workqueue() call
+> 0827a1fb143fa mm/zswap: invalidate zswap entry when swap entry free
+> 
+> I also noticed that you are using z3fold as the zpool. Is the problem
+> reproducible with zsmalloc? I wouldn't be surprised if there's a
+> z3fold bug somewhere.
 
-One other thing...
+You're assuming that it's a zswap/zsmalloc/... bug.  If it's a random
+scribble, as suggested by Takero Funaki:
 
-Instead of making a "_SAFE" variant, let's just make the 32-bit version
-always safe.
+https://lore.kernel.org/linux-mm/CAPpoddere2g=kkMzrxuJ1KCG=0Hg1-1v=ppg4dON9wK=pKq2uQ@mail.gmail.com/
 
-Also, is there any downside to using %ss: on 64-bit?  If not, let's just
-update the one and only CLEAR_CPU_BUFFERS use %ss:.
+then focusing on zswap will not be fruitful.
 
