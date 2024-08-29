@@ -1,117 +1,145 @@
-Return-Path: <linux-kernel+bounces-306682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7D5B96420F
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 12:37:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A71E9964214
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 12:37:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E9DD2886E1
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:37:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFDFC1C24712
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:37:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AAE518CC1A;
-	Thu, 29 Aug 2024 10:30:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEADA18E744;
+	Thu, 29 Aug 2024 10:35:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vOpWa6yq"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="l1+nHupM"
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7F9418CBF8
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 10:30:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7412D18C002
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 10:35:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724927454; cv=none; b=opCFmaeA0KVO7HY4Gu/mdCmp2FWYZVZUfjSMl4FE2X/0NP+iVfyZqEJ9eeDjom19b0eIbmjQDPLP720KM5T8NL9EG/Ye0jYVBkmC+O+QmhpbBfwpDfp1u0yms3OJQgCfTIBCkRUhxKdv2ih2Aj448SFdLdZmgbuMLYU6Hjo33rg=
+	t=1724927713; cv=none; b=glOs132CdZiqKGMMu1WZ9CQegK5amLtxNUxQAWlLBZBVT7Dp6+Y1fZVfuXbRYorpQ0psBN203lCQ+cnwiTxFj8KyATq1yZJcmIamufaS8QhVlvvznXY1wvt6t8q4VNwUSbufNLN4AZ6lDDXvxehwgin5Zt4xqlaH/4YI8zRyQps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724927454; c=relaxed/simple;
-	bh=JwD/5CpATNeAUUT2U9dB5jqpbx39vshHUiLHiXYrBCs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QowSm7zOGI40j4TKNCGg8nvUdLfc59whG+6h7hd/kRnvNOst+jTrOKSGT+Xs7e3wGuXrO08QVGes04OeelMQNqS/XIe/m5jNNp++ZOXnR4dj4VLPXTtT0JA/GJXIGLmCLqyOB3muxSE2ECOiK7SVKcBMoRL3TObjxcX3srjJi/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vOpWa6yq; arc=none smtp.client-ip=209.85.208.171
+	s=arc-20240116; t=1724927713; c=relaxed/simple;
+	bh=r5XlFHXqIDGAS4pJ7CA1OniqLCNWwc1Rol6XYS1Bq+4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=td2tQ5IsqW/IsL4p0L16FyxAZdP0eQ1NImbz0rBqS1tUipQ6yrEjnvR+YBXBcaBjHmvX0ysRK1/tZHKttGnRxeuhVctzpOMpvfaNQUy86Uo49ydJz7ywnN8AsJ2E35TiUhc+kYY70lEDZunXK+txJw/7Mtpwi7PYUo2bvI/OfRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=l1+nHupM; arc=none smtp.client-ip=209.85.128.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2f409c87b07so6167711fa.0
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 03:30:52 -0700 (PDT)
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6c0e22218d0so5944417b3.0
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 03:35:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724927451; x=1725532251; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+/rkwYzdtv1HTnAFhDMt6zw9EEXfwMPtCfoF7AvvSYU=;
-        b=vOpWa6yqIIGPLB+LvxeuaVbzdJKcgZlhA7I90lsjAcS9A/o3ESu/amJQJXvbkqNFgi
-         wd/vRC6aZ8BWeawj5rCLEuKZdmH7hRxP3fnjgndcAAaKvWNrVy8Q5FwL2VngouV/aiDL
-         4lNzWnCxorGR8flUm/HWTsay6m+Y2FBKObcD0hPLpPUs89bF+x0YhrCWU9RZ0E3FPxhf
-         /1h92pYvQZYK2FWaDk/2zt1lwGpfy3MeNmZGOOiiaSSdqhZg4yKfkfbLxNpOyBW+E2/8
-         mRpNRoWWpKyyCl31F20kL1lc8W3HzW4qD6YP38FzD7Wo2S+aG9Syf3zZYcungQdgTNUx
-         dgFA==
+        d=linaro.org; s=google; t=1724927710; x=1725532510; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Kq79Xl7SQIb+Lw9vp0M7UjB/SSF9XrLeMvRoawMdetU=;
+        b=l1+nHupM8DuETNwKrZz4lnytIcJJMPLvmdncWzEJN73bD1BevyNtmmObri+LwHQJ6n
+         6NUu3EA4z8CqjwpLTWWvQTKMgbcB/ZKM4OYkedSnfz4xaafCQyisn4rHx9btXZJCJRTY
+         Yybizp3uP70c9HbiEXVLtBu7RqDeCJQ5soZEjA82UtqhuHqjbgmX6OwD3DAA14+xF0kd
+         Kbxo+/P1jHpe+F4xiSdrn1iEKhhV92aorjyrAqDwampGwdwZvvmWi+bcbiQtzyRR4VEA
+         XtAbJSVDrSbsm/yyOpHEXOFNE8m6s+h++NnKshdZ7weDC0yr+igpVz9VKRBEour8icme
+         ytCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724927451; x=1725532251;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+/rkwYzdtv1HTnAFhDMt6zw9EEXfwMPtCfoF7AvvSYU=;
-        b=hsIT+3+9KgV0D2mN7hs6BZu6uIpmv1FlaI+eAjdudPJD6/Ht6tW+rUbrj4FjzBfjhz
-         qfEx6Oy92ho3E5bBtoyl5YzzEyXANYCBfafP+PXhtDsvEZtCLhBnne9ui1jc5YsrYeN7
-         TXb5PkoA1PiouRDabi/Z1iXoHBe8OJ2jYfX+BcCEocWodx1v4kr/k+1eitWvd3ByAzcF
-         vlOWwc4WZQBXIlsMguvZCaowx39UWSeQzsbOy8UN9okDhEXuOS6ZwcfGlMHta8ulTpPQ
-         ckLeKKT/tAE+oYZjEFypCbkG5jql3NjoDZcXJ8am9+smYRzvBsgs2mS4rA1aqIRCUidh
-         IO2A==
-X-Gm-Message-State: AOJu0Yx+IeDgFcdDwt56iARUYIRvWk0mZ7k6754P9qGvkp5kGty7pw6T
-	PEU09xBdBqS3xJJd+/c1a78Crz1QvZjyj62pK9p/mMOaQ5Q/dDKNWuDlvqfiZMM=
-X-Google-Smtp-Source: AGHT+IExRQfAycplDihxi2sTfQugdwOLm/BGeiRKRBZyEWM9TcHn6gFVPCB6oog9W8hrTsVTV1Oz+Q==
-X-Received: by 2002:a2e:bea6:0:b0:2ef:185d:e3d7 with SMTP id 38308e7fff4ca-2f61050fa47mr21875841fa.38.1724927450310;
-        Thu, 29 Aug 2024 03:30:50 -0700 (PDT)
-Received: from [192.168.0.25] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c226cebf6esm533814a12.97.2024.08.29.03.30.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 29 Aug 2024 03:30:49 -0700 (PDT)
-Message-ID: <918e84fa-4a07-4ca4-bd3c-a14cb0a8f3dc@linaro.org>
-Date: Thu, 29 Aug 2024 11:30:49 +0100
+        d=1e100.net; s=20230601; t=1724927710; x=1725532510;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Kq79Xl7SQIb+Lw9vp0M7UjB/SSF9XrLeMvRoawMdetU=;
+        b=q49Kv/IwXfsDNVFcBULWIkq83QZ9EGwccM/PQeT0VcwAePKpEXmAk0mlfM3IgQLO/m
+         zNTLNnAFYCr3dVs1EXrqXX+x/ZVZtR3jE2UWPTWWEjZJQYKPHZY3VnYtsmKKlp534pcF
+         YsxHEwwtz8ygLDTnDBpYSUMUm9sKxUnDp1BR0JG3S/LI4RtxM67JaNT3HvxPDWSfHSpR
+         cCSUoRqweRNnzNevT4ELaeeMgMacEePyz3ArejqdUeFcu1wkClacmOpNrXNY6awd5sg2
+         slktsytREsT2YQyDp5uOxFV5IUyI0af3wg8RL/MH2V0I9XSRfxHB1dYFn1YDyJe27mjs
+         wK5A==
+X-Forwarded-Encrypted: i=1; AJvYcCXGa/YkhUtzJSPnwVJiFP/ss07enLmbt+fBBt9tELdWtG9v9VzlXAfdNOfuUvZDsjyrP0GfrcbDwvVuvrE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxEuAwvBrCDkiEZ/AgKenea8RMvTgknEvMcqxMdb/Nz1G5kOm3
+	n80KlKHtTqbD0eDYbaS9n7+V9MKfrBgzKlmgWIjNnmtVOv/nuJ/q8Xf8frhiSanaNeuyABACjXF
+	CpRIJjQ+LF6+jp7lqc1x6csKVKR5TJ6M+cDgjIA==
+X-Google-Smtp-Source: AGHT+IHgylNA9acmi7Jpgg+5AiFrARVY6/x1pKrYQGxG1xaaobSbZE7WofyUs6wiOW9YFtPA4UP+FOrs9ipxDKVDuqE=
+X-Received: by 2002:a05:690c:fc4:b0:615:2a14:4ea6 with SMTP id
+ 00721157ae682-6d275e33603mr28071377b3.8.1724927710370; Thu, 29 Aug 2024
+ 03:35:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND v3 2/3] media: qcom: venus: Fix uninitialized variable
- warning
-To: Nas Chung <nas.chung@chipsnmedia.com>, mchehab@kernel.org,
- hverkuil@xs4all.nl, linux-media@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-References: <20240725061034.461-1-nas.chung@chipsnmedia.com>
- <20240725061034.461-3-nas.chung@chipsnmedia.com>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <20240725061034.461-3-nas.chung@chipsnmedia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240829-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-8-v1-0-bdb05b4b5a2e@linaro.org>
+ <20240829-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-8-v1-1-bdb05b4b5a2e@linaro.org>
+In-Reply-To: <20240829-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-8-v1-1-bdb05b4b5a2e@linaro.org>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Thu, 29 Aug 2024 13:34:58 +0300
+Message-ID: <CAA8EJprgHAmuFxj5hO5BYFywW7sGC2VcMZwaadBLOmYJr88OYg@mail.gmail.com>
+Subject: Re: [PATCH 01/21] drm/msm/dsi: add support to DSI CTRL v2.8.0
+To: Jun Nie <jun.nie@linaro.org>
+Cc: Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, linux-arm-msm@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, Jonathan Marek <jonathan@marek.ca>
+Content-Type: text/plain; charset="UTF-8"
 
-On 25/07/2024 07:10, Nas Chung wrote:
-> Avoid uninitialized variable when both V4L2_TYPE_IS_OUTPUT() and
-> V4L2_TYPE_IS_CAPTURE() return false.
-> 
-> Signed-off-by: Nas Chung <nas.chung@chipsnmedia.com>
+On Thu, 29 Aug 2024 at 13:19, Jun Nie <jun.nie@linaro.org> wrote:
+>
+> From: Jonathan Marek <jonathan@marek.ca>
+>
+> Add support to DSI CTRL v2.8.0 with priority support
+
+Proper description is missing
+
+>
+> Signed-off-by: Jun Nie <jun.nie@linaro.org>
+
+Several tags are missing here.
+
+Also, how is this patch related to quadpipe?
+
 > ---
->   drivers/media/platform/qcom/venus/vdec.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/platform/qcom/venus/vdec.c b/drivers/media/platform/qcom/venus/vdec.c
-> index d12089370d91..b72b579018e3 100644
-> --- a/drivers/media/platform/qcom/venus/vdec.c
-> +++ b/drivers/media/platform/qcom/venus/vdec.c
-> @@ -161,7 +161,7 @@ find_format_by_index(struct venus_inst *inst, unsigned int index, u32 type)
->   
->   		if (V4L2_TYPE_IS_OUTPUT(type)) {
->   			valid = venus_helper_check_codec(inst, fmt[i].pixfmt);
-> -		} else if (V4L2_TYPE_IS_CAPTURE(type)) {
-> +		} else {
->   			valid = venus_helper_check_format(inst, fmt[i].pixfmt);
->   
->   			if (fmt[i].pixfmt == V4L2_PIX_FMT_QC10C &&
+>  drivers/gpu/drm/msm/dsi/dsi_host.c | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+>
+> diff --git a/drivers/gpu/drm/msm/dsi/dsi_host.c b/drivers/gpu/drm/msm/dsi/dsi_host.c
+> index 185d7de0bf376..6388bb12696ff 100644
+> --- a/drivers/gpu/drm/msm/dsi/dsi_host.c
+> +++ b/drivers/gpu/drm/msm/dsi/dsi_host.c
+> @@ -2238,13 +2238,23 @@ int msm_dsi_host_cmd_rx(struct mipi_dsi_host *host,
+>         return ret;
+>  }
+>
+> +#define DSI_VBIF_CTRL                  (0x01CC - 4)
+> +#define DSI_VBIF_CTRL_PRIORITY         0x07
+> +
+>  void msm_dsi_host_cmd_xfer_commit(struct mipi_dsi_host *host, u32 dma_base,
+>                                   u32 len)
+>  {
+>         struct msm_dsi_host *msm_host = to_msm_dsi_host(host);
+> +       const struct msm_dsi_cfg_handler *cfg_hnd = msm_host->cfg_hnd;
+> +       u32 reg;
+>
+>         dsi_write(msm_host, REG_DSI_DMA_BASE, dma_base);
+>         dsi_write(msm_host, REG_DSI_DMA_LEN, len);
+> +       if (cfg_hnd->minor >= MSM_DSI_6G_VER_MINOR_V2_8_0) {
+> +               reg = dsi_read(msm_host, DSI_VBIF_CTRL);
+> +               reg |= (DSI_VBIF_CTRL_PRIORITY & 0x7);
+> +               dsi_write(msm_host, DSI_VBIF_CTRL, reg);
+> +       }
+>         dsi_write(msm_host, REG_DSI_TRIG_DMA, 1);
+>
+>         /* Make sure trigger happens */
+>
+> --
+> 2.34.1
+>
 
-Can you give an example of the error - compile time I assume, this fixes ?
 
----
-bod
+-- 
+With best wishes
+Dmitry
 
