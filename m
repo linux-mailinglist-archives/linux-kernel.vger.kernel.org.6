@@ -1,82 +1,61 @@
-Return-Path: <linux-kernel+bounces-306405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C6DF963E9B
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:32:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEBCF963EA4
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:33:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1B891F22C91
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:32:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBAE81C213FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:33:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BF7218EFE2;
-	Thu, 29 Aug 2024 08:30:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="lswyE7cv"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B425E18D620;
+	Thu, 29 Aug 2024 08:30:57 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B19C18C033;
-	Thu, 29 Aug 2024 08:30:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CAA743154;
+	Thu, 29 Aug 2024 08:30:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724920213; cv=none; b=L8yfDxZ1css3Ib1vyhAdfTR9U7E64wiNS3IDBFhzuObvZbaZirxFWVTI15tordTIbhZsqZ+nugU3KXP/usszVi//4/SZsZwpv+Uu5Cn88cNesEVycnzPbR0qAWeE6BFcEpxBHRA3F/qy8TWx/YHnCLcn7C2qb5bHLX5+nKAnOVk=
+	t=1724920257; cv=none; b=Y2TEqwbTKy1PQiAWKLqeyOq3/897oLZ4PSrwSYxVl4/uiDB8i4/lNa4JIy1V508aC4ombbdRj43y5orylwr0GoZPdUp53JMBiZW+W+kjtIOlFeAqfyLQDNIZ+nV+LsNQ23do+yx0XGpGfsed7JD1hPjbJPaXu/qTqkciEt7yaCo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724920213; c=relaxed/simple;
-	bh=cZc2j8iERsxik3XaaeLG3n3brBXvp6UxbYVHjy5fpLo=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fsAy6kjddiku+mrHTMwdOC5iEHwj0sg77PiDcUs+zZ6xpRLD8xs4zrwbjN+hFI3VBEqnifYfJEFdZxnVvhuktPPJuAG1DPBUj1/vjw5FfYgcXxEyH6XIMoIvnmDk0vi3znoXIz7LgQWI5jxGfdYEwgN7x8NJSqtFI/FFyv3JJTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=lswyE7cv; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47SJLuLE002697;
-	Thu, 29 Aug 2024 08:29:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	hGKNNRsxgan7LrE3JmFUZvV3G9dxagz9H0bEmvaJBI8=; b=lswyE7cv33RIur/g
-	HTvelpla7SXyytWPS7q1+ZrXk3SYTzXbBj5/36kvMoBN8puSv+zXL2lTBjUwujAy
-	QUrO7FkyNzK6jcQzidIOwLzz/2TizhKAZT6z5JCoCro3LSQDl7kKzAqobfo6tmny
-	uglMLzhHWKS5X6f7yd/SxpRCWQELBoym5p/QNpq+ovphozZDvT0wZvcIp0CWgMcd
-	aHzv4V9PYBawU8vCX3GuzWPbAlywG7uP+vFZ3ZNylnvOjXOaUjv3mijftxXRsLwK
-	8MHU6OxMUYTJda3V5VxgMW5HCfFt1Lj6LyjUHe+sBhbKLt1vVtThNBpeO/zDvKq7
-	NnS3Jw==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 419putvhmn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 29 Aug 2024 08:29:56 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47T8TuKM024801
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 29 Aug 2024 08:29:56 GMT
-Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 29 Aug 2024 01:29:49 -0700
-From: Varadarajan Narayanan <quic_varada@quicinc.com>
-To: <andersson@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <konradybcio@kernel.org>, <catalin.marinas@arm.com>, <will@kernel.org>,
-        <djakov@kernel.org>, <richardcochran@gmail.com>,
-        <geert+renesas@glider.be>, <dmitry.baryshkov@linaro.org>,
-        <neil.armstrong@linaro.org>, <arnd@arndb.de>,
-        <nfraprado@collabora.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-pm@vger.kernel.org>, <netdev@vger.kernel.org>
-CC: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski@linaro.org>,
-        Varadarajan Narayanan
-	<quic_varada@quicinc.com>
-Subject: [PATCH v5 8/8] arm64: defconfig: build NSS Clock Controller driver for Qualcomm IPQ5332
-Date: Thu, 29 Aug 2024 13:58:30 +0530
-Message-ID: <20240829082830.56959-9-quic_varada@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240829082830.56959-1-quic_varada@quicinc.com>
-References: <20240829082830.56959-1-quic_varada@quicinc.com>
+	s=arc-20240116; t=1724920257; c=relaxed/simple;
+	bh=jmQoHidF+pqSdlMEJDvQ5iPil4CrsAlQ/9Bauya5xLc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=h9mQIk+RdX6AtpT4Ch9ehLToY5iFpVk+uTUAa/3+BGZQ7VNjIgg0AEUTNJlxl8ndjggJ/V4cSlVfXG4qKZ+OTYKBYtzIswakHnXOE8/F+ql/vI0EnHt1FvQ8Bh9seUYsNcm/hw9LQiYfhiGsi0yu8450XyYqII2VXKwVbJeVd3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
+	by APP-05 (Coremail) with SMTP id zQCowAB34UCjMdBm6R02Cw--.14213S2;
+	Thu, 29 Aug 2024 16:30:35 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: nbd@nbd.name,
+	lorenzo@kernel.org,
+	ryder.lee@mediatek.com,
+	shayne.chen@mediatek.com,
+	sean.wang@mediatek.com,
+	kvalo@kernel.org,
+	matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com,
+	chui-hao.chiu@mediatek.com,
+	howard-yh.hsu@mediatek.com,
+	StanleyYP.Wang@mediatek.com,
+	benjamin-jw.lin@mediatek.com,
+	allen.ye@mediatek.com,
+	chank.chen@mediatek.com,
+	meichia.chiu@mediatek.com
+Cc: linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Ma Ke <make24@iscas.ac.cn>,
+	stable@vger.kernel.org
+Subject: [PATCH] wifi: mt76: mt7996: fix NULL pointer dereference in mt7996_mcu_sta_bfer_eht
+Date: Thu, 29 Aug 2024 16:30:26 +0800
+Message-Id: <20240829083026.3195359-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,47 +63,51 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: xLKOIB4wP5qphndM1hc1TQXp-B388VX1
-X-Proofpoint-GUID: xLKOIB4wP5qphndM1hc1TQXp-B388VX1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-29_02,2024-08-29_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- mlxlogscore=999 suspectscore=0 phishscore=0 spamscore=0 bulkscore=0
- clxscore=1015 mlxscore=0 malwarescore=0 lowpriorityscore=0 impostorscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408290062
+X-CM-TRANSID:zQCowAB34UCjMdBm6R02Cw--.14213S2
+X-Coremail-Antispam: 1UD129KBjvdXoWruw4fGryfuF17KFW5ZF18Xwb_yoWfAwc_ur
+	1Ivrn3Jw40gw45Kr47ZwsxuryYkaykZF97Gay5tayfJa9rAFWUWF1Svas3Ar9xCFn7ZF1U
+	Jw1DJFyFvrZ3XjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbSkFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
+	6F4UJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r
+	xl6s0DM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVAC
+	Y4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJV
+	W8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI2
+	0VAGYxC7M4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS14v26r4a6rW5MxAIw28Icx
+	kI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2Iq
+	xVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42
+	IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY
+	6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aV
+	CY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7sRiSfO3UUUUU==
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 
-From: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
+Fix the NULL pointer dereference in mt7996_mcu_sta_bfer_eht.
 
-NSSCC driver is needed to enable the ethernet interfaces and not
-necessary for the bootup of the SoC, hence build it as a module.
+Found by code review.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Signed-off-by: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
-Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+Cc: stable@vger.kernel.org
+Fixes: ba01944adee9 ("wifi: mt76: mt7996: add EHT beamforming support")
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
 ---
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/wireless/mediatek/mt76/mt7996/mcu.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 81ca46e3ab4b..2962bc079ddb 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -1307,6 +1307,7 @@ CONFIG_IPQ_GCC_5332=y
- CONFIG_IPQ_GCC_6018=y
- CONFIG_IPQ_GCC_8074=y
- CONFIG_IPQ_GCC_9574=y
-+CONFIG_IPQ_NSSCC_5332=m
- CONFIG_MSM_GCC_8916=y
- CONFIG_MSM_MMCC_8994=m
- CONFIG_MSM_GCC_8994=y
+diff --git a/drivers/net/wireless/mediatek/mt76/mt7996/mcu.c b/drivers/net/wireless/mediatek/mt76/mt7996/mcu.c
+index 2e4fa9f48dfb..d0fe2505ddbf 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt7996/mcu.c
++++ b/drivers/net/wireless/mediatek/mt76/mt7996/mcu.c
+@@ -1605,6 +1605,9 @@ mt7996_mcu_sta_bfer_eht(struct ieee80211_sta *sta, struct ieee80211_vif *vif,
+ 				 IEEE80211_EHT_MCS_NSS_RX) - 1;
+ 	u8 snd_dim, sts;
+ 
++	if (!vc)
++		return;
++
+ 	bf->tx_mode = MT_PHY_TYPE_EHT_MU;
+ 
+ 	mt7996_mcu_sta_sounding_rate(bf);
 -- 
-2.34.1
+2.25.1
 
 
