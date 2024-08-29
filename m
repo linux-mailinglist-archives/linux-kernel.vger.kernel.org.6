@@ -1,134 +1,105 @@
-Return-Path: <linux-kernel+bounces-307722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6807B96521B
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 23:37:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EDC3965226
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 23:39:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CDB9FB21A01
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 21:37:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A98128475D
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 21:39:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A8F61B9B51;
-	Thu, 29 Aug 2024 21:37:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF8B61BA87D;
+	Thu, 29 Aug 2024 21:39:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O/x4Xi9p"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="PyZMUphq"
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65F1C18A92B
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 21:37:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8EE71B3B1D
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 21:39:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724967456; cv=none; b=Aq+XOgFSzvofWGQG76YZcBdLc6psMzZc+PgJ+RjorcE9w8n4uOn+s6E3G7r/Ln5Z2NT9DdcmxMjPuGy6FIdwW448iV8vmK1QZ3AIGYSOtbZQ2i4wifl+tLZGEiaqtGVz4gLOQi2zJA4e/dv2WxZ/LEE/cTEqbyk0O7EcEhC0JpA=
+	t=1724967571; cv=none; b=MA92biWqZSCqUlYm70PShGxPQfXICjWSc4XjZcl/GCisefYLiN5bkRaLOpkIi264I3Tl667IHO9CQAscQPuiISWu2JaU7ieRXTWveiWNx8HVMEEAYPTS22YfIG7BIphzuHIX9nUCTCXubRyolKVyTm0feeiOwjPbT/W8Njh847k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724967456; c=relaxed/simple;
-	bh=wSOqRBziMHB6yLF35urVPkauk4cefa2f2z8nYfsMT/k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=N7SiqoyJsj5O+k1q4q6b7IIe2H9QBo2xHud5myS3UwgVFacer+R7MFObXN08lmeCZCZ8gUiqPhtAkgDBoxZY6SyiTizN4ZXrWGl7jD1mYqefa5FCIkY0AOgapKHvNorRj9FJYheXMwIJJ6QN6p3KnkIKYN7elUn8rhYRJUNZbTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O/x4Xi9p; arc=none smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-7d21b0c8422so112549a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 14:37:35 -0700 (PDT)
+	s=arc-20240116; t=1724967571; c=relaxed/simple;
+	bh=xWmQ1OxqFQz7lf6SRBxNuo8JLNOt90S3oTCefaPSYZM=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=oMI3c+vKkwqiaUuP1NgiRmRdBEvHblpakc3Jgcdly9bXIQ3X7riKpdLUcN7m7/2ISMjsKGtjLC5AlNwRuyASU60sb8Y2v3u+Cm9Gql46e7XSwWU3XFon9w/1p7fCu2OW8HNCy02f5o9zsqf2qGbK+7KgHHCNFMEcRn7WNXjlE04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=PyZMUphq; arc=none smtp.client-ip=209.85.215.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-7d1fa104851so634958a12.3
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 14:39:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724967455; x=1725572255; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=purestorage.com; s=google2022; t=1724967568; x=1725572368; darn=vger.kernel.org;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ZqDs1AXQAfVToI31sahYYzMYjpkf0HNQiurR5mfvYPc=;
-        b=O/x4Xi9p/TGFdHnw88ktRXT3lpKIHtxyWeVdM0PqSxuc/Y7gGM8VpAGhcLypQ1HsEj
-         Et7/3SC334du2ixMCW7RY6iPeTnvyC0uWW4Rj8P/6rLqmhPu7l51Klw2hn6AMrLcvSXP
-         /5viQXhdAjfZ5GuAeOUyuAKorqlRnqMe00NTsGH/kYA8de9XOTX05KynLI0zc457lkcE
-         xHRpudgCOyVi1sWTt9PnfYNiMMTThly4HCOEjpjDiRMsPFxUhaNSnz7Xk3uTJMKHIPoa
-         G/2g51/wORKwqyAi9MOLY/zJ3LjQegyN/G9mPC6X8swsJ3z4dmv5iph7fgB6A0cr9/ru
-         hhzQ==
+        bh=/KcJF8QQgoMkUco4enV2ZPS1HMzsxznWZ0pCfKEnKH8=;
+        b=PyZMUphqwF9MO4qOJ4M912fcKTtBIzSrNImkl3Wap/tCM9M+WcnP0fH97HUoLackI9
+         iUYLCboWvuejF2ORDcstJUYQKkqje9UBut/6B5M0e0nvc11Dk3tUZp/3HxYy4EK6u6eF
+         dkFrbTjc9+Rcx6jyqeF8hIOJPmBTsmtxhCCjmdxg3Lg+wsfSVTgOmX8PT4C6M/Fmk9Bi
+         gX126hjAZ/Y97gTGQK7RZQpF4hkqfJsTYX0yEr1wBRn5OMJXsxa1GoJOAy8VB9vkJETK
+         QbwdoR7R1BqNNCG6TJmSr11dFtMaf1NqsGvoWBnj7kd9Fu6iFaAT4j8Zr5mHlutwUhGB
+         JI3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724967455; x=1725572255;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1724967568; x=1725572368;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ZqDs1AXQAfVToI31sahYYzMYjpkf0HNQiurR5mfvYPc=;
-        b=KJyXy8z6IcYntqn20gg/U9VNpCFqZEmjSrk/lM8Z48Rm2PzGRR1GQloXItJIK4G/db
-         W7GSQaJ8Jid8LUm61XLcH9VFq/6pT/IF4K1vAQZe1W7vff0oLJGfvzKdPWmRfLz9au3F
-         ze3qFp1ZQr9SW6sqbuFfCz4fToqAeZi2a+52eu1ad/GiSzIYqYr9kMkaCDk+w9LZsXVj
-         aSSBnaQaFwxdHUetpKA61Bfq/O9pvyCPHar60+gGLlM22ESt7AScWKgOyooM45JWCdBw
-         QACCS+c7T05sXhsVWEyRLuM+xaTuI0++nAC4FYosX5UihDLzLSMGeZH11Wd4FdXIR2EU
-         Nudw==
-X-Forwarded-Encrypted: i=1; AJvYcCUkFP62iVbljwnHdrJJQpVLi3AQHhTgQ8vVgqqUste79jRw+bDO4wWbUp22wkMmsEDuZFbD8Bx3Z0gPm5o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNuuzdIzBWX5eXgEkSBUa87PoNUsaYHTqp8T2vgFvq/znFrK34
-	JpMRP661ELrpzDj5mE7C8U1DD/BMMzMhNI2EdTzZPSHLW9WiTg9FwBJOiruwHNOn11clvtKlff6
-	aXf3pA8mW375LenKjfrd0hz0Y7pg=
-X-Google-Smtp-Source: AGHT+IF7TMIVRf+RSqmC2FIwf/+gi6PfP2SWSDN8W2wiDyjbh+vA/0OZKN9uQcvOoNzVjzrsTwMTmzexHIry8tIu54k=
-X-Received: by 2002:a17:902:c409:b0:204:e4c9:ce9b with SMTP id
- d9443c01a7336-20527300e77mr1308605ad.2.1724967454478; Thu, 29 Aug 2024
- 14:37:34 -0700 (PDT)
+        bh=/KcJF8QQgoMkUco4enV2ZPS1HMzsxznWZ0pCfKEnKH8=;
+        b=kJUn/O63smbw7rvWX2CvPZfbgdvJdli3U54+twuTRhNQprrJKNPJ8f3COs/GdOqMhU
+         DgZC2jvAetpduuuq32+9RKsWZ7kMld1+Qk9RyUFwYDJdFJjSMtSrZ2cz/qNRmmmdGVNs
+         Mey+m5QqjIJAz/3q24hRuVkmsbJ+hHvm1RqR39rdormffn1d3XuM4CDU/FYtsBkH5zTK
+         D/CZ9bCTsEfcv38KCbl1uqrEviuhU/Z48/tBfVcKEDsGTo3ZjHW2V/waC0qqZIQA0RHQ
+         rfBLFnoav3agjVr9zWEPYp8Du7m+Viu/UJ+/7dumVQfL96I56J2YXrs8fwVR8RuGRLru
+         bdBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWuo6DD7uN+CnNKhWnSXzPTfp5v+JEye1vFqfatfTm0ndp4c3KtqKmoVFzm/2aXxdZC11Ls+fDjxO5sJO4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9QE+ErROonmT3+Jr77ueIeAJ6P/kpSOtwNi6tfKSaGH3xQe99
+	YXR1ihM9hgpMBlknsWh7KIFlY4g5Fdjq0pymyH+5aVTasTksOAXxOeTboF1lxKk=
+X-Google-Smtp-Source: AGHT+IEcXzUs8FoS4L8k0/z6Ku0YobbN9cwTJiImNRR4sdcXZ0Np8BqHyO2j7RLzFbPZpoN7+TDUlg==
+X-Received: by 2002:a17:90a:fe8c:b0:2c2:f6a2:a5f7 with SMTP id 98e67ed59e1d1-2d8561a16afmr4896336a91.13.1724967567904;
+        Thu, 29 Aug 2024 14:39:27 -0700 (PDT)
+Received: from dev-mkhalfella2.dev.purestorage.com ([208.88.159.128])
+        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-2d84462aec5sm4705298a91.32.2024.08.29.14.39.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Aug 2024 14:39:27 -0700 (PDT)
+From: Mohamed Khalfella <mkhalfella@purestorage.com>
+To: Saeed Mahameed <saeedm@nvidia.com>,
+	Leon Romanovsky <leon@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: yzhong@purestorage.com,
+	Mohamed Khalfella <mkhalfella@purestorage.com>,
+	netdev@vger.kernel.org,
+	linux-rdma@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/1] net/mlx5: Added cond_resched() to crdump collection
+Date: Thu, 29 Aug 2024 15:38:55 -0600
+Message-Id: <20240829213856.77619-1-mkhalfella@purestorage.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240829023654.20884-1-jiapeng.chong@linux.alibaba.com>
-In-Reply-To: <20240829023654.20884-1-jiapeng.chong@linux.alibaba.com>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Thu, 29 Aug 2024 17:37:22 -0400
-Message-ID: <CADnq5_Na=-KTEOJT6y8EzQdk_wewFBGs5Or1j5bfVA1wO0PTCA@mail.gmail.com>
-Subject: Re: [PATCH -next] drm/amd/display: Remove the redundant else if
- branch in the function amdgpu_dm_init()
-To: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-Cc: harry.wentland@amd.com, sunpeng.li@amd.com, Rodrigo.Siqueira@amd.com, 
-	alexander.deucher@amd.com, christian.koenig@amd.com, Xinhui.Pan@amd.com, 
-	airlied@gmail.com, daniel@ffwll.ch, amd-gfx@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	Abaci Robot <abaci@linux.alibaba.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 28, 2024 at 10:37=E2=80=AFPM Jiapeng Chong
-<jiapeng.chong@linux.alibaba.com> wrote:
->
-> The assignment of the else and if else branches is the same, so we
-> remove it and add comments here to make the code easier to understand.
+Changes in v2:
+- Removed cond_resched() in mlx5_vsc_wait_on_flag(). The idea is that
+  usleep_range() should be enough.
+- Updated cond_resched() in mlx5_vsc_gw_read_block_fast every 128
+  iterations.
 
-I think the code is clearer as is.  If you force IPS on, you want to
-make sure it's enabled, regardless of what the default ends up being
-in the else case.
+v1: https://lore.kernel.org/all/20240819214259.38259-1-mkhalfella@purestorage.com/
 
-Alex
+Mohamed Khalfella (1):
+  net/mlx5: Added cond_resched() to crdump collection
 
->
-> ./drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c:1871:6-8: WARNING: po=
-ssible condition with no effect (if =3D=3D else).
->
-> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-> Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=3D9829
-> Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-> ---
->  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
->
-> diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/=
-gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-> index e14c0c060e1b..71624917c475 100644
-> --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-> +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-> @@ -1868,9 +1868,7 @@ static int amdgpu_dm_init(struct amdgpu_device *ade=
-v)
->                 init_data.flags.disable_ips =3D DMUB_IPS_DISABLE_DYNAMIC;
->         else if (amdgpu_dc_debug_mask & DC_DISABLE_IPS2_DYNAMIC)
->                 init_data.flags.disable_ips =3D DMUB_IPS_RCG_IN_ACTIVE_IP=
-S2_IN_OFF;
-> -       else if (amdgpu_dc_debug_mask & DC_FORCE_IPS_ENABLE)
-> -               init_data.flags.disable_ips =3D DMUB_IPS_ENABLE;
-> -       else
-> +       else /* The branch cover "else if (amdgpu_dc_debug_mask & DC_FORC=
-E_IPS_ENABLE)" */
->                 init_data.flags.disable_ips =3D DMUB_IPS_ENABLE;
->
->         init_data.flags.disable_ips_in_vpb =3D 0;
-> --
-> 2.32.0.3.g01195cf9f
->
+ drivers/net/ethernet/mellanox/mlx5/core/lib/pci_vsc.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+-- 
+2.45.2
+
 
