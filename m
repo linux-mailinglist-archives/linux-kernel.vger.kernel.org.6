@@ -1,119 +1,138 @@
-Return-Path: <linux-kernel+bounces-307081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24BAC9647A2
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:10:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65FFA9647AC
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:12:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDD6C1F23789
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 14:10:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03E861F23910
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 14:12:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D1E61AD9E0;
-	Thu, 29 Aug 2024 14:10:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61F9E1AE033;
+	Thu, 29 Aug 2024 14:12:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="WI+Z8a48"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	dkim=pass (1024-bit key) header.d=apertussolutions.com header.i=dpsmith@apertussolutions.com header.b="fRJYXpXL"
+Received: from sender4-of-o51.zoho.com (sender4-of-o51.zoho.com [136.143.188.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BBAD18E750;
-	Thu, 29 Aug 2024 14:10:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724940610; cv=none; b=J5BsxnuArn3KOIICDVQJeshgkFxj6snTGsojLw3ZU8X+ijhzYMfniDo1DFI7HVcl0ErSIAB1V3BmAiOb1/3fCwQRTZFjjpq0lDkTJcNxkbRPYo4j+QtkovbubfZLzvtTOunwj9EgOoBgv5DyZDxRrSqt87dPS9GHrTarFozrA6E=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724940610; c=relaxed/simple;
-	bh=qTwOLDyuIJZS5WYFmgDfv4KEXGvXw9UoAMyimnM+OxA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qPsOiYosZx3yzuuT/9UeLIkRgzI/rzdFFGKtoo8Hp3n0hsccirz3nsHMneH3aawuk5y5sMky0S9RFxV9Jhk4nFMPQQeeXdK1ENo7mCjSElcFLIVM6wMueBhEkcfAN9ovLpMsJs+CU78DamIWCVw2VRLyg35TLt12PbrBFC6oCoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=WI+Z8a48; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id C69EA40003;
-	Thu, 29 Aug 2024 14:10:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1724940605;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=u9iP8bCRJqK47kKnLBPXwytzrpV7PSNInp4gC39oES4=;
-	b=WI+Z8a48GHLNMFT578dHsj4QyDLRExsKUPQ0TLHA88ybm6R1hCzAbfVmFQIgGU/6+QQbsX
-	3/sZAA+/5d99NWipDtt1/z5DVbTuY1wKqgpLOp/tOdqpqSdHIQjSyjp5aPwVFO+di9F7/3
-	XROqjXnbN61hjhIQGYPGlSvEqfTUOyXmVTmuYy3j177iPLiPq2dpSzxL7T7X5hm8uR4xgw
-	oq+us58dKDlVcEGHCXdlLWWbzKQKB6hHFBwxrrm02m5lTHTBOJ0LNJG9bobClegUNwYvPg
-	eJjXUZalKMzEaz8TJp/jEIILgeyIvZHRFjaBj4uiexGxa50xV0BGWWHtjLGD/Q==
-Date: Thu, 29 Aug 2024 16:10:03 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Dharma Balasubiramani <dharma.b@microchip.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: clock: Add SAMA7D65 PMC compatible string
-Message-ID: <20240829141003278e9ec2@mail.local>
-References: <20240829-sama7d65-next-v1-1-53d4e50b550d@microchip.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9034E1A3BDD;
+	Thu, 29 Aug 2024 14:12:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.51
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724940747; cv=pass; b=MbqgQEZK5Xk+2D+sOpjtK2h+HFdl+0bfkj37W1K1Uds1NxXSt78iZyNW93HJ2rFrgcJzjKZMxgYrhyvsJpTZ87TKTGpadfQfoTBwhTaexdPGBv5T7SB1uCKGR37iXhBTzW/4zZHknpr67Vv3YwgMiqf/Ah8ym8wJMIiAo15+A/o=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724940747; c=relaxed/simple;
+	bh=7hB/1UOJaiqQ99Joa1DObT9nogjXVp6w2U15f4FVo3Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Lxb0veOerT8BEIzmJq9Tk7r/EASVTsWNexoWFtVdf0MxZOZfnpPtwQ+VtE1GHfeH/V3xMNoD2tNr8GuK6Y7VWRCRCJgqDLDOKK6CpYcj5wwtUJWS9N4ED2EpPwtwequwRmLlVNfxbsu3UpsA0DFVu51hnzxJ/y8gQzsIfBRX+jA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=apertussolutions.com; spf=pass smtp.mailfrom=apertussolutions.com; dkim=pass (1024-bit key) header.d=apertussolutions.com header.i=dpsmith@apertussolutions.com header.b=fRJYXpXL; arc=pass smtp.client-ip=136.143.188.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=apertussolutions.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=apertussolutions.com
+ARC-Seal: i=1; a=rsa-sha256; t=1724940676; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=E7EusWO6er6F2xI1Zxfssj17795cFIrBU9nS7H5PyLGs+6UWBCNXAkfV+JQpsvkn4X6QnDjZg59GcAbdwpZwp541+ugqTaxP6T/nv6M351s7VISQpTXJZegJ/QpLmHKW8PhIgd5ObyYNwREe1/OqSZxAHGA/WYAAlVOJLcXTMDk=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1724940676; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=HgDBKtReaNoT627XPwozc8cV/1MN4aAoTtHPOciy3pM=; 
+	b=F8+Ieta99m9Sb6grjg5r5Hse1Vt8cQANARXzRz4E2JRoFdXjGYznYWVRmMvi/k0t3GJxjfgkNXCi7mbnz93mta8ovG1WRwOCa2szi73evgpHYzIgytv1sd3soamVZ71SpJYmuyZoaySGKcb25OExw2BJMSP43syvz3OmqKbf23o=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=apertussolutions.com;
+	spf=pass  smtp.mailfrom=dpsmith@apertussolutions.com;
+	dmarc=pass header.from=<dpsmith@apertussolutions.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1724940676;
+	s=zoho; d=apertussolutions.com; i=dpsmith@apertussolutions.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=HgDBKtReaNoT627XPwozc8cV/1MN4aAoTtHPOciy3pM=;
+	b=fRJYXpXL9J45pXy0RROxungza/op8PLpbcAgBCB2imI/b3vHv4nw02sEX8neAivz
+	PPiCX2FneFCwIi7K74vsx1xZ2NcmUIkgDl+v3rZoRF1EkHBouBvTymaYqasGUoGZL83
+	itV4OEfBmfm1uvXSAhidcGZMH/LIAtY/V/1UW3+4=
+Received: by mx.zohomail.com with SMTPS id 1724940674239491.862092879441;
+	Thu, 29 Aug 2024 07:11:14 -0700 (PDT)
+Message-ID: <e3194ad1-e976-40a6-a8f3-98081b0b07ea@apertussolutions.com>
+Date: Thu, 29 Aug 2024 10:11:11 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240829-sama7d65-next-v1-1-53d4e50b550d@microchip.com>
-X-GND-Sasl: alexandre.belloni@bootlin.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 01/15] x86/boot: Place kernel_info at a fixed offset
+To: Ard Biesheuvel <ardb@kernel.org>, Stuart Yoder <stuart.yoder@arm.com>
+Cc: Ross Philipson <ross.philipson@oracle.com>, linux-kernel@vger.kernel.org,
+ x86@kernel.org, linux-integrity@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-crypto@vger.kernel.org, kexec@lists.infradead.org,
+ linux-efi@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
+ bp@alien8.de, hpa@zytor.com, dave.hansen@linux.intel.com,
+ mjg59@srcf.ucam.org, James.Bottomley@hansenpartnership.com,
+ peterhuewe@gmx.de, jarkko@kernel.org, jgg@ziepe.ca, luto@amacapital.net,
+ nivedita@alum.mit.edu, herbert@gondor.apana.org.au, davem@davemloft.net,
+ kanth.ghatraju@oracle.com, trenchboot-devel@googlegroups.com
+References: <20240214221847.2066632-1-ross.philipson@oracle.com>
+ <20240214221847.2066632-2-ross.philipson@oracle.com>
+ <CAMj1kXH3Gvr3vDRLDdXuc0s7ZAQYE6+D7tmCRBjJWwWt2fn4-w@mail.gmail.com>
+ <9d01a6d2-4dd9-4331-8fc9-b01c07cfdbb5@apertussolutions.com>
+ <CAMj1kXHn6xeAskWiDLvvA4oG3j9_tqx+iMYJXMqmgvyX4pMzgg@mail.gmail.com>
+Content-Language: en-US
+From: "Daniel P. Smith" <dpsmith@apertussolutions.com>
+In-Reply-To: <CAMj1kXHn6xeAskWiDLvvA4oG3j9_tqx+iMYJXMqmgvyX4pMzgg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
 
-On 29/08/2024 15:08:45+0530, Dharma Balasubiramani wrote:
-> Add the `microchip,sama7d65-pmc` compatible string to the existing binding,
-> since the SAMA7D65 PMC shares the same properties and clock requirements
-> as the SAMA7G5.
+On 8/28/24 13:45, Ard Biesheuvel wrote:
+> (cc Stuart)
+> 
+> On Thu, 21 Mar 2024 at 15:46, Daniel P. Smith
+> <dpsmith@apertussolutions.com> wrote:
+>>
+>> Hi Ard!
+>>
+>> On 2/15/24 02:56, Ard Biesheuvel wrote:
+>>> On Wed, 14 Feb 2024 at 23:31, Ross Philipson <ross.philipson@oracle.com> wrote:
+>>>>
+>>>> From: Arvind Sankar <nivedita@alum.mit.edu>
+>>>>
+>>>> There are use cases for storing the offset of a symbol in kernel_info.
+>>>> For example, the trenchboot series [0] needs to store the offset of the
+>>>> Measured Launch Environment header in kernel_info.
+>>>>
+>>>
+>>> Why? Is this information consumed by the bootloader?
+>>
+>> Yes, the bootloader needs a standardized means to find the offset of the
+>> MLE header, which communicates a set of meta-data needed by the DCE in
+>> order to set up for and start the loaded kernel. Arm will also need to
+>> provide a similar metadata structure and alternative entry point (or a
+>> complete rewrite of the existing entry point), as the current Arm entry
+>> point is in direct conflict with Arm DRTM specification.
+>>
+> 
+> Digging up an old thread here: could you elaborate on this? What do
+> you mean by 'Arm entry point' and how does it conflict directly with
+> the Arm DRTM specification? The Linux/arm64 port predates that spec by
+> about 10 years, so I would expect the latter to take the former into
+> account. If that failed to happen, we should fix the spec while we
+> still can.
 
-Shouldn't you rather use a fallback if you currently have no driver
-change?
+Yes, we have been working with Stuart regarding the specification and 
+crafting a compliant implementation approach. It is still very early 
+days, we are attempting to draft a plan around the specification with no 
+physical implementation to validate against. After some discussion, the 
+concern that a separate entry point may be needed has faded and in fact 
+it likely will not be needed. As always, the devil is in the details, 
+and until we have a hardware that has implemented the specification, and 
+we attempt to light it up, we won't know what will be needed for the 
+implementation.
 
-> 
-> Signed-off-by: Dharma Balasubiramani <dharma.b@microchip.com>
-> ---
->  Documentation/devicetree/bindings/clock/atmel,at91rm9200-pmc.yaml | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/atmel,at91rm9200-pmc.yaml b/Documentation/devicetree/bindings/clock/atmel,at91rm9200-pmc.yaml
-> index c9eb60776b4d..885d47dd5724 100644
-> --- a/Documentation/devicetree/bindings/clock/atmel,at91rm9200-pmc.yaml
-> +++ b/Documentation/devicetree/bindings/clock/atmel,at91rm9200-pmc.yaml
-> @@ -43,6 +43,7 @@ properties:
->                - atmel,sama5d4-pmc
->                - microchip,sam9x60-pmc
->                - microchip,sam9x7-pmc
-> +              - microchip,sama7d65-pmc
->                - microchip,sama7g5-pmc
->            - const: syscon
->  
-> @@ -90,6 +91,7 @@ allOf:
->              enum:
->                - microchip,sam9x60-pmc
->                - microchip,sam9x7-pmc
-> +              - microchip,sama7d65-pmc
->                - microchip,sama7g5-pmc
->      then:
->        properties:
-> 
-> ---
-> base-commit: b18bbfc14a38b5234e09c2adcf713e38063a7e6e
-> change-id: 20240829-sama7d65-next-a91d089b56a3
-> 
-> Best regards,
-> -- 
-> Dharma Balasubiramani <dharma.b@microchip.com>
-> 
+In short, at this point it was determined no update to the DRTM spec is 
+needed. As hardware becomes available, and we do battle with it, Stuart 
+will be kept up to date. We will work with him to ensure any changes are 
+captured that will help reduce chances that vendors and developers do 
+not misinterpret the spec.
 
--- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+V/r,
+Daniel P. Smith
 
