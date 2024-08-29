@@ -1,304 +1,265 @@
-Return-Path: <linux-kernel+bounces-307367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 601BC964C87
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 19:04:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20C85964C82
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 19:03:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C4C04B277F8
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 17:04:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44FA31C237EB
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 17:03:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F0F01B791F;
-	Thu, 29 Aug 2024 17:00:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0968D1B5EBF;
+	Thu, 29 Aug 2024 17:00:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="hqhpzs60"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b="prPHO91H"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA9451B78E8;
-	Thu, 29 Aug 2024 17:00:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAC1B1B5EBE
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 17:00:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724950853; cv=none; b=iTqCEfx26FGvZLrXh2CKxiZn6xMNEA1ou9f8TAAByK2PI3B+IpdQrRz2cLBt62LJuirpuUCZ70OQT9qsl/hVjLqmS30APZSLZQC3+tFYs9tc8+fLrnfY2FZ9fzeZtUfxXKO6BfmOQOj4EX4Sus0kQWR7PzN37NlYPtAf1B0kWEo=
+	t=1724950850; cv=none; b=Dic0+5Esne8iMUjQwle0yZXt/GQ1EnZFfvgTRtMY72Q9ac7OsaFJwWciozfOsMVkDpDvbzVL5wtoXgECfN55UuFNoWUyoqUjDLsHJpS3dXG6Zu4guWeQ9ufUhjGchWfFWddKw+ic8O/DsMMG0Jk6Z565KRDhrK4gfof9UDFOCck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724950853; c=relaxed/simple;
-	bh=/MdS2lronU3t1s9FxX1gp3QQpP2GD6vioGFr05Az4NM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gj/5eMgkzWB6DLbku0iVi1awoNBSkrLqWsNSdxA9lkjZGb2ec8eB+kNjEf4mrT0I7zjguPG0zEWgBk1iwG0XCHi0LRTmU2S26nDI1lA26facPBro5czJL1QZZz5F+GMUOk1vv1iQMwqNKbmeGod3sTVC4X0b5kHhYY01MEMslok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=hqhpzs60; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 730CC226;
-	Thu, 29 Aug 2024 18:59:40 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1724950780;
-	bh=/MdS2lronU3t1s9FxX1gp3QQpP2GD6vioGFr05Az4NM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hqhpzs6027r3z6rgQoN0w9/AHmkMfgxy5a8XOjc4yXlEeEyj5VTrQmSfvaLOA2e7l
-	 f/Ud074kQOx9F+iMa2Lx19XAGcMLqSTl5k0uJGPEQQI8B0/Cqd8P2m5bBfsJGWQDLs
-	 92g0LLN6hDcJJ3KN0S1zmL7YA+3OJs1digQ6C0KQ=
-Date: Thu, 29 Aug 2024 20:00:18 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Benjamin Bara <bbara93@gmail.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Alexander Stein <alexander.stein@ew.tq-group.com>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Benjamin Bara <benjamin.bara@skidata.com>
-Subject: Re: [PATCH v2 1/2] media: i2c: imx290: Check for availability in
- probe()
-Message-ID: <20240829170018.GB15799@pendragon.ideasonboard.com>
-References: <20240828-imx290-avail-v2-0-bd320ac8e8fa@skidata.com>
- <20240828-imx290-avail-v2-1-bd320ac8e8fa@skidata.com>
- <20240829131909.GD12951@pendragon.ideasonboard.com>
- <CAJpcXm59W-1OkDVC5NjLycR0FFOFVFQf0yfjCfsKztg4YUqtkQ@mail.gmail.com>
+	s=arc-20240116; t=1724950850; c=relaxed/simple;
+	bh=r39iS0mZmeesAN8mRRVPFX8IPK5tuUvZAQuloWJvpeY=;
+	h=Date:Subject:In-Reply-To:CC:From:To:Message-ID; b=ighXzkJAywE9Pf4PWq48I8WYVn22uKPnWq7ZJPj20s1CYGeUmaaRUXXu3h+phr4uwwo0kavoqysJTu+K3sBLLadcMRIs8tKnfbaTsgSmRioT7aKlCe3efX29ipaqAp+lDxQ/JpD1PjEI5MGkPdaKDEznBrt7HWpJiMz3L1rT5n4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com; spf=pass smtp.mailfrom=dabbelt.com; dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b=prPHO91H; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dabbelt.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-71433cba1b7so660755b3a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 10:00:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dabbelt-com.20230601.gappssmtp.com; s=20230601; t=1724950847; x=1725555647; darn=vger.kernel.org;
+        h=message-id:to:from:cc:in-reply-to:subject:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=v6yVeKIAZdNlCjwxHunt8GrVJ/ApsEacIVWq6Y0ogzc=;
+        b=prPHO91HSOADrr0+kq1K3EW7V4m4kl9hSOqwXlAafDmUTelXdjybDUTlZbkiN7OVvN
+         xcsMEQYJtQKmAe5ue2qfht7+JihW/zuooKT+bZzFgXecRpQyoyfPOA0r910tsIvcCe8P
+         eW6BiwPE/NlP4s+EbJr/Se93Ez0FltvnHkzKdYniKxQESxLgegL2vrkH1toRHSV6WrJe
+         KuVieK0r1hNlauuOjMruyaNzBN/POjtgWpeSOWp6ZTo8VIT5bRaAbjYMDrnv/vEuJQBY
+         S62YQ/K3K1OPYL1ioTcwjZQ075ho3OZfAJU3dgSAWyhj+9kFwdA4RVW90DIZLApOnSD9
+         P/HA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724950847; x=1725555647;
+        h=message-id:to:from:cc:in-reply-to:subject:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=v6yVeKIAZdNlCjwxHunt8GrVJ/ApsEacIVWq6Y0ogzc=;
+        b=sAuqdj9/s0mLZ6FsDqhw3TTYJaJRuwdTzCzIXfQEyLqHmrCTYpLC4R3f9UCF3t5BWS
+         4vQ0JVbKodxHdbWhHrKdCJhaK3nkv1A75jWNOsDWeHzdBkPFFUTL+rcN1x+QTtb2ptgr
+         azdCDxLCrSTBijAm9y0u24+U0iw+u8Ut3kZoyJOxD1/c2eAByGsdFtogZWnxFaQwCeU3
+         xU/q1HGWPFsl605bGAlgwkhQEGpo8VH6SCszFgr0LIvqY5ZKWJvsD4+5LQYipTKphtV3
+         OlI8pY4mqzfXKjiDpDMXSTXvbpy1JRDBpd6mCgZfpnJqv9sAe1tuW4OMO26NS8j8iPwr
+         jM0A==
+X-Forwarded-Encrypted: i=1; AJvYcCX4P4OrSgvk6Rsy8xxCpUdktyirtRENJoABJQz2PV4zQqgvFeQG5mlJW/guDncGW+ZAwtpjU2wNj2PupZI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWE+nHKVBOa35I8ZTOwEvvysxVZzxK7gPB+GOuODIRisTGLniH
+	VmXE2bCHTpY243CSS3IzLrtJajMjHDJkuQq9ugHuOxkzDUEDS3hxkKM5EGOnI+4=
+X-Google-Smtp-Source: AGHT+IH3f6jrHjn3UecOjnnTSh7f1mjtosaBnqcvhiQTmwoBq2WfcZwsjSYUQZNm8240zpeF9tE3wA==
+X-Received: by 2002:a05:6a00:91a0:b0:70d:2b1b:a37f with SMTP id d2e1a72fcca58-715dfc22895mr4520173b3a.24.1724950846693;
+        Thu, 29 Aug 2024 10:00:46 -0700 (PDT)
+Received: from localhost ([192.184.165.199])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7d22e77438dsm1466259a12.27.2024.08.29.10.00.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Aug 2024 10:00:45 -0700 (PDT)
+Date: Thu, 29 Aug 2024 10:00:45 -0700 (PDT)
+X-Google-Original-Date: Thu, 29 Aug 2024 10:00:42 PDT (-0700)
+Subject:     Re: [PATCH RFC v2 0/4] mm: Introduce MAP_BELOW_HINT
+In-Reply-To: <a048515e-f6e4-4d77-920b-6742529f3ca4@suse.cz>
+CC: Charlie Jenkins <charlie@rivosinc.com>, Arnd Bergmann <arnd@arndb.de>,
+  Richard Henderson <richard.henderson@linaro.org>, ink@jurassic.park.msu.ru, mattst88@gmail.com, vgupta@kernel.org,
+  linux@armlinux.org.uk, guoren@kernel.org, chenhuacai@kernel.org, kernel@xen0n.name,
+  tsbogend@alpha.franken.de, James.Bottomley@HansenPartnership.com, deller@gmx.de, mpe@ellerman.id.au,
+  npiggin@gmail.com, christophe.leroy@csgroup.eu, naveen@kernel.org, agordeev@linux.ibm.com,
+  gerald.schaefer@linux.ibm.com, hca@linux.ibm.com, gor@linux.ibm.com, borntraeger@linux.ibm.com,
+  svens@linux.ibm.com, ysato@users.sourceforge.jp, dalias@libc.org, glaubitz@physik.fu-berlin.de,
+  davem@davemloft.net, andreas@gaisler.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+  dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, luto@kernel.org, peterz@infradead.org,
+  muchun.song@linux.dev, akpm@linux-foundation.org, Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com,
+  shuah@kernel.org, Linus Torvalds <torvalds@linux-foundation.org>, linux-arch@vger.kernel.org,
+  linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+  linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org, loongarch@lists.linux.dev,
+  linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+  linux-s390@vger.kernel.org, linux-sh@vger.kernel.org, sparclinux@vger.kernel.org, linux-mm@kvack.org,
+  linux-kselftest@vger.kernel.org, linux-api@vger.kernel.org
+From: Palmer Dabbelt <palmer@dabbelt.com>
+To: vbabka@suse.cz
+Message-ID: <mhng-77a89c0b-bfdf-4a6f-bb6e-cee3ff1efbc6@palmer-ri-x1c9>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAJpcXm59W-1OkDVC5NjLycR0FFOFVFQf0yfjCfsKztg4YUqtkQ@mail.gmail.com>
 
-Hi Benjamin,
+On Thu, 29 Aug 2024 02:02:34 PDT (-0700), vbabka@suse.cz wrote:
+> Such a large recipient list and no linux-api. CC'd, please include it on
+> future postings.
+>
+> On 8/29/24 09:15, Charlie Jenkins wrote:
+>> Some applications rely on placing data in free bits addresses allocated
+>> by mmap. Various architectures (eg. x86, arm64, powerpc) restrict the
+>> address returned by mmap to be less than the 48-bit address space,
+>> unless the hint address uses more than 47 bits (the 48th bit is reserved
+>> for the kernel address space).
+>>
+>> The riscv architecture needs a way to similarly restrict the virtual
+>> address space. On the riscv port of OpenJDK an error is thrown if
+>> attempted to run on the 57-bit address space, called sv57 [1].  golang
+>> has a comment that sv57 support is not complete, but there are some
+>> workarounds to get it to mostly work [2].
+>>
+>> These applications work on x86 because x86 does an implicit 47-bit
+>> restriction of mmap() address that contain a hint address that is less
+>> than 48 bits.
+>>
+>> Instead of implicitly restricting the address space on riscv (or any
+>> current/future architecture), a flag would allow users to opt-in to this
+>> behavior rather than opt-out as is done on other architectures. This is
+>> desirable because it is a small class of applications that do pointer
+>> masking.
+>
+> I doubt it's desirable to have different behavior depending on architecture.
+> Also you could say it's a small class of applications that need more than 47
+> bits.
 
-On Thu, Aug 29, 2024 at 05:36:48PM +0200, Benjamin Bara wrote:
-> On Thu, 29 Aug 2024 at 15:19, Laurent Pinchart wrote:
-> > On Wed, Aug 28, 2024 at 08:13:07PM +0200, Benjamin Bara wrote:
-> > > Currently, the V4L2 subdevice is also created when the device is not
-> > > available/connected. In this case, dmesg shows the following:
-> > >
-> > > [   10.419510] imx290 7-001a: Error writing reg 0x301c: -6
-> > > [   10.428981] imx290 7-001a: Error writing reg 0x3020: -6
-> > > [   10.442712] imx290 7-001a: Error writing reg 0x3018: -6
-> > > [   10.454018] imx290 7-001a: Error writing reg 0x3020: -6
-> > >
-> > > which seems to come from imx290_ctrl_update() after the subdev init is
-> > > finished.
-> >
-> > I think this should also be fixed. There should be no need to write
-> > those registers at probe time. Would moving the
-> > pm_runtime_mark_last_busy() and pm_runtime_put_autosuspend() calls to
-> > just before imx290_subdev_init() help ?
-> 
-> I guess if I decrease the autosuspend delay (now 1s), it would work -
-> but it feels like a hack to me. I would prefer to not call
+We're sort of stuck with the architeture-depending behavior here: for 
+the first few years RISC-V only had 39-bit VAs, so the defato uABI ended 
+up being that userspace can ignore way more bits.  While 48 bits might 
+be enough for everyone, 39 doesn't seem to be -- or at least IIRC when 
+we tried restricting the default to that, we broke stuff.  There's also 
+some other wrinkles like arbitrary bit boundaries in pointer masking and 
+vendor-specific paging formats, but at some point we just end up down a 
+rabbit hole of insanity there...
 
-Is decreading the autosuspend delay needed ? If you call
-pm_runtime_put_autosuspend() before imx290_subdev_init(), will the
-pm_runtime_get_if_in_use() call in imx290_set_ctrl() return a non-zero
-value if the device hasn't been suspended yet due to the autosuspend
-delay ? My understanding is that it shouldn't, unlike
-pm_runtime_get_if_active().
+FWIW, I think that userspace depending on just tossing some VA bits 
+because some kernels happened to never allocate from them is just 
+broken, but it seems like other ports worked around the 48->57 bit 
+transition and we're trying to do something similar for 39->48 (and that 
+works with 49->57, as we'll have to deal with that eventually).
 
-> imx290_ctrl_update() at all during probe(). I guess the reason why it is
-> done is to have sane ctrl values for link_freq, hblank and vblank.
-> However, as they depend on the mode (which isn't known at that time), it
-> (at least to me) doesn't make sense to just "assume" the first mode
-> here.
+So that's basically how we ended up with this sort of thing: trying to 
+do something similar without a flag broke userspace because we were 
+trying to jam too much into the hints.  I couldn't really figure out a 
+way to satisfy all the userspace constraints by just implicitly 
+retrofitting behavior based on the hints, so we figured having an 
+explicit flag to control the behavior would be the sanest way to go.
 
-The reason why the function is called at probe time is to centralize in
-a single location all the code that computes ranges for the controls.
-Otherwise, the logic would need to be duplicated in imx290_ctrl_init().
-We could possibly split imx290_ctrl_update() in two functions, one that
-computes the ranges and one that updates the controls, and call the
-first one from imx290_ctrl_init().
+That said: I'm not opposed to just saying "depending on 39-bit VAs is 
+broken" and just forcing people to fix it.
 
-> I would prefer to introduce a FREQ_INDEX_OFF with 0 here and use this as
-> default, and use the ranges from the datasheet for {v,h}blank already
-> when creating the controls. When the mode is decided, the blanks will be
-> adapted to be in range.
-
-That would violate the V4L2 API I'm afraid. Subdevs are supposed to have
-a valid configuration at all times, including just after probe before
-being configured by users.
-
-> I can add an example in the next round, need to implement and test
-> first.
-> 
-> > > However, as the errors are ignored, the subdev is initialized
-> > > but simply does not work. From userspace perspective, there is no
-> > > visible difference between a working and not-working subdevice (except
-> > > when trying it out or watching for the error message).
-> > >
-> > > This commit adds a simple availability check before starting with the
-> > > subdev initialization to error out instead.
-> > >
-> > > Signed-off-by: Benjamin Bara <benjamin.bara@skidata.com>
-> > > ---
-> > > Changes since v1:
-> > > - define operating/standby mode and use it
-> > > - read out the standby mode during probe and ensure it is standby
-> > > ---
-> > >  drivers/media/i2c/imx290.c | 17 +++++++++++++++--
-> > >  1 file changed, 15 insertions(+), 2 deletions(-)
-> > >
-> > > diff --git a/drivers/media/i2c/imx290.c b/drivers/media/i2c/imx290.c
-> > > index 4150e6e4b9a6..2a869576600c 100644
-> > > --- a/drivers/media/i2c/imx290.c
-> > > +++ b/drivers/media/i2c/imx290.c
-> > > @@ -29,6 +29,8 @@
-> > >  #include <media/v4l2-subdev.h>
-> > >
-> > >  #define IMX290_STANDBY                                       CCI_REG8(0x3000)
-> > > +#define IMX290_STANDBY_OPERATING                     (0 << 0)
-> > > +#define IMX290_STANDBY_STANDBY                               (1 << 0)
-> >
-> > The datasheet documents the STANDBY field as a single bit, but doesn't
-> > mention an OPERATING value. I would match that, drop
-> > IMX290_STANDBY_OPERATING and write
-> 
-> The imx290 datasheet from Arrow has it on page 35, but I can switch to
-> your version if preferred :)
-> 
-> > #define IMX290_STANDBY_STANDBY                          BIT(0)
-> >
-> > >  #define IMX290_REGHOLD                                       CCI_REG8(0x3001)
-> > >  #define IMX290_XMSTA                                 CCI_REG8(0x3002)
-> > >  #define IMX290_ADBIT                                 CCI_REG8(0x3005)
-> > > @@ -1016,7 +1018,7 @@ static int imx290_start_streaming(struct imx290 *imx290,
-> > >               return ret;
-> > >       }
-> > >
-> > > -     cci_write(imx290->regmap, IMX290_STANDBY, 0x00, &ret);
-> > > +     cci_write(imx291->regmap, IMX290_STANDBY, IMX290_STANDBY_OPERATING, &ret);
-> >
-> > This hunk would then be dropped.
-> >
-> > >
-> > >       msleep(30);
-> > >
-> > > @@ -1029,7 +1031,7 @@ static int imx290_stop_streaming(struct imx290 *imx290)
-> > >  {
-> > >       int ret = 0;
-> > >
-> > > -     cci_write(imx290->regmap, IMX290_STANDBY, 0x01, &ret);
-> > > +     cci_write(imx290->regmap, IMX290_STANDBY, IMX290_STANDBY_STANDBY, &ret);
-> >
-> > And this looks fine.
-> >
-> > The change isn't mentioned in the commit message though. I wouldn't ask
-> > for a v3 just to split this, but as you need to address other issues, it
-> > would be nice to have a separate patch in v3.
-> 
-> Yup, can do that :)
-> 
-> > >
-> > >       msleep(30);
-> > >
-> > > @@ -1520,6 +1522,7 @@ static int imx290_probe(struct i2c_client *client)
-> > >  {
-> > >       struct device *dev = &client->dev;
-> > >       struct imx290 *imx290;
-> > > +     u64 val;
-> > >       int ret;
-> > >
-> > >       imx290 = devm_kzalloc(dev, sizeof(*imx290), GFP_KERNEL);
-> > > @@ -1580,6 +1583,16 @@ static int imx290_probe(struct i2c_client *client)
-> > >       pm_runtime_set_autosuspend_delay(dev, 1000);
-> > >       pm_runtime_use_autosuspend(dev);
-> > >
-> > > +     /* Make sure the sensor is available before V4L2 subdev init. */
-> > > +     ret = cci_read(imx290->regmap, IMX290_STANDBY, &val, NULL);
-> >
-> > I still wish we had an ID register, but so be it.
-> 
-> When we implement a SW reset (to be sure that there was a reset in case
-> a dummy regulator is used), we can probably come up with a mix of
-> different default values of registers to go through, but not sure if
-> this is really worth it...
-> 
-> > > +     if (ret)
-> >
-> > Maybe add
-> >
-> >                 ret = dev_err_probe(dev, -ENODEV, "Failed to detect sensor\n");
-> >
-> > or something similar ? Up to you.
-> 
-> Probably a good idea. I didn't print something here because cci_read()
-> already does.
-> 
-> > > +             goto err_pm;
-> > > +     if (val != IMX290_STANDBY_STANDBY) {
-> >
-> > I think this check could be dropped though. If the sensor isn't present
-> > or doesn't respond to I2C reads for any other reason, cci_read() will
-> > fail.
-> 
-> I added it because Sakari and Alex suggested to read back a value and
-> compare it to an expectation. Would keep it therefore?
-
-If we had an ID register that had a more discriminatory value I would
-check its contents. In this case, as the goal is to detect if the device
-is functional, I don't think the check adds much value, unless you think
-we need to protect against an incorrect devices responding to the same
-I2C address. I would prefer dropping this, but I don't mind keeping the
-check too much.
-
-> > > +             dev_err(dev, "Sensor is not in standby mode\n");
-> > > +             ret = -ENODEV;
-> > > +             goto err_pm;
-> > > +     }
-> > > +
-> >
-> > My last concern is about accessing hardware at probe time. There are
-> > known cases where this is problematic. They can be split in two
-> > categories, systems that exhibit unwanted side effects when powering the
-> > sensor up, and systems where the sensor can't be accessed at probe time.
-> >
-> > The two issues I can think of in the first category is devices that have
-> > a camera privacy light that could cause worries among users if it
-> > flashes at boot time, and devices that agressively optimize boot time.
-> >
-> > In the second category, I know that some people use camera serdes
-> > (FPD-Link, GMSL, ...) that are controlled by userspace. As they should
-> > instead use kernel drivers for those components, upstream may not care
-> > too much about this use case. Another issue I was told about was a
-> > device booting in temperatures that were too low for the camera to
-> > operate, which then needed half an hour to heat the device enclosure
-> > before the sensor and serdes could be accessed. That's a bit extreme,
-> > but it sounds like a valid use case to me.
-> >
-> > What do we do with those cases ? Detecting devices at probe time does
-> > have value, so I think it should be a policy decision. We may want to
-> > convey some of that information through DT properties (I'm not sure what
-> > would be acceptable there though). In any case, that's quite a bit of
-> > yak shaving, so I'm inclined to accept this series (or rather its next
-> > version), given that quite a few other camera sensor drivers detect the
-> > device at probe time. I would however like feedback on the problem to
-> > try and find a good solution.
-> 
-> One of the rather "simpler" solutions that come to my mind (without
-> adding something like a generic "disallow-regulator-during-probe" or
-> similar DT property) is to check the current state of the used
-> regulator(s) and keep it during the cam probe. If it is already active:
-> fine, we can communicate and find out; if not: live with schroedinger's
-> cam. Probably we should decide at one point in time if dead or alive.
-> 
-> If you think this sounds fine, I can modify the series to do that.
-
-Hmmmm that's sounds a bit dangerous, and possibly racy. I think we can
-add the check for now, and implement a more generic mechanism in a
-second step. As discussed in a separate e-mail in the same thread, most
-of the use cases I mentioned can be addressed by loading the driver as a
-module. The only exception (at the moment) is the privacy light problem.
-I'd like to address that more globally.
-
-> > >       /* Initialize the V4L2 subdev. */
-> > >       ret = imx290_subdev_init(imx290);
-> > >       if (ret)
-> > >
-
--- 
-Regards,
-
-Laurent Pinchart
+>> This flag will also allow seemless compatibility between all
+>> architectures, so applications like Go and OpenJDK that use bits in a
+>> virtual address can request the exact number of bits they need in a
+>> generic way. The flag can be checked inside of vm_unmapped_area() so
+>> that this flag does not have to be handled individually by each
+>> architecture.
+>>
+>> Link:
+>> https://github.com/openjdk/jdk/blob/f080b4bb8a75284db1b6037f8c00ef3b1ef1add1/src/hotspot/cpu/riscv/vm_version_riscv.cpp#L79
+>> [1]
+>> Link:
+>> https://github.com/golang/go/blob/9e8ea567c838574a0f14538c0bbbd83c3215aa55/src/runtime/tagptr_64bit.go#L47
+>> [2]
+>>
+>> To: Arnd Bergmann <arnd@arndb.de>
+>> To: Richard Henderson <richard.henderson@linaro.org>
+>> To: Ivan Kokshaysky <ink@jurassic.park.msu.ru>
+>> To: Matt Turner <mattst88@gmail.com>
+>> To: Vineet Gupta <vgupta@kernel.org>
+>> To: Russell King <linux@armlinux.org.uk>
+>> To: Guo Ren <guoren@kernel.org>
+>> To: Huacai Chen <chenhuacai@kernel.org>
+>> To: WANG Xuerui <kernel@xen0n.name>
+>> To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+>> To: James E.J. Bottomley <James.Bottomley@HansenPartnership.com>
+>> To: Helge Deller <deller@gmx.de>
+>> To: Michael Ellerman <mpe@ellerman.id.au>
+>> To: Nicholas Piggin <npiggin@gmail.com>
+>> To: Christophe Leroy <christophe.leroy@csgroup.eu>
+>> To: Naveen N Rao <naveen@kernel.org>
+>> To: Alexander Gordeev <agordeev@linux.ibm.com>
+>> To: Gerald Schaefer <gerald.schaefer@linux.ibm.com>
+>> To: Heiko Carstens <hca@linux.ibm.com>
+>> To: Vasily Gorbik <gor@linux.ibm.com>
+>> To: Christian Borntraeger <borntraeger@linux.ibm.com>
+>> To: Sven Schnelle <svens@linux.ibm.com>
+>> To: Yoshinori Sato <ysato@users.sourceforge.jp>
+>> To: Rich Felker <dalias@libc.org>
+>> To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+>> To: David S. Miller <davem@davemloft.net>
+>> To: Andreas Larsson <andreas@gaisler.com>
+>> To: Thomas Gleixner <tglx@linutronix.de>
+>> To: Ingo Molnar <mingo@redhat.com>
+>> To: Borislav Petkov <bp@alien8.de>
+>> To: Dave Hansen <dave.hansen@linux.intel.com>
+>> To: x86@kernel.org
+>> To: H. Peter Anvin <hpa@zytor.com>
+>> To: Andy Lutomirski <luto@kernel.org>
+>> To: Peter Zijlstra <peterz@infradead.org>
+>> To: Muchun Song <muchun.song@linux.dev>
+>> To: Andrew Morton <akpm@linux-foundation.org>
+>> To: Liam R. Howlett <Liam.Howlett@oracle.com>
+>> To: Vlastimil Babka <vbabka@suse.cz>
+>> To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+>> To: Shuah Khan <shuah@kernel.org>
+>> Cc: linux-arch@vger.kernel.org
+>> Cc: linux-kernel@vger.kernel.org
+>> Cc: linux-alpha@vger.kernel.org
+>> Cc: linux-snps-arc@lists.infradead.org
+>> Cc: linux-arm-kernel@lists.infradead.org
+>> Cc: linux-csky@vger.kernel.org
+>> Cc: loongarch@lists.linux.dev
+>> Cc: linux-mips@vger.kernel.org
+>> Cc: linux-parisc@vger.kernel.org
+>> Cc: linuxppc-dev@lists.ozlabs.org
+>> Cc: linux-s390@vger.kernel.org
+>> Cc: linux-sh@vger.kernel.org
+>> Cc: sparclinux@vger.kernel.org
+>> Cc: linux-mm@kvack.org
+>> Cc: linux-kselftest@vger.kernel.org
+>> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+>>
+>> Changes in v2:
+>> - Added much greater detail to cover letter
+>> - Removed all code that touched architecture specific code and was able
+>>   to factor this out into all generic functions, except for flags that
+>>   needed to be added to vm_unmapped_area_info
+>> - Made this an RFC since I have only tested it on riscv and x86
+>> - Link to v1: https://lore.kernel.org/r/20240827-patches-below_hint_mmap-v1-0-46ff2eb9022d@rivosinc.com
+>>
+>> ---
+>> Charlie Jenkins (4):
+>>       mm: Add MAP_BELOW_HINT
+>>       mm: Add hint and mmap_flags to struct vm_unmapped_area_info
+>>       mm: Support MAP_BELOW_HINT in vm_unmapped_area()
+>>       selftests/mm: Create MAP_BELOW_HINT test
+>>
+>>  arch/alpha/kernel/osf_sys.c                  |  2 ++
+>>  arch/arc/mm/mmap.c                           |  3 +++
+>>  arch/arm/mm/mmap.c                           |  7 ++++++
+>>  arch/csky/abiv1/mmap.c                       |  3 +++
+>>  arch/loongarch/mm/mmap.c                     |  3 +++
+>>  arch/mips/mm/mmap.c                          |  3 +++
+>>  arch/parisc/kernel/sys_parisc.c              |  3 +++
+>>  arch/powerpc/mm/book3s64/slice.c             |  7 ++++++
+>>  arch/s390/mm/hugetlbpage.c                   |  4 ++++
+>>  arch/s390/mm/mmap.c                          |  6 ++++++
+>>  arch/sh/mm/mmap.c                            |  6 ++++++
+>>  arch/sparc/kernel/sys_sparc_32.c             |  3 +++
+>>  arch/sparc/kernel/sys_sparc_64.c             |  6 ++++++
+>>  arch/sparc/mm/hugetlbpage.c                  |  4 ++++
+>>  arch/x86/kernel/sys_x86_64.c                 |  6 ++++++
+>>  arch/x86/mm/hugetlbpage.c                    |  4 ++++
+>>  fs/hugetlbfs/inode.c                         |  4 ++++
+>>  include/linux/mm.h                           |  2 ++
+>>  include/uapi/asm-generic/mman-common.h       |  1 +
+>>  mm/mmap.c                                    |  9 ++++++++
+>>  tools/include/uapi/asm-generic/mman-common.h |  1 +
+>>  tools/testing/selftests/mm/Makefile          |  1 +
+>>  tools/testing/selftests/mm/map_below_hint.c  | 32 ++++++++++++++++++++++++++++
+>>  23 files changed, 120 insertions(+)
+>> ---
+>> base-commit: 5be63fc19fcaa4c236b307420483578a56986a37
+>> change-id: 20240827-patches-below_hint_mmap-b13d79ae1c55
 
