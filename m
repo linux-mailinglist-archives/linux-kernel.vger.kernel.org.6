@@ -1,113 +1,168 @@
-Return-Path: <linux-kernel+bounces-306680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E49A996420B
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 12:36:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC13196420D
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 12:36:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A06E1286DE8
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:36:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35DB81F218A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:36:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D0C91AE864;
-	Thu, 29 Aug 2024 10:28:36 +0000 (UTC)
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8A97192B8E;
+	Thu, 29 Aug 2024 10:29:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WxHgP9JK"
+Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2698194C96;
-	Thu, 29 Aug 2024 10:28:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F54818E372;
+	Thu, 29 Aug 2024 10:29:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724927316; cv=none; b=QH5ux2HRiCrATo4FvA5rFB396oZZvgdvlj2oKXaQM/PefpGoeJG1ar5c4Td3rmA8lb1tXcftCbYXxsC8o1lSyxBYBAULH4MQtD7WA6UKFGFqDCRUcdl9xd2+oyXwfblp300CTgGBFdTcEFKzYWjTq1RwgCRTyO41f47+GIMw7EM=
+	t=1724927397; cv=none; b=bUp/lfYUPBrarid0AOKgTxyRzmsBnzwG99H0VlRAms8+BGmLGBKcDDeAVZCsSgR9iE3fcRMpSL+52borLxdkXTt3x7P7pk/j8UzCB+mYkDrcqwEe4PhSpqwnCsKCI/OPwjV7+WSHJzr54y5WXyc0z6oEoTwGd9lwNidWGvfIDFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724927316; c=relaxed/simple;
-	bh=kGKixAvMqg/YT4b7ZF1i8fAhvuV8TjpkWW7Ve1FJ3AM=;
+	s=arc-20240116; t=1724927397; c=relaxed/simple;
+	bh=kR8Ap2dEgc9SIGX+U5MHWd8dlkRGCIwiPqnUCBBpPss=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=k2ca5HeSA1z9HkoEHr4QV5ot1SxQqODT7IUDuTee/rWmTloIXmcNccN0nMkOE9v67yVe7P54EnqXHk1p5+Vog01rx38K0q/TnpExYoqhLt8Hc6A7GHXRnA1vS9p+/FfoIjTc43USyZ6C9HueGMfMil7xlZT/IA+6YZ1zRJFu/xM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	 To:Cc:Content-Type; b=c9q3QtthprXueogp7HUAA1ZgrVRCDdc1nJKrtna2Q06JAoJsjD0pvGEyVfogoZ96h5oDfu1VgfU2U2XsF0BTSKGLjynr7UgQkGZGOQuU96o90usXZk4Q1h4gNSQnUDb0qk2btjjrV/bKs/HI8nBoZYLZGpxzdqcVk0pWAwUWAfE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WxHgP9JK; arc=none smtp.client-ip=209.85.222.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-699ac6dbf24so4883577b3.3;
-        Thu, 29 Aug 2024 03:28:34 -0700 (PDT)
+Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7a7f8b0b7d0so16690085a.2;
+        Thu, 29 Aug 2024 03:29:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724927395; x=1725532195; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/+Q7s5PxV3KAi3K3eVR19t9nHuuGAXw/J+XPGFRVh5U=;
+        b=WxHgP9JKlOCnDRM/2C/QLNFtdJWDSp/azBsjls5QXLc6mSau00mIqoXSarel3dZS5G
+         /Brx06Pq2WhgE6QuXm7u3yhTzpDj9wEOt70ZposlCZ1ptlzWFKRxqhCvysZLUEjYJK8p
+         W08uxkdGc3n1Gmbsh6a2sG1Tq4FOuNBu+Tq6NccuVAe+TuKLR7ZfT7AQpD57sbOFTIQ7
+         G7nzaUFS0Ygi3/J5M0vmDx2CImWzGTZnV7eaUFe0y3LQATyLC3Sz9HbvsyjWoDnlxWm6
+         UGYYcmRH9WACfxMg34G1QGdApJ3IBFTfR05NR175RkCQ/1hcuBxth166XrFherp/u26D
+         OgaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724927313; x=1725532113;
+        d=1e100.net; s=20230601; t=1724927395; x=1725532195;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=iybCc4zZgKXtGotDUGTWZKPqJCIrcEfsWk8HvPOHsV8=;
-        b=cFeZYpewMMah5Q5O1jbE7xwKQ1fok+SsL0uAl/PeAS74sUqXgn+U4rA8OxVtPZS4HM
-         7WgK22mniLD5ue9mG+pT3Ks5P7fMye5b9MOfeSwx91/VFZr8zWcol4lzy9E+FrOO2kXS
-         3STov080y6Cj5egmuwDflEFkG7Nk/+iLNHU7MXhpAaQec/UVVpayXJe/Xu5HQppkzY5I
-         YYBrLqotI5ZM/9r0asnGVkP/m201sKFZv5LzuI80qctA+9myPBNmHsFojfZvjiAulSk+
-         3O10s4rJ637Fvh7rdLS9Vrb29erJ8T2Zekt/7H14i45jP0EZ1Ya6iHEvFmiK6hMJppSf
-         Fjow==
-X-Forwarded-Encrypted: i=1; AJvYcCWrHsxwx3D/wWl2OW92baOCpMS2NsFupByRHfbrzZ3R6tQZVa+J9wbrt2Qyjaoct2LWUvDgZ4dN/II5@vger.kernel.org, AJvYcCX+BGUupGYcasgHwE0J4ad+M79y5co9DTWlApxB2eTE6W0GJ/S5yR3tTcVeqMN7AFZakHvG2nTQFsdEXkrl@vger.kernel.org, AJvYcCXnrX7TKUiYe6GyrXIC0+VQ2K/0RBPlwITBX+3/KAWlJvyau+/X2ljuv/wmB2cmbHiHGmY9tzc6RgdtrSmpS+pUbNk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3OCCM0lpdgd6Aht0ZxF1JW7MU0UQEcoWsHW8HmQNL7SkR9hi7
-	+tF6K9soTnYuAS5Lf4uftwq2BD7LbvBinL8ZJSZj2OPCGYNci7TyGb1MEDZY
-X-Google-Smtp-Source: AGHT+IERRV7m1qXO7+RHC/S9Jy4Zn5Ueskjz7DTXLzcuY/WsMMCUB8wBU/4+OAjO+Sj6DISMw7Co8Q==
-X-Received: by 2002:a05:690c:ed5:b0:6be:28ab:d874 with SMTP id 00721157ae682-6d275d3e0e1mr22965607b3.2.1724927313048;
-        Thu, 29 Aug 2024 03:28:33 -0700 (PDT)
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com. [209.85.128.175])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6d2d58d3cd6sm1835027b3.102.2024.08.29.03.28.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 29 Aug 2024 03:28:32 -0700 (PDT)
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-699ac6dbf24so4883477b3.3;
-        Thu, 29 Aug 2024 03:28:32 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV/GmSkINTcbwng65NCgtYc5Ef9VDouG6qzv5cny9u9hJEz44lTu2XDQ8ll7FP+U0aG0cRUUktWDNXDD4Ga@vger.kernel.org, AJvYcCVtgKHTgQ7pybV2U0yvgb6rbs63Ms/+20NanOrxvqDSKw4F9sGnI+6dpZR4txB6de4aATkvEgcmt2G5@vger.kernel.org, AJvYcCXyTwIbNnizl0ObxaK/nQwygnDxfR6EhMvNHUfPEmQyHt6/T87O6oLwZy3JutdVqOOENeSD9hRHgF+xzgGXMaa50Xs=@vger.kernel.org
-X-Received: by 2002:a05:690c:6e10:b0:6b4:b45:2f1 with SMTP id
- 00721157ae682-6d277a7a8b4mr29356747b3.34.1724927312524; Thu, 29 Aug 2024
- 03:28:32 -0700 (PDT)
+        bh=/+Q7s5PxV3KAi3K3eVR19t9nHuuGAXw/J+XPGFRVh5U=;
+        b=gRcQ4dKrNQF5dXX99qtX9LB8hFdiN6q2NjyZa8ROQadLyAmYWIbw7j6Yk7KzE9F0M5
+         VUoUf5sPIhBLKV/KhG5bzal+99mhC0F+6yU9VIUFI4EYXm/Ob3AhYAM/wlXhivpN2n3C
+         RSLwzqBCNBHPXLbD8cYfgGnewJ4bkxerDl6582U1cBncb6cZ9jQA4/YHW7Anw3zmRx1n
+         NcaUsVEuBGrWsfB2Lr466iJDeNY/Dyl30yNiAptfkbqFhnigaUA+PCTsxc5eiVWMFD8l
+         bik/joNOlljRhsB9/d5QNxFbfr/ZVfIeWoEsRi/PvE1rlyZVhbvAjewPgHGaec63RGy1
+         36Kw==
+X-Forwarded-Encrypted: i=1; AJvYcCUj9YhGK64U64jpthXz/vw7U/QzLkBjVOed69SgxwGon0QNs8vQqOjMlurzfPBXYS1Tb1+KAcHSWtStltk=@vger.kernel.org, AJvYcCVSbFMuhDS6UQL9Yzv5IQVGKmIMIVhtwkByVfdbVOGTKMLIMyQwiRoRqrb4ZBTrH35xAwir0FRj+/n2aKyIbQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/HNh2ecokLwDamz8o8AoYGZTbmdLY/Mo5KodONZIssGIq/Mn0
+	e7NWLsTzNvi+deB31kAK6A8UCOfm6Qy/xIigvHDQPSuS5HaQfoBsrxJjV/7615oJhagn7CL9RE+
+	fa7yJX2xJl2cSG9K7ODDmFu8rVafwhmOMwWM=
+X-Google-Smtp-Source: AGHT+IE0zNGEhEcBv6/yDczCimzxHfhiG5M7fVHKl6jTxOWLwlYzwOP8zmxfXyO+tfvkGjuzRldRfZlOqHLYscGp9cc=
+X-Received: by 2002:a05:620a:280c:b0:79f:a6c:f422 with SMTP id
+ af79cd13be357-7a8041af2d9mr188453185a.24.1724927394860; Thu, 29 Aug 2024
+ 03:29:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240828124134.188864-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240828124134.188864-10-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20240828124134.188864-10-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 29 Aug 2024 12:28:19 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUJ3etwFe1jYd1LNnpVZjcb6qrYi1FKkTiF81Okfbekhg@mail.gmail.com>
-Message-ID: <CAMuHMdUJ3etwFe1jYd1LNnpVZjcb6qrYi1FKkTiF81Okfbekhg@mail.gmail.com>
-Subject: Re: [PATCH v4 9/9] arm64: dts: renesas: r9a09g057h44-rzv2h-evk:
- Enable watchdog
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20240722101443.10768-1-feilv@asrmicro.com> <CAOQ4uxhP03BHK8gDmeySxkacGvy9BToZkb5nTgaegWxJPAuG8A@mail.gmail.com>
+ <CAJfpegtPOgowkK5EHxNZnuHDo9AZTbF2-zxMc99rvWL44rdMXQ@mail.gmail.com> <CAOQ4uxiYGsKzMZ73=WLZqseU=ibboFtPfqpeGtmFWYY3uxjMvw@mail.gmail.com>
+In-Reply-To: <CAOQ4uxiYGsKzMZ73=WLZqseU=ibboFtPfqpeGtmFWYY3uxjMvw@mail.gmail.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Thu, 29 Aug 2024 12:29:43 +0200
+Message-ID: <CAOQ4uxi-BuKU-AbyydVB2c8z0DiPP-Ednu+bN3JB2Cqf7rZamA@mail.gmail.com>
+Subject: Re: [PATCH V2] ovl: fsync after metadata copy-up via mount option "fsync=strict"
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Fei Lv <feilv@asrmicro.com>, linux-unionfs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, lianghuxu@asrmicro.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 28, 2024 at 2:41=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.c=
-om> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Tue, Aug 27, 2024 at 10:46=E2=80=AFAM Amir Goldstein <amir73il@gmail.com=
+> wrote:
 >
-> Enable WDT1 watchdog on RZ/V2H EVK platform.
+> On Mon, Aug 26, 2024 at 5:59=E2=80=AFPM Miklos Szeredi <miklos@szeredi.hu=
+> wrote:
+> >
+> > On Mon, 22 Jul 2024 at 15:56, Amir Goldstein <amir73il@gmail.com> wrote=
+:
+> > >
+> > > On Mon, Jul 22, 2024 at 1:14=E2=80=AFPM Fei Lv <feilv@asrmicro.com> w=
+rote:
+> > > >
+> > > > For upper filesystem which does not enforce ordering on storing of
+> > > > metadata changes(e.g. ubifs), when overlayfs file is modified for
+> > > > the first time, copy up will create a copy of the lower file and
+> > > > its parent directories in the upper layer. Permission lost of the
+> > > > new upper parent directory was observed during power-cut stress tes=
+t.
+> > > >
+> > > > Fix by adding new mount opion "fsync=3Dstrict", make sure data/meta=
+data of
+> > > > copied up directory written to disk before renaming from tmp to fin=
+al
+> > > > destination.
+> > > >
+> > > > Signed-off-by: Fei Lv <feilv@asrmicro.com>
+> > >
+> > > Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+> > >
+> > > but I'd also like to wait for an ACK from Miklos on this feature.
+> >
+> > I'm okay with this.  I'm a little confused about sync=3Dstrict mode,
+> > since most copy ups will have vfs_fsync() called twice.  Is this what
+> > we want, or could this be consolidated into a single fsync?
+> >
 >
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> v3->v4
-> - Included RB tag
-> - Updated commit header
+> Maybe it could, but remember that ubifs strict mode is the odd case
+> if we have an extra fsync for the odd case, I think code simplicity is
+> a more important factor.
+>
+> > Also is it worth optimizing away the fsync on the directory in cases
+> > the filesystem is well behaved?  Maybe we should just move the
+> > vfs_fsync() call into ovl_copy_up_metadata() and omit the complexity
+> > related to the additional mount option?
+> >
 
-Thanks, will queue in renesas-devel for v6.12.
+Maybe, but note that in ovl_copy_up_meta_inode_data(),
+copy up of data still requires fsync and there is no call to
+ovl_copy_up_metadata() in that code path, so trying to optimize
+double fsync in all the code paths in going to be a PITA IMA
+and not worth the trouble.
 
-Gr{oetje,eeting}s,
+>
+> Hmm. Maybe you are confused by the commit message that only mentions
+> fsync of the parent directory (same as the reported reproducer), but
+> the strict mode fsync also affects metacopy, not only parent dir copy up.
+>
+> > To me it feels that it shouldn't matter in terms of performance, but
+> > if reports of performance regressions come in, we can still make this
+> > optional.
+> >
+>
+> I think that the case of chown -R with metacopy is going to be terribly c=
+rippled
+> if every metacopy gets and fsync.
+>
 
-                        Geert
+But maybe we can ignore crash safety of metacopy on ubifs, because
+1. the ubifs users may not be using this feature
+2. ubifs may be nice and takes care of ordering O_TMPFILE
+    metadata updates before exposing the link
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+Then we can do the following:
+IF (metacopy_enabled)
+    fsync only in ovl_copy_up_file()
+ELSE
+    fsync only in ovl_copy_up_metadata()
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Let me know what you think.
+
+Thanks,
+Amir.
 
