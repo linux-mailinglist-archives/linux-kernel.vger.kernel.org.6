@@ -1,143 +1,108 @@
-Return-Path: <linux-kernel+bounces-307643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8FC99650B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 22:22:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 795E89650B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 22:23:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FE341F22ACC
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 20:22:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22E6A1F24A6A
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 20:23:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87C8C1BA88F;
-	Thu, 29 Aug 2024 20:22:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 479BB1BAECF;
+	Thu, 29 Aug 2024 20:23:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="W2vvt1bt"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xpK0YSf0"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31C9B15AAB6
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 20:22:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41C661B652E
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 20:23:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724962964; cv=none; b=jLj77203cstalsCfT4HoLF7y5FVfOOFdxTxv3JwcOdWjW7n7Hwk34+8fadcNo8PQQ9m4ktpoNEo7XKDXC9QAi7/pXPlIQov/iOI9dxVlciN9v5v6wKAPk3iFcz6Jgtvzvo2woC7d8ju0fXuOJKcO6g0owY3R4rWUFIvPyw+Yn4U=
+	t=1724963009; cv=none; b=uWCc+UHe8co1JrnttkURIKLQY/vIjzU4l0/Ld469slonrGjom2xG/rWYrmsBukNj3USa+lcJh88wvlLfG0TDEpjuk7h9LLOA37cTtwv0RkFMfM/NqnQKd4ME1agR00unwi9519JBR4h9ilLYZXPmdEMhX3dUpoGersC8DN9v7B4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724962964; c=relaxed/simple;
-	bh=kKj8zc4tlLcBltcCReUg6Uzn747Y/w89aEMAM8WYEDg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=r5/cNwzt6IT+vR0J1Z0nh0QJQ5r5xCDO6UCor7D5BQFRf6dztbdUW05bvxTqeboxNG7v+5sqr7fX18cQK3ht2sU2TS7HL8ES8+YgnnWjPdLjmqYHdsQYNmXZa9Fjh0NZttSL4C3lY1mFheXr8idHlT4n85HLvCJ51Mco65AVty8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=W2vvt1bt; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724962962;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=yIlcCFkBaiUavKPXgyUjDxL+3t1TXE/zaK2phWDIt6w=;
-	b=W2vvt1bt+xd4tc4y8D+H5ePuZGxP0y/qZzhkR0WQsYEQJsyDm2SuOkpsYY0MFxNBCgKO8A
-	ltxWRGGmuLaDLD47NDEyrSWr2b+kQUB9KYy7b7fQYghhfvcIgBa8gbpLx4yzEVu5m09FkJ
-	8wz5YMpNbgpi+POzbetBQtgv/9FcNpE=
-Received: from mail-ot1-f70.google.com (mail-ot1-f70.google.com
- [209.85.210.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-44-KG3OR4p_MC-FUz0wTGj1JQ-1; Thu, 29 Aug 2024 16:22:41 -0400
-X-MC-Unique: KG3OR4p_MC-FUz0wTGj1JQ-1
-Received: by mail-ot1-f70.google.com with SMTP id 46e09a7af769-7092fa5079eso1125490a34.2
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 13:22:40 -0700 (PDT)
+	s=arc-20240116; t=1724963009; c=relaxed/simple;
+	bh=Iv0nram+hMde9A6+V/Nhy4IAnUZ/iQZXPvpsf4ATybU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tigpnYquLaaOcsFNZZdgb3lbE0ceBNacjewosnT6vdwCaKD2jvZrzZSS5CCA/qBIGuclpnZC7MkVdXxVIGYSfZHwx0W3w5eDcqt8BUMa8gOPT1ehkrkis/PclgYUQ1mtwL7rP5YtKCRM+ghRwqJ+RaLQhYtMETsb7WKRFZ6UFwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xpK0YSf0; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-202018541afso13055ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 13:23:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1724963007; x=1725567807; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Iv0nram+hMde9A6+V/Nhy4IAnUZ/iQZXPvpsf4ATybU=;
+        b=xpK0YSf06ZDts+8Lvjrzs6kse2zAs1odgSbF9n0R7MMxVK5iXnQ/1fEQiX4WWrLrme
+         keHJsRhLpXy8sBh2/0DtrYErfWSdFCZRERVpHYiQdKR1aHc+DTVnDVEahVDznJDJQUo6
+         c2+FN1h1YXFHJHhtiC0NRoYlMmJUYtkcS9ZHP4Q4ZnJ72mF/3I8MfVHrW6IBe8UAJlkX
+         t2RXSO3WAfb8X+dNnVImVk6HSMggS4+ZSpX4ryV93QIkVI0I2BW4CNl/jk1jkVVH6TgC
+         hP2orxkg63XkbMhofs5hudJaITMi5K/KtucGRiWqzryOJl3jTXt/DR1SmkA61aam+hVa
+         e4mg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724962960; x=1725567760;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yIlcCFkBaiUavKPXgyUjDxL+3t1TXE/zaK2phWDIt6w=;
-        b=K1SUnh9OgReFptAgnWhf97W3J9x0NRSO+Ao4Y6v+stWzYiqdGdOOkl5iEkAlH19KQ+
-         EF2HEVrHRlehNiH1vR1P77IN+aK8My0PHbeWAu6kS1EWUiaJ4x1VCNtARiZidM0OHf6e
-         YFxDjXFrla2yV3/G2N/CQWThlfsrLyYJOc8dLSPaCzp8D+J65RVmK9USt1eO5j5PiSFw
-         hk11ZX0uRrkFDpbLSRQqiF+GY3h9M+3B8WVXO8pOuPWvUAoCkPnniZ0nnq0hAZflWHop
-         soQ7+Iut4h44YApRxhvnok3ZfVafYR7uhhLqVYqA1GJw71X1K65ldu/3vobCe0oecSJk
-         uvIQ==
-X-Gm-Message-State: AOJu0YyI7K7OYyj9Ihl7qdBl6LdD76gagKx6Cz1RXY3K524EQcJi7Bau
-	fOKdYFYfNmHStPwM1y54BWTbQOaMqbCpGXmQhQGV9JvOcv/NAG35ECmR+qXHkXFVCbIXCszPN/P
-	QKP3U9Fw0hk3VTT+tRyJGOpqWc6sgGYiNhwNjxUADRdlbTFMeaI/IFvFUryUo/QGubtldIG2qd7
-	1B1ry0PrcyJtHCvB0PKXSOed0Ovjwn/QM8pOvGoY8b//Q=
-X-Received: by 2002:a05:6830:6884:b0:704:470d:a470 with SMTP id 46e09a7af769-70f5c48b465mr3967276a34.28.1724962959732;
-        Thu, 29 Aug 2024 13:22:39 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF3D/QgmuWSAwu0zH6SqxrhZIuLPdZ2EGJ8cbRJq+lkIvuviP800t8fhORgXtIOqGLTluRh1Q==
-X-Received: by 2002:a05:6830:6884:b0:704:470d:a470 with SMTP id 46e09a7af769-70f5c48b465mr3967254a34.28.1724962959366;
-        Thu, 29 Aug 2024 13:22:39 -0700 (PDT)
-Received: from x1n.redhat.com (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-70f67173fd3sm68688a34.45.2024.08.29.13.22.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 13:22:38 -0700 (PDT)
-From: Peter Xu <peterx@redhat.com>
-To: linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Cc: peterx@redhat.com,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jason Gunthorpe <jgg@nvidia.com>,
-	David Hildenbrand <david@redhat.com>
-Subject: [PATCH] fixup! mm/pagewalk: Check pfnmap for folio_walk_start()
-Date: Thu, 29 Aug 2024 16:22:37 -0400
-Message-ID: <20240829202237.2640288-1-peterx@redhat.com>
-X-Mailer: git-send-email 2.45.0
+        d=1e100.net; s=20230601; t=1724963007; x=1725567807;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Iv0nram+hMde9A6+V/Nhy4IAnUZ/iQZXPvpsf4ATybU=;
+        b=LP6WkMT0hhjJDcWpiWmOkMbbv155xpiloPD71oSVtsJXMH3K1/k/dyq9mYvnGfx61K
+         tW6sOJxrQTrjAz5xmAfPQZaobtITQ4PY5Cn9+IFqUmnxmEOjpnKURlXoWPTBqu3YepJF
+         j5lriNxX/CtJZ/ZUgV6+e/c/49rRNHlWK893vKBhmaX2hDUuBKZjLdLG+NJqow6NxTmN
+         6IjOP/LpYbYsoa4eYm+OtKSkDuHV1qMl76NHURWt7JRviheNcvcqaRaozGgS49p8dTgF
+         xGhaLreY1Sl3DdEHgpUj2qEe846Rw5i6g3JA2Uz42tZIlCvipYhTTHK78cu1zfoWw3+2
+         M/pQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVTGP1OmRX6bUwL/orvO5dJ/6W+ZRUBPuqGdjqcJ/ZJpWQx7SOEK/ptj9Al0vnHV+v1nY33YARguXu/Ooo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6W06QAi1aqyNqMLJ/B0ZWCji9Ikns1ycdgJVARX6tiW9v7J83
+	JJFxXvfz4LKnCSHpZ1L+eNuQPagHABrCynbmWoUg9/JLDWLQeYJC1CSirlUc4hMwLgX6liGJ3vV
+	LbTEmeWq/xXnnhVkpfz5cxG4VSMo2VrsZanaU
+X-Google-Smtp-Source: AGHT+IGBH5Hs5IwU/+WhvREPe+6gjLlNZ0hPKyvj2VhSl+HfN9Vj0g5NCglCep91U8aw0jgzQy4XJ/V0IeT07QGzPvw=
+X-Received: by 2002:a17:902:e892:b0:201:dc7b:a882 with SMTP id
+ d9443c01a7336-20523b3ee98mr651105ad.26.1724963006843; Thu, 29 Aug 2024
+ 13:23:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <CANikGpf0OmGMSkksH_ihW9_yXVAL25xKD4CBy8d1gpKj0inPjQ@mail.gmail.com>
+In-Reply-To: <CANikGpf0OmGMSkksH_ihW9_yXVAL25xKD4CBy8d1gpKj0inPjQ@mail.gmail.com>
+From: Jann Horn <jannh@google.com>
+Date: Thu, 29 Aug 2024 22:22:49 +0200
+Message-ID: <CAG48ez3b-FCz7+4MH=CmhbhmSfTT4FTrDAJfbL5UvufRut7ixg@mail.gmail.com>
+Subject: Re: BUG: kernel panic: corrupted stack end in worker_thread
+To: Juefei Pu <juefei.pu@email.ucr.edu>
+Cc: James.Bottomley@hansenpartnership.com, martin.petersen@oracle.com, 
+	linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Yu Hao <yhao016@ucr.edu>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Per David's suggestion, remove some stale comment in vm_normal_page_pmd()
-as we start to have special bit in pmd too.  Meanwhile move the
-pmd_special() check here from folio_walk_start().
+On Wed, Aug 28, 2024 at 1:49=E2=80=AFAM Juefei Pu <juefei.pu@email.ucr.edu>=
+ wrote:
+> Hello,
+> We found the following issue using syzkaller on Linux v6.10.
+> The PoC generated by Syzkaller can have the kernel panic.
+> The full report including the Syzkaller reproducer:
+> https://gist.github.com/TomAPU/a96f6ccff8be688eb2870a71ef4d035d
+>
+> The brief report is below:
+>
+> Syzkaller hit 'kernel panic: corrupted stack end in worker_thread' bug.
+>
+> Kernel panic - not syncing: corrupted stack end detected inside scheduler
 
-Signed-off-by: Peter Xu <peterx@redhat.com>
----
+I assume you're fuzzing without CONFIG_VMAP_STACK? Please make sure to
+set CONFIG_VMAP_STACK=3Dy in your kernel config, that will give much
+better diagnostics when you hit a stack overrun like this, instead of
+causing random corruption and running into the corrupted stack end
+detection.
 
-Andrew, would you consider squashing this patch into the commit
-"mm/pagewalk: Check pfnmap for folio_walk_start()" in mm-unstable?  This is
-so far the only thing I plan to update on the huge pfnmap series, thanks.
----
- mm/memory.c   | 9 ++++-----
- mm/pagewalk.c | 2 +-
- 2 files changed, 5 insertions(+), 6 deletions(-)
-
-diff --git a/mm/memory.c b/mm/memory.c
-index 06b42db8a2db..b95fce7d190f 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -672,11 +672,10 @@ struct page *vm_normal_page_pmd(struct vm_area_struct *vma, unsigned long addr,
- {
- 	unsigned long pfn = pmd_pfn(pmd);
- 
--	/*
--	 * There is no pmd_special() but there may be special pmds, e.g.
--	 * in a direct-access (dax) mapping, so let's just replicate the
--	 * !CONFIG_ARCH_HAS_PTE_SPECIAL case from vm_normal_page() here.
--	 */
-+	/* Currently it's only used for huge pfnmaps */
-+	if (unlikely(pmd_special(pmd)))
-+		return NULL;
-+
- 	if (unlikely(vma->vm_flags & (VM_PFNMAP|VM_MIXEDMAP))) {
- 		if (vma->vm_flags & VM_MIXEDMAP) {
- 			if (!pfn_valid(pfn))
-diff --git a/mm/pagewalk.c b/mm/pagewalk.c
-index 12be5222d70e..461ea3bbd8d9 100644
---- a/mm/pagewalk.c
-+++ b/mm/pagewalk.c
-@@ -783,7 +783,7 @@ struct folio *folio_walk_start(struct folio_walk *fw,
- 		fw->pmdp = pmdp;
- 		fw->pmd = pmd;
- 
--		if (pmd_none(pmd) || pmd_special(pmd)) {
-+		if (pmd_none(pmd)) {
- 			spin_unlock(ptl);
- 			goto not_found;
- 		} else if (!pmd_leaf(pmd)) {
--- 
-2.45.0
-
+(Note that if you're using KASAN, you have to enable
+CONFIG_KASAN_VMALLOC in order for CONFIG_VMAP_STACK to work.)
 
