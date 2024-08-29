@@ -1,178 +1,97 @@
-Return-Path: <linux-kernel+bounces-307249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0E50964ACA
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 17:58:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 206E5964ADF
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 18:00:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94E72284262
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:58:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D01C3287177
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:00:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67B521B3F14;
-	Thu, 29 Aug 2024 15:58:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 261F21B3F01;
+	Thu, 29 Aug 2024 16:00:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Uk9ICepu"
-Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com [209.85.210.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gyyP/xwQ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F3A51B3F07;
-	Thu, 29 Aug 2024 15:58:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D9871B3F07
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 16:00:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724947117; cv=none; b=hrZ8TKc1tdTMJmtQOCbiy8j6wUsZQKD0TuKbBy2+xQk4+5NMzzxxXHnteEtUPYa4coNC/UI2XJD6HovuVK/9JdTQBT8XuvtYsQqy9IXqyRe+3pdI+EhLqMNm7qY3LTEG2D8FgyslsIp8nV6d40M0n3XP0yJenJFULI356bivGBc=
+	t=1724947203; cv=none; b=UX9C4knATaTK4ZIsGJXpXVFGGgsMwuKgaeHtlwmuC3PUabO146Qgx4gkRaKiBT2+AVkNEQDKH6Hx9vrYv03x9EkbZa7C74XOCW3zuCvEu5zdLL3cNChXfKmVi+dpYsg4wQ8dOzcocVuvVPUlwNsTdfmgyUy10M4kvZE72fS/w3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724947117; c=relaxed/simple;
-	bh=lcW1Fr8nT1yLudggBf7OO8h3Q4/x1DlPqjN6rek0GGU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U96rersoA0WpNu9QrKGAgfjI+3ZWgLYbG0UdGgDfvIYZ8H0o4F++nWLJpBLmPMZvmBMZ3s3sMRv6UbRy1ryKBglPFYEap32Vsyrwlk2MeQW54wCRutkQE10FQFR7F0abwHTepcatrLDx3ODIvUDiLTNy6TKHkJ5PVNh+LJvX3b8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Uk9ICepu; arc=none smtp.client-ip=209.85.210.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-70968db52d0so769812a34.3;
-        Thu, 29 Aug 2024 08:58:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724947115; x=1725551915; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=y8SUS2sti1DatQX5oI9Q4F22VsksxpH0yRfWZTktViQ=;
-        b=Uk9ICeputHQHlzzrUQqYXr0MCBEmJg2cl8UqSXVLDCMVJC4kpRa0Hbno256MO9X0vy
-         cCsGzlO4BsFPgiDrtfffkcA4X8j49y8ygrqYmRDa7Gg6ioTYwCKz8ebqUt3AQ8aCsTh8
-         56Itf0/LSud0utjrSiS3DdX9nUvQoT8KgvloAsZE59zyhdt/3H4uOLxvG9o9JVyecDkT
-         NunImLvtoQs9bHH6ACLV6+U2zXQMJxxpk5Jrd4GJWPY+zulLL6kfB/ens/lRbxn3glZ+
-         JIeavxBLWCo95Va8sYBffZWYt87ZugLqecq/gK3skrAysqd7hle63ksjfRwQ2nTdyrLX
-         /1CQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724947115; x=1725551915;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=y8SUS2sti1DatQX5oI9Q4F22VsksxpH0yRfWZTktViQ=;
-        b=dSCwl5Ur4MfT/mfj3JFtcPBO5MCsNtiFRXTDVbcEYCyTFKk7WL71+HXeFJya+8UMwk
-         ISjmVgQeBQBSddJvojgYRfleqPf1OYLsJyK/SstHxF1B+82Mpn3CfJS7fS/q0eTVPdG1
-         8Ewolnz6p9+UuL8jmbX8xMKA0jngiEuEp3YIkmvd8oQBe2zsCF8/BINhRJZr/AyjigbO
-         FMhYgtp00CGHOPyGcdvLLqoZNvxA8MY01aIuRW61Lp6GdxLC+GP2ESjLljD4sBra8Lse
-         puJqEQM2+Ok1TmcVbK6pWkEgvQJi7iK42y2ecA9Yo19HlVCK/OUiWrW3ecF+kLc4ncyM
-         ObZw==
-X-Forwarded-Encrypted: i=1; AJvYcCVuzJkn9FL/njTIjDkZdq3GQhGP/zaTJJkNG3Oy0j7eX6svxbE14jMLAoRCUmvpIGAWzd4DzjhDOtZtXs8m@vger.kernel.org, AJvYcCWwmWFjVEYmsAQodAYyrdwO2Xt1qyRAdIyMYwG8pncoP+9t9NP6E4Jc5/RrV/oTUXb9s/q9p6oEs+pQn31c@vger.kernel.org, AJvYcCWysfLIWiJRPCaaH99bvr7HLqdgHZ6Y14SFcqQryXz2WBWyUY3pQnR8zawQ8wfMLkSM+cTj0b0vjAk/rm0j@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywj8f0b6DoJATrtobApKXNmTy1IYgByvdqALNpLigVMWE7wh96T
-	qPMpsolWLg6WZK000NQB35tmcQEx/cYxZCE8PmdOvVU8PUs6RyJM
-X-Google-Smtp-Source: AGHT+IEmKmJPQO4B38zaWzkb0S8/l+pJwy1vmcrxzdHGLGAZ7Yzv7ADKfo+OZVemW5ah5PWd2mY+XQ==
-X-Received: by 2002:a05:6359:4592:b0:1a6:799b:b06c with SMTP id e5c5f4694b2df-1b603f1598cmr461914955d.23.1724947115153;
-        Thu, 29 Aug 2024 08:58:35 -0700 (PDT)
-Received: from eaf ([2800:40:39:2b6:7cb1:da28:8837:b7fb])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7d22e9be476sm1356974a12.69.2024.08.29.08.58.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 08:58:34 -0700 (PDT)
-Date: Thu, 29 Aug 2024 12:58:29 -0300
-From: Ernesto =?utf-8?Q?A=2E_Fern=C3=A1ndez?= <ernesto.mnd.fernandez@gmail.com>
-To: Brian Masney <bmasney@redhat.com>,
-	Jeffrey Hugo <quic_jhugo@quicinc.com>
-Cc: herbert@gondor.apana.org.au, davem@davemloft.net,
-	quic_omprsing@quicinc.com, neil.armstrong@linaro.org,
-	quic_bjorande@quicinc.com, linux-arm-msm@vger.kernel.org,
-	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] crypto: qcom-rng: fix support for ACPI-based systems
-Message-ID: <20240829155829.GA6489@eaf>
-References: <20240829012005.382715-1-bmasney@redhat.com>
- <20240829012005.382715-3-bmasney@redhat.com>
+	s=arc-20240116; t=1724947203; c=relaxed/simple;
+	bh=FZMzouHuGgFWMsyvFfqSWdgkqnTzjcd2HKW5qqix9aE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=t92gqMkyKsO0hczuDD6nION7HT3a4NFSJiUzQaetSU85oliu+a5UFtmR5to473/COEU5MniSyorbPHTay3YChs8ceZt1TrV9bnet9PBhllwqbuLD1GNhIv8aEysASvfp1rWH8NhZTjHNLivB00dv0ni5knR5hH7tkXz987nG/l8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gyyP/xwQ; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724947202; x=1756483202;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=FZMzouHuGgFWMsyvFfqSWdgkqnTzjcd2HKW5qqix9aE=;
+  b=gyyP/xwQ6h6wIjGDWdSm7JRcVSY7TZP59QRupUAIXfT78nHcLWmTSUEY
+   j5g8Fyn5yX6NDViXqqlp+AzwFKT/8Akpf1Ip8R1uBed2LBjwpEkUvZgl2
+   Vq3YozXwP/KNi8C01A7lWWgdQEmT1Y+jw6hB0QB1BWzWEhZFnjY9lxw3r
+   DKcMg/7rYZtaALWyNNiyy2/cxseodWQbl97WD8z2gvR+d1RX02MMHhYmU
+   dfsiv6YFK6c2Gw4u2XV3HZayxtweQzlYpcNBqDvqb07ejagrhacR+voPU
+   iGRRceU2k0PhS30W4ZnzcZ4e/dIo7U84wsz1skUjxODA/keKugjnyFtdJ
+   g==;
+X-CSE-ConnectionGUID: 2N+oWOy1QqaWRQwAHRiM9A==
+X-CSE-MsgGUID: bQQppncuQ+G+xzQ1NqENPw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11179"; a="23695913"
+X-IronPort-AV: E=Sophos;i="6.10,186,1719903600"; 
+   d="scan'208";a="23695913"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 09:00:02 -0700
+X-CSE-ConnectionGUID: ji0B6GX1TiCrXeH6j7zzXA==
+X-CSE-MsgGUID: uttuXp35TnSqnZou/4qUug==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,186,1719903600"; 
+   d="scan'208";a="68440628"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa005.jf.intel.com with ESMTP; 29 Aug 2024 08:59:58 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id A75D2610; Thu, 29 Aug 2024 18:59:56 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	intel-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Cc: Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>
+Subject: [PATCH v1 0/2] drm/i915/fence: A couple of build fixes
+Date: Thu, 29 Aug 2024 18:58:36 +0300
+Message-ID: <20240829155950.1141978-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240829012005.382715-3-bmasney@redhat.com>
+Content-Transfer-Encoding: 8bit
 
-Hi,
+With CONFIG_WERROR=y and `make W=1` build fails on my x86_64 machine.
+This is due to some unused functions. Hence these quick fixes.
 
-thanks for the patch. I have one doubt:
+Andy Shevchenko (2):
+  drm/i915/fence: Mark debug_fence_init_onstack() with __maybe_unused
+  drm/i915/fence: Mark debug_fence_free() with __maybe_unused
 
-On Wed, Aug 28, 2024 at 09:20:05PM -0400, Brian Masney wrote:
-> The qcom-rng driver supports both ACPI and device tree based systems.
-> ACPI support was broken when the hw_random interface support was added.
-> Let's go ahead and fix this by checking has_acpi_companion().
-> 
-> This fix was boot tested on a Qualcomm Amberwing server.
-> 
-> Fixes: f29cd5bb64c2 ("crypto: qcom-rng - Add hw_random interface support")
-> Signed-off-by: Brian Masney <bmasney@redhat.com>
-> ---
->  drivers/crypto/qcom-rng.c | 36 ++++++++++++++++++++----------------
->  1 file changed, 20 insertions(+), 16 deletions(-)
-> 
-> diff --git a/drivers/crypto/qcom-rng.c b/drivers/crypto/qcom-rng.c
-> index 4ed545001b77..470062cb258c 100644
-> --- a/drivers/crypto/qcom-rng.c
-> +++ b/drivers/crypto/qcom-rng.c
-> @@ -176,6 +176,21 @@ static struct rng_alg qcom_rng_alg = {
->  	}
->  };
->  
-> +static struct qcom_rng_match_data qcom_prng_match_data = {
-> +	.skip_init = false,
+ drivers/gpu/drm/i915/i915_sw_fence.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-So with acpi, skip_init will be set to false now, right? But before
-f29cd5bb64c2 broke it, skip_init used to be set to true. Was that wrong
-before, or now?
+-- 
+2.43.0.rc1.1336.g36b5255a03ac
 
-Ernesto
-
-> +	.hwrng_support = false,
-> +};
-> +
-> +static struct qcom_rng_match_data qcom_prng_ee_match_data = {
-> +	.skip_init = true,
-> +	.hwrng_support = false,
-> +};
-> +
-> +static struct qcom_rng_match_data qcom_trng_match_data = {
-> +	.skip_init = true,
-> +	.hwrng_support = true,
-> +};
-> +
->  static int qcom_rng_probe(struct platform_device *pdev)
->  {
->  	struct qcom_rng *rng;
-> @@ -196,7 +211,11 @@ static int qcom_rng_probe(struct platform_device *pdev)
->  	if (IS_ERR(rng->clk))
->  		return PTR_ERR(rng->clk);
->  
-> -	rng->match_data = (struct qcom_rng_match_data *)of_device_get_match_data(&pdev->dev);
-> +	if (has_acpi_companion(&pdev->dev))
-> +		rng->match_data = &qcom_prng_match_data;
-> +	else
-> +		rng->match_data =
-> +			(struct qcom_rng_match_data *)of_device_get_match_data(&pdev->dev);
->  
->  	qcom_rng_dev = rng;
->  	ret = crypto_register_rng(&qcom_rng_alg);
-> @@ -231,21 +250,6 @@ static void qcom_rng_remove(struct platform_device *pdev)
->  	qcom_rng_dev = NULL;
->  }
->  
-> -static struct qcom_rng_match_data qcom_prng_match_data = {
-> -	.skip_init = false,
-> -	.hwrng_support = false,
-> -};
-> -
-> -static struct qcom_rng_match_data qcom_prng_ee_match_data = {
-> -	.skip_init = true,
-> -	.hwrng_support = false,
-> -};
-> -
-> -static struct qcom_rng_match_data qcom_trng_match_data = {
-> -	.skip_init = true,
-> -	.hwrng_support = true,
-> -};
-> -
->  static const struct acpi_device_id __maybe_unused qcom_rng_acpi_match[] = {
->  	{ .id = "QCOM8160", .driver_data = 1 },
->  	{}
-> -- 
-> 2.46.0
-> 
 
