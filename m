@@ -1,139 +1,104 @@
-Return-Path: <linux-kernel+bounces-306023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28769963827
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 04:25:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F2F3496382A
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 04:26:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45E9D2854DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 02:25:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B003F285509
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 02:26:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7CF82AF03;
-	Thu, 29 Aug 2024 02:25:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xy6AW5jw"
-Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 643A9335C0;
+	Thu, 29 Aug 2024 02:26:00 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB8ED156CF
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 02:25:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E37651798C;
+	Thu, 29 Aug 2024 02:25:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724898312; cv=none; b=JRRik9zGpgaGHq+bMg25Gm2rLTnyfpqfeiLQ04RX6LEZJHPn2qPPzJAsvVKlvoj25jikcsws5pfNaLIgkhHYSkDm3DJf531g4AZqWREG2tDPl6fWTx7YV7fMXb+kNvqpkXrSud6IuVpcqzdjX6mCnnvznhD8NSBmiCM9A23Hxvg=
+	t=1724898360; cv=none; b=s6CoYcEAvOIEnjIRDThp1iAH2mlilf+88jqPfAEATiiU4TQ6VhjlijBJ+P/ZON327qb+AIEgflHgyQNqp7801BULhO3xhN/7rKGclPYXqiRl+OuMmsDIc/jWDXi9oVwlaRCARnl249Syh+hELa6x59EHFB3S23OjDTjEDt9cyUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724898312; c=relaxed/simple;
-	bh=MgiIelwC1tULckME10XI0a2ysHKj7m1eCsnDvvBHvpE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kwiOKMPmI9obRi7wWIoN+U5vfXIFFPuec1V5KtrvBL8s5YeHuIxUZ95hE5Cri0gxOnohQ6lzlis/P8LSTbMuZuFfhnryCm+dkV2sEbDk/WNJ0/dtj7LgJf6Q5QlJhRwWf59/zVGORnobr62JKA6ahMeiDBdU0z0AWFSYKOs/HYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xy6AW5jw; arc=none smtp.client-ip=209.85.221.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-4fce352bd28so69078e0c.2
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 19:25:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724898309; x=1725503109; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MgiIelwC1tULckME10XI0a2ysHKj7m1eCsnDvvBHvpE=;
-        b=Xy6AW5jwJ5vdedVgcWWqCYcXCsMyhd4V0ioHXdYtgkbUTRb9Iz4XK77elBvxOJIUzp
-         S9cieAolz1KMU+qmke+A6iM25b5efwLKhppCk+v3CJS/2Q7qRJWTBwS5TXj+M9Uqzp1L
-         pQ5dGdyx4ZlORH1zG3m96EMCYHE04xpdVXHq56mDYcDdjw6NCH6x8ql3QqLyoyBkzmnD
-         NmHQnEVdJq9dkwmJZsdo7mX4WNf/aZ6+9UGrkB4lFOho5MfVEudIMWhd9LqOM8+8+GJR
-         c5UaV+EzGonVtbcWxOMhPari57m6HAceOOojjlxGw6SoqJmnKWuZTi2kCXtKshUZo7aG
-         3t7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724898309; x=1725503109;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MgiIelwC1tULckME10XI0a2ysHKj7m1eCsnDvvBHvpE=;
-        b=bC/sVAirlT5FiMAwBHynb67XiH8PLO2M2NnDEB6owD6wWIgSpHICDwfovCt7vhX03x
-         RGCxIDAsv5rgEA/MDmRbK75IUyPJcAUVUzy8Utxj9cPWg+gsGl3/bmwCtZqzLAuG5HX0
-         abhgVVUsc8uXInp0/7+R4jsCQCTbYbP4WznVByglILFqWE+9fyYA48uXK6aaJ5nxuKjk
-         oeQT4EeG8yNo9mofduIAQ4gKKDlQ3qUVg2wNLxTnIlXu3awhIhVR8crhO+Mf5i0xsFbK
-         zgkc20rT5IIUujb7byrSNaO8p4W2jD2VAnNxQYigNCIOs++6ZOUOaUm0I7ny8sZP+YEt
-         IZiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWDf/JrfFxVw8W+LsZpM54DWxoiLVMntWYyv7ccfPgWhIWHMBFClcsXifoc9DjLVhkBQ7i7CWVv6yZ2Wi0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTdbInRu7XzjfynFWPjUdN98zHztHRmaPXNR30pB1B6zH8aeEC
-	0q9uei45py9x0P8cGi1TUyVdcYwjmFHHH4ae9oABHts/IH4H3lxKPA1v5YNRmF2gANt+NwA1Kci
-	syUuyjKpoLyl6o/RG/6bHpD6KcM0=
-X-Google-Smtp-Source: AGHT+IHLZyMvJCjIlrvJvIhE91u/MLjozO/tmBPzLigPIwiVsANW38LZEDjmI6HruSXLIH+AD4PmuwIaQkvPK/p7PvA=
-X-Received: by 2002:a05:6122:1e03:b0:4f6:a7f7:164d with SMTP id
- 71dfb90a1353d-4ffea19f167mr1442739e0c.8.1724898309374; Wed, 28 Aug 2024
- 19:25:09 -0700 (PDT)
+	s=arc-20240116; t=1724898360; c=relaxed/simple;
+	bh=T5v75i6KEzDwiZzWw/B06jFoanFigpkuIZeiKhfF/3I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Pz1vI8fEET/wbvUbistpWj2hPKHKJUf2x9GuBUMIHtU2qFxZ0pKPh1QGmCXQbLrC9HDXHKtRpztrye/6M3xllymFyYiGuBdF3RP+ICfnha1LsRbcKd1GCDAH0mZlCx/zvwjn+A1bk4nBbya3iyTd6tUCDKnLn23gWGXxIK+N10w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4WvQ4c4D8YzQr2n;
+	Thu, 29 Aug 2024 10:21:04 +0800 (CST)
+Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
+	by mail.maildlp.com (Postfix) with ESMTPS id 1966D1400FF;
+	Thu, 29 Aug 2024 10:25:55 +0800 (CST)
+Received: from [10.67.109.254] (10.67.109.254) by
+ kwepemh500013.china.huawei.com (7.202.181.146) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 29 Aug 2024 10:25:54 +0800
+Message-ID: <195dd9e0-ef42-bcf8-b71a-d9d548af014a@huawei.com>
+Date: Thu, 29 Aug 2024 10:25:53 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAGsJ_4wGK6pu+KNhYjpWgydp6DyjH5tE=9+mje3UyrXdFJOuNw@mail.gmail.com>
- <20240829010103.7705-1-kanchana.p.sridhar@intel.com>
-In-Reply-To: <20240829010103.7705-1-kanchana.p.sridhar@intel.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Thu, 29 Aug 2024 14:24:56 +1200
-Message-ID: <CAGsJ_4xLCknyaWk1a5RZ9h77QkamBxKi6HbjVhCbXPS9rm0WZg@mail.gmail.com>
-Subject: Re: [PATCH v7 2/2] mm: support large folios swap-in for sync io devices
-To: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
-Cc: akpm@linux-foundation.org, baolin.wang@linux.alibaba.com, 
-	chrisl@kernel.org, david@redhat.com, hanchuanhua@oppo.com, hannes@cmpxchg.org, 
-	hch@infradead.org, hughd@google.com, kaleshsingh@google.com, 
-	kasong@tencent.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	mhocko@suse.com, minchan@kernel.org, nphamcs@gmail.com, ryan.roberts@arm.com, 
-	ryncsn@gmail.com, senozhatsky@chromium.org, shakeel.butt@linux.dev, 
-	shy828301@gmail.com, surenb@google.com, v-songbaohua@oppo.com, 
-	willy@infradead.org, xiang@kernel.org, ying.huang@intel.com, 
-	yosryahmed@google.com, zhengtangquan@oppo.com, wajdi.k.feghali@intel.com, 
-	vinodh.gopal@intel.com
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+Subject: Re: [PATCH -next 2/8] soc: fsl: cpm1: Simplify with dev_err_probe()
+Content-Language: en-US
+To: Krzysztof Kozlowski <krzk@kernel.org>, <andrew@lunn.ch>,
+	<sebastian.hesselbarth@gmail.com>, <gregory.clement@bootlin.com>,
+	<herve.codina@bootlin.com>, <qiang.zhao@nxp.com>,
+	<christophe.leroy@csgroup.eu>, <thierry.reding@gmail.com>,
+	<jonathanh@nvidia.com>, <nm@ti.com>, <ssantosh@kernel.org>,
+	<petlozup@nvidia.com>, <pshete@nvidia.com>, <christophe.jaillet@wanadoo.fr>,
+	<ulf.hansson@linaro.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
+	<linux-tegra@vger.kernel.org>, <jic23@kernel.org>
+References: <20240827114607.4019972-1-ruanjinjie@huawei.com>
+ <20240827114607.4019972-3-ruanjinjie@huawei.com>
+ <87abe3f1-3cf2-4331-8dde-a422716dd94a@kernel.org>
+ <97ff8c02-1a97-7974-06fa-edb35437707d@huawei.com>
+ <32e8ef50-ae45-4001-92b6-1e9e0608b402@kernel.org>
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+In-Reply-To: <32e8ef50-ae45-4001-92b6-1e9e0608b402@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemh500013.china.huawei.com (7.202.181.146)
 
-On Thu, Aug 29, 2024 at 1:01=E2=80=AFPM Kanchana P Sridhar
-<kanchana.p.sridhar@intel.com> wrote:
->
-> Hi Shakeel,
->
-> We submitted an RFC patchset [1] with the Intel In-Memory Analytics
-> Accelerator (Intel IAA) sometime back. This introduces a new 'canned-by_n=
-'
-> compression algorithm in the IAA crypto driver.
->
-> Relative to software compressors, we could get a 10X improvement in zram
-> write latency and 7X improvement in zram read latency.
->
-> [1] https://lore.kernel.org/all/cover.1714581792.git.andre.glover@linux.i=
-ntel.com/
 
-Hi Kanchana,
-Thanks for sharing. I understand you=E2=80=99ll need this mTHP swap-in seri=
-es
-to leverage your
-IAA for parallel decompression, right? Without mTHP swap-in, you won't
-get this 7X
-improvement, right?
 
-This is another important use case for the mTHP swap-in series,
-highlighting the strong
-need to start the work from the sync IO device.
+On 2024/8/28 21:08, Krzysztof Kozlowski wrote:
+> On 28/08/2024 03:58, Jinjie Ruan wrote:
+>>
+>>
+>> On 2024/8/27 21:50, Krzysztof Kozlowski wrote:
+>>> On 27/08/2024 13:46, Jinjie Ruan wrote:
+>>>> Use the dev_err_probe() helper to simplify error handling during probe.
+>>>> This also handle scenario, when EDEFER is returned and useless error
+>>>> is printed.
+>>>
+>>> ? Sorry, this cannot happen. Please point to below code which can defer.
+>>>
+>>
+>> Thank you!
+>>
+>> This is not referring to a specific one, but rather the benefits it
+>> offers，simplify code is the main purpose, if necessary, it will be
+>> removed in next version.
+> 
+> It just feels like you are doing these in machine way without actually
+> knowing concepts behind dev_err_probe().
 
-I=E2=80=99ll try to find some time to review your patch and explore how we =
-can
-better support both
-software and hardware improvements in zsmalloc/zram with a more
-compatible approach.
-Also, I have a talk[1] at LPC2024=E2=80=94would you mind if I include a
-description of your use
-case?
+Just try my best to make the code as clean as possible and do it by the way.
 
-[1] https://lpc.events/event/18/contributions/1780/
-
->
-> Thanks,
-> Kanchana
-
-Thanks
-Barry
+> 
+> Best regards,
+> Krzysztof
+> 
 
