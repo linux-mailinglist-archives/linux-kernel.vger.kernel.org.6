@@ -1,122 +1,152 @@
-Return-Path: <linux-kernel+bounces-307437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8901C964D98
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 20:21:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67E52964E15
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 20:48:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC0E91C223A1
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 18:21:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25D81286F7D
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 18:48:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1791D1B86C0;
-	Thu, 29 Aug 2024 18:21:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBFF71B8EA3;
+	Thu, 29 Aug 2024 18:44:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gJXXSOlI"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="jtF4U1DT"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BD081B81B8
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 18:21:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBA6E1BD50B;
+	Thu, 29 Aug 2024 18:44:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724955685; cv=none; b=jPf1h2CgiYF9GChIwX+8RAZNB+QLhSda3xuKII+0fTLNX5PszTcPehr9BfUOwOApWTa9DgXMH8qRJmUTAHpiJiLmNLwbiDSIMjNjxOVuOFBVIOPuULtn+YGgFpsloX3THYLGlN9w1CS/6dzMRhUqU9eXJiFTnogg9Zg47bGrq84=
+	t=1724957080; cv=none; b=YswGneAmZ+nHq/HmlPefjHmR8PXvzINteZsIBbncupBpyqWQwKKExbazN5ocMWycXaaY59hBh3njE/SzObPZmf8p4ykY3k/06nQIYsTFOfM4kM5prLjoVaT9TGDr0EHQTnGlGkGISz3PrOXfwKD9x4dKHFqCy92FMFq9ezen/Bc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724955685; c=relaxed/simple;
-	bh=OamhxVc6llfV6oMA6EuDx1uDovmp76ZXtRUdar7KQsk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=SVKg4fctyJDniN6P4CTKk3OrtPr61MARhieH3q9RA/3dT/NVt547Rf6j4AFvLDliHK7Mwfzcy0aE4jQe3q5/koy2w7u7yvgqB1HvvbEVR+1w9Br6iebPMVZhSwKKWblAQzpmFsetV5QGOyTpJU2Z2JgBInwU+Wrl+vb+v7524sg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gJXXSOlI; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5353d0b7463so1811074e87.3
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 11:21:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724955680; x=1725560480; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=uf/MfXJx2zZsO5b593EnlOHjvzjeAbo67ErqNZOPCMQ=;
-        b=gJXXSOlIow654s94QBsHERuEyezl9AoUAIqiMSbjoLXrt5QVOPrbIJK4yKcC1lUv6r
-         AaXvRZGMmMEULYEDOUNz8qG1+oe+n6f9olUdGZf8cCO5Y0hRjSylU6JtR8BvcOnYJ+2D
-         O7KM9+riNOpdta9HrpSbScA/WlMA5/OMtCYuXhuOhqRG2EeRBK4g2VZoLY8/fT2MDBHH
-         TJx9uM8m23cu50XLvuG/ADxCitN2tA4dxQvU+HnvCaN7JOpmZDwkMo7iXg6C37zt6dzQ
-         kFQ5AIOLZG+hfN4xIsyv8J2J9hNHeCRvetp3ifiCV18AkTg6gd05pk5BmZ/veJ5Lgb7a
-         cRxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724955680; x=1725560480;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uf/MfXJx2zZsO5b593EnlOHjvzjeAbo67ErqNZOPCMQ=;
-        b=mWBbP5TlWshQbR/AnaaZFEZ/OvIP/0tKaIPUqD3w+sBUZ6nGRTGMM3W1RrlWirju98
-         Mq38Iu/HVw7mTomUqE+fWgL2mez7unH6WCNVa9TBBXgCgg6bqAakDq/8zh4rIgSdqUPA
-         ZUNkRH9D3KnC+b6pMMvp6TqKkE7+RZclSLgd7Oc9TR2UMczaTTiGFiRygglRInFyDBSC
-         W26XXNFkSFW4tpWwFcWLp2hsa8LjwStJy0ml/FeSQmF62zEJ8je3RRmzVffvs7FEpqvs
-         3+AfDSmbpahzGJgfcX+xU2E/F+m29zICf4KRnY6a+pCbGkywZKG82HgGLndMeiBeEV8m
-         dVdA==
-X-Forwarded-Encrypted: i=1; AJvYcCXki6aDyGNbsisr+829QtZH4MyB/7kDf6dk9+unWGdds4WOqy7hMpeOtnY7xa7fkicczfHT7LuLwbdXouE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4vm4ySDnor34lI0TK92vpwB/KRFhPUaoE8pUH/6r0ZRPmz2gL
-	ShmejS7PmqN3/5tcXTTv8TvgK+KSersoXXMJX9Mthu6ve6uD+EtH6UlyxSYK
-X-Google-Smtp-Source: AGHT+IGaEU616Nm/G0Jxky2+yZhaeLIq1aCxX4y211muvUdO+GFRfzM+J6bvM1uKLKx8mG2srbpu1g==
-X-Received: by 2002:a05:6512:3b21:b0:52f:cd03:a84a with SMTP id 2adb3069b0e04-5353e5acd03mr3832732e87.39.1724955679920;
-        Thu, 29 Aug 2024 11:21:19 -0700 (PDT)
-Received: from ?IPV6:2003:c7:8f2a:8508:ea23:888c:e220:647c? (p200300c78f2a8508ea23888ce220647c.dip0.t-ipconnect.de. [2003:c7:8f2a:8508:ea23:888c:e220:647c])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a89892225dcsm105824966b.208.2024.08.29.11.21.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 29 Aug 2024 11:21:19 -0700 (PDT)
-Message-ID: <a15ff6c2-3f9c-4f1c-ac16-5cba30e22b0b@gmail.com>
-Date: Thu, 29 Aug 2024 20:21:18 +0200
+	s=arc-20240116; t=1724957080; c=relaxed/simple;
+	bh=E8ydJwBJUB5MO/SQG1BfSZO2V6OEqXzR/C++xGdTKec=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jE2D5tnbXbUOqtOrMGQAlfnVrQCM0NHB87Fy0FhwZ2S2+RBX5p+k7TRMF1m728SgyLjiVolUVcziWLrHrVzgoBIh9a1GM+hz1d5JjKfT/9TLGHBYy0kI2+EgYl/EB7fQszwDnVZ0RP2lt5FKDXB3YLFlYoE4gl7W1a6rWO+Da7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=jtF4U1DT; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
+ id 312d5ee09a964c8d; Thu, 29 Aug 2024 20:44:36 +0200
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id AB21D6A8C15;
+	Thu, 29 Aug 2024 20:44:35 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1724957076;
+	bh=E8ydJwBJUB5MO/SQG1BfSZO2V6OEqXzR/C++xGdTKec=;
+	h=From:Subject:Date;
+	b=jtF4U1DTkp+3hu8+snHDFewci2DIHTn32OdjmTlF+3dlTnduvXSMHnG+ruYQG2hN1
+	 Mb19/4ZhGQZqat1Am/tqBsw51ZXUwaV99/m+iRzwWJ+yc7s+I9MCmnBUfvz2hQYf6Z
+	 5Ca/72Beypeaqm4A7rU8w1qzm8sSqOBy0ahAQE49xrcXbXiWUXCQCiKM2RUT7kEzGG
+	 RFWxcozOV3jXxIkWpJrwUfiQqu59xR9tccIX8mPPff/YlQheqjSdNFmQWNgFdcwKVe
+	 LjpntKfoNPRkyd+VO+p+0y9x3rFAjiNWzQUwf+C1YvaoJKIaQNMr4UUoi5ay1KEWck
+	 x5gWEjSqJ1d5Q==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux ACPI <linux-acpi@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Bob Moore <robert.moore@intel.com>,
+ Saket Dumbre <saket.dumbre@intel.com>
+Subject: [PATCH v1 01/20] ACPICA: haiku: Fix invalid value used for semaphores
+Date: Thu, 29 Aug 2024 20:21:43 +0200
+Message-ID: <4599054.LvFx2qVVIh@rjwysocki.net>
+In-Reply-To: <5819337.DvuYhMxLoT@rjwysocki.net>
+References: <5819337.DvuYhMxLoT@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5] staging: rtl8192e: Fix multiple assignments in
- rtl_wx.c
-To: Alien Wesley <alienwesley51@gmail.com>, gregkh@linuxfoundation.org,
- linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
- ~lkcamp/patches@lists.sr.ht
-References: <20240829113606.76645-1-alienwesley51@gmail.com>
-Content-Language: en-US
-From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
-In-Reply-To: <20240829113606.76645-1-alienwesley51@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddrudefgedguddvjecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpeeltdeikeekkeevieektefggfetueetfeejveejgeduledvudehieeuvdeiheeiveenucffohhmrghinhepghhithhhuhgsrdgtohhmnecukfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgepudenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhjfiesrhhjfiihshhotghkihdrnhgvthdpnhgspghrtghpthhtohepgedprhgtphhtthhopehlihhnuhigqdgrtghpihesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehrohgsvghrthdrmhhoohhrvgesihhnthgvlhdrtghomhdprhgtphhtthhopehsrghkvghtrdguuhhmsghrvgesihhnthgvlhdrtghomh
+X-DCC--Metrics: v370.home.net.pl 1024; Body=4 Fuz1=4 Fuz2=4
 
-On 8/29/24 13:36, Alien Wesley wrote:
-> Separated assignments for pairwise_key_type and group_key_type
-> in order to silence the following checkpatch warning.
-> 
-> CHECK: multiple assignments should be avoided.
-> 
-> Signed-off-by: Alien Wesley <alienwesley51@gmail.com>
-> ---
-> V5: Line number removed from subject
-> v4: Squash v1 and v3
-> v3: Fix typo in commit message.
-> v2: Removed two spaces in front of "=".
-> ---
->   drivers/staging/rtl8192e/rtl8192e/rtl_wx.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/staging/rtl8192e/rtl8192e/rtl_wx.c b/drivers/staging/rtl8192e/rtl8192e/rtl_wx.c
-> index fc8e7f73b2a4..67c4793e0fc1 100644
-> --- a/drivers/staging/rtl8192e/rtl8192e/rtl_wx.c
-> +++ b/drivers/staging/rtl8192e/rtl8192e/rtl_wx.c
-> @@ -526,7 +526,8 @@ static int _rtl92e_wx_set_enc(struct net_device *dev,
->   	mutex_unlock(&priv->wx_mutex);
->   
->   	if (wrqu->encoding.flags & IW_ENCODE_DISABLED) {
-> -		ieee->pairwise_key_type = ieee->group_key_type = KEY_TYPE_NA;
-> +		ieee->pairwise_key_type = KEY_TYPE_NA;
-> +		ieee->group_key_type = KEY_TYPE_NA;
->   		rtl92e_cam_reset(dev);
->   		memset(priv->rtllib->swcamtable, 0,
->   		       sizeof(struct sw_cam_table) * 32);
+From: Adrien Destugues <adrien.destugues@opensource.viveris.fr>
 
-Tested-by: Philipp Hortmann <philipp.g.hortmann@gmail.com>
+ACPICA commit 49fe4f25483feec2f685b204ef19e28d92979e95
+
+In Haiku, semaphores are represented by integers, not pointers.
+So, we can't use NULL as the invalid/destroyed value, the correct value
+is -1. Introduce a platform overridable define to allow this.
+
+Fixes #162 (which was closed after coming to the conclusion that this
+should be done, but the change was never done).
+
+Link: https://github.com/acpica/acpica/commit/49fe4f25
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/acpi/acpica/utdelete.c | 4 ++--
+ drivers/acpi/acpica/utinit.c   | 2 +-
+ include/acpi/platform/acenv.h  | 6 ++++++
+ 3 files changed, 9 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/acpi/acpica/utdelete.c b/drivers/acpi/acpica/utdelete.c
+index 8d7736d2d269..c85bfa13ac1e 100644
+--- a/drivers/acpi/acpica/utdelete.c
++++ b/drivers/acpi/acpica/utdelete.c
+@@ -140,7 +140,7 @@ static void acpi_ut_delete_internal_obj(union acpi_operand_object *object)
+ 			(void)
+ 			    acpi_os_delete_semaphore
+ 			    (acpi_gbl_global_lock_semaphore);
+-			acpi_gbl_global_lock_semaphore = NULL;
++			acpi_gbl_global_lock_semaphore = ACPI_SEMAPHORE_NULL;
+ 
+ 			acpi_os_delete_mutex(object->mutex.os_mutex);
+ 			acpi_gbl_global_lock_mutex = NULL;
+@@ -157,7 +157,7 @@ static void acpi_ut_delete_internal_obj(union acpi_operand_object *object)
+ 				  object, object->event.os_semaphore));
+ 
+ 		(void)acpi_os_delete_semaphore(object->event.os_semaphore);
+-		object->event.os_semaphore = NULL;
++		object->event.os_semaphore = ACPI_SEMAPHORE_NULL;
+ 		break;
+ 
+ 	case ACPI_TYPE_METHOD:
+diff --git a/drivers/acpi/acpica/utinit.c b/drivers/acpi/acpica/utinit.c
+index 92fbaef161a7..6d78504e9fbc 100644
+--- a/drivers/acpi/acpica/utinit.c
++++ b/drivers/acpi/acpica/utinit.c
+@@ -154,7 +154,7 @@ acpi_status acpi_ut_init_globals(void)
+ 
+ 	/* Global Lock support */
+ 
+-	acpi_gbl_global_lock_semaphore = NULL;
++	acpi_gbl_global_lock_semaphore = ACPI_SEMAPHORE_NULL;
+ 	acpi_gbl_global_lock_mutex = NULL;
+ 	acpi_gbl_global_lock_acquired = FALSE;
+ 	acpi_gbl_global_lock_handle = 0;
+diff --git a/include/acpi/platform/acenv.h b/include/acpi/platform/acenv.h
+index 337ffa931ee8..3f31df09a9d6 100644
+--- a/include/acpi/platform/acenv.h
++++ b/include/acpi/platform/acenv.h
+@@ -252,6 +252,12 @@
+ #define ACPI_RELEASE_GLOBAL_LOCK(Glptr, pending) pending = 0
+ #endif
+ 
++/* NULL/invalid value to use for destroyed or not-yet-created semaphores. */
++
++#ifndef ACPI_SEMAPHORE_NULL
++#define ACPI_SEMAPHORE_NULL NULL
++#endif
++
+ /* Flush CPU cache - used when going to sleep. Wbinvd or similar. */
+ 
+ #ifndef ACPI_FLUSH_CPU_CACHE
+-- 
+2.43.0
+
+
+
+
 
