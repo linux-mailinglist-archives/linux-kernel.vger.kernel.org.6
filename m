@@ -1,118 +1,146 @@
-Return-Path: <linux-kernel+bounces-306571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45A9A9640A1
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 11:54:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C2949640A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 11:55:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73B721C244BA
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 09:54:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F3E1AB21B88
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 09:55:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D08F418DF6E;
-	Thu, 29 Aug 2024 09:54:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="1C0mPFB6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1B4F18E050;
+	Thu, 29 Aug 2024 09:54:47 +0000 (UTC)
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16F6C18990C;
-	Thu, 29 Aug 2024 09:54:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4CCA166F01;
+	Thu, 29 Aug 2024 09:54:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724925278; cv=none; b=Ph1kcKIdiXLh8zGOQ3ItpG25JQs4NYVq0uY6RDc37jl4nPKxGewOqqvPoVzZLsXlMkc1SXYvThKyu9kfZP1l8IjTQZoRMY8tbHfyjoPso0QCf580cWJIdNf8IaJZsBNawFQdGDIJGMuY4q4mKuony9N6x0i/CHbVgaU/5hYFmLE=
+	t=1724925287; cv=none; b=HpDZeubbEg0DJz3zis5ZuUatjFfilRU8i5PtAhzs5umxQI/XKSwcpa4pnqG/vHTEjN7QfJc8v9VuhS7WYpb7LIwYvijXsGWqNrs/+2sHjtv3451YZKn3lHC7WCWrcFwxWZKiGSJR89WQDzkAvNvfVGNDESfUj7MQJiVyPyyD9o4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724925278; c=relaxed/simple;
-	bh=r0rYo5Cb1TYlRbByxd0FLOjj81gHy0gDDxkdJo2MVOk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jtSJ6WrEPRw47WsOoeXxWo6yl/UvvaVk1kw2A7gETPelSsfBALsNPwQUEMXFA/W6q9toe1+198eYN0bgk8ozUbrkkH8VRo0f9qF68ew61ZL/flgXulTrGY++2z6/8LDwwC8AD9OnWmSNvBcbB27nRIc4G17JOtYZPIIH3iFrA5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=1C0mPFB6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4751CC4CEC1;
-	Thu, 29 Aug 2024 09:54:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1724925277;
-	bh=r0rYo5Cb1TYlRbByxd0FLOjj81gHy0gDDxkdJo2MVOk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=1C0mPFB6P1AEVd4YpJwqQ8XlYqVxruUWgdIao85/3ke5pGGCi8u4MbDKhPYe1i7jH
-	 80ISS/xjSgXiiPHYmE7K8KB/yyqhLESF9+15pAy1NX8T3BMu3ixIiuEH1w3dc1vZOm
-	 n4nChHy+SnbKxxfnz0opuiWQY7FVbxIhVHyCv+Jk=
-Date: Thu, 29 Aug 2024 11:54:34 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Riyan Dhiman <riyandhiman14@gmail.com>
-Cc: sudipm.mukherjee@gmail.com, teddy.wang@siliconmotion.com,
-	linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev
-Subject: Re: [PATCH] staging: sm750fb: fix checkpatch warning architecture
- specific defines should be avoided
-Message-ID: <2024082959-luminous-quirk-83cb@gregkh>
-References: <20240827193634.3291-4-riyandhiman14@gmail.com>
+	s=arc-20240116; t=1724925287; c=relaxed/simple;
+	bh=GR94o0/hnkFOcdTPGxx4YvT9bFyof/P6oOY80AzOvug=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DSH4DpLatewSnw8VKacDiI0pXwd++M8Bnem7VqisUi0vRANGCh+OHxs2naXcl6b3b7Q2DO57jLOqZ3LNYQoj2gS/GsKvy58wGINelrC4vDkgVVOLCtd2gCcPzwtOlibDEvypdbfuCVT8Vgnv55Romn6jwPAm9oSGu6++uJN87u4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4281ca54fd3so4120465e9.2;
+        Thu, 29 Aug 2024 02:54:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724925284; x=1725530084;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=niPeFODUw2C4h49CRj80TyLm3GDcVImYtPd60cjwsbo=;
+        b=UOxGKFeWloGXj55aHGGXpojkks7QCcru0G6QA48MYOdm3CTxfqb56ePv3SaMvruBSW
+         nYeYI4a4iqYuq2StoSB0cL0BQonBmiVU1/LvvvWKy0BwLK6glJzcESKxdBnVBk6wc9MY
+         Wpk9fJ3/qsIO+MCoRDaEJ8yvVIvYTAmVSNaBTKicIw4Zw+wpb240fE/VofcOR1wdFwW+
+         gT2pu66hBMGJZSdoGchdCTEhiwfi3bJf+Lf5tNp1aYSiZQ6Wv+UVfnf3oWUVh4YVfFIJ
+         M0jt8mReb11b1LqXV/b8RWSSbIwmOKAVEDrhT10462KLQWfO3djVXkuV5aylw5vRDz4b
+         HnrA==
+X-Forwarded-Encrypted: i=1; AJvYcCUPuBQ+MAkC0rZhvdacKda+YjK4SckigB2XFgyWmZtFFALCLMR2AI1Z7Mtviq6/dxl4joNdGhPBbX5mE5M=@vger.kernel.org, AJvYcCUlkP432LlqU636QsGNFb/wqEJI/LYg8tDLpwrThhBERy/aigjDpn6cEeKatCad0zfXwf9YXlTYI3/f14Gw@vger.kernel.org, AJvYcCVWLfX60udLjaZPliNtkNmXE5KjnALLDx0yxWsiXeEeLt+mMj+tvgHDcG0afW96bovkNKEwGV4/DsE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHSwwmx9y5ZzZt2Wtka2KiQBa/KBJJxihRV9o8eOxoWHD0GP99
+	ZpZc0IuQAoNEuWPVxDCuC8NcXBBg42pXvdqfS+Z14SNPYz8ULcQ4
+X-Google-Smtp-Source: AGHT+IG70tYW460DCvJzDeWsHO1wfd/2vUM9RpiC4n27/tyqyqbizBuo09ss/RAsEqmMs5l+EniPgg==
+X-Received: by 2002:a05:600c:1382:b0:426:6eac:8314 with SMTP id 5b1f17b1804b1-42bb02c1647mr17692475e9.1.1724925283521;
+        Thu, 29 Aug 2024 02:54:43 -0700 (PDT)
+Received: from ?IPV6:2a0b:e7c0:0:107::aaaa:69? ([2a0b:e7c0:0:107::aaaa:69])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3749ee7475dsm965033f8f.27.2024.08.29.02.54.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 29 Aug 2024 02:54:42 -0700 (PDT)
+Message-ID: <8bcddd10-6699-4e76-9eaf-8768f1c1ae66@kernel.org>
+Date: Thu, 29 Aug 2024 11:54:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240827193634.3291-4-riyandhiman14@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/6] math.h: Add macros for rounding to the closest
+ value
+To: Jani Nikula <jani.nikula@intel.com>, Devarsh Thakkar <devarsht@ti.com>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: mchehab@kernel.org, hverkuil-cisco@xs4all.nl,
+ linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+ sebastian.fricke@collabora.com, linux-doc@vger.kernel.org, praneeth@ti.com,
+ nm@ti.com, vigneshr@ti.com, s-jain1@ti.com, r-donadkar@ti.com,
+ b-brnich@ti.com, detheridge@ti.com, p-mantena@ti.com, vijayp@ti.com,
+ andi.shyti@linux.intel.com, nicolas@ndufresne.ca, davidgow@google.com,
+ dlatypov@google.com, corbet@lwn.net, broonie@kernel.org,
+ rdunlap@infradead.org, nik.borisov@suse.com, Dave.Martin@arm.com
+References: <20240826150822.4057164-1-devarsht@ti.com>
+ <20240826150822.4057164-2-devarsht@ti.com>
+ <Zsy-8xXQ01-JhL0m@smile.fi.intel.com>
+ <9c41f6b7-6b06-cd5b-74bd-24873c4beaf7@ti.com> <87frqqyw9r.fsf@intel.com>
+ <0b06794b-34c5-ec0d-59c6-8412a8789eaf@ti.com> <878qwfy9cg.fsf@intel.com>
+Content-Language: en-US
+From: Jiri Slaby <jirislaby@kernel.org>
+Autocrypt: addr=jirislaby@kernel.org; keydata=
+ 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
+In-Reply-To: <878qwfy9cg.fsf@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Aug 28, 2024 at 01:06:37AM +0530, Riyan Dhiman wrote:
-> Abstract out x86-specific code in ddk750_init_hw() to improve
-> portability and adhere to kernel coding standards. Replaces
-> architecture-specific defines with CONFIG_X86 checks.
+On 29. 08. 24, 11:19, Jani Nikula wrote:
+> The stupid thing here is, I still don't remember which one is the
+> generic thing, rounddown() or round_down(). I have to look it up every
+> single time to be sure. I refuse to believe I'd be the only one.
 > 
-> Fixes checkpatch warning:
-> - CHECK: architecture specific defines should be avoided.
-> 
-> Changes made:
-> - Create a new function sm750le_set_graphic_mode to encapsulate architecture
-> specifc behaviour.
-> - Using CONFIG_X86 instead of i386 and x86.
-> - Added placeholder for non-x86 architectures in sm750le_set_graphic_mode
-> function.
-> 
-> Signed-off-by: Riyan Dhiman <riyandhiman14@gmail.com>
-> ---
->  drivers/staging/sm750fb/ddk750_chip.c | 17 ++++++++++++-----
->  1 file changed, 12 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/staging/sm750fb/ddk750_chip.c b/drivers/staging/sm750fb/ddk750_chip.c
-> index 02860d3ec365..23196070bceb 100644
-> --- a/drivers/staging/sm750fb/ddk750_chip.c
-> +++ b/drivers/staging/sm750fb/ddk750_chip.c
-> @@ -210,6 +210,17 @@ unsigned int ddk750_get_vm_size(void)
->  	return data;
->  }
->  
-> +static void sm750le_set_graphic_mode(void)
-> +{
-> +#ifdef CONFIG_X86
-> +	outb_p(0x88, 0x3d4);
-> +	outb_p(0x06, 0x3d5);
-> +#else
-> +	/* Implement an alternative method for non-x86 architectures */
-> +	/* This might involve memory-mapped I/O or other chip-specific methods */
-> +#endif
-> +}
-> +
->  int ddk750_init_hw(struct initchip_param *p_init_param)
->  {
->  	unsigned int reg;
-> @@ -229,11 +240,7 @@ int ddk750_init_hw(struct initchip_param *p_init_param)
->  		reg |= (VGA_CONFIGURATION_PLL | VGA_CONFIGURATION_MODE);
->  		poke32(VGA_CONFIGURATION, reg);
->  	} else {
-> -#if defined(__i386__) || defined(__x86_64__)
-> -		/* set graphic mode via IO method */
-> -		outb_p(0x88, 0x3d4);
-> -		outb_p(0x06, 0x3d5);
-> -#endif
-> +		sm750le_set_graphic_mode();
+> It's okay to accidentally use the generic version, no harm done. It's
+> definitely not okay to accidentally use the special pow-2 version, so it
+> should have a special name. I think _pow2() or _pow_2() is a fine
+> suffix.
 
-This really doesn't change much, right?  I think the existing code is
-fine, it's ok to ignore checkpatch here.
+Concur.
 
-thanks,
+-- 
+js
+suse labs
 
-greg k-h
 
