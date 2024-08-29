@@ -1,96 +1,77 @@
-Return-Path: <linux-kernel+bounces-306036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CEF6963848
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 04:40:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB0DB96384B
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 04:43:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F8DD1C22358
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 02:40:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A84BB285746
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 02:43:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EBF63B796;
-	Thu, 29 Aug 2024 02:40:15 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F2D34C70;
+	Thu, 29 Aug 2024 02:43:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="TC4GUpuw"
+Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AF6F481B1;
-	Thu, 29 Aug 2024 02:40:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31D2E24B28
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 02:43:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724899215; cv=none; b=W+4TqbEmmjEqmlGDewW5+e7gNR2gVuW4sRB2P6u/DaKkcsg3ZqTk9RoPjMWoQw788oy4bvV1zhuzTj9o8RCqZB24YS7ZPcUjBXA2fCdif8J+Csh+0KQWzx9Jb1jy6ISsza1EkAKPHeJ7exR23OTrt5t+k7Me0WNbKV7BWY/5kuU=
+	t=1724899416; cv=none; b=igSBIGQ9x7pOLi+/KsAJFkkdWpAgnKgOIJdMmQP2t3SK7lpik95MlxRZL9Xo+AGfjcnVS7EKDUsZocHoXA6o5LTM+GUk+Ym88UPovHOqc92VZt/kCpFJwUU6KRlXzcCHRRznwCfjDZuhKkc56LPfgakomdtRuevki9/uFzDnSuc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724899215; c=relaxed/simple;
-	bh=D4ZvmeeU1FOPRboWQswrh5spc8/PYtigkM6ItBUeReg=;
-	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=qGhmYxrbmqgNsz/tuLkikCqMPhHE4DvQ2+u5FroCx23X21cJA3BeP5sPA7Du1wY6ED0XLP65IKxpcqeJUgwcAbgInDsP7lar7NfoTUeB0s6vXxKo4DrOCEvjYPwYjfZagTjGI66EcCO7nyIMxvzkDBaEDtm0bTPMd/dPut86YOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4WvQQn0fh4z1HHlc;
-	Thu, 29 Aug 2024 10:36:49 +0800 (CST)
-Received: from kwepemm000007.china.huawei.com (unknown [7.193.23.189])
-	by mail.maildlp.com (Postfix) with ESMTPS id 902451A0188;
-	Thu, 29 Aug 2024 10:40:09 +0800 (CST)
-Received: from [10.67.120.192] (10.67.120.192) by
- kwepemm000007.china.huawei.com (7.193.23.189) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 29 Aug 2024 10:40:08 +0800
-Message-ID: <b3d6030e-14a3-4d5f-815c-2f105f49ea6a@huawei.com>
-Date: Thu, 29 Aug 2024 10:40:07 +0800
+	s=arc-20240116; t=1724899416; c=relaxed/simple;
+	bh=iMlNIyAp9xbd1MXJTwBtMlnKA8Uydo3I+gaSZj5PAso=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OkdrRDdAsRba0Sumttiwx/rxJu8vheHTeajCytTYdVE2j9THuqvNEpOJ1Zwp41x96APDtQJut38R5L/xrAeYhEUvSd93vtbC3MBHWQQmeCRpVH332BXU3IY7Ye3uEWErAVDLG4AN6qUyOtj13qCrK7zF9Ljm8SHtwUoZViyfr4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=TC4GUpuw; arc=none smtp.client-ip=91.218.175.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 29 Aug 2024 02:43:27 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1724899413;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SdgR6bWMr023JzNGS1NP/3oB6n68ffTOSfVCi43HP6U=;
+	b=TC4GUpuwL7+acgtopotjpyY45Oqr70/JSBnotB1mA7zb8AdLvuy4nncR21cChRVk4rQ/W1
+	uPEXADipNt7H2ENfrV7E2XIoaAx50EYCwXVIl++ADLtatVkcmQjURIoRc1riGeQlloizQd
+	/QuVwB5XVycDgXwqao1P9E1Sb9b8N2s=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Roman Gushchin <roman.gushchin@linux.dev>
+To: Xingyu Li <xli399@ucr.edu>
+Cc: hannes@cmpxchg.org, mhocko@kernel.org, shakeel.butt@linux.dev,
+	muchun.song@linux.dev, cgroups@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, Yu Hao <yhao016@ucr.edu>
+Subject: Re: BUG: general protection fault in get_mem_cgroup_from_objcg
+Message-ID: <Zs_gT7g9Dv-QAxfj@google.com>
+References: <CALAgD-6Uy-2kVrj05SeCiN4wZu75Vq5-TCEsiUGzYwzjO4+Ahg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-CC: <shaojijie@huawei.com>, <davem@davemloft.net>, <edumazet@google.com>,
-	<pabeni@redhat.com>, <shenjian15@huawei.com>, <wangpeiyang1@huawei.com>,
-	<liuyonglong@huawei.com>, <chenhao418@huawei.com>, <sudongming1@huawei.com>,
-	<xujunsheng@huawei.com>, <shiyongbang@huawei.com>, <libaihan@huawei.com>,
-	<andrew@lunn.ch>, <jdamato@fastly.com>, <horms@kernel.org>,
-	<jonathan.cameron@huawei.com>, <shameerali.kolothum.thodi@huawei.com>,
-	<salil.mehta@huawei.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH V5 net-next 05/11] net: hibmcge: Implement some .ndo
- functions
-To: Jakub Kicinski <kuba@kernel.org>
-References: <20240827131455.2919051-1-shaojijie@huawei.com>
- <20240827131455.2919051-6-shaojijie@huawei.com>
- <20240828183954.39ea827f@kernel.org>
-From: Jijie Shao <shaojijie@huawei.com>
-In-Reply-To: <20240828183954.39ea827f@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemm000007.china.huawei.com (7.193.23.189)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALAgD-6Uy-2kVrj05SeCiN4wZu75Vq5-TCEsiUGzYwzjO4+Ahg@mail.gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
+On Wed, Aug 28, 2024 at 04:09:49PM -0700, Xingyu Li wrote:
+> Hi,
+> 
+> We found a bug in Linux 6.10 using syzkaller. It is possibly a  null
+> pointer dereference bug.
+> The reprodcuer is
+> https://gist.github.com/freexxxyyy/315733cb1dc3bc8cbe055b457c1918c0
 
-on 2024/8/29 9:39, Jakub Kicinski wrote:
-> On Tue, 27 Aug 2024 21:14:49 +0800 Jijie Shao wrote:
->> +static int hbg_net_open(struct net_device *dev)
->> +{
->> +	struct hbg_priv *priv = netdev_priv(dev);
->> +
->> +	if (test_and_set_bit(HBG_NIC_STATE_OPEN, &priv->state))
->> +		return 0;
->> +
->> +	netif_carrier_off(dev);
-> Why clear the carrier during open? You should probably clear it once on
-> the probe path and then on stop.
+Hello,
 
-In net_open(), the GMAC is not ready to receive or transmit packets.
-Therefore, netif_carrier_off() is called.
+thank you for the report. Can you, please, share the kernel config file?
+Also, how long does it take to reproduce?
 
-Packets can be received or transmitted only after the PHY is linked.
-Therefore, netif_carrier_on() should be called in adjust_link.
-
-In net_stop() we also call netif_carrier_off()
-	
-	Thanks,
-	Jijie Shao
-
+Thanks!
 
