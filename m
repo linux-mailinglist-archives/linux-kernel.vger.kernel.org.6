@@ -1,125 +1,113 @@
-Return-Path: <linux-kernel+bounces-306763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A7CB964335
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:37:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48528964337
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:38:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B01FB23E7D
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 11:37:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03107286A44
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 11:38:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBA561922CD;
-	Thu, 29 Aug 2024 11:37:45 +0000 (UTC)
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D09CA1922EA;
+	Thu, 29 Aug 2024 11:37:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="dCMAb7hQ"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45F521BC4E;
-	Thu, 29 Aug 2024 11:37:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFCD2191F97
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 11:37:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724931465; cv=none; b=V6UqnopL9cDUYjyNZH7+eBYpI3J0OiowINWsaEsfxTzMQP+awFCKdtyf47yQpMPiRsMlk/a/YiDtwn7qWAmm6Gns78WdbkNHzIqS9ibGweQbwbGJpW54Y/GDzBZQo4XqtQWLs1Jel1zlF2hiI73J36exXy1zhUZWhP/XVtIutg4=
+	t=1724931473; cv=none; b=bzdzeZvXTUAhSv45mFmEpSoScraIUkHO5SaPZvqVJ9d2pe/xSyv0IObAcKcJznQd9g/CYTtiFk4EBo3f0kuf2VFC5PqRX3AXcOJRsw7K4lCxVrHkw9I0fS4l8uyHQrUEym1YnIjRG58u1VGscGANpet0Yilwhx84llro5LsA9yg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724931465; c=relaxed/simple;
-	bh=oOQOr+p9coOi9gUPDNiWFW8vOQny+mAQ1S6UKIjr+p4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ccLelaJH54Cpx8si2AnCG//2HE6ug8BPd0bTPIrmIbicH6hLkrwP2IkM8CbUJHFc2FmutZ8VtLegAH8ZFU9EL1EjfC8RieqPSqM/q6FSbxmijE4Oq2gWrelhb9puchlnZypXWdjnxgDU1EKPXORs3OL3OjJpns2ZgSpa3Oxv1AA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de; spf=fail smtp.mailfrom=denx.de; arc=none smtp.client-ip=46.255.230.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=denx.de
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id E8A011C0082; Thu, 29 Aug 2024 13:37:40 +0200 (CEST)
-Date: Thu, 29 Aug 2024 13:37:40 +0200
-From: Pavel Machek <pavel@denx.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org,
-	kuba@kernel.org, linan122@huawei.com, dsterba@suse.com,
-	song@kernel.org, tglx@linutronix.de, viro@zeniv.linux.org.uk,
-	christian.brauner@ubuntu.com, keescook@chromium.org
-Subject: Re: [PATCH 6.1 000/321] 6.1.107-rc1 review
-Message-ID: <ZtBdhPWRqJ6vJPu3@duo.ucw.cz>
-References: <20240827143838.192435816@linuxfoundation.org>
+	s=arc-20240116; t=1724931473; c=relaxed/simple;
+	bh=cNzbsA+TbK++Ak183JvAbBvIZCIt69jGcDVpJSPxpEk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=adr4ygL/zLnX7PwK2iczxEdPYVEv67uEre7Dh/VY27M6zOuw1zC4sXV9uuEHKXZVBkUa98J73sDCnLa38uiwSKRFYJqfrte7hPZCRFuyDKKMNWmMpla1g8UqeLFwBpTJDYx8I0f1QlJMvx8H857dxPuVjrgm70r9wBvY0VUp1K4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=dCMAb7hQ; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2d1daa2577bso388397a91.2
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 04:37:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1724931469; x=1725536269; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3uwnGCH/YIzPLaHUb/2waUJ87bIA5++OGLa9jaJO7I8=;
+        b=dCMAb7hQ5kGZLBBW5BJup3+L4zEz2hiCjVacfHWmJslYHpeGLp6nhbOsgHFm5Ak6u+
+         Mp03g30F8H/uHSXuXLvQmzt+lkrro6xkFE6VnFXg6/I2/5g2qjJ15r9o0PxDdAfJpZpB
+         OyM0Lk02J22rA4+EMfALbLXmjLaNKNKZjSIzMm1B997Txf1SpqmAGj4w95NR8HcWhyM5
+         6q9Y0vV+pSA8kfVRXe07KNo1aDHHtPfowVkvCqUjEmWuXukMkgtRRKTmLvcGRoCWu17i
+         NstFa8aniz3kpZHUDEjgXizqbYSBHARPFCyt2hn6u3WDXL+hFhsxXd8RbRVdyp/dxNop
+         esqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724931469; x=1725536269;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3uwnGCH/YIzPLaHUb/2waUJ87bIA5++OGLa9jaJO7I8=;
+        b=GvHgdE0XP8CAOvQ8F6GAGm4Ed5ggYRh03gfPLFONvLolQWqpUEWV9H28KLsJL7+mty
+         3U3cXcoI5bfZzsVPhUK35JpiGnsGsyc8p/SGM3WXwpvmr2gDLeTaw8sileK6meKlp4k0
+         e0XWP0DgoSQvXblyiwj7de/H4bQZXnd8iy6rHeTz6VBJx1bqIJfZFPmbXVluuONFVaO6
+         07z49YNQk7ok4fNM9lBQuMErCVPT/un6BeCbdIT1W604koic4LVVyWfEA+cMrGxjg/T5
+         vzf4UCdaw+T5ZzpAf5yoO60wjyBvfL2nWNtxcn3lFCJ3DOM2ir5gQd7Z/QIkW+j+vpby
+         juTw==
+X-Forwarded-Encrypted: i=1; AJvYcCWnXmucFbFtPFVf+4V7DGHCGRH89DmEuMnZ1tKmBJRwA+GcXE8rgL9ZdgNpm/uMGao44IzchzocUeHp9Vw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxfWePYue6sLYSVrP5GBC49MwxhejTrR521oDZS4hvn0IZaeOkw
+	d9nftzGRRp+ylQPZc2Ht0Ku/GIrXJEUyv2jN7qhzh/iAs6rUgWBJpHkbnHN2OmU=
+X-Google-Smtp-Source: AGHT+IFCzL8y6Y0fPNCJTLQKLePeR4IrAq+Gu1W+X4VnQGS0d3COJICgpMgUCJOuCGUPlJhD/q5ZmQ==
+X-Received: by 2002:a17:903:40c6:b0:202:35a8:42 with SMTP id d9443c01a7336-2050c46ca2bmr26184035ad.49.1724931468980;
+        Thu, 29 Aug 2024 04:37:48 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-205152d6a82sm9666505ad.73.2024.08.29.04.37.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 29 Aug 2024 04:37:48 -0700 (PDT)
+Message-ID: <e5e97bad-075a-4d78-af78-3bbc124c06b1@kernel.dk>
+Date: Thu, 29 Aug 2024 05:37:47 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="+UEXMl8Ve75Dvp+Q"
-Content-Disposition: inline
-In-Reply-To: <20240827143838.192435816@linuxfoundation.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 1/2] bdev: add support for CPU latency PM QoS tuning
+To: Tero Kristo <tero.kristo@linux.intel.com>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240829075423.1345042-1-tero.kristo@linux.intel.com>
+ <20240829075423.1345042-2-tero.kristo@linux.intel.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20240829075423.1345042-2-tero.kristo@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 8/29/24 1:18 AM, Tero Kristo wrote:
+> diff --git a/block/bio.c b/block/bio.c
+> index e9e809a63c59..6c46d75345d7 100644
+> --- a/block/bio.c
+> +++ b/block/bio.c
+> @@ -282,6 +282,8 @@ void bio_init(struct bio *bio, struct block_device *bdev, struct bio_vec *table,
+>  	bio->bi_max_vecs = max_vecs;
+>  	bio->bi_io_vec = table;
+>  	bio->bi_pool = NULL;
+> +
+> +	bdev_update_cpu_latency_pm_qos(bio->bi_bdev);
+>  }
+>  EXPORT_SYMBOL(bio_init);
 
---+UEXMl8Ve75Dvp+Q
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This is entirely the wrong place to do this, presumably it should be
+done at IO dispatch time, not when something initializes a bio.
 
-Hi!
+And also feels like entirely the wrong way to go about this, adding
+overhead to potentially each IO dispatch, of which there can be millions
+per second.
 
-> This is the start of the stable review cycle for the 6.1.107 release.
-> There are 321 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+-- 
+Jens Axboe
 
-I believe these have problems:
-
-> Jakub Kicinski <kuba@kernel.org>
->     net: don't dump stack on queue timeout
-
-This does not fix bug and will cause surprises for people parsing
-logs, as changelog explains
-
-> Christian Brauner <brauner@kernel.org>
->     binfmt_misc: cleanup on filesystem umount
-
-Changelog explains how this may cause problems. It does not fix a
-bug. It is overly long. It does not have proper signoff by stable team.
-
-> Li Nan <linan122@huawei.com>
->     md: clean up invalid BUG_ON in md_ioctl
-
-Cleanup, not a bugfix.
-
-> David Sterba <dsterba@suse.com>
->     btrfs: change BUG_ON to assertion in tree_move_down()
-
-Cleanup, not a bugfix.
-
-> David Sterba <dsterba@suse.com>
->     btrfs: delete pointless BUG_ON check on quota root in btrfs_qgroup_ac=
-count_extent()
-
-Cleanup, not a bugfix.
-
-> Guanrui Huang <guanrui.huang@linux.alibaba.com>
->     irqchip/gic-v3-its: Remove BUG_ON in its_vpe_irq_domain_alloc
-
-Cleanup, not a bugfix.
-
-Best regards,
-								Pavel
---=20
-DENX Software Engineering GmbH,        Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---+UEXMl8Ve75Dvp+Q
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZtBdhAAKCRAw5/Bqldv6
-8tQUAJ9HIPFJUPF4wxNqBq5iLMnUY3rDDACfdcK/yVH0iytrgvodz5nsyuiliN4=
-=3O9Z
------END PGP SIGNATURE-----
-
---+UEXMl8Ve75Dvp+Q--
 
