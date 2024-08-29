@@ -1,77 +1,86 @@
-Return-Path: <linux-kernel+bounces-307758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 340AD965294
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 00:01:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72DBE965298
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 00:03:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E21172845F4
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 22:01:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97AB01C242D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 22:03:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43F881BA29F;
-	Thu, 29 Aug 2024 22:01:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2C271BA889;
+	Thu, 29 Aug 2024 22:03:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="YYOsw+Dn"
-Received: from EUR02-VI1-obe.outbound.protection.outlook.com (mail-vi1eur02on2068.outbound.protection.outlook.com [40.107.241.68])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="bNEb2kzF"
+Received: from EUR02-VI1-obe.outbound.protection.outlook.com (mail-vi1eur02on2048.outbound.protection.outlook.com [40.107.241.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 166A71BAEC8;
-	Thu, 29 Aug 2024 22:01:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.241.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E30726296;
+	Thu, 29 Aug 2024 22:03:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.241.48
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724968867; cv=fail; b=EEYOPEAvLKA4SIOc0fh0yK0lko5gDzRVtBZqb3ZKS05Rlyfgt5NV3ZtlCZiHcVatWrfVKfH7L7UKdZ7kBHgUKhVAWvvv5w9VvILYAciik0/xeOHrxyOH9kXTAt7ekeb51EI3ELhZQjGB3Cg+MUj8mjT+QPmTDHhQydsPB+gANBQ=
+	t=1724969002; cv=fail; b=TxbM3I28XdnPTRnhxSBHSXbh09BIpDKHfIRCJq+mW6gboif4k8dn4uInp3ww2qiAPlfP6TTwK3h3IrdtoY+4aWQg7nmBBaN5RQtDTHQGliFwni2hUZDoHguzrA0h1Gi2AVpBVs4G7gn1Xh0TLtHa3OTBOHEbAXgjL8CFgzXy5FM=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724968867; c=relaxed/simple;
-	bh=Wk64ta0iJfSK1W/mqKyM+dF84J9+EQwinuXF1qhfBq8=;
+	s=arc-20240116; t=1724969002; c=relaxed/simple;
+	bh=l6NexzxEsmyncH2xpra3OJNJwZKFN2gjlAocAJg8FkI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=HGB5+8aQw7+NlooJHvtnJ+p7u4sOTiXpYWf0nX8LwZnhBAgkMKT4rKGe7DDoQ6IZCr6BRa6Wk8uehMwHo+RqtKwEwO2ykrv8ezkpNUbKVhOVhMNEjPFOBaeKfQIoRxixwyL24ASx0VDvnJ0LkOjjhSgvQp1I4+X8mTUcq6HxO9o=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=YYOsw+Dn; arc=fail smtp.client-ip=40.107.241.68
+	 Content-Disposition:In-Reply-To:MIME-Version; b=raaI2i3wBoVt0eNMTPXhBa8jZY86TH0IwPO8sUP1Z5j0th236kPYRC1gTgHig5phwxQymzc5ZDY7m9McIG3JTOwoksldGuP3LOwhpnuZwffkO18ox2AOEB7mVzNy07ogB5KQPOsn7Z5WlvSkyknax81G7EoO62kdgRlqaB4IakM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=bNEb2kzF; arc=fail smtp.client-ip=40.107.241.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hfRhHHRBTBtZTcV3PS13h2Slg2M1prLPzGUGwW31qad8Srbhbr1qGPthr75NF9bEbRmbFawiVgpeShIMfwp0H38V3rfuavZdN4E0gpWeff2oWv1anZwrh9wSYZVBgsJxzZfRanMCFEReO1mLWUgzjAfd7wKmVc1oPrKOQlKpiW6TqtKpRF8d6qOkE0mL2bD3wr88VzGgwFy/3VpTUusg7uoSd/7Ao62xba4BPVWbtqWzOFueKEvVykJRMSvOM16AHFZwAr5948ORqruvl6oITViYyFxxdRynDfJqeDEcq8OR3OLUbHKVP4W+ghdzbbKEgIZfTSi03cBOkoH8HNqqow==
+ b=XyJHx32H+9vTeWNg7UlS9yRA/7FSE0upfZWDz7vDX5Rojn/2pNOi6GRZ1mvxDhPEqSXk8Yzq3P69WIJZchoT2tfKe8svceHnmJmaUWFYwPOwqvMtLIp76CUYEIHp4c1ysP1+ia1Qeq5yzpywOxFXG2DnjvBdB7RK892VpzAPVAWNEBLDdZWhB5DY+4IQ2eO/SCGdLGgZCm6oEQ3S9SbugQFp1lbEOXGMHMxGgj/eK8tWUIrq91Eoz0x1f11T06XviG5HJzFTftgqu9mHZOzT41vpIFRSCx25JYby4KZiYWJRZ4W+DjAXvsAzMeTMo7CKJGefBhJBQVYfK0SQIV27mg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3s/rTSHPBF/g0T1U3Tw+A6CXNyzCswGc3yTk0lB1dGo=;
- b=RcbVT/s5vfDrcIz2pYQYeCNJTtmE1wYbLkF1uopfsHugCdvdMyp76kkS7aNim9KGmJ+PgDv789vIYWHsWiYjpRJFWXR80TUExf9a3Z85Egzd99WdNiCN3ZEarM+IZJT/hZcCHRydw+fSGLEA1qMsVEST7V+KSt8QA7DTb7FEmsof2NCxL+QsEM/f6WeCsdPe4OcHCz5K2f3G1lYDNy7UbBRgd9BDW3uY0dTVo2SF9DL+L4Ky4wuZ6AEh/rR1j3ncDCev521YX3v0TsXjFxbDURw76QUuXOUgxFCGeTRN7gWlZEuMlJg83YAjyjm0qUXNzcxUNflaHW6Tj+cIJaPhjw==
+ bh=PVHAKTZmUNUtxUjDc7zW/Ngu7tKDZZXo9KK5fG9eT9A=;
+ b=Rt+/v/DSvp6emv8jGAIV2j6CweN9LG0aUmE3FznGxJOgmyt70gD3aljbKMzYGvGdgGcIG0jMZFtiwsl/AdXLXWZ97vOGwlo07aeS/TSp37NXcwlWp49O6L8IqKKaUChUwjFBmi/LYLOaeXhQljHwyJuA1lrm2UZtYXawF0jC1TJ+NJuWrI3vYv0SkRzIQ6icPbbZci3N8OTcUrPG5aXdoHv/37yGz1GhF+HvvZeAz24FGLZQWyNKfzRxYuo6abk1T4QyyTPqaEuOLC1vkMByrS9oV01PM9wvLak9BFCw6YfHS66MEApU/YUeaEKhNw2uapv41wMH/sFANxoQGNE4yA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
  header.d=nxp.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3s/rTSHPBF/g0T1U3Tw+A6CXNyzCswGc3yTk0lB1dGo=;
- b=YYOsw+DnsDk49ctZylgoRu90I0zSn1HX4OClOZ/ZB7nvTU3kcU9ignJJP55EZIzAsAD2WghQU6PB94MRtjndwAo+/W+8xTud4PBDU4bcZMiJcI0Z4HB2bJAEx3wU6S/IsvDzBuZT/lFZvtZvTk1tijwyaZpYT60csz9LYGBi1gLqv8hbi4g9Pip9c7U8zGpAw5EjCVJpFAg2KKMH9UjyY1EvVeBB1p2SmMt5XCfV0Tam5B7o5FH4dZqp+bxjBKGyOi4nL8uOWaoHI5RYrrsEbxwOzDpved/kSvmnULfJSrBysjgURrSJ8c9YOdcXQS/+M0iKAJnmfDknVlNt4aNS4A==
+ bh=PVHAKTZmUNUtxUjDc7zW/Ngu7tKDZZXo9KK5fG9eT9A=;
+ b=bNEb2kzFOTgq04fNtuij0MbtyMyig9SfeLKd8lGe6COA2gbby14XtxE87CvXOj/EdkaxenWCdGvzt+AWyQgzGU1jSd+Yq3NCwjTMByK4r6zQfShPHx0edIhrAOBWPcY4h0rj1OjC58P8imruFSRTgyQcvFvJAtl9hQt+sCNoiLKa134GC90Q3WuAwV4HpyBEND7UMKWSOajFj7Kl1sU/6/mgypQ4ijOkemsQ6h9MlWGID+9r52Fctdp9czMLa4aF9B6LyFBQE+vwdLjJ95MEW7ciYl/GcOialvtG+JzfPhwFyPmlKBaecRnSPX4VyHTWVhRoqycjidqkzvtHJnOerw==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nxp.com;
 Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
  by AM8PR04MB7972.eurprd04.prod.outlook.com (2603:10a6:20b:236::16) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.24; Thu, 29 Aug
- 2024 22:00:58 +0000
+ 2024 22:03:17 +0000
 Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
  ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
  ([fe80::9126:a61e:341d:4b06%4]) with mapi id 15.20.7897.027; Thu, 29 Aug 2024
- 22:00:58 +0000
-Date: Thu, 29 Aug 2024 18:00:51 -0400
+ 22:03:17 +0000
+Date: Thu, 29 Aug 2024 18:03:07 -0400
 From: Frank Li <Frank.li@nxp.com>
-To: christophe.jaillet@wanadoo.fr
-Cc: alice.guo@nxp.com, festevam@gmail.com, imx@lists.linux.dev,
-	kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
-	linux@roeck-us.net, s.hauer@pengutronix.de, shawnguo@kernel.org,
-	wim@linux-watchdog.org, ye.li@nxp.com
-Subject: Re: [PATCH v5 1/1] watchdog: imx7ulp_wdt: move post_rcs_wait into
- struct imx_wdt_hw_feature
-Message-ID: <ZtDvk02cvKCemYbN@lizhi-Precision-Tower-5810>
-References: <20240730145610.2177627-1-Frank.Li@nxp.com>
+To: York Sun <york.sun@nxp.com>, Borislav Petkov <bp@alien8.de>,
+	Tony Luck <tony.luck@intel.com>, James Morse <james.morse@arm.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Robert Richter <rric@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>
+Cc: linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Borislav Petkov <bp@suse.de>, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/6] EDAC: fsl_ddr: Pass down fsl_mc_pdata in ddr_in32()
+ and ddr_out32()
+Message-ID: <ZtDwG2xFGaUssJVN@lizhi-Precision-Tower-5810>
+References: <20240709-imx95_edac-v1-0-3e9c146c1b01@nxp.com>
+ <20240709-imx95_edac-v1-1-3e9c146c1b01@nxp.com>
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240730145610.2177627-1-Frank.Li@nxp.com>
-X-ClientProxiedBy: SJ0PR03CA0159.namprd03.prod.outlook.com
- (2603:10b6:a03:338::14) To PAXPR04MB9642.eurprd04.prod.outlook.com
+In-Reply-To: <20240709-imx95_edac-v1-1-3e9c146c1b01@nxp.com>
+X-ClientProxiedBy: BY3PR03CA0006.namprd03.prod.outlook.com
+ (2603:10b6:a03:39a::11) To PAXPR04MB9642.eurprd04.prod.outlook.com
  (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -81,89 +90,86 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AM8PR04MB7972:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8a820525-5b93-4022-ac92-08dcc876102e
+X-MS-Office365-Filtering-Correlation-Id: b26b370b-99e2-4ccd-c4a4-08dcc87662f1
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|366016|7416014|52116014|38350700014;
+	BCL:0;ARA:13230040|1800799024|376014|366016|7416014|52116014|38350700014|921020;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?KdWO0+W30E3+ovn7NTTsbamNLvSVQM8qStN2yRDycctEwBAPUoiBzcw9AZIO?=
- =?us-ascii?Q?e3cXrDwS5sfdK+KCWicL6+1qlQp0cAIlXi5zX08WsGy/+SmNpa4O/0NPQO33?=
- =?us-ascii?Q?JG3ibzOCC8FcYt6rD/cHqAS9+VHgicReR8GQO7iyF/k9Pi3MNCGpIJTTMqsf?=
- =?us-ascii?Q?zFC2VPqHhW93RadyuxogQ6vWTbD63e+BqUUqeXXmb7GUdUdDrrmCFJf6FxIW?=
- =?us-ascii?Q?YqOl/C5hsc0jdQuMvOW8WQ9EWOtW4oAZOY5/8+ke5wfp2JzZMUG9tKkNTikh?=
- =?us-ascii?Q?uagJUDapkW2Tib9scCOo+plBrx6jp6WqOMUsS0mPnS4lV6XvUTSHpzWfH1Sg?=
- =?us-ascii?Q?5F+kT4V6KPegB1mbD9b/Vu2CcVjMplMnejmb3BJndJdDN8+ZIn9yq/20MHHa?=
- =?us-ascii?Q?fxOM9uiXW6Yh8vXdOlXkxcWiN2j/PDBRloqNJkPuVknpGH5SgeRYDZDaHJG/?=
- =?us-ascii?Q?XUQMcTrMNx4fW0uILpUTvSS1yFjy7p2fjIBcWXAVaVUnF1Xbq2KuuifIzQe1?=
- =?us-ascii?Q?NLinYMSlSfrZdtEKUHOMU8nXkTMSzQ03ciI52/2yikBLcVmAoFaHxmdN+mHk?=
- =?us-ascii?Q?1XJIDz68VjEdNn2I2sOn+uQ7n2Nqio/UPZJBtgpprjDf/4TO0r/8i6GtHxHs?=
- =?us-ascii?Q?LXvkaPy1cMNiEz7cErtgeDD2zUqj/cP7L/UTiOEFxCqltK6fUkGUryiLbeEq?=
- =?us-ascii?Q?ChsHFvlXamSJKLmV/MjDukjojGLvEgvwKb4K4sW+6GnMi5DXyl4xC5q2iGw1?=
- =?us-ascii?Q?bVgi+VdVaEvXXmhjgvZ/x/tganZCcaN5gGLoIt8DngKLWZ9LTniBpiI1FjOU?=
- =?us-ascii?Q?wIT/fA8ruG2ilLVdOMsQ2P1or+G+fAnVGc6VHel9irL+6LPMYMlA3tWAlMlh?=
- =?us-ascii?Q?KIvVi4ktQXZY7F52pbOSiRoWTSz7+IKAH4/PPF1QplWOslkrpJsLZHBWqK2G?=
- =?us-ascii?Q?AzsaZo/Nt6HKZRV5iCeBfM88rmAL35Jm+qtfa9v2aVg0WzIjXrXWoNWFgbxg?=
- =?us-ascii?Q?G0eCQOxajzx0nRn55EDOIN7KZdhAkMoP9LCLgDnW/vPrrdCb4d4nH6LEbOoj?=
- =?us-ascii?Q?nNsnKqJl+oKOd6NQL3EQyrOabyU3JJTO7TieUrXGzkzBPptx6kir6a4YVFlU?=
- =?us-ascii?Q?OXiPVT8RrjtDCEp6PQhn9NmNDAZ93WaqgvidgeP/vbQhtP3SYlWC0AWR9rjQ?=
- =?us-ascii?Q?T3xYnP8vcONNzpwsPJOvaXsOKWK7hQuSwUfA9STztmRTU5qGUVsj5J9PKxdq?=
- =?us-ascii?Q?r23W2RjP2MHpRmqRj942K4BSf8HGxVQ1UEB6VzhTtu1vpqsmIRIjguSovNdT?=
- =?us-ascii?Q?fCVThrfXXdTnE1Mk/Z+I2iQrZz/epup8Yd3M5hREXMeX9LDFE4x7btLFwn1Y?=
- =?us-ascii?Q?FP6TpSh8IoX37ChQSgM4Oh0ppStgelUndbyjpVpFI5t45fPiVA=3D=3D?=
+	=?us-ascii?Q?AI5M7AsRf9JY1wUWafbfyr8ByYYNk+vzmDhHLIzsuqIpRWEhUsIiVcEhQpXa?=
+ =?us-ascii?Q?OWe1zOVwQX6XKqBsMZxFgutQKHBnJ8assW2822KQGixxvqhPRtRmorcXhIvQ?=
+ =?us-ascii?Q?BVs+1JgDGP5KurFH5jKz6ubTX/LGpsPJrj42BqEtItPZ9xtP7e7cVu3XWQCc?=
+ =?us-ascii?Q?9HvoDC65CQo6zSYO6LTwEQCjHwp5TmDbHwYOGXXIdpYYVrU0wkdnR/ujQVac?=
+ =?us-ascii?Q?YVBzPGXddSPbYWtG83TPV1CZDgFQlSgGmXTOBho3OhTE7zKhGXVOIB1fLp/D?=
+ =?us-ascii?Q?6TvTuyYLQ+DZl5DwIvXEXHzwJUGZ2j0sAjxK09Uy+ndv4zha26icGMg5nAhv?=
+ =?us-ascii?Q?dDRMWowy6yeHpiuC98vaQV3evxPP5y815vc5037NUWFe990cS7Xy/jCfGAb9?=
+ =?us-ascii?Q?dxGhUsfi9H+kXksA07xMhMYOzE7c1/9T46mtcf1Y18bfsQE+xPiNrP2Yg2ZG?=
+ =?us-ascii?Q?n2cbVvf8Xtq5YSAzYyEahZwkoHcR4o6Yo2VgoBYEwlfvLpD8Gj0pdaw/f9Jt?=
+ =?us-ascii?Q?O83odb8Qp/PoIAE2EhLQEPD44mAzHcp/lm0WacjszOZ0V/CcMKQseVJz4iAG?=
+ =?us-ascii?Q?0FB0hGrPAfkFM7Ctf2GsevWnLQ3RmN6UZemhy+v2VLyhkOwISIyEkNGljXLD?=
+ =?us-ascii?Q?PAJPEDxvZIjW/Gf6Ac67+oE5D0Z+hSvNzP1YIvZOQe3w6AAAn/+S+YQWYEnJ?=
+ =?us-ascii?Q?Its5TMllarn8AmftJIH+mzavVLUNYduHEhGErEpC2gMBDkD1PQ5Q22ogY/wk?=
+ =?us-ascii?Q?ODcPvk3jngoDOUQ+mamBlCGE6aUBiJ2tBtujHwPaoKkmOb3PtsouZC84J/Et?=
+ =?us-ascii?Q?IWHkgAAFfQ3mWmuHerMHfQBoaGPjFT2jFpCuuzgQLck+lkCFikofTJgTrNFw?=
+ =?us-ascii?Q?RmV579EyqRjD693UJf0pv9ZYPFqykDPO1gtgm53fL6g7ATf0lZ3dWjc1PzHT?=
+ =?us-ascii?Q?JDzeKPaobVKISHXbyI42jvYY5E09fKm7Hkss1+VYtOkpZFfSTVbcQ2JxvsQc?=
+ =?us-ascii?Q?JLAIti1FnsCOGUaehpT6/5UkO7ydIThpCjVs0jejyOTicRwPHNsa+jsU48p5?=
+ =?us-ascii?Q?7SiFBvep5SAX6U3S44ihIjKJCmq2KlqYRsSRfMtsVw2FvKoMbGQ7qjB9LZJY?=
+ =?us-ascii?Q?6jVeoR5KHDFwD9PO0rxtwRCs7ZlqnGYKq9/crpezHLAZoi1IoTFaQyZJLFVO?=
+ =?us-ascii?Q?6RJeX5+QQwMppn/RZRjMhbCJ/TCyIugr7mMJl8e/4V0C9rK+qGKfCwnN6COu?=
+ =?us-ascii?Q?u3TQVZFco0HZko0kTB+GyArfUdSeXoObaooJffhC6i992ae7Wa8dPlJ8B1tD?=
+ =?us-ascii?Q?XkNmpR/GH4CXv2uoDN5HEG/wvapV9uDtOFUSqi0KUavB3osB0xOJNqUU3S0V?=
+ =?us-ascii?Q?I2qmTnlHlBv4MpzmLXYxjyObm5UC74uW/Bpzer/7+sKh4kR4hpEjS2s1mLqF?=
+ =?us-ascii?Q?F9Pmtt4/heU=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(7416014)(52116014)(38350700014);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(7416014)(52116014)(38350700014)(921020);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?nRTY7WsAdTbXwNHEvVutWpf3QSp+WZaGoe9nPqIR1/EcRxK5CcoB7S4YWNtF?=
- =?us-ascii?Q?zuESMAn1HUe84oplDAa6vZ0zOAHVAhkkqIzRe7rGNehG6IboNyTd2z5rRLb9?=
- =?us-ascii?Q?8FnwrmpSd1qgiafOJFfisTVZo3hz+CEB/I3LJ7qf5LNLuq2WNUh7dg3JD2Vk?=
- =?us-ascii?Q?JXYFXqOqruUmDCfb7+yuLW+1DzerhAbea7jGVyAB6OTp9uOAEKsfUmYDHbOU?=
- =?us-ascii?Q?xUCSzU9vMjKclYYt6WmDbI6zO5sehAdb/4HKvwpN7lXWszzNEV0LZoKwgWgL?=
- =?us-ascii?Q?3O97d0eQhE71auWrKdQ3wGZaAytPKFzMk4Kg2Dl/9WX5LMBeFS1BAg0N4Ar2?=
- =?us-ascii?Q?bPdXSzFrkgsqvGA3XMAq3FtRC/nBhLGwn3gc4YMbKF8N3Clt/UXe9ElX42+U?=
- =?us-ascii?Q?llA7VYQBmF/U2rdgYseLrch+dGKrnr8eUypqu3SqSkIIcLGAbNiLv3qzh1D8?=
- =?us-ascii?Q?jBslCAKtdWcXy9VNZNAsDFK/bbe/cJKXXt0mTnXUN1wmMhIwPlSew9ZwDQhK?=
- =?us-ascii?Q?ViqbSXeDTVxVxAikDJQ2flORZgxtQXWdsn8SJkE7T/hsgXxh8SRGGfpn4DZ2?=
- =?us-ascii?Q?OzlwPPKq19gKhjspXb4jfSGcSEXCS/qRWpAOKcjcviIIfjyhsQCu8eyHd6XW?=
- =?us-ascii?Q?2EQBJVSKfZsBWIBFuKJYyujuD/VuX6nFFjzH0hHC9wwoI+bhNK+TXUUNJacy?=
- =?us-ascii?Q?txcYuBj4FnSZggjBvQUb38dZOpuZnZUuEaEQtRk3AymTQjUyWDAIQ1foINDT?=
- =?us-ascii?Q?688SeDEwcIhOsYf/s3AuodOGYgJJeigUecCLv8XcCA+wqHmVd2X1ch3ytAXl?=
- =?us-ascii?Q?AMn5ydtegvw1SZD7+Ld/i75Qb5NuXDGPnuNx279oyOWJjnRRdtCAo3hjJ5AL?=
- =?us-ascii?Q?LJr3Tk/6CD7O5ea0nbczIgIRclDCnkB0+aIst8WdXG0GzAgdsRdnStUSDzS+?=
- =?us-ascii?Q?C/jaZGxpvP6jZkecgsQKTKYoknc0dLmnSkO3li6130wXiFBU57nLmL7XwV0K?=
- =?us-ascii?Q?AmG9VC0ZWkXpoK+n79CHk7kRJ+RE5LcU0XCkYK8eymLIoG4p+OXgLqokc873?=
- =?us-ascii?Q?jMNx+zFuOobJFZVX8TUXqTv2Mxm6PCOTqcHkGQkA3Ig0EilSwu2Fo7oZB7yH?=
- =?us-ascii?Q?G9N5dYjuSXb+25ACT0LfkrtPlgEu9bFlImFSkCSxPpw9kYatOuitf8GlIhuR?=
- =?us-ascii?Q?Babnp3HsA85DP4wO6X3I17b807xbIqqChavai5GdAx/pimG91FF9GEo/AuIa?=
- =?us-ascii?Q?peGmd1RZ/wgZIo+bj5XMbLDUnQHN7al8dZqyv+1YcnqsONLR4HAsK3FXOD4x?=
- =?us-ascii?Q?NeEL5TaezpOScE28XVLi9Tu7drlTLzmzaX9sYajXZIApMR6ycZGIJj+sbTt6?=
- =?us-ascii?Q?fqJqUsa4t/+BtSEHgnmT10xlB8IcOyqvt2UOeXvSDynSG4hzH4hx8WYYlt19?=
- =?us-ascii?Q?nSeRKnPbGkiVUH6UpepFUYRtm+hxoKKvkaHStSa0SC4D2x3MQ2IDg9DRVrdN?=
- =?us-ascii?Q?utc+IL1toBD1IovA+CsywOy3gsg43cQgh2c4N2QF1OBgV3Tgj7HhCKSPgxIH?=
- =?us-ascii?Q?zmETDx6wwkt1LcHoiCc=3D?=
+	=?us-ascii?Q?scVcYzhGTcMVgU3U5AXtqNU9FJ+k4mwJQ7+vsQ6NX+XYdNBLU55LB1VFdQNK?=
+ =?us-ascii?Q?obuIXQnK5BSV/emi31juvUBtZ+SLGrSLGjdsaoiYbiSLpPrstHOR+Ak8DNYD?=
+ =?us-ascii?Q?8dXbEf8h8qkKaJXMTgq7B5uu8LRkc48IUBm869YINLDu7guXLyDmvz3zalh8?=
+ =?us-ascii?Q?GDxdNOzhSvsr+1JZByhiiCYE5QeivfhpSRMe3gerfOf5C9bLrJDn1BqtvApu?=
+ =?us-ascii?Q?fHgobyqLnItZlW3ldjMD06ShQQytw8GGg7JOtjL9SWW/zL2KJ1co3DchdGP8?=
+ =?us-ascii?Q?8YCqmmDICozI3ez4JOUJPTCuYGj4SuxfN3XmaRRWaG2Xg5a1s6SghEmMgUJE?=
+ =?us-ascii?Q?MPiixX91SfbFBtN8BUBIby4m9KieC48TTRnVoAM8W6jWMfZ+hteGzjylFxCq?=
+ =?us-ascii?Q?yMY7nAzFsXUzVm9CruqdVrNKyjPki7kZqHB4vo9T9doaIObkazw6QlhICejc?=
+ =?us-ascii?Q?5+CJfd24c2TO/qu45IOSvt+vs7Sge59AOeq8yqH4cCmNaOWfgDDv8NEYmY21?=
+ =?us-ascii?Q?TeyRXeulKNmIvjONUCagPPW1ylTuLpF4gVKFMr/K9PhSESnXYhIg3oxoEh9l?=
+ =?us-ascii?Q?J0yYvmh0KhWxZNtJd8ys/NZuxfDaS7w240MmLpKNNwByw6pWACd8j5hPoIhj?=
+ =?us-ascii?Q?ZT6omQhw11oyyhc2EUgg1wWnb4b0d+pbgNvhpUlLem/zJJYmj+z01AAEVgdC?=
+ =?us-ascii?Q?Fg01kidEPQjFJ5f71UaSAcGVKh9PIagLQfTenfZbH+kFBNpiAndbCGdDMRNk?=
+ =?us-ascii?Q?Z9Fys1MfaNM/iVRlQXV8W4dUgjf9uqh8T4c/P5Kmzwlj3lhgzGY9rj70yV5K?=
+ =?us-ascii?Q?Fo2oXEOi85x6QuvOzZNqR63nOk/UumQNmitP3c2XYopfbr72hnn3PrV0+mcG?=
+ =?us-ascii?Q?HprbeHCYpUPTcCFnFJTfahLyBELz0tfNwl7nto9BsG4o8LOK6zxDpc/0OU2H?=
+ =?us-ascii?Q?04S8dMUogLD9arfZOwk4A/fmwIylf4GtgSWVbuoswYD7kKmDaw46UFnRlb46?=
+ =?us-ascii?Q?dVgYXNbqJmqz5KoZMRLJbJ9m2RhP+sUDsKoryiXkqKAFZoj7MQQRsbXISHXW?=
+ =?us-ascii?Q?FLjqCgT1zIW9nDzLhnUaLT/BM4StniktazhR3cf10agyHXmA/yF/tt9EjAVd?=
+ =?us-ascii?Q?eeRkszwafMzSwydof7m16ELrS97icU/+XIvriyU12z+jDc7oK61oy3QcFs7G?=
+ =?us-ascii?Q?BPg14R/5izID9uC13VMyResB9L3lMsszKev524n2BKtz1PiBgph6yIYrMUVL?=
+ =?us-ascii?Q?IJ0CXY/jvV72HS5KxjOW5cL5do9db2K3+lQXALuaxSg43Le063u/ZLgjS0SZ?=
+ =?us-ascii?Q?quE1MT9jdy7L0IfhWe+DtT3GuZKycDmRoWy94EqsaTykWifMVPymSjxEj69Y?=
+ =?us-ascii?Q?slX9sLt8PK4PhSTD9+kcDrZZMX2ko32h2r6vb17U65X16Zk+2edCENex/tqU?=
+ =?us-ascii?Q?2vPiwq8gw5xGH4JgncXdexzSlPxe4xPntB3A6m7AzgDzZ2cvi7YHG7w4t9Cm?=
+ =?us-ascii?Q?sRzexf+K/pzP5xbhsdgM30Gn9VXkpm96u3qQ73A3oP0nLsYkQgrY8j2ZrXfw?=
+ =?us-ascii?Q?eH+Tec+HfiBp1sVXrh8=3D?=
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8a820525-5b93-4022-ac92-08dcc876102e
+X-MS-Exchange-CrossTenant-Network-Message-Id: b26b370b-99e2-4ccd-c4a4-08dcc87662f1
 X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Aug 2024 22:00:58.4215
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Aug 2024 22:03:17.2753
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: tuF9PzN8jGB8u8Z8aDqIyUPglGUkJAcXQMjq67irlUTahmXzKOcMzoszj7p1KUh3i8JKTeXtr2eAy/SSrslEYQ==
+X-MS-Exchange-CrossTenant-UserPrincipalName: +RqXNOXN4DeTwf8S0ouZnR5gukt4BPY4M5RI7VebwtOC7I48qbjwrb0jbqyKsdsCcvauQK2cPeQ7B/sXehKDlQ==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM8PR04MB7972
 
-On Tue, Jul 30, 2024 at 10:56:10AM -0400, Frank Li wrote:
-> Move post_rcs_wait into struct imx_wdt_hw_feature to simple code logic for
-> difference compatible string.
+On Tue, Jul 09, 2024 at 04:23:02PM -0400, Frank Li wrote:
+> Pass down fsl_mc_data in help function ddr_in32() and ddr_out32() to
+> prepare add iMX9 support. iMX9 have a little difference register layout.
 >
-> i.MX93 watchdog needn't wait 2.5 clocks after RCS is done. So needn't set
-> post_rcs_wait.
+> No functional change.
 >
-> Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-> Signed-off-by: Alice Guo <alice.guo@nxp.com>
-> Reviewed-by: Ye Li <ye.li@nxp.com>
 > Signed-off-by: Frank Li <Frank.Li@nxp.com>
 > ---
 
@@ -171,87 +177,223 @@ Ping?
 
 Frank
 
-> Change from v4 to v5
-> - move compatible string 8ulp under 7ulp
-> Chagne from v3 to v4:
-> - Go back to v2 according to Guenter's feedback
-> Change from v2 to v3:
-> - Set post_rcs_wait to false explicitly to maintain code consistency
-> - Add Guenter review tag.
-> Change from v1 to v2:
-> - Combine to one patch
-> ---
->  drivers/watchdog/imx7ulp_wdt.c | 21 +++++++++------------
->  1 file changed, 9 insertions(+), 12 deletions(-)
+>  drivers/edac/fsl_ddr_edac.c | 62 ++++++++++++++++++++++++---------------------
+>  1 file changed, 33 insertions(+), 29 deletions(-)
 >
-> diff --git a/drivers/watchdog/imx7ulp_wdt.c b/drivers/watchdog/imx7ulp_wdt.c
-> index 94914a22daff7..0f13a30533574 100644
-> --- a/drivers/watchdog/imx7ulp_wdt.c
-> +++ b/drivers/watchdog/imx7ulp_wdt.c
-> @@ -55,6 +55,7 @@ MODULE_PARM_DESC(nowayout, "Watchdog cannot be stopped once started (default="
+> diff --git a/drivers/edac/fsl_ddr_edac.c b/drivers/edac/fsl_ddr_edac.c
+> index d148d262d0d4d..a7982370e2381 100644
+> --- a/drivers/edac/fsl_ddr_edac.c
+> +++ b/drivers/edac/fsl_ddr_edac.c
+> @@ -35,13 +35,17 @@ static u32 orig_ddr_err_disable;
+>  static u32 orig_ddr_err_sbe;
+>  static bool little_endian;
 >
->  struct imx_wdt_hw_feature {
->  	bool prescaler_enable;
-> +	bool post_rcs_wait;
->  	u32 wdog_clock_rate;
->  };
->
-> @@ -62,7 +63,6 @@ struct imx7ulp_wdt_device {
->  	struct watchdog_device wdd;
->  	void __iomem *base;
->  	struct clk *clk;
-> -	bool post_rcs_wait;
->  	bool ext_reset;
->  	const struct imx_wdt_hw_feature *hw;
->  };
-> @@ -95,7 +95,7 @@ static int imx7ulp_wdt_wait_rcs(struct imx7ulp_wdt_device *wdt)
->  		ret = -ETIMEDOUT;
->
->  	/* Wait 2.5 clocks after RCS done */
-> -	if (wdt->post_rcs_wait)
-> +	if (wdt->hw->post_rcs_wait)
->  		usleep_range(wait_min, wait_min + 2000);
->
->  	return ret;
-> @@ -334,15 +334,6 @@ static int imx7ulp_wdt_probe(struct platform_device *pdev)
->  	/* The WDOG may need to do external reset through dedicated pin */
->  	imx7ulp_wdt->ext_reset = of_property_read_bool(dev->of_node, "fsl,ext-reset-output");
->
-> -	imx7ulp_wdt->post_rcs_wait = true;
-> -	if (of_device_is_compatible(dev->of_node,
-> -				    "fsl,imx8ulp-wdt")) {
-> -		dev_info(dev, "imx8ulp wdt probe\n");
-> -		imx7ulp_wdt->post_rcs_wait = false;
-> -	} else {
-> -		dev_info(dev, "imx7ulp wdt probe\n");
-> -	}
-> -
->  	wdog = &imx7ulp_wdt->wdd;
->  	wdog->info = &imx7ulp_wdt_info;
->  	wdog->ops = &imx7ulp_wdt_ops;
-> @@ -403,6 +394,12 @@ static const struct dev_pm_ops imx7ulp_wdt_pm_ops = {
->  static const struct imx_wdt_hw_feature imx7ulp_wdt_hw = {
->  	.prescaler_enable = false,
->  	.wdog_clock_rate = 1000,
-> +	.post_rcs_wait = true,
-> +};
+> -static inline u32 ddr_in32(void __iomem *addr)
+> +static inline u32 ddr_in32(struct fsl_mc_pdata *pdata, unsigned int off)
+>  {
+> +	void __iomem *addr = pdata->mc_vbase + off;
 > +
-> +static const struct imx_wdt_hw_feature imx8ulp_wdt_hw = {
-> +	.prescaler_enable = false,
-> +	.wdog_clock_rate = 1000,
->  };
+>  	return little_endian ? ioread32(addr) : ioread32be(addr);
+>  }
 >
->  static const struct imx_wdt_hw_feature imx93_wdt_hw = {
-> @@ -411,8 +408,8 @@ static const struct imx_wdt_hw_feature imx93_wdt_hw = {
->  };
+> -static inline void ddr_out32(void __iomem *addr, u32 value)
+> +static inline void ddr_out32(struct fsl_mc_pdata *pdata, unsigned int off, u32 value)
+>  {
+> +	void __iomem *addr = pdata->mc_vbase + off;
+> +
+>  	if (little_endian)
+>  		iowrite32(value, addr);
+>  	else
+> @@ -60,7 +64,7 @@ static ssize_t fsl_mc_inject_data_hi_show(struct device *dev,
+>  	struct mem_ctl_info *mci = to_mci(dev);
+>  	struct fsl_mc_pdata *pdata = mci->pvt_info;
+>  	return sprintf(data, "0x%08x",
+> -		       ddr_in32(pdata->mc_vbase + FSL_MC_DATA_ERR_INJECT_HI));
+> +		       ddr_in32(pdata, FSL_MC_DATA_ERR_INJECT_HI));
+>  }
 >
->  static const struct of_device_id imx7ulp_wdt_dt_ids[] = {
-> -	{ .compatible = "fsl,imx8ulp-wdt", .data = &imx7ulp_wdt_hw, },
->  	{ .compatible = "fsl,imx7ulp-wdt", .data = &imx7ulp_wdt_hw, },
-> +	{ .compatible = "fsl,imx8ulp-wdt", .data = &imx8ulp_wdt_hw, },
->  	{ .compatible = "fsl,imx93-wdt", .data = &imx93_wdt_hw, },
->  	{ /* sentinel */ }
->  };
+>  static ssize_t fsl_mc_inject_data_lo_show(struct device *dev,
+> @@ -70,7 +74,7 @@ static ssize_t fsl_mc_inject_data_lo_show(struct device *dev,
+>  	struct mem_ctl_info *mci = to_mci(dev);
+>  	struct fsl_mc_pdata *pdata = mci->pvt_info;
+>  	return sprintf(data, "0x%08x",
+> -		       ddr_in32(pdata->mc_vbase + FSL_MC_DATA_ERR_INJECT_LO));
+> +		       ddr_in32(pdata, FSL_MC_DATA_ERR_INJECT_LO));
+>  }
+>
+>  static ssize_t fsl_mc_inject_ctrl_show(struct device *dev,
+> @@ -80,7 +84,7 @@ static ssize_t fsl_mc_inject_ctrl_show(struct device *dev,
+>  	struct mem_ctl_info *mci = to_mci(dev);
+>  	struct fsl_mc_pdata *pdata = mci->pvt_info;
+>  	return sprintf(data, "0x%08x",
+> -		       ddr_in32(pdata->mc_vbase + FSL_MC_ECC_ERR_INJECT));
+> +		       ddr_in32(pdata, FSL_MC_ECC_ERR_INJECT));
+>  }
+>
+>  static ssize_t fsl_mc_inject_data_hi_store(struct device *dev,
+> @@ -97,7 +101,7 @@ static ssize_t fsl_mc_inject_data_hi_store(struct device *dev,
+>  		if (rc)
+>  			return rc;
+>
+> -		ddr_out32(pdata->mc_vbase + FSL_MC_DATA_ERR_INJECT_HI, val);
+> +		ddr_out32(pdata, FSL_MC_DATA_ERR_INJECT_HI, val);
+>  		return count;
+>  	}
+>  	return 0;
+> @@ -117,7 +121,7 @@ static ssize_t fsl_mc_inject_data_lo_store(struct device *dev,
+>  		if (rc)
+>  			return rc;
+>
+> -		ddr_out32(pdata->mc_vbase + FSL_MC_DATA_ERR_INJECT_LO, val);
+> +		ddr_out32(pdata, FSL_MC_DATA_ERR_INJECT_LO, val);
+>  		return count;
+>  	}
+>  	return 0;
+> @@ -137,7 +141,7 @@ static ssize_t fsl_mc_inject_ctrl_store(struct device *dev,
+>  		if (rc)
+>  			return rc;
+>
+> -		ddr_out32(pdata->mc_vbase + FSL_MC_ECC_ERR_INJECT, val);
+> +		ddr_out32(pdata, FSL_MC_ECC_ERR_INJECT, val);
+>  		return count;
+>  	}
+>  	return 0;
+> @@ -286,7 +290,7 @@ static void fsl_mc_check(struct mem_ctl_info *mci)
+>  	int bad_data_bit;
+>  	int bad_ecc_bit;
+>
+> -	err_detect = ddr_in32(pdata->mc_vbase + FSL_MC_ERR_DETECT);
+> +	err_detect = ddr_in32(pdata, FSL_MC_ERR_DETECT);
+>  	if (!err_detect)
+>  		return;
+>
+> @@ -295,14 +299,14 @@ static void fsl_mc_check(struct mem_ctl_info *mci)
+>
+>  	/* no more processing if not ECC bit errors */
+>  	if (!(err_detect & (DDR_EDE_SBE | DDR_EDE_MBE))) {
+> -		ddr_out32(pdata->mc_vbase + FSL_MC_ERR_DETECT, err_detect);
+> +		ddr_out32(pdata, FSL_MC_ERR_DETECT, err_detect);
+>  		return;
+>  	}
+>
+> -	syndrome = ddr_in32(pdata->mc_vbase + FSL_MC_CAPTURE_ECC);
+> +	syndrome = ddr_in32(pdata, FSL_MC_CAPTURE_ECC);
+>
+>  	/* Mask off appropriate bits of syndrome based on bus width */
+> -	bus_width = (ddr_in32(pdata->mc_vbase + FSL_MC_DDR_SDRAM_CFG) &
+> +	bus_width = (ddr_in32(pdata, FSL_MC_DDR_SDRAM_CFG) &
+>  		     DSC_DBW_MASK) ? 32 : 64;
+>  	if (bus_width == 64)
+>  		syndrome &= 0xff;
+> @@ -310,8 +314,8 @@ static void fsl_mc_check(struct mem_ctl_info *mci)
+>  		syndrome &= 0xffff;
+>
+>  	err_addr = make64(
+> -		ddr_in32(pdata->mc_vbase + FSL_MC_CAPTURE_EXT_ADDRESS),
+> -		ddr_in32(pdata->mc_vbase + FSL_MC_CAPTURE_ADDRESS));
+> +		ddr_in32(pdata, FSL_MC_CAPTURE_EXT_ADDRESS),
+> +		ddr_in32(pdata, FSL_MC_CAPTURE_ADDRESS));
+>  	pfn = err_addr >> PAGE_SHIFT;
+>
+>  	for (row_index = 0; row_index < mci->nr_csrows; row_index++) {
+> @@ -320,8 +324,8 @@ static void fsl_mc_check(struct mem_ctl_info *mci)
+>  			break;
+>  	}
+>
+> -	cap_high = ddr_in32(pdata->mc_vbase + FSL_MC_CAPTURE_DATA_HI);
+> -	cap_low = ddr_in32(pdata->mc_vbase + FSL_MC_CAPTURE_DATA_LO);
+> +	cap_high = ddr_in32(pdata, FSL_MC_CAPTURE_DATA_HI);
+> +	cap_low = ddr_in32(pdata, FSL_MC_CAPTURE_DATA_LO);
+>
+>  	/*
+>  	 * Analyze single-bit errors on 64-bit wide buses
+> @@ -367,7 +371,7 @@ static void fsl_mc_check(struct mem_ctl_info *mci)
+>  				     row_index, 0, -1,
+>  				     mci->ctl_name, "");
+>
+> -	ddr_out32(pdata->mc_vbase + FSL_MC_ERR_DETECT, err_detect);
+> +	ddr_out32(pdata, FSL_MC_ERR_DETECT, err_detect);
+>  }
+>
+>  static irqreturn_t fsl_mc_isr(int irq, void *dev_id)
+> @@ -376,7 +380,7 @@ static irqreturn_t fsl_mc_isr(int irq, void *dev_id)
+>  	struct fsl_mc_pdata *pdata = mci->pvt_info;
+>  	u32 err_detect;
+>
+> -	err_detect = ddr_in32(pdata->mc_vbase + FSL_MC_ERR_DETECT);
+> +	err_detect = ddr_in32(pdata, FSL_MC_ERR_DETECT);
+>  	if (!err_detect)
+>  		return IRQ_NONE;
+>
+> @@ -396,7 +400,7 @@ static void fsl_ddr_init_csrows(struct mem_ctl_info *mci)
+>  	u32 cs_bnds;
+>  	int index;
+>
+> -	sdram_ctl = ddr_in32(pdata->mc_vbase + FSL_MC_DDR_SDRAM_CFG);
+> +	sdram_ctl = ddr_in32(pdata, FSL_MC_DDR_SDRAM_CFG);
+>
+>  	sdtype = sdram_ctl & DSC_SDTYPE_MASK;
+>  	if (sdram_ctl & DSC_RD_EN) {
+> @@ -444,7 +448,7 @@ static void fsl_ddr_init_csrows(struct mem_ctl_info *mci)
+>  		csrow = mci->csrows[index];
+>  		dimm = csrow->channels[0]->dimm;
+>
+> -		cs_bnds = ddr_in32(pdata->mc_vbase + FSL_MC_CS_BNDS_0 +
+> +		cs_bnds = ddr_in32(pdata, FSL_MC_CS_BNDS_0 +
+>  				   (index * FSL_MC_CS_BNDS_OFS));
+>
+>  		start = (cs_bnds & 0xffff0000) >> 16;
+> @@ -558,11 +562,11 @@ int fsl_mc_err_probe(struct platform_device *op)
+>  	fsl_ddr_init_csrows(mci);
+>
+>  	/* store the original error disable bits */
+> -	orig_ddr_err_disable = ddr_in32(pdata->mc_vbase + FSL_MC_ERR_DISABLE);
+> -	ddr_out32(pdata->mc_vbase + FSL_MC_ERR_DISABLE, 0);
+> +	orig_ddr_err_disable = ddr_in32(pdata, FSL_MC_ERR_DISABLE);
+> +	ddr_out32(pdata, FSL_MC_ERR_DISABLE, 0);
+>
+>  	/* clear all error bits */
+> -	ddr_out32(pdata->mc_vbase + FSL_MC_ERR_DETECT, ~0);
+> +	ddr_out32(pdata, FSL_MC_ERR_DETECT, ~0);
+>
+>  	res = edac_mc_add_mc_with_groups(mci, fsl_ddr_dev_groups);
+>  	if (res) {
+> @@ -571,15 +575,15 @@ int fsl_mc_err_probe(struct platform_device *op)
+>  	}
+>
+>  	if (edac_op_state == EDAC_OPSTATE_INT) {
+> -		ddr_out32(pdata->mc_vbase + FSL_MC_ERR_INT_EN,
+> +		ddr_out32(pdata, FSL_MC_ERR_INT_EN,
+>  			  DDR_EIE_MBEE | DDR_EIE_SBEE);
+>
+>  		/* store the original error management threshold */
+> -		orig_ddr_err_sbe = ddr_in32(pdata->mc_vbase +
+> +		orig_ddr_err_sbe = ddr_in32(pdata,
+>  					    FSL_MC_ERR_SBE) & 0xff0000;
+>
+>  		/* set threshold to 1 error per interrupt */
+> -		ddr_out32(pdata->mc_vbase + FSL_MC_ERR_SBE, 0x10000);
+> +		ddr_out32(pdata, FSL_MC_ERR_SBE, 0x10000);
+>
+>  		/* register interrupts */
+>  		pdata->irq = platform_get_irq(op, 0);
+> @@ -620,12 +624,12 @@ void fsl_mc_err_remove(struct platform_device *op)
+>  	edac_dbg(0, "\n");
+>
+>  	if (edac_op_state == EDAC_OPSTATE_INT) {
+> -		ddr_out32(pdata->mc_vbase + FSL_MC_ERR_INT_EN, 0);
+> +		ddr_out32(pdata, FSL_MC_ERR_INT_EN, 0);
+>  	}
+>
+> -	ddr_out32(pdata->mc_vbase + FSL_MC_ERR_DISABLE,
+> +	ddr_out32(pdata, FSL_MC_ERR_DISABLE,
+>  		  orig_ddr_err_disable);
+> -	ddr_out32(pdata->mc_vbase + FSL_MC_ERR_SBE, orig_ddr_err_sbe);
+> +	ddr_out32(pdata, FSL_MC_ERR_SBE, orig_ddr_err_sbe);
+>
+>  	edac_mc_del_mc(&op->dev);
+>  	edac_mc_free(mci);
+>
 > --
 > 2.34.1
 >
