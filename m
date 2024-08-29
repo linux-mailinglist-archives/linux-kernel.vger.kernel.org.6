@@ -1,183 +1,125 @@
-Return-Path: <linux-kernel+bounces-306171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DF43963A2B
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:00:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DB23963A2E
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:00:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 333501C23DA2
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 06:00:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EBF01F2136C
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 06:00:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72F3B14B967;
-	Thu, 29 Aug 2024 06:00:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1C1A157485;
+	Thu, 29 Aug 2024 06:00:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kGse8ehH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ucr.edu header.i=@ucr.edu header.b="epT9/G+r";
+	dkim=pass (1024-bit key) header.d=ucr.edu header.i=@ucr.edu header.b="jytuvKZl"
+Received: from mx6.ucr.edu (mx.ucr.edu [138.23.62.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86DC21487F1;
-	Thu, 29 Aug 2024 05:59:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA54314AD2B
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 06:00:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=138.23.62.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724911199; cv=none; b=deb+M778SCpJBt6L+YRzl++JDfC/S3R4WRJEnXmeHDXTOo9LKv6SFUZm+wU9JH+WyzOFIpFkvVfXOSmBo2Tv/9d8cuuWo8psUkeZzX4lBj4oxm70HZXIJR6jH3bSQEzfZUx4/0LYECibJNY+/F57cqniiwG0UquJOUDaoOB5x+s=
+	t=1724911217; cv=none; b=pKvn1GfxQZTf4pic8xi4vARu4WKou0TyBNO36QMZ36ljbcgqTXJ7jfpFUWQ69mRDRduiOKM2vjuqf93KvLpjzOJunydtzh0JOonhEectLtd+zzhGX60NAxOy06T2nlI0VngD0xai//z0vQjq+WvZa6fw9ClCyVUfKba8SoKik58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724911199; c=relaxed/simple;
-	bh=or9q8znWmsvhx/j2aAse3wsrDXtSIeQ3YTWHYshzmHc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=h+amx7WIzjNahaBQkVjyr0MQvx4NDnwJUc4ZME8LPr4eX6LMbj1e4wzu/1Z6xYkSBSG7pGX85bCZuuzgWAmAXXB+1S8tQqhYvbP2VUK4xhercEWrpLqpagFABwxOJ3sh0tUNKCKBUKT4wfAXY/Cv6vgUvy2VhypvBu4T/ydD1gU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kGse8ehH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46F55C4CEC1;
-	Thu, 29 Aug 2024 05:59:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724911199;
-	bh=or9q8znWmsvhx/j2aAse3wsrDXtSIeQ3YTWHYshzmHc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=kGse8ehHwVLDFq3qY6Hi+JwfPfaHPU4q8GdCZnnnVzrXeoQqOVUVsnPLrqLRbw/wJ
-	 ClD5SSAsILP5fThXiau2NnbcH5o2uLy9+70rAbcoWN4fZpYC8J50iEP7pW/BNZLBAl
-	 /jd8OegsxlYqiviXh0RjYwHAMP6xOhkGcl4T0DT9Nl8aWDdTW+HHRS1ItLknEjgu9h
-	 MxL8PRPFDUgwSf76jfv8cuhzzwVodMB/w6zTvkN2Fy8/o7CQuHs4rzR3rI/r4uCIkv
-	 1x0qufl9VShpp43Ef03PMb6xzlIzbxf7zAPUk4c36cDvTn0SnrH3HCrawLmEl9RRNZ
-	 2igmKlmNSNNUA==
-Message-ID: <606dc93b-9433-46bf-8c38-1d07b3677abb@kernel.org>
-Date: Thu, 29 Aug 2024 07:59:52 +0200
+	s=arc-20240116; t=1724911217; c=relaxed/simple;
+	bh=c5+BxaXWvRBxDUcjcZvL61zh83/XIf0pWGMRioPHBrM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=J8f68XwUfq4ZaXZ62Pdl0ahvne2IAqgs/K8zifnsJFNqVHiPayajF4Czix0l86TDedvRkoM5v18RgzMpZ7p2cbt76nnIq0OI0yEjrayw6gPFGTdi1iRp6vCQSacwKYrijDRCzgf+LocHJPlkS6qEtlK9mcc8IXPAWJnZFx+TPsY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ucr.edu; spf=pass smtp.mailfrom=ucr.edu; dkim=pass (2048-bit key) header.d=ucr.edu header.i=@ucr.edu header.b=epT9/G+r; dkim=pass (1024-bit key) header.d=ucr.edu header.i=@ucr.edu header.b=jytuvKZl; arc=none smtp.client-ip=138.23.62.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ucr.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucr.edu
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=ucr.edu; i=@ucr.edu; q=dns/txt; s=selector3;
+  t=1724911215; x=1756447215;
+  h=dkim-signature:x-google-dkim-signature:
+   x-forwarded-encrypted:x-gm-message-state:
+   x-google-smtp-source:mime-version:references:in-reply-to:
+   from:date:message-id:subject:to:cc:content-type:
+   content-transfer-encoding:x-cse-connectionguid:
+   x-cse-msgguid;
+  bh=c5+BxaXWvRBxDUcjcZvL61zh83/XIf0pWGMRioPHBrM=;
+  b=epT9/G+rMJ8mREb+i27CPEuLL7Y6aIdvae5/7WCVcLwrekMLjI8jrJ+c
+   U5d3Ue0WZEgw+pn4X/NRXAk2SSmeWBVEuzrxe9Qk0LQXJA9UMsQUVDUSZ
+   jErpawWSzBf3eqVEeaLktIEwylrfhUbfOhPAySOxN9cv7SSrFRuR11jPX
+   JNJW9BOuka5CK5HmgzSLscJIM9sLztBGkDwousHPzIyaYdgvx8FdaFcXT
+   WGg8R7lObiTsmipae6eU60VByJ7zkWyxSYtUx29xsTXRDqKtBGcndsP5K
+   0K9V3277ws24hpogPnmL9JwTGE1yNlOOCLwV1JXO3LZYkFIrgzHbZzrxm
+   w==;
+X-CSE-ConnectionGUID: 68M9jnEMQR6+I6wSbF+hfw==
+X-CSE-MsgGUID: WWKWjqRCR8+KkR1r+CMMew==
+Received: from mail-oo1-f69.google.com ([209.85.161.69])
+  by smtpmx6.ucr.edu with ESMTP/TLS/TLS_AES_256_GCM_SHA384; 28 Aug 2024 23:00:11 -0700
+Received: by mail-oo1-f69.google.com with SMTP id 006d021491bc7-5d5ffdc9ed9so429642eaf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 23:00:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ucr.edu; s=rmail; t=1724911211; x=1725516011; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=c5+BxaXWvRBxDUcjcZvL61zh83/XIf0pWGMRioPHBrM=;
+        b=jytuvKZlUOMeiYJnv1EfA2q7BIvZIREcrF8X3yTebJ5cmI00Ln9uJHGKQp2uWoHBRX
+         /6q78ByY6R/V7YF8dsTuGK6ZhoC/SswRAl1h0EHKe4rU4BarERXBbxTEp0OuijXMBJHh
+         ru91xnuNBrh34OnOhb1XXQJA1RQFW4XEIgRcs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724911211; x=1725516011;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=c5+BxaXWvRBxDUcjcZvL61zh83/XIf0pWGMRioPHBrM=;
+        b=NHlm6wyX6oiiICirI2809o+UXxTPMJnd8DBLphtM55TT80GnhtD6UqHj0BkAL3BYkO
+         iriZSrZ3IPd9YqX8K15GlNWH4wUeydyu8DNlTJO53/F8KNDO+An7Kl1QTZ9+LxPKZA8J
+         y2HBbQf3+waKbb7QWVq8obMf1nBMeSJAshvlJmxN6/dwKpCtHuUWfyYkeB6KMN9v6Hoh
+         GC5LDOxjejZC37MKmyu1xPbpWtGhFsEjLAmzUVGWkKxBK3YNoXiMpLifPNgOoDnKix5z
+         ajFIUgtz85DdrVGjqYLl+psFr8oo2dDzrV/PbuKQhN3Pr6t7wCG8nytxJ2EQfWVrWzNU
+         YVsA==
+X-Forwarded-Encrypted: i=1; AJvYcCWhLvqs2cJN8Lz+MxbacavQOidkZoXKP6YlNxkf0FmGsm7JqHy79q6MzeT5UtcY5veAv0HKL4acOaL4eMY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPaCmjYBszyUDjf7uf798CvANdM8X+9s8FnPeuQrdtdYgsKQuu
+	0xG+5k2JkKRNeZnW7VjbRJhgyoyFHI/uGd1najJbzAMh5YiP8+kRCx5yIB8gwS8S12YJ2H9d8tb
+	Xvw6kMjJS/ZOk77cRShpfK63lEBMqasROV9VnEtTcw8Y0rW+LWOHTSf/NTY7N81goJUm6kUfcUr
+	qeZNQzuCEjaF92cjIN6mrAbdzw/PuBrirI6MemRw==
+X-Received: by 2002:a05:6820:2295:b0:5dc:a733:d98a with SMTP id 006d021491bc7-5df980cf733mr2263967eaf.7.1724911211517;
+        Wed, 28 Aug 2024 23:00:11 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG5thjR14Ks+6judAwL4nDPvcXZjzFPCcbYGPrB7DoyTxw6g4i4UpkLaTzBuGzQKTfzqhlcGKfYt1vxkUxvhM0=
+X-Received: by 2002:a05:6820:2295:b0:5dc:a733:d98a with SMTP id
+ 006d021491bc7-5df980cf733mr2263936eaf.7.1724911211146; Wed, 28 Aug 2024
+ 23:00:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/9] dt-bindings: soc: renesas: Document RZ/V2H EVK
- board
-To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
- Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-renesas-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Biju Das <biju.das.jz@bp.renesas.com>,
- Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
- Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20240828124134.188864-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20240828124134.188864-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <28106585-59d1-42c4-af56-89820b15bdfb@kernel.org>
- <CA+V-a8tGBQTNLEBBKTi0Gy47CsdFpQKQkwP02omSWTt8DveqGA@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <CA+V-a8tGBQTNLEBBKTi0Gy47CsdFpQKQkwP02omSWTt8DveqGA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <CALAgD-4uup-u-7rVLpFqKWqeVVVnf5-88vqHOKD-TnGeYmHbQw@mail.gmail.com>
+ <202408281812.3F765DF@keescook> <CALAgD-6CptEMjtkwEfSZyzPMwhbJ_965cCSb5B9pRcgxjD_Zkg@mail.gmail.com>
+ <BA3EA925-5E5E-4791-B820-83A238A2E458@kernel.org>
+In-Reply-To: <BA3EA925-5E5E-4791-B820-83A238A2E458@kernel.org>
+From: Yu Hao <yhao016@ucr.edu>
+Date: Wed, 28 Aug 2024 23:00:01 -0700
+Message-ID: <CA+UBctBGbAc5rDV97DaJGJopqTKkeuC8hHiMrN6irt84r0NoRw@mail.gmail.com>
+Subject: Re: BUG: WARNING in retire_sysctl_set
+To: Kees Cook <kees@kernel.org>
+Cc: Xingyu Li <xli399@ucr.edu>, mcgrof@kernel.org, j.granados@samsung.com, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Waiman Long <longman@redhat.com>, 
+	Sven Eckelmann <sven@narfation.org>, Thomas Gleixner <tglx@linutronix.de>, anna-maria@linutronix.de, 
+	frederic@kernel.org, netdev@vger.kernel.org, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Tejun Heo <tj@kernel.org>, 
+	Kuniyuki Iwashima <kuniyu@amazon.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 28/08/2024 22:09, Lad, Prabhakar wrote:
-> Hi Krzysztof,
-> 
-> On Wed, Aug 28, 2024 at 3:34 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>
->> On 28/08/2024 14:41, Prabhakar wrote:
->>> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->>>
->>> Add "renesas,rzv2h-evk" which targets the Renesas RZ/V2H ("R9A09G057")
->>> EVK board.
->>>
->>> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->>> Acked-by: Rob Herring (Arm) <robh@kernel.org>
->>> ---
->>> Hi Rob, I have restored your Ack with the below change, I hope that's OK.
->>>
->>> Cheers, Prabhakar
->>>
->>> v1->v4
->>> - Updated 'renesas,gp-evk # GP-EVK' -> 'renesas,rzv2h-evk # RZ/V2H EVK'
->>> - Updated commit message
->>>
->>> v1: https://patchwork.kernel.org/project/linux-renesas-soc/patch/20240724094707.569596-2-prabhakar.mahadev-lad.rj@bp.renesas.com/
->>> ---
->>>  Documentation/devicetree/bindings/soc/renesas/renesas.yaml | 2 ++
->>>  1 file changed, 2 insertions(+)
->>>
->>> diff --git a/Documentation/devicetree/bindings/soc/renesas/renesas.yaml b/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
->>> index d582992aaf0e..b7acb65bdecd 100644
->>> --- a/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
->>> +++ b/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
->>> @@ -527,6 +527,8 @@ properties:
->>>
->>>        - description: RZ/V2H(P) (R9A09G057)
->>>          items:
->>> +          - enum:
->>> +              - renesas,rzv2h-evk # RZ/V2H EVK
->>>            - enum:
->>
->> This is unusual pattern for me, but maybe I miss here something. Commit
->> message does not explain why EXISTING boards needs to be changed. What
->> does it mean "rzv2h-evk targets evk board"? How does this work?
->>
-> This commit is not changing the existing boards. The entries below the
-> addition are the RZ/V2H(P) SoC variants. Here we are just adding the
-> board entry which is based on RZ/V2H SoC [0].
+On Wed, Aug 28, 2024 at 10:33=E2=80=AFPM Kees Cook <kees@kernel.org> wrote:
+> That's excellent that you've developed better templates! Can you submit t=
+hese to syzkaller upstream? Then the automated fuzzing CI dashboard will be=
+nefit (and save you the work of running and reporting the new finds).
+Yes, we are also working on this.
+And it also takes some time to figure out the differences in the
+syscall descriptions and to satisfy syzkaller's style requirements.
+So we are still working on the patch of syscall descriptions for Syzkaller.
 
-Then it is even more surprising to see there entries which were not
-boards. What's in this file in such case?
-
-Which DTS file it matches?
-
-> In the board DTS file it will be used as "compatible =
-> "renesas,rzv2h-evk", "renesas,r9a09g057h44", "renesas,r9a09g057";",
-> see [1].
-> 
->                ^^                              ^^
->                  ^^
-> 
->               Board variant             SoC  variant
->     Generic RZ/V2H SoC
-> 
->> You have EVK board and now it is not valid anymore?
->>
-> No this is not the case.
-Krzysztof
-
+Once again, we apologize for our mistakes of some helpless report
+emails and thank you for your reminder and understanding.
 
