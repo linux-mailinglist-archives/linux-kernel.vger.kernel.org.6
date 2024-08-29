@@ -1,164 +1,108 @@
-Return-Path: <linux-kernel+bounces-307617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6681796506A
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 22:01:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE4F396506E
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 22:03:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C19A01F247DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 20:01:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62B8B282FA7
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 20:03:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A0391BA870;
-	Thu, 29 Aug 2024 20:01:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7BE91B8E9F;
+	Thu, 29 Aug 2024 20:03:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dNJ5CPdc"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nkGKjMGM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B896214A0B2
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 20:01:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF1F01311B5
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 20:03:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724961682; cv=none; b=bI8rxatJRT/MuiKuT5UgHE5WciF45r3y2R/lSnEz1/WdbYISJAFFyQi9uJmOL7lAeAf41hQ0AaA6SacHfrxSokJiPVNkW51/JUNDdzcY57qKCGu5hgMTb0f2P8ISNccSfZYUjZBVVsNVk3bNXu+NjOomyaewS/2lzA2134sozVg=
+	t=1724961822; cv=none; b=g2CTUAsrhrMO7zc/wOqxuPQsyfIjlcmEg4okGMLFglQy2rn8lZ9QH0i4aE+roVVi93Q5BJxzJHIIT2m8E96bVnkqcw6/T9ul+MxBlPAVsrdjBEJrxZ/6pvXLov9lXlkPiKYldRpQCuXLCK7L5Ro5YnBsy8/UnNUmnTs2k7WkJUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724961682; c=relaxed/simple;
-	bh=PMHLABp3MzC3BY1kwsZKSYYX95t3aAZeY2Evqq7KAMI=;
+	s=arc-20240116; t=1724961822; c=relaxed/simple;
+	bh=jwuvKMrY5cTod7e2LGlDDYGRX/xeSQPNePjeIZJkTsA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q5a/XLgLD5mX2awwtKZGKDZUDXcY17fOG3RbPx0JpAQX+9E13vv0eouvQ7v3wQALJcj/Ftb1QMKxvLMWdlIZX+YRk8axL6Ab+WHjhVv3XVkTTQ5/HMAmP7YU/xmFXgfXAQ49abKI+Gx7bLBjQFkt7ff1jiatH61gTQvOrDBwqEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dNJ5CPdc; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724961679;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=a6YgJDRtCG6NqNHvxBGwLph56rsiY6btQEOiIVWjksU=;
-	b=dNJ5CPdc+6sUvDd4NHF+mL7Q6DMtjQ+UODMboqtOyvTxZqF4UakKnCtHcJ+LdXwUr9EgYT
-	E2+OCi2C2NNZHD/odLYP2RwonbJYHbUd3Kaa76ZMb2SmyUiP7Rz1O24CJp7ZHUe/EY3mVe
-	n5qNXFr3kTJdCn2QIZ/9C3r/fYgzeYU=
-Received: from mail-oo1-f72.google.com (mail-oo1-f72.google.com
- [209.85.161.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-517-DsrhZO2UMhObV1eIDn54hw-1; Thu, 29 Aug 2024 16:01:18 -0400
-X-MC-Unique: DsrhZO2UMhObV1eIDn54hw-1
-Received: by mail-oo1-f72.google.com with SMTP id 006d021491bc7-5df993bfe56so1098299eaf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 13:01:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724961677; x=1725566477;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=a6YgJDRtCG6NqNHvxBGwLph56rsiY6btQEOiIVWjksU=;
-        b=NLmWyFGfeh6am+TUqhx8fgEzeYz4qHSn3bpJVXJuP4X+yc9Sr1YCRoyXSWS/bbpOyr
-         mXCh/dovTETL3jwRMUi/YJAsU/W5ztWPXmQM5nwTCGLWWAsqQn5zObWvOWexRv5wS2KG
-         x23Uozq2jWbBGpn2wtthVW/Lb6oX09J3FSdww4qFQj53UrfkmiVkp4xWDyDBTVE4uo09
-         NIVYuwsd4OjKC1bCCuJ9H2feCDUq3hVndvy+n7Yhd/VJunwLLhP2hFJTjuO/An6PnKiJ
-         V0QXzl6KvE05aRe3p2T8kacGUNuhv8aHqkLQQ9Uqo/qv8+t6zM8CiUYo1IWz+tN/qT3R
-         9+FQ==
-X-Gm-Message-State: AOJu0Yw6qz/D58UDzh4n6c1jU6kWdRbJwuqt+9CVer/KM+y97a7zp+v5
-	j43wa+TGE0Tr5S0W57XySNtmIQsqQdEpx8Ymxlri65Xxd6wZNs0neC2wtYO7YV3TYSQpJkONpBL
-	Uh8i9eNlIE0JSVG4ordTFoAMq8huogV6zkS9sj/DC129nYskeDXjctV0ZKB7Gkg==
-X-Received: by 2002:a05:6820:168d:b0:5df:81ed:2655 with SMTP id 006d021491bc7-5dfacd7a869mr90154eaf.1.1724961677309;
-        Thu, 29 Aug 2024 13:01:17 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGK7ZWE97qlIasXgZMNuMbAVeGSN/jRz09m4SD8T+Wcq60efkSETyErTr9KSiO3wUuWWJ5s/g==
-X-Received: by 2002:a05:6820:168d:b0:5df:81ed:2655 with SMTP id 006d021491bc7-5dfacd7a869mr90109eaf.1.1724961676881;
-        Thu, 29 Aug 2024 13:01:16 -0700 (PDT)
-Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5dfa04e8aadsm341894eaf.28.2024.08.29.13.01.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 13:01:16 -0700 (PDT)
-Date: Thu, 29 Aug 2024 16:01:09 -0400
-From: Peter Xu <peterx@redhat.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	Gavin Shan <gshan@redhat.com>,
-	Catalin Marinas <catalin.marinas@arm.com>, x86@kernel.org,
-	Ingo Molnar <mingo@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Alistair Popple <apopple@nvidia.com>, kvm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Sean Christopherson <seanjc@google.com>,
-	Oscar Salvador <osalvador@suse.de>,
-	Jason Gunthorpe <jgg@nvidia.com>, Borislav Petkov <bp@alien8.de>,
-	Zi Yan <ziy@nvidia.com>, Axel Rasmussen <axelrasmussen@google.com>,
-	Yan Zhao <yan.y.zhao@intel.com>, Will Deacon <will@kernel.org>,
-	Kefeng Wang <wangkefeng.wang@huawei.com>,
-	Alex Williamson <alex.williamson@redhat.com>
-Subject: Re: [PATCH v2 07/19] mm/fork: Accept huge pfnmap entries
-Message-ID: <ZtDThWS16Kv0QKR1@x1n>
-References: <20240826204353.2228736-1-peterx@redhat.com>
- <20240826204353.2228736-8-peterx@redhat.com>
- <78d77162-11df-4437-b70b-fa04f868a494@redhat.com>
- <ZtC9ThIs7aSK7gdK@x1n>
- <32a451ee-6836-4d4d-814c-752c15415aae@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=E0LzTA7a8vkvruahOvGRJPJhfTz7uA/PVRiaElmHNDt2hEsTAFls7C+natHlJ4TQxMaQEV8k02nFATyYOeNyKHMKOMwvW2px19wJsAgTGwtWlRRsKiWg3kVMIMPOHGZnUzd3A14qTVlc69oFw1yNz/8vAPtoiYsWeXxKms4Oz3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nkGKjMGM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7867C4CEC1;
+	Thu, 29 Aug 2024 20:03:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724961821;
+	bh=jwuvKMrY5cTod7e2LGlDDYGRX/xeSQPNePjeIZJkTsA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nkGKjMGMClK2QbKf3YBMwoOS/hzBHGZmfx+sMNajgsvFgOYgq6DuhmPgUPK5Q/LtO
+	 R4xzAEbTbZK30cEf/oSCus5JmAMLZcA0nRxtdc3c8d8+ZobnF1lIKkJiGHacL+tcI0
+	 cNbi51EvXgqdn2+k7o5326M261WIJy9ootdDMVs8wV9+yXO4mG5QmgO/0wt+38Icvg
+	 cVAFBtdeVhXfRyElgXYRs1KTQxZ9KjKaUYGDLSnWWBbuv4BT4A0Z008ajMreO0Jsy7
+	 mlF6SA12oa3p+Onm5+A1YC20wob310qOv7XkNOLa3sc4WqHn1nHJTOmgQhGkaLTa82
+	 CtZaBn2LrPDjQ==
+Date: Thu, 29 Aug 2024 13:03:39 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Jani Nikula <jani.nikula@linux.intel.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH v1 0/2] drm/i915/fence: A couple of build fixes
+Message-ID: <20240829200339.GA2791510@thelio-3990X>
+References: <20240829155950.1141978-1-andriy.shevchenko@linux.intel.com>
+ <87cylrwahb.fsf@intel.com>
+ <ZtCnhXwtO-gd1fMf@smile.fi.intel.com>
+ <ZtC5oXSzUuuIgLiQ@smile.fi.intel.com>
+ <20240829182255.GA1468662@thelio-3990X>
+ <87a5gvw4y9.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <32a451ee-6836-4d4d-814c-752c15415aae@redhat.com>
+In-Reply-To: <87a5gvw4y9.fsf@intel.com>
 
-On Thu, Aug 29, 2024 at 09:44:01PM +0200, David Hildenbrand wrote:
-> On 29.08.24 20:26, Peter Xu wrote:
-> > On Thu, Aug 29, 2024 at 05:10:42PM +0200, David Hildenbrand wrote:
-> > > On 26.08.24 22:43, Peter Xu wrote:
-> > > > Teach the fork code to properly copy pfnmaps for pmd/pud levels.  Pud is
-> > > > much easier, the write bit needs to be persisted though for writable and
-> > > > shared pud mappings like PFNMAP ones, otherwise a follow up write in either
-> > > > parent or child process will trigger a write fault.
-> > > > 
-> > > > Do the same for pmd level.
-> > > > 
-> > > > Signed-off-by: Peter Xu <peterx@redhat.com>
-> > > > ---
-> > > >    mm/huge_memory.c | 29 ++++++++++++++++++++++++++---
-> > > >    1 file changed, 26 insertions(+), 3 deletions(-)
-> > > > 
-> > > > diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> > > > index e2c314f631f3..15418ffdd377 100644
-> > > > --- a/mm/huge_memory.c
-> > > > +++ b/mm/huge_memory.c
-> > > > @@ -1559,6 +1559,24 @@ int copy_huge_pmd(struct mm_struct *dst_mm, struct mm_struct *src_mm,
-> > > >    	pgtable_t pgtable = NULL;
-> > > >    	int ret = -ENOMEM;
-> > > > +	pmd = pmdp_get_lockless(src_pmd);
-> > > > +	if (unlikely(pmd_special(pmd))) {
-> > > 
-> > > I assume I have to clean up your mess here as well?
-> > 
-> > Can you leave meaningful and explicit comment?  I'll try to address.
+On Thu, Aug 29, 2024 at 09:37:34PM +0300, Jani Nikula wrote:
+> On Thu, 29 Aug 2024, Nathan Chancellor <nathan@kernel.org> wrote:
+> > Since commit 6863f5643dd7 ("kbuild: allow Clang to find unused static
+> > inline functions for W=1 build"). clang warns about unused static inline
+> > functions in .c files, unlike GCC (they both do not warn for functions
+> > coming from .h files). This difference is worked around for the normal
+> > build by adding '__maybe_unused' to the definition of 'inline' but
+> > Masahiro wanted to disable it for W=1 to allow this difference to find
+> > unused/dead code. There have not been too many complaints as far as I am
+> > aware but I can see how it is surprising.
 > 
-> Sorry Peter, but I raised all that as reply to v1. For example, I stated
-> that vm_normal_page_pmd() already *exist* and why these pmd_special() checks
-> should be kept there.
-
-We discussed the usage of pmd_page() but I don't think this is clear you
-suggest it to be used there.  IOW, copy_huge_pmd() doesn't use
-vm_normal_page_pmd() yet so far and I'm not sure whether it's always safe.
-
-E.g. at least one thing I spot is vm_normal_page_pmd() returns NULL for
-huge zeropage pmd but here in fork() we need to take a ref with
-mm_get_huge_zero_folio().
-
+> Heh, I was just going to reply citing the same commit.
 > 
-> I hear you, you're not interested in cleaning that up. So at this point it's
-> easier for me to clean it up myself.
+> I occasionally build with clang myself, and we do enable most W=1 by
+> default in the drm subsystem, so I was wondering why I hadn't hit
+> this. The crucial difference is that we lack -DKBUILD_EXTRA_WARN1 which
+> W=1 adds.
+> 
+> I see there's no subdir-cppflags-y, but I don't see any harm in us
+> adding -Wundef and -DKBUILD_EXTRA_WARN1 to subdir-ccflags-y. After we
+> fix the fallout, of course. Do you?
 
-It might be easier indeed you provide a patch that you think the best.
+No, that seems entirely reasonable when your goal is to enable W=1 for
+your subsystem.
 
-Then I'll leave that to you, and I'll send the solo fixup patch to be
-squashed soon to the list.
+> I don't much like the __maybe_unused stuff, but I guess it's fine as a
+> stopgap measure, and then we can grep for that when running out of
+> things to do. :p
 
--- 
-Peter Xu
+Perhaps worth a TODO or something? Maybe a kernel newbie could work on
+that at some point if it is not high enough priority.
 
+Cheers,
+Nathan
 
