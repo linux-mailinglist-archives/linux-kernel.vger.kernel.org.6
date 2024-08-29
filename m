@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-306774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9F22964361
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:43:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7647F964367
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:45:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B2C81C247F2
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 11:43:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C5711C247E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 11:45:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 395F5192B8F;
-	Thu, 29 Aug 2024 11:43:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CC931922F2;
+	Thu, 29 Aug 2024 11:44:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BEkixloW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z4awrOFf"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53C85192B6F;
-	Thu, 29 Aug 2024 11:43:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 894961917FB;
+	Thu, 29 Aug 2024 11:44:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724931809; cv=none; b=Sp/V+ux3CorqMe252e89DufXv7McRrUEQyMSo+x4fz0Q6uXWa4P0uoOteEjeTNJjAJFBeHmHuGjy3XCxDmWfBoNfUbMK9ECQB5DJ8DOyn91XIEqkAVoTwItpsxrxozEQ19735CsrNZqvZmBFQ5X+fdyJqmM8Jsvn9udOwqEdd+0=
+	t=1724931892; cv=none; b=tBsEbgwqSTLr+kmpHUSRudZ2ajWdcVe7qM7n2bNEjaUaXEnOD4lmN18iiNsRhMcGQNm2niFfyaRKQvWftbP2Hzv5QXSZtSGmuGWscE01UF5RYMQRjn//AOlNQ2qdWB/p3Q6uGSMDitHGSg+tUV9YWqD7Vwg8l3YzbIzSvZs5ZLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724931809; c=relaxed/simple;
-	bh=+vwGjG4SYTkqbQO3vvTQsn4HZB75Wc4Op09eNXZ30M4=;
+	s=arc-20240116; t=1724931892; c=relaxed/simple;
+	bh=4cgFU/fqSVMRNK/AEZBAQEqPUz3up32PdKIGaCGcIVM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=s2MHr/OZdy2N5m7ETO9cokpwOgFHDGQcSgIfu5GJ0ZCPKZ8iRX6KuurTE/22/y2PRk4YSG+XtmjgVBqfXG9BH+js0dy6L6mz6i1DZufP0NachmDKo5ZUH/HTwR1bvhHQ2/CVcvUNAMO/akpMgbY3wUcUji0i7kxXDxwA/YGx800=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BEkixloW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CCC6C4CEC1;
-	Thu, 29 Aug 2024 11:43:25 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=RDHm++8LgYGQwre5TGZ6Zz2dNOYIZ3ZbC2N2OMQFKEDYT2PrWSdVKQCp1R+dSQB91PRKbr7LvJg4pChuuKhjUyUD5+ON0BLIlULZVQoN3zRZyTiuHXcndV7s4lFeV60MfkZwhLGQGuaqUegZacnGsnGJXv2k1OZgDN8K9Zy9GUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z4awrOFf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEB20C4CEC1;
+	Thu, 29 Aug 2024 11:44:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724931809;
-	bh=+vwGjG4SYTkqbQO3vvTQsn4HZB75Wc4Op09eNXZ30M4=;
+	s=k20201202; t=1724931892;
+	bh=4cgFU/fqSVMRNK/AEZBAQEqPUz3up32PdKIGaCGcIVM=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=BEkixloW3+XwfuMBJA5HBXMLYrqCkca48I1lTN0EIbk0PLIt7JAQQVt67edcRBEsA
-	 9Hj/F+8JGkI0C0GzUZ3kbWFUctcZt2FeckB1eg1K7WVQ+5BbPPi8A/siUzcCN00RPC
-	 /JLCzePpjBU+vObF5cn5ZUw1ZAKcrofg/6dDhkMDFOifLo9V5XhZC64Njti2x4y6xW
-	 kJPNyZpVhfQB0+UgSsBsR6yfaVEYPEGS6XsGwsJMO2+4OmTe7AzIrVQSqcVvmilgPY
-	 uktF+hYVWtlcndGSs5D4sBm7OwOddslPBPEqsExfCng84Q6aJ4EVHMxU2PcjDyNzCE
-	 hLc7e0droKe+Q==
-Message-ID: <4591cf26-f60b-453f-a73b-4157999336bf@kernel.org>
-Date: Thu, 29 Aug 2024 13:43:21 +0200
+	b=Z4awrOFfvug3IfZxT8TMO+F29Ns2QpKhGmrWfgCb/TqUMmZeb8S8U0t3rGxU0+zu1
+	 QTOjQ5HDOfv1DChom9TyDgaRG/Mawxxx6PGNARuml3H5+hOT7733GjmVWwROM50CXq
+	 gwNqTwE0bnKEZQ0qV5ffFS6Jhu97U3oKIj0ndamXm1FmhGERgqvWgoJKS4c67ZDYGs
+	 9K8QNrWm4frEYjJCztPx5d4Bv4l6mY51gE1tPTTiN25xuBDPQZPq9h/IVGMOymYPCc
+	 64ra0CA9P0Lvf1u5QlKtjoAFwxctBXyAU/ImR1pZS0nt/7LzMAqIawyVBC+2Z4F/I/
+	 DTr6+1JYNa0+Q==
+Message-ID: <e3d9a629-6fcc-4fd8-b44f-47efdda5f494@kernel.org>
+Date: Thu, 29 Aug 2024 13:44:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -50,17 +50,16 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH 1/3] dt-bindings: apple,aic: Document A7-A11 compatibles
-To: Nick Chan <towinchenmi@gmail.com>, "Rob Herring (Arm)" <robh@kernel.org>
-Cc: devicetree@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
- Sven Peter <sven@svenpeter.dev>, Thomas Gleixner <tglx@linutronix.de>,
- Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, linux-arm-kernel@lists.infradead.org,
- Hector Martin <marcan@marcan.st>, linux-kernel@vger.kernel.org,
- Alyssa Rosenzweig <alyssa@rosenzweig.io>, asahi@lists.linux.dev
+To: Nick Chan <towinchenmi@gmail.com>, Hector Martin <marcan@marcan.st>,
+ Sven Peter <sven@svenpeter.dev>, Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+ Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, asahi@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+Cc: ~postmarketos/upstreaming@lists.sr.ht
 References: <20240829092610.89731-1-towinchenmi@gmail.com>
  <20240829092610.89731-2-towinchenmi@gmail.com>
- <172492705116.3333643.6993934329983052782.robh@kernel.org>
- <afd79f6c-89b4-4229-aa16-f130a35d78b0@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -106,60 +105,60 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <afd79f6c-89b4-4229-aa16-f130a35d78b0@gmail.com>
+In-Reply-To: <20240829092610.89731-2-towinchenmi@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 29/08/2024 13:09, Nick Chan wrote:
+On 29/08/2024 11:03, Nick Chan wrote:
+> Document the compatibles for Apple A7-A11 SoCs.
 > 
+> There are three feature levels:
+> - A7-A10: No fast IPI
+> - A11: fast IPI, global only
+> - M1: fast IPI with local and global support
 > 
-> On 29/8/2024 18:24, Rob Herring (Arm) wrote:
->>
->> On Thu, 29 Aug 2024 17:03:11 +0800, Nick Chan wrote:
->>> Document the compatibles for Apple A7-A11 SoCs.
->>>
->>> There are three feature levels:
->>> - A7-A10: No fast IPI
->>> - A11: fast IPI, global only
->>> - M1: fast IPI with local and global support
->>>
->>> Each feature level is an extension of the previous. For example, M1 will
->>> also work with the A7 feature level.
->>>
->>> Signed-off-by: Nick Chan <towinchenmi@gmail.com>
->>> ---
->>>  .../bindings/interrupt-controller/apple,aic.yaml  | 15 ++++++++++++---
->>>  1 file changed, 12 insertions(+), 3 deletions(-)
->>>
->>
->> My bot found errors running 'make dt_binding_check' on your patch:
->>
->> yamllint warnings/errors:
->>
->> dtschema/dtc warnings/errors:
->> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/interrupt-controller/apple,aic.example.dtb: interrupt-controller@23b100000: compatible: 'oneOf' conditional failed, one must be fixed:
->> 	['apple,t8103-aic', 'apple,aic'] is too long
->> 	['apple,t8103-aic', 'apple,aic'] is too short
->> 	'apple,s5l8960x-aic' was expected
->> 	'apple,t8103-aic' is not one of ['apple,s8000-aic', 'apple,t7000-aic', 'apple,t8010-aic']
->> 	'apple,t8015-aic' was expected
->> 	from schema $id: http://devicetree.org/schemas/interrupt-controller/apple,aic.yaml#
->>
->> doc reference errors (make refcheckdocs):
->>
->> See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240829092610.89731-2-towinchenmi@gmail.com
->>
->> The base for the series is generally the latest rc1. A different dependency
->> should be noted in *this* patch.
->>
->> If you already ran 'make dt_binding_check' and didn't see the above
->> error(s), then make sure 'yamllint' is installed and dt-schema is up to
->> date:
-> Acked. yamllint was not installed on my system.
-> 
+> Each feature level is an extension of the previous. For example, M1 will
+> also work with the A7 feature level.
 
-The error are not coming from yamllint. It's not about yamllint. You
-just never tested the binding.
+It's hard for me to map above to compatibles. Extend the commit msg to
+include names used in the bindings.
+
+> 
+> Signed-off-by: Nick Chan <towinchenmi@gmail.com>
+> ---
+>  .../bindings/interrupt-controller/apple,aic.yaml  | 15 ++++++++++++---
+>  1 file changed, 12 insertions(+), 3 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/interrupt-controller/apple,aic.yaml b/Documentation/devicetree/bindings/interrupt-controller/apple,aic.yaml
+> index 698588e9aa86..28e09b933087 100644
+> --- a/Documentation/devicetree/bindings/interrupt-controller/apple,aic.yaml
+> +++ b/Documentation/devicetree/bindings/interrupt-controller/apple,aic.yaml
+> @@ -36,9 +36,18 @@ allOf:
+>  
+>  properties:
+>    compatible:
+> -    items:
+> -      - const: apple,t8103-aic
+> -      - const: apple,aic
+> +    oneOf:
+> +      - const: apple,s5l8960x-aic
+
+Which one is this?
+
+> +      - items:
+> +          - enum:
+> +              - apple,s8000-aic
+> +              - apple,t7000-aic
+> +              - apple,t8010-aic
+> +          - const: apple,s5l8960x-aic
+> +      - items:
+> +          - const: apple,t8103-aic
+> +          - const: apple,t8015-aic
+
+Why are you changing all existing devices? Test your change, you would
+see here errors.
+
+
 
 Best regards,
 Krzysztof
