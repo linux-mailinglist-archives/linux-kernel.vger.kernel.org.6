@@ -1,119 +1,86 @@
-Return-Path: <linux-kernel+bounces-307053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7CA096475C
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:58:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38CF8964761
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:59:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DBC61F22F7E
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:58:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D87751F214E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:59:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E811A1AD9CD;
-	Thu, 29 Aug 2024 13:58:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DaWi4+YN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 383C81AD3E4;
+	Thu, 29 Aug 2024 13:59:06 +0000 (UTC)
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [195.130.132.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F19018CC1A;
-	Thu, 29 Aug 2024 13:58:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE98818CC1A
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 13:59:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724939913; cv=none; b=Rv/iXgBxzcDIDXHJZxHyOzfbaNEm4SAFQQtsU3Q9fnFENs1M6YwnvJYCsulavnUWjqZgATgQuMoCMYkn0PQrG4lmLDtiRK+k/TNlgDn3VvA31qkeRaL7fnNy5MaYAdHFzBWv0jGB1Zn/grhxL3oDhI2oYGGPQ5xQJd32M3GFSiU=
+	t=1724939945; cv=none; b=I52ajUMhp387Dk3N7Y7LREYyQXDL+GxCmxc8aHNI4HP1aKzrLMdqMt1YiF8ptFOoz2GqkYCua8ipDDRa77+xh1WMYawW4an7fQDWS5Cg1Lq+FhdbQRH9Er/pMCMJI19uiUFSXD7wFr8IHDMr9/Zt6iMnuppMaQ2sDwurU9qjUWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724939913; c=relaxed/simple;
-	bh=ZapR8G5uRpf7IydIeRIlNL2R+edJOZvbSd+R9K2a/dM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rfxLKKFDuhJwmRnX48Xmqs2W2CyBbbJPWOOrKoVIY8dVdrBm+QsdmAcZTD+9+oltPpjwFSycELZ5bsmaHPCK+3Qv+qWV/zc/jK1HYiBp+S7Tr5owW28NZGo4gC+9Gq6evF3IaLPcx63BLFoOFZ3PHJvmtoBd8xUvKYt81/IBUxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DaWi4+YN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91276C4CEC1;
-	Thu, 29 Aug 2024 13:58:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724939911;
-	bh=ZapR8G5uRpf7IydIeRIlNL2R+edJOZvbSd+R9K2a/dM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DaWi4+YN3qETrzeIdOj4+WS854MUgisfVEIlRP0Yxkg5Sg+PaqfYmyt648E56Q2It
-	 lMT5fJYhC7QVKhOAAAuc8GrKzQrgiZQH3yqAfVAmr02Cr983F6J9YVjAcxlNvtYHEz
-	 uV8OFDoW7PobQ2nj8R0UHbMnYEQ0KX2Qh1zvgFI6sr8+XVyegYIuYgICJhuP5Hz5bE
-	 t1AM87PhtREUpN5lL1incQCrs9oWQvTxK/jpEzOHjKLOccE+QaW7mlOqD6vJmeeA6R
-	 fFplD2aD3sgmHyBs9DG0SjbyltYlt+W+SCGM0QVIDDYpxHAd/r1Wglr0SKePhrfvtt
-	 h1zf6inKKRUYw==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1sjffh-000000007Gd-0eAg;
-	Thu, 29 Aug 2024 15:58:45 +0200
-Date: Thu, 29 Aug 2024 15:58:45 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Stephen Boyd <swboyd@chromium.org>
-Cc: Konrad Dybcio <konradybcio@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, patches@lists.linux.dev,
-	linux-clk@vger.kernel.org,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Amit Pundir <amit.pundir@linaro.org>,
-	Taniya Das <quic_tdas@quicinc.com>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Subject: Re: [PATCH v3 1/2] clk: qcom: dispcc-sc7180: Only park display clks
- at init
-Message-ID: <ZtB-lZWdRIv3mLFr@hovoldconsulting.com>
-References: <20240828171722.1251587-1-swboyd@chromium.org>
- <20240828171722.1251587-2-swboyd@chromium.org>
+	s=arc-20240116; t=1724939945; c=relaxed/simple;
+	bh=2ZzzzbFibssxKlI8fgEo5y/RMIwq+8GMREcd6JnM4T0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=u5cPL1zLWaiysOVrfTO99ZhcZ3eKhA1HcOGAZdokvUE2TTIyBUPkihD/qd6IkrmTaaTTIz57VXydJ16H9WgL0VuIuq56Pb9x+Mpo6EpMqGS7ub3PwvF/8UUeqYV6WRAvowZVu92B+YaIP+CIJFidqMjlwhrwbvEaqZiOmGu0TQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:fbdf:b855:e99a:9ec0])
+	by baptiste.telenet-ops.be with cmsmtp
+	id 5pyv2D0010Yrr4n01pyvfB; Thu, 29 Aug 2024 15:58:55 +0200
+Received: from rox.of.borg ([192.168.97.57])
+	by ramsan.of.borg with esmtp (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1sjffo-001GSq-5f;
+	Thu, 29 Aug 2024 15:58:54 +0200
+Received: from geert by rox.of.borg with local (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1sjffq-0002Ze-SV;
+	Thu, 29 Aug 2024 15:58:54 +0200
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Jassi Brar <jassisinghbrar@gmail.com>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	Sudeep Holla <sudeep.holla@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH resend] mailbox: ARM_MHU_V3 should depend on ARM64
+Date: Thu, 29 Aug 2024 15:58:53 +0200
+Message-Id: <a391c86658d6c2e6d1aee583caa7a030731596d1.1724939823.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240828171722.1251587-2-swboyd@chromium.org>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 28, 2024 at 10:17:07AM -0700, Stephen Boyd wrote:
-> Amit Pundir reports that audio and USB-C host mode stops working on
-> sm8550 after commit 01a0a6cc8cfd ("clk: qcom: Park shared RCGs upon
-> registration"). That's because the gcc_usb30_prim_master_clk_src clk is
-> registered and clk_rcg2_shared_init() parks it on XO. Running USB at a
-> slower speed than the link supports is effectively under-clocking the
-> USB link and probably confusing the downstream USB devices.
-> 
-> We didn't need to change all the shared RCGs to park on XO at
-> registration time in commit commit 01a0a6cc8cfd ("clk: qcom: Park shared
-> RCGs upon registration"). Instead, we only needed to park the few
-> display related clks on sc7180 to fix the issue.
-> 
-> Fix sm8550 (and likely other qcom SoCs) by skipping the parking part of
-> clk_rcg2_shared_init(). Make that the default init clk_op for shared
-> RCGs, but keep the part where we cache the config register as that's
-> still necessary to figure out the true parent of the clk is. Introduce
-> another set of clk_ops 'clk_rcg2_shared_init_park' that does what
-> clk_rcg2_shared_init() was doing and use that for the display clks on
-> sc7180. This fixes the sm8550 problem and limits the "park upon
-> registration" logic to the display clks that need it.
-> 
-> Fixes: 01a0a6cc8cfd ("clk: qcom: Park shared RCGs upon registration")
-> Cc: Konrad Dybcio <konradybcio@kernel.org>
-> Cc: Bjorn Andersson <andersson@kernel.org>
-> Cc: Taniya Das <quic_tdas@quicinc.com>
-> Cc: Neil Armstrong <neil.armstrong@linaro.org>
-> Reported-by: Amit Pundir <amit.pundir@linaro.org>
-> Closes: https://lore.kernel.org/CAMi1Hd1KQBE4kKUdAn8E5FV+BiKzuv+8FoyWQrrTHPDoYTuhgA@mail.gmail.com
-> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+The ARM MHUv3 controller is only present on ARM64 SoCs.  Hence add a
+dependency on ARM64, to prevent asking the user about this driver when
+configuring a kernel for a different architecture than ARM64.
 
-I can confirm that this fixes the earlycon issue on x1e80100 that Bryan
-reported here:
+Fixes: ca1a8680b134b5e6 ("mailbox: arm_mhuv3: Add driver")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/mailbox/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-	https://lore.kernel.org/lkml/20240823-x1e80100-clk-fix-v1-1-0b1b4f5a96e8@linaro.org/
+diff --git a/drivers/mailbox/Kconfig b/drivers/mailbox/Kconfig
+index 4eed972959279a07..cbd9206cd7de34c5 100644
+--- a/drivers/mailbox/Kconfig
++++ b/drivers/mailbox/Kconfig
+@@ -25,6 +25,7 @@ config ARM_MHU_V2
+ 
+ config ARM_MHU_V3
+ 	tristate "ARM MHUv3 Mailbox"
++	depends on ARM64 || COMPILE_TEST
+ 	depends on HAS_IOMEM || COMPILE_TEST
+ 	depends on OF
+ 	help
+-- 
+2.34.1
 
-Perhaps you can drop the "dispcc-sc7180:" prefix from Subject when
-applying (or resending) since this fixes a regression on multiple
-Qualcomm SoCs. For example, use something like:
-
-	clk: qcom: Only park sc7180 display clks at init
-
-Tested-by: Johan Hovold <johan+linaro@kernel.org>
-
-Johan
 
