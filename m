@@ -1,70 +1,76 @@
-Return-Path: <linux-kernel+bounces-306088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AF549638F3
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 05:48:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85ED4963919
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 05:55:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FAD81C20DBA
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 03:48:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EDF60B2179B
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 03:55:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE6C4481B1;
-	Thu, 29 Aug 2024 03:48:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63F5A145323;
+	Thu, 29 Aug 2024 03:54:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="amM+39++"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Kqreyw9R"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7CF2132103
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 03:48:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 072D34D8C6
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 03:54:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724903327; cv=none; b=L/dU3zeM1kYoR7uGphKGozSpKs7seZP4R9QLqeNdqJCSbdjiXwI5II7nHv8PpXpDTCD7Kdzg8DGP8d+4ZY1Re3gaAtCy1pdYw7oBBVzG4IiGFDfpreGNV07WmnaYQTCUfbPNhnbGTfgPPT9nqvDsoBG3Cqw+WjYA7mLBJJc+2q0=
+	t=1724903687; cv=none; b=ZUgFwf3uKppTBTGtODRVmTOQPu53F5zjDIkRLboZ/lE5UANeilcZhJR4UXEJMWhvPjdY2tfrGrI/hvWmqTe0zc5fPQMsb04j7mjtGhSgQ7IAfBJk5ieSlGC0FgSrdQ/MVW7qmKcAQ7LDi1KS8+UKliAxupUoK2I68X8aFvTgIWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724903327; c=relaxed/simple;
-	bh=gQPUqmCWgULDvv2fwuEEDcsWDIiTn120DtFH641zEbA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hcXYxQsjqI69jL2KqDibzKWWzRQQrcwAoGnHa11J2sCMr5Gd7oPyC5L7fnXMvxT91upaESMQ8oK0gaIV3ltMaXMVymMqOa1zK2ESmZHSHaPVLafGJzhJGXzxCYC7V2li2jfSg0Zk/JRq9oVecMIwr7x7MY15UzNtb8G/174tj5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=amM+39++; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724903324;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=72lhOeFspkLtOGTCbKaEW6OSZn0dDr96N8djAnUA6LU=;
-	b=amM+39++hNEMPN2B+y0FIH3RnmAOoAGWFNxwUhhr5/ic2ggWYYS3zwWX+xoTEVJKp/2AmM
-	dMfB5tpZuuv1mOHwUoHya9z/FCoGAoN0EmBhoPEO7TJ1GPx5J6HjVA9pK9WvJ9+25tXxPN
-	HDrRkELAgOB71p36zfDz9XuzetVdQc0=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-348-6aNmUtoDPzWVgpnDZP7fiA-1; Wed,
- 28 Aug 2024 23:48:40 -0400
-X-MC-Unique: 6aNmUtoDPzWVgpnDZP7fiA-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 14B121955D48;
-	Thu, 29 Aug 2024 03:48:39 +0000 (UTC)
-Received: from localhost (unknown [10.72.112.42])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 80EFA1955F1B;
-	Thu, 29 Aug 2024 03:48:37 +0000 (UTC)
-Date: Thu, 29 Aug 2024 11:48:32 +0800
-From: Baoquan He <bhe@redhat.com>
-To: "Uladzislau Rezki (Sony)" <urezki@gmail.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Christoph Hellwig <hch@infradead.org>,
-	Michal Hocko <mhocko@suse.com>,
-	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
-Subject: Re: [PATCH] mm: vmalloc: Refactor vm_area_alloc_pages() function
-Message-ID: <Zs/vkLWrRNRkSvwC@MiWiFi-R3L-srv>
-References: <20240827190916.34242-1-urezki@gmail.com>
+	s=arc-20240116; t=1724903687; c=relaxed/simple;
+	bh=sF0iGMOK+Lwj1e0gMx/2nuQN7xoRc9d6g+UIAuerDlY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=mAAfr5xweOIhyJS/juHJVLUP/o5/ekdO5QYZLTTSc2jcd0s4tRofmfLnfbl0jHIkkeL/Ed1OuMykot9VXjhE15WV8LW8hx0XE9mEfJ6PdObGl9O0ZpuM5V3VPgIwDzHA3uDhIixEz4tvhv7yJ35hakFHAgwvQyAFSKN/Ih6tXTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Kqreyw9R; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724903685; x=1756439685;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=sF0iGMOK+Lwj1e0gMx/2nuQN7xoRc9d6g+UIAuerDlY=;
+  b=Kqreyw9RuzlpB5w0EKVmnJtP3hzjCDj/JH70/9vcO4XuezDhHYpETvzf
+   O3Z6sunF3FB87MCQ2peKfc5dWyWG4bZ0vWdoUAP7sZa8oHvGula08ZAs2
+   22Mk2byPFKVaYhLyMnc9Lj/IWwiqIbAyABQbsyfMVGAokMqJ1y8CVL5rK
+   rgVmSvDrvx/Qvx07qwyU9LDeQYKEEbN5MVDvOoOEoctFheTpO17VlpFcp
+   AUL0dt4ac7qmxitG4a45mBCGQ2MLUChVyo56KWJQQtCHZxbR5+y1vQ6OI
+   IW4fxtjzhl6r2bj8Qy1B8whvdL3lKxw+70J7mBmNHhBXWRmg0eO8Y+7lL
+   A==;
+X-CSE-ConnectionGUID: 2mP+I1uTT7C2jKw/34VdpA==
+X-CSE-MsgGUID: WKXD+KFOR/WI2iFSl15jBw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11178"; a="45988092"
+X-IronPort-AV: E=Sophos;i="6.10,184,1719903600"; 
+   d="scan'208";a="45988092"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2024 20:54:44 -0700
+X-CSE-ConnectionGUID: H8229kuBQhCqOQ1BZAW+NA==
+X-CSE-MsgGUID: wCahuuRASLyhUGYuwZV7Kg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,184,1719903600"; 
+   d="scan'208";a="67805003"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by fmviesa005.fm.intel.com with ESMTP; 28 Aug 2024 20:54:43 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sjWF6-000Ldy-1j;
+	Thu, 29 Aug 2024 03:54:40 +0000
+Date: Thu, 29 Aug 2024 11:54:31 +0800
+From: kernel test robot <lkp@intel.com>
+To: Serge Semin <Sergey.Semin@baikalelectronics.ru>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Bjorn Helgaas <helgaas@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: drivers/pci/controller/dwc/pcie-designware.c:898:50: error: '%d'
+ directive output may be truncated writing between 1 and 11 bytes into a
+ region of size 3
+Message-ID: <202408291130.0S7KrQvL-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,134 +79,75 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240827190916.34242-1-urezki@gmail.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-On 08/27/24 at 09:09pm, Uladzislau Rezki (Sony) wrote:
-> The aim is to simplify and making the vm_area_alloc_pages()
-> function less confusing as it became more clogged nowadays:
-> 
-> - eliminate a "bulk_gfp" variable and do not overwrite a gfp
->   flag for bulk allocator;
-> - drop __GFP_NOFAIL flag for high-order-page requests on upper
->   layer. It becomes less spread between levels when it comes to
->   __GFP_NOFAIL allocations;
-> - add a comment about a fallback path if high-order attempt is
->   unsuccessful because for such cases __GFP_NOFAIL is dropped;
-> - fix a typo in a commit message.
-> 
-> Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
-> ---
->  mm/vmalloc.c | 37 +++++++++++++++++--------------------
->  1 file changed, 17 insertions(+), 20 deletions(-)
-> 
-> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> index 3f9b6bd707d2..57862865e808 100644
-> --- a/mm/vmalloc.c
-> +++ b/mm/vmalloc.c
-> @@ -3531,8 +3531,6 @@ vm_area_alloc_pages(gfp_t gfp, int nid,
->  		unsigned int order, unsigned int nr_pages, struct page **pages)
->  {
->  	unsigned int nr_allocated = 0;
-> -	gfp_t alloc_gfp = gfp;
-> -	bool nofail = gfp & __GFP_NOFAIL;
->  	struct page *page;
->  	int i;
->  
-> @@ -3543,9 +3541,6 @@ vm_area_alloc_pages(gfp_t gfp, int nid,
->  	 * more permissive.
->  	 */
->  	if (!order) {
-> -		/* bulk allocator doesn't support nofail req. officially */
-> -		gfp_t bulk_gfp = gfp & ~__GFP_NOFAIL;
-> -
->  		while (nr_allocated < nr_pages) {
->  			unsigned int nr, nr_pages_request;
->  
-> @@ -3563,12 +3558,11 @@ vm_area_alloc_pages(gfp_t gfp, int nid,
->  			 * but mempolicy wants to alloc memory by interleaving.
->  			 */
->  			if (IS_ENABLED(CONFIG_NUMA) && nid == NUMA_NO_NODE)
-> -				nr = alloc_pages_bulk_array_mempolicy_noprof(bulk_gfp,
-> +				nr = alloc_pages_bulk_array_mempolicy_noprof(gfp,
->  							nr_pages_request,
->  							pages + nr_allocated);
-> -
->  			else
-> -				nr = alloc_pages_bulk_array_node_noprof(bulk_gfp, nid,
-> +				nr = alloc_pages_bulk_array_node_noprof(gfp, nid,
->  							nr_pages_request,
->  							pages + nr_allocated);
->  
-> @@ -3582,30 +3576,24 @@ vm_area_alloc_pages(gfp_t gfp, int nid,
->  			if (nr != nr_pages_request)
->  				break;
->  		}
-> -	} else if (gfp & __GFP_NOFAIL) {
-> -		/*
-> -		 * Higher order nofail allocations are really expensive and
-> -		 * potentially dangerous (pre-mature OOM, disruptive reclaim
-> -		 * and compaction etc.
-> -		 */
-> -		alloc_gfp &= ~__GFP_NOFAIL;
->  	}
->  
->  	/* High-order pages or fallback path if "bulk" fails. */
->  	while (nr_allocated < nr_pages) {
-> -		if (!nofail && fatal_signal_pending(current))
-> +		if (!(gfp & __GFP_NOFAIL) && fatal_signal_pending(current))
->  			break;
->  
->  		if (nid == NUMA_NO_NODE)
-> -			page = alloc_pages_noprof(alloc_gfp, order);
-> +			page = alloc_pages_noprof(gfp, order);
->  		else
-> -			page = alloc_pages_node_noprof(nid, alloc_gfp, order);
-> +			page = alloc_pages_node_noprof(nid, gfp, order);
-> +
->  		if (unlikely(!page))
->  			break;
->  
->  		/*
->  		 * Higher order allocations must be able to be treated as
-> -		 * indepdenent small pages by callers (as they can with
-> +		 * independent small pages by callers (as they can with
->  		 * small-page vmallocs). Some drivers do their own refcounting
->  		 * on vmalloc_to_page() pages, some use page->mapping,
->  		 * page->lru, etc.
-> @@ -3666,7 +3654,16 @@ static void *__vmalloc_area_node(struct vm_struct *area, gfp_t gfp_mask,
->  	set_vm_area_page_order(area, page_shift - PAGE_SHIFT);
->  	page_order = vm_area_page_order(area);
->  
-> -	area->nr_pages = vm_area_alloc_pages(gfp_mask | __GFP_NOWARN,
-> +	/*
-> +	 * Higher order nofail allocations are really expensive and
-           ~~~~~~~~~~~~
-Seems we use both higher-order and high-order to describe the
-non 0-order pages in many places. I personally would take high-order,
-higher-order seems to be a little confusing because it's not explicit
-what is compared with and lower.
+Hi Serge,
 
-Surely this is not an issue to this patch, I see a lot of 'higher order'
-in kernel codes.
+FYI, the error/warning still remains.
 
-For this patch,
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   d5d547aa7b51467b15d9caa86b116f8c2507c72a
+commit: 939fbcd568fd294034c96edc92ff5b9de1a5fce8 PCI: dwc: Add Root Port and Endpoint controller eDMA engine support
+date:   1 year, 6 months ago
+config: x86_64-sof-customedconfig-atom-defconfig (https://download.01.org/0day-ci/archive/20240829/202408291130.0S7KrQvL-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240829/202408291130.0S7KrQvL-lkp@intel.com/reproduce)
 
-Reviewed-by: Baoquan He <bhe@redhat.com>
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408291130.0S7KrQvL-lkp@intel.com/
 
-> +	 * potentially dangerous (pre-mature OOM, disruptive reclaim
-> +	 * and compaction etc.
-> +	 *
-> +	 * Please note, the __vmalloc_node_range_noprof() falls-back
-> +	 * to order-0 pages if high-order attempt is unsuccessful.
-> +	 */
-> +	area->nr_pages = vm_area_alloc_pages((page_order ?
-> +		gfp_mask & ~__GFP_NOFAIL : gfp_mask) | __GFP_NOWARN,
->  		node, page_order, nr_small_pages, area->pages);
->  
->  	atomic_long_add(area->nr_pages, &nr_vmalloc_pages);
-> -- 
-> 2.39.2
-> 
+All errors (new ones prefixed by >>):
 
+   drivers/pci/controller/dwc/pcie-designware.c: In function 'dw_pcie_edma_detect':
+>> drivers/pci/controller/dwc/pcie-designware.c:898:50: error: '%d' directive output may be truncated writing between 1 and 11 bytes into a region of size 3 [-Werror=format-truncation=]
+     898 |                 snprintf(name, sizeof(name), "dma%d", pci->edma.nr_irqs);
+         |                                                  ^~
+   In function 'dw_pcie_edma_irq_verify',
+       inlined from 'dw_pcie_edma_detect' at drivers/pci/controller/dwc/pcie-designware.c:949:8:
+   drivers/pci/controller/dwc/pcie-designware.c:898:46: note: directive argument in the range [-2147483648, 22]
+     898 |                 snprintf(name, sizeof(name), "dma%d", pci->edma.nr_irqs);
+         |                                              ^~~~~~~
+   drivers/pci/controller/dwc/pcie-designware.c:898:17: note: 'snprintf' output between 5 and 15 bytes into a destination of size 6
+     898 |                 snprintf(name, sizeof(name), "dma%d", pci->edma.nr_irqs);
+         |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   cc1: all warnings being treated as errors
+
+
+vim +898 drivers/pci/controller/dwc/pcie-designware.c
+
+   878	
+   879	static int dw_pcie_edma_irq_verify(struct dw_pcie *pci)
+   880	{
+   881		struct platform_device *pdev = to_platform_device(pci->dev);
+   882		u16 ch_cnt = pci->edma.ll_wr_cnt + pci->edma.ll_rd_cnt;
+   883		char name[6];
+   884		int ret;
+   885	
+   886		if (pci->edma.nr_irqs == 1)
+   887			return 0;
+   888		else if (pci->edma.nr_irqs > 1)
+   889			return pci->edma.nr_irqs != ch_cnt ? -EINVAL : 0;
+   890	
+   891		ret = platform_get_irq_byname_optional(pdev, "dma");
+   892		if (ret > 0) {
+   893			pci->edma.nr_irqs = 1;
+   894			return 0;
+   895		}
+   896	
+   897		for (; pci->edma.nr_irqs < ch_cnt; pci->edma.nr_irqs++) {
+ > 898			snprintf(name, sizeof(name), "dma%d", pci->edma.nr_irqs);
+   899	
+   900			ret = platform_get_irq_byname_optional(pdev, name);
+   901			if (ret <= 0)
+   902				return -EINVAL;
+   903		}
+   904	
+   905		return 0;
+   906	}
+   907	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
