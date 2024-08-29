@@ -1,206 +1,237 @@
-Return-Path: <linux-kernel+bounces-306253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D23A2963BF3
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:50:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CA08963BF5
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:50:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE169B239A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 06:50:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51D451C2130A
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 06:50:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1F6C1537B9;
-	Thu, 29 Aug 2024 06:49:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3A38161328;
+	Thu, 29 Aug 2024 06:49:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="SIhixGlF"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="TLyovVo0"
+Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01on2077.outbound.protection.outlook.com [40.107.215.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3E1D161328
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 06:49:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724914190; cv=none; b=nxmi6lJk8eypAR4TF1MqaXF4G6xRXG4FN74vcXUSKBOmLmuhp1uret4rYfbF457xfLJ4XcI2q5haJSpTW7SxY35xZQzeYxEfDTGfgs96BqnrqMiwcYqWJnfp1m4Ci2KHrOGUe7Bhl+QSBZuu3z9NFaT4joctPD2FWpRIUugf57g=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724914190; c=relaxed/simple;
-	bh=+6J5GRBTSQB22LMbKF5kAwSQs90jnOuDQH8qepeI/iE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=j485OPqMUSbX34rAdqHpGlrVbUm21Dkyt3Bl738hDcQ290Y1HaCx2BHca4AneyEXqNIQCjBNRg5J44f18shHFjeAOPRdy0wooKxGONiMo9KTXTYgAnxiLZHyXH4z0m83cCbyOLHxFMblhQwOXi1GfQsJ5jKzCQP8pqfxb1a0fUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=SIhixGlF; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2f401c20b56so12420111fa.0
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 23:49:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1724914187; x=1725518987; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3SJ/S8s6ymwgMOR0oWpgqeaiVzupwAzeqRKGoyGdDvg=;
-        b=SIhixGlF2RLJ8y0XNBO1x+YbIzlfNRwPobkCLksOisIFtR/hNrRgJc4jol+avpJM+B
-         HEss7TFS82mkiYHwvroeFD9lmwczHJ0n2M5Bx5KENQ/AdAPzAMkW8IYrcoNmBrTYqeOG
-         ScIhxf3L3Qe615Xze9hzGo0jyhL7v8Pe68M3jtJnhzvwfyeibT5TCLmxzxRNJpuKRMVx
-         TtFESVldMWJU5n/QeflwaNJTXiuXlZym8C5TA69heU3Debx8t0fNF3ehXaGWznsqwRZ5
-         RuXaEwvEsrykEcCCDg91K0BOWulZ9izeamDm7mjegcQS5LVOC4ZDUJFT/5p2wgxfXB1e
-         +yDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724914187; x=1725518987;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3SJ/S8s6ymwgMOR0oWpgqeaiVzupwAzeqRKGoyGdDvg=;
-        b=FdCyp3+spViuRr1hySgPmfVhodNhN00nPArdFkGx5kjn7rKDhweeyKj9bWNkvCZvNF
-         ESQBWaYwVrwkoW7QchmX5PEVA0f0w9jUK/eHXLrZ2xDwa165WINBdERMtCNyzvD1gogm
-         yzaEIRw/3Shc+V2RRfNjusu4EN9mnHiTqZjWRbA5jRUSRdC8sMnfT+XjgyRihCCDrewC
-         nlp+vTczc14tCPQrxRufxrVZiLLEioT4gPDgv0aONBmtYn9FOyxT1ytp8eNfCLySjQHg
-         BvtCNZ6A2zfZBYnlVnWS5iiAo6mVSR660aZ6h8a4rFGjvSCy1lTT9Fwcr3NuNJLjBRDq
-         FWbA==
-X-Forwarded-Encrypted: i=1; AJvYcCVMA7Uy4F2DBa9yfm0eHmUZnruabcwTNIHRIaMZsJlrJAOGbb+dBsWrtX3sFnDxAzwmNgrLwSeltt6FaBY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YziwIdTIlIu4fJ4+T4HvZ0V3EaCaJBrFoTH3qN0i1qVn8Zo2fF2
-	j5qsHvDm2H9+3dC7Tb0CgeptBCm9qVAznshoZqiLmonOIGf2jTMfvZjkn7WnhXWFOucTcMjTct8
-	xz1ef/DV28FtQD2Qz80f4yinP6ybKsTrpCFKgMA==
-X-Google-Smtp-Source: AGHT+IF3BL6bSy6BIFTMgHXF0M9DSfrHTvM8HzubREUgUq0pr1f3k88i+ThXx1hinTdBsAZkIqxHeHHemAumxKwyxQE=
-X-Received: by 2002:a05:6512:b1b:b0:52f:30d:526c with SMTP id
- 2adb3069b0e04-53540fe8999mr206492e87.5.1724914186368; Wed, 28 Aug 2024
- 23:49:46 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BA5415AD9B;
+	Thu, 29 Aug 2024 06:49:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.77
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724914198; cv=fail; b=gfv19XhydnwyF+cQU3bjg8zwEP1pObY+wXyXOWeYCz9C+tS1JlE35tXG88qiAY4kCEYAq6J+BHUxJfXCNoT0BQijm3W6FO94AjKn73rq/iynna0zCx8ToJX18HVGOKCZzrnbdY5KLCxjdWToMZb0uAeoPDLU9Eq10gnw0sBD34c=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724914198; c=relaxed/simple;
+	bh=I9Qy9u+CEvhEOLgLDJAatowLcxt5ow2wKmqXUUFu8DE=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=H5kSWEOMVgM1y11T39vEze+kROFAN+jAhSY5KXMXNfnyPqvgk10Zv+k58ZpEwfcx5cm12val/gklN5Rsp0i+eFVpC0tB2onDCYEhAVzFvuy75mVQz4/VBJKdcraetTINAqrlu8i6CyHFQiFl9P6G//medAcu8Ogl/RTelxcZrI8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=TLyovVo0; arc=fail smtp.client-ip=40.107.215.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Px6ArrXrS0xViRr8xBI3A58wRHQFE5pHLINCUE8m++UDvEx7KIzQ+lVNVoNek9xGN33KDrQNEXyhRpkdm7vG8KHjxep3rsPtJxnixHFrncUvB24fLwK1mD2BmbFDNQz/SL+bQ2Qjoe7zS6QVO++LfGWEr54scKmb7SC+mpiUBAZK+rs2AmxoIPF+cyVbR9V6KXIFje2IikiQ3zAbkWICULuY19nK/MlTjaup8l7E4/5XObr0+BzPBdvwhAUXVSDLbzWcHh3FPwIMhP+JoaaYPVjc39jSrY7biDdvCw7uvgB1LXArtN582SqzMJBKCX8J5gP0rIe6WZBAYwJV1Fkjew==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7ERW67835KJU82Kiry6wBE9lAwUEgX1142JZ2NSdtbE=;
+ b=DnPsEFDut7MffD93l25/3Bn8Z3XjaBiHVQjSubrm7ec/NPpWA/cjRRl8v2dgRkwUX39pahc99klVuw7H23ay0V6DrAiSZ+uWNIi9DbWqmg0lnov/XNZZi8YI+FJdvSNdwjWkW580Xy6HYVVQU9n2fuawPh8Gd5yH4ZpueKkW2HHsmqptDqvKugqu3FZoGDB3KEJMGsg7RKedsIPMP6RS7XDcrYoZ07POqpLXb8lYsyPUTBf1moDC9S9zWHVOw6uWyld/pk34N68mMlGUxg0JKCjnt0IJ/LZHxvpl56YERlxYyKqUotD59eoHTuR9nqwNOQiY4/5Go0Ad3u28A8D8VQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7ERW67835KJU82Kiry6wBE9lAwUEgX1142JZ2NSdtbE=;
+ b=TLyovVo0ZMTewBlsJ4Lh8T7opJ9xbj7eweVQkE/aaWIHvkOAZjyjxfWS2GRH6+nVP9T2PA9kE5wotK0H5CRjA/8kiEm6aJrsnuI+I5gdOOENn1y1jkUR3N+0+qxZLNjbXXwVcoSKyoadiy5NX2MCDqXHHLFs/nTgw3qkiq6fKQNAtgDFvHyKFMfdOUlWERMO8yBQxeWLmtIVJBBCKOfL1iQPdpPUgBtzO65RKFZfnmrrs/D50g1pa4DgiLic+CRqexBKb8/mzJ0F2swzj46509re+isEOunsRLPXAOORmtrZ5Ba26sDx0Q7Rofth5tXqxfL9Tv127MZ8h9slo0TMyA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from KL1PR0601MB4211.apcprd06.prod.outlook.com
+ (2603:1096:820:23::14) by SEYPR06MB6822.apcprd06.prod.outlook.com
+ (2603:1096:101:1b0::13) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.25; Thu, 29 Aug
+ 2024 06:49:53 +0000
+Received: from KL1PR0601MB4211.apcprd06.prod.outlook.com
+ ([fe80::29e8:8083:a2b3:bd1a]) by KL1PR0601MB4211.apcprd06.prod.outlook.com
+ ([fe80::29e8:8083:a2b3:bd1a%4]) with mapi id 15.20.7897.027; Thu, 29 Aug 2024
+ 06:49:53 +0000
+From: Wang Jianzheng <wangjianzheng@vivo.com>
+To: Damien Le Moal <dlemoal@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-riscv@lists.infradead.org (open list:CANAAN/KENDRYTE K210 SOC FPIOA DRIVER),
+	linux-gpio@vger.kernel.org (open list:CANAAN/KENDRYTE K210 SOC FPIOA DRIVER),
+	linux-kernel@vger.kernel.org (open list)
+Cc: opensource.kernel@vivo.com,
+	wangjianzheng@vivo.com
+Subject: [PATCH 4/5] pinctrl: k210: Use devm_clk_get_enabled() helpers
+Date: Thu, 29 Aug 2024 14:49:38 +0800
+Message-Id: <20240829064938.20114-1-wangjianzheng@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TYCP286CA0310.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:38b::7) To KL1PR0601MB4211.apcprd06.prod.outlook.com
+ (2603:1096:820:23::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240829033904.477200-1-nick.hu@sifive.com> <20240829033904.477200-3-nick.hu@sifive.com>
- <CAK9=C2Xui8c0b55WrZxCZYqK=AFmiPT+nG8d_E0d7SpamwvO-Q@mail.gmail.com> <CAKddAkCoZy=uid5gVzUg-zwhBxX_EZCbFR18521N3142MPv=jw@mail.gmail.com>
-In-Reply-To: <CAKddAkCoZy=uid5gVzUg-zwhBxX_EZCbFR18521N3142MPv=jw@mail.gmail.com>
-From: Anup Patel <apatel@ventanamicro.com>
-Date: Thu, 29 Aug 2024 12:19:34 +0530
-Message-ID: <CAK9=C2VbF2JKSfJLVEV4SYQFxr+gmpBTjtK6DuVFSbEAjRmFOA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] time-riscv: Stop stimecmp when cpu hotplug
-To: Nick Hu <nick.hu@sifive.com>
-Cc: greentime.hu@sifive.com, zong.li@sifive.com, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@ucw.cz>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Andrew Jones <ajones@ventanamicro.com>, 
-	Conor Dooley <conor.dooley@microchip.com>, Samuel Holland <samuel.holland@sifive.com>, 
-	Sunil V L <sunilvl@ventanamicro.com>, linux-pm@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: KL1PR0601MB4211:EE_|SEYPR06MB6822:EE_
+X-MS-Office365-Filtering-Correlation-Id: aeb346c0-f52e-4f7c-ab51-08dcc7f6c91d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|52116014|376014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?h4y7tzYiSVtysS00k+r8cKh5ZHqDRZlAlOAqiYgYa2sbQwlgpe6Qp2/tMY7n?=
+ =?us-ascii?Q?a4hgtYlvo0DONCjxe61+aZj0gb7sumkWn7rDbYvuYVCqEDaLNigtBNkxw3OB?=
+ =?us-ascii?Q?RIOITL/LrjnwdjsJAebsqybzu/xtuAKEoo1VHE8BfhJZMychxaHqg59m4Zeu?=
+ =?us-ascii?Q?Qm7zm7dk9JLyGWApkWBV+k0n9NglYt9nr2aTctu/R0x8pqrEiff233BE78uh?=
+ =?us-ascii?Q?BT/iDzi4X7pqZE8W6MzCJk35ElIWqCqc0u9l1kZOsoogdW11wZaix12+6K75?=
+ =?us-ascii?Q?Tk/mGY746KN6qrlVyIK8yDropw0sLHBAbEbg2AYYvlHj0hVz9ZMV0eudL+Q6?=
+ =?us-ascii?Q?JOknwEXFkrpUafAM+MaBSsFrbsezyl1Q7Gcjld1jwSt93c+C5323wJWcbFEe?=
+ =?us-ascii?Q?5bdC95KPZ0+DA8b0iMXez1H9i31+SD/56wdZb/4vwPAXMVMuaJbpVvReobIb?=
+ =?us-ascii?Q?Vtav/FNt5Xa2XUYygfvfOaW8UpuN91P7i70h31HiLyERZXk39iB2kyWEZ3TY?=
+ =?us-ascii?Q?9EWbVV0rOvBElXkK4JY3lH+PHkkTqwAJBeSAp2Q7T2ejRnZzKEpsjFaETSIL?=
+ =?us-ascii?Q?A0ub8prknMK3IiXum4/oDqkoiH3cogB+RoEx13zknLRN207FRPJrtNiGlbWx?=
+ =?us-ascii?Q?pR210BXNSWOo3lci2iBs+8ZSL67+Wmeo4r2Vay2RDDLScx5X/aQyGh5FWJgb?=
+ =?us-ascii?Q?cXXQwQNMhoeKxCG42CQzXmE0/6L1CvpmSQpkxCQgKfHlCHUTgNDT8v7KgHxs?=
+ =?us-ascii?Q?lLvjS5wVuEitrbcvtDn2uPFn8f0XBE/Ca9yRkQdqfm7AmooMBDl5Gkle7hrR?=
+ =?us-ascii?Q?kwSgUyfb1TIcw7xvEUvm/MNN6bwCWSpDUFQdE+f794xK923ujJ/qyySY0sYD?=
+ =?us-ascii?Q?OSUX0K9ywXHfwgCaioKaVckxJSd/SAqqZYLICDdnBtncdD3Nsj82T85T+Ms6?=
+ =?us-ascii?Q?8GGXyX+l9F5uThaTHVmAd/mjvTRdMJKl3dTOM5wB/FlvrkdDJ+KOyAMqQX84?=
+ =?us-ascii?Q?r+0NTZ0MSQ0LOwUdqsTcoPpr8H2H2/Lr5hqyN7vG4tjqAZ2ymXKXaonakYU9?=
+ =?us-ascii?Q?V7I7Rbq9ejX+w0tIV1qz6e5VuPd5CKrwetGinWWB/yraP5+f3tnRIn3Uu+oA?=
+ =?us-ascii?Q?T6bqQ9ovziuLmrJq+/pDNlIndkknggYbWLfEsC3rQcG3QY6/VEb3SFmbokS+?=
+ =?us-ascii?Q?M1PVjlQRoxN3UpXFruKFl8Gm860KFw+YZroQoWOlXgtnlRI3XVsrFdS5QNHp?=
+ =?us-ascii?Q?HMrlkNMxHhiZfsIlJJBUtYPBu4KJ4XJWrUDqvaRqxePrcvBoZrp4lgjSrGYu?=
+ =?us-ascii?Q?e1plGcmODLR6/D+8OaYaV44qfx7RHo5JT3TZ+169vcMS7k1nSotQLEiDjEEN?=
+ =?us-ascii?Q?yOS+RmanqtgYhBRwHKIB3sXkRb5PHq95iO6nCqUND6uGRSHxTQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR0601MB4211.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(52116014)(376014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?6j9YJUGdlom/69klZPow2FuqvdOCG+RROvjQTR5P596xGomcJNJkDszptr+z?=
+ =?us-ascii?Q?3Ks2twCZY61mSK28yb49KbAAHsEyaBNMnkOxp8e2I0CZMgnf98DlrjXJKhJ+?=
+ =?us-ascii?Q?/GGGXKfxi0bW2jsvgO8GHTN/6dszyUREDl18q2Jk/5aV6lJjJrbefakLdx1q?=
+ =?us-ascii?Q?PTvFt+05UkDrerlzFDp4J1t6hs48kltdPcJBzesE9E47hizOtSlfVpNyjs8S?=
+ =?us-ascii?Q?JCbsYTJXiChLWKqTQ1d4NOu6eAQxJYXTAWmCQP4ypIFCQskFU0Q7f6dQCY9x?=
+ =?us-ascii?Q?TyUVzW9I0lCLvnROCeo/2JEhIITsBxYQXkIMKS3966AFpYWVhBHvFT+kf3LB?=
+ =?us-ascii?Q?jOh/87Y8UIZax4Mxs7H+fYptjvncNNUD0tRIpZ37jufeJZU+2mDSdsc6no7T?=
+ =?us-ascii?Q?raZsb+a1n+7Fd8berMv6Dvd6QtzFsamsxTOLVbSS0Osqszg8fT80Z15mWY2p?=
+ =?us-ascii?Q?cpgnW7SQ6HqUDxRKmZFcnVLDERruWAz5/TcFZGGW5qtNJZw/PWeHQcfDKeK3?=
+ =?us-ascii?Q?cnkpy7my+J/nD0b1Y3UFcMjqe7W/u/440NhCX2PNAv93JeB0R2E6LwcY2dqg?=
+ =?us-ascii?Q?3TbBp/tWhy944EXH3KKykL31Cms1Htt6HC2Ag3Mwlnd3FmqsnR/C7gpkZPXR?=
+ =?us-ascii?Q?g3hG+zayoM68Ti/+qb7U3cm/5crXBiw7MHGpTxdxVi23w4FKwNg0bAgnckg9?=
+ =?us-ascii?Q?N+7qsuJugT26AJSYcJXqPs7YNIQc5ozN9a9UDFXQxcoBLPoqHuH5E7EeLGq4?=
+ =?us-ascii?Q?BPRJ9s3te5Bi7iikBOxLl0moN7XbpvyIKdLuVEekLqvx069F/Yu6soum9+TY?=
+ =?us-ascii?Q?Y0eqorbCY8CWntgCTXMhIl7C3KYB2kPjDn27fP77djjsW/Bn9/wXeqz/OHjk?=
+ =?us-ascii?Q?9jVdn4mL9Btyen1pfpFgyylpd9TujvlwbvmKdE/9MRRoEkFxDRqg+pTp1AHT?=
+ =?us-ascii?Q?lFniJGIsT9QNVQQ2Hc1z78EPCNP/QYILCaxLL75wUgBy9zOQhIGGksb0ASKP?=
+ =?us-ascii?Q?S4sk/I878zj1N1ezCgTZtrSsW4AZ6ywdjzcBWGfX5eSBJ+m4kkqkm3yzvEa1?=
+ =?us-ascii?Q?pTV4DJfcYkwGBrJIaVPixveQUwHbOUhKAx0fHY1Mjz1yTCR2wqUqw5H8Fyud?=
+ =?us-ascii?Q?AKlJc8oaQygM/fIhc2bToUmFjRS+Z46hYiZGY3gtEyi/1bsdyXhEF8TASYMr?=
+ =?us-ascii?Q?Dr6oWArp2l2K6QpXUMev39Zf7HSCOy57NMvg3g2tb5zeBfUcMQQftcZCOGTt?=
+ =?us-ascii?Q?Ryyo+RAQPNATYi1Cz3u5vJfiS72pEytgxeI76FkzoVFagTtNZ0nOkbwgxPOb?=
+ =?us-ascii?Q?vnASrgM800U+yxFn4UlONQzUit3xVFAmAAAD9r6bRH0JmWwUJ823rL6WXi9E?=
+ =?us-ascii?Q?mAYgXbziXp80buYmwZiIP7KrdwvbPeQbl7sLngrI922fuk+Z+KbqWD6DZH8v?=
+ =?us-ascii?Q?lq3njBsDNI2XI8o9OPYiM1ByO+Q+LOBBa062cPJDIGQRFMNckSYdBQ9TYHg6?=
+ =?us-ascii?Q?bOTTiLiDpbbhywWNewpnXhAnOh/3taouUVJmqbvfZ/XuN/5hlNF0ev50O0bv?=
+ =?us-ascii?Q?x/DINx5dEGQc98CE3cG/vUviuAlmS1QM1bhJoMnu?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: aeb346c0-f52e-4f7c-ab51-08dcc7f6c91d
+X-MS-Exchange-CrossTenant-AuthSource: KL1PR0601MB4211.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Aug 2024 06:49:53.1315
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: gYNaXTFOuGb9rTOzww2H0qAjirbKru9o6NiCc+67Mi5GBafa3fcnIAs9mcTxJbT4nT/R/afKcq23TqjL6y6E4A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR06MB6822
 
-On Thu, Aug 29, 2024 at 11:53=E2=80=AFAM Nick Hu <nick.hu@sifive.com> wrote=
-:
->
-> Hi Anup
->
-> On Thu, Aug 29, 2024 at 1:18=E2=80=AFPM Anup Patel <apatel@ventanamicro.c=
-om> wrote:
-> >
-> > On Thu, Aug 29, 2024 at 9:10=E2=80=AFAM Nick Hu <nick.hu@sifive.com> wr=
-ote:
-> > >
-> > > Stop the stimecmp when the cpu is going to be off otherwise the timer
-> > > interrupt may pending while performing power down operation.
-> > >
-> > > Signed-off-by: Nick Hu <nick.hu@sifive.com>
-> > > ---
-> > >  drivers/clocksource/timer-riscv.c | 22 +++++++++++++++-------
-> > >  1 file changed, 15 insertions(+), 7 deletions(-)
-> > >
-> > > diff --git a/drivers/clocksource/timer-riscv.c b/drivers/clocksource/=
-timer-riscv.c
-> > > index 48ce50c5f5e6..9a6acaa8dfb0 100644
-> > > --- a/drivers/clocksource/timer-riscv.c
-> > > +++ b/drivers/clocksource/timer-riscv.c
-> > > @@ -32,15 +32,19 @@
-> > >  static DEFINE_STATIC_KEY_FALSE(riscv_sstc_available);
-> > >  static bool riscv_timer_cannot_wake_cpu;
-> > >
-> > > +static void riscv_clock_stop_stimecmp(void)
-> > > +{
-> > > +       csr_write(CSR_STIMECMP, ULONG_MAX);
-> > > +       if (IS_ENABLED(CONFIG_32BIT))
-> > > +               csr_write(CSR_STIMECMPH, ULONG_MAX);
-> > > +}
-> > > +
-> > >  static void riscv_clock_event_stop(void)
-> > >  {
-> > > -       if (static_branch_likely(&riscv_sstc_available)) {
-> > > -               csr_write(CSR_STIMECMP, ULONG_MAX);
-> > > -               if (IS_ENABLED(CONFIG_32BIT))
-> > > -                       csr_write(CSR_STIMECMPH, ULONG_MAX);
-> > > -       } else {
-> > > +       if (static_branch_likely(&riscv_sstc_available))
-> > > +               riscv_clock_stop_stimecmp();
-> > > +       else
-> > >                 sbi_set_timer(U64_MAX);
-> > > -       }
-> > >  }
-> > >
-> > >  static int riscv_clock_next_event(unsigned long delta,
-> > > @@ -126,7 +130,11 @@ static int riscv_timer_starting_cpu(unsigned int=
- cpu)
-> > >
-> > >  static int riscv_timer_dying_cpu(unsigned int cpu)
-> > >  {
-> > > -       disable_percpu_irq(riscv_clock_event_irq);
-> > > +       if (static_branch_likely(&riscv_sstc_available))
-> > > +               riscv_clock_stop_stimecmp();
-> > > +       else
-> > > +               disable_percpu_irq(riscv_clock_event_irq);
-> > > +
-> >
-> > Not disabling riscv_clock_event_irq here for Sstc would now
-> > cause riscv_timer_starting_cpu() to unnecessarily enable it
-> > when the CPU is powered-up.
-> >
-> > I think the below change is sufficient for this patch:
-> >
-> > diff --git a/drivers/clocksource/timer-riscv.c
-> > b/drivers/clocksource/timer-riscv.c
-> > index 48ce50c5f5e6..546fd248f4ff 100644
-> > --- a/drivers/clocksource/timer-riscv.c
-> > +++ b/drivers/clocksource/timer-riscv.c
-> > @@ -127,6 +127,11 @@ static int riscv_timer_starting_cpu(unsigned int c=
-pu)
-> >  static int riscv_timer_dying_cpu(unsigned int cpu)
-> >  {
-> >         disable_percpu_irq(riscv_clock_event_irq);
-> > +       /*
-> > +        * Stop the timer when the cpu is going to be offline otherwise
-> > +        * the timer interrupt may be pending while performing power-do=
-wn.
-> > +        */
-> > +       riscv_clock_event_stop();
-> >         return 0;
-> >  }
-> >
-> The sbi_exit() of OpenSBI will disable mtimecmp when
-> sbi_hsm_hart_stop() so the mtimecmp will be disabled twice if there is
-> no SSTC.
-> How about adding a SSTC available check before the riscv_clock_event_stop=
-?
+The devm_clk_get_enabled() helpers:
+    - call devm_clk_get()
+    - call clk_prepare_enable() and register what is needed in order to
+     call clk_disable_unprepare() when needed, as a managed resource.
 
-Currently, OpenSBI uses mtimecmp only for implementing
-SBI time extension but in the future, OpenSBI might implement
-a per-hart timer event list to allow M-mode timer events.
+This simplifies the code and avoids the calls to clk_disable_unprepare().
 
-Don't assume in what environment the driver is running.
+Signed-off-by: Wang Jianzheng <wangjianzheng@vivo.com>
+---
+ drivers/pinctrl/pinctrl-k210.c | 35 ++++++++--------------------------
+ 1 file changed, 8 insertions(+), 27 deletions(-)
 
-It is possible that the driver is running under a hypervisor
-which only provides SBI time extension and does not virtualize
-Sstc extension.
+diff --git a/drivers/pinctrl/pinctrl-k210.c b/drivers/pinctrl/pinctrl-k210.c
+index a898e40451fe..0f6b55fec31d 100644
+--- a/drivers/pinctrl/pinctrl-k210.c
++++ b/drivers/pinctrl/pinctrl-k210.c
+@@ -925,7 +925,6 @@ static int k210_fpioa_probe(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
+ 	struct device_node *np = dev->of_node;
+ 	struct k210_fpioa_data *pdata;
+-	int ret;
+ 
+ 	dev_info(dev, "K210 FPIOA pin controller\n");
+ 
+@@ -940,46 +939,28 @@ static int k210_fpioa_probe(struct platform_device *pdev)
+ 	if (IS_ERR(pdata->fpioa))
+ 		return PTR_ERR(pdata->fpioa);
+ 
+-	pdata->clk = devm_clk_get(dev, "ref");
++	pdata->clk = devm_clk_get_enabled(dev, "ref");
+ 	if (IS_ERR(pdata->clk))
+ 		return PTR_ERR(pdata->clk);
+ 
+-	ret = clk_prepare_enable(pdata->clk);
+-	if (ret)
+-		return ret;
+-
+-	pdata->pclk = devm_clk_get_optional(dev, "pclk");
+-	if (!IS_ERR(pdata->pclk)) {
+-		ret = clk_prepare_enable(pdata->pclk);
+-		if (ret)
+-			goto disable_clk;
+-	}
++	pdata->pclk = devm_clk_get_optional_enabled(dev, "pclk");
++	if (IS_ERR(pdata->pclk))
++		return PTR_ERR(pdata->pclk);
+ 
+ 	pdata->sysctl_map =
+ 		syscon_regmap_lookup_by_phandle_args(np,
+ 						"canaan,k210-sysctl-power",
+ 						1, &pdata->power_offset);
+-	if (IS_ERR(pdata->sysctl_map)) {
+-		ret = PTR_ERR(pdata->sysctl_map);
+-		goto disable_pclk;
+-	}
++	if (IS_ERR(pdata->sysctl_map))
++		return PTR_ERR(pdata->sysctl_map);
+ 
+ 	k210_fpioa_init_ties(pdata);
+ 
+ 	pdata->pctl = pinctrl_register(&k210_pinctrl_desc, dev, (void *)pdata);
+-	if (IS_ERR(pdata->pctl)) {
+-		ret = PTR_ERR(pdata->pctl);
+-		goto disable_pclk;
+-	}
++	if (IS_ERR(pdata->pctl))
++		return PTR_ERR(pdata->pctl);
+ 
+ 	return 0;
+-
+-disable_pclk:
+-	clk_disable_unprepare(pdata->pclk);
+-disable_clk:
+-	clk_disable_unprepare(pdata->clk);
+-
+-	return ret;
+ }
+ 
+ static const struct of_device_id k210_fpioa_dt_ids[] = {
+-- 
+2.34.1
 
->
->   /*
->    * Stop the timer when the cpu is going to be offline otherwise
->    * the timer interrupt may be pending while performing power-down.
->    */
-> if (static_branch_likely(&riscv_sstc_available))
->     riscv_clock_event_stop();
->
-
-Regards,
-Anup
 
