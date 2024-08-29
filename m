@@ -1,167 +1,79 @@
-Return-Path: <linux-kernel+bounces-307309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93ACD964B95
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 18:23:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C61F964B9A
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 18:23:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A712282884
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:23:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C96531F2180E
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:23:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D5E11B4C49;
-	Thu, 29 Aug 2024 16:22:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="BdotlAeI";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Tegg2S6s";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="WhyHXXT4";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="X08BLpck"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3DEF38F9C;
-	Thu, 29 Aug 2024 16:22:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E46E38F9C;
+	Thu, 29 Aug 2024 16:23:43 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17F0418C032
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 16:23:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724948575; cv=none; b=TRV2V6HxmJ3zVi0zw6jxkj7EGZA6/UIR+Po+l56MloQlyIVS3ZA5CZV66WfXWmXy+w8s/1XjyyFrzL8AY+3IgGW+0kRGVrxwrkBCwLL3MwlCNOSIgy/HBCcMGOyWnHXga4fqrQyGy2Th8pscoSFwNkLYpiByFBch74RvC9IF0C4=
+	t=1724948622; cv=none; b=hpQmmKSFW1uEAouo3nVaxPORASo9kNizU4Nhqi9QXB8BzLKPOaHGm6of4y9PWhClzsGC3XelhQnQgdHDJaaufc0dVkP2VkodBHL8SIGrHJ+IIE1n/8nfah2DZ/9WwqVQ72asoVqMgRTQyvpe25GViR2QeDRxT7tjWE6JLtZq0HQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724948575; c=relaxed/simple;
-	bh=xCJMHOX25QOgtyzPIKPwJ4McoZCcuj2+xMof2qIuWgU=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PbbPSI6koq92yS36vV8TufGEhfmAd8MEri25MD+nBAs9t34o7zTCKjAKHvEHcOaBRSyVmhNJyBhPJApznusw1oGgTl1hatLOfWd7T3fVYq6uX1DzjYfGf+2nL1ZCfi5kp790r76hB8GeB0qCN4TR1N3cGnm43TDDkRs0PEGOOZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=BdotlAeI; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Tegg2S6s; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=WhyHXXT4; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=X08BLpck; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id DA8C11F449;
-	Thu, 29 Aug 2024 16:22:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1724948572; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lqxE3wVAnc67PfYzr6H1KIHv1Iy/FY0+ZzpQO2C1mxI=;
-	b=BdotlAeI0VSdcxvGLRC7bygesEtHqHnR6XWaqk5mHPusCdqYwSaOp2jVXUv2m86de9Rpoj
-	sEQvqufbCYGhZe6gXPojVz9JR3Xl0HUkM8A5rmo6llYuXrO/ea8xSPr4Dp8Uo/4cSlvwgm
-	deO0GTfuDHxcX8oEZn2Yv1Oufyo6X1k=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1724948572;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lqxE3wVAnc67PfYzr6H1KIHv1Iy/FY0+ZzpQO2C1mxI=;
-	b=Tegg2S6s91p1Ak43LJHtRTZuJlc0H03bdO+XGa3KShtg4wItYLorPL9yVkCVIsdCnRhKdB
-	7DpmAJsS6gRV21BA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=WhyHXXT4;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=X08BLpck
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1724948571; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lqxE3wVAnc67PfYzr6H1KIHv1Iy/FY0+ZzpQO2C1mxI=;
-	b=WhyHXXT47Nmzdddu3hmBPFwDW3NyK5FrysR+qeabrhhpU1CLD7kBR/2zBSVly+O9CC/DAK
-	O/IYBayw34IuMbgrZZZxQiaWEmjsAReP3bvxNQY2oqUeKFrYg9WNzc2LMYODCHRuZti/VH
-	8rtPDi4UkwRxXM3FQWUl8m+BzKY7mu8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1724948571;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lqxE3wVAnc67PfYzr6H1KIHv1Iy/FY0+ZzpQO2C1mxI=;
-	b=X08BLpckludQQ+MOsb/Rt+EkPS09ZuJFKIb/TWSsQPxWABMFAnB6YTUVOlp9YiqiGbwqAq
-	ff1kcSFma9pKQ4Dg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id AC5AC13408;
-	Thu, 29 Aug 2024 16:22:51 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 0RzXKFug0GZUeQAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Thu, 29 Aug 2024 16:22:51 +0000
-Date: Thu, 29 Aug 2024 18:23:36 +0200
-Message-ID: <87wmjzl2lz.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Simon Trimmer <simont@opensource.cirrus.com>
-Cc: <tiwai@suse.com>,
-	<linux-sound@vger.kernel.org>,
-	<alsa-devel@alsa-project.org>,
-	<linux-kernel@vger.kernel.org>,
-	<patches@opensource.cirrus.com>
-Subject: Re: [PATCH] ALSA: hda/realtek: Autodetect Cirrus Logic companion amplifier bindings
-In-Reply-To: <20240829161114.140938-1-simont@opensource.cirrus.com>
-References: <20240829161114.140938-1-simont@opensource.cirrus.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1724948622; c=relaxed/simple;
+	bh=Ml2Eb3Spu9o8mnCkLAs4MhMbOh9QmCQTIu+aR8VJPgo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iFQIVWuDbqthkAsRVysc9s2WDQHNa5pQG7rQO4Qx+2EfgfwkJp856Q05xfvY7ttmrJDoj6gqvbUc6zNFGgMjYRy8doQb8VvlYa2AWGG1jd/5kYjMpu2SK/R7lSPdQ6pJV1NjWx3Fcf4ym4ISO3lCYxwwHtlGy5QUO7OvhmhzwRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A81B3106F;
+	Thu, 29 Aug 2024 09:24:06 -0700 (PDT)
+Received: from bogus (e107155-lin.cambridge.arm.com [10.1.198.42])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 56AFB3F762;
+	Thu, 29 Aug 2024 09:23:39 -0700 (PDT)
+Date: Thu, 29 Aug 2024 17:23:37 +0100
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Liviu Dudau <liviu.dudau@arm.com>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Russell King <linux@armlinux.org.uk>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] ARM: versatile: fix OF node leak in CPUs prepare
+Message-ID: <ZtCgiSIGmQzA4EwG@bogus>
+References: <20240826054934.10724-1-krzysztof.kozlowski@linaro.org>
+ <ZtBqqXWvVWDtaeE8@e110455-lin.cambridge.arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Rspamd-Queue-Id: DA8C11F449
-X-Spam-Score: -5.51
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-5.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_SOME(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[cirrus.com:email,suse.de:mid,suse.de:dkim];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZtBqqXWvVWDtaeE8@e110455-lin.cambridge.arm.com>
 
-On Thu, 29 Aug 2024 18:11:14 +0200,
-Simon Trimmer wrote:
+On Thu, Aug 29, 2024 at 01:33:45PM +0100, Liviu Dudau wrote:
+> On Mon, Aug 26, 2024 at 07:49:33AM +0200, Krzysztof Kozlowski wrote:
+> > Machine code is leaking OF node reference from of_find_matching_node()
+> > in realview_smp_prepare_cpus().
+> > 
+> > Fixes: 5420b4b15617 ("ARM: realview: add an DT SMP boot method")
+> > Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 > 
-> We do not need model specific HDA quirks to construct the component
-> binding details of Cirrus Logic companion amplifiers as this information
-> is already present in the ACPI.
+> Acked-by: Liviu Dudau <liviu.dudau@arm.com>
 > 
-> Quirks are then only required for special workarounds not described in
-> the ACPI such as internal configuration of the Realtek codecs.
+> I think Sudeep is going to take the series through his tree, but he might
+> be on holiday at this time.
 > 
-> The codec pointer is now initialized in hda_component_manager_init() so
-> that we can detect when companion amplifiers are found in the ACPI but
-> the SSID invokes a quirk that also attempts to create the component
-> binding.
-> 
-> Signed-off-by: Simon Trimmer <simont@opensource.cirrus.com>
-> ---
-> v1 - This patch applies to for-next with this additional patch:
->      b1faff28a2bd ("ALSA: hda: hda_component: Fix mutex crash if nothing ever binds")
->      which is currently only in the for-linus.
 
-OK, I now merged for-linus to for-next, and applied yours.
+I am not that lucky 😉. Anyways I left these to Linus W as he deals with
+versatile platforms. I have only seen them but never run anything on them.
 
->      We're looking to do the same for the CS35L41 devices, but that will
->      come later because there are many more quirks to work through.
-
-That's understandable.  Thanks!
-
-
-Takashi
+--
+Regards,
+Sudeep
 
