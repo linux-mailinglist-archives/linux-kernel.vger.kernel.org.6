@@ -1,105 +1,155 @@
-Return-Path: <linux-kernel+bounces-307156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 617AD964950
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 17:00:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A4EB964957
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 17:01:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E758284C92
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:00:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E4BD1C229E5
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:01:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9C2F1B14FC;
-	Thu, 29 Aug 2024 14:59:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="PBsta0pW"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C8481B1429;
+	Thu, 29 Aug 2024 15:01:14 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4823B1B14FA;
-	Thu, 29 Aug 2024 14:59:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 162EA36B0D;
+	Thu, 29 Aug 2024 15:01:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724943589; cv=none; b=oTYzrQNApbo+eatuLQvZp2popiBvSQMMQ+4e9DduU4idSgj/cJpRIhuVFrUNzMyX2xBAY9xDZlXI7uLgIqbYzSiTJHccqXosWQG8kepAn6aspywXKnVGdNh6Qa7jz6ECGl6HTcaKQggCtv7QbNA6aC0vkn1XKBQ2+8sHhUXp7V8=
+	t=1724943673; cv=none; b=tgStRduWG5wD/69Dw5PwBhwONn3lUzfmaxTqCRRxZOtj8YTzSLXGIrPciaG8K5MCaX8ajHS/RWoLO98zW6h+242gPvS9rIwPrbB908nNRZSwlmH7bNh7f4J9tLzVa0QTsTAiOay4gRsXp2NqRb0P9B/pqG3XCZzVzfM876ciqZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724943589; c=relaxed/simple;
-	bh=FIrKZ7eFEap29RyzpJNG+rDeVQSYhnoanvSiHXY8nvw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M+OHYHmKsFlb78TA6TWDrGWIWQd9hTSfvaZLjyIrBR87Bf2Pspr999iRQyaxkq/2fTtA4WHI+VMIRu5V03xG9IzPAV38eES4H9VkItKm7jRsxU4PRsMd7Zijv3QhACdVB0lK4Xguy7Yr6ES31A0ruiaf62hXK30hXptEJhu/OYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=PBsta0pW; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=pKAEHrlxI9H+II4MqA/rpzR3mfsca14ExRhLsNlJG8Y=; b=PBsta0pWa97i7SIHSI4lyUGqIB
-	bInXMWu8DFRTLrJgzyvVQZT22DLSsxnnabc80wfJye1DORhYnhUrAH9tqP6VOe8S8AaPldb/bH31s
-	qehvP8SNl20V4K15MyXH/YwjnWMi6yR1zMtHhQhfLKNc/733wyEdQWn6aWrA7k6t+/UU=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sjgcL-0062zG-LU; Thu, 29 Aug 2024 16:59:21 +0200
-Date: Thu, 29 Aug 2024 16:59:21 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Jijie Shao <shaojijie@huawei.com>, davem@davemloft.net,
-	edumazet@google.com, pabeni@redhat.com, shenjian15@huawei.com,
-	wangpeiyang1@huawei.com, liuyonglong@huawei.com,
-	chenhao418@huawei.com, sudongming1@huawei.com,
-	xujunsheng@huawei.com, shiyongbang@huawei.com, libaihan@huawei.com,
-	jdamato@fastly.com, horms@kernel.org, jonathan.cameron@huawei.com,
-	shameerali.kolothum.thodi@huawei.com, salil.mehta@huawei.com,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V5 net-next 05/11] net: hibmcge: Implement some .ndo
- functions
-Message-ID: <f8978a4a-aa9d-4f36-ab40-5068f859bfec@lunn.ch>
-References: <20240827131455.2919051-1-shaojijie@huawei.com>
- <20240827131455.2919051-6-shaojijie@huawei.com>
- <20240828183954.39ea827f@kernel.org>
- <b3d6030e-14a3-4d5f-815c-2f105f49ea6a@huawei.com>
- <20240829074339.426e298b@kernel.org>
+	s=arc-20240116; t=1724943673; c=relaxed/simple;
+	bh=yxT/CITz2Ev+XRlXd/JOk8lr2Jz4zNqFFvpl/UT9/tQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TloShmt8ouALh+lWDAY5+Pod21bLa731GqLKD/LuSs7c+FKIslEtl1B2cFp0oJ+SVZjUYALvt7+jvyaq1fW59ZQhG5OyhEPHwcJvHEMWRUs1iKw8EP1Ujf/gj4Gg+jTfOoIbCBFuPYHkGjf4d04meXLGKnG+ulKtKbZvv96GgT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4WvkxW5xyLz9sTX;
+	Thu, 29 Aug 2024 17:01:03 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id CjnhSQGtSteZ; Thu, 29 Aug 2024 17:01:03 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4Wvkwf6YQGz9sSX;
+	Thu, 29 Aug 2024 17:00:18 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id CF1CB8B794;
+	Thu, 29 Aug 2024 17:00:18 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id Ebp-7Axw5H8e; Thu, 29 Aug 2024 17:00:18 +0200 (CEST)
+Received: from [192.168.234.40] (unknown [192.168.234.40])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 398B98B764;
+	Thu, 29 Aug 2024 17:00:18 +0200 (CEST)
+Message-ID: <0085b19d-bb87-45bc-8a74-7464316f86a1@csgroup.eu>
+Date: Thu, 29 Aug 2024 17:00:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240829074339.426e298b@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] random: vDSO: Redefine PAGE_SIZE and PAGE_MASK
+To: Vincenzo Frascino <vincenzo.frascino@arm.com>,
+ Arnd Bergmann <arnd@arndb.de>, "Jason A . Donenfeld" <Jason@zx2c4.com>
+Cc: Theodore Ts'o <tytso@mit.edu>, Andy Lutomirski <luto@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+ linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ Linux-Arch <linux-arch@vger.kernel.org>
+References: <b8f8fb6d1d10386c74f2d8826b737a74c60b76b2.1724743492.git.christophe.leroy@csgroup.eu>
+ <defab86b7fb897c88a05a33b62ccf38467dda884.1724747058.git.christophe.leroy@csgroup.eu>
+ <Zs2RCfMgfNu_2vos@zx2c4.com>
+ <cb66b582-ba63-4a5a-9df8-b07288f1f66d@app.fastmail.com>
+ <0f9255f1-5860-408c-8eaa-ccb4dd3747fa@csgroup.eu>
+ <17437f43-9d1f-4263-888e-573a355cb0b5@arm.com>
+ <272cb38a-c0e3-4e6e-89ce-b503c75c2c33@csgroup.eu>
+ <bab7286c-e27e-450a-8bb6-e5b09063a033@arm.com>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <bab7286c-e27e-450a-8bb6-e5b09063a033@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 29, 2024 at 07:43:39AM -0700, Jakub Kicinski wrote:
-> On Thu, 29 Aug 2024 10:40:07 +0800 Jijie Shao wrote:
-> > on 2024/8/29 9:39, Jakub Kicinski wrote:
-> > > On Tue, 27 Aug 2024 21:14:49 +0800 Jijie Shao wrote:  
-> > >> +static int hbg_net_open(struct net_device *dev)
-> > >> +{
-> > >> +	struct hbg_priv *priv = netdev_priv(dev);
-> > >> +
-> > >> +	if (test_and_set_bit(HBG_NIC_STATE_OPEN, &priv->state))
-> > >> +		return 0;
-> > >> +
-> > >> +	netif_carrier_off(dev);  
-> > > Why clear the carrier during open? You should probably clear it once on
-> > > the probe path and then on stop.  
-> > 
-> > In net_open(), the GMAC is not ready to receive or transmit packets.
-> > Therefore, netif_carrier_off() is called.
-> > 
-> > Packets can be received or transmitted only after the PHY is linked.
-> > Therefore, netif_carrier_on() should be called in adjust_link.
+Hi Vincenzo,
+
+Le 29/08/2024 à 14:01, Vincenzo Frascino a écrit :
+> Hi Christophe,
 > 
-> But why are you calling _off() during .ndo_open() ?
-> Surely the link is also off before ndo_open is called?
+> On 27/08/2024 18:14, Christophe Leroy wrote:
+>>
+>>
+>> Le 27/08/2024 à 18:05, Vincenzo Frascino a écrit :
+>>> Hi Christophe,
+>>>
+>>> On 27/08/2024 11:49, Christophe Leroy wrote:
+>>>
+>>> ...
+> 
+> ...
+> 
+>>>
+>>> Could you please clarify where minmax is needed? I tried to build Jason's master
+>>> tree for x86, commenting the header and it seems building fine. I might be
+>>> missing something.
+>>
+>> Without it:
+>>
+>>    VDSO32C arch/powerpc/kernel/vdso/vgetrandom-32.o
+>> In file included from /home/chleroy/linux-powerpc/lib/vdso/getrandom.c:11,
+>>                   from <command-line>:
+> ...
+> 
+>>
+>>
+>>>
+>>>> Same for ARRAY_SIZE(->reserved) by the way, easy to do opencode, we also have it
+>>>> only once
+>>>>
+>>>
+>>> I have a similar issue to figure out why linux/array_size.h and
+>>> uapi/linux/random.h are needed. It seems that I can build the object without
+>>> them. Could you please explain?
+>>
+>> Without linux/array_size.h:
+>>
+>>    VDSO32C arch/powerpc/kernel/vdso/vgetrandom-32.o
+>> In file included from <command-line>:
+>> /home/chleroy/linux-powerpc/lib/vdso/getrandom.c: In function
+>> '__cvdso_getrandom_data':
+>> /home/chleroy/linux-powerpc/lib/vdso/getrandom.c:89:40: error: implicit
+> If this is the case, those headers should be defined for the powerpc
+> implementation only. The generic implementation should be interpreted as the
+> minimum common denominator in between all the architectures for what concerns
+> the headers.
+> 
 
-I wounder what driver they copied?
+Sorry, I disagree. You can't rely on necessary headers being included 
+indirectly by other arch specific headers. getrandom.c uses 
+ARRAY_SIZE(), it must include the header that defines ARRAY_SIZE().
 
-The general trend is .probe() calls netif_carrier_off(). After than,
-phylib/phylink is in control of the carrier and the MAC driver does
-not touch it. in fact, when using phylink, if you try to change the
-carrier, you will get SHOUTED at from Russell.
+At the moment, on x86 you get linux/array.h by change through the 
+following chain, that the reason why the build doesn't break:
 
-	Andrew
+In file included from ./include/linux/kernel.h:16,
+                  from ./include/linux/cpumask.h:11,
+                  from ./arch/x86/include/asm/cpumask.h:5,
+                  from ./arch/x86/include/asm/msr.h:11,
+                  from ./arch/x86/include/asm/vdso/gettimeofday.h:19,
+                  from ./include/vdso/datapage.h:164,
+                  from 
+arch/x86/entry/vdso/../../../../lib/vdso/getrandom.c:9,
+
+ From my point of view you can't expect such a chain from each architecture.
+
+Christophe
 
