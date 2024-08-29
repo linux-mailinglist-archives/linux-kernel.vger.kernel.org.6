@@ -1,83 +1,84 @@
-Return-Path: <linux-kernel+bounces-306747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47B879642E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:22:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91E419642E8
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:22:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CAA152865CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 11:22:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C54671C22649
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 11:22:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 693A11917F6;
-	Thu, 29 Aug 2024 11:22:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E08E191F99;
+	Thu, 29 Aug 2024 11:22:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OkDUYOGD"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jgEIPi9+"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C2EB7E59A
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 11:22:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDBE9189F36
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 11:22:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724930549; cv=none; b=B1IB5rRc+gbtNOQeJJoai+RDzOJdNS++QWGI3uIIsSK+ukqcvC8ewgJ8TG7Yhjt9fWn+5u9z4Kw4nnRrT+Mbmj5rOB4Y5q/4ljOVkolRfpKdtS4EDv59zwpde5V/19u10SV3fFEbT9sXj+5eKpBHjT8ywXM8bmeNMQlaZF5OqqY=
+	t=1724930550; cv=none; b=jIM/aartXQLG8+/K+XRT4AYyo/hMv7F+NY/TecRck2MDaBlgGDbKmT5Jm4HJ3OCMEqLKGqn/w3s9hFvAfqkUk0ocs4K9jEXlskwkxlFz7fIYGHJ5GeKi1E0AA6HF2/AfOLVdiyGj+OlF0/bYArtltasHTsIawMDZ4St1dz+/KQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724930549; c=relaxed/simple;
-	bh=UKAFLic5sUvG0MAi4w1J71bSw6RYZMUlgvvspx9oocY=;
+	s=arc-20240116; t=1724930550; c=relaxed/simple;
+	bh=m0zGPee70htKLNG1aroZHLqSMeK6wL0UCCQrWEPQUg8=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=d6pCtgqVnR2W72q8esVhbRqsFoIa/QAizX5lD/mP0uIC+2s+KJ/ecgksLVeJNIwYW9ify0hfcqAm4XRZh8pdkGxGaUe1R1VbB2lLtoS8w4+7RlWhl6Z2z9VmI9nzU1r/6khmh3Qlrwuk+2O0Gin0BLREv3T9uOz2ASiULnl/tm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OkDUYOGD; arc=none smtp.client-ip=209.85.128.49
+	 MIME-Version:Content-Type; b=noPNTUyyDgF9izBxiT3cJqDTTsp9iLEHUKfBX6m/WYOwO29u3KcZQ1r8rMI2DBjDKR8Qt5ObzmQ1+p+RiuTX8tr13wzbQ/tQq89DZ2O8dwSBV0DHPtt+K8aqiDpPvM803TxC30DZEbXg/rm5ScltMF+ah4GYEspV2dWG7UiFi4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jgEIPi9+; arc=none smtp.client-ip=209.85.128.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4280c55e488so3065775e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 04:22:27 -0700 (PDT)
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4280ca0791bso5078255e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 04:22:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724930546; x=1725535346; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1724930547; x=1725535347; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=pgb6iZKhbzGIQfuNXvt3MSxhnROPCHe+fvwJkwB4S6U=;
-        b=OkDUYOGDMg1V8Oc6aY13J8p+AHxunghgdtKkdP4jgrsUv9mkSVgQw2110Mt0mTZGoV
-         OrQIwH+IBh3MrIPFRJAlsRj+UkvPB9dbHHiy+xOCmdLBbTJV9Hppec3bjGFYtRcHvxkz
-         B5evfp8RTlEZkiGRN9C70noC0RbOOCEXXbOAimmmydh0nnfTVqm6UC2pKoFNZ2UVE5QL
-         jCS4ume+h67BmwBBpLsTLRoM8WrrHWddMlvXTM6yzcPaZThvOmkbs9nUSgYGdevdua9h
-         g2t69epfRKubLHqSly98gLLnlpcAk8KorNWf0PIkD7/QBK3t7HbXAZ5IQfi7zxs89IrW
-         Ewcg==
+        bh=sGUXNcN04Y9MaZPBhh9adsoWjhrmOFV1DxQRKRls/NY=;
+        b=jgEIPi9+qFUS+ShoTtkowsdXAKBX/KXsrrHIHzXjcU9KPdGzLpPwiwYwpCmZGjRS4S
+         EcxrXsGOD3IHOv9A4RpvvjWyIUGuCvS/NsBEgBmc+mgGdtfJxaRKIZnCmp2TcviJPn1Q
+         3OQo5gQq5+regr+A5eBl9KAzBzjHr9UMVWkzZlr0KRIp+bu6ysxxFzSSQxaS6KnMEKM6
+         fWk1Gl+aAKDBCxJSEuMRlLblS6GJlPBLZuyjMVWbpqr4uw0N1Q9agu3VMqeAE9GZe8AO
+         G9TqV1BCwN8FglA7tewY+iSmpjI3VyDUnaUgf1MakFqtwvosY+CDwov50m6rFV0zrbnx
+         yKAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724930546; x=1725535346;
+        d=1e100.net; s=20230601; t=1724930547; x=1725535347;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=pgb6iZKhbzGIQfuNXvt3MSxhnROPCHe+fvwJkwB4S6U=;
-        b=G/TLB1Yfm1h8n3LFP7LGmIfnFMsoOvWLQCuaGKcl9SmizxhaNU4dXWyCPxuuSUJi+L
-         NSBaKfhBTsJUTckE2cw+kVYCRvWo2dfNi8tTMoN5USyxZXvD21pYyz4CSPQZM21IZytm
-         oPRertpLSeVsncjnmZKQbpIMjJDvSSE5wpvp4mzk47t7qNVrZCEHa2iILirLz0HUeqZq
-         toOGA278qlNI015+8b31wbTp9M0rHrCYaoCucoSUURat8NTr+56IFwqI/1x5luX02yuX
-         YAqe0lREX6dMg+IHkQ4ytUEHv9KZPVOBC1pB1+uo7hmYmBjrZrzVLrj6KSzcpTLJbH6g
-         r0cA==
-X-Forwarded-Encrypted: i=1; AJvYcCVNs3zOgZYgqQTsCejAcy69ifeYby8ccJHVR7nAISZf714mF0Vk9tSPbqwom9o4f9r2ewzGr82BgOh6TMs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQQqLohgRkkWPtRSS1DMebFsz93Cl0FQxH4T8bwapo66gcIqOD
-	C5MkWgsZ7pUyQBUllggH2XdGDSLJA6th4oh74+6bi0sG53ZC86u3E5ZEuRSUwJ4=
-X-Google-Smtp-Source: AGHT+IE0nbH7IwCpgklDgufzyh8MSswgnymev7gytjl81YNMXkfTbZLWTfVxhkwJh4TfKrf86Wv83Q==
-X-Received: by 2002:a05:600c:1d08:b0:424:a401:f012 with SMTP id 5b1f17b1804b1-42bb74111e3mr10034135e9.3.1724930545955;
-        Thu, 29 Aug 2024 04:22:25 -0700 (PDT)
+        bh=sGUXNcN04Y9MaZPBhh9adsoWjhrmOFV1DxQRKRls/NY=;
+        b=loxQQTdMz09kVd8t24R2Fg7qIpKYFtQboBfZesAVD4qXGVF9k8p3xfVicXdQwiCirR
+         qNW4dDEoiW9xmyhrFI/Erk0Ub7R1b98iBB9NYUocgFjLVSAQvNd3GlRLNngr8ZGS83z6
+         2QjV1bnECYwTErb7VdRZC2/z3RlIfi3r03mXiR1skOGCaGf4uVHpeYouVTrXCfWxA4sE
+         0imVCd1Nf+nY3b7uavhfYwWjHyqagHDO+tkPpIn2bMWOrpuBivkR9kGxD6Vu7RnRILra
+         HY63gz/w70EddRbt7jNylDV9yruUXO08qpx0g9otqrXnlXdPfRfgBUGzDw/h9aGHpM0Z
+         sTsg==
+X-Forwarded-Encrypted: i=1; AJvYcCV37g78JBK7txfUOHtFVTPeSKwi1R08sVBzD30nHhWngYgVn8LOKp/th8M7tHaapM6k90rl70oyUQCwXsw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5Pe3dIE1w9cafLVRhbwB2RIXKigqfZlQ3ZiB/3Ix7EwSDCmxa
+	eJhCk8sZGDQjFOPPOXyW/nojmt7N6/g/aweMN1q7d09VPPTMlIunvclv+LiuKZY=
+X-Google-Smtp-Source: AGHT+IGpqUMCzEBAM6RTehWTEXC3oIO+Obb9EuLNoraNM2SjW5aJQ09jYdcjL27yffI4QE1CzaO0TA==
+X-Received: by 2002:a05:600c:3b97:b0:426:59aa:e2fe with SMTP id 5b1f17b1804b1-42bb01c2071mr19975075e9.19.1724930546877;
+        Thu, 29 Aug 2024 04:22:26 -0700 (PDT)
 Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:8261:5fff:fe11:bdda])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bb6e33d60sm14122015e9.43.2024.08.29.04.22.25
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bb6e33d60sm14122015e9.43.2024.08.29.04.22.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 04:22:25 -0700 (PDT)
+        Thu, 29 Aug 2024 04:22:26 -0700 (PDT)
 From: Neil Armstrong <neil.armstrong@linaro.org>
 To: maarten.lankhorst@linux.intel.com, mripard@kernel.org, 
  tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch, 
- Tejas Vipin <tejasvipin76@gmail.com>
-Cc: quic_jesszhan@quicinc.com, dianders@chromium.org, 
+ Abhishek Tamboli <abhishektamboli9@gmail.com>
+Cc: quic_jesszhan@quicinc.com, skhan@linuxfoundation.org, 
+ rbmarliere@gmail.com, linux-kernel-mentees@lists.linuxfoundation.org, 
  dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240828182210.565861-1-tejasvipin76@gmail.com>
-References: <20240828182210.565861-1-tejasvipin76@gmail.com>
-Subject: Re: [PATCH v2] drm/panel: novatek-nt35950: transition to mipi_dsi
- wrapped functions
-Message-Id: <172493054517.1145269.7126299597772633159.b4-ty@linaro.org>
-Date: Thu, 29 Aug 2024 13:22:25 +0200
+In-Reply-To: <20240827152504.30586-1-abhishektamboli9@gmail.com>
+References: <20240827152504.30586-1-abhishektamboli9@gmail.com>
+Subject: Re: [PATCH] drm/panel: nv3051d: Transition to
+ mipi_dsi_dcs_write_seq_multi
+Message-Id: <172493054606.1145269.2440128121534341021.b4-ty@linaro.org>
+Date: Thu, 29 Aug 2024 13:22:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,16 +91,17 @@ X-Mailer: b4 0.14.1
 
 Hi,
 
-On Wed, 28 Aug 2024 23:52:10 +0530, Tejas Vipin wrote:
-> Changes the novatek-nt35950 panel to use multi style functions for
-> improved error handling.
+On Tue, 27 Aug 2024 20:55:04 +0530, Abhishek Tamboli wrote:
+> Replace deprecated 'mipi_dsi_dcs_write_seq()' macro
+> to 'mipi_dsi_dcs_write_seq_multi' macro in
+> panel_nv3051d_init_sequence function.
 > 
 > 
 
 Thanks, Applied to https://gitlab.freedesktop.org/drm/misc/kernel.git (drm-misc-next)
 
-[1/1] drm/panel: novatek-nt35950: transition to mipi_dsi wrapped functions
-      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/076403a69837c1f8454ceced3ed6f0465835f4d1
+[1/1] drm/panel: nv3051d: Transition to mipi_dsi_dcs_write_seq_multi
+      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/bfbdf72d6c145e008805f0745ff79f9b8e301e0e
 
 -- 
 Neil
