@@ -1,147 +1,229 @@
-Return-Path: <linux-kernel+bounces-307334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62530964BF1
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 18:49:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0031964BFC
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 18:51:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC7F1B20E40
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:49:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F2FA3B21446
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:51:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A06A51B583E;
-	Thu, 29 Aug 2024 16:49:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A84DC1B5EA7;
+	Thu, 29 Aug 2024 16:51:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ZN4XHFJb"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mpqjyDpG"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D22F11B3F14;
-	Thu, 29 Aug 2024 16:49:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D7D318C331;
+	Thu, 29 Aug 2024 16:51:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724950158; cv=none; b=bjDI/nN2iVOXK1r/wrLVtgK52EB/GzXf2OWR36kpiM1ppRH0/qp4b6a1JHLrGEJIXoYyd1BQ5JMtBO3ia/Xa2zEEGBof/LT6zGBIS2axT4L7lxf5UzEwfHhn9zugtH0rzfPPj4N+pgQvDK4j46mXh8LO+K87uT9PmPkrdlH7w/I=
+	t=1724950280; cv=none; b=qw98ZT7RkQvtsWBs1ZH2b+cvcn/lWMTbDZFGVqWUWRfKHuPPSg0ZSJCOQdeAaMli/94SlJ/6dO6w8kDklbLtI/0qHhjRAjxQAAEnXGPYvQJUiNP5eMZ1SelwUGgnh+n0VKT6eK7JCfvY2QQH1Iwt6YgujOiEuAm0YUOxInTTkqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724950158; c=relaxed/simple;
-	bh=s/i27x2woyr+jAdNocf3l1he5+C/5cvjWEG3EZFHJfs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cPby08YZpkkYimvEPhXsZcMa4Y88/431HbmpC5zDRcvYsLGxYGnQ7UHn1wiAq+szmAp1nuKbUpDH3/8uGeZ0x5RtfXiXydM6dd9VNsParOHkTHzyLlic8Q8uzKGfelOA5ccgM+0D7+Kz0/r2yP1ryu9wITPZ70UY+QUuhZjc+Jc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=ZN4XHFJb; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 13230226;
-	Thu, 29 Aug 2024 18:48:04 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1724950085;
-	bh=s/i27x2woyr+jAdNocf3l1he5+C/5cvjWEG3EZFHJfs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZN4XHFJbIZPlzDx7+ysoaRN7EzJxE/R45R2r0fRgayUb8cedpeqSu6bYX1+1Kirwx
-	 96Gl5UQ/huJYwaneHw0/ConldzdPBe0qb7bPXFpsBGbvrveuuybTXGw7KUMr+Rm+hZ
-	 naK9pXMLKzuNhsA/Wppd/d6Y5tJ0xmme9Po4mPAs=
-Date: Thu, 29 Aug 2024 19:48:43 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Benjamin Bara <bbara93@gmail.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	s=arc-20240116; t=1724950280; c=relaxed/simple;
+	bh=suEmnq7l7kBu+OuAtK7MqN9CEE/c1CjjuOo7qUnodFQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kOFnhKDxdcKDIzb56CXDTRy6okuMJ5v/edANvzfBzr1fAFU3KhE+oj74KVuevY31aFZXCNIjyrSLrApH+ZuWSFx7hznL0uEiDB+vQg3IctY5gPxM9yAfwUza9Sm2CCbMzzmaK+EdGMG9n7f9EaYLJRR3evp1YtU/p6uatNcdm7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mpqjyDpG; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724950280; x=1756486280;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=suEmnq7l7kBu+OuAtK7MqN9CEE/c1CjjuOo7qUnodFQ=;
+  b=mpqjyDpGpuHpMP8dA2pdte9F0/UOKVTdyUwfLusnVh1ca0mcl0eFvp0G
+   Mgci0JpygWKhqo6W/e/Fo9Z9dVwVqAFx19j/Z0aqI1i0dKm7+P6S9xy1t
+   1B4/pKwbBvltcZATObRjde1of+JjK1Rt72D/ZMkgtw/JWFA/305Io48e9
+   3cf+URLGQ28qzQpZFBrbF/4WAT3a7seuNvn0gfU7mNYDUNocA5iaxwm6W
+   G38l6W12vf8FDaA5hzgB7u8/DxjJW6v7oNAl5ZIWLieLOtqwGGQ9fvDqV
+   b80AzWCDvohntaEp7B8vvjGYG1ewbstFyHpc0/QBMKtWqnoNB3wTQotmR
+   w==;
+X-CSE-ConnectionGUID: ww8fuObLSfWiScxoHjR1pQ==
+X-CSE-MsgGUID: u+V21QujQtC5D9DixzaZ9g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11179"; a="27352517"
+X-IronPort-AV: E=Sophos;i="6.10,186,1719903600"; 
+   d="scan'208";a="27352517"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 09:51:19 -0700
+X-CSE-ConnectionGUID: FMuKukLMTuaMP2qSd8GspA==
+X-CSE-MsgGUID: oKyJU16sRKyj1n4b4TQIwQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,186,1719903600"; 
+   d="scan'208";a="63958139"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa006.jf.intel.com with ESMTP; 29 Aug 2024 09:51:16 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id A8D2E143; Thu, 29 Aug 2024 19:51:14 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Gergo Koteles <soyer@irl.hu>,
 	Hans de Goede <hdegoede@redhat.com>,
-	Alexander Stein <alexander.stein@ew.tq-group.com>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Benjamin Bara <benjamin.bara@skidata.com>
-Subject: Re: [PATCH v2 1/2] media: i2c: imx290: Check for availability in
- probe()
-Message-ID: <20240829164843.GA15799@pendragon.ideasonboard.com>
-References: <20240828-imx290-avail-v2-0-bd320ac8e8fa@skidata.com>
- <20240828-imx290-avail-v2-1-bd320ac8e8fa@skidata.com>
- <20240829131909.GD12951@pendragon.ideasonboard.com>
- <20240829163247.ovsst5ipecthtc6u@thinkpad>
+	platform-driver-x86@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Ike Panhc <ike.pan@canonical.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	kernel test robot <lkp@intel.com>
+Subject: [PATCH v1 1/1] platform/x86: ideapad-laptop: Make the scope_guard() clear of its scope
+Date: Thu, 29 Aug 2024 19:50:32 +0300
+Message-ID: <20240829165105.1609180-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240829163247.ovsst5ipecthtc6u@thinkpad>
+Content-Transfer-Encoding: 8bit
 
-Hi Manivannan,
+First of all, it's a bit counterintuitive to have something like
 
-On Thu, Aug 29, 2024 at 10:02:47PM +0530, Manivannan Sadhasivam wrote:
-> On Thu, Aug 29, 2024 at 04:19:09PM +0300, Laurent Pinchart wrote:
-> 
-> Hi Laurent,
-> 
-> [...]
-> 
-> > > +		dev_err(dev, "Sensor is not in standby mode\n");
-> > > +		ret = -ENODEV;
-> > > +		goto err_pm;
-> > > +	}
-> > > +
-> > 
-> > My last concern is about accessing hardware at probe time. There are
-> > known cases where this is problematic. They can be split in two
-> > categories, systems that exhibit unwanted side effects when powering the
-> > sensor up, and systems where the sensor can't be accessed at probe time.
-> > 
-> > The two issues I can think of in the first category is devices that have
-> > a camera privacy light that could cause worries among users if it
-> > flashes at boot time, and devices that agressively optimize boot time.
-> > 
-> > In the second category, I know that some people use camera serdes
-> > (FPD-Link, GMSL, ...) that are controlled by userspace. As they should
-> > instead use kernel drivers for those components, upstream may not care
-> > too much about this use case. Another issue I was told about was a
-> > device booting in temperatures that were too low for the camera to
-> > operate, which then needed half an hour to heat the device enclosure
-> > before the sensor and serdes could be accessed. That's a bit extreme,
-> > but it sounds like a valid use case to me.
-> > 
-> > What do we do with those cases ? Detecting devices at probe time does
-> > have value, so I think it should be a policy decision. We may want to
-> > convey some of that information through DT properties (I'm not sure what
-> > would be acceptable there though). In any case, that's quite a bit of
-> > yak shaving, so I'm inclined to accept this series (or rather its next
-> > version), given that quite a few other camera sensor drivers detect the
-> > device at probe time. I would however like feedback on the problem to
-> > try and find a good solution.
-> 
-> Most of the issues you mentioned applies to other hardware peripherals also IMO.
-> And it is common for the drivers to read registers and make sure the device is
-> detected on the bus during probe().
+	int err;
+	...
+	scoped_guard(...)
+		err = foo(...);
+	if (err)
+		return err;
 
-That's true. I think the problem affects different device types
-differently though, and this may (or may not) call for different
-solutions.
+Second, with a particular kernel configuration and compiler version in
+one of such cases the objtool is not happy:
 
-> If an usecase doesn't want to read the
-> registers during probe time, then they _should_not_ build the driver as built-in
-> rather make it as a loadable module and load it whenever necessary. This applies
-> to boot time optimization as well.
+  ideapad-laptop.o: warning: objtool: .text.fan_mode_show: unexpected end of section
 
-For most of the use cases I listed I agree with you. One exception is
-the privacy light issue. Regardless of when the camera sensor driver is
-loaded, powering the device at probe time will flash the privacy light.
-Doing so later than boot time would probably make the issue even worse,
-I would worry more if I saw my webcam privacy light flashing at a random
-point after boot time.
+I'm not an expert on all this, but the theory is that compiler and
+linker in this case can't understand that 'result' variable will be
+always initialized as long as no error has been returned. Assigning
+'result' to a dummy value helps with this. Note, that fixing the
+scoped_guard() scope (as per above) does not make issue gone.
 
-> A DT property wouldn't be feasible as DT is supposed to describe the hardware,
-> not the usecase.
+That said, assign dummy value and make the scope_guard() clear of its scope.
+For the sake of consistency do it in the entire file.
 
-I think that rule is typically slightly relaxed, by allowing in DT
-system descriptions, not just hardware descriptions. Otherwise we
-wouldn't allow things like reserved memory ranges. Describing that a
-camera sensor has a privacy light, in a way that would allow drivers to
-avoid powering up the device at probe time without requiring much
-duplicated code in all drivers, would in my opinion be an acceptable DT
-usage.
+Fixes: 7cc06e729460 ("platform/x86: ideapad-laptop: add a mutex to synchronize VPC commands")
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202408290219.BrPO8twi-lkp@intel.com/
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
 
+This has been Cc'ed to objtool and clang maintainers to have a look and
+tell if this can be addressed in a better way.
+
+ drivers/platform/x86/ideapad-laptop.c | 48 +++++++++++++++------------
+ 1 file changed, 27 insertions(+), 21 deletions(-)
+
+diff --git a/drivers/platform/x86/ideapad-laptop.c b/drivers/platform/x86/ideapad-laptop.c
+index 35c75bcff195..c64dfc56651d 100644
+--- a/drivers/platform/x86/ideapad-laptop.c
++++ b/drivers/platform/x86/ideapad-laptop.c
+@@ -554,13 +554,14 @@ static ssize_t camera_power_show(struct device *dev,
+ 				 char *buf)
+ {
+ 	struct ideapad_private *priv = dev_get_drvdata(dev);
+-	unsigned long result;
++	unsigned long result = 0;
+ 	int err;
+ 
+-	scoped_guard(mutex, &priv->vpc_mutex)
++	scoped_guard(mutex, &priv->vpc_mutex) {
+ 		err = read_ec_data(priv->adev->handle, VPCCMD_R_CAMERA, &result);
+-	if (err)
+-		return err;
++		if (err)
++			return err;
++	}
+ 
+ 	return sysfs_emit(buf, "%d\n", !!result);
+ }
+@@ -577,10 +578,11 @@ static ssize_t camera_power_store(struct device *dev,
+ 	if (err)
+ 		return err;
+ 
+-	scoped_guard(mutex, &priv->vpc_mutex)
++	scoped_guard(mutex, &priv->vpc_mutex) {
+ 		err = write_ec_cmd(priv->adev->handle, VPCCMD_W_CAMERA, state);
+-	if (err)
+-		return err;
++		if (err)
++			return err;
++	}
+ 
+ 	return count;
+ }
+@@ -628,13 +630,14 @@ static ssize_t fan_mode_show(struct device *dev,
+ 			     char *buf)
+ {
+ 	struct ideapad_private *priv = dev_get_drvdata(dev);
+-	unsigned long result;
++	unsigned long result = 0;
+ 	int err;
+ 
+-	scoped_guard(mutex, &priv->vpc_mutex)
++	scoped_guard(mutex, &priv->vpc_mutex) {
+ 		err = read_ec_data(priv->adev->handle, VPCCMD_R_FAN, &result);
+-	if (err)
+-		return err;
++		if (err)
++			return err;
++	}
+ 
+ 	return sysfs_emit(buf, "%lu\n", result);
+ }
+@@ -654,10 +657,11 @@ static ssize_t fan_mode_store(struct device *dev,
+ 	if (state > 4 || state == 3)
+ 		return -EINVAL;
+ 
+-	scoped_guard(mutex, &priv->vpc_mutex)
++	scoped_guard(mutex, &priv->vpc_mutex) {
+ 		err = write_ec_cmd(priv->adev->handle, VPCCMD_W_FAN, state);
+-	if (err)
+-		return err;
++		if (err)
++			return err;
++	}
+ 
+ 	return count;
+ }
+@@ -737,13 +741,14 @@ static ssize_t touchpad_show(struct device *dev,
+ 			     char *buf)
+ {
+ 	struct ideapad_private *priv = dev_get_drvdata(dev);
+-	unsigned long result;
++	unsigned long result = 0;
+ 	int err;
+ 
+-	scoped_guard(mutex, &priv->vpc_mutex)
++	scoped_guard(mutex, &priv->vpc_mutex) {
+ 		err = read_ec_data(priv->adev->handle, VPCCMD_R_TOUCHPAD, &result);
+-	if (err)
+-		return err;
++		if (err)
++			return err;
++	}
+ 
+ 	priv->r_touchpad_val = result;
+ 
+@@ -762,10 +767,11 @@ static ssize_t touchpad_store(struct device *dev,
+ 	if (err)
+ 		return err;
+ 
+-	scoped_guard(mutex, &priv->vpc_mutex)
++	scoped_guard(mutex, &priv->vpc_mutex) {
+ 		err = write_ec_cmd(priv->adev->handle, VPCCMD_W_TOUCHPAD, state);
+-	if (err)
+-		return err;
++		if (err)
++			return err;
++	}
+ 
+ 	priv->r_touchpad_val = state;
+ 
 -- 
-Regards,
+2.43.0.rc1.1336.g36b5255a03ac
 
-Laurent Pinchart
 
