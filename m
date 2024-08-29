@@ -1,189 +1,347 @@
-Return-Path: <linux-kernel+bounces-306527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EF9B96401D
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 11:31:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE7DD96405E
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 11:38:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 478C0283D3C
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 09:31:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9541E282C71
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 09:38:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A42519004E;
-	Thu, 29 Aug 2024 09:28:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9176518E748;
+	Thu, 29 Aug 2024 09:37:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="W4Jzuh1o"
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11011036.outbound.protection.outlook.com [52.101.65.36])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="oZA7TE1Y";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="omYsbTru";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="oZA7TE1Y";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="omYsbTru"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AB1E18FDA6;
-	Thu, 29 Aug 2024 09:28:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.36
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724923728; cv=fail; b=NCjsmX3rNyhfpHBmuce4w/1c7FlekZH3gRfYERcjSAqgeb1AhS4mCtk5J+NxB+GjDjzFpjXWoh0C7f+P9TiPZATcJokAzc1oZeIFz1aMsH6eIlxR1BBWkJMlBVL/BuKlZz+v5FMJnw7Tj9qGicHCfdzy5Pg3rgnDXdwQKLXooN4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724923728; c=relaxed/simple;
-	bh=k1QqtE24uZOJyPWcfFnA1FVkrloawdKgeMGB3WDNXLo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=eTfS0tqXqrsXLPqXuOB4Z/lLR+G6nOYZ0c5R3bQyQ9D2eXhHlAmyTZqIbG0E668RMF1BY5enwyunBIxZUYVjhSGyl2pw6Msq3P/Ii3nkl7knwxibuM22LHoLlbfaBxxdAgGFDNvwSL+D4oD2so1yfhEP4yx9apk7kzpYe7Dr+Eg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=W4Jzuh1o; arc=fail smtp.client-ip=52.101.65.36
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=tX78+gwBXu5DF/p1QKBUIz4aMFoemJPxUjLjgvjD912Q39FYnkoxw7SnZWgEWGqGaoIwwCdE0IlRKTGIPkQNF0IKjYTaKGiPmqlCLrnQVzP90bddLqVnn+y+KLdzGNi/3NQv+tYdGPtqfXPpfE0wrnLMo6XL817wdgnG46NM+pFMkIzZm0bLgncCFNAJ3y/+uST80+suo5fXbIoTBmXgw4fapqTE/f6IfwGSNg2PQnTjE/gPa+Y/lu8x1O/laizfAUo8A4TvAqEoifWQPgs9TrKVmIp/enxIFf3POc5wXlHGutJQrMsEd1cX/ZBLgPnKy+3IeT60rfp3nLa6+B2Fsg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9pOKWFsLShoUkFNjIDJxlro2YyKFvBdbovV7Gwq3uZY=;
- b=H6qJHKnWSR78EzNBgg6e997vGnvl1FQSndcrR7Q/4DLEcMz/Q8GAJ59j/QiBLemBIQ8iHC+EA8JOiA8+tvp2VA3Pf3euTiFanfZEjOkTUY/AQavUfJ26VLpQDDJoOxLpnP0uBFNTbdTPi4X2qjfFhB7EX8jLm2ZWtD61m+dUcLFARLYwykErUPn8ncwWyTG2geKEgIHGtSQxu3RFeFXonJTw87jhZQ7SyHn2ITLF2xHVDgABLALhpLhvXFc3CqUyrQS5veHtrDYGfbFUFHZhp6FO5QwcCdngamNo6DXN1afZFAAbhqtYr2l2K4y6STTxZV1fvghMkv4BuA2iWnq1fQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9pOKWFsLShoUkFNjIDJxlro2YyKFvBdbovV7Gwq3uZY=;
- b=W4Jzuh1oOvnAuItagQbuCbZZe/RV0mWYGRrOVWFcJPgCIHgTX0W+r72DpEudHR2tpOCPpCagHCz6iVBqpvyn900TzWkjL5Fx2U+oDjE7QqkTqaYNv62jJrjc7Wrr0mvwTH6TPnxzJqvZZHJNRkpQFTPhCkET4o4Qfocp6ht5yQ4KaVO6tumIwMuUCYFCK1OfDByCVPHOEhFg8RxfvW25/ws2C2c5jVgGGauMJlwv7V9kjEkWmoOmViKv+896g2gm7tBUQyFaQq+LLCWina2M3G+wbcqOIQCp6t36cbF5DwhIYxuLQELxNSK3y6uiz/8AYVYYp9tPO0vzJVheJsvQww==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from VI1PR04MB5005.eurprd04.prod.outlook.com (2603:10a6:803:57::30)
- by AM7PR04MB6902.eurprd04.prod.outlook.com (2603:10a6:20b:107::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.28; Thu, 29 Aug
- 2024 09:28:44 +0000
-Received: from VI1PR04MB5005.eurprd04.prod.outlook.com
- ([fe80::3a57:67cf:6ee0:5ddb]) by VI1PR04MB5005.eurprd04.prod.outlook.com
- ([fe80::3a57:67cf:6ee0:5ddb%4]) with mapi id 15.20.7897.021; Thu, 29 Aug 2024
- 09:28:44 +0000
-From: carlos.song@nxp.com
-To: aisheng.dong@nxp.com,
-	andi.shyti@kernel.org,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	kernel@pengutronix.de,
-	festevam@gmail.com
-Cc: linux-i2c@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 5/5] i2c: imx-lpi2c: increase PM timeout to avoid operate clk frequently
-Date: Thu, 29 Aug 2024 17:37:22 +0800
-Message-Id: <20240829093722.2714921-5-carlos.song@nxp.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240829093722.2714921-1-carlos.song@nxp.com>
-References: <20240829093722.2714921-1-carlos.song@nxp.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: AS4PR10CA0023.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:5d8::15) To VI1PR04MB5005.eurprd04.prod.outlook.com
- (2603:10a6:803:57::30)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CDAB18CBFE;
+	Thu, 29 Aug 2024 09:37:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724924261; cv=none; b=dNEkl2O5cA2taTZauCS+7oPLyH9vyM3k+g7MmcW6+bSQSu9KD4hi5SPLW60WKemgi2WvsxR37pLHD9PSaujuRwhJrvPaY6vdCwtQx3y0kx+AG/08BNlLgIqgv1uWoEXt6HUqkUGJQ81DQqdkrnKHq70lHaO8qbUOLG6YF33x91A=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724924261; c=relaxed/simple;
+	bh=lhmzv8vL+ANlbOmjNK4zvMLX7XiFnSTBb8tBvs9UObc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MHSvOfizSPn4J+xemLgsUYf9FjfQSyctEutNLOtFdEkTiMX6Yu/fwOkxJPqoA3DwBu4YqWKahpJPMZJ7x777W02xI67mP40ZJorDc6jHHqhjjCWO4i9PXPSgrtNUfIZBOex+1PacGwDTvkJe9P/FmpPqvX9602QSeqbs2L4cGqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=oZA7TE1Y; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=omYsbTru; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=oZA7TE1Y; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=omYsbTru; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id A96861FD10;
+	Thu, 29 Aug 2024 09:37:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1724924257; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9drsSD5YJCouaKbMktVv8j8L/jfLbn2xhxC8kz8aIlA=;
+	b=oZA7TE1YY5nXJkOW40ResvG1zmb/IW9l1Un+zYjR3jFgF8bAb4CmVb5rgCbKvq6f3F6B9t
+	wkWrt94DdDP8F8cISWAzIhdgU0H5qilivSM/mg5PhR7XNVsn0DjIjVaCWV8cPMIbWFMevR
+	5WQoH/LX8r8mnbi/Gu/6yMwhc/qK2jk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1724924257;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9drsSD5YJCouaKbMktVv8j8L/jfLbn2xhxC8kz8aIlA=;
+	b=omYsbTruGNB64Af8UELCpSc6wli2TCeYGq4FBAGp4l0h8cQEra7bIXuQ+tJp6Ce3AzQ04h
+	XcnOQUSpT1gg2sAA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1724924257; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9drsSD5YJCouaKbMktVv8j8L/jfLbn2xhxC8kz8aIlA=;
+	b=oZA7TE1YY5nXJkOW40ResvG1zmb/IW9l1Un+zYjR3jFgF8bAb4CmVb5rgCbKvq6f3F6B9t
+	wkWrt94DdDP8F8cISWAzIhdgU0H5qilivSM/mg5PhR7XNVsn0DjIjVaCWV8cPMIbWFMevR
+	5WQoH/LX8r8mnbi/Gu/6yMwhc/qK2jk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1724924257;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9drsSD5YJCouaKbMktVv8j8L/jfLbn2xhxC8kz8aIlA=;
+	b=omYsbTruGNB64Af8UELCpSc6wli2TCeYGq4FBAGp4l0h8cQEra7bIXuQ+tJp6Ce3AzQ04h
+	XcnOQUSpT1gg2sAA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9D86C13408;
+	Thu, 29 Aug 2024 09:37:37 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id llhxJmFB0Gb6dAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 29 Aug 2024 09:37:37 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 5969EA0965; Thu, 29 Aug 2024 11:37:33 +0200 (CEST)
+Date: Thu, 29 Aug 2024 11:37:33 +0200
+From: Jan Kara <jack@suse.cz>
+To: Michal Hocko <mhocko@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Christoph Hellwig <hch@lst.de>, Yafang Shao <laoar.shao@gmail.com>,
+	Kent Overstreet <kent.overstreet@linux.dev>, jack@suse.cz,
+	Christian Brauner <brauner@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, linux-bcachefs@vger.kernel.org,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Michal Hocko <mhocko@suse.com>
+Subject: Re: [PATCH 1/2] bcachefs: do not use PF_MEMALLOC_NORECLAIM
+Message-ID: <20240829093733.njnlsyexwknyosxe@quack3>
+References: <20240826085347.1152675-1-mhocko@kernel.org>
+ <20240826085347.1152675-2-mhocko@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: VI1PR04MB5005:EE_|AM7PR04MB6902:EE_
-X-MS-Office365-Filtering-Correlation-Id: b01af4f0-34a4-49fc-559a-08dcc80cf9a3
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|376014|52116014|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Snr6dm1xVekDOO/ux7Q+U+TvaI/n24zpPVl+Pyvppw3ri13XoNiIRLF/SmaT?=
- =?us-ascii?Q?zXtUZUS6gw0E1K4kFXRk6oiuBUgGqK6meyktqCeHvQ5tjjpXahsA2r0X5zKJ?=
- =?us-ascii?Q?mAAJ95oiTvXGzMDm9oPsLKVek8S+eAEkHrH6aGRxX9yT4S4nGhQtF6bMFzC+?=
- =?us-ascii?Q?VPb7YITYNOX+568p6TfIUp+6vVwc48zWiSt0FWuvzWkJbfUu9wssJwVKmjcr?=
- =?us-ascii?Q?50Zh7NB9VBhYkrw5XALyWA9mbuQzRb1flN263fXx+YP9bbVIoWE8NDf4IQxk?=
- =?us-ascii?Q?Zz5LgG48zSIhB8oe/UmKjGjzfiisufGIdx3Byel7Sty9JxOMMienRepcZ9an?=
- =?us-ascii?Q?6fpntY1jZRIBKsdK7esntfvPxPS/QozPXgSecd9o9cyPyg/JjPDGt3wg0Ec+?=
- =?us-ascii?Q?52CfBQDrIBABDtgnFjf0QWQP2BvtD98e/IwJi1Ry+raLM6E+AuOYo4G/Womx?=
- =?us-ascii?Q?TykZSaE1aXLhazVmZud1zk1c6fbeAtvT1JpzmV5ynVPf9cW6FHoCfj6b7yeG?=
- =?us-ascii?Q?ic0r1kRF9XcctHOqDYU9zp1Ae8R6/Jg1YEhisZVMQ0LQRBrcCBSVBf3G/KVN?=
- =?us-ascii?Q?ETP4/iAeYh2lI/rgCZfSYkgkXdl2tfNcCvt/qmlB0qOKhUPQaFgvYAMZmSdI?=
- =?us-ascii?Q?5G6coHewrpq/HIXg6RPoRoqwFR5Yl/SXPMlJhHFDMPScG+NKrgWEw43CpMnW?=
- =?us-ascii?Q?qoFWhoUyeiT4Oz6QQseEZGZwRiUN4trssLliItmaXzMfsCMV0oqYoxspio6H?=
- =?us-ascii?Q?a+8itwzzvCjEH+umN5psVhQXcTRhCOqCSfv9EygFyLVUNnuK99+tEvmAvbEc?=
- =?us-ascii?Q?0PKCc3Ent8fdouraNmppKhqMLeFBOjNYsOEW60AArJnTZn8PL61tgRDBqxx7?=
- =?us-ascii?Q?/DexppN8E1GKLRn6UcT7go+/pTWWHvlthh4VypF7nhQFnQfJRLxDwfZwttAF?=
- =?us-ascii?Q?99YdwEoIGncXhYdEUM8sKv+0SrBsdfSxtbiHRpSa7dovsjToTIaKh5qaKd//?=
- =?us-ascii?Q?u6sBzNyFkjcpV70gAKnBglMIDjeE6I3wmMolpGjWXomfSJnIfjsz0a3XWoVz?=
- =?us-ascii?Q?xBiJ+AhwU5pEeHLCx8LCLn1Soacf6T3QxDj1XnMsKbAqVXjbnNNkOHsEdonP?=
- =?us-ascii?Q?SfdZjDsyE66Lf0z0KCSnIukorpgHj8T8Tqb/3clHAuB/bzONBKEpptxw6Bt+?=
- =?us-ascii?Q?nbNlk6PD/PUuBUmPiuALR757YejWEdHrnF+7X3gKyPKSbZgBeG3Lde8rMgPR?=
- =?us-ascii?Q?I8Z2RiHr2ogKIOPQ/r8glauQVGAPFIOrdcS4hsquV13mCejSdX+oWByyRfFf?=
- =?us-ascii?Q?rRBQ18GD8Kv4zz+8vh0SxzLFxNs1Loji6Ui1DfZbjGQni3sOjVVn/E7JVULH?=
- =?us-ascii?Q?U+apd8fpaAcmL73DgBhUoMg90HdV8XCLefufqbbHRSllWWMJ8A=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI1PR04MB5005.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(52116014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Y7ceSi4WujvjGB1gOdd4qc34CcB0ePh4+vIK6ISw7Mh5o1t2ecgiMvlDIHHq?=
- =?us-ascii?Q?XIOtkK1ue36Sur2ad5hndblehW8oOtcfyoartRA6cegqNI/uGEmkDTKJ4eB7?=
- =?us-ascii?Q?WYvc1mDeHN/DcZXDXXQNxJjAa3RYT3ySlfAsnwZACuug6H4jekVA/2cv+mwT?=
- =?us-ascii?Q?XNGs1U2q4YVpx9JlBav/FOyKQa3W4arVlsfVk4z4oPOjQMzk2cHGR1Y3bgX6?=
- =?us-ascii?Q?aNfjMeo5gHnlvIYHaJ9Yka9ga9w2XMDMmB6D8WN1sPdM2a4NwmB5fEMPGLgq?=
- =?us-ascii?Q?hxVu34I2XsVHBgFUomApoHz37hYa2+9yHSfootVb0LtmKUnegai8qscUw3OO?=
- =?us-ascii?Q?XsdbVGlordBS6/xw6lUVaRTHebWEW2WgH8VEJ64ghn/gDivJsBOorx/KNtqK?=
- =?us-ascii?Q?ULPziXKXyvR06dt23EiOhbR7wN8iAMfepr1Nqxtk2PDN1TxPpZegcUUmtBzW?=
- =?us-ascii?Q?UpGlDJoJARqrxB8taizY8HjWC6MoRgzuLlQzkBd/rT8RO1t0jG2RArcIf0WA?=
- =?us-ascii?Q?osfGu7Kaine+TRurZYkvpbGVJy192mqb+++BvdtdWLrqJ6Vn03Zs+0xmlyxJ?=
- =?us-ascii?Q?aguM6pwjaA0Ts9Y9mTQpcNPGagOxiVtmDLH8x3dvvq16n8+lvb0bVIa1fkjK?=
- =?us-ascii?Q?2kJJAQoPaKkrmL7w5KvfIUGGNQb1sjS4Tt9zV9/v2i2bNiHpmQl1dMsleB3V?=
- =?us-ascii?Q?qbpUwi3pkaePcwmfdcDoC95mmnnVI65I9NJMjNgGSsnWbqsg9qmkYo/tcnkU?=
- =?us-ascii?Q?wXSSse4+zzUTtVY9MX6GAiTNBh8baPfiNgpxIcKypfEN7FfK6firr+7ir2Zg?=
- =?us-ascii?Q?KsU3PZAgnZ1xZO+kDs4JYWWJmQggMWxVwEtJF5gltNLwbL95SbdXsanmSvJ4?=
- =?us-ascii?Q?nKwpgw/M/HbnJHJkS51qcJn6pDq/o6TZySWVKTJgRTO5OspDjXt4n8yVk+sE?=
- =?us-ascii?Q?l/5+lzDa3lk1P/GPv3G1aw4CfQkdTV3Z8CQZoL2IvVaC8kYBlpjkL5xsjXPf?=
- =?us-ascii?Q?JdLUk5/8v1KwECln3OVeDg/HxTlJpP6aDj/S4sBrGiUPvvaUgwlqSvK0wGjA?=
- =?us-ascii?Q?wKFUEVQrRRvvEOaz5nvG0bjEBxil+pVJwF0msmIbn4e2upfr3/2sXRA3fGb2?=
- =?us-ascii?Q?uGmpTLhnVm/R8ccHCK+gTbBhFnJ1/UUzO8GUbwyCObwsqAEcuSvAhgHluMm9?=
- =?us-ascii?Q?lBjUkBlKcXx8QHTgCMlLmAuEmKJoiQvzYYXzcHYALqA4J/8d17Atk3j6mbPj?=
- =?us-ascii?Q?lk2x0OjlwLrxvaqO+9b8eQGvWhXFpU+dCLLHVceV+ZM+JeJnu67H16sqBptd?=
- =?us-ascii?Q?kAF5Kr1ec6A8SEEPVuOVv9gVt+EUHkwCbC/gFjgoV+bQV5gSabd4btWCJ/wl?=
- =?us-ascii?Q?5NB8nI5NzheqOpf7BriKWtxsTMHbE3DPzSlmr8xrw91ae/ffXQN6+T3KFcsX?=
- =?us-ascii?Q?MJyXiuLlilfpnalsRHQ+Mcx6o25tpRvkVvfQafgJM0yTlvwikh8B3UAA6pht?=
- =?us-ascii?Q?jHuiSHghRKd2n5fRjYMjlwG+A/Crqd0AwCfAo/AJiIwhCSpte4gXCoahkLEt?=
- =?us-ascii?Q?OZ3Mds0pM8okrtlPRaZzI8PruvdlLBWfEUTqTf4R?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b01af4f0-34a4-49fc-559a-08dcc80cf9a3
-X-MS-Exchange-CrossTenant-AuthSource: VI1PR04MB5005.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Aug 2024 09:28:44.0041
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: tTPojjFw0XwkJUNmgdTZcRqMwEzrRdAO+T6VzUma/vRaG+PM2kIh64e7smY2nXIfF+G6vsqGfeapLUavrAQd4A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR04MB6902
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240826085347.1152675-2-mhocko@kernel.org>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_COUNT_THREE(0.00)[3];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[17];
+	RCVD_TLS_LAST(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_CC(0.00)[linux-foundation.org,lst.de,gmail.com,linux.dev,suse.cz,kernel.org,zeniv.linux.org.uk,paul-moore.com,namei.org,hallyn.com,vger.kernel.org,kvack.org,suse.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Spam-Score: -2.30
+X-Spam-Flag: NO
 
-From: Clark Wang <xiaoning.wang@nxp.com>
+On Mon 26-08-24 10:47:12, Michal Hocko wrote:
+> From: Michal Hocko <mhocko@suse.com>
+> 
+> bch2_new_inode relies on PF_MEMALLOC_NORECLAIM to try to allocate a new
+> inode to achieve GFP_NOWAIT semantic while holding locks. If this
+> allocation fails it will drop locks and use GFP_NOFS allocation context.
+> 
+> We would like to drop PF_MEMALLOC_NORECLAIM because it is really
+> dangerous to use if the caller doesn't control the full call chain with
+> this flag set. E.g. if any of the function down the chain needed
+> GFP_NOFAIL request the PF_MEMALLOC_NORECLAIM would override this and
+> cause unexpected failure.
+> 
+> While this is not the case in this particular case using the scoped gfp
+> semantic is not really needed bacause we can easily pus the allocation
+> context down the chain without too much clutter.
+> 
+> Acked-by: Christoph Hellwig <hch@lst.de>
+> Signed-off-by: Michal Hocko <mhocko@suse.com>
 
-Switching the clock frequently will affect the data transmission
-efficiency, and prolong the timeout to reduce autosuspend times for
-lpi2c.
+For the VFS changes feel free to add:
 
-Signed-off-by: Clark Wang <xiaoning.wang@nxp.com>
-Signed-off-by: Carlos Song <carlos.song@nxp.com>
----
- drivers/i2c/busses/i2c-imx-lpi2c.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-diff --git a/drivers/i2c/busses/i2c-imx-lpi2c.c b/drivers/i2c/busses/i2c-imx-lpi2c.c
-index 210d505db76d..cc5e5d96aacd 100644
---- a/drivers/i2c/busses/i2c-imx-lpi2c.c
-+++ b/drivers/i2c/busses/i2c-imx-lpi2c.c
-@@ -129,7 +129,7 @@
- #define I2C_CLK_RATIO	2
- #define CHUNK_DATA	256
- 
--#define I2C_PM_TIMEOUT		10 /* ms */
-+#define I2C_PM_TIMEOUT		1000 /* ms */
- #define I2C_DMA_THRESHOLD	8 /* bytes */
- 
- enum lpi2c_imx_mode {
+								Honza
+
+> ---
+>  fs/bcachefs/fs.c          | 14 ++++++--------
+>  fs/inode.c                |  6 +++---
+>  include/linux/fs.h        |  7 ++++++-
+>  include/linux/lsm_hooks.h |  2 +-
+>  include/linux/security.h  |  4 ++--
+>  security/security.c       |  8 ++++----
+>  6 files changed, 22 insertions(+), 19 deletions(-)
+> 
+> diff --git a/fs/bcachefs/fs.c b/fs/bcachefs/fs.c
+> index 15fc41e63b6c..7a55167b9133 100644
+> --- a/fs/bcachefs/fs.c
+> +++ b/fs/bcachefs/fs.c
+> @@ -231,9 +231,9 @@ static struct inode *bch2_alloc_inode(struct super_block *sb)
+>  	BUG();
+>  }
+>  
+> -static struct bch_inode_info *__bch2_new_inode(struct bch_fs *c)
+> +static struct bch_inode_info *__bch2_new_inode(struct bch_fs *c, gfp_t gfp)
+>  {
+> -	struct bch_inode_info *inode = kmem_cache_alloc(bch2_inode_cache, GFP_NOFS);
+> +	struct bch_inode_info *inode = kmem_cache_alloc(bch2_inode_cache, gfp);
+>  	if (!inode)
+>  		return NULL;
+>  
+> @@ -245,7 +245,7 @@ static struct bch_inode_info *__bch2_new_inode(struct bch_fs *c)
+>  	mutex_init(&inode->ei_quota_lock);
+>  	memset(&inode->ei_devs_need_flush, 0, sizeof(inode->ei_devs_need_flush));
+>  
+> -	if (unlikely(inode_init_always(c->vfs_sb, &inode->v))) {
+> +	if (unlikely(inode_init_always_gfp(c->vfs_sb, &inode->v), gfp)) {
+>  		kmem_cache_free(bch2_inode_cache, inode);
+>  		return NULL;
+>  	}
+> @@ -258,12 +258,10 @@ static struct bch_inode_info *__bch2_new_inode(struct bch_fs *c)
+>   */
+>  static struct bch_inode_info *bch2_new_inode(struct btree_trans *trans)
+>  {
+> -	struct bch_inode_info *inode =
+> -		memalloc_flags_do(PF_MEMALLOC_NORECLAIM|PF_MEMALLOC_NOWARN,
+> -				  __bch2_new_inode(trans->c));
+> +	struct bch_inode_info *inode = __bch2_new_inode(trans->c, GFP_NOWARN | GFP_NOWAIT);
+>  
+>  	if (unlikely(!inode)) {
+> -		int ret = drop_locks_do(trans, (inode = __bch2_new_inode(trans->c)) ? 0 : -ENOMEM);
+> +		int ret = drop_locks_do(trans, (inode = __bch2_new_inode(trans->c, GFP_NOFS)) ? 0 : -ENOMEM);
+>  		if (ret && inode) {
+>  			__destroy_inode(&inode->v);
+>  			kmem_cache_free(bch2_inode_cache, inode);
+> @@ -328,7 +326,7 @@ __bch2_create(struct mnt_idmap *idmap,
+>  	if (ret)
+>  		return ERR_PTR(ret);
+>  #endif
+> -	inode = __bch2_new_inode(c);
+> +	inode = __bch2_new_inode(c, GFP_NOFS);
+>  	if (unlikely(!inode)) {
+>  		inode = ERR_PTR(-ENOMEM);
+>  		goto err;
+> diff --git a/fs/inode.c b/fs/inode.c
+> index 86670941884b..95fd67a6cac3 100644
+> --- a/fs/inode.c
+> +++ b/fs/inode.c
+> @@ -153,7 +153,7 @@ static int no_open(struct inode *inode, struct file *file)
+>   * These are initializations that need to be done on every inode
+>   * allocation as the fields are not initialised by slab allocation.
+>   */
+> -int inode_init_always(struct super_block *sb, struct inode *inode)
+> +int inode_init_always(struct super_block *sb, struct inode *inode, gfp_t gfp)
+>  {
+>  	static const struct inode_operations empty_iops;
+>  	static const struct file_operations no_open_fops = {.open = no_open};
+> @@ -230,14 +230,14 @@ int inode_init_always(struct super_block *sb, struct inode *inode)
+>  #endif
+>  	inode->i_flctx = NULL;
+>  
+> -	if (unlikely(security_inode_alloc(inode)))
+> +	if (unlikely(security_inode_alloc(inode, gfp)))
+>  		return -ENOMEM;
+>  
+>  	this_cpu_inc(nr_inodes);
+>  
+>  	return 0;
+>  }
+> -EXPORT_SYMBOL(inode_init_always);
+> +EXPORT_SYMBOL(inode_init_always_gfp);
+>  
+>  void free_inode_nonrcu(struct inode *inode)
+>  {
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index fd34b5755c0b..d46ca71a7855 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -3027,7 +3027,12 @@ extern loff_t default_llseek(struct file *file, loff_t offset, int whence);
+>  
+>  extern loff_t vfs_llseek(struct file *file, loff_t offset, int whence);
+>  
+> -extern int inode_init_always(struct super_block *, struct inode *);
+> +extern int inode_init_always_gfp(struct super_block *, struct inode *, gfp_t);
+> +static inline int inode_init_always(struct super_block *sb, struct inode *inode)
+> +{
+> +	return inode_init_always_gfp(sb, inode, GFP_NOFS);
+> +}
+> +
+>  extern void inode_init_once(struct inode *);
+>  extern void address_space_init_once(struct address_space *mapping);
+>  extern struct inode * igrab(struct inode *);
+> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+> index a2ade0ffe9e7..b08472d64765 100644
+> --- a/include/linux/lsm_hooks.h
+> +++ b/include/linux/lsm_hooks.h
+> @@ -150,6 +150,6 @@ extern struct lsm_info __start_early_lsm_info[], __end_early_lsm_info[];
+>  		__used __section(".early_lsm_info.init")		\
+>  		__aligned(sizeof(unsigned long))
+>  
+> -extern int lsm_inode_alloc(struct inode *inode);
+> +extern int lsm_inode_alloc(struct inode *inode, gfp_t gfp);
+>  
+>  #endif /* ! __LINUX_LSM_HOOKS_H */
+> diff --git a/include/linux/security.h b/include/linux/security.h
+> index 1390f1efb4f0..7c6b9b038a0d 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -336,7 +336,7 @@ int security_dentry_create_files_as(struct dentry *dentry, int mode,
+>  					struct cred *new);
+>  int security_path_notify(const struct path *path, u64 mask,
+>  					unsigned int obj_type);
+> -int security_inode_alloc(struct inode *inode);
+> +int security_inode_alloc(struct inode *inode, gfp_t gfp);
+>  void security_inode_free(struct inode *inode);
+>  int security_inode_init_security(struct inode *inode, struct inode *dir,
+>  				 const struct qstr *qstr,
+> @@ -769,7 +769,7 @@ static inline int security_path_notify(const struct path *path, u64 mask,
+>  	return 0;
+>  }
+>  
+> -static inline int security_inode_alloc(struct inode *inode)
+> +static inline int security_inode_alloc(struct inode *inode, gfp_t gfp)
+>  {
+>  	return 0;
+>  }
+> diff --git a/security/security.c b/security/security.c
+> index 8cee5b6c6e6d..3581262da5ee 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -660,14 +660,14 @@ static int lsm_file_alloc(struct file *file)
+>   *
+>   * Returns 0, or -ENOMEM if memory can't be allocated.
+>   */
+> -int lsm_inode_alloc(struct inode *inode)
+> +int lsm_inode_alloc(struct inode *inode, gfp_t gfp)
+>  {
+>  	if (!lsm_inode_cache) {
+>  		inode->i_security = NULL;
+>  		return 0;
+>  	}
+>  
+> -	inode->i_security = kmem_cache_zalloc(lsm_inode_cache, GFP_NOFS);
+> +	inode->i_security = kmem_cache_zalloc(lsm_inode_cache, gfp);
+>  	if (inode->i_security == NULL)
+>  		return -ENOMEM;
+>  	return 0;
+> @@ -1582,9 +1582,9 @@ int security_path_notify(const struct path *path, u64 mask,
+>   *
+>   * Return: Return 0 if operation was successful.
+>   */
+> -int security_inode_alloc(struct inode *inode)
+> +int security_inode_alloc(struct inode *inode, gfp_t gfp)
+>  {
+> -	int rc = lsm_inode_alloc(inode);
+> +	int rc = lsm_inode_alloc(inode, gfp);
+>  
+>  	if (unlikely(rc))
+>  		return rc;
+> -- 
+> 2.46.0
+> 
 -- 
-2.34.1
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
