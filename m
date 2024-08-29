@@ -1,125 +1,175 @@
-Return-Path: <linux-kernel+bounces-307300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F34A7964B7D
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 18:20:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB681964B80
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 18:21:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32B121C20C13
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:20:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 708CD281A26
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:21:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10CA21B81A1;
-	Thu, 29 Aug 2024 16:18:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD6C61B86C0;
+	Thu, 29 Aug 2024 16:18:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="eExrMeiB"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UAGJi+B9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 515A61922FE
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 16:18:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E69171922FE;
+	Thu, 29 Aug 2024 16:18:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724948284; cv=none; b=tRW8HB5hQuqLL3pnLCng++mLiR6kYUdqsk3v5CQzRi3sx09FufIY7XfFaSxQ4dRrOF8YfaaAtAnIpax/2qGf8lvoCgEjOaCltiLYceGQEQnuZ6mmDdKmGyCxE86hAfySt4qDuJ44BQUqxZq7n46I/FbqKzQHKtBHSTaTOMCKYFY=
+	t=1724948302; cv=none; b=AelYCvUiSgdYSsA13uQI/YGNpStmFAeHm9PW264dl9aBGXqOZCyhxKCx6g4V0ntdmqJfgJmYUEvTcxui/oIm+gp1oUNYeF/BjUnhOA2iwZMgNjOLWDg9bXob5yLkUh8jT5Q8/kt1hQWDq5ZPj8vxyMAeEvT3Gi/MiWBt1bUwpsA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724948284; c=relaxed/simple;
-	bh=cbJAMKxXww8yvz4UFEB5fS8WEI+MbDZrb/jPY+MHTDI=;
+	s=arc-20240116; t=1724948302; c=relaxed/simple;
+	bh=0DFCIEnpEsAW/SjC51AnwDz3RJhoIFR9GB8cHGV8p5Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CABuBKXJal76fn7VlzdZOg/pPSf0KSpTYCNcDy0YYm6b7DHb/GyWToyGqf9dZTXwXtKPqSlBtgduOBd1qp4YxGnA4/IZW0AG33WYDxIxbtDtrQoqZficaaw0MC/JJwWMqOhH5CgP18/mxRwSsX3tBQZwZTS4m67kbkc+wSYqmpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=eExrMeiB; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a86933829dcso110935066b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 09:18:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1724948281; x=1725553081; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=COwbHVOt1r56SG2JuuV/PgR+aLtkhx1pNzDMhZuXgw4=;
-        b=eExrMeiB1++LSJ973kvLbKQJ2jpUYV60amhqp/s1Dw9k4vkrJDHTjqz4AbD9YDJ2On
-         COmL/Kyr2mZOXrKo5YM4KkZ/UAAKyDTqJUu/sga/Qd8AtHoaFqX+gmQociRy+HohPcs3
-         PVyK5hzqVMnZNQvuSqhPVsaWPJ5jSVAfc8JcaVaE9rRZKjL6mB87JuVlFXl95zuXb9xt
-         on4tV4L3CjYZnWeqqjBH1ndsBk1T2hd2/IeSW6lHFveqM2oHtX8RMCtItqgitqcBrr7H
-         o3lHCoLhDnIC+nu5YdD72SJpTul+rDXD0oPWcxO62hjGqe4K++cNOTIirKU8YJ4N8Prf
-         qY+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724948281; x=1725553081;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=COwbHVOt1r56SG2JuuV/PgR+aLtkhx1pNzDMhZuXgw4=;
-        b=vvRg5SISkJUH99fPW5xJpNT+8cj86gRXrCSfX7MPZfIIiS014Slt57OJiRNyePs6QS
-         4vjt4V/rTXnAk50OPxYhuRB8fuW/IBxAZ/ZJchUItcNlI2svXqL0chuXQl44deoVg9/7
-         ERQ4DJjaEwdoz0x5H8nPpochHoJz4aQu1Oyr7+WY5TBaJcE1dhnJF/Hm72ixgs/kI5ud
-         U2JW/dlNxYoWRfJpJipsfI1PUvl/aMsgkYd7AAlUbteTJCyKByjCunyYqeX3jNTko3hM
-         nWAquYIOZ2+WM5B3ByQfH0frGHWW+S4S69HwndM4VPFeFFf7l4SHWlDOhdHhKFSUIZjH
-         IJ6w==
-X-Forwarded-Encrypted: i=1; AJvYcCXf66jHqumXTm04L4UB2DGobxs1ITQwxenjykcHzM4+UcxEawSYSEM4WhqtuM8D3pM2mjyLoTyiGHMaU/o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjGJgW05bMb10YSkgcunejxYhfY+y7SmB0Xbrcc6PguoS7R3Zm
-	BrXLjgcm0HD3N4DhDeghugo5vCrUZWNZqRGqio/4ss4vjAyTaTPFnCizJDhKMzg=
-X-Google-Smtp-Source: AGHT+IHH6suzNkazxzI4rMNO/vh/EMc5E3tPX44rnkcdBJ2k1g1/3FoXmnODIMOi71P4DSzyaA1wNQ==
-X-Received: by 2002:a17:907:1b1e:b0:a80:f6a0:9c3c with SMTP id a640c23a62f3a-a897f1b5c1fmr303933366b.0.1724948280521;
-        Thu, 29 Aug 2024 09:18:00 -0700 (PDT)
-Received: from blackdock.suse.cz ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8989196bc4sm95902566b.125.2024.08.29.09.17.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 09:17:59 -0700 (PDT)
-Date: Thu, 29 Aug 2024 18:17:58 +0200
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Willem de Bruijn <willemb@google.com>
-Cc: cve@kernel.org, linux-kernel@vger.kernel.org, 
-	Tao Liu <thomas.liu@ucloud.cn>
-Subject: Re: CVE-2022-48936: gso: do not skip outer ip header in case of ipip
- and net_failover
-Message-ID: <jsnwzpmezgju7r7nkcauaicthkzizsqglb6p43zq25cdvdgbgt@dlkgwkch52qi>
-References: <2024082224-CVE-2022-48936-9302@gregkh>
- <z3hh3yrf5wym3obgol6obh3dkmqoc3rwbkj23qcmadf63b47h2@nn2232wngans>
- <2024082854-reassign-uniformed-2c2f@gregkh>
+	 Content-Type:Content-Disposition:In-Reply-To; b=KGWN7ouoZWtgi/n3+9NSUASNGsvGB3tD6UoLgls9YyXrQ19uDbIJis99sM7jje1kiqWQnqk0ZrPaxfMxlhmOTWGwKf9U5tSDL1F1TCnxxCclTSyuknj02uM4s5WCqyIZ7g4z6Kh3U5cuczs1XAKHcuQZe11aOqtnzqpbWfpGkJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UAGJi+B9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B1F8C4CEC5;
+	Thu, 29 Aug 2024 16:18:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724948301;
+	bh=0DFCIEnpEsAW/SjC51AnwDz3RJhoIFR9GB8cHGV8p5Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UAGJi+B9G7+ByyYTIff3xkkjmNTvtXetrK7MraXov7GbqBK4stVR39FvWENtwLR2y
+	 DiS6pkiibezMP1HXyHh0jQvBRZcUNV216gv7u55c+LduKII9t7gur38dgEwaaTc0WJ
+	 6IMawqXsQvaRLr8ynXiHoRLOSW/X3LJKZmY7kj0jb6uJ2EkN8dCRz8oZ6e8jJaWeo+
+	 Me8/i22BFG48bmjL5K9LF6vXvbNzrgUcN3ms38IQPVzEqtTt3HKp9gWZSFOd9nDabb
+	 FUQ74IrtCj095vhYzPK6hUgnn1pSQsVeAi+4JER9g0V9hm9A/4/S4V8GaAadxBUhpL
+	 MietOEiOgq9rA==
+Date: Thu, 29 Aug 2024 17:18:17 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: phy: add NXP PTN3222 eUSB2 to USB2
+ redriver
+Message-ID: <20240829-dandy-jingle-1002fb99b900@spud>
+References: <20240829-nxp-ptn3222-v1-0-46906bc4747a@linaro.org>
+ <20240829-nxp-ptn3222-v1-1-46906bc4747a@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="lxyentzy5dodthvg"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="lb2JHJxD1qBMGfou"
 Content-Disposition: inline
-In-Reply-To: <2024082854-reassign-uniformed-2c2f@gregkh>
+In-Reply-To: <20240829-nxp-ptn3222-v1-1-46906bc4747a@linaro.org>
 
 
---lxyentzy5dodthvg
+--lb2JHJxD1qBMGfou
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 28, 2024 at 09:30:08AM GMT, Greg Kroah-Hartman <gregkh@linuxfou=
-ndation.org> wrote:
-> > What is the security issue here?
+On Thu, Aug 29, 2024 at 11:21:13AM +0300, Dmitry Baryshkov wrote:
+> The NXP PTN3222 is the single-port eUSB2 to USB2 redriver that performs
+> translation between eUSB2 and USB2 signalling schemes. It supports all
+> three data rates: Low Speed, Full Speed and High Speed.
 >=20
-> This was assigned as part of the import of the Linux kernel GSD entries
-> into CVEs as required by the CVE board of directors (hence the 2022
-> date).  If you don't feel this should be assigned a CVE, just let me
-> know and I will be glad to reject it.
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>  .../devicetree/bindings/phy/nxp,ptn3222.yaml       | 55 ++++++++++++++++=
+++++++
+>  1 file changed, 55 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/phy/nxp,ptn3222.yaml b/Doc=
+umentation/devicetree/bindings/phy/nxp,ptn3222.yaml
+> new file mode 100644
+> index 000000000000..acec5bb2391d
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/phy/nxp,ptn3222.yaml
+> @@ -0,0 +1,55 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/phy/nxp,ptn3222.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: NXP PTN3222 1-port eUSB2 to USB2 redriver
+> +
+> +maintainers:
+> +  - Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - nxp,ptn3222
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  "#phy-cells":
+> +    const: 0
+> +
+> +  vdd1v8-supply:
+> +    description: power supply (1.8V)
 
-The address of original author bounces back. Willem, could you please
-help explaining context of the change? (~the questions in my previous
-message).
+As a nit, these descriptions could just be ": true" like the
+reset-gpios, they're equally obvious.
 
-Thanks,
-Michal
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
 
---lxyentzy5dodthvg
+Cheers,
+Conor.
+
+> +
+> +  vdd3v3-supply:
+> +    description: power supply (3.3V)
+> +
+> +  reset-gpios: true
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - '#phy-cells'
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/gpio/gpio.h>
+> +
+> +    i2c {
+> +        #address-cells =3D <1>;
+> +        #size-cells =3D <0>;
+> +
+> +        redriver@4f {
+> +            compatible =3D "nxp,ptn3222";
+> +            reg =3D <0x4f>;
+> +            #phy-cells =3D <0>;
+> +            vdd3v3-supply =3D <&vreg_3p3>;
+> +            vdd1v8-supply =3D <&vreg_1p8>;
+> +            reset-gpios =3D <&gpio_reset GPIO_ACTIVE_LOW>;
+> +        };
+> +    };
+> +...
+>=20
+> --=20
+> 2.39.2
+>=20
+
+--lb2JHJxD1qBMGfou
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQTd6mfF2PbEZnpdoAkt3Wney77BSQUCZtCfMwAKCRAt3Wney77B
-SckSAP9j4gd/Tcc3QZ10c+GJhPk6QE4iQ1jyw2uZezw2Ij6hBAEAkLvhHDOFQvrN
-yrB3B1hvATG9Y35GIjPNTeKVH2dGng4=
-=TZpN
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZtCfSAAKCRB4tDGHoIJi
+0g0vAP0ULmArYvwsKhDXcZT3/4k+oqLJV5IRg5A/j6KAIiP0kAEA3keLUf3OdneN
+T8XD0nEmiPfqLNo/YVZtsIw/VcqqsQ4=
+=tE0b
 -----END PGP SIGNATURE-----
 
---lxyentzy5dodthvg--
+--lb2JHJxD1qBMGfou--
 
