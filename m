@@ -1,600 +1,134 @@
-Return-Path: <linux-kernel+bounces-307524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 090EE964E83
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 21:13:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1024C964E71
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 21:11:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29F0C1C22904
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 19:13:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8417AB20B77
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 19:11:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 798CB1B9B41;
-	Thu, 29 Aug 2024 19:12:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96B861B8E86;
+	Thu, 29 Aug 2024 19:11:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hfyPmOCI"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xjgaxDK3"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B5B51B6540;
-	Thu, 29 Aug 2024 19:12:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74A261B6540
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 19:11:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724958752; cv=none; b=XwTaPVcqEy9skf7/rEw1CFNRtz7Nyyr+jDNXlRvJxS1gWVLrZ63gea0VEGcK/hhmm4YshllRW6myEEa2o9q7A+uZXwTJwpVNDyMxSQL9jPv45nZLbpZTM7oU99Gv7tOzyR6clVyS239dhpiA95YeEgTnCOSAh1K4GPZZacTIvgY=
+	t=1724958701; cv=none; b=VNfQ/wfuGlbBsAAdWjIdsxesrgygInitmq04Q4ZVo8xpjhNnFVXtsNzoL4wYa4fABzy/fjMdJCElBuQWG8ByakEKZzYWHDhxzXqMh0QwmMZEbmDx9XNKd1BSmrSpCot9yRf6Tr24IywjNBw5GLlJhpw8z7a4VnU+95lW4uc8nj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724958752; c=relaxed/simple;
-	bh=IccCRubsZkcY5u3qNEH7PHyogwGX+dXPNc8wVEM5Uj0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=IlLtOW19GE2cic94oRBopDM6Cj7jo0T6VlM/0aGOtZ7HZEO+COHxw13XZhAcSmZ57499h4CtzRdkyqYpPClolcDXbtvKnyTcCmTLbhmv0rNe1NGgUiFk7G137m/UMeh9fsM0VvDv0rCCzs3Cs7UZLwIZa7gY8DFbywsdd6UkYjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hfyPmOCI; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47TGK93O024486;
-	Thu, 29 Aug 2024 19:06:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	XDi8cWM8np1l+qyak2upQZYRIHORj4j79K4H6ISldk8=; b=hfyPmOCIbJzySDql
-	OmdQD12Zz2sJREaZberhLneflE/hOKYVZZofyBK6QxUqr+18/e7B2woskKUH04yX
-	P9M6Vu7XCzs0Sw1UkxkCGUDZsLS2J/ybso0t3LyLX392wvtW70b21D/3qIl5LXMA
-	moO9LAh5TzBMpGjBBvPoAERhy5GgXTVGwzuYgryZAtMF714InpSKXglhAg/IpGDL
-	onNsTohtbQclmqE+Ke7mTlocsMoR/YNkSWUnZwb0lG3imy41+HiXq8RBvXvyElo7
-	Sz/h8Nr/0cTtOzqvqIu0+E1ab50ffotira891aDv2XBw5h9QpcpLs73DzIoO7eBM
-	PC1l5w==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 419puvedfy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 29 Aug 2024 19:06:52 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47TJ6ppS019360
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 29 Aug 2024 19:06:51 GMT
-Received: from [10.110.28.107] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 29 Aug
- 2024 12:06:47 -0700
-Message-ID: <57eee144-cdc4-48e7-838b-103cda6ec1dd@quicinc.com>
-Date: Thu, 29 Aug 2024 12:06:46 -0700
+	s=arc-20240116; t=1724958701; c=relaxed/simple;
+	bh=9ox/zUiQ79M7vwxUB7uAMR7Luybc2qdrTo+dCWXL4zc=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=Z356dK4DpsCPA9PEoZNuB0s3kF11W+e80h8MFZK6ww+2RnQiiUTsEYhvELje0URBMZP7kXilsczG0w6BlQFXWkKmvJlI3KPYK/cuHTZNMn2+C9FW5qtvYfd35/hDmHlD7fmZNSybUSeR2AIQDfSjXmv3HXdHMm4jtDoe7npy9ek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--vipinsh.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xjgaxDK3; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--vipinsh.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6ac83a71d45so16896377b3.3
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 12:11:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1724958699; x=1725563499; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=v1a2GwNMFZtV+1SGv6UQ8OK/j1fw5mIkgMyF+JmvsP8=;
+        b=xjgaxDK3ZwWDBOyAi96Jirmp0Aei8vfBoiNheItqKwou/8k5rQ4FxwdCD48ASEpbZF
+         kWhv4Njl0pv5DPO1mN4GIxm5W11MGdoNedNhtnTZqXywENm0wz4Hd7Hcl2d1GmoILsnB
+         AIoehWvV9/mm+BHRdDXzNoJUpcHJsof0YwMdvAZq4MRBdiekodboollW5zQHHiKvTiQK
+         qZGzoM2LC4kPh4c3txOGmS2yLISoWNLj5HfcJUMZOjAZApRVRaCoVjy6G+QIr92fIqgY
+         qwlgARpYgTt+hGniwEtZ8MpuaJKu8PDmRvW8xTK6thTeqjIIsgJ85pzn6FAmq6NBQOyh
+         4MEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724958699; x=1725563499;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=v1a2GwNMFZtV+1SGv6UQ8OK/j1fw5mIkgMyF+JmvsP8=;
+        b=a/aYfbHFD5tMwHhT0+RfOLdGsokfKzkseJMjmLirlLZGOH1qWUFibb5hsSU01C35vT
+         txDf9XWQ+FltWlUNsoN3Nyd+m5jmjlqlSCkXm0n7RuZLMYNMgBqF/HhfIA5MprMF/1C2
+         jUZ8NObA31jiST5axranv8jY8XzLoys+1G3FQ9HGTyvNiQcSP3Gj8nUnco8Z1VICR1Cc
+         YiZpOcQE8rTjCgZU8wmidvWI5j1N8O3+Yrtiyu33XK7FS+41ADSDGf+vwotmfdIMwOoB
+         niTMlD9JtCLdxN4UwdvSlQVWaLcPyj+2gD91b3My97ozkVOnwcy7l08BQMZ7Y015n+wh
+         Ddbw==
+X-Forwarded-Encrypted: i=1; AJvYcCVuniW1/x9NfiqLJYUbX55ud9f9wF12n+mdB2OXvj5PLreqHkmd8qDjLpHN+dechD/WC7RHT7g8WKvPhoQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCqDjkz4nQZMx32P5FubVF/FDYSgJN3sbG8QXoq/RgoXasK7By
+	53rwO4/v5bxdKaiiHc5nDjcn0nO/CkCMHRY0PP4oJwYxRL8NfiIROhgxlJ4ecSOLDnR/o07uh5o
+	7Opetyg==
+X-Google-Smtp-Source: AGHT+IFsu0tqq1k3ZGpatQc8i7RrU0gs2eFt1itqCzLQHBoKohcpEOjlXsjW8OwFWwhZYJs028y4MzhZjCwc
+X-Received: from vipin.c.googlers.com ([34.105.13.176]) (user=vipinsh
+ job=sendgmr) by 2002:a05:690c:6201:b0:691:3acc:eb2d with SMTP id
+ 00721157ae682-6d2e8feb16fmr603267b3.4.1724958699211; Thu, 29 Aug 2024
+ 12:11:39 -0700 (PDT)
+Date: Thu, 29 Aug 2024 12:11:31 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 22/22] arm64: dts: qcom: Add reduced functional DT for
- SA8255p Ride platform
-Content-Language: en-US
-To: Krzysztof Kozlowski <krzk@kernel.org>, <andersson@kernel.org>,
-        <konradybcio@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <rafael@kernel.org>, <viresh.kumar@linaro.org>,
-        <herbert@gondor.apana.org.au>, <davem@davemloft.net>,
-        <sudeep.holla@arm.com>, <andi.shyti@kernel.org>, <tglx@linutronix.de>,
-        <will@kernel.org>, <joro@8bytes.org>, <jassisinghbrar@gmail.com>,
-        <lee@kernel.org>, <linus.walleij@linaro.org>, <amitk@kernel.org>,
-        <thara.gopinath@gmail.com>, <broonie@kernel.org>,
-        <wim@linux-watchdog.org>, <linux@roeck-us.net>
-CC: <robin.murphy@arm.com>, <cristian.marussi@arm.com>, <rui.zhang@intel.com>,
-        <lukasz.luba@arm.com>, <vkoul@kernel.org>, <quic_gurus@quicinc.com>,
-        <agross@kernel.org>, <bartosz.golaszewski@linaro.org>,
-        <quic_rjendra@quicinc.com>, <robimarko@gmail.com>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-        <linux-crypto@vger.kernel.org>, <arm-scmi@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-i2c@vger.kernel.org>,
-        <iommu@lists.linux.dev>, <linux-gpio@vger.kernel.org>,
-        <linux-serial@vger.kernel.org>, <linux-spi@vger.kernel.org>,
-        <linux-watchdog@vger.kernel.org>, <kernel@quicinc.com>,
-        <quic_psodagud@quicinc.com>, <quic_tsoni@quicinc.com>,
-        <quic_shazhuss@quicinc.com>
-References: <20240828203721.2751904-1-quic_nkela@quicinc.com>
- <20240828203721.2751904-23-quic_nkela@quicinc.com>
- <746be896-8798-44b0-aa86-e77cf34655e1@kernel.org>
-From: Nikunj Kela <quic_nkela@quicinc.com>
-In-Reply-To: <746be896-8798-44b0-aa86-e77cf34655e1@kernel.org>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.46.0.469.g59c65b2a67-goog
+Message-ID: <20240829191135.2041489-1-vipinsh@google.com>
+Subject: [PATCH v2 0/4] KVM: x86/mmu: Run NX huge page recovery under MMU read lock
+From: Vipin Sharma <vipinsh@google.com>
+To: seanjc@google.com, pbonzini@redhat.com, dmatlack@google.com
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Vipin Sharma <vipinsh@google.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 1DMGIf9YfzGAwuDSquaVObGA-TL4ZKmm
-X-Proofpoint-GUID: 1DMGIf9YfzGAwuDSquaVObGA-TL4ZKmm
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-29_06,2024-08-29_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- mlxlogscore=999 priorityscore=1501 bulkscore=0 impostorscore=0
- adultscore=0 malwarescore=0 phishscore=0 lowpriorityscore=0 mlxscore=0
- spamscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408290136
+
+Split NX huge page recovery in two separate flows, one for TDP MMU and
+one for non-TDP MMU.
+
+TDP MMU flow will use MMU read lock and non-TDP MMU flow will use MMU
+write lock. This change unblocks vCPUs which are waiting for MMU read
+lock while NX huge page recovery is running and zapping shadow pages.
+
+A Windows guest was showing network latency jitters which was root
+caused to vCPUs waiting for MMU read lock when NX huge page recovery
+thread was holding MMU write lock. Disabling NX huge page recovery fixed
+the jitter issue.
+
+So, to optimize NX huge page recovery, it was modified to run under MMU
+read lock, the switch made jitter issue disappear completely and vCPUs
+wait time for MMU read lock reduced drastically. Patch 4 commit log has
+the data from the tool to show improvement observed.
+
+Patch 1 adds a little bit of code churn which is removed in Patch 2 and
+3. It was done to make tracking NX huge pages separately in a separate
+patch and then later split common recovery worker code.
+
+v2:
+- Track legacy and TDP MMU NX huge pages separately.
+- Each list has their own calculation of "to_zap", i.e. number of pages
+  to zap.
+- Unaccount huge page before dirty log check and zap logic in TDP MMU recovery
+  worker. Check patch 4 for more details.
+- 32 bit build issue fix.
+- Sparse warning fix for comparing RCU pointer with non-RCU pointer.
+  (sp->spt == spte_to_child_pt())
 
 
-On 8/29/2024 12:49 AM, Krzysztof Kozlowski wrote:
-> On 28/08/2024 22:37, Nikunj Kela wrote:
->> SA8255p Ride platform is an automotive virtual platform. This platform
->> abstracts resources such as clocks, regulators etc. in the firmware VM.
->> The device drivers request resources operations over SCMI using power,
->> performance, reset and sensor protocols.
->>
->> Multiple virtual SCMI instances are being employed for greater parallelism.
->> These instances are tied to devices such that devices can have dedicated
->> SCMI channel. Firmware VM (runs SCMI platform stack) is SMP enabled and
->> can process requests from agents in parallel. Qualcomm smc transport is
->> used for communication between SCMI agent and platform.
->>
->> Let's add the reduced functional support for SA8255p Ride board.
->> Subsequently, the support for PCIe, USB, UFS, Ethernet will be added.
->>
->> Co-developed-by: Shazad Hussain <quic_shazhuss@quicinc.com>
->> Signed-off-by: Shazad Hussain <quic_shazhuss@quicinc.com>
->> Signed-off-by: Nikunj Kela <quic_nkela@quicinc.com>
->> ---
->>  arch/arm64/boot/dts/qcom/Makefile           |    1 +
->>  arch/arm64/boot/dts/qcom/sa8255p-pmics.dtsi |   80 +
->>  arch/arm64/boot/dts/qcom/sa8255p-ride.dts   |  149 ++
->>  arch/arm64/boot/dts/qcom/sa8255p-scmi.dtsi  | 2312 ++++++++++++++++++
->>  arch/arm64/boot/dts/qcom/sa8255p.dtsi       | 2405 +++++++++++++++++++
->>  5 files changed, 4947 insertions(+)
->>  create mode 100644 arch/arm64/boot/dts/qcom/sa8255p-pmics.dtsi
->>  create mode 100644 arch/arm64/boot/dts/qcom/sa8255p-ride.dts
->>  create mode 100644 arch/arm64/boot/dts/qcom/sa8255p-scmi.dtsi
->>  create mode 100644 arch/arm64/boot/dts/qcom/sa8255p.dtsi
->>
-> ...
->
->> diff --git a/arch/arm64/boot/dts/qcom/sa8255p-ride.dts b/arch/arm64/boot/dts/qcom/sa8255p-ride.dts
->> new file mode 100644
->> index 000000000000..1dc03051ad92
->> --- /dev/null
->> +++ b/arch/arm64/boot/dts/qcom/sa8255p-ride.dts
->> @@ -0,0 +1,149 @@
->> +// SPDX-License-Identifier: BSD-3-Clause
->> +/*
->> + * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
->> + */
->> +
->> +/dts-v1/;
->> +
->> +#include <dt-bindings/gpio/gpio.h>
->> +
->> +#include "sa8255p.dtsi"
->> +#include "sa8255p-pmics.dtsi"
->> +#include "sa8255p-scmi.dtsi"
->> +
->> +/ {
->> +	model = "Qualcomm Technologies, Inc. SA8255P Ride";
->> +	compatible = "qcom,sa8255p-ride", "qcom,sa8255p";
->> +
->> +	aliases {
->> +		i2c11 = &i2c11;
->> +		i2c18 = &i2c18;
->> +		serial0 = &uart10;
->> +		serial1 = &uart4;
->> +		spi16 = &spi16;
->> +		scmichannels = &scmichannels;
-> Nothing parses this.
->
-We are using this alias in bootloader to speed up the parsing. Since we
-are using 64 SCMI instances and SCMI smc transport driver for
-Qualcomm(drivers/firmware/arm_scmi/transports/smc.c) expects
-cap-id(created by hypervisor at boot time), our bootloader gets those
-cap-id for each channel and populate them. This alias is an optimization
-to save boottime as in automotive, boot KPIs are critical.
+v1: https://lore.kernel.org/kvm/20240812171341.1763297-1-vipinsh@google.com/#t
+
+Vipin Sharma (4):
+  KVM: x86/mmu: Track TDP MMU NX huge pages separately
+  KVM: x86/mmu: Extract out TDP MMU NX huge page recovery code
+  KVM: x86/mmu: Rearrange locks and to_zap count for NX huge page
+    recovery
+  KVM: x86/mmu: Recover TDP MMU NX huge pages using MMU read lock
+
+ arch/x86/include/asm/kvm_host.h |  13 ++-
+ arch/x86/kvm/mmu/mmu.c          | 135 +++++++++++++++++---------------
+ arch/x86/kvm/mmu/mmu_internal.h |   3 +
+ arch/x86/kvm/mmu/tdp_mmu.c      | 122 +++++++++++++++++++++++++++--
+ arch/x86/kvm/mmu/tdp_mmu.h      |   3 +-
+ 5 files changed, 204 insertions(+), 72 deletions(-)
 
 
->
->> +
->> +#include <dt-bindings/interrupt-controller/arm-gic.h>
->> +
->> +&firmware {
->> +	scmi0: scmi0 {
-> scmi-0
->
-ACK!
->> +		compatible = "qcom,scmi-smc";
->> +		arm,smc-id = <0xc6008012>;
->> +		shmem = <&shmem0>;
->> +
->> +		interrupts = <GIC_SPI 963 IRQ_TYPE_EDGE_RISING>;
->> +		interrupt-names = "a2p";
->> +
->> +		max-rx-timeout-ms = <3000>;
->> +
->> +		status = "disabled";
-> status is the last property (from properties)
->
-ACK!
-> ...
->
->> +
->> +&soc {
->> +	scmichannels: sram@d0000000 {
->> +		#address-cells = <1>;
->> +		#size-cells = <1>;
->> +		compatible = "mmio-sram";
->> +		reg = <0x0 0xd0000000 0x0 0x40000>;
->> +		ranges = <0x0 0x0 0x0 0xffffffff>;
->> +
->> +		shmem0: scmi-sram@d0000000 {
->> +			compatible = "arm,scmi-shmem";
->> +			reg = <0xd0000000 0x1000>;
->> +		};
->> +
->> +		shmem1: scmi-sram@d0001000 {
->> +			compatible = "arm,scmi-shmem";
->> +			reg = <0xd0001000 0x1000>;
->> +		};
->> +
->> +		shmem2: scmi-sram@d0002000 {
->> +			compatible = "arm,scmi-shmem";
->> +			reg = <0xd0002000 0x1000>;
->> +		};
->> +
->> +		shmem3: scmi-sram@d0003000 {
->> +			compatible = "arm,scmi-shmem";
->> +			reg = <0xd0003000 0x1000>;
->> +		};
->> +
->> +		shmem4: scmi-sram@d0004000 {
->> +			compatible = "arm,scmi-shmem";
->> +			reg = <0xd0004000 0x1000>;
->> +		};
->> +
->> +		shmem5: scmi-sram@d0005000 {
->> +			compatible = "arm,scmi-shmem";
->> +			reg = <0xd0005000 0x1000>;
->> +		};
->> +
->> +		shmem6: scmi-sram@d0006000 {
->> +			compatible = "arm,scmi-shmem";
->> +			reg = <0xd0006000 0x1000>;
->> +		};
->> +
->> +		shmem7: scmi-sram@d0007000 {
->> +			compatible = "arm,scmi-shmem";
->> +			reg = <0xd0007000 0x1000>;
->> +		};
->> +
->> +		shmem8: scmi-sram@d0008000 {
->> +			compatible = "arm,scmi-shmem";
->> +			reg = <0xd0008000 0x1000>;
->> +		};
->> +
->> +		shmem9: scmi-sram@d0009000 {
->> +			compatible = "arm,scmi-shmem";
->> +			reg = <0xd0009000 0x1000>;
->> +		};
->> +
->> +		shmem10: scmi-sram@d000a000 {
->> +			compatible = "arm,scmi-shmem";
->> +			reg = <0xd000a000 0x1000>;
->> +		};
->> +
->> +		shmem11: scmi-sram@d000b000 {
->> +			compatible = "arm,scmi-shmem";
->> +			reg = <0xd000b000 0x1000>;
->> +		};
->> +
->> +		shmem12: scmi-sram@d000c000 {
->> +			compatible = "arm,scmi-shmem";
->> +			reg = <0xd000c000 0x1000>;
->> +		};
->> +
->> +		shmem13: scmi-sram@d000d000 {
->> +			compatible = "arm,scmi-shmem";
->> +			reg = <0xd000d000 0x1000>;
->> +		};
->> +
->> +		shmem14: scmi-sram@d000e000 {
->> +			compatible = "arm,scmi-shmem";
->> +			reg = <0xd000e000 0x1000>;
->> +		};
->> +
->> +		shmem15: scmi-sram@d000f000 {
->> +			compatible = "arm,scmi-shmem";
->> +			reg = <0xd000f000 0x1000>;
->> +		};
->> +
->> +		shmem16: scmi-sram@d0010000 {
->> +			compatible = "arm,scmi-shmem";
->> +			reg = <0xd0010000 0x1000>;
->> +		};
->> +
->> +		shmem17: scmi-sram@d0011000 {
->> +			compatible = "arm,scmi-shmem";
->> +			reg = <0xd0011000 0x1000>;
->> +		};
->> +
->> +		shmem18: scmi-sram@d0012000 {
->> +			compatible = "arm,scmi-shmem";
->> +			reg = <0xd0012000 0x1000>;
->> +		};
->> +
->> +		shmem19: scmi-sram@d0013000 {
->> +			compatible = "arm,scmi-shmem";
->> +			reg = <0xd0013000 0x1000>;
->> +		};
->> +
->> +		shmem20: scmi-sram@d0014000 {
->> +			compatible = "arm,scmi-shmem";
->> +			reg = <0xd0014000 0x1000>;
->> +		};
->> +
->> +		shmem21: scmi-sram@d0015000 {
->> +			compatible = "arm,scmi-shmem";
->> +			reg = <0xd0015000 0x1000>;
->> +		};
->> +
->> +		shmem22: scmi-sram@d0016000 {
->> +			compatible = "arm,scmi-shmem";
->> +			reg = <0xd0016000 0x1000>;
->> +		};
->> +
->> +		shmem23: scmi-sram@d0017000 {
->> +			compatible = "arm,scmi-shmem";
->> +			reg = <0xd0017000 0x1000>;
->> +		};
->> +
->> +		shmem24: scmi-sram@d0018000 {
->> +			compatible = "arm,scmi-shmem";
->> +			reg = <0xd0018000 0x1000>;
->> +		};
->> +
->> +		shmem25: scmi-sram@d0019000 {
->> +			compatible = "arm,scmi-shmem";
->> +			reg = <0xd0019000 0x1000>;
->> +		};
->> +
->> +		shmem26: scmi-sram@d001a000 {
->> +			compatible = "arm,scmi-shmem";
->> +			reg = <0xd001a000 0x1000>;
->> +		};
->> +
->> +		shmem27: scmi-sram@d001b000 {
->> +			compatible = "arm,scmi-shmem";
->> +			reg = <0xd001b000 0x1000>;
->> +		};
->> +
->> +		shmem28: scmi-sram@d001c000 {
->> +			compatible = "arm,scmi-shmem";
->> +			reg = <0xd001c000 0x1000>;
->> +		};
->> +
->> +		shmem29: scmi-sram@d001d000 {
->> +			compatible = "arm,scmi-shmem";
->> +			reg = <0xd001d000 0x1000>;
->> +		};
->> +
->> +		shmem30: scmi-sram@d001e000 {
->> +			compatible = "arm,scmi-shmem";
->> +			reg = <0xd001e000 0x1000>;
->> +		};
->> +
->> +		shmem31: scmi-sram@d001f000 {
->> +			compatible = "arm,scmi-shmem";
->> +			reg = <0xd001f000 0x1000>;
->> +		};
->> +
->> +		shmem32: scmi-sram@d0020000 {
->> +			compatible = "arm,scmi-shmem";
->> +			reg = <0xd0020000 0x1000>;
->> +		};
->> +
->> +		shmem33: scmi-sram@d0021000 {
->> +			compatible = "arm,scmi-shmem";
->> +			reg = <0xd0021000 0x1000>;
->> +		};
->> +
->> +		shmem34: scmi-sram@d0022000 {
->> +			compatible = "arm,scmi-shmem";
->> +			reg = <0xd0022000 0x1000>;
->> +		};
->> +
->> +		shmem35: scmi-sram@d0023000 {
->> +			compatible = "arm,scmi-shmem";
->> +			reg = <0xd0023000 0x1000>;
->> +		};
->> +
->> +		shmem36: scmi-sram@d0024000 {
->> +			compatible = "arm,scmi-shmem";
->> +			reg = <0xd0024000 0x1000>;
->> +		};
->> +
->> +		shmem37: scmi-sram@d0025000 {
->> +			compatible = "arm,scmi-shmem";
->> +			reg = <0xd0025000 0x1000>;
->> +		};
->> +
->> +		shmem38: scmi-sram@d0026000 {
->> +			compatible = "arm,scmi-shmem";
->> +			reg = <0xd0026000 0x1000>;
->> +		};
->> +
->> +		shmem39: scmi-sram@d0027000 {
->> +			compatible = "arm,scmi-shmem";
->> +			reg = <0xd0027000 0x1000>;
->> +		};
->> +
->> +		shmem40: scmi-sram@d0028000 {
->> +			compatible = "arm,scmi-shmem";
->> +			reg = <0xd0028000 0x1000>;
->> +		};
->> +
->> +		shmem41: scmi-sram@d0029000 {
->> +			compatible = "arm,scmi-shmem";
->> +			reg = <0xd0029000 0x1000>;
->> +		};
->> +
->> +		shmem42: scmi-sram@d002a000 {
->> +			compatible = "arm,scmi-shmem";
->> +			reg = <0xd002a000 0x1000>;
->> +		};
->> +
->> +		shmem43: scmi-sram@d002b000 {
->> +			compatible = "arm,scmi-shmem";
->> +			reg = <0xd002b000 0x1000>;
->> +		};
->> +
->> +		shmem44: scmi-sram@d002c000 {
->> +			compatible = "arm,scmi-shmem";
->> +			reg = <0xd002c000 0x1000>;
->> +		};
->> +
->> +		shmem45: scmi-sram@d002d000 {
->> +			compatible = "arm,scmi-shmem";
->> +			reg = <0xd002d000 0x1000>;
->> +		};
->> +
->> +		shmem46: scmi-sram@d002e000 {
->> +			compatible = "arm,scmi-shmem";
->> +			reg = <0xd002e000 0x1000>;
->> +		};
->> +
->> +		shmem47: scmi-sram@d002f000 {
->> +			compatible = "arm,scmi-shmem";
->> +			reg = <0xd002f000 0x1000>;
->> +		};
->> +
->> +		shmem48: scmi-sram@d0030000 {
->> +			compatible = "arm,scmi-shmem";
->> +			reg = <0xd0030000 0x1000>;
->> +		};
->> +
->> +		shmem49: scmi-sram@d0031000 {
->> +			compatible = "arm,scmi-shmem";
->> +			reg = <0xd0031000 0x1000>;
->> +		};
->> +
->> +		shmem50: scmi-sram@d0032000 {
->> +			compatible = "arm,scmi-shmem";
->> +			reg = <0xd0032000 0x1000>;
->> +		};
->> +
->> +		shmem51: scmi-sram@d0033000 {
->> +			compatible = "arm,scmi-shmem";
->> +			reg = <0xd0033000 0x1000>;
->> +		};
->> +
->> +		shmem52: scmi-sram@d0034000 {
->> +			compatible = "arm,scmi-shmem";
->> +			reg = <0xd0034000 0x1000>;
->> +		};
->> +
->> +		shmem53: scmi-sram@d0035000 {
->> +			compatible = "arm,scmi-shmem";
->> +			reg = <0xd0035000 0x1000>;
->> +		};
->> +
->> +		shmem54: scmi-sram@d0036000 {
->> +			compatible = "arm,scmi-shmem";
->> +			reg = <0xd0036000 0x1000>;
->> +		};
->> +
->> +		shmem55: scmi-sram@d0037000 {
->> +			compatible = "arm,scmi-shmem";
->> +			reg = <0xd0037000 0x1000>;
->> +		};
->> +
->> +		shmem56: scmi-sram@d0038000 {
->> +			compatible = "arm,scmi-shmem";
->> +			reg = <0xd0038000 0x1000>;
->> +		};
->> +
->> +		shmem57: scmi-sram@d0039000 {
->> +			compatible = "arm,scmi-shmem";
->> +			reg = <0xd0039000 0x1000>;
->> +		};
->> +
->> +		shmem58: scmi-sram@d003a000 {
->> +			compatible = "arm,scmi-shmem";
->> +			reg = <0xd003a000 0x1000>;
->> +		};
->> +
->> +		shmem59: scmi-sram@d003b000 {
->> +			compatible = "arm,scmi-shmem";
->> +			reg = <0xd003b000 0x1000>;
->> +		};
->> +
->> +		shmem60: scmi-sram@d003c000 {
->> +			compatible = "arm,scmi-shmem";
->> +			reg = <0xd003c000 0x1000>;
->> +		};
->> +
->> +		shmem61: scmi-sram@d003d000 {
->> +			compatible = "arm,scmi-shmem";
->> +			reg = <0xd003d000 0x1000>;
->> +		};
->> +
->> +		shmem62: scmi-sram@d003e000 {
->> +			compatible = "arm,scmi-shmem";
->> +			reg = <0xd003e000 0x1000>;
->> +		};
->> +
->> +		shmem63: scmi-sram@d003f000 {
->> +			compatible = "arm,scmi-shmem";
->> +			reg = <0xd003f000 0x1000>;
->> +		};
->> +	};
->> +};
->> diff --git a/arch/arm64/boot/dts/qcom/sa8255p.dtsi b/arch/arm64/boot/dts/qcom/sa8255p.dtsi
->> new file mode 100644
->> index 000000000000..c354f76ffa5e
->> --- /dev/null
->> +++ b/arch/arm64/boot/dts/qcom/sa8255p.dtsi
->> @@ -0,0 +1,2405 @@
->> +// SPDX-License-Identifier: BSD-3-Clause
->> +/*
->> + * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
->> + */
->> +
->> +#include <dt-bindings/interrupt-controller/arm-gic.h>
->> +#include <dt-bindings/mailbox/qcom-ipcc.h>
->> +
->> +/ {
->> +	interrupt-parent = <&intc>;
->> +
->> +	#address-cells = <2>;
->> +	#size-cells = <2>;
->> +
->> +	clocks {
->> +		xo_board_clk: xo-board-clk {
->> +			compatible = "fixed-clock";
->> +			#clock-cells = <0>;
->> +		};
->> +
->> +		sleep_clk: sleep-clk {
->> +			compatible = "fixed-clock";
->> +			#clock-cells = <0>;
->> +		};
->> +
->> +		gpll0_board_clk: gpll0-board-clk {
->> +			compatible = "fixed-clock";
->> +			#clock-cells = <0>;
->> +		};
->> +
->> +		bi_tcxo_div2: bi-tcxo-div2-clk {
->> +			compatible = "fixed-factor-clock";
->> +			clocks = <&xo_board_clk>;
->> +			clock-mult = <1>;
->> +			clock-div = <2>;
->> +			#clock-cells = <0>;
->> +		};
->> +	};
->> +
->> +	cpus {
->> +		#address-cells = <2>;
->> +		#size-cells = <0>;
->> +
->> +		CPU0: cpu@0 {
-> Lowercase label.
-ACK!
->
-> ...
->
-> Best regards,
-> Krzysztof
->
+base-commit: 332d2c1d713e232e163386c35a3ba0c1b90df83f
+-- 
+2.46.0.469.g59c65b2a67-goog
+
 
