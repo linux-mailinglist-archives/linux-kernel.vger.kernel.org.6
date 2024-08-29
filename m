@@ -1,151 +1,124 @@
-Return-Path: <linux-kernel+bounces-307404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2ACF964D34
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 19:49:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1CF0964D39
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 19:50:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F40C21C22AD5
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 17:49:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 968631F22B34
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 17:50:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE9871B790B;
-	Thu, 29 Aug 2024 17:49:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E2851B790F;
+	Thu, 29 Aug 2024 17:50:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="alE77Gbc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gY/8sdlE"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38C9D4D8C1;
-	Thu, 29 Aug 2024 17:49:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9C3F4D8C1;
+	Thu, 29 Aug 2024 17:50:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724953747; cv=none; b=IURCoVczF1f7jeZIx+Ai4Qu4HlsmuhJX67th8ZkAQ4Ph2bN7GPBheGsXtJyEa3udnKmTFbCqGm90No0JIf/mLihV1f+YGZ9EDqs3NbuK4C13ogVxAW2B1nJVCxRU1arRvVCTBUvzEGTchljCo4BliQEFXEXEAi0w0nPmPTE6nVY=
+	t=1724953839; cv=none; b=Q1TKeAHv5+NIMj0Ul8RpTRwoBG1nBw8O/o7P+T0+YdURBXBxN3d3iYZQy/PtKsLMTjCc+F1I/MThStNtcdDll7lSRgBShKbLk1FQhdzefxJDIPN66QhPL1fGFooAVJ8ppXlhyjLTvFL8fBn3Ch7gG0XKYVF9kwnxWV5FwcnnfWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724953747; c=relaxed/simple;
-	bh=QWWOFe/ASXAPJ38v2aHBuhEpRmh5sbL8ny7rcbpiugc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n80JIWoFQ0CgZLgxl8pHgNIKARo7cmlvwKdaLWQo7WszewhIkgJT6CUgZ8zjmjmOtj9MpdhjqxfAldrq3KY4Rxa1AhGBLcYaFBetpilCFQUplSvohdd59NzsBFalQOIEGVeZ84L9LXYDgC1Q0GlG4B0mtYT0pMWQmdQHHJCIIPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=alE77Gbc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 481FEC4CEC1;
-	Thu, 29 Aug 2024 17:49:06 +0000 (UTC)
+	s=arc-20240116; t=1724953839; c=relaxed/simple;
+	bh=Xy3NW4pFyHQqbMAZ00aMDkY+SK+roG6AjV6zLmJQKB4=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:To:Date; b=LqoHFDgzHHJC2DyILWvRZ2ikpAvuaBCtr7zMm7eGofKpESgoh0DR7sXCbxqjgooskyCaDrUMjgqzs8dJ5G/ztOOj3fEQsCDudIt79ebQ2oQFRCrzDaNxNdj3I/VJwHJrB3ocByI2QL2r32gdPpKsAVWUDJzwd2BRzfGDWZrNJf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gY/8sdlE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D0A1C4CEC1;
+	Thu, 29 Aug 2024 17:50:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724953746;
-	bh=QWWOFe/ASXAPJ38v2aHBuhEpRmh5sbL8ny7rcbpiugc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=alE77GbcKxrXUGBBTKl/3SKJ027OH7GUR7jM0NlH/DXMGZLzbUVI72oqOpZuR/tXk
-	 D9Iede+iR5Gbjgn8ScAJ7+oCPY7JKMVYn04trYdl16x62MEKLZ5dphIoP62KyFNdZI
-	 BRRWGvkUhf112pDrV99Ei3Hf9bcM68O28H/YHuFQslAQ1I4hWQNyfbPcNiFAumZpL5
-	 DnCMTjTEB63jEKLLbZCOhlMX5jOMv5YjK2chde7GdySjIBKNNZaGOinnAOb/9a1jf3
-	 CojHvFfX2JSWOYghFo2wByQPQ0UEjRcfJxhu8JneRLSu6GCP6hVA3T7qDatdsTUWfj
-	 H3s8b5YjuXhsg==
-Date: Thu, 29 Aug 2024 23:19:03 +0530
-From: Vinod Koul <vkoul@kernel.org>
-To: Yangtao Li <frank.li@vivo.com>
-Cc: kishon@kernel.org, krzk@kernel.org, alim.akhtar@samsung.com,
-	konrad.dybcio@linaro.org, liubo03@inspur.com, robh@kernel.org,
-	yuvaraj.cd@gmail.com, ks.giri@samsung.com, vasanth.a@samsung.com,
-	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH 2/4] phy: qualcomm: phy-qcom-apq8064-sata: Convert to
- devm_clk_get_enabled()
-Message-ID: <ZtC0j1kaHKHA3v/P@vaman>
-References: <20240822084400.1595426-1-frank.li@vivo.com>
+	s=k20201202; t=1724953839;
+	bh=Xy3NW4pFyHQqbMAZ00aMDkY+SK+roG6AjV6zLmJQKB4=;
+	h=In-Reply-To:References:Subject:From:To:Date:From;
+	b=gY/8sdlER4kFUWz2FBBAW3hOJ0idxFM12wivu7B21nS+1jiGPY5bWo0FGYDNGmzJZ
+	 QpbxFv9OROwSSfuX2jqB4WHkP7hpR2IIzyq9irjlluazTmX3aQzquyWy9HxEeQFB1G
+	 lP82I8WJRsORObFpaojziBrCrs91ZzWGBO6ig1+m9YM8l3vkHprJlb0Gam5bAz8HdI
+	 a+OdbQ26HGCdmJU05TVbSLk+q0deArTeWRGBGWoSWR20yGnnLAr4SuCN0RQ86g5opS
+	 oMBonC02+nhTT+FjSbUfmDWYOHvLN4+FjKsoNJ+xUuvHKaf32/++qC4b0TTq27MHsT
+	 PfFglx6fbbggA==
+Message-ID: <3569ef6d81adc41330c4002752ba3aa9.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240822084400.1595426-1-frank.li@vivo.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <OS8PR06MB7541F12972412AE565A93287F2962@OS8PR06MB7541.apcprd06.prod.outlook.com>
+References: <20240828062740.1614744-1-ryan_chen@aspeedtech.com> <20240828062740.1614744-4-ryan_chen@aspeedtech.com> <61c8234139fcd2b27610ef18e9d9fbf7.sboyd@kernel.org> <OS8PR06MB7541F12972412AE565A93287F2962@OS8PR06MB7541.apcprd06.prod.outlook.com>
+Subject: RE: [PATCH v2 3/3] clk: aspeed: add AST2700 clk driver
+From: Stephen Boyd <sboyd@kernel.org>
+To: Ryan Chen <ryan_chen@aspeedtech.com>, andrew@codeconstruct.com.au, conor+dt@kernel.org, devicetree@vger.kernel.org, joel@jms.id.au, krzk+dt@kernel.org, linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, mturquette@baylibre.com, p.zabel@pengutronix.de, robh@kernel.org
+Date: Thu, 29 Aug 2024 10:50:37 -0700
+User-Agent: alot/0.10
 
-On 22-08-24, 02:44, Yangtao Li wrote:
-> Convert devm_clk_get(), clk_prepare_enable() to a single
-> call to devm_clk_get_enabled(), as this is exactly
-> what this function does.
+Quoting Ryan Chen (2024-08-29 00:09:12)
+> > Subject: Re: [PATCH v2 3/3] clk: aspeed: add AST2700 clk driver
+> >=20
+> > Quoting Ryan Chen (2024-08-27 23:27:40)
+> > > a/drivers/clk/clk-ast2700.c b/drivers/clk/clk-ast2700.c new file mode
+> > > 100644 index 000000000000..7e0466e73980
+> > > --- /dev/null
+> > > +++ b/drivers/clk/clk-ast2700.c
+> > > @@ -0,0 +1,1198 @@
+> > > +// SPDX-License-Identifier: GPL-2.0
+> > > +/*
+> > > + * Copyright (c) 2024 ASPEED Technology Inc.
+> > > + * Author: Ryan Chen <ryan_chen@aspeedtech.com>  */
+> > > +
+> > > +#include <linux/bits.h>
+> > > +#include <linux/clk-provider.h>
+> > [...]
+> > > +
+> > > +struct ast2700_reset {
+> > > +       void __iomem *base;
+> > > +       struct ast2700_reset_signal const *signal;
+> > > +       struct reset_controller_dev rcdev; };
+> >=20
+> > Please move the reset controller to the drivers/reset directory by mean=
+s of
+> > using an auxiliary device. There are some existing examples in there if=
+ you
+> > grep for auxiliary_device in drivers/reset to help guide.
+>=20
+> Do you mean to have another reset controller driver?
+> If yes, I may need syscon for remap two drivers.
 
-Can you please resend this as a single thread. Threading is broken in
-this series, I see 2, 3 patches, no idea where 1, 4 are...
+Yes. A syscon is not necessary to do that.
 
-> 
-> Signed-off-by: Yangtao Li <frank.li@vivo.com>
-> ---
->  drivers/phy/qualcomm/phy-qcom-apq8064-sata.c | 22 ++++----------------
->  1 file changed, 4 insertions(+), 18 deletions(-)
-> 
-> diff --git a/drivers/phy/qualcomm/phy-qcom-apq8064-sata.c b/drivers/phy/qualcomm/phy-qcom-apq8064-sata.c
-> index 3642a5d4f2f3..18c0dbd8e707 100644
-> --- a/drivers/phy/qualcomm/phy-qcom-apq8064-sata.c
-> +++ b/drivers/phy/qualcomm/phy-qcom-apq8064-sata.c
-> @@ -68,7 +68,6 @@
->  
->  struct qcom_apq8064_sata_phy {
->  	void __iomem *mmio;
-> -	struct clk *cfg_clk;
->  	struct device *dev;
->  };
->  
-> @@ -203,7 +202,7 @@ static int qcom_apq8064_sata_phy_probe(struct platform_device *pdev)
->  	struct device *dev = &pdev->dev;
->  	struct phy_provider *phy_provider;
->  	struct phy *generic_phy;
-> -	int ret;
-> +	struct clk *cfg_clk;
->  
->  	phy = devm_kzalloc(dev, sizeof(*phy), GFP_KERNEL);
->  	if (!phy)
-> @@ -223,19 +222,14 @@ static int qcom_apq8064_sata_phy_probe(struct platform_device *pdev)
->  	phy_set_drvdata(generic_phy, phy);
->  	platform_set_drvdata(pdev, phy);
->  
-> -	phy->cfg_clk = devm_clk_get(dev, "cfg");
-> -	if (IS_ERR(phy->cfg_clk)) {
-> +	cfg_clk = devm_clk_get_enabled(dev, "cfg");
-> +	if (IS_ERR(cfg_clk)) {
->  		dev_err(dev, "Failed to get sata cfg clock\n");
-> -		return PTR_ERR(phy->cfg_clk);
-> +		return PTR_ERR(cfg_clk);
->  	}
->  
-> -	ret = clk_prepare_enable(phy->cfg_clk);
-> -	if (ret)
-> -		return ret;
-> -
->  	phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
->  	if (IS_ERR(phy_provider)) {
-> -		clk_disable_unprepare(phy->cfg_clk);
->  		dev_err(dev, "%s: failed to register phy\n", __func__);
->  		return PTR_ERR(phy_provider);
->  	}
-> @@ -243,13 +237,6 @@ static int qcom_apq8064_sata_phy_probe(struct platform_device *pdev)
->  	return 0;
->  }
->  
-> -static void qcom_apq8064_sata_phy_remove(struct platform_device *pdev)
-> -{
-> -	struct qcom_apq8064_sata_phy *phy = platform_get_drvdata(pdev);
-> -
-> -	clk_disable_unprepare(phy->cfg_clk);
-> -}
-> -
->  static const struct of_device_id qcom_apq8064_sata_phy_of_match[] = {
->  	{ .compatible = "qcom,apq8064-sata-phy" },
->  	{ },
-> @@ -258,7 +245,6 @@ MODULE_DEVICE_TABLE(of, qcom_apq8064_sata_phy_of_match);
->  
->  static struct platform_driver qcom_apq8064_sata_phy_driver = {
->  	.probe	= qcom_apq8064_sata_phy_probe,
-> -	.remove_new = qcom_apq8064_sata_phy_remove,
->  	.driver = {
->  		.name	= "qcom-apq8064-sata-phy",
->  		.of_match_table	= qcom_apq8064_sata_phy_of_match,
-> -- 
-> 2.39.0
+> >=20
+> > > +
+> > > +#define to_rc_data(p) container_of(p, struct ast2700_reset, rcdev)
+> > > +
+> > [...]
+> > > +
+> > > +static int ast2700_soc0_clk_init(struct device_node *soc0_node) {
+> > > +       struct clk_hw_onecell_data *clk_data;
+> > > +       void __iomem *clk_base;
+> > [...]
+> > > +                                            0, clk_base +
+> > SCU0_CLK_STOP,
+> > > +                                            28, 0,
+> > > + &ast2700_clk_lock);
+> > > +
+> > > +       of_clk_add_hw_provider(soc0_node, of_clk_hw_onecell_get,
+> > > + clk_data);
+> > > +
+> > > +       return 0;
+> > > +};
+> > > +
+> > > +CLK_OF_DECLARE_DRIVER(ast2700_soc0, "aspeed,ast2700-scu0",
+> > > +ast2700_soc0_clk_init); CLK_OF_DECLARE_DRIVER(ast2700_soc1,
+> > > +"aspeed,ast2700-scu1", ast2700_soc1_clk_init);
+> >=20
+> > Why can't this be a platform driver?
+> Due to clk and reset will be the first driver in core.
+> Do you think all drivers should be platform driver?
 
--- 
-~Vinod
+Yes all drivers should be a platform driver.
 
