@@ -1,106 +1,123 @@
-Return-Path: <linux-kernel+bounces-307022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D6AE9646EE
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:40:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B2D19646F2
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:40:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32F1C1F21F95
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:40:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA8EE1F22337
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:40:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C6071AAE06;
-	Thu, 29 Aug 2024 13:40:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C14C1A76BE;
+	Thu, 29 Aug 2024 13:40:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OpUvT1IT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7831019408D;
-	Thu, 29 Aug 2024 13:40:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Hp4yWOJI"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 656861A7062;
+	Thu, 29 Aug 2024 13:40:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724938801; cv=none; b=NjozfiMl8G6VoKCUKrnRMh4krHcPsPWLzAHkMusFzAWc0Ih7LZzvfeWeDxTUmNA7pPbdpMbd+PykPC8Sr7IZWCCODpS1s9jarpDs0lifpqBrIDezsz933JkQvmRZ7gptkWGrNCVhYEjJXmXeX7mc9y8zJOz6rtsc7DfGHS13Ek4=
+	t=1724938818; cv=none; b=GqZtmxnmGo3lvxYJ8VP01k5VNOdCYObA3JQ1AWXdvXW5MUIPx3G6cVC2hejx+KXJqY16WQDeEdYrmcFucytRW3uumPQXdNnpNC1tq2q/WxF9Gk9OVt0HLcs2uyqr1Lze8FX/FvjMmS+jGCCKv+kwRqdKJAATbbkiyCFkcmo+6YQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724938801; c=relaxed/simple;
-	bh=T8uq5UDm0y39JoS8gj7vYpV20ScMyzrUL55wcPe8U0A=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=BPsOPVgNKD46NZEz/U4NiFEjaUu8riZzWWkkhQqrECzsXjTIaqcDIhEgZSmKKzZQAPndQNJQSReE2NHvIgPD3+cczxzgIyghRFcrGSH7uYvdLS9gR9ptoAF5PAWJcT5AOoCvIDDrXUjPavuHRhh9I4EyS0cbBmGfrPvl+B8uJJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OpUvT1IT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B40B9C4CEC1;
-	Thu, 29 Aug 2024 13:40:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724938801;
-	bh=T8uq5UDm0y39JoS8gj7vYpV20ScMyzrUL55wcPe8U0A=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=OpUvT1IT8u82MSNgks9scGD8Eo+HbsJrIlHP5QLs6GEgVc3kfN7p3isndrBUfQoyM
-	 2kG0qv1HNU6rxkzbgSf8WV2ivxtsLvAUy7hkRCLprCA6R8XYsJSHTm6WJJhhOnJs0J
-	 qoVWhjdyVTeTgu3Yk2ULi15KhxvgoJ63hXDz/UtZ48ptoLXJpplQ7LEjONdgkx8Txx
-	 w8vMXROxtlWJSuytsSZ05bn9kcRgicNf0K9a9xSc007Gw0tJCxy5mT7ceKMoXqWqO3
-	 fzBmaKsKTLYv0jM/sm1i5H4SPgcK2ksp+n+F7hvYCkUyBjpCaxAzUT0yxCL9WUgjEL
-	 w1XV+jdIjfrSg==
-Date: Thu, 29 Aug 2024 08:39:59 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1724938818; c=relaxed/simple;
+	bh=qNPPeHf/vYuq0NGXxA3J7Hqh0THBlpKiI5+YoxZwegg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GOry+hzSQtlr06KELnl3dInaiEKSuSRToSo6WC0DyIpaTG4GBQsqOJ8aInwiC+qbHn26usJS7dl5lSi91XU/6OXQ25yJdp7W/F1cH1TYYkupafZb6nn0GSLEk+T1datRwaA2GfwISb2NbY9IjuyMivhHx5UC+f/jap2V2wvHoog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=Hp4yWOJI; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1127)
+	id DC86620B7123; Thu, 29 Aug 2024 06:40:16 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com DC86620B7123
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1724938816;
+	bh=hbaGrTEPuSV2RDgGFeoOvPU36FCdWtiuI0WSBEYaL4g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Hp4yWOJIYNRDz2N8JTwyECMJcbmS/xdhZrsPeC0cSKFzZDAzQM36kiH8qCkWtXQDu
+	 jF6z4/VVmApRePXk+lfWLmlrwTC1qosvbPHJJj6EBJ4/Uowf8rBeUMi/+1kNyJOuqF
+	 ye/9puQAjxQFQQeONjHGb80WIOaa/KyFO2QUN/NQ=
+Date: Thu, 29 Aug 2024 06:40:16 -0700
+From: Saurabh Singh Sengar <ssengar@linux.microsoft.com>
+To: Naman Jain <namjain@linux.microsoft.com>
+Cc: "K . Y . Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Stephen Hemminger <stephen@networkplumber.org>,
+	Michael Kelley <mhklinux@outlook.com>, linux-hyperv@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] Drivers: hv: vmbus: Fix rescind handling in
+ uio_hv_generic
+Message-ID: <20240829134016.GA29554@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+References: <20240829071312.1595-1-namjain@linux.microsoft.com>
+ <20240829071312.1595-3-namjain@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Angelo Dureghello <adureghello@baylibre.com>
-Cc: Olivier Moysan <olivier.moysan@foss.st.com>, 
- Lars-Peter Clausen <lars@metafoo.de>, devicetree@vger.kernel.org, 
- Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org, 
- Michael Hennerich <Michael.Hennerich@analog.com>, dlechner@baylibre.com, 
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Jonathan Cameron <jic23@kernel.org>, linux-kernel@vger.kernel.org
-In-Reply-To: <20240829-wip-bl-ad3552r-axi-v0-v1-4-b6da6015327a@baylibre.com>
-References: <20240829-wip-bl-ad3552r-axi-v0-v1-0-b6da6015327a@baylibre.com>
- <20240829-wip-bl-ad3552r-axi-v0-v1-4-b6da6015327a@baylibre.com>
-Message-Id: <172493879919.232012.15230520873780726405.robh@kernel.org>
-Subject: Re: [PATCH RFC 4/8] dt-bindings: iio: dac: add adi axi-dac bus
- property
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240829071312.1595-3-namjain@linux.microsoft.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 
-
-On Thu, 29 Aug 2024 14:32:02 +0200, Angelo Dureghello wrote:
-> From: Angelo Dureghello <adureghello@baylibre.com>
+On Thu, Aug 29, 2024 at 12:43:12PM +0530, Naman Jain wrote:
+> Rescind offer handling relies on rescind callbacks for some of the
+> resources cleanup, if they are registered. It does not unregister
+> vmbus device for the primary channel closure, when callback is
+> registered. Without it, next onoffer does not come, rescind flag
+> remains set and device goes to unusable state.
 > 
-> Add bus property.
+> Add logic to unregister vmbus for the primary channel in rescind callback
+> to ensure channel removal and relid release, and to ensure that next
+> onoffer can be received and handled properly.
 > 
-> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+> Cc: stable@vger.kernel.org
+> Fixes: ca3cda6fcf1e ("uio_hv_generic: add rescind support")
+> Signed-off-by: Naman Jain <namjain@linux.microsoft.com>
 > ---
->  Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml | 9 +++++++++
->  1 file changed, 9 insertions(+)
+>  drivers/hv/vmbus_drv.c       | 1 +
+>  drivers/uio/uio_hv_generic.c | 8 ++++++++
+>  2 files changed, 9 insertions(+)
 > 
+> diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
+> index 7242c4920427..c405295b930a 100644
+> --- a/drivers/hv/vmbus_drv.c
+> +++ b/drivers/hv/vmbus_drv.c
+> @@ -1980,6 +1980,7 @@ void vmbus_device_unregister(struct hv_device *device_obj)
+>  	 */
+>  	device_unregister(&device_obj->device);
+>  }
+> +EXPORT_SYMBOL_GPL(vmbus_device_unregister);
+>  
+>  #ifdef CONFIG_ACPI
+>  /*
+> diff --git a/drivers/uio/uio_hv_generic.c b/drivers/uio/uio_hv_generic.c
+> index e3e66a3e85a8..870409599411 100644
+> --- a/drivers/uio/uio_hv_generic.c
+> +++ b/drivers/uio/uio_hv_generic.c
+> @@ -121,6 +121,14 @@ static void hv_uio_rescind(struct vmbus_channel *channel)
+>  
+>  	/* Wake up reader */
+>  	uio_event_notify(&pdata->info);
+> +
+> +	/*
+> +	 * With rescind callback registered, rescind path will not unregister the device
+> +	 * from vmbus when the primary channel is rescinded.
+> +	 * Without it, rescind handling is incomplete and next onoffer msg does not come.
+> +	 * Unregister the device from vmbus here.
+> +	 */
+> +	vmbus_device_unregister(channel->device_obj);
+>  }
+>  
+>  /* Sysfs API to allow mmap of the ring buffers
+> -- 
+> 2.34.1
+>
 
-My bot found errors running 'make dt_binding_check' on your patch:
-
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml: properties:bus-type: 'enum' should not be valid under {'enum': ['const', 'enum', 'exclusiveMaximum', 'exclusiveMinimum', 'minimum', 'maximum', 'multipleOf', 'pattern']}
-	hint: Scalar and array keywords cannot be mixed
-	from schema $id: http://devicetree.org/meta-schemas/keywords.yaml#
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240829-wip-bl-ad3552r-axi-v0-v1-4-b6da6015327a@baylibre.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+For the series,
+Reviewed-by: Saurabh Sengar <ssengar@linux.microsoft.com> 
 
