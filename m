@@ -1,90 +1,126 @@
-Return-Path: <linux-kernel+bounces-307453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26BEF964DC0
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 20:36:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44B00964E01
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 20:45:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D92B5284A95
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 18:36:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03ACE2847C8
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 18:45:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACB911B9B27;
-	Thu, 29 Aug 2024 18:36:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BE5A1BAED7;
+	Thu, 29 Aug 2024 18:44:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="Jtez3PWx"
-Received: from mail-40131.protonmail.ch (mail-40131.protonmail.ch [185.70.40.131])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="adYnnH6c"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF1331B8E8F;
-	Thu, 29 Aug 2024 18:36:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 408451B9B2D;
+	Thu, 29 Aug 2024 18:44:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724956569; cv=none; b=di+vM9ZJWNKR96sfFIr/A32Zf0qLi9umazniIQ+KBIdss0dWZyVjVG7zqixwWCXm5lyl/tEMEo/YzGE7tlfrM+xmQVT7bI1cbgQAc82o3U9yziz8xBo/O6oP0Ew6cO8eFG6Vs2nrwm2iSAb5h4FY3mqJgyJo6sWFelML+PtTtyg=
+	t=1724957071; cv=none; b=keL29IMFGhcd7X97YpTUIX30BuUwsxIlqR2jPJ+RtWPfTE476yk6/yj6im+02Zk7padOvp6xZX2/DDOPxuzeASMGhsioQJI+mdtymqF5BJ+AnkwXr/xuBQ7z4bwJ0mcAamjXxcdddFkSEMeAkjAyI4LIR95FJ7H0TMgJdYgyEz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724956569; c=relaxed/simple;
-	bh=0CeoohYIgEl750/scRCCTDN+fV/PSMmnH/dD9rfKobs=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KAqHxh+0Hj07kXULVPdeX6UhnDRA6W00GDct33CN/8Ej5yLGBeOYo8cW50a+eY0JGSrGlVP5bmzkO0VOC4jeYxug0cNcOgwwIsDCtBvIjBWqYyllQzl5N96Ld2gTUVL57FJe0D9n03MHaYDPPPkFa3B5YglXZdKQgVUOEnyjWfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=Jtez3PWx; arc=none smtp.client-ip=185.70.40.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1724956555; x=1725215755;
-	bh=3cGYxjk1l4dXDgwObkWKN+gXbK3hp40TD6HTmR+dAg4=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=Jtez3PWxGwRZWIWVUcG/pLjrPWB+sa9D7TAeT8SItktHtnPOjKQg+SJZPVsr+OgoZ
-	 N3X4I5qVjQMpQosknGw2D5dN9NJyYHl9QGsZ4n/j7pyqN+nwZFrho25iawCR2nLW4R
-	 w4OESkEWfj4U+mbVypAa6KZKBL1sQTXlxROBnxDp4ys2xnks3/I2u4+/L3R3nFuvIP
-	 /wz6QlcF6ns18qdTz6qWWCA0vU0O6Mv3r3exhlNMxKUK5IkrZt8Y/7uv7Zm+GIsnrh
-	 g4EQZjab7gzKKWFK5GYmod/ab/fQdHd186rRk4lEidSeNK9behqTopRviYnl5dlJBX
-	 7IIwBaNbZiFNg==
-Date: Thu, 29 Aug 2024 18:35:52 +0000
-To: Danilo Krummrich <dakr@kernel.org>, ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@samsung.com, aliceryhl@google.com, akpm@linux-foundation.org
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: daniel.almeida@collabora.com, faith.ekstrand@collabora.com, boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v6 10/26] rust: treewide: switch to our kernel `Box` type
-Message-ID: <87500c80-5724-4091-9f70-a8f1516b85dd@proton.me>
-In-Reply-To: <20240816001216.26575-11-dakr@kernel.org>
-References: <20240816001216.26575-1-dakr@kernel.org> <20240816001216.26575-11-dakr@kernel.org>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: a9f476956df74de268fff20e07093f19f8b7871c
+	s=arc-20240116; t=1724957071; c=relaxed/simple;
+	bh=S4CkdgFLwOCb5lMnnxvQ1Y3NpKIZBPF/PKaHfWrYn2M=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hBwhLfKUjMdbCriLjlbam/VjBAeeXJUsCPCt7uhMJb/19voUaLIwliN8cjviV9HkdkD2kRswNQ/UPuPT6fw3VU58IuH8cnuGwogr18yCjN+RmwKJ+JTxSQodxGprB8HpOk3xxQBuVEC2siach3xP9/cK3rZdJpEvbQX/plfHVW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=adYnnH6c reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
+ id ab6ddb748adf9e07; Thu, 29 Aug 2024 20:44:27 +0200
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id CA9C26A8C15;
+	Thu, 29 Aug 2024 20:44:26 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1724957067;
+	bh=S4CkdgFLwOCb5lMnnxvQ1Y3NpKIZBPF/PKaHfWrYn2M=;
+	h=From:Subject:Date;
+	b=adYnnH6c8c9iK18mehjN9m6J8oIzNHewaK85KAiKjti6XOkadzGnZ3DlCZ/guF3sd
+	 LCdj6of245q2l4GW7Byps9nnrfVwrlbKwt47IeGwP2okbcQskHAbLjs0hp6eO2k6fv
+	 GVLpoHoBIRpiE2kiTwXnl3wqgrSNekOjMxbiRdSKrIwN8gg/jjA7aKjjqW/3B5Q2o1
+	 dbQ8F9LYQOLK1sYW996ZTKl8gdvRFM8D2hJOSyFFoEL64/b4iw1tvfxq4WoFX8oplp
+	 jG55SfI3aDPURUlbxl1+x5fnXrfMz7oQ+KitM0lXFK9Blx+ox611MHsHmXs6M1zj7/
+	 eiusC+9ovxIWw==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux ACPI <linux-acpi@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Bob Moore <robert.moore@intel.com>,
+ Saket Dumbre <saket.dumbre@intel.com>
+Subject:
+ [PATCH v1 10/20] ACPICA: Fix memory leak if acpi_ps_get_next_namepath() fails
+Date: Thu, 29 Aug 2024 20:35:54 +0200
+Message-ID: <5980113.MhkbZ0Pkbq@rjwysocki.net>
+In-Reply-To: <5819337.DvuYhMxLoT@rjwysocki.net>
+References: <5819337.DvuYhMxLoT@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddrudefgedguddvjecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpeelueffveduueelfeeihfehleejjeekvdejveetueeuhfetjefggeekudelvdeuueenucffohhmrghinhepkhgvrhhnvghlrdhorhhgpdhgihhthhhusgdrtghomhenucfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpehrjhifsehrjhifhihsohgtkhhirdhnvghtpdhnsggprhgtphhtthhopeegpdhrtghpthhtoheplhhinhhugidqrggtphhisehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhosggvrhhtrdhmohhorhgvsehinhhtvghlrdgtohhmpdhrtghpthhtohepshgrkhgvthdrughumhgsrhgvsehinhhtvghlrdgtohhm
+X-DCC--Metrics: v370.home.net.pl 1024; Body=4 Fuz1=4 Fuz2=4
 
-On 16.08.24 02:10, Danilo Krummrich wrote:
-> Now that we got the kernel `Box` type in place, convert all existing
-> `Box` users to make use of it.
->=20
-> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+From: Armin Wolf <W_Armin@gmx.de>
 
-Reviewed-by: Benno Lossin <benno.lossin@proton.me>
+ACPICA commit 2802af722bbde7bf1a7ac68df68e179e2555d361
 
+If acpi_ps_get_next_namepath() fails, the previously allocated
+union acpi_parse_object needs to be freed before returning the
+status code.
+
+The issue was first being reported on the Linux ACPI mailing list:
+
+Link: https://lore.kernel.org/linux-acpi/56f94776-484f-48c0-8855-dba8e6a7793b@yandex.ru/T/
+Link: https://github.com/acpica/acpica/commit/2802af72
+Signed-off-by: Armin Wolf <W_Armin@gmx.de>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 ---
-Cheers,
-Benno
+ drivers/acpi/acpica/psargs.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-> ---
->  drivers/block/rnull.rs            |  4 +--
->  rust/kernel/init.rs               | 51 ++++++++++++++++---------------
->  rust/kernel/init/__internal.rs    |  2 +-
->  rust/kernel/rbtree.rs             | 34 ++++++++++++---------
->  rust/kernel/sync/arc.rs           | 17 +++++------
->  rust/kernel/sync/condvar.rs       |  4 +--
->  rust/kernel/sync/lock/mutex.rs    |  2 +-
->  rust/kernel/sync/lock/spinlock.rs |  2 +-
->  rust/kernel/workqueue.rs          | 20 ++++++------
->  rust/macros/lib.rs                |  6 ++--
->  10 files changed, 73 insertions(+), 69 deletions(-)
+diff --git a/drivers/acpi/acpica/psargs.c b/drivers/acpi/acpica/psargs.c
+index 422c074ed289..7debfd5ce0d8 100644
+--- a/drivers/acpi/acpica/psargs.c
++++ b/drivers/acpi/acpica/psargs.c
+@@ -820,6 +820,10 @@ acpi_ps_get_next_arg(struct acpi_walk_state *walk_state,
+ 			    acpi_ps_get_next_namepath(walk_state, parser_state,
+ 						      arg,
+ 						      ACPI_NOT_METHOD_CALL);
++			if (ACPI_FAILURE(status)) {
++				acpi_ps_free_op(arg);
++				return_ACPI_STATUS(status);
++			}
+ 		} else {
+ 			/* Single complex argument, nothing returned */
+ 
+@@ -854,6 +858,10 @@ acpi_ps_get_next_arg(struct acpi_walk_state *walk_state,
+ 			    acpi_ps_get_next_namepath(walk_state, parser_state,
+ 						      arg,
+ 						      ACPI_POSSIBLE_METHOD_CALL);
++			if (ACPI_FAILURE(status)) {
++				acpi_ps_free_op(arg);
++				return_ACPI_STATUS(status);
++			}
+ 
+ 			if (arg->common.aml_opcode == AML_INT_METHODCALL_OP) {
+ 
+-- 
+2.43.0
+
+
+
 
 
