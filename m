@@ -1,88 +1,160 @@
-Return-Path: <linux-kernel+bounces-306559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3014D964078
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 11:44:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0593A96407C
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 11:45:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E245D28186F
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 09:44:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B77FD285C39
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 09:45:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13F4818C90B;
-	Thu, 29 Aug 2024 09:43:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D04E18DF87;
+	Thu, 29 Aug 2024 09:45:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="ouPYeu28"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jTZ1aBJr"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 872F318C937
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 09:43:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A70B7189F37;
+	Thu, 29 Aug 2024 09:45:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724924637; cv=none; b=IbewqBab/4Dfuz6JmogshtBcPoXhb2WfkBHLpB6dTQRbzOwuw7JOsiDz9wqPsqyUZqoE9QZup/ObqBmlOHMfuniASGLitHfwQjVv6rqj1f8OPWp3KLvkIZuTWfPrBwcLHgC+YpZIhc3yRNdlvBAI5UDmQIQOXWqR2jQiw9onD5U=
+	t=1724924739; cv=none; b=bC6QAi2Bdnxaq/8r+zeskpH0rf/lCo3kE7V6AG/+z9WmE2HNDXDg3FsqHG2hkXtd4OapvhP15SoreYDzbakKWUKXFmcxegj27lyY52BOyJkE+sB12hZkEFvhIrfgRsz77Aqhl8+gt0H2HGwcvXLPZ7AYeLtuandss88L7BLydAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724924637; c=relaxed/simple;
-	bh=6WGtKULhO7NtT1xQq49oRvr+3cJhPPCbH0/ItdgppYc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BT5TT/Ciu/i2UlLOCg/F3L7uMseeP58QIXFEwSj4KzW1MfGdhn2ahwcehkf/J+kfEnz/BhlEBX5eRCCGgqGTa91ob0rMQQZeh8jiZt9+0eVgcHhAty5hUQPGvtxxbZVDe8o5ieWIqH1bMDWzQ2MnzhFk0F2MX1z0U1SGBeWUNRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=ouPYeu28; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a86883231b4so42417966b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 02:43:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1724924634; x=1725529434; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=6WGtKULhO7NtT1xQq49oRvr+3cJhPPCbH0/ItdgppYc=;
-        b=ouPYeu28QfmfP8rZfXqgKAOzq4gi1aF/Mxbiyd9Vm6hBQcWsuq8KotSXL+e6+Y6uKh
-         kd98Rr/8kRSNZBkINQ6FiOs98oS2Y0PaFonpPBEBP4/97ICpjP4FmTXXRO7nHuH277G9
-         kNfabgksSs1hZdmXh61HTh95WIw4z0V296QnE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724924634; x=1725529434;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6WGtKULhO7NtT1xQq49oRvr+3cJhPPCbH0/ItdgppYc=;
-        b=cK4sPb7DBlv1uovRc34ccxXDWeY7U6Mj2UljMYZe20I8VxdrGvcpcpdp+3aA4Cr/vT
-         xqv+bFXp3rOM3ijwyt5fLGoJDOwqYle2oCpNPQCGQKKpS19Ct4iFWSlHOftRaEIa3EDk
-         Z8LneRJ7rj4Sfd6FzCi/OX3D8393Pfc90gfcai2VE+685zYefoBB2H9ZbrTZ0VrXftNA
-         kRniM+8Q0q4ByNO0dO3xuCnnNx3ymtdQQdw4sfcV7DHCIy8TTcXbgZSOeQdbh5HDSxHl
-         KOyHpxLdruALQgOVmz4bmjtFvH9BGJ3aTPs6rSpFKsrJsbdF2E1NNRGdkFwxtEPR4gVQ
-         uLGw==
-X-Forwarded-Encrypted: i=1; AJvYcCVfFiHZWnVOFH8Fco8mQMiEmgFw/zDn0/IoO7rTyWXOOLqZ9oPnABYV9pmbMTiSTjL9cjWyBL9jser1rbE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLNJ18XER2DT3wvendw8Gb7iK3yK2lHzch+QmzXzHM/K2B4nRS
-	WMWijOXyNjHYzHxEglqxWClfHj44cOABp68Ztr5jt1lZEgG94BCBrz+5f66+mwDxZq/t6pM8lYi
-	IoqB5zIg6Qb0gQqu25BZBG1S96Jqawdv8/aB1/XQeFKexsZdd
-X-Google-Smtp-Source: AGHT+IHsNUkYXjfU1oM+c5YkSz3TMi9+2UKHgA3/7MACl7eKulH+vN+TQMlnBEik3EWNhJiL3d5fjhwJ5AyvhnwieYQ=
-X-Received: by 2002:a17:906:794c:b0:a80:bf0f:2256 with SMTP id
- a640c23a62f3a-a897f7821d9mr162353766b.8.1724924633804; Thu, 29 Aug 2024
- 02:43:53 -0700 (PDT)
+	s=arc-20240116; t=1724924739; c=relaxed/simple;
+	bh=4ueHelHgSTqT3lKO+PyUF90mHm7gbgnOAxqWdSm+Ulg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jx6oquAW3n8ibTdns8ZllMjf4LU+JMxyr9vb7JmzFGySRvlhBaX5pXSfkPSE5OiL+s/CIZQf88rDIuh7OsUbRfCCvg4SVABL3ySX6y5u51JjqQSMFnq5X7nckrDwH5Y4UXLYSZ/ir8S/cju/WY5/g8nawRf5uAIqYb81SMnZ3u0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jTZ1aBJr; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47T8Pba2014958;
+	Thu, 29 Aug 2024 09:45:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:message-id:mime-version:subject:to; s=
+	qcppdkim1; bh=jNegF+g1xhVssgmkjuQ/vzvKlzG4fD1d4RD6qVQLKtk=; b=jT
+	Z1aBJrAkXn5hp02TIr1+g/9Elg7hCL/9jvBFUk2kkhQKVLg5k5dLDTdbI0CXFou6
+	up6rrPHuGZoazj7dPd8o3pCu+u74PLF8M1/t6uwCZ3o8AcXhxu9dOnWZ1SJ9iw5k
+	o1hed4CHRpYkUy8QygwGqvz9BcfdNumD3jf9//07Bf7tho09NYq8iCfAC3ovUgGH
+	uU65tgPeIIbrNXnHIrBaBRoegBxthZKk47sgrQz338HxxZNjFasogI8r4Evp2ATg
+	rtscAKjJB1UilnCPxg3T5P4QHjABstrMpsa/XMbo0BQH2yrupSDkQhdMijN+0z8g
+	SUoGjNYCsvwYNupOVXpg==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 419px5mp1b-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 29 Aug 2024 09:45:32 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47T9jFrk020098
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 29 Aug 2024 09:45:15 GMT
+Received: from hu-faisalh-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 29 Aug 2024 02:45:13 -0700
+From: Faisal Hassan <quic_faisalh@quicinc.com>
+To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+        Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>
+CC: <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Faisal Hassan
+	<quic_faisalh@quicinc.com>, <stable@vger.kernel.org>
+Subject: [PATCH v2] usb: dwc3: core: update LC timer as per USB Spec V3.2
+Date: Thu, 29 Aug 2024 15:15:02 +0530
+Message-ID: <20240829094502.26502-1-quic_faisalh@quicinc.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240517161028.7046-1-aaptel@nvidia.com>
-In-Reply-To: <20240517161028.7046-1-aaptel@nvidia.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Thu, 29 Aug 2024 11:43:42 +0200
-Message-ID: <CAJfpegtBjy+ns4e73B3qB2_U82wwuq33LNcFuHtfMy9agncaHw@mail.gmail.com>
-Subject: Re: [PATCH] fs/fuse: use correct name fuse_conn_list in docstring
-To: Aurelien Aptel <aaptel@nvidia.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: FauzJH8HQ6X88T0VtEzu_JSg2OyxzIQC
+X-Proofpoint-GUID: FauzJH8HQ6X88T0VtEzu_JSg2OyxzIQC
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-29_02,2024-08-29_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 clxscore=1015
+ adultscore=0 suspectscore=0 lowpriorityscore=0 mlxlogscore=999 spamscore=0
+ priorityscore=1501 bulkscore=0 mlxscore=0 malwarescore=0 impostorscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2408290072
 
-On Fri, 17 May 2024 at 18:10, Aurelien Aptel <aaptel@nvidia.com> wrote:
->
-> fuse_mount_list doesn't exist, use fuse_conn_list.
->
-> Signed-off-by: Aurelien Aptel <aaptel@nvidia.com>
+This fix addresses STAR 9001285599, which only affects DWC_usb3 version
+3.20a. The timer value for PM_LC_TIMER in DWC_usb3 3.20a for the Link
+ECN changes is incorrect. If the PM TIMER ECN is enabled via GUCTL2[19],
+the link compliance test (TD7.21) may fail. If the ECN is not enabled
+(GUCTL2[19] = 0), the controller will use the old timer value (5us),
+which is still acceptable for the link compliance test. Therefore, clear
+GUCTL2[19] to pass the USB link compliance test: TD 7.21.
 
-Applied, thanks.
+Cc: stable@vger.kernel.org
+Signed-off-by: Faisal Hassan <quic_faisalh@quicinc.com>
+Acked-by: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+---
+Changes in v2: Updated comment and commit message to include the
+controller IP.
 
-Miklos
+v1 link:
+https://lore.kernel.org/all/20240822084504.1355-1-quic_faisalh@quicinc.com
+
+ drivers/usb/dwc3/core.c | 15 +++++++++++++++
+ drivers/usb/dwc3/core.h |  2 ++
+ 2 files changed, 17 insertions(+)
+
+diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
+index 734de2a8bd21..92d7ec830322 100644
+--- a/drivers/usb/dwc3/core.c
++++ b/drivers/usb/dwc3/core.c
+@@ -1378,6 +1378,21 @@ static int dwc3_core_init(struct dwc3 *dwc)
+ 		dwc3_writel(dwc->regs, DWC3_GUCTL2, reg);
+ 	}
+ 
++	/*
++	 * STAR 9001285599: This issue affects DWC_usb3 version 3.20a
++	 * only. If the PM TIMER ECM is enabled through GUCTL2[19], the
++	 * link compliance test (TD7.21) may fail. If the ECN is not
++	 * enabled (GUCTL2[19] = 0), the controller will use the old timer
++	 * value (5us), which is still acceptable for the link compliance
++	 * test. Therefore, do not enable PM TIMER ECM in 3.20a by
++	 * setting GUCTL2[19] by default; instead, use GUCTL2[19] = 0.
++	 */
++	if (DWC3_VER_IS(DWC3, 320A)) {
++		reg = dwc3_readl(dwc->regs, DWC3_GUCTL2);
++		reg &= ~DWC3_GUCTL2_LC_TIMER;
++		dwc3_writel(dwc->regs, DWC3_GUCTL2, reg);
++	}
++
+ 	/*
+ 	 * When configured in HOST mode, after issuing U3/L2 exit controller
+ 	 * fails to send proper CRC checksum in CRC5 feild. Because of this
+diff --git a/drivers/usb/dwc3/core.h b/drivers/usb/dwc3/core.h
+index 1e561fd8b86e..c71240e8f7c7 100644
+--- a/drivers/usb/dwc3/core.h
++++ b/drivers/usb/dwc3/core.h
+@@ -421,6 +421,7 @@
+ 
+ /* Global User Control Register 2 */
+ #define DWC3_GUCTL2_RST_ACTBITLATER		BIT(14)
++#define DWC3_GUCTL2_LC_TIMER			BIT(19)
+ 
+ /* Global User Control Register 3 */
+ #define DWC3_GUCTL3_SPLITDISABLE		BIT(14)
+@@ -1269,6 +1270,7 @@ struct dwc3 {
+ #define DWC3_REVISION_290A	0x5533290a
+ #define DWC3_REVISION_300A	0x5533300a
+ #define DWC3_REVISION_310A	0x5533310a
++#define DWC3_REVISION_320A	0x5533320a
+ #define DWC3_REVISION_330A	0x5533330a
+ 
+ #define DWC31_REVISION_ANY	0x0
+-- 
+2.17.1
+
 
