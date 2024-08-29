@@ -1,80 +1,172 @@
-Return-Path: <linux-kernel+bounces-307720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F36A0965213
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 23:34:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF15B965216
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 23:34:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91F121F21483
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 21:34:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7810A2857F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 21:34:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD0081BA288;
-	Thu, 29 Aug 2024 21:34:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59D501BA29F;
+	Thu, 29 Aug 2024 21:34:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pYYTadF2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FBOxK4qj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 139E118C009;
-	Thu, 29 Aug 2024 21:34:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86B511898E0;
+	Thu, 29 Aug 2024 21:34:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724967276; cv=none; b=NfjFcf9SJfhgSSDAVofDPnxfZG4BqRxN4SWkgYPdQ93VPEOpOH/IXQaebCPV1zgRHEeOQQ6K7Iho8CRVGVLf4ZgjGAAN5pcK67I4PKZZ3k7A3PCOBHm7cPBfJ1UAylfRzpIl+yq+cextytbPC6d5r29YDIXpp3I09IF9lX8HkoM=
+	t=1724967290; cv=none; b=LDEcJjpnJmOaEAdSYOhoCV1TJ1PwObFiFMAWH6+N1SK22VEChCHkxo0XovNSzaFdEQEmjEgewa3+AUQlDHU6gnAdB9lhCQ9EC9di9SoXrKVJpRmzDYCX/UOp9D3yxHSzd+m2+Le2k4IPHT/vStdHn6dHA15gvC1apddgRMI8KDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724967276; c=relaxed/simple;
-	bh=NhI1MGw5O8NlxxSvfTqfFzLEWRaKeD6kKZzqMi3QfBQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZpmGEbYwcOCSYASNQ3U09sZ9EKeyvv3WV5wPVrTURSGUCsoG8gApTGkAtM/c6iBP6s8gsaGO1lQpNw6o2vshygOGhvsN63yoU0A2reb1wYcjkMULrb8SFIGDMpsyyfvaopmiCEvSKrISMqKItb2TBXN5jj/AChto5FdpmWW7l3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pYYTadF2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 266EDC4CEC1;
-	Thu, 29 Aug 2024 21:34:32 +0000 (UTC)
+	s=arc-20240116; t=1724967290; c=relaxed/simple;
+	bh=ub7Z5aN8IySBUMo8/+nhlsLcMo/h7ul28OnQpJA+4hk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gIwQb/sEwoIrcf91WvWqC1am4mZ0BIusSGloHsVsUTrQLDag8cDTPzvGyEhUFRsoUvcCZhQ2r0cFCpA6bGk0lRoa5Pm/fUx6mPErYYDHzfMfzsUdlENfxNEZ7xwy7LVCBj/yzQyrp4qQyjQqNBoi1Jyp2xwbtR1+OFcI6pabO+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FBOxK4qj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00CA5C4CEC1;
+	Thu, 29 Aug 2024 21:34:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724967275;
-	bh=NhI1MGw5O8NlxxSvfTqfFzLEWRaKeD6kKZzqMi3QfBQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=pYYTadF2TD/FsKyHxiI5TCjJk0BNC6Suqt1lIH1cHmfdNPmLhne790y9xPYxDQlgM
-	 2+mLgjOgzs4kC9FH+YkhchiKRSfnwXdZpKJuO0q/erm3HzkWETt0k0RVC2ClLJxJhF
-	 q8iS+K++1dd70iYdhKTJw98DDBvebyuBs+nKFBYgVd6fgpXISaSPS20Rl3S5phwnet
-	 z+9Hub5H7IDQ7E4wQNzvpFzcuVNuORkC2BHwfzBhUHLE6HoOfkcPl7Mz1uidjk6jF4
-	 7pHIjDllLpuRZMvfj57O3KBl7t8HrrYOGtgU3gtnAaAocXLD8OVsw6rPHEaDeiZ/kL
-	 Hf1bJrmzokYNw==
-Message-ID: <e1d99e29-629b-4a5b-ace6-ff56e2b5e05a@kernel.org>
-Date: Thu, 29 Aug 2024 23:34:30 +0200
+	s=k20201202; t=1724967290;
+	bh=ub7Z5aN8IySBUMo8/+nhlsLcMo/h7ul28OnQpJA+4hk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FBOxK4qjIdVHEAxAH6BGat92NShZR2602T+Ww2i+UWJaZeocQrYRfGtumvBDAv0+1
+	 9yN7/tzuG8MeUyZFoKQ/ovik7XUj87Yk8CH4dFz5qwVJ8CzZOMeVqsd2hOnIFbsWmD
+	 d+jpteh8ZYcBztouqNySUhmdvirlXTUT/JZkIEV2WTI9sXeBwvRymenv05FnsqRtrZ
+	 /nRwGMwdiSOjZV7Q1Z6aIc9CVIKGgATjVV5gLROPI+oTnNuq/yAE943RWNCfLNBX+l
+	 T2CUgQYBlOM+U5UNGtR5AlpkOXPbzuMTwhZsR99fpTd3tCI698A7ECrF/4o0kzEFUS
+	 WggpAV+dGEBrw==
+Date: Thu, 29 Aug 2024 14:34:48 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: John Garry <john.g.garry@oracle.com>
+Cc: chandan.babu@oracle.com, dchinner@redhat.com, hch@lst.de,
+	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, catherine.hoang@oracle.com,
+	martin.petersen@oracle.com
+Subject: Re: [PATCH v4 02/14] xfs: always tail align maxlen allocations
+Message-ID: <20240829213448.GO6224@frogsfrogsfrogs>
+References: <20240813163638.3751939-1-john.g.garry@oracle.com>
+ <20240813163638.3751939-3-john.g.garry@oracle.com>
+ <20240823163149.GC865349@frogsfrogsfrogs>
+ <6d735dff-04a4-4386-b9e5-c01643dab92a@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: qcom: x1e80100: Add orientation-switch to all
- USB+DP QMP PHYs
-To: Abel Vesa <abel.vesa@linaro.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: Johan Hovold <johan@kernel.org>, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240829-x1e80100-combo-qmpphys-add-orientation-switch-v1-1-5c61ea1794da@linaro.org>
-Content-Language: en-US
-From: Konrad Dybcio <konradybcio@kernel.org>
-In-Reply-To: <20240829-x1e80100-combo-qmpphys-add-orientation-switch-v1-1-5c61ea1794da@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6d735dff-04a4-4386-b9e5-c01643dab92a@oracle.com>
 
-On 29.08.2024 1:44 PM, Abel Vesa wrote:
-> All three USB SS combo QMP PHYs need to power off, deinit, then init and
-> power on again on every plug in event. This is done by forwarding the
-> orientation from the retimer/mux to the PHY. All is needed is the
-> orientation-switch property in each such PHY devicetree node. So add
-> them.
+On Thu, Aug 29, 2024 at 06:58:02PM +0100, John Garry wrote:
+> On 23/08/2024 17:31, Darrick J. Wong wrote:
 > 
-> Fixes: 4af46b7bd66f ("arm64: dts: qcom: x1e80100: Add USB nodes")
-> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-> ---
+> sorry for the slow reply...
+> 
+> > On Tue, Aug 13, 2024 at 04:36:26PM +0000, John Garry wrote:
+> > > From: Dave Chinner <dchinner@redhat.com>
+> > > > > When we do a large allocation, the core free space allocation code
+> > > assumes that args->maxlen is aligned to args->prod/args->mod. hence
+> > > if we get a maximum sized extent allocated, it does not do tail
+> > > alignment of the extent.
+> > > 
+> > > However, this assumes that nothing modifies args->maxlen between the
+> > > original allocation context setup and trimming the selected free
+> > > space extent to size. This assumption has recently been found to be
+> > > invalid - xfs_alloc_space_available() modifies args->maxlen in low
+> > > space situations - and there may be more situations we haven't yet
+> > > found like this.
+> > > 
+> > > Force aligned allocation introduces the requirement that extents are
+> > > correctly tail aligned, resulting in this occasional latent
+> > > alignment failure to be reclassified from an unimportant curiousity
+> > > to a must-fix bug.
+> > > 
+> > > Removing the assumption about args->maxlen allocations always being
+> > > tail aligned is trivial, and should not impact anything because
+> > > args->maxlen for inodes with extent size hints configured are
+> > > already aligned. Hence all this change does it avoid weird corner
+> > > cases that would have resulted in unaligned extent sizes by always
+> > > trimming the extent down to an aligned size.
+> > > 
+> > > Signed-off-by: Dave Chinner <dchinner@redhat.com>
+> > > Reviewed-by: "Darrick J. Wong" <djwong@kernel.org> [provisional on v1 series comment]
+> > 
+> > Still provisional -- neither the original patch author nor the submitter
+> > have answered my question from June:
+> > 
+> > IOWs, we always trim rlen, unless there is no alignment (prod==1) or
+> > rlen is less than mod.  For a forcealign file, it should never be the
+> > case that minlen < mod because we'll have returned ENOSPC, right?
+> 
+> For forcealign, mod == 0, so naturally that (minlen < mod) would not happen.
+> We want to alloc a multiple of align only, which is in prod.
+> 
+> If we consider minlen < prod, then that should not happen either as we would
+> have returned ENOSPC. In xfs_bmap_select_minlen() we rounddown blen by
+> args->alignment, and if that is less than the ap->minlen (1), i.e. if after
+> rounddown we have 0, then we return ENOSPC for forcealign. So then minlen
+> would not be less than prod after selecting minlen in
+> xfs_bmap_select_minlen().
+> 
+> I hope that I am answering the question asked...
 
-Reviewed-by: Konrad Dybcio <konradybcio@kernel.org>
+Yep, that satisfies my curiosity!  Thanks for getting back to me,
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 
-Konrad
+--D
+
+> 
+> Thanks,
+> John
+> 
+> > 
+> > --D
+> > 
+> > > Signed-off-by: John Garry <john.g.garry@oracle.com>
+> > > ---
+> > >   fs/xfs/libxfs/xfs_alloc.c | 12 +++++-------
+> > >   1 file changed, 5 insertions(+), 7 deletions(-)
+> > > 
+> > > diff --git a/fs/xfs/libxfs/xfs_alloc.c b/fs/xfs/libxfs/xfs_alloc.c
+> > > index d559d992c6ef..bf08b9e9d9ac 100644
+> > > --- a/fs/xfs/libxfs/xfs_alloc.c
+> > > +++ b/fs/xfs/libxfs/xfs_alloc.c
+> > > @@ -433,20 +433,18 @@ xfs_alloc_compute_diff(
+> > >    * Fix up the length, based on mod and prod.
+> > >    * len should be k * prod + mod for some k.
+> > >    * If len is too small it is returned unchanged.
+> > > - * If len hits maxlen it is left alone.
+> > >    */
+> > > -STATIC void
+> > > +static void
+> > >   xfs_alloc_fix_len(
+> > > -	xfs_alloc_arg_t	*args)		/* allocation argument structure */
+> > > +	struct xfs_alloc_arg	*args)
+> > >   {
+> > > -	xfs_extlen_t	k;
+> > > -	xfs_extlen_t	rlen;
+> > > +	xfs_extlen_t		k;
+> > > +	xfs_extlen_t		rlen = args->len;
+> > >   	ASSERT(args->mod < args->prod);
+> > > -	rlen = args->len;
+> > >   	ASSERT(rlen >= args->minlen);
+> > >   	ASSERT(rlen <= args->maxlen);
+> > > -	if (args->prod <= 1 || rlen < args->mod || rlen == args->maxlen ||
+> > > +	if (args->prod <= 1 || rlen < args->mod ||
+> > >   	    (args->mod == 0 && rlen < args->prod))
+> > >   		return;
+> > >   	k = rlen % args->prod;
+> > > -- 
+> > > 2.31.1
+> > > 
+> > > 
+> 
+> 
 
