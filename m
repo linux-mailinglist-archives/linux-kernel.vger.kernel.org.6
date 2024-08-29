@@ -1,285 +1,156 @@
-Return-Path: <linux-kernel+bounces-306445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B1AF963F18
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:53:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D880963F1B
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:54:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BDB01C243E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:53:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC54C286AE8
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:53:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A016C18E355;
-	Thu, 29 Aug 2024 08:52:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86CF918E37F;
+	Thu, 29 Aug 2024 08:52:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="HNLduTVS"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XpMeQm1Q"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E481218E364
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 08:52:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5228218C336;
+	Thu, 29 Aug 2024 08:52:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724921532; cv=none; b=J26qQnJ+9yvVtcLlkuGxeOULEqz2LG+2vijy66I5LGKYnLWHNwYVlE8a3zWU1YPLRvXQiDBCeYn/kFHFPFf9pV5WSgff2zuPEQIxfrI4w7nXK1GPmQb9dDkH0jNMRFxguq8JZ7H1fEgDRkMVLOiZKTvhUiklsIJ68bClL2sO3rg=
+	t=1724921541; cv=none; b=YjEPQUSx3mZf18z0C2b62eB18TrtMNKt3b+094dAYBmXKETPBQG6oeW5ujCS32cDkcgVnxBR3wTWZwgDlhgy0cWGw0WUAtJkERK3V00XP/UdKJXEGE1Q5rymbKlxj0+cXB6pR/A7LQDi36sEf2BmLbYuL51akC3fjaCLQDwJ/VE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724921532; c=relaxed/simple;
-	bh=kNIE9BNf8Zv75I/FZ7NOqQGoA6g4YLu7tMFeythIcfc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kBNHPT97MfSYD3xZB/bOrYZpvhL8Htu7sYnfG43Y7EreyF+ZsFLHRfgLDnEEb5nDqBzxo7GvyiD6IcSdSs16VVJttN+zRABq6dIQu9XBFzee2p9jleQRbFbB8gBw1E4ERNszu/6gpzfUFMI4EgeEONvQr9CLJXeZPVgBbFiAQ90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=HNLduTVS; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2021c03c13aso3323085ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 01:52:10 -0700 (PDT)
+	s=arc-20240116; t=1724921541; c=relaxed/simple;
+	bh=JoNKXsP+ELF+WzkuxADTmn91rPBN1LBTYC9JtQzS+mc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BO5kyvTWaWnP7KVdu58kpLbINR+f329dZ1Uh5c7MT3wV/zU00c2mED8kaDVJbDPE0MzqEHrb/6vPFMPsSfNA/64+P2ZAiuNFORwfaKzxBLOO5h/Ob76F+hGD1KUFmTSysad26tkrCiiGGbaJxLgkaQaczlX4hbi2Ugc3UA4IqL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XpMeQm1Q; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-7bb75419123so222994a12.3;
+        Thu, 29 Aug 2024 01:52:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1724921530; x=1725526330; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1724921539; x=1725526339; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=iWRchbsiI/jit0CfCKj74uSu6ttu4ROq7KriKtjM8cE=;
-        b=HNLduTVS+NiusJfaTa1ZilLuHUGB4fa5G+TghDaL+Dnlt4i3FdhmkFdf4znX7IFH3B
-         u0tTxjWHtsCJCN1mRz08Ki4BDgTH8IGpHWBj7FgFoE1wsvMFuKqb3244VirxtU0hZfnN
-         rZxk5acMvM1kbklMARJLDoEa2959nUsuPP8S0=
+        bh=6ibpBHf4LnLFaAl2Dofr/5pacDToGSrHsOi9i7R4u18=;
+        b=XpMeQm1QvYfmKgBDNoibj215XixdJbSeuCiyvfbM7b0eLIOAAs+lkMWLafH/VktgSr
+         qaPi0/CVypIWywxUiWR+KM/Z4GYV6zFnFHDCJQ88u8dtLwBuxFyADUu+vDflCKSly9dM
+         zn9TX+H2R6JHt+gekwyEDOJPHW7e4Sk8f8L091P9+plJrkpkV5GZRjacxKDuOdl+vVve
+         jDkfNcQKw85c2+bzO4N1iYc1wEtPkkfb0AgybghohQjb0c9z390AW4ydikXZ1Q3f6FQt
+         rdUzSgNUDQEfbG7/FynWPsUnWxZKrJ90AGhH4dbtLPf8OZdUQ0xpG6oTA6nOn7VH8fGc
+         DqMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724921530; x=1725526330;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1724921539; x=1725526339;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=iWRchbsiI/jit0CfCKj74uSu6ttu4ROq7KriKtjM8cE=;
-        b=RGyrarZmrWDIdPACT089kBSJnnqoQcGVq+iFpoHWTah6rB8zjz1wiX+Prvdr42L3bi
-         Z8G0N+kRFzKtyaZxfJsrq+Fgx625uIfJ6RmdQBPe+1Z8E/EYFUZob47s6RZEK6JijnhS
-         4u4g//ZhacSfgMlb139gA0SavIEOKDeLgMcKg9u0dD1436IzScUPP6Xb55ZHXe+YqLrs
-         MHjV9bgoJRw0jsQDnPnFHBocmC/na9JtDfOTWfsOsA1As7zpIMAkSKPypM4CD74P2oJd
-         x4Wdf3fffnjSZ7t8IPnfRAUL4L6JhyE2DkYsuO3orVr0umixV+LVxdyKZbEJAEbBtX1O
-         Uq3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCX50qE1OvPaIcd2rpLhr0OTE20PTK7dmvR/scuz23SiU67kQtMwNET8QYtlB8Bfk77s9+L/y6kosheQwIE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzw85vf9Lpva83RbuMwXSMxzhQafnqcGK5Od6Qs24G+4A3gvZ3x
-	1ok/0llYVOyDlrRuRwF02LtKm2B4kNX0dWyfc9tElIGR5c2akIjyDYE4sP10jw==
-X-Google-Smtp-Source: AGHT+IGOtUweXCQpV0LrosRSEGtTwTNe13Qf96/F2cMlyFpBImeyvt9uH0ZmoT0phJz7470I5C5maQ==
-X-Received: by 2002:a17:902:da84:b0:202:60e:76f6 with SMTP id d9443c01a7336-2050ea4ce5emr31435735ad.29.1724921529985;
-        Thu, 29 Aug 2024 01:52:09 -0700 (PDT)
-Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:fbe5:6d6c:1cc7:23f3])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20515543fbdsm6924165ad.218.2024.08.29.01.52.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 01:52:09 -0700 (PDT)
-From: Chen-Yu Tsai <wenst@chromium.org>
-To: Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>
-Cc: Chen-Yu Tsai <wenst@chromium.org>,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v2 10/10] regulator: Unify "negative error number" terminology in comments
-Date: Thu, 29 Aug 2024 16:51:30 +0800
-Message-ID: <20240829085131.1361701-11-wenst@chromium.org>
-X-Mailer: git-send-email 2.46.0.295.g3b9ea8a38a-goog
-In-Reply-To: <20240829085131.1361701-1-wenst@chromium.org>
-References: <20240829085131.1361701-1-wenst@chromium.org>
+        bh=6ibpBHf4LnLFaAl2Dofr/5pacDToGSrHsOi9i7R4u18=;
+        b=tki9j/MuWW2yFmNKc56LJ3e1ujLjRONS8ULuisdgt6osXpkWJttOOjXS6hMXNxBInn
+         5MZ3XxpDFhiqOVEu1cPryext/Ge99eatBR87+YYgC/X5KqhoRLSPMwV0rZ2GeJRMpS6X
+         ydneI7+W3H3ij222UNQM+PISlhHopNDS6DulbwzaWPi3LI0+9evBS8JGsaLc9a4Lfc4L
+         hzNuG9Xszeg2AVxy1jNq94l3AVXYlNoVkw6Cx8acnrcwY7F9SSgLI8LQOrwYPUkifH43
+         sxTSAivbjHhU4DiG+U7akskwfyYxV+dZF2+QgwVpfJ2+laJrG60bvNn47JoF7P/UQCnk
+         MItw==
+X-Forwarded-Encrypted: i=1; AJvYcCVRcHA2DOHj7ekfsTW75EygEApCaiSwsf7s3FcLfrjBdN7LGogQySyyiVJOIhj2BGnvEjHTozEa7EfcZyKf@vger.kernel.org, AJvYcCVl8utuQv0/PsRpXD2VL7qhX0NRfZyeyNdwolZu/BgfU/3Kz6I8FF7YvzQytjF80lwA2A6r//npsj3lPA==@vger.kernel.org, AJvYcCX914sPPrLwT9ogGxlrhjzVbzsGM2RcE9080JWncS1RHvZa0N6PO/vxQi8KU2uU2w4T2odJ0zpUxow6@vger.kernel.org
+X-Gm-Message-State: AOJu0YzpRsSguRFq9gdHUkwN1/AwIIhnrwK8pwEk30E+Zr75pAJ/GTVJ
+	0BcURG7lUyYu+R9pkhmdLXmQSsFZkueYerkAwD7ewGsLIX986Q4mVZoNSuHSQpRivJXUxG+rrWR
+	WjFtVNwr6ricD8oS/38GZCb35hiU=
+X-Google-Smtp-Source: AGHT+IHDpF/XtR7HzOnX7agd3oRRaJRuRBQbzXGpKTSu9vCM8QEV8fuA3k6SHYRN/6No+INzQEHuuCuCTbKq0uRiZ40=
+X-Received: by 2002:a17:90a:d503:b0:2c9:e0d3:1100 with SMTP id
+ 98e67ed59e1d1-2d8561e17a0mr1885110a91.19.1724921539418; Thu, 29 Aug 2024
+ 01:52:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20230113205922.2312951-1-andreas@kemnade.info> <CAMRc=Mf4-8AfTHLrvaF14tc2TJatxZJWnMOF-1G8HmDhPKSFAw@mail.gmail.com>
+In-Reply-To: <CAMRc=Mf4-8AfTHLrvaF14tc2TJatxZJWnMOF-1G8HmDhPKSFAw@mail.gmail.com>
+From: Richard Weinberger <richard.weinberger@gmail.com>
+Date: Thu, 29 Aug 2024 10:52:07 +0200
+Message-ID: <CAFLxGvyX1Q8qGXkWW+JiyQSfP=1dFzeZ7C4OCJHk2pFGX7zygw@mail.gmail.com>
+Subject: Re: [PATCH] gpio: omap: use dynamic allocation of base
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Andreas Kemnade <andreas@kemnade.info>, grygorii.strashko@ti.com, ssantosh@kernel.org, 
+	khilman@kernel.org, linus.walleij@linaro.org, linux-omap@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Previous commits cleaning up kerneldoc used the term "negative error
-number" to refer to error condition return values. Update remaining
-instances of other terminology such as "error code" or "errno" as
-well so the whole regulator subsystem is unified.
+On Mon, Jan 16, 2023 at 9:54=E2=80=AFAM Bartosz Golaszewski <brgl@bgdev.pl>=
+ wrote:
+>
+> On Fri, Jan 13, 2023 at 9:59 PM Andreas Kemnade <andreas@kemnade.info> wr=
+ote:
+> >
+> > Static allocatin is deprecated and may cause probe mess,
+> > if probe order is unusual.
+> >
+> > like this example
+> > [    2.553833] twl4030_gpio twl4030-gpio: gpio (irq 145) chaining IRQs =
+161..178
+> > [    2.561401] gpiochip_find_base: found new base at 160
+> > [    2.564392] gpio gpiochip5: (twl4030): added GPIO chardev (254:5)
+> > [    2.564544] gpio gpiochip5: registered GPIOs 160 to 177 on twl4030
+> > [...]
+> > [    2.692169] omap-gpmc 6e000000.gpmc: GPMC revision 5.0
+> > [    2.697357] gpmc_mem_init: disabling cs 0 mapped at 0x0-0x1000000
+> > [    2.703643] gpiochip_find_base: found new base at 178
+> > [    2.704376] gpio gpiochip6: (omap-gpmc): added GPIO chardev (254:6)
+> > [    2.704589] gpio gpiochip6: registered GPIOs 178 to 181 on omap-gpmc
+> > [...]
+> > [    2.840393] gpio gpiochip7: Static allocation of GPIO base is deprec=
+ated, use dynamic allocation.
+> > [    2.849365] gpio gpiochip7: (gpio-160-191): GPIO integer space overl=
+ap, cannot add chip
+> > [    2.857513] gpiochip_add_data_with_key: GPIOs 160..191 (gpio-160-191=
+) failed to register, -16
+> > [    2.866149] omap_gpio 48310000.gpio: error -EBUSY: Could not registe=
+r gpio chip
+> >
+> > So probing was done in an unusual order, causing mess
+> > and chips not getting their gpio in the end.
+> >
+> > Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+> > ---
+> > maybe CC stable? not sure about good fixes tag.
+> >
+> >  drivers/gpio/gpio-omap.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
+> > index 80ddc43fd875..f5f3d4b22452 100644
+> > --- a/drivers/gpio/gpio-omap.c
+> > +++ b/drivers/gpio/gpio-omap.c
+> > @@ -1020,7 +1020,7 @@ static int omap_gpio_chip_init(struct gpio_bank *=
+bank, struct irq_chip *irqc,
+> >                 if (!label)
+> >                         return -ENOMEM;
+> >                 bank->chip.label =3D label;
+> > -               bank->chip.base =3D gpio;
+> > +               bank->chip.base =3D -1;
+> >         }
+> >         bank->chip.ngpio =3D bank->width;
+> >
+> > --
+> > 2.30.2
+> >
+>
+> This could potentially break some legacy user-space programs using
+> sysfs but whatever, let's apply it and see if anyone complains.
 
-Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
----
-Changes since v1:
-- New patch
----
- drivers/regulator/core.c                |  2 +-
- drivers/regulator/devres.c              | 18 +++++++++---------
- drivers/regulator/fixed.c               |  2 +-
- drivers/regulator/irq_helpers.c         |  2 +-
- drivers/regulator/max77802-regulator.c  |  4 ++--
- drivers/regulator/qcom-rpmh-regulator.c |  6 +++---
- drivers/regulator/qcom_smd-regulator.c  |  2 +-
- 7 files changed, 18 insertions(+), 18 deletions(-)
+FWIW, this broke users pace on my side.
+Not a super big deal, I'll just revert this patch for now.
+Maybe the application in question can get rewritten to find the gpio by lab=
+el.
 
-diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index 0b929ab71188..c1d11924d892 100644
---- a/drivers/regulator/core.c
-+++ b/drivers/regulator/core.c
-@@ -3388,7 +3388,7 @@ EXPORT_SYMBOL_GPL(regulator_get_regmap);
-  *         voltage selectors.
-  *
-  * On success, the output parameters @vsel_reg and @vsel_mask are filled in
-- * and 0 is returned, otherwise a negative errno is returned.
-+ * and 0 is returned, otherwise a negative error number is returned.
-  */
- int regulator_get_hardware_vsel_register(struct regulator *regulator,
- 					 unsigned *vsel_reg,
-diff --git a/drivers/regulator/devres.c b/drivers/regulator/devres.c
-index 7111c46e9de1..1b893cdd1aad 100644
---- a/drivers/regulator/devres.c
-+++ b/drivers/regulator/devres.c
-@@ -163,7 +163,7 @@ EXPORT_SYMBOL_GPL(devm_regulator_get_optional);
-  * In cases where the supply is not strictly required, callers can check for
-  * -ENODEV error and handle it accordingly.
-  *
-- * Returns: voltage in microvolts on success, or an error code on failure.
-+ * Returns: voltage in microvolts on success, or an negative error number on failure.
-  */
- int devm_regulator_get_enable_read_voltage(struct device *dev, const char *id)
- {
-@@ -174,8 +174,8 @@ int devm_regulator_get_enable_read_voltage(struct device *dev, const char *id)
- 	 * Since we need a real voltage, we use devm_regulator_get_optional()
- 	 * rather than getting a dummy regulator with devm_regulator_get() and
- 	 * then letting regulator_get_voltage() fail with -EINVAL. This way, the
--	 * caller can handle the -ENODEV error code if needed instead of the
--	 * ambiguous -EINVAL.
-+	 * caller can handle the -ENODEV negative error number if needed instead
-+	 * of the ambiguous -EINVAL.
- 	 */
- 	r = devm_regulator_get_optional(dev, id);
- 	if (IS_ERR(r))
-@@ -276,7 +276,7 @@ static int _devm_regulator_bulk_get(struct device *dev, int num_consumers,
-  * @num_consumers: number of consumers to register
-  * @consumers:     configuration of consumers; clients are stored here.
-  *
-- * @return 0 on success, an errno on failure.
-+ * @return 0 on success, a negative error number on failure.
-  *
-  * This helper function allows drivers to get several regulator
-  * consumers in one operation with management, the regulators will
-@@ -299,7 +299,7 @@ EXPORT_SYMBOL_GPL(devm_regulator_bulk_get);
-  * @num_consumers: number of consumers to register
-  * @consumers:     configuration of consumers; clients are stored here.
-  *
-- * @return 0 on success, an errno on failure.
-+ * @return 0 on success, a negative error number on failure.
-  *
-  * This helper function allows drivers to exclusively get several
-  * regulator consumers in one operation with management, the regulators
-@@ -326,7 +326,7 @@ EXPORT_SYMBOL_GPL(devm_regulator_bulk_get_exclusive);
-  * This is a convenience function to allow bulk regulator configuration
-  * to be stored "static const" in files.
-  *
-- * Return: 0 on success, an errno on failure.
-+ * Return: 0 on success, a negative error number on failure.
-  */
- int devm_regulator_bulk_get_const(struct device *dev, int num_consumers,
- 				  const struct regulator_bulk_data *in_consumers,
-@@ -393,7 +393,7 @@ static void devm_regulator_bulk_disable(void *res)
-  * @num_consumers: number of consumers to register
-  * @id:            list of supply names or regulator IDs
-  *
-- * @return 0 on success, an errno on failure.
-+ * @return 0 on success, a negative error number on failure.
-  *
-  * This helper function allows drivers to get several regulator
-  * consumers in one operation with management, the regulators will
-@@ -574,7 +574,7 @@ static void devm_regulator_unregister_supply_alias(struct device *dev,
-  *             lookup the supply
-  * @num_id:    number of aliases to register
-  *
-- * @return 0 on success, an errno on failure.
-+ * @return 0 on success, a negative error number on failure.
-  *
-  * This helper function allows drivers to register several supply
-  * aliases in one operation, the aliases will be automatically
-@@ -726,7 +726,7 @@ static void regulator_irq_helper_drop(void *res)
-  *			IRQ.
-  * @rdev_amount:	Amount of regulators associated with this IRQ.
-  *
-- * Return: handle to irq_helper or an ERR_PTR() encoded error code.
-+ * Return: handle to irq_helper or an ERR_PTR() encoded negative error number.
-  */
- void *devm_regulator_irq_helper(struct device *dev,
- 				const struct regulator_irq_desc *d, int irq,
-diff --git a/drivers/regulator/fixed.c b/drivers/regulator/fixed.c
-index c3de9c783d26..1cb647ed70c6 100644
---- a/drivers/regulator/fixed.c
-+++ b/drivers/regulator/fixed.c
-@@ -129,7 +129,7 @@ static irqreturn_t reg_fixed_under_voltage_irq_handler(int irq, void *data)
-  * If it's an optional IRQ and not found, it returns 0.
-  * Otherwise, it attempts to request the threaded IRQ.
-  *
-- * Return: 0 on success, or error code on failure.
-+ * Return: 0 on success, or a negative error number on failure.
-  */
- static int reg_fixed_get_irqs(struct device *dev,
- 			      struct fixed_voltage_data *priv)
-diff --git a/drivers/regulator/irq_helpers.c b/drivers/regulator/irq_helpers.c
-index 2de7b907c81d..0aa188b2bbb2 100644
---- a/drivers/regulator/irq_helpers.c
-+++ b/drivers/regulator/irq_helpers.c
-@@ -333,7 +333,7 @@ static void init_rdev_errors(struct regulator_irq *h)
-  *			IRQ.
-  * @rdev_amount:	Amount of regulators associated with this IRQ.
-  *
-- * Return: handle to irq_helper or an ERR_PTR() encoded error code.
-+ * Return: handle to irq_helper or an ERR_PTR() encoded negative error number.
-  */
- void *regulator_irq_helper(struct device *dev,
- 			   const struct regulator_irq_desc *d, int irq,
-diff --git a/drivers/regulator/max77802-regulator.c b/drivers/regulator/max77802-regulator.c
-index 69eb6abd2551..b2e87642bec4 100644
---- a/drivers/regulator/max77802-regulator.c
-+++ b/drivers/regulator/max77802-regulator.c
-@@ -160,8 +160,8 @@ static unsigned max77802_get_mode(struct regulator_dev *rdev)
-  * Enable Control Logic3 by PWRREQ (LDO 3)
-  *
-  * If setting the regulator mode fails, the function only warns but does
-- * not return an error code to avoid the regulator core to stop setting
-- * the operating mode for the remaining regulators.
-+ * not return a negative error number to avoid the regulator core to stop
-+ * setting the operating mode for the remaining regulators.
-  */
- static int max77802_set_suspend_mode(struct regulator_dev *rdev,
- 				     unsigned int mode)
-diff --git a/drivers/regulator/qcom-rpmh-regulator.c b/drivers/regulator/qcom-rpmh-regulator.c
-index 6b4cb7ba49c7..6c343b4b9d15 100644
---- a/drivers/regulator/qcom-rpmh-regulator.c
-+++ b/drivers/regulator/qcom-rpmh-regulator.c
-@@ -158,7 +158,7 @@ struct rpmh_vreg_init_data {
-  * @wait_for_ack:	Boolean indicating if execution must wait until the
-  *			request has been acknowledged as complete
-  *
-- * Return: 0 on success, errno on failure
-+ * Return: 0 on success, or a negative error number on failure
-  */
- static int rpmh_regulator_send_request(struct rpmh_vreg *vreg,
- 			struct tcs_cmd *cmd, bool wait_for_ack)
-@@ -317,7 +317,7 @@ static unsigned int rpmh_regulator_vrm_get_mode(struct regulator_dev *rdev)
-  * This function is used in the regulator_ops for VRM type RPMh regulator
-  * devices.
-  *
-- * Return: 0 on success, errno on failure
-+ * Return: 0 on success, or a negative error number on failure
-  */
- static unsigned int rpmh_regulator_vrm_get_optimum_mode(
- 	struct regulator_dev *rdev, int input_uV, int output_uV, int load_uA)
-@@ -409,7 +409,7 @@ static const struct regulator_ops rpmh_regulator_xob_ops = {
-  * @pmic_rpmh_data:	Pointer to a null-terminated array of rpmh-regulator
-  *			resources defined for the top level PMIC device
-  *
-- * Return: 0 on success, errno on failure
-+ * Return: 0 on success, or a negative error number on failure
-  */
- static int rpmh_regulator_init_vreg(struct rpmh_vreg *vreg, struct device *dev,
- 			struct device_node *node, const char *pmic_id,
-diff --git a/drivers/regulator/qcom_smd-regulator.c b/drivers/regulator/qcom_smd-regulator.c
-index 6761ada0cf7d..28e7ce60cb61 100644
---- a/drivers/regulator/qcom_smd-regulator.c
-+++ b/drivers/regulator/qcom_smd-regulator.c
-@@ -1386,7 +1386,7 @@ MODULE_DEVICE_TABLE(of, rpm_of_match);
-  * @pmic_rpm_data:	Pointer to a null-terminated array of qcom_smd-regulator
-  *			resources defined for the top level PMIC device
-  *
-- * Return: 0 on success, errno on failure
-+ * Return: 0 on success, or a negative error number on failure
-  */
- static int rpm_regulator_init_vreg(struct qcom_rpm_reg *vreg, struct device *dev,
- 				   struct device_node *node,
--- 
-2.46.0.295.g3b9ea8a38a-goog
-
+--=20
+Thanks,
+//richard
 
