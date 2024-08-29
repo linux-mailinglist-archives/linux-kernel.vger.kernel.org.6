@@ -1,176 +1,142 @@
-Return-Path: <linux-kernel+bounces-307201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EAA19649F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 17:27:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26A789649F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 17:26:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9972CB238E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:26:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55FC21C22D30
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:26:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 611811B3756;
-	Thu, 29 Aug 2024 15:26:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79D441B252C;
+	Thu, 29 Aug 2024 15:26:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="P5sWcG+Y";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="RuXgNkK4";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="P5sWcG+Y";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="RuXgNkK4"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y99SYHQi"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E7661B3725;
-	Thu, 29 Aug 2024 15:26:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D95E1B1411;
+	Thu, 29 Aug 2024 15:26:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724945181; cv=none; b=bkHIgdE/eZjsgVUL7WTKP9zBXHxl5mUrp0n5eTZXI8NJ/8Zpi2MnZhiiuOssfhG4lH1bXLGgj+gzLjd6VdvNhG917pwZWLrNxojsKV7D+2UpX0CtmERAD0i1daiyltPvpVFpmvmFAcA09GTeVJs4oAKLyuq160UW1rysUI2At3U=
+	t=1724945175; cv=none; b=eu3ByUvZe+fhsjyLUo/JjHoe6Hb3QjzTHZ4Hrh4MGkVgdnYb42qpKCfHH6RrNhqRwX5cTzb1ammo6H4uU2GhZpfbqh7F/gcvRADV8ng+pMrDgjnvKaE2+MQFR+o0g9it2x4bqay80LlTlFYDd5WkUmCJa/bcWK08wAyFEPWFf64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724945181; c=relaxed/simple;
-	bh=4AzVlidiVub3x1Wk1+N4GhpDYIF/K+dVA+RFHIp5jdA=;
+	s=arc-20240116; t=1724945175; c=relaxed/simple;
+	bh=E64+/rTlHIhV8w2ynBojlZI0qR87eW+72PsmAVPKhvs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sa7zBzBCe+3QhHTzZPx+YytwQOPyC2x7NS4SjqP2NcKOc1Vwwr+uwwUf0n+5Seqal3CNpUTQSCrBXRRSdPEPfh+AbAZz6QW0OOok9HFWN7jXav0UMGIMC3rED7T5xVwafTGpQ3MpX/OInFrh/wdXrSvjNPCYgIjvxLyq8fKPHmY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=P5sWcG+Y; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=RuXgNkK4; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=P5sWcG+Y; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=RuXgNkK4; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 9FFC921B9D;
-	Thu, 29 Aug 2024 15:26:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1724945171;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Vo0JVSwVkkM7rFafROeru0QLUH+EphkuxjdhxvwSkPM=;
-	b=P5sWcG+YOEHu551aRvlYlHHmaciNn2c1btSPKmULasifgntFs1XekjfS9oqmy1Bs44HfIk
-	SrFINudVszLXTmBJ/TaQDVlOlPl2dptSydxePCv6FZAUi23C5You/T+VYLQ/fV/gaprWBr
-	2JQqlEPUDA0ZeRNAz5ZRGRrLYMBXMWc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1724945171;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Vo0JVSwVkkM7rFafROeru0QLUH+EphkuxjdhxvwSkPM=;
-	b=RuXgNkK4S2U60Glryne5gpCzPDqRjPM64p+pcaBiwrkRkdb4BYPxtSAYqDLrpnPj+83gkf
-	iL+ZEjtnub5z6eCw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=P5sWcG+Y;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=RuXgNkK4
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1724945171;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Vo0JVSwVkkM7rFafROeru0QLUH+EphkuxjdhxvwSkPM=;
-	b=P5sWcG+YOEHu551aRvlYlHHmaciNn2c1btSPKmULasifgntFs1XekjfS9oqmy1Bs44HfIk
-	SrFINudVszLXTmBJ/TaQDVlOlPl2dptSydxePCv6FZAUi23C5You/T+VYLQ/fV/gaprWBr
-	2JQqlEPUDA0ZeRNAz5ZRGRrLYMBXMWc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1724945171;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Vo0JVSwVkkM7rFafROeru0QLUH+EphkuxjdhxvwSkPM=;
-	b=RuXgNkK4S2U60Glryne5gpCzPDqRjPM64p+pcaBiwrkRkdb4BYPxtSAYqDLrpnPj+83gkf
-	iL+ZEjtnub5z6eCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7A50F139B0;
-	Thu, 29 Aug 2024 15:26:11 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Lg+hHROT0GZtaAAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Thu, 29 Aug 2024 15:26:11 +0000
+	 Content-Type:Content-Disposition:In-Reply-To; b=FyfJimnHpcmXC8OB3aReCxm2y0KtBq8x+38pE1GBOog0AohJ0Lu5lCUR6ihfyXW91AqQ+7LV+vAv8TTdS1nMUkopu2NPS1pPUlCddrTma8JUh0Kdu0bGuDr4ukZV2sT5itVBjJr0zeB1TauJ6tdbkCrFrhAMn+FGDT4yesqvChc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y99SYHQi; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3718b5e9c4fso500975f8f.0;
+        Thu, 29 Aug 2024 08:26:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724945172; x=1725549972; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=oj8SbGZsIPIT2zmoQ3FCznFjgKHPHFcUOdD/u1KoOXU=;
+        b=Y99SYHQihsvbcnA1aAQZ1X2hUGKOEhw5m5czkm/8HFkD4YdsrxmurfQ0dtBnfhvG+w
+         YzHYkzJN/9McLLRii8xET6WQd9uRO7re/6q6UiWESNxTOgyr64+UywvAKo//UlISnrGi
+         9xrCoNC5g05jEuTqRF8P/v+jMT2oOgypWwdNaOml/ZYhuNGKYvVUB4/t63NHztn/dDSc
+         uenLWL41jhOsXTLLUCzxocLFImt/rFC7trxycUG60hUtdHzJ8n7LW4/o2rEJJn1rHkaS
+         tGJQprl87076F+p9YzIp2adxat5j4gEoEiaLHWcnsNSMOgNThjXB0/KUpDG9neBwG6QP
+         g8/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724945172; x=1725549972;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oj8SbGZsIPIT2zmoQ3FCznFjgKHPHFcUOdD/u1KoOXU=;
+        b=s9dbu86ESx1GTCaPt42EILoWUbgGRi5wbCLKQJOXc8uU1+9IUAFEnZinOLcacrTTbz
+         NTfAi+8dz2mASme+zA8qZLxqyF0+J/NJD6LNJMnAC4HhrKI9evox6cc6JTy0qZ1LwPio
+         Tv2PqJJf3TyIzSNxDCCfewd3gpAwg8T4gmBV2ev83qaDO+zd8hujaoBCpRg522guHeDa
+         mgnQb3DBeQrWmC+3nR1TM48NQwUKpVdNJLr6ao30HYKFfJctkIhtEcl1k8AT6zRP6x61
+         IE1mnunb1rY0Xp1c6PRpxDr+5gue0hqYd2sAfRbXvNpkD3O5gbZOhNQe9LWAfG97RzcS
+         9y7A==
+X-Forwarded-Encrypted: i=1; AJvYcCVNKkaDtRDx74utCmknCJYUe30r+9QeZKE3B2DvGErBbEgVm9ePRCH1Q/EZYPaegZVib736dqNymUlVfjPd@vger.kernel.org, AJvYcCVsxRYIYuCMowL4Ln3v/odCI6hWl+opGyJCLrM59uXnzFz0Rnfq7eX0jHu4UmBvTtCqhoiYcoPnpQB5pc8=@vger.kernel.org, AJvYcCX+5HTg7p3GQvsAAbNRfAu0VkrSilOxo9XuujBCnR7Oz4SuN0f6zlM53POTWeL9K5yofKCw6hqOsaVg@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywb52jwoRAOGr4nEUiJW9pWJ6O2Y40ZiArXWM6Z90hPsqzFoeaw
+	XkHF7ZETAsZD98LAmtrudeknoQXowwJeFkR5ag3lOxZlIoB4HbUnLsCITioI
+X-Google-Smtp-Source: AGHT+IHP0OXJXv4WkuN1TcI72+6EAU4MNPCBF7fJ0ui7mZaXbtB/CGHPHVVxkmwaz7r45EsaI6jU+A==
+X-Received: by 2002:a5d:4a8d:0:b0:367:958e:9821 with SMTP id ffacd0b85a97d-3749b54d0c8mr2455333f8f.29.1724945171897;
+        Thu, 29 Aug 2024 08:26:11 -0700 (PDT)
+Received: from orome (p200300e41f29d300f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f29:d300:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ba63abd2esm53798565e9.22.2024.08.29.08.26.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Aug 2024 08:26:11 -0700 (PDT)
 Date: Thu, 29 Aug 2024 17:26:10 +0200
-From: David Sterba <dsterba@suse.cz>
-To: Li Zetao <lizetao1@huawei.com>
-Cc: clm@fb.com, josef@toxicpanda.com, dsterba@suse.com, terrelln@fb.com,
-	quwenruo.btrfs@gmx.com, willy@infradead.org,
-	dan.carpenter@linaro.org, linux-btrfs@vger.kernel.org,
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -next v2 00/14] btrfs: Cleaned up folio->page conversion
-Message-ID: <20240829152610.GK25962@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-References: <20240828182908.3735344-1-lizetao1@huawei.com>
+Subject: Re: [PATCH v1 00/11] Tegra114: complete TF701T device tree
+Message-ID: <deznx2y3vb4zj4y6n22okly5cqjq7sbe6lwmtlqkag65mcmcto@exthbprmgvpy>
+References: <20240806123906.161218-1-clamor95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="w2xhdq6xdnppmbho"
+Content-Disposition: inline
+In-Reply-To: <20240806123906.161218-1-clamor95@gmail.com>
+
+
+--w2xhdq6xdnppmbho
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240828182908.3735344-1-lizetao1@huawei.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Rspamd-Queue-Id: 9FFC921B9D
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.21 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_TLS_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:replyto,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	FREEMAIL_ENVRCPT(0.00)[gmx.com];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[fb.com,toxicpanda.com,suse.com,gmx.com,infradead.org,linaro.org,vger.kernel.org];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.21
-X-Spam-Flag: NO
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 29, 2024 at 02:28:54AM +0800, Li Zetao wrote:
-> Hi all,
-> 
-> In btrfs, because there are some interfaces that do not use folio,
-> there is page-folio-page mutual conversion. This patch set should
-> clean up folio-page conversion as much as possible and use folio
-> directly to reduce invalid conversions.
-> 
-> This patch set starts with the rectification of function parameters,
-> using folio as parameters directly. And some of those functions have
-> already been converted to folio internally, so this part has little
-> impact. 
-> 
-> I have tested with fsstress more than 10 hours, and no problems were
-> found. For the convenience of reviewing, I try my best to only modify
-> a single interface in each patch.
-> 
-> Josef also worked on converting pages to folios, and this patch set was
-> inspired by him[1].
-> 
-> Considering Josef's suggestion[2], this patchset has passed most of the
-> xfs/btrfs use cases, include btrfs/060 and btrfs/069.
-> 
-> This patchset is based on commit bcdaf0fe6a52("btrfs: initialize
-> last_extent_end to fix -Wmaybe-uninitialized warning in extent_fiemap()")
-> 
-> v1 -> v2:
->  * Change clear_page_extent_mapped() to clear_folio_extent_mapped()
->  * Fix a bug[3] when folio is valid and it should be unlocked and put
->  in copy_inline_to_page().
+On Tue, Aug 06, 2024 at 03:38:55PM GMT, Svyatoslav Ryhel wrote:
+> Complete ASUS TF701T device tree with available information
+> about the device.
+>=20
+> Svyatoslav Ryhel (11):
+>   ARM: nvidia: tf701t: use unimomentary pinmux setup
+>   ARM: nvidia: tf701t: bind VDE device
+>   ARM: nvidia: tf701t: correct and complete PMIC and PMC bindings
+>   ARM: nvidia: tf701t: add HDMI bindings
+>   ARM: nvidia: tf701t: add Bluetooth node
+>   ARM: nvidia: tf701t: adjust sensors nodes
+>   ARM: nvidia: tf701t: complete sound bindings
+>   ARM: nvidia: tf701t: bind WIFI SDIO and EMMC
+>   ARM: nvidia: tf701t: re-group GPIO keys
+>   ARM: nvidia: tf701t: use dedicated backlight regulator
+>   ARM: nvidia: tf701t: configure USB
+>=20
+>  .../boot/dts/nvidia/tegra114-asus-tf701t.dts  | 1516 ++++++++++++++---
+>  1 file changed, 1289 insertions(+), 227 deletions(-)
 
-I've tested the series a few times and so far no problems, the changes
-are straightforward. I'll add it to for-next soon. Thanks.
+I've applied all of these with some minor tweak (mostly whitespace, but
+also updating the subject to use "ARM: tegra:" as prefix).
+
+Thanks,
+Thierry
+
+--w2xhdq6xdnppmbho
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmbQkxEACgkQ3SOs138+
+s6HVcg//SnxLMpgN4WY7+lFi4oZfB3Oq7hEZVTUuz2sptaYuj3ylkYn5JJzv2ApF
+dSbdO65D7dZajgWCaR6kRWISmbAMKmxCifQU9u/dQKnZegvxEBuKbloGAS4thWh2
+46KLg4GBjT235SbjOPoF1Lzoie0/SiJNWTbPeaLH+n1IrORVZs2QAbZFbl/X5+HW
+RqMsPGAndur/giCjtxYTLLAItGLA33/5X1+4nzTdFrL76Fzlr5hMX/NIZJ2n1/vh
+/N0GGKeVP20u6QegGNnfaeZQEJaOlMCRSiLuuCTrugYq9TCm1yEiiWVi2tc2UItf
+IMlJeL3r8Hizuc8nU1iQVEPTLxrRa0wO/u0gag2qJhA3w/qISSXFeviwm+/XVh+B
+KpFqr4vixOINZvK3p4/qmy8wL5LUF+IkYaNKXxruQH8BeiMYLptyJYZOc5FbeAmr
+EHvFFf8R24X1twMobTuK+3veDy+ZVH42DRa50Sz/X1GI8Oqn+ByqxZpR6VkmcbYu
+WcVsAQdOzMhf2vGPiwxTMhsmxTvjIR1YTr5PK0v6WEwLDM0sgyYZ2tTz1BEbDrgx
+dXjXBGw/U2khlZJzoRMnRIykMeC3Kf9zrH6ecGof99wc1dREPjRTkVRzx91BkRxi
+/3RRahQzuEO8BeStuwwgdsGbtDWue4bxsEmJfJqu91/UAXcQotk=
+=1owH
+-----END PGP SIGNATURE-----
+
+--w2xhdq6xdnppmbho--
 
