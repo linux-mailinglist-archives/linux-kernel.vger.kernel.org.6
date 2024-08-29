@@ -1,100 +1,219 @@
-Return-Path: <linux-kernel+bounces-307656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 804739650E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 22:46:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3ACB0965131
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 22:51:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B338C1C23658
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 20:46:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4B56285B72
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 20:51:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4A3318B46B;
-	Thu, 29 Aug 2024 20:46:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1B8A1BC9ED;
+	Thu, 29 Aug 2024 20:49:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="Vv8R8Q3z"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="eazZdALR"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7A73156F41;
-	Thu, 29 Aug 2024 20:46:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E15518B496;
+	Thu, 29 Aug 2024 20:49:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724964386; cv=none; b=WZeZ7o9qr5YrUwM8hZDsNEqU0Wrh7M9mX1lM0Ba2Mpl0HXl7SDtPjQTqgOBxN1xEIar+iNqFox67L6OIPem4e2gGeLu/taE8i2zxNa3+Y+xgXbjUyA/3nij9Rcx2wWIAbhmyFmPv2I6c60se1jDWNo/Qc+wZSsezsn5Gam8eSL0=
+	t=1724964558; cv=none; b=VF1b9M7seRWGFghT84hZrYsQ5a+c0mb3uxURyB5q47Z8DCCtzRxc7NF+7LEQmhHxmIUjicfjwxy+FQigEnB+E0sRiMM6TQ3e13uy0QSUCk4OAxWym3OShTGa3f77eQzddBj7RaavWZN5VYEOVjELqz+gweu/GpaUnaT7+4FvnXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724964386; c=relaxed/simple;
-	bh=sz6bfXs+WP0Ejzb1cu2NDB1RHCuklbR3uaZZtR0pUr4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X2l/UWPhafFrO0x5AKqZrDVJ+31xFbvHuSWCD5hmvZAk5ar3KsAeqDnpHllTf2BmyKs+yyAqet2zuZ01Q+2sDAOE8EXT6DERbh/S1DAIlj9eGK+aG4lUMFp66oy9tiXjiwHtA+5WfBclbFIhB8SJFJ7DXcqYzjQID1qjyXjI79E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=Vv8R8Q3z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35297C4CEC1;
-	Thu, 29 Aug 2024 20:46:24 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="Vv8R8Q3z"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1724964382;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yzYDFZGf2D5cZoFoVdkeZRMawcANUGavo1EP8gkyRN0=;
-	b=Vv8R8Q3z+7wPzTo9eIO+3m5iei8oI72IZPwUa8plD03Ut0uV8cLK836ZWfGlhCUOeSA201
-	mD56+sbS0UJOQuJe4YO93tBXgz2Qfy77h0SrQhS7kGLLr9qzCurqHPt6FMKwx8RN+5Q5cG
-	S9Mf7yO4HBoYD07/Fv9N092aS0vlU8A=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 2ad44a09 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Thu, 29 Aug 2024 20:46:22 +0000 (UTC)
-Date: Thu, 29 Aug 2024 22:46:17 +0200
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: Adhemerval Zanella <adhemerval.zanella@linaro.org>
-Cc: Theodore Ts'o <tytso@mit.edu>, linux-kernel@vger.kernel.org,
-	linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-arch@vger.kernel.org,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-	Eric Biggers <ebiggers@kernel.org>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>
-Subject: Re: [PATCH v2] aarch64: vdso: Wire up getrandom() vDSO implementation
-Message-ID: <ZtDeGbgdpeI082i6@zx2c4.com>
-References: <20240829201728.2825-1-adhemerval.zanella@linaro.org>
+	s=arc-20240116; t=1724964558; c=relaxed/simple;
+	bh=li2FK37xH5VcoxQBl82OOClVE0swUPx/KS02ws4/GLc=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=RT0xLqc7ABeqx20AJb6ia9mD2UcrMKq2kE9AfMmRF2d1UWFf4blFdr4OGmbYdW5lDOxZCqqtEKCA1yEp6qOFwR/y64P8NniUAXzqDzoOR968Fcr9zm68A3d0ygzHxpYNcDUThWkxgKAOfflF/srlsco8nbWKika+VaBXqstOQts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=eazZdALR; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47THZYUs013576;
+	Thu, 29 Aug 2024 20:49:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=TYC4TzRd+KuX9AOfuqWSug
+	xiUtqlBhucAyGClbXpUEg=; b=eazZdALR0tfzG5khNnK+rHG/T3UmQbN/KteYOk
+	MfDC41O/Jlw+nfDO54UUM8ZKVwkwlttQANsFgP8T37WjFoNrkFQSwPFkLJRCnE2e
+	Nrvc7VqGLGhPFpCiTeROTsuWZQU/MVaSL/a9FN2qIEWI36bKC6XixVmY0dhE7og4
+	CwfRHuUo4C0Op0mmIF2DMDApwosbjSqT9U8itG+wfMmKN04/07l1ZcLyqU6KzYVW
+	saevLa/RH25Vbef3k2/+zaj9b9CMNQc6BFoU0z6KcVWugSdtA5u5SuNU+j5jpRXS
+	LV1g4FwrZ5mBZbrIMtuEBqFonpncK2BI8E8qE8z05Uywr3GA==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 419px5pgw9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 29 Aug 2024 20:49:00 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47TKmxK8020558
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 29 Aug 2024 20:48:59 GMT
+Received: from jesszhan-linux.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 29 Aug 2024 13:48:59 -0700
+From: Jessica Zhang <quic_jesszhan@quicinc.com>
+Subject: [PATCH 00/21] drm/msm/dpu: Add Concurrent Writeback Support for
+ DPU 10.x+
+Date: Thu, 29 Aug 2024 13:48:21 -0700
+Message-ID: <20240829-concurrent-wb-v1-0-502b16ae2ebb@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240829201728.2825-1-adhemerval.zanella@linaro.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJXe0GYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDM0ML3eT8vOTSoqLUvBLd8iRdS/MUMyNjC/M0S1MjJaCegqLUtMwKsHn
+ RsbW1AMkBZs9fAAAA
+To: Rob Clark <robdclark@gmail.com>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@linaro.org>,
+        <quic_abhinavk@quicinc.com>, Sean Paul
+	<sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        "David
+ Airlie" <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+        "Maarten
+ Lankhorst" <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard
+	<mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>
+CC: <quic_ebharadw@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
+        <linux-kernel@vger.kernel.org>, Rob Clark <robdclark@chromium.org>,
+        "Jessica
+ Zhang" <quic_jesszhan@quicinc.com>
+X-Mailer: b4 0.15-dev-99b12
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1724964539; l=5099;
+ i=quic_jesszhan@quicinc.com; s=20230329; h=from:subject:message-id;
+ bh=li2FK37xH5VcoxQBl82OOClVE0swUPx/KS02ws4/GLc=;
+ b=bRtpb/AhdA68uX10EF0UV+7Uyfsb79gzMyXZhhf/+zOcoVWQJe0QnUQp71b6zMZhrVi8fE/DL
+ Jj4I4HzHvUUBawL9q7qRInasI+52WZF4tJrNJWUkA/wjgVGKhAgKnvF
+X-Developer-Key: i=quic_jesszhan@quicinc.com; a=ed25519;
+ pk=gAUCgHZ6wTJOzQa3U0GfeCDH7iZLlqIEPo4rrjfDpWE=
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: uzw6JP2Kku02lsaug26DAF5r76jOjL5K
+X-Proofpoint-GUID: uzw6JP2Kku02lsaug26DAF5r76jOjL5K
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-29_06,2024-08-29_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 clxscore=1011
+ adultscore=0 suspectscore=0 lowpriorityscore=0 mlxlogscore=999 spamscore=0
+ priorityscore=1501 bulkscore=0 mlxscore=0 malwarescore=0 impostorscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2408290147
 
-Hi Catalin, Will, Adhemerval,
+DPU supports a single writeback session running concurrently with primary
+display when the CWB mux is configured properly. This series enables
+clone mode for DPU driver and adds support for programming the CWB mux
+in cases where the hardware has dedicated CWB pingpong blocks. Currently,
+the CWB hardware blocks have only been added to the SM8650
+hardware catalog.
 
-On Thu, Aug 29, 2024 at 08:17:14PM +0000, Adhemerval Zanella wrote:
-> Hook up the generic vDSO implementation to the aarch64 vDSO data page.
-> The _vdso_rng_data required data is placed within the _vdso_data vvar
-> page, by using a offset larger than the vdso_data.
-> 
-> The vDSO function requires a ChaCha20 implementation that does not
-> write to the stack, and that can do an entire ChaCha20 permutation.
-> The one provided is based on the current chacha-neon-core.S and uses NEON
-> on the permute operation. The fallback for chips that do not support
-> NEON issues the syscall.
-> 
-> This also passes the vdso_test_chacha test along with
-> vdso_test_getrandom. The vdso_test_getrandom bench-single result on
-> Neoverse-N1 shows:
-> 
->    vdso: 25000000 times in 0.746506464 seconds
->    libc: 25000000 times in 8.849179444 seconds
-> syscall: 25000000 times in 8.818726425 seconds
+This changes are split into two parts:
 
-Aside from the big endian concerns we discussed on IRC, this is looking
-fine to me, and I'd like to get some variant of this queued up in my
-random.git tree for 6.12 soon.
+The first part of the series will pull in Dmitry's patches to refactor
+the DPU resource manager to be based off of CRTC instead of encoder.
+This includes some changes (noted in the relevant commits) by me and
+Abhinav to fix some issues with getting the global state and refactoring
+the CDM allocation to work with Dmitry's changes.
 
-But first, Catalin or Will -- could one of you take a look and provide
-your Acked-by for that, if the patch looks good to you?
+The second part of the series will add support for CWB by doing the
+following:
 
-Thanks,
-Jason
+1) Add a DRM helper to detect if the current CRTC state is in clone mode
+   and add an "in_clone_mode" entry to the atomic state print
+2) Add the CWB mux to the hardware catalog and clarify the pingpong
+   block index enum to specifiy which pingpong blocks are dedicated to
+   CWB only and which ones are general use pingpong blocks
+3) Add CWB as part of the devcoredump
+4) Add support for configuring the CWB mux via dpu_hw_wb ops
+5) Add pending flush support for CWB
+6) Add support for validating clone mode in the DPU CRTC and setting up
+   CWB within the encoder
+7) Adjust the encoder trigger flush, trigger start, and kickoff order to
+   accomodate clone mode
+8) Adjust when the frame done timer is started for clone mode
+9) Define the possible clones for DPU encoders so that 
+
+The feature was tested on SM8650 using IGT's kms_writeback test with the
+following change [1] and dumping the writeback framebuffer when in clone
+mode. I haven't gotten the chance to test it on DP yet, but I've
+validated both single and dual LM on DSI.
+
+To test CWB with IGT, you'll need to apply this series [1] and run
+the following command:
+
+IGT_FRAME_DUMP_PATH=<dump path> FRAME_PNG_FILE_NAME=<file name> \
+./build/tests/kms_writeback [--run-subtest dump-valid-clones] \
+-dc <primary display mode>
+
+[1] https://patchwork.freedesktop.org/series/137933/
+
+---
+Dmitry Baryshkov (4):
+      drm/msm/dpu: get rid of struct dpu_rm_requirements
+      drm/msm/dpu: switch RM to use crtc_id rather than enc_id for allocation
+      drm/msm/dpu: move resource allocation to CRTC
+      drm/msm/dpu: fill CRTC resources in dpu_crtc.c
+
+Esha Bharadwaj (3):
+      drm/msm/dpu: add CWB entry to catalog for SM8650
+      drm/msm/dpu: add devcoredumps for cwb registers
+      drm/msm/dpu: add CWB support to dpu_hw_wb
+
+Jessica Zhang (14):
+      drm: add clone mode check for CRTC
+      drm: print clone mode status in atomic state
+      drm/msm/dpu: Check CRTC encoders are valid clones
+      drm/msm/dpu: Add RM support for allocating CWB
+      drm/msm/dpu: Add CWB to msm_display_topology
+      drm/msm/dpu: Require modeset if clone mode status changes
+      drm/msm/dpu: Reserve resources for CWB
+      drm/msm/dpu: Configure CWB in writeback encoder
+      drm/msm/dpu: Program hw_ctl to support CWB
+      drm/msm/dpu: Adjust writeback phys encoder setup for CWB
+      drm/msm/dpu: Start frame done timer after encoder kickoff
+      drm/msm/dpu: Skip trigger flush and start for CWB
+      drm/msm/dpu: Reorder encoder kickoff for CWB
+      drm/msm/dpu: Set possible clones for all encoders
+
+ drivers/gpu/drm/drm_atomic.c                       |   1 +
+ .../drm/msm/disp/dpu1/catalog/dpu_10_0_sm8650.h    |  29 +-
+ .../gpu/drm/msm/disp/dpu1/catalog/dpu_8_1_sm8450.h |   4 +-
+ .../gpu/drm/msm/disp/dpu1/catalog/dpu_9_0_sm8550.h |   4 +-
+ .../drm/msm/disp/dpu1/catalog/dpu_9_2_x1e80100.h   |   4 +-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c           | 253 ++++++++++++++-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c        | 358 ++++++++++++---------
+ drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.h        |  36 ++-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys.h   |  18 +-
+ .../gpu/drm/msm/disp/dpu1/dpu_encoder_phys_wb.c    |  67 +++-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h     |  13 +
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.c         |  30 +-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.h         |  14 +-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h        |  14 +-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_wb.c          |  69 +++-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_wb.h          |  34 ++
+ drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c            |  12 +-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h            |  12 +-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c             | 351 ++++++++++++--------
+ drivers/gpu/drm/msm/disp/dpu1/dpu_rm.h             |  14 +-
+ drivers/gpu/drm/msm/msm_drv.h                      |   2 +
+ include/drm/drm_crtc.h                             |   7 +
+ 22 files changed, 994 insertions(+), 352 deletions(-)
+---
+base-commit: dd482072df04d3c2bb180fc860b0ed0d3c99bdd4
+change-id: 20240618-concurrent-wb-97d62387f952
+
+Best regards,
+-- 
+Jessica Zhang <quic_jesszhan@quicinc.com>
+
 
