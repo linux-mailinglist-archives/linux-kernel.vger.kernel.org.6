@@ -1,178 +1,254 @@
-Return-Path: <linux-kernel+bounces-307091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AF079647DC
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:19:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EBA8964822
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:24:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 820A21F22E6E
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 14:19:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4BDDFB2CCFB
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 14:23:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 256471B0116;
-	Thu, 29 Aug 2024 14:18:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="WJOtZwsT"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2045.outbound.protection.outlook.com [40.107.92.45])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8CE01AE864;
+	Thu, 29 Aug 2024 14:19:53 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 885441917C6;
-	Thu, 29 Aug 2024 14:18:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.45
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724941108; cv=fail; b=m2x5z0jmY/uM5OwRI7lEUBkI+hRP6hsRatVH2tEj6vuGSxJcytjGf1DFcrbxeOJj7AHbPiw6jam8RACuv0pNTi0B9N3nXknDLIKPf7SFjAK+W+pDaxIhxtSzLRmvFdF0bqVX+l/wLj3UFeYYTH/mNAFWOnffFCXkwnf/4Qm7X54=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724941108; c=relaxed/simple;
-	bh=m4y1OASdUdr07udhLgBwpUOvlhuD6sjpoIdac9kdVvs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=TyRcEkC8IIIzifYs1/V1NZUTgqe3su7/psZ52QNFzceQLeHaGjpf44doczOKDbRqMBqp2DAp9kYdpCkU+GV+RfkoN2ju2ZdUnpx4tresAnGHwgjFci3xaBap6fvYReVrH9GyRdxBgSE/dRD/Juiv1Gj/i0GtJPxL6jQLagkJX58=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=WJOtZwsT; arc=fail smtp.client-ip=40.107.92.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=lEWJRPOYX23rbeW1o71o6tPHAwlkb1aN7nr2fGOvb02gN5DPpZARJRNERBV58RTIKKLUdvNudAfGP3tkf4BB6Q9zpwHVNgOdTfPwam19ICag0xsGsokkk8XHD7RqnwxDVQFtkN2QqWDO+sW99SMUmw562XzOdzdnClp2ysF5kY4SAUQn7QvWLGPZl1PuXHk8Ypo6UHTCaR5jrHWDpxr7F8exWezsmEsbpsTFBIXxacGXK9GzgkovMaG2wiAFoSMZsjbUdgHQPMedEuJMxdAaSXha26vMaOxlvTYM8Y7qiH6AtgppWpIm0JqtHBY7/OcNoUok41tS0cyHsYslCILlgQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XYDNhSA38JhFcrwPiCyOHCvdOF1ihmi6s/QgaP4PjGY=;
- b=jBh2EjZa/7+EWsQgib1ZOlZgvHvcOx1iOKgQX+JxcNcro2fg5/TXehf+FwTM7iCjkVyb2NG56ad57JMmlhCV2cY/1xIbxnHhEFb5CWwNLu9qABD8A2SCj2YL19Vy6xA3Ksnplp5m4WtByWNqcdvmj/a9pk31pBCSYIdV1deywhhE2ZavJ6qaHIEobWEiY+c4CXpoJJXomLUEDx5XZNRWGz79RidTD2fTYJQdKz+XABh0SmRco1TsPZQbbBDeMlOsJgrt0agCOwNrj35wK70rtRoTGhH/ThbGAKHe/xzV7F7pO/RpZxmH/jZEMPBixwO4x/XqCUHJTupHZSlJcTqD4A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XYDNhSA38JhFcrwPiCyOHCvdOF1ihmi6s/QgaP4PjGY=;
- b=WJOtZwsT9Cso/wVTSCbdQ4wK5NtI0fDcVWUmxZVDLM4HnR4XfH6OH+7szO0v+dRBb3BYIwQOclEyam4PaKRclFKiskTQBFM0ee3mgMU460GluweS9HZCwhApXZAbzu8b+RBEVhMPtzcQiNieC8dU2I1E0sdz0XcPBUlJGX5as48=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM4PR12MB6373.namprd12.prod.outlook.com (2603:10b6:8:a4::7) by
- IA0PR12MB8421.namprd12.prod.outlook.com (2603:10b6:208:40f::5) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7897.26; Thu, 29 Aug 2024 14:18:23 +0000
-Received: from DM4PR12MB6373.namprd12.prod.outlook.com
- ([fe80::12f7:eff:380b:589f]) by DM4PR12MB6373.namprd12.prod.outlook.com
- ([fe80::12f7:eff:380b:589f%7]) with mapi id 15.20.7897.027; Thu, 29 Aug 2024
- 14:18:23 +0000
-Date: Thu, 29 Aug 2024 10:18:18 -0400
-From: Yazen Ghannam <yazen.ghannam@amd.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>, linux-edac@vger.kernel.org,
-	linux-kernel@vger.kernel.org, tony.luck@intel.com, x86@kernel.org,
-	avadhut.naik@amd.com, john.allen@amd.com,
-	boris.ostrovsky@oracle.com
-Subject: Re: [PATCH] x86/MCE: Prevent CPU offline for SMCA CPUs with non-core
- banks
-Message-ID: <20240829141818.GA458692@yaz-khff2.amd.com>
-References: <20240821140017.330105-1-yazen.ghannam@amd.com>
- <87jzg4g8dm.ffs@tglx>
- <20240826132057.GA449322@yaz-khff2.amd.com>
- <9D26E333-B33C-4FD4-9A8F-6F9DC1EC6527@alien8.de>
- <20240827134706.GA719384@yaz-khff2.amd.com>
- <7D571DAA-E399-4580-98B3-8A6E7085CB54@alien8.de>
- <20240829140305.GA448036@yaz-khff2.amd.com>
- <20240829141415.GDZtCCN89eyjycV0uf@fat_crate.local>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240829141415.GDZtCCN89eyjycV0uf@fat_crate.local>
-X-ClientProxiedBy: BN9P220CA0004.NAMP220.PROD.OUTLOOK.COM
- (2603:10b6:408:13e::9) To DM4PR12MB6373.namprd12.prod.outlook.com
- (2603:10b6:8:a4::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A65542A96;
+	Thu, 29 Aug 2024 14:19:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724941193; cv=none; b=U2Cbzs9f3zWdXrcWHaWcs5AjZjmXQF/W6Irjb1FR85NIwQzk9sT6bMw+Py2aWElh0LHoM22aAZv8jUrd4xQC8UqRoqFY3+NjIQ1ssRTF97p/9EsUFOGZMcFfVFFwYHXPSHzIrVQnp3iN3dWE+UpB2YdvMIosI4YJZyY5ZpjlAZo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724941193; c=relaxed/simple;
+	bh=cQ+Yytpsq6B15Gxw8y+wWSg9HZED+7ysWVFrZmzZZR8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rA1k7mKJItxZczOWDtEotvw5gt5dnETlYalkfoQz0MfktLz8ffgQaG/Ll6N6TyvtEpewDl5zUNNU0ZFcnWiqdgYwBausbZ9aEoHysA/AhVcAk1BHvklDw3JVImU2Ri14vRIssXj7nhPhrLFzBIpc/5FuvCsQjTl46+nvd+5YR3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Wvk1h4S3xz4f3jtv;
+	Thu, 29 Aug 2024 22:19:36 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 9F1741A018D;
+	Thu, 29 Aug 2024 22:19:46 +0800 (CST)
+Received: from [10.67.108.244] (unknown [10.67.108.244])
+	by APP4 (Coremail) with SMTP id gCh0CgCHr4WBg9Bm7Pw6DA--.21461S3;
+	Thu, 29 Aug 2024 22:19:46 +0800 (CST)
+Message-ID: <eb37b77d-58ed-4b79-a942-7c249cb5050b@huaweicloud.com>
+Date: Thu, 29 Aug 2024 22:19:45 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB6373:EE_|IA0PR12MB8421:EE_
-X-MS-Office365-Filtering-Correlation-Id: 75caae1a-a9c2-4b3b-6c90-08dcc83570a9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?/KO8fFMREXd/76EIjN4iCB2bJSCZEqg3SrgRa53chXZ84e6+6hEtjkdGbDW1?=
- =?us-ascii?Q?55T63/FE3MDzPj7LXWDrU+T0EkZQPtXHbsItnk5LGtfzpiX32LIm38kqZhA5?=
- =?us-ascii?Q?0b2tAiMsk5GfcfPI38FF44Gd10zfBuXd3X/8MlW4SWOW+goqdL/A0pgln0vv?=
- =?us-ascii?Q?Hr/JmRJgoukQPnammPm5IcwVcLHDoIvBVSE+hwPIXcVNVm72mb/W+G/p9t+1?=
- =?us-ascii?Q?vSGnVNIak46pmCsS4jfHk5QA/gG/qlFfee9zYrIQIx21lCn6y4crUWddjbHR?=
- =?us-ascii?Q?NfLPzHykaWk9A49uxEKdSwyqVvlBuXkDtfAM9e6HSRm+X/uBjUN2mJhJRqBB?=
- =?us-ascii?Q?J7487kUylkZz6VsQGpESFFesbib6lKCqX9jYSsai9obtNClOLHLudXd4S8+4?=
- =?us-ascii?Q?/eIU2Ydsz8k3GW8M3kIUx35K7lO309D3AsyV67WUpiq1JwlB4bpoGM11+1Yj?=
- =?us-ascii?Q?6jV2mLTLLfJ1K8DEXoKb/YhL6y6cJOkoo3a+yEmZ0HshzGS1DLMixGK3WymG?=
- =?us-ascii?Q?EJ6u3OFDK+1aodg+MNuv70n5cWEYQow61c4XRFpO+hYiC36tNQZJe0P1ZyU1?=
- =?us-ascii?Q?5EHc4NtruBdDX4hlj60GqInpn+GSdKVATYzdwLxIIt0dpnpQ53+f49HzbvDG?=
- =?us-ascii?Q?I8gIwPSEH1Fjqr9LwF4htKqlVlynIxkZwyoTtK0xkQEaUtOZjpZKd9e2OCiy?=
- =?us-ascii?Q?wG1Il3smUcG2z3bV46CJFYvtf1emmgH+ezaW8Yr8iqlIV2UsOCYS3G5g0CLr?=
- =?us-ascii?Q?PQHwe/bYC1tg1vunaGTxvHS4gSRXlhl27Jp2UvL3cVU+27xWrNUI0Gdzm/TI?=
- =?us-ascii?Q?nD3tGst7PVfMwqH0RZ5wXnG69s8ETEp08B+bOb5sW8yNPGuUmY150Xe6cW90?=
- =?us-ascii?Q?ds0WA7B8YbcqzKd9y/S8mIqn4cMnlZ3/+nlPMx+gO6aHc/mx9cExAsFrnJho?=
- =?us-ascii?Q?viiUoA5uRYOFspmDopper/YNbNpKv+tQWJA5qwgnZ8SrWslegSW9ZPinvxy+?=
- =?us-ascii?Q?DeSdg8cQ6U5iyLyEUG3NiQ3CP5Ayo2hqn9g4FXYojVIkPtbW7YD4YzdCNUYi?=
- =?us-ascii?Q?6KPmPLKfEX6+CyfezIiFDoMNrG6/tDRTsRbBgIytKGShMrOjeCcNfZzs1HWq?=
- =?us-ascii?Q?AiLfjhMrrFfqfT+LrLRnQLZkO84/O5tDhUuTu85cG3KYCA1LQJNF3IlMr+JE?=
- =?us-ascii?Q?5wRcj7C27SesHrZ8UbZfJKSFuUogfByb44dFBNW/HpS636cniuBoifSClxxV?=
- =?us-ascii?Q?WvnmbEO7z5zZD7jEUl+28BaQXp0FlQh7v/yxk8SEzGxQ5W/Gt58giBDv5RcC?=
- =?us-ascii?Q?YBHCO9CzyCxLyCNClVs1bNprcvg+hVUQqMSR09lEPs93pA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6373.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?C3OIlhOX/WVHG9MIaHP/3XbvG/1h69RysL1cL9Vjm5i8h3Ruqevsp7YuPCud?=
- =?us-ascii?Q?V2paxDpc8zi11Y9Nor5kH7ykfwWMgornJ6M4Fqlrfxsaa88S/cto2JipGUqb?=
- =?us-ascii?Q?yATM1/1UYADUmzbAp3/YOIr9a41S3/G3UJFRD7NpdAYtZC3bn6ic7LFIEUYR?=
- =?us-ascii?Q?gl/mslh6Svj2YdXvknhx9aLcbTK0216MTHch64OkhubYVJ8BQMvNWWB6BesA?=
- =?us-ascii?Q?MGmncPYaA1LDBzdATE2KzbJGVcK3RTg3URnFxXcTIKHq6LT87idxYVZxoi21?=
- =?us-ascii?Q?SsHUggu2apr2KwK9pz4EEI/agIoN9Bqbj1Iw+TmioJFcHkZKdUJTLOPXfi9y?=
- =?us-ascii?Q?lu35BmvLTa+ysCwJd4D2ZW2wYInTUEeOydywFUbKVexaNpqaerL8L6NZ1+nk?=
- =?us-ascii?Q?/NS5NvKoh8xGLRSVadZcTLL3cOdoOeMjT4SEAnACId/8DX/jN8tahk+t+uQ/?=
- =?us-ascii?Q?d1mifxs+AVCzgVBL4p+5vSHUXrJuVk+U0ZCsouHO3UFcfWsTHd7wZOVQH0M9?=
- =?us-ascii?Q?x1ziFIJeKvnhJXbLnFMzNCXW8spkGVcsPvnxzSAITOcthjZCal8GMOUK10wr?=
- =?us-ascii?Q?8qxOLzlrHqDGhq1iHosttddCkz6oJeQ1sCFuRZFc3swoYNGBU9Z8ofgRMNr8?=
- =?us-ascii?Q?5VEUC8yaOtO1/HYrmEhrUMmfX5RNHQ+PUZy8/X9c2yFCBl7edSfZ14ZIz0I7?=
- =?us-ascii?Q?buXwR/lQABFPwf335r/DUpG9BHwqJ+tOJO3Ok/nsGivgQoItI0TVZZuVaZ4H?=
- =?us-ascii?Q?2pgqLJu5rlrXFddeFNIQSA0oHeI8KSXEKXSmVAVWiNrsQlAK3q8Uft63dP6v?=
- =?us-ascii?Q?Byxw7w3Vhi4LJwtkdXYqVGsAmAnu3fDYgqNYXzRF8nKjVqXOlEWEBG3KnhAU?=
- =?us-ascii?Q?hOe5gy+/4x81iyLJGSB2XCJ9ljGG57ztbNr3NMO4nhVbD49PXbF5Tp8xjrpB?=
- =?us-ascii?Q?XT9n+Fbk6S3wan2D+gXlvtksodFeKw90AVakBkUYaQKnzEA5vmOuHBp6GRyL?=
- =?us-ascii?Q?Tt+8ZyeOguhc6oCQRdF7OQoTl/vSzWYZ3oqW/w3OvJHRyZUz4/rpJpSgjgzW?=
- =?us-ascii?Q?r5oFod5rXdi6U+VF9Ow62g+fJhPiPihutNXHj1M61XuvErymOMiC5islLGmN?=
- =?us-ascii?Q?bK7vWCRx8nDUCkc6kqzfujHMzV7WEz73N4A9+h6Dk3W7yBcr/aebLBEbCRve?=
- =?us-ascii?Q?Q3gAjD1cCpCtFPN8uYZsx+8dlaXj5pwWBWOtgINoTeKATSeYSky1jmVHyGWP?=
- =?us-ascii?Q?TT1JlYtpdbHnwWVUomzWyKOyY2TYZfRxYgL63QV0dBo8dpCBcKPBRQnY5aUg?=
- =?us-ascii?Q?FM2M7S2rVtePxo1F8udtPeW+QPqRBEUEYprhsMzco+eQv3dJATkBbM3qMUSR?=
- =?us-ascii?Q?/eGo7E8Dv3UAou9POe773CC3vvozsZrw58VmWHdkdHQjGRffoKMEil8PV364?=
- =?us-ascii?Q?4oh/nBu9O3lchWIMdkPMXav7VDL3k3IVBriNYokm0LD0TMxYERJnKBNxJncA?=
- =?us-ascii?Q?gpXNJjcHlNLbRI3/n2GXpkIYehUlnX3qW6Z1xo1y4d0Jzx3rZaBZe/e2uljd?=
- =?us-ascii?Q?NBL1X7Nwf4pZc8ZLDsx17kpfRhfDHUhkGzk2sOnf?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 75caae1a-a9c2-4b3b-6c90-08dcc83570a9
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6373.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Aug 2024 14:18:23.0156
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: vBlX1THq2q2/UOJmpzKQNyEjzaNJhxOGBmugIGyCh4VgUAKTCyzY5Vz2LbfgUQxorXbXSWFK42KLwjAqh2Xb7A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB8421
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/2] perf/core: Fix incorrect time diff in tick adjust
+ period
+Content-Language: en-US
+To: "Liang, Kan" <kan.liang@linux.intel.com>,
+ Adrian Hunter <adrian.hunter@intel.com>, peterz@infradead.org
+Cc: mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
+ mark.rutland@arm.com, alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+ irogers@google.com, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240821134227.577544-1-luogengkun@huaweicloud.com>
+ <20240821134227.577544-3-luogengkun@huaweicloud.com>
+ <c5b73b4f-b257-4847-a213-741889d89159@linux.intel.com>
+ <c1b2a1b6-8b6d-40b4-84d4-d007c024fc84@intel.com>
+ <e15110af-c2f2-47ff-99fd-649cf5b46e46@linux.intel.com>
+ <30884874-848a-40ef-9e02-7cdb7b1a029a@intel.com>
+ <63bcac23-e650-41c8-9c9e-93e258355777@linux.intel.com>
+From: Luo Gengkun <luogengkun@huaweicloud.com>
+In-Reply-To: <63bcac23-e650-41c8-9c9e-93e258355777@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCHr4WBg9Bm7Pw6DA--.21461S3
+X-Coremail-Antispam: 1UD129KBjvJXoW3Wr1xAFy5AFyfJrWfCrWfXwb_yoWxAF47pr
+	WkAF15trWkJr18ur1jyw1ktry8tw1kJw1DWF15Ga4xAwn8trn2qF47XF1Y9r1qyrs7JFyj
+	ya1jqry7urWjqFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
+	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8
+	ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1
+	7KsUUUUUU==
+X-CM-SenderInfo: 5oxrwvpqjn3046kxt4xhlfz01xgou0bp/
 
-On Thu, Aug 29, 2024 at 04:14:15PM +0200, Borislav Petkov wrote:
-> On Thu, Aug 29, 2024 at 10:03:05AM -0400, Yazen Ghannam wrote:
-> > Do you think we should we continue to pursue this or no?
-> 
-> You mean the kernel should prevent those folks from shooting themselves in the
-> foot?
-> 
-> How would that patch look like?
+
+On 2024/8/29 21:46, Liang, Kan wrote:
 >
+> On 2024-08-27 9:10 p.m., Adrian Hunter wrote:
+>> On 27/08/24 23:06, Liang, Kan wrote:
+>>>
+>>> On 2024-08-27 1:16 p.m., Adrian Hunter wrote:
+>>>> On 27/08/24 19:42, Liang, Kan wrote:
+>>>>>
+>>>>> On 2024-08-21 9:42 a.m., Luo Gengkun wrote:
+>>>>>> Perf events has the notion of sampling frequency which is implemented in
+>>>>>> software by dynamically adjusting the counter period so that samples occur
+>>>>>> at approximately the target frequency.  Period adjustment is done in 2
+>>>>>> places:
+>>>>>>   - when the counter overflows (and a sample is recorded)
+>>>>>>   - each timer tick, when the event is active
+>>>>>> The later case is slightly flawed because it assumes that the time since
+>>>>>> the last timer-tick period adjustment is 1 tick, whereas the event may not
+>>>>>> have been active (e.g. for a task that is sleeping).
+>>>>>>
+>>>>> Do you have a real-world example to demonstrate how bad it is if the
+>>>>> algorithm doesn't take sleep into account?
+>>>>>
+>>>>> I'm not sure if introducing such complexity in the critical path is
+>>>>> worth it.
+>>>>>
+>>>>>> Fix by using jiffies to determine the elapsed time in that case.
+>>>>>>
+>>>>>> Signed-off-by: Luo Gengkun <luogengkun@huaweicloud.com>
+>>>>>> ---
+>>>>>>   include/linux/perf_event.h |  1 +
+>>>>>>   kernel/events/core.c       | 11 ++++++++---
+>>>>>>   2 files changed, 9 insertions(+), 3 deletions(-)
+>>>>>>
+>>>>>> diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+>>>>>> index 1a8942277dda..d29b7cf971a1 100644
+>>>>>> --- a/include/linux/perf_event.h
+>>>>>> +++ b/include/linux/perf_event.h
+>>>>>> @@ -265,6 +265,7 @@ struct hw_perf_event {
+>>>>>>   	 * State for freq target events, see __perf_event_overflow() and
+>>>>>>   	 * perf_adjust_freq_unthr_context().
+>>>>>>   	 */
+>>>>>> +	u64				freq_tick_stamp;
+>>>>>>   	u64				freq_time_stamp;
+>>>>>>   	u64				freq_count_stamp;
+>>>>>>   #endif
+>>>>>> diff --git a/kernel/events/core.c b/kernel/events/core.c
+>>>>>> index a9395bbfd4aa..86e80e3ef6ac 100644
+>>>>>> --- a/kernel/events/core.c
+>>>>>> +++ b/kernel/events/core.c
+>>>>>> @@ -55,6 +55,7 @@
+>>>>>>   #include <linux/pgtable.h>
+>>>>>>   #include <linux/buildid.h>
+>>>>>>   #include <linux/task_work.h>
+>>>>>> +#include <linux/jiffies.h>
+>>>>>>   
+>>>>>>   #include "internal.h"
+>>>>>>   
+>>>>>> @@ -4120,7 +4121,7 @@ static void perf_adjust_freq_unthr_events(struct list_head *event_list)
+>>>>>>   {
+>>>>>>   	struct perf_event *event;
+>>>>>>   	struct hw_perf_event *hwc;
+>>>>>> -	u64 now, period = TICK_NSEC;
+>>>>>> +	u64 now, period, tick_stamp;
+>>>>>>   	s64 delta;
+>>>>>>   
+>>>>>>   	list_for_each_entry(event, event_list, active_list) {
+>>>>>> @@ -4148,6 +4149,10 @@ static void perf_adjust_freq_unthr_events(struct list_head *event_list)
+>>>>>>   		 */
+>>>>>>   		event->pmu->stop(event, PERF_EF_UPDATE);
+>>>>>>   
+>>>>>> +		tick_stamp = jiffies64_to_nsecs(get_jiffies_64());
+>>>>> Seems it only needs to retrieve the time once at the beginning, not for
+>>>>> each event.
+>>>>>
+>>>>> There is a perf_clock(). It's better to use it for the consistency.
+>>>> perf_clock() is much slower, and for statistical sampling it doesn't
+>>>> have to be perfect.
+>>> Because of rdtsc?
+>> Yes
+> OK. I'm not worry about it too much as long as it's only invoked once in
+> each tick.
+>
+>>> If it is only used here, it should be fine. What I'm worried about is
+>>> that someone may use it with other timestamp in perf later. Anyway, it's
+>>> not a big deal.
+>>>
+>>> The main concern I have is that do we really need the patch?
+>> The current code is wrong.
+>>
+>>> It seems can only bring us a better guess of the period for the sleep
+>>> test. Then we have to do all the calculate for each tick.
+>> Or any workload that sleeps periodically.
+>>
+>> Another option is to remove the period adjust on tick entirely.
+>> Although arguably the calculation at a tick is better because
+>> it probably covers a longer period.
+> Or we may remove the period adjust on overflow.
+>
+> As my understanding, the period adjust on overflow is to handle the case
+> while the overflow happens very frequently (< 2 ticks). It is mainly
+> caused by the very low start period (1).
+> I'm working on a patch to set a larger start period, which should
+> minimize the usage of the period adjust on overflow.
+I think it's hard to choose a nice initial period, it may require a lot 
+of testing, good luck.
+>
+> Anyway, based on the current code, I agree that adding a new
+> freq_tick_stamp should be required. But it doesn't need to read the time
+> for each event. I think reading the time once at the beginning should be
+> good enough for the period adjust/estimate algorithm.
 
-Right, I'm working on another revision. I'll try to send it today.
+That's a good idea, do you think it's appropriate to move this line here?
 
-The gist is that we can hide the sysfs interface for CPUs that shouldn't
-be hotplugged. We already do this today for other special cases like
-CPU0.
 
 Thanks,
-Yazen
+
+Gengkun
+
+@@ -4126,6 +4126,8 @@ perf_adjust_freq_unthr_context(struct 
+perf_event_context *ctx, bool unthrottle)
+
+         raw_spin_lock(&ctx->lock);
+
++       tick_stamp = jiffies64_to_nsecs(get_jiffies_64());
++
+         list_for_each_entry_rcu(event, &ctx->event_list, event_entry) {
+                 if (event->state != PERF_EVENT_STATE_ACTIVE)
+                         continue;
+@@ -4152,7 +4154,6 @@ perf_adjust_freq_unthr_context(struct 
+perf_event_context *ctx, bool unthrottle)
+                  */
+                 event->pmu->stop(event, PERF_EF_UPDATE);
+
+-               tick_stamp = jiffies64_to_nsecs(get_jiffies_64());
+                 period = tick_stamp - hwc->freq_tick_stamp;
+                 hwc->freq_tick_stamp = tick_stamp;
+
+>
+> Thanks,
+> Kan
+>
+>>> Thanks,
+>>> Kan
+>>>>> Thanks,
+>>>>> Kan
+>>>>>> +		period = tick_stamp - hwc->freq_tick_stamp;
+>>>>>> +		hwc->freq_tick_stamp = tick_stamp;
+>>>>>> +
+>>>>>>   		now = local64_read(&event->count);
+>>>>>>   		delta = now - hwc->freq_count_stamp;
+>>>>>>   		hwc->freq_count_stamp = now;
+>>>>>> @@ -4157,9 +4162,9 @@ static void perf_adjust_freq_unthr_events(struct list_head *event_list)
+>>>>>>   		 * reload only if value has changed
+>>>>>>   		 * we have stopped the event so tell that
+>>>>>>   		 * to perf_adjust_period() to avoid stopping it
+>>>>>> -		 * twice.
+>>>>>> +		 * twice. And skip if it is the first tick adjust period.
+>>>>>>   		 */
+>>>>>> -		if (delta > 0)
+>>>>>> +		if (delta > 0 && likely(period != tick_stamp))
+>>>>>>   			perf_adjust_period(event, period, delta, false);>
+>>>>>>   		event->pmu->start(event, delta > 0 ? PERF_EF_RELOAD : 0);
+>>>>
+>>
+
 
