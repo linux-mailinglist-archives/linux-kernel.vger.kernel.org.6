@@ -1,112 +1,87 @@
-Return-Path: <linux-kernel+bounces-306164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68BF5963A1C
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 07:58:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3867963A23
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 07:59:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27D6828352B
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 05:58:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 312541C20EA4
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 05:59:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E79D815E5C0;
-	Thu, 29 Aug 2024 05:56:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U80bwJ6P"
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE55914C5A3;
-	Thu, 29 Aug 2024 05:56:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 576DA171E70;
+	Thu, 29 Aug 2024 05:56:32 +0000 (UTC)
+Received: from cmccmta2.chinamobile.com (cmccmta2.chinamobile.com [111.22.67.135])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8CBB166F11
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 05:56:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724910984; cv=none; b=tLrdag05VyZeng3zGaOgec32tiLCeTwpXCmm1UutZcoyjbtaS1tYz5JgzQPp3MVi68LavsG1NRbCs/+AonsEuyXSGXc8T1lHuXaf5mCOnMUi8B9Qqjc+VZawGOl9958dGRIpT3lF9xpOAwKIWyK6F3V5oJ382FsY0HI5+s6jCrk=
+	t=1724910991; cv=none; b=PXTXaaOWSnaApPOENYCo6o2pNy+5cRGZm52YT5OmdQbRJIx7PNK8bWIG0N5f3yDIgrcgXf7XU+xnKMWrjNo6ANipHTUxJCDh6uATMKA73ghrtLCjJ4LWra6BeTTG8+GkruRWixoDEs7LEghz8Ow0Nbxls5xypHDOgQs3Efkqj3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724910984; c=relaxed/simple;
-	bh=iyainqTBOI2KJZnApzZhFisnYAo8hdGHlo9bPxtpQ6s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ByB0hVNK9mE4J48zbMAKw1U+tmgePzB/cx1ROC86T5dbos0WA+y8xbtU2Nk80tEjHNeF+OJJ1Z39G7Fjwnftbl78rSf6ZmAlQbuRZpK7RsJu4LQsZS+2YpSb/XUUgyvVzbjopZHYcsaBVK+m1eVR9DWWtxtVO9jCGUNXmdqrg9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U80bwJ6P; arc=none smtp.client-ip=209.85.128.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6c3f1939d12so2973377b3.2;
-        Wed, 28 Aug 2024 22:56:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724910982; x=1725515782; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oN+N69wCZiTHjAzKrZyYz5mHgQfDfNRMmqum6pBByWw=;
-        b=U80bwJ6PpIYsR+G8SpL+XAt8G4BSnfNbuU3K93QVT0/6BBMfDy9Yus5qTVQiYsn4YF
-         ytXaowjrex+yh0xU6S30ot73qn6lylIeqkpXASHrbuDq7r179ob448AEGRF0d24o6en+
-         nT73eNfAglANSEg0AWpkdjD5PHaIuUx0sFn/Xlpg3Jz4QJYsthLfRKV6Y6/GmM++fmDo
-         cR2MJkhM06x7dXysw3pAGsunGpsKPYOH57/lmyrmOsKCqxxot7wUA9Pf7MxBzoq6C5VK
-         KmUjm2zl/3frQKVk9NB7699bCMhmqWCjl0sB8ufYuALwtiYYgSb/RX2nfB51FkyBx6wF
-         Vn2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724910982; x=1725515782;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oN+N69wCZiTHjAzKrZyYz5mHgQfDfNRMmqum6pBByWw=;
-        b=bbLpewKeMKL4ZOgxADwOhBL/HxwHMDA1k+TB7IlLOALUsPXPaaQPIrJaVN2tLCNZ3l
-         lpW1OdFcTHFmU304JQnP7N3xokCHz8ihd+oCt7v7oMRvgrAaAbNffprwu1i3gJifi7PG
-         NuQMgtvrY519KTSjpGoeCj2NuL+Fuwd+lUouNm5vgQwoqjlPXk/GX9raXbn/lE3rU/P2
-         1Fb2f9P/warIM/Y+CUcMYjq35xIrKt3LZfbyK+uFVt9Fh9qY5xER0PpABalblBIC4+z2
-         u3CSXWnw+8LDci2kcF+3INWXE/B47dAK0KTPQqEDVTiIp2eo6zJNYfsk0lV53mEdV8pJ
-         TLzg==
-X-Forwarded-Encrypted: i=1; AJvYcCWaIEuS/PgXxYg7OFAN8pU78eoO5jLfienShfGaJk1heD9NPbArW+iRBrv/z7TNXCYkWdRuhVXDjAqn8Ag=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYft3tOTjgxtF/hWpe1KiyfrkpXB5P8z+5fJHWlZ26p8HKfeGw
-	4rJnUTuDEmkcsWv3KbOgRuttlneL2VuHDbqZyx+b7/Xh7G2mDmyAlRgwa/H1OktQw4LbUNtbqyv
-	n43BRzp3DAcdFYpSmsgveJC68FCs=
-X-Google-Smtp-Source: AGHT+IHP6BaFC1oihqrY9vQTIo6gIv4P0ceqYs0YTlDpfFUYDYPaoTA+3NjEoRcXUKcqpFYiXkn7384WVB4BcOYCKJc=
-X-Received: by 2002:a05:690c:6206:b0:6b2:1b65:4c05 with SMTP id
- 00721157ae682-6d2764fa003mr20738067b3.17.1724910981723; Wed, 28 Aug 2024
- 22:56:21 -0700 (PDT)
+	s=arc-20240116; t=1724910991; c=relaxed/simple;
+	bh=MFg+ITjK7BXdRP6IrxNH4jBB6eGK0jmaSr5cqf/2EZM=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=Q7m9S0VX7ES+e28Z0gIZieuvEKnaGYSFCqDYke/3Cd4+LzNR8lDPfDd0OExtYICB1u5NbhmxqHQhGYs1YV4IbKidnQveee88Zw3YZouDQK60l5Wrb3hrOb0JUEC2Kr5P9Orhj+NLEiJneuOcJgEM+yb9Pl5WfApN1z/G5+J8wso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app07-12007 (RichMail) with SMTP id 2ee766d00d85eef-b2ef3;
+	Thu, 29 Aug 2024 13:56:24 +0800 (CST)
+X-RM-TRANSID:2ee766d00d85eef-b2ef3
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from ubuntu.localdomain (unknown[223.108.79.99])
+	by rmsmtp-syy-appsvr07-12007 (RichMail) with SMTP id 2ee766d00d86c6c-914a4;
+	Thu, 29 Aug 2024 13:56:24 +0800 (CST)
+X-RM-TRANSID:2ee766d00d86c6c-914a4
+From: Zhu Jun <zhujun2@cmss.chinamobile.com>
+To: akpm@linux-foundation.org
+Cc: linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	zhujun2@cmss.chinamobile.com
+Subject: [PATCH] tools/mm: Use calloc and check the potential memory allocation failure
+Date: Wed, 28 Aug 2024 22:56:21 -0700
+Message-Id: <20240829055621.3890-1-zhujun2@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240826192904.100181-1-rosenp@gmail.com> <Zs_9yVMp8moxGfpE@pengutronix.de>
-In-Reply-To: <Zs_9yVMp8moxGfpE@pengutronix.de>
-From: Rosen Penev <rosenp@gmail.com>
-Date: Wed, 28 Aug 2024 22:56:15 -0700
-Message-ID: <CAKxU2N9Lhe7vMpsUgrdpZ7m04-eoT4XA--LRHO0-ssfkPbEyKw@mail.gmail.com>
-Subject: Re: [PATCHv4 net-next] net: ag71xx: get reset control using devm api
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com, 
-	kuba@kernel.org, pabeni@redhat.com, linux@armlinux.org.uk, 
-	linux-kernel@vger.kernel.org, p.zabel@pengutronix.de
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 28, 2024 at 9:49=E2=80=AFPM Oleksij Rempel <o.rempel@pengutroni=
-x.de> wrote:
->
-> On Mon, Aug 26, 2024 at 12:28:45PM -0700, Rosen Penev wrote:
-> > Currently, the of variant is missing reset_control_put in error paths.
-> > The devm variant does not require it.
-> >
-> > Allows removing mdio_reset from the struct as it is not used outside th=
-e
-> > function.
-> >
-> > Signed-off-by: Rosen Penev <rosenp@gmail.com>
->
-> You forgot to include my Reviewed-by tags from v3
-Correct. Although Jakub wants me to respin this removing that always
-true branch.
->
-> --
-> Pengutronix e.K.                           |                             =
-|
-> Steuerwalder Str. 21                       | http://www.pengutronix.de/  =
-|
-> 31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    =
-|
-> Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 =
-|
+Replace malloc with calloc and add memory allocating check
+of comm_str before used.
+
+Signed-off-by: Zhu Jun <zhujun2@cmss.chinamobile.com>
+---
+ tools/mm/page_owner_sort.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/tools/mm/page_owner_sort.c b/tools/mm/page_owner_sort.c
+index e1f264444342..4e2329831810 100644
+--- a/tools/mm/page_owner_sort.c
++++ b/tools/mm/page_owner_sort.c
+@@ -368,9 +368,12 @@ static __u64 get_ts_nsec(char *buf)
+ 
+ static char *get_comm(char *buf)
+ {
+-	char *comm_str = malloc(TASK_COMM_LEN);
++	char *comm_str = calloc(TASK_COMM_LEN, sizeof(char));
+ 
+-	memset(comm_str, 0, TASK_COMM_LEN);
++	if (!comm_str) {
++		fprintf(stderr, "Out of memory\n");
++		return NULL;
++	}
+ 
+ 	search_pattern(&comm_pattern, comm_str, buf);
+ 	errno = 0;
+-- 
+2.17.1
+
+
+
 
