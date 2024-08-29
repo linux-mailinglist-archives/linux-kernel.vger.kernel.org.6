@@ -1,203 +1,195 @@
-Return-Path: <linux-kernel+bounces-307308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A71D1964B91
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 18:22:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE476964B8D
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 18:22:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC6031C20DF8
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:22:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 673C628224F
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:22:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66CD81B6547;
-	Thu, 29 Aug 2024 16:21:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2EEE1B5ED1;
+	Thu, 29 Aug 2024 16:21:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CoARXOaD"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="fTrW7e+N"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5DAF1B5325;
-	Thu, 29 Aug 2024 16:21:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724948495; cv=none; b=BLye7u37lMJ1Fhs5Zjg6/lnotqpXJm2PX2E/KdNYW2+SP+lhKEN+fIa6Lz1yrhKUdW7sjp4zXSu2xqgRgcraXYVWQ6H9n601UMQSE6M6nPfN3kd6TaN3nG0pMkMW0u0lF80LrdJo9RR/ypGHpCVb87PAn27d/617bi2e5014Ip8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724948495; c=relaxed/simple;
-	bh=QSD0KfHL5nBVjCs5CyKPuF0Hu/LItF1ebis/Y0+ARtE=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A5211B4C30
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 16:21:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724948486; cv=pass; b=BNMcjqhdNy5BtjfJuc4Sw3jLiJVc7kQ0gXfIMkf5d6PIkRX2SPtlWEo9IXu6ZFQKjA5f0DwT4X8rOJAYWzU9IiIBwg8im5IEGLaRPkF7KMl45diLnmmmQQRz+WioPqWYtscgoYTrL2pLTTjkEVplfOEQbllR1GMS6HaNhZlGMQo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724948486; c=relaxed/simple;
+	bh=0HcdaEdylsCGyRJy2Q38Frq+sDsEr1LQSV/jfzYcQco=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HREtMqugwx1znK7376Rs0BY5cDsNHw3BXgKCGUxExXPdc75QnU0MvL9coYezjgOr7aaYVwLdR6PXZX+jDWiYoatO69JF2MsNt70OmFM5hEkezSvFtGL/WzQXEYYzFzeLscSCM6sbHREqlWBuFq+UB4M5YY+nxS9laqP+P/F9fbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CoARXOaD; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724948493; x=1756484493;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=QSD0KfHL5nBVjCs5CyKPuF0Hu/LItF1ebis/Y0+ARtE=;
-  b=CoARXOaDXvSxzo5PFlyYg6jyW5xR47lo+6Da/LT7bPo8kyF+dc1vAnHR
-   m8RauvLq0C0Owqo210V3hw948HykysylRgRdUc8/8fPxoCn3pcmlGkuKF
-   NU+wDpJxynLnEFzjhpzQhACjdKdiKWiit80loWmE010eXip9DM8jw8Mbj
-   35W1W2g7TVj7btBBWowhYakfLwkE7lMYibkgAgEuLFk82lD4AfgjGB66S
-   rcoGE49Z92WBBw4aCcuofvp1XHo/BwM9jRL3e2G4Vj5cngxyWebv7Q/ZG
-   E2kDzUtmvmMOqHSpOwQZujzILKSNwfjPnqunQSxXw2Fh/wqN4bDyX+Mim
-   g==;
-X-CSE-ConnectionGUID: KeyKL/QhQbaVHwapqPTZ+A==
-X-CSE-MsgGUID: a5J9g5BGTgOJguCRlRoaIg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11179"; a="23725567"
-X-IronPort-AV: E=Sophos;i="6.10,186,1719903600"; 
-   d="scan'208";a="23725567"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 09:21:32 -0700
-X-CSE-ConnectionGUID: baVme5SvQhCgxvjuylVrYg==
-X-CSE-MsgGUID: SRL9VVpyRRKKuQttzYY6tg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,186,1719903600"; 
-   d="scan'208";a="94368725"
-Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
-  by orviesa002.jf.intel.com with ESMTP; 29 Aug 2024 09:21:30 -0700
-Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sjhtm-0000So-29;
-	Thu, 29 Aug 2024 16:21:26 +0000
-Date: Fri, 30 Aug 2024 00:20:59 +0800
-From: kernel test robot <lkp@intel.com>
-To: Haifeng Xu <haifeng.xu@shopee.com>, viro@zeniv.linux.org.uk,
-	brauner@kernel.org, jack@suse.cz
-Cc: oe-kbuild-all@lists.linux.dev, tytso@mit.edu, yi.zhang@huaweicloud.com,
-	yukuai1@huaweicloud.com, tj@kernel.org, linux-ext4@vger.kernel.org,
-	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Haifeng Xu <haifeng.xu@shopee.com>
-Subject: Re: [PATCH] buffer: Associate the meta bio with blkg from buffer page
-Message-ID: <202408300007.m9sHEOXo-lkp@intel.com>
-References: <20240828033224.146584-1-haifeng.xu@shopee.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ju9pTE5wUeA/zJpTqB050zNVfU3yTBYNrRwXn/tvReYJA3nmta8oPFWFYtJdFcCXYcPZfIGs7wOM8QWRiescAcctnC+JulbQOI5bBJEVaW/2VznrMO1EcUE8t/Ln+AWsq5Ztahdwbo9+KDCELQ37OWX8aPBBHBXK5Yd3aAJXKIM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=fTrW7e+N; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Delivered-To: boris.brezillon@collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1724948466; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=leG/d0cR2+56+PyJKOdsLHdb8mkE15DZegxKb641DYlutiv/wRzy4PtBg4lWYTNj5BGSL5ZZ8I211hpqE7fScJOxWlnt3v4j3goBGa57Bl4ccD+7M5r6ivOGLFfp6nLyFFSCoo0toUPL8MEOLkHgYX78RPJXBdC5vSzSbBhZFLU=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1724948466; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=3eq8FwzxjN39W3vHF7pwhZn8LHFFsJbAnMpv8vr2dmU=; 
+	b=DP+KW+2r17rJM5lWP+ymS/fjjCQIlain/EHKZ553sMBlV9dEsc7n7HqrLn0aLJUMwrjgBJU2+IkbeNwfW+bU/HXjReNBEi5MQ2oNbdoYoruxWXNzt8j4J2wkmi6dQ8Z5E9sXqLgmD2Wj+ukcCoGMsebAfDT0wBISrSLe653ZXCA=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
+	dmarc=pass header.from=<adrian.larumbe@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1724948466;
+	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To:Message-Id:Reply-To;
+	bh=3eq8FwzxjN39W3vHF7pwhZn8LHFFsJbAnMpv8vr2dmU=;
+	b=fTrW7e+Nxz366hxitPPr3zy7AUb5A2mSsY6baKlgXmsv9JHdaZBWPRDQ4iUZkTDB
+	dVFZ+ty5Mt4Xmo4/GdfdVepiNi6ubJd5gcxSFDlJuSh2Wh2X7XoZYYZQjTFVPugN8D4
+	/4XVARxU0BoBZdVYErbJldC/X/shB7EFTZHHrSo0=
+Received: by mx.zohomail.com with SMTPS id 1724948464346650.5979957472007;
+	Thu, 29 Aug 2024 09:21:04 -0700 (PDT)
+Date: Thu, 29 Aug 2024 17:21:00 +0100
+From: =?utf-8?Q?Adri=C3=A1n?= Larumbe <adrian.larumbe@collabora.com>
+To: Liviu Dudau <liviu.dudau@arm.com>
+Cc: Boris Brezillon <boris.brezillon@collabora.com>, 
+	Steven Price <steven.price@arm.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, kernel@collabora.com, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/panthor: flush FW AS caches in slow reset path
+Message-ID: <lmle5ub5y2tz6vyamqvgvfqrbw6gymgncw3hn4s23zrjf63bmd@rj7aioyqy4uo>
+References: <20240816185250.344080-1-adrian.larumbe@collabora.com>
+ <20240817111017.2a010061@collabora.com>
+ <ZtCMUg-PoOUH98Ub@e110455-lin.cambridge.arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240828033224.146584-1-haifeng.xu@shopee.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZtCMUg-PoOUH98Ub@e110455-lin.cambridge.arm.com>
 
-Hi Haifeng,
+On 29.08.2024 15:57, Liviu Dudau wrote:
+> Hi Adrián,
+> 
+> On Sat, Aug 17, 2024 at 11:10:17AM +0200, Boris Brezillon wrote:
+> > On Fri, 16 Aug 2024 19:52:49 +0100
+> > Adrián Larumbe <adrian.larumbe@collabora.com> wrote:
+> > 
+> > > In the off-chance that waiting for the firmware to signal its booted status
+> > > timed out in the fast reset path, one must flush the cache lines for the
+> > > entire FW VM address space before reloading the regions, otherwise stale
+> > > values eventually lead to a scheduler job timeout.
+> > > 
+> > > Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
+> > 
+> > We probably want Fixes/Cc-stable tags here.
+> > 
+> > > ---
+> > >  drivers/gpu/drm/panthor/panthor_fw.c  |  8 +++++++-
+> > >  drivers/gpu/drm/panthor/panthor_mmu.c | 19 ++++++++++++++++---
+> > >  drivers/gpu/drm/panthor/panthor_mmu.h |  1 +
+> > >  3 files changed, 24 insertions(+), 4 deletions(-)
+> > > 
+> > > diff --git a/drivers/gpu/drm/panthor/panthor_fw.c b/drivers/gpu/drm/panthor/panthor_fw.c
+> > > index 857f3f11258a..ef232c0c2049 100644
+> > > --- a/drivers/gpu/drm/panthor/panthor_fw.c
+> > > +++ b/drivers/gpu/drm/panthor/panthor_fw.c
+> > > @@ -1089,6 +1089,12 @@ int panthor_fw_post_reset(struct panthor_device *ptdev)
+> > >  		panthor_fw_stop(ptdev);
+> > >  		ptdev->fw->fast_reset = false;
+> > >  		drm_err(&ptdev->base, "FW fast reset failed, trying a slow reset");
+> > > +
+> > > +		ret = panthor_vm_flush_all(ptdev->fw->vm);
+> > > +		if (ret) {
+> > > +			drm_err(&ptdev->base, "FW slow reset failed (couldn't flush FW's AS l2cache)");
+> > > +			return ret;
+> > > +		}
+> > >  	}
+> > >  
+> > >  	/* Reload all sections, including RO ones. We're not supposed
+> > > @@ -1099,7 +1105,7 @@ int panthor_fw_post_reset(struct panthor_device *ptdev)
+> > >  
+> > >  	ret = panthor_fw_start(ptdev);
+> > >  	if (ret) {
+> > > -		drm_err(&ptdev->base, "FW slow reset failed");
+> > > +		drm_err(&ptdev->base, "FW slow reset failed (couldn't start the FW )");
+> > >  		return ret;
+> > >  	}
+> > >  
+> > > diff --git a/drivers/gpu/drm/panthor/panthor_mmu.c b/drivers/gpu/drm/panthor/panthor_mmu.c
+> > > index d47972806d50..a77ee5ce691d 100644
+> > > --- a/drivers/gpu/drm/panthor/panthor_mmu.c
+> > > +++ b/drivers/gpu/drm/panthor/panthor_mmu.c
+> > > @@ -874,14 +874,27 @@ static int panthor_vm_flush_range(struct panthor_vm *vm, u64 iova, u64 size)
+> > >  	if (!drm_dev_enter(&ptdev->base, &cookie))
+> > >  		return 0;
+> > >  
+> > > -	/* Flush the PTs only if we're already awake */
+> > > -	if (pm_runtime_active(ptdev->base.dev))
+> > > -		ret = mmu_hw_do_operation(vm, iova, size, AS_COMMAND_FLUSH_PT);
+> > > +	/*
+> > > +	 * If we made it this far, that means the device is awake, because
+> > > +	 * upon device suspension, all active VMs are given an AS id of -1
+> > > +	 */
+> > > +	ret = mmu_hw_do_operation(vm, iova, size, AS_COMMAND_FLUSH_PT);
+> > 
+> > I would normally prefer this change to be in its own commit, but given
+> > this is needed to be able to flush caches in the resume path, I'm fine
+> > keeping it in the same patch. The comment is a bit odd now that you
+> > dropped the pm_runtime_active() call though. I would rather have a
+> > comment in mmu_hw_do_operation_locked(), after the AS ID check
+> > explaining that as.id >= 0 guarantees that the HW is up and running,
+> > and that we can proceed with the flush operation without calling
+> > pm_runtime_active().
+> 
+> Given Boris' comments, are you planning on sending a v2?
 
-kernel test robot noticed the following build errors:
+Sure, I got caught up in a bunch of higher priority tasks this week, but I'll be
+sending a v2 either before the end of this week or early next week.
 
-[auto build test ERROR on brauner-vfs/vfs.all]
-[also build test ERROR on linus/master v6.11-rc5 next-20240829]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> Best regards,
+> Liviu
+> 
+> > 
+> > >  
+> > >  	drm_dev_exit(cookie);
+> > >  	return ret;
+> > >  }
+> > >  
+> > > +/**
+> > > + * panthor_vm_flush_all() - Flush L2 caches for the entirety of a VM's AS
+> > > + * @vm: VM whose cache to flush
+> > > + *
+> > > + * Return: 0 on success, a negative error code if flush failed.
+> > > + */
+> > > +int panthor_vm_flush_all(struct panthor_vm *vm)
+> > > +{
+> > > +	return panthor_vm_flush_range(vm, vm->base.mm_start, vm->base.mm_range);
+> > > +}
+> > > +
+> > >  static int panthor_vm_unmap_pages(struct panthor_vm *vm, u64 iova, u64 size)
+> > >  {
+> > >  	struct panthor_device *ptdev = vm->ptdev;
+> > > diff --git a/drivers/gpu/drm/panthor/panthor_mmu.h b/drivers/gpu/drm/panthor/panthor_mmu.h
+> > > index f3c1ed19f973..6788771071e3 100644
+> > > --- a/drivers/gpu/drm/panthor/panthor_mmu.h
+> > > +++ b/drivers/gpu/drm/panthor/panthor_mmu.h
+> > > @@ -31,6 +31,7 @@ panthor_vm_get_bo_for_va(struct panthor_vm *vm, u64 va, u64 *bo_offset);
+> > >  int panthor_vm_active(struct panthor_vm *vm);
+> > >  void panthor_vm_idle(struct panthor_vm *vm);
+> > >  int panthor_vm_as(struct panthor_vm *vm);
+> > > +int panthor_vm_flush_all(struct panthor_vm *vm);
+> > >  
+> > >  struct panthor_heap_pool *
+> > >  panthor_vm_get_heap_pool(struct panthor_vm *vm, bool create);
+> > 
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Haifeng-Xu/buffer-Associate-the-meta-bio-with-blkg-from-buffer-page/20240828-113409
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
-patch link:    https://lore.kernel.org/r/20240828033224.146584-1-haifeng.xu%40shopee.com
-patch subject: [PATCH] buffer: Associate the meta bio with blkg from buffer page
-config: alpha-defconfig (https://download.01.org/0day-ci/archive/20240830/202408300007.m9sHEOXo-lkp@intel.com/config)
-compiler: alpha-linux-gcc (GCC) 13.3.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240830/202408300007.m9sHEOXo-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408300007.m9sHEOXo-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   fs/buffer.c: In function 'submit_bh_wbc':
-   fs/buffer.c:2826:29: error: implicit declaration of function 'mem_cgroup_css_from_folio'; did you mean 'mem_cgroup_from_obj'? [-Werror=implicit-function-declaration]
-    2826 |                 memcg_css = mem_cgroup_css_from_folio(folio);
-         |                             ^~~~~~~~~~~~~~~~~~~~~~~~~
-         |                             mem_cgroup_from_obj
-   fs/buffer.c:2826:27: warning: assignment to 'struct cgroup_subsys_state *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
-    2826 |                 memcg_css = mem_cgroup_css_from_folio(folio);
-         |                           ^
->> fs/buffer.c:2827:21: error: implicit declaration of function 'cgroup_subsys_on_dfl' [-Werror=implicit-function-declaration]
-    2827 |                 if (cgroup_subsys_on_dfl(memory_cgrp_subsys) &&
-         |                     ^~~~~~~~~~~~~~~~~~~~
->> fs/buffer.c:2827:42: error: 'memory_cgrp_subsys' undeclared (first use in this function)
-    2827 |                 if (cgroup_subsys_on_dfl(memory_cgrp_subsys) &&
-         |                                          ^~~~~~~~~~~~~~~~~~
-   fs/buffer.c:2827:42: note: each undeclared identifier is reported only once for each function it appears in
-   fs/buffer.c:2828:42: error: 'io_cgrp_subsys' undeclared (first use in this function)
-    2828 |                     cgroup_subsys_on_dfl(io_cgrp_subsys)) {
-         |                                          ^~~~~~~~~~~~~~
->> fs/buffer.c:2829:37: error: implicit declaration of function 'cgroup_e_css'; did you mean 'cgroup_exit'? [-Werror=implicit-function-declaration]
-    2829 |                         blkcg_css = cgroup_e_css(memcg_css->cgroup, &io_cgrp_subsys);
-         |                                     ^~~~~~~~~~~~
-         |                                     cgroup_exit
->> fs/buffer.c:2829:59: error: invalid use of undefined type 'struct cgroup_subsys_state'
-    2829 |                         blkcg_css = cgroup_e_css(memcg_css->cgroup, &io_cgrp_subsys);
-         |                                                           ^~
-   cc1: some warnings being treated as errors
-
-
-vim +/cgroup_subsys_on_dfl +2827 fs/buffer.c
-
-  2778	
-  2779	static void submit_bh_wbc(blk_opf_t opf, struct buffer_head *bh,
-  2780				  enum rw_hint write_hint,
-  2781				  struct writeback_control *wbc)
-  2782	{
-  2783		const enum req_op op = opf & REQ_OP_MASK;
-  2784		struct bio *bio;
-  2785	
-  2786		BUG_ON(!buffer_locked(bh));
-  2787		BUG_ON(!buffer_mapped(bh));
-  2788		BUG_ON(!bh->b_end_io);
-  2789		BUG_ON(buffer_delay(bh));
-  2790		BUG_ON(buffer_unwritten(bh));
-  2791	
-  2792		/*
-  2793		 * Only clear out a write error when rewriting
-  2794		 */
-  2795		if (test_set_buffer_req(bh) && (op == REQ_OP_WRITE))
-  2796			clear_buffer_write_io_error(bh);
-  2797	
-  2798		if (buffer_meta(bh))
-  2799			opf |= REQ_META;
-  2800		if (buffer_prio(bh))
-  2801			opf |= REQ_PRIO;
-  2802	
-  2803		bio = bio_alloc(bh->b_bdev, 1, opf, GFP_NOIO);
-  2804	
-  2805		fscrypt_set_bio_crypt_ctx_bh(bio, bh, GFP_NOIO);
-  2806	
-  2807		bio->bi_iter.bi_sector = bh->b_blocknr * (bh->b_size >> 9);
-  2808		bio->bi_write_hint = write_hint;
-  2809	
-  2810		__bio_add_page(bio, bh->b_page, bh->b_size, bh_offset(bh));
-  2811	
-  2812		bio->bi_end_io = end_bio_bh_io_sync;
-  2813		bio->bi_private = bh;
-  2814	
-  2815		/* Take care of bh's that straddle the end of the device */
-  2816		guard_bio_eod(bio);
-  2817	
-  2818		if (wbc) {
-  2819			wbc_init_bio(wbc, bio);
-  2820			wbc_account_cgroup_owner(wbc, bh->b_page, bh->b_size);
-  2821		} else if (buffer_meta(bh)) {
-  2822			struct folio *folio;
-  2823			struct cgroup_subsys_state *memcg_css, *blkcg_css;
-  2824	
-  2825			folio = page_folio(bh->b_page);
-  2826			memcg_css = mem_cgroup_css_from_folio(folio);
-> 2827			if (cgroup_subsys_on_dfl(memory_cgrp_subsys) &&
-  2828			    cgroup_subsys_on_dfl(io_cgrp_subsys)) {
-> 2829				blkcg_css = cgroup_e_css(memcg_css->cgroup, &io_cgrp_subsys);
-  2830				bio_associate_blkg_from_css(bio, blkcg_css);
-  2831			}
-  2832		}
-  2833	
-  2834		submit_bio(bio);
-  2835	}
-  2836	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Adrian Larumbe
 
