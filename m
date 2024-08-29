@@ -1,161 +1,96 @@
-Return-Path: <linux-kernel+bounces-306809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0128A9643EB
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 14:07:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AC2E9643EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 14:08:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A675E1F20F4D
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 12:07:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CCECC1C24714
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 12:08:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA1B719308E;
-	Thu, 29 Aug 2024 12:07:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B999B19309D;
+	Thu, 29 Aug 2024 12:08:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=shreeya.patel@collabora.com header.b="GeM63ouC"
-Received: from sender3-op-o17.zoho.com (sender3-op-o17.zoho.com [136.143.184.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TzbZXlSw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81E8718E755;
-	Thu, 29 Aug 2024 12:07:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.184.17
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724933259; cv=pass; b=YfSXLcZtemjIbTi+HDTYhzOlGq4//kEZCH2GOpfuzT8MpiAVUqBxrwJAhHB/zoA/NR0mNFDx6rUl5tkEjYopyjgLUH39p9hiBwOHeX+bNeDziYqlBYPyIZTFmkg1yO+XUgSGI8Jwl8RW2TAFuBbvx+WWSSDvqZ20N/oOrdX7sqg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724933259; c=relaxed/simple;
-	bh=4I+e2okk/YXtq/9Vz9Ywovnl1TTnH572UNNPSZy1zgM=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=nKXpJvst2gTaF2rJhziBVU8yqJyJRKUBj6gbmKg35yxf69jnKOrOTddq+HdxV8mQKQ0Ldes20kLcCn7qhRj9Igo8zRLtNtht9yFar9IHDo7atle1FkBBbLzcqOCr/fs3rnNRrRX4PmP8crePoq8+SQp5z7cepgbNkatX1mz9sFY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=shreeya.patel@collabora.com header.b=GeM63ouC; arc=pass smtp.client-ip=136.143.184.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Delivered-To: kernelci-regressions@collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1724933230; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=lAgKO66A+YW8nXOM/2RPjho0fKN+McEJFnRbNCQ4B85A6hz8qHLTygeQitDEWEWuhvpBxR8NqXlnfM5FGSYjwP4VoC958q872KZmIKL7d2UR5IcrLKrqiFaONPrZAOSbkXCH/zIDjrrZFOIr7nrsWBe2AcjLK0MPRtV8rSpVxMY=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1724933230; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=suyBxaZl/fG6Fm9ksWETuidxGq6YUFN7oHDB/v3rqIw=; 
-	b=czOsfKpv/XYBqizsDvgmRpb/d9K+6eBpnwl6CPxS56H8Ds0B1f/k3mrfYEdxLGD/41uyeoeHpaWLESu9ZhfXCSkWc7FOm1RCiqSS24cKzkwe00G4C5DqYboaUjLqx0db8oVbk5t15egmNbZd80FY+xd3LMayGri/GVRbI2wROig=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=shreeya.patel@collabora.com;
-	dmarc=pass header.from=<shreeya.patel@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1724933230;
-	s=zohomail; d=collabora.com; i=shreeya.patel@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=suyBxaZl/fG6Fm9ksWETuidxGq6YUFN7oHDB/v3rqIw=;
-	b=GeM63ouCQd+7kOawk7G+duxxreMxS7IuB96Dvnx0NxIaWwkT4IGbYtzZGO7ARF4l
-	Af2nAlPhyLssZyIUIF1Hv5sbOyD3eRsJb2lgu7wAUSH3gqHAHTDzZNQhrEwjm9oxqRh
-	khH7TbE4opIcwPCpv2IBwc01ZxlywtueaQArVNFg=
-Received: from mail.zoho.com by mx.zohomail.com
-	with SMTP id 1724933227631219.01950855698306; Thu, 29 Aug 2024 05:07:07 -0700 (PDT)
-Date: Thu, 29 Aug 2024 17:37:07 +0530
-From: Shreeya Patel <shreeya.patel@collabora.com>
-To: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
-Cc: "stable" <stable@vger.kernel.org>, "patches" <patches@lists.linux.dev>,
-	"linux-kernel" <linux-kernel@vger.kernel.org>,
-	"torvalds" <torvalds@linux-foundation.org>,
-	"akpm" <akpm@linux-foundation.org>, "linux" <linux@roeck-us.net>,
-	"shuah" <shuah@kernel.org>, "patches" <patches@kernelci.org>,
-	"lkft-triage" <lkft-triage@lists.linaro.org>,
-	"pavel" <pavel@denx.de>, "jonathanh" <jonathanh@nvidia.com>,
-	"f.fainelli" <f.fainelli@gmail.com>,
-	"sudipm.mukherjee" <sudipm.mukherjee@gmail.com>,
-	"srw" <srw@sladewatkins.net>, "rwarsow" <rwarsow@gmx.de>,
-	"conor" <conor@kernel.org>, "allen.lkml" <allen.lkml@gmail.com>,
-	"broonie" <broonie@kernel.org>,
-	"Kernel CI - Regressions" <kernelci-regressions@collabora.com>,
-	"Gustavo Padovan" <gustavo.padovan@collabora.com>,
-	"Jeny Sheth" <jeny.sadadia@collabora.com>
-Message-ID: <1919e08445a.c252539b484915.5023963413874535346@collabora.com>
-In-Reply-To: <20240827143838.192435816@linuxfoundation.org>
-References: <20240827143838.192435816@linuxfoundation.org>
-Subject: Re: [PATCH 6.1 000/321] 6.1.107-rc1 review
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 071B816D300;
+	Thu, 29 Aug 2024 12:08:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724933317; cv=none; b=qZDOOCa8PSh4pxjXoRvzRzVZin+wK0F8jOiQptYwcek/MipUd9mGOpYmaSlf0xBRpMXqn7HrCFu25p20Av44D5/9mLztonFRGoNB7BAzX5YzN1txksbsFoDVrbBiQR3n9byguqQKpMMTQ3R2iWGa5iocn1g4bX/sY7ShqBChtYk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724933317; c=relaxed/simple;
+	bh=2SZ4w3HmQZKF9leGXOpc3uWRQCOEUBftuvZc6PwMW9w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Svz3BTH0KJH2ALV/zYkjlkCIzNvhqzAjokaRRk3sUe7SBIO5us5aCH4KDXr8EHCufrW6yAtdrmlTZBvjqOsNpRepnNH0iKmXVdpfw5hnY8K1qmvO4xgKrj93YkvTMGg0TyUPsjJGatLWKlWkNqEtGCh3d/y2RSl12dyszrhn2F0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TzbZXlSw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6477EC4CEC1;
+	Thu, 29 Aug 2024 12:08:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724933316;
+	bh=2SZ4w3HmQZKF9leGXOpc3uWRQCOEUBftuvZc6PwMW9w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TzbZXlSwNfN70LSKXvrZLAa3jlrXONrIVJZ2ndZo9vB4HepPvEp7WF2p7oqiCm3f0
+	 zQFQiJ+VtSqjH73nolgWmqwyykAnGxbiLcu4jCdyLWa240d2l3KRoZgnfEPTvIKozt
+	 bI9R3Kv7WluzFekWkla32KttyXbMhLE/BkC6MR/BiRMejAzOObdI9E32EFx7+uXndz
+	 ybA3a3MIPAlxQnV5doFIVYjBK7SnOoOc0p7GkMOK2UxrsJQddj9oNM8uAiMzIcgLNh
+	 4B10v/CDxM0UlyRmQTmOP6HzB23I2n1kVdrPqRjGd/FujC9J75wOxJZXqiJsgAmt7w
+	 YsT89c0a9dnPA==
+Date: Thu, 29 Aug 2024 14:08:31 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>, 
+	mszeredi@redhat.com, stgraber@stgraber.org, linux-fsdevel@vger.kernel.org, 
+	Seth Forshee <sforshee@kernel.org>, Amir Goldstein <amir73il@gmail.com>, 
+	Bernd Schubert <bschubert@ddn.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 2/9] fs/fuse: add FUSE_OWNER_UID_GID_EXT extension
+Message-ID: <20240829-hurtig-vakuum-5011fdeca0ed@brauner>
+References: <20240108120824.122178-1-aleksandr.mikhalitsyn@canonical.com>
+ <20240108120824.122178-3-aleksandr.mikhalitsyn@canonical.com>
+ <CAJfpegtixg+NRv=hUhvkjxFaLqb_Vhb6DSxmRNxXD-GHAGiHGg@mail.gmail.com>
+ <CAEivzxeva5ipjihSrMa4u=uk9sDm9DNg9cLoYg0O6=eU2jLNQQ@mail.gmail.com>
+ <CAJfpegsqPz+8iDVZmmSHn09LZ9fMwyYzb+Kib4258y8jSafsYQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Importance: Medium
-User-Agent: Zoho Mail
-X-Mailer: Zoho Mail
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAJfpegsqPz+8iDVZmmSHn09LZ9fMwyYzb+Kib4258y8jSafsYQ@mail.gmail.com>
 
- ---- On Tue, 27 Aug 2024 20:05:08 +0530  Greg Kroah-Hartman  wrote ---=20
- > This is the start of the stable review cycle for the 6.1.107 release.
- > There are 321 patches in this series, all will be posted as a response
- > to this one.  If anyone has any issues with these being applied, please
- > let me know.
- >=20
- > Responses should be made by Thu, 29 Aug 2024 14:37:36 +0000.
- > Anything received after that time might be too late.
- >=20
- > The whole patch series can be found in one patch at:
- > =C2=A0=C2=A0=C2=A0=C2=A0https://www.kernel.org/pub/linux/kernel/v6.x/sta=
-ble-review/patch-6.1.107-rc1.gz
- > or in the git tree and branch at:
- > =C2=A0=C2=A0=C2=A0=C2=A0git://git.kernel.org/pub/scm/linux/kernel/git/st=
-able/linux-stable-rc.git linux-6.1.y
- > and the diffstat can be found below.
- >=20
+On Thu, Aug 29, 2024 at 10:24:42AM GMT, Miklos Szeredi wrote:
+> On Thu, 18 Jul 2024 at 21:12, Aleksandr Mikhalitsyn
+> <aleksandr.mikhalitsyn@canonical.com> wrote:
+> 
+> > This was a first Christian's idea when he originally proposed a
+> > patchset for cephfs [2]. The problem with this
+> > approach is that we don't have an idmapping provided in all
+> > inode_operations, we only have it where it is supposed to be.
+> > To workaround that, Christian suggested applying a mapping only when
+> > we have mnt_idmap, but if not just leave uid/gid as it is.
+> > This, of course, leads to inconsistencies between different
+> > inode_operations, for example ->lookup (idmapping is not applied) and
+> > ->symlink (idmapping is applied).
+> > This inconsistency, really, is not a big deal usually, but... what if
+> > a server does UID/GID-based permission checks? Then it is a problem,
+> > obviously.
+> 
+> Is it even sensible to do UID/GID-based permission checks in the
+> server if idmapping is enabled?
 
-Hi,
+It really makes no sense.
 
-Please find the KernelCI report below :-
+> 
+> If not, then we should just somehow disable that configuration (i.e.
+> by the server having to opt into idmapping), and then we can just use
+> the in_h.[ugi]d for creates, no?
 
-
-OVERVIEW
-
-    Builds: 25 passed, 2 failed
-
-    Boot tests: 412 passed, 0 failed
-
-    CI systems: broonie, maestro
-
-REVISION
-
-    Commit
-        name: v6.1.106-322-gb9218327d235
-        hash: b9218327d235d21e2e82c8dc6a8ef4a389c9c6a6
-    Checked out from
-        https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-6.1.y
-
-
-BUILDS
-
-    Failures
-      -i386 (tinyconfig)
-      Build detail: https://kcidb.kernelci.org/d/build/build?orgId=3D1&var-=
-id=3Dmaestro:66cdf1fffb8042744d0f1923
-      Build error: kernel/rcu/rcu.h:218:17: error: implicit declaration of =
-function =E2=80=98kmem_dump_obj=E2=80=99; did you mean =E2=80=98mem_dump_ob=
-j=E2=80=99? [-Werror=3Dimplicit-function-declaration]
-      -x86_64 (tinyconfig)
-      Build detail: https://kcidb.kernelci.org/d/build/build?orgId=3D1&var-=
-id=3Dmaestro:66cdf200fb8042744d0f192a
-      Build error: kernel/rcu/rcu.h:218:17: error: implicit declaration of =
-function =E2=80=98kmem_dump_obj=E2=80=99; did you mean =E2=80=98mem_dump_ob=
-j=E2=80=99? [-Werror=3Dimplicit-function-declaration]
-      CI system: maestro
-
-
-BOOT TESTS
-
-No new boot failures found
-
-See complete and up-to-date report at:
-
-    https://kcidb.kernelci.org/d/revision/revision?orgId=3D1&var-git_commit=
-_hash=3Db9218327d235d21e2e82c8dc6a8ef4a389c9c6a6&var-patchset_hash=3D
-
-
-Tested-by: kernelci.org bot <bot@kernelci.org>
-
-Thanks,
-KernelCI team
+Fwiw, that's what the patchset is doing. It's only supported if the
+server sets "default_permissions".
 
