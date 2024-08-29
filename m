@@ -1,99 +1,190 @@
-Return-Path: <linux-kernel+bounces-306215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B158963B34
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:21:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB96C963B54
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:24:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22FD5285CCE
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 06:21:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 572751F24E8C
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 06:24:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D02B14F9DD;
-	Thu, 29 Aug 2024 06:21:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0380F16D306;
+	Thu, 29 Aug 2024 06:23:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ed/hTtDx"
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="SA4vrN+G"
+Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5778814A4EB
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 06:21:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BEE316B389
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 06:23:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724912494; cv=none; b=VCIR/VxcZpfOskjbI1JrF7GJiFraBMLBtbApzKtABVWju7NCPgc+734Fj1dlOcOSi3GPvdp6NsRuACn84u8isQsojig+85bmO4NvWruBvYxasG0UEV31OhRn/zuNA7g4n/tZ5WcmBceyyaIsfOQSJcpBaUsmN/duP/EMfaEntcw=
+	t=1724912611; cv=none; b=B90Du6YyW0pmSVRp4wvhDRFOlsFYoJZCNcPWanavHybbctsor/r5tEuuR/yiIzF/J/tJQj7vp27pubFWHjCd/AJDCkPXAUp/i0E4mdo195JT7gMLCl80qT/wEApcIES6SeUGdQgTOheKh3m7aMtZ5OjYcayX/cs3TeaTDpAqmUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724912494; c=relaxed/simple;
-	bh=4m+yGSdBhixhxvtmH1e1egnd1m06G0SnfHvjAyZhdsc=;
+	s=arc-20240116; t=1724912611; c=relaxed/simple;
+	bh=dkdmIuQYl1coKbga9XyJn6tBjWI8hTtx/BFx3J36z/s=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZWjFassIY4ueL1vkjEf/oR/XHFNnMc4iSOc+d4ouLfxFNTEjLYBVYjH5189FmuvEoLk+7T+eVRq43a9t1KWl4hZfaozeBJbdzX6omLntwIotBpbcPonmXtFpkcdBn4U8Rt9zGZlVnkh8x+y1vcgOkZ5wG4GKCMhxgjOUDCa0uaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ed/hTtDx; arc=none smtp.client-ip=209.85.128.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6b8f13f28fbso2805327b3.1
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 23:21:33 -0700 (PDT)
+	 To:Cc:Content-Type; b=EJVSQhS37W4it1V969kEeuUjDBBVTeKb9Nc6ZDcqr3A2yHalc+E+mGPWPxV0IdbuWcFUoqQJCjYUrYRxnVbdPT+A+ezsmzHDxQaQCo8q7/sJA5Zaj1x6xr1ig2LXIlVtWflobVyVSeBAtEHxRxCJ54TeFFyTlXdcpV+gk0SD+kE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=SA4vrN+G; arc=none smtp.client-ip=209.85.167.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-3db13410adfso179423b6e.2
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 23:23:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724912492; x=1725517292; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=4m+yGSdBhixhxvtmH1e1egnd1m06G0SnfHvjAyZhdsc=;
-        b=ed/hTtDxATFooCygmqy2GcSrpbNuUHXhLjgAMxr4UGRn2XPKZkQy4NwrA8ciT8wXQy
-         GZXqAIzjVHjSb4bZkm5sU23etNROyfbYje9y5B7eyjThMerLUJFNSPRXFy0EKrMWTjSd
-         5NAh+On745txIlpHJMM6gRp+al99uRdnOviir2MDJGPanh1Z+U2rVqcv/laetblo/MYJ
-         6IcUYChV17Wg6c8ECn+D0qLLeE1dBOD4Xug5Do2f5yL4Fvu0a16xQrtYyhWPvbXiDXUV
-         AU/QH+CVq7mszMfTOdbAfQ0ZK1FSQf5Seeg/wooYHJx5JhY/buwbc8w12JMCpIEFCaXp
-         HSBQ==
+        d=sifive.com; s=google; t=1724912608; x=1725517408; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=We5m3+H3R8SKY6TgdOmuAhW7gddzpKBKIL3OWVnLm/o=;
+        b=SA4vrN+GleCX+brUm5YBZZkIg+7W9IpjC7OB0KP5YENpab9Zk4dR2BQRbdJbsUhbrd
+         FClJ2QDK+4jh8Lm0x6Iakam7AZ6YH1h0E3uCFzl0upuJEetsxjqCg4fL6w1Z/3XoKDB4
+         ranr4ZpChBUsxbnNHYq/lB/FSnQNE+G2tUixN/s5tOCMSP82TaiKTX1jfSnA5y/D9BdP
+         ZPyEke6/TlK+nPREQxpm1dbghynV+0ObR0uk9PEZpfcOa3UnKSFggNgtKT8vGmQjEd9v
+         DUsSzdstx5La5bdllB/DpVd2CwiIamABFv6W2ee086loa6KKP3YEpUF/mG8+ZLIVtmHP
+         HPww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724912492; x=1725517292;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4m+yGSdBhixhxvtmH1e1egnd1m06G0SnfHvjAyZhdsc=;
-        b=G6lXaYsRRS1dN0MyNeXA2lRspbuXqcJdNxDQ8MIicUA4yNW3qIlbR97MToO1E06AeJ
-         q1sx1lat3pUVylGIaRyvecA4u5b/uQ3baf/BnKz6t4uxUGijQuI0Y61deXPRDz8lpaYM
-         wRMIR/4rtzyiQJtPrixHaWMc27NtztSkdMFQnfq3GtbFWwzG1kZPS0dBgw+R207IZKN3
-         +AfVG8z61FuKMPj1YMqpIGQUnbkpXE6P0vt0ZtC2lmsgrmynsdEAVp0PYrCeSjgaFT4j
-         CDAxvbmdlwndhv7NuAc5H5el5Uu41xQoOS/npRtFaTczMxoR567oyIEeHv7PsweLTNEd
-         e1VA==
-X-Forwarded-Encrypted: i=1; AJvYcCVBYm/PdOK8Xqm2/yiFoDCsnvg3bEvRcAkzjndcNBwzu/H+H51MNVT61og39rh1pNNQD66tw2RGbMOW7zg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0/pRBdahdcSjKV46i01exC1YWsG3SfwW7FqzaB+qVMlq5u2sH
-	q5DICBHM/k/7frY0BdYHzFhlFys0R7aKcoTqDtXOmCkai89PS9Prq9rdvMO1OfUmTMV0EHTyWSF
-	faeg9dz+lZ8LevtW8nhVfnhwyt60=
-X-Google-Smtp-Source: AGHT+IHMLEKsLhvNrpFB2co1aHPpoSBzoSmaC8bal4WcNj5PJZQOLOS3kwAZjR3oI8mxlBYACeDUFi9uQ35Ii9qQaX0=
-X-Received: by 2002:a05:690c:38b:b0:61b:342e:91ae with SMTP id
- 00721157ae682-6d277778e64mr16682037b3.36.1724912492142; Wed, 28 Aug 2024
- 23:21:32 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724912608; x=1725517408;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=We5m3+H3R8SKY6TgdOmuAhW7gddzpKBKIL3OWVnLm/o=;
+        b=QL9x7t/rD1i3dxhIgfU0W37N2bO2KIWpnE5hFQ6kma7TMcZCLUmMM7VcPi/Mwowxwl
+         PWc/CGfuvzXTEBDYOpWVzBS9hicGz75N6apSALpZs5WMFDxE9iV7JB2cantPk5XsEbCC
+         wmwk6LAaWquQzco+4z1ch+4md1o+x5fQHCcwl6oww8FlWxyVMaP5KblmJFwDgREFdggb
+         nvxrsCg6+Q5BgVdiL7QEYHpDVPrnvg4D24rp9LYkS1VLMyb3Y9E96VSexm975afE4vCG
+         mjFGTkHOorUfnBEZjzLCrW4jqiXLggFT8b/e+AK+tHs97zageFHs7k+travQM/HrgJsz
+         nFng==
+X-Forwarded-Encrypted: i=1; AJvYcCUtvMr/hJ6gb9Ox2IkliIk9/S4xMRwpYOPO2Vwk1wz5GC4v/q+hMUx9XN+IWQmEOansRizLEzGfltKSX9I=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyl80KcpneqQz9elN/cXEEIoXi3XmYnN6NvA+iILuJ9u08HxcAm
+	BGu3/M0z1o49t4oSM5RQpf7goYTeqM+bX9LMzk/emWGz9ZF6Yk6clzp7+Xev1lCwq3encFQEot3
+	YK6FSuKHuc3OvTaIr15TXM6a5D9zzpZo3dKKKuA==
+X-Google-Smtp-Source: AGHT+IGx2qU3L4U5PKY484HvHyYBLh0VVe3B33vKeGxVNlqtt9Y75kBhD2f6+d1QQddZ4gxg4HMzb7nFa22jyhmjQaY=
+X-Received: by 2002:a05:6808:30a1:b0:3d6:32d2:2c10 with SMTP id
+ 5614622812f47-3df05e350f0mr2073377b6e.31.1724912608433; Wed, 28 Aug 2024
+ 23:23:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <c844faa0-343a-46f4-a54f-0fd65f4d4679@leemhuis.info> <BN9PR11MB5276CA2E1922D9FD6B9F2ECF8C962@BN9PR11MB5276.namprd11.prod.outlook.com>
-In-Reply-To: <BN9PR11MB5276CA2E1922D9FD6B9F2ECF8C962@BN9PR11MB5276.namprd11.prod.outlook.com>
-From: Markus Rathgeb <maggu2810@gmail.com>
-Date: Thu, 29 Aug 2024 08:21:20 +0200
-Message-ID: <CAOcK=CN3-v=dgMC9XTbh-h0zaD01uatOZKjvSF7ocofTCOGp7Q@mail.gmail.com>
-Subject: Re: [regression] usb and thunderbould are misbehaving or broken due
- to iommu/vt-d change
-To: "Tian, Kevin" <kevin.tian@intel.com>
-Cc: Linux regressions mailing list <regressions@lists.linux.dev>, Lu Baolu <baolu.lu@linux.intel.com>, 
-	Will Deacon <will@kernel.org>, David Woodhouse <dwmw2@infradead.org>, Joerg Roedel <joro@8bytes.org>, 
-	"iommu@lists.linux.dev" <iommu@lists.linux.dev>, LKML <linux-kernel@vger.kernel.org>, 
-	Jacob Pan <jacob.jun.pan@linux.intel.com>, Adam Williamson <awilliam@redhat.com>
+References: <20240829033904.477200-1-nick.hu@sifive.com> <20240829033904.477200-3-nick.hu@sifive.com>
+ <CAK9=C2Xui8c0b55WrZxCZYqK=AFmiPT+nG8d_E0d7SpamwvO-Q@mail.gmail.com>
+In-Reply-To: <CAK9=C2Xui8c0b55WrZxCZYqK=AFmiPT+nG8d_E0d7SpamwvO-Q@mail.gmail.com>
+From: Nick Hu <nick.hu@sifive.com>
+Date: Thu, 29 Aug 2024 14:23:17 +0800
+Message-ID: <CAKddAkCoZy=uid5gVzUg-zwhBxX_EZCbFR18521N3142MPv=jw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] time-riscv: Stop stimecmp when cpu hotplug
+To: Anup Patel <apatel@ventanamicro.com>
+Cc: greentime.hu@sifive.com, zong.li@sifive.com, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@ucw.cz>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Andrew Jones <ajones@ventanamicro.com>, 
+	Conor Dooley <conor.dooley@microchip.com>, Samuel Holland <samuel.holland@sifive.com>, 
+	Sunil V L <sunilvl@ventanamicro.com>, linux-pm@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> Probably f90584f4beb8 ("iommu/vt-d: Add helper to flush caches
-> for context change") is more relevant. There was a bug reported
-> against it and fixed a few days ago:
+Hi Anup
 
-I added a comment on bugzilla, too.
-While adding additional logs to the bugzilla entry I realized that one
-commit has not been tested.
+On Thu, Aug 29, 2024 at 1:18=E2=80=AFPM Anup Patel <apatel@ventanamicro.com=
+> wrote:
+>
+> On Thu, Aug 29, 2024 at 9:10=E2=80=AFAM Nick Hu <nick.hu@sifive.com> wrot=
+e:
+> >
+> > Stop the stimecmp when the cpu is going to be off otherwise the timer
+> > interrupt may pending while performing power down operation.
+> >
+> > Signed-off-by: Nick Hu <nick.hu@sifive.com>
+> > ---
+> >  drivers/clocksource/timer-riscv.c | 22 +++++++++++++++-------
+> >  1 file changed, 15 insertions(+), 7 deletions(-)
+> >
+> > diff --git a/drivers/clocksource/timer-riscv.c b/drivers/clocksource/ti=
+mer-riscv.c
+> > index 48ce50c5f5e6..9a6acaa8dfb0 100644
+> > --- a/drivers/clocksource/timer-riscv.c
+> > +++ b/drivers/clocksource/timer-riscv.c
+> > @@ -32,15 +32,19 @@
+> >  static DEFINE_STATIC_KEY_FALSE(riscv_sstc_available);
+> >  static bool riscv_timer_cannot_wake_cpu;
+> >
+> > +static void riscv_clock_stop_stimecmp(void)
+> > +{
+> > +       csr_write(CSR_STIMECMP, ULONG_MAX);
+> > +       if (IS_ENABLED(CONFIG_32BIT))
+> > +               csr_write(CSR_STIMECMPH, ULONG_MAX);
+> > +}
+> > +
+> >  static void riscv_clock_event_stop(void)
+> >  {
+> > -       if (static_branch_likely(&riscv_sstc_available)) {
+> > -               csr_write(CSR_STIMECMP, ULONG_MAX);
+> > -               if (IS_ENABLED(CONFIG_32BIT))
+> > -                       csr_write(CSR_STIMECMPH, ULONG_MAX);
+> > -       } else {
+> > +       if (static_branch_likely(&riscv_sstc_available))
+> > +               riscv_clock_stop_stimecmp();
+> > +       else
+> >                 sbi_set_timer(U64_MAX);
+> > -       }
+> >  }
+> >
+> >  static int riscv_clock_next_event(unsigned long delta,
+> > @@ -126,7 +130,11 @@ static int riscv_timer_starting_cpu(unsigned int c=
+pu)
+> >
+> >  static int riscv_timer_dying_cpu(unsigned int cpu)
+> >  {
+> > -       disable_percpu_irq(riscv_clock_event_irq);
+> > +       if (static_branch_likely(&riscv_sstc_available))
+> > +               riscv_clock_stop_stimecmp();
+> > +       else
+> > +               disable_percpu_irq(riscv_clock_event_irq);
+> > +
+>
+> Not disabling riscv_clock_event_irq here for Sstc would now
+> cause riscv_timer_starting_cpu() to unnecessarily enable it
+> when the CPU is powered-up.
+>
+> I think the below change is sufficient for this patch:
+>
+> diff --git a/drivers/clocksource/timer-riscv.c
+> b/drivers/clocksource/timer-riscv.c
+> index 48ce50c5f5e6..546fd248f4ff 100644
+> --- a/drivers/clocksource/timer-riscv.c
+> +++ b/drivers/clocksource/timer-riscv.c
+> @@ -127,6 +127,11 @@ static int riscv_timer_starting_cpu(unsigned int cpu=
+)
+>  static int riscv_timer_dying_cpu(unsigned int cpu)
+>  {
+>         disable_percpu_irq(riscv_clock_event_irq);
+> +       /*
+> +        * Stop the timer when the cpu is going to be offline otherwise
+> +        * the timer interrupt may be pending while performing power-down=
+.
+> +        */
+> +       riscv_clock_event_stop();
+>         return 0;
+>  }
+>
+The sbi_exit() of OpenSBI will disable mtimecmp when
+sbi_hsm_hart_stop() so the mtimecmp will be disabled twice if there is
+no SSTC.
+How about adding a SSTC available check before the riscv_clock_event_stop?
 
-good: 804f98e224e41c16e3b70f97790f84894745a392
-untested: 2b989ab9bc89b29dd4b5509408b8fa42337eda56
-bad: f90584f4beb84211c4d21b319cc13f391fe9f3c2
+  /*
+   * Stop the timer when the cpu is going to be offline otherwise
+   * the timer interrupt may be pending while performing power-down.
+   */
+if (static_branch_likely(&riscv_sstc_available))
+    riscv_clock_event_stop();
 
-I do not understand why git bisect told me there is no remaining commit to test.
+> Regards,
+> Anup
 
