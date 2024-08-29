@@ -1,128 +1,91 @@
-Return-Path: <linux-kernel+bounces-307476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3A66964DF6
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 20:44:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 93A63964DE0
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 20:40:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82E77B211D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 18:44:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3625EB21863
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 18:40:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B0D81B9B38;
-	Thu, 29 Aug 2024 18:44:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CFE71B9B28;
+	Thu, 29 Aug 2024 18:38:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="cbjseovY"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="AdhDIDwQ"
+Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AA531B86E9;
-	Thu, 29 Aug 2024 18:44:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26F331B5832;
+	Thu, 29 Aug 2024 18:38:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724957068; cv=none; b=f5SeOau4Esvc8OR+b/ihUmGLCEWcuUlC4hAUnKHklVi2jOP9b4aSB03winu35hO6O0krBpXBkFbEBjOF5ZSZPKEFW/f+kMfdooTxCpMvNfjftbPBNP1L3GcmD993iGdNEV5GmzfHdRAIinFJMcgqACBWuXFTBEGtQE8MGhCvc30=
+	t=1724956733; cv=none; b=RHNBWGqWzZfZnZPAdYG1kiXtkJNeenxVz8bv5UJktfDFoOMaaHna+FNqMc8l5lNalgkxHpN1quFwbQAnK67wlU5xXvGI1x6gXQFpTi6eBzyeuyQ21GNey+Be+8yU7zdgvAwgH7d7t7VA7QD2970ub6GW16zOdWChTCRRfwar+kM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724957068; c=relaxed/simple;
-	bh=Jx/BFerNDf7r5tR1yNitkZFck465J+ltG0IRRiB5vtA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sVRlwcu8raTgMtwedrMuo+4P1+s+1BsSxHJz53YrR649EZMYEFfBf0OgHVv5EZkp5kyB2k6qUBeG1C1inuiVk5aQZu04/0y7n9deD/qJLpBthzhP764NKFRZ2Nbi9uIf52eQL/ofN1t2HFqGO/hgnejfqlmW0OxuUMc7sU9JnW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=cbjseovY reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
- id 49512f7242cb57d7; Thu, 29 Aug 2024 20:44:24 +0200
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id B7F1A6A8C15;
-	Thu, 29 Aug 2024 20:44:23 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1724957064;
-	bh=Jx/BFerNDf7r5tR1yNitkZFck465J+ltG0IRRiB5vtA=;
-	h=From:Subject:Date;
-	b=cbjseovY4lVygyiB81PefKCkpynKJ7qZiPXxX2pwj8A3xtl/1STyjA34kVQlYNT9A
-	 WkZHMn/+9Ks56G21WxzEY+mDgpS3/suwViaLrqOWJp9O4873OchyM2IC8inuph6SPS
-	 0qCkd+gFPjmnVWr584rS7kaYxJWMHG4YqmqbUPep1FrrP5DoeeDrOtAYf4si8jQJ9N
-	 CFuVTSxOLhPieoa1EBFXOnrpXon0jReNBTW4qn036w2XrhY3yN12doFuqdSkPsrqJ+
-	 rsnWmLbO8fIagQaMfbGIch+x1Pq652AX7M3EjRsonZeFXdI4FAu+pHwGO4MRNpWv6G
-	 RHDs6CaLEwM1A==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux ACPI <linux-acpi@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Bob Moore <robert.moore@intel.com>,
- Saket Dumbre <saket.dumbre@intel.com>
-Subject:
- [PATCH v1 13/20] ACPICA: Add support for supressing leading zeros in hex
- strings
-Date: Thu, 29 Aug 2024 20:38:31 +0200
-Message-ID: <23640949.6Emhk5qWAg@rjwysocki.net>
-In-Reply-To: <5819337.DvuYhMxLoT@rjwysocki.net>
-References: <5819337.DvuYhMxLoT@rjwysocki.net>
+	s=arc-20240116; t=1724956733; c=relaxed/simple;
+	bh=Hzlq9ATV/IdK2qYDozMOa6xJ4Laou6pdDwohHLPhdSk=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=G0+hxOa8qjjbYrB6gVhMxN0Rros4z8b5JsvaM2qFR4gK9/aZWns9pGN2OeKDK9CzAdSu9U6jjqd3Bu+iSxo/hVXSccRGzSEhb8wbrU32dy0f5ySo3Z3cQlqprc/QBYF2VmvzKPhzZ8jpSlmRZ5QUEKdXcFQu8onCvmAbBIOd7Fk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=AdhDIDwQ; arc=none smtp.client-ip=185.70.43.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1724956726; x=1725215926;
+	bh=MLJi7n9niisvBeNz7ehwmqHyybu0ZRqBu18tqOTkky0=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=AdhDIDwQakEz+/dzhJumYYkSe+qGsMoyJ9+klfZo69XLksxf8gGtpf11I7C+Z0Hlw
+	 hHllUrViyv0cN05yUPIIwRoKLPpGWnIYANZ8Dkm2cOg1+EkrBLyIAP+AZ18gDYmobt
+	 i5ehKJEdDRBkHT6X9RENqi4Nhk7+BM3vU/0QdjqiMQxDEcJ31l+U9ROzD9qx/LfZBg
+	 Z2andH6Btn3FKVJcilk7JH0ivfgRGp4rcBcjCRRiWTioFwfD5cpaCf0EafbpCzFHkn
+	 /xxgUmJDBoliYdvN7mnDCr2K5fKWS+qnnAMAS5Ue+ABV3gA216Jc4JfoWIpB4MJQis
+	 rNIk+kNyLWx1g==
+Date: Thu, 29 Aug 2024 18:38:43 +0000
+To: Danilo Krummrich <dakr@kernel.org>, ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@samsung.com, aliceryhl@google.com, akpm@linux-foundation.org
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: daniel.almeida@collabora.com, faith.ekstrand@collabora.com, boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v6 11/26] rust: alloc: remove `BoxExt` extension
+Message-ID: <01e83e23-28f8-4e1e-8fc7-4115cfe82bb1@proton.me>
+In-Reply-To: <20240816001216.26575-12-dakr@kernel.org>
+References: <20240816001216.26575-1-dakr@kernel.org> <20240816001216.26575-12-dakr@kernel.org>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 60dc07155cb8e4f3049451d813e6c9d7e4195563
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: clean
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddrudefgedguddvjecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpeeltdeikeekkeevieektefggfetueetfeejveejgeduledvudehieeuvdeiheeiveenucffohhmrghinhepghhithhhuhgsrdgtohhmnecukfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhjfiesrhhjfiihshhotghkihdrnhgvthdpnhgspghrtghpthhtohepgedprhgtphhtthhopehlihhnuhigqdgrtghpihesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehrohgsvghrthdrmhhoohhrvgesihhnthgvlhdrtghomhdprhgtphhtthhopehsrghkvghtrdguuhhmsghrvgesihhnthgvlhdrtghomh
-X-DCC--Metrics: v370.home.net.pl 1024; Body=4 Fuz1=4 Fuz2=4
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-From: Armin Wolf <W_Armin@gmx.de>
+On 16.08.24 02:10, Danilo Krummrich wrote:
+> Now that all existing `Box` users were moved to the kernel `Box` type,
+> remove the `BoxExt` extension and all other related extensions.
+>=20
+> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
 
-ACPICA commit 86289439d9f8b9eda28c249da66ae230d6439491
+This is just a minor nit, but could you please change the commit title
+to "rust: alloc: remove extension of std's `Box`"?
+With that:
 
-Currently the leading_zeros argument has no effect when
-converting hex integers. Fix that.
+Reviewed-by: Benno Lossin <benno.lossin@proton.me>
 
-Link: https://github.com/acpica/acpica/commit/86289439
-Signed-off-by: Armin Wolf <W_Armin@gmx.de>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 ---
- drivers/acpi/acpica/exconvrt.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+Cheers,
+Benno
 
-diff --git a/drivers/acpi/acpica/exconvrt.c b/drivers/acpi/acpica/exconvrt.c
-index 4e8ab3c26565..9647325d290d 100644
---- a/drivers/acpi/acpica/exconvrt.c
-+++ b/drivers/acpi/acpica/exconvrt.c
-@@ -270,6 +270,7 @@ acpi_ex_convert_to_ascii(u64 integer,
- 	u32 decimal_length;
- 	u32 remainder;
- 	u8 supress_zeros = !leading_zeros;
-+	u8 hex_char;
- 
- 	ACPI_FUNCTION_ENTRY();
- 
-@@ -330,8 +331,17 @@ acpi_ex_convert_to_ascii(u64 integer,
- 
- 			/* Get one hex digit, most significant digits first */
- 
--			string[k] = (u8)
-+			hex_char = (u8)
- 			    acpi_ut_hex_to_ascii_char(integer, ACPI_MUL_4(j));
-+
-+			/* Supress leading zeros until the first non-zero character */
-+
-+			if (hex_char == ACPI_ASCII_ZERO && supress_zeros) {
-+				continue;
-+			}
-+
-+			supress_zeros = FALSE;
-+			string[k] = hex_char;
- 			k++;
- 		}
- 		break;
--- 
-2.43.0
-
-
-
+> ---
+>  rust/kernel/alloc.rs         |  1 -
+>  rust/kernel/alloc/box_ext.rs | 80 ------------------------------------
+>  rust/kernel/init.rs          | 44 +-------------------
+>  rust/kernel/lib.rs           |  1 -
+>  rust/kernel/prelude.rs       |  4 +-
+>  rust/kernel/types.rs         | 28 -------------
+>  6 files changed, 3 insertions(+), 155 deletions(-)
+>  delete mode 100644 rust/kernel/alloc/box_ext.rs
 
 
