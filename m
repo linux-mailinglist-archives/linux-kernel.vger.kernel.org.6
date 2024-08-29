@@ -1,103 +1,100 @@
-Return-Path: <linux-kernel+bounces-307077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D3829647B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:14:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF2FE964794
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:06:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 68744B2839C
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 14:07:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63CF71F23F65
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 14:06:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D46DD1B012A;
-	Thu, 29 Aug 2024 14:05:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E65271AF4CA;
+	Thu, 29 Aug 2024 14:05:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b="aqh0TVv8"
-Received: from mail.cybernetics.com (mail.cybernetics.com [72.215.153.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BQHhsf97"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6B9C2BD19
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 14:05:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=72.215.153.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A841D1AED4B;
+	Thu, 29 Aug 2024 14:05:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724940339; cv=none; b=HevdLFVlMoIHjn3CoeWcPPPN3dC8YEjv1vu7D8o211stHyA/u0ugo1zhQ77ypdUECgEI09roIuhMOr3JM2U4gCMaDWF47HpkkzXg4Plso+dh7Lz17o3M7JaFXfjcWUD2YHXlQWy9uYCPoafamXlZEjoZ96WscPuEzJ1mfzBMxlw=
+	t=1724940322; cv=none; b=cY39FCF7zNHM68u4vwJSxHWhVLlf65pPkjWqV4CnHRyCqVj6KQ/PJH8QYg6srssf+Z40cO1FcKXSyOdKqWic5r+wKSjz3SInuZOcbeAkTAaTBrSaZoWBNYoi4Amk2RHA6/U5+T307KBxRC15kCV+6VDCHSGRERh7OyMJ6qrKuig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724940339; c=relaxed/simple;
-	bh=WS7AE2lZ80ktgxKFgI1HSIZKX9yTyxehsQ541Zemgss=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=qHDWnZ748+tWTNoaHeCwxKgZPuJTCkZb+wnm60xFOYm9LCPOApMJEGmnZedXUO6tjCP/+qfedcr0lg/NtIuGMH5ep6kymeAo+8UrCWctYt5+9eKmEMkZDNBZwj2UcQxz5rcDk2RMmi42WdFZiL9XDVNeKFRa4ZpjxQgDjjM0H0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com; spf=pass smtp.mailfrom=cybernetics.com; dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b=aqh0TVv8; arc=none smtp.client-ip=72.215.153.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cybernetics.com
-X-ASG-Debug-ID: 1724939577-1cf439709d530220001-xx1T2L
-Received: from cybernetics.com ([10.10.4.126]) by mail.cybernetics.com with ESMTP id LgcrnbZSKlfGqkXR; Thu, 29 Aug 2024 09:53:19 -0400 (EDT)
-X-Barracuda-Envelope-From: tonyb@cybernetics.com
-X-Barracuda-RBL-Trusted-Forwarder: 10.10.4.126
-X-ASG-Whitelist: Client
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=cybernetics.com; s=mail;
-	bh=Fn9M4a8qPT1jW0s9JHYJms7eiaAIoJs0KI1NmmFglss=;
-	h=Content-Transfer-Encoding:Content-Type:Subject:From:Cc:To:Content-Language:
-	MIME-Version:Date:Message-ID; b=aqh0TVv8DopVDHFyZSPRh8FeqaPijV5iAejsBrDE2c/+M
-	zaCc5AiCQD5oRyyZod0ZrLb8RkACPAy3W25dMSPCQVQ1uprwoTxkW2Vqw7ZfVxz266AmF1qWoKWAK
-	vbO5ZwxOnSwHp0uplHQqZ8IzzJ3PuxiBB5EHjMcU5Vng7vxbw=
-Received: from [10.157.2.224] (HELO [192.168.200.1])
-  by cybernetics.com (CommuniGate Pro SMTP 7.1.1)
-  with ESMTPS id 13430318; Thu, 29 Aug 2024 09:51:25 -0400
-Message-ID: <d65e598f-4d3e-4092-bc39-16b636181708@cybernetics.com>
-X-Barracuda-RBL-Trusted-Forwarder: 10.157.2.224
-Date: Thu, 29 Aug 2024 09:51:25 -0400
+	s=arc-20240116; t=1724940322; c=relaxed/simple;
+	bh=+/nuKKGWH31VBxbkHsa0ZLL2lsknIYutCh8lbJono1k=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=ENNzFfkOjR+CGTSPfYFY4u4CPCa3XurtuwwG1FU0JCRs1/NLxfmnFQYxk90dD7JQZ2OQBe/v6RunauOzDCubU4OfHcOBmVg3cw0J2u5qHFyAwGsMe513mqgk22B6BhUWCImQytFnfNxxcjVfN29tMdCEUWkZ9fYd9Wi0njZ1SGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BQHhsf97; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a868b739cd9so82454966b.2;
+        Thu, 29 Aug 2024 07:05:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724940319; x=1725545119; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=h1f3vlyYRWem4jKM0S+DdQyVAsPBA19xwQyVU9FqicQ=;
+        b=BQHhsf97afmb4R+YIVp6OMFZQzdhOISMk2A+diNg6r3uti8KRo82Oi/q9co+VvGENP
+         j9C5bk3Oqye3S1lY4duEOzwzrmcmGysyN5NiBA4YdZjMghlKuiY6xxmJGS9FvYMUjz8W
+         GTJol8nWFf+LEYiI5QhA02ii5Bl0al3Vxvp0by2HgI3IWv5t3j5VdCZXpaIkvw5jzsBA
+         eEo6dsxTk4pSg6jb2dtr1qGqMsfSMFRZjHNG36osG+raB7z2EGvFjHyWdKiBJ86hsYqj
+         e9v3p85IoQ7srAPjNm51+G8Z1dbRNSZWElylLQN3PbQIA+ABe3oBcyfhl8fDkOLcVCi4
+         OP+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724940319; x=1725545119;
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=h1f3vlyYRWem4jKM0S+DdQyVAsPBA19xwQyVU9FqicQ=;
+        b=u4AkCYO8ARQQzl5rPWFGzuYkw+QEOESW4v41UQDf7cgH64vIptiKxehKNLEJa1ADju
+         VgBzmrA14VwsLj6BP70486LFZ8QDy2mUFXkmnRX/PVDW42p5rxESBSFPATzdglOTshTJ
+         u5sNx+dBXf522Wl7tJ9oOeRqIJZulnjHd5nhU4//YDChs+ibiyNrN+2TVruVQQKGPARR
+         g8gED8crP9H9ddf2BGweVJResQ8GTkxb89+Wp7H3vLyCcfek/00VyrMtNFjOZpLOpC+c
+         STvvEEGBudutG6aNSesx1Kvk6tkJ4hWMWw5t+UW0TEmU0K9skAGELyMc7qaHdexGCUI0
+         EJpg==
+X-Forwarded-Encrypted: i=1; AJvYcCV4l8GwaptfxihlFkfzRoDwXRhbIdgioq/Vzf12/Ezde9gcFTLIuE22uBpxD3CxT2HouY2JeKPKS2ZbCHA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzoSCmXYI2dlEZkfuALAbehfhB2v5kIPbGT9AQkH0c7QQoby0bX
+	A33Jx/J/C+Q4d4otjWOWMFrY5cfDNBnd58Ldr2HKk5JgXXC5WKjd
+X-Google-Smtp-Source: AGHT+IH3fWfGs0d04ZNwiSCQ+7SnWddrnDR3fbdR5s34gl69uOnZ0LuNw6+d1d+enAh0kS62h4eQ6w==
+X-Received: by 2002:a17:906:dc92:b0:a86:80b7:471d with SMTP id a640c23a62f3a-a897f930cc2mr271785266b.37.1724940318167;
+        Thu, 29 Aug 2024 07:05:18 -0700 (PDT)
+Received: from [192.168.1.122] (cpc159313-cmbg20-2-0-cust161.5-4.cable.virginm.net. [82.0.78.162])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8989092143sm83848866b.96.2024.08.29.07.05.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 29 Aug 2024 07:05:17 -0700 (PDT)
+Subject: Re: [PATCH v2] sfc: Convert to use ERR_CAST()
+To: Shen Lichuan <shenlichuan@vivo.com>, habetsm.xilinx@gmail.com,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com
+Cc: netdev@vger.kernel.org, linux-net-drivers@amd.com,
+ linux-kernel@vger.kernel.org, opensource.kernel@vivo.com
+References: <20240829021253.3066-1-shenlichuan@vivo.com>
+From: Edward Cree <ecree.xilinx@gmail.com>
+Message-ID: <bfc3e843-6e22-6709-2f72-db3e7ef7de57@gmail.com>
+Date: Thu, 29 Aug 2024 15:05:16 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier
- <nicolas@fjasle.eu>, Daniel Gomez <da.gomez@samsung.com>,
- linux-kbuild@vger.kernel.org,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-From: Tony Battersby <tonyb@cybernetics.com>
-Subject: [PATCH] kbuild: remove recent dependency on "truncate" program
-Content-Type: text/plain; charset=UTF-8
-X-ASG-Orig-Subj: [PATCH] kbuild: remove recent dependency on "truncate" program
+In-Reply-To: <20240829021253.3066-1-shenlichuan@vivo.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
-X-Barracuda-Connect: UNKNOWN[10.10.4.126]
-X-Barracuda-Start-Time: 1724939599
-X-Barracuda-URL: https://10.10.4.122:443/cgi-mod/mark.cgi
-X-Barracuda-BRTS-Status: 0
-X-Virus-Scanned: by bsmtpd at cybernetics.com
-X-Barracuda-Scan-Msg-Size: 939
 
-Remove the recently-added dependency on the truncate program for
-building the kernel.  truncate is not available when building the kernel
-under Yocto.  It could be added, but it would be better just to avoid
-the unnecessary dependency.
+On 29/08/2024 03:12, Shen Lichuan wrote:
+> As opposed to open-code, using the ERR_CAST macro clearly indicates that
+> this is a pointer to an error value and a type conversion was performed.
+> 
+> Signed-off-by: Shen Lichuan <shenlichuan@vivo.com>
+> Reviewed-by: Jacob Keller <jacob.e.keller@intel.com>
+> ---
 
-Fixes: 1472464c6248 ("kbuild: avoid scripts/kallsyms parsing /dev/null")
-Signed-off-by: Tony Battersby <tonyb@cybernetics.com>
----
- scripts/link-vmlinux.sh | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/scripts/link-vmlinux.sh b/scripts/link-vmlinux.sh
-index 070a319140e8..c27b4e969f20 100755
---- a/scripts/link-vmlinux.sh
-+++ b/scripts/link-vmlinux.sh
-@@ -215,7 +215,7 @@ kallsymso=
- strip_debug=
- 
- if is_enabled CONFIG_KALLSYMS; then
--	truncate -s0 .tmp_vmlinux.kallsyms0.syms
-+	true > .tmp_vmlinux.kallsyms0.syms
- 	kallsyms .tmp_vmlinux.kallsyms0.syms .tmp_vmlinux0.kallsyms
- fi
- 
-
-base-commit: 3e9bff3bbe1355805de919f688bef4baefbfd436
--- 
-2.25.1
-
+Reviewed-by: Edward Cree <ecree.xilinx@gmail.com>
 
