@@ -1,137 +1,145 @@
-Return-Path: <linux-kernel+bounces-306153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE7959639FD
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 07:42:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D271963A01
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 07:45:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6CC1DB21A82
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 05:42:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 001EA1F22DEB
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 05:45:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21E65146D7E;
-	Thu, 29 Aug 2024 05:42:42 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFA3E14A0A9;
+	Thu, 29 Aug 2024 05:45:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aBgmNRrP"
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 190541C6B2
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 05:42:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B03D04D8C8;
+	Thu, 29 Aug 2024 05:45:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724910161; cv=none; b=cOy3qduI8hFwOS4QfLtx1/HPn6XjERWKZVlRMlE5yBsaYGr5mnzYx6ZapUJTOM0D6NgsRtDna5FuCeMFsS5Xeh9/huRolKkvAUwGDHw9M2viapZeVaoYYTm5UxmrrlZirpayorbDCoBsD48cW/SzBGGe5zK37jC6nSib0mhg3+o=
+	t=1724910326; cv=none; b=oPkobF8okl2K0NqLP6yDE5lKVQLs2/EQHZPYABwkLPHDhIY2+MMpTaEz56WIApg3D4pbXCDHIF0DxQyZ+UOxGOb0i8HRu8NDQPA3knQgbvMZgQKbRbn0hoGPLAHDwjFU0/3c+0LUH3oo3VbbnyTpRXNUxtA1LD7+h5u2sSxReXI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724910161; c=relaxed/simple;
-	bh=DPGIHL2xqCpRpIeuqliKBmpCZuFUzJXdjTOOZAr5/4A=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=oS8EtRKsgsQUGP7PVMsnThhHs86XS+TMSgF4H8tlyKe1lUYRShsh4eyx5AkOZTQ0y7ZsrjpGbO4++weUh8sX4BJLsduqABGzhDk33WlTt/sVcwXvFvn2PuBRdjriYtuYe952gDmnQYwr0jeJFr+mDW9DEdRJ68mGN/GtSg3wEb4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-39d51267620so2654365ab.3
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 22:42:39 -0700 (PDT)
+	s=arc-20240116; t=1724910326; c=relaxed/simple;
+	bh=niPsbo8FagnABTd0ex4iS3PoQ4LHrM2/TG3FQ1R7abk=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=txaWIr2g56ZJ435v2brVUItCXEUQSEjqrjCoJRpiBggIq/1/AJJOttgGUF9P+xc/g6R+5y+JBS7cH+0YCMJuc+jU8AT+BhPh9wNYqJpxq+K+syUhgcP/AhuZ6iXlspCOjV5ic0IQ1tNtUw3aWb7VOCyAYgMaYM7X0R9vTJWw5Ys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aBgmNRrP; arc=none smtp.client-ip=209.85.215.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-7bcf8077742so184658a12.0;
+        Wed, 28 Aug 2024 22:45:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724910324; x=1725515124; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=PG7vUrjczTjDpkZnaTU3bwsLk/EQ0vq8liBHN/oleaE=;
+        b=aBgmNRrP5ZStXqq+R9cACG//9OYUPHWLixUQ2FsLMtxM6YNJNBoPrJ5jbhmAlrmKOm
+         sLmqzyUoLykL4xi1EgAf1SaW+SRNljRh8f7TsptCMOJ4OHUtqhjamSAj/lZQMNI6VND2
+         To6YCkRNxcIWRjoWEAB2zD0UnDQDkxWWtlmvOMXVcUYf6+utROcPiWlvn7nG7IZ4BKy3
+         2dXYVnbkIrzWCu8uwko5PeTRS+n/fQEY5O51xWKw7BetR60NyJ6GktHN46uMeb1hCzHd
+         QN0gu8yLQVVUFpLCs4RtXxrL8byWlYbZI0zlUz+1gjhIG+qHV2/3einq0MIjRTrK7YVa
+         I84Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724910159; x=1725514959;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OIt/byNmE3xDvUOKnOidaKkycTZU/pTAF1NPAuUVJZA=;
-        b=f0wotsWgX0L3FXoFF7RqGaEta3UVh89ewcKknugRqgv6gsBo9kcuST+mloBjL18dUz
-         n+otVOYPM72XSOGXNm5VBvCE+4Z6ulRk9HNSy8ZZxQeM1sP8/LIDj+cxhu028DYPApiB
-         1baI4qU6JccD3rZjqy1tOaJhb8cJAOLHt/SSBqta42qahZGAWpa2w5tmxMXWhu/jJwQT
-         gz59B/tethOtcuoU1BI8lKQ7+6B/KIZdRqp7BWspy3dlQVy17Iq/3ZKspwvYlUC+XRQv
-         Sqm5e9NWgJavO6O0zxSvug27zwB/7WOPxxrs2OGhBqD3wIV9HPTmEoQhe+XdT4K4s5xa
-         6O+w==
-X-Gm-Message-State: AOJu0YwfkfLXkvnsg0sFacyZgWqCrhSOn4ndhLBLkXfSzsY8QCelOfKB
-	MJOMxzlJkzL0109BGiGWyuTzkUQTsOTiRSVQ5gLL8yJcWiq3Fs9DfFr13bhHnZp8y26v+8hazj9
-	ZSPqBrGjGc1kw3XOOI3R8MS0VMAxbQvW7v38geMqbaywpnbmm9Pmu4GQ=
-X-Google-Smtp-Source: AGHT+IHmXNGXZ6X/bQ3/JO38jQSBaMrfCGhsbvH7Pywxcps8rC4iufPBHUogCujBe4ZyESsJ4jmIZa0WaD4dAG3szVJWlsg3Vb31
+        d=1e100.net; s=20230601; t=1724910324; x=1725515124;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=PG7vUrjczTjDpkZnaTU3bwsLk/EQ0vq8liBHN/oleaE=;
+        b=qzdQSwLZS0tTZqxtqwON+v9mFVfUTKMna4Y1xErqFu5wIQdMr+4px9IHInYFHX2dxE
+         WHjdZ3tlDdtNZb8dwtzBlSYq/vkiC+to5+NGKM6F1bqZvC7pMkdCdcS52ULSpJDDCoaz
+         gmTONRC4cOxwRqnqPStVWI4M7SKhbwXdMaYQxsM+foBy5pgoaXQNPvOM5q69JmWG3K5X
+         8ma+0qEX3r6J728R5LwvPhRFBAZzXQbxBHFv8JD6aJtkekjJTDGsOfq33VHQGld2x2uk
+         Oa18mbb2dUnRDIv8JUOa7yBAPCl3PNVzSUgAWYtHYNQf00YKAGx8NAwBkUvr0KW7OaK9
+         TotQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV88H5tA/hH0DD1fzNsvd+PFEsWA3AE9Ru31Ibrb0eEsl60r14uqP4wD0TGZROxvsEfaNE=@vger.kernel.org, AJvYcCX4sMaw1WsMSZdk+67597v+tn6eh7sDbPrCOMR8VIHqZTYYimKbrRcyyXMc7u4NJO9VTjsfdJfK/U211OcA@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRfpjRw1xBomsyevTe5yL4D3DqebvH4i5iJhrjIgShwCXNjlUk
+	Bb2QwhRX3G6RZNlzGqbZWyQOIjL6/eycrUMcVusEZ8E9/axg3dvON8VYo+Q6
+X-Google-Smtp-Source: AGHT+IFRhJ/jJGZgSwALOLE4RIOGZVAVMdKqAUQuGpcwiU0TTI2cOHaHrPBCidQDiWUz0TG1tH2w+A==
+X-Received: by 2002:a05:6a21:2d05:b0:1cc:e659:7ffe with SMTP id adf61e73a8af0-1cce659819emr354168637.14.1724910323765;
+        Wed, 28 Aug 2024 22:45:23 -0700 (PDT)
+Received: from [192.168.0.235] ([38.34.87.7])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d8445e9a51sm3003665a91.21.2024.08.28.22.45.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Aug 2024 22:45:23 -0700 (PDT)
+Message-ID: <d1ca563d8f2f5b63e7b0ec8b91c57914c32f1679.camel@gmail.com>
+Subject: Re: [PATCH bpf] bpf: add check for invalid name in
+ btf_name_valid_section()
+From: Eduard Zingerman <eddyz87@gmail.com>
+To: Jeongjun Park <aha310510@gmail.com>, alexei.starovoitov@gmail.com
+Cc: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org,
+ daniel@iogearbox.net,  haoluo@google.com, john.fastabend@gmail.com,
+ jolsa@kernel.org, kpsingh@kernel.org,  linux-kernel@vger.kernel.org,
+ martin.lau@linux.dev, sdf@fomichev.me,  song@kernel.org,
+ yonghong.song@linux.dev
+Date: Wed, 28 Aug 2024 22:45:18 -0700
+In-Reply-To: <20240829034552.262214-1-aha310510@gmail.com>
+References: 
+	<CAADnVQKsZ9zboc4k0mnrwcUv6ioSQ6aBXXC+t+-233n17Vdw-A@mail.gmail.com>
+	 <20240829034552.262214-1-aha310510@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1647:b0:377:1625:5fca with SMTP id
- e9e14a558f8ab-39f377ceda2mr1069585ab.1.1724910159194; Wed, 28 Aug 2024
- 22:42:39 -0700 (PDT)
-Date: Wed, 28 Aug 2024 22:42:39 -0700
-In-Reply-To: <0000000000008851fe0620c5f51c@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000004efde50620cbf13b@google.com>
-Subject: Re: [syzbot] Re: [syzbot] [btrfs?] kernel BUG in __extent_writepage_io
- (2)
-From: syzbot <syzbot+ba3c0273042a898c230e@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+On Thu, 2024-08-29 at 12:45 +0900, Jeongjun Park wrote:
+> Alexei Starovoitov wrote:
+> >=20
+> > On Fri, Aug 23, 2024 at 3:43=E2=80=AFAM Jeongjun Park <aha310510@gmail.=
+com> wrote:
+> > >=20
+> > > If the length of the name string is 1 and the value of name[0] is NUL=
+L
+> > > byte, an OOB vulnerability occurs in btf_name_valid_section() and the
+> > > return value is true, so the invalid name passes the check.
+> > >=20
+> > > To solve this, you need to check if the first position is NULL byte.
+> > >=20
+> > > Fixes: bd70a8fb7ca4 ("bpf: Allow all printable characters in BTF DATA=
+SEC names")
+> > > Signed-off-by: Jeongjun Park <aha310510@gmail.com>
+> > > ---
+> > >  kernel/bpf/btf.c | 3 +++
+> > >  1 file changed, 3 insertions(+)
+> > >=20
+> > > diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
+> > > index 520f49f422fe..5c24ea1a65a4 100644
+> > > --- a/kernel/bpf/btf.c
+> > > +++ b/kernel/bpf/btf.c
+> > > @@ -823,6 +823,9 @@ static bool btf_name_valid_section(const struct b=
+tf *btf, u32 offset)
+> > >         const char *src =3D btf_str_by_offset(btf, offset);
+> > >         const char *src_limit;
+> > >=20
+> > > +       if (!*src)
+> > > +               return false;
+> > > +
+> >=20
+> > We've talked about it. Quote:
+> > "Pls add a selftest that demonstrates the issue
+> > and produce a patch to fix just that."
+> >=20
+> > length =3D=3D 1 and name[0] =3D 0 is a hypothesis.
+> > Demonstrate that such a scenario is possible then this patch will be
+> > worth applying.
+> >=20
+> > pw-bot: cr
+>=20
+> Sorry for the omission, I still don't know how to write selftest.
+>=20
+> But I can give you the C repro and KASAN log that trigger this=C2=A0vulne=
+rability.=20
+> I would appreciate it if you could look at it and=C2=A0make a judgment.
 
-***
-
-Subject: Re: [syzbot] [btrfs?] kernel BUG in __extent_writepage_io (2)
-Author: lizhi.xu@windriver.com
-
-#syz test
-
-diff --git a/fs/btrfs/extent_map.c b/fs/btrfs/extent_map.c
-index 10ac5f657e38..397eee4c4217 100644
---- a/fs/btrfs/extent_map.c
-+++ b/fs/btrfs/extent_map.c
-@@ -384,6 +384,7 @@ static void try_merge_map(struct btrfs_inode *inode, struct extent_map *em)
- 		free_extent_map(merge);
- 		dec_evictable_extent_maps(inode);
- 	}
-+	printk("em: %p, blockstart: %llu, mblockstart: %llu, %s\n", em, extent_map_block_start(em), extent_map_block_start(merge), __func__);
- }
- 
- /*
-@@ -493,7 +494,11 @@ static int add_extent_mapping(struct btrfs_inode *inode,
- 	if (ret)
- 		return ret;
- 
-+	printk("em: %p, blockstart: %llu, em refs: %d, %s\n",
-+		em, extent_map_block_start(em), refcount_read(&em->refs), __func__);
- 	setup_extent_mapping(inode, em, modified);
-+	printk("setuped, em: %p, blockstart: %llu, em refs: %d, %s\n",
-+		em, extent_map_block_start(em), refcount_read(&em->refs), __func__);
- 
- 	if (!btrfs_is_testing(fs_info) && is_fstree(btrfs_root_id(root)))
- 		percpu_counter_inc(&fs_info->evictable_extent_maps);
-@@ -743,6 +748,8 @@ int btrfs_add_extent_mapping(struct btrfs_inode *inode,
- 			}
- 			free_extent_map(existing);
- 		}
-+	} else if (!ret) {
-+		ASSERT(extent_map_block_start(em) != EXTENT_MAP_HOLE);
- 	}
- 
- 	ASSERT(ret == 0 || ret == -EEXIST);
-diff --git a/fs/btrfs/extent_map.h b/fs/btrfs/extent_map.h
-index 5154a8f1d26c..a84ef0c7d601 100644
---- a/fs/btrfs/extent_map.h
-+++ b/fs/btrfs/extent_map.h
-@@ -154,6 +154,7 @@ static inline u64 extent_map_block_start(const struct extent_map *em)
- 	if (em->disk_bytenr < EXTENT_MAP_LAST_BYTE) {
- 		if (extent_map_is_compressed(em))
- 			return em->disk_bytenr;
-+		printk("em: %p, disk byte nr: %llu, offset: %llu, %s\n", em, em->disk_bytenr, em->offset, __func__);
- 		return em->disk_bytenr + em->offset;
- 	}
- 	return em->disk_bytenr;
-diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index b1b6564ab68f..45f3b31aacc3 100644
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -6958,7 +6958,9 @@ struct extent_map *btrfs_get_extent(struct btrfs_inode *inode,
- 	}
- 
- 	write_lock(&em_tree->lock);
-+	printk("em: %p, blockstart: %llu, start: %llu, len: %llu, %s\n", em, extent_map_block_start(em), start, len, __func__);
- 	ret = btrfs_add_extent_mapping(inode, &em, start, len);
-+	printk("ret: %d, em: %p, blockstart: %llu, start: %llu, len: %llu, %s\n", ret, em, extent_map_block_start(em), start, len, __func__);
- 	write_unlock(&em_tree->lock);
- out:
- 	btrfs_free_path(path);
+I will prepare a test case.
+Probably tomorrow.
 
