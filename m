@@ -1,182 +1,188 @@
-Return-Path: <linux-kernel+bounces-306830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8641964449
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 14:22:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B785B96444D
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 14:23:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D5752866DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 12:22:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F0E62811B1
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 12:23:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95146195FE5;
-	Thu, 29 Aug 2024 12:22:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D05A194C77;
+	Thu, 29 Aug 2024 12:23:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="Fp+90MHl"
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OZNDyHU6"
+Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1751318D63A
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 12:22:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A331316D300
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 12:23:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724934124; cv=none; b=ZLurQhf0KJir4yT31rLeiHGiZdXkdbZv8+4PVX0pbAIXbDRJUZFT2/m+k9AR88gAl+TJLPsRmsrhNCb/1PzzJW6eZqy7E2nvtcXCLjHon7/b2C+FB4L1SCnlESGpPtGClJRQlpb8E+EmrE8FDjIJXPrZbUsfBsFBKCDM1Hp4LF4=
+	t=1724934188; cv=none; b=j9o8FECbSctcp6eogeCB5PC6miSVmYH+bN9pCt5zx2G5BWESdoQ5CBb1iYtBCalt0KBSfqowtKTWuaxo1a0yZmDsVCmc2GRCUnEInwDlg4lJG8qgE9P/n+e0XPDmnpqooiCXMPqgkl+mK8TQ8cBw9z/Rk2Ecqjm3dVjZJY+Uj4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724934124; c=relaxed/simple;
-	bh=h7IDSYAQydykreAp3+pvcbQEF5019MRHNEBnjuv11fM=;
+	s=arc-20240116; t=1724934188; c=relaxed/simple;
+	bh=Tw3/jhaabwzEbbNyJEyJTf+O3ChH2rIwxRUBlWAIgG0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RN1vHrhCW4ILt7FbuNjQ+KVn2/QKZSIenTzl+ve2zxZ0GTkk1qcvQThshPKOj9KbNd+IZjFQ5hLFPmGaAiEAH9+tMqbkUrMidsDTh9CyNF/n4+NuQ7kLeEYR/bZQ5rjWKiWDDr5u0UVIhESAmHEB55FvWuPjAKDLYIuPlSCGB6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=Fp+90MHl; arc=none smtp.client-ip=185.125.188.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-vk1-f200.google.com (mail-vk1-f200.google.com [209.85.221.200])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 523DF3F63C
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 12:22:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1724934121;
-	bh=7qlMKnlG19yoapUMIHs1PTakDfSSoLT1Ahia2jJ2HUU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type;
-	b=Fp+90MHljlyrjse5qZxaaQvfTmmN7WprbDXYyUtLbaY7TTFTq8sE0WzHq04M7TvKH
-	 PdkfWnN7TQSfB3kDzMYNF2i/l2dNYCW++JSR7/x7n/wW0JJX28Tq104S+s/Bx8NGld
-	 TUSqOh7xaw8GhHUBQk9vXcR90SngOdU/514FIT2NMbw1MfHNredkNFt7NS9K0nZoTe
-	 WUwXGiucyjAktyilo67whhVJEKKxJgtxKlC95PzVvBSvGwNx4rJ7Ky63Oc5f+f8ryJ
-	 wAoLI+bvVV9hE0Zbmdf1kePAGc/9SS+JuB066lCkAmmtO2CV6P8Jtcn/WFaCSkf9dE
-	 SSRFdFGjDPAOg==
-Received: by mail-vk1-f200.google.com with SMTP id 71dfb90a1353d-4fce6e3067bso272778e0c.1
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 05:22:01 -0700 (PDT)
+	 To:Cc:Content-Type; b=ln2qgISAgU4zpeqL38kTG6szQh49o6SM4l8sY/Oy6JMo5pgBCx5a13Gv/C8qG65NToRhXVrucNaNk3ZMxhjGrRbKAdfJQou+2BFzdsVmKCaTEDO4aV9UtE36pBmu3BsCysYdLrbxWSE3LNjMir6K1dLHEM8WQQdXJyrsza1mErU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OZNDyHU6; arc=none smtp.client-ip=209.85.219.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e13d5cbc067so635392276.2
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 05:23:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724934185; x=1725538985; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=oBRgy1SwbqgGgsChwDpW9dCKtLDOgboL57fncnEqPqg=;
+        b=OZNDyHU6dzPzHY5MLDixm1dg489ClGCM8CQXB/+FUEUphp3flBSXgvfUcjdS6O5gMn
+         57NsrqiwzQpGHGpVM2x/sDhYBk5j35S3M7dd5OXmehqODw35XsXFtBdGozZo2ow1d2PM
+         jobcvZVDfuGImLATz9KqwmCpFzZe3/PiPGzFsifN9+NE5sMOYptMS2zKCaROSB/hHtMv
+         RgfYkrRAzpwwJT9Dmnk4fuhYA4Xp4XfxOozr+6AYVpygqsBBfVpGfZOcYNxJ5YBj9/6B
+         fXKytgeQuo02gEbvx7PvKAXwsNEZPPZFn5wHWLJo2w5sSz/ai0gocsWzVcQOQy1lW1SE
+         sR7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724934120; x=1725538920;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7qlMKnlG19yoapUMIHs1PTakDfSSoLT1Ahia2jJ2HUU=;
-        b=RK5oeeYtBF5qEYds4rlZOM0tjqUuv6H8Ctl7db3+LwzngND2G6nykWlv5jDS2T+67t
-         jaXSXdyO4mP5kf6QJeZTv2+Aad8uYR+lFHClzxWfu0qFlGo9jR4JpeleafEFXFdMm+Wh
-         do8LA7YbZmaNpFHnjIDUTok+UqG0e9v7TDn67mgQov4DIKILer4rAAT8h/ylziLvXKB7
-         AOTWJUxn+ypUC963eyBOv8EHWjFYXomVZqzKvmGHUsRI6cmo7F2C+04oxuXNTKqJEHkb
-         kR6fQQ7xv+iTnO2saiIefxDQVN7flitbfBRs2s1LJgVjvM8nzqOn8c4pB1T1zOwkDuw2
-         X6RA==
-X-Forwarded-Encrypted: i=1; AJvYcCW4JVPyhzFQ3JZsfk4YW18+ZYfGzNp9nCoefGu/vqUyf7ZPY5kNG5WyG+gZNKQmN7IXJuaoRl2zmdoVDJo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3w3s/tshvEK+XMKyAI2eOzcSz4GoOp7uATrp+mZgy2nPL/BMH
-	YKF1ITWf0cktx6s2OKJe1eUm4mgSBjz+uvKEkN3e3TjBzkDRYE3MOqx39xjw49tsAssaO66NmXa
-	U5GbiCXZNUQlVjloei5hKImi8PXa6paqMVUiFqZ2f0+2KXDmSmzoL280juKFlCG8uKqUZ1VpkQT
-	PMAqPSJeAKmKSJrWsdhfgC4UrhlsuirEymm6KKdenkXa7K3vcQMrMe
-X-Received: by 2002:a05:6102:942:b0:494:5b9d:529e with SMTP id ada2fe7eead31-49a5af76165mr3157206137.26.1724934120068;
-        Thu, 29 Aug 2024 05:22:00 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH6PMGmdgrxq/HwjXlsfmlr6/NtQqSnyVyF+AnqA/n4ibuUaSLZ6cLPzJWT+cYm7FXkrCaRFiSeKqKlaRrHODQ=
-X-Received: by 2002:a05:6102:942:b0:494:5b9d:529e with SMTP id
- ada2fe7eead31-49a5af76165mr3157182137.26.1724934119701; Thu, 29 Aug 2024
- 05:21:59 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724934185; x=1725538985;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oBRgy1SwbqgGgsChwDpW9dCKtLDOgboL57fncnEqPqg=;
+        b=ncc1qL5SCz7ELohtm5vn0NO44uvfU2730BdEj7KESo1gfbJInNNOrf8erja1i2SvHH
+         e9HYoh4744SYNHQLN7L+qlPxhBweMaQ3PtB/xtcbFUBzKcIl5Gpeorja8FgLTYQtEFo9
+         dICR5xG6obcZurWGBdSlZMTG5v8/eHIT6H1AT+Jmr1Cb6GjYdBZgEkgAAfoyZqAEHQRG
+         y4ioo4gL6yKUmlxjbcGCDOQn+K5EfH2JZ2cpjYnsOIqrXwLg1nLZ71tQnCHqe4G9ygiW
+         o/JNWU2r1fcgSNg1B7O3ULZR2I+aUz2U7GXqnMC3n75agRcnpCtRZyyqs6UDzz5uu9uw
+         Ki7w==
+X-Forwarded-Encrypted: i=1; AJvYcCWmwQbRG+i81/6pihVq0cD31+8csNs6WHzxyffN8TpQkxK2c8JiOaAByvCCzWO26B5iIz7Wyedj27h2rwM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywb1w3D5C9tnOl9dsYgOyI9gyn7GsD7ZBxYejLOtSrhlZWmAMkw
+	s5s0W6Mki7gJc9vR9PLDowRsijm+VpPbpwNUWGH6ooOAPtTSeFUyBq3ar6KHuSYoTUu44PCes4L
+	LL53KIuefl/0qsvHSaUPu9dkl/d4b9iZ2kaQrrg==
+X-Google-Smtp-Source: AGHT+IE2JwdDtHrXWOXkr8swPM5s7DryraYBiVanjT5C61UlNu+OUKVCm0356LXp35L2K1UItF9VpHBO/lLLY49AnQM=
+X-Received: by 2002:a05:6902:2e11:b0:e0b:e550:4e46 with SMTP id
+ 3f1490d57ef6-e1a5ab452e5mr2752227276.5.1724934185317; Thu, 29 Aug 2024
+ 05:23:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240108120824.122178-1-aleksandr.mikhalitsyn@canonical.com>
- <20240108120824.122178-3-aleksandr.mikhalitsyn@canonical.com>
- <CAJfpegtixg+NRv=hUhvkjxFaLqb_Vhb6DSxmRNxXD-GHAGiHGg@mail.gmail.com>
- <CAEivzxeva5ipjihSrMa4u=uk9sDm9DNg9cLoYg0O6=eU2jLNQQ@mail.gmail.com>
- <CAJfpegsqPz+8iDVZmmSHn09LZ9fMwyYzb+Kib4258y8jSafsYQ@mail.gmail.com>
- <20240829-hurtig-vakuum-5011fdeca0ed@brauner> <CAEivzxf1TLUeR_j8h5LfkmLOAKzrenK55bw9Qj4OV0=7Dkx9=w@mail.gmail.com>
-In-Reply-To: <CAEivzxf1TLUeR_j8h5LfkmLOAKzrenK55bw9Qj4OV0=7Dkx9=w@mail.gmail.com>
-From: Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-Date: Thu, 29 Aug 2024 14:21:48 +0200
-Message-ID: <CAEivzxeSmWPiAHbPoXZWhfavKOoX4vp8VPrPs8uNh-P_ux0-0w@mail.gmail.com>
-Subject: Re: [PATCH v1 2/9] fs/fuse: add FUSE_OWNER_UID_GID_EXT extension
-To: Christian Brauner <brauner@kernel.org>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, mszeredi@redhat.com, stgraber@stgraber.org, 
-	linux-fsdevel@vger.kernel.org, Seth Forshee <sforshee@kernel.org>, 
-	Amir Goldstein <amir73il@gmail.com>, Bernd Schubert <bschubert@ddn.com>, linux-kernel@vger.kernel.org
+References: <20240829-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-8-v1-0-bdb05b4b5a2e@linaro.org>
+In-Reply-To: <20240829-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-8-v1-0-bdb05b4b5a2e@linaro.org>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Thu, 29 Aug 2024 15:22:54 +0300
+Message-ID: <CAA8EJpoD_=FaBL2xj+xu21BG0X2vOtVcskOyeZFrWg4XL3m_tw@mail.gmail.com>
+Subject: Re: [PATCH 00/21] drm/msm: Support quad pipe with dual-DSI
+To: Jun Nie <jun.nie@linaro.org>
+Cc: Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, linux-arm-msm@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, Jonathan Marek <jonathan@marek.ca>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 29, 2024 at 2:17=E2=80=AFPM Aleksandr Mikhalitsyn
-<aleksandr.mikhalitsyn@canonical.com> wrote:
+On Thu, 29 Aug 2024 at 13:19, Jun Nie <jun.nie@linaro.org> wrote:
 >
-> On Thu, Aug 29, 2024 at 2:08=E2=80=AFPM Christian Brauner <brauner@kernel=
-.org> wrote:
-> >
-> > On Thu, Aug 29, 2024 at 10:24:42AM GMT, Miklos Szeredi wrote:
-> > > On Thu, 18 Jul 2024 at 21:12, Aleksandr Mikhalitsyn
-> > > <aleksandr.mikhalitsyn@canonical.com> wrote:
-> > >
-> > > > This was a first Christian's idea when he originally proposed a
-> > > > patchset for cephfs [2]. The problem with this
-> > > > approach is that we don't have an idmapping provided in all
-> > > > inode_operations, we only have it where it is supposed to be.
-> > > > To workaround that, Christian suggested applying a mapping only whe=
-n
-> > > > we have mnt_idmap, but if not just leave uid/gid as it is.
-> > > > This, of course, leads to inconsistencies between different
-> > > > inode_operations, for example ->lookup (idmapping is not applied) a=
-nd
-> > > > ->symlink (idmapping is applied).
-> > > > This inconsistency, really, is not a big deal usually, but... what =
-if
-> > > > a server does UID/GID-based permission checks? Then it is a problem=
-,
-> > > > obviously.
-> > >
-> > > Is it even sensible to do UID/GID-based permission checks in the
-> > > server if idmapping is enabled?
+> 2 SSPP and dual-DSI interface are need for super wide DSI panel.
+> This patch set make changes to DSI driver and extend pipes
+> and related mixer blending logic to support quad pipe.
 >
-> Dear friends,
->
-> >
-> > It really makes no sense.
->
-> +
->
-> >
-> > >
-> > > If not, then we should just somehow disable that configuration (i.e.
-> > > by the server having to opt into idmapping), and then we can just use
-> > > the in_h.[ugi]d for creates, no?
-> >
-> > Fwiw, that's what the patchset is doing. It's only supported if the
-> > server sets "default_permissions".
->
-> Yeah. Thanks, Christian!
->
-> That's what we have:
->
-> +++ b/fs/fuse/inode.c
-> @@ -1345,6 +1345,12 @@ static void process_init_reply(struct
-> fuse_mount *fm, struct fuse_args *args,
->                  fm->sb->s_export_op =3D &fuse_export_fid_operations;
->              if (flags & FUSE_OWNER_UID_GID_EXT)
->                  fc->owner_uid_gid_ext =3D 1;
-> +            if (flags & FUSE_ALLOW_IDMAP) {
-> +                if (fc->owner_uid_gid_ext && fc->default_permissions)
-> +                    fm->sb->s_iflags &=3D ~SB_I_NOIDMAP;
-> +                else
-> +                    ok =3D false;
-> +            }
->          } else {
->              ra_pages =3D fc->max_read / PAGE_SIZE;
->
-> So idmapped mounts can be enabled ONLY if "default_permissions" mode
-> is set. At the same time,
-> some fuse servers (glusterfs), even when "default_permissions" is set,
-> still have some UID/GID-based checks.
-> So, they effectively duplicate permission checking logic in the
-> userspace. We can not do anything with that, but only
-> fix fuse servers to stop doing so. See also my PoC for glusterfs-fuse
-> idmapped mounts support:
-> https://github.com/mihalicyn/glusterfs/commit/ab3ec2c7cbe22618cba9cc94a52=
-a492b1904d0b2
+> This patch set is based on virtual plane patch set:
+> https://patchwork.freedesktop.org/series/131109/
 
-and yes, latest patchset (v3) is here:
-https://lore.kernel.org/all/20240815092429.103356-1-aleksandr.mikhalitsyn@c=
-anonical.com/#t
+Is this "depends" or "used some ideas" or something else?
+
+If it depends, please say that clearly, including the revision of the patchset.
+
+Next, generic feedback for the series.
+- Please provide detailed commit messages. Describe why the change is
+being introduced.
+- Please grok why and how SSPPs are handled in non-virtual and
+especially in a virtual case. Feel free to ask questions, but I really
+don't expect to see patches assuming single SSPP per pair of pipes.
+- Please drop all unrelated changes. DSI, DSC, etc must go to separate series.
+- Please take care about the commit trailers. If the change is a fix,
+it should have the Fixes trailer.
+
+Next, please restructure the series. The patches should be ordered and
+split in a logical order.
+Start with a commit that gets rid of r_pipe. Don't increase
+PIPES_PER_STAGE, etc, just loop over two pipes. Note how the code
+handles r_pipe->sspp and keep that unchanged. Be sure to handle odd
+plane sizes correctly. You can not just divide width by two to get the
+pipe width.
+Next, split PIPES_PER_STAGE into two defines: one for mixer code, one
+for the pipes per plane.
+Next come additional patches, like PP stride, etc.
+Then extract the code to handle a single LM pair.
+Finally introduce quad pipe, allocate two sets of LM configs, etc.
+Each LM config still gets two pipes per plane. Each plane can have 4
+pipes. Be extremely careful with splitting of the plane framebuffer
+into the pipe configuration. Both x coordinate and width can be odd.
+And a pair of pipes can not cross the screen middle line.
 
 >
-> Kind regards,
-> Alex
+> Signed-off-by: Jun Nie <jun.nie@linaro.org>
+> ---
+> Jonathan Marek (3):
+>       drm/msm/dsi: add support to DSI CTRL v2.8.0
+>       drm/msm/dsi: fix DSC width for the bonded DSI case
+>       drm/msm/dsi: support DSC configurations with slice_per_pkt > 1
+>
+> Jun Nie (18):
+>       drm/msm/dsi: pass the right width to dsc
+>       drm/msm/dpu: polish log for resource allocation
+>       drm/msm/dpu: Add utility to get mixer number
+>       drm/msm/dpu: Support dynamic DSC number
+>       drm/msm/dpu: decide right side per last bit
+>       drm/msm/dpu: request more mixer for 4K+ DSC case
+>       drm/msm/dpu: fix lm number counter for quad-pipe
+>       drm/msm/dpu: Support 4 mixers at most
+>       drm/msm/dpu: switch RM to use crtc_id rather than enc_id for allocation
+>       drm/msm/dpu: Support quad pipe in header files
+>       drm/msm/dpu: Support quad-pipe in SSPP checking
+>       drm/msm/dpu: support plane splitting in quad-pipe case
+>       drm/msm/dpu: support SSPP assignment for quad-pipe case
+>       drm/msm/dpu: setup pipes with 2 set of stage config
+>       drm/msm/dpu: blend pipes by left and right
+>       drm/msm/dpu: bind correct pingpong for quad pipe
+>       drm/msm/dpu: support quad pipe in general operations
+>       drm/msm/dpu: revise debug info to support quad pipe
+>
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c         | 119 ++++---
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.h         |  11 +-
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c      |  73 +++--
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys.h |   3 +-
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h   |   1 +
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.c       |  19 +-
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.h       |   4 +-
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h      |   2 +-
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_sspp.h      |  11 +-
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h          |  12 +-
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c        | 385 ++++++++++++-----------
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_plane.h        |  30 +-
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c           | 209 ++++++------
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_rm.h           |  19 +-
+>  drivers/gpu/drm/msm/dsi/dsi.h                    |   3 +-
+>  drivers/gpu/drm/msm/dsi/dsi_host.c               |  54 ++--
+>  drivers/gpu/drm/msm/dsi/dsi_manager.c            |   2 +-
+>  include/drm/drm_mipi_dsi.h                       |   2 +
+>  18 files changed, 566 insertions(+), 393 deletions(-)
+> ---
+> base-commit: 9651fbfb684e7a1288dbae3bf1f15cd484c0217a
+> change-id: 20240829-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-8-d2d6b3eb1d57
+>
+> Best regards,
+> --
+> Jun Nie <jun.nie@linaro.org>
+>
+
+
+-- 
+With best wishes
+Dmitry
 
