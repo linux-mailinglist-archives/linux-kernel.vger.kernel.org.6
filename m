@@ -1,126 +1,214 @@
-Return-Path: <linux-kernel+bounces-307381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C66A8964CB7
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 19:26:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62ADD964CBC
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 19:28:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 31C25B21DE0
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 17:26:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18F812841F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 17:28:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B14281B655C;
-	Thu, 29 Aug 2024 17:26:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 007601B78E0;
+	Thu, 29 Aug 2024 17:28:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20230601.gappssmtp.com header.i=@amacapital-net.20230601.gappssmtp.com header.b="pNtaPKTq"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gaZ4j7Jd"
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B40BD16D9BA
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 17:26:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C97EC146A96;
+	Thu, 29 Aug 2024 17:28:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724952395; cv=none; b=eXPEBVYr2/HWequEA1RVvp2q+BZogd0FsS/VdALvO3Eo7YStQ369CNuSNtN4Ri0khsnJMvUt95ysonhLIJfSEr4X8Xedvh/0jYTkulespxlI0kL5wJNV8ZnATUgYoqyL6dUUFRHqYlDlpEfLvGicnsLco7BYc3NS+7r/DkIkJzM=
+	t=1724952518; cv=none; b=qJmDaxWorMdwsvZaOTE+kEj8jsLDSRkTw7XfwFyOZnRcZJEgeLxLk+NEpgl763Fg6dcWPofdpFhhd6lwXwgsjksayaa8zMqrdlzuRD6ZcAzSRXi7FYHGImkKuk1xHpMfyD6pf0QtzUNZASA+Ub4thAvnNglZMmPjZUwOVXpnvVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724952395; c=relaxed/simple;
-	bh=7VZ7yYporrUw0FRjwYmX04dMNvDufXFjSmEG0/Se2ak=;
+	s=arc-20240116; t=1724952518; c=relaxed/simple;
+	bh=KJKoUfWUoMAHUQHg5Fy0b3Mzd2sRhvl7cmJ2Y9HGAoA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rk+WO9zyoWCnK1FaU8s48FobL6viTXO7jtQvsDEqVAHVE+LCDdfJ/DlQqOJtwusZQJjRBnJjw/TGotwifh00ddxm5QnOes48DLstuC1AflyWAEGnlyB1kFQknDvN4VB1oXFhwd6jAnsIzauSx9GSB6yEWwsS5hTzXl9q8gC3+NY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net; spf=pass smtp.mailfrom=amacapital.net; dkim=pass (2048-bit key) header.d=amacapital-net.20230601.gappssmtp.com header.i=@amacapital-net.20230601.gappssmtp.com header.b=pNtaPKTq; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amacapital.net
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5c0a9ae3665so1035036a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 10:26:32 -0700 (PDT)
+	 To:Cc:Content-Type; b=Sw5OrMEd4qiUzHwsAckaTAoLFsk75iou5ETZiq9G890dDbGHf2Ug1MJwpkNqzsLrMulUewcQzNulYSAkHGg9l2ZD7Z/OtJJHpiRN5G/GNt/BzyNemKox6F8nLBq3NpyUmhW/QtkTob/fsUWY7XKsFrVmg/4OG0nUbMWIq0c6jok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gaZ4j7Jd; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-7c6b4222fe3so575448a12.3;
+        Thu, 29 Aug 2024 10:28:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20230601.gappssmtp.com; s=20230601; t=1724952391; x=1725557191; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1724952516; x=1725557316; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=vOQJo2GeGUsaAWwa6mncP2Ys8KGeup0MpOwdKy9vZ2s=;
-        b=pNtaPKTq8z+phRW+uQGnTs+qMXHaYIL/GcjN/x/LnQf2BjyD8p5y2H+5vEhuXKXwi8
-         ftG71B9DPoNzB61KcrF9I1ei9eQf2ItqUYScWVjtjkt038PDovAf+02G3PWdbSEYV/gF
-         VUGanuygqMUa0EDniUcD+RGPKCi9cK0s3HVNSVxbNZWgj1KO3N8BsdQgdPTbVaho7cbN
-         uffjG8xPFXRyzvmojT5Q7GJWc9gNeBN1RpYE7Fg8701yIuOCKeoEpvBhWU5Nd1dfCpBH
-         lGtzdaTkl9tdb4wY11odFxjZXazcjSkQ87QjPN7HGdpnmU6q/RhAPAweUh09vLJlr1v1
-         allQ==
+        bh=sHtTBbzeYQ0PhvAJXeu6V6EJfe+INUGk7sZpaNX20bs=;
+        b=gaZ4j7JdqeP+aTOB9mDQtq39X2oloBwWLt+kLzILOiIeQbPUHwRXvBMxj15gnG0FX5
+         m464HLDoMtTAfbcu/F0UUUAS39H9INmvEzC2JKLAvl+6fFtI4ButbfAAEwZ5HfQyDbMj
+         r/pUp+INcUxdFeQNS1EPKBaY7wWKjzqLImuoqXxxPTxLWU5sWF1nk+Jzss5DUy5W1AxW
+         Osn9cx8+kKWw/m8yIszPeC8DzTNF6gnmIvFCvUfLNc2x33J565oFRF/fo1PdgrMBCMIk
+         t7nJpeRl4N5+9HVD1A/Vghjlb2oot1wQXfRBqK8uwsU80ZXZ5qXS+dXB4jToV+xHdfCl
+         QbIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724952391; x=1725557191;
+        d=1e100.net; s=20230601; t=1724952516; x=1725557316;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=vOQJo2GeGUsaAWwa6mncP2Ys8KGeup0MpOwdKy9vZ2s=;
-        b=WZmhUghCldSNQoPRGQ4+wSpwABFioIH3/sc0LksgtuFvghb0RQO5JsREnsUQe1ydQQ
-         IT7OFhB1wuJPJ2XwSakxUmyzuUgZuTmMMqYlNFe/RdygRU0f/0D5ynLyOJWXNarB0YBu
-         9keY0o2DWona4ScCJcdQBpGKDQqkUkvKogoDgccvBJZ3dsKC5zwb0YeVg9ZVqr2FpVRT
-         GK5iFF2m2rbmcycwq+obJhsf9nt2BYuC8fWrKlGQjicPCzYRvDxZWmeBlGp1y+ZA7c5V
-         FKnaFCdBplXeP6Fzw+jDSR5xPMswB1MqJ/IMx48Xp+6Q0/nNHSIrieHF+CuIzfVF8koo
-         SEiA==
-X-Forwarded-Encrypted: i=1; AJvYcCWFqLvEsWGEJ3vqNrS1CorSGTXzMD3C5HN/9jB4rxCBsVIu7+REsXFqfc4L/Q87d/IzsfM6s4JcwLwfGQY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFCH76n3ql6AVnu60zd43Nqx4zi+tJYezWk5h2XE6koPF1Jtxb
-	Y0AEuFmI31BROi5ViBmxs5y17VHTJ+kl+4egYfCob02S+mPuUEXjbsWqqUntOq5+FgbMakj3Zee
-	tfW57qAimRycu017UQrvYsInZlxgKy8CoV0At
-X-Google-Smtp-Source: AGHT+IH4iuyCchMQAlPW+yMmxvPWO1Nlc/xUYnfiyGoA+O59EpUNxRiKYElkWTnQ0OSm9kXEGTyn1XnDACEEoQtNqZ8=
-X-Received: by 2002:a05:6402:401e:b0:5be:ff22:8eef with SMTP id
- 4fb4d7f45d1cf-5c21ed98f9fmr3609188a12.36.1724952390717; Thu, 29 Aug 2024
- 10:26:30 -0700 (PDT)
+        bh=sHtTBbzeYQ0PhvAJXeu6V6EJfe+INUGk7sZpaNX20bs=;
+        b=lEgjVuweoZEoEjmsx0hSFFbrH/YreakorPex8zmzxWN2Z0cQYx1aHkWZFrxVw9JCtx
+         zDcM0AtMc5rV4TaI8AMEMcZQHONuSwdCfInpGnfTcCFKx+ReL+VmbfZKiqAZpEwGaJx7
+         VjeeEby+M0uNwHQieKJ5VtnlluXq5H/cRQgymvS2KsDI4I+3M8UfKRSkn0P6GcSvwHlb
+         oau3IB98X3YgQjqqYVRxJ5LU9fr1S3JHFzhZ1ZhW26lrkdj1UB25nATLc+X+uitbTwKs
+         HHgJcLeYMvmV2yGy8+JnN48gRHcCAyq/znIKhFgpZQ+giT3IBI2taFdUzbG/vJ6H3Te1
+         aB3w==
+X-Forwarded-Encrypted: i=1; AJvYcCVPZUnImHgpR74XKEQ8S4Nn5rpBG52gyo3trKUqVBMT1OlALzd1dYmaFFxwAByNl9Y/deUAQRvWQs+is207SROk9Skd@vger.kernel.org, AJvYcCWOpX7dmDRwg3+Bw0hxmONeZtD6mSDLWA8cdzCtSwsctL4r2jRWnySFt70BNuiKIqz/LIc=@vger.kernel.org, AJvYcCX0wO1Itl5KJnOHdpu7WfJHyr0l2tVtU/RD2Z+G06yBlKmvtkzJ16PVfvkSLxVsh8GWgBdX/cLOd0qTZkpP@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzh/m1RYN3Ox7QNTdmUCtmn34OMi3UFrHEEKI/FTmcvnJ7Zr2RJ
+	SD4w9HBUaV2UyuxWiosopK4OgkaLRsjDuq+WHQZPr0seqUFzFa9/lQfPxh8k49Fd6VbTfFXqQuY
+	pX3KXVyWGkwS12XchF7Tdx+9BKXw=
+X-Google-Smtp-Source: AGHT+IHFSsyIXZBp/wN1WeIfBQIX6SXXWbfTEQ+vV3dVVPuTZikp/jdnt41Q1uEUqofGNYCJ3J6pvEG0iPugoozqPs8=
+X-Received: by 2002:a17:90b:4b45:b0:2d3:ba42:775c with SMTP id
+ 98e67ed59e1d1-2d85618168dmr4248026a91.1.1724952515912; Thu, 29 Aug 2024
+ 10:28:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240531010331.134441-1-ross.philipson@oracle.com>
- <20240531010331.134441-7-ross.philipson@oracle.com> <20240531021656.GA1502@sol.localdomain>
- <874jaegk8i.fsf@email.froward.int.ebiederm.org> <5b1ce8d3-516d-4dfd-a976-38e5cee1ef4e@apertussolutions.com>
- <87ttflli09.ffs@tglx> <CALCETrXQ7rChWLDqTG0+KY7rsfajSPguMnHO1G4VJi_mgwN9Zw@mail.gmail.com>
- <Zs/qJsKu3StL3Wzt@srcf.ucam.org>
-In-Reply-To: <Zs/qJsKu3StL3Wzt@srcf.ucam.org>
-From: Andy Lutomirski <luto@amacapital.net>
-Date: Thu, 29 Aug 2024 10:26:18 -0700
-Message-ID: <CALCETrW8jfkvMc2rwCoyiVON25YFVQZWrb4ZFFoUs3zhRV4YEQ@mail.gmail.com>
-Subject: Re: [PATCH v9 06/19] x86: Add early SHA-1 support for Secure Launch
- early measurements
-To: Matthew Garrett <mjg59@srcf.ucam.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, "Daniel P. Smith" <dpsmith@apertussolutions.com>, 
-	"Eric W. Biederman" <ebiederm@xmission.com>, Eric Biggers <ebiggers@kernel.org>, 
-	Ross Philipson <ross.philipson@oracle.com>, linux-kernel@vger.kernel.org, x86@kernel.org, 
-	linux-integrity@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-crypto@vger.kernel.org, kexec@lists.infradead.org, 
-	linux-efi@vger.kernel.org, iommu@lists.linux-foundation.org, mingo@redhat.com, 
-	bp@alien8.de, hpa@zytor.com, dave.hansen@linux.intel.com, ardb@kernel.org, 
-	James.Bottomley@hansenpartnership.com, peterhuewe@gmx.de, jarkko@kernel.org, 
-	jgg@ziepe.ca, nivedita@alum.mit.edu, herbert@gondor.apana.org.au, 
-	davem@davemloft.net, corbet@lwn.net, dwmw2@infradead.org, 
-	baolu.lu@linux.intel.com, kanth.ghatraju@oracle.com, 
-	andrew.cooper3@citrix.com, trenchboot-devel@googlegroups.com
+References: <20240813203409.3985398-1-andrii@kernel.org> <20240828125418.07c3c63e08dc688e62fef4d2@kernel.org>
+In-Reply-To: <20240828125418.07c3c63e08dc688e62fef4d2@kernel.org>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Thu, 29 Aug 2024 10:28:24 -0700
+Message-ID: <CAEf4BzbHuHPuLHT5E619crJ1Gdvr8LnQpR7w=vrx8Gb6NHAeZA@mail.gmail.com>
+Subject: Re: [PATCH v3] uprobes: turn trace_uprobe's nhit counter to be
+ per-CPU one
+To: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Andrii Nakryiko <andrii@kernel.org>, linux-trace-kernel@vger.kernel.org, 
+	rostedt@goodmis.org, peterz@infradead.org, oleg@redhat.com, 
+	bpf@vger.kernel.org, linux-kernel@vger.kernel.org, jolsa@kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 28, 2024 at 8:25=E2=80=AFPM Matthew Garrett <mjg59@srcf.ucam.or=
-g> wrote:
+On Tue, Aug 27, 2024 at 8:55=E2=80=AFPM Masami Hiramatsu <mhiramat@kernel.o=
+rg> wrote:
 >
-> On Wed, Aug 28, 2024 at 08:17:05PM -0700, Andy Lutomirski wrote:
+> On Tue, 13 Aug 2024 13:34:09 -0700
+> Andrii Nakryiko <andrii@kernel.org> wrote:
 >
-> > Ross et al, can you confirm that your code actually, at least by
-> > default and with a monstrous warning to anyone who tries to change the
-> > default, caps SHA1 PCRs if SHA256 is available?  And then can we maybe
-> > all stop hassling the people trying to develop this series about the
-> > fact that they're doing their best with the obnoxious system that the
-> > TPM designers gave them?
+> > trace_uprobe->nhit counter is not incremented atomically, so its value
+> > is questionable in when uprobe is hit on multiple CPUs simultaneously.
+> >
+> > Also, doing this shared counter increment across many CPUs causes heavy
+> > cache line bouncing, limiting uprobe/uretprobe performance scaling with
+> > number of CPUs.
+> >
+> > Solve both problems by making this a per-CPU counter.
+> >
 >
-> Presumably this would be dependent upon non-SHA1 banks being enabled?
+> Looks good to me. Let me pick it to linux-trace probes/for-next.
+>
 
-Of course.  It's also not immediately obvious to me what layer of the
-stack should be responsible for capping SHA1 PCRs.  Should it be the
-kernel?  Userspace?
+Thanks! I just checked linux-trace repo, doesn't seem like this was
+applied yet, is that right? Or am I checking in the wrong place?
 
-It seems like a whole lot of people, for better or for worse, want to
-minimize the amount of code that even knows how to compute SHA1
-hashes.  I'm not personally convinced I agree with this strategy, but
-it is what it is.  And maybe people would be happier if the default
-behavior of the kernel is to notice that SHA256 is available and then
-cap SHA1 before even asking user code's permission.
-
---Andy
+> Thank you,
+>
+>
+> > Reviewed-by: Oleg Nesterov <oleg@redhat.com>
+> > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+> > ---
+> >  kernel/trace/trace_uprobe.c | 24 +++++++++++++++++++++---
+> >  1 file changed, 21 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
+> > index c98e3b3386ba..c3df411a2684 100644
+> > --- a/kernel/trace/trace_uprobe.c
+> > +++ b/kernel/trace/trace_uprobe.c
+> > @@ -17,6 +17,7 @@
+> >  #include <linux/string.h>
+> >  #include <linux/rculist.h>
+> >  #include <linux/filter.h>
+> > +#include <linux/percpu.h>
+> >
+> >  #include "trace_dynevent.h"
+> >  #include "trace_probe.h"
+> > @@ -62,7 +63,7 @@ struct trace_uprobe {
+> >       char                            *filename;
+> >       unsigned long                   offset;
+> >       unsigned long                   ref_ctr_offset;
+> > -     unsigned long                   nhit;
+> > +     unsigned long __percpu          *nhits;
+> >       struct trace_probe              tp;
+> >  };
+> >
+> > @@ -337,6 +338,12 @@ alloc_trace_uprobe(const char *group, const char *=
+event, int nargs, bool is_ret)
+> >       if (!tu)
+> >               return ERR_PTR(-ENOMEM);
+> >
+> > +     tu->nhits =3D alloc_percpu(unsigned long);
+> > +     if (!tu->nhits) {
+> > +             ret =3D -ENOMEM;
+> > +             goto error;
+> > +     }
+> > +
+> >       ret =3D trace_probe_init(&tu->tp, event, group, true, nargs);
+> >       if (ret < 0)
+> >               goto error;
+> > @@ -349,6 +356,7 @@ alloc_trace_uprobe(const char *group, const char *e=
+vent, int nargs, bool is_ret)
+> >       return tu;
+> >
+> >  error:
+> > +     free_percpu(tu->nhits);
+> >       kfree(tu);
+> >
+> >       return ERR_PTR(ret);
+> > @@ -362,6 +370,7 @@ static void free_trace_uprobe(struct trace_uprobe *=
+tu)
+> >       path_put(&tu->path);
+> >       trace_probe_cleanup(&tu->tp);
+> >       kfree(tu->filename);
+> > +     free_percpu(tu->nhits);
+> >       kfree(tu);
+> >  }
+> >
+> > @@ -815,13 +824,21 @@ static int probes_profile_seq_show(struct seq_fil=
+e *m, void *v)
+> >  {
+> >       struct dyn_event *ev =3D v;
+> >       struct trace_uprobe *tu;
+> > +     unsigned long nhits;
+> > +     int cpu;
+> >
+> >       if (!is_trace_uprobe(ev))
+> >               return 0;
+> >
+> >       tu =3D to_trace_uprobe(ev);
+> > +
+> > +     nhits =3D 0;
+> > +     for_each_possible_cpu(cpu) {
+> > +             nhits +=3D per_cpu(*tu->nhits, cpu);
+> > +     }
+> > +
+> >       seq_printf(m, "  %s %-44s %15lu\n", tu->filename,
+> > -                     trace_probe_name(&tu->tp), tu->nhit);
+> > +                trace_probe_name(&tu->tp), nhits);
+> >       return 0;
+> >  }
+> >
+> > @@ -1512,7 +1529,8 @@ static int uprobe_dispatcher(struct uprobe_consum=
+er *con, struct pt_regs *regs)
+> >       int ret =3D 0;
+> >
+> >       tu =3D container_of(con, struct trace_uprobe, consumer);
+> > -     tu->nhit++;
+> > +
+> > +     this_cpu_inc(*tu->nhits);
+> >
+> >       udd.tu =3D tu;
+> >       udd.bp_addr =3D instruction_pointer(regs);
+> > --
+> > 2.43.5
+> >
+>
+>
+> --
+> Masami Hiramatsu (Google) <mhiramat@kernel.org>
+>
 
