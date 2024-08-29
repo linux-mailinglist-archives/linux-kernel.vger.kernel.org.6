@@ -1,131 +1,328 @@
-Return-Path: <linux-kernel+bounces-307013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 974B59646EF
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:40:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4292964747
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:53:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2222AB27BB8
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:37:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7606DB2BB0D
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:38:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8AF91AAE1E;
-	Thu, 29 Aug 2024 13:36:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C7131B1411;
+	Thu, 29 Aug 2024 13:37:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="e4r6pdKj"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="BUuFgBlZ"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32C8D1A7AF3
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 13:36:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 871D81AD3E6
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 13:36:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724938588; cv=none; b=WFUKtXV15Omj7yFAw73+lOmmW262VRlsDpcleJRSRsOtknbK16srVVP9WbwRXOUDJS2VMEN7XVWpbQ2pBglVfuBKICvUOXAfk9Bp7axRQQpqme1Q4zOex+fLhR8E+HO1aTDuPQhOe2Rc79Vwm+a5zjxHeC/lOcnB1BThi9aC5uI=
+	t=1724938620; cv=none; b=V8qILqAH5EWclOh36lIST1mYxHMfPlLGulugdZv0o4SlrxABnEL7ud5V5hJpg+5tgb1RHEnDj4p5S13RV0K1LHukLkzH/wpXnt27ZpKIIIjaxRlvPe/1IAJmjKV+2zBwa2HEB3uKGrz+g7nKErUob4EZXj/5lQtchLp+F/eG5Gc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724938588; c=relaxed/simple;
-	bh=ZeMJUIxFKueAM+1gPkeqgvS13tV5orxhIMCtghsgqXg=;
+	s=arc-20240116; t=1724938620; c=relaxed/simple;
+	bh=XYEuM7Zmmc9ozg5FXOHZZHuMIIHeg7xw8R7CBajOpdU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a5MnF7CpfMtndFTJDZvgR+GGTdnBRoCWUn4CoV+ZPEsrheT1h/Fl82SohSZyvUCW8PzOcd7APRLiKfxdLsoXKeY7ZoSz7ns3NIIDatuSthVX2SVIHDEyKz1feN13wIgP34tX7ViPdvXr/TLXbZL9wt8NolqLE2Q2c/3sVeWCGxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=e4r6pdKj; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4280ca0791bso6304305e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 06:36:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1724938583; x=1725543383; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=wwzrWSl4QmNb//4oM3ybSBFzbuQXvWdfQdlCdZCtaZA=;
-        b=e4r6pdKjPdGe/L+u3mt/ch9JZVadpiKCr2uAcj/fdYoqvTbA3v4x9eo6O+jKThkFeO
-         D+/kHToYGF7f750MuLbYE20fFAYP0CBDf7XQZCtHQuXimtqOQpI6flSMSSG27u+uAfWy
-         KK2VshhkUnYrY64rT9mRt84kPSCFbMJokBldEPRQnpt9Pi3Jwm9pr6TIjtIyPWqufobe
-         96+PYKAcb1LJMrUOOBBuamw9ufKX++u5U6Ff2Cm+Pgnb50CEaKMMKlsivtmV0PKQVDY+
-         t2+MztI9c9+KTVhdMboBXEg0SKpIjGKpSN1I8yPzzDG1wF3wYMufroW2HzdMyGisT6b5
-         O6Fw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724938583; x=1725543383;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wwzrWSl4QmNb//4oM3ybSBFzbuQXvWdfQdlCdZCtaZA=;
-        b=hDJlurs6kS18lr50uorfSfJr9FBCYfwcI2WRGYL3+81tvgUBu7c1ARpx0mRl0vf2Cj
-         S5hoJKGkrsk7GfutfQu9e7GZNEXHAb9Z9UPcz7oucMzQaoczyGA/xYnyf9nEHVNE4q/Y
-         Dsad+QQTxaBD/4NuJVaZGMJ5anyvqF9WNXRD3ra7v6jjw98rE2nYMr5V4StSm0iAqsOG
-         3H98BeH5fnJDxeZ8vUGrCXfPGnEWD2B5N8PmEXN3WwWGHJc3+MbSmjc6t0FyXXcb80sU
-         trsbnrWxpqIHq8dNXhYrwVF0LQfVJ86wUxhuKi9PKZ0i8UrMQyCMgUuim392vQ1NgutZ
-         UuoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWeYiw072ubrr0rHo1S1N+soz+Kiy3Q7egidFYjDECR0+DWBoFf4/tqIBnaCIHNMaZSYpQEbjVz4ECGTmg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yye5KvG1ToeulyZVyh+1ZlZD88SIBm/LCjnF11R9MlOqx2FGoAh
-	MFDfrdcf6T8d8DF40bkmnrVZL38QeKd/3QT1tzfB4Go2IPJg1KGe1dhVT+IBmv8=
-X-Google-Smtp-Source: AGHT+IF2hWzIo4nvH7VaruPdmF/MnzuPCFARU8YeDyU0mXMLL5O5B66d3cJOBON82KFLLD/if11uUg==
-X-Received: by 2002:a05:600c:4594:b0:426:6d1a:d497 with SMTP id 5b1f17b1804b1-42bb01b993amr23949655e9.12.1724938583239;
-        Thu, 29 Aug 2024 06:36:23 -0700 (PDT)
-Received: from localhost (109-81-82-19.rct.o2.cz. [109.81.82.19])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bb9593c32sm4208105e9.48.2024.08.29.06.36.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 06:36:22 -0700 (PDT)
-Date: Thu, 29 Aug 2024 15:36:22 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: Zhongkun He <hezhongkun.hzk@bytedance.com>
-Cc: akpm@linux-foundation.org, hannes@cmpxchg.org, roman.gushchin@linux.dev,
-	shakeel.butt@linux.dev, muchun.song@linux.dev,
-	lizefan.x@bytedance.com, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org
-Subject: Re: [External] Re: [RFC PATCH 0/2] Add disable_unmap_file arg to
- memory.reclaim
-Message-ID: <ZtB5Vn69L27oodEq@tiehlicka>
-References: <20240829101918.3454840-1-hezhongkun.hzk@bytedance.com>
- <ZtBMO1owCU3XmagV@tiehlicka>
- <CACSyD1Ok62n-SF8fGrDQq_JC4SUSvFb-6QjgjnkD9=JacCJiYg@mail.gmail.com>
- <ZtBglyqZz_uGDnOS@tiehlicka>
- <CACSyD1NWVe9gjo15xsPnh-JUEsacawf47uoiu439tRO7K+ov5g@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XNmAG3JvE9FKJZyiCtawp37BqOf82eoEHpjsESd8c/Zt/vIzSVkXlfTB69Fh0MJn7mEXuVnTfG3KxiFPvsOFIK8CgRI6iiPp2DqEtbYxDXLbVhyw7p19lZ65mSRwpSEU3rjzdTPV0coyaXFnRl1Qbg0KUluuawIg0kDk+DYdKdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=BUuFgBlZ; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 3EAE94000B;
+	Thu, 29 Aug 2024 13:36:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1724938609;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Oj4RcjtjNEqx6JS5AmpNWk5GQ8DJcRGL7kAtiI3DBlo=;
+	b=BUuFgBlZklhc1JR5srZqZqEejVC7+o3TCG73l23VPg80gp4c9pJ7OXbm03T9p/GIXLcemz
+	u0b6DkNxB0R1oEbkKbcdNOIPb6tGBVgHpx2z8uvvbPvEkCzdljc3sM//Dj0u8XiRn0vD1F
+	ntTWr8aJp3aJnx8nEfRFpu4gRdGqRb+MW/HRpGVZxz3xHllaBinPrrVGIdq8oJOiqb3qg7
+	59gXxd7xWEIFzvuZ8c8HnwY8WOdSK4gD3jWAtwOonO+FE+v49zHWgfhHsaMvfg7vkaXZKR
+	2X9kylIj/idD81BtGDxvwimdVQc/hE4pkL6/71v0QcYxg3I1r/K9Aa4tBPPymw==
+Date: Thu, 29 Aug 2024 15:36:47 +0200
+From: Louis Chauvet <louis.chauvet@bootlin.com>
+To: =?iso-8859-1?Q?Jos=E9_Exp=F3sito?= <jose.exposito89@gmail.com>
+Cc: airlied@gmail.com, arthurgrillo@riseup.net, daniel@ffwll.ch,
+	dri-devel@lists.freedesktop.org, hamohammed.sa@gmail.com,
+	jeremie.dautheribes@bootlin.com, linux-kernel@vger.kernel.org,
+	maarten.lankhorst@linux.intel.com, mairacanal@riseup.net,
+	marcheu@google.com, melissa.srw@gmail.com,
+	miquel.raynal@bootlin.com, mripard@kernel.org,
+	nicolejadeyee@google.com, rodrigosiqueiramelo@gmail.com,
+	seanpaul@google.com, thomas.petazzoni@bootlin.com,
+	tzimmermann@suse.de
+Subject: Re: [PATCH v2] drm/vkms: Add documentation
+Message-ID: <ZtB5b36il_s_kYIe@louis-chauvet-laptop>
+Mail-Followup-To: =?iso-8859-1?Q?Jos=E9_Exp=F3sito?= <jose.exposito89@gmail.com>,
+	airlied@gmail.com, arthurgrillo@riseup.net, daniel@ffwll.ch,
+	dri-devel@lists.freedesktop.org, hamohammed.sa@gmail.com,
+	jeremie.dautheribes@bootlin.com, linux-kernel@vger.kernel.org,
+	maarten.lankhorst@linux.intel.com, mairacanal@riseup.net,
+	marcheu@google.com, melissa.srw@gmail.com,
+	miquel.raynal@bootlin.com, mripard@kernel.org,
+	nicolejadeyee@google.com, rodrigosiqueiramelo@gmail.com,
+	seanpaul@google.com, thomas.petazzoni@bootlin.com,
+	tzimmermann@suse.de
+References: <20240826-google-clarifications-v2-1-2574655b0b91@bootlin.com>
+ <20240827174903.2774-1-jose.exposito89@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CACSyD1NWVe9gjo15xsPnh-JUEsacawf47uoiu439tRO7K+ov5g@mail.gmail.com>
+In-Reply-To: <20240827174903.2774-1-jose.exposito89@gmail.com>
+X-GND-Sasl: louis.chauvet@bootlin.com
 
-On Thu 29-08-24 21:15:50, Zhongkun He wrote:
-> On Thu, Aug 29, 2024 at 7:51â€¯PM Michal Hocko <mhocko@suse.com> wrote:
-[...]
-> > Is this some artificial workload or something real world?
-> >
+Le 27/08/24 - 19:49, José Expósito a écrit :
+> Hi Louis,
 > 
-> This is an artificial workload to show the detail of this case more
-> easily. But we have encountered this problem on our servers.
+> > Add documentation around vkms_output and its initialization.
+> > 
+> > Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+> > ---
+> > This series does not introduce functionnal changes, only some
+> > documentation and renaming to clarify the code.
+> > ---
+> > Changes in v2:
+> > - Dropped already applied patches
+> > - Dropped useless patch as its content is deleted later
+> > - Remove dependency on previous series
+> > - Apply Maíra's comments
+> > - Link to v1: https://lore.kernel.org/r/20240814-google-clarifications-v1-0-3ee76d7d0c28@bootlin.com
+> 
+> I think you missed my email in the previous patch:
+> https://patchwork.kernel.org/project/dri-devel/patch/20240814-google-clarifications-v1-3-3ee76d7d0c28@bootlin.com/#25983103
+> 
+> Minor comments, but it'd be nice to get them fixed if possible.
 
-This is always good to mention in the changelog. If you can observe this
-in real workloads it is good to get numbers from those because
-artificial workloads tend to overshoot the underlying problem and we can
-potentially miss the practical contributors to the problem.
+Yes, sorry! The v3 is in your inbox.
+Thanks for the review!
 
-Seeing this my main question is whether we should focus on swappiness
-behavior more than adding a very strange and very targetted reclaim
-mode. After all we have a mapped memory and executables protection in
-place. So in the end this is more about balance between anon vs. file
-LRUs.
-
-> If the performance of the disk is poor, like HDD, the situation will
-> become even worse.
-
-Doesn't that impact swapin/out as well? Or do you happen to have a
-faster storage for the swap?
-
-> The delay of the task becomes more serious because reading data will
-> be slower.  Hot pages will thrash repeatedly between the memory and
-> the disk. 
-
-Doesn't refault stats and IO cost aspect of the reclaim when balancing
-LRUs dealing with this situation already? Why it doesn't work in your
-case? Have you tried to investigate that?
--- 
-Michal Hocko
-SUSE Labs
+Louis Chauvet
+ 
+> Jose
+> 
+> > ---
+> >  drivers/gpu/drm/vkms/vkms_drv.h    | 86 ++++++++++++++++++++++++++++++++------
+> >  drivers/gpu/drm/vkms/vkms_output.c | 12 ++++++
+> >  2 files changed, 86 insertions(+), 12 deletions(-)
+> > 
+> > 
+> > ---
+> > base-commit: 22bc22ccf95bfa6eb6288ba4bc33d7fc0078381e
+> > change-id: 20240520-google-clarifications-dede8dcbe38a
+> > 
+> > Best regards,
+> > 
+> > diff --git a/drivers/gpu/drm/vkms/vkms_drv.h b/drivers/gpu/drm/vkms/vkms_drv.h
+> > index 5e46ea5b96dc..1fc068d4de4c 100644
+> > --- a/drivers/gpu/drm/vkms/vkms_drv.h
+> > +++ b/drivers/gpu/drm/vkms/vkms_drv.h
+> > @@ -73,29 +73,56 @@ struct vkms_color_lut {
+> >  };
+> >  
+> >  /**
+> > - * vkms_crtc_state - Driver specific CRTC state
+> > + * struct vkms_crtc_state - Driver specific CRTC state
+> > + *
+> >   * @base: base CRTC state
+> >   * @composer_work: work struct to compose and add CRC entries
+> > - * @n_frame_start: start frame number for computed CRC
+> > - * @n_frame_end: end frame number for computed CRC
+> > + *
+> > + * @num_active_planes: Number of active planes
+> > + * @active_planes: List containing all the active planes (counted by
+> > + *  @num_active_planes). They should be stored in z-order.
+> > + * @active_writeback: Current active writeback job
+> > + * @gamma_lut: Look up table for gamma used in this CRTC
+> > + * @crc_pending: Protected by @vkms_output.composer_lock, true when the frame CRC is not computed
+> > + *		 yet. Used by vblank to detect if the composer is too slow.
+> > + * @wb_pending: Protected by @vkms_output.composer_lock, true when a writeback frame is requested.
+> > + * @frame_start: Protected by @vkms_output.composer_lock, saves the frame number before the start
+> > + *		 of the composition process.
+> > + * @frame_end: Protected by @vkms_output.composer_lock, saves the last requested frame number.
+> > + *	       This is used to generate enough CRC entries when the composition worker is too slow.
+> >   */
+> >  struct vkms_crtc_state {
+> >  	struct drm_crtc_state base;
+> >  	struct work_struct composer_work;
+> >  
+> >  	int num_active_planes;
+> > -	/* stack of active planes for crc computation, should be in z order */
+> >  	struct vkms_plane_state **active_planes;
+> >  	struct vkms_writeback_job *active_writeback;
+> >  	struct vkms_color_lut gamma_lut;
+> >  
+> > -	/* below four are protected by vkms_output.composer_lock */
+> >  	bool crc_pending;
+> >  	bool wb_pending;
+> >  	u64 frame_start;
+> >  	u64 frame_end;
+> >  };
+> >  
+> > +/**
+> > + * struct vkms_output - Internal representation of all output components in vkms
+> > + *
+> > + * @crtc: Base CRTC in DRM
+> > + * @encoder: DRM encoder used for this output
+> > + * @connector: DRM connector used for this output
+> > + * @wb_connecter: DRM writeback connector used for this output
+> > + * @vblank_hrtimer: Timer used to trigger the vblank
+> > + * @period_ns: Period of the vblank timer, used to configure @vblank_hrtimer and to compute
+> > + *	       vblank timestamps
+> > + * @composer_workq: Ordered workqueue for @composer_state.composer_work.
+> > + * @lock: Lock used to protect concurrent access to the composer
+> > + * @composer_enabled: Protected by @lock, true when the vkms composer is active (crc needed or
+> > + *		      writeback)
+> > + * @composer_state: Current state of this vkms output
+> > + * @composer_lock: Lock used internally to protect @composer_state members
+> > + */
+> >  struct vkms_output {
+> >  	struct drm_crtc crtc;
+> >  	struct drm_encoder encoder;
+> > @@ -103,28 +130,38 @@ struct vkms_output {
+> >  	struct drm_writeback_connector wb_connector;
+> >  	struct hrtimer vblank_hrtimer;
+> >  	ktime_t period_ns;
+> > -	/* ordered wq for composer_work */
+> >  	struct workqueue_struct *composer_workq;
+> > -	/* protects concurrent access to composer */
+> >  	spinlock_t lock;
+> >  
+> > -	/* protected by @lock */
+> >  	bool composer_enabled;
+> >  	struct vkms_crtc_state *composer_state;
+> >  
+> >  	spinlock_t composer_lock;
+> >  };
+> >  
+> > -struct vkms_device;
+> > -
+> > +/**
+> > + * struct vkms_config - General configuration for VKMS driver
+> > + *
+> > + * @writeback: If true, a writeback buffer can be attached to the CRTC
+> > + * @cursor: If true, a cursor plane is created in the VKMS device
+> > + * @overlay: If true, NUM_OVERLAY_PLANES will be created for the VKMS device
+> > + * @dev: Used to store the current vkms device. Only set when the device is instantiated.
+> > + */
+> >  struct vkms_config {
+> >  	bool writeback;
+> >  	bool cursor;
+> >  	bool overlay;
+> > -	/* only set when instantiated */
+> >  	struct vkms_device *dev;
+> >  };
+> >  
+> > +/**
+> > + * struct vkms_device - Description of a vkms device
+> > + *
+> > + * @drm - Base device in DRM
+> > + * @platform - Associated platform device
+> > + * @output - Configuration and sub-components of the vkms device
+> > + * @config: Configuration used in this vkms device
+> > + */
+> >  struct vkms_device {
+> >  	struct drm_device drm;
+> >  	struct platform_device *platform;
+> > @@ -132,6 +169,10 @@ struct vkms_device {
+> >  	const struct vkms_config *config;
+> >  };
+> >  
+> > +/*
+> > + * The following helpers are used to convert a member of a struct into its parent.
+> > + */
+> > +
+> >  #define drm_crtc_to_vkms_output(target) \
+> >  	container_of(target, struct vkms_output, crtc)
+> >  
+> > @@ -144,12 +185,33 @@ struct vkms_device {
+> >  #define to_vkms_plane_state(target)\
+> >  	container_of(target, struct vkms_plane_state, base.base)
+> >  
+> > -/* CRTC */
+> > +/**
+> > + * vkms_crtc_init() - Initialize a CRTC for vkms
+> > + * @dev: DRM device associated with the vkms buffer
+> > + * @crtc: uninitialized CRTC device
+> > + * @primary: primary plane to attach to the CRTC
+> > + * @cursor plane to attach to the CRTC
+> > + */
+> >  int vkms_crtc_init(struct drm_device *dev, struct drm_crtc *crtc,
+> >  		   struct drm_plane *primary, struct drm_plane *cursor);
+> >  
+> > +/**
+> > + * vkms_output_init() - Initialize all sub-components needed for a vkms device.
+> > + *
+> > + * @vkmsdev: vkms device to initialize
+> > + * @possible_crtc_index: CRTC which can be attached to the planes. The caller must ensure that
+> > + * possible_crtc_index is positive and less or equals to 31.
+> > + */
+> >  int vkms_output_init(struct vkms_device *vkmsdev, int index);
+> >  
+> > +/**
+> > + * vkms_plane_init() - Initialize a plane
+> > + *
+> > + * @vkmsdev: vkms device containing the plane
+> > + * @type: type of plane to initialize
+> > + * @possible_crtc_index: CRTC which can be attached to the plane. The caller must ensure that
+> > + * possible_crtc_index is positive and less or equals to 31.
+> > + */
+> >  struct vkms_plane *vkms_plane_init(struct vkms_device *vkmsdev,
+> >  				   enum drm_plane_type type, int index);
+> >  
+> > diff --git a/drivers/gpu/drm/vkms/vkms_output.c b/drivers/gpu/drm/vkms/vkms_output.c
+> > index 5ce70dd946aa..da69beb43ab0 100644
+> > --- a/drivers/gpu/drm/vkms/vkms_output.c
+> > +++ b/drivers/gpu/drm/vkms/vkms_output.c
+> > @@ -21,6 +21,7 @@ static int vkms_conn_get_modes(struct drm_connector *connector)
+> >  {
+> >  	int count;
+> >  
+> > +	/* Use the default modes list from DRM */
+> >  	count = drm_add_modes_noedid(connector, XRES_MAX, YRES_MAX);
+> >  	drm_set_preferred_mode(connector, XRES_DEF, YRES_DEF);
+> >  
+> > @@ -58,6 +59,12 @@ int vkms_output_init(struct vkms_device *vkmsdev, int index)
+> >  	int writeback;
+> >  	unsigned int n;
+> >  
+> > +	/*
+> > +	 * Initialize used plane. One primary plane is required to perform the composition.
+> > +	 *
+> > +	 * The overlay and cursor planes are not mandatory, but can be used to perform complex
+> > +	 * composition.
+> > +	 */
+> >  	primary = vkms_plane_init(vkmsdev, DRM_PLANE_TYPE_PRIMARY, index);
+> >  	if (IS_ERR(primary))
+> >  		return PTR_ERR(primary);
+> > @@ -76,6 +83,7 @@ int vkms_output_init(struct vkms_device *vkmsdev, int index)
+> >  			return PTR_ERR(cursor);
+> >  	}
+> >  
+> > +	/* [1]: Allocation of a CRTC, its index will be 1 */
+> >  	ret = vkms_crtc_init(dev, crtc, &primary->base, &cursor->base);
+> >  	if (ret)
+> >  		return ret;
+> > @@ -95,6 +103,10 @@ int vkms_output_init(struct vkms_device *vkmsdev, int index)
+> >  		DRM_ERROR("Failed to init encoder\n");
+> >  		goto err_encoder;
+> >  	}
+> > +	/*
+> > +	 * This is an hardcoded value to select crtc for the encoder.
+> > +	 * 1 here designate the first registered CRTC, the one allocated in [1]
+> > +	 */
+> >  	encoder->possible_crtcs = 1;
+> >  
+> >  	ret = drm_connector_attach_encoder(connector, encoder);
+> 
 
