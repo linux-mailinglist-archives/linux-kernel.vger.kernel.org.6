@@ -1,132 +1,325 @@
-Return-Path: <linux-kernel+bounces-306947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 717B69645D7
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:09:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7A9B9645DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:11:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D79DAB26A89
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:09:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 781981F27F8A
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:11:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B11851A4ADE;
-	Thu, 29 Aug 2024 13:09:48 +0000 (UTC)
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 801061A3BCE;
+	Thu, 29 Aug 2024 13:10:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SN/g0ixq"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4819B446D1;
-	Thu, 29 Aug 2024 13:09:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5C4D18E025
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 13:10:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724936988; cv=none; b=JttLhQNCTzG051P07bNHivLIaed+BgpVcdYvfMUruNaqi5wEqFuDMgAur4AdWfGLjbXGZRNb1+mTZqn/AhDrppX+meHNJYBnrczICjaEWfBLgYte60aJPDWQHRwbzR1lLTVgm2KdZYHRtrwQQCs5qLRn2Cd9both4iHcP+83TWE=
+	t=1724937046; cv=none; b=rnbQF/u66i6XSJVn4o1fQBQAS/yAaFOuKrVUEflqTnjj8isExlN/THUEw3JrMe9y17gz9Rduzmdh+l5IWbnrg/+6+d2LixiI2y69W5lRIEPSBAUEYDdHfjBpbQigaqwkxT5uSFmOeL4U/afedpV1Lhh1wxP07WrNY/tChp4b1Qg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724936988; c=relaxed/simple;
-	bh=txHBaIr/umD1HwUz5m1du7i9/LqWw7leQCsHXtL/9Yw=;
+	s=arc-20240116; t=1724937046; c=relaxed/simple;
+	bh=d0CBz2/CMekLs/MiaCWxTano/uPg70or9OrRr5u1HXE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=f/VgkcffdFXoCKyawd0s2SYIuRzDC4O81wwCzmQXs2SA2nRrWbPEm/UvWvlVZEeszgefdCuljByHcQzIKXcfxfbYEMxse8MMt0Ace6+vh+Q4l2ezNnyU/zHzGj04odlokOhjEmfxwBlw3vF195Z7ERTVsijk/hKFf/V3ZpqjlcA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-6c1ed19b25fso5956757b3.2;
-        Thu, 29 Aug 2024 06:09:46 -0700 (PDT)
+	 To:Cc:Content-Type; b=Rkp9NNawnR77wDwT8KNraNosrcKSqzT28nhjWNk8ujKL9vXCu/8X+amR24noQJEOEWDUQ/Do52AvfKNCxXfpvhSkwUDD50ylbkPuGqoDfCdfZSGOvZdemsH0RO1d8pafDbx4ZV5sm4woyGbyxdSWAedczpw55haU1G2HjGc6+2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SN/g0ixq; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724937042;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zC8/Iin5jByWnaQ3zVHoR4GF2O68JTxKriuHnXWQluc=;
+	b=SN/g0ixqFKLLIhzPWA4WdrK1Jq1xw8FLrkb/sbC3+vrFjeO/QgszAlvXCoHdcpiOLXOT/N
+	SRzSlfqsARe+5LnciN/LNvUDvYmvjBV15PW83WtDCMeB5MOHYhyFLGfD0AGq7cf98A0S1N
+	ixsArEJfKYggRCaLsbKeted0XWT5nhw=
+Received: from mail-yw1-f200.google.com (mail-yw1-f200.google.com
+ [209.85.128.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-519-LFSA1XDnMCGyqn7KGEuyBg-1; Thu, 29 Aug 2024 09:10:41 -0400
+X-MC-Unique: LFSA1XDnMCGyqn7KGEuyBg-1
+Received: by mail-yw1-f200.google.com with SMTP id 00721157ae682-6b41e02c293so13149517b3.0
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 06:10:41 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724936985; x=1725541785;
+        d=1e100.net; s=20230601; t=1724937041; x=1725541841;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Qvqa0cXkstoBgirkQOfefdgYYuuDi0dJfHzpUKpVE68=;
-        b=stLcV+kwHOxP4lFsJXQp+Y/XLNllp8DdasgH0ZU909YK818nivmP7mEH2a9rtxfWL4
-         LMbR5Ta0WV6orJBY30VXBaGOCbtsYFNe/vfdZ+N6Y8H0/UGuT6GpnOZtsr0p8UgHaP02
-         CPX/KN0Zpo+WLVLUKV5CG1Wnf5qO1VmNp66+ksBY6j4obnSKqju4CkLvpiNGQa3Knr/Q
-         Q6GCcH4RF6Emf+IDtlCWJAM+6flCxfhNUBX1K6GTaa9B7Yddc7RfFUdx9FZ9yROPyg2p
-         onhJY1pEcCQdIlhXpLSgt1qG5mJqj52b1CUhEtXhCI2kz3tw+qvhSuf1hImiEueqXjYG
-         uHYg==
-X-Forwarded-Encrypted: i=1; AJvYcCWQ6bkG1NrKrPy4iRSaR9/QbwrQCWk6MrQQzOoFcCKTQM3Lt4ioJqKXDO1exoPUwezUZhd3uyu3DB3VdKAH@vger.kernel.org, AJvYcCXMHh0RKQZO/NQ75+X3sFKdur7FranoyrEugN5lh9cHjsRE8EN5lDte5RqmVGaCkQ8WcvrzPlNB+oNcoGPQIHrmE7k=@vger.kernel.org, AJvYcCXr5jO1JcPPLMOITMGDTcE9q6tFQglMxO47dkdnJfl7AOitX9/5n7YUSmLKyoWkgXmuI4tdgHQS6C8Z@vger.kernel.org
-X-Gm-Message-State: AOJu0YwN4nTYWHpxdZ8Ix07C97JeDWJFYSX+602fMnEay4mME7NDULa0
-	xbnkHcF6aLhjPfpQiCku70RzjINKmjzplQj8qOU6I/Ol5EX0B6TXoRusRFXr
-X-Google-Smtp-Source: AGHT+IE8lamDYHvoPg7A6e/Y+e4ffqovBO5BL4dPNSGK8RyzJJXDe9pTms6AYnXblLpl0AGaqArwiw==
-X-Received: by 2002:a05:690c:d93:b0:664:db79:b275 with SMTP id 00721157ae682-6d2728ff11fmr33205917b3.0.1724936984888;
-        Thu, 29 Aug 2024 06:09:44 -0700 (PDT)
-Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com. [209.85.219.178])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6d2d57dedb5sm2326957b3.95.2024.08.29.06.09.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 29 Aug 2024 06:09:44 -0700 (PDT)
-Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e164caa76e4so629119276.1;
-        Thu, 29 Aug 2024 06:09:44 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWB4R5Tzfui9LKY4k4yI4621jLliIz1wXqCmmOPx9u6Mo8FGGNLoY8yPui6SExfFU+CeCF2dWZHsNj/oye1Lp3ULmk=@vger.kernel.org, AJvYcCWudMGASONKqe1jtCah46LI8W2zs+h6J3aQ8bU+Zq6coUIELRbtJeiOAlRSmLTWCyO79N7nRhiB3Ibyj5Nc@vger.kernel.org, AJvYcCXxP+Nv7uklzE5W2qOoVP/JJIjvXCx7SaqVohB7cgKrg1aoHTrYEjnkDL29ZQIHfYCcZcbgnvJJODTN@vger.kernel.org
-X-Received: by 2002:a05:6902:218a:b0:e11:6ebe:ce8f with SMTP id
- 3f1490d57ef6-e1a5ab57421mr2743647276.7.1724936984336; Thu, 29 Aug 2024
- 06:09:44 -0700 (PDT)
+        bh=zC8/Iin5jByWnaQ3zVHoR4GF2O68JTxKriuHnXWQluc=;
+        b=pri8VxIDMcTYRdrR6nUpjDUzLDk+KJLICieuSZ9xtLHqKbb2NeBO71GG3EmS6NFnsT
+         S0izAROrfbMiO7UCerS+jr/TrF2zYWhjwBCxQvWLUW1NHMblAApI6hw2DpVMjjEZ6nhT
+         ZUvrh2hEyTjbuy139eQdSYxVjvyuRXtxCvF9oHiO6XwtP+Q7vIbGWHIRv5GtwC6egKSN
+         ZiY1xQS4M4qnSFkLJ7I3NzzCExTZB1lXS0qG1g6cN3gLi4qfO8x9Q7lrVRz6vkKCS8TS
+         bJRAjCVUm+yA5Drqvtd3RSl+nxJ4lG3ZTYknA1OxBfyhXyJ1rEQy66IxmMRIOXbqb32e
+         5MFg==
+X-Forwarded-Encrypted: i=1; AJvYcCXr3FbqO/Cc4OUfyJNi3wL7RoiuQXbuWt5vSbpy0wBbtD7NrKR2goWLBM3aA3Y4fBiTzeyhxlwMiYldvIw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzoyW/vIpgIfEHK4ra/wxEPVjKk42SPHLWqihbKxBLTPTfFO6rL
+	x4RduOSbW2Tc4PMcIgCoMqPS0FdfgCSNbjKYbiq7sjUiGbcWQ8IcNFkteW2iDRQ0q7qHBrcBzRj
+	xQx70c9hhl+SQa2zoTp8u0egRl4fW4tUSJV/d/79CXzi9l/BbLMqywrZZUUYZsFTbpiElm5aqTx
+	YTpcYWr/mo/oOCUm54kKPgwk5Lja4/+nQLB5dn
+X-Received: by 2002:a05:6902:e0b:b0:e16:69b5:ef66 with SMTP id 3f1490d57ef6-e1a5af17657mr2875228276.54.1724937040651;
+        Thu, 29 Aug 2024 06:10:40 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG1EKlldA1iqYUNyHISgw7bsNGWhmnDWo+D7H7j//+YtsZz+zCQ3i+3uYrIQkF1hrQjOhnGW6achMSx1MPph64=
+X-Received: by 2002:a05:6902:e0b:b0:e16:69b5:ef66 with SMTP id
+ 3f1490d57ef6-e1a5af17657mr2875187276.54.1724937040249; Thu, 29 Aug 2024
+ 06:10:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240827131722.89359-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240827131722.89359-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20240827131722.89359-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 29 Aug 2024 15:09:32 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdU739fyGhF4WGo-REEus82h0VVz+jQtgXk5qUaTqvu6hg@mail.gmail.com>
-Message-ID: <CAMuHMdU739fyGhF4WGo-REEus82h0VVz+jQtgXk5qUaTqvu6hg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] pinctrl: renesas: rzg2l: Introduce single macro for
- digital noise filter configuration
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-renesas-soc@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20240821114100.2261167-2-dtatulea@nvidia.com> <20240821114100.2261167-3-dtatulea@nvidia.com>
+In-Reply-To: <20240821114100.2261167-3-dtatulea@nvidia.com>
+From: Eugenio Perez Martin <eperezma@redhat.com>
+Date: Thu, 29 Aug 2024 15:10:03 +0200
+Message-ID: <CAJaqyWcFVLXg=nUdOJOviWA+TDfbqBeEHrVROVC1nYrO8+ZmhA@mail.gmail.com>
+Subject: Re: [PATCH vhost 1/7] vdpa/mlx5: Create direct MKEYs in parallel
+To: Dragos Tatulea <dtatulea@nvidia.com>
+Cc: "Michael S . Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
+	Si-Wei Liu <si-wei.liu@oracle.com>, virtualization@lists.linux-foundation.org, 
+	Gal Pressman <gal@nvidia.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Parav Pandit <parav@nvidia.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+	Cosmin Ratiu <cratiu@nvidia.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Prabhakar,
-
-Thanks for your patch!
-
-On Tue, Aug 27, 2024 at 3:17=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.c=
-om> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Wed, Aug 21, 2024 at 1:41=E2=80=AFPM Dragos Tatulea <dtatulea@nvidia.com=
+> wrote:
 >
-> When enabling the digital noise filter for the pins, it is necessary to
-> configure both the noise filter stages (via the FILNUM register) and the
-> sampling interval (via the FILCLKSEL register). To simplify this process,
-> we introduce a single macro for configuring the digital noise filter.
-
-Currently the pin control tables just declare which pins support
-digital noise filter configuration, but the driver does not support
-configuring the digital noise filters yet, right?
-
-So I'd reword the paragraph above to something like:
-
-    Support for enabling the digital noise filter, and support for
-    configuring the noise filter stages (via the FILNUM register) and the
-    sampling interval (via the FILCLKSEL register) are related: a pin
-    supports either all or none of them.  Hence simplify declaring digital
-    noise filter support for a pin by using a single feature flag instead o=
-f
-    three separate flags.
-
-> This patch removes the PIN_CFG_FILNUM and PIN_CFG_FILCLKSEL configuration
-> macros and renames PIN_CFG_FILONOFF to PIN_CFG_NF.
+> Use the async interface to issue MTT MKEY creation.
+> Extra care is taken at the allocation of FW input commands
+> due to the MTT tables having variable sizes depending on
+> MR.
 >
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> The indirect MKEY is still created synchronously at the
+> end as the direct MKEYs need to be filled in.
+>
+> This makes create_user_mr() 3-5x faster, depending on
+> the size of the MR.
+>
+> Signed-off-by: Dragos Tatulea <dtatulea@nvidia.com>
+> Reviewed-by: Cosmin Ratiu <cratiu@nvidia.com>
+> ---
+>  drivers/vdpa/mlx5/core/mr.c | 118 +++++++++++++++++++++++++++++-------
+>  1 file changed, 96 insertions(+), 22 deletions(-)
+>
+> diff --git a/drivers/vdpa/mlx5/core/mr.c b/drivers/vdpa/mlx5/core/mr.c
+> index 4758914ccf86..66e6a15f823f 100644
+> --- a/drivers/vdpa/mlx5/core/mr.c
+> +++ b/drivers/vdpa/mlx5/core/mr.c
+> @@ -49,17 +49,18 @@ static void populate_mtts(struct mlx5_vdpa_direct_mr =
+*mr, __be64 *mtt)
+>         }
+>  }
+>
+> -static int create_direct_mr(struct mlx5_vdpa_dev *mvdev, struct mlx5_vdp=
+a_direct_mr *mr)
+> +struct mlx5_create_mkey_mem {
+> +       u8 out[MLX5_ST_SZ_BYTES(create_mkey_out)];
+> +       u8 in[MLX5_ST_SZ_BYTES(create_mkey_in)];
+> +       DECLARE_FLEX_ARRAY(__be64, mtt);
 
-For the actual patch contents:
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+I may be missing something obvious, but why do we need
+DECLARE_FLEX_ARRAY here? My understanding is that it is only needed in
+special cases like uapi headers and we can use "__be64 mtt[]" here.
 
-Gr{oetje,eeting}s,
+> +};
+> +
+> +static void fill_create_direct_mr(struct mlx5_vdpa_dev *mvdev,
+> +                                 struct mlx5_vdpa_direct_mr *mr,
+> +                                 struct mlx5_create_mkey_mem *mem)
+>  {
+> -       int inlen;
+> +       void *in =3D &mem->in;
+>         void *mkc;
+> -       void *in;
+> -       int err;
+> -
+> -       inlen =3D MLX5_ST_SZ_BYTES(create_mkey_in) + roundup(MLX5_ST_SZ_B=
+YTES(mtt) * mr->nsg, 16);
+> -       in =3D kvzalloc(inlen, GFP_KERNEL);
+> -       if (!in)
+> -               return -ENOMEM;
+>
+>         MLX5_SET(create_mkey_in, in, uid, mvdev->res.uid);
+>         mkc =3D MLX5_ADDR_OF(create_mkey_in, in, memory_key_mkey_entry);
+> @@ -76,18 +77,25 @@ static int create_direct_mr(struct mlx5_vdpa_dev *mvd=
+ev, struct mlx5_vdpa_direct
+>         MLX5_SET(create_mkey_in, in, translations_octword_actual_size,
+>                  get_octo_len(mr->end - mr->start, mr->log_size));
+>         populate_mtts(mr, MLX5_ADDR_OF(create_mkey_in, in, klm_pas_mtt));
+> -       err =3D mlx5_vdpa_create_mkey(mvdev, &mr->mr, in, inlen);
+> -       kvfree(in);
+> -       if (err) {
+> -               mlx5_vdpa_warn(mvdev, "Failed to create direct MR\n");
+> -               return err;
+> -       }
+>
+> -       return 0;
+> +       MLX5_SET(create_mkey_in, in, opcode, MLX5_CMD_OP_CREATE_MKEY);
+> +       MLX5_SET(create_mkey_in, in, uid, mvdev->res.uid);
+> +}
+> +
+> +static void create_direct_mr_end(struct mlx5_vdpa_dev *mvdev,
+> +                                struct mlx5_vdpa_direct_mr *mr,
+> +                                struct mlx5_create_mkey_mem *mem)
+> +{
+> +       u32 mkey_index =3D MLX5_GET(create_mkey_out, mem->out, mkey_index=
+);
+> +
+> +       mr->mr =3D mlx5_idx_to_mkey(mkey_index);
+>  }
+>
+>  static void destroy_direct_mr(struct mlx5_vdpa_dev *mvdev, struct mlx5_v=
+dpa_direct_mr *mr)
+>  {
+> +       if (!mr->mr)
+> +               return;
+> +
+>         mlx5_vdpa_destroy_mkey(mvdev, mr->mr);
+>  }
+>
+> @@ -179,6 +187,74 @@ static int klm_byte_size(int nklms)
+>         return 16 * ALIGN(nklms, 4);
+>  }
+>
+> +static int create_direct_keys(struct mlx5_vdpa_dev *mvdev, struct mlx5_v=
+dpa_mr *mr)
+> +{
+> +       struct mlx5_vdpa_async_cmd *cmds =3D NULL;
+> +       struct mlx5_vdpa_direct_mr *dmr;
+> +       int err =3D 0;
+> +       int i =3D 0;
+> +
+> +       cmds =3D kvcalloc(mr->num_directs, sizeof(*cmds), GFP_KERNEL);
+> +       if (!cmds)
+> +               return -ENOMEM;
 
-                        Geert
+Nit: this could benefit from Scope-based Cleanup Helpers [1], as it
+would make clear that memory is always removed at the end of the
+function & could prevent errors if the function is modified in the
+future. I'm a big fan of them so my opinion may be biased though :).
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+It would be great to be able to remove the array members with that
+too, but I think the kernel doesn't have any facility for that.
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+> +
+> +       list_for_each_entry(dmr, &mr->head, list) {
+> +               struct mlx5_create_mkey_mem *cmd_mem;
+> +               int mttlen, mttcount;
+> +
+> +               mttlen =3D roundup(MLX5_ST_SZ_BYTES(mtt) * dmr->nsg, 16);
+
+I don't get the roundup here, I guess it is so the driver does not
+send potentially uninitialized memory to the device? Maybe the 16
+should be a macro?
+
+> +               mttcount =3D mttlen / sizeof(cmd_mem->mtt[0]);
+> +               cmd_mem =3D kvcalloc(1, struct_size(cmd_mem, mtt, mttcoun=
+t), GFP_KERNEL);
+> +               if (!cmd_mem) {
+> +                       err =3D -ENOMEM;
+> +                       goto done;
+> +               }
+> +
+> +               cmds[i].out =3D cmd_mem->out;
+> +               cmds[i].outlen =3D sizeof(cmd_mem->out);
+> +               cmds[i].in =3D cmd_mem->in;
+> +               cmds[i].inlen =3D struct_size(cmd_mem, mtt, mttcount);
+> +
+> +               fill_create_direct_mr(mvdev, dmr, cmd_mem);
+> +
+> +               i++;
+> +       }
+> +
+> +       err =3D mlx5_vdpa_exec_async_cmds(mvdev, cmds, mr->num_directs);
+> +       if (err) {
+> +
+> +               mlx5_vdpa_err(mvdev, "error issuing MTT mkey creation for=
+ direct mrs: %d\n", err);
+> +               goto done;
+> +       }
+> +
+> +       i =3D 0;
+> +       list_for_each_entry(dmr, &mr->head, list) {
+> +               struct mlx5_vdpa_async_cmd *cmd =3D &cmds[i++];
+> +               struct mlx5_create_mkey_mem *cmd_mem;
+> +
+> +               cmd_mem =3D container_of(cmd->out, struct mlx5_create_mke=
+y_mem, out);
+> +
+> +               if (!cmd->err) {
+> +                       create_direct_mr_end(mvdev, dmr, cmd_mem);
+
+The caller function doesn't trust the result if we return an error.
+Why not use the previous loop to call create_direct_mr_end? Am I
+missing any side effect?
+
+> +               } else {
+> +                       err =3D err ? err : cmd->err;
+> +                       mlx5_vdpa_err(mvdev, "error creating MTT mkey [0x=
+%llx, 0x%llx]: %d\n",
+> +                               dmr->start, dmr->end, cmd->err);
+> +               }
+> +       }
+> +
+> +done:
+> +       for (i =3D i-1; i >=3D 0; i--) {
+> +               struct mlx5_create_mkey_mem *cmd_mem;
+> +
+> +               cmd_mem =3D container_of(cmds[i].out, struct mlx5_create_=
+mkey_mem, out);
+> +               kvfree(cmd_mem);
+> +       }
+> +
+> +       kvfree(cmds);
+> +       return err;
+> +}
+> +
+>  static int create_indirect_key(struct mlx5_vdpa_dev *mvdev, struct mlx5_=
+vdpa_mr *mr)
+>  {
+>         int inlen;
+> @@ -279,14 +355,8 @@ static int map_direct_mr(struct mlx5_vdpa_dev *mvdev=
+, struct mlx5_vdpa_direct_mr
+>                 goto err_map;
+>         }
+>
+> -       err =3D create_direct_mr(mvdev, mr);
+> -       if (err)
+> -               goto err_direct;
+> -
+>         return 0;
+>
+> -err_direct:
+> -       dma_unmap_sg_attrs(dma, mr->sg_head.sgl, mr->nsg, DMA_BIDIRECTION=
+AL, 0);
+>  err_map:
+>         sg_free_table(&mr->sg_head);
+>         return err;
+> @@ -401,6 +471,10 @@ static int create_user_mr(struct mlx5_vdpa_dev *mvde=
+v,
+>         if (err)
+>                 goto err_chain;
+>
+> +       err =3D create_direct_keys(mvdev, mr);
+> +       if (err)
+> +               goto err_chain;
+> +
+>         /* Create the memory key that defines the guests's address space.=
+ This
+>          * memory key refers to the direct keys that contain the MTT
+>          * translations
+> --
+> 2.45.1
+>
+
 
