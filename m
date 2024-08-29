@@ -1,88 +1,123 @@
-Return-Path: <linux-kernel+bounces-306223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B098963B81
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:27:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E71C963B83
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:28:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9DA17B20D68
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 06:27:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D21DB1C2317F
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 06:28:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 782341537CB;
-	Thu, 29 Aug 2024 06:27:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB0D01547F8;
+	Thu, 29 Aug 2024 06:27:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l7TiLvWY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=narfation.org header.i=@narfation.org header.b="yKEVa7u+"
+Received: from dvalin.narfation.org (dvalin.narfation.org [213.160.73.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A6FF149011;
-	Thu, 29 Aug 2024 06:27:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99575152165;
+	Thu, 29 Aug 2024 06:27:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.160.73.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724912822; cv=none; b=E7/J275hv8I8dvNFZUYyIRNjRhlLi8r/rDVqtvtD4CwREL6oOQxK7F5419qTIPsOeKM5ODq2z76x7YtvfMXl1aInGd0tBC++elniVl2BSCLk1YUyW+fCWzMZRUCk+S1upfICxzSjK3+ziAy43KufflARr278sjX7hnfB8DGPDwI=
+	t=1724912861; cv=none; b=rMb55bqfDMSe/o2x6Pfz+pDnxMJMQs5pY6F6YLoI65eqPkdxjXykeX7nGLVLkqvurBCoiZDlofROGhJJ8RuOXtlzqpScDcSIY+uAoDqfOtcR6HW7BnYV+yg+H6MFY+0jl3HvNX6PTt+TfoigkHhw3JfjPQGPEIFcU7r5T23ZDaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724912822; c=relaxed/simple;
-	bh=LfMDqTYrMRzWFQuCi212tKc8pWfKm73B+o52D2AYjGY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B13WwnpRTy23NwL+CjVtokitBsqo6RowgIt6HSjMHG5Xbw3B8yGXLH7R0MVKTX4uob9K3EaY+OkGQUxKdO6VZPvqKjByT0OLgWhoyJG4mlzIwsFmgX0pmbwLGhgCxgGU+F2mS5q6JDh6932tR6Urjz1VsriNrMxxp9KeRJY2f1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l7TiLvWY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44875C4CEC2;
-	Thu, 29 Aug 2024 06:27:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724912822;
-	bh=LfMDqTYrMRzWFQuCi212tKc8pWfKm73B+o52D2AYjGY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=l7TiLvWYLd78QE1/+HMOx7kgDsy5rrfYKFeOPJMxyG8m+uxlRlaXxdh3608rb+h6f
-	 OoeSRhZVW256ytU7Kt83/asOVyMB53Ek3BN70FvMTPhdA+zpsJ2XRU06/f48+Na/Bt
-	 4GrYhVyjswCBPQMklv/dSnDt3bJZfwwc+B6KoJmRR+SktQV1s0sTKe/d8lR5AeGYxr
-	 xO1X9rD5uoeMCVWRbPgmnWRfeEXcbPt/ChRhZOx935LMlULwqcX2FnpFL6UAbfL9yI
-	 00rrn0PJDZeKuATY7Jk4ufUmLoXJ058L3Mf7L1izzK5+zXn11uNoUU4hH4nclHM9SA
-	 U5a5jyZhbd7pg==
-Date: Thu, 29 Aug 2024 08:26:58 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Nikunj Kela <quic_nkela@quicinc.com>
-Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, rafael@kernel.org, viresh.kumar@linaro.org, 
-	herbert@gondor.apana.org.au, davem@davemloft.net, sudeep.holla@arm.com, andi.shyti@kernel.org, 
-	tglx@linutronix.de, will@kernel.org, joro@8bytes.org, jassisinghbrar@gmail.com, 
-	lee@kernel.org, linus.walleij@linaro.org, amitk@kernel.org, 
-	thara.gopinath@gmail.com, broonie@kernel.org, wim@linux-watchdog.org, linux@roeck-us.net, 
-	robin.murphy@arm.com, cristian.marussi@arm.com, rui.zhang@intel.com, 
-	lukasz.luba@arm.com, vkoul@kernel.org, quic_gurus@quicinc.com, agross@kernel.org, 
-	bartosz.golaszewski@linaro.org, quic_rjendra@quicinc.com, robimarko@gmail.com, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux-crypto@vger.kernel.org, arm-scmi@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org, iommu@lists.linux.dev, 
-	linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, linux-spi@vger.kernel.org, 
-	linux-watchdog@vger.kernel.org, kernel@quicinc.com, quic_psodagud@quicinc.com, 
-	quic_tsoni@quicinc.com, quic_shazhuss@quicinc.com
-Subject: Re: [PATCH 03/22] dt-bindings: arm: qcom: add SA8255p Ride board
-Message-ID: <xwd2xhe5aupumyt2nnwdxybls4okghlzmqkx3z2ah7wir45z7k@dkaqepbl5ows>
-References: <20240828203721.2751904-1-quic_nkela@quicinc.com>
- <20240828203721.2751904-4-quic_nkela@quicinc.com>
+	s=arc-20240116; t=1724912861; c=relaxed/simple;
+	bh=j4hkk4D1grsXQRQs5w6Q7xKzebFR0yWWiUJtJpfe1K8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PtADED9TpTk+jXz7jfYHCzXyd2iK7hXmDHxnKAlddz+BJKpo5uQa3RDEEWnuw9/yagoCP5YvYcTrT+7ulpNgDz2R4Gx7BCWf/ErufnBrS/C4gWvGyBIuUn3gS1VNfmHecZMwznWEuG5/BPNNK7pEgejsNVZLjW8ZsXqT81V+3oM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=narfation.org; spf=pass smtp.mailfrom=narfation.org; dkim=pass (1024-bit key) header.d=narfation.org header.i=@narfation.org header.b=yKEVa7u+; arc=none smtp.client-ip=213.160.73.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=narfation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=narfation.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=narfation.org;
+	s=20121; t=1724912850;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=D77BSHaUFViLdDM7kfQVR6bNScj//7o43h1CahEFyCk=;
+	b=yKEVa7u+YKRRiHQAM6lxvripiGVk3vjqz7lKBIVeKZNBe5iv6XAn73xLXiyE6+IMuf0S9F
+	xEF+e9RPJQ6BPqy8eucpuPqKP4GS4j+eFDFsB1kENlay/dsePZfFulgtkYuv+shEqW3u4S
+	rVZ1r/tbEATLDm41Ajlx3cKtoxak0Ao=
+From: Sven Eckelmann <sven@narfation.org>
+To: Xingyu Li <xli399@ucr.edu>
+Cc: mareklindner@neomailbox.ch, sw@simonwunderlich.de, a@unstable.cc,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ b.a.t.m.a.n@lists.open-mesh.org, Yu Hao <yhao016@ucr.edu>
+Subject: Re: BUG: general protection fault in batadv_bla_del_backbone_claims
+Date: Thu, 29 Aug 2024 08:27:20 +0200
+Message-ID: <2212852.CQOukoFCf9@sven-l14>
+In-Reply-To:
+ <CALAgD-7AOA0At+y0BR2MZ0WXPFM03tQneRbeGZQqiKy6=1T0rw@mail.gmail.com>
+References:
+ <CALAgD-7C3t=vRTvpnVvsZ_1YhgiiynDaX_ud0O6pxSBn3suADQ@mail.gmail.com>
+ <13617673.uLZWGnKmhe@bentobox>
+ <CALAgD-7AOA0At+y0BR2MZ0WXPFM03tQneRbeGZQqiKy6=1T0rw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240828203721.2751904-4-quic_nkela@quicinc.com>
+Content-Type: multipart/signed; boundary="nextPart23944202.6Emhk5qWAg";
+ micalg="pgp-sha512"; protocol="application/pgp-signature"
 
-On Wed, Aug 28, 2024 at 01:37:02PM -0700, Nikunj Kela wrote:
-> Document the SA8255p SoC and its reference board: sa8255p-ride.
+--nextPart23944202.6Emhk5qWAg
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"; protected-headers="v1"
+From: Sven Eckelmann <sven@narfation.org>
+To: Xingyu Li <xli399@ucr.edu>
+Date: Thu, 29 Aug 2024 08:27:20 +0200
+Message-ID: <2212852.CQOukoFCf9@sven-l14>
+MIME-Version: 1.0
+
+On Thursday, 29 August 2024 06:30:23 CEST Xingyu Li wrote:
+> > Which line would that be in your build?
 > 
-> Signed-off-by: Nikunj Kela <quic_nkela@quicinc.com>
-> ---
->  Documentation/devicetree/bindings/arm/qcom.yaml | 6 ++++++
->  1 file changed, 6 insertions(+)
+> Somehow, the bug report does not include the line number in my end.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+You can try to use gdb or similar tools to figure out more about it [1]. Maybe 
+even adjust your kernel build to create better debuggable crashes
 
-Best regards,
-Krzysztof
+> 
+> At the moment, I am unable to reproduce this crash with the provided
+> reproducer.
+
+Since I am missing information and you don't have a working reproducer - how 
+should I then fix anything? Your comment from the first doesn't seem to apply 
+and it is unclear how you came to the conclusion in the first place.
+
+> > Can you reproduce it with it?
+> 
+> Sorry. The above syzkaller reproducer needs the additional support  to run it.
+> But here is a C reproducer:
+> https://gist.github.com/freexxxyyy/0be5002c45d7f060cb599dd7595cab78
+
+I've tried to run it with the normal syz-execprog - but you seem to say now 
+that this reproducer is not working the upstream one? In this case, please try 
+to get it working with upstream. See also the mail from Kees Cook [2].
+
+Kind regards,
+	Sven
+
+[1] https://www.open-mesh.org/projects/devtools/wiki/Crashlog_with_pstore#Decoding-the-stack-trace
+[2] https://lore.kernel.org/r/202408281812.3F765DF@keescook
+--nextPart23944202.6Emhk5qWAg
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQS81G/PswftH/OW8cVND3cr0xT1ywUCZtAUyQAKCRBND3cr0xT1
+yxDRAP0Xgpu7aT8LpohRYfvgXf8o+GrJZqVeEyS+5DchULBSkAD/UrteyweAjX2D
+BFSV2WqmyRJuWVxsbsxYCo2hixPZhgM=
+=D8Cf
+-----END PGP SIGNATURE-----
+
+--nextPart23944202.6Emhk5qWAg--
+
+
 
 
