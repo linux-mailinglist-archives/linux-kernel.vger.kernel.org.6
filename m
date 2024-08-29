@@ -1,100 +1,83 @@
-Return-Path: <linux-kernel+bounces-306731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7CB79642A7
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:07:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11A619642AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:07:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4DE6EB27AA8
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 11:07:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B15D81F267EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 11:07:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16B1418991C;
-	Thu, 29 Aug 2024 11:06:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E419B1917E4;
+	Thu, 29 Aug 2024 11:06:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Dy4cP0CF"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ubZi3w8x"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1152190661
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 11:06:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B810189B95;
+	Thu, 29 Aug 2024 11:06:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724929598; cv=none; b=KHvk3AaDi0PwgbY1/9JcHHhDn+tkdo/8ICOY70XcxspW8U4VnExnggvaMaZ5JBwOB5WnPCDzZlJc32JY6aRqcu+gWyiSxR3pl6uKBcNW5G6RerkXxvNgCroppb0wDjC0nHi74q7U9Oke6LZUwKyJcPliL71kqRott+WqlCogdUc=
+	t=1724929608; cv=none; b=aLU9ImN6a5pDN5wJNpEVFDJJ53YwaERF1D6pCDIjm8s8sHFX+R2ZREDb+mHsq+WxQ+bZXmZHsAbK7eoyfGDoJrgBiJeYN3NWTYMQjOMIzDquSOtsugA+zHH9V8ElTuozGlMFMATdcHhV9+snNBtl4k7rEtuYD9rY5aO8VhJVtQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724929598; c=relaxed/simple;
-	bh=uRpFzjlZ7Ai/nO4F2kVPVYXtCZasLM6bdoo5lTOaLEg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EM7E7oObNS0AzEKJWxTcyzO+NjzVMPnK7heUtj3UAqx5h3dkO63/9fSraXy/E6ELBVRnLkWQQvrvdHlK+WoU+5ocL+7BMwuYksWRtQaz9XRwAdflUZaTU0dhM2X+2i3n0oCGYR7rQ/z0L6f5G74n+8sYy6QgrVDywEsFd1loKnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Dy4cP0CF; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724929598; x=1756465598;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=uRpFzjlZ7Ai/nO4F2kVPVYXtCZasLM6bdoo5lTOaLEg=;
-  b=Dy4cP0CF+ba01FnGOllsowOMk+6y/7sPPchshfcbWtkxYy799wC4qWZF
-   AkxJ7R35va+vvwoxauR3LcjbCYBJ2ra0ufdjSilAIykfeicbnf62EKqT7
-   D9Su0+yoF8VGAzwvJr9EFkWeMUM5oop8neSA+TMBn1X41q6dlep2rC3n5
-   abhP9LC7uxZfMYGUwUba670Rr2rzhoOlKHM7ZewNpQ7OGWdLiKhJ6W8UP
-   5kKWfe6lr2gbWz0kno7DGU1xIocZlTTtVWLDH+K5Ue+klXtBASoXiZPms
-   v1TkfpV9960Kb3d24HWSlm0Oc3NzBiD1i96ozxkvBegA7TxJEflUFlV0x
-   Q==;
-X-CSE-ConnectionGUID: O13cDeoBTXuN6q72IbI35Q==
-X-CSE-MsgGUID: bKRrwZFgQXGkc80xXkiqMw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11178"; a="34170438"
-X-IronPort-AV: E=Sophos;i="6.10,185,1719903600"; 
-   d="scan'208";a="34170438"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 04:06:37 -0700
-X-CSE-ConnectionGUID: g8c8LC+rQquyXsOH+xikeQ==
-X-CSE-MsgGUID: ioR/cnlZTrWunCXIi85ahg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,185,1719903600"; 
-   d="scan'208";a="94278260"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 04:06:36 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sjcz2-00000002yM2-33B3;
-	Thu, 29 Aug 2024 14:06:32 +0300
-Date: Thu, 29 Aug 2024 14:06:32 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: Lee Jones <lee@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] mfd: intel-lpss: New LPSS PCI IDs
-Message-ID: <ZtBWOC-DKARsQ-XP@smile.fi.intel.com>
-References: <20240829095719.1557-1-ilpo.jarvinen@linux.intel.com>
+	s=arc-20240116; t=1724929608; c=relaxed/simple;
+	bh=fg/Pr9Xu9fIkWG4EBqfPavp/9fNb65GBV6otyYiBVvQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HfeAhw+vUYK3KHqfCIOvufZIPzKRZxWUAC6lUZhbMeYNlfaguEEPtUcQ2dSHYSMjIK6fO7a3N1RzkgEbNiSxluUqeM0U6ffK9PlSCGc4oirIstLYWbksnXW5XtAz+USfxAA+hmnwlFAJ5QpTGqkTHZq6YXrjuWiyNMHGN6e6hPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ubZi3w8x; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31DC4C4CEC1;
+	Thu, 29 Aug 2024 11:06:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724929607;
+	bh=fg/Pr9Xu9fIkWG4EBqfPavp/9fNb65GBV6otyYiBVvQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ubZi3w8xP8xTAKbnCBG1uKicwv3mIjrvbnZiZ0jZS42OEeJBQYMG1zsVJIRpu5fje
+	 O0M8BeKz29VQAhIWrZxc6fFxvVjSVrhpbKk+aI5OYFPybIvP7WfL1tNmZpFKOqPtV1
+	 pmDO6H8LpoEFL+Lw/P4Z63DRA1fVJD7EzxJ7qemFv8Mp+LwI/Y9AySGV1zlDO/URY+
+	 UonY5otW+50QDjH8UZfoamFuMo5xxUgPZomDaiusU1U+IX+d9Eiz8PDX0fLIFoZ9G3
+	 EjYml9btFqg1L1WrypXxhEkmyrrST3n5o+We/SWBL9P+x/cPAV9HMCNF8fJehVcJzb
+	 btl6mqPzZ9SWw==
+Message-ID: <b2bc241c-ed17-48d2-b665-50f9aac9daaf@kernel.org>
+Date: Thu, 29 Aug 2024 13:06:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240829095719.1557-1-ilpo.jarvinen@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] phy: add NXP PTN3222 eUSB2 to USB2 redriver
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Konrad Dybcio <konradybcio@kernel.org>, linux-phy@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org
+References: <20240829-nxp-ptn3222-v1-0-46906bc4747a@linaro.org>
+ <20240829-nxp-ptn3222-v1-2-46906bc4747a@linaro.org>
+Content-Language: en-US
+From: Konrad Dybcio <konradybcio@kernel.org>
+In-Reply-To: <20240829-nxp-ptn3222-v1-2-46906bc4747a@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Aug 29, 2024 at 12:57:17PM +0300, Ilpo Järvinen wrote:
-> Hi,
+On 29.08.2024 10:21 AM, Dmitry Baryshkov wrote:
+> The NXP PTN3222 is the single-port eUSB2 to USB2 redriver that performs
+> translation between eUSB2 and USB2 signalling schemes. It supports all
+> three data rates: Low Speed, Full Speed and High Speed.
 > 
-> Here are a few LPSS PCI IDs for new platforms. The Arrow Lake-H one was
-> sent already in the previous cycle but it might have fallen through the
-> crack so resending it here.
+> The reset state enables autonegotiation of the PHY role and of the data
+> rate, so no additional programming is required.
+> 
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
 
-I believe that the choices for SPI and I2C (i.e. SSP types and I2C functional
-clock rates) were carefully chosen in accordance with the specifications.
-With this in mind,
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Tested-by: Konrad Dybcio <konradybcio@kernel.org>
 
--- 
-With Best Regards,
-Andy Shevchenko
-
+Konrad
 
 
