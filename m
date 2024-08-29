@@ -1,68 +1,68 @@
-Return-Path: <linux-kernel+bounces-306438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87149963F10
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:52:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 752EA963F11
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:52:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5BB41C242FA
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:52:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED6FF1F251B2
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:52:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3694C18D620;
-	Thu, 29 Aug 2024 08:51:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C598E18D640;
+	Thu, 29 Aug 2024 08:52:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="O2OljoS9"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="JRcojrtP"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04A5218CC12
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 08:51:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4DE818C35D
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 08:51:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724921517; cv=none; b=BL5QaJ3/gcJTzK2kIucZi6UVKxaXO3WNXQ3wbjGhyxs1qJYQBYtVrv9IWzVt18ZCkYvpzqb6LUZxodSMt1baaJdY0tp7mpuLll0jUup84Ii+L0r6S6ja25T5v67pDplrAykNhEafsWDu25RxqVVvRxeXzEVCv+7r1kkQXq3glHk=
+	t=1724921519; cv=none; b=a+0p8ekLjViu6F4irZY1uTja+jcepGnHDGvIpUeg+GOblArNMyljSGEUrLMO/w3XrlsnKWxazge19Sg3OkhBp0tRVpuWul6h6kwZa0iGIh3oH9Ch1ElIfLf1NpgEKKAhr7++UgKiLLsvwRDGS7nDG7QZQpPV0YuBOQ+Cef1+XsQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724921517; c=relaxed/simple;
-	bh=CITJ/pXW+PNEYY3huU/lIyFmUCDxWKW9ESaqs7VfFa8=;
+	s=arc-20240116; t=1724921519; c=relaxed/simple;
+	bh=Ke+pQZjKf0p+gJIaQwR13J4j2KBNs5YVJ0+ePSyhd9s=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IshJYECRmanffJw9e0SZtG6ghoz6B6/5LZBmaZDo4dQU1P3R9aN4jTC9hODGGsnOaw3zMxnSwGjJKb7zcjpRzLadtGBywdkAVl+inqTXLmb+S6svbTk9f5tPk7iNj4Y6zgb/HKzfHf6M5OGno6AT67gfSx/5ShLjR/XJUJmVlVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=O2OljoS9; arc=none smtp.client-ip=209.85.214.172
+	 MIME-Version; b=fvzwav92end2O3B3XxzrkhIdWTlNsMuy4QnhfC3hybeqjwZzn9FEBrxGWmx0UuE4iVCotCYKeit2fY3JiZesaDnopazqBSpSpc0bZ4j+HnySdqAttoavahMxCxVz9UXMPJpZ3+nJl4mh35uBoxdOZJCT/m+DYFxKFwrhEg4Tq5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=JRcojrtP; arc=none smtp.client-ip=209.85.214.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-204f52fe74dso3560465ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 01:51:55 -0700 (PDT)
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-202146e93f6so4029875ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 01:51:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1724921515; x=1725526315; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1724921517; x=1725526317; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Peh3KRS2otd9KMsQofYzoADoRSJG/N+Ns2pNhtBQcKs=;
-        b=O2OljoS9x9fVCvJ60pIxUL1m5HBIrgWNj9Q2k9eXlJDust0J+E1Sj5JIvOmlrSOXFl
-         k7Q5LtdyfFEESAETSj2bl6fgJaJoXAGQ/84aHsY8HFFKap7q1wuBnzgmTYkPg6ssCgh8
-         LNX5nwPse86LBpXDZw/yfFokZJhBPTFR2Nwf0=
+        bh=9eExJ/LSKKVvg9hYH9GnPj/p8H26y4FLjUbJxPPs080=;
+        b=JRcojrtPgmK4Y7PKhFQ+hU/1OWh6CphqAukaG2bddWOO3/gE0QibBpb2csNep6OdkQ
+         JkVYnIvPcYfOW9EILazAnz+XZrPKRNXJrfQXLTZELL+yu9K/w6YMT1TM4F2yDLPKf3Rm
+         2+RcBf1MW2vZA/SngBLkN0BxlY5DTp3BF/3tY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724921515; x=1725526315;
+        d=1e100.net; s=20230601; t=1724921517; x=1725526317;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Peh3KRS2otd9KMsQofYzoADoRSJG/N+Ns2pNhtBQcKs=;
-        b=WjbX81ORqAiGdV7NcHUsmY2FuqKLorHr9VVcxcO+hfSwnUotQZd6+HHNINgPfJPsUP
-         9Ig5HWx8NPrwwM53GaSeyMCSuPheDagC4NMCn5hg7mAsnCYazGCb7l3iTJOld4k7DuJB
-         Kz58fHPTqzIogChZlF8T90E1cnh3HkRm9SVW2ntWzKYuCQE1bnTCziRLkegsiRTa8xSM
-         6DvfnKN4nXsqDukCqgmCHSSPHoPQ+fpmBUF/vnt9xu1j8HDNQfAA2nJlOIekIHAJbhe7
-         iR585iZf0S719L4G1IaJLrgsWUg7xwjonK+kCi90+x+fOee4MoQaquvic+DAOoro/cnG
-         pGCA==
-X-Forwarded-Encrypted: i=1; AJvYcCVkdVF/9lyg+nIoNeM2SWGdX4V9fkjapXKJStX8WY4mn+I7PvW+nj3WToZPazthSOGEQgyCkkoyb73g20Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYK9RyiaGt+/g8BkvGWoUQkxAya6C4yBViYgI6YhH1a4Jhh5wh
-	OXcJ/1n1YSvZvLKsKtJbX4qJ0ta6cHVD0VoGA7d1tdKupqTqmSdBBpUC6i2zDA==
-X-Google-Smtp-Source: AGHT+IGo3tvc2nBfopqiex+TZW5v8gp7UnG5vd9DIk3b/JKNnSyE+2RajYwWR7PuW+PQtgmHbWWHHQ==
-X-Received: by 2002:a17:902:ec84:b0:203:a0c7:3156 with SMTP id d9443c01a7336-2050c23699amr22263655ad.5.1724921515115;
-        Thu, 29 Aug 2024 01:51:55 -0700 (PDT)
+        bh=9eExJ/LSKKVvg9hYH9GnPj/p8H26y4FLjUbJxPPs080=;
+        b=iTYrEF5mJSwyYqDtPmvQGyB4L4xIYHsv83C/8eH9IB83nR66Ri57Dhui9BKGvxrjBw
+         JTJaypA4VpHfrG1VRUPyb2mIzjuKtxjdhlOxhlpyE7XjrIvvZU/zra6LPIfadMw34ex3
+         YmxtyMrWJHKtgpE2bydhBNygdq0cJX+bd9cHRxMcD2SxPLQJ1TOqmzHHDMJLZNJA0iBv
+         qEtVPrp0t+cchoODHUhQLeLQ0lmCfNn9Vdd3wqOFzec07lqlxLH1i5IBewU9XClVNy6/
+         M3CHilitA4c5fUorHk3vtW1jm2r0SdddAQBOmi/B6xDCP5fe7T9xi1x6VJ+JBuvVrQEd
+         +Spw==
+X-Forwarded-Encrypted: i=1; AJvYcCWDNYSAulQ+24ITPbNAox3bM2GhBPp8tnCJUDzKq2fLGmJ1fSRYiMhFGFa0o/wXCC6aPFJfBn7lYhhOkik=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5w3vHfusm8WjgJOTkf2VQZdFkz3gQaipMmwPQacsv3IOjP/vE
+	MtPT+XH8livhzO3LiCCU4sqNognM2lEpTRYPbifSiU9mPypz+FVaG+oUcMF1kw==
+X-Google-Smtp-Source: AGHT+IHUH7tsXNguLatZjd+DWsassoMfMvLOPUoskM9fuBDw+9E/mq7qkdIorWuKes7byOLkDCI3Ag==
+X-Received: by 2002:a17:902:ce83:b0:202:3ebf:679d with SMTP id d9443c01a7336-2050c3d2936mr21337985ad.37.1724921516915;
+        Thu, 29 Aug 2024 01:51:56 -0700 (PDT)
 Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:fbe5:6d6c:1cc7:23f3])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20515543fbdsm6924165ad.218.2024.08.29.01.51.52
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20515543fbdsm6924165ad.218.2024.08.29.01.51.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 01:51:54 -0700 (PDT)
+        Thu, 29 Aug 2024 01:51:56 -0700 (PDT)
 From: Chen-Yu Tsai <wenst@chromium.org>
 To: Mark Brown <broonie@kernel.org>,
 	Liam Girdwood <lgirdwood@gmail.com>
@@ -70,9 +70,9 @@ Cc: Chen-Yu Tsai <wenst@chromium.org>,
 	linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v2 03/10] regulator: core: Fix incorrectly formatted kerneldoc "Return" sections
-Date: Thu, 29 Aug 2024 16:51:23 +0800
-Message-ID: <20240829085131.1361701-4-wenst@chromium.org>
+Subject: [PATCH v2 04/10] regulator: core: Add missing kerneldoc "Return" sections
+Date: Thu, 29 Aug 2024 16:51:24 +0800
+Message-ID: <20240829085131.1361701-5-wenst@chromium.org>
 X-Mailer: git-send-email 2.46.0.295.g3b9ea8a38a-goog
 In-Reply-To: <20240829085131.1361701-1-wenst@chromium.org>
 References: <20240829085131.1361701-1-wenst@chromium.org>
@@ -85,15 +85,13 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
 kernel-doc complains about missing "Return" section for many documented
-functions in the regulator core. Many of them actually have descriptions
-about the return values, just not in the format kernel-doc wants.
+functions in the regulator core. Some with free-form return value
+descriptions have been fixed in the previous patch. The remaining are
+completely missing any mention of return values.
 
-Convert these to use the proper "Return:" section header. The existing
-descriptions have been reworded and moved around to fit the grammar and
-formatting.
-
-In a few cases where the functions don't call even more functions
-and the error numbers are known, those are documented in detail.
+Add "Return" sections to these kerneldoc blocks with basic descriptions.
+In a few cases where the functions don't call even more functions and
+the error numbers are known, those are documented in detail.
 
 Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
 ---
@@ -101,323 +99,285 @@ Changes since v1:
 - Capitalized first word of first sentence in "Return" section
 - Added articles ("the", "a") to the description based on surrounding
   and function implementation context
-- Indented "Return" section for regulator_is_enabled()
 ---
- drivers/regulator/core.c | 101 ++++++++++++++++++++++-----------------
- 1 file changed, 56 insertions(+), 45 deletions(-)
+ drivers/regulator/core.c | 65 ++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 63 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index 0ce3fe1774fe..d7656b91f5bb 100644
+index d7656b91f5bb..0b929ab71188 100644
 --- a/drivers/regulator/core.c
 +++ b/drivers/regulator/core.c
-@@ -427,8 +427,9 @@ static void regulator_lock_dependent(struct regulator_dev *rdev,
-  *
-  * Traverse all child nodes.
-  * Extract the child regulator device node corresponding to the supply name.
-- * returns the device node corresponding to the regulator if found, else
-- * returns NULL.
-+ *
-+ * Return: Pointer to the &struct device_node corresponding to the regulator
-+ *	   if found, or %NULL if not found.
-  */
- static struct device_node *of_get_child_regulator(struct device_node *parent,
- 						  const char *prop_name)
-@@ -460,8 +461,9 @@ static struct device_node *of_get_child_regulator(struct device_node *parent,
-  * @supply: regulator supply name
-  *
-  * Extract the regulator device node corresponding to the supply name.
-- * returns the device node corresponding to the regulator if found, else
-- * returns NULL.
-+ *
-+ * Return: Pointer to the &struct device_node corresponding to the regulator
-+ *	   if found, or %NULL if not found.
-  */
- static struct device_node *of_get_regulator(struct device *dev, const char *supply)
- {
-@@ -2308,13 +2310,13 @@ struct regulator *_regulator_get(struct device *dev, const char *id,
-  * @dev: device for regulator "consumer"
-  * @id: Supply name or regulator ID.
-  *
-- * Returns a struct regulator corresponding to the regulator producer,
-- * or IS_ERR() condition containing errno.
-- *
-  * Use of supply names configured via set_consumer_device_supply() is
-  * strongly encouraged.  It is recommended that the supply name used
-  * should match the name used for the supply and/or the relevant
-  * device pins in the datasheet.
-+ *
-+ * Return: Pointer to a &struct regulator corresponding to the regulator
-+ *	   producer, or an ERR_PTR() encoded negative error number.
-  */
- struct regulator *regulator_get(struct device *dev, const char *id)
- {
-@@ -2327,11 +2329,9 @@ EXPORT_SYMBOL_GPL(regulator_get);
-  * @dev: device for regulator "consumer"
-  * @id: Supply name or regulator ID.
-  *
-- * Returns a struct regulator corresponding to the regulator producer,
-- * or IS_ERR() condition containing errno.  Other consumers will be
-- * unable to obtain this regulator while this reference is held and the
-- * use count for the regulator will be initialised to reflect the current
-- * state of the regulator.
-+ * Other consumers will be unable to obtain this regulator while this
-+ * reference is held and the use count for the regulator will be
-+ * initialised to reflect the current state of the regulator.
-  *
-  * This is intended for use by consumers which cannot tolerate shared
-  * use of the regulator such as those which need to force the
-@@ -2342,6 +2342,9 @@ EXPORT_SYMBOL_GPL(regulator_get);
-  * strongly encouraged.  It is recommended that the supply name used
-  * should match the name used for the supply and/or the relevant
-  * device pins in the datasheet.
-+ *
-+ * Return: Pointer to a &struct regulator corresponding to the regulator
-+ *	   producer, or an ERR_PTR() encoded negative error number.
-  */
- struct regulator *regulator_get_exclusive(struct device *dev, const char *id)
- {
-@@ -2354,9 +2357,6 @@ EXPORT_SYMBOL_GPL(regulator_get_exclusive);
-  * @dev: device for regulator "consumer"
-  * @id: Supply name or regulator ID.
-  *
-- * Returns a struct regulator corresponding to the regulator producer,
-- * or IS_ERR() condition containing errno.
-- *
-  * This is intended for use by consumers for devices which can have
-  * some supplies unconnected in normal use, such as some MMC devices.
-  * It can allow the regulator core to provide stub supplies for other
-@@ -2368,6 +2368,9 @@ EXPORT_SYMBOL_GPL(regulator_get_exclusive);
-  * strongly encouraged.  It is recommended that the supply name used
-  * should match the name used for the supply and/or the relevant
-  * device pins in the datasheet.
-+ *
-+ * Return: Pointer to a &struct regulator corresponding to the regulator
-+ *	   producer, or an ERR_PTR() encoded negative error number.
-  */
- struct regulator *regulator_get_optional(struct device *dev, const char *id)
- {
-@@ -2507,12 +2510,12 @@ EXPORT_SYMBOL_GPL(regulator_unregister_supply_alias);
-  * lookup the supply
-  * @num_id: Number of aliases to register
-  *
-- * @return 0 on success, an errno on failure.
-- *
-  * This helper function allows drivers to register several supply
-  * aliases in one operation.  If any of the aliases cannot be
-  * registered any aliases that were registered will be removed
-  * before returning to the caller.
+@@ -139,6 +139,8 @@ static bool regulator_ops_is_valid(struct regulator_dev *rdev, int ops)
+  * once. If a task, which is calling this function is other
+  * than the one, which initially locked the mutex, it will
+  * wait on mutex.
 + *
 + * Return: 0 on success or a negative error number on failure.
   */
- int regulator_bulk_register_supply_alias(struct device *dev,
- 					 const char *const *id,
-@@ -2837,7 +2840,7 @@ static int _regulator_do_enable(struct regulator_dev *rdev)
-  * responsible for keeping track of the refcount for a given regulator consumer
-  * and applying / unapplying these things.
-  *
-- * Returns 0 upon no error; -error upon error.
-+ * Return: 0 on success or negative error number on failure.
-  */
- static int _regulator_handle_consumer_enable(struct regulator *regulator)
- {
-@@ -2863,7 +2866,7 @@ static int _regulator_handle_consumer_enable(struct regulator *regulator)
-  *
-  * The opposite of _regulator_handle_consumer_enable().
-  *
-- * Returns 0 upon no error; -error upon error.
+ static inline int regulator_lock_nested(struct regulator_dev *rdev,
+ 					struct ww_acquire_ctx *ww_ctx)
+@@ -1464,6 +1466,8 @@ static int handle_notify_limits(struct regulator_dev *rdev,
+  * Constraints *must* be set by platform code in order for some
+  * regulator operations to proceed i.e. set_voltage, set_current_limit,
+  * set_mode.
++ *
 + * Return: 0 on success or a negative error number on failure.
   */
- static int _regulator_handle_consumer_disable(struct regulator *regulator)
+ static int set_machine_constraints(struct regulator_dev *rdev)
  {
-@@ -3271,13 +3274,13 @@ static int _regulator_list_voltage(struct regulator_dev *rdev,
-  * regulator_is_enabled - is the regulator output enabled
-  * @regulator: regulator source
-  *
-- * Returns positive if the regulator driver backing the source/client
-- * has requested that the device be enabled, zero if it hasn't, else a
-- * negative errno code.
-- *
-  * Note that the device backing this regulator handle can have multiple
-  * users, so it might be enabled even if regulator_enable() was never
-  * called for this particular source.
+@@ -1702,6 +1706,8 @@ static int set_machine_constraints(struct regulator_dev *rdev)
+  * Called by platform initialisation code to set the supply regulator for this
+  * regulator. This ensures that a regulators supply will also be enabled by the
+  * core if it's child is enabled.
 + *
-+ * Return: Positive if the regulator driver backing the source/client
-+ *	   has requested that the device be enabled, zero if it hasn't,
-+ *	   else a negative error number.
-  */
- int regulator_is_enabled(struct regulator *regulator)
- {
-@@ -3298,9 +3301,10 @@ EXPORT_SYMBOL_GPL(regulator_is_enabled);
-  * regulator_count_voltages - count regulator_list_voltage() selectors
-  * @regulator: regulator source
-  *
-- * Returns number of selectors, or negative errno.  Selectors are
-- * numbered starting at zero, and typically correspond to bitfields
-- * in hardware registers.
-+ * Return: Number of selectors for @regulator, or negative error number.
-+ *
-+ * Selectors are numbered starting at zero, and typically correspond to
-+ * bitfields in hardware registers.
-  */
- int regulator_count_voltages(struct regulator *regulator)
- {
-@@ -3322,9 +3326,9 @@ EXPORT_SYMBOL_GPL(regulator_count_voltages);
-  * @selector: identify voltage to list
-  * Context: can sleep
-  *
-- * Returns a voltage that can be passed to @regulator_set_voltage(),
-- * zero if this selector code can't be used on this system, or a
-- * negative errno.
-+ * Return: Voltage for @selector that can be passed to regulator_set_voltage(),
-+ *	   0 if @selector can't be used on this system, or a negative error
-+ *	   number on failure.
-  */
- int regulator_list_voltage(struct regulator *regulator, unsigned selector)
- {
-@@ -3336,8 +3340,8 @@ EXPORT_SYMBOL_GPL(regulator_list_voltage);
-  * regulator_get_regmap - get the regulator's register map
-  * @regulator: regulator source
-  *
-- * Returns the register map for the given regulator, or an ERR_PTR value
-- * if the regulator doesn't use regmap.
-+ * Return: Pointer to the &struct regmap for @regulator, or ERR_PTR()
-+ *	   encoded -%EOPNOTSUPP if @regulator doesn't use regmap.
-  */
- struct regmap *regulator_get_regmap(struct regulator *regulator)
- {
-@@ -3387,7 +3391,9 @@ EXPORT_SYMBOL_GPL(regulator_get_hardware_vsel_register);
-  * directly written to the regulator registers. The address of the voltage
-  * register can be determined by calling @regulator_get_hardware_vsel_register.
-  *
-- * On error a negative errno is returned.
-+ * Return: 0 on success, -%EINVAL if the selector is outside the supported
-+ *	   range, or -%EOPNOTSUPP if the regulator does not support voltage
-+ *	   selectors.
-  */
- int regulator_list_hardware_vsel(struct regulator *regulator,
- 				 unsigned selector)
-@@ -3414,7 +3420,7 @@ EXPORT_SYMBOL_GPL(regulator_list_hardware_vsel);
-  * Request that the regulator be enabled/disabled with the regulator output at
-  * the predefined voltage or current value.
-  *
-- * On success 0 is returned, otherwise a negative errno is returned.
 + * Return: 0 on success or a negative error number on failure.
   */
- int regulator_hardware_enable(struct regulator *regulator, bool enable)
- {
-@@ -3438,8 +3444,8 @@ EXPORT_SYMBOL_GPL(regulator_hardware_enable);
-  * regulator_get_linear_step - return the voltage step size between VSEL values
-  * @regulator: regulator source
-  *
-- * Returns the voltage step size between VSEL values for linear
-- * regulators, or return 0 if the regulator isn't a linear regulator.
-+ * Return: The voltage step size between VSEL values for linear regulators,
-+ *	   or 0 if the regulator isn't a linear regulator.
+ static int set_supply(struct regulator_dev *rdev,
+ 		      struct regulator_dev *supply_rdev)
+@@ -1734,6 +1740,8 @@ static int set_supply(struct regulator_dev *rdev,
+  * sources to symbolic names for supplies for use by devices.  Devices
+  * should use these symbolic names to request regulators, avoiding the
+  * need to provide board-specific regulator names as platform data.
++ *
++ * Return: 0 on success or a negative error number on failure.
   */
- unsigned int regulator_get_linear_step(struct regulator *regulator)
+ static int set_consumer_device_supply(struct regulator_dev *rdev,
+ 				      const char *consumer_dev_name,
+@@ -2000,11 +2008,13 @@ static struct regulator_dev *regulator_lookup_by_name(const char *name)
+  * @dev: device for regulator "consumer".
+  * @supply: Supply name or regulator ID.
+  *
++ * Return: pointer to &struct regulator_dev or ERR_PTR() encoded negative error number.
++ *
+  * If successful, returns a struct regulator_dev that corresponds to the name
+  * @supply and with the embedded struct device refcount incremented by one.
+  * The refcount must be dropped by calling put_device().
+- * On failure one of the following ERR-PTR-encoded values is returned:
+- * -ENODEV if lookup fails permanently, -EPROBE_DEFER if lookup could succeed
++ * On failure one of the following ERR_PTR() encoded values is returned:
++ * -%ENODEV if lookup fails permanently, -%EPROBE_DEFER if lookup could succeed
+  * in the future.
+  */
+ static struct regulator_dev *regulator_dev_lookup(struct device *dev,
+@@ -2451,6 +2461,8 @@ EXPORT_SYMBOL_GPL(regulator_put);
+  *
+  * All lookups for id on dev will instead be conducted for alias_id on
+  * alias_dev.
++ *
++ * Return: 0 on success or a negative error number on failure.
+  */
+ int regulator_register_supply_alias(struct device *dev, const char *id,
+ 				    struct device *alias_dev,
+@@ -2640,6 +2652,8 @@ static void regulator_ena_gpio_free(struct regulator_dev *rdev)
+  *
+  * GPIO is enabled in case of initial use. (enable_count is 0)
+  * GPIO is disabled when it is not shared any more. (enable_count <= 1)
++ *
++ * Return: 0 on success or a negative error number on failure.
+  */
+ static int regulator_ena_gpio_ctrl(struct regulator_dev *rdev, bool enable)
  {
-@@ -4527,7 +4533,7 @@ EXPORT_SYMBOL_GPL(regulator_get_voltage_rdev);
-  * regulator_get_voltage - get regulator output voltage
+@@ -2962,6 +2976,8 @@ static int _regulator_enable(struct regulator *regulator)
+  *
+  * NOTE: the output value can be set by other drivers, boot loader or may be
+  * hardwired in the regulator.
++ *
++ * Return: 0 on success or a negative error number on failure.
+  */
+ int regulator_enable(struct regulator *regulator)
+ {
+@@ -3072,6 +3088,8 @@ static int _regulator_disable(struct regulator *regulator)
+  * NOTE: this will only disable the regulator output if no other consumer
+  * devices have it enabled, the regulator device supports disabling and
+  * machine constraints permit this operation.
++ *
++ * Return: 0 on success or a negative error number on failure.
+  */
+ int regulator_disable(struct regulator *regulator)
+ {
+@@ -3121,6 +3139,8 @@ static int _regulator_force_disable(struct regulator_dev *rdev)
+  * NOTE: this *will* disable the regulator output even if other consumer
+  * devices have it enabled. This should be used for situations when device
+  * damage will likely occur if the regulator is not disabled (e.g. over temp).
++ *
++ * Return: 0 on success or a negative error number on failure.
+  */
+ int regulator_force_disable(struct regulator *regulator)
+ {
+@@ -3203,6 +3223,8 @@ static void regulator_disable_work(struct work_struct *work)
+  * NOTE: this will only disable the regulator output if no other consumer
+  * devices have it enabled, the regulator device supports disabling and
+  * machine constraints permit this operation.
++ *
++ * Return: 0 on success or a negative error number on failure.
+  */
+ int regulator_disable_deferred(struct regulator *regulator, int ms)
+ {
+@@ -3362,6 +3384,9 @@ EXPORT_SYMBOL_GPL(regulator_get_regmap);
+  * hardware or firmware that can make I2C requests behind the kernel's back,
+  * for example.
+  *
++ * Return: 0 on success, or -%EOPNOTSUPP if the regulator does not support
++ *         voltage selectors.
++ *
+  * On success, the output parameters @vsel_reg and @vsel_mask are filled in
+  * and 0 is returned, otherwise a negative errno is returned.
+  */
+@@ -4216,6 +4241,8 @@ static int regulator_balance_voltage(struct regulator_dev *rdev,
+  * request voltage that meets the system constraints will be used.
+  * Regulator system constraints must be set for this regulator before
+  * calling this function otherwise this call will fail.
++ *
++ * Return: 0 on success or a negative error number on failure.
+  */
+ int regulator_set_voltage(struct regulator *regulator, int min_uV, int max_uV)
+ {
+@@ -4326,6 +4353,8 @@ EXPORT_SYMBOL_GPL(regulator_set_suspend_voltage);
+  * Provided with the starting and ending voltage, this function attempts to
+  * calculate the time in microseconds required to rise or fall to this new
+  * voltage.
++ *
++ * Return: ramp time in microseconds, or a negative error number if calculation failed.
+  */
+ int regulator_set_voltage_time(struct regulator *regulator,
+ 			       int old_uV, int new_uV)
+@@ -4383,6 +4412,8 @@ EXPORT_SYMBOL_GPL(regulator_set_voltage_time);
+  *
+  * Drivers providing ramp_delay in regulation_constraints can use this as their
+  * set_voltage_time_sel() operation.
++ *
++ * Return: ramp time in microseconds, or a negative error number if calculation failed.
+  */
+ int regulator_set_voltage_time_sel(struct regulator_dev *rdev,
+ 				   unsigned int old_selector,
+@@ -4435,6 +4466,8 @@ int regulator_sync_voltage_rdev(struct regulator_dev *rdev)
+  * Re-apply the last configured voltage.  This is intended to be used
+  * where some external control source the consumer is cooperating with
+  * has caused the configured voltage to change.
++ *
++ * Return: 0 on success or a negative error number on failure.
+  */
+ int regulator_sync_voltage(struct regulator *regulator)
+ {
+@@ -4566,6 +4599,8 @@ EXPORT_SYMBOL_GPL(regulator_get_voltage);
+  *
+  * NOTE: Regulator system constraints must be set for this regulator before
+  * calling this function otherwise this call will fail.
++ *
++ * Return: 0 on success or a negative error number on failure.
+  */
+ int regulator_set_current_limit(struct regulator *regulator,
+ 			       int min_uA, int max_uA)
+@@ -4639,6 +4674,8 @@ EXPORT_SYMBOL_GPL(regulator_get_current_limit);
+  *
+  * NOTE: Regulator system constraints must be set for this regulator before
+  * calling this function otherwise this call will fail.
++ *
++ * Return: 0 on success or a negative error number on failure.
+  */
+ int regulator_set_mode(struct regulator *regulator, unsigned int mode)
+ {
+@@ -4700,6 +4737,9 @@ static unsigned int _regulator_get_mode(struct regulator_dev *rdev)
   * @regulator: regulator source
   *
-- * This returns the current regulator voltage in uV.
-+ * Return: Current regulator voltage in uV, or a negative error number on failure.
-  *
-  * NOTE: If the regulator is disabled it will return the voltage value. This
-  * function should not be used to determine regulator state.
-@@ -4611,7 +4617,8 @@ static int _regulator_get_current_limit(struct regulator_dev *rdev)
-  * regulator_get_current_limit - get regulator output current
-  * @regulator: regulator source
-  *
-- * This returns the current supplied by the specified current sink in uA.
-+ * Return: Current supplied by the specified current sink in uA,
+  * Get the current regulator operating mode.
++ *
++ * Return: Current operating mode as %REGULATOR_MODE_* values,
 + *	   or a negative error number on failure.
-  *
-  * NOTE: If the regulator is disabled it will return the current value. This
-  * function should not be used to determine regulator state.
-@@ -4779,7 +4786,7 @@ EXPORT_SYMBOL_GPL(regulator_get_error_flags);
-  * If a regulator is an always-on regulator then an individual consumer's
-  * load will still be removed if that consumer is fully disabled.
-  *
-- * On error a negative errno is returned.
-+ * Return: 0 on success or a negative error number on failure.
   */
- int regulator_set_load(struct regulator *regulator, int uA_load)
+ unsigned int regulator_get_mode(struct regulator *regulator)
  {
-@@ -4964,12 +4971,12 @@ int _regulator_bulk_get(struct device *dev, int num_consumers,
-  * @num_consumers: Number of consumers to register
-  * @consumers:     Configuration of consumers; clients are stored here.
+@@ -4746,6 +4786,8 @@ static int _regulator_get_error_flags(struct regulator_dev *rdev,
+  * @flags: pointer to store error flags
   *
-- * @return 0 on success, an errno on failure.
-- *
-  * This helper function allows drivers to get several regulator
-  * consumers in one operation.  If any of the regulators cannot be
-  * acquired then any regulators that were allocated will be freed
-  * before returning to the caller.
+  * Get the current regulator error information.
 + *
 + * Return: 0 on success or a negative error number on failure.
   */
- int regulator_bulk_get(struct device *dev, int num_consumers,
- 		       struct regulator_bulk_data *consumers)
-@@ -4990,12 +4997,13 @@ static void regulator_bulk_enable_async(void *data, async_cookie_t cookie)
+ int regulator_get_error_flags(struct regulator *regulator,
+ 				unsigned int *flags)
+@@ -4818,6 +4860,9 @@ EXPORT_SYMBOL_GPL(regulator_set_load);
+  * for the regulator also enable bypass mode and the machine
+  * constraints allow this.  Bypass mode means that the regulator is
+  * simply passing the input directly to the output with no regulation.
++ *
++ * Return: 0 on success or if changing bypass is not possible, or
++ *	   a negative error number on failure.
+  */
+ int regulator_allow_bypass(struct regulator *regulator, bool enable)
+ {
+@@ -4875,6 +4920,8 @@ EXPORT_SYMBOL_GPL(regulator_allow_bypass);
+  * @nb: notifier block
   *
-  * @num_consumers: Number of consumers
-  * @consumers:     Consumer data; clients are stored here.
-- * @return         0 on success, an errno on failure
-  *
-  * This convenience API allows consumers to enable multiple regulator
-  * clients in a single API call.  If any consumers cannot be enabled
-  * then any others that were enabled will be disabled again prior to
-  * return.
+  * Register notifier block to receive regulator events.
 + *
 + * Return: 0 on success or a negative error number on failure.
   */
- int regulator_bulk_enable(int num_consumers,
- 			  struct regulator_bulk_data *consumers)
-@@ -5039,12 +5047,13 @@ EXPORT_SYMBOL_GPL(regulator_bulk_enable);
+ int regulator_register_notifier(struct regulator *regulator,
+ 			      struct notifier_block *nb)
+@@ -4890,6 +4937,8 @@ EXPORT_SYMBOL_GPL(regulator_register_notifier);
+  * @nb: notifier block
   *
-  * @num_consumers: Number of consumers
-  * @consumers:     Consumer data; clients are stored here.
-- * @return         0 on success, an errno on failure
-  *
-  * This convenience API allows consumers to disable multiple regulator
-  * clients in a single API call.  If any consumers cannot be disabled
-  * then any others that were disabled will be enabled again prior to
-  * return.
+  * Unregister regulator event notifier block.
 + *
 + * Return: 0 on success or a negative error number on failure.
   */
- int regulator_bulk_disable(int num_consumers,
- 			   struct regulator_bulk_data *consumers)
-@@ -5078,7 +5087,6 @@ EXPORT_SYMBOL_GPL(regulator_bulk_disable);
+ int regulator_unregister_notifier(struct regulator *regulator,
+ 				struct notifier_block *nb)
+@@ -5180,6 +5229,8 @@ static void regulator_handle_critical(struct regulator_dev *rdev,
   *
-  * @num_consumers: Number of consumers
-  * @consumers:     Consumer data; clients are stored here.
-- * @return         0 on success, an errno on failure
+  * Called by regulator drivers to notify clients a regulator event has
+  * occurred.
++ *
++ * Return: %NOTIFY_DONE.
+  */
+ int regulator_notifier_call_chain(struct regulator_dev *rdev,
+ 				  unsigned long event, void *data)
+@@ -5198,6 +5249,8 @@ EXPORT_SYMBOL_GPL(regulator_notifier_call_chain);
+  * @mode: Mode to convert
   *
-  * This convenience API allows consumers to forcibly disable multiple regulator
-  * clients in a single API call.
-@@ -5086,6 +5094,8 @@ EXPORT_SYMBOL_GPL(regulator_bulk_disable);
-  * likely occur if the regulators are not disabled (e.g. over temp).
-  * Although regulator_force_disable function call for some consumers can
-  * return error numbers, the function is called for all consumers.
+  * Convert a regulator mode into a status.
++ *
++ * Return: %REGULATOR_STATUS_* value corresponding to given mode.
+  */
+ int regulator_mode_to_status(unsigned int mode)
+ {
+@@ -5888,6 +5941,8 @@ EXPORT_SYMBOL_GPL(regulator_unregister);
+  * @dev: ``&struct device`` pointer that is passed to _regulator_suspend()
+  *
+  * Configure each regulator with it's suspend operating parameters for state.
 + *
 + * Return: 0 on success or a negative error number on failure.
   */
- int regulator_bulk_force_disable(int num_consumers,
- 			   struct regulator_bulk_data *consumers)
-@@ -5582,8 +5592,9 @@ static struct regulator_coupler generic_regulator_coupler = {
-  * @cfg: runtime configuration for regulator
+ static int regulator_suspend(struct device *dev)
+ {
+@@ -5977,6 +6032,8 @@ EXPORT_SYMBOL_GPL(regulator_has_full_constraints);
   *
-  * Called by regulator drivers to register a regulator.
-- * Returns a valid pointer to struct regulator_dev on success
-- * or an ERR_PTR() on error.
+  * Get rdev regulator driver private data. This call can be used in the
+  * regulator driver context.
 + *
-+ * Return: Pointer to a valid &struct regulator_dev on success or
-+ *	   an ERR_PTR() encoded negative error number on failure.
++ * Return: Pointer to regulator driver private data.
   */
- struct regulator_dev *
- regulator_register(struct device *dev,
+ void *rdev_get_drvdata(struct regulator_dev *rdev)
+ {
+@@ -5990,6 +6047,8 @@ EXPORT_SYMBOL_GPL(rdev_get_drvdata);
+  *
+  * Get regulator driver private data. This call can be used in the consumer
+  * driver context when non API regulator specific functions need to be called.
++ *
++ * Return: Pointer to regulator driver private data.
+  */
+ void *regulator_get_drvdata(struct regulator *regulator)
+ {
+@@ -6011,6 +6070,8 @@ EXPORT_SYMBOL_GPL(regulator_set_drvdata);
+ /**
+  * rdev_get_id - get regulator ID
+  * @rdev: regulator
++ *
++ * Return: Regulator ID for @rdev.
+  */
+ int rdev_get_id(struct regulator_dev *rdev)
+ {
 -- 
 2.46.0.295.g3b9ea8a38a-goog
 
