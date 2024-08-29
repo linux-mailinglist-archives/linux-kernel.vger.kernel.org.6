@@ -1,187 +1,133 @@
-Return-Path: <linux-kernel+bounces-306496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2181963FC1
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 11:20:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F38B963FC9
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 11:21:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CA5528268C
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 09:19:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9ED01C21230
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 09:21:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D811F18CC19;
-	Thu, 29 Aug 2024 09:19:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3691318D623;
+	Thu, 29 Aug 2024 09:21:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DiQOUwcA"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="rQWLWFoz"
+Received: from mx0b-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37C5518D65D;
-	Thu, 29 Aug 2024 09:19:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA3F23E47B;
+	Thu, 29 Aug 2024 09:21:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724923161; cv=none; b=EbH/tTgfKf+mcguAMdnzv7rvDwlBFvyDqv5rB2bfr1rdgJg2n/BsS4cey/f+C3LD1+Cru3tWBZdOOf2UNOmSLPsAdxgZO5EWFHVMDhvebDskxP+ZYfnyAiRtjeba28dPMiOoEoh2dzs484REnrGxCQMNTm3UThFNSFNgBQpaqv4=
+	t=1724923262; cv=none; b=Ej/nYy0TomP8zB449OmevkWilRwYW+XsgT0aXwewyDxxURhO5gNgYOXvRB6mKSoI8CBIAzdnwFbAm1J4kEh9+GOAaaaF8rOVxo6wfu+aqAs7BXf7iQUPUkTFA19n1nlNgpc40vu2veqQev5QpK0vr5AwSnEGltHh+JollkfZvas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724923161; c=relaxed/simple;
-	bh=tDQ+pcdvyOHFVZp+IKdv/jP5uGeKzI1qWJ/cb4iqJLY=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=ip0dVUQzMu5Fkri5AZXdjWD7V8CYP2IVyxF5/KlePCyDclR5jmkBL42v31nwZAEGY2iSgRwfQJBBnvIjfntlCUG1FjTlhSZS4/uAbupv1WRg4/5G1b5Y65raqa+5zWlz3D7lV3W4aEwOYrSwdiJA5s3Yex2rCls9aYkigbC7cdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DiQOUwcA; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724923159; x=1756459159;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=tDQ+pcdvyOHFVZp+IKdv/jP5uGeKzI1qWJ/cb4iqJLY=;
-  b=DiQOUwcASgqAyIc61j0uPTXVl1l1J0Y/qkVs1DSJ1PlPn3/izY1TZlf7
-   kDGHONUruZmm254Z0Gk4YPmkC7G6ljfPXW14CsbuS88kQy2YITQR/Gfyl
-   xz5LinzgqlcyUhmM84zB2FBEqzQ9bCtk+AlDWUFnnrg1fKAbOb3RgRRnC
-   yCGSZnsXN8191BsUVEm4v0l2NeQj7ipzxiRXnO0pG47g7HoTFhQ4ftuIf
-   Ox7bwuV+hnYpPcG4ti/WT4mcZ0OreYenBDx++P7Leu7WdJE4JU4BoxYbM
-   IeCVCWi6TqzdI6ArSC4FezOvu/sZ9ryjNPU8Tw17YfeA4mIyZOMplPmh1
-   w==;
-X-CSE-ConnectionGUID: HtSDaDNUQtqqm8QCnLwYHw==
-X-CSE-MsgGUID: 5RNAA4oKQTWvMUFZQqt04w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11178"; a="27378144"
-X-IronPort-AV: E=Sophos;i="6.10,185,1719903600"; 
-   d="scan'208";a="27378144"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 02:18:51 -0700
-X-CSE-ConnectionGUID: JYj9OFH1TPyVQ0j0O36uRA==
-X-CSE-MsgGUID: s13OWi+oQ7m5eETGx5hHCw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,185,1719903600"; 
-   d="scan'208";a="86731441"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.245.59])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 02:18:49 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Thu, 29 Aug 2024 12:18:45 +0300 (EEST)
-To: Tero Kristo <tero.kristo@linux.intel.com>
-cc: Hans de Goede <hdegoede@redhat.com>, srinivas.pandruvada@linux.intel.com, 
-    platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/3] Documentation: admin-guide: pm: Add efficiency
- vs. latency tradeoff to uncore documentation
-In-Reply-To: <20240828153657.1296410-2-tero.kristo@linux.intel.com>
-Message-ID: <d4939d77-8fab-f4b6-f1f7-4af05951d3eb@linux.intel.com>
-References: <20240828153657.1296410-1-tero.kristo@linux.intel.com> <20240828153657.1296410-2-tero.kristo@linux.intel.com>
+	s=arc-20240116; t=1724923262; c=relaxed/simple;
+	bh=z5H1n5+yj1DYotcoI4dZUwHA/y/DLWWWYsqvbvVPZ3c=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jaWJiZ+h3tv8Xaz1q8RiwL1DUD7LbeXUz8Ri7MHKnr9+6zBVxZr+i+eXFRuy+LI/Rzuq2A5RmfcQNLihbTkEZ0cliY2rx2vQSRU7jKg1Zl/7elb1f2FAPopqyP6uNLndVoP2g/sI0YsFP66vUmEPE6YqUyPvhNGHZWLcbqeBaOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=rQWLWFoz; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0375855.ppops.net [127.0.0.1])
+	by mx0b-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47T5dbPl023793;
+	Thu, 29 Aug 2024 05:20:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=
+	content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=DKIM; bh=AQNCInblHQuSFMuSF5tBSnjYSi0
+	WvZHihfo3gUj7uyo=; b=rQWLWFozz3S2LIb/V/WRU0oybnvv6R/cEytLXpPAbKg
+	kheAL3RwAkzkDipaP+90+BOHiv3xS/lAjKY+6YY4/DSzlpvM8uNl0EU1iKOdVQq7
+	fRNyCUiFHr2InNVktUETE+S/KTggFNRBwa+k8WXcSuGK5mmNNQf17PYI24R2Fs0W
+	AfeteK+ra35NR71cGIhlY15G3b4pOShPQVLlhvJ8JIqBy5guC/W0vJ9UXifn7wzY
+	9bl71FeP0jgxlc7SnJB//eS5CTLjdgGCbuhyHzE1DYatlOUkQfD3lQ+AT0/kTHaY
+	uTwbnWXnYDSNY/tDTlEpuM8S7dACgURCAZw91Y49+Fw==
+Received: from nwd2mta4.analog.com ([137.71.173.58])
+	by mx0b-00128a01.pphosted.com (PPS) with ESMTPS id 41ak1mgth5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 29 Aug 2024 05:20:44 -0400 (EDT)
+Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
+	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 47T9KhKo021794
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 29 Aug 2024 05:20:43 -0400
+Received: from ASHBCASHYB4.ad.analog.com (10.64.17.132) by
+ ASHBMBX8.ad.analog.com (10.64.17.5) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.14; Thu, 29 Aug 2024 05:20:42 -0400
+Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by
+ ASHBCASHYB4.ad.analog.com (10.64.17.132) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.14; Thu, 29 Aug 2024 05:20:42 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx9.ad.analog.com
+ (10.64.17.10) with Microsoft SMTP Server id 15.2.986.14 via Frontend
+ Transport; Thu, 29 Aug 2024 05:20:42 -0400
+Received: from amiclaus-VirtualBox.ad.analog.com (AMICLAUS-L02.ad.analog.com [10.48.65.124])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 47T9KVkT016079;
+	Thu, 29 Aug 2024 05:20:33 -0400
+From: Antoniu Miclaus <antoniu.miclaus@analog.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Michael Hennerich <michael.hennerich@analog.com>,
+        Antoniu Miclaus <antoniu.miclaus@analog.com>,
+        <linux-input@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH 1/2] input: touchscreem: ad7877: add match table
+Date: Thu, 29 Aug 2024 12:19:35 +0300
+Message-ID: <20240829092007.25850-1-antoniu.miclaus@analog.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-2058753919-1724923125=:1289"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-GUID: oUjQVsubJo4Y5fLDUdtmaKYkSBXEBSz6
+X-Proofpoint-ORIG-GUID: oUjQVsubJo4Y5fLDUdtmaKYkSBXEBSz6
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-29_02,2024-08-29_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
+ mlxlogscore=999 clxscore=1011 suspectscore=0 lowpriorityscore=0
+ impostorscore=0 bulkscore=0 adultscore=0 phishscore=0 priorityscore=1501
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408290068
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Add match table for the ad7877 driver and define the compatible string.
 
---8323328-2058753919-1724923125=:1289
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+---
+ drivers/input/touchscreen/ad7877.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-On Wed, 28 Aug 2024, Tero Kristo wrote:
+diff --git a/drivers/input/touchscreen/ad7877.c b/drivers/input/touchscreen/ad7877.c
+index a0598e9c7aff..7886454a19c6 100644
+--- a/drivers/input/touchscreen/ad7877.c
++++ b/drivers/input/touchscreen/ad7877.c
+@@ -805,10 +805,17 @@ static int ad7877_resume(struct device *dev)
+ 
+ static DEFINE_SIMPLE_DEV_PM_OPS(ad7877_pm, ad7877_suspend, ad7877_resume);
+ 
++static const struct of_device_id ad7877_of_match[] = {
++	{ .compatible = "adi,ad7877", },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, ad7877_of_match);
++
+ static struct spi_driver ad7877_driver = {
+ 	.driver = {
+ 		.name		= "ad7877",
+ 		.dev_groups	= ad7877_groups,
++		.of_match_table = ad7877_of_match,
+ 		.pm		= pm_sleep_ptr(&ad7877_pm),
+ 	},
+ 	.probe		= ad7877_probe,
+-- 
+2.46.0
 
-> Added documentation about the functionality of efficiency vs. latency tra=
-deoff
-> control in intel Xeon processors, and how this is configured via sysfs.
->=20
-> Signed-off-by: Tero Kristo <tero.kristo@linux.intel.com>
-> ---
-> v2:
->   * Largely re-wrote the documentation
->=20
->  .../pm/intel_uncore_frequency_scaling.rst     | 59 +++++++++++++++++++
->  1 file changed, 59 insertions(+)
->=20
-> diff --git a/Documentation/admin-guide/pm/intel_uncore_frequency_scaling.=
-rst b/Documentation/admin-guide/pm/intel_uncore_frequency_scaling.rst
-> index 5ab3440e6cee..26ded32b06f5 100644
-> --- a/Documentation/admin-guide/pm/intel_uncore_frequency_scaling.rst
-> +++ b/Documentation/admin-guide/pm/intel_uncore_frequency_scaling.rst
-> @@ -113,3 +113,62 @@ to apply at each uncore* level.
-> =20
->  Support for "current_freq_khz" is available only at each fabric cluster
->  level (i.e., in uncore* directory).
-> +
-> +Efficiency vs. Latency Tradeoff
-> +-------------------------------
-> +
-> +The Efficiency Latency Control (ELC) feature improves performance
-> +per watt. With this feature hardware power management algorithms
-> +optimize trade-off between latency and power consumption. For some
-> +latency sensitive workloads further tuning can be done by SW to
-> +get desired performance.
-> +
-> +The hardware monitors the average CPU utilization across all cores
-> +in a power domain at regular intervals and decides an uncore frequency.
-> +While this may result in the best performance per watt, workload may be
-> +expecting higher performance at the expense of power. Consider an
-> +application that intermittently wakes up to perform memory reads on an
-> +otherwise idle system. In such cases, if hardware lowers uncore
-> +frequency, then there may be delay in ramp up of frequency to meet
-> +target performance.
-> +
-> +The ELC control defines some parameters which can be changed from SW.
-> +If the average CPU utilization is below a user defined threshold
-> +(elc_low_threshold_percent attribute below), the user defined uncore
-> +frequency floor frequency will be used (elc_floor_freq_khz attribute
-
-Consider the following simplification:
-
-"the user defined uncore frequency floor frequency" ->
-"the user-defined uncore floor frequency"
-
-I think it tells the same even without that first "frequency".
-
-Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
-
---=20
- i.
-
-> +below) instead of hardware calculated minimum.
-> +
-> +Similarly in high load scenario where the CPU utilization goes above
-> +the high threshold value (elc_high_threshold_percent attribute below)
-> +instead of jumping to maximum uncore frequency, frequency is increased
-> +in 100MHz steps. This avoids consuming unnecessarily high power
-> +immediately with CPU utilization spikes.
-> +
-> +Attributes for efficiency latency control:
-> +
-> +``elc_floor_freq_khz``
-> +=09This attribute is used to get/set the efficiency latency floor freque=
-ncy.
-> +=09If this variable is lower than the 'min_freq_khz', it is ignored by
-> +=09the firmware.
-> +
-> +``elc_low_threshold_percent``
-> +=09This attribute is used to get/set the efficiency latency control low
-> +=09threshold. This attribute is in percentages of CPU utilization.
-> +
-> +``elc_high_threshold_percent``
-> +=09This attribute is used to get/set the efficiency latency control high
-> +=09threshold. This attribute is in percentages of CPU utilization.
-> +
-> +``elc_high_threshold_enable``
-> +=09This attribute is used to enable/disable the efficiency latency contr=
-ol
-> +=09high threshold. Write '1' to enable, '0' to disable.
-> +
-> +Example system configuration below, which does following:
-> +  * when CPU utilization is less than 10%: sets uncore frequency to 800M=
-Hz
-> +  * when CPU utilization is higher than 95%: increases uncore frequency =
-in
-> +    100MHz steps, until power limit is reached
-> +
-> +  elc_floor_freq_khz:800000
-> +  elc_high_threshold_percent:95
-> +  elc_high_threshold_enable:1
-> +  elc_low_threshold_percent:10
->=20
-
---8323328-2058753919-1724923125=:1289--
 
