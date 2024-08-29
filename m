@@ -1,121 +1,136 @@
-Return-Path: <linux-kernel+bounces-307085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73D7F9647C0
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:16:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BA409647CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:17:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30E7A2819D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 14:16:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 190FF281AE2
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 14:17:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3EE11AE854;
-	Thu, 29 Aug 2024 14:16:41 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E50E19005B;
-	Thu, 29 Aug 2024 14:16:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E4C119005B;
+	Thu, 29 Aug 2024 14:16:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="InKQsAT3"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D5DC19408D;
+	Thu, 29 Aug 2024 14:16:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724941001; cv=none; b=gvlDS+WmIDbqVC/wluvl8sl5WIyT7M/UPs5m5pG2KPcAz38Z9UZ+2eVuu4VM7DbTAqrZCHZSHc4AZMMp5vZ2DR6OT0W8CgrrNAweWfbXYL1DWHwFNkageVE0YBrtpwSjnYJIdlshrW2dZk5/O/T25x/jFpQ5/qCgYZi4jJ7wnwY=
+	t=1724941010; cv=none; b=CMckM+it4ZyC/OKUU7LtneoumUkrsW1kEfoNOg5Q2zYtnx9HL1K0Vt9+HS8eHXEFVuKeBet2x0jni+NW1GWEIGaojosfGjQoPAp5mh6Z9XkyVktYUoQbBnSLCPY1A3GDBOfORVEfrAhoPQWqYqXMSupEF06BTLwXtDjwzKUYSGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724941001; c=relaxed/simple;
-	bh=tECZU7mql8sjrz983n7f9Ehzd3ecd772DREuZHxXL3o=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=fSP4+TPBv+57n/nG3/1MqwA2L5Ll9qWkwKmMyLGQ7xcQ370kdFQnUflMOrOh1LlyEbpD13WwPwKliIPu86HrR/x5kztCuQeXMI96A1UGe5HjFMY9cBYT0ye5D9QeG2Y7gbrDrZX2VGRJA68VJITml5nlDJDJIStqxdcJc7ZzX6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4Wvjrc2ZMNzQr6Q;
-	Thu, 29 Aug 2024 22:11:44 +0800 (CST)
-Received: from kwepemm600007.china.huawei.com (unknown [7.193.23.208])
-	by mail.maildlp.com (Postfix) with ESMTPS id 66BE51401F2;
-	Thu, 29 Aug 2024 22:16:35 +0800 (CST)
-Received: from [10.174.178.219] (10.174.178.219) by
- kwepemm600007.china.huawei.com (7.193.23.208) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 29 Aug 2024 22:16:34 +0800
-Subject: Re: [PATCH v2] usb: xHCI: add XHCI_RESET_ON_RESUME quirk for Phytium
- xHCI host
-To: WangYuli <wangyuli@uniontech.com>
-CC: <mathias.nyman@intel.com>, <gregkh@linuxfoundation.org>,
-	<linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-pci@vger.kernel.org>, <guanwentao@uniontech.com>, Chen Baozi
-	<chenbaozi@phytium.com.cn>, Wang Zhimin <wangzhimin1179@phytium.com.cn>, Chen
- Zhenhua <chenzhenhua@phytium.com.cn>, Wang Yinfeng
-	<wangyinfeng@phytium.com.cn>, Jiakun Shuai <shuaijiakun1288@phytium.com.cn>
-References: <196A709D168A9A04+20240829095028.345047-1-wangyuli@uniontech.com>
-From: Zenghui Yu <yuzenghui@huawei.com>
-Message-ID: <4a26f1ef-9264-667c-faa1-33a7ae69b473@huawei.com>
-Date: Thu, 29 Aug 2024 22:16:33 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.12.1
+	s=arc-20240116; t=1724941010; c=relaxed/simple;
+	bh=Kzeqef7Cl73RQWlhJcPtJiNooSid7j+18DeILrIoT3M=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=PeG/j9LbuOx5wysdYECzegNAKqrQ4IIos79OSrIiJaBfiwz/TfgLMsJV6PQ7zSIwGbGDTgAyWLS16Aagg1wP8jT/XkO/Cyc+wBZvwJuH/1KP2HYhIH3PtCLslmoE+xowgfRpC/oPMWLbCNvBODaQT6ylKn+sP4bH2d3gHaFG6lU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=InKQsAT3; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1134)
+	id 9BDB620B7165; Thu, 29 Aug 2024 07:16:48 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 9BDB620B7165
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1724941008;
+	bh=ioiS0PvcMSwqDFoOxAKdu97AGRROolR0blMaCmo8GUQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=InKQsAT3Pj8Cn/lX+FlwwBMVJjlwYnN6xKlBcuox0a+8d0+M3kWjKfYFz92b+oz4S
+	 +5+7NChDNsL+B4OgBFpSdAR4/AyOcvulP1RW2Aqmm7aWWNTbxTvRtcnpYMiRrEK9O+
+	 Y1PvPtnne9YG/71XVkKGDwZGwM5R5Z9MhdYLfTjc=
+From: Shradha Gupta <shradhagupta@linux.microsoft.com>
+To: linux-hyperv@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-rdma@vger.kernel.org
+Cc: Shradha Gupta <shradhagupta@linux.microsoft.com>,
+	"K. Y. Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>,
+	Dexuan Cui <decui@microsoft.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Long Li <longli@microsoft.com>,
+	Simon Horman <horms@kernel.org>,
+	Konstantin Taranov <kotaranov@microsoft.com>,
+	Souradeep Chakrabarti <schakrabarti@linux.microsoft.com>,
+	Erick Archer <erick.archer@outlook.com>,
+	Pavan Chebbi <pavan.chebbi@broadcom.com>,
+	Ahmed Zaki <ahmed.zaki@intel.com>,
+	Colin Ian King <colin.i.king@gmail.com>,
+	Shradha Gupta <shradhagupta@microsoft.com>
+Subject: [PATCH net-next] net: mana: Improve mana_set_channels() for low mem conditions
+Date: Thu, 29 Aug 2024 07:16:46 -0700
+Message-Id: <1724941006-2500-1-git-send-email-shradhagupta@linux.microsoft.com>
+X-Mailer: git-send-email 1.8.3.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <196A709D168A9A04+20240829095028.345047-1-wangyuli@uniontech.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemm600007.china.huawei.com (7.193.23.208)
 
-On 2024/8/29 17:50, WangYuli wrote:
-> The resume operation of Phytium Px210 xHCI host would failed
-> to restore state. Use the XHCI_RESET_ON_RESUME quirk to skip
-> it and reset the controller after resume.
-> 
-> Co-developed-by: Chen Baozi <chenbaozi@phytium.com.cn>
-> Signed-off-by: Chen Baozi <chenbaozi@phytium.com.cn>
-> Co-developed-by: Wang Zhimin <wangzhimin1179@phytium.com.cn>
-> Signed-off-by: Wang Zhimin <wangzhimin1179@phytium.com.cn>
-> Co-developed-by: Chen Zhenhua <chenzhenhua@phytium.com.cn>
-> Signed-off-by: Chen Zhenhua <chenzhenhua@phytium.com.cn>
-> Co-developed-by: Wang Yinfeng <wangyinfeng@phytium.com.cn>
-> Signed-off-by: Wang Yinfeng <wangyinfeng@phytium.com.cn>
-> Co-developed-by: Jiakun Shuai <shuaijiakun1288@phytium.com.cn>
-> Signed-off-by: Jiakun Shuai <shuaijiakun1288@phytium.com.cn>
-> Signed-off-by: WangYuli <wangyuli@uniontech.com>
-> ---
+The mana_set_channels() function requires detaching the mana
+driver and reattaching it with changed channel values.
+During this operation if the system is low on memory, the reattach
+might fail, causing the network device being down.
+To avoid this we pre-allocate buffers at the beginning of set operation,
+to prevent complete network loss
 
-You should add the change log for a v2 patch.
+Signed-off-by: Shradha Gupta <shradhagupta@linux.microsoft.com>
+---
+ .../ethernet/microsoft/mana/mana_ethtool.c    | 28 +++++++++++--------
+ 1 file changed, 16 insertions(+), 12 deletions(-)
 
->  drivers/usb/host/xhci-pci.c | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/drivers/usb/host/xhci-pci.c b/drivers/usb/host/xhci-pci.c
-> index b5705ed01d83..fabae8420ce9 100644
-> --- a/drivers/usb/host/xhci-pci.c
-> +++ b/drivers/usb/host/xhci-pci.c
-> @@ -55,6 +55,9 @@
->  #define PCI_DEVICE_ID_INTEL_ALDER_LAKE_PCH_XHCI		0x51ed
->  #define PCI_DEVICE_ID_INTEL_ALDER_LAKE_N_PCH_XHCI	0x54ed
->  
-> +#define PCI_VENDOR_ID_PHYTIUM		0x1db7
-> +#define PCI_DEVICE_ID_PHYTIUM_XHCI			0xdc27
-> +
->  /* Thunderbolt */
->  #define PCI_DEVICE_ID_INTEL_MAPLE_RIDGE_XHCI		0x1138
->  #define PCI_DEVICE_ID_INTEL_ALPINE_RIDGE_2C_XHCI	0x15b5
-> @@ -407,6 +410,10 @@ static void xhci_pci_quirks(struct device *dev, struct xhci_hcd *xhci)
->  	if (pdev->vendor == PCI_VENDOR_ID_VIA)
->  		xhci->quirks |= XHCI_RESET_ON_RESUME;
->  
-> +	if (pdev->vendor == PCI_VENDOR_ID_PHYTIUM ||
+diff --git a/drivers/net/ethernet/microsoft/mana/mana_ethtool.c b/drivers/net/ethernet/microsoft/mana/mana_ethtool.c
+index d6a35fbda447..5077493fdfde 100644
+--- a/drivers/net/ethernet/microsoft/mana/mana_ethtool.c
++++ b/drivers/net/ethernet/microsoft/mana/mana_ethtool.c
+@@ -345,27 +345,31 @@ static int mana_set_channels(struct net_device *ndev,
+ 	struct mana_port_context *apc = netdev_priv(ndev);
+ 	unsigned int new_count = channels->combined_count;
+ 	unsigned int old_count = apc->num_queues;
+-	int err, err2;
++	int err;
++
++	apc->num_queues = new_count;
++	err = mana_pre_alloc_rxbufs(apc, ndev->mtu);
++	apc->num_queues = old_count;
++	if (err) {
++		netdev_err(ndev, "Insufficient memory for new allocations");
++		return err;
++	}
+ 
+ 	err = mana_detach(ndev, false);
+ 	if (err) {
+ 		netdev_err(ndev, "mana_detach failed: %d\n", err);
+-		return err;
++		goto out;
+ 	}
+ 
+ 	apc->num_queues = new_count;
+ 	err = mana_attach(ndev);
+-	if (!err)
+-		return 0;
+-
+-	netdev_err(ndev, "mana_attach failed: %d\n", err);
+-
+-	/* Try to roll it back to the old configuration. */
+-	apc->num_queues = old_count;
+-	err2 = mana_attach(ndev);
+-	if (err2)
+-		netdev_err(ndev, "mana re-attach failed: %d\n", err2);
++	if (err) {
++		apc->num_queues = old_count;
++		netdev_err(ndev, "mana_attach failed: %d\n", err);
++	}
+ 
++out:
++	mana_pre_dealloc_rxbufs(apc);
+ 	return err;
+ }
+ 
+-- 
+2.34.1
 
-Shouldn't this be a '&&'?
-
-> +	    pdev->device == PCI_DEVICE_ID_PHYTIUM_XHCI)
-> +		xhci->quirks |= XHCI_RESET_ON_RESUME;
-> +
->  	/* See https://bugzilla.kernel.org/show_bug.cgi?id=79511 */
->  	if (pdev->vendor == PCI_VENDOR_ID_VIA &&
->  			pdev->device == 0x3432)
-> 
 
