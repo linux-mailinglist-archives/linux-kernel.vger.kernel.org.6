@@ -1,70 +1,53 @@
-Return-Path: <linux-kernel+bounces-307009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B25549646C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:36:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D13939646C8
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:36:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B24D280C29
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:36:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10E861C20F3D
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:36:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A4D71AB500;
-	Thu, 29 Aug 2024 13:32:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="OjBWIrjm"
-Received: from smtp-fw-9102.amazon.com (smtp-fw-9102.amazon.com [207.171.184.29])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEC3F1ABED7;
+	Thu, 29 Aug 2024 13:32:54 +0000 (UTC)
+Received: from michel.telenet-ops.be (michel.telenet-ops.be [195.130.137.88])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C625C1A4ADE
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 13:32:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.184.29
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A88F1ABEA8
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 13:32:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.88
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724938364; cv=none; b=jIaSa3S2GFEXPutBbvlV6+5HCKEKscbJ3RvrZEnXKCIOBGcMvw44mK+HPiHSBuEpOm/KFX2RLgB2lsC0vmLAmvtqUoms5VfmLmLCpF8gLObJXp4hQv4ZjMlkF7vTMVjJdaEUT0Mc2hUW8J0jvKDZYyk0eDzB1uhLTtOUojFkHnc=
+	t=1724938374; cv=none; b=PuY8C6gMWX98pCB2Ri0TRLoHPME6Uw4yzEEHg/CvYOHnKW9yTPhRDA/DZqc6CLhW/jql+E180swZpf/uodOwjWbaWc7Zi1KalvhT0nYAOPYqcQorBWmhgln7UsRBA3sEmGN0Ft5+8URuEG8xw+i4sV2qqxB3/TP7fXcjsIP/TMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724938364; c=relaxed/simple;
-	bh=+5sQGoX5bZXTlDFYHn/Ahl4DzZDpeBVWimbRq4RLSaQ=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=j2klhOqQLK7N59TbebRosjbrQdE4j8JyO9URbLdqFm33KX02shWF5EAVePJYbUg59bV9fbQUv5jgteLlXga4zauHSlaAMlh7heAl7zJ8lLJjHN6bOxJpdt7/wZC/4ugpXdnW/37V5U4pmq0Ud13Mlopp4ET76jiOqJbPban+nGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=OjBWIrjm; arc=none smtp.client-ip=207.171.184.29
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1724938363; x=1756474363;
-  h=from:to:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=vvr7g01Sw9GYgNz0LoAAg4T3ibT+u+jm1p9VxTddzJ8=;
-  b=OjBWIrjmYKi1v1rhLMyHS5wbSd7fBe/AHwLKV5HOvoH2HXd9HQ9zamct
-   LiilzH8BIfhuPRj9gScvUZS5XNxDK9Iq4sX3TkJpMX95Pa4e9Py7amyWp
-   OG1/f2VvSsHPes2RbF1htkTPPw3nN57Paqmmdu+3/MH1d0fKgiFnIeZzI
-   I=;
-X-IronPort-AV: E=Sophos;i="6.10,185,1719878400"; 
-   d="scan'208";a="448725231"
-Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.214])
-  by smtp-border-fw-9102.sea19.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 13:32:38 +0000
-Received: from EX19MTAUWA002.ant.amazon.com [10.0.7.35:31780]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.21.120:2525] with esmtp (Farcaster)
- id 52e6a62b-1635-4469-8507-9256d931fde3; Thu, 29 Aug 2024 13:32:36 +0000 (UTC)
-X-Farcaster-Flow-ID: 52e6a62b-1635-4469-8507-9256d931fde3
-Received: from EX19MTAUWA001.ant.amazon.com (10.250.64.218) by
- EX19MTAUWA002.ant.amazon.com (10.250.64.202) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Thu, 29 Aug 2024 13:32:36 +0000
-Received: from dev-dsk-pjy-1a-76bc80b3.eu-west-1.amazon.com (10.15.97.110) by
- mail-relay.amazon.com (10.250.64.204) with Microsoft SMTP Server id
- 15.2.1258.34 via Frontend Transport; Thu, 29 Aug 2024 13:32:36 +0000
-Received: by dev-dsk-pjy-1a-76bc80b3.eu-west-1.amazon.com (Postfix, from userid 22993570)
-	id 0277A20836; Thu, 29 Aug 2024 13:32:35 +0000 (UTC)
-From: Puranjay Mohan <pjy@amazon.com>
-To: Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>, "Christoph
- Hellwig" <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
-	<linux-nvme@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<puranjay@kernel.org>, <amazon-linux-kernel@amazon.com>
-Subject: [PATCH v3] nvme: fix metadata handling in nvme-passthrough
-Date: Thu, 29 Aug 2024 13:32:17 +0000
-Message-ID: <20240829133217.1627-1-pjy@amazon.com>
-X-Mailer: git-send-email 2.40.1
+	s=arc-20240116; t=1724938374; c=relaxed/simple;
+	bh=MmX1CmtLsaNaQxXPUyOhcWdouZuyyk8hiwX+AaiDa1E=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lnGQZqOSNjxbVxZljR4+xx5VgrhL+JL6+rKd+7OCq1Ei4/9XTLLn7+2c/F660qxXMmDnlTwX/JV8q0dNiXU6AM8Wd5DIM2u9HixNVD3gvtA2bciJGgEIayf2mC1XnqgZRHaoen+Eh2aZRVmItpH7ZNwesVMIh/Luvez8L4zZjOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.88
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:fbdf:b855:e99a:9ec0])
+	by michel.telenet-ops.be with cmsmtp
+	id 5pYj2D00K0Yrr4n06pYj8Y; Thu, 29 Aug 2024 15:32:44 +0200
+Received: from rox.of.borg ([192.168.97.57])
+	by ramsan.of.borg with esmtp (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1sjfGS-001GQE-VN;
+	Thu, 29 Aug 2024 15:32:43 +0200
+Received: from geert by rox.of.borg with local (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1sjfGV-0002At-MJ;
+	Thu, 29 Aug 2024 15:32:43 +0200
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] nvmem: Fix return type of devm_nvmem_device_get() in kerneldoc
+Date: Thu, 29 Aug 2024 15:32:38 +0200
+Message-Id: <d2748e1873daf55973de9c99ffeb6de6fa6451af.1724938228.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,91 +55,37 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
 
-On an NVMe namespace that does not support metadata, it is possible to
-send an IO command with metadata through io-passthru. This allows issues
-like [1] to trigger in the completion code path.
-nvme_map_user_request() doesn't check if the namespace supports metadata
-before sending it forward. It also allows admin commands with metadata to
-be processed as it ignores metadata when bdev == NULL and may report
-success.
+devm_nvmem_device_get() returns an nvmem device, not an nvmem cell.
 
-Reject an IO command with metadata when the NVMe namespace doesn't
-support it and reject an admin command if it has metadata.
-
-[1] https://lore.kernel.org/all/mb61pcylvnym8.fsf@amazon.com/
-
-Suggested-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Puranjay Mohan <pjy@amazon.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
-Reviewed-by: Anuj Gupta <anuj20.g@samsung.com>
+Fixes: e2a5402ec7c6d044 ("nvmem: Add nvmem_device based consumer apis.")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-V2: https://lore.kernel.org/all/20240827132327.1704-1-pjy@amazon.com/
-Changes in V3
-- Reject admin commands with metadata by also failing if there's no bdev
+ drivers/nvmem/core.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-V1: https://lore.kernel.org/all/20240827121701.48792-1-pjy@amazon.com/
-Changes in V2:
-- Add a flag called 'has_metadata' and use it for the support check and
-also for the check before calling bio_integrity_map_user()
----
- drivers/nvme/host/ioctl.c | 22 ++++++++++++++--------
- 1 file changed, 14 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/nvme/host/ioctl.c b/drivers/nvme/host/ioctl.c
-index f1d58e70933f..15c93ce07e26 100644
---- a/drivers/nvme/host/ioctl.c
-+++ b/drivers/nvme/host/ioctl.c
-@@ -4,6 +4,7 @@
-  * Copyright (c) 2017-2021 Christoph Hellwig.
+diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
+index 516dfd861b9f968f..33ffa2aa4c115239 100644
+--- a/drivers/nvmem/core.c
++++ b/drivers/nvmem/core.c
+@@ -1276,13 +1276,13 @@ void nvmem_device_put(struct nvmem_device *nvmem)
+ EXPORT_SYMBOL_GPL(nvmem_device_put);
+ 
+ /**
+- * devm_nvmem_device_get() - Get nvmem cell of device form a given id
++ * devm_nvmem_device_get() - Get nvmem device of device form a given id
+  *
+  * @dev: Device that requests the nvmem device.
+  * @id: name id for the requested nvmem device.
+  *
+- * Return: ERR_PTR() on error or a valid pointer to a struct nvmem_cell
+- * on success.  The nvmem_cell will be freed by the automatically once the
++ * Return: ERR_PTR() on error or a valid pointer to a struct nvmem_device
++ * on success.  The nvmem_device will be freed by the automatically once the
+  * device is freed.
   */
- #include <linux/bio-integrity.h>
-+#include <linux/blk-integrity.h>
- #include <linux/ptrace.h>	/* for force_successful_syscall_return */
- #include <linux/nvme_ioctl.h>
- #include <linux/io_uring/cmd.h>
-@@ -119,9 +120,14 @@ static int nvme_map_user_request(struct request *req, u64 ubuffer,
- 	struct request_queue *q = req->q;
- 	struct nvme_ns *ns = q->queuedata;
- 	struct block_device *bdev = ns ? ns->disk->part0 : NULL;
-+	bool supports_metadata = bdev && blk_get_integrity(bdev->bd_disk);
-+	bool has_metadata = meta_buffer && meta_len;
- 	struct bio *bio = NULL;
- 	int ret;
- 
-+	if (has_metadata && !supports_metadata)
-+		return -EINVAL;
-+
- 	if (ioucmd && (ioucmd->flags & IORING_URING_CMD_FIXED)) {
- 		struct iov_iter iter;
- 
-@@ -143,15 +149,15 @@ static int nvme_map_user_request(struct request *req, u64 ubuffer,
- 		goto out;
- 
- 	bio = req->bio;
--	if (bdev) {
-+	if (bdev)
- 		bio_set_dev(bio, bdev);
--		if (meta_buffer && meta_len) {
--			ret = bio_integrity_map_user(bio, meta_buffer, meta_len,
--						     meta_seed);
--			if (ret)
--				goto out_unmap;
--			req->cmd_flags |= REQ_INTEGRITY;
--		}
-+
-+	if (has_metadata) {
-+		ret = bio_integrity_map_user(bio, meta_buffer, meta_len,
-+					     meta_seed);
-+		if (ret)
-+			goto out_unmap;
-+		req->cmd_flags |= REQ_INTEGRITY;
- 	}
- 
- 	return ret;
+ struct nvmem_device *devm_nvmem_device_get(struct device *dev, const char *id)
 -- 
-2.40.1
+2.34.1
 
 
