@@ -1,116 +1,97 @@
-Return-Path: <linux-kernel+bounces-307545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B31CA964EC9
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 21:26:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06456964ECD
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 21:27:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7093F284D53
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 19:26:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 399701C23036
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 19:27:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF0D51BA26F;
-	Thu, 29 Aug 2024 19:26:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB1B21B9B5F;
+	Thu, 29 Aug 2024 19:27:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XIa2JUou"
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=engleder-embedded.com header.i=@engleder-embedded.com header.b="iyxOwQft"
+Received: from mx23lb.world4you.com (mx23lb.world4you.com [81.19.149.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D31491B9B55;
-	Thu, 29 Aug 2024 19:26:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 851D83AC28;
+	Thu, 29 Aug 2024 19:27:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.19.149.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724959600; cv=none; b=lKk4J8pZ1bikvUyerqLkbfI+q8Vdu9DnOS6Z5EsKQFNBOsC8XVCn4sqr4PCHuGfJ3F1tQ1o+ZY36RZyVtnLHx2Bl1hyL079Uqvgh2FFH82uhjHxjPzVj3o56EHFJMqi78SLntwYnbFXO9Q/ItHIs8Vaa+yyRw4xLpyGmXScPous=
+	t=1724959638; cv=none; b=XZcDbnYQOocWbSVd/3VvmGNlg/UsPBYFbMmy5lKVC49+1pFDi+m/j2YT3pFBcBS+2cqmcg+nRdqngZv3H60WeQU5iI/39o6YBYjOqmL23XNMYbFfyY9W8zp+/7yV77y790p3D1P2Hw/Y24ibbPHfLTeAkvOH2DgcTzqVMiXzysg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724959600; c=relaxed/simple;
-	bh=/jHu2Ms/ZN+wfcxWWxuyLebk2/G39DLenbNwKxKHBow=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Jb9IV50miHQl2jN0A4mh7w6q40pWqOgSrRn9OircjR3kFx/5+MBmpD00aIV5I1fGFZTuXIoFHX+9LfUlYKTdqk5AkoWuXsXhCFTMd7M4OZUsipYJkLo6xwqZFGeODJt0mxokfxNrCwkm0zMM/fbwio+bJs+OlXRNqiif1GpVxAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XIa2JUou; arc=none smtp.client-ip=209.85.128.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6b47ff8a59aso9657727b3.2;
-        Thu, 29 Aug 2024 12:26:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724959598; x=1725564398; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/jHu2Ms/ZN+wfcxWWxuyLebk2/G39DLenbNwKxKHBow=;
-        b=XIa2JUoucLnZTwoaivuTSwxD7J4998xwEvYRPFYLPyarnq9mXNnTuZmHDslNjVC+b0
-         FuYlWCOoRqsrg0NI1xvTrQKlTnQUqTFg+AWCMtzz7XKXgv/6F23jIZENL9ALFi8sybjq
-         KaUWHRruy4hrZBIi7Ghx07ql9nHvFjgEhuFE2xhA5fpYKz7BtrRxRv3xevTDbivzilgD
-         SOwkoneJupvwOwkEJehLB4wpJrRfnHAINsHcrAFeSKGnzH1lBLo9rQ7jlonXXQtDjlZY
-         cijYjZFAydrz4Zk8xGc1DONgd8Xo+0HbNuUCEN+UHxwnFcCYCPkbtcHTphpdLZO3DLCP
-         0Kfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724959598; x=1725564398;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/jHu2Ms/ZN+wfcxWWxuyLebk2/G39DLenbNwKxKHBow=;
-        b=iVgOiSrPwwrvIWHe2f6FscFnSfQV3N1/pjdg7UPNQPyFuzSJx5O8trH7vrUSXdJ3dY
-         VF8lFZSNGBvQd6fXHFweLtjvtFtW7+h49m7wPBBIcASnhsmSCvqTcixE5ZT8hIngJv4O
-         xt1vOu5stXdqF7x5587ZpIK99Z31TMgWGSzKIKFJAupm54CYR1t/ME5WnyIJumnu0roE
-         9RegQ6pn7US/vsO89cp9BUfwGqbWpByJSCaAUm1wIe234ia9k9y4c+yFtBmmXWCvMpOq
-         0ejT/Sowu/6PWcS0tl/hyetrojkirHxaYb9bJRyyJm56dr+QKPhjgaYc4KwR1NFKslwN
-         Rx1g==
-X-Forwarded-Encrypted: i=1; AJvYcCUTIni4X482jitFN7HQjXfCfYYXnusP+JugjXWPrc3qglQp7a0qjN2kUNv7jzpSAwKxf9Np19fLjq/7nrdV@vger.kernel.org, AJvYcCW8shL0zDDziBxwmh30R6W3oSRvin+ZZUgVsREGYZPZmWpTnQT9XiykzRd24BmX9/VX8kBvT3InxQKNF7fe+c60@vger.kernel.org, AJvYcCWoQHI3ms4R0U4vSxnk5ymfMUYjPM3ZLKTtAd9BmWnK4EmGOCTIrzUUqq/of9Wh3f0avIVryR8F@vger.kernel.org
-X-Gm-Message-State: AOJu0YzeWZINTMrZjbbsVyzuvYogx4/+VjYoC14CNtYyLlQQMh9o3Tpz
-	V3LL9P0ssvMJ6E/VfdfkqflWl/AkQC4nDznOH4pJVw4l/4wMECM+
-X-Google-Smtp-Source: AGHT+IF3A4Dg3yywX6rdk0fMPUiWmAhLI3O4uROfvDXt55ZidG1tpRj8xppq84PC2/rnONxsihtsgQ==
-X-Received: by 2002:a05:690c:4701:b0:6ae:dab5:a3b5 with SMTP id 00721157ae682-6d276116ec6mr37042947b3.13.1724959597506;
-        Thu, 29 Aug 2024 12:26:37 -0700 (PDT)
-Received: from localhost (fwdproxy-frc-017.fbsv.net. [2a03:2880:21ff:11::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6d2d3ea3080sm3612347b3.44.2024.08.29.12.26.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 12:26:37 -0700 (PDT)
-From: Joshua Hahn <joshua.hahnjy@gmail.com>
-To: tj@kernel.org
-Cc: JoshuaHahnjoshua.hahn6@gmail.com,
-	cgroups@vger.kernel.org,
-	hannes@cmpxchg.org,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	lizefan.x@bytedance.com,
-	mkoutny@suse.com,
-	shuah@kernel.org
-Subject: Re: [PATCH 1/2] Tracking cgroup-level niced CPU time
-Date: Thu, 29 Aug 2024 12:26:36 -0700
-Message-ID: <20240829192636.1054186-1-joshua.hahnjy@gmail.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <ZszHM_UV24aSWTC8@slm.duckdns.org>
-References: <ZszHM_UV24aSWTC8@slm.duckdns.org>
+	s=arc-20240116; t=1724959638; c=relaxed/simple;
+	bh=tsa65pvZJDD6R4EM4kwdUAwA1p2t4Jmyl08tvKxO4c0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YUdKz2TLZwwx7CpvQgVzRQTIFAQN46OBJTvdvAL+bKjW9OJeoFrmdxrkzQbxR4mZY21Ie4WD/sUmfkhzOnZIzUiAPGu1R+FY2h5SWcjg4HUBfreFN1H2cCHMHWbEPc+pjcADzYkGdTY3Bz0MGmPuWWMxBGvT4MuS6Aix3E3HzH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=engleder-embedded.com; spf=pass smtp.mailfrom=engleder-embedded.com; dkim=pass (1024-bit key) header.d=engleder-embedded.com header.i=@engleder-embedded.com header.b=iyxOwQft; arc=none smtp.client-ip=81.19.149.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=engleder-embedded.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=engleder-embedded.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=engleder-embedded.com; s=dkim11; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=QrhCT7icu6NtnGgnTVANA9HRX8TTQ+yDYH4sT/SdKxU=; b=iyxOwQftMHbfTt+tYbSYAAPFku
+	2tb2UF+TYVS8rBE271UdtFJqGwpG7izlnirE4eAcAO/mMt1XlbJB8Cv/WyOQudLdYSRh4YnacYQu4
+	+yLncnJJNQqUTGubW1X5tS7gYoDTKbCBFk0ogTLH27FnCJ01toySVYoLd9Ry+nYENcwU=;
+Received: from [88.117.52.244] (helo=[10.0.0.160])
+	by mx23lb.world4you.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96.2)
+	(envelope-from <gerhard@engleder-embedded.com>)
+	id 1sjknM-0003tY-0W;
+	Thu, 29 Aug 2024 21:27:00 +0200
+Message-ID: <23021c75-3dcb-404c-bf79-cef583f4600a@engleder-embedded.com>
+Date: Thu, 29 Aug 2024 21:26:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net] igc: Unlock on error in igc_io_resume()
+Content-Language: en-US
+To: Dan Carpenter <dan.carpenter@linaro.org>,
+ Sasha Neftin <sasha.neftin@intel.com>
+Cc: Tony Nguyen <anthony.l.nguyen@intel.com>,
+ Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <64a982d3-a2f5-4ef7-ad75-61f6bb1fae24@stanley.mountain>
+From: Gerhard Engleder <gerhard@engleder-embedded.com>
+In-Reply-To: <64a982d3-a2f5-4ef7-ad75-61f6bb1fae24@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AV-Do-Run: Yes
 
-Hello, thank you for reviewing the patch.
+On 29.08.24 21:22, Dan Carpenter wrote:
+> Call rtnl_unlock() on this error path, before returning.
+> 
+> Fixes: bc23aa949aeb ("igc: Add pcie error handler support")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>   drivers/net/ethernet/intel/igc/igc_main.c | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/net/ethernet/intel/igc/igc_main.c b/drivers/net/ethernet/intel/igc/igc_main.c
+> index dfd6c00b4205..0a095cdea4fb 100644
+> --- a/drivers/net/ethernet/intel/igc/igc_main.c
+> +++ b/drivers/net/ethernet/intel/igc/igc_main.c
+> @@ -7413,6 +7413,7 @@ static void igc_io_resume(struct pci_dev *pdev)
+>   	rtnl_lock();
+>   	if (netif_running(netdev)) {
+>   		if (igc_open(netdev)) {
+> +			rtnl_unlock();
+>   			netdev_err(netdev, "igc_open failed after reset\n");
+>   			return;
+>   		}
 
-> > Cgroup-level CPU statistics currently include time spent on
-> > user/system processes, but do not include niced CPU time (despite
-> > already being tracked). This patch exposes niced CPU time to the
-> > userspace, allowing users to get a better understanding of their
-> > hardware limits and can facilitate better load-balancing.
->
-> You aren't talking about the in-kernel scheduler's load balancer, right? If
-> so, can you please update the description? This is a bit too confusing for a
-> commit message for a kernel commit.
-
-Thank you for pointing this out -- I'll edit the commit message to the
-following in a v2:
-
-Cgroup-level CPU statistics currently include time spent on
-user/system processes, but do not include niced CPU time (despite
-already being tracked). This patch exposes niced CPU time to the
-userspace, allowing users to get a better understanding of their
-hardware limits and can facilitate more informed workload distribution.
-
-Thanks,
-Joshua
+Reviewed-by: Gerhard Engleder <gerhard@engleder-embedded.com>
 
