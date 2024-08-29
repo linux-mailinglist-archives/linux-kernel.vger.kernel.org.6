@@ -1,168 +1,142 @@
-Return-Path: <linux-kernel+bounces-306346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5304C963DC5
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 09:55:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D0C0963C9C
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 09:19:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5A8E286E17
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 07:55:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F6DA286708
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 07:19:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EDAE18A6DF;
-	Thu, 29 Aug 2024 07:54:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD76617277F;
+	Thu, 29 Aug 2024 07:19:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="b+Uoi8rM"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="JxEVMcCN"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6908189F3C;
-	Thu, 29 Aug 2024 07:54:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09FF71547E3
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 07:19:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724918080; cv=none; b=rIgLDWgitjrxkrsZpteF3Jm8r/bCK5+BvDm4SlKLWTXYHTE6k9cEluEIQ50z6DMWSNFLQZBcDZSbkj8ICoov1FU1d/j0R+V5udL12UP6DSyz0Jbkoql14ms1ANm4zEf9Tbccyu8fcGNJ0H9/8KuJ7DAaGhMLD6cygATcmmCqXvI=
+	t=1724915959; cv=none; b=cKaa8PB2GkX7tl7o1p7z/QAtSKq6D4uREk25gNrZDGpbYsZPj6LbDt4SHSPXSOC++mu3oWdTXCH5oZOlWeXgTXBn0qNd3DHcK5iMRQIF7gVOSK1rMSUmxSqB4c8Gvvqt8D+UUscwDiNF13SC6JG7QDddn0bG2CtGM9L2jUqaiVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724918080; c=relaxed/simple;
-	bh=6ctqR1JOxjRDrvBOIC24P/w4dBCCpjzFRRxbNdyaogM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZygL0NLxdvn95oARiLqWjCZ7sP+DIMoIn1tGPKOVZAiM8PXNWCm70CUV+Ccwcq3h1dDKrYSnA+HHzd/vCGeK0J3ZH80XgJtEmRbn6t4+5NNfNWWWU9nW/QH6+vEQ+0FNXwhIrx4eStF6vtu3AsSzGJQOUO1/T+40hVSkq9/nuq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=b+Uoi8rM; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724918079; x=1756454079;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=6ctqR1JOxjRDrvBOIC24P/w4dBCCpjzFRRxbNdyaogM=;
-  b=b+Uoi8rMN78MYkrsZ+N3eRy7UlPCTvPP+VquJwhbqxq54vmrgd7jLYUE
-   A8dWMe2WgP1zG4MqnXhj/JU0kvgnOvqN7+vBZIuO7FGcE4MH5NmcB+a9r
-   gllzX7Vuy37cYz3m9JKmlO3yi9jd7WE1nhgf6GV+YDlxPO9cUtSBhj7pK
-   TyaoLYTKBJmBJKafCvzNF4oD3u0AASy/KMrFImGtXZolig8EYqRtHiIXX
-   K0B/9h8yJIYlbmyEBhtN+Xho5g/qLqhgiOXMS3XvmsLhimobVYvsRg36a
-   L1fhmhULnzF/wtyLjTNJbwxCsAH0XAeaQ57LeTLHH/oCc1RhoaaVlkyKr
-   g==;
-X-CSE-ConnectionGUID: aXwbDyAlQTyNyZsGJltvow==
-X-CSE-MsgGUID: YC5x3lNoQVGOtK1wffbqgQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11178"; a="13275405"
-X-IronPort-AV: E=Sophos;i="6.10,185,1719903600"; 
-   d="scan'208";a="13275405"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 00:54:39 -0700
-X-CSE-ConnectionGUID: RlnBxwenRv2Adg5yY7l2TA==
-X-CSE-MsgGUID: /SJSYfs3SYa7mC7K8Q+Urw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,185,1719903600"; 
-   d="scan'208";a="68161193"
-Received: from carterle-desk.ger.corp.intel.com (HELO tkristo-desk.intel.com) ([10.245.246.205])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 00:54:38 -0700
-From: Tero Kristo <tero.kristo@linux.intel.com>
-To: axboe@kernel.dk
-Cc: linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [RFC PATCH 2/2] block/genhd: add sysfs knobs for the CPU latency PM QoS settings
-Date: Thu, 29 Aug 2024 10:18:20 +0300
-Message-ID: <20240829075423.1345042-3-tero.kristo@linux.intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240829075423.1345042-1-tero.kristo@linux.intel.com>
-References: <20240829075423.1345042-1-tero.kristo@linux.intel.com>
+	s=arc-20240116; t=1724915959; c=relaxed/simple;
+	bh=TISxj6nsuiWrdhbb47Ec6ZP2r5NbItH83bfghYORogE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MsQYILtVONbyV8/z6e6Q8tshxGjeXt6wJioSFqi9ksRD6ipELo1RPBJV7gTIxbX92Gw5VfR1tATiu2z3582IaveeMDWQvXx7XYgfnaHhAFFk2bWBycG+LM1UpooO3XXRmwk6cOELTbSVZn8SpoEfXF0GUUsoXhH5COMZNf8u6mA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=JxEVMcCN; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-367990aaef3so197087f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 00:19:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1724915955; x=1725520755; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=cZZ5Dfz1N7noCUMuVJV0Kdu8cyfE+FvZY+c2JPzrzUQ=;
+        b=JxEVMcCNMVnAsfgSK8HAvKnOH1CQBceoxZehw7bB7oXPtVjQoui8R/tEuMyLdbRhEY
+         BDiL39AeCL+8LLMjU9hFG0F/m2Gn1UZUQGc1flmkw1TWy1Rc676YFfZu76phiGcupGfN
+         CUxX4VKfza71DKDeRBnmclH3YWjGAwnztlBCWBVcmWdMa3atoBfSxKN6w/6kDGSNZB2B
+         6G2mxB0uk7rXQUJFVm6jEWycLi5jznTLAT8BjiCbpkyq39NE2pUNyfNZ9y9QMV4Wb6kG
+         xGCeuyq1sDQHyojVadNI2kGTUfYHmA5VO4qR7rw4w+9TRKqPxGhw++dA5EHq4KE9JJVp
+         Z30g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724915955; x=1725520755;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cZZ5Dfz1N7noCUMuVJV0Kdu8cyfE+FvZY+c2JPzrzUQ=;
+        b=CCR/TfT6afAjloFtjzMgo61FcYjlt/87z52C5RHAjUbFEnn6p0cX9uaAcXgbTwPFv5
+         aG888fAPUAycxRC9ReGX5IkGGCzkKkil3qopaPmyWqldKedHocjOZP3ltMacUbWGYygE
+         B160MQo7duW9vdm1cGjDdaz/YvG85ZRqLlY9FoFwHS5NcciFS06ACnssMmhGM3iwjIUY
+         As/uzJMXJyto7fZRQ2c/IiypQBfwLuyhiVX01r4yfA9nXr30pxk+8qI7XTuGjGm0Ni5R
+         waaEOsk5L+jmC4VUBphrfgZRGe59OD0GelcB00aZIowm89s/wIvCTFgEQ/JkEQPLz1jb
+         Yi4w==
+X-Forwarded-Encrypted: i=1; AJvYcCU6aaK42J/XCkc/TLlcC8YtqREO+jEaG9yYXNnDVX35jvvNd0a7zvadFPeMUHMZ3a4ru+0aZUDBxUsk97s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDQKMFxugAr2t+uFV2BcF2sIljIjHSkaRq98i224ywaR/g4AYE
+	UdOoCqmVd8PGHVwl+rh0x0M1TZMZTFVzWJTJfHmk3VPhSOneRGKsSjyrocx+sGw=
+X-Google-Smtp-Source: AGHT+IGWX48blvuHIVWdw3Bdns41uj8z9ckLX+g7N99SFM42wMeFHQFkVqKqWrh8ih/Ez3xgeQ7kyg==
+X-Received: by 2002:adf:b312:0:b0:371:82bc:7d93 with SMTP id ffacd0b85a97d-3749b526ec0mr1284850f8f.12.1724915955164;
+        Thu, 29 Aug 2024 00:19:15 -0700 (PDT)
+Received: from localhost (109-81-82-19.rct.o2.cz. [109.81.82.19])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3749ee9ba83sm665280f8f.54.2024.08.29.00.19.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Aug 2024 00:19:14 -0700 (PDT)
+Date: Thu, 29 Aug 2024 09:19:13 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Matthew Wilcox <willy@infradead.org>, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	Dave Chinner <dchinner@redhat.com>
+Subject: Re: [PATCH] bcachefs: Switch to memalloc_flags_do() for vmalloc
+ allocations
+Message-ID: <ZtAg8Slmclt8jm4a@tiehlicka>
+References: <20240828140638.3204253-1-kent.overstreet@linux.dev>
+ <Zs9xC3OJPbkMy25C@casper.infradead.org>
+ <gutyvxwembnzaoo43dzvmnpnbmj6pzmypx5kcyor3oeomgzkva@6colowp7crgk>
+ <Zs959Pa5H5WeY5_i@tiehlicka>
+ <xxs3s22qmlzby3ligct7x5a3fbzzjfdqqt7unmpih64dk3kdyx@vml4m27gpujw>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <xxs3s22qmlzby3ligct7x5a3fbzzjfdqqt7unmpih64dk3kdyx@vml4m27gpujw>
 
-Add sysfs knobs for the following parameters:
+On Wed 28-08-24 18:58:43, Kent Overstreet wrote:
+> On Wed, Aug 28, 2024 at 09:26:44PM GMT, Michal Hocko wrote:
+> > On Wed 28-08-24 15:11:19, Kent Overstreet wrote:
+> > > On Wed, Aug 28, 2024 at 07:48:43PM GMT, Matthew Wilcox wrote:
+> > > > On Wed, Aug 28, 2024 at 10:06:36AM -0400, Kent Overstreet wrote:
+> > > > > vmalloc doesn't correctly respect gfp flags - gfp flags aren't used for
+> > > > > pte allocation, so doing vmalloc/kvmalloc allocations with reclaim
+> > > > > unsafe locks is a potential deadlock.
+> > > > 
+> > > > Kent, the approach you've taken with this was NACKed.  You merged it
+> > > > anyway (!).  Now you're spreading this crap further, presumably in an effort
+> > > > to make it harder to remove.
+> > > 
+> > > Excuse me? This is fixing a real issue which has been known for years.
+> > 
+> > If you mean a lack of GFP_NOWAIT support in vmalloc then this is not a
+> > bug but a lack of feature. vmalloc has never promissed to support this
+> > allocation mode and a scoped gfp flag will not magically make it work
+> > because there is a sleeping lock involved in an allocation path in some
+> > cases.
+> > 
+> > If you really need this feature to be added then you should clearly
+> > describe your usecase and listen to people who are familiar with the
+> > vmalloc internals rather than heavily pushing your direction which
+> > doesn't work anyway.
+> 
+> Michal, I'm plenty familiar with the vmalloc internals. Given that you
+> didn't even seem to be aware of how it doesn't respect gfp flags, you
+> seem to be the person who hasn't been up to speed in this discussion.
 
-  cpu_lat_limit_us: for limiting the CPU latency to given value when block IO
-		    is running
-  cpu_lat_timeout_ms: for clearing up the CPU latency limit after block IO
-		      is complete
+GFP_NOWAIT is explicitly documented as unsupported
+(__vmalloc_node_range_noprof). vmalloc internals are using
+vmap_purge_lock and blocking notifiers (vmap_notify_list) in rare cases
+so PF_MEMALLOC_NORECLAIM is not really sufficient to provide NOWAIT
+semantic (this is really not just about page tables allocations). There
+might be other places that require blocking - I do not claim to be an
+expert on the vmalloc allocator.
 
-This can be used to prevent the CPU from entering deep idle states when
-block IO is running and waiting for an interrupt, potentially causing
-large latencies to the operation.
+Just my 2 cents do whatever you want with this information. 
 
-Signed-off-by: Tero Kristo <tero.kristo@linux.intel.com>
----
- block/genhd.c | 46 ++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 46 insertions(+)
+It seems that this discussion is not going to be really productive so I
+will leave you here.
 
-diff --git a/block/genhd.c b/block/genhd.c
-index 8f1f3c6b4d67..2fbd967a3e36 100644
---- a/block/genhd.c
-+++ b/block/genhd.c
-@@ -1046,6 +1046,48 @@ static ssize_t partscan_show(struct device *dev,
- 	return sprintf(buf, "%u\n", disk_has_partscan(dev_to_disk(dev)));
- }
- 
-+static ssize_t cpu_lat_limit_us_show(struct device *dev,
-+				     struct device_attribute *attr, char *buf)
-+{
-+	struct block_device *bdev = dev_to_bdev(dev);
-+
-+	return sprintf(buf, "%d\n", bdev->cpu_lat_limit);
-+}
-+
-+static ssize_t cpu_lat_limit_us_store(struct device *dev,
-+				      struct device_attribute *attr,
-+				      const char *buf, size_t count)
-+{
-+	struct block_device *bdev = dev_to_bdev(dev);
-+	int i;
-+
-+	if (count > 0 && !kstrtoint(buf, 10, &i))
-+		bdev->cpu_lat_limit = i;
-+
-+	return count;
-+}
-+
-+static ssize_t cpu_lat_timeout_ms_show(struct device *dev,
-+				       struct device_attribute *attr, char *buf)
-+{
-+	struct block_device *bdev = dev_to_bdev(dev);
-+
-+	return sprintf(buf, "%d\n", bdev->cpu_lat_timeout);
-+}
-+
-+static ssize_t cpu_lat_timeout_ms_store(struct device *dev,
-+					struct device_attribute *attr,
-+					const char *buf, size_t count)
-+{
-+	struct block_device *bdev = dev_to_bdev(dev);
-+	int i;
-+
-+	if (count > 0 && !kstrtoint(buf, 10, &i))
-+		bdev->cpu_lat_timeout = i;
-+
-+	return count;
-+}
-+
- static DEVICE_ATTR(range, 0444, disk_range_show, NULL);
- static DEVICE_ATTR(ext_range, 0444, disk_ext_range_show, NULL);
- static DEVICE_ATTR(removable, 0444, disk_removable_show, NULL);
-@@ -1060,6 +1102,8 @@ static DEVICE_ATTR(inflight, 0444, part_inflight_show, NULL);
- static DEVICE_ATTR(badblocks, 0644, disk_badblocks_show, disk_badblocks_store);
- static DEVICE_ATTR(diskseq, 0444, diskseq_show, NULL);
- static DEVICE_ATTR(partscan, 0444, partscan_show, NULL);
-+static DEVICE_ATTR_RW(cpu_lat_limit_us);
-+static DEVICE_ATTR_RW(cpu_lat_timeout_ms);
- 
- #ifdef CONFIG_FAIL_MAKE_REQUEST
- ssize_t part_fail_show(struct device *dev,
-@@ -1111,6 +1155,8 @@ static struct attribute *disk_attrs[] = {
- 	&dev_attr_events_poll_msecs.attr,
- 	&dev_attr_diskseq.attr,
- 	&dev_attr_partscan.attr,
-+	&dev_attr_cpu_lat_limit_us.attr,
-+	&dev_attr_cpu_lat_timeout_ms.attr,
- #ifdef CONFIG_FAIL_MAKE_REQUEST
- 	&dev_attr_fail.attr,
- #endif
+If you reconsider and realize that a productive discussion realy
+requires also listening and respect then get back and we can try again.
+
+Good luck!
 -- 
-2.43.1
-
+Michal Hocko
+SUSE Labs
 
