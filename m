@@ -1,161 +1,110 @@
-Return-Path: <linux-kernel+bounces-306745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED9989642D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:17:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3EC39642E5
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:22:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F45B1C212A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 11:17:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BF6A1F23881
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 11:22:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2DFF9474;
-	Thu, 29 Aug 2024 11:17:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A58E519048F;
+	Thu, 29 Aug 2024 11:22:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fLFA23Vk"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="skch1S/2"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B268A2B9CD
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 11:17:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EAC49474
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 11:22:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724930230; cv=none; b=PN4wpqo8Z05QIAwPsRjYZQOFq/m+4ZNMBWi4M4vR2+EKfi8aVXTs7QJDvjM/Xje6xxVAB6cYvcY9uW+8TUD1vGUTmZiiMfcHO8ETTSyGm5/bBufP9g7ug9U/6WCYmygxfT/eMDggEOrzfvBFxEo46GEij9N0qvuH2/sdVrnfQhM=
+	t=1724930549; cv=none; b=e7LcTZQKv7B6oICf98nwyZCd76pqRvsjvHdB9667Nso9c39PUEiQhd6lnmt/8uX3gzTou5x8XNWIMaOmMszDRYW0ZmoZ5aqwWLitn/MMa3oteZU/kQzOYMWoE4FOxJOHPj5s2XStvKQzRoRT131GTufCUgCBk9cMu04PcfJb2zI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724930230; c=relaxed/simple;
-	bh=6MssBDNrO0WJQ7BC23qjUcaOIJyLa4CQjHgBgEWJIXk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NIUJHR04Imh5Zc7svq7BPZYgiEn9DsNXZcpEPAnUklPNDwcCVXadJm7VrLjhQBC74WXYsF8c56WNsPudq14fWYTfgrMinEiPNo7At/Kk6Nbf5xvaAuywR2gOJhxjUZvVpMgTc3on6t39/nm0pJihg1nRS59Ywm+/3XHeS2qdR/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fLFA23Vk; arc=none smtp.client-ip=209.85.216.54
+	s=arc-20240116; t=1724930549; c=relaxed/simple;
+	bh=O0Y/AFpa5aX5cFCa3K5odeAxS0xeOnjrnas4BD7VE10=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=irZ4nyMojQq5GgtKiuctjAtnZFbXX6jbPb01PFT/4Zq1uV7/NHfCYMA5PiUUYBNjnA7TizfZjV1jz695TO5z+VzrDJ/aMcbpgYsQ6mO8Ys6UJnG5nwRsqpkY3wIP6nbxVK2pniWB1wlBvnVwmS5GryJtmydGagIpotxRZaNC+QY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=skch1S/2; arc=none smtp.client-ip=209.85.128.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2d5f5d8cc01so388971a91.0
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 04:17:08 -0700 (PDT)
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-42bb72a5e0bso4043895e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 04:22:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724930228; x=1725535028; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=am22cKQWP6n0/ohrouxqRikoVkqYhCxzxqagOImmkVY=;
-        b=fLFA23VkKXwnXWcCU20DSpydhwk4rIAv4wDdLfGWkvoJy9PYtteYaaUVCyMA3oDlYI
-         1/hPAxXa+4CA/Ly0H82ImX0gs+/LAnPj5sKKTwiesieVctf1rYBImgk5JzY42TYpmobl
-         A4/VJQSreLPQm5ngxbSf0MEZD5OKEUIOPASAMSgu+QeBShzkI7NL1VnWMMKWH2AOt1Df
-         mPLbUDkN4W7DyuRA58kfe5I2u9JKdhwI9wFKxfl+MZy+kfAc0/jgZeoY+zFXzFkxbsRN
-         Rxsw65WgRWCQc5OZ8sEtUh7v/AIyn2/dXMHDrmZJ5IPQCoXZ4tEbbDwVZYgxYEG60IDc
-         a5Kw==
+        d=linaro.org; s=google; t=1724930545; x=1725535345; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cwq6oUC3DLFb6LHJMA7x3N/oOgzyp0ek1NiN8KPUNVo=;
+        b=skch1S/2QXg6n333kppDuvHEsPH0pY3X2Pd+Sgz+BGgf/yM7IuguSJLaVpnhTf2DXH
+         3qpOgJ5KF2J+1a0I75SU5/U5ea8+QEHyY7G335AmXE8ARh710iR79KtupPpmCkKdIRuV
+         CiMM5FRzZYgFUY3rin3ibWn1lIv73esJIQLfyQgMY03DEPd88sPagOH3BLR0Kmvt6n8d
+         R5SgS/NcHrYdVpDBdt17QeQc24wRpjy/CtSPvjj7OiKonDKG+XdEvEis4uVYbRW2jKGU
+         dmewF6oblToo5vRf761IjI4xacSrrxU6IhLCmhz9yfIq5CluyCBUlFxqc25V2KxCotXY
+         Hcuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724930228; x=1725535028;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=am22cKQWP6n0/ohrouxqRikoVkqYhCxzxqagOImmkVY=;
-        b=wpm1HvRi3cXg8ziKTirTlbtbU8FzP7pv/EwjMZWk4hgwdURJ6s4JBi+yTdFrAWgJmj
-         OsFHbCp44pdDrODqLQCza3yhsfzQZfwVY6tpnaXPC7WJ+hGViHW7Zs0ZeG59IgnEr1X3
-         sDOqAPc0dyoU759RzeCwqtQHZzqIz4TwvN/rlZEqwBL6rz9V/3sGWh79riZIuFkZ7ZKo
-         Dh/1opM3ZuE9t/r6djVHoSNngeskZCsa5td/B0nZvta4zt1jF2pXbd2GomfDU3YhjZ31
-         z+IZBvV2LTBggk4jejUqU9cQVtIznlzlr4xalmVozmh4eAfQzyaVcSE11raDtCc+dzie
-         A1XA==
-X-Forwarded-Encrypted: i=1; AJvYcCWhyeVLVs9eiP7S9Eo+RS2d35I9OVOcAyS0s0tW80G0GIhH3SkePFK9MHElLmiqLHwX1T30Yonb1FXb+IU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHfcz9RJDuoYTFdbpACyRIhtCRF8Dmzc4pH6/vS0mHMJLHBeYR
-	y2BbdYQ3aTi4p5H4J1N35IbtPuO4sagnO/FLMKD2g7Js5jWJK/2xFiveo4HvJ/DgVO28Tq590W7
-	z6c2ewXjiC04pEwKe747UMDG7XinrIVmiZbO1KQ==
-X-Google-Smtp-Source: AGHT+IH1T12mE9rHPH6kUY/iyJq0y2Ytt3ckXTMcNy8IISCWNcOwToqApPMtf/a43021k38iLM0rMUNHMbBnKa/5qAc=
-X-Received: by 2002:a17:90b:4387:b0:2d4:27de:dc39 with SMTP id
- 98e67ed59e1d1-2d856a5f271mr3395023a91.6.1724930227802; Thu, 29 Aug 2024
- 04:17:07 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724930545; x=1725535345;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cwq6oUC3DLFb6LHJMA7x3N/oOgzyp0ek1NiN8KPUNVo=;
+        b=unwiRyN4Max5yiA+xmxvta+1sC1RFHbjWzh/1cvinRVGbGieHZXUZIbaQsz8aVNhJF
+         w2T7n9r4tn4anaLhVt4pJR4bRhSo4vpezdxyB+aYOmWSEG+Pigu2SZ9MWemK+YeN0Qrd
+         3ZaJdeRM6acZsDxhulMGclKg76BTrwZvi6reRvskzR42Zx81a1uW7UOEYz1eLvYbyLmH
+         Aw+wlEOTookolRtXtwcuT+TL14lR46wKsTzetS21eXbYVba2SixoKyG+/x0Y82Nwrinl
+         iNftCtUKpL+j1F31IrxstLSDZwBu4DYc76jlGx9qVfrJLNAPu2nD57YAFKQb3vQPz6Xa
+         4lCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU0htMvD9UJF51JzvW8RFHxk6M+Q4pm9PLT//WqqZ7I8WMFp+ko++Gl0N4lvwFvBObLJGVjw2uoGy01ix4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw72O3HzTbToThaJwCejgLZXGGB/hDGkFL0WurvE2WRFlNmYZH3
+	sfRmXJZARvkfNUJ06Kl52eaVhSUe8u1tG1WAP2TATh7YsLRVFNEu+ziIpBKrQNk=
+X-Google-Smtp-Source: AGHT+IGX8FgKJ9OLClmHZ9MmqJf1OLjmkFuFn7waOynWRsD8HlkQEk2ZA1PtyRRNz/LCammUU4hm7Q==
+X-Received: by 2002:a05:600c:1548:b0:426:6876:83bb with SMTP id 5b1f17b1804b1-42bb01bfbfemr21200945e9.17.1724930545034;
+        Thu, 29 Aug 2024 04:22:25 -0700 (PDT)
+Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:8261:5fff:fe11:bdda])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bb6e33d60sm14122015e9.43.2024.08.29.04.22.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Aug 2024 04:22:24 -0700 (PDT)
+From: Neil Armstrong <neil.armstrong@linaro.org>
+To: Jessica Zhang <quic_jesszhan@quicinc.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+ Doug Anderson <dianders@chromium.org>, 
+ Neil Armstrong <neil.armstrong@linaro.org>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240828-topic-sm8x50-upstream-vtdr6130-multi-v1-0-0cae20d4c55d@linaro.org>
+References: <20240828-topic-sm8x50-upstream-vtdr6130-multi-v1-0-0cae20d4c55d@linaro.org>
+Subject: Re: [PATCH 0/2] drm/panel: annual cleanup of visionox vtdr6130
+ driver
+Message-Id: <172493054424.1145269.17157130520267583947.b4-ty@linaro.org>
+Date: Thu, 29 Aug 2024 13:22:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240829-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-8-v1-0-bdb05b4b5a2e@linaro.org>
- <20240829-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-8-v1-10-bdb05b4b5a2e@linaro.org>
-In-Reply-To: <20240829-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-8-v1-10-bdb05b4b5a2e@linaro.org>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Thu, 29 Aug 2024 14:16:55 +0300
-Message-ID: <CAA8EJppFCVQPFa1-o7T08Bs+vzbykDXwVTOq4=B2LuWJb2gYGw@mail.gmail.com>
-Subject: Re: [PATCH 10/21] drm/msm/dpu: fix lm number counter for quad-pipe
-To: Jun Nie <jun.nie@linaro.org>
-Cc: Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, linux-arm-msm@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.1
 
-On Thu, 29 Aug 2024 at 13:20, Jun Nie <jun.nie@linaro.org> wrote:
->
-> Add the case to reserve multiple pair mixer for high resolution
+Hi,
 
-I think you already know what is missing here.
+On Wed, 28 Aug 2024 18:03:38 +0200, Neil Armstrong wrote:
+> Switch to _multi() dsi functions and devm_regulator_bulk_get_const()
+> 
+> 
 
->
-> Signed-off-by: Jun Nie <jun.nie@linaro.org>
-> ---
->  drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c | 6 +++---
->  drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c      | 8 +++++++-
->  2 files changed, 10 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-> index 33cfd94badaba..f57725ad494d2 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-> @@ -54,7 +54,7 @@
->  #define MAX_PHYS_ENCODERS_PER_VIRTUAL \
->         (MAX_H_TILES_PER_DISPLAY * NUM_PHYS_ENCODER_TYPES)
->
-> -#define MAX_CHANNELS_PER_ENC 2
-> +#define MAX_CHANNELS_PER_ENC 4
->
->  #define IDLE_SHORT_TIMEOUT     1
->
-> @@ -2029,8 +2029,8 @@ static void dpu_encoder_helper_reset_mixers(struct dpu_encoder_phys *phys_enc)
->         struct dpu_hw_mixer_cfg mixer;
->         int i, num_lm;
->         struct dpu_global_state *global_state;
-> -       struct dpu_hw_blk *hw_lm[2];
-> -       struct dpu_hw_mixer *hw_mixer[2];
-> +       struct dpu_hw_blk *hw_lm[MAX_CHANNELS_PER_ENC];
-> +       struct dpu_hw_mixer *hw_mixer[MAX_CHANNELS_PER_ENC];
->         struct dpu_hw_ctl *ctl = phys_enc->hw_ctl;
->
->         memset(&mixer, 0, sizeof(mixer));
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c
-> index e219d706610c2..77d7ff789346e 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c
-> @@ -306,7 +306,11 @@ static int _dpu_rm_reserve_lms(struct dpu_rm *rm,
->                 if (!rm->mixer_blks[i])
->                         continue;
->
-> -               lm_count = 0;
-> +               /*
-> +                * Clear the last bit to drop the previous primary mixer if
-> +                * fail to find its peer.
-> +                */
-> +               lm_count &= 0xfe;
->                 lm_idx[lm_count] = i;
->
->                 if (!_dpu_rm_check_lm_and_get_connected_blks(rm, global_state,
-> @@ -353,6 +357,8 @@ static int _dpu_rm_reserve_lms(struct dpu_rm *rm,
->
->                 trace_dpu_rm_reserve_lms(lm_idx[i] + LM_0, enc_id,
->                                          pp_idx[i] + PINGPONG_0);
-> +               DPU_DEBUG("reserve lm[%d]:%d, pp_idx[%d]:%d, dspp[%d]:%d for enc_id %d\n",
-> +                         i, lm_idx[i], i, pp_idx[i], i, dspp_idx[i], enc_id);
->         }
->
->         return 0;
->
-> --
-> 2.34.1
->
+Thanks, Applied to https://gitlab.freedesktop.org/drm/misc/kernel.git (drm-misc-next)
 
+[1/2] drm/panel: visionox-vtdr6130: switch to mipi_dsi wrapped functions
+      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/175d648be98bae22eb22444377dd9a0c497c9d46
+[2/2] drm/panel: visionox-vtdr6130: switch to devm_regulator_bulk_get_const
+      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/e0cb0c785250d0565c19ba17fc95bd7ab97670ba
 
 -- 
-With best wishes
-Dmitry
+Neil
+
 
