@@ -1,190 +1,169 @@
-Return-Path: <linux-kernel+bounces-306134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 666589639BC
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 07:06:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFFBA9639C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 07:09:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DF11285807
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 05:06:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35A371F24C48
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 05:09:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E7CB82D94;
-	Thu, 29 Aug 2024 05:06:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A0091465AB;
+	Thu, 29 Aug 2024 05:09:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ucr.edu header.i=@ucr.edu header.b="m5Es5NY4";
-	dkim=pass (1024-bit key) header.d=ucr.edu header.i=@ucr.edu header.b="dIQlg0xW"
-Received: from mx-lax3-1.ucr.edu (mx-lax3-1.ucr.edu [169.235.156.35])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="Cbw+ing+"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11olkn2084.outbound.protection.outlook.com [40.92.18.84])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A4D5A955
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 05:05:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=169.235.156.35
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724907960; cv=none; b=MlW4pzmtOUKWHjNbXtNf+E8XCkfvUnteCUyZhA6/T0RgDX41yrgoCW+CIHP1J3jtL00Xws2uHxxHFoBMgje0sCGPhkJT5bCkw7XEKg+KIiOP8NhA6Y9+9+nAN+3vFDexqYwpR67/cFrUCUcIAHXctqLUtod8XDi7xq4+IrZkKHY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724907960; c=relaxed/simple;
-	bh=fkVTBjI5EVgKxds8nwBxCOXVtcVkum/SwZEVDIO7pBQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ssrz/X+6OVBB+xEub9O7X7n3skTTQMkSsxS/ifzhyvykk6bfWaEnre2G8tAoHt2u64//epYE+fOHV272mwbADjfsFAaDyKJvEQIIobZNV1ZUMMi9QRPZjok8fT8vrDVoqhLPQlqVWHkSocLvLv+BiBKY4OqzjzIjbtlpPdYm/60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ucr.edu; spf=pass smtp.mailfrom=ucr.edu; dkim=pass (2048-bit key) header.d=ucr.edu header.i=@ucr.edu header.b=m5Es5NY4; dkim=pass (1024-bit key) header.d=ucr.edu header.i=@ucr.edu header.b=dIQlg0xW; arc=none smtp.client-ip=169.235.156.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ucr.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucr.edu
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=ucr.edu; i=@ucr.edu; q=dns/txt; s=selector3;
-  t=1724907959; x=1756443959;
-  h=dkim-signature:x-google-dkim-signature:
-   x-forwarded-encrypted:x-gm-message-state:
-   x-google-smtp-source:mime-version:references:in-reply-to:
-   from:date:message-id:subject:to:cc:content-type:
-   content-transfer-encoding:x-cse-connectionguid:
-   x-cse-msgguid;
-  bh=fkVTBjI5EVgKxds8nwBxCOXVtcVkum/SwZEVDIO7pBQ=;
-  b=m5Es5NY4rmhBRSLuWIMLlx4IwwTUrW+F9b1Ry+ibhQYDbfkauz+QYsCg
-   0ozRraGvG5y4SCuw9FVKtlemyA+vApkCetneSq9I0rLUcEtOvDEYFN274
-   KQqTbKInYvSiNc77Q6066k/kM1x+6t4u7UQDDQqd6CPyAoA9PBQm9y22W
-   YvgjzTOAWva6ZLyXhOatf09ICrma9etFUB6U3Dfg9ZLUuXA1lI9fYcuqT
-   fp99WTWJSTBHIGnxdjUkeljMMvGSn0ovCtoL+vXWc/U34OgXAu8cdQl1f
-   6O6pNSf8m2eIRrdJsZVDvVzbf+CnQF7WhJwIYqtux6f/djFwH/hDRzk3X
-   A==;
-X-CSE-ConnectionGUID: M+bmTQIcTViW9b9qflq9LA==
-X-CSE-MsgGUID: DpAAsOhkTtSjfIidffodHA==
-Received: from mail-il1-f197.google.com ([209.85.166.197])
-  by smtp-lax3-1.ucr.edu with ESMTP/TLS/TLS_AES_256_GCM_SHA384; 28 Aug 2024 22:05:57 -0700
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-39d27200924so11848715ab.0
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 22:05:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ucr.edu; s=rmail; t=1724907956; x=1725512756; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=J7ki0XIr5uUI/th5K3r1sL32gxrfAdrUZKeYyqBGFEY=;
-        b=dIQlg0xWxmSmOCrBEklKuC6nY67pEU1ODWtnml3iZgC2na2os4vTu3oe1npI1oZoDy
-         2tuNRhizutLATDxkT6tBZ7if4DRgKejUbIDZm+PxjCJg7MvuqIv1V/Wx3KhlYZ749yoB
-         tpZucRBnTb+xwi3wQdU7Jfl94W3fTTnd60ptQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724907956; x=1725512756;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=J7ki0XIr5uUI/th5K3r1sL32gxrfAdrUZKeYyqBGFEY=;
-        b=SxwKWR4RTzyrFbk/WhCiKdX7GVFP1aQEJnkPSeyWDQ6n9MBDCcBQmfXYADckYYYEvT
-         GQa4Tvvnu9k4ULgHyKOCLZuOV8ObV+YaGOBhgGvkjqWtWq+jPlisarH70Q1V60Fzjp4k
-         QVMZSzuQNrz22ODBDsBuzT0uxFwXoumHtNoUOdRX5EWv8kfQ2sBNmH4rFQ8z1SdZaxOL
-         EhIBrn6V2rg7zwZdNOA2iFs98Clt6kQ31BRWCorEJihw1h3PWjF1LdQVTdPjEQEvq4NT
-         NVa36joBUKnf06ajIU4ZQfw7PMtKhG4PFCldSGnk+uF4UikePs2sAlqPj6M/ZDo+ePRL
-         l9Rw==
-X-Forwarded-Encrypted: i=1; AJvYcCUxdGZexqaSo5gbDgT0vCSNsaEYFga7Hh/+uobSZPzWPNf/7XnMonEStNYZ2F0kXWXthtsKPlWoccxcYYc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyElSwcTpScWYUf6FE19OkqMRmFX81hkEfRzRtb1SYxBnx3J5Yc
-	MfgkCc8hfx5NWW8+RT1KeTo1mWGwCBCbfMjFanHSvJFHZA73QI4F+DNOpv/GdPpPuGyKOMuuf2s
-	kyfgjdSPB379/OWQqMGp34s20Y83NjO1H2gmAsauOi7bKt3QegkD5vbKxJA0+/NmRLrz9/fNY0j
-	ePWeLBjD0OD4rwNMEaSeu3DSBw/RV3uS6RuPwIrQ==
-X-Received: by 2002:a05:6e02:17c9:b0:39b:3244:a355 with SMTP id e9e14a558f8ab-39f3b34f798mr3015785ab.11.1724907955867;
-        Wed, 28 Aug 2024 22:05:55 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHGEvO4eezMVg0uNVGJlLVxBnnO1du+5nNXST5ApK/OVJk/QNq4p1HfqSwlNw58ZPdwRdsVb/jgqZOudbhdt7k=
-X-Received: by 2002:a05:6e02:17c9:b0:39b:3244:a355 with SMTP id
- e9e14a558f8ab-39f3b34f798mr3015695ab.11.1724907955466; Wed, 28 Aug 2024
- 22:05:55 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A36B40870;
+	Thu, 29 Aug 2024 05:09:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.18.84
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724908185; cv=fail; b=LolwWRSlt5mlmZblquLHgJXDSMZXALBqZaMPNhvGgmEIXKnULeSI93rBbO0bI1eXust5tt5yJsRNTMzV/E8Uq0f4CvOcTjvvHbGeGejFBG80gGz+j3054rPSY8Qrj3Ua0oPe07ln68KetkVQYHD4Doj73pTim9pQM93h1Cis/fA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724908185; c=relaxed/simple;
+	bh=JshRJMw5RIfftLZj0Y+LRu1hfj9oxghD69Q5xHVXHwE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Rl4k+8snYkbAAt2JWwk475HYwxYw6KIhIaEBopaTOyxYmma2LIJIURkAbhectP2mGkqmXqePCcTlkbsKKrjKe0/Ux1AnHnRp7X77lDSvcg8TDbuHo3FSBMoSRBIDfY8lN5/omEkYXaiwJIoEdu3T6Qa2M77MOv+tlOj9JSZxovA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=Cbw+ing+; arc=fail smtp.client-ip=40.92.18.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=R0LFTob9Tl/v216/zUEjxvPuO8OBUnWlahBO80gMQ3Rerh6Q4UPTEf6l9D+BCPlFvaVHqeePH8XrkaEQHsyxRZv3xB9Q3Eog/PjgzjbAdGRQngYsMaQLEuxgqwKOpary24TNY6r97IdYv8UpOQFH6WBW4wDAy/L99bT5XrnxMVCuALFTJTa6tLNOjZfqAppHGlKMuhWzocpD81WywfUivyIbAh8tH9W4iAQYl0+Myw2tNBEg4VuWPPmcAJ4TOPCcOZ28jc3m5YqAztEq4d0t+u7vaJ+tQmMR8gXcOSl8qM6FoSW9rQyNClcBqMKiZpSuJpDlswIsRNZqwUbuEBKkwQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vVmT5CMMYq9LdP3EkPBBN2ZqNm+zKy81PF+L2axmtGw=;
+ b=lwvCWqkSJj4GDjHrssS75c/XhA6AtDrQX3gOQb7s6E6Eo9hqZUAIekb8Xw8HQIH6N4EaJTF7dwJiQttNvpnBA7cHQxYIwzpLTfHXhPsIxVxbv893Hw4hAc4KO/yM22VRwlCvMB+IdsXegPPTvJPNStGrVYNBeYtepeOm77ZP3gipLUg+ZJs4Oo9zUwJYEq1k/nA++O8uHAvX57p5k9infIWjKScKuSTC/l7ixI9WpGNv3dVFYnSZtajuIKbbmxSROFPAW7qYzQGzreH1Uil5yRBwM3UnTaXFny31MwMJ+y7KSFxPKC9UJU/b2NpqAbN8TmRXHgAE2EF98XJDr6L2IA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vVmT5CMMYq9LdP3EkPBBN2ZqNm+zKy81PF+L2axmtGw=;
+ b=Cbw+ing+IuEdyt0ri+vDKh9rejSsA/bPGCWvsQlcTrxHtZb9TfVVhAvVIsMpAPyciniB7vnooC9uqMAad5lOfj1D+tsRHB62B2a7iHUUugyT+8DrgezLY8qNORVhWc5SS83Km1hWaq9vncyh+yyHwZ7ZfaFIBAy+IhfiV62Blq+Yc9mfiqVjtx9Fn6BboYiiIeC32V8aEWY98AO2ojHigzTJVIaDxuc/j+sni3Rh/HMEUg/Mv6OyL+9GRMNUBO4v8WobCzaUgz+mHhxR4A2VlfUIsc/p0TkoU1fkyAlVi658qireroFqpuHk7YnKuaibOZ0RQa9taadK9lYzeWzZ4w==
+Received: from IA1PR20MB4953.namprd20.prod.outlook.com (2603:10b6:208:3af::19)
+ by MW4PR20MB5105.namprd20.prod.outlook.com (2603:10b6:303:20a::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.27; Thu, 29 Aug
+ 2024 05:09:41 +0000
+Received: from IA1PR20MB4953.namprd20.prod.outlook.com
+ ([fe80::ab0b:c0d3:1f91:d149]) by IA1PR20MB4953.namprd20.prod.outlook.com
+ ([fe80::ab0b:c0d3:1f91:d149%4]) with mapi id 15.20.7897.021; Thu, 29 Aug 2024
+ 05:09:41 +0000
+From: Inochi Amaoto <inochiama@outlook.com>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Jisheng Zhang <jszhang@kernel.org>,
+	Guo Ren <guoren@kernel.org>,
+	Drew Fustini <dfustini@baylibre.com>,
+	Haylen Chu <heylenay@outlook.com>,
+	Inochi Amaoto <inochiama@outlook.com>
+Cc: linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: (subset) [PATCH v4 0/7] riscv: sophgo: Add pinctrl support for CV1800 series SoC
+Date: Thu, 29 Aug 2024 13:08:41 +0800
+Message-ID:
+ <IA1PR20MB4953281633974BE4AB4887F5BB962@IA1PR20MB4953.namprd20.prod.outlook.com>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <IA1PR20MB4953DC78BB0FE0C57EA94F91BBB32@IA1PR20MB4953.namprd20.prod.outlook.com>
+References: <IA1PR20MB4953DC78BB0FE0C57EA94F91BBB32@IA1PR20MB4953.namprd20.prod.outlook.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-TMN: [IT9AbJ8TNaKIyzrpvWlfPsXJDZEWp/n29LcozQBzIgw=]
+X-ClientProxiedBy: TYCPR01CA0021.jpnprd01.prod.outlook.com (2603:1096:405::33)
+ To IA1PR20MB4953.namprd20.prod.outlook.com (2603:10b6:208:3af::19)
+X-Microsoft-Original-Message-ID:
+ <172490809691.606212.17146855872593490329.b4-ty@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CALAgD-41QZdm=Sj2N4QyYyeNY1EMq6DKY+q7647-53ysZEs8ZQ@mail.gmail.com>
- <20240829011805.92574-1-kuniyu@amazon.com>
-In-Reply-To: <20240829011805.92574-1-kuniyu@amazon.com>
-From: Xingyu Li <xli399@ucr.edu>
-Date: Wed, 28 Aug 2024 22:05:45 -0700
-Message-ID: <CALAgD-68WWDvqrVL0XgjAWuc8K5Wi+3y_cst25Tjsq+qoUW9CA@mail.gmail.com>
-Subject: Re: BUG: unable to handle kernel NULL pointer dereference in sock_def_readable
-To: Kuniyuki Iwashima <kuniyu@amazon.com>
-Cc: davem@davemloft.net, edumazet@google.com, gouhao@uniontech.com, 
-	kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	pabeni@redhat.com, quic_abchauha@quicinc.com, willemb@google.com, 
-	wuyun.abel@bytedance.com, yhao016@ucr.edu
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: IA1PR20MB4953:EE_|MW4PR20MB5105:EE_
+X-MS-Office365-Filtering-Correlation-Id: ee3bdf6a-d6b9-4e94-164a-08dcc7e8c968
+X-MS-Exchange-SLBlob-MailProps:
+	7J/vb0KDx3jIGjTVij+H+31XKAuPWx7Gsw+JgTmeTHrySBmQtvsGenU2hMnP0j1KyDw089V+UQ95JHqJtbDXcgEbhgYxVfTdXXecfr935JWbe9WcR+wsz/pt/8vpEmf6+JUc5irl+Ku/rnqPxkLo6by6F7rwxyQOu9LsPW/wafHE3hQ3rbfQ0laSyeSJoJhR7bmIRD05+b7uU9tD53Et8xtrLH1GKi/kNdginOZVKWeNK5YzEvvykiEixKEYfcUzV6EKu2xIuDZnQAqJKFch1g2LZDEa8kKXFgUIAZ8vGmPpTc9J3zdOCd+syQc7X6KRpro9FIvlkF2vx5q9Y2KkXnQpTUL7Zt91+v82x5AGuR/ZL4b+mcc3NRMdqzXookrIaTVkrKM4TdLF1TI04voS+aBlA7a77yUR0Pz8QAlyTBsRImxc+qky1sxqHJhNnLS8Qmr2QfNLXoRSTEzxexTQxJWBtPwphnMjcQRFn1U2/wFjfC5U49Gw7/8FgA2rb+5+M+J4MukFE+SCWYv/AeqZY+YkUbDUjCpPhfseALix/pRtf+rN+viDbXFZ+lhBhuehxhRuoOjVU44q3iQ2P/bk9pm1u1eojVDylkYqTKdJc6fGuhTm2XZbI7JaJTpGRC/Zn6xwDckoLc51jtcA2ufQI9wSzwdlBiO22VqcV/3ZgJ9vhh8rz6E2CnisssdPTH8JkOXLD70qh1BGRJM+roTs+osB0LEx+RQ/GlGinykmXnF5rZRHmFprSS1omZn4RrV2VgiMKNgsU8ShhHaVQjGYYenpbztmA8rEeDJUN4iNewQ=
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|15080799006|6090799003|5072599009|19110799003|8060799006|461199028|1602099012|3412199025|440099028|4302099013|1710799026;
+X-Microsoft-Antispam-Message-Info:
+	nPV1MtS8RGncpZDzSkQ3C21Nfmd9zMedD/sxiEePt0NwjvH+JsVDIThC403e0a1BjVj0PXsVQ1eSG/9+fbKlvll6qIVuwtxsbDh5clETg/grz8zx2Znd0M+jRYjR7pRmRCHVxCmtaWUdSNXfL4T9eMuV8h35d9ZoGKWTrIEXC9sl5XMx8ZBq9IBw1gbfn+H0VxQ9SmTTmH0i6LY+qrFSZsqfWs5xX70KnkId/WZkdo+Uh2S9iOGq4epOos1Qd256cf6p3Wlb87fxqf+bkhK/OffYK4NHV5seAzllSacsxu1RibOaOLZHehig5HcrBobzzpifRat/94UCsvJF5JBxXNwYQ7n/aDq19iIH6/nbvKM2YEEbsrBk4fTbGlVeZKN7u+vTNDzWhgSWangbKdn4Bwg8SyTnDdc55H8ZyLEJeTDuBU53YCV4Tib9S6RVtIBEhu2bZRQI+pLO5aapopg9qYG977ubhEjpGmDSTDj4CXRwbherBalmlx4YQppwL//Xr3yw7ikYsPIbWuc3qNMtS8lTBnqIBPHex7IGKNtqKpY0cl4YXHuu46WnvxPe6M6aWEfzvPVkM9DeavuBV4ORrhlXzNCZ6uoCfzGX2iB4HNkYeGrJFLOn9xMpEIaz15OyjVy4g4LRtts4f/n+6NS/q9bglsPc2/zuw6Lt1j9+3ZoNpvPI2AYg0CJXdfWd159aKQwmV69mSiyHcEChZH+pajuUHlQahNcHAEJGzmJpCp4ODi7bEk3/yi2Pt3FYfzyVcaQl0Ak06RX9uLzW9ixPyU6eLqELvQKYCweXm0GYTNT0UzSGGR/I/3SafdiOJhhwlANdFuKR7g26z/hBn29YWKnFMeEKYpDEbjtIlogXgST0cBumPZRHRqikCaDnpbu0
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?V1c3SkdLa2pVS2E5clczUC9HNzRmNzd0b0x2RkpLaGNWOWYvRmRJQVcyUllZ?=
+ =?utf-8?B?RDJPN1F6aXM0YVgwVmlkczd2cUl3MjJrZ3hMS2l6ejQwY3pnVGM0dktxRkxH?=
+ =?utf-8?B?N1hOdm1PS2thM0cxM3dOcFFvcmlHOW9hVzlJQ214VlRPTHgxTmt4QVlSaHpZ?=
+ =?utf-8?B?WWthbVdHQ001VnM5ek4xOUlpejNSUCt2L2lzZjhLUzNYTXFHZENGY3J6TFZx?=
+ =?utf-8?B?MmVSUHVwQnFDemVydEdVLzAwOXlISkxwRXdkcHlzc0dCM3A0Y1ZuNkpqdWlD?=
+ =?utf-8?B?NlhsMktEWE03ejlLNlVZUW90aUFpWEVoRkoxckxYNEtna2pLWXlaV2NRMlVu?=
+ =?utf-8?B?MDdNbFVDc0phSmtIZ2l3bWszYm4yZ2p0Z2Z1dGF4QTV0TjhkR0dRY3BNNktK?=
+ =?utf-8?B?UUlCRVljNWtIU0s0eEVYRW1CaTlYWkVMbDBXQ01zdmJKemNueDJ1eWllSTJl?=
+ =?utf-8?B?Z3BKcXZVK0ZuSUFMczBMbU0ya3JLR09keWdBT0VRZHB4cUJUZFl1L3NaZkRq?=
+ =?utf-8?B?OUVlNUxTWnc0WHZ4TXNwcis2d1diRGJ6Q3FxeFYvY2c4Yk9TbEh3V3FJb0M0?=
+ =?utf-8?B?STdmZnhsYVh0TUxrZEY0WDlwbldKVFRNdGRqMStYUkU4cWVSc2F6ZVhFaGdN?=
+ =?utf-8?B?RUt4UFpSN09ma1NMSEtiak03U3ZzVTdrY29wRG5UdDJxa01VL0dWV09handW?=
+ =?utf-8?B?UVpEREFTZ2lYaW9tcUoyeVdNYjBmbG1uWFNUZVc3akllRG9qWWoveXJNM3pX?=
+ =?utf-8?B?dFlSZXcwM2xqVkREQ3RsS1BIcDlhTUpIN3h0dHJEczRhU0xwMEtvTXFFRTRW?=
+ =?utf-8?B?YTF2b2h5SVNKYzd4VmpMK3o0eUxqZmRiOEpsTFZYRWlNVmdTTzFpWk55L2FD?=
+ =?utf-8?B?TG9Icng3NGZ5MW1FcWtiQnF5OW5xMGF6QjB4UGl4bENYOG00TnJGNUtZWHFw?=
+ =?utf-8?B?a3pGdWl2cG4rczRXVGt0TnhFUHUvNkdORHgyNklFSFJuSWRrVk5YUENYaTB1?=
+ =?utf-8?B?MHJGS0dUNGZGVkIwS2ZobFltMEZ3RHVkT0pSZlhCUkZMN1YvZEZXRHlRMzBC?=
+ =?utf-8?B?QVFaOEhscXphWVBtKzA5SWF3bXIxWGJPTEI3RmFrMGlPNDBITWplRDZudVVp?=
+ =?utf-8?B?NU8rTGZuTEZzUnU5SlV5dm1XS2d6TlpUdDBvbWlFQjNUejNCQWFDWUU0cjdw?=
+ =?utf-8?B?bTl6SGkwaC9NV0ZHRU84d1ZnMnRnbkMzMjJXcTRtQStqaFVRZEVLb0lpenRV?=
+ =?utf-8?B?UU13UFp1TW95U2xaeVVqOVFYNEN1cnJ2S1BHYzhCVjBuN0pwT1VvZlJxVnBY?=
+ =?utf-8?B?QnFreEpVOUhMVkZDblNjL0R4a3dqc2syODRVdHoyc01MbmNBSDlDSm16d09s?=
+ =?utf-8?B?aWllN2ZwVE5jMWZaL3FLR2k2RVhkVXJidyt3eHkzMGc2VkZHcEJjWHRjMkI3?=
+ =?utf-8?B?c0djN3EzUVBiUzVDR21rZFphb1RaZ1l4cWtnK1ltNTBhWitWb3NYWlBycUcr?=
+ =?utf-8?B?dk1NTjRKK3piS2NnM3NSS2ROcUVLYnlqck1SVG1ISndnZEN3T0gvbnZrUTkv?=
+ =?utf-8?B?dUR1QTIrbVVLU2FMb3VQNG1lWlY5U3dpOEVwUHhlc2NWS0duVUIxelVOUllJ?=
+ =?utf-8?B?Z2YvSWg4ZE9VUVNCeXdsei9NalZqY1oxcXF5NzVoRFNoVERIekVCKzhvQVV3?=
+ =?utf-8?Q?4YJYWoDXBk/gpt+wyoxW?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ee3bdf6a-d6b9-4e94-164a-08dcc7e8c968
+X-MS-Exchange-CrossTenant-AuthSource: IA1PR20MB4953.namprd20.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Aug 2024 05:09:40.9604
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR20MB5105
 
-I would ask you to stop sending these reports, we already have syzbot
-with a more complete infrastructure.
+On Fri, 2 Aug 2024 08:33:58 +0800, Inochi Amaoto wrote:
+> Add basic pinctrl driver for Sophgo CV1800 series SoCs.
+> This patch series aims to replace the previous patch from Jisheng [1].
+> Since the pinctrl of cv1800 has nested mux and its pin definination
+> is discrete, it is not suitable to use "pinctrl-single" to cover the
+> pinctrl device.
+> 
+> This patch require another patch [2] that provides standard attribute
+> "input-schmitt-microvolt"
+> 
+> [...]
 
-Sorry for it. Previously, I did not notice such rules to report bugs.
-Later, I will only report bugs with reproducer or with a patch.
-Also, the bugs that I reported are fuzzed using the syzkaller templates
-that we generated, but not those from the syzkaller official
-templates. We want to find bugs that do not have the corresponding
-official syzkaller template.
-I also checked to make sure that the bugs I reported did not occur on syzbo=
-t.
+Applied to for-next, thanks!
 
+[6/7] riscv: dts: sophgo: cv1800b: add pinctrl support
+      https://github.com/sophgo/linux/commit/1728c7e408c6e5ef1c6f3a2c7f75bd20139c2e13
+[7/7] riscv: dts: sophgo: cv1812h: add pinctrl support
+      https://github.com/sophgo/linux/commit/2926c05f9cb7b5bb0374fb7a53bffd65937a454f
 
-On Wed, Aug 28, 2024 at 6:18=E2=80=AFPM Kuniyuki Iwashima <kuniyu@amazon.co=
-m> wrote:
->
-> From: Xingyu Li <xli399@ucr.edu>
-> Date: Wed, 28 Aug 2024 16:38:59 -0700
-> > Hi,
-> >
-> > We found a bug in Linux 6.10 using syzkaller. It is possibly a null
-> > pointer dereference  bug.
-> > The bug report is as follows, but unfortunately there is no generated
-> > syzkaller reproducer.
->
-> quoting Eric's words:
->
-> ---8<---
-> I would ask you to stop sending these reports, we already have syzbot
-> with a more complete infrastructure.
-> ---8<---
-> https://lore.kernel.org/netdev/CANn89iK6rq0XWO5-R5CzA5YAv2ygaTA=3D=3DEVh+=
-O74VHGDBNqUoA@mail.gmail.com/
->
-> (unless you have a repro that syzbot doesn't have or you are confident
->  that this is true positive)
->
->
-> >
-> > Bug report:
-> >
-> > BUG: kernel NULL pointer dereference, address: 0000000000000000
-> > #PF: supervisor instruction fetch in kernel mode
-> > #PF: error_code(0x0010) - not-present page
-> > PGD 0 P4D 0
-> > Oops: Oops: 0010 [#1] PREEMPT SMP KASAN PTI
-> > CPU: 0 PID: 0 Comm: swapper/0 Not tainted 6.10.0 #13
-> > Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04=
-/01/2014
-> > RIP: 0010:0x0
-> > Code: Unable to access opcode bytes at 0xffffffffffffffd6.
-> > RSP: 0018:ffffc90000006af8 EFLAGS: 00010046
-> > RAX: 1ffff92001572f0a RBX: 0000000000000000 RCX: 00000000000000c3
-> > RDX: 0000000000000010 RSI: 0000000000000001 RDI: ffffc9000ab97840
-> > RBP: 0000000000000001 R08: 0000000000000003 R09: fffff52000000d3c
-> > R10: dffffc0000000000 R11: 0000000000000000 R12: ffffc9000ab97850
-> > R13: 0000000000000000 R14: ffffc9000ab97840 R15: ffff88802dfb3680
-> > FS:  0000000000000000(0000) GS:ffff888063a00000(0000) knlGS:00000000000=
-00000
-> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > CR2: ffffffffffffffd6 CR3: 000000000d932000 CR4: 0000000000350ef0
-> > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> > Call Trace:
-> >  <IRQ>
-> >  __wake_up_common kernel/sched/wait.c:89 [inline]
-> >  __wake_up_common_lock+0x134/0x1e0 kernel/sched/wait.c:106
-> >  sock_def_readable+0x167/0x380 net/core/sock.c:3353
->
-> This seems to be caused due to memory corruption.
-> skwq_has_sleeper() has NULL check.
->
-> Recently I saw some reports similar to what you posted and that seem
-> unlikely to happen without such an issue in another place.
+Thanks,
+Inochi
 
-
-
---
-Yours sincerely,
-Xingyu
 
