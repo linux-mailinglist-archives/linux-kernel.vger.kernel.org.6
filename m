@@ -1,87 +1,223 @@
-Return-Path: <linux-kernel+bounces-306322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10503963D49
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 09:40:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEBA7963D4B
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 09:41:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71153283972
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 07:40:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4060E1F255E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 07:41:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1066E188CDE;
-	Thu, 29 Aug 2024 07:40:08 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BBD05588E;
-	Thu, 29 Aug 2024 07:40:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 320581891AC;
+	Thu, 29 Aug 2024 07:41:03 +0000 (UTC)
+Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C61F5588E
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 07:40:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724917207; cv=none; b=V5mwBgAX51lXfOaOmueetsoh4yk3Uwf/qFXnyzb+iN0cID4Q7RYzya58hvC8qe7UPZZDYvOxQQ5o6IXjeL7Q5KmMxnaB9cPCFCAz47w2n/EwXromnM3Yosty03mrb5PpbFeFqOwH9gbiFmhioSWvqOyCHn1IBztVAOmRXZXb7SQ=
+	t=1724917262; cv=none; b=jPS4f6CrIAsg06Mc9esWkmLGV0+vkQR3PLQMW07zVkhfMzmIKDS0DbT8WM9R6D7oo7WNKD7XMsGbMrPgiflok7FUkW6T7AUGiYowz3j8KjwhdQYzuFd59agDyQ16Bx6jXvICbPSKlL51d45//fiSPrvhPxkfweKIHE39CTCERzY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724917207; c=relaxed/simple;
-	bh=986i0+xBNupS/1yuTZLZEAjb9nmb581G5gYz4J0pnGk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Kb/wX4pXuWLTRMDBU1GvXI1BjJT5+dsw+mF06VayKapkRSTFJe+LQsuKPyKukPf0ZioVapVVScC5pK4JUKvPTi/eZvQcm3DCa98Osl1i8zVIeHv6IY0FsAIWaZZqWiAtyQi7/FZE5JPV1lf0c4fDUNwSSEHGAPexCoZFCG3hFk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 61C34DA7;
-	Thu, 29 Aug 2024 00:40:30 -0700 (PDT)
-Received: from [10.162.41.23] (e116581.arm.com [10.162.41.23])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2C7FF3F73B;
-	Thu, 29 Aug 2024 00:40:01 -0700 (PDT)
-Message-ID: <37577635-89c9-4afe-a30d-add02c0eb896@arm.com>
-Date: Thu, 29 Aug 2024 13:09:58 +0530
+	s=arc-20240116; t=1724917262; c=relaxed/simple;
+	bh=clUOSNy1tnYZXYJ2rQjtl1YSvWtxyFyfj9AFS+QpEE0=;
+	h=CC:Subject:To:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=cHY300mB3RZW0eqPseqMa9HZA1AR5sYsLhlyzbYCWI7XnfP2hJHdCHBF5u+KmWD0NOA+EcQCiRhQ5WFbzwhaL2Csl9Pdme8Yla3YJrSSQbbCrjIoeFe9xWqUMeZdTluyDhpkZ6zdidwpmxoPZr0rJGskLnIlksEhnKdZ1MfO2vY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4WvY9R35lhz1S9NC;
+	Thu, 29 Aug 2024 15:40:43 +0800 (CST)
+Received: from kwepemd200014.china.huawei.com (unknown [7.221.188.8])
+	by mail.maildlp.com (Postfix) with ESMTPS id 6E2971A0188;
+	Thu, 29 Aug 2024 15:40:56 +0800 (CST)
+Received: from [10.67.121.177] (10.67.121.177) by
+ kwepemd200014.china.huawei.com (7.221.188.8) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Thu, 29 Aug 2024 15:40:55 +0800
+CC: <yangyicong@hisilicon.com>, <linuxppc-dev@lists.ozlabs.org>,
+	<bp@alien8.de>, <dave.hansen@linux.intel.com>, <mingo@redhat.com>,
+	<linux-arm-kernel@lists.infradead.org>, <mpe@ellerman.id.au>,
+	<peterz@infradead.org>, <tglx@linutronix.de>, <sudeep.holla@arm.com>,
+	<will@kernel.org>, <catalin.marinas@arm.com>, <x86@kernel.org>,
+	<linux-kernel@vger.kernel.org>, <dietmar.eggemann@arm.com>,
+	<gregkh@linuxfoundation.org>, <rafael@kernel.org>,
+	<jonathan.cameron@huawei.com>, <prime.zeng@hisilicon.com>,
+	<linuxarm@huawei.com>, <xuwei5@huawei.com>, <guohanjun@huawei.com>
+Subject: Re: [PATCH v5 3/4] arm64: topology: Support SMT control on ACPI based
+ system
+To: Pierre Gondois <pierre.gondois@arm.com>
+References: <20240806085320.63514-1-yangyicong@huawei.com>
+ <20240806085320.63514-4-yangyicong@huawei.com>
+ <a998c723-7451-439a-9c88-7c8b5c1b890b@arm.com>
+From: Yicong Yang <yangyicong@huawei.com>
+Message-ID: <00e6110a-462a-c117-0292-e88b57d27a05@huawei.com>
+Date: Thu, 29 Aug 2024 15:40:54 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.5.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] tools/mm: Use calloc and check the potential memory
- allocation failure
-To: Markus Elfring <Markus.Elfring@web.de>,
- Zhu Jun <zhujun2@cmss.chinamobile.com>, linux-mm@kvack.org,
- kernel-janitors@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20240829055621.3890-1-zhujun2@cmss.chinamobile.com>
- <716f7466-562d-4bbe-a8ec-851a0b289db5@web.de>
-Content-Language: en-US
-From: Dev Jain <dev.jain@arm.com>
-In-Reply-To: <716f7466-562d-4bbe-a8ec-851a0b289db5@web.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+In-Reply-To: <a998c723-7451-439a-9c88-7c8b5c1b890b@arm.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemd200014.china.huawei.com (7.221.188.8)
 
+Hi Pierre,
 
-On 8/29/24 11:55, Markus Elfring wrote:
->> Replace malloc with calloc and add memory allocating check
->                        memset(…, 0, …) call by calloc()?
+On 2024/8/27 23:40, Pierre Gondois wrote:
+> Hello Yicong,
+> IIUC we are looking for the maximum number of threads a CPU can have
+> in the platform. But is is actually possible to have a platform with
+> CPUs not having the same number of threads ?
+> 
 
-Calloc returns zeroed-out memory.
+I was thinking of the heterogenous platforms, for example part of the
+cores have SMT and others don't (I don't have any though, but there
+should be some such platforms for arm64).
 
->
->
->> of comm_str before used.
-> * Add also a null pointer check for the detection of a memory allocation failure.
+> For instance kernel/cpu.c::cpu_smt_num_threads_valid() will check
+> that the number of threads is either 1 or cpu_smt_max_threads (as
+> CONFIG_SMT_NUM_THREADS_DYNAMIC is not enabled for arm64). However
+> a (hypothetical) platform with:
+> - CPU0: 2 threads
+> - CPU1: 4 threads
+> should not be able to set the number of threads to 2, as
+> 1 < 2 < cpu_smt_max_threads (cf. cpu_smt_num_threads_valid()).
+> 
 
-Which is exactly what Zhu has done?
+It's a bit more complex. If we enable/disable the SMT using on/off control
+then we won't have this problem. We'll online all the CPUs on enabling and
+offline CPUs which is not primary thread and don't care about the thread
+number of each core.
 
->
-> * Would you like to improve such a change description another bit
->    (with tags like “Fixes” and “Cc”)?
->
-> * How do you think about to omit the statement “fprintf(stderr, "Out of memory\n");”?
+Control using thread number is introduced by CONFIG_SMT_NUM_THREADS_DYNAMIC
+and only enabled on powerpc. I think this interface is not enough to handle
+the hypothetical we assumed, since it assumes the homogenous platform that
+all the CPUs have the same thread number. But this should be fine for
+the platforms with SMT(with same thread number) and non-SMT cores, since it do
+indicates the real thread number of the SMT cores.
 
-Why?
+> So if there is an assumption that all the CPUs have the same number of
+> threads, it should be sufficient to count the number of threads for one
+> CPU right ?
+> 
 
->
-> * I suggest to omit the word “potential” from the summary phrase.
->
->
+Naturally and conveniently I may think use of the threads number of CPU0 (boot
+cpu) in such a solution. But this will be wrong if CPU0 is non-SMT on a heterogenous
+platform :(
+
+> In the other (unlikely) case (i.e. CPUs can have various number of threads),
+> I think we should either:
+> - use your method and check that all the CPUs have the same number of threads
+> - get the number of threads for one CPU and check that all the CPUs are
+>    identical using the ACPI_PPTT_ACPI_IDENTICAL tag
+
+I think this won't be simpler since we still need to iterate all the CPUs to see
+if they have the same hetero_id (checked how we're using this ACPI tag in
+arm_acpi_register_pmu_device()). We could already know if they're identical by
+comparing the thread number and do the update if necessary.
+
+> - have a per-cpu cpu_smt_max_threads value ?
+
+This should be unnecessary in currently stage if there's no platforms
+with several kind cores have different thread number like in your assumption
+and enable CONFIG_SMT_NUM_THREADS_DYNAMIC on such platforms. Otherwise using
+a global cpu_smt_max_threads to enable the SMT control should be enough.
+Does it make sense?
+
+Thanks,
+Yicong
+
+> 
+> Same comment for the DT patch. If there is an assumption that all CPUs have
+> the same number of threads, then update_smt_num_threads() could only be called
+> once I suppose,
+> 
 > Regards,
-> Markus
->
+> Pierre
+> 
+> 
+> On 8/6/24 10:53, Yicong Yang wrote:
+>> From: Yicong Yang <yangyicong@hisilicon.com>
+>>
+>> For ACPI we'll build the topology from PPTT and we cannot directly
+>> get the SMT number of each core. Instead using a temporary xarray
+>> to record the SMT number of each core when building the topology
+>> and we can know the largest SMT number in the system. Then we can
+>> enable the support of SMT control.
+>>
+>> Signed-off-by: Yicong Yang <yangyicong@hisilicon.com>
+>> ---
+>>   arch/arm64/kernel/topology.c | 24 ++++++++++++++++++++++++
+>>   1 file changed, 24 insertions(+)
+>>
+>> diff --git a/arch/arm64/kernel/topology.c b/arch/arm64/kernel/topology.c
+>> index 1a2c72f3e7f8..f72e1e55b05e 100644
+>> --- a/arch/arm64/kernel/topology.c
+>> +++ b/arch/arm64/kernel/topology.c
+>> @@ -15,8 +15,10 @@
+>>   #include <linux/arch_topology.h>
+>>   #include <linux/cacheinfo.h>
+>>   #include <linux/cpufreq.h>
+>> +#include <linux/cpu_smt.h>
+>>   #include <linux/init.h>
+>>   #include <linux/percpu.h>
+>> +#include <linux/xarray.h>
+>>     #include <asm/cpu.h>
+>>   #include <asm/cputype.h>
+>> @@ -43,11 +45,16 @@ static bool __init acpi_cpu_is_threaded(int cpu)
+>>    */
+>>   int __init parse_acpi_topology(void)
+>>   {
+>> +    int thread_num, max_smt_thread_num = 1;
+>> +    struct xarray core_threads;
+>>       int cpu, topology_id;
+>> +    void *entry;
+>>         if (acpi_disabled)
+>>           return 0;
+>>   +    xa_init(&core_threads);
+>> +
+>>       for_each_possible_cpu(cpu) {
+>>           topology_id = find_acpi_cpu_topology(cpu, 0);
+>>           if (topology_id < 0)
+>> @@ -57,6 +64,20 @@ int __init parse_acpi_topology(void)
+>>               cpu_topology[cpu].thread_id = topology_id;
+>>               topology_id = find_acpi_cpu_topology(cpu, 1);
+>>               cpu_topology[cpu].core_id   = topology_id;
+>> +
+>> +            entry = xa_load(&core_threads, topology_id);
+>> +            if (!entry) {
+>> +                xa_store(&core_threads, topology_id,
+>> +                     xa_mk_value(1), GFP_KERNEL);
+>> +            } else {
+>> +                thread_num = xa_to_value(entry);
+>> +                thread_num++;
+>> +                xa_store(&core_threads, topology_id,
+>> +                     xa_mk_value(thread_num), GFP_KERNEL);
+>> +
+>> +                if (thread_num > max_smt_thread_num)
+>> +                    max_smt_thread_num = thread_num;
+>> +            }
+>>           } else {
+>>               cpu_topology[cpu].thread_id  = -1;
+>>               cpu_topology[cpu].core_id    = topology_id;
+>> @@ -67,6 +88,9 @@ int __init parse_acpi_topology(void)
+>>           cpu_topology[cpu].package_id = topology_id;
+>>       }
+>>   +    cpu_smt_set_num_threads(max_smt_thread_num, max_smt_thread_num);
+>> +
+>> +    xa_destroy(&core_threads);
+>>       return 0;
+>>   }
+>>   #endif
+> 
+> .
 
