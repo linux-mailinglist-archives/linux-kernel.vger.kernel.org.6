@@ -1,147 +1,123 @@
-Return-Path: <linux-kernel+bounces-306150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F11819639EF
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 07:37:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8B449639F2
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 07:38:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F8FC285222
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 05:37:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C8389B2426D
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 05:38:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 453F9146000;
-	Thu, 29 Aug 2024 05:37:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C7C514B967;
+	Thu, 29 Aug 2024 05:37:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dk7vYYVi"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hOx5tUFh"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13C3012E1D9
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 05:37:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EF3D14B94B
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 05:37:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724909847; cv=none; b=bPNHRA1ZxouehHJHLszxqGr/CMm3mCbADwE8dfuPpiNSwUQvEzPz70RWeXL6jeFGP2D4Pe2Zubf4ct8gJ/q67jdSXo4qrAFJbQASGPWotUqCe33RT79+1MQjN15amO/0aHIALc4pgmD0ZCeQemYiYNMb1X2jXUUTNynSkUP9ky8=
+	t=1724909867; cv=none; b=hAycPNxalo6JD43o1xe30gBCbOWg/xUMihi8L5ykmYJ2tLdGMsg5qgMdqR4c9/6nb+MMrOm/anEqZ5wJJK8gmhy+5+PKUEcItt0WlkrFuBWRsZOhSlK31HfaGyINx8I1MNdTltdKFohv2EPRWUP88o/x09rSFqapqeiUI83NpbU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724909847; c=relaxed/simple;
-	bh=qD7ebZNdArLGz1UyWTFq1yDHD6DlP1syHwDD/mleSvM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rjoyRbglP0OZwgJHVNX1DYYZg681diCJkRv49IbfhNXlPJy1zme+c2008of8rAzIISSavdaelEin9+vI+ajD/hk/hK8d0l0XGrlWpyFn7pHbxP9cmDq4PH3kHkr3EFOKRjCeKp2TQPj6WqBLnVoFMvEQBxj3E3VFlMfjlTJ26CM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dk7vYYVi; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-204d391f53bso1840855ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 22:37:25 -0700 (PDT)
+	s=arc-20240116; t=1724909867; c=relaxed/simple;
+	bh=lkk6anRFctndRZTQo8ST3rqb53GeepJeRWThtCQMT4I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=aqo0Z2HWXq8OWNmTFGtWFBLGDdJ33bGXQrdaCPyy2W5yWrfQzU6knYfiVPFVJ2BCfzcz2ee2ouq7oQFH4ZKNninXGwE1JIQN0ZynEzNOU+sGlotyWOlza5IaBrpQw/Q95aNZgQmuBFns+CSR1w9c7yu9xR5ZA04SubYkSCAReQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hOx5tUFh; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a7a843bef98so14750566b.2
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 22:37:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724909845; x=1725514645; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=qrVNScHyA8siqcwGagEWT1GIw67KMMaKbjDlL/wsrMY=;
-        b=dk7vYYVinR/IBIupn+u5ltPPtbh0w9rlT3M/oClFO1KIty3XBQXV4j1z5CQx0Z5lHE
-         FittyhTW6jfiNpPVr5cRDWDSyVr5iG7GM003TWrLgYip+wDNgENimqM8JyfczAB4i/ps
-         PSxBQpxKIPf2IjTIqK3gaBLMvOFV23onuTfn6s2TUx09+Wl1X41jZG7qvYcdptWSQbzS
-         fXL4T1Nj36JVCo1AsYdOV0DEW0bjBARzrB4s9ceuNCqa/5MNYpi3/AxN8ASmN6SN9pQZ
-         zC0ULqvKdAZ3xXWf/OEaDezWbvVN4Hc3JzEpdhrpeExUohoSDUJpvZOETxdFwTK3o/WW
-         tSYA==
+        d=gmail.com; s=20230601; t=1724909864; x=1725514664; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=1Mpl613ImjjzIum6yob4Qlo8XGEpDoFGTb4R5TS3Up0=;
+        b=hOx5tUFhPYe82xx2gHAYIyQz5uoum6lBjw2XxeZCGzsS8wImmgnVr7IYJQKNLczess
+         s9RMN/30NbB0CXK4bDwG7fdfC7xmAH/2J7ZFHfR3ukqMQMjOG68GeVRLMTlHvgqwxCXZ
+         BX31qSUjeye4w/4IJxqQnhMabOYHk6wvvUiFV/HPTa3yHcCycKq9/z1vRzYhZBT62AO2
+         +xuC1X03AqKWaaaePXa0RncHxXXPrWtimCKs+YAG3MCHEqxSGTs9hIT92/er2zi57daX
+         Qj7UvL0rmfqXGAYafPrS0fwcvjZIe/JWZtSqW/gr/v9bdUtawE2eKs7sbYtowUcxRaj/
+         ermw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724909845; x=1725514645;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1724909864; x=1725514664;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qrVNScHyA8siqcwGagEWT1GIw67KMMaKbjDlL/wsrMY=;
-        b=sE/GppVmDhWpmc802fJaih2YaRXB9xYHjkheLr/1FwyjnQPrHMEyW8Lo1zd5QuYQvv
-         O6juj/K/ZUQvax8aShyLyRjSPgyyFDuqTuiRE247A1IncwCo71CPwI+JT5e2mU2fMuUq
-         TClmXTVYZ6IDo4pz/U/clL2YGJVqSW52365ojv7Bu1bcY+RkbsdGp1E3bMwJJuYy7i7Z
-         QfJ5CoLS4rcuhogiqWfocH2PFOmuezd3n5izJsKEvMmakCq51i60CbGOsaNWXPnA6/iU
-         sVpy4NXA3k/igHwoMpxCh02WrfPP0nP5IQUKcEQdEhnMDil1onIemOsJdvdYHTyrBcPS
-         I+ZA==
-X-Forwarded-Encrypted: i=1; AJvYcCVhssCN3Pqrgcagszy3ZUN+VQVSlKLj6ccMe0LfW6Bo1cs8adR7ZHbXgxncnPQ3JTr5HMfPA/eU5p78OW4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwcCYcENEvn4Qxlh/UL05p/eyxkk/WFIxT3GXldFLVoIjzF8AeA
-	hJmKc8Xh9RRb7GBi2QFvOGHl5AiV5+9f4Knw6kN8N5eEXkt5rnInyvQIZU9Ugg==
-X-Google-Smtp-Source: AGHT+IHYVzYFsTDl7Qb0RREM7yv53xVhDCi5Y3JRA2rhvcxmy5c8PWS8Jb3jlzDACM6hONljzDoqvw==
-X-Received: by 2002:a17:903:2350:b0:1f7:26f:9185 with SMTP id d9443c01a7336-2050c34fd6cmr19991505ad.10.1724909845213;
-        Wed, 28 Aug 2024 22:37:25 -0700 (PDT)
-Received: from thinkpad ([120.56.198.191])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-205152b37d5sm3814485ad.25.2024.08.28.22.37.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2024 22:37:24 -0700 (PDT)
-Date: Thu, 29 Aug 2024 11:07:20 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: lpieralisi@kernel.org, kw@linux.com, bhelgaas@google.com,
-	robh@kernel.org, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Subject: Re: [PATCH v2] PCI: qcom-ep: Enable controller resources like PHY
- only after refclk is available
-Message-ID: <20240829053720.gmblrai2hkd73el3@thinkpad>
-References: <20240828140108.5562-1-manivannan.sadhasivam@linaro.org>
- <20240828205945.GA37767@bhelgaas>
+        bh=1Mpl613ImjjzIum6yob4Qlo8XGEpDoFGTb4R5TS3Up0=;
+        b=EQvar4MFGZTkbtPznxp4EZkbOOZbFMTesiZsZmvfcYo51z7x6ui3XyfxMSA5RNPenQ
+         x/cq+ICFhMkqQlzx0dgnLVRMolCJ0EcwmKLB5tqZeHizBSr2xsD5Qhnilx66YyKfJn+W
+         2sMbez2HZ/ADkMWuCoDSQY2VcXjKIQP2/OmYzIwKYzjJO0rsshGxkMMwNbzzS0MIOjFS
+         k5/gWeXgzTOWTSTMDDfT5blhzGEs0L06reH/VQh+DPctpu2LXRmSibE9BLKrPABXwYwP
+         pP/+NBWMkZyakZzoKY6vSTKNWevHKBjbceknKzxWm4bqtpH+Zvj+3WNnaY/YiWkQEgW8
+         ij1g==
+X-Forwarded-Encrypted: i=1; AJvYcCVgAw8lkgga47LjoRmPW7rZ/ng3bBWeMGeC4Z1prQHp8Tmntis8u2Dm+h2YDz2aiBQ24BiXOzCFwTI9ZsU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxp6RtL8snUBAeMDgLEdRWBOJpeETkaRkwQGESDZtOebju/ap3p
+	8OYezNN5BzSyUYdvYIPa422ufpoTTysHMgWxdHo5IIAiv2Id5U0y
+X-Google-Smtp-Source: AGHT+IF478ZX6mihGbhF8/Ix51ceNwaRw26Ei+3LxKfnJGJbMcL7UmotJXindpua0hcV/Qn1ax/abA==
+X-Received: by 2002:a17:906:f588:b0:a86:7a84:abb7 with SMTP id a640c23a62f3a-a897f83b28cmr113530566b.20.1724909864088;
+        Wed, 28 Aug 2024 22:37:44 -0700 (PDT)
+Received: from [192.168.0.104] (p57ba2f9b.dip0.t-ipconnect.de. [87.186.47.155])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a898900f079sm29667266b.66.2024.08.28.22.37.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 28 Aug 2024 22:37:43 -0700 (PDT)
+Message-ID: <0c76ca65-acc1-4167-b2ca-d6d7ef0b5c64@gmail.com>
+Date: Thu, 29 Aug 2024 07:37:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240828205945.GA37767@bhelgaas>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] staging: rtl8712: Fix style issues in rtl871x_io.c
+To: Manisha Singh <masingh.linux@gmail.com>,
+ florian.c.schilhabel@googlemail.com, gregkh@linuxfoundation.org,
+ linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20240828222153.68062-2-masingh.linux@gmail.com>
+Content-Language: en-US
+From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
+In-Reply-To: <20240828222153.68062-2-masingh.linux@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Aug 28, 2024 at 03:59:45PM -0500, Bjorn Helgaas wrote:
-> On Wed, Aug 28, 2024 at 07:31:08PM +0530, Manivannan Sadhasivam wrote:
-> > qcom_pcie_enable_resources() is called by qcom_pcie_ep_probe() and it
-> > enables the controller resources like clocks, regulator, PHY. On one of the
-> > new unreleased Qcom SoC, PHY enablement depends on the active refclk. And
-> > on all of the supported Qcom endpoint SoCs, refclk comes from the host
-> > (RC). So calling qcom_pcie_enable_resources() without refclk causes the
-> > whole SoC crash on the new SoC.
-> > 
-> > qcom_pcie_enable_resources() is already called by
-> > qcom_pcie_perst_deassert() when PERST# is deasserted, and refclk is
-> > available at that time.
-> > 
-> > Hence, remove the unnecessary call to qcom_pcie_enable_resources() from
-> > qcom_pcie_ep_probe() to prevent the crash.
-> > 
-> > Fixes: 869bc5253406 ("PCI: dwc: ep: Fix DBI access failure for drivers requiring refclk from host")
-> > Tested-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > ---
-> > 
-> > Changes in v2:
-> > 
-> > - Changed the patch description to mention the crash clearly as suggested by
-> >   Bjorn
+On 8/29/24 00:21, Manisha Singh wrote:
+> Refactor the _init_intf_hdl() function to avoid multiple
+> assignments in a single statement. This change improves code readability
+> and adheres to kernel coding style guidelines.
 > 
-> Clearly mentioning the crash as rationale for the change is *part* of
-> what I was looking for.
+> Signed-off-by: Manisha Singh <masingh.linux@gmail.com>
+> ---
+> Changes since v2:
+> 	- commit message updated.
+> 	- assignment done before goto fail.
 > 
-> The rest, just as important, is information about what sort of crash
-> this is, because I hope and suspect the crash is recoverable, and we
-> *should* recover from it because PERST# may occur at arbitrary times,
-> so trying to avoid it is never going to be reliable.
+> Changes since v1:
+> 	Broke the patch into 2 different fixes.
 > 
+>   drivers/staging/rtl8712/rtl871x_io.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/staging/rtl8712/rtl871x_io.c b/drivers/staging/rtl8712/rtl871x_io.c
+> index 6789a4c98564..378da0aa7f55 100644
+> --- a/drivers/staging/rtl8712/rtl871x_io.c
+> +++ b/drivers/staging/rtl8712/rtl871x_io.c
+> @@ -48,8 +48,8 @@ static uint _init_intf_hdl(struct _adapter *padapter,
+>   	set_intf_funs = &(r8712_usb_set_intf_funs);
+>   	set_intf_ops = &r8712_usb_set_intf_ops;
+>   	init_intf_priv = &r8712_usb_init_intf_priv;
+> -	pintf_priv = pintf_hdl->pintfpriv = kmalloc(sizeof(struct intf_priv),
+> -						    GFP_ATOMIC);
+> +	pintf_priv = kmalloc(sizeof(struct intf_priv), GFP_ATOMIC);
+> +	pintf_hdl->pintfpriv = pintf_priv;
+>   	if (!pintf_priv)
+>   		goto _init_intf_hdl_fail;
+>   	pintf_hdl->adapter = (u8 *)padapter;
 
-I did mention 'whole SoC crash' which typically means unrecoverable state as
-the SoC would crash (not just the driver). On Qcom SoCs, this will also lead the
-SoC to boot into EDL (Emergency Download) mode so that the users can collect
-dumps on the crash.
-
-As I mentioned in earlier thread, I don't know how to avoid this crash entirely
-(host asserting PERST# at random times) and still depend on refclk from host.
-The best possible thing we can do is, at the time of PERST# assert, we can
-notify the EPF driver to cancel all the work and not touch any registers that
-require active refclk which is what the driver currently does.
-
-And I'm also working on SRIS support which will allow the endpoint to generate
-its own refclk and planning to make that mode as the default working mode.
-Still the users could opt for non-SRIS mode (current mode of requiring refclk
-from host) through DT.
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
+Tested-by: Philipp Hortmann <philipp.g.hortmann@gmail.com> AW-NU120
 
