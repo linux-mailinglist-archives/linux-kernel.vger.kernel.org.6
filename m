@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-306778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B5C8964373
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:46:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93C22964375
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:47:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31D351F2226C
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 11:46:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C702B1C24715
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 11:47:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E678D1922E8;
-	Thu, 29 Aug 2024 11:46:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D88A01922FB;
+	Thu, 29 Aug 2024 11:47:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mSmN/0NG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="He1vTMFu"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B4F918E375;
-	Thu, 29 Aug 2024 11:46:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DF12190663;
+	Thu, 29 Aug 2024 11:47:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724932009; cv=none; b=tAtKImWo0MzTRtbrzmsvsAcEbWgH9sNTBy2ZpJY+mfAI1qjm/06+wiTZvQLqHnCeIi4z/LRp0/oTwZd/SFDdgwGWC6VR3HfohR7lonzWYATahYyfmo90lK0kZvKMk1+9K0hDyho9EWtZ8ofKWsHZTjoW1CXqWjDaqykaWLwuniI=
+	t=1724932040; cv=none; b=gaGqQTnMiL5rYpWxHS8oJBBI2OX7oJ3Z92qz3gDhvhSmtKi8AQTdWPbOo8B80EgR1IUDCOeFmjQ2HDWBmC9x0A18e0xiwtWz3g0LcXqaDlMuOJDK6prg4cClUEKZWRZVAaC2Hs024zrXjKNmsDHAyIDM/NL4Tee2hBtbYe84avA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724932009; c=relaxed/simple;
-	bh=H9yWvvnTQWX6NQ5UZKTRsjOrm3Tu+T6fWoZPEcbHI/k=;
+	s=arc-20240116; t=1724932040; c=relaxed/simple;
+	bh=Bao+PsAXuX7NvU6F8ybBhx/aGmPG9tBiwr6xFEzJDlE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Q+0/McvB8EHba3tDEeQnjgnbtPDeriCgonO0wf98Hc4lo044Aaehorgkh45GtNxzQ6rQN7lL4AAFjPWL12iFT17fQXYP9wplJn6auZ1c3PGnacMUC8+XlIhiH1Zm0ICqtiNJ3cVqU8jLWT4hqrOyWCu/jbJohOxgc5KiO3DBxwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mSmN/0NG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2376C4CEC1;
-	Thu, 29 Aug 2024 11:46:43 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=kq8YfgQFzhTJad4ZGGzxG/BbJJmWjYO5lrX7/TsuNeuidse1d93u+ExwIN6aKTwAPZjUaEofBslawm3Ak7BVHAUR4Dnb9a2JL55MpFEr7G5db27tS+lNg8dZ3vtvPd8Tpx3cUFOUACG/c+w3kHFr1Ap0CR0se0+nl1Ov6hJRy3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=He1vTMFu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 942A0C4CEC1;
+	Thu, 29 Aug 2024 11:47:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724932008;
-	bh=H9yWvvnTQWX6NQ5UZKTRsjOrm3Tu+T6fWoZPEcbHI/k=;
+	s=k20201202; t=1724932038;
+	bh=Bao+PsAXuX7NvU6F8ybBhx/aGmPG9tBiwr6xFEzJDlE=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=mSmN/0NG/rQu+/WKgXCLM+n6w652mHXV9Lsg543t16iFAsLW9V63WR7xkDzUwJmyM
-	 SyHYMvwySUpoznLSyHnX2ekTXLjxjwTeuRok07234m73vygD3LGvz98gq10lJDIXLM
-	 POHJWu//+BGAeBzonx/sxOtmaPaWCtFdq18VUCC56mbPXamK5+MH9Osb7Ww3xBfW8/
-	 egjEDCIxL5YWnrPJUJu18vCFHCHT40NL/tb5pOUwa5bmvegu2XskABRRH74tFSjBKe
-	 PopoBq3D6J1wu2MHEpjHFj9b05J/YJ41HBWI6wj1kMrH5/aKRVC6g/0JRrXabNOaTn
-	 dI7vJLBob5RYg==
-Message-ID: <220766f0-7cbb-4b4c-a976-477ca1d89fee@kernel.org>
-Date: Thu, 29 Aug 2024 13:46:41 +0200
+	b=He1vTMFuWfX/c4iSLuD9JXrquWlJQLhrULK7OoWU8GZXq5d24h52OR1UChDuG4YeU
+	 qcJTBN3CN5Oyv4cj5mTLPAmtNJr3Ex+4DD/kkOSuzVOaqw6hV/s4zBfWdtIjJPov34
+	 +Dt5FZ2yPos/0my4Fnz/dWgJMgAJrzKp16DnIcgCUPhEOo7MmD1kQJk1vFCfV6BoY1
+	 ga4tR+e8X1XPWlbfQL/29ywrK3Yk1sXrowOYx4hj/5LmV8xgkZegiaIRv6tdNgq9EV
+	 c6RCz9bAh1BqOpYF/Exu/qF9nf4uQJ9xb2k53F4ydSD4pWGBxUPz4PJ1sZlnMDCXl/
+	 pScV2jpEX1xEw==
+Message-ID: <fcd0e771-2633-4fac-82cd-4b579ce17a9c@kernel.org>
+Date: Thu, 29 Aug 2024 13:47:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,8 +49,7 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND 1/3] dt-bindings: apple,aic: Document A7-A11
- compatibles
+Subject: Re: [PATCH RESEND 0/3] Add AIC support for A7-A11 SoCs
 To: Nick Chan <towinchenmi@gmail.com>, Hector Martin <marcan@marcan.st>,
  Sven Peter <sven@svenpeter.dev>, Alyssa Rosenzweig <alyssa@rosenzweig.io>,
  Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
@@ -60,7 +59,6 @@ To: Nick Chan <towinchenmi@gmail.com>, Hector Martin <marcan@marcan.st>,
  devicetree@vger.kernel.org
 Cc: ~postmarketos/upstreaming@lists.sr.ht
 References: <20240829110436.46052-1-towinchenmi@gmail.com>
- <20240829110436.46052-2-towinchenmi@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -106,26 +104,15 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240829110436.46052-2-towinchenmi@gmail.com>
+In-Reply-To: <20240829110436.46052-1-towinchenmi@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 29/08/2024 13:02, Nick Chan wrote:
-> Document the compatibles for Apple A7-A11 SoCs.
-> 
-> There are three feature levels:
-> - A7-A10: No fast IPI
-> - A11: fast IPI, global only
-> - M1: fast IPI with local and global support
-> 
-> Signed-off-by: Nick Chan <towinchenmi@gmail.com>
-> ---
+> Resend to correct dt-bindings issues pointed out by Rob.
 
-Please do not resend different patch. Or rather explain - is this the
-same? Looks different, so RESEND is not appropriate.
-
-Follow submitting patches in this regard, you need v2. Just use b4 for
-this process.
+RESEND means the same patch, so nothing gets corrected. How the tools
+should know which patch to pick up?
 
 Best regards,
 Krzysztof
