@@ -1,156 +1,208 @@
-Return-Path: <linux-kernel+bounces-307109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A651096483D
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:27:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 194BA964851
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:28:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE1851C22E1F
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 14:27:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0C5628566E
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 14:28:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37CE11AE856;
-	Thu, 29 Aug 2024 14:27:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6A271B0120;
+	Thu, 29 Aug 2024 14:28:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="QMC9OYz5"
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="BG2jd9hy"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 063ED1A76C1
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 14:27:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AA091A76D2;
+	Thu, 29 Aug 2024 14:28:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724941636; cv=none; b=jhNbhykLyuGWazaWSqGLDFs0W0oymMGX4G4eSqUF1900n3BJJRpWv7O6t+uE/74+D1sUKHOVEX5MlTBxkcRtENyQ/eLoOzHaamx88t4PkuaKTamMmU0zM64b9O5FdarEZtma1tXULLgxzrS6OmZ5ly5xvz4yiHNG3ue7DgrLTOo=
+	t=1724941685; cv=none; b=Nr/YisGb2or1xxEwhmnOzs3F+6/dhf2lK18AHfGjVBs6Kxv8YQ7qxHwREAsn8zPSooVnPtXFRkyvzo/KjZUxC16p006sBxqTjKJfpIBBcB169HKOiJZqYVmzxk6pPobmpHO3QQrkhhdQ4s8s7FmdtCMYRL91id+SlR/5xBzuXoc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724941636; c=relaxed/simple;
-	bh=Dzf6d2bdjoD0B5OMUYmUjZooF47c2Vi6q7JwFihNdf8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uS/3HVhJWmmuUcO8zN09iQRVrvawusu7h/ttYPuQUMbkx/Oq3WWSLaoIN+l6OEpOxL6mChCLIcLD16fA0LI5OUb6Ch9TyTeGLgex3iECzhnIv/sC3MGuN9tZ+F1LT0NHUEqiff/dHttRqLG01XPTyEYdZr5iPApN9yr60EC6MOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=QMC9OYz5; arc=none smtp.client-ip=209.85.215.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-7c6b4222fe3so420287a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 07:27:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1724941634; x=1725546434; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=n2OOh+VCVK5/2MQz7ooKTOwltB8S/8ZEKBIDSHGLnlw=;
-        b=QMC9OYz5hN9il5eClrXtjTvnvpLDVILkrsMYKQRFxYjmWRi4IyVuPAydr9n5Q2/8w2
-         mWtjAthCw0NGApZ7StvJHmP9ADNN/Q/lw8l1zMEKxhkoOAqrpIar+Rq+LX2HEfsVMugS
-         WCSlntNjjhi6oojStJPyVw62h7HXlIF9B1bzNFzYBRRrYtLxj5uOM9MJhv8bth3RnUcL
-         grUoTwzAOQBvWLlxR+bwWWBugUFxE98zY6D26IXxw/Ff5afLHKYWMU7zEvi9WZKx+Hmh
-         u7+NW9hQ9GsMRVwBiDqENYr0yd2d5Xuyn+cN/mU/tm+kfsec+dsFIvYp8dAGcuBwjukS
-         QEUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724941634; x=1725546434;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=n2OOh+VCVK5/2MQz7ooKTOwltB8S/8ZEKBIDSHGLnlw=;
-        b=ltHLEeREPmjcVlf/O04RTETmJRxvp/2CMPhtliPmb+yBDx9TURngqciAAtA2E2GZqr
-         OSl8XGJ94zS8OtpGsp7WjOZf7FJi1G6NnQpu6r/FUWPqwl/5qK5rBE3u/d0ooy+tifVG
-         z/vXLKk7VXJNAem1hbqWaOMU37tv2pcE4TFyWVPd22fNrFXonq+m3H0q9RfQF98TdQii
-         5JluYXWTaSnYPo6PVgrfufihYFJn/4nHnOt8bk//5ZvEVXXkL0eNVJbkP5EwxV9YCVxr
-         NQF34uGsAYBMI28Yyz8IwcT6UW0PoXL85z86JJEgCFdCEY52Tv4g9PHdYnuj1OIlPvIi
-         ulbA==
-X-Forwarded-Encrypted: i=1; AJvYcCXzPW6MIc44J1+H0KyyGTeyqGTqMgjry8JB9k5yDr7zTG7Ek10xwxpbyPBeSMS+ghgTuj4x/w6hqj48QvM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YziWJc4AcnXmzN43XXuf9V/cTpEwnkLS7idlaBlhJ6/KdU9pUp6
-	XsdV6qjbRI8PyJSFhg7dMlHYJNU2tWs84fcKFjv378vaprMpTCOJcBzL+GeySGmGGk8Ttc7iNQM
-	R
-X-Google-Smtp-Source: AGHT+IHoOtZbO6aG3P1JZ9jG7nfRTKU3cDhAQsdkX112QyeI5JUZTX3EuDxdBLxMn0khFhYGynskaQ==
-X-Received: by 2002:a05:6a20:e196:b0:1c4:c1cd:a29d with SMTP id adf61e73a8af0-1cce101c8fdmr2841575637.28.1724941634275;
-        Thu, 29 Aug 2024 07:27:14 -0700 (PDT)
-Received: from dread.disaster.area (pa49-179-0-65.pa.nsw.optusnet.com.au. [49.179.0.65])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7d22e9d4df4sm1270220a12.82.2024.08.29.07.27.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 07:27:13 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1sjg7D-00H16b-0t;
-	Fri, 30 Aug 2024 00:27:11 +1000
-Date: Fri, 30 Aug 2024 00:27:11 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Michal Hocko <mhocko@suse.com>, Matthew Wilcox <willy@infradead.org>,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, Dave Chinner <dchinner@redhat.com>
-Subject: Re: [PATCH] bcachefs: Switch to memalloc_flags_do() for vmalloc
- allocations
-Message-ID: <ZtCFP5w6yv/aykui@dread.disaster.area>
-References: <20240828140638.3204253-1-kent.overstreet@linux.dev>
- <Zs9xC3OJPbkMy25C@casper.infradead.org>
- <gutyvxwembnzaoo43dzvmnpnbmj6pzmypx5kcyor3oeomgzkva@6colowp7crgk>
- <Zs959Pa5H5WeY5_i@tiehlicka>
- <xxs3s22qmlzby3ligct7x5a3fbzzjfdqqt7unmpih64dk3kdyx@vml4m27gpujw>
- <ZtBWxWunhXTh0bhS@tiehlicka>
- <wjfubyrzk4ovtuae5uht7uhhigkrym2anmo5w5vp7xgq3zss76@s2uy3qindie4>
+	s=arc-20240116; t=1724941685; c=relaxed/simple;
+	bh=BmWjnAijfw6T7UxB+tkThQpa/pIriw7JMt+dzMxcamc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ePMQWgEm+J5rokjihdiyrQFbJHW1pv51w5yTBhnhJegBzBtrHY0UTI3hIRmJiQRaetggRe1pxnmsGeaD1A/zxEHsOifV4SOgr+fFrl80+hN+EUy+tE7Axt2x8Wd9yLi7FNN80dl9ZjTW47fVTZlgqULqD4fEL7pWg6JvbPI0wA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=BG2jd9hy; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47T8HlKv031817;
+	Thu, 29 Aug 2024 14:27:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	1s4+RPa5fTYDeOi0K3UjRSPTnkLkZRQOrwdHKLhFCs0=; b=BG2jd9hyiuyvAIEl
+	s8u0X9WRaiq1saQo74VPL2NCcxjODyemQD9GFPGFb8UQIvP3Lm+LaDVm58jcxuuN
+	wbQt6Jrs/N77ZKZoTgOr/JkDE6sPy+CBEUy3v4hRILl/0C6x6Naw5vfFOwrAVPzN
+	BPRwNkVZyq48rMOwH9MSF6YVpAatS1OjoY6qhhqealsjt5XJpldKKGtiSgY+86V+
+	gcdwC4ja529t/2D50tFqhyJHpvSeVubaveMouh2oVPe8tv3XPwxp7IaSMm6Cf9su
+	XmNeNzXCFF61YnhNtRtC3GjRZ06zSAr78vOwr6XhQkEUQzsya8bOCVcvYJ/KGK7O
+	jEP+NA==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 419puw5hps-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 29 Aug 2024 14:27:21 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47TERJOl015048
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 29 Aug 2024 14:27:19 GMT
+Received: from [10.110.28.107] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 29 Aug
+ 2024 07:27:15 -0700
+Message-ID: <19f5389a-a88b-4f29-98fd-c9d539c7c225@quicinc.com>
+Date: Thu, 29 Aug 2024 07:27:15 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <wjfubyrzk4ovtuae5uht7uhhigkrym2anmo5w5vp7xgq3zss76@s2uy3qindie4>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 17/22] dt-bindings: serial: document support for SA8255p
+Content-Language: en-US
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: <andersson@kernel.org>, <konradybcio@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <rafael@kernel.org>,
+        <viresh.kumar@linaro.org>, <herbert@gondor.apana.org.au>,
+        <davem@davemloft.net>, <sudeep.holla@arm.com>, <andi.shyti@kernel.org>,
+        <tglx@linutronix.de>, <will@kernel.org>, <joro@8bytes.org>,
+        <jassisinghbrar@gmail.com>, <lee@kernel.org>,
+        <linus.walleij@linaro.org>, <amitk@kernel.org>,
+        <thara.gopinath@gmail.com>, <broonie@kernel.org>,
+        <wim@linux-watchdog.org>, <linux@roeck-us.net>, <robin.murphy@arm.com>,
+        <cristian.marussi@arm.com>, <rui.zhang@intel.com>,
+        <lukasz.luba@arm.com>, <vkoul@kernel.org>, <quic_gurus@quicinc.com>,
+        <agross@kernel.org>, <bartosz.golaszewski@linaro.org>,
+        <quic_rjendra@quicinc.com>, <robimarko@gmail.com>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+        <linux-crypto@vger.kernel.org>, <arm-scmi@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-i2c@vger.kernel.org>,
+        <iommu@lists.linux.dev>, <linux-gpio@vger.kernel.org>,
+        <linux-serial@vger.kernel.org>, <linux-spi@vger.kernel.org>,
+        <linux-watchdog@vger.kernel.org>, <kernel@quicinc.com>,
+        <quic_psodagud@quicinc.com>, <quic_tsoni@quicinc.com>,
+        <quic_shazhuss@quicinc.com>, Praveen Talari <quic_ptalari@quicinc.com>
+References: <20240828203721.2751904-1-quic_nkela@quicinc.com>
+ <20240828203721.2751904-18-quic_nkela@quicinc.com>
+ <esl3zcntkewslcredif54venyopwgj2niruoeqcvbhqmbyt5qc@odixl23o7omk>
+From: Nikunj Kela <quic_nkela@quicinc.com>
+In-Reply-To: <esl3zcntkewslcredif54venyopwgj2niruoeqcvbhqmbyt5qc@odixl23o7omk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: Uur1LjkVDPzDxrIosfw2P0DSrkNvBKO-
+X-Proofpoint-GUID: Uur1LjkVDPzDxrIosfw2P0DSrkNvBKO-
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-29_03,2024-08-29_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ priorityscore=1501 malwarescore=0 bulkscore=0 mlxscore=0
+ lowpriorityscore=0 phishscore=0 mlxlogscore=999 suspectscore=0
+ adultscore=0 spamscore=0 impostorscore=0 classifier=spam adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2408290100
 
-On Thu, Aug 29, 2024 at 07:55:08AM -0400, Kent Overstreet wrote:
-> Ergo, if you're not absolutely sure that a GFP_NOFAIL use is safe
-> according to call path and allocation size, you still need to be
-> checking for failure - in the same way that you shouldn't be using
-> BUG_ON() if you cannot prove that the condition won't occur in real wold
-> usage.
 
-We've been using __GFP_NOFAIL semantics in XFS heavily for 30 years
-now. This was the default Irix kernel allocator behaviour (it had a
-forwards progress guarantee and would never fail allocation unless
-told it could do so). We've been using the same "guaranteed not to
-fail" semantics on Linux since the original port started 25 years
-ago via open-coded loops.
+On 8/29/2024 12:41 AM, Krzysztof Kozlowski wrote:
+> On Wed, Aug 28, 2024 at 01:37:16PM -0700, Nikunj Kela wrote:
+>> Add compatibles representing UART support on SA8255p.
+>>
+>> Clocks and interconnects are being configured in the firmware VM
+>> on SA8255p platform, therefore making them optional.
+>>
+>> CC: Praveen Talari <quic_ptalari@quicinc.com>
+>> Signed-off-by: Nikunj Kela <quic_nkela@quicinc.com>
+>> ---
+>>  .../serial/qcom,serial-geni-qcom.yaml         | 58 ++++++++++++++++---
+>>  1 file changed, 51 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/serial/qcom,serial-geni-qcom.yaml b/Documentation/devicetree/bindings/serial/qcom,serial-geni-qcom.yaml
+>> index dd33794b3534..dcd43e1353ec 100644
+>> --- a/Documentation/devicetree/bindings/serial/qcom,serial-geni-qcom.yaml
+>> +++ b/Documentation/devicetree/bindings/serial/qcom,serial-geni-qcom.yaml
+>> @@ -13,11 +13,42 @@ maintainers:
+>>  allOf:
+>>    - $ref: /schemas/serial/serial.yaml#
+> Please move entire allOf: to the place after "required:" block.
+>
+>>  
+>> +  - if:
+>> +      properties:
+>> +        compatible:
+>> +          contains:
+>> +            enum:
+>> +              - qcom,sa8255p-geni-uart
+>> +              - qcom,sa8255p-geni-debug-uart
+>> +    then:
+>> +      required:
+>> +        - power-domains
+>> +        - power-domain-names
+>> +      properties:
+>> +        power-domains:
+>> +          minItems: 2
+>> +          maxItems: 2
+>> +    else:
+>> +      required:
+>> +        - clocks
+>> +        - clock-names
+>> +      properties:
+>> +        power-domains:
+>> +          maxItems: 1
+>> +        interconnects:
+>> +          maxItems: 2
+>> +        interconnect-names:
+>> +          items:
+>> +            - const: qup-core
+>> +            - const: qup-config
+>> +
+>>  properties:
+>>    compatible:
+>>      enum:
+>>        - qcom,geni-uart
+>>        - qcom,geni-debug-uart
+>> +      - qcom,sa8255p-geni-uart
+>> +      - qcom,sa8255p-geni-debug-uart
+> Not compatible with the old ones? Well, it is impossible. Generic
+> compatible like "qcom,geni-uart" means ALL DEVICES forever will be
+> compatible, because otherwise it just does not make any sense.  Of
+> course "all devices forever will be compatible" is impossible as well,
+> thus DT maintainers are suggesting SoC-specific compatibles all the
+> time, but if developers decide that they know the future, you should
+> keep it, right?
 
-IOWs, __GFP_NOFAIL semantics have been production tested for a
-couple of decades on Linux via XFS, and nobody here can argue that
-XFS is unreliable or crashes in low memory scenarios. __GFP_NOFAIL
-as it is used by XFS is reliable and lives up to the "will not fail"
-guarantee that it is supposed to have.
+Hi Krzysztof,
 
-Fundamentally, __GFP_NOFAIL came about to replace the callers doing
+SA8255p uart is not compatible with generic ones. While I get your
+point, could you please advise how to proceed on this? Of course, no one
+could predict the future at the time generic compatibles were added but
+here we are now with the usecase!
 
-	do {
-		p = kmalloc(size);
-	while (!p);
+Thanks,
 
-so that they blocked until memory allocation succeeded. The call
-sites do not check for failure, because -failure never occurs-.
+-Nikunj
 
-The MM devs want to have visibility of these allocations - they may
-not like them, but having __GFP_NOFAIL means it's trivial to audit
-all the allocations that use these semantics.  IOWs, __GFP_NOFAIL
-was created with an explicit guarantee that it -will not fail- for
-normal allocation contexts so it could replace all the open-coded
-will-not-fail allocation loops..
-
-Given this guarantee, we recently removed these historic allocation
-wrapper loops from XFS, and replaced them with __GFP_NOFAIL at the
-allocation call sites. There's nearly a hundred memory allocation
-locations in XFS that are tagged with __GFP_NOFAIL.
-
-If we're now going to have the "will not fail" guarantee taken away
-from __GFP_NOFAIL, then we cannot use __GFP_NOFAIL in XFS. Nor can
-it be used anywhere else that a "will not fail" guarantee it
-required.
-
-Put simply: __GFP_NOFAIL will be rendered completely useless if it
-can fail due to external scoped memory allocation contexts.  This
-will force us to revert all __GFP_NOFAIL allocations back to
-open-coded will-not-fail loops.
-
-This is not a step forwards for anyone.
-
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+>>  
+>>    clocks:
+>>      maxItems: 1
+>> @@ -26,12 +57,10 @@ properties:
+>>      const: se
+>>  
+>>    interconnects:
+>> -    maxItems: 2
+>> +    description: phandles of interconnect bw provider
+> Constraints must stay in top-level.
+>
+> Best regards,
+> Krzysztof
+>
 
