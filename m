@@ -1,133 +1,134 @@
-Return-Path: <linux-kernel+bounces-306393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 861DE963E5B
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:27:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C27A9963E5C
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:27:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B86061C21F77
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:27:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0097E1C21B13
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:27:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 366CC18C320;
-	Thu, 29 Aug 2024 08:27:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFEBF18C031;
+	Thu, 29 Aug 2024 08:27:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="ifdmLA2Z"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dN6gO2wd"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7D6D18C025;
-	Thu, 29 Aug 2024 08:26:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FD7118C32F
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 08:27:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724920019; cv=none; b=sIN7aB7N/arSSPmoFo0ZlJr3V+89Uw0Z83RheyuC9D4prVU0XVgq0Yj8oDvImwcHQmAZseIYOa/ah6KmlBmVIaoDU7e/vttdq29dOEdF2AyaXEK7WOtXzAoYGVz2JevY90UVByYAC+AkUQpLb4mBpXuM9E/dRMOwoLpPQ9KR4iI=
+	t=1724920023; cv=none; b=AfItXFAsbv27bM+u4nn8rAkMgiti52pvEYXOK21mM4NA9LivqZFPqVmairr9TeVp/pLSULUNSjgQ4E3soJXJZRyoRK9W4Ds4dH0ELiCGwBvay55r8kwFYd07n1/ObDfPlGKAaGpmrjWSN8+n2jKAuvtKgu0PhepAdqWTDyqSdMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724920019; c=relaxed/simple;
-	bh=FDBLvL3b/XCdjS0adlnE6hBgdXNcogXnYATjW3mX3Gs=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=RXkRZdyYMOjbke8cuQYGYkIPG/HW4gk0bDFGtVA1sYoDX6gt/aFtC3PjFT0Z+9dHddJpk/jsfGbfGdLLhj30tI4Q0VoDRbx2cSplJ1wBbrtTMp2NfwAeQyqYdL8E945oIURTagh+HjWg6wkm56J9VTQhqs88z5OMfStWoR+3fRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=ifdmLA2Z; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
-	s=201909; t=1724920014;
-	bh=CzX6lvuIolyjXVJmi/cVG/X6CAC23HjxHju8uHsztN0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=ifdmLA2ZirGiQQ8DKH6A6ZHgCMR1ss7zyDFp3CptPsdwMvp/3YGG5gBHGQUEUKUzg
-	 ITO14BjJMTtMSVhv+OWGvxvVRuqV/uDr1qMTHrjCXpCA4AhG+fXdppjYRKj1SYalDA
-	 c5OEvTytT2HGK7FuARoCOz0vu+NPkuwhztoGR1vEusip5cUw9u2oaNaTthykDEP4om
-	 aG2SxS1UuJhaWBae0UnoEaKnIcych9qgh1+wLPD/3IrbnzUQZgDwgKUPmcIv0mATKK
-	 PtmYiyKLMkmTsA/rAyMlTUsbJAoexgEIiM3ollUIPnJsv6rs7t3Jl4HY46paJVrakT
-	 7gCuXwLBau9iw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WvZBV0vd6z4wd6;
-	Thu, 29 Aug 2024 18:26:42 +1000 (AEST)
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Charlie Jenkins <charlie@rivosinc.com>, Arnd Bergmann <arnd@arndb.de>,
- Richard Henderson <richard.henderson@linaro.org>, Ivan Kokshaysky
- <ink@jurassic.park.msu.ru>, Matt Turner <mattst88@gmail.com>, Vineet Gupta
- <vgupta@kernel.org>, Russell King <linux@armlinux.org.uk>, Guo Ren
- <guoren@kernel.org>, Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui
- <kernel@xen0n.name>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, Helge
- Deller <deller@gmx.de>, Nicholas Piggin <npiggin@gmail.com>, Christophe
- Leroy <christophe.leroy@csgroup.eu>, Naveen N Rao <naveen@kernel.org>,
- Alexander Gordeev <agordeev@linux.ibm.com>, Gerald Schaefer
- <gerald.schaefer@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>,
- Vasily Gorbik <gor@linux.ibm.com>, Christian Borntraeger
- <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>,
- Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker
- <dalias@libc.org>, John Paul Adrian Glaubitz
- <glaubitz@physik.fu-berlin.de>, "David S. Miller" <davem@davemloft.net>,
- Andreas Larsson <andreas@gaisler.com>, Thomas Gleixner
- <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
- <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>, Peter
- Zijlstra <peterz@infradead.org>, Muchun Song <muchun.song@linux.dev>,
- Andrew Morton <akpm@linux-foundation.org>, "Liam R. Howlett"
- <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, Lorenzo
- Stoakes <lorenzo.stoakes@oracle.com>, Shuah Khan <shuah@kernel.org>
-Cc: linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-alpha@vger.kernel.org, linux-snps-arc@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org,
- loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
- linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
- sparclinux@vger.kernel.org, linux-mm@kvack.org,
- linux-kselftest@vger.kernel.org, Charlie Jenkins <charlie@rivosinc.com>
-Subject: Re: [PATCH RFC v2 1/4] mm: Add MAP_BELOW_HINT
-In-Reply-To: <20240829-patches-below_hint_mmap-v2-1-638a28d9eae0@rivosinc.com>
-References: <20240829-patches-below_hint_mmap-v2-0-638a28d9eae0@rivosinc.com>
- <20240829-patches-below_hint_mmap-v2-1-638a28d9eae0@rivosinc.com>
-Date: Thu, 29 Aug 2024 18:26:41 +1000
-Message-ID: <87mskvenum.fsf@mail.lhotse>
+	s=arc-20240116; t=1724920023; c=relaxed/simple;
+	bh=Bg3qnOD/wVviS+JcQvXBgCI/eQDVp+5vsrv7n/OOhkk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eqnWrC6vHAVJNE8CB65d12Sg7FDHMJlKIymTQDUGxqGBxsIZH2Zklw/mrBikD/HSrFV7fNXXtY9g9TMsBjQrsBIe2tDWbeDQXb7aCDNjovYI/WEJICXMNqfyJDJPZPW3zKzPZUyGZh6+c1sYVKaRBKNrWaP3MNxpPAUJc0IYDKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dN6gO2wd; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724920020;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=009aMKtYz3alNozgyKcZzRLs3QnC7nYwCnZ9axqzyJI=;
+	b=dN6gO2wd7tODjZQTVn/wG8h0vgkqYTz6G3E0EvhenputSfqJ14x036jJIGSMMJEllAxiJ1
+	48Pft1cazdTaVpXMI3CyM0HNJ9MiCT3phY9YXokIc2tXi+2cif4W8mVeKv2m+DOPXs17C2
+	4CZYqPeFmTXIE5gYfmwYBFCt7c1lN80=
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
+ [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-329-YUNkeSMOOiGPDa_ZKJ4yLw-1; Thu, 29 Aug 2024 04:26:58 -0400
+X-MC-Unique: YUNkeSMOOiGPDa_ZKJ4yLw-1
+Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-a8680b74416so209157866b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 01:26:57 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724920017; x=1725524817;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=009aMKtYz3alNozgyKcZzRLs3QnC7nYwCnZ9axqzyJI=;
+        b=BuFp6cXXO0ASRmIIEfjjI/jYDCGj4Ejb6cNzTlpFf/i9NmxvpCqfL67X4qw+kPy1Qm
+         582+LiGBFc+EGkpyNnc1NYVXYvBSAtNiocPBUBMrRVZeduuUJIqA65uyf/hRILUM1TiD
+         0Gh+IyN2z8OMa4+A/APeiqpu+PvjOBAcGVe59d/x7jcA7ERbKrDhFimaJjjeO3YeYAAX
+         izJfSPB09bSEwl2uV4CbRAwxX0rMB3r6Qv7OAFucMqd9fDVK+1nRYdpbjk9NztO+Z2Qb
+         RlMMlJD3nHeMMo88BFvWsea7+dtWruzWHde1foLYBfFOldCphq65lDvXKskMUREntLPH
+         9x1g==
+X-Forwarded-Encrypted: i=1; AJvYcCWR7dru3MyvhjfQvMfDAxEw53FDXSye6hax5YGm93GZytIHPBf/G5hJ5DOnaaAJsfHTEXOaJDAkUaKf9aA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzmkm+P0nwzHZvwOCQc49pw1SzaIvDNf0BcrgT1/LTPSa0qs1J1
+	kcuVnZPg0pwd+4I4Yan99W2DZgYNmEYOdIKBUnfOVMRBmqdiKnQb5hW0C29J3/vMS8rqrhoMMk0
+	R6CTCq8zfgPQKcuWF7vAoa87BMcRKahmtDIJCDQnjRu2fqjgfahiRzqmjUt2L0Q==
+X-Received: by 2002:a17:907:3f08:b0:a7a:8dcd:ffb4 with SMTP id a640c23a62f3a-a898259d562mr216808566b.17.1724920016793;
+        Thu, 29 Aug 2024 01:26:56 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGpgPvAWdmdMwSpjC1P4giL7TG3nksWf9mUuwzWdS9aF/bqlDM5xYu2KySqyBFkeSGzQSLmJg==
+X-Received: by 2002:a17:907:3f08:b0:a7a:8dcd:ffb4 with SMTP id a640c23a62f3a-a898259d562mr216805566b.17.1724920016274;
+        Thu, 29 Aug 2024 01:26:56 -0700 (PDT)
+Received: from ?IPV6:2a0d:3344:1b50:3f10:2f04:34dd:5974:1d13? ([2a0d:3344:1b50:3f10:2f04:34dd:5974:1d13])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c226c7c060sm413582a12.50.2024.08.29.01.26.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 29 Aug 2024 01:26:55 -0700 (PDT)
+Message-ID: <26d3f7cf-1fd8-48b6-97be-ba6819a2ff85@redhat.com>
+Date: Thu, 29 Aug 2024 10:26:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] nfc: pn533: Add poll mod list filling check
+To: Aleksandr Mishin <amishin@t-argos.ru>,
+ Samuel Ortiz <sameo@linux.intel.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
+References: <20240827084822.18785-1-amishin@t-argos.ru>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20240827084822.18785-1-amishin@t-argos.ru>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Charlie Jenkins <charlie@rivosinc.com> writes:
-> Some applications rely on placing data in free bits addresses allocated
-> by mmap. Various architectures (eg. x86, arm64, powerpc) restrict the
-> address returned by mmap to be less than the 48-bit address space,
-> unless the hint address uses more than 47 bits (the 48th bit is reserved
-> for the kernel address space).
->
-> To make this behavior explicit and more versatile across all
-> architectures, define a mmap flag that allows users to define an
-> arbitrary upper limit on addresses returned by mmap.
->
-> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
-> ---
->  include/uapi/asm-generic/mman-common.h       | 1 +
->  tools/include/uapi/asm-generic/mman-common.h | 1 +
-  
-You're not meant to update the headers in tools/ directly. There's a
-mail somewhere from acme somewhere describing the proper process, but
-the tldr is leave it up to him.
 
-> diff --git a/include/uapi/asm-generic/mman-common.h b/include/uapi/asm-generic/mman-common.h
-> index 6ce1f1ceb432..03ac13d9aa37 100644
-> --- a/include/uapi/asm-generic/mman-common.h
-> +++ b/include/uapi/asm-generic/mman-common.h
-> @@ -32,6 +32,7 @@
->  
->  #define MAP_UNINITIALIZED 0x4000000	/* For anonymous mmap, memory could be
->  					 * uninitialized */
-> +#define MAP_BELOW_HINT	  0x8000000	/* give out address that is below (inclusive) hint address */
 
-IMHO the API would be clearer if this actually forced the address to be
-below the hint. That's what the flag name implies after all.
+On 8/27/24 10:48, Aleksandr Mishin wrote:
+> In case of im_protocols value is 1 and tm_protocols value is 0 this
+> combination successfully passes the check
+> 'if (!im_protocols && !tm_protocols)' in the nfc_start_poll().
+> But then after pn533_poll_create_mod_list() call in pn533_start_poll()
+> poll mod list will remain empty and dev->poll_mod_count will remain 0
+> which lead to division by zero.
+> 
+> Normally no im protocol has value 1 in the mask, so this combination is
+> not expected by driver. But these protocol values actually come from
+> userspace via Netlink interface (NFC_CMD_START_POLL operation). So a
+> broken or malicious program may pass a message containing a "bad"
+> combination of protocol parameter values so that dev->poll_mod_count
+> is not incremented inside pn533_poll_create_mod_list(), thus leading
+> to division by zero.
+> Call trace looks like:
+> nfc_genl_start_poll()
+>    nfc_start_poll()
+>      ->start_poll()
+>      pn533_start_poll()
+> 
+> Add poll mod list filling check.
+> 
+> Found by Linux Verification Center (linuxtesting.org) with SVACE.
+> 
+> Fixes: dfccd0f58044 ("NFC: pn533: Add some polling entropy")
+> Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
 
-It would also mean the application doesn't need to take into account the
-length of the mapping when passing the hint.
+The issue looks real to me and the proposed fix the correct one, but 
+waiting a little more for Krzysztof feedback, as he expressed concerns 
+on v1.
 
-cheers
+Thanks,
+
+Paolo
+
 
