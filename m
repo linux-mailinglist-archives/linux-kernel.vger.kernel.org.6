@@ -1,188 +1,100 @@
-Return-Path: <linux-kernel+bounces-306413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81D36963EBB
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:35:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4406963EB2
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:35:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EEA6281DF5
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:35:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFA501C2438F
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:35:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9532F18C34D;
-	Thu, 29 Aug 2024 08:35:35 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66D7918C030;
+	Thu, 29 Aug 2024 08:35:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mYJwXoxr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DF50189F36;
-	Thu, 29 Aug 2024 08:35:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 997773D6A;
+	Thu, 29 Aug 2024 08:35:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724920535; cv=none; b=YmE5nw44NRUKkRitQ3KLXAELZqRFDYHtLrOHim54GAjkloGFKE8T8TeLifRHWAs/mtOO7HUMXFGVMaIDop/DSEiIzYKJj3zyf6eMlrlqN8NzYTD6b2maNh4wcY5mLLOX3Lx6zkRRZmKRwiQGPAaE9/vH0M7FOqfE9qVS0zgI6Hc=
+	t=1724920505; cv=none; b=I9rkY8dRbyw9+x4a5gnpi3vRK5Gc3+af6GFhs/U80sbG8gDmLVcRKyevRnDhyIOBAUqQuKetZsaMHpAEKVGgwy9EhLsUKbog5/LClTqXXErU0CqqtucmKHEbvtpBM80f9rTGLh/AyOr4suf8oVazw3pif0TQCgZYPWOHYBSsXi4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724920535; c=relaxed/simple;
-	bh=08PKGA+fUzd0s7QRwGYtG0cpzGpgl+u8V4qYLR6fTnM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qHgNcREPq3ejXs8U9HPi0JWHpUoocgvY3/yb+IrQeTK8WIP0qtPFrMG0To6kO2jJ0Q7HGtdLbICjZ7rDsqSIOCR2C9piD0Z6zv+ZfA8A0EdvwHmWHHBzrZTiIceLTnwAsJ/IovKLBXm/7Trg40harrLC2iU3RP5RJzjXj2o8ivo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4WvZNM1FFNz4f3kFL;
-	Thu, 29 Aug 2024 16:35:15 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id C9E841A0FA3;
-	Thu, 29 Aug 2024 16:35:29 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgB3n4XNMtBmyzYkDA--.10163S4;
-	Thu, 29 Aug 2024 16:35:27 +0800 (CST)
-From: libaokun@huaweicloud.com
-To: netfs@lists.linux.dev
-Cc: dhowells@redhat.com,
-	jlayton@kernel.org,
-	brauner@kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	hsiangkao@linux.alibaba.com,
-	jefflexu@linux.alibaba.com,
-	linux-erofs@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org,
-	libaokun@huaweicloud.com,
-	yangerkun@huawei.com,
-	houtao1@huawei.com,
-	yukuai3@huawei.com,
-	wozizhi@huawei.com,
-	Baokun Li <libaokun1@huawei.com>,
-	stable@kernel.org
-Subject: [PATCH v2] cachefiles: fix dentry leak in cachefiles_open_file()
-Date: Thu, 29 Aug 2024 16:34:09 +0800
-Message-Id: <20240829083409.3788142-1-libaokun@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1724920505; c=relaxed/simple;
+	bh=P0f8ntpzcKey1wli+oN8eCCGvNidzORW7xrQUlBhT3E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bvTqYxVPfcX0kU/BYdCRbwXehNBliKTy7bXgd40Id19dU27+N78Gl7e3cyITm7hd1cYSvAwq5QFFeou6spRxRriTJ1nF4Y2EX8jKvdHY1h9C/MZ/KQ2ZNchA3yuzbxipWjniO9LcNiu/bdOTk1sov60WGi9U7NOeLClkhOuY8r0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mYJwXoxr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45145C4CEC7;
+	Thu, 29 Aug 2024 08:35:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724920505;
+	bh=P0f8ntpzcKey1wli+oN8eCCGvNidzORW7xrQUlBhT3E=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=mYJwXoxrqaUHZFFsNtMvTkCPvneG+WOO2MF97WITH5sfI+5l9M+JEMu+2XmuqAqsW
+	 pXFlz3L0natvIdxu6Yc2+C6Qi2Ltxf1/w+2pFcnwn3625cBJLg08Z3FjfrcrT0TYxA
+	 Y3lPBfnsTXOJ6Nyd4X82wvoZVBMVwju4VqUdlDczVTGkvQDDEQOCSBc9UkIZOdWz5k
+	 QmzvT/FjPvr3V6GVovDdrIIqLm3La14vwsl5pCrpb7vy4Ua49hjC2+x5Uxx+r/m0OG
+	 rYS4wY1ODCRow6lJUHU+2OTd3/d1z/MFh+7tSgYyW45YrVJ6RRsS4onddv61JbBRAf
+	 3PjtitvyWzvBw==
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5bef295a2b4so691750a12.0;
+        Thu, 29 Aug 2024 01:35:05 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUr1dy0Ckxti/7b0b/SRUFR2eAyvZdST31A5T/ch0ORApZXmYwoShKelH4UH33Ap8WoojSTybuCYIU=@vger.kernel.org, AJvYcCVXLuWuD1fJi/BFzwv/YOnzhnfNIZFJjwcL+RN9CtAA47JhnBEVrN/fAcEfF70S6AHC8H1fWZGWN3ZJ1nE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6N18cqW4/LfzjR4g6mgtrHZrKjD15VPwa/83XfvLbj/mCiGwn
+	ouknGvqB+ATHzEyH/i7x8w6fTa7SPn7yxEyK4M8DallLiNrPvHQBiZcbKiA8ZnqGYrxw4tL18Cq
+	anOsvxXoYLbACD4/942aEABVF4uM=
+X-Google-Smtp-Source: AGHT+IF/e3S0CMGyfyhfJSpUWyWUcXjSg14YL8RAMcl4MQ9juD6gouEMbZsgTyeeytlDKzqdQRjDuFUMsdjKimhDofc=
+X-Received: by 2002:a05:6402:4314:b0:5c2:1132:7ce7 with SMTP id
+ 4fb4d7f45d1cf-5c220101f2emr2238125a12.7.1724920503791; Thu, 29 Aug 2024
+ 01:35:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgB3n4XNMtBmyzYkDA--.10163S4
-X-Coremail-Antispam: 1UD129KBjvJXoWxury8ZF45AFW8Zw1DCw4kJFb_yoW5ZF15pF
-	ZayFyxJryrWrWkGr48AFnYqr1rA3yjqF1DX3Z5Wr1kAr1qvr1aqr17tr1Fqry5GrZ7Ar42
-	qF1UCa43JryjkrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9E14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
-	Y2ka0xkIwI1lw4CEc2x0rVAKj4xxMxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI4
-	8JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xv
-	wVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjx
-	v20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20E
-	Y4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267
-	AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbTGQDUUUUU==
-X-CM-SenderInfo: 5olet0hnxqqx5xdzvxpfor3voofrz/1tbiAQAKBWbO339ALgABsp
+References: <20240828062459.1853837-1-chenhuacai@loongson.cn>
+ <affff6410e681152c3fdcf3512df76d734f29aeb.camel@xry111.site>
+ <CAAhV-H6YLg1ipUf-45-0zF6HRcCfkVikwQM5cAD7_VSYyAsfoQ@mail.gmail.com> <baba6eec7a1f66dc8b82d5e16612d0703dd33c81.camel@xry111.site>
+In-Reply-To: <baba6eec7a1f66dc8b82d5e16612d0703dd33c81.camel@xry111.site>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Thu, 29 Aug 2024 16:34:49 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H7RF8yXHacfq0nj-QTNXmZrRKG4xhHav66ZPg0SdGT64w@mail.gmail.com>
+Message-ID: <CAAhV-H7RF8yXHacfq0nj-QTNXmZrRKG4xhHav66ZPg0SdGT64w@mail.gmail.com>
+Subject: Re: [PATCH] cpufreq: loongson3: Use raw_smp_processor_id() in do_service_request()
+To: Xi Ruoyao <xry111@xry111.site>
+Cc: Huacai Chen <chenhuacai@loongson.cn>, "Rafael J . Wysocki" <rafael@kernel.org>, 
+	Viresh Kumar <viresh.kumar@linaro.org>, loongarch@lists.linux.dev, 
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Xuerui Wang <kernel@xen0n.name>, Jiaxun Yang <jiaxun.yang@flygoat.com>, 
+	Binbin Zhou <zhoubinbin@loongson.cn>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Baokun Li <libaokun1@huawei.com>
+On Thu, Aug 29, 2024 at 3:33=E2=80=AFPM Xi Ruoyao <xry111@xry111.site> wrot=
+e:
+>
+> On Wed, 2024-08-28 at 21:55 +0800, Huacai Chen wrote:
+> > > Do I need to modify some firmware setting to make it work?
+> > You should update your firmware.
+>
+> I've already updated to UDK2018-3A6000-
+> 7A2000_EVB_V4.0.05756_prestable2405_0523dbg.fd on a XA61200 before
+> trying CPUFreq.
+>
+> And I also tried enabling DVFS in the firmware setting, and disabling
+> the overclocking.  Both didn't work.
+Hmm, current firmware with DVFS can only cooperate with the old
+CPUFreq driver in old-world kernels. New firmware which can cooperate
+with the upstream CPUFreq driver hasn't been released yet.
 
-A dentry leak may be caused when a lookup cookie and a cull are concurrent:
+Huacai
 
-            P1             |             P2
------------------------------------------------------------
-cachefiles_lookup_cookie
-  cachefiles_look_up_object
-    lookup_one_positive_unlocked
-     // get dentry
-                            cachefiles_cull
-                              inode->i_flags |= S_KERNEL_FILE;
-    cachefiles_open_file
-      cachefiles_mark_inode_in_use
-        __cachefiles_mark_inode_in_use
-          can_use = false
-          if (!(inode->i_flags & S_KERNEL_FILE))
-            can_use = true
-	  return false
-        return false
-        // Returns an error but doesn't put dentry
-
-After that the following WARNING will be triggered when the backend folder
-is umounted:
-
-==================================================================
-BUG: Dentry 000000008ad87947{i=7a,n=Dx_1_1.img}  still in use (1) [unmount of ext4 sda]
-WARNING: CPU: 4 PID: 359261 at fs/dcache.c:1767 umount_check+0x5d/0x70
-CPU: 4 PID: 359261 Comm: umount Not tainted 6.6.0-dirty #25
-RIP: 0010:umount_check+0x5d/0x70
-Call Trace:
- <TASK>
- d_walk+0xda/0x2b0
- do_one_tree+0x20/0x40
- shrink_dcache_for_umount+0x2c/0x90
- generic_shutdown_super+0x20/0x160
- kill_block_super+0x1a/0x40
- ext4_kill_sb+0x22/0x40
- deactivate_locked_super+0x35/0x80
- cleanup_mnt+0x104/0x160
-==================================================================
-
-Whether cachefiles_open_file() returns true or false, the reference count
-obtained by lookup_positive_unlocked() in cachefiles_look_up_object()
-should be released.
-
-Therefore release that reference count in cachefiles_look_up_object() to
-fix the above issue and simplify the code.
-
-Fixes: 1f08c925e7a3 ("cachefiles: Implement backing file wrangling")
-Cc: stable@kernel.org
-Signed-off-by: Baokun Li <libaokun1@huawei.com>
----
-v1->v2:
-	Use of new solution.
-
-v1: https://lore.kernel.org/r/20240826040018.2990763-1-libaokun@huaweicloud.com
-
- fs/cachefiles/namei.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
-
-diff --git a/fs/cachefiles/namei.c b/fs/cachefiles/namei.c
-index f53977169db4..2b3f9935dbb4 100644
---- a/fs/cachefiles/namei.c
-+++ b/fs/cachefiles/namei.c
-@@ -595,14 +595,12 @@ static bool cachefiles_open_file(struct cachefiles_object *object,
- 	 * write and readdir but not lookup or open).
- 	 */
- 	touch_atime(&file->f_path);
--	dput(dentry);
- 	return true;
- 
- check_failed:
- 	fscache_cookie_lookup_negative(object->cookie);
- 	cachefiles_unmark_inode_in_use(object, file);
- 	fput(file);
--	dput(dentry);
- 	if (ret == -ESTALE)
- 		return cachefiles_create_file(object);
- 	return false;
-@@ -611,7 +609,6 @@ static bool cachefiles_open_file(struct cachefiles_object *object,
- 	fput(file);
- error:
- 	cachefiles_do_unmark_inode_in_use(object, d_inode(dentry));
--	dput(dentry);
- 	return false;
- }
- 
-@@ -654,7 +651,9 @@ bool cachefiles_look_up_object(struct cachefiles_object *object)
- 		goto new_file;
- 	}
- 
--	if (!cachefiles_open_file(object, dentry))
-+	ret = cachefiles_open_file(object, dentry);
-+	dput(dentry);
-+	if (!ret)
- 		return false;
- 
- 	_leave(" = t [%lu]", file_inode(object->file)->i_ino);
--- 
-2.39.2
-
+>
+> --
+> Xi Ruoyao <xry111@xry111.site>
+> School of Aerospace Science and Technology, Xidian University
 
