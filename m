@@ -1,155 +1,187 @@
-Return-Path: <linux-kernel+bounces-306062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 136189638B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 05:17:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9600C9638BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 05:19:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE32B285C39
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 03:17:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4EBCBB22B46
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 03:19:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 301D24F20C;
-	Thu, 29 Aug 2024 03:17:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB47749625;
+	Thu, 29 Aug 2024 03:19:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20230601.gappssmtp.com header.i=@amacapital-net.20230601.gappssmtp.com header.b="V5Dy5ekw"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="J6Q8aqN0"
+Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2053.outbound.protection.outlook.com [40.107.117.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91BBD3A1DA
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 03:17:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724901440; cv=none; b=dqjCRFlMVfN/IZN4dYY6TJWzzP6Yt9sLknU5za4DxxziYFtbQ8xmphLi0AG+YsgY/kvgMsZ2uUSIoJpTUiF4Y7xgjidZ0GwF89fka3z/L+AJAcoZE+7zbRni/7ZQoMOD1y7Zxsv3qH7q2lSAf7xRNklmx5c9eq0bJyxUn8RvOrg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724901440; c=relaxed/simple;
-	bh=2aTnaXW705uxQNx7oNYfenyF4g7+kMVW1ZmdnZoGpwc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=txiaX2bgMMnOunEvW3fK7uYl5JDcGZqcROSANiwLqdZ1jtdlxtye6WgvDU5coI2kQQzf38OV6gUQJvoRKOFqa63z4ov4aqJ3xaP60/hdUbvLR8prYPCWFC9K15Hy9/Spd7XfOxUR1G1kgAMUcTz/1CffqIrnwTTw3IgsQmI14Vc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net; spf=pass smtp.mailfrom=amacapital.net; dkim=pass (2048-bit key) header.d=amacapital-net.20230601.gappssmtp.com header.i=@amacapital-net.20230601.gappssmtp.com header.b=V5Dy5ekw; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amacapital.net
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5befd2f35bfso128357a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 20:17:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20230601.gappssmtp.com; s=20230601; t=1724901437; x=1725506237; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KNmzosmlE3keF9ZOCKanmUq6J3PfB9qYT5nEB2uhPjQ=;
-        b=V5Dy5ekwSz4wlE7HIog3NxMEqjOmIkwJJvBJI80QQjk5dv0AllEip3f/d0NrqLAaHv
-         cA63UJtIQlP40O7dftABI7mbjgbdLfBu4FWt3Bq3lVfREK4HLx8wT4BFMVtfZ0QOxswt
-         vY9CPSS+wSbJZ3nokNkaANEVjcmjKENxLvnmMiqEQVSthWf7v4f+SW3bcUTISkOZOzxu
-         prvnwSKg9iKmYoB5JutyocnBiMZxiqpra6t4HKKLymEO3K7YsLRFLOIZryJlHZ09fmLj
-         Of9O27H6Nx0n2PjerFUsF5Q2McYvlwTLu4QNmEazbBquYEzt5eMQ+nPCfbV+qOMKUThK
-         3eFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724901437; x=1725506237;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KNmzosmlE3keF9ZOCKanmUq6J3PfB9qYT5nEB2uhPjQ=;
-        b=FSHg2Y62mp0lpmWR+XiirNk9PQ5jHjrPD/tP67ldMIXtwzDUOre2UPiL4S6HUleHpL
-         C1xeDI/O10cLnbhjkJzrZ9C8qlKfW7dy343DnYJVzWSX9EM9PWV4wICx+VDqqzBycwk7
-         zHtwf44FF1Zpi2g6vjwd0X1o7XmwjE4soOrmWKsJoZh6nuS5DKvdnnzAPJa1j5+gMXet
-         wnngsAPn9y0Lh+WupqwY94LKDdaxCKizo06toid7Zj4rVJp1uUy4X65GZiPkNgJjtrFF
-         Leey/67btRRDwMJxCYAMsLC0Nt1/cfOL/acJX1eH7tQ+urxvW6k0uTBcw2mslt3my7+q
-         7Tow==
-X-Forwarded-Encrypted: i=1; AJvYcCXC1lN2u+ltmriBUSA4wWGwDEPlfrjL/pk9rGeN8ztzIozJBtXXMoSgajnMcEXuNIU6gjwO2NqHXfpl7xQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2aEVjGNF0gsMk6OnMLPMQ+Yd6gmXHqdc1Z8DRpJ6VJ90XTy9t
-	pCs7Hqp7JKHl2gvMjE6obnV00oXJ9ZSVtHdKAel8a3z589ZQZGZs9D28giNCYoEOZM89GFtzudh
-	iyCzvugMyd7ZPpEot4JXxKxA++4+78ZNxVhr90imrORuKjjY=
-X-Google-Smtp-Source: AGHT+IFEtovpRJEIjkfJeoX6oyzRzBMJpdpEM5rys6Mzg7Lm/FHfWD6uqtRHPHJtPhzPqMuGNpCp0pksl5KfgHXNdDI=
-X-Received: by 2002:a05:6402:518e:b0:5bf:c8:78a with SMTP id
- 4fb4d7f45d1cf-5c21ed5316amr952709a12.17.1724901436704; Wed, 28 Aug 2024
- 20:17:16 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA9031B7F4;
+	Thu, 29 Aug 2024 03:19:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.53
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724901570; cv=fail; b=B56Kq+KfSrLaHoWERtHLbXMH23QBQrto2gZ4EQGD8FS0OXp4RkBY9UlA1RpN02sZt9xxm3EaRud2C18BvGjSTz2krtJOa1j+GcqSQ+aiHAfGp6yPYs2+nm4KIAzO5pfHkFhL9d6I0vL1ca4v6+CeaiLjhadPEkQxV0+CeA7m1ok=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724901570; c=relaxed/simple;
+	bh=3sOKQfPu21xu4da2YFpOYnA4x3H8LFgxV2fr/Fe0LF8=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=kYf4b1V/vwRCwLLEDtDnxXTvEsEmSOfpdnhsYkfg5Na8mWzbUIhq+LDHL3NQFYcLapCWyGPU0zW3GzZZt8yGVBP1ZxSHQ3URnxvYd8NXLWsv4PBWQ9S3t3ljkebrqWPt/W3721Cu9/yprlmB/c0ayZg52+5rQkIzcHXdvtZqFmM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=J6Q8aqN0; arc=fail smtp.client-ip=40.107.117.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=HVsGbm+FJVyIZ7MpgHulqPmjHv1SIGMhapW9LN92aRiB/aarNrMUXJyIGone7gENZcIScIL7KBOGOc8ztkxYtRgR6YyJ/1Zck79ul+1XHwqP31VDoymi/Er79HxwPPBx5SGtMvA5P+OGnr5XWfKWfdWRIBVTPLpXNpZS1gSaJso1g11WeDQQOwucwLpgw4Q4x862HMyKctamU5amoAa+978o/zcLnbI0Xj4lswY3LO8BriW52Oy/m7JFNkxIq29ythkpn+o8qUgdIkzOG1w21FeCAYMTy5S1F+GPaPhQ6DCzNRdokrt9x8mOK77TJhRdP1XhsDF2I+hOuCcq4YxoQQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=wkiBpToYSULnQ1jcEw7OLvflE5caJXbxsND2UxGQ3gg=;
+ b=mtN8HPDMSB/KzOHbkYOztb3oyKO2iyHSJWRdZq0Ao7eLiSfpic1NSlOOAmPeql3Y1OLA18lOrbT3HCti9Y9SU77y/vfrxnJFv/hN5ee9qP9juvtOgAOMMCbwJiz1qZER74GRersp4cPi4AX5JCb9Qxb1cKFs/bZmYjAKDSb7mt4srLPGsjK+Augl8sw9PUn4V9PH1i41zuPG7Og6vkd2Y28YD2MpVXmXULhWh603J7Ps5FNo2LYmEtKtlhTQcZ3jnORhyjYgX4sknHtlq5oBVHUQaYz09N/bW45/ukARR9v0E1ijTkhv5acb1kuozOAzUTyKWBdk2YHbUiYtJH1YgQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=wkiBpToYSULnQ1jcEw7OLvflE5caJXbxsND2UxGQ3gg=;
+ b=J6Q8aqN0wVJu/FtcnSrYr+RuIrpmsnMa4pZAiygmWr21ZNrB1iLovYuA/30EdkGFaTBMZwYr8LzVzi+OysoRH9+QRRxsdBbUgJp4lkaQVx7qESBK2S30Vam6mu/p9hoBmxHs+kpIwLLT7Yu4jsqWP2R3/8MNxkxNP94xZ/odyGQPcfRNjQ4nkKtWx6Wz2U9GZ9JPyXFclIsPZC6OxK3VvL1tjCiuHPIHAp0JVRxutl3/Ki0GCbL+1/bFsllR1sM9GZwKEOxq9sScBTqCkZkw8W/snkUUF1sGb/hBJi94nR0TAxaG+zPYDEzk4NYt2I3lN870bihMNxVZ1Te4MAFM1Q==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from KL1PR0601MB4113.apcprd06.prod.outlook.com (2603:1096:820:31::7)
+ by SEYPR06MB5184.apcprd06.prod.outlook.com (2603:1096:101:89::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.28; Thu, 29 Aug
+ 2024 03:19:22 +0000
+Received: from KL1PR0601MB4113.apcprd06.prod.outlook.com
+ ([fe80::7e85:dad0:3f7:78a1]) by KL1PR0601MB4113.apcprd06.prod.outlook.com
+ ([fe80::7e85:dad0:3f7:78a1%4]) with mapi id 15.20.7897.027; Thu, 29 Aug 2024
+ 03:19:21 +0000
+From: Yan Zhen <yanzhen@vivo.com>
+To: kuba@kernel.org,
+	marcin.s.wojtas@gmail.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	pabeni@redhat.com
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	opensource.kernel@vivo.com,
+	Yan Zhen <yanzhen@vivo.com>
+Subject: [PATCH v2 net-next] ethernet: marvell: Use min macro
+Date: Thu, 29 Aug 2024 11:19:06 +0800
+Message-Id: <20240829031906.1907025-1-yanzhen@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR06CA0203.apcprd06.prod.outlook.com (2603:1096:4:1::35)
+ To KL1PR0601MB4113.apcprd06.prod.outlook.com (2603:1096:820:31::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240531010331.134441-1-ross.philipson@oracle.com>
- <20240531010331.134441-7-ross.philipson@oracle.com> <20240531021656.GA1502@sol.localdomain>
- <874jaegk8i.fsf@email.froward.int.ebiederm.org> <5b1ce8d3-516d-4dfd-a976-38e5cee1ef4e@apertussolutions.com>
- <87ttflli09.ffs@tglx>
-In-Reply-To: <87ttflli09.ffs@tglx>
-From: Andy Lutomirski <luto@amacapital.net>
-Date: Wed, 28 Aug 2024 20:17:05 -0700
-Message-ID: <CALCETrXQ7rChWLDqTG0+KY7rsfajSPguMnHO1G4VJi_mgwN9Zw@mail.gmail.com>
-Subject: Re: [PATCH v9 06/19] x86: Add early SHA-1 support for Secure Launch
- early measurements
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: "Daniel P. Smith" <dpsmith@apertussolutions.com>, 
-	"Eric W. Biederman" <ebiederm@xmission.com>, Eric Biggers <ebiggers@kernel.org>, 
-	Ross Philipson <ross.philipson@oracle.com>, linux-kernel@vger.kernel.org, x86@kernel.org, 
-	linux-integrity@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-crypto@vger.kernel.org, kexec@lists.infradead.org, 
-	linux-efi@vger.kernel.org, iommu@lists.linux-foundation.org, mingo@redhat.com, 
-	bp@alien8.de, hpa@zytor.com, dave.hansen@linux.intel.com, ardb@kernel.org, 
-	mjg59@srcf.ucam.org, James.Bottomley@hansenpartnership.com, peterhuewe@gmx.de, 
-	jarkko@kernel.org, jgg@ziepe.ca, nivedita@alum.mit.edu, 
-	herbert@gondor.apana.org.au, davem@davemloft.net, corbet@lwn.net, 
-	dwmw2@infradead.org, baolu.lu@linux.intel.com, kanth.ghatraju@oracle.com, 
-	andrew.cooper3@citrix.com, trenchboot-devel@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: KL1PR0601MB4113:EE_|SEYPR06MB5184:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8a2a7875-5bba-41d2-e60f-08dcc7d95ff3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|376014|1800799024|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?atNDWa87ibAxa/b2yngtlg7YArNV5aHYHp/xgEE7QgYSaToZSwAfEgRijUZv?=
+ =?us-ascii?Q?ckoKPwqhCXDrpYfHmNtklyzQwrAUKQw3QoQPtDIChKi+cL5Gf5JhkFFQyH06?=
+ =?us-ascii?Q?JhFPDs7LApQQmmXMQ5FLjf8E9LQHEe/BO1J7lUPnIk5ROfa24MYxhxfiaEbn?=
+ =?us-ascii?Q?2a5WeKkPDw49H3YQKO5rsXbwm1OWLvxJLUUZHKw2PPVpwjq9Vt+z1b8vpiWy?=
+ =?us-ascii?Q?lVGqwRJoVheZfB/5+Y0mt+XZecMJPcsyARNuJE/5h4k75P+nnVMgetH6M08G?=
+ =?us-ascii?Q?zzezSV3UZG2TGOKaBbvHy9z42It0Zx4z3Juo141o11o8o2+wC54/uG1oPWQA?=
+ =?us-ascii?Q?KNI1WHpZBnjPvG/wyKG+QaVefM4LOX651N+71F8kFuskhSSDTPNMqj9zaS7f?=
+ =?us-ascii?Q?TmPPp1QzFZ3GBGExjP0xiCVUJRkdho/DmLzxU3843KX2QBoxQ6LbKfmjV/Tq?=
+ =?us-ascii?Q?vtDtON85ubm/LtcH44NzsJEyn3QM6TYprZ0qtxiu6c12kJfPQ3EfmVJsIp47?=
+ =?us-ascii?Q?XgKuJRCmac2j4yvh+H61IF3zkFOM89uN3OrZ2HnrOdKV6h8ehUipE6Qr7c6B?=
+ =?us-ascii?Q?zfIY3kgXib6d0JUUIdTGCaiEA+ZrSY/9scI8ynmR0iLt4OYDIbCDO7vbkjlo?=
+ =?us-ascii?Q?8SiRdXFrRptqFuwBoWaHH8L8muz6Aqc6ePtpJNjUR4aUvtijnWh//jdgu2DO?=
+ =?us-ascii?Q?/TdGMmkvaHHLA/DHZH3gvQ25j7fG+EIy7EKojQOtkdB4wCf3Q8LeS/6hn4Ny?=
+ =?us-ascii?Q?ST0zvqMgJdq0Xsf+3WJLiyCUULaNwy0+k0jANhrK7DFyr0K3jDrCDer3d685?=
+ =?us-ascii?Q?DpVMyn85WAzc2RozfjQkN5iuAMTRP2Cwnyi92ljRnGEKjWcqnAcTmaV/hBrn?=
+ =?us-ascii?Q?yW0rKcPY4+sAH3cJmum0CiXxJPLX3QL/hQhowvj2ftl6JqCRTktvtN5rWVSr?=
+ =?us-ascii?Q?blZETQaRMryngajNgN8x1KbxgXWTfH4iXEyIquMKiInzIru2NRFpMtt1eceh?=
+ =?us-ascii?Q?2mU6S7YfRvQgJjb/lq7oNVXDUfh/+Q0NmLboFGicHNgTeVmZiEDIIyTpOpke?=
+ =?us-ascii?Q?0WqGq8V3qS5Xh5UjGXihx1s/cJemrUF2+UDx9yCKd6MsoWoP1fFQIqbIty0g?=
+ =?us-ascii?Q?IOwSbDGBylp4HSuyPLHkIy4+SRb2I1Nm0gIlPlqb+P5OU5CsFaY0gXrYpOkk?=
+ =?us-ascii?Q?t27+8RFZ9dIaGYQQ4FfnYJIasMnfy/UJJ2KXS7WPuk11R+qcFzx60wDdQ0fj?=
+ =?us-ascii?Q?c1Thq1Oj5h6h4YTxMoFwQaAul+mt3Ce9MrZkrW2+simuKmEIQMxEC/XeAy6T?=
+ =?us-ascii?Q?a6xSQT0iy+zCdddsvd7Qt9pGeGOlGacXpXU8wkktdwuq7MbQxY7NQifxAtmJ?=
+ =?us-ascii?Q?aloezdwP7IDSPS3Ep4O0Nc+y0QUjxusz5yfTSseEJvTxTw7syA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR0601MB4113.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?nRY2OPc++PPkVMR51NnhmBmzP+0CGibhZB3UmYvFO8IA0kM+BRWu95vH8hzd?=
+ =?us-ascii?Q?t8DBAzcTWkZzw3hxs31oq9gMlXRk9Rfr0T0dVAiHVIW4CdK8wcL/SJLlVQTV?=
+ =?us-ascii?Q?Zf+7rBLu5yI4My0MOPStxWTzxA9aYigvPYV7ymN4rDD8BKhgKOm+aSiXpWhn?=
+ =?us-ascii?Q?aWk2YLY9kOTXpEBzeFwjZlh0uO2fVHSWx868TYPxNifMsOZRcXn/Bfcr2Ass?=
+ =?us-ascii?Q?2NRhDh6SOiz+pYA+uo4dmMjUoVe6dQdp4F9BM8yRq7kz4FeqQ3BPpiqWV0OP?=
+ =?us-ascii?Q?68FpFH2ernVcDzngzneUXtlrYay8cym8IY1o6hk+XSeROHmHO4ryyrZKm5zd?=
+ =?us-ascii?Q?3lB4y+NhmeRdttNiE/oqW3sZx3U09QroKmUSuI9zbdAo9+/5hTyAOhgKh44N?=
+ =?us-ascii?Q?xuwxiR2EI/RI3aRZfSqCqnIheWjPMwcU+7Y1RKmnR5TgrJiD4OmpBoK7+3RN?=
+ =?us-ascii?Q?7dGfLQ6NVX33gs7EKYSw1o2uvelJvWzoKg0VKp/VokZLTztYnUzBopymLYuE?=
+ =?us-ascii?Q?Pahkr62pNtBDgkwlWMO1ff0+G2zdDMDxYQBDmrZ2sEsciT5AfBM7Leet7Zr7?=
+ =?us-ascii?Q?EsuEyLuOZCgTjFdCsp+BHiJrjEgw0ks8gQkLUWYM/vSVHXSRPQzKkIrmtyE+?=
+ =?us-ascii?Q?HHVC48unLWQYLgfBDkqu53do0X/DCbSI4Uctnc4j49y8ZXUNzs9Q9FMYxtdW?=
+ =?us-ascii?Q?EIIyeQvhnlQ5nIghtDk8BafG8B2PfTDPOWDP7uVaAqK0bYi4LIv4dce5vbES?=
+ =?us-ascii?Q?QY4Fypn9W0NOKV+JyK72sWXCCpX6v4e/SMOLZEXiylv7+vMN1vrvpQQ2bbtF?=
+ =?us-ascii?Q?TSHaHLJlbOWGz59a9yLlhT4aC8Gdt2v0aPrMLskGaPp/N1uD15wwn3JdUYyv?=
+ =?us-ascii?Q?Ib0CrscPIqumXQjbH5ZgiPXoydqHQXNoaoEOilPS4YQbyWbYQLHx3ztC2S1H?=
+ =?us-ascii?Q?XmE69cCbn8efmTxpYHFpKnQTFviFPqBAalr5ZIBCe5B89FzWAMiI4wa8bu1u?=
+ =?us-ascii?Q?5CWR6eh0Cp5sPmXDpDnYnCqy1V9XPJQShKkFeY9HNlSDerI0ZYuXzAtu/6kG?=
+ =?us-ascii?Q?DQEZ03sCgVK/RPbuX8+q720L67+Fbe20u2Op614VA59H4RkncC16zHM75c3t?=
+ =?us-ascii?Q?54cHHT3vN9886JS+odMgomCN5qyylchASVFTL5PTuwzhN+VPlCq1Nv4f7jHd?=
+ =?us-ascii?Q?8GbnFYxBz1iUfoQ6GK1D3GNUA2syjyNGbf6/oeiBPEXG+rM3fOHpmH38NM0O?=
+ =?us-ascii?Q?asspj9gLDv/WLjcSLB9RLRILAE3VV1FRzyDT9XZLMm41VHL6pi6jPGqHXIuD?=
+ =?us-ascii?Q?63mXbxMCDQ8ALdkU4dUjkgkhIX5Faxoi38PAMUxjrPCorYfHJd6VJ56BQSJt?=
+ =?us-ascii?Q?7xz609sPBJYjMKZpqKUQ7U9mnRrkCnxoOZo9pj6Z+7fqsO27/qbvXsy65l59?=
+ =?us-ascii?Q?TVx3NTR0WvZXrPQ3gA0cMPXBq7zt4IGIL2X1cFe9josJYj5VA5W1VpGDBl9y?=
+ =?us-ascii?Q?LqM10Rci6hnlZ9684zgbnjU5vL59vP/R0b4071t3suPjKdtckCt/tgISN5W9?=
+ =?us-ascii?Q?Rts/pXT2y/MiGl3xyVF0NoabhajcRo5Sjfz7G8Zy?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8a2a7875-5bba-41d2-e60f-08dcc7d95ff3
+X-MS-Exchange-CrossTenant-AuthSource: KL1PR0601MB4113.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Aug 2024 03:19:21.2996
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 33op3C4QQ4XygQ2TNPVbqoo3iXFx8I0Dd8gBEMBuJu1RZ3wnsdcec3yfvt1bCsVlsQNAsm+f0wJ6n2STL1I9Tw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR06MB5184
 
-On Thu, Aug 15, 2024 at 12:10=E2=80=AFPM Thomas Gleixner <tglx@linutronix.d=
-e> wrote:
->
-> On Thu, Aug 15 2024 at 13:38, Daniel P. Smith wrote:
-> > On 5/31/24 09:54, Eric W. Biederman wrote:
-> >> Eric Biggers <ebiggers@kernel.org> writes:
-> >>> That paragraph is also phrased as a hypothetical, "Even if we'd prefe=
-r to use
-> >>> SHA-256-only".  That implies that you do not, in fact, prefer SHA-256=
- only.  Is
-> >>> that the case?  Sure, maybe there are situations where you *have* to =
-use SHA-1,
-> >>> but why would you not at least *prefer* SHA-256?
-> >>
-> >> Yes.  Please prefer to use SHA-256.
-> >>
-> >> Have you considered implementing I think it is SHA1-DC (as git has) th=
-at
-> >> is compatible with SHA1 but blocks the known class of attacks where
-> >> sha1 is actively broken at this point?
-> >
-> > We are using the kernel's implementation, addressing what the kernel
-> > provides is beyond our efforts. Perhaps someone who is interested in
-> > improving the kernel's SHA1 could submit a patch implementing/replacing
-> > it with SHA1-DC, as I am sure the maintainers would welcome the help.
->
-> Well, someone who is interested to get his "secure" code merged should
-> have a vested interested to have a non-broken SHA1 implementation if
-> there is a sensible requirement to use SHA1 in that new "secure" code,
-> no?
->
-> Just for the record. The related maintainers can rightfully decide to
-> reject known broken "secure" code on a purely technical argument.
->
+Using the real macro is usually more intuitive and readable,
+When the original file is guaranteed to contain the minmax.h header file
+and compile correctly.
 
-Wait, hold on a second.
+Signed-off-by: Yan Zhen <yanzhen@vivo.com>
+---
 
-SHA1-DC isn't SHA1.  It's a different hash function that is mostly
-compatible with SHA1, is different on some inputs, and is maybe more
-secure.  But the _whole point_ of using SHA1 in the TPM code (well,
-this really should be the whole point for new applications) is to
-correctly cap the SHA1 PCRs so we can correctly _turn them off_ in the
-best way without breaking compatibility with everything that might
-read the event log.  I think that anyone suggesting using SHA1-DC for
-this purpose should give some actual analysis as to why they think
-it's an improvement, let alone even valid.
+Changes in v2:
+- Rewrite the subject.
+- Using umin() instead of min().
 
-Ross et al, can you confirm that your code actually, at least by
-default and with a monstrous warning to anyone who tries to change the
-default, caps SHA1 PCRs if SHA256 is available?  And then can we maybe
-all stop hassling the people trying to develop this series about the
-fact that they're doing their best with the obnoxious system that the
-TPM designers gave them?
+ drivers/net/ethernet/marvell/mvneta.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Thanks,
-Andy
+diff --git a/drivers/net/ethernet/marvell/mvneta.c b/drivers/net/ethernet/marvell/mvneta.c
+index d72b2d5f96db..08d277165f40 100644
+--- a/drivers/net/ethernet/marvell/mvneta.c
++++ b/drivers/net/ethernet/marvell/mvneta.c
+@@ -4750,8 +4750,7 @@ mvneta_ethtool_set_ringparam(struct net_device *dev,
+ 
+ 	if ((ring->rx_pending == 0) || (ring->tx_pending == 0))
+ 		return -EINVAL;
+-	pp->rx_ring_size = ring->rx_pending < MVNETA_MAX_RXD ?
+-		ring->rx_pending : MVNETA_MAX_RXD;
++	pp->rx_ring_size = umin(ring->rx_pending, MVNETA_MAX_RXD);
+ 
+ 	pp->tx_ring_size = clamp_t(u16, ring->tx_pending,
+ 				   MVNETA_MAX_SKB_DESCS * 2, MVNETA_MAX_TXD);
+-- 
+2.34.1
+
 
