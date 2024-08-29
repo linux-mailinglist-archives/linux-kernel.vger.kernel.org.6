@@ -1,78 +1,139 @@
-Return-Path: <linux-kernel+bounces-307298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D541964B78
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 18:20:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BDC8964B7C
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 18:20:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C7CE280DAA
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:20:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA365B27EF7
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:20:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C48F91B78E4;
-	Thu, 29 Aug 2024 16:17:51 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 765691922FE;
-	Thu, 29 Aug 2024 16:17:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D12321B7905;
+	Thu, 29 Aug 2024 16:18:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="mPd1GkGm"
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA1D81B78FB;
+	Thu, 29 Aug 2024 16:18:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724948271; cv=none; b=Vf6DziHk4qX7Cmxq3bduxAaJXlMXJclZWi8AVd5VoB3MorO8I7KArN+RWcedA1jhd2d0Q9wN/eqrV2Y41d2zBkpCWrmgkGJcflVgvGdKW9MsOm/XD9quzteqV7v5Ahnu4wAF5yMvGxj+2grFdabDO6+8JO4ZpzGcGosKqrWL4gQ=
+	t=1724948283; cv=none; b=Wj8a7RtqYl25fIJJcui+hhbSTK8lrD/pSzMXpaORsSxTvHZU1zRelE6qAHWy/zfE0aigk7/Es6xMD10+91fr/hKe7x/xDLYO0BMjN+G2Tyf6eXxl3xbrFbDF8eiWVxjkIGPa9exBnG4AV75PQvXoJ1v458Go16asPYcAEq2/jQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724948271; c=relaxed/simple;
-	bh=jjnFKvczBENKiZiDjjEQLKForEKb+4c2ND9lOv0yeHw=;
+	s=arc-20240116; t=1724948283; c=relaxed/simple;
+	bh=pnVQOit5esrOdWDax1UHkIVI8KzUprZRWP+rRMTsqXM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GY1U1v+haN2QbA0C1lRMFrA2hqSlP0JJbVW2QvURt+35sTkDe8cbmQfdgNfZ900tFaC7De6xDoZqxu2cK16UtSfaRfvLuLb0ftmbrWOBtNLsDYXY928IjPRcXcI7TywK8K/n4dQLVFtQnLLy5V+6b2YEi6UdpMUFBQGfr1bNjnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9E2DEDA7;
-	Thu, 29 Aug 2024 09:18:14 -0700 (PDT)
-Received: from bogus (e107155-lin.cambridge.arm.com [10.1.198.42])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B3ED83F762;
-	Thu, 29 Aug 2024 09:17:46 -0700 (PDT)
-Date: Thu, 29 Aug 2024 17:17:44 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Aleksandr Mishin <amishin@t-argos.ru>
-Cc: Fu Wei <fu.wei@linaro.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Hanjun Guo <guohanjun@huawei.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	<linux-acpi@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>
-Subject: Re: [PATCH] acpi/arm64: Adjust error handling procedure in
- gtdt_parse_timer_block()
-Message-ID: <ZtCfKEIfJW7X8UWg@bogus>
-References: <20240827101239.22020-1-amishin@t-argos.ru>
+	 Content-Type:Content-Disposition:In-Reply-To; b=owlTsPwUx7eAgFl/Y6x05CtLFdwE3EuvlddYNWThm1EMbbLW/xnQULRZIBgzk7k6ToOK4IsebxPlaExt6UnY4+L9sEk51Lj4O9nZ/Unbc4mtfSPRaX6p3dLq5I4TAuhOfnT1mtHM1WyGJpClIzsZUIbTcQ+7YiypLOq0XBtuJlM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=mPd1GkGm; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id E154620003;
+	Thu, 29 Aug 2024 16:17:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1724948273;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PPbweNLOln15v4/LrRjZ9XZdej7S6QSQGVF/NJJi1Ug=;
+	b=mPd1GkGmHi486sj2v/JLrpOWlIDP8EIqkoFDqHq9cvOPGm6r9F8cOBbXl7pkGVTeD6zADp
+	ZflWJABmmj/yF1evEX6pbh8k79TCoyKFSM2MlAl844ZQRmReNnDROnDH1oNKJAHQu3tygD
+	abDD7/vsZrYBUSWA+MoGAP5DiUP7SA836V1YjtJ2sRIsOFdx54gqajy2d76XAaxmYqiqS3
+	BWc2Sww4mMaWXNKQvQEaT7WhtDuHqdeXp8dCBhs/MFxeCRJhhTHXzVGjXkb3Qz51XV3u7J
+	H7Dxq7WAP8RFKsYtWrcynH/TZXpJQJD5JRPl4LqoHn0w/f1aydEI1E6w4Z3lRg==
+Date: Thu, 29 Aug 2024 18:17:52 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: gomba007@gmail.com
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-rtc@vger.kernel.org, csokas.bence@prolan.hu,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v6 0/2] Add support for the DFRobot SD2405AL I2C RTC
+ Module.
+Message-ID: <202408291617526e31318b@mail.local>
+References: <20240829-rtc-sd2405al-v6-0-4fbfe2624aa7@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240827101239.22020-1-amishin@t-argos.ru>
+In-Reply-To: <20240829-rtc-sd2405al-v6-0-4fbfe2624aa7@gmail.com>
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-On Tue, Aug 27, 2024 at 01:12:39PM +0300, Aleksandr Mishin wrote:
-> In case of error in gtdt_parse_timer_block() invalid 'gtdt_frame'
-> will be used in 'do {} while (i-- >= 0 && gtdt_frame--);' statement block
-> because do{} block will be executed even if 'i == 0'.
+This looks good, can you send v7 adressint Conor's comment, don't forget
+to collect his tag.
+
+On 29/08/2024 13:31:43+0200, TÛth J·nos via B4 Relay wrote:
+> This patch series adds a driver and the documentation for the SD2405AL I2C RTC.
 > 
-> Adjust error handling procedure by replacing 'i-- >= 0' with 'i-- > 0'.
+> To: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> To: Rob Herring <robh@kernel.org>
+> To: Krzysztof Kozlowski <krzk+dt@kernel.org>
+> To: Conor Dooley <conor+dt@kernel.org>
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-rtc@vger.kernel.org
+> Cc: csokas.bence@prolan.hu
+> Cc: devicetree@vger.kernel.org
+> Signed-off-by: TÛth J·nos <gomba007@gmail.com>
 > 
-> Found by Linux Verification Center (linuxtesting.org) with SVACE.
->
-
-(For some reason I don't see the original email in my inbox, might have
-got blocked üôÅ). Anyways LGTM,
-
-Acked-by: Aleksandr Mishin <amishin@t-argos.ru>
+> Changes in v6:
+> - Add missing To-s and Cc-s.
+> - Rebased onto v6.11-rc5
+> - Link to v5: https://lore.kernel.org/r/20240828-rtc-sd2405al-v5-0-9e3f8fa5ea6b@gmail.com
+> 
+> Changes in v5:
+> - Rework based on Alexandre Belloni's suggestions.
+> - Drop explicit initialization of struct i2c_device_id::driver_data.
+> - Add documentation.
+> - Link to v4: https://lore.kernel.org/r/20240624-rtc-sd2405al-v4-1-2b2bc759f98f@gmail.com
+> 
+> Changes in v4:
+> - Implement more comprehensive data validation.
+> - Inline some temporary variables.
+> - Link to v3: https://lore.kernel.org/r/20240620-rtc-sd2405al-v3-1-65d5bb01af50@gmail.com
+> 
+> Changes in v3:
+> - #define-s of registers are reworked.
+> - Minor revisions based on the reviewer's suggestions.
+> - Link to v2: https://lore.kernel.org/r/20240619-rtc-sd2405al-v2-1-39bea29bd2a5@gmail.com
+> 
+> Changes in v2:
+> - Refactored based on reviewer's suggestions.
+> - I couldn't get the I2C IRQ to work on Raspberry Pi 4, so alarm is
+>   skipped.
+> - Link to v1: https://lore.kernel.org/r/20240607-rtc-sd2405al-v1-1-535971e7a866@gmail.com
+> 
+> ---
+> TÛth J·nos (2):
+>       drivers: rtc: Add driver for SD2405AL.
+>       dt-bindings: rtc: Add support for SD2405AL.
+> 
+>  .../devicetree/bindings/rtc/trivial-rtc.yaml       |   2 +
+>  .../devicetree/bindings/vendor-prefixes.yaml       |   2 +
+>  MAINTAINERS                                        |   6 +
+>  drivers/rtc/Kconfig                                |  10 +
+>  drivers/rtc/Makefile                               |   1 +
+>  drivers/rtc/rtc-sd2405al.c                         | 227 +++++++++++++++++++++
+>  6 files changed, 248 insertions(+)
+> ---
+> base-commit: 5be63fc19fcaa4c236b307420483578a56986a37
+> change-id: 20240607-rtc-sd2405al-a0947377c73d
+> 
+> Best regards,
+> -- 
+> TÛth J·nos <gomba007@gmail.com>
+> 
+> 
 
 -- 
-Regards,
-Sudeep
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
