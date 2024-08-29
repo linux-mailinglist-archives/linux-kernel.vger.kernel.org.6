@@ -1,139 +1,87 @@
-Return-Path: <linux-kernel+bounces-306146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 388FB9639E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 07:32:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 742579639E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 07:33:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9BB6EB23F21
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 05:32:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A4400B23AC3
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 05:33:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEB4D1487F6;
-	Thu, 29 Aug 2024 05:31:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4ED91494B2;
+	Thu, 29 Aug 2024 05:33:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="KaKfqPMf"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tE4nHiaV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84C5B3BBF6;
-	Thu, 29 Aug 2024 05:31:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BF19EAD5;
+	Thu, 29 Aug 2024 05:33:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724909515; cv=none; b=fSEB2dWRvcRYPyQfMd6CXfDdWVbHlHKcDfN/qZWiJX2eKyT63tI5PlZRfM4Vkw996KGvvRLjigx67d1uWFmPhuBeqNAz+TtWFQAxkCqzOcX5VY5I5Ha6TCIeoHPQrXBl4iymHgeHUcugd9uIYUc1Jxnmyi6EnZMwxK2eRmUoWVk=
+	t=1724909607; cv=none; b=WDk7yJmhs6W5GTxFXf6KSpzg2m8r4q3242sluYZGfYT8ByksX7O+w/dI8dA147a6hbwSdPMQpxRGv9UWyvKR4+UxFlM3ptZAR9mBW5pZt0K0VUNJdTRV67A4RcwjSS/+uLEYuEOR04c2BRG6LBq7t/PdL+oXY/ZZuyCo8V7AeUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724909515; c=relaxed/simple;
-	bh=Y0HajbfS+F53T+99bHSu8tNmFstlDevBrgW5zNiW8ps=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=DdqUgkw+59BnlO0u5eE0+4UYOoi5r4kFSp9SeBut5T6JSoze+CFjwZA65r16qDbRrrfyXS+z9WZk4jRBEzs3lnEzps1wDkXArs+4xKHTfUWPkjaqhFI2YLd3nXRbMEo9VqStbNDaqBUtZ3ufQwfBmdkuXf/jJnvo36Sma3SfNPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=KaKfqPMf; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1724909508;
-	bh=uDvloGG3rY+/rOFfyrSGxei59bzgiKp1Bc/hDJG9KGc=;
-	h=Date:From:To:Cc:Subject:From;
-	b=KaKfqPMfLMNzbRLBUaqRTktn0BNkMnK/Qsr2UI4MW9XfjdMvoBPzJBHZ92kcL5A/y
-	 CHjcR52JYDP3iAL3CaM7Cku1sLIOmmFrJYrziuQdlR8iMKDmufde/dXcP02chvfyX+
-	 IjciMHFATseMiRv3lHmNy5CAQCbOT9zQw7MKI9lObudX8XPT7dFFzL6rJDLh6G+0Jm
-	 fDZtG0SJVtHQwkaFBsXgEqWX+zlxAD4crgw/hDp1AGIS55aigqOYqg0kyPvx3UyT6I
-	 FB/g5V+yu+ut+H+f1RoqZKDGDk+ubkdmeQFqBghe39g5TpX37rrkJzFdHvYE4pHqFF
-	 bMEanPDv8ppVQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WvVJf6GPhz4wnw;
-	Thu, 29 Aug 2024 15:31:46 +1000 (AEST)
-Date: Thu, 29 Aug 2024 15:31:45 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Kees Cook <kees@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
-Cc: Hongbo Li <lihongbo22@huawei.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Michal Wajdeczko <michal.wajdeczko@intel.com>
-Subject: linux-next: manual merge of the kspp tree with the mm tree
-Message-ID: <20240829153145.7f768337@canb.auug.org.au>
+	s=arc-20240116; t=1724909607; c=relaxed/simple;
+	bh=tGOvwmXOs76XhqKtvRUyCxm5Pa342IrbVlP8rxGktWA=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=rUkU0ki+V+edNd+RzuWbOnA1rYlPRUKubWBRtZQqu9vHtjZ9+UsSlX7fjlvYFoPG+mgOVnMM7nVEYFoTVn7GhC7318IzAp45j7t3mByVUj8behs3kVutrJhXsYaONOyERQDRJdWLmrAhmLl5vtTYlfTCjKVg3MZHwWgS0NGjmFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tE4nHiaV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7007FC4CEC1;
+	Thu, 29 Aug 2024 05:33:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724909606;
+	bh=tGOvwmXOs76XhqKtvRUyCxm5Pa342IrbVlP8rxGktWA=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=tE4nHiaVZ2oLjNi0Rwfz8L79JoWj5SM87XU55S/OKhRgfte7lOJ80D1T91wtry5Qe
+	 XtB3qvIj3vWYkk8X779kTZPIKHm3NYz6c42ftvsclrjJwBT3JG+LxxYf1wMHti7PcV
+	 a4m3Y9pXNwOCYAVNaw9nOHDl4hmXI0s25C9WfLBf3vfkqVD0mGrACq4O5nFf3Yd4sD
+	 zSgys6pmRcnOBlaNndeXW+G5PBHZj8wNE4VUzL9Jsx8z4OHgtq+D8JQvS+edsGtKIE
+	 8bhDWuGQvQBbWCCNqI6at8SBZ2RO/7bcVhjaCoNBTSQHGdwTUx/F6pblKuMwc0sIx5
+	 HGA5GrqnH/m4Q==
+Date: Wed, 28 Aug 2024 22:33:23 -0700
+From: Kees Cook <kees@kernel.org>
+To: Xingyu Li <xli399@ucr.edu>
+CC: mcgrof@kernel.org, j.granados@samsung.com, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, Yu Hao <yhao016@ucr.edu>,
+ "Paul E. McKenney" <paulmck@kernel.org>, Waiman Long <longman@redhat.com>,
+ Sven Eckelmann <sven@narfation.org>, Thomas Gleixner <tglx@linutronix.de>,
+ anna-maria@linutronix.de, frederic@kernel.org, netdev@vger.kernel.org,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Tejun Heo <tj@kernel.org>, Kuniyuki Iwashima <kuniyu@amazon.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: BUG: WARNING in retire_sysctl_set
+User-Agent: K-9 Mail for Android
+In-Reply-To: <CALAgD-6CptEMjtkwEfSZyzPMwhbJ_965cCSb5B9pRcgxjD_Zkg@mail.gmail.com>
+References: <CALAgD-4uup-u-7rVLpFqKWqeVVVnf5-88vqHOKD-TnGeYmHbQw@mail.gmail.com> <202408281812.3F765DF@keescook> <CALAgD-6CptEMjtkwEfSZyzPMwhbJ_965cCSb5B9pRcgxjD_Zkg@mail.gmail.com>
+Message-ID: <BA3EA925-5E5E-4791-B820-83A238A2E458@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/k/7ifZ79PiRbl83chpaonQD";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/k/7ifZ79PiRbl83chpaonQD
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain;
+ charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
 
-Today's linux-next merge of the kspp tree got a conflict in:
 
-  include/linux/string_choices.h
+On August 28, 2024 10:02:00 PM PDT, Xingyu Li <xli399@ucr=2Eedu> wrote:
+>In fact, the bugs that I report are fuzzed by the syzkaller templates
+>that we generated, but not those from the syzkaller official
+>templates=2E We want to find bugs that do not have the corresponding
+>official syzkaller template=2E
+>I also checked to make sure that the bugs I reported did not occur on syz=
+bot=2E
 
-between commit:
+That's excellent that you've developed better templates! Can you submit th=
+ese to syzkaller upstream? Then the automated fuzzing CI dashboard will ben=
+efit (and save you the work of running and reporting the new finds)=2E
 
-  533f2ca2a8a2 ("lib/string_choices: add str_true_false()/str_false_true() =
-helper")
-
-from the mm-nonmm-unstable branch of the mm tree and commits:
-
-  a98ae7f045b2 ("lib/string_choices: Add str_up_down() helper")
-  f5c1ca3a15fd ("string_choices: Add wrapper for str_down_up()")
-
-from the kspp tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+-Kees
 
 --=20
-Cheers,
-Stephen Rothwell
-
-diff --cc include/linux/string_choices.h
-index 4a2432313b8e,1320bcdcb89c..000000000000
---- a/include/linux/string_choices.h
-+++ b/include/linux/string_choices.h
-@@@ -42,12 -42,12 +42,18 @@@ static inline const char *str_yes_no(bo
-  	return v ? "yes" : "no";
-  }
- =20
- +static inline const char *str_true_false(bool v)
- +{
- +	return v ? "true" : "false";
- +}
- +#define str_false_true(v)		str_true_false(!(v))
- +
-+ static inline const char *str_up_down(bool v)
-+ {
-+ 	return v ? "up" : "down";
-+ }
-+ #define str_down_up(v)		str_up_down(!(v))
-+=20
-  /**
-   * str_plural - Return the simple pluralization based on English counts
-   * @num: Number used for deciding pluralization
-
---Sig_/k/7ifZ79PiRbl83chpaonQD
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbQB8EACgkQAVBC80lX
-0Gy8Pwf/W91/0zkiny+JCo0Ve8cK7WrYsblj3YnVIIc1eAkjXqtqToGyIBA7yjxn
-rMXkRc9WErbM4+5NiZ/1qyGgw9kZeEoXlEzR2qMqabYBlTn1UAWXpvYRzVz3l8KT
-rvSusoi/QF2JzkWmdMmoGowd8yW/enVTwAS0pp6TrLxFbhdSPRHB9aVGzwtlAOkR
-KH1+3zat4zQDPuY0CVnNIUzJ7DSi/n/yDiOL3x4/TtajfI9iiIb1UIwBi1tmhnpo
-jBgQyyLzaZ8TY+DZd61SuusziRhKNj3HwNbBF4cerz1fn0pZeMMCttOW5UyOvgVx
-9TeQqCbNEYqzRZRR57XUtZZl6K5VMg==
-=83DQ
------END PGP SIGNATURE-----
-
---Sig_/k/7ifZ79PiRbl83chpaonQD--
+Kees Cook
 
