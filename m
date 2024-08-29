@@ -1,57 +1,84 @@
-Return-Path: <linux-kernel+bounces-306534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 872D2964032
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 11:33:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D617A964036
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 11:33:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B49571C2478A
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 09:33:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5421E1F2622C
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 09:33:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD3D118D63A;
-	Thu, 29 Aug 2024 09:33:00 +0000 (UTC)
-Received: from bmailout2.hostsharing.net (bmailout2.hostsharing.net [83.223.78.240])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A5F718CC1F;
+	Thu, 29 Aug 2024 09:33:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qHmuYsPy"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C40A9189BA3;
-	Thu, 29 Aug 2024 09:32:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.78.240
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38B72189F58
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 09:33:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724923980; cv=none; b=oBfs/ZpnACQAJwqmAIExg1IksnvjYw0G1Dr3KP0Dm81Gb/IUTJcnYWznZnSNcviMLpQazUaog/DFXe2u0K4yDhPizNTtoY5Rpuz69nOhoXbqliymfu0t3CUaFoa9RPGtpnipjvEfEuU9Zg36NLdYRae/7GSdS/7IABbXWMaiVuI=
+	t=1724924010; cv=none; b=fRHWaqaXFfmMWWZrpN2vQLtuNr2jG+zOXyzFgNLIlPRgDYqBfpDkRvHWCMZJAAZuJgEA6aEO1dCVCy+pQg4xZusehUuaDxcw7Z/KY470ty3oRs1gFOnsTRnI0SMkphucL9cEcDgbgEcCamPXIp2BcdXYxN277AjY6e0UxSizZ3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724923980; c=relaxed/simple;
-	bh=yGCID0GCiA9pXFJg0fO8tvyOnGozjM+tId2ELiGSJsw=;
+	s=arc-20240116; t=1724924010; c=relaxed/simple;
+	bh=VB1kDnu1MIKuQQyIPG+ao88lOi5fFWaWQ4pPR/dfLYY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ic5en6ndqL4xYsJtIsE1PxM1VBludjpODUDnZqCY2NyXdxbIDfp44c9rYqJ0AZdBPaDJhjC68Jcj9QNz36js0fTf+MZv3uLq3LTlrIxWt5JTEG+zoQ7b/ggxfqUUUyOW3WlM8Fo70zcz1uS/Xixs3ciaDWZpszSq/3+XQl5W/oI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.78.240
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout2.hostsharing.net (Postfix) with ESMTPS id 8E4AF28036B3A;
-	Thu, 29 Aug 2024 11:32:47 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id 676935B1ED; Thu, 29 Aug 2024 11:32:47 +0200 (CEST)
-Date: Thu, 29 Aug 2024 11:32:47 +0200
-From: Lukas Wunner <lukas@wunner.de>
-To: Esther Shimanovich <eshimanovich@chromium.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Rajat Jain <rajatja@google.com>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	iommu@lists.linux.dev,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4] PCI: Detect and trust built-in Thunderbolt chips
-Message-ID: <ZtBAP4TayLmdiya_@wunner.de>
-References: <20240823-trust-tbt-fix-v4-1-c6f1e3bdd9be@chromium.org>
- <ZstCyti3FHZIeFO8@wunner.de>
- <CA+Y6NJE1p-nidmCZzJ7j-mJAmCLmC2q2meUf-5FFSWofWES-qA@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ITviuT+mQxXHTV0TNLetlrhxuSebLV0ZNIKApaOp0b6EtLPP2lUVgAd/EKSWTAUdEWE1y4U60rRensqGRNEAMS9OilPXCmXs8WD35F7zvZmTUcx1UvUrQpm0pwFwj8+tZeEhsA7YopS7AZOOm3InKnHdiwWQ0pqB4dlBEfQGKkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qHmuYsPy; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5343eeb4973so648590e87.2
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 02:33:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724924006; x=1725528806; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=jf1RPd5k7N/KVvI+pR1mRC3GqCsCws3Rx9+XmMS/Wws=;
+        b=qHmuYsPyHOjMKuudmW3MAPOpIovYRUGYh7jBI8Ttbuhd/qlLuDKOSQKiwEAwGxgnxH
+         lONv8ExEFaHOzBCcGhm0ULoFOleF7VdAVZthz3YKBaXGJ/czZ6ih8dv/mYsCaaMjyX1w
+         /+zqciqjUE1SIT46ee//l/NkHWGY+ibY6AhCFNsBxFweYZsl9Oyk+LyH6LGN9++ir12v
+         3cRO9WzthmABKqjLmFjRXeaeUfNmxWwTZwKy0mPcYHxVE3Yizx3yXRh+mNpgmZlPBnQh
+         zxoEJpNNVhC1jfO5eWgADYn/6xzSBCGUePnZ+RYgJ0VIiiuXXhQKseKQCEAywOepVxIJ
+         bHRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724924006; x=1725528806;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jf1RPd5k7N/KVvI+pR1mRC3GqCsCws3Rx9+XmMS/Wws=;
+        b=BITMgx7+AF8EPTVN3GOCYbxSkrHDPnxeTYcBW7c/AsAt4iQ5gBjZ+zhmDlaQjSvuZz
+         N5vO1nW2SzXPzeZmd2Q3lGYh+BgYvz/UHtUOrEiQvJQPvcaAH1N66qyybgRl4sI98YCS
+         We4Zr1Wm5/ZNuAlXpJrkzHXvI9cK5X0IAGvJXAAIGiLezVwUzYqD5PLzPoheE+g+3Mnz
+         ADK3CVQrJX5ph6r0tKROXFXoey04/9f/vdJpfeRWh+aM6XVZIPTO74pCbtBLhz8X6hFO
+         S5KC/QkZbd3sJQheoil98IU+Y/7Vl4Y8u1wnfXyYJ3zKp1wPAzIzbEzQr063+c9eX44e
+         n98w==
+X-Forwarded-Encrypted: i=1; AJvYcCXzmlaIzuogxawebHy6hiK4rYH95tFX8XKuxY+U6KgN31xgOGwFSSGoxJh+E2ZJeUw3o+3ROBvisFyPGTY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxS/0/vqXLqYdCMApQGOggt3o+lxi//q2q0uBojUKB0vg51f4Jz
+	IychNrRMGG/m8JQtqwvQms83KU0jf5gWUA+ZpPV54UlrlxXyFUhEf6rgZlQvtEc=
+X-Google-Smtp-Source: AGHT+IF0uXzxqPg+vkmJaBu1kcINtw+G6a7PP/BHLmzK3LMZI1o0ADhmOi10PWnUFYBbncLDSaMPzA==
+X-Received: by 2002:a05:6512:3094:b0:52e:9921:6dff with SMTP id 2adb3069b0e04-5353e5755a3mr2004560e87.26.1724924005677;
+        Thu, 29 Aug 2024 02:33:25 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-535407ac51esm105418e87.80.2024.08.29.02.33.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Aug 2024 02:33:25 -0700 (PDT)
+Date: Thu, 29 Aug 2024 12:33:23 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: quic_dikshita@quicinc.com
+Cc: Vikash Garodia <quic_vgarodia@quicinc.com>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Vedang Nagar <quic_vnagar@quicinc.com>
+Subject: Re: [PATCH v3 16/29] media: iris: implement iris v4l2_ctrl_ops and
+ prepare capabilities
+Message-ID: <gehwgofhviqcnopaughxfcpsqmbbiaayid2scgat4xnd5ngwmo@ylawfiup2tqc>
+References: <20240827-iris_v3-v3-0-c5fdbbe65e70@quicinc.com>
+ <20240827-iris_v3-v3-16-c5fdbbe65e70@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,83 +87,497 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CA+Y6NJE1p-nidmCZzJ7j-mJAmCLmC2q2meUf-5FFSWofWES-qA@mail.gmail.com>
+In-Reply-To: <20240827-iris_v3-v3-16-c5fdbbe65e70@quicinc.com>
 
-On Wed, Aug 28, 2024 at 05:15:24PM -0400, Esther Shimanovich wrote:
-> On Sun, Aug 25, 2024 at 10:49???AM Lukas Wunner <lukas@wunner.de> wrote:
-> > On Fri, Aug 23, 2024 at 04:53:16PM +0000, Esther Shimanovich wrote:
-> > > --- a/drivers/pci/probe.c
-> > > +++ b/drivers/pci/probe.c
-> > > +static bool pcie_has_usb4_host_interface(struct pci_dev *pdev)
-> > > +{
-> > > +     struct fwnode_handle *fwnode;
-> > > +
-> > > +     /*
-> > > +      * For USB4, the tunneled PCIe root or downstream ports are marked
-> > > +      * with the "usb4-host-interface" ACPI property, so we look for
-> > > +      * that first. This should cover most cases.
-> > > +      */
-> > > +     fwnode = fwnode_find_reference(dev_fwnode(&pdev->dev),
-> > > +                                    "usb4-host-interface", 0);
-> >
-> > This is all ACPI only, so it should either be #ifdef'ed to CONFIG_ACPI
-> > or moved to drivers/pci/pci-acpi.c.
-> >
-> > Alternatively, it could be moved to arch/x86/pci/ because ACPI can also
-> > be enabled on arm64 or riscv but the issue seems to only affect x86.
+On Tue, Aug 27, 2024 at 03:35:41PM GMT, Dikshita Agarwal via B4 Relay wrote:
+> From: Vedang Nagar <quic_vnagar@quicinc.com>
 > 
-> Thanks for the feedback! Adding an #ifdef to CONFIG_ACPI seems more
-> straightforward, but I do like the idea of not having unnecessary code
-> run on non-x86 systems.
+> Implement s_ctrl and g_volatile_ctrl ctrl ops.
+> Introduce platform specific driver and firmware capabilities.
+> Capabilities are set of video specifications
+> and features supported by a specific platform (SOC).
+> Each capability is defined with min, max, range, default
+> value and corresponding HFI.
 > 
-> I'd appreciate some guidance here. How would I move a portion of a
-> function into a completely different location in the kernel src?
-> Could you show me an example?
+> Signed-off-by: Vedang Nagar <quic_vnagar@quicinc.com>
+> Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
+> ---
+>  drivers/media/platform/qcom/iris/Makefile          |   1 +
+>  drivers/media/platform/qcom/iris/iris_buffer.c     |   3 +-
+>  drivers/media/platform/qcom/iris/iris_core.h       |   2 +
+>  drivers/media/platform/qcom/iris/iris_ctrls.c      | 194 +++++++++++++++++++++
+>  drivers/media/platform/qcom/iris/iris_ctrls.h      |  15 ++
+>  .../platform/qcom/iris/iris_hfi_gen1_defines.h     |   4 +
+>  .../platform/qcom/iris/iris_hfi_gen2_command.c     |   1 +
+>  .../platform/qcom/iris/iris_hfi_gen2_defines.h     |   9 +
+>  drivers/media/platform/qcom/iris/iris_instance.h   |   6 +
+>  .../platform/qcom/iris/iris_platform_common.h      |  71 ++++++++
+>  .../platform/qcom/iris/iris_platform_sm8250.c      |  56 ++++++
+>  .../platform/qcom/iris/iris_platform_sm8550.c      | 138 +++++++++++++++
+>  drivers/media/platform/qcom/iris/iris_probe.c      |   7 +
+>  drivers/media/platform/qcom/iris/iris_vdec.c       |  24 ++-
+>  drivers/media/platform/qcom/iris/iris_vdec.h       |   2 +-
+>  drivers/media/platform/qcom/iris/iris_vidc.c       |  16 +-
+>  16 files changed, 536 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/media/platform/qcom/iris/Makefile b/drivers/media/platform/qcom/iris/Makefile
+> index 9c50e29db41e..a746681e03cd 100644
+> --- a/drivers/media/platform/qcom/iris/Makefile
+> +++ b/drivers/media/platform/qcom/iris/Makefile
+> @@ -1,5 +1,6 @@
+>  iris-objs += iris_buffer.o \
+>               iris_core.o \
+> +             iris_ctrls.o \
+>               iris_firmware.o \
+>               iris_hfi_common.o \
+>               iris_hfi_gen1_command.o \
+> diff --git a/drivers/media/platform/qcom/iris/iris_buffer.c b/drivers/media/platform/qcom/iris/iris_buffer.c
+> index a1017ceede7d..652117a19b45 100644
+> --- a/drivers/media/platform/qcom/iris/iris_buffer.c
+> +++ b/drivers/media/platform/qcom/iris/iris_buffer.c
+> @@ -12,7 +12,6 @@
+>  #define MAX_WIDTH 4096
+>  #define MAX_HEIGHT 2304
+>  #define NUM_MBS_4K (DIV_ROUND_UP(MAX_WIDTH, 16) * DIV_ROUND_UP(MAX_HEIGHT, 16))
+> -#define BASE_RES_MB_MAX 138240
+>  
+>  /*
+>   * NV12:
+> @@ -74,7 +73,7 @@ static u32 iris_input_buffer_size(struct iris_inst *inst)
+>  	num_mbs = iris_get_mbpf(inst);
+>  	if (num_mbs > NUM_MBS_4K) {
+>  		div_factor = 4;
+> -		base_res_mbs = BASE_RES_MB_MAX;
+> +		base_res_mbs = inst->driver_cap[MBPF].value;
+>  	} else {
+>  		base_res_mbs = NUM_MBS_4K;
+>  		div_factor = 2;
+> diff --git a/drivers/media/platform/qcom/iris/iris_core.h b/drivers/media/platform/qcom/iris/iris_core.h
+> index 1f6eca31928d..657d26a0fa2e 100644
+> --- a/drivers/media/platform/qcom/iris/iris_core.h
+> +++ b/drivers/media/platform/qcom/iris/iris_core.h
+> @@ -58,6 +58,7 @@
+>   * @intr_status: interrupt status
+>   * @sys_error_handler: a delayed work for handling system fatal error
+>   * @instances: a list_head of all instances
+> + * @inst_fw_cap: an array of supported instance capabilities
+>   */
+>  
+>  struct iris_core {
+> @@ -97,6 +98,7 @@ struct iris_core {
+>  	u32					intr_status;
+>  	struct delayed_work			sys_error_handler;
+>  	struct list_head			instances;
+> +	struct platform_inst_fw_cap		inst_fw_cap[INST_FW_CAP_MAX];
+>  };
+>  
+>  int iris_core_init(struct iris_core *core);
+> diff --git a/drivers/media/platform/qcom/iris/iris_ctrls.c b/drivers/media/platform/qcom/iris/iris_ctrls.c
+> new file mode 100644
+> index 000000000000..868306d68a87
+> --- /dev/null
+> +++ b/drivers/media/platform/qcom/iris/iris_ctrls.c
+> @@ -0,0 +1,194 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
+> + */
+> +
+> +#include "iris_ctrls.h"
+> +#include "iris_instance.h"
+> +
+> +static bool iris_valid_cap_id(enum platform_inst_fw_cap_type cap_id)
+> +{
+> +	return cap_id >= 1 && cap_id < INST_FW_CAP_MAX;
+> +}
+> +
+> +static enum platform_inst_fw_cap_type iris_get_cap_id(u32 id)
+> +{
+> +	switch (id) {
+> +	case V4L2_CID_MPEG_VIDEO_DECODER_MPEG4_DEBLOCK_FILTER:
+> +		return DEBLOCK;
+> +	case V4L2_CID_MPEG_VIDEO_H264_PROFILE:
+> +		return PROFILE;
+> +	case V4L2_CID_MPEG_VIDEO_H264_LEVEL:
+> +		return LEVEL;
+> +	default:
+> +		return INST_FW_CAP_MAX;
+> +	}
+> +}
+> +
+> +static u32 iris_get_v4l2_id(enum platform_inst_fw_cap_type cap_id)
+> +{
+> +	if (!iris_valid_cap_id(cap_id))
+> +		return 0;
+> +
+> +	switch (cap_id) {
+> +	case DEBLOCK:
+> +		return V4L2_CID_MPEG_VIDEO_DECODER_MPEG4_DEBLOCK_FILTER;
+> +	case PROFILE:
+> +		return V4L2_CID_MPEG_VIDEO_H264_PROFILE;
+> +	case LEVEL:
+> +		return V4L2_CID_MPEG_VIDEO_H264_LEVEL;
+> +	default:
+> +		return 0;
+> +	}
+> +}
+> +
+> +static int iris_vdec_op_g_volatile_ctrl(struct v4l2_ctrl *ctrl)
+> +{
+> +	enum platform_inst_fw_cap_type cap_id;
+> +	struct iris_inst *inst = NULL;
+> +
+> +	inst = container_of(ctrl->handler, struct iris_inst, ctrl_handler);
+> +	switch (ctrl->id) {
+> +	case V4L2_CID_MIN_BUFFERS_FOR_CAPTURE:
+> +		ctrl->val = inst->buffers[BUF_OUTPUT].min_count;
+> +		break;
+> +	case V4L2_CID_MIN_BUFFERS_FOR_OUTPUT:
+> +		ctrl->val = inst->buffers[BUF_INPUT].min_count;
+> +		break;
+> +	default:
+> +		cap_id = iris_get_cap_id(ctrl->id);
+> +		if (iris_valid_cap_id(cap_id))
+> +			ctrl->val = inst->fw_cap[cap_id].value;
+> +		else
+> +			return -EINVAL;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int iris_vdec_op_s_ctrl(struct v4l2_ctrl *ctrl)
+> +{
+> +	enum platform_inst_fw_cap_type cap_id;
+> +	struct platform_inst_fw_cap *cap;
+> +	struct iris_inst *inst;
+> +
+> +	inst = container_of(ctrl->handler, struct iris_inst, ctrl_handler);
+> +	cap = &inst->fw_cap[0];
+> +
+> +	cap_id = iris_get_cap_id(ctrl->id);
+> +	if (!iris_valid_cap_id(cap_id))
+> +		return -EINVAL;
+> +
+> +	cap[cap_id].flags |= CAP_FLAG_CLIENT_SET;
+> +
+> +	inst->fw_cap[cap_id].value = ctrl->val;
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct v4l2_ctrl_ops iris_ctrl_ops = {
+> +	.s_ctrl = iris_vdec_op_s_ctrl,
+> +	.g_volatile_ctrl = iris_vdec_op_g_volatile_ctrl,
+> +};
+> +
+> +int iris_ctrls_init(struct iris_inst *inst)
+> +{
+> +	struct platform_inst_fw_cap *cap;
+> +	int num_ctrls = 0, ctrl_idx = 0;
+> +	int idx = 0, ret;
+> +	u32 v4l2_id;
+> +
+> +	cap = &inst->fw_cap[0];
+> +
+> +	for (idx = 1; idx < INST_FW_CAP_MAX; idx++) {
+> +		if (iris_get_v4l2_id(cap[idx].cap_id))
+> +			num_ctrls++;
+> +	}
+> +	if (!num_ctrls)
+> +		return -EINVAL;
+> +
+> +	ret = v4l2_ctrl_handler_init(&inst->ctrl_handler, num_ctrls);
+> +	if (ret)
+> +		return ret;
+> +
+> +	for (idx = 1; idx < INST_FW_CAP_MAX; idx++) {
+> +		struct v4l2_ctrl *ctrl;
+> +
+> +		v4l2_id = iris_get_v4l2_id(cap[idx].cap_id);
+> +		if (!v4l2_id)
+> +			continue;
+> +
+> +		if (ctrl_idx >= num_ctrls) {
+> +			ret = -EINVAL;
+> +			goto error;
+> +		}
+> +
+> +		if (cap[idx].flags & CAP_FLAG_MENU) {
+> +			ctrl = v4l2_ctrl_new_std_menu(&inst->ctrl_handler,
+> +						      &iris_ctrl_ops,
+> +						      v4l2_id,
+> +						      cap[idx].max,
+> +						      ~(cap[idx].step_or_mask),
+> +						      cap[idx].value);
+> +		} else {
+> +			ctrl = v4l2_ctrl_new_std(&inst->ctrl_handler,
+> +						 &iris_ctrl_ops,
+> +						 v4l2_id,
+> +						 cap[idx].min,
+> +						 cap[idx].max,
+> +						 cap[idx].step_or_mask,
+> +						 cap[idx].value);
+> +		}
+> +		if (!ctrl) {
+> +			ret = -EINVAL;
+> +			goto error;
+> +		}
+> +
+> +		ret = inst->ctrl_handler.error;
+> +		if (ret)
+> +			goto error;
+> +
+> +		if ((cap[idx].flags & CAP_FLAG_VOLATILE) ||
+> +		    (ctrl->id == V4L2_CID_MIN_BUFFERS_FOR_CAPTURE ||
+> +		     ctrl->id == V4L2_CID_MIN_BUFFERS_FOR_OUTPUT))
+> +			ctrl->flags |= V4L2_CTRL_FLAG_VOLATILE;
+> +
+> +		ctrl->flags |= V4L2_CTRL_FLAG_EXECUTE_ON_WRITE;
+> +		ctrl_idx++;
+> +	}
+> +
+> +	return 0;
+> +error:
+> +	v4l2_ctrl_handler_free(&inst->ctrl_handler);
+> +
+> +	return ret;
+> +}
+> +
+> +int iris_session_init_caps(struct iris_core *core)
+> +{
+> +	struct platform_inst_fw_cap *inst_plat_cap_data;
+> +	int i, num_inst_cap;
+> +	u32 cap_id;
+> +
+> +	inst_plat_cap_data = core->iris_platform_data->inst_fw_cap_data;
+> +	if (!inst_plat_cap_data)
+> +		return -EINVAL;
+> +
+> +	num_inst_cap = core->iris_platform_data->inst_fw_cap_data_size;
+> +
+> +	for (i = 0; i < num_inst_cap && i < INST_FW_CAP_MAX - 1; i++) {
 
-One way to do this would be to move pcie_is_tunneled(),
-pcie_has_usb4_host_interface() and pcie_switch_directly_under()
-to arch/x86/pci/acpi.c.
+Drop the second condition
 
-Rename pcie_is_tunneled() to arch_pci_dev_is_removable() and remove
-the "static" declaration specifier from that function.
+> +		cap_id = inst_plat_cap_data[i].cap_id;
+> +		if (!iris_valid_cap_id(cap_id))
+> +			continue;
+> +
+> +		core->inst_fw_cap[cap_id].cap_id = inst_plat_cap_data[i].cap_id;
+> +		core->inst_fw_cap[cap_id].min = inst_plat_cap_data[i].min;
+> +		core->inst_fw_cap[cap_id].max = inst_plat_cap_data[i].max;
+> +		core->inst_fw_cap[cap_id].step_or_mask = inst_plat_cap_data[i].step_or_mask;
+> +		core->inst_fw_cap[cap_id].value = inst_plat_cap_data[i].value;
+> +		core->inst_fw_cap[cap_id].flags = inst_plat_cap_data[i].flags;
+> +		core->inst_fw_cap[cap_id].hfi_id = inst_plat_cap_data[i].hfi_id;
+> +	}
+> +
+> +	return 0;
+> +}
+> diff --git a/drivers/media/platform/qcom/iris/iris_ctrls.h b/drivers/media/platform/qcom/iris/iris_ctrls.h
+> new file mode 100644
+> index 000000000000..46e1da847aa8
+> --- /dev/null
+> +++ b/drivers/media/platform/qcom/iris/iris_ctrls.h
+> @@ -0,0 +1,15 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +/*
+> + * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
+> + */
+> +
+> +#ifndef _IRIS_CTRLS_H_
+> +#define _IRIS_CTRLS_H_
+> +
+> +struct iris_core;
+> +struct iris_inst;
+> +
+> +int iris_ctrls_init(struct iris_inst *inst);
+> +int iris_session_init_caps(struct iris_core *core);
+> +
+> +#endif
+> diff --git a/drivers/media/platform/qcom/iris/iris_hfi_gen1_defines.h b/drivers/media/platform/qcom/iris/iris_hfi_gen1_defines.h
+> index da52e497b74a..9dc050063924 100644
+> --- a/drivers/media/platform/qcom/iris/iris_hfi_gen1_defines.h
+> +++ b/drivers/media/platform/qcom/iris/iris_hfi_gen1_defines.h
+> @@ -31,9 +31,13 @@
+>  #define HFI_EVENT_SYS_ERROR				0x1
+>  #define HFI_EVENT_SESSION_ERROR				0x2
+>  
+> +#define HFI_PROPERTY_CONFIG_VDEC_POST_LOOP_DEBLOCKER	0x1200001
+> +
+>  #define HFI_PROPERTY_SYS_CODEC_POWER_PLANE_CTRL		0x5
+>  #define HFI_PROPERTY_SYS_IMAGE_VERSION			0x6
+>  
+> +#define HFI_PROPERTY_PARAM_WORK_MODE			0x1015
+> +#define HFI_PROPERTY_PARAM_WORK_ROUTE			0x1017
+>  #define HFI_MSG_SYS_INIT				0x20001
+>  #define HFI_MSG_SYS_SESSION_INIT			0x20006
+>  #define HFI_MSG_SYS_SESSION_END				0x20007
+> diff --git a/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c b/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c
+> index a74114b0761a..6ad2ca7be0f0 100644
+> --- a/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c
+> +++ b/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c
+> @@ -108,6 +108,7 @@ static int iris_hfi_gen2_session_set_default_header(struct iris_inst *inst)
+>  	struct iris_inst_hfi_gen2 *inst_hfi_gen2 = to_iris_inst_hfi_gen2(inst);
+>  	u32 default_header = false;
+>  
+> +	default_header = inst->fw_cap[DEFAULT_HEADER].value;
 
-Add a function declaration for arch_pci_dev_is_removable() to
-include/linux/pci.h.
+This isn't related to the s_ctrl and g_volatile_ctrl. Please split this
+commit into the chunk that is actually related to that API and the rest
+of the changes.
 
-Add a __weak arch_pci_dev_is_removable() function which just returns
-false in drivers/pci/probe.c right above pci_set_removable().
+>  	iris_hfi_gen2_packet_session_property(inst,
+>  					      HFI_PROP_DEC_DEFAULT_HEADER,
+>  					      HFI_HOST_FLAGS_NONE,
+> diff --git a/drivers/media/platform/qcom/iris/iris_hfi_gen2_defines.h b/drivers/media/platform/qcom/iris/iris_hfi_gen2_defines.h
+> index 18cc9365ab75..401df7b4e976 100644
+> --- a/drivers/media/platform/qcom/iris/iris_hfi_gen2_defines.h
+> +++ b/drivers/media/platform/qcom/iris/iris_hfi_gen2_defines.h
+> @@ -28,7 +28,16 @@
+>  #define HFI_PROP_UBWC_BANK_SWZL_LEVEL3		0x03000008
+>  #define HFI_PROP_UBWC_BANK_SPREADING		0x03000009
+>  #define HFI_PROP_CODEC				0x03000100
+> +#define HFI_PROP_PROFILE			0x03000107
+> +#define HFI_PROP_LEVEL				0x03000108
+> +#define HFI_PROP_STAGE				0x0300010a
+> +#define HFI_PROP_PIPE				0x0300010b
+> +#define HFI_PROP_LUMA_CHROMA_BIT_DEPTH		0x0300010f
+> +#define HFI_PROP_CODED_FRAMES			0x03000120
+> +#define HFI_PROP_BUFFER_HOST_MAX_COUNT		0x03000123
+> +#define HFI_PROP_PIC_ORDER_CNT_TYPE		0x03000128
+>  #define HFI_PROP_DEC_DEFAULT_HEADER		0x03000168
+> +#define HFI_PROP_DEC_START_FROM_RAP_FRAME	0x03000169
+>  #define HFI_PROP_END				0x03FFFFFF
+>  
+>  #define HFI_SESSION_ERROR_BEGIN			0x04000000
+> diff --git a/drivers/media/platform/qcom/iris/iris_instance.h b/drivers/media/platform/qcom/iris/iris_instance.h
+> index d28b8fd7ec2f..2429b9860789 100644
+> --- a/drivers/media/platform/qcom/iris/iris_instance.h
+> +++ b/drivers/media/platform/qcom/iris/iris_instance.h
+> @@ -23,8 +23,11 @@
+>   * @fh: reference of v4l2 file handler
+>   * @fmt_src: structure of v4l2_format for source
+>   * @fmt_dst: structure of v4l2_format for destination
+> + * @ctrl_handler: reference of v4l2 ctrl handler
+>   * @crop: structure of crop info
+>   * @completions: structure of signal completions
+> + * @driver_cap: array of supported instance driver capabilities
+> + * @fw_cap: array of supported instance firmware capabilities
+>   * @buffers: array of different iris buffers
+>   * @fw_min_count: minimnum count of buffers needed by fw
+>   * @once_per_session_set: boolean to set once per session property
+> @@ -42,8 +45,11 @@ struct iris_inst {
+>  	struct v4l2_fh			fh;
+>  	struct v4l2_format		*fmt_src;
+>  	struct v4l2_format		*fmt_dst;
+> +	struct v4l2_ctrl_handler	ctrl_handler;
+>  	struct iris_hfi_rect_desc	crop;
+>  	struct completion		completion;
+> +	struct platform_inst_driver_cap	driver_cap[INST_DRIVER_CAP_MAX];
+> +	struct platform_inst_fw_cap	fw_cap[INST_FW_CAP_MAX];
+>  	struct iris_buffers		buffers[BUF_TYPE_MAX];
+>  	u32				fw_min_count;
+>  	bool				once_per_session_set;
+> diff --git a/drivers/media/platform/qcom/iris/iris_platform_common.h b/drivers/media/platform/qcom/iris/iris_platform_common.h
+> index 754cccc638a5..2935b769abb7 100644
+> --- a/drivers/media/platform/qcom/iris/iris_platform_common.h
+> +++ b/drivers/media/platform/qcom/iris/iris_platform_common.h
+> @@ -10,6 +10,23 @@
+>  #define HW_RESPONSE_TIMEOUT_VALUE               (1000) /* milliseconds */
+>  #define AUTOSUSPEND_DELAY_VALUE			(HW_RESPONSE_TIMEOUT_VALUE + 500) /* milliseconds */
+>  
+> +#define REGISTER_BIT_DEPTH(luma, chroma)	((luma) << 16 | (chroma))
+> +#define BIT_DEPTH_8				REGISTER_BIT_DEPTH(8, 8)
+> +#define CODED_FRAMES_PROGRESSIVE		0x0
+> +#define DEFAULT_MAX_HOST_BUF_COUNT		64
+> +#define DEFAULT_MAX_HOST_BURST_BUF_COUNT	256
+> +
+> +enum stage_type {
+> +	STAGE_1 = 1,
+> +	STAGE_2 = 2,
+> +};
+> +
+> +enum pipe_type {
+> +	PIPE_1 = 1,
+> +	PIPE_2 = 2,
+> +	PIPE_4 = 4,
+> +};
+> +
+>  extern struct iris_platform_data sm8550_data;
+>  extern struct iris_platform_data sm8250_data;
+>  
+> @@ -41,6 +58,56 @@ struct ubwc_config_data {
+>  	u32	bank_spreading;
+>  };
+>  
+> +enum platform_inst_driver_cap_type {
+> +	FRAME_WIDTH = 1,
+> +	FRAME_HEIGHT,
+> +	MBPF,
+> +	INST_DRIVER_CAP_MAX,
+> +};
 
-And that's it.
+Please use C structures for platform caps. You have introduced a
+wrapping that 1:1 maps to C code, which is not iterated or otherwise
+accessed via a generic ID aside from the driver code.
 
-See pcibios_device_add() for an example.
+> +
+> +enum platform_inst_fw_cap_type {
+> +	PROFILE = 1,
+> +	LEVEL,
+> +	INPUT_BUF_HOST_MAX_COUNT,
+> +	STAGE,
+> +	PIPE,
+> +	POC,
+> +	CODED_FRAMES,
+> +	BIT_DEPTH,
+> +	DEFAULT_HEADER,
+> +	RAP_FRAME,
+> +	DEBLOCK,
+> +	INST_FW_CAP_MAX,
+> +};
 
-That's one way to do it.  It ensures that the code is only compiled
-on x86 and only if CONFIG_ACPI=y.  Basically the linker picks the
-arch_pci_dev_is_removable() in arch/x86/pci/acpi.c, or the empty
-__weak function of the same name on !x86 or if CONFIG_ACPI=n.
+I have mixed feelings towards fw caps. Let's see how the code evolves
+after you split the commit into V4L2 CTRL code and the rest of the
+changes.
 
-An alternative approach would involve using an empty static inline.
-I think the difference is that an empty static inline is optimized
-away by the compiler, whereas the empty __weak function is not
-optimized away by the compiler, but may be optimized away by the
-linker if CONFIG_LTO=y.
+> +
+> +enum platform_inst_cap_flags {
+> +	CAP_FLAG_NONE			= 0,
 
-For the static inline it's basically the same but you omit the
-__weak arch_pci_dev_is_removable() in drivers/pci/probe.c and
-instead constrain the function declaration in include/linux/pci.h to:
-#if defined(CONFIG_X86) && defined(CONFIG_ACPI)
-...and the #else branch would contain the empty static inline
-which just returns false.
+No need to define NONE, just skip the setting.
 
-See pci_mmcfg_early_init() for an example.
+> +	CAP_FLAG_DYNAMIC_ALLOWED	= BIT(0),
+> +	CAP_FLAG_MENU			= BIT(1),
+> +	CAP_FLAG_INPUT_PORT		= BIT(2),
+> +	CAP_FLAG_OUTPUT_PORT		= BIT(3),
+> +	CAP_FLAG_CLIENT_SET		= BIT(4),
+> +	CAP_FLAG_BITMASK		= BIT(5),
+> +	CAP_FLAG_VOLATILE		= BIT(6),
+> +};
+> +
+> +struct platform_inst_driver_cap {
+> +	enum platform_inst_driver_cap_type cap_id;
+> +	u32 min;
+> +	u32 max;
+> +	u32 value;
+> +};
+> +
+> +struct platform_inst_fw_cap {
+> +	enum platform_inst_fw_cap_type cap_id;
+> +	s64 min;
+> +	s64 max;
+> +	s64 step_or_mask;
+> +	s64 value;
+> +	u32 hfi_id;
+> +	enum platform_inst_cap_flags flags;
+> +};
+> +
 
-Maybe the empty static inline is better because then the entire
-"if (arch_pci_dev_is_removable(...))" clause can be optimized away
-without reliance on CONFIG_LTO=y.
 
-I hope I haven't confused you completely.
-
-Thanks,
-
-Lukas
+-- 
+With best wishes
+Dmitry
 
