@@ -1,191 +1,145 @@
-Return-Path: <linux-kernel+bounces-306156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6ADC963A07
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 07:50:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95A68963A11
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 07:56:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 180541C226F9
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 05:50:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42BB81F22970
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 05:56:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44E43148FF7;
-	Thu, 29 Aug 2024 05:50:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 403F014A619;
+	Thu, 29 Aug 2024 05:56:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b="gr9Oru55"
-Received: from mickerik.phytec.de (mickerik.phytec.de [91.26.50.163])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="db2zyw6s"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78E38A92D
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 05:50:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.26.50.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 769241487F1;
+	Thu, 29 Aug 2024 05:56:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724910621; cv=none; b=HYN+6yi9FquvSC2eL80r2ljn3eHp4JzU0QgRqrw4KWpYx+OZ6GKQcYobvrc+lhDJ7Pg7ZKUtsEDm+oBDDdKqwHblSLVAeG4Hi/3s47x9y5Hri0JueC6eTQWL77Ey/oCvG5bKHYq0KSACHWAM68srU/NWRkzsa1AZRD67f7+PEe4=
+	t=1724910962; cv=none; b=RTSsR96OuwsKzxlFHZE0EMcU4ozolJ4LrS1fxNlVDOcOLLaIUMsLhYF6k7BpsAKTtg1eZgOaASEvYOZmj2V1Bv5M6Mnmy2eQbe7R/0sGQSfdPLoJJwP5N4VRSBdilratEg0xBltQO/JXYIPmE2KgR8+BlNmSEyBRclwUuzWAZn4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724910621; c=relaxed/simple;
-	bh=wdBzlHPzqbQqgzcrw6a0vj9ow8E9XI7yoBVOFCltyaU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=tsq9TAgKgs+q8yRqK08837diKdyu4OVcEVwkXHIpPIW9RgY8Vdss0dmBuilKspjX5GJuyJe9MsxwAe6KR0oNv3wXxeyJRdv8Ew88IolYZc0silgsm0cLxhXaEojJOd3k7gtgQfMCN4cvMMM+JQ4ZkTI/VagmrRA8wY2W7Is3Q8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de; spf=pass smtp.mailfrom=phytec.de; dkim=pass (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b=gr9Oru55; arc=none smtp.client-ip=91.26.50.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytec.de
-DKIM-Signature: v=1; a=rsa-sha256; d=phytec.de; s=a4; c=relaxed/simple;
-	q=dns/txt; i=@phytec.de; t=1724910607; x=1727502607;
-	h=From:Sender:Reply-To:Subject:Date:Message-ID:To:CC:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=wdBzlHPzqbQqgzcrw6a0vj9ow8E9XI7yoBVOFCltyaU=;
-	b=gr9Oru55Ya8fIOEFTJWgUwzKTqZam7nORIKE3fTzALaiTx0pAKu65g1vzQoJqCg5
-	mNKhf6TdxESteR7fMWLpVclafPuHc55yRjAMrmBXl2ghL0yWMeOVv3Bi+ZeDdMPF
-	+DBqbTnjhNLy2Rm2Wjl1Pfz8PYqAHuVHSZvo944m3p4=;
-X-AuditID: ac14000a-03e52700000021bc-3d-66d00c0f9590
-Received: from berlix.phytec.de (Unknown_Domain [172.25.0.12])
-	(using TLS with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(Client did not present a certificate)
-	by mickerik.phytec.de (PHYTEC Mail Gateway) with SMTP id D9.1B.08636.F0C00D66; Thu, 29 Aug 2024 07:50:07 +0200 (CEST)
-Received: from [10.0.0.19] (172.25.0.11) by Berlix.phytec.de (172.25.0.12)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.6; Thu, 29 Aug
- 2024 07:50:02 +0200
-Message-ID: <2d454d61-6f17-4c31-9d03-b065489b26c9@phytec.de>
-Date: Thu, 29 Aug 2024 07:49:57 +0200
+	s=arc-20240116; t=1724910962; c=relaxed/simple;
+	bh=awg13QCLRvaX7kb8KIorHdKyKvRmjNYCGTZ98BD5/M0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UlOtA/TELgW6H8dwrmeLnjNjGYcfj0ksMy1+T+2ej4b8tbmi5AgBRhysbriqb/8/V0FgswBpQlytUmFi4gIhT8eNvGM+bUip6h6IgkeP5IKxI0AClp3e8AoQTzFgposVYmqsU25eOHUqctRq4YD7gffhAGGrcbfUM517WXgGzrU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=db2zyw6s; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1724910960; x=1756446960;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=awg13QCLRvaX7kb8KIorHdKyKvRmjNYCGTZ98BD5/M0=;
+  b=db2zyw6sAHnVrJ3gPD+jzMLaEau25XCoqPkyOyZEsofQKfx4/RYPRSh/
+   TZ8Gb8jL/RuFdfEPrCpn3esCKd+w036dEdPuL/r81WkxDsAmrSWKIEhxc
+   XJ4y3WJYTioPFHicNbYMh7+OHxV91cVlHHE5uipkl7T3DY3j+pZTUSag2
+   zMisbaperzJgB0/3L/WVZJ722pYKeL5B1gs+u7plbX2wC4ZCtKpZPVBFw
+   ztW3dnACfRII4aJAmregoMgbkXmu+E2hZrX3MAYUfYSVpujOFdEKe7YqN
+   Un5BBRbPWGiA31XJvQb6DToeaMGmOXk84vq9mk49+XVl10hlpxXwgpO4e
+   A==;
+X-CSE-ConnectionGUID: 2MQclz5sT/+LITt4o2qSTg==
+X-CSE-MsgGUID: 1GiybGNwRwyyDUmec29r2Q==
+X-IronPort-AV: E=Sophos;i="6.10,184,1719903600"; 
+   d="scan'208";a="261978658"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 28 Aug 2024 22:55:59 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Wed, 28 Aug 2024 22:55:20 -0700
+Received: from HYD-DK-UNGSW21.microchip.com (10.10.85.11) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
+ 15.1.2507.35 via Frontend Transport; Wed, 28 Aug 2024 22:55:16 -0700
+From: Raju Lakkaraju <Raju.Lakkaraju@microchip.com>
+To: <netdev@vger.kernel.org>
+CC: <davem@davemloft.net>, <linux@armlinux.org.uk>, <kuba@kernel.org>,
+	<andrew@lunn.ch>, <hkallweit1@gmail.com>, <richardcochran@gmail.com>,
+	<rdunlap@infradead.org>, <Bryan.Whitehead@microchip.com>,
+	<edumazet@google.com>, <pabeni@redhat.com>, <linux-kernel@vger.kernel.org>,
+	<horms@kernel.org>, <UNGLinuxDriver@microchip.com>
+Subject: [PATCH net-next V4 0/5] Add support to PHYLINK for LAN743x/PCI11x1x chips
+Date: Thu, 29 Aug 2024 11:21:27 +0530
+Message-ID: <20240829055132.79638-1-Raju.Lakkaraju@microchip.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] arm64: dts: ti: k3-am64* Disable ethernet by default
- at SoC level
-To: Logan Bristol <logan.bristol@utexas.edu>
-CC: Josua Mayer <josua@solid-run.com>, Wadim Egorov <w.egorov@phytec.de>,
-	<linux@ew.tq-group.com>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>, Conor
- Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Vignesh Raghavendra <vigneshr@ti.com>, Nishanth Menon <nm@ti.com>
-References: <20240809135753.1186-1-logan.bristol@utexas.edu>
- <4e884c6c-ec82-4229-a2a4-55da66cc284f@phytec.de>
- <6fa4f5e5-7f7b-495a-a95a-82d7b105d2d7@utexas.edu>
-Content-Language: en-US
-From: Daniel Schultz <d.schultz@phytec.de>
-In-Reply-To: <6fa4f5e5-7f7b-495a-a95a-82d7b105d2d7@utexas.edu>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: Florix.phytec.de (172.25.0.13) To Berlix.phytec.de
- (172.25.0.12)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprCIsWRmVeSWpSXmKPExsWyRpKBR5ef50KawaxnmhZr9p5jsph/5Byr
-	xfLJC9gtXs66x2ax6fE1VovLu+awWXxdd4bV4k/3ViaLNz/OMln8P/uB3YHL48WEf0wem1Z1
-	snlsXlLv8a/1MbPH8RvbmTza9gV6fN4kF8AexWWTkpqTWZZapG+XwJXxddME9oLZChXvJ8xh
-	b2DcKN3FyMkhIWAi8W/advYuRi4OIYElTBIrXl2Fcm4xSuz9vZsdpIpXwEbi05cvTCA2i4Cq
-	xKfbT5gh4oISJ2c+YQGxRQXkJe7fmgFWLywQLXFz0jmwGhEBHYmnWzvAhjILPGCSmPt6BtSG
-	xYwSa5r+sIFUMQuIS9x6Mh9sA5uAlsSdLXPBujkF7CQOXr7PClFjIbH4zUF2CFteonnrbLAa
-	IQEFidnbJjNC/CMvMe3ca2YIO1TiyKbVTBMYhWchOXYWknWzkIydhWTsAkaWVYxCuZnJ2alF
-	mdl6BRmVJanJeimpmxhBMSfCwLWDsW+OxyFGJg7GQ4wSHMxKIrwnjp9NE+JNSaysSi3Kjy8q
-	zUktPsQozcGiJM67uiM4VUggPbEkNTs1tSC1CCbLxMEp1cDom3dasi3/3jT/lHl75H8Ff6ve
-	6eq1rfBO5o97US0n//RO/WsneUZAPjtqxtPzZVtaz170fpKVs2Zms47r/Nkts5r8ApMKmRU7
-	/jwXU1hxcd858wX6tnv3hzYbzWV4/fHnpbm3dzDHaIveazoZ82FV89WPtU0HNpbfXS2YtO0r
-	/1eOzwt5alIuK7EUZyQaajEXFScCABb3uGenAgAA
+Content-Type: text/plain
 
+This is the follow-up patch series of
+https://lkml.iu.edu/hypermail/linux/kernel/2310.2/02078.html
 
-On 26.08.24 23:17, Logan Bristol wrote:
-> Hi Daniel,
->
-> On 8/26/2024 12:29 AM, Daniel Schultz wrote:
->> Hey Logan,
->>
->> my feedback is similar to Josua's.
->>
->> On 09.08.24 15:57, Logan Bristol wrote:
->>> External interfaces should be disabled at the SoC DTSI level, since
->>> the node is incomplete. Disable Ethernet switch and ports in SoC DTSI
->>> and enable them in the board DTS. If the board DTS includes a SoM DTSI
->>> that completes the node description, enable the Ethernet switch and 
->>> ports
->>> in SoM DTSI.
->>>
->>> Reflect this change in SoM DTSIs by removing ethernet port disable.
->>>
->>> Signed-off-by: Logan Bristol <logan.bristol@utexas.edu>
->>> ---
->>> Changes since v1:
->>> - Enabled cpsw3g and cpsw_port1 in SoM DTSI instead of board DTS
->>> if board DTS included SoM DTSI
->>> ---
->>>   arch/arm64/boot/dts/ti/k3-am64-main.dtsi               | 3 +++
->>>   arch/arm64/boot/dts/ti/k3-am64-phycore-som.dtsi        | 6 ++----
->>>   arch/arm64/boot/dts/ti/k3-am642-evm.dts                | 3 +++
->>>   arch/arm64/boot/dts/ti/k3-am642-sk.dts                 | 3 +++
->>>   arch/arm64/boot/dts/ti/k3-am642-sr-som.dtsi            | 6 ++----
->>>   arch/arm64/boot/dts/ti/k3-am642-tqma64xxl-mbax4xxl.dts | 6 ++----
->>>   6 files changed, 15 insertions(+), 12 deletions(-)
->>>
->>> diff --git a/arch/arm64/boot/dts/ti/k3-am64-main.dtsi b/arch/arm64/ 
->>> boot/dts/ti/k3-am64-main.dtsi
->>> index f8370dd03350..69c5af58b727 100644
->>> --- a/arch/arm64/boot/dts/ti/k3-am64-main.dtsi
->>> +++ b/arch/arm64/boot/dts/ti/k3-am64-main.dtsi
->>> @@ -677,6 +677,7 @@ cpsw3g: ethernet@8000000 {
->>>           assigned-clock-parents = <&k3_clks 13 9>;
->>>           clock-names = "fck";
->>>           power-domains = <&k3_pds 13 TI_SCI_PD_EXCLUSIVE>;
->>> +        status = "disabled";
->>>           dmas = <&main_pktdma 0xC500 15>,
->>>                  <&main_pktdma 0xC501 15>,
->>> @@ -701,6 +702,7 @@ cpsw_port1: port@1 {
->>>                   phys = <&phy_gmii_sel 1>;
->>>                   mac-address = [00 00 00 00 00 00];
->>>                   ti,syscon-efuse = <&main_conf 0x200>;
->>> +                status = "disabled";
->>>               };
->>>               cpsw_port2: port@2 {
->>> @@ -709,6 +711,7 @@ cpsw_port2: port@2 {
->>>                   label = "port2";
->>>                   phys = <&phy_gmii_sel 2>;
->>>                   mac-address = [00 00 00 00 00 00];
->>> +                status = "disabled";
->>>               };
->>>           };
->>> diff --git a/arch/arm64/boot/dts/ti/k3-am64-phycore-som.dtsi b/arch/ 
->>> arm64/boot/dts/ti/k3-am64-phycore-som.dtsi
->>> index ea7c58fb67e2..6bece2fb4e95 100644
->>> --- a/arch/arm64/boot/dts/ti/k3-am64-phycore-som.dtsi
->>> +++ b/arch/arm64/boot/dts/ti/k3-am64-phycore-som.dtsi
->>> @@ -185,6 +185,7 @@ AM64X_IOPAD(0x0278, PIN_INPUT, 7)    /* (C19) 
->>> EXTINTn.GPIO1_70 */
->>>   &cpsw3g {
->>>       pinctrl-names = "default";
->>>       pinctrl-0 = <&cpsw_rgmii1_pins_default>;
->>> +    status = "okay";
->>>   };
->>>   &cpsw3g_mdio {
->>> @@ -208,10 +209,7 @@ cpsw3g_phy1: ethernet-phy@1 {
->>>   &cpsw_port1 {
->>>       phy-mode = "rgmii-rxid";
->>>       phy-handle = <&cpsw3g_phy1>;
->> The connected phy is located on the SOM and should be enabled by 
->> default.
->>> -};
->>> -
->>> -&cpsw_port2 {
->>> -    status = "disabled";
->>> +    status = "okay";
->>>   };
->>
->> This port is routed to the carrier-board. Please drop this node.
->
-> I replied similarly to Josua's comments, but if cpsw_port1 is to be 
-> enabled and cpsw_port2 should be dropped from this DTSI, isn't that 
-> shown in this diff?
+Divide the PHYLINK adaptation and SFP modifications into two separate patch
+series.
 
-Ah, sorry. I did the same mistake :)
+The current patch series focuses on transitioning the LAN743x driver's PHY
+support from phylib to phylink.
 
-Acked-by: Daniel Schultz <d.schultz@phytec.de>
+Tested on PCI11010 Rev-1 Evaluation board
 
->
-> Thank you,
-> Logan Bristol
->
+Change List:
+============
+V3 -> V4:
+  - Add fixed-link patch along with this series. 
+    Note: Note: This code was developed by Mr.Russell King
+    Ref: 
+    https://lore.kernel.org/netdev/LV8PR11MB8700C786F5F1C274C73036CC9F8E2@LV8PR11MB8700.namprd11.prod.outlook.com/T/#me943adf54f1ea082edf294aba448fa003a116815
+  - Change phylink fixed-link function header's string from "Returns" to
+    "Returns:" 
+  - Remove the EEE private variable from LAN743x adapter strcture and fix the
+    EEE's set/get functions
+  - set the individual caps (i.e. _RGMII, _RGMII_ID, _RGMII_RXID and
+    __RGMII_TXID) replace with phy_interface_set_rgmii( ) function
+  - Change lan743x_set_eee( ) to lan743x_mac_eee_enable( )
+
+V2 -> V3:
+  - Remove the unwanted parens in each of these if() sub-blocks 
+  - Replace "to_net_dev(config->dev)" with "netdev".
+  - Add GMII_ID/RGMII_TXID/RGMII_RXID in supported_interfaces
+  - Fix the lan743x_phy_handle_exists( ) return type
+
+V1 -> V2:
+  - Fix the Russell King's comments i.e. remove the speed, duplex update in 
+    lan743x_phylink_mac_config( )
+  - pre-March 2020 legacy support has been removed
+
+V0 -> V1:
+  - Integrate with Synopsys DesignWare XPCS drivers
+  - Based on external review comments,
+  - Changes made to SGMII interface support only 1G/100M/10M bps speed
+  - Changes made to 2500Base-X interface support only 2.5Gbps speed
+  - Add check for not is_sgmii_en with is_sfp_support_en support
+  - Change the "pci11x1x_strap_get_status" function return type from void to
+    int
+  - Add ethtool phylink wol, eee, pause get/set functions
+
+Raju Lakkaraju (5):
+  net: phylink: Add phylink_set_fixed_link() to configure fixed link
+    state in phylink
+  net: lan743x: Create separate PCS power reset function
+  net: lan743x: Create separate Link Speed Duplex state function
+  net: lan743x: Migrate phylib to phylink
+  net: lan743x: Add support to ethtool phylink get and set settings
+
+ drivers/net/ethernet/microchip/Kconfig        |   5 +-
+ .../net/ethernet/microchip/lan743x_ethtool.c  | 117 +--
+ drivers/net/ethernet/microchip/lan743x_main.c | 677 +++++++++++-------
+ drivers/net/ethernet/microchip/lan743x_main.h |   4 +
+ drivers/net/phy/phylink.c                     |  42 ++
+ include/linux/phylink.h                       |   2 +
+ 6 files changed, 523 insertions(+), 324 deletions(-)
+
+-- 
+2.34.1
+
 
