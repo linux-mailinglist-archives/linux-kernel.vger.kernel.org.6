@@ -1,160 +1,159 @@
-Return-Path: <linux-kernel+bounces-307051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4604D964754
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:58:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 151B196475A
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:58:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6C9F282406
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:57:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6E27284C41
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:58:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C8741AD418;
-	Thu, 29 Aug 2024 13:57:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="qnkoyHCO"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B98F42BD19
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 13:57:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 876321AD3FC;
+	Thu, 29 Aug 2024 13:58:11 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAB3C19309D
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 13:58:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724939870; cv=none; b=e11nghYV6klHjvAVP6xgCbG7x/Ago9cBVg9BUYf78dGNM+2wWA3TtYx/0LLtn5UONRxTeMSnAA5P6LJI1wKs41QjumQgUzZcyp8XSnuApZUkKNvhBQZwtu5hUyxEyEKHt8tfEGdZWqLq/AxFFBGW4i0oP29Rx/9rWYTk6+qMw9g=
+	t=1724939891; cv=none; b=q5to3Uy/ADSONUL2BnzezuIiW7MDmRftVtulqWWsTUa4TFYYW8mPRMo51OrNAvSKmNXE+LM1jOT08ZxtJhalkXNfNYcorDOPSG5No6E16exqSxEg4c1L+7AfiJgZzdvbM35butnB0eItFXgh6fbtpNCaEHU3WNq4QIfzuLOuOQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724939870; c=relaxed/simple;
-	bh=aAaeMEKKUf0lY+Ch3OCRX9KFRGPFr3Fe+OwkVaMvlGQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MFLpI8p9K7Gv/3FwlczY7mpcrSWKaes89H3XuBCP7BhyhnWTfjW4sK/RISnxnqHAMHSnGh1r+ca2Ycx0LRpQGbd3q3qxEC06EKDvDeKPVD/Btw5ZHR1OWeFGYt7jOLN/8acStDPW5yGu8YMOlGC3Qm9TTf4vi762E9eF3Szh744=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=qnkoyHCO; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5bed83488b6so740514a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 06:57:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1724939867; x=1725544667; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:mail-followup-to:message-id:subject:cc:to
-         :from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=h2gGqR0ue6Sz02StJxUbNnShrWM0kJ8kSFj/oBxzkSM=;
-        b=qnkoyHCOH0RF2xT9fNFHhJ0VQSDKPi/2CEHjzXf37HqhN7Qc6Xb7ggGyEEl1xfrEsD
-         3BTXi3sXaNbOPyODbaLgu9nX7gdsmsE4DZTc3QehsAfjCzi9dEATRxYxZTvnZ2AePBld
-         xD2stj5VyLXYCDEwCkSt2gMdo49zbaomeQWkM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724939867; x=1725544667;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:mail-followup-to:message-id:subject:cc:to
-         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=h2gGqR0ue6Sz02StJxUbNnShrWM0kJ8kSFj/oBxzkSM=;
-        b=PlswlLFye9KL7J58bzckvmcsjNU5yTvKs0Aox83OJAqu5s46JHYNxcWXYkC3YyhNfq
-         XzglzE6PMn+Ckx7H6U0g+B9i/7qkOtcpqxK3Yk6yJoWjBKkCeMCiwVR8bWsBwrBadDx7
-         z8ZvWgKusDy9kr/GKhccX1zb23FhSNy3/afvSffj6qm8SKS1fNo1K6JC4uaQdB4ZPR0e
-         Wozq3FpCfscYQauNNCpv4yOCi73IcUg9FNpEhNU5XOvvYt+tirFaAej8SXGJEE9IN3qn
-         oZf9x7a3728ZSxMhpHK79c0qw45LlbqEex2gWjeHojta3uN+6KPi0iLkblG56J8C5P7d
-         KGnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU6N+6OELoQ7FAFBPjX1c9rDjDYCo1+mFKDjBJ51TsxEdqqPnFO9Q89TdOhM6COZ8cZyvukiGxw/B72rM8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxv2VnyxssHImv9fulpMcCoVeIMb8xPNHf9pEuoi1rINFAEeSDu
-	VWkuUOWSEhXQaRaWL6P+7cem1O6u04hnn068TAyHPRyn0xQE5nSUXOeXsRSBOJY=
-X-Google-Smtp-Source: AGHT+IFWlMQE5BE0mOF4xapjpI537bzGB827eRSNxKW3GxEaAZxX5+mJ1A04QSiRHHGCsTxl9GE6mg==
-X-Received: by 2002:a05:6402:2112:b0:5c0:a8ba:3c41 with SMTP id 4fb4d7f45d1cf-5c21ed2ffd0mr2687284a12.8.1724939866518;
-        Thu, 29 Aug 2024 06:57:46 -0700 (PDT)
-Received: from LQ3V64L9R2 ([80.208.222.2])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8989021983sm82713866b.84.2024.08.29.06.57.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 06:57:45 -0700 (PDT)
-Date: Thu, 29 Aug 2024 14:57:43 +0100
-From: Joe Damato <jdamato@fastly.com>
-To: Eric Dumazet <edumazet@google.com>
-Cc: netdev@vger.kernel.org, amritha.nambiar@intel.com,
-	sridhar.samudrala@intel.com, sdf@fomichev.me, bjorn@rivosinc.com,
-	hch@infradead.org, willy@infradead.org,
-	willemdebruijn.kernel@gmail.com, skhawaja@google.com,
-	kuba@kernel.org, Martin Karsten <mkarsten@uwaterloo.ca>,
-	"David S. Miller" <davem@davemloft.net>,
-	Paolo Abeni <pabeni@redhat.com>, Jiri Pirko <jiri@resnulli.us>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Breno Leitao <leitao@debian.org>,
-	Johannes Berg <johannes.berg@intel.com>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next 3/5] net: napi: Make gro_flush_timeout per-NAPI
-Message-ID: <ZtB-V5cQl0Eoiw68@LQ3V64L9R2>
-Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
-	Eric Dumazet <edumazet@google.com>, netdev@vger.kernel.org,
-	amritha.nambiar@intel.com, sridhar.samudrala@intel.com,
-	sdf@fomichev.me, bjorn@rivosinc.com, hch@infradead.org,
-	willy@infradead.org, willemdebruijn.kernel@gmail.com,
-	skhawaja@google.com, kuba@kernel.org,
-	Martin Karsten <mkarsten@uwaterloo.ca>,
-	"David S. Miller" <davem@davemloft.net>,
-	Paolo Abeni <pabeni@redhat.com>, Jiri Pirko <jiri@resnulli.us>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Breno Leitao <leitao@debian.org>,
-	Johannes Berg <johannes.berg@intel.com>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	open list <linux-kernel@vger.kernel.org>
-References: <20240829131214.169977-1-jdamato@fastly.com>
- <20240829131214.169977-4-jdamato@fastly.com>
- <CANn89iKUqF5bO_Ca+qrfO_gsfWmutpzFL-ph5mQd86_2asW9dg@mail.gmail.com>
+	s=arc-20240116; t=1724939891; c=relaxed/simple;
+	bh=b5BaD0XeRvTetfsx5mFLuPPc+7NMzlcP6j2F9w9nt14=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=k68euXBLuRLWcEoq4Hx5qVWYwHaf0NnN0NuLeA+dylbRAVvG9j008lkpzJFQ7wNpffhwcPNz7zph/89YPsFj1I+O2f1dlGK+xfZUqTqqplLMiHs3Uned4Y3XEN2DRX4+FHk+RbtXnOnasTBLre7n9G9cM8DGNoW+HWw62I1XXXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6FCBADA7;
+	Thu, 29 Aug 2024 06:58:34 -0700 (PDT)
+Received: from [10.57.16.245] (unknown [10.57.16.245])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D4A5E3F66E;
+	Thu, 29 Aug 2024 06:58:06 -0700 (PDT)
+Message-ID: <ecf53bd6-6047-4ce5-92e9-41651e7ade15@arm.com>
+Date: Thu, 29 Aug 2024 14:58:04 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANn89iKUqF5bO_Ca+qrfO_gsfWmutpzFL-ph5mQd86_2asW9dg@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] driver core: platform: Call iommu_release_device in
+ dma_cleanup
+To: Sachin Parekh <sachinparekh@google.com>, gregkh@linuxfoundation.org,
+ rafael@kernel.org, will@kernel.org
+Cc: lokeshvutla@google.com, linux-kernel@vger.kernel.org,
+ iommu@lists.linux.dev
+References: <20240829120504.2976612-1-sachinparekh@google.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20240829120504.2976612-1-sachinparekh@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Aug 29, 2024 at 03:48:05PM +0200, Eric Dumazet wrote:
-> On Thu, Aug 29, 2024 at 3:13 PM Joe Damato <jdamato@fastly.com> wrote:
-> >
-> > Allow per-NAPI gro_flush_timeout setting.
-> >
-> > The existing sysfs parameter is respected; writes to sysfs will write to
-> > all NAPI structs for the device and the net_device gro_flush_timeout
-> > field.  Reads from sysfs will read from the net_device field.
-> >
-> > The ability to set gro_flush_timeout on specific NAPI instances will be
-> > added in a later commit, via netdev-genl.
-> >
-> > Signed-off-by: Joe Damato <jdamato@fastly.com>
-> > Reviewed-by: Martin Karsten <mkarsten@uwaterloo.ca>
-> > Tested-by: Martin Karsten <mkarsten@uwaterloo.ca>
-> > ---
-> >  include/linux/netdevice.h | 26 ++++++++++++++++++++++++++
-> >  net/core/dev.c            | 32 ++++++++++++++++++++++++++++----
-> >  net/core/net-sysfs.c      |  2 +-
-> >  3 files changed, 55 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
-> > index 7d53380da4c0..d00024d9f857 100644
-> > --- a/include/linux/netdevice.h
-> > +++ b/include/linux/netdevice.h
-> > @@ -372,6 +372,7 @@ struct napi_struct {
-> >         int                     rx_count; /* length of rx_list */
-> >         unsigned int            napi_id;
-> >         int                     defer_hard_irqs;
-> > +       unsigned long           gro_flush_timeout;
-> >         struct hrtimer          timer;
-> >         struct task_struct      *thread;
-> >         /* control-path-only fields follow */
-> > @@ -557,6 +558,31 @@ void napi_set_defer_hard_irqs(struct napi_struct *n, int defer);
-> >   */
-> >  void netdev_set_defer_hard_irqs(struct net_device *netdev, int defer);
-> >
+On 2024-08-29 1:05 pm, Sachin Parekh wrote:
+> Installing a kernel module that has an iommu node in its
+> device tree increments corresponding iommu kernel module
+> reference count during driver_register.
+> Removing the same kernel module doesn't decrement the
+> iommu reference count resulting in error while
+> removing the iommu kernel module
 > 
-> Same remark :  dev->gro_flush_timeout is no longer read in the fast path.
+>      $ modprobe arm-smmu-v3
+>      $ modprobe test_module
+>      $ modprobe -r test_module
+>      $ modprobe -r arm-smmu-v3
+>      modprobe: can't unload module arm_smmu_v3: Resource temporarily unavailable
 > 
-> Please move gro_flush_timeout out of net_device_read_txrx and update
-> Documentation/networking/net_cachelines/net_device.rst
+> Cause:
+>      platform_driver_register
+>          ...
+>          -> platform_dma_configure
+>              ...
+>              -> iommu_probe_device (Increments reference count)
+> 
+>      platform_driver_unregister
+>          ...
+>          -> platform_dma_cleanup
+>              ...
+>              -> No corresponding iommu_release_device call
+> 
+> Fix:
+>      Call iommu_release_device in platform_dma_cleanup to remove the
+>      iommu from the corresponding kernel module
 
-Thanks, Eric. I will take care of both in the v2.
+There is nothing to fix here, the current behaviour is correct and 
+expected. It appears the comment in of_iommu_configure() got lost, but 
+the equivalent in acpi_iommu_configure_id() is still there - the dodgy 
+iommu_probe_device() calls at those points still logically represent the 
+same operation which should have happened via iommu_bus_notifier() or 
+iommu_device_register(), it's just being replayed later for hacky reasons.
+
+IOMMU groups are supposed to be tied to the lifetime of the struct 
+device, and unbinding a driver does not make the device itself go away - 
+if the devicetree says it exists, then the IOMMU layer knows that. 
+Modular IOMMU drivers are still not really intended to be removable, 
+unless all their client devices can actually be removed form the system 
+(and/or the IOMMU driver is being tested without any clients present).
+
+Thanks,
+Robin.
+
+> Signed-off-by: Sachin Parekh <sachinparekh@google.com>
+> ---
+>   drivers/base/platform.c | 3 +++
+>   drivers/iommu/iommu.c   | 3 +--
+>   include/linux/iommu.h   | 1 +
+>   3 files changed, 5 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/base/platform.c b/drivers/base/platform.c
+> index 4c3ee6521ba5..c8125325a5e9 100644
+> --- a/drivers/base/platform.c
+> +++ b/drivers/base/platform.c
+> @@ -1467,6 +1467,9 @@ static void platform_dma_cleanup(struct device *dev)
+>   
+>   	if (!drv->driver_managed_dma)
+>   		iommu_device_unuse_default_domain(dev);
+> +
+> +	if (dev_of_node(dev))
+> +		iommu_release_device(dev);
+>   }
+>   
+>   static const struct dev_pm_ops platform_dev_pm_ops = {
+> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+> index ed6c5cb60c5a..495f548fd4b9 100644
+> --- a/drivers/iommu/iommu.c
+> +++ b/drivers/iommu/iommu.c
+> @@ -92,7 +92,6 @@ static const char * const iommu_group_resv_type_string[] = {
+>   
+>   static int iommu_bus_notifier(struct notifier_block *nb,
+>   			      unsigned long action, void *data);
+> -static void iommu_release_device(struct device *dev);
+>   static struct iommu_domain *
+>   __iommu_group_domain_alloc(struct iommu_group *group, unsigned int type);
+>   static int __iommu_attach_device(struct iommu_domain *domain,
+> @@ -663,7 +662,7 @@ static void __iommu_group_remove_device(struct device *dev)
+>   	iommu_group_put(group);
+>   }
+>   
+> -static void iommu_release_device(struct device *dev)
+> +void iommu_release_device(struct device *dev)
+>   {
+>   	struct iommu_group *group = dev->iommu_group;
+>   
+> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+> index 04cbdae0052e..2f9cb7d9dadf 100644
+> --- a/include/linux/iommu.h
+> +++ b/include/linux/iommu.h
+> @@ -1049,6 +1049,7 @@ void dev_iommu_priv_set(struct device *dev, void *priv);
+>   
+>   extern struct mutex iommu_probe_device_lock;
+>   int iommu_probe_device(struct device *dev);
+> +void iommu_release_device(struct device *dev);
+>   
+>   int iommu_dev_enable_feature(struct device *dev, enum iommu_dev_features f);
+>   int iommu_dev_disable_feature(struct device *dev, enum iommu_dev_features f);
 
