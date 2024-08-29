@@ -1,117 +1,167 @@
-Return-Path: <linux-kernel+bounces-307209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C123964A16
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 17:31:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9306F964A1B
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 17:32:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F7B81C237FE
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:31:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E7FA1F23083
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:32:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E13231B3737;
-	Thu, 29 Aug 2024 15:31:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B8491B3F0B;
+	Thu, 29 Aug 2024 15:31:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IAw+5xmz"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CKv9zzdq"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9B881A0732;
-	Thu, 29 Aug 2024 15:31:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF8261A0732
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 15:31:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724945490; cv=none; b=ewDtO0oBS8ScDfS1uKNBQCrNRKmk2moglRhcAZCGG3IwAA2MSn88Er76DXxHb5PvLLSPrnDSSJMAxuf1QZMs6lQN/n/qQ9CA2Ojmff+UYa4yYEVKIYcDGKxx352wmJbJbHVAbKYtA9iYYmJEVsdlGrOaD52Eu3EYeWxbgSGlpIs=
+	t=1724945506; cv=none; b=M6WdyvrryKe6HLnf5dhri16xANPpHyfVyzjPSnwt49gtD6p0mNV5JjS5VUV/H95Pptsl8uF8xOR9Vcsm1YSnlY9249WDQXipP7sSaQrQmS4ucXU2qytJzwnxJCZA84E+AoA/9DHLnz1iE6wnvq6p7JaAYC3bTsw5KbNrvIXfWus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724945490; c=relaxed/simple;
-	bh=7hGXNZWgx//c4c3r9ZLTcXRU4T/PDM96+23D1Ad4A1Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=f/pv7LNrwLp4Q+xGV9sQKfWRpYU04Fq+8MDPasu4IELcDYIWFwvXY9yfWAX6qBJbpUCG/yO34cDQAYIFUbUieT44TPHO0jfrzbG7k1KNDXK6fzRgq9OvcplN2WJMiZdfrH9H8dHZASU/5X2O03XH5GlI8R1Xzo/QFt9t8Mw5Jm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IAw+5xmz; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-428101fa30aso7503525e9.3;
-        Thu, 29 Aug 2024 08:31:28 -0700 (PDT)
+	s=arc-20240116; t=1724945506; c=relaxed/simple;
+	bh=HJmwn/0JFnzsnQnzKr8gkbD+ep4LL2U46xq8HCPKOfc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=JjM5L9Tv4jl0F7FBjJxDFPdWsW5Q/8qs/Hw6PVt9BVqVD7U9sypVoBy8pFcEaa/6TYlIEki4cMiiFCsuKCGBp+1emxfKOQAwyneWQPoQjT5QlMB0XhopbkYAY+weRbLrmt2ZBhUXoRef3wntmljWp5YYSirJL4sGJQwdDZLMoT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CKv9zzdq; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2f3f163e379so13068951fa.3
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 08:31:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724945487; x=1725550287; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1724945503; x=1725550303; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=1VX275HeOjFKVc6+k2cCnpqbGUp8cwQRAZ5P/IfojC0=;
-        b=IAw+5xmzfM3Wqwjo0Bp/mqogeM7YI9WeUb0hOday0iLYwPc47mEGZVRpJYqEm7XDln
-         kFXD9j4akS2Vxtx1FPjlrI3ciZrVlTrvAm3hbwxKmpui9FYg3rfgkQIPYoeEi5Xqp28Z
-         v0XPrP/rQfHnx/EcFcPnTfBBtAw+jUBGaw58g2UR4nWWCCTC9FQzTXHZx75zbQ4PoUDF
-         1UdE9YXxATXWuIqOu/f2FSXnG9P3hRHCPXeLbrC9OsSCya7DnCufhEvoIgsHP9/HjDjp
-         r0kYD3gRthUykYRiHo7HvpMsa1i8izhKMUXLmRigEtpXWyoq6G7dDq1GCTjID0u35ZQP
-         nI9g==
+        bh=1U1YaxDrIZa5AMVlFHNmIflB8sd0no/S8DXcr9Xwqxg=;
+        b=CKv9zzdqGnxK30sccuDFjpeOLYQW4LC4eoH+2xS28l8563eqXHPWPw4cIOTRftjUey
+         CNpzUdi1yYultXRG25CTjP771zm6mCvoArfUdGGxwGAz80ki5e0TuZvTA//K9g9bxLjj
+         g5S4n2ZlHoGfsN2fVwH3dLiz6dx9iHkflRnmXZo5wUPnLNHo51W1qCmrfgh0CA5wTrCo
+         xnTWW7mCsvtEKFqAb6NPEOfjtsl+skJRkOv2xmoOXbU7JNrXaki2aeO5x0G/1FHLIQkH
+         6MvTvuAvixWsML7FMGC1y+8183dQN7Dx4WwS8sBypEYS81aBxnhRUZiBSRGAcVZi/tx+
+         WKLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724945487; x=1725550287;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1724945503; x=1725550303;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=1VX275HeOjFKVc6+k2cCnpqbGUp8cwQRAZ5P/IfojC0=;
-        b=heRyyJE7DCyHbf/LAJYCLBmtI3JvVgTaN89IjOxV2iuoc22LNQONzkWxT3anqb7woN
-         jREINAiqRe/pb1GNiXMANN4Xm6iNFRYFjI6lPWW3WwoH+fZuAtXqAI86NSBrWoDzEF+q
-         ZNg+gmrm6+eF1zep2ojMaM75lndcGfYdjdt/NyskiqRk96wodltGRvwxdEw9Oc1XT0gB
-         P0OytQuDa5f7ldaD4H8k7O+8etOnasn9Kslf+PXUaINypMAVhw2k7GNqs/dgsY/51CGM
-         jnorj7btw0oZfIdY5NGwvp9u7LeEc5Wz/Zqxvnl0lWQDGgNejPRSxhcCGcWHV/9k7bUH
-         jYaw==
-X-Forwarded-Encrypted: i=1; AJvYcCV30HVK86KV/PL3R9Cfp5SzrbjZTlfa6XzWp0Fz31PqLmwgLHgTZBGyq6Ad4BIPBL9FuKEtGXBKTKff6QI=@vger.kernel.org, AJvYcCW07jK1fvfxRGnwqc5NHPxrTQbaSnvlaQ52D1nG3eGtCcAsjwkn9XLVZO32hbC5xWCce05ULo7WbQMGVi8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWc/nMGxVXaQX9eWMDxFGx5Ynd49afNajouvPLeVR1U34wD/sr
-	h2Kixhec7vF4nYnbQ0WwDfRwQLv/MIbSbEscy73iQcY0uKyge2zO
-X-Google-Smtp-Source: AGHT+IE0z2Lk5+eKz7UAcfVxpx7lU8HWLO3PlHhGWPjs8//GN0A70wdsCXF+MNu0zbxcK4Yjk4mlvA==
-X-Received: by 2002:a05:600c:1382:b0:426:6eac:8314 with SMTP id 5b1f17b1804b1-42bb02c1647mr28131805e9.1.1724945486229;
-        Thu, 29 Aug 2024 08:31:26 -0700 (PDT)
-Received: from localhost (p200300e41f29d300f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f29:d300:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bb6e27c70sm20447765e9.35.2024.08.29.08.31.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 08:31:25 -0700 (PDT)
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
-Cc: devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] arm64: tegra: add wp-gpio to P2957 board
-Date: Thu, 29 Aug 2024 17:31:23 +0200
-Message-ID: <172494536049.1302383.5328678787632525054.b4-ty@nvidia.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240815-tx1_sdmmc-v1-0-7856ac25a204@tecnico.ulisboa.pt>
-References: <20240815-tx1_sdmmc-v1-0-7856ac25a204@tecnico.ulisboa.pt>
+        bh=1U1YaxDrIZa5AMVlFHNmIflB8sd0no/S8DXcr9Xwqxg=;
+        b=Sg/yvDNiqFhz2V6xKhRhsTdFjzCjK4NLSShWlD0pTt3vH0IZwVYNneCOvDdN1fRlpN
+         ngnuDmzqL/4VfIE+dtoZWy74UdvrxFHu12oTw1mbYTht33ZuS5MTNgpeGYk/EvsXA5xy
+         It2+MvoFnTYXk7NQn/b3m2NG+n6l7rdyEU+IKX94PaDv8LcEYpv+QjVJXfRxPh9m70h6
+         SJ/NRhUz4zKaossk/qhxr97sJiJVUHw/l/1Qyb/vg3MZ4CaC3jk2azJnpq8NWXg8/F3Q
+         IBi585478u9kq2jqQ2kRS76PyIVoElDv4NhmlFg+qzYWojdb7lP2x1iOu3Lve4THdFdV
+         jPwg==
+X-Forwarded-Encrypted: i=1; AJvYcCXi7oW+4KNiIyMjp819Mb3umzJgIUjao4uhm/nGfSNiLgun4ccWxLDPmYm/Z+iA+EpyNMzBbzHeDHagSUA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhUz4cdNjcrt7aRxBqzOwD7VVPGJNLjk1kRnG/3m8BcfmgIipj
+	ZcRWWe+/CmR9IE+cb5dX2S4KDU4prbppRG9CGemh1vcfyJ7V5UblahcSmRs8Y1dn2SScGqH4AQv
+	rDHR5YrzvUBPFAl3RRjIDyQKsUAjRb//zJ9eC
+X-Google-Smtp-Source: AGHT+IEU6GOaXKR9I2jPDVOQ4lVSi6XXLtyFi4pPPM5bH2cZUJwcifL4f/1ZEBLGQ9soQOhjCYDh5zF2yVTZbC+r6GE=
+X-Received: by 2002:a05:6512:3d05:b0:535:3da7:5b59 with SMTP id
+ 2adb3069b0e04-5353e5431d9mr3651290e87.12.1724945501915; Thu, 29 Aug 2024
+ 08:31:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20240829131214.169977-1-jdamato@fastly.com> <20240829131214.169977-4-jdamato@fastly.com>
+ <CANn89iKUqF5bO_Ca+qrfO_gsfWmutpzFL-ph5mQd86_2asW9dg@mail.gmail.com> <ZtCTgEEgcL3XqQcO@LQ3V64L9R2>
+In-Reply-To: <ZtCTgEEgcL3XqQcO@LQ3V64L9R2>
+From: Eric Dumazet <edumazet@google.com>
+Date: Thu, 29 Aug 2024 17:31:30 +0200
+Message-ID: <CANn89iJgXsn7yjWaiuuq=LFsKpQi8RQFo89MDRxeNddxeZUC2A@mail.gmail.com>
+Subject: Re: [PATCH net-next 3/5] net: napi: Make gro_flush_timeout per-NAPI
+To: Joe Damato <jdamato@fastly.com>, Eric Dumazet <edumazet@google.com>, netdev@vger.kernel.org, 
+	amritha.nambiar@intel.com, sridhar.samudrala@intel.com, sdf@fomichev.me, 
+	bjorn@rivosinc.com, hch@infradead.org, willy@infradead.org, 
+	willemdebruijn.kernel@gmail.com, skhawaja@google.com, kuba@kernel.org, 
+	Martin Karsten <mkarsten@uwaterloo.ca>, "David S. Miller" <davem@davemloft.net>, 
+	Paolo Abeni <pabeni@redhat.com>, Jiri Pirko <jiri@resnulli.us>, 
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Lorenzo Bianconi <lorenzo@kernel.org>, 
+	Breno Leitao <leitao@debian.org>, Johannes Berg <johannes.berg@intel.com>, 
+	Alexander Lobakin <aleksander.lobakin@intel.com>, Heiner Kallweit <hkallweit1@gmail.com>, 
+	open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Thierry Reding <treding@nvidia.com>
+On Thu, Aug 29, 2024 at 5:28=E2=80=AFPM Joe Damato <jdamato@fastly.com> wro=
+te:
+>
+> On Thu, Aug 29, 2024 at 03:48:05PM +0200, Eric Dumazet wrote:
+> > On Thu, Aug 29, 2024 at 3:13=E2=80=AFPM Joe Damato <jdamato@fastly.com>=
+ wrote:
+> > >
+> > > Allow per-NAPI gro_flush_timeout setting.
+> > >
+> > > The existing sysfs parameter is respected; writes to sysfs will write=
+ to
+> > > all NAPI structs for the device and the net_device gro_flush_timeout
+> > > field.  Reads from sysfs will read from the net_device field.
+> > >
+> > > The ability to set gro_flush_timeout on specific NAPI instances will =
+be
+> > > added in a later commit, via netdev-genl.
+> > >
+> > > Signed-off-by: Joe Damato <jdamato@fastly.com>
+> > > Reviewed-by: Martin Karsten <mkarsten@uwaterloo.ca>
+> > > Tested-by: Martin Karsten <mkarsten@uwaterloo.ca>
+> > > ---
+> > >  include/linux/netdevice.h | 26 ++++++++++++++++++++++++++
+> > >  net/core/dev.c            | 32 ++++++++++++++++++++++++++++----
+> > >  net/core/net-sysfs.c      |  2 +-
+> > >  3 files changed, 55 insertions(+), 5 deletions(-)
+> > >
+> > > diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
+> > > index 7d53380da4c0..d00024d9f857 100644
+> > > --- a/include/linux/netdevice.h
+> > > +++ b/include/linux/netdevice.h
+> > > @@ -372,6 +372,7 @@ struct napi_struct {
+> > >         int                     rx_count; /* length of rx_list */
+> > >         unsigned int            napi_id;
+> > >         int                     defer_hard_irqs;
+> > > +       unsigned long           gro_flush_timeout;
+> > >         struct hrtimer          timer;
+> > >         struct task_struct      *thread;
+> > >         /* control-path-only fields follow */
+> > > @@ -557,6 +558,31 @@ void napi_set_defer_hard_irqs(struct napi_struct=
+ *n, int defer);
+> > >   */
+> > >  void netdev_set_defer_hard_irqs(struct net_device *netdev, int defer=
+);
+> > >
+> >
+> > Same remark :  dev->gro_flush_timeout is no longer read in the fast pat=
+h.
+> >
+> > Please move gro_flush_timeout out of net_device_read_txrx and update
+> > Documentation/networking/net_cachelines/net_device.rst
+>
+> Is there some tooling I should use to generate this file?
+>
+> I am asking because it seems like the file is missing two fields in
+> net_device at the end of the struct:
+>
+> struct hlist_head          page_pools;
+> struct dim_irq_moder *     irq_moder;
+>
 
+At first glance this is control path only, no big deal.
 
-On Thu, 15 Aug 2024 16:50:38 +0100, Diogo Ivo wrote:
-> Define the wp-gpio for the P2597 board.
-> 
-> For this, patch 1 fixes the assignment of the vmmc supply's gpio that
-> was incorrectly assigned to the wp-gpio of the external slot.
-> 
-> Patch 2 adds the definition of the wp-gpio.
-> 
-> [...]
+> Both of which seem to have been added just before and long after
+> (respectively) commit 14006f1d8fa2 ("Documentations: Analyze heavily
+> used Networking related structs").
+>
+> If this is a bug, I can submit one patch (with two fixes tags) which
+> adds both fields to the file?
 
-Applied, thanks!
+No need for a Fixes: tag for this, just submit to net-next.
 
-[1/2] arm64: tegra: Fix gpio for P2597 vmmc regulator
-      commit: 46a26db82748a9434fae662738ff80e350b179ee
-[2/2] arm64: tegra: Add wp-gpio for P2597's external card slot
-      commit: ebe899563a83c9bb578248eb4a4d56414275d9fa
-
-Best regards,
--- 
-Thierry Reding <treding@nvidia.com>
+This file is really 'needed' for current development, for people
+caring about data locality.
 
