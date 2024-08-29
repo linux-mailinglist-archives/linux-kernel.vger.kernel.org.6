@@ -1,131 +1,97 @@
-Return-Path: <linux-kernel+bounces-306739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B19209642BC
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:10:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5DF19642C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:11:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 677002815F7
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 11:10:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 622021F22E35
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 11:11:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4838190679;
-	Thu, 29 Aug 2024 11:10:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DBC319068E;
+	Thu, 29 Aug 2024 11:10:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EBrgC1rd"
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LmCH6dss"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89F18189F3E
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 11:10:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36CB7190674;
+	Thu, 29 Aug 2024 11:10:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724929829; cv=none; b=YI2psUaXqQfRZTPhhh6fwguUupkc2xEcl8XGtu4L81Q/GNMo+kpomHJFkaEcJeq64RUTHkNd8742zrnITl/eKvpu10rCKOS4vDOvEBiWwVufCYckzDkhqQNkT5msIX8SUC0oZxCSp2DuqOQbaoX9lJCpnXla8jn6K6GK+vVvbQM=
+	t=1724929857; cv=none; b=W40282aiJg2licgWSN+LUcmoMa94feNBLMlHy8y+FgAnFUPBJrIxNxMd+Fwdy1MiiQ/7XNiQXUCYmbl8UFKupBwDDx1KJrdQF+4jaD7end2szxAfwCbO04UKb+QfUgMi3lVaKvmVyf6DwO+28P6O29IKRi8H7TRE97UzVAzFPGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724929829; c=relaxed/simple;
-	bh=ZILWOizrwMsUda6cQqGOf30Fw9nb4FMaJ7/AwYYDyXs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DHtMTLWNE7ecxADcwzGF6/x16G8B0iZWZC3+UdkRT4V+u9G6Ym2dz17FRlUy1QE0FkFx5utuU4C4h4sRX3Uq0CNJV3Z4tm03zwNZpxqHcliwoCCKfCDe62QVQjsUeWZ/6w4W3vtpBiO/x+Vmele50MvH9hUP5Y4qmZwHoERVyqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EBrgC1rd; arc=none smtp.client-ip=209.85.219.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e02b79c6f21so543920276.2
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 04:10:27 -0700 (PDT)
+	s=arc-20240116; t=1724929857; c=relaxed/simple;
+	bh=6SI2/lyqhaIoUJGj02tkJ25nXbbSPE8tjotNBrHjFRs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MjTwbMATdyCXR8E14Z6s1dQW2S6thHco4Tp9aco0N3Piw3EMSVQ+vZV57o0R2rBmA25km+lHl4LB1N7CzOHIaTUDLum96l/eYF3RploymLXMAOTyizC4ryo3jxQrvFjtyrLeTz7/6tM/WhN5EVJ57rR9tKnNHmHi5PYMo+wFosk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LmCH6dss; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-37193ef72a4so361155f8f.1;
+        Thu, 29 Aug 2024 04:10:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724929826; x=1725534626; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=IMZRn0sUhAT7QPLtxYhsMgrNJCWGnuhAKggHYsS2Lvc=;
-        b=EBrgC1rdT2nBUAmgN8easAjqGnHY15UprcEGlMQlxe9nk+n7QlLZ2Z/KlEQo9Na6zU
-         Uh+vD0DQrXCPi/UuNWF1VoU/BPdlr5/Yxn+IfbWc/yz8ORKLajZB6Jzi2A9O+0/8kK32
-         iOc3uJB1IjhgSFtUhqh2ymDjmApz0FXWQAxM8zTQqpHcw76XULy7kzByGKjOpQSytU5Y
-         AFgEdluGZHwrkL05YwigL8t5IR5u8fA2qOXD97aktDsQOOPhXBWrgPwNTyW9XVsC0Fcl
-         3WGbEI/LKNQqybQJFbj78OCaTWiwRw9Jhh0T1UL26orKFKoEkGW6k48LmoZwrcDahWl9
-         7toQ==
+        d=gmail.com; s=20230601; t=1724929854; x=1725534654; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=6SI2/lyqhaIoUJGj02tkJ25nXbbSPE8tjotNBrHjFRs=;
+        b=LmCH6dss9G5T/GKowTME8OkVjYfUpRhR1vTrNyX5xG1Acj5jTIiudBWs7K5tLG/ax8
+         N+nmPzoVY65bdsVmhxuvR8dVCL7UtyhXp6x9rsgm2IRKdB5hbB7zM+kQnBcHUU+9Czte
+         a+lVYw7mu0udvV/CNN0WKW8Ay9qvyDhryIdcQhIgsQFhSSkI+w+8+h3ginYQ6jL7p5qp
+         nhVx+3Gec9oYVh1IF6EuA07PqhOGvqdSS6JihdJk4UTeEXCWVKCIC6fKAeROVdY6h8sC
+         /RCh6OKcvC4f47i6aApQ2cb4/tQLnmNnLbwN4dyMcsb9/TMZ9MZH6mzYQD96Td46ogrH
+         OEsg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724929826; x=1725534626;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IMZRn0sUhAT7QPLtxYhsMgrNJCWGnuhAKggHYsS2Lvc=;
-        b=LIlvs/79cXgG7USiTN+bNyCbp1sjfCEkSyyzVyysp6AYV6PLwUcBBQvGNRAj78Sm9q
-         lACp/kqBM3KdeM2O7So9LGyHcrB0loOKFIJ4ckRkmYHPfxecSInAaNxrzJEyt4Zhza8r
-         M/hnIiAGBa5St3SHcrqc/V/uOSaIXXwS+nLVVE7qxCxL74ciJqsoqFwtdTEvyKrvNc3x
-         hYv0Fa+Of9Sn8w43q3jasgC7+uFZDcJormBLYuPFP3yh/AP/et/E01Nis6LKbiLVoayW
-         IKN9qh+8RIXaXljhGtBSzkUFlsFQrDQHFZ6QIfmJ2Xi6FW/xcA5haMksmf3aVkXr3vQ1
-         tEWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXbEDYxjlXttTAJf2yFLnnqGweY/EoC0EDadL1t9eu9Zkxu8znux9ZPD10FSwrugBCiVW3yiCjv8B7Wx9Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlTzW/BcEkGrXlrBiKF2puDXjEL16CT/6NqirCx5i4qRJ5qgi0
-	c75XijmzYjw6/tHgkfZYUOFiNmoBd0CN6TVVFp3Y6JtmCSn7rTO/x7hc2Xq4ZJsBkKJ4iVcSoTp
-	hBxjt2lc9AaZ2T+aqen24jisAbgN0bh/Bu96G7A==
-X-Google-Smtp-Source: AGHT+IExKB2y+YYKi+w/X2u1O51Cl6dOZJ7yQ6Ws+aZXHZmk8aKxUzPH5YQQBBnmoCI91r2oWOFUFXCggGYyUusPgOo=
-X-Received: by 2002:a05:6902:e0b:b0:e13:cb58:dd15 with SMTP id
- 3f1490d57ef6-e1a5ab47dfbmr2665701276.8.1724929826178; Thu, 29 Aug 2024
- 04:10:26 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724929854; x=1725534654;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6SI2/lyqhaIoUJGj02tkJ25nXbbSPE8tjotNBrHjFRs=;
+        b=PD7nEXPd0JGr9+LGWjZ4vi68IuHkEIlMBDyEk0X53MrLXXsPNb/JLLQ12LG4/bBvBp
+         f/13AtvbZ63T8h+GVX7UyHgWtfoLc14ZKKCIvUccu+5WolP1tZQuc+RReOrfD0any4lN
+         cDzoH5HwjibIP6Vu9VlSkcY27kXuwCg6BRxgclMq763aIpY8+OIjnudPi3V29XsFLYPJ
+         7SjMdTaJP7/TJfircT0tk5OkBz41adsAoEPj3RrsGCtNDvJSKB2jcBik+Zi3gwy5Bboi
+         d1qEG1ryHR6ZqlsTEvr5/qHtfIUVOa9lPS3c9oGL/KSTsNwf69+v3f104cQxUxu7rsUv
+         XSWA==
+X-Forwarded-Encrypted: i=1; AJvYcCWLj/rbgzOqSQXRi5DCp0o3HbuVkHWq01O1a7PpWv4MsOS3QNBFalStUOrO7a6UEQ1fOXKL4KOncYKO@vger.kernel.org, AJvYcCXlh2fQzhnen0wIKzsKp8aqm8aoUA3E/bPCguKP872/y/BeXKUrzLvPMZ5eVWoQ3HS0gDBd7PIfcQCsZ3w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzMgBtmEC/a/h7qdKHx3wMWM1cg//ynGukE6WTljXdyvHTsBof
+	32laRIDx9TWcqDyYndfbaBgyifL0bOi/CxKDv4wZ88/eW5Rd4AuE2basIY8l
+X-Google-Smtp-Source: AGHT+IG9s3hpkv6OK/W1x8fPf5JzfVj+jZ5LiyGMPxmRcTThesjyrHRmAq/ziTdoVEhmXxZMx7YCDQ==
+X-Received: by 2002:a5d:59a9:0:b0:35f:cd7:5ba1 with SMTP id ffacd0b85a97d-3749b585ddamr2083795f8f.60.1724929853785;
+        Thu, 29 Aug 2024 04:10:53 -0700 (PDT)
+Received: from ubuntu2204 (fgw-godollo.uni-mate.hu. [192.188.242.165])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bb6deb2f5sm13912935e9.2.2024.08.29.04.10.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Aug 2024 04:10:53 -0700 (PDT)
+Date: Thu, 29 Aug 2024 13:10:51 +0200
+From: =?utf-8?B?VMOzdGggSsOhbm9z?= <gomba007@gmail.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+	linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org, csokas.bence@prolan.hu
+Subject: Re: [PATCH v5 2/2] dt-bindings: rtc: Add support for SD2405AL.
+Message-ID: <xtauzwfdqeg6scijjhg2khd6jd2tyfjjyf7dtpaj53esnvlki6@qaix4scw2f4l>
+References: <20240828-rtc-sd2405al-v5-0-9e3f8fa5ea6b@gmail.com>
+ <20240828-rtc-sd2405al-v5-2-9e3f8fa5ea6b@gmail.com>
+ <0f328688-99e1-41c0-9300-c7ff847ebabc@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240829-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-8-v1-0-bdb05b4b5a2e@linaro.org>
- <20240829-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-8-v1-7-bdb05b4b5a2e@linaro.org>
-In-Reply-To: <20240829-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-8-v1-7-bdb05b4b5a2e@linaro.org>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Thu, 29 Aug 2024 14:10:15 +0300
-Message-ID: <CAA8EJpqZjO9rfVgVkhyCpg9qfyc13MHtz=RRhZG6ihMsVM+bSA@mail.gmail.com>
-Subject: Re: [PATCH 07/21] drm/msm/dpu: Support dynamic DSC number
-To: Jun Nie <jun.nie@linaro.org>
-Cc: Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, linux-arm-msm@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <0f328688-99e1-41c0-9300-c7ff847ebabc@kernel.org>
 
-On Thu, 29 Aug 2024 at 13:20, Jun Nie <jun.nie@linaro.org> wrote:
->
-> Do not assume DSC number as 2. Because there are 4 DSC in
-> quad pipe case.
+Dear Krzysztof,
 
-Please expand the commit message. You prefer brevity, but your
-comments lack clarifications.
+Thank you for the advice, and sorry for the inconvenience.
 
->
-> Signed-off-by: Jun Nie <jun.nie@linaro.org>
-> ---
->  drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-> index 6bdd9c21ff3ed..05b203be2a9bc 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-> @@ -553,9 +553,9 @@ bool dpu_encoder_use_dsc_merge(struct drm_encoder *drm_enc)
->                 if (dpu_enc->phys_encs[i])
->                         intf_count++;
->
-> -       /* See dpu_encoder_get_topology, we only support 2:2:1 topology */
-> +       /* DSC and mixer are mapped 1:1, so reuse the mixer number */
+Best regards,
+János
 
-Why? DSCmerge is a valid topology even if it is not supported yet.
-
->         if (dpu_enc->dsc)
-> -               num_dsc = 2;
-> +               num_dsc = dpu_crtc_get_lm_num(drm_enc->crtc->state);
->
->         return (num_dsc > 0) && (num_dsc > intf_count);
->  }
->
-> --
-> 2.34.1
->
-
-
--- 
-With best wishes
-Dmitry
 
