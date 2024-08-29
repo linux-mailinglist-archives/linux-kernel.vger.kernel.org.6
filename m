@@ -1,87 +1,49 @@
-Return-Path: <linux-kernel+bounces-306461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D8E8963F52
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 11:00:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72747963F56
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 11:01:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 146831F22C22
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 09:00:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A27661C244F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 09:01:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94FCC18C926;
-	Thu, 29 Aug 2024 09:00:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 957E518CC1D;
+	Thu, 29 Aug 2024 09:00:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="LPcz7wVC"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z1c4bfN9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B05AF148838
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 09:00:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD699158541;
+	Thu, 29 Aug 2024 09:00:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724922040; cv=none; b=fJwKnJdMPFql87xlyUYdNxqXQokSxvmNuWhuV7+CNNElN48C0YZQq4WcTnqJ0Taie+7UvdSV5hm3q6N5a4N/HnWsyyHTJ3BwmdzSqQiqgUcrRDVR5hg1txaArE0WNe/NLlX/3xzpi85aCDo5/aZtxu8dpBXzLCyvepRVj+sZqN0=
+	t=1724922045; cv=none; b=oP2OWuO5CbUTMRM7G77Npu+flg2Z4IikJIZzI3f6ckfkpSCaodK4cLurSOc1hgRWinjof8oUGxIttgaNuB9KSfT+gNKgR6sLIxO1le8Hqq7Eyyy6ThDkY1iQ9fYw+0Ompr7W8X/OuNaHLRCkwjJEBplfXs4zFEUuO5J0MeFwpbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724922040; c=relaxed/simple;
-	bh=81+YZ0KSh/IunsDPFB8A4sOGy/yTbcZFpSn1SUKBv40=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tuPleibdsa5A0DlcSuBBWiCM1zhv1aVLwfuuwMojI1MaLEjFgfjQ8DDRFvDWEQuSNVi7DTFHEYOCZCbeY7uEwmMS5AkFjFs1oqPI+/ATp69F0L39HkxWRC7qJEoM1tvSZGIM0ze3nVkguvCNTaOXerNjRI2JBQ3B5F67z1wkIks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=LPcz7wVC; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-371a6fcd863so282118f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 02:00:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1724922037; x=1725526837; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=BeNRcsK1VBAVknVZMYL7LYgNLSYxmT3BPkThGqZl++4=;
-        b=LPcz7wVCXxAEh/X7Dpx2orLhRCXd9wIodZLGIH6UtELSMsgOsBEGHqFkiIfZ04Q4Sw
-         N5HKYXmq3QOv8scndLkxfKXzhKNHW4SYWNpGUIoOMPOfh811290g3fB6mJDgtEtvYig/
-         lJwkrorpQPsd/zGkNcs5Th2iOQPTjfNXceE233Pih8bxVWjjFDvb1W145SnPvEx5n+9x
-         r86budCFqHIMXlXjbBaPZDW/yM6Ee50no7oB+Vy49gsUMjK+7amNyOpDwlUT2kvQ8fED
-         u5t9ropchpihgUrFgGP107L6wSBhMLwk+0GQZhY/NozcFPnfriSsmzIedaCpOKb5j4V0
-         0cEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724922037; x=1725526837;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BeNRcsK1VBAVknVZMYL7LYgNLSYxmT3BPkThGqZl++4=;
-        b=kWYlslaJ7SlHfkJd+fIrye58ji/Clud7IOX0q6yyD+mxuQv0mXE0E+S+X0+0y6gEyD
-         ihAPYqC2BqLSBx6IMIoYnIt7CpCHKd/olE87HGTH6TCMXA+8261vjhGOviDn+u0cGXBr
-         Z55aioBXrUNF81eL1ifjvxhGYQ/QWqLQTc1VYSsZaksoXZ67F8QzVIJDFlrRSvwT0L6T
-         wfZcO5fOGDXxKlQVX7aBDohOAOHn2k/6epOnBG3afEf/ICTkfKl1zQq5u5nLsspskdD4
-         5lcYQldUFUPDQMBcA5gOG7+QtNf9xd7OLwlw6zNEcUQdH+2bnFK0CI3KYZRTi3aXZ/dX
-         WFxA==
-X-Forwarded-Encrypted: i=1; AJvYcCUPyOZIDPeMcQRVy0c4Hal0nwzaWa7y2tMA611CaIfNmM30jrGi/PztbkMIcEvfQQ9gRJ1iVTBmF38UstM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzvskLWfnxVWJEwM/XNRo2mvQaVOATtN6HG0yvUQdrpfjON1L5
-	4FN9QNa8YTMTNZ3C1RXKHz6JVhV4WXfwx5JPkgeJRr43Q6PsHq1Elb3/5gyDPOA=
-X-Google-Smtp-Source: AGHT+IFDn/Gg69njG25mI4d4sEhZazC4fYygfh318ZFGyBPM6YU+PgABbs6EeHt9ufd4I3vB2nPnxQ==
-X-Received: by 2002:a5d:51c9:0:b0:368:4218:a3d with SMTP id ffacd0b85a97d-3749b54fe8bmr1391056f8f.37.1724922036607;
-        Thu, 29 Aug 2024 02:00:36 -0700 (PDT)
-Received: from alex-rivos.ba.rivosinc.com (amontpellier-656-1-456-62.w92-145.abo.wanadoo.fr. [92.145.124.62])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3749efb15b8sm860971f8f.105.2024.08.29.02.00.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 02:00:36 -0700 (PDT)
-From: Alexandre Ghiti <alexghiti@rivosinc.com>
-To: Atish Patra <atishp@atishpatra.org>,
-	Anup Patel <anup@brainfault.org>,
-	Will Deacon <will@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	linux-riscv@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: Alexandre Ghiti <alexghiti@rivosinc.com>,
-	Andrea Parri <parri.andrea@gmail.com>,
-	Nam Cao <namcao@linutronix.de>
-Subject: [PATCH -fixes v2] drivers: perf: Fix smp_processor_id() use in preemptible code
-Date: Thu, 29 Aug 2024 11:00:34 +0200
-Message-Id: <20240829090034.15777-1-alexghiti@rivosinc.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1724922045; c=relaxed/simple;
+	bh=6FlULx1l5ZzbnHr7od9Cx8fS3FJKI2YOaUqcI6QMaZk=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=QKU2PtZu8vwIhTrtCxnBqcQwsbwu7rZR+FfEb+hwX+8Ag/xVqKhAEYdEe/631rccReGerOSGR6/mCu6s7ZTHnTgLHtYBQj0OGP2OqkFzWr/ZBmP8XsinZFlMdw1MqQhPfEx17Lul0WM8l3UY9hME/ESRFfQqkfut3jSPdGdLjX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z1c4bfN9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 347D0C4CEC3;
+	Thu, 29 Aug 2024 09:00:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724922045;
+	bh=6FlULx1l5ZzbnHr7od9Cx8fS3FJKI2YOaUqcI6QMaZk=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=Z1c4bfN9u42xl5To8HSB36ylnLJeSgoSk2Snuc/Iw93J6HrGQNp9LHfERvscNDf5q
+	 ZWCDek7aoeLnRrxX2rf/1l1rEL8A0+nsBpDfJrsrVj2qSDaTabEhMTBYq8cmur9S7X
+	 2Zj6wkakEOd3tQ5WOnmgHYT+hGBxkgEL1uhB5qMjgn3CyAHeOPtlb6aGVFH/Zc6VLp
+	 dWDIusAb2rXlI/WhuVpWInJFVLyWjOrj1T4T5dHQVM8jD5ZHGB2/1EYhA0Uv7cSTNP
+	 T8e7RRi0O0Wscgh/IWfw5wTSAVtkCi74skAvtRGQ0jtXhJTOwzq07smhtvBRgw1tT2
+	 qER1yxcalTDrA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE3A03809A80;
+	Thu, 29 Aug 2024 09:00:46 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,46 +51,72 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net v2 00/15] mptcp: more fixes for the in-kernel PM
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172492204527.1873855.649951306821371963.git-patchwork-notify@kernel.org>
+Date: Thu, 29 Aug 2024 09:00:45 +0000
+References: <20240828-net-mptcp-more-pm-fix-v2-0-7f11b283fff7@kernel.org>
+In-Reply-To: <20240828-net-mptcp-more-pm-fix-v2-0-7f11b283fff7@kernel.org>
+To: Matthieu Baerts <matttbe@kernel.org>
+Cc: mptcp@lists.linux.dev, martineau@kernel.org, geliang@kernel.org,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ shuah@kernel.org, fw@strlen.de, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ stable@vger.kernel.org, arinc.unal@arinc9.com,
+ syzbot+455d38ecd5f655fc45cf@syzkaller.appspotmail.com
 
-As reported in [1], the use of smp_processor_id() in
-pmu_sbi_device_probe() must be protected by disabling the preemption, so
-simply use get_cpu()/put_cpu() instead.
+Hello:
 
-Reported-by: Andrea Parri <parri.andrea@gmail.com>
-Reported-by: Nam Cao <namcao@linutronix.de>
-Closes: https://lore.kernel.org/linux-riscv/20240820074925.ReMKUPP3@linutronix.de/ [1]
-Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
----
+This series was applied to netdev/net.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
 
-Changes in v2:
-- Do not disable the preemption in static_key_enable() (Will)
+On Wed, 28 Aug 2024 08:14:23 +0200 you wrote:
+> Here is a new batch of fixes for the MPTCP in-kernel path-manager:
+> 
+> Patch 1 ensures the address ID is set to 0 when the path-manager sends
+> an ADD_ADDR for the address of the initial subflow. The same fix is
+> applied when a new subflow is created re-using this special address. A
+> fix for v6.0.
+> 
+> [...]
 
- drivers/perf/riscv_pmu_sbi.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+Here is the summary with links:
+  - [net,v2,01/15] mptcp: pm: reuse ID 0 after delete and re-add
+    https://git.kernel.org/netdev/net/c/8b8ed1b429f8
+  - [net,v2,02/15] mptcp: pm: fix RM_ADDR ID for the initial subflow
+    https://git.kernel.org/netdev/net/c/87b5896f3f78
+  - [net,v2,03/15] selftests: mptcp: join: check removing ID 0 endpoint
+    https://git.kernel.org/netdev/net/c/5f94b08c0012
+  - [net,v2,04/15] mptcp: pm: send ACK on an active subflow
+    https://git.kernel.org/netdev/net/c/c07cc3ed895f
+  - [net,v2,05/15] mptcp: pm: skip connecting to already established sf
+    https://git.kernel.org/netdev/net/c/bc19ff57637f
+  - [net,v2,06/15] mptcp: pm: reset MPC endp ID when re-added
+    https://git.kernel.org/netdev/net/c/dce1c6d1e925
+  - [net,v2,07/15] selftests: mptcp: join: check re-adding init endp with != id
+    https://git.kernel.org/netdev/net/c/1c2326fcae4f
+  - [net,v2,08/15] selftests: mptcp: join: no extra msg if no counter
+    https://git.kernel.org/netdev/net/c/76a2d8394cc1
+  - [net,v2,09/15] mptcp: pm: do not remove already closed subflows
+    https://git.kernel.org/netdev/net/c/58e1b66b4e4b
+  - [net,v2,10/15] mptcp: pm: fix ID 0 endp usage after multiple re-creations
+    https://git.kernel.org/netdev/net/c/9366922adc6a
+  - [net,v2,11/15] selftests: mptcp: join: check re-re-adding ID 0 endp
+    https://git.kernel.org/netdev/net/c/d397d7246c11
+  - [net,v2,12/15] mptcp: avoid duplicated SUB_CLOSED events
+    https://git.kernel.org/netdev/net/c/d82809b6c5f2
+  - [net,v2,13/15] selftests: mptcp: join: validate event numbers
+    https://git.kernel.org/netdev/net/c/20ccc7c5f7a3
+  - [net,v2,14/15] mptcp: pm: ADD_ADDR 0 is not a new address
+    https://git.kernel.org/netdev/net/c/57f86203b41c
+  - [net,v2,15/15] selftests: mptcp: join: check re-re-adding ID 0 signal
+    https://git.kernel.org/netdev/net/c/f18fa2abf810
 
-diff --git a/drivers/perf/riscv_pmu_sbi.c b/drivers/perf/riscv_pmu_sbi.c
-index 31a17a56eb3b..febd8e74a72f 100644
---- a/drivers/perf/riscv_pmu_sbi.c
-+++ b/drivers/perf/riscv_pmu_sbi.c
-@@ -1373,11 +1373,16 @@ static int pmu_sbi_device_probe(struct platform_device *pdev)
- 
- 	/* SBI PMU Snapsphot is only available in SBI v2.0 */
- 	if (sbi_v2_available) {
-+		int cpu;
-+
- 		ret = pmu_sbi_snapshot_alloc(pmu);
- 		if (ret)
- 			goto out_unregister;
- 
--		ret = pmu_sbi_snapshot_setup(pmu, smp_processor_id());
-+		cpu = get_cpu();
-+		ret = pmu_sbi_snapshot_setup(pmu, cpu);
-+		put_cpu();
-+
- 		if (ret) {
- 			/* Snapshot is an optional feature. Continue if not available */
- 			pmu_sbi_snapshot_free(pmu);
+You are awesome, thank you!
 -- 
-2.39.2
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
