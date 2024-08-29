@@ -1,153 +1,145 @@
-Return-Path: <linux-kernel+bounces-306206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31527963B21
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:18:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09FDD963B25
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:19:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A0B32B20F99
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 06:18:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4CB6281256
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 06:19:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9F9514C59C;
-	Thu, 29 Aug 2024 06:17:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BEC914B950;
+	Thu, 29 Aug 2024 06:18:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="L3Z4eUpr"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ca2R7Ada"
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66AE345014;
-	Thu, 29 Aug 2024 06:17:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AEBB15749C
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 06:18:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724912277; cv=none; b=YHH/qsDtkoRROwbVjToCaNblCJ8ljjhQkiwXTolBVzAghc3zRPiBCCMVscliUb/G/oSrmueNemEkvOXGNdaE//KQMgHhe2PacDXh816hmgPXaG9GkDkksD8N2LP/BO17vM018ABdke/+4R/fqBDTIq5q2Tm7RIy8YxtLp+f4DXs=
+	t=1724912326; cv=none; b=lPIUoT+AWdLqaPU/a2FroO8XU59qQ4voE1/tU7ZykdEIHD3FVASOTzqyCn02HAQ+yS5I5nbV6OexGvur6MiWBH/GyLWFjB2zgjWNAD/kBH3pPkY7VjSckWFkqh03EyxaZ4CndV2I9kCQchVABhuUZOaA2hOscfGXX8NxV7+U924=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724912277; c=relaxed/simple;
-	bh=6RzSrv3nyFuhiKzG5BP3qCVTA/Grb69zizAwthqsJEs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=CAePkcoDyIjAc4Go8/3uI36QtmpZkeTpzKnWHukekOl57me/6bzLmWTa1DSAzDdJvvfmixT4unV/ayKvu68HvYXqymwsahDpzsl75U7G6EcN7iLZhaFpWCT6fkmN41SYv1DN1g++nsMpzKAHUT6u6y/BMOxvx59FMvSl+HT54dU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=L3Z4eUpr; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47T6HV1q054780;
-	Thu, 29 Aug 2024 01:17:31 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1724912251;
-	bh=fnhuBR25tOtm6jBNJ0bOgimcMKg7qyAIojAku3kruEc=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=L3Z4eUprXD7YUdSkcNFy8hxBfzjN8NrY3Q1WgAWllUfzCMM9638lihZyWduviwW77
-	 046oaK3cPf3Cr1AKUQTK3sn/3+yzMC4i71mrXtbxeCnEm4WB+PRESR/NTWZKEfbOzX
-	 sGROUxxO4C6Din3SBKlVCwiZ9ICqD8g8f9FWDuus=
-Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47T6HVnO052987
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 29 Aug 2024 01:17:31 -0500
-Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 29
- Aug 2024 01:17:31 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 29 Aug 2024 01:17:31 -0500
-Received: from [172.24.227.151] (uda0510294.dhcp.ti.com [172.24.227.151])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47T6HQa9007117;
-	Thu, 29 Aug 2024 01:17:27 -0500
-Message-ID: <99c874f1-3d85-43b2-a3a0-40e1e0c25696@ti.com>
-Date: Thu, 29 Aug 2024 11:47:25 +0530
+	s=arc-20240116; t=1724912326; c=relaxed/simple;
+	bh=B5igwmVxT26gZJCM/XFa30ybfP+wv7/f5eHeCK9IXig=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:References; b=U+W9BtlcdLPjN7wZ/UtstQ7Hz0LeKcyI4HlDiPVk6kf8F6Y9rBKFNXgg8PwM5LdRAgJ4NprqwJk8qFFGa/eaPWWnRwEIv1W+ZOBxJIKM2SgMySo/oJwg+K5mv9XJ7KCOQbRRbdDVcLzUih5xB6MOXWRGe0Sqq+7iJQYHMRUp2DY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=ca2R7Ada; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20240829061835epoutp0142ec7fd5e617cb9543b9bad02a7fcf6e~wHpy83LT50451704517epoutp016
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 06:18:35 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20240829061835epoutp0142ec7fd5e617cb9543b9bad02a7fcf6e~wHpy83LT50451704517epoutp016
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1724912315;
+	bh=f3aZyQOzdwCUe2jYrERkEiVouCvT8uBAms8XHTyBERE=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=ca2R7Ada4WoPaulyfPAE2nyrZpHMPIxZzQSTtqNaLdz1axM3J+gmDn77NFsDvuZST
+	 2qW4Yii5hMKS+7BjjIgdsN+qdqtP+psqquLAL9iHvSnHShkOTVOhk1SFZB5e2UPffX
+	 zICRMC3D5wtCuNfmvgnJAjrWgmgkTVJDsCep+T4E=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+	epcas1p3.samsung.com (KnoxPortal) with ESMTP id
+	20240829061835epcas1p3a8b8c10f24ff9e7dd4dcff884d6c1ad5~wHpygsuZJ3110431104epcas1p3L;
+	Thu, 29 Aug 2024 06:18:35 +0000 (GMT)
+Received: from epsmgec1p1-new.samsung.com (unknown [182.195.38.242]) by
+	epsnrtp2.localdomain (Postfix) with ESMTP id 4WvWLf6jB4z4x9Q6; Thu, 29 Aug
+	2024 06:18:34 +0000 (GMT)
+Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
+	epsmgec1p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	77.CA.19509.AB210D66; Thu, 29 Aug 2024 15:18:34 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240829061834epcas1p127b6ec517e904efbf1eba945fbfd4bb0~wHpxuiJBV1114911149epcas1p1U;
+	Thu, 29 Aug 2024 06:18:34 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240829061834epsmtrp1c2ce1086fe65b5ea7482ccb8e61bf3fa~wHpxtsGAX0812908129epsmtrp1H;
+	Thu, 29 Aug 2024 06:18:34 +0000 (GMT)
+X-AuditID: b6c32a4c-17bc070000004c35-73-66d012bac836
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	C4.57.19367.AB210D66; Thu, 29 Aug 2024 15:18:34 +0900 (KST)
+Received: from localhost.localdomain (unknown [10.253.98.171]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240829061834epsmtip220ba0e74fc2e27f657a4d087e2dc30ed~wHpxefwgd2307823078epsmtip2H;
+	Thu, 29 Aug 2024 06:18:34 +0000 (GMT)
+From: Seunghwan Baek <sh8267.baek@samsung.com>
+To: linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
+	ulf.hansson@linaro.org, ritesh.list@gmail.com, quic_asutoshd@quicinc.com,
+	adrian.hunter@intel.com
+Cc: grant.jung@samsung.com, jt77.jang@samsung.com, junwoo80.lee@samsung.com,
+	dh0421.hwang@samsung.com, jangsub.yi@samsung.com, sh043.lee@samsung.com,
+	cw9316.lee@samsung.com, sh8267.baek@samsung.com, wkon.kim@samsung.com
+Subject: [PATCH v2 0/2] mmc: cqhci: Fix for check CQHCI_HALT state.
+Date: Thu, 29 Aug 2024 15:18:21 +0900
+Message-Id: <20240829061823.3718-1-sh8267.baek@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrMKsWRmVeSWpSXmKPExsWy7bCmnu4uoQtpBi+PGVucfLKGzWLGqTZW
+	i33XTrJb/Pq7nt2iY+tkJosdz8+wW+z628xkcXnXHDaLI//7GS0WdsxlsTh4qoPdounPPhaL
+	a2dOsFocXxtusfnSNxYHfo+ds+6yeyze85LJ4861PWweE/fUefRtWcXo8XmTXABbVLZNRmpi
+	SmqRQmpecn5KZl66rZJ3cLxzvKmZgaGuoaWFuZJCXmJuqq2Si0+ArltmDtDFSgpliTmlQKGA
+	xOJiJX07m6L80pJUhYz84hJbpdSClJwCswK94sTc4tK8dL281BIrQwMDI1OgwoTsjIf/vjIV
+	/GaqOPK2hb2BcQlTFyMnh4SAicSX7TsZuxi5OIQE9jBKfP98lBnC+cQocWzpLjY4Z/PePriW
+	9xPvQCV2MkqsfQZT9ZlRYv/WG2wgVWwCehKv2g+DJUQEFjFK7P1xB2wws8B9oKqDfxhBqoQF
+	nCU+Xn3B0sXIwcEioCpx900IiMkrYC2x42UwxDZ5idUbDoC1Sgi8ZJc48/MoG0iNhICLxL7P
+	AhA1whKvjm9hh7ClJF72t0HZxRILN05igehtYZS4vhxirYSAvURzazPYHGYBTYn1u/RBwswC
+	fBLvvvawQoznlehoE4KoVpU4tWErVKe0xPXmBlYI20Niy8FuZhBbSCBWYmvrWrYJjDKzEIYu
+	YGRcxSiVWlCcm56abFhgqJuXWg6PneT83E2M4NSn5bOD8fv6v3qHGJk4GA8xSnAwK4nwnjh+
+	Nk2INyWxsiq1KD++qDQntfgQoykwlCYyS4km5wOTb15JvKGJpYGJmZGJhbGlsZmSOO+ZK2Wp
+	QgLpiSWp2ampBalFMH1MHJxSDUzd6X/2GgX8UfYw7eIIDWOt/O8ib/G35oqNe+l09eCLZROU
+	uiwef7yoflfwm5qf6fcnntbVamGaOfHV/6cfbw+u+3CBbceebLXc5Vz9/Rv/8Wa2qtvusHNn
+	cwj/41bbXn+u9V79j0dbua4H7/wR5Cn34fIXrk2F86/u3uxuM+dKcfaiVgbJ6NmTF7z7bNpz
+	vXNOys5pV1Q/VbQeEzu/cIETy63fzj3rv6r+2D75/vVVJ9dmOhn5aJ4UrfU/bm/qdG3lyZy0
+	+d6Lq/nKtuTMeTc/Y4qWVrDB6+TTP9TkKh6/qDnXr9fu9+DGxP7TDucXeVTd14yW+ynx32Vz
+	ReTSho6Ia35mixTvdFe/ZbM8U6/EUpyRaKjFXFScCABOwngYBgQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrCLMWRmVeSWpSXmKPExsWy7bCSvO4uoQtpBtuuiFucfLKGzWLGqTZW
+	i33XTrJb/Pq7nt2iY+tkJosdz8+wW+z628xkcXnXHDaLI//7GS0WdsxlsTh4qoPdounPPhaL
+	a2dOsFocXxtusfnSNxYHfo+ds+6yeyze85LJ4861PWweE/fUefRtWcXo8XmTXABbFJdNSmpO
+	Zllqkb5dAlfGw39fmQp+M1UcedvC3sC4hKmLkZNDQsBE4v3EO2xdjFwcQgLbGSW+tj1jh0hI
+	Szw+8JKxi5EDyBaWOHy4GKLmI6PE9y/LwWrYBPQkXrUfBmsWEVjBKDFz+VRmkASzwGtGia4L
+	ESC2sICzxMerL1hABrEIqErcfRMCYvIKWEvseBkMsUpeYvWGA8wTGHkWMDKsYhRNLSjOTc9N
+	LjDUK07MLS7NS9dLzs/dxAgOSK2gHYzL1v/VO8TIxMF4iFGCg1lJhPfE8bNpQrwpiZVVqUX5
+	8UWlOanFhxilOViUxHmVczpThATSE0tSs1NTC1KLYLJMHJxSDUyTzFb8Zq/KOOg3k8WemeGA
+	lPKrM1M1nn3R3ql8rej+/PP/Lsz6us/2qPpb8+h9PTyWZ5NC8nft03ofM9votWHImznlmoek
+	kvM8Fq2R3vPYcsMHUxNTH3mlbzeDv72Ld3omWxwbH//x8oV7bM++lPjn7vKuZJM689GkNyvK
+	99tVPYvM0NUPrpetd1Kx0fGpS1+dnHxZcvpBrqi9AclCJcUPW+JCXluK/ePq+JC4g3tD8Cfn
+	/FvFBmb8h5PEk2bysqWnq8n1rNc+cYBV/X/61if9FyZEVpz+LPS/WU039+mZijaZFfY3L125
+	vzQ5Ivjczr818RNer+jsmF55vN9moV/L2uCL/lpXw334jHvtmZVYijMSDbWYi4oTAXvM9Nu3
+	AgAA
+X-CMS-MailID: 20240829061834epcas1p127b6ec517e904efbf1eba945fbfd4bb0
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240829061834epcas1p127b6ec517e904efbf1eba945fbfd4bb0
+References: <CGME20240829061834epcas1p127b6ec517e904efbf1eba945fbfd4bb0@epcas1p1.samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] remoteproc: Use iommu_paging_domain_alloc()
-To: Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Lu Baolu
-	<baolu.lu@linux.intel.com>, <andersson@kernel.org>,
-        <afd@ti.com>, <nm@ti.com>, <hnagalla@ti.com>
-CC: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-        Robin
- Murphy <robin.murphy@arm.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-        Kevin Tian
-	<kevin.tian@intel.com>, <linux-remoteproc@vger.kernel.org>,
-        <iommu@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-        Jason Gunthorpe
-	<jgg@nvidia.com>
-References: <20240812072811.9737-1-baolu.lu@linux.intel.com>
- <ZsdktJEqR9BOgivK@p14s>
-Content-Language: en-US
-From: Beleswar Prasad Padhi <b-padhi@ti.com>
-In-Reply-To: <ZsdktJEqR9BOgivK@p14s>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Hi All,
+Code fix for check cqe halt state.
 
-On 22/08/24 21:47, Mathieu Poirier wrote:
-> Hi Baolu,
->
-> Sorry for the late reply, this slipped through the cracks.
->
-> On Mon, Aug 12, 2024 at 03:28:11PM +0800, Lu Baolu wrote:
-> > An iommu domain is allocated in rproc_enable_iommu() and is attached to
-> > rproc->dev.parent in the same function.
-> > 
-> > Use iommu_paging_domain_alloc() to make it explicit.
-> > 
-> > Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-> > Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
-> > Link: https://lore.kernel.org/r/20240610085555.88197-13-baolu.lu@linux.intel.com
-> > ---
-> >  drivers/remoteproc/remoteproc_core.c | 6 +++---
-> >  1 file changed, 3 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> > index f276956f2c5c..eb66f78ec8b7 100644
-> > --- a/drivers/remoteproc/remoteproc_core.c
-> > +++ b/drivers/remoteproc/remoteproc_core.c
-> > @@ -109,10 +109,10 @@ static int rproc_enable_iommu(struct rproc *rproc)
-> >  		return 0;
-> >  	}
-> >  
-> > -	domain = iommu_domain_alloc(dev->bus);
-> > -	if (!domain) {
-> > +	domain = iommu_paging_domain_alloc(dev);
->
-> I'm a little hesitant here.  Function iommu_domain_alloc() passes NULL two the
-> second argument of __iommu_domain_alloc() while iommu_paging_domain_alloc()
-> provides a 'dev'.  I don't have any HW to test on and I am not familiar enough
-> with the IOMMU subsystem to confidently more forward.
->
-> I am asking the Qualcomm (Bjorn and friends) and TI crew (Beleswar, Andrew,
-> Nishanth and Hari) to test this patch on their IOMMU devices and get back to me
-> with a "Tested-by".
+---
+Changes in v2:
+ - Modify and delete "Fixes" tag.
+ - Change the subject of each commit.
 
+---
 
-Just a heads-up. Currently, I am seeing boot failures while booting 
-remotecores in TI's IOMMU devices with mainline kernel. Working on the 
-the fix, once it is done, will apply the above patch and test it ASAP.
+Seunghwan Baek (2):
+  mmc: cqhci: Fix checking of CQHCI_HALT state
+  cqhci-core: Make use cqhci_halted() routine
 
-Thanks,
-Beleswar
+ drivers/mmc/host/cqhci-core.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
->
-> Thanks,
-> Mathieu
->
-> > +	if (IS_ERR(domain)) {
-> >  		dev_err(dev, "can't alloc iommu domain\n");
-> > -		return -ENOMEM;
-> > +		return PTR_ERR(domain);
-> >  	}
-> >  
-> >  	iommu_set_fault_handler(domain, rproc_iommu_fault, rproc);
-> > -- 
-> > 2.34.1
-> > 
->
+-- 
+2.17.1
+
 
