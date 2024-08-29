@@ -1,190 +1,205 @@
-Return-Path: <linux-kernel+bounces-306662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 076309641D0
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 12:31:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D61A964177
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 12:22:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B55D628CCC9
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:31:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5A79CB209E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:22:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39CD218FDA6;
-	Thu, 29 Aug 2024 10:22:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A991A18FDC0;
+	Thu, 29 Aug 2024 10:18:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="X82kJWvu"
-Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com [209.85.210.41])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="d8Irqwkv"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C647018FDAB
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 10:22:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE35818FDD7
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 10:17:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724926926; cv=none; b=F5Kp1tm78xuTfXZ/O6j7hCxFKnlNJWKvoKB4p1UWCvd8eq+a2YBDy7M5/lEfKCHUVbrAhnuY4Vjuh4pEskp/w2bSaukcO2LaCgQJFcftLTkA6ei7fF8dAz1g+3i89o6QPqbL0MfL9swLyqZRtDveHKPb8uPsFjrqsAjHPyDCBYU=
+	t=1724926679; cv=none; b=Y3g+Ob3z0Z41/8GpsmxJUVQC0H1w8r9XCVPIxMXg74+xpVxd6wd2/dg8bP6okrZIbpdO0Q6lhj5a0bNKLeHdUfREDIpBfhtw3rch7ekXTxPWh+G3UgQdGmGUpen3AV56ToGCTHzgJO3XGS/w0pSNXupYlUhIjKQrhv9BkHlrvAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724926926; c=relaxed/simple;
-	bh=nVktgxY+Y22iglpT7aElSF7x0cz/c6cqG4U2dR19+fc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=LSWseSB5nCYDuin1GOuG437PBZbcHQPTz5t3Zv8gpY1kM0y6ReOQ4iJpgFyo3IyKCv4Y7dG31JEe631WDNxJBu7JXdtGIDvRbhnYukBXTzkCDutJjOBh6OI2p8JIBEeaSdZKT4WU56SEzySHpPbeQ0ZJ4NGdCdTvgV6lAdX2UIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=X82kJWvu; arc=none smtp.client-ip=209.85.210.41
+	s=arc-20240116; t=1724926679; c=relaxed/simple;
+	bh=jx64PfnZ0P8Maw2epRmW4FNEZO3KTHmGCd5DnUz0FZE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=lOQBaHyBeMil2LPfuNM63lcVo1Nin+tHchUnjkDUYrnNEPkV+ndL4RdFzOnFmsZQBvaJVVX+hnllTDEAVFUjfF/2s/MmVzg35JLLjbdsEUTlrOIbDo30mhEpN5/ZHIKGMQ8A6Az0AxQ/DRBFo+/i3BGrsBjHxjcCzr1fOhvIZKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=d8Irqwkv; arc=none smtp.client-ip=209.85.128.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-70b3b62025dso343733a34.0
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 03:22:04 -0700 (PDT)
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-428178fc07eso3982405e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 03:17:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724926924; x=1725531724; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EoL1g7/icKaoeTVszo+C7O0+4g1QDi21vNC01sKJZ+U=;
-        b=X82kJWvuPlJxTlkCTJugXJBL4V6oMX7v2ZqIaASSXy+UIAWgeA4vDItL4HUoF7ffP+
-         D1R1sGrqUwbZd9VLc0g4vh/7HouC0kKC1Nm+UbotHjQ1OGPvuMQ1CBHIlIGgvLOFLJkU
-         iEc+s9aNqGP10H6gpom+t1PBEqKHZwj8AkA44kK8Qiifv+9AULp++3B0EA3D+kx0SrW3
-         YGL3xlr1kh+hjWIT7U+ZDzN4d5j239N6Yf4FYRz3v6H+RRy4MohjRS5TjL3oK47QaaAB
-         PF7Iewl1zlvZyzmiNqlw0AY3j9WdTxe4lbHeRikB6MBA3G+tCGnCiDLaNjnYNZ4GY/Dz
-         VDvw==
+        d=linaro.org; s=google; t=1724926676; x=1725531476; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=cpJAK3u0wNHTYAsOsJ3G+ulHexNJQQgw5rassGX01aE=;
+        b=d8Irqwkv/k29762uM5U05JtKZWXC4vooT55qu1pQTHzqLUUOWrUm+QUTV8iK6bwX3H
+         pFgGhEbFeuFoCXLju9QaBDowQbnZrwR/xY7iGSZsGGjdLZLRKwdU+FUe5/D5fFg6bXO3
+         1CW6SmF0CezHUlgEVvi2rjjQMSpHO5MtNNfH4iR57/6TOlrK+QjsJEyK0iJGwzXW7AAd
+         YbnfXzfHQwma4EevC00o2JUzFbA6RGNjjOmgMHBCzn/qCP9C982QjB5k99JYITmME750
+         lnXiaVPdFK7k1hjzuwYa9twi3mxO5KezN0A1uT2YPvtqbvy1moOmWzDsVGFW5ps4b5gp
+         cCbw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724926924; x=1725531724;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EoL1g7/icKaoeTVszo+C7O0+4g1QDi21vNC01sKJZ+U=;
-        b=sF++YXucf6QO7HfQSW6r7XkeR4gkGaH11BnNbX2c5DKoyIPUB944ggQimk6D/YFT3/
-         AVnrGq6w2C6L75LKvBPYawYRVwJozY+klEJ+yQtWYp+d79BLPGFzhL8OIJtyYrYoebnY
-         LLypymlLojqRR/464awwW02Y8V/Y22OoXrChRgvqXLgqkTC/pFNugeh5pfF5vVFoYVUH
-         lJqCrKWLpGhWWciCRGC3uQjTeOkfYxXqlRqi8lQYVPItd06NPzwCtDva5DvCj96zKt/a
-         WnjVWZYhItURsUFxFcfyK1Bycd0WYH988qzY/aeZzsUSTiOEyeeFXNvrT/hQTmgmL+oY
-         XQgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUKz8D3mbjROnKuTyb5NgjKhFX3Eube3Gc0pHVcUrS7f7nerMorCaa7os+h3xNHOg7CkyX5X0QtxGqWbbU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YygsX5BqG30nQ4p8tKgOhlJhEo9maInWcDoPXfMBEB3Fmo0hwbF
-	XvNw5dyXujXaXLcVk3BTOvICukd3nC580G9OowyiEHr2o1zf5IQv8zmtWg+LHNQ=
-X-Google-Smtp-Source: AGHT+IGeTVY5NXa21IFreOo7cUd0AF9nsb1AdXB76rapR4PU7ulwY3JN4O81zXAJhD39YeE/gmu+nA==
-X-Received: by 2002:a05:6358:3128:b0:1a6:7e01:e4f4 with SMTP id e5c5f4694b2df-1b603cce66emr313159955d.28.1724926923856;
-        Thu, 29 Aug 2024 03:22:03 -0700 (PDT)
-Received: from [127.0.1.1] ([112.65.12.167])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7d22e9d4df4sm891684a12.82.2024.08.29.03.21.55
+        d=1e100.net; s=20230601; t=1724926676; x=1725531476;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cpJAK3u0wNHTYAsOsJ3G+ulHexNJQQgw5rassGX01aE=;
+        b=LmfF+FOW8ODIBB6YvYqjj0FuAEoYEf9bJFuGUaeNW9KpUZqhf4RMtf8RhoJPB7JvQ7
+         EQrQQCZRBx8x65lsh5U7y8a9YXAFd03sXrpeQEjMbhFGREDVjEzWb1ckNgWXojDXUalO
+         bQcCtoIeb4M94GW5+Bzi5rnKQYe/LOc8i7H5iBizW4guz9Qsh4vm9+2RU2WJ5pQ12Tnk
+         GNp9n7p7AlAcUPtUHnHgEY8Qk++zN48mzAwVd3ACp9/1ci8B4bN4mdwnnpebNvq5B0KN
+         IYOO7wDWIWKJyfubBYSJod4o0MPXvSnvAnJRl7pYHUW1U1Bofsz/+dg9h3kdFR5CKxUb
+         eeOA==
+X-Forwarded-Encrypted: i=1; AJvYcCVHJrDGo5bdyn7amHQQNJEPQcrdVZv5G5+dpEhGnPRKBdicEe2FY0Jyv62HylTSGhF9oOKvyhfslZIeh8k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YywjTxzVQJs961sUiNnSGS82FBzT78wnHyw328rYCpdfxrvjfBY
+	Q45udUEay7rdU+hJyumADbEXPP5WHSKCQN0rkIYrslysautiUzZOWzJHPLskYEU=
+X-Google-Smtp-Source: AGHT+IHKHTDFnByEuQrhxWvf5SouAIMF+9fOY83uMUNMpx5WQn1PycSxrrZARYgdc1+Bu9avy5zAFw==
+X-Received: by 2002:a05:600c:4707:b0:426:5b21:97fa with SMTP id 5b1f17b1804b1-42bb27a102cmr18206875e9.29.1724926675727;
+        Thu, 29 Aug 2024 03:17:55 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ba6396700sm47212215e9.10.2024.08.29.03.17.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 03:22:03 -0700 (PDT)
-From: Jun Nie <jun.nie@linaro.org>
-Date: Thu, 29 Aug 2024 18:17:50 +0800
-Subject: [PATCH 21/21] drm/msm/dpu: revise debug info to support quad pipe
+        Thu, 29 Aug 2024 03:17:55 -0700 (PDT)
+Date: Thu, 29 Aug 2024 13:17:51 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: oe-kbuild@lists.linux.dev, Huan Yang <link@vivo.com>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	Gerd Hoffmann <kraxel@redhat.com>, linux-media@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
+	linux-kernel@vger.kernel.org
+Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
+	opensource.kernel@vivo.com, Huan Yang <link@vivo.com>
+Subject: Re: [PATCH v4 4/5] udmabuf: udmabuf_create codestyle cleanup
+Message-ID: <b9946356-3375-4817-92dd-baaf85802462@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240829-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-8-v1-21-bdb05b4b5a2e@linaro.org>
-References: <20240829-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-8-v1-0-bdb05b4b5a2e@linaro.org>
-In-Reply-To: <20240829-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-8-v1-0-bdb05b4b5a2e@linaro.org>
-To: Rob Clark <robdclark@gmail.com>, 
- Abhinav Kumar <quic_abhinavk@quicinc.com>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Sean Paul <sean@poorly.run>, 
- Marijn Suijten <marijn.suijten@somainline.org>, 
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- Jun Nie <jun.nie@linaro.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1724926736; l=3921;
- i=jun.nie@linaro.org; s=20240403; h=from:subject:message-id;
- bh=nVktgxY+Y22iglpT7aElSF7x0cz/c6cqG4U2dR19+fc=;
- b=ps+qzD7mgTydu3jMaADiSxfJjhNUZjxeZGWz5mhRkEH5L6u1lEgMUtgsZS8PogIIhHvYDdUCr
- 5HJfsvYAO6ZCG37w8uuEos6cFcsZ8wmsgOcKJVAZ5ki84E6rwKZoQC7
-X-Developer-Key: i=jun.nie@linaro.org; a=ed25519;
- pk=MNiBt/faLPvo+iJoP1hodyY2x6ozVXL8QMptmsKg3cc=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240822084342.1574914-5-link@vivo.com>
 
-Unify debug info to support dual pipe and quad pipe
+Hi Huan,
 
-Signed-off-by: Jun Nie <jun.nie@linaro.org>
----
- drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c  | 16 +++++++-------
- drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c | 35 +++++++++++++------------------
- 2 files changed, 21 insertions(+), 30 deletions(-)
+kernel test robot noticed the following build warnings:
 
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-index 8fd56f8f2851f..9e8c5225c8dca 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-@@ -1437,15 +1437,13 @@ static int _dpu_debugfs_status_show(struct seq_file *s, void *data)
- 		seq_printf(s, "\tdst x:%4d dst_y:%4d dst_w:%4d dst_h:%4d\n",
- 			state->crtc_x, state->crtc_y, state->crtc_w,
- 			state->crtc_h);
--		seq_printf(s, "\tsspp[0]:%s\n",
--			   pstate->pipe.sspp->cap->name);
--		seq_printf(s, "\tmultirect[0]: mode: %d index: %d\n",
--			pstate->pipe.multirect_mode, pstate->pipe.multirect_index);
--		if (pstate->r_pipe.sspp) {
--			seq_printf(s, "\tsspp[1]:%s\n",
--				   pstate->r_pipe.sspp->cap->name);
--			seq_printf(s, "\tmultirect[1]: mode: %d index: %d\n",
--				   pstate->r_pipe.multirect_mode, pstate->r_pipe.multirect_index);
-+		for (i = 0; i < PIPES_PER_STAGE; i++) {
-+			if (!pstate->pipe_cfg[i].visible)
-+				break;
-+			seq_printf(s, "\tsspp[%d]:%s\n",
-+					i, pstate->pipe[i].sspp->cap->name);
-+			seq_printf(s, "\tmultirect[%d]: mode: %d index: %d\n",
-+					i, pstate->pipe[i].multirect_mode, pstate->pipe[i].multirect_index);
- 		}
- 
- 		seq_puts(s, "\n");
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
-index c3ea97b4ce439..12f7b510eb5e0 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
-@@ -1550,30 +1550,23 @@ static void dpu_plane_atomic_print_state(struct drm_printer *p,
- 		const struct drm_plane_state *state)
- {
- 	const struct dpu_plane_state *pstate = to_dpu_plane_state(state);
--	const struct dpu_sw_pipe *pipe = &pstate->pipe;
--	const struct dpu_sw_pipe_cfg *pipe_cfg = &pstate->pipe_cfg;
--	const struct dpu_sw_pipe *r_pipe = &pstate->r_pipe;
--	const struct dpu_sw_pipe_cfg *r_pipe_cfg = &pstate->r_pipe_cfg;
-+	const struct dpu_sw_pipe *pipe;
-+	const struct dpu_sw_pipe_cfg *pipe_cfg;
-+	int i;
- 
- 	drm_printf(p, "\tstage=%d\n", pstate->stage);
- 
--	if (pipe->sspp) {
--		drm_printf(p, "\tsspp[0]=%s\n", pipe->sspp->cap->name);
--		drm_printf(p, "\tmultirect_mode[0]=%s\n", dpu_get_multirect_mode(pipe->multirect_mode));
--		drm_printf(p, "\tmultirect_index[0]=%s\n",
--			   dpu_get_multirect_index(pipe->multirect_index));
--		drm_printf(p, "\tsrc[0]=" DRM_RECT_FMT "\n", DRM_RECT_ARG(&pipe_cfg->src_rect));
--		drm_printf(p, "\tdst[0]=" DRM_RECT_FMT "\n", DRM_RECT_ARG(&pipe_cfg->dst_rect));
--	}
--
--	if (r_pipe->sspp) {
--		drm_printf(p, "\tsspp[1]=%s\n", r_pipe->sspp->cap->name);
--		drm_printf(p, "\tmultirect_mode[1]=%s\n",
--			   dpu_get_multirect_mode(r_pipe->multirect_mode));
--		drm_printf(p, "\tmultirect_index[1]=%s\n",
--			   dpu_get_multirect_index(r_pipe->multirect_index));
--		drm_printf(p, "\tsrc[1]=" DRM_RECT_FMT "\n", DRM_RECT_ARG(&r_pipe_cfg->src_rect));
--		drm_printf(p, "\tdst[1]=" DRM_RECT_FMT "\n", DRM_RECT_ARG(&r_pipe_cfg->dst_rect));
-+	for (i = 0; i < PIPES_PER_STAGE; i++) {
-+		pipe_cfg = &pstate->pipe_cfg[i];
-+		pipe = &pstate->pipe[i];
-+		if (pipe->sspp) {
-+			drm_printf(p, "\tsspp[%d]=%s\n", i, pipe->sspp->cap->name);
-+			drm_printf(p, "\tmultirect_mode[%d]=%s\n", i, dpu_get_multirect_mode(pipe->multirect_mode));
-+			drm_printf(p, "\tmultirect_index[%d]=%s\n",
-+				   i, dpu_get_multirect_index(pipe->multirect_index));
-+			drm_printf(p, "\tsrc[%d]=" DRM_RECT_FMT "\n", i, DRM_RECT_ARG(&pipe_cfg->src_rect));
-+			drm_printf(p, "\tdst[%d]=" DRM_RECT_FMT "\n", i, DRM_RECT_ARG(&pipe_cfg->dst_rect));
-+		}
- 	}
- }
- 
+url:    https://github.com/intel-lab-lkp/linux/commits/Huan-Yang/udmabuf-direct-map-pfn-when-first-page-fault/20240826-105359
+base:   6a7917c89f219f09b1d88d09f376000914a52763
+patch link:    https://lore.kernel.org/r/20240822084342.1574914-5-link%40vivo.com
+patch subject: [PATCH v4 4/5] udmabuf: udmabuf_create codestyle cleanup
+config: x86_64-randconfig-161-20240829 (https://download.01.org/0day-ci/archive/20240829/202408291101.WAf552sW-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+| Closes: https://lore.kernel.org/r/202408291101.WAf552sW-lkp@intel.com/
+
+smatch warnings:
+drivers/dma-buf/udmabuf.c:467 udmabuf_create() error: double free of 'folios'
+
+vim +/folios +467 drivers/dma-buf/udmabuf.c
+
+c1bbed66899726 Gurchetan Singh 2019-12-02  396  static long udmabuf_create(struct miscdevice *device,
+c1bbed66899726 Gurchetan Singh 2019-12-02  397  			   struct udmabuf_create_list *head,
+c1bbed66899726 Gurchetan Singh 2019-12-02  398  			   struct udmabuf_create_item *list)
+fbb0de79507819 Gerd Hoffmann   2018-08-27  399  {
+fb2c508270085b Huan Yang       2024-08-22  400  	pgoff_t pgcnt = 0, pglimit, max_ipgcnt = 0;
+fb2c508270085b Huan Yang       2024-08-22  401  	long ret = -EINVAL;
+fbb0de79507819 Gerd Hoffmann   2018-08-27  402  	struct udmabuf *ubuf;
+fb2c508270085b Huan Yang       2024-08-22  403  	struct folio **folios = NULL;
+fb2c508270085b Huan Yang       2024-08-22  404  	u32 i, flags;
+fbb0de79507819 Gerd Hoffmann   2018-08-27  405  
+33f35429fc49c0 Gerd Hoffmann   2018-09-11  406  	ubuf = kzalloc(sizeof(*ubuf), GFP_KERNEL);
+fbb0de79507819 Gerd Hoffmann   2018-08-27  407  	if (!ubuf)
+fbb0de79507819 Gerd Hoffmann   2018-08-27  408  		return -ENOMEM;
+fbb0de79507819 Gerd Hoffmann   2018-08-27  409  
+c6a3194c05e7e6 Vivek Kasireddy 2024-06-23  410  	INIT_LIST_HEAD(&ubuf->unpin_list);
+dc4716d75154b3 Gerd Hoffmann   2018-09-11  411  	pglimit = (size_limit_mb * 1024 * 1024) >> PAGE_SHIFT;
+fbb0de79507819 Gerd Hoffmann   2018-08-27  412  	for (i = 0; i < head->count; i++) {
+fb2c508270085b Huan Yang       2024-08-22  413  		pgoff_t itempgcnt;
+fb2c508270085b Huan Yang       2024-08-22  414  
+fb2c508270085b Huan Yang       2024-08-22  415  		if (!PAGE_ALIGNED(list[i].offset))
+0d17455ca85ecb Gerd Hoffmann   2018-09-11  416  			goto err;
+fb2c508270085b Huan Yang       2024-08-22  417  		if (!PAGE_ALIGNED(list[i].size))
+0d17455ca85ecb Gerd Hoffmann   2018-09-11  418  			goto err;
+fb2c508270085b Huan Yang       2024-08-22  419  
+fb2c508270085b Huan Yang       2024-08-22  420  		itempgcnt = list[i].size >> PAGE_SHIFT;
+fb2c508270085b Huan Yang       2024-08-22  421  		pgcnt += itempgcnt;
+fb2c508270085b Huan Yang       2024-08-22  422  
+fb2c508270085b Huan Yang       2024-08-22  423  		if (pgcnt > pglimit)
+0d17455ca85ecb Gerd Hoffmann   2018-09-11  424  			goto err;
+fb2c508270085b Huan Yang       2024-08-22  425  
+fb2c508270085b Huan Yang       2024-08-22  426  		max_ipgcnt = max_t(unsigned long, itempgcnt, max_ipgcnt);
+fbb0de79507819 Gerd Hoffmann   2018-08-27  427  	}
+2b6dd600dd7257 Pavel Skripkin  2021-12-30  428  
+fb2c508270085b Huan Yang       2024-08-22  429  	if (!pgcnt)
+2b6dd600dd7257 Pavel Skripkin  2021-12-30  430  		goto err;
+2b6dd600dd7257 Pavel Skripkin  2021-12-30  431  
+fb2c508270085b Huan Yang       2024-08-22  432  	ubuf->folios = kvmalloc_array(pgcnt, sizeof(*ubuf->folios),
+fbb0de79507819 Gerd Hoffmann   2018-08-27  433  				      GFP_KERNEL);
+5e72b2b41a21e5 Vivek Kasireddy 2024-06-23  434  	if (!ubuf->folios) {
+fbb0de79507819 Gerd Hoffmann   2018-08-27  435  		ret = -ENOMEM;
+0d17455ca85ecb Gerd Hoffmann   2018-09-11  436  		goto err;
+fbb0de79507819 Gerd Hoffmann   2018-08-27  437  	}
+fb2c508270085b Huan Yang       2024-08-22  438  
+fb2c508270085b Huan Yang       2024-08-22  439  	ubuf->offsets = kvcalloc(pgcnt, sizeof(*ubuf->offsets), GFP_KERNEL);
+0c8b91ef5100ea Vivek Kasireddy 2024-06-23  440  	if (!ubuf->offsets) {
+0c8b91ef5100ea Vivek Kasireddy 2024-06-23  441  		ret = -ENOMEM;
+0c8b91ef5100ea Vivek Kasireddy 2024-06-23  442  		goto err;
+0c8b91ef5100ea Vivek Kasireddy 2024-06-23  443  	}
+fbb0de79507819 Gerd Hoffmann   2018-08-27  444  
+fb2c508270085b Huan Yang       2024-08-22  445  	folios = kvmalloc_array(max_ipgcnt, sizeof(*folios), GFP_KERNEL);
+c6a3194c05e7e6 Vivek Kasireddy 2024-06-23  446  	if (!folios) {
+c6a3194c05e7e6 Vivek Kasireddy 2024-06-23  447  		ret = -ENOMEM;
+c6a3194c05e7e6 Vivek Kasireddy 2024-06-23  448  		goto err;
+c6a3194c05e7e6 Vivek Kasireddy 2024-06-23  449  	}
+c6a3194c05e7e6 Vivek Kasireddy 2024-06-23  450  
+fb2c508270085b Huan Yang       2024-08-22  451  	for (i = 0; i < head->count; i++) {
+fb2c508270085b Huan Yang       2024-08-22  452  		ret = __udmabuf_pin_list_folios(&list[i], ubuf, folios);
+
+There is a kfree(folios) hidden inside this function.  It doesn't belong there.
+
+fb2c508270085b Huan Yang       2024-08-22  453  		if (ret)
+0d17455ca85ecb Gerd Hoffmann   2018-09-11  454  			goto err;
+c6a3194c05e7e6 Vivek Kasireddy 2024-06-23  455  	}
+452dc1b0221804 Huan Yang       2024-08-22  456  	kvfree(folios);
+                                                        ^^^^^^^^^^^^^^
+A second free
+
+fbb0de79507819 Gerd Hoffmann   2018-08-27  457  
+5e72b2b41a21e5 Vivek Kasireddy 2024-06-23  458  	flags = head->flags & UDMABUF_FLAGS_CLOEXEC ? O_CLOEXEC : 0;
+5e72b2b41a21e5 Vivek Kasireddy 2024-06-23  459  	ret = export_udmabuf(ubuf, device, flags);
+5e72b2b41a21e5 Vivek Kasireddy 2024-06-23  460  	if (ret < 0)
+0d17455ca85ecb Gerd Hoffmann   2018-09-11  461  		goto err;
+                                                                ^^^^^^^^
+
+fbb0de79507819 Gerd Hoffmann   2018-08-27  462  
+5e72b2b41a21e5 Vivek Kasireddy 2024-06-23  463  	return ret;
+fbb0de79507819 Gerd Hoffmann   2018-08-27  464  
+0d17455ca85ecb Gerd Hoffmann   2018-09-11  465  err:
+c6a3194c05e7e6 Vivek Kasireddy 2024-06-23  466  	unpin_all_folios(&ubuf->unpin_list);
+fb2c508270085b Huan Yang       2024-08-22 @467  	kvfree(folios);
+                                                        ^^^^^^^^^^^^^
+Double free
+
+452dc1b0221804 Huan Yang       2024-08-22  468  	kvfree(ubuf->offsets);
+452dc1b0221804 Huan Yang       2024-08-22  469  	kvfree(ubuf->folios);
+fbb0de79507819 Gerd Hoffmann   2018-08-27  470  	kfree(ubuf);
+fbb0de79507819 Gerd Hoffmann   2018-08-27  471  	return ret;
+fbb0de79507819 Gerd Hoffmann   2018-08-27  472  }
 
 -- 
-2.34.1
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
 
