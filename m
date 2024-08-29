@@ -1,112 +1,90 @@
-Return-Path: <linux-kernel+bounces-306420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15AD5963ED0
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:40:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BF04963ED6
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:41:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C606128493C
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:40:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3635A1F23BA8
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:41:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BF9218C33B;
-	Thu, 29 Aug 2024 08:40:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 681AB18C343;
+	Thu, 29 Aug 2024 08:41:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="Xy9SMGPR"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MQETfUyj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE17D18C031;
-	Thu, 29 Aug 2024 08:40:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A299FA95E;
+	Thu, 29 Aug 2024 08:41:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724920818; cv=none; b=GCFleKV/alYr/qwQBO3hkK2qpgsjxU0/bEGmnkOHwnwKYoKITcfDAKnirbcQWx0zwk/LaoxlEpdD4f80bM248MdKTZuwuosrbasQz9ZQ0pr82eCrW+1RgiQ6NE18sBy/xu29BlLmCQwzUqKn/EKZ6Pu3tJ1Dz1PN59Fzmk/BbSo=
+	t=1724920912; cv=none; b=kVbKgu6bABoqPb1QU9V1qPXJCYuNhvhs329OnKPsgWOP9dt9qGq1JE8zBFjgpMlKqaWJ4yfgrtm2+tNlMYbDx8O7qUlLRpuJN62o/2O+3TDi/8c6Jg6VlWxekCjUhFLUyzkRdTTwHoQzJOvqWU+1+aj/+o5M/867kJZJFKJubMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724920818; c=relaxed/simple;
-	bh=wqUBko9nJux0cAwPOEfDcb1V9rZWqZbVILdjsy+nTgM=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mhGFcHOi5aW8M640ofClV/M2AGMa8P/r9WG7qNZNWLesCYWJtgAmEo2lJfiwORuCEN6Y83PyXHCYkkLeoIj0Fd2qUVYpBR7D/jwi9+5dJkjPzfwJ/ExV5fCAmURS2VHpnUe6WzzxNEshGXb5NjUy7pwLNbMvF9awld41qqkZ0jk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=Xy9SMGPR; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 47T8eAq153355699, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
-	t=1724920810; bh=wqUBko9nJux0cAwPOEfDcb1V9rZWqZbVILdjsy+nTgM=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:
-	 Content-Transfer-Encoding:Content-Type;
-	b=Xy9SMGPRuv8+w56YcIXkGxhcM05aW5NrHBiiIbNZoj/xrGBRsaD65eiwSmQv1hypn
-	 zS/8qHdEFevzMn1cclZ/J/h+DmxRpklXYqoStkoZlNyOzg7BBxcK9yEswl9pT7qoS3
-	 RAkH1tSljoJ4gRRjLYjJbzj5hKoP9RO9kZYDvD6m5eyd/+Rf6hgb2W3HPdYLd1VHe7
-	 gT5Gqh+mRjW3vE6EN5lhL7rmuxUdaNPvf/z6/2CS74phzhv2VMGepmkONNXRe38fXF
-	 h7sv70ieJbDht59gAAxIWLoic8YRiHaxkubFIg3NqgX/VFpf0bInp70oQRoYeqlgrt
-	 NWCpPCWxGn4uA==
-Received: from mail.realtek.com (rtexh36506.realtek.com.tw[172.21.6.27])
-	by rtits2.realtek.com.tw (8.15.2/3.02/5.92) with ESMTPS id 47T8eAq153355699
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 29 Aug 2024 16:40:10 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXH36506.realtek.com.tw (172.21.6.27) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 29 Aug 2024 16:40:10 +0800
-Received: from localhost.localhost (172.21.132.53) by RTEXMBS04.realtek.com.tw
- (172.21.6.97) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.35; Thu, 29 Aug
- 2024 16:40:09 +0800
-From: Hilda Wu <hildawu@realtek.com>
-To: <marcel@holtmann.org>
-CC: <luiz.dentz@gmail.com>, <linux-bluetooth@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <alex_lu@realsil.com.cn>,
-        <max.chou@realtek.com>, <kidman@realtek.com>
-Subject: [PATCH v4] Bluetooth: btrtl: Set msft ext address filter quirk for RTL8852B
-Date: Thu, 29 Aug 2024 16:40:05 +0800
-Message-ID: <20240829084005.681732-1-hildawu@realtek.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1724920912; c=relaxed/simple;
+	bh=8HRBD6DNPP4RHe53IvvNcMCos/yojmZ5jwfzKPWDlqo=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=ZBVV2ZkktCKfqqHSv1YrDex5os1xRH0vFhronHgG1S4TvDYH0cRc2yDr+hKhf43+svVqkAXgDWmBpU9iCd9WcYtPs27MZzrVUzpSUwy84U/PkLq7cVouvFYwJsvimCF4caeQW8+VxVzpyYnYZJRU1R2IkPDUAvDotxz1mJzyIes=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MQETfUyj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D83EFC4CEC1;
+	Thu, 29 Aug 2024 08:41:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724920912;
+	bh=8HRBD6DNPP4RHe53IvvNcMCos/yojmZ5jwfzKPWDlqo=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=MQETfUyjZk034CCXe1TfYMNLAHX1aNUgKSEg9FweEX5S7/xUGSLK1+Crk4lwiqwaV
+	 KZ0A6EdfFgkoZL7wOxd1Pf9RAQNyD0o0rN3O1tIzNLfPVyszG4YyxqbkDaY9G6ARvQ
+	 PkSMtw3KV3ZWfrC4Q80aGB/h/hDnnN65bz1BNqXCnEPI7faqTonYgIuFq1NpOYTkJO
+	 WafgVXdTeEnsPdhge/6ykM0IqQ2RHtY7q9SFzJm/7xAdnz3hM8nG01l4aadvU3iP9J
+	 OhKxcU1Mhj4j0WerTZtzrEnnDp1DNMPvgCBUAjiB9YBvlS6KpEJZ+mlXS4d+8+10d1
+	 wF/i76vbVJNEg==
+From: Benjamin Tissoires <bentiss@kernel.org>
+To: Jiri Kosina <jikos@kernel.org>, Shuah Khan <shuah@kernel.org>, 
+ Peter Hutterer <peter.hutterer@who-t.net>, bentiss@kernel.org
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org
+In-Reply-To: <20240827-hidraw-revoke-v5-0-d004a7451aea@kernel.org>
+References: <20240827-hidraw-revoke-v5-0-d004a7451aea@kernel.org>
+Subject: Re: [PATCH v5 0/4] HID: hidraw: HIDIOCREVOKE introduction
+Message-Id: <172492091061.936766.13914253813022258960.b4-ty@kernel.org>
+Date: Thu, 29 Aug 2024 10:41:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: RTEXH36505.realtek.com.tw (172.21.6.25) To
- RTEXMBS04.realtek.com.tw (172.21.6.97)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.0
 
-For tracking multiple devices concurrently with a condition.
-The patch enables the HCI_QUIRK_USE_MSFT_EXT_ADDRESS_FILTER quirk
-on RTL8852B controller.
+On Tue, 27 Aug 2024 17:19:28 +0900, bentiss@kernel.org wrote:
+> The is the v5 of the HIDIOCREVOKE patches.
+> 
+> After a small discussion with Peter, we decided to:
+> - drop the BPF hooks that are problematic (Linus doesn't want
+>   "ALLOW_ERROR_INJECTION" to be used as "normal" fmodret bpf hooks)
+> - punt those BPF hooks later once we get the API right
+> - I'll be the one sending that new version, given that it's easier for
+>   me ATM
+> 
+> [...]
 
-The quirk setting is based on commit 9e14606d8f38 ("Bluetooth: msft:
-Extended monitor tracking by address filter")
+Applied to hid/hid.git (for-6.12/hidraw), thanks!
 
-With this setting, when a pattern monitor detects a device, this
-feature issues an address monitor for tracking that device. Let the
-original pattern monitor keep monitor new devices.
+[1/4] HID: hidraw: add HIDIOCREVOKE ioctl
+      https://git.kernel.org/hid/hid/c/b31c9d9dc343
+[2/4] selftests/hid: extract the utility part of hid_bpf.c into its own header
+      https://git.kernel.org/hid/hid/c/375e9bde9fc0
+[3/4] selftests/hid: Add initial hidraw tests skeleton
+      https://git.kernel.org/hid/hid/c/8163892a629c
+[4/4] selftests/hid: Add HIDIOCREVOKE tests
+      https://git.kernel.org/hid/hid/c/321f7798cfb8
 
-Signed-off-by: Hilda Wu <hildawu@realtek.com>
----
-Change:
-v4: edit commit log and summary
-v3: edit commit log and title
-v2: Add reference commit, update commit description
----
----
- drivers/bluetooth/btrtl.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/bluetooth/btrtl.c b/drivers/bluetooth/btrtl.c
-index 4c0f551a9975..2d95b3ea046d 100644
---- a/drivers/bluetooth/btrtl.c
-+++ b/drivers/bluetooth/btrtl.c
-@@ -1308,6 +1308,7 @@ void btrtl_set_quirks(struct hci_dev *hdev, struct btrtl_device_info *btrtl_dev)
- 			btrealtek_set_flag(hdev, REALTEK_ALT6_CONTINUOUS_TX_CHIP);
- 
- 		if (btrtl_dev->project_id == CHIP_ID_8852A ||
-+		    btrtl_dev->project_id == CHIP_ID_8852B ||
- 		    btrtl_dev->project_id == CHIP_ID_8852C)
- 			set_bit(HCI_QUIRK_USE_MSFT_EXT_ADDRESS_FILTER, &hdev->quirks);
- 
+Cheers,
 -- 
-2.34.1
+Benjamin Tissoires <bentiss@kernel.org>
 
 
