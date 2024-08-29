@@ -1,106 +1,113 @@
-Return-Path: <linux-kernel+bounces-307477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 316E6964DF7
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 20:45:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12401964DE8
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 20:43:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E314C28464F
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 18:44:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBB9E1F23400
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 18:43:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B341F1B9B48;
-	Thu, 29 Aug 2024 18:44:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A2CC1B8E86;
+	Thu, 29 Aug 2024 18:42:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="VMu2NHl4"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="joWaMbs/"
+Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF1B31AE87D;
-	Thu, 29 Aug 2024 18:44:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E6C44D59F
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 18:42:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724957069; cv=none; b=XW1h1snRjzPycdmWfKSreBE1JnjFLTkwKj5BJWuRg81MtgbfwMCKExsJv4Os4nZLy6APWEfq/XJukR+6twAGI2oft9s++9RQl+soItzF9H+nYD1PPR09265YsQESrgqbvPwqSgOLeb12rA/y9Azg/UMMpHXYXUXFMUlhnjqcINk=
+	t=1724956972; cv=none; b=t/NLcYrbcx4AoY9AaaVpHgskp3HEaHhAgyNtZUR0M+DIw0ftzWtom0cRwmvy/ckJeRG/kNF8wbzMAWAvoHHv2PpUpykaG3AMqhA1v1dU+7pFRplJ5pgzpscD5Tmc64osfnAs+RXcz46skZtw9PtDEVC6F43PSSYLTunwAiJNyoA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724957069; c=relaxed/simple;
-	bh=SM2L06wyyGFCYq0I0UkjyhZdArH+g1ybSzlTJ8JhSRk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TR/e+O5Fl4tNc/wRdVRSOAV1m4ARUCMn9Vp2iBQXTHALQxqDhwT9zFdAHW01LIXhi4bFqeBxUuW1L1bgZJGR+yNmwK69RDO7r17MgESHZB8EKHiqe+RsUxKz7MGnxUiFsoWlYcoKprvgIgbYm8z6BZcygIa6aO600cTTtrbg6T8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=VMu2NHl4; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
- id 7fc385bf7bc6a151; Thu, 29 Aug 2024 20:44:19 +0200
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id B287C6A8C15;
-	Thu, 29 Aug 2024 20:44:18 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1724957059;
-	bh=SM2L06wyyGFCYq0I0UkjyhZdArH+g1ybSzlTJ8JhSRk=;
-	h=From:Subject:Date;
-	b=VMu2NHl4VzGk+NYvyygIzD59cY8ZUurQY4aVHr4HYc42PeEEUA6ACglP3/jDxx8fB
-	 hOILmS4sFunE1NLpzXqMHMe1UOki/mcBtow5tbpCo574xh9W+PMjZBp+BhuPZBbVa3
-	 vNeuTaRjFbEehOBYx3yqP4H6gdFXdOdq48YGQht55cXZ6kEQHUlMnqZiWPkPytogxd
-	 XhXMYZ7uGfcvC/0V3oSALTawHCeilXFaND68klpzrk8VVykloTIVulga+tZBBY7fC5
-	 fY0peDInOq1fudPJo35lxQdLko5Nng6XO9DhxyUu0IdU6bDqEcrlt6EpJgLetNijKa
-	 RJ5I9vVq+A58Q==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux ACPI <linux-acpi@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Bob Moore <robert.moore@intel.com>,
- Saket Dumbre <saket.dumbre@intel.com>
-Subject: [PATCH v1 18/20] ACPICA: iasl: handle empty connection_node
-Date: Thu, 29 Aug 2024 20:42:37 +0200
-Message-ID: <115008536.nniJfEyVGO@rjwysocki.net>
-In-Reply-To: <5819337.DvuYhMxLoT@rjwysocki.net>
-References: <5819337.DvuYhMxLoT@rjwysocki.net>
+	s=arc-20240116; t=1724956972; c=relaxed/simple;
+	bh=FKzuZ92hgjikr1TymWCa05Fjh2jFE3ZTr+nuO70Y0/Q=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZurOjAr/B74vdIlfCKxCtyDaqc7706Pxk8/pDYgIWZoZ6bZ1/kHJ56MXaOGuuyWTJdsCjavVQwv72FMEBrlno9+5Dmrbm6Vkul8qVsN0qHBkCsD1/5dfxwIIgLHP1JcIux7LwLiyMziE6gh5C3a1Qo0EuES4rQis/WqFbQm9/G8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=joWaMbs/; arc=none smtp.client-ip=185.70.43.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1724956969; x=1725216169;
+	bh=IghPTrqsf0PYbIybSIdWfKQ4wloUFIsbW+NfxCoVioY=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=joWaMbs/SnRJug/1Efl3lukJJ7Kh3g+2jYETUe5Uxw5upCvhOMO5R7ydgtTnvK3i2
+	 usFPCfBccdLzAKFosfM2p7KxYJYFR8na5xZNJAYDVij+KQWLIHmKwHDeuGdU61wIeo
+	 Z7uAE8wI/zM5AOB2+LFHfyhxpUKAwt61AIKoyn3FLurrONRfoc8IgGyhkToQPUg9Z5
+	 jFoKsZUYcRFlrv4ZfA61jt69pXnXcp4nKYbZ2ztX9+J2TUw4vrJwQ2fylFdCzLmjtD
+	 hwdgpbi4xbb7snqigyvsJ+c4auhQtpGmFwhoYV4wDdiZb1iHY2UzthYDUkDZuYA4PZ
+	 2H9Hi7lXjhdcw==
+Date: Thu, 29 Aug 2024 18:42:43 +0000
+To: Danilo Krummrich <dakr@kernel.org>, ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@samsung.com, aliceryhl@google.com, akpm@linux-foundation.org
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: daniel.almeida@collabora.com, faith.ekstrand@collabora.com, boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v6 21/26] rust: alloc: implement `contains` for `Flags`
+Message-ID: <9dee325e-6610-4628-8afb-d53895f7a9f1@proton.me>
+In-Reply-To: <20240816001216.26575-22-dakr@kernel.org>
+References: <20240816001216.26575-1-dakr@kernel.org> <20240816001216.26575-22-dakr@kernel.org>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 23c120e56b61df2530a0e7ade62cef2f46c6a9dc
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: clean
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddrudefgedguddvjecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpeeltdeikeekkeevieektefggfetueetfeejveejgeduledvudehieeuvdeiheeiveenucffohhmrghinhepghhithhhuhgsrdgtohhmnecukfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhjfiesrhhjfiihshhotghkihdrnhgvthdpnhgspghrtghpthhtohepgedprhgtphhtthhopehlihhnuhigqdgrtghpihesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehrohgsvghrthdrmhhoohhrvgesihhnthgvlhdrtghomhdprhgtphhtthhopehsrghkvghtrdguuhhmsghrvgesihhnthgvlhdrtghomh
-X-DCC--Metrics: v370.home.net.pl 1024; Body=4 Fuz1=4
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-From: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
+On 16.08.24 02:11, Danilo Krummrich wrote:
+> Provide a simple helper function to check whether given flags do
+> contain one or multiple other flags.
+>=20
+> This is used by a subsequent patch implementing the Cmalloc `Allocator`
+> to check for __GFP_ZERO.
+>=20
+> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
 
-ACPICA commit 6c551e2c9487067d4b085333e7fe97e965a11625
+Reviewed-by: Benno Lossin <benno.lossin@proton.me>
 
-Link: https://github.com/acpica/acpica/commit/6c551e2c
-Signed-off-by: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 ---
- drivers/acpi/acpica/exprep.c | 3 +++
- 1 file changed, 3 insertions(+)
+Cheers,
+Benno
 
-diff --git a/drivers/acpi/acpica/exprep.c b/drivers/acpi/acpica/exprep.c
-index 08196fa17080..82b1fa2d201f 100644
---- a/drivers/acpi/acpica/exprep.c
-+++ b/drivers/acpi/acpica/exprep.c
-@@ -437,6 +437,9 @@ acpi_status acpi_ex_prep_field_value(struct acpi_create_field_info *info)
- 
- 		if (info->connection_node) {
- 			second_desc = info->connection_node->object;
-+			if (second_desc == NULL) {
-+				break;
-+			}
- 			if (!(second_desc->common.flags & AOPOBJ_DATA_VALID)) {
- 				status =
- 				    acpi_ds_get_buffer_arguments(second_desc);
--- 
-2.43.0
-
-
-
+> ---
+>  rust/kernel/alloc.rs | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/rust/kernel/alloc.rs b/rust/kernel/alloc.rs
+> index 1feabc817d00..5c66229a7542 100644
+> --- a/rust/kernel/alloc.rs
+> +++ b/rust/kernel/alloc.rs
+> @@ -34,7 +34,7 @@
+>  /// They can be combined with the operators `|`, `&`, and `!`.
+>  ///
+>  /// Values can be used from the [`flags`] module.
+> -#[derive(Clone, Copy)]
+> +#[derive(Clone, Copy, PartialEq)]
+>  pub struct Flags(u32);
+>=20
+>  impl Flags {
+> @@ -42,6 +42,11 @@ impl Flags {
+>      pub(crate) fn as_raw(self) -> u32 {
+>          self.0
+>      }
+> +
+> +    /// Check whether `flags` is contained in `self`.
+> +    pub fn contains(self, flags: Flags) -> bool {
+> +        (self & flags) =3D=3D flags
+> +    }
+>  }
+>=20
+>  impl core::ops::BitOr for Flags {
+> --
+> 2.46.0
+>=20
 
 
