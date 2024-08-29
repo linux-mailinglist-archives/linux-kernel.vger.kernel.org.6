@@ -1,148 +1,141 @@
-Return-Path: <linux-kernel+bounces-307647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 496A29650BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 22:26:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 279469650C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 22:29:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F287F2857B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 20:26:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D8ABB2136E
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 20:29:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FC931BAEF3;
-	Thu, 29 Aug 2024 20:26:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17BDE1BAED8;
+	Thu, 29 Aug 2024 20:29:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="oKZfZYdO"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=ucr.edu header.i=@ucr.edu header.b="NZydtRyF";
+	dkim=pass (1024-bit key) header.d=ucr.edu header.i=@ucr.edu header.b="KvZwoxBm"
+Received: from mx-lax3-1.ucr.edu (mx-lax3-1.ucr.edu [169.235.156.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA1F31B5813;
-	Thu, 29 Aug 2024 20:26:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3875524B28
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 20:29:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=169.235.156.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724963169; cv=none; b=ZOse57gL9D4uiwhy+WAs8Odfk7DQKLtAby1gp13refucNRjD5f+vwwr3eNg7OLxvMe1FUgDXYjC4JbsfCiUsJpqCWqp9Q4XVrGecfbXloGCzErHUWpMJxmWvTIHWA8ivw5lThO+4XuUOHnmuLL+mZ33JPYkLh1S7rKSSqJqM8hg=
+	t=1724963351; cv=none; b=oUg1xmQqtfp5oUCrpog53hje+Ezo7R2osxAwPnZwETE/EWgNZEigFH3aLHtCTFkHOFAQuY4GvKV+MCSVBPbbPwj75Zy7Z/1LEr67w0I0ybuu0ZJMe6fvn5/JQpTr4u4+m536sBNak0PloXNFWDTEs97seNZyAfxzm8E2phiMc94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724963169; c=relaxed/simple;
-	bh=86RPtIL+msArvWiZ8omd1lm+QQ09MUZ0+jCaU7IO3Dk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j6DC0sH7u/sdXNnANX5IcD5cQFQB5MrYffOe3ymMGZeElxeNOJVThl0lwhJJpjMcTItmwmT/MirOdgNz3oE1kYVdYXGAuE/xvTWcHPcTaZTsX2ItsZ2xbCDYHrkG1QyQwkUCWhMfO64GKquj9smrRHhOtTMlHqSTHCOG+pv89jA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=oKZfZYdO; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724963168; x=1756499168;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=86RPtIL+msArvWiZ8omd1lm+QQ09MUZ0+jCaU7IO3Dk=;
-  b=oKZfZYdOyrUuq7HwvrEkakHg6nsCx4dA8eL1H78/duK9dFkxlegQFaAv
-   whA5+GZ4JjJDNRB/o0OoK0OKrDHEZgoc1AJp+NNg2lG9yzJwwB5xXO80C
-   +a9dslVn5cE2XzvUqMWFSa8j0dDaGDP+RDPbbpaZ1IoEmVCkw7Lo3WNE2
-   mPFsL4QqcaW28ELbu8xTKbI7cWZLzkBVy1tDUPnnnXn/nj2nxISlU9W6q
-   EN15pMqyoX8wHVQ2tZIpcrbwldR58S0Wk+328SymTutXKgA7HC/eMZ10O
-   PosansJdvn05kFxYbi/kQm64Ve1QZvs1z9L0uQzJTYuKqb6sOzXQs6MRd
-   A==;
-X-CSE-ConnectionGUID: nOxfFtozSv2P32YyqqYNTA==
-X-CSE-MsgGUID: KHCKNrKcR8efyZ9Kk1P8GQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11179"; a="27462709"
-X-IronPort-AV: E=Sophos;i="6.10,186,1719903600"; 
-   d="scan'208";a="27462709"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 13:26:07 -0700
-X-CSE-ConnectionGUID: LyJTEhqnR0KpyPumG70D+g==
-X-CSE-MsgGUID: c+lPvE3ORMWZcsJnV3/Y3g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,186,1719903600"; 
-   d="scan'208";a="94514568"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 13:26:04 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sjliS-000000039Rk-4Beb;
-	Thu, 29 Aug 2024 23:26:01 +0300
-Date: Thu, 29 Aug 2024 23:26:00 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Vasileios Amoiridis <vassilisamir@gmail.com>
-Cc: jic23@kernel.org, lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, ang.iglesiasg@gmail.com,
-	linus.walleij@linaro.org, biju.das.jz@bp.renesas.com,
-	javier.carrasco.cruz@gmail.com, semen.protsenko@linaro.org,
-	579lpy@gmail.com, ak@it-klinger.de, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	christophe.jaillet@wanadoo.fr
-Subject: Re: [PATCH v4 4/7] iio: pressure: bmp280: Use sleep and forced mode
- for oneshot captures
-Message-ID: <ZtDZWCgE-zRriyQ4@smile.fi.intel.com>
-References: <20240828205128.92145-1-vassilisamir@gmail.com>
- <20240828205128.92145-5-vassilisamir@gmail.com>
- <ZtBqNAYlZSEhd_20@smile.fi.intel.com>
- <20240829191344.GC3493@vamoiridPC>
+	s=arc-20240116; t=1724963351; c=relaxed/simple;
+	bh=849volckYMWkz8XfZeWLz51T1AB/VyL8ul5AhPBn++k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nSfqZx2Xo0jyyjzs6rUUcfIkst+oK8FqV8cMxujRIXHYtwig4j33vVyY8eIh2QHZQ5U5G/kD7qv7EHFPat7YzdAK5jeV1RjSSsG7pkqBp3ClXK/gXXgRXUWjnGQWA0/rCM70AZqWzCjOr+YVNChMuuUI5wCKweDgAis3oG13l8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=email.ucr.edu; spf=pass smtp.mailfrom=ucr.edu; dkim=pass (2048-bit key) header.d=ucr.edu header.i=@ucr.edu header.b=NZydtRyF; dkim=pass (1024-bit key) header.d=ucr.edu header.i=@ucr.edu header.b=KvZwoxBm; arc=none smtp.client-ip=169.235.156.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=email.ucr.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucr.edu
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=ucr.edu; i=@ucr.edu; q=dns/txt; s=selector3;
+  t=1724963349; x=1756499349;
+  h=dkim-signature:x-google-dkim-signature:
+   x-forwarded-encrypted:x-gm-message-state:
+   x-google-smtp-source:mime-version:references:in-reply-to:
+   from:date:message-id:subject:to:cc:content-type:
+   content-transfer-encoding:x-cse-connectionguid:
+   x-cse-msgguid;
+  bh=849volckYMWkz8XfZeWLz51T1AB/VyL8ul5AhPBn++k=;
+  b=NZydtRyFB7uYpFV8SdNY8SIPUFTcCDUJhHRHSFagsYIsSc1Bywc3yZAA
+   1XvChxlo6bLUogRz8SFFwdtscRgrSFS/1EWj6YcFMO4+ReJ6gxnw7/nw7
+   sE9tkjqnk+bBbh1IVJNPEFtynrWgvk7vA0cBGdF4uW1UcfPPk2GKwgCR4
+   kvWo6Y7LdyiP87o0CgL9q64ouCCz2MrklAoU9nPyPCi8V7fNN0TVxHUX+
+   Jm4CiTt2RB5+RFpp9ckXrWFxX42DlOP+niaHQouQqHRv73WMYvFlsejmY
+   ch//5wOuyN/L4UMJaHH2fNPo9TTZgXmWeaXGLUNIZBFW+mhGN0FMxoKEp
+   w==;
+X-CSE-ConnectionGUID: AWqySWcrTsij2WK8vh+sGQ==
+X-CSE-MsgGUID: 11GwzaXXR+GK0G4CgguccA==
+Received: from mail-io1-f70.google.com ([209.85.166.70])
+  by smtp-lax3-1.ucr.edu with ESMTP/TLS/TLS_AES_256_GCM_SHA384; 29 Aug 2024 13:29:08 -0700
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-81f9053ac4dso120870239f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 13:29:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ucr.edu; s=rmail; t=1724963347; x=1725568147; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=849volckYMWkz8XfZeWLz51T1AB/VyL8ul5AhPBn++k=;
+        b=KvZwoxBmvT5XXJHfGY3dY6uENEmxpL6qscG7/gmbdNEGL/Ul8PnYN+9h2hQmioIaZ0
+         0bbWWuPECVfPbthIFbwaff9cDSfTE7QZiiqZgIgSrdKbTJKYNa5BqGY9/N5j+fWOGppM
+         SuzNM25u1Bhe70nK5bq9eOkmfJ8LbnGwUX888=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724963347; x=1725568147;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=849volckYMWkz8XfZeWLz51T1AB/VyL8ul5AhPBn++k=;
+        b=a4cRI7g6E4qLfeZV5U53hmpbOi0UcNQnFfX0y02kknCrDxkBX/WUPleCz66CgPUf/W
+         dvdt32NUFGPp8WvppXGMTCMSnPTPCR5aFHSHB9/y1X1wLKxqz6dKWLtMRAr4wV4fJR9b
+         aj0SNQ65Ex3TnAZtKqcKJakYl0OPlqJ3qBBTLO2npXY0yPIQTUNiD8yQty7YyCiTUrS0
+         J3TJIn1o8avVTe3SvsTfiRUX1Sy4iKOfqZu05ZH8KOvoW8pAsz5p5PV6LiF+PK00Pj3P
+         JsCN9nErpg3mbO8hBPpAAHFtKUYFoiXWNxTeFsSPKHylVg7IE63K7g1hH5zfGxJHmFDc
+         2wcg==
+X-Forwarded-Encrypted: i=1; AJvYcCUS8OBUF4Bu8jm9BvXhciD3lToGroj0R/XjIUpqqlfU0+dqIrWnGrrzLoc5qyk1WXZbNDv/pSeC3f7PVPM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFcH5WHtcghEKxxPo5O4hjOT2WmoscVd+uqTyuiAzCwxqq3+zo
+	ZTwNDtfjw33PL7hViwYlNAL0lwrglYCMuBIK4MTk1e4zORZdqLz8miSjdr8I3hLViNQiAbcvT/g
+	eqFRv7KSmDtiZ8OWytBqPQbuwMD5bhzGx2KjCr8wNfqbQl1XcN0b6RKbM9xuKPfBmniFOUcaJbP
+	NKAoKEj9C4DohfOT1j53oTQyP4DKEBromrDagpvg==
+X-Received: by 2002:a05:6602:619a:b0:804:1579:182c with SMTP id ca18e2360f4ac-82a11011423mr490623039f.5.1724963347537;
+        Thu, 29 Aug 2024 13:29:07 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE83jaTbymcBM8pIekmJUAAq30TW8KLn0Sslp6myqI8EisD5YCEbb4Xmx1iGNWzKslrwL+WV+35ICmn7wQKwDc=
+X-Received: by 2002:a05:6602:619a:b0:804:1579:182c with SMTP id
+ ca18e2360f4ac-82a11011423mr490621539f.5.1724963347200; Thu, 29 Aug 2024
+ 13:29:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240829191344.GC3493@vamoiridPC>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <CANikGpf0OmGMSkksH_ihW9_yXVAL25xKD4CBy8d1gpKj0inPjQ@mail.gmail.com>
+ <CAG48ez3b-FCz7+4MH=CmhbhmSfTT4FTrDAJfbL5UvufRut7ixg@mail.gmail.com>
+In-Reply-To: <CAG48ez3b-FCz7+4MH=CmhbhmSfTT4FTrDAJfbL5UvufRut7ixg@mail.gmail.com>
+From: Juefei Pu <juefei.pu@email.ucr.edu>
+Date: Thu, 29 Aug 2024 13:28:55 -0700
+Message-ID: <CANikGpcNj6P1jH8v0NjZJeQdn2=FbPr71CJ8W8GE+OeiCMgucA@mail.gmail.com>
+Subject: Re: BUG: kernel panic: corrupted stack end in worker_thread
+To: Jann Horn <jannh@google.com>
+Cc: Juefei Pu <juefei.pu@email.ucr.edu>, James.Bottomley@hansenpartnership.com, 
+	martin.petersen@oracle.com, linux-scsi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Yu Hao <yhao016@ucr.edu>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 29, 2024 at 09:13:44PM +0200, Vasileios Amoiridis wrote:
-> On Thu, Aug 29, 2024 at 03:31:48PM +0300, Andy Shevchenko wrote:
-> > On Wed, Aug 28, 2024 at 10:51:24PM +0200, Vasileios Amoiridis wrote:
+Hi Jann,
 
-...
+I checked the kernel configuration we used and I found that we did
+enable CONFIG_KASAN_VMALLOC and CONFIG_VMAP_STACK during fuzzing.
+I've uploaded the full configuration to
+https://gist.github.com/TomAPU/64f5db0fe976a3e94a6dd2b621887cdd
 
-> > int bmp280_chip_config(struct bmp280_data *data)
-> > 
-> > >  				BMP280_OSRS_TEMP_MASK |
-> > >  				BMP280_OSRS_PRESS_MASK |
-> > >  				BMP280_MODE_MASK,
-> > > -				osrs | BMP280_MODE_NORMAL);
-> > > +				osrs | BMP280_MODE_SLEEP);
-> > >  	if (ret) {
-> > >  		dev_err(data->dev, "failed to write ctrl_meas register\n");
-> > >  		return ret;
-> > 
-> > This _feels_ like a separate change. I haven't found anything explicitly
-> > describing it in the commit message. Did I miss it?
-> 
-> Well this change is because before, the sensor was by default in
-> NORMAL_MODE so whenever we were writing a different setting (Output
-> data rate, oversampling ratio) to the sensor, the NORMAL_MODE was
-> chosen. There was no idea of SLEEP or FORCED MODE.
-> 
-> While now, since this commits adds the idea of SLEEP_MODE
-> by default (FORCED_MODE for oneshot captures, and NORMAL_MODE for
-> buffer/trigger) we need to keep the sensor in SLEEP_MODE as well
-> when we change its configuration.
-> 
-> I believe it belongs to this commit. Maybe though, I should mention
-> this change explicitly in the commit message?
-
-Yes, please.
-
-...
-
-> > And in programming hardware we quite often operate with power-of-2 things, so I
-> > recommend to have 8 per line,
-> > 
-> > 	static const int time_conv_press[] = {
-> > 		0, 1050, 1785, 3045, 5670, 10920, 21420, 42420,		/* 0-7 */
-> > 		84420,							/* 8 */
-> > 	};
-> 
-> I was not aware of this convention, I can do it.
-
-It's rather a common sense to easy maintain this and see exactly how many
-(decimal) values are supplied. With hex values we usually make them fixed-width
-and hence easier to count (however also makes sense to keep power-of-2 in mind).
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+On Thu, Aug 29, 2024 at 1:23=E2=80=AFPM Jann Horn <jannh@google.com> wrote:
+>
+> On Wed, Aug 28, 2024 at 1:49=E2=80=AFAM Juefei Pu <juefei.pu@email.ucr.ed=
+u> wrote:
+> > Hello,
+> > We found the following issue using syzkaller on Linux v6.10.
+> > The PoC generated by Syzkaller can have the kernel panic.
+> > The full report including the Syzkaller reproducer:
+> > https://gist.github.com/TomAPU/a96f6ccff8be688eb2870a71ef4d035d
+> >
+> > The brief report is below:
+> >
+> > Syzkaller hit 'kernel panic: corrupted stack end in worker_thread' bug.
+> >
+> > Kernel panic - not syncing: corrupted stack end detected inside schedul=
+er
+>
+> I assume you're fuzzing without CONFIG_VMAP_STACK? Please make sure to
+> set CONFIG_VMAP_STACK=3Dy in your kernel config, that will give much
+> better diagnostics when you hit a stack overrun like this, instead of
+> causing random corruption and running into the corrupted stack end
+> detection.
+>
+> (Note that if you're using KASAN, you have to enable
+> CONFIG_KASAN_VMALLOC in order for CONFIG_VMAP_STACK to work.)
 
