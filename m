@@ -1,149 +1,175 @@
-Return-Path: <linux-kernel+bounces-307203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54382964A01
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 17:28:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 99A8D964A05
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 17:28:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7962A1C234CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:28:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9381C1C24060
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:28:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 774971B2EEA;
-	Thu, 29 Aug 2024 15:27:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CA191B3745;
+	Thu, 29 Aug 2024 15:28:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kXSVpX5I"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="pkoYZ1Wq"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2850F1B252F;
-	Thu, 29 Aug 2024 15:27:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E712D1B2505
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 15:28:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724945278; cv=none; b=FZ0yJWQj/B/PUfqJffOzjcTttLEuXqaczRA4BgIfhsi7hMEFKIn58htsGok8eMVWssT5M0T6SxizrcfzDT1pRbiJy5IhGe2fH5Q9UtP80tuZS1Aa43OKWgkkoay3n16Pwwu1A+GgO53YnzlpvBTODOAL9lngWMAWQIzouXzOFxQ=
+	t=1724945288; cv=none; b=Sw90KmyXVfHQhgXfoL86RzcaNPcX1NEEGqs1QgUS2etc8FhyTgekJNdZThsxOlbv79xuw86i8smJt5Bu80ZAYdT3h2MFu+NETdvEB0JFcKFOXS6a4GESbBWHQKehblHHa0bVgq6m23vYg/8zWuu7mtUy4Plm9nht0Rcxb6qxeMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724945278; c=relaxed/simple;
-	bh=rEHcCrksPK4zKuna47RL6KHvDgrL7S+K+JPsxR4F8NY=;
+	s=arc-20240116; t=1724945288; c=relaxed/simple;
+	bh=Lka1zm7XmcUB5solzQAlYgxWdcDi74lEnAD6wVdlaB0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YIO4LzOBxDDnt92aw+8tvzY0iJTQxuKa18faPoSJmm+AAyNrL+nDeblTSCgAWUzkNQhngEI7G6k2bARZMT6i4GiUnjHTWhoTMnq4XU543WSy+aUidtnBb/9udYtAjdzbNs8e3QgyksLhyJv8pAzN71N0/SUFKZRW4znFyaUYexw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kXSVpX5I; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-371ba7e46easo566728f8f.0;
-        Thu, 29 Aug 2024 08:27:56 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=YNLrpsg8ePRIlDxBCSiR9VngM4lRB2+QVWK3hdt1AYqC98yRKibSdxvWW3nCQ84zJH7riYYEPJcp9m53hjIs4ba1VfMzk8FwX9NKLs21xw+KZwR2bkcxCw2djRLZaWGDLedmBq9qJFNrWMasIhJpIUwkPd7KpVNG2jq4mHfN+j0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=pkoYZ1Wq; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5beb6ea9ed6so902941a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 08:28:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724945275; x=1725550075; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Yw07to4eXEKZD8HOhtMMTh+5t396wUm62mYRHx0re1s=;
-        b=kXSVpX5IC1Hi6XjLNLmqjkGDU+/0fF7A1USW9oDe//Q0Xqp7poLumUlMcoLkBa17Lu
-         RtOXCAmPfUlOBSMwebmwTxd7ddw2HGovQgf+7aMJFagGiNAXjqj9ezcLgZe9D9aNVnBJ
-         xEWp7Fw9D95VUedPFkT9dnWTW78hucW25XD0smpQkud+vWXvo6vWxgGMFmxJNouNIJ8O
-         kkF4B/TYuznH4S0CkWZ7FMeg7o9SqgkFTuuIg3Cuw5pmNIhZRUvvC+HzCzqBkcPPZnko
-         15qyM/zJMi7KvMavIr9NM2kK5Pcn7v9GTjfUc+CiwWXPTI+Ce4Y4C8qaQggewCDvK0eW
-         +ZkQ==
+        d=fastly.com; s=google; t=1724945285; x=1725550085; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:mail-followup-to:message-id:subject:cc:to
+         :from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=6k+Lbp/vKSlk4oMmUj+Nso6RmewTr08uCZE3vQ6ntA8=;
+        b=pkoYZ1Wq3kj2PFb0ePlgGTh915DvS0Yya9qBMxgft8N9SVNfy2ngDOB3iIN8DKreJI
+         T1bG1/PhxugXBBiF82U/qZjpiVT23dR+4tAlCD04HIxb96+vPurDrK9rMW2jg49stK1m
+         5qfufGD0S0OA7egXf91hJmVRQW8dollnc0Nyw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724945275; x=1725550075;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Yw07to4eXEKZD8HOhtMMTh+5t396wUm62mYRHx0re1s=;
-        b=OVBgXZTBM8/Cm4Y7g8cbf8yFYdSAD6MSSVVXhoIlm29WnB6Vg0sFRIDa41xN7aBMxd
-         FI6OTb8Guf5Kl7vX/DrqbH5HmNeD3Dhl0RY0hnmr9VWAVoSLulS31jq+ryxKaZ2GgWex
-         nXZUROJT5ujs0fcb20a0EexTUJt8bB40yX9fAQCx2Ul9d7D13RaqQiuECsOtSeqOCmF1
-         mlPjrAbsaz+PXf87OYphAZyhfI4Gk/N6uV494fKVJzbVjEGv0NCipD7xmi+fO+Y8LwBv
-         slHaCPLIkEC+WJSmRTiZEpjAYoxZ17Woc7c0iwMsHuL2qfWnPGCKiGmlZhQgA9F3R7qy
-         Tcxw==
-X-Forwarded-Encrypted: i=1; AJvYcCUgP5/oHDTDY0DPPHAIHDYy+U/loboXVQqWoZnt3O/a4S36haVJUr7lTkCfOvswrCMulPNFTHld5F8A@vger.kernel.org, AJvYcCUq3NTBbo3osZvrOvZaRRN/5PW1zcA1KLc+of6UNNPGtFDMMPFxo+eDbke/V4GpwAIEOccv7VF5cPBc0TX6@vger.kernel.org, AJvYcCVp44RJHGTyYwCR2f6OsOXMMJCP3de+OUTWFiQ4mhgcnLf7wzyUEkAIjRen4SXTyrj25OAK+wqEzktNK3A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJJK3Lh22Up6ky8zxwOrj3YIorT6TRqVnKOBVVZTx0UXKG7mkg
-	Nhxv/VpwnDrOpxtTngQFwa/0FHPaOP0J733/Rj+RRc57XzPgDXs9
-X-Google-Smtp-Source: AGHT+IFcl7nunAt6M7i70ObiC4pL46x8FG3FLkfqKTXOy0/JlSrM/nqJVzGHMedlJBUQqrlMwbEqwA==
-X-Received: by 2002:a05:6000:1a47:b0:367:95e6:158a with SMTP id ffacd0b85a97d-3749b58e42bmr1828448f8f.63.1724945274756;
-        Thu, 29 Aug 2024 08:27:54 -0700 (PDT)
-Received: from orome (p200300e41f29d300f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f29:d300:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ba641db90sm54631535e9.38.2024.08.29.08.27.54
+        d=1e100.net; s=20230601; t=1724945285; x=1725550085;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:mail-followup-to:message-id:subject:cc:to
+         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6k+Lbp/vKSlk4oMmUj+Nso6RmewTr08uCZE3vQ6ntA8=;
+        b=NlmQekCrmj7LW1waAUKkRTTuPmSuJGIv5Uakwd+P8dCuOpt4A+TbD9z4e/s4UsOgBp
+         GtdC84c1Qf23Gq8xrO+h5PrmvlrWt4A86hRihjHS8nSeOgkkCYpr4J5cp58VP8QCgtrT
+         92vaByE/tHBbIIxMhEP6JFFnAhKico3UskWe4G4s8mURW0cJmRD0bYeMWJBKPWWuJgR+
+         PZNPP4TNjlRHW2pACzp8KLayGic/FZ7+baERme3o9warTEOYaOmvbGb0FGRAAiSK0sdN
+         rAvTo8/kXDEJrmZO+PrVG8n5EYejqTP3mlYBvwPN90VPsf6ui6GvbkY8IWfy+fMsG5Qz
+         Zbpw==
+X-Forwarded-Encrypted: i=1; AJvYcCVno3u+0AxJW8cYqVFww2+TULiu4yrNDVCbG7CDYHltWaP8YwzE5BUWyBjYiBO7OqOvBQNfG/RuXRsxQQc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YztMJvxR30TjaVuP0s1WdRmIoiVPCsFTbUA5hNX7i9BmLKmejrx
+	+SMJWOCJHkLuzQSpR0lvJTPWRjCLCuv4B42xrLyaCovrAzVQb/EC10LtzvRvZxQ=
+X-Google-Smtp-Source: AGHT+IGb3JIMQyWbOM4dnnyOp1EW2lUPeYUZ2LE2Fn5Y8fixva/Ya5HAMfpZPdTllAZGR3YEgps7qw==
+X-Received: by 2002:a05:6402:3584:b0:5be:df7a:14fd with SMTP id 4fb4d7f45d1cf-5c21ed41d85mr2980037a12.9.1724945284582;
+        Thu, 29 Aug 2024 08:28:04 -0700 (PDT)
+Received: from LQ3V64L9R2 ([80.208.222.2])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8989223268sm90211566b.218.2024.08.29.08.28.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 08:27:54 -0700 (PDT)
-Date: Thu, 29 Aug 2024 17:27:52 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Svyatoslav Ryhel <clamor95@gmail.com>, 
-	Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 05/11] ARM: nvidia: tf701t: add Bluetooth node
-Message-ID: <iyoa64mxxi47azcvv6fuljsyjlhv3ltf5gajc4yts3uryye2na@mbhnyt2es7xt>
-References: <20240806123906.161218-1-clamor95@gmail.com>
- <20240806123906.161218-6-clamor95@gmail.com>
- <9dda725f-71f6-4f64-87a7-f7151fa1690c@linaro.org>
+        Thu, 29 Aug 2024 08:28:04 -0700 (PDT)
+Date: Thu, 29 Aug 2024 16:28:00 +0100
+From: Joe Damato <jdamato@fastly.com>
+To: Eric Dumazet <edumazet@google.com>
+Cc: netdev@vger.kernel.org, amritha.nambiar@intel.com,
+	sridhar.samudrala@intel.com, sdf@fomichev.me, bjorn@rivosinc.com,
+	hch@infradead.org, willy@infradead.org,
+	willemdebruijn.kernel@gmail.com, skhawaja@google.com,
+	kuba@kernel.org, Martin Karsten <mkarsten@uwaterloo.ca>,
+	"David S. Miller" <davem@davemloft.net>,
+	Paolo Abeni <pabeni@redhat.com>, Jiri Pirko <jiri@resnulli.us>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Breno Leitao <leitao@debian.org>,
+	Johannes Berg <johannes.berg@intel.com>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next 3/5] net: napi: Make gro_flush_timeout per-NAPI
+Message-ID: <ZtCTgEEgcL3XqQcO@LQ3V64L9R2>
+Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
+	Eric Dumazet <edumazet@google.com>, netdev@vger.kernel.org,
+	amritha.nambiar@intel.com, sridhar.samudrala@intel.com,
+	sdf@fomichev.me, bjorn@rivosinc.com, hch@infradead.org,
+	willy@infradead.org, willemdebruijn.kernel@gmail.com,
+	skhawaja@google.com, kuba@kernel.org,
+	Martin Karsten <mkarsten@uwaterloo.ca>,
+	"David S. Miller" <davem@davemloft.net>,
+	Paolo Abeni <pabeni@redhat.com>, Jiri Pirko <jiri@resnulli.us>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Breno Leitao <leitao@debian.org>,
+	Johannes Berg <johannes.berg@intel.com>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	open list <linux-kernel@vger.kernel.org>
+References: <20240829131214.169977-1-jdamato@fastly.com>
+ <20240829131214.169977-4-jdamato@fastly.com>
+ <CANn89iKUqF5bO_Ca+qrfO_gsfWmutpzFL-ph5mQd86_2asW9dg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="3rum6blmlkk6aglf"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <9dda725f-71f6-4f64-87a7-f7151fa1690c@linaro.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANn89iKUqF5bO_Ca+qrfO_gsfWmutpzFL-ph5mQd86_2asW9dg@mail.gmail.com>
 
-
---3rum6blmlkk6aglf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Aug 06, 2024 at 03:33:58PM GMT, Krzysztof Kozlowski wrote:
-> On 06/08/2024 14:39, Svyatoslav Ryhel wrote:
-> > Add serial node along with bluetooth node to ASUS TF701T device-tree.
-> >=20
-> > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+On Thu, Aug 29, 2024 at 03:48:05PM +0200, Eric Dumazet wrote:
+> On Thu, Aug 29, 2024 at 3:13 PM Joe Damato <jdamato@fastly.com> wrote:
+> >
+> > Allow per-NAPI gro_flush_timeout setting.
+> >
+> > The existing sysfs parameter is respected; writes to sysfs will write to
+> > all NAPI structs for the device and the net_device gro_flush_timeout
+> > field.  Reads from sysfs will read from the net_device field.
+> >
+> > The ability to set gro_flush_timeout on specific NAPI instances will be
+> > added in a later commit, via netdev-genl.
+> >
+> > Signed-off-by: Joe Damato <jdamato@fastly.com>
+> > Reviewed-by: Martin Karsten <mkarsten@uwaterloo.ca>
+> > Tested-by: Martin Karsten <mkarsten@uwaterloo.ca>
 > > ---
-> >  .../boot/dts/nvidia/tegra114-asus-tf701t.dts  | 28 ++++++++++++++++++-
-> >  1 file changed, 27 insertions(+), 1 deletion(-)
-> >=20
-> > diff --git a/arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dts b/arch/a=
-rm/boot/dts/nvidia/tegra114-asus-tf701t.dts
-> > index fe1772250a85..00c3325878b9 100644
-> > --- a/arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dts
-> > +++ b/arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dts
-> > @@ -1111,7 +1111,33 @@ serial@70006040 {
-> >  	};
-> > =20
-> >  	serial@70006200 {
-> > -		/* Bluetooth */
-> > +		compatible =3D "nvidia,tegra114-hsuart", "nvidia,tegra30-hsuart";
->=20
-> Why do you override compatible? Boards do not come with different SoCs,
-> do they?
+> >  include/linux/netdevice.h | 26 ++++++++++++++++++++++++++
+> >  net/core/dev.c            | 32 ++++++++++++++++++++++++++++----
+> >  net/core/net-sysfs.c      |  2 +-
+> >  3 files changed, 55 insertions(+), 5 deletions(-)
+> >
+> > diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
+> > index 7d53380da4c0..d00024d9f857 100644
+> > --- a/include/linux/netdevice.h
+> > +++ b/include/linux/netdevice.h
+> > @@ -372,6 +372,7 @@ struct napi_struct {
+> >         int                     rx_count; /* length of rx_list */
+> >         unsigned int            napi_id;
+> >         int                     defer_hard_irqs;
+> > +       unsigned long           gro_flush_timeout;
+> >         struct hrtimer          timer;
+> >         struct task_struct      *thread;
+> >         /* control-path-only fields follow */
+> > @@ -557,6 +558,31 @@ void napi_set_defer_hard_irqs(struct napi_struct *n, int defer);
+> >   */
+> >  void netdev_set_defer_hard_irqs(struct net_device *netdev, int defer);
+> >
+> 
+> Same remark :  dev->gro_flush_timeout is no longer read in the fast path.
+> 
+> Please move gro_flush_timeout out of net_device_read_txrx and update
+> Documentation/networking/net_cachelines/net_device.rst
 
-Just to clarify this: it's not being overridden because the SoC is
-different but because for Bluetooth we need to enable the high-speed
-UART mode of these devices, as opposed to the standard UART mode used
-for regular serial ports.
+Is there some tooling I should use to generate this file?
 
-Thierry
+I am asking because it seems like the file is missing two fields in
+net_device at the end of the struct:
 
---3rum6blmlkk6aglf
-Content-Type: application/pgp-signature; name="signature.asc"
+struct hlist_head          page_pools;
+struct dim_irq_moder *     irq_moder;
 
------BEGIN PGP SIGNATURE-----
+Both of which seem to have been added just before and long after
+(respectively) commit 14006f1d8fa2 ("Documentations: Analyze heavily
+used Networking related structs").
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmbQk3gACgkQ3SOs138+
-s6FuPQ//c/8ii3SnqqB380okkfXtCNYL+zu5HZ1I+KoymGdDHx4VSJiiP1CIf0j6
-XeSttYEv7qvpb8fkZMKXq+1hC0l7T+FcQ2NbXRlb/0UDlBWDg4Bw6+6g6FIBW3Nm
-ODFeUk0CajTNqAzQWl7HpYyPpncur2+HZiCpvG5fyA89NVJMawoIweKp266T4NA8
-YnRdRDMsFhfCX/lWW/RA8t5SL4OKEF3ZZt5EcerdNeAWh5Ik/pvIhDe7r0Bn+0ea
-e6FISn495+IWfh4D5bbb7HyVDjayDqT0AYOajqaGfFDVVy504oZoooyIYS5rJ1Qi
-ou9SAbvKFMHoOLS0JEKfRBU2G4FzmcSDyS5XQzVKtZEfUAxouWRP/ePEQAz5UFNK
-YaXOtdRayXPzqNc5wMTLV0Tjlamy6dzn7M2bgRQL3tJStsAQ5vODYsakVhiVB5on
-eggAdqvt0ATxHJJGSqdKsJV1FShqIybT2sY0GGi0T1ybq6SudymSOMauYHECHJ8l
-NBhgLsAA+Ied3M8EYa8Rp7AGHaNG1G2YCLu5Yi+uIZ9zkVfK2wSmhrs5hGQlq1SR
-og6hM72OC82XWjY8R47KiDdEWdV2XLJhEYfWsBzH1O9w6IbutlNVfJu3fQNvSVzr
-6bMTfNPqeNvxPPdiLS3scn+WTuVfnSLX7RUeQSxMAjPiEiKyvIM=
-=M//d
------END PGP SIGNATURE-----
+If this is a bug, I can submit one patch (with two fixes tags) which
+adds both fields to the file?
 
---3rum6blmlkk6aglf--
+- Joe
 
