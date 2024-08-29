@@ -1,190 +1,203 @@
-Return-Path: <linux-kernel+bounces-306923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA26A96458B
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 14:56:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E46896458E
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 14:56:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C138A1C20AF2
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 12:56:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8D31286913
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 12:56:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 495201B2EF8;
-	Thu, 29 Aug 2024 12:52:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3866F1B1437;
+	Thu, 29 Aug 2024 12:53:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="JtTQgtdr"
-Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01on2059.outbound.protection.outlook.com [40.107.215.59])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="KbL5VC/u"
+Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 872111CAAC;
-	Thu, 29 Aug 2024 12:52:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.59
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724935971; cv=fail; b=Pty6RzArM46IuAd1hHl3G3/uVt4dtdQkv9He9lz2viWYnZFmJ7CWnvwSgq/B77WLJbboEiZBcNguaOsVNJ0ANESwdEEqFTh+PWHtaOmt02I14na2GEQI0eLRmfANs1hRsH3dXDIlbRniRdG6sCDdCrKxw5dkXBUNUVXVIq7mvF0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724935971; c=relaxed/simple;
-	bh=Di59dCS1rM0ALl5SfzjzDqADQVA6k636/ae909RdVXY=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=gY9CP/GkZ+T/0NHXV3SzzkyPWNq3Zor7Ie3L5XoavyiYacpCC2rC39PI6eKhg4V2S0UE0HYnMjWCF12TaOUk3VF/NIDMFsilqSKCSRaJvdYq4zTq4zAEwjZpt8INBUPCv3Ruyc70CblAlZLo7Ge97kPjWoiOWKM5WRJczUVvJFc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=JtTQgtdr; arc=fail smtp.client-ip=40.107.215.59
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=FeReX8/Ihf2AjbPTmQJ4jcG/iduN1c+WcetaRr15zMsNf6FGOPTpO/SwONtQcYJzrQpORUh+x3z5IyoxrAFR9tzJ4kosFPwr7jc05D0v4UwIv12o0Mazv+ok9YPPq8sM2pYGCQXMy81rRTbQcKteOIGpm76kAs7oW48Yjhwa2Tgy1dvGrcnjK5cysDW3lqaTaIeDtxbXdKWnpCz574ohm/M4gxpNitSsbBYa33OT7g34Q8qHRReaNwSAYZ4J/PkQv5dExSG1oGb9nR+88O3ej/scY0vj9ES6LKA0jVgoByjuXPUWFDpGMziS9ig2Rbsa6RyaIHWSLVuwSeYZAILLQA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Pa0odwKLT6YYnfgKQfkmeuWYX7ByIvBWY8YSsGpPzic=;
- b=gM6PwgIpxGAkTtYxRgDwApisuWG7LdkG+hX+vTCj01GQQbGFIp6C4eR1p9/FwRci0fGRL52v/O0as7qPyLKwJ6AhJg+Bw0glsIz+/xMbjvv8l+5C6/C4WYN/SseeLGefD1uXH4mZ4h3XjdLkUZDcvPHkeHlv9nzVvEG8MJu7P+W6jrNYFUp94vw8rFO7KUMtbCVMKH1XOxmsRQb7JX2LYcZiAR7/mrPMhxugExXfI4axGHz0oCeMoMwPbwZoSAgF00oz8NisNHDR4Pb2659KHBUS4TPRTmrKMDSIqtMQSTt8fhmFsW7lpppFuqNfPbgvy6esCPorUxI/eD0Sfzzz4g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Pa0odwKLT6YYnfgKQfkmeuWYX7ByIvBWY8YSsGpPzic=;
- b=JtTQgtdrQAb37IC+0yS/JLIB1j2QOUgf5A64P5yq8b3fLpO2WLcEsv8Teqf/Vwbn+lAFW1ONCNAnw/fAi59Fc/OTc7022h/z1kBK3CTt+HYgFYss7OyAvsLqKlqvEemp4bKO9/lXqLA/sHVvVAB1aQWe0KmhYzW0MZBDBez7BA0RgiBDX6FURlw1lQ65M44b5g2pwFwn2OnS+dcqsXclQcGEJ1QU2SXH8Rq2XNC9c8S+PCuLxj7WStrV+y3ogJvhqcdkIczD1sFcHFbUga/1GWvZLAtpIESNzUs48a3aOv4TnyjEjaEMhAMdWy203B/hiw8QJRiAIqowp1Z0MzrYLg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from TYZPR06MB5709.apcprd06.prod.outlook.com (2603:1096:400:283::14)
- by TYZPR06MB6024.apcprd06.prod.outlook.com (2603:1096:400:335::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.24; Thu, 29 Aug
- 2024 12:52:46 +0000
-Received: from TYZPR06MB5709.apcprd06.prod.outlook.com
- ([fe80::bc46:cc92:c2b6:cd1a]) by TYZPR06MB5709.apcprd06.prod.outlook.com
- ([fe80::bc46:cc92:c2b6:cd1a%4]) with mapi id 15.20.7897.027; Thu, 29 Aug 2024
- 12:52:46 +0000
-From: Yuesong Li <liyuesong@vivo.com>
-To: dave@stgolabs.net,
-	jonathan.cameron@huawei.com,
-	dave.jiang@intel.com,
-	alison.schofield@intel.com,
-	vishal.l.verma@intel.com,
-	ira.weiny@intel.com,
-	dan.j.williams@intel.com,
-	rrichter@amd.com,
-	terry.bowman@amd.com,
-	Benjamin.Cheatham@amd.com
-Cc: linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	opensource.kernel@vivo.com,
-	Yuesong Li <liyuesong@vivo.com>
-Subject: [PATCH v1] cxl/port: Convert to use ERR_CAST()
-Date: Thu, 29 Aug 2024 20:52:35 +0800
-Message-Id: <20240829125235.3266865-1-liyuesong@vivo.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TYCP286CA0366.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:405:79::6) To TYZPR06MB5709.apcprd06.prod.outlook.com
- (2603:1096:400:283::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59A4619645C
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 12:53:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724935983; cv=none; b=U9eMmpK6PwB4by62XtIJaFlqQP8WrDbTA42yMPfqC7CwozCQtmNhkCaS49rnOAaDo4SCbiEiaYIfoJPMOKljqTdN+sK0t0dYOkTaG0KmgdRR+0yRxjLvznLE59Fqll6s/qy9jrnSlDv1jgwxNmBaop8G+LXeFdqVh3Sr4xjxvug=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724935983; c=relaxed/simple;
+	bh=2QxECIkMRBg1EHw+Lnb7plNG6unPYTyHh3rJdDSG+GA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QlMRIt/8SLTTZw13Em6F50l9EPadObCHfd04Jwjy/JOHcGRa4v2MspTszQjQOiThbcO4cSZL+kAGS6VTJPB4w8zoRWMBTx+rz9mkQjTlWVtQwpL/4PiUUCXC4I+WJkneTWpDcV14tx8egXE3jlaotDS02c28xUwIB1kSrrLfaQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=KbL5VC/u; arc=none smtp.client-ip=95.215.58.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 29 Aug 2024 14:52:54 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1724935979;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RuangRg+vh3E7dlcXFpSDKUB0oQAYvgNeBuSyw6jcC8=;
+	b=KbL5VC/ubgUL7rfAgj+wK9QB3y540bW4/RAh/DzZcSiZQi+81nG6jfiuhRLm1cRZ+TIgzn
+	FypUXa3hMUiyV56itV7aaZ9McMEEZotBSckDhdGQBBU0Ar/RSnOi2RLvX2dPG3YffLoqU/
+	KR8Dz9w4091deBakaT6Msw7tgH6O8/8=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Andrea Righi <andrea.righi@linux.dev>
+To: "Gautham R. Shenoy" <gautham.shenoy@amd.com>
+Cc: Mario Limonciello <mario.limonciello@amd.com>,
+	Mario Limonciello <superm1@kernel.org>,
+	Borislav Petkov <bp@alien8.de>, Perry Yuan <perry.yuan@amd.com>,
+	"maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	"open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>,
+	"open list:ACPI" <linux-acpi@vger.kernel.org>,
+	"open list:CPU FREQUENCY SCALING FRAMEWORK" <linux-pm@vger.kernel.org>,
+	changwoo@igalia.com, David Vernet <void@manifault.com>,
+	Tejun Heo <tj@kernel.org>
+Subject: Re: [PATCH 8/8] cpufreq: amd-pstate: Drop some uses of
+ cpudata->hw_prefcore
+Message-ID: <ZtBvJk4MMCcF2SI8@gpd3>
+References: <20240826211358.2694603-1-superm1@kernel.org>
+ <20240826211358.2694603-9-superm1@kernel.org>
+ <Zs4G084+7MmzdYjU@BLRRASHENOY1.amd.com>
+ <61b96549-2969-4b64-a40d-f91f614ec3ab@amd.com>
+ <Zs6w3RktAb6fJrJ+@BLRRASHENOY1.amd.com>
+ <Zs7Bwh6T3HCGlR9C@gpd3>
+ <Zs866Myvbs0ByoAK@BLRRASHENOY1.amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYZPR06MB5709:EE_|TYZPR06MB6024:EE_
-X-MS-Office365-Filtering-Correlation-Id: f8af8e1c-0529-4568-9eff-08dcc8297afb
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|7416014|52116014|366016|38350700014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?jIYYLobnJQcKYz6AhACIty4R+X0yv/9mPaFvMh/23SiUmizd+B2wAtv2S3lk?=
- =?us-ascii?Q?bih5/YEO2Y71eR2UrfKwpbj3NxLKF01XlTjnM57GVsfEj+CPh8LpQ1r2ok98?=
- =?us-ascii?Q?Fo0f+O5oohDi2643zIpn28jvLIfznKwNBIN2fWE2HttKS0+r0Yg3tXprNHyK?=
- =?us-ascii?Q?bLl5eTPfUu6cFnqf64JOCRyvUAqgGezKN+nqNLrzZwZpnGnVmM4HHnsTnhQt?=
- =?us-ascii?Q?2OEs7AOw+uDgS1fSkre8k7bsns2ceGP51jUE9qDCuERRoSdjPNW7s1Rvd464?=
- =?us-ascii?Q?mZ0xI/BptuJ2Oa+2Qa5kTpqSCZge72VYFdVikVLON1H245zsVSe3O4kF7ehR?=
- =?us-ascii?Q?vxe5N65Rm7Y88+5F6iX75Ejnulk5BtKEH74UkVAXaOMoYRDxc6X6HxN2M1hd?=
- =?us-ascii?Q?bzCdHNlUF27CNvseB7axcbbXzGeb1Ro5whTUvgy5DlHsDljYPfY6uRKSx27R?=
- =?us-ascii?Q?dMtaacs+su/Ddyu1ByJjplZ/7rd0TkIqHmx4eI7mRiCU4eb5Ri5s18fUAnou?=
- =?us-ascii?Q?c3YFTLnogk8irlZD6RvT6XxqF76A4pyrchAVxEA572R4UX5730J3HeDVo3sp?=
- =?us-ascii?Q?EHrdqV+55yYTrSnoR75/W5lEnF1osI3du4NyDn95Dw7pQCFEXk3EaYJhUltO?=
- =?us-ascii?Q?lNMkB2TVbrInoBiTHoGaSkWF2GlH1LU6UU/SQjKjI39FpqYHslFmENsLLCJ/?=
- =?us-ascii?Q?HsxW/+ao3Em6649dEljbqdywYI4D/fcw6QBzm8CarKzjA8CCdow/08dhXHpK?=
- =?us-ascii?Q?oYuWymHefqEFtcVSlQDbeU8LQ/0DoVox6vc/ETCG0dkUUQYE7iOiq4AB5G/r?=
- =?us-ascii?Q?6QP+dZ82xB6ZpGB64IzKqrmsGHcwT5OaIJHQIsyxyLVkgRkRf3XcEEkRuanT?=
- =?us-ascii?Q?lN6WY6G7sMI9HDILZ8C6zgYNOd7KM4mTlH4i5OBrdytjUADzaM0gb9El7xMv?=
- =?us-ascii?Q?FKHQq/cfRl37BJiUzt++yGNmJYIIxgotOxyoUwUF54vKTSgSEKN9OhYt161G?=
- =?us-ascii?Q?dSDU3dXfYheLTSfxCPJBYRq6LzfkQkHdHPuQEkrzszLJA/pAeyeMMI57fV+B?=
- =?us-ascii?Q?0nhvJVn1MosXb5zEB4znFkbltT8ThBTS5U6Yq/dixcrCcgLj3xO52+e/N30A?=
- =?us-ascii?Q?oHnHIss4NT8dGyVen+VSIy2U16APPPFRl/xMPrKG4dENFNeUCc5UT+tqcfty?=
- =?us-ascii?Q?2jMIPZURlHFCaRFW+iL7awwrF5e6KvaVIEwb9G1V2zOjoN01/JiXSs7v96ZQ?=
- =?us-ascii?Q?kJD+YlZ8nbhpxdJzn64MU0Y3dXxtFuKgsr4Tq8OZDIdYHFxl+Y3dwAXev9Yp?=
- =?us-ascii?Q?O6lI1nCXTDTgO+vRSi9MYLpiSxzR85BhHSoxFQYiKBDTsY2HLcS0sAH1cj4r?=
- =?us-ascii?Q?QZRHMa8j9jkbVq9cFBxIb4v4Fsaj7QcoQiOlR/H1jd0v2n5UmtZYJ2uQrtwz?=
- =?us-ascii?Q?HmlXAgdPAFM=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR06MB5709.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(52116014)(366016)(38350700014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?aJGcAY7vCpxvq4sTpOV+GmoA2tecJmGFc5Acaqp+nEslC8LZSwMptQwVRb7x?=
- =?us-ascii?Q?b0lbtYiYGeyQqi7AFaecjLetry+hXIrDM3GHjREeg88mDBgsCQ9pFVAefomZ?=
- =?us-ascii?Q?AhEUUvbOjnC+L4LmTLB90zufc7POX+3wp414abgrbRyhcXlQwA4Yer2dNs5q?=
- =?us-ascii?Q?U5bblwZeboC+PDtRpt6W3yUcw7l5HgFESYM/VtXOvP20A95fK9cCC1mAD1v3?=
- =?us-ascii?Q?5G0C/QHU3QjER8tl37xYI+JtDvpNVnW2W5eJElMTTvkwvoOIxr0qRphAZgYL?=
- =?us-ascii?Q?PxQBFoKshSBsIAXYEo+yCrlOI/T8KtP3wUToVXKRqXiQzAgCDKpxpRVfgNSC?=
- =?us-ascii?Q?+JhSJ0602Owzmu4EfIOVfd+KVAC12d8lcH/7EqlCODSv73It2rwtOuyOoZ5g?=
- =?us-ascii?Q?LrceeX76kvCTGPijZe+hBTYElw5SNZUYmWKW66oJsOT0kCbD2W/iV+j3tK2f?=
- =?us-ascii?Q?oRcTEvWNQlP4bkF9rl5czfyqt5RAVQU2a9IRfgFegGJRB6278evRvHBkYNNY?=
- =?us-ascii?Q?yJK8drn0bCb8xZxg9rDjqaaikGZ0QXNzsHMaF40z4mVDuiC098T21QSKV84c?=
- =?us-ascii?Q?J/LgyWUTFxKYqYx9exWtgknoXr7Ar9yTdGETSwgZgdYpemE2LNONhRBw/rs9?=
- =?us-ascii?Q?k8Ri1qr1egvwBoVKDTYBCRAxsldX2to4GlH6Wfrcm+BNdD5XGvhimqSYHAk3?=
- =?us-ascii?Q?13cMgXoBz4yVzRFt7Z0KUwSx0UO1lKY+I473crB11G4OpyCrzEkCAqyf2Yyr?=
- =?us-ascii?Q?XwkTLJIt7bXS/CioqGawiUto6KzGuxRKAQBc3VB9NIpKjMrClI5ZsXLQdVvW?=
- =?us-ascii?Q?MNIuRznL2PR6gk/dXafOgYv71eYeH67FWNochw/s4Y4vZVm3ucPM48gQElhH?=
- =?us-ascii?Q?7nW0oeqb1Ubt5a4nQNcuim4G/OuLNmECQ8ff+CdhAqB6tVleKJWjtU3Obvcr?=
- =?us-ascii?Q?ku/I7C4lbm/DQ7wf7QIH+Gw5Flgt1pIW4bnQfTbZ+ThofXv2kRFylpoWikAR?=
- =?us-ascii?Q?o/AS+scjOJrwgdEIrl719GGNOHpzr0fqZYoGSA1ujRPd3V5sgadSGLRs9U8I?=
- =?us-ascii?Q?nu8Q4nYwdX8v/AFIeQKlAJSJoX8Sxz+eLJBtFTMrMZ0yPI3pV9e2Ou2LPZZd?=
- =?us-ascii?Q?JAVWNgQX/UWOqz8F/2NJAKESZa201hVVao08PAIkeN6gckJlVWedN5fKYiq3?=
- =?us-ascii?Q?aIAAgx5jAZt1QfnAAgyNg5WfW5FeJzFherXx4Yn9EgkdupGPGo6gfCukCrOG?=
- =?us-ascii?Q?DUZCrxtVUVVupAve/nfkFkOPy4Nq+nMfgg3HRkFtXyZMFiRdJaM+QzitxaJV?=
- =?us-ascii?Q?J8lApYFSPAcSVZEBo0/LogsizfGhP3ubgQejeCLmRuPVEwvvRkOV/4lw56eh?=
- =?us-ascii?Q?agsY4fz9wE4qxg4iu66F5vs8AQnwD8cUZRVGrS1PisY2SzLQLl/hD+gSb9Ng?=
- =?us-ascii?Q?s1YUKCepcJ2KzD8yWoCYBwUPSY+J37g0Q3DNWqekdIWuFzv+gB9sqoTmFkGP?=
- =?us-ascii?Q?Mw9knWkeeb97fBu7auZMHOoN4iPHscqVene13q3/EP334/tJe8EEdvfxxr6v?=
- =?us-ascii?Q?HJ3amaJqIEBw2aDI9osH891VFyr6l77H2IFcFc7F?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f8af8e1c-0529-4568-9eff-08dcc8297afb
-X-MS-Exchange-CrossTenant-AuthSource: TYZPR06MB5709.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Aug 2024 12:52:46.3825
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: tfRj6/4Qku5iJMXCvNmLAJYy8uG5GofhjUCa8Lc5M5frFZptv1tfaaumISCfChRi62v9oXgJHF+bxe6VeGxKWg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB6024
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zs866Myvbs0ByoAK@BLRRASHENOY1.amd.com>
+X-Migadu-Flow: FLOW_OUT
 
-Use ERR_CAST() as it is designed for casting an error pointer to
-another type.
+On Wed, Aug 28, 2024 at 08:27:44PM +0530, Gautham R. Shenoy wrote:
+> Hello Andrea,
+> 
+> On Wed, Aug 28, 2024 at 08:20:50AM +0200, Andrea Righi wrote:
+> > On Wed, Aug 28, 2024 at 10:38:45AM +0530, Gautham R. Shenoy wrote:
+> > ...
+> > > > I had thought this was a malfunction in the behavior that it reflected the
+> > > > current status, not the hardware /capability/.
+> > > > 
+> > > > Which one makes more sense for userspace?  In my mind the most likely
+> > > > consumer of this information would be something a sched_ext based userspace
+> > > > scheduler.  They would need to know whether the scheduler was using
+> > > > preferred cores; not whether the hardware supported it.
+> > > 
+> > > The commandline parameter currently impacts only the fair sched-class
+> > > tasks since the preference information gets used only during
+> > > load-balancing.
+> > > 
+> > > IMO, the same should continue with sched-ext, i.e. if the user has
+> > > explicitly disabled prefcore support via commandline, the no sched-ext
+> > > scheduler should use the preference information to make task placement
+> > > decisions. However, I would like to see what the sched-ext folks have
+> > > to say. Adding some of them to the Cc list.
+> > 
+> > IMHO it makes more sense to reflect the real state of prefcore support
+> > from a "system" perspective, more than a "hardware" perspective, so if
+> > it's disabled via boot command line it should show disabled.
+> > 
+> > From a user-space scheduler perspective we should be fine either way, as
+> > long as the ABI is clearly documented, since we also have access to
+> > /proc/cmdline and we would be able to figure out if the user has
+> > disabled it via cmdline (however, the preference is still to report the
+> > actual system status).
+> 
+> Thank you for confirming this.
+> 
+> > 
+> > Question: having prefcore enabled affects also the value of
+> > scaling_max_freq? Like an `lscpu -e`, for example, would show a higher
+> > max frequency for the specific preferred cores? (this is another useful
+> > information from a sched_ext scheduler perspective).
+> 
+> Since the scaling_max_freq is computed based on the boost-numerator,
+> at least from this patchset, the numerator would be the same across
+> all kinds of cores, and thus the scaling_max_freq reported will be the
+> same across all the cores.
 
-This macro utilizes the __force and __must_check modifiers, which instruct
-the compiler to verify for errors at the locations where it is employed.
+I see, so IIUC from user-space the most reliable way to detect the
+fastest cores is to check amd_pstate_highest_perf / amd_pstate_max_freq,
+right? I'm trying to figure out a way to abstract and generalize the
+concept of "fast cores" in sched_ext.
 
-Signed-off-by: Yuesong Li <liyuesong@vivo.com>
----
- drivers/cxl/core/port.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Also, is this something that has changed recently? I see this on an
+AMD Ryzen Threadripper PRO 7975WX 32-Cores running a 6.8 kernel:
 
-diff --git a/drivers/cxl/core/port.c b/drivers/cxl/core/port.c
-index 1d5007e3795a..bdd3275ad417 100644
---- a/drivers/cxl/core/port.c
-+++ b/drivers/cxl/core/port.c
-@@ -941,7 +941,7 @@ struct cxl_root *devm_cxl_add_root(struct device *host,
- 
- 	port = devm_cxl_add_port(host, host, CXL_RESOURCE_NONE, NULL);
- 	if (IS_ERR(port))
--		return (struct cxl_root *)port;
-+		return ERR_CAST(port);
- 
- 	cxl_root = to_cxl_root(port);
- 	cxl_root->ops = ops;
--- 
-2.34.1
+$ uname -r
+6.8.0-40-generic
 
+$ grep . /sys/devices/system/cpu/cpu*/cpufreq/cpuinfo_max_freq
+/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_max_freq:5352000
+/sys/devices/system/cpu/cpu1/cpufreq/cpuinfo_max_freq:5352000
+/sys/devices/system/cpu/cpu2/cpufreq/cpuinfo_max_freq:5352000
+/sys/devices/system/cpu/cpu3/cpufreq/cpuinfo_max_freq:5352000
+/sys/devices/system/cpu/cpu4/cpufreq/cpuinfo_max_freq:5352000
+/sys/devices/system/cpu/cpu5/cpufreq/cpuinfo_max_freq:5352000
+/sys/devices/system/cpu/cpu6/cpufreq/cpuinfo_max_freq:5352000
+/sys/devices/system/cpu/cpu7/cpufreq/cpuinfo_max_freq:5352000
+/sys/devices/system/cpu/cpu8/cpufreq/cpuinfo_max_freq:5352000
+/sys/devices/system/cpu/cpu9/cpufreq/cpuinfo_max_freq:5352000
+/sys/devices/system/cpu/cpu10/cpufreq/cpuinfo_max_freq:5352000
+/sys/devices/system/cpu/cpu11/cpufreq/cpuinfo_max_freq:5352000
+/sys/devices/system/cpu/cpu12/cpufreq/cpuinfo_max_freq:5352000
+/sys/devices/system/cpu/cpu13/cpufreq/cpuinfo_max_freq:5352000
+/sys/devices/system/cpu/cpu14/cpufreq/cpuinfo_max_freq:5352000
+/sys/devices/system/cpu/cpu15/cpufreq/cpuinfo_max_freq:5352000
+/sys/devices/system/cpu/cpu16/cpufreq/cpuinfo_max_freq:6161000
+/sys/devices/system/cpu/cpu17/cpufreq/cpuinfo_max_freq:6321000
+/sys/devices/system/cpu/cpu18/cpufreq/cpuinfo_max_freq:6001000
+/sys/devices/system/cpu/cpu19/cpufreq/cpuinfo_max_freq:6646000
+/sys/devices/system/cpu/cpu20/cpufreq/cpuinfo_max_freq:5837000
+/sys/devices/system/cpu/cpu21/cpufreq/cpuinfo_max_freq:6482000
+/sys/devices/system/cpu/cpu22/cpufreq/cpuinfo_max_freq:5517000
+/sys/devices/system/cpu/cpu23/cpufreq/cpuinfo_max_freq:5677000
+/sys/devices/system/cpu/cpu24/cpufreq/cpuinfo_max_freq:6966000
+/sys/devices/system/cpu/cpu25/cpufreq/cpuinfo_max_freq:7775000
+/sys/devices/system/cpu/cpu26/cpufreq/cpuinfo_max_freq:6806000
+/sys/devices/system/cpu/cpu27/cpufreq/cpuinfo_max_freq:7775000
+/sys/devices/system/cpu/cpu28/cpufreq/cpuinfo_max_freq:7130000
+/sys/devices/system/cpu/cpu29/cpufreq/cpuinfo_max_freq:7451000
+/sys/devices/system/cpu/cpu30/cpufreq/cpuinfo_max_freq:7290000
+/sys/devices/system/cpu/cpu31/cpufreq/cpuinfo_max_freq:7611000
+/sys/devices/system/cpu/cpu32/cpufreq/cpuinfo_max_freq:5352000
+/sys/devices/system/cpu/cpu33/cpufreq/cpuinfo_max_freq:5352000
+/sys/devices/system/cpu/cpu34/cpufreq/cpuinfo_max_freq:5352000
+/sys/devices/system/cpu/cpu35/cpufreq/cpuinfo_max_freq:5352000
+/sys/devices/system/cpu/cpu36/cpufreq/cpuinfo_max_freq:5352000
+/sys/devices/system/cpu/cpu37/cpufreq/cpuinfo_max_freq:5352000
+/sys/devices/system/cpu/cpu38/cpufreq/cpuinfo_max_freq:5352000
+/sys/devices/system/cpu/cpu39/cpufreq/cpuinfo_max_freq:5352000
+/sys/devices/system/cpu/cpu40/cpufreq/cpuinfo_max_freq:5352000
+/sys/devices/system/cpu/cpu41/cpufreq/cpuinfo_max_freq:5352000
+/sys/devices/system/cpu/cpu42/cpufreq/cpuinfo_max_freq:5352000
+/sys/devices/system/cpu/cpu43/cpufreq/cpuinfo_max_freq:5352000
+/sys/devices/system/cpu/cpu44/cpufreq/cpuinfo_max_freq:5352000
+/sys/devices/system/cpu/cpu45/cpufreq/cpuinfo_max_freq:5352000
+/sys/devices/system/cpu/cpu46/cpufreq/cpuinfo_max_freq:5352000
+/sys/devices/system/cpu/cpu47/cpufreq/cpuinfo_max_freq:5352000
+/sys/devices/system/cpu/cpu48/cpufreq/cpuinfo_max_freq:6161000
+/sys/devices/system/cpu/cpu49/cpufreq/cpuinfo_max_freq:6321000
+/sys/devices/system/cpu/cpu50/cpufreq/cpuinfo_max_freq:6001000
+/sys/devices/system/cpu/cpu51/cpufreq/cpuinfo_max_freq:6646000
+/sys/devices/system/cpu/cpu52/cpufreq/cpuinfo_max_freq:5837000
+/sys/devices/system/cpu/cpu53/cpufreq/cpuinfo_max_freq:6482000
+/sys/devices/system/cpu/cpu54/cpufreq/cpuinfo_max_freq:5517000
+/sys/devices/system/cpu/cpu55/cpufreq/cpuinfo_max_freq:5677000
+/sys/devices/system/cpu/cpu56/cpufreq/cpuinfo_max_freq:6966000
+/sys/devices/system/cpu/cpu57/cpufreq/cpuinfo_max_freq:7775000
+/sys/devices/system/cpu/cpu58/cpufreq/cpuinfo_max_freq:6806000
+/sys/devices/system/cpu/cpu59/cpufreq/cpuinfo_max_freq:7775000
+/sys/devices/system/cpu/cpu60/cpufreq/cpuinfo_max_freq:7130000
+/sys/devices/system/cpu/cpu61/cpufreq/cpuinfo_max_freq:7451000
+/sys/devices/system/cpu/cpu62/cpufreq/cpuinfo_max_freq:7290000
+/sys/devices/system/cpu/cpu63/cpufreq/cpuinfo_max_freq:7611000
+
+Thanks,
+-Andrea
 
