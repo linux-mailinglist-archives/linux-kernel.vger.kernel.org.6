@@ -1,201 +1,138 @@
-Return-Path: <linux-kernel+bounces-307125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08E569648B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:39:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 370AE9648BA
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:40:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FD7D1C22E58
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 14:39:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF67228156D
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 14:40:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D8991B012D;
-	Thu, 29 Aug 2024 14:38:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="UD1HV6vp"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77E6E19049D;
-	Thu, 29 Aug 2024 14:38:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 451B21B012A;
+	Thu, 29 Aug 2024 14:39:54 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EA881B143B;
+	Thu, 29 Aug 2024 14:39:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724942332; cv=none; b=i1Ihz2WXazqzSOnyMGeqytnL9xp+UkT+EImfhy+Ww2TQhiyF5VT2Q/5Rf+KQPeyftz9QJjjzOTiZyA5yB88uwac/lr2RDujYy+PRP3l04SeuY00vhZyBrG1tCDpSW2vUyxOGWct/guOfXve65E90isBJHD8Wi6YF4HchUJR6seY=
+	t=1724942393; cv=none; b=OUXXaEcchNlB6RPjB/09NR+56RWIu8UwwP8HpSProgdFbBv4BJuG2uJDKXCqn4xNco4u8xgfxNH5B0xgpl2MvexXuPZ5PpiMXovQIgX9PC7hh5amMvBjdbHFquHP24h/CnFenp9Pk9y8By1tSfCodluPt9FtlGgAL33niIjrH4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724942332; c=relaxed/simple;
-	bh=FMQS2O5d+DRmHBkg5Fp2Zk5YiN6kMZNZGivHCXdxMUk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jEcRkkc+MA3Z/qExFj77H49TQbpTcmcTndk3ON1OlKH+AqKXA4lhey7VVcvwoqJlTk5BvGV1mN9CaIW5G7gSAvt1uinE7MPRCAWAUCRcpTut6YYTk95IG73ytKTfy4n/8A9CTSW3MfB0Xlehwy2aEGcyhLE5kLMHIe57tJtmApU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=UD1HV6vp; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 1787840E0275;
-	Thu, 29 Aug 2024 14:38:48 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id uUNMbPNF293b; Thu, 29 Aug 2024 14:38:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1724942322; bh=IO4ma28zS0rS9FhCeUmCpz2/rGp6VmKJbKIMwcc+1F0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UD1HV6vpZJUxduYovLkMvLS0T/08vD4bd6QC/Qc6UZQ5q5PFCjm/pl1tWsXDeJpE4
-	 8k+ad0bOaxZmLf6dKGMLkVc0sNSNzDUJVU0wL8PywLCYnTNBZTB/Z7hfsv5xtBsjJS
-	 4ashoQf0art9MJdepehxRQDON52OM7rvWVHGdvErwrP3RsNo0wuCoiwPJQFHlFJdvW
-	 fE2TSjoIOUJXdCqPDes6RUJqv8mewMNGiq6k1HgiHHsMUbDeutdnbbMjYf9GV+VQz1
-	 wOPhvSokUGktO6yB8np165FQgZa392Tc/8IPkUdBLC8cppUcH0N036LAj7Wk461IZz
-	 kxILcqH7t37FABY89MiNhVOwnsDwGAtM/2laYYdiY4nYoSl069JUZW1V31kKTy9bej
-	 By+ETEUFVzTjTepec+Rq2ewEciHN9UMmfwWTeISISGJNYM5SHS0hRqRwiAAXTF5I2p
-	 JXaFkAI1MSRivKw6A4vkjn5gB8CnPeA437PDO/90LDwEL4fkCrOUsCHEijuPoU66SU
-	 GseDgw55JeWprDUmwEeevhoboxdc+SlKUUfJKfR62mtW6ghAvPYFpKcxqcInHxKpVD
-	 FH7cDzNXIWTVWRl7Zh1D/2SzrH5hhHEQw+WkNa/JvKAB9N/plfS3B/g7fRjXhx6l6a
-	 qKXHhqDNpZFFmF1dmCtO6i8s=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 6413E40E0169;
-	Thu, 29 Aug 2024 14:38:19 +0000 (UTC)
-Date: Thu, 29 Aug 2024 16:38:11 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: Tony Luck <tony.luck@intel.com>,
-	Daniel Ferguson <danielf@os.amperecomputing.com>,
-	Ard Biesheuvel <ardb@kernel.org>, James Morse <james.morse@arm.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Len Brown <lenb@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Shiju Jose <shiju.jose@huawei.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>, Ira Weiny <ira.weiny@intel.com>,
-	Shuai Xue <xueshuai@linux.alibaba.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Tyler Baicar <tbaicar@codeaurora.org>,
-	Will Deacon <will@kernel.org>, Xie XiuQi <xiexiuqi@huawei.com>,
-	linux-acpi@vger.kernel.org, linux-edac@vger.kernel.org,
-	linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Shengwei Luo <luoshengwei@huawei.com>,
-	Jason Tian <jason@os.amperecomputing.com>
-Subject: Re: [PATCH v2 1/5] RAS: Report all ARM processor CPER information to
- userspace
-Message-ID: <20240829143811.GDZtCH07BFEdbbv9wx@fat_crate.local>
-References: <cover.1720679234.git.mchehab+huawei@kernel.org>
- <3853853f820a666253ca8ed6c7c724dc3d50044a.1720679234.git.mchehab+huawei@kernel.org>
+	s=arc-20240116; t=1724942393; c=relaxed/simple;
+	bh=HBjPQ7htFePlvgPXIVgV4omFwKv/gvrtPNO0yF79XDs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TyDb7VF9tlOmMncNfkW1Iz6jkIky5gO9/t2/OkkMiwTfY8lm/juI39wJT4L2SmfXWLJ4XHEHwnY9oL3GmEENMs94dAmBX9U8utxSH2WSCpjhC+vjVpXHp51KmwKAwpcH4DzzuX+Ha5ve23LGqtLe/kxPiPuNxnBF05sWNMU76a4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C1F9BDA7;
+	Thu, 29 Aug 2024 07:40:16 -0700 (PDT)
+Received: from [10.57.16.245] (unknown [10.57.16.245])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A801D3F66E;
+	Thu, 29 Aug 2024 07:39:13 -0700 (PDT)
+Message-ID: <1a7ab0db-646d-4975-9974-7b911990055a@arm.com>
+Date: Thu, 29 Aug 2024 15:38:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <3853853f820a666253ca8ed6c7c724dc3d50044a.1720679234.git.mchehab+huawei@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 RESED 1/2] dma: replace zone_dma_bits by zone_dma_limit
+To: neil.armstrong@linaro.org, Baruch Siach <baruch@tkos.co.il>,
+ Christoph Hellwig <hch@lst.de>, Marek Szyprowski <m.szyprowski@samsung.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Cc: iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ linux-s390@vger.kernel.org, =?UTF-8?B?UGV0ciBUZXNhxZnDrWs=?=
+ <petr@tesarici.cz>, Ramon Fried <ramon@neureality.ai>,
+ Elad Nachman <enachman@marvell.com>,
+ linux-arm-msm <linux-arm-msm@vger.kernel.org>
+References: <cover.1723359916.git.baruch@tkos.co.il>
+ <17c067618b93e5d71f19c37826d54db4299621a3.1723359916.git.baruch@tkos.co.il>
+ <1a0c7282-63e0-4add-8e38-3abe3e0a8e2f@linaro.org>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <1a0c7282-63e0-4add-8e38-3abe3e0a8e2f@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jul 11, 2024 at 08:28:52AM +0200, Mauro Carvalho Chehab wrote:
-> In addition to those data, it also exports two fields that are
-> parsed by the GHES driver when firmware reports it, e. g.:
+On 2024-08-29 2:42 pm, Neil Armstrong wrote:
+> Hi,
 > 
-> - error severity
-> - cpu logical index
-
-s/cpu/CPU/g
-
-check your whole set pls.
-
-> Report all of these information to userspace via trace uAPI, So that
-> userspace can properly record the error and take decisions related
-> to cpu core isolation according to error severity and other info.
+> On 11/08/2024 09:09, Baruch Siach wrote:
+>> From: Catalin Marinas <catalin.marinas@arm.com>
+>>
+>> Hardware DMA limit might not be power of 2. When RAM range starts above
+>> 0, say 4GB, DMA limit of 30 bits should end at 5GB. A single high bit
+>> can not encode this limit.
+>>
+>> Use plain address for DMA zone limit.
+>>
+>> Since DMA zone can now potentially span beyond 4GB physical limit of
+>> DMA32, make sure to use DMA zone for GFP_DMA32 allocations in that case.
+>>
+>> Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+>> Co-developed-by: Baruch Siach <baruch@tkos.co.il>
+>> Signed-off-by: Baruch Siach <baruch@tkos.co.il>
+>> ---
+>>   arch/arm64/mm/init.c       | 30 +++++++++++++++---------------
+>>   arch/powerpc/mm/mem.c      |  5 ++++-
+>>   arch/s390/mm/init.c        |  2 +-
+>>   include/linux/dma-direct.h |  2 +-
+>>   kernel/dma/direct.c        |  6 +++---
+>>   kernel/dma/pool.c          |  4 ++--
+>>   kernel/dma/swiotlb.c       |  6 +++---
+>>   7 files changed, 29 insertions(+), 26 deletions(-)
+>>
 > 
-> After this patch, all the data from ARM Processor record from table
+> <snip>
+> 
+> This change breaks the Qualcomm SM8550-HDK boot since next-20240826.
+> It doesn't affect SM8550-QRD or other similar SoCs like SM8650 or SM8450.
+> The last CI run on next-20240828 can be found at:
+> https://git.codelinaro.org/linaro/qcomlt/ci/staging/cdba-tester/-/pipelines/100936
+> 
+> SM8550-HDK boot log:
+> https://git.codelinaro.org/linaro/qcomlt/ci/staging/cdba-tester/-/jobs/165617
+> 
+[...]
 
-Avoid having "This patch" or "This commit" in the commit message. It is
-tautologically useless.
+Yeah, a 35-bit ZONE_DMA is sure to make stuff go wrong:
 
-Also, do
+> [    0.000000] Zone ranges:
+> [    0.000000]   DMA      [mem 0x0000000080000000-0x0000000affffffff]
+> [    0.000000]   DMA32    empty
+> [    0.000000]   Normal   empty
 
-$ git grep 'This patch' Documentation/process
+Compared to before:
 
-for more details.
+[    0.000000]   DMA      [mem 0x0000000080000000-0x00000000ffffffff]
+[    0.000000]   DMA32    empty
+[    0.000000]   Normal   [mem 0x0000000100000000-0x0000000affffffff]
 
-...
+This'll be because the SoC DT is describing a general non-restrictive range:
+		dma-ranges = <0 0 0 0 0x10 0>;
 
-> [mchehab: modified patch description, solve merge conflicts and fix coding style]
-> Fixes: e9279e83ad1f ("trace, ras: add ARM processor error trace event")
-> Signed-off-by: Shengwei Luo <luoshengwei@huawei.com>
-> Signed-off-by: Jason Tian <jason@os.amperecomputing.com>
-> Signed-off-by: Daniel Ferguson <danielf@os.amperecomputing.com>
+Which proves we need more information than 
+{acpi,of}_dma_get_max_cpu_address() are currently able to give us, 
+because what zone_dma_limit actually wants to be is the *minimum* of the 
+lowest highest CPU address of any DMA range, and the lowest CPU address 
+of any DMA range + 2^32. I was thinking it had all ended up looking a 
+bit too easy... :)
 
-What is this SOB chain trying to tell me?
+I think v1 of the fix[1] might actually work out for this, albeit still 
+for the wrong reasons - if so, I concede that maybe at this point it 
+might be safest to go back to that one as a quick short-term fix (with a 
+big fat comment to say so) rather than try to rush the proper solution 
+or revert everything.
 
-All those folks handled the patch?
+Thanks,
+Robin.
 
-> Tested-by: Shiju Jose <shiju.jose@huawei.com>
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-> Link: https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Record.html#arm-processor-error-section
-> ---
->  drivers/acpi/apei/ghes.c | 11 ++++-----
->  drivers/ras/ras.c        | 45 +++++++++++++++++++++++++++++++++++--
->  include/linux/ras.h      | 16 +++++++++++---
->  include/ras/ras_event.h  | 48 +++++++++++++++++++++++++++++++++++-----
->  4 files changed, 103 insertions(+), 17 deletions(-)
-
-...
-
-> -void log_arm_hw_error(struct cper_sec_proc_arm *err)
-> +void log_arm_hw_error(struct cper_sec_proc_arm *err, const u8 sev)
->  {
-> -	trace_arm_event(err);
-> +	struct cper_arm_err_info *err_info;
-> +	struct cper_arm_ctx_info *ctx_info;
-> +	u8 *ven_err_data;
-> +	u32 ctx_len = 0;
-> +	int n, sz, cpu;
-> +	s32 vsei_len;
-> +	u32 pei_len;
-> +	u8 *pei_err;
-> +	u8 *ctx_err;
-> +
-> +	pei_len = sizeof(struct cper_arm_err_info) * err->err_info_num;
-> +	pei_err = (u8 *)err + sizeof(struct cper_sec_proc_arm);
-> +
-> +	err_info = (struct cper_arm_err_info *)(err + 1);
-> +	ctx_info = (struct cper_arm_ctx_info *)(err_info + err->err_info_num);
-> +	ctx_err = (u8 *)ctx_info;
-> +	for (n = 0; n < err->context_info_num; n++) {
-> +		sz = sizeof(struct cper_arm_ctx_info) + ctx_info->size;
-> +		ctx_info = (struct cper_arm_ctx_info *)((long)ctx_info + sz);
-> +		ctx_len += sz;
-> +	}
-> +
-> +	vsei_len = err->section_length - (sizeof(struct cper_sec_proc_arm) +
-> +					  pei_len + ctx_len);
-> +	if (vsei_len < 0) {
-> +		pr_warn(FW_BUG
-> +			"section length: %d\n", err->section_length);
-> +		pr_warn(FW_BUG
-> +			"section length is too small\n");
-> +		pr_warn(FW_BUG
-> +			"firmware-generated error record is incorrect\n");
-
-No need to break those lines.
-
-> +		vsei_len = 0;
-> +	}
-> +	ven_err_data = (u8 *)ctx_info;
-> +
-> +	cpu = GET_LOGICAL_INDEX(err->mpidr);
-> +	/* when return value is invalid, set cpu index to -1 */
-
-Obvious comment - no need for it.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+[1] 
+https://lore.kernel.org/linux-arm-kernel/731d204f5f556ad61bbaf004b1d984f83c90b4f5.1724748249.git.baruch@tkos.co.il/
 
