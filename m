@@ -1,127 +1,84 @@
-Return-Path: <linux-kernel+bounces-307493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50B71964E17
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 20:48:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1CCA964D95
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 20:19:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08FB7286CEC
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 18:48:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80CF21F244DE
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 18:19:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 812FC1BDAB9;
-	Thu, 29 Aug 2024 18:44:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B79881B86D0;
+	Thu, 29 Aug 2024 18:19:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="I3rjWKT7"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="j26c9S+d"
+Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E789F1BDA94;
-	Thu, 29 Aug 2024 18:44:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53A861B86C6
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 18:19:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724957080; cv=none; b=EudgWTHY+4tXK/OY3vtfnObb0TbI8uw+M+Q/jHNtO+tpJOZSShdMQPKcNwFXL0sX9DucYaEI8uKd2oinfxGFQLt9b5OQJUCysidjOeLSREbqIQxWYmgHNcknQFqpihQCXSEinknaYfYKrCdPuaNB4fKizmBAkOEvUmUWRh2iVbQ=
+	t=1724955564; cv=none; b=Hm4yO5RNx8KkAP/8QfVftfbsm2KgCbifbybSSw7qAI6+oXoFBbWQ6MH2FPbKBY5BXUqtx/YaR6u6KA2XBBbRWz9WEjzSIHGcXJ+8957IObJ9YLh7XQf0fUmewS4AM6JbuQy0K0+m7+Bx6i7FX6yI5c/dGJcL2Jtl/dw0IdcbmYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724957080; c=relaxed/simple;
-	bh=D9Kqd3FKIOYvAEPnmVq1vDuA0cMh5s8MRJ8xmOBpr7Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=l2dxTm9k/xSXHziKJHdBkhTAknyxHwN541CDWXOc4HchRy43NDNWQmkcF2RWy2xzn30lqJZVYdLiDtFrONgaNfX+Upg57zykTVrzh7iIEqj8/JlPYVpzCyukznnS9X1looP3CGEIsi0+iFhGWv03mR3agDYaAelcXURS9UxCxaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=I3rjWKT7; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
- id 96faff22bc9cb589; Thu, 29 Aug 2024 20:44:37 +0200
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id A9D876A8C15;
-	Thu, 29 Aug 2024 20:44:36 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1724957077;
-	bh=D9Kqd3FKIOYvAEPnmVq1vDuA0cMh5s8MRJ8xmOBpr7Y=;
-	h=From:Subject:Date;
-	b=I3rjWKT7/20WEhOoPufhG4WG99D7kblUSzX+rJfFPD5AIPyPVah5ojO7H1IFT5G07
-	 L3nM3MOY+lyUucTSN1g4/7NZyrVOuQzJycdbznoZmThfKsF7Kk4jQgh9JHyiNunQXQ
-	 CwdZ4SzRvzDf/p9ygRIZ3EsW3JN6fajBS9FMiWa4AdPZQQ9FqKgE/bT2T9SPIJ9MOk
-	 j98LUZ4jnVMO+JNgNB2lm9GaoUjhqC0ljmb1HcyqEnceupIEbSaLwtufF0N3rAPzWS
-	 eDqvtrscWPUJUaZZ4drKMN1gB6rUOpz/DX9xLraoddKMJmw3Bm/RlqUXE8qbaW45zR
-	 J/92JefRGnksA==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux ACPI <linux-acpi@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Bob Moore <robert.moore@intel.com>,
- Saket Dumbre <saket.dumbre@intel.com>
-Subject: [PATCH v1 00/20] ACPICA: Release 20240827
-Date: Thu, 29 Aug 2024 20:18:53 +0200
-Message-ID: <5819337.DvuYhMxLoT@rjwysocki.net>
+	s=arc-20240116; t=1724955564; c=relaxed/simple;
+	bh=h3FeHrXdQcOSknLmzlELlkNf2rblPiuIhon54Vp0OAo=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UB8Ei24CANV6PV/R1/1NhglGCcsREHn72ViZnys6734vsrNpHrNeUqvVUlUlxNAcmN7X+oI0o/Ra1AgWjqscP+jFCjrkkLT8m/aPCK8mCC1PlbduXHI60eri/KosM3R+9vLLjIcDssWD42PWajulEwPRN6ipeHGTAeQvUGfJZhg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=j26c9S+d; arc=none smtp.client-ip=185.70.43.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1724955555; x=1725214755;
+	bh=h3FeHrXdQcOSknLmzlELlkNf2rblPiuIhon54Vp0OAo=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=j26c9S+dFupn+t1U3Oje/yxSGYbZnxMC/XEXQovK+KqjS8A2fvFAtfj9PTBdmwtv/
+	 X8mjjPkwoQpuoJa171IgR3VCgBE3eGv3QWi0g5Idz8IikIi2RSVwIlazVVd4I7ebQC
+	 J8LiziINqDK7jJ0IWYxWtKHTfRDiXZhV9csb+fI6wxeY61x1z6T9cAR9zvi5n6L9nw
+	 zrjMIFf4TveSj8QOmf/iEOPNGbIHbrABII1Xmym3MMfZFIcOoMxcd0YN3P+g5kx/l4
+	 XKwhMpJy9AOPqNsJVEGzYMBDQir3FSlvNAhNhUOoYgf/6nWvxaOYh1jvJaJdbvh9ac
+	 pjLHfDEGkuCOg==
+Date: Thu, 29 Aug 2024 18:19:09 +0000
+To: Danilo Krummrich <dakr@kernel.org>, ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@samsung.com, aliceryhl@google.com, akpm@linux-foundation.org
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: daniel.almeida@collabora.com, faith.ekstrand@collabora.com, boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v6 01/26] rust: alloc: add `Allocator` trait
+Message-ID: <60253988-37e7-4acb-b2ae-748b30a4ac21@proton.me>
+In-Reply-To: <20240816001216.26575-2-dakr@kernel.org>
+References: <20240816001216.26575-1-dakr@kernel.org> <20240816001216.26575-2-dakr@kernel.org>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 6bc830cb4344c3a2d832377fd8c8b4022cb0514a
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: clean
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddrudefgedguddvjecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpeffffffkefgheehffelteeiveeffeevhfelteejvddvieejjeelvdeiheeuveeuffenucfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpehrjhifsehrjhifhihsohgtkhhirdhnvghtpdhnsggprhgtphhtthhopeegpdhrtghpthhtoheplhhinhhugidqrggtphhisehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhosggvrhhtrdhmohhorhgvsehinhhtvghlrdgtohhmpdhrtghpthhtohepshgrkhgvthdrughumhgsrhgvsehinhhtvghlrdgtohhm
-X-DCC--Metrics: v370.home.net.pl 1024; Body=4 Fuz1=4 Fuz2=4
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi All,
+On 16.08.24 02:10, Danilo Krummrich wrote:
+> Add a kernel specific `Allocator` trait, that in contrast to the one in
+> Rust's core library doesn't require unstable features and supports GFP
+> flags.
+>=20
+> Subsequent patches add the following trait implementors: `Kmalloc`,
+> `Vmalloc` and `KVmalloc`.
+>=20
+> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
 
-These are ACPICA 20240827 changes ported to Linux, except for some
-patches that have been applied already or are going to be routed
-through other maintainer trees.
+We discussed this in our weekly meeting (I think ~one week ago?). If you
+give me a draft version of the comment that you plan to add regarding
+the `old_layout` parameter, I can see if I am happy with it. If I am, I
+would give you my RB.
 
-The following changes are included:
-
-Adam Lackorzynski (1):
-      ACPICA: Avoid warning for Dump Functions
-
-Adam Young (1):
-      ACPICA: Allow PCC Data Type in MCTP resource.
-
-Adrien Destugues (1):
-      ACPICA: haiku: Fix invalid value used for semaphores
-
-Aleksandrs Vinarskis (1):
-      ACPICA: iasl: handle empty connection_node
-
-Armin Wolf (6):
-      ACPICA: Fix memory leak if acpi_ps_get_next_namepath() fails
-      ACPICA: Fix memory leak if acpi_ps_get_next_field() fails
-      ACPICA: Allow for supressing leading zeros when using acpi_ex_convert_to_ascii()
-      ACPICA: Add support for supressing leading zeros in hex strings
-      ACPICA: Update integer-to-hex-string conversions
-      ACPICA: Add support for Windows 11 22H2 _OSI string
-
-Dave Jiang (1):
-      ACPICA: HMAT: Add extended linear address mode to MSCIS
-
-Jose Marinho (1):
-      ACPICA: Implement the Dword_PCC Resource Descriptor Macro
-
-Punit Agrawal (1):
-      ACPICA: MPAM: Correct the typo in struct acpi_mpam_msc_node member
-
-Saket Dumbre (2):
-      ACPICA: Allow for more flexibility in _DSM args
-      ACPICA: Setup for ACPICA release 20240827
-
-Sia Jee Heng (2):
-      ACPICA: SPCR: Update the SPCR table to version 4
-      ACPICA: Headers: Add RISC-V SBI Subtype to DBG2
-
-Vasily Khoruzhick (2):
-      ACPICA: Implement ACPI_WARNING_ONCE and ACPI_ERROR_ONCE
-      ACPICA: executer/exsystem: Don't nag user about every Stall() violating the spec
-
-Zhang Rui (1):
-      ACPICA: Complete CXL 3.0 CXIMS structures
-
-Thanks!
-
+---
+Cheers,
+Benno
 
 
