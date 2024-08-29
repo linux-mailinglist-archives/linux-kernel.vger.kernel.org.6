@@ -1,331 +1,208 @@
-Return-Path: <linux-kernel+bounces-307147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88603964924
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:54:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17EEA96492F
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:54:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FB5828231A
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 14:54:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F4591F21F10
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 14:54:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A7721B1428;
-	Thu, 29 Aug 2024 14:54:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F29A31B250C;
+	Thu, 29 Aug 2024 14:54:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sxvL09kL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="P3Y2ld7a"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 593421B1417
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 14:54:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 242D41B143D
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 14:54:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724943249; cv=none; b=bdk1ZUSvj1MKVkAOiiWm1HpNQKC6lwSCCW9lZ+lC5574adbyRl2i1ZFGwmL15zEBx/xUwQv5Y2j6GRZcbju/c9/dTsLZAiDwgOYDaXs0Aus3fBkVOTtnL2KGMgooEScMeG+LUGbyCkPxUUzjY+cN8Agmd0jHV8TvU3kmuSrQYTY=
+	t=1724943273; cv=none; b=ayh3+zoBXcAGi2kM1NFopCsAfm22uVczpdM6dph/MnYIRysID1sgNBB7Wk0XIwL2jTUqMmE7q3JA5rogc1mQpNXVfiM/sywKRWPwV2PGcVX1nCHTCWleqju9uaxuue/Q/bjSiJ+2z66f8LMFntcjc1cKX09SXjJ5it0MKdO4NGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724943249; c=relaxed/simple;
-	bh=gGjwRsC3M9/c/KkD/8kJVbZnTVSAPzCfx1ZJsG9gXmM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pKPkt+Lqu3d/5NLrybWJ3KkEP8N3LxJuYLD7ukpVngylaDiHLhKlxEIRWdGgk0PuBohqBKP4H9LCjjOm96oHmt5IcPfJhgrhwG3EaBj7oVYdQ+1hxJPLqpETmu5llryX6BQ3OWI95Oo7cCSbdUMsi6Xao1KT4svQxWqAC8Wp5YM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sxvL09kL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F06B7C4CECE
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 14:54:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724943249;
-	bh=gGjwRsC3M9/c/KkD/8kJVbZnTVSAPzCfx1ZJsG9gXmM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=sxvL09kLzbUxLI9MxEXZuSRmQKwYwr0RLNsnEetM3Q6Hhti9iAxt/3c8oDk9MKr+A
-	 p2ksOY4Nuzn2Hk6L4mNtPvWBsG91Ph4oBgnNsS7mgRqJVJc6v9VUjCWBMG7gN+CcHy
-	 83W+K+/vpIqbrRTsI5KBZr5GnSpEjbvs7EdHcjsCMIXIKusQ6kfpQsoG48J7CcJNAX
-	 hmt5Tk2eMXIS/czJa3a5YQvGrQvo8lqQ/PLb04cajH0tVLUftr9okX6S42ex68IogA
-	 vN/Z4gputZuXpxZVwui0jHJs0KsNRv02Nb1GQufbuY6Xgi/A4JTZ9rFpOIpIOZtVCK
-	 7+P2EULu2Fkig==
-Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-27051f63018so449154fac.3
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 07:54:08 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWb56tsporeNJAFBgyEO6XTR9IjnYL1s0++7SMEVBszF57l6CwZ5K/VvXj6KiYMmen0ObY32lM4Fc73ek4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOGpyfzm1eDDCZwsTp6dDxjuP+ttu+92argDbknIHL87yYBHza
-	fCxMM/sXZAuxXNFGOHVVYzSgrM1+bfTN/MJuD7p/ZfZfO/4HSkCp2Xsr5CUL54O4S4FHbCZG6Yk
-	f0HyjesYEui8xpUthqiqwhQ7Gww==
-X-Google-Smtp-Source: AGHT+IEyygn0DMFYzMyxc8jy6sIuWErx12dvbL0cJxtOdFO//M5/LG3maZP8Ohf/uApEShQBQN09W1UKNHJV+sMS3/Q=
-X-Received: by 2002:a05:6358:6f98:b0:1aa:a01a:23dc with SMTP id
- e5c5f4694b2df-1b603c55350mr395137555d.15.1724943248105; Thu, 29 Aug 2024
- 07:54:08 -0700 (PDT)
+	s=arc-20240116; t=1724943273; c=relaxed/simple;
+	bh=WVKIpxyvSxvXJXDMoFBBlYcfXvBhD3sx8jPRqfscME4=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=dF9DhsqbaIgtMjfToECf0ZGopKESVJIaA+DhzK/+yOTqEzKuuhsT4X8ObvpqKTgCygQS81LVyvUWhzMZ5ALd7F0Zuw9FgIZOI+b4oLRAtEfK981+uxaeI1THYL6LCuH/9JNAsLnne9dNU74Dzj3rsUIzisJ3pg5sSI1A38+ihk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=P3Y2ld7a; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3719753d365so575337f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 07:54:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724943269; x=1725548069; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=65MyFHHTA1PsDIlSg/rTxhPf0z2KfhQQqeQtyDirckk=;
+        b=P3Y2ld7aIaUHGUKaIZe0OKdtYu4rmb+u7+FJ7DbG5ZviJ4GcTuvoPr+ES6nRtK33Yd
+         J4VHJefA4zslFj1sMyEyKQJ7Bd+QT36NomumuyFCrzP0W8CE8PSihp6bNzbf4pMWDuVe
+         kiBcZ+xAmPti7jZYEHD+e+OOw2ITU5JDmLgweOr07LSe3nYIPY8lgmTPE+ZJfKcRRUZm
+         mxp/xVf2bhlKLPZtaweRxUStw8SXG/Nbf02pfF4JtyrF3emLtm+BEDfAHnwhqIOViUfo
+         9Uy2LbG5/HJM0OJA7fx2afLdJpO07sTg4FWpFR6EpzzHFtdCquPSipc2PnA3EqZiYv5w
+         K3eQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724943269; x=1725548069;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=65MyFHHTA1PsDIlSg/rTxhPf0z2KfhQQqeQtyDirckk=;
+        b=PjI69/Qn87gOwtLpZnFtAauN94NuLEZdSGAbyoHsuIGC12VruopGjFJTZDUX66HISa
+         7iyRcdoKQyAf4R7NjBmzCySGovMBRoimyQTA9/VrINTdFMDXufjCSCgTOZX7xgxuQK6T
+         oE00QWUWpf6nCJkUk8Kv8gWhUGRamhQX5uaNYo9gDHSzX/+SD8d0z58HZztyg3kjh/Oa
+         uAJl0+OGiRLFv4bVfln1LclJA68eSPgQqRKl2E76aE4WqEJ8rrtwQQEBa8KXsw6Hy7ym
+         HDvV8809tF/+rjMEZhgm6gpWbZrVvgfFBlFl6BkldPdCauRRY0sdUIPqvehmgsxOQt55
+         nuTw==
+X-Forwarded-Encrypted: i=1; AJvYcCVHHFoZr5mlCP9C+FYd9bMg/48I8n0XvFKcNNpSinFM0oQ8J4643TKCzGBuMTOONY+y1IO0XA0FaaG03p4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZvDonL41VAq6dikQbYbAlT2vAjVvGDAKxePbAmWxqzt/j7AB3
+	EkcY4+nGiedsKAIapICs2bHOoXSsoxoqkNP/uuFsyiYoi2kiE52+KxgZH5vxBkc=
+X-Google-Smtp-Source: AGHT+IHZH6stL4551rGqzrB66QW6+0W2V+BEhTdVDMA/uaumsNpkCQJsZo6bnlAOMG7WaWFSPvBr0g==
+X-Received: by 2002:a05:600c:3596:b0:426:61e8:fb35 with SMTP id 5b1f17b1804b1-42bb02812aamr25983165e9.4.1724943268906;
+        Thu, 29 Aug 2024 07:54:28 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:12f5:c9c:a0e1:6915? ([2a01:e0a:982:cbb0:12f5:c9c:a0e1:6915])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bb6a10353sm17740285e9.1.2024.08.29.07.54.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 29 Aug 2024 07:54:28 -0700 (PDT)
+Message-ID: <8d630ba4-8f6d-427d-bfa3-8eeba002517c@linaro.org>
+Date: Thu, 29 Aug 2024 16:54:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240826060654.24038-1-shuijing.li@mediatek.com>
-In-Reply-To: <20240826060654.24038-1-shuijing.li@mediatek.com>
-From: Chun-Kuang Hu <chunkuang.hu@kernel.org>
-Date: Thu, 29 Aug 2024 22:54:22 +0800
-X-Gmail-Original-Message-ID: <CAAOTY_8K2BQm5JOBpeP+ZYcctcHAp46JWma7z4vWGFoa1MFbCg@mail.gmail.com>
-Message-ID: <CAAOTY_8K2BQm5JOBpeP+ZYcctcHAp46JWma7z4vWGFoa1MFbCg@mail.gmail.com>
-Subject: Re: [PATCH v8] drm/mediatek: dsi: Add dsi per-frame lp code for mt8188
-To: Shuijing Li <shuijing.li@mediatek.com>
-Cc: chunkuang.hu@kernel.org, p.zabel@pengutronix.de, airlied@gmail.com, 
-	daniel@ffwll.ch, matthias.bgg@gmail.com, 
-	angelogioacchino.delregno@collabora.com, jitao.shi@mediatek.com, 
-	dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	Project_Global_Chrome_Upstream_Group@mediatek.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+From: neil.armstrong@linaro.org
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH v6 RESED 1/2] dma: replace zone_dma_bits by zone_dma_limit
+To: Robin Murphy <robin.murphy@arm.com>, Baruch Siach <baruch@tkos.co.il>,
+ Christoph Hellwig <hch@lst.de>, Marek Szyprowski <m.szyprowski@samsung.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Cc: iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ linux-s390@vger.kernel.org, =?UTF-8?B?UGV0ciBUZXNhxZnDrWs=?=
+ <petr@tesarici.cz>, Ramon Fried <ramon@neureality.ai>,
+ Elad Nachman <enachman@marvell.com>,
+ linux-arm-msm <linux-arm-msm@vger.kernel.org>
+References: <cover.1723359916.git.baruch@tkos.co.il>
+ <17c067618b93e5d71f19c37826d54db4299621a3.1723359916.git.baruch@tkos.co.il>
+ <1a0c7282-63e0-4add-8e38-3abe3e0a8e2f@linaro.org>
+ <1a7ab0db-646d-4975-9974-7b911990055a@arm.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <1a7ab0db-646d-4975-9974-7b911990055a@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi, Shuijing:
+Hi Robin,
 
-Shuijing Li <shuijing.li@mediatek.com> =E6=96=BC 2024=E5=B9=B48=E6=9C=8826=
-=E6=97=A5 =E9=80=B1=E4=B8=80 =E4=B8=8B=E5=8D=882:07=E5=AF=AB=E9=81=93=EF=BC=
-=9A
->
-> Adding the per-frame lp function of mt8188, which can keep HFP in HS and
-> reduce the time required for each line to enter and exit low power.
-> Per Frame LP:
->   |<----------One Active Frame-------->|
-> --______________________________________----___________________
->   ^HSA+HBP^^RGB^^HFP^^HSA+HBP^^RGB^^HFP^    ^HSA+HBP^^RGB^^HFP^
->
-> Per Line LP:
->   |<---------------One Active Frame----------->|
-> --______________--______________--______________----______________
->   ^HSA+HBP^^RGB^  ^HSA+HBP^^RGB^  ^HSA+HBP^^RGB^    ^HSA+HBP^^RGB^
+On 29/08/2024 16:38, Robin Murphy wrote:
+> On 2024-08-29 2:42 pm, Neil Armstrong wrote:
+>> Hi,
+>>
+>> On 11/08/2024 09:09, Baruch Siach wrote:
+>>> From: Catalin Marinas <catalin.marinas@arm.com>
+>>>
+>>> Hardware DMA limit might not be power of 2. When RAM range starts above
+>>> 0, say 4GB, DMA limit of 30 bits should end at 5GB. A single high bit
+>>> can not encode this limit.
+>>>
+>>> Use plain address for DMA zone limit.
+>>>
+>>> Since DMA zone can now potentially span beyond 4GB physical limit of
+>>> DMA32, make sure to use DMA zone for GFP_DMA32 allocations in that case.
+>>>
+>>> Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+>>> Co-developed-by: Baruch Siach <baruch@tkos.co.il>
+>>> Signed-off-by: Baruch Siach <baruch@tkos.co.il>
+>>> ---
+>>>   arch/arm64/mm/init.c       | 30 +++++++++++++++---------------
+>>>   arch/powerpc/mm/mem.c      |  5 ++++-
+>>>   arch/s390/mm/init.c        |  2 +-
+>>>   include/linux/dma-direct.h |  2 +-
+>>>   kernel/dma/direct.c        |  6 +++---
+>>>   kernel/dma/pool.c          |  4 ++--
+>>>   kernel/dma/swiotlb.c       |  6 +++---
+>>>   7 files changed, 29 insertions(+), 26 deletions(-)
+>>>
+>>
+>> <snip>
+>>
+>> This change breaks the Qualcomm SM8550-HDK boot since next-20240826.
+>> It doesn't affect SM8550-QRD or other similar SoCs like SM8650 or SM8450.
+>> The last CI run on next-20240828 can be found at:
+>> https://git.codelinaro.org/linaro/qcomlt/ci/staging/cdba-tester/-/pipelines/100936
+>>
+>> SM8550-HDK boot log:
+>> https://git.codelinaro.org/linaro/qcomlt/ci/staging/cdba-tester/-/jobs/165617
+>>
+> [...]
+> 
+> Yeah, a 35-bit ZONE_DMA is sure to make stuff go wrong:
+> 
+>> [    0.000000] Zone ranges:
+>> [    0.000000]   DMA      [mem 0x0000000080000000-0x0000000affffffff]
+>> [    0.000000]   DMA32    empty
+>> [    0.000000]   Normal   empty
+> 
+> Compared to before:
+> 
+> [    0.000000]   DMA      [mem 0x0000000080000000-0x00000000ffffffff]
+> [    0.000000]   DMA32    empty
+> [    0.000000]   Normal   [mem 0x0000000100000000-0x0000000affffffff]
+> 
+> This'll be because the SoC DT is describing a general non-restrictive range:
+>          dma-ranges = <0 0 0 0 0x10 0>;
+> 
+> Which proves we need more information than {acpi,of}_dma_get_max_cpu_address() are currently able to give us, because what zone_dma_limit actually wants to be is the *minimum* of the lowest highest CPU address of any DMA range, and the lowest CPU address of any DMA range + 2^32. I was thinking it had all ended up looking a bit too easy... :)
+> 
+> I think v1 of the fix[1] might actually work out for this, albeit still for the wrong reasons - if so, I concede that maybe at this point it might be safest to go back to that one as a quick short-term fix (with a big fat comment to say so) rather than try to rush the proper solution or revert everything.
 
-Applied to mediatek-drm-next [1], thanks.
+Indeed v1 patches makes boot work again:
+[    0.000000] Zone ranges:
+[    0.000000]   DMA      [mem 0x0000000080000000-0x00000000ffffffff]
+[    0.000000]   DMA32    empty
+[    0.000000]   Normal   [mem 0x0000000100000000-0x0000000affffffff]
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/chunkuang.hu/linux.git/=
-log/?h=3Dmediatek-drm-next
+Please add my:
+Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8550-HDK
 
-Regards,
-Chun-Kuang.
+Thanks,
+Neil
 
->
-> Signed-off-by: Shuijing Li <shuijing.li@mediatek.com>
-> ---
-> Changes in v8:
-> Directly write value into DSI_HSTX_CKL_WC without check per suggestion fr=
-om previous thread:
-> https://patchwork.kernel.org/project/linux-mediatek/patch/20240819061333.=
-26069-1-shuijing.li@mediatek.com/
-> Changes in v7:
-> Fix code style and simplify the code per suggestion from previous thread:
-> https://patchwork.kernel.org/project/linux-mediatek/patch/20240813022315.=
-18502-1-shuijing.li@mediatek.com/
-> Changes in v6:
-> Simplify the code per suggestion from previous thread:
-> https://patchwork.kernel.org/project/linux-mediatek/patch/20240812070341.=
-26053-1-shuijing.li@mediatek.com/
-> Changes in v5:
-> Fix code style issue and add per-line-lp function to be symmetrical with =
-per-frame-lp.
-> per suggestion from previous thread:
-> https://patchwork.kernel.org/project/linux-mediatek/patch/20240801081144.=
-22372-1-shuijing.li@mediatek.com/
-> Changes in v4:
-> Drop the code related to bllp_en and bllp_wc, adjust ps_wc to dsi->vm.hac=
-tive *
-> dsi_buf_bpp.
-> Changes in v3:
-> Use function in bitfield.h and get value from phy timing, per suggestion
-> from previous thread:
-> https://patchwork.kernel.org/project/linux-mediatek/patch/20240424091639.=
-22759-1-shuijing.li@mediatek.com/
-> Changes in v2:
-> Use bitfield macros and add new function for per prame lp and improve
-> the format, per suggestion from previous thread:
-> https://patchwork.kernel.org/project/linux-mediatek/patch/20240314094238.=
-3315-1-shuijing.li@mediatek.com/
-> ---
->  drivers/gpu/drm/mediatek/mtk_dsi.c | 106 +++++++++++++++++++++++++----
->  1 file changed, 94 insertions(+), 12 deletions(-)
->
-> diff --git a/drivers/gpu/drm/mediatek/mtk_dsi.c b/drivers/gpu/drm/mediate=
-k/mtk_dsi.c
-> index b6e3c011a12d..eeec641cab60 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_dsi.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_dsi.c
-> @@ -88,12 +88,15 @@
->  #define DSI_HSA_WC             0x50
->  #define DSI_HBP_WC             0x54
->  #define DSI_HFP_WC             0x58
-> +#define HFP_HS_VB_PS_WC                GENMASK(30, 16)
-> +#define HFP_HS_EN                      BIT(31)
->
->  #define DSI_CMDQ_SIZE          0x60
->  #define CMDQ_SIZE                      0x3f
->  #define CMDQ_SIZE_SEL          BIT(15)
->
->  #define DSI_HSTX_CKL_WC                0x64
-> +#define HSTX_CKL_WC                    GENMASK(15, 2)
->
->  #define DSI_RX_DATA0           0x74
->  #define DSI_RX_DATA1           0x78
-> @@ -187,6 +190,7 @@ struct mtk_dsi_driver_data {
->         bool has_shadow_ctl;
->         bool has_size_ctl;
->         bool cmdq_long_packet_ctl;
-> +       bool support_per_frame_lp;
->  };
->
->  struct mtk_dsi {
-> @@ -426,7 +430,75 @@ static void mtk_dsi_ps_control(struct mtk_dsi *dsi, =
-bool config_vact)
->         writel(ps_val, dsi->regs + DSI_PSCTRL);
->  }
->
-> -static void mtk_dsi_config_vdo_timing(struct mtk_dsi *dsi)
-> +static void mtk_dsi_config_vdo_timing_per_frame_lp(struct mtk_dsi *dsi)
-> +{
-> +       u32 horizontal_sync_active_byte;
-> +       u32 horizontal_backporch_byte;
-> +       u32 horizontal_frontporch_byte;
-> +       u32 hfp_byte_adjust, v_active_adjust;
-> +       u32 cklp_wc_min_adjust, cklp_wc_max_adjust;
-> +       u32 dsi_tmp_buf_bpp;
-> +       unsigned int da_hs_trail;
-> +       unsigned int ps_wc, hs_vb_ps_wc;
-> +       u32 v_active_roundup, hstx_cklp_wc;
-> +       u32 hstx_cklp_wc_max, hstx_cklp_wc_min;
-> +       struct videomode *vm =3D &dsi->vm;
-> +
-> +       if (dsi->format =3D=3D MIPI_DSI_FMT_RGB565)
-> +               dsi_tmp_buf_bpp =3D 2;
-> +       else
-> +               dsi_tmp_buf_bpp =3D 3;
-> +
-> +       da_hs_trail =3D dsi->phy_timing.da_hs_trail;
-> +       ps_wc =3D vm->hactive * dsi_tmp_buf_bpp;
-> +
-> +       if (dsi->mode_flags & MIPI_DSI_MODE_VIDEO_SYNC_PULSE) {
-> +               horizontal_sync_active_byte =3D
-> +                       vm->hsync_len * dsi_tmp_buf_bpp - 10;
-> +               horizontal_backporch_byte =3D
-> +                       vm->hback_porch * dsi_tmp_buf_bpp - 10;
-> +               hfp_byte_adjust =3D 12;
-> +               v_active_adjust =3D 32 + horizontal_sync_active_byte;
-> +               cklp_wc_min_adjust =3D 12 + 2 + 4 + horizontal_sync_activ=
-e_byte;
-> +               cklp_wc_max_adjust =3D 20 + 6 + 4 + horizontal_sync_activ=
-e_byte;
-> +       } else {
-> +               horizontal_sync_active_byte =3D vm->hsync_len * dsi_tmp_b=
-uf_bpp - 4;
-> +               horizontal_backporch_byte =3D (vm->hback_porch + vm->hsyn=
-c_len) *
-> +                       dsi_tmp_buf_bpp - 10;
-> +               cklp_wc_min_adjust =3D 4;
-> +               cklp_wc_max_adjust =3D 12 + 4 + 4;
-> +               if (dsi->mode_flags & MIPI_DSI_MODE_VIDEO_BURST) {
-> +                       hfp_byte_adjust =3D 18;
-> +                       v_active_adjust =3D 28;
-> +               } else {
-> +                       hfp_byte_adjust =3D 12;
-> +                       v_active_adjust =3D 22;
-> +               }
-> +       }
-> +       horizontal_frontporch_byte =3D vm->hfront_porch * dsi_tmp_buf_bpp=
- - hfp_byte_adjust;
-> +       v_active_roundup =3D (v_active_adjust + horizontal_backporch_byte=
- + ps_wc +
-> +                          horizontal_frontporch_byte) % dsi->lanes;
-> +       if (v_active_roundup)
-> +               horizontal_backporch_byte +=3D dsi->lanes - v_active_roun=
-dup;
-> +       hstx_cklp_wc_min =3D (DIV_ROUND_UP(cklp_wc_min_adjust, dsi->lanes=
-) + da_hs_trail + 1)
-> +                          * dsi->lanes / 6 - 1;
-> +       hstx_cklp_wc_max =3D (DIV_ROUND_UP((cklp_wc_max_adjust + horizont=
-al_backporch_byte +
-> +                          ps_wc), dsi->lanes) + da_hs_trail + 1) * dsi->=
-lanes / 6 - 1;
-> +
-> +       hstx_cklp_wc =3D FIELD_PREP(HSTX_CKL_WC, (hstx_cklp_wc_min + hstx=
-_cklp_wc_max) / 2);
-> +       writel(hstx_cklp_wc, dsi->regs + DSI_HSTX_CKL_WC);
-> +
-> +       hs_vb_ps_wc =3D ps_wc - (dsi->phy_timing.lpx + dsi->phy_timing.da=
-_hs_exit +
-> +                     dsi->phy_timing.da_hs_prepare + dsi->phy_timing.da_=
-hs_zero + 2) * dsi->lanes;
-> +       horizontal_frontporch_byte |=3D FIELD_PREP(HFP_HS_EN, 1) |
-> +                                     FIELD_PREP(HFP_HS_VB_PS_WC, hs_vb_p=
-s_wc);
-> +
-> +       writel(horizontal_sync_active_byte, dsi->regs + DSI_HSA_WC);
-> +       writel(horizontal_backporch_byte, dsi->regs + DSI_HBP_WC);
-> +       writel(horizontal_frontporch_byte, dsi->regs + DSI_HFP_WC);
-> +}
-> +
-> +static void mtk_dsi_config_vdo_timing_per_line_lp(struct mtk_dsi *dsi)
->  {
->         u32 horizontal_sync_active_byte;
->         u32 horizontal_backporch_byte;
-> @@ -436,7 +508,6 @@ static void mtk_dsi_config_vdo_timing(struct mtk_dsi =
-*dsi)
->         u32 dsi_tmp_buf_bpp, data_phy_cycles;
->         u32 delta;
->         struct mtk_phy_timing *timing =3D &dsi->phy_timing;
-> -
->         struct videomode *vm =3D &dsi->vm;
->
->         if (dsi->format =3D=3D MIPI_DSI_FMT_RGB565)
-> @@ -444,16 +515,6 @@ static void mtk_dsi_config_vdo_timing(struct mtk_dsi=
- *dsi)
->         else
->                 dsi_tmp_buf_bpp =3D 3;
->
-> -       writel(vm->vsync_len, dsi->regs + DSI_VSA_NL);
-> -       writel(vm->vback_porch, dsi->regs + DSI_VBP_NL);
-> -       writel(vm->vfront_porch, dsi->regs + DSI_VFP_NL);
-> -       writel(vm->vactive, dsi->regs + DSI_VACT_NL);
-> -
-> -       if (dsi->driver_data->has_size_ctl)
-> -               writel(FIELD_PREP(DSI_HEIGHT, vm->vactive) |
-> -                      FIELD_PREP(DSI_WIDTH, vm->hactive),
-> -                      dsi->regs + DSI_SIZE_CON);
-> -
->         horizontal_sync_active_byte =3D (vm->hsync_len * dsi_tmp_buf_bpp =
-- 10);
->
->         if (dsi->mode_flags & MIPI_DSI_MODE_VIDEO_SYNC_PULSE)
-> @@ -499,6 +560,26 @@ static void mtk_dsi_config_vdo_timing(struct mtk_dsi=
- *dsi)
->         writel(horizontal_sync_active_byte, dsi->regs + DSI_HSA_WC);
->         writel(horizontal_backporch_byte, dsi->regs + DSI_HBP_WC);
->         writel(horizontal_frontporch_byte, dsi->regs + DSI_HFP_WC);
-> +}
-> +
-> +static void mtk_dsi_config_vdo_timing(struct mtk_dsi *dsi)
-> +{
-> +       struct videomode *vm =3D &dsi->vm;
-> +
-> +       writel(vm->vsync_len, dsi->regs + DSI_VSA_NL);
-> +       writel(vm->vback_porch, dsi->regs + DSI_VBP_NL);
-> +       writel(vm->vfront_porch, dsi->regs + DSI_VFP_NL);
-> +       writel(vm->vactive, dsi->regs + DSI_VACT_NL);
-> +
-> +       if (dsi->driver_data->has_size_ctl)
-> +               writel(FIELD_PREP(DSI_HEIGHT, vm->vactive) |
-> +                       FIELD_PREP(DSI_WIDTH, vm->hactive),
-> +                       dsi->regs + DSI_SIZE_CON);
-> +
-> +       if (dsi->driver_data->support_per_frame_lp)
-> +               mtk_dsi_config_vdo_timing_per_frame_lp(dsi);
-> +       else
-> +               mtk_dsi_config_vdo_timing_per_line_lp(dsi);
->
->         mtk_dsi_ps_control(dsi, false);
->  }
-> @@ -1197,6 +1278,7 @@ static const struct mtk_dsi_driver_data mt8188_dsi_=
-driver_data =3D {
->         .has_shadow_ctl =3D true,
->         .has_size_ctl =3D true,
->         .cmdq_long_packet_ctl =3D true,
-> +       .support_per_frame_lp =3D true,
->  };
->
->  static const struct of_device_id mtk_dsi_of_match[] =3D {
-> --
-> 2.45.2
->
+> 
+> Thanks,
+> Robin.
+> 
+> [1] https://lore.kernel.org/linux-arm-kernel/731d204f5f556ad61bbaf004b1d984f83c90b4f5.1724748249.git.baruch@tkos.co.il/
+
 
