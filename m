@@ -1,329 +1,496 @@
-Return-Path: <linux-kernel+bounces-306689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B717396421F
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 12:41:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F07E5964221
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 12:45:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC6391C2471D
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:41:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20F551C24715
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:45:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBF9818E360;
-	Thu, 29 Aug 2024 10:40:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DE5318D644;
+	Thu, 29 Aug 2024 10:44:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="CBVuGKso"
-Received: from mail-ej1-f68.google.com (mail-ej1-f68.google.com [209.85.218.68])
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="wJWYq3ee"
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60A3A15FA93
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 10:40:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A887148FE6;
+	Thu, 29 Aug 2024 10:44:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724928054; cv=none; b=htBIE2tO/7+JOQuGXBIc/2Vn2kR77GGmXj661ZFjNkyt9BWSaCFFVTmswqZ2MDrHdT1E8plnbAVMz7eMpnRJjpYPku6T+TzDTZSLeNobmB3YJRZV657jtwNdPPkqqDsC5gsl60W1HRIasRibVY+TSiWVsP/1unfoWdwb5eGXw7A=
+	t=1724928298; cv=none; b=gcTqtUaBCAEl8e7OSPvAaMJrF69BjzzCSC5AUImmVLjPkWUy4/wdkyZcCwp0mTFiRXm1Fr73VU6mqLqk2AzHGd7aGPgcr2biezJBJYY18m+RqMkDgHUZDkxn3CgKO43eFARW+LgAmckqiCh/qU4iJFwpls//D6umkUWpMoYPGzA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724928054; c=relaxed/simple;
-	bh=oBs6rTef3t7+2UM7m73Q75zjl+OdHm7lJRZDomtLuvc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bLVDhp3g3dxI89jwwzqnKCP0OdPg18LRnN13ar8Von5Zf4S0IpFVCKwxmWe3wQ+qhq3U+MKN380Pm4nmMPdHce1jTagesARnqz8t3f7TcCso5hGKuY+WOntvb7IXStJ2uk+JVhagFbTXevE/W7Gj/QcHKv2ejaj6ekm591jOL4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=CBVuGKso; arc=none smtp.client-ip=209.85.218.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-ej1-f68.google.com with SMTP id a640c23a62f3a-a8695cc91c8so43356366b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 03:40:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1724928050; x=1725532850; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:mail-followup-to:message-id:subject:cc:to
-         :from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Tsq//j+H5ixsuT8m1m+oQU7qTGwUCuKP2F/HTF+wnpE=;
-        b=CBVuGKsoN8+2kvK5YElh1Ichtg+I23XHF61yhmyccnh8gctR0VlmkXH9XcfggYeB8o
-         qSnCzVg4FKMXyKz5MHbBcgl/osObqqUl2FQ0i7/YJxUd6uE0uxBqmELbPHNJpA9QXAGQ
-         J3RxHlhpTrAiXCuhx3Dd1b8vKdO7qF3x/zkDk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724928050; x=1725532850;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:mail-followup-to:message-id:subject:cc:to
-         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Tsq//j+H5ixsuT8m1m+oQU7qTGwUCuKP2F/HTF+wnpE=;
-        b=uOXdaNSAC4O5Xv6/LQwDY2HIIGKDZvNdPFi8WHVL5pn1SdIbMDJIhbPDBkQlpTaMY4
-         FJlKb5emlVGJMvajHI/mHxAq54gE8MB+dhf8nCFgU9tfPkIvJFYpBZLJW/uemuUChEi6
-         2krdZzBzPphFHJIKKVuNO50MpaC6u9U0syxrROK7JiffaG/dia4N8gyCRxAmI4uobGUj
-         csK2hUpmihbnJq9jLD8RGi4ajDLO7zBhmRk6t3jATSK5hnf8J2iihK9qItr6BYdzuO4T
-         MAiFPLL0+WkC9GT0McEFtolkbklwLr24mlomxtETFXBaku97FEH50d123mkQZBbL2eKn
-         9NRA==
-X-Forwarded-Encrypted: i=1; AJvYcCXEon9yRb/HFsNVr+Odmmrhdx8FZpe53VNq18nhunDwrDjomv/2/v4T/bHk8pT/HocMVq4phdCL6s6f4hQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxT+mY88HsnJxHaWzaA5HIcSbJv9UhPCJtyEMMmhfrCLDGIxBGO
-	ft8/YE8ydEME4Ww1NN9Kac6t3qa5ESE8N28wAYXs7B247GiJMvtA2WxHUA8o9Dg=
-X-Google-Smtp-Source: AGHT+IHUfySnDTuQo2u25koIToxsry3YgUb2xQDsoBD8wjywfCio/HCqYP4RML57+Q8ru2bOH5YcvA==
-X-Received: by 2002:a17:907:7da4:b0:a86:9793:350d with SMTP id a640c23a62f3a-a897fad5099mr165221266b.62.1724928049067;
-        Thu, 29 Aug 2024 03:40:49 -0700 (PDT)
-Received: from LQ3V64L9R2 ([80.208.222.2])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8988feae58sm63790066b.18.2024.08.29.03.40.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 03:40:48 -0700 (PDT)
-Date: Thu, 29 Aug 2024 11:40:46 +0100
-From: Joe Damato <jdamato@fastly.com>
-To: Naman Gulati <namangulati@google.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, netdev@vger.kernel.org,
-	Stanislav Fomichev <sdf@fomichev.me>, linux-kernel@vger.kernel.org,
-	skhawaja@google.com,
-	Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
-	mkarsten@uwaterloo.ca
-Subject: Re: [PATCH] Add provision to busyloop for events in ep_poll.
-Message-ID: <ZtBQLqqMrpCLBMw1@LQ3V64L9R2>
-Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
-	Naman Gulati <namangulati@google.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, netdev@vger.kernel.org,
-	Stanislav Fomichev <sdf@fomichev.me>, linux-kernel@vger.kernel.org,
-	skhawaja@google.com,
-	Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
-	mkarsten@uwaterloo.ca
-References: <20240828181011.1591242-1-namangulati@google.com>
+	s=arc-20240116; t=1724928298; c=relaxed/simple;
+	bh=fh4Q9qvG2S3Qw9ZL4fh9LWFQenZY+OmEdMFYHgDkeAg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=d6lPYxfyeAPRmWGTaELOCZi+sCUH4iHMLBJJKXlAv9gx821GQ8baezS3EbeB6DUgJkZN3Htym9aLgd9vjXw7ZBntgdkvtl1G7B5ir/ToUZW70aqL4OMfrfjzmsQjo5FtsB14Cx1ZEDiNQDoYWwYyK7tYbCVcY3haAH8sGoPyyGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=wJWYq3ee; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from localhost.localdomain (85-222-111-42.dynamic.chello.pl [85.222.111.42])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(No client certificate requested)
+	(Authenticated sender: lukma@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id 903CA889FF;
+	Thu, 29 Aug 2024 12:44:53 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1724928294;
+	bh=eeqHR45C/IOZMb3bO8qyvhd667kPEJdyTxkUXn5XVpg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=wJWYq3eerEqboQax9VA1Hjj2HblzgcnbmDyLb9c0x6Qt8ZFl/rro5O5WQF/m5u6Ue
+	 0VOD4h6SIhFeogcsgLBmkoxMztmJ9l+No6KgGqTW9UUfhCIjCD4x/hlC9qiPYTcAeI
+	 lHMqQbGouf5zYugPb4sOAoBiQY8wZw02N/yUV8KnW/1qe3DQDxvvX3XUoSXld6PvFd
+	 5Y/0e7mCiWdyqD8REfrbhT4CdCkKHR5ZU9TlSgCcJkp7sXjmY2ZyrTtIY9od4LHhVe
+	 C02NojWuwEi33emUrlwVKD3OqAck6HOFz70Q62xbwVQSKe2Xp7dTclGI7/vVNYZoDu
+	 hB/uHf2fNOvSg==
+From: Lukasz Majewski <lukma@denx.de>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	devicetree@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Lukasz Majewski <lukma@denx.de>
+Subject: [PATCH v2] dts: nxp: mxs: Add descriptions for imx287 based btt3-[012] devices
+Date: Thu, 29 Aug 2024 12:44:36 +0200
+Message-Id: <20240829104436.3134551-1-lukma@denx.de>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240828181011.1591242-1-namangulati@google.com>
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
-On Wed, Aug 28, 2024 at 06:10:11PM +0000, Naman Gulati wrote:
-> NAPI busypolling in ep_busy_loop loops on napi_poll and checks for new
-> epoll events after every napi poll. Checking just for epoll events in a
-> tight loop in the kernel context delivers latency gains to applications
-> that are not interested in napi busypolling with epoll.
-> 
-> This patch adds an option to loop just for new events inside
-> ep_busy_loop, guarded by the EPIOCSPARAMS ioctl that controls epoll napi
-> busypolling.
+The btt3 device' HW revisions from 0 to 2 use imx287 SoC and are to
+some extend similar to already upstreamed XEA devices, hence are
+using common imx28-lwe.dtsi file.
 
-This makes an API change, so I think that linux-api@vger.kernel.org
-needs to be CC'd ?
- 
-> A comparison with neper tcp_rr shows that busylooping for events in
-> epoll_wait boosted throughput by ~3-7% and reduced median latency by
-> ~10%.
-> 
-> To demonstrate the latency and throughput improvements, a comparison was
-> made of neper tcp_rr running with:
->     1. (baseline) No busylooping
+New, imx28-btt3.dtsi has been added to embrace common DTS
+properties for different HW revisions for this device.
 
-Is there NAPI-based steering to threads via SO_INCOMING_NAPI_ID in
-this case? More details, please, on locality. If there is no
-NAPI-based flow steering in this case, perhaps the improvements you
-are seeing are a result of both syscall overhead avoidance and data
-locality?
+As a result - changes introduced in imx28-btt3-[012].dts are
+minimal.
 
->     2. (epoll busylooping) enabling the epoll busy looping on all epoll
->     fd's
+Signed-off-by: Lukasz Majewski <lukma@denx.de>
 
-This is the case you've added, event_poll_only ? It seems like in
-this case you aren't busy looping exactly, you are essentially
-allowing IRQ/softIRQ to drive processing and checking on wakeup that
-events are available.
+---
+Changes for v2:
+- Rename dts file from btt3-[012] to imx28-btt3-[012] to match current
+  linux kernel naming convention
+- Remove 'wlf,wm8974' from compatible for codec@1a
+---
+ arch/arm/boot/dts/nxp/mxs/Makefile         |   3 +
+ arch/arm/boot/dts/nxp/mxs/imx28-btt3-0.dts |  12 +
+ arch/arm/boot/dts/nxp/mxs/imx28-btt3-1.dts |   8 +
+ arch/arm/boot/dts/nxp/mxs/imx28-btt3-2.dts |  12 +
+ arch/arm/boot/dts/nxp/mxs/imx28-btt3.dtsi  | 320 +++++++++++++++++++++
+ 5 files changed, 355 insertions(+)
+ create mode 100644 arch/arm/boot/dts/nxp/mxs/imx28-btt3-0.dts
+ create mode 100644 arch/arm/boot/dts/nxp/mxs/imx28-btt3-1.dts
+ create mode 100644 arch/arm/boot/dts/nxp/mxs/imx28-btt3-2.dts
+ create mode 100644 arch/arm/boot/dts/nxp/mxs/imx28-btt3.dtsi
 
-IMHO, I'm not sure if "epoll busylooping" is an appropriate
-description.
+diff --git a/arch/arm/boot/dts/nxp/mxs/Makefile b/arch/arm/boot/dts/nxp/mxs/Makefile
+index a430d04f9c69..e45192bcd197 100644
+--- a/arch/arm/boot/dts/nxp/mxs/Makefile
++++ b/arch/arm/boot/dts/nxp/mxs/Makefile
+@@ -1,5 +1,8 @@
+ # SPDX-License-Identifier: GPL-2.0
+ dtb-$(CONFIG_ARCH_MXS) += \
++	imx28-btt3-0.dtb \
++	imx28-btt3-1.dtb \
++	imx28-btt3-2.dtb \
+ 	imx23-evk.dtb \
+ 	imx23-olinuxino.dtb \
+ 	imx23-sansa.dtb \
+diff --git a/arch/arm/boot/dts/nxp/mxs/imx28-btt3-0.dts b/arch/arm/boot/dts/nxp/mxs/imx28-btt3-0.dts
+new file mode 100644
+index 000000000000..6ac46e4b21bb
+--- /dev/null
++++ b/arch/arm/boot/dts/nxp/mxs/imx28-btt3-0.dts
+@@ -0,0 +1,12 @@
++// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
++/*
++ * Copyright 2024
++ * Lukasz Majewski, DENX Software Engineering, lukma@denx.de
++ */
++
++/dts-v1/;
++#include "imx28-btt3.dtsi"
++
++&hog_pins_rev {
++	fsl,pull-up = <MXS_PULL_ENABLE>;
++};
+diff --git a/arch/arm/boot/dts/nxp/mxs/imx28-btt3-1.dts b/arch/arm/boot/dts/nxp/mxs/imx28-btt3-1.dts
+new file mode 100644
+index 000000000000..213fe931c58b
+--- /dev/null
++++ b/arch/arm/boot/dts/nxp/mxs/imx28-btt3-1.dts
+@@ -0,0 +1,8 @@
++// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
++/*
++ * Copyright 2024
++ * Lukasz Majewski, DENX Software Engineering, lukma@denx.de
++ */
++
++/dts-v1/;
++#include "imx28-btt3.dtsi"
+diff --git a/arch/arm/boot/dts/nxp/mxs/imx28-btt3-2.dts b/arch/arm/boot/dts/nxp/mxs/imx28-btt3-2.dts
+new file mode 100644
+index 000000000000..c787c2d03463
+--- /dev/null
++++ b/arch/arm/boot/dts/nxp/mxs/imx28-btt3-2.dts
+@@ -0,0 +1,12 @@
++// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
++/*
++ * Copyright 2024
++ * Lukasz Majewski, DENX Software Engineering, lukma@denx.de
++ */
++
++/dts-v1/;
++#include "imx28-btt3.dtsi"
++
++&lcdif {
++	display = <&display_te_b>;
++};
+diff --git a/arch/arm/boot/dts/nxp/mxs/imx28-btt3.dtsi b/arch/arm/boot/dts/nxp/mxs/imx28-btt3.dtsi
+new file mode 100644
+index 000000000000..27a01e925e26
+--- /dev/null
++++ b/arch/arm/boot/dts/nxp/mxs/imx28-btt3.dtsi
+@@ -0,0 +1,320 @@
++// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
++/*
++ * Copyright 2024
++ * Lukasz Majewski, DENX Software Engineering, lukma@denx.de
++ */
++/dts-v1/;
++#include "imx28-lwe.dtsi"
++
++/ {
++	model = "BTT3";
++
++	compatible = "lwn,btt3", "fsl,imx28";
++
++	chosen {
++	       bootargs = "root=/dev/mmcblk0p2 rootfstype=ext4 ro rootwait console=ttyAMA0,115200 panic=1 quiet";
++	};
++
++	memory@40000000 {
++		reg = <0x40000000 0x10000000>;
++		device_type = "memory";
++	};
++
++	poweroff {
++		compatible = "gpio-poweroff";
++		gpios = <&gpio0 24 0>;
++	};
++
++	sound {
++		compatible = "simple-audio-card";
++		simple-audio-card,name = "BTTC Audio";
++		simple-audio-card,widgets = "Speaker", "BTTC Speaker";
++		simple-audio-card,routing = "BTTC Speaker", "SPKOUTN", "BTTC Speaker", "SPKOUTP";
++		simple-audio-card,dai-link@0 {
++			format = "left_j";
++			bitclock-master = <&dai0_master>;
++			frame-master = <&dai0_master>;
++			mclk-fs = <256>;
++			dai0_master: cpu {
++				sound-dai = <&saif0>;
++			};
++			codec {
++				sound-dai = <&wm89xx>;
++				clocks = <&saif0>;
++			};
++		};
++	};
++
++	wifi_pwrseq: sdio-pwrseq {
++		compatible = "mmc-pwrseq-simple";
++		pinctrl-names = "default";
++		pinctrl-0 = <&wifi_en_pin_bttc>;
++		reset-gpios = <&gpio0 27 GPIO_ACTIVE_LOW>;
++		/* W1-163 needs 60us for WL_EN to be low and */
++		/* 150ms after high before downloading FW is possible */
++		post-power-on-delay-ms = <200>;
++		power-off-delay-us = <100>;
++	};
++};
++
++&auart0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&auart0_2pins_a>;
++	status = "okay";
++};
++
++&auart3 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&auart3_pins_a>;
++	uart-has-rtscts;
++	status = "okay";
++};
++
++&i2c0 {
++	wm89xx: codec@1a {
++		compatible = "wlf,wm8940";
++		reg = <0x1a>;
++		#sound-dai-cells = <0>;
++	};
++};
++
++&lcdif {
++	pinctrl-names = "default";
++	pinctrl-0 = <&lcdif_24bit_pins_a>, <&lcdif_sync_pins_bttc>,
++		    <&lcdif_reset_pins_bttc>;
++	lcd-supply = <&reg_3v3>;
++	display = <&display0>;
++	status = "okay";
++	display0: display0 {
++		bits-per-pixel = <32>;
++		bus-width = <24>;
++		display-timings {
++			native-mode = <&timing0>;
++			timing0: timing0 {
++				clock-frequency = <6500000>;
++				hactive = <320>;
++				vactive = <240>;
++				hfront-porch = <20>;
++				hback-porch = <38>;
++				hsync-len = <30>;
++				vfront-porch = <4>;
++				vback-porch = <14>;
++				vsync-len = <4>;
++				hsync-active = <0>;
++				vsync-active = <0>;
++				de-active = <0>;
++				pixelclk-active = <1>;
++			};
++		};
++	};
++	display_te_b: display1 {
++		bits-per-pixel = <32>;
++		bus-width = <24>;
++		display-timings {
++			native-mode = <&timing0>;
++			timing_te_b: timing0 {
++				clock-frequency = <6500000>;
++				hactive = <320>;
++				vactive = <240>;
++				hfront-porch = <20>;
++				hback-porch = <68>;
++				hsync-len = <30>;
++				vfront-porch = <4>;
++				vback-porch = <14>;
++				vsync-len = <4>;
++				hsync-active = <0>;
++				vsync-active = <0>;
++				de-active = <1>;
++				pixelclk-active = <1>;
++			};
++		};
++	};
++
++};
++
++&mac0 {
++	clocks = <&clks 57>, <&clks 57>, <&clks 64>;
++	clock-names = "ipg", "ahb", "enet_out";
++	phy-handle = <&mac0_phy>;
++	phy-mode = "rmii";
++	phy-supply = <&reg_3v3>;
++	local-mac-address = [ 00 11 B8 00 BF 8A ];
++	status = "okay";
++
++	mdio {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		mac0_phy: ethernet-phy@0 {
++			/* LAN8720Ai - PHY ID */
++			compatible = "ethernet-phy-id0007.c0f0","ethernet-phy-ieee802.3-c22";
++			reg = <0>;
++			smsc,disable-energy-detect;
++			max-speed = <100>;
++
++			reset-gpios = <&gpio4 12 GPIO_ACTIVE_LOW>; /* GPIO4_12 */
++			reset-assert-us = <1000>;
++			reset-deassert-us = <1000>;
++		};
++	};
++};
++
++&pinctrl {
++	pinctrl-names = "default";
++	pinctrl-0 = <&hog_pins_a>, <&hog_pins_rev>;
++
++	hog_pins_a: hog@0 {
++		reg = <0>;
++		fsl,pinmux-ids = <
++			MX28_PAD_GPMI_RDY2__GPIO_0_22
++			MX28_PAD_GPMI_RDY3__GPIO_0_23
++			MX28_PAD_GPMI_RDN__GPIO_0_24
++			MX28_PAD_LCD_VSYNC__GPIO_1_28
++			MX28_PAD_SSP2_SS1__GPIO_2_20
++			MX28_PAD_SSP2_SS2__GPIO_2_21
++			MX28_PAD_AUART2_CTS__GPIO_3_10
++			MX28_PAD_AUART2_RTS__GPIO_3_11
++			MX28_PAD_GPMI_WRN__GPIO_0_25
++			MX28_PAD_ENET0_RXD2__GPIO_4_9
++			MX28_PAD_ENET0_TXD2__GPIO_4_11
++		>;
++		fsl,drive-strength = <MXS_DRIVE_4mA>;
++		fsl,voltage = <MXS_VOLTAGE_HIGH>;
++		fsl,pull-up = <MXS_PULL_DISABLE>;
++	};
++
++	hog_pins_rev: hog@1 {
++		reg = <1>;
++		fsl,pinmux-ids = <
++			MX28_PAD_ENET0_RXD3__GPIO_4_10
++			MX28_PAD_ENET0_TX_CLK__GPIO_4_5
++			MX28_PAD_ENET0_COL__GPIO_4_14
++			MX28_PAD_ENET0_CRS__GPIO_4_15
++		>;
++		fsl,drive-strength = <MXS_DRIVE_4mA>;
++		fsl,voltage = <MXS_VOLTAGE_HIGH>;
++		fsl,pull-up = <MXS_PULL_DISABLE>;
++	};
++
++	keypad_pins_bttc: keypad-bttc@0 {
++		reg = <0>;
++		fsl,pinmux-ids = <
++			MX28_PAD_GPMI_D00__GPIO_0_0
++			MX28_PAD_AUART0_CTS__GPIO_3_2
++			MX28_PAD_AUART0_RTS__GPIO_3_3
++			MX28_PAD_GPMI_D03__GPIO_0_3
++			MX28_PAD_GPMI_D04__GPIO_0_4
++			MX28_PAD_GPMI_D05__GPIO_0_5
++			MX28_PAD_GPMI_D06__GPIO_0_6
++			MX28_PAD_GPMI_D07__GPIO_0_7
++			MX28_PAD_GPMI_CE1N__GPIO_0_17
++			MX28_PAD_GPMI_CE2N__GPIO_0_18
++			MX28_PAD_GPMI_CE3N__GPIO_0_19
++			MX28_PAD_GPMI_RDY0__GPIO_0_20
++		>;
++		fsl,drive-strength = <MXS_DRIVE_4mA>;
++		fsl,voltage = <MXS_VOLTAGE_HIGH>;
++		fsl,pull-up = <MXS_PULL_DISABLE>;
++	};
++
++	lcdif_sync_pins_bttc: lcdif-bttc@0 {
++		reg = <0>;
++		fsl,pinmux-ids = <
++			MX28_PAD_LCD_DOTCLK__LCD_DOTCLK
++			MX28_PAD_LCD_ENABLE__LCD_ENABLE
++			MX28_PAD_LCD_HSYNC__LCD_HSYNC
++			MX28_PAD_LCD_RD_E__LCD_VSYNC
++		>;
++		fsl,drive-strength = <MXS_DRIVE_4mA>;
++		fsl,voltage = <MXS_VOLTAGE_HIGH>;
++		fsl,pull-up = <MXS_PULL_DISABLE>;
++	};
++
++	lcdif_reset_pins_bttc: lcdif-bttc@1 {
++		reg = <1>;
++		fsl,pinmux-ids = <
++			MX28_PAD_LCD_RESET__GPIO_3_30
++		>;
++		fsl,drive-strength = <MXS_DRIVE_4mA>;
++		fsl,voltage = <MXS_VOLTAGE_HIGH>;
++		fsl,pull-up = <MXS_PULL_ENABLE>;
++	};
++
++	ssp1_sdio_pins_a: ssp1-sdio@0 {
++		reg = <0>;
++		fsl,pinmux-ids = <
++			MX28_PAD_SSP1_DATA0__SSP1_D0
++			MX28_PAD_GPMI_D01__SSP1_D1
++			MX28_PAD_GPMI_D02__SSP1_D2
++			MX28_PAD_SSP1_DATA3__SSP1_D3
++			MX28_PAD_SSP1_CMD__SSP1_CMD
++			MX28_PAD_SSP1_SCK__SSP1_SCK
++		>;
++		fsl,drive-strength = <MXS_DRIVE_8mA>;
++		fsl,voltage = <MXS_VOLTAGE_HIGH>;
++		fsl,pull-up = <MXS_PULL_ENABLE>;
++	};
++
++	wifi_en_pin_bttc: wifi_en_pin@0 {
++		reg = <0>;
++		fsl,pinmux-ids = <
++			MX28_PAD_GPMI_CLE__GPIO_0_27
++		>;
++		fsl,drive-strength = <MXS_DRIVE_8mA>;
++		fsl,voltage = <MXS_VOLTAGE_HIGH>;
++		fsl,pull-up = <MXS_PULL_ENABLE>;
++	};
++};
++
++&pwm {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pwm3_pins_a>;
++	status = "okay";
++};
++
++&reg_usb_5v {
++	gpio = <&gpio1 28 0>;
++};
++
++&saif0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&saif0_pins_a>;
++	#sound-dai-cells = <0>;
++	assigned-clocks = <&clks 53>;
++	assigned-clock-rates = <12000000>;
++	status = "okay";
++};
++
++&saif1 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&saif1_pins_a>;
++	fsl,saif-master = <&saif0>;
++	#sound-dai-cells = <0>;
++	status = "okay";
++};
++
++&ssp1 {
++	compatible = "fsl,imx28-mmc";
++	pinctrl-names = "default";
++	pinctrl-0 = <&ssp1_sdio_pins_a>;
++	bus-width = <4>;
++	no-1-8-v;       /* force 3.3V VIO */
++	pm-ignore-notify;
++	non-removable;
++	vmmc-supply = <&reg_3v3>;
++	mmc-pwrseq = <&wifi_pwrseq>;
++	keep-power-in-suspend;
++	status = "okay";
++
++	wlan@1 {
++		reg = <1>;
++		compatible = "brcm,bcm4329-fmac";
++	};
++};
++
++&ssp2 {
++	compatible = "fsl,imx28-spi";
++	pinctrl-names = "default";
++	pinctrl-0 = <&spi2_pins_a>;
++	status = "okay";
++};
+-- 
+2.39.2
 
->     3. (userspace busylooping) looping on epoll_wait in userspace
->     with timeout=0
-
-Same question as Stanislav; timeout=0 should get ep_loop to transfer
-events immediately (if there are any) and return without actually
-invoking busy poll. So, it would seem that your ioctl change
-shouldn't be necessary since the equivalent behavior is already
-possible with timeout=0.
-
-I'd probably investigate both syscall overhead and data locality
-before approving this patch because it seems a bit suspicious to me.
-
-> 
-> Stats for two machines with 100Gbps NICs running tcp_rr with 5 threads
-> and varying flows:
-> 
-> Type                Flows   Throughput             Latency (μs)
->                              (B/s)      P50   P90    P99   P99.9   P99.99
-> baseline            15	    272145      57.2  71.9   91.4  100.6   111.6
-> baseline            30	    464952	66.8  78.8   98.1  113.4   122.4
-> baseline            60	    695920	80.9  118.5  143.4 161.8   174.6
-> epoll busyloop      15	    301751	44.7  70.6   84.3  95.4    106.5
-> epoll busyloop      30	    508392	58.9  76.9   96.2  109.3   118.5
-> epoll busyloop      60	    745731	77.4  106.2  127.5 143.1   155.9
-> userspace busyloop  15	    279202	55.4  73.1   85.2  98.3    109.6
-> userspace busyloop  30	    472440	63.7  78.2   96.5  112.2   120.1
-> userspace busyloop  60	    720779	77.9  113.5  134.9 152.6   165.7
-> 
-> Per the above data epoll busyloop outperforms baseline and userspace
-> busylooping in both throughput and latency. As the density of flows per
-> thread increased, the median latency of all three epoll mechanisms
-> converges. However epoll busylooping is better at capturing the tail
-> latencies at high flow counts.
-> 
-> Signed-off-by: Naman Gulati <namangulati@google.com>
-> ---
->  fs/eventpoll.c                 | 53 ++++++++++++++++++++++++++--------
->  include/uapi/linux/eventpoll.h |  3 +-
->  2 files changed, 43 insertions(+), 13 deletions(-)
-> 
-> diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-> index f53ca4f7fcedd..6cba79261817a 100644
-> --- a/fs/eventpoll.c
-> +++ b/fs/eventpoll.c
-> @@ -232,7 +232,10 @@ struct eventpoll {
->  	u32 busy_poll_usecs;
->  	/* busy poll packet budget */
->  	u16 busy_poll_budget;
-> -	bool prefer_busy_poll;
-> +	/* prefer to busypoll in napi poll */
-> +	bool napi_prefer_busy_poll;
-
-Adding napi seems slightly redundant to me but I could be convinced either
-way, I suppose.
-
-> +	/* avoid napi poll when busy looping and poll only for events */
-> +	bool event_poll_only;
-
-I'm not sure about this overall; this isn't exactly what I think of
-when I think about the word "polling" but maybe I'm being too
-nit-picky.
-
->  #endif
->  
->  #ifdef CONFIG_DEBUG_LOCK_ALLOC
-> @@ -430,6 +433,24 @@ static bool ep_busy_loop_end(void *p, unsigned long start_time)
->  	return ep_events_available(ep) || busy_loop_ep_timeout(start_time, ep);
->  }
->  
-> +/**
-> + * ep_event_busy_loop - loop until events available or busy poll
-> + * times out.
-> + *
-> + * @ep: Pointer to the eventpoll context.
-> + *
-> + * Return: true if events available, false otherwise.
-> + */
-> +static bool ep_event_busy_loop(struct eventpoll *ep)
-> +{
-> +	unsigned long start_time = busy_loop_current_time();
-> +
-> +	while (!ep_busy_loop_end(ep, start_time))
-> +		cond_resched();
-> +
-> +	return ep_events_available(ep);
-> +}
-> +
->  /*
->   * Busy poll if globally on and supporting sockets found && no events,
->   * busy loop will return if need_resched or ep_events_available.
-> @@ -440,23 +461,29 @@ static bool ep_busy_loop(struct eventpoll *ep, int nonblock)
->  {
->  	unsigned int napi_id = READ_ONCE(ep->napi_id);
->  	u16 budget = READ_ONCE(ep->busy_poll_budget);
-> -	bool prefer_busy_poll = READ_ONCE(ep->prefer_busy_poll);
-> +	bool event_poll_only = READ_ONCE(ep->event_poll_only);
->  
->  	if (!budget)
->  		budget = BUSY_POLL_BUDGET;
->  
-> -	if (napi_id >= MIN_NAPI_ID && ep_busy_loop_on(ep)) {
-> +	if (!ep_busy_loop_on(ep))
-> +		return false;
-> +
-> +	if (event_poll_only) {
-> +		return ep_event_busy_loop(ep);
-> +	} else if (napi_id >= MIN_NAPI_ID) {
-> +		bool napi_prefer_busy_poll = READ_ONCE(ep->napi_prefer_busy_poll);
-> +
->  		napi_busy_loop(napi_id, nonblock ? NULL : ep_busy_loop_end,
-> -			       ep, prefer_busy_poll, budget);
-> +				ep, napi_prefer_busy_poll, budget);
->  		if (ep_events_available(ep))
->  			return true;
->  		/*
-> -		 * Busy poll timed out.  Drop NAPI ID for now, we can add
-> -		 * it back in when we have moved a socket with a valid NAPI
-> -		 * ID onto the ready list.
-> -		 */
-> +		* Busy poll timed out.  Drop NAPI ID for now, we can add
-> +		* it back in when we have moved a socket with a valid NAPI
-> +		* ID onto the ready list.
-> +		*/
->  		ep->napi_id = 0;
-> -		return false;
->  	}
->  	return false;
->  }
-> @@ -523,13 +550,15 @@ static long ep_eventpoll_bp_ioctl(struct file *file, unsigned int cmd,
->  
->  		WRITE_ONCE(ep->busy_poll_usecs, epoll_params.busy_poll_usecs);
->  		WRITE_ONCE(ep->busy_poll_budget, epoll_params.busy_poll_budget);
-> -		WRITE_ONCE(ep->prefer_busy_poll, epoll_params.prefer_busy_poll);
-> +		WRITE_ONCE(ep->napi_prefer_busy_poll, epoll_params.prefer_busy_poll);
-> +		WRITE_ONCE(ep->event_poll_only, epoll_params.event_poll_only);
->  		return 0;
->  	case EPIOCGPARAMS:
->  		memset(&epoll_params, 0, sizeof(epoll_params));
->  		epoll_params.busy_poll_usecs = READ_ONCE(ep->busy_poll_usecs);
->  		epoll_params.busy_poll_budget = READ_ONCE(ep->busy_poll_budget);
-> -		epoll_params.prefer_busy_poll = READ_ONCE(ep->prefer_busy_poll);
-> +		epoll_params.prefer_busy_poll = READ_ONCE(ep->napi_prefer_busy_poll);
-> +		epoll_params.event_poll_only = READ_ONCE(ep->event_poll_only);
->  		if (copy_to_user(uarg, &epoll_params, sizeof(epoll_params)))
->  			return -EFAULT;
->  		return 0;
-> @@ -2203,7 +2232,7 @@ static int do_epoll_create(int flags)
->  #ifdef CONFIG_NET_RX_BUSY_POLL
->  	ep->busy_poll_usecs = 0;
->  	ep->busy_poll_budget = 0;
-> -	ep->prefer_busy_poll = false;
-> +	ep->napi_prefer_busy_poll = false;
->  #endif
-
-Just FYI: This is going to conflict with a patch I've sent to VFS
-that hasn't quite made its way back to net-next just yet.
-
-https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/commit/?h=vfs.misc&id=4eb76c5d9a8851735fd3ec5833ecf412e8921655
-
->  	ep->file = file;
->  	fd_install(fd, file);
-> diff --git a/include/uapi/linux/eventpoll.h b/include/uapi/linux/eventpoll.h
-> index 4f4b948ef3811..3bc0f4eed976c 100644
-> --- a/include/uapi/linux/eventpoll.h
-> +++ b/include/uapi/linux/eventpoll.h
-> @@ -89,9 +89,10 @@ struct epoll_params {
->  	__u32 busy_poll_usecs;
->  	__u16 busy_poll_budget;
->  	__u8 prefer_busy_poll;
-> +	__u8 event_poll_only:1;
->  
->  	/* pad the struct to a multiple of 64bits */
-> -	__u8 __pad;
-> +	__u8 __pad:7;
->  };
-
-If the above is accepted then a similar change should make its way
-into glibc, uclibc-ng, and musl. It might be easier to add an
-entirely new ioctl.
-
-All the above said: I'm not sure I'm convinced yet and having more
-clear data, descriptions, and answers on locality/syscall overhead
-would be very helpful.
-
-In the future, add 'net-next' to the subject line so that this
-targets the right tree:
-   [PATCH net-next] subject-line
-
-- Joe
 
