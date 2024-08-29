@@ -1,140 +1,125 @@
-Return-Path: <linux-kernel+bounces-306761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 934C496432F
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:36:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A7CB964335
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:37:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB201B26B73
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 11:36:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B01FB23E7D
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 11:37:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FDB9191F99;
-	Thu, 29 Aug 2024 11:36:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dW07G7AB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBA561922CD;
+	Thu, 29 Aug 2024 11:37:45 +0000 (UTC)
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6CF3190663;
-	Thu, 29 Aug 2024 11:36:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45F521BC4E;
+	Thu, 29 Aug 2024 11:37:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724931383; cv=none; b=DV13sWnzcKPHQXDLmHEoIMbGbdNmkr0/VS63dl9fKOT1TDSo/lz3SjTc+m4tcJXMFZVC6UU7qYUVbvXPYj1a73RculAfc4mVEtRgSQ1O+5ZVhLbvnrV2RLY0WHpg+fYAEhAZlkF66kvicNrMXcXa5jtcx26Dq7gBH1gOP1yb0Tc=
+	t=1724931465; cv=none; b=V6UqnopL9cDUYjyNZH7+eBYpI3J0OiowINWsaEsfxTzMQP+awFCKdtyf47yQpMPiRsMlk/a/YiDtwn7qWAmm6Gns78WdbkNHzIqS9ibGweQbwbGJpW54Y/GDzBZQo4XqtQWLs1Jel1zlF2hiI73J36exXy1zhUZWhP/XVtIutg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724931383; c=relaxed/simple;
-	bh=UV/VEcSLsr0IvtBSy3fvTXeCYqvLcRLTSiq34M3N3rA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OAOFDFzCdBCckQpo21q8c8CS1KWv7Xgo7dzsOtncVcVksKvY+Kl1KDnmKspW2vbQ64f+t1E3qynG+egSf8skTfBy5aWWdHcK6yqXR4JY9ArxeOAS1CBQyOUlHXiKtKz79oQ6WFyglzcDZRv16TZc0nDz9yAhSFSsF2r168QO5R4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dW07G7AB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F000C4CEC1;
-	Thu, 29 Aug 2024 11:36:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724931383;
-	bh=UV/VEcSLsr0IvtBSy3fvTXeCYqvLcRLTSiq34M3N3rA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=dW07G7AB6Kx2OLWQ1+e0SuzrToISOL3pQfIw8NnGP6I2AOKoEAjXDyGzg8p0sBITB
-	 IfDL76NLzdbjGdMLhgIxSoTxmnGcxb6FU63us++VqgfJB6twbjIIGUuGYyu0N8G95h
-	 u/p5OtWM/rde3YF5darRI0tOw1gBteQQI6yQrKVdpRa1eFXmYgqhRsDoGk5M9lWbVk
-	 wCs4FtHPXKLbl/Ly5mPLugRdDFXtByVYn4fSFsy8osC0jZ6xiLqdvxxE1d38vdQVUX
-	 BjK+eAnLF4FpcdClaJEU11zpvuGvRnuLpIxXLG0Jtx6oZ/MkeJk16N8tF7zQL4dmMs
-	 7hWDYCRhqjbpw==
-Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-3df0519a3ceso306542b6e.2;
-        Thu, 29 Aug 2024 04:36:23 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWpVgsEhXfeBq2JWJjTNhEuZZ+YJWkW7Lxi4bqw676+bd4UiOcWo/jYdMSuM/dpEli/jGVI8xYA1Tvi@vger.kernel.org, AJvYcCXj6gRlC4lCT3SL0jGBojxHbQxHQQp2CbITHhNs4GafgYPBCRIVrJR3cNA3GR0jsHB8firAikKQua37Oaeo@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy13fpUQA3w9mbP9PxvnbWfbMTtUFHkl3B8PhhS7o7bEMZ11g9N
-	3kSe+vszSawNF/0y2/5aTiX/k6xGxi3ge21RTYThcN2b51nUWrt/UCFSUfuPPpj97Tk9fonGpZv
-	FTPzCSmI7STSZWpPFUTwPoPqS0yc=
-X-Google-Smtp-Source: AGHT+IGRLMLDjKP7Mea2/P9G2bPD+iq2B4CkR78+Jl3o7ZHDib6Cg9ZOf5XNWtJFTZHgpNYZcaE4ghppbb8Rd2Zb5jM=
-X-Received: by 2002:a05:6808:1799:b0:3da:adc3:4a83 with SMTP id
- 5614622812f47-3df05f08b5cmr2536327b6e.51.1724931382475; Thu, 29 Aug 2024
- 04:36:22 -0700 (PDT)
+	s=arc-20240116; t=1724931465; c=relaxed/simple;
+	bh=oOQOr+p9coOi9gUPDNiWFW8vOQny+mAQ1S6UKIjr+p4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ccLelaJH54Cpx8si2AnCG//2HE6ug8BPd0bTPIrmIbicH6hLkrwP2IkM8CbUJHFc2FmutZ8VtLegAH8ZFU9EL1EjfC8RieqPSqM/q6FSbxmijE4Oq2gWrelhb9puchlnZypXWdjnxgDU1EKPXORs3OL3OjJpns2ZgSpa3Oxv1AA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de; spf=fail smtp.mailfrom=denx.de; arc=none smtp.client-ip=46.255.230.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=denx.de
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id E8A011C0082; Thu, 29 Aug 2024 13:37:40 +0200 (CEST)
+Date: Thu, 29 Aug 2024 13:37:40 +0200
+From: Pavel Machek <pavel@denx.de>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org,
+	kuba@kernel.org, linan122@huawei.com, dsterba@suse.com,
+	song@kernel.org, tglx@linutronix.de, viro@zeniv.linux.org.uk,
+	christian.brauner@ubuntu.com, keescook@chromium.org
+Subject: Re: [PATCH 6.1 000/321] 6.1.107-rc1 review
+Message-ID: <ZtBdhPWRqJ6vJPu3@duo.ucw.cz>
+References: <20240827143838.192435816@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240826233437.19632-1-00107082@163.com>
-In-Reply-To: <20240826233437.19632-1-00107082@163.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 29 Aug 2024 13:36:11 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0jjwFcs-w7c6tjzuZFdAdsOb7S_4yMvqVoJn_LmOiWJTA@mail.gmail.com>
-Message-ID: <CAJZ5v0jjwFcs-w7c6tjzuZFdAdsOb7S_4yMvqVoJn_LmOiWJTA@mail.gmail.com>
-Subject: Re: [PATCH] acpi/_DSM: Add rev/func to warning message when
- acpi_evaluate_dsm failed.
-To: David Wang <00107082@163.com>
-Cc: rafael@kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="+UEXMl8Ve75Dvp+Q"
+Content-Disposition: inline
+In-Reply-To: <20240827143838.192435816@linuxfoundation.org>
+
+
+--+UEXMl8Ve75Dvp+Q
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 27, 2024 at 1:35=E2=80=AFAM David Wang <00107082@163.com> wrote=
-:
->
-> When acpi_evaluate_dsm failed, the warning message lacks the rev
-> and func information which is available and helpful.
-> For example, iwlwifi would make _DSM queries for lari config,
-> and when it failed, all warning messages are all the same:
->   ACPI: \: failed to evaluate _DSM bf0212f2-788f-c64d-a5b3-1f738e285ade (=
-0x1001)
->   ACPI: \: failed to evaluate _DSM bf0212f2-788f-c64d-a5b3-1f738e285ade (=
-0x1001)
->   ACPI: \: failed to evaluate _DSM bf0212f2-788f-c64d-a5b3-1f738e285ade (=
-0x1001)
->   ACPI: \: failed to evaluate _DSM bf0212f2-788f-c64d-a5b3-1f738e285ade (=
-0x1001)
->   ACPI: \: failed to evaluate _DSM bf0212f2-788f-c64d-a5b3-1f738e285ade (=
-0x1001)
->   ACPI: \: failed to evaluate _DSM bf0212f2-788f-c64d-a5b3-1f738e285ade (=
-0x1001)
->   ACPI: \: failed to evaluate _DSM bf0212f2-788f-c64d-a5b3-1f738e285ade (=
-0x1001)
->   ACPI: \: failed to evaluate _DSM bf0212f2-788f-c64d-a5b3-1f738e285ade (=
-0x1001)
-> With this patch, the warnings would be more informative:
->   ACPI: \: failed to evaluate _DSM bf0212f2-788f-c64d-a5b3-1f738e285ade r=
-ev:0 func:1 (0x1001)
->   ACPI: \: failed to evaluate _DSM bf0212f2-788f-c64d-a5b3-1f738e285ade r=
-ev:0 func:6 (0x1001)
->   ACPI: \: failed to evaluate _DSM bf0212f2-788f-c64d-a5b3-1f738e285ade r=
-ev:0 func:7 (0x1001)
->   ACPI: \: failed to evaluate _DSM bf0212f2-788f-c64d-a5b3-1f738e285ade r=
-ev:0 func:8 (0x1001)
->   ACPI: \: failed to evaluate _DSM bf0212f2-788f-c64d-a5b3-1f738e285ade r=
-ev:0 func:3 (0x1001)
->   ACPI: \: failed to evaluate _DSM bf0212f2-788f-c64d-a5b3-1f738e285ade r=
-ev:0 func:9 (0x1001)
->   ACPI: \: failed to evaluate _DSM bf0212f2-788f-c64d-a5b3-1f738e285ade r=
-ev:0 func:10 (0x1001)
->   ACPI: \: failed to evaluate _DSM bf0212f2-788f-c64d-a5b3-1f738e285ade r=
-ev:0 func:12 (0x1001)
->
-> Signed-off-by: David Wang <00107082@163.com>
-> ---
->  drivers/acpi/utils.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/acpi/utils.c b/drivers/acpi/utils.c
-> index ae9384282273..6de542d99518 100644
-> --- a/drivers/acpi/utils.c
-> +++ b/drivers/acpi/utils.c
-> @@ -801,7 +801,8 @@ acpi_evaluate_dsm(acpi_handle handle, const guid_t *g=
-uid, u64 rev, u64 func,
->
->         if (ret !=3D AE_NOT_FOUND)
->                 acpi_handle_warn(handle,
-> -                                "failed to evaluate _DSM %pUb (0x%x)\n",=
- guid, ret);
-> +                                "failed to evaluate _DSM %pUb rev:%lld f=
-unc:%lld (0x%x)\n",
-> +                                guid, rev, func, ret);
->
->         return NULL;
->  }
-> --
+Hi!
 
-Applied as 6.12 material with some edits in the subject and changelog, than=
-ks!
+> This is the start of the stable review cycle for the 6.1.107 release.
+> There are 321 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+
+I believe these have problems:
+
+> Jakub Kicinski <kuba@kernel.org>
+>     net: don't dump stack on queue timeout
+
+This does not fix bug and will cause surprises for people parsing
+logs, as changelog explains
+
+> Christian Brauner <brauner@kernel.org>
+>     binfmt_misc: cleanup on filesystem umount
+
+Changelog explains how this may cause problems. It does not fix a
+bug. It is overly long. It does not have proper signoff by stable team.
+
+> Li Nan <linan122@huawei.com>
+>     md: clean up invalid BUG_ON in md_ioctl
+
+Cleanup, not a bugfix.
+
+> David Sterba <dsterba@suse.com>
+>     btrfs: change BUG_ON to assertion in tree_move_down()
+
+Cleanup, not a bugfix.
+
+> David Sterba <dsterba@suse.com>
+>     btrfs: delete pointless BUG_ON check on quota root in btrfs_qgroup_ac=
+count_extent()
+
+Cleanup, not a bugfix.
+
+> Guanrui Huang <guanrui.huang@linux.alibaba.com>
+>     irqchip/gic-v3-its: Remove BUG_ON in its_vpe_irq_domain_alloc
+
+Cleanup, not a bugfix.
+
+Best regards,
+								Pavel
+--=20
+DENX Software Engineering GmbH,        Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--+UEXMl8Ve75Dvp+Q
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZtBdhAAKCRAw5/Bqldv6
+8tQUAJ9HIPFJUPF4wxNqBq5iLMnUY3rDDACfdcK/yVH0iytrgvodz5nsyuiliN4=
+=3O9Z
+-----END PGP SIGNATURE-----
+
+--+UEXMl8Ve75Dvp+Q--
 
