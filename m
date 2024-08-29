@@ -1,161 +1,84 @@
-Return-Path: <linux-kernel+bounces-306279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE184963C91
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 09:17:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C98A0963C62
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 09:16:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 318EEB21A10
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 07:17:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 088AC1C237D5
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 07:16:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ACFF189912;
-	Thu, 29 Aug 2024 07:16:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1450D16D4CA;
+	Thu, 29 Aug 2024 07:16:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="TjlS0Dp3"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="BKdnPUrZ"
+Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48793189909
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 07:16:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F29EF14A0A8
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 07:16:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724915786; cv=none; b=NmzcHsaGl3esUvQbjBvYCayKVOG0cP0Q16AcYTjhjWhamXwKeP+uTUjAmKoOGM/u5xy2vIJcH+gIbaSuJMkyFRUabFozM/bi0FNs1JAPQA6ZfU32Y04hp3W9JzLJJ9bOd0RllZAUBikQ6fkbCxLuZTkoZDhPMTlV85Ft+bSa5Lc=
+	t=1724915771; cv=none; b=r9h5GI+OHI4OAZNF2bTb/2pd8hJeGvbEaVxjOmpqI7FWzeViWnRjNaiug51nXXDvMR8VFwAw9pqnrNc/+34HE4PqmMxL/ZMMEdG5R9Ky5mN0im63tybbe4QdpDLDGqedIALD9+HB7FYibfE03FyeWMSC+XXGgixlGYt6TEaFkX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724915786; c=relaxed/simple;
-	bh=awlA0FQ8vwXq3Nn6i3BedGsUxTSd4n1W8+rk6Ti/shY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=t/S1qh86OevMVzteq77kWHbK7+b+oCpFJzfLcjJv/VYqFx+WKJFkqy45/q4Ls3hZ9tYVyq5Plz3Ff75Zy2Sy+f4VzPwqlR9QayLuIxJpbTOangL5CnWySzUVPVGpQKVT+V70oM7wPvrzNbufOghXTM1K6rIPCocDf+cTbJ2yYM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=TjlS0Dp3; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-714287e4083so326944b3a.2
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 00:16:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1724915783; x=1725520583; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=eRZz0v4roamBPZuEY8lRo6reatKDFS+11+O4EIK+5eU=;
-        b=TjlS0Dp3sIxhtH7AFdqO92T0ekVteFvdM+sCF5XyVv3XoycyrhONnJ5b6l4bIU+OXU
-         +sM9soxzMteqCXnirEEXJSH9rVi3ilb/X8s8bRYA+g3lYee7AhNvl7VtDS6pnFaMhxTv
-         0HSYtb06lIjFA3ce2rAstRVnUeVgtcdW+ZLvQoT8WeAljgbzOTABTuwyPcKoCY8Tvrp+
-         ZKgYGOxjv5kvmn3JSuEi2pmb5ig94MwY0FU++0EWq+ww/K0g6vcSjogl5p2zAQLbxPYz
-         k1m/GWaNu+Y8K7iyqjo91CJA67a0L83bX3b5HOFeosk1frp1SEtBuzxs/5nrEhHdyynv
-         SYrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724915783; x=1725520583;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eRZz0v4roamBPZuEY8lRo6reatKDFS+11+O4EIK+5eU=;
-        b=queHhIpuUYvNpAvsDqnEr22A+WGX0B1yQUKY5ZhV6jFQ8TSSqGhIKQxC2ZGrEPrfEz
-         4jaj/XH0DoCY7bV4+IFMBnAbZZC4pS+IKbX7qWREGNilpMXnGPWQLzcdI7UvYK2GbaoA
-         /gZZ36t9+XklLWdsEV0q53BexJIxrAK+ENNPp5Hkev81mZReT92785GO++jEZd98idVy
-         dU7GbQM8jRvJ1uMUcvRGJPhiPTt+ZPHMNHy3bo4GfMTAi1zed5JNGV1WtMDhudAUxxPE
-         1sh6SVueahqjR89GklxZpEajC9/QSUpfIANY3HqUGfJ8rNFY/81g4AT4A59jUyvNDUJ3
-         P/xQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUMM6WsHxSf5ZWFzWDBKpvU4+CeAeD0Tbn4xR89vSUIac0pt1d74965HHdizNYD/Itl8C9QP0Z+Z5LmxY0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yya7zBntDsEC97hPJc+beIFyk4qlwmVprmHFk+qIvvv4+ocrvZR
-	8vjeP16dmA8PAyQdiVHx+jK8cFZ9LVu4OWNjB+FGEBBWd0mmI9/BMTKYc3QDNlk=
-X-Google-Smtp-Source: AGHT+IESlo3+HNMz8Vyf9gnK2kr34iORO0t8ZckMgQQJOrmm4rJ0EngcQswLax6rU2xQbGZPh7/0eg==
-X-Received: by 2002:a05:6a20:6f88:b0:1c4:7dbc:d21a with SMTP id adf61e73a8af0-1cce104dce4mr1887803637.32.1724915783368;
-        Thu, 29 Aug 2024 00:16:23 -0700 (PDT)
-Received: from charlie.ba.rivosinc.com ([64.71.180.162])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7d22e9bef08sm581976a12.58.2024.08.29.00.16.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 00:16:22 -0700 (PDT)
-From: Charlie Jenkins <charlie@rivosinc.com>
-Date: Thu, 29 Aug 2024 00:16:00 -0700
-Subject: [PATCH RFC v2 3/4] mm: Support MAP_BELOW_HINT in
- vm_unmapped_area()
+	s=arc-20240116; t=1724915771; c=relaxed/simple;
+	bh=8BPOSniWHrQvyGuJwHUdifQmH4rIEpBku5MkeNEdRyk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lRhXGYtx0NCMCqZQbeojU26ZuasdmH9MvJDfZkYWC6Q6UlQhEYzthhnjGxH3kmSvRxJ10uZnFB71Lyid10u9oKu8NYK2d42uX4BKkkmhsNyfE2CIGgkyWgQs9uWnpH19ln+BqLwvyLKgbe1J4ZjHNqtu9vzwhMppu03ZVkfRhBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=BKdnPUrZ; arc=none smtp.client-ip=91.218.175.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1724915764;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=i0xeUGCoMFjPpXS2CoMByWeQ2WkworfO2h9ojNKikDc=;
+	b=BKdnPUrZ6noU8tgVCXevmJGCnRSxEavE+YxglUD1ePg89mqvsqLcft0uTmhFdNSotZVHTP
+	2rgD509Se+g8J6h6yUoGIVCZ+rVvfi8ZDEDTryqW8CvytdVAH1yFvIMiEh2hXJRFRUs+UW
+	KvzNn1syB2z0v4PWwSV0IHuhNrbeE1Q=
+From: Kunwu Chan <kunwu.chan@linux.dev>
+To: konishi.ryusuke@gmail.com
+Cc: linux-nilfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Kunwu Chan <chentao@kylinos.cn>
+Subject: [PATCH] nilfs2: Remove duplicate 'unlikely()' usage
+Date: Thu, 29 Aug 2024 15:16:00 +0800
+Message-ID: <20240829071600.30706-1-kunwu.chan@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240829-patches-below_hint_mmap-v2-3-638a28d9eae0@rivosinc.com>
-References: <20240829-patches-below_hint_mmap-v2-0-638a28d9eae0@rivosinc.com>
-In-Reply-To: <20240829-patches-below_hint_mmap-v2-0-638a28d9eae0@rivosinc.com>
-To: Arnd Bergmann <arnd@arndb.de>, 
- Richard Henderson <richard.henderson@linaro.org>, 
- Ivan Kokshaysky <ink@jurassic.park.msu.ru>, 
- Matt Turner <mattst88@gmail.com>, Vineet Gupta <vgupta@kernel.org>, 
- Russell King <linux@armlinux.org.uk>, Guo Ren <guoren@kernel.org>, 
- Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, 
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, 
- Helge Deller <deller@gmx.de>, Michael Ellerman <mpe@ellerman.id.au>, 
- Nicholas Piggin <npiggin@gmail.com>, 
- Christophe Leroy <christophe.leroy@csgroup.eu>, 
- Naveen N Rao <naveen@kernel.org>, 
- Alexander Gordeev <agordeev@linux.ibm.com>, 
- Gerald Schaefer <gerald.schaefer@linux.ibm.com>, 
- Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
- Christian Borntraeger <borntraeger@linux.ibm.com>, 
- Sven Schnelle <svens@linux.ibm.com>, 
- Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>, 
- John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
- "David S. Miller" <davem@davemloft.net>, 
- Andreas Larsson <andreas@gaisler.com>, Thomas Gleixner <tglx@linutronix.de>, 
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
- Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
- "H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>, 
- Peter Zijlstra <peterz@infradead.org>, Muchun Song <muchun.song@linux.dev>, 
- Andrew Morton <akpm@linux-foundation.org>, 
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
- Vlastimil Babka <vbabka@suse.cz>, 
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Shuah Khan <shuah@kernel.org>
-Cc: linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-alpha@vger.kernel.org, linux-snps-arc@lists.infradead.org, 
- linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org, 
- loongarch@lists.linux.dev, linux-mips@vger.kernel.org, 
- linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
- linux-s390@vger.kernel.org, linux-sh@vger.kernel.org, 
- sparclinux@vger.kernel.org, linux-mm@kvack.org, 
- linux-kselftest@vger.kernel.org, Charlie Jenkins <charlie@rivosinc.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=991; i=charlie@rivosinc.com;
- h=from:subject:message-id; bh=awlA0FQ8vwXq3Nn6i3BedGsUxTSd4n1W8+rk6Ti/shY=;
- b=owGbwMvMwCHWx5hUnlvL8Y3xtFoSQ9oFBUtNRaX7W4IPbnI+Ms3hivNnCcHEiLSn/wN2Mfr8Y
- bUwSP3TUcrCIMbBICumyMJzrYG59Y5+2VHRsgkwc1iZQIYwcHEKwES8tjMyvNn0V3yhfGTAnNVL
- rI6JakxSy1zhtaNTK7Nm7eOzb9jnWDIy3NjktX5Wn9/XRXLVu44d2/Xri3n+zz1GZcf0P1w88Pv
- nEX4A
-X-Developer-Key: i=charlie@rivosinc.com; a=openpgp;
- fpr=7D834FF11B1D8387E61C776FFB10D1F27D6B1354
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-To ensure that all memory allocations comply with the new MAP_BELOW_HINT
-flag, set the high_limit in vm_unmapped_area() to the hint address +
-length at most. All callers to this function set the high_limit to
-something reasonable, usually with space for a random offset and a gap
-for the stack. To respect the provided high_limit, take the minimum of
-hint+length and the given high_limit.
+From: Kunwu Chan <chentao@kylinos.cn>
 
-Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+nested unlikely() calls, IS_ERR already uses unlikely() internally
+
+Signed-off-by: Kunwu Chan <chentao@kylinos.cn>
 ---
- mm/mmap.c | 3 +++
- 1 file changed, 3 insertions(+)
+ fs/nilfs2/page.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/mm/mmap.c b/mm/mmap.c
-index 34ba0db23678..459ad380c673 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -1766,6 +1766,9 @@ unsigned long vm_unmapped_area(struct vm_unmapped_area_info *info)
- {
- 	unsigned long addr;
+diff --git a/fs/nilfs2/page.c b/fs/nilfs2/page.c
+index 7797903e014e..9c0b7cddeaae 100644
+--- a/fs/nilfs2/page.c
++++ b/fs/nilfs2/page.c
+@@ -262,7 +262,7 @@ int nilfs_copy_dirty_pages(struct address_space *dmap,
+ 			NILFS_FOLIO_BUG(folio, "inconsistent dirty state");
  
-+	if (info->hint != 0 && info->mmap_flags & MAP_BELOW_HINT)
-+		info->high_limit = MIN(info->high_limit, info->hint + info->length);
-+
- 	if (info->flags & VM_UNMAPPED_AREA_TOPDOWN)
- 		addr = unmapped_area_topdown(info);
- 	else
-
+ 		dfolio = filemap_grab_folio(dmap, folio->index);
+-		if (unlikely(IS_ERR(dfolio))) {
++		if (IS_ERR(dfolio)) {
+ 			/* No empty page is added to the page cache */
+ 			folio_unlock(folio);
+ 			err = PTR_ERR(dfolio);
 -- 
-2.45.0
+2.41.0
 
 
