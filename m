@@ -1,172 +1,95 @@
-Return-Path: <linux-kernel+bounces-306010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F5049637FA
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 03:48:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 120079637F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 03:48:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E6EF285433
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 01:48:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C49A72854C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 01:48:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36DCC3A1A8;
-	Thu, 29 Aug 2024 01:48:03 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95BB625777;
+	Thu, 29 Aug 2024 01:48:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sPjHqwAC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FF278814;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D533D134B1;
 	Thu, 29 Aug 2024 01:47:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724896082; cv=none; b=bHMPbxqpB2bpj/kS266llMc0GZzV6gGJulzZY9/9K/+tNeDE3ZAOIeBYRIVpqtT86yr8JXP4w/xecTdqpM9rg5LYYhWxu+Zke30orxdN3FjtwkLu2+BaFzOmeMKYzjFWiPltnp6GUu4uIKAEvy/mJo/vaUlUNMg34MEpSm/0y30=
+	t=1724896079; cv=none; b=KbJj90r1FLWh7Nxy2KC2aTQ6jPc1dCKqotblbSBnir+DPGAWxc+qgK+WkMUKImuF5QB9Ozf9zwRDCXkO6CZB2sKrs6MNP7JuTmtkv7PLRj6UiulbiXL9d52oX2/yqHRZSuDvEzetuc8B3ElNGOwHkHBBxKcBuutSsd2ZvqEWNQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724896082; c=relaxed/simple;
-	bh=65uLomZEV8871d1GCTHmy9S9rvjIdMtAIZRCgEbyMlE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=pjUyUP4Tq65H0CH7pxy1nQkoEnDoSY+MTkUN0RCt2zhzI0evHY2EWj2ynMdMt1M0vIDL8Yg5nCCzQNZ48RJmyDEZJ8PjebzzsL6Hs9Rjdy4+iGxVMiUjjrMVynpnYaK483hGRn0KTpEb4E86kD4vNpYpgiBphlQV6WuZhxzDnVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WvPJ01sthzfbTG;
-	Thu, 29 Aug 2024 09:45:52 +0800 (CST)
-Received: from dggpeml500022.china.huawei.com (unknown [7.185.36.66])
-	by mail.maildlp.com (Postfix) with ESMTPS id 746B61800D2;
-	Thu, 29 Aug 2024 09:47:56 +0800 (CST)
-Received: from [10.67.111.104] (10.67.111.104) by
- dggpeml500022.china.huawei.com (7.185.36.66) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 29 Aug 2024 09:47:56 +0800
-Message-ID: <1bf791fc-0990-4f7a-9879-f0677bc1628f@huawei.com>
-Date: Thu, 29 Aug 2024 09:47:55 +0800
+	s=arc-20240116; t=1724896079; c=relaxed/simple;
+	bh=o0U7VzoKwXIiZbLPwvoM55Hldh1xPTlmKmC9yrytIvs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UpQPtPtEEAV9zAtxKqcrLEznzEUXJrQUMjKb46XNkASH2gMCSLcn16N0i6GoypSx08Qzh6PzL4x6aB0HOkqzSHjgZSemurfiswNLjp+u5sxDjRh/CI0zc+/iIdvbBPu2Gk+BYkplOmG/lfp5oBvSMicWB3yVn7boSsVST3HMKx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sPjHqwAC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE1B6C4CEC0;
+	Thu, 29 Aug 2024 01:47:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724896079;
+	bh=o0U7VzoKwXIiZbLPwvoM55Hldh1xPTlmKmC9yrytIvs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sPjHqwAClCFlB5skqAP2DeXsiXObUIH0CeUsM4W1QiOBYxSFSU3/mgsjOGiVXq3F1
+	 6WMpwxR59UKlPoiQw6ziOF0u05iNxRYMEuhiZadfUdoEBx6NUayYdxznZdKfbbO6c2
+	 xxpI2u+IAgDMuQQsHgOUirj4L4OfsW3zXtOg/L7R85f6w3TDh/9Olnh9H5EOGN23B4
+	 uXyLazFLcDfnRBl+84oYL6V/PgbjbjPEwyRK8am1qu1jA3L6R88TxWUr/sE83p4LOe
+	 576+h+GV8Iby146ymDuFshkGHljKB7kGrOZY7njBP6qzpNlMR/oIvJLId/F48iJ16r
+	 t44sMuiC7aTnQ==
+Date: Wed, 28 Aug 2024 18:47:59 -0700
+From: Kees Cook <kees@kernel.org>
+To: kernel test robot <lkp@intel.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Vlastimil Babka <vbabka@suse.cz>, Arnd Bergmann <arnd@arndb.de>
+Subject: Re: include/linux/slab.h:552:15: error: type defaults to 'int' in
+ declaration of 'kmem_buckets_create'
+Message-ID: <202408281843.D8948B2@keescook>
+References: <202408280559.FIsoHAAc-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] net: ipa: make use of dev_err_cast_probe()
-To: Alex Elder <elder@ieee.org>, Simon Horman <horms@kernel.org>, Yuesong Li
-	<liyuesong@vivo.com>
-CC: <elder@kernel.org>, <davem@davemloft.net>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <opensource.kernel@vivo.com>
-References: <20240828160728.GR1368797@kernel.org>
- <5622e611-ce5d-4d0b-852f-759616f9452c@ieee.org>
-Content-Language: en-US
-From: Hongbo Li <lihongbo22@huawei.com>
-In-Reply-To: <5622e611-ce5d-4d0b-852f-759616f9452c@ieee.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- dggpeml500022.china.huawei.com (7.185.36.66)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202408280559.FIsoHAAc-lkp@intel.com>
 
+On Wed, Aug 28, 2024 at 05:21:04AM +0800, kernel test robot wrote:
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+> head:   3ec3f5fc4a91e389ea56b111a73d97ffc94f19c6
+> commit: b32801d1255be1da62ea8134df3ed9f3331fba12 mm/slab: Introduce kmem_buckets_create() and family
+> date:   8 weeks ago
+> config: x86_64-randconfig-072-20240827 (https://download.01.org/0day-ci/archive/20240828/202408280559.FIsoHAAc-lkp@intel.com/config)
+> compiler: gcc-11 (Debian 11.3.0-12) 11.3.0
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240828/202408280559.FIsoHAAc-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202408280559.FIsoHAAc-lkp@intel.com/
+> 
+> All errors (new ones prefixed by >>):
+> 
+>    arch/x86/include/asm/fpu/types.h:355:22: note: in expansion of macro 'PAGE_SIZE'
+>      355 |         u8 __padding[PAGE_SIZE];
+>          |                      ^~~~~~~~~
+>    arch/x86/include/asm/page_types.h:10:33: warning: "CONFIG_PAGE_SHIFT" is not defined, evaluates to 0 [-Wundef]
+>       10 | #define PAGE_SHIFT              CONFIG_PAGE_SHIFT
+>          |                                 ^~~~~~~~~~~~~~~~~
 
+This continues to be a problem with CONFIG_PAGE_SHIFT with this config,
+and is a known problem with no clear fix[1]. I think reports could be
+silenced for now.
 
-On 2024/8/29 9:27, Alex Elder wrote:
-> On 8/28/24 11:07 AM, Simon Horman wrote:
->> On Wed, Aug 28, 2024 at 04:41:15PM +0800, Yuesong Li wrote:
->>> Using dev_err_cast_probe() to simplify the code.
->>>
->>> Signed-off-by: Yuesong Li <liyuesong@vivo.com>
->>> ---
->>>   drivers/net/ipa/ipa_power.c | 5 ++---
->>>   1 file changed, 2 insertions(+), 3 deletions(-)
->>>
->>> diff --git a/drivers/net/ipa/ipa_power.c b/drivers/net/ipa/ipa_power.c
->>> index 65fd14da0f86..248bcc0b661e 100644
->>> --- a/drivers/net/ipa/ipa_power.c
->>> +++ b/drivers/net/ipa/ipa_power.c
->>> @@ -243,9 +243,8 @@ ipa_power_init(struct device *dev, const struct 
->>> ipa_power_data *data)
->>>       clk = clk_get(dev, "core");
->>>       if (IS_ERR(clk)) {
->>> -        dev_err_probe(dev, PTR_ERR(clk), "error getting core clock\n");
->>> -
->>> -        return ERR_CAST(clk);
->>> +        return dev_err_cast_probe(dev, clk,
->>> +                "error getting core clock\n");
->>>       }
->>>       ret = clk_set_rate(clk, data->core_clock_rate);
->>
->> Hi,
->>
->> There are lot of clean-up patches floating around at this time.
->> And I'm unsure if you are both on the same team or not, but in
->> any case it would be nice if there was some co-ordination.
->> Because here we have two different versions of the same patch.
->> Which, from a maintainer and reviewer pov is awkward.
-I apologize for causing confusion, and I will strive to submit patches 
-that are truly valuable in the future.
+-Kees
 
-Thanks,
-Hongbo
+[1] https://lore.kernel.org/all/85bb8bbc-f48d-46fd-aebb-03b2f7d3980a@app.fastmail.com/
 
-> 
-> I just noticed this (looking at the patch from Hongbo Li).
-> 
->> In principle the change(s) look(s) fine to me. But there are some minor
->> problems.
->>
->> 1. For the patch above, it should be explicitly targeted at net-next.
->>     (Or net if it was a bug fix, which it is not.)
->>
->>     Not a huge problem, as this is the default. But please keep this 
->> in mind
->>     for future posts.
->>
->>     Subject: [PATCH vX net-next]: ...
->>
->> 2. For the patch above, the {} should be dropped, as in the patch below.
-> 
-> Agreed.
-> 
->> 3. For both patches. The dev_err_cast_probe should be line wrapped,
->>     and the indentation should align with the opening (.
->>
->>         return dev_err_cast_probe(dev, clk,
->>                       "error getting core clock\n");
->>
->> I'd like to ask you to please negotiate amongst yourselves and
->> post _just one_ v2 which addresses the minor problems highlighted above.
-> 
-> Thank you Simon, you are correct and I appreciate your proposed
-> solution.  I'll await a followup patch (perhaps jointly signed
-> off?)
-> 
->                      -Alex
-> 
->> Thanks!
->>
->> On Wed, Aug 28, 2024 at 08:15:51PM +0800, Hongbo Li wrote:
->>> Using dev_err_cast_probe() to simplify the code.
->>>
->>> Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
->>> ---
->>>   drivers/net/ipa/ipa_power.c | 7 ++-----
->>>   1 file changed, 2 insertions(+), 5 deletions(-)
->>>
->>> diff --git a/drivers/net/ipa/ipa_power.c b/drivers/net/ipa/ipa_power.c
->>> index 65fd14da0f86..c572da9e9bc4 100644
->>> --- a/drivers/net/ipa/ipa_power.c
->>> +++ b/drivers/net/ipa/ipa_power.c
->>> @@ -242,11 +242,8 @@ ipa_power_init(struct device *dev, const struct 
->>> ipa_power_data *data)
->>>       int ret;
->>>       clk = clk_get(dev, "core");
->>> -    if (IS_ERR(clk)) {
->>> -        dev_err_probe(dev, PTR_ERR(clk), "error getting core clock\n");
->>> -
->>> -        return ERR_CAST(clk);
->>> -    }
->>> +    if (IS_ERR(clk))
->>> +        return dev_err_cast_probe(dev, clk, "error getting core 
->>> clock\n");
->>>       ret = clk_set_rate(clk, data->core_clock_rate);
->>>       if (ret) {
->>
-> 
-> 
+-- 
+Kees Cook
 
