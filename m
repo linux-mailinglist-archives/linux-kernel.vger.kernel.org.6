@@ -1,316 +1,238 @@
-Return-Path: <linux-kernel+bounces-306282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E9F7963C9F
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 09:20:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD9E5963CA0
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 09:20:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B3DB1F24F1D
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 07:20:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C92B01C24044
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 07:20:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E53C172BA8;
-	Thu, 29 Aug 2024 07:20:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D5CC17BED4;
+	Thu, 29 Aug 2024 07:20:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jAqIkgT2"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="WCBxHr7v"
+Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2079.outbound.protection.outlook.com [40.107.117.79])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B23D0210EE;
-	Thu, 29 Aug 2024 07:20:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724916024; cv=none; b=Zrw2OzhuKsM6/7aQXLy8FLZHdUds3ZIY2muS4OaoxGjaKBlrS+kLNKbQ6C+psxeR+fuqi/GNkQbK3RMQkjPaJS9Z/DM2AmG8oY0TlWEXB/C9tY/CiH+htsLd2yuiioEhdSCsHt2bBDgWIW2hJbWGjUc7RKJ0QW+fw9uahxHClyk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724916024; c=relaxed/simple;
-	bh=WYPa1rZUXSZPFuRJF6ekwyZIujiw0R1PqzJqfS34Ds8=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=OnOu2fY5NMNL4PLcgHfI3z2BSa79h4+RNqOID4a101WvnrTH7t8U/O3LCuth6MJWMuLLvmeeN9ni90FIxwpR5JbeDhQFceCdNg7dxU84G2lKjIVx3ycYRZ5o/FOUI05DTe+6rIhfDc1gKElrxmxXShsk8gyhReeh78p5ERx5P6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jAqIkgT2; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724916022; x=1756452022;
-  h=message-id:date:mime-version:from:subject:to:cc:
-   references:in-reply-to:content-transfer-encoding;
-  bh=WYPa1rZUXSZPFuRJF6ekwyZIujiw0R1PqzJqfS34Ds8=;
-  b=jAqIkgT29KdJgbgf0TRC5EpE0fM1e/hekBunwdOZbK8Vl25U9x8GtvNH
-   yI+E0Cvs+oCuX8NULUOPtJ99POQ2szdz7+JHH7r5dSc4zZRM4wHvsPH/X
-   PzKtu2agPny/MZ1ElB1jn0fKAd5XeMw7ywjAhAShJ3rEgKlNIww8TJ9cf
-   CUgIfQ4TBxh13oRcHIjQBeaBjpGo1oezcBaCrqr5h/zyfMAxoxWcGci05
-   STYlgSvDvLsPymv+kFBOV7IjPAXMS5rPunm86SniA2CeEVkbRFC67CxK1
-   43TVd6L2/Oyux9FpWMjQybKXefLscj/xw24Uwg0qYhgoD3ziiocSD+2o3
-   w==;
-X-CSE-ConnectionGUID: cyRhEufkSkO6F01pgykbYA==
-X-CSE-MsgGUID: sjMc7uBJSUmH3MJkQwl8ew==
-X-IronPort-AV: E=McAfee;i="6700,10204,11178"; a="34889540"
-X-IronPort-AV: E=Sophos;i="6.10,185,1719903600"; 
-   d="scan'208";a="34889540"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 00:20:21 -0700
-X-CSE-ConnectionGUID: Py+tC13iS2akyApHe2FmPg==
-X-CSE-MsgGUID: OdtLSfsJTN+BMSv5DMGR+g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,185,1719903600"; 
-   d="scan'208";a="67850445"
-Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.245.115.59])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 00:20:15 -0700
-Message-ID: <5235e05e-1d73-4f70-9b5d-b8648b1f4524@intel.com>
-Date: Thu, 29 Aug 2024 10:20:11 +0300
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C32A4210EE;
+	Thu, 29 Aug 2024 07:20:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.79
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724916032; cv=fail; b=agBkmZ/0P+VOy/kUEj2cYv3MKbpseQLGJuplNGdw+rRhQKWTZxjIKYYTt1ye4eIAKEteiP4hwuMGZCwqh3mqnoI+nJDZUUm21AdL2xpCdR7B+BeTZtVm1VsVBoWbS/rzPGIo5NcVbAzzF/JdcOkjQy7IWMuljoU5sDg8Isg+dDU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724916032; c=relaxed/simple;
+	bh=IWKSC3pDAGk7yBzUnitDGYZL3fnx3ApY4CElOZPiako=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=kloulrGaHROBeqEp2E8FBat3eZVdkuPkosbXXW/aiR0mBhWIqvq1qUuGOVLaPjK6SpGGp7AiR7SXexwKQv9IFSLFy0XiBQRN2RP5zX8k+glZxHgjKrmNiTEBp2aqZr0d77LGAO6T3yoSbl2Wc17D+4a0G/jYuigF7w1Z7awQwI0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=WCBxHr7v; arc=fail smtp.client-ip=40.107.117.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=EmwNJKsZKKPuxqgwcgjov3tjnmEPZC0gFErG7S4/Sym/i9trw9pMzUW7iyu26opJd0DF82yqXWnVAHpSGr5qfm9PqlLMmXa08xbhyckHNlJthCFX4wzh0dthgt1ZQZl2pxmO3yJGZ816gTa3eoDH/SxeBF0gbf57a6I6ikjWx1QkAacvql5w82qHHoiGkmkVBbRgT0TnAT+IP2Vi2I7Lt/un7RPP0U1dXu9tl58OQXLVrvezyV+yU6EBO4xKrRk/2i5Vbfr3fka5Pi4rJP3D0eLje0oCwlU60Kw8DycY8dCf9JmSkqPCh1lVhO5Wb6fr2yx2SVCFV+3bXD5i8NZ6TA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Y0Tztwz7vGOnGQh4vVk71C5hgRJ1H1K201FaQMm3bko=;
+ b=C6bx8KyXgGt9gonWzNZ9h0jcvX6q/3m9Y0Rs22ytLNnzmB0rfadPIFJ1SfZsnmh6lF46c+obb3Eb6O/6rO4GLaDvmV4LiwSMfAa7r4Sm4EpQQ/fKRnl5VQ5gvAXk052ZNkjR280uSos0roo090EMXkN0KJR43OK9/89ovXeMRjzgT6ihxoCtqnwQkY9l58a2w/uxw/Kmo50Q3+W6kO2geTOHkoeFHncUNPvai88mE59UT4lndZTvywSFmImBbkpQfNZJyTuYx7rhjbS5xKyzhkK/SkcACEouiRtDVU/i+2l2974tO5lz25d6b45x3lDm2pXO/zyJjwkXFE1nDZEozA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Y0Tztwz7vGOnGQh4vVk71C5hgRJ1H1K201FaQMm3bko=;
+ b=WCBxHr7vAFWtJebfFl1CPUkFB6gBGaXdvd2YKHAb6SMqVYjiUyP1xO5fejyY1m+udddLandElxOn3vZ5kp43OGxp5GBO8KrQJpU00RQxcSz2fxHyUH6xQrbvjTMTZa4hsxU9Mgb3eRU1OeZU9PUHw+fZAe/b+n9FJ30jarBOfylcC2JlCpc4BPjLYECKq9SRkh/ywt6ili0FId4nefd1+wYDW4bjBMgP881OcUUKPcusk1iv3x8HzPBudUOSeTb0oNbhOKW6Fiv+L42Nsc2oTnwGmiLU/U2ZCQbbZbjUAFRNKOwoktv9xdDuhO5WBKKYEwW4SYeZcMvbkLjflLZd3Q==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from TYZPR06MB6263.apcprd06.prod.outlook.com (2603:1096:400:33d::14)
+ by TYSPR06MB6605.apcprd06.prod.outlook.com (2603:1096:400:47d::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Thu, 29 Aug
+ 2024 07:20:27 +0000
+Received: from TYZPR06MB6263.apcprd06.prod.outlook.com
+ ([fe80::bd8:d8ed:8dd5:3268]) by TYZPR06MB6263.apcprd06.prod.outlook.com
+ ([fe80::bd8:d8ed:8dd5:3268%6]) with mapi id 15.20.7897.027; Thu, 29 Aug 2024
+ 07:20:26 +0000
+From: Yang Ruibin <11162571@vivo.com>
+To: Lars-Peter Clausen <lars@metafoo.de>,
+	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	alsa-devel@alsa-project.org,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: opensource.kernel@vivo.com,
+	Yang Ruibin <11162571@vivo.com>
+Subject: [PATCH v1] ASoC: codecs: Simplify with dev_err_probe()
+Date: Thu, 29 Aug 2024 15:20:16 +0800
+Message-Id: <20240829072016.2329466-1-11162571@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TYCP286CA0322.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:3b7::11) To TYZPR06MB6263.apcprd06.prod.outlook.com
+ (2603:1096:400:33d::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Adrian Hunter <adrian.hunter@intel.com>
-Subject: Re: [PATCH v3 2/8] x86/virt/tdx: Remove 'struct field_mapping' and
- implement TD_SYSINFO_MAP() macro
-To: Kai Huang <kai.huang@intel.com>, dave.hansen@intel.com,
- kirill.shutemov@linux.intel.com, tglx@linutronix.de, bp@alien8.de,
- peterz@infradead.org, mingo@redhat.com, hpa@zytor.com,
- dan.j.williams@intel.com, seanjc@google.com, pbonzini@redhat.com
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
- rick.p.edgecombe@intel.com, isaku.yamahata@intel.com, chao.gao@intel.com,
- binbin.wu@linux.intel.com
-References: <cover.1724741926.git.kai.huang@intel.com>
- <9eb6b2e3577be66ea2f711e37141ca021bf0159b.1724741926.git.kai.huang@intel.com>
-Content-Language: en-US
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-In-Reply-To: <9eb6b2e3577be66ea2f711e37141ca021bf0159b.1724741926.git.kai.huang@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TYZPR06MB6263:EE_|TYSPR06MB6605:EE_
+X-MS-Office365-Filtering-Correlation-Id: f4fd70e3-a27a-4d50-af62-08dcc7fb0e06
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|52116014|1800799024|376014|38350700014|81742002;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?rw8gYGOg3mpERmadJv82ZK6os0HEZiHSjZETSamQb91uiMiCgY58iSL/rkOZ?=
+ =?us-ascii?Q?HkehPIev8MtZ19D6L4EhmRQafg0AJanS8ad8LfgLBneXbv3SEAxeBFfhIREi?=
+ =?us-ascii?Q?mVG3B1R9Lz36DDc6zzbn/0x/CVJIP/P6Jpm1XvxBe/40JoebZcih9VK7U67l?=
+ =?us-ascii?Q?kOrJW5zLui5bGUYsEU6SComLZ8+NJjWk7R2IGy3V6SrKnggRwOzcvzEZ/f0Y?=
+ =?us-ascii?Q?NGk/ZDXyWcQ7IlVz2YEuyY/RgObymBw1/bepCwm8lFOgQJ/eIouInGRqxYcQ?=
+ =?us-ascii?Q?n79tZCwDpWELbSVI+gTVortiFrI3JSUeedHZyQigEXmuphoW12uDEKKw3rkY?=
+ =?us-ascii?Q?3hD4fIVNMVZiE6FXQP6dOhOeRI9szXyaQofrcDOhjQNEMlWhOHN3XivZ9dPr?=
+ =?us-ascii?Q?f+KuVMSLh53jeR1JMJ662v/qOZtZcwUavYy4Hx1ltrNPJRdY4U1DDhQXrPx8?=
+ =?us-ascii?Q?1RyNCeh3badQQ3e9ruBnV4amrqRU95LQ3IeybEuBHlYCGwRQlO9GHlj0ql1i?=
+ =?us-ascii?Q?8lusRMYMEtpi1V45SVfJXEbCf5UFtzQbfYH3YhcQKEWa52WqzW1hxldUb4OW?=
+ =?us-ascii?Q?Fe3n8Rz9uCAJIpviNV2pRCLSp+Q9ZCY34P+n7OzBzOVUU+WX6q7km/KGkM+g?=
+ =?us-ascii?Q?+zMfdNZf9qVU18S/BeMfbJQ4GI6RxMnbZA3ZQtsJrKOwtKWBWJTj+RUCxL5F?=
+ =?us-ascii?Q?dN8+5CVxP7s/h1hiTsGcvBrbLaWwucEUl9I+1WcIcdhtW/xJ4VomzXP9rRdU?=
+ =?us-ascii?Q?jMfDxegYarownnWTjIPuDvcjF74jrypmPzNE1p77pF6hNSMrWdawuJ749MGb?=
+ =?us-ascii?Q?GBTdMzwxUtcR5OHUM/eAVzCWN/H2A67XRW3fH7s4khl7+i2xcQ9B4GvB2ExK?=
+ =?us-ascii?Q?UrIkZushA76LLdFekx2NhzVVre9yCuoX1XL8zEpyFoWRQEGNOJePhLf6JHNz?=
+ =?us-ascii?Q?MYz5I0vShgigv5xFgP6WGC870G0MO30t68DBtPtcGkqqkA6VwI+LDCIuTsMn?=
+ =?us-ascii?Q?pDHfV8E+5ZVTH1ljyACZEwzmvjAFwBGmk1/3t6vyjTzzlHjQAfDrz74cEqEp?=
+ =?us-ascii?Q?bi5DeGtNZkEqKeOqygqOImwshyqppQpenHOGwxhZlpAWQ9uVrSszfiMhfiWu?=
+ =?us-ascii?Q?urYHmHUo/FzUOGXwnbkAQV38SrWoMsHa9qIoWDZp6ljuQVNGLSSdMEBL0mSP?=
+ =?us-ascii?Q?Ee/eaLJty2LzqRxHMYeV7Gkqwa4uFVYFbXxPCY6/J1unLO5h3Dsnn7yQYqLw?=
+ =?us-ascii?Q?sUoV0TqAb+CqIXjBVsn3QpiR2LD3GwoqA4P1ffWk639AwktZKtcEDjmogxkw?=
+ =?us-ascii?Q?W/4aUOo498n6F5iO7AjW6eNg8z+tXTVgz0j5tZ/2HNSCcUU/cVO1T0uqisPC?=
+ =?us-ascii?Q?HBcM83DWCOqThiMfqOy5Dfzo9A3eVgBDsuyLXI/HFm9s09TBfXJNucG46nif?=
+ =?us-ascii?Q?KLT1PcQOrr0=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR06MB6263.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(52116014)(1800799024)(376014)(38350700014)(81742002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?dZ/jIFnYDiSGMOm2NRlENqxo7PeWv4kwgtex6fdx1c+dgtWKhjD2eDKEpQBJ?=
+ =?us-ascii?Q?T6c0JaqVyMZM+Ex9HRzZELDv9s7vOT9aN1ccForqIYRCZmZJn7rRw9v/PsKA?=
+ =?us-ascii?Q?o0oOM57iHOJjZ5vExf0yLLmGk+QSB7KedrNPALYNIEBs4L4wH0qSVOg016er?=
+ =?us-ascii?Q?NIlQ5GfW0RsNBNsb7zv6J2IuPAn5MXto4hd0Ik8UFiPVY1PihZeIWjnlf3qL?=
+ =?us-ascii?Q?WWRU3F0DzvU/yw+EmCPyl2tCKEFtqw26Ac2S8RewTq1PDwvUWVlLkWlp7n/T?=
+ =?us-ascii?Q?+CiAK2lKBvzWSkBle5OQQ7iJGM0NX8SlN1eetHU4LgE88LmdhpZFmt/SFp/v?=
+ =?us-ascii?Q?Juko5wSLulFY7E++ahCGfJonFIhlv4VrCQ0MQHzIN+P//po8b//vprruezpw?=
+ =?us-ascii?Q?Kvzf7sE08SQORsD6EIPp0itT1VQggP4ywzqFPmZYzia6dDmnMJGayWjzO9RH?=
+ =?us-ascii?Q?Eatr65rgx6IqNhW0p90WD8X3Tf/uPouzMUsJ2rUyWjMpTm7ns4XWvnvPBubO?=
+ =?us-ascii?Q?CDd/qFF3SUexXZNbw0QeAfnUib8/GQHwgBl+uZZ7rGr43/4h7wc/GVae/j4j?=
+ =?us-ascii?Q?PXZIDRfOA5BI6RdXO336L3OGvZW7+0yUD5viV/CjuWxDA33GgzbfbR9rkx7s?=
+ =?us-ascii?Q?fwog7Rn+HDBMjQmff3DW1WMYGbiTKXL0MHbjG5SVWyWrmuNQkGdUpT6EAQlK?=
+ =?us-ascii?Q?elh8SmIYjzrlj9USKGyRi/wDN0WMvGjp85r5pwSxvHJBVv8ZbJC3lyi48hAt?=
+ =?us-ascii?Q?uyQx5zmpAG0wPUN2tsYzZYpsR+Rt3XoHPqHSoDlWk0G6CIUyQxV8j45KxQyC?=
+ =?us-ascii?Q?af/m1PrdN/bwLnexl6f+5AAgaSCSa4h9ZPsb1ji4ojjrI4LEGfmIZZYA65rZ?=
+ =?us-ascii?Q?tIAxWH93DJ4qpUZx0DUny0LlLlytaEk1GtXa6js2+6zig3CyCvdj9kD3xAg1?=
+ =?us-ascii?Q?uo2r//ftk6ncrioS8JyER17dMSuhr+KRItXPTC+vlTF8QLxcLXKxB3RvgpTs?=
+ =?us-ascii?Q?OvTGqjtRdI9Q+qz24N82F5aMf+sJScZb7NHFAqab+1MpOIxpnNe/id5ths6P?=
+ =?us-ascii?Q?ObrIsDTturKJqfXO++C4wzQsbxG05kZGVFRhBafCbxk28MkBjOnFnoGxVpVr?=
+ =?us-ascii?Q?YLOJsrPTsHQEUExe1JMh6Y5MAxhlNWiigaaW9/KPqoaxGz1Ncg9H/r/SMOAo?=
+ =?us-ascii?Q?WYZs4ILADOQDDter1SBTWq806uEI1a7pNwaKnOnPHkfamO4ZQ986/nskuL3y?=
+ =?us-ascii?Q?n5DaCQ/LxsPv9vvo4k7UmHScYcryqSDo9aea5aUfZ04ncQOznLOzqwgzAWIw?=
+ =?us-ascii?Q?idekB7NutLusE67r1PXnmEf95B6wc6dPKkqWj07Sb7nrmXTVmzyrXMyrz8O+?=
+ =?us-ascii?Q?v4LgYdF28+pVPVd1YGhh9nBptHnp1aefLIhwkCRHeKwnPJCXp1aJuTkHAjig?=
+ =?us-ascii?Q?sh5QKzggkh1JfBLuVDMr3z1EG0LsfyEg+YR0nyfLf4sh2BRd1lemIQ/7GFun?=
+ =?us-ascii?Q?5fnBajZUHjzpZxKp9frsL20Ntn86zmozxaQajdcsnITziru/iRkVjhq3jK7X?=
+ =?us-ascii?Q?huiKiXo1xnw5OR/f6RIfwKygq/X0hV64O9tYX3nV?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f4fd70e3-a27a-4d50-af62-08dcc7fb0e06
+X-MS-Exchange-CrossTenant-AuthSource: TYZPR06MB6263.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Aug 2024 07:20:26.8081
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: nZ1VsDuigsG/eaWrXDEngxf4T5pt9EKpgESq/WH/fMFQI58EESySH+q8Hu4v1sTDVSfROnmvyBB+or4sRBF4GQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYSPR06MB6605
 
-On 27/08/24 10:14, Kai Huang wrote:
+Using dev_err_probe() instead of dev_err() in probe() simplifies
+the error path and standardizes the format of the error code.
 
-Subject could be "Simplify the reading of Global Metadata Fields"
+Signed-off-by: Yang Ruibin <11162571@vivo.com>
+---
+ sound/soc/codecs/ad1980.c   |  4 ++--
+ sound/soc/codecs/adau1701.c | 12 ++++++------
+ sound/soc/codecs/ssm2602.c  |  4 ++--
+ 3 files changed, 10 insertions(+), 10 deletions(-)
 
-> TL;DR: Remove the 'struct field_mapping' structure and use another way
-> to implement the TD_SYSINFO_MAP() macro to improve the current metadata
-> reading code, e.g., switching to use build-time check for metadata field
-> size over the existing runtime check.
-
-Perhaps:
-
-  Remove 'struct field_mapping' and let read_sys_metadata_field16() accept
-  the member variable address, simplifying the code in preparation for adding
-  support for more metadata structures and field sizes.
-
-> 
-> The TDX module provides a set of "global metadata fields".  They report
-
-Global Metadata Fields
-
-> things like TDX module version, supported features, and fields related
-> to create/run TDX guests and so on.
-> 
-> For now the kernel only reads "TD Memory Region" (TDMR) related global
-> metadata fields, and all of those fields are organized in one structure.
-
-The patch is self-evidently simpler (21 insertions(+), 36 deletions(-))
-so there doesn't seem to be any need for further elaboration.  Perhaps
-just round it off and stop there.
-
-  ... and all of those fields are organized in one structure,
-  but that will change in the near future.
-
-> 
-> The kernel currently uses 'struct field_mapping' to facilitate reading
-> multiple metadata fields into one structure.  The 'struct field_mapping'
-> records the mapping between the field ID and the offset of the structure
-> to fill out.  The kernel initializes an array of 'struct field_mapping'
-> for each structure member (using the TD_SYSINFO_MAP() macro) and then
-> reads all metadata fields in a loop using that array.
-> 
-> Currently the kernel only reads TDMR related metadata fields into one
-> structure, and the function to read one metadata field takes the pointer
-> of that structure and the offset:
-> 
->   static int read_sys_metadata_field16(u64 field_id,
->                                        int offset,
->                                        struct tdx_sys_info_tdmr *ts)
->   {...}
-> 
-> Future changes will need to read more metadata fields into different
-> structures.  To support this the above function will need to be changed
-> to take 'void *':
-> 
->   static int read_sys_metadata_field16(u64 field_id,
->                                        int offset,
->                                        void *stbuf)
->   {...}
-> 
-> This approach loses type-safety, as Dan suggested.  A better way is to
-> make it be ..
-> 
->   static int read_sys_metadata_field16(u64 field_id, u16 *val) {...}
-> 
-> .. and let the caller calculate the buffer in a type-safe way [1].
-> 
-> Also, the using of the 'struct field_mapping' loses the ability to be
-> able to do build-time check about the metadata field size (encoded in
-> the field ID) due to the field ID is "indirectly" initialized to the
-> 'struct field_mapping' and passed to the function to read.  Thus the
-> current code uses runtime check instead.
-> 
-> Dan suggested to remove the 'struct field_mapping', unroll the loop,
-> skip the array, and call the read_sys_metadata_field16() directly with
-> build-time check [1][2].  And to improve the readability, reimplement
-> the TD_SYSINFO_MAP() [3].
-> 
-> The new TD_SYSINFO_MAP() isn't perfect.  It requires the function that
-> uses it to define a local variable @ret to carry the error code and set
-> the initial value to 0.  It also hard-codes the variable name of the
-> structure pointer used in the function.  But overall the pros of this
-> approach beat the cons.
-> 
-> Link: https://lore.kernel.org/kvm/a107b067-861d-43f4-86b5-29271cb93dad@intel.com/T/#m7cfb3c146214d94b24e978eeb8708d92c0b14ac6 [1]
-> Link: https://lore.kernel.org/kvm/a107b067-861d-43f4-86b5-29271cb93dad@intel.com/T/#mbe65f0903ff7835bc418a907f0d02d7a9e0b78be [2]
-> Link: https://lore.kernel.org/kvm/a107b067-861d-43f4-86b5-29271cb93dad@intel.com/T/#m80cde5e6504b3af74d933ea0cbfc3ca9d24697d3 [3]
-
-Probably just one link would suffice, say the permalink to Dan's
-comment:
-
-https://lore.kernel.org/kvm/66b16121c48f4_4fc729424@dwillia2-xfh.jf.intel.com.notmuch/
-
-> Suggested-by: Dan Williams <dan.j.williams@intel.com>
-> Signed-off-by: Kai Huang <kai.huang@intel.com>
-> ---
-> 
-> v2 -> v3:
->  - Remove 'struct field_mapping' and reimplement TD_SYSINFO_MAP().
-> 
-> ---
->  arch/x86/virt/vmx/tdx/tdx.c | 57 ++++++++++++++-----------------------
->  1 file changed, 21 insertions(+), 36 deletions(-)
-> 
-> diff --git a/arch/x86/virt/vmx/tdx/tdx.c b/arch/x86/virt/vmx/tdx/tdx.c
-> index e979bf442929..7e75c1b10838 100644
-> --- a/arch/x86/virt/vmx/tdx/tdx.c
-> +++ b/arch/x86/virt/vmx/tdx/tdx.c
-> @@ -270,60 +270,45 @@ static int read_sys_metadata_field(u64 field_id, u64 *data)
->  	return 0;
->  }
->  
-> -static int read_sys_metadata_field16(u64 field_id,
-> -				     int offset,
-> -				     struct tdx_sys_info_tdmr *ts)
-> +static int read_sys_metadata_field16(u64 field_id, u16 *val)
->  {
-> -	u16 *ts_member = ((void *)ts) + offset;
->  	u64 tmp;
->  	int ret;
->  
-> -	if (WARN_ON_ONCE(MD_FIELD_ID_ELE_SIZE_CODE(field_id) !=
-> -			MD_FIELD_ID_ELE_SIZE_16BIT))
-> -		return -EINVAL;
-> +	BUILD_BUG_ON(MD_FIELD_ID_ELE_SIZE_CODE(field_id) !=
-> +			MD_FIELD_ID_ELE_SIZE_16BIT);
-
-This gets removed next patch, so why do it
-
->  
->  	ret = read_sys_metadata_field(field_id, &tmp);
->  	if (ret)
->  		return ret;
->  
-> -	*ts_member = tmp;
-> +	*val = tmp;
->  
->  	return 0;
->  }
->  
-> -struct field_mapping {
-> -	u64 field_id;
-> -	int offset;
-> -};
-> -
-> -#define TD_SYSINFO_MAP(_field_id, _offset) \
-> -	{ .field_id = MD_FIELD_ID_##_field_id,	   \
-> -	  .offset   = offsetof(struct tdx_sys_info_tdmr, _offset) }
-> -
-> -/* Map TD_SYSINFO fields into 'struct tdx_sys_info_tdmr': */
-> -static const struct field_mapping fields[] = {
-> -	TD_SYSINFO_MAP(MAX_TDMRS,	      max_tdmrs),
-> -	TD_SYSINFO_MAP(MAX_RESERVED_PER_TDMR, max_reserved_per_tdmr),
-> -	TD_SYSINFO_MAP(PAMT_4K_ENTRY_SIZE,    pamt_entry_size[TDX_PS_4K]),
-> -	TD_SYSINFO_MAP(PAMT_2M_ENTRY_SIZE,    pamt_entry_size[TDX_PS_2M]),
-> -	TD_SYSINFO_MAP(PAMT_1G_ENTRY_SIZE,    pamt_entry_size[TDX_PS_1G]),
-> -};
-> +/*
-> + * Assumes locally defined @ret and @sysinfo_tdmr to convey the error
-> + * code and the 'struct tdx_sys_info_tdmr' instance to fill out.
-> + */
-> +#define TD_SYSINFO_MAP(_field_id, _member)						\
-
-"MAP" made sense when it was in a struct whereas
-now it is reading.
-
-> +	({										\
-> +		if (!ret)								\
-> +			ret = read_sys_metadata_field16(MD_FIELD_ID_##_field_id,	\
-> +					&sysinfo_tdmr->_member);			\
-> +	})
->  
->  static int get_tdx_sys_info_tdmr(struct tdx_sys_info_tdmr *sysinfo_tdmr)
->  {
-> -	int ret;
-> -	int i;
-> +	int ret = 0;
->  
-> -	/* Populate 'sysinfo_tdmr' fields using the mapping structure above: */
-> -	for (i = 0; i < ARRAY_SIZE(fields); i++) {
-> -		ret = read_sys_metadata_field16(fields[i].field_id,
-> -						fields[i].offset,
-> -						sysinfo_tdmr);
-> -		if (ret)
-> -			return ret;
-> -	}
-> +	TD_SYSINFO_MAP(MAX_TDMRS,	      max_tdmrs);
-> +	TD_SYSINFO_MAP(MAX_RESERVED_PER_TDMR, max_reserved_per_tdmr);
-> +	TD_SYSINFO_MAP(PAMT_4K_ENTRY_SIZE,    pamt_entry_size[TDX_PS_4K]);
-> +	TD_SYSINFO_MAP(PAMT_2M_ENTRY_SIZE,    pamt_entry_size[TDX_PS_2M]);
-> +	TD_SYSINFO_MAP(PAMT_1G_ENTRY_SIZE,    pamt_entry_size[TDX_PS_1G]);
-
-Another possibility is to put the macro at the invocation site:
-
-#define READ_SYS_INFO(_field_id, _member)				\
-	ret = ret ?: read_sys_metadata_field16(MD_FIELD_ID_##_field_id,	\
-					       &sysinfo_tdmr->_member)
-
-	READ_SYS_INFO(MAX_TDMRS,             max_tdmrs);
-	READ_SYS_INFO(MAX_RESERVED_PER_TDMR, max_reserved_per_tdmr);
-	READ_SYS_INFO(PAMT_4K_ENTRY_SIZE,    pamt_entry_size[TDX_PS_4K]);
-	READ_SYS_INFO(PAMT_2M_ENTRY_SIZE,    pamt_entry_size[TDX_PS_2M]);
-	READ_SYS_INFO(PAMT_1G_ENTRY_SIZE,    pamt_entry_size[TDX_PS_1G]);
-
-#undef READ_SYS_INFO
-
-And so on in later patches:
-
-#define READ_SYS_INFO(_field_id, _member)				\
-	ret = ret ?: read_sys_metadata_field(MD_FIELD_ID_##_field_id,	\
-					     &sysinfo_version->_member)
-
-	READ_SYS_INFO(MAJOR_VERSION,    major);
-	READ_SYS_INFO(MINOR_VERSION,    minor);
-	READ_SYS_INFO(UPDATE_VERSION,   update);
-	READ_SYS_INFO(INTERNAL_VERSION, internal);
-	READ_SYS_INFO(BUILD_NUM,        build_num);
-	READ_SYS_INFO(BUILD_DATE,       build_date);
-
-#undef READ_SYS_INFO
-
-
->  
-> -	return 0;
-> +	return ret;
->  }
->  
->  /* Calculate the actual TDMR size */
+diff --git a/sound/soc/codecs/ad1980.c b/sound/soc/codecs/ad1980.c
+index 3c1ae13c1..25fd8bc4f 100644
+--- a/sound/soc/codecs/ad1980.c
++++ b/sound/soc/codecs/ad1980.c
+@@ -239,8 +239,8 @@ static int ad1980_soc_probe(struct snd_soc_component *component)
+ 	ac97 = snd_soc_new_ac97_component(component, 0, 0);
+ 	if (IS_ERR(ac97)) {
+ 		ret = PTR_ERR(ac97);
+-		dev_err(component->dev, "Failed to register AC97 component: %d\n", ret);
+-		return ret;
++		return dev_err_probe(component->dev, ret,
++			"Failed to register AC97 component: %d\n", ret);
+ 	}
+ 
+ 	regmap = regmap_init_ac97(ac97, &ad1980_regmap_config);
+diff --git a/sound/soc/codecs/adau1701.c b/sound/soc/codecs/adau1701.c
+index 8bd6067df..9fe18b22b 100644
+--- a/sound/soc/codecs/adau1701.c
++++ b/sound/soc/codecs/adau1701.c
+@@ -678,8 +678,8 @@ static int adau1701_probe(struct snd_soc_component *component)
+ 	ret = regulator_bulk_enable(ARRAY_SIZE(adau1701->supplies),
+ 				    adau1701->supplies);
+ 	if (ret < 0) {
+-		dev_err(component->dev, "Failed to enable regulators: %d\n", ret);
+-		return ret;
++		return dev_err_probe(component->dev, ret,
++			"Failed to enable regulators: %d\n", ret);
+ 	}
+ 
+ 	/*
+@@ -799,15 +799,15 @@ static int adau1701_i2c_probe(struct i2c_client *client)
+ 	ret = devm_regulator_bulk_get(dev, ARRAY_SIZE(adau1701->supplies),
+ 			adau1701->supplies);
+ 	if (ret < 0) {
+-		dev_err(dev, "Failed to get regulators: %d\n", ret);
+-		return ret;
++		return dev_err_probe(dev, ret,
++			"Failed to get regulators: %d\n", ret);
+ 	}
+ 
+ 	ret = regulator_bulk_enable(ARRAY_SIZE(adau1701->supplies),
+ 			adau1701->supplies);
+ 	if (ret < 0) {
+-		dev_err(dev, "Failed to enable regulators: %d\n", ret);
+-		return ret;
++		return dev_err_probe(dev, ret,
++			"Failed to enable regulators: %d\n", ret);
+ 	}
+ 
+ 	adau1701->client = client;
+diff --git a/sound/soc/codecs/ssm2602.c b/sound/soc/codecs/ssm2602.c
+index c29324403..727bcccad 100644
+--- a/sound/soc/codecs/ssm2602.c
++++ b/sound/soc/codecs/ssm2602.c
+@@ -606,8 +606,8 @@ static int ssm260x_component_probe(struct snd_soc_component *component)
+ 
+ 	ret = regmap_write(ssm2602->regmap, SSM2602_RESET, 0);
+ 	if (ret < 0) {
+-		dev_err(component->dev, "Failed to issue reset: %d\n", ret);
+-		return ret;
++		return dev_err_probe(component->dev, ret,
++			"Failed to issue reset: %d\n", ret);
+ 	}
+ 
+ 	regmap_register_patch(ssm2602->regmap, ssm2602_patch,
+-- 
+2.34.1
 
 
