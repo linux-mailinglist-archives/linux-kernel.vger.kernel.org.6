@@ -1,111 +1,113 @@
-Return-Path: <linux-kernel+bounces-307368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58175964C89
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 19:04:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C5E7964C8D
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 19:04:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D9AC1F22710
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 17:04:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F4321C23AC6
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 17:04:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3DCA1B81C4;
-	Thu, 29 Aug 2024 17:01:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C5A81B81D0;
+	Thu, 29 Aug 2024 17:02:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X+3DuIXH"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RSyj7Njj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65A2C1AAE1A;
-	Thu, 29 Aug 2024 17:01:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD8601B151C;
+	Thu, 29 Aug 2024 17:02:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724950895; cv=none; b=eD4vzRa307fd9iY3H7kfVZ9UlqKb5O4ftN9JLLSGwtxR6RR3O1NYo1MAQDxUw+1iEsp7OBOyDjDMFuJfFWlT94tN/MHVIF0vvW+wvj/cWsMEZMxnSgexLn1S0vLH6HOj7zb7vTzEBeCnpLiDr6R0liLGwz9mVzNJnzJhxIdBzAs=
+	t=1724950920; cv=none; b=M3aDYJc+eZWfRJJlBIm45m1uxeoTaMoFd5HrJD4K+tYyJzlfAmj4Vi02lqn2fRZkPyjcOfHFR5Amtvak8oUJh885Mtxmqneq6Udx867EjtHRAQHP0UXwj6laBORW5WxsEQZWFqQS/NNT+1Yt9879kR76dBQGrhPx0LtExWbE8LY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724950895; c=relaxed/simple;
-	bh=YehqG4PtaapmXnLiVOq9WpGytyQ7YD42DofQvtnV7HU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oDQJ9wlkIjKJQfS6Hi1ipTWoXIyJHNE43FnikJ+/n3FeZOZOzFpNiwKnU4joTWS49QHM8sq/pVwpP3aByZRSLyuAO0cgAJFy2LYPAAo+f25s7f4/S5JA/UVLv0nm7Q+UaKFo0rC3wexdol81zVUvKlyfqmR91CkrcN4CZ2rIbio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X+3DuIXH; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-42bb885f97eso3141985e9.0;
-        Thu, 29 Aug 2024 10:01:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724950892; x=1725555692; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=YehqG4PtaapmXnLiVOq9WpGytyQ7YD42DofQvtnV7HU=;
-        b=X+3DuIXHoo8K9zqnOkOu6lfu+iD15nO//aLM7VQqy53CjmcynFvcvgv4rASa2399Yt
-         E5BIwTo/iwKDLJzLDZfo1dV82wTvNYfKgL786TA1vOSxc0oY85RIBc6DG/+DuCeN3XxI
-         tGXdpP+OTw6g+LLmNyai2SAen+J1e5NATCRHs/58xDFsY3kjCERHixzfuECEjMBQdd3B
-         U0eatbQCVec6pmdU+otdxyxariUTaxN6+H2VJ7qwDoOBmbuq5Ml8GaQoTKvP/07ieeSI
-         ULUgRSi+lO+pGf/foKAZBplk1Jp61zPlxdjVgBoNJ8F+EnPp/l8Ol1zZmpvs6My/CjNt
-         A01w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724950892; x=1725555692;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YehqG4PtaapmXnLiVOq9WpGytyQ7YD42DofQvtnV7HU=;
-        b=XK4H131FYqzYCwX4EmEQVbLozbL2fCUFH4ETLQ9nC+mpUfQaatAiMh3UG5Lr26W/FC
-         9IsrBp6H79l4FP0cRk0BaeeZN2cgl/t0Ol86LnM+RxvgVefudGrOvgKN1/DsH0jhQHLK
-         rFZlYTSs3WTlis8IJcY135PdpO8JmxiCuQEKKZFk053tuAUnOabtsHr8kuMoQB8mtmht
-         Y1AaC/BpsXrX9wZw5oL4qAxcRZGwxzQQtnSIuZI35oClHvf7LG0tSzryl1gH+FD6L3tv
-         MxJ5DR0DgybKBKlYRNgb4xI7FEFrfewHAJDSpCuBYBmklQhc+HKcrAp3BZ5C7VNEh6JF
-         oJug==
-X-Forwarded-Encrypted: i=1; AJvYcCVHSn50cu2VXr5BkKVgHGZVXWZckLn29NuOWyX8GO4RgXWAKIt26o1pQF8Oz1B8w5efAOifXa1Kl0qHB6c=@vger.kernel.org, AJvYcCWV+V3PWka97re/06juc4PdzGiIfnfkaHvF8Z1DmiFB5IAeOr2l4t3rpFncVq5xutqNJ3duJjZT@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHDBRhhIm8Rk5dKBFHDAeYB57N0qkFKw6W8KkRh4MJgbqiFPCZ
-	ZuG59rupERnjw/GymLR/3LOv8Z6C3GB0NxK6qK5zZ21MlTXj6QYm
-X-Google-Smtp-Source: AGHT+IFosliCC5+a+h4wlp+6u+dlP/pGWWU2L2Rh54ZG82z8dvc2aWVVIoZMBy8f4qkeaRSreWo7yA==
-X-Received: by 2002:adf:f302:0:b0:362:23d5:3928 with SMTP id ffacd0b85a97d-3749c1da581mr1781820f8f.17.1724950890602;
-        Thu, 29 Aug 2024 10:01:30 -0700 (PDT)
-Received: from ?IPV6:2001:861:3385:e20:6384:4cf:52c5:3194? ([2001:861:3385:e20:6384:4cf:52c5:3194])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bb6e33f5esm22284355e9.39.2024.08.29.10.01.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 29 Aug 2024 10:01:30 -0700 (PDT)
-Message-ID: <cc32d1c4-16de-423d-b125-9301154c950d@gmail.com>
-Date: Thu, 29 Aug 2024 19:01:29 +0200
+	s=arc-20240116; t=1724950920; c=relaxed/simple;
+	bh=RJBfIbkiW7TN/v+WigG9LTCZysSAl3Gpt7zlyd7Izms=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KQHmuhPkrBlYhaK2GxYt047Ci9jPylFLM6xtQLxnoidlhX60LvG5DLd9ifas6SowTHLxDhiJ4WTGy0Gi6L6iPLUOSpwlIgnUFnxc6EDszh1HffXP465T38NBsFhz/KBJV8OUdZEfe8BvBC9D6lp3Lnxy45LW1Lh2RQwtV70zbBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RSyj7Njj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D31DC4CEC1;
+	Thu, 29 Aug 2024 17:01:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724950920;
+	bh=RJBfIbkiW7TN/v+WigG9LTCZysSAl3Gpt7zlyd7Izms=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RSyj7NjjcVbLlXlQ2Sdc0Im7sEu5rfFbFbMCx6LDBgU09J5wkKh8ur2t1D6mlumFj
+	 Gt/nYmGVY71Io1lWD6hs7T1A/ZuK7rdasdnOs8OlV0cXmgbgEUAv+7pWtMPGiKYrVM
+	 gZSE04vBYyr1aQ6YkzVocL06apGlZVnID9VGMWwbkLppHXRJ7qMFy0dX0DzLjnqoWP
+	 6rhB+A0EsxqqDuJA9oE9OptA7AcuRy+cTrFfCv/63/Zl8a1wgBu6dciVPXDOnxOZU9
+	 lsd40uOxv6vIAUhp5r82VWMfGfcJoQsLmPO4e0lFCQ1O742t0MSnVoLTNFN/Q5D1rZ
+	 +Fd7WXENuYj3A==
+Date: Thu, 29 Aug 2024 22:31:56 +0530
+From: Vinod Koul <vkoul@kernel.org>
+To: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
+Cc: konrad.dybcio@linaro.org, andersson@kernel.org, andi.shyti@kernel.org,
+	linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
+	quic_vdadhani@quicinc.com
+Subject: Re: [PATCH v1 0/4] Enable shared SE support over I2C
+Message-ID: <ZtCphFX+4hXMNFPG@vaman>
+References: <20240829092418.2863659-1-quic_msavaliy@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND] drm/sti: avoid potential dereference of error
- pointers
-To: Ma Ke <make24@iscas.ac.cn>, alain.volmat@foss.st.com,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
- airlied@gmail.com, daniel@ffwll.ch, laurent.pinchart@ideasonboard.com,
- akpm@linux-foundation.org
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20240826052652.2565521-1-make24@iscas.ac.cn>
-Content-Language: en-US, fr
-From: =?UTF-8?Q?Rapha=C3=ABl_Gallais-Pou?= <rgallaispou@gmail.com>
-In-Reply-To: <20240826052652.2565521-1-make24@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240829092418.2863659-1-quic_msavaliy@quicinc.com>
 
+On 29-08-24, 14:54, Mukesh Kumar Savaliya wrote:
+> This Series adds support to share QUP based I2C SE between subsystems.
+> Each subsystem should have its own GPII which interacts between SE and
+> GSI DMA HW engine.
+> 
+> Subsystem must acquire Lock over the SE on GPII channel so that it
+> gets uninterrupted control till it unlocks the SE. It also makes sure
+> the commonly shared TLMM GPIOs are not touched which can impact other
+> subsystem or cause any interruption. Generally, GPIOs are being
+> unconfigured during suspend time. 
 
+Most of the use case it is either I2C using it or some other peripheral
+using it, so who are you protecting the channel with this locking
+mechanism?
 
-Le 26/08/2024 à 07:26, Ma Ke a écrit :
-> The return value of drm_atomic_get_crtc_state() needs to be
-> checked. To avoid use of error pointer 'crtc_state' in case
-> of the failure.
->
-> Cc: stable@vger.kernel.org
-> Fixes: dec92020671c ("drm: Use the state pointer directly in planes atomic_check")
->
-> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
->
-Hi,
+> GSI DMA engine is capable to perform requested transfer operations
+> from any of the SE in a seamless way and its transparent to the
+> subsystems. Make sure to enable “qcom,shared-se” flag only while
+> enabling this feature. I2C client should add in its respective parent
+> node.
 
-Tested-by: Raphaël Gallais-Pou <rgallaispou@gmail.com>
+Why should this be expose to peripheral drivers and not handled
+internally inside dma driver, you lock, submit the txn to engine and
+then unlock when txn is processed, why should this be exposed to
+clients?
 
-Regards,
-Raphaël
+> 
+> ---
+> Mukesh Kumar Savaliya (4):
+>   dt-bindindgs: i2c: qcom,i2c-geni: Document shared flag
+>   dma: gpi: Add Lock and Unlock TRE support to access SE exclusively
+>   soc: qcom: geni-se: Export function geni_se_clks_off()
+>   i2c: i2c-qcom-geni: Enable i2c controller sharing between two
+>     subsystems
+> 
+>  .../bindings/i2c/qcom,i2c-geni-qcom.yaml      |  4 ++
+>  drivers/dma/qcom/gpi.c                        | 37 ++++++++++++++++++-
+>  drivers/i2c/busses/i2c-qcom-geni.c            | 29 +++++++++++----
+>  drivers/soc/qcom/qcom-geni-se.c               |  4 +-
+>  include/linux/dma/qcom-gpi-dma.h              |  6 +++
+>  include/linux/soc/qcom/geni-se.h              |  3 ++
+>  6 files changed, 74 insertions(+), 9 deletions(-)
+> 
+> -- 
+> 2.25.1
+> 
+
+-- 
+~Vinod
 
