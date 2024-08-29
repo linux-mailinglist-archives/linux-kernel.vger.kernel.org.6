@@ -1,150 +1,114 @@
-Return-Path: <linux-kernel+bounces-307338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEA4D964C16
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 18:52:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 35F3D964C18
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 18:53:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 40793B21229
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:52:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 94A02B23AC2
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:53:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D5B11B5EB3;
-	Thu, 29 Aug 2024 16:52:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A0C91B5EAF;
+	Thu, 29 Aug 2024 16:52:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mRBWKkfz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KIh9HtIn"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EA091B151C;
-	Thu, 29 Aug 2024 16:52:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 747241B5EA6;
+	Thu, 29 Aug 2024 16:52:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724950359; cv=none; b=hK7TlpTLG3lkEqpWYk/uQHoEy8D6+IkGSFxUtZyDoUnA2vebGbLnI4ZIsRk/4Qc1LMNw/mkrfagTO95kZyQaY+83FDr/h8AeOScjzfTaUVwNiIy7Zt5QIcb33TcCbOuC2FWA56U2rBMMreS0b4y0WnS0Romwo6nNdGyYvMebFDU=
+	t=1724950369; cv=none; b=WO//I6zUAsrMP79oJtUmswUawnvmPIM6H5yxJwFS3OlsJocbJcPA/vnVaLZKQLYIbrfodDjlJGM4mn4ongUCRD4Oi5k/BR77sCk9rDg0MJ6j246CXNUPRkQWQVsJf/ELv+BHUiQFnGH6tBxD5yoTolqpS6qUz6jAr5/efXQLqEE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724950359; c=relaxed/simple;
-	bh=dpcjacSyZ0wDA5iUfrSXiOJl110RtbPxhTCYt96yME0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oQ+hQUV6izRYz/oIjoRC2v2Ni6s03u5Vfgc+WM/d4ZfhqHF9YYAYx2ooIFNpSx4F4KKcNY2boDar1R79qTta7UvtCPqVtRG5ihTwgepbAxROTFpze//miYrlNCzEf5THWfgjlBYBqu2hxehQgrrRv/ajnF7bB2uDRN4VZLe9OvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mRBWKkfz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E907C4CEC1;
-	Thu, 29 Aug 2024 16:52:36 +0000 (UTC)
+	s=arc-20240116; t=1724950369; c=relaxed/simple;
+	bh=hnufhCbXjNCAMLwQDuHCdh0s0iVsisj6beB30jVpEi4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=OvPhqGT1vLv7JkwHG3i4KiMlstwW5V7ufpB0BJ+K2Ib5+QhA5BcwgFad+DRbK3fTWTu/oObU5RWj3oe8DHKAFpR2rTT69SKcyuiFVGnk5BE7236ETz2Z50ZesyjlcVPArWNYVd9TCNfrJK9LpFX4sw3+fJaM9FPtalyYAC1ud0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KIh9HtIn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67AB4C4CEC1;
+	Thu, 29 Aug 2024 16:52:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724950358;
-	bh=dpcjacSyZ0wDA5iUfrSXiOJl110RtbPxhTCYt96yME0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mRBWKkfzZaGg0P7VYohoCehlB1b6sx+YN+5B4sx78PjOcnj86ngo/n9ZiO3iI2Ih2
-	 BJlr5kun7SALyn1l3EqHrY3mzPhpP54Uym+jpJ5qrShzAIz3x4LmcfgTW7VYz4K1c3
-	 UW49umMDKDvunI9Amdj0YTFvu6qZCegpYdaGoIqUVh80a2WapvQj3FoQ8aVJZC2Evi
-	 crt3ql6hKCR72Tw8ROhNJJZu3/hmj5+4MSVQBJagLcJzE8XxKjHGmUxPTmMpQNv7t0
-	 d2yMIsPdL8LxZkBCpQP8wvT3MPK4tElmraOb+eGuRXzjqOW1UT3Hsja5ry8tqhsSff
-	 RJSqAhWqVtazw==
-Date: Thu, 29 Aug 2024 17:52:34 +0100
-From: Simon Horman <horms@kernel.org>
-To: Rosen Penev <rosenp@gmail.com>
-Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, linux@armlinux.org.uk,
-	linux-kernel@vger.kernel.org, o.rempel@pengutronix.de,
-	p.zabel@pengutronix.de
-Subject: Re: [PATCHv2 net-next] net: ag71xx: update FIFO bits and descriptions
-Message-ID: <20240829165234.GV1368797@kernel.org>
-References: <20240828223931.153610-1-rosenp@gmail.com>
+	s=k20201202; t=1724950369;
+	bh=hnufhCbXjNCAMLwQDuHCdh0s0iVsisj6beB30jVpEi4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=KIh9HtIn3Xk+UPaYoDfruElplumKEor5QZulYQepcz5AEw4bKg8rbC9Y3djnXLsH/
+	 WszTsGl93p2DWQLlM3/Jze6uqsP2vZ6D6NPcSfSMP4/4yh5UPsGjrjgtWnHlaRVjSr
+	 6CU4Qug5zBAxyxqQPliiu0u+k56SxOVOt8BoHPvufSlarplUUuZ3x7eGkaimyeOBw2
+	 QM5DugDCC8nA6HOFlOg8d0rpa29Sz4Y4h9H5FjRgUeED4BmyJvgqGDNmojAhEdx5ho
+	 qximeILAZnDl6VWUQhDAYxcqL5s12k2SWEjovr0prd6AVEuIZNsKuU/M6eginunv/E
+	 80umz9rKbU+Sg==
+From: Mark Brown <broonie@kernel.org>
+To: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>, Chen-Yu Tsai <wens@csie.org>, 
+ Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Samuel Holland <samuel@sholland.org>, Maxime Ripard <mripard@kernel.org>, 
+ =?utf-8?q?Cl=C3=A9ment_P=C3=A9ron?= <peron.clem@gmail.com>, 
+ Marcus Cooper <codekipper@gmail.com>, 
+ Matteo Martelli <matteomartelli3@gmail.com>
+Cc: linux-sound@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
+In-Reply-To: <20240801-asoc-fix-sun4i-i2s-v2-1-a8e4e9daa363@gmail.com>
+References: <20240801-asoc-fix-sun4i-i2s-v2-1-a8e4e9daa363@gmail.com>
+Subject: Re: [PATCH v2] ASoC: sunxi: sun4i-i2s: fix LRCLK polarity in i2s
+ mode
+Message-Id: <172495036615.681615.13022036067408318288.b4-ty@kernel.org>
+Date: Thu, 29 Aug 2024 17:52:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240828223931.153610-1-rosenp@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-37811
 
-On Wed, Aug 28, 2024 at 03:38:47PM -0700, Rosen Penev wrote:
-> Taken from QCA SDK. No functional difference as same bits get applied.
+On Thu, 01 Aug 2024 14:07:19 +0200, Matteo Martelli wrote:
+> This fixes the LRCLK polarity for sun8i-h3 and sun50i-h6 in i2s mode
+> which was wrongly inverted.
 > 
-> Signed-off-by: Rosen Penev <rosenp@gmail.com>
-> ---
->  v2: forgot to send to netdev
->  drivers/net/ethernet/atheros/ag71xx.c | 48 +++++++++++++--------------
->  1 file changed, 24 insertions(+), 24 deletions(-)
+> The LRCLK was being set in reversed logic compared to the DAI format:
+> inverted LRCLK for SND_SOC_DAIFMT_IB_NF and SND_SOC_DAIFMT_NB_NF; normal
+> LRCLK for SND_SOC_DAIFMT_IB_IF and SND_SOC_DAIFMT_NB_IF. Such reversed
+> logic applies properly for DSP_A, DSP_B, LEFT_J and RIGHT_J modes but
+> not for I2S mode, for which the LRCLK signal results reversed to what
+> expected on the bus. The issue is due to a misinterpretation of the
+> LRCLK polarity bit of the H3 and H6 i2s controllers. Such bit in this
+> case does not mean "0 => normal" or "1 => inverted" according to the
+> expected bus operation, but it means "0 => frame starts on low edge" and
+> "1 => frame starts on high edge" (from the User Manuals).
 > 
-> diff --git a/drivers/net/ethernet/atheros/ag71xx.c b/drivers/net/ethernet/atheros/ag71xx.c
-> index db2a8ade6205..692dbded8211 100644
-> --- a/drivers/net/ethernet/atheros/ag71xx.c
-> +++ b/drivers/net/ethernet/atheros/ag71xx.c
-> @@ -149,11 +149,11 @@
->  #define FIFO_CFG4_MC		BIT(8)	/* Multicast Packet */
->  #define FIFO_CFG4_BC		BIT(9)	/* Broadcast Packet */
->  #define FIFO_CFG4_DR		BIT(10)	/* Dribble */
-> -#define FIFO_CFG4_LE		BIT(11)	/* Long Event */
-> -#define FIFO_CFG4_CF		BIT(12)	/* Control Frame */
-> -#define FIFO_CFG4_PF		BIT(13)	/* Pause Frame */
-> -#define FIFO_CFG4_UO		BIT(14)	/* Unsupported Opcode */
-> -#define FIFO_CFG4_VT		BIT(15)	/* VLAN tag detected */
-> +#define FIFO_CFG4_CF		BIT(11)	/* Control Frame */
-> +#define FIFO_CFG4_PF		BIT(12)	/* Pause Frame */
-> +#define FIFO_CFG4_UO		BIT(13)	/* Unsupported Opcode */
-> +#define FIFO_CFG4_VT		BIT(14)	/* VLAN tag detected */
-> +#define FIFO_CFG4_LE		BIT(15)	/* Long Event */
->  #define FIFO_CFG4_FT		BIT(16)	/* Frame Truncated */
->  #define FIFO_CFG4_UC		BIT(17)	/* Unicast Packet */
->  #define FIFO_CFG4_INIT	(FIFO_CFG4_DE | FIFO_CFG4_DV | FIFO_CFG4_FC | \
-> @@ -168,28 +168,28 @@
->  #define FIFO_CFG5_DV		BIT(1)	/* RX_DV Event */
->  #define FIFO_CFG5_FC		BIT(2)	/* False Carrier */
->  #define FIFO_CFG5_CE		BIT(3)	/* Code Error */
-> -#define FIFO_CFG5_LM		BIT(4)	/* Length Mismatch */
-> -#define FIFO_CFG5_LO		BIT(5)	/* Length Out of Range */
-> -#define FIFO_CFG5_OK		BIT(6)	/* Packet is OK */
-> -#define FIFO_CFG5_MC		BIT(7)	/* Multicast Packet */
-> -#define FIFO_CFG5_BC		BIT(8)	/* Broadcast Packet */
-> -#define FIFO_CFG5_DR		BIT(9)	/* Dribble */
-> -#define FIFO_CFG5_CF		BIT(10)	/* Control Frame */
-> -#define FIFO_CFG5_PF		BIT(11)	/* Pause Frame */
-> -#define FIFO_CFG5_UO		BIT(12)	/* Unsupported Opcode */
-> -#define FIFO_CFG5_VT		BIT(13)	/* VLAN tag detected */
-> -#define FIFO_CFG5_LE		BIT(14)	/* Long Event */
-> -#define FIFO_CFG5_FT		BIT(15)	/* Frame Truncated */
-> -#define FIFO_CFG5_16		BIT(16)	/* unknown */
-> -#define FIFO_CFG5_17		BIT(17)	/* unknown */
-> +#define FIFO_CFG5_CR		BIT(4)  /* CRC error */
-> +#define FIFO_CFG5_LM		BIT(5)	/* Length Mismatch */
-> +#define FIFO_CFG5_LO		BIT(6)	/* Length Out of Range */
-> +#define FIFO_CFG5_OK		BIT(7)	/* Packet is OK */
-> +#define FIFO_CFG5_MC		BIT(8)	/* Multicast Packet */
-> +#define FIFO_CFG5_BC		BIT(9)	/* Broadcast Packet */
-> +#define FIFO_CFG5_DR		BIT(10)	/* Dribble */
-> +#define FIFO_CFG5_CF		BIT(11)	/* Control Frame */
-> +#define FIFO_CFG5_PF		BIT(12)	/* Pause Frame */
-> +#define FIFO_CFG5_UO		BIT(13)	/* Unsupported Opcode */
-> +#define FIFO_CFG5_VT		BIT(14)	/* VLAN tag detected */
-> +#define FIFO_CFG5_LE		BIT(15)	/* Long Event */
-> +#define FIFO_CFG5_FT		BIT(16)	/* Frame Truncated */
-> +#define FIFO_CFG5_UC		BIT(17)	/* Unicast Packet */
->  #define FIFO_CFG5_SF		BIT(18)	/* Short Frame */
->  #define FIFO_CFG5_BM		BIT(19)	/* Byte Mode */
->  #define FIFO_CFG5_INIT	(FIFO_CFG5_DE | FIFO_CFG5_DV | FIFO_CFG5_FC | \
-> -			 FIFO_CFG5_CE | FIFO_CFG5_LO | FIFO_CFG5_OK | \
-> -			 FIFO_CFG5_MC | FIFO_CFG5_BC | FIFO_CFG5_DR | \
-> -			 FIFO_CFG5_CF | FIFO_CFG5_PF | FIFO_CFG5_VT | \
-> -			 FIFO_CFG5_LE | FIFO_CFG5_FT | FIFO_CFG5_16 | \
-> -			 FIFO_CFG5_17 | FIFO_CFG5_SF)
-> +			 FIFO_CFG5_CE | FIFO_CFG5_LM | FIFO_CFG5_L0 | \
+> [...]
 
-			                               FIFO_CFG5_LO
+Applied to
 
-> +			 FIFO_CFG5_OK | FIFO_CFG5_MC | FIFO_CFG5_BC | \
-> +			 FIFO_CFG5_DR | FIFO_CFG5_CF | FIFO_CFG5_UO | \
-> +			 FIFO_CFG5_VT | FIFO_CFG5_LE | FIFO_CFG5_FT | \
-> +			 FIFO_CFG5_UC | FIFO_CFG5_SF)
->  
->  #define AG71XX_REG_TX_CTRL	0x0180
->  #define TX_CTRL_TXE		BIT(0)	/* Tx Enable */
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-Please consider a patch to allow compilation of this driver with
-COMPILE_TEST in order to increase build coverage.
+Thanks!
 
--- 
-pw-bot: cr
+[1/1] ASoC: sunxi: sun4i-i2s: fix LRCLK polarity in i2s mode
+      commit: 3e83957e8dd7433a69116780d9bad217b00913ea
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
