@@ -1,85 +1,120 @@
-Return-Path: <linux-kernel+bounces-307032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 330F2964711
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:43:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1DA3964715
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:44:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD33D1F23094
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:43:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CCA51F240FB
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:44:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69C3D1AB507;
-	Thu, 29 Aug 2024 13:43:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E3E51AD401;
+	Thu, 29 Aug 2024 13:43:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2/IeRB1u";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="juGiuoXI"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="QNNobhrN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42ECA19408D;
-	Thu, 29 Aug 2024 13:43:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A895F19FA93;
+	Thu, 29 Aug 2024 13:43:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724938990; cv=none; b=j+8dmtZeIvkx4B0lZ1Kj0dDgk4rEUx6hOIcapSvuLuHKW+mlqk021sleZDYkce9MZx0w0GukOqa6TU7ffNQU9ZiFty5qMPDYOYBQqDI2oyXoxSR6oEFagJTLSiKHhYveT5KUWQ1p3S1LmUkjYde6dfPa+IbEs7buUQvI74sW4J8=
+	t=1724939020; cv=none; b=V9x+Qiq2/GKEiFioYSBJAxi9Jcs7qXHi6FvqTGVKdA4Dodc+uBFsRa4Fp72gK/SBU2B+QRDLXNDx+aDQuyEduIl5QAZmZkNtKVPZlTbqOuw3aKRFIA8wESvHZckbNZfHN+dFTbry9zKt6BMdZuF6OJ1N3xHTG/rk5Kg3o+ofCOM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724938990; c=relaxed/simple;
-	bh=nHf+xT92yT82mqfp+QipgHo+k+vk0BwwMwDlqkjAv3s=;
-	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=h2W8zlGg2+SYenRq11zSkTl1Pydu6mMmpbpGHccC0fiTHcILWxRV0AUnCghMloxqRofx/r3T0dbiK5G4npQhioiix6uO8HgrF6KKVA3kRI1pIqP4FKCgytj6ExeKWvZizukUfL7hAxW3eunqV/UnFR+WFlxnPk4IsJYvoosi8ZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2/IeRB1u; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=juGiuoXI; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1724938987;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aggf7neS26jWKW+YIQkenH6/dZMQMCyhYknOlHKaKGE=;
-	b=2/IeRB1udgz4p/pcCGc4UXSK9YP6TdSt3W2cdcUezsQDh+7EcnPjfzF/HyuFC0wa1MuHme
-	pF4BZhAikgZHgi0clgSyrrZqEQu+Xa6sCwl8pEDhE7/iPCA+V1V2vJWi/6R15lBwbmCkru
-	bci5WWK2Bd3hCii45vkheTFIxUgsg9NEoxiC+xaFbBD1QPPWOCtPYNA4B0dN7SCS0aAPXS
-	SzPBQZDbbjcwSmZA8XaCc12t6gmA+/Guz3Qyk942yu1dXqgUsLd+WDcExOdAOem/kS40j/
-	i6lX2n9LoJKzq24FJwBbl38f61+fTKaCIbWYuT5OaW0/HP+wzhgsBp1B/gZDlQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1724938987;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aggf7neS26jWKW+YIQkenH6/dZMQMCyhYknOlHKaKGE=;
-	b=juGiuoXIPzeyd6G33VQMgMjLiCRqDX7VGyrH4FIb3jszoPFwGaNtXSGD53P39IycO9hqRh
-	2FCHfRTeae/j+hDQ==
-To: Nick Hu <nick.hu@sifive.com>, greentime.hu@sifive.com,
- zong.li@sifive.com, "Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek
- <pavel@ucw.cz>, Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Daniel Lezcano
- <daniel.lezcano@linaro.org>, Andrew Jones <ajones@ventanamicro.com>, Conor
- Dooley <conor.dooley@microchip.com>, Samuel Holland
- <samuel.holland@sifive.com>, Nick Hu <nick.hu@sifive.com>, Sunil V L
- <sunilvl@ventanamicro.com>, linux-pm@vger.kernel.org,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] time-riscv: Stop stimecmp when cpu hotplug
-In-Reply-To: <20240829033904.477200-3-nick.hu@sifive.com>
-References: <20240829033904.477200-1-nick.hu@sifive.com>
- <20240829033904.477200-3-nick.hu@sifive.com>
-Date: Thu, 29 Aug 2024 15:43:06 +0200
-Message-ID: <87o75ba1hx.ffs@tglx>
+	s=arc-20240116; t=1724939020; c=relaxed/simple;
+	bh=eG8LcoYEoMxJcrYn1Xs1IBVQAMGPcz0W+h4R0Axvogg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BotEdQ5P0LAf17vJKAl1+2DKhr8A9q0Nju9vKrDkq3ZAZni4SsW+U/ECH5zNiOJmFE3/Ma+QVKVhfESVjFzvQF2NVdAn8Gro3qoFNnmSKEcs1NP86O9PRqOnnNxdfKHGHDfIhDGY+yi0clTr04xRQ6SuArQPvOdQVF/qN7Sl4b8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=QNNobhrN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B0C6C4CEC1;
+	Thu, 29 Aug 2024 13:43:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1724939020;
+	bh=eG8LcoYEoMxJcrYn1Xs1IBVQAMGPcz0W+h4R0Axvogg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QNNobhrNJd9HddIynzaAzccu6o3VejivwqKcPuN+7lEChm2cmVL0aHd3WENoO36Sb
+	 D9t+B8aE14KvJ+VrD4ZC8okJSEZYjEbMiOsrhdy63PmPLexSo0sHQG/VzmTYCWt4WD
+	 /vzMyEmACQ3g+JEkkcPtQCCLDwqrShPiqEr7d3dY=
+Date: Thu, 29 Aug 2024 15:43:36 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Pavel Machek <pavel@denx.de>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org,
+	kuba@kernel.org, linan122@huawei.com, dsterba@suse.com,
+	song@kernel.org, tglx@linutronix.de, viro@zeniv.linux.org.uk,
+	christian.brauner@ubuntu.com, keescook@chromium.org
+Subject: Re: [PATCH 6.1 000/321] 6.1.107-rc1 review
+Message-ID: <2024082940-dugout-motor-00b3@gregkh>
+References: <20240827143838.192435816@linuxfoundation.org>
+ <ZtBdhPWRqJ6vJPu3@duo.ucw.cz>
+ <2024082954-direction-gonad-7fa2@gregkh>
+ <ZtBljcXHrUdvglG0@duo.ucw.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZtBljcXHrUdvglG0@duo.ucw.cz>
 
-On Thu, Aug 29 2024 at 11:39, Nick Hu wrote:
+On Thu, Aug 29, 2024 at 02:11:57PM +0200, Pavel Machek wrote:
+> On Thu 2024-08-29 13:52:59, Greg Kroah-Hartman wrote:
+> > On Thu, Aug 29, 2024 at 01:37:40PM +0200, Pavel Machek wrote:
+> > > > Christian Brauner <brauner@kernel.org>
+> > > >     binfmt_misc: cleanup on filesystem umount
+> > > 
+> > > Changelog explains how this may cause problems. It does not fix a
+> > > bug. It is overly long. It does not have proper signoff by stable team.
+> > 
+> > The sign off is there, it's just further down than you might expect.
+> 
+> Is it? Who signed this off for stable?
+> 
+> cf7602cbd58246d02a8544e4f107658fe846137a
+> 
+>     In line with our general policy, if we see a regression for systemd or
+>     other users with this change we will switch back to the old behavior for
+>     the initial binfmt_misc mount and have binary types pin the filesystem
+>     again. But while we touch this code let's take the chance and let's
+>     improve on the status quo.
+>     
+>     [1]: https://lore.kernel.org/r/20191216091220.465626-2-laurent@vivier.eu
+>     [2]: commit 43a4f2619038 ("exec: binfmt_misc: fix race between load_misc_binary() and kill_node()"
+>     [3]: commit 83f918274e4b ("exec: binfmt_misc: shift filp_close(interp_file) from kill_node() to bm_evict_inode()")
+>     [4]: commit f0fe2c0f050d ("binder: prevent UAF for binderfs devices II")
+>     
+>     Link: https://lore.kernel.org/r/20211028103114.2849140-1-brauner@kernel.org (v1)
+>     Cc: Sargun Dhillon <sargun@sargun.me>
+>     Cc: Serge Hallyn <serge@hallyn.com>
+>     Cc: Jann Horn <jannh@google.com>
+>     Cc: Henning Schild <henning.schild@siemens.com>
+>     Cc: Andrei Vagin <avagin@gmail.com>
+>     Cc: Al Viro <viro@zeniv.linux.org.uk>
+>     Cc: Laurent Vivier <laurent@vivier.eu>
+>     Cc: linux-fsdevel@vger.kernel.org
+>     Acked-by: Serge Hallyn <serge@hallyn.com>
+>     Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+>     Signed-off-by: Christian Brauner <brauner@kernel.org>
+>     Signed-off-by: Kees Cook <keescook@chromium.org>
+> 
 
-clocksource/drivers/timer-riscv: is the proper prefix
+If you look at the actual patch in our tree, it shows this, and was in
+the original email.
 
-Thanks,
+Yes, git stripped it off here, but really, you should be saying "Hey,
+something looks wrong here, the patch has it but the git commit does
+not", which would have been a lot more helpful...
 
-        tglx
-        
+Anyway, I'll go fix this up in the quilt tree now, thanks.
+
+greg k-h
 
