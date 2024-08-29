@@ -1,263 +1,160 @@
-Return-Path: <linux-kernel+bounces-307191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28E189649CB
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 17:18:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA0439649CA
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 17:18:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D42082835D4
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:18:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37FB6B2908D
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:18:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F00871B3737;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FF651B2EF9;
 	Thu, 29 Aug 2024 15:18:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ahu2+OCX";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="LZlzj02K"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="V7N3GV+E"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD7FC1B29CA;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 705AE1B1513;
 	Thu, 29 Aug 2024 15:18:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724944692; cv=fail; b=AxTFIovZTLmPP/Cz+d1cdWc7mD6551ak0jU8ri5xTQFSBHYS1/QE67XUMCAHrSD9mbFGbeEBELf0DzR9R7/BaXsdTmV4N3blqujtZx1W1jhBY7q2/jRge6VLD4Rresa6jBr0KBW3MNrY1ef/rpJfUx10ns9SMcWRiGJyysVZQVY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724944692; cv=none; b=hKWyaErbyOSWtl/x21UuNFc8QCuT8wnQGaKyCHN0mhHfkBXNc4O+KWRUtF6jURk23Mekx2wamXyDiuNDkNnA5t8ukNHqsjk58tnuk28Biy8qTCUavQyw5yhDKV38lYO965WLqictwki3iisSGDZbImN8gNoNWAG53H8uTOPEZVc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1724944692; c=relaxed/simple;
-	bh=SYc/unyHofZTJGZYzI2SWDg97oGGsScvIcGmhFZf5U4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=azf0im5sUWN/kzIsWXKYRdWN/DABhFGBIOoaGQC6BMerUfRDtTejCpwp68Ffr/fd4amic0M5gcfRRhxpPMkE1ywTommUo3W0v1kbBDylgs+YFg+Xq115yftSKnqTAqoPUcQs8hRWmE8I3pJ/MV42XE7V0zf0TH6koCdp4BaPLek=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=ahu2+OCX; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=LZlzj02K; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47TBweVA012341;
-	Thu, 29 Aug 2024 15:17:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	date:from:to:cc:subject:message-id:references:content-type
-	:in-reply-to:mime-version; s=corp-2023-11-20; bh=bvl9TWXA+Y+LzN5
-	OdWUOsbACvBCbcFfH5DFqKR2IQrA=; b=ahu2+OCXvHdALsyDgsHkjCDQzBTkzcz
-	NGdKb3dI/a23oBO7TC32PtRYTAB7WamEAdNH2hA80GAgcXLBwSdf1y/SEc2lNbFR
-	emZySx8NGj0gykz0PmHr4WGTowxdYVe/V+oAQMnKeXY3+hDIyIbpjEtMHojHYqsy
-	nz1YdEuIKPMh+ywamps0aUPAKAqZZzGoSgkupsKNveWrQ3diPGCMhV7ECn/13xME
-	c2wN/6clULY6uuBn+mTSpRQG57xKoxP9s1bcjWZ5Zu0U6aemos6wVeACoK6hpQaK
-	AACYffzY0q7ClZVDwo/o26AJpIKGLKNTsNqvnk9shYsN50E9ifcGONw==
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 419pukmc5w-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 29 Aug 2024 15:17:52 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 47TEep61031845;
-	Thu, 29 Aug 2024 15:17:51 GMT
-Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10lp2100.outbound.protection.outlook.com [104.47.58.100])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 418a0wuybv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 29 Aug 2024 15:17:51 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=tuVg4rsVVoddjcotRzOhU9InnHOMseXbGz8cPTEqgrJSc3HJeu0cy6Lz4qB2Nuw68dF1ugOq8uIVGS9v9KOJ39Au/pHH4hVVkpz5AOogkfM1QPlu1yPNj5K3+KRIDBfGvz7MwVEECM5PsatXAC2defSSGVpPtCF/Buhyy0nfiQ1p+DbYl4KvGbZgj8QUB5uh6AsafvtlSjDFRUZklruYo0SuA3PxorLKUqUaLf8tZSfOF6hph1jhPsyTYP82pLY+jww//a8vMxknreL/CnxMF55Hv5grxLMT+rsjNJHYApHh4Lbr7Ag8usmIgHeU/UA99U4thPpp2ZA7Y9gXWPeYBA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=bvl9TWXA+Y+LzN5OdWUOsbACvBCbcFfH5DFqKR2IQrA=;
- b=tsP5NNEoNlwFXhK6BqxfCzLPGBU2iS9KXT8DkTIVju/9wCvo6m8E4ufTf7CgMNmcY1tZsPxB+ULV7euRnlOn1HbamLP37J5eGMxUQ08aroDcoNB4MtapiMJN8vHWwUlc9+D8VgpqEnV25cd0yLMiNcE+kkngaHAFzeCSdVuWr4XtKybho1PFe+7BBwxPyM4uJtm0rmDSjWxiTFAsWbInT0V64I+94YKLfOl0Rf47xHDSst4aZ2C7kC8NiN2D+9M3lP1vnlB/EGiILZSL18IKCPKEwn7dhxRHIHhSb8h9YMKFgOn0lgyZzl4YsovuZIaBWKV/We6aQggATL5DpwJvbQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bvl9TWXA+Y+LzN5OdWUOsbACvBCbcFfH5DFqKR2IQrA=;
- b=LZlzj02KFcsD4DcKNElzxvhOHQeqfov9trm6sLHaWybKlNMwibTcVA5Dlu3X90ja+fkAW1I8+QsxiJErXWaIWDM8Et4ltfCEbPb8L6lbCmQPdGdcT5/AdgLyG74ptGkT1Xs3ad5HFuLRh9YBrQF78csfSCWFj6NARKYAscSGp4Y=
-Received: from BN0PR10MB5128.namprd10.prod.outlook.com (2603:10b6:408:117::24)
- by PH7PR10MB7849.namprd10.prod.outlook.com (2603:10b6:510:308::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.18; Thu, 29 Aug
- 2024 15:17:49 +0000
-Received: from BN0PR10MB5128.namprd10.prod.outlook.com
- ([fe80::743a:3154:40da:cf90]) by BN0PR10MB5128.namprd10.prod.outlook.com
- ([fe80::743a:3154:40da:cf90%6]) with mapi id 15.20.7918.017; Thu, 29 Aug 2024
- 15:17:49 +0000
-Date: Thu, 29 Aug 2024 11:17:45 -0400
-From: Chuck Lever <chuck.lever@oracle.com>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Neil Brown <neilb@suse.de>, Olga Kornievskaia <kolga@netapp.com>,
-        Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
-        Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>,
-        Olga Kornievskaia <okorniev@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-        Jonathan Corbet <corbet@lwn.net>, Tom Haynes <loghyr@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH v3 01/13] nfsd: fix nfsd4_deleg_getattr_conflict in
- presence of third party lease
-Message-ID: <ZtCRGfPRayPPDXRM@tissot.1015granger.net>
-References: <20240829-delstid-v3-0-271c60806c5d@kernel.org>
- <20240829-delstid-v3-1-271c60806c5d@kernel.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240829-delstid-v3-1-271c60806c5d@kernel.org>
-X-ClientProxiedBy: CH3P220CA0025.NAMP220.PROD.OUTLOOK.COM
- (2603:10b6:610:1e8::14) To BN0PR10MB5128.namprd10.prod.outlook.com
- (2603:10b6:408:117::24)
+	bh=ZHToJQgtxYpOzm/EEY6t44DYuFgoJT8DPD7E9uLr8eQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=r0PITrvYapAWVvlfvSS9ZVN2HSGLWXhzWHtfmO4NKmoRAC34uP6YmgYc/e8w/954riJhX1ukE3+yYaOYfQFtg0Eyw6FZ/5ZbEK0xsGKzk+zJEAho4HlbWaLZtsi9jGwpnP8mUzGPW2KmLZ7hmigzJje5qNjobmFbx4RH+KJvCAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=V7N3GV+E; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724944691; x=1756480691;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=ZHToJQgtxYpOzm/EEY6t44DYuFgoJT8DPD7E9uLr8eQ=;
+  b=V7N3GV+ELc5tpSC6oeO5r/gIz64y7J2aMfqTSSAwY9Q2vM30smjomi+K
+   MMTcQgHc68qNnfvUmPwOBK6C7Ny/Dh+eXaEiC9iBcQsDzqU/b1O9py11S
+   cxyFCQAaSoVa7rpVZ0eWlxkNp7hmo7NGRD63eiR4tQXSUu5gu77GR1Im5
+   NP1mBn/0DIju5s0QyHb3lw3OL+em67j/1/pJvunpXE8DLDnNVUJeVhrha
+   28SzweWfOTWsQqVI/w6YPc8wO8SW5HYoSqO/V2uBnFPtjqF7rxWxz4C+Y
+   e85YWTYCG5nMGVnTz9Z+kZ0ov2KabYmiyg2245srlc0viad3n+ZTqVT6C
+   A==;
+X-CSE-ConnectionGUID: UsCEKvgVTnKqGSZB7kpFyw==
+X-CSE-MsgGUID: Xv2ufnejQZaJhZEF4ySadg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11179"; a="41053122"
+X-IronPort-AV: E=Sophos;i="6.10,185,1719903600"; 
+   d="scan'208";a="41053122"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 08:18:10 -0700
+X-CSE-ConnectionGUID: GhudT9hHSPW/RRNvBRcbkA==
+X-CSE-MsgGUID: 8dwgPF14R46vsYE7nUuLuw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,185,1719903600"; 
+   d="scan'208";a="94349706"
+Received: from tfalcon-desk.amr.corp.intel.com (HELO [10.124.220.59]) ([10.124.220.59])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 08:18:10 -0700
+Message-ID: <f2b0ffc7-f8f8-4ebc-99da-9139c372bd09@intel.com>
+Date: Thu, 29 Aug 2024 08:17:53 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN0PR10MB5128:EE_|PH7PR10MB7849:EE_
-X-MS-Office365-Filtering-Correlation-Id: 606b2405-6fac-416b-188a-08dcc83dbe35
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?HWK3xv9M0JlsJ2mvF5QcTgKPn4t3/SzJUrB36v3apyL1uNYRLA9g9LC9PLw9?=
- =?us-ascii?Q?mPBnplZ3NdMSDJ9C/9+b9BPkhsZY71+x+kNxFCt/oSDBaJP9XO2aM97BrMvQ?=
- =?us-ascii?Q?+cEFY1CD7XbkSg5tahyCN/XxYUdLkBDgFyUcrPCmG3Am9uQH/L4EuDwBguRp?=
- =?us-ascii?Q?etKjLil1Oln0Q9sTALpTJVmIIyK9qf8WQHiDJF2qo7t8jKGwrCFTtpdazCVe?=
- =?us-ascii?Q?xY0lZAYkiVGx4QNQsywdxxZooTqvvwiNtgq0L3veylQO6334wM1mdG/q0lV9?=
- =?us-ascii?Q?eey4nUwV/EkGsPNjUhABZ5zX3iHtpQxmiQSuB18MDwQOkeWrIeyXdV0sXsYw?=
- =?us-ascii?Q?iEvbxPBUA8di3Pyik/tUfvQLQAE/R8N1nMHIOjbCDGyWJ4D5zbCfC0TauMHn?=
- =?us-ascii?Q?2ElvUuBrZoKDTvZAHRucTAn/zPFOWXhQTVY9H8p5p1C3bPtd1Dg9HCsMCzp2?=
- =?us-ascii?Q?aAk0cU+5IgYtWJYdUYBdiRHg6TvoF44gyaDzaM67sUBVcBXLOYp9Hdat5dch?=
- =?us-ascii?Q?tkUtZGxQXfukGQhI+VQSRM7Kx8Qt3r360lKc00+vUSHUIzfinm2mi4m0e9a9?=
- =?us-ascii?Q?wnxYiYyCYTE8p79JiLPZTl01RLwYJ2T+1En/Cc38EebdqyBrHvnciX9oIiMX?=
- =?us-ascii?Q?2uvcf3obXyVwzbaQQulByYC/TFn8bZLBJCV2RRgiMtGAPJb4CeRdE0nYigMc?=
- =?us-ascii?Q?SFJpndCeQupLNNmrdqkJOCRZ2RyDVcW0ADuLd+ONykTzXKqD5byM0p3ria/7?=
- =?us-ascii?Q?HW30PyjDJzVLgm26dsBu544hbYZUYMavUqj9EVjgVMHgpxWTTTjfR4TVjqP8?=
- =?us-ascii?Q?gwR+2VJI8EuTdvFvV5BdQmFLTZQcTc8wQaH1YZh0LJq08fBuWfz/swsJwLbH?=
- =?us-ascii?Q?xoHr6bmlT9ZAV4y6wj+tfmQVDMzqhb8SfrszoJdl1o5ycRRODAfM4Mu1rrRQ?=
- =?us-ascii?Q?FKLiwnEpf8VSO4GOLIHzMYRs9buK0tJFQim+wql0yB1bRfK3t02OgE/o7yQp?=
- =?us-ascii?Q?U/9b5ICnk5uzd1hqIh0KYtCxH+ZterpgeTX7/tdtuMyta9xtdm3th9X1ml/8?=
- =?us-ascii?Q?g/SG7Q6rb8MWQfpNl+P+SYw/McJcrOzJ1CWcWBqI3GYBOPiflHbpjlRK5wRl?=
- =?us-ascii?Q?gyUoHjoV8n9jEQZ7mvoXXqJHk/9e/so4cT5GZM6LtckSCbOE0wyLocvb6XOj?=
- =?us-ascii?Q?Y31ZvsIysrs/YHO4hnQazK4iFGrYMfqEqeJKs1tlgerfhM82sX+NI4VZlzw5?=
- =?us-ascii?Q?t9aLr81uQ1LH4Ml9amgRbclnbhyHbRL9+YL+jSIlAEHr/HmQ0K8NhASdSbBi?=
- =?us-ascii?Q?RB9njW3fOCFFIEu8IWaoKbCVqHggnfaJuAMKY9ZJ6nO7AQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN0PR10MB5128.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?64CRdlo+87UsFp2P4RsAC0FUB3QfC0XhTg5DfAUqfEma0ccScMe6Y+33elju?=
- =?us-ascii?Q?eo8Ynh+MZGlkVVYr3WUfQSUg1cw6X60H76UGXksd7RDcnSbqH/s70y5gTOUk?=
- =?us-ascii?Q?Bjbx4fdSPLyB2AnN2FX8+Otg6HzTnyVccAuUQwhGjP/bd0ZEaZFn3CG/0PG0?=
- =?us-ascii?Q?V3SJ0hBIN7zGNFCA20fpo7lJyareFQkAHPYVge9z5QrhZGi0Lo1O71MsojBN?=
- =?us-ascii?Q?lGlhoIEk8gXofz0bFGrEiFunq70yUNpcJGND8rsAiSFCSJA4i82plxTjGqf/?=
- =?us-ascii?Q?sm54BqQkDVH10f9Aa0yEPzS5L2w0IYNb4BGOFWY8eSQrRY0xq+wGCdyG+IPG?=
- =?us-ascii?Q?9hVeDaBh1QyjkMzH5LrYKwem6SOBnQXLYYJ8SZZDU9qQPJtMVaLP/ihB5G2L?=
- =?us-ascii?Q?E2HUNRo7dwVN7vrNvaTaAJjDC94TZ7W4RcyCXbebhZmJJeyTbMpJ6lEOq1nG?=
- =?us-ascii?Q?npl7E6DyqckKtnXkzlv6S2S87l5PeDOdzOIgCJxa6PCOuLipCbakZ4DYjsCJ?=
- =?us-ascii?Q?qQF+Uqu1lKDD93tKxRZZeR28JRNn4cpDgcqEepW2JEZ9fDkcQiw2wVpzr53v?=
- =?us-ascii?Q?WykjCyVIS1lDF3yNYKdH0uhTHf9WgwOcPzKVULhQUAAC21k6YRIDOQU0VEli?=
- =?us-ascii?Q?7QaKli/eOuwUr9Czs2UN3ckgnaiKCMGFgdABECbR/3IQvodGnh6jTIDmeBmz?=
- =?us-ascii?Q?2E2G4tzQ1lH72Yf8IJieeAq+gu+zFVer3f2GSkGa15MYSwH4eJxGRlbIZsyM?=
- =?us-ascii?Q?UDd8IcUjF4J/KCJlfhJ6v2p7AELmku0VrnEpKDpqb9vk18u3Qr8k+l5yQC/4?=
- =?us-ascii?Q?rz1bKar3+a17mkbvgMk/13zdmDDCn2fVI3WmdXEniCgMddN41wKOBg2os5ME?=
- =?us-ascii?Q?YrVLOgmkAd4Uc75NWGPM+SaodyeeayQ5GKxEL/fN2I59BlCnPl2xp7a6bPEH?=
- =?us-ascii?Q?p15//wtergJC6RIThrLKt9zFNPowRqrocqNW9mNgXLENOU7ECCSvo8QGgF9l?=
- =?us-ascii?Q?P/iY+Y3SauKmUSrSWU8a2VA+JZhV/JA08OtXyhU6SZhBk56OP27OCKY76fbG?=
- =?us-ascii?Q?GHFCf2CrEqRElvWg6U/IphTEu5h0iKrOyBfV3IK44/dp8PgUVEPCbrRxQX5+?=
- =?us-ascii?Q?HyQri/RfagUt5A6jrhiNOh/QG5WAca/Iy7bBFUSj8WxE+bb8waD8MpGCr2wT?=
- =?us-ascii?Q?9Nm8qIwZHtB+GB4oDU1iJFshzuOmuSfet0SxEM8eiQz4o7kVAYzncdLMb/Y+?=
- =?us-ascii?Q?XmhCIe/VyJkNRe2dnw49Q1SOG8FjsTbFQoi7+EHcI2B0gt6AfdI3u6QWaiQ+?=
- =?us-ascii?Q?d9Mz52SCGZmDrmQhL/Y3GebkPZmmARh83Ogq2egtdluDUbsC4oFiEVNgGIeX?=
- =?us-ascii?Q?NjCRt+EgVyTCBCfppMPyxQyjbp/RBtSmgMHXZSvbiagd6QEgUEaW2+FRpBbT?=
- =?us-ascii?Q?ta0TGA6gjGqNgxd8/CboJoCWTYBJ39wdZk+C9QLR1TKIYoV3bOSx+h5LNftE?=
- =?us-ascii?Q?9v92IdtXw76TQIu/YeVwWX7XOBQSXfj/X/q0LquPMKGIPaXmcDREXLi0jvUp?=
- =?us-ascii?Q?zlIDj0dMFSK/BQeNBkTf74LJZraU5WDPpu37TOS8tnc7QpF0L/0lhO5ku/xv?=
- =?us-ascii?Q?TA=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	eutfrBJexNYKbzbxrAYwH58ID0iB5NT0JuE3mjMvxhyko/gf4m280mgW3/qpjB3k8YFOWdmDB62I/pE9FNXAIWldLTc/aACs4mpDzvVb6VljZTT1M6BPKBNeTnvg0XWgjbiNbhUZnfkf/ZH6QNG81CxC+HGlLqdq4hEwrPSfIKSCJ2OYM+LXd0a7LdXNvsdNwhM3Nrxt2B8TcToTp9oGfa5rba+IKizVMssQAmPKwLiAh41AmCeIyy8aJuqJw8DFOXVyQ/pVRpNXLlq8bM9btQt75AJXlZWY2d/Ip43t3iHRmdyR4i2fQrLHsPi8GHakkk+S1xeEMaTMrCcvB3QQF/4lpFX49ylcwo1yaSet2uCbt03fKzZSaFSY/f2NO1jdrTDZNt2KwUhVHYoNvcgpwhER0WbevUeog5zHPIm/iwb8lg8YtRokCGHVLCDBb60qeEUODXoCVsN6H7dIqqfYXxe+skBk0bsIdbJs2bGTwbt0cTMA8ndRHZEiAF4P7BdPCDR0kkVqZlFn3CtabDLWJ5TTg+rkVOxnp74E20kth5YoGTS736PdXdGWVCSwNxA57tmeA1GxwGwj/tIec30rwbtgHS93nJ3SJ2QUppgrM0Q=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 606b2405-6fac-416b-188a-08dcc83dbe35
-X-MS-Exchange-CrossTenant-AuthSource: BN0PR10MB5128.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Aug 2024 15:17:49.0428
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: B6Z+tBHzZ8afxjWNlVz4cEhx4pRod66RZtElt27TZkscx3psSvbapamKlHB1j7ml6xcXsVhB4GI4s7WL9u0HgQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR10MB7849
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-29_04,2024-08-29_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 mlxlogscore=999 mlxscore=0
- suspectscore=0 malwarescore=0 spamscore=0 adultscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2407110000
- definitions=main-2408290106
-X-Proofpoint-GUID: yqcmw_p5-kFh4DC6fpMGNPhIj_p3LwqP
-X-Proofpoint-ORIG-GUID: yqcmw_p5-kFh4DC6fpMGNPhIj_p3LwqP
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] x86/sgx: Fix deadloop in __sgx_alloc_epc_page()
+To: Aaron Lu <aaron.lu@intel.com>, Jarkko Sakkinen <jarkko@kernel.org>,
+ Dave Hansen <dave.hansen@linux.intel.com>
+Cc: x86@kernel.org, linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Zhimin Luo <zhimin.luo@intel.com>
+References: <20240829023800.1671210-1-aaron.lu@intel.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20240829023800.1671210-1-aaron.lu@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Aug 29, 2024 at 09:26:39AM -0400, Jeff Layton wrote:
-> From: NeilBrown <neilb@suse.de>
+Generally, I think it's a bad idea to refer to function names in
+subjects.  This, for instance would be much more informative:
+
+	x86/sgx: Fix deadlock in SGX NUMA node search
+
+On 8/28/24 19:38, Aaron Lu wrote:
+> When current node doesn't have a EPC section configured by firmware and
+> all other EPC sections memory are used up, CPU can stuck inside the
+> while loop in __sgx_alloc_epc_page() forever and soft lockup will happen.
+> Note how nid_of_current will never equal to nid in that while loop because
+> nid_of_current is not set in sgx_numa_mask.
 > 
-> It is not safe to dereference fl->c.flc_owner without first confirming
-> fl->fl_lmops is the expected manager.  nfsd4_deleg_getattr_conflict()
-> tests fl_lmops but largely ignores the result and assumes that flc_owner
-> is an nfs4_delegation anyway.  This is wrong.
-> 
-> With this patch we restore the "!= &nfsd_lease_mng_ops" case to behave
-> as it did before the changed mentioned below.  This the same as the
-> current code, but without any reference to a possible delegation.
-> 
-> Fixes: c5967721e106 ("NFSD: handle GETATTR conflict with write delegation")
-> Signed-off-by: NeilBrown <neilb@suse.de>
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> Also worth mentioning is that it's perfectly fine for firmware to not
+> seup an EPC section on a node. Setting an EPC section on each node can
+> be good for performance but that's not a requirement functionality wise.
 
-I've already applied this to nfsd-fixes.
+The changelog is a little rough, but I think Kai gave some good
+suggestions.  The other thing you can do is dump the text in chatgpt (or
+whatever) and have it fix your grammar.  It actually does a pretty
+decent job.
 
-If I include this commit in both nfsd-fixes and nfsd-next then the
-linux-next merge whines about duplicate patches. Stephen Rothwell
-suggested git-merging nfsd-fixes and nfsd-next but I'm not quite
-confident enough to try that.
+Also, you didn't say _how_ you fixed this.  That needs to be in here.
+Something along the lines of:
 
-Barring another solution, merging this series will have to wait a
-few days before the two trees can sync up.
+	Rework the loop to start and end on *a* node that has SGX
+	memory.  This avoids the deadlock looking for the current SGX-
+	lacking node to show up in the loop when it never will.
 
+The code looks fine, so feel free to add:
 
-> ---
->  fs/nfsd/nfs4state.c | 11 +++++++++--
->  1 file changed, 9 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
-> index b6bf39c64d78..eaa11d42d1b1 100644
-> --- a/fs/nfsd/nfs4state.c
-> +++ b/fs/nfsd/nfs4state.c
-> @@ -8854,7 +8854,15 @@ nfsd4_deleg_getattr_conflict(struct svc_rqst *rqstp, struct dentry *dentry,
->  			 */
->  			if (type == F_RDLCK)
->  				break;
-> -			goto break_lease;
-> +
-> +			nfsd_stats_wdeleg_getattr_inc(nn);
-> +			spin_unlock(&ctx->flc_lock);
-> +
-> +			status = nfserrno(nfsd_open_break_lease(inode, NFSD_MAY_READ));
-> +			if (status != nfserr_jukebox ||
-> +			    !nfsd_wait_for_delegreturn(rqstp, inode))
-> +				return status;
-> +			return 0;
->  		}
->  		if (type == F_WRLCK) {
->  			struct nfs4_delegation *dp = fl->c.flc_owner;
-> @@ -8863,7 +8871,6 @@ nfsd4_deleg_getattr_conflict(struct svc_rqst *rqstp, struct dentry *dentry,
->  				spin_unlock(&ctx->flc_lock);
->  				return 0;
->  			}
-> -break_lease:
->  			nfsd_stats_wdeleg_getattr_inc(nn);
->  			dp = fl->c.flc_owner;
->  			refcount_inc(&dp->dl_stid.sc_count);
-> 
-> -- 
-> 2.46.0
-> 
+Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
 
--- 
-Chuck Lever
+Also, I do think we should probably add some kind of sanity warning to
+the SGX code in another patch.  If a node on an SGX system has CPUs and
+memory, it's very likely it will also have some EPC.  It can be
+something soft like a pr_info(), but I think it would be nice to have.
 
