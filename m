@@ -1,112 +1,491 @@
-Return-Path: <linux-kernel+bounces-307371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45FBE964C92
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 19:05:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E50F6964C93
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 19:05:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E38E21F20FCC
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 17:05:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E4D0284D24
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 17:05:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37A5D1B86D3;
-	Thu, 29 Aug 2024 17:03:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AF401B5EC2;
+	Thu, 29 Aug 2024 17:04:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZhGXw6ZI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JkfHAz8p"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67E381B5327;
-	Thu, 29 Aug 2024 17:03:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EC55156669
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 17:04:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724951011; cv=none; b=KHYkRU9wGZoYgcHxC/I69bq5hUtVQ8P/Ohh89eUkhUbAxfilf48XvSP9/eHZhthv7KYyPEP7xQtOhEKitU5z1TeN9++1QYGeYEsFTi1555Iq4eEsT4ETZZFV0Rd6cV0p5RYGxyQqJgEWhVSVmjZAim2Wpt7Ht+kK5a758RZBU2I=
+	t=1724951054; cv=none; b=AOW3qvYn2U3P6crgGP+AyiFggoH0ZxZn0an0BqfxzeXmKFcIC3+etGwodpDxMmiUBWsO0B6jDo//tRC/dNZ95u7Lwjy3vbI4FesW/clVqTmioNBe2H7DT/GVnSIdgNX+5E/xdedpLEo1lrPB9Trexn5zX5eKAmgp7Vue1yD5VMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724951011; c=relaxed/simple;
-	bh=fF3MZfjWlsFpCSUK05YMBeA2C4rmrtnhmYrTtq1uU0Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WW63gZSVoprUKRSAaRWq8wrvyvH1unqnO4Rkiiq1olTpHkM615AEqYVw+fpJ1tRR84EqUeoaHlfpKrWvfMahw+sCm86bPkhiAOJsh/tmz70KJL9hk1+9Ep+mAPacEqFQv1eRk9wf5HYQY2/sTAdh9j2oWKoakIy3GM6Oks8mXDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZhGXw6ZI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1892C4CEC1;
-	Thu, 29 Aug 2024 17:03:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724951011;
-	bh=fF3MZfjWlsFpCSUK05YMBeA2C4rmrtnhmYrTtq1uU0Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZhGXw6ZIpHaX7JtJXKxC+GfEC1uwdjGFdHd4u3KBEKsgNEMlsfLwY28AzyzstIyy2
-	 wuRnpC5FDa2d7QrnJCgninVC5chkrb2PVaVhnfIvb3ITaIJEqj/nH41BFD3ZSz9VM/
-	 SoSSYsOc81eMJWqMVcXpC1l24NfFd5ZNrHcib6NsTv+4+4ikTu7YF7mT4InIucpw0u
-	 48htY7e+QOgDMhcG62bBjp321l+7fdxiYxcVWLFLbPPFchXxQ2qNUbwdxUQMFbggO5
-	 I51KzR4bHsNR2nB0gU3r4wKJouSCitIS7TWi7J8KGrBLKvr2QwjU6oS0u0Dwx8KZ+u
-	 T9Wera6VSKTkg==
-Date: Thu, 29 Aug 2024 22:33:27 +0530
-From: Vinod Koul <vkoul@kernel.org>
-To: Inochi Amaoto <inochiama@outlook.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, dmaengine@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v12 2/3] soc/sophgo: add top sysctrl layout file for
- CV18XX/SG200X
-Message-ID: <ZtCp346ucJq/V1kP@vaman>
-References: <IA1PR20MB495396729244074C36E51E11BB942@IA1PR20MB4953.namprd20.prod.outlook.com>
- <IA1PR20MB4953E0D56CE4010C470E4A71BB942@IA1PR20MB4953.namprd20.prod.outlook.com>
- <Zs9kUAeapWeN/4GS@vaman>
- <IA1PR20MB4953572077286AF23A747507BB962@IA1PR20MB4953.namprd20.prod.outlook.com>
+	s=arc-20240116; t=1724951054; c=relaxed/simple;
+	bh=ggs2P8b2EjHr2ddRCQTSkVLRcmD9WtXyenDHI48AL5s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UGwR7Fy1wosytRG9qZQKle09QLPN8vfY55doAvR3gfdBrg/zriglD+2RnfmogKLoCj8auQUJ+SBxoGsz9zvVkhijESnOBnTbL3NAWiq1vuUd65GDoinlkrmImeiJG4DKFZEQDaiwb5cHcxfBcQ3TkYM2lcUe3O8/SHhNiYbeQVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JkfHAz8p; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-20260346ca1so7445ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 10:04:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1724951051; x=1725555851; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1nrWj+lbgwnv4pKqxuewQJzBbIqoUYBkPvZycuD61mM=;
+        b=JkfHAz8pDOUJ1NyJHzS6NyZv4pYvSga6zEK7Ga5l4Dc09tKh1e7owtqOyCYSqe28DQ
+         yNA5diC/bDfX/xNq0aATMuQeF1kVDMrKngf+3JJl1FO5YrntAZ2pvOiWrIGBm81x0kdK
+         1aHqy5hy9jh3hrsNQmDzA7kbRDPWnEqvLSUy/krcUOWL2F1zCq8pvSJJgTseLfPA54mi
+         +tsjS5FtmEa3vwO/ENoOgTTx4nUuyM2CcBXoZq70Fjr6J7qLILNWvnLxtvmyvI2gr/jJ
+         42GJMESXw2OOa0PjLfk+a1rl9zV6p40XV+e0uml8iH5057wz/hT9Exrm/uB26P22Eqza
+         8TqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724951051; x=1725555851;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1nrWj+lbgwnv4pKqxuewQJzBbIqoUYBkPvZycuD61mM=;
+        b=EuMPGRQyFG5+RshU5TtWvMEtSzxNe7iKpLDv00Mus1JbZCVBqB+IEIuiVtF1lQVyda
+         yRagEy22QiXEufkLW64aHNt1KGzP6IDYmf98KWXxRKe8icRh4bWMmHH+xpkCJoIW2IEu
+         cujAZSuM+q2k3VFJs8ogDwZUZ1Ex9BjY/YmgIAsFXKkDk9ahTDblNH39nN+0E8pHS5QK
+         ZqpCaRqjz1O6cljw4hZYdcNO4r+q0PI6gb3haSCP0NOg8x9lveTDCshXhTWC7cqkXCly
+         /ax/Vasm40lrJdW95ksHSMGCnDjDAECeOZb2qNmDNOc1JLqzKL6jSq/xS8SkmwXOKjMS
+         XSAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVAUzbS+wMHGaUZ4r2qpFnHVQHuBC8QehQGbaFX/TLzrWZfxTGLEYsUoS619zh7K+O1u2yKl8KIMdaRV5g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5a7BRyDwI8Oalz9JcCrl0KSw9RgNb59YD2aM2zhP7bWy+R8b5
+	JukVH6+bcps8UV7h8hLc2BcGKUCrE1s3izW5P7L6xXrT0NjPNTddJuGS2jSRmfSGuGgyyyBob7k
+	/jomXvuRmwTTwMNYwXC97UQtoplzIx6WB6W+9
+X-Google-Smtp-Source: AGHT+IEKjHEI5fi8CACxEU/wuH7rLZWTlw6hmW+nXaPA8fFpOSL/sPXDl3XdQmTpStVXXT1hAiKSRn50zzP7b1kofVA=
+X-Received: by 2002:a17:903:32ca:b0:201:fba5:3ed with SMTP id
+ d9443c01a7336-20510d58008mr3167875ad.27.1724951050824; Thu, 29 Aug 2024
+ 10:04:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <IA1PR20MB4953572077286AF23A747507BB962@IA1PR20MB4953.namprd20.prod.outlook.com>
+References: <20240809072532.work.266-kees@kernel.org> <20240809073309.2134488-5-kees@kernel.org>
+In-Reply-To: <20240809073309.2134488-5-kees@kernel.org>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Thu, 29 Aug 2024 10:03:56 -0700
+Message-ID: <CAJuCfpHOqKPzbbkULpWU5g1-8mTLXraQM4taHzajY_cJ-YFWgQ@mail.gmail.com>
+Subject: Re: [PATCH 5/5] slab: Allocate and use per-call-site caches
+To: Kees Cook <kees@kernel.org>
+Cc: Vlastimil Babka <vbabka@suse.cz>, Kent Overstreet <kent.overstreet@linux.dev>, 
+	Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>, 
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org, 
+	"GONG, Ruiqi" <gongruiqi@huaweicloud.com>, Jann Horn <jannh@google.com>, 
+	Matteo Rizzo <matteorizzo@google.com>, jvoisin <julien.voisin@dustri.org>, 
+	Xiu Jianfeng <xiujianfeng@huawei.com>, linux-kernel@vger.kernel.org, 
+	linux-hardening@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 29-08-24, 09:38, Inochi Amaoto wrote:
-> On Wed, Aug 28, 2024 at 11:24:24PM GMT, Vinod Koul wrote:
-> > On 27-08-24, 14:49, Inochi Amaoto wrote:
-> > > The "top" system controller of CV18XX/SG200X exposes control
-> > > register access for various devices. Add soc header file to
-> > > describe it.
-> > 
-> > I dont think I am full onboard this idea, 
-> 
-> Feel free to share your idea. I just added this file for
-> convenience to access the offset of the syscon device. 
-> In fact, I am not sure whether it is better to use reg
-> offset. Using reg adds some unncessary complexity, but
-> can avoid use this offset file. If you prefer this way,
-> it is OK for me to change.
+On Fri, Aug 9, 2024 at 12:33=E2=80=AFAM Kees Cook <kees@kernel.org> wrote:
+>
+> Use separate per-call-site kmem_cache or kmem_buckets. These are
+> allocated on demand to avoid wasting memory for unused caches.
+>
+> A few caches need to be allocated very early to support allocating the
+> caches themselves: kstrdup(), kvasprintf(), and pcpu_mem_zalloc(). Any
+> GFP_ATOMIC allocations are currently left to be allocated from
+> KMALLOC_NORMAL.
+>
+> With a distro config, /proc/slabinfo grows from ~400 entries to ~2200.
+>
+> Since this feature (CONFIG_SLAB_PER_SITE) is redundant to
+> CONFIG_RANDOM_KMALLOC_CACHES, mark it a incompatible. Add Kconfig help
+> text that compares the features.
+>
+> Improvements needed:
+> - Retain call site gfp flags in alloc_tag meta field to:
+>   - pre-allocate all GFP_ATOMIC caches (since their caches cannot
+>     be allocated on demand unless we want them to be GFP_ATOMIC
+>     themselves...)
 
-I would just add the offsets that I need in local driver header and move
-on...
+I'm currently working on a feature to identify allocations with
+__GFP_ACCOUNT known at compile time (similar to how you handle the
+size in the previous patch). Might be something you can reuse/extend.
 
-> 
-> > but still need someone to ack it
-> 
-> I am not sure there will be someone to ack it. If this patch
-> is kept.
-> 
-> > > 
-> > > Signed-off-by: Inochi Amaoto <inochiama@outlook.com>
-> > > ---
-> > >  include/soc/sophgo/cv1800-sysctl.h | 30 ++++++++++++++++++++++++++++++
-> > 
-> > is soc/sophgo/ right path? why not include/soc/sifive/... (sorry dont
-> > know much about this here...)
-> > 
-> 
-> CV1800 is a SoC from Sophgo, it is not from SiFive.
+>   - Separate MEMCG allocations as well
 
-As I said I am not sure, someone who is from this world should ack this
-header
+Do you mean allocations with __GFP_ACCOUNT or something else?
 
--- 
-~Vinod
+> - Allocate individual caches within kmem_buckets on demand to
+>   further reduce memory usage overhead.
+>
+> Signed-off-by: Kees Cook <kees@kernel.org>
+> ---
+> Cc: Suren Baghdasaryan <surenb@google.com>
+> Cc: Kent Overstreet <kent.overstreet@linux.dev>
+> Cc: Vlastimil Babka <vbabka@suse.cz>
+> Cc: Christoph Lameter <cl@linux.com>
+> Cc: Pekka Enberg <penberg@kernel.org>
+> Cc: David Rientjes <rientjes@google.com>
+> Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Roman Gushchin <roman.gushchin@linux.dev>
+> Cc: Hyeonggon Yoo <42.hyeyoo@gmail.com>
+> Cc: linux-mm@kvack.org
+> ---
+>  include/linux/alloc_tag.h |   8 +++
+>  lib/alloc_tag.c           | 121 +++++++++++++++++++++++++++++++++++---
+>  mm/Kconfig                |  19 +++++-
+>  mm/slab_common.c          |   1 +
+>  mm/slub.c                 |  31 +++++++++-
+>  5 files changed, 170 insertions(+), 10 deletions(-)
+>
+> diff --git a/include/linux/alloc_tag.h b/include/linux/alloc_tag.h
+> index f5d8c5849b82..c95628f9b049 100644
+> --- a/include/linux/alloc_tag.h
+> +++ b/include/linux/alloc_tag.h
+> @@ -24,6 +24,7 @@ struct alloc_tag_counters {
+>  struct alloc_meta {
+>         /* 0 means non-slab, SIZE_MAX means dynamic, and everything else =
+is fixed-size. */
+>         size_t sized;
+> +       void *cache;
+
+I see now where that meta.cache in the previous patch came from...
+That part should be moved here.
+
+>  };
+>  #define ALLOC_META_INIT(_size) {               \
+>                 .sized =3D (__builtin_constant_p(_size) ? (_size) : SIZE_=
+MAX), \
+> @@ -216,6 +217,13 @@ static inline void alloc_tag_sub(union codetag_ref *=
+ref, size_t bytes) {}
+>
+>  #endif /* CONFIG_MEM_ALLOC_PROFILING */
+>
+> +#ifdef CONFIG_SLAB_PER_SITE
+> +void alloc_tag_early_walk(void);
+> +void alloc_tag_site_init(struct codetag *ct, bool ondemand);
+> +#else
+> +static inline void alloc_tag_early_walk(void) {}
+> +#endif
+> +
+>  #define alloc_hooks_tag(_tag, _do_alloc)                               \
+>  ({                                                                     \
+>         struct alloc_tag * __maybe_unused _old =3D alloc_tag_save(_tag); =
+ \
+> diff --git a/lib/alloc_tag.c b/lib/alloc_tag.c
+> index 6d2cb72bf269..e8a66a7c4a6b 100644
+> --- a/lib/alloc_tag.c
+> +++ b/lib/alloc_tag.c
+> @@ -157,6 +157,89 @@ static void __init procfs_init(void)
+>         proc_create_seq("allocinfo", 0400, NULL, &allocinfo_seq_op);
+>  }
+>
+> +#ifdef CONFIG_SLAB_PER_SITE
+> +static bool ondemand_ready;
+> +
+> +void alloc_tag_site_init(struct codetag *ct, bool ondemand)
+> +{
+> +       struct alloc_tag *tag =3D ct_to_alloc_tag(ct);
+> +       char *name;
+> +       void *p, *old;
+> +
+> +       /* Only handle kmalloc allocations. */
+> +       if (!tag->meta.sized)
+> +               return;
+> +
+> +       /* Must be ready for on-demand allocations. */
+> +       if (ondemand && !ondemand_ready)
+> +               return;
+> +
+> +       old =3D READ_ONCE(tag->meta.cache);
+> +       /* Already allocated? */
+> +       if (old)
+> +               return;
+> +
+> +       if (tag->meta.sized < SIZE_MAX) {
+> +               /* Fixed-size allocations. */
+> +               name =3D kasprintf(GFP_KERNEL, "f:%zu:%s:%d", tag->meta.s=
+ized, ct->function, ct->lineno);
+> +               if (WARN_ON_ONCE(!name))
+> +                       return;
+> +               /*
+> +                * As with KMALLOC_NORMAL, the entire allocation needs to=
+ be
+> +                * open to usercopy access. :(
+> +                */
+> +               p =3D kmem_cache_create_usercopy(name, tag->meta.sized, 0=
+,
+> +                                              SLAB_NO_MERGE, 0, tag->met=
+a.sized,
+> +                                              NULL);
+> +       } else {
+> +               /* Dynamically-size allocations. */
+> +               name =3D kasprintf(GFP_KERNEL, "d:%s:%d", ct->function, c=
+t->lineno);
+> +               if (WARN_ON_ONCE(!name))
+> +                       return;
+> +               p =3D kmem_buckets_create(name, SLAB_NO_MERGE, 0, UINT_MA=
+X, NULL);
+> +       }
+> +       if (p) {
+> +               if (unlikely(!try_cmpxchg(&tag->meta.cache, &old, p))) {
+> +                       /* We lost the allocation race; clean up. */
+> +                       if (tag->meta.sized < SIZE_MAX)
+> +                               kmem_cache_destroy(p);
+> +                       else
+> +                               kmem_buckets_destroy(p);
+> +               }
+> +       }
+> +       kfree(name);
+> +}
+> +
+> +static void alloc_tag_site_init_early(struct codetag *ct)
+> +{
+> +       /* Explicitly initialize the caches needed to initialize caches. =
+*/
+> +       if (strcmp(ct->function, "kstrdup") =3D=3D 0 ||
+> +           strcmp(ct->function, "kvasprintf") =3D=3D 0 ||
+> +           strcmp(ct->function, "pcpu_mem_zalloc") =3D=3D 0)
+
+I hope we can find a better way to distinguish these allocations.
+Maybe have a specialized hook for them, like alloc_hooks_early() which
+sets a bit inside ct->flags to distinguish them?
+
+> +               alloc_tag_site_init(ct, false);
+> +
+> +       /* TODO: pre-allocate GFP_ATOMIC caches here. */
+
+You could pre-allocate GFP_ATOMIC caches during
+alloc_tag_module_load() only if gfp_flags are known at compile time I
+think. I guess for the dynamic case choose_slab() will fall back to
+kmalloc_slab()?
+
+> +}
+> +#endif
+> +
+> +static void alloc_tag_module_load(struct codetag_type *cttype,
+> +                                 struct codetag_module *cmod)
+> +{
+> +#ifdef CONFIG_SLAB_PER_SITE
+> +       struct codetag_iterator iter;
+> +       struct codetag *ct;
+> +
+> +       iter =3D codetag_get_ct_iter(cttype);
+> +       for (ct =3D codetag_next_ct(&iter); ct; ct =3D codetag_next_ct(&i=
+ter)) {
+> +               if (iter.cmod !=3D cmod)
+> +                       continue;
+> +
+> +               /* TODO: pre-allocate GFP_ATOMIC caches here. */
+> +               //alloc_tag_site_init(ct, false);
+> +       }
+> +#endif
+> +}
+> +
+>  static bool alloc_tag_module_unload(struct codetag_type *cttype,
+>                                     struct codetag_module *cmod)
+>  {
+> @@ -175,8 +258,21 @@ static bool alloc_tag_module_unload(struct codetag_t=
+ype *cttype,
+>
+>                 if (WARN(counter.bytes,
+>                          "%s:%u module %s func:%s has %llu allocated at m=
+odule unload",
+> -                        ct->filename, ct->lineno, ct->modname, ct->funct=
+ion, counter.bytes))
+> +                        ct->filename, ct->lineno, ct->modname, ct->funct=
+ion, counter.bytes)) {
+>                         module_unused =3D false;
+> +               }
+> +#ifdef CONFIG_SLAB_PER_SITE
+> +               else if (tag->meta.sized) {
+> +                       /* Remove the allocated caches, if possible. */
+> +                       void *p =3D READ_ONCE(tag->meta.cache);
+> +
+> +                       WRITE_ONCE(tag->meta.cache, NULL);
+
+I'm guessing you are not using try_cmpxchg() the same way you did in
+alloc_tag_site_init() because a race with any other user is impossible
+at the module unload time? If so, a comment mentioning that would be
+good.
+
+> +                       if (tag->meta.sized < SIZE_MAX)
+> +                               kmem_cache_destroy(p);
+> +                       else
+> +                               kmem_buckets_destroy(p);
+> +               }
+> +#endif
+>         }
+>
+>         return module_unused;
+> @@ -260,15 +356,16 @@ static void __init sysctl_init(void)
+>  static inline void sysctl_init(void) {}
+>  #endif /* CONFIG_SYSCTL */
+>
+> +static const struct codetag_type_desc alloc_tag_desc =3D {
+> +       .section        =3D "alloc_tags",
+> +       .tag_size       =3D sizeof(struct alloc_tag),
+> +       .module_load    =3D alloc_tag_module_load,
+> +       .module_unload  =3D alloc_tag_module_unload,
+> +};
+> +
+>  static int __init alloc_tag_init(void)
+>  {
+> -       const struct codetag_type_desc desc =3D {
+> -               .section        =3D "alloc_tags",
+> -               .tag_size       =3D sizeof(struct alloc_tag),
+> -               .module_unload  =3D alloc_tag_module_unload,
+> -       };
+> -
+> -       alloc_tag_cttype =3D codetag_register_type(&desc);
+> +       alloc_tag_cttype =3D codetag_register_type(&alloc_tag_desc);
+>         if (IS_ERR(alloc_tag_cttype))
+>                 return PTR_ERR(alloc_tag_cttype);
+>
+> @@ -278,3 +375,11 @@ static int __init alloc_tag_init(void)
+>         return 0;
+>  }
+>  module_init(alloc_tag_init);
+> +
+> +#ifdef CONFIG_SLAB_PER_SITE
+> +void alloc_tag_early_walk(void)
+> +{
+> +       codetag_early_walk(&alloc_tag_desc, alloc_tag_site_init_early);
+> +       ondemand_ready =3D true;
+> +}
+> +#endif
+> diff --git a/mm/Kconfig b/mm/Kconfig
+> index 855c63c3270d..4f01cb6dd32e 100644
+> --- a/mm/Kconfig
+> +++ b/mm/Kconfig
+> @@ -302,7 +302,20 @@ config SLAB_PER_SITE
+>         default SLAB_FREELIST_HARDENED
+>         select SLAB_BUCKETS
+>         help
+> -         Track sizes of kmalloc() call sites.
+> +         As a defense against shared-cache "type confusion" use-after-fr=
+ee
+> +         attacks, every kmalloc()-family call allocates from a separate
+> +         kmem_cache (or when dynamically sized, kmem_buckets). Attackers
+> +         will no longer be able to groom malicious objects via similarly
+> +         sized allocations that share the same cache as the target objec=
+t.
+> +
+> +         This increases the "at rest" kmalloc slab memory usage by
+> +         roughly 5x (around 7MiB), and adds the potential for greater
+> +         long-term memory fragmentation. However, some workloads
+> +         actually see performance improvements when single allocation
+> +         sites are hot.
+
+I hope you provide the performance and overhead data in the cover
+letter when you post v1.
+
+> +
+> +         For a similar defense, see CONFIG_RANDOM_KMALLOC_CACHES, which
+> +         has less memory usage overhead, but is probabilistic.
+>
+>  config SLUB_STATS
+>         default n
+> @@ -331,6 +344,7 @@ config SLUB_CPU_PARTIAL
+>  config RANDOM_KMALLOC_CACHES
+>         default n
+>         depends on !SLUB_TINY
+> +       depends on !SLAB_PER_SITE
+>         bool "Randomize slab caches for normal kmalloc"
+>         help
+>           A hardening feature that creates multiple copies of slab caches=
+ for
+> @@ -345,6 +359,9 @@ config RANDOM_KMALLOC_CACHES
+>           limited degree of memory and CPU overhead that relates to hardw=
+are and
+>           system workload.
+>
+> +         For a similar defense, see CONFIG_SLAB_PER_SITE, which is
+> +         deterministic, but has greater memory usage overhead.
+> +
+>  endmenu # Slab allocator options
+>
+>  config SHUFFLE_PAGE_ALLOCATOR
+> diff --git a/mm/slab_common.c b/mm/slab_common.c
+> index fc698cba0ebe..09506bfa972c 100644
+> --- a/mm/slab_common.c
+> +++ b/mm/slab_common.c
+> @@ -1040,6 +1040,7 @@ void __init create_kmalloc_caches(void)
+>                 kmem_buckets_cache =3D kmem_cache_create("kmalloc_buckets=
+",
+>                                                        sizeof(kmem_bucket=
+s),
+>                                                        0, SLAB_NO_MERGE, =
+NULL);
+> +       alloc_tag_early_walk();
+>  }
+>
+>  /**
+> diff --git a/mm/slub.c b/mm/slub.c
+> index 3520acaf9afa..d14102c4b4d7 100644
+> --- a/mm/slub.c
+> +++ b/mm/slub.c
+> @@ -4135,6 +4135,35 @@ void *__kmalloc_large_node_noprof(size_t size, gfp=
+_t flags, int node)
+>  }
+>  EXPORT_SYMBOL(__kmalloc_large_node_noprof);
+>
+> +static __always_inline
+> +struct kmem_cache *choose_slab(size_t size, kmem_buckets *b, gfp_t flags=
+,
+> +                              unsigned long caller)
+> +{
+> +#ifdef CONFIG_SLAB_PER_SITE
+> +       struct alloc_tag *tag =3D current->alloc_tag;
+> +
+> +       if (!b && tag && tag->meta.sized &&
+> +           kmalloc_type(flags, caller) =3D=3D KMALLOC_NORMAL &&
+> +           (flags & GFP_ATOMIC) !=3D GFP_ATOMIC) {
+
+What if allocation is GFP_ATOMIC but a previous allocation from the
+same location (same tag) happened without GFP_ATOMIC and
+tag->meta.cache was allocated. Why not use that existing cache?
+Same if the tag->meta.cache was pre-allocated.
+
+
+> +               void *p =3D READ_ONCE(tag->meta.cache);
+> +
+> +               if (!p && slab_state >=3D UP) {
+> +                       alloc_tag_site_init(&tag->ct, true);
+> +                       p =3D READ_ONCE(tag->meta.cache);
+> +               }
+> +
+> +               if (tag->meta.sized < SIZE_MAX) {
+> +                       if (p)
+> +                               return p;
+> +                       /* Otherwise continue with default buckets. */
+> +               } else {
+> +                       b =3D p;
+> +               }
+> +       }
+> +#endif
+> +       return kmalloc_slab(size, b, flags, caller);
+> +}
+> +
+>  static __always_inline
+>  void *__do_kmalloc_node(size_t size, kmem_buckets *b, gfp_t flags, int n=
+ode,
+>                         unsigned long caller)
+> @@ -4152,7 +4181,7 @@ void *__do_kmalloc_node(size_t size, kmem_buckets *=
+b, gfp_t flags, int node,
+>         if (unlikely(!size))
+>                 return ZERO_SIZE_PTR;
+>
+> -       s =3D kmalloc_slab(size, b, flags, caller);
+> +       s =3D choose_slab(size, b, flags, caller);
+>
+>         ret =3D slab_alloc_node(s, NULL, flags, node, caller, size);
+>         ret =3D kasan_kmalloc(s, ret, size, flags);
+> --
+> 2.34.1
+>
 
