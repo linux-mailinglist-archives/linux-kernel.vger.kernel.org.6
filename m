@@ -1,94 +1,156 @@
-Return-Path: <linux-kernel+bounces-307270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3EC6964B1C
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 18:09:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A511E964B28
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 18:11:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0E42286913
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:09:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 616442856F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:11:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DA261B3F14;
-	Thu, 29 Aug 2024 16:09:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4CDC1B140A;
+	Thu, 29 Aug 2024 16:11:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dqqRpPpy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="hrqDNfnD"
+Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A210192B84;
-	Thu, 29 Aug 2024 16:09:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A35A1B4C55
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 16:11:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724947787; cv=none; b=pNHQ7NHQlq6tU/4T/21wluHGicyTI1Y5pzSEwO/zPzOzI9cufPUsmhzWfzaV/zqYvqSOQVuFpm0N0UvqmsepPHHjxzXOqaV2w0n8dNcR4pF+K/6oy+FL+q/UEa1CHweZNWP4gyG1KOG1AcJxKDH/ty8bfLLdxq7wuNm2esHe2uQ=
+	t=1724947867; cv=none; b=sq32xp5jRS8LhApQZK0WQKw3CSA8pcQAXxEY6Q72lnglaiYKatXKwda1dFTzy8sYI0lNvOAPhnCRPKRtKlROkkMmsaLG0jc1F/bbCRuOdK4pOdbHnSQKZVKbixm7GV8hCLOdYHIJi3LK/sznqECNA/VaqXq9PveB8k1dZmTOkEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724947787; c=relaxed/simple;
-	bh=tyKDa9eF9hWmJ5krbc0vX9Qd82zc8OOsfQkxJ4wEuwQ=;
+	s=arc-20240116; t=1724947867; c=relaxed/simple;
+	bh=DY7oqtCWi3Gr0j/wHl0PYqK7Sy/TikvGGe3rvyUSFIU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WjlBWiTS2rCcYmHDwKfZ3maUmHWVXeLjgYJTWbAdz5xqGXfvgA20t8wqAGXjk5XiBvjed1IiPjv73jFWc+7cU4DrU1ubQR7BLZWAMegI1V03bn2DaYqyE3NlJNqZjwPXcoBxi8rgYBUyhGYfsqpMPDkGM7vKLzfes4LcRj/aXnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dqqRpPpy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD096C4CEC1;
-	Thu, 29 Aug 2024 16:09:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724947787;
-	bh=tyKDa9eF9hWmJ5krbc0vX9Qd82zc8OOsfQkxJ4wEuwQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dqqRpPpyypSmADZrtxUQTuhdXioLX4bNUO4CeBn/sxR03V+3Pg+Yj5+ffrNqO7d47
-	 rHI9e6s5f54GSKZpsKO0VesJu0xYXFq4B0LZU6DKRcXeyb5PQArSTmmZ2wwSJ0g/rU
-	 6vs1GjOzrODidwKMW7UlbTzjn7EdaosbmgueNkFTTSQWULDdTApqB2mjBSHXVMZtxj
-	 XI+jlTTNGHi2hS85Vk6oHH6tWOOCZXjTtVHlyLhMYrRGGHowXGt5aFGqUoO7HiOTUT
-	 hcUrK8G6DKGsP0fsRKVzcd7bDjqes3Q6bguURytmClL9c2idhZX3ra7iQ9Llr056oR
-	 YU4XzusjSC6LA==
-Date: Thu, 29 Aug 2024 17:09:42 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Dharma Balasubiramani <dharma.b@microchip.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: clocks: atmel,at91sam9x5-sckc: add sama7d65
-Message-ID: <20240829-mosaic-elective-2dcaad5fc6c4@spud>
-References: <20240829-sama7d65-sck-v1-1-3e7b19e3cbf9@microchip.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=CdaW5U9wGNnSkOPyjrXwZttWvuPBdYlj2x33h8HhHrzNQuRDCyF33X1xqFaqw2k6tAYPJzio+H4eo6kEUJtYFJiTGi/BHAC5Mm9VrVNy+pwPFl/GBPF6GPT80Vss/kflhmhum8uxbI1cgHyO/Sxj5/UOkfMH6J2+cNpF2riVwiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=hrqDNfnD; arc=none smtp.client-ip=91.218.175.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 29 Aug 2024 09:10:53 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1724947859;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tMNX7CC2ZokFN7tmkODHv3OqmYDEKIEaSqAFQdA/2uI=;
+	b=hrqDNfnDx0E+8b7nai3Ir81wZO3rzI2sVvhQ1sasU4acY5grkfXMtDS4oH0iiPBfNNZOOi
+	Gkg/9xEp7tV0NsgpZb7E/PSBeK7w+7okdsgaAbviPBZXSdcsCe45T3L6ksPFRzYP0PoR0g
+	100bDwm30tkPs/6ucLw9qlOvCqS/J+g=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Muchun Song <muchun.song@linux.dev>, 
+	David Rientjes <rientjes@google.com>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, 
+	Eric Dumazet <edumazet@google.com>, "David S . Miller" <davem@davemloft.net>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Meta kernel team <kernel-team@meta.com>, cgroups@vger.kernel.org, 
+	netdev@vger.kernel.org
+Subject: Re: [PATCH v2] memcg: add charging of already allocated slab objects
+Message-ID: <mvxyevmpzwatlt7z4fdjakvuixmp5hcqmvo3467kzlgp2xkbgf@xumnm2y6xxrg>
+References: <20240827235228.1591842-1-shakeel.butt@linux.dev>
+ <9fb06d9b-dec5-4300-acef-bbce51a9a0c1@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="DS9Ulw7sw6YNxpVn"
-Content-Disposition: inline
-In-Reply-To: <20240829-sama7d65-sck-v1-1-3e7b19e3cbf9@microchip.com>
-
-
---DS9Ulw7sw6YNxpVn
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <9fb06d9b-dec5-4300-acef-bbce51a9a0c1@suse.cz>
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, Aug 29, 2024 at 04:24:37PM +0530, Dharma Balasubiramani wrote:
-> Add bindings for SAMA7D65's slow clock controller.
->=20
-> Signed-off-by: Dharma Balasubiramani <dharma.b@microchip.com>
+On Thu, Aug 29, 2024 at 11:42:10AM GMT, Vlastimil Babka wrote:
+> On 8/28/24 01:52, Shakeel Butt wrote:
+> > At the moment, the slab objects are charged to the memcg at the
+> > allocation time. However there are cases where slab objects are
+> > allocated at the time where the right target memcg to charge it to is
+> > not known. One such case is the network sockets for the incoming
+> > connection which are allocated in the softirq context.
+> > 
+> > Couple hundred thousand connections are very normal on large loaded
+> > server and almost all of those sockets underlying those connections get
+> > allocated in the softirq context and thus not charged to any memcg.
+> > However later at the accept() time we know the right target memcg to
+> > charge. Let's add new API to charge already allocated objects, so we can
+> > have better accounting of the memory usage.
+> > 
+> > To measure the performance impact of this change, tcp_crr is used from
+> > the neper [1] performance suite. Basically it is a network ping pong
+> > test with new connection for each ping pong.
+> > 
+> > The server and the client are run inside 3 level of cgroup hierarchy
+> > using the following commands:
+> > 
+> > Server:
+> >  $ tcp_crr -6
+> > 
+> > Client:
+> >  $ tcp_crr -6 -c -H ${server_ip}
+> > 
+> > If the client and server run on different machines with 50 GBPS NIC,
+> > there is no visible impact of the change.
+> > 
+> > For the same machine experiment with v6.11-rc5 as base.
+> > 
+> >           base (throughput)     with-patch
+> > tcp_crr   14545 (+- 80)         14463 (+- 56)
+> > 
+> > It seems like the performance impact is within the noise.
+> > 
+> > Link: https://github.com/google/neper [1]
+> > Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
+> > ---
+> > v1: https://lore.kernel.org/all/20240826232908.4076417-1-shakeel.butt@linux.dev/
+> > Changes since v1:
+> > - Correctly handle large allocations which bypass slab
+> > - Rearrange code to avoid compilation errors for !CONFIG_MEMCG builds
+> > 
+> > RFC: https://lore.kernel.org/all/20240824010139.1293051-1-shakeel.butt@linux.dev/
+> > Changes since the RFC:
+> > - Added check for already charged slab objects.
+> > - Added performance results from neper's tcp_crr
+> > 
+> >  include/linux/slab.h            |  1 +
+> >  mm/slub.c                       | 51 +++++++++++++++++++++++++++++++++
+> >  net/ipv4/inet_connection_sock.c |  5 ++--
+> >  3 files changed, 55 insertions(+), 2 deletions(-)
+> 
+> I can take the v3 in slab tree, if net people ack?
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Thanks.
 
---DS9Ulw7sw6YNxpVn
-Content-Type: application/pgp-signature; name="signature.asc"
+> 
+> BTW, will this be also useful for Linus's idea of charging struct files only
+> after they exist? But IIRC there was supposed to be also a part where we
+> have a way to quickly determine if we're not over limit (while allowing some
+> overcharge to make it quicker).
+>
 
------BEGIN PGP SIGNATURE-----
+Do you have link to those discussions or pointers to the code? From what
+you have described, I think this should work. We have the relevant gfp
+flags to control the charging behavior (with some caveats).
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZtCdRgAKCRB4tDGHoIJi
-0rI6AP49JYlSWrgb4BX978wCCGjZhQj2Je3Uvv2k/pdMlbWHYQEAnpwFboh90uYG
-ySqncxdvHBYGWtyxim6MRTo7bWFlpwY=
-=E7BV
------END PGP SIGNATURE-----
+> Because right now this just overcharges unconditionally, but that's
+> understandable when the irq context creating the socket can't know the memcg
+> upfront. In the open() situation this is different.
+> 
 
---DS9Ulw7sw6YNxpVn--
+For networking we deliberately overcharges in the irq context (if
+needed) and the course correct in the task context. However networking
+stack is very robust due to mechanisms like backoff, retransmit to handle
+situations like packet drops, allocation failures, congestion etc. Other
+subsystem are not that robust against ENOMEM. Once I have more detail I
+can follow up on the struct files case.
+
+thanks,
+Shakeel
+
+
 
