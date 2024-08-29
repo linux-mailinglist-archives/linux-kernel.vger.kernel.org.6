@@ -1,116 +1,161 @@
-Return-Path: <linux-kernel+bounces-306808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B56F9643E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 14:06:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0128A9643EB
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 14:07:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C5CF1C246D4
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 12:06:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A675E1F20F4D
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 12:07:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84D04194120;
-	Thu, 29 Aug 2024 12:06:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA1B719308E;
+	Thu, 29 Aug 2024 12:07:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TL4bR+VA"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=shreeya.patel@collabora.com header.b="GeM63ouC"
+Received: from sender3-op-o17.zoho.com (sender3-op-o17.zoho.com [136.143.184.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8317191484;
-	Thu, 29 Aug 2024 12:06:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724933199; cv=none; b=GXkQWzemwPgTWPn/r0PLG2UxNzJ+eUqbei6HQYeEoxS1GuHavhQGOHLFn1BwMEcfENlt3gHRLgIkDXwaru8nCZTolO4w+A1bA65cXrHxrkp7xfEbcTrofJ9Wb9z7TDpCTGzsnc4iVjovNitapwP8xHALb0WozkzcR6fhPGrdcuo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724933199; c=relaxed/simple;
-	bh=+E0TYoC9A8uXLguv/Jkw/zwcuXpNrTVLwhTVwVZOVSM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QanxNghVeQWBurqjn29Yc1eTBaH6P41/w435QgFd0UsD05jfMEUU0gN5iJ44JzTO0pV1ZIbW3Wiph1o3fXsYDYF/pQZ9BNmAnDt6or7g/HqtcR8WVEagQzDa3cW03XMgC3hdVPW5AjWgnVDngH7HSrwn4QUWG/a+7D4iHPtq/lo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TL4bR+VA; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724933199; x=1756469199;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=+E0TYoC9A8uXLguv/Jkw/zwcuXpNrTVLwhTVwVZOVSM=;
-  b=TL4bR+VAzQfrlXWRK5srZ7kZWuQTJmakXhNBqxjpNxsTkFxxjgu5y7Er
-   sb0Yis4o2DPiSl0NBWpYoEWK0kMuvlITHOgaqrTUxf0u1jh+moq7Ro18g
-   BSHylHRG2uCUsUYywrMEB6zmG0XQJq2gBJoRPLxEOqktYbnrdTKHmYalg
-   haknx6dEKhrmXK8g5M9UHdJSE17eOfXOqO4Himxs8m+ghkch0zjjs7e2O
-   Nc82tpCTiVAwQz0rjNSsugZ6XV001IZBqgKwKe+ScMuDSs17X+BlVtR+T
-   +T3qS1MMAJtyaOt7h4ONSGY7LWGdndA9SwMWCyoU5P0c2aMzYFHY7pxrG
-   Q==;
-X-CSE-ConnectionGUID: C7gF54MCTk6Y9ORacrU5Vg==
-X-CSE-MsgGUID: xkQOdkvoQPKXf3VmgawSvw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11179"; a="34894553"
-X-IronPort-AV: E=Sophos;i="6.10,185,1719903600"; 
-   d="scan'208";a="34894553"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 05:06:37 -0700
-X-CSE-ConnectionGUID: k+W/toi/TWe2IfsTonTjMg==
-X-CSE-MsgGUID: lvERwannT0OBKxNI/IUyAg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,185,1719903600"; 
-   d="scan'208";a="63890665"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 05:06:31 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sjduo-00000002zFD-1bmO;
-	Thu, 29 Aug 2024 15:06:14 +0300
-Date: Thu, 29 Aug 2024 15:06:14 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Vasileios Amoiridis <vassilisamir@gmail.com>
-Cc: jic23@kernel.org, lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, ang.iglesiasg@gmail.com,
-	linus.walleij@linaro.org, biju.das.jz@bp.renesas.com,
-	javier.carrasco.cruz@gmail.com, semen.protsenko@linaro.org,
-	579lpy@gmail.com, ak@it-klinger.de, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	christophe.jaillet@wanadoo.fr
-Subject: Re: [PATCH v4 1/7] iio: pressure: bmp280: Use bulk read for humidity
- calibration data
-Message-ID: <ZtBkNu0luJyT1emw@smile.fi.intel.com>
-References: <20240828205128.92145-1-vassilisamir@gmail.com>
- <20240828205128.92145-2-vassilisamir@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81E8718E755;
+	Thu, 29 Aug 2024 12:07:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.184.17
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724933259; cv=pass; b=YfSXLcZtemjIbTi+HDTYhzOlGq4//kEZCH2GOpfuzT8MpiAVUqBxrwJAhHB/zoA/NR0mNFDx6rUl5tkEjYopyjgLUH39p9hiBwOHeX+bNeDziYqlBYPyIZTFmkg1yO+XUgSGI8Jwl8RW2TAFuBbvx+WWSSDvqZ20N/oOrdX7sqg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724933259; c=relaxed/simple;
+	bh=4I+e2okk/YXtq/9Vz9Ywovnl1TTnH572UNNPSZy1zgM=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=nKXpJvst2gTaF2rJhziBVU8yqJyJRKUBj6gbmKg35yxf69jnKOrOTddq+HdxV8mQKQ0Ldes20kLcCn7qhRj9Igo8zRLtNtht9yFar9IHDo7atle1FkBBbLzcqOCr/fs3rnNRrRX4PmP8crePoq8+SQp5z7cepgbNkatX1mz9sFY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=shreeya.patel@collabora.com header.b=GeM63ouC; arc=pass smtp.client-ip=136.143.184.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Delivered-To: kernelci-regressions@collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1724933230; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=lAgKO66A+YW8nXOM/2RPjho0fKN+McEJFnRbNCQ4B85A6hz8qHLTygeQitDEWEWuhvpBxR8NqXlnfM5FGSYjwP4VoC958q872KZmIKL7d2UR5IcrLKrqiFaONPrZAOSbkXCH/zIDjrrZFOIr7nrsWBe2AcjLK0MPRtV8rSpVxMY=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1724933230; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=suyBxaZl/fG6Fm9ksWETuidxGq6YUFN7oHDB/v3rqIw=; 
+	b=czOsfKpv/XYBqizsDvgmRpb/d9K+6eBpnwl6CPxS56H8Ds0B1f/k3mrfYEdxLGD/41uyeoeHpaWLESu9ZhfXCSkWc7FOm1RCiqSS24cKzkwe00G4C5DqYboaUjLqx0db8oVbk5t15egmNbZd80FY+xd3LMayGri/GVRbI2wROig=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=shreeya.patel@collabora.com;
+	dmarc=pass header.from=<shreeya.patel@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1724933230;
+	s=zohomail; d=collabora.com; i=shreeya.patel@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=suyBxaZl/fG6Fm9ksWETuidxGq6YUFN7oHDB/v3rqIw=;
+	b=GeM63ouCQd+7kOawk7G+duxxreMxS7IuB96Dvnx0NxIaWwkT4IGbYtzZGO7ARF4l
+	Af2nAlPhyLssZyIUIF1Hv5sbOyD3eRsJb2lgu7wAUSH3gqHAHTDzZNQhrEwjm9oxqRh
+	khH7TbE4opIcwPCpv2IBwc01ZxlywtueaQArVNFg=
+Received: from mail.zoho.com by mx.zohomail.com
+	with SMTP id 1724933227631219.01950855698306; Thu, 29 Aug 2024 05:07:07 -0700 (PDT)
+Date: Thu, 29 Aug 2024 17:37:07 +0530
+From: Shreeya Patel <shreeya.patel@collabora.com>
+To: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
+Cc: "stable" <stable@vger.kernel.org>, "patches" <patches@lists.linux.dev>,
+	"linux-kernel" <linux-kernel@vger.kernel.org>,
+	"torvalds" <torvalds@linux-foundation.org>,
+	"akpm" <akpm@linux-foundation.org>, "linux" <linux@roeck-us.net>,
+	"shuah" <shuah@kernel.org>, "patches" <patches@kernelci.org>,
+	"lkft-triage" <lkft-triage@lists.linaro.org>,
+	"pavel" <pavel@denx.de>, "jonathanh" <jonathanh@nvidia.com>,
+	"f.fainelli" <f.fainelli@gmail.com>,
+	"sudipm.mukherjee" <sudipm.mukherjee@gmail.com>,
+	"srw" <srw@sladewatkins.net>, "rwarsow" <rwarsow@gmx.de>,
+	"conor" <conor@kernel.org>, "allen.lkml" <allen.lkml@gmail.com>,
+	"broonie" <broonie@kernel.org>,
+	"Kernel CI - Regressions" <kernelci-regressions@collabora.com>,
+	"Gustavo Padovan" <gustavo.padovan@collabora.com>,
+	"Jeny Sheth" <jeny.sadadia@collabora.com>
+Message-ID: <1919e08445a.c252539b484915.5023963413874535346@collabora.com>
+In-Reply-To: <20240827143838.192435816@linuxfoundation.org>
+References: <20240827143838.192435816@linuxfoundation.org>
+Subject: Re: [PATCH 6.1 000/321] 6.1.107-rc1 review
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240828205128.92145-2-vassilisamir@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Importance: Medium
+User-Agent: Zoho Mail
+X-Mailer: Zoho Mail
 
-On Wed, Aug 28, 2024 at 10:51:21PM +0200, Vasileios Amoiridis wrote:
-> Convert individual reads to a bulk read for the humidity calibration data.
+ ---- On Tue, 27 Aug 2024 20:05:08 +0530  Greg Kroah-Hartman  wrote ---=20
+ > This is the start of the stable review cycle for the 6.1.107 release.
+ > There are 321 patches in this series, all will be posted as a response
+ > to this one.  If anyone has any issues with these being applied, please
+ > let me know.
+ >=20
+ > Responses should be made by Thu, 29 Aug 2024 14:37:36 +0000.
+ > Anything received after that time might be too late.
+ >=20
+ > The whole patch series can be found in one patch at:
+ > =C2=A0=C2=A0=C2=A0=C2=A0https://www.kernel.org/pub/linux/kernel/v6.x/sta=
+ble-review/patch-6.1.107-rc1.gz
+ > or in the git tree and branch at:
+ > =C2=A0=C2=A0=C2=A0=C2=A0git://git.kernel.org/pub/scm/linux/kernel/git/st=
+able/linux-stable-rc.git linux-6.1.y
+ > and the diffstat can be found below.
+ >=20
 
-...
+Hi,
 
-> +	calib->H2 = get_unaligned_le16(&data->bme280_humid_cal_buf[H2]);
-> +	calib->H3 = data->bme280_humid_cal_buf[H3];
-> +	tmp_1 = get_unaligned_be16(&data->bme280_humid_cal_buf[H4]);
-> +	tmp_2 = FIELD_GET(BME280_COMP_H4_GET_MASK_UP, tmp_1);
-> +	h4_upper = FIELD_PREP(BME280_COMP_H4_PREP_MASK_UP, tmp_2);
-> +	h4_lower = FIELD_GET(BME280_COMP_H4_MASK_LOW,
-
-> +			get_unaligned_be16(&data->bme280_humid_cal_buf[H4]));
-
-Either I don't understand the side effects, or this is the same as tmp_1. No?
-
-> +	calib->H4 = sign_extend32(h4_upper | h4_lower, 11);
-> +	calib->H5 = sign_extend32(FIELD_GET(BME280_COMP_H5_MASK,
-> +			get_unaligned_le16(&data->bme280_humid_cal_buf[H5])), 11);
-> +	calib->H6 = data->bme280_humid_cal_buf[H6];
-
--- 
-With Best Regards,
-Andy Shevchenko
+Please find the KernelCI report below :-
 
 
+OVERVIEW
+
+    Builds: 25 passed, 2 failed
+
+    Boot tests: 412 passed, 0 failed
+
+    CI systems: broonie, maestro
+
+REVISION
+
+    Commit
+        name: v6.1.106-322-gb9218327d235
+        hash: b9218327d235d21e2e82c8dc6a8ef4a389c9c6a6
+    Checked out from
+        https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-6.1.y
+
+
+BUILDS
+
+    Failures
+      -i386 (tinyconfig)
+      Build detail: https://kcidb.kernelci.org/d/build/build?orgId=3D1&var-=
+id=3Dmaestro:66cdf1fffb8042744d0f1923
+      Build error: kernel/rcu/rcu.h:218:17: error: implicit declaration of =
+function =E2=80=98kmem_dump_obj=E2=80=99; did you mean =E2=80=98mem_dump_ob=
+j=E2=80=99? [-Werror=3Dimplicit-function-declaration]
+      -x86_64 (tinyconfig)
+      Build detail: https://kcidb.kernelci.org/d/build/build?orgId=3D1&var-=
+id=3Dmaestro:66cdf200fb8042744d0f192a
+      Build error: kernel/rcu/rcu.h:218:17: error: implicit declaration of =
+function =E2=80=98kmem_dump_obj=E2=80=99; did you mean =E2=80=98mem_dump_ob=
+j=E2=80=99? [-Werror=3Dimplicit-function-declaration]
+      CI system: maestro
+
+
+BOOT TESTS
+
+No new boot failures found
+
+See complete and up-to-date report at:
+
+    https://kcidb.kernelci.org/d/revision/revision?orgId=3D1&var-git_commit=
+_hash=3Db9218327d235d21e2e82c8dc6a8ef4a389c9c6a6&var-patchset_hash=3D
+
+
+Tested-by: kernelci.org bot <bot@kernelci.org>
+
+Thanks,
+KernelCI team
 
