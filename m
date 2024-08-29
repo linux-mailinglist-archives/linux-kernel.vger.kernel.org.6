@@ -1,108 +1,125 @@
-Return-Path: <linux-kernel+bounces-306919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DF5396456A
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 14:54:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A13D964584
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 14:56:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F17A6B28DF0
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 12:54:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 177F41F29964
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 12:56:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F48C1AE056;
-	Thu, 29 Aug 2024 12:49:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="caOUhOI3"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A5EF1B151D;
+	Thu, 29 Aug 2024 12:51:19 +0000 (UTC)
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8095F1AE033
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 12:49:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 429D41AE861;
+	Thu, 29 Aug 2024 12:51:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724935760; cv=none; b=riyrXZaW70QMzHFOP6Ln4xnWiBViQY6LA+cvQO4VqYkSQPJpkPCJWjtt6iWJhbLPK5vy/6G0XMl2iN9W0YNUC/UKyMq8/AIv5UGAlOl7t9q+fC62OAXIcRGXblB/Y+4LzbfkeoTi09PEmSYoUvkXYcu0qnePqvUndQAGUke+p38=
+	t=1724935878; cv=none; b=bstQtF7+vCPkZbqTtctxZViXe53c2ndgYExDRuhSylYeY2hvEe0Mwitm8ZO9/Kom+uLOSl+N7vnw4Z9J3oom2xjYBOOKDXPAQmaWus8gDCIuBj9vjpWhphSbyNW824FI5RBxxAN7vG38ANk4BGlb60Uq832kOb7pzditf6QesXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724935760; c=relaxed/simple;
-	bh=sPZsmusIAktLi9bcP0xGfBUVHX02EQ5gXL1gLmac0cA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SxjyQuI0Fq5dyPdD8v6iQ+gBEc9VjSNjL8vl6fT5NzzUUP1akc/oM1xo9en8UEs1xhcoSjIEWbJ+OY8zlinvAxYe/eRxxLOGWQIQnZ/XiG3wtYekLQNQ4O6bKR6vpJfKcvmJlW2xfI0BuM8BSvckADR2969TtimDHn1EfwTNnoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=caOUhOI3; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724935760; x=1756471760;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=sPZsmusIAktLi9bcP0xGfBUVHX02EQ5gXL1gLmac0cA=;
-  b=caOUhOI3thBfU60GYgNO4s9/FPdH60UfcCE34y+vx1vsFW9KhD3DPWHw
-   DLlD7RJAWxjbwJ5/yU8xsBp1Jc7iH1tjmZJJMqec+DZsgC5fm/3wNhAVR
-   acGtLev/SHl8Vn16Vr5tMr5NJjZn2XT3Vt+aVfbmHKLAvlbwLEzNfvO0I
-   4XHh6ge1FwwGLmY3pAa/BV9t9yCiSUtBmQs37VbzcoPC5WXcFDSsc68iy
-   GXmsovjgWnvDhVxbLHcG3FirEC7+Ya7mTOf1QbGs5R6ln1jAOgE5aSrAi
-   bICEscvHf+hNYEw1R3F6fM9bE4n/+XvWYUZSdW5Z4lbhvJ+nHdK1Ke+Qt
-   Q==;
-X-CSE-ConnectionGUID: Dy72VceVRmK3jnXzY10heQ==
-X-CSE-MsgGUID: 8D/tzh/oSGOB7l5GQc3h8w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11179"; a="41026125"
-X-IronPort-AV: E=Sophos;i="6.10,185,1719903600"; 
-   d="scan'208";a="41026125"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 05:49:19 -0700
-X-CSE-ConnectionGUID: D4yuMiytS1uS0u+1oRQG4A==
-X-CSE-MsgGUID: LEZsvLTzRBCqhdKCDoN2kw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,185,1719903600"; 
-   d="scan'208";a="63766090"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 05:49:17 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sjeaR-00000002zvV-01c2;
-	Thu, 29 Aug 2024 15:49:15 +0300
-Date: Thu, 29 Aug 2024 15:49:14 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Chen-Yu Tsai <wenst@chromium.org>
-Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Matti Vaittinen <mazziesaccount@gmail.com>
-Subject: Re: [PATCH v2 08/10] regulator: irq_helpers: Fix
- regulator_irq_map_event_simple() kerneldoc
-Message-ID: <ZtBuSjH3EfK7QiiC@smile.fi.intel.com>
-References: <20240829085131.1361701-1-wenst@chromium.org>
- <20240829085131.1361701-9-wenst@chromium.org>
+	s=arc-20240116; t=1724935878; c=relaxed/simple;
+	bh=TdlstDs9GF3GW1CQLJxbDiBEfsNrmEYh+0rBE8YH438=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oX0Ji+s7kfc8bcAGTHZmBV0mJDRCGmiPCTeW5ilnvjpCPhLIYO5Si8KFE5JeWVyQbppwuqy1a37/xSfVkeljyDXxIDv2LkzQwgKva9zZTQVifpSi+dtTps0qFzhgd7HSzguAWNFCir+AbS7DdSLsyIJtCyDT4OwHjqqf0VxoPB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e1161ee54f7so695624276.2;
+        Thu, 29 Aug 2024 05:51:17 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724935876; x=1725540676;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6RaapfIZqaKH/yUWHMOaNDMRq75shGd+WNNlMTOiDx8=;
+        b=WJsOfhH9irmM0WHdIPjzeCumywOW8UWV988Ix0WHsP+ACICGt/89QciFNVlwmXYUfp
+         9DUFcUJzNwxfa7g6Gff6XBtZYFjsrJWBPv2ziBge9KEIfonm9LbWuWgEjHEZ2eYMIAVM
+         /oTkLH3uwIh+LpACcPC2Z6zaCKOiV53xJYaWuBxuKSXwJQ8QI1Qph+l/dt0BYGuJAXrr
+         0bUITNBjlzFTLgZpUQBLoaGcUq+o9S5nI30WXgaadOoxhdp1AFP3l612C+ILRlgDGRhJ
+         5Hyxt/SPlsoCPNc9BTFrfLSJXuJ2iUa/dVVoyJHYbIXbrDDiLlWHSmlwdXs4WdyR9ZQN
+         ah7g==
+X-Forwarded-Encrypted: i=1; AJvYcCWidbVc7yL2yWu7pJK0J/cqJWtxNABTHap3x9aJnGFViLAzNkuOFlhYAjyS2QsijyNHVYSMhiCSNHrYD+bk@vger.kernel.org, AJvYcCXeLryRaq5ytcp9trLdFHalIU4E+w9ZRT9fRRUTdIRVvfe7Yew0lyjFIHQn5F/Uewji0nYQzffmNTq0@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzlql2F65WvSFS2+M5+JKyhXQE6pE1qL/2f8lj5dg7ARcST+Nbv
+	cZRluZlltEBKm7b059ygOuDhQxKQ6E0TuEhipJpDl+ZEjE8BFqtnnaAz+JXf
+X-Google-Smtp-Source: AGHT+IESphWkmRnT6/H9x41PpF8+hRufS//3uA9QTn+VPZY2/qMrt1QLU6hy1TXnqsIvD2rvBmFw0A==
+X-Received: by 2002:a05:6902:1791:b0:e13:eba5:406d with SMTP id 3f1490d57ef6-e1a5ab58505mr2573707276.9.1724935875659;
+        Thu, 29 Aug 2024 05:51:15 -0700 (PDT)
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com. [209.85.219.172])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6d2d5daebd6sm2271907b3.105.2024.08.29.05.51.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 29 Aug 2024 05:51:15 -0700 (PDT)
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e1161ee54f7so695584276.2;
+        Thu, 29 Aug 2024 05:51:15 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV9N8kt0Zs0rbLRYLuXK3SUJTY/GokEdLrqhGinlmq9aeAxg/G+wy+/fBoc4yk0meIgG3jlKQC8keH/@vger.kernel.org, AJvYcCViND1QZNtHzcdFvSCfvBDszy8C8eua8blmZtD0xezVx/6e1NnbymV3/VJFQbaa+7Dfu/XC7dQOyPqKp3LW@vger.kernel.org
+X-Received: by 2002:a25:ed08:0:b0:e1a:43fb:12e6 with SMTP id
+ 3f1490d57ef6-e1a5ae020famr2604026276.35.1724935874608; Thu, 29 Aug 2024
+ 05:51:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240829085131.1361701-9-wenst@chromium.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20240822230104.707812-1-andy.shevchenko@gmail.com>
+ <CAMuHMdW2W+RsnBWdvxJJ7wOKCyM_162Hb1Xkd6id4h_74fzQrw@mail.gmail.com> <CAHp75VfyPQGXT9ypp+SducvHwOgMpCm-rCXSrQ=9-MCH8b+ZLw@mail.gmail.com>
+In-Reply-To: <CAHp75VfyPQGXT9ypp+SducvHwOgMpCm-rCXSrQ=9-MCH8b+ZLw@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 29 Aug 2024 14:51:02 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdX38O+TOhaK4_C5kh+11VwQTdnnSU=nhkSzdeJT=aMnxg@mail.gmail.com>
+Message-ID: <CAMuHMdX38O+TOhaK4_C5kh+11VwQTdnnSU=nhkSzdeJT=aMnxg@mail.gmail.com>
+Subject: Re: [PATCH v1 1/1] pinctrl: renesas: rzg2l: Replace
+ of_node_to_fwnode() with more suitable API
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, 
+	"Lad, Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 29, 2024 at 04:51:28PM +0800, Chen-Yu Tsai wrote:
-> kernel-doc complains about missing "Return" section for the function
-> regulator_irq_map_event_simple().
-> 
-> Add a "Return" section for it based on its behavior. The function
-> actually always returns 0, but fills in fields in its @rid parameter as
-> needed. Expand the description of the parameter to cover this.
-> 
-> While at it fix a typo found in the description of the same function.
-> 
-> Reported-by: Matti Vaittinen <mazziesaccount@gmail.com>
-> Closes: https://lore.kernel.org/all/e341240e-1c1f-49a2-91cd-440888fdbda0@gmail.com/
+Hi Andy,
 
-Fixes?
+On Fri, Aug 23, 2024 at 3:17=E2=80=AFPM Andy Shevchenko
+<andy.shevchenko@gmail.com> wrote:
+> On Fri, Aug 23, 2024 at 10:23=E2=80=AFAM Geert Uytterhoeven
+> <geert@linux-m68k.org> wrote:
+> > On Fri, Aug 23, 2024 at 1:01=E2=80=AFAM Andy Shevchenko
+> > <andy.shevchenko@gmail.com> wrote:
+> > > of_node_to_fwnode() is a IRQ domain specific implementation of
+> > > of_fwnode_handle(). Replace the former with more suitable API.
+>
+> ...
+>
+> > > -       girq->fwnode =3D of_node_to_fwnode(np);
+> > > +       girq->fwnode =3D dev_fwnode(pctrl->dev);
+> >
+> > While this looks correct, the new call goes through many more hoops, an=
+d
+> > is not a simple inline function.
 
-> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+[...]
 
--- 
-With Best Regards,
-Andy Shevchenko
+> P.S. Also note, it's _the only_ pin control driver that uses that API.
 
+Thanks for the explanation!
 
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-pinctrl for v6.12.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
