@@ -1,119 +1,95 @@
-Return-Path: <linux-kernel+bounces-306263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3E24963C30
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 09:07:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BBC8963C3D
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 09:08:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F444B22B21
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 07:07:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C2481C22199
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 07:08:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B403716D306;
-	Thu, 29 Aug 2024 07:07:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B00416B753;
+	Thu, 29 Aug 2024 07:08:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="C78EhkWZ"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Oi7qM7bD"
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4588A15B543
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 07:07:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15B0F4C70
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 07:08:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724915232; cv=none; b=fyXvz5he0Vwy3YOVrvxzkCZx8S1Kf0C4cZm7C+6j+gXuvdVCDZqoWdLk/h1w9+ftmxyEbM8UecV6EWM8nSs1UgMiDsehwulsf4Tv6GEzydCaVUIac3IXCfxMhKjzagbmF3TdemsJKjt2Ci42ubnVdcfew5RVvo7sAPWcFEceRXw=
+	t=1724915313; cv=none; b=PrteStXYQAMX+abuVE27JoJa2++Dae7jwq1QEVyDkr1QU1aOptLQm0bPxHrEH15EEN0YK2jsxmiaENhRr04xbUlPEIfqd0I2jzc8Uurm3Z5WJsqFIsKNeCQX4a1j+S006KWUw3YQ2hxmLQtX+Sn2+CvVXBnMnIq884HV60j8nWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724915232; c=relaxed/simple;
-	bh=iIrdz8xHWQOEmDFHwlLnKLxhlF+qVRPko7F/x7pE884=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HaAS0vXZPjfD++zfJ5QvDvLphbH9YbLe0go3ypZDcoiRgWeqIuVW7kLN+iNNMBPtjsqForNjvZvgiSUskYDoRraPsWCq6QfTNfkGeI8tq4RZMJ+IvyAp/MA/7eueANspsTLa1ePH5qN3oSK+gqLS84ihTfLJsRleRh+wHoFvUsw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=C78EhkWZ; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5bed72ff443so273447a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 00:07:09 -0700 (PDT)
+	s=arc-20240116; t=1724915313; c=relaxed/simple;
+	bh=IyAuhBUMpYrYzg9Rg/bUmtSrNRyiuw2WIh1lFBFmEwg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SGRoaPiE9awtG5/9ba2xTI6dfH4KxSX+9YlvUKszSPy2xESPc6ENPKy5L94Aygg+qp/AErQrPgvQuNoAlXW8s9C4oL88roMg2eakSgDfpUB4gpUp1uuHNZRFeh5TczDds2NhhLwA6/yNv6ndh9iFFPkpraKmtKE7qkb+tIRod9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Oi7qM7bD; arc=none smtp.client-ip=209.85.128.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-6bada443ffeso2599627b3.0
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 00:08:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724915228; x=1725520028; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=EDV7LYU2DJnsK4TmWVUaf/+yENKrN1KF0jvLEaGLdFU=;
-        b=C78EhkWZlwdNl1s6yFdlE52bVdMr+V8Jflg7LLxWQ9+zV5DmAPxCcqt4Ar2E/rbLHm
-         xtE5Bi60AJgqYRUj2e037uhCuUjvfoADqb9IcaSJ5no2w9XY1/x3ZNX1E4Nd4cpBnT9B
-         yJ1w9q5y/xg2pmlaNYRE3dmt0tIF9tFzs4RZleE21fkIwG7VRFA6H7xESiABacL36O09
-         jFfXvpPxmX8WRrWdY48OlqvRj8j42JOmwB0+4sGVGhvhoHzhjbHctnovhbZGPocDoiNY
-         GcrEWvz2wC6Zn59xDtjBzbYpKKdfwUJk5fu3wAS0hVVxbwpPeiBEQuchd+0qXXLcgLmC
-         pgrQ==
+        d=gmail.com; s=20230601; t=1724915311; x=1725520111; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=IyAuhBUMpYrYzg9Rg/bUmtSrNRyiuw2WIh1lFBFmEwg=;
+        b=Oi7qM7bDWBcThvLTy75nlir7tps2Hoyx0RxpTjcF5+UIeX/oIPAZT40vEzkbLIRrHY
+         0SwDZdfS1oCuQQio412iIVkDD+kk2Oy2tTWB7FcAlvzOkhynu3ly8zGl/9vVqJRSGT1e
+         58Cebt0451lZTMb2V1Lidqi1IhAosA/AIVXFxjTA7o3tvrzb02Sco8z1XXy3LGyb00mF
+         /oZLWvHkgQQs/MR2s2ZGbfVzQ1MOc/fb8G3kDr7oAPPuG64SFwAVZqxcyJlCFcLN4Fbf
+         pUSdVhTDG4jpOughXiNflx0Q5faNwsV3Rid3WZZikvSeFESlxp4nwbfiQ9u+TpxxZgn5
+         HTqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724915228; x=1725520028;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EDV7LYU2DJnsK4TmWVUaf/+yENKrN1KF0jvLEaGLdFU=;
-        b=ArhTMLtnfVJKWHNr9lKpRUY9+rQaVmBwJWImruPyleygFvN19n5vEYC6DPvvt7dNi6
-         bP4dqC6Gfx1HWQSg/yISl5yCUIx2qgEwPzuuXQtMLfJR16XPr+wHF4MyoM8PjAhe0l1N
-         DsVrXcXuMokTreibgzesYz6ayjbRsDNnW79vM0gh5bUzksvHmay+SVv8i9HBCIKzASvz
-         Qg16UkmfRa0wJa/p1wgOeuhcdTThqiKcd9hfXzns9Bw+oPsQc6f1xqIgdaUtcpmDcBw0
-         p3/NZpXWZzjSaWV6wUiVRWwhsznOT4h9BJrl2VeVf5mU1l88MnDKiP4073SWE/q9eg0H
-         7+4A==
-X-Forwarded-Encrypted: i=1; AJvYcCV+YJMSdt/vfqaKvlBMxRuRFT5nBkSsHuFQyalmNV/t3FslwYHAxPYFbLAtC9JBOILzMI398VlWkZYCMPk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6up6mI1njLMJsLHET0CWp+yoZOIEdnKBq3d1O7lzqArQvlNKD
-	Do3+5qLE8T3b7NjPUwudtEk4EdlsqgavPSRi2diWxXocn3mv68y2eDXM8GWpOLk=
-X-Google-Smtp-Source: AGHT+IFNrbFztgjXMHcLbgg0oT3MbRl4ZmtEJeLPKhMXUsVFcQa9Y3/vmFxcGOFsZGHW/LlDarOk/g==
-X-Received: by 2002:a17:907:e92:b0:a80:7193:bd88 with SMTP id a640c23a62f3a-a897f8f78a4mr131638966b.36.1724915228420;
-        Thu, 29 Aug 2024 00:07:08 -0700 (PDT)
-Received: from linaro.org ([82.79.186.176])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8988feae63sm38563966b.35.2024.08.29.00.07.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 00:07:07 -0700 (PDT)
-Date: Thu, 29 Aug 2024 10:07:05 +0300
-From: Abel Vesa <abel.vesa@linaro.org>
-To: Pengfei Li <pengfei.li_1@nxp.com>
-Cc: krzk+dt@kernel.org, robh@kernel.org, abelvesa@kernel.org,
-	mturquette@baylibre.com, sboyd@kernel.org, conor+dt@kernel.org,
-	shawnguo@kernel.org, s.hauer@pengutronix.de, ping.bai@nxp.com,
-	ye.li@nxp.com, peng.fan@nxp.com, aisheng.dong@nxp.com,
-	frank.li@nxp.com, kernel@pengutronix.de, festevam@gmail.com,
-	linux-clk@vger.kernel.org, imx@lists.linux.dev,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/2] clk: imx93: Move IMX93_CLK_END macro to clk driver
-Message-ID: <ZtAeGWtJDMyTVkjc@linaro.org>
-References: <20240627082426.394937-1-pengfei.li_1@nxp.com>
+        d=1e100.net; s=20230601; t=1724915311; x=1725520111;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IyAuhBUMpYrYzg9Rg/bUmtSrNRyiuw2WIh1lFBFmEwg=;
+        b=j65ltay7CXcw4ZSF1cUd07mxLJk2vuIi4NojZyKs0cW8y7i0Ny3xSO25rhAABKcMb/
+         7vttssm3qAJQfk6PPekbhC5gohLI0EC9SuinajrBeCTAla1bVUspw5Z1M66PPRpHqQ0J
+         sXsB6Nge8uTdgrhQG+cVuJLPD6PfFC6zqP1aQer7h0dwX4Rrt0NJfEG6sD0XoxVlN/35
+         YQ0ayOm+5EICgOnazPPVJvpHg5e1v/iMHeOpkebPnRPJPFm9Y5+I/g7QULYrEn/fes7E
+         bBFrhR9eeLusITxvnHKKoghIMwVH1LV1Exhvwa5vxaIMr6z169AK8PyNxZJGdcMdiq+A
+         bfzw==
+X-Forwarded-Encrypted: i=1; AJvYcCWoCNtdwMKp1TAVGKLRxxRo23yX4UFNqYIDq3JhRL29+UdoL+n1TqWzMlaY56KZLOQJocOeloWvVgiXteI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnJAw6GYi8g/7Bs31HBsCdRosXWVbpumRrJHhmyCHa9UDC+mnm
+	NS6NUvZlI1is6lvgdjfYPpPA8GK1xJIebanaTJ+SA0xSg0UXdtarlUM/vfwgMJp8mgGh+mSnsnc
+	1tig6dcULEjac8+oyiMnKCHffFYU=
+X-Google-Smtp-Source: AGHT+IHBG54kcyJNao2S8e3RZf5s1k+UvHDbQfTQZBYaZtFW8uvd8xnYVaG4KN2Krr/p0slYw316fyXauQdT/GHO33s=
+X-Received: by 2002:a05:690c:d83:b0:640:aec2:101c with SMTP id
+ 00721157ae682-6d2ed2992b6mr3916147b3.2.1724915310875; Thu, 29 Aug 2024
+ 00:08:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240627082426.394937-1-pengfei.li_1@nxp.com>
+References: <c844faa0-343a-46f4-a54f-0fd65f4d4679@leemhuis.info>
+ <BN9PR11MB5276CA2E1922D9FD6B9F2ECF8C962@BN9PR11MB5276.namprd11.prod.outlook.com>
+ <CAOcK=CN3-v=dgMC9XTbh-h0zaD01uatOZKjvSF7ocofTCOGp7Q@mail.gmail.com>
+In-Reply-To: <CAOcK=CN3-v=dgMC9XTbh-h0zaD01uatOZKjvSF7ocofTCOGp7Q@mail.gmail.com>
+From: Markus Rathgeb <maggu2810@gmail.com>
+Date: Thu, 29 Aug 2024 09:08:18 +0200
+Message-ID: <CAOcK=CPi1TokgySF77X+zuQ10kxfsfCXekYVanPhF51+Ow1XRg@mail.gmail.com>
+Subject: Re: [regression] usb and thunderbould are misbehaving or broken due
+ to iommu/vt-d change
+To: "Tian, Kevin" <kevin.tian@intel.com>
+Cc: Linux regressions mailing list <regressions@lists.linux.dev>, Lu Baolu <baolu.lu@linux.intel.com>, 
+	Will Deacon <will@kernel.org>, David Woodhouse <dwmw2@infradead.org>, Joerg Roedel <joro@8bytes.org>, 
+	"iommu@lists.linux.dev" <iommu@lists.linux.dev>, LKML <linux-kernel@vger.kernel.org>, 
+	Jacob Pan <jacob.jun.pan@linux.intel.com>, Adam Williamson <awilliam@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 24-06-27 16:24:24, Pengfei Li wrote:
-> 'IMX93_CLK_END' macro was previously defined in imx93-clock.h to
-> indicate the number of clocks, but it is not part of the ABI, so
-> it should be moved to clk driver.
-> 
+I did a git reset to 2b989ab9bc89b29dd4b5509408b8fa42337eda56
+Build and tested the kernel.
 
-Right, why?
+This seems to be a good commit.
 
-All other providers have been using the _CLK_END from the bindings
-header. What is so special about this ? AFAICT, nothing.
-
-> ---
-> Change for v2:
-> - Use pre-processor define to simplify code.
-> - link to v1: https://lore.kernel.org/all/20240625175147.94985-1-pengfei.li_1@nxp.com/
-> 
-> Pengfei Li (2):
->   clk: imx93: Move IMX93_CLK_END macro to clk driver
->   dt-bindings: clock: imx93: Drop IMX93_CLK_END macro definition
-> 
->  drivers/clk/imx/clk-imx93.c             | 2 ++
->  include/dt-bindings/clock/imx93-clock.h | 1 -
->  2 files changed, 2 insertions(+), 1 deletion(-)
-> 
-> -- 
-> 2.34.1
-> 
+So, the first bad commit on my side seems to be
+f90584f4beb84211c4d21b319cc13f391fe9f3c2
 
