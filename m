@@ -1,130 +1,110 @@
-Return-Path: <linux-kernel+bounces-307294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B514C964B6B
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 18:19:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AF3D7964B6F
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 18:19:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 688EB1F21830
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:19:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 604DD1F24F1D
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:19:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05E521B8E82;
-	Thu, 29 Aug 2024 16:16:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gu3vu998"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CB611B6525;
+	Thu, 29 Aug 2024 16:17:09 +0000 (UTC)
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 422301B3B1D;
-	Thu, 29 Aug 2024 16:16:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B9111B0132;
+	Thu, 29 Aug 2024 16:17:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724948195; cv=none; b=tFlbhrGNf4zD+si8Gy7rexgLSLHKyVipRG8WbpWNZjDh5i7v+D6tIlQw15USq+zH42bRVCd3RkjJSo7EWPla2d0XTNDnv7xLnt7qa8BJC09+KSDPiFixZ16yNw0LXD/+I4WnBMhcTKO+qud6gUrRFJNtqmva+zxbNKPSR+BJeVg=
+	t=1724948229; cv=none; b=PSDIgMiDqr04L0IOCD6LAT4sWWqJPVkVpiBdAa2er9mZbof3NxDgdKWOg8hguvmcotr4cx7ZDMeaGdxScSoOqRQxMmJ/UAkISIKGD5hVNEDZLJNUjDsYXyecCpydd94YMCEWd/a77ShtCYoSj9l6XlJg7N+nrUpnW1q9FduIq+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724948195; c=relaxed/simple;
-	bh=HxPcbRMFcsJNqFKtugSZKtmx4npczuzpAat1MMw2FFk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Le+218cfn4IkN+BdAPEkXnDwKAXU29Z9/zlrZGZfezVEiaI97PZlZYbDtF9Y015rvQncZOyhOhGm5+NIwByRugwXhnQGBRUnA+C1fRUDz/q/De/LvXHy/g83Cv5a17fsWgS3Xo1hnw7sRvgVA7wY1eCFAC6GiKl8wcfVSsT+Ay8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gu3vu998; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1277C4CEC2;
-	Thu, 29 Aug 2024 16:16:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724948194;
-	bh=HxPcbRMFcsJNqFKtugSZKtmx4npczuzpAat1MMw2FFk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Gu3vu9985tehBLLpWjFYDXPNeRGf5KzowUGu7XAR7vA1/jCUwgGlEU19/YOl75g6t
-	 TMay80EKIq/vhlaQDBRu8Zta/68PuiZ7jjXSwGAFD+zjNI+sp1UoqflEcgRn8GcXOC
-	 Qi7ERfy7GZzOuPi5BeLdmVHf/IVofWRwxIR/sHg+FbqZYhxsEzhpbp/twR+8K8EKSc
-	 v7m4gKF/yFPx6rqhgMf28KhbMeFTqXgnGrRImgDsmSzYI0B8jL6GqWNcpUMn27gQTF
-	 A25Ecd+fU+ewLBIBJAGIxt38zO0nGhg4Jj//W18xnJHZuPi9ZyA7kimFIMFHA+buhU
-	 e65SI6ZOuuJKQ==
-Date: Thu, 29 Aug 2024 17:16:30 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Antoniu Miclaus <antoniu.miclaus@analog.com>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Michael Hennerich <michael.hennerich@analog.com>,
-	linux-input@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] dt-bindings: touchscreen: ad7877: add bindings
-Message-ID: <20240829-mossy-dispense-bab38650455f@spud>
-References: <20240829092007.25850-1-antoniu.miclaus@analog.com>
- <20240829092007.25850-2-antoniu.miclaus@analog.com>
+	s=arc-20240116; t=1724948229; c=relaxed/simple;
+	bh=QO7AvKeKUYKjhD9JCpJcMgmbNtqlRhAYgMyPkP9BLoI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sSsEQkcYdGprRWtDd1edJJtC+kXPX9vMHhtJaRa8TnPRhzGqwi09YW3SnPZ+De7KtKc22sZrbFBXORgl7nz/Hz5vCgEmXPAa6DKuWMdzEDHb2p2yxMIpMN1NncvuDwjRoYD0ThLa4QMMvRJN5S6czEHwSSbqFpGYB+8rsUJDmkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a86b64ebd8aso60946666b.1;
+        Thu, 29 Aug 2024 09:17:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724948226; x=1725553026;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PmiVoCqkpTm1fR0+qxgPcUI1LVSiOqIdzCopqFmVZvk=;
+        b=ww6NTX5ccFUecE85YWYYbDKdmRJ9u0+u/uZRNr4BTo/G6JF+lmrrfIcqlBJMHoZVY3
+         PB61guPyAIEGDijzRTmWOnog6urv5UoqeE/Fr5dixoPfiODQwUzxR/2xcCJL5TZUYmAP
+         SFoHOnjVRkqN0xp+nlbnYrOoNAoC80WvGtvvLtn9xk90+E9ymuRlE7h3AkhbuTIXdhU0
+         lRtT7NBgrGBnLTebse4f0+Wx7EcyYUeMiVxWN5OZlOuZqMwdyQq8a43HRPSFMa5+y07g
+         o6JiLzLUMyyx0vR+T/4Tf69a8pAwCA8cd1SFFyEaQWkLSySB15TCV2DL5eihF6JZlwRm
+         xqog==
+X-Forwarded-Encrypted: i=1; AJvYcCVDocuK1frBmscHthcG9wkdq/anOcFmex3GDsipxosxiMA3IRDw+DUj0elfkO/0pR29igpPFH8kCYa7i5E=@vger.kernel.org, AJvYcCVj2HuSf8slY4mcS4KA9RCaYQn1I09EQlfaIJ11dsRlbCa8TdtVn1OaMDilOxxNvvkwF7fz++ti@vger.kernel.org, AJvYcCWOmSqCG7H7Aq9Zhvp851MwTXYM+ezMKM8emcbZ7Rl3iBM/zTZfUpgjf4ApMiUOsVEKQjpnS6Z+yA86SIGIQxd/@vger.kernel.org
+X-Gm-Message-State: AOJu0YzbjLiBrlp+Nm8w6wATiSTEmWYtisBw/s+eaGCSeNiugu5kidnp
+	Z3s4kd2qnhUM2Eed9vVf2LoC/XR9MxsGREi2N8ebY+PeVSmGme1w
+X-Google-Smtp-Source: AGHT+IGlI2ObNhmxpHo2caYpwI+WseL6KODVNU58UJmvzFGKpoXdnpR/8Hm0Vpc3HMYGwlkrhlHclA==
+X-Received: by 2002:a05:6402:4308:b0:5be:ff75:3aa9 with SMTP id 4fb4d7f45d1cf-5c21ed8c6a2mr3646921a12.26.1724948225141;
+        Thu, 29 Aug 2024 09:17:05 -0700 (PDT)
+Received: from localhost (fwdproxy-lla-006.fbsv.net. [2a03:2880:30ff:6::face:b00c])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c226cebf6esm844131a12.97.2024.08.29.09.17.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Aug 2024 09:17:04 -0700 (PDT)
+From: Breno Leitao <leitao@debian.org>
+To: fw@strlen.de,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: rbc@meta.com,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	netfilter-devel@vger.kernel.org
+Subject: [PATCH nf-next v4 0/2] netfilter: Make IP_NF_IPTABLES_LEGACY selectable
+Date: Thu, 29 Aug 2024 09:16:53 -0700
+Message-ID: <20240829161656.832208-1-leitao@debian.org>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="hFaBAt629pkSLViP"
-Content-Disposition: inline
-In-Reply-To: <20240829092007.25850-2-antoniu.miclaus@analog.com>
+Content-Transfer-Encoding: 8bit
 
+These two patches make IP_NF_IPTABLES_LEGACY and IP6_NF_IPTABLES_LEGACY
+Kconfigs user selectable, avoiding creating an extra dependency by
+enabling some other config that would select IP{6}_NF_IPTABLES_LEGACY.
 
---hFaBAt629pkSLViP
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Changelog:
 
-On Thu, Aug 29, 2024 at 12:19:36PM +0300, Antoniu Miclaus wrote:
-> Add device tree bindings for the ad7877 driver.
->=20
-> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
-> ---
->  .../input/touchscreen/adi,ad7877.yaml         | 58 +++++++++++++++++++
->  1 file changed, 58 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/input/touchscreen/a=
-di,ad7877.yaml
->=20
-> diff --git a/Documentation/devicetree/bindings/input/touchscreen/adi,ad78=
-77.yaml b/Documentation/devicetree/bindings/input/touchscreen/adi,ad7877.ya=
-ml
-> new file mode 100644
-> index 000000000000..5fc5124c5999
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/input/touchscreen/adi,ad7877.yaml
-> @@ -0,0 +1,58 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/input/touchscreen/adi,ad7877.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Analog Devices AD7877 Touch Screen Controller
-> +
-> +maintainers:
-> +  - Antoniu Miclaus <antoniu.miclaus@analog.com>
-> +
-> +description: |
-> +  Analog Devices Touch Screen Controller
-> +  https://www.analog.com/media/en/technical-documentation/data-sheets/AD=
-7877.pdf
-> +
-> +allOf:
-> +  - $ref: touchscreen.yaml#
-> +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
+v4:
+ * Remove the "depends on" part, which may come later in a separate
+   change, given its intrusive on how to configure selftests
 
-> +
-> +unevaluatedProperties: false
+v3:
+ * Make sure that the generate from  tools/testing/selftests/net/config
+   look the same before and after. (Jakub)
+ * https://lore.kernel.org/all/20240827145242.3094777-1-leitao@debian.org/
 
-So, all of the properties in those two files are valid for this
-touchscreen controller?
+v2:
+ * Added the new configuration in the selftest configs (Jakub)
+ * Added this simple cover letter
+ * https://lore.kernel.org/all/20240823174855.3052334-1-leitao@debian.org/
 
---hFaBAt629pkSLViP
-Content-Type: application/pgp-signature; name="signature.asc"
+v1:
+ * https://lore.kernel.org/all/20240822175537.3626036-1-leitao@debian.org/
 
------BEGIN PGP SIGNATURE-----
+Breno Leitao (2):
+  netfilter: Make IP6_NF_IPTABLES_LEGACY selectable
+  netfilter: Make IP_NF_IPTABLES_LEGACY selectable
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZtCe3gAKCRB4tDGHoIJi
-0iT8AP4pJ9a6awlbILTm7sxvIpWDpdBbhXEgx4ngjVqasbPQqAD8DQiAFH2A3p5f
-JPd29psXBmpBvhIG+Xi2vJGMjOF+Cgs=
-=mApE
------END PGP SIGNATURE-----
+ net/ipv4/netfilter/Kconfig | 7 ++++++-
+ net/ipv6/netfilter/Kconfig | 8 +++++++-
+ 2 files changed, 13 insertions(+), 2 deletions(-)
 
---hFaBAt629pkSLViP--
+-- 
+2.43.5
+
 
