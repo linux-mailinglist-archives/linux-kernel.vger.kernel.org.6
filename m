@@ -1,150 +1,176 @@
-Return-Path: <linux-kernel+bounces-306204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3A04963B1B
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:15:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A512963B1D
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:16:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96CD91F2325F
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 06:15:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D7DC1C21DAB
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 06:16:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E58571537C6;
-	Thu, 29 Aug 2024 06:15:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B3A714AD22;
+	Thu, 29 Aug 2024 06:16:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n7Sf0Ecx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="ak6SdMF1"
+Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26CCE14B94F;
-	Thu, 29 Aug 2024 06:15:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B08E4963C
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 06:16:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724912102; cv=none; b=HKUi3HxJhFDMyvlbPg3W8iQhpKWk6/m8UNui99YHuuZYdWA0lPkEqDvIyTFA0HIyHn3RY/vtKCWPk1IyVVDocKaQOOSNgXNJWw257TMlbpj5TdaWXLpo1qipRj9dW3SDCptQQWi01zYYqSfkDyqtzDj00MpwrUpHvWZaN4+kpo8=
+	t=1724912180; cv=none; b=o4OnCRP+F6w+ILvSO9fztx9Ou4uipvy/brevHz3h6cpLqG+kwO+gewJJZ+R4ta1nBpqnzeqGCP416BxVpLkRr/RLxhznJ1cEeY3WjUOy+k1im+5jdNVVhDe3zEMPMaswuUpwXQrM3Mz/5XChNW1/CgStVugux0E161ZTkCIhwRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724912102; c=relaxed/simple;
-	bh=CYhvJTzMnUvSO6kqmCCSLSZZi2DwPcCuH0MXtqEy9dI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ace8GrV1/EAxME+9gSTOg+X8JRHt3qf2pfbTn/szELIn4BrPEipFcaYyVlUE6x+Z4Xdx1pbtHlk+VwTV4lyBKc7pmvV1cFl7xPuSJk6LwD8IPRxnUmMMNn5ZhWrlgV6Frqky/2+5XU7jhkgEjWnePbnHQ8L1Dmwmk1WnmDk+NyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n7Sf0Ecx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEDDBC4CEC2;
-	Thu, 29 Aug 2024 06:15:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724912101;
-	bh=CYhvJTzMnUvSO6kqmCCSLSZZi2DwPcCuH0MXtqEy9dI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=n7Sf0EcxIZtYDzoiK9o10w2CB9vJwmaavVk0LqtMeOMjMRPYhNost6WU35oMAdXi7
-	 NVgNf5SgDEzo6GlCM33IwxfPpOncXFuZPJeu0az4EFFslk+J2HwFWtbJSwLnQIy25q
-	 /rJ/yzEHqqFbkUumaqkZHZtTgPyVwoJefmWppnIqf3m8IEjPb9HpZ7bXCSEoKqKiGs
-	 yQv1IDZqv97pfEHCwL18MVz/InUnRQ9OToqkEoF5nMpHX8z3vKDtyDB4UzukpUOni5
-	 ORi3ug7SZP0RVbbRewznpS7cRm7qpGzaWI+ZnqEitTPLpoQrzhQ2wDNNUtk+HyDJuY
-	 8eSi9DQhGEXig==
-Date: Thu, 29 Aug 2024 08:14:58 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Jan Kiszka <jan.kiszka@siemens.com>
-Cc: Nishanth Menon <nm@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>, 
-	Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org, 
-	Siddharth Vadapalli <s-vadapalli@ti.com>, Bao Cheng Su <baocheng.su@siemens.com>, 
-	Hua Qian Li <huaqian.li@siemens.com>, Diogo Ivo <diogo.ivo@siemens.com>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, 
-	Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: [PATCH v3 2/7] dt-bindings: PCI: ti,am65: Extend for use with PVU
-Message-ID: <2tc4eistthjifxsedwux3x7c52xlhkt5d3h2pcbe3glzzga6pg@bvbbsghc57zu>
-References: <cover.1724868080.git.jan.kiszka@siemens.com>
- <752fb193661bb5e60e5aae6f87704784cbad145d.1724868080.git.jan.kiszka@siemens.com>
+	s=arc-20240116; t=1724912180; c=relaxed/simple;
+	bh=TD/d27Q2fNPvJ6OBiRM0NjLejuEOHNoymox6NIv2/N8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ctBzIP1UCMCewdZ7jx9u3bDCJ3BUvn/JU3ysHOn777HSeD8GDAdFJGLNfSiJ0WWE4mFVYmrH+pQew8nFWcs/ipuoamPokko9qElgstc52PWSMVKCVYSbx7MXfs9CFewMKUnynx/bJAkuB/A/MkE4qQlPCVLMACYi+sJnnbWu22Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=ak6SdMF1; arc=none smtp.client-ip=209.85.167.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-oi1-f179.google.com with SMTP id 5614622812f47-3df02c407c4so173685b6e.1
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 23:16:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google; t=1724912178; x=1725516978; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9y4ddcKIVUQCa1/ea3XcOqcG2GLAb+NeoR2FFMnflVY=;
+        b=ak6SdMF1oo2wvYIyEJTeje80H9Ld5YHkAzrKiHZthDpdEhjX7RaBsekhBf22SqPRsA
+         nxR12KOBlXOyUQL6KvXiMNApBg2FZcRegmEFPlbK24FSlr2Ve8h81E1x86/6M522YKm/
+         f0KVMXXKM5qQ5NX6lUHpNPLqcP0IBDnQtatqZcv2ezPpC+/uA8AFFTXFBHuL0EOqfW3i
+         mBjfFN9Fh4Z4FUh0AVtv3fXCJ5XbU2RvPjv99yYJI9FGbEkXDEQcXo57k0NYKJjBynMc
+         lSe9OXNuZRvHElBwLBHzIX+9qr2OKHutj/36ux9ZkIYpGn3KRacWy+VooVdLivpvtnuZ
+         Kdcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724912178; x=1725516978;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9y4ddcKIVUQCa1/ea3XcOqcG2GLAb+NeoR2FFMnflVY=;
+        b=WmwBNrIC16l3XfiSHmzpfrTEcdAXqhJ5emSvCW0j5Jk4GtV/tqNClroFmaMCCJ1Vox
+         l/D1hvkQSaoyK8MjKs/TzQlf1DfDSH5MQ/u5Xst3/P+IgUIJKsnt9aW/MrGgDaBTpCHW
+         NjLg7CcLwBY0b8HYMgDEZGC5DFOXewMXFsDW9oxbkyfndSawDTPEV5oQDNIjQ2JHu/6x
+         zqK6tthS5ZlonG82bs93tR6I1sfurISbithgzsX5HY2zE0N4ROxmNICWI93+eerVbTiT
+         Y/+ufniwsbqayHFzXPWwo+VverM47j+Lvvi9KkZQnBM/kbVJfYA19aWcxuIGJvA+MI5K
+         Atjg==
+X-Forwarded-Encrypted: i=1; AJvYcCX8TfzUCCExMkkVcBKWiEhSfr5pFJgOBgYZwLvUKtL/G/aFfW8WyFNh7uhwEgeES4LU1ss7tIswJxSw+38=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yww1FQwNH44USQUGaKMGDO+jz4lyM0WeR3z0uh0XYjdr67omUzu
+	Shq+GHxmZ6Df1hDqUB5YMkZFnOlVIjSYkHOgQpM9jn9/uAmh/HKB8ONCCzSHdA/x8FXUjW87KJv
+	mrzGGQwLqXYMhpMLXKy/5RUDx2mRZAgr5HmKHag==
+X-Google-Smtp-Source: AGHT+IEE4wRUW1rNC4WHXpmToVacLhp7JtdVm9GWj68DauHvAo1uUeyA1+SsT9HZgMVr7s8RUG+CLOtF61Epupbl4tY=
+X-Received: by 2002:a05:6808:1241:b0:3de:218f:b60 with SMTP id
+ 5614622812f47-3df05c480afmr1690639b6e.17.1724912177961; Wed, 28 Aug 2024
+ 23:16:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+References: <20240829033904.477200-1-nick.hu@sifive.com> <20240829033904.477200-2-nick.hu@sifive.com>
+ <CAK9=C2XSrxXGB-PKKi0sLQq7L1Ovucb73Bc9tOnxwWTxux_D7g@mail.gmail.com>
+In-Reply-To: <CAK9=C2XSrxXGB-PKKi0sLQq7L1Ovucb73Bc9tOnxwWTxux_D7g@mail.gmail.com>
+From: Nick Hu <nick.hu@sifive.com>
+Date: Thu, 29 Aug 2024 14:16:07 +0800
+Message-ID: <CAKddAkBwL+n7fK6ugCpNeCv3dryaPJTS1qAM9E6VHb1QkSKd=g@mail.gmail.com>
+Subject: Re: [PATCH 1/2] riscv: Add stimecmp save and restore
+To: Anup Patel <apatel@ventanamicro.com>
+Cc: greentime.hu@sifive.com, zong.li@sifive.com, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@ucw.cz>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Andrew Jones <ajones@ventanamicro.com>, 
+	Conor Dooley <conor.dooley@microchip.com>, Samuel Holland <samuel.holland@sifive.com>, 
+	Sunil V L <sunilvl@ventanamicro.com>, linux-pm@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <752fb193661bb5e60e5aae6f87704784cbad145d.1724868080.git.jan.kiszka@siemens.com>
 
-On Wed, Aug 28, 2024 at 08:01:15PM +0200, Jan Kiszka wrote:
-> From: Jan Kiszka <jan.kiszka@siemens.com>
->=20
-> The PVU on the AM65 SoC is capable of restricting DMA from PCIe devices
-> to specific regions of host memory. Add the optional property
-> "memory-regions" to point to such regions of memory when PVU is used.
->=20
-> Since the PVU deals with system physical addresses, utilizing the PVU
-> with PCIe devices also requires setting up the VMAP registers to map the
-> Requester ID of the PCIe device to the CBA Virtual ID, which in turn is
-> mapped to the system physical address. Hence, describe the VMAP
-> registers which are optionally unless the PVU shall used for PCIe.
->=20
-> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
-> ---
-> CC: Lorenzo Pieralisi <lpieralisi@kernel.org>
-> CC: "Krzysztof Wilczy=C5=84ski" <kw@linux.com>
-> CC: Bjorn Helgaas <bhelgaas@google.com>
-> CC: linux-pci@vger.kernel.org
-> ---
->  .../bindings/pci/ti,am65-pci-host.yaml        | 52 ++++++++++++++-----
->  1 file changed, 40 insertions(+), 12 deletions(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/pci/ti,am65-pci-host.yaml =
-b/Documentation/devicetree/bindings/pci/ti,am65-pci-host.yaml
-> index 0a9d10532cc8..d8182bad92de 100644
-> --- a/Documentation/devicetree/bindings/pci/ti,am65-pci-host.yaml
-> +++ b/Documentation/devicetree/bindings/pci/ti,am65-pci-host.yaml
-> @@ -19,16 +19,6 @@ properties:
->        - ti,am654-pcie-rc
->        - ti,keystone-pcie
-> =20
-> -  reg:
-> -    maxItems: 4
-> -
-> -  reg-names:
-> -    items:
-> -      - const: app
-> -      - const: dbics
-> -      - const: config
-> -      - const: atu
-> -
+Hi Anup,
 
-Properties must be defined in top-level.
+On Thu, Aug 29, 2024 at 1:18=E2=80=AFPM Anup Patel <apatel@ventanamicro.com=
+> wrote:
+>
+> On Thu, Aug 29, 2024 at 9:09=E2=80=AFAM Nick Hu <nick.hu@sifive.com> wrot=
+e:
+> >
+> > If the HW support the SSTC extension, we should save and restore the
+> > stimecmp register while cpu non retention suspend.
+> >
+> > Signed-off-by: Nick Hu <nick.hu@sifive.com>
+> > ---
+> >  arch/riscv/include/asm/suspend.h |  4 ++++
+> >  arch/riscv/kernel/suspend.c      | 13 +++++++++++++
+> >  2 files changed, 17 insertions(+)
+> >
+> > diff --git a/arch/riscv/include/asm/suspend.h b/arch/riscv/include/asm/=
+suspend.h
+> > index 4ffb022b097f..ffaac2efabb5 100644
+> > --- a/arch/riscv/include/asm/suspend.h
+> > +++ b/arch/riscv/include/asm/suspend.h
+> > @@ -16,6 +16,10 @@ struct suspend_context {
+> >         unsigned long envcfg;
+> >         unsigned long tvec;
+> >         unsigned long ie;
+> > +#if __riscv_xlen < 64
+> > +       unsigned long stimecmph;
+> > +#endif
+> > +       unsigned long stimecmp;
+> >  #ifdef CONFIG_MMU
+> >         unsigned long satp;
+> >  #endif
+> > diff --git a/arch/riscv/kernel/suspend.c b/arch/riscv/kernel/suspend.c
+> > index c8cec0cc5833..3afd86e1abf7 100644
+> > --- a/arch/riscv/kernel/suspend.c
+> > +++ b/arch/riscv/kernel/suspend.c
+> > @@ -19,6 +19,12 @@ void suspend_save_csrs(struct suspend_context *conte=
+xt)
+> >         context->tvec =3D csr_read(CSR_TVEC);
+> >         context->ie =3D csr_read(CSR_IE);
+> >
+> > +       if (riscv_has_extension_unlikely(RISCV_ISA_EXT_SSTC)) {
+> > +               context->stimecmp =3D csr_read(CSR_STIMECMP);
+> > +#if __riscv_xlen < 64
+> > +               context->stimecmph =3D csr_read(CSR_STIMECMPH);
+> > +#endif
+> > +       }
+>
+> The suspend save/restore is enabled for the NoMMU kernel as well
+> (which runs in M-mode) so it is better to save/restore stimecmp CSR
+> only for MMU enabled kernels (just like satp CSR).
+>
+Good point. Will update that in the next version.
+Thanks for the feedback.
 
-https://elixir.bootlin.com/linux/v6.8/source/Documentation/devicetree/bindi=
-ngs/ufs/qcom,ufs.yaml
+> >         /*
+> >          * No need to save/restore IP CSR (i.e. MIP or SIP) because:
+> >          *
+> > @@ -42,6 +48,13 @@ void suspend_restore_csrs(struct suspend_context *co=
+ntext)
+> >         csr_write(CSR_TVEC, context->tvec);
+> >         csr_write(CSR_IE, context->ie);
+> >
+> > +       if (riscv_has_extension_unlikely(RISCV_ISA_EXT_SSTC)) {
+> > +               csr_write(CSR_STIMECMP, context->stimecmp);
+> > +#if __riscv_xlen < 64
+> > +               csr_write(CSR_STIMECMPH, context->stimecmph);
+> > +#endif
+> > +       }
+> > +
+> >  #ifdef CONFIG_MMU
+> >         csr_write(CSR_SATP, context->satp);
+> >  #endif
+> > --
+> > 2.34.1
+> >
+> >
+>
+> Regards,
+> Anup
 
->    interrupts:
->      maxItems: 1
-> =20
-> @@ -84,12 +74,48 @@ if:
->        enum:
->          - ti,am654-pcie-rc
->  then:
-> +  properties:
-> +    reg:
-> +      minItems: 4
-> +      maxItems: 6
-> +
-> +    reg-names:
-> +      minItems: 4
-> +      items:
-> +        - const: app
-> +        - const: dbics
-> +        - const: config
-> +        - const: atu
-> +        - const: vmap_lp
-> +        - const: vmap_hp
-
-This as well goes to the top.
-
-> +
-> +    memory-region:
-> +      minItems: 1
-
-Missing maxItems and this must be defined in top-level.
-
-Best regards,
-Krzysztof
-
+Regards,
+Nick
 
