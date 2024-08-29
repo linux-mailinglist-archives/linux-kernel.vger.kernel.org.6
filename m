@@ -1,142 +1,102 @@
-Return-Path: <linux-kernel+bounces-306720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04FD4964284
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:02:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FC70964281
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:02:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3860E1C20F27
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 11:02:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFC601F27D0D
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 11:02:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF15919148D;
-	Thu, 29 Aug 2024 11:02:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 582DA190661;
+	Thu, 29 Aug 2024 11:02:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LJRUA0Lj"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V/vzyJ+0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B777418C93E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 969F718A6D1;
 	Thu, 29 Aug 2024 11:02:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724929348; cv=none; b=Bj/3bFtTawPlLfONxzPiBMfaMN42+Mr5zk1freX0x3fOCgo+ZnKZITWZ9RaL8KhLVQHyio77IJjv/wkfQYULtgV1I57CLmHL0BZ1hX/60TwjRgdvfA3jvrdaW41Tf+klGAMfAqngKNdcNB4z3gsnvUyfDO7MPdJ5mbABCEfulM4=
+	t=1724929346; cv=none; b=M4yNHsApfN3ihvC512F/yhTgyUrHwoG3+LsH9t5/JHcSEY6SAGq89P27rMbnefHpTFoiO3YmpgWc7bOGfsTmhHIvm38vLn1NV/LChWBS320mngkZGXJ9GsPrG3A285PIgFGsGGHGax0ZoiJPl7xgEIefG+TKPPeftLIo/tr8F4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724929348; c=relaxed/simple;
-	bh=W0z2/bWZRJUf1adVeJGT+JY63YbhpGAWpXa3+iV2Wco=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=UcTMrpFtdAMncsbWPEd1kRAze+6TvsGwDAl/6Eny9USxs/4jJaKA15BOhc9gh3AN5kuFQEo86ZdDMxDnavQuWXK7gLZ8Cmgbe2ji6DlfL3hfbaCn0aE3E0QwnYYJS+80NWNOlrvh6blHpXUwXzPs1tDdPnhXyAiSKVw4mryiPHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LJRUA0Lj; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724929347; x=1756465347;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=W0z2/bWZRJUf1adVeJGT+JY63YbhpGAWpXa3+iV2Wco=;
-  b=LJRUA0LjPLbrhnQD+djOgOStQQI/t89bfB0F9sUb1GKq7L7s7dCM76cw
-   f4bVYzPI01bhm3nPiSNEFtoSKEAf+zBUhOTraWf8xxeH6+kphpWi7vhla
-   m2yjiEZo3gQAlzyPdWzE9ojojhJKjkCk9rJ0ubfyXlLQqEvB3rWCsRwsU
-   qj9tg/BH3/00Vr41zkyEeET27k+FiX9XlbiwTInTgeX2bEpNHeq0W0uH6
-   o3kLxA+/RDb/FvonD38aK2QdDQULdVC2nSiuQ4HIMO7FTH5gKVgfRfb+R
-   TwgrlQWVtmdyItX40EIsf2J3+axhGRNgja0VNDEuaSf9q6nW6D7C5/zuw
-   A==;
-X-CSE-ConnectionGUID: 32vfMSoHRzu9k0seGN2uHw==
-X-CSE-MsgGUID: Bn+/zanjRy+d3Ipn60qvaQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11178"; a="34081915"
-X-IronPort-AV: E=Sophos;i="6.10,185,1719903600"; 
-   d="scan'208";a="34081915"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 04:02:26 -0700
-X-CSE-ConnectionGUID: 6ZdcXHwkQ46u4hh0RRUjBA==
-X-CSE-MsgGUID: 5PLjQjJ4RaSMM5BCn5pbfw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,185,1719903600"; 
-   d="scan'208";a="68208348"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.245.59])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 04:02:23 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Thu, 29 Aug 2024 14:02:19 +0300 (EEST)
-To: Xi Pardee <xi.pardee@linux.intel.com>
-cc: irenic.rajneesh@gmail.com, david.e.box@linux.intel.com, 
-    Hans de Goede <hdegoede@redhat.com>, platform-driver-x86@vger.kernel.org, 
-    LKML <linux-kernel@vger.kernel.org>, linux-pm@vger.kernel.org
-Subject: Re: [PATCH v2 05/11] platform/x86:intel/pmc: Remove unneeded h file
- inclusion
-In-Reply-To: <20240828222932.1279508-6-xi.pardee@linux.intel.com>
-Message-ID: <8bda80eb-c0b8-c9c7-5c18-bb06701a69cb@linux.intel.com>
-References: <20240828222932.1279508-1-xi.pardee@linux.intel.com> <20240828222932.1279508-6-xi.pardee@linux.intel.com>
+	s=arc-20240116; t=1724929346; c=relaxed/simple;
+	bh=u+LH04eT4qocxpQHoAB733TwPibGYYZSu7w3tJjRL9M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d9RqFjL+u53bIVXJZlhau8r0/5rWZ0kqpFtalRsXAt9xcCa2J+nbJH5S2LwukurepeMxJ/cwGQ99A4DOIaji+eNzHEZ9a0wxW4N85oFEpT4rwaVXMWZyRBg+PVz2sxTgAlO8cHv+xLcYTKPnG9bTkm83S2MEVHKKY/uR0YwA77s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V/vzyJ+0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E5AAC4CEC1;
+	Thu, 29 Aug 2024 11:02:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724929346;
+	bh=u+LH04eT4qocxpQHoAB733TwPibGYYZSu7w3tJjRL9M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=V/vzyJ+0vfSOtFN7JvSOXt/w3m6hz/Zc4Hn+UXN1HajC0sev+5Kn+EzZLVb3+W9Cd
+	 MzBL6PbpoOxZYWW0L/ufw2rdIP8h6rD79pxue2D257zFUsyNf+RV5LvFXKYDLlLpL8
+	 idgyqxbosUWkYDwhWNogHsNbyUoBvApSSZLlIwRjO+ToYbk+6rZMhz4IRAoZLSkwrD
+	 WPhciWjihwtg4t+z082d5NnzdlgaBfp+/w1C+n3x2TtPPEDDF0YuqRy2ZYb/CDDbkR
+	 Wgzcmc7Rl4Rtur0A/xRyTY5AhH+rHqjd7hEcf3ThVvFzs0ZHCIuXxTVkE5+qcnNr3u
+	 ZaaA4sl9fq+5A==
+Date: Thu, 29 Aug 2024 12:02:21 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Dev Jain <dev.jain@arm.com>
+Cc: shuah@kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kselftest@vger.kernel.org, Catalin.Marinas@arm.com,
+	will@kernel.org, ryan.roberts@arm.com, Anshuman.Khandual@arm.com,
+	aneesh.kumar@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] selftests/arm64: Fix build warnings for abi
+Message-ID: <3699c056-693b-4313-a750-2e777b48ed46@sirena.org.uk>
+References: <20240827051851.3738533-1-dev.jain@arm.com>
+ <6e5588d9-c22c-4a94-afce-1274c888403e@sirena.org.uk>
+ <5241c418-d5af-46ca-8188-7b67e1640f88@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-2113534642-1724929339=:1289"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="X1ArkKO1t1w+4Ebb"
+Content-Disposition: inline
+In-Reply-To: <5241c418-d5af-46ca-8188-7b67e1640f88@arm.com>
+X-Cookie: Go 'way!  You're bothering me!
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
 
---8323328-2113534642-1724929339=:1289
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+--X1ArkKO1t1w+4Ebb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Wed, 28 Aug 2024, Xi Pardee wrote:
+On Thu, Aug 29, 2024 at 11:55:33AM +0530, Dev Jain wrote:
+> On 8/28/24 16:10, Mark Brown wrote:
 
-In the subject:
+> > > -		ksft_exit_fail_msg("raise(SIGSTOP)", strerror(errno));
+> > > +		ksft_exit_fail_perror("raise(SIGSTOP)");
 
-h file -> header
+> > The idea with these is to include the error code as well so adding the
+> > %s would be better.
 
-> telemetry.h header file is not needed in arl.c or mtl.c. Remove
-> them to avoid confusion.
+> ksft_exit_fail_perror() can do that thing for us.
 
-I'd also note this is cross directory/driver include, so perhaps something=
-=20
-along these lines:
+Oh, sorry - I missed that it was changing to _perror() as well as
+removing the argument.  Yes, that's fine.
 
-telemetry.h from PMT is not needed in arl.c or mtl.c so remove
-the cross-driver include.
+--X1ArkKO1t1w+4Ebb
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
+-----BEGIN PGP SIGNATURE-----
 
---=20
- i.
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbQVTwACgkQJNaLcl1U
+h9BrlQf5AUdYWbXTssiOT5pOTsakKSPbq3tQm+3ChArNFJqdk785whqJi24zKtNo
+mXh8gCiYf+OkPd07Pako3zPfc8AJFILorStbgnukS/2tElGWr42kGdpqvGXGHBlD
+gt4JxM/cZLZA2pSpCpcMHZez9dXtk6Ozz4jeRCyiu7mS2oi5TjrCd5S3ndkwCjKn
+E7SF6yey+AofPWk44dlnEx2Dii8pe6JIhVLtKTZEJ5LzNK0I7RAu9asYGvuKb1Rc
+VOG0M1WtCHFrakOJE5w9eEzpOj5NoMLXe6WRxyLqgYlbhtSt5QWUbFzmk/KrFh9o
+bVk9V5yK7bcPqShuqyK36PHqbgDppw==
+=MjqY
+-----END PGP SIGNATURE-----
 
-> Signed-off-by: Xi Pardee <xi.pardee@linux.intel.com>
-> ---
->  drivers/platform/x86/intel/pmc/arl.c | 1 -
->  drivers/platform/x86/intel/pmc/mtl.c | 1 -
->  2 files changed, 2 deletions(-)
->=20
-> diff --git a/drivers/platform/x86/intel/pmc/arl.c b/drivers/platform/x86/=
-intel/pmc/arl.c
-> index 870da98ceb41..0460715c58f4 100644
-> --- a/drivers/platform/x86/intel/pmc/arl.c
-> +++ b/drivers/platform/x86/intel/pmc/arl.c
-> @@ -10,7 +10,6 @@
-> =20
->  #include <linux/pci.h>
->  #include "core.h"
-> -#include "../pmt/telemetry.h"
-> =20
->  /* PMC SSRAM PMT Telemetry GUID */
->  #define IOEP_LPM_REQ_GUID=090x5077612
-> diff --git a/drivers/platform/x86/intel/pmc/mtl.c b/drivers/platform/x86/=
-intel/pmc/mtl.c
-> index 908b5f8bb6e5..e7f5b650902d 100644
-> --- a/drivers/platform/x86/intel/pmc/mtl.c
-> +++ b/drivers/platform/x86/intel/pmc/mtl.c
-> @@ -10,7 +10,6 @@
-> =20
->  #include <linux/pci.h>
->  #include "core.h"
-> -#include "../pmt/telemetry.h"
-> =20
->  /* PMC SSRAM PMT Telemetry GUIDS */
->  #define SOCP_LPM_REQ_GUID=090x2625030
->=20
-
---8323328-2113534642-1724929339=:1289--
+--X1ArkKO1t1w+4Ebb--
 
