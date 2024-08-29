@@ -1,219 +1,140 @@
-Return-Path: <linux-kernel+bounces-307003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BF119646AA
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:33:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EE4A9646E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:39:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6119B1C20D77
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:33:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71A3F1C22A12
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:39:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6D2B1B5EBB;
-	Thu, 29 Aug 2024 13:27:55 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05B1A1AB500;
+	Thu, 29 Aug 2024 13:37:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="llgUmdBC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 033831AE84C;
-	Thu, 29 Aug 2024 13:27:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 444FC19408D;
+	Thu, 29 Aug 2024 13:37:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724938075; cv=none; b=pTw2YfKDoP9xfAyRmZWq9szbeJPmAMgV34CzCiN8ibPUdktMyszuq/0xJjVe5i+v7wqcpwB8VF9BSAOXqG/2tkCFsnlWNLXFHvOI+BPrT+iZ78ZSpheJ/K5krW27htvE/OimiAKffOSReENlbQjmMtLkOUsrMBfGhfVd4tlpJCo=
+	t=1724938671; cv=none; b=neUSkoz7F9IDMhpPuh32eqIu+WiiOV9U1kjep2cui/XOlTLsgeoKOOpoIuWJ88zdz+rGk7+3v+lrCFgsrOWCCDrQVOtwfoP2zSNeuTjg8frZKPMqX5xMWNhcvsQZdBLRyXyU8dqI0mp3uzbh7MwzOXQHaTdOnqh8qFCrtKKo5No=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724938075; c=relaxed/simple;
-	bh=6LM37PaL2W80lbU4UvB+TGFDJbbj3kS8Xb/o/IuByWg=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=noyWGmwKh1LlD5vTz3rGt/jEbCPfXdA1S0DQpVS2FusQmMegbXJty9lIxBwQeEULjfZG73owp6WGt+XokLGzghmI21O8CoqrX6WTT8S+xDU/FtTLrzGYgBrtOIn/KU4P1HvCkybN3uOTGdFw6L97ovXhUctgIcJ+r+XDlqrLWJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4Wvhqg2snbz1xwG6;
-	Thu, 29 Aug 2024 21:25:51 +0800 (CST)
-Received: from kwepemg500017.china.huawei.com (unknown [7.202.181.81])
-	by mail.maildlp.com (Postfix) with ESMTPS id 85BF21A0188;
-	Thu, 29 Aug 2024 21:27:49 +0800 (CST)
-Received: from huawei.com (10.175.127.227) by kwepemg500017.china.huawei.com
- (7.202.181.81) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 29 Aug
- 2024 21:27:48 +0800
-From: Li Lingfeng <lilingfeng3@huawei.com>
-To: <trondmy@kernel.org>, <anna@kernel.org>
-CC: <jlayton@kernel.org>, <linux-nfs@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <yukuai1@huaweicloud.com>,
-	<houtao1@huawei.com>, <yi.zhang@huawei.com>, <yangerkun@huawei.com>,
-	<lilingfeng@huaweicloud.com>, <lilingfeng3@huawei.com>
-Subject: [PATCH v2] nfs: protect nfs41_impl_id by rcu
-Date: Thu, 29 Aug 2024 21:37:43 +0800
-Message-ID: <20240829133743.1008788-1-lilingfeng3@huawei.com>
-X-Mailer: git-send-email 2.31.1
+	s=arc-20240116; t=1724938671; c=relaxed/simple;
+	bh=Ca+p3EBy6mFIJiseSrgzhJ3uhFfJHvkFK+bEdDKuuBE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r7gCfvsYMvI92iO+f7kYKfFTM+R9C3JTV13FB5evJA4RsExQ7JYxcnz6eLzfJAoxYlavfyZ9DMnEi0oiZC7kP+Xb4Jk3L3WG5yi8uU/O534IBBtTKBHC00kleoJa9cXBaG9Bam3VX2ampVOG9NiEV7qgSaSCli+foWktBGlLQxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=llgUmdBC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBA5CC4CEC1;
+	Thu, 29 Aug 2024 13:37:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724938670;
+	bh=Ca+p3EBy6mFIJiseSrgzhJ3uhFfJHvkFK+bEdDKuuBE=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=llgUmdBCThp6X16iae1KFMQ0xTfN49f3PUWONK5Zj8t8fZMrLztX3otPGqDW7Cqpx
+	 vpFCeqZaoZGqcGQHm6nafaMiCUI3LgEKVElU7w8Kw9ilGP3KciDaQTRatnZ4Sdi76L
+	 5Y106K47AAGjgYG6eaqP3+3/qwtyWAs4kKYAAf1coL0jm+oS9AJ5NBZ3hUxUpkexB/
+	 xaGTHHp3d4xTh8qdUfza0hNskAYa98B4Eqiju3RZ9yPue+sTZrCZNrKYYMXzRKLMFL
+	 NDx5DVq4YLrHupcgKLTvNsDYwkQb/i+IhGWBam9YFjUhpRg4Ou0fNa5ck2Lbqf0UfV
+	 uA+1OtxyXppUg==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 4D86ECE0D9C; Thu, 29 Aug 2024 06:37:50 -0700 (PDT)
+Date: Thu, 29 Aug 2024 06:37:50 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-kernel@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>
+Subject: Re: 16-bit store instructions &c?
+Message-ID: <1bb58d8d-4a2a-4728-a8f3-9295145dbbb0@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <3ca4590a-8256-42d1-89ca-f337ae6f755c@paulmck-laptop>
+ <b3512703-bab3-4999-ac20-b1b874fcfcc3@app.fastmail.com>
+ <289c7e10-06df-435b-a30d-c2a5bc4eea29@paulmck-laptop>
+ <9242c5c2-2011-45bf-8679-3f918323788e@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemg500017.china.huawei.com (7.202.181.81)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9242c5c2-2011-45bf-8679-3f918323788e@app.fastmail.com>
 
-When performing exchange id call, a new nfs41_impl_id will be allocated to
-store some information from server. The pointers to the old and new
-nfs41_impl_ids are swapped, and the old one will be freed.
+On Wed, Aug 28, 2024 at 10:01:06PM +0200, Arnd Bergmann wrote:
+> On Wed, Aug 28, 2024, at 14:22, Paul E. McKenney wrote:
+> > On Wed, Aug 28, 2024 at 01:48:41PM +0000, Arnd Bergmann wrote:
+> >
+> >> There is a related problem with ARM RiscPC, which
+> >> uses a kernel built with -march=armv3, and that
+> >> disallows 16-bit load/store instructions entirely,
+> >> similar to how alpha ev5 and earlier lacked both
+> >> byte and word access.
+> >
+> > And one left to go.  Progress, anyway.  ;-)
+> 
+> What I meant to say about this one is also that we can probably
+> ignore it as well, since it's on the way out already, at the latest
+> when gcc-9 becomes the minimum compiler, as gcc-8 was the last
+> to support -march=armv3. We can also ask Russell if he's ok with
+> dropping it earlier, as he is almost certainly the only user.
 
-However, UAF may be triggered as follows:
+Even better, thank you!
 
-After T2 has got a pointer to the nfs41_impl_id, the nfs41_impl_id is
-freed by T1 before it is used.
-         T1                                           T2
-nfs4_proc_exchange_id
- _nfs4_proc_exchange_id
-  nfs4_run_exchange_id
-   kzalloc // alloc nfs41_impl_id-B
-   rpc_run_task
-                                nfs_show_stats
-                                 show_implementation_id
-                                  impl_id = nfss->nfs_client->cl_implid
-                                  // get alloc nfs41_impl_id-A
-  swap(clp->cl_implid, resp->impl_id)
-  rpc_put_task
-   ...
-    nfs4_exchange_id_release
-     kfree // free nfs41_impl_id-A
-                                  impl_id->name // UAF
+My plan is to submit a pull request for the remaining three 8-bit
+cmpxchg() emulation commits into the upcoming merge window.  In the
+meantime, I will create similar patches for 16-bit cmpxchg() and perhaps
+also both 8-bit and 16-bit xchg().  I will obviously CC both you and
+Russell on the full set.  And if there are hardware-incompatibility
+complaints, we can deal with them, whether by dropping the offending
+pieces of my patches or by whatever other adjustments make sense.
 
-Fix this issue by using rcu to protect the nfs41_impl_id.
+Does that seem like a reasonable approach, or is there a better way?
 
-Signed-off-by: Li Lingfeng <lilingfeng3@huawei.com>
----
-v1->v2:
-  Free nfs41_impl_id by call_rcu in nfs4_shutdown_client to resolve
-  warning.
- fs/nfs/nfs4client.c       | 10 +++++++++-
- fs/nfs/nfs4proc.c         | 12 ++++++++++--
- fs/nfs/super.c            | 12 +++++++++---
- include/linux/nfs_fs_sb.h |  2 +-
- include/linux/nfs_xdr.h   |  1 +
- 5 files changed, 30 insertions(+), 7 deletions(-)
+> >> Everything else that I see has native load/store
+> >> on 16-bit words and either has 16-bit atomics or
+> >> can emulate them using the 32-bit ones.
+> >> 
+> >> However, the one thing that people usually
+> >> want 16-bit xchg() for is qspinlock, and that
+> >> one not only depends on it being atomic but also
+> >> on strict forward-progress guarantees, which
+> >> I think the emulated version can't provide
+> >> in general.
+> >> 
+> >> This does not prevent architectures from doing
+> >> it anyway.
+> >
+> > Given that the simpler spinlock does not provide forward-progress
+> > guarantees, I don't see any reason that these guarantees cannot be voided
+> > for architectures without native 16-bit stores and atomics.
+> >
+> > After all, even without those guarantees, qspinlock provides very real
+> > benefits over simple spinlocks.
+> 
+> My understanding of this problem is that with a trivial bit spinlock,
+> the worst case is that one task never gets the lock while others
+> also want it, but a qspinlock based on a flawed xchg() implementation
+> may end with none of the CPUs ever getting the lock. It may not
+> matter in practice, but it does feel worse.
 
-diff --git a/fs/nfs/nfs4client.c b/fs/nfs/nfs4client.c
-index 83378f69b35e..1aee1cfb6f1f 100644
---- a/fs/nfs/nfs4client.c
-+++ b/fs/nfs/nfs4client.c
-@@ -281,6 +281,13 @@ static void nfs4_destroy_callback(struct nfs_client *clp)
- 		nfs_callback_down(clp->cl_mvops->minor_version, clp->cl_net);
- }
- 
-+static void nfs4_free_impl_id_rcu(struct rcu_head *head)
-+{
-+	struct nfs41_impl_id *impl_id = container_of(head, struct nfs41_impl_id, __rcu_head);
-+
-+	kfree(impl_id);
-+}
-+
- static void nfs4_shutdown_client(struct nfs_client *clp)
- {
- 	if (__test_and_clear_bit(NFS_CS_RENEWD, &clp->cl_res_state))
-@@ -293,7 +300,8 @@ static void nfs4_shutdown_client(struct nfs_client *clp)
- 	rpc_destroy_wait_queue(&clp->cl_rpcwaitq);
- 	kfree(clp->cl_serverowner);
- 	kfree(clp->cl_serverscope);
--	kfree(clp->cl_implid);
-+	if (clp->cl_implid)
-+		call_rcu(&clp->cl_implid->__rcu_head, nfs4_free_impl_id_rcu);
- 	kfree(clp->cl_owner_id);
- }
- 
-diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
-index b8ffbe52ba15..6bb820bd205e 100644
---- a/fs/nfs/nfs4proc.c
-+++ b/fs/nfs/nfs4proc.c
-@@ -8866,13 +8866,21 @@ struct nfs41_exchange_id_data {
- 	struct nfs41_exchange_id_args args;
- };
- 
-+static void nfs4_free_impl_id_rcu(struct rcu_head *head)
-+{
-+	struct nfs41_impl_id *impl_id = container_of(head, struct nfs41_impl_id, __rcu_head);
-+
-+	kfree(impl_id);
-+}
-+
- static void nfs4_exchange_id_release(void *data)
- {
- 	struct nfs41_exchange_id_data *cdata =
- 					(struct nfs41_exchange_id_data *)data;
- 
- 	nfs_put_client(cdata->args.client);
--	kfree(cdata->res.impl_id);
-+	if (cdata->res.impl_id)
-+		call_rcu(&cdata->res.impl_id->__rcu_head, nfs4_free_impl_id_rcu);
- 	kfree(cdata->res.server_scope);
- 	kfree(cdata->res.server_owner);
- 	kfree(cdata);
-@@ -9034,7 +9042,7 @@ static int _nfs4_proc_exchange_id(struct nfs_client *clp, const struct cred *cre
- 
- 	swap(clp->cl_serverowner, resp->server_owner);
- 	swap(clp->cl_serverscope, resp->server_scope);
--	swap(clp->cl_implid, resp->impl_id);
-+	resp->impl_id = rcu_replace_pointer(clp->cl_implid, resp->impl_id, 1);
- 
- 	/* Save the EXCHANGE_ID verifier session trunk tests */
- 	memcpy(clp->cl_confirm.data, argp->verifier.data,
-diff --git a/fs/nfs/super.c b/fs/nfs/super.c
-index 97b386032b71..6097dbe8e334 100644
---- a/fs/nfs/super.c
-+++ b/fs/nfs/super.c
-@@ -612,13 +612,19 @@ static void show_pnfs(struct seq_file *m, struct nfs_server *server)
- 
- static void show_implementation_id(struct seq_file *m, struct nfs_server *nfss)
- {
--	if (nfss->nfs_client && nfss->nfs_client->cl_implid) {
--		struct nfs41_impl_id *impl_id = nfss->nfs_client->cl_implid;
-+	struct nfs_client *clp = nfss->nfs_client;
-+	struct nfs41_impl_id *impl_id;
-+
-+	if (!clp)
-+		return;
-+	rcu_read_lock();
-+	impl_id = rcu_dereference(clp->cl_implid);
-+	if (impl_id)
- 		seq_printf(m, "\n\timpl_id:\tname='%s',domain='%s',"
- 			   "date='%llu,%u'",
- 			   impl_id->name, impl_id->domain,
- 			   impl_id->date.seconds, impl_id->date.nseconds);
--	}
-+	rcu_read_unlock();
- }
- #else
- #if IS_ENABLED(CONFIG_NFS_V4)
-diff --git a/include/linux/nfs_fs_sb.h b/include/linux/nfs_fs_sb.h
-index 1df86ab98c77..29c98c9df42f 100644
---- a/include/linux/nfs_fs_sb.h
-+++ b/include/linux/nfs_fs_sb.h
-@@ -102,7 +102,7 @@ struct nfs_client {
- 	bool			cl_preserve_clid;
- 	struct nfs41_server_owner *cl_serverowner;
- 	struct nfs41_server_scope *cl_serverscope;
--	struct nfs41_impl_id	*cl_implid;
-+	struct nfs41_impl_id __rcu *cl_implid;
- 	/* nfs 4.1+ state protection modes: */
- 	unsigned long		cl_sp4_flags;
- #define NFS_SP4_MACH_CRED_MINIMAL  1	/* Minimal sp4_mach_cred - state ops
-diff --git a/include/linux/nfs_xdr.h b/include/linux/nfs_xdr.h
-index 45623af3e7b8..b3c96ea2a64b 100644
---- a/include/linux/nfs_xdr.h
-+++ b/include/linux/nfs_xdr.h
-@@ -1374,6 +1374,7 @@ struct nfs41_impl_id {
- 	char				domain[NFS4_OPAQUE_LIMIT + 1];
- 	char				name[NFS4_OPAQUE_LIMIT + 1];
- 	struct nfstime4			date;
-+	struct rcu_head			__rcu_head;
- };
- 
- #define MAX_BIND_CONN_TO_SESSION_RETRIES 3
--- 
-2.31.1
+I could argue that there is no law saying that a flawed atomic operation
+cannot cause a trivial bit spinlock to never be actually handed to any
+CPU, but point taken.  Given that the emulated xchg() would be implemented
+in terms of cmpxchg(), there is clearly less opportunity for the hardware
+to "do the right thing" in terms of fairness and starvation.  After all,
+the hardware very likekly has less visibility into a cmpxchg()-emulated
+xchg() operation than into a hardware xchg() instruction.
 
+Perhaps the best approach is a comment on the xchg() emulation stating
+that it might offer weaker forward-progress guarantees.
+
+An alternative approach is to emulate 16-bit cmpxchg(), and defer
+emulation of 8-bit and 16-bit xchg().
+
+Thoughts?
+
+							Thanx, Paul
 
