@@ -1,151 +1,229 @@
-Return-Path: <linux-kernel+bounces-307620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4152F96507D
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 22:06:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0743A96507F
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 22:07:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F139A283068
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 20:06:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A58EC1F2628B
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 20:07:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 954891BAECB;
-	Thu, 29 Aug 2024 20:06:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1542D1BA883;
+	Thu, 29 Aug 2024 20:07:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pgh05sZH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gWWG29MC"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A44DA1311B5;
-	Thu, 29 Aug 2024 20:06:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2C131BA287
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 20:06:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724961962; cv=none; b=KVop9deUsUViAhlRJNOaVUEaNx8QPe29a8lJ1snTwbpoBjbedx9U35KGVRBh3sErOD0gdQvSO02qpQbY1TD4WqYdwm2G2OJ1RDg/wjR3P0F6Upz41plX9TcHGqFldipzPdyoSNa3QGBZahFcqnmDr1hobWETA9rWzod12XhDKbc=
+	t=1724962019; cv=none; b=KbyyzSt7fa3y1aKakc+Jt/8nCrc90dant7uq9znAOZJsPtdG1o9V9Bm73qtFMPiqB7I7vOf2IqGkJdTdx1xcDGM8Q3Vs0KkccSMeRmOmufZoFsv0hpORFpQQnS/TX4v7WcFHOmmwCvl8OC1r+D8iLQyUbvg9BTCFnH6KfLqCSds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724961962; c=relaxed/simple;
-	bh=jjY3PbslKhfXvlshQ539eQ+z8Cll4clbilq8gY8N3I0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=di16iONw5wb098h76VpcyGjwdmoQ4t1bF+pbjW7d34orEsTc2dNwT0O1MCZZ4OR9XAg0rBOXv8u82Ab0iCSnuxgRzkjqitmnA8wW5WF7wh16Q9hXTAyk0T5G2KBUOVkvSYuuPmaRKoWIrikqgTAyc4KdmAQTIFrS/1tZHUlgiSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pgh05sZH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E22A9C4CEC1;
-	Thu, 29 Aug 2024 20:05:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724961962;
-	bh=jjY3PbslKhfXvlshQ539eQ+z8Cll4clbilq8gY8N3I0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Pgh05sZHH1ibogv5993BrLByQD2Hc0qfcAv2NJeBS3Mftf84AbXP9FW90wTGti+Tf
-	 ru32QNYkthl3hI0pSdGfQtUdsHeU1uWr6boa5WmBadB/vr4S5eY2mzVWaDVz/GH8Ks
-	 JvpRPHZu38SQAmQmVTfol3Si3hAjwgijOkJkBnM/xm9lUV+WW1lQ07x1jXV6BdovV9
-	 ZQLhh2jTkOWKq8dmJVXCjaUdIP0R1ph0q54o9t2g7Pi9fTt4xeg0jKN26ZYxsETwJC
-	 pkVrvKZrhYyJUI3CTFCDMW/PZRtCtcwBFmOQJTvVO7vMftTj08uaE4xrP321ZNlR4R
-	 cuA4wT2MNl2xw==
-Date: Thu, 29 Aug 2024 21:05:48 +0100
-From: Simon Horman <horms@kernel.org>
-To: Mina Almasry <almasrymina@google.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-alpha@vger.kernel.org,
-	linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-	sparclinux@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	linux-arch@vger.kernel.org, bpf@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-media@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Richard Henderson <richard.henderson@linaro.org>,
-	Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-	Matt Turner <mattst88@gmail.com>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-	Helge Deller <deller@gmx.de>, Andreas Larsson <andreas@gaisler.com>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	Ilias Apalodimas <ilias.apalodimas@linaro.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Steffen Klassert <steffen.klassert@secunet.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	David Ahern <dsahern@kernel.org>,
-	Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
-	=?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>,
-	Magnus Karlsson <magnus.karlsson@intel.com>,
-	Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
-	Jonathan Lemon <jonathan.lemon@gmail.com>,
-	Shuah Khan <shuah@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
-	Pavel Begunkov <asml.silence@gmail.com>, David Wei <dw@davidwei.uk>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Yunsheng Lin <linyunsheng@huawei.com>,
-	Shailend Chand <shailend@google.com>,
-	Harshitha Ramamurthy <hramamurthy@google.com>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Jeroen de Borst <jeroendb@google.com>,
-	Praveen Kaligineedi <pkaligineedi@google.com>,
-	Bagas Sanjaya <bagasdotme@gmail.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	Nikolay Aleksandrov <razor@blackwall.org>,
-	Taehee Yoo <ap420073@gmail.com>,
-	Willem de Bruijn <willemb@google.com>,
-	Kaiyuan Zhang <kaiyuanz@google.com>,
-	Daniel Vetter <daniel.vetter@ffwll.ch>
-Subject: Re: [PATCH net-next v23 03/13] netdev: support binding dma-buf to
- netdevice
-Message-ID: <20240829200548.GX1368797@kernel.org>
-References: <20240829060126.2792671-1-almasrymina@google.com>
- <20240829060126.2792671-4-almasrymina@google.com>
+	s=arc-20240116; t=1724962019; c=relaxed/simple;
+	bh=9ZAG4xVxK2s1NUjwNxY2G84N9pLAuVSOCrY6odqnKBg=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=G7FRsdRnB+DXbF0v8Y8MVFlP60p6cmydToVSFxGR8LKvMJzEfCTgkoXEiIALRjNNtdV8rrZEm1SkB8xf9IIs4kJlzNwKq+6gx4+M29OHOSO4/cETJQoTOGhGzQaLfqOuOrEv4wL0bb7CEOeOid4PWvoFGemrNr7qkXBPtbCRmbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gWWG29MC; arc=none smtp.client-ip=209.85.215.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-7d235d55c41so469342a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 13:06:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1724962017; x=1725566817; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=h0tAXdbF9s5aVrX2D9yJymXJxFJA/BG13Aebp2mvni4=;
+        b=gWWG29MCg6sYMqf7MzyDxk6ysK5JnvU1JkRCgIQUNMuyoERsO4sKJc4aR/JFcc2lfQ
+         jOpUXAAs1PJ1er7wR9+2aNiqp/qBs6/8bBLuR3poCLBdeAVLQOwYLTh7Kkp9jVkad7En
+         Ur6vuArPtTquPe+aZEYuHqbGO3dYKtdZfG44FJLrpX5310UDDeCtzbJEg4bcGMJRXADL
+         BJ/O9gKrqTZzZZcz2xIW32FY5YUPo30n1YKcp93KEyv+BZLd4+HCpleItvRng4rZEaB7
+         x/rmWnSLXrAs2CDegOAbqg+b7BNc0UcoTotN3/thoWqSzJBZTp04uy6nzcLx1wI5UHvy
+         lKIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724962017; x=1725566817;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=h0tAXdbF9s5aVrX2D9yJymXJxFJA/BG13Aebp2mvni4=;
+        b=LluThywsVtWK7YcWcLmCrMLs4A/M0QjT0Bwm/WtfbU06sFP31oC4cwkNyALoMFkMGg
+         n+eJb8axK1xhhmJkhLIkJpqmwZd/hy5Sr6WdoBrqtiVn+eu4IpmPSeNvAf3buoNCWMR+
+         TOQZ9VOYlQGlHePwk7sS4WxK2IU04BDV+j/P/4VjsTYGNN+6ZOtOdQVl4SaAGdUQbXws
+         0JXjpaSmsM2GejkUQ0oWmhX/v0VLedg1IsQiG62Z64uSsJCkFcxlbdaU+sQE4Tdmobok
+         uy7lrI3zKImDQ8M+3qZ89wcA5Z9sewVbPnuh0VLpMNSPmTwCFCFuqT7pILRgJxBrYvph
+         0DkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUy5rxe4iitXRhY6bKCwWFycn+wl9A8A0hiTkcj64CZSvk/OrzbfcNjjMNiAGTpXWxBvI8MtbDlHQ9zqEo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwvKlE5gb3B03UtgkZ1P0PBTvpqeYRvacGsEo9hIQlGRcGDqiVF
+	rSnDjdx99D8+Gs5ZnjUnI0HVsLgGsMl8bfBtYw4tTN+D+alcV+Zy9hUkj7N5F0YiC+FJJGeMx8T
+	StA==
+X-Google-Smtp-Source: AGHT+IHvuOtDnHgaKGMG7YaufVXKF5bZJUCSaLhF0tkNOnDRLtlvFWPo0p053FxGCu89mhSEyHod1HWgecQ=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a17:90a:5304:b0:2c2:5b8a:ef9c with SMTP id
+ 98e67ed59e1d1-2d85616d60cmr8985a91.2.1724962016945; Thu, 29 Aug 2024 13:06:56
+ -0700 (PDT)
+Date: Thu, 29 Aug 2024 13:06:55 -0700
+In-Reply-To: <20240829191135.2041489-5-vipinsh@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240829060126.2792671-4-almasrymina@google.com>
+Mime-Version: 1.0
+References: <20240829191135.2041489-1-vipinsh@google.com> <20240829191135.2041489-5-vipinsh@google.com>
+Message-ID: <ZtDU3x9t66BnpPt_@google.com>
+Subject: Re: [PATCH v2 4/4] KVM: x86/mmu: Recover TDP MMU NX huge pages using
+ MMU read lock
+From: Sean Christopherson <seanjc@google.com>
+To: Vipin Sharma <vipinsh@google.com>
+Cc: pbonzini@redhat.com, dmatlack@google.com, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-On Thu, Aug 29, 2024 at 06:01:16AM +0000, Mina Almasry wrote:
-
-...
-
-> diff --git a/net/core/netdev-genl-gen.c b/net/core/netdev-genl-gen.c
-> index 6b7fe6035067..8b87801e8d1c 100644
-> --- a/net/core/netdev-genl-gen.c
-> +++ b/net/core/netdev-genl-gen.c
-> @@ -8,6 +8,7 @@
+On Thu, Aug 29, 2024, Vipin Sharma wrote:
+> @@ -1806,7 +1832,7 @@ void kvm_tdp_mmu_recover_nx_huge_pages(struct kvm *kvm)
+>  	struct kvm_mmu_page *sp;
+>  	bool flush = false;
 >  
->  #include "netdev-genl-gen.h"
+> -	lockdep_assert_held_write(&kvm->mmu_lock);
+> +	lockdep_assert_held_read(&kvm->mmu_lock);
+>  	/*
+>  	 * Zapping TDP MMU shadow pages, including the remote TLB flush, must
+>  	 * be done under RCU protection, because the pages are freed via RCU
+> @@ -1815,8 +1841,11 @@ void kvm_tdp_mmu_recover_nx_huge_pages(struct kvm *kvm)
+>  	rcu_read_lock();
 >  
-> +#include <linux/list.h>
->  #include <uapi/linux/netdev.h>
-
-Hi Mina,
-
-Strangely, when tools/net/ynl/ynl-regen.sh -f runs, it places
-the includes in the opposite order.
-
-I raise this as it may lead to churn later.
-
-...
-
-> diff --git a/net/core/netdev-genl-gen.h b/net/core/netdev-genl-gen.h
-> index 67c34005750c..01ef29ace149 100644
-> --- a/net/core/netdev-genl-gen.h
-> +++ b/net/core/netdev-genl-gen.h
-> @@ -9,6 +9,7 @@
->  #include <net/netlink.h>
->  #include <net/genetlink.h>
+>  	for ( ; to_zap; --to_zap) {
+> -		if (list_empty(&kvm->arch.tdp_mmu_possible_nx_huge_pages))
+> +		spin_lock(&kvm->arch.tdp_mmu_pages_lock);
+> +		if (list_empty(&kvm->arch.tdp_mmu_possible_nx_huge_pages)) {
+> +			spin_unlock(&kvm->arch.tdp_mmu_pages_lock);
+>  			break;
+> +		}
 >  
-> +#include <linux/list.h>
->  #include <uapi/linux/netdev.h>
+>  		/*
+>  		 * We use a separate list instead of just using active_mmu_pages
+> @@ -1832,16 +1861,29 @@ void kvm_tdp_mmu_recover_nx_huge_pages(struct kvm *kvm)
+>  		WARN_ON_ONCE(!sp->role.direct);
+>  
+>  		/*
+> -		 * Unaccount and do not attempt to recover any NX Huge Pages
+> -		 * that are being dirty tracked, as they would just be faulted
+> -		 * back in as 4KiB pages. The NX Huge Pages in this slot will be
+> +		 * Unaccount the shadow page before zapping its SPTE so as to
+> +		 * avoid bouncing tdp_mmu_pages_lock more than is necessary.
+> +		 * Clearing nx_huge_page_disallowed before zapping is safe, as
+> +		 * the flag doesn't protect against iTLB multi-hit, it's there
+> +		 * purely to prevent bouncing the gfn between an NX huge page
+> +		 * and an X small spage. A vCPU could get stuck tearing down
+> +		 * the shadow page, e.g. if it happens to fault on the region
+> +		 * before the SPTE is zapped and replaces the shadow page with
+> +		 * an NX huge page and get stuck tearing down the child SPTEs,
+> +		 * but that is a rare race, i.e. shouldn't impact performance.
+> +		 */
+> +		unaccount_nx_huge_page(kvm, sp);
+> +		spin_unlock(&kvm->arch.tdp_mmu_pages_lock);
+> +
+> +		/*
+> +		 * Don't bother zapping shadow pages if the memslot is being
+> +		 * dirty logged, as the relevant pages would just be faulted back
+> +		 * in as 4KiB pages. Potential NX Huge Pages in this slot will be
+>  		 * recovered, along with all the other huge pages in the slot,
+>  		 * when dirty logging is disabled.
+>  		 */
+> -		if (kvm_mmu_sp_dirty_logging_enabled(kvm, sp))
+> -			unaccount_nx_huge_page(kvm, sp);
+> -		else
+> -			flush |= kvm_tdp_mmu_zap_sp(kvm, sp);
+> +		if (!kvm_mmu_sp_dirty_logging_enabled(kvm, sp))
+> +			flush |= tdp_mmu_zap_possible_nx_huge_page(kvm, sp);
+>  		WARN_ON_ONCE(sp->nx_huge_page_disallowed);
+>  
+>  		if (need_resched() || rwlock_needbreak(&kvm->mmu_lock)) {
 
-Ditto.
+Tsk, tsk.  There's a cond_resched_rwlock_write() lurking here.
 
-...
+Which is a decent argument/segue for my main comment: I would very, very strongly
+prefer to have a single flow for the control logic.  Almost all of the code is
+copy+pasted to the TDP MMU, and there unnecessary and confusing differences between
+the two flows.  E.g. the TDP MMU does unaccount_nx_huge_page() preemptively, while
+the shadow MMU does not.
+
+The TDP MMU has a few extra "locks" (rcu_read_lock() + tdp_mmu_pages_lock), but
+I don't see any harm in taking those in the shadow MMU flow.  KVM holds a spinlock
+and so RCU practically is meaningless, and tdp_mmu_pages_lock will never be
+contended since it's only ever taken under mmu_lock.
+
+If we _really_ wanted to bury tdp_mmu_pages_lock in the TDP MMU, it could be
+passed in as an optional paramter.  I'm not super opposed to that, it just looks
+ugly, and I'm not convinced it's worth the effort.  Maybe a middle ground would
+be to provide a helper so that tdp_mmu_pages_lock can stay 64-bit only, but this
+code doesn't need #ifdefs?
+
+Anyways, if the helper is __always_inline, there shouldn't be an indirect call
+to recover_page().  Completely untested, but this is the basic gist.
+
+---
+typedef bool (*nx_recover_page_t)(struct kvm *kvm, struct kvm_mmu_page *sp,
+				  struct list_head *invalid_pages);
+
+static __always_inline void kvm_recover_nx_huge_pages(struct kvm *kvm,
+						      bool shared,
+						      spinlock_t *list_lock;
+						      struct list_head *pages,
+						      unsigned long nr_pages,
+						      nx_recover_page_t recover_page)
+{
+	unsigned int ratio = READ_ONCE(nx_huge_pages_recovery_ratio);
+	unsigned long to_zap = ratio ? DIV_ROUND_UP(nr_pages, ratio) : 0;
+	struct kvm_mmu_page *sp;
+	LIST_HEAD(invalid_list);
+	int rcu_idx;
+	bool flush;
+
+	kvm_lockdep_assert_mmu_lock_held(kvm, shared);
+
+	rcu_idx = srcu_read_lock(&kvm->srcu);
+	rcu_read_lock();
+
+	for ( ; to_zap; --to_zap) {
+		spin_lock(&kvm->arch.tdp_mmu_pages_lock);
+		if (list_empty(pages)) {
+			spin_unlock(&kvm->arch.tdp_mmu_pages_lock);
+			break;
+		}
+
+		sp = list_first_entry(pages, struct kvm_mmu_page,
+				      possible_nx_huge_page_link);
+		WARN_ON_ONCE(!sp->nx_huge_page_disallowed);
+		WARN_ON_ONCE(!sp->role.direct);
+
+		unaccount_nx_huge_page(kvm, sp);
+		spin_unlock(&kvm->arch.tdp_mmu_pages_lock);
+
+		if (!kvm_mmu_sp_dirty_logging_enabled(kvm, sp))
+			flush |= recover_page(kvm, sp, &invalid_list);
+
+		WARN_ON_ONCE(sp->nx_huge_page_disallowed);
+
+		if (need_resched() || rwlock_needbreak(&kvm->mmu_lock)) {
+			kvm_mmu_remote_flush_or_zap(kvm, &invalid_list, flush);
+
+			rcu_read_unlock();
+
+			if (shared)
+				cond_resched_rwlock_read(&kvm->mmu_lock);
+			else
+				cond_resched_rwlock_write(&kvm->mmu_lock);
+
+			rcu_read_lock();
+		}
+	}
+
+	kvm_mmu_remote_flush_or_zap(kvm, &invalid_list, flush);
+
+	rcu_read_unlock();
+	srcu_read_unlock(&kvm->srcu, rcu_idx);
+}
 
