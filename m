@@ -1,296 +1,259 @@
-Return-Path: <linux-kernel+bounces-306237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A17FE963BBF
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:36:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 550E2963BBC
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:36:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3052C1F233CA
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 06:36:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 081342837C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 06:36:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC0581662F1;
-	Thu, 29 Aug 2024 06:36:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C034E15B543;
+	Thu, 29 Aug 2024 06:35:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="Jwud5f1H"
-Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2070.outbound.protection.outlook.com [40.107.255.70])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FDTEIrDC"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49E5F159565;
-	Thu, 29 Aug 2024 06:35:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.70
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724913361; cv=fail; b=W/TMP6uPlE7+mw578+0Xj8owv7wTxB3Ro23FYRv0YL9tByx8VOfjoHWaihlY37iRZYu1OsLVPybsdhr698szaA7eCnN2/uvUC5b5OI7jUTV696LuP+jdsa+Kg+LO6av2Rx45fTlZShAhXhIx83jzdrlNQHtg7eWfHPoOKPKHbS8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724913361; c=relaxed/simple;
-	bh=4P4CYhshO45V+prUmZGWWKOlNur2xK0yKTs/9MT97BA=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=a7NDmD3Ifbwz0oEvt2L1VCkDLKnONMvodnBf8vceNPjUkIo92d5dBw0PzXzmuBM/0zEPWXF0h4lypgR2t6H64M7aTNJP8WOoDMwnrmqYlcm277tvaEfxQfEY0gZ7PP2lswgTqrnO9z1NQ8odgq8h9iwHLsg0x2OUw/4x9KnHG68=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=Jwud5f1H; arc=fail smtp.client-ip=40.107.255.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Oura1+KcdqqZW1roXYNJ4Ns4tdeXWpQ1t0RmmTiAMHeUg+nDjeHXln8Y3XPPv9SJ5YB7QD+V/UNSSqTRH5RHQ/Cgudj854JmDY/J7E5vJQ5uBtARel+qBcTPFz2K4ogrhs0uQ816FUaNolmilcn4D7dbcqOwVCuckhftCPW/iu1pwlUE4XxLvdGGDD05e/VV+8BioRaycPq1ISupzmBlwZ5FcMQwpEO3m19oBJMui3PDHSa2/+XnZ4MwWHz1i0PjA1nh3vy+zSHBrUwKm7yxwLmfeWhrklRi2TKYeAucIoBoSxuD1KQjT4036i2Hyn2hCYJHyOv8OFYT51prRbuInQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xXiArJkHOVeBjnw6LhYxjtGhJW300DCEkuMmQ8RyAlo=;
- b=VGl7oPMXFF8yvhJ/VLevc/LDTCS86WREp/mdmSDIRyzMTz2xfzYVooITWI5rzKUIq9O+ci0HH10lOqyDhvkml2ecqRuFPkWulRnWhf5li+3sWtlIv7K/93iIwAFknZmCL5W0IzG1W91VuZRU4T77mbk3xMgzifxIuUwGnLPY8cxJLVVpcfnJWU/wn3DdRDMfTIcogPz+QI0a/YjSNQfHv/QP+TgSm2/J4Px3cDWyNggGs+dsGbhj6YeSG6jLCqNwQ8+jtUli+PZGP5DkonA5DCondPPE8c4bK7yjyW7Ksvymm7tjB0A7HAsWLf+o9p+m9zebjrET30jiGPOw6rmmoQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xXiArJkHOVeBjnw6LhYxjtGhJW300DCEkuMmQ8RyAlo=;
- b=Jwud5f1HQjr8OsZeLcCXSWQTwUd23eYixhL4TCKcGGsJCHkE9epVzWS7as9tIMBM0ZmJLeTsBKcbWO2A/hKq9A+Q0VjzQplOvZcRRIqyw8s9uq2LJuIUmb6ua2lEeLmLJZ9HquSoJJ/AFu05CvubMIY/d/kTP3tApd4M0H0oIvWlUu7kh72qkQnSbBv46lVYnWWfVj/M/OVQErcPBAv2m8k4trwm4A+ivNPU9Kj24N26hwlKuJUw0o57uqPnKL03CWzp+eDoEfJQimwyRjM5vKoJG7JJHYezTSN1ATU/oCJZ3QNEO/Aq+LgYcyHJb+BAfs6ey7TW4N3DNPFjM/v/Jg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from PUZPR06MB5676.apcprd06.prod.outlook.com (2603:1096:301:f8::10)
- by SEZPR06MB5689.apcprd06.prod.outlook.com (2603:1096:101:9d::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.26; Thu, 29 Aug
- 2024 06:35:53 +0000
-Received: from PUZPR06MB5676.apcprd06.prod.outlook.com
- ([fe80::a00b:f422:ac44:636f]) by PUZPR06MB5676.apcprd06.prod.outlook.com
- ([fe80::a00b:f422:ac44:636f%6]) with mapi id 15.20.7897.021; Thu, 29 Aug 2024
- 06:35:53 +0000
-Message-ID: <34b3b1e9-353c-4a31-9e09-d4ba5d28eb51@vivo.com>
-Date: Thu, 29 Aug 2024 14:35:48 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/5] udmabuf: direct map pfn when first page fault
-To: "Kasireddy, Vivek" <vivek.kasireddy@intel.com>,
- Sumit Semwal <sumit.semwal@linaro.org>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Gerd Hoffmann <kraxel@redhat.com>,
- "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- "linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc: "opensource.kernel@vivo.com" <opensource.kernel@vivo.com>
-References: <20240822084342.1574914-1-link@vivo.com>
- <20240822084342.1574914-2-link@vivo.com>
- <IA0PR11MB718571990B58A16756C15E2FF8962@IA0PR11MB7185.namprd11.prod.outlook.com>
-From: Huan Yang <link@vivo.com>
-In-Reply-To: <IA0PR11MB718571990B58A16756C15E2FF8962@IA0PR11MB7185.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SI1PR02CA0026.apcprd02.prod.outlook.com
- (2603:1096:4:1f4::11) To PUZPR06MB5676.apcprd06.prod.outlook.com
- (2603:1096:301:f8::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19E4E145341
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 06:35:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724913358; cv=none; b=dXEykc5PK6dihBbVZcQtAnU4G2JlPFph13b1LSsoHoh8Tm/XWUlJ82Fiyz9tlLaNLlGWvvDTP2/9t9tljS9AFFHkFRRfErJe6loYjkXNtLBEtwCWeKacb7wdNe/H0PA6JAEktDrAlpkiaA9N5xlWFRaGh34UwKq9F0BkWqczHsA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724913358; c=relaxed/simple;
+	bh=3C1Pn7P3u8kE5/Xh3nRhBnJPEczNDtMVCQsnQWU/0cs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SJgKhR7h+48vQNKXyF96PLXYckClVg/o58l/fcYK7adL4cvNiGuU4ijPEnDUJBBWTJPHT4o4miqfx5yO8vlAr4XexWnFnP1cHOgkH+YpC3klWXAtwZ4Na8Vtqojof1xaXtE5JZ/WUmCDPtFti+xb2xOwnbO3zlCs6vjp6r+B/zU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FDTEIrDC; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724913355;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ARdYw+ULfprbR8rWo2jBMYSOxo9s06JO2wfsOxBjzAI=;
+	b=FDTEIrDCBhF0Hfs+As0xgNZ7PiycpF1dOaLha9+aLdQ+gNlnvWdC/OFzpp9t7r2C7Y+7o1
+	zqQMj6EGgwYJyBJ0Yn6p/JOzLDknotAu1WNCgCKxVbBV1pQ1PvsG0+h4ZxEhaB0JA66tsb
+	hjrWZchKJA47OteBcVBm5fBks2aNPzA=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-48-O1YuPE2hOE2OUpYdQkmebQ-1; Thu, 29 Aug 2024 02:35:54 -0400
+X-MC-Unique: O1YuPE2hOE2OUpYdQkmebQ-1
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-371b187634fso625797f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 23:35:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724913353; x=1725518153;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ARdYw+ULfprbR8rWo2jBMYSOxo9s06JO2wfsOxBjzAI=;
+        b=I8ukjiU+fWj2OAz/ToL4XC0t7DTfncEC/g8+pN+Sa7njghfQkTeZskfIX0QGgkJJxW
+         YYmtBy4lZ+WxIrwz2FRoXvwYb+7SQHFKwTChR0kj+TkbhUnzKyMj8D254xOy/1cJ6JBM
+         mMhoZ8busZORKIr3YxMvqbOsvs37GgXTQZj5c6Iiksp8R2CO8ifBopEG5mg9n+ls7bUf
+         QEriQPHuw4TNSBmsZIkmsM5vSGLbqP8dSiTux7RPdWi4h/PPPRuRTqubcmUEOtbpGk+e
+         51CUPkO0ClVKF81ceY5XHoiDwmCNzQeg33PtmPFVhDzlbHrrg2Jdro7if3dHpy9s219H
+         7/Lw==
+X-Gm-Message-State: AOJu0YwmmNz+jOWIUNW2CVpS5gR4SuGlO8+C+lATlXHmUcLX9fdEPOKq
+	YjwgsfUfQ9Tb3WRyJjWZjGOS+DWN4CDhKWV+U3iI5N6PrGPQYhAlxy8yGNeLzVt7W5lOcbFuZMR
+	7Q3M0PxdulXI9cqksWKXoIEyQhc/B0flIisQ/uKyDpJmYOpgFNL6Qlg6wPEpOBg==
+X-Received: by 2002:a5d:6dc9:0:b0:36b:aa96:d1e5 with SMTP id ffacd0b85a97d-374a0228f7fmr389000f8f.18.1724913352816;
+        Wed, 28 Aug 2024 23:35:52 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE+BYnHXIYm3/KvEc5f71yqUBdVMg4j3LgSlWxLc6pR3RHwNPaLqwMOSo5yMutRBM4U2UC/rA==
+X-Received: by 2002:a5d:6dc9:0:b0:36b:aa96:d1e5 with SMTP id ffacd0b85a97d-374a0228f7fmr388949f8f.18.1724913351919;
+        Wed, 28 Aug 2024 23:35:51 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c711:c600:c1d6:7158:f946:f083? (p200300cbc711c600c1d67158f946f083.dip0.t-ipconnect.de. [2003:cb:c711:c600:c1d6:7158:f946:f083])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3749efafb30sm581789f8f.94.2024.08.28.23.35.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 28 Aug 2024 23:35:51 -0700 (PDT)
+Message-ID: <2123f339-2487-4b1c-abb1-313e9a012242@redhat.com>
+Date: Thu, 29 Aug 2024 08:35:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PUZPR06MB5676:EE_|SEZPR06MB5689:EE_
-X-MS-Office365-Filtering-Correlation-Id: 15ad7da7-6f12-4989-73e4-08dcc7f4d498
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|52116014|366016|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?N3V3MzAwSHR2b2srYmV6eWdwSkI2Z0FmNWl5Y3lTYVd4bElBMFo2RkpVMVNz?=
- =?utf-8?B?ckUzNmVjamVjM0wrTGtVQXpEako3MVRvZDc1bDdjV2ZuRWpteS9vVzR1Tkdh?=
- =?utf-8?B?d3ZOTDNHQzhsR3dCOTFQUVV2blFoYkJxMUxsVVFTZTYzSUtFdEYzRFVWaFJt?=
- =?utf-8?B?Vjg2VzhnOW9NVS9ac29JNDUvZjlhc2xHRHprb1JzUlQzZWMrVFVDT2taZVdy?=
- =?utf-8?B?cUxJbGFmV2I1MHJSNzhEazgxeVdMOXJ0VXM5UUp3S1p5KzZGOWVjb2VjbHFE?=
- =?utf-8?B?a05Lb2JRMFIyRUFGY2hMblB1eE9lQ2pVN1M3OUE5U3Ywb3ZiQUR6aHJrSUJE?=
- =?utf-8?B?VXhsK2RPaS9WbGFlRGRFelZJMEYzdmFBWk5wazNSNW4wZUM5c2NvSHdmTUxE?=
- =?utf-8?B?c1RHekgwOHRSRjJDTHNmVjViem1sSEJxdW9wNjJPbFVwN2ZqTU9KbXhaYzNC?=
- =?utf-8?B?UXJHeGhyTk41VVpxNzlUQ25XSFZ6alAwSUg0Z2N4MVdRMnVDdW5LN0hiblJl?=
- =?utf-8?B?N0VUbHNZOGZGOTJ4bUQxc3dTbDBxM0llSmNPQnppKzF5QjhlaGF5S0QwK2Yv?=
- =?utf-8?B?YWdXTHNLeXZ2ODBYTHJwVUNFS25NYnFXYXhwMjN3TDZPaHVibCsrVVcwMTR1?=
- =?utf-8?B?NUtGaC9teFZNRVEwV05jeCtTV2Rjb0hwWSt3cThId25pN2ZRZVJoWTQ5UUFk?=
- =?utf-8?B?WXd3aU9qZ1hMTkhzSXVOQmpCWGVjZlBrL24vQlh1V3ROdVhxei9vN0IrN3Fk?=
- =?utf-8?B?ZUhqNElqK1UrZDF1L3FUV0RVa05VZlY1ZXRZU2VnSnBrZXF3MFFCejNzdUVt?=
- =?utf-8?B?d2NvcXhacUROQUlwSlFWK0NpZmxEbmxZL1NKVVpMUE5PazlneHJ1U2xieVUw?=
- =?utf-8?B?a0FHb2pJQUM5dHhsb3hPaURmQjJLajQxUzVVRTB0eUM3blBOR3lCalhmNmZh?=
- =?utf-8?B?aVNFTE12WXhiTjhGS1hGMU8yVnF2NDNZZ3dCNzdpcU90c3VQb29INkxhR05J?=
- =?utf-8?B?dFYxMW5qYTcxL3RHNkQxVkNRSitwNGFNdkw5bWhNWjdoT3V4alNQS09iaksy?=
- =?utf-8?B?MUlUUlFjTWYrdHVKaUhNVmN6UUZMdlNEZytuUVBleXRWUHZCM1hjUko5cmRo?=
- =?utf-8?B?clpENHN4cEwwUnRWNHlOUi92dDcyVVZMcUJoKzF5ZHJSMTN5Q2g1WFBoTDVs?=
- =?utf-8?B?TjZqaVJxRE81QU51NWhNUmJUMWFoN3ZEUThOY2tEWnRHZDQ0Y0xRQ0tsUG1t?=
- =?utf-8?B?M3RESldDRTAwU0tETk12T0hnSWpQT0o2MmRFQ1I1QVV5QnpRRysxcWRYb3N2?=
- =?utf-8?B?YTkwUmNwK2pHWnNVL0hCcEhsQzVBTTFaOVYrKzc2Rkt5OUE5RkdRNzlFY04x?=
- =?utf-8?B?V2NLUHBxZ3FIcHR5SnpNeXB5NXllR1R0N2k4WlRQNnpnN1NjVDM2RUZ4NFZ6?=
- =?utf-8?B?MXpKUVBHNTdsVE1yZVA5bGxQTWdVeVhWQVpsSnlWWi9hUytkK2Era24xZDhR?=
- =?utf-8?B?emJ6TENXNElzRkI5T3B2WmVraWQ3Z0pmZTZaZkl1cWRsZFhSTkNBMy81NHJi?=
- =?utf-8?B?TWl4bHRhQlVXcHUza2RSSnd1V2dXZ2xBRktJeWNOVVdhL20xWDFEdFJpekFV?=
- =?utf-8?B?VU53eDFuTndadFY4bDlDOTFaMmQzWGZhUXNOWGdmblUrdDJuMEUrdnh3MkYz?=
- =?utf-8?B?RENGVjlXNFRvMkNYVjdiSHZhSjlxYVRnMFFiaVVQQllSNVNKWlVpalI3OTR6?=
- =?utf-8?B?dXRMQjJQSFRmMk44d2lPMERUU2ZIZHhtaWg4YlozTng4Q0VmVE9ubDdBaG5h?=
- =?utf-8?B?MUo5aWR4VVJXdUR5aHkyREN4Rmx2a2l0QjJQSGNTWmVodG43TG94SnludVNn?=
- =?utf-8?B?ZnFOakZWVVQxelQ0ZDBSTkhSbS8zM1A4bGhobkZPeEk4eEE9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PUZPR06MB5676.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Q0VVS01Xd3dtcnFXSHN5ckdHQUlDckZoZ3BUR1h6WWZmYUpFUWtwWHh3eDgr?=
- =?utf-8?B?TlQwWVFjUmo4bkQ1ZlYrTkg5WU90d3dxTUV6OGNDbEp6Tjk3eUM1UCtTNFY1?=
- =?utf-8?B?ZUZaWTQxOW5SWmxJalFkakJRTVBHbWU2L2lpTUxBQ1J0SSt4K0NwOXNaT2li?=
- =?utf-8?B?dFBGQlpVNFllZWpibG1CZlR2Q0ZXbmZzOEtoaEhvQWpQZW11SE1kSFgralM0?=
- =?utf-8?B?dlNVUE9oRkRqWDVoR2tzRWJXTFNRNE5wMnZKOXBRYkpmV2E3eDJ2a3VvU1NX?=
- =?utf-8?B?Q1MybXpXK3M0emFUdXcyWk15SGxXeFNpSFgxWVo4K2J4RjVGaENkM2FVYW94?=
- =?utf-8?B?ZVFXbXVCdFBBVzZ2UVRVMUx0YnRUdW5qbVh6SjZjNS9Ca0Y2ZVNXMmtWRlhF?=
- =?utf-8?B?RUxQWlhjcTFmbm5GUDdaUzRMVThJWm1JV3I4amxYL3dIS1g1MlExaTZvSW5L?=
- =?utf-8?B?c0JQd0pDVWZSdU5oMTZzYmEyYTd3NG1wNzVvdlJXejQ3NG9vWXltWDgxYXpO?=
- =?utf-8?B?T0F1dXh2OWw2TFREZUNadkdTcGg3SlZ2WEl4Wmh1UWVET3d5RFpSdkdOREE1?=
- =?utf-8?B?MmlQT2srQ241aFYvc0J1ZitxRUJDNlE3S1ZPcW1JaUc1YVplOVJhYkxCcVli?=
- =?utf-8?B?SER4Ym56V1FHMmFvUUtQTTlQRmNOL3ZvcnczRnRydjhBNVRyUnRhS0ZMT2xx?=
- =?utf-8?B?YWxKV1I0dVF2eXoxMDBRT0V3aHAvOEhKTXBTem1qUk5FRlR4NXRPTDZxcHpm?=
- =?utf-8?B?QmVxMmdjWGF1NTArUzFTY0hlSFNKUjlYNzFlR21LN2RzYmlsYzhUK2VNd09j?=
- =?utf-8?B?bTl6Wlo4eUUwdEY3cHdVMGZ5SHZaa2xna0hBOE4ybG15dkxpak5lWjVocGU3?=
- =?utf-8?B?QytUcXhmRitJZ1FzRFdVRWk5T0dTL0ZIdWY4MzNERmliQlhQT0xhQ1VlQnQ1?=
- =?utf-8?B?ZUhKZk5QNExXVVl1cXNtTmdtSXdrZFFNTmpxalBpRWtZR3FLbngyWTFtMzM5?=
- =?utf-8?B?T2M0NXB0bVdoVHhTY0E2QURuN0dpbTNORW9YVEFyNjR3L1oyeGhQNm9iL1kv?=
- =?utf-8?B?eDMySGZSb2JtRlhBeFJnZFJtOTgvUTFuNDBVNnhtOHYwMmRtWkNDbUxMN3pl?=
- =?utf-8?B?NHRGdlFrRUoxSW1OTnYwU0hjalJ2MHhJTVhjd1NoVUZDNUU5UjI0aDNFbUJZ?=
- =?utf-8?B?RFA4TDJUT1p1ODhxV1Fvak4zYm9yUTlZb24yNnpuWEJsaGU2VzRZWnBxQ2Uz?=
- =?utf-8?B?NHB1TXlsdk4rNlVJak94MEVGTkthWW1MamMyNWtSaExiaGtwUE1qWG5lbVE0?=
- =?utf-8?B?aDgrRXNLMVNPSE01V1BjNitJamxXbmRVQTBYdlNneW1ZTUFldC9lZnNhenFY?=
- =?utf-8?B?WlFLVHpSeEZ2eHJsbWZwMklTbEFyZkJsa2g4aHVXZGw2OXYybzE2MGpKbGRo?=
- =?utf-8?B?WWJyUTJKaG9yb0p0aitPWEtnVXNNWmlGaWthNGNEY1dBNExzRlhFMWtmdTAv?=
- =?utf-8?B?R2FFYTFzS2xSRTdwRitTVkJMbHptN1JkTU84a3VTamVMbGg1RWZtVFJkczU0?=
- =?utf-8?B?NjlvKzhHakp6ckpKSHorL2NFS0VQdEo1bmNqaFhOd3V0bnAwV0ozVmZVUkdQ?=
- =?utf-8?B?S21ybE94cFoxTnhhZW1EV0k2cjhiNDN3WGZoelJJanNLVVRHV2pZSkc0R1Bi?=
- =?utf-8?B?NW9JZnR4dkg4TkppbzR0YlFnRFlURytwb0VJd0pIVmhFc3BrYk10VExNdnpQ?=
- =?utf-8?B?Um9mRVdyRDE2UngvVmtwVm05bHlaNnhHMmJ0R0g4OEwydm1PeDEvV21kUHF2?=
- =?utf-8?B?UmpGaC9pNmgzTGtsbjNCZVUxWlZKZU04bFplMU5QNkJWeGtJazRHRGhPa2VJ?=
- =?utf-8?B?cHhkcmJyMTJ3dEdqa213cEVNN0lBR3B0dDBrbmhFNk45cEMvSDRwa2gxL1Zi?=
- =?utf-8?B?YWFLTHQwQnhuOFJDL0UwQ0dmRVJMSTdRZCtiVmZrNkhaUDU2U0MwWG53S2pa?=
- =?utf-8?B?RWVST1pUemYvYy8va3JuOVhBblQwVk5YdFBZSFcwc3AvU0lLMlRkZUNSZHpM?=
- =?utf-8?B?UmVSU3pqN0dLMTJ0NzY1ck93Q3JXVmtxZlVvQzFENHhuNGJLWGMwNFplTHNE?=
- =?utf-8?Q?ZNx67JLVh4wKlioPZ1I3vDYvk?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 15ad7da7-6f12-4989-73e4-08dcc7f4d498
-X-MS-Exchange-CrossTenant-AuthSource: PUZPR06MB5676.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Aug 2024 06:35:53.4901
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: C1AloCbfy0kp04An7g0dy6ACtqxv6H+vFtry7O4CjFA7nbwEPy4FZqqbb2vUdik3b0e8P/IKC0sBkQNF/Wp/Nw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR06MB5689
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 06/19] mm/pagewalk: Check pfnmap for folio_walk_start()
+To: Jason Gunthorpe <jgg@nvidia.com>, Peter Xu <peterx@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ Gavin Shan <gshan@redhat.com>, Catalin Marinas <catalin.marinas@arm.com>,
+ x86@kernel.org, Ingo Molnar <mingo@redhat.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Paolo Bonzini <pbonzini@redhat.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Alistair Popple <apopple@nvidia.com>,
+ kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Sean Christopherson <seanjc@google.com>, Oscar Salvador <osalvador@suse.de>,
+ Borislav Petkov <bp@alien8.de>, Zi Yan <ziy@nvidia.com>,
+ Axel Rasmussen <axelrasmussen@google.com>, Yan Zhao <yan.y.zhao@intel.com>,
+ Will Deacon <will@kernel.org>, Kefeng Wang <wangkefeng.wang@huawei.com>,
+ Alex Williamson <alex.williamson@redhat.com>
+References: <20240826204353.2228736-1-peterx@redhat.com>
+ <20240826204353.2228736-7-peterx@redhat.com>
+ <9f9d7e96-b135-4830-b528-37418ae7bbfd@redhat.com> <Zs8zBT1aDh1v9Eje@x1n>
+ <c1d8220c-e292-48af-bbab-21f4bb9c7dc5@redhat.com> <Zs9-beA-eTuXTfN6@x1n>
+ <20240828234652.GD3773488@nvidia.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20240828234652.GD3773488@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+
+On 29.08.24 01:46, Jason Gunthorpe wrote:
+> On Wed, Aug 28, 2024 at 03:45:49PM -0400, Peter Xu wrote:
+> 
+>> Meanwhile I'm actually not 100% sure pte_special is only needed in
+>> gup-fast.  See vm_normal_page() and for VM_PFNMAP when pte_special bit is
+>> not defined:
+>>
+>> 		} else {
+>> 			unsigned long off;
+>> 			off = (addr - vma->vm_start) >> PAGE_SHIFT;
+>> 			if (pfn == vma->vm_pgoff + off) <------------------ [1]
+>> 				return NULL;
+>> 			if (!is_cow_mapping(vma->vm_flags))
+>> 				return NULL;
+>> 		}
+>>
+>> I suspect things can go wrong when there's assumption on vm_pgoff [1].  At
+>> least vfio-pci isn't storing vm_pgoff for the base PFN, so this check will
+>> go wrong when pte_special is not supported on any arch but when vfio-pci is
+>> present.  I suspect more drivers can break it.
+
+Fortunately, we did an excellent job at documenting vm_normal_page():
+
+  * There are 2 broad cases. Firstly, an architecture may define a pte_special()
+  * pte bit, in which case this function is trivial. Secondly, an architecture
+  * may not have a spare pte bit, which requires a more complicated scheme,
+  * described below.
+  *
+  * A raw VM_PFNMAP mapping (ie. one that is not COWed) is always considered a
+  * special mapping (even if there are underlying and valid "struct pages").
+  * COWed pages of a VM_PFNMAP are always normal.
+  *
+  * The way we recognize COWed pages within VM_PFNMAP mappings is through the
+  * rules set up by "remap_pfn_range()": the vma will have the VM_PFNMAP bit
+  * set, and the vm_pgoff will point to the first PFN mapped: thus every special
+  * mapping will always honor the rule
+  *
+  *	pfn_of_page == vma->vm_pgoff + ((addr - vma->vm_start) >> PAGE_SHIFT)
+  *
+  * And for normal mappings this is false.
+  *
+
+remap_pfn_range_notrack() will currently handle that for us:
+
+if (is_cow_mapping(vma->vm_flags)) {
+	if (addr != vma->vm_start || end != vma->vm_end)
+		return -EINVAL;
+}
+
+Even if [1] would succeed, the is_cow_mapping() check will return NULL and it will
+all work as expected, even without pte_special().
+
+Because VM_PFNMAP is easy: in a !COW mapping, everything is special.
+
+> 
+> I think that is a very important point.
+> 
+> IIRC this was done magically in one of the ioremap pfns type calls,
+> and if VFIO is using fault instead it won't do it.
+> 
+> This probably needs more hand holding for the driver somehow..
+
+As long as these drivers don't support COW-mappings. It's all good.
+
+And IIUC, we cannot support COW mappings if we don't use remap_pfn_range().
+
+For this reason, remap_pfn_range() also bails out if not the whole VMA is covered
+in a COW mapping.
+
+It would be great if we could detect and fail that. Likely when trying to insert
+PFNs (*not* using remap_pfn_range) manually we would have to WARN if we stumble over
+a COW mapping.
+
+In the meantime, we should really avoid any new VM_PFNMAP COW users ...
+
+> 
+>> So I wonder if it's really the case in real life that only gup-fast would
+>> need the special bit.  It could be that we thought it like that, but nobody
+>> really seriously tried run it without special bit yet to see things broke.
+> 
+> Indeed.
+
+VM_PFNMAP for sure works.
+
+VM_MIXEDMAP, I am not so sure. The s390x introduction of pte_special() [again,
+I posted the commit] raised why they need it: because pfn_valid() could have
+returned non-refcounted pages. One would have to dig if that is even still the
+case as of today, and if other architectures have similar constraints.
 
 
-在 2024/8/29 14:08, Kasireddy, Vivek 写道:
-> Hi Huan,
->
->> Subject: [PATCH v4 1/5] udmabuf: direct map pfn when first page fault
->>
->> The current udmabuf mmap uses a page fault to populate the vma.
->>
->> However, the current udmabuf has already obtained and pinned the folio
->> upon completion of the creation.This means that the physical memory has
->> already been acquired, rather than being accessed dynamically.
->>
->> As a result, the page fault has lost its purpose as a demanding
->> page. Due to the fact that page fault requires trapping into kernel mode
->> and filling in when accessing the corresponding virtual address in mmap,
->> when creating a large size udmabuf, this represents a considerable
->> overhead.
->>
->> This patch fill vma area with pfn when the first page fault trigger, so,
->> any other access will not enter page fault.
->>
->> Suggested-by: Vivek Kasireddy <vivek.kasireddy@intel.com>
->> Signed-off-by: Huan Yang <link@vivo.com>
->> ---
->>   drivers/dma-buf/udmabuf.c | 26 ++++++++++++++++++++++++--
->>   1 file changed, 24 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/dma-buf/udmabuf.c b/drivers/dma-buf/udmabuf.c
->> index 047c3cd2ceff..0e33d25310ec 100644
->> --- a/drivers/dma-buf/udmabuf.c
->> +++ b/drivers/dma-buf/udmabuf.c
->> @@ -43,7 +43,8 @@ static vm_fault_t udmabuf_vm_fault(struct vm_fault
->> *vmf)
->>   	struct vm_area_struct *vma = vmf->vma;
->>   	struct udmabuf *ubuf = vma->vm_private_data;
->>   	pgoff_t pgoff = vmf->pgoff;
->> -	unsigned long pfn;
->> +	unsigned long addr, end, pfn;
->> +	vm_fault_t ret;
->>
->>   	if (pgoff >= ubuf->pagecount)
->>   		return VM_FAULT_SIGBUS;
->> @@ -51,7 +52,28 @@ static vm_fault_t udmabuf_vm_fault(struct vm_fault
->> *vmf)
->>   	pfn = folio_pfn(ubuf->folios[pgoff]);
->>   	pfn += ubuf->offsets[pgoff] >> PAGE_SHIFT;
->>
->> -	return vmf_insert_pfn(vma, vmf->address, pfn);
->> +	ret = vmf_insert_pfn(vma, vmf->address, pfn);
->> +	if (ret & VM_FAULT_ERROR)
->> +		return ret;
->> +
->> +	/* pre fault */
->> +	pgoff = vma->vm_pgoff;
->> +	end = vma->vm_end;
->> +	addr = vma->vm_start;
->> +
->> +	for (; addr < end; pgoff++, addr += PAGE_SIZE) {
-> Although unlikely, I think we should also check for pgoff < ubuf->pagecount.
-Ohh, yes.
->
->> +		if (addr == vmf->address)
->> +			continue;
->> +
->> +		pfn = folio_pfn(ubuf->folios[pgoff]);
->> +
->> +		pfn += ubuf->offsets[pgoff] >> PAGE_SHIFT;
->> +
->> +		if (vmf_insert_pfn(vma, addr, pfn) & VM_FAULT_ERROR)
-> Shouldn't you store the return value of vmf_insert_pfn in ret? Otherwise, we'll
-> return success when the above call fails.
+> 
+> What arches even use the whole 'special but not special' system?
+> 
+> Can we start banning some of this stuff on non-special arches?
 
-If anything wrong in there, let it report when it true access and then 
-report. Not in there.
+Again, VM_PFNMAP is not a problem. Only VM_MIXEDMAP, and I would love to
+see that go. There are some, but not that many users ... but I'm afraid it's
+not that easy :)
 
-It's pre-fault, 'this' page's fault is already dealed success. No reason 
-to report in it's fault.
+-- 
+Cheers,
 
->
-> Anyway, I am wondering if it is more optimal to just iterate over pages instead
-> of addresses. Something like below:
->
-> +       unsigned long nr_pages = vma_pages(vma);
-> +       unsigned long addr = vma->vm_start;
->
-> -       if (pgoff >= ubuf->pagecount)
-> -               return VM_FAULT_SIGBUS;
-> +       WARN_ON(nr_pages != ubuf->pagecount);
->
-> -       pfn = folio_pfn(ubuf->folios[pgoff]);
-> -       pfn += ubuf->offsets[pgoff] >> PAGE_SHIFT;
-> +       for (pg = 0; pg < nr_pages && pg < ubuf->pagecount; pg++) {
-> +               pfn = folio_pfn(ubuf->folios[pg]);
-> +               pfn += ubuf->offsets[pg] >> PAGE_SHIFT;
->
-> -       return vmf_insert_pfn(vma, vmf->address, pfn);
-> +               ret = vmf_insert_pfn(vma, addr, pfn);
-> +               addr += PAGE_SIZE;
-> + }
+David / dhildenb
 
-Maybe mmap with a offset? just start from 0 not too good.
-
-This seems clear, but is it not good to handle insert pfn error elsewhere?
-
->
-> Thanks,
-> Vivek
->
->> +			break;
->> +	}
->> +
->> +	return ret;
->>   }
->>
->>   static const struct vm_operations_struct udmabuf_vm_ops = {
->> --
->> 2.45.2
 
