@@ -1,126 +1,95 @@
-Return-Path: <linux-kernel+bounces-307481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44B00964E01
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 20:45:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FD19964DBB
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 20:36:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03ACE2847C8
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 18:45:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 931121C20BFA
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 18:36:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BE5A1BAED7;
-	Thu, 29 Aug 2024 18:44:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BDA81B8E8B;
+	Thu, 29 Aug 2024 18:36:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="adYnnH6c"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ITgXofYm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 408451B9B2D;
-	Thu, 29 Aug 2024 18:44:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B98AF4D59F;
+	Thu, 29 Aug 2024 18:36:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724957071; cv=none; b=keL29IMFGhcd7X97YpTUIX30BuUwsxIlqR2jPJ+RtWPfTE476yk6/yj6im+02Zk7padOvp6xZX2/DDOPxuzeASMGhsioQJI+mdtymqF5BJ+AnkwXr/xuBQ7z4bwJ0mcAamjXxcdddFkSEMeAkjAyI4LIR95FJ7H0TMgJdYgyEz0=
+	t=1724956565; cv=none; b=BFSu5fr004fQ9YwRr9cq9Bck0rxod4bE3Yzn+k/rAQqGHXlEiltzmNEsEzeMhB9lvU0pIE24NgvnryMPP6f2F+DRYXrYv0f051EQ3x7Mr0BLuRL84wN7J/bvgJjwtEOdync+DGXKXPjTvYUSYruzaK/waeJGTAFRrKOhqByLG9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724957071; c=relaxed/simple;
-	bh=S4CkdgFLwOCb5lMnnxvQ1Y3NpKIZBPF/PKaHfWrYn2M=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hBwhLfKUjMdbCriLjlbam/VjBAeeXJUsCPCt7uhMJb/19voUaLIwliN8cjviV9HkdkD2kRswNQ/UPuPT6fw3VU58IuH8cnuGwogr18yCjN+RmwKJ+JTxSQodxGprB8HpOk3xxQBuVEC2siach3xP9/cK3rZdJpEvbQX/plfHVW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=adYnnH6c reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
- id ab6ddb748adf9e07; Thu, 29 Aug 2024 20:44:27 +0200
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id CA9C26A8C15;
-	Thu, 29 Aug 2024 20:44:26 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1724957067;
-	bh=S4CkdgFLwOCb5lMnnxvQ1Y3NpKIZBPF/PKaHfWrYn2M=;
-	h=From:Subject:Date;
-	b=adYnnH6c8c9iK18mehjN9m6J8oIzNHewaK85KAiKjti6XOkadzGnZ3DlCZ/guF3sd
-	 LCdj6of245q2l4GW7Byps9nnrfVwrlbKwt47IeGwP2okbcQskHAbLjs0hp6eO2k6fv
-	 GVLpoHoBIRpiE2kiTwXnl3wqgrSNekOjMxbiRdSKrIwN8gg/jjA7aKjjqW/3B5Q2o1
-	 dbQ8F9LYQOLK1sYW996ZTKl8gdvRFM8D2hJOSyFFoEL64/b4iw1tvfxq4WoFX8oplp
-	 jG55SfI3aDPURUlbxl1+x5fnXrfMz7oQ+KitM0lXFK9Blx+ox611MHsHmXs6M1zj7/
-	 eiusC+9ovxIWw==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux ACPI <linux-acpi@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Bob Moore <robert.moore@intel.com>,
- Saket Dumbre <saket.dumbre@intel.com>
-Subject:
- [PATCH v1 10/20] ACPICA: Fix memory leak if acpi_ps_get_next_namepath() fails
-Date: Thu, 29 Aug 2024 20:35:54 +0200
-Message-ID: <5980113.MhkbZ0Pkbq@rjwysocki.net>
-In-Reply-To: <5819337.DvuYhMxLoT@rjwysocki.net>
-References: <5819337.DvuYhMxLoT@rjwysocki.net>
+	s=arc-20240116; t=1724956565; c=relaxed/simple;
+	bh=Mxgf/84Y368eJ01uALZl6+hxWNZdpBDsZMUdIPn0f5o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IspfnZAiYeTZe3h1KhWMjLEcDMYvrAb2X+ig8XvXrboHs1nCQGPILu1Tgg4ef6bZi6nwqPLeFmzECqWCAwQsIyOYDZl9wjQEkLOqWFaiwznlgvuaxDPdAg0CcxSm8yKG5FXfhAkrzZOHNge5y0Hdjs7hGdtLwCDb+8X7wVabCp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ITgXofYm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6647BC4CEC2;
+	Thu, 29 Aug 2024 18:36:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724956565;
+	bh=Mxgf/84Y368eJ01uALZl6+hxWNZdpBDsZMUdIPn0f5o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ITgXofYmvTEoWUdQ+jq3yc3XOD7MH1h4mlishkA0S+AzZMScvyn11W1HoE4N/6do9
+	 nUxWggFoDfbougAQ+SMo7yYHF75VQ/2Zw2gMSTkw2+Tfs1RUeMPSfrziSSqTTx3YE7
+	 gI+nQc5qXP5SQ0bHWqyFiS6eX7Gu29w/GaGhBYmCEbClL8aG3KJ0AVeHZveus0SkrM
+	 iymZOgHeteGlri8HkJ4YhTmoeyH1c6SJZR5ZRLECuusoWFcDbEmbXnPYVWhdj7RwGf
+	 rD78oiKXQaLQkLvSaNzHhn4Z01TPuB+89QmRb6iUh1y6ff7cQQx0WXfvrUPMAZfbUz
+	 +drnU7Bobk2Ag==
+Date: Thu, 29 Aug 2024 13:36:03 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Yixun Lan <dlan@gentoo.org>
+Cc: Albert Ou <aou@eecs.berkeley.edu>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	Meng Zhang <zhangmeng.kevin@spacemit.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Meng Zhang <kevin.z.m@hotmail.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Icenowy Zheng <uwu@icenowy.me>, linux-kernel@vger.kernel.org,
+	Yangyu Chen <cyy@cyyself.name>, Conor Dooley <conor@kernel.org>,
+	Inochi Amaoto <inochiama@outlook.com>,
+	Jesse Taube <jesse@rivosinc.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jisheng Zhang <jszhang@kernel.org>
+Subject: Re: [PATCH v3 1/4] dt-bindings: pinctrl: spacemit: add support for
+ K1 SoC
+Message-ID: <172495656327.898546.917420601420420121.robh@kernel.org>
+References: <20240828-02-k1-pinctrl-v3-0-1fed6a22be98@gentoo.org>
+ <20240828-02-k1-pinctrl-v3-1-1fed6a22be98@gentoo.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: clean
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddrudefgedguddvjecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpeelueffveduueelfeeihfehleejjeekvdejveetueeuhfetjefggeekudelvdeuueenucffohhmrghinhepkhgvrhhnvghlrdhorhhgpdhgihhthhhusgdrtghomhenucfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpehrjhifsehrjhifhihsohgtkhhirdhnvghtpdhnsggprhgtphhtthhopeegpdhrtghpthhtoheplhhinhhugidqrggtphhisehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhosggvrhhtrdhmohhorhgvsehinhhtvghlrdgtohhmpdhrtghpthhtohepshgrkhgvthdrughumhgsrhgvsehinhhtvghlrdgtohhm
-X-DCC--Metrics: v370.home.net.pl 1024; Body=4 Fuz1=4 Fuz2=4
-
-From: Armin Wolf <W_Armin@gmx.de>
-
-ACPICA commit 2802af722bbde7bf1a7ac68df68e179e2555d361
-
-If acpi_ps_get_next_namepath() fails, the previously allocated
-union acpi_parse_object needs to be freed before returning the
-status code.
-
-The issue was first being reported on the Linux ACPI mailing list:
-
-Link: https://lore.kernel.org/linux-acpi/56f94776-484f-48c0-8855-dba8e6a7793b@yandex.ru/T/
-Link: https://github.com/acpica/acpica/commit/2802af72
-Signed-off-by: Armin Wolf <W_Armin@gmx.de>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- drivers/acpi/acpica/psargs.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/drivers/acpi/acpica/psargs.c b/drivers/acpi/acpica/psargs.c
-index 422c074ed289..7debfd5ce0d8 100644
---- a/drivers/acpi/acpica/psargs.c
-+++ b/drivers/acpi/acpica/psargs.c
-@@ -820,6 +820,10 @@ acpi_ps_get_next_arg(struct acpi_walk_state *walk_state,
- 			    acpi_ps_get_next_namepath(walk_state, parser_state,
- 						      arg,
- 						      ACPI_NOT_METHOD_CALL);
-+			if (ACPI_FAILURE(status)) {
-+				acpi_ps_free_op(arg);
-+				return_ACPI_STATUS(status);
-+			}
- 		} else {
- 			/* Single complex argument, nothing returned */
- 
-@@ -854,6 +858,10 @@ acpi_ps_get_next_arg(struct acpi_walk_state *walk_state,
- 			    acpi_ps_get_next_namepath(walk_state, parser_state,
- 						      arg,
- 						      ACPI_POSSIBLE_METHOD_CALL);
-+			if (ACPI_FAILURE(status)) {
-+				acpi_ps_free_op(arg);
-+				return_ACPI_STATUS(status);
-+			}
- 
- 			if (arg->common.aml_opcode == AML_INT_METHODCALL_OP) {
- 
--- 
-2.43.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240828-02-k1-pinctrl-v3-1-1fed6a22be98@gentoo.org>
 
 
+On Wed, 28 Aug 2024 11:30:23 +0000, Yixun Lan wrote:
+> Add dt-bindings for the pinctrl driver of SpacemiT's K1 SoC.
+> 
+> Signed-off-by: Yixun Lan <dlan@gentoo.org>
+> ---
+> Changes in v3:
+> - drop spacemit,slew-rate-{enable,disable} property
+> - use drive-strength instead of drive-strength-microamp
+> - fold strong-pull-up into bias-pull-up
+> - format fixed
+> - title fixed
+> ---
+>  .../bindings/pinctrl/spacemit,k1-pinctrl.yaml      | 127 +++++++++++++++++++++
+>  1 file changed, 127 insertions(+)
+> 
 
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
 
