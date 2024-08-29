@@ -1,193 +1,134 @@
-Return-Path: <linux-kernel+bounces-306280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37F3B963C9B
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 09:17:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5536C963DC1
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 09:54:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D4201C2228C
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 07:17:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0019D1F212B2
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 07:54:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73ED9176AAE;
-	Thu, 29 Aug 2024 07:16:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85AAE189F37;
+	Thu, 29 Aug 2024 07:54:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="Zmw2fa05"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DGHkQzUb"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABB3F189BBD
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 07:16:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D13A219E0;
+	Thu, 29 Aug 2024 07:54:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724915789; cv=none; b=gDw5nH2Yb1c8hESHjCNn2S078O6iHlCN01hRbLxwqxhZTj4MDL6lfit/ZBXb7mLJ76iBvep/L53W2DUXII74wo+IGRxNkkf5NXipll400xtj2FUvRljKeohyqFEKlGyTriU9Ou8/rV5krP9Wia9Q7P0+/MZMYOU370cb5ie0YqI=
+	t=1724918077; cv=none; b=cNDWhSLyRenjgw9Pl6gwcLm4Dq269Ei6LbCF8uk5G/OY8nHDAF5LrWAPL0cMnp+d/6Jp4RJ2vytZQgRqNnzIw28UqLdA0q/58bQmKQUC0X1KQJlBL1fDf2JEsbwtSXF5kYPbkHjSOi2w4OqDmqPAthz/dlqp34Z+qImQXyOJhYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724915789; c=relaxed/simple;
-	bh=s/V5Z34t4dT0xkb/r9QmO4zmTWyR+OmvwZt8Wf5I9yo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=UfnJeUTE7xjmQ+gOPc6NUoBsvkqKFG2Wt8PHybiTEkmulFFU3fZ4iaEgJQVnmjg82eQ2hL3eDOK5B5AiX0AMvef9o/5FGbs5BfS+S8KA1R7kQJ7T5R/F5SJ0nlF+SQFLozg3nBRnlGEDZMLrsyAbKQ8BLTb0MlJBgPtKB6hJvDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=Zmw2fa05; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-7141b04e7a3so300077b3a.3
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 00:16:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1724915787; x=1725520587; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9klKwS2bfsiGNUk5X0TeI2il7xQjjU59nEcVHrUHGMg=;
-        b=Zmw2fa057H/kJNIfe9z2GivEaW5+J9vcY2FIos2S6b/u8LnIO8xr56iAgxZKFh0e3Y
-         KWFPpig+OIvMX2Q/5ipa0T4ukJ546vdEtqJPfdGy+rY5Lh7GtRIQnv8txJTfWEY6A4hJ
-         UnSKnLE4gtB6HTDgNAqR7ydT4fv/1hFErcTgGN0TEOqPpyr1RN+ZRXSayGN4hvPvxB58
-         ioTHyQEaBlBNpdu55vzWCYDe5OEJaGxS6Su4YqiRz0vXCg0dkwdL7Op9uCa/v4ruA9W7
-         EWt+wx/VOiZsLFCYT6JAAE5uO2iZdccJzDPLj2QibQxwFRMKZFJKpJhUfhcWN75dzPTh
-         2TJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724915787; x=1725520587;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9klKwS2bfsiGNUk5X0TeI2il7xQjjU59nEcVHrUHGMg=;
-        b=NXqG+RsxbgmZJp3wXopAub0Zh+Qh1Gy1AthvbV7yOVR8kvSZ4fsRY043fr10xZ7V3L
-         kaUuImuqqOaRrdRggu8zF7X9ec48us6Ln71d6HNXp2D05zhR7jn6Cc4RMN+WV5P7Swq0
-         aZlR04s3Qj/OCQOXzCV2GoOp2+i29+jXswBovgDZv64TRK9+AyIpSNfsmckDJj0O7eBw
-         G0j/MWSVEQ69wY+KPCrI6FlcK8qFS1lU22AuqkYVq+fgHJyHGKkXLua3LUA9Xb3ePef3
-         67GCjktQ3hDnothawjqj47NIWY/qXOSxAZwCxGFi+NWIGWwwicttF3UBGNpG70xZBORY
-         yrZw==
-X-Forwarded-Encrypted: i=1; AJvYcCUV7znIptNiOYRabcxSLWGp20IkyECPuSpNls/3M3PtPq+IXkpJ4oC6SQaMgPn66NbCwiNbbA3k/XjqoyU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyvK53PrhkVVZVHX+7A60bIiN3lGqSMzvuIcaXPBWto1GeXJB2P
-	R8y9JBIjo8fol57iTSAgRT8oT/qyCuPyzcqUHk3p1AYMMlwM0wBepNEVixt4H4k=
-X-Google-Smtp-Source: AGHT+IF3t2cjexZNLvhhEG5lVGM8VXbW+pDj1JAzDu87zeFwskGcSX3PJG32Vb5o0zHIzYY5Gmbt2A==
-X-Received: by 2002:a05:6a20:e196:b0:1be:c4bb:6f31 with SMTP id adf61e73a8af0-1cce1011dd6mr2308343637.18.1724915786799;
-        Thu, 29 Aug 2024 00:16:26 -0700 (PDT)
-Received: from charlie.ba.rivosinc.com ([64.71.180.162])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7d22e9bef08sm581976a12.58.2024.08.29.00.16.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 00:16:26 -0700 (PDT)
-From: Charlie Jenkins <charlie@rivosinc.com>
-Date: Thu, 29 Aug 2024 00:16:01 -0700
-Subject: [PATCH RFC v2 4/4] selftests/mm: Create MAP_BELOW_HINT test
+	s=arc-20240116; t=1724918077; c=relaxed/simple;
+	bh=qQ1QhRJfWXzL+NFAlYH6609UIlwBlD1gCnMQ/XLB7aY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ml0Gk14IEE4mYg2KJy1lHrP+nNvjoyK13e8rZS/JUyGWxAnGNo1v/YD+UfUoF3m6ZuozxJYYwU2taTAXZFzRnO4KyNV5oLHztGymN5wdQf0hIjuyIk5doTFwq0oWWslt+i97h0//6RcYz7aHjAtrtN/Z2rA7HG8fSPh4mB7ICYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DGHkQzUb; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724918076; x=1756454076;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=qQ1QhRJfWXzL+NFAlYH6609UIlwBlD1gCnMQ/XLB7aY=;
+  b=DGHkQzUbFWp2cHxYzamrRjp0YUWqjlOQ7iS75P61aPa3KNRoHGuMlktk
+   JnsVYPgbM1Ka9s6ApbpCNGYEzNGzuE22goOzdz3EMzYGTncveQs5jegRz
+   PJEKoB2IGTrYoOjgv2cSLL2HTbPOHqic7FV17Ce/FDlNGEH9pau0XIstB
+   2PSWioJ2ZlgXJeFLmYOPdHOhmgL+0H062cWUdSPj1uU26jsbchyk2/X13
+   Ly9mJlck6Xose1RZPZWCu2rbSTSlRCQlPx1LJ1MPz5KBdhlJHhqMHYbnJ
+   d4OfgWRiGDl9EjyqpW3L1p5nf0iuKYiVzuDG/0SVlKfrDpSW3hgF2cXg3
+   Q==;
+X-CSE-ConnectionGUID: ydMiGA1HRrqtqrDWV9I3SQ==
+X-CSE-MsgGUID: 5Gk1Ruq5S3KmBG+3wqv/aA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11178"; a="13275401"
+X-IronPort-AV: E=Sophos;i="6.10,185,1719903600"; 
+   d="scan'208";a="13275401"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 00:54:36 -0700
+X-CSE-ConnectionGUID: ObprGb/SRvSk1N7jDMiaoQ==
+X-CSE-MsgGUID: t6bymFt5T9mhYaOvh6nhUQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,185,1719903600"; 
+   d="scan'208";a="68161189"
+Received: from carterle-desk.ger.corp.intel.com (HELO tkristo-desk.intel.com) ([10.245.246.205])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 00:54:35 -0700
+From: Tero Kristo <tero.kristo@linux.intel.com>
+To: axboe@kernel.dk
+Cc: linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [RFC PATCH 0/2] block: CPU latency PM QoS tuning
+Date: Thu, 29 Aug 2024 10:18:18 +0300
+Message-ID: <20240829075423.1345042-1-tero.kristo@linux.intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240829-patches-below_hint_mmap-v2-4-638a28d9eae0@rivosinc.com>
-References: <20240829-patches-below_hint_mmap-v2-0-638a28d9eae0@rivosinc.com>
-In-Reply-To: <20240829-patches-below_hint_mmap-v2-0-638a28d9eae0@rivosinc.com>
-To: Arnd Bergmann <arnd@arndb.de>, 
- Richard Henderson <richard.henderson@linaro.org>, 
- Ivan Kokshaysky <ink@jurassic.park.msu.ru>, 
- Matt Turner <mattst88@gmail.com>, Vineet Gupta <vgupta@kernel.org>, 
- Russell King <linux@armlinux.org.uk>, Guo Ren <guoren@kernel.org>, 
- Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, 
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, 
- Helge Deller <deller@gmx.de>, Michael Ellerman <mpe@ellerman.id.au>, 
- Nicholas Piggin <npiggin@gmail.com>, 
- Christophe Leroy <christophe.leroy@csgroup.eu>, 
- Naveen N Rao <naveen@kernel.org>, 
- Alexander Gordeev <agordeev@linux.ibm.com>, 
- Gerald Schaefer <gerald.schaefer@linux.ibm.com>, 
- Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
- Christian Borntraeger <borntraeger@linux.ibm.com>, 
- Sven Schnelle <svens@linux.ibm.com>, 
- Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>, 
- John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
- "David S. Miller" <davem@davemloft.net>, 
- Andreas Larsson <andreas@gaisler.com>, Thomas Gleixner <tglx@linutronix.de>, 
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
- Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
- "H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>, 
- Peter Zijlstra <peterz@infradead.org>, Muchun Song <muchun.song@linux.dev>, 
- Andrew Morton <akpm@linux-foundation.org>, 
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
- Vlastimil Babka <vbabka@suse.cz>, 
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Shuah Khan <shuah@kernel.org>
-Cc: linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-alpha@vger.kernel.org, linux-snps-arc@lists.infradead.org, 
- linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org, 
- loongarch@lists.linux.dev, linux-mips@vger.kernel.org, 
- linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
- linux-s390@vger.kernel.org, linux-sh@vger.kernel.org, 
- sparclinux@vger.kernel.org, linux-mm@kvack.org, 
- linux-kselftest@vger.kernel.org, Charlie Jenkins <charlie@rivosinc.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1995; i=charlie@rivosinc.com;
- h=from:subject:message-id; bh=s/V5Z34t4dT0xkb/r9QmO4zmTWyR+OmvwZt8Wf5I9yo=;
- b=owGbwMvMwCHWx5hUnlvL8Y3xtFoSQ9oFBcsP6+L/Tm5SuNTuoL5vd1CHFePmle9+1/Le0d5Yp
- 3hVY8XNjlIWBjEOBlkxRRaeaw3MrXf0y46Klk2AmcPKBDKEgYtTACYikcjwz6bDSmrzHWPjp6+e
- zUhZGF3tGZgzRbFMebrXzej5O9YXpDH8j7Z7ceLNKc+79Xs9s7LbGbZefbF4gvgksf23zjP3/b/
- +jhkA
-X-Developer-Key: i=charlie@rivosinc.com; a=openpgp;
- fpr=7D834FF11B1D8387E61C776FFB10D1F27D6B1354
+Content-Transfer-Encoding: 8bit
 
-Add a selftest for MAP_BELOW_HINT that maps until it runs out of space
-below the hint address.
+Hello,
 
-Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
----
- tools/testing/selftests/mm/Makefile         |  1 +
- tools/testing/selftests/mm/map_below_hint.c | 32 +++++++++++++++++++++++++++++
- 2 files changed, 33 insertions(+)
+These patches introduce a mechanism for limiting deep CPU idle states
+during block IO. With certain workloads, it is possible for CPU to
+enter deep idle while waiting for the IO completion, causing a large
+latency to the completion interrupt. See example below, where I used
+an Intel Icelake Xeon system to run a simple 'fio' test with random
+reads, and with CPU C6 state disabled / enabled (results from 2 * 2min
+runs):
 
-diff --git a/tools/testing/selftests/mm/Makefile b/tools/testing/selftests/mm/Makefile
-index cfad627e8d94..4e2de85267b5 100644
---- a/tools/testing/selftests/mm/Makefile
-+++ b/tools/testing/selftests/mm/Makefile
-@@ -50,6 +50,7 @@ TEST_GEN_FILES += hugepage-shm
- TEST_GEN_FILES += hugepage-vmemmap
- TEST_GEN_FILES += khugepaged
- TEST_GEN_FILES += madv_populate
-+TEST_GEN_FILES += map_below_hint
- TEST_GEN_FILES += map_fixed_noreplace
- TEST_GEN_FILES += map_hugetlb
- TEST_GEN_FILES += map_populate
-diff --git a/tools/testing/selftests/mm/map_below_hint.c b/tools/testing/selftests/mm/map_below_hint.c
-new file mode 100644
-index 000000000000..55d6cbf90645
---- /dev/null
-+++ b/tools/testing/selftests/mm/map_below_hint.c
-@@ -0,0 +1,32 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Test the MAP_BELOW_HINT mmap flag.
-+ */
-+#include <sys/mman.h>
-+#include <errno.h>
-+#include "../kselftest.h"
-+
-+#define ADDR (1 << 20)
-+#define LENGTH (ADDR / 10000)
-+
-+#define MAP_BELOW_HINT	  0x8000000	/* Not defined in all libc */
-+
-+/*
-+ * Map memory with MAP_BELOW_HINT until no memory left. Ensure that all returned
-+ * addresses are below the hint.
-+ */
-+int main(int argc, char **argv)
-+{
-+	void *addr;
-+
-+	do {
-+		addr = mmap((void *)ADDR, LENGTH, PROT_READ | PROT_WRITE,
-+			    MAP_PRIVATE | MAP_ANONYMOUS | MAP_BELOW_HINT, -1, 0);
-+	} while (addr != MAP_FAILED && (unsigned long)addr <= ADDR);
-+
-+	if (errno == ENOMEM)
-+		ksft_test_result_pass("MAP_BELOW_HINT works\n");
-+	else
-+		ksft_test_result_fail("mmap returned address above hint with MAP_BELOW_HINT with error: %s\n",
-+				      strerror(errno));
-+}
+C6 enabled:
+    slat (nsec): min=1769, max=73247, avg=6960.96, stdev=2115.90
+    clat (nsec): min=442, max=242706, avg=23767.06, stdev=13348.74
+     lat (usec): min=12, max=250, avg=30.73, stdev=13.96
 
--- 
-2.45.0
+    slat (nsec): min=1849, max=58824, avg=6970.61, stdev=2134.38
+    clat (nsec): min=1684, max=241880, avg=23545.68, stdev=13448.87
+     lat (usec): min=12, max=249, avg=30.52, stdev=14.03
+
+C6 disabled:
+    slat (nsec): min=2110, max=57871, avg=6867.86, stdev=1711.55
+    clat (nsec): min=486, max=98292, avg=22185.50, stdev=10473.34
+     lat (usec): min=13, max=105, avg=29.05, stdev=10.99
+
+    slat (nsec): min=2128, max=67730, avg=6913.52, stdev=1714.89
+    clat (nsec): min=552, max=93409, avg=22582.50, stdev=10407.53
+     lat (usec): min=13, max=108, avg=29.50, stdev=10.93
+
+The maximum latency with C6 enabled is about 2.5x seen with C6
+disabled.
+
+Now, the patches provided here introduce a mechanism for the block
+layer to limit the maximum CPU latencies, with user configurable
+sysfs knobs per block device. Doing following config in my test
+system:
+
+  /sys/block/nvme0n1/cpu_lat_limit_us = 10
+  /sys/block/nvme0n1/cpu_lat_timeout_ms = 3
+
+This limits the maximum CPU latency for the active CPUs doing block IO
+to 10us, and the limit is removed if there is no block IO for 3ms.
+
+Running the same fio test used above with C6 enabled, I get:
+
+    slat (nsec): min=1887, max=71037, avg=7239.68, stdev=1850.67
+    clat (nsec): min=438, max=103628, avg=22488.75, stdev=10457.86
+     lat (usec): min=12, max=133, avg=29.73, stdev=11.04
+
+    slat (nsec): min=1942, max=69159, avg=7194.01, stdev=1788.63
+    clat (nsec): min=418, max=115739, avg=22239.51, stdev=10448.37
+     lat (usec): min=12, max=123, avg=29.43, stdev=10.96
+
+... so the maximum latencies are cut by approx 100us and are quite close
+to the levels seen with C6 disabled completely system wide.
+
+Any thoughts about the patches and the approach taken?
+
+-Tero
 
 
