@@ -1,85 +1,113 @@
-Return-Path: <linux-kernel+bounces-306379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 370C3963E2D
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:15:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07783963DFB
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:04:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69A861C23F8A
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:15:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9955AB24BF8
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:04:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F391E18A926;
-	Thu, 29 Aug 2024 08:15:50 +0000 (UTC)
-Received: from cmccmta2.chinamobile.com (cmccmta4.chinamobile.com [111.22.67.137])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45E8716C877;
-	Thu, 29 Aug 2024 08:15:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.137
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F382718A6BA;
+	Thu, 29 Aug 2024 08:04:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mcXYZKsa";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cvLYtBtI"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD27A2BAEB;
+	Thu, 29 Aug 2024 08:04:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724919350; cv=none; b=O54a7ci4BMMOCAO612+rI6frzJ3q+tMmcYL8w3s1eFGtkTg5JAOzPcUSapQqfR1HOWCaaCo/Vd7VV0Jt4RNDeLxtc+oyvU1jDp6F3WeWZCYnchiQSVd3avQPIwAdp8TUI0R+YcJ9Hmfq8Lhl6A9IbNN0a6FwWqlvVHFq3s/UbWo=
+	t=1724918676; cv=none; b=SNnzNXg/Cl6+kkp0VN95fAHj1ExvXgG/Fr/dfZ+3WeW6yfQ+E0HYbwHEC+em5WI6JgkC1JeKs+PggmuWltPXuPfcEIcVCnVcwFt2+0f7BtSMfQ4TlhY/gU8BUNzgabxEyXOhyS7KjtX5YYkSCj95Q7YJ5oGsdBeNNpexp2p+cXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724919350; c=relaxed/simple;
-	bh=96b3QaO/fvdFeIQiacO3g3kb4N3p4fSEb5/85+QqnD8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Ju5MuUB3rpbHJa/x6mYrsaGCiAOPX8n8Te0NdTDdhGGs5rqc6D3ELRWTqSMgOxV9UoyyJNLhf/rYhbGChdgo0DnTArflMXclRvflAYEqh9hDuyUZnudjbBT3qHPlrc+CRRMzkpzcC43H7BNk8IT/AZ0AgEGGNAzlGv0ouQ3b9Vk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.137
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app08-12008 (RichMail) with SMTP id 2ee866d02e2ea6b-efa9f;
-	Thu, 29 Aug 2024 16:15:43 +0800 (CST)
-X-RM-TRANSID:2ee866d02e2ea6b-efa9f
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from localhost.localdomain (unknown[223.108.79.100])
-	by rmsmtp-syy-appsvr10-12010 (RichMail) with SMTP id 2eea66d02e2ef14-98800;
-	Thu, 29 Aug 2024 16:15:43 +0800 (CST)
-X-RM-TRANSID:2eea66d02e2ef14-98800
-From: zhangjiao2 <zhangjiao2@cmss.chinamobile.com>
-To: brgl@bgdev.pl
-Cc: warthog618@gmail.com,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	zhangjiao <zhangjiao2@cmss.chinamobile.com>
-Subject: [PATCH] tools: gpio: rm .*.cmd when make clean
-Date: Thu, 29 Aug 2024 14:29:42 +0800
-Message-Id: <20240829062942.11487-1-zhangjiao2@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.33.0
+	s=arc-20240116; t=1724918676; c=relaxed/simple;
+	bh=aI4iTR7tkgxi9E/O+LO3sPJAywLCTCNo4Xh7wlrvrUg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ocLxSn7T2H/VthcZTVraN/WBNf2pBYsHTgUfyGHnBfO5AMO3pZRcjV/PbKnyn+6BAM5tNJW9og5ozgP+lCbO6YdtyFpUXB1lf7k9uRL/fEYdrZkxN9e3RCXqNAYsWPpu5c8HDXqILv0VFJv78zB97aFGoB55fSDSMjXb3PNvCfA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mcXYZKsa; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cvLYtBtI; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Anna-Maria Behnsen <anna-maria@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1724918672;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9LsMX+cDLXM0sEN1H8MTU9ShA0idUI61FD1DCYpj8FI=;
+	b=mcXYZKsa7tEJZ8pgx/EiW3ZGvGYudX3dkZb3KEjMACuHI3yGlBjaJiKdA3HugIcL6I3JhP
+	FVKWLVLek5y8KsyTbG2x2WiAnJctcBkWng5QIBsmTyWIz1O7jxlftP77WIRJYzFHW4bnPQ
+	pNGpxTUOTjImw8wTkUR2x61bHTuS/Cg78+uHGXhfYl8NfaDHo536ycpvUtqWJHw7dIl7TI
+	n09K4qJiKXKqFKYSeuv6gAIDUBc4cOKvqiT986P2a5GVgTxOhLZiV1J4A9UGk7Xguhpnzu
+	+ToPWp4Y+r3bYMS9uy+jdQR6UPk0/qIaOZ77VZSdMiPsb4T/giuO3IjvmjM1Uw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1724918672;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9LsMX+cDLXM0sEN1H8MTU9ShA0idUI61FD1DCYpj8FI=;
+	b=cvLYtBtI9CHsYKxatQGa4EQW8PBcq9c06EgnLJXDqub2wHfDJ9olq/FK7kRdhpbncgPb68
+	6lmUdZVKpN3tiGDA==
+To: Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, linux-acpi@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, Frederic
+ Weisbecker <frederic@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Jonathan Corbet <corbet@lwn.net>, Andrew Morton
+ <akpm@linux-foundation.org>
+Subject: Re: [PATCH] ACPI: Remove msleep() bloat from acpi_os_sleep()
+In-Reply-To: <87frqoig98.fsf@somnus>
+References: <2803b89021f991662b000f50e45dbaebdcca438a.1724729626.git.len.brown@intel.com>
+ <CAJZ5v0jcOUoN6gDDFkufu8xWF-BHXaSKnXqraHsTkq8JanJXuQ@mail.gmail.com>
+ <CAJvTdKkucaRVDZm6EVeUxwyrQexyuYd7ECUBSkpP0nC9PwzspA@mail.gmail.com>
+ <CAJZ5v0jvYitb7DLyLkqTRv0TT=6yBHDvEvb8tJLzAOVKa3hqnQ@mail.gmail.com>
+ <CAJZ5v0gxVqrASiuJq=UX9jyZsG=XvriFn2=7CPmG6-1sKbmPEQ@mail.gmail.com>
+ <CAJvTdK=-ETniiwzwLYH14+TeU0kA49gvTnqyRxH7-Hc6tzTBUw@mail.gmail.com>
+ <CAJvTdKmpfs_nh4J0R8T=1P9WaAJ-nJ+mKj=rT3tqMpmvpUTisA@mail.gmail.com>
+ <87frqoig98.fsf@somnus>
+Date: Thu, 29 Aug 2024 10:04:32 +0200
+Message-ID: <87ikvjah67.fsf@somnus>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-From: zhangjiao <zhangjiao2@cmss.chinamobile.com>
+Anna-Maria Behnsen <anna-maria@linutronix.de> writes:
 
-rm .*.cmd when make clean
+[...]
 
-Signed-off-by: zhangjiao <zhangjiao2@cmss.chinamobile.com>
----
- tools/gpio/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> Lets have a deeper look to msleep() internals: msleep() uses timer list
+> timers. Because of the design of the timer wheel (granularity of buckets
+> increases with the levels) and because of the granularity of jiffies the
+> sleep values will be longer as specified. Let's assume we are executing
+> a msleep(1) on a HZ=250 system:
+>
+> First msecs are mapped on jiffies, so this results in a 4ms timeout
+> value, as there is nothing shorter than 1 jiffie. Then the jiffie value
+> is handed over to timer code and msleep() adds another jiffie to the
+> timeout. The timeout is then 2 jiffies or 8ms. With this timeout a timer
+> list timer is queued. To make sure that timers will not fire early or
+> race with a concurrent incrementation of jiffie, timers are queued
+> always into the next bucket. As the timer will end up in the first level
+> of the timer wheel the granularity of the buckets is 1 jiffies. This
+> means that the timeout would be 3 jiffies in worst case.
+>
+> The additional jiffie in msleep() is the historical prevention that the
+> sleep time is at least the specified time. This is handled by timer
+> wheel core code itself, so this extra jiffie could be removed. I will
+> provide a patch for it.
 
-diff --git a/tools/gpio/Makefile b/tools/gpio/Makefile
-index d29c9c49e251..ed565eb52275 100644
---- a/tools/gpio/Makefile
-+++ b/tools/gpio/Makefile
-@@ -78,7 +78,7 @@ $(OUTPUT)gpio-watch: $(GPIO_WATCH_IN)
- clean:
- 	rm -f $(ALL_PROGRAMS)
- 	rm -f $(OUTPUT)include/linux/gpio.h
--	find $(or $(OUTPUT),.) -name '*.o' -delete -o -name '\.*.d' -delete
-+	find $(or $(OUTPUT),.) -name '*.o' -delete -o -name '\.*.d' -delete -o -name '\.*.cmd' -delete
- 
- install: $(ALL_PROGRAMS)
- 	install -d -m 755 $(DESTDIR)$(bindir);		\
--- 
-2.33.0
+I missed to use the whole cc list above when sending the patch:
 
+  https://lore.kernel.org/r/20240829074133.4547-1-anna-maria@linutronix.de/
 
+Thanks,
+
+	Anna-Maria
 
 
