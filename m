@@ -1,518 +1,225 @@
-Return-Path: <linux-kernel+bounces-307497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 566F6964E22
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 20:49:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01F67964E21
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 20:49:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 073D5286CD5
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 18:49:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 663B5B24F83
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 18:49:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65F601BF7E2;
-	Thu, 29 Aug 2024 18:44:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DF4B1B9B26;
+	Thu, 29 Aug 2024 18:44:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="t8YwRM3V"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="CCLbSHRx"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2055.outbound.protection.outlook.com [40.107.237.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 878731BE845
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 201871B8EB8
 	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 18:44:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724957088; cv=none; b=YT0UxPUUWS+QNHqVq5KvunrtOswiBgc9MR08ciP3Z/90b38WBPb5Re2KMyxlvxy/FTHXkeV88XYL+RP3wgJh5zatTcErfUpc6KCgRarBK9++PkByIUN2nCxAwBuPkRoJTkBeqqAXXKjXDONDKd8XzUdrxR5B856Qz7ss4e/3JCQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724957088; c=relaxed/simple;
-	bh=glpytlFNWVyL5EuuRuf2gTf+/aIydiklOOZeTJB0XJw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Wmzdp14EXmg0p14LoHtypWKRdGS4QfpFNQU9sHydI/QyvML9czOhTCsmQC1GMGzzvgBqkGxl8mnd1ReSWz+ouQtLV1hEr8pygniRMn0/NVoUZQwk+5ksdNugHZqCoUUBjkD1iXQM/S5DluI3x8u8LZDhdWeAv+Dm+yKKvcKJz8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=t8YwRM3V; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-367990aaef3so561246f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 11:44:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724957083; x=1725561883; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=I9Sc5q6d+L7jR6dSkuanGyhhhM4vadmsIdrORiHP/aw=;
-        b=t8YwRM3VJNPZTTJEZvTQM2W/UmCJIyXftzjiUKAUJOxrTizUhuZaODPZ2ilhBPNTx2
-         E4poynzLoOoNWP0rt2Fzt4E81x2qRgh2yTxHJ+uSqLpZbb+7kUFKw6hlVvpIQLIb+Xgr
-         TQlgBcAZFy3j7Hk0PGz00zjGPojScUkgZXFi7t618r9SJqNu99F22cPVt6Y/hTNq9kgF
-         CiHEiCiCY3uE0poboJujLZwgTudOmJy0UsZ/rka5HvJYdI4W7TDS2WGd2C0rxH0/3CWE
-         6rJmIYaO8aAEbJ5rubI+5kAnRo/JKnZoqaaOCbAUyrFXSW/9FKjHsgeanEsgQwmHwD5j
-         /R9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724957083; x=1725561883;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=I9Sc5q6d+L7jR6dSkuanGyhhhM4vadmsIdrORiHP/aw=;
-        b=QYUvTwUefTqi7CItVcuCrmx0wwnFKI1Crs6mlWXq0ImWLV/YQgWOPPv4JHcX+hBRsX
-         QaG9k1oO37SS3VAR/An2vBkD102UXF6IZyRoCwdMp7OaE0C8x5bQmj9VVZ8apjpcgaBQ
-         LEaoXS9Y/eexqKphiOpNRtQYjbwzSYXU+vkhvf0EVIe21cbTluhDYx56NtzMDPbUjUw+
-         u/xuThJxQT5SdgjecaN72fPOOLs0u66nSVJGohkmf9CIOLVV2wErqOwxEaJgkUCNgreL
-         Wk3bDPMwVLf1WMslXNyrp/5KjVmbI5U55ARERq8GKDEhUDGsUi9i2oXtci0+28FYi368
-         eD+A==
-X-Forwarded-Encrypted: i=1; AJvYcCXbUWBGt8gWvpoIIn7xtc2gEe0lR+hslChI6wn7jhqRQE077CFaoZu6MuhUYmxHxMuvDB2yo2LWe3yd2EQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUtLTp8TTgro0Zkgm88fg5OiWmQ64mFAza5QWcNRsN9BZOZ0g9
-	m0qh3ddPWFgStdLp7ObhXfPogBnhvmTk974CIsqxD7qEveC9RyoSSSwJyKocDhA=
-X-Google-Smtp-Source: AGHT+IHwSGyND99cltAUSDsWUNtowwPO8QufcIbhRi0JQSQLsWYocj0S5nwXV2FqOaMz/V1ZzyWv+Q==
-X-Received: by 2002:adf:fc4d:0:b0:374:90b0:1f63 with SMTP id ffacd0b85a97d-3749b586babmr2514627f8f.60.1724957082690;
-        Thu, 29 Aug 2024 11:44:42 -0700 (PDT)
-Received: from [127.0.1.1] ([82.79.186.176])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bb6e33b41sm24540885e9.40.2024.08.29.11.44.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 11:44:42 -0700 (PDT)
-From: Abel Vesa <abel.vesa@linaro.org>
-Date: Thu, 29 Aug 2024 21:44:26 +0300
-Subject: [PATCH RFC 2/2] usb: typec: Add support for Parade PS8830 Type-C
- Retimer
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.55
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724957086; cv=fail; b=pnoA8Is56VAWG7LQac+80r1CmrvFtpuWpGaJQ2wRUiQYaiWXtcIzvmKyU4pOga3u6nf9YIS+bceeo+jhHVDOQwiXKz7LFQhI71US+CfS0gffZ9cDOA5DhH1sWyYBE9r2Knb6VhCGwC/US7EYo8mofoQ8+bFqdDkG9TlrM7eLvuE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724957086; c=relaxed/simple;
+	bh=EGyFyZ2HKbb2Lv/DZQ3czEcsBFSbtcsEAn1SCbpE+Ss=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=EirTWmQWknLqWv1g17Sk8RvaYEfJYYMIhrZLPOB86QY47nwzTJvfZtO36xZvnwJOBkebISbmW7YFTnyG/qfani2FZ1bovgAnVF6Btg37o0Ctb4WqEbBaGhVgZJXKAeAOA/lVZyezBLBCMKAGiVjBTjBKssAP5HREugWLwvmfq4o=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=CCLbSHRx; arc=fail smtp.client-ip=40.107.237.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QwnBbG4+656HbRRz0sRo08QgObhiSKXDB6i/2vqoIPkSewpPQxn01apnjWPJJTdEH/lPgc3WltXNg3y7CetKZGtmiU5fuBgkZ0xqTq+acYtiGlv2bUCAbOMYaq+Bp0cYrGb7RFgPJ0Hh+AePoxvvz08SSz2NHLMYrt/eSM7usUFGMMyebbxfkYhasjgS5iBSMPgnBSmO1sSfiz2XjotqW5heLQ6tX8Gbb63xE4XrQ4C9h0a+BfHsdIqZnVC2EGrXxDssxH6Kl6Wpf0gJPlzdLI45LjsAl91urmgOZD+E8CmUBqt/yulcwphIw2VnScIaU0KLILlYox56yq8D22zFFg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=TjZcaZB8dO/QXjnlnQoXRQTxmUisEXWMoHSO1MM2eds=;
+ b=byrv8gVmXd6iLv8nCTpeZZ7X8hgsxKbBCKXaZ+1DWUJxbKwH41YL2mjDzp/7tTm1tpv9vLaci1ySy3siyL9sCeeKOEDgApEweu/ksYTXKVqcoa6KKxMSDxVevbWl1u2tunx99CR5gdwYBsxprNYjqShXYpKzeFEsd///aywedBdaxFs8gkfThlK9OYVoG0hRFZe7KGP59c6LHcwgYfWKuBUwgBaAAJuVn/A6MWJ654YdcZltSHQJSJ22IhccYq2n+MV4EsigRADptEo6fPrhu5FW+suIi4egfOSTFj27fgkJK6Oj+R5CvUYG5GvWmxSHZcVWNzhLBOGAFUzERlA8PA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=TjZcaZB8dO/QXjnlnQoXRQTxmUisEXWMoHSO1MM2eds=;
+ b=CCLbSHRxiLdXfB5VT8NxApnHgBQ2wNk4wgAeUpZ4FYqYk0SCXy2yLCD7asvVwCvCTKPTdEOneDI5vl7Dh76oebAoET9oBmlMPc7TOqBrglJCi/4erSWJRwKpcEnjQ9sunAYlpIl+DwLn/zTnfK7I2RBAzXT+AHNxTfh64XcxSuCKDtByxftuIdN8yve+hKw3JEbNGGRViDBjlZHLujsvN/NpwH2SqEybUqpL178cujfzQkVTlLiwJq2/H2lbcaA+lyfk6Un3+l8aKsqeDSF35PpZ3Wxp/mIhbsG3c3ZcGn73HIPSfCx4o819e0LupuabV+n4yU59bPjxubzy1n1gzQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CY8PR12MB8297.namprd12.prod.outlook.com (2603:10b6:930:79::18)
+ by DS7PR12MB5742.namprd12.prod.outlook.com (2603:10b6:8:71::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.20; Thu, 29 Aug
+ 2024 18:44:41 +0000
+Received: from CY8PR12MB8297.namprd12.prod.outlook.com
+ ([fe80::b313:73f4:6e6b:74a4]) by CY8PR12MB8297.namprd12.prod.outlook.com
+ ([fe80::b313:73f4:6e6b:74a4%5]) with mapi id 15.20.7897.027; Thu, 29 Aug 2024
+ 18:44:40 +0000
+Message-ID: <06bda32c-6670-4d47-bd68-f8d0771aa838@nvidia.com>
+Date: Thu, 29 Aug 2024 20:44:36 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] mlx5_vnet: Set speed and duplex of vDPA devices to
+ UNKNOWN
+To: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>, mst@redhat.com,
+ jasowang@redhat.com
+Cc: bilbao@vt.edu, xuanzhuo@linux.alibaba.com, eperezma@redhat.com,
+ cratiu@nvidia.com, lingshan.zhu@intel.com, virtualization@lists.linux.dev,
+ linux-kernel@vger.kernel.org, Carlos Bilbao <cbilbao@digitalocean.com>
+References: <20240829161620.38679-1-carlos.bilbao.osdev@gmail.com>
+ <20240829161620.38679-2-carlos.bilbao.osdev@gmail.com>
+Content-Language: en-US
+From: Dragos Tatulea <dtatulea@nvidia.com>
+In-Reply-To: <20240829161620.38679-2-carlos.bilbao.osdev@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR3P281CA0047.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:4a::10) To CY8PR12MB8297.namprd12.prod.outlook.com
+ (2603:10b6:930:79::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240829-x1e80100-ps8830-v1-2-bcc4790b1d45@linaro.org>
-References: <20240829-x1e80100-ps8830-v1-0-bcc4790b1d45@linaro.org>
-In-Reply-To: <20240829-x1e80100-ps8830-v1-0-bcc4790b1d45@linaro.org>
-To: Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, 
- Rajendra Nayak <quic_rjendra@quicinc.com>, 
- Sibi Sankar <quic_sibis@quicinc.com>, Johan Hovold <johan@kernel.org>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
- Trilok Soni <quic_tsoni@quicinc.com>, linux-kernel@vger.kernel.org, 
- linux-usb@vger.kernel.org, devicetree@vger.kernel.org, 
- Abel Vesa <abel.vesa@linaro.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=10730; i=abel.vesa@linaro.org;
- h=from:subject:message-id; bh=glpytlFNWVyL5EuuRuf2gTf+/aIydiklOOZeTJB0XJw=;
- b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBm0MGUsqNOux+Q2pK76CLjpRflg110B9hZpYHy/
- k1DjoO5TomJAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCZtDBlAAKCRAbX0TJAJUV
- VkPGD/91icgCUGLYigkyK5NdblCCernhkJbQhjRNuO7N/l3/qS0FgljE6wmsii3cnClLYHb3J8z
- kkafzHVCLenI+qdolWsViCgLMzFZr46BK3hEoATN1wE+Gd3zoZkquoSg9oqNo5kGzhLJSg7p8iI
- EcqpVF5JauGy28h+4CvucG18/kfA2I5ZT5WeCFlc/5YjBK5sVdFpNKqTU1WLH+4BWfH5/oKr8UT
- GiMuoCaX3L1egfOy7OWfB7Z7tIUqiY+k545k/I0pI94K7RxsHPyitl51WF/xvoev30/Z0t5VCll
- ykV7qsqkOX87Po/zJUlDDyPjPkfNfe0Q45ZSUg7UJcDF8YTgiTJIPA/iAPcc1GFxTsSdiYWTYLk
- Ij5kr+tIbu3U72LUI3EBf3KK2e/PNR1XqJkTd3J8WgDm/fD9eRAsu7xnovbZE4qE4DFlRNZS9KN
- LxfqDjhmr/JoKXiyhJODm8wrwuejw3PkyqFYB82qXlKv4xcE9h5TYwuD2whCdGtOQPcybq2HP85
- vmao+zycEc+89P8AAcchcUvKLDpNhjV7Ywr0eC/usnSzr7p+aQ+VJtFWQS+HKiexhbugNJvrBmS
- lp4qcX0806cGlWMiBbi2h1ddo8VyrA2t138bwxrRsShtDyZqbLoFR+YdHiu0W1lTB1hGmxFvlzf
- T4NPktcaQbp3XIw==
-X-Developer-Key: i=abel.vesa@linaro.org; a=openpgp;
- fpr=6AFF162D57F4223A8770EF5AF7BF214136F41FAE
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY8PR12MB8297:EE_|DS7PR12MB5742:EE_
+X-MS-Office365-Filtering-Correlation-Id: e3988c4a-bc74-44c3-9eaf-08dcc85aa42b
+X-LD-Processed: 43083d15-7273-40c1-b7db-39efd9ccc17a,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+ =?utf-8?B?eEdZdkdzUmdoQW5XNlV5a3lUYXdQcUwraGVUc1kwYm9FWmQxclpnbGRucDZ1?=
+ =?utf-8?B?RjdwQUdXK3p0cXUxZXR0TmpOVHVmVElIbkxuUWM1d1NVSGJ1VDlLZTRoTU9T?=
+ =?utf-8?B?Y2VqeVU2M0NQZm02aWZYaDRIL1ZJNE5lV0kzeWlUTGxyODlGWmJ4ZzhUSHpK?=
+ =?utf-8?B?eVRPMVZuSmFsaEkzUUhyTHRRQ0dmSzhhS0I4K2UzOWxFT1dWS05MSU5GejFj?=
+ =?utf-8?B?bzAreTBlZ1g2NnJ2RUVNdHpKbmdJNnl4RVppREhLOEMzY2Y1akVlRzlTWWR3?=
+ =?utf-8?B?RU45c09nb0Yrc2VKckNXTkN4T0s3SUJLUDNmYytpT1VDZnR2WEFUZ3ZUMGkw?=
+ =?utf-8?B?NFUzWHNvbGpGN3NNOWFXcFdWU3kyVHBhRElybk1CdEdkY3BqVlhiSUVFemxJ?=
+ =?utf-8?B?cFcvS1JZVUhSL0Z1ZDNObWpyS1BHaHlqTXc5VUh0clJXOVdCRTlHeFRXSldU?=
+ =?utf-8?B?THpjazYvZ2xvQ3lBSFVCUjNEb21xWGJxK2ZNMmRxaVV6WUNGeXdFOUw5RTlR?=
+ =?utf-8?B?dC9ZK3JLZjRNdXNvVmNNSXNkZFFMeDhUelgwMUNvT1dyOCsrYXpmR1p4aVBj?=
+ =?utf-8?B?UEFESUwvY29Jc1ZoZnQxM1c4T2tLczdweEhkbWkrL0tRckU3T1dTTTZDcHJk?=
+ =?utf-8?B?bVo5WHQ2MEk0aHdOOG9YekhmR1VHQXh2a2tNRW9IM3FQaEhXL1VtSm56QkNN?=
+ =?utf-8?B?NUZXTHdtVFRWNVdnVGNZM3JNUEp2MlhFS0tBejRBK1E3MC9xbi9HeUNNNjF4?=
+ =?utf-8?B?RXpyNEU1bTZxMWFsNHY5MVByK1FJRzJQNEJ1Zk1XZ0pOVzFaTmVzSW9TbGxS?=
+ =?utf-8?B?S0ovMVY1ZWtlZTRYdzdSY3BsZERuZGdxZ2c5Z3FnaFk4SnI1M0cwY3dkaUsy?=
+ =?utf-8?B?R3pMbCtHQzBxcjlMYkZsNVNOLzVnQTdKb0o5bzB4b3V3Y2hlOFNlQmswK2Y1?=
+ =?utf-8?B?M3VHT0dZR0RiRlB6SDN3Vmo4Rk4zWW9GK2tQMXkzendub2tMNkREZ1BwS0hU?=
+ =?utf-8?B?MnNPWTJyT1NaUnpHeENzTThsSmRpSGZNOXE4VzlUOERXRldNa2xVKzlmYTFK?=
+ =?utf-8?B?T3RKL0QrUVFCQThNcjVOajNORUN6RzVlUGJXRmZxdm5PeFVEUTFKdGZ5RFVp?=
+ =?utf-8?B?N2FRRndWb09OSnRLSE1xam5HVGFXRlh4bUdsUytsMFRIUEMzc2JZZnZWUExv?=
+ =?utf-8?B?R2pyQVZQRG5pbVB3c1pKckRheDdwb21ZV2JsZWhtVHFKaWVRSkx0UE5wVjgy?=
+ =?utf-8?B?SUpUSS9TQi9iMk1FVWFFV3dZbThwN1RwMmFqeFBIQUJpNnVqVjBHUFBtOG9T?=
+ =?utf-8?B?NEFMOU5aSU9aTW1HOUZRaXhQMVhCNU1PTHlRNXhsRGR5ZFJEVEVEdHRNRUpw?=
+ =?utf-8?B?a0pBdXBRZXBPZTc5QzlMc1VPYnI0RXoydDFhVlUramoxSkMxRmpFYUVCdFg5?=
+ =?utf-8?B?eE5Sd2M5SzB1L3UyUVJvck9MT01mVGowV2pzb2cvSDJNMEE5bmNIejZ0RHF5?=
+ =?utf-8?B?K1VLUVNyREUvb0lOZzFCaFFzaWFWVmczQ2cxZ1ovcVhiNGM4TUpBSUg3Z1hi?=
+ =?utf-8?B?OTdDL3UvbzRnVWpMdXA4UHF6SHNLRlhWK2NDV3kya1poamxYb0NhV1BKMmpp?=
+ =?utf-8?B?WFJtVHRnaHVaUkZHN0x2OE9vaDJxSkZna3RSUkZMaFovMEVCenJLWk92NEZM?=
+ =?utf-8?B?U2dQcm1RV250b3U2VFVObUpCN25qaWcrVHBROU9WaEJoWE9PRktVTktUcHhW?=
+ =?utf-8?B?VU93VHFOUUVyUmcvWE1rMUVZYUtiNmdsVURibEZTMHNNOEdmM3J1WFpzNWJB?=
+ =?utf-8?B?U0laUEtyY1dzNnVJdWZlUT09?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY8PR12MB8297.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?utf-8?B?SDVTaGhHSnVHcGYxbktrdG0zR0c0SkNRbHBvbFdvdzhlVHh3dVE1cWtnaU5q?=
+ =?utf-8?B?d3JOd25iL2oxcGFNUXdoNlBxOGhXbG5LOGtDZ0VqdjF2YkZMbi9vd2FlQVpY?=
+ =?utf-8?B?aU1RSnZXZmJpN1p4Q0k4K2FkaXdOUG5CajNybTdlcm43WEFpV0FZMDhuZFNl?=
+ =?utf-8?B?NEhNb0NQa1E4M2lKMmM1TVBJT2kvMHMzaHlIYzF6Yk9mcFJaZGxiK1M4d25r?=
+ =?utf-8?B?SmlheG9xU29ZdWlPY2FBWmt3S2xaLzV0NEVEMEtacXhkOU1uY1pOdEVqSUlM?=
+ =?utf-8?B?U1c3WVdqL0NxM2E0enBLeS95Mlo0cjF3UEh6Q1FaQThDc0c5a0RJeGVjME1a?=
+ =?utf-8?B?WFlTMmJQbGZTNlR2NnA0UzFJR0crdDNBMlpUNWp1UUFLWWQ5d2ZkSTA2NEZy?=
+ =?utf-8?B?Tklrd2s0aEExZTNLSE5pQ0d5RHZ4UkErZStOWTF3SUFYMnJTUGlESit0VWZK?=
+ =?utf-8?B?Rk9ZTDRqNmxUcC9nSm5lbDg3RGNicC9Xc3QrOFNNU0VBR09heVowbnl6K09u?=
+ =?utf-8?B?d0VvQ1ZFVm5NNjZEblNVdXcveDJBZ3RQanN6MWZXWXRWNExVZW5UbElsejZk?=
+ =?utf-8?B?NVU0QitzeEJRR2Fza0t6bDdSYjk0RS91ZDN2NmxLUjllWk9PdHQ1Q0N0NTU0?=
+ =?utf-8?B?SGp0MGttQTJ3S2RPMGxpMUprN2RvN24vYml3UytiWWtPOHNpaGNlS0J4NzZT?=
+ =?utf-8?B?ZFU2dXpudllFR2srWnpHMkpVMWx5cTQ1WFl0U2NPT3lUQmJEZUZ0bGdpZVB4?=
+ =?utf-8?B?UVM0WGFNQlB1Sjl5YU1SOTBDaE0wZUJheWxnMktsVjltSStrR2lmRUVpVTJw?=
+ =?utf-8?B?aDhudE1TRldzMGh6ZU5hcHlVTEl3Q29SdGtJK1gza2FEL1ZkR2J1MnJPaDlQ?=
+ =?utf-8?B?c0RFOEk5YU5PWWNISEZ4SzFGK0kzTjFyRUM2UXVBZjJIbjBnYWVTRFppb0N6?=
+ =?utf-8?B?eDRNb0RDcWZLbWd1NEFJcjkxaXh5T1JsR1JPK25rQzE4RHlOVUV1cWVJMjdR?=
+ =?utf-8?B?NVFxbHZydVM2Mlk5TWwzSjlTY2dvQUgrNjIzcWdTNkdxYXIzOG5lMlozc1Fn?=
+ =?utf-8?B?NGhJOVFkUjNHbHBEMWpWZElJeWZTV1k0bnlUbW4xSXA3K01QQ0ZwVmU4N1R0?=
+ =?utf-8?B?VHhjOFF0QVVKMXVZaWpVWElzSWNTcFVMRmxKYmJSdmx3eW8yYXowaXFMNmln?=
+ =?utf-8?B?NXBrRHpmVzdzSjVrcGtQeTI3RVBtREgzNmkzVnZ5ekY4TDAyekQxa25kRGVm?=
+ =?utf-8?B?Q1hMYUNNUUY1NW1mdmNUelVTTTAzczVBWU1SSHZHVW9UWktEYkc0djI5NFFv?=
+ =?utf-8?B?WUZRdmE3bjhoNmFvYUJ1c2oyK1hhUUFKT1EwWmVVUmlRSFJIRUszZ1A4S3Nk?=
+ =?utf-8?B?eXRvQlEwWThIUHN3Ymd0WHpLdW5ycEpERVVaT1NqWVl5TkU3UCtpeEVzYWxy?=
+ =?utf-8?B?QkJQQkZjWEQ5R2hnY2dKQTQ4Z2xkZndqSzdOb3dNeVgrL1pBLzFwdUp0Yjdq?=
+ =?utf-8?B?VjFodXc2dzlNZkloVEZWTS9UMHdzNk9JOEJCa2gxQ25tbkJrVFUwR0hzZTRG?=
+ =?utf-8?B?YVV3ZjZJOTNJUDUrWmg3Ri90dHhrMi93dHMzVUgxUGd3emtHZ0ZmQjg5dklW?=
+ =?utf-8?B?a3V1K25hdE1qQkRnVHA2bWZvN3lSWWF4UFk4cy9vR1FpbzZ6dXJxTFZHaC8z?=
+ =?utf-8?B?U0VDazRXUW1Xalp2K3BzQWpocXFjK1k1ZGdmeVdTUmNPVmJKT3VVNXB2VEZz?=
+ =?utf-8?B?NGRvZ1pQY2ZqSHIyaFRFUTVuLytoRzZMbnEzZmxZZHpicDRVemJsN21LZng0?=
+ =?utf-8?B?SGNEL1pPMERiVCtPLzZ3dzRlL2NhK2Z0N0Y4OG9GZ0FhVFBEUUV4d2hQeVhV?=
+ =?utf-8?B?ZjFhc21kWUh1S0JWTGNQbGtITllCQWNMNHErb283MTZ1YUlNNEJycmRVck1R?=
+ =?utf-8?B?SjJrRmc0dUtYd0ZrS3N3MFVTNXV0dHE5Q1BkOC9qMGlyc1RESlE0VEVqQ0ht?=
+ =?utf-8?B?RlVXU3VmbU9tRGVtRnExbjdYSXYwRmxVU0M3WUtOcVgrd0drVHZ6MTdYTW94?=
+ =?utf-8?B?d21aY09hNjFNbmcxMStGdHAwajZyRDY4TnY1ZStqWnZYbk9MUXJzTFhuWHB1?=
+ =?utf-8?Q?N4wxGSbN/pfMwUjp7H5Qf8ss0?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e3988c4a-bc74-44c3-9eaf-08dcc85aa42b
+X-MS-Exchange-CrossTenant-AuthSource: CY8PR12MB8297.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Aug 2024 18:44:40.9055
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: fRuCIyPrTl55HqR0SBbsWwZYaAfs8VsPgenrboxPrI0mlp3hCPE04jXRW6zGuukA6+qd1Y6ISEvPFVm8g0Na8Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB5742
 
-The Parade PS8830 is a Type-C muti-protocol retimer controlled over I2C.
-It provides both altmode and orientation handling.
 
-Add a driver with support for the following modes:
- - DP 4lanes
- - USB3
- - DP 2lanes + USB3
 
-Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
----
- drivers/usb/typec/mux/Kconfig  |  10 ++
- drivers/usb/typec/mux/Makefile |   1 +
- drivers/usb/typec/mux/ps8830.c | 347 +++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 358 insertions(+)
+On 29.08.24 18:16, Carlos Bilbao wrote:
+> From: Carlos Bilbao <cbilbao@digitalocean.com>
+> 
+> Initialize the speed and duplex fields in virtio_net_config to UNKNOWN.
+> This is needed because mlx5_vdpa vDPA devicess currently do not support the
+> VIRTIO_NET_F_SPEED_DUPLEX feature which reports speed and duplex. Add
+> needed helper cpu_to_mlx5vdpa32() to convert endianness of speed.
+> 
+> Signed-off-by: Carlos Bilbao <cbilbao@digitalocean.com>
+Nit: prefix is vdpa/mlx5. Once that is fixed, for this patch:
+Reviewed-by: Dragos Tatulea <dtatulea@nvidia.com>
 
-diff --git a/drivers/usb/typec/mux/Kconfig b/drivers/usb/typec/mux/Kconfig
-index ce7db6ad3057..48613b67f1c5 100644
---- a/drivers/usb/typec/mux/Kconfig
-+++ b/drivers/usb/typec/mux/Kconfig
-@@ -56,6 +56,16 @@ config TYPEC_MUX_NB7VPQ904M
- 	  Say Y or M if your system has a On Semiconductor NB7VPQ904M Type-C
- 	  redriver chip found on some devices with a Type-C port.
- 
-+config TYPEC_MUX_PS8830
-+	tristate "Parade PS8830 Type-C retimer driver"
-+	depends on I2C
-+	depends on DRM || DRM=n
-+	select DRM_AUX_BRIDGE if DRM_BRIDGE && OF
-+	select REGMAP_I2C
-+	help
-+	  Say Y or M if your system has a Parade PS8830 Type-C retimer chip
-+	  found on some devices with a Type-C port.
-+
- config TYPEC_MUX_PTN36502
- 	tristate "NXP PTN36502 Type-C redriver driver"
- 	depends on I2C
-diff --git a/drivers/usb/typec/mux/Makefile b/drivers/usb/typec/mux/Makefile
-index bb96f30267af..4b23b12cfe45 100644
---- a/drivers/usb/typec/mux/Makefile
-+++ b/drivers/usb/typec/mux/Makefile
-@@ -6,5 +6,6 @@ obj-$(CONFIG_TYPEC_MUX_PI3USB30532)	+= pi3usb30532.o
- obj-$(CONFIG_TYPEC_MUX_INTEL_PMC)	+= intel_pmc_mux.o
- obj-$(CONFIG_TYPEC_MUX_IT5205)		+= it5205.o
- obj-$(CONFIG_TYPEC_MUX_NB7VPQ904M)	+= nb7vpq904m.o
-+obj-$(CONFIG_TYPEC_MUX_PS8830)		+= ps8830.o
- obj-$(CONFIG_TYPEC_MUX_PTN36502)	+= ptn36502.o
- obj-$(CONFIG_TYPEC_MUX_WCD939X_USBSS)	+= wcd939x-usbss.o
-diff --git a/drivers/usb/typec/mux/ps8830.c b/drivers/usb/typec/mux/ps8830.c
-new file mode 100644
-index 000000000000..517ccac5932f
---- /dev/null
-+++ b/drivers/usb/typec/mux/ps8830.c
-@@ -0,0 +1,347 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Parade PS8830 usb retimer driver
-+ *
-+ * Copyright (C) 2024 Linaro Ltd.
-+ */
-+
-+#include <drm/bridge/aux-bridge.h>
-+#include <linux/clk.h>
-+#include <linux/gpio/consumer.h>
-+#include <linux/i2c.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/mutex.h>
-+#include <linux/regmap.h>
-+#include <linux/regulator/consumer.h>
-+#include <linux/usb/typec_altmode.h>
-+#include <linux/usb/typec_dp.h>
-+#include <linux/usb/typec_mux.h>
-+#include <linux/usb/typec_retimer.h>
-+
-+struct ps8830_retimer {
-+	struct i2c_client *client;
-+	struct regulator_bulk_data supplies[4];
-+	struct gpio_desc *reset_gpio;
-+	struct regmap *regmap;
-+	struct typec_switch_dev *sw;
-+	struct typec_retimer *retimer;
-+	struct clk *xo_clk;
-+
-+	bool needs_update;
-+	struct typec_switch *typec_switch;
-+	struct typec_mux *typec_mux;
-+
-+	struct mutex lock; /* protect non-concurrent retimer & switch */
-+
-+	enum typec_orientation orientation;
-+	unsigned long mode;
-+	int cfg[3];
-+
-+};
-+
-+static int ps8830_configure(struct ps8830_retimer *retimer, int cfg0, int cfg1, int cfg2)
-+{
-+	if (cfg0 == retimer->cfg[0] &&
-+	    cfg1 == retimer->cfg[1] &&
-+	    cfg2 == retimer->cfg[2])
-+		return 0;
-+
-+	retimer->cfg[0] = cfg0;
-+	retimer->cfg[1] = cfg1;
-+	retimer->cfg[2] = cfg2;
-+
-+	regmap_write(retimer->regmap, 0x0, cfg0);
-+	regmap_write(retimer->regmap, 0x1, cfg1);
-+	regmap_write(retimer->regmap, 0x2, cfg2);
-+
-+	return 0;
-+}
-+
-+static int ps8380_set(struct ps8830_retimer *retimer)
-+{
-+	int cfg0 = 0x00, cfg1 = 0x00, cfg2 = 0x00;
-+	int ret;
-+
-+	retimer->needs_update = false;
-+
-+	switch (retimer->orientation) {
-+	/* Safe mode */
-+	case TYPEC_ORIENTATION_NONE:
-+		cfg0 = 0x01;
-+		cfg1 = 0x00;
-+		cfg2 = 0x00;
-+		break;
-+	case TYPEC_ORIENTATION_NORMAL:
-+		cfg0 = 0x01;
-+		break;
-+	case TYPEC_ORIENTATION_REVERSE:
-+		cfg0 = 0x03;
-+		break;
-+	}
-+
-+	switch (retimer->mode) {
-+	/* Safe mode */
-+	case TYPEC_STATE_SAFE:
-+		cfg0 = 0x01;
-+		cfg1 = 0x00;
-+		cfg2 = 0x00;
-+		break;
-+
-+	/* USB3 Only */
-+	case TYPEC_STATE_USB:
-+		cfg0 |= 0x20;
-+		break;
-+
-+	/* DP Only */
-+	case TYPEC_DP_STATE_C:
-+	case TYPEC_DP_STATE_E:
-+		cfg0 &= 0x0f;
-+		cfg1 = 0x85;
-+		break;
-+
-+	/* DP + USB */
-+	case TYPEC_DP_STATE_D:
-+	case TYPEC_DP_STATE_F:
-+		cfg0 |= 0x20;
-+		cfg1 = 0x85;
-+		break;
-+
-+	default:
-+		return -EOPNOTSUPP;
-+	}
-+
-+	gpiod_set_value(retimer->reset_gpio, 0);
-+	msleep(20);
-+	gpiod_set_value(retimer->reset_gpio, 1);
-+
-+	msleep(60);
-+
-+	ret = ps8830_configure(retimer, 0x01, 0x00, 0x00);
-+
-+	msleep(30);
-+
-+	return ps8830_configure(retimer, cfg0, cfg1, cfg2);
-+}
-+
-+static int ps8830_sw_set(struct typec_switch_dev *sw,
-+			 enum typec_orientation orientation)
-+{
-+	struct ps8830_retimer *retimer = typec_switch_get_drvdata(sw);
-+	int ret = 0;
-+
-+	ret = typec_switch_set(retimer->typec_switch, orientation);
-+	if (ret)
-+		return ret;
-+
-+	mutex_lock(&retimer->lock);
-+
-+	if (retimer->orientation != orientation) {
-+		retimer->orientation = orientation;
-+		retimer->needs_update = true;
-+	}
-+
-+	if (retimer->needs_update)
-+		ret = ps8380_set(retimer);
-+
-+	mutex_unlock(&retimer->lock);
-+
-+	return ret;
-+}
-+
-+static int ps8830_retimer_set(struct typec_retimer *rtmr,
-+			      struct typec_retimer_state *state)
-+{
-+	struct ps8830_retimer *retimer = typec_retimer_get_drvdata(rtmr);
-+	struct typec_mux_state mux_state;
-+	int ret = 0;
-+
-+	mutex_lock(&retimer->lock);
-+
-+	if (state->mode != retimer->mode) {
-+		retimer->mode = state->mode;
-+		retimer->needs_update = true;
-+	}
-+
-+	if (retimer->needs_update)
-+		ret = ps8380_set(retimer);
-+
-+	mutex_unlock(&retimer->lock);
-+
-+	if (ret)
-+		return ret;
-+
-+	mux_state.alt = state->alt;
-+	mux_state.data = state->data;
-+	mux_state.mode = state->mode;
-+
-+	return typec_mux_set(retimer->typec_mux, &mux_state);
-+}
-+
-+static const struct regmap_config ps8830_retimer_regmap = {
-+	.max_register = 0x1f,
-+	.reg_bits = 8,
-+	.val_bits = 8,
-+};
-+
-+static int ps8830_retimer_probe(struct i2c_client *client)
-+{
-+	struct device *dev = &client->dev;
-+	struct typec_switch_desc sw_desc = { };
-+	struct typec_retimer_desc rtmr_desc = { };
-+	struct ps8830_retimer *retimer;
-+	int ret;
-+
-+	retimer = devm_kzalloc(dev, sizeof(*retimer), GFP_KERNEL);
-+	if (!retimer)
-+		return -ENOMEM;
-+
-+	retimer->client = client;
-+
-+	retimer->regmap = devm_regmap_init_i2c(client, &ps8830_retimer_regmap);
-+	if (IS_ERR(retimer->regmap)) {
-+		dev_err(dev, "Failed to allocate register map\n");
-+		return PTR_ERR(retimer->regmap);
-+	}
-+
-+	retimer->supplies[0].supply = "vdd33";
-+	retimer->supplies[1].supply = "vdd18";
-+	retimer->supplies[2].supply = "vdd15";
-+	retimer->supplies[3].supply = "vcc";
-+	ret = devm_regulator_bulk_get(dev, ARRAY_SIZE(retimer->supplies),
-+				      retimer->supplies);
-+	if (ret)
-+		return ret;
-+
-+	retimer->xo_clk = devm_clk_get(dev, "xo");
-+	if (IS_ERR(retimer->xo_clk))
-+		return PTR_ERR(retimer->xo_clk);
-+
-+	retimer->reset_gpio = devm_gpiod_get(dev, "reset", GPIOD_OUT_HIGH);
-+	if (IS_ERR(retimer->reset_gpio))
-+		return PTR_ERR(retimer->reset_gpio);
-+
-+	retimer->typec_switch = fwnode_typec_switch_get(dev->fwnode);
-+	if (IS_ERR(retimer->typec_switch))
-+		return dev_err_probe(dev, PTR_ERR(retimer->typec_switch),
-+				     "failed to acquire orientation-switch\n");
-+
-+	retimer->typec_mux = fwnode_typec_mux_get(dev->fwnode);
-+	if (IS_ERR(retimer->typec_mux)) {
-+		ret = dev_err_probe(dev, PTR_ERR(retimer->typec_mux),
-+				    "failed to acquire mode-mux\n");
-+		goto err_switch_put;
-+	}
-+
-+	ret = regulator_bulk_enable(ARRAY_SIZE(retimer->supplies),
-+				    retimer->supplies);
-+	if (ret < 0) {
-+		dev_err(dev, "cannot enable regulators %d\n", ret);
-+		goto err_mux_put;
-+	}
-+
-+	ret = clk_prepare_enable(retimer->xo_clk);
-+	if (ret) {
-+		dev_err(dev, "Failed to enable XO: %d\n", ret);
-+		goto err_disable_vreg;
-+	}
-+
-+	gpiod_set_value(retimer->reset_gpio, 0);
-+	msleep(20);
-+	gpiod_set_value(retimer->reset_gpio, 1);
-+
-+	msleep(60);
-+	mutex_init(&retimer->lock);
-+
-+	sw_desc.drvdata = retimer;
-+	sw_desc.fwnode = dev_fwnode(dev);
-+	sw_desc.set = ps8830_sw_set;
-+
-+	ret = drm_aux_bridge_register(dev);
-+	if (ret)
-+		goto err_disable_gpio;
-+
-+	retimer->sw = typec_switch_register(dev, &sw_desc);
-+	if (IS_ERR(retimer->sw)) {
-+		ret = dev_err_probe(dev, PTR_ERR(retimer->sw),
-+				    "Error registering typec switch\n");
-+		goto err_disable_gpio;
-+	}
-+
-+	rtmr_desc.drvdata = retimer;
-+	rtmr_desc.fwnode = dev_fwnode(dev);
-+	rtmr_desc.set = ps8830_retimer_set;
-+
-+	retimer->retimer = typec_retimer_register(dev, &rtmr_desc);
-+	if (IS_ERR(retimer->retimer)) {
-+		ret = dev_err_probe(dev, PTR_ERR(retimer->retimer),
-+				    "Error registering typec retimer\n");
-+		goto err_switch_unregister;
-+	}
-+
-+	dev_info(dev, "Registered Parade PS8830 retimer\n");
-+	return 0;
-+
-+err_switch_unregister:
-+	typec_switch_unregister(retimer->sw);
-+
-+err_disable_gpio:
-+	gpiod_set_value(retimer->reset_gpio, 0);
-+	clk_disable_unprepare(retimer->xo_clk);
-+
-+err_disable_vreg:
-+	regulator_bulk_disable(ARRAY_SIZE(retimer->supplies),
-+			       retimer->supplies);
-+err_mux_put:
-+	typec_mux_put(retimer->typec_mux);
-+
-+err_switch_put:
-+	typec_switch_put(retimer->typec_switch);
-+
-+	return ret;
-+}
-+
-+static void ps8830_retimer_remove(struct i2c_client *client)
-+{
-+	struct ps8830_retimer *retimer = i2c_get_clientdata(client);
-+
-+	typec_retimer_unregister(retimer->retimer);
-+	typec_switch_unregister(retimer->sw);
-+
-+	gpiod_set_value(retimer->reset_gpio, 0);
-+
-+	clk_disable_unprepare(retimer->xo_clk);
-+
-+	regulator_bulk_disable(ARRAY_SIZE(retimer->supplies),
-+			       retimer->supplies);
-+
-+	typec_mux_put(retimer->typec_mux);
-+	typec_switch_put(retimer->typec_switch);
-+}
-+
-+static const struct i2c_device_id ps8830_retimer_table[] = {
-+	{ "parade,ps8830" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(i2c, ps8830_retimer_table);
-+
-+static const struct of_device_id ps8830_retimer_of_table[] = {
-+	{ .compatible = "parade,ps8830" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, ps8830_retimer_of_table);
-+
-+static struct i2c_driver ps8830_retimer_driver = {
-+	.driver = {
-+		.name = "ps8830_retimer",
-+		.of_match_table = ps8830_retimer_of_table,
-+	},
-+	.probe		= ps8830_retimer_probe,
-+	.remove		= ps8830_retimer_remove,
-+	.id_table	= ps8830_retimer_table,
-+};
-+
-+module_i2c_driver(ps8830_retimer_driver);
-+
-+MODULE_DESCRIPTION("Parade PS8830 Type-C Retimer driver");
-+MODULE_LICENSE("GPL");
-
--- 
-2.34.1
+> ---
+>  drivers/vdpa/mlx5/net/mlx5_vnet.c | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+> 
+> diff --git a/drivers/vdpa/mlx5/net/mlx5_vnet.c b/drivers/vdpa/mlx5/net/mlx5_vnet.c
+> index fa78e8288ebb..c47009a8b472 100644
+> --- a/drivers/vdpa/mlx5/net/mlx5_vnet.c
+> +++ b/drivers/vdpa/mlx5/net/mlx5_vnet.c
+> @@ -193,6 +193,11 @@ static __virtio16 cpu_to_mlx5vdpa16(struct mlx5_vdpa_dev *mvdev, u16 val)
+>  	return __cpu_to_virtio16(mlx5_vdpa_is_little_endian(mvdev), val);
+>  }
+>  
+> +static __virtio32 cpu_to_mlx5vdpa32(struct mlx5_vdpa_dev *mvdev, u32 val)
+> +{
+> +	return __cpu_to_virtio32(mlx5_vdpa_is_little_endian(mvdev), val);
+> +}
+> +
+>  static u16 ctrl_vq_idx(struct mlx5_vdpa_dev *mvdev)
+>  {
+>  	if (!(mvdev->actual_features & BIT_ULL(VIRTIO_NET_F_MQ)))
+> @@ -3795,6 +3800,13 @@ static int mlx5_vdpa_dev_add(struct vdpa_mgmt_dev *v_mdev, const char *name,
+>  	init_rwsem(&ndev->reslock);
+>  	config = &ndev->config;
+>  
+> +	/*
+> +	 * mlx5_vdpa vDPA devices currently don't support reporting or
+> +	 * setting the speed or duplex.
+> +	 */
+> +	config->speed  = cpu_to_mlx5vdpa32(mvdev, SPEED_UNKNOWN);
+> +	config->duplex = DUPLEX_UNKNOWN;
+> +
+>  	if (add_config->mask & BIT_ULL(VDPA_ATTR_DEV_NET_CFG_MTU)) {
+>  		err = config_func_mtu(mdev, add_config->net.mtu);
+>  		if (err)
 
 
