@@ -1,123 +1,157 @@
-Return-Path: <linux-kernel+bounces-306964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC889964619
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:15:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 130F2964623
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:16:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 54101B29BF7
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:15:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4F08285441
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:16:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06F911AB51F;
-	Thu, 29 Aug 2024 13:14:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TlsbY6AQ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1D671A76B7;
+	Thu, 29 Aug 2024 13:15:51 +0000 (UTC)
+Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A91B1196C6C
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 13:14:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 996B519005B;
+	Thu, 29 Aug 2024 13:15:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724937291; cv=none; b=kPyth8UdacYQX5w1XMpefrCl2LCwOKnfglrNIIrdbmnTETERlUsJJq5ieKh9Oh10mWnuON++nRQQFa+ou9BqiHU3buNbMyMew/ubC4KO/pn+06CCaUFiJA9r22cAY1LwkhlZR3soqWrrEzrwEpAp55RJ+KQdBebvKQEEytrrh2A=
+	t=1724937351; cv=none; b=kSN+iYkyFrphZRkk+oLa2Yg8OMLD5lriEOrSZ2c5yqjMuhbweP1Sl6kKnrwBV+0/iDdaIMGBsxyVDgK1qLvNlEkFQ6M3P3DaERJgPJLsUJWqUznwkO8S1V2y+d90v7fXQtfoVx0JNtL4iQGehHPuyiCdoAh6DfhkDh/Q1/Rd80c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724937291; c=relaxed/simple;
-	bh=Jm+pmtdf4qP9lPF5z1JGJhcaEsEtzSEatYaWyXpSPDw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hqsCPlhSR57nBoAUSLwlp0m9N84YJPI31SKz2TqMhrxYfugtRNwCk9hj/GYs5WNnX2Yo3srFg2ZTMzr+8tCowcGl1LLvSyNDTAp1AJAX8kgPzXn58d+mA+TIpKXdUhbKPrT/iIxEJz77OD6dRydo6V94jVskdW6zB4yb43sMKrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TlsbY6AQ; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724937288;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KMkwOi4JjN6JJkWoqwgZkqx+R20QEZgxqkFxgjlzSuM=;
-	b=TlsbY6AQF22oyqK6yRlm4Yj8WEJyKcB28J8ZDoPlgcmeSJQZSg6K7WPn8hbqLCkoqx35wD
-	O6Lvi/yG4l8jebJvLBnPil0E80pfBxlEzR7WmfTVsLgbTrCvp2TB7GhoSxbLwwcr2taFBM
-	l6+3deRgTc5khif1M7KEskYGpiUcb0g=
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
- [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-171-86uvlDFRNEqTMgQCkZjKKg-1; Thu, 29 Aug 2024 09:14:47 -0400
-X-MC-Unique: 86uvlDFRNEqTMgQCkZjKKg-1
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-45683a483e1so6982141cf.3
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 06:14:47 -0700 (PDT)
+	s=arc-20240116; t=1724937351; c=relaxed/simple;
+	bh=SvcnL1CiJ4UYqU1+vWZ1TpjbnhjVzEHNqoFcTIuferw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FT5FDeu28wfoYGvTWbuZX6zXAAUtFUUOOA9nrkKsyo8GdJACWVyHeAr9EeTQxBSuU/jqSvG9/9JbJ3CdgqP5jCNkB2b0emZaJ+LMN+N5jdBX41IbPhwbouoQg6MgQfJQzdobcRv1L3+6oWv8wjYpWf9ODY348loVoYx4L7NG4+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e1a2264e907so649667276.2;
+        Thu, 29 Aug 2024 06:15:49 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724937286; x=1725542086;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KMkwOi4JjN6JJkWoqwgZkqx+R20QEZgxqkFxgjlzSuM=;
-        b=Ljm8grcNutcuZB044MUsZ7mrr4jxzLvMxdmEGZvUzzQZAiMrXxmq5nemJdDGQYXOyz
-         Aq5NzMTjByuoZuz9WPKgfuonA3voJSN68qzdNWH/aYXZusrIpLq+Yrs+s0VlmvfErml4
-         sYbynUK66jqr1dxdLcA4ORKUogDiiVqrCWi8hzA01e7QQN7VWmulTgpZF7UkI5zjEP2J
-         nlZKZZfE9pIBuZ8HWc/JhoHc0o7T9DoEwCc/bH9EMEyqN0T2TS0FyKl1IZYnAq4N+CWS
-         mSnUryPAvWimfnLL3swBZvI7GcagWTMN4K8D6rqbzmvOKqOu4nBGHlIzb8VFCWWUh6Ez
-         CwFw==
-X-Forwarded-Encrypted: i=1; AJvYcCUJn/CtbTAXqiYJPSPNrd7UQLSFZNNtgvFZtmmihkr3aa6w3qg+ujt8vIFjKmr+Few6L0ztpmecbAd24zM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxP3ytD/AksdMQ1HvYFOnO7SQtIXxHh7zZHvD3JvwefPm9A0PCf
-	9bY8ZZh1KjLEYqWLaDVpZEkNrfKAJ0SkSQ+9YUUe2Z7H84izDginDklSwBdFT2HJLF4HTHvpwry
-	UNqcoZGzFUjid7opifmpE7Va+RuKBjS7Fizlkn41li9u3dnQH6/jpd7FxUzuqU+uy7TLJGw==
-X-Received: by 2002:a05:622a:418f:b0:456:45cd:db71 with SMTP id d75a77b69052e-4567f592c65mr35525061cf.21.1724937286482;
-        Thu, 29 Aug 2024 06:14:46 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFur2WCumVIV79Jh3TYo0EaOZHBpT13u9xP4uBg+9WfG5rJuXo7es8ZRNZVfgld+I/exrnwqg==
-X-Received: by 2002:a05:622a:418f:b0:456:45cd:db71 with SMTP id d75a77b69052e-4567f592c65mr35524161cf.21.1724937286065;
-        Thu, 29 Aug 2024 06:14:46 -0700 (PDT)
-Received: from x1gen2nano ([2600:1700:1ff0:d0e0::33])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45682cb02casm4742421cf.42.2024.08.29.06.14.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 06:14:45 -0700 (PDT)
-Date: Thu, 29 Aug 2024 08:14:43 -0500
-From: Andrew Halaney <ahalaney@redhat.com>
-To: Dmitry Dolenko <d.dolenko@metrotek.ru>
-Cc: alexandre.torgue@foss.st.com, davem@davemloft.net, edumazet@google.com, 
-	joabreu@synopsys.com, kuba@kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
-	mcoquelin.stm32@gmail.com, netdev@vger.kernel.org, pabeni@redhat.com, 
-	quic_abchauha@quicinc.com, quic_scheluve@quicinc.com, system@metrotek.ru
-Subject: Re: [PATCH RFC/RFT net-next] net: stmmac: drop the ethtool begin()
- callback
-Message-ID: <ibna42mzj4tk3kddnnzgosglumngupdwxnthkm7rkqrejbr5oy@7j4ey2gtl6zl>
-References: <20240429-stmmac-no-ethtool-begin-v1-1-04c629c1c142@redhat.com>
- <20240828143541.254436-1-d.dolenko@metrotek.ru>
+        d=1e100.net; s=20230601; t=1724937348; x=1725542148;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZP+WcrUbXlpLIN+zbDAxSw3wyDZd7f9soRRffkD1mr4=;
+        b=PU2puXnBDzErqfK8znng/hMqbzZc3CjOlpRW+uPNIeMrYEVCgYo4CWZsn6ZI4h796k
+         9x6KXUmxd926BmkIXuMjpXxbP41Z4cDJ3h6anQKNuAnfpFUQAm8Yt7J0dm7Z2NcG5F9U
+         gltKz5K6cIXXGdf9QksfS0bbFr8LZSFGg2TjvP/WUqvtb9hg6P4ATcXjJy52PaW5WdVr
+         HvErukvwE/uRNxnCQdTnVTDgEzEwcpmm/pdGtYcwdii/LmLnI+POr7obVer6/0E3xKYA
+         2CDIPT7oT1wtyf8QultEsVLA2M/AmG4+u/OkIqT3AlebXIud5ogM3nqgBqA/PDV4i6f2
+         GFdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW8USoJfhDSH0bFsYQR32k/+v4C6pG9rIpz5HPIEnlDGWDzwm37BCR7goNCOTbNy4/Al/AKVwNtm5nEKT/aIS4euPc=@vger.kernel.org, AJvYcCWs2bia9+kiCY6dwVhYpHNKsjCQAd07kFonFT53uxw9bFFP3BbWDaqM7Ja02S0heUhUsXjCJB9oC66qrRra@vger.kernel.org, AJvYcCXE4+d4XfOnXg3dRZDUs+/y+pBnKIwnpThoJZqTT11+jI1MzKqN+psSPzfv97dUer/ggshtiIVsPAGt@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgI8TnsZKmWpvPyRiCksJ5rrB96Vx5EttzCxc3kgc53N+Sdfyw
+	OEUhl/aZINReGILxFsFKUmm2qHMyQHcR6I+5N4Dv59f/ETYh56BroXm4UBzX
+X-Google-Smtp-Source: AGHT+IHK5HgicfN/6dt1utpjkwz7mf+Sgz81J6u0cgCFw213cKeEXvqhgKtifuY/V85XzfHPS6ZSbw==
+X-Received: by 2002:a05:6902:2503:b0:e0b:eb79:d49 with SMTP id 3f1490d57ef6-e1a5ab80046mr2609991276.18.1724937348163;
+        Thu, 29 Aug 2024 06:15:48 -0700 (PDT)
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com. [209.85.219.177])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e1a626853absm234636276.28.2024.08.29.06.15.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 29 Aug 2024 06:15:47 -0700 (PDT)
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e16518785c2so516106276.1;
+        Thu, 29 Aug 2024 06:15:47 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUTDuEcuWhpq/CPDmsSL722JzIeatOmMK7oaV8a4I8plIl+2vWNY69Oq2oPWM6SzBckF+0BPYtbO7HZ@vger.kernel.org, AJvYcCVsWObdyEFCaswuIN0L38VX9qMXYMfgNQFsRZBpidYSSzFUvzBY4z9DxTLnXJ3MH+CGukq3xhyDS/KIrNQ1@vger.kernel.org, AJvYcCW0bY7iInQ94Ut+QTK8ZVdO3xrhmMtOWj9Cx0hPiPp3j3QyjE7+Y3wuO7rEjCGH9km/4V25h8fdgHPmdXDEyz/pMHY=@vger.kernel.org
+X-Received: by 2002:a05:6902:1b0c:b0:e16:6b7e:94b4 with SMTP id
+ 3f1490d57ef6-e1a5ac9a7f0mr3023234276.26.1724937347265; Thu, 29 Aug 2024
+ 06:15:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240828143541.254436-1-d.dolenko@metrotek.ru>
+References: <20240827131722.89359-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240827131722.89359-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20240827131722.89359-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 29 Aug 2024 15:15:34 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVQ-hy7aW-rs5eTLSOULF_GHVV=NHvjCLhPW3XS3Y=+8Q@mail.gmail.com>
+Message-ID: <CAMuHMdVQ-hy7aW-rs5eTLSOULF_GHVV=NHvjCLhPW3XS3Y=+8Q@mail.gmail.com>
+Subject: Re: [PATCH 2/2] pinctrl: renesas: rzg2l: Move pinconf_to_config_argument()
+ call outside of switch cases
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-renesas-soc@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 28, 2024 at 05:35:41PM GMT, Dmitry Dolenko wrote:
-> Are there any updates on this topic?
-> 
-> We are faced with the fact that we can not read or change settings of
-> interface while it is down, and came up with the same solution for this
-> problem.
-> 
-> I do not know if Reviewed-by and Tested-by are suitable for patch marked as
-> RFC but I will post mine in case it is acceptable here.
-> 
-> Reviewed-by: Dmitry Dolenko <d.dolenko@metrotek.ru>
-> Tested-by: Dmitry Dolenko <d.dolenko@metrotek.ru>
-> 
+Hi Prabhakar,
 
-In my opinion the tags are welcomed.
+Thanks for your patch!
 
-I had sort of forgotten about this until your reply, the use case I
-had was only to try and force out another bug, so it slipped my mind.
+On Tue, Aug 27, 2024 at 3:17=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.c=
+om> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Refactor the `rzg2l_pinctrl_pinconf_set()` function by moving the call to
+> `arg =3D pinconf_to_config_argument(_configs[i])` to the beginning of the
+> loop. Previously, this call was redundantly made in each case of the
+> switch statement.
 
-Since both of us were bitten by this, and nobody has indicated it's a bad
-idea otherwise, I'll rebase and send v2 with your tags to try and get
-this merged.
+This is not 100% true: the PIN_CONFIG_BIAS_* cases do not
+call pinconf_to_config_argument(). But I agree that calling it
+unconditionally doesn't harm.
 
-Thanks,
-Andrew
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
+> --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+> +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+> @@ -1395,7 +1395,6 @@ static int rzg2l_pinctrl_pinconf_set(struct pinctrl=
+_dev *pctldev,
+>                         break;
+>
+>                 case PIN_CONFIG_OUTPUT_ENABLE:
+> -                       arg =3D pinconf_to_config_argument(_configs[i]);
+>                         if (!(cfg & PIN_CFG_OEN))
+>                                 return -EINVAL;
+>                         if (!pctrl->data->oen_write)
+
+Missed opportunity for simplification:
+
+                case PIN_CONFIG_POWER_SOURCE:
+-                       settings.power_source =3D
+pinconf_to_config_argument(_configs[i]);
++                       settings.power_source =3D arg;
+                        break;
+
+> @@ -1432,8 +1429,6 @@ static int rzg2l_pinctrl_pinconf_set(struct pinctrl=
+_dev *pctldev,
+>                         break;
+>
+>                 case PIN_CONFIG_DRIVE_STRENGTH:
+> -                       arg =3D pinconf_to_config_argument(_configs[i]);
+> -
+>                         if (!(cfg & PIN_CFG_IOLH_A) || hwcfg->drive_stren=
+gth_ua)
+>                                 return -EINVAL;
+>
+
+                case PIN_CONFIG_DRIVE_STRENGTH_UA:
+                        ...
+-                       settings.drive_strength_ua =3D
+pinconf_to_config_argument(_configs[i]);
++                       settings.drive_strength_ua =3D arg;
+                        break;
+
+The rest LGTM.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
