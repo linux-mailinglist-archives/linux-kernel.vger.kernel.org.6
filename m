@@ -1,132 +1,239 @@
-Return-Path: <linux-kernel+bounces-307827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A798965366
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 01:28:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 235AF96536A
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 01:29:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BAF27B22336
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 23:28:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8AE55B2221C
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 23:29:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B9E018EFED;
-	Thu, 29 Aug 2024 23:28:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF25818EFEE;
+	Thu, 29 Aug 2024 23:28:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ucr.edu header.i=@ucr.edu header.b="QdlbIuDX";
-	dkim=pass (1024-bit key) header.d=ucr.edu header.i=@ucr.edu header.b="sGSHPI7U"
-Received: from mx5.ucr.edu (mx.ucr.edu [138.23.62.67])
+	dkim=pass (2048-bit key) header.d=ucr.edu header.i=@ucr.edu header.b="GGSaNq9t";
+	dkim=pass (1024-bit key) header.d=ucr.edu header.i=@ucr.edu header.b="gMX8FMpF"
+Received: from mx-lax3-3.ucr.edu (mx-lax3-3.ucr.edu [169.235.156.38])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF12918DF77
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 23:28:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=138.23.62.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3134218E776
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 23:28:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=169.235.156.38
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724974093; cv=none; b=r9eIx79pBIGa4ZKYNl3w5rb0CZdcPoQ50iVKhW66EHYoZcRcKUphYAaqX8n1mKd5Z8iWEJJ3G8+O/iy0sIdGufVE2arPYNbSGbhIBylk4GH6M4JvQGUUEzQYjYrRbqTiHvFP/VWIaQVUD2rsTZ48AygF7fhmdeBMD1zJa2xMtX0=
+	t=1724974133; cv=none; b=HpUT+ewE92tc3hKF2LxDgnDorkNFABEPF3t1X6Jy5QPy5SNIOfxj1Rpc1OozQLcZyO4ccKqX2V5tpxXKyoC6fYz7VaTLZYPpUd/MCT1hn5s044ipoRWQ/zMUB19yKyaTqRKCSOBxqenCcOw7ao7PTv888uUlmRIwLBWPK+eZAo0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724974093; c=relaxed/simple;
-	bh=aPBGdzIUtqksQ7B6dOMgEsV38mKnXn6qQ25F7q2ECnI=;
+	s=arc-20240116; t=1724974133; c=relaxed/simple;
+	bh=o7TxbGOuYb6+2NV9KDNCzI2PYElkRPUUbRTEqJkS/w4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=olRLiyL3rtCJ6nYt3rTu/DO8wvRqln6TmrHTaiuyvkuXWN6xF4oNS3EkVABbasmn7LaMoZ51kKwxXWlgoXI9r3bNe4xTVTWLZAXQlHgg7XcBtk0/nJEeKt/cnEZJzRsuMsNnYrf6jGOoHOL4QF77N8rzr/aNhrfhpoKp/74UOag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ucr.edu; spf=pass smtp.mailfrom=ucr.edu; dkim=pass (2048-bit key) header.d=ucr.edu header.i=@ucr.edu header.b=QdlbIuDX; dkim=pass (1024-bit key) header.d=ucr.edu header.i=@ucr.edu header.b=sGSHPI7U; arc=none smtp.client-ip=138.23.62.67
+	 To:Cc:Content-Type; b=p4xh0ObvoNLeKhuJ7Xtoazr/czJq34WwzhCNcXknIy3jz8dyo3kHeslbi3/UYF5tRcx6diG/bERlZIKzyWl8vh4+nqTEeTN6PaA4SluVXSB8xTUPf3gO86jTV23jwdMJBZHbT9NXc2ATw8ParbA3oIfo8IRneuCrS3hI+9r0tOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ucr.edu; spf=pass smtp.mailfrom=ucr.edu; dkim=pass (2048-bit key) header.d=ucr.edu header.i=@ucr.edu header.b=GGSaNq9t; dkim=pass (1024-bit key) header.d=ucr.edu header.i=@ucr.edu header.b=gMX8FMpF; arc=none smtp.client-ip=169.235.156.38
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ucr.edu
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucr.edu
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=ucr.edu; i=@ucr.edu; q=dns/txt; s=selector3;
-  t=1724974092; x=1756510092;
+  t=1724974133; x=1756510133;
   h=dkim-signature:x-google-dkim-signature:
    x-forwarded-encrypted:x-gm-message-state:
    x-google-smtp-source:mime-version:references:in-reply-to:
    from:date:message-id:subject:to:cc:content-type:
    content-transfer-encoding:x-cse-connectionguid:
    x-cse-msgguid;
-  bh=aPBGdzIUtqksQ7B6dOMgEsV38mKnXn6qQ25F7q2ECnI=;
-  b=QdlbIuDX9UDeCqTLOqINdzXocYGxEKcFDcyKZjt3nsBeuC0WrRvomCV7
-   3GbgQywTfBsR4/U+d3vnYvZMmh3XgA/6luJTTNO9+KF/dg+c9zLbvkSk4
-   7HOPxWMTL+JE92RV7jjYbXAZKtyaIGA4m+5j/6t8SUUYtBozOHAxj/OBi
-   4NmJeK8RBDu04jMDnuFtiYQ5KoceTY4cNzapDQyhxq0AbjGkQ/+/d0x0o
-   ZW8JL6skBKUuBMXEH77xOmxbk+mVxoX10IBNeiugb3LA+hfWh15rmk8VD
-   jB1Div1ypbDY7d4uCJybm9R6i4j6jUHkL8NhYYagg8DjChvyRZG36SGUx
+  bh=o7TxbGOuYb6+2NV9KDNCzI2PYElkRPUUbRTEqJkS/w4=;
+  b=GGSaNq9t1VaFGLc6GlhI5Lc6z9zM4X1iRxjWM4uw7d0YSwhipZt03EKa
+   ewi3dxFs5E1jcFC4Ea0tf6okmHGT5Y0hfhcMTEceejNJu7B8W/WjFJNwv
+   lPSNiN32Mb/uFYtSaNucOQwCSXGRrsd0gIIHC4PLmenok36N2NBn1VJB1
+   /TMYTwA2PW3UHjYTJ2IooA8P0xSsqlCpS8tEzkHjclqU7GID9+rEt4ezP
+   rZsN0edUcmahcwiKYLFA71xFbIFh0fLLFys7WprGiVMK3n1M4zNq30R/3
+   VziDkS/1WVgS4oP85kekT1KrpNGFqTm8VJ+PsuwZCR1/pTIbrK8i5V492
    g==;
-X-CSE-ConnectionGUID: EZ7ncPYjQbWc8tE4gh7yKw==
-X-CSE-MsgGUID: +gvtA2nARrOrUcw5eEy1zw==
-Received: from mail-pj1-f71.google.com ([209.85.216.71])
-  by smtpmx5.ucr.edu with ESMTP/TLS/TLS_AES_256_GCM_SHA384; 29 Aug 2024 16:28:11 -0700
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-2d3baf38457so1970352a91.0
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 16:28:10 -0700 (PDT)
+X-CSE-ConnectionGUID: shlnsBw+S3uA8EQqAP96nA==
+X-CSE-MsgGUID: XVv3lxNGQPuElGEQtT4TYw==
+Received: from mail-pj1-f70.google.com ([209.85.216.70])
+  by smtp-lax3-3.ucr.edu with ESMTP/TLS/TLS_AES_256_GCM_SHA384; 29 Aug 2024 16:28:52 -0700
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-2d3b438c8c9so1210652a91.0
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 16:28:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ucr.edu; s=rmail; t=1724974090; x=1725578890; darn=vger.kernel.org;
+        d=ucr.edu; s=rmail; t=1724974131; x=1725578931; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=aPBGdzIUtqksQ7B6dOMgEsV38mKnXn6qQ25F7q2ECnI=;
-        b=sGSHPI7UDGlPV1+93HNFNYLl9XvqGa4fU51cLNl+qmPAt6YHKg34Cqli2J1VLR8+7i
-         MJGWwG+8/0JAY/mv5YD1+O/mRj+G545ywlfRP2ceNSMyC/lZhfAY18qzEr+ODhT4zlt4
-         j9q5pE1qmzOpVW+B/+5FdKanf1GKA2qTx6FPw=
+        bh=8eXCCEcvkF/OtTcfqtjGA5y/ytVcRP5BmWe5mmszibo=;
+        b=gMX8FMpFGetRD+LatlMP3jP+Zqov62BgnL0ClQMYTOvSx/Kt31zFSJqklW+CSQU1T7
+         76QRwW5Mtwv0qn5aQMkBLEbGrCj7b1aFPfRQQgSAbB3TOpXcJdbrjyTZbEBNlFGf0bhs
+         4fuC1PPl1+IKJwvxMra8YewEOxdpO9vuCsvAs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724974090; x=1725578890;
+        d=1e100.net; s=20230601; t=1724974131; x=1725578931;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=aPBGdzIUtqksQ7B6dOMgEsV38mKnXn6qQ25F7q2ECnI=;
-        b=anhGovdao+CAaOwHSa0MpSW43SUC3D1rdIvlGJoZz/PFFg5vARKCWh/pasrdGu0aap
-         mZlPvuwb0ecoiJf4yGJqtz03WNMiv4/4E985YhkrSe1lCaYEmjDqLgdaFbg+tE244f/J
-         3tQcoNA4o2ckmfVBMBRsejZNenCGLkEKzKO9+qHX8FbfCxME83zEgTKlaAX9ezrrQiGr
-         aoyCv7GOfAhU52CZFnn5sCq4olI0CyU0FHWFXS+0lJHZv+lOKvkiM/8IiI8AAm7l0aVZ
-         bCCRkTH07PmyO7R5JLToIcUdnInEvIBYJ7D/4ZyFLMrGLx4jzFq+pJCakmxWqcXs6huU
-         hmrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUcTBEb5H5oEU/XoUK0HZdeFqRizrk1XRUiF3OglHXhuQsEJTLRv8280itVxfw0Pu1Z91k+2t/3fwLdOzk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwlP+CIfEAFm2BcXAwrIBZLvotRZHzehKWO8VR3YRkuCGWk9PoQ
-	/MSTJhBcgOu82luUG+TN+nTUIUFLfQKeTuAheAr0GbFBVs7jjyYIX0ROjuBCUPVCz7tPcqk50W9
-	jivxE0BXygVqQNCXsnmOMqjWXDg8Gb4B+ehjRAIvFeUMAYCaL+4ecKmjgQkDKh8hRTF90p5BwPN
-	VdfDxu4ZF5+82Mj0MMn8nJ5GK7cMgXO53UVZrdKg==
-X-Received: by 2002:a17:90a:7807:b0:2c9:75a7:5c25 with SMTP id 98e67ed59e1d1-2d856c7e4e8mr5697855a91.15.1724974090038;
-        Thu, 29 Aug 2024 16:28:10 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH/ftKnmUjyZCuqOjMEk1OFSOiaq0Iaf0lLk96xUKx8Qd1ZghN5c4b5HHa1WIK0tLHqz2+6bwA7Ogb8xZ1NyYk=
-X-Received: by 2002:a17:90a:7807:b0:2c9:75a7:5c25 with SMTP id
- 98e67ed59e1d1-2d856c7e4e8mr5697833a91.15.1724974089662; Thu, 29 Aug 2024
- 16:28:09 -0700 (PDT)
+        bh=8eXCCEcvkF/OtTcfqtjGA5y/ytVcRP5BmWe5mmszibo=;
+        b=nDs0KiiztEG98w6gA7xQwk/dAtuEWmTBBQjY1M/PHi6f/V1E06Q2eADBMRuNVc6Swa
+         Twk5Xok5sgu9YfmiiUlLOgk2JqGtsRzDW731owVch71OGkEPWrjpqH+9rNeJ2fzqdwtM
+         P6u6p0Mjldl7bFQlo6pgKtDCbfJPAW9GnMsbCa1H++ao0UWF2r6+23LE8iO+7zZV1/uU
+         xyLAnu8cpnhU4Fsw9jA5/aEsD4J9TFuZIUTaYuoJ/4KbSAvXs8M5aTFNSZKxn/n/aRCs
+         B3VsOpPnWSLECRrQ/Iveod1zN7gDs+LB/d6dk1cWnYLZ4TKQUVbx+B3YWKEppd4bgAVh
+         T2jA==
+X-Forwarded-Encrypted: i=1; AJvYcCUrtmQAW05Scdvmkubinlv4eo4k46e5tOazPnBoYBGgl3v8ib/9oNsRgibVUT+iTeJIDwlkqBBMxTbyvGM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzcIQkVKSKMZFwLqZiIeZDtFFykIyZBtq3Ubkmld3+cOymwXzni
+	yKiAPKfLHaw74t4Y1EJbo49N9uleaghYvxrNjY+Ae3EBk1Bt/SjXOrEGAp6w+tT/+MPkP7JhTH6
+	Da3OEAv1rZj0Rf2zwDoYdcOpOUYscN5dMiUiNwHMlH02MPEguuKYcjIsSUm762NxHNVKlH1FmjU
+	qSAwKPIU5speYonk/tsqsvsxUPVXw3rpLuCI1Wpg==
+X-Received: by 2002:a17:90b:17d2:b0:2d3:ce96:eb62 with SMTP id 98e67ed59e1d1-2d8564ad328mr4710860a91.38.1724974130739;
+        Thu, 29 Aug 2024 16:28:50 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF6ftCTWqvGu2AgybuH2oVhw2/tz7HkoHLaFXJSqIW4v/qhGsDpQ+9aZhRhxQLQqyKX/2caJqmY3w718JAC2pQ=
+X-Received: by 2002:a17:90b:17d2:b0:2d3:ce96:eb62 with SMTP id
+ 98e67ed59e1d1-2d8564ad328mr4710844a91.38.1724974130377; Thu, 29 Aug 2024
+ 16:28:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CALAgD-6Uy-2kVrj05SeCiN4wZu75Vq5-TCEsiUGzYwzjO4+Ahg@mail.gmail.com>
- <Zs_gT7g9Dv-QAxfj@google.com> <CALAgD-5-8YjG=uOk_yAy_U8Dy9myRvC+pAiVe0R+Yt+xmEuCxQ@mail.gmail.com>
- <ZtEDEoL-fT2YKeGA@google.com>
-In-Reply-To: <ZtEDEoL-fT2YKeGA@google.com>
+References: <CALAgD-4hkHVcCq2ycdwnA2hYDBMqijLUOfZgvf1WfFpU-8+42w@mail.gmail.com>
+ <CALAgD-7JpFBhb1L+NXL9WoQP4hWbmfwsnWmePsER4SCud-BE9A@mail.gmail.com> <3fbe1092-d0be-4e30-96a7-4ec72d65b013@huaweicloud.com>
+In-Reply-To: <3fbe1092-d0be-4e30-96a7-4ec72d65b013@huaweicloud.com>
 From: Xingyu Li <xli399@ucr.edu>
-Date: Thu, 29 Aug 2024 16:27:57 -0700
-Message-ID: <CALAgD-6Vg9k=wd1zaJ+k-EaWLnzosAn2f=iz7FvhVpdS6eq-dA@mail.gmail.com>
-Subject: Re: BUG: general protection fault in get_mem_cgroup_from_objcg
-To: Roman Gushchin <roman.gushchin@linux.dev>
-Cc: hannes@cmpxchg.org, mhocko@kernel.org, shakeel.butt@linux.dev, 
-	muchun.song@linux.dev, cgroups@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Yu Hao <yhao016@ucr.edu>, Juefei Pu <jpu007@ucr.edu>
+Date: Thu, 29 Aug 2024 16:28:39 -0700
+Message-ID: <CALAgD-47U+dZuVxoq9pSSpYk=Y6H6yTwmpe6iBmFBk-xCADW_w@mail.gmail.com>
+Subject: Re: WARNING in process_measurement
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc: zohar@linux.ibm.com, roberto.sassu@huawei.com, dmitry.kasatkin@gmail.com, 
+	eric.snowberg@oracle.com, paul@paul-moore.com, jmorris@namei.org, 
+	serge@hallyn.com, linux-integrity@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Yu Hao <yhao016@ucr.edu>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Juefei: Can you give some input on this?
+Here is the config file:
+https://gist.github.com/TomAPU/64f5db0fe976a3e94a6dd2b621887cdd
 
-On Thu, Aug 29, 2024 at 4:24=E2=80=AFPM Roman Gushchin <roman.gushchin@linu=
-x.dev> wrote:
+On Thu, Aug 29, 2024 at 5:56=E2=80=AFAM Roberto Sassu
+<roberto.sassu@huaweicloud.com> wrote:
 >
-> On Wed, Aug 28, 2024 at 10:20:04PM -0700, Xingyu Li wrote:
-> > Hi,
+> On 8/29/2024 12:53 PM, Xingyu Li wrote:
+> > The above syzkaller reproducer needs additional support. And here is
+> > the C reproducer:
+> > https://gist.github.com/freexxxyyy/c3d1ccb8104af6b0d51ed50c29b363d3
+>
+> Hi Xingyu
+>
+> do you have a .config for testing?
+>
+> Thanks
+>
+> Roberto
+>
+> > On Sat, Aug 24, 2024 at 10:23=E2=80=AFPM Xingyu Li <xli399@ucr.edu> wro=
+te:
+> >>
+> >> Hi,
+> >>
+> >> We found a bug in Linux 6.10. This is likely a mutex corruption bug,
+> >> where the mutex's internal state has been compromised, leading to an
+> >> integrity check failure. The bug occurs in
+> >> https://elixir.bootlin.com/linux/v6.10/source/security/integrity/ima/i=
+ma_main.c#L269.
+> >>
+> >> The bug report and syzkaller reproducer are as follows:
+> >>
+> >> Bug report:
+> >>
+> >> DEBUG_LOCKS_WARN_ON(lock->magic !=3D lock)
+> >> WARNING: CPU: 0 PID: 8057 at kernel/locking/mutex.c:587
+> >> __mutex_lock_common kernel/locking/mutex.c:587 [inline]
+> >> WARNING: CPU: 0 PID: 8057 at kernel/locking/mutex.c:587
+> >> __mutex_lock+0xc2d/0xd50 kernel/locking/mutex.c:752
+> >> Modules linked in:
+> >> CPU: 0 PID: 8057 Comm: cron Not tainted 6.10.0 #13
+> >> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 0=
+4/01/2014
+> >> RIP: 0010:__mutex_lock_common kernel/locking/mutex.c:587 [inline]
+> >> RIP: 0010:__mutex_lock+0xc2d/0xd50 kernel/locking/mutex.c:752
+> >> Code: 04 20 84 c0 0f 85 13 01 00 00 83 3d fc e5 23 04 00 0f 85 e9 f4
+> >> ff ff 48 c7 c7 60 70 4c 8b 48 c7 c6 e0 70 4c 8b e8 83 f4 54 f6 <0f> 0b
+> >> e9 cf f4 ff ff 0f 0b e9 dc f8 ff ff 0f 0b e9 5b f5 ff ff 48
+> >> RSP: 0018:ffffc9000aa77380 EFLAGS: 00010246
+> >> RAX: 26a6b2d2d0cdac00 RBX: 0000000000000000 RCX: ffff8880241e5a00
+> >> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+> >> RBP: ffffc9000aa774d0 R08: ffffffff8155a25a R09: 1ffff1100c74519a
+> >> R10: dffffc0000000000 R11: ffffed100c74519b R12: dffffc0000000000
+> >> R13: ffff888020efc330 R14: 0000000000000000 R15: 1ffff9200154eeb8
+> >> FS:  00007f902ffb1840(0000) GS:ffff888063a00000(0000) knlGS:0000000000=
+000000
+> >> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> >> CR2: 00007f902fb7e06a CR3: 0000000018c3c000 CR4: 0000000000350ef0
+> >> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> >> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> >> Call Trace:
+> >>   <TASK>
+> >>   process_measurement+0x536/0x1ff0 security/integrity/ima/ima_main.c:2=
+69
+> >>   ima_file_check+0xec/0x170 security/integrity/ima/ima_main.c:572
+> >>   security_file_post_open+0x51/0xb0 security/security.c:2982
+> >>   do_open fs/namei.c:3656 [inline]
+> >>   path_openat+0x2c0b/0x3580 fs/namei.c:3813
+> >>   do_filp_open+0x22d/0x480 fs/namei.c:3840
+> >>   do_sys_openat2+0x13a/0x1c0 fs/open.c:1413
+> >>   do_sys_open fs/open.c:1428 [inline]
+> >>   __do_sys_openat fs/open.c:1444 [inline]
+> >>   __se_sys_openat fs/open.c:1439 [inline]
+> >>   __x64_sys_openat+0x243/0x290 fs/open.c:1439
+> >>   do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+> >>   do_syscall_64+0x7e/0x150 arch/x86/entry/common.c:83
+> >>   entry_SYSCALL_64_after_hwframe+0x67/0x6f
+> >> RIP: 0033:0x7f903019a167
+> >> Code: 25 00 00 41 00 3d 00 00 41 00 74 47 64 8b 04 25 18 00 00 00 85
+> >> c0 75 6b 44 89 e2 48 89 ee bf 9c ff ff ff b8 01 01 00 00 0f 05 <48> 3d
+> >> 00 f0 ff ff 0f 87 95 00 00 00 48 8b 4c 24 28 64 48 2b 0c 25
+> >> RSP: 002b:00007fff194600a0 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
+> >> RAX: ffffffffffffffda RBX: 0000564dd2fb9cf0 RCX: 00007f903019a167
+> >> RDX: 0000000000000000 RSI: 00007f902fb7e103 RDI: 00000000ffffff9c
+> >> RBP: 00007f902fb7e103 R08: 0000000000000008 R09: 0000000000000001
+> >> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+> >> R13: 0000564dd2fb9cf0 R14: 0000000000000001 R15: 0000000000000000
+> >>   </TASK>
+> >>
+> >>
+> >> Syzkaller reproducer:
+> >> # {Threaded:false Repeat:true RepeatTimes:0 Procs:1 Slowdown:1
+> >> Sandbox: SandboxArg:0 Leak:false NetInjection:false NetDevices:false
+> >> NetReset:false Cgroups:false BinfmtMisc:false CloseFDs:false
+> >> KCSAN:false DevlinkPCI:false NicVF:false USB:false VhciInjection:false
+> >> Wifi:false IEEE802154:true Sysctl:true Swap:false UseTmpDir:true
+> >> HandleSegv:true Trace:false LegacyOptions:{Collide:false Fault:false
+> >> FaultCall:0 FaultNth:0}}
+> >> r0 =3D openat$ptmx(0xffffffffffffff9c, 0x0, 0x141040, 0x0)
+> >> ioctl$TIOCSETD(r0, 0x5423, 0x0)
+> >> mmap$IORING_OFF_CQ_RING(&(0x7f0000ffc000/0x4000)=3Dnil, 0x4000, 0x2,
+> >> 0x20031, 0xffffffffffffffff, 0x8000000)
+> >> mmap$IORING_OFF_SQ_RING(&(0x7f0000ff4000/0xc000)=3Dnil, 0xc000, 0xe,
+> >> 0x12, 0xffffffffffffffff, 0x0)
+> >> openat$sndseq(0xffffffffffffff9c, 0x0, 0x902)
+> >> write$syz_spec_18446744072532934322_80(0xffffffffffffffff,
+> >> &(0x7f0000000000)=3D"2b952480c7ca55097d1707935ba64b20f3026c03d658026b8=
+1bf264340512b3cb4e01afda2de754299ea7a113343ab7b9bda2fc0a2e2cdbfecbca0233a07=
+72b12ebde5d98a1203cb871672dff7e4c86ec1dccef0a76312fbe8d45dc2bd0f8fc2ebeb2a6=
+be6a300916c5281da2c1ef64d66267091b82429976c019da3645557ed1d439c5a637f6bf58c=
+53bc414539dd87c69098d671402586b631f9ac5c2fe9cedc281a6f005b5c4d1dd5ed9be400"=
+,
+> >> 0xb4)
+> >> r1 =3D syz_open_dev$sg(&(0x7f00000003c0), 0x0, 0x8000)
+> >> ioctl$syz_spec_1724254976_2866(r1, 0x1, &(0x7f0000000080)=3D{0x0, 0x2,
+> >> [0x85, 0x8, 0x15, 0xd]})
+> >> ioctl$KDGKBDIACR(0xffffffffffffffff, 0x4bfa, 0x0)
+> >>
+> >>
+> >> --
+> >> Yours sincerely,
+> >> Xingyu
 > >
-> > Here is the kernel config file:
-> > https://gist.github.com/TomAPU/64f5db0fe976a3e94a6dd2b621887cdd
 > >
-> > how long does it take to reproduce?
-> > Juefei will follow on this, and I just CC'ed him.
+> >
 >
-> I ran the reproducer for several hours in a vm without much success.
-> So in order to make any progress I'd really need a help from your side.
-> If you can reproduce it consistently, can you, please, try to bisect it?
->
-> Thanks!
-
 
 
 --=20
