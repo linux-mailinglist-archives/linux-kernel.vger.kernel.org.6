@@ -1,86 +1,149 @@
-Return-Path: <linux-kernel+bounces-307373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80729964C9B
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 19:05:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AA43964C9E
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 19:06:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E524CB241E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 17:05:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 043B1B2443E
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 17:06:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D95EE1B5EB8;
-	Thu, 29 Aug 2024 17:05:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 716541B6544;
+	Thu, 29 Aug 2024 17:06:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ROhFhDPO"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IcH+wcIe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88E344DA14
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 17:05:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAB391B5EC7;
+	Thu, 29 Aug 2024 17:06:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724951123; cv=none; b=OmhIrjm1b0NZCtE/B9gGnzkwlkBUl6xuVqZsg/6HQm1nYbnNdW76BoglJ+9jc/cYbILFhZSfZv6xj2UYiEXXEStJFvpTK98mur0WdduSC5fOz2bkLRlObV1i7KmaK/LsyE+slrGWXGN+3lNc6jZ8HzzLo+ix5sxMSDikTDA1qAE=
+	t=1724951187; cv=none; b=Tj3Z3egxfe/nUU9wpNEsouNVnIPCJ1OnQeBZ3RpLdSwOqo+m8gzcpfhW2+JDUrthdBkE4SeHgOR0/BN26KJKqyelb9vHLIxvB9yyraTq9i3aDsOiHnOWbpBmnpGyjbAQjUJ16MbOdRjUudtNLvFsqh9V76KAg92xCWHn/FIURwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724951123; c=relaxed/simple;
-	bh=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=A1tGYWwFcyhAntwC5wYF+OhtKHgFlr5ZQOR1BcpP8Y2oy6MfslCZu7h3Z29N8uUuGe9qJ8ZKy59k+sH1/K0I7rh10OKXkbOZOm19w74os/OSz/r09z7VRwZq9YkZOtg+cWD4qE5mamVf8sdpUWQ1erHN3o7LsWvBvbRHk2i33CY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ROhFhDPO; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-42817d3ecfeso135e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 10:05:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724951119; x=1725555919; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=;
-        b=ROhFhDPO9Ll9pWySk8+1RNzrFAIkqvOHeAt76Sekt/2Nq2RgyGnHOrg06nVAwJTbbx
-         zAi0uJwwJP0jqEYMfTHLkWaLJ2gekVim0k8G/dT0p2KPEwnnDBxr8vGAEIAbWGgwydbJ
-         27gRXfuhbdNIvrexgxiNmeLdRC7iD8eL/W8DICUJu+ZkoPpVwFJIzZtULYynfRQ7WJSf
-         hf3JckSyM3mS9++wZHTI426vRojfg3E4bT5gEo9V8aflq0OYneGz+LtgkdyczysS1TMQ
-         xYqLj5Joab5nUxH9a9uJl41/gt6GcyBRtoMAcugUPwyUekYoCs3c/38EOqb5F/7yf3PF
-         4aQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724951119; x=1725555919;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=;
-        b=r23+fQRdbkihyBqmPUbWMtoQabWyAScG3dXl5tYvQ0u4vQwhVVweNpwSIDx/YGT02N
-         6j7Gb5XduGBeIt6j2eLzJ45HYal64j9qQTqMZ0wjN7r+aYt0Tj5KSJx51AwtabVcZQ1l
-         5v5EJ+vLMfjv30NqRmP7aczea1B/wWiRe5jlgOTBlB6RsCq4tTDKoWc53vQ78PR1bSeg
-         OUY+VoVa146K9vi374aca64PA+UWubd4E8LCCFxNElONd0GyI7PeO973FhMarjh3Vpuy
-         emF5o35+WuuQmASWWUA4nVigsoPn8yOwENRm9bM3BYaY5LV6I4je9JW/QCFZfqT7WLzb
-         64WA==
-X-Gm-Message-State: AOJu0YzjCMys3fjcx0cjkuOtmi1KQIoT5JuaRx4lcZ3Nrr2+Bo6FleOe
-	UfUxLlnneWkA6zw02+x9GujGQq/8tatLXQeYEc+ihYhK0XU0JXu/VMrcsovq3Omtz+jt/+yNJb2
-	VAJLDOx5mDkFvcKDulhHUCW9+qDK+QEbFtH0q0men6IlrkjNv
-X-Gm-Gg: AV9I1ZT+I66w0VnT5o14ZFWn+6R+/ebutaXcns3KimGD7AqFzhWgTju3brPxnVZGfzk
-	2Z5m0YPqC063wcjNglBVaNnarndFInTKndKGZmCAvyeFMpEahp5NFrupiHUA=
-X-Google-Smtp-Source: AGHT+IF8ncbv3hPX6txBwjD+mljfVJFZjCz8WD9pS5r0ChWeEb3HcbLEeUEQAMuL4Kr+bb+8RiZA/+ov4ZUA9UxFSLs=
-X-Received: by 2002:a05:600c:6d12:b0:424:a2ae:8d1d with SMTP id
- 5b1f17b1804b1-42bba2d4b89mr12755e9.2.1724951118768; Thu, 29 Aug 2024 10:05:18
- -0700 (PDT)
+	s=arc-20240116; t=1724951187; c=relaxed/simple;
+	bh=lj650uyHo6vu/bGwW3cMb2EVJ2dmy20z4HwiRrmZTpA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=Mzjqipyx4lfYytSlZrWkRF/Ekzm5/wsFJqQyhEhy4L2rlAmSrvdut43P+V/gaTclBeaZQAWUdABuo/iL86tIdDxJY/jvKtY4Lgfr88bKnB4MWh6QvbGZhg/y1khH+xEbqSk+63lN8Mmf7TPKOTrvMWBCRTLujAdzE3N9FYNfotk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IcH+wcIe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15A07C4CEC1;
+	Thu, 29 Aug 2024 17:06:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724951186;
+	bh=lj650uyHo6vu/bGwW3cMb2EVJ2dmy20z4HwiRrmZTpA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=IcH+wcIeM47sQx9CH1WoGqeEMfoUeYPH2+tDfCozYasJXeeKjV0ZvFUkVWju/PCYq
+	 xwbNcjjH/MxUmcQWXStqHVQ0WR6wlfJpdbhD96oGch3nmAuwkr9M8Qc6FZTmFcDhn6
+	 g4h0EuFSGDmkmZ/v80oUNLbeB4VbP01eiH6S2xDYRkEQLFou5l91hwxXYosVx6DW2V
+	 fayPgnlzWaJTBDhnc6lvZ3xALheuLUArB+SiE3n94MhyvVRdmn2xz5oU6ivO19mR5j
+	 stElcgd/pu8fCxePcz43OUmWuZg6f+5wZnPWTiInI+/wU1hmKrrYu6C1EJqPpyJKaz
+	 /WGFTWP0pBTrw==
+Date: Thu, 29 Aug 2024 12:06:24 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: lpieralisi@kernel.org, kw@linux.com, bhelgaas@google.com,
+	robh@kernel.org, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Subject: Re: [PATCH v2] PCI: qcom-ep: Enable controller resources like PHY
+ only after refclk is available
+Message-ID: <20240829170624.GA67120@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAFs7P=jk=wfo0nbHzqd1NrGX3NKpOezD4-u=nAMqzq7mq4Lidg@mail.gmail.com>
-In-Reply-To: <CAFs7P=jk=wfo0nbHzqd1NrGX3NKpOezD4-u=nAMqzq7mq4Lidg@mail.gmail.com>
-From: Joshua Pius <joshuapius@google.com>
-Date: Thu, 29 Aug 2024 13:04:40 -0400
-Message-ID: <CAFs7P=jPqv2Zr6Fnw584TKhj5joBRt7X7gMidE4MiK1ABAMiRQ@mail.gmail.com>
-Subject: Re: [PATCH] ALSA: Add logitech Audio profile quirk
-To: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
-Cc: devicetree@vger.kernel.org, linux-sound@vger.kernel.org, 
-	linux-usb@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	linux-doc@vger.kernel.org, alsa-devel@alsa-project.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240829164455.ts2j46dfxwp3pa2f@thinkpad>
 
+On Thu, Aug 29, 2024 at 10:14:55PM +0530, Manivannan Sadhasivam wrote:
+> On Thu, Aug 29, 2024 at 07:38:08AM -0500, Bjorn Helgaas wrote:
+> > On Thu, Aug 29, 2024 at 11:07:20AM +0530, Manivannan Sadhasivam wrote:
+> > > On Wed, Aug 28, 2024 at 03:59:45PM -0500, Bjorn Helgaas wrote:
+> > > > On Wed, Aug 28, 2024 at 07:31:08PM +0530, Manivannan Sadhasivam wrote:
+> > > > > qcom_pcie_enable_resources() is called by qcom_pcie_ep_probe() and it
+> > > > > enables the controller resources like clocks, regulator, PHY. On one of the
+> > > > > new unreleased Qcom SoC, PHY enablement depends on the active refclk. And
+> > > > > on all of the supported Qcom endpoint SoCs, refclk comes from the host
+> > > > > (RC). So calling qcom_pcie_enable_resources() without refclk causes the
+> > > > > whole SoC crash on the new SoC.
+> > > > > 
+> > > > > qcom_pcie_enable_resources() is already called by
+> > > > > qcom_pcie_perst_deassert() when PERST# is deasserted, and refclk is
+> > > > > available at that time.
+> > > > > 
+> > > > > Hence, remove the unnecessary call to qcom_pcie_enable_resources() from
+> > > > > qcom_pcie_ep_probe() to prevent the crash.
+> > > > > 
+> > > > > Fixes: 869bc5253406 ("PCI: dwc: ep: Fix DBI access failure for drivers requiring refclk from host")
+> > > > > Tested-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > > > > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > > > > ---
+> > > > > 
+> > > > > Changes in v2:
+> > > > > 
+> > > > > - Changed the patch description to mention the crash clearly as suggested by
+> > > > >   Bjorn
+> > > > 
+> > > > Clearly mentioning the crash as rationale for the change is *part* of
+> > > > what I was looking for.
+> > > > 
+> > > > The rest, just as important, is information about what sort of crash
+> > > > this is, because I hope and suspect the crash is recoverable, and we
+> > > > *should* recover from it because PERST# may occur at arbitrary times,
+> > > > so trying to avoid it is never going to be reliable.
+> > > 
+> > > I did mention 'whole SoC crash' which typically means unrecoverable
+> > > state as the SoC would crash (not just the driver). On Qcom SoCs,
+> > > this will also lead the SoC to boot into EDL (Emergency Download)
+> > > mode so that the users can collect dumps on the crash.
+> > 
+> > IIUC we're talking about an access to a PHY register, and the access
+> > requires Refclk from the host.  I assume the SoC accesses the register
+> > by doing an MMIO load.  If nothing responds, I assume the SoC would
+> > take a machine check or similar because there's no data to complete
+> > the load instruction.  So I assume again that the Linux on the SoC
+> > doesn't know how to recover from such a machine check?  If that's the
+> > scenario, is the machine check unrecoverable in principle, or is it
+> > potentially recoverable but nobody has done the work to do it?  My
+> > guess would be the latter, because the former would mean that it's
+> > impossible to build a robust endpoint around this SoC.  But obviously
+> > this is all complete speculation on my part.
+> 
+> Atleast on Qcom SoCs, doing a MMIO read without enabling the
+> resources would result in a NoC (Network On Chip) error, which then
+> end up as an exception to the Trustzone and Trustzone will finally
+> convert it to a SoC crash so that the users could take a crash dump
+> and do the analysis on why the crash has happened.
+> 
+> I know that it may sound strange to developers coming from x86 world
+> :)
 
+It's only strange if the system design forces a crash for events that
+happen in normal operation.  Sounds like part of the problem here is
+the non-SRIS mode that depends on Refclk from the host.  That and the
+fact that operating in non-SRIS mode has an unavoidable race where
+PERST# from the host at the wrong time can crash the endpoint.
+
+I think users of non-SRIS mode need to be aware of this issue, and
+this patch to narrow the race window, but not close it completely, is
+one good place to mention it.
+
+> But this NoC error is something NVidia has also reported before, so
+> I wouldn't assume that this is a Qcom specific issue but rather for
+> SoCs depending on refclk from host.
+
+Are there other drivers that need a similar band-aid?
+
+> For building a robust endpoint, SoCs should generate refclk by
+> themselves.
+> 
+> - Mani
+> 
+> -- மணிவண்ணன் சதாசிவம்
 
