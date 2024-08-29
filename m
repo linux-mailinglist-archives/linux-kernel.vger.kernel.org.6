@@ -1,116 +1,107 @@
-Return-Path: <linux-kernel+bounces-307540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FDFE964EBA
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 21:23:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 86E8A964EC2
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 21:24:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E194DB22E13
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 19:23:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0968DB2175A
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 19:24:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E38D1B8EBA;
-	Thu, 29 Aug 2024 19:23:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E48351B9B41;
+	Thu, 29 Aug 2024 19:24:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DekIvRRD"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RUYdJCwt"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8215E1B86EB
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 19:23:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B144D1B9B33;
+	Thu, 29 Aug 2024 19:24:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724959394; cv=none; b=llVT90eAf03Y5QuwZLtSqdX2UodSZW/jOvKBrvPkkw3HhudixttymvqlhNZrsu7Iozt5I49isBL1WPcWIIiz0M8A0z8ClIR3yBtnw/FL0GkeEDSMEW4VUeXlGKBl18lk/02VrSdf2SFalllGGmyj9WkfJPO32y7Ls7v3kgJ+BM4=
+	t=1724959473; cv=none; b=iw4zYkp6nVGAvpEqsldUIAgmLnHjAb6ARrm5ueWxABfhn8r0lQ4dJzBfD2azk1iVryWFsWcUKqryt9vwrMqAeXI7hbSB4lFAs+DyYrxEscCZi9y2IeOQYlBNpG/y4YqVN03d0S1f+RWUyhudalPonCaRVyKs7idwPB+E4jfLbog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724959394; c=relaxed/simple;
-	bh=ukuhjIxgkFrw5P/9mVNrV8Qq3LbAA9wjABoHcIrvHsw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=l7kZY8bDE4hA7lUl0UyOEhjgaJJFULvG7cYuBgCclW5JOXT+og90Sls1XBMj6lmk7jwL/ufYWx5pf7l7cAisMNWUBpFvuWojmjOY1XpMJEs3qcgFHQy+oLRb7+rs5eY0yg09cfnfwuR2VdfBlXyhNnadLo5EvrdTWY/JVF726w4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DekIvRRD; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-371936541caso634915f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 12:23:11 -0700 (PDT)
+	s=arc-20240116; t=1724959473; c=relaxed/simple;
+	bh=BmFEeWRoTKmrRXWSutrOaYv0xbNIQ74TxBbzWKgjmLw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ep+7vnNpwNtIQaWevT80bkVqre4gF5b+csJgB3YVJdOzXg+5I9A7nhkmop/t3Z9Q9khAqc/Fm6tmw2OEAeNW8kCteMVHV2it1IfRnOK2vhHm+G9IpG/o6veQSYb4jbC/cQzJGORm9OoEnJda8Mi7RjpXE8wmthS8UmkQQWkYgLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RUYdJCwt; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-37196229343so706819f8f.0;
+        Thu, 29 Aug 2024 12:24:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724959390; x=1725564190; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Kb+/gPdGEJGskPrMhsAh3708IPHwwoKYQn4i2knABsE=;
-        b=DekIvRRDqYfQ0XWYv6AoaSdL8i6r+m1JNTFzWQO+w8mtH541fO1S2AhWvLhoQXnNkO
-         hs/hOsghtggXyGQZrVHwOEcSI/iJSQqpQOBSKU2AofBl3dC94ebXKsRIesJpuDF1IQoj
-         aLdlqjv6lOaCE3qL/AX45ILOvYDTcDbvfV41yKE0UAbe2MheBI1tv/uh/afVu+kIGsJo
-         XdWCPPPVcuv6VdjPj0cJ4ist0BUAzHgIYN8Vs3ykfoJCEqrhVJiCA9TP1gmQG0O556u4
-         mvUX1llCH782AFLr20MD69Ep2y+Q0QuxyHIbN9BPwHXo/8JpwUITNSNVpUmytHHujrne
-         tq6w==
+        d=gmail.com; s=20230601; t=1724959469; x=1725564269; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BmFEeWRoTKmrRXWSutrOaYv0xbNIQ74TxBbzWKgjmLw=;
+        b=RUYdJCwt/u956eZU3V1cyhuwOI8iM6HWc0eFdqosBAHZl/6eMFdGSI6lvVvV2pZDiP
+         eLolEyMaC2uauRt5JEEdn0eQwEdxjMT+hMMh/czKb7RPCD6Oy3rjDbg9v/eKDd4yhC2d
+         EEySCsy0LaU6GdQ648sIzAPy3lvkq+ioahkxITd3k6xCPHJBlUwDDa/DzLUm92Npkw6j
+         1BRECUJUiAIzJy8LYuYq1KAEIAJUSanFRbZpltLFQNjK72hxNi4g7KAWlD7FbeVks0Df
+         nDTaxJc+rWlG9ns0Dspob1xO/a8T3MC9gKuX0qtyw5fISphhfBjgXTcPgZXhxIcpVQbJ
+         eMvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724959390; x=1725564190;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Kb+/gPdGEJGskPrMhsAh3708IPHwwoKYQn4i2knABsE=;
-        b=ZdP1f16Jzvd1nAxq4fvBO26XPBilT0Pdorz1RyDu3mAl+NjIubyc9zMFZ99Mho0/TL
-         Ur/jcr/uYilI5zxAHkyD0t3qmwvIHmO7z+/+KCDztfGty+tunl6oiuRLLFgOeMgv6xXD
-         z9VvTH8HYXl1yCUC7pPWk+6AQKi7pmeSNcH6YBI3BBBWpqK/Kdl/L8RNNBSY5EujgrgG
-         ce57yDwotykMpS+pOaL3zNwGkfCRIopY4lXIbK7rHSjgzewcr2UBoJWY57otThnvAWTp
-         ZwXzqUHwrsMtwzCDPcGqiTNeWfOCcsk2VeKXEBN7x2yysO/Qlw7YBe9+xtKSQjnyI4xe
-         ZlyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWwBqK3hAtGygyOaoITwtyRCfQUOKDc5OoyyOHmAOTr4df3qMLja1j8GVk9BNiqrzVKzTRepyBXHQ6fjv4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3KQbsJZ4V5Kgvc59uOKsqCgdQSffO/ecPLxgwXBhE/pfB3a8D
-	8UMrSC6ptJbKKeRFQZHPIklX5cBAGGoCWcKRPltaPVvpFCS+oywcU0jLIdt7aUM=
-X-Google-Smtp-Source: AGHT+IE4wYbt9jCHc5S83ZfW88uhbElBJKmpOtRl+dxUob9KomXWqzq1uB65e6/dHM7+SpafO+b45g==
-X-Received: by 2002:adf:f510:0:b0:371:8682:467e with SMTP id ffacd0b85a97d-3749b58168emr2590741f8f.46.1724959389644;
-        Thu, 29 Aug 2024 12:23:09 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3749ee7475dsm2115161f8f.27.2024.08.29.12.23.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 12:23:09 -0700 (PDT)
-Date: Thu, 29 Aug 2024 22:23:04 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Maximilian Luz <luzmaximilian@gmail.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Johan Hovold <johan+linaro@kernel.org>,
-	Ard Biesheuvel <ardb@kernel.org>, linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] firmware: qcom: uefisecapp: Fix deadlock in qcuefi_acquire()
-Message-ID: <19829bc4-1b6f-47f7-847a-e90c25749e40@stanley.mountain>
+        d=1e100.net; s=20230601; t=1724959469; x=1725564269;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BmFEeWRoTKmrRXWSutrOaYv0xbNIQ74TxBbzWKgjmLw=;
+        b=Jx2TRsruJlXOxssPrlkRIbHFVoQneWij1vtNiwjS8FR2GuqDUqWGfAp9dIFqy2CgnJ
+         zSex2wLQopPirgHsPsiuDEjOs5HqFgMeHW2XcIpXjIVQjM4KN4bl+EG5yhjMfdVTARyl
+         M3qmLIyCzdvaigMaL4jhTgimde8/BqtzrTUEuZ0WMkl8xTNKvBegUoa2KMPMarChFeWj
+         qfaPSiNSXQod2vl7zOiiXV+u+ifVn8HAdIGvNfggicDAhv0T7uyKqpsXdRJURyJ0JNJe
+         MKq0jzhHU9CxNWnuZ4ZgVB4IRv0/38CRmmcSdTFtxDITcmCuYWJIjmy8kXwI78UbtSxW
+         tnUg==
+X-Forwarded-Encrypted: i=1; AJvYcCUJog4NtmwPTDhczeY3iZwpYP80Dga08njHtjPEcjbx6kdVOfccIRvwOylka/nVcnzre8CQzxbTf0ZPty1c@vger.kernel.org, AJvYcCXhp1XU/2PwSWBqojp0nta7NRLQoVr7+uoRPQN8uUojXQpI2Y8T9jH7ZMmGzdVCwZizn8U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwoXcxIV7r+I9ILGorQdh1qFhlm+B/o877/zIiNXFlmh0qXXhmY
+	XVjvsitvov+MkOEd0CUIJin0hShqwZWelpmp+qYzWmgqUkJ9v6ITvsrxG3tVpOZkuYjYjNF1LEN
+	sohqU2FbRq5u/sfk9hFwOki/qgsU=
+X-Google-Smtp-Source: AGHT+IHOkEO16tIXxM5kBfCPn575boZ5jVxseMjoaohbBQ6j6UJ1g0BXSfTd5JZCM80of12ANtAKGQEsyphT9T8sK4k=
+X-Received: by 2002:adf:f691:0:b0:371:8dbf:8c1b with SMTP id
+ ffacd0b85a97d-3749b56154fmr2842662f8f.34.1724959468964; Thu, 29 Aug 2024
+ 12:24:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+References: <CAK7LNATb8dbhvdSgiNEMkdsgg93q4ZUGUxReZYNjOV3fDPnfyQ@mail.gmail.com>
+ <20240828181028.4166334-1-legion@kernel.org>
+In-Reply-To: <20240828181028.4166334-1-legion@kernel.org>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Thu, 29 Aug 2024 12:24:17 -0700
+Message-ID: <CAADnVQL4Cy-F_=RJy_=3v97mfaMRWGp54xN-t9QzOqY3+hoghg@mail.gmail.com>
+Subject: Re: [PATCH v3] bpf: Remove custom build rule
+To: Alexey Gladkov <legion@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
+	Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>, Masahiro Yamada <masahiroy@kernel.org>, 
+	Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Oleg Nesterov <oleg@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-If the __qcuefi pointer is not set, then in the original code, we would
-hold onto the lock.  That means that if we tried to set it later, then
-it would cause a deadlock.  Drop the lock on the error path.  That's
-what all the callers are expecting.
+On Wed, Aug 28, 2024 at 11:11=E2=80=AFAM Alexey Gladkov <legion@kernel.org>=
+ wrote:
+>
+> --- /dev/null
+> +++ b/kernel/bpf/btf_iter.c
+> @@ -0,0 +1,2 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +#include "../../tools/lib/bpf/btf_iter.c"
 
-Fixes: 759e7a2b62eb ("firmware: Add support for Qualcomm UEFI Secure Application")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/firmware/qcom/qcom_qseecom_uefisecapp.c | 4 ++++
- 1 file changed, 4 insertions(+)
+These files are licensed as
+// SPDX-License-Identifier: (LGPL-2.1 OR BSD-2-Clause)
+in libbpf directory.
+Pls use that.
 
-diff --git a/drivers/firmware/qcom/qcom_qseecom_uefisecapp.c b/drivers/firmware/qcom/qcom_qseecom_uefisecapp.c
-index 6fefa4fe80e8..447246bd04be 100644
---- a/drivers/firmware/qcom/qcom_qseecom_uefisecapp.c
-+++ b/drivers/firmware/qcom/qcom_qseecom_uefisecapp.c
-@@ -715,6 +715,10 @@ static int qcuefi_set_reference(struct qcuefi_client *qcuefi)
- static struct qcuefi_client *qcuefi_acquire(void)
- {
- 	mutex_lock(&__qcuefi_lock);
-+	if (!__qcuefi) {
-+		mutex_unlock(&__qcuefi_lock);
-+		return NULL;
-+	}
- 	return __qcuefi;
- }
- 
--- 
-2.45.2
+Pls keep acks/reviews-bys/tested-by when you respin.
 
+Thanks
+
+pw-bot: cr
 
