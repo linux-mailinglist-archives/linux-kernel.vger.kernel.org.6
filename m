@@ -1,84 +1,91 @@
-Return-Path: <linux-kernel+bounces-307690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 273A3965187
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 23:10:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6ECBD96514F
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 22:56:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C42111F23285
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 21:10:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 196341F24DB4
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 20:56:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68A0B189F5A;
-	Thu, 29 Aug 2024 21:09:55 +0000 (UTC)
-Received: from brightrain.aerifal.cx (brightrain.aerifal.cx [104.156.224.86])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 456551AE87B;
+	Thu, 29 Aug 2024 20:55:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ELdlvzrQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C80818A92C
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 21:09:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=104.156.224.86
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74724189B82;
+	Thu, 29 Aug 2024 20:55:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724965795; cv=none; b=a+oYfj6mdXWj5GmXYXkR2kJ2XqQIou/2mZAAOaXa1pBAF1C8RtO50hNP6UdUzgmz0VTWE3O/pR8tpjGSyK4HldADnGozSNLdvLpDTQuInF2xvUiJE6G1kexeLE+fbrg4Ua4wRJV59zZYSLM+I+4rAtLm+HPGmpewg9THs4eE9Gw=
+	t=1724964927; cv=none; b=nG+5rCPsjwX1aeYPAZ01oGpqs0JOf/Z8u5iXYyVGF5dj/aXKwuQcOVigmyGnD7As54zbjgdXr3wPV2tKbaaHJyPwdXfMiJbSR91sDWK2lXVDI/aP9k5Wvmeneyh1nVwOGPwMusdwx+nDiae1XtAEDipxY95BXR6gUGF4YZ6pnmU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724965795; c=relaxed/simple;
-	bh=S3YBKg7lXNOxz5AOfofnf/s0noWCjPueQqE5fBwJHJg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=dqF+ZdUrQkcZ2A2KgG9VLOTrXP2Zc+a44HB+B2vvkF1jkAwA5aWOMAxr+Z2fYEgcga07s+s4TH3MiS/mG5/j5Nj8DHK60+SUWWQsfTo9H6d83oes7OFTWdqNJLoFZDIyIZopaK3BUEcjoCzJs+03Qq89pyySI2uf24yhTbZBa6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=libc.org; spf=pass smtp.mailfrom=aerifal.cx; arc=none smtp.client-ip=104.156.224.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=libc.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aerifal.cx
-Date: Thu, 29 Aug 2024 16:54:38 -0400
-From: Rich Felker <dalias@libc.org>
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Cc: linux-api@vger.kernel.org, libc-alpha@sourceware.org,
-	musl@lists.openwall.com
-Subject: AT_MINSIGSTKSZ mismatched interpretation kernel vs libc
-Message-ID: <20240829205436.GA14562@brightrain.aerifal.cx>
+	s=arc-20240116; t=1724964927; c=relaxed/simple;
+	bh=98NgYxDFTZsyIcVeJpstEhZpPHzU/V/rLwQM7OZ3NQc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m+epfsSHSXGObwLPfRbSV1I+onj4kBX3OwzDOKKYMoVlmbp84DfGw5umNsaF+jqe/+rU9yCwgul1rx5IugjrKMSmBCIQc/NAnWCDY5Q8hVieYIiPdWvkXVDD980KIiZam9CXxVjmlijHV2fkVXSFsTTV3vUb4/8cfbY93mwuEOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ELdlvzrQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E043BC4CEC1;
+	Thu, 29 Aug 2024 20:55:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724964926;
+	bh=98NgYxDFTZsyIcVeJpstEhZpPHzU/V/rLwQM7OZ3NQc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ELdlvzrQNZephMZGNw04ktlB7TzO/liAMo28JPJwsWjRBGuZUG6Sp1GEGHsl0maLF
+	 Hdq+5/tKOH2OHnKAlC/4IPVS0+l44HBiWcTQd1BYnKYBRe3bhtPyeik4ztJKP/NXN3
+	 R2FTYTLdka6XBFtVcGH3M3xLRuzE7NYqIeTb+bgQq1FBSYW09DdOA6yV5OoE+Bg35+
+	 RITfWrkEYC0D32vdzqEs28MS7vHzm72qI+4aB2E7jV+uLrVIavIYTDnyufWVCL+bJQ
+	 hvIeUgLnXsyEwLq2ugiy7ySE/l+qlMrj4QXfZNSse3zIDIDb58ZEbdOLe1GzRwzLMy
+	 TvJ5eFpo9fBdw==
+Date: Thu, 29 Aug 2024 21:55:22 +0100
+From: Simon Horman <horms@kernel.org>
+To: Rosen Penev <rosenp@gmail.com>
+Cc: Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+	davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+	linux@armlinux.org.uk, linux-kernel@vger.kernel.org,
+	o.rempel@pengutronix.de, p.zabel@pengutronix.de
+Subject: Re: [PATCHv2 net-next] net: ag71xx: update FIFO bits and descriptions
+Message-ID: <20240829205522.GC1368797@kernel.org>
+References: <20240828223931.153610-1-rosenp@gmail.com>
+ <20240829165234.GV1368797@kernel.org>
+ <CAKxU2N8j5Fw1spACmNyWniKGpSWtMt0H3KY5JZj5zYaA0c69kA@mail.gmail.com>
+ <20240829124752.6ce254da@kernel.org>
+ <CAKxU2N9F6+nZzW=me_ti76RwUFiKqG5RT0Ztgztc8yE9O3fwhQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAKxU2N9F6+nZzW=me_ti76RwUFiKqG5RT0Ztgztc8yE9O3fwhQ@mail.gmail.com>
 
-As I understand it, the AT_MINSIGSTKSZ auxv value is supposed to be a
-suitable runtime value for MINSIGSTKSZ (sysconf(_SC_MINSIGSTKSZ)),
-such that it's safe to pass as a size to sigaltstack. However, this is
-not how the kernel actually implements it. At least on x86 and
-powerpc, the kernel fills it via get_sigframe_size, which computes the
-size of the sigcontext/siginfo/etc to be pushed and uses that
-directly, without allowing any space for actual execution, and without
-ensuring the value is at least as large as the legacy constant
-MINSIGSTKSZ. This leads to two problems:
+On Thu, Aug 29, 2024 at 01:21:02PM -0700, Rosen Penev wrote:
+> On Thu, Aug 29, 2024 at 12:47 PM Jakub Kicinski <kuba@kernel.org> wrote:
+> >
+> > On Thu, 29 Aug 2024 10:47:01 -0700 Rosen Penev wrote:
+> > > > Please consider a patch to allow compilation of this driver with
+> > > > COMPILE_TEST in order to increase build coverage.
+> > > Is that just
+> >
+> > Aha, do that and run an allmodconfig build on x86 to make sure nothing
+> > breaks. If it's all fine please submit
+> Funny enough it did break due to a mistake (L0 vs LO).
 
-1. If userspace uses the value without clamping it not-below
-   MINSIGSTKSZ, sigaltstack will fail with ENOMEM.
+Then I'd say this exercise is a success :)
 
-2. If the kernel needs more space than MINSIGSTKSZ just for the signal
-   frame structures, userspace that trusts AT_MINSIGSTKSZ will only
-   allocate enough for the frame, and the program will immediately
-   crash/stack-overflow once execution passes to userspace.
+> I guess I'll
+> send a series just to keep these patches together.
 
-Since existing kernels in the wild can't be fixed, and since it looks
-like the problem is just that the kernel chose a poor definition of
-AT_MINSIGSTKSZ, I think userspace (glibc, musl, etc.) need to work
-around the problem, adding a per-arch correction term to
-AT_MINSIGSTKSZ that's basically equal to:
+In general, if you have multiple patches for the same driver,
+for a single tree (net or net-next) I would either:
+1) Send them as a series
+2) Wait for one to be accepted before sending the next one
 
-    legacy_MINSIGSTKSZ - AT_MINSIGSTKSZ as returned on legacy hw
-
-such that adding the correction term would reproduce the expected
-value MINSIGSTKSZ.
-
-The only question is whether the kernel will commit to keeping this
-behavior, or whether it would be "fixed" to include all the needed
-working space when they eventually decide they want bigger stacks for
-some new register file bloat. I think keeping the current behavior, so
-we can just add a fixed offset, is probably the best thing to do.
-
-Rich
+Option 1 seems appropriate here.
 
