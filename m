@@ -1,84 +1,82 @@
-Return-Path: <linux-kernel+bounces-307194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04FA89649DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 17:20:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 75ACE9649E3
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 17:22:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A4A31C22C0B
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:20:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AEB11C22632
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:22:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 151821B29AF;
-	Thu, 29 Aug 2024 15:20:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 523AB1B29AA;
+	Thu, 29 Aug 2024 15:22:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Egj4RduW"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W7JFfLrt"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A904F1B1505;
-	Thu, 29 Aug 2024 15:20:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1417243ADE;
+	Thu, 29 Aug 2024 15:22:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724944831; cv=none; b=kmNEPR3E1D9nPNmHA+39uRxTseQ3wN4GgIVC6AcAeJCnKq2gGrcW1CpiEQvFO3/hMIbPnDCvFaSLscbYmHsZKkxGKNWYNEtiNg98ZWsTqArpSrQz3o63z40/u0rnLGKvZlGdVZs9sFYBTMBL+HoAFwZQ7H+RcwbPvNz7FtC1zTo=
+	t=1724944942; cv=none; b=pVqagynGdokaOVxrrbLZNn3Ab95+tp6lGNYvgIyv5g55n3zJ97NEOtGS7vyK7UMg0HxYkNsA9xLZVZldFkEKbTO6OoAbIsrVFOpt9CeqmNdTVhJ+DApm6jXlqMXun3MKpmPVbH2bm7XQVd1ku3jxHCtDX5r2p+tJVPv6+3saYdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724944831; c=relaxed/simple;
-	bh=3CPL4RJHA03wwpA8F+T8Ce8Bi53YSfV0qkFQPtDEBQw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nNY2Hq9wr2jevxoWlD52PR/2dhWZYZ4ZNQqnvc67EUSjACCOR8lHYf9Jj0IxpScWXVL/tVpfhmNZAE9Dc3GklbyImNBcH1EgX25jDDP50QLijjlQ+fYt+DWktNKq7g8h0JG2vKFm4ljCegiLL2pIl2XAgfBTPPotrf4jQyXNEmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Egj4RduW; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724944830; x=1756480830;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=3CPL4RJHA03wwpA8F+T8Ce8Bi53YSfV0qkFQPtDEBQw=;
-  b=Egj4RduWy3paJR/1JFQa+e3UaXrheWCCXGGbhp321IGJzH88tODynbSn
-   XuqXPwiqR+hLeFqa3twAvrw+sjaLrohiM5EeNIfd7mCIbUg1mM+KQtLJS
-   G2iKnA/TiHi7MLt8WZLzPQRwXtLQEvxQGHItr/U3lTxLeejZz/xfoByYS
-   us3gnQZXcDRFhXKU7XHsizhwOiUlbNxQYZT2D0NYrRJIRpFyQgRrkM3IK
-   Jw4xey3g50plDSX7+YhRYJn6ag3BVHFvnWT2URSsPlAWxMWM5LPYsWhxJ
-   8sqphS/htJUO1oGm/RljaqRkxBFHAz8oYGd+GgCDKF7U5RsyGnKYR1K4L
-   A==;
-X-CSE-ConnectionGUID: yxEj70VGT0OcBqRHs9ZvHQ==
-X-CSE-MsgGUID: XRetHN39SYWAMmQqsA62cQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11179"; a="34118330"
-X-IronPort-AV: E=Sophos;i="6.10,185,1719903600"; 
-   d="scan'208";a="34118330"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 08:20:29 -0700
-X-CSE-ConnectionGUID: qe5oVHKNR3mWnHVwlUh9rQ==
-X-CSE-MsgGUID: JRELzpHWRkOeydwRuPXYAg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,185,1719903600"; 
-   d="scan'208";a="68428043"
-Received: from kanliang-dev.jf.intel.com ([10.165.154.102])
-  by orviesa005.jf.intel.com with ESMTP; 29 Aug 2024 08:20:28 -0700
-From: kan.liang@linux.intel.com
-To: peterz@infradead.org,
-	mingo@redhat.com,
-	tglx@linutronix.de,
-	acme@kernel.org,
-	namhyung@kernel.org,
-	mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org,
-	irogers@google.com,
-	adrian.hunter@intel.com,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: ravi.bangoria@amd.com,
-	sandipan.das@amd.com,
-	atrajeev@linux.vnet.ibm.com,
-	luogengkun@huaweicloud.com,
-	ak@linux.intel.com,
-	Kan Liang <kan.liang@linux.intel.com>
-Subject: [RFC PATCH] perf: New start period for the freq mode
-Date: Thu, 29 Aug 2024 08:20:36 -0700
-Message-Id: <20240829152036.3923842-1-kan.liang@linux.intel.com>
-X-Mailer: git-send-email 2.38.1
+	s=arc-20240116; t=1724944942; c=relaxed/simple;
+	bh=291jpGjLUM4gv+row/g40/RkHWc54EuUBwrXNjFkY6k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YJnprD7KxL8hnOzKNESONL0fol63Ry7ygqCNYqOQXAC3PP1/O10qabVD5HzK5St17QXN4MBoU3ITqcjJns6kM9rfJRddQWzHWaHtxG92wbCDb9Bcvjj+GfiLJBVbZes3iYXbmfJ6+dfrnRZgD/IMTAI43vi+mdibcWrX/wFmNWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W7JFfLrt; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-371936541caso502711f8f.0;
+        Thu, 29 Aug 2024 08:22:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724944939; x=1725549739; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Q7PRQy+Kz5kGB4uu1V7mT3d6Kex4l7Rw9r1Zl56FLww=;
+        b=W7JFfLrta/R9EdXeQ1c8aSFDofTVdmLB12sdg9fI9mS82cHPL8H6WR/XOKxj9xyfJX
+         PhQLkAZhLnhGPfH7qwd5FbFnt1X1Qh/M1lH/Qjnxxsj1SwUlMimiH0sjMHkkSDF/RLmQ
+         I2hAJKkkOmTCegMJqwhRw05cJ4wiHrFVEkn6+/dd9nrjhbEZ0xGdmmtURCDMx1izQy9d
+         bId1FaU0bcbxf9eLI91Nm6gHQR2OOPowvXYJ5oZ5jLevcw91K5BTNiylz8QmomtvXJfT
+         dOB2cuTggRbPY19nAtUjozoLwJaYn6w+aBD3vNbrcjfYsP6f99Q+CNsUGXaFu91jOJaE
+         pfzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724944939; x=1725549739;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Q7PRQy+Kz5kGB4uu1V7mT3d6Kex4l7Rw9r1Zl56FLww=;
+        b=Es1qHvcjJYb99WbfkaONmC8H7gXSPoypUhPRIt+NMySSxWIMVGuo3Kws9V5jaHL0/O
+         6XdjbjTxkmYrKc9LKm8fcw3LA6tc92ng2A/2YiJXWr/P0O4PTpbaPBO3XcAv4VDU5urB
+         9I8nrGvRximtCcx/4NbcX3Xdhg1N+Jh/Q07ghOjW8cd/U3w1kzYKlR4kVGeOijGW+olk
+         VC9T0HKhVPSsQd1+ciVmvbSo0ivmU6dAV1+pNHqTvo0tS9gui30RQXEOHoa8HsBu0SHV
+         nST86DzQ39ve94ts18AYPQtG8+sdGHpL5AG+PnvqXguckcT/mwZ1fN3+613x8tnaS9/5
+         r/CQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXOA/LXemUSote+Gws5pcqe91FwfCkQm0reNmAONOq5PPe6rzpT5En9ipOx1cAVo4QKT3y1lks2qehZ@vger.kernel.org, AJvYcCXR3XGVS1ofoJI5CasAWRMyOzrEYW4LVja2n9BE2mRM5kfjgkrixPkQfH8xpRx9yiYNEM2JZAkJFyEozLb8@vger.kernel.org
+X-Gm-Message-State: AOJu0YwpQAOISgSUAZ2sq3rNYDKKwgpcFxqMidlrE9TtDaqQfzPQCTCs
+	bx7+9k5MrH5hOW1TP1LulXcqRVeK4tr2OkKjp8TaRka5FcOWX/jD
+X-Google-Smtp-Source: AGHT+IE9EbO37rVQiUYeKd06kc7c+K9fxQJuaQQZs5Dj+NSsAWnQCSg8FEnaompj8W50zKhoZqdaaA==
+X-Received: by 2002:a5d:45d2:0:b0:368:3b1a:8350 with SMTP id ffacd0b85a97d-3749b5498eamr2215641f8f.19.1724944939096;
+        Thu, 29 Aug 2024 08:22:19 -0700 (PDT)
+Received: from localhost.localdomain ([178.69.224.101])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3749ee71b9dsm1692336f8f.38.2024.08.29.08.22.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Aug 2024 08:22:18 -0700 (PDT)
+From: Artem Sadovnikov <ancowi69@gmail.com>
+To: "Theodore Ts'o" <tytso@mit.edu>
+Cc: Artem Sadovnikov <ancowi69@gmail.com>,
+	Andreas Dilger <adilger.kernel@dilger.ca>,
+	linux-ext4@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org,
+	Ritesh Harjani <ritesh.list@gmail.com>,
+	Mikhail Ukhin <mish.uxin2012@yandex.ru>
+Subject: [PATCH v3] ext4: fix i_data_sem unlock order in ext4_ind_migrate()
+Date: Thu, 29 Aug 2024 15:22:09 +0000
+Message-ID: <20240829152210.2754-1-ancowi69@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,128 +85,48 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Kan Liang <kan.liang@linux.intel.com>
+Fuzzing reports a possible deadlock in jbd2_log_wait_commit.
 
-The freq mode is the current default mode of Linux perf. 1 period is
-used as a start period. The period is auto-adjusted in each tick or an
-overflow to meet the frequency target.
+This issue is triggered when an EXT4_IOC_MIGRATE ioctl is set to require
+synchronous updates because the file descriptor is opened with O_SYNC.
+This can lead to the jbd2_journal_stop() function calling
+jbd2_might_wait_for_commit(), potentially causing a deadlock if the
+EXT4_IOC_MIGRATE call races with a write(2) system call.
 
-The start period 1 is too low and may trigger some issues.
-- Many HWs do not support period 1 well.
-  https://lore.kernel.org/lkml/875xs2oh69.ffs@tglx/
-- For an event that occurs frequently, period 1 is too far away from the
-  real period. Lots of the samples are generated at the beginning.
-  The distribution of samples may not be even.
+This problem only arises when CONFIG_PROVE_LOCKING is enabled. In this
+case, the jbd2_might_wait_for_commit macro locks jbd2_handle in the
+jbd2_journal_stop function while i_data_sem is locked. This triggers
+lockdep because the jbd2_journal_start function might also lock the same
+jbd2_handle simultaneously.
 
-It's hard to find a universal start period for all events. The idea is
-only to give an estimate for the popular HW and HW cache events. For the
-rest of the events, start from the lowest possible recommended value.
+Found by Linux Verification Center (linuxtesting.org) with syzkaller.
 
-Only the Intel event list JSON file provides the recommended SAV
-(sample after value) for each event. The estimation is based on the
-Intel's SAV.
-
-This patch implements a generic perf_freq_start_period() which impacts
-all ARCHs.
-If the other ARCHs don't like the start period, a per-pmu
-(*freq_start_period) may be introduced instead. Or make it a __weak
-function.
-The other option would be exposing a start_period knob in the sysfs or a
-per-event config. So the end users can set their preferred start period.
-Please let me know your thoughts.
-
-SW events may need to be specially handled, which is not implemented in
-the patch.
-
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+Reviewed-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+Co-developed-by: Mikhail Ukhin <mish.uxin2012@yandex.ru>
+Signed-off-by: Mikhail Ukhin <mish.uxin2012@yandex.ru>
+Signed-off-by: Artem Sadovnikov <ancowi69@gmail.com>
 ---
- kernel/events/core.c | 65 +++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 64 insertions(+), 1 deletion(-)
+ v2: New addresses have been added and Ritesh Harjani has been noted as a
+ reviewer.
+ v3: Description updated.
+ fs/ext4/migrate.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 4b855b018a79..7a028474caef 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -12017,6 +12017,69 @@ static void account_event(struct perf_event *event)
- 	account_pmu_sb_event(event);
- }
- 
-+static u64 perf_freq_start_period(struct perf_event *event)
-+{
-+	int type = event->attr.type;
-+	u64 config, factor;
-+
-+	/*
-+	 * The 127 is the lowest possible recommended SAV (sample after value)
-+	 * for a 4000 freq (default freq), according to Intel event list JSON
-+	 * file, which is the only JSON file that provides a recommended value.
-+	 */
-+	factor = 127 * 4000;
-+	if (type != PERF_TYPE_HARDWARE && type != PERF_TYPE_HW_CACHE)
-+		goto end;
-+
-+	/*
-+	 * The estimation of the start period in the freq mode is
-+	 * based on the below assumption.
-+	 *
-+	 * For a cycles or an instructions event, 1GHZ of the
-+	 * underlying platform, 1 IPC. The workload is idle 50% time.
-+	 * The start period = 1,000,000,000 * 1 / freq / 2.
-+	 *		    = 500,000,000 / freq
-+	 *
-+	 * Usually, the branch-related events occur less than the
-+	 * instructions event. According to the Intel event list JSON
-+	 * file, the SAV (sample after value) of a branch-related event
-+	 * is usually 1/4 of an instruction event.
-+	 * The start period of branch-related events = 125,000,000 / freq.
-+	 *
-+	 * The cache-related events occurs even less. The SAV is usually
-+	 * 1/20 of an instruction event.
-+	 * The start period of cache-related events = 25,000,000 / freq.
-+	 */
-+	config = event->attr.config & PERF_HW_EVENT_MASK;
-+	if (type == PERF_TYPE_HARDWARE) {
-+		switch (config) {
-+		case PERF_COUNT_HW_CPU_CYCLES:
-+		case PERF_COUNT_HW_INSTRUCTIONS:
-+		case PERF_COUNT_HW_BUS_CYCLES:
-+		case PERF_COUNT_HW_STALLED_CYCLES_FRONTEND:
-+		case PERF_COUNT_HW_STALLED_CYCLES_BACKEND:
-+		case PERF_COUNT_HW_REF_CPU_CYCLES:
-+			factor = 500000000;
-+			break;
-+		case PERF_COUNT_HW_BRANCH_INSTRUCTIONS:
-+		case PERF_COUNT_HW_BRANCH_MISSES:
-+			factor = 125000000;
-+			break;
-+		case PERF_COUNT_HW_CACHE_REFERENCES:
-+		case PERF_COUNT_HW_CACHE_MISSES:
-+			factor = 25000000;
-+			break;
-+		default:
-+			goto end;
-+		}
-+	}
-+
-+	if (type == PERF_TYPE_HW_CACHE)
-+		factor = 25000000;
-+end:
-+	return DIV_ROUND_UP_ULL(factor, event->attr.sample_freq);
-+}
-+
- /*
-  * Allocate and initialize an event structure
-  */
-@@ -12140,7 +12203,7 @@ perf_event_alloc(struct perf_event_attr *attr, int cpu,
- 	hwc = &event->hw;
- 	hwc->sample_period = attr->sample_period;
- 	if (attr->freq && attr->sample_freq)
--		hwc->sample_period = 1;
-+		hwc->sample_period = perf_freq_start_period(event);
- 	hwc->last_period = hwc->sample_period;
- 
- 	local64_set(&hwc->period_left, hwc->sample_period);
+diff --git a/fs/ext4/migrate.c b/fs/ext4/migrate.c
+index d98ac2af8199..a5e1492bbaaa 100644
+--- a/fs/ext4/migrate.c
++++ b/fs/ext4/migrate.c
+@@ -663,8 +663,8 @@ int ext4_ind_migrate(struct inode *inode)
+ 	if (unlikely(ret2 && !ret))
+ 		ret = ret2;
+ errout:
+-	ext4_journal_stop(handle);
+ 	up_write(&EXT4_I(inode)->i_data_sem);
++	ext4_journal_stop(handle);
+ out_unlock:
+ 	ext4_writepages_up_write(inode->i_sb, alloc_ctx);
+ 	return ret;
 -- 
-2.38.1
+2.43.0
 
 
