@@ -1,146 +1,123 @@
-Return-Path: <linux-kernel+bounces-306514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF90D963FFE
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 11:27:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DDE6964040
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 11:35:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 68C6AB24C15
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 09:27:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 148861F2157E
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 09:35:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26DD118DF60;
-	Thu, 29 Aug 2024 09:26:36 +0000 (UTC)
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E77C18CBFA;
+	Thu, 29 Aug 2024 09:35:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="Jq2XZ2Wv"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48AAF18CC1B;
-	Thu, 29 Aug 2024 09:26:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE9FB1547C8;
+	Thu, 29 Aug 2024 09:35:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724923595; cv=none; b=EQhbCQasG1Uyi4pObiIOZZjrQ20IrZA1IwM0ESzOKaoS/EDIrG/pU33V1J8TyZ/cPo4pueIwp8arMfE45VxFN7TGd6dtM3VEpq0hT+mmTWPQX/vOXiVPPb3lXfocCumfrfNqfm5qntvyVTN4/eJmB+vfLd5D20lEjTptDYq6kqs=
+	t=1724924144; cv=none; b=NNj76QkHJE6RjGQ+I6/tqNJWKTLnOzk+H0LM/BQgpQg0NF2CwL//WbzJ6or5w20fm2MxeTFIy6yGl48AZzf7MmAuTc/mYzVgGKysLwWfZjVh6PTDWJw9cxObfI+63nQS3STMvqQUNXgWgjcNPNUtOj83/chM2g0eQSYVAlREa74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724923595; c=relaxed/simple;
-	bh=dMHJeWxKwHHIHYwpupto0QfO0aDT5yxQ86wMZDpxhSM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dTZFjrArsDovBSrk8LnTgLFV9W2L2fRYftJYn0lvZp3nHP6E8vMtnoyZ+TaJkAScc8bwrPsRvQw64qrdl5MgyS22m1T5aMNytKkzJ/onQN3AiXUFo8iG0/KlEjh09nxM/KGkaZO4WscXmxgBkctccrVPCAJQixBDCKwMsGKTbkw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 95A622199E;
-	Thu, 29 Aug 2024 09:26:31 +0000 (UTC)
-Authentication-Results: smtp-out1.suse.de;
-	none
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8624C13408;
-	Thu, 29 Aug 2024 09:26:31 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Z6e7IMc+0GaMcQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 29 Aug 2024 09:26:31 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 3FE80A0965; Thu, 29 Aug 2024 11:26:31 +0200 (CEST)
-Date: Thu, 29 Aug 2024 11:26:31 +0200
-From: Jan Kara <jack@suse.cz>
-To: zhangshida <starzhangzsd@gmail.com>
-Cc: tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.com,
-	ebiggers@kernel.org, linux-ext4@vger.kernel.org,
-	linux-kernel@vger.kernel.org, zhangshida@kylinos.cn,
-	Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH 2/3] ext4: hoist ext4_block_write_begin and replace the
- __block_write_begin
-Message-ID: <20240829092631.oa2fxpfs3ok6uzbw@quack3>
-References: <20240829085407.3331490-1-zhangshida@kylinos.cn>
- <20240829085407.3331490-3-zhangshida@kylinos.cn>
- <20240829091250.gq2cgkfubbvlysxy@quack3>
+	s=arc-20240116; t=1724924144; c=relaxed/simple;
+	bh=H9lfUPv3T1mST3tzbqShCdPOuFcAKP3xRCkh/nwpKwM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VbscrmygXeqz3bU389JY6S8m2QegVnsfrBaPZCjKGMrDFZu3CYmOoruH09lFOz5HRL62WOu/msdawZuqd5oW2xadjARn0NYKvAmwJpoKb9uXTgOhcjQ72kAHYznOWqB7jovNGdX8zTLGwuRDirweO0Qyy1VZS4nwZvElTPFHa6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=Jq2XZ2Wv; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from localhost (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 6A1724157B;
+	Thu, 29 Aug 2024 11:27:55 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+	by localhost (disroot.org [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id BgBux_5UOXgm; Thu, 29 Aug 2024 11:27:54 +0200 (CEST)
+From: Yao Zi <ziyao@disroot.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1724923674; bh=H9lfUPv3T1mST3tzbqShCdPOuFcAKP3xRCkh/nwpKwM=;
+	h=From:To:Cc:Subject:Date;
+	b=Jq2XZ2WvwoOnB6Q/RKRhl9eBW6tXwK6poVcZiFavSh9HX2vyeZhJCqp0V12JOgMEp
+	 Y9XDP4ECZvXkBPjktrReKakwSa30mOpNX6TVBYsPbMPqFwSdl0tJf8PVjE/cMGFun1
+	 VfsEQATb/r/EDTUyFZiYfyZiH8Uf60RgzW+P4AlJP//1gbhh6OW0hlW7+0uON+nyLt
+	 9HmOsGKWzpFWa4bHHQZ23F92rpFG8HoI8Zh4kDJgBHxPw+kBjbZnzBLz2/7C3jZrhG
+	 IiUsd4HImvLCEYXDWtr+8AtB4rIZ2OSjAZXqWICiyIfnXvoS8kop/FZHsIrWs5zzbf
+	 UeMHGrvhitAUQ==
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Chris Morgan <macromorgan@hotmail.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Tim Lunn <tim@feathertop.org>,
+	Andy Yan <andyshrk@163.com>,
+	Muhammed Efe Cetin <efectn@protonmail.com>,
+	Jagan Teki <jagan@edgeble.ai>,
+	Dragan Simic <dsimic@manjaro.org>,
+	Ondrej Jirman <megi@xff.cz>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org
+Cc: Celeste Liu <CoelacanthusHex@gmail.com>,
+	Yao Zi <ziyao@disroot.org>
+Subject: [PATCH v4 0/4] Add initial support for Rockchip RK3528 SoC
+Date: Thu, 29 Aug 2024 09:27:01 +0000
+Message-ID: <20240829092705.6241-1-ziyao@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240829091250.gq2cgkfubbvlysxy@quack3>
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.00 / 50.00];
-	REPLY(-4.00)[]
-X-Spam-Score: -4.00
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 95A622199E
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
 
-On Thu 29-08-24 11:12:50, Jan Kara wrote:
-> On Thu 29-08-24 16:54:06, zhangshida wrote:
-> > From: Shida Zhang <zhangshida@kylinos.cn>
-> > 
-> > Using __block_write_begin() make it inconvenient to journal the
-> > user data dirty process. We can't tell the block layer maintainer,
-> > ‘Hey, we want to trace the dirty user data in ext4, can we add some
-> > special code for ext4 in __block_write_begin?’:P
-> > 
-> > So use ext4_block_write_begin() instead.
-> > 
-> > The two functions are basically doing the same thing except for the
-> > fscrypt related code. Remove the unnecessary #ifdef since
-> > fscrypt_inode_uses_fs_layer_crypto() returns false (and it's known at
-> > compile time) when !CONFIG_FS_ENCRYPTION.
-> > 
-> > And hoist the ext4_block_write_begin so that it can be used in other
-> > files.
-> > 
-> > Suggested-by: Jan Kara <jack@suse.cz>
-> > Suggested-by: Eric Biggers <ebiggers@kernel.org>
-> > Signed-off-by: Shida Zhang <zhangshida@kylinos.cn>
-> 
-> I think I've given my Reviewed-by on this already in previous version - you
-> can keep those tags unless the patch significantly changes. Anyway: feel
-> free to add:
-> 
-> Reviewed-by: Jan Kara <jack@suse.cz>
+Rockchip RK3528 is a quad-core ARM Cortex-A53 SoC designed for
+multimedia application. This series add a basic device tree with CPU,
+interrupts and UART nodes for it and is able to boot into a kernel with
+only UART console.
 
-I've realized the patch slightly changed so that's likely why you've
-dropped the Reviewed-by so I retract my comment :)
+Has been tested on Radxa E20C board[1] with vendor U-boot, successfully
+booted into initramfs with this log[2].
 
-I've also realized one thing:
+[1]: https://docs.radxa.com/en/e/e20c
+[2]: https://gist.github.com/ziyao233/b74523a1e3e8bf36286a572e008ca319
 
-> > --- a/fs/ext4/inode.c
-> > +++ b/fs/ext4/inode.c
-> > @@ -1024,10 +1024,10 @@ int do_journal_get_write_access(handle_t *handle, struct inode *inode,
-> >  	if (!buffer_mapped(bh) || buffer_freed(bh))
-> >  		return 0;
-> >  	/*
-> > -	 * __block_write_begin() could have dirtied some buffers. Clean
-> > +	 * ext4_block_write_begin() could have dirtied some buffers. Clean
-> >  	 * the dirty bit as jbd2_journal_get_write_access() could complain
-> >  	 * otherwise about fs integrity issues. Setting of the dirty bit
-> > -	 * by __block_write_begin() isn't a real problem here as we clear
-> > +	 * by ext4_block_write_begin() isn't a real problem here as we clear
-> >  	 * the bit before releasing a page lock and thus writeback cannot
-> >  	 * ever write the buffer.
-> >  	 */
+Changed from v3:
+- move mmio devices into soc node
+https://lore.kernel.org/all/20240814155014.18097-1-ziyao@disroot.org/
 
-This comment and the special buffer_dirty() handling in this function can
-be removed after patch 3 of this series. Nice additional cleanup :).
+Changed from v2:
+- fix fixed-clock nodename
+https://lore.kernel.org/all/20240811140725.64866-1-ziyao@disroot.org/
 
-								Honza
+Changed from v1:
+- fix stdout-path
+- style improvements
+https://lore.kernel.org/all/20240803125510.4699-2-ziyao@disroot.org/
+
+Yao Zi (4):
+  dt-bindings: serial: snps-dw-apb-uart: Document Rockchip RK3528
+  dt-bindings: arm: rockchip: Add Radxa E20C board
+  arm64: dts: rockchip: Add base DT for rk3528 SoC
+  arm64: dts: rockchip: Add Radxa e20c board
+
+ .../devicetree/bindings/arm/rockchip.yaml     |   5 +
+ .../bindings/serial/snps-dw-apb-uart.yaml     |   1 +
+ arch/arm64/boot/dts/rockchip/Makefile         |   1 +
+ .../boot/dts/rockchip/rk3528-radxa-e20c.dts   |  22 ++
+ arch/arm64/boot/dts/rockchip/rk3528.dtsi      | 189 ++++++++++++++++++
+ 5 files changed, 218 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts
+ create mode 100644 arch/arm64/boot/dts/rockchip/rk3528.dtsi
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.46.0
+
 
