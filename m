@@ -1,308 +1,379 @@
-Return-Path: <linux-kernel+bounces-307776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DAA89652DD
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 00:25:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 581259652E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 00:26:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A638B226AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 22:25:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E9562850D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 22:26:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 383401BD00F;
-	Thu, 29 Aug 2024 22:24:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79A331BE243;
+	Thu, 29 Aug 2024 22:25:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="eah9mlFU"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GtuPO+67"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B23C1BAEEE;
-	Thu, 29 Aug 2024 22:24:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E62B1BE22F;
+	Thu, 29 Aug 2024 22:25:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724970279; cv=none; b=TkBvzJ35UljYA51JKQkgTqi4k0CK8P1m9iCganCUOBHOdG434IlyP/7FZ1Y33SPl0Fwa8lRwgt9RRUR1yu66FNKAjW9vXMuSrj+v7WAxHNQKleuUhH/NS4iYmYBBM8APH0Qptiiz9zaZB6g7GwQKtpKejcvaPbYA2N5lBPawm28=
+	t=1724970327; cv=none; b=Zq6Xp/WpaDshJ7/U+6HkYywOn9mXWhrnapZlMV87j8OkCzQyBSzBUoFieipOK59lD5aZoaf8aL18wc7NuMYa6C6VGdoYi2bEisLwnl/HiYkQwjSjLRONo/zMvXCx9ddhGvlwnqH+KrkK2daCVugvZypJQrdoDVkHVW+G8BWsUmY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724970279; c=relaxed/simple;
-	bh=vNp4WCXRq96/jsbTyQi8C13HB80VQ5tpk67BkQVTMlQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=C0zPe599LFI6qBXEEZD6PtM5gkj3wg8jzel+2dag9jzeSErzW/FcYDxJ3Y5h/MxoCSBTxObY/K4tlG9Gv4JDmcUR3tLYX7FQSYM4h81RYbR4Y/kOYIyMmNGH2l9s6S/gveJh1bXmulIYnXIvdf3Gmc0R0RmydtvZ4kS65vIbt40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=eah9mlFU; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47THWFOG026564;
-	Thu, 29 Aug 2024 22:24:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	OikWV/zxhCjbqlu1U3SrGEvR6lLB0Wn4slbdklJYTbQ=; b=eah9mlFUiP8U2VPm
-	C2fRIGHbALCXiJ2dg5iiSTWWGrrJG4hcOVmBlzZQgz9WSEhILxnJNru1yrxSn/N+
-	xGK7RThKNRyd17la0q+19UxJSgOgSUyq5gNFlqQknwFlNRs9AvBVj8NmN4av+7Qp
-	iuZzrb6HZ5WDmEhtpI2G5/R8Y4SNFfloKCL9byLSHyI7Zz7lTJOfcYn9jjg/3lXk
-	FWJ4eDnf5LeiXzF1rLop15EAggNmJNqP68Tlg83dpshOqp83pqH1PQqx/UBtaI5o
-	im5wW4b9CGjV6n8QVowjQtqOq5GaczfOntucqC085rm0NnZRr6azGqK4ixGlZA/X
-	NM6uuA==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 419puvesp0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 29 Aug 2024 22:24:14 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47TMOD6e014638
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 29 Aug 2024 22:24:13 GMT
-Received: from hu-eberman-lv.qualcomm.com (10.49.16.6) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 29 Aug 2024 15:24:13 -0700
-From: Elliot Berman <quic_eberman@quicinc.com>
-Date: Thu, 29 Aug 2024 15:24:13 -0700
-Subject: [PATCH RFC v2 5/5] mm: guest_memfd: Add option to remove
- inaccessible memory from direct map
+	s=arc-20240116; t=1724970327; c=relaxed/simple;
+	bh=9QL5tYH2tIhzGwNe5gZfGSxX1emUw9NxqJ0jPSVxO7E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EjRA21bxppMpYYcSER4DnpK/LycplfA983SKcMgIx4D5rdeyvuyEQ4vgrPv3Qe6541FlSQNFbAj41ndtTAxE31jeBjqzsdrymjPf/pu0bp+m4iURRZcXJCp3BIYXaFUXMNDcO9AiS/1eBmDKxw2kkdnyjxPg8Yjahsfm6QOTXdk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GtuPO+67; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B050C4CEC1;
+	Thu, 29 Aug 2024 22:25:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724970326;
+	bh=9QL5tYH2tIhzGwNe5gZfGSxX1emUw9NxqJ0jPSVxO7E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GtuPO+67i2pbCILo9/yvl0O1IcwnF5psrFDSu6i7vpGbGfiFJWK/hCzVSF5NQgusX
+	 1hkosOoEtrakTA6EwwDmKLwXlChRqzlI8G46GPB/pUdGVBJrKomGRlWI4Qthoe9qVg
+	 Pj/eegAHDRvoBTyDm3Qzao0TIlxKMYqw1zqB4sPMAFvYUrj9xi3EQbLtOXmAaOJ3vy
+	 QpEs2HSTWkYjulZl+OtwtbH3aFAjcqcHnaytrxrbXYKslkDHvLajcVWYBzb9Ib3Ri4
+	 cFE2yDxI9tpvXtaw4jXhwJNaSeBtBvcDNxCKPCd9z9wcWdjDbU7rFfhzBWxZa7AvWc
+	 iu3x42vWOlOdw==
+Date: Fri, 30 Aug 2024 00:25:18 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
+	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
+	a.hindborg@samsung.com, aliceryhl@google.com,
+	akpm@linux-foundation.org, daniel.almeida@collabora.com,
+	faith.ekstrand@collabora.com, boris.brezillon@collabora.com,
+	lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com,
+	cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com,
+	ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v6 22/26] rust: alloc: implement `Cmalloc` in module
+ allocator_test
+Message-ID: <ZtD1TsGm0swi7gyv@pollux.localdomain>
+References: <20240816001216.26575-1-dakr@kernel.org>
+ <20240816001216.26575-23-dakr@kernel.org>
+ <e3ccbf52-224e-4869-992b-4fcaa0ec3410@proton.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240829-guest-memfd-lib-v2-5-b9afc1ff3656@quicinc.com>
-References: <20240829-guest-memfd-lib-v2-0-b9afc1ff3656@quicinc.com>
-In-Reply-To: <20240829-guest-memfd-lib-v2-0-b9afc1ff3656@quicinc.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-        Sean Christopherson
-	<seanjc@google.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Thomas Gleixner
-	<tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov
-	<bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Fuad Tabba
-	<tabba@google.com>, David Hildenbrand <david@redhat.com>,
-        Patrick Roy
-	<roypat@amazon.co.uk>, <qperret@google.com>,
-        Ackerley Tng
-	<ackerleytng@google.com>,
-        Mike Rapoport <rppt@kernel.org>, <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-        <kvm@vger.kernel.org>, <linux-coco@lists.linux.dev>,
-        <linux-arm-msm@vger.kernel.org>,
-        Elliot Berman <quic_eberman@quicinc.com>
-X-Mailer: b4 0.14.1
-X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: VKocc11VXrfwDcfhSZyfG1SnIgFpRfUU
-X-Proofpoint-GUID: VKocc11VXrfwDcfhSZyfG1SnIgFpRfUU
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-29_06,2024-08-29_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- mlxlogscore=721 priorityscore=1501 bulkscore=0 impostorscore=0
- adultscore=0 malwarescore=0 phishscore=0 lowpriorityscore=0 mlxscore=0
- spamscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408290158
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e3ccbf52-224e-4869-992b-4fcaa0ec3410@proton.me>
 
-When memory is made inaccessible to the host, Linux may still
-speculatively access the folio if a load_unaligned_zeropad is performed
-at the end of the prior page. To ensure Linux itself catches such errors
-without hypervisor crashing Linux, unmap the guest-inaccessible pages
-from the direct map.
+On Thu, Aug 29, 2024 at 07:14:18PM +0000, Benno Lossin wrote:
+> On 16.08.24 02:11, Danilo Krummrich wrote:
+> > So far the kernel's `Box` and `Vec` types can't be used by userspace
+> > test cases, since all users of those types (e.g. `CString`) use kernel
+> > allocators for instantiation.
+> > 
+> > In order to allow userspace test cases to make use of such types as
+> > well, implement the `Cmalloc` allocator within the allocator_test module
+> > and type alias all kernel allocators to `Cmalloc`. The `Cmalloc`
+> > allocator uses libc's realloc() function as allocator backend.
+> > 
+> > Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+> > ---
+> >  rust/kernel/alloc/allocator_test.rs | 178 ++++++++++++++++++++++++++--
+> >  1 file changed, 171 insertions(+), 7 deletions(-)
+> > 
+> > diff --git a/rust/kernel/alloc/allocator_test.rs b/rust/kernel/alloc/allocator_test.rs
+> > index 1b2642c547ec..7fff308d02dc 100644
+> > --- a/rust/kernel/alloc/allocator_test.rs
+> > +++ b/rust/kernel/alloc/allocator_test.rs
+> > @@ -2,20 +2,184 @@
+> > 
+> 
+> Could add a short paragraph as the module description why this module
+> exists? Would probably be enough to paste the commit message.
 
-This feature is made optional because arm64 pKVM can provide a special,
-detectable fault which can be fixed up directly.
+Yes, sounds good.
 
-Signed-off-by: Elliot Berman <quic_eberman@quicinc.com>
----
- include/linux/guest_memfd.h |  1 +
- mm/guest_memfd.c            | 79 +++++++++++++++++++++++++++++++++++++++++++--
- 2 files changed, 78 insertions(+), 2 deletions(-)
+> 
+> >  #![allow(missing_docs)]
+> > 
+> > -use super::{AllocError, Allocator, Flags};
+> > +use super::{flags::*, AllocError, Allocator, Flags};
+> >  use core::alloc::Layout;
+> > +use core::cmp;
+> > +use core::mem;
+> > +use core::ptr;
+> >  use core::ptr::NonNull;
+> > 
+> > -pub struct Kmalloc;
+> > +pub struct Cmalloc;
+> > +pub type Kmalloc = Cmalloc;
+> >  pub type Vmalloc = Kmalloc;
+> >  pub type KVmalloc = Kmalloc;
+> > 
+> > -unsafe impl Allocator for Kmalloc {
+> > +extern "C" {
+> > +    #[link_name = "aligned_alloc"]
+> > +    fn libc_aligned_alloc(align: usize, size: usize) -> *mut core::ffi::c_void;
+> > +
+> > +    #[link_name = "free"]
+> > +    fn libc_free(ptr: *mut core::ffi::c_void);
+> > +}
+> > +
+> > +struct CmallocData {
+> > +    // The actual size as requested through `Cmalloc::alloc` or `Cmalloc::realloc`.
+> > +    size: usize,
+> > +    // The offset from the pointer returned to the caller of `Cmalloc::alloc` or `Cmalloc::realloc`
+> > +    // to the actual base address of the allocation.
+> > +    offset: usize,
+> > +}
+> > +
+> > +impl Cmalloc {
+> > +    /// Adjust the size and alignment such that we can additionally store `CmallocData` right
+> > +    /// before the actual data described by `layout`.
+> > +    ///
+> > +    /// Example:
+> > +    ///
+> > +    /// For `CmallocData` assume an alignment of 8 and a size of 16.
+> > +    /// For `layout` assume and alignment of 16 and a size of 64.
+> 
+> This looks like you want it rendered as bulletpoints (but it won't).
 
-diff --git a/include/linux/guest_memfd.h b/include/linux/guest_memfd.h
-index 66e5d3ab42613..de53bce15db99 100644
---- a/include/linux/guest_memfd.h
-+++ b/include/linux/guest_memfd.h
-@@ -33,6 +33,7 @@ enum guest_memfd_grab_flags {
- 
- enum guest_memfd_create_flags {
- 	GUEST_MEMFD_FLAG_CLEAR_INACCESSIBLE = (1UL << 0),
-+	GUEST_MEMFD_FLAG_REMOVE_DIRECT_MAP = (1UL << 1),
- };
- 
- struct folio *guest_memfd_grab_folio(struct file *file, pgoff_t index, u32 flags);
-diff --git a/mm/guest_memfd.c b/mm/guest_memfd.c
-index 194b2c3ea1525..d4232739d4c5b 100644
---- a/mm/guest_memfd.c
-+++ b/mm/guest_memfd.c
-@@ -8,6 +8,7 @@
- #include <linux/falloc.h>
- #include <linux/guest_memfd.h>
- #include <linux/pagemap.h>
-+#include <linux/set_memory.h>
- #include <linux/wait.h>
- 
- #include "internal.h"
-@@ -26,6 +27,45 @@ struct guest_memfd_private {
- 	atomic_t safe;
- };
- 
-+static inline int folio_set_direct_map_invalid_noflush(struct folio *folio)
-+{
-+	unsigned long i, nr = folio_nr_pages(folio);
-+	int r;
-+
-+	for (i = 0; i < nr; i++) {
-+		struct page *page = folio_page(folio, i);
-+
-+		r = set_direct_map_invalid_noflush(page);
-+		if (r)
-+			goto out_remap;
-+	}
-+	/**
-+	 * Currently no need to flush as hypervisor will also be flushing
-+	 * tlb when giving the folio to guest.
-+	 */
-+
-+	return 0;
-+out_remap:
-+	for (; i > 0; i--) {
-+		struct page *page = folio_page(folio, i - 1);
-+
-+		BUG_ON(set_direct_map_default_noflush(page));
-+	}
-+
-+	return r;
-+}
-+
-+static inline void folio_set_direct_map_default_noflush(struct folio *folio)
-+{
-+	unsigned long i, nr = folio_nr_pages(folio);
-+
-+	for (i = 0; i < nr; i++) {
-+		struct page *page = folio_page(folio, i);
-+
-+		BUG_ON(set_direct_map_default_noflush(page));
-+	}
-+}
-+
- static inline int base_safe_refs(struct folio *folio)
- {
- 	/* 1 for filemap */
-@@ -131,6 +171,12 @@ struct folio *guest_memfd_grab_folio(struct file *file, pgoff_t index, u32 flags
- 				goto out_free;
- 		}
- 	} else {
-+		if (gmem_flags & GUEST_MEMFD_FLAG_REMOVE_DIRECT_MAP) {
-+			r = folio_set_direct_map_invalid_noflush(folio);
-+			if (r < 0)
-+				goto out_free;
-+		}
-+
- 		if (ops->prepare_inaccessible) {
- 			r = ops->prepare_inaccessible(inode, folio);
- 			if (r < 0)
-@@ -203,6 +249,7 @@ int guest_memfd_make_accessible(struct folio *folio)
- 	struct guest_memfd_private *private = folio_get_private(folio);
- 	struct inode *inode = folio_inode(folio);
- 	struct guest_memfd_operations *ops = inode->i_private;
-+	unsigned long gmem_flags;
- 	int r;
- 
- 	/*
-@@ -218,6 +265,10 @@ int guest_memfd_make_accessible(struct folio *folio)
- 	if (!r)
- 		return -EBUSY;
- 
-+	gmem_flags = (unsigned long)inode->i_mapping->i_private_data;
-+	if (gmem_flags & GUEST_MEMFD_FLAG_REMOVE_DIRECT_MAP)
-+		folio_set_direct_map_default_noflush(folio);
-+
- 	if (ops->prepare_accessible) {
- 		r = ops->prepare_accessible(inode, folio);
- 		if (r)
-@@ -248,6 +299,7 @@ int guest_memfd_make_inaccessible(struct folio *folio)
- 	struct guest_memfd_private *private = folio_get_private(folio);
- 	struct inode *inode = folio_inode(folio);
- 	struct guest_memfd_operations *ops = inode->i_private;
-+	unsigned long gmem_flags;
- 	int r;
- 
- 	r = atomic_dec_if_positive(&private->accessible);
-@@ -266,6 +318,13 @@ int guest_memfd_make_inaccessible(struct folio *folio)
- 		goto err;
- 	}
- 
-+	gmem_flags = (unsigned long)inode->i_mapping->i_private_data;
-+	if (gmem_flags & GUEST_MEMFD_FLAG_REMOVE_DIRECT_MAP) {
-+		r = folio_set_direct_map_invalid_noflush(folio);
-+		if (r)
-+			goto err;
-+	}
-+
- 	if (ops->prepare_inaccessible) {
- 		r = ops->prepare_inaccessible(inode, folio);
- 		if (r)
-@@ -454,6 +513,7 @@ static int gmem_error_folio(struct address_space *mapping, struct folio *folio)
- 	struct guest_memfd_operations *ops = inode->i_private;
- 	off_t offset = folio->index;
- 	size_t nr = folio_nr_pages(folio);
-+	unsigned long gmem_flags;
- 	int ret;
- 
- 	filemap_invalidate_lock_shared(mapping);
-@@ -464,6 +524,10 @@ static int gmem_error_folio(struct address_space *mapping, struct folio *folio)
- 
- 	filemap_invalidate_unlock_shared(mapping);
- 
-+	gmem_flags = (unsigned long)inode->i_mapping->i_private_data;
-+	if (gmem_flags & GUEST_MEMFD_FLAG_REMOVE_DIRECT_MAP)
-+		folio_set_direct_map_default_noflush(folio);
-+
- 	return ret;
- }
- 
-@@ -474,7 +538,7 @@ static bool gmem_release_folio(struct folio *folio, gfp_t gfp)
- 	struct guest_memfd_operations *ops = inode->i_private;
- 	off_t offset = folio->index;
- 	size_t nr = folio_nr_pages(folio);
--	unsigned long val, expected;
-+	unsigned long val, expected, gmem_flags;
- 	int ret;
- 
- 	ret = ops->invalidate_begin(inode, offset, nr);
-@@ -483,6 +547,10 @@ static bool gmem_release_folio(struct folio *folio, gfp_t gfp)
- 	if (ops->invalidate_end)
- 		ops->invalidate_end(inode, offset, nr);
- 
-+	gmem_flags = (unsigned long)inode->i_mapping->i_private_data;
-+	if (gmem_flags & GUEST_MEMFD_FLAG_REMOVE_DIRECT_MAP)
-+		folio_set_direct_map_default_noflush(folio);
-+
- 	expected = base_safe_refs(folio);
- 	val = atomic_read(&private->safe);
- 	WARN_ONCE(val != expected, "folio[%x] safe ref: %d != expected %d\n",
-@@ -518,7 +586,14 @@ static inline bool guest_memfd_check_ops(const struct guest_memfd_operations *op
- 
- static inline unsigned long guest_memfd_valid_flags(void)
- {
--	return GUEST_MEMFD_FLAG_CLEAR_INACCESSIBLE;
-+	unsigned long flags = GUEST_MEMFD_FLAG_CLEAR_INACCESSIBLE;
-+
-+#ifdef CONFIG_ARCH_HAS_SET_DIRECT_MAP
-+	if (can_set_direct_map())
-+		flags |= GUEST_MEMFD_FLAG_REMOVE_DIRECT_MAP;
-+#endif
-+
-+	return flags;
- }
- 
- /**
+Actually, that wasn't my intention, but I'm fine changing that.
 
--- 
-2.34.1
+> 
+> > +    ///
+> > +    /// 0                16               32                                               96
+> > +    /// |----------------|----------------|------------------------------------------------|
+> > +    ///        empty         CmallocData                         data
+> 
+> Can you put this inside of '```'? Then it will render nicely in markdown
+> (don't forget to specify the type 'text')
 
+Sure.
+
+> 
+> > +    ///
+> > +    /// For this example the returned `Layout` has an alignment of 32 and a size of 96.
+> > +    fn layout_adjust(layout: Layout) -> Result<Layout, AllocError> {
+> > +        let layout = layout.pad_to_align();
+> > +
+> > +        // Ensure that `CmallocData` fits into half the alignment. Additionally, this guarantees
+> > +        // that advancing a pointer aligned to `align` by `align / 2` we still satisfy or exceed
+> > +        // the alignment requested through `layout`.
+> > +        let align = cmp::max(
+> > +            layout.align(),
+> > +            mem::size_of::<CmallocData>().next_power_of_two(),
+> > +        ) * 2;
+> > +
+> > +        // Add the additional space required for `CmallocData`.
+> > +        let size = layout.size() + mem::size_of::<CmallocData>();
+> > +
+> > +        Ok(Layout::from_size_align(size, align)
+> > +            .map_err(|_| AllocError)?
+> > +            .pad_to_align())
+> > +    }
+> > +
+> > +    fn alloc_store_data(layout: Layout) -> Result<NonNull<u8>, AllocError> {
+> > +        let requested_size = layout.size();
+> > +
+> > +        let layout = Self::layout_adjust(layout)?;
+> > +        let min_align = layout.align() / 2;
+> > +
+> > +        // SAFETY: Returns either NULL or a pointer to a memory allocation that satisfies or
+> > +        // exceeds the given size and alignment requirements.
+> > +        let raw_ptr = unsafe { libc_aligned_alloc(layout.align(), layout.size()) } as *mut u8;
+> > +
+> > +        let priv_ptr = NonNull::new(raw_ptr).ok_or(AllocError)?;
+> > +
+> > +        // SAFETY: Advance the pointer by `min_align`. The adjustments from `Self::layout_adjust`
+> > +        // ensure that after this operation the original size and alignment requirements are still
+> > +        // satisfied or exceeded.
+> 
+> This SAFETY comment should address why it's OK to call `add`. You
+> justify something different, namely why the allocation still satisfies
+> the requirements of `layout`. That is something that this function
+> should probably guarantee.
+
+So, I guess you're arguing that instead I should say that, we're still within
+the bounds of the same allocated object and don't exceed `isize`?
+
+> 
+> > +        let ptr = unsafe { priv_ptr.as_ptr().add(min_align) };
+> > +
+> > +        // SAFETY: `min_align` is greater than or equal to the size of `CmallocData`, hence we
+> > +        // don't exceed the allocation boundaries.
+> > +        let data_ptr: *mut CmallocData = unsafe { ptr.sub(mem::size_of::<CmallocData>()) }.cast();
+> > +
+> > +        let data = CmallocData {
+> > +            size: requested_size,
+> > +            offset: min_align,
+> > +        };
+> > +
+> > +        // SAFETY: `data_ptr` is properly aligned and within the allocation boundaries reserved for
+> > +        // `CmallocData`.
+> > +        unsafe { data_ptr.write(data) };
+> > +
+> > +        NonNull::new(ptr).ok_or(AllocError)
+> > +    }
+> > +
+> > +    /// # Safety
+> > +    ///
+> > +    /// `ptr` must have been previously allocated with `Self::alloc_store_data`.
+> 
+> You additionally need that you have shared access to the pointee.
+> 
+> > +    unsafe fn data<'a>(ptr: NonNull<u8>) -> &'a CmallocData {
+> > +        // SAFETY: `Self::alloc_store_data` stores the `CmallocData` right before the address
+> > +        // returned to callers of `Self::alloc_store_data`.
+> > +        let data_ptr: *mut CmallocData =
+> > +            unsafe { ptr.as_ptr().sub(mem::size_of::<CmallocData>()) }.cast();
+> > +
+> > +        // SAFETY: The `CmallocData` has been previously stored at this offset with
+> > +        // `Self::alloc_store_data`.
+> > +        unsafe { &*data_ptr }
+> > +    }
+> > +
+> > +    /// # Safety
+> > +    ///
+> > +    /// This function must not be called more than once for the same allocation.
+> > +    ///
+> > +    /// `ptr` must have been previously allocated with `Self::alloc_store_data`.
+> 
+> You additionally need that you have exclusive access to the pointee.
+> 
+> > +    unsafe fn free_read_data(ptr: NonNull<u8>) {
+> > +        // SAFETY: `ptr` has been created by `Self::alloc_store_data`.
+> > +        let data = unsafe { Self::data(ptr) };
+> > +
+> > +        // SAFETY: `ptr` has been created by `Self::alloc_store_data`.
+> > +        let priv_ptr = unsafe { ptr.as_ptr().sub(data.offset) };
+> > +
+> > +        // SAFETY: `priv_ptr` has previously been allocatored with this `Allocator`.
+> > +        unsafe { libc_free(priv_ptr.cast()) };
+> > +    }
+> > +}
+> > +
+> > +unsafe impl Allocator for Cmalloc {
+> > +    fn alloc(layout: Layout, flags: Flags) -> Result<NonNull<[u8]>, AllocError> {
+> > +        if layout.size() == 0 {
+> > +            return Ok(NonNull::slice_from_raw_parts(NonNull::dangling(), 0));
+> > +        }
+> > +
+> > +        let ptr = Self::alloc_store_data(layout)?;
+> > +
+> > +        if flags.contains(__GFP_ZERO) {
+> > +            // SAFETY: `Self::alloc_store_data` guarantees that `ptr` points to memory of at least
+> > +            // `layout.size()` bytes.
+> > +            unsafe { ptr.as_ptr().write_bytes(0, layout.size()) };
+> > +        }
+> 
+> This makes me wonder, what other flags should we handle for this
+> allocator?
+
+I don't think there are any other flags that we can handle. The only other one
+that'd make sense is __GFP_NOFAIL, but we can't guarantee that.
+
+If any specific gfp flags are needed, I think it's simply not a candidate for a
+userspace test.
+
+If we really want to do something here, we could whitelist the flags we ignore,
+since they do not matter (such as __GFP_NOWARN) and panic() for everything else.
+
+But I don't think that's really needed.
+
+> 
+> > +
+> > +        Ok(NonNull::slice_from_raw_parts(ptr, layout.size()))
+> > +    }
+> > +
+> >      unsafe fn realloc(
+> > -        _ptr: Option<NonNull<u8>>,
+> > -        _layout: Layout,
+> > -        _flags: Flags,
+> > +        ptr: Option<NonNull<u8>>,
+> > +        layout: Layout,
+> > +        flags: Flags,
+> >      ) -> Result<NonNull<[u8]>, AllocError> {
+> > -        panic!();
+> > +        let src: NonNull<u8> = if let Some(src) = ptr {
+> > +            src.cast()
+> 
+> Why the cast?
+
+Probably a copy-paste mistake.
+
+> 
+> > +        } else {
+> > +            return Self::alloc(layout, flags);
+> > +        };
+> 
+> You should be able to write this instead:
+> 
+>     let Some(src) = ptr else {
+>         return Self::alloc(layout, flags);
+>     };
+
+Yes, indeed.
+
+> 
+> > +
+> > +        if layout.size() == 0 {
+> > +            // SAFETY: `src` has been created by `Self::alloc_store_data`.
+> 
+> This is not true, consider:
+> 
+>     let ptr = alloc(size = 0);
+>     free(ptr)
+> 
+> Alloc will return a dangling pointer due to the first if statement and
+> then this function will pass it to `free_read_data`, even though it
+> wasn't created by `alloc_store_data`.
+> This isn't forbidden by the `Allocator` trait function's safety
+> requirements.
+> 
+> > +            unsafe { Self::free_read_data(src) };
+> > +
+> > +            return Ok(NonNull::slice_from_raw_parts(NonNull::dangling(), 0));
+> > +        }
+> > +
+> > +        let dst = Self::alloc(layout, flags)?;
+> > +
+> > +        // SAFETY: `src` has been created by `Self::alloc_store_data`.
+> > +        let data = unsafe { Self::data(src) };
+> 
+> Same issue here, if the allocation passed in is zero size. I think you
+> have no other choice than to allocate even for zero size requests...
+> Otherwise how would you know that they are zero-sized.
+
+Good catch - gonna fix it.
+
+> 
+> ---
+> Cheers,
+> Benno
+> 
+> > +
+> > +        // SAFETY: `src` has previously been allocated with this `Allocator`; `dst` has just been
+> > +        // newly allocated. Copy up to the smaller of both sizes.
+> > +        unsafe {
+> > +            ptr::copy_nonoverlapping(
+> > +                src.as_ptr(),
+> > +                dst.as_ptr().cast(),
+> > +                cmp::min(layout.size(), data.size),
+> > +            )
+> > +        };
+> > +
+> > +        // SAFETY: `src` has been created by `Self::alloc_store_data`.
+> > +        unsafe { Self::free_read_data(src) };
+> > +
+> > +        Ok(dst)
+> >      }
+> >  }
+> > --
+> > 2.46.0
+> > 
+> 
 
