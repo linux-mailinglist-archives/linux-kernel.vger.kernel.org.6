@@ -1,173 +1,141 @@
-Return-Path: <linux-kernel+bounces-307803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3582965322
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 00:52:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0759C96532A
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 00:54:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 024391C215D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 22:52:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D6C81C2158F
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 22:54:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 312921BBBC1;
-	Thu, 29 Aug 2024 22:52:23 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E7F31BB6A2;
+	Thu, 29 Aug 2024 22:52:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="c7lJ6i9m"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07A831BAEE9
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 22:52:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC1B11BB68F;
+	Thu, 29 Aug 2024 22:52:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724971942; cv=none; b=CRtv6VCJzPKVna4UZYMgemBun+DGbwjEsp3nR4ooWsUBO6KfnrHLdXSB/IQ5l5sgOEkfqmxP+baeXad5z2Jy4unbtkDB/AsYYmXBmA2egkhiTsfHjCRG68DlZDibm90WVVVh8GxW5AaWROO6Cd3QzsAynj/I8BQ5UH9HbAztbn4=
+	t=1724971960; cv=none; b=e0+SgO7TqRkaEK7TO8qM056d/OJZQ38Aypgr0pyPsU2KnEaultc1CMlhrGC4c210ULSwK1XSwLYL1HnE0JNXmdaSm1k3vxkk/tJ6s6p6y21purb5lEUOYUmBTv/z913kL8gj4cd2YjU9kKRhBiN482kVLNeOKNZoutZusuWNZrA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724971942; c=relaxed/simple;
-	bh=ViWdrCt6a6K0Vj2wiEIRR3LaPMEKuEhY7asSNTKq/y8=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=YqTxxZRonHfZIJdsnnhx1moFdASjX9nLsxLfGQJF6lbnhanc/7NAO4lEFu2Ap4loatUJJaH9zUCJcdAnF+lwPC2diR3vDye03cv/q+bFRFWk+EjfypLAYtXUXnI1/vl+0B5P8IFP99IV4bCYVp+SechvJqE5yNUcMaCASu/b8DI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-82a21f28d87so79278939f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 15:52:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724971940; x=1725576740;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=bumZo3FBLWya88IH5IRSKgIMdpWcn/AV4Rx++TefK60=;
-        b=Zq1ody4Sye10M9N0Iijxy3kfg0ly55ZrVdYawp4TIgZgcFJ3DRq9h40aHMVO/6hKxE
-         rMZ1tpPomBI79aZrhIGxofsftv8kvdrw439nG2N103/M40f4wpz8gwevuUowdQ/hIDZx
-         QN9XPArkLxlTdalz5Vah53k0eV+AzxO6kp6Ut/kIxIBVGvduxl0mlhDureudJRub/v2j
-         Y86/pBZodr2Cs2te9RI4BJBW0LzKLZprXFfXYa6J3GHRv4YJ2fhVG/Xkch7arLJ21mHp
-         ueDrnDl9OgvLERNvAer7xKQhik4Jd0hq0Be0qUixdNceCWum8yfOkc3g83aKclAAKXAd
-         7lMw==
-X-Forwarded-Encrypted: i=1; AJvYcCXqU+puDzMmRRwCst0sG/Cxu5ig6RPQFYNJziG8kmvsk3qgQPlWMh+yGE1eHe1u2u9flv+VYGssQyi3XmI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGtYVD7XGvg14fVdvicn2voiW6mXOCn5+/A76k+7ZTO+ROnjPC
-	bv2GFTOsW22W4rUQxpnqeiVTg78RXIHr5WT5EXBKx2f/CZtrf8vD0rYOnltxMQMWXHRSgIQXoDv
-	iZhEnIVJbPirOkMnkzttmVpTQfuICaGMVQgtwJX1siQ0edKoIE0zXax0=
-X-Google-Smtp-Source: AGHT+IGMVjRWPf9J8J2cG2Beb5loxdx6ExYiJMpdm+PK8UtMyNFEuSYgi+X3bNn5RcXJ7OigzZA5DkGq1PI46wNCdBe48o/kCC3t
+	s=arc-20240116; t=1724971960; c=relaxed/simple;
+	bh=nwosCeddYyYaRp5UhR6FYlGTI9FI4lDAnnU+nj8f2Bk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HfRMkg2Einzx8aMqUynxParULeXzM7GR/VlFQbc4PXvB0E2gAsQLiQatzqY/R1lquIbtnV+xd6KD2+gxxB1heZwBz1XqAttQUkVIAY+va1tWiJc+e0NNUlqNTswwEEwD9Cz7ptBrhwOGO1CnQT71k+zGDw3zNMGM8OPl1eOH4cQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=c7lJ6i9m; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724971959; x=1756507959;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=nwosCeddYyYaRp5UhR6FYlGTI9FI4lDAnnU+nj8f2Bk=;
+  b=c7lJ6i9m1D+aiT2O9ifWpvNdUjEbqFkfa8t5axMz37bqUW9GukhAkeed
+   +/u6cWQHEAl0PkeMmuMMF30USr4OygVGISG3ETs9Yf+pWU24hzmnLHeBF
+   /IKHkMcsTcNqmcRyhCcjpVQtvYlrKo4pMPUTrj8ETHnlFimuoHUXLMsFA
+   nXTcs28vrt4fFLixyPeNQYk+ASVXhX4iiaYtBMJBI4aogAMOoQF0mwm2r
+   oUGboMJrdzOTp6O05xTBpFIVMp6rAqN4LDTd1XItq6LngRC4yviXqbe9S
+   PC+7P8IzTJQXCEif80Jl3YXtQizH4LSCwxBs+zPJ1FlAy3p9RczYMSTI4
+   Q==;
+X-CSE-ConnectionGUID: WybxI5U2Qj2RmW7JNQUobg==
+X-CSE-MsgGUID: 87uuTjsZTyyjBrM3NzlssQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11179"; a="27479151"
+X-IronPort-AV: E=Sophos;i="6.10,186,1719903600"; 
+   d="scan'208";a="27479151"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 15:52:38 -0700
+X-CSE-ConnectionGUID: JN47tgPTQ62QN+87gLwDrA==
+X-CSE-MsgGUID: nkjGe730QAai5ZFNIG7yyw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,186,1719903600"; 
+   d="scan'208";a="63415117"
+Received: from rchatre-mobl4.amr.corp.intel.com (HELO rchatre-mobl4.intel.com) ([10.125.111.220])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 15:52:38 -0700
+From: Reinette Chatre <reinette.chatre@intel.com>
+To: fenghua.yu@intel.com,
+	shuah@kernel.org,
+	tony.luck@intel.com,
+	peternewman@google.com,
+	babu.moger@amd.com,
+	ilpo.jarvinen@linux.intel.com
+Cc: maciej.wieczor-retman@intel.com,
+	reinette.chatre@intel.com,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/6] selftests/resctrl: Support diverse platforms with MBM and MBA tests
+Date: Thu, 29 Aug 2024 15:52:26 -0700
+Message-ID: <cover.1724970211.git.reinette.chatre@intel.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:892a:b0:4c2:7945:5a32 with SMTP id
- 8926c6da1cb9f-4d017ee53f1mr8917173.5.1724971940197; Thu, 29 Aug 2024 15:52:20
- -0700 (PDT)
-Date: Thu, 29 Aug 2024 15:52:20 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000be46510620da5362@google.com>
-Subject: [syzbot] [net?] WARNING in hsr_fill_frame_info
-From: syzbot <syzbot+3d602af7549af539274e@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+The resctrl selftests for Memory Bandwidth Allocation (MBA) and Memory
+Bandwidth Monitoring (MBM) are failing on some (for example [1]) Emerald
+Rapids systems. The test failures result from the following two
+properties of these systems:
+1) Emerald Rapids systems can have up to 320MB L3 cache. The resctrl
+   MBA and MBM selftests measure memory traffic for which a hardcoded
+   250MB buffer has been sufficient so far. On platforms with L3 cache
+   larger than the buffer, the buffer fits in the L3 cache and thus
+   no/very little memory traffic is generated during the "memory
+   bandwidth" tests.
+2) Some platform features, for example RAS features or memory
+   performance features that generate memory traffic may drive accesses
+   that are counted differently by performance counters and MBM
+   respectively, for instance generating "overhead" traffic which is not
+   counted against any specific RMID. Until now these counting
+   differences have always been "in the noise". On Emerald Rapids
+   systems the maximum MBA throttling (10% memory bandwidth)
+   throttles memory bandwidth to where memory accesses by these other
+   platform features push the memory bandwidth difference between
+   memory controller performance counters and resctrl (MBM) beyond the
+   tests' hardcoded tolerance.
 
-syzbot found the following issue on:
+Make the tests more robust against platform variations:
+1) Let the buffer used by memory bandwidth tests be guided by the size
+   of the L3 cache.
+2) Larger buffers require longer initialization time before the buffer can
+   be used to measurement. Rework the tests to ensure that buffer
+   initialization is complete before measurements start.
+3) Do not compare performance counters and MBM measurements at low
+   bandwidth. The value of "low" is hardcoded to 750MiB based on
+   measurements on Emerald Rapids, Sapphire Rapids, and Ice Lake
+   systems. This limit is not applicable to AMD systems since it
+   only applies to the MBA and MBM tests that are isolated to Intel.
 
-HEAD commit:    5be63fc19fca Linux 6.11-rc5
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=150a2d8d980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8605cd35ddc8ff3c
-dashboard link: https://syzkaller.appspot.com/bug?extid=3d602af7549af539274e
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15d1f76b980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17d49305980000
+[1]
+https://ark.intel.com/content/www/us/en/ark/products/237261/intel-xeon-platinum-8592-processor-320m-cache-1-9-ghz.html
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/13cdc3162477/disk-5be63fc1.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/ea315e9db653/vmlinux-5be63fc1.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/eb68cddf5620/bzImage-5be63fc1.xz
+Reinette Chatre (6):
+  selftests/resctrl: Fix sparse warnings
+  selftests/resctrl: Ensure measurements skip initialization of default
+    benchmark
+  selftests/resctrl: Simplify benchmark parameter passing
+  selftests/resctrl: Use cache size to determine "fill_buf" buffer size
+  selftests/resctrl: Do not compare performance counters and resctrl at
+    low bandwidth
+  selftests/resctrl: Keep results from first test run
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+3d602af7549af539274e@syzkaller.appspotmail.com
+ tools/testing/selftests/resctrl/cmt_test.c    |  33 +--
+ tools/testing/selftests/resctrl/fill_buf.c    |  19 +-
+ tools/testing/selftests/resctrl/mba_test.c    |  26 +-
+ tools/testing/selftests/resctrl/mbm_test.c    |  25 +-
+ tools/testing/selftests/resctrl/resctrl.h     |  57 +++--
+ .../testing/selftests/resctrl/resctrl_tests.c |  15 +-
+ tools/testing/selftests/resctrl/resctrl_val.c | 223 +++++-------------
+ 7 files changed, 152 insertions(+), 246 deletions(-)
 
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 5237 at net/hsr/hsr_forward.c:602 handle_std_frame net/hsr/hsr_forward.c:602 [inline]
-WARNING: CPU: 0 PID: 5237 at net/hsr/hsr_forward.c:602 hsr_fill_frame_info+0x3da/0x570 net/hsr/hsr_forward.c:630
-Modules linked in:
-CPU: 0 UID: 0 PID: 5237 Comm: syz-executor387 Not tainted 6.11.0-rc5-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-RIP: 0010:handle_std_frame net/hsr/hsr_forward.c:602 [inline]
-RIP: 0010:hsr_fill_frame_info+0x3da/0x570 net/hsr/hsr_forward.c:630
-Code: 00 31 c0 48 83 c4 10 5b 41 5c 41 5d 41 5e 41 5f 5d c3 cc cc cc cc e8 55 bb fb f5 90 0f 0b 90 e9 09 ff ff ff e8 47 bb fb f5 90 <0f> 0b 90 eb 93 89 e9 80 e1 07 80 c1 03 38 c1 0f 8c a3 fc ff ff 48
-RSP: 0018:ffffc90000007278 EFLAGS: 00010246
-RAX: ffffffff8b97d2c9 RBX: 0000000000000000 RCX: ffff88807529bc00
-RDX: 0000000000000100 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffff88807d910cc0 R08: ffffffff8b97d119 R09: 0000000000000000
-R10: ffffc900000073c8 R11: fffff52000000e7b R12: dffffc0000000000
-R13: 0000000000000008 R14: ffff888029d04f20 R15: ffffc900000073c0
-FS:  0000555564778380(0000) GS:ffff8880b9200000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00005633c816f000 CR3: 000000001faac000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <IRQ>
- fill_frame_info net/hsr/hsr_forward.c:700 [inline]
- hsr_forward_skb+0x847/0x2b60 net/hsr/hsr_forward.c:715
- hsr_handle_frame+0x51b/0x7d0 net/hsr/hsr_slave.c:70
- __netif_receive_skb_core+0x13e8/0x4570 net/core/dev.c:5555
- __netif_receive_skb_list_core+0x2b7/0x980 net/core/dev.c:5737
- __netif_receive_skb_list net/core/dev.c:5804 [inline]
- netif_receive_skb_list_internal+0xa51/0xe30 net/core/dev.c:5896
- gro_normal_list include/net/gro.h:515 [inline]
- napi_complete_done+0x310/0x8e0 net/core/dev.c:6247
- gro_cell_poll+0x19a/0x1c0 net/core/gro_cells.c:66
- __napi_poll+0xcb/0x490 net/core/dev.c:6772
- napi_poll net/core/dev.c:6841 [inline]
- net_rx_action+0x89b/0x1240 net/core/dev.c:6963
- handle_softirqs+0x2c4/0x970 kernel/softirq.c:554
- do_softirq+0x11b/0x1e0 kernel/softirq.c:455
- </IRQ>
- <TASK>
- __local_bh_enable_ip+0x1bb/0x200 kernel/softirq.c:382
- tun_rx_batched+0x732/0x8f0
- tun_get_user+0x2f84/0x4720 drivers/net/tun.c:2006
- tun_chr_write_iter+0x113/0x1f0 drivers/net/tun.c:2052
- new_sync_write fs/read_write.c:497 [inline]
- vfs_write+0xa72/0xc90 fs/read_write.c:590
- ksys_write+0x1a0/0x2c0 fs/read_write.c:643
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7ff04a780a30
-Code: 40 00 48 c7 c2 b8 ff ff ff f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb b7 0f 1f 00 80 3d 71 d6 07 00 00 74 17 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 58 c3 0f 1f 80 00 00 00 00 48 83 ec 28 48 89
-RSP: 002b:00007ffc50380778 EFLAGS: 00000202 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007ff04a780a30
-RDX: 000000000000006a RSI: 00000000200006c0 RDI: 00000000000000c8
-RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000202 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
- </TASK>
+-- 
+2.46.0
 
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
