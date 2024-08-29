@@ -1,156 +1,135 @@
-Return-Path: <linux-kernel+bounces-307271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A511E964B28
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 18:11:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B113B964B2C
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 18:13:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 616442856F4
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:11:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6430B1F2705C
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:13:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4CDC1B140A;
-	Thu, 29 Aug 2024 16:11:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF8BB1B29D2;
+	Thu, 29 Aug 2024 16:13:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="hrqDNfnD"
-Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HxQMC6M2"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A35A1B4C55
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 16:11:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E53C41B0132
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 16:13:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724947867; cv=none; b=sq32xp5jRS8LhApQZK0WQKw3CSA8pcQAXxEY6Q72lnglaiYKatXKwda1dFTzy8sYI0lNvOAPhnCRPKRtKlROkkMmsaLG0jc1F/bbCRuOdK4pOdbHnSQKZVKbixm7GV8hCLOdYHIJi3LK/sznqECNA/VaqXq9PveB8k1dZmTOkEc=
+	t=1724947999; cv=none; b=dctwJYw04jInzFeUlGGlxidFn8KuppBbdWIQJN+Dt9oPXKAruBDyDQBwiSn4gleXU30ZiuqbTrR+WnloowqdQCoiQu+XC2baWo6S4yJE5xG/9fxr8M970B80azLj9SCi+UsI7s7w9GwcTE/+UmLHoAzqGtTrAZage+sh0+JP1sA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724947867; c=relaxed/simple;
-	bh=DY7oqtCWi3Gr0j/wHl0PYqK7Sy/TikvGGe3rvyUSFIU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CdaW5U9wGNnSkOPyjrXwZttWvuPBdYlj2x33h8HhHrzNQuRDCyF33X1xqFaqw2k6tAYPJzio+H4eo6kEUJtYFJiTGi/BHAC5Mm9VrVNy+pwPFl/GBPF6GPT80Vss/kflhmhum8uxbI1cgHyO/Sxj5/UOkfMH6J2+cNpF2riVwiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=hrqDNfnD; arc=none smtp.client-ip=91.218.175.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Thu, 29 Aug 2024 09:10:53 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1724947859;
+	s=arc-20240116; t=1724947999; c=relaxed/simple;
+	bh=kkmk67njSj3RYt5xQQFMEzZ1Ur9x+vmFtoczjMZFm9w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WmkPsiwg2DkElkeqrvhEr54X+cjX/f1naq7ScK4s7mIby2/mFomeoF2xR7IJvcMR9Q8ISemyvPlScc3ZgkT+I0Nupr5VZNXWaPrwe6AzOvCiMfZdg/fdSx6O7OpuANQEWltxlffc55k9I4iU9s8G1KIldN8OmQtht72CBPXAfy8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HxQMC6M2; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724947996;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tMNX7CC2ZokFN7tmkODHv3OqmYDEKIEaSqAFQdA/2uI=;
-	b=hrqDNfnDx0E+8b7nai3Ir81wZO3rzI2sVvhQ1sasU4acY5grkfXMtDS4oH0iiPBfNNZOOi
-	Gkg/9xEp7tV0NsgpZb7E/PSBeK7w+7okdsgaAbviPBZXSdcsCe45T3L6ksPFRzYP0PoR0g
-	100bDwm30tkPs/6ucLw9qlOvCqS/J+g=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Muchun Song <muchun.song@linux.dev>, 
-	David Rientjes <rientjes@google.com>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, 
-	Eric Dumazet <edumazet@google.com>, "David S . Miller" <davem@davemloft.net>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Meta kernel team <kernel-team@meta.com>, cgroups@vger.kernel.org, 
-	netdev@vger.kernel.org
-Subject: Re: [PATCH v2] memcg: add charging of already allocated slab objects
-Message-ID: <mvxyevmpzwatlt7z4fdjakvuixmp5hcqmvo3467kzlgp2xkbgf@xumnm2y6xxrg>
-References: <20240827235228.1591842-1-shakeel.butt@linux.dev>
- <9fb06d9b-dec5-4300-acef-bbce51a9a0c1@suse.cz>
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=COFAXD9yJzZM407zOzOxKIdk87f2SuuzWb/JWLyEDEQ=;
+	b=HxQMC6M2KeYOcAEnm4drUXxUnL/BbBX7Ecjm1+d3G2YuU6onMtELNLVW0oja2jVPOyxS/T
+	7xarifghFP7H69q3UtwxPSGkvYQthjU2tKkeg6tgEWPS2lVJ/seWZgRQ5S9QuAbkjdZw6T
+	wkAllD99tNBT6yOyTO0JWgngbsCi3Zk=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-445-OabU_tjOOj-RCPzIQMtzlg-1; Thu,
+ 29 Aug 2024 12:13:12 -0400
+X-MC-Unique: OabU_tjOOj-RCPzIQMtzlg-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E07301954B1F;
+	Thu, 29 Aug 2024 16:13:10 +0000 (UTC)
+Received: from laptop.redhat.com (unknown [10.39.194.81])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id A448A19560AA;
+	Thu, 29 Aug 2024 16:13:05 +0000 (UTC)
+From: Eric Auger <eric.auger@redhat.com>
+To: eric.auger.pro@gmail.com,
+	eric.auger@redhat.com,
+	treding@nvidia.com,
+	vbhadram@nvidia.com,
+	jonathanh@nvidia.com,
+	mperttunen@nvidia.com,
+	linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org,
+	alex.williamson@redhat.com,
+	clg@redhat.com,
+	alexandre.torgue@foss.st.com,
+	joabreu@synopsys.com
+Cc: msalter@redhat.com
+Subject: [RFC PATCH 0/5] vfio: platform: reset: Introduce tegra234 mgbe reset module
+Date: Thu, 29 Aug 2024 18:11:04 +0200
+Message-ID: <20240829161302.607928-1-eric.auger@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9fb06d9b-dec5-4300-acef-bbce51a9a0c1@suse.cz>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-On Thu, Aug 29, 2024 at 11:42:10AM GMT, Vlastimil Babka wrote:
-> On 8/28/24 01:52, Shakeel Butt wrote:
-> > At the moment, the slab objects are charged to the memcg at the
-> > allocation time. However there are cases where slab objects are
-> > allocated at the time where the right target memcg to charge it to is
-> > not known. One such case is the network sockets for the incoming
-> > connection which are allocated in the softirq context.
-> > 
-> > Couple hundred thousand connections are very normal on large loaded
-> > server and almost all of those sockets underlying those connections get
-> > allocated in the softirq context and thus not charged to any memcg.
-> > However later at the accept() time we know the right target memcg to
-> > charge. Let's add new API to charge already allocated objects, so we can
-> > have better accounting of the memory usage.
-> > 
-> > To measure the performance impact of this change, tcp_crr is used from
-> > the neper [1] performance suite. Basically it is a network ping pong
-> > test with new connection for each ping pong.
-> > 
-> > The server and the client are run inside 3 level of cgroup hierarchy
-> > using the following commands:
-> > 
-> > Server:
-> >  $ tcp_crr -6
-> > 
-> > Client:
-> >  $ tcp_crr -6 -c -H ${server_ip}
-> > 
-> > If the client and server run on different machines with 50 GBPS NIC,
-> > there is no visible impact of the change.
-> > 
-> > For the same machine experiment with v6.11-rc5 as base.
-> > 
-> >           base (throughput)     with-patch
-> > tcp_crr   14545 (+- 80)         14463 (+- 56)
-> > 
-> > It seems like the performance impact is within the noise.
-> > 
-> > Link: https://github.com/google/neper [1]
-> > Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
-> > ---
-> > v1: https://lore.kernel.org/all/20240826232908.4076417-1-shakeel.butt@linux.dev/
-> > Changes since v1:
-> > - Correctly handle large allocations which bypass slab
-> > - Rearrange code to avoid compilation errors for !CONFIG_MEMCG builds
-> > 
-> > RFC: https://lore.kernel.org/all/20240824010139.1293051-1-shakeel.butt@linux.dev/
-> > Changes since the RFC:
-> > - Added check for already charged slab objects.
-> > - Added performance results from neper's tcp_crr
-> > 
-> >  include/linux/slab.h            |  1 +
-> >  mm/slub.c                       | 51 +++++++++++++++++++++++++++++++++
-> >  net/ipv4/inet_connection_sock.c |  5 ++--
-> >  3 files changed, 55 insertions(+), 2 deletions(-)
-> 
-> I can take the v3 in slab tree, if net people ack?
+We introduce a new vfio platform reset module for the tegra234
+Multi-Gigabit Ethernet (MGBE).
 
-Thanks.
+This reset driver is more complex than previous ones because some
+resources need to be prepared and released (clocks and reset). The
+existing infrastructure was too simplistic to do that. So this series
+extends the original single reset function to an ops struct enhanced
+with optional open/close callbacks.
 
-> 
-> BTW, will this be also useful for Linus's idea of charging struct files only
-> after they exist? But IIRC there was supposed to be also a part where we
-> have a way to quickly determine if we're not over limit (while allowing some
-> overcharge to make it quicker).
->
+There the reset and clocks are handled. the functions are
+called on open_device/close_device callback. That's questionable
+whether this should be called in init/release instead but memory
+regions cannot be ioremapped at that time since
+vfio_platform_regions_init is called on .opendevice.
 
-Do you have link to those discussions or pointers to the code? From what
-you have described, I think this should work. We have the relevant gfp
-flags to control the charging behavior (with some caveats).
+The actual reset toggles the mac reset, disable mac interrupts,
+stop DMA requests and do a SW reset.
 
-> Because right now this just overcharges unconditionally, but that's
-> understandable when the irq context creating the socket can't know the memcg
-> upfront. In the open() situation this is different.
-> 
+The reset code is inspired of the native driver:
+net/ethernet/stmicro/stmmac/dwxgmac2_dma.c and
+net/ethernet/stmicro/stmmac/dwmac-tegra.c
 
-For networking we deliberately overcharges in the irq context (if
-needed) and the course correct in the task context. However networking
-stack is very robust due to mechanisms like backoff, retransmit to handle
-situations like packet drops, allocation failures, congestion etc. Other
-subsystem are not that robust against ENOMEM. Once I have more detail I
-can follow up on the struct files case.
+This series can be found at:
+https://github.com/eauger/linux/tree/tegra234-mgbe-reset-module-rfc
 
-thanks,
-Shakeel
+The qemu series to test with can be found at
+https://github.com/eauger/qemu/tree/tegra234-mgbe-rfc
 
+Best Regards
+
+Eric
+
+
+Eric Auger (5):
+  vfio_platform: Introduce vfio_platform_get_region helper
+  vfio_platform: reset: Prepare for additional reset ops
+  vfio_platform: reset: Introduce new open and close callbacks
+  vfio-platform: Add a new handle to store reset data
+  vfio/platform: Add tegra234-mgbe vfio platform reset module
+
+ drivers/vfio/platform/reset/Kconfig           |   7 +
+ drivers/vfio/platform/reset/Makefile          |   2 +
+ .../platform/reset/vfio_platform_amdxgbe.c    |   7 +-
+ .../reset/vfio_platform_calxedaxgmac.c        |   7 +-
+ .../reset/vfio_platform_tegra234_mgbe.c       | 245 ++++++++++++++++++
+ drivers/vfio/platform/vfio_platform_common.c  |  78 ++++--
+ drivers/vfio/platform/vfio_platform_private.h |  43 ++-
+ 7 files changed, 358 insertions(+), 31 deletions(-)
+ create mode 100644 drivers/vfio/platform/reset/vfio_platform_tegra234_mgbe.c
+
+-- 
+2.41.0
 
 
