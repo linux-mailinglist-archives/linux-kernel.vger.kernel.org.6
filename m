@@ -1,89 +1,126 @@
-Return-Path: <linux-kernel+bounces-307703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05AE09651A4
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 23:17:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A90149651B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 23:18:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42D0EB20C69
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 21:17:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F3E11F25120
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 21:18:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C5991BBBC9;
-	Thu, 29 Aug 2024 21:15:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E91E1BAEEE;
+	Thu, 29 Aug 2024 21:17:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Eyn0RUq5"
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11011023.outbound.protection.outlook.com [52.101.65.23])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZKSqYN2T"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10D861BA27F
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 21:15:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC29A1BAED6;
+	Thu, 29 Aug 2024 21:17:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.19
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724966129; cv=fail; b=dioAQ0jeho5VWqRRMcwSObY2pc0AwJVnzqTuYXKAkbRFPRnZMp+cHmNvKFG0tCNkdFdZFiYHAOwE4Xd4+OouE/HDaFyzoKBOPOoXVW4MSY/+YZYGh8FOn4paDs2VqC0QOwWiDFdX1SLlODsoYNE5RxzgENSN0ltr5wTQifqGdhA=
+	t=1724966223; cv=fail; b=Kv/hxk7hQhRP8/fDLm1vsqtftCpT/n60zWkMrtibCObe4EMK0dpkWVCx6J9gdchoOPsmSIvsoAq6knuz/CSJb+F7whSrFIjuisKWNDIIqulgzXRrS32E9ykO2Jg+J7ZWG+Xmc1CHHc6VnLCxFT5ba17jlFzCZZlpqO8GtgZ0WQY=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724966129; c=relaxed/simple;
-	bh=AHcqgly/vmoU+jJ+4HNr0fpgvCz9aPVFw5NId2LgYsM=;
-	h=From:Date:Subject:Content-Type:Message-Id:References:In-Reply-To:
-	 To:Cc:MIME-Version; b=pivVC29zJDKl4b65FAhrXf/ZHIhgzMCSUh9ZMD9/uRpVQVL7rUJF3FLlMiDsXSOJ5qiY8tVr3N4bBuNYara3nPWFcLhhamYbXhhdX2sNuqiNAtuvaIgvWhaMatroXDS5nBscHBN9mEQLz4uGcPTvs5pAsA1HVrQYFsZxDP0a0+0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Eyn0RUq5; arc=fail smtp.client-ip=52.101.65.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	s=arc-20240116; t=1724966223; c=relaxed/simple;
+	bh=OkSzBER1tCDHqCakICMWzDv8gdL5CY5O07UMGPgMTlk=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=m0NC5LHnt6qozYzEcpkCXrzdBF2tJ3lHMYcSJpPOuvp2PdDSOIsMTUvksyenjSY9SmKfiXSh8f6lJtu7RURPxBjE+061RG0DxnbSgD5wWAgiv6/wsLyr2qAEEF43CYGHde34STn/myij3jUOzfsEVoTnKcpJXbo/RAijdz8w6nE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZKSqYN2T; arc=fail smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724966222; x=1756502222;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=OkSzBER1tCDHqCakICMWzDv8gdL5CY5O07UMGPgMTlk=;
+  b=ZKSqYN2TQtqI5GOr1PSRtHpd8Ij/3DLZ6dXKzIOK7CT15S+VLIV44bAE
+   FO77HHSRfxfqa6UBfRquJhaxXNzhx6VYTsqP9rV046FJ8avo3EURi11nM
+   0XrtLvg7gJL8Rfc3WxSSwpY2V/eoZcPFxxqUWXp/hendPd6RNMx9TEOsE
+   MnwAm4aAaZcUmprIymI2Cc2EI9+MIhvYUhYKixGK8+ZRmEJH5uuckjdbB
+   0Vi1UR2MyCeXb7TlBLc8nmNYtXVn4DiP5GNHYgWVUcO8++TED6LEqXM/C
+   lU6WrWnp3Ry7KSwEW5GltNGrRt3gE6BFljw7AFo8HLIltNql1Ug8fICjs
+   A==;
+X-CSE-ConnectionGUID: DIPPFe8hRvymKf2WIJ47jg==
+X-CSE-MsgGUID: uEfkgVF1SLeQ9N1Wwx7pjg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11179"; a="23453102"
+X-IronPort-AV: E=Sophos;i="6.10,186,1719903600"; 
+   d="scan'208";a="23453102"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 14:17:00 -0700
+X-CSE-ConnectionGUID: sR7fQbCpSleqLIAYCEnw2w==
+X-CSE-MsgGUID: 2n7ZzfksRieI97udP25/jw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,186,1719903600"; 
+   d="scan'208";a="63697152"
+Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
+  by fmviesa008.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 29 Aug 2024 14:16:59 -0700
+Received: from fmsmsx611.amr.corp.intel.com (10.18.126.91) by
+ fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Thu, 29 Aug 2024 14:16:59 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx611.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Thu, 29 Aug 2024 14:16:59 -0700
+Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Thu, 29 Aug 2024 14:16:59 -0700
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (104.47.56.174)
+ by edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 29 Aug 2024 14:16:58 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ZwxaHeP3MN9BaWjLwO61fPQMynQEQKOlRf8rRmHosmxtWF2oudyvDE+WcOEbjjDpQ7PGi4AZrDiGrAxiC0PZc2vwDkdolFhR09f0KbcUBSNIuih8yK4f4x2ssarA0w9v57oHM3SPZLDIcEvr56apXMyW3OwUOcxFLGHpQ2j7fWQUl4IA9sQ7ux4DOtDhbk5lXabMOMV35Tk7nvOE6Z21pia0WFbZy8hF9Vh8Y2wWi4Tqzsr+B5EsVBjMsZ4GhnN6Cc4Mq43BiEHql5AhA6iHDByFbb6QOAkM48vzqUiqtpXRpFQs4hyIFbr4lTx4IHAKC2rmIEAqh3W81hKx24jDtg==
+ b=Qw8cs6CYQTNdb2yBbRBCu8NVQuI0CSmld0HWWKEodIEcZEm4tifTo01AjT2TCSjdqtlquUS8bOaCQqR3tRqb4fJLXDTLniMWYOVMF7IRzy2MdjQG2T2Ik0QO00NvXO52rAHEtWSOuyp5V4KCezKNI5AVSAZ8UOEdgemozWQ+F15nIc9pEuQzuB/M1UoQZS6u/ipQTrXi0cAOGLyGMbb2tmka2Np/PrE2vviDTDCD2ZA9W1rEjruMGKYSh8ilqwlesba+lxVj+aDacAfLFTsnvoX3A0LItDKJ92uC0gNhL1upj9nPrt+a+8A52cWLgZvltqEC4eJhZC44/dQ2rhVHMg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=l+wM5XFFRbRdoH83tWAzH9EHEDGwXzNFWdNBvKh93EY=;
- b=sAxTnOIR0/Tc0Abp/IDfQI4nYm4eVEZl+oHhkQAUCB5xQ2BFBuI0osMScw90ppBigPtDb0doav1bYchbsxO2KI90zTn5RgPEdVhrtMAX9K0SN9czlGJiDESSc7zby7kBb34Ojhb6XszdQZbGsZdxupdGvwWAfdr3wYDZmSkG5ye8L5+4fzux9e8P1XvXqYVlOFt7Wnzw/i/2+QzHCzD48FdlJ2hT4gUUEjWq2gOtESio68NIJqX7IC9K293D88UyS4Qo9mg5EzixDWbjxsiOzusEuJGsBXOwovJyAPtU1pCNOc8EHjYxbqlHbg14qO4Tnjf2VGmO1hHk2j0ZWdHc9A==
+ bh=cnspQfBWmI1rN26mTcKiTbAmSLkpHTPP8UiQ2zH4HVg=;
+ b=EQAq0w4dCTCkZlnqHdxh4hhIiIht2hQvWluEEs8eAnwtm5ANlVPoFU2VaBum7Fjjsq7T4zWbEG6EJJfFssYoXJ4rDTs5S6YNc4JYiYicsj4sfO+JirtWGl7TfE4qmpgDEGhMeoKfKYKGOASUZRy6nkuc7UERf0EHtUp1Khd9QSRtXBWTEgiRjx0paW4TM7kfVzOD9a7ClNapzJj8heJcfCQ+UCHkGyjBC0e32/lnI0QIotCQeVF6lAbVUNryTAQEe+ycQuJHrbHNBQOxKSwOZ16vQbWtH56I54DwZWkFUKieIL70LId7FesiNL9EBvBWSCA/EWxZnVjaOMAtS0Igpg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=l+wM5XFFRbRdoH83tWAzH9EHEDGwXzNFWdNBvKh93EY=;
- b=Eyn0RUq59+ydzykMiopNsweBdpst1oMq5T/MQKL46/pDnEcfx7w2MR0I/9NHu+bhkDc0iruNTwRyZZ5+QGq8qcVh19fRqxfA84Sjq7jxdyD7JPkD/eLrIJvTWuKPjvEicy+dy3KlEbJ+1AtJ0OULS7dTbzLtWhHpRVI6pBdITrHsMDGqc2eIADfDpmRHNMgDC1S7lA6JaZ9eCCUUBZqxOD48le7B8u20i09cu7EZCLLFerpGBZM+CYdMBmP95GY/Qr+Ff4x9cHtJDmvcClA9UCBHlzBKWBxrmgRCA2prWM6W1tmFnoUXOOzVkmNwqcHKdfEvTxcJ6CkK0bJFfGTw0Q==
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by AM9PR04MB8971.eurprd04.prod.outlook.com (2603:10a6:20b:40a::5) with
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SA1PR11MB6733.namprd11.prod.outlook.com (2603:10b6:806:25c::17)
+ by SA1PR11MB8474.namprd11.prod.outlook.com (2603:10b6:806:3ac::16) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.20; Thu, 29 Aug
- 2024 21:15:21 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%4]) with mapi id 15.20.7897.027; Thu, 29 Aug 2024
- 21:15:21 +0000
-From: Frank Li <Frank.Li@nxp.com>
-Date: Thu, 29 Aug 2024 17:14:08 -0400
-Subject: [PATCH v4 11/11] i3c: master: svc: fix possible assignment of the
- same address to two devices
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240829-i3c_fix-v4-11-ebcbd5efceba@nxp.com>
-References: <20240829-i3c_fix-v4-0-ebcbd5efceba@nxp.com>
-In-Reply-To: <20240829-i3c_fix-v4-0-ebcbd5efceba@nxp.com>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>, 
- Boris Brezillon <boris.brezillon@collabora.com>, 
- Parshuram Thombare <pthombar@cadence.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Boris Brezillon <bbrezillon@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
- Miquel Raynal <miquel.raynal@bootlin.com>, 
- Conor Culhane <conor.culhane@silvaco.com>
-Cc: linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org, 
- imx@lists.linux.dev, Frank Li <Frank.Li@nxp.com>, stable@kernel.org
-X-Mailer: b4 0.13-dev-e586c
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1724966083; l=3184;
- i=Frank.Li@nxp.com; s=20240130; h=from:subject:message-id;
- bh=AHcqgly/vmoU+jJ+4HNr0fpgvCz9aPVFw5NId2LgYsM=;
- b=0VnkJGxAJrsl06sm4Q7m0MJStVDIHL9X8VwXMfWEyiHZdMs19KXgj9cBZzvu/mZoO7o/agbna
- XxpkRjLB24PBzgJjoLbfBoLT7OIc77CR44IMpbqnnM3g7Vectva8HmV
-X-Developer-Key: i=Frank.Li@nxp.com; a=ed25519;
- pk=I0L1sDUfPxpAkRvPKy7MdauTuSENRq+DnA+G4qcS94Q=
-X-ClientProxiedBy: SJ0PR13CA0219.namprd13.prod.outlook.com
- (2603:10b6:a03:2c1::14) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.26; Thu, 29 Aug
+ 2024 21:16:53 +0000
+Received: from SA1PR11MB6733.namprd11.prod.outlook.com
+ ([fe80::cf7d:9363:38f4:8c57]) by SA1PR11MB6733.namprd11.prod.outlook.com
+ ([fe80::cf7d:9363:38f4:8c57%6]) with mapi id 15.20.7897.027; Thu, 29 Aug 2024
+ 21:16:53 +0000
+Date: Thu, 29 Aug 2024 16:16:46 -0500
+From: Ira Weiny <ira.weiny@intel.com>
+To: Jonathan Cameron <Jonathan.Cameron@huawei.com>, <ira.weiny@intel.com>
+CC: Dave Jiang <dave.jiang@intel.com>, Fan Ni <fan.ni@samsung.com>, "Navneet
+ Singh" <navneet.singh@intel.com>, Chris Mason <clm@fb.com>, Josef Bacik
+	<josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, Petr Mladek
+	<pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>, Andy Shevchenko
+	<andriy.shevchenko@linux.intel.com>, Rasmus Villemoes
+	<linux@rasmusvillemoes.dk>, Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Jonathan Corbet <corbet@lwn.net>, Andrew Morton <akpm@linux-foundation.org>,
+	Dan Williams <dan.j.williams@intel.com>, Davidlohr Bueso <dave@stgolabs.net>,
+	Alison Schofield <alison.schofield@intel.com>, Vishal Verma
+	<vishal.l.verma@intel.com>, <linux-btrfs@vger.kernel.org>,
+	<linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-doc@vger.kernel.org>, <nvdimm@lists.linux.dev>
+Subject: Re: [PATCH v3 18/25] cxl/extent: Process DCD events and realize
+ region extents
+Message-ID: <66d0e53e9d3e9_f937b294b7@iweiny-mobl.notmuch>
+References: <20240816-dcd-type2-upstream-v3-0-7c9b96cba6d7@intel.com>
+ <20240816-dcd-type2-upstream-v3-18-7c9b96cba6d7@intel.com>
+ <20240827141852.0000553d@Huawei.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240827141852.0000553d@Huawei.com>
+X-ClientProxiedBy: MW4PR03CA0174.namprd03.prod.outlook.com
+ (2603:10b6:303:8d::29) To SA1PR11MB6733.namprd11.prod.outlook.com
+ (2603:10b6:806:25c::17)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,175 +128,690 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AM9PR04MB8971:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8a6b77b2-82e0-44f9-a876-08dcc86fb119
-X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-TrafficTypeDiagnostic: SA1PR11MB6733:EE_|SA1PR11MB8474:EE_
+X-MS-Office365-Filtering-Correlation-Id: be6e7256-73d3-438f-c53f-08dcc86fe7cb
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
- BCL:0;ARA:13230040|376014|1800799024|52116014|7416014|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
- =?utf-8?B?Q3puY1B1bDB5WlA2N3RjbVhxaURTa0daNHE0SFBSWW1Fd3RZVEZ0OStKMWty?=
- =?utf-8?B?TEhzU0tRcFFYczNHbnZUbUJhQytra0FHV1hBaVlXUFhVWmFOQ3NqNzZ1M3BL?=
- =?utf-8?B?RUtiSjNaM2FMbzRuaHZKaC8yelVVNVRBMTQ1THUxZmZlQkdocGdVelQ2N2V3?=
- =?utf-8?B?aE9MRDVucGNiWVA1dklLSE40T2JDYXc5T29BVWt2NkNkVVZRR3ZoeXBqeXph?=
- =?utf-8?B?NmJqZFFnTU1IMGZPT1cyek1mVkwyNzFocE9kRGxnUm9BNXRSMnlwMU5oWjg1?=
- =?utf-8?B?akx5WFlCRmZjMWJiM1NLRFp1dnZ4NUx5K09EdWppZEk3bWxoaVdqN0t6bmpC?=
- =?utf-8?B?dDV4VlpxWWhRcVYzWUpHQXZObys0TkRMbzhkNEZGelUyYUszSFNzSHZldkMx?=
- =?utf-8?B?eklMaXgzVVMxQll2eTFrbnNiY3N6ZVpRTGRReDdrVkZJcW1oRnc1TlFHdlhY?=
- =?utf-8?B?MHBCUzFLb05SeFJ0TzZLeWx2WnlUTURob2FsRGZSY2haK0t3RG9yWjdpNzky?=
- =?utf-8?B?RFg4clhMSmk3QWFMVkZYVVd3NXhUNW9vcnJVODRIMEFyOWZrQ0xtblJ4amc3?=
- =?utf-8?B?RmQ5M2plT1RkVTloaG9GVVR2MUlTRzhzOHgvUjBlZ1NjT05sY05LaE1nRDRX?=
- =?utf-8?B?bnhMUHJjeGp2Y3d0bVR4d0dNTkVLYml1ZUVEZFFmTEdEL3BvNUJHTG9RSXp2?=
- =?utf-8?B?TGVvTlZHTVRNWUxZcXRTc25XMUVldFJLSG5ITU5ZekkwdkpBZ3JMdHZENS8r?=
- =?utf-8?B?VGI2RkZTbUo3TUEwK3dLVGhaR01kajV0ZFlXTXRnR0hnc2kyL2JjYVltRk55?=
- =?utf-8?B?OCtGMmJtMTZtSitrcWZHTDlURjhsZmVPaU1uK24vTndVL08zQy9WNnIyem5t?=
- =?utf-8?B?aUZmQ2N6T0RORUhyallleXBtLzFkYWlvekNLaC9SUE5kdVc3Nks1cEh1UTk3?=
- =?utf-8?B?QytRRkZudzhGQjY3S1FoV1dlSWdrUFppRStKQmZCUnNOQ3ROTnlZbVE5KzZk?=
- =?utf-8?B?dnBWajlmZkxuNjYwL0doTnFEM09RRWVpSXpPVXNPMngrQnozK0QzVVEwam00?=
- =?utf-8?B?c08wem5tMHBMZlVIZXlyOTJWTkNXRWtHN3NWOTRMYTJOWnlnL21zWStmWk43?=
- =?utf-8?B?SGV5QThYZ1RSTHRyYjQ5MHlkeGFpRUEvdWljM1JUeFhjN0lkZ0c2TUJaODRY?=
- =?utf-8?B?RUxzUXlYWHU3MXVMaUY5ZFFmUEloV29oVnBlVTJVSXZXemMxcUtQekNWR0pG?=
- =?utf-8?B?NVVaVXFkYmZ2UWlKSmw5VUhwYjBZdXFvSjBDZ3NPTzVNRHpvcUpYMnR4NkJP?=
- =?utf-8?B?S1BoZXhxdXcxWDRZSlM0MG16ZzI4TVNjbmUySDlRQkhWZ3hybVRaZkhtR2hF?=
- =?utf-8?B?cE5sU3MzajhrNk9qRDRiU3A1RkkxVXZ5RDZDSGF0R1B3OG81UnIyc2RTMEtP?=
- =?utf-8?B?eU00UytGVkxSS2JXTGlmQXRMcHdnbE5yREJ2Yi9ORjdDcEQwcklzWXpWVGxa?=
- =?utf-8?B?c0FxbVFnV08xS1pUSVNlNDROZ3JERitPaXhQeTY3eUxBZDQxQTlZTlVSNWJQ?=
- =?utf-8?B?eWtKVVI5eFQ0L3lPWVNDZlZXTUVmV0d4UTE3SG51d2dzSFN5cjBuclQ3NnI1?=
- =?utf-8?B?Zm56a3dGMWNBaWh2NUpjb3ltcDZZU2RveVlSRUY0N1FSelU3L3g0TkUxN0NO?=
- =?utf-8?B?dHNGbTI1ZjVJOGFvVVY3RHRzdDFmcit4TXVrazBXR3RldmROMW4zSVkzYzRl?=
- =?utf-8?B?dG5YcTZXcWx3Y0R3WlB4OHpYT0ljNDBRWUtydGxISy9oQWhSclhHRTNUNGs0?=
- =?utf-8?B?ZWVmazc4Z1ZZSXVHMWRHc0JZb0FUUW1UcDBRWmowWCs3bFR3bURWanl4aVRH?=
- =?utf-8?B?RUkveHlGdHR4SVlzY0RiRlN3ZEd3MFZUUkJIN082dHNLZWc9PQ==?=
-X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(52116014)(7416014)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?VxrgHbUOw6LD14MBUsCePabmM/NZHqw/lIwBdS0yvv9zSdIXqt6N7iKoFi0G?=
+ =?us-ascii?Q?DqnArtsYF1l5yBP2BdYwAXKvMnLfaERMBpsA6QH1Sa4OdPSoVUhNvNP+bZuw?=
+ =?us-ascii?Q?ah4m/H4rHPkccTbVQ+G23GWewdTCufCbRcGXSNW9UHkwdQ2c1YfPG6KvxcJz?=
+ =?us-ascii?Q?Tz8MrET09njD63ivlrknKcs1wmKrsR1tCfyirgRqTMsh/d9mDh6dXLDZaSgL?=
+ =?us-ascii?Q?v7b4LSbsiBLT7fw6gPKQnw71HZ15hXDjkX5E2WgwflDEByaPOTqG11Pz4x7X?=
+ =?us-ascii?Q?nIgqS/KXL6jluuj4IUpgZUiTNlANUBS4keHqTdwNv6Hp9ZvSmFCx9Se9Yckp?=
+ =?us-ascii?Q?KH/CLck2V1wUVpuYrW9vYtrF/1s8R0qOugCDc8tElSV51gObB9d9NYjB3Wgw?=
+ =?us-ascii?Q?UAoUqcuILEAwJ9SOsgbLmlx8R3W1rRsAweK8spRXfqAMx4cx2N8/V3F53uwH?=
+ =?us-ascii?Q?2tZ6PpMwfELQJ5xOavr9rSN8N+AOj+iunnJpQR1OhC96v4X3XY/ntPjavrma?=
+ =?us-ascii?Q?unKLClV6Ur2uTcNwo5rEqx228SkBjCxldmJsPbk/4sFLR6AeHqYuNH6FdJSh?=
+ =?us-ascii?Q?c2S6u4nW4uUv/Qet2aqNLqVpqcp27ZOBXxpy+p3CNf/rwgkWp7J8kLhKWPPi?=
+ =?us-ascii?Q?eZMQhb3iyRgyqvotnJOsh0JC+T2Z6FYvntXgNj3xGw83WHvnvjFQiX70q+u8?=
+ =?us-ascii?Q?H7myyAPNw3vhvLaMx6gZq1BmkRf7uQalXxp2jJKF71SDnwUZNd3/d0StNYFk?=
+ =?us-ascii?Q?tVahH3Tk9oV6aervIotmdOoC03kEfUNNbXG4kT15klIuixArkw/uuM/k2vPB?=
+ =?us-ascii?Q?GsniCY4HZ9A0GWpFnoqKXCoMhamomf4ig4yEB19AM0l6bKg2+k68YDCNCHrZ?=
+ =?us-ascii?Q?v+IhnmfSIwTSqTJdGwhvJO+ai07UgFcalpnaVzutVi5vIILETfuyDZn6yoKL?=
+ =?us-ascii?Q?zMgG82lh5/PsY7Pu6fucljG7uvN2dPGeg5tidc9cUYxS4kQGDBo3Td3fLhXl?=
+ =?us-ascii?Q?V/C3l4CETpWpN7hcU9J6D/dvvGvAGUswI6HIWvBZcYnkedf/IHEDtgYIkVIC?=
+ =?us-ascii?Q?0y46qGrGq77qLhRuZ1JRPvjEqSdR8jGxWYNrVk6Y33RiuEXv4m4FvskNccZE?=
+ =?us-ascii?Q?PHOgxZGKzwgLk6cvNYcsfNPJkl1OIp7CGwseTsDiTHQB3QybVmMcayNtZ3uM?=
+ =?us-ascii?Q?UwDXy1RtmJx3i+olw6A4ejQWdaZ+h0dO9unU6W6LJgH6rxKnz/bhxuYXSEf+?=
+ =?us-ascii?Q?EpZDmA8kaX66mBojSj0cAggq99vuEvS04GGIIXPWXFi1gB/h57dyfIbG6MNt?=
+ =?us-ascii?Q?XfqLtccVuv/PcVchYah2v/Hf1uoS9goxm17A+bdKOSzVzQ=3D=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR11MB6733.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?utf-8?B?ZTVNaTQ2WnVJVmdiRjhieXdYeXF5S2F2ZHRyeEE4M2NOQTJGMlo0RVRSem9B?=
- =?utf-8?B?VXlYOFRwM2ZPWW9XTG8vd2xGQm1EK1NCU3hrVWZpUlU4Y0llTmtZUzhDTEVa?=
- =?utf-8?B?TXJYREpPS2dkVEFOMmFJbkdUeTdPTHY0cTVxWTdlYWpzLzI4b3BTMlNNUGlH?=
- =?utf-8?B?T3pjN3N3NGRnZlZRZWxZVjJDQ0g5U1A2S1FxNWdoYm9XRjlUVUdjVHpZZ2t5?=
- =?utf-8?B?ZWl1QU9rQ0ErYS9CcEdvVm5hZW0zVENhNnQ0akdxMkNvZVN2SitVMTNia2cv?=
- =?utf-8?B?dmp2OEhncURxblByR0R6QXJFbWJhZXNNaC8yNlBCY3FXc1o2RUx1a0VPVk96?=
- =?utf-8?B?dTRJSzhVclFXUnFvVXg1Z3NzWjY0Y1pYSFRpSXA2a3lxWDdUeVdEYzZWVnh0?=
- =?utf-8?B?OWhSU0RSaGxJS1YvVFMxTnA5d1FOSXluSjBmQWFOVE5hOGZMcmVHdjdlVmky?=
- =?utf-8?B?am1vbWJiNGJBcm05Slh1Z3RBYllaUXJuMm1PU3g3SkJxVjNZVXpRdVZ0UlY3?=
- =?utf-8?B?aS8vRUh0ZytvNksrZE4rU2s2QXFVUThuNVlJa3JXWWZxT09XZ3B0RTA4cEcy?=
- =?utf-8?B?d2NVeERhRTlpVHc3UENlWEdZelUwdW1ST2oxTmZqcDRlVzVLTjJGdGhRWVoy?=
- =?utf-8?B?TmMwcHhTcENPNGZXZWFRNlVGcFJScC9jWG9wZCtyNjFSS29oRlI5VHRUNDVD?=
- =?utf-8?B?R1FJVjdYNUFxRzlwRjZUVEg3UFA3ZjdXSUZxeGVpZWxRVGlMZUFoTXl5ZVp1?=
- =?utf-8?B?MnJ6b2Q0OHZDb0t5dWtNRE9wQU9NamhKdytiaFkrQ3I1WHRuQXJRNkJqazdJ?=
- =?utf-8?B?R1VFMU50Nkl6YUhhSEx4TEZ0KzdnUGplY1JRM2NLNXVRR1ZuSHVGMm9PQkhp?=
- =?utf-8?B?TXByZCsyQmZaTm5tK1EzK3oxdjRZQldPNHdoQUZ5VlRjemM2NFRwV2RmYW1V?=
- =?utf-8?B?d0xYUHlrY1F5NkdxT2NCY1FZMGVEYURMYWpjMUo4QjhrdkpxYmdMV0FLaFVO?=
- =?utf-8?B?OC9GM0dXL1grdWNOR2h3M2ZwVlV0dy9tTDI5SXduWVFqYUc1SHlrWVdHL2Np?=
- =?utf-8?B?dUxpcWkxWE03cmlkZmplR3ZYdHA5L2duVGdrZCtJNE5OR2luWjVrbk9XSjky?=
- =?utf-8?B?YldpV2wrRDY1cDFOT016WnpWenJLWXEyTUx5QnJFZ1F4cXpGanJtUzdwRlJH?=
- =?utf-8?B?VWE2YkFuSmNJQ0FiOGtrbmpWNGM5TG9OVkkvc0JSWXBnUlcyWVEwN2lnNWJn?=
- =?utf-8?B?NVpFQzhqYlh6N3NnK1Rsa25Ic2hCaXRWNmFBWFIyWEU1SVVCUmxldW4xTUo2?=
- =?utf-8?B?ZkYrZDBjWDYyaTlReDlKUzNrUDNKcEsvZzd3aXdhZE9GWXplZWhieVZUcW1E?=
- =?utf-8?B?bU9kcGJjVGp0eEpCdmNMbEMvVUtoeTEwTktMWng3YjJwdmdzUTVxTVlOTTFu?=
- =?utf-8?B?R0xMcTZFbTFqaVlTRFhQeWhkWGd6czB4dDcyOWwyeUo2L05UNTkzR3BlNkpL?=
- =?utf-8?B?WTBmNFNpaW1veEVTYVNsYlgvbXYvT1UvUTc1ckc4NE5GSTgxQis3Smg3eEtu?=
- =?utf-8?B?ejlXVVg1SEwyYXVpeFNuMkpBZW1GRVlSaVAweVBsVmZZck5vLy9pMm40NWo0?=
- =?utf-8?B?ak9yUGVIeXVkM0xLNGtzQjBZZllpQ2RYTmJtOVV1U2tHblVsQm03NVFiaFFB?=
- =?utf-8?B?WkFDbWsyY2ZGQ1JrdXJUa1o0c2h6clB0eWJuUzhNY05rcVRlZTRrK3JWRDMr?=
- =?utf-8?B?elpPZnpTNi9JUmZEd21TZGJhWFh5ZGp5UWZVTXdaQk9aNjlqQjlZbXVMRGZJ?=
- =?utf-8?B?VEZOL0ZiSyt6YnpZam92VDNEdmF0M0U4dGJIKzQwazJaUXVVZWM1aTZRNzdI?=
- =?utf-8?B?aEpQSXlaQklzNGE3Njd6Mi95T2VKUnRNSmxrVFVIVHh0Qk1ReW5XZGVYRlJj?=
- =?utf-8?B?YWM2bkllbGZ0c0E3Ti9jeFo5aUVRRy8vWHJHY1pWMUx5b3liWUhJR0hIc1o3?=
- =?utf-8?B?ZEdwWnZtb0wxR2ltaGIzTllCSXUvY3p2dzR1WlJEOVlBeGxFc0s2eU5LSTNJ?=
- =?utf-8?B?YmdYTGdSdm9TeWJrNmNoS2dUUnNlRWdvRC9jemNlNjlyZDhwd2x4M3FTQjUv?=
- =?utf-8?Q?a50oUXWiriox5AQStUOhCk1OY?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8a6b77b2-82e0-44f9-a876-08dcc86fb119
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?FFp+zUcxMg2Ua4RiL0DeC82ZBMoWCOW4CN+bmPt+IrmFabdXIxTgFwMM5CmA?=
+ =?us-ascii?Q?s7A3CfIPX228x1H0Ys8nTwf7i/yq5/GrAkvJT2Q6mxcwubHvgpvPPNdXZvYw?=
+ =?us-ascii?Q?Oqm3POM21Ye7RTJziXmqD7uZRWe2JYKYMjWl/Wqz8iYyBMn8LsmjQVb4+n9l?=
+ =?us-ascii?Q?WT6Kcakr7XqOpXw3F+2MoNYY5G+TAN+ObApML47zSGQj3ZNEO7T2uuZHGekl?=
+ =?us-ascii?Q?9DZP7PxsNQ4sBQTSfmkBQwiNgssl82tvD9j4usimVCQsjJAZOGqy1uAdODgP?=
+ =?us-ascii?Q?hqMvqLPsJd8oETMyr1gfpb1vmPdh+uuirG9nukSZeoT7DDoKGSIvYEHcJDTB?=
+ =?us-ascii?Q?7b9NoFFMLc2vV3cJmTRGIN/HjCs5lig9FFSKnHRvSkIz/isbxGRVIpDM8WOM?=
+ =?us-ascii?Q?guW97aYBYAJlX9Ll3Ed1yYtl3dOkSAyZMHvfgp3Wa10eJzW7fv76DbV8elmA?=
+ =?us-ascii?Q?9strXTiPWWhtNOjPdxVAaaIz7er9h+Ybp7qY6wZFZayVCcp3n1RpJyWN+WmB?=
+ =?us-ascii?Q?nudOXAZdAm5wqxPIU+pan7jWtIj+GhsQ+Db5v+s4yC07ZbvNml2wOT3kuUzc?=
+ =?us-ascii?Q?g6pqtx9mn4RxqiuSfctsdkkInsoEhev4gJpZ20obcCEQiQg3vCJjgrrauHYB?=
+ =?us-ascii?Q?WQ/FmuUhtC9ZCFLHKbxAOuxU766G1tnVhVPxuEcpG84jlWnPRC69xXdPkUll?=
+ =?us-ascii?Q?gUwmnPVtQt1uv5ugvWe82dgGAZeqxYfq1dImRdhRygIWvhBr+4UFo7GJ6eDq?=
+ =?us-ascii?Q?9sX3OQ0hLGGvL6fxQQu0iNkr3k8d9JrstqgYnsyu3SLjmxHrBEALUil3/qJK?=
+ =?us-ascii?Q?bS15sUUBqy3tlb6EOhxO6V+tjCTDnw//p5HvV42/QMF98AMRh50QVreYHJBN?=
+ =?us-ascii?Q?+yLrsfFD7ncaccOYqe0HzdNsYA+Lm9iflbLJbcRzcvb6DIbhFV7A3A2wUQp/?=
+ =?us-ascii?Q?q9eNJqZTAb2zn8s8vDHXHgDs+mEi5hbzGLVWQqD5CxPfg4FdUv+C6jq9u6Ky?=
+ =?us-ascii?Q?v17oWsKoCnzX3auc6f3uMZxTm5bcs7aOUGuud9pajtOV6Xu4iwsRdKsfrozw?=
+ =?us-ascii?Q?vrAMseLTgp/vKMv4McSkDIXORufLA4p8Zp0JkioZNbiEM5zKK54jXOoYyj+6?=
+ =?us-ascii?Q?mVwWx73fJXx9wnTpbPB5N2ZzQM2bsYt9o9NFTA1j2V3Eoz8igf6C7AKvWcZe?=
+ =?us-ascii?Q?Ij7ebz+NoA1gzJxy+M0i5iETZuS8gy8UvBaljTFi+YZ0+lUJqptlGODgTSA1?=
+ =?us-ascii?Q?44T/ZYy2+EDuwrQJHJUDKcJxzR/fWbaiNsrZAiuINBKONyPHhsy9ncjAukZ3?=
+ =?us-ascii?Q?qX64U4ywp8abipIMSDE+eAGWQfKmo9fdWzX/tFKWHKPh5J4ZMiZU8YxNAzS6?=
+ =?us-ascii?Q?iqMQGNMaCva1fwWoRBZXSeLrnm+kqh08VKDCgbrIi+H5D18p+DwlM3Uf2jWY?=
+ =?us-ascii?Q?vFR+DKtINeC/xjhwIzCPljW4muEWX70GXosUJM2PB0HBZElCXauzN8xGWfTf?=
+ =?us-ascii?Q?XcitoB8QejC4FiuC5GgSpuUImf8OAuaUUpZKLQZoYMEGA75o/mvqcuPf/Wjl?=
+ =?us-ascii?Q?dMRxQE4ydCerN9nEUukB3hsL/FjlsiggJr4lzWXG?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: be6e7256-73d3-438f-c53f-08dcc86fe7cb
+X-MS-Exchange-CrossTenant-AuthSource: SA1PR11MB6733.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Aug 2024 21:15:21.9011
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Aug 2024 21:16:53.7810
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: dQk4Ej28I1weAx7kZza93Ulc0FGfZTaPPfh+f2m/0wC64762D/vT5la70piuHZ9hNO/hcsJSet30MpGBDitU6A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB8971
+X-MS-Exchange-CrossTenant-UserPrincipalName: q6uE6tUy46rDhYaCsyhmNzBy49iKZodduc3AHhjk8NGrR1DKb+YpdBh37Z9AQn4xYbxQzZdjQLf5+LVv6aG76A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB8474
+X-OriginatorOrg: intel.com
 
-svc_i3c_master_do_daa() {
-    ...
-    for (i = 0; i < dev_nb; i++) {
-        ret = i3c_master_add_i3c_dev_locked(m, addrs[i]);
-        if (ret)
-            goto rpm_out;
-    }
-}
+Jonathan Cameron wrote:
+> On Fri, 16 Aug 2024 09:44:26 -0500
+> ira.weiny@intel.com wrote:
+> 
+> > From: Navneet Singh <navneet.singh@intel.com>
+> > 
 
-If two devices (A and B) are detected in DAA and address 0xa is assigned to
-device A and 0xb to device B, a failure in i3c_master_add_i3c_dev_locked()
-for device A (addr: 0xa) could prevent device B (addr: 0xb) from being
-registered on the bus. The I3C stack might still consider 0xb a free
-address. If a subsequent Hotjoin occurs, 0xb might be assigned to Device A,
-causing both devices A and B to use the same address 0xb, violating the I3C
-specification.
+[snip]
 
-The return value for i3c_master_add_i3c_dev_locked() should not be checked
-because subsequent steps will scan the entire I3C bus, independent of
-whether i3c_master_add_i3c_dev_locked() returns success.
+> > +static int match_contains(struct device *dev, void *data)
+> > +{
+> > +	struct region_extent *region_extent = to_region_extent(dev);
+> > +	struct match_data *md = data;
+> > +	struct cxled_extent *entry;
+> > +	unsigned long index;
+> > +
+> > +	if (!region_extent)
+> > +		return 0;
+> > +
+> > +	xa_for_each(&region_extent->decoder_extents, index, entry) {
+> > +		if (md->cxled == entry->cxled &&
+> > +		    range_contains(&entry->dpa_range, md->new_range))
+> > +			return true;
+> As below, this returns int, so shouldn't be true or false.
 
-If device A registration fails, there is still a chance to register device
-B. i3c_master_add_i3c_dev_locked() can reset DAA if a failure occurs while
-retrieving device information.
+Yep.  Thanks.
 
-Cc: stable@kernel.org
-Fixes: 317bacf960a4 ("i3c: master: add enable(disable) hot join in sys entry")
-Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
-Signed-off-by: Frank Li <Frank.Li@nxp.com>
----
-change from v3 to v4
-- add comments about not check return value
-- add miquel's review tag
----
- drivers/i3c/master/svc-i3c-master.c | 27 +++++++++++++++++++++------
- 1 file changed, 21 insertions(+), 6 deletions(-)
+> 
+> > +	}
+> > +	return false;
+> > +}
+> 
+> > +static int match_overlaps(struct device *dev, void *data)
+> > +{
+> > +	struct region_extent *region_extent = to_region_extent(dev);
+> > +	struct match_data *md = data;
+> > +	struct cxled_extent *entry;
+> > +	unsigned long index;
+> > +
+> > +	if (!region_extent)
+> > +		return 0;
+> > +
+> > +	xa_for_each(&region_extent->decoder_extents, index, entry) {
+> > +		if (md->cxled == entry->cxled &&
+> > +		    range_overlaps(&entry->dpa_range, md->new_range))
+> > +			return true;
+> 
+> returns int, so returning true or false is odd.
 
-diff --git a/drivers/i3c/master/svc-i3c-master.c b/drivers/i3c/master/svc-i3c-master.c
-index 83b2943074866..a520f5482b592 100644
---- a/drivers/i3c/master/svc-i3c-master.c
-+++ b/drivers/i3c/master/svc-i3c-master.c
-@@ -1039,12 +1039,27 @@ static int svc_i3c_master_do_daa(struct i3c_master_controller *m)
- 	if (ret)
- 		goto rpm_out;
- 
--	/* Register all devices who participated to the core */
--	for (i = 0; i < dev_nb; i++) {
--		ret = i3c_master_add_i3c_dev_locked(m, addrs[i]);
--		if (ret)
--			goto rpm_out;
--	}
-+	/*
-+	 * Register all devices who participated to the core
-+	 *
-+	 * If two devices (A and B) are detected in DAA and address 0xa is assigned to
-+	 * device A and 0xb to device B, a failure in i3c_master_add_i3c_dev_locked()
-+	 * for device A (addr: 0xa) could prevent device B (addr: 0xb) from being
-+	 * registered on the bus. The I3C stack might still consider 0xb a free
-+	 * address. If a subsequent Hotjoin occurs, 0xb might be assigned to Device A,
-+	 * causing both devices A and B to use the same address 0xb, violating the I3C
-+	 * specification.
-+	 *
-+	 * The return value for i3c_master_add_i3c_dev_locked() should not be checked
-+	 * because subsequent steps will scan the entire I3C bus, independent of
-+	 * whether i3c_master_add_i3c_dev_locked() returns success.
-+	 *
-+	 * If device A registration fails, there is still a chance to register device
-+	 * B. i3c_master_add_i3c_dev_locked() can reset DAA if a failure occurs while
-+	 * retrieving device information.
-+	 */
-+	for (i = 0; i < dev_nb; i++)
-+		i3c_master_add_i3c_dev_locked(m, addrs[i]);
- 
- 	/* Configure IBI auto-rules */
- 	ret = svc_i3c_update_ibirules(master);
+Yep.
 
--- 
-2.34.1
+> 
+> > +	}
+> > +
+> > +	return false;
+> > +}
+> 
+> 
+> > +int cxl_rm_extent(struct cxl_memdev_state *mds, struct cxl_extent *extent)
+> > +{
+> > +	u64 start_dpa = le64_to_cpu(extent->start_dpa);
+> > +	struct cxl_memdev *cxlmd = mds->cxlds.cxlmd;
+> > +	struct cxl_endpoint_decoder *cxled;
+> > +	struct range hpa_range, dpa_range;
+> > +	struct cxl_region *cxlr;
+> > +
+> > +	dpa_range = (struct range) {
+> > +		.start = start_dpa,
+> > +		.end = start_dpa + le64_to_cpu(extent->length) - 1,
+> > +	};
+> > +
+> > +	guard(rwsem_read)(&cxl_region_rwsem);
+> > +	cxlr = cxl_dpa_to_region(cxlmd, start_dpa, &cxled);
+> > +	if (!cxlr) {
+> > +		memdev_release_extent(mds, &dpa_range);
+> 
+> How does this condition happen?  Perhaps a comment needed.
 
+Fair enough.  Proposed comment.
+
+	/*
+	 * No region can happen here for a few reasons:
+	 *
+	 * 1) Extents were accepted and the host crashed/rebooted
+	 *    leaving them in an accepted state.  On reboot the host
+	 *    has not yet created a region to own them.
+	 *
+	 * 2) Region destruction won the race with the device releasing
+	 *    all the extents.  Here the release will be a duplicate of
+	 *    the one sent via region destruction.
+	 *
+	 * 3) The device is confused and releasing extents for which no
+	 *    region ever existed.
+	 *
+	 * In all these cases make sure the device knows we are not
+	 * using this extent.
+	 */
+
+Item 2 is AFAICS ok with the spec.
+
+> 
+> > +		return -ENXIO;
+> > +	}
+> > +
+> > +	calc_hpa_range(cxled, cxlr->cxlr_dax, &dpa_range, &hpa_range);
+> > +
+> > +	/* Remove region extents which overlap */
+> > +	return device_for_each_child(&cxlr->cxlr_dax->dev, &hpa_range,
+> > +				     cxlr_rm_extent);
+> > +}
+> > +
+> > +static int cxlr_add_extent(struct cxl_dax_region *cxlr_dax,
+> > +			   struct cxl_endpoint_decoder *cxled,
+> > +			   struct cxled_extent *ed_extent)
+> > +{
+> > +	struct region_extent *region_extent;
+> > +	struct range hpa_range;
+> > +	int rc;
+> > +
+> > +	calc_hpa_range(cxled, cxlr_dax, &ed_extent->dpa_range, &hpa_range);
+> > +
+> > +	region_extent = alloc_region_extent(cxlr_dax, &hpa_range, ed_extent->tag);
+> > +	if (IS_ERR(region_extent))
+> > +		return PTR_ERR(region_extent);
+> > +
+> > +	rc = xa_insert(&region_extent->decoder_extents, (unsigned long)ed_extent, ed_extent,
+> 
+> I'd wrap that earlier to keep the line a bit shorter.
+
+Done.
+
+> 
+> > +		       GFP_KERNEL);
+> > +	if (rc) {
+> > +		free_region_extent(region_extent);
+> > +		return rc;
+> > +	}
+> > +
+> > +	/* device model handles freeing region_extent */
+> > +	return online_region_extent(region_extent);
+> > +}
+> > +
+> > +/* Callers are expected to ensure cxled has been attached to a region */
+> > +int cxl_add_extent(struct cxl_memdev_state *mds, struct cxl_extent *extent)
+> > +{
+> > +	u64 start_dpa = le64_to_cpu(extent->start_dpa);
+> > +	struct cxl_memdev *cxlmd = mds->cxlds.cxlmd;
+> > +	struct cxl_endpoint_decoder *cxled;
+> > +	struct range ed_range, ext_range;
+> > +	struct cxl_dax_region *cxlr_dax;
+> > +	struct cxled_extent *ed_extent;
+> > +	struct cxl_region *cxlr;
+> > +	struct device *dev;
+> > +
+> > +	ext_range = (struct range) {
+> > +		.start = start_dpa,
+> > +		.end = start_dpa + le64_to_cpu(extent->length) - 1,
+> > +	};
+> > +
+> > +	guard(rwsem_read)(&cxl_region_rwsem);
+> > +	cxlr = cxl_dpa_to_region(cxlmd, start_dpa, &cxled);
+> > +	if (!cxlr)
+> > +		return -ENXIO;
+> > +
+> > +	cxlr_dax = cxled->cxld.region->cxlr_dax;
+> > +	dev = &cxled->cxld.dev;
+> > +	ed_range = (struct range) {
+> > +		.start = cxled->dpa_res->start,
+> > +		.end = cxled->dpa_res->end,
+> > +	};
+> > +
+> > +	dev_dbg(&cxled->cxld.dev, "Checking ED (%pr) for extent %par\n",
+> > +		cxled->dpa_res, &ext_range);
+> > +
+> > +	if (!range_contains(&ed_range, &ext_range)) {
+> > +		dev_err_ratelimited(dev,
+> > +				    "DC extent DPA %par (%*phC) is not fully in ED %par\n",
+> > +				    &ext_range.start, CXL_EXTENT_TAG_LEN,
+> > +				    extent->tag, &ed_range);
+> > +		return -ENXIO;
+> > +	}
+> > +
+> > +	if (extents_contain(cxlr_dax, cxled, &ext_range))
+> 
+> This case confuses me. If the extents are already there I think we should
+> error out or at least print something as that's very wrong.
+
+I thought we discussed this in one of the community meetings that it would be
+ok to accept these.  We could certainly print a warning here.
+
+In all honestly I'm wondering if these restrictions are really needed anymore.
+But at the same time I really, really, really don't think anyone has a good use
+case to have to support these cases.  So I'm keeping the code simple for now.
+
+> 
+> > +		return 0;
+> > +
+> > +	if (extents_overlap(cxlr_dax, cxled, &ext_range))
+> > +		return -ENXIO;
+> > +
+> > +	ed_extent = kzalloc(sizeof(*ed_extent), GFP_KERNEL);
+> > +	if (!ed_extent)
+> > +		return -ENOMEM;
+> > +
+> > +	ed_extent->cxled = cxled;
+> > +	ed_extent->dpa_range = ext_range;
+> > +	memcpy(ed_extent->tag, extent->tag, CXL_EXTENT_TAG_LEN);
+> > +
+> > +	dev_dbg(dev, "Add extent %par (%*phC)\n", &ed_extent->dpa_range,
+> > +		CXL_EXTENT_TAG_LEN, ed_extent->tag);
+> > +
+> > +	return cxlr_add_extent(cxlr_dax, cxled, ed_extent);
+> > +}
+> > diff --git a/drivers/cxl/core/mbox.c b/drivers/cxl/core/mbox.c
+> > index 01a447aaa1b1..f629ad7488ac 100644
+> > --- a/drivers/cxl/core/mbox.c
+> > +++ b/drivers/cxl/core/mbox.c
+> > @@ -882,6 +882,48 @@ int cxl_enumerate_cmds(struct cxl_memdev_state *mds)
+> >  }
+> >  EXPORT_SYMBOL_NS_GPL(cxl_enumerate_cmds, CXL);
+> >  
+> > +static int cxl_validate_extent(struct cxl_memdev_state *mds,
+> > +			       struct cxl_extent *extent)
+> > +{
+> > +	u64 start = le64_to_cpu(extent->start_dpa);
+> > +	u64 length = le64_to_cpu(extent->length);
+> > +	struct device *dev = mds->cxlds.dev;
+> > +
+> > +	struct range ext_range = (struct range){
+> > +		.start = start,
+> > +		.end = start + length - 1,
+> > +	};
+> > +
+> > +	if (le16_to_cpu(extent->shared_extn_seq) != 0) {
+> 
+> That's not the 'main' way to tell if an extent is shared because
+> we could have a single extent (so seq == 0).
+> Should verify it's not in a DCD region that
+> is shareable to make this decision.
+
+Ah...  :-/
+
+> 
+> I've lost track on the region handling so maybe you already do
+> this by not including those regions at all?
+
+I don't think so.
+
+I'll add the region check.  I see now why I glossed over this though.  The
+shared nature of a DCD partition is defined in the DSMAS.
+
+Is that correct?  Or am I missing something in the spec?
+
+> 
+> > +		dev_err_ratelimited(dev,
+> > +				    "DC extent DPA %par (%*phC) can not be shared\n",
+> > +				    &ext_range.start, CXL_EXTENT_TAG_LEN,
+> > +				    extent->tag);
+> > +		return -ENXIO;
+> > +	}
+> > +
+> > +	/* Extents must not cross DC region boundary's */
+> > +	for (int i = 0; i < mds->nr_dc_region; i++) {
+> > +		struct cxl_dc_region_info *dcr = &mds->dc_region[i];
+> > +		struct range region_range = (struct range) {
+> > +			.start = dcr->base,
+> > +			.end = dcr->base + dcr->decode_len - 1,
+> > +		};
+> > +
+> > +		if (range_contains(&region_range, &ext_range)) {
+> > +			dev_dbg(dev, "DC extent DPA %par (DCR:%d:%#llx)(%*phC)\n",
+> > +				&ext_range, i, start - dcr->base,
+> > +				CXL_EXTENT_TAG_LEN, extent->tag);
+> > +			return 0;
+> > +		}
+> > +	}
+> > +
+> > +	dev_err_ratelimited(dev,
+> > +			    "DC extent DPA %par (%*phC) is not in any DC region\n",
+> > +			    &ext_range, CXL_EXTENT_TAG_LEN, extent->tag);
+> > +	return -ENXIO;
+> > +}
+> > +
+> >  void cxl_event_trace_record(const struct cxl_memdev *cxlmd,
+> >  			    enum cxl_event_log_type type,
+> >  			    enum cxl_event_type event_type,
+> > @@ -1009,6 +1051,207 @@ static int cxl_clear_event_record(struct cxl_memdev_state *mds,
+> >  	return rc;
+> >  }
+> >  
+> > +static int cxl_send_dc_response(struct cxl_memdev_state *mds, int opcode,
+> > +				struct xarray *extent_array, int cnt)
+> > +{
+> > +	struct cxl_mbox_dc_response *p;
+> > +	struct cxl_mbox_cmd mbox_cmd;
+> > +	struct cxl_extent *extent;
+> > +	unsigned long index;
+> > +	u32 pl_index;
+> > +	int rc = 0;
+> > +
+> > +	size_t pl_size = struct_size(p, extent_list, cnt);
+> > +	u32 max_extents = cnt;
+> > +
+> What is cnt is zero? All extents rejected so none in the
+> extent_array. Need to send a zero extent response to reject
+> them all IIRC.
+
+yes.  I missed that thanks.
+
+> 
+> > +	/* May have to use more bit on response. */
+> > +	if (pl_size > mds->payload_size) {
+> > +		max_extents = (mds->payload_size - sizeof(*p)) /
+> > +			      sizeof(struct updated_extent_list);
+> > +		pl_size = struct_size(p, extent_list, max_extents);
+> > +	}
+> > +
+> > +	struct cxl_mbox_dc_response *response __free(kfree) =
+> > +						kzalloc(pl_size, GFP_KERNEL);
+> > +	if (!response)
+> > +		return -ENOMEM;
+> > +
+> > +	pl_index = 0;
+> > +	xa_for_each(extent_array, index, extent) {
+> > +
+> > +		response->extent_list[pl_index].dpa_start = extent->start_dpa;
+> > +		response->extent_list[pl_index].length = extent->length;
+> > +		pl_index++;
+> > +		response->extent_list_size = cpu_to_le32(pl_index);
+> > +
+> > +		if (pl_index == max_extents) {
+> > +			mbox_cmd = (struct cxl_mbox_cmd) {
+> > +				.opcode = opcode,
+> > +				.size_in = struct_size(response, extent_list,
+> > +						       pl_index),
+> > +				.payload_in = response,
+> > +			};
+> > +
+> > +			response->flags = 0;
+> > +			if (pl_index < cnt)
+> > +				response->flags &= CXL_DCD_EVENT_MORE;
+> > +
+> > +			rc = cxl_internal_send_cmd(mds, &mbox_cmd);
+> > +			if (rc)
+> > +				return rc;
+> > +			pl_index = 0;
+> > +		}
+> > +	}
+> > +
+> > +	if (pl_index) {
+> || !cnt 
+> 
+> I think so we send a nothing accepted message.
+
+Yep.
+
+> 
+> > +		mbox_cmd = (struct cxl_mbox_cmd) {
+> > +			.opcode = opcode,
+> > +			.size_in = struct_size(response, extent_list,
+> > +					       pl_index),
+> > +			.payload_in = response,
+> > +		};
+> > +
+> > +		response->flags = 0;
+> > +		rc = cxl_internal_send_cmd(mds, &mbox_cmd);
+> 		if (rc)
+> 			return rc;
+> > +	}
+> > +
+> 
+> return 0;  So that reader doesn't have to check what rc was in !pl_index
+> case and avoids assigning rc right at the top.
+
+Ah thanks.  That might have been left over from something previous.
+
+> 
+> 
+> > +	return rc;
+> > +}
+> 
+> 
+> > +static int cxl_add_pending(struct cxl_memdev_state *mds)
+> > +{
+> > +	struct device *dev = mds->cxlds.dev;
+> > +	struct cxl_extent *extent;
+> > +	unsigned long index;
+> > +	unsigned long cnt = 0;
+> > +	int rc;
+> > +
+> > +	xa_for_each(&mds->pending_extents, index, extent) {
+> > +		if (validate_add_extent(mds, extent)) {
+> 
+> 
+> Add a comment here that not accepting an extent but
+> accepting some or none means this one was rejected (I'd forgotten how
+> that bit worked)
+
+Ok yeah that may not be clear without reading the spec closely.
+
+	/*
+	 * Any extents which are to be rejected are omitted from
+	 * the response.  An empty response means all are
+	 * rejected.
+	 */
+
+> 
+> > +			dev_dbg(dev, "unconsumed DC extent DPA:%#llx LEN:%#llx\n",
+> > +				le64_to_cpu(extent->start_dpa),
+> > +				le64_to_cpu(extent->length));
+> > +			xa_erase(&mds->pending_extents, index);
+> > +			kfree(extent);
+> > +			continue;
+> > +		}
+> > +		cnt++;
+> > +	}
+> > +	rc = cxl_send_dc_response(mds, CXL_MBOX_OP_ADD_DC_RESPONSE,
+> > +				  &mds->pending_extents, cnt);
+> > +	xa_for_each(&mds->pending_extents, index, extent) {
+> > +		xa_erase(&mds->pending_extents, index);
+> > +		kfree(extent);
+> > +	}
+> > +	return rc;
+> > +}
+> > +
+> > +static int handle_add_event(struct cxl_memdev_state *mds,
+> > +			    struct cxl_event_dcd *event)
+> > +{
+> > +	struct cxl_extent *tmp = kzalloc(sizeof(*tmp), GFP_KERNEL);
+> > +	struct device *dev = mds->cxlds.dev;
+> > +
+> > +	if (!tmp)
+> > +		return -ENOMEM;
+> > +
+> > +	memcpy(tmp, &event->extent, sizeof(*tmp));
+> 
+> kmemdup?
+
+yep.
+
+> 
+> > +	if (xa_insert(&mds->pending_extents, (unsigned long)tmp, tmp,
+> > +		      GFP_KERNEL)) {
+> > +		kfree(tmp);
+> > +		return -ENOMEM;
+> > +	}
+> > +
+> > +	if (event->flags & CXL_DCD_EVENT_MORE) {
+> > +		dev_dbg(dev, "more bit set; delay the surfacing of extent\n");
+> > +		return 0;
+> > +	}
+> > +
+> > +	/* extents are removed and free'ed in cxl_add_pending() */
+> > +	return cxl_add_pending(mds);
+> > +}
+> 
+> >  static void cxl_mem_get_records_log(struct cxl_memdev_state *mds,
+> >  				    enum cxl_event_log_type type)
+> >  {
+> > @@ -1044,9 +1287,17 @@ static void cxl_mem_get_records_log(struct cxl_memdev_state *mds,
+> >  		if (!nr_rec)
+> >  			break;
+> >  
+> > -		for (i = 0; i < nr_rec; i++)
+> > +		for (i = 0; i < nr_rec; i++) {
+> >  			__cxl_event_trace_record(cxlmd, type,
+> >  						 &payload->records[i]);
+> > +			if (type == CXL_EVENT_TYPE_DCD) {
+> Bit of a deep indent so maybe flip logic?
+> 
+> Logic wise it's a bit dubious as we might want to match other
+> types in future though so up to you.
+
+I was thinking more along these lines.  But the rc is unneeded.  That print
+can be in the handle function.
+
+
+Something like this:
+
+diff --git a/drivers/cxl/core/mbox.c b/drivers/cxl/core/mbox.c
+index 88b823afe482..e86a483d80eb 100644
+--- a/drivers/cxl/core/mbox.c
++++ b/drivers/cxl/core/mbox.c
+@@ -1231,16 +1231,17 @@ static char *cxl_dcd_evt_type_str(u8 type)
+        return "<unknown>";
+ }
+
+-static int cxl_handle_dcd_event_records(struct cxl_memdev_state *mds,
++static void cxl_handle_dcd_event_records(struct cxl_memdev_state *mds,
+                                        struct cxl_event_record_raw *raw_rec)
+ {
+        struct cxl_event_dcd *event = &raw_rec->event.dcd;
+        struct cxl_extent *extent = &event->extent;
+        struct device *dev = mds->cxlds.dev;
+        uuid_t *id = &raw_rec->id;
++       int rc;
+
+        if (!uuid_equal(id, &CXL_EVENT_DC_EVENT_UUID))
+-               return -EINVAL;
++               return;
+
+        dev_dbg(dev, "DCD event %s : DPA:%#llx LEN:%#llx\n",
+                cxl_dcd_evt_type_str(event->event_type),
+@@ -1248,15 +1249,22 @@ static int cxl_handle_dcd_event_records(struct cxl_memdev_state *mds,
+
+        switch (event->event_type) {
+        case DCD_ADD_CAPACITY:
+-               return handle_add_event(mds, event);
++               rc = handle_add_event(mds, event);
++               break;
+        case DCD_RELEASE_CAPACITY:
+-               return cxl_rm_extent(mds, &event->extent);
++               rc = cxl_rm_extent(mds, &event->extent);
++               break;
+        case DCD_FORCED_CAPACITY_RELEASE:
+                dev_err_ratelimited(dev, "Forced release event ignored.\n");
+-               return 0;
++               rc = 0;
++               break;
+        default:
+-               return -EINVAL;
++               rc = -EINVAL;
++               break;
+        }
++
++       if (rc)
++               dev_err_ratelimited(dev, "dcd event failed: %d\n", rc);
+ }
+
+ static void cxl_mem_get_records_log(struct cxl_memdev_state *mds,
+@@ -1297,13 +1305,9 @@ static void cxl_mem_get_records_log(struct cxl_memdev_state *mds,
+                for (i = 0; i < nr_rec; i++) {
+                        __cxl_event_trace_record(cxlmd, type,
+                                                 &payload->records[i]);
+-                       if (type == CXL_EVENT_TYPE_DCD) {
+-                               rc = cxl_handle_dcd_event_records(mds,
+-                                                                 &payload->records[i]);
+-                               if (rc)
+-                                       dev_err_ratelimited(dev, "dcd event failed: %d\n",
+-                                                           rc);
+-                       }
++                       if (type == CXL_EVENT_TYPE_DCD)
++                               cxl_handle_dcd_event_records(mds,
++                                                       &payload->records[i]);
+                }
+
+                if (payload->flags & CXL_GET_EVENT_FLAG_OVERFLOW)
+<end diff>
+
+> 
+> 			if (type != CXL_EVENT_TYPE_DCD)
+> 				continue;
+> 
+> 			rc = 
+> 
+> > +				rc = cxl_handle_dcd_event_records(mds,
+> > +								  &payload->records[i]);
+> > +				if (rc)
+> > +					dev_err_ratelimited(dev, "dcd event failed: %d\n",
+> > +							    rc);
+> > +			}
+> > +		}
+> >  
+> 
+> >  struct cxl_memdev_state *cxl_memdev_state_create(struct device *dev)
+> >  {
+> >  	struct cxl_memdev_state *mds;
+> > @@ -1628,6 +1892,8 @@ struct cxl_memdev_state *cxl_memdev_state_create(struct device *dev)
+> >  	mds->cxlds.type = CXL_DEVTYPE_CLASSMEM;
+> >  	mds->ram_perf.qos_class = CXL_QOS_CLASS_INVALID;
+> >  	mds->pmem_perf.qos_class = CXL_QOS_CLASS_INVALID;
+> > +	xa_init(&mds->pending_extents);
+> > +	devm_add_action_or_reset(dev, clear_pending_extents, mds);
+> 
+> Why don't you need to check if this failed? Definitely seems unlikely
+> to leave things in a good state. Unlikely to fail of course, but you never know.
+
+yea good catch.
+
+> 
+> >  
+> >  	return mds;
+> >  }
+> 
+> > @@ -3090,6 +3091,8 @@ static struct cxl_dax_region *cxl_dax_region_alloc(struct cxl_region *cxlr)
+> >  
+> >  	dev = &cxlr_dax->dev;
+> >  	cxlr_dax->cxlr = cxlr;
+> > +	cxlr->cxlr_dax = cxlr_dax;
+> > +	ida_init(&cxlr_dax->extent_ida);
+> >  	device_initialize(dev);
+> >  	lockdep_set_class(&dev->mutex, &cxl_dax_region_key);
+> >  	device_set_pm_not_required(dev);
+> > @@ -3190,7 +3193,10 @@ static int devm_cxl_add_pmem_region(struct cxl_region *cxlr)
+> >  static void cxlr_dax_unregister(void *_cxlr_dax)
+> >  {
+> >  	struct cxl_dax_region *cxlr_dax = _cxlr_dax;
+> > +	struct cxl_region *cxlr = cxlr_dax->cxlr;
+> >  
+> > +	cxlr->cxlr_dax = NULL;
+> > +	cxlr_dax->cxlr = NULL;
+> 
+> cxlr_dax->cxlr was assigned before this patch. 
+> 
+> I'm not seeing any new checks on these being non null so why
+> are the needed?  If there is a good reason for this then
+> a comment would be useful.
+
+I'm not sure anymore either.  Perhaps this was left over from an earlier
+version.  Or was something I thought I would need that ended up getting
+removed.  I'll test without this hunk and remove it if I can.
+
+Thanks for the review,
+Ira
+
+[snip]
 
