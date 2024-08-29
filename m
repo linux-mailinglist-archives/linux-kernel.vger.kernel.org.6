@@ -1,305 +1,133 @@
-Return-Path: <linux-kernel+bounces-306193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8B85963AFD
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:10:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E5B9963B06
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:10:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19A4D1C23FCA
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 06:10:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C137C1C24042
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 06:10:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DCAF249EB;
-	Thu, 29 Aug 2024 06:09:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 127B915C120;
+	Thu, 29 Aug 2024 06:09:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ja3mITm4"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="azTZXJOw"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 674AB14A0A8;
-	Thu, 29 Aug 2024 06:09:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.16
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724911762; cv=fail; b=DkQKsDbx9b5ryv+zphGwa0rjBcvxIu4Ig6HBuH4al3sVGXohn/b1jOnmycRTpVEI53xMBsgsVZQ4Vm/ga1x2f9ll1fi8Bu9ZriUPs6O7EEvbNP0lmpw6/jVvicFJ2+By99jSaYojGjTOnEnnMgn/QtboLAHmS+liMtaPLpZ/BCs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724911762; c=relaxed/simple;
-	bh=yzWjJbxWXDVPOmlPeXbC5/kC8N0jkizfs6sSzv11fag=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=s/fWIBFPe1vJYFvesTzBmFfe++MoG0aH0AJNULpwMqSNMQUZv7fb5PNvuP6L6kov42/TqvXF6tmhrLDQdTjD5VvW5oyhLgfm1XB5hp09fXglE5E6xmNXuyY3sl7U7Ab4NXKqZThwdY8U1V6CvIuGv/d6+9nN9IrWjJsm40EuQUo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ja3mITm4; arc=fail smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724911760; x=1756447760;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=yzWjJbxWXDVPOmlPeXbC5/kC8N0jkizfs6sSzv11fag=;
-  b=Ja3mITm4t5ZsK+truk1rUqC1j+Wv7PKdSlJYxfhemxUmEars7M3ygGnP
-   BIWvV6h0jZl77NJM5dh3TINPF+oZBoVUR3b4VlWU88Uzu9vfYUxP0Hd8q
-   dK0oYmmUIbmy+jEL9FvxrmMjeJCesTYqr/8yk06itOx3Z6S5UpJ27zWql
-   gVVRvo2RWhwqCWnVJeL9enfsHhy95H6zvOswzJpFRQtCRw1Mi36XHiyuQ
-   9mL1LWk/aYqsT5sl0dpQ5cvD12CWEKCayIPeqUggVyu3p9vNNZ7u6j8KA
-   0cEAsh6aHbSkdTW+9mcRZ6B0MhMQabhEtJ/CRQ8m9/FxBDNTR1xNtrP2E
-   w==;
-X-CSE-ConnectionGUID: h2pVb2v1QFWdL0cqP1WNzQ==
-X-CSE-MsgGUID: Qe+3SkfpQCCsWv1Vf1FRKw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11178"; a="23612976"
-X-IronPort-AV: E=Sophos;i="6.10,184,1719903600"; 
-   d="scan'208";a="23612976"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2024 23:09:19 -0700
-X-CSE-ConnectionGUID: 9x4KIUI1QxyD7SEr+VcYtQ==
-X-CSE-MsgGUID: oHv8yDetQF2Jk6/X9QosxQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,184,1719903600"; 
-   d="scan'208";a="63656909"
-Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
-  by fmviesa010.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 28 Aug 2024 23:09:03 -0700
-Received: from fmsmsx611.amr.corp.intel.com (10.18.126.91) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Wed, 28 Aug 2024 23:09:01 -0700
-Received: from fmsmsx603.amr.corp.intel.com (10.18.126.83) by
- fmsmsx611.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Wed, 28 Aug 2024 23:09:00 -0700
-Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Wed, 28 Aug 2024 23:09:00 -0700
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.40) by
- edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Wed, 28 Aug 2024 23:09:00 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ZeaJoqorR+ESxx9Rrc3uh5umYlKsweuVExaikM7vZmztD3bOX2rz2kAOkRTPMCmcV1auN4mdKeyors+Ji67V95lb8yCC8mwaARyzH4j5szChuSVsffV6mYK5xqgAHtlssk9mbvICYgZfLNmHGGYS0p7hMQ/bhjm2YyFAPjh4DTDe+Eg58iz/K5BbaQC+X2WJJ4Lv6HIuIrvRlyNInEsoKLOlSv3dffG5EI7xmIgI3Cp4NykfgaMGN+aOw7WuJYe+pk3IM/G3+T3Ugmy+0b1BDw+0IYZCTvKUKMp0P88KXrvvbnp9iDI+oHgH58apVgJ4s7jarGD7y5QNWY90H/xIiA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HBkKzo4Px2B4/7Dvq7RfzBNzk+18xre+Zn55YtKpcjc=;
- b=g9nlTyzkphIyOjruHICBdaRsNkPxL7nSZyZDnrrprO6lERGGtatuweP9M/P9LeSiuwaRuZfhjWD7XvEw9WcyjbBwtm9vr3hGyKABaiT5MjjqnaSCuW7uEZAcEfLmW+d01hIb59OnaZZKu0EowbJkr46uNz4MMKQ/v2Oy2Sp/M2CKwchnIoLmNkeEz0ga/YAo6oXM6wXgHIGrU5rfLOXwy1atScGy3YyUDJ5qxPHxI8MSrbbV4C4vZY9DSr3iWuvFe5MZBAk8ZR9Woef5LpoH54A1jvN3dXGwgTG+W46ZaGmwWDsgT887YqCl6DHekRr2MCS0BPPqzSaGCZ3aX7d3TA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from IA0PR11MB7185.namprd11.prod.outlook.com (2603:10b6:208:432::20)
- by SA2PR11MB4969.namprd11.prod.outlook.com (2603:10b6:806:111::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.28; Thu, 29 Aug
- 2024 06:08:58 +0000
-Received: from IA0PR11MB7185.namprd11.prod.outlook.com
- ([fe80::dd3b:ce77:841a:722b]) by IA0PR11MB7185.namprd11.prod.outlook.com
- ([fe80::dd3b:ce77:841a:722b%4]) with mapi id 15.20.7897.027; Thu, 29 Aug 2024
- 06:08:58 +0000
-From: "Kasireddy, Vivek" <vivek.kasireddy@intel.com>
-To: Huan Yang <link@vivo.com>, Sumit Semwal <sumit.semwal@linaro.org>,
-	=?iso-8859-1?Q?Christian_K=F6nig?= <christian.koenig@amd.com>, Gerd Hoffmann
-	<kraxel@redhat.com>, "linux-media@vger.kernel.org"
-	<linux-media@vger.kernel.org>, "dri-devel@lists.freedesktop.org"
-	<dri-devel@lists.freedesktop.org>, "linaro-mm-sig@lists.linaro.org"
-	<linaro-mm-sig@lists.linaro.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-CC: "opensource.kernel@vivo.com" <opensource.kernel@vivo.com>
-Subject: RE: [PATCH v4 1/5] udmabuf: direct map pfn when first page fault
-Thread-Topic: [PATCH v4 1/5] udmabuf: direct map pfn when first page fault
-Thread-Index: AQHa9G+T11uuaSJPXEe+DfxssxyDrLI9NGNw
-Date: Thu, 29 Aug 2024 06:08:58 +0000
-Message-ID: <IA0PR11MB718571990B58A16756C15E2FF8962@IA0PR11MB7185.namprd11.prod.outlook.com>
-References: <20240822084342.1574914-1-link@vivo.com>
- <20240822084342.1574914-2-link@vivo.com>
-In-Reply-To: <20240822084342.1574914-2-link@vivo.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: IA0PR11MB7185:EE_|SA2PR11MB4969:EE_
-x-ms-office365-filtering-correlation-id: 07dabf3f-7eb7-41aa-80fa-08dcc7f111f4
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|376014|366016|38070700018;
-x-microsoft-antispam-message-info: =?iso-8859-1?Q?mHE0qKRHyBG4Ubcsz3bd2Vn9qceqwNcqlTNOjNuOs4mijE5vtCnAK8c9Nh?=
- =?iso-8859-1?Q?mb96xl0ISjI+b8OkgcLv5+3so/jwstVda4aRnhMzultPowSRXuITPUQLZA?=
- =?iso-8859-1?Q?SlikYz4SzmQ3MUcH3BUVcRCqbgKtQ5Qa3wsmCVv3YhHGy3uughUvFUwQLh?=
- =?iso-8859-1?Q?Mnp7XUg0KaD+9DZV4tFk377cIvwINoiSfDgTcam/JT1+qGUg1Nk1zb9HNz?=
- =?iso-8859-1?Q?DyfurejkjLPQGzRH78LPsgzPfgPqNZm2LkFs0ADYTLvXI4K9nZAjXDgSYf?=
- =?iso-8859-1?Q?KphcqV4MWvYewvGrnkkmLUUV+yuvQ02sEubOsqpinQkNRNH1Kxmnpfye4s?=
- =?iso-8859-1?Q?1XE9gy4XWRVHd+LnGMCfTlcm5pCaU9/ARBDMbPV2YQdzGREDSQd+IaNp9y?=
- =?iso-8859-1?Q?Kt8biDDQM42r3bH1/sCYuKG3wqYUbp0mO3KmBLAYvb0xqWhsKNXGxhE/o5?=
- =?iso-8859-1?Q?nkFVLTZGcWAuYqPqFpXmd9T5L3Xy3B1sQWVSs5PXAu/vSQuAmeVTxNRZhe?=
- =?iso-8859-1?Q?Jy+JkEN3pmIDZI2WNQ5Z81jWGNVK4uXEb4WUQ+Xg1w9UzoNY4+NVMnBrOc?=
- =?iso-8859-1?Q?SLhF85DDbyuiGwPSNOuq0F5/rC+NjtF1QS8mWPzmLGYjPGn8TVcxXb0R/z?=
- =?iso-8859-1?Q?W9ZyyISVSE/T9wiVjnsj5N9WgT5r4ohqlyUh3ZvjOd2ornMb4Psm7uxsW7?=
- =?iso-8859-1?Q?XnJTlToleg/eMai2MG0+q9M1ACbtklJXATkPoHN7lvGsPPjeaZILDl34o7?=
- =?iso-8859-1?Q?xFXa6s8BQYnDqPwElClbBX1b4ysdrSgB0UOeLdTMLH/dyC/qosMbZ7v8OX?=
- =?iso-8859-1?Q?MH3eKVA2HaLO6SFQpQmvc7uG5mIpHn+OMMynqUkM4EH00QtMWzCBiVmCTf?=
- =?iso-8859-1?Q?B4h0bzB4m3oXZy9RLvM7ayKiPnmyBES9F7IwUC1RsgXChMw7/MixSgXBO/?=
- =?iso-8859-1?Q?tgvLf74BmC/7/NcbSvx7b6C0p3SEBaoUIKebaPSWrJ8nKqfwxpNpPR1Iq5?=
- =?iso-8859-1?Q?MHaDvyY+wMDzOFc/gceI69ra4vwmswk4zniBnRoiNLe5izXkFc72koloPR?=
- =?iso-8859-1?Q?oPgh8p3ewB3fiJhGxykOVXdOdzMWaJkwVytbXycl0aHtYRXHBmd5wIQHST?=
- =?iso-8859-1?Q?MY5QWRTyONL7xGTt6txzurE2GZ8qHKNBOG+grda7SPL8X+X8oJ1x4CqflX?=
- =?iso-8859-1?Q?tgPE33lS2opr8183cwMcJ/QsRwL6PcHjYHA1+DOotF5VVl+jSGarthsdlh?=
- =?iso-8859-1?Q?mlZ8OAN3dEdloRQhSkypJLt3Smfy3EzZ7851xGuROvfPslqQ1PLRcuIVSb?=
- =?iso-8859-1?Q?YZCRAMafSWfzmUAudo+5xwvLKbl3PpNvWazJ5n+7s1wF3JRb1LyeGDkubK?=
- =?iso-8859-1?Q?9fn9wQuusOvlwEzBx5iwyIlaXQ0YeJSngRaaihOrvL1hX2RvgyC9R3dSLM?=
- =?iso-8859-1?Q?Penh1fHHuLQiL+0AV2XoNig2D4khLAsymQV06g=3D=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA0PR11MB7185.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?ktxW1WDAF0aLGqlFna9+DytN84iqiZw09Wd5LyNejWcPYaVetqUlYv4XYu?=
- =?iso-8859-1?Q?leteIh8SrKq0t/Bz6IGuSRR4PaobaCLHFNDIJk9kuS0pKm8P2w5r2ep95W?=
- =?iso-8859-1?Q?BhN+E4GUm5kaTnfRGYNbKxr6YY60l1nqSaHeWtfLFjn6V1aw8bC74jTTfn?=
- =?iso-8859-1?Q?2F3fvMg34kL87KsM5cHvI/s1G7t1xw8p7FLrJCUv5Y5hX7K4cv4Vf+hYtR?=
- =?iso-8859-1?Q?ePxH0xRoY7VrQfeAK8F/TezgKfStRibsaf5bGqFtqgDyOtCI8KAB19jWNs?=
- =?iso-8859-1?Q?Z3az67mtQiZktEWHquWAGMSF8YEAjSpKRQ3vvHlw5nNb2dFma++HDD9Rsm?=
- =?iso-8859-1?Q?1ywad5BtvhXQHzR2kVye8e6wI190Qe48FEoE0KTQTC/w5d+M8Qj+GphEgh?=
- =?iso-8859-1?Q?scKd48aeKdpHxGJlH6g5yaSgczF4w78Tx9SGCg2Ai9CJImfpM2nvcDab9p?=
- =?iso-8859-1?Q?3PjyJ+Impd3WYilxuEpslZpCwQAaVQlTVxAPlCtJhZ6nqxAP2fPH/Fh2r+?=
- =?iso-8859-1?Q?saVaETzKFe3TnH3xSeZOwFkpgQB7Fp0ZTdETeBFfvU6p+Q6Xb9k1535NJu?=
- =?iso-8859-1?Q?mwjrDC71GULr8QDbc3X6H0WenPbNkL95Ivsd32h/xT9xanx+Lnb/BnMY2R?=
- =?iso-8859-1?Q?PwseZXj+a3xPu80l1sAF0ipgMRjgjdfrN+OXjWjzEQYJl4AhOrCcWszapZ?=
- =?iso-8859-1?Q?3vU/Te9SK3qbAXYwzagScAXk15fYQuMpMQDHjJxg4xnUOVyIc1S+HNf3/B?=
- =?iso-8859-1?Q?8pjjOQztnrdFKNtns+eAYMN4fXXinSsEB+n2OAe86Mjwrqdy48EjRzInX4?=
- =?iso-8859-1?Q?iI3kkRPOWnGRYXwYFel9ueYfOwWlmtbWnWgzdNCczGzGQfyUx9CYM1OGeF?=
- =?iso-8859-1?Q?viKpQOrgWLDmJoENYz7nJjNQnuUsYz5btV46bjRlGoouqFWWVCIGEr1rcN?=
- =?iso-8859-1?Q?92e0NQUf0yOfQOLBxPdjDCl8wbMQ5+q7fWdGDGMIaMtEwLpcNgCTYtKzF4?=
- =?iso-8859-1?Q?0F0ldd//baksWLSf7egH3hjAHfMcE0GmH1BQkrwaSsAQ7grm2flS4TvYL6?=
- =?iso-8859-1?Q?XkIhM27KuI+3YkaIwTfbdje5Z2voP9HUBzP3gSsp/EjLmdXSKwft1QgaS1?=
- =?iso-8859-1?Q?/j0/dLa+ScZtPBmWwZIwDuibI+XjR2D73JaBzUeaAbtWMlJ/wTju909qAa?=
- =?iso-8859-1?Q?9pgCpxfCu+9xCL9ZVXlrgbAPgu8OQgXrO5A7tuQfwfvklWvdCDt5W8MNNR?=
- =?iso-8859-1?Q?0em3ignb4zYgEmzb14xON0Yw2coAcCRQyMvnAXifNY5nCGOsCFcE8NLjPG?=
- =?iso-8859-1?Q?HaUaSVZE1cp4Uxqcw3dR2xSZI2Daw6a0gERtzCeAlbJuSAbdJif2I/WfHM?=
- =?iso-8859-1?Q?5PG5WYqP5foI75iF6kfhKGWhbVtoCmljZkast9xqWkp7JwvXl249fpfs7j?=
- =?iso-8859-1?Q?imCJBazqmvmnIc1N8z6dK3lK2XmMfnEv4PngBIE/v4EAfO2nit9LBqpHAN?=
- =?iso-8859-1?Q?MRfMA/eNLGB/nz+jdYZ62uhwlF9x/P0COOGK06kn9GLqXe1DwWV+pmW7m8?=
- =?iso-8859-1?Q?YyhSDTTZYHDOGiDfJLZli44bjSSn+C/iew+1oow/AwHy/LHxq8qWjilExP?=
- =?iso-8859-1?Q?lorthOEGqM4EUrH1kUuPwKnPveKcqeTKr3?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E3D6158541;
+	Thu, 29 Aug 2024 06:09:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724911787; cv=none; b=ML5PcgEIwQHT6I9jiBoiYanwsBz2xwQouie4z11RL2UGx1sCUfZbF7VW/W6UrsIH9gHa374zpcUxvSgbsQxGEk06Bg/AcHrc5OEISGlGGsHQuSREtXGAxogktAkd77TvIj5eMT8Cnbe8KlUPPFpGUf+btof3faUECqf/4EetXAU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724911787; c=relaxed/simple;
+	bh=GQkNWluE4Yum3sxtquyh8Yn4fcPJka2uCoYU0wdH/2k=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pAF3/Fhv2XsrNXzpGOAbJgKlK6P+J8msFL+ffLWJibrX3Evp1TkfpR65uogN6DIpjbUcG/BDGTKpMhrjjycajInWYtTf258mIewOtyJcCrgVc4QTZ4M78vcwqTTG0Vc2XtzoDX5a59JhDtEpuD95w1EEkLLDK4dPPy1/JhDCdY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=azTZXJOw; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47T69bBo046248;
+	Thu, 29 Aug 2024 01:09:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1724911777;
+	bh=Gy0jgFxTDIUQhAWoIr3XRLjpuQETE0i5KWeKsQ0IZNA=;
+	h=From:To:CC:Subject:Date;
+	b=azTZXJOwjjDOG4fSYfw6tZYyRV0b13bBWumypq2fxZYT+/GkV9hsfFk4ZDovJoK/y
+	 zcFiAPg+ZJiBwjyptaLaUMD6zgO+Pc9GM0DTRzm1NXQBd/A2mgSteE/Cn38brKYnqx
+	 NSNvqW/KbNf8GlKwk4fdhH9lpQMaXLHcGEzD9o5Y=
+Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47T69bdF048456
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 29 Aug 2024 01:09:37 -0500
+Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 29
+ Aug 2024 01:09:36 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 29 Aug 2024 01:09:36 -0500
+Received: from uda0510294.dhcp.ti.com (uda0510294.dhcp.ti.com [172.24.227.151])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47T69XCI126434;
+	Thu, 29 Aug 2024 01:09:33 -0500
+From: Beleswar Padhi <b-padhi@ti.com>
+To: <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>
+CC: <u-kumar1@ti.com>, <j-choudhary@ti.com>, <vaishnav.a@ti.com>, <afd@ti.com>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCH v4 0/2] Add Remoteproc Support for TI's J722S SoCs
+Date: Thu, 29 Aug 2024 11:39:30 +0530
+Message-ID: <20240829060932.3441295-1-b-padhi@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: IA0PR11MB7185.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 07dabf3f-7eb7-41aa-80fa-08dcc7f111f4
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Aug 2024 06:08:58.1999
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: IW5kKhgiCcDOcIrpDofdLViujldQBj2/4OhXE60X0iWGoervHuJ4z2Qzmw4/Hhtbbh4ycjfXAjzlEDdSzweeB6THsJq78kB9DaUOp7cb87c=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR11MB4969
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Hi Huan,
+Hello All,
 
-> Subject: [PATCH v4 1/5] udmabuf: direct map pfn when first page fault
->=20
-> The current udmabuf mmap uses a page fault to populate the vma.
->=20
-> However, the current udmabuf has already obtained and pinned the folio
-> upon completion of the creation.This means that the physical memory has
-> already been acquired, rather than being accessed dynamically.
->=20
-> As a result, the page fault has lost its purpose as a demanding
-> page. Due to the fact that page fault requires trapping into kernel mode
-> and filling in when accessing the corresponding virtual address in mmap,
-> when creating a large size udmabuf, this represents a considerable
-> overhead.
->=20
-> This patch fill vma area with pfn when the first page fault trigger, so,
-> any other access will not enter page fault.
->=20
-> Suggested-by: Vivek Kasireddy <vivek.kasireddy@intel.com>
-> Signed-off-by: Huan Yang <link@vivo.com>
-> ---
->  drivers/dma-buf/udmabuf.c | 26 ++++++++++++++++++++++++--
->  1 file changed, 24 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/dma-buf/udmabuf.c b/drivers/dma-buf/udmabuf.c
-> index 047c3cd2ceff..0e33d25310ec 100644
-> --- a/drivers/dma-buf/udmabuf.c
-> +++ b/drivers/dma-buf/udmabuf.c
-> @@ -43,7 +43,8 @@ static vm_fault_t udmabuf_vm_fault(struct vm_fault
-> *vmf)
->  	struct vm_area_struct *vma =3D vmf->vma;
->  	struct udmabuf *ubuf =3D vma->vm_private_data;
->  	pgoff_t pgoff =3D vmf->pgoff;
-> -	unsigned long pfn;
-> +	unsigned long addr, end, pfn;
-> +	vm_fault_t ret;
->=20
->  	if (pgoff >=3D ubuf->pagecount)
->  		return VM_FAULT_SIGBUS;
-> @@ -51,7 +52,28 @@ static vm_fault_t udmabuf_vm_fault(struct vm_fault
-> *vmf)
->  	pfn =3D folio_pfn(ubuf->folios[pgoff]);
->  	pfn +=3D ubuf->offsets[pgoff] >> PAGE_SHIFT;
->=20
-> -	return vmf_insert_pfn(vma, vmf->address, pfn);
-> +	ret =3D vmf_insert_pfn(vma, vmf->address, pfn);
-> +	if (ret & VM_FAULT_ERROR)
-> +		return ret;
-> +
-> +	/* pre fault */
-> +	pgoff =3D vma->vm_pgoff;
-> +	end =3D vma->vm_end;
-> +	addr =3D vma->vm_start;
-> +
-> +	for (; addr < end; pgoff++, addr +=3D PAGE_SIZE) {
-Although unlikely, I think we should also check for pgoff < ubuf->pagecount=
-.
+The K3 J722S SoCs have one single-core Arm Cortex-R5F processor in each
+of the WAKEUP, MCU and MAIN voltage domain, and two C71x DSP subsystems
+in MAIN voltage domain. Thus, this series adds the DT Nodes for the
+remote processors to add support for IPC.
 
-> +		if (addr =3D=3D vmf->address)
-> +			continue;
-> +
-> +		pfn =3D folio_pfn(ubuf->folios[pgoff]);
-> +
-> +		pfn +=3D ubuf->offsets[pgoff] >> PAGE_SHIFT;
-> +
-> +		if (vmf_insert_pfn(vma, addr, pfn) & VM_FAULT_ERROR)
-Shouldn't you store the return value of vmf_insert_pfn in ret? Otherwise, w=
-e'll
-return success when the above call fails.
+This series also enables IPC on the J722S-EVM platform based on the
+above SoC by adding the mailbox instances, shared memory carveouts and
+reserving the conflicting timer nodes (as they are used by remoteproc
+firmware).
 
-Anyway, I am wondering if it is more optimal to just iterate over pages ins=
-tead
-of addresses. Something like below:
+v4: Changelog:
+* Nishanth:
+1) Fixed DT node properties order to put standard properties before vendor
+specific properties in patch "arm64: dts: ti: k3-j722s-main: Add R5F
+and C7x remote processor nodes"
+2) Put "status" property at the end in extended DT nodes and preceded
+child nodes with a single blank line wherever applicable in patch
+"arm64: dts: ti: k3-j722s-evm: Enable Inter-Processor Communication"
+following kernel DTS coding style.
 
-+       unsigned long nr_pages =3D vma_pages(vma);
-+       unsigned long addr =3D vma->vm_start;
+Link to v3:
+https://lore.kernel.org/all/20240828112713.2668526-1-b-padhi@ti.com/
 
--       if (pgoff >=3D ubuf->pagecount)
--               return VM_FAULT_SIGBUS;
-+       WARN_ON(nr_pages !=3D ubuf->pagecount);
+v3: Changelog:
+1) Reserved conflicting Timer Nodes in k3-j722s-evm.dts file to avoid remotecore
+boot failures.
 
--       pfn =3D folio_pfn(ubuf->folios[pgoff]);
--       pfn +=3D ubuf->offsets[pgoff] >> PAGE_SHIFT;
-+       for (pg =3D 0; pg < nr_pages && pg < ubuf->pagecount; pg++) {
-+               pfn =3D folio_pfn(ubuf->folios[pg]);
-+               pfn +=3D ubuf->offsets[pg] >> PAGE_SHIFT;
+Link to v2:
+https://lore.kernel.org/all/20240612112259.1131653-1-b-padhi@ti.com/
 
--       return vmf_insert_pfn(vma, vmf->address, pfn);
-+               ret =3D vmf_insert_pfn(vma, addr, pfn);
-+               addr +=3D PAGE_SIZE;
-+ }
+v2: Changelog:
+1) Addressed Andrew's comments to refactor remotecore nodes into
+k3-j722s-main.dtsi file.
+2) Squashed Patch 2 and 3 from V1 into Patch 2 in V2 as they were doing
+the same logical thing.
+3) The DTBs check warnings from V1 are automatically fixed after a
+dt-binding patch[0] was merged in linux-next.
 
-Thanks,
-Vivek
+Link to v1:
+https://lore.kernel.org/all/20240607090433.488454-1-b-padhi@ti.com/
 
-> +			break;
-> +	}
-> +
-> +	return ret;
->  }
->=20
->  static const struct vm_operations_struct udmabuf_vm_ops =3D {
-> --
-> 2.45.2
+[0]: https://lore.kernel.org/all/20240604171450.2455-1-hnagalla@ti.com/
+
+Apurva Nandan (2):
+  arm64: dts: ti: k3-j722s-main: Add R5F and C7x remote processor nodes
+  arm64: dts: ti: k3-j722s-evm: Enable Inter-Processor Communication
+
+ arch/arm64/boot/dts/ti/k3-j722s-evm.dts   | 157 ++++++++++++++++++++++
+ arch/arm64/boot/dts/ti/k3-j722s-main.dtsi |  61 +++++++++
+ 2 files changed, 218 insertions(+)
+
+-- 
+2.34.1
 
 
