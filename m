@@ -1,136 +1,140 @@
-Return-Path: <linux-kernel+bounces-307233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F0D7964A83
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 17:49:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34F17964A87
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 17:49:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35E201F23EE3
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:49:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C2051C24726
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:49:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A8AF1B140E;
-	Thu, 29 Aug 2024 15:48:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D82E71B3B23;
+	Thu, 29 Aug 2024 15:49:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XoYQSrCn"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="FG2DPyp9"
+Received: from out-176.mta0.migadu.com (out-176.mta0.migadu.com [91.218.175.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA50C1AB512;
-	Thu, 29 Aug 2024 15:48:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59CB743ADE
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 15:49:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724946509; cv=none; b=HfDtqJ+1HBDNG74a2P7dAFu385i+8eaN3zUYBumv/CadT4n3+ZSPN3dOsTT4Ps0n8I9/HF5kkY6NH4IbtollahgORsXDIAl8xF8m7lY3wuXK1i/Ew6KPkJIsCKECkRaWO2bgVldYtW3KC8jUA7UNRK8CrmpWWjafA61FtpBDcCQ=
+	t=1724946580; cv=none; b=Do+2JIYoIJHaKzbiz5z4PPS3No760DHKYeZj2Oxr6F2FxHDjaS7hP2JOOlVBAKbmuyLPZc0SU3zxFvUMDrdDr875cIAcuOrAjc0Woz9juaLDnndMIP9nFePYRkWSudU2IjlHgf0wgn5YXZQvgVccYubLJSRGn1DHfVT5a17WyFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724946509; c=relaxed/simple;
-	bh=jGZZqTWQLlQS7zdXBaSb3hal0F8Dbilk+yGJqrIgH9Q=;
+	s=arc-20240116; t=1724946580; c=relaxed/simple;
+	bh=ugyvySIO2uNTkY3T/MUNXgyaVyZ2XD1kpVyCqFgpWE0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o//GNSVaC4WrDE6MOqg1356fa0kMi+wgQfSg0UcGf6ckWkxwtUoMORTw42EntKb50fP5LAKLR8CX95Kv2Q/ChGPSGgStjF6Pzhnl942d59DuJPi7vctpDQruHaJhZ9/ASKHRdSTUPhKrFUmrnFlyoNbotPv4IcnaamyYnIWFwK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XoYQSrCn; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-371bb8322b2so547731f8f.0;
-        Thu, 29 Aug 2024 08:48:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724946505; x=1725551305; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=XRpLyEmngmNsO1BlLrJr9uLhRTF0emdGC9GU+ntEPy8=;
-        b=XoYQSrCnP2aqjUR7JNuEQ/Af6gc8oK/uXjhggehM1uG1dfO19ZUpmzplxsEy9F4f+j
-         Q3KzYBnL/EYMvKBgEyOUi+TXZT3c4pp/FftPmrAWKfCsT8eCrF6eiQxeB17qAuOZYAKW
-         Mpo0uXnLfQ5Eu19AbfkDfKKSEzZr1HKXbRUYJkDe/be9IrmSqSUv9SSwSyX8ExG9ygXg
-         CxI1yhqK6ww9Gr+BWQoBCS/hZ3W/t/qM6t436+zKsxEA0nnY5OIrePGv4f2diAdNF3hA
-         UHI9XRkjuFcBsdBK090dKZGeyZ1Ist20F9MmTDhmdOl9nNhfOqXzemMMGBkWXcS5NzYl
-         1ZJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724946505; x=1725551305;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XRpLyEmngmNsO1BlLrJr9uLhRTF0emdGC9GU+ntEPy8=;
-        b=FXgjC2vEjC7L23ZvB5k9X1Z6MJOT508/Wj50Mh4aRTxCOM+RFgU+b3skTrFWaI2Mus
-         RA7Zd+byXnXhK1eGoyhT7yccA0pBDi7ZuV+bn6tyVt8X3LzhB11t4EP1JJPllMhC0z5H
-         /QyriW4Chm3B3+hVCqeC53SbgKmQRTUIzWNZ3QOLZYu4IV3KKWHWSgSp6ypsgi5b0FSZ
-         qjKtKWJLv7Y2LUrgAB9Busu9dbe3oMIWdmcWKmKRigCgMddgThyDBENZmmY00c/5i4Bf
-         2dSKS/zD+CEbyPCI7fz0MVFFmbr0TT3LsFsCAFBM5RBdBEVTdYiZBo8lUluEtqo67OAG
-         48rA==
-X-Forwarded-Encrypted: i=1; AJvYcCUZhN7Tzr/gzPJG+0Scg0owDRQ6oC4xZBLetQ9vwjzfX6fyhM0ce4dnZ9fn40UGixXgW5pcWRukZ/vuZso=@vger.kernel.org, AJvYcCUdqNYmQ6XP5OnXPmWptz4FWc7juiuWNcJ1YiR7PDGwluAAaZTKeNyzSqExOBpXoMJ/0OHtuWrHlkOOCA0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2vtRPFGut8TsCibF0sbOrwiHuuVxPZ0pwFImHoWVgm+P2fAvQ
-	sWts8Fkid1mDfReM8Lpjwm82voERc8AH1guf7V7y7C4T4LGucB81
-X-Google-Smtp-Source: AGHT+IGHCUQwA6BDdTVYfWxrUiljUYvRhArRrCkCd9PaG0NPrjy8Vb6jJpV0ZVxb4oWoGgNm4GroJA==
-X-Received: by 2002:adf:f302:0:b0:362:23d5:3928 with SMTP id ffacd0b85a97d-3749c1da581mr1592529f8f.17.1724946504464;
-        Thu, 29 Aug 2024 08:48:24 -0700 (PDT)
-Received: from orome (p200300e41f29d300f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f29:d300:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ba63abe97sm54625005e9.24.2024.08.29.08.48.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 08:48:24 -0700 (PDT)
-Date: Thu, 29 Aug 2024 17:48:22 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Kunwu Chan <kunwu.chan@linux.dev>
-Cc: mperttunen@nvidia.com, airlied@gmail.com, daniel@ffwll.ch, 
-	dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Kunwu Chan <chentao@kylinos.cn>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH] gpu: host1x: Make host1x_context_device_bus_type constant
-Message-ID: <7lfoxxbtscgfsy6rttfea2vfmv6nf3xzzfv3tczd5sd27utwyv@vmrhr5j4ng4f>
-References: <20240823080724.148423-1-kunwu.chan@linux.dev>
+	 Content-Type:Content-Disposition:In-Reply-To; b=pONJlgA5wpNRyhjQHdmrBm+yEzlWhF43Fpa8izYYVTZna3v8vml7Tmv/muiD1vULnkyqURYtGIwllz7/MJjv7LIwge1CR9Dt65db05HJS+HZQxZHTsVz0q5PfttdlmI1kN3H6ZWwVAOZg2MAYp8g9tMH2+DK9fp2FjG2Wr6SZIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=FG2DPyp9; arc=none smtp.client-ip=91.218.175.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 29 Aug 2024 08:49:29 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1724946576;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JSVZiXj9uWNsdq1CBv+qiytgVutH4w3/0Njr6e1mFG0=;
+	b=FG2DPyp9orc0RU6IR4u4nURavRjF22n5a/J740GoG1zfzgAUlDCqamGIA3VjPaCLdQNchZ
+	xUTHqVPrMvi0y8SG8PzZA+xJgXeUlQBZ6zsxocob5xVk45+e2C8dy4wYQY5Xrss549CaNW
+	ZunWROmbBtjp53RvCLZV9owEL4jM97Y=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Muchun Song <muchun.song@linux.dev>
+Cc: Roman Gushchin <roman.gushchin@linux.dev>, 
+	Andrew Morton <akpm@linux-foundation.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Michal Hocko <mhocko@kernel.org>, Vlastimil Babka <vbabka@suse.cz>, 
+	David Rientjes <rientjes@google.com>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, 
+	Eric Dumazet <edumazet@google.com>, "David S . Miller" <davem@davemloft.net>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Linux Memory Management List <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Meta kernel team <kernel-team@meta.com>, cgroups@vger.kernel.org, netdev <netdev@vger.kernel.org>
+Subject: Re: [PATCH v1] memcg: add charging of already allocated slab objects
+Message-ID: <nt5zhccndtrj2pyyjm6wkah4iizzijdamaqce24t7nqioy4c5y@3vtipktwtzkn>
+References: <20240826232908.4076417-1-shakeel.butt@linux.dev>
+ <Zs1CuLa-SE88jRVx@google.com>
+ <yiyx4fh6dklqpexfstkzp3gf23hjpbjujci2o6gs7nb4sutzvb@b5korjrjio3m>
+ <EA5F7851-B519-4570-B299-8A096A09D6E7@linux.dev>
+ <a5rzw7uuf7pgrhhut7keoy66c6u4rgiuxx2qmwywbvl2iktfku@23dzxczejcet>
+ <97F404E9-C3C2-4BD2-9539-C40237E71B2B@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="5discxhm4f5xyvaj"
-Content-Disposition: inline
-In-Reply-To: <20240823080724.148423-1-kunwu.chan@linux.dev>
-
-
---5discxhm4f5xyvaj
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <97F404E9-C3C2-4BD2-9539-C40237E71B2B@linux.dev>
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, Aug 23, 2024 at 04:07:24PM GMT, Kunwu Chan wrote:
-> From: Kunwu Chan <chentao@kylinos.cn>
->=20
-> Since commit d492cc2573a0 ("driver core: device.h: make struct
-> bus_type a const *"), the driver core can properly handle constant
-> struct bus_type, move the host1x_context_device_bus_type variable
-> to be a constant structure as well, placing it into read-only memory
-> which can not be modified at runtime.
->=20
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Suggested-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Signed-off-by: Kunwu Chan <chentao@kylinos.cn>
-> ---
->  drivers/gpu/host1x/context_bus.c   | 2 +-
->  include/linux/host1x_context_bus.h | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
+On Thu, Aug 29, 2024 at 10:36:01AM GMT, Muchun Song wrote:
+> 
+> 
+> > On Aug 29, 2024, at 03:03, Shakeel Butt <shakeel.butt@linux.dev> wrote:
+> > 
+> > Hi Muchun,
+> > 
+> > On Wed, Aug 28, 2024 at 10:36:06AM GMT, Muchun Song wrote:
+> >> 
+> >> 
+> >>> On Aug 28, 2024, at 01:23, Shakeel Butt <shakeel.butt@linux.dev> wrote:
+> >>> 
+> > [...]
+> >>>> 
+> >>>> Does it handle the case of a too-big-to-be-a-slab-object allocation?
+> >>>> I think it's better to handle it properly. Also, why return false here?
+> >>>> 
+> >>> 
+> >>> Yes I will fix the too-big-to-be-a-slab-object allocations. I presume I
+> >>> should just follow the kfree() hanlding on !folio_test_slab() i.e. that
+> >>> the given object is the large or too-big-to-be-a-slab-object.
+> >> 
+> >> Hi Shakeel,
+> >> 
+> >> If we decide to do this, I suppose you will use memcg_kmem_charge_page
+> >> to charge big-object. To be consistent, I suggest renaming kmem_cache_charge
+> >> to memcg_kmem_charge to handle both slab object and big-object. And I saw
+> >> all the functions related to object charging is moved to memcontrol.c (e.g.
+> >> __memcg_slab_post_alloc_hook), so maybe we should also do this for
+> >> memcg_kmem_charge?
+> >> 
+> > 
+> > If I understand you correctly, you are suggesting to handle the general
+> > kmem charging and slab's large kmalloc (size > KMALLOC_MAX_CACHE_SIZE)
+> > together with memcg_kmem_charge(). However that is not possible due to
+> > slab path updating NR_SLAB_UNRECLAIMABLE_B stats while no updates for
+> > this stat in the general kmem charging path (__memcg_kmem_charge_page in
+> > page allocation code path).
+> > 
+> > Also this general kmem charging path is used by many other users like
+> > vmalloc, kernel stack and thus we can not just plainly stuck updates to
+> > NR_SLAB_UNRECLAIMABLE_B in that path.
+> 
+> Sorry, maybe I am not clear . To make sure we are on the same page, let
+> me clarify my thought. In your v2, I thought if we can rename
+> kmem_cache_charge() to memcg_kmem_charge() since kmem_cache_charge()
+> already has handled both big-slab-object (size > KMALLOC_MAX_CACHE_SIZE)
+> and small-slab-object cases. You know, we have a function of
+> memcg_kmem_charge_page() which could be used for charging big-slab-object
+> but not small-slab-object. So I thought maybe memcg_kmem_charge() is a
+> good name for it to handle both cases. And if we do this, how about moving
+> this new function to memcontrol.c since all memcg charging functions are
+> moved to memcontrol.c instead of slub.c.
+> 
 
-Applied, thanks.
+Oh you want the core function to be in memcontrol.c. I don't have any
+strong opinion where the code should exist but I do want the interface
+to still be kmem_cache_charge() because that is what we are providing to
+the users which charging slab objects. Yes some of those might be
+big-slab-objects but that is transparent to the users.
 
-Thierry
+Anyways, for now I will go with my current approach but on the followup
+will explore and discuss with you on which code should exist in which
+file. I hope that is acceptable to you.
 
---5discxhm4f5xyvaj
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmbQmEYACgkQ3SOs138+
-s6EysxAArYfkVMvVVYkvw+kpGNUhX00DpSW9J4CclmMg2h0PH57jkGiYPx9H5IGF
-m/WyoeY+RVH12s7H6BOhnEKRcNKxurXUBztLZt9R3KQQVwiLt+EqhoHALqGp6C+N
-vpZGnCUpSkUa7tHz3iAaxd8H1GRLinlmnLK8zCDSXnYNcRc4M5S2CjmOYK2WKyaF
-KJFtrn4WVQqH1zqQCX2bINPlnVq5lw7S5Lr4qMwHjwM1CvnmHfuEgH8tTLT7AllG
-6N+nxtnvgKol4ETOSFMvFk85wiIyrxsQqgg51xdfp0cFDRzdyBmV7ogyAlOI1p07
-9h7Jd5l4XuaTGPBhEnpnShUutL9YQoDOylHI+ylC/ZObe7HDj/gj1O1ORae43zRe
-G5bi6fG6Cmi03WnKQSjRniTl+ROLBdodVkfx8xqDhiixC8dqxAbV3HK9jJb9c0Bs
-PBV4Pq2B47GFSF73Z5YpsU3y6jfzLPX5ySV9KRWLBCatnEMpcg/GXHeIh+vNoTNf
-eiS644a2C6Zln+b4zaMMlQKjp0pknEFc1JCCW3TUzSmvegZkhLVkewNub624iT0b
-i707owNNxXf1jx7qQ2YPUSM1JhDFiiJ7VcaD+LrzHmjxQTde8kd0+7laEGpGFxSB
-yaMY0hd+mDtshIqzv9WLfJQV4+9wyzqW1Zkoh3fMztdeJCkgfGI=
-=kU8E
------END PGP SIGNATURE-----
-
---5discxhm4f5xyvaj--
+thanks,
+Shakeel
 
