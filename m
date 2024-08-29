@@ -1,218 +1,190 @@
-Return-Path: <linux-kernel+bounces-307078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85031964799
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:07:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E5D596479B
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:07:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11A0E1F23755
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 14:07:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C10F21F24413
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 14:07:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 108221AD9E9;
-	Thu, 29 Aug 2024 14:07:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9680F1AED2B;
+	Thu, 29 Aug 2024 14:07:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="RP02U9sZ"
-Received: from xry111.site (xry111.site [89.208.246.23])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z400QnWl"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A33EE1ABEAF;
-	Thu, 29 Aug 2024 14:06:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6151E1AE846;
+	Thu, 29 Aug 2024 14:07:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724940419; cv=none; b=TyaYu35Q+xv96Kp9e1BdAUTV1AAqSWvWsqmcII8gTICqV1g/1CuGh4YphPM+KsmfEGD1l6teOPdFoxIJnf89SbH7V7s/9pXq6OhJpikaNQq4kqu88ZwrAT5TuqBtehuyhOBkoQwdoDOiQPTIOiBQw0ChcEYZburvurKJk02yTqU=
+	t=1724940422; cv=none; b=oL4sNNVwgGLr5hi5cwjflshJB8xlwmBKyvdhul9tTJktc4s9fjxq3VgLu1+HjsiyHmeelMhSiZMHkE3lTzTRAA1cg5NkEGblzWwc2RgyRcdNMmxWuetHkSeLrW9SdFfUC/RC1SOFbzZ4rwGkBLxUsVlCPs4T8cHk8BhVN3y9Sos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724940419; c=relaxed/simple;
-	bh=0S0yRpTpB8yDAp2PnEOxUn8pAAxSOhZjZhcRIfE3S74=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=PCzvty5W4r64kQDq+oyGygFLWgO9zkQQQVRjCflmhqoZ6gy41nUP3witi9Wi9RIylmxIIRkZTBCZ+ym7sVzMd7sdc4eZeX+q2F2fxbnvtoHZRLQVv4eUiA9xSp2t86H5eFJRU8Psv7uiLo31tK2BDovj/uBN53fpWY+Pndyy8OI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=RP02U9sZ; arc=none smtp.client-ip=89.208.246.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xry111.site;
-	s=default; t=1724940414;
-	bh=0S0yRpTpB8yDAp2PnEOxUn8pAAxSOhZjZhcRIfE3S74=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=RP02U9sZkbOfdFPO8mfb67sv7a7pUPB1RkXe0tOFUw1oK+k3Pdd7QhkvEk+EuzCcm
-	 s/x0TZLUUesMrgjSZMkxhFutpEP8H8mIiqTlrxBI1cS0lc791ysBI+l/hts/fl+RmN
-	 2mqCBWCuIS1pcPcdWPZMRWCPMk0F7w5598CqkERM=
-Received: from [192.168.124.6] (unknown [113.200.174.10])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-384) server-digest SHA384)
-	(Client did not present a certificate)
-	(Authenticated sender: xry111@xry111.site)
-	by xry111.site (Postfix) with ESMTPSA id 7AD2966F26;
-	Thu, 29 Aug 2024 10:06:51 -0400 (EDT)
-Message-ID: <a3373ad5f92a4120bd0c8e0c751eb7617e035cf6.camel@xry111.site>
-Subject: Re: [PATCH v5] LoongArch: vDSO: Wire up getrandom() vDSO
- implementation
-From: Xi Ruoyao <xry111@xry111.site>
-To: "Jason A. Donenfeld" <Jason@zx2c4.com>, Tiezhu Yang
- <yangtiezhu@loongson.cn>
-Cc: Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, 
- linux-crypto@vger.kernel.org, loongarch@lists.linux.dev, 
- linux-kernel@vger.kernel.org, Jinyang He <hejinyang@loongson.cn>, Arnd
- Bergmann <arnd@arndb.de>, Thomas Gleixner <tglx@linutronix.de>, Christophe
- Leroy <christophe.leroy@csgroup.eu>
-Date: Thu, 29 Aug 2024 22:06:47 +0800
-In-Reply-To: <ZtB5pqfp0Lg6lzz6@zx2c4.com>
-References: <20240829125656.19017-1-xry111@xry111.site>
-	 <ZtB3RczHN00XDO52@zx2c4.com> <ZtB5pqfp0Lg6lzz6@zx2c4.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3 
+	s=arc-20240116; t=1724940422; c=relaxed/simple;
+	bh=Dnc97RZIVh4Cs30Qnu+fHSGTdzuC4rmOQI0ZaXzgC7w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bg/pLHN4FVbV7viIfBud9zQDjgPnZxaUcNiOQNbwiMIrHKjXhcGzo0GzgjM/2qYykChc1V9NHGIL7rPCWea0C2zqnThaiu4kavUi6UwLwk+scX9UbnpSlycYcb+BHy7F78i0eHdiCZI8YJnlgkouCBrh2LUWqEA2QnHjFeB3lYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z400QnWl; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-7142e002aceso575596b3a.2;
+        Thu, 29 Aug 2024 07:07:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724940421; x=1725545221; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=iK1IVOMJIxyZnFgv4BStIpf1YlI4C67hPRkMhKa7i/g=;
+        b=Z400QnWlTcuha2HuzdoMffJXpysUx0OY/fWAl5Zm+dV19b2OZW/e2JY7HhfRAmlWDp
+         YJ5fQ3faFu0ovLOCL8nfRKHFl61sKfZLNQcC8pI4rgVg6h+R9lDwSBioXH0Eo2FisKLS
+         XeEVIJ4G3qW3RziJmEugzfbRmY58W8sYZ1hVLwvqKP/6BDRir3Rw//gA199Lu/aQsYJz
+         3jESmTc5xxw+yXh5js9vaqrch6lSRlNWfpXo4iBIB0VottC9sLIdrzpsB346KiXof14d
+         PJPPjhJMXeLwvwLjTP17/+uu/t2JLljGDpcfR6dqpqbsD4W2PtUGoHd3QPoWhufe8SQC
+         QqEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724940421; x=1725545221;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=iK1IVOMJIxyZnFgv4BStIpf1YlI4C67hPRkMhKa7i/g=;
+        b=SJmGc57NfJgXl/qt34Dg0A2uMFpDPY1tLGe6R5IQOBGgSv//vtmSWq5kDk6gDkDP/3
+         S+3d/0/3ZQOOoSYo3Eclz4H7cDV9Wgbf5eJwHH92zWXja3bKui+5gQbeenhQxbCytGUr
+         idcVBUJBlCPxX8GIjI68apgjGQ4434nzd8iqlmax6n7/Zts2SJYdpQKHeiYkNsc4RRsF
+         8CjfXoc60Lx0foKdJ5urLjn+GwmwDOWHqhudDWKyFYyoUvAhFmyZroEp+t6nlpebu2qB
+         dd+Fzir+nS6jh4qXLY3LG4bGqeQ8O/UstPFhHgBFJ9njxvVbLlOOCD+UIgjLz0pEzQer
+         X2sQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVhSqcvwFDz9pSv9ru5YjNmvjl0u/6ndIga8H6ydo3dVlIBp6ouoWKx03IzPd9kaKa/KnyCIGRGcqv0@vger.kernel.org, AJvYcCWMYGa7M8zYpuMDKfUlvzDN4Tvh6hzfonY3z+ALoKWu7nVMjfz5q4ukaq4Ud16GfSNdbwO7TOGLycaimby5@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxzCLw1VYY/MEnamulIV/hIns8tfXCH/hOlmWbQT/B7Uas3VqT
+	qjDKY+AajLPb+ObxOVabcaCFHyIpBI00e77Mdwb5LUjn/tgYWv4jemDBFKLHHMc=
+X-Google-Smtp-Source: AGHT+IG2CyT+7KwKUd+VOi3UxpXYONelmRV4w2rkII4YQ8l9bIrb2V+UgLmErP8YyjI2/5thiSzKwQ==
+X-Received: by 2002:a05:6a00:1798:b0:70e:91ca:32ab with SMTP id d2e1a72fcca58-715dfaea829mr3436412b3a.6.1724940420644;
+        Thu, 29 Aug 2024 07:07:00 -0700 (PDT)
+Received: from [192.168.0.122] ([59.188.211.160])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-715e55b9c4esm1192104b3a.92.2024.08.29.07.06.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 29 Aug 2024 07:07:00 -0700 (PDT)
+Message-ID: <e6377027-c4e5-4fd2-abf4-63cf6282542d@gmail.com>
+Date: Thu, 29 Aug 2024 22:06:56 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-
-On Thu, 2024-08-29 at 15:37 +0200, Jason A. Donenfeld wrote:
-> On Thu, Aug 29, 2024 at 03:27:33PM +0200, Jason A. Donenfeld wrote:
-> > One small question just occurred to me:
-> >=20
-> > > +static __always_inline const struct vdso_rng_data *__arch_get_vdso_r=
-ng_data(
-> > > +	void)
-> > > +{
-> > > +	return (const struct vdso_rng_data *)(
-> > > +		get_vdso_data() +
-> > > +		VVAR_LOONGARCH_PAGES_START * PAGE_SIZE +
-> > > +		offsetof(struct loongarch_vdso_data, rng_data));
-> > > +}
-> >=20
-> > Did you test this in a TIMENS? On x86, I had to deal with the page
-> > offsets switching around depending on whether there was a TIMENS. I
-> > tested this in my test harness with some basic code like:
-> >=20
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (argc =3D=3D 1) {
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 if (unshare(CLONE_NEWTIME))
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 panic("unsh=
-are(CLONE_NEWTIME)");
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 if (!fork()) {
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (execl(a=
-rgv[0], argv[0], "now-in-timens"))
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 panic("execl");
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 }
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 wait(NULL);
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 poweroff();
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
-> >=20
-> > Because unlike other namespaces, the time one only becomes active after
-> > fork/exec.
-> >=20
-> > But maybe loongarch is more organized and you don't need any special
-> > handling in __arch_get_vdso...data() functions like I needed on x86.
-> > Just thought I should check.
->=20
-> Normal results:
->=20
-> =C2=A0=C2=A0 vdso: 25000000 times in 0.287330836 seconds
-> =C2=A0=C2=A0 libc: 25000000 times in 4.480710835 seconds
-> syscall: 25000000 times in 4.411098048 seconds
->=20
-> After applying
->=20
-> diff --git a/arch/x86/include/asm/vdso/getrandom.h b/arch/x86/include/asm=
-/vdso/getrandom.h
-> index ff5334ad32a0..5cb1b318ebe3 100644
-> --- a/arch/x86/include/asm/vdso/getrandom.h
-> +++ b/arch/x86/include/asm/vdso/getrandom.h
-> @@ -32,8 +32,6 @@ static __always_inline ssize_t getrandom_syscall(void *=
-buffer, size_t len, unsig
->=20
-> =C2=A0static __always_inline const struct vdso_rng_data *__arch_get_vdso_=
-rng_data(void)
-> =C2=A0{
-> -	if (IS_ENABLED(CONFIG_TIME_NS) && __vdso_data->clock_mode =3D=3D VDSO_C=
-LOCKMODE_TIMENS)
-> -		return (void *)&__vdso_rng_data + ((void *)&__timens_vdso_data - (void=
- *)&__vdso_data);
-> =C2=A0	return &__vdso_rng_data;
-> =C2=A0}
->=20
-> the results are:
->=20
-> =C2=A0=C2=A0 vdso: 25000000 times in 4.403789593 seconds
-> =C2=A0=C2=A0 libc: 25000000 times in 4.466771093 seconds
-> syscall: 25000000 times in 4.428145416 seconds
->=20
-> The difference is that when it finds the shared data in the wrong place,
-> it thinks the RNG is uninitialized, so it always falls back to the
-> syscall, hence all three times being the same.
->=20
-> If you're unsure how timens handling works on loongarch, try this test
-> yourself and see what you get.
-
-$ unshare -r -T --boottime $((365*24*3600))
-# uptime
- 21:54:36 up 365 days,  5:38,  0 user,  load average: 0.05, 0.08, 2.82
-# /home/xry111/git-repos/linux/tools/testing/selftests/vDSO/vdso_test_getra=
-ndom bench-single
-   vdso: 25000000 times in 0.499528591 seconds
-   libc: 25000000 times in 6.968980040 seconds
-syscall: 25000000 times in 6.987357071 seconds
-
-So it seems normal in a time ns.
-
-And from a comment in arch/loongarch/include/asm/vdso/vdso.h:
-
-/*
- * The layout of vvar:
- *
- *                      high
- * +---------------------+--------------------------+
- * | loongarch vdso data | LOONGARCH_VDSO_DATA_SIZE |
- * +---------------------+--------------------------+
- * |  time-ns vdso data  |        PAGE_SIZE         |
- * +---------------------+--------------------------+
- * |  generic vdso data  |        PAGE_SIZE         |
- * +---------------------+--------------------------+
- *                      low
- */
-
-And VVAR_LOONGARCH_PAGES_START is 2:
-
-enum vvar_pages {
-    VVAR_GENERIC_PAGE_OFFSET,
-    VVAR_TIMENS_PAGE_OFFSET,
-    VVAR_LOONGARCH_PAGES_START,
-    VVAR_LOONGARCH_PAGES_END =3D VVAR_LOONGARCH_PAGES_START +
-LOONGARCH_VDSO_DATA_PAGES - 1,
-    VVAR_NR_PAGES,
-};
-
-So get_vdso_data() + VVAR_LOONGARCH_PAGES_START * PAGE_SIZE should have
-already "jumped over" the time-ns vdso data.
-
-OTOH it seems we are wasting a page if !CONFIG_TIME_NS.	Maybe:
-
-enum vvar_pages {
-    VVAR_GENERIC_PAGE_OFFSET,
-#ifdef CONFIG_TIME_NS
-    VVAR_TIMENS_PAGE_OFFSET,
-#endif
-    VVAR_LOONGARCH_PAGES_START,
-    VVAR_LOONGARCH_PAGES_END =3D VVAR_LOONGARCH_PAGES_START +
-LOONGARCH_VDSO_DATA_PAGES - 1,
-    VVAR_NR_PAGES,
-};
-
-Tiezhu: how do you think?
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND 3/3] irqchip/apple-aic: Add a new "Global fast IPIs
+ only" feature level
+Content-Language: en-MW
+To: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
+ Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+ Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, asahi@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+Cc: ~postmarketos/upstreaming@lists.sr.ht
+References: <20240829110436.46052-1-towinchenmi@gmail.com>
+ <20240829110436.46052-4-towinchenmi@gmail.com>
+From: Nick Chan <towinchenmi@gmail.com>
+In-Reply-To: <20240829110436.46052-4-towinchenmi@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
---=20
-Xi Ruoyao <xry111@xry111.site>
-School of Aerospace Science and Technology, Xidian University
+
+On 29/8/2024 19:02, Nick Chan wrote:
+> Starting with the A11 (T8015) SoC, Apple began using arm64 sysregs for
+> fast IPIs. However, on A11, there is no such things as "Local" fast IPIs,
+> as the SYS_IMP_APL_IPI_RR_LOCAL_EL1 register does not seem to exist.
+> 
+> Add a new feature level, used by the compatible "apple,t8015-aic",
+> controlled by a static branch key named use_local_fast_ipi. When
+> use_fast_ipi is true and use_local_fast_ipi is false, fast IPIs are used
+> but all IPIs goes through the register SYS_IMP_APL_IPI_RR_GLOBAL_EL1, as
+> "global" IPIs.
+> 
+> Signed-off-by: Nick Chan <towinchenmi@gmail.com>
+> ---
+>  drivers/irqchip/irq-apple-aic.c | 25 ++++++++++++++++++++++++-
+>  1 file changed, 24 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/irqchip/irq-apple-aic.c b/drivers/irqchip/irq-apple-aic.c
+> index 626aaeafa96c..1640074af2e1 100644
+> --- a/drivers/irqchip/irq-apple-aic.c
+> +++ b/drivers/irqchip/irq-apple-aic.c
+> @@ -236,6 +236,8 @@ enum fiq_hwirq {
+>  
+>  /* True if UNCORE/UNCORE2 and Sn_... IPI registers are present and used (A11+) */
+>  static DEFINE_STATIC_KEY_TRUE(use_fast_ipi);
+> +/* True if SYS_IMP_APL_IPI_RR_LOCAL_EL1 exists (M1+) */
+> +static DEFINE_STATIC_KEY_TRUE(use_local_fast_ipi);
+>  
+>  struct aic_info {
+>  	int version;
+> @@ -253,6 +255,7 @@ struct aic_info {
+>  
+>  	/* Features */
+>  	bool fast_ipi;
+> +	bool local_fast_ipi;
+>  };
+>  
+>  static const struct aic_info aic1_info __initconst = {
+> @@ -271,6 +274,16 @@ static const struct aic_info aic1_fipi_info __initconst = {
+>  	.fast_ipi	= true,
+>  };
+>  
+> +static const struct aic_info aic1_local_fipi_info __initconst = {
+> +	.version	= 1,
+> +
+> +	.event		= AIC_EVENT,
+> +	.target_cpu	= AIC_TARGET_CPU,
+> +
+> +	.fast_ipi	= true,
+> +	.local_fast_ipi = true,
+> +};
+> +
+>  static const struct aic_info aic2_info __initconst = {
+This patch is incorrectly disabling local fast IPI on aic2, it will be
+corrected in v2.
+
+>  	.version	= 2,
+>  
+> @@ -282,6 +295,10 @@ static const struct aic_info aic2_info __initconst = {
+>  static const struct of_device_id aic_info_match[] = {
+>  	{
+>  		.compatible = "apple,t8103-aic",
+> +		.data = &aic1_local_fipi_info,
+> +	},
+> +	{
+> +		.compatible = "apple,t8015-aic",
+>  		.data = &aic1_fipi_info,
+>  	},
+>  	{
+> @@ -748,7 +765,8 @@ static void aic_ipi_send_fast(int cpu)
+>  	u64 cluster = MPIDR_CLUSTER(mpidr);
+>  	u64 idx = MPIDR_CPU(mpidr);
+>  
+> -	if (MPIDR_CLUSTER(my_mpidr) == cluster)
+> +	if (static_branch_likely(&use_local_fast_ipi) &&
+> +	    MPIDR_CLUSTER(my_mpidr) == cluster)
+>  		write_sysreg_s(FIELD_PREP(IPI_RR_CPU, idx),
+>  			       SYS_IMP_APL_IPI_RR_LOCAL_EL1);
+>  	else
+> @@ -992,6 +1010,11 @@ static int __init aic_of_ic_init(struct device_node *node, struct device_node *p
+>  	else
+>  		static_branch_disable(&use_fast_ipi);
+>  
+> +	if (irqc->info.local_fast_ipi)
+> +		static_branch_enable(&use_local_fast_ipi);
+> +	else
+> +		static_branch_disable(&use_local_fast_ipi);
+> +
+>  	irqc->info.die_stride = off - start_off;
+>  
+>  	irqc->hw_domain = irq_domain_create_tree(of_node_to_fwnode(node),
+
+Nick Chan
 
