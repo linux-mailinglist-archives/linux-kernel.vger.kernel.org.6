@@ -1,147 +1,131 @@
-Return-Path: <linux-kernel+bounces-306169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BD7E963A24
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 07:59:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7B6D963A27
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 07:59:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DFCB31F22E3B
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 05:59:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E14DB23797
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 05:59:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42B001537CB;
-	Thu, 29 Aug 2024 05:57:06 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3461E14B946;
+	Thu, 29 Aug 2024 05:57:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WbOeQWsP"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10FB682D94
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 05:57:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF5BF14B950
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 05:57:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724911025; cv=none; b=SPyb/cg2XxjLZNEKwJoz3PlyZVZHvLS+lplBOOER5EbzIaTV4h6/mpv5ElM8nbqKr6srNk0KcZh+VWz4GpSJG1idaO9+4MT11bVdylP7rwYJTFPY0gtylOOf5YG2HWDbBmH/oRNWzvjY58g4guGvLkjJAIpDyV9hQ5lO4QdgQrs=
+	t=1724911046; cv=none; b=k3nADN6ikToJ/SEtZdQhjsf2v2/8GsoDWSi6lmSVTarx5QnLhcqI1nDLEmTDa+ZiEjSWEAfwRMnM6t0mENW9CukhiaKY99klukDj5O587hBeLIoQAeKuIHwrl2u1qzfJHu/oUqlvPkvsgZVtdGb8z6r9+d6/dw7cypnkcNdLiWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724911025; c=relaxed/simple;
-	bh=cfdPW45FESLgM15k3LRbinNyNYsFZXahPgFCu3AMxKA=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=jQbcfBBp/isAnEuo4o2yuHzeGYhfBQhCNfM7v9OiQHLfWzad5y2K88i3VFf7ui6slP2UwVIcSG+WMyCIcoVj9HaGq+mcZWU179cUmEnzXVttAffUqregGcmrzH6bs2R6slRzlKNuN/DbL+FwBUTpoQVkxtKnDQWexo/2Bh4jKpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-39f36def4feso2737945ab.2
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 22:57:03 -0700 (PDT)
+	s=arc-20240116; t=1724911046; c=relaxed/simple;
+	bh=dHjnz2UzSLfwh1FR8aDWFAa/de3ziMwtFVKc+1uy4S0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FazYRrcLkkM81DnRl2sB7mfL106josEoIYXBJ/iQxXzh/HIq5xfhTAlWZQGVcX94b7kmrPjjzVyJc9R4MeOOp9B2OVNpwZVrN7j5dd6d/TZdeTDRnHjz2qdwOgca2NYNXV2LhLW6BBj2bLkJXfBJfQPvw5clEcvmfbSfzyz85tg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WbOeQWsP; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2f401c20b56so12125661fa.0
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 22:57:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724911043; x=1725515843; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=1vASjKIj/XbShQ3oRAfqq4CjpUQYKAt498Y++gSmZqU=;
+        b=WbOeQWsP7SyHsxiyacwFv06CQ4JNqQ0nkzbEM+jW1U7vaRLy5D783zGoU/8j4wmbCq
+         gl04R532YijHMj/qLrgH40bTT9DFYEtFqlo0hiE+CgvWYk95S+d1Ag+fh71tXIZKCsGJ
+         /ARer9G1pCvUCGjYAI9UatcTJfIWuw8JORQkksFN0ax3m6XakDC757RUmXe4anaIFJ5T
+         /zjUqfYBZgcx93XuonOUVBIXI+gFAUpyqt9J6hwxfe3CwG2Co1M5IwHlPVap/Hi+38/O
+         cAq2LPCb3er9N9pGOSeVSHmOWYunE/FyESEfr13x3c0+FibX9PWlSQVaE0/kvPmsOD/9
+         B7Eg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724911023; x=1725515823;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tr+e1ubLc48wQhKJZkcJj66Oqxz6UPS6LetYk33BfSw=;
-        b=duyUyRN7cdd9gsPgAKyetCupHGgjEU3l/279IM1NfQ+X2spfltjP6//s8KTcva3Cxi
-         9geh7jlMfsdT9OXeRCAPHM4+o7NVdIkFp8t+o4Z4yy/xKdVjThbISeKt045N5laKuRvv
-         gcs90gFOpLUSGAxv8vqrsS1tMHGK5VxFjTwcv0WoeoMeHqnuJhwlMKkrX8Qk2cmBVXYy
-         klk3LvuNBmA4Jb8PH/0527K1ecLrOnwFqwqjxH7da2LCj7iY0LBHuRg5cFDVFY8jlgma
-         9x672TcQLh9lWGIkLs2hzqhCccxTCYya+3nJ3YpPeeeaopX6S6aj2n3gdOESDXJ93JZ+
-         sduw==
-X-Gm-Message-State: AOJu0YzGAiQw35HsVmBbkZ1zXi1jq288u0Y55yhjsBp57kuMpMTUSllv
-	8FZFm2yrJnvNmrx4FYVg9zHZw5MIuV5ogmVITwEquEBroe+XgDOF6ZqCCIBad+7ECWqFUhPoj2k
-	G4zIsZ/VerXWGceEk1L6gB7pIxB6RC1SX/KmdoIFevYcgUGwC2cUzkHQ=
-X-Google-Smtp-Source: AGHT+IEQsCK+CXpYudyljjTo8qwcMVBqDJI8Xu4CIV4KBkAS1lEXlq0cyPmB3lrclUxoM5gwf6IGDtSjx/SbmYYTUa045YVMAfa2
+        d=1e100.net; s=20230601; t=1724911043; x=1725515843;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1vASjKIj/XbShQ3oRAfqq4CjpUQYKAt498Y++gSmZqU=;
+        b=t4ndel3bUEk0+44NairrLSXyWTTjw00WD3AwKMcEHyA5/r7geSu/Nlx7snDz4u/D6g
+         hd8Q2oZlWoy6NDrgVIN9zJKdG0fABF6RkpalxwhirerBfZeNpZE+dGkBHr/wEy2pfFl/
+         g8th6e3uXPJdzZUYILd8Qw58lbOZPSDsJH+OxSZeOa3DF5aSyRObpSE3MtvoOmZtyVjj
+         WXNPnnRNkQsbhFTN/fbTrXU3FtYAoBBzveX7hvQFLrWV+BsGURp6ZPuBA3QwP2T1p0Zu
+         ssQDlBErzy1qePLbx69i8h5JKlHsDFXPgG49By6V9SN8mYvdJfCO0i+LMthlodyJUkWn
+         6YJg==
+X-Forwarded-Encrypted: i=1; AJvYcCXXk7ETnRUla7nleuBjT8YVWR21xvFMuvHiSp+PLkvJJtXS8V5HoGPXNKWWrN9p8WyRp3i296K/0JiM/sc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwpaNQCVxPAFPh5fIFXNKs7PE3brOiuuzScywAohhIm4LxwpDyl
+	1RuMjsvzeiedxDV40y2awEZPRu4JhblHqAEQqFH1VzCV2LC5UfWyPSKSwcBUlOg=
+X-Google-Smtp-Source: AGHT+IGp6B4PARu5DefP0fh+oEmkjIvpMlcIls1wS868UOLPrl34GguF+KwFIE4+MKTA10hqteoEQA==
+X-Received: by 2002:a05:6512:39d3:b0:52e:a737:2958 with SMTP id 2adb3069b0e04-5353ebf75b1mr338516e87.28.1724911042131;
+        Wed, 28 Aug 2024 22:57:22 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53540853739sm58251e87.289.2024.08.28.22.57.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Aug 2024 22:57:21 -0700 (PDT)
+Date: Thu, 29 Aug 2024 08:57:20 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Chukun Pan <amadeus@jmu.edu.cn>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Rob Herring <robh@kernel.org>, linux-arm-msm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 2/4] arm64: dts: qcom: ipq6018: add 1.5GHz CPU
+ Frequency
+Message-ID: <xmqyp2rgd3nozuiqu44iwidjnnwsidls3mxaqhmy3sshd4nok5@n552fd5tkjoc>
+References: <20240821101025.858961-1-amadeus@jmu.edu.cn>
+ <20240821101025.858961-3-amadeus@jmu.edu.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d17:b0:396:1fc1:7034 with SMTP id
- e9e14a558f8ab-39f377eb269mr1438445ab.0.1724911023218; Wed, 28 Aug 2024
- 22:57:03 -0700 (PDT)
-Date: Wed, 28 Aug 2024 22:57:03 -0700
-In-Reply-To: <20240829054235.3940345-1-lizhi.xu@windriver.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000cef6da0620cc24a1@google.com>
-Subject: Re: [syzbot] [btrfs?] kernel BUG in __extent_writepage_io (2)
-From: syzbot <syzbot+ba3c0273042a898c230e@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, lizhi.xu@windriver.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240821101025.858961-3-amadeus@jmu.edu.cn>
 
-Hello,
+On Wed, Aug 21, 2024 at 06:10:23PM GMT, Chukun Pan wrote:
+> The IPQ6005 SoCs and some IPQ6000 SoCs (with PMIC, no fused)[1] have
+> CPU frequencies up to 1.5GHz, so add this frequency.
+> 
+> [1] Usually the SBL version is BOOT.XF.0.3-00077-IPQ60xxLZB-2
+> The old version of IPQ6000 did not explicitly fused the SoC to
+> be 'IPQ6000', and fused the CPU frequency to 1.5GHz.
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-kernel BUG in btrfs_add_extent_mapping
+Again, more data is necessary here. "some" doesn't look exact enough.
 
-em: ffff888066d637e0, blockstart: 18446744073709551613, em refs: 1, add_extent_mapping
-em: ffff888066d637e0, blockstart: 18446744073709551613, mblockstart: 18446744073709551613, try_merge_map
-setuped, em: ffff888066d637e0, blockstart: 18446744073709551613, em refs: 2, add_extent_mapping
-assertion failed: extent_map_block_start(em) != EXTENT_MAP_HOLE, in fs/btrfs/extent_map.c:752
-------------[ cut here ]------------
-kernel BUG at fs/btrfs/extent_map.c:752!
-Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
-CPU: 0 UID: 0 PID: 6365 Comm: syz.1.20 Not tainted 6.11.0-rc5-syzkaller-00081-gd5d547aa7b51-dirty #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-RIP: 0010:btrfs_add_extent_mapping+0x715/0x790 fs/btrfs/extent_map.c:752
-Code: f9 07 90 0f 0b e8 8b e6 e1 fd 48 c7 c7 20 5b 2c 8c 48 c7 c6 20 5c 2c 8c 48 c7 c2 a0 59 2c 8c b9 f0 02 00 00 e8 2c c5 f9 07 90 <0f> 0b e8 64 e6 e1 fd 49 be 00 00 00 00 00 fc ff df e9 6a fb ff ff
-RSP: 0018:ffffc900032b7160 EFLAGS: 00010246
-RAX: 000000000000005d RBX: dffffc0000000000 RCX: 10a2bc291a71c100
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
-RBP: 1ffff1100cdac701 R08: ffffffff817400cc R09: fffffbfff1cba0e0
-R10: dffffc0000000000 R11: fffffbfff1cba0e0 R12: ffff888066d63808
-R13: ffff888066d637e0 R14: 0000000000000000 R15: fffffffffffffffd
-FS:  00007f3abd3676c0(0000) GS:ffff8880b9200000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fffd35749c8 CR3: 0000000074d68000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- btrfs_get_extent+0x124b/0x1d30 fs/btrfs/inode.c:6962
- btrfs_cont_expand+0x28f/0xcd0 fs/btrfs/inode.c:4923
- btrfs_write_check+0x440/0x590 fs/btrfs/file.c:1181
- btrfs_buffered_write+0x288/0x1360 fs/btrfs/file.c:1221
- btrfs_direct_write+0x531/0xb40 fs/btrfs/direct-io.c:942
- btrfs_do_write_iter+0x2a1/0x760 fs/btrfs/file.c:1505
- do_iter_readv_writev+0x60a/0x890
- vfs_writev+0x37c/0xbb0 fs/read_write.c:971
- do_pwritev fs/read_write.c:1072 [inline]
- __do_sys_pwritev2 fs/read_write.c:1131 [inline]
- __se_sys_pwritev2+0x1ca/0x2d0 fs/read_write.c:1122
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f3abc579e79
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f3abd367038 EFLAGS: 00000246 ORIG_RAX: 0000000000000148
-RAX: ffffffffffffffda RBX: 00007f3abc716058 RCX: 00007f3abc579e79
-RDX: 0000000000000001 RSI: 0000000020000240 RDI: 0000000000000004
-RBP: 00007f3abc5e793e R08: 0000000000000000 R09: 0000000000000003
-R10: 0000000000002000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000001 R14: 00007f3abc716058 R15: 00007ffe16a6f238
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:btrfs_add_extent_mapping+0x715/0x790 fs/btrfs/extent_map.c:752
-Code: f9 07 90 0f 0b e8 8b e6 e1 fd 48 c7 c7 20 5b 2c 8c 48 c7 c6 20 5c 2c 8c 48 c7 c2 a0 59 2c 8c b9 f0 02 00 00 e8 2c c5 f9 07 90 <0f> 0b e8 64 e6 e1 fd 49 be 00 00 00 00 00 fc ff df e9 6a fb ff ff
-RSP: 0018:ffffc900032b7160 EFLAGS: 00010246
-RAX: 000000000000005d RBX: dffffc0000000000 RCX: 10a2bc291a71c100
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
-RBP: 1ffff1100cdac701 R08: ffffffff817400cc R09: fffffbfff1cba0e0
-R10: dffffc0000000000 R11: fffffbfff1cba0e0 R12: ffff888066d63808
-R13: ffff888066d637e0 R14: 0000000000000000 R15: fffffffffffffffd
-FS:  00007f3abd3676c0(0000) GS:ffff8880b9200000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fffd35749c8 CR3: 0000000074d68000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> 
+> Signed-off-by: Chukun Pan <amadeus@jmu.edu.cn>
+> ---
+>  arch/arm64/boot/dts/qcom/ipq6018.dtsi | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/ipq6018.dtsi b/arch/arm64/boot/dts/qcom/ipq6018.dtsi
+> index 1b584d9aadd1..33062417781a 100644
+> --- a/arch/arm64/boot/dts/qcom/ipq6018.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/ipq6018.dtsi
+> @@ -140,6 +140,13 @@ opp-1440000000 {
+>  			clock-latency-ns = <200000>;
+>  		};
+>  
+> +		opp-1512000000 {
+> +			opp-hz = /bits/ 64 <1512000000>;
+> +			opp-microvolt = <937500>;
+> +			opp-supported-hw = <0x2>;
+> +			clock-latency-ns = <200000>;
+> +		};
+> +
+>  		opp-1608000000 {
+>  			opp-hz = /bits/ 64 <1608000000>;
+>  			opp-microvolt = <987500>;
+> -- 
+> 2.25.1
+> 
 
-
-Tested on:
-
-commit:         d5d547aa Merge tag 'random-6.11-rc6-for-linus' of git:..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1266cceb980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=a0455552d0b27491
-dashboard link: https://syzkaller.appspot.com/bug?extid=ba3c0273042a898c230e
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=11df82eb980000
-
+-- 
+With best wishes
+Dmitry
 
