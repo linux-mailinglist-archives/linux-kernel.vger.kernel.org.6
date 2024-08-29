@@ -1,228 +1,307 @@
-Return-Path: <linux-kernel+bounces-307377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8B12964CA4
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 19:10:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45A32964CA8
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 19:13:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61BEC283835
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 17:10:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 682CE1C2310B
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 17:13:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD4631B5ECA;
-	Thu, 29 Aug 2024 17:10:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D4271B6548;
+	Thu, 29 Aug 2024 17:13:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lJLywIP+"
-Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gVfufPsC"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F2DC1494AF
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 17:10:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DB741B151F
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 17:13:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724951447; cv=none; b=QfeTxEZIfHV6bhBJSrzNajKeFoGOsDSTJxOMtZm8loGq38u3ciMUkYh/UFKThglppQv6MGr8Axu+c0WMAis1jO5Db1ym/xxmiXbZrubqd1bBjzvHICtuephYkZv4eAHoeVgv6jTTVO9f8MWqP6x7j0rA7upOfEL9CmJWZrQUB+4=
+	t=1724951610; cv=none; b=aLCYWHLMJxt26ziMb3oO6rLL0ePaXLsuXJxMZWu+fgTqUaGWqrCvp5wUGhrqrb/EO5ofBCySGuns0L2CD3yF/wMPb4mwfht13K2kFljhiaj/mjqQ5p8R/VvtnHcCTqN9bCa+NNKJBZAiduvETTLuwgnpbtlFnfJtjfknQfch3KI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724951447; c=relaxed/simple;
-	bh=qom5VxmFC4o36TM2n6k2TWB6DsCkXjTTOIIwGrrzboA=;
+	s=arc-20240116; t=1724951610; c=relaxed/simple;
+	bh=ULZgVzZQEVeW14csxACTHaIhrGVoWfY1nAJLC6fS0wk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qcAgVgPsTEo+CeC6ohWewUp1Ks1cnpprC0XzmNiXRbgawckDGnywhfXPJBXeEBGdcwsFPvqCm4Ef1mEE6HLNmxoQtT8gamNTJ5GmtCFVGKMWCAUY7tNMW50RJp+mUN6Zz2pRVM92ONo8NF9iV0b/sY9CRhE40N2OnmJAZFzaFwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lJLywIP+; arc=none smtp.client-ip=209.85.219.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6bf6beda0c0so5253236d6.1
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 10:10:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724951444; x=1725556244; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JP4Eh51AekJMydrtI494GdwaaSvpwbU1iqZqBMLS+IU=;
-        b=lJLywIP+I5AGYP1SX7gP38il72IwDHkD0gIOsPDfNBl02YD1KCmZNNi+Js3OkC5vjw
-         WwOhPk41w4/CEP1Usb2E+hTBtXfufr47RRIM1+tEKlPNjR+bJufHXfJu0o+HeRbdZyeS
-         7urCuTedKpIssXaN0P/I5MKSkRI7S+DgqvrlfgN6AH4lwVTswEGDKxYqt94E0DXXUVSR
-         VyUntA3RWc0GMiIUVflyKPkrhuamtAIcbjZi9u4SEwTaoP1QEKJ7nyK70aZ3qIiEaWSO
-         X5u3l6vqM9kJ012Xa8YBfbXFxqSpA0WoAY3TTuIL+VWqhTP6bxFQ314/BMlMUivCcfr6
-         uu/g==
+	 To:Cc:Content-Type; b=V9oeuyaQlVIPt1GYd0Xi3qs/TXA0z9yuPkRdmGF3MvmtR9XqT4ild10EVcqy3JP0liLyPEYie+0eQy2yZlBvGYgpbtW0Xj0uQuI22kQej6KxrwJxIE3ZpH9a3t+CckQElSpb0/0R/IZt4R1Si7r4ujLPEYzzBGnVLS/BukkDgM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gVfufPsC; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724951607;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7RulHBFlrK+Dikd6+7/LyodQMXb8hyWyQicOlpD/FiQ=;
+	b=gVfufPsC7mq0UmlitoQCcFk7Rlp0VIinYIyaseDV22laL4Zwk+A2fXlROy5HpXh4ZvWObO
+	LiiG1XTCI/PDO0f1asdoeN3WyceWi1BQQTfhA0G6HeChTVKLtX1LI039/j/SkJToRWyINW
+	YgLN3imYRSkjjwbi6b91bxe5UjasmpI=
+Received: from mail-yw1-f199.google.com (mail-yw1-f199.google.com
+ [209.85.128.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-449-xzG2xtTwOoSakiWxV92XAQ-1; Thu, 29 Aug 2024 13:13:23 -0400
+X-MC-Unique: xzG2xtTwOoSakiWxV92XAQ-1
+Received: by mail-yw1-f199.google.com with SMTP id 00721157ae682-6adcb88da08so20024497b3.3
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 10:13:23 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724951444; x=1725556244;
+        d=1e100.net; s=20230601; t=1724951603; x=1725556403;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=JP4Eh51AekJMydrtI494GdwaaSvpwbU1iqZqBMLS+IU=;
-        b=nzCqoKY9fAQBRjKBUGozQe4flxtFJvq7LvWuGhH8+EuMwRupCZl/3zjYBZO4ynp4Kn
-         OVaw5EmHDHFaHiM141FVvbcTmhGOXTGlz1+s1EzKDv2oS0PYguOWjx2ui8bZuw3NaWA0
-         Q5S6K9bJ8f5GrWWeTJ1BzEAZi0CWtJ2rcSUoodn3Sisud8AM3hPGlS+BUfXR4+pIrucs
-         uqSqNkRvUrt+vKoo2rsqFF3qQDWkptwHzXrFqRCJj+DggJTOl6V2S+G5BMdv1+6GY5bs
-         mQzxf8hhvml8R6xwF7mRACYIgmC9+iKs79vSW42yf9pWYqrnPJ7RgbGWn28252BLZVlN
-         Ax5g==
-X-Gm-Message-State: AOJu0YwWX+UZa8xWwdqFeN2Qwpi2FBEyw8c72aFcxz0+kfMqm66uRElL
-	veklVK6wAHmU3ppmP/TJptXDGYlBveJ2MelGCr12P++2F2qVsO1kkFNijx9mbv9xJpe+XAvdRQY
-	jgxc2FndGGxQfqGh3ThvRnRApaQ0=
-X-Google-Smtp-Source: AGHT+IFpa54Pu1ljtImHw5UT06YP15vm5GYyQ98tkJniYlTA7g9/rJHt3aNNaNy6f62GevtdZtSIWzT2cRatervk8Oo=
-X-Received: by 2002:a05:6214:5a0b:b0:6c1:6b5d:8cd with SMTP id
- 6a1803df08f44-6c33e6a7d9dmr46646616d6.49.1724951443834; Thu, 29 Aug 2024
- 10:10:43 -0700 (PDT)
+        bh=7RulHBFlrK+Dikd6+7/LyodQMXb8hyWyQicOlpD/FiQ=;
+        b=w2QjF+NdgM880IrsN31tJnwAT6WSMV+oV031w9fR77hWmC19XChMu5LBTYAzMoEfzS
+         SGJ+2DWWuoYvuV8s78ANhvKZr+lJLVloh6/6G7M4d8EigSC9k+3vIS+W3wPU5pkTnZEb
+         8Ei+flIcY2Iq/FbmTMsh3F2pCdmNdky0hlQzNT81/YhFqoXiiEhXKAkafz9xSgQVqtLq
+         +KwosW+NEE8oT52RP7PsbPK0vcxcgusdA90E5e0QK6qltohfEkmLgi2PLpgMw8NB13Dy
+         lrArFN73tmMZrt8fsyXj9SHPcy2VO65P2py4d95UrOD+3PmWnITUF+w3eYT+3mdfC4eU
+         Wx3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVozgA829aW8ap8ezqUYCL0ykbPkrRm1+2j8gXJTXCi7hLiJxl4WVSTKBzKYAWTeGyuco+maGvl1IXZLag=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsojolPxkzC9O9GXQ4wKHp41VUPYLDMEzwmklqM1yH34+3oarW
+	gjvdtwGWpH3pQxnmQiP+UNoAa73emBndVdfDIJuiRc7HgeBieW7EHxgjqMad8Yt5+pGI52YN78L
+	/cp4vwJAqgatP93Xuvi2YbuqP0KiVvIJeOaJDqn0S8BlOs+ESYcTMiEvf7ZCrkY6wwlsRc5rP1C
+	5WVFNwxBUVazvMb0fIZGZuyK3gGNmIk7dyRpGF
+X-Received: by 2002:a05:690c:4d43:b0:650:859b:ec8d with SMTP id 00721157ae682-6d276404c5dmr41338807b3.10.1724951603150;
+        Thu, 29 Aug 2024 10:13:23 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGWLGUl+iNDTcbJR2coSAb9n1xDdZKJRQUk15SulJLUN8J5uqhs1YN2kMYvluqhQIeacQ3whnDxGvsIxupEJrs=
+X-Received: by 2002:a05:690c:4d43:b0:650:859b:ec8d with SMTP id
+ 00721157ae682-6d276404c5dmr41338607b3.10.1724951602855; Thu, 29 Aug 2024
+ 10:13:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240828093516.30228-1-kanchana.p.sridhar@intel.com>
- <CAKEwX=Pqm3pjOO-ErOTGnNYKwMas4fdiN0bdUcrPHzfKf-Qryw@mail.gmail.com> <SJ0PR11MB5678412EE36C10CC0D69D036C9962@SJ0PR11MB5678.namprd11.prod.outlook.com>
-In-Reply-To: <SJ0PR11MB5678412EE36C10CC0D69D036C9962@SJ0PR11MB5678.namprd11.prod.outlook.com>
-From: Nhat Pham <nphamcs@gmail.com>
-Date: Thu, 29 Aug 2024 10:10:32 -0700
-Message-ID: <CAKEwX=P3L_uxWs6m9KL_Pqv_LpPpXH4E9gWMT95oi==ZNmqkWQ@mail.gmail.com>
-Subject: Re: [PATCH v5 0/3] mm: ZSWAP swap-out of mTHP folios
-To: "Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
-	"hannes@cmpxchg.org" <hannes@cmpxchg.org>, "yosryahmed@google.com" <yosryahmed@google.com>, 
-	"ryan.roberts@arm.com" <ryan.roberts@arm.com>, "Huang, Ying" <ying.huang@intel.com>, 
-	"21cnbao@gmail.com" <21cnbao@gmail.com>, "akpm@linux-foundation.org" <akpm@linux-foundation.org>, 
-	"Zou, Nanhai" <nanhai.zou@intel.com>, "Feghali, Wajdi K" <wajdi.k.feghali@intel.com>, 
-	"Gopal, Vinodh" <vinodh.gopal@intel.com>, Usama Arif <usamaarif642@gmail.com>, 
-	Chengming Zhou <chengming.zhou@linux.dev>
+References: <20240821114100.2261167-2-dtatulea@nvidia.com> <20240821114100.2261167-9-dtatulea@nvidia.com>
+ <CAJaqyWfANjzrKk9J=hJrdv6c8xd5Xx81XyigPBvc--AxQQK_gg@mail.gmail.com> <bccae5ab-45d3-447e-aed9-d1955da0b109@nvidia.com>
+In-Reply-To: <bccae5ab-45d3-447e-aed9-d1955da0b109@nvidia.com>
+From: Eugenio Perez Martin <eperezma@redhat.com>
+Date: Thu, 29 Aug 2024 19:12:46 +0200
+Message-ID: <CAJaqyWcxuyo3uN6Y9-LXjPtd+rJmeXi-BrDadAnuLhT3EyUieA@mail.gmail.com>
+Subject: Re: [PATCH vhost 7/7] vdpa/mlx5: Postpone MR deletion
+To: Dragos Tatulea <dtatulea@nvidia.com>
+Cc: "Michael S . Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
+	Si-Wei Liu <si-wei.liu@oracle.com>, virtualization@lists.linux-foundation.org, 
+	Gal Pressman <gal@nvidia.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Parav Pandit <parav@nvidia.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+	Cosmin Ratiu <cratiu@nvidia.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 28, 2024 at 5:06=E2=80=AFPM Sridhar, Kanchana P
-<kanchana.p.sridhar@intel.com> wrote:
+On Thu, Aug 29, 2024 at 5:23=E2=80=AFPM Dragos Tatulea <dtatulea@nvidia.com=
+> wrote:
 >
 >
-> > -----Original Message-----
-> > From: Nhat Pham <nphamcs@gmail.com>
-> > Sent: Wednesday, August 28, 2024 2:35 PM
-> > To: Sridhar, Kanchana P <kanchana.p.sridhar@intel.com>
-> > Cc: linux-kernel@vger.kernel.org; linux-mm@kvack.org;
-> > hannes@cmpxchg.org; yosryahmed@google.com; ryan.roberts@arm.com;
-> > Huang, Ying <ying.huang@intel.com>; 21cnbao@gmail.com; akpm@linux-
-> > foundation.org; Zou, Nanhai <nanhai.zou@intel.com>; Feghali, Wajdi K
-> > <wajdi.k.feghali@intel.com>; Gopal, Vinodh <vinodh.gopal@intel.com>
-> > Subject: Re: [PATCH v5 0/3] mm: ZSWAP swap-out of mTHP folios
-> >
-> > On Wed, Aug 28, 2024 at 2:35=E2=80=AFAM Kanchana P Sridhar
-> > <kanchana.p.sridhar@intel.com> wrote:
-> > >
-> > > Hi All,
-> > >
-> > > This patch-series enables zswap_store() to accept and store mTHP
-> > > folios. The most significant contribution in this series is from the
-> > > earlier RFC submitted by Ryan Roberts [1]. Ryan's original RFC has be=
-en
-> > > migrated to v6.11-rc3 in patch 2/4 of this series.
-> > >
-> > > [1]: [RFC PATCH v1] mm: zswap: Store large folios without splitting
-> > >      https://lore.kernel.org/linux-mm/20231019110543.3284654-1-
-> > ryan.roberts@arm.com/T/#u
-> > >
-> > > Additionally, there is an attempt to modularize some of the functiona=
-lity
-> > > in zswap_store(), to make it more amenable to supporting any-order
-> > > mTHPs. For instance, the function zswap_store_entry() stores a
-> > zswap_entry
-> > > in the xarray. Likewise, zswap_delete_stored_offsets() can be used to
-> > > delete all offsets corresponding to a higher order folio stored in zs=
-wap.
-> > >
-> >
-> > Will this have any conflict with mTHP swap work? Especially with mTHP
-> > swap-in and zswap writeback.
-> >
-> > My understanding is from zswap's perspective, the large folio is
-> > broken apart into independent subpages, correct? What happens when we
-> > have partially written back mTHP (i.e some subpages are in zswap
-> > still, whereas others are written back to swap). Would this
-> > automatically prevent mTHP swapin?
 >
-> That is a good point. To begin with, this patch-series would make the def=
-ault
-> behavior for mTHP swapout/storage and swapin for ZSWAP to be on par with
-> ZRAM. From zswap's perspective, imo this is a significant step forward to=
-wards
-> realizing cold memory storage with mTHP folios. However, it is only a sta=
-rting
-> point that makes the behavior uniform across zswap/zram. Initially, workl=
-oads
-> would see a one-time benefit with reclaim being able to swapout mTHP
-> folios without splitting, to zswap. If the mTHPs were cold memory, then w=
-e
-> would have derived latency gains towards memory savings (with zswap).
->
-> However, if the mTHP were part of "not so cold" memory, this would result
-> in a one-way mTHP conversion to 4K folios. Depending on workloads and the=
-ir
-> access patterns, we could either see individual 4K folios being swapped i=
-n,
-> or entire chunks if not the entire (original) mTHP needing to be swapped =
-in.
->
-> It should be noted that this is more of a performance vs. cold memory
-> preservation trade-off that needs to drive mTHP reclaim, storage, swapin =
-and
-> writeback policy. Different workloads could require different policies. H=
-owever,
-> even though this patch is only a starting point, it is still functionally=
- correct
-> by being equivalent to zram-mTHP, and compatible with the rest of mm and
-> swap as far as mTHP. Another important functionality/data consistency dec=
-ision
-> I made in this patch series is error handling during zswap_store() of mTH=
-P:
-> in case of any errors, all swap offsets for the mTHP are deleted from the
-> zswap xarray/zpool, since we know that the mTHP will now have to be store=
-d
-> in the backing swap device. IOW, an mTHP is either entirely stored in zsw=
-ap,
-> or entirely not stored in zswap.
->
-> To answer your question, we would need to come up with what the semantics
-> would need to be for zswap zpool storage granularity, swapin granularity,
-> readahead granularity and writeback wrt mTHP and how the overall swap
-> sub-system needs to "preserve" mTHP vs. splitting mTHP into 4K/lower-orde=
+> On 29.08.24 17:07, Eugenio Perez Martin wrote:
+> > On Wed, Aug 21, 2024 at 1:42=E2=80=AFPM Dragos Tatulea <dtatulea@nvidia=
+.com> wrote:
+> >>
+> >> Currently, when a new MR is set up, the old MR is deleted. MR deletion
+> >> is about 30-40% the time of MR creation. As deleting the old MR is not
+> >> important for the process of setting up the new MR, this operation
+> >> can be postponed.
+> >>
+> >> This series adds a workqueue that does MR garbage collection at a late=
 r
-> folios during swapout. Once we have a good understanding of these policie=
-s,
-> we could implement them in zswap. Alternately, develop an abstraction tha=
-t is
-> one level above zswap/zram and makes things easier and shareable between
-> zswap and zram. By this, I mean fundamental assumptions such as consecuti=
-ve
-> swap offsets (for instance). To some extent, this implies that an mTHP as=
- a
-> swap entity is defined by consecutiveness of swap offsets. Maybe the poli=
-cy
-> to keep mTHPs in the system over extended duration might be to assemble
-> them dynamically based on swapin_readahead() decisions (which is based on
-> workload access patterns). In other words, mTHPs could be a useful abstra=
-ction
-> that can be static or even dynamic based on working set characteristics, =
-and
-> cold memory preservation. This is quite a complex topic imho.
+> >> point. If the MR lock is taken, the handler will back off and
+> >> reschedule. The exception during shutdown: then the handler must
+> >> not postpone the work.
+> >>
+> >> Note that this is only a speculative optimization: if there is some
+> >> mapping operation that is triggered while the garbage collector handle=
+r
+> >> has the lock taken, this operation it will have to wait for the handle=
+r
+> >> to finish.
+> >>
+> >> Signed-off-by: Dragos Tatulea <dtatulea@nvidia.com>
+> >> Reviewed-by: Cosmin Ratiu <cratiu@nvidia.com>
+> >> ---
+> >>  drivers/vdpa/mlx5/core/mlx5_vdpa.h | 10 ++++++
+> >>  drivers/vdpa/mlx5/core/mr.c        | 51 ++++++++++++++++++++++++++++-=
+-
+> >>  drivers/vdpa/mlx5/net/mlx5_vnet.c  |  3 +-
+> >>  3 files changed, 60 insertions(+), 4 deletions(-)
+> >>
+> >> diff --git a/drivers/vdpa/mlx5/core/mlx5_vdpa.h b/drivers/vdpa/mlx5/co=
+re/mlx5_vdpa.h
+> >> index c3e17bc888e8..2cedf7e2dbc4 100644
+> >> --- a/drivers/vdpa/mlx5/core/mlx5_vdpa.h
+> >> +++ b/drivers/vdpa/mlx5/core/mlx5_vdpa.h
+> >> @@ -86,8 +86,18 @@ enum {
+> >>  struct mlx5_vdpa_mr_resources {
+> >>         struct mlx5_vdpa_mr *mr[MLX5_VDPA_NUM_AS];
+> >>         unsigned int group2asid[MLX5_VDPA_NUMVQ_GROUPS];
+> >> +
+> >> +       /* Pre-deletion mr list */
+> >>         struct list_head mr_list_head;
+> >> +
+> >> +       /* Deferred mr list */
+> >> +       struct list_head mr_gc_list_head;
+> >> +       struct workqueue_struct *wq_gc;
+> >> +       struct delayed_work gc_dwork_ent;
+> >> +
+> >>         struct mutex lock;
+> >> +
+> >> +       atomic_t shutdown;
+> >>  };
+> >>
+> >>  struct mlx5_vdpa_dev {
+> >> diff --git a/drivers/vdpa/mlx5/core/mr.c b/drivers/vdpa/mlx5/core/mr.c
+> >> index ec75f165f832..43fce6b39cf2 100644
+> >> --- a/drivers/vdpa/mlx5/core/mr.c
+> >> +++ b/drivers/vdpa/mlx5/core/mr.c
+> >> @@ -653,14 +653,46 @@ static void _mlx5_vdpa_destroy_mr(struct mlx5_vd=
+pa_dev *mvdev, struct mlx5_vdpa_
+> >>         kfree(mr);
+> >>  }
+> >>
+> >> +#define MLX5_VDPA_MR_GC_TRIGGER_MS 2000
+> >> +
+> >> +static void mlx5_vdpa_mr_gc_handler(struct work_struct *work)
+> >> +{
+> >> +       struct mlx5_vdpa_mr_resources *mres;
+> >> +       struct mlx5_vdpa_mr *mr, *tmp;
+> >> +       struct mlx5_vdpa_dev *mvdev;
+> >> +
+> >> +       mres =3D container_of(work, struct mlx5_vdpa_mr_resources, gc_=
+dwork_ent.work);
+> >> +
+> >> +       if (atomic_read(&mres->shutdown)) {
+> >> +               mutex_lock(&mres->lock);
+> >> +       } else if (!mutex_trylock(&mres->lock)) {
+> >
+> > Is the trylock worth it? My understanding is that mutex_lock will add
+> > the kthread to the waitqueue anyway if it is not able to acquire the
+> > lock.
+> >
+> I want to believe it is :). I noticed during testing that this can
+> interfere with the case where there are several .set_map() operations
+> in quick succession. That's why the work is delayed by such a long
+> time.
 >
-> As we know, Barry Song and Chuanhua Han have started the discussion on
-> this in their zram mTHP swapin series [1].
-
-Yeah I'm a bit more concerned with the correctness aspect. As long as
-it's not buggy, then we can implement mTHP zswapout first, and force
-individual subpage (z)swapin for now (since we cannot control
-writeback from writing individual subpages).
-
-We can discuss strategy to harmonize mTHP, zswap (with writeback) as
-we go along.
-
-BTW, I think we're not cc-ing Chengming? Is the get_maintainers script
-not working properly... Let me manually add him in - please include
-him in future submission and responses, as he is also a zswap reviewer
-:)
-
-Also cc-ing Usama who is interested in this work.
-
+> It's not a perfect heuristic but I found that it's better than not
+> having it.
 >
-> [1] https://lore.kernel.org/all/20240821074541.516249-3-hanchuanhua@oppo.=
-com/T/#u
+
+Understood, thanks for explaining! Can you add the explanation to the macro=
+?
+
+It would be great to find a mechanism so the work is added in low
+priority fashion, but I don't know any.
+
+> >> +               queue_delayed_work(mres->wq_gc, &mres->gc_dwork_ent,
+> >> +                                  msecs_to_jiffies(MLX5_VDPA_MR_GC_TR=
+IGGER_MS));
+> >> +               return;
+> >> +       }
+> >> +
+> >> +       mvdev =3D container_of(mres, struct mlx5_vdpa_dev, mres);
+> >> +
+> >> +       list_for_each_entry_safe(mr, tmp, &mres->mr_gc_list_head, mr_l=
+ist) {
+> >> +               _mlx5_vdpa_destroy_mr(mvdev, mr);
+> >> +       }
+> >> +
+> >> +       mutex_unlock(&mres->lock);
+> >> +}
+> >> +
+> >>  static void _mlx5_vdpa_put_mr(struct mlx5_vdpa_dev *mvdev,
+> >>                               struct mlx5_vdpa_mr *mr)
+> >>  {
+> >> +       struct mlx5_vdpa_mr_resources *mres =3D &mvdev->mres;
+> >> +
+> >>         if (!mr)
+> >>                 return;
+> >>
+> >> -       if (refcount_dec_and_test(&mr->refcount))
+> >> -               _mlx5_vdpa_destroy_mr(mvdev, mr);
+> >> +       if (refcount_dec_and_test(&mr->refcount)) {
+> >> +               list_move_tail(&mr->mr_list, &mres->mr_gc_list_head);
+> >> +               queue_delayed_work(mres->wq_gc, &mres->gc_dwork_ent,
+> >> +                                  msecs_to_jiffies(MLX5_VDPA_MR_GC_TR=
+IGGER_MS));
+> >
+> > Why the delay?
+> >
+> See above.
 >
-> Thanks,
-> Kanchana
+> >> +       }
+> >>  }
+> >>
+> >>  void mlx5_vdpa_put_mr(struct mlx5_vdpa_dev *mvdev,
+> >> @@ -848,9 +880,17 @@ int mlx5_vdpa_init_mr_resources(struct mlx5_vdpa_=
+dev *mvdev)
+> >>  {
+> >>         struct mlx5_vdpa_mr_resources *mres =3D &mvdev->mres;
+> >>
+> >> -       INIT_LIST_HEAD(&mres->mr_list_head);
+> >> +       mres->wq_gc =3D create_singlethread_workqueue("mlx5_vdpa_mr_gc=
+");
+> >> +       if (!mres->wq_gc)
+> >> +               return -ENOMEM;
+> >> +
+> >> +       INIT_DELAYED_WORK(&mres->gc_dwork_ent, mlx5_vdpa_mr_gc_handler=
+);
+> >> +
+> >>         mutex_init(&mres->lock);
+> >>
+> >> +       INIT_LIST_HEAD(&mres->mr_list_head);
+> >> +       INIT_LIST_HEAD(&mres->mr_gc_list_head);
+> >> +
+> >>         return 0;
+> >>  }
+> >>
+> >> @@ -858,5 +898,10 @@ void mlx5_vdpa_destroy_mr_resources(struct mlx5_v=
+dpa_dev *mvdev)
+> >>  {
+> >>         struct mlx5_vdpa_mr_resources *mres =3D &mvdev->mres;
+> >>
+> >> +       atomic_set(&mres->shutdown, 1);
+> >> +
+> >> +       flush_delayed_work(&mres->gc_dwork_ent);
+> >> +       destroy_workqueue(mres->wq_gc);
+> >> +       mres->wq_gc =3D NULL;
+> >>         mutex_destroy(&mres->lock);
+> >>  }
+> >> diff --git a/drivers/vdpa/mlx5/net/mlx5_vnet.c b/drivers/vdpa/mlx5/net=
+/mlx5_vnet.c
+> >> index 1cadcb05a5c7..ee9482ef51e6 100644
+> >> --- a/drivers/vdpa/mlx5/net/mlx5_vnet.c
+> >> +++ b/drivers/vdpa/mlx5/net/mlx5_vnet.c
+> >> @@ -3435,6 +3435,8 @@ static void mlx5_vdpa_free(struct vdpa_device *v=
+dev)
+> >>         free_fixed_resources(ndev);
+> >>         mlx5_vdpa_clean_mrs(mvdev);
+> >>         mlx5_vdpa_destroy_mr_resources(&ndev->mvdev);
+> >> +       mlx5_cmd_cleanup_async_ctx(&mvdev->async_ctx);
+> >> +
+> >>         if (!is_zero_ether_addr(ndev->config.mac)) {
+> >>                 pfmdev =3D pci_get_drvdata(pci_physfn(mvdev->mdev->pde=
+v));
+> >>                 mlx5_mpfs_del_mac(pfmdev, ndev->config.mac);
+> >> @@ -4044,7 +4046,6 @@ static void mlx5_vdpa_dev_del(struct vdpa_mgmt_d=
+ev *v_mdev, struct vdpa_device *
+> >>         destroy_workqueue(wq);
+> >>         mgtdev->ndev =3D NULL;
+> >>
+> >
+> > Extra newline here.
+> Ack.
+> >
+> >> -       mlx5_cmd_cleanup_async_ctx(&mvdev->async_ctx);
+> >>  }
+> >>
+> >>  static const struct vdpa_mgmtdev_ops mdev_ops =3D {
+> >> --
+> >> 2.45.1
+> >>
+> >
+>
+
 
