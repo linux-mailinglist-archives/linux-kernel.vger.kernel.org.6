@@ -1,80 +1,61 @@
-Return-Path: <linux-kernel+bounces-306904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE9C9964538
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 14:50:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8BC196453D
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 14:51:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 744AD1F26996
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 12:50:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D612B28768
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 12:51:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 932051B5300;
-	Thu, 29 Aug 2024 12:42:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51D551B5EBD;
+	Thu, 29 Aug 2024 12:42:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="P9IAaZoZ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="d9wkAv5S"
+Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62CA51B3F0C;
-	Thu, 29 Aug 2024 12:42:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57E361B5832
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 12:42:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724935353; cv=none; b=KYEdQXgiXDkivdFGC12iIhnpm8Xxy2edNt4mC4UyyZ2FwQ8vFgMLvjCjnvl0ZpFWxZhPRb9mJjEKI4Ku6uXO8/IkBuP3zbBvFlLZQXHZczsQqyTS2zTel9kMIiQRP/gdIJYPRCBDg3eOsfqp1yiN5a7Zl0EJxUuh12kU+mO6Wno=
+	t=1724935373; cv=none; b=PYVea5pQ89J9PKvbvs1SeksBpcr6LLh0IyuJB7s0ypstHuwf6w9TTH9fv/dkQ6cgExWJbFCEkvFYkGM7iGeoChljgS0lx1JiFQQ/Mt1MI7YatrSFWlcYIgOtP35bXcJ5OafTXOrw2i/t8sxOhTvpGNbDiwg88R+5uEw4EePdFVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724935353; c=relaxed/simple;
-	bh=S8HjtZR9IGY8h9Q2Aw0t82mnMV37G1ct121ak2NRpr8=;
+	s=arc-20240116; t=1724935373; c=relaxed/simple;
+	bh=ADwLGNGiaK3lns2GUXiZI6S4bjiJhuc+TKq6YqqSCk8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TIVg796PSd9kdhykmKwpVd4h7O4/zpF1436BENF/0++fDqnFNniwZVO2QE2DW86ILtnm1epdLCRrIiGxS1FhAdoIc/5bH8I17EX2ou437tMZIwu1EKhyaZ9lT53UqKlLwjZD0cSNJr6KWxpU9B9wAsY+mYQ09Wbk0/D2RChA6/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=P9IAaZoZ; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724935352; x=1756471352;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=S8HjtZR9IGY8h9Q2Aw0t82mnMV37G1ct121ak2NRpr8=;
-  b=P9IAaZoZW8Y61AImToGYzI9Qg239o0a9wMH7G3llnTrhj6umlSts3jK6
-   3Wwt+bpIWGk7iIAnmnfVP2FB+HEujTjzNc5g/cuHBHbky5ctMd6SjB2m/
-   Sjj6b1v+BmtG1InhKYVVU/hmpW7U9sEacgvO99rmsSXeDJPLdb626M3AR
-   verYWEC8CaN2fRY6Gn1GpWMp23RvA6IlDYAgGGLj+EzxpGL7r+yPyrK3V
-   76iwLU8TR0XEMparu3ltxUVuchUwR2RUbpucSBUZJmE8jqBaJWtM0fGRY
-   R7/B+ObeJnLY5djGEXdMHse4AvJW9CWx/w0Z1ctiymC6JPIFVX1TFo9m8
-   g==;
-X-CSE-ConnectionGUID: qS1EgQOpQFOzE6k4AZ0I6w==
-X-CSE-MsgGUID: HgkLIJcKTASA0Ky/36uCbQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11179"; a="23475813"
-X-IronPort-AV: E=Sophos;i="6.10,185,1719903600"; 
-   d="scan'208";a="23475813"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 05:42:32 -0700
-X-CSE-ConnectionGUID: tpVEf2/oSvOu4V2WCBYlow==
-X-CSE-MsgGUID: fmqmIbY/TbGtwjn27vf5hQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,185,1719903600"; 
-   d="scan'208";a="86791284"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 05:42:29 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id 5C55C11F8D1;
-	Thu, 29 Aug 2024 15:42:27 +0300 (EEST)
-Date: Thu, 29 Aug 2024 12:42:27 +0000
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Benjamin Bara <bbara93@gmail.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Alexander Stein <alexander.stein@ew.tq-group.com>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Benjamin Bara <benjamin.bara@skidata.com>
-Subject: Re: [PATCH v2 1/2] media: i2c: imx290: Check for availability in
- probe()
-Message-ID: <ZtBss-c1IN7j-Nf5@kekkonen.localdomain>
-References: <20240828-imx290-avail-v2-0-bd320ac8e8fa@skidata.com>
- <20240828-imx290-avail-v2-1-bd320ac8e8fa@skidata.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gOOlNZUB3AzfyzRrsw7MNHKyAV1lhGGg7xZQEGcNct8iKf2hpDZC5IC+o3uAsDwhSsz9cPGvibcHow/EeQ6K7w++rXXWEYo1/YGwp0uXWo0WCGClgV3bbGMqQqM2NhthqD+UkrJgihLigTRq2HcoD5L88Kg/CffucuhogTV4wEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=d9wkAv5S; arc=none smtp.client-ip=95.215.58.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 29 Aug 2024 08:42:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1724935369;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tNwHoeoh/+wF32dV32WxYpQ/YVsPYMrSItFbwY6BfW0=;
+	b=d9wkAv5SG8C9ESy/IzIJVu675IQ2gFGCDH5HGa/p1MhQWtHdRWCyssPcIJXad0jP1TV/Gh
+	nPXEbSSrSAjb9e8Dm9WDgpg9yv7oFgCIG5WDqZW+aswtTdzVe4B9/J4+BmQIMtgI0CUYH3
+	e18O0ZfrWXr7tU024NNjA2YNEHXFWuA=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Michal Hocko <mhocko@suse.com>
+Cc: Matthew Wilcox <willy@infradead.org>, linux-fsdevel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, Dave Chinner <dchinner@redhat.com>
+Subject: Re: [PATCH] bcachefs: Switch to memalloc_flags_do() for vmalloc
+ allocations
+Message-ID: <eatlt3lugcodzlef54xsxdm7w5o3gwtreyf3qvuhq3ebpi3bas@zt6isukikuvw>
+References: <20240828140638.3204253-1-kent.overstreet@linux.dev>
+ <Zs9xC3OJPbkMy25C@casper.infradead.org>
+ <gutyvxwembnzaoo43dzvmnpnbmj6pzmypx5kcyor3oeomgzkva@6colowp7crgk>
+ <Zs959Pa5H5WeY5_i@tiehlicka>
+ <xxs3s22qmlzby3ligct7x5a3fbzzjfdqqt7unmpih64dk3kdyx@vml4m27gpujw>
+ <ZtBWxWunhXTh0bhS@tiehlicka>
+ <wjfubyrzk4ovtuae5uht7uhhigkrym2anmo5w5vp7xgq3zss76@s2uy3qindie4>
+ <ZtBqwOiBThqxzckc@tiehlicka>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,53 +64,69 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240828-imx290-avail-v2-1-bd320ac8e8fa@skidata.com>
+In-Reply-To: <ZtBqwOiBThqxzckc@tiehlicka>
+X-Migadu-Flow: FLOW_OUT
 
-Hi Benjamin,
+On Thu, Aug 29, 2024 at 02:34:08PM GMT, Michal Hocko wrote:
+> On Thu 29-08-24 07:55:08, Kent Overstreet wrote:
+> > On Thu, Aug 29, 2024 at 01:08:53PM GMT, Michal Hocko wrote:
+> > > On Wed 28-08-24 18:58:43, Kent Overstreet wrote:
+> > > > On Wed, Aug 28, 2024 at 09:26:44PM GMT, Michal Hocko wrote:
+> > > > > On Wed 28-08-24 15:11:19, Kent Overstreet wrote:
+> > > [...]
+> > > > > > It was decided _years_ ago that PF_MEMALLOC flags were how this was
+> > > > > > going to be addressed.
+> > > > > 
+> > > > > Nope! It has been decided that _some_ gfp flags are acceptable to be used
+> > > > > by scoped APIs. Most notably NOFS and NOIO are compatible with reclaim
+> > > > > modifiers and other flags so these are indeed safe to be used that way.
+> > > > 
+> > > > Decided by who?
+> > > 
+> > > Decides semantic of respective GFP flags and their compatibility with
+> > > others that could be nested in the scope.
+> > 
+> > Well, that's a bit of commentary, at least.
+> > 
+> > The question is which of those could properly apply to a section, not a
+> > callsite, and a PF_MEMALLOC_NOWAIT (similar to but not exactly the same
+> > as PF_MEMALLOC_NORECLAIM) would be at the top of that list since we
+> > already have a clear concept of sections where we're not allowed to
+> > sleep.
+> 
+> Unfortunately a lack of __GFP_DIRECT_RECLAIM means both no reclaim and
+> no sleeping allowed for historical reasons. GFP_NOWAIT is both used from
+> atomic contexts and as an optimistic allocation attempt with a heavier
+> fallback allocation strategy. If you want NORECLAIM semantic then this
+> would need to be represented by different means than __GFP_DIRECT_RECLAIM
+> alone.
 
-On Wed, Aug 28, 2024 at 08:13:07PM +0200, Benjamin Bara wrote:
-> Currently, the V4L2 subdevice is also created when the device is not
-> available/connected. In this case, dmesg shows the following:
-> 
-> [   10.419510] imx290 7-001a: Error writing reg 0x301c: -6
-> [   10.428981] imx290 7-001a: Error writing reg 0x3020: -6
-> [   10.442712] imx290 7-001a: Error writing reg 0x3018: -6
-> [   10.454018] imx290 7-001a: Error writing reg 0x3020: -6
-> 
-> which seems to come from imx290_ctrl_update() after the subdev init is
-> finished. However, as the errors are ignored, the subdev is initialized
-> but simply does not work. From userspace perspective, there is no
-> visible difference between a working and not-working subdevice (except
-> when trying it out or watching for the error message).
-> 
-> This commit adds a simple availability check before starting with the
-> subdev initialization to error out instead.
-> 
-> Signed-off-by: Benjamin Bara <benjamin.bara@skidata.com>
-> ---
-> Changes since v1:
-> - define operating/standby mode and use it
-> - read out the standby mode during probe and ensure it is standby
-> ---
->  drivers/media/i2c/imx290.c | 17 +++++++++++++++--
->  1 file changed, 15 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/media/i2c/imx290.c b/drivers/media/i2c/imx290.c
-> index 4150e6e4b9a6..2a869576600c 100644
-> --- a/drivers/media/i2c/imx290.c
-> +++ b/drivers/media/i2c/imx290.c
-> @@ -29,6 +29,8 @@
->  #include <media/v4l2-subdev.h>
->  
->  #define IMX290_STANDBY					CCI_REG8(0x3000)
-> +#define IMX290_STANDBY_OPERATING			(0 << 0)
-> +#define IMX290_STANDBY_STANDBY				(1 << 0)
+I don't see it as particularly needed - the vmalloc locks you mentioned
+previously just mean it's something worth considering. In my usage I
+probably wouldn't care about those locks, but for keeping the API simple
+we probably want just PF_MEMALLOC_NOWAIT (where those locks become
+trylock).
 
-This should use BIT() instead (or at least unsigned values). I'll fix that
-while at it, too...
+> > And that tells us how to resolve GFP_NOFAIL with other conflicting
+> > PF_MEMALLOC flags: GFP_NOFAIL loses.
+> > 
+> > It is a _bug_ if GFP_NOFAIL is accidentally used in a non sleepable
+> > context, and properly labelling those sections to the allocator would
+> > allow us to turn undefined behaviour into an error - _that_ would be
+> > turning kmalloc() into a safe interface.
+> 
+> If your definition of safe includes an oops or worse silent failure
+> then yes. Not really safe interface in my book though. E.g. (just
+> randomly looking at GFP_NOFAIL users) btree_paths_realloc doesn't check
+> the return value and if it happened to be called from such a scope it
+> would have blown up. That code is safe without the scope though. There
+> are many other callsites which do not have failure paths.
 
--- 
-Kind regards,
+Yes, but that's unsafe anyways due to the max allocation size of
+GFP_NOFAIL - I'll have to fix that.
 
-Sakari Ailus
+Note that even if we got rid of the smaller max allocation size of
+GFP_NOFAIL allocations we'd _still_ generally need error paths due to
+the hard limit of INT_MAX, and integer overflow checking for array
+allocations.
 
