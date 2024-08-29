@@ -1,198 +1,164 @@
-Return-Path: <linux-kernel+bounces-306708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6ADE896425B
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 12:55:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AD3196425E
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 12:55:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DF7E1C24A70
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:55:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E0E31F26544
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:55:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59A6F18FC70;
-	Thu, 29 Aug 2024 10:53:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76ECB18CC07;
+	Thu, 29 Aug 2024 10:54:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="EDlQzT32"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Kiq+dDi3"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE54419148D;
-	Thu, 29 Aug 2024 10:53:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24D5B18F2F9;
+	Thu, 29 Aug 2024 10:54:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724928827; cv=none; b=o3gw17x5tbT4jRcz6SBCbD45JMfgU8hLvq5VdPUx4YHSqES8QbMhfdAQO+lcdy306dZ3/almj/UXwN2a4HGVP1zFNOmVuEsEu+1wufrh//i5N+MeyF6MPEPJk9WlQp+UxfUo1TcdXUrxRHQ1qGkgx3Hei62fluZG1HYMHaCxgAs=
+	t=1724928871; cv=none; b=dJDcwzOCEkLamecbU+Bd77HtDpPgp1IfqGSogUTI1FIlndfpRe6fLtByRzJoTeAZinxgY23p1SoZtjSIuvExSalVWr3lFZGVlfI2scfCqX6G2g16kAZiE5UtHgYJ3/3VVWSxJ8hcG8QZEQaOtawqBkQCvUrQ4r+qN15ub/+VTCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724928827; c=relaxed/simple;
-	bh=W+d9Jim0nEEIZkLVc5JOyipYeC6MdWhZ9+Fm9Fk3Q5M=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RP9LvFEHXWtiDA4Ri7XUwsx9FU5Xjr/wBkcxVfU/N1IoNoaOklecaY34tlxfgf/D0RPb8sJ+nHX/50JYtJMSfGIVEuvayN+EhLGn1TEpYU1/p924KXb13+3KOp8i2VXL4tgExRj7ru7q99TeeSKBnOKOuNsyo2/DAk9XlMr/b0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=EDlQzT32; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47TArVR3026554;
-	Thu, 29 Aug 2024 05:53:31 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1724928811;
-	bh=8hOk9PuXGBpXAe2XkNZFCwoENS4wBkLV7iENTvnk1I4=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=EDlQzT32Mz6oq9+jtgsZgmL9v+wcg96oHj9WDJ8XE6URUq1dMZpG39PGrHVx49EaK
-	 Wmdam/9N2SMNL9iYcE7WZfqARpPZO95UZI+RUsno2P48IbMd9W6fEzV9ieYyKd1575
-	 7LE2O15zToL+A7z4jU6eAFBdONh8H6bAWkd1bV8Q=
-Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47TArUEs081129
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 29 Aug 2024 05:53:31 -0500
-Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 29
- Aug 2024 05:53:30 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 29 Aug 2024 05:53:30 -0500
-Received: from uda0492258.dhcp.ti.com (uda0492258.dhcp.ti.com [10.24.72.81])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47TArHpT070385;
-	Thu, 29 Aug 2024 05:53:26 -0500
-From: Siddharth Vadapalli <s-vadapalli@ti.com>
-To: <bhelgaas@google.com>, <lpieralisi@kernel.org>, <kw@linux.com>,
-        <manivannan.sadhasivam@linaro.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <vigneshr@ti.com>,
-        <kishon@kernel.org>
-CC: <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <srk@ti.com>, <s-vadapalli@ti.com>
-Subject: [PATCH v4 2/2] PCI: j721e: Enable ACSPCIE Refclk if "ti,syscon-acspcie-proxy-ctrl" exists
-Date: Thu, 29 Aug 2024 16:23:16 +0530
-Message-ID: <20240829105316.1483684-3-s-vadapalli@ti.com>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20240829105316.1483684-1-s-vadapalli@ti.com>
-References: <20240829105316.1483684-1-s-vadapalli@ti.com>
+	s=arc-20240116; t=1724928871; c=relaxed/simple;
+	bh=yTXKpdTr4O4p6Hr5Fbd1/Fg3x6RSY5v7OLIpb7xcel4=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=UeBBKEzbMySKrMVM4oCzdTO1rZEkAkTsvL9FsTQ7LMMENDTrWVsd2XVdFuUYwnLl3k92umnM43mpEIj89dkQEZ01dTPDL1lPdWyqZKddTJoxQxxahQWomdWSmdZILujUq0L9AUZ4nBSsYWC4S2UI06eCN8cSxE/1GNDiNE5OzMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Kiq+dDi3; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724928870; x=1756464870;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=yTXKpdTr4O4p6Hr5Fbd1/Fg3x6RSY5v7OLIpb7xcel4=;
+  b=Kiq+dDi3/afJ4ozQ1Govz2PMnHldplbqsZZIyu/UWGrVyoWJsBjrAk/2
+   ni8YGS3Me6R6dAG9fI1nZl6AgQG7yFx7xviUJuDy/h3es5yhj5Z6Q3xyh
+   8g2zKMm7HmU1dUEBmHG5hAdbEnSCc6sW/ecY0u8lgHjNTXp2BvAUMxZqJ
+   l3CvXHgZWf7id72GYnvZ5N2ju5b7Op2dMw6fVfLCZA6Mag1g4V2ntcyuo
+   zesye7o1VWHCisrGNIgEGJbYX4tULXJH/frY+mPYjD4dasLyyZgN8XSUZ
+   +sC1rgh98d3FPqFcmH5cnroLi9dm7Gda7+SjpdpPEK0xXsv30edCHVnnf
+   w==;
+X-CSE-ConnectionGUID: Q+79ifJYTy65nLqZYTSsSg==
+X-CSE-MsgGUID: OMZgaVv1QFuKwmiYynxgng==
+X-IronPort-AV: E=McAfee;i="6700,10204,11178"; a="23087062"
+X-IronPort-AV: E=Sophos;i="6.10,185,1719903600"; 
+   d="scan'208";a="23087062"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 03:54:30 -0700
+X-CSE-ConnectionGUID: QQCczAdcQfq3tXp/gbUbyQ==
+X-CSE-MsgGUID: FJ2x0EENQy2lWfvaR0rD0A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,185,1719903600"; 
+   d="scan'208";a="64032615"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.245.59])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 03:54:27 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Thu, 29 Aug 2024 13:54:22 +0300 (EEST)
+To: Xi Pardee <xi.pardee@linux.intel.com>
+cc: irenic.rajneesh@gmail.com, david.e.box@linux.intel.com, 
+    Hans de Goede <hdegoede@redhat.com>, platform-driver-x86@vger.kernel.org, 
+    LKML <linux-kernel@vger.kernel.org>, linux-pm@vger.kernel.org
+Subject: Re: [PATCH v2 04/11] platform/x86:intel/pmc: Convert index variables
+ to be unsigned
+In-Reply-To: <20240828222932.1279508-5-xi.pardee@linux.intel.com>
+Message-ID: <7880c5cb-3b32-0956-30ce-b25fe537de07@linux.intel.com>
+References: <20240828222932.1279508-1-xi.pardee@linux.intel.com> <20240828222932.1279508-5-xi.pardee@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: multipart/mixed; boundary="8323328-1845205492-1724928862=:1289"
 
-The ACSPCIE module is capable of driving the reference clock required by
-the PCIe Endpoint device. It is an alternative to on-board and external
-reference clock generators. Enabling the output from the ACSPCIE module's
-PAD IO Buffers requires clearing the "PAD IO disable" bits of the
-ACSPCIE_PROXY_CTRL register in the CTRL_MMR register space.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Add support to enable the ACSPCIE reference clock output using the optional
-device-tree property "ti,syscon-acspcie-proxy-ctrl".
+--8323328-1845205492-1724928862=:1289
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
----
+On Wed, 28 Aug 2024, Xi Pardee wrote:
 
-v3:
-https://lore.kernel.org/r/20240827055548.901285-3-s-vadapalli@ti.com/
-Changes since v3:
-- Rebased patch on next-20240829.
-- Addressed Bjorn's feedback at:
-  https://lore.kernel.org/r/20240828211906.GA38267@bhelgaas/
-  with the following changes:
-  1) Updated the implementation of j721e_enable_acspcie_refclk() by
-  reducing the nested IF conditions to make it easier to read.
-  2) Updated the section invoking j721e_enable_acspcie_refclk() within
-  j721e_pcie_ctrl_init() by returning 0 if "ti,syscon-acspcie-proxy-ctrl"
-  isn't present and returning j721e_enable_acspcie_refclk() otherwise.
+> Convert the index variables type to be unsigned to avoid confusion
+> and error.
+>=20
+> Signed-off-by: Xi Pardee <xi.pardee@linux.intel.com>
 
-v2:
-https://lore.kernel.org/r/20240729092855.1945700-3-s-vadapalli@ti.com/
-Changes since v2:
-- Rebased patch on next-20240826.
+Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
 
-v1:
-https://lore.kernel.org/r/20240715120936.1150314-4-s-vadapalli@ti.com/
-Changes since v1:
-- Addressed Bjorn's feedback at:
-  https://lore.kernel.org/r/20240725211841.GA859405@bhelgaas/
-  with the following changes:
-  1) Updated $subject and commit message to indicate that this patch
-  enables ACSPCIE reference clock output if the DT property is present.
-  2) Updated macro and comments to indicate that the BITS correspond to
-  disabling ACSPCIE output, due to which clearing them enables the
-  reference clock output.
-  3) Replaced "PAD" with "refclk" both in the function name and in the
-  error prints.
-  4) Wrapped lines to be within the 80 character limit to match the rest
-  of the driver.
+--=20
+ i.
 
- drivers/pci/controller/cadence/pci-j721e.c | 39 +++++++++++++++++++++-
- 1 file changed, 38 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/pci/controller/cadence/pci-j721e.c b/drivers/pci/controller/cadence/pci-j721e.c
-index 85718246016b..7f7732e2dcaa 100644
---- a/drivers/pci/controller/cadence/pci-j721e.c
-+++ b/drivers/pci/controller/cadence/pci-j721e.c
-@@ -44,6 +44,7 @@ enum link_status {
- #define J721E_MODE_RC			BIT(7)
- #define LANE_COUNT(n)			((n) << 8)
- 
-+#define ACSPCIE_PAD_DISABLE_MASK	GENMASK(1, 0)
- #define GENERATION_SEL_MASK		GENMASK(1, 0)
- 
- struct j721e_pcie {
-@@ -220,6 +221,36 @@ static int j721e_pcie_set_lane_count(struct j721e_pcie *pcie,
- 	return ret;
- }
- 
-+static int j721e_enable_acspcie_refclk(struct j721e_pcie *pcie,
-+				       struct regmap *syscon)
-+{
-+	struct device *dev = pcie->cdns_pcie->dev;
-+	struct device_node *node = dev->of_node;
-+	u32 mask = ACSPCIE_PAD_DISABLE_MASK;
-+	struct of_phandle_args args;
-+	u32 val;
-+	int ret;
-+
-+	ret = of_parse_phandle_with_fixed_args(node,
-+					       "ti,syscon-acspcie-proxy-ctrl",
-+					       1, 0, &args);
-+	if (ret) {
-+		dev_err(dev,
-+			"ti,syscon-acspcie-proxy-ctrl has invalid arguments\n");
-+		return ret;
-+	}
-+
-+	/* Clear PAD IO disable bits to enable refclk output */
-+	val = ~(args.args[0]);
-+	ret = regmap_update_bits(syscon, 0, mask, val);
-+	if (ret) {
-+		dev_err(dev, "failed to enable ACSPCIE refclk: %d\n", ret);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
- static int j721e_pcie_ctrl_init(struct j721e_pcie *pcie)
- {
- 	struct device *dev = pcie->cdns_pcie->dev;
-@@ -259,7 +290,13 @@ static int j721e_pcie_ctrl_init(struct j721e_pcie *pcie)
- 		return ret;
- 	}
- 
--	return 0;
-+	/* Enable ACSPCIE refclk output if the optional property exists */
-+	syscon = syscon_regmap_lookup_by_phandle_optional(node,
-+						"ti,syscon-acspcie-proxy-ctrl");
-+	if (!syscon)
-+		return 0;
-+
-+	return j721e_enable_acspcie_refclk(pcie, syscon);
- }
- 
- static int cdns_ti_pcie_config_read(struct pci_bus *bus, unsigned int devfn,
--- 
-2.40.1
-
+> ---
+>  drivers/platform/x86/intel/pmc/core.c            | 5 +++--
+>  drivers/platform/x86/intel/pmc/core.h            | 2 +-
+>  drivers/platform/x86/intel/pmc/ssram_telemetry.c | 2 +-
+>  3 files changed, 5 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/drivers/platform/x86/intel/pmc/core.c b/drivers/platform/x86=
+/intel/pmc/core.c
+> index 630ce2087552..8984041f35f4 100644
+> --- a/drivers/platform/x86/intel/pmc/core.c
+> +++ b/drivers/platform/x86/intel/pmc/core.c
+> @@ -1716,7 +1716,8 @@ static int pmc_core_get_lpm_req(struct pmc_dev *pmc=
+dev, struct pmc *pmc)
+> =20
+>  int pmc_core_ssram_get_lpm_reqs(struct pmc_dev *pmcdev)
+>  {
+> -=09int ret, i;
+> +=09unsigned int i;
+> +=09int ret;
+> =20
+>  =09if (!pmcdev->ssram_pcidev)
+>  =09=09return -ENODEV;
+> @@ -1743,7 +1744,7 @@ const struct pmc_reg_map *pmc_core_find_regmap(stru=
+ct pmc_info *list, u16 devid)
+>  }
+> =20
+>  int pmc_core_pmc_add(struct pmc_dev *pmcdev, u64 pwrm_base,
+> -=09=09     const struct pmc_reg_map *reg_map, int pmc_index)
+> +=09=09     const struct pmc_reg_map *reg_map, unsigned int pmc_index)
+>  {
+>  =09struct pmc *pmc =3D pmcdev->pmcs[pmc_index];
+> =20
+> diff --git a/drivers/platform/x86/intel/pmc/core.h b/drivers/platform/x86=
+/intel/pmc/core.h
+> index 6763e59180a4..5af1d41a83f7 100644
+> --- a/drivers/platform/x86/intel/pmc/core.h
+> +++ b/drivers/platform/x86/intel/pmc/core.h
+> @@ -606,7 +606,7 @@ extern void pmc_core_set_device_d3(unsigned int devic=
+e);
+>  extern int pmc_core_ssram_init(struct pmc_dev *pmcdev, int func);
+>  extern const struct pmc_reg_map *pmc_core_find_regmap(struct pmc_info *l=
+ist, u16 devid);
+>  extern int pmc_core_pmc_add(struct pmc_dev *pmcdev, u64 pwrm_base,
+> -=09=09=09    const struct pmc_reg_map *reg_map, int pmc_index);
+> +=09=09=09    const struct pmc_reg_map *reg_map, unsigned int pmc_index);
+> =20
+>  int spt_core_init(struct pmc_dev *pmcdev);
+>  int cnp_core_init(struct pmc_dev *pmcdev);
+> diff --git a/drivers/platform/x86/intel/pmc/ssram_telemetry.c b/drivers/p=
+latform/x86/intel/pmc/ssram_telemetry.c
+> index 0a2bfca5ff41..4b21d9cf310a 100644
+> --- a/drivers/platform/x86/intel/pmc/ssram_telemetry.c
+> +++ b/drivers/platform/x86/intel/pmc/ssram_telemetry.c
+> @@ -75,7 +75,7 @@ static inline u64 get_base(void __iomem *addr, u32 offs=
+et)
+>  }
+> =20
+>  static int
+> -pmc_core_ssram_get_pmc(struct pmc_dev *pmcdev, int pmc_idx, u32 offset)
+> +pmc_core_ssram_get_pmc(struct pmc_dev *pmcdev, unsigned int pmc_idx, u32=
+ offset)
+>  {
+>  =09struct pci_dev *ssram_pcidev =3D pmcdev->ssram_pcidev;
+>  =09void __iomem __free(pmc_core_iounmap) *tmp_ssram =3D NULL;
+>=20
+--8323328-1845205492-1724928862=:1289--
 
