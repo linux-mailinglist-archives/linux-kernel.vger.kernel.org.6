@@ -1,113 +1,78 @@
-Return-Path: <linux-kernel+bounces-307297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B16DD964B76
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 18:20:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D541964B78
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 18:20:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 28746B27C5B
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:20:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C7CE280DAA
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:20:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B17381B8EBB;
-	Thu, 29 Aug 2024 16:17:13 +0000 (UTC)
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9739A1B654D;
-	Thu, 29 Aug 2024 16:17:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C48F91B78E4;
+	Thu, 29 Aug 2024 16:17:51 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 765691922FE;
+	Thu, 29 Aug 2024 16:17:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724948233; cv=none; b=LjW5pD5ZQxCSz9/o3vz1jMNLol1qMKXZwO3trjLirxNsSz3LZ8HjErlUFuz6rHqsxWwiBt0DDkNl3IdV0eRxbE/GZkmTeajezCtAl/vcioVJVBnqyCVKbthHodPrGf86KUjQuESaGcHAuX3wPYhT6/MbJB0IxldYQiK8TezrjE8=
+	t=1724948271; cv=none; b=Vf6DziHk4qX7Cmxq3bduxAaJXlMXJclZWi8AVd5VoB3MorO8I7KArN+RWcedA1jhd2d0Q9wN/eqrV2Y41d2zBkpCWrmgkGJcflVgvGdKW9MsOm/XD9quzteqV7v5Ahnu4wAF5yMvGxj+2grFdabDO6+8JO4ZpzGcGosKqrWL4gQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724948233; c=relaxed/simple;
-	bh=tiajQYn9nsePlqD4415CMV+9WOMc1VSANwqYlFxVtUg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=os+y2R69hPPzJILQtvy4WGjuj2m/8PHcWMfa8balsN+cyqdqLnynrCygztBbDWaTe91h0XEhhOV6mXRKrBjtfsrzFG5TB7a6y8P89jGb0QwbIHh23avQs6nCWxp/QS6qZWcunIgeWBSxqrq7QorZAPdHKo66vBo0V9vcSzlkFJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5bed72ff443so1054441a12.1;
-        Thu, 29 Aug 2024 09:17:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724948230; x=1725553030;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=i4tTQIMCvK8JaDCUUSonRDoAPxJVCvvDpjeKG9dSjwU=;
-        b=wr7VH12CmxDuo4YBvXTynAr89rzdsH0CVe3DdMvsNC6lULHali7QMaWGJMkUTfRJrT
-         7zB/yiiNOdFGwy9CySICwl9yIoQ5kSXS50N2r3ETN5RD7t6E9h3UKgPLf4q5xCCzHWW8
-         023H6cBkwKbd0xf01639wVewbMnHemhV7TTaESglcCsTFgrjUWFCWhhBvPIjqi2zTUwt
-         BJ9aU+qjVMKuUDXwr7FpNJl0NgTjxYFRdbPSg94pjdk9lTMv7+eJfvF6sXpi6YMwe6nq
-         SibIPS++rWy7LRLfnATXzj1AUycH+0ntbHgBn1UlfWoeLFnTPOFCLgtLNjrCaoRDw58l
-         sNyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUB4pbzGqWN5iup7KjiCuaRRMvexYFKQCk9GfPaFotrFu9o6vqyc5dL9bh+kKlswa0qsGLsuyuHOUZ5AKQ=@vger.kernel.org, AJvYcCVXcPKQq3Rbc4VM1BCZDimpT5dkebGw03zmdzf6qvL2X4PavMvzdvFjlJQgVz4TuGMCrF7l3z5TtVw0RlWAKO2W@vger.kernel.org, AJvYcCXR6vo38w6v2/8Om5nylc0AsFv32KVKhbe/CQcTnW8X5QrQtXqUvYnkPX7COzSESUkU8Mton0SX@vger.kernel.org
-X-Gm-Message-State: AOJu0YyqSNpVX1Sgj6F+9ip+Y+A3rgCA2h2Cl0uoH3RYNZJHjoWGTsjZ
-	vYzFpUGxcpW1GtZKJqawJMYyw4uJNVwHVl02myfqxjjLszx2coSF
-X-Google-Smtp-Source: AGHT+IF3lPqELwq5st4WQCl0HD/aCaayvrDgmEklE4DTN8jPOXGQRz1na1bRSeVbktGDwZM+2psK3Q==
-X-Received: by 2002:a17:907:7f25:b0:a86:8166:1b0a with SMTP id a640c23a62f3a-a897fad100dmr303802666b.56.1724948229273;
-        Thu, 29 Aug 2024 09:17:09 -0700 (PDT)
-Received: from localhost (fwdproxy-lla-116.fbsv.net. [2a03:2880:30ff:74::face:b00c])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8988feb112sm96683466b.39.2024.08.29.09.17.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 09:17:08 -0700 (PDT)
-From: Breno Leitao <leitao@debian.org>
-To: fw@strlen.de,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	Pablo Neira Ayuso <pablo@netfilter.org>,
-	Jozsef Kadlecsik <kadlec@netfilter.org>,
-	David Ahern <dsahern@kernel.org>
-Cc: rbc@meta.com,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	netfilter-devel@vger.kernel.org,
-	coreteam@netfilter.org (open list:NETFILTER)
-Subject: [PATCH nf-next v4 2/2] netfilter: Make IP_NF_IPTABLES_LEGACY selectable
-Date: Thu, 29 Aug 2024 09:16:55 -0700
-Message-ID: <20240829161656.832208-3-leitao@debian.org>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20240829161656.832208-1-leitao@debian.org>
-References: <20240829161656.832208-1-leitao@debian.org>
+	s=arc-20240116; t=1724948271; c=relaxed/simple;
+	bh=jjnFKvczBENKiZiDjjEQLKForEKb+4c2ND9lOv0yeHw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GY1U1v+haN2QbA0C1lRMFrA2hqSlP0JJbVW2QvURt+35sTkDe8cbmQfdgNfZ900tFaC7De6xDoZqxu2cK16UtSfaRfvLuLb0ftmbrWOBtNLsDYXY928IjPRcXcI7TywK8K/n4dQLVFtQnLLy5V+6b2YEi6UdpMUFBQGfr1bNjnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9E2DEDA7;
+	Thu, 29 Aug 2024 09:18:14 -0700 (PDT)
+Received: from bogus (e107155-lin.cambridge.arm.com [10.1.198.42])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B3ED83F762;
+	Thu, 29 Aug 2024 09:17:46 -0700 (PDT)
+Date: Thu, 29 Aug 2024 17:17:44 +0100
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Aleksandr Mishin <amishin@t-argos.ru>
+Cc: Fu Wei <fu.wei@linaro.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Hanjun Guo <guohanjun@huawei.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	<linux-acpi@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>
+Subject: Re: [PATCH] acpi/arm64: Adjust error handling procedure in
+ gtdt_parse_timer_block()
+Message-ID: <ZtCfKEIfJW7X8UWg@bogus>
+References: <20240827101239.22020-1-amishin@t-argos.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240827101239.22020-1-amishin@t-argos.ru>
 
-This option makes IP_NF_IPTABLES_LEGACY user selectable, giving
-users the option to configure iptables without enabling any other
-config.
+On Tue, Aug 27, 2024 at 01:12:39PM +0300, Aleksandr Mishin wrote:
+> In case of error in gtdt_parse_timer_block() invalid 'gtdt_frame'
+> will be used in 'do {} while (i-- >= 0 && gtdt_frame--);' statement block
+> because do{} block will be executed even if 'i == 0'.
+> 
+> Adjust error handling procedure by replacing 'i-- >= 0' with 'i-- > 0'.
+> 
+> Found by Linux Verification Center (linuxtesting.org) with SVACE.
+>
 
-Signed-off-by: Breno Leitao <leitao@debian.org>
----
- net/ipv4/netfilter/Kconfig | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+(For some reason I don't see the original email in my inbox, might have
+got blocked 🙁). Anyways LGTM,
 
-diff --git a/net/ipv4/netfilter/Kconfig b/net/ipv4/netfilter/Kconfig
-index 1b991b889506..16507ae13736 100644
---- a/net/ipv4/netfilter/Kconfig
-+++ b/net/ipv4/netfilter/Kconfig
-@@ -12,7 +12,12 @@ config NF_DEFRAG_IPV4
- 
- # old sockopt interface and eval loop
- config IP_NF_IPTABLES_LEGACY
--	tristate
-+	tristate "Legacy IP tables support"
-+	default	n
-+	select NETFILTER_XTABLES
-+	help
-+	  iptables is a general, extensible packet identification legacy framework.
-+	  This is not needed if you are using iptables over nftables (iptables-nft).
- 
- config NF_SOCKET_IPV4
- 	tristate "IPv4 socket lookup support"
+Acked-by: Aleksandr Mishin <amishin@t-argos.ru>
+
 -- 
-2.43.5
-
+Regards,
+Sudeep
 
