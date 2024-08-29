@@ -1,76 +1,145 @@
-Return-Path: <linux-kernel+bounces-307144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD533964911
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:51:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDFA2964912
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:52:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C5131C22AD4
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 14:51:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B050284454
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 14:52:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B9D81B1411;
-	Thu, 29 Aug 2024 14:51:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 674171B1403;
+	Thu, 29 Aug 2024 14:51:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gsUHafk7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BzEBG0Bc"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C5801C6A1;
-	Thu, 29 Aug 2024 14:51:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A847E1AE84C;
+	Thu, 29 Aug 2024 14:51:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724943095; cv=none; b=BX/2wDCP0UXz96M+MtfbCDLQ+fDZv6hhzE7io+bF/d2Cd988XQSY7IpKAZkDxIkbrQLjvnijI1Zr5kMZEcaW6wVB+R8tbJI+5AdkxliJG/1WvsUgdyRhgPYCRzS/XNWZZ+TLR7nF4feOj8SnfKu43lpfnMGRufC0KurxaqnNmtE=
+	t=1724943102; cv=none; b=IxmIsYRWW3rFwxdm/J7Ap0SsW9mnr+s/NGnv5rO5/Q7n70SRWm79dwzaHwI6qhvp8/RBT89AmbAou4fPCCnTJJZMGBJEOrTOEDg4lVYx8nj6T2fhYNnCp5CYJRxu0Rtj3GSg2DA/6JIxA9x0U5Xta6jJbxqGnss59WFSiKALQkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724943095; c=relaxed/simple;
-	bh=rRykT8OQgaenDvIxYt53LaIAo4Gxdd96QkB/dv1nl8c=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mtEij8RK36vdfzEJ8IL5IDwyzr12hHyOAaOeUVNKx7B1cTQVGeUtZZI5AlORUikJyf70v1B4U/e4tw6tButHqAn4M2vLFJUuSYd5jQep9sMIimjh2z0BHOqtCZHL0oKV2NzRgDqc2JPMrJCWbCDsT4pYOZu4aenbJTDWMWrMEz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gsUHafk7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F07AC4CEC3;
-	Thu, 29 Aug 2024 14:51:34 +0000 (UTC)
+	s=arc-20240116; t=1724943102; c=relaxed/simple;
+	bh=qTnDyzEcne5+cOMjbnWs7xjxVNKWuYlyKpsjIOtxtCE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=e4roMDBLsbAJVcI+z6a5dYPX3Ha1G/zSDtWFMbCWt2q9TBFjOBJt7TZAlYnaBgtfK0HFPHcLyG1YwJN57ydX+IeaaxNvkO6dcoyL/mIXOrwt3GVcU/MnzkBETQKLZ3bk8MHQwOnRpvXPa4u0hLW65wxKu1ANwWHTUzLZldt4pRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BzEBG0Bc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4CD2C4CEC1;
+	Thu, 29 Aug 2024 14:51:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724943095;
-	bh=rRykT8OQgaenDvIxYt53LaIAo4Gxdd96QkB/dv1nl8c=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=gsUHafk7rTdqjlc8g6CdOPmEDiYTlTQ0Qlubs84BvCBCuz27rYlGqJcSe8YGk7KZ4
-	 tdeCZ7dOSpCnk1l9Xp8D8Np15q8bmy0Df6EO4JnAQKPDb1OBfJ41YrgRWgbR6k16HG
-	 onTQgXql4iOL0Pg0/1crJJBkTmgeOydT5w8AHjLI1jBg7CPVA/6Lv1nTHPlVVLPjsY
-	 peGwWVVDNdsF6Vi52NTt2f1Kce04ArUFb4ke7mVjsLWSqlTZeEYWsjVD7K16+FY/NZ
-	 z/OWQBHL1hKHPoqnhrkf+UcsQxtmCWS06Wpy7ZNdv01Pwsl6C8Bsb1vG4GXgiDRHtn
-	 ktQpwiYYBK0UQ==
-Date: Thu, 29 Aug 2024 07:51:33 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Jijie Shao <shaojijie@huawei.com>
-Cc: <davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
- <shenjian15@huawei.com>, <wangpeiyang1@huawei.com>,
- <liuyonglong@huawei.com>, <chenhao418@huawei.com>,
- <sudongming1@huawei.com>, <xujunsheng@huawei.com>,
- <shiyongbang@huawei.com>, <libaihan@huawei.com>, <andrew@lunn.ch>,
- <jdamato@fastly.com>, <horms@kernel.org>, <jonathan.cameron@huawei.com>,
- <shameerali.kolothum.thodi@huawei.com>, <salil.mehta@huawei.com>,
- <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH V5 net-next 06/11] net: hibmcge: Implement
- .ndo_start_xmit function
-Message-ID: <20240829075133.34c28f1f@kernel.org>
-In-Reply-To: <df861206-0a7a-4744-98f6-6335303d29ef@huawei.com>
-References: <20240827131455.2919051-1-shaojijie@huawei.com>
-	<20240827131455.2919051-7-shaojijie@huawei.com>
-	<20240828184120.07102a2f@kernel.org>
-	<df861206-0a7a-4744-98f6-6335303d29ef@huawei.com>
+	s=k20201202; t=1724943101;
+	bh=qTnDyzEcne5+cOMjbnWs7xjxVNKWuYlyKpsjIOtxtCE=;
+	h=Date:From:To:Cc:Subject:From;
+	b=BzEBG0BclTNaB7UAV8QmAdVBBvyaQaK8vIxq3n28+2MDof1iGFB+DpWXh5FMwehAH
+	 DkjngAQAUNFz7FKNvn/Fndpmfbdb83B7lcg5E1vVWXF4qt0vZ40t6+O4irNDj8dxsE
+	 cJfSPF4qdKPLgUxy9vQQyMYg3kohx9Ve6+oSu5HVwwiwarE38PxgIYQQBw6AEwQMKs
+	 M3kyq46fNryvilaOVAU0c1tIzidO9oxZOKRpCrZWcLaTmnMRD7cNCJwlOlcfuyfBie
+	 j7UuH+aFyEn+VamWi9vg2AKs2KJ71egkIXeXobmfKQU0m7An5USwrgkQl+t3H2jm4I
+	 PpB36CdnDhNRw==
+Date: Thu, 29 Aug 2024 11:51:37 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>, Jiri Olsa <jolsa@kernel.org>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org
+Subject: [PATCH 1/1] Revert "tools build: Remove leftover libcap tests that
+ prevents fast path feature detection from working"
+Message-ID: <ZtCK-WIpBaUM8-q3@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Thu, 29 Aug 2024 10:32:33 +0800 Jijie Shao wrote:
-> I won't be able to do a loopback test if the network port goes down unexpectedly.
+Ian pointed out that the libcap feature test is also used by bpftool, so
+we can't remove it just because perf stopped using it, revert the
+removal of the feature test.
 
-One clarification in addition to what Andrew explained - we're talking
-about allocating in ndo_open, not carrier itself being up / down.
+Since both perf and libcap uses the fast path feature detection
+(tools/build/feature/test-all.c), probably the best thing is to keep
+libcap-devel when building perf even it not being used there.
+
+This reverts commit 47b3b6435e4bfb61ae8ffc63a11bd3c310f69acf.
+
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Ian Rogers <irogers@google.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Kan Liang <kan.liang@linux.intel.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/build/feature/Makefile      |  6 +++++-
+ tools/build/feature/test-libcap.c | 20 ++++++++++++++++++++
+ 2 files changed, 25 insertions(+), 1 deletion(-)
+ create mode 100644 tools/build/feature/test-libcap.c
+
+diff --git a/tools/build/feature/Makefile b/tools/build/feature/Makefile
+index b873fc58804e2f38..12796808f07a8c0d 100644
+--- a/tools/build/feature/Makefile
++++ b/tools/build/feature/Makefile
+@@ -25,6 +25,7 @@ FILES=                                          \
+          test-libbfd-liberty-z.bin              \
+          test-cplus-demangle.bin                \
+          test-cxa-demangle.bin                  \
++         test-libcap.bin			\
+          test-libelf.bin                        \
+          test-libelf-getphdrnum.bin             \
+          test-libelf-gelf_getnote.bin           \
+@@ -111,7 +112,7 @@ all: $(FILES)
+ __BUILD = $(CC) $(CFLAGS) -MD -Wall -Werror -o $@ $(patsubst %.bin,%.c,$(@F)) $(LDFLAGS)
+   BUILD = $(__BUILD) > $(@:.bin=.make.output) 2>&1
+   BUILD_BFD = $(BUILD) -DPACKAGE='"perf"' -lbfd -ldl
+-  BUILD_ALL = $(BUILD) -fstack-protector-all -O2 -D_FORTIFY_SOURCE=2 -ldw -lelf -lnuma -lelf -lslang $(FLAGS_PERL_EMBED) $(FLAGS_PYTHON_EMBED) -DPACKAGE='"perf"' -lbfd -ldl -lz -llzma -lzstd
++  BUILD_ALL = $(BUILD) -fstack-protector-all -O2 -D_FORTIFY_SOURCE=2 -ldw -lelf -lnuma -lelf -lslang $(FLAGS_PERL_EMBED) $(FLAGS_PYTHON_EMBED) -DPACKAGE='"perf"' -lbfd -ldl -lz -llzma -lzstd -lcap
+ 
+ __BUILDXX = $(CXX) $(CXXFLAGS) -MD -Wall -Werror -o $@ $(patsubst %.bin,%.cpp,$(@F)) $(LDFLAGS)
+   BUILDXX = $(__BUILDXX) > $(@:.bin=.make.output) 2>&1
+@@ -139,6 +140,9 @@ $(OUTPUT)test-fortify-source.bin:
+ $(OUTPUT)test-bionic.bin:
+ 	$(BUILD)
+ 
++$(OUTPUT)test-libcap.bin:
++	$(BUILD) -lcap
++
+ $(OUTPUT)test-libelf.bin:
+ 	$(BUILD) -lelf
+ 
+diff --git a/tools/build/feature/test-libcap.c b/tools/build/feature/test-libcap.c
+new file mode 100644
+index 0000000000000000..d2a2e152195f976b
+--- /dev/null
++++ b/tools/build/feature/test-libcap.c
+@@ -0,0 +1,20 @@
++// SPDX-License-Identifier: GPL-2.0
++#include <sys/capability.h>
++#include <linux/capability.h>
++
++int main(void)
++{
++	cap_flag_value_t val;
++	cap_t caps = cap_get_proc();
++
++	if (!caps)
++		return 1;
++
++	if (cap_get_flag(caps, CAP_SYS_ADMIN, CAP_EFFECTIVE, &val) != 0)
++		return 1;
++
++	if (cap_free(caps) != 0)
++		return 1;
++
++	return 0;
++}
+-- 
+2.46.0
+
 
