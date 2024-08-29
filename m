@@ -1,342 +1,180 @@
-Return-Path: <linux-kernel+bounces-306896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A094E964525
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 14:48:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0055E964529
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 14:48:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC433B275DF
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 12:48:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 262B71C24C20
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 12:48:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E0CF1AD9FA;
-	Thu, 29 Aug 2024 12:41:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70E7C1B2EF2;
+	Thu, 29 Aug 2024 12:41:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="LGBNMBF+"
-Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="KKvqSmHK"
+Received: from HK2PR02CU002.outbound.protection.outlook.com (mail-eastasiaazon11010039.outbound.protection.outlook.com [52.101.128.39])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F90B19E806
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 12:41:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.101
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724935276; cv=none; b=oDr74Ki5yFLjTQ53Dn+X2qUGvQZv6cahdZ9GeFTrknkHropuroWkyd1dBUKT0edeq/pGPvK9hJ0ZvpMvJ/YXLw39w36mTRr7qzz/xxj8zvgqTsp/2tEa0uLlISgggF5GLr5q3tBA+srijMm6vFpg31wIf/pY/Il7lDVO7d4Yk/g=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724935276; c=relaxed/simple;
-	bh=oEt6/1/2dTYTT38BTVtY63MzsRFx1ivEXxQ6wx1zG3s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XSZF+vISzXJih7wSqV6X7xMfkqpZv7DPTB90DLt6lhu9sg5uGw8nsYgF/T4n+8ls4UfuYROJMpFM4UZAyO/mNksbMptGr1MUaXwJyk3Zmlm6DlpvHBA+yQ3P97JnAWI/+BVtUjg0xEx1IAk+HCUv2+1ytml4ReADWKQkSopUtLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=LGBNMBF+; arc=none smtp.client-ip=115.124.30.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1724935265; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=nAudkI0+JvHhkm0M7Sh7ypY6bb03Eg6fINXHetDbltY=;
-	b=LGBNMBF+XmyM2uLLNjwY3hY3ZTAPAA8poeCrYRRWR7B/023YzeWDd2jct2YVcy4wUE9+X4boNh9tIbH8SEChs5KqUYZ8G18eB8QdeAvZ9fJ/6rCfOnR6rzHHhw4yko626e6b+3qMiv+BhG33kBOfqCMFFHX6JnnK5VRamCBm0Sg=
-Received: from 30.15.214.20(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WDt43.n_1724935261)
-          by smtp.aliyun-inc.com;
-          Thu, 29 Aug 2024 20:41:03 +0800
-Message-ID: <3c7e4800-ec9c-4288-85bf-89f3fef18827@linux.alibaba.com>
-Date: Thu, 29 Aug 2024 20:40:59 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B5A91AD9DE;
+	Thu, 29 Aug 2024 12:41:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.128.39
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724935295; cv=fail; b=L9Bum/zwWnp4cFfMx+nHDhD1VPTtZAbB6iPX/E8tMQF/8Sxq4I0oEAjVf6DDgOUlCDN62VSkB0e/wuw4tgO14bupYlTV6sL6W1l+EOzNX/1FI5Dm1MPs+sW0Q49L6ivNI+/n9tc7tACy4dL7iY2qT+hpBNaVtwfTla9qISON7JY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724935295; c=relaxed/simple;
+	bh=qbKtzYI6zTCW7s2AcWKlIslRtwLWTPUHA+tfku2mY3E=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=bIz4tN8Sx+i/LyrWknRg4NwqQETY9rAzs+IkzK3NKM1sZTOhxoWDMdfOMYst5s2gMJtqABkeJExIxAFu4qh4Ea2OevdEdTfMLjbwU5NiMlaMFohl+fpMpAi7mcOhA7IVWPwnmYJVl8KSdhVG9dYo2kSnAaim5v/+gWN/3eSlf2E=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=KKvqSmHK; arc=fail smtp.client-ip=52.101.128.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ukVBOWjsZPDkuDJb3UDNeI4RgJ7XQn3o+13cnBZd2h7W3FrnqJe3TSD7VuUBe7CZ/dvHxOp7J/yUJCuDkbMlyS1nD8P3caT/vnqe8ArAIOqBwjqctpoQq2jQECgpvqkK+q6kOBlJ0VOAlHYXZHu4hnyH12+hewCsb+34K/z5YwPNR24dtjsfeyJlROedUUupbVvQBZF8Lgtti4iM8yp1y0ata8OYOngGeR3mhS3uCE5gLlbNOI3+w3kWWCDgV09f6OIH80jZuwyZ35RboHsQ7ILZyU83ROoCQdxV/FkKknhiHkCtaJAE16m0KtOmg/nHh/DTxL8KDS9WtouTbERM2g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=U0SenKOg630rSkvIusCkLl1Vs3ix659KSFtX/B3DkTI=;
+ b=TqmMwhXt6H569tOlukHSEWz4I35ozqp1xx6lGikK3NK1zTx/znRD+vgEfSJIOEmC2+yykh07Y9DRP6EvCtz83b80W+Yndvd8bQMLEBf/pHYf264RBRsWmGAf/HYgl5ocAeHP1IbI8g5dFzRp077g9Xq0CvWwAM12ns1QZpN9KjabSvVQwYZWGa0RU06DA1NT+8L4T3CQJWvBAJ1ebB46+gZY/x33XyB7rEsZ/b4K8xS24EV/CMiJo0pLQ9YvxWgiHtJIdju1rYcKfHlsRfvuC/yzlwJKITle8S2IBxcTJ+RB4XhmoJJ41QBGYG5l/nxQn4wFXrDsCQmpK/Ugd3xhEA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=U0SenKOg630rSkvIusCkLl1Vs3ix659KSFtX/B3DkTI=;
+ b=KKvqSmHKKZWIPzQI37PXZUAuOQaVXBptyEhOUIRaDpPx/6sUhFbuDEAXMqTsO8W/HGHGAkseEGjYG5TeBq3zGg9RFV19oj7zkChoDPYcyxz56oZbtSACUzvcXe97qmcNfWSZUAjW3zWPQ+ih9sZs+Iws450JlTmnszI6nHcH6GBY/uRlCta6QaSVvmLTPWrCKCihKRa6b1qotU7/zfLPiHfGxzZH0Momi10qXlnyMpHel+7+L2x6OvhnS1WDw8qAhJM8wMlOiTHWrepSLFAGD6DdPNqHGGsix336NgP95T2r0nfHoatBRlYMe//AtHsoq34n0P4ZOQlEVFN9mtAJXA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from TYZPR06MB4461.apcprd06.prod.outlook.com (2603:1096:400:82::8)
+ by TYZPR06MB6238.apcprd06.prod.outlook.com (2603:1096:400:33f::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Thu, 29 Aug
+ 2024 12:41:30 +0000
+Received: from TYZPR06MB4461.apcprd06.prod.outlook.com
+ ([fe80::9c62:d1f5:ede3:1b70]) by TYZPR06MB4461.apcprd06.prod.outlook.com
+ ([fe80::9c62:d1f5:ede3:1b70%5]) with mapi id 15.20.7897.027; Thu, 29 Aug 2024
+ 12:41:30 +0000
+From: Yu Jiaoliang <yujiaoliang@vivo.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: opensource.kernel@vivo.com
+Subject: [PATCH v1] bus: qcom: Simplify with dev_err_probe()
+Date: Thu, 29 Aug 2024 20:41:18 +0800
+Message-Id: <20240829124118.3256437-1-yujiaoliang@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TY2PR02CA0018.apcprd02.prod.outlook.com
+ (2603:1096:404:56::30) To TYZPR06MB4461.apcprd06.prod.outlook.com
+ (2603:1096:400:82::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 4/9] mm: filemap: use xa_get_order() to get the swap
- entry order
-To: Hugh Dickins <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>
-Cc: willy@infradead.org, david@redhat.com, wangkefeng.wang@huawei.com,
- chrisl@kernel.org, ying.huang@intel.com, 21cnbao@gmail.com,
- ryan.roberts@arm.com, shy828301@gmail.com, ziy@nvidia.com,
- ioworker0@gmail.com, da.gomez@samsung.com, p.raghav@samsung.com,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <cover.1723434324.git.baolin.wang@linux.alibaba.com>
- <6876d55145c1cc80e79df7884aa3a62e397b101d.1723434324.git.baolin.wang@linux.alibaba.com>
- <d3dc75e2-40a7-8439-734c-19d83707164c@google.com>
- <3c020874-4cf3-418c-b89b-4e6ed158e5b9@linux.alibaba.com>
- <c336e6e4-da7f-b714-c0f1-12df715f2611@google.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <c336e6e4-da7f-b714-c0f1-12df715f2611@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TYZPR06MB4461:EE_|TYZPR06MB6238:EE_
+X-MS-Office365-Filtering-Correlation-Id: ccabf3fc-0955-4ae9-85e1-08dcc827e7ce
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|1800799024|366016|52116014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Ygws7yTw8xME6C8SbxfygUWT6gT4Tcb88HZT4C/kP1sD08rwYNs1GQ0zRmJ2?=
+ =?us-ascii?Q?yDhwspgEK0rV9ixZNA48fd6aGcF4rIfe4IJ2/iaQZG/Zyab0uFQCC2iQZxEp?=
+ =?us-ascii?Q?zsLoKnnp5ftup+2UrZtmmm0RkyF8QwtoVDKlD7ZH106lQOrVQWkiQ8WD907S?=
+ =?us-ascii?Q?7pKxGYYwQRNenG21z3mtrr1xQN3XWU8La0z1q7pOEcZBJhObYHkZ0MrGmLvZ?=
+ =?us-ascii?Q?0WGDS39Rxs5lyt73D8Vx/OwHKhCD2+zPTCAFRoMl4WDYiKzSegCIuUEmFw25?=
+ =?us-ascii?Q?YanbKdmIi57hSbsRI/ETWF1/cR2PMbAzCCScvf6sRJJn20QPLjJD9h2eU2L/?=
+ =?us-ascii?Q?bibL4tTRtHa84VHPog6R6GSMcDvK4PTh4q24Qjn+Z3KYSQKNFzhya/P2FeDq?=
+ =?us-ascii?Q?0AY6ihnNFqO1cvRq1Lv+4spN3ipFz9doN4cjI9vuUY49PmO4ae0wtX4Ey8K+?=
+ =?us-ascii?Q?mXlYACrbV03fAsD8nV4wkGjpRmjRcdnQXIVMAO/HAySZeg0ZQvJYbvreRZrX?=
+ =?us-ascii?Q?1FRJKCs36F2iXpoh5O9JKLrSjcmynTdXeu1d/SGvSPUQ5wgENz3lc83WdwOL?=
+ =?us-ascii?Q?dSTFIcNJesIeF3YySW1TIJYDcwImvW5yQcNputNTvJ6eLtV3TcloS2u+WjU2?=
+ =?us-ascii?Q?Pz1eXn77xjTkphJijVSjWZBrJZmkg11RBfeReZg8M/N+W+nZLIcLkiaDBKA+?=
+ =?us-ascii?Q?uWqlL/QlKquno9rS/G2VNkP4iu0glbx3VgXvBLzOcPTDUeGusHEW4jENkRQE?=
+ =?us-ascii?Q?h/AdkOIsEI+msdBdd4IvE51z2eMi3tJe8voZtba0BIlV089Xg3ySqboSblu5?=
+ =?us-ascii?Q?UTGR8CCU93LXrdW2/5QOlVX9+wRVlqu7gEZvrFVn9AUO4xmHEpOnUL0L9UCo?=
+ =?us-ascii?Q?NBc4+Sp3iWA5ia4KmkBiH4Go9bnpKVe+by2K+XG9uZHPCSWnE16HQUzGPsz+?=
+ =?us-ascii?Q?BvurWlhyhG6IlQmYU0ptS7pMLvRjHkSvB4ZrQ9v3iklkPv+jFaT0tgNkdLwD?=
+ =?us-ascii?Q?O38ltOJy4gT+kE13tYPsOkLpPRxjBSOT58zJi3tNPa9Eow/1srYS9jr1Gcol?=
+ =?us-ascii?Q?OExW2RvBCQmf4hfZG3cIr4DOHR2fHcS7ioLfgwF9fKMgXc6wzZjgmOb6TZCB?=
+ =?us-ascii?Q?lkOZ6gsTwc47ugKkhefWRXQvNQ9A9ElrLbldfUDgWc0AtPyjLZrlQXOVwIJP?=
+ =?us-ascii?Q?8UqFJ/tR/FMoq6NlZh0WE/bM+9Ve1nOa2ZyAo5Pr39loASd2IXtP3ohGx3eB?=
+ =?us-ascii?Q?cRcu1f1b48dv0y0axSzVsJfkZYcRU3vjI1NhRTK1EDypNfB+r5jvnBQDUuYy?=
+ =?us-ascii?Q?zFEZTKfV92f68l3CabodcARGJoxGyrqxfVwHh6mTpdp820nW1K524SZ2O6g7?=
+ =?us-ascii?Q?6vffaSvDePZeTO6vIgcwn7XTlODafXs8bn9Y4FZnQn6A8jM6gQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR06MB4461.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(52116014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?tzJ7FaxCvTHVqUG+jqgnTzC8EgEwTpcAp43qpBVI2Y0Ac8mAht87IrtQyNrC?=
+ =?us-ascii?Q?xnUlDrqUtGwUbGq3WgbxUrcbgPP04rlci1zOQFT9sQwggBTT5shRgu5r5HWU?=
+ =?us-ascii?Q?oxtDgTsF4L/jN3jitENxMU/IizTfwNXHotev2i1IOeMxCDx2Fk10cbZMXaOW?=
+ =?us-ascii?Q?rE9h8zGlSbvre7l4mHxpE0he6Jr7I4+ZSbxljTxrl82dRK5S+j6BJg1JAG2l?=
+ =?us-ascii?Q?V0h01H849uEUGsLNu5xew3bUoX/cl2GhlqBsl6dTl0tumtGo0zHnsoAjKqh+?=
+ =?us-ascii?Q?Pn+aVbwQSMc1oPRNSCpzLt8DIJAeZs9muqyZHaY3qHZvvDn3Zc6DJA6XROtj?=
+ =?us-ascii?Q?Xn8N3H4kVANMfZh93DrUN9AEFADzQi3+2JcsJyvBgbyPYyn030BpKjohVx4U?=
+ =?us-ascii?Q?PkPnTRwKA+eBPVfufjuUEM6Z5Uj2352upXcFqAz9uerM/RrbN13cSDHbk2t0?=
+ =?us-ascii?Q?Tq2vPb7Z9VIfiP7IrlnOz8MzpHJE47STWlDkAryWwUUl7hWgJKfF5fvzLMw3?=
+ =?us-ascii?Q?Ah14mp5YmdXTAstzDwp/5jlN7uWhj5fop12w06RJgE+S1XL4tKmh2ADR+ADd?=
+ =?us-ascii?Q?WS87SWhmAZZYAW0o8uHqOKo1ngN7KK3yBX5tdCVNZwxv9U+G3iH/jetm8vBS?=
+ =?us-ascii?Q?Ji/OpuYzSMER5yQ2302q0g2j4c2N38GVkkXadGNpomqBrOc6PI5TIHPPKCEh?=
+ =?us-ascii?Q?6jklEtOHXHSUGss6kkZjkJSn/LM5qqhbxndJHUmKB5470VbxyLHID+VthA3J?=
+ =?us-ascii?Q?woJSvFgSimE1ATMUGWPu4ADw6uzWT0yEjg2SUGmxXiQGlGLvZNWVEhl9ZZk+?=
+ =?us-ascii?Q?5JX2c/SAKXLecqw12iFeLB/C8tPA2Hi3Zn6kRy4zsVm5RhkCQagzVUN9W17s?=
+ =?us-ascii?Q?Pj/R5FFwEmkHBIdGa/4TWN3lqXTr0XrSrhk8zFBvEKFtOP8GcfwGH5SXDJGD?=
+ =?us-ascii?Q?ztzTDioR56NSdNrl2oiPA/atqOd8Fs4IvS/wVS81mxNd2fNBV5QWrxWC0T9H?=
+ =?us-ascii?Q?hapf1NBj//X+yjTdgMKkEgDpXfGpHzkrPyD2rucrSVDBxZozPFeMCYI4AFXc?=
+ =?us-ascii?Q?upslqCVqx9QM5U1eH0fpQzqXisbuYoF3kQpbNDTeYwiBBbK34akrsm03Hecn?=
+ =?us-ascii?Q?Xcro3pe/fAS2m0SbBJuIIrfBSFz/lK6LKOaI4Y4soiMbO1PyqOqgTyKJetpc?=
+ =?us-ascii?Q?8VXIboFUvOaWdq5xf8BXNYEFIOe4mRL/XgnfN86YaIRshBsXUw9DoEBRHCpi?=
+ =?us-ascii?Q?MHlVtR+589AEklqQzU838sahSWFl1qnSjS0p2qQi+nD8zCImNafsIOGVjMRj?=
+ =?us-ascii?Q?At8O5mwgBz7Fxa1QFW6JUVYOne77745MRgGdK/ASRADnt10PR5SSXYOewpMx?=
+ =?us-ascii?Q?0LUZoet4qoJHth2sB19hzBl50DAONAaf6UnLJWYyyO2k35cEPszVldMDTEto?=
+ =?us-ascii?Q?xygIQ5MhVRGRVuB5CFEW4hdna+id2AH2WRlgghavftLsMTgALfgxxC1QwsgK?=
+ =?us-ascii?Q?aWYFOFCoR1bGaQdtppxlXMt1ky3xOTy/3e7xaCgQLepuEf/x5MAF7prglrrf?=
+ =?us-ascii?Q?eI/K0we9b9zcJInA5k4fJgEqvVSTuMpTOcoZDa5G?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ccabf3fc-0955-4ae9-85e1-08dcc827e7ce
+X-MS-Exchange-CrossTenant-AuthSource: TYZPR06MB4461.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Aug 2024 12:41:30.0149
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 16Qty5vnjSh8ydU9YMf3t/JuhCwrm8JNe6jIp3LtlAk15PQxk4P8nQLFlcbwjUPBFIFojphcRbgSGCLXDe/kJg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB6238
 
+Error handling in probe() can be a bit simpler with dev_err_probe().
 
+Signed-off-by: Yu Jiaoliang <yujiaoliang@vivo.com>
+---
+ drivers/bus/qcom-ebi2.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-On 2024/8/29 16:07, Hugh Dickins wrote:
-> On Tue, 27 Aug 2024, Baolin Wang wrote:
->> On 2024/8/26 05:55, Hugh Dickins wrote:
->>> On Mon, 12 Aug 2024, Baolin Wang wrote:
->>>
->>>> In the following patches, shmem will support the swap out of large folios,
->>>> which means the shmem mappings may contain large order swap entries, so
->>>> using xa_get_order() to get the folio order of the shmem swap entry to
->>>> update the '*start' correctly.
->>>>
->>>> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
->>>> ---
->>>>    mm/filemap.c | 4 ++++
->>>>    1 file changed, 4 insertions(+)
->>>>
->>>> diff --git a/mm/filemap.c b/mm/filemap.c
->>>> index 4130be74f6fd..4c312aab8b1f 100644
->>>> --- a/mm/filemap.c
->>>> +++ b/mm/filemap.c
->>>> @@ -2056,6 +2056,8 @@ unsigned find_get_entries(struct address_space
->>>> *mapping, pgoff_t *start,
->>>>      folio = fbatch->folios[idx];
->>>>      if (!xa_is_value(folio))
->>>>    			nr = folio_nr_pages(folio);
->>>> +		else
->>>> +			nr = 1 << xa_get_order(&mapping->i_pages,
->>>> indices[idx]);
->>>>     	*start = indices[idx] + nr;
->>>>     }
->>>>     return folio_batch_count(fbatch);
->>>> @@ -2120,6 +2122,8 @@ unsigned find_lock_entries(struct address_space
->>>> *mapping, pgoff_t *start,
->>>>      folio = fbatch->folios[idx];
->>>>      if (!xa_is_value(folio))
->>>>    			nr = folio_nr_pages(folio);
->>>> +		else
->>>> +			nr = 1 << xa_get_order(&mapping->i_pages,
->>>> indices[idx]);
->>>>     	*start = indices[idx] + nr;
->>>>     }
->>>>     return folio_batch_count(fbatch);
->>>> -- 
->>>
->>> Here we have a problem, but I'm not suggesting a fix for it yet: I
->>> need to get other fixes out first, then turn to thinking about this -
->>> it's not easy.
->>
->> Thanks for raising the issues.
->>
->>>
->>> That code is almost always right, so it works well enough for most
->>> people not to have noticed, but there are two issues with it.
->>>
->>> The first issue is that it's assuming indices[idx] is already aligned
->>> to nr: not necessarily so.  I believe it was already wrong in the
->>> folio_nr_pages() case, but the time I caught it wrong with a printk
->>> was in the swap (value) case.  (I may not be stating this correctly:
->>> again more thought needed but I can't spend so long writing.)
->>>
->>> And immediately afterwards that kernel build failed with a corrupted
->>> (all 0s) .o file - I'm building on ext4 on /dev/loop0 on huge tmpfs while
->>> swapping, and happen to be using the "-o discard" option to ext4 mount.
->>>
->>> I've been chasing these failures (maybe a few minutes in, maybe half an
->>> hour) for days, then had the idea of trying without the "-o discard":
->>> whereupon these builds can be repeated successfully for many hours.
->>> IIRC ext4 discard to /dev/loop0 entails hole-punch to the tmpfs.
->>>
->>> The alignment issue can easily be corrected, but that might not help.
->>> (And those two functions would look better with the rcu_read_unlock()
->>> moved down to just before returning: but again, wouldn't really help.)
->>>
->>> The second issue is that swap is more slippery to work with than
->>> folios or pages: in the folio_nr_pages() case, that number is stable
->>> because we hold a refcount (which stops a THP from being split), and
->>> later we'll be taking folio lock too.  None of that in the swap case,
->>> so (depending on how a large entry gets split) the xa_get_order() result
->>> is not reliable. Likewise for other uses of xa_get_order() in this series.
->>
->> Now we have 2 users of xa_get_order() in this series:
->>
->> 1) shmem_partial_swap_usage(): this is acceptable, since racy results are not
->> a problem for the swap statistics.
-> 
-> Yes: there might be room for improvement, but no big deal there.
-> 
->>
->> 2) shmem_undo_range(): when freeing a large swap entry, it will use
->> xa_cmpxchg_irq() to make sure the swap value is not changed (in case the large
->> swap entry is split). If failed to cmpxchg, then it will use current index to
->> retry in shmem_undo_range(). So seems not too bad?
-> 
-> Right, I was missing the cmpxchg aspect. I am not entirely convinced of
-> the safety in proceeding in this way, but I shouldn't spread FUD without
-> justification. Today, no yesterday, I realized what might be the actual
-> problem, and it's not at all these entry splitting races I had suspected.
-> 
-> Fix below.  Successful testing on mm-everything-2024-08-24-07-21 (well,
-> that minus the commit which spewed warnings from bootup) confirmed it.
-> But testing on mm-everything-2024-08-28-21-38 very quickly failed:
-> unrelated to this series, presumably caused by patch or patches added
-> since 08-24, one kind of crash on one machine (some memcg thing called
-> from isolate_migratepages_block), another kind of crash on another (some
-> memcg thing called from __read_swap_cache_async), I'm exhausted by now
-> but will investigate later in the day (or hope someone else has).
+diff --git a/drivers/bus/qcom-ebi2.c b/drivers/bus/qcom-ebi2.c
+index c1fef1b4bd89..dbd6a99bcc99 100644
+--- a/drivers/bus/qcom-ebi2.c
++++ b/drivers/bus/qcom-ebi2.c
+@@ -308,10 +308,8 @@ static int qcom_ebi2_probe(struct platform_device *pdev)
+ 		return PTR_ERR(ebi2xclk);
+ 
+ 	ret = clk_prepare_enable(ebi2xclk);
+-	if (ret) {
+-		dev_err(dev, "could not enable EBI2X clk (%d)\n", ret);
+-		return ret;
+-	}
++	if (ret)
++		return dev_err_probe(dev, ret, "could not enable EBI2X clk\n");
+ 
+ 	ebi2clk = devm_clk_get(dev, "ebi2");
+ 	if (IS_ERR(ebi2clk)) {
+-- 
+2.34.1
 
-I saw the isolate_migratepages_block crash issue on 
-mm-everything-2024-08-28-09-32, and I reverted Kefeng's series "[PATCH 
-0/4] mm: convert to folio_isolate_movable()", the 
-isolate_migratepages_block issue seems to be resolved (at least I can 
-not reproduce it).
-
-And I have already pointed out some potential issues in Kefeng’s 
-series[1]. Andrew has dropped this series from 
-mm-everything-2024-08-28-21-38. However, you can still encounter the 
-isolate_migratepages_block issue on mm-everything-2024-08-28-21-38, 
-while I cannot, weird.
-
-[1] 
-https://lore.kernel.org/all/3f8300d9-1c21-46ad-a311-e97dc94eda08@linux.alibaba.com/
-
-[  337.999054] page: refcount:0 mapcount:0 mapping:0000000000000000 
-index:0x3bbda pfn:0xf09041
-[  337.999065] memcg:ffff0000c642f000
-[  337.999066] anon flags: 
-0x17fffe0000020808(uptodate|owner_2|swapbacked|node=0|zone=2|lastcpupid=0x3ffff)
-[  337.999071] raw: 17fffe0000020808 dead000000000100 dead000000000122 
-ffff00047c6537b9
-[  337.999073] raw: 000000000003bbda 0000000000000000 00000000ffffffff 
-ffff0000c642f000
-[  337.999074] page dumped because: VM_BUG_ON_PAGE(page_ref_count(page) 
-== 0)
-[  337.999082] ------------[ cut here ]------------
-[  337.999083] kernel BUG at include/linux/mm.h:1126!
-[  337.999384] Internal error: Oops - BUG: 00000000f2000800 [#1] SMP
-[  338.002828] CPU: 31 UID: 0 PID: 87531 Comm: transhuge-stres Kdump: 
-loaded Tainted: G            E      6.11.0-rc4+ #830
-[  338.003372] Tainted: [E]=UNSIGNED_MODULE
-[  338.003570] Hardware name: Alibaba Cloud Alibaba Cloud ECS, BIOS 
-1.0.0 01/01/2017
-[  338.003939] pstate: 63400005 (nZCv daif +PAN -UAO +TCO +DIT -SSBS 
-BTYPE=--)
-[  338.004282] pc : isolate_migratepages_block+0xb84/0x1000
-[  338.004553] lr : isolate_migratepages_block+0xb84/0x1000
-[  338.004817] sp : ffff8000a730b5d0
-[......]
-[  338.008538] Call trace:
-[  338.008661]  isolate_migratepages_block+0xb84/0x1000
-[  338.008910]  isolate_migratepages+0x118/0x330
-[  338.009127]  compact_zone+0x2c8/0x640
-[  338.009311]  compact_zone_order+0xbc/0x110
-[  338.009516]  try_to_compact_pages+0xf8/0x368
-[  338.009730]  __alloc_pages_direct_compact+0x8c/0x260
-[  338.010002]  __alloc_pages_slowpath.constprop.0+0x388/0x900
-[  338.010279]  __alloc_pages_noprof+0x1f8/0x270
-[  338.010497]  alloc_pages_mpol_noprof+0x8c/0x210
-[  338.010724]  folio_alloc_mpol_noprof+0x18/0x68
-[  338.010945]  vma_alloc_folio_noprof+0x7c/0xd0
-[  338.011162]  do_huge_pmd_anonymous_page+0xe0/0x3b0
-[  338.011401]  __handle_mm_fault+0x428/0x440
-[  338.011606]  handle_mm_fault+0x68/0x210
-
-> [PATCH] mm: filemap: use xa_get_order() to get the swap entry order: fix
-> 
-> find_lock_entries(), used in the first pass of shmem_undo_range() and
-> truncate_inode_pages_range() before partial folios are dealt with, has
-> to be careful to avoid those partial folios: as its doc helpfully says,
-> "Folios which are partially outside the range are not returned".  Of
-> course, the same must be true of any value entries returned, otherwise
-> truncation and hole-punch risk erasing swapped areas - as has been seen.
-> 
-> Rewrite find_lock_entries() to emphasize that, following the same pattern
-> for folios and for value entries.
-> 
-> Adjust find_get_entries() slightly, to get order while still holding
-> rcu_read_lock(), and to round down the updated start: good changes, like
-> find_lock_entries() now does, but it's unclear if either is ever important.
-> 
-> Signed-off-by: Hugh Dickins <hughd@google.com>
-
-Thanks Hugh. The changes make sense to me.
-
-> ---
->   mm/filemap.c | 41 +++++++++++++++++++++++++----------------
->   1 file changed, 25 insertions(+), 16 deletions(-)
-> 
-> diff --git a/mm/filemap.c b/mm/filemap.c
-> index 885a8ed9d00d..88a2ed008474 100644
-> --- a/mm/filemap.c
-> +++ b/mm/filemap.c
-> @@ -2047,10 +2047,9 @@ unsigned find_get_entries(struct address_space *mapping, pgoff_t *start,
->   		if (!folio_batch_add(fbatch, folio))
->   			break;
->   	}
-> -	rcu_read_unlock();
->   
->   	if (folio_batch_count(fbatch)) {
-> -		unsigned long nr = 1;
-> +		unsigned long nr;
->   		int idx = folio_batch_count(fbatch) - 1;
->   
->   		folio = fbatch->folios[idx];
-> @@ -2058,8 +2057,10 @@ unsigned find_get_entries(struct address_space *mapping, pgoff_t *start,
->   			nr = folio_nr_pages(folio);
->   		else
->   			nr = 1 << xa_get_order(&mapping->i_pages, indices[idx]);
-> -		*start = indices[idx] + nr;
-> +		*start = round_down(indices[idx] + nr, nr);
->   	}
-> +	rcu_read_unlock();
-> +
->   	return folio_batch_count(fbatch);
->   }
->   
-> @@ -2091,10 +2092,17 @@ unsigned find_lock_entries(struct address_space *mapping, pgoff_t *start,
->   
->   	rcu_read_lock();
->   	while ((folio = find_get_entry(&xas, end, XA_PRESENT))) {
-> +		unsigned long base;
-> +		unsigned long nr;
-> +
->   		if (!xa_is_value(folio)) {
-> -			if (folio->index < *start)
-> +			nr = folio_nr_pages(folio);
-> +			base = folio->index;
-> +			/* Omit large folio which begins before the start */
-> +			if (base < *start)
->   				goto put;
-> -			if (folio_next_index(folio) - 1 > end)
-> +			/* Omit large folio which extends beyond the end */
-> +			if (base + nr - 1 > end)
->   				goto put;
->   			if (!folio_trylock(folio))
->   				goto put;
-> @@ -2103,7 +2111,19 @@ unsigned find_lock_entries(struct address_space *mapping, pgoff_t *start,
->   				goto unlock;
->   			VM_BUG_ON_FOLIO(!folio_contains(folio, xas.xa_index),
->   					folio);
-> +		} else {
-> +			nr = 1 << xa_get_order(&mapping->i_pages, xas.xa_index);
-> +			base = xas.xa_index & ~(nr - 1);
-> +			/* Omit order>0 value which begins before the start */
-> +			if (base < *start)
-> +				continue;
-> +			/* Omit order>0 value which extends beyond the end */
-> +			if (base + nr - 1 > end)
-> +				break;
->   		}
-> +
-> +		/* Update start now so that last update is correct on return */
-> +		*start = base + nr;
->   		indices[fbatch->nr] = xas.xa_index;
->   		if (!folio_batch_add(fbatch, folio))
->   			break;
-> @@ -2115,17 +2135,6 @@ unsigned find_lock_entries(struct address_space *mapping, pgoff_t *start,
->   	}
->   	rcu_read_unlock();
->   
-> -	if (folio_batch_count(fbatch)) {
-> -		unsigned long nr = 1;
-> -		int idx = folio_batch_count(fbatch) - 1;
-> -
-> -		folio = fbatch->folios[idx];
-> -		if (!xa_is_value(folio))
-> -			nr = folio_nr_pages(folio);
-> -		else
-> -			nr = 1 << xa_get_order(&mapping->i_pages, indices[idx]);
-> -		*start = indices[idx] + nr;
-> -	}
->   	return folio_batch_count(fbatch);
->   }
->   
 
