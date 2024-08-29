@@ -1,133 +1,104 @@
-Return-Path: <linux-kernel+bounces-307505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A7EC964E43
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 20:58:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE836964E46
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 20:59:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A965B21A8D
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 18:58:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99DC21F2272C
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 18:59:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B70081B6542;
-	Thu, 29 Aug 2024 18:58:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B9441B81DF;
+	Thu, 29 Aug 2024 18:59:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hvn/24yo"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="KQQQFF89"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 739881B0120;
-	Thu, 29 Aug 2024 18:57:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C3541B0120
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 18:59:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724957880; cv=none; b=NZgNSA0cClDyFUvLT364gpypRqflkCLcMujbzkM1Yo2JDLZPydDCixeFgvsX19B8URY3bmYsXzs3x5Hh+urwjAyaXkUimltXp6Q1R+1vLEyMpH4F4Dd6Hl3jHso8swRwC308Ki1Te9fTUlVNoLj9mKMIqbW//QmJg5pD817OnAM=
+	t=1724957950; cv=none; b=T8t//vPbblCur2kEakw/akTWuYIt2N2fTbnOxkuRMiS7OiOWNc16IO2zrzjehahB7oOuM0UBFoHblpevf0Fni+NHk3+bndnQH1plaj6jIlBI1kxDUE2mN4180/ba0hIJcXLiAI9Kzxy8x/769E6k0YyDDk4czUagBWJCDJ3GqBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724957880; c=relaxed/simple;
-	bh=/kIdD3v9PL35nwxm6CuWpYZdRCoiMQcuUVF75ZnSC2Y=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=umGdDvcF74Rrl+GfgwnPi4ruhrKHgZzMPutPMZl5Ng6N3//4Anw2tFyLJ8P/Zjl09xp8lTirhjAUQuqTsDQWo0FNRd6CDzwp/Dz6EGuCgf8Abbh6Gz+xKX8oQr2GEq1ux5gX3n8HFYJ9+moWqiArUgo88HAOB1rY5CHc85Wo83c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hvn/24yo; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a86883231b4so115970866b.3;
-        Thu, 29 Aug 2024 11:57:58 -0700 (PDT)
+	s=arc-20240116; t=1724957950; c=relaxed/simple;
+	bh=8944gwBBDCIPhxVQl1VCWvslS12wnEJH+5faN1eQ4s4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=g7nfraTisEPhRyMWOZ1WMGjGRNxG/S3+TJY1UcLzssAtFA5vzYiMQ1UbwooL7it42rftUDr5A4cc92luCAEK6DdRIf7UkV5AbR8ZmWWyfmzM53NPiP/lczn7NW32fidMnA4INumawEFvI64rbQMdHVQTbV/spvlCwmYOput6u8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=KQQQFF89; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a8696e9bd24so132391466b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 11:59:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724957876; x=1725562676; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7UZoDEfc6CPKoWrLjn6mASVFpzP1uqbEEK2Alllrf7A=;
-        b=hvn/24yo0cPyX1P2ZJBURiKBtoqIeQV+mPpO9m0XF93dmKhKong+ulMKyERyE9lX8M
-         Jju7I5j4GkZLd3FOtnHZ+Nwne9xfHnbzbyxNtRuGAec/h+qflFZxVIWTkxt+gak+eu7G
-         g9Kfeogduxg68sKpAKz/YnRKQliw9dSpoXLdT7kQOK1eLnZPX4OZ7osZY0WHX9iLYukJ
-         dVRPdqSVDuXcBaSjPOzhpBNgs7EAIE8+r/K15NtKfbRtACvrQ9MNuIV6RB9vQxdWScNU
-         mK8rMAFrsUIzcBJONreOXpXqKHhTk5EMiCHPQLsMsRolyNFFvq1N4NzVH4ENgiktL3N7
-         mYPA==
+        d=szeredi.hu; s=google; t=1724957947; x=1725562747; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=PRZBUt1W8DCJ1jHrr+gnsMYGeF53sTiXJ23wwVYpYOg=;
+        b=KQQQFF89WUQ5UNMw3Fgn+Fp5Tqp5R+moQ1r4dSTEGjLnR527XcdNW9RV1vGaRSJ2xl
+         LPITw4fSJXvxbODV+QPd3DOW7qS0VWdzXDfRQrI1h8uPvqvqEDx3jgkO1MbGFrlv7eAk
+         IFBaWZwzIaiBEPaFFNkpx58XM3KwQAs2JP8D0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724957876; x=1725562676;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7UZoDEfc6CPKoWrLjn6mASVFpzP1uqbEEK2Alllrf7A=;
-        b=U/gqJdv0w2TMrjEbkJmJbW/yNoAFeK2I2GCom39HWEqEpAmtvo+lO8Sz3qbmJAHugS
-         Xz6bBbvLruQbmhm6wis3FZUqdDqAY6b7biuaRmNRBm0oxChr2a6ZXhElthsf3Gz59FdO
-         2jXfNeToVkjb/yp51OE4oGhWlSbpZeE4FaIKidt7Ud/FzqfAiZqCJsw5C1c00nB8PV3p
-         SK5uRxE1MpY5Oq0sG81+lqQgtqVmFS8xk/p3K043Heytkrz18+QKx6srUo6gMi2APAEO
-         iEYDGIZOJH3P3qB5V397Tx3zPh+Gb18KfMO0hMHWHoqRBJCMasbUZRiGzqno7mlr1yRL
-         rU/A==
-X-Forwarded-Encrypted: i=1; AJvYcCVbSxPXHuPnYwL3czjHA7Q6P4Z3ZB19+xjpaQqQtGQ//nQGngnYxR1KiwkHTKbZvES132xlavEl0gD/@vger.kernel.org, AJvYcCWifEjjrgkqF11a6PB640q4rTMx8iyTzdB10w6g4HAgFQB4R4DCmFk9QmPszVU0uvJbAhQh7cpEYYgf@vger.kernel.org, AJvYcCXU7WE0uXc58jCokuxGubl0kVLEbQZgXTDbHjRBMMGwJyhwIrzXCKJCJ//R7Ij4B2eePAevlWfHBkajMcRM@vger.kernel.org
-X-Gm-Message-State: AOJu0YxgV0M+QZzIw1iMZHXpGff34hPGuNz/f/5vSNFiDdZENeTfJG6b
-	Bi477ubWb0wiXVGZqB+u6UOSbkrzJQC2o/8/KCgOZuVCFT1k8MqQ
-X-Google-Smtp-Source: AGHT+IEImtgET40/r9Zokthw3/Oe/03HXIKcIgIm5jMXppV4ADkjPViqN9kcofe9QI9MSv9JQjAAMA==
-X-Received: by 2002:a17:907:7252:b0:a7d:a080:baa with SMTP id a640c23a62f3a-a897f8f77f9mr308939666b.34.1724957875909;
-        Thu, 29 Aug 2024 11:57:55 -0700 (PDT)
-Received: from vamoiridPC ([2a04:ee41:82:7577:f22f:934f:9b88:e7ce])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a898922710csm109846166b.223.2024.08.29.11.57.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 11:57:55 -0700 (PDT)
-From: Vasileios Amoiridis <vassilisamir@gmail.com>
-X-Google-Original-From: Vasileios Amoiridis <vamoirid@vamoiridPC>
-Date: Thu, 29 Aug 2024 20:57:53 +0200
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Vasileios Amoiridis <vassilisamir@gmail.com>, jic23@kernel.org,
-	lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, ang.iglesiasg@gmail.com,
-	linus.walleij@linaro.org, biju.das.jz@bp.renesas.com,
-	javier.carrasco.cruz@gmail.com, semen.protsenko@linaro.org,
-	579lpy@gmail.com, ak@it-klinger.de, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	christophe.jaillet@wanadoo.fr
-Subject: Re: [PATCH v4 1/7] iio: pressure: bmp280: Use bulk read for humidity
- calibration data
-Message-ID: <20240829185753.GA3493@vamoiridPC>
-References: <20240828205128.92145-1-vassilisamir@gmail.com>
- <20240828205128.92145-2-vassilisamir@gmail.com>
- <ZtBkNu0luJyT1emw@smile.fi.intel.com>
+        d=1e100.net; s=20230601; t=1724957947; x=1725562747;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PRZBUt1W8DCJ1jHrr+gnsMYGeF53sTiXJ23wwVYpYOg=;
+        b=a7FoPUDgwmINsTELAiNFLDU/KKdDUWRetkaRERCZi0XlTGOMYHTNX1igUki5MBC3Jh
+         W+/iXuoZOGFxS2lCJKU8UdL28r2ea+qfpJBL1cVi1ms8EZgWvu16Tu02izgduKBtiIqF
+         oMtPVL28TuHZO+gMSVujBNFoWYAcJlWAVyyQmjBieVuEkCejjrkVgMZiUo0elmB+e3ui
+         nHJ1y+sKfy6SvkAPH+/50cP4QJGaJyUdrYeZ7Pz0QmkjsNSmYzhj0mH4i+LtJHqUa590
+         bwdDUWb+NNSIXZE5cUQgTjIvaB1xvrzzsZcznjSgezlemov6F+OGzE8CcWh79LwnyHdA
+         l8Xw==
+X-Forwarded-Encrypted: i=1; AJvYcCXnjGlFo2B6wK16fO81YMCCivdqHDo9jtCXjaM4bA8Vhg/+AGFtVgnoheY4nbmU8kWUduhxSFYt9QVmm+o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwymHJb+Kw9ZuCkrhcX/cm5Wb1zCbBDXihjLrlfjisife73xtyA
+	Y/1Sll/cgKHdbjxlYKB/AEZhCw3yabM+Vzgp1wrUdYUuTU3Fo4GEt1jdUHgEeHRC5ecDHeheSz+
+	MyYNNtKpxuEGg/NFdLeJRhZYKlT8PWipMB1G2UQ==
+X-Google-Smtp-Source: AGHT+IE1lSs8AeBnJcwLSsDPcuMKigE0iJFh6T8NMjRqEvSK/A7qrA5InXsUBFZKfmJ/zOeVCOtgTcZxcnE5fm4gz4w=
+X-Received: by 2002:a17:907:9708:b0:a80:7ce0:8b2a with SMTP id
+ a640c23a62f3a-a897f84d44cmr302438566b.19.1724957947326; Thu, 29 Aug 2024
+ 11:59:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZtBkNu0luJyT1emw@smile.fi.intel.com>
+References: <20240108120824.122178-1-aleksandr.mikhalitsyn@canonical.com>
+ <20240108120824.122178-3-aleksandr.mikhalitsyn@canonical.com>
+ <CAJfpegtixg+NRv=hUhvkjxFaLqb_Vhb6DSxmRNxXD-GHAGiHGg@mail.gmail.com>
+ <CAEivzxeva5ipjihSrMa4u=uk9sDm9DNg9cLoYg0O6=eU2jLNQQ@mail.gmail.com>
+ <CAJfpegsqPz+8iDVZmmSHn09LZ9fMwyYzb+Kib4258y8jSafsYQ@mail.gmail.com>
+ <20240829-hurtig-vakuum-5011fdeca0ed@brauner> <CAJfpegsVY97_5mHSc06mSw79FehFWtoXT=hhTUK_E-Yhr7OAuQ@mail.gmail.com>
+ <CAEivzxdPmLZ7rW1aUtqxzJEP0_ScGTnP2oRhJO2CRWS8fb3OLQ@mail.gmail.com>
+ <CAJfpegvC9Ekp7+PUpmkTRsAvUq2pH2UMAHc7dOOCXAdbfHPvwg@mail.gmail.com> <CAEivzxd1NtpY_GNnN2=bzwoejn7uUK6Quj_f0_LnnJTBxkE8zQ@mail.gmail.com>
+In-Reply-To: <CAEivzxd1NtpY_GNnN2=bzwoejn7uUK6Quj_f0_LnnJTBxkE8zQ@mail.gmail.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Thu, 29 Aug 2024 20:58:55 +0200
+Message-ID: <CAJfpegtHQsEUuFq1k4ZbTD3E1h-GsrN3PWyv7X8cg6sfU_W2Yw@mail.gmail.com>
+Subject: Re: [PATCH v1 2/9] fs/fuse: add FUSE_OWNER_UID_GID_EXT extension
+To: Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+Cc: Christian Brauner <brauner@kernel.org>, mszeredi@redhat.com, stgraber@stgraber.org, 
+	linux-fsdevel@vger.kernel.org, Seth Forshee <sforshee@kernel.org>, 
+	Amir Goldstein <amir73il@gmail.com>, Bernd Schubert <bschubert@ddn.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Aug 29, 2024 at 03:06:14PM +0300, Andy Shevchenko wrote:
-> On Wed, Aug 28, 2024 at 10:51:21PM +0200, Vasileios Amoiridis wrote:
-> > Convert individual reads to a bulk read for the humidity calibration data.
-> 
-> ...
-> 
-> > +	calib->H2 = get_unaligned_le16(&data->bme280_humid_cal_buf[H2]);
-> > +	calib->H3 = data->bme280_humid_cal_buf[H3];
-> > +	tmp_1 = get_unaligned_be16(&data->bme280_humid_cal_buf[H4]);
-> > +	tmp_2 = FIELD_GET(BME280_COMP_H4_GET_MASK_UP, tmp_1);
-> > +	h4_upper = FIELD_PREP(BME280_COMP_H4_PREP_MASK_UP, tmp_2);
-> > +	h4_lower = FIELD_GET(BME280_COMP_H4_MASK_LOW,
-> 
-> > +			get_unaligned_be16(&data->bme280_humid_cal_buf[H4]));
-> 
-> Either I don't understand the side effects, or this is the same as tmp_1. No?
-> 
+On Thu, 29 Aug 2024 at 19:41, Aleksandr Mikhalitsyn
+<aleksandr.mikhalitsyn@canonical.com> wrote:
 
-Hi Andy,
+> Let's think about it a bit more and if you confirm that we want to go
+> this way, then I'll rework my patches.
 
-Thanks again for taking the time to review this!
+And ACK from Christian would be good.
 
-This is the same as tmp1, and I didn't notice that I should change it.
-Thanks for pointing it out.
+I don't see why this would be a radical change: idmapping changes the
+meaning of fsuid/fsgid, so we now can't send those to the server in
+the non-create case.  The only thing that changes is that an "invalid
+ID" value is introduced into the protocol.  Probably makes sense to
+explicitly define this valiue in <uapi/linux/fuse.h>.
 
-Cheers,
-Vasilis
-> > +	calib->H4 = sign_extend32(h4_upper | h4_lower, 11);
-> > +	calib->H5 = sign_extend32(FIELD_GET(BME280_COMP_H5_MASK,
-> > +			get_unaligned_le16(&data->bme280_humid_cal_buf[H5])), 11);
-> > +	calib->H6 = data->bme280_humid_cal_buf[H6];
-> 
-> -- 
-> With Best Regards,
-> Andy Shevchenko
-> 
-> 
+Thanks,
+Miklos
 
