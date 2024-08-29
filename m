@@ -1,113 +1,109 @@
-Return-Path: <linux-kernel+bounces-307470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12401964DE8
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 20:43:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BEC9964DEC
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 20:43:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBB9E1F23400
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 18:43:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5977128464F
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 18:43:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A2CC1B8E86;
-	Thu, 29 Aug 2024 18:42:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 011E31B8E86;
+	Thu, 29 Aug 2024 18:43:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="joWaMbs/"
-Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CPlYK/QJ"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E6C44D59F
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 18:42:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13CA94D59F;
+	Thu, 29 Aug 2024 18:43:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724956972; cv=none; b=t/NLcYrbcx4AoY9AaaVpHgskp3HEaHhAgyNtZUR0M+DIw0ftzWtom0cRwmvy/ckJeRG/kNF8wbzMAWAvoHHv2PpUpykaG3AMqhA1v1dU+7pFRplJ5pgzpscD5Tmc64osfnAs+RXcz46skZtw9PtDEVC6F43PSSYLTunwAiJNyoA=
+	t=1724957006; cv=none; b=cAMJdNt6e67gIStd0dFoRaHhVsgwCVz1oZAShJ64IwDqZtE/qYqMceoh7HkRoVIk7LiQsRvC5SjWjRobVZi8D/ng6VrIGDMbrsw/1d7pjZ0h1ZYg/lFNfEtPlLjZhhrTatRV1q9i+hPVT3fE8JvGthhqm+04v1XcPgRvPLLobdo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724956972; c=relaxed/simple;
-	bh=FKzuZ92hgjikr1TymWCa05Fjh2jFE3ZTr+nuO70Y0/Q=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZurOjAr/B74vdIlfCKxCtyDaqc7706Pxk8/pDYgIWZoZ6bZ1/kHJ56MXaOGuuyWTJdsCjavVQwv72FMEBrlno9+5Dmrbm6Vkul8qVsN0qHBkCsD1/5dfxwIIgLHP1JcIux7LwLiyMziE6gh5C3a1Qo0EuES4rQis/WqFbQm9/G8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=joWaMbs/; arc=none smtp.client-ip=185.70.43.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1724956969; x=1725216169;
-	bh=IghPTrqsf0PYbIybSIdWfKQ4wloUFIsbW+NfxCoVioY=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=joWaMbs/SnRJug/1Efl3lukJJ7Kh3g+2jYETUe5Uxw5upCvhOMO5R7ydgtTnvK3i2
-	 usFPCfBccdLzAKFosfM2p7KxYJYFR8na5xZNJAYDVij+KQWLIHmKwHDeuGdU61wIeo
-	 Z7uAE8wI/zM5AOB2+LFHfyhxpUKAwt61AIKoyn3FLurrONRfoc8IgGyhkToQPUg9Z5
-	 jFoKsZUYcRFlrv4ZfA61jt69pXnXcp4nKYbZ2ztX9+J2TUw4vrJwQ2fylFdCzLmjtD
-	 hwdgpbi4xbb7snqigyvsJ+c4auhQtpGmFwhoYV4wDdiZb1iHY2UzthYDUkDZuYA4PZ
-	 2H9Hi7lXjhdcw==
-Date: Thu, 29 Aug 2024 18:42:43 +0000
-To: Danilo Krummrich <dakr@kernel.org>, ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@samsung.com, aliceryhl@google.com, akpm@linux-foundation.org
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: daniel.almeida@collabora.com, faith.ekstrand@collabora.com, boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v6 21/26] rust: alloc: implement `contains` for `Flags`
-Message-ID: <9dee325e-6610-4628-8afb-d53895f7a9f1@proton.me>
-In-Reply-To: <20240816001216.26575-22-dakr@kernel.org>
-References: <20240816001216.26575-1-dakr@kernel.org> <20240816001216.26575-22-dakr@kernel.org>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 23c120e56b61df2530a0e7ade62cef2f46c6a9dc
+	s=arc-20240116; t=1724957006; c=relaxed/simple;
+	bh=vE+oHFDKn1n2H0ca0J6627LrKzdWqp1r5PgbRtG60jI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ijPLSjCI14NCFyj9qWwdrtxqZXgipKBvQxp1bjL9LO0XeRvwj0IM88eVkkRND7YQEmXbgGuScsUcml5eu91WVuqsWfEUOeFEHpsiO+s7vzwa/KHwlAI9549iS/lVVsRENFBEpypgKyMImKw3g0szKC8mKBsSEH2QQMRAcdNp0Wk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CPlYK/QJ; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-715cdc7a153so834242b3a.0;
+        Thu, 29 Aug 2024 11:43:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724957004; x=1725561804; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=4C7xSOcW/TzKaBdUZWPIdJ9PAcDUfVW7KB+BCThOMkc=;
+        b=CPlYK/QJjoZ/Sb/O82Kog2l97PSM/wl6runqGGVtcwStezgFWNxPVtWj0q7p5uanQC
+         51bsJSPJvTK+vzoxM25xZ+p5AwSHttnjFw/5cdt7DlTu+AQzBuamIM6tLvD7FdTEPEjG
+         uJW2bmae1cjBsDvfudGsoIONvua2QC4jJO+VdX2cqPo/P6f1On7pLhX4ohy9tdcbNPTr
+         gYjHwUPy80k3sfUylC1noM6qmlNWYGxYrdhP/lx+bdPRfKkV0UPXN8nko6WhVWTpK0pP
+         5XPQTYkdMsv/VJ8l2G0+KIJy+Wim72/k8svT6oANR0RrZD3YGKfSwdgWi39xylLSSC9f
+         lWUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724957004; x=1725561804;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4C7xSOcW/TzKaBdUZWPIdJ9PAcDUfVW7KB+BCThOMkc=;
+        b=M3QY542CKaPVxVo3YL81GUwmT3ujnDZ5e9WI/TUC0zLUNU/r+m7QXlTFEeFEL8LA8p
+         yfYOyNYLijhBBvqYIvRCOJn09hfd0OVDyuifcgP9pWB/vXuGbZs7T8QtBqvkFKhXwSmX
+         n4VLulwQWuhZWT0r4StnJeQUTJVBsgPp86BFVeKnQN3Ns9hEeo1RT+tOxdpGesZvcc1A
+         urSRfgIQnBX+IUhjrKVD97/BbLHAz63Bi+dZ/vkRaHl3jX3hPi1qoUzequUCu7wJUt3C
+         ZhnH/OV2Ng+zwWMg7GHmwehtfeGt++w53XiepvUFHCacpx7P8XrdwZ0znK4mRmlYoMh1
+         ZWmg==
+X-Forwarded-Encrypted: i=1; AJvYcCX7FhNDUQOdXesSqbbjydtjxCElfnI5DL5CeANEL8wDt5z6hI2mEZeHEp3Jp0Z+Th1D5+4Fdzc17lebHi8=@vger.kernel.org, AJvYcCXD1TU9oG91XW8UWdUUpiQhtPK2VEIV9eRHa2I4i63VmkAzG6Grl6yL/R6afICvzBi4xrhZVlXN@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGtlnJy14NMchxaTxxiCb1s/WccVndT2kdXwiIuXy09y1NCP1j
+	3Y9D9LvEJBu2Hkwdux+1K7K7X3MffzhiU7iqEcIGWaaZqBwT8bDN
+X-Google-Smtp-Source: AGHT+IFVq3+ktr6bQOFUC8KGniIQIVORiHvN8Mt2AhB7WSm9HpXa44ndoShl8h6MzRhY/EwEB20hIg==
+X-Received: by 2002:aa7:8895:0:b0:706:aa39:d5c1 with SMTP id d2e1a72fcca58-715e78a7047mr5738454b3a.8.1724957004073;
+        Thu, 29 Aug 2024 11:43:24 -0700 (PDT)
+Received: from [192.168.1.14] ([200.4.98.43])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-715e55b9cf0sm1486289b3a.96.2024.08.29.11.43.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 29 Aug 2024 11:43:23 -0700 (PDT)
+Message-ID: <9f4831cc-84f4-4329-b912-d558c74797c6@gmail.com>
+Date: Thu, 29 Aug 2024 15:43:18 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [patch net-next v4] ethtool: pse-pd: move pse validation into set
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ syzbot+ec369e6d58e210135f71@syzkaller.appspotmail.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240828174340.593130-2-djahchankoike@gmail.com>
+ <20240829103552.09f22f98@device-28.home>
+Content-Language: en-US
+From: Diogo Jahchan Koike <djahchankoike@gmail.com>
+In-Reply-To: <20240829103552.09f22f98@device-28.home>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 16.08.24 02:11, Danilo Krummrich wrote:
-> Provide a simple helper function to check whether given flags do
-> contain one or multiple other flags.
->=20
-> This is used by a subsequent patch implementing the Cmalloc `Allocator`
-> to check for __GFP_ZERO.
->=20
-> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+Hi Maxime,
 
-Reviewed-by: Benno Lossin <benno.lossin@proton.me>
+On 8/29/24 05:35, Maxime Chevallier wrote
+> You have an extra white space here. Make sure you run your patch through
+> the checkpatch script to detect this kind of issues. 
 
----
-Cheers,
-Benno
+My apologies, I did forget to run checkpatch, thanks for pointing that out. Will
 
-> ---
->  rust/kernel/alloc.rs | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
->=20
-> diff --git a/rust/kernel/alloc.rs b/rust/kernel/alloc.rs
-> index 1feabc817d00..5c66229a7542 100644
-> --- a/rust/kernel/alloc.rs
-> +++ b/rust/kernel/alloc.rs
-> @@ -34,7 +34,7 @@
->  /// They can be combined with the operators `|`, `&`, and `!`.
->  ///
->  /// Values can be used from the [`flags`] module.
-> -#[derive(Clone, Copy)]
-> +#[derive(Clone, Copy, PartialEq)]
->  pub struct Flags(u32);
->=20
->  impl Flags {
-> @@ -42,6 +42,11 @@ impl Flags {
->      pub(crate) fn as_raw(self) -> u32 {
->          self.0
->      }
-> +
-> +    /// Check whether `flags` is contained in `self`.
-> +    pub fn contains(self, flags: Flags) -> bool {
-> +        (self & flags) =3D=3D flags
-> +    }
->  }
->=20
->  impl core::ops::BitOr for Flags {
-> --
-> 2.46.0
->=20
+send the corrected patch.
+
+
+Thanks,
+
+Diogo Jahchan Koike
 
 
