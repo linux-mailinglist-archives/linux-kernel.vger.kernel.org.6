@@ -1,115 +1,144 @@
-Return-Path: <linux-kernel+bounces-307640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5EA09650AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 22:18:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D334A9650A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 22:18:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D5DA2814F7
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 20:18:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D8011F22EE7
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 20:18:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 537621BB6A1;
-	Thu, 29 Aug 2024 20:18:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Al6imJ8D"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C374E1BAEDE;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B47731BAEDC;
 	Thu, 29 Aug 2024 20:18:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KFvgWyfG"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7525A1BA88F
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 20:18:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724962714; cv=none; b=o9b0i7MjIN8jKCUocQeCcvlT4nwPXlV7GQ5JknnVCjQ6jSaAxYgBWuJGLwEF/L/XKTcJ948anz0Sno2SlpP/1bRWaOOExjM0ARmsmH+Dr/cbrVsd0aqNJjx8V1QclnK0povqYaRRIiqGkonqOMMG3FSR7tMrp8P8Kkp9JnoaGPY=
+	t=1724962712; cv=none; b=WTm3Po9GbSmHrCI+Px4ULen5F8YxkZbRWvFysNPhgRbakT2WSGnRmwglOQMgt0JO6HjUf5GQRiS9YqD6/Lv+XDQUONabhPHOl6lw5gNgMKUiPq+z1r+Lr+qGdMAdgwmq/ioH13ptzLAe+G0D/TsNKpWTe3Yp9XwejVrKpdrRqG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724962714; c=relaxed/simple;
-	bh=SKWfYrbBH0IoRJ/3tiqPCXJ5zpPI+w9UX0N3O8LojwM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XQ1iO7ArXpgOLRa4GYDf/7dCnat0mczASCtCy1TprqGiVbFkmIb1eX+mLgLQyrUNuC8ocfr7pcNLAQ7m7dz3OorN67QRpU6OF0gQIxWu18L5yNVjqTe6N5Z3S7V+BiWUE0vKoX6RQMOy7hAg1+ZDhve0mll2cc697HeRrayoJQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Al6imJ8D; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724962713; x=1756498713;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=SKWfYrbBH0IoRJ/3tiqPCXJ5zpPI+w9UX0N3O8LojwM=;
-  b=Al6imJ8DledFZGYRGw7GZxoaM46NvseFe4A8hnfiBkIb6ia1zxFrKYVO
-   NnarmasluwOxVoHzTzpAt0ochUQKDKwz0ptng5ZMBtCJKCHUCmJDiWhPj
-   Td4MSwHh5BHRUB84yrGH27M8bbWChHNAsY4dRi7e7HrfsaKUXa6QCJP/Z
-   A12yBjE/r5E8lQvWR2tSCSGhABkFhn4C8LKHSpXl8tHSVeLM1YGlfAfHK
-   7XbRF9J4kH7JPdsr2yQGC8RCdE4aGm+m4cV3cxdJxwuwZk2PVksKNCaLL
-   UgQnr9pRSLNmzIj7IzeNbigZrEjNjBGaSzSTnP24y+Gcl2Z429/3dZWFp
-   A==;
-X-CSE-ConnectionGUID: 0uxEcvlyR8KJyKAjA5Y05w==
-X-CSE-MsgGUID: 4r4iOB6DSei0maF5qUMcew==
-X-IronPort-AV: E=McAfee;i="6700,10204,11179"; a="34992815"
-X-IronPort-AV: E=Sophos;i="6.10,186,1719903600"; 
-   d="scan'208";a="34992815"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 13:18:32 -0700
-X-CSE-ConnectionGUID: 8MEbzyTCSCGD5Ve/3diPvw==
-X-CSE-MsgGUID: 5Q+KPRAZSs65U8HIgdNAVw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,186,1719903600"; 
-   d="scan'208";a="86922584"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 13:18:28 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sjlb7-000000039IC-169l;
-	Thu, 29 Aug 2024 23:18:25 +0300
-Date: Thu, 29 Aug 2024 23:18:25 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Vasileios Amoiridis <vassilisamir@gmail.com>
-Cc: jic23@kernel.org, lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, ang.iglesiasg@gmail.com,
-	linus.walleij@linaro.org, biju.das.jz@bp.renesas.com,
-	javier.carrasco.cruz@gmail.com, semen.protsenko@linaro.org,
-	579lpy@gmail.com, ak@it-klinger.de, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	christophe.jaillet@wanadoo.fr
-Subject: Re: [PATCH v4 2/7] iio: pressure: bmp280: Add support for bmp280
- soft reset
-Message-ID: <ZtDXkZQh689PGtrb@smile.fi.intel.com>
-References: <20240828205128.92145-1-vassilisamir@gmail.com>
- <20240828205128.92145-3-vassilisamir@gmail.com>
- <ZtBlLqLgpi2h6kMl@smile.fi.intel.com>
- <20240829190004.GB3493@vamoiridPC>
+	s=arc-20240116; t=1724962712; c=relaxed/simple;
+	bh=gWZDX2yB/LRVevbJYJAmyipmeTu7Crz6O/4RZ1n2yNw=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=NrXqw2xey4Wdk0TFo64HL6XV4T68tIazsuGx5Dv08xzywZjv1hmSYAeBf2K3aBN0JEvHqmT9zfvbfAdBPJGkb0H3oIq6OvDD/jmXyoR567ITWzgRj+ssqgyM1LTO4bgT6x/5uwhPl+bHIX+CY16PmwCMO5FNlncwpxRfgt3m9W0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KFvgWyfG; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e13c3dee397so1727200276.3
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 13:18:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1724962709; x=1725567509; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=xp+nUWa7e3H9z7YXgjztwQOeCXL6SgtH037N9HE8+a8=;
+        b=KFvgWyfG8c3iIGnKl/6UaxSTFyKWkqoO/nzaYxTmYl0uHrrDRRZKN4XNuQmfxWwsgw
+         IB9xeOVFHUFzsOhmD6ASIBJ5w+X4GXPb6cLjxxSkVktJYDZPW2Ce48uL2wD2TkQ36wmM
+         s3S5mU8JEk0WtPhRp0du4o1AkykFDLFKXPaqp+pt6X6gxaR9/w5UaqPjClfSHbEq4v15
+         2xibPl78GP+UI2j+UP5v5M81YHVxxhzfvkkEJz1V1ajcfcyxSMEuiM3wjECSlpnA6vSb
+         rDaofpM0Y4Vabq8eFofQA8aLob5/VRAni09bKilQL68FHPTNTEGOn6qtIuIB3+ADEUvJ
+         hKLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724962709; x=1725567509;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xp+nUWa7e3H9z7YXgjztwQOeCXL6SgtH037N9HE8+a8=;
+        b=V8lNlnISgvoq2GY8XRbhYxLOdTOUevfBkM77A84Ajeg6QbE042eFUTPlI24B0xeWDQ
+         mZvx0azyqdoOaA3+leeAlWvAqkGG4h+WWWdvPLUWdF3f5hSRL8eINkjr+miEBxJWPDWj
+         5Ir6NkJbB+86Xi2lD9d5gleswGxMZ1ff2XQ5lFkppq8aIlOWEh+kHsvUBbNwFZcEHkAO
+         TGFd/kCAFFMf//mXRXBxoU9aQRNjE/kBBurGJS+Zrirzb5FVveYEspl0V9t9VTePCzjM
+         XO2Sme9cKBxnrJuqS0cRsJGRr4YMIsA9teOFG7Cy+0QzU7lGBu4u674vAHxkH0b2+nfK
+         DCqw==
+X-Forwarded-Encrypted: i=1; AJvYcCWifpgrRG1gjlvSI4IGXn1KsHnNBxjceewTZAliDt8jQfysSPenJAy1RhGOhCpfEXzBM4+yt9fYYJPLUw4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8czcQgdAieQ4s9N5KoxDyxcWNukN3cJe4Y6LvsVXJJ4Xexswa
+	JtKGcvESZad2BN7tde7KhoEChDj+D4zMOxwt2m40QbM9nWze2n5XFGh+RGagse1OZr9W5qtEF3s
+	bTw==
+X-Google-Smtp-Source: AGHT+IGxLbIhfuqYDQioPCPEOkolNsROz1Gi6Rdvmdjoei6tLD1VnRlcfB7/z+Ib5bQ9Ont+AQs+mc72u2w=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a25:4986:0:b0:e16:6d88:b8c2 with SMTP id
+ 3f1490d57ef6-e1a7a00db26mr7276.4.1724962709044; Thu, 29 Aug 2024 13:18:29
+ -0700 (PDT)
+Date: Thu, 29 Aug 2024 13:18:27 -0700
+In-Reply-To: <20240829191135.2041489-2-vipinsh@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240829190004.GB3493@vamoiridPC>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Mime-Version: 1.0
+References: <20240829191135.2041489-1-vipinsh@google.com> <20240829191135.2041489-2-vipinsh@google.com>
+Message-ID: <ZtDXQ6oeQrb8LxkX@google.com>
+Subject: Re: [PATCH v2 1/4] KVM: x86/mmu: Track TDP MMU NX huge pages separately
+From: Sean Christopherson <seanjc@google.com>
+To: Vipin Sharma <vipinsh@google.com>
+Cc: pbonzini@redhat.com, dmatlack@google.com, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-On Thu, Aug 29, 2024 at 09:00:04PM +0200, Vasileios Amoiridis wrote:
-> On Thu, Aug 29, 2024 at 03:10:22PM +0300, Andy Shevchenko wrote:
-> > On Wed, Aug 28, 2024 at 10:51:22PM +0200, Vasileios Amoiridis wrote:
+On Thu, Aug 29, 2024, Vipin Sharma wrote:
+> @@ -871,8 +871,17 @@ void track_possible_nx_huge_page(struct kvm *kvm, struct kvm_mmu_page *sp)
+>  		return;
+>  
+>  	++kvm->stat.nx_lpage_splits;
+> -	list_add_tail(&sp->possible_nx_huge_page_link,
+> -		      &kvm->arch.possible_nx_huge_pages);
+> +	if (is_tdp_mmu_page(sp)) {
+> +#ifdef CONFIG_X86_64
+> +		++kvm->arch.tdp_mmu_possible_nx_huge_pages_count;
+> +		list_add_tail(&sp->possible_nx_huge_page_link,
+> +			      &kvm->arch.tdp_mmu_possible_nx_huge_pages);
+> +#endif
 
-...
+Pass in the count+list, that way there's no #ifdef and no weird questions for
+what happens if the impossible happens (is_tdp_mmu_page() on 32-bit KVM).
 
-> > Yes, it's up to 84 characters long, but I think it improves readability.
-> 
-> In all the previous cases though, shouldn't checkpatch.pl generate errors?
+void track_possible_nx_huge_page(struct kvm *kvm, struct kvm_mmu_page *sp,
+				 u64 *nr_pages, struct list_head *pages)
+{
+	/*
+	 * If it's possible to replace the shadow page with an NX huge page,
+	 * i.e. if the shadow page is the only thing currently preventing KVM
+	 * from using a huge page, add the shadow page to the list of "to be
+	 * zapped for NX recovery" pages.  Note, the shadow page can already be
+	 * on the list if KVM is reusing an existing shadow page, i.e. if KVM
+	 * links a shadow page at multiple points.
+	 */
+	if (!list_empty(&sp->possible_nx_huge_page_link))
+		return;
 
-No, much earlier than 100 characters relaxed limit was introduced, checkpatch
-stopped complaining on long string literals.
+	++kvm->stat.nx_lpage_splits;
+	++(*nr_pages);
+	list_add_tail(&sp->possible_nx_huge_page_link, pages);
+}
 
-> I didn't notice that they were below 80 chars and I never checked more
-> because checkpatch.pl didn't say anything...
+> +	} else {
+> +		++kvm->arch.possible_nx_huge_pages_count;
+> +		list_add_tail(&sp->possible_nx_huge_page_link,
+> +			      &kvm->arch.possible_nx_huge_pages);
+> +	}
+>  }
+>  
+>  static void account_nx_huge_page(struct kvm *kvm, struct kvm_mmu_page *sp,
+> @@ -906,6 +915,13 @@ void untrack_possible_nx_huge_page(struct kvm *kvm, struct kvm_mmu_page *sp)
+>  		return;
+>  
+>  	--kvm->stat.nx_lpage_splits;
+> +	if (is_tdp_mmu_page(sp)) {
+> +#ifdef CONFIG_X86_64
+> +		--kvm->arch.tdp_mmu_possible_nx_huge_pages_count;
+> +#endif
+> +	} else {
+> +		--kvm->arch.possible_nx_huge_pages_count;
+> +	}
 
-Exactly! This is old (6+ years?) feature.
+Same thing here.  Only tweak to my proposed API in patch 4 is that it needs to
+take nr_pages as a pointer.  Then it can simply pass those along to this helper.
 
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+>  	list_del_init(&sp->possible_nx_huge_page_link);
+>  }
 
