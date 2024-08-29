@@ -1,109 +1,105 @@
-Return-Path: <linux-kernel+bounces-307819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FA2996533C
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 01:04:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24B8F96533D
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 01:05:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 490AB1C2201C
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 23:04:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B702EB22BBC
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 23:05:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B460C18E37E;
-	Thu, 29 Aug 2024 23:04:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9760718CBE1;
+	Thu, 29 Aug 2024 23:04:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fYYY2L4e"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b="rxjsY1X+"
+Received: from mout.web.de (mout.web.de [212.227.15.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 869CB18A6D2;
-	Thu, 29 Aug 2024 23:04:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E50D1BAEE2
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 23:04:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724972681; cv=none; b=LeXBvZb80czJFGGFOeJZWhQC3yQ95IJOkieSv+nf8YA02DUjaAVbqbwSfGc4hrkJHsdvH/s2uSomTB12SVAF2jeoNtSKR/lB1OjyJjj7M1kB8fMh7ujiaLRk79FFyKYqVdn5A6fdpmswXEvf/UwQrqiN+9EHSpBcDXD/eF4cyWw=
+	t=1724972685; cv=none; b=Dl90w+53mBaW6eFWnyoz9hj/vx56b7mpJJRmrb5DeQAuFLar0cku69fP3SZGQeaXYpnSwX78qO2LSEA6smTeth6drSoZS21opPfrAW+chH2CZEZiXfELtDjaeT3CFADw+MKYMueiPPmt7xxEG1WrLP6/S3Dosq0CapR2G/PEY8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724972681; c=relaxed/simple;
-	bh=xxKz9PCxVQJGKzd3KrLHagUw7YiCjOLdR1D0sByscmA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ArGURY9N5TmQ5kWqdYjp1DizsTf/LS8ZhIBoX/K3kejweedawNxi5gh3SXiOKNxj6o2h5gTCGQP71mcbqIImHnbqGJtMNMWUDMnamlwoM5Q66Sm7p2vxl9w7vtzp0hQ3ji0w1t6+OgatOBS1Dj1iUAYItGIPDDA1eC9FS11tBVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fYYY2L4e; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724972679; x=1756508679;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=xxKz9PCxVQJGKzd3KrLHagUw7YiCjOLdR1D0sByscmA=;
-  b=fYYY2L4e1V07AoyWKKWgUdY5bwfTlE3sK0Xn37GWPyKzfD35L6M2hDOG
-   ij1+pWRbWGEllgSAxS+9mvt3TZLQtB9Fc6Za6ujblvPACiNj7+s52KVjk
-   oVryv75MJAzrCa1F01Atjw5wV3P3REuBhDqicZ2z9FxOMZO2WWs+iDouE
-   E23Wg24usUsysbq19Ltko5Lf+ZwIxsV4hvpL4tTFloLZjipsXzvCT9kzi
-   1lxtNEG/l7We5GlCSDjLdADsp2nrhRiXsCOA/ImdhGija8XEZSGbcJL8Y
-   o6lv0Bz8kVHa4XzcaWq0QA2KaaP9D9sPqwN+hjNLnTlG92w8EVA3lnC+D
-   A==;
-X-CSE-ConnectionGUID: i9lOqrZZQeCjANDk9aZAWA==
-X-CSE-MsgGUID: PIRpRCtISziPPU+nrb1v7w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11179"; a="23787287"
-X-IronPort-AV: E=Sophos;i="6.10,187,1719903600"; 
-   d="scan'208";a="23787287"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 16:04:38 -0700
-X-CSE-ConnectionGUID: zZrwyE/lRvChSnynhLhZ3g==
-X-CSE-MsgGUID: 27Uof+B2QCmlHWAXj6GV2Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,187,1719903600"; 
-   d="scan'208";a="101234744"
-Received: from bpinto-mobl1.amr.corp.intel.com (HELO desk) ([10.125.65.120])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 16:04:39 -0700
-Date: Thu, 29 Aug 2024 16:04:29 -0700
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	linux-kernel@vger.kernel.org, x86@kernel.org,
-	Robert Gill <rtgill82@gmail.com>,
-	Jari Ruusu <jariruusu@protonmail.com>,
-	Brian Gerst <brgerst@gmail.com>,
-	"Linux regression tracking (Thorsten Leemhuis)" <regressions@leemhuis.info>,
-	antonio.gomez.iglesias@linux.intel.com,
-	daniel.sneddon@linux.intel.com, stable@vger.kernel.org
-Subject: Re: [PATCH v5] x86/entry_32: Use stack segment selector for VERW
- operand
-Message-ID: <20240829230429.bksowrtyj7qqwtsh@desk>
-References: <20240711-fix-dosemu-vm86-v5-1-e87dcd7368aa@linux.intel.com>
- <cdcc5b91-321b-4e33-9a86-829b8f632ae6@intel.com>
+	s=arc-20240116; t=1724972685; c=relaxed/simple;
+	bh=2Rjx78nyUgX75X0GQGLqziP8KKXen2/SCwhbO9BiCE0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=EuUs9bGGnrFVBGisq3NnrR6rDEDhcpJNOC3KsCegcvfjb6/MBVY+9DVQxZTKsbqkzPTdf4dDkbhdytgXplnRvrlYjUfmstNTHW4OU6cPvfqGrdQk9x181R5l0uvuCtMQ4J0y+OZu0dLB1kMRudhO4AsAacBp08eZhMRV9fbkjEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b=rxjsY1X+; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1724972680; x=1725577480; i=spasswolf@web.de;
+	bh=HyWzHg+sfe9Oo23hZtoGqTcGf6ltwKxb3Z16ronqjEM=;
+	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-ID:In-Reply-To:
+	 References:MIME-Version:cc:content-transfer-encoding:content-type:
+	 date:from:message-id:mime-version:reply-to:subject:to;
+	b=rxjsY1X+9a1L/bERUROA8mZ38qs80DisJvPDxCZBsOfhL6ZUtY4n0NZBrKF8dv1x
+	 uUcKgig/9634unH19JNjdAHFXfdDaDkIFPRaP5jae3Jpv9ygOTZuSwqH8EaIiX2CO
+	 XA/lBuhe93zq5u8w5v51SEKI8xjEF7wcBauS+SFEjIFQJqGZ/L6MOFpE8mKlDJf5J
+	 zsuK0yJk3NikbvvhQRn3D/DU5Z/1mhiklEvrqdm04eOlgbf/pPKQhe8hFDa5NCI+S
+	 /WS5kBDJ0ffXVOyiMBejFiniMMtOSVGsUBXpGHr26qP/ofnmODZZp7wccEV9Xonte
+	 DU/2idhSM94Y9tnoKw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from localhost.localdomain ([84.119.92.193]) by smtp.web.de
+ (mrweb006 [213.165.67.108]) with ESMTPSA (Nemesis) id
+ 1MYclj-1sXJUp1hml-00Uxgp; Fri, 30 Aug 2024 01:04:40 +0200
+From: Bert Karwatzki <spasswolf@web.de>
+To: =?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Cc: Bert Karwatzki <spasswolf@web.de>,
+	linux-kernel@vger.kernel.org
+Subject: Re: commit c2fe0480cd77 leads to hang on boot
+Date: Fri, 30 Aug 2024 01:04:37 +0200
+Message-ID: <20240829230438.3226-1-spasswolf@web.de>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: 20240829224124.2978-1-spasswolf@web.de
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cdcc5b91-321b-4e33-9a86-829b8f632ae6@intel.com>
+X-Provags-ID: V03:K1:axW3DG9u6C9TIL17DpA7PMcF0F3UQHDa01yRhhsc6YnNc9YeJAT
+ jwaTDjMnFxu6kThjGkB9xd3GJ5s0F/UUBnxJvBx+3edhXqxexEiDqQ2nQfo8L5BUYPN39XT
+ FMYXQHs0/qHqiMKrFt4guzfdZqK6gpNdg5TQHZ1ji1r47HBjw/f8sEDoCb41lIzISUMS5zW
+ cT42rJvtDAc7A2aG0eqMA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:HVy2g/1cvag=;rAnMoYSC045+l/3NicjqIhMfjzk
+ 2nqOnY1fQm2fn9oiqDjdEiePHvDv09tWNTYFBgrlVI7d86N2wlaXr0tE450u1UYrmaqP4bZ8V
+ +g9g6LlFXRDfuLlrv3o4O/fl5LavXlIC+/MO2RVh+PjA4liMRkjNK5OBJvbOyWR+8JNdGgG+w
+ M8IEw90ed0D0JdObvUQ/yJS+DcBrZFcHd+nzQoIE3koNQX/X33DjDvAhABS/afdoaQBfqZIjC
+ czdtVdYriZwQnXo4Wj+XyHE2RBpfUP3gG75qPN5twmmwcHdu4o2Ma7XqPg8BXVfNJUgakDdl+
+ bvYBNQWScKsAxgOsLKg8GTQRp9Y3rEcceW2GaRW3rsd6vWweg9NOuaJmW7mIXBtKTQclV4bMG
+ MjsBYO+ylgSK1ql1NoZGK+5hIKX77tMft0Zdz+6qLFS143ZT6IRvVEjU5z8JvtpmcTQvAPYpR
+ LJML9pBrD8SBoyyln/S9B9hGQEjX6h5dGDECOt+4/IaVBhF1i7xQxf1mg1uON6I1F6aYZA9UB
+ aoVjBbrXgp/V+ZMP/G6hlcQLlvFH32a8JNXpnGLZ083Y8b05EabKR/+TzWlTfCsfMDUBomJ81
+ 942Oc0LAbKNz1elKysgI1AvG5MWpMCBIpz3RXPNVRUPxZKE8aowTvJ07U9fyQIY39JVhWSAZQ
+ UQAKHqm4RYbmm/s5lxxGSXtGaa8enawaL+ZxjNlTsV71FUqcrz0EQfhgk4jYNhUjMnpAIcCKM
+ H4K6OQl726xmLppUwL4NlUxfq0km1Z5haa7QXyKei+qN3CK0MeywiUsp0GRDyLgXK1u0QRPzP
+ cNJtwMgbbC2kg31usaLryIJg==
 
-On Thu, Aug 29, 2024 at 03:28:13PM -0700, Dave Hansen wrote:
-> On 7/11/24 15:03, Pawan Gupta wrote:
-> > +/*
-> > + * Safer version of CLEAR_CPU_BUFFERS that uses %ss to reference VERW operand
-> > + * mds_verw_sel. This ensures VERW will not #GP for an arbitrary user %ds.
-> > + */
-> > +.macro CLEAR_CPU_BUFFERS_SAFE
-> > +	ALTERNATIVE "", __stringify(verw %ss:_ASM_RIP(mds_verw_sel)), X86_FEATURE_CLEAR_CPU_BUF
-> > +.endm
-> 
-> One other thing...
-> 
-> Instead of making a "_SAFE" variant, let's just make the 32-bit version
-> always safe.
+To look into the issue I applied the following patch to next-20240829:
 
-That sounds good to me.
+diff --git a/drivers/video/fbdev/efifb.c b/drivers/video/fbdev/efifb.c
+index 20517448487e..ba2b0d4b1bd3 100644
+--- a/drivers/video/fbdev/efifb.c
++++ b/drivers/video/fbdev/efifb.c
+@@ -573,6 +573,8 @@ static int efifb_probe(struct platform_device *dev)
+ 		pr_err("efifb: cannot acquire aperture\n");
+ 		goto err_fb_dealloc_cmap;
+ 	}
++	printk(KERN_INFO "%s: not calling devm_register_framebuffer\n", __func__);
++	goto err_fb_dealloc_cmap;
+ 	err = devm_register_framebuffer(&dev->dev, info);
+ 	if (err < 0) {
+ 		pr_err("efifb: cannot register framebuffer\n");
 
-> Also, is there any downside to using %ss: on 64-bit?  If not, let's just
-> update the one and only CLEAR_CPU_BUFFERS use %ss:.
+Now booting works again so the problem seems to be in devm_register_framebuffer().
 
-A quick test after adding %ss: on 64-bit doesn't show any significant
-latency difference. I will revise the patch.
+Bert Karwatzki
+
+
 
