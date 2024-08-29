@@ -1,97 +1,97 @@
-Return-Path: <linux-kernel+bounces-307132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D8339648D7
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:44:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 305979648D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:44:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B7B1EB2589A
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 14:43:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B660B27CD8
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 14:44:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CE941B012D;
-	Thu, 29 Aug 2024 14:43:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="foJeTLb3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 577CA1B1407;
+	Thu, 29 Aug 2024 14:43:55 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E0A81B012C;
-	Thu, 29 Aug 2024 14:43:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72E401922F1;
+	Thu, 29 Aug 2024 14:43:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724942622; cv=none; b=OhyRwuz31hPipvvbOt0KtHu7Iv+S3YRyAkmrA2mVBhFr0aa+rTt0RU4+mQxL0YLXB1EsAZN7dDhiXBvX33ZSb1XYpWHrSGZLzf+AnNFlGpXlnnMqY5wNp3Jb8CHIfcIpmqK0Dq1OgUd1DRzA+rNoqEbmCKaav8IP4WTbT5AiFhY=
+	t=1724942634; cv=none; b=r/LOmDk/11BnBipXpvV1YyUhTIeGJTfUMfkK6I43HCnJ2TyEXQJ8ImXD/Wv7yMdC8uG8azALgA8rAcVCBKEV5gbhHVid1yzZsP3C2sCKdpC9QrbbAM9nRd2h/VUV96JwQPv/hbcGuzvwQYdQee5ZodwsYVKp1tb6qIpsMczcl3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724942622; c=relaxed/simple;
-	bh=u1e3c0SFv9yNqfvkqvxRfaciHwQvuY6Qr1U+4eLCqyQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NX0QmSAD7rNrMFHnHLvsqjtnN8vIcHpgRrz14UHji52yOl0hnhdTShvNFpWLZRB15FYYFBnu9azpstOY/HsLbyreGlgh3Y+WeqZ54RgVOlpUM6XY9hEicY3HPRdpHN/oZ4xBSxonzSI3gKmEaAvSZsnaarVPxBsNva1mCT95lQg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=foJeTLb3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0565C4CEC1;
-	Thu, 29 Aug 2024 14:43:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724942621;
-	bh=u1e3c0SFv9yNqfvkqvxRfaciHwQvuY6Qr1U+4eLCqyQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=foJeTLb37N8xHOf3JvDM0pzvEOwW3Lyn8EEMiwfjkZsR7XBDCQ6haF+IZKQKISypP
-	 xV/mdZPLJOc8P/kPDvq6aBWVPTuOcFrqFaY+pZK2EeHo10vJNT/9c7G6Q7ldLb0T60
-	 cNuLnhnUtFkzLdu1/JH+XGs5M4ANtE0prmV/VzYQ30UaBvU1eqmU7M66zOrgdH2/DL
-	 fLjWk0ZG1b6C0SMClYlX2d3OFb6OyX5kWUXF0Ujcsj+H7aNzcZV26j2psFX5thwMJI
-	 HyApwOt89EGv31nvOnlx6bvG0YkF5JfpqExRzoWxFvh8S+t9r1/XVyCS/t1Ttx128b
-	 C43eCoNgdk59A==
-Date: Thu, 29 Aug 2024 07:43:39 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Jijie Shao <shaojijie@huawei.com>
-Cc: <davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
- <shenjian15@huawei.com>, <wangpeiyang1@huawei.com>,
- <liuyonglong@huawei.com>, <chenhao418@huawei.com>,
- <sudongming1@huawei.com>, <xujunsheng@huawei.com>,
- <shiyongbang@huawei.com>, <libaihan@huawei.com>, <andrew@lunn.ch>,
- <jdamato@fastly.com>, <horms@kernel.org>, <jonathan.cameron@huawei.com>,
- <shameerali.kolothum.thodi@huawei.com>, <salil.mehta@huawei.com>,
- <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH V5 net-next 05/11] net: hibmcge: Implement some .ndo
- functions
-Message-ID: <20240829074339.426e298b@kernel.org>
-In-Reply-To: <b3d6030e-14a3-4d5f-815c-2f105f49ea6a@huawei.com>
-References: <20240827131455.2919051-1-shaojijie@huawei.com>
-	<20240827131455.2919051-6-shaojijie@huawei.com>
-	<20240828183954.39ea827f@kernel.org>
-	<b3d6030e-14a3-4d5f-815c-2f105f49ea6a@huawei.com>
+	s=arc-20240116; t=1724942634; c=relaxed/simple;
+	bh=FgtLsvE2Z8nQ5GkSJHHX2Xh3JCncwV6NJfiC6LrqmBM=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JlX8RTVx/YsNCZMdMs0jx3pizbjducgShB/U8+sFNSVsrevWj9lan0VnUVlMZxBXO3TikAEgLKgfa1MnJaMHPrICY1PQnBXBOpAuCjhUxwLLU5GWb+ulImzQg/MbD48FNH+k8QUUxOPwRNEbn6kVJZmrVdNEce6TsaUJj22/kAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WvkSs063Gz6K6V4;
+	Thu, 29 Aug 2024 22:39:41 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id D4183140519;
+	Thu, 29 Aug 2024 22:43:45 +0800 (CST)
+Received: from localhost (10.203.177.66) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 29 Aug
+ 2024 15:43:45 +0100
+Date: Thu, 29 Aug 2024 15:43:44 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Yuesong Li <liyuesong@vivo.com>
+CC: <dave@stgolabs.net>, <dave.jiang@intel.com>, <alison.schofield@intel.com>,
+	<vishal.l.verma@intel.com>, <ira.weiny@intel.com>,
+	<dan.j.williams@intel.com>, <rrichter@amd.com>, <terry.bowman@amd.com>,
+	<Benjamin.Cheatham@amd.com>, <linux-cxl@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <opensource.kernel@vivo.com>
+Subject: Re: [PATCH v1] cxl/port: Convert to use ERR_CAST()
+Message-ID: <20240829154344.00000f9c@Huawei.com>
+In-Reply-To: <20240829125235.3266865-1-liyuesong@vivo.com>
+References: <20240829125235.3266865-1-liyuesong@vivo.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500004.china.huawei.com (7.191.163.9) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-On Thu, 29 Aug 2024 10:40:07 +0800 Jijie Shao wrote:
-> on 2024/8/29 9:39, Jakub Kicinski wrote:
-> > On Tue, 27 Aug 2024 21:14:49 +0800 Jijie Shao wrote:  
-> >> +static int hbg_net_open(struct net_device *dev)
-> >> +{
-> >> +	struct hbg_priv *priv = netdev_priv(dev);
-> >> +
-> >> +	if (test_and_set_bit(HBG_NIC_STATE_OPEN, &priv->state))
-> >> +		return 0;
-> >> +
-> >> +	netif_carrier_off(dev);  
-> > Why clear the carrier during open? You should probably clear it once on
-> > the probe path and then on stop.  
+On Thu, 29 Aug 2024 20:52:35 +0800
+Yuesong Li <liyuesong@vivo.com> wrote:
+
+> Use ERR_CAST() as it is designed for casting an error pointer to
+> another type.
 > 
-> In net_open(), the GMAC is not ready to receive or transmit packets.
-> Therefore, netif_carrier_off() is called.
+> This macro utilizes the __force and __must_check modifiers, which instruct
+> the compiler to verify for errors at the locations where it is employed.
 > 
-> Packets can be received or transmitted only after the PHY is linked.
-> Therefore, netif_carrier_on() should be called in adjust_link.
+> Signed-off-by: Yuesong Li <liyuesong@vivo.com>
 
-But why are you calling _off() during .ndo_open() ?
-Surely the link is also off before ndo_open is called?
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
-> In net_stop() we also call netif_carrier_off()
+> ---
+>  drivers/cxl/core/port.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/cxl/core/port.c b/drivers/cxl/core/port.c
+> index 1d5007e3795a..bdd3275ad417 100644
+> --- a/drivers/cxl/core/port.c
+> +++ b/drivers/cxl/core/port.c
+> @@ -941,7 +941,7 @@ struct cxl_root *devm_cxl_add_root(struct device *host,
+>  
+>  	port = devm_cxl_add_port(host, host, CXL_RESOURCE_NONE, NULL);
+>  	if (IS_ERR(port))
+> -		return (struct cxl_root *)port;
+> +		return ERR_CAST(port);
+>  
+>  	cxl_root = to_cxl_root(port);
+>  	cxl_root->ops = ops;
 
-Exactly, so it should already be off.
 
