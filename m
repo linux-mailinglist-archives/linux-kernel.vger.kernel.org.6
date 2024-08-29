@@ -1,170 +1,156 @@
-Return-Path: <linux-kernel+bounces-307530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C851B964E97
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 21:15:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C228964E9A
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 21:16:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 079C91C22F2F
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 19:15:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17FCF28282D
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 19:16:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 417A41B8E86;
-	Thu, 29 Aug 2024 19:15:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 386D11B86EF;
+	Thu, 29 Aug 2024 19:15:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AoqN2EV6"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TL6UCmDy"
+Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com [209.85.221.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB39639FC1;
-	Thu, 29 Aug 2024 19:15:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0D1D1465AB;
+	Thu, 29 Aug 2024 19:15:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724958921; cv=none; b=tAOHXNdsSSuM7EIy7QdvZNsUwabhq+QqKRB+xUh/egZJ2bl2VJLHQnlynMVUBquwvEuMD7+VZSPbgavIEVoQjLr7tF/KeQSh+0RDBa5S4rmyyvicQX35Ol+anQMw62OIA8+yB4kJoq7SaESfvZYoapefCEaK6HRZ31JtLmr6kAM=
+	t=1724958957; cv=none; b=X/yxTZ20f/oN1/nKES6nvDLbQhhPnpYtaqOtTNaQE3zeXT56lD2QrVorf4U/6eY2/kg1S1+pWMBwe6+c5S4CyeNdh14gTWLRoeqnzrigJYVS2y76lIzmuZP/x1BdYSQjq3LNUqSITAIOIySF1lsavam8ZzbA7LGbqcwqa06z7TY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724958921; c=relaxed/simple;
-	bh=VHRQ6wf9pASIVs0NmwnOb3Zk5nT39iYNBnojgSvFuB4=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=owbhehfy6NGiL4S1BxP0n9lRy+SIqhfttUZuOAnK58E02yBNo5l431Rrp25avnwgDRUGbFeX5NJ/74JiUafRb9KXJP3LS+T0POKhfCmro/XAYYLQf/gS5qVRkjusB7TNwPgQTebqVRuQlkqtvIx9PeMrCMi/HB1BujoGNlhlo+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AoqN2EV6; arc=none smtp.client-ip=209.85.208.46
+	s=arc-20240116; t=1724958957; c=relaxed/simple;
+	bh=0jXi7+7QMhF/FyYgxjssnc7RbxbhImRq/78BKVAp2XA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iizfL0EP6SnoEl9R3m4SCvKuiKvUYbq8gJpATgQbIuv0T+xcJz6TSAg9nNDA9FCEJFqJZqxrpzzhqn/vWR+AvX1L0AyiOV16cURwjkYoStfS1J4JdfGC9VPLxQSANeE4YdoHPHZn2nJfIb2OluCJjZtDKpgPpUGYT0fma0W0Zk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TL6UCmDy; arc=none smtp.client-ip=209.85.221.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5c210e23651so1133924a12.3;
-        Thu, 29 Aug 2024 12:15:19 -0700 (PDT)
+Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-4feb60e525bso587477e0c.0;
+        Thu, 29 Aug 2024 12:15:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724958918; x=1725563718; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=sQxMrVtFfx3iaAIR/DPAoViy1DT9cORfUF5Ff0JKuaQ=;
-        b=AoqN2EV6srNL30eh5v9hHT7RCHwxiA3IQeuISV23ESr0rjm3+2Qkb4LxQOtS1vgWz6
-         XjHRizGnWHYNXTPqnEzMWGA1Yo/WGmwE/HmmUZN3IkV4BVHxhCr1mc2KgdIfy0n5hMA5
-         t0lu5jiqzErKpq3ra21fm1lbNYF2cqEPRCnvwnTuu3aqjZrgHbywIZHKDf4aRtCHLTV7
-         rm41n+RDoobcKkcQfGqQqMtd5pLxnTOY9QhPgMltVIxBTo3orVdT6s9N/JUcAP40r8+z
-         BvY6FT6kvM0DrB3CFvlXhjRBUiwZcMj5AuWztbiRsG6lhEaAA5jJyd9GUD4oVmcDHDzt
-         J0Rw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724958918; x=1725563718;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1724958955; x=1725563755; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=sQxMrVtFfx3iaAIR/DPAoViy1DT9cORfUF5Ff0JKuaQ=;
-        b=nwxhR7aSqDSZJsxQD7lFP17kUVYfopjHa7o2Ry66dUhuXT7CrnhhpwVvGNmvF1X4C1
-         IZJ+5/Wc7RTMmLwHEewqfT6zdialnkH994I1ZOijO+hYsOhaS0M4ilHRYMn5+g0Wq76R
-         kwq/u/INxbR+g6gWVjbDRWkxEAUbkMV2opY+aXgaFLNXK+jkkg2OByWgDml1JHm/npRi
-         XxLZh7X0sTtHPHjINi2f/l7F33ZauhVh/QuggyzPpJkWTDC5a3edxMAKW3FIgrsyAIeI
-         ugPDVWzJz8RnuUrqEg9EmMYC1SqsN9Io8BBo0yt1jTT99uU8TinCBUndj29qMCUegmqs
-         WvDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU7hMlXQVZY2WD8QkBmkWik8XJJE1q8TNAZjajRDbdajfFgGiVYsL2gw8WJSIjx4DToL+oIItE9pE+X@vger.kernel.org, AJvYcCWLi4E3bNNIew9TZsoupPFzneI869Gu1ouem7OEDvbVn5xYv9Gry1+43NPxcu4uScEYJ1lVJpQxd/rkTq2T@vger.kernel.org, AJvYcCXRdjtbfxmWBAxKBX4PZJMjnqxuyiuV716D/NPhjQPRNaNIRtlNsZtEtL0eDgdv36BHUv3P4YgiG09s@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5it29THMrhKlJQKNG6QXyhm3TwpRcA37QOxXbQ9Sa7QCPXd/M
-	o3cg029NbrnYBSqnDHzzp6gE1gq1ihm8vYtHf2GfCCNKWdMVuLfu
-X-Google-Smtp-Source: AGHT+IEMEpVMwRHUID3qppOiNOjip0uISdiyTcHF26ujuUdsmlYKuybpxmku/4sDzekFVAf8pt6vig==
-X-Received: by 2002:a17:907:7e88:b0:a86:b923:4a04 with SMTP id a640c23a62f3a-a897fa74422mr294061166b.50.1724958917156;
-        Thu, 29 Aug 2024 12:15:17 -0700 (PDT)
-Received: from vamoiridPC ([2a04:ee41:82:7577:f22f:934f:9b88:e7ce])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a89891d7495sm110879466b.166.2024.08.29.12.15.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 12:15:16 -0700 (PDT)
-From: Vasileios Amoiridis <vassilisamir@gmail.com>
-X-Google-Original-From: Vasileios Amoiridis <vamoirid@vamoiridPC>
-Date: Thu, 29 Aug 2024 21:15:14 +0200
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Vasileios Amoiridis <vassilisamir@gmail.com>, jic23@kernel.org,
-	lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, andriy.shevchenko@linux.intel.com,
-	ang.iglesiasg@gmail.com, linus.walleij@linaro.org,
-	biju.das.jz@bp.renesas.com, javier.carrasco.cruz@gmail.com,
-	semen.protsenko@linaro.org, 579lpy@gmail.com, ak@it-klinger.de,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, christophe.jaillet@wanadoo.fr
-Subject: Re: [PATCH v4 5/7] dt-bindings: iio: pressure: bmp085: Add
- interrupts for BMP3xx and BMP5xx devices
-Message-ID: <20240829191514.GD3493@vamoiridPC>
-References: <20240828205128.92145-1-vassilisamir@gmail.com>
- <20240828205128.92145-6-vassilisamir@gmail.com>
- <fzdd26t5kjtwhvxxjq7k7ilbmx7i5r6phcygv5nlq2ajntlqht@pkt3kmr2hv6s>
+        bh=nR0JuAwLuIKu+YZbSZKkpBbfbZUDSLztLsb5RIpWmB4=;
+        b=TL6UCmDylPiyrTNyc68n+ztq5Q5WISuBLZ3rVeXdtIG3NvsNWHfPbpznFDe2Qmb4fc
+         4PPuZogz3Es95t7FsJBZE4G1eCUPKEnLjmri7iT0BMTf9s6N8xCpisSNogzjvvDH4Rdv
+         InQpRbd3M+3CdL71h5ouKmQcQSg3imt6cs3wTZt0tKItQsHQpa6vHJE0e+gWduxVigEt
+         ukKT0iQ40uSMbOCi9VAlpE0QkDnYh7XV+EQ1WOJst49v3jqnFIaaKTCiWcfFWk81W6vZ
+         +mhwLC8Sr/pWQgR1RqESUVvXQqf03ASa/PUpLNlVjqeg5N/E0rSS7WMdNQH8CSq0BlKI
+         +LkQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724958955; x=1725563755;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nR0JuAwLuIKu+YZbSZKkpBbfbZUDSLztLsb5RIpWmB4=;
+        b=mtLI3IAVQpRBwdBy+7b9ge/L/ylWm/4VdXYaRbebl4okJ6U6KQGclNUlXHZUU6GJXZ
+         3b+af683t+D/Bt6XVM+r/XmQHqNOmcajlOcow+Jd1Ydjo/aRdPm0u4XCQhYDlgad6dP5
+         clqO2NWkQ4A3mWxDibDCh2ZZ9m8VYPp/18zwQXO/05BCaYxpXl0jCx9st0jE8gkFDXcq
+         h6CuYQYyObrW6SZohkURiOq7Jh4g21MpIjtQrgaYFDF0GaMiZur34h00SAMEViOD+J9Y
+         pnGrXslUHHsnwZUkA2Fa1vdlE2ugQiUZoNW/ZjfoEUoXUSUppOjhip9XSq+05/vDEXYE
+         iedg==
+X-Forwarded-Encrypted: i=1; AJvYcCV0PYGWBNOlgkucYkDoRXFVkVpraGKcOxinnPIEaaCdwplPamK2ZxL5nHtsSRA+lBLXPU2oTbarBKtyLwYyQYL7taA=@vger.kernel.org, AJvYcCX0Se00CoimizG5uycWsLJCaQoCp+hWmtxw494XqH6jCNbI9/7gqD4iBVlZud486VT1VJf1CkWbJQcF@vger.kernel.org, AJvYcCXVUfmj0ybzMslaeZMm7C6iASPc8ONspSE7CDlWy6Vy8AO/ZKYETvWYwg0B/f/fCOj6DOorjm4tMDR8mVj2@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4G71YBs1l5FdmIM2YwUwR8cRlNmKYsfcQI72BlaTGPUv3fIEH
+	+qkAVMHGPERzHVOr4ZVFLS3EEmCjfl5UjSjpWevYc4OmkUK4sEjajQROj1fZf9CHs5kI/IjeyGV
+	uRg0fMJimEUSAIWqwL+hHFK+JjQE=
+X-Google-Smtp-Source: AGHT+IHgv7JcjoF2hykAtWUI6o2nnP5h2u8BmIiAGNCkjmIUGko5XrcSIvgWtonot4VZ8C5CT7i2yskb+aCm7ARQRYA=
+X-Received: by 2002:ac5:c4d2:0:b0:4f9:a30:d855 with SMTP id
+ 71dfb90a1353d-5003b09d2f7mr3094385e0c.3.1724958954636; Thu, 29 Aug 2024
+ 12:15:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fzdd26t5kjtwhvxxjq7k7ilbmx7i5r6phcygv5nlq2ajntlqht@pkt3kmr2hv6s>
+References: <20240827131722.89359-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240827131722.89359-2-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdU739fyGhF4WGo-REEus82h0VVz+jQtgXk5qUaTqvu6hg@mail.gmail.com>
+In-Reply-To: <CAMuHMdU739fyGhF4WGo-REEus82h0VVz+jQtgXk5qUaTqvu6hg@mail.gmail.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Thu, 29 Aug 2024 20:15:24 +0100
+Message-ID: <CA+V-a8uU2UfhB7JhSKOuOQrOxaGtyuKAMWW-ZC+xDrfYRpHekA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] pinctrl: renesas: rzg2l: Introduce single macro for
+ digital noise filter configuration
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-renesas-soc@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 29, 2024 at 08:06:07AM +0200, Krzysztof Kozlowski wrote:
-> On Wed, Aug 28, 2024 at 10:51:25PM +0200, Vasileios Amoiridis wrote:
-> > Add interrupt options for BMP3xx and BMP5xx devices as well.
-> > 
-> > Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
-> > ---
-> >  .../bindings/iio/pressure/bmp085.yaml         | 22 ++++++++++++++++++-
-> >  1 file changed, 21 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/iio/pressure/bmp085.yaml b/Documentation/devicetree/bindings/iio/pressure/bmp085.yaml
-> > index 6fda887ee9d4..edf5901c6c87 100644
-> > --- a/Documentation/devicetree/bindings/iio/pressure/bmp085.yaml
-> > +++ b/Documentation/devicetree/bindings/iio/pressure/bmp085.yaml
-> > @@ -48,14 +48,34 @@ properties:
-> >  
-> >    interrupts:
-> >      description:
-> > -      interrupt mapping for IRQ (BMP085 only)
-> > +      interrupt mapping for IRQ. Supported in BMP085, BMP3xx, BMP5xx
-> >      maxItems: 1
-> >  
-> > +  drive-open-drain:
-> > +    description:
-> > +      set if the interrupt pin should be configured as open drain.
-> > +      If not set, defaults to push-pull configuration.
-> 
-> I don't think you implemented my comment.
-> 
+Hi Geert,
 
-Hi Krzysztof,
+Thank you for the review.
 
-Thanks for you reply!
+On Thu, Aug 29, 2024 at 2:09=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
+k.org> wrote:
+>
+> Hi Prabhakar,
+>
+> Thanks for your patch!
+>
+> On Tue, Aug 27, 2024 at 3:17=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail=
+.com> wrote:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > When enabling the digital noise filter for the pins, it is necessary to
+> > configure both the noise filter stages (via the FILNUM register) and th=
+e
+> > sampling interval (via the FILCLKSEL register). To simplify this proces=
+s,
+> > we introduce a single macro for configuring the digital noise filter.
+>
+> Currently the pin control tables just declare which pins support
+> digital noise filter configuration, but the driver does not support
+> configuring the digital noise filters yet, right?
+>
+Yes that's right.
 
-Indeed, I totally forgot this change, I will do it in next
-version. If you see the cover letter I didn't even mention it
-there so I totally forgot it...
-
-> > +
-> >  required:
-> >    - compatible
-> >    - vddd-supply
-> >    - vdda-supply
-> >  
-> > +allOf:
-> > +  - if:
-> 
-> not:
-
-ACK.
-
-> 
-> > +      properties:
-> > +        compatible:
-> > +          enum:
-> > +            - bosch,bmp085
-> > +            - bosch,bmp380
-> > +            - bosch,bmp580
-> > +    then:
-> > +      properties:
-> > +        interrupts: true
-> > +    else:
-> 
-> so no need for else:.
-> 
-
-By default this property is considered false?
+> So I'd reword the paragraph above to something like:
+>
+>     Support for enabling the digital noise filter, and support for
+>     configuring the noise filter stages (via the FILNUM register) and the
+>     sampling interval (via the FILCLKSEL register) are related: a pin
+>     supports either all or none of them.  Hence simplify declaring digita=
+l
+>     noise filter support for a pin by using a single feature flag instead=
+ of
+>     three separate flags.
+>
+Ok, I'll update the commit description as above.
 
 Cheers,
-Vasilis
+Prabhakar
 
-> 
-> Best regards,
-> Krzysztof
-> 
+> > This patch removes the PIN_CFG_FILNUM and PIN_CFG_FILCLKSEL configurati=
+on
+> > macros and renames PIN_CFG_FILONOFF to PIN_CFG_NF.
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> For the actual patch contents:
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
+8k.org
+>
+> In personal conversations with technical people, I call myself a hacker. =
+But
+> when I'm talking to journalists I just say "programmer" or something like=
+ that.
+>                                 -- Linus Torvalds
 
