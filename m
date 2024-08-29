@@ -1,178 +1,121 @@
-Return-Path: <linux-kernel+bounces-306562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8508E964088
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 11:50:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21A9096408F
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 11:51:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F2481F2304E
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 09:50:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35D8D1C228E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 09:51:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DDD418E021;
-	Thu, 29 Aug 2024 09:49:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B70218E036;
+	Thu, 29 Aug 2024 09:51:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mwL6pv6i"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="dbvY0W0l"
+Received: from smtpbgau1.qq.com (smtpbgau1.qq.com [54.206.16.166])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ABF818DF77
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 09:49:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11C0E18C02F
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 09:51:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.16.166
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724924994; cv=none; b=PdTjqt5QYvvvdrV3lniHjZTYQvij35MCjDj1t1Ag6CfWAQVOeCvdOoYcqja0MUemrb2hU5B3+xjFiJaNqvQqZyWLS/IAd6/AIDjN5sNGYaDvR1dlcZaQ8GwJ7RCfK8+P9FxH75SknBCiDXd0Opf/m2QdixGfLSh5KWr6y8wY09I=
+	t=1724925095; cv=none; b=pohoSZLUtIlMMYGz8EqNRJvthlu7d+wPWZk2QUsWxH3vhSShEXTO8xy1EUO8XveOVmp2by5+r8NSJefhnGRcGvQ/Z4e5SKjTiUR5dZzaroko3NI3NKZlobe30qOWwnP/WZ1+L/d5+iZG+RP/nGMvUoMcJ2bi46f5JIlspcmHbfM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724924994; c=relaxed/simple;
-	bh=7Gh5rIZZaUQp/+KXCB7wUzIP4BFWrquNWB5FRNG0+Y0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=nBmG3T0MENs0S//vEoQ1HoF//i1WFx0XFDVQrGjSwbxyM80oEcmOqvEZsQknSjZwhSwwiug8AU1VRHawIDK+xPOFhhfMo8aqqzL8kMXpuh5W5q8Fhc8kYLdzJ/3OcS8HoezOjeQljzXnUcNhwhF3YjaMdgyrRjXxtjLiR6YGCnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mwL6pv6i; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a7a843bef98so36953466b.2
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 02:49:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724924991; x=1725529791; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=5ijbc1FBmZqLQmOrVie/CTDt0zfKTwvY0WB9RmnQpeQ=;
-        b=mwL6pv6iu7qpALKWlu4I4pRtLCBede1mtX62LeZOOsPXO8xSPyVGMKtMw1kiwIXpNj
-         q9KlbYMBDyz2uWFD/Ghg0zhzQFTDl0DBmw8KxbN2DZf4xC+uN2CHqJYQRItXPwUQktuA
-         c9OaAGvh1kjgJTZ12xAiCV8Nafr+GrAU3nsDSYUgJJXGSoIvNAeoRk4Z7VI0jXFB16M5
-         a39YfPhn4gtm5DbBHhQxn4QJy4a3Ahu9fKWiY2gQiBJ3Fy2JQjQ+BQcWVf5ItUH1qavc
-         kGbPSyfUbJh60HYv1oEl7bKHeqN9B1HiaNdGbq8yHnrB/SBX/VW15v+tBJW4gICV8wRu
-         ye7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724924991; x=1725529791;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5ijbc1FBmZqLQmOrVie/CTDt0zfKTwvY0WB9RmnQpeQ=;
-        b=CF5hrWpGU783Qr1z4mgbUFbtM0rSDgtW9xDgSlVLiuaOJvPF1I/yDucrLaVi2lxFa1
-         Hl+1LUd8enQNTjVHMNtYjHN5FpKxgv/Y9nwOgsngHAKXxV98j0TGibB/aoWTgFkPPt3p
-         vJDVFkqjxk5admzxN+P/ocWXF/odGBOXGEDI5a/ktMDSQ/ivvEKFOFngiPyCH56IJm57
-         +boHkCXWNhOE35pPjeiO2eYwprEsvS0N0c5DkvIJHJJvUQPqGBZbPgKF810dDgrQjILB
-         fkwzVvoqJix7hgNWQcF2+rQsbPZsrdPnZp1ccVic+LWbxpkh+4rqzgMXm0LYPv8Ktwde
-         mAdw==
-X-Forwarded-Encrypted: i=1; AJvYcCVpfM6L+4XrSNmDBVvJ7S4ubNWSweKiclu6C8wuI04OCAwFPhc41JIFKKQ+dEESQ8JOB/O+rXYVoxHKhYk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwupG8pdwoOZV0yMxx8O78WMNdQyxg23jBe5lnE5v+wLb6BaQz9
-	IEg9mszLDE19CW9XnDSZDQFNN6auUa/zU6TkXe6DzDp7J/ql0V0pmHDqtE/O+MM=
-X-Google-Smtp-Source: AGHT+IGqCHgwIkeJ3Y2sXZ8IUAgugHtlAhdcUpgiEZufWlSzBa0418AQyUq1POIX2NuOp3xuZSwusA==
-X-Received: by 2002:a17:906:6a1b:b0:a86:f960:411d with SMTP id a640c23a62f3a-a897f7832dcmr182989366b.2.1724924990682;
-        Thu, 29 Aug 2024 02:49:50 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a898908f62bsm56746466b.91.2024.08.29.02.49.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 02:49:50 -0700 (PDT)
-Date: Thu, 29 Aug 2024 12:49:46 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: oe-kbuild@lists.linux.dev, Yan Zhen <yanzhen@vivo.com>,
-	davem@davemloft.net, chuck.lever@oracle.com, jlayton@kernel.org,
-	trondmy@kernel.org, anna@kernel.org, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com
-Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev, neilb@suse.de,
-	okorniev@redhat.com, Dai.Ngo@oracle.com, tom@talpey.com,
-	linux-nfs@vger.kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, opensource.kernel@vivo.com,
-	Yan Zhen <yanzhen@vivo.com>
-Subject: Re: [PATCH v3] sunrpc: Fix error checking for d_hash_and_lookup()
-Message-ID: <a8cb00eb-8b39-49ab-a9d8-a68a7d7f4423@stanley.mountain>
+	s=arc-20240116; t=1724925095; c=relaxed/simple;
+	bh=7TylQoddSxB9ZHHf9DNZGW9iD+hOgef4/KVkWYwfLMI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=X5CyWjwMTzUKnsoUHEp0vuFh29PNbbGOsavOh0F/wH1c7hi6UN6tFNWuCkV610qCK07p9GycF09FGuuSbTchOSRaLFxU4AdVoL8VI3Qqs4MQVq4muoNn2s8u/fid8H4lMwAkAJ1G0GDRXxH1751sDv6dmk9Ebl2GWhKphsXWxv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=dbvY0W0l; arc=none smtp.client-ip=54.206.16.166
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1724925058;
+	bh=C8Ap7JInDIabgSxCYPM4pbBC80uSwTy3ex4duXRFaHU=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=dbvY0W0lIQ2corqG+YFAbmQT95lfzQ2SGB+jB9KnsEP3NHi+ZINQ4cBJbGf+JSFqm
+	 XHKQGwZQ+VlKchCHodc383UTNdBZREPmuGMp53GfQWD8aFjPGuDCoj/ghZwTBPtRv5
+	 VNMByx94GtyFo5J5xezvJGmDEYlX82miUdHtHKqM=
+X-QQ-mid: bizesmtp90t1724925034t64mciaj
+X-QQ-Originating-IP: EJmO/ueDMiuaxusWmcU8TWgM5tfiwk54zZSXTUIcmM4=
+Received: from localhost.localdomain ( [113.57.152.160])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Thu, 29 Aug 2024 17:50:31 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 17652668555461779045
+From: WangYuli <wangyuli@uniontech.com>
+To: mathias.nyman@intel.com,
+	gregkh@linuxfoundation.org
+Cc: linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	guanwentao@uniontech.com,
+	WangYuli <wangyuli@uniontech.com>,
+	Chen Baozi <chenbaozi@phytium.com.cn>,
+	Wang Zhimin <wangzhimin1179@phytium.com.cn>,
+	Chen Zhenhua <chenzhenhua@phytium.com.cn>,
+	Wang Yinfeng <wangyinfeng@phytium.com.cn>,
+	Jiakun Shuai <shuaijiakun1288@phytium.com.cn>
+Subject: [PATCH v2] usb: xHCI: add XHCI_RESET_ON_RESUME quirk for Phytium xHCI host
+Date: Thu, 29 Aug 2024 17:50:28 +0800
+Message-ID: <196A709D168A9A04+20240829095028.345047-1-wangyuli@uniontech.com>
+X-Mailer: git-send-email 2.43.4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240828044355.590260-1-yanzhen@vivo.com>
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtp:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
 
-Hi Yan,
+The resume operation of Phytium Px210 xHCI host would failed
+to restore state. Use the XHCI_RESET_ON_RESUME quirk to skip
+it and reset the controller after resume.
 
-kernel test robot noticed the following build warnings:
+Co-developed-by: Chen Baozi <chenbaozi@phytium.com.cn>
+Signed-off-by: Chen Baozi <chenbaozi@phytium.com.cn>
+Co-developed-by: Wang Zhimin <wangzhimin1179@phytium.com.cn>
+Signed-off-by: Wang Zhimin <wangzhimin1179@phytium.com.cn>
+Co-developed-by: Chen Zhenhua <chenzhenhua@phytium.com.cn>
+Signed-off-by: Chen Zhenhua <chenzhenhua@phytium.com.cn>
+Co-developed-by: Wang Yinfeng <wangyinfeng@phytium.com.cn>
+Signed-off-by: Wang Yinfeng <wangyinfeng@phytium.com.cn>
+Co-developed-by: Jiakun Shuai <shuaijiakun1288@phytium.com.cn>
+Signed-off-by: Jiakun Shuai <shuaijiakun1288@phytium.com.cn>
+Signed-off-by: WangYuli <wangyuli@uniontech.com>
+---
+ drivers/usb/host/xhci-pci.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Yan-Zhen/sunrpc-Fix-error-checking-for-d_hash_and_lookup/20240828-124615
-base:   git://git.linux-nfs.org/projects/trondmy/linux-nfs.git linux-next
-patch link:    https://lore.kernel.org/r/20240828044355.590260-1-yanzhen%40vivo.com
-patch subject: [PATCH v3] sunrpc: Fix error checking for d_hash_and_lookup()
-config: i386-randconfig-141-20240829 (https://download.01.org/0day-ci/archive/20240829/202408290616.Ke1JxTcE-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-| Closes: https://lore.kernel.org/r/202408290616.Ke1JxTcE-lkp@intel.com/
-
-smatch warnings:
-net/sunrpc/rpc_pipe.c:1310 rpc_gssd_dummy_populate() warn: passing zero to 'ERR_CAST'
-
-vim +/ERR_CAST +1310 net/sunrpc/rpc_pipe.c
-
-4b9a445e3eeb8bd Jeff Layton   2013-11-14  1297  static struct dentry *
-4b9a445e3eeb8bd Jeff Layton   2013-11-14  1298  rpc_gssd_dummy_populate(struct dentry *root, struct rpc_pipe *pipe_data)
-4b9a445e3eeb8bd Jeff Layton   2013-11-14  1299  {
-4b9a445e3eeb8bd Jeff Layton   2013-11-14  1300  	int ret = 0;
-4b9a445e3eeb8bd Jeff Layton   2013-11-14  1301  	struct dentry *gssd_dentry;
-4b9a445e3eeb8bd Jeff Layton   2013-11-14  1302  	struct dentry *clnt_dentry = NULL;
-4b9a445e3eeb8bd Jeff Layton   2013-11-14  1303  	struct dentry *pipe_dentry = NULL;
-4b9a445e3eeb8bd Jeff Layton   2013-11-14  1304  	struct qstr q = QSTR_INIT(files[RPCAUTH_gssd].name,
-4b9a445e3eeb8bd Jeff Layton   2013-11-14  1305  				  strlen(files[RPCAUTH_gssd].name));
-4b9a445e3eeb8bd Jeff Layton   2013-11-14  1306  
-4b9a445e3eeb8bd Jeff Layton   2013-11-14  1307  	/* We should never get this far if "gssd" doesn't exist */
-                                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-4b9a445e3eeb8bd Jeff Layton   2013-11-14  1308  	gssd_dentry = d_hash_and_lookup(root, &q);
-cf4564e657c6275 Yan Zhen      2024-08-28  1309  	if (IS_ERR_OR_NULL(gssd_dentry))
-cf4564e657c6275 Yan Zhen      2024-08-28 @1310  		return ERR_CAST(gssd_dentry);
-
-The callers are not expecting a NULL return from rpc_gssd_dummy_populate() so
-this will lead to a crash.
-
-The comments to d_hash_and_lookup() say it returns NULL if the file doesn't
-exist and the error pointers if the filename is invalid.  Neither one should be
-possible here according to the comments on line 1307.  So we're debating about
-how to handle impossible situations.
-
-4b9a445e3eeb8bd Jeff Layton   2013-11-14  1311  
-4b9a445e3eeb8bd Jeff Layton   2013-11-14  1312  	ret = rpc_populate(gssd_dentry, gssd_dummy_clnt_dir, 0, 1, NULL);
-4b9a445e3eeb8bd Jeff Layton   2013-11-14  1313  	if (ret) {
-4b9a445e3eeb8bd Jeff Layton   2013-11-14  1314  		pipe_dentry = ERR_PTR(ret);
-4b9a445e3eeb8bd Jeff Layton   2013-11-14  1315  		goto out;
-4b9a445e3eeb8bd Jeff Layton   2013-11-14  1316  	}
-4b9a445e3eeb8bd Jeff Layton   2013-11-14  1317  
-4b9a445e3eeb8bd Jeff Layton   2013-11-14  1318  	q.name = gssd_dummy_clnt_dir[0].name;
-4b9a445e3eeb8bd Jeff Layton   2013-11-14  1319  	q.len = strlen(gssd_dummy_clnt_dir[0].name);
-4b9a445e3eeb8bd Jeff Layton   2013-11-14  1320  	clnt_dentry = d_hash_and_lookup(gssd_dentry, &q);
-cf4564e657c6275 Yan Zhen      2024-08-28  1321  	if (IS_ERR_OR_NULL(clnt_dentry)) {
-b7ade38165ca000 Vasily Averin 2020-06-01  1322  		__rpc_depopulate(gssd_dentry, gssd_dummy_clnt_dir, 0, 1);
-4b9a445e3eeb8bd Jeff Layton   2013-11-14  1323  		pipe_dentry = ERR_PTR(-ENOENT);
-4b9a445e3eeb8bd Jeff Layton   2013-11-14  1324  		goto out;
-4b9a445e3eeb8bd Jeff Layton   2013-11-14  1325  	}
-4b9a445e3eeb8bd Jeff Layton   2013-11-14  1326  
-e2f0c83a9de331d Jeff Layton   2013-12-05  1327  	ret = rpc_populate(clnt_dentry, gssd_dummy_info_file, 0, 1, NULL);
-e2f0c83a9de331d Jeff Layton   2013-12-05  1328  	if (ret) {
-e2f0c83a9de331d Jeff Layton   2013-12-05  1329  		__rpc_depopulate(gssd_dentry, gssd_dummy_clnt_dir, 0, 1);
-e2f0c83a9de331d Jeff Layton   2013-12-05  1330  		pipe_dentry = ERR_PTR(ret);
-e2f0c83a9de331d Jeff Layton   2013-12-05  1331  		goto out;
-e2f0c83a9de331d Jeff Layton   2013-12-05  1332  	}
-e2f0c83a9de331d Jeff Layton   2013-12-05  1333  
-4b9a445e3eeb8bd Jeff Layton   2013-11-14  1334  	pipe_dentry = rpc_mkpipe_dentry(clnt_dentry, "gssd", NULL, pipe_data);
-e2f0c83a9de331d Jeff Layton   2013-12-05  1335  	if (IS_ERR(pipe_dentry)) {
-e2f0c83a9de331d Jeff Layton   2013-12-05  1336  		__rpc_depopulate(clnt_dentry, gssd_dummy_info_file, 0, 1);
-3396f92f8be606e Jeff Layton   2013-12-05  1337  		__rpc_depopulate(gssd_dentry, gssd_dummy_clnt_dir, 0, 1);
-e2f0c83a9de331d Jeff Layton   2013-12-05  1338  	}
-4b9a445e3eeb8bd Jeff Layton   2013-11-14  1339  out:
-4b9a445e3eeb8bd Jeff Layton   2013-11-14  1340  	dput(clnt_dentry);
-4b9a445e3eeb8bd Jeff Layton   2013-11-14  1341  	dput(gssd_dentry);
-4b9a445e3eeb8bd Jeff Layton   2013-11-14  1342  	return pipe_dentry;
-4b9a445e3eeb8bd Jeff Layton   2013-11-14  1343  }
-
+diff --git a/drivers/usb/host/xhci-pci.c b/drivers/usb/host/xhci-pci.c
+index b5705ed01d83..fabae8420ce9 100644
+--- a/drivers/usb/host/xhci-pci.c
++++ b/drivers/usb/host/xhci-pci.c
+@@ -55,6 +55,9 @@
+ #define PCI_DEVICE_ID_INTEL_ALDER_LAKE_PCH_XHCI		0x51ed
+ #define PCI_DEVICE_ID_INTEL_ALDER_LAKE_N_PCH_XHCI	0x54ed
+ 
++#define PCI_VENDOR_ID_PHYTIUM		0x1db7
++#define PCI_DEVICE_ID_PHYTIUM_XHCI			0xdc27
++
+ /* Thunderbolt */
+ #define PCI_DEVICE_ID_INTEL_MAPLE_RIDGE_XHCI		0x1138
+ #define PCI_DEVICE_ID_INTEL_ALPINE_RIDGE_2C_XHCI	0x15b5
+@@ -407,6 +410,10 @@ static void xhci_pci_quirks(struct device *dev, struct xhci_hcd *xhci)
+ 	if (pdev->vendor == PCI_VENDOR_ID_VIA)
+ 		xhci->quirks |= XHCI_RESET_ON_RESUME;
+ 
++	if (pdev->vendor == PCI_VENDOR_ID_PHYTIUM ||
++	    pdev->device == PCI_DEVICE_ID_PHYTIUM_XHCI)
++		xhci->quirks |= XHCI_RESET_ON_RESUME;
++
+ 	/* See https://bugzilla.kernel.org/show_bug.cgi?id=79511 */
+ 	if (pdev->vendor == PCI_VENDOR_ID_VIA &&
+ 			pdev->device == 0x3432)
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.43.4
 
 
