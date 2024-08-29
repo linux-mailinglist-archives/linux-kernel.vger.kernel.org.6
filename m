@@ -1,110 +1,151 @@
-Return-Path: <linux-kernel+bounces-306467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D92A963F69
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 11:03:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2B5D964005
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 11:28:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 242B31F25C97
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 09:03:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69DC41F234D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 09:28:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBA3C18CBFC;
-	Thu, 29 Aug 2024 09:02:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9779D18E354;
+	Thu, 29 Aug 2024 09:27:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ECUPFfOb"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a5CvwiHV"
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84D0218C91E
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 09:02:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73EE518DF7A;
+	Thu, 29 Aug 2024 09:27:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724922173; cv=none; b=BVgcma4rPFn9es9LEyo1jJ0Fl76d+jdV0GwloZb6pil6NTp7AEtCAhA1+VhpF37145N62SkNrtSI1yQy1fOtdUenJNvWZbt43pqTvSVeIJJ3OcBgmYWt9qPzZTUbYb4glxnIZHus//RG8cnYwS9nuy2Fz4PXeDYmPw+GS103LmM=
+	t=1724923632; cv=none; b=tlEnR7c+qu8pmsMk5lmCIts6H+PO/qGcY6MSZbAXXafOb01/ENU4slcqCAWsWkHWpTuC/zQXrHFmuqd2UdSyZJ/HDvjLAXsbz9zhuwfXMKXOhEBKW1iGeJSDzSunGhMG2+SYT9bKSILxOAV/T4oO8UPRpZFAF9mjXfqffX6j1D0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724922173; c=relaxed/simple;
-	bh=gkKATRNNDNIPhS3Vg4S0CIL1kfKHfczkzAV/Zg7RGxM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DS3UEsttSkr9NgNEEgv2UslKLjvJczG6jy0kk1PonmDE0ACSwvPGJK+FaWmhcH/LwN0fzpxNbYi/sUw97znbRr7y5sqqviZUZ6NredMapeXMh+k/nBjb2OmTA/R/nVSykFU0IPnm6wkqoEASjcIPFM+c6UdtImQJKHJhQ7//QRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ECUPFfOb; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5343eeb4973so596672e87.2
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 02:02:51 -0700 (PDT)
+	s=arc-20240116; t=1724923632; c=relaxed/simple;
+	bh=g7vPCp6T2KzSgyaMPE1ZnoCnxjUR5ijKx+yapczFdz0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=F/HasBjee6wgHRaaPsWK79WF5h2oUms8KLZ+ikn6rL+ID2GH++UVS9js8VkqnLgRCsMvZNIlBKsrWoblrkQbyF/kavVVEowgaYUKGiC5unNul02ax0h5QJM0qy714VzDZ+5RUZoPc/bG40/ngEa03gMK2YDbz7pY94Y9OWrGLqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a5CvwiHV; arc=none smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-656d8b346d2so245861a12.2;
+        Thu, 29 Aug 2024 02:27:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724922169; x=1725526969; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=yU74Z1taMGbV+l39s12NXbpyp4bl/SLE0B6UFkVkWLE=;
-        b=ECUPFfObkfdd3vRIWzXq5/8OC2z8A3/XB1q7ubc84q4yf87eotvSg6MLLF04LaDIYG
-         CLS/B4HXx3AzVRmqHRD350I07tdOgIxRUjrjOZEu1phEv0/p/wHlC7LmjR/6iTOsuoHz
-         50uxVqL+XCWUOQrLrDcIakXd7ywD2pRzdpV6xgxXcsGwHX/Dl/2V4VRempMvQ20l5iyu
-         NjJKDsZ88C731ij/ivYjPVjsViU3k/UOKIuyj4HtCdVP6JojOg1XWb5AOg9oDfcf0n6c
-         oQuXFHWUU5A2bh7cfdkt4dpzEVd+wSoMRpyttyzGeB7/2HJpjgI/PJrNAUwZh81538hX
-         3eHA==
+        d=gmail.com; s=20230601; t=1724923631; x=1725528431; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Dvjn3LozyX7PzUcM0O+kSIxcuZqvkXVUv2cAp4pQJyY=;
+        b=a5CvwiHV/+C+hNXHD2PcYCKym6BlPQTuhdSTZ/ZHfhMKxplnNNSLE0vaiQiCaw44UH
+         unYZIJJivZ8hJJ/g8fQx90Sd4oBHzFChKlilFongcSbAgEPfby2VBGJpGIbAdaT1zbcv
+         +Ac4VTjlFahiSQG5R5TRdXsx/SxwCjV8it2drHoNzrSxjnrKTEm+TnDu3Pga7v18BFdp
+         kCOhmoLZE/g+JIGTOqWMOrDOjHPbq44/BbJtW2TC+BpSHjNpWfgMudtH/OiGhp+NYXKh
+         GaMj6/8ogBg76eCTva5XdaAcAd8rcM/kGpTC+ac2yRmv7cS1G5DzgldOW/Gciq6QKhly
+         1yrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724922169; x=1725526969;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yU74Z1taMGbV+l39s12NXbpyp4bl/SLE0B6UFkVkWLE=;
-        b=nIJ6kvD8pwE2Fw2SKTtEY8uXj6xZ4p3BUVLJDDTtXUQD5670svxDZJZ694sYmAaFlt
-         X8emjLpitVN4q4qSOYwz+vznLUMP/+GdJVJrCL9p/vs2/3REWQXcdTrJIXxTQRYnRoPD
-         7ioeUttCmKDkyhPRxYt94tC+a1KeDNM83G7TL+RLpWrIpvqzxXQQZdqzrybrgLE4nNVS
-         R6mN52YI7JSKK7V+73jxaqup0T0Gyd3j33wtlsOqRVfQO3qWQHARFoiVzMKpI3fSjEfS
-         feXHidBg1KvDVMq5UoF6cLxnww0dHxpEE1Auz8/7GvvN+ppfPVEKUJqghM43zkzgen67
-         TX/A==
-X-Forwarded-Encrypted: i=1; AJvYcCVbN6dWKmEDj1n+Nf9wT+LyS7183T+T7ugpRsnd0Q+mVUYwTV61UT4U3bW112/po6ivcPm0X17u4roj9Zs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxqeE/9XORvnjFHiXuIEQA016C6eTKKU7WLSJt32/WSy6wiwJn
-	gwQrArG2puyNeY8FtpPA8fudQa64aBxMDT8rNcqQH0KllTaRrKQ3g7SVNIRfhp4=
-X-Google-Smtp-Source: AGHT+IEOG/Fqff23S0qeqzOkwCb6zYTfMyOgmyR3JgJ5MsKUOkzSuMuafc5IyicZkjqzBwKINyngaQ==
-X-Received: by 2002:a05:6512:baa:b0:52e:8071:e89d with SMTP id 2adb3069b0e04-5353e5acc6fmr1722676e87.40.1724922168807;
-        Thu, 29 Aug 2024 02:02:48 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-535407abdb9sm99698e87.72.2024.08.29.02.02.48
+        d=1e100.net; s=20230601; t=1724923631; x=1725528431;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Dvjn3LozyX7PzUcM0O+kSIxcuZqvkXVUv2cAp4pQJyY=;
+        b=TpSzfvFq4496ckz3iv9vCkVLHVkOBoMpfaxuazA7HMaIPPPXkpjQFTL6g3E+dWtE80
+         SHUoFRG+Zxkb2gDTgpQcpePdD9W4AEMsjWVebhiJh2JOkKJ2HlwSgMdlznud1FFGDStB
+         z+k34GdXuf4yGdWL78+TqKP/J/EkKQug+Mfl06ts7ppNbDwKT25yuUIos7e+Qzw0tVvz
+         /VaCSvG5ILVF88Ti4zW2TF8OfJRl56ZN6J4zyu0KTZJg7y1/btlVwog8ecUHqC6qIl/d
+         kHIoK76mjco99HvOKZxHikJEJvW0ATxueuz10n0n9GNdVG8TzDTJuOKfEad4J6eHN2tM
+         womQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX/QR8usQG2pGn248z5JstiHaCnxP0LlDq2Uie+SHsOKFUfXYgAw7NtnjxGDE+kI/93PCgOcVkp06Ge5ExM@vger.kernel.org, AJvYcCXwhOWsZKX6LSqY2Nr94jOPR4LtyVNyjngFvYU5S2MgwNU50ZIoX+4WPV7qZGnFXbrx7PXJ1AbY9sX8@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfT2QmFxKrk3Db7tJbetdjHJYwJL7Iyxy7JQJviEwmkUFRwg2I
+	O9WxIHI6CDAhF+UcRStHM3xmRv1K/IbxFEC+/9SIOVOcyWa51DdW
+X-Google-Smtp-Source: AGHT+IHH9msDkUh4C+HrO5ERn2jIh+PFRRJ3FprkC7wSKj6bergnvBcBclkRVm7iRpcIrBtCX3ESng==
+X-Received: by 2002:a05:6a20:c78e:b0:1c0:e49a:6900 with SMTP id adf61e73a8af0-1cce0fea52bmr2077586637.7.1724923630574;
+        Thu, 29 Aug 2024 02:27:10 -0700 (PDT)
+Received: from localhost.localdomain ([59.188.211.160])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-20515552b6dsm7469245ad.249.2024.08.29.02.27.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 02:02:48 -0700 (PDT)
-Date: Thu, 29 Aug 2024 12:02:46 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Vinod Koul <vkoul@kernel.org>, 
-	Kishon Vijay Abraham I <kishon@kernel.org>, Ray Jui <rjui@broadcom.com>, 
-	Scott Branden <sbranden@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Chunfeng Yun <chunfeng.yun@mediatek.com>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, linux-phy@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, 
-	linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH 07/11] phy: qcom: qmp-pcie-msm8996: Simplify with scoped
- for each OF child loop
-Message-ID: <3omsbwonwputnyns5h6rq52bsafqb6is42jk6ty5pv7z2wmyvs@jeb33bmeotyh>
-References: <20240826-phy-of-node-scope-v1-0-5b4d82582644@linaro.org>
- <20240826-phy-of-node-scope-v1-7-5b4d82582644@linaro.org>
+        Thu, 29 Aug 2024 02:27:10 -0700 (PDT)
+From: Nick Chan <towinchenmi@gmail.com>
+To: Hector Martin <marcan@marcan.st>,
+	Sven Peter <sven@svenpeter.dev>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	asahi@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Cc: ~postmarketos/upstreaming@lists.sr.ht,
+	Nick Chan <towinchenmi@gmail.com>
+Subject: [PATCH 0/3] Add AIC support for A7-A11 SoCs
+Date: Thu, 29 Aug 2024 17:03:10 +0800
+Message-ID: <20240829092610.89731-1-towinchenmi@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240826-phy-of-node-scope-v1-7-5b4d82582644@linaro.org>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 26, 2024 at 12:07:23PM GMT, Krzysztof Kozlowski wrote:
-> Use scoped for_each_available_child_of_node_scoped() when iterating over
-> device nodes to make code a bit simpler.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->  drivers/phy/qualcomm/phy-qcom-qmp-pcie-msm8996.c | 11 +++--------
->  1 file changed, 3 insertions(+), 8 deletions(-)
-> 
+Hi,
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+This series is a second attempt at adding support for A7-A11 SoCs to
+Linux, it is based on a previous attempt, which you can find at [1].
+However, there have been quite a bit of changes.
 
+First, the boot process has changed, now, the boot process includes
+a "1337" version of checkra1n [2], a custom PongoOS binary [3], and
+a modified version of m1n1 [4]. The kernel is appended to m1n1 and loaded
+by it.
+
+This attempt also supports SMP, which has uncovered some differences
+in the A7-A11 AIC. Namely, although A11 supported fast IPI, it only
+supported "global" fast IPIs via SYS_IMP_APL_IPI_RR_GLOBAL_EL1,
+and SYS_IMP_APL_IPI_RR_LOCAL_EL1 does not exist on A11. As a result,
+there are now three feature levels:
+
+A7 - A10: No fast IPI
+A11: "Global" fast IPI
+M1: Global and Local fast IPI
+
+Each feature level is strictly an extension of the previous, for example,
+M1 will also work with the A7-A10 compatible. As a result, the
+modifications only includes if'ing out of features, in order to make
+the existing driver work on older SoCs.
+
+The A10(X) contains P-core and E-core pairs where only one core in each
+pair may be active at one time, controlled by CPU frequency. A RFC patch
+will be posted to disable 32-bit executable support on A10(X), as it only
+supported 16KB page size anyways. However, such a patch is not required
+to run AArch64 Linux on A10. At worst, any attempt to run 32-bit
+executables will result in the process crashing.
+
+Initial device trees will be posted in a later patch series, likely when
+the AIC modifications are accepted.
+
+Asahi Linux downstream kernel note:
+These patches will not work with the Asahi Linux downstream kernel,
+as these earlier SoCs do not support state retention across deep WFI,
+which results in the CPUs going back to RVBAR on cpuidle.
+
+[1]: https://lore.kernel.org/asahi/20221007200022.22844-1-konrad.dybcio@somainline.org/
+[2]: https://checkra.in/1337
+[3]: https://github.com/asdfugil/pongoOS/tree/mini
+[4]: https://github.com/asdfugil/m1n1-idevice
+
+Nick Chan (3):
+  dt-bindings: apple,aic: Document A7-A11 compatibles
+  irqchip/apple-aic: Only access IPI sysregs when use_fast_ipi is true
+  irqchip/apple-aic: Add a new "Global fast IPIs only" feature level
+
+ .../interrupt-controller/apple,aic.yaml       | 15 ++++--
+ drivers/irqchip/irq-apple-aic.c               | 49 ++++++++++++++-----
+ 2 files changed, 48 insertions(+), 16 deletions(-)
 
 -- 
-With best wishes
-Dmitry
+2.46.0
+
 
