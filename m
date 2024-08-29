@@ -1,112 +1,128 @@
-Return-Path: <linux-kernel+bounces-307248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7064B964AC7
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 17:58:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65F39964ACD
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 17:58:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A36341C23D0F
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:58:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E4271C231A3
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:58:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A15041B3F26;
-	Thu, 29 Aug 2024 15:57:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6D7E1B4C21;
+	Thu, 29 Aug 2024 15:58:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="wSpyoNFd"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lLMaJwCv"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C07CC4643B
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 15:57:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75FEA1B29AA;
+	Thu, 29 Aug 2024 15:58:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724947074; cv=none; b=f1GC2mA9v2VCdq3m8utt7sLOzR8hzyFANI+/SEiVoslBbNGJfbUfEkVE5MkCOOjjrxzIyDPTmb9Ntam/g53/0haJA3iCMv14NR7p0GCVi/0+7VZosI54bywfcPD1/CGQY9/qWfHw5/YIzIOraSX0w8FFZR+P2Ghem64S1fAtdbo=
+	t=1724947124; cv=none; b=m/Q3jrV5G8fQM3wX8eHKQGdcNinBSx+QxfuPH7fCnLQO4Tizqwl2QQuJd0uCau9yMJciZGTJMYivEkiTFBSRZK2aGj0TR5zGCS/CXnMTaPs2phSzf0dFqZ47qP9T7sbwjaU/jOkeJD/qAa44VLi9OhddWrypQEC/4kKQwCGkVR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724947074; c=relaxed/simple;
-	bh=BjQzomJdfelQle+FoyKCfNVMJnt/w3H756pm8LAAsZE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DExQC6MycKJ4mW5b7HDX3Gx3BRzM383hiAbydbfVAdktPHdQ2VqJyki83loEv8mclNn+IQVAZUyyaxN17adWGdd38oXEHJ6xykfLXkiHElekrCLo0u/GnMdAFqvo4QJRV9QyRYzPwIelHQ+/XTwikrz7HgxZSd1magw8DGV5cJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=wSpyoNFd; arc=none smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-7b8884631c4so325287a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 08:57:51 -0700 (PDT)
+	s=arc-20240116; t=1724947124; c=relaxed/simple;
+	bh=f7QkdqLQNpv165OxQ70XV8bsOdIVoKcfW1VXLeNbzt0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=feYTvddsc62LYTaBTB2ZKzh+BNFdO5s1gPYil/SaxYBlprPMN+tQw2jRmS9jqKd4ME7F+eZCY64okVPg4tnHCC5QVBHnDzyRyzZplzlcPNf/yi329HItp3+8xJ3DXQqA6W2Eje7Tdayaa7TmMjP9hTH4peAxABURG3KoLp2pqSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lLMaJwCv; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-201fba05363so7252845ad.3;
+        Thu, 29 Aug 2024 08:58:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1724947071; x=1725551871; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=/41oDsZHfxhcl1cqUKA01PWjnJrjTcYi52+9QxRI62A=;
-        b=wSpyoNFdEh10hAqmGC56DeP0G5vUzxzxB3mY5K4cg0WB1ONH9vvaczzDZLlITE2N6n
-         GYDqf7y2rbYjeuQDmj6GAG/JIveq7pcHL2CWWqcpVuKYb1gfNI+wWvVlqNWwDgEF80dL
-         TwljAMLA92vo/opYyrZbUcT5Jsy7DREYwpO1c=
+        d=gmail.com; s=20230601; t=1724947118; x=1725551918; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=lhPD/kfMojMsiZuoWrSaNbTJbgUBxkxmEH5S95zw+WE=;
+        b=lLMaJwCvs4lF4AtBJaKobMlzDjjx/vQ2s3PEanVHnouSyd7FFvbvdEex7WtR8HobuD
+         Hx4qhyaXJbG1JFqbnTPdyEHVj3LFKugbzAqajRS6i1WClsohtGPSIA4wSMETiXGywamR
+         OlO+ZSeMbzkaqeKPyCiIamaEd5FkrXVWeivm5HhSdG91FLNaB05rJfFjpeJ9qcD/X54N
+         I/z+zt1uIH7HJwr7X/K08gdqzqXMbOeCZc3VgambNSgJ//b5C4TIdVdb5/4hbTG1n21F
+         yy+cjQOa0LiYTGMDHr+jSeWbuw7tZNEpX3LCJB2iw1wgxswUisiFd1zAbuEk8k+x4K8x
+         EJDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724947071; x=1725551871;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1724947118; x=1725551918;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=/41oDsZHfxhcl1cqUKA01PWjnJrjTcYi52+9QxRI62A=;
-        b=DS4IRUJiE2MTP4uApqrnXvHdtmj0X0Bk1vlO1nWVN3MMXFL7E647/MP7BzLjsLrpof
-         homjVXX3Xhjfve2U0cMpOAnlMzbofLHuctSNj4YjWqTo4I+C6VP7jsk2gF5iE3vK65Rc
-         VR1yoQcZQAnBnnMDWDuuCw/lB4wRgPxHgcDt5Ahw+1ZlxIynQdm7Qx207+H2iKNTCkMN
-         HLJ+U8+PqpaxNFwFGswikNJ8mnGfeJX8izoucNxCYP31cmRw3uPaBnGp50oRlRpDglAQ
-         eC3H3DpRwu/P0H9EeLNZ318ANA6rL9xwsn2oEIqwzsFWhe4QjcdK6lEJhb6otgxSvHPq
-         OrZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXCRIjRLriyn+xaQdEJYOvwNY7zPrFSvQtTz9jubQE6az1oecvfe4ZkTYij08yFgaFH9076bzwAlqE/ZYE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyAybs9c17j3Fp/HHM07szAAUKu25t/Tih/RGroohb/UefqFq1H
-	luW3Ias9ieam1s8Ivzw3nSi1N8/r4H6AE3jIOI5NqQUdlMyE53zOu6Bo3HjgdNM=
-X-Google-Smtp-Source: AGHT+IEN/5x5JumXpn1GxODDJHBpZA1fqwxshkNBrm3W4Pi55CCH9podw+EpN5OXTvwZkSm6rfsQDg==
-X-Received: by 2002:a05:6a20:d8b:b0:1c6:b45a:df51 with SMTP id adf61e73a8af0-1cce1022303mr2371314637.30.1724947070902;
-        Thu, 29 Aug 2024 08:57:50 -0700 (PDT)
-Received: from localhost.localdomain ([2620:11a:c019:0:65e:3115:2f58:c5fd])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-715e569dccesm1294592b3a.136.2024.08.29.08.57.49
+        bh=lhPD/kfMojMsiZuoWrSaNbTJbgUBxkxmEH5S95zw+WE=;
+        b=oI/wulStuNGPoLfYqAsamYxa0YxpSeuT/43SvY90nN3Sch+Gwy3dk9fCjwb5+gHOMy
+         4llkgvqFymDjnITdpupEhIE3mPxSiltEJGRU9aLsqLIuLVLH1pkNyfXpBxjHoPUfmNFR
+         pydyijHAgS+aFVR3ZjHX2Bg8rov6LZu490XZdcbOGmfthvnrwo/TVz+JmWPFZzsyRh5N
+         YPDDNgNTcJT9IEQssrmSmfZ9C1mfS+XUTBFLGiBlePt0PeLFRmMju2g1LqR6t8vfRHuO
+         imOi+hSpi/WSje6p9aPnc3QCJ9zUzAo7fhupqRNh5RIKIJugUqkEgL6P6fVSLdLTmXmz
+         BlmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVzi6FI/+7XUpGJpskTeHzizl5vFTF8lnUvNAOrZ8aPYBAo+8Sde2ee4obfAP/tMq5A/JPaz6M48j16w2U=@vger.kernel.org, AJvYcCWlu4eS44dyM0lDOrBBBBFZaRgo/7YS+oCmutNrztCBu+jKd27vx94GAm0xJixMkebLR4oIr6sROenNgTk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLRhCnvn6iootwpQoT6npwiFtYuiMgGqCZ6hkNZaFrYA7pz9/r
+	hP4QUsZP0pWv5TLwBFrrCPrW8u3T4sV6HCMgID5RGbeJYDyhTX5Z
+X-Google-Smtp-Source: AGHT+IG1iOySf3RBBJ3oZsxcckYR+heTF1O3pcq0NqbDD6cG8BqQV54k0HoaRzIYQMYUSXNS5l1OAA==
+X-Received: by 2002:a17:902:d2ce:b0:202:4b65:65c0 with SMTP id d9443c01a7336-2050c3a9497mr33986965ad.32.1724947118265;
+        Thu, 29 Aug 2024 08:58:38 -0700 (PDT)
+Received: from five231003 ([2405:201:c006:3236:1c28:fa2a:bb62:6e9])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-205152b3546sm13110165ad.17.2024.08.29.08.58.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 08:57:50 -0700 (PDT)
-From: Joe Damato <jdamato@fastly.com>
-To: netdev@vger.kernel.org
-Cc: mkarsten@uwaterloo.ca,
-	edumazet@google.com,
-	kuba@kernel.org,
-	Joe Damato <jdamato@fastly.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	linux-doc@vger.kernel.org (open list:DOCUMENTATION),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH net-next] Documentation: Add missing fields to net_cachelines
-Date: Thu, 29 Aug 2024 15:57:42 +0000
-Message-Id: <20240829155742.366584-1-jdamato@fastly.com>
-X-Mailer: git-send-email 2.25.1
+        Thu, 29 Aug 2024 08:58:37 -0700 (PDT)
+Date: Thu, 29 Aug 2024 21:28:28 +0530
+From: Kousik Sanagavarapu <five231003@gmail.com>
+To: Jinjie Ruan <ruanjinjie@huawei.com>
+Cc: andrew@lunn.ch, sebastian.hesselbarth@gmail.com,
+	gregory.clement@bootlin.com, herve.codina@bootlin.com,
+	qiang.zhao@nxp.com, christophe.leroy@csgroup.eu,
+	thierry.reding@gmail.com, jonathanh@nvidia.com, nm@ti.com,
+	ssantosh@kernel.org, petlozup@nvidia.com, pshete@nvidia.com,
+	ruanjinjie@huawei.com, christophe.jaillet@wanadoo.fr,
+	ulf.hansson@linaro.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	linux-tegra@vger.kernel.org, krzk@kernel.org, jic23@kernel.org
+Subject: Re: [PATCH -next 8/8] soc: ti: knav_qmss_queue: Simplify with scoped
+ for each OF child loop
+Message-ID: <ZtCapIwWZolY7oMH@five231003>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240827114607.4019972-9-ruanjinjie@huawei.com>
 
-Two fields, page_pools and *irq_moder, were added to struct net_device
-in commit 083772c9f972 ("net: page_pool: record pools per netdev") and
-commit f750dfe825b9 ("ethtool: provide customized dim profile
-management"), respectively.
+Jinjie Ruan <ruanjinjie@huawei.com> writes:
+> @@ -1080,17 +1080,13 @@ static int knav_queue_setup_regions(struct knav_device *kdev,
+>  {
+>  	struct device *dev = kdev->dev;
+>  	struct knav_region *region;
+> -	struct device_node *child;
+>  	u32 temp[2];
+>  	int ret;
+>  
+> -	for_each_child_of_node(regions, child) {
+> +	for_each_child_of_node_scoped(regions, child) {
 
-Add both to the net_cachelines documentation, as well.
+Are you sure using *_scoped() is better here?  Since it seems that we
+need the memory pointed to by "child" in cases where we don't go into an
+error path.
 
-Signed-off-by: Joe Damato <jdamato@fastly.com>
----
- Documentation/networking/net_cachelines/net_device.rst | 2 ++
- 1 file changed, 2 insertions(+)
+>  		region = devm_kzalloc(dev, sizeof(*region), GFP_KERNEL);
+> -		if (!region) {
+> -			of_node_put(child);
+> -			dev_err(dev, "out of memory allocating region\n");
+> -			return -ENOMEM;
+> -		}
+> +		if (!region)
+> +			return dev_err_probe(dev, -ENOMEM, "out of memory allocating region\n");
+>  
+>  		region->name = knav_queue_find_name(child);
+>  		of_property_read_u32(child, "id", &region->id);
 
-diff --git a/Documentation/networking/net_cachelines/net_device.rst b/Documentation/networking/net_cachelines/net_device.rst
-index 70c4fb9d4e5c..a0e0fab8161a 100644
---- a/Documentation/networking/net_cachelines/net_device.rst
-+++ b/Documentation/networking/net_cachelines/net_device.rst
-@@ -176,3 +176,5 @@ netdevice_tracker                   dev_registered_tracker
- struct_rtnl_hw_stats64*             offload_xstats_l3                                               
- struct_devlink_port*                devlink_port                                                    
- struct_dpll_pin*                    dpll_pin                                                        
-+struct hlist_head                   page_pools
-+struct dim_irq_moder*               irq_moder
--- 
-2.25.1
+Similarly in most of the other cases in this series where a similar
+change is done.
 
+Also FYI, as for dev_err_probe(), I think I covered all of them in this
+file and a patch for it is currently sitting in ti-drivers-soc-next.
+
+Thanks
 
