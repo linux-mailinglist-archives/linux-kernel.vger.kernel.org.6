@@ -1,100 +1,101 @@
-Return-Path: <linux-kernel+bounces-306411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4406963EB2
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:35:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BBD3963EB6
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:35:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFA501C2438F
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:35:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 99253B22B80
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:35:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66D7918C030;
-	Thu, 29 Aug 2024 08:35:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC2BB15C137;
+	Thu, 29 Aug 2024 08:35:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mYJwXoxr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="cah3Mpc5"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 997773D6A;
-	Thu, 29 Aug 2024 08:35:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51450189912;
+	Thu, 29 Aug 2024 08:35:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724920505; cv=none; b=I9rkY8dRbyw9+x4a5gnpi3vRK5Gc3+af6GFhs/U80sbG8gDmLVcRKyevRnDhyIOBAUqQuKetZsaMHpAEKVGgwy9EhLsUKbog5/LClTqXXErU0CqqtucmKHEbvtpBM80f9rTGLh/AyOr4suf8oVazw3pif0TQCgZYPWOHYBSsXi4=
+	t=1724920518; cv=none; b=cFk8bM3MDnMU6lnfPzhh4UDVeN1iukY8wCsPmQNQ7DjHt+fUxkiqWJ1KaFjwpcncUSgHlECx+1OlUUlGfsy0mYX0qN67xB+lwLjhOik8xOBIh4qYrosl7Wbtwwi+Hsj0QVYiXAli+HP8Y9qSHPrbjJe139tYN7CRbiIYgHgBLGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724920505; c=relaxed/simple;
-	bh=P0f8ntpzcKey1wli+oN8eCCGvNidzORW7xrQUlBhT3E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bvTqYxVPfcX0kU/BYdCRbwXehNBliKTy7bXgd40Id19dU27+N78Gl7e3cyITm7hd1cYSvAwq5QFFeou6spRxRriTJ1nF4Y2EX8jKvdHY1h9C/MZ/KQ2ZNchA3yuzbxipWjniO9LcNiu/bdOTk1sov60WGi9U7NOeLClkhOuY8r0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mYJwXoxr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45145C4CEC7;
-	Thu, 29 Aug 2024 08:35:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724920505;
-	bh=P0f8ntpzcKey1wli+oN8eCCGvNidzORW7xrQUlBhT3E=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=mYJwXoxrqaUHZFFsNtMvTkCPvneG+WOO2MF97WITH5sfI+5l9M+JEMu+2XmuqAqsW
-	 pXFlz3L0natvIdxu6Yc2+C6Qi2Ltxf1/w+2pFcnwn3625cBJLg08Z3FjfrcrT0TYxA
-	 Y3lPBfnsTXOJ6Nyd4X82wvoZVBMVwju4VqUdlDczVTGkvQDDEQOCSBc9UkIZOdWz5k
-	 QmzvT/FjPvr3V6GVovDdrIIqLm3La14vwsl5pCrpb7vy4Ua49hjC2+x5Uxx+r/m0OG
-	 rYS4wY1ODCRow6lJUHU+2OTd3/d1z/MFh+7tSgYyW45YrVJ6RRsS4onddv61JbBRAf
-	 3PjtitvyWzvBw==
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5bef295a2b4so691750a12.0;
-        Thu, 29 Aug 2024 01:35:05 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUr1dy0Ckxti/7b0b/SRUFR2eAyvZdST31A5T/ch0ORApZXmYwoShKelH4UH33Ap8WoojSTybuCYIU=@vger.kernel.org, AJvYcCVXLuWuD1fJi/BFzwv/YOnzhnfNIZFJjwcL+RN9CtAA47JhnBEVrN/fAcEfF70S6AHC8H1fWZGWN3ZJ1nE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6N18cqW4/LfzjR4g6mgtrHZrKjD15VPwa/83XfvLbj/mCiGwn
-	ouknGvqB+ATHzEyH/i7x8w6fTa7SPn7yxEyK4M8DallLiNrPvHQBiZcbKiA8ZnqGYrxw4tL18Cq
-	anOsvxXoYLbACD4/942aEABVF4uM=
-X-Google-Smtp-Source: AGHT+IF/e3S0CMGyfyhfJSpUWyWUcXjSg14YL8RAMcl4MQ9juD6gouEMbZsgTyeeytlDKzqdQRjDuFUMsdjKimhDofc=
-X-Received: by 2002:a05:6402:4314:b0:5c2:1132:7ce7 with SMTP id
- 4fb4d7f45d1cf-5c220101f2emr2238125a12.7.1724920503791; Thu, 29 Aug 2024
- 01:35:03 -0700 (PDT)
+	s=arc-20240116; t=1724920518; c=relaxed/simple;
+	bh=6iZ8iIGBRLFC4519kTdXtS0rAGmtcKBdcw8S6IFTyEI=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=N+ZlqV4xezEliP6zfKTCqhKerU7hvP1fnHgM/EmIHDmzmccP+nH5BkO9cKmbJKtg8NeDB797hu9K89JhLMsvcude07wVj/r+1P6jzIjq1FT1V29ThgL99e+qzFUZX1H/TDfMqCAP9Xx/pGEDeBF46iAj53SfHHDPhW6F1bcaDA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=cah3Mpc5; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 07C2540E01C5;
+	Thu, 29 Aug 2024 08:35:14 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id g_I6YJdYLlmn; Thu, 29 Aug 2024 08:35:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1724920509; bh=CPJhcm4WSc5DpBeeH7qgshS/p1SRpirWBGGJlu0SQk4=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=cah3Mpc5nSYpGQMyejkNsp95hkl/X+s6B5xBrgHTfPCNNQHp02ZSXOUI3HjjX9DhW
+	 vEjexwCY727LS3YMNoK0hQUMyonR7aCZ6D039tIZEc0OGBucSwndlYqbguDZ5gi4V1
+	 qhZLMvXyyeZMQu6daP0guN8Y1oKm6wakJjFYxPGOxJLNxtRkK+Z+Ex/igPHquHI7Wj
+	 Ddds+DrEZRos0kyn+w1xjqjEOWO/CswZhHip6siwbkvvkLWV5HCiPMzsqyHYzuUJoT
+	 L5qAqTd7VSvRgD2Z1lZm5t9usfqnAZaWvE1uVf4Va1N3vBI82FN068qKydf+GuJidM
+	 XA1OKDiXNXqX6CU65lFshs7FVcU81qS2symUlsmgah/jJijv/Tf0+WDNXM80jUmtfG
+	 Nlfq/D7c6dvsjCzZq6aRE4X0n+UsndkhJQiIm0XIRUG9GGVUW/RgrPl5RQ3h7s4yoL
+	 3HIXB4MRZm3S3Yac4tzt6ibF8iW4XM+Ll3t856HohJIhipSd1Bm0aYJr6hm2CmI2vW
+	 WVddYO2iPSadIGgueMUoLwBneHPNBouJQPv+xtq6+hv0CCXnB9obYO8ytEQsrQei75
+	 OGA2vtzuB2ZuJwSvSswy6ChUfr7Bf8mfj7ZWYX5nRoa/YrU7DDUXMabC788QCRKSqU
+	 s0hrlESh+O3tj6sHBKJoGii4=
+Received: from [127.0.0.1] (business-24-134-159-81.pool2.vodafone-ip.de [24.134.159.81])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 51BEC40E016A;
+	Thu, 29 Aug 2024 08:34:53 +0000 (UTC)
+Date: Thu, 29 Aug 2024 10:34:49 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Ashish Kalra <Ashish.Kalra@amd.com>, seanjc@google.com, pbonzini@redhat.com,
+ dave.hansen@linux.intel.com, tglx@linutronix.de, mingo@redhat.com,
+ x86@kernel.org
+CC: hpa@zytor.com, peterz@infradead.org, linux-kernel@vger.kernel.org,
+ kvm@vger.kernel.org, thomas.lendacky@amd.com, michael.roth@amd.com,
+ kexec@lists.infradead.org, linux-coco@lists.linux.dev
+Subject: Re: [PATCH] x86/sev: Fix host kdump support for SNP
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20240827203804.4989-1-Ashish.Kalra@amd.com>
+References: <20240827203804.4989-1-Ashish.Kalra@amd.com>
+Message-ID: <87475131-856C-44DC-A27A-84648294F094@alien8.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240828062459.1853837-1-chenhuacai@loongson.cn>
- <affff6410e681152c3fdcf3512df76d734f29aeb.camel@xry111.site>
- <CAAhV-H6YLg1ipUf-45-0zF6HRcCfkVikwQM5cAD7_VSYyAsfoQ@mail.gmail.com> <baba6eec7a1f66dc8b82d5e16612d0703dd33c81.camel@xry111.site>
-In-Reply-To: <baba6eec7a1f66dc8b82d5e16612d0703dd33c81.camel@xry111.site>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Thu, 29 Aug 2024 16:34:49 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H7RF8yXHacfq0nj-QTNXmZrRKG4xhHav66ZPg0SdGT64w@mail.gmail.com>
-Message-ID: <CAAhV-H7RF8yXHacfq0nj-QTNXmZrRKG4xhHav66ZPg0SdGT64w@mail.gmail.com>
-Subject: Re: [PATCH] cpufreq: loongson3: Use raw_smp_processor_id() in do_service_request()
-To: Xi Ruoyao <xry111@xry111.site>
-Cc: Huacai Chen <chenhuacai@loongson.cn>, "Rafael J . Wysocki" <rafael@kernel.org>, 
-	Viresh Kumar <viresh.kumar@linaro.org>, loongarch@lists.linux.dev, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Xuerui Wang <kernel@xen0n.name>, Jiaxun Yang <jiaxun.yang@flygoat.com>, 
-	Binbin Zhou <zhoubinbin@loongson.cn>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;
+ charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 29, 2024 at 3:33=E2=80=AFPM Xi Ruoyao <xry111@xry111.site> wrot=
-e:
+On August 27, 2024 10:38:04 PM GMT+02:00, Ashish Kalra <Ashish=2EKalra@amd=
+=2Ecom> wrote:
+>From: Ashish Kalra <ashish=2Ekalra@amd=2Ecom>
 >
-> On Wed, 2024-08-28 at 21:55 +0800, Huacai Chen wrote:
-> > > Do I need to modify some firmware setting to make it work?
-> > You should update your firmware.
->
-> I've already updated to UDK2018-3A6000-
-> 7A2000_EVB_V4.0.05756_prestable2405_0523dbg.fd on a XA61200 before
-> trying CPUFreq.
->
-> And I also tried enabling DVFS in the firmware setting, and disabling
-> the overclocking.  Both didn't work.
-Hmm, current firmware with DVFS can only cooperate with the old
-CPUFreq driver in old-world kernels. New firmware which can cooperate
-with the upstream CPUFreq driver hasn't been released yet.
+>With active SNP VMs, SNP_SHUTDOWN_EX invoked during panic notifiers cause=
+s
+>crashkernel boot failure with the following signature:
 
-Huacai
+Why would SNP_SHUTDOWN be allowed *at all* if there are active SNP guests =
+and there's potential to lose guest data in the process?!
 
->
-> --
-> Xi Ruoyao <xry111@xry111.site>
-> School of Aerospace Science and Technology, Xidian University
+I don't think you want to be on the receiving end of those customer suppor=
+t calls at your cloud provider=2E=2E=2E
+
+--=20
+Sent from a small device: formatting sucks and brevity is inevitable=2E 
 
