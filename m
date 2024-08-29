@@ -1,180 +1,199 @@
-Return-Path: <linux-kernel+bounces-306499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C5D4963FCC
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 11:21:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8D9E963FC4
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 11:20:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29C4E2874C8
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 09:21:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D613BB24695
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 09:20:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51DDB18DF6A;
-	Thu, 29 Aug 2024 09:21:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0F9C18D65D;
+	Thu, 29 Aug 2024 09:19:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="Y00DVouM"
-Received: from mx0b-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="R8hefzsR"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D91CD189F37;
-	Thu, 29 Aug 2024 09:21:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 363C73E47B;
+	Thu, 29 Aug 2024 09:19:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724923263; cv=none; b=g0fs9dQW90EpNZUd6L+NpLnc3P6dDoy3a9PgQdYL0UsPQtcWJ9ls5A/m7hK1foIuHpIqfWktB9iOdIo08GQBs96B6hpQ1K+lCmW4WuvJuTDaFEvMX+R/bE5hpZwkqSyccLeg96wT2jaNOnne1LHY2CLsRKWZjfe9ZhXUPaz6Wok=
+	t=1724923198; cv=none; b=ZGNor03sX8UfvSY9YuuapvI0+zqyisz5Ddb4udr6vIpLpRu1l4T77fznDXWRexn/F5BfLNpjLGIGEoJt+U/vZdPqMfXthaN7MVgHCAwQeDRv3/gvk7CoZwYoOZmlrHJsyRZW9+lpWoZVVhrmIFDXAA/0zvI7AMVLI1FD/taTf+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724923263; c=relaxed/simple;
-	bh=XJugORg/LzFC55f/REHC966kTYTIH3sVOqWKZaSt80s=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JFNIU6uwuyY8i+0SygkWIgNJPL69GBJZrICKrCIcq6obsKPmIc9O07sTgzakYSZmqyeMV1ltZZ3BNu6G60yaZzKAPO5S/JV2vBQSa1+Mb3h+g6ZtHDmWpr7yY6W/jB1oUTONiVpBABC1ZN9oDi6shGnVbkBCMA0sp+hC7aRPxDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=Y00DVouM; arc=none smtp.client-ip=148.163.135.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
-Received: from pps.filterd (m0375855.ppops.net [127.0.0.1])
-	by mx0b-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47T5daQT023782;
-	Thu, 29 Aug 2024 05:20:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=DKIM; bh=uXjcL
-	JH5zyb2xQL1amE7PdnQiC7BzUxHgz8hwuNuQMs=; b=Y00DVouMj0auGQXYxhNbm
-	wlXCLTl009wbY1OlyBpHFR/DJqFt1HjDGPosxpOjh4Rk5IuGlr1rzjVMXxT0c2IR
-	PiYZe83AJiIhmyamGnpvdqv2aHOda4Qq1gcq5SaxnU0L0+PgBM/JPdR7ZRzDo413
-	mZyvdjTxQ7XnUkZMx+qvqGge/ElJ5CoCZmC2DkaBQLZgwBTWlvf+VipILU3iugKe
-	lm5jetPa4cn0WXlBaRCDsQv9t6hNh934kJwaVlwhAaiOkpJG5GK/EFPHkXU5UpIL
-	x90gmhySeRyE7dBl+VBJR6N7Xs6kJY3PjLa9aH3ybbjptxQpIdMWim+hZa9ugYbo
-	g==
-Received: from nwd2mta4.analog.com ([137.71.173.58])
-	by mx0b-00128a01.pphosted.com (PPS) with ESMTPS id 41ak1mgthf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 29 Aug 2024 05:20:52 -0400 (EDT)
-Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
-	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 47T9KoBx021806
-	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 29 Aug 2024 05:20:50 -0400
-Received: from ASHBCASHYB4.ad.analog.com (10.64.17.132) by
- ASHBMBX8.ad.analog.com (10.64.17.5) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.14; Thu, 29 Aug 2024 05:20:50 -0400
-Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by
- ASHBCASHYB4.ad.analog.com (10.64.17.132) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.14; Thu, 29 Aug 2024 05:20:49 -0400
-Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx9.ad.analog.com
- (10.64.17.10) with Microsoft SMTP Server id 15.2.986.14 via Frontend
- Transport; Thu, 29 Aug 2024 05:20:49 -0400
-Received: from amiclaus-VirtualBox.ad.analog.com (AMICLAUS-L02.ad.analog.com [10.48.65.124])
-	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 47T9KVkU016079;
-	Thu, 29 Aug 2024 05:20:46 -0400
-From: Antoniu Miclaus <antoniu.miclaus@analog.com>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Michael Hennerich <michael.hennerich@analog.com>,
-        Antoniu Miclaus <antoniu.miclaus@analog.com>,
-        <linux-input@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH 2/2] dt-bindings: touchscreen: ad7877: add bindings
-Date: Thu, 29 Aug 2024 12:19:36 +0300
-Message-ID: <20240829092007.25850-2-antoniu.miclaus@analog.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240829092007.25850-1-antoniu.miclaus@analog.com>
-References: <20240829092007.25850-1-antoniu.miclaus@analog.com>
+	s=arc-20240116; t=1724923198; c=relaxed/simple;
+	bh=y0oWGGe7R6HnOQYclTlWlPmFdV39yRoRU7bLFGNWI3M=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=c6L732fOXTMUBduU9EVAWbVFCkoonKwAvtXCiXAX8htZfkds66mKvYv6Zl3/0bhV9Ulsch1f0HdN3ERNYFz/yUNja959ny6uvC4WJ10+BHGEgyG3yQX9hYkUb5ObDSCWanfq1xCRnfYKdSWSJFBLvEKh2vzVnTGzpdLdgtsB5zo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=R8hefzsR; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724923197; x=1756459197;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=y0oWGGe7R6HnOQYclTlWlPmFdV39yRoRU7bLFGNWI3M=;
+  b=R8hefzsR7kj+9v5PuhxD8FfRhCqiBXtbwslxKBKyH3OxHgXEOI3rX5s1
+   UZvNO/C6p1J9dd6xDsnBruGW3PJtrL39/gYhKWV1fK6hWH1k2F2fJq5XZ
+   6qWntJfeHXZWZDoASIbjZl8tNhT7XydiysWPREb830UoNRY7nbESOJDkw
+   7iEViAlxaqKc2QQwAiMFGx6hr4pLSHvIAMyrhqWom/O2G6zQttsNCG5cf
+   YrZyrnh9mfV2nmiInxGzkx6STgdBeLdUmuaEAJEFJpXTpegtZ53b4RiMV
+   HbRUodbIs8jtQQv/lsVxS1puYDRVrATOoFDN/mqzPEbaRgt9DM/QvO+My
+   g==;
+X-CSE-ConnectionGUID: jL/Wf+aMScCiK5+6RxN8sw==
+X-CSE-MsgGUID: 0xfuGmKSQ4Ogrs2+TzZpZQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11178"; a="40978199"
+X-IronPort-AV: E=Sophos;i="6.10,185,1719903600"; 
+   d="scan'208";a="40978199"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 02:19:56 -0700
+X-CSE-ConnectionGUID: UaV69X6MRAaEwbmgVJX0bg==
+X-CSE-MsgGUID: emelES7JQ9GXwWK4dghn7w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,185,1719903600"; 
+   d="scan'208";a="68345578"
+Received: from mjarzebo-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.242])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 02:19:47 -0700
+From: Jani Nikula <jani.nikula@intel.com>
+To: Devarsh Thakkar <devarsht@ti.com>, Andy Shevchenko
+ <andriy.shevchenko@linux.intel.com>
+Cc: mchehab@kernel.org, hverkuil-cisco@xs4all.nl,
+ linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+ sebastian.fricke@collabora.com, linux-doc@vger.kernel.org,
+ praneeth@ti.com, nm@ti.com, vigneshr@ti.com, s-jain1@ti.com,
+ r-donadkar@ti.com, b-brnich@ti.com, detheridge@ti.com, p-mantena@ti.com,
+ vijayp@ti.com, andi.shyti@linux.intel.com, nicolas@ndufresne.ca,
+ jirislaby@kernel.org, davidgow@google.com, dlatypov@google.com,
+ corbet@lwn.net, broonie@kernel.org, rdunlap@infradead.org,
+ nik.borisov@suse.com, Dave.Martin@arm.com
+Subject: Re: [PATCH v2 1/6] math.h: Add macros for rounding to the closest
+ value
+In-Reply-To: <0b06794b-34c5-ec0d-59c6-8412a8789eaf@ti.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20240826150822.4057164-1-devarsht@ti.com>
+ <20240826150822.4057164-2-devarsht@ti.com>
+ <Zsy-8xXQ01-JhL0m@smile.fi.intel.com>
+ <9c41f6b7-6b06-cd5b-74bd-24873c4beaf7@ti.com> <87frqqyw9r.fsf@intel.com>
+ <0b06794b-34c5-ec0d-59c6-8412a8789eaf@ti.com>
+Date: Thu, 29 Aug 2024 12:19:43 +0300
+Message-ID: <878qwfy9cg.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ADIRuleOP-NewSCL: Rule Triggered
-X-Proofpoint-GUID: 0A8cgR_m5zRsy1efZL13DtOtIeItD-Hc
-X-Proofpoint-ORIG-GUID: 0A8cgR_m5zRsy1efZL13DtOtIeItD-Hc
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-29_02,2024-08-29_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
- mlxlogscore=999 clxscore=1015 suspectscore=0 lowpriorityscore=0
- impostorscore=0 bulkscore=0 adultscore=0 phishscore=0 priorityscore=1501
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408290068
 
-Add device tree bindings for the ad7877 driver.
+On Tue, 27 Aug 2024, Devarsh Thakkar <devarsht@ti.com> wrote:
+> Hi Nikula,
+>
+> Thanks for the review.
+>
+> On 27/08/24 18:10, Jani Nikula wrote:
+>> On Tue, 27 Aug 2024, Devarsh Thakkar <devarsht@ti.com> wrote:
+>
+> [..]
+>
+>>> The equivalency between roundclosest w.r.t round_closest is same as
+>>> equivalency between existing macros rounddown w.r.t round_down. Functionally
+>>> both are same but the former is recommended to be used only for the scenario
+>>> where multiple is not power of 2 and latter is faster but is strictly for the
+>>> scenario where multiple is power of 2. I think the same is already summarized
+>>> well in commit message and further elaborated in the patch itself as part of
+>>> header file comments [1] so I personally don't think any update is required
+>>> w.r.t this.
+>> 
+>> I still don't think rounddown vs. round_down naming is a good example to
+>> model anything after.
+>> 
+>> I have yet to hear a single compelling argument in favor of having a
+>> single underscore in the middle of a name having implications about the
+>> inputs of a macro/function.
+>> 
+>> The macros being added here are at 2 or 3 in Rusty's scale [1]. We could
+>> aim for 6 (The name tells you how to use it), but also do opportunistic
+>> 8 (The compiler will warn if you get it wrong) for compile-time
+>> constants.
+>> 
+>
+> The macros use existing round_up/round_down underneath, so need to check if
+> they have compile-time checks but either-way this should not block the current
+> series as the series does not aim to enhance the existing round_up/round_down
+> macros.
+>
+>> As-is, these, and round_up/round_down, are just setting a trap for an
+>> unsuspecting kernel developer to fall into.
+>> 
+>
+> I understand what you are saying but I believe this was already discussed in
+> original patch series [1] where you had raised the same issue and it was even
+> discussed if we want to go with a new naming convention (like
+> round_closest_up_pow_2) [2] or not and the final consensus reached on naming
+> was to align with the existing round*() macros [3]. Moreover, I didn't hear
+> back any further arguments on this in further 8 revisions carrying this patch,
+> so thought this was aligned per wider consensus.
+>
+> Anyways, to re-iterate the discussion do we want to change to below naming scheme?
+>
+> round_closest_up_pow_2
+> round_closest_down_pow_2
+> roundclosest
+>
+> or any other suggestions for naming ?
+>
+> If there is a wider consensus on the suggested name (and ok to deviate from
+> existing naming convention), then we can go ahead with that.
 
-Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
----
- .../input/touchscreen/adi,ad7877.yaml         | 58 +++++++++++++++++++
- 1 file changed, 58 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/input/touchscreen/adi,ad7877.yaml
+The stupid thing here is, I still don't remember which one is the
+generic thing, rounddown() or round_down(). I have to look it up every
+single time to be sure. I refuse to believe I'd be the only one.
 
-diff --git a/Documentation/devicetree/bindings/input/touchscreen/adi,ad7877.yaml b/Documentation/devicetree/bindings/input/touchscreen/adi,ad7877.yaml
-new file mode 100644
-index 000000000000..5fc5124c5999
---- /dev/null
-+++ b/Documentation/devicetree/bindings/input/touchscreen/adi,ad7877.yaml
-@@ -0,0 +1,58 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/input/touchscreen/adi,ad7877.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Analog Devices AD7877 Touch Screen Controller
-+
-+maintainers:
-+  - Antoniu Miclaus <antoniu.miclaus@analog.com>
-+
-+description: |
-+  Analog Devices Touch Screen Controller
-+  https://www.analog.com/media/en/technical-documentation/data-sheets/AD7877.pdf
-+
-+allOf:
-+  - $ref: touchscreen.yaml#
-+  - $ref: /schemas/spi/spi-peripheral-props.yaml#
-+
-+properties:
-+  compatible:
-+    enum:
-+      - adi,ad7877
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  spi-max-frequency:
-+    description: AD7877 SPI bus clock frequency.
-+    minimum: 10000
-+    maximum: 20000000
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+    spi {
-+      #address-cells = <1>;
-+      #size-cells = <0>;
-+
-+      touchscreen@0 {
-+        compatible = "adi,ad7877";
-+        reg = <0>;
-+        spi-max-frequency = <20000000>;
-+        interrupts = <21 IRQ_TYPE_EDGE_FALLING>;
-+        interrupt-parent = <&gpio>;
-+      };
-+    };
-+...
+It's okay to accidentally use the generic version, no harm done. It's
+definitely not okay to accidentally use the special pow-2 version, so it
+should have a special name. I think _pow2() or _pow_2() is a fine
+suffix.
+
+Another stupid thing is, I'd name the generic thing round_down(). But
+whoopsie, that's not the generic thing.
+
+This naming puts an unnecessary extra burden on people. It's a stupid
+"convention" to follow. It's a mistake. Not repeating a mistake trumps
+following the pattern.
+
+There, I've said it. Up to the people who ack and commit to decide.
+
+
+BR,
+Jani.
+
+
+>
+> [1]: https://lore.kernel.org/all/ZkIG0-01pz632l4R@smile.fi.intel.com/
+> [2]: https://lore.kernel.org/all/5ebcf480-81c6-4c2d-96e8-727d44f21ca9@ti.com/
+> [3]:
+> https://lore.kernel.org/all/ZkIG0-01pz632l4R@smile.fi.intel.com/#:~:text=series%20is%20that%3A%0A%2D-,align,-naming%20(with%20the
+>
+> Regards
+> Devarsh
+>> 
+>> BR,
+>> Jani.
+>> 
+>> 
+>> [1] https://ozlabs.org/~rusty/index.cgi/tech/2008-03-30.html
+>> 
+>> 
+>>>
+>>> [1]: https://lore.kernel.org/all/20240826150822.4057164-2-devarsht@ti.com
+>>>
+>>> Regards
+>>> Devarsh
+>> 
+
 -- 
-2.46.0
-
+Jani Nikula, Intel
 
