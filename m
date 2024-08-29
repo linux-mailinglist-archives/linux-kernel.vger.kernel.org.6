@@ -1,75 +1,72 @@
-Return-Path: <linux-kernel+bounces-307503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBD53964E35
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 20:51:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8284A964E3F
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 20:52:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EEDB01C22609
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 18:51:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 402402828F3
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 18:52:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A42721B8E82;
-	Thu, 29 Aug 2024 18:51:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CD5D1B8E88;
+	Thu, 29 Aug 2024 18:52:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UG4jwAxW"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b3KbXqaC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 971D9481D1;
-	Thu, 29 Aug 2024 18:51:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58ABC1494B2;
+	Thu, 29 Aug 2024 18:52:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724957470; cv=none; b=BUrLsw7RY6ONv3N9koFpbL1If6AYbdM/kbY39CxnLuCl4jEZ2GSFvpoXKi2HTeKjO51dvEkNSKK8hhOxsft5yQTI/b0ypwAs1HP0UDbHV9st+erjZrOkbvVefszBQmaupjM3Y0H1Uup4ABkfXGZcAduR7hTQc4XNGJLOsT0e3z4=
+	t=1724957562; cv=none; b=LZbe/Y7zrWHxddgquZIl8rZZPIqRSuMO392eH1F5SrCPTcemQLLOG9nFB7FVOYKcZ+67asMoUJodlgp8Lvmxw/n0A2XAAuowX6+Ijii2h0QK6QLoRFStoTeZEJl13CipZWbApXt9neQfaweasddOSAB0QHpBRtSkeToJRt02udU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724957470; c=relaxed/simple;
-	bh=D42KJ/YIG3pbccGOwuLNNQLlJrAg2tdeLR/yfTxAKgM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=EAAf2K+/0kO2QgDe5QJ1NabcGQWE/PWfPXTThQNbxiOlnpX1955ocAeiHCNjCsqKGiTO9o+gfFnzidgqhVQrMeRgCIQpnL1Xxl7rO4YfTr3jCHw0KoylW+c55w8unM6GyNR4tEQsBuodIVPSwQV2+I2eO3SRp9zESEay6xc1+XY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UG4jwAxW; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-7140ff4b1e9so858662b3a.3;
-        Thu, 29 Aug 2024 11:51:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724957467; x=1725562267; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FDWW96TyKQxT75kLOIMnOo6yCk9tPy/z6V+9aoVRcVo=;
-        b=UG4jwAxWlOSqitiVeHVtQKuHpKjQJKDWz+PhneceNb2ZTNGlJjK7R42t2OGTwKg6lu
-         VNe1SvLVE6zENGeQ2srpCbPTRiAFulfAFHl+x0lOfXR9IJk1dX8NN7EcXrS8RfyotHvl
-         mihFgYeJRo7ijldCMWDCk8PVPNO9+DCyCWtuXisMa1XbccvoPS0cpkGvL+5Z1qvjxNc9
-         3HG/MWDF6kVvV/5G8JIe/Fe6hTJP+38nYMqvk798ZSwPV7fkFANRCeoJhFlX0r5x1TY4
-         fPPzC2DRXHxDc+nhAlUzchdeKgNZCMeZC6Is9x5S3kEHYLhO0D7/DI6nBN8FMNmBE8H6
-         f93A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724957467; x=1725562267;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FDWW96TyKQxT75kLOIMnOo6yCk9tPy/z6V+9aoVRcVo=;
-        b=PzZDAurVfmDoDuGtnl7cJ/b5ENw34eRTGdsUwXjlGLKBz62YOtWSQIw7+lxSd2mdVJ
-         xXL9heLcHdsOT+AaWQXocti6loZfBn2FMVcoRb2obSTQB2MH19tbX/9OIufmyXaSWaQZ
-         aa0LFfNi7jLx9N+hPlW8EUnKYxWqDu+a2phjvJhoTxS0E7qGwzVLFwZ7KDsYj67BTfSl
-         NpDh6Jt1NESxZZT/OWIxnVsEjQpvpSUZRgYwAXbbGaqD9AiCLmk3wGC9t1lY1PnZumG7
-         QYODf1RJ3NI3k/Ttx8OKpOE/rCjSpS3asrp9hetE2QYqvLJb6M7BrwgwjxhZwMUCHqc0
-         1P2w==
-X-Gm-Message-State: AOJu0Ywv8LL3+GiXT0TVfnRBinUkfzyOuFnGqawNp04lpt70WLVP/0uL
-	dAyyRvNDEw/Ceq5QLp1cgVzts8EJFppnXN8D455VrdPPfmtiQ1SxTk4e5Q==
-X-Google-Smtp-Source: AGHT+IEcvhJogEx51N7fP0DkjmBEFPe3SOAYM+Yw27YuFnX7XWob7hV270eXU1abRmhV848wsMQmZA==
-X-Received: by 2002:a05:6a20:d046:b0:1cc:d2d9:b408 with SMTP id adf61e73a8af0-1cce0ff0fefmr3688330637.3.1724957467252;
-        Thu, 29 Aug 2024 11:51:07 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:2ed6:5fae:d35c:9c2d])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-715e56dd267sm1447369b3a.157.2024.08.29.11.51.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 11:51:06 -0700 (PDT)
-Date: Thu, 29 Aug 2024 11:51:04 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: linux-input@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Frank Li <Frank.Li@nxp.com>,
-	Robin Gong <yibin.gong@nxp.com>
-Subject: [PATCH] Input: snvs_pwrkey - use devm_clk_get_optional_enabled()
-Message-ID: <ZtDDGMaOFlMYjOrt@google.com>
+	s=arc-20240116; t=1724957562; c=relaxed/simple;
+	bh=sji9qUHLrqHNW9BPEl5XCsnv+ETqRB6bWthNHqjS8ks=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DFdCyrQ4Bf3euJjXvXuE/CyouwzgK3syY0widik7Q/ebjy3tUUUJ9nChWgA1+YJ/1m6igJVs7of7OuMFJ2XMcGqsCWt3AVitRR1050JmaUq+Wwb0ya+QfBcW3SgjIHBCs8JJ9tNr+jXDbil2jQdVcFP9v4HJEXeGKz8kIBZPJ7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b3KbXqaC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9460BC4CEC1;
+	Thu, 29 Aug 2024 18:52:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724957561;
+	bh=sji9qUHLrqHNW9BPEl5XCsnv+ETqRB6bWthNHqjS8ks=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=b3KbXqaCwxgQIesaGWz0wsMeMBDUv0yytXgal8R6jeuHVlZqaBLT7/9XFox2ERjcO
+	 9NVN1CkLl68ZV88Z4sPzema+0lLKi1WA0TmWgzLPOTzGmjZUBvGNn/SWT4SddOhTM/
+	 M9sBWFbm8vqMVWXfc2IyB/nXdMXuukiAfzykL9RE+2IEQYu4Sl60FNcfnXl3jHkDw5
+	 Ocg2HPMWl1idVHFtmWIgFAmHBkn1nmp6dIMj3hy7bcQmvFQjkKk/DDY3fMlWOhTpma
+	 a7pVUtKxtUJPC5laEA4kBh0oL8DdIeF14K4KeeysXWVQTM83Rs8F9Nm1lC9kZ64g5Y
+	 ae33sp3w6Xy9g==
+Date: Thu, 29 Aug 2024 13:52:40 -0500
+From: Rob Herring <robh@kernel.org>
+To: Nikunj Kela <quic_nkela@quicinc.com>
+Cc: andersson@kernel.org, konradybcio@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, rafael@kernel.org, viresh.kumar@linaro.org,
+	herbert@gondor.apana.org.au, davem@davemloft.net,
+	sudeep.holla@arm.com, andi.shyti@kernel.org, tglx@linutronix.de,
+	will@kernel.org, joro@8bytes.org, jassisinghbrar@gmail.com,
+	lee@kernel.org, linus.walleij@linaro.org, amitk@kernel.org,
+	thara.gopinath@gmail.com, broonie@kernel.org,
+	wim@linux-watchdog.org, linux@roeck-us.net, robin.murphy@arm.com,
+	cristian.marussi@arm.com, rui.zhang@intel.com, lukasz.luba@arm.com,
+	vkoul@kernel.org, quic_gurus@quicinc.com, agross@kernel.org,
+	bartosz.golaszewski@linaro.org, quic_rjendra@quicinc.com,
+	robimarko@gmail.com, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-crypto@vger.kernel.org,
+	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-i2c@vger.kernel.org, iommu@lists.linux.dev,
+	linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org,
+	linux-spi@vger.kernel.org, linux-watchdog@vger.kernel.org,
+	kernel@quicinc.com, quic_psodagud@quicinc.com,
+	quic_tsoni@quicinc.com, quic_shazhuss@quicinc.com
+Subject: Re: [PATCH 21/22] ARM: dt: GIC: add extended SPI specifier
+Message-ID: <20240829185240.GA914553-robh@kernel.org>
+References: <20240828203721.2751904-1-quic_nkela@quicinc.com>
+ <20240828203721.2751904-22-quic_nkela@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,74 +75,34 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20240828203721.2751904-22-quic_nkela@quicinc.com>
 
-Switch to using devm_clk_get_optional_enabled() helper instead of
-acquiring the clock with devm_clk_get_optional(), enabling it, and
-defining and installing a custom devm action to call clk_disable().
+On Wed, Aug 28, 2024 at 01:37:20PM -0700, Nikunj Kela wrote:
+> Add interrupt specifier for extended SPI interrupts.
 
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
----
- drivers/input/keyboard/snvs_pwrkey.c | 24 +-----------------------
- 1 file changed, 1 insertion(+), 23 deletions(-)
+What's an "extended SPI"? Is this a GIC spec thing? If so, what version?
 
-diff --git a/drivers/input/keyboard/snvs_pwrkey.c b/drivers/input/keyboard/snvs_pwrkey.c
-index ad8660be0127..f7b5f1e25c80 100644
---- a/drivers/input/keyboard/snvs_pwrkey.c
-+++ b/drivers/input/keyboard/snvs_pwrkey.c
-@@ -100,11 +100,6 @@ static irqreturn_t imx_snvs_pwrkey_interrupt(int irq, void *dev_id)
- 	return IRQ_HANDLED;
- }
- 
--static void imx_snvs_pwrkey_disable_clk(void *data)
--{
--	clk_disable_unprepare(data);
--}
--
- static void imx_snvs_pwrkey_act(void *pdata)
- {
- 	struct pwrkey_drv_data *pd = pdata;
-@@ -141,28 +136,12 @@ static int imx_snvs_pwrkey_probe(struct platform_device *pdev)
- 		dev_warn(&pdev->dev, "KEY_POWER without setting in dts\n");
- 	}
- 
--	clk = devm_clk_get_optional(&pdev->dev, NULL);
-+	clk = devm_clk_get_optional_enabled(&pdev->dev, NULL);
- 	if (IS_ERR(clk)) {
- 		dev_err(&pdev->dev, "Failed to get snvs clock (%pe)\n", clk);
- 		return PTR_ERR(clk);
- 	}
- 
--	error = clk_prepare_enable(clk);
--	if (error) {
--		dev_err(&pdev->dev, "Failed to enable snvs clock (%pe)\n",
--			ERR_PTR(error));
--		return error;
--	}
--
--	error = devm_add_action_or_reset(&pdev->dev,
--					 imx_snvs_pwrkey_disable_clk, clk);
--	if (error) {
--		dev_err(&pdev->dev,
--			"Failed to register clock cleanup handler (%pe)\n",
--			ERR_PTR(error));
--		return error;
--	}
--
- 	pdata->wakeup = of_property_read_bool(np, "wakeup-source");
- 
- 	pdata->irq = platform_get_irq(pdev, 0);
-@@ -204,7 +183,6 @@ static int imx_snvs_pwrkey_probe(struct platform_device *pdev)
- 	error = devm_request_irq(&pdev->dev, pdata->irq,
- 			       imx_snvs_pwrkey_interrupt,
- 			       0, pdev->name, pdev);
--
- 	if (error) {
- 		dev_err(&pdev->dev, "interrupt not available.\n");
- 		return error;
--- 
-2.46.0.469.g59c65b2a67-goog
-
-
--- 
-Dmitry
+> 
+> Qualcomm SA8255p platform uses extended SPI for SCMI 'a2p' doorbells.
+> 
+> Signed-off-by: Nikunj Kela <quic_nkela@quicinc.com>
+> ---
+>  include/dt-bindings/interrupt-controller/arm-gic.h | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/include/dt-bindings/interrupt-controller/arm-gic.h b/include/dt-bindings/interrupt-controller/arm-gic.h
+> index 35b6f69b7db6..9c06248446b7 100644
+> --- a/include/dt-bindings/interrupt-controller/arm-gic.h
+> +++ b/include/dt-bindings/interrupt-controller/arm-gic.h
+> @@ -12,6 +12,7 @@
+>  
+>  #define GIC_SPI 0
+>  #define GIC_PPI 1
+> +#define GIC_ESPI 2
+>  
+>  /*
+>   * Interrupt specifier cell 2.
+> -- 
+> 2.34.1
+> 
 
