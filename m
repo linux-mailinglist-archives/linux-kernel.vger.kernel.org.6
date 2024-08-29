@@ -1,133 +1,126 @@
-Return-Path: <linux-kernel+bounces-306591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EC549640E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 12:07:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E61F9640ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 12:08:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C2032845C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:07:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EEC09283727
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:08:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5259318E020;
-	Thu, 29 Aug 2024 10:07:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vzb61wKO"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7187D18E028;
+	Thu, 29 Aug 2024 10:07:58 +0000 (UTC)
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D08BB18CBE5
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 10:07:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E33DD4A00;
+	Thu, 29 Aug 2024 10:07:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724926023; cv=none; b=s2gI6PuJiqdDfL3JO5Bcry5TYXbLZhqsEjifMpzmP6NkUNEIQQBTUxiCJuj4tQs8zRCBVt3DKp/3u35Yp7kmTTjiKyVw1J0fn+prRmXOp67yPIRJZLwW6qUuftweiAZehVaeQmSFH0AI59wZhAQskAPWR4lreOVPQ4IeeioDxnU=
+	t=1724926078; cv=none; b=RaMplrminwsqtRyH0m2n34yQBPZ0fp4J0a+v/tawxOtXlQz2SrzwlQHam0phV2F7Bg4pNXNOavZPNTMHGCQ47vUDoyllV8/tregoBAH9ttKHF//jlRHW7Q8hXqxDnuzKghGuAI+18vOs8YD6QVS+lH73RkWhz26MuQaoRKHeZZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724926023; c=relaxed/simple;
-	bh=ZuoDD44tNeycvKn5O9iVYZj0plCcUDqFpueY5KbJbX0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=at9YYPUbFMq91Wc946ixXF5c9BtZ8/OrvYeTRupHYgw3TJdvrESjLOOL8G429jiiUSVB78u8JloKoJVBtbOHGyOe7WQ42rTqvy1lXx8MqysJlMyKkdKZnICnCkcf2XZNqQoJz1kS2JeWz3ahmRGETIBZ1knQRwARLNhGkuIlsLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vzb61wKO; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-533461323cdso617631e87.2
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 03:07:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724926019; x=1725530819; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=p4m4sFOZMDTMX82iw7f1HhdQ6KEhLtr+hrPhztMpqLI=;
-        b=vzb61wKOL/tdMQ+oG9V7e/Ya+sqvSsHLuVzdIV+gMVyKUOC2AAuhKfdLxNou49sabT
-         DvALHBVLEnz5jIeLV4zBX4f8j4mHTM5P3KPBLqmnKI88tU9i8lGdGvvdMDM7dxqNcgUU
-         dvw5ZzgsAjEZ6dt5xy3K+hhfZmIWIW6w1nwVimre2gd4J7X+L0gQAANTY0HHwQkE/FRF
-         PIusHC1dC7+pQSYyQNaYy4DrOQfubvvQUDQP5pMTvOtRhn+QiyLbhBzy3usvbG/jT/b6
-         a4lbykPtpBytW6ISMNcqBIfYn/1gD0Oc5yca40CZsDGRxOoPW0p0+zcdfiI0KAzkMWlt
-         vl7w==
+	s=arc-20240116; t=1724926078; c=relaxed/simple;
+	bh=34SMnDpz2sOkKhVTCiD5hAHJS3njg+Xu9HXU10mjVNQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=npj89V/+VGGqR2n+/z4swg8Y4ARzfvRHHLmEj8BWL/icL+h/fZSoqqkcAyW7TdRVqxKcxUcjTMujnF8aJrDtY0yfXox496blaYcv7L4XjOPMn6tCRKPS6d8a/fIpzb/ZNgSPbmZtZTmCEu5xOq2DaSdG53ZB9kW6NJq/KVIVQUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-6b4432b541aso4871547b3.1;
+        Thu, 29 Aug 2024 03:07:55 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724926019; x=1725530819;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=p4m4sFOZMDTMX82iw7f1HhdQ6KEhLtr+hrPhztMpqLI=;
-        b=HkOyTHGdhnWliTkuncMUrx9sOA89neoT3P5qk8zBtz2N4nGk/XoDqQF3w4GT63hJ8n
-         Ov+y/WBwA8xUoYQxNs2EGZT6tjDjIZFUg1PHpSFQ7a1B+09j3/chE7PnChshNPZpXHjF
-         vTNBxD6dzS5qdlaz9b91D0dY75Ls57y89mWGPx/sO4Hm93pGiOlrbfzjTfcsN1vYuwz+
-         pcfGWLFuts9zPsCSczopIZCYuCRHNnPU55367fr9wFyzPlF1kCcGLZAuhLBywEiNv2s/
-         DbjDdqPPH5b2SC24iTYfGfo07Z2znQjdaVBvqj91gea9o4zJf6aQZh+tbwVR55PhmZlH
-         ThrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVM94Tl/XU5HKoo1Xaml0Bz751JfYZIYvQxOH6g50xXxvuoRlUluzaUhnMjQp/knya4oFwS5uU6GyWLipE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxK+D3rPOzBWWYeOWGJyd9cN/DJZSBnTWGqbIvI/hRJyDcIkPtQ
-	hy2n0yLt8aw6iQLRXutOz1KAKB180pHgCzt2cm0NVzCkVVxkdTiVUqj2GPZ8cPY=
-X-Google-Smtp-Source: AGHT+IEAyzzgG0+l2SSqg3XbyWi54g9EJHgJyEiWmSeAfTXoSsLIi75kAP68EXftAzwcFS197Ifz8Q==
-X-Received: by 2002:a05:6512:3f0a:b0:533:460c:e42f with SMTP id 2adb3069b0e04-5353e5449b2mr1408030e87.4.1724926018326;
-        Thu, 29 Aug 2024 03:06:58 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-535408593d5sm112334e87.306.2024.08.29.03.06.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 03:06:57 -0700 (PDT)
-Date: Thu, 29 Aug 2024 13:06:56 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: robdclark@gmail.com, quic_abhinavk@quicinc.com, sean@poorly.run, 
-	marijn.suijten@somainline.org, airlied@gmail.com, daniel@ffwll.ch, 
-	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -next] drm/msm: Use
- devm_platform_ioremap_resource_byname()
-Message-ID: <6k6hghic2ay277jg5tddihqal2i2fta2aam2du6dbjqq4whcjh@lilojqbwgnsx>
-References: <20240828084849.2527115-1-ruanjinjie@huawei.com>
+        d=1e100.net; s=20230601; t=1724926074; x=1725530874;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=agM2uieBOGDHR7oA4CvBCTPuHqTNsiUN2AfPhgc69q4=;
+        b=jmB8nnmKooN9CaFD67ul6wZPap/iNPRd270zqJIpcaqFw36LtftVHbIilm4oLO0Wdp
+         cXckJP7pM5d3tN5Mai/927hvQXeAHlP24/Qj8oIuaUXo9EvgU40c+L93ReAhW9dNM0vF
+         38zWan2/k/5EgP3YbrN6AeD4vL1nsTHbtb+4E3XyI34YK0dLWIQ4EtasQBUb5u4vPO1z
+         urkLOzDlJ7nhK5y8Pt/N1EHMVoM5J1I/OIi1vg2BrxzVcU+DZUbRA04DNxPB4FpVr545
+         5uFWvEUa7TLX539dQpNCDPXjqdlB+CG2eeHYr9Kc/VDLtDtQahUI2u8ydBaip29Cy/Fd
+         iZ4g==
+X-Forwarded-Encrypted: i=1; AJvYcCUSuIYQ0LUfKVDnf+3VEgC+6NhkwTTS1s25wNpeCnW/FeXnncOxv7tmMvv99EW2+gBvAPkodKHJeUU6cXyE@vger.kernel.org, AJvYcCUnGRLwtF1e2iyseCbGcuNnohZtYOSM0UUvTHKIAOI/xlPVxdgGhqHgtpaE3DQLrnZ4RWb7TRsEdDYt@vger.kernel.org, AJvYcCV2Xn+wdECbPTB8RZhUlpop8wpRxyT52DRgxoMQxvualSqD36+bp9LoW/4sj80cchYxYqaE1LXXsIUE/n9yLyo=@vger.kernel.org, AJvYcCW4r0uT1/szO8XgzKf+FyUQG0jdIBV25Sku7yy9OkO4JGg/URNlgnKBM+dJKEqnIrRMjzKvFqBO3HfwmUfWxzs5EEc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9/RPticklKb67yqT9TJRAdqU6pRmOyEGkyjzF0ozJIeDmHo1Q
+	KwylGFdMPFzrJCj6mE/Fi9zK2AhclCLXG2II+M9w3FwqxX55jOhBWIZZOduk
+X-Google-Smtp-Source: AGHT+IGpGMFWeVqqx+ZaqEkEnBkoAa8xh12uYIUlSBhuIZoCsK6tepIXrfrEQHnONZNLDe2HO5Qc0Q==
+X-Received: by 2002:a05:690c:6509:b0:6b2:1b65:4c0d with SMTP id 00721157ae682-6d276404956mr24390297b3.10.1724926074375;
+        Thu, 29 Aug 2024 03:07:54 -0700 (PDT)
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com. [209.85.128.170])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6d2d39c72c1sm1783607b3.24.2024.08.29.03.07.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 29 Aug 2024 03:07:53 -0700 (PDT)
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6b4432b541aso4871407b3.1;
+        Thu, 29 Aug 2024 03:07:53 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCULIosyf1XranRO/NecnPwrnDNAFIb+04W0nwTu8BwqNJ5TfbE+8phQ08Iprn5rAcycZa8cY14X42VTl0EJlofXEvY=@vger.kernel.org, AJvYcCV7j+ma8k4eaAEJZ/Tsp0Gz1xyX0eJdQ2qDP2r0MqsI8NE/6rxpZ83RrEcA7bGHxNxE6iQ0PEFsaY5HL21Xyvg=@vger.kernel.org, AJvYcCVf+99xgukgvRBuPdWO5ZwW/sDe6BGLonWF6uNt/42/6/c4v7ZdAzi3qgXF7NvVxY5QvQ4qVWSJE+zC@vger.kernel.org, AJvYcCW8U1XxxS3vPkPaqiseGmk+m3t31Mk9L/8J0l+ludtmOWpIkTJAyXy2XbSnWYBPdBqtJK73yf1AcKMF6ttQ@vger.kernel.org
+X-Received: by 2002:a05:690c:10c:b0:6c1:4068:cd45 with SMTP id
+ 00721157ae682-6d27804aeb9mr20404287b3.38.1724926073635; Thu, 29 Aug 2024
+ 03:07:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240828084849.2527115-1-ruanjinjie@huawei.com>
+References: <20240806210623.183842-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240806210623.183842-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20240806210623.183842-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 29 Aug 2024 12:07:41 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUW8FjgNb9J4hsfZOk3EbXMmihemm2BkO4pLAaZ-QGNiw@mail.gmail.com>
+Message-ID: <CAMuHMdUW8FjgNb9J4hsfZOk3EbXMmihemm2BkO4pLAaZ-QGNiw@mail.gmail.com>
+Subject: Re: [PATCH v4 1/2] dt-bindings: watchdog: renesas,wdt: Document
+ RZ/V2H(P) SoC
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck <linux@roeck-us.net>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Magnus Damm <magnus.damm@gmail.com>, 
+	Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-watchdog@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+	Conor Dooley <conor.dooley@microchip.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 28, 2024 at 04:48:49PM GMT, Jinjie Ruan wrote:
-> platform_get_resource_byname() and devm_ioremap_resource() can be
-> replaced by devm_platform_ioremap_resource_byname(), which can
-> simplify the code logic a bit, No functional change here.
+Hi Prabhakar,
 
-NAK.
+Thanks for your patch!
 
-platform_get_resource_byname gets mdss_pdev, while devm_ function
-uses pdev->dev. Passing mdss_pdev to
-devm_platform_ioremap_resource_byname() means that the resource will get
-lifetime management attached to the lifecycle of the other driver.
+On Tue, Aug 6, 2024 at 11:06=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.c=
+om> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Add support for the Watchdog Timer (WDT) hardware found in the Renesas
+> RZ/V2H(P) SoC to the `renesas,wdt` device tree bindings. The RZ/V2H(P)
+> SoC features a WDT that is compatible with existing Renesas watchdog
+> drivers.
 
-> 
-> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
-> ---
->  drivers/gpu/drm/msm/msm_io_utils.c | 8 +-------
->  1 file changed, 1 insertion(+), 7 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/msm/msm_io_utils.c b/drivers/gpu/drm/msm/msm_io_utils.c
-> index afedd61c3e28..6f7933f01ae6 100644
-> --- a/drivers/gpu/drm/msm/msm_io_utils.c
-> +++ b/drivers/gpu/drm/msm/msm_io_utils.c
-> @@ -54,13 +54,7 @@ void __iomem *msm_ioremap_mdss(struct platform_device *mdss_pdev,
->  			       struct platform_device *pdev,
->  			       const char *name)
->  {
-> -	struct resource *res;
-> -
-> -	res = platform_get_resource_byname(mdss_pdev, IORESOURCE_MEM, name);
-> -	if (!res)
-> -		return ERR_PTR(-EINVAL);
-> -
-> -	return devm_ioremap_resource(&pdev->dev, res);
-> +	return devm_platform_ioremap_resource_byname(mdss_pdev, name);
->  }
->  
->  static void __iomem *_msm_ioremap(struct platform_device *pdev, const char *name,
-> -- 
-> 2.34.1
-> 
+Your patch "watchdog: Add Watchdog Timer driver for RZ/V2H(P)"
+contradicts the last sentence, so please drop the latter.
 
--- 
-With best wishes
-Dmitry
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+
+> --- a/Documentation/devicetree/bindings/watchdog/renesas,wdt.yaml
+> +++ b/Documentation/devicetree/bindings/watchdog/renesas,wdt.yaml
+
+With the above fixed:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
