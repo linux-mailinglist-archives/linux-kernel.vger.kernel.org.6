@@ -1,91 +1,86 @@
-Return-Path: <linux-kernel+bounces-307600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BCB0965031
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 21:54:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22B0A965033
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 21:55:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 407F61F22B31
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 19:54:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD4C128A857
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 19:54:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E86171BBBC9;
-	Thu, 29 Aug 2024 19:44:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8EFE1BC078;
+	Thu, 29 Aug 2024 19:45:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YRfiYAP7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uaxk8UGT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15F701BAEDE;
-	Thu, 29 Aug 2024 19:44:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E47C71B81C4;
+	Thu, 29 Aug 2024 19:45:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724960696; cv=none; b=euV8/2qNpPKoiLE96NTEVWHKSUKLVnlXE/cuJrhJsQPz80f+urVq16E1q78flWsF64fn63r1BRg52qHXOrtri81svQUiMLILGFnqt0ifi9isvyqkAMGDR6UbnGLWUUO1meRK1KhEChHekmVW9+1RfljXRaB59Lk//mdd13B2QQM=
+	t=1724960713; cv=none; b=chlzF6V2zYgiFxp82tRmcrE5CNjjRYvhdimu04duWU+yU/xxqA5Vtl/XWdkSxyjo6ZvVFGBvtc7ZARSgUzRLffmLOtQFXwVHnUuUszs+47OFxDa6MAvO0Z/nU2eM6P9YRACbe8Eq6d1cVkv+14UG0Xjx7pV58zPf9Sp7JB5vxAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724960696; c=relaxed/simple;
-	bh=k/g00ysHF7KkuUbMODChP4TngDt/vB6+q6ahC1ZjB14=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nz0VUU3Cz7nln7L+BCfvEEWF6Z5JXCo+KYsQVGLexV4myzArLhv+T0PlydCxWW+KR3Ga3K3FACaM9ifppHFxWBkwK/UMz98kwSI09XVdLs2DuVPBwgtAA79zuzWrgx2PK26crCLJwe33ypBRryeq65FbOzdttxhLaYpsZ3P899Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YRfiYAP7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A9E8C4CEC2;
-	Thu, 29 Aug 2024 19:44:51 +0000 (UTC)
+	s=arc-20240116; t=1724960713; c=relaxed/simple;
+	bh=fNXyOL49jkAUQOf2cFndtXdZqKqQJRLcasbXp/nDGv8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FZsYa8jEGbbVa4QYG4X4FM7FjepbusQRIm+F5lGKdzsJoYiv1qkF3mJHfpIkQ2CXBp4B0lNByuFMbeil4jNU6ykuq0nCPXHHCl5WEFZMtes7vg0zyrnkmoU9/jAJJvn3p6F1L5G9xKxKr2mMqMJLUAU9cW2bO3kRR9mb3r3oa3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uaxk8UGT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A82CC4CEC5;
+	Thu, 29 Aug 2024 19:45:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724960695;
-	bh=k/g00ysHF7KkuUbMODChP4TngDt/vB6+q6ahC1ZjB14=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=YRfiYAP7VoPoNx/3AAkHbr5Qk8vXD3mE2Vj2EiM2UXXnPBZbGuwHvUr0GBJNv9/cb
-	 r2p9aAgV8pSy0lfu1XX6mGJgZfY2A7xPcgSWqguM40AxlzmuwjrP6GXndjzusSOhOf
-	 ZgNjxfL/lA25Q+UrG9cLm228FqQy0Uv8B/RHc1wJVmYNiJXaa6haJqDdRNnrxbuZqA
-	 Eh4Z3x7TSnr0hz2TAgl7wykB1fHftqmvckZ6d+hdIyIrxLtPKC8Wdca81SbXJ8Ueu9
-	 WoYbT/OT2L5McrRT5yoLpV07TjdjQZ6iilvNtvSLa6baA6zIyKSj8906zKeu59drC+
-	 8wpfssMv6gM8Q==
-Message-ID: <1a1e3d43-27b7-4927-ad4d-25580bd133e7@kernel.org>
-Date: Thu, 29 Aug 2024 21:44:48 +0200
+	s=k20201202; t=1724960712;
+	bh=fNXyOL49jkAUQOf2cFndtXdZqKqQJRLcasbXp/nDGv8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=uaxk8UGTINmKWRhy3kt6biGc1VXQ2ISgP5muzPKrWBnBwD1P5olMnhQXNGzYAYX8b
+	 KV7qOHAv46vFOIMgP6dByReJXfG+cebyLXJZ/U1rHGTiDNJcY4hQ+4uaGzPVXmbPQO
+	 sWEy3aXgS9zSw/mse8XNaTjj7Y60Tyb22vF7cPP/1TWFluqgCpWZeH/HnxepGmttDe
+	 RG3KrTY1EtQOuNdn9uk7dgpwjPY6p7yQCpqAs4OrZEcEFqx0IlXR5fBnBjV1aS4x9m
+	 ctiPCuQZkdBtbv2I3rbIMdPzpnuda0GKClk5z/eln0z+oIkv+zgJgqAyBFhlSEQvW/
+	 Gh7laltT3UaLQ==
+From: Jiri Olsa <jolsa@kernel.org>
+To: Oleg Nesterov <oleg@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Tianyi Liu <i.pear@outlook.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>
+Cc: bpf@vger.kernel.org,
+	Steven Rostedt <rostedt@goodmis.org>,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Subject: [PATCH bpf-next 0/2] selftests/bpf: Add uprobe pid filter test
+Date: Thu, 29 Aug 2024 21:45:03 +0200
+Message-ID: <20240829194505.402807-1-jolsa@kernel.org>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/5] Revert "soc: qcom: smd-rpm: Match rpmsg channel
- instead of compatible"
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Andy Gross <agross@kernel.org>,
- Stephan Gerhold <stephan@gerhold.net>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- linux-clk@vger.kernel.org, linux-remoteproc@vger.kernel.org,
- stable@vger.kernel.org
-References: <20240729-fix-smd-rpm-v2-0-0776408a94c5@linaro.org>
- <20240729-fix-smd-rpm-v2-1-0776408a94c5@linaro.org>
-Content-Language: en-US
-From: Konrad Dybcio <konradybcio@kernel.org>
-In-Reply-To: <20240729-fix-smd-rpm-v2-1-0776408a94c5@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 29.07.2024 9:52 PM, Dmitry Baryshkov wrote:
-> The rpm_requests device nodes have the compatible node. As such the
-> rpmsg core uses OF modalias instead of a native rpmsg modalias. Thus if
-> smd-rpm is built as a module, it doesn't get autoloaded for the device.
-> 
-> Revert the commit bcabe1e09135 ("soc: qcom: smd-rpm: Match rpmsg channel
-> instead of compatible")
-> 
-> Fixes: bcabe1e09135 ("soc: qcom: smd-rpm: Match rpmsg channel instead of compatible")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
+hi,
+in response to [1] patch, I'm adding bpf selftest that confirms the
+change fixes problem for bpf programs trigered by return uprobe created
+over perf event.
 
-Reviewed-by: Konrad Dybcio <konradybcio@kernel.org>
+Oleg pointed out other issues with uprobe_multi pid filter,
+I plan to send another patchset for that.
 
-Konrad
+thanks,
+jirka
+
+
+[1] https://lore.kernel.org/linux-trace-kernel/ME0P300MB0416034322B9915ECD3888649D882@ME0P300MB0416.AUSP300.PROD.OUTLOOK.COM/
+---
+Jiri Olsa (2):
+      selftests/bpf: Add child argument to spawn_child function
+      selftests/bpf: Add uprobe pid filter test for multiple processes
+
+ tools/testing/selftests/bpf/prog_tests/uprobe_multi_test.c  | 188 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-----------------------
+ tools/testing/selftests/bpf/progs/uprobe_multi_pid_filter.c |  61 ++++++++++++++++++++++++++++++
+ 2 files changed, 203 insertions(+), 46 deletions(-)
+ create mode 100644 tools/testing/selftests/bpf/progs/uprobe_multi_pid_filter.c
 
