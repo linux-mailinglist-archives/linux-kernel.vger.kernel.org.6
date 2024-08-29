@@ -1,804 +1,130 @@
-Return-Path: <linux-kernel+bounces-306648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 652979641AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 12:28:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F105F964175
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 12:22:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F0351C2117E
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:28:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE1A1282E9B
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:22:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F1001B252C;
-	Thu, 29 Aug 2024 10:20:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 187DD18FDBA;
+	Thu, 29 Aug 2024 10:17:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="w587LvwB"
-Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EbzXGNGi"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA68C1946CF
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 10:20:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B89FF1537CB
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 10:17:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724926852; cv=none; b=bXtrhOvSM8sg+cCAi4N7KTKMFYaX1uC0jX4GdBtKWIWn+43HkbCufYYYK9nN/PvFhk/bcbVwEdgD/GkPO7Lq7vnXdoJx+nbHhAxWZoqHIshTu5KQJ9Rd4j09ctXwyOSFEj06BJEM2OT5AF5Pixdcd6dIDVWuidC97zXium53zpY=
+	t=1724926670; cv=none; b=MWhxQOChIhEn6eIWdEiVgY78kao61S66drgjg541FoH413zsxommOwJOWZC1y8rBCIthFXHoyOCuoziJby8J50QMUdk41H5GsDvYqWvo5i4Npv+8gfTkYbxYZW7Yc4QYT7AiLB4VtFMIMfrp+ZKDEgbDHcorhDK0XfG7jaV8cnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724926852; c=relaxed/simple;
-	bh=Bu2HVVTgMjnhk5Qq58H2r8E1MiJErBK1iIMTLBeo7Ms=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=OZhxQRQjef7tVdXuRQ42eHbz0Jc9zYTuuHt0CxPbILZCvfWBuhMZ0I0Laj8tXJQ7kUV3ff039mHDR0dT/UbU/q6VHBCzUFAJCGKHp98kf1yanczpkfBv+XhnTsI6SNF+j93ZV0Bt9N464fcxnrWtAndXPUlQwPZRQWLn/P6vKaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=w587LvwB; arc=none smtp.client-ip=209.85.210.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-70cb1b959a6so265185a34.3
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 03:20:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724926848; x=1725531648; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YXJUqrx+UV5Y9Q9kChrmqmxRtCbD2xoa+NBPBC3/478=;
-        b=w587LvwBUsuOrubLNI9fPfbyHLHyDtzS+s9ZI99FiaLGsS779CNM8VjNCLOXxAJ920
-         CYlAHj4JaeHqMt9c5WWFiXxLUk7M0hyKLKp2AfzRJOyC0MZcxTHkv9vTaHurDPUXOaTJ
-         XRaQ4B/RW6o64/gyPOau3PMNYfRi2Yj/F8mnlgw7eiNCuMCSUfDJJq5sXggIJG+JamEo
-         pD/9nJwxvxrFvROdmuZytkxdrol9k7Kihgw/EUXHVjuJyJm5+7z0s21PK8UVwd+mr3U6
-         OiAsfmvFvC3UAkScubdVnWTX3uvoVtD9OVmF3TdSO3Y7RGyVRDf7OsS9hUB84ivXheH4
-         KIbw==
+	s=arc-20240116; t=1724926670; c=relaxed/simple;
+	bh=wHItm0cKnnaiF4q9fmEemTB6NMjNhRCJeehB+N+PzI8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KiLmqlMSPW5RDgFLg7iLOuGcCvkzaR/OOLm4fnyn+i3KZaAWfP//moBNLLOscaKyc/1gUqY1FY8ZPSu6DUdJ/W8s7TbOpRxokfnFIhTrty3tDDbwhyZDUGENLIIWHh55Ld+4rYRCGDqOPCkVxqFxiRc4tjq0CCD7CR13Vt23fJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EbzXGNGi; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724926667;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0mmwGYx8IP56w8yEP/hicn/i9wnPK+R/r3F9WzYay6Q=;
+	b=EbzXGNGiAlJAHv8xg02g6HWWQ3eVbhtGILeqLO3x2HeV9ZHekmbDZj5asaTOP9ulOIrYU4
+	Y/RIyYKzFNjgipKmC1INCaqIYNgdgdj3c3+1fGH2odeN6lPLMCBuwd2F7uqooaCeLVuSs9
+	nz+yYOgO64zdT9G/71nSDupbTxRF7EU=
+Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
+ [209.85.208.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-1-pTEamWpoMiW3w2gN1Qb2uw-1; Thu, 29 Aug 2024 06:17:45 -0400
+X-MC-Unique: pTEamWpoMiW3w2gN1Qb2uw-1
+Received: by mail-ed1-f71.google.com with SMTP id 4fb4d7f45d1cf-5bedba9894dso324836a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 03:17:44 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724926848; x=1725531648;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1724926663; x=1725531463;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=YXJUqrx+UV5Y9Q9kChrmqmxRtCbD2xoa+NBPBC3/478=;
-        b=KfdDEo28VUy1tKoIBwHWu/FOI+T+8XaQb05NUmiYzyUduNCAp6sgNKNg7Fpo8e35UF
-         IalrWqQG2eL3+gJd9wFmNCH6MFcwWgzKHzwNf8kmhSuWeln0yOFLe7QnQC4eYcqa8C3k
-         l8wDSTuHQEySGTieEdDrSUo/sEaxJo/TuOjVW3Hd1BkQbEWIFMtSTzNoIpllIwKdlGrr
-         9JxyRYOcIL3cDBHrRVIAXltcRA9sb7dxhvpwMO6CngjJA96Mo5d9lHv15hMhL1UJ44nz
-         OJrKrLvjDn7tIDXrMScI8dBY1k9HENNMfmkg/EL3jmT33nAjB6YGKNNPLIhAYnAclONC
-         fK7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVEAZftQrU+WeCx12nwNqH6gJyZedAHX3KtXV93gTsviHJSdp9NkpCw/apPzS38pXZD59jTQMoOv/+MCW4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyfAmQ7hOC0u13+TsFxzdZ2GIlRyBvzkHAwPqsDa370Gy38AYrs
-	gSIIES6ga6WGflLsg+1Km3Zzq7KxBsB5Ec2EJ7gEedJTkCTgZoPvrNsLWD5nEP4=
-X-Google-Smtp-Source: AGHT+IGPU4anJfJQvzQDJn/MZxPgJfJqs2lrFSXpVrJUQ5Av558yw/upzcXRgv0zZRJ6e+CJP1vJMg==
-X-Received: by 2002:a05:6358:e49a:b0:1ad:471:9b7 with SMTP id e5c5f4694b2df-1b603c3af46mr292162355d.18.1724926847953;
-        Thu, 29 Aug 2024 03:20:47 -0700 (PDT)
-Received: from [127.0.1.1] ([112.65.12.167])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7d22e9d4df4sm891684a12.82.2024.08.29.03.20.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 03:20:47 -0700 (PDT)
-From: Jun Nie <jun.nie@linaro.org>
-Date: Thu, 29 Aug 2024 18:17:41 +0800
-Subject: [PATCH 12/21] drm/msm/dpu: switch RM to use crtc_id rather than
- enc_id for allocation
+        bh=0mmwGYx8IP56w8yEP/hicn/i9wnPK+R/r3F9WzYay6Q=;
+        b=qDS7x03JEjtjAW+uSnq/zlCmsQbu2A5d5r/1Pg7BjzmzCaxQglDcyhlEOs/Iz55GjB
+         AhQWK2g4HaivhCnLCx1SNmRJhMpPGaGS5mavEFj3dP+YUPoUQg9/4z++AA6lxMzhRGJH
+         A/HdycrCzUvAMjweVLoL8l2UE37T0tFE4hAkD4hEQGnr9sd0tuDePqJN1X1p856sBNr4
+         fcqFCE5ZJEUAAiZP5Mn8YnU/HI3qY446uzGYZnugWPON3wcy4IKuKAuHC+5BmHZXy18m
+         Vy/+8+/EfV03zKxbZZminTqLRDepLqVhjPmDp+YledmNp51lm82/Njsg9rFIlQEiu6RP
+         6JbA==
+X-Forwarded-Encrypted: i=1; AJvYcCVb4LpGzz8IRaF5zD/qGORdsPootP6KTiqLYFrh5DD9KHW5M1KMRBWQ8I0bNGLvZBVMI9tdYeVWVRi2LCE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjwkjulKb3Z2dEe7gHPK9GIBd3+CzWOkkI7tNxIjZv2ePYHX49
+	HIUE++5f6y7AODEsVAOS1j1FKGJSpvDmgclOhuy3JatKbMI36ii7eZgH3nyhw9UbpdvJeIpzF+R
+	PLTsc9BxJhWeaC/OPwpEGeJ2LaUpv5PUOXgfM1iB0hP4NMLD05DPfHzKtD/UTuA==
+X-Received: by 2002:a05:6402:2353:b0:5bf:a2c:4f35 with SMTP id 4fb4d7f45d1cf-5c21ed3fd0fmr1711576a12.10.1724926662976;
+        Thu, 29 Aug 2024 03:17:42 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEnxtX1dyLotbngOwRntZMasp8GlOKnrQUf/CTxmCFchZTpvVeZZxoc/aKq03HesYuywXiFag==
+X-Received: by 2002:a05:6402:2353:b0:5bf:a2c:4f35 with SMTP id 4fb4d7f45d1cf-5c21ed3fd0fmr1711541a12.10.1724926662241;
+        Thu, 29 Aug 2024 03:17:42 -0700 (PDT)
+Received: from [10.39.192.156] (5920ab7b.static.cust.trined.nl. [89.32.171.123])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c226ce784csm527340a12.91.2024.08.29.03.17.41
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 29 Aug 2024 03:17:41 -0700 (PDT)
+From: Eelco Chaudron <echaudro@redhat.com>
+To: Yan Zhen <yanzhen@vivo.com>
+Cc: edumazet@google.com, pshelar@ovn.org, davem@davemloft.net,
+ kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
+ dev@openvswitch.org, linux-kernel@vger.kernel.org, opensource.kernel@vivo.com
+Subject: Re: [PATCH v1 net-next] net: openvswitch: Use ERR_CAST() to return
+Date: Thu, 29 Aug 2024 12:17:41 +0200
+X-Mailer: MailMate (1.14r6056)
+Message-ID: <CF346267-CFB2-4DC9-9E88-C502E1358830@redhat.com>
+In-Reply-To: <20240829095509.3151987-1-yanzhen@vivo.com>
+References: <20240829095509.3151987-1-yanzhen@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240829-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-8-v1-12-bdb05b4b5a2e@linaro.org>
-References: <20240829-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-8-v1-0-bdb05b4b5a2e@linaro.org>
-In-Reply-To: <20240829-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-8-v1-0-bdb05b4b5a2e@linaro.org>
-To: Rob Clark <robdclark@gmail.com>, 
- Abhinav Kumar <quic_abhinavk@quicinc.com>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Sean Paul <sean@poorly.run>, 
- Marijn Suijten <marijn.suijten@somainline.org>, 
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- Jun Nie <jun.nie@linaro.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1724926736; l=25817;
- i=jun.nie@linaro.org; s=20240403; h=from:subject:message-id;
- bh=Bu2HVVTgMjnhk5Qq58H2r8E1MiJErBK1iIMTLBeo7Ms=;
- b=nWjWQUhev9TovyLt4kBoAgF4zHl6y43CP0YqVMO3DGCrYwm8wZmsQdEFdU7iiGhvhj4JZqdWm
- ib+rdxa2jc4B2OBDLXzxkfaMIS8S4AEUeeaEQTJsieUSYC4oMZjvCBV
-X-Developer-Key: i=jun.nie@linaro.org; a=ed25519;
- pk=MNiBt/faLPvo+iJoP1hodyY2x6ozVXL8QMptmsKg3cc=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-Up to now the driver has been using encoder to allocate hardware resources.
-Switch it to use CRTC id so that mixer number can be known in
-dpu_plane_virtual_assign_resources() via CRTC id for sspp alloation.
 
-Because the mixer allocation is done in drm_atomic_helper_check_modeset()
-as part of CRTC operation. While the sspp assignment is in
-drm_atomic_helper_check_planes() call tree. So CRTC is more central
-than encoder. Siwtching the id achieves above goal.
 
-Co-developed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Signed-off-by: Jun Nie <jun.nie@linaro.org>
----
- drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c |  18 +--
- drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h     |  12 +-
- drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c      | 190 +++++++++++++---------------
- drivers/gpu/drm/msm/disp/dpu1/dpu_rm.h      |  19 ++-
- 4 files changed, 115 insertions(+), 124 deletions(-)
+On 29 Aug 2024, at 11:55, Yan Zhen wrote:
 
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-index f57725ad494d2..76793201b984e 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-@@ -703,11 +703,11 @@ static int dpu_encoder_virt_atomic_check(
- 	 * Dont allocate when active is false.
- 	 */
- 	if (drm_atomic_crtc_needs_modeset(crtc_state)) {
--		dpu_rm_release(global_state, drm_enc);
-+		dpu_rm_release(global_state, crtc_state->crtc);
- 
- 		if (!crtc_state->active_changed || crtc_state->enable)
- 			ret = dpu_rm_reserve(&dpu_kms->rm, global_state,
--					drm_enc, crtc_state, topology);
-+					crtc_state->crtc, topology);
- 	}
- 
- 	trace_dpu_enc_atomic_check_flags(DRMID(drm_enc), adj_mode->flags);
-@@ -1141,14 +1141,14 @@ static void dpu_encoder_virt_atomic_mode_set(struct drm_encoder *drm_enc,
- 
- 	/* Query resource that have been reserved in atomic check step. */
- 	num_pp = dpu_rm_get_assigned_resources(&dpu_kms->rm, global_state,
--		drm_enc->base.id, DPU_HW_BLK_PINGPONG, hw_pp,
-+		drm_enc->crtc, DPU_HW_BLK_PINGPONG, hw_pp,
- 		ARRAY_SIZE(hw_pp));
- 	num_ctl = dpu_rm_get_assigned_resources(&dpu_kms->rm, global_state,
--		drm_enc->base.id, DPU_HW_BLK_CTL, hw_ctl, ARRAY_SIZE(hw_ctl));
-+		drm_enc->crtc, DPU_HW_BLK_CTL, hw_ctl, ARRAY_SIZE(hw_ctl));
- 	num_lm = dpu_rm_get_assigned_resources(&dpu_kms->rm, global_state,
--		drm_enc->base.id, DPU_HW_BLK_LM, hw_lm, ARRAY_SIZE(hw_lm));
-+		drm_enc->crtc, DPU_HW_BLK_LM, hw_lm, ARRAY_SIZE(hw_lm));
- 	dpu_rm_get_assigned_resources(&dpu_kms->rm, global_state,
--		drm_enc->base.id, DPU_HW_BLK_DSPP, hw_dspp,
-+		drm_enc->crtc, DPU_HW_BLK_DSPP, hw_dspp,
- 		ARRAY_SIZE(hw_dspp));
- 
- 	for (i = 0; i < MAX_CHANNELS_PER_ENC; i++)
-@@ -1156,7 +1156,7 @@ static void dpu_encoder_virt_atomic_mode_set(struct drm_encoder *drm_enc,
- 						: NULL;
- 
- 	num_dsc = dpu_rm_get_assigned_resources(&dpu_kms->rm, global_state,
--						drm_enc->base.id, DPU_HW_BLK_DSC,
-+						drm_enc->crtc, DPU_HW_BLK_DSC,
- 						hw_dsc, ARRAY_SIZE(hw_dsc));
- 	for (i = 0; i < num_dsc; i++) {
- 		dpu_enc->hw_dsc[i] = to_dpu_hw_dsc(hw_dsc[i]);
-@@ -1170,7 +1170,7 @@ static void dpu_encoder_virt_atomic_mode_set(struct drm_encoder *drm_enc,
- 		struct dpu_hw_blk *hw_cdm = NULL;
- 
- 		dpu_rm_get_assigned_resources(&dpu_kms->rm, global_state,
--					      drm_enc->base.id, DPU_HW_BLK_CDM,
-+					      drm_enc->crtc, DPU_HW_BLK_CDM,
- 					      &hw_cdm, 1);
- 		dpu_enc->cur_master->hw_cdm = hw_cdm ? to_dpu_hw_cdm(hw_cdm) : NULL;
- 	}
-@@ -2042,7 +2042,7 @@ static void dpu_encoder_helper_reset_mixers(struct dpu_encoder_phys *phys_enc)
- 	global_state = dpu_kms_get_existing_global_state(phys_enc->dpu_kms);
- 
- 	num_lm = dpu_rm_get_assigned_resources(&phys_enc->dpu_kms->rm, global_state,
--		phys_enc->parent->base.id, DPU_HW_BLK_LM, hw_lm, ARRAY_SIZE(hw_lm));
-+		phys_enc->parent->crtc, DPU_HW_BLK_LM, hw_lm, ARRAY_SIZE(hw_lm));
- 
- 	for (i = 0; i < num_lm; i++) {
- 		hw_mixer[i] = to_dpu_hw_mixer(hw_lm[i]);
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h
-index 1952576600575..4f0fa1596b414 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h
-@@ -134,12 +134,12 @@ struct dpu_global_state {
- 
- 	struct dpu_rm *rm;
- 
--	uint32_t pingpong_to_enc_id[PINGPONG_MAX - PINGPONG_0];
--	uint32_t mixer_to_enc_id[LM_MAX - LM_0];
--	uint32_t ctl_to_enc_id[CTL_MAX - CTL_0];
--	uint32_t dspp_to_enc_id[DSPP_MAX - DSPP_0];
--	uint32_t dsc_to_enc_id[DSC_MAX - DSC_0];
--	uint32_t cdm_to_enc_id;
-+	uint32_t pingpong_to_crtc_id[PINGPONG_MAX - PINGPONG_0];
-+	uint32_t mixer_to_crtc_id[LM_MAX - LM_0];
-+	uint32_t ctl_to_crtc_id[CTL_MAX - CTL_0];
-+	uint32_t dspp_to_crtc_id[DSPP_MAX - DSPP_0];
-+	uint32_t dsc_to_crtc_id[DSC_MAX - DSC_0];
-+	uint32_t cdm_to_crtc_id;
- 
- 	uint32_t sspp_to_crtc_id[SSPP_MAX - SSPP_NONE];
- };
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c
-index 77d7ff789346e..bb8ba609f5c9b 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c
-@@ -21,9 +21,9 @@
- 
- 
- static inline bool reserved_by_other(uint32_t *res_map, int idx,
--				     uint32_t enc_id)
-+				     uint32_t crtc_id)
- {
--	return res_map[idx] && res_map[idx] != enc_id;
-+	return res_map[idx] && res_map[idx] != crtc_id;
- }
- 
- /**
-@@ -225,7 +225,7 @@ static int _dpu_rm_get_lm_peer(struct dpu_rm *rm, int primary_idx)
-  *	pingpong
-  * @rm: dpu resource manager handle
-  * @global_state: resources shared across multiple kms objects
-- * @enc_id: encoder id requesting for allocation
-+ * @crtc_id: crtc id requesting for allocation
-  * @lm_idx: index of proposed layer mixer in rm->mixer_blks[], function checks
-  *      if lm, and all other hardwired blocks connected to the lm (pp) is
-  *      available and appropriate
-@@ -239,14 +239,14 @@ static int _dpu_rm_get_lm_peer(struct dpu_rm *rm, int primary_idx)
-  */
- static bool _dpu_rm_check_lm_and_get_connected_blks(struct dpu_rm *rm,
- 		struct dpu_global_state *global_state,
--		uint32_t enc_id, int lm_idx, int *pp_idx, int *dspp_idx,
-+		uint32_t crtc_id, int lm_idx, int *pp_idx, int *dspp_idx,
- 		struct dpu_rm_requirements *reqs)
- {
- 	const struct dpu_lm_cfg *lm_cfg;
- 	int idx;
- 
- 	/* Already reserved? */
--	if (reserved_by_other(global_state->mixer_to_enc_id, lm_idx, enc_id)) {
-+	if (reserved_by_other(global_state->mixer_to_crtc_id, lm_idx, crtc_id)) {
- 		DPU_DEBUG("lm %d already reserved\n", lm_idx + LM_0);
- 		return false;
- 	}
-@@ -258,7 +258,7 @@ static bool _dpu_rm_check_lm_and_get_connected_blks(struct dpu_rm *rm,
- 		return false;
- 	}
- 
--	if (reserved_by_other(global_state->pingpong_to_enc_id, idx, enc_id)) {
-+	if (reserved_by_other(global_state->pingpong_to_crtc_id, idx, crtc_id)) {
- 		DPU_DEBUG("lm %d pp %d already reserved\n", lm_cfg->id,
- 				lm_cfg->pingpong);
- 		return false;
-@@ -274,7 +274,7 @@ static bool _dpu_rm_check_lm_and_get_connected_blks(struct dpu_rm *rm,
- 		return false;
- 	}
- 
--	if (reserved_by_other(global_state->dspp_to_enc_id, idx, enc_id)) {
-+	if (reserved_by_other(global_state->dspp_to_crtc_id, idx, crtc_id)) {
- 		DPU_DEBUG("lm %d dspp %d already reserved\n", lm_cfg->id,
- 				lm_cfg->dspp);
- 		return false;
-@@ -286,7 +286,7 @@ static bool _dpu_rm_check_lm_and_get_connected_blks(struct dpu_rm *rm,
- 
- static int _dpu_rm_reserve_lms(struct dpu_rm *rm,
- 			       struct dpu_global_state *global_state,
--			       uint32_t enc_id,
-+			       uint32_t crtc_id,
- 			       struct dpu_rm_requirements *reqs)
- 
- {
-@@ -314,7 +314,7 @@ static int _dpu_rm_reserve_lms(struct dpu_rm *rm,
- 		lm_idx[lm_count] = i;
- 
- 		if (!_dpu_rm_check_lm_and_get_connected_blks(rm, global_state,
--				enc_id, i, &pp_idx[lm_count],
-+				crtc_id, i, &pp_idx[lm_count],
- 				&dspp_idx[lm_count], reqs)) {
- 			continue;
- 		}
-@@ -333,7 +333,7 @@ static int _dpu_rm_reserve_lms(struct dpu_rm *rm,
- 				continue;
- 
- 			if (!_dpu_rm_check_lm_and_get_connected_blks(rm,
--					global_state, enc_id, j,
-+					global_state, crtc_id, j,
- 					&pp_idx[lm_count], &dspp_idx[lm_count],
- 					reqs)) {
- 				continue;
-@@ -350,15 +350,15 @@ static int _dpu_rm_reserve_lms(struct dpu_rm *rm,
- 	}
- 
- 	for (i = 0; i < lm_count; i++) {
--		global_state->mixer_to_enc_id[lm_idx[i]] = enc_id;
--		global_state->pingpong_to_enc_id[pp_idx[i]] = enc_id;
--		global_state->dspp_to_enc_id[dspp_idx[i]] =
--			reqs->topology.num_dspp ? enc_id : 0;
-+		global_state->mixer_to_crtc_id[lm_idx[i]] = crtc_id;
-+		global_state->pingpong_to_crtc_id[pp_idx[i]] = crtc_id;
-+		global_state->dspp_to_crtc_id[dspp_idx[i]] =
-+			reqs->topology.num_dspp ? crtc_id : 0;
- 
--		trace_dpu_rm_reserve_lms(lm_idx[i] + LM_0, enc_id,
-+		trace_dpu_rm_reserve_lms(lm_idx[i] + LM_0, crtc_id,
- 					 pp_idx[i] + PINGPONG_0);
--		DPU_DEBUG("reserve lm[%d]:%d, pp_idx[%d]:%d, dspp[%d]:%d for enc_id %d\n",
--			  i, lm_idx[i], i, pp_idx[i], i, dspp_idx[i], enc_id);
-+		DPU_DEBUG("reserve lm[%d]:%d, pp_idx[%d]:%d, dspp[%d]:%d for crtc_id %d\n",
-+			  i, lm_idx[i], i, pp_idx[i], i, dspp_idx[i], crtc_id);
- 	}
- 
- 	return 0;
-@@ -367,7 +367,7 @@ static int _dpu_rm_reserve_lms(struct dpu_rm *rm,
- static int _dpu_rm_reserve_ctls(
- 		struct dpu_rm *rm,
- 		struct dpu_global_state *global_state,
--		uint32_t enc_id,
-+		uint32_t crtc_id,
- 		const struct msm_display_topology *top)
- {
- 	int ctl_idx[MAX_BLOCKS];
-@@ -391,7 +391,7 @@ static int _dpu_rm_reserve_ctls(
- 
- 		if (!rm->ctl_blks[j])
- 			continue;
--		if (reserved_by_other(global_state->ctl_to_enc_id, j, enc_id))
-+		if (reserved_by_other(global_state->ctl_to_crtc_id, j, crtc_id))
- 			continue;
- 
- 		ctl = to_dpu_hw_ctl(rm->ctl_blks[j]);
-@@ -415,8 +415,8 @@ static int _dpu_rm_reserve_ctls(
- 		return -ENAVAIL;
- 
- 	for (i = 0; i < ARRAY_SIZE(ctl_idx) && i < num_ctls; i++) {
--		global_state->ctl_to_enc_id[ctl_idx[i]] = enc_id;
--		trace_dpu_rm_reserve_ctls(i + CTL_0, enc_id);
-+		global_state->ctl_to_crtc_id[ctl_idx[i]] = crtc_id;
-+		trace_dpu_rm_reserve_ctls(i + CTL_0, crtc_id);
- 	}
- 
- 	return 0;
-@@ -424,12 +424,12 @@ static int _dpu_rm_reserve_ctls(
- 
- static int _dpu_rm_pingpong_next_index(struct dpu_global_state *global_state,
- 				       int start,
--				       uint32_t enc_id)
-+				       uint32_t crtc_id)
- {
- 	int i;
- 
- 	for (i = start; i < (PINGPONG_MAX - PINGPONG_0); i++) {
--		if (global_state->pingpong_to_enc_id[i] == enc_id)
-+		if (global_state->pingpong_to_crtc_id[i] == crtc_id)
- 			return i;
- 	}
- 
-@@ -450,7 +450,7 @@ static int _dpu_rm_pingpong_dsc_check(int dsc_idx, int pp_idx)
- 
- static int _dpu_rm_dsc_alloc(struct dpu_rm *rm,
- 			     struct dpu_global_state *global_state,
--			     uint32_t enc_id,
-+			     uint32_t crtc_id,
- 			     const struct msm_display_topology *top)
- {
- 	int num_dsc = 0;
-@@ -463,10 +463,10 @@ static int _dpu_rm_dsc_alloc(struct dpu_rm *rm,
- 		if (!rm->dsc_blks[dsc_idx])
- 			continue;
- 
--		if (reserved_by_other(global_state->dsc_to_enc_id, dsc_idx, enc_id))
-+		if (reserved_by_other(global_state->dsc_to_crtc_id, dsc_idx, crtc_id))
- 			continue;
- 
--		pp_idx = _dpu_rm_pingpong_next_index(global_state, pp_idx, enc_id);
-+		pp_idx = _dpu_rm_pingpong_next_index(global_state, pp_idx, crtc_id);
- 		if (pp_idx < 0)
- 			return -ENAVAIL;
- 
-@@ -474,7 +474,7 @@ static int _dpu_rm_dsc_alloc(struct dpu_rm *rm,
- 		if (ret)
- 			return -ENAVAIL;
- 
--		global_state->dsc_to_enc_id[dsc_idx] = enc_id;
-+		global_state->dsc_to_crtc_id[dsc_idx] = crtc_id;
- 		num_dsc++;
- 		pp_idx++;
- 	}
-@@ -490,7 +490,7 @@ static int _dpu_rm_dsc_alloc(struct dpu_rm *rm,
- 
- static int _dpu_rm_dsc_alloc_pair(struct dpu_rm *rm,
- 				  struct dpu_global_state *global_state,
--				  uint32_t enc_id,
-+				  uint32_t crtc_id,
- 				  const struct msm_display_topology *top)
- {
- 	int num_dsc = 0;
-@@ -505,11 +505,11 @@ static int _dpu_rm_dsc_alloc_pair(struct dpu_rm *rm,
- 			continue;
- 
- 		/* consective dsc index to be paired */
--		if (reserved_by_other(global_state->dsc_to_enc_id, dsc_idx, enc_id) ||
--		    reserved_by_other(global_state->dsc_to_enc_id, dsc_idx + 1, enc_id))
-+		if (reserved_by_other(global_state->dsc_to_crtc_id, dsc_idx, crtc_id) ||
-+		    reserved_by_other(global_state->dsc_to_crtc_id, dsc_idx + 1, crtc_id))
- 			continue;
- 
--		pp_idx = _dpu_rm_pingpong_next_index(global_state, pp_idx, enc_id);
-+		pp_idx = _dpu_rm_pingpong_next_index(global_state, pp_idx, crtc_id);
- 		if (pp_idx < 0)
- 			return -ENAVAIL;
- 
-@@ -519,7 +519,7 @@ static int _dpu_rm_dsc_alloc_pair(struct dpu_rm *rm,
- 			continue;
- 		}
- 
--		pp_idx = _dpu_rm_pingpong_next_index(global_state, pp_idx + 1, enc_id);
-+		pp_idx = _dpu_rm_pingpong_next_index(global_state, pp_idx + 1, crtc_id);
- 		if (pp_idx < 0)
- 			return -ENAVAIL;
- 
-@@ -529,8 +529,8 @@ static int _dpu_rm_dsc_alloc_pair(struct dpu_rm *rm,
- 			continue;
- 		}
- 
--		global_state->dsc_to_enc_id[dsc_idx] = enc_id;
--		global_state->dsc_to_enc_id[dsc_idx + 1] = enc_id;
-+		global_state->dsc_to_crtc_id[dsc_idx] = crtc_id;
-+		global_state->dsc_to_crtc_id[dsc_idx + 1] = crtc_id;
- 		num_dsc += 2;
- 		pp_idx++;	/* start for next pair */
- 	}
-@@ -546,11 +546,9 @@ static int _dpu_rm_dsc_alloc_pair(struct dpu_rm *rm,
- 
- static int _dpu_rm_reserve_dsc(struct dpu_rm *rm,
- 			       struct dpu_global_state *global_state,
--			       struct drm_encoder *enc,
-+			       uint32_t crtc_id,
- 			       const struct msm_display_topology *top)
- {
--	uint32_t enc_id = enc->base.id;
--
- 	if (!top->num_dsc || !top->num_intf)
- 		return 0;
- 
-@@ -560,22 +558,22 @@ static int _dpu_rm_reserve_dsc(struct dpu_rm *rm,
- 	 * 2) DSC pair starts from even index, such as index(0,1), (2,3), etc
- 	 * 3) even PINGPONG connects to even DSC
- 	 * 4) odd PINGPONG connects to odd DSC
--	 * 5) pair: encoder +--> pp_idx_0 --> dsc_idx_0
-+	 * 5) pair: crtc    +--> pp_idx_0 --> dsc_idx_0
- 	 *                  +--> pp_idx_1 --> dsc_idx_1
- 	 */
- 
- 	/* num_dsc should be either 1, 2 or 4 */
- 	if (top->num_dsc > top->num_intf)	/* merge mode */
--		return _dpu_rm_dsc_alloc_pair(rm, global_state, enc_id, top);
-+		return _dpu_rm_dsc_alloc_pair(rm, global_state, crtc_id, top);
- 	else
--		return _dpu_rm_dsc_alloc(rm, global_state, enc_id, top);
-+		return _dpu_rm_dsc_alloc(rm, global_state, crtc_id, top);
- 
- 	return 0;
- }
- 
- static int _dpu_rm_reserve_cdm(struct dpu_rm *rm,
- 			       struct dpu_global_state *global_state,
--			       struct drm_encoder *enc)
-+			       uint32_t crtc_id)
- {
- 	/* try allocating only one CDM block */
- 	if (!rm->cdm_blk) {
-@@ -583,12 +581,12 @@ static int _dpu_rm_reserve_cdm(struct dpu_rm *rm,
- 		return -EIO;
- 	}
- 
--	if (global_state->cdm_to_enc_id) {
-+	if (global_state->cdm_to_crtc_id) {
- 		DPU_ERROR("CDM_0 is already allocated\n");
- 		return -EIO;
- 	}
- 
--	global_state->cdm_to_enc_id = enc->base.id;
-+	global_state->cdm_to_crtc_id = crtc_id;
- 
- 	return 0;
- }
-@@ -596,30 +594,30 @@ static int _dpu_rm_reserve_cdm(struct dpu_rm *rm,
- static int _dpu_rm_make_reservation(
- 		struct dpu_rm *rm,
- 		struct dpu_global_state *global_state,
--		struct drm_encoder *enc,
-+		uint32_t crtc_id,
- 		struct dpu_rm_requirements *reqs)
- {
- 	int ret;
- 
--	ret = _dpu_rm_reserve_lms(rm, global_state, enc->base.id, reqs);
-+	ret = _dpu_rm_reserve_lms(rm, global_state, crtc_id, reqs);
- 	if (ret) {
- 		DPU_ERROR("unable to find appropriate mixers\n");
- 		return ret;
- 	}
- 
--	ret = _dpu_rm_reserve_ctls(rm, global_state, enc->base.id,
-+	ret = _dpu_rm_reserve_ctls(rm, global_state, crtc_id,
- 				&reqs->topology);
- 	if (ret) {
- 		DPU_ERROR("unable to find appropriate CTL\n");
- 		return ret;
- 	}
- 
--	ret  = _dpu_rm_reserve_dsc(rm, global_state, enc, &reqs->topology);
-+	ret  = _dpu_rm_reserve_dsc(rm, global_state, crtc_id, &reqs->topology);
- 	if (ret)
- 		return ret;
- 
- 	if (reqs->topology.needs_cdm) {
--		ret = _dpu_rm_reserve_cdm(rm, global_state, enc);
-+		ret = _dpu_rm_reserve_cdm(rm, global_state, crtc_id);
- 		if (ret) {
- 			DPU_ERROR("unable to find CDM blk\n");
- 			return ret;
-@@ -630,7 +628,7 @@ static int _dpu_rm_make_reservation(
- }
- 
- static int _dpu_rm_populate_requirements(
--		struct drm_encoder *enc,
-+		struct drm_crtc *crtc,
- 		struct dpu_rm_requirements *reqs,
- 		struct msm_display_topology req_topology)
- {
-@@ -644,66 +642,59 @@ static int _dpu_rm_populate_requirements(
- }
- 
- static void _dpu_rm_clear_mapping(uint32_t *res_mapping, int cnt,
--				  uint32_t enc_id)
-+				  uint32_t crtc_id)
- {
- 	int i;
- 
- 	for (i = 0; i < cnt; i++) {
--		if (res_mapping[i] == enc_id)
-+		if (res_mapping[i] == crtc_id)
- 			res_mapping[i] = 0;
- 	}
- }
- 
- void dpu_rm_release(struct dpu_global_state *global_state,
--		    struct drm_encoder *enc)
-+		    struct drm_crtc *crtc)
- {
--	_dpu_rm_clear_mapping(global_state->pingpong_to_enc_id,
--		ARRAY_SIZE(global_state->pingpong_to_enc_id), enc->base.id);
--	_dpu_rm_clear_mapping(global_state->mixer_to_enc_id,
--		ARRAY_SIZE(global_state->mixer_to_enc_id), enc->base.id);
--	_dpu_rm_clear_mapping(global_state->ctl_to_enc_id,
--		ARRAY_SIZE(global_state->ctl_to_enc_id), enc->base.id);
--	_dpu_rm_clear_mapping(global_state->dsc_to_enc_id,
--		ARRAY_SIZE(global_state->dsc_to_enc_id), enc->base.id);
--	_dpu_rm_clear_mapping(global_state->dspp_to_enc_id,
--		ARRAY_SIZE(global_state->dspp_to_enc_id), enc->base.id);
--	_dpu_rm_clear_mapping(&global_state->cdm_to_enc_id, 1, enc->base.id);
-+	uint32_t crtc_id = crtc->base.id;
-+
-+	_dpu_rm_clear_mapping(global_state->pingpong_to_crtc_id,
-+		ARRAY_SIZE(global_state->pingpong_to_crtc_id), crtc_id);
-+	_dpu_rm_clear_mapping(global_state->mixer_to_crtc_id,
-+		ARRAY_SIZE(global_state->mixer_to_crtc_id), crtc_id);
-+	_dpu_rm_clear_mapping(global_state->ctl_to_crtc_id,
-+		ARRAY_SIZE(global_state->ctl_to_crtc_id), crtc_id);
-+	_dpu_rm_clear_mapping(global_state->dsc_to_crtc_id,
-+		ARRAY_SIZE(global_state->dsc_to_crtc_id), crtc_id);
-+	_dpu_rm_clear_mapping(global_state->dspp_to_crtc_id,
-+		ARRAY_SIZE(global_state->dspp_to_crtc_id), crtc_id);
- }
- 
- int dpu_rm_reserve(
- 		struct dpu_rm *rm,
- 		struct dpu_global_state *global_state,
--		struct drm_encoder *enc,
--		struct drm_crtc_state *crtc_state,
-+		struct drm_crtc *crtc,
- 		struct msm_display_topology topology)
- {
- 	struct dpu_rm_requirements reqs;
- 	int ret;
- 
--	/* Check if this is just a page-flip */
--	if (!drm_atomic_crtc_needs_modeset(crtc_state))
--		return 0;
--
- 	if (IS_ERR(global_state)) {
- 		DPU_ERROR("failed to global state\n");
- 		return PTR_ERR(global_state);
- 	}
- 
--	DRM_DEBUG_KMS("reserving hw for enc %d crtc %d\n",
--		      enc->base.id, crtc_state->crtc->base.id);
-+	DRM_DEBUG_KMS("reserving hw for crtc %d\n", crtc->base.id);
- 
--	ret = _dpu_rm_populate_requirements(enc, &reqs, topology);
-+	ret = _dpu_rm_populate_requirements(crtc, &reqs, topology);
- 	if (ret) {
- 		DPU_ERROR("failed to populate hw requirements\n");
- 		return ret;
- 	}
- 
--	ret = _dpu_rm_make_reservation(rm, global_state, enc, &reqs);
-+	ret = _dpu_rm_make_reservation(rm, global_state, crtc->base.id, &reqs);
- 	if (ret)
- 		DPU_ERROR("failed to reserve hw resources: %d\n", ret);
- 
--
--
- 	return ret;
- }
- 
-@@ -800,42 +791,43 @@ static char *dpu_hw_blk_type_name[] = {
- };
- 
- int dpu_rm_get_assigned_resources(struct dpu_rm *rm,
--	struct dpu_global_state *global_state, uint32_t enc_id,
-+	struct dpu_global_state *global_state, struct drm_crtc *crtc,
- 	enum dpu_hw_blk_type type, struct dpu_hw_blk **blks, int blks_size)
- {
-+	uint32_t crtc_id = crtc->base.id;
- 	struct dpu_hw_blk **hw_blks;
--	uint32_t *hw_to_enc_id;
-+	uint32_t *hw_to_crtc_id;
- 	int i, num_blks, max_blks;
- 
- 	switch (type) {
- 	case DPU_HW_BLK_PINGPONG:
- 		hw_blks = rm->pingpong_blks;
--		hw_to_enc_id = global_state->pingpong_to_enc_id;
-+		hw_to_crtc_id = global_state->pingpong_to_crtc_id;
- 		max_blks = ARRAY_SIZE(rm->pingpong_blks);
- 		break;
- 	case DPU_HW_BLK_LM:
- 		hw_blks = rm->mixer_blks;
--		hw_to_enc_id = global_state->mixer_to_enc_id;
-+		hw_to_crtc_id = global_state->mixer_to_crtc_id;
- 		max_blks = ARRAY_SIZE(rm->mixer_blks);
- 		break;
- 	case DPU_HW_BLK_CTL:
- 		hw_blks = rm->ctl_blks;
--		hw_to_enc_id = global_state->ctl_to_enc_id;
-+		hw_to_crtc_id = global_state->ctl_to_crtc_id;
- 		max_blks = ARRAY_SIZE(rm->ctl_blks);
- 		break;
- 	case DPU_HW_BLK_DSPP:
- 		hw_blks = rm->dspp_blks;
--		hw_to_enc_id = global_state->dspp_to_enc_id;
-+		hw_to_crtc_id = global_state->dspp_to_crtc_id;
- 		max_blks = ARRAY_SIZE(rm->dspp_blks);
- 		break;
- 	case DPU_HW_BLK_DSC:
- 		hw_blks = rm->dsc_blks;
--		hw_to_enc_id = global_state->dsc_to_enc_id;
-+		hw_to_crtc_id = global_state->dsc_to_crtc_id;
- 		max_blks = ARRAY_SIZE(rm->dsc_blks);
- 		break;
- 	case DPU_HW_BLK_CDM:
- 		hw_blks = &rm->cdm_blk;
--		hw_to_enc_id = &global_state->cdm_to_enc_id;
-+		hw_to_crtc_id = &global_state->cdm_to_crtc_id;
- 		max_blks = 1;
- 		break;
- 	default:
-@@ -845,17 +837,17 @@ int dpu_rm_get_assigned_resources(struct dpu_rm *rm,
- 
- 	num_blks = 0;
- 	for (i = 0; i < max_blks; i++) {
--		if (hw_to_enc_id[i] != enc_id)
-+		if (hw_to_crtc_id[i] != crtc_id)
- 			continue;
- 
- 		if (num_blks == blks_size) {
--			DPU_ERROR("More than %d %s assigned to enc %d\n",
--				  blks_size, dpu_hw_blk_type_name[type], enc_id);
-+			DPU_ERROR("More than %d resources assigned to crtc %d\n",
-+				  blks_size, crtc_id);
- 			break;
- 		}
- 		if (!hw_blks[i]) {
--			DPU_ERROR("%s unavailable to assign to enc %d\n",
--				  dpu_hw_blk_type_name[type], enc_id);
-+			DPU_ERROR("%s unavailable to assign to crtc %d\n",
-+				  dpu_hw_blk_type_name[type], crtc_id);
- 			break;
- 		}
- 		blks[num_blks++] = hw_blks[i];
-@@ -885,38 +877,38 @@ void dpu_rm_print_state(struct drm_printer *p,
- 
- 	drm_puts(p, "resource mapping:\n");
- 	drm_puts(p, "\tpingpong=");
--	for (i = 0; i < ARRAY_SIZE(global_state->pingpong_to_enc_id); i++)
-+	for (i = 0; i < ARRAY_SIZE(global_state->pingpong_to_crtc_id); i++)
- 		dpu_rm_print_state_helper(p, rm->pingpong_blks[i],
--					  global_state->pingpong_to_enc_id[i]);
-+					  global_state->pingpong_to_crtc_id[i]);
- 	drm_puts(p, "\n");
- 
- 	drm_puts(p, "\tmixer=");
--	for (i = 0; i < ARRAY_SIZE(global_state->mixer_to_enc_id); i++)
-+	for (i = 0; i < ARRAY_SIZE(global_state->mixer_to_crtc_id); i++)
- 		dpu_rm_print_state_helper(p, rm->mixer_blks[i],
--					  global_state->mixer_to_enc_id[i]);
-+					  global_state->mixer_to_crtc_id[i]);
- 	drm_puts(p, "\n");
- 
- 	drm_puts(p, "\tctl=");
--	for (i = 0; i < ARRAY_SIZE(global_state->ctl_to_enc_id); i++)
-+	for (i = 0; i < ARRAY_SIZE(global_state->ctl_to_crtc_id); i++)
- 		dpu_rm_print_state_helper(p, rm->ctl_blks[i],
--					  global_state->ctl_to_enc_id[i]);
-+					  global_state->ctl_to_crtc_id[i]);
- 	drm_puts(p, "\n");
- 
- 	drm_puts(p, "\tdspp=");
--	for (i = 0; i < ARRAY_SIZE(global_state->dspp_to_enc_id); i++)
-+	for (i = 0; i < ARRAY_SIZE(global_state->dspp_to_crtc_id); i++)
- 		dpu_rm_print_state_helper(p, rm->dspp_blks[i],
--					  global_state->dspp_to_enc_id[i]);
-+					  global_state->dspp_to_crtc_id[i]);
- 	drm_puts(p, "\n");
- 
- 	drm_puts(p, "\tdsc=");
--	for (i = 0; i < ARRAY_SIZE(global_state->dsc_to_enc_id); i++)
-+	for (i = 0; i < ARRAY_SIZE(global_state->dsc_to_crtc_id); i++)
- 		dpu_rm_print_state_helper(p, rm->dsc_blks[i],
--					  global_state->dsc_to_enc_id[i]);
-+					  global_state->dsc_to_crtc_id[i]);
- 	drm_puts(p, "\n");
- 
- 	drm_puts(p, "\tcdm=");
- 	dpu_rm_print_state_helper(p, rm->cdm_blk,
--				  global_state->cdm_to_enc_id);
-+				  global_state->cdm_to_crtc_id);
- 	drm_puts(p, "\n");
- 
- 	drm_puts(p, "\tsspp=");
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.h
-index c51c5a9255ce6..720e2c64effbf 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.h
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.h
-@@ -68,26 +68,25 @@ int dpu_rm_init(struct drm_device *dev,
-  *	HW blocks can then be accessed through dpu_rm_get_* functions.
-  *	HW Reservations should be released via dpu_rm_release_hw.
-  * @rm: DPU Resource Manager handle
-- * @drm_enc: DRM Encoder handle
-- * @crtc_state: Proposed Atomic DRM CRTC State handle
-+ * @crtc: DRM CRTC handle
-  * @topology: Pointer to topology info for the display
-  * @Return: 0 on Success otherwise -ERROR
-  */
--int dpu_rm_reserve(struct dpu_rm *rm,
-+int dpu_rm_reserve(
-+		struct dpu_rm *rm,
- 		struct dpu_global_state *global_state,
--		struct drm_encoder *drm_enc,
--		struct drm_crtc_state *crtc_state,
-+		struct drm_crtc *crtc,
- 		struct msm_display_topology topology);
- 
- /**
-- * dpu_rm_reserve - Given the encoder for the display chain, release any
-+ * dpu_rm_reserve - Given the crtc for the display chain, release any
-  *	HW blocks previously reserved for that use case.
-  * @rm: DPU Resource Manager handle
-- * @enc: DRM Encoder handle
-+ * @crtc: DRM CRTC handle
-  * @Return: 0 on Success otherwise -ERROR
-  */
- void dpu_rm_release(struct dpu_global_state *global_state,
--		struct drm_encoder *enc);
-+		struct drm_crtc *crtc);
- 
- /**
-  * dpu_rm_reserve_sspp - Reserve the required SSPP for the provided CRTC
-@@ -111,10 +110,10 @@ void dpu_rm_release_all_sspp(struct dpu_global_state *global_state,
- 			     struct drm_crtc *crtc);
- 
- /**
-- * Get hw resources of the given type that are assigned to this encoder.
-+ * Get hw resources of the given type that are assigned to this crtc.
-  */
- int dpu_rm_get_assigned_resources(struct dpu_rm *rm,
--	struct dpu_global_state *global_state, uint32_t enc_id,
-+	struct dpu_global_state *global_state, struct drm_crtc *crtc,
- 	enum dpu_hw_blk_type type, struct dpu_hw_blk **blks, int blks_size);
- 
- /**
+> Using ERR_CAST() is more reasonable and safer, When it is necessary
+> to convert the type of an error pointer and return it.
+>
+> Signed-off-by: Yan Zhen <yanzhen@vivo.com>
+> ---
+>  net/openvswitch/flow_netlink.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/net/openvswitch/flow_netlink.c b/net/openvswitch/flow_netl=
+ink.c
+> index c92bdc4dfe19..729ef582a3a8 100644
+> --- a/net/openvswitch/flow_netlink.c
+> +++ b/net/openvswitch/flow_netlink.c
+> @@ -2491,7 +2491,7 @@ static struct nlattr *reserve_sfa_size(struct sw_=
+flow_actions **sfa,
+>
+>  	acts =3D nla_alloc_flow_actions(new_acts_size);
+>  	if (IS_ERR(acts))
+> -		return (void *)acts;
+> +		return ERR_CAST(acts);
 
--- 
-2.34.1
+Change looks good to me.
+
+Acked-by: Eelco Chaudron <echaudro@redhat.com>
+
+>  	memcpy(acts->actions, (*sfa)->actions, (*sfa)->actions_len);
+>  	acts->actions_len =3D (*sfa)->actions_len;
+> -- =
+
+> 2.34.1
 
 
