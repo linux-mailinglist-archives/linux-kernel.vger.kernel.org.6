@@ -1,111 +1,95 @@
-Return-Path: <linux-kernel+bounces-306773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0298F96435F
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:43:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5323D96434E
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:42:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9427EB28113
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 11:43:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E168AB27B0B
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 11:42:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAF331922E1;
-	Thu, 29 Aug 2024 11:43:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55EBE1922EE;
+	Thu, 29 Aug 2024 11:42:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eRmL0zuq"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="bTJjLA5c"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75B8A1917FB
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 11:43:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB2CD191F63;
+	Thu, 29 Aug 2024 11:42:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724931807; cv=none; b=EmW5s+G7mVq4AoYpW91Nykl/a1qus7vbOi1PvW8YFZpbh4WY5F+yUd48ffCl0wcn4WqHhDhXE3teXNBwHrRhnWKNdTdoQa16UYVsFOVVBaedS1qAuv7kJNjg/VEI/xEcWnjZxFXBTnc7HQdgXMxY9uIvv86CAr7q3bP1CFH3zqQ=
+	t=1724931727; cv=none; b=Fh8znQ8wHX+MGPVxfqnV/uqAHoLoFaeryqx7/vd9gfvAluYHvl53G9JtQNDT72YkLG6bpmE4jDFY6SB6kGsg6vI0g+s8OlEeSS+ZyrN7sm+58r4EpBAFL97KUdnizlJoRUrZDFNymXGlisBH02Xdq1YHC+jlnArL9fgoD7oL4i4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724931807; c=relaxed/simple;
-	bh=s63R0yEtD2lzGTkJnFSMLaCXpECL6SDh0c4ddUidQTQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VQEtCFPz3olrXKyoT2kgehnAxqD098TmlzdvY7fyVdHzog7iSvMoNo9j0t2ZhzTYKjO/dSBrg/+BAEmGJ5JWCE+r9OMhKwdS44iyO5vNXRZoa5VA1prumVUWV60MEdG9T761lvTtIIavyJHKLEV+6CqsqjuljJNzjJOLNEOsDDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eRmL0zuq; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3719f0758c6so371827f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 04:43:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724931804; x=1725536604; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=WKJ044DJ6shbS65781+Yi0H+JjJTteS86fL5N3lWl+k=;
-        b=eRmL0zuqvqHE+6jMMd7XaqHcHpUy8Tzta7cK/n9wTu89h8Iv+UJNiyxHrxIMC0tWHJ
-         NAyGlOcTtPVfa+y9TPHuwKs/UgWv1yy6BGsmk9nvNRXJ20y68d/Yzs3uKTX5i9qw3ZeY
-         W1kkiYWQ1y5MhJqEie4mYsrVL8fmEcncDVSz8fAG2r1drVqhzErHIUhPBaQRNOh16qFO
-         aXW1fg/ZreFXtphrQYiOKbf8J/n6BdjGNEdkvijn9A9sUCLpkt4mFGiGt3krBpyyH5jk
-         a9JDl3scMa0wy75PPo0PdLSZHKR66MXd8vBZQwlvApcJImHHinfLpwsO7zoQ6RHlexFv
-         cpcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724931804; x=1725536604;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WKJ044DJ6shbS65781+Yi0H+JjJTteS86fL5N3lWl+k=;
-        b=dRh4gU4wJ6PoL07jibxCYU9tPTB3seafK1Ba/ZBkrcZU0DS7DhhZngMjLpRks8IDZ+
-         YKwJ/ZpEULPBKtlZ7U0evaTv6IxJDxBg7d6JRT/AMJycXLCWge0DgVtY15M7O+6H1Q83
-         T5gci7uJjG4vJKUFVGmG5IJHRbiJ1gQIDx05urlgWer1FKTJWwrJKZjLT/7qTXgrh+zS
-         BOeYaCFKzGizvRfER2rAo68h72VcUPFqW/LrABXay1h8n1a68wry3pGl7cogGG3QucfG
-         i3ja4Wuc5UDeIEV0SdD7/eEg7xo9E7XcoVFat4DcQInZcFRDhquxV6mygoNT03qcF/Rm
-         K72Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWc7+k1fRC671OoyhT0Au8hReIVt59gIXk2C+tmUmhfrptrut3PZaGPirY5rjSELTkWnRUvox3cVFkjMrc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxst3nbigxDLzLvbWUk0fmzJR6mP9Pxon/QFAP8R1Z3tKSEN0s7
-	GNU//dD4KXja5+ucD1A4o7LBAVDWm7cNuvdTUlVIHakbCkb8z5yw+YUn4oE9FRA=
-X-Google-Smtp-Source: AGHT+IFOdw9ujiuwiSBHFU9+4OjvZIDBUCRu48fmW/IwaVfF6faEydvSR/mrTCHm1bmjK7UKGK5Yfw==
-X-Received: by 2002:adf:e508:0:b0:368:7a04:7f5b with SMTP id ffacd0b85a97d-3749b581bd6mr1613589f8f.40.1724931803624;
-        Thu, 29 Aug 2024 04:43:23 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3749ee7171esm1202801f8f.37.2024.08.29.04.43.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 04:43:23 -0700 (PDT)
-Date: Thu, 29 Aug 2024 14:43:17 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Alien Wesley <alienwesley51@gmail.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org, ~lkcamp/patches@lists.sr.ht
-Subject: Re: [PATCH] staging: rtl8192e: Fix Assignment operator '=' in
- rtl_wx.c:681
-Message-ID: <9c1dc3e4-18fa-4a09-9be9-f0f3c9b4fb43@stanley.mountain>
-References: <20240825161335.21737-1-alienwesley51@gmail.com>
- <2024082916-savings-upstage-9606@gregkh>
- <8c1960d3-8f0b-4505-99aa-8af55685bbb3@gmail.com>
+	s=arc-20240116; t=1724931727; c=relaxed/simple;
+	bh=6XOmQDVFjQgc2CKL6kanHnYaPJO2r+OHXS5SQCEPjBg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Mip9e8/9q2I6RIY/n2JnkiScPAFEGhNJP1NsvmnHotitx3MWLct02U1DCPuuqD/bt9gc0I97vxwmj9VkOI7BgC4r7nkjmVLRb0Pk3M1gyy7OZjxrHFlgp3wXuGOhJiGRTAsDR3Wbo8ldYnRuKdIJ66Mg/hpLzWsOPIw3YsobndA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=bTJjLA5c; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=FJSZahwc40ZHt4JyXqSTTDfaFMrVzETSzLCNlx+UK3g=; b=bTJjLA5ckKx6GUELjopKDUZ56B
+	ZGQu5BZgKWmE1yYHFzp64o0YhCoCdzLqrnBGZRMK7uY36Xi4tD7L3lM+SEEP9lPCstTTNOQ3SrAda
+	nxxl/4faVYNB458Ru5qDawcLuslkZjqBWtMhRikYeoWqi2eMIh4UZFOuBQqvCCMMK1RsCfd+D/aB/
+	QlBfYnmWylCbhlo7P2fSIz8aDFDgk5HbaNpZcAOqtNpjg3ECztszmqqeU/0CkY81SKuhdC+Cmc5RC
+	wi3D9FLL8TBcTToPIN2FjARC+H+nvHQUU2hYgCA6qVIMhwOLNrKzqIPZj+lIf6czom5U7rApowgXg
+	wzUb3Lbw==;
+Received: from i5e861916.versanet.de ([94.134.25.22] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1sjdXN-0003Yq-3K; Thu, 29 Aug 2024 13:42:01 +0200
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: linux-kernel@vger.kernel.org,
+ Detlev Casanova <detlev.casanova@collabora.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Jaehoon Chung <jh80.chung@samsung.com>, linux-mmc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, kernel@collabora.com,
+ Detlev Casanova <detlev.casanova@collabora.com>
+Subject: Re: [PATCH v5 0/3] Add dw_mmc support for rk3576
+Date: Thu, 29 Aug 2024 13:43:17 +0200
+Message-ID: <2596461.otXNkdZ6W1@diego>
+In-Reply-To:
+ <010201919996ef8a-db8bbe89-3c18-4dc3-bd0c-6498f09d978a-000000@eu-west-1.amazonses.com>
+References:
+ <010201919996ef8a-db8bbe89-3c18-4dc3-bd0c-6498f09d978a-000000@eu-west-1.amazonses.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8c1960d3-8f0b-4505-99aa-8af55685bbb3@gmail.com>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-On Thu, Aug 29, 2024 at 08:33:41AM -0300, Alien Wesley wrote:
-> On 8/29/24 06:52, Greg KH wrote:
-> > On Sun, Aug 25, 2024 at 01:13:35PM -0300, Alien Wesley wrote:
-> > > Separated assignments for pairwise_key_type and group_key_type
-> > > in order to silence the following checkpatch warning.
-> > > 
-> > > CHECK: Assignment operator '=' should be on the previous line.
-> > > 
-> > > Signed-off-by: Alien Wesley <alienwesley51@gmail.com>
-> > Please do not put line numbers in the subject line.
-> > 
-> > thanks,
-> > 
-> > greg k-h
+Am Mittwoch, 28. August 2024, 17:24:51 CEST schrieb Detlev Casanova:
+> The SD card controller on the rk3576 SoC stores the phase settings into
+> the dw_mmc controller, so the code has to be adapted to implement that.
 > 
-> Should I fix up the subject and resend it as v2?
+> Although the feature can be detected through the USRID register value, the
+> decision to use it is based on the compatible.
+> 
+> The compatible for rk3576 is added in its own group of compatible to mark
+> that all devices compatible with rk3576 have internal phase settings and
+> don't have the ciu-drive and ciu-sample clocks.
+> 
+> Changes since v4:
+> - Drop commit that ignores phase above 270 degrees
+> - Use a bool instead of int for internal_phase field
+> - Fix pahse typo
 
-Yes.
+Sending through some Amazon thing broke your message-ids in this series
+too.
 
-regards,
-dan carpenter
 
 
