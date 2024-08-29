@@ -1,129 +1,183 @@
-Return-Path: <linux-kernel+bounces-306633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15CE296418C
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 12:24:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FB7D964198
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 12:25:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B34211F21084
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:24:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D144289505
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:25:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69612191F89;
-	Thu, 29 Aug 2024 10:19:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 654EA1AE86C;
+	Thu, 29 Aug 2024 10:20:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uk+IUGBj"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gRad7HSB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F6031ABECB
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 10:19:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79B0618E360;
+	Thu, 29 Aug 2024 10:20:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724926770; cv=none; b=dzG+mmu4U9qvDE5Y6go/LlyPaznpA9Yj06YTu7ZQS0MLvLUtDZgOjPmVLYpW87cMpGSgReFBP6/0onFPWHlg9/ncFntJEhW1N6iiWaQ67oIr+dBGU2bAw5jNMzV+Adh3f1IOyKWt5zUqHp0nxej+Okx6VWKnLhbWjc9KRPlGKaA=
+	t=1724926805; cv=none; b=SmN4CHw8/f0WJXbE4xQrZh8P4Tk5zGzkPhCtG0nTnu0yAacRJ3UmK6sNs/YdPcSoYiRp/ockkv+7LyYmmjA876geyFf1L6+d4LO4ZCenkxmTdh3uapTY17KWQFTVCNFMqFI+NLFpPt6mxvysPJw2W73xwfvN/HS70qxnbcXsZ5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724926770; c=relaxed/simple;
-	bh=JiZQWXIRJ3HjYCLl7hFrsgGpcmSL/PwTn6gBZKW5NnI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g4GA/YYNvPbOYrI4pRBsQW4In6GnWPoGxsCsnyq+7mEAJrN33pbrwDmgRnU0WR1oC1xFrRboV3fR5p5TqmQD/IeF0SySyreUsY+aZslKAYqjEQgrWhmA6AU1zLWm7h/JMAxJAsx9Eo+Q1lHHDJ44lmlKj5DyusMVb6keNPMlj9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uk+IUGBj; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-533521cd1c3so561161e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 03:19:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724926767; x=1725531567; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=dsgEl12pS5/oK+D6m4jiXUFGwYqDk87JRvruFRHJCvw=;
-        b=uk+IUGBj5vZH3cUlq2z+8waWEcJdBbudsV6P5FOXvr7So1vE7L2e7qHSw1N5JsuKCQ
-         QlW0/hRw8G4d/Sa3gISoaOm5JS9YG5HQInI8cnMdPtR1GEPrn7g4ial+4H9w6Wx3KtVD
-         433zVeHCx6YnUt9yCdFwxG7RvrxCsC0tm1JQoFLC5lSMpF04b17ngzA+T8tKoUH42SEE
-         IuaBWpMZFwbDgUoAqhfXCniT/ZIRZWcaVPKLPRUoY3TAsc75Q4VvNvxCZoU5rEYPhXx9
-         rprx8+ECE+/26gBj0bkBrX8diJyx57P0yEOaWTC88DssIYeTx81ErBOqc6DzTfwL9pkd
-         jd3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724926767; x=1725531567;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dsgEl12pS5/oK+D6m4jiXUFGwYqDk87JRvruFRHJCvw=;
-        b=GCE857SuL/wAtE5FYSsDcdI7AAgI+aF+QfSXtlaCE8AOlfxWiDrJDnZVkdL7BfjbKf
-         /ki/o0Ns/BehGPAFeGiI6keK17HfvbRBh/Rc991HaFx087CTTzCtd5nof7kuAGKma6PV
-         3eDMoyOZHfhZBB/I9qce3K6+g8cA8TWprOMcruiB9Xbv9eHJ3ngbB39ZZ2I4TR94tL6y
-         ybxSaRA2s5mvkrY+0EDWrJnj129FSgUH1aTg32tS6zoxJp1gR33YLFpxEL1Kcw/A7oaG
-         c098uOb0Z5gG+YqiGWN31R9DsYNPqw18v9XawZsgdoyjtsYvsAbvqYSWlm12g0ZZJjMb
-         K6Zw==
-X-Forwarded-Encrypted: i=1; AJvYcCW5QXH7LEzlrw5r+zKTt7e8DPLDPPNcCTukEYQ3oVw0J6d1qL4aZcGYpUqxnKhkQRAP7XqEaNxZaeKT1Bw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yybzg3Oobn0gvGpLClyq0wySla7ofUV6wGr39oLM7RJ9/Lp2/GJ
-	t8/oLBB56SIQW8iIRjCiPsD3a8N6HmkYNsFX0NOIQX1cY+ov3fcakYcaUvOxL4U=
-X-Google-Smtp-Source: AGHT+IFI/J4pmYQEU4+SHn18VCyisudN4k2godV3tyoAlPi2LbLETrSD6LA/Lou8PXucHxARCjq3Jg==
-X-Received: by 2002:a05:6512:234b:b0:530:b773:b4ce with SMTP id 2adb3069b0e04-5353e575f40mr2138577e87.33.1724926766646;
-        Thu, 29 Aug 2024 03:19:26 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53540827af9sm116406e87.170.2024.08.29.03.19.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 03:19:26 -0700 (PDT)
-Date: Thu, 29 Aug 2024 13:19:24 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: neil.armstrong@linaro.org
-Cc: Vinod Koul <vkoul@kernel.org>, 
-	Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH 2/2] phy: add NXP PTN3222 eUSB2 to USB2 redriver
-Message-ID: <izr7linltwo4kbpp4dtls7bahvk4a2hwtqaz3fyuktjuiudqly@ivulir54ktxk>
-References: <20240829-nxp-ptn3222-v1-0-46906bc4747a@linaro.org>
- <20240829-nxp-ptn3222-v1-2-46906bc4747a@linaro.org>
- <79a643de-9808-4866-9e41-8bd5ab55ffed@linaro.org>
+	s=arc-20240116; t=1724926805; c=relaxed/simple;
+	bh=HfoDebrrdMTgjgIeGo1ad8UvhHmluv9QNZXmjJWWtHc=;
+	h=Content-Type:Message-ID:Date:MIME-Version:Subject:To:References:
+	 Cc:From:In-Reply-To; b=nHgE/+QmYLu3qyNDNAnicVsVkDlUVbI+YAgo6ChQyXJFus2oDGrSfT2ZGzgI8/skwnOvn0ny4Ghw2AtbfeDR9A004Supv+OT5BOI5VMghbhNJlefMCcqiokw5s3xR0OFHUm/3eXnbqezP2/CU98ghAWvZFa+qgFkhyPhmMVsiCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gRad7HSB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15548C4CEC6;
+	Thu, 29 Aug 2024 10:20:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724926805;
+	bh=HfoDebrrdMTgjgIeGo1ad8UvhHmluv9QNZXmjJWWtHc=;
+	h=Date:Subject:To:References:Cc:From:In-Reply-To:From;
+	b=gRad7HSBdp1sUDXBW99cUvxXUb43s+a4e7PYu4iLI2dzB9cSK5fY52RVb0lrGm6b7
+	 N2Hjew5A/cekQQzCInCfSRGr7QDIq3Re7JMD7KFeZW6bzctcvPEKu11ECKmGYm7CKV
+	 xHtTEI5SMQcYLsZV/posfWJtXIeKcal4qW1EydLfeIQ2hLFDwiWnt85Bkf//tFUvks
+	 //kPRavqaA8iHxXOvy1UznPaybux1E7KGqAOTV2jT+anK3Z8b3aqnWjM6gkqrIbAhN
+	 QwnSsQe15VdZb4s52DrAW3g02YudI4BYfHbGtuttEinZUtV3HM/wMME4//FJ8vvUW7
+	 xyI63k1TrLvQA==
+Content-Type: multipart/mixed; boundary="------------Fa3F6ffuUGJe7vuBAGk4P4hY"
+Message-ID: <0b851ec5-f91d-4dd3-99da-e81b98c9ed28@kernel.org>
+Date: Thu, 29 Aug 2024 12:19:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <79a643de-9808-4866-9e41-8bd5ab55ffed@linaro.org>
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH v3] net: ftgmac100: Get link speed and duplex for NC-SI:
+ manual merge
+Content-Language: en-GB
+To: Jacky Chou <jacky_chou@aspeedtech.com>, davem@davemloft.net,
+ kuba@kernel.org, pabeni@redhat.com
+References: <20240827030513.481469-1-jacky_chou@aspeedtech.com>
+Cc: edumazet@google.com, u.kleine-koenig@pengutronix.de,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Stephen Rothwell <sfr@canb.auug.org.au>
+From: Matthieu Baerts <matttbe@kernel.org>
+Autocrypt: addr=matttbe@kernel.org; keydata=
+ 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
+ lzVbFe7fduHbABmYz9cefQpO7wDE/Q==
+Organization: NGI0 Core
+In-Reply-To: <20240827030513.481469-1-jacky_chou@aspeedtech.com>
 
-On Thu, Aug 29, 2024 at 10:30:49AM GMT, neil.armstrong@linaro.org wrote:
-> On 29/08/2024 10:21, Dmitry Baryshkov wrote:
-> > The NXP PTN3222 is the single-port eUSB2 to USB2 redriver that performs
-> > translation between eUSB2 and USB2 signalling schemes. It supports all
-> > three data rates: Low Speed, Full Speed and High Speed.
-> > 
-> > The reset state enables autonegotiation of the PHY role and of the data
-> > rate, so no additional programming is required.
-> > 
-> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > ---
-> >   drivers/phy/Kconfig           |  11 ++++
-> >   drivers/phy/Makefile          |   1 +
-> >   drivers/phy/phy-nxp-ptn3222.c | 119 ++++++++++++++++++++++++++++++++++++++++++
-> >   3 files changed, 131 insertions(+)
+This is a multi-part message in MIME format.
+--------------Fa3F6ffuUGJe7vuBAGk4P4hY
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-> > +
-> > +	ptn3222->supplies[0].supply = "vdd3v3";
-> > +	ptn3222->supplies[0].init_load_uA = 11000;
-> > +	ptn3222->supplies[1].supply = "vdd1v8";
-> > +	ptn3222->supplies[1].init_load_uA = 55000;
-> > +
-> > +	ret = devm_regulator_bulk_get(dev,
-> > +				      NUM_SUPPLIES,
-> > +				      ptn3222->supplies);
-> 
-> Suggestion only, you could switch to devm_regulator_bulk_get_const()
+Hello,
 
-Good idea, I'll take a look.
+On 27/08/2024 05:05, Jacky Chou wrote:
+> The ethtool of this driver uses the phy API of ethtool
+> to get the link information from PHY driver.
+> Because the NC-SI is forced on 100Mbps and full duplex,
+> the driver connect a fixed-link phy driver for NC-SI.
+> The ethtool will get the link information from the
+> fixed-link phy driver.
 
-> 
-> > +	if (ret)
-> > +		return ret;
-> > +
+FYI, we got a small conflict when merging 'net' in 'net-next' in the
+MPTCP tree due to this patch applied in 'net':
 
+  4186c8d9e6af ("net: ftgmac100: Ensure tx descriptor updates are visible")
+
+and this one from 'net-next':
+
+  e24a6c874601 ("net: ftgmac100: Get link speed and duplex for NC-SI")
+
+----- Generic Message -----
+The best is to avoid conflicts between 'net' and 'net-next' trees but if
+they cannot be avoided when preparing patches, a note about how to fix
+them is much appreciated.
+
+The conflict has been resolved on our side[1] and the resolution we
+suggest is attached to this email. Please report any issues linked to
+this conflict resolution as it might be used by others. If you worked on
+the mentioned patches, don't hesitate to ACK this conflict resolution.
+---------------------------
+
+Regarding this conflict, it looks like it was due to a
+refactoring/clean-up, removing extra whitespaces a bit everywhere in the
+same file, and was surprisingly part of the fix patch applied in 'net'.
+The two unrelated changes have been taken to resolve this conflict:
+removing the extra space, and adding 'phy_stop(netdev->phydev);' after
+the 'err_ncsi' label.
+
+Rerere cache is available in [2].
+
+Cheers,
+Matt
+
+[1] https://github.com/multipath-tcp/mptcp_net-next/commit/ecf6b3c48b19
+[2] https://github.com/multipath-tcp/mptcp-upstream-rr-cache/commit/20cd
 -- 
-With best wishes
-Dmitry
+Sponsored by the NGI0 Core fund.
+
+--------------Fa3F6ffuUGJe7vuBAGk4P4hY
+Content-Type: text/x-patch; charset=UTF-8;
+ name="ecf6b3c48b19f91d96881bd5f2d41e312bae58ce.patch"
+Content-Disposition: attachment;
+ filename="ecf6b3c48b19f91d96881bd5f2d41e312bae58ce.patch"
+Content-Transfer-Encoding: base64
+
+ZGlmZiAtLWNjIGRyaXZlcnMvbmV0L2V0aGVybmV0L2ZhcmFkYXkvZnRnbWFjMTAwLmMKaW5k
+ZXggNGM1NDZjM2FlZjBmLDQ0NDY3MWI4YmJlMi4uZjNjYzE0Y2M3NTdkCi0tLSBhL2RyaXZl
+cnMvbmV0L2V0aGVybmV0L2ZhcmFkYXkvZnRnbWFjMTAwLmMKKysrIGIvZHJpdmVycy9uZXQv
+ZXRoZXJuZXQvZmFyYWRheS9mdGdtYWMxMDAuYwpAQEAgLTE1NTMsMTUgLTE1NTQsMTYgKzE1
+NjQsMTYgQEBAIHN0YXRpYyBpbnQgZnRnbWFjMTAwX29wZW4oc3RydWN0IG5ldF9kZQogIAog
+IAlyZXR1cm4gMDsKICAKIC0gZXJyX25jc2k6CiArZXJyX25jc2k6CisgCXBoeV9zdG9wKG5l
+dGRldi0+cGh5ZGV2KTsKICAJbmFwaV9kaXNhYmxlKCZwcml2LT5uYXBpKTsKICAJbmV0aWZf
+c3RvcF9xdWV1ZShuZXRkZXYpOwogLSBlcnJfYWxsb2M6CiArZXJyX2FsbG9jOgogIAlmdGdt
+YWMxMDBfZnJlZV9idWZmZXJzKHByaXYpOwogIAlmcmVlX2lycShuZXRkZXYtPmlycSwgbmV0
+ZGV2KTsKIC0gZXJyX2lycToKICtlcnJfaXJxOgogIAluZXRpZl9uYXBpX2RlbCgmcHJpdi0+
+bmFwaSk7CiAtIGVycl9odzoKICtlcnJfaHc6CiAgCWlvd3JpdGUzMigwLCBwcml2LT5iYXNl
+ICsgRlRHTUFDMTAwX09GRlNFVF9JRVIpOwogIAlmdGdtYWMxMDBfZnJlZV9yaW5ncyhwcml2
+KTsKICAJcmV0dXJuIGVycjsK
+
+--------------Fa3F6ffuUGJe7vuBAGk4P4hY--
 
