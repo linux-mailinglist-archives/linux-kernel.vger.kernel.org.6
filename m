@@ -1,139 +1,123 @@
-Return-Path: <linux-kernel+bounces-306982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8998A964672
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:27:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D82D2964665
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:25:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A98D4B29172
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:25:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 837371F2281B
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:25:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6E141A76A8;
-	Thu, 29 Aug 2024 13:25:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E3A71A7AE4;
+	Thu, 29 Aug 2024 13:25:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="ZDnUaWz9"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ap6/COmG"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84CAE192B6F;
-	Thu, 29 Aug 2024 13:25:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B442A192B6F;
+	Thu, 29 Aug 2024 13:25:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724937902; cv=none; b=Hzw4GQYfpJH6nFt2P2sQV8v7qKreQKOSTIu/BHtO88K0rmnm+/U/5mMlTbBruz6C63k9+RcDnmd6DVz0+066xN9xB8HLBRDwWNlaf5lITPK7Yahn7Pmt5zV0y03rT3c+pSD983zj2PwveHoAYI2o5HsNqDijH2+ZD6X9XEit1Y0=
+	t=1724937919; cv=none; b=JSZ3U1M9nRuQ6AboPA4zIIvCXiNLFW3cdifwUUF4Ueea263mbzBvbOmY0huC4mzPSJWuq+lgYYZOKDMEIvuVLbB2+4TYB0iUp7lbXm4Cy5Jpxun98LBTHmlEnt3h3/ncp+FHgkey+X+AWw1UwiLnU7g1i5ZIl63ICbfOoRM8cAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724937902; c=relaxed/simple;
-	bh=GV60B7TnA6DnC3HM8+W6F2D5ilvKsXaFmGtCwJfJZaw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z9uq6obTBJgXbNt93P80sa/79HXrDRWDV/4xxrBlhFboKNNvVMKw09JRXBEFjOI5E2Ci5c6etzY68XdTtTcunqm2IOw05vYNZW/ACzfq5HwCG9JMEtcCvf/rEhQStYSoA0Ov68ppPwSEINDK/GWd7h/oN5tEUmAojq+s26sR96s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=ZDnUaWz9; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 6950C40E0288;
-	Thu, 29 Aug 2024 13:24:58 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id RLZtmtQE7s3y; Thu, 29 Aug 2024 13:24:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1724937892; bh=vNtQxJkHxft4astBfVL5KicdSbzbOp9p9GXUzMP7v+M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZDnUaWz9X/E9xmg3UH8tRu4v44eG1CImcZvlSx/eqNtKxY1qS8SnEK58fLTHjPZje
-	 aKb/XjUwAnfyWJEAWToV1v9aykcJCpJMjkEzdTsYeA1AIZeyEoxOSSEo5jfIllFRpR
-	 DM5pFQyW7obJ5D3nHZGP9a5uuBVrP2Tg0/PeGTqH4EF0UfGR2T9hF3Mfm5CVSf37uy
-	 hmdSvh8z2/RhoEgP1hhgwYD3QaAKY1SfteFViArQMKlCqSKEiUrdYm3bN/w3MBskTL
-	 S8MeqtsDpZg+T4OE1KltFIdFPt1Cz5lSWmRJVIo1fMOCFlOrAVwTlyL4ADY7Q0+5VQ
-	 mMQcMJ4a1xX2EeqGLrIerf7SxDVsWpxT6r7nT88bEAY6FKffIXhZqjmzSgnCCf3nPa
-	 5/kIjhrBSleRvPxQ6WqLZsrLL4nkHviueKIlKpLUDgDKqhwM9XHsfri5alpqZ611VX
-	 sX8aoML67u40katcGp8s8qrX4Uvp1fgdpGCXYmJkElHK3a1d+c5k21r3E2PJkgJVx3
-	 4cNsUidy2tIlJVpNu5x6U2+CdRelRQSXgpjZTUzYCDKPZ+0bKIM/EsNCv0rtQZ4pD7
-	 vlABlzJ1pkAdnOyp389tjEHURbdlCEj2K2iCBr6eyxQ2pgNuLfSt4tzrM+xrJO74IW
-	 SqyPtt1c+BQsX9up7As4GSbA=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 3ABA140E0275;
-	Thu, 29 Aug 2024 13:24:39 +0000 (UTC)
-Date: Thu, 29 Aug 2024 15:24:38 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Pavan Kumar Paluri <papaluri@amd.com>
-Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Eric Van Tassell <Eric.VanTassell@amd.com>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Ashish Kalra <ashish.kalra@amd.com>,
-	Michael Roth <michael.roth@amd.com>,
-	Brijesh Singh <brijesh.singh@amd.com>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH 1/2] x86, KVM:SVM: Move sev specific parsing into
- arch/x86/virt/svm
-Message-ID: <20240829132438.GCZtB2lqeYpleYk9c4@fat_crate.local>
-References: <20240801205638.6603-1-papaluri@amd.com>
- <20240801205638.6603-2-papaluri@amd.com>
+	s=arc-20240116; t=1724937919; c=relaxed/simple;
+	bh=n77bCPZhEhpA7pX7XHjUFUHJCMPAurXbxUj+f9Jyqa4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JG4P5eF/JkBq2j4PJMGYyW4VEYO2fnjCN8N817xGz7qxmMye7UMPnT8gX3Tc1AAb5MpiKWJ1EItKr4FDwd67RWsa4/hdDNekWtRFAjTz4WTQp2uLqcSqWGvSYf+xUG0FHdOYQCqQQvOonsolqUy0tzWOqVgztSVmnSPT9ALqY8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ap6/COmG; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724937918; x=1756473918;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=n77bCPZhEhpA7pX7XHjUFUHJCMPAurXbxUj+f9Jyqa4=;
+  b=Ap6/COmG0Vk7rqFXWDN9mrUqEXm/BdBpyJIxOdZqVgHkdopxI2OZ6Bt/
+   olfpCRy/Mx+tKXgGulf788nOkWWBU+ZDAohES6OQZfisSnCnW9MWSy0ig
+   KxqWazMV2nTT8QLhalfR8VENGCDU0qZdyrFvqT3vsBOR2TAIZstV2dYNP
+   rPrz7A1fn1p2wi4GUQe556wP1lXKS+Ousyy3lJQ9cGJGjSM+JEcBh5H+Y
+   ryQf+A5YjGWDlByN6Fff1fnP+luYk2TRaxhPCqTOe+PO1lwCT5FgD9hTL
+   G34lY4b0k2llqm9+AueI4kNbTAkGHim3dy6tVxzsudn210GsMMrY5Db5f
+   w==;
+X-CSE-ConnectionGUID: 6kMD3vlqTm6GyU9yFYOVrw==
+X-CSE-MsgGUID: EIi7kagJQOii18LAEAsXAQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11179"; a="34185220"
+X-IronPort-AV: E=Sophos;i="6.10,185,1719903600"; 
+   d="scan'208";a="34185220"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 06:25:18 -0700
+X-CSE-ConnectionGUID: CMR8G9PlQnG+jJscNPSPbg==
+X-CSE-MsgGUID: 6p7D2YcFRryMDkc3Pk+Z9w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,185,1719903600"; 
+   d="scan'208";a="68462912"
+Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.240.26]) ([10.124.240.26])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 06:25:15 -0700
+Message-ID: <4eb4a26e-ebad-478e-9635-93f7fbed103b@intel.com>
+Date: Thu, 29 Aug 2024 21:25:11 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240801205638.6603-2-papaluri@amd.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 02/25] KVM: TDX: Define TDX architectural definitions
+To: Rick Edgecombe <rick.p.edgecombe@intel.com>, seanjc@google.com,
+ pbonzini@redhat.com, kvm@vger.kernel.org
+Cc: kai.huang@intel.com, isaku.yamahata@gmail.com,
+ tony.lindgren@linux.intel.com, linux-kernel@vger.kernel.org,
+ Isaku Yamahata <isaku.yamahata@intel.com>,
+ Sean Christopherson <sean.j.christopherson@intel.com>
+References: <20240812224820.34826-1-rick.p.edgecombe@intel.com>
+ <20240812224820.34826-3-rick.p.edgecombe@intel.com>
+Content-Language: en-US
+From: Xiaoyao Li <xiaoyao.li@intel.com>
+In-Reply-To: <20240812224820.34826-3-rick.p.edgecombe@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Aug 01, 2024 at 03:56:37PM -0500, Pavan Kumar Paluri wrote:
-> +#include <linux/memblock.h>
+On 8/13/2024 6:47 AM, Rick Edgecombe wrote:
+> +/*
+> + * TD_PARAMS is provided as an input to TDH_MNG_INIT, the size of which is 1024B.
+> + */
+> +struct td_params {
+> +	u64 attributes;
+> +	u64 xfam;
+> +	u16 max_vcpus;
+> +	u8 reserved0[6];
+> +
+> +	u64 eptp_controls;
+> +	u64 exec_controls;
 
-What's the idea of adding some random include here?
+TDX 1.5 renames 'exec_controls' to 'config_flags', maybe we need update 
+it to match TDX 1.5 since the minimum supported TDX module of linux 
+starts from 1.5.
 
-Does this file use memblock?
+Besides, TDX 1.5 defines more fields that was reserved in TDX 1.0, but 
+most of them are not used by current TDX enabling patches. If we update 
+TD_PARAMS to match with TDX 1.5, should we add them as well?
 
-I don't think so.
+This leads to another topic that defining all the TDX structure in this 
+patch seems unfriendly for review. It seems better to put the 
+introduction of definition and its user in a single patch.
 
-You need to resolve include visibility by including the headers where you need
-them:
+> +	u16 tsc_frequency;
+> +	u8  reserved1[38];
+> +
+> +	u64 mrconfigid[6];
+> +	u64 mrowner[6];
+> +	u64 mrownerconfig[6];
+> +	u64 reserved2[4];
+> +
+> +	union {
+> +		DECLARE_FLEX_ARRAY(struct tdx_cpuid_value, cpuid_values);
+> +		u8 reserved3[768];
+> +	};
+> +} __packed __aligned(1024);
 
-diff --git a/arch/x86/include/asm/sev-common.h b/arch/x86/include/asm/sev-common.h
-index dd302fe49f04..d3e7f97e2a4a 100644
---- a/arch/x86/include/asm/sev-common.h
-+++ b/arch/x86/include/asm/sev-common.h
-@@ -8,6 +8,9 @@
- #ifndef __ASM_X86_SEV_COMMON_H
- #define __ASM_X86_SEV_COMMON_H
- 
-+#include <asm/cache.h>
-+#include <asm/pgtable_types.h>
-+
- #define GHCB_MSR_INFO_POS		0
- #define GHCB_DATA_LOW			12
- #define GHCB_MSR_INFO_MASK		(BIT_ULL(GHCB_DATA_LOW) - 1)
-diff --git a/arch/x86/virt/svm/cmdline.c b/arch/x86/virt/svm/cmdline.c
-index 507549a9c793..f0a532108f49 100644
---- a/arch/x86/virt/svm/cmdline.c
-+++ b/arch/x86/virt/svm/cmdline.c
-@@ -5,11 +5,8 @@
-  * Copyright (C) 2023 - 2024 Advanced Micro Devices, Inc.
-  *
-  * Author: Michael Roth <michael.roth@amd.com>
-- *
-  */
- 
--#include <linux/memblock.h>
--
- #include <asm/sev.h>
- 
- struct sev_config sev_cfg;
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
 
