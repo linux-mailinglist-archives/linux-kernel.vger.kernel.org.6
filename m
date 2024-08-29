@@ -1,100 +1,126 @@
-Return-Path: <linux-kernel+bounces-306839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A651964473
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 14:30:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64CA0964475
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 14:30:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC96A286EBF
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 12:30:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC9B4B2118F
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 12:30:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C785419882E;
-	Thu, 29 Aug 2024 12:30:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CC2A197A99;
+	Thu, 29 Aug 2024 12:30:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="VlloGS0t"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gaPRySIx"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99D7618E360
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 12:30:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A7AE18E360;
+	Thu, 29 Aug 2024 12:30:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724934620; cv=none; b=EvLiFmokr6Wh3Xsnls0z/1ClKI491c92JIYHBzYBfqq1ekGN8oLK4G13NnT4cp0fTiXXyevMUcnpvcZPxu2uIZ+IsAPmIaho85sRm0M+wZyy6/3Y63oVHPYXOGdn1X+jDumBcA1U5V9BEuF7jS8YGHPcb4HQ7R3Kkut7JZHdNWo=
+	t=1724934628; cv=none; b=Uy4wuaexOdazc1D5myGDMj6PCitlUqMD7uy3vf4Vmt1FBWDPbsxTHEzV3fgO5gPVsIjBIKTKF1rLVewkjbyO5QTgoxsMLsyjtGGgamIHc0syXyK3Hu8JQQugdwaGGd0KQoU102VAZsH8xXhth+8S60+5lqK8sNouBZSJx668UDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724934620; c=relaxed/simple;
-	bh=c6r5N+p5e0daxU7CXz5nIWMWNCoTF84WTktAT8Y9Z+Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AN9hYBDSBCN9m2UvgxVn/oCRWUFqLphWeY7JLyo8priYV4sfAeyJFuEDGCIPPP6VFeChO1u8z8iopwMG/TZZKeOamzT59KXS+2bBY5LP+QyzswGTEJwA0JCZQyBmY2JhC1UCozKNft9N/e4tsZ/hq0o6dtKStM42BJUdg+x/kVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=VlloGS0t; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5353d0b7463so1054811e87.3
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 05:30:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1724934617; x=1725539417; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=GsC+gfoM6MaBZP3mn7x0NTnh7K+ZhhCt3TESRyjjWWk=;
-        b=VlloGS0tSgTB5rdX++T11Wm1X/JDaU256NgGpX+xiz6c0wfbzSr+uUTffIW6xQQ7U8
-         berEjIumkjm2dpzf4k71BqfM9NaHUAekrYlwv6LKaUt9tCEHGiLmlK1tcsaOa3QMu0gD
-         GdxKAK4qq53lixR15lvkJrEQNGCDHKKn9LVys=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724934617; x=1725539417;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GsC+gfoM6MaBZP3mn7x0NTnh7K+ZhhCt3TESRyjjWWk=;
-        b=ax3dEMl9VcBbYYlVNPaDUbuBm3QxaOxmARlmFOKwVrG6QtsLT4zNYZAjxohW1jnL3k
-         VDUd+b+DvoBM3n08keOPw8u9KnFJeDeYm13XF7BDuGye7jtnq3m04qyrjFKViuRy1SQL
-         oKxLWem/A1Xoft5BX49lL8YBgAcQserI2VUAXjrJj6le5PacKg7oIod6raQqYVRj3aPj
-         EdBXc+mkbOcg/C6QHM2ZLGxkRqrE91C5KKHpJrddLAnjQxyw3Fg8lGdo2AW10v3HxEvv
-         0KmNk0chXZVKnfEG5Ol0yI/mWmea4hdQL75LveKRW4Wg41OZIPfMF2o2ygI+sD+i1WK4
-         bKZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVhulkXjWJi6sQ2wxpb+4mIYjmT+Rzsgpb41aRe2spDSTnAjP0qBhqXGiMkwPT5I+YMrGojC1rwZV9U3bY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXQJtF9JdRQelMmZwojMtam5n8A+Y8oT/o2ANx6/yALkMLR+jE
-	+1EorBkVI3qd+EGFBKZdyi6JV2nyRXGIT98WgVo/EBQo745wnYkYWV1KJ5WlL8jBBzuzdsNi06K
-	XJKBuCfyYPZEjBEPYW3Bxfmpvl4+8sm8nbONAFw==
-X-Google-Smtp-Source: AGHT+IH8clhYKqNN3t6yM6mWOT5Z3clueVHYpFdRhAMDFrCA17blK2kPxMHWFSZTS/0A41zYP3doO8wp8aARXzRVg3E=
-X-Received: by 2002:a05:6512:3f19:b0:533:4656:d4d6 with SMTP id
- 2adb3069b0e04-5353e5432c4mr2407794e87.5.1724934616618; Thu, 29 Aug 2024
- 05:30:16 -0700 (PDT)
+	s=arc-20240116; t=1724934628; c=relaxed/simple;
+	bh=u3qcRvtBLlVgfxJ6HUJVJJbVviRspfWgoYS2Mn9zdg4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g1So9fXTQsXg2tgdl9tXtdyUjFzm46+WnHmXdwoD7cCo1NCt8ep4wMsO54cl5tjCV87PibwNHiUpegv4AfH4QAZXFmj1lWDydjvtKOVWJa6mjN8Mvtmvbwcq/f2cr/qgZMy4cWoLR51bKPgG9OwkNqp35JThb1Gj4SG18UvUq7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gaPRySIx; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724934627; x=1756470627;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=u3qcRvtBLlVgfxJ6HUJVJJbVviRspfWgoYS2Mn9zdg4=;
+  b=gaPRySIx2GU6xqreKXdDmm3UC/+haATlpX95xHxVfXobV4YXC9m6dVtT
+   OpU4RWyGTwsYQLOZNtVDV7N5+99NzsoN8ltfoevNDBoM6UMJBgnivJMDv
+   zzVl1ItQ8HkYm5dGoBYOUMscdvqiL4YMRKvPHuGNHQ9rl5agcjybS03CM
+   ntqRvg8TWU4rBjfEH6b46g9IrRp4dtzZWmxn+RYQerbX9OTgDOxkAByU+
+   yfAdWYf3YViP3BXgOF7JtCXmMzZtov3IZjX5I+uXzQWdO0x3KUwnSHtO+
+   A8qRZD7Xf+xRR+TRa88B389HdvNTnWOaIRjR5HA+WcKb8Jo56/wIE9Rga
+   g==;
+X-CSE-ConnectionGUID: UExMX1h+RGmXV09ZIouPog==
+X-CSE-MsgGUID: dm2WBJDfQ+CoBwwAkYHh+w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11179"; a="27281204"
+X-IronPort-AV: E=Sophos;i="6.10,185,1719903600"; 
+   d="scan'208";a="27281204"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 05:30:27 -0700
+X-CSE-ConnectionGUID: Ksu6FyZYSxijbfdxtrifdw==
+X-CSE-MsgGUID: 14sX5qBeSCyBml+sOUFRUQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,185,1719903600"; 
+   d="scan'208";a="63619919"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa009.fm.intel.com with ESMTP; 29 Aug 2024 05:30:22 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id 17CD4170; Thu, 29 Aug 2024 15:30:21 +0300 (EEST)
+Date: Thu, 29 Aug 2024 15:30:21 +0300
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Alexey Gladkov <legion@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-coco@lists.linux.dev, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Yuan Yao <yuan.yao@intel.com>, 
+	Geert Uytterhoeven <geert@linux-m68k.org>, Yuntao Wang <ytcoode@gmail.com>, Kai Huang <kai.huang@intel.com>, 
+	Baoquan He <bhe@redhat.com>, Oleg Nesterov <oleg@redhat.com>, cho@microsoft.com, 
+	decui@microsoft.com, John.Starks@microsoft.com, stable@vger.kernel.org
+Subject: Re: [PATCH v5 4/6] x86/tdx: Add a restriction on access to MMIO
+ address
+Message-ID: <cpbbbdeqkgvtoeqviygn6vcagxl55wjb3nyhqd5fzk2re6luan@rmfr2sbw7tfi>
+References: <cover.1724248680.git.legion@kernel.org>
+ <cover.1724837158.git.legion@kernel.org>
+ <b9b120f5615776d3f557c96e244e57c97ac7d9d4.1724837158.git.legion@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240108120824.122178-1-aleksandr.mikhalitsyn@canonical.com>
- <20240108120824.122178-3-aleksandr.mikhalitsyn@canonical.com>
- <CAJfpegtixg+NRv=hUhvkjxFaLqb_Vhb6DSxmRNxXD-GHAGiHGg@mail.gmail.com>
- <CAEivzxeva5ipjihSrMa4u=uk9sDm9DNg9cLoYg0O6=eU2jLNQQ@mail.gmail.com>
- <CAJfpegsqPz+8iDVZmmSHn09LZ9fMwyYzb+Kib4258y8jSafsYQ@mail.gmail.com> <20240829-hurtig-vakuum-5011fdeca0ed@brauner>
-In-Reply-To: <20240829-hurtig-vakuum-5011fdeca0ed@brauner>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Thu, 29 Aug 2024 14:29:59 +0200
-Message-ID: <CAJfpegsVY97_5mHSc06mSw79FehFWtoXT=hhTUK_E-Yhr7OAuQ@mail.gmail.com>
-Subject: Re: [PATCH v1 2/9] fs/fuse: add FUSE_OWNER_UID_GID_EXT extension
-To: Christian Brauner <brauner@kernel.org>
-Cc: Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>, mszeredi@redhat.com, 
-	stgraber@stgraber.org, linux-fsdevel@vger.kernel.org, 
-	Seth Forshee <sforshee@kernel.org>, Amir Goldstein <amir73il@gmail.com>, 
-	Bernd Schubert <bschubert@ddn.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b9b120f5615776d3f557c96e244e57c97ac7d9d4.1724837158.git.legion@kernel.org>
 
-On Thu, 29 Aug 2024 at 14:08, Christian Brauner <brauner@kernel.org> wrote:
+On Wed, Aug 28, 2024 at 12:44:34PM +0200, Alexey Gladkov wrote:
+> From: "Alexey Gladkov (Intel)" <legion@kernel.org>
+> 
+> For security reasons, access from kernel space to MMIO addresses in
+> userspace should be restricted. All MMIO operations from kernel space
+> are considered trusted and are not validated.
+> 
+> For instance, if in response to a syscall, kernel does put_user() and
+> the target address is MMIO mapping in userspace, current #VE handler
+> threat this access as kernel MMIO which is wrong and have security
+> implications.
 
-> Fwiw, that's what the patchset is doing. It's only supported if the
-> server sets "default_permissions".
+What about this:
 
-My specific issue is with FUSE_EXT_OWNER_UID_GID, which I think is
-unnecessary.  Just fill the header with the mapped uid/gid values,
-which most servers already use for creating the file with the correct
-st_uid/st_gid and not for checking permission.  When the mapped values
-are unavailable, set the uid/gid in the header -1.  Should be better
-than sending nonsense values to userspace, no?
+------------------------------------8<-----------------------------------
 
-Thanks,
-Miklos
+Subject: x86/tdx: Fix "in-kernel MMIO" check
+
+TDX only supports kernel-initiated MMIO operations. The handle_mmio()
+function checks if the #VE exception occurred in the kernel and rejects
+the operation if it did not.
+
+However, userspace can deceive the kernel into performing MMIO on its
+behalf. For example, if userspace can point a syscall to an MMIO address,
+syscall does get_user() or put_user() on it, triggering MMIO #VE. The
+kernel will treat the #VE as in-kernel MMIO.
+
+Ensure that the target MMIO address is within the kernel before decoding
+instruction.
+
+------------------------------------8<-----------------------------------
+
+And please make this patch the first in the patchset. It has to be
+backported to stable trees and should have zero dependencies on the rest
+of the patchset.
+
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
