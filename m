@@ -1,194 +1,158 @@
-Return-Path: <linux-kernel+bounces-306471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF72C963F76
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 11:06:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D8DD963F7A
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 11:06:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E17211C22460
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 09:06:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF3B4285EF8
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 09:06:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8557618C91E;
-	Thu, 29 Aug 2024 09:06:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96A1B18CBED;
+	Thu, 29 Aug 2024 09:06:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="INt9dyye"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nCTVBWLB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CACAB15666A
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 09:06:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C919915666A;
+	Thu, 29 Aug 2024 09:06:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724922381; cv=none; b=J7Bi3S5NH18PnMw6/rGRHkO9Ch01aB/gMoUVkO6SZMKgr90pedjZE0TKJjuMB0rtTkrxEsw1QDiEOq+gaLgHo6LPMDM0+UV87Biih46HgNSZJIcVMScSdX95YvR4ybEo5bYG1BqUxqaAHGQTxlYdTxTDLTwL/Wu5tuJjFdVN90Y=
+	t=1724922398; cv=none; b=YV4Z7OrvFsxStfy+1pSoLBuc+HkP4rrld1cfdtHRTDdfjotaicQDc1x3FvkTiNlyAg49Kjix9tIk0axLicheM31YIp8u4sGPG1bC456GTOX2BHiAmPa1mhCfD0QZMy1yqthEY+tQPwxwFlR5YGLpxmksYrAcTucyj1eOGBj6AIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724922381; c=relaxed/simple;
-	bh=dNmgvB0PNie3Ta9wWOJOICrzojenRtlbYkH0WIcuTts=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TocCgDcjJG1prDOGTA1E0Gcd5rw5svBQnPjObVvvORUyap5D9KmdseynhJvt4P2zUWevO5ZsFbYXEP7z75dqTHQ7vM281m622ZF0dwz4BIW1AuJb+5Nj/XYOk8lRiHY2KbWLo/mhenxQWWDce1STrxliz2Dz3xlk3PrjHRadLX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=INt9dyye; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724922378;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/uYBPSE4scu+k+l3zhOUlQLPU644iSREuuqaqkYhf/E=;
-	b=INt9dyyeYASbL7OG22OgQCTw7b7xPPNIsM0dbpEayEx7oGBMpK/y1yF+Vwl1CWvH3tMe2a
-	M1MqJdtlFIVF8FVzI9DB2IjDELS8qfGWRqvG5edDrTADqzy2fsIyIBmmZdglabkQDtqGSZ
-	R0ki5Q1RHyO2lCiwSAekTVIsIUouZ0A=
-Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
- [209.85.208.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-452-ttQGm3d5PjebMEc5k4UK5Q-1; Thu, 29 Aug 2024 05:06:17 -0400
-X-MC-Unique: ttQGm3d5PjebMEc5k4UK5Q-1
-Received: by mail-ed1-f69.google.com with SMTP id 4fb4d7f45d1cf-5bedb783849so324238a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 02:06:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724922376; x=1725527176;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/uYBPSE4scu+k+l3zhOUlQLPU644iSREuuqaqkYhf/E=;
-        b=rB0nqtZ8CcQ+yrkBROVJgPJiil3NKXpFNC0B7KcT2n7OtNwp22UJsdrnoxeI6GKo2p
-         1L+r8xCZ4keiQk9bwEuAuVs1iSih9jKCM9f3ibQjA6B2WzYigo23JjWlo2t/dJGr5xtr
-         oDZTHxRbF2JAxqrJWbGUdZT/LHo1R4vcO8dw5umg1+pGdPwuZC/Pmmnmlbq6C0ulj+e3
-         aHYll8Eqm7xk6TNPi3Omb3b/WO3lCurSzLVofBO9/wDHIAVeaDvZkTqSbOhNosXAQtyy
-         8dpNRsKQLp7p0vpQeVE8nAoeBJLGJgaEqQf+fNWGXh+g2R8aZj2+L0ukmySV/C2uj0y4
-         JOVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCViXk8M4+vu49MqU/uFwBoS23geOyEmrolM/FgdvIWznMNWSfyl9RoJSO0JjCtXGhjsQMTxskK3flIWjew=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyz9HJ0HQv3O5owjO7NRsvdJbpYEGl/GEN5GqOZ+zX4Q4b81MA8
-	1wzHumqCdRHv1PiqIoeeMRrQXuZKOJb/BDES964z7YrPZxWcwGh3Onti+CKDhFS0R7N7iR9U1o8
-	Ke0ivQ54YwD2/MvXw5kDbqLGd+8oN2AjE6/clVNXtssSdbQRxwJxrPNSlFrfIxT+SZnnvjRg/Gs
-	eXLZKgVm5J/keJtnSLbnj/9UqrKl4WWE/JTGtJ
-X-Received: by 2002:a05:6402:90b:b0:5be:fbe7:11ac with SMTP id 4fb4d7f45d1cf-5c21ed54d3cmr1826751a12.20.1724922375793;
-        Thu, 29 Aug 2024 02:06:15 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHGLm8Hz5ioA0VaJ4JLlmepguUyiuDxm4rTg99EfDG1HDgky7aJfIl1rtVoY3YUHlEK2SJJtzOojwa/4ib/k+8=
-X-Received: by 2002:a05:6402:90b:b0:5be:fbe7:11ac with SMTP id
- 4fb4d7f45d1cf-5c21ed54d3cmr1826728a12.20.1724922375297; Thu, 29 Aug 2024
- 02:06:15 -0700 (PDT)
+	s=arc-20240116; t=1724922398; c=relaxed/simple;
+	bh=oo/dUElHFSvMNzt9dtUUMHlG68pacVcJeg0G/aF98eg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JwYBbCU1/EwUsmH3+YRyDMfw/JF9f6niFNhi7gyJMJ8KPmuSeLctgFUpXv7MqGUg2L8b8D6M0NDLMQGb4xUQV2hp6jDOOjzpOcjjOFcBrHWdH6ecvoBxQ3yXwMPsdm/NUSiQtcIvVOlzy6hZuqHerHpYw+3Fs/TNGXF4TKtD1w4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nCTVBWLB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7357BC4CEC1;
+	Thu, 29 Aug 2024 09:06:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724922398;
+	bh=oo/dUElHFSvMNzt9dtUUMHlG68pacVcJeg0G/aF98eg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=nCTVBWLB6FSV+hkOWtvobtE6l1VVwy7ybA6SWTi+SWZh6c7hErBKnCjrVEK4n7kCl
+	 BrIq4Ebu0ooLtmmm6w/kifjT0SUXN4UsZyH67f4RrRnLrbS8PcXUUOc7MixBGM3aXC
+	 eA3Vf5mGNADXIJ09wz44fhrVB8cy5mn3ryH+yV12pst4ktNy8dzZwAuMNU4ynuVG/J
+	 7TnTRTGbaGVcbGOUUXo9lqTAZqVjaT+YynUujXxHfSU+Y+JLbbSk7WVGiUFShERPLt
+	 eWZSlKYUQycYsdLJjkcj1uKYlzO6psvLpXRP0+sG5HDdQFmLWKArg+vf3nfhxfvm6s
+	 1pED8VyJiA7mw==
+Message-ID: <b1088e86-a88e-4e20-9923-940dfba5dea8@kernel.org>
+Date: Thu, 29 Aug 2024 11:06:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240827160256.2446626-2-dtatulea@nvidia.com> <CACGkMEuRvqu8W9-OqPBRhn1DG-+DO6TCzFdHqc7zB74GkNDkAQ@mail.gmail.com>
- <CACLfguXjiyp+Ya4mUKXu6Dmb3Wx5wW0bbNGRSFWE-Z0E5gALTA@mail.gmail.com> <8daf221f-8d87-4da1-944c-3bcd0edea604@nvidia.com>
-In-Reply-To: <8daf221f-8d87-4da1-944c-3bcd0edea604@nvidia.com>
-From: Cindy Lu <lulu@redhat.com>
-Date: Thu, 29 Aug 2024 17:05:38 +0800
-Message-ID: <CACLfguVr1bd6=bkGn6hX3W7xBr45qydaCpQ1mNpsATeWFqe2ZA@mail.gmail.com>
-Subject: Re: [PATCH] vdpa/mlx5: Use random MAC address when no nic vport MAC set
-To: Dragos Tatulea <dtatulea@nvidia.com>
-Cc: Jason Wang <jasowang@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>, 
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
-	si-wei.liu@oracle.com, Jiri Pirko <jiri@nvidia.com>, virtualization@lists.linux.dev, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] nfc: pn533: Add poll mod list filling check
+To: Paolo Abeni <pabeni@redhat.com>, Aleksandr Mishin <amishin@t-argos.ru>,
+ Samuel Ortiz <sameo@linux.intel.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ lvc-project@linuxtesting.org
+References: <20240827084822.18785-1-amishin@t-argos.ru>
+ <26d3f7cf-1fd8-48b6-97be-ba6819a2ff85@redhat.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <26d3f7cf-1fd8-48b6-97be-ba6819a2ff85@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, 28 Aug 2024 at 17:37, Dragos Tatulea <dtatulea@nvidia.com> wrote:
->
->
->
-> On 28.08.24 11:00, Cindy Lu wrote:
-> > On Wed, 28 Aug 2024 at 09:51, Jason Wang <jasowang@redhat.com> wrote:
-> >>
-> >> On Wed, Aug 28, 2024 at 12:03=E2=80=AFAM Dragos Tatulea <dtatulea@nvid=
-ia.com> wrote:
-> >>>
-> >>> When the vdpa device is configured without a specific MAC
-> >>> address, the vport MAC address is used. However, this
-> >>> address can be 0 which prevents the driver from properly
-> >>> configuring the MPFS and breaks steering.
-> >>>
-> >>> The solution is to simply generate a random MAC address
-> >>> when no MAC is set on the nic vport.
-> >>>
-> >>> Now it's possible to create a vdpa device without a
-> >>> MAC address and run qemu with this device without needing
-> >>> to configure an explicit MAC address.
-> >>>
-> >>> Signed-off-by: Dragos Tatulea <dtatulea@nvidia.com>
-> >>> Reviewed-by: Jiri Pirko <jiri@nvidia.com>
-> >>
-> >> Acked-by: Jason Wang <jasowang@redhat.com>
-> >>
-> >> (Adding Cindy for double checking if it has any side effect on Qemu si=
-de)
-> >>
-> >> Thanks
-> >>
-> > But Now there is a bug in QEMU: if the hardware MAC address does not
-> > match the one in the QEMU command line, it will cause traffic loss.
-> >
-> Why is this a new issue in qemu? qemu in it's current state won't work
-> with a different mac address that the one that is set in HW anyway.
->
-this is not a new bug. We are trying to fix it because it will cause
-traffic lose without any warning.
-in my fix , this setting (different mac in device and Qemu) will fail
-to load the VM.
+On 29/08/2024 10:26, Paolo Abeni wrote:
+> 
+> 
+> On 8/27/24 10:48, Aleksandr Mishin wrote:
+>> In case of im_protocols value is 1 and tm_protocols value is 0 this
+>> combination successfully passes the check
+>> 'if (!im_protocols && !tm_protocols)' in the nfc_start_poll().
+>> But then after pn533_poll_create_mod_list() call in pn533_start_poll()
+>> poll mod list will remain empty and dev->poll_mod_count will remain 0
+>> which lead to division by zero.
+>>
+>> Normally no im protocol has value 1 in the mask, so this combination is
+>> not expected by driver. But these protocol values actually come from
+>> userspace via Netlink interface (NFC_CMD_START_POLL operation). So a
+>> broken or malicious program may pass a message containing a "bad"
+>> combination of protocol parameter values so that dev->poll_mod_count
+>> is not incremented inside pn533_poll_create_mod_list(), thus leading
+>> to division by zero.
+>> Call trace looks like:
+>> nfc_genl_start_poll()
+>>    nfc_start_poll()
+>>      ->start_poll()
+>>      pn533_start_poll()
+>>
+>> Add poll mod list filling check.
+>>
+>> Found by Linux Verification Center (linuxtesting.org) with SVACE.
+>>
+>> Fixes: dfccd0f58044 ("NFC: pn533: Add some polling entropy")
+>> Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
+> 
+> The issue looks real to me and the proposed fix the correct one, but 
+> waiting a little more for Krzysztof feedback, as he expressed concerns 
+> on v1.
 
-> > So, Just an FYI here: if your patch merged, it may cause traffic loss.
-> > and now I'm working in the fix it in qemu, the link is
-> > https://patchew.org/QEMU/20240716011349.821777-1-lulu@redhat.com/
-> > The idea of this fix is
-> > There are will only two acceptable situations for qemu:
-> > 1. The hardware MAC address is the same as the MAC address specified
-> > in the QEMU command line, and both MAC addresses are not 0.
-> > 2. The hardware MAC address is not 0, and the MAC address in the QEMU
-> > command line is 0. In this situation, the hardware MAC address will
-> > overwrite the QEMU command line address.
-> >
-> Why would this not work with this patch? This patch simply sets a MAC
-> if the vport doesn't have one set. Which allows for more scenarios to
-> work.
->
-I do not mean your patch will not work, I just want to make some
-clarify here.Your patch + my fix may cause the VM to fail to load in
-some situations, and this is as expected.
-Your patch is good to merge.
-Thanks
-cindy
+There was one month delay between my reply and clarifications from
+Fedor, so original patch is neither in my mailbox nor in my brain.
 
-> Thanks,
-> Dragos
->
-> > Thanks
-> > Cindy
-> >
-> >
-> >>> ---
-> >>>  drivers/vdpa/mlx5/net/mlx5_vnet.c | 3 +++
-> >>>  1 file changed, 3 insertions(+)
-> >>>
-> >>> diff --git a/drivers/vdpa/mlx5/net/mlx5_vnet.c b/drivers/vdpa/mlx5/ne=
-t/mlx5_vnet.c
-> >>> index fa78e8288ebb..1c26139d02fe 100644
-> >>> --- a/drivers/vdpa/mlx5/net/mlx5_vnet.c
-> >>> +++ b/drivers/vdpa/mlx5/net/mlx5_vnet.c
-> >>> @@ -3824,6 +3824,9 @@ static int mlx5_vdpa_dev_add(struct vdpa_mgmt_d=
-ev *v_mdev, const char *name,
-> >>>                 err =3D mlx5_query_nic_vport_mac_address(mdev, 0, 0, =
-config->mac);
-> >>>                 if (err)
-> >>>                         goto err_alloc;
-> >>> +
-> >>> +               if (is_zero_ether_addr(config->mac))
-> >>> +                       eth_random_addr(config->mac);
-> >>>         }
-> >>>
-> >>>         if (!is_zero_ether_addr(config->mac)) {
-> >>> --
-> >>> 2.45.1
-> >>>
-> >>
-> >
->
+
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+However different problem is: shouldn't as well or instead
+nfc_genl_start_poll() validate the attributes received by netlink?
+
+We just pass them directly to the drivers and several other drivers
+might not expect random stuff there.
+
+Best regards,
+Krzysztof
 
 
