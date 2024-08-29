@@ -1,94 +1,136 @@
-Return-Path: <linux-kernel+bounces-306307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A639963CF9
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 09:30:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E84A7963D06
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 09:31:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7B371F21914
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 07:30:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5ECCEB2415F
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 07:31:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 532F316CD1C;
-	Thu, 29 Aug 2024 07:30:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80059189F5A;
+	Thu, 29 Aug 2024 07:30:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="Anmad/q2"
-Received: from xry111.site (xry111.site [89.208.246.23])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="doZP7xNs"
+Received: from smtpbg151.qq.com (smtpbg151.qq.com [18.169.211.239])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C2871898FD
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 07:30:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FD09189BBD;
+	Thu, 29 Aug 2024 07:30:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.169.211.239
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724916605; cv=none; b=WE4gpFZNfqV80g3F0xNDQxWvYVRcuEHnSo5nwKAvWuc/QHB5dgv0BY+2QiNx1AE6ZsdBR7DLkWRi86X6FvtUIXsnxLRp/oF2kZR3xU+t98vPIyADsktB5g5ao/ssgEJpNRSMmk8MVVNNx8cRdI2QYZN1NLWyzD/RbXei/eo1wuk=
+	t=1724916628; cv=none; b=UqVsoMW32IGPx9vF6dl/a164j0Yj36rA69w4eoG7lbEfqe4S6KGGD1vbbBWwKslRgNilx+j8xgFtUqHaMRF5uzXTCyU1nBzj/m9y+wZpWLLfGacoemcokS9KbB/pDUjaiW29Jk3wTPAgE2zHkFl0doldHWkGVMNrXp+RXtM2nDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724916605; c=relaxed/simple;
-	bh=B22L4EpLZ/nJYRm9ioZMoDnSAsmGmN2WDW+2SjK4HqA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=BjwP6vGUyVd3NCikaHaImP73bQHnfblrq6lj5jW8Hw1h4g+xXrsgy1IpIL7+DDeHfVt3PSTeRpd+KmZNv390quPORY+g9qhid1iKXqJQUJMIrJLua0AdUw1/7/KA8vJvYeyv0JgVHaqWn2DD6I78De8DG9yexTrlqLuoQHvi7EQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=Anmad/q2; arc=none smtp.client-ip=89.208.246.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xry111.site;
-	s=default; t=1724916603;
-	bh=B22L4EpLZ/nJYRm9ioZMoDnSAsmGmN2WDW+2SjK4HqA=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=Anmad/q2SsIQR10cl38/i+vfJNz1NOqr7rjRysxtNZKle5a9aG7ByUUX4PYtgSHeY
-	 3c+O/6cGphVyZgzBdmOHqTchaAEnrwEU62K7xAK3FszV9PcCB3P2nVVP98/F2CWFLf
-	 5E7tYFQdqkjmze/mniDzLuYTeL9waXfdIYYiymac=
-Received: from [127.0.0.1] (unknown [IPv6:2001:470:683e::1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-384) server-digest SHA384)
-	(Client did not present a certificate)
-	(Authenticated sender: xry111@xry111.site)
-	by xry111.site (Postfix) with ESMTPSA id 30CF866F26;
-	Thu, 29 Aug 2024 03:30:01 -0400 (EDT)
-Message-ID: <9236591104ebcbb7db9561516f38ab889c05a17b.camel@xry111.site>
-Subject: Re: [PATCH] LoongArch: Remove posix_types.h include from
- sigcontext.h
-From: Xi Ruoyao <xry111@xry111.site>
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: WANG Xuerui <kernel@xen0n.name>, loongarch@lists.linux.dev, 
-	linux-kernel@vger.kernel.org
-Date: Thu, 29 Aug 2024 15:30:00 +0800
-In-Reply-To: <CAAhV-H6QxJH9y34326La4yFkz6AxUKPRYNkmkxhEe0i0S6QLyA@mail.gmail.com>
-References: <20240828031421.147944-2-xry111@xry111.site>
-	 <CAAhV-H5dDkyd5qkipwbKJvNduWM0UgENBqMHJGXhEoekizneaw@mail.gmail.com>
-	 <e8cc0f2d1e82097ab8646edfdd2a4a1fca386bcc.camel@xry111.site>
-	 <CAAhV-H6QxJH9y34326La4yFkz6AxUKPRYNkmkxhEe0i0S6QLyA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3 
+	s=arc-20240116; t=1724916628; c=relaxed/simple;
+	bh=LyEMVh4RLCp2HjxapIF7Tq+5ikLws1y4KEPU3klkGN0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aCiFqjvIBr48CzNTBjYFoogy9KbOtDkPo9aDOhX9xjueXfqvALyb0IrI1i2M1OWnlbP+NWFGkK9VfLY4u+EHH7wBIoCFwft0EgR+R5me3L03QLFnNk1heW0BwCN/NtWIK33+22L6CE5bGyOdaO2zghA1C+ars9aV8ikoW9z7s3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=doZP7xNs; arc=none smtp.client-ip=18.169.211.239
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1724916614;
+	bh=dAJ8ztKTv9lIJL1qRsZJt5YWdjQ1q7wv2JIz9gJfdcI=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=doZP7xNsVsFUD/UtQm6RFYSF/pTMW0qzh/4k2vUxAM9I86i18/z4ZOgR4B+g67NgZ
+	 cL2LuwmpnOqQ19aDtPmAP0l3L7Tu4AWnu+MLIlZiDyBdOZjfgWde2XZqfue4zqEpnn
+	 DPDSbP2SOoHtICK4sa5/UIe7CKnF54cm0B5ZmGjU=
+X-QQ-mid: bizesmtp87t1724916610td1la1ss
+X-QQ-Originating-IP: k3Vx3kPdv4++iXJufQYQJD+NYUDo2mSAC6TuiRzZhRA=
+Received: from localhost.localdomain ( [113.57.152.160])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Thu, 29 Aug 2024 15:30:08 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 939266593025190656
+From: WangYuli <wangyuli@uniontech.com>
+To: mathias.nyman@intel.com,
+	gregkh@linuxfoundation.org,
+	bhelgaas@google.com
+Cc: linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	guanwentao@uniontech.com,
+	zhanjun@uniontech.com,
+	WangYuli <wangyuli@uniontech.com>,
+	Chen Baozi <chenbaozi@phytium.com.cn>,
+	Wang Zhimin <wangzhimin1179@phytium.com.cn>,
+	Chen Zhenhua <chenzhenhua@phytium.com.cn>,
+	Wang Yinfeng <wangyinfeng@phytium.com.cn>,
+	Jiakun Shuai <shuaijiakun1288@phytium.com.cn>
+Subject: [PATCH] usb: xHCI: add XHCI_RESET_ON_RESUME quirk for Phytium xHCI host
+Date: Thu, 29 Aug 2024 15:30:05 +0800
+Message-ID: <59E000092FD56E43+20240829073005.304698-1-wangyuli@uniontech.com>
+X-Mailer: git-send-email 2.43.4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtp:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
 
-On Wed, 2024-08-28 at 12:43 +0800, Huacai Chen wrote:
-> On Wed, Aug 28, 2024 at 12:27=E2=80=AFPM Xi Ruoyao <xry111@xry111.site> w=
-rote:
-> >=20
-> > On Wed, 2024-08-28 at 12:11 +0800, Huacai Chen wrote:
-> > > Hi, Ruoyao,
-> > >=20
-> > > Just some questions:
-> > > 1, Changing UAPI is not a good idea.
-> >=20
-> > But removing unneeded includes from UAPI is fine.=C2=A0 For example, th=
-e
-> > commit 44e0b165b6c078b84767da4ba06ffa27af562c96 has removed
-> > linux/posix_types.h from termbits.h for all ports.
-> Need more tests, not just kselftests.
+The resume operation of Phytium Px210 xHCI host would failed
+to restore state. Use the XHCI_RESET_ON_RESUME quirk to skip
+it and reset the controller after resume.
 
-I've built and tested Glibc with this change.  But if you want a full
-system rebuild it won't happen in the next few months, and I can resend
-the patch after the next time I rebuild the system.
+Co-developed-by: Chen Baozi <chenbaozi@phytium.com.cn>
+Signed-off-by: Chen Baozi <chenbaozi@phytium.com.cn>
+Co-developed-by: Wang Zhimin <wangzhimin1179@phytium.com.cn>
+Signed-off-by: Wang Zhimin <wangzhimin1179@phytium.com.cn>
+Co-developed-by: Chen Zhenhua <chenzhenhua@phytium.com.cn>
+Signed-off-by: Chen Zhenhua <chenzhenhua@phytium.com.cn>
+Co-developed-by: Wang Yinfeng <wangyinfeng@phytium.com.cn>
+Signed-off-by: Wang Yinfeng <wangyinfeng@phytium.com.cn>
+Co-developed-by: Jiakun Shuai <shuaijiakun1288@phytium.com.cn>
+Signed-off-by: Jiakun Shuai <shuaijiakun1288@phytium.com.cn>
+Signed-off-by: WangYuli <wangyuli@uniontech.com>
+---
+ drivers/usb/host/xhci-pci.c | 6 ++++++
+ include/linux/pci_ids.h     | 2 ++
+ 2 files changed, 8 insertions(+)
 
+diff --git a/drivers/usb/host/xhci-pci.c b/drivers/usb/host/xhci-pci.c
+index b5705ed01d83..af967644489c 100644
+--- a/drivers/usb/host/xhci-pci.c
++++ b/drivers/usb/host/xhci-pci.c
+@@ -55,6 +55,8 @@
+ #define PCI_DEVICE_ID_INTEL_ALDER_LAKE_PCH_XHCI		0x51ed
+ #define PCI_DEVICE_ID_INTEL_ALDER_LAKE_N_PCH_XHCI	0x54ed
+ 
++#define PCI_DEVICE_ID_PHYTIUM_XHCI			0xdc27
++
+ /* Thunderbolt */
+ #define PCI_DEVICE_ID_INTEL_MAPLE_RIDGE_XHCI		0x1138
+ #define PCI_DEVICE_ID_INTEL_ALPINE_RIDGE_2C_XHCI	0x15b5
+@@ -407,6 +409,10 @@ static void xhci_pci_quirks(struct device *dev, struct xhci_hcd *xhci)
+ 	if (pdev->vendor == PCI_VENDOR_ID_VIA)
+ 		xhci->quirks |= XHCI_RESET_ON_RESUME;
+ 
++	if (pdev->vendor == PCI_VENDOR_ID_PHYTIUM ||
++	    pdev->device == PCI_DEVICE_ID_PHYTIUM_XHCI)
++		xhci->quirks |= XHCI_RESET_ON_RESUME;
++
+ 	/* See https://bugzilla.kernel.org/show_bug.cgi?id=79511 */
+ 	if (pdev->vendor == PCI_VENDOR_ID_VIA &&
+ 			pdev->device == 0x3432)
+diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
+index e388c8b1cbc2..25fff4130503 100644
+--- a/include/linux/pci_ids.h
++++ b/include/linux/pci_ids.h
+@@ -2605,6 +2605,8 @@
+ 
+ #define PCI_VENDOR_ID_FUNGIBLE		0x1dad
+ 
++#define PCI_VENDOR_ID_PHYTIUM		0x1db7
++
+ #define PCI_VENDOR_ID_HXT		0x1dbf
+ 
+ #define PCI_VENDOR_ID_TEKRAM		0x1de1
+-- 
+2.43.4
 
---=20
-Xi Ruoyao <xry111@xry111.site>
-School of Aerospace Science and Technology, Xidian University
 
