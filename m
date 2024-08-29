@@ -1,146 +1,113 @@
-Return-Path: <linux-kernel+bounces-306225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76AB9963B85
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:28:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1791963B17
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:14:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A5331F2554F
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 06:28:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D44C91C20B3E
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 06:14:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C63D7154C15;
-	Thu, 29 Aug 2024 06:28:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="goRHsBek"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E2D114B949;
+	Thu, 29 Aug 2024 06:14:33 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8967E1B813;
-	Thu, 29 Aug 2024 06:28:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1BCC14B946;
+	Thu, 29 Aug 2024 06:14:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724912906; cv=none; b=M8iCogk8ZGEaFwB3EoBBHIgtjL5I3sntrAYHLnL3dDpoXHwdmsvnVjVKM0UPLwM6SLEK3xhnLJLRGc1lI1L21olHI3hVQUZi4wMrGb/eERieujUjmFBf0vpARmjnmIXGNe2R3BKih9i5Bz7wKkWBXujHZe5DuFNvnGywi6NmcVc=
+	t=1724912072; cv=none; b=f3lU+1ofUXXqW1+u1lIsFOoX/QBGAhY9k/MFkgavjWugo2bH+td9VddhCc2zd8MeVsGS7f06JtRi2BCokJ6S8HjaNKbsOjttXoSBn5/jhCSImigzDcuk838VDOTf6qBsWcOb10RfaYxccXpBRNXEFPAUeXwhIrmuz7yM4pwIirY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724912906; c=relaxed/simple;
-	bh=CC/Lxc2OKAqLqILZZ5OBWYXOqCl5U8tQXMtCMWltyW8=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=M3DPbK6fhTfEzQE6cd7j/8qY/08j5gFrmw/7zX1EahvhBXt23VoLqp1JkfCL+1pCdE3dZ2snwZ9mFJuQIlA+ULyTqAIg2BsvkpFGLZWf+QHQY8T9dgopYMQ7Ulicr+QZafdR+oxG6lYGkldjGgyMoudcPGsYrKPIsLDPsP5dfmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=goRHsBek; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724912900; x=1756448900;
-  h=from:to:cc:subject:date:message-id;
-  bh=CC/Lxc2OKAqLqILZZ5OBWYXOqCl5U8tQXMtCMWltyW8=;
-  b=goRHsBekm+oi05veOv+6hJNYwaG3mXON94A0mSPIXOa3PyAtCetAIUxI
-   8Mr+/8r2XVwmFmsNsCKz/rJKb0VYxbmMn5bP7oCUfbXIQjXlhN76niGPo
-   8vGUfVUUJixXh5OSTml4qDtK9UFTtAMAs2pmiVVVWiujtAqMrVvBhEjpC
-   IrVnXhL8Sq9cYIRUuZhJPQK4WKutatBXiNT4hyvLXdh/dHqbKOzI4/ISr
-   XR6InXBMDRU1Rg0s2D4p25baq0dla2ySRKQ8eNpu6J3ErLh5J1a3ra+U9
-   1yj+XENEQi3blwcm5qBnQYqwPt4pcPihfwtFJoTYoYwyKR77IbzWNRHPZ
-   A==;
-X-CSE-ConnectionGUID: RGGEa92vTXKPNRbgW87oFQ==
-X-CSE-MsgGUID: Jo1IVG3qQuGVNN/fNs3fNQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11178"; a="23059903"
-X-IronPort-AV: E=Sophos;i="6.10,184,1719903600"; 
-   d="scan'208";a="23059903"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2024 23:28:19 -0700
-X-CSE-ConnectionGUID: fI7cP9kvQam7HTqB7XIRPg==
-X-CSE-MsgGUID: tYVoKNqDQDSSpvwz0Nv3/w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,185,1719903600"; 
-   d="scan'208";a="86684583"
-Received: from qiuxu-clx.sh.intel.com ([10.239.53.109])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2024 23:28:17 -0700
-From: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
-To: Tony Luck <tony.luck@intel.com>
-Cc: Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
-	Borislav Petkov <bp@alien8.de>,
-	James Morse <james.morse@arm.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Robert Richter <rric@kernel.org>,
-	linux-edac@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/1] EDAC/{skx_common,i10nm}: Remove the AMAP register for determing DDR5
-Date: Thu, 29 Aug 2024 14:13:09 +0800
-Message-Id: <20240829061309.57738-1-qiuxu.zhuo@intel.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1724912072; c=relaxed/simple;
+	bh=bRvzdSesM2DUfoPm8tIN1Hzg0/PX7HOPVgfqhLkIfUc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QxpFWKY3FYqEeGcdFuv10umN10tjUZ8HXvu3rsxsFU+2rbXqs/pKDPpJosZpZgVGRFwaPYwc1i11kf3MkX7voZlEj7dHcCY2tCVC1fwdLYECSvzIVdPrMQ8/N4iAsf1qroiqtykikr0r73Y4xoE7eFS750r7RjJes1k/gbc7GHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [192.168.0.2] (ip5f5af162.dynamic.kabel-deutschland.de [95.90.241.98])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 68B7261E5FE05;
+	Thu, 29 Aug 2024 08:13:54 +0200 (CEST)
+Message-ID: <83b72389-e12b-4224-aed7-736880e2877f@molgen.mpg.de>
+Date: Thu, 29 Aug 2024 08:13:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] Bluetooth: btrtl: Set msft ext address filter quirk
+To: Hilda Wu <hildawu@realtek.com>
+Cc: marcel@holtmann.org, luiz.dentz@gmail.com,
+ linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
+ alex_lu@realsil.com.cn, max.chou@realtek.com, kidman@realtek.com
+References: <20240829034627.676529-1-hildawu@realtek.com>
+Content-Language: en-US
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <20240829034627.676529-1-hildawu@realtek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-The configuration flag 'res_config->support_ddr5 = true' sufficiently
-indicates DDR5 memory support for Sapphire Rapids and Granite Rapids.
-Additionally, the i10nm_edac driver doesn't need to use the AMAP
-register for setting the 'fine_grain_bank' of each DIMM. Therefore,
-remove the AMAP register for determining DDR5.
+Dear Hilda,
 
-Signed-off-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
----
- drivers/edac/i10nm_base.c | 9 ++-------
- drivers/edac/skx_common.c | 2 +-
- 2 files changed, 3 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/edac/i10nm_base.c b/drivers/edac/i10nm_base.c
-index 24dd896d9a9d..33cdb3016b7c 100644
---- a/drivers/edac/i10nm_base.c
-+++ b/drivers/edac/i10nm_base.c
-@@ -47,10 +47,6 @@
- 	readl((m)->mbase + ((m)->hbm_mc ? 0xef8 :	\
- 	(res_cfg->type == GNR ? 0xaf8 : 0x20ef8)) +	\
- 	(i) * (m)->chan_mmio_sz)
--#define I10NM_GET_AMAP(m, i)		\
--	readl((m)->mbase + ((m)->hbm_mc ? 0x814 :	\
--	(res_cfg->type == GNR ? 0xc14 : 0x20814)) +	\
--	(i) * (m)->chan_mmio_sz)
- #define I10NM_GET_REG32(m, i, offset)	\
- 	readl((m)->mbase + (i) * (m)->chan_mmio_sz + (offset))
- #define I10NM_GET_REG64(m, i, offset)	\
-@@ -971,7 +967,7 @@ static int i10nm_get_dimm_config(struct mem_ctl_info *mci,
- {
- 	struct skx_pvt *pvt = mci->pvt_info;
- 	struct skx_imc *imc = pvt->imc;
--	u32 mtr, amap, mcddrtcfg = 0;
-+	u32 mtr, mcddrtcfg = 0;
- 	struct dimm_info *dimm;
- 	int i, j, ndimms;
- 
-@@ -980,7 +976,6 @@ static int i10nm_get_dimm_config(struct mem_ctl_info *mci,
- 			continue;
- 
- 		ndimms = 0;
--		amap = I10NM_GET_AMAP(imc, i);
- 
- 		if (res_cfg->type != GNR)
- 			mcddrtcfg = I10NM_GET_MCDDRTCFG(imc, i);
-@@ -992,7 +987,7 @@ static int i10nm_get_dimm_config(struct mem_ctl_info *mci,
- 				 mtr, mcddrtcfg, imc->mc, i, j);
- 
- 			if (IS_DIMM_PRESENT(mtr))
--				ndimms += skx_get_dimm_info(mtr, 0, amap, dimm,
-+				ndimms += skx_get_dimm_info(mtr, 0, 0, dimm,
- 							    imc, i, j, cfg);
- 			else if (IS_NVDIMM_PRESENT(mcddrtcfg, j))
- 				ndimms += skx_get_nvdimm_info(dimm, imc, i, j,
-diff --git a/drivers/edac/skx_common.c b/drivers/edac/skx_common.c
-index 8d18099fd528..724d41322dda 100644
---- a/drivers/edac/skx_common.c
-+++ b/drivers/edac/skx_common.c
-@@ -363,7 +363,7 @@ int skx_get_dimm_info(u32 mtr, u32 mcmtr, u32 amap, struct dimm_info *dimm,
- 	if (imc->hbm_mc) {
- 		banks = 32;
- 		mtype = MEM_HBM2;
--	} else if (cfg->support_ddr5 && (amap & 0x8)) {
-+	} else if (cfg->support_ddr5) {
- 		banks = 32;
- 		mtype = MEM_DDR5;
- 	} else {
--- 
-2.17.1
+Thank you for your patch.
 
+Am 29.08.24 um 05:46 schrieb Hilda Wu:
+> For tracking multiple devices concurrently with a condition.
+> The patch enables the HCI_QUIRK_USE_MSFT_EXT_ADDRESS_FILTER quirk
+> on RTL8852B controller.
+
+Please add the controller name also to the commit message summary.
+
+> The quirk setting is based on this commit.
+> Commit 9e14606d8f38 ("Bluetooth: msft: Extended monitor tracking by
+> address filter")
+
+… is based on commit 9e14606d8f38 ("Bluetooth: msft: Extended monitor 
+tracking by address filter").
+
+> With this setting, when a pattern monitor detects a device, this
+> feature issues an address monitor for tracking that device. Let the
+> original pattern monitor can keep monitor new devices.
+
+Remove *can*?
+
+Please paste possible Linux message before/after the commit into the 
+commit message.
+
+> Signed-off-by: Hilda Wu <hildawu@realtek.com>
+> ---
+> Change:
+> v3: edit commit log and title
+> v2: Add reference commit, update commit description
+> ---
+> ---
+>   drivers/bluetooth/btrtl.c | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/bluetooth/btrtl.c b/drivers/bluetooth/btrtl.c
+> index 4c0f551a9975..2d95b3ea046d 100644
+> --- a/drivers/bluetooth/btrtl.c
+> +++ b/drivers/bluetooth/btrtl.c
+> @@ -1308,6 +1308,7 @@ void btrtl_set_quirks(struct hci_dev *hdev, struct btrtl_device_info *btrtl_dev)
+>   			btrealtek_set_flag(hdev, REALTEK_ALT6_CONTINUOUS_TX_CHIP);
+>   
+>   		if (btrtl_dev->project_id == CHIP_ID_8852A ||
+> +		    btrtl_dev->project_id == CHIP_ID_8852B ||
+>   		    btrtl_dev->project_id == CHIP_ID_8852C)
+>   			set_bit(HCI_QUIRK_USE_MSFT_EXT_ADDRESS_FILTER, &hdev->quirks);
+
+
+Kind regards,
+
+Paul
 
