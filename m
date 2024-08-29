@@ -1,268 +1,137 @@
-Return-Path: <linux-kernel+bounces-305978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14D6296378D
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 03:16:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 937B8963790
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 03:18:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 39754B21341
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 01:16:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 13821B225A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 01:18:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B6F91798F;
-	Thu, 29 Aug 2024 01:16:15 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC0C94C62;
-	Thu, 29 Aug 2024 01:16:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05D0318EA8;
+	Thu, 29 Aug 2024 01:18:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="Ids7cP/c"
+Received: from smtp-fw-6002.amazon.com (smtp-fw-6002.amazon.com [52.95.49.90])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F2AD4C62;
+	Thu, 29 Aug 2024 01:18:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.95.49.90
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724894174; cv=none; b=TbsrRn3MKGlP4nS1O/9aLI3WKyicDgQVK6gLEalKjLezCi+sJuhVto7MQsbf73Bm3b6Ukc+wIPWv+eHn8SG55ui0skl7TuKT0RU/8vKA3MOI2xEPb3layGPfNwfAWnC0pnIB+Oljp7ErHDQeLqbM4pYL6YvER2QgBft5dSJKiZk=
+	t=1724894305; cv=none; b=E8MVUUNK2ADo4WcscNPWpR2kLT84O6DcvpZMjl8TPNRGWDoTjcEUsld+4CTpJkpoQ9TpwOZ/HkU2jSo0CLZWkXMTw7vnNRl79cK9RtHeqFalWEvFSxI2/UxBhwmqct0qqotoYBzTA9tCVk5i3y8MWIIxDFxXsLm6MvF0z5qjhkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724894174; c=relaxed/simple;
-	bh=Yl3jprZvOrk15IBj+m4V20ifNWGPILknOIKdQ8lCNfU=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=pKjuzkLXtyAyT3PJLBCt3syzbgY4Uk+YbDRL5E55IO7ufAegrb9VLNoRgnTalno5l6HfYe+N1Q+bT059I9GV2PJvtD/IrSjzcC3axUCyIDdW9Du7EXIzwlYj5J1BRLOkO2efR351Jf9dFt/yDfgiy0SYsKJkFtpTUQIeqYiszvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.42.62])
-	by gateway (Coremail) with SMTP id _____8DxOJrQy89m1FcjAA--.33977S3;
-	Thu, 29 Aug 2024 09:16:00 +0800 (CST)
-Received: from [10.20.42.62] (unknown [10.20.42.62])
-	by front1 (Coremail) with SMTP id qMiowMDxmWbOy89mfg4mAA--.4212S3;
-	Thu, 29 Aug 2024 09:15:58 +0800 (CST)
-Subject: Re: [RFC v2 2/2] irqchip/loongson-eiointc: Add multiple interrupt pin
- routing support
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: Jianmin Lv <lvjianmin@loongson.cn>, WANG Xuerui <kernel@xen0n.name>,
- Thomas Gleixner <tglx@linutronix.de>, loongarch@lists.linux.dev,
- linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org
-References: <20240828070603.3518753-1-maobibo@loongson.cn>
- <20240828070603.3518753-3-maobibo@loongson.cn>
- <CAAhV-H6+GYjbJbZjKUVvHJ7sTnRhMqBOun149OqO8WEL7xF8Aw@mail.gmail.com>
-From: maobibo <maobibo@loongson.cn>
-Message-ID: <819bb7b2-cbbf-ea47-7bae-3a0902d48096@loongson.cn>
-Date: Thu, 29 Aug 2024 09:15:28 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1724894305; c=relaxed/simple;
+	bh=nNQPCpdivYne4QbVOMfu9c9aQK37GCHKyRy0+DUeEFw=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fv5tn7b9LF18MvftMJj0Vx9mtubkBtsxf3hbmEkBXCgbo6bjF0eOdab4BtJ80+ocQdNNEcE3XqqNzVxoq59dF7SrpGyWAvHGBIC7sQkRdD7iEcHR4YjcQopPECDPgNO+STMTG11QzJrAJMJHAf1G5yznBrIFXoDJW5uZThjmAUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=Ids7cP/c; arc=none smtp.client-ip=52.95.49.90
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1724894304; x=1756430304;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=VFJu8fyWP5bQ3bCV96e4oyKqBdNaTYZNXDwbn6Fy4c4=;
+  b=Ids7cP/cklWGk9YTOf++HApMXY6UIWeTC8T7qzLMqvpZ/wpffH/OWpCE
+   S8ZRSBERQAhybHG/hKpimLsXu0UxIiIXVKTBwAvYSZNEisBzlTNro4MqI
+   YGwQG+RCCKqDll4hYrzMcDUVLjFoUTocqUZoB0wa+sUfi9vf73n0p3sGj
+   0=;
+X-IronPort-AV: E=Sophos;i="6.10,184,1719878400"; 
+   d="scan'208";a="429889089"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
+  by smtp-border-fw-6002.iad6.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 01:18:19 +0000
+Received: from EX19MTAUWB001.ant.amazon.com [10.0.7.35:63524]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.2.242:2525] with esmtp (Farcaster)
+ id b7be642e-e2a5-42f6-acfb-593d18a8f59e; Thu, 29 Aug 2024 01:18:18 +0000 (UTC)
+X-Farcaster-Flow-ID: b7be642e-e2a5-42f6-acfb-593d18a8f59e
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWB001.ant.amazon.com (10.250.64.248) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Thu, 29 Aug 2024 01:18:17 +0000
+Received: from 88665a182662.ant.amazon.com.com (10.88.146.184) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.35;
+ Thu, 29 Aug 2024 01:18:14 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <xli399@ucr.edu>
+CC: <davem@davemloft.net>, <edumazet@google.com>, <gouhao@uniontech.com>,
+	<kuba@kernel.org>, <kuniyu@amazon.com>, <linux-kernel@vger.kernel.org>,
+	<netdev@vger.kernel.org>, <pabeni@redhat.com>, <quic_abchauha@quicinc.com>,
+	<willemb@google.com>, <wuyun.abel@bytedance.com>, <yhao016@ucr.edu>
+Subject: Re: BUG: unable to handle kernel NULL pointer dereference in sock_def_readable
+Date: Wed, 28 Aug 2024 18:18:05 -0700
+Message-ID: <20240829011805.92574-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <CALAgD-41QZdm=Sj2N4QyYyeNY1EMq6DKY+q7647-53ysZEs8ZQ@mail.gmail.com>
+References: <CALAgD-41QZdm=Sj2N4QyYyeNY1EMq6DKY+q7647-53ysZEs8ZQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAAhV-H6+GYjbJbZjKUVvHJ7sTnRhMqBOun149OqO8WEL7xF8Aw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMDxmWbOy89mfg4mAA--.4212S3
-X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBj93XoW3WFWrtF15Ar13GFWruFWrtFc_yoWxur4kpF
-	W0kF98tFW5JFyUWr9Iqa1DtF1Syrn8XrWjkan3Gayxta1qkw1kGF4rAa4YkwnFkr48Ar4a
-	vF4Yyw1Uu3Z8C3gCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-	Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx1l5I
-	8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv67AK
-	xVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07AlzV
-	AYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E
-	14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIx
-	kGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAF
-	wI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r
-	4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU8zwZ7UU
-	UUU==
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D039UWB001.ant.amazon.com (10.13.138.119) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-
-
-On 2024/8/28 下午9:56, Huacai Chen wrote:
-> Hi, Bibo,
+From: Xingyu Li <xli399@ucr.edu>
+Date: Wed, 28 Aug 2024 16:38:59 -0700
+> Hi,
 > 
-> On Wed, Aug 28, 2024 at 3:06 PM Bibo Mao <maobibo@loongson.cn> wrote:
->>
->> Eiointc interrupt controller support 256 interrupt vectors at most,
->> and irq handler gets interrupt status from base register group
->> EIOINTC_REG_ISR plus specific offset. It needs to read register group
->> EIOINTC_REG_ISR four times to get all 256 interrupt vectors status.
->>
->> Eiointc registers including EIOINTC_REG_ISR is software emulated for
->> VMs, there will be VM-exits when accessing eiointc registers. Here one
->> method is introduced so that eiointc interrupt controller can route
->> to different cpu interrupt pins for every 64 interrupt vectors. So
->> irq handler needs read only relative 64 interrupt vector, it  reduces
->> VM-exits.
->>
->> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
->> ---
->>   drivers/irqchip/irq-loongson-eiointc.c | 72 ++++++++++++++++++++++----
->>   1 file changed, 63 insertions(+), 9 deletions(-)
->>
->> diff --git a/drivers/irqchip/irq-loongson-eiointc.c b/drivers/irqchip/irq-loongson-eiointc.c
->> index e9ec63d85ee8..c6bcb6625e6d 100644
->> --- a/drivers/irqchip/irq-loongson-eiointc.c
->> +++ b/drivers/irqchip/irq-loongson-eiointc.c
->> @@ -30,11 +30,20 @@
->>   #define VEC_REG_IDX(irq_id)    ((irq_id) / VEC_COUNT_PER_REG)
->>   #define VEC_REG_BIT(irq_id)     ((irq_id) % VEC_COUNT_PER_REG)
->>   #define EIOINTC_ALL_ENABLE     0xffffffff
->> +#define EIOINTC_ROUTE_MULTIPLE_IP      BIT(0)
->>
->>   #define MAX_EIO_NODES          (NR_CPUS / CORES_PER_EIO_NODE)
->>
->>   static int nr_pics;
->>
->> +struct eiointc_priv;
->> +struct eiointc_ip_route {
->> +       struct eiointc_priv     *priv;
->> +       /* Routed destination IP offset */
->> +       int                     start;
->> +       int                     end;
->> +};
->> +
->>   struct eiointc_priv {
->>          u32                     node;
->>          u32                     vec_count;
->> @@ -43,6 +52,8 @@ struct eiointc_priv {
->>          struct fwnode_handle    *domain_handle;
->>          struct irq_domain       *eiointc_domain;
->>          int                     parent_hwirq;
->> +       int                     flags;
->> +       struct eiointc_ip_route route_info[4];
->>   };
->>
->>   static struct eiointc_priv *eiointc_priv[MAX_IO_PICS];
->> @@ -145,12 +156,20 @@ static int eiointc_router_init(unsigned int cpu)
->>          uint32_t data;
->>          uint32_t node = cpu_to_eio_node(cpu);
->>          int index = eiointc_index(node);
->> +       int hwirq, mask;
->>
->>          if (index < 0) {
->>                  pr_err("Error: invalid nodemap!\n");
->>                  return -1;
->>          }
->>
->> +       /* Enable cpu interrupt pin routed from eiointc */
->> +       hwirq = eiointc_priv[index]->parent_hwirq;
->> +       mask = BIT(hwirq);
->> +       if (eiointc_priv[index]->flags & EIOINTC_ROUTE_MULTIPLE_IP)
->> +               mask |= BIT(hwirq + 1) | BIT(hwirq + 2) | BIT(hwirq + 3);
->> +       set_csr_ecfg(mask);
->> +
->>          if ((cpu_logical_map(cpu) % CORES_PER_EIO_NODE) == 0) {
->>                  eiointc_enable();
->>
->> @@ -161,12 +180,23 @@ static int eiointc_router_init(unsigned int cpu)
->>
->>                  for (i = 0; i < eiointc_priv[0]->vec_count / 32 / 4; i++) {
->>                          /*
->> -                        * Route to interrupt pin, using offset minus INT_HWI0
->> -                        * Offset 0 means IP0 and so on
->> -                        * Every 32 vector routing to one interrupt pin
->> +                        * Route to interrupt pin, minus INT_HWI0 as offset
->> +                        * Offset 0 means IP0 and so on, every 32 vector
->> +                        * routing to one interrupt pin
->> +                        *
->> +                        * If flags is set with EIOINTC_ROUTE_MULTIPLE_IP,
->> +                        * every 64 vector routes to different consecutive
->> +                        * IPs, otherwise all vector routes to the same IP
->>                           */
->> -                       bit = BIT(eiointc_priv[index]->parent_hwirq - INT_HWI0);
->> -                       data = bit | (bit << 8) | (bit << 16) | (bit << 24);
->> +                       if (eiointc_priv[index]->flags & EIOINTC_ROUTE_MULTIPLE_IP) {
->> +                               bit = BIT(hwirq++ - INT_HWI0);
->> +                               data = bit | (bit << 8);
->> +                               bit = BIT(hwirq++ - INT_HWI0);
->> +                               data |= (bit << 16) | (bit << 24);
->> +                       } else  {
->> +                               bit = BIT(hwirq - INT_HWI0);
->> +                               data = bit | (bit << 8) | (bit << 16) | (bit << 24);
->> +                       }
->>                          iocsr_write32(data, EIOINTC_REG_IPMAP + i * 4);
->>                  }
->>
->> @@ -197,11 +227,18 @@ static void eiointc_irq_dispatch(struct irq_desc *desc)
->>          u64 pending;
->>          bool handled = false;
->>          struct irq_chip *chip = irq_desc_get_chip(desc);
->> -       struct eiointc_priv *priv = irq_desc_get_handler_data(desc);
->> +       struct eiointc_ip_route *info = irq_desc_get_handler_data(desc);
->>
->>          chained_irq_enter(chip, desc);
->>
->> -       for (i = 0; i < eiointc_priv[0]->vec_count / VEC_COUNT_PER_REG; i++) {
->> +       /*
->> +        * If EIOINTC_ROUTE_MULTIPLE_IP is set, every 64 interrupt vectors in
->> +        * eiointc interrupt controller routes to different cpu interrupt pins
->> +        *
->> +        * Every cpu interrupt pin has its own irq handler, it is ok to
->> +        * read ISR for these 64 interrupt vectors rather than all vectors
->> +        */
->> +       for (i = info->start; i < info->end; i++) {
->>                  pending = iocsr_read64(EIOINTC_REG_ISR + (i << 3));
->>
->>                  /* Skip handling if pending bitmap is zero */
->> @@ -214,7 +251,7 @@ static void eiointc_irq_dispatch(struct irq_desc *desc)
->>                          int bit = __ffs(pending);
->>                          int irq = bit + VEC_COUNT_PER_REG * i;
->>
->> -                       generic_handle_domain_irq(priv->eiointc_domain, irq);
->> +                       generic_handle_domain_irq(info->priv->eiointc_domain, irq);
->>                          pending &= ~BIT(bit);
->>                          handled = true;
->>                  }
->> @@ -397,8 +434,25 @@ static int __init eiointc_init(struct eiointc_priv *priv, int parent_irq,
->>          }
->>
->>          eiointc_priv[nr_pics++] = priv;
->> +       if (cpu_has_hypervisor) {
->> +               priv->parent_hwirq = INT_HWI0;
->> +               for (i = 0; i < priv->vec_count / VEC_COUNT_PER_REG; i++) {
->> +                       priv->route_info[i].start  = priv->parent_hwirq - INT_HWI0 + i;
->> +                       priv->route_info[i].end    = priv->route_info[i].start + 1;
->> +                       priv->route_info[i].priv   = priv;
->> +                       parent_irq = get_percpu_irq(priv->parent_hwirq + i);
->> +                       irq_set_chained_handler_and_data(parent_irq, eiointc_irq_dispatch,
->> +                                                               &priv->route_info[i]);
->> +               }
->> +               priv->flags |= EIOINTC_ROUTE_MULTIPLE_IP;
-> Can real machines also use EIOINTC_ROUTE_MULTIPLE_IP?
-In theory it is possible on real machine also. Now there are potential 
-problems which needs more code modification.
+> We found a bug in Linux 6.10 using syzkaller. It is possibly a null
+> pointer dereference  bug.
+> The bug report is as follows, but unfortunately there is no generated
+> syzkaller reproducer.
 
-1. On real machine, liointc uses one or two IPs, 
-EIOINTC_ROUTE_MULTIPLE_IP requires four IPs. eiointc uses bitmap IP map 
-method now, only IP0-IP3 can be used.
+quoting Eric's words:
 
-2. For multiple eiointc support, instead IP0-IP3 can be used for 
-multiple eiointc support since IPs is per-cpu.
+---8<---
+I would ask you to stop sending these reports, we already have syzbot
+with a more complete infrastructure.
+---8<---
+https://lore.kernel.org/netdev/CANn89iK6rq0XWO5-R5CzA5YAv2ygaTA==EVh+O74VHGDBNqUoA@mail.gmail.com/
 
-On the other hand, what is the benefit doing such thing on real machine, 
-we need cost about accessing iocsr register on real machine, there is 
-such data from my side.
+(unless you have a repro that syzbot doesn't have or you are confident
+ that this is true positive)
 
-Regards
-Bibo Mao
+
 > 
-> Huacai
+> Bug report:
 > 
->> +       } else {
->> +               priv->route_info[0].start  = 0;
->> +               priv->route_info[0].end    = priv->vec_count / VEC_COUNT_PER_REG;
->> +               priv->route_info[0].priv   = priv;
->> +               irq_set_chained_handler_and_data(parent_irq, eiointc_irq_dispatch,
->> +                                                       &priv->route_info[0]);
->> +       }
->>          eiointc_router_init(0);
->> -       irq_set_chained_handler_and_data(parent_irq, eiointc_irq_dispatch, priv);
->>
->>          if (nr_pics == 1) {
->>                  register_syscore_ops(&eiointc_syscore_ops);
->> --
->> 2.39.3
->>
+> BUG: kernel NULL pointer dereference, address: 0000000000000000
+> #PF: supervisor instruction fetch in kernel mode
+> #PF: error_code(0x0010) - not-present page
+> PGD 0 P4D 0
+> Oops: Oops: 0010 [#1] PREEMPT SMP KASAN PTI
+> CPU: 0 PID: 0 Comm: swapper/0 Not tainted 6.10.0 #13
+> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
+> RIP: 0010:0x0
+> Code: Unable to access opcode bytes at 0xffffffffffffffd6.
+> RSP: 0018:ffffc90000006af8 EFLAGS: 00010046
+> RAX: 1ffff92001572f0a RBX: 0000000000000000 RCX: 00000000000000c3
+> RDX: 0000000000000010 RSI: 0000000000000001 RDI: ffffc9000ab97840
+> RBP: 0000000000000001 R08: 0000000000000003 R09: fffff52000000d3c
+> R10: dffffc0000000000 R11: 0000000000000000 R12: ffffc9000ab97850
+> R13: 0000000000000000 R14: ffffc9000ab97840 R15: ffff88802dfb3680
+> FS:  0000000000000000(0000) GS:ffff888063a00000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: ffffffffffffffd6 CR3: 000000000d932000 CR4: 0000000000350ef0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  <IRQ>
+>  __wake_up_common kernel/sched/wait.c:89 [inline]
+>  __wake_up_common_lock+0x134/0x1e0 kernel/sched/wait.c:106
+>  sock_def_readable+0x167/0x380 net/core/sock.c:3353
 
+This seems to be caused due to memory corruption.
+skwq_has_sleeper() has NULL check.
+
+Recently I saw some reports similar to what you posted and that seem
+unlikely to happen without such an issue in another place.
 
