@@ -1,148 +1,153 @@
-Return-Path: <linux-kernel+bounces-306419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94DBD963ECE
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:40:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99FAA963ECC
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:40:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B91341C24302
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:40:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57247284AD6
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:40:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 428F918C90E;
-	Thu, 29 Aug 2024 08:40:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D659318C031;
+	Thu, 29 Aug 2024 08:40:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="trtS3KR3"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="AUhNEcMt"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6747FA95E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54D433D6A;
 	Thu, 29 Aug 2024 08:39:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724920804; cv=none; b=NZzdsJhRTjOLyZAWqzTbm4PaPixB1h2l+DTH8SDGeQJHCZcwdyp4SuAy9o6xjdtt32ifxDJYHZ0bM1KZKbZSPQICSqt7ExhSkC5OGVyk/eLyjOP44tLzJQZa1v3D/B3JIDaTnoutBk5GsS2BafbOh5HJCUbk5B2U6nPBePfx1zI=
+	t=1724920801; cv=none; b=jAM5HOe1pxIGDh2x5vZ6y630VWf5u97w8SggaO4EEtCmtMBw6o2A3y16zESv7rnC8YwpVSvzznzCkIO5F/5vQjYzNJPe5ASVnUUdLQUC37Yn53/ofm88o14RDaddYnMJSex2H7PvmYSSPklNf1iidjFpfTwRvMnJgZUSuUxA2aQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724920804; c=relaxed/simple;
-	bh=nYm7k/bU2XBFM5zBHvUSt+A9ANU/1URLWURTjWOEBsk=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=tMCnVJ6uQJYxDsCOGnJ1S/GmRZutjgXkN1yKw6hPuhejhbFFCHsj+OcF2cd4Jc5rY+KsGZP21Qc4gCCw6lYjMES+hiRsIWzeF3jWVBAJ4oBHINUM6erzNjS+0e7SR+Q2rf1NkFp+c51w5WfsMtCxgKj0GxQQIep1syoiuW4/ASQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=trtS3KR3; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 47T8dUgW53355613, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
-	t=1724920770; bh=nYm7k/bU2XBFM5zBHvUSt+A9ANU/1URLWURTjWOEBsk=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:MIME-Version;
-	b=trtS3KR3nyMIAqbSzFQm930OSCqyzfjLFJ2a/GOnueF4DpMBkawkEIMo4Eh6JSglr
-	 cBEK2z2KWa9VoQ//XmurpFpomx2e+yv9qOY+Cj6CTy2Nqub4SKcZc7EnQp+0jjaFBc
-	 nXfFLLpXOCpqJErmJzAFXZZVOYMolKJDYLEtpLzUaaKIRjaQ/fTnXUACiCqtbEkYtZ
-	 wDImBk3c4/X0C8T9IndVsgTgv8mO/gNEitHzLcAkyGTa/QbLNzRUE3b5RKw6fo9QmG
-	 qKmC77fLKkOXzgsrOb+E9P1p3twcg1HknbyQt5nh7PDhCLGWzjJYUYdnzV9oHSw1z6
-	 b0c7Rl+KxfM0Q==
-Received: from mail.realtek.com (rtexh36505.realtek.com.tw[172.21.6.25])
-	by rtits2.realtek.com.tw (8.15.2/3.02/5.92) with ESMTPS id 47T8dUgW53355613
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 29 Aug 2024 16:39:30 +0800
-Received: from RTEXDAG01.realtek.com.tw (172.21.6.100) by
- RTEXH36505.realtek.com.tw (172.21.6.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 29 Aug 2024 16:39:30 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXDAG01.realtek.com.tw (172.21.6.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Thu, 29 Aug 2024 16:39:29 +0800
-Received: from RTEXMBS04.realtek.com.tw ([fe80::2882:4142:db9:db1f]) by
- RTEXMBS04.realtek.com.tw ([fe80::2882:4142:db9:db1f%11]) with mapi id
- 15.01.2507.035; Thu, 29 Aug 2024 16:39:29 +0800
-From: Hilda Wu <hildawu@realtek.com>
-To: Paul Menzel <pmenzel@molgen.mpg.de>
-CC: "marcel@holtmann.org" <marcel@holtmann.org>,
-        "luiz.dentz@gmail.com"
-	<luiz.dentz@gmail.com>,
-        "linux-bluetooth@vger.kernel.org"
-	<linux-bluetooth@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "alex_lu@realsil.com.cn"
-	<alex_lu@realsil.com.cn>,
-        Max Chou <max.chou@realtek.com>, KidmanLee
-	<kidman@realtek.com>
-Subject: RE: [PATCH v3] Bluetooth: btrtl: Set msft ext address filter quirk
-Thread-Topic: [PATCH v3] Bluetooth: btrtl: Set msft ext address filter quirk
-Thread-Index: AQHa+cYJjXc6wB+kB0ONYbe9oAOxjrI9O5aAgACbPAA=
-Date: Thu, 29 Aug 2024 08:39:29 +0000
-Message-ID: <62d8718a7c134596a8d3ffea26d490b2@realtek.com>
-References: <20240829034627.676529-1-hildawu@realtek.com>
- <83b72389-e12b-4224-aed7-736880e2877f@molgen.mpg.de>
-In-Reply-To: <83b72389-e12b-4224-aed7-736880e2877f@molgen.mpg.de>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1724920801; c=relaxed/simple;
+	bh=FyjX4kcH5LavAMmhOmNvR8SALI7vKJuOwonjdbQiaLU=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=aMrHwsF0LqdkcOcG/v/joJovKqdRL7LfVuDPU1+RaTvE2Xwv5O3+jpmUQTm1LQeBzqg7rzfpcpnBiLgc9aTVxmRIaspFaMIqmzUR/kmr+XsQ9Ckr2LlcLU8Q6m9OpYJxG9vkAsaEtQMI5VD82Z8JI13g8i/YmlA4mITlwc7t7Sk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=AUhNEcMt; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 2D99D40E0184;
+	Thu, 29 Aug 2024 08:39:57 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id ITKrumJMBXou; Thu, 29 Aug 2024 08:39:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1724920793; bh=tqRMih8maOqhgAUQosY7U14hqRXwiLtPrj0M9xoEAXM=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=AUhNEcMtcPtYT++FFWUCR2JVvFBPPnytDRBwzSx0y/pXWKtybnWe6pSkSrB0F4fWz
+	 3EhbGD/grLQjmAZY4ATWshzZ4NNMS2JSWIOs6/SPRn8ulOy47grVfKNXj295QfxuCQ
+	 5OWEd2o1/h5ang6FzaXQNwYJIuRaGeOpxk3UPlfKTN9fyj/02vIk3thHafp/EnBJpD
+	 ulGZNxYu2EJc7Yx8jp96KGLBifjDg0DOfxiIH+hPBQEr6KyTZA+qWZ0zuQWDyixrZg
+	 buUQwCUTaYLvOF1SzfcbJsBG4CPYm3BCt2z55sGOGYep+QWPGdj5dMvH/3ASb5kmCy
+	 JG4C8Nj5hVdTCsd6m5We7DBAQtDK3QS2CglE9YKs0iuyYR/ltxqn9FrJeBmR2WZ8V0
+	 fssdOVSQabXjy1hENJL46oOrp3EmzMVC0M+2mhT6AKzlkMha8m1zHi4HwgLVIcQiF+
+	 q7y7hB0RmM3VA9E1sGTxu8HtPh/lTwFJbRRO6XRUSosg73IHDmCuBje8gGUgrM6+fd
+	 8pGIOeMrpQcnAbtHnVMMn6Kti/y2PfzQeyr3kLoAPTRBMr6ceJeafkM8KXNB7zy5IM
+	 zlRC3njZScFO0Qx67SlOlws3BVImF4Zy00qt6yXk/pIryJvq+J1pkrsrMEATjZSbT9
+	 SVghbv6oJSzXXuFNOQWLWTX4=
+Received: from [127.0.0.1] (business-24-134-159-81.pool2.vodafone-ip.de [24.134.159.81])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 36B4840E025E;
+	Thu, 29 Aug 2024 08:39:43 +0000 (UTC)
+Date: Thu, 29 Aug 2024 10:39:41 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Yazen Ghannam <yazen.ghannam@amd.com>
+CC: Thomas Gleixner <tglx@linutronix.de>, linux-edac@vger.kernel.org,
+ linux-kernel@vger.kernel.org, tony.luck@intel.com, x86@kernel.org,
+ avadhut.naik@amd.com, john.allen@amd.com, boris.ostrovsky@oracle.com
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH=5D_x86/MCE=3A_Prevent_CPU_offl?=
+ =?US-ASCII?Q?ine_for_SMCA_CPUs_with_non-core_banks?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20240827134706.GA719384@yaz-khff2.amd.com>
+References: <20240821140017.330105-1-yazen.ghannam@amd.com> <87jzg4g8dm.ffs@tglx> <20240826132057.GA449322@yaz-khff2.amd.com> <9D26E333-B33C-4FD4-9A8F-6F9DC1EC6527@alien8.de> <20240827134706.GA719384@yaz-khff2.amd.com>
+Message-ID: <7D571DAA-E399-4580-98B3-8A6E7085CB54@alien8.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-SGkgUGF1bCwNCg0KVGhhbmtzIGZvciB5b3VyIGZlZWRiYWNrLg0KSSB3aWxsIHNlbmQgdGhlIFY0
-IGFuZCBwbGVhc2UgY2hlY2sgbXkgY29tbWVudCBhcyBiZWxvdy4gVGhhbmsgeW91IGFnYWluLg0K
-DQpSZWdhcmRzLA0KSGlsZGENCg0KLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCkZyb206IFBh
-dWwgTWVuemVsIDxwbWVuemVsQG1vbGdlbi5tcGcuZGU+IA0KU2VudDogVGh1cnNkYXksIEF1Z3Vz
-dCAyOSwgMjAyNCAyOjE0IFBNDQpUbzogSGlsZGEgV3UgPGhpbGRhd3VAcmVhbHRlay5jb20+DQpD
-YzogbWFyY2VsQGhvbHRtYW5uLm9yZzsgbHVpei5kZW50ekBnbWFpbC5jb207IGxpbnV4LWJsdWV0
-b290aEB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IGFsZXhf
-bHVAcmVhbHNpbC5jb20uY247IE1heCBDaG91IDxtYXguY2hvdUByZWFsdGVrLmNvbT47IEtpZG1h
-bkxlZSA8a2lkbWFuQHJlYWx0ZWsuY29tPg0KU3ViamVjdDogUmU6IFtQQVRDSCB2M10gQmx1ZXRv
-b3RoOiBidHJ0bDogU2V0IG1zZnQgZXh0IGFkZHJlc3MgZmlsdGVyIHF1aXJrDQoNCg0KRXh0ZXJu
-YWwgbWFpbC4NCg0KDQoNCkRlYXIgSGlsZGEsDQoNCg0KVGhhbmsgeW91IGZvciB5b3VyIHBhdGNo
-Lg0KDQpBbSAyOS4wOC4yNCB1bSAwNTo0NiBzY2hyaWViIEhpbGRhIFd1Og0KPiBGb3IgdHJhY2tp
-bmcgbXVsdGlwbGUgZGV2aWNlcyBjb25jdXJyZW50bHkgd2l0aCBhIGNvbmRpdGlvbi4NCj4gVGhl
-IHBhdGNoIGVuYWJsZXMgdGhlIEhDSV9RVUlSS19VU0VfTVNGVF9FWFRfQUREUkVTU19GSUxURVIg
-cXVpcmsgb24gDQo+IFJUTDg4NTJCIGNvbnRyb2xsZXIuDQoNClBsZWFzZSBhZGQgdGhlIGNvbnRy
-b2xsZXIgbmFtZSBhbHNvIHRvIHRoZSBjb21taXQgbWVzc2FnZSBzdW1tYXJ5Lg0KDQpVcGRhdGVk
-IGluIHY0Lg0KDQo+IFRoZSBxdWlyayBzZXR0aW5nIGlzIGJhc2VkIG9uIHRoaXMgY29tbWl0Lg0K
-PiBDb21taXQgOWUxNDYwNmQ4ZjM4ICgiQmx1ZXRvb3RoOiBtc2Z0OiBFeHRlbmRlZCBtb25pdG9y
-IHRyYWNraW5nIGJ5IA0KPiBhZGRyZXNzIGZpbHRlciIpDQoNCuKApiBpcyBiYXNlZCBvbiBjb21t
-aXQgOWUxNDYwNmQ4ZjM4ICgiQmx1ZXRvb3RoOiBtc2Z0OiBFeHRlbmRlZCBtb25pdG9yIHRyYWNr
-aW5nIGJ5IGFkZHJlc3MgZmlsdGVyIikuDQoNClVwZGF0ZWQgaW4gdjQuDQoNCj4gV2l0aCB0aGlz
-IHNldHRpbmcsIHdoZW4gYSBwYXR0ZXJuIG1vbml0b3IgZGV0ZWN0cyBhIGRldmljZSwgdGhpcyAN
-Cj4gZmVhdHVyZSBpc3N1ZXMgYW4gYWRkcmVzcyBtb25pdG9yIGZvciB0cmFja2luZyB0aGF0IGRl
-dmljZS4gTGV0IHRoZSANCj4gb3JpZ2luYWwgcGF0dGVybiBtb25pdG9yIGNhbiBrZWVwIG1vbml0
-b3IgbmV3IGRldmljZXMuDQoNClJlbW92ZSAqY2FuKj8NCg0KVXBkYXRlZCBpbiB2NC4NCg0KUGxl
-YXNlIHBhc3RlIHBvc3NpYmxlIExpbnV4IG1lc3NhZ2UgYmVmb3JlL2FmdGVyIHRoZSBjb21taXQg
-aW50byB0aGUgY29tbWl0IG1lc3NhZ2UuDQoNClRoZXJlIHdpbGwgbm8gbWVzc2FnZXMgYWZ0ZXIg
-dGhlIGNvbW1pdC4NClJlbGF0ZWQgTGludXggbWVzc2FnZSBpcyB3aGVuIHVzaW5nIE1TRlQgZXh0
-IGFuZCB0dXJuaW5nIG9uIERFQlVHIGxvZywgdGhlIG1lc3NhZ2Ugc2hvd3Mgd2hlbiBhZGQgb3Ig
-Y2FuY2VsIGFuIGFkZHJlc3MgZmlsdGVyIHdoZW4gcmVjZWl2aW5nIGEgTEUgbW9uaXRvciBkZXZp
-Y2UgZXZlbnQuDQpERUJVRyBrZXJuZWw6IFsgNTI2My44OTcyOThdIEJsdWV0b290aDogbXNmdF9t
-b25pdG9yX2RldmljZV9ldnQoKSBoY2kwOiBNU0ZUIHZlbmRvciBldmVudCAweDAyOiBoYW5kbGUg
-MHgwMDAwIHN0YXRlIDEgYWRkciBjNDowNTpjNDowNTowMDowMA0KREVCVUcga2VybmVsOiBbIDUy
-NjMuODk3MzA2XSBCbHVldG9vdGg6IG1zZnRfYWRkX2FkZHJlc3NfZmlsdGVyKCkgaGNpMDogTVNG
-VDogQWRkIGRldmljZSBjNDowNTpjNDowNTowMDowMCBhZGRyZXNzIGZpbHRlcg0KDQpERUJVRyBr
-ZXJuZWw6IFsgNTMyNC45ODEwNTJdIEJsdWV0b290aDogbXNmdF9tb25pdG9yX2RldmljZV9ldnQo
-KSBoY2kwOiBNU0ZUIHZlbmRvciBldmVudCAweDAyOiBoYW5kbGUgMHgwMDAzIHN0YXRlIDAgYWRk
-ciBjNDowNTpjNDowNTowMDowMA0KREVCVUcga2VybmVsOiBbIDUzMjQuOTgyODQ3XSBCbHVldG9v
-dGg6IG1zZnRfY2FuY2VsX2FkZHJlc3NfZmlsdGVyX3N5bmMoKSBoY2kwOiBNU0ZUOiBDYW5jZWxl
-ZCBkZXZpY2UgYzQ6MDU6YzQ6MDU6MDA6MDAgYWRkcmVzcyBmaWx0ZXINCg0KPiBTaWduZWQtb2Zm
-LWJ5OiBIaWxkYSBXdSA8aGlsZGF3dUByZWFsdGVrLmNvbT4NCj4gLS0tDQo+IENoYW5nZToNCj4g
-djM6IGVkaXQgY29tbWl0IGxvZyBhbmQgdGl0bGUNCj4gdjI6IEFkZCByZWZlcmVuY2UgY29tbWl0
-LCB1cGRhdGUgY29tbWl0IGRlc2NyaXB0aW9uDQo+IC0tLQ0KPiAtLS0NCj4gICBkcml2ZXJzL2Js
-dWV0b290aC9idHJ0bC5jIHwgMSArDQo+ICAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCsp
-DQo+DQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2JsdWV0b290aC9idHJ0bC5jIGIvZHJpdmVycy9i
-bHVldG9vdGgvYnRydGwuYyANCj4gaW5kZXggNGMwZjU1MWE5OTc1Li4yZDk1YjNlYTA0NmQgMTAw
-NjQ0DQo+IC0tLSBhL2RyaXZlcnMvYmx1ZXRvb3RoL2J0cnRsLmMNCj4gKysrIGIvZHJpdmVycy9i
-bHVldG9vdGgvYnRydGwuYw0KPiBAQCAtMTMwOCw2ICsxMzA4LDcgQEAgdm9pZCBidHJ0bF9zZXRf
-cXVpcmtzKHN0cnVjdCBoY2lfZGV2ICpoZGV2LCBzdHJ1Y3QgYnRydGxfZGV2aWNlX2luZm8gKmJ0
-cnRsX2RldikNCj4gICAgICAgICAgICAgICAgICAgICAgIGJ0cmVhbHRla19zZXRfZmxhZyhoZGV2
-LCANCj4gUkVBTFRFS19BTFQ2X0NPTlRJTlVPVVNfVFhfQ0hJUCk7DQo+DQo+ICAgICAgICAgICAg
-ICAgaWYgKGJ0cnRsX2Rldi0+cHJvamVjdF9pZCA9PSBDSElQX0lEXzg4NTJBIHx8DQo+ICsgICAg
-ICAgICAgICAgICAgIGJ0cnRsX2Rldi0+cHJvamVjdF9pZCA9PSBDSElQX0lEXzg4NTJCIHx8DQo+
-ICAgICAgICAgICAgICAgICAgIGJ0cnRsX2Rldi0+cHJvamVjdF9pZCA9PSBDSElQX0lEXzg4NTJD
-KQ0KPiAgICAgICAgICAgICAgICAgICAgICAgc2V0X2JpdChIQ0lfUVVJUktfVVNFX01TRlRfRVhU
-X0FERFJFU1NfRklMVEVSLCANCj4gJmhkZXYtPnF1aXJrcyk7DQoNCg0KS2luZCByZWdhcmRzLA0K
-DQpQYXVsDQo=
+On August 27, 2024 3:47:06 PM GMT+02:00, Yazen Ghannam <yazen=2Eghannam@amd=
+=2Ecom> wrote:
+>On Tue, Aug 27, 2024 at 02:50:40PM +0200, Borislav Petkov wrote:
+>> On August 26, 2024 3:20:57 PM GMT+02:00, Yazen Ghannam <yazen=2Eghannam=
+@amd=2Ecom> wrote:
+>> >On Sun, Aug 25, 2024 at 01:16:37PM +0200, Thomas Gleixner wrote:
+>> >> On Wed, Aug 21 2024 at 09:00, Yazen Ghannam wrote:
+>> >> > Logical CPUs in AMD Scalable MCA (SMCA) systems can manage non-cor=
+e
+>> >> > banks=2E Each of these banks represents unique and separate hardwa=
+re
+>> >> > located within the system=2E Each bank is managed by a single logi=
+cal CPU;
+>> >> > they are not shared=2E Furthermore, the "CPU to MCA bank" assignme=
+nt
+>> >> > cannot be modified at run time=2E
+>> >> >
+>> >> > The MCE subsystem supports run time CPU hotplug=2E Many vendors ha=
+ve
+>> >> > non-core MCA banks, so MCA settings are not cleared when a CPU is
+>> >> > offlined for these vendors=2E
+>> >> >
+>> >> > Even though the non-core MCA banks remain enabled, MCA errors will=
+ not
+>> >> > be handled (reported, cleared, etc=2E) on SMCA systems when the ma=
+naging
+>> >> > CPU is offline=2E
+>> >> >
+>> >> > Check if a CPU manages non-core MCA banks and, if so, prevent it f=
+rom
+>> >> > being taken offline=2E
+>> >>=20
+>> >> Which in turn breaks hibernation and kexec=2E=2E=2E
+>> >>
+>> >
+>> >Right, good point=2E
+>> >
+>> >Maybe this change can apply only to a user-initiated (sysfs) case?
+>> >
+>> >Thanks,
+>> >Yazen
+>> >
+>>=20
+>> Or, you can simply say that the MCE cannot be processed because the use=
+r took the managing CPU offline=2E=20
+>>
+>
+>I found that we can not populate the "cpuN/online" file=2E This would
+>prevent a user from offlining a CPU, but it shouldn't prevent the system
+>from doing what it needs=2E
+>
+>This is already done for CPU0, and other cases I think=2E
+>
+>> What is this actually really fixing anyway?
+>
+>There are times where a user wants to take CPUs offline due to software
+>licensing=2E And this would prevent the user from unintentionally
+>offlining CPUs that would affect MCA handling=2E
+>
+>Thanks,
+>Yazen
+
+If the user offlines CPUs and some MCEs cannot be handled as a result, the=
+n that's her/his problem, no?
+
+- Why does it hurt when I do this?=20
+- Well, don't do that then=2E
+--=20
+Sent from a small device: formatting sucks and brevity is inevitable=2E 
 
