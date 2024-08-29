@@ -1,118 +1,147 @@
-Return-Path: <linux-kernel+bounces-307333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63FD0964BED
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 18:47:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62530964BF1
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 18:49:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D6CC1F22F10
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:47:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC7F1B20E40
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 16:49:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6BB61B5830;
-	Thu, 29 Aug 2024 16:47:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A06A51B583E;
+	Thu, 29 Aug 2024 16:49:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j0AzJAPj"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ZN4XHFJb"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20E521B29B8;
-	Thu, 29 Aug 2024 16:47:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D22F11B3F14;
+	Thu, 29 Aug 2024 16:49:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724950043; cv=none; b=iy5qa01cVm9yLsDolRSPkRaclomeprawzUgJfafJUVaVL+eQHDGCJm0OlGzxkm7sdnLMvumBTQoba/2Sz0VJD27eUwmK4X+MLgEKY5wt4VRJwB3KbbnUfE9wLZKbmoh1++64PGFRqG5BuzGKrWtJe09BCfxd98902q4SXu8WZuI=
+	t=1724950158; cv=none; b=bjDI/nN2iVOXK1r/wrLVtgK52EB/GzXf2OWR36kpiM1ppRH0/qp4b6a1JHLrGEJIXoYyd1BQ5JMtBO3ia/Xa2zEEGBof/LT6zGBIS2axT4L7lxf5UzEwfHhn9zugtH0rzfPPj4N+pgQvDK4j46mXh8LO+K87uT9PmPkrdlH7w/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724950043; c=relaxed/simple;
-	bh=4YaAZj0aI3sfyHjFEbYSrOsCmiOYvMHEKnuTD9oNT4o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hE/gD/maOaEYwESqvVfW7GDDc8HOEohq/EQT9qvjKJxZc8OyL2VaU7llUw3TsAljqzoGf0aBEf8zQ7l0CtRkMsTuwoROJXNQH5kZPuAQYA1sCvdILRH5CL4xBteC/KK3s9vVWwZEzMPOabRJmfLFUAC7/Ct6/pZV6+Ph9oissc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j0AzJAPj; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-533488ffaebso1024347e87.0;
-        Thu, 29 Aug 2024 09:47:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724950037; x=1725554837; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Fafiv4aWzoBJ8Jl4zsxzIAg9PdZ55+QC1PcI7sssSDE=;
-        b=j0AzJAPjAbnlJuLTvw2vcCtqvid8RXqsPNack+PfcHWTQL2LCTeeSrLl45v2NW+sxX
-         lLMDUDhpsMaaWqdscCwkVhvGPRfLBWvA/FAUQ40A3C6qliUCm1/9AvuinQ5t8+5B19Hw
-         pi+nlZOb4pVwtP+Z/2yh1gOvdkUOYeutEHAbD9OQCkQ8Mi5COSH85TdR2iHAkBb5FhBI
-         +hX5PWWoz1wfBeucQ8ccnxl+/9B+CvA8c3Jy6Nr6HxG+0yIA3X5LFFd9h5r8mLC8GtXX
-         pwF+fTVdCiVIv8Ekj0V4ekN6eTqktl3F98IivRsKNfz7SE6VVStR1hMjL8IsnAm5dwKV
-         JzGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724950037; x=1725554837;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Fafiv4aWzoBJ8Jl4zsxzIAg9PdZ55+QC1PcI7sssSDE=;
-        b=f5/y80z91iNv5Iw3YEOQ6feYV04TjrCWm8EPHdyba5N3EmhkQObA2nhwM4VJ8CQXCJ
-         9Acljvwyynw5LGqogMeFC8DT8focApEpDBZ3FwaDrWVaqIk736u3pgTq7EHUqkzDZ0tl
-         WN157yutpj4NvjZHWnqZPdVBER0GePxmchrdRjZXzZImVFEoQVao6+tie50ZgSDSuBBA
-         4wW0jGhHKbYNIX6HAZVtBiSJZhrT5zgVPrumQdFw8uVGpfjZp3FZMeoI8Bo4XF+opZLz
-         DhvqwgjeAty9P2/LA6bzgZ2rPEts1Ak5X9/H+AhPMreBendvaiPiQFK5YcMkN37D9/F1
-         w5ew==
-X-Forwarded-Encrypted: i=1; AJvYcCW96jwfqoEkvq0i9/UG5UMWbZvI2Ud4aZN5hTlDyeW4ZK3bgCjTMVArDiTIppiA4E+dspAedihTjU4aCHk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUjU6XImFUorUCpDCfNmCC59Op9m19ys8cS04xlKAW0xaF1otX
-	8iGsPsy/sCY4kaCxFQ4Ly7jz5fY2Rbd9355M/B3dhZKIENZbqtYORf0BnPFDU34Sy2iyjNXUfZR
-	EO1Xsr29aqs9l54yMIQeEQ+uBqhI=
-X-Google-Smtp-Source: AGHT+IFU4QRZnjrVNo79BoXWHbX92zIpxai/FBq0igJeyZSDlNxCwctQUbBUrC/FWFDyk8YC5e4x4C9B9kgVCo5EZc0=
-X-Received: by 2002:a05:6512:3e0d:b0:52e:faf0:40c with SMTP id
- 2adb3069b0e04-5353e54365cmr2303984e87.3.1724950036535; Thu, 29 Aug 2024
- 09:47:16 -0700 (PDT)
+	s=arc-20240116; t=1724950158; c=relaxed/simple;
+	bh=s/i27x2woyr+jAdNocf3l1he5+C/5cvjWEG3EZFHJfs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cPby08YZpkkYimvEPhXsZcMa4Y88/431HbmpC5zDRcvYsLGxYGnQ7UHn1wiAq+szmAp1nuKbUpDH3/8uGeZ0x5RtfXiXydM6dd9VNsParOHkTHzyLlic8Q8uzKGfelOA5ccgM+0D7+Kz0/r2yP1ryu9wITPZ70UY+QUuhZjc+Jc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=ZN4XHFJb; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 13230226;
+	Thu, 29 Aug 2024 18:48:04 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1724950085;
+	bh=s/i27x2woyr+jAdNocf3l1he5+C/5cvjWEG3EZFHJfs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZN4XHFJbIZPlzDx7+ysoaRN7EzJxE/R45R2r0fRgayUb8cedpeqSu6bYX1+1Kirwx
+	 96Gl5UQ/huJYwaneHw0/ConldzdPBe0qb7bPXFpsBGbvrveuuybTXGw7KUMr+Rm+hZ
+	 naK9pXMLKzuNhsA/Wppd/d6Y5tJ0xmme9Po4mPAs=
+Date: Thu, 29 Aug 2024 19:48:43 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Benjamin Bara <bbara93@gmail.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Alexander Stein <alexander.stein@ew.tq-group.com>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Benjamin Bara <benjamin.bara@skidata.com>
+Subject: Re: [PATCH v2 1/2] media: i2c: imx290: Check for availability in
+ probe()
+Message-ID: <20240829164843.GA15799@pendragon.ideasonboard.com>
+References: <20240828-imx290-avail-v2-0-bd320ac8e8fa@skidata.com>
+ <20240828-imx290-avail-v2-1-bd320ac8e8fa@skidata.com>
+ <20240829131909.GD12951@pendragon.ideasonboard.com>
+ <20240829163247.ovsst5ipecthtc6u@thinkpad>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240829071600.30706-1-kunwu.chan@linux.dev>
-In-Reply-To: <20240829071600.30706-1-kunwu.chan@linux.dev>
-From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-Date: Fri, 30 Aug 2024 01:47:00 +0900
-Message-ID: <CAKFNMo=1xjz8ZPXHMeWk6dFcya+c3wrCD2=svh9XoeHxz01BZg@mail.gmail.com>
-Subject: Re: [PATCH] nilfs2: Remove duplicate 'unlikely()' usage
-To: Kunwu Chan <kunwu.chan@linux.dev>
-Cc: linux-nilfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Kunwu Chan <chentao@kylinos.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240829163247.ovsst5ipecthtc6u@thinkpad>
 
-On Thu, Aug 29, 2024 at 4:16=E2=80=AFPM Kunwu Chan wrote:
->
-> From: Kunwu Chan <chentao@kylinos.cn>
->
-> nested unlikely() calls, IS_ERR already uses unlikely() internally
->
-> Signed-off-by: Kunwu Chan <chentao@kylinos.cn>
-> ---
->  fs/nilfs2/page.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/nilfs2/page.c b/fs/nilfs2/page.c
-> index 7797903e014e..9c0b7cddeaae 100644
-> --- a/fs/nilfs2/page.c
-> +++ b/fs/nilfs2/page.c
-> @@ -262,7 +262,7 @@ int nilfs_copy_dirty_pages(struct address_space *dmap=
-,
->                         NILFS_FOLIO_BUG(folio, "inconsistent dirty state"=
-);
->
->                 dfolio =3D filemap_grab_folio(dmap, folio->index);
-> -               if (unlikely(IS_ERR(dfolio))) {
-> +               if (IS_ERR(dfolio)) {
->                         /* No empty page is added to the page cache */
->                         folio_unlock(folio);
->                         err =3D PTR_ERR(dfolio);
-> --
-> 2.41.0
->
+Hi Manivannan,
 
-Thank you.  I'll pick it up.
+On Thu, Aug 29, 2024 at 10:02:47PM +0530, Manivannan Sadhasivam wrote:
+> On Thu, Aug 29, 2024 at 04:19:09PM +0300, Laurent Pinchart wrote:
+> 
+> Hi Laurent,
+> 
+> [...]
+> 
+> > > +		dev_err(dev, "Sensor is not in standby mode\n");
+> > > +		ret = -ENODEV;
+> > > +		goto err_pm;
+> > > +	}
+> > > +
+> > 
+> > My last concern is about accessing hardware at probe time. There are
+> > known cases where this is problematic. They can be split in two
+> > categories, systems that exhibit unwanted side effects when powering the
+> > sensor up, and systems where the sensor can't be accessed at probe time.
+> > 
+> > The two issues I can think of in the first category is devices that have
+> > a camera privacy light that could cause worries among users if it
+> > flashes at boot time, and devices that agressively optimize boot time.
+> > 
+> > In the second category, I know that some people use camera serdes
+> > (FPD-Link, GMSL, ...) that are controlled by userspace. As they should
+> > instead use kernel drivers for those components, upstream may not care
+> > too much about this use case. Another issue I was told about was a
+> > device booting in temperatures that were too low for the camera to
+> > operate, which then needed half an hour to heat the device enclosure
+> > before the sensor and serdes could be accessed. That's a bit extreme,
+> > but it sounds like a valid use case to me.
+> > 
+> > What do we do with those cases ? Detecting devices at probe time does
+> > have value, so I think it should be a policy decision. We may want to
+> > convey some of that information through DT properties (I'm not sure what
+> > would be acceptable there though). In any case, that's quite a bit of
+> > yak shaving, so I'm inclined to accept this series (or rather its next
+> > version), given that quite a few other camera sensor drivers detect the
+> > device at probe time. I would however like feedback on the problem to
+> > try and find a good solution.
+> 
+> Most of the issues you mentioned applies to other hardware peripherals also IMO.
+> And it is common for the drivers to read registers and make sure the device is
+> detected on the bus during probe().
 
-Ryusuke Konishi
+That's true. I think the problem affects different device types
+differently though, and this may (or may not) call for different
+solutions.
+
+> If an usecase doesn't want to read the
+> registers during probe time, then they _should_not_ build the driver as built-in
+> rather make it as a loadable module and load it whenever necessary. This applies
+> to boot time optimization as well.
+
+For most of the use cases I listed I agree with you. One exception is
+the privacy light issue. Regardless of when the camera sensor driver is
+loaded, powering the device at probe time will flash the privacy light.
+Doing so later than boot time would probably make the issue even worse,
+I would worry more if I saw my webcam privacy light flashing at a random
+point after boot time.
+
+> A DT property wouldn't be feasible as DT is supposed to describe the hardware,
+> not the usecase.
+
+I think that rule is typically slightly relaxed, by allowing in DT
+system descriptions, not just hardware descriptions. Otherwise we
+wouldn't allow things like reserved memory ranges. Describing that a
+camera sensor has a privacy light, in a way that would allow drivers to
+avoid powering up the device at probe time without requiring much
+duplicated code in all drivers, would in my opinion be an acceptable DT
+usage.
+
+-- 
+Regards,
+
+Laurent Pinchart
 
