@@ -1,139 +1,116 @@
-Return-Path: <linux-kernel+bounces-305954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-305955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1900C9636EC
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 02:39:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47CCA9636F1
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 02:43:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA6F0285BDE
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 00:39:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A4F77B23655
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 00:43:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50332DF53;
-	Thu, 29 Aug 2024 00:39:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C487DDD9;
+	Thu, 29 Aug 2024 00:42:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eSS0rV0X"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="NBoV586L"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A8C6D29E;
-	Thu, 29 Aug 2024 00:39:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 345EC6125
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 00:42:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724891953; cv=none; b=EamIfUELxeLIgpqZvTtZPqw5Y/WIEKoZU9NdbdZv0dkm2wRBppA0cOpshY6wMvZ8oK/dWsxr3oBB26FMOhbB4ImrBL2Y8fVFU8GOUS5kSbXzJJi4Jh+ek5urVDzfhreXj/aNZQFgq0qn0ylufAbdPDkkwGhO9pGJuxV97c+aUw8=
+	t=1724892176; cv=none; b=HA5MQ0L/dVVZJm8cWAATwHY+MSw1vEtv6gVXyuo7de4ue6GD93vMBowfEU3qfSFUSJIoo+LTiq5rqvXWsN6SEVjFlJ+kexf7CGronMsnqdDlGb/CLmyBNUJdBeJTrtay5MlAQqYVsGwqIRYK2gWxVuGg/WUBzWJI5tR5l7o7QWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724891953; c=relaxed/simple;
-	bh=J2YLgGYjd/b/kV9CeRRzCPpfAbhb2Ce+KbAMu2Y03ZI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tvhmyDSVFktPI5mKSx2yaGHryAuFhdHG1HQ2wM29KLUGn58WA6k88TnuxJHpflUdq5ZD0is6MUC6uNYwsjzqxbL9CWD0RNfKRjraj9hAIlq62TX22JQWjdfGXLY78d3H61QOPuFzSUIlq83ThpnII/6DAlWD+lCh+y1HqsQsevw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eSS0rV0X; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4280ee5f1e3so828025e9.0;
-        Wed, 28 Aug 2024 17:39:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724891950; x=1725496750; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fjJnLtLWNstwTkHqs3LEBcg+uL2ZjXsIciAHNDmGzio=;
-        b=eSS0rV0XoiYGJ0y4N57T8lEiUEC0cUbSunktFoQ067+wAcXYqX4WaHqYQWmsmn7uKw
-         GrfrRpzo4ohloQBl2q8lEMkOJwugqVVhNi8hWqRSQzpa/tc1NJC/SgE3RIocIF6i2+26
-         MOKmAHMWOTKCM69qnR5lCi1Db+QL/FjXJDVhuc4o8WZnCRSskaESo3KoxUlIHKsYNjEn
-         /ed9GHOs6fCExOKCVIkSKCpQ0fr0VR0X/kuWs/uCHcAd3yTKYJg26oXrBaJG0v5odSQu
-         GkhA/K1EMdcBT4FTASD4VdF/Jc5ta0TiMqBQMGyBvS6X9XwM5XRYMdJ8wFvZpJVPUtd3
-         dXrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724891950; x=1725496750;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fjJnLtLWNstwTkHqs3LEBcg+uL2ZjXsIciAHNDmGzio=;
-        b=ZIJAapCjIRv/pZHDcE4AuAid3XkOpKDJWjMAtM/rY+4i1n4oqq7uaZTl4CMQ5bc9Ij
-         NcjJilsAj1oQpA663aLWQ5HkOej4XvH4fqVo2vMRoPLLb6gQBD5WlfRSrvt5zQqYaqnA
-         0ZSI4WHtMoLw8Zri241OStN/J3+SvrgLIefq8V7Y0QDL1WZr4euJaWAiYWY8u/H4Sk7e
-         VvYjHFEMEqcD97HAn/uIcNV9nKNPQ6CJl7c9YaWA7IWaTRqvMxICXd7yHjaqQHrBYK7W
-         FAQxCnOXRp+bWoLV7AmxTpI9cl5PQnkprTQNaKpDIvnFBw9znTFCgy+7G8JeAuVBwfNU
-         hqtw==
-X-Forwarded-Encrypted: i=1; AJvYcCV8ET1kE8m1bYtof+vl/I54MGLw1M4R2erwfC725GKQmuO8qt/uwSVQH34HFkw0NCOuVwfstnXsYcoKVL3r@vger.kernel.org, AJvYcCVB1okW+dtzpTYLqdxt2IyQtq5m8HAbjsGsoUo5UkfXe3UfNyjSyIxkZwOklt7e/mmqFJE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVh8KrCWGFJpp9BQkAZbQyY0u1g0uyAI2zNEyzwZTT+07ilUC+
-	z/l3l8WzzRGWQfPG+i+4JWKSm+Tyywx5U3nfZGHaKZs3g0ZzvA0IkeYizmcWzb8OjJwVqzNyLuS
-	qyFfHeoHJMd0x1FQbhTwI/hwO7G0=
-X-Google-Smtp-Source: AGHT+IFRB2hDOzUeHu3DxIIFBiTamW0y60MeePZMZ55td5yiJ2trZjJfXhyR7XmoRLvkP6HSAydbu+YSnhVS/YGwMfI=
-X-Received: by 2002:a05:600c:1f90:b0:429:dc88:7e65 with SMTP id
- 5b1f17b1804b1-42bb02ecb7emr8749245e9.12.1724891950133; Wed, 28 Aug 2024
- 17:39:10 -0700 (PDT)
+	s=arc-20240116; t=1724892176; c=relaxed/simple;
+	bh=o4brvdfWk5uxX61Zj5d1/G0xxylWqH0ufTuF3bxeDN0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kb7m9Tc8sHA8Qu0K11DVrgyH+Hbq2TpYGpiURzLZHBlppM4nN7yQjQcwP+D3MCmWD3LDom7htlb0OJOloemCpjrbQasnbvThz89ETwZiPl+a5N9FQJTzurnJvPgUTp8jHssE5dwcAZRsi1i8UVqz5rKVA3kYd/k8lcCc+mHxSos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=NBoV586L; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EB7DC4CEC0;
+	Thu, 29 Aug 2024 00:42:55 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="NBoV586L"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1724892173;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=9/30TaV4mvaAKw5rzfdYQI3sb/AgSfx4ekLyAZeVFgA=;
+	b=NBoV586L+qpTpJ6WpxTc56uGMEMFeM2Zq6Px5f3pKSAoaIJ+odzjQw4EL8MqbQtYrx49ht
+	Xl1aToh6TlE/ex/a403ZklRXar2jhtyEaNgKjd78YcfvhLl823VUOscExzLIQkxIedknnm
+	P5i+TJuDlfAu/zgkp5mym7iyDZUFd2k=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id b9eee145 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Thu, 29 Aug 2024 00:42:52 +0000 (UTC)
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [GIT PULL] random number generator fixes for 6.11-rc6
+Date: Thu, 29 Aug 2024 02:42:46 +0200
+Message-ID: <20240829004246.3433304-1-Jason@zx2c4.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <AM6PR03MB5848874457E6E3E21635B18999952@AM6PR03MB5848.eurprd03.prod.outlook.com>
-In-Reply-To: <AM6PR03MB5848874457E6E3E21635B18999952@AM6PR03MB5848.eurprd03.prod.outlook.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Wed, 28 Aug 2024 17:38:59 -0700
-Message-ID: <CAADnVQJgHWXs-FiOtEX4qyyuAvXfXmbhrQ0c=Yn0NSH2oTGqXA@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v2 1/2] bpf: Add KF_OBTAIN for obtaining objects
- without reference count
-To: Juntong Deng <juntong.deng@outlook.com>
-Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	John Fastabend <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Eddy Z <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
-	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Kumar Kartikeya Dwivedi <memxor@gmail.com>, snorcht@gmail.com, bpf <bpf@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 28, 2024 at 1:05=E2=80=AFPM Juntong Deng <juntong.deng@outlook.=
-com> wrote:
->
->  static bool is_kfunc_sleepable(struct bpf_kfunc_call_arg_meta *meta)
-> @@ -12845,6 +12851,12 @@ static int check_kfunc_call(struct bpf_verifier_=
-env *env, struct bpf_insn *insn,
->                         /* For mark_ptr_or_null_reg, see 93c230e3f5bd6 */
->                         regs[BPF_REG_0].id =3D ++env->id_gen;
->                 }
-> +
-> +               if (is_kfunc_obtain(&meta)) {
-> +                       regs[BPF_REG_0].type |=3D PTR_TRUSTED;
-> +                       regs[BPF_REG_0].ref_obj_id =3D meta.ref_obj_id;
-> +               }
+Hi Linus,
 
-The long term plan for the verifier is to do KF_TRUSTED_ARGS
-by default in all kfuncs.
-In that sense a PTR_TO_BTF_ID returned from a kfunc
-has to be either trusted/rcu or acquired.
-Currently we have only one odd set of kfuncs iter_next() that
-return old/deprecated style PTR_TO_BTF_ID without either TRUSTED
-or UNTRUSTED flag.
-That is being fixed. They will become TRUSTED | RCU.
-After that all new kfuncs should be reviewed from point of view
-whether structs that they return either trusted|rcu.
-So KF_OBTAIN is partially unnecessary.
+This pull has one small fix:
 
-But what you want to achieve with KF_OBTAIN is more than just TRUSTED.
-You want to propagate ref_obj_id and we cannot do that.
-When types change they cannot have the same ref_obj_id.
-Think of sock_from_file(). If we add such a wrapper as a kfunc
-it will be returning a different object.
-(struct *)file !=3D (struct sock *)file->private_data
-They has to have different ids.
+- Reject invalid flags passed to vgetrandom() in the same way that getrandom()
+  does, so that the behavior is the same, from Yann.
 
-The patch 2 is just buggy:
-+struct mm_struct *bpf_kfunc_obtain_test(struct task_struct *task)
-+{
-+       return task->mm;
-+}
+  The flags argument to getrandom() only has a behavioral effect on the
+  function if the RNG isn't initialized yet, so vgetrandom() falls back to the
+  syscall in that case. But if the RNG is initialized, all of the flags behave
+  the same way, so vgetrandom() didn't bother checking them, and just ignored
+  them entirely. But that doesn't account for invalid flags passed in, which
+  need to be rejected so we can use them later.
 
-This is wrong:
-- mm has to be refcnted. Acquiring a task doesn't mean that task->mm
-stays valid.
-- ref_obj_id cannot be copied. It's incorrect from verifier ref tracking po=
-v.
+Please pull.
 
-pw-bot: cr
+Side note: there are now enablements of vgetrandom() in review for arm64, ppc,
+and loongarch, and hopefully they'll be ready for 6.12. In the process of
+getting this wired up on several archs, various build, selftest, header, and
+other bureaucratic-style gotchas have been found and fixed. Originally my plan
+was to send you a pull containing those fixes, for 6.11, so that the actual new
+arch code could then go in via each respective arch tree for 6.12. But these
+little fixes have started to pile up, and some of the build ones deserve a bit
+of care and testing under different circumstances, so I'd like to actually let
+these cook in linux-next for a while longer and send them for 6.12 instead. And
+it's not like they actually fix any _current_ issue, as the x86 codegen is the
+same; they just fix bugs in order to enable other archs later. So now my
+current plan is to send these to you for 6.12, alongside the new arch
+enablements in that same pull, after receiving acks from the arch maintainers
+to do that. If you are curious or do want these build fixes now for some
+reason, though, they're all sitting in my tree.
+
+Thanks,
+Jason
+
+The following changes since commit dc1c8034e31b14a2e5e212104ec508aec44ce1b9:
+
+  minmax: simplify min()/max()/clamp() implementation (2024-07-28 20:24:12 -0700)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/crng/random.git tags/random-6.11-rc6-for-linus
+
+for you to fetch changes up to 28f5df210d06beb5920cf80446f1c27456c14b92:
+
+  random: vDSO: reject unknown getrandom() flags (2024-08-26 09:58:52 +0200)
+
+----------------------------------------------------------------
+Random number generator fixes for Linux 6.11-rc6.
+----------------------------------------------------------------
+
+Yann Droneaud (1):
+      random: vDSO: reject unknown getrandom() flags
+
+ lib/vdso/getrandom.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
