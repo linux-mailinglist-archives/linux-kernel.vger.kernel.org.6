@@ -1,155 +1,387 @@
-Return-Path: <linux-kernel+bounces-306424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 910F8963EEF
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:44:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 169C6963EF2
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 10:44:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 01C0CB2319E
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:44:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE4B32839CC
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 08:44:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7107318C90F;
-	Thu, 29 Aug 2024 08:44:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECA5A18C34A;
+	Thu, 29 Aug 2024 08:44:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TqEahd06"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wCAGlsQ5"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1453515C13B;
-	Thu, 29 Aug 2024 08:44:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17A7D18C92F
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 08:44:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724921071; cv=none; b=ubEJstXktQfWXMDg7DkqHuINdIKzFbVfpL89QUN3yxnE9yRMh7WSgtJYyNnJ+9t68w4RQrQU1fO937HHIZJ8/l5b4WaCBcS1E9FBbxhUMZL3sYwemjB1uuCTGCP2ykrY6C6HzZZEML5ZR3YiePOWwE4Z0dJTRaE+ezrNVMUDqv8=
+	t=1724921076; cv=none; b=dNiv/fSeRU/DHjs8nTgg/KPdkP02VwKLX+xOiqWnZ/4JCsnYxiJQddoCJloxM7yf2vO3w1mDYzx6Po1OqHUIgWMu9IAVLuX1IK5e0PfkQDvULTAJ35uXLlkxS4RXb4s7hD142IulJCTAW3cucO9ug+luVlQ/BJ4G5O5mfMfG2Ag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724921071; c=relaxed/simple;
-	bh=rS7qG8284LsPMVDZT3Wk6pL1xkn6e7lfFskZ9IfThig=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NRj8UyvQTdR/tZ6CdVspcX25wjhWKzfFTBiJCWgJp77T1LGO8Z7JgsJK1RPLVUqPKBu3mNRIjZnRIucgRZWPadr8QVoRgJYHD8pKWI6XMOpzy+Cm6h3ebBUpXlSQSvDiiOKqbDaCWucdZOFHzEzhY5sWSj5TRanlC8eZFhQ+otg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TqEahd06; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-371aa511609so248692f8f.1;
-        Thu, 29 Aug 2024 01:44:29 -0700 (PDT)
+	s=arc-20240116; t=1724921076; c=relaxed/simple;
+	bh=YXPu+02a3iAoSDGi0S+a+LddESyhQMLo5+sL2vOPM+k=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=DHTguMykGuFXNc5Guwy1WK2+/O3RVXo8xYRgt604odIF7LCEavvBc5VBT5/6U10eDWPv9jBGBdSynOHA0906vIit0RqeNRmCAzcyrMKb/Rv38pjkAqa8Yw0nLHqKCDOVL3IWnJ2JIMO9dTDiAU+EN3ZUQqybofVeKlKXnc11vxI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wCAGlsQ5; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-428e0d184b4so3222765e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 01:44:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724921068; x=1725525868; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qkYEbPeyDZMPuncnqwYBTt8dp21NOhBXd/4fbCM70QY=;
-        b=TqEahd06PUZsD0+MsTe19Sh65SWlINq6cgOJE7DCRng4oWChKojK0Pwy0SVtGAKFTW
-         cA6yAbH5Z8gKQicMZSYfBEwiydQGC6PnxikfVcB/NqFkoQBhRecqJ4e9wE64CuiuJoC1
-         J9Gu8ZFI3HNEsWMv4t6eEaWN696X6QJj0p/0u2Oa0nx8+MJqS1DacKfNFcNCK9lJVeoW
-         3MN/owOHNWmj6eO7RZZvMAr0OpHf7esC01ktzwIamnXEv2Zqf+sHEPpkkQAOS6JN7DPt
-         2BAtQPJzp/i0MtLdZONRrCZVSHpGih0Medv/RdiKDDKqLlqmXX8He1w6s1GpbZ9a+ijg
-         4H1g==
+        d=linaro.org; s=google; t=1724921072; x=1725525872; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=MQjRV8KDG/Lpcqg2hQHcveqFn+Rg4OZ0FjrZ9YRvTig=;
+        b=wCAGlsQ5TbI6XcBICYe8oBPUC7vNKMp5htldl8aPN3rsQ3Eh/2qgKlYFBLEV9//0bX
+         RvThXrJNS8vMeUd6ebouxIZvGQcL0lJNNUsnA8gQK5ksEHOx9eohFmgZiqlVefgiM3FE
+         6X9lod+8xnqlu6lU5+GuIMNIiLlGagrMxpQXyZIhk3dEVgUkjHT5Bmv66MtM7QBdoxbs
+         4KO7xC+gKvrLhVLFrdCjv3Mrhk75i2ws7Hh2XJ/0mjWoRHKVDVNUeJT5E8yPyi4YE8CA
+         0wJOkzDzS1FkCnItPw/jUpAQzGNHEmclcEGRULhH76TjSUR1WfZnenWjT4mMA1jJj6r2
+         tKvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724921068; x=1725525868;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qkYEbPeyDZMPuncnqwYBTt8dp21NOhBXd/4fbCM70QY=;
-        b=KCU3G6NL4Xh4fi4PK7Hb5jB+kuxPv5HHZnR6h592doF9JA1ngB7MzG2frLRTBxVxcr
-         2NJWr0jBSQ3ZfIoLlIJBurHKrrfcOcap+Fe4b9eMZKA4gQFtY4oTwE3n0A56M096H22M
-         Px6eRMD/1q7oDIWIofut7nSe0L3XIHMzl3ph5UxSdfcJROpAWMJmFwdTFd8k3TpLJL7f
-         kAhp2VcFSyThFCPcbeYR9Joi7baAQLWxkxcx6rYHY7ki7pkQ+0NQCgXLOLMLJvjtXjFG
-         44tQqgi7expoGlnQp1zK0/9Yo77cFlSeaQejbXdZcD7Dv1mdEC8hdEx+2b4YGbkwbHhy
-         /Rrg==
-X-Forwarded-Encrypted: i=1; AJvYcCVssR18l3SmQGGNklrGwZMCJFRekJgckZUvYJbSPp13vrElrAc88S84PzOuKUU4bjg9OLF53+zuaGhQ8Rs=@vger.kernel.org, AJvYcCVusMsq3GeY401s42giufhsviRL42lSyFILXivWVi4X8SF1aLN0jV2sv/DNlJtdtK5RS0Ty015i+szD@vger.kernel.org, AJvYcCWCqAl32kDK7zKPkTrIg+Y9gZrYT3UbYJbaG/SfuDUyvPJFulPu+K5MtiXwSlwKkdt9YecfhUN3e1UHaKlT@vger.kernel.org, AJvYcCXtU+/62miLw44pBPC3EBfi/EzCozx3eh7DEkrl7nt2h1+aArXMMCPfMcBZOWCGSXClR7hKtqfNuu7y@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvskqLh5EEkexP6icQZfK6RJjnV2u93YS3xkX8IW9CretfkqWw
-	JFydt8xlBOEChiskZMp911gCiAr/5gCwWDu7DsLEHQU+hIyGYyz+2mWhKPBT
-X-Google-Smtp-Source: AGHT+IEMouz3ROOjSErGJywXdM5Mfn+/P48p3QNwwTCNoCWFYKxG5dcA1+1v8UKm8OgVo7achmy9aQ==
-X-Received: by 2002:adf:c04a:0:b0:366:eb61:b47 with SMTP id ffacd0b85a97d-3749b52fa73mr1316866f8f.8.1724921067626;
-        Thu, 29 Aug 2024 01:44:27 -0700 (PDT)
-Received: from orome (p200300e41f29d300f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f29:d300:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3749ee71650sm836764f8f.40.2024.08.29.01.44.26
+        d=1e100.net; s=20230601; t=1724921072; x=1725525872;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MQjRV8KDG/Lpcqg2hQHcveqFn+Rg4OZ0FjrZ9YRvTig=;
+        b=AmwphOuZzp0WuJeT8HfxyRIQTf0m7m+BzJJDYqzQy0ezV32kYrD5VqgEYtTePsr24W
+         C22DwZupkJD8isL9mIPwOC3ORGODv+6ja8i/w+I8kWYjU9x2rU/HcRwewBDYfPZ2hViq
+         CYdBv9JBBsq7Ew4WplZYW1lG8biuWMbX6/zGXzpp6gQejpfk/e9zgxSkQVmO3ggFzPUI
+         rSYjDmSfobGSxZ0WX+PFRhSNI9VLbN0VEH3fSt8YBiUGaXRVP7/GsJPzbllqteCISB/U
+         hMzcZ3hm5BZrh2/BYVEpjWftyUcCXKeyQKJ0ziFsjKy2ikKJ8+51ffZKeIg0Hdz3rfLv
+         iZVA==
+X-Forwarded-Encrypted: i=1; AJvYcCV8JVdNWUCK+VVTJDcl0H0Tza9Vo3gDt19fCvO4dcFEGPZITOciK0AzPsNHllvT5xZlbp3safItu5baIpg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5YotViYTENdqCTUIZqvUhJJmcg2Hwth8/GDFhbP3aJkTqJtXA
+	R9tLN9YY5tXVE2WKA1wujQSmJAvns6WXQ5pCe6vUOlshZ84F49jE9d9EqonMge70mmCzi+JcISe
+	x
+X-Google-Smtp-Source: AGHT+IG1+aHrBKmftPD5hD1/Gw1QzmryaaDfQm+O0lrXVsW+w70Wpwoq7GzWBif5V6emk9i+uEwT9g==
+X-Received: by 2002:a05:600c:3b89:b0:426:6688:2421 with SMTP id 5b1f17b1804b1-42bb02ee44amr15226835e9.11.1724921071907;
+        Thu, 29 Aug 2024 01:44:31 -0700 (PDT)
+Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:8261:5fff:fe11:bdda])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3749ee413a8sm835489f8f.6.2024.08.29.01.44.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 01:44:27 -0700 (PDT)
-Date: Thu, 29 Aug 2024 10:44:25 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/3] dt-bindings: i2c: nvidia,tegra20-i2c: minor cleanups
-Message-ID: <kjoc55okpq2h3t3olnsfegp2jalgo3mr636eqg5tndmjc2t5de@7dy7du53p53y>
-References: <20240820-dt-bindings-i2c-nvidia-v1-0-2763e9a9a1b0@linaro.org>
- <rzf7wiv7hvalx4svnnxxsu7z2ciprujxfdwbr7te7cqtmi6xkc@757xhotlbren>
- <36769d45-d827-41bf-befc-e7b0e95f199e@linaro.org>
+        Thu, 29 Aug 2024 01:44:31 -0700 (PDT)
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Date: Thu, 29 Aug 2024 10:44:30 +0200
+Subject: [PATCH] clk: qcom: gcc-sm8650: Don't use shared clk_ops for QUPs
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="jastyiiobfjmpo6r"
-Content-Disposition: inline
-In-Reply-To: <36769d45-d827-41bf-befc-e7b0e95f199e@linaro.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240829-topic-sm8650-upstream-fix-qup-clk-rcg-shared-v1-1-7ecdbc672187@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAO000GYC/x2N0QqDMAwAf0XyvEAtc7T7lbGHLkYNm9olKoL47
+ yt7PDjuDjBWYYN7dYDyJibzVKC+VEBDmnpGaQuDd/7qgo+4zFkIbQy3xuGabVFOI3ay43fNSJ8
+ 3KvVoQ1JusXMx1BSb8GKCkszKxfzvHs/z/AGZy3oQfgAAAA==
+To: Stephen Boyd <sboyd@kernel.org>, Bjorn Andersson <andersson@kernel.org>
+Cc: Konrad Dybcio <konradybcio@kernel.org>, 
+ Taniya Das <quic_tdas@quicinc.com>, linux-arm-msm@vger.kernel.org, 
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Neil Armstrong <neil.armstrong@linaro.org>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=9677;
+ i=neil.armstrong@linaro.org; h=from:subject:message-id;
+ bh=YXPu+02a3iAoSDGi0S+a+LddESyhQMLo5+sL2vOPM+k=;
+ b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBm0DTuzl+wC/7w2kEgdeX7NvE2rL//wlu+ELjR0C7s
+ Xmx+fC2JAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZtA07gAKCRB33NvayMhJ0YUGEA
+ C4hh1F76HXdf57QROJWnIZ734Rygpzt/+p6q61oQ63ZG63+HaEFoJi3f8CXtQAYNJZm3W+eNgzYs5b
+ oSFi2dO0a+2WY5tKabygJC9Heq4WRis4UqqDS+lueK8FihoI2fTKmLNjYWI3Hgic7CbaWIrUKvg+h8
+ TxolPTsE4sVbzPJBUK5phMyozdmapmkPmKthQ1c6qjwHSDDS0diOx1+M4jSHRixi8wgl3SuYzkGa48
+ IrzBE9WtJXiVtu04t45Fd91ZzUFklTg7iwj3j2nBs+e7bK/1nLtl9mtmdCk+DxobJG1bmTm4vk0IkL
+ b2utCVDhfuanRNp272CqlbXrHKmSTa51/L/7pcOuNU868nlsgydTZdcztk/VqlLBeXjS1Ydcxz2t/0
+ N2PvBH3ckcXzw5ZaUUT2ojpl1oZH5if2r7oN01XzpozDqNjzpI2NI6+z3wbSHoem33aVctZgcWU8VX
+ mgznb3tRxGuwLL9Eig2IVfwFOKWNFcNPa1CIstnvrPaBL4fFFn4WUJ+IOAySDylh96otfGT6UkQUre
+ bKietVAfkvFeyHUxlErkJzHvY/USnEixIpIcY2D9Gd0QQALyf6ue9OqJPpVSyyc9JYAfR8oz3o7qPk
+ J+hgSy7o5x+354SLPMI8yGk79oXXs+m8uzIWrUZACDnVkUkw+Bk/8wCtuJ6A==
+X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
+ fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
 
+The QUPs aren't shared in a way that requires parking the RCG at an
+always on parent in case some other entity turns on the clk. The
+hardware is capable of setting a new frequency itself with the DFS mode,
+so parking is unnecessary. Furthermore, there aren't any GDSCs for these
+devices, so there isn't a possibility of the GDSC turning on the clks
+for housekeeping purposes.
 
---jastyiiobfjmpo6r
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Like for the SM8550 GCC QUP clocks at [1], do not use shared clk_ops for QUPs.
 
-On Tue, Aug 27, 2024 at 04:21:01PM GMT, Krzysztof Kozlowski wrote:
-> On 27/08/2024 16:03, Thierry Reding wrote:
-> > On Tue, Aug 20, 2024 at 10:44:23AM GMT, Krzysztof Kozlowski wrote:
-> >> Simple cleanups for nvidia I2C.
-> >>
-> >> Best regards,
-> >> Krzysztof
-> >>
-> >> ---
-> >> Krzysztof Kozlowski (3):
-> >>       dt-bindings: i2c: nvidia,tegra20-i2c: combine same if:then: clau=
-ses
-> >>       dt-bindings: i2c: nvidia,tegra20-i2c: restrict also clocks in if=
-:then:
-> >>       dt-bindings: i2c: nvidia,tegra20-i2c: define power-domains top-l=
-evel
-> >>
-> >>  .../bindings/i2c/nvidia,tegra20-i2c.yaml           | 27 ++++++++++++-=
----------
-> >>  1 file changed, 15 insertions(+), 12 deletions(-)
-> >=20
-> > It wasn't clear who you wanted to pick these up, so I've applied them to
-> > the Tegra tree. Shout if anybody wants to take them through a different
-> > tree.
->=20
-> They target I2C and I think they were merged by Andi:
-> https://lore.kernel.org/all/dkcfnidl3xgvspiusp3zftgdftyvlbxahlbumjdfl7dvx=
-gmdmr@nomisqfu2mwb/
+[1] https://lore.kernel.org/all/20240827231237.1014813-3-swboyd@chromium.org/
 
-Indeed, I hadn't seen Andi's reply in the patch tracker, so had assumed
-people were waiting for me to pick them into the Tegra tree.
+Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+---
+ drivers/clk/qcom/gcc-sm8650.c | 56 +++++++++++++++++++++----------------------
+ 1 file changed, 28 insertions(+), 28 deletions(-)
 
-I'll drop them.
+diff --git a/drivers/clk/qcom/gcc-sm8650.c b/drivers/clk/qcom/gcc-sm8650.c
+index 9bc19bea0c97..fd9d6544bdd5 100644
+--- a/drivers/clk/qcom/gcc-sm8650.c
++++ b/drivers/clk/qcom/gcc-sm8650.c
+@@ -713,7 +713,7 @@ static struct clk_rcg2 gcc_qupv3_i2c_s0_clk_src = {
+ 		.parent_data = gcc_parent_data_0,
+ 		.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_shared_ops,
++		.ops = &clk_rcg2_ops,
+ 	},
+ };
+ 
+@@ -728,7 +728,7 @@ static struct clk_rcg2 gcc_qupv3_i2c_s1_clk_src = {
+ 		.parent_data = gcc_parent_data_0,
+ 		.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_shared_ops,
++		.ops = &clk_rcg2_ops,
+ 	},
+ };
+ 
+@@ -743,7 +743,7 @@ static struct clk_rcg2 gcc_qupv3_i2c_s2_clk_src = {
+ 		.parent_data = gcc_parent_data_0,
+ 		.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_shared_ops,
++		.ops = &clk_rcg2_ops,
+ 	},
+ };
+ 
+@@ -758,7 +758,7 @@ static struct clk_rcg2 gcc_qupv3_i2c_s3_clk_src = {
+ 		.parent_data = gcc_parent_data_0,
+ 		.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_shared_ops,
++		.ops = &clk_rcg2_ops,
+ 	},
+ };
+ 
+@@ -773,7 +773,7 @@ static struct clk_rcg2 gcc_qupv3_i2c_s4_clk_src = {
+ 		.parent_data = gcc_parent_data_0,
+ 		.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_shared_ops,
++		.ops = &clk_rcg2_ops,
+ 	},
+ };
+ 
+@@ -788,7 +788,7 @@ static struct clk_rcg2 gcc_qupv3_i2c_s5_clk_src = {
+ 		.parent_data = gcc_parent_data_0,
+ 		.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_shared_ops,
++		.ops = &clk_rcg2_ops,
+ 	},
+ };
+ 
+@@ -803,7 +803,7 @@ static struct clk_rcg2 gcc_qupv3_i2c_s6_clk_src = {
+ 		.parent_data = gcc_parent_data_0,
+ 		.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_shared_ops,
++		.ops = &clk_rcg2_ops,
+ 	},
+ };
+ 
+@@ -818,7 +818,7 @@ static struct clk_rcg2 gcc_qupv3_i2c_s7_clk_src = {
+ 		.parent_data = gcc_parent_data_0,
+ 		.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_shared_ops,
++		.ops = &clk_rcg2_ops,
+ 	},
+ };
+ 
+@@ -833,7 +833,7 @@ static struct clk_rcg2 gcc_qupv3_i2c_s8_clk_src = {
+ 		.parent_data = gcc_parent_data_0,
+ 		.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_shared_ops,
++		.ops = &clk_rcg2_ops,
+ 	},
+ };
+ 
+@@ -848,7 +848,7 @@ static struct clk_rcg2 gcc_qupv3_i2c_s9_clk_src = {
+ 		.parent_data = gcc_parent_data_0,
+ 		.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_shared_ops,
++		.ops = &clk_rcg2_ops,
+ 	},
+ };
+ 
+@@ -863,7 +863,7 @@ static struct clk_init_data gcc_qupv3_wrap1_qspi_ref_clk_src_init = {
+ 	.parent_data = gcc_parent_data_0,
+ 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 	.flags = CLK_SET_RATE_PARENT,
+-	.ops = &clk_rcg2_shared_ops,
++	.ops = &clk_rcg2_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap1_qspi_ref_clk_src = {
+@@ -899,7 +899,7 @@ static struct clk_init_data gcc_qupv3_wrap1_s0_clk_src_init = {
+ 	.parent_data = gcc_parent_data_0,
+ 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 	.flags = CLK_SET_RATE_PARENT,
+-	.ops = &clk_rcg2_shared_ops,
++	.ops = &clk_rcg2_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap1_s0_clk_src = {
+@@ -916,7 +916,7 @@ static struct clk_init_data gcc_qupv3_wrap1_s1_clk_src_init = {
+ 	.parent_data = gcc_parent_data_0,
+ 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 	.flags = CLK_SET_RATE_PARENT,
+-	.ops = &clk_rcg2_shared_ops,
++	.ops = &clk_rcg2_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap1_s1_clk_src = {
+@@ -948,7 +948,7 @@ static struct clk_init_data gcc_qupv3_wrap1_s3_clk_src_init = {
+ 	.parent_data = gcc_parent_data_0,
+ 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 	.flags = CLK_SET_RATE_PARENT,
+-	.ops = &clk_rcg2_shared_ops,
++	.ops = &clk_rcg2_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap1_s3_clk_src = {
+@@ -980,7 +980,7 @@ static struct clk_init_data gcc_qupv3_wrap1_s4_clk_src_init = {
+ 	.parent_data = gcc_parent_data_0,
+ 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 	.flags = CLK_SET_RATE_PARENT,
+-	.ops = &clk_rcg2_shared_ops,
++	.ops = &clk_rcg2_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap1_s4_clk_src = {
+@@ -997,7 +997,7 @@ static struct clk_init_data gcc_qupv3_wrap1_s5_clk_src_init = {
+ 	.parent_data = gcc_parent_data_0,
+ 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 	.flags = CLK_SET_RATE_PARENT,
+-	.ops = &clk_rcg2_shared_ops,
++	.ops = &clk_rcg2_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap1_s5_clk_src = {
+@@ -1014,7 +1014,7 @@ static struct clk_init_data gcc_qupv3_wrap1_s6_clk_src_init = {
+ 	.parent_data = gcc_parent_data_0,
+ 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 	.flags = CLK_SET_RATE_PARENT,
+-	.ops = &clk_rcg2_shared_ops,
++	.ops = &clk_rcg2_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap1_s6_clk_src = {
+@@ -1031,7 +1031,7 @@ static struct clk_init_data gcc_qupv3_wrap1_s7_clk_src_init = {
+ 	.parent_data = gcc_parent_data_0,
+ 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 	.flags = CLK_SET_RATE_PARENT,
+-	.ops = &clk_rcg2_shared_ops,
++	.ops = &clk_rcg2_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap1_s7_clk_src = {
+@@ -1059,7 +1059,7 @@ static struct clk_rcg2 gcc_qupv3_wrap2_ibi_ctrl_0_clk_src = {
+ 		.parent_data = gcc_parent_data_2,
+ 		.num_parents = ARRAY_SIZE(gcc_parent_data_2),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_shared_ops,
++		.ops = &clk_rcg2_ops,
+ 	},
+ };
+ 
+@@ -1068,7 +1068,7 @@ static struct clk_init_data gcc_qupv3_wrap2_s0_clk_src_init = {
+ 	.parent_data = gcc_parent_data_0,
+ 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 	.flags = CLK_SET_RATE_PARENT,
+-	.ops = &clk_rcg2_shared_ops,
++	.ops = &clk_rcg2_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap2_s0_clk_src = {
+@@ -1085,7 +1085,7 @@ static struct clk_init_data gcc_qupv3_wrap2_s1_clk_src_init = {
+ 	.parent_data = gcc_parent_data_0,
+ 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 	.flags = CLK_SET_RATE_PARENT,
+-	.ops = &clk_rcg2_shared_ops,
++	.ops = &clk_rcg2_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap2_s1_clk_src = {
+@@ -1102,7 +1102,7 @@ static struct clk_init_data gcc_qupv3_wrap2_s2_clk_src_init = {
+ 	.parent_data = gcc_parent_data_0,
+ 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 	.flags = CLK_SET_RATE_PARENT,
+-	.ops = &clk_rcg2_shared_ops,
++	.ops = &clk_rcg2_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap2_s2_clk_src = {
+@@ -1119,7 +1119,7 @@ static struct clk_init_data gcc_qupv3_wrap2_s3_clk_src_init = {
+ 	.parent_data = gcc_parent_data_0,
+ 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 	.flags = CLK_SET_RATE_PARENT,
+-	.ops = &clk_rcg2_shared_ops,
++	.ops = &clk_rcg2_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap2_s3_clk_src = {
+@@ -1136,7 +1136,7 @@ static struct clk_init_data gcc_qupv3_wrap2_s4_clk_src_init = {
+ 	.parent_data = gcc_parent_data_0,
+ 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 	.flags = CLK_SET_RATE_PARENT,
+-	.ops = &clk_rcg2_shared_ops,
++	.ops = &clk_rcg2_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap2_s4_clk_src = {
+@@ -1153,7 +1153,7 @@ static struct clk_init_data gcc_qupv3_wrap2_s5_clk_src_init = {
+ 	.parent_data = gcc_parent_data_0,
+ 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 	.flags = CLK_SET_RATE_PARENT,
+-	.ops = &clk_rcg2_shared_ops,
++	.ops = &clk_rcg2_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap2_s5_clk_src = {
+@@ -1186,7 +1186,7 @@ static struct clk_init_data gcc_qupv3_wrap2_s6_clk_src_init = {
+ 	.parent_data = gcc_parent_data_10,
+ 	.num_parents = ARRAY_SIZE(gcc_parent_data_10),
+ 	.flags = CLK_SET_RATE_PARENT,
+-	.ops = &clk_rcg2_shared_ops,
++	.ops = &clk_rcg2_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap2_s6_clk_src = {
+@@ -1203,7 +1203,7 @@ static struct clk_init_data gcc_qupv3_wrap2_s7_clk_src_init = {
+ 	.parent_data = gcc_parent_data_0,
+ 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 	.flags = CLK_SET_RATE_PARENT,
+-	.ops = &clk_rcg2_shared_ops,
++	.ops = &clk_rcg2_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap2_s7_clk_src = {
+@@ -1226,7 +1226,7 @@ static struct clk_init_data gcc_qupv3_wrap3_qspi_ref_clk_src_init = {
+ 	.parent_data = gcc_parent_data_0,
+ 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+ 	.flags = CLK_SET_RATE_PARENT,
+-	.ops = &clk_rcg2_shared_ops,
++	.ops = &clk_rcg2_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap3_qspi_ref_clk_src = {
 
-Thanks,
-Thierry
+---
+base-commit: 195a402a75791e6e0d96d9da27ca77671bc656a8
+change-id: 20240829-topic-sm8650-upstream-fix-qup-clk-rcg-shared-f0981c958bec
 
---jastyiiobfjmpo6r
-Content-Type: application/pgp-signature; name="signature.asc"
+Best regards,
+-- 
+Neil Armstrong <neil.armstrong@linaro.org>
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmbQNOkACgkQ3SOs138+
-s6FlIw//WEBpF+XgLGpAPoRUyXeGZ+6XkpqogCwhLKJFsPluWlH67WvmK61MvjtY
-9Ig+xBiy2ANhZJV9vaudWnIDHte6/amh37rz7fRazi8+UVbDEiUZu5fo0JgEJsnK
-YLTRkcGmJr4IBuVm3sVI2+HjdtAnt9Ba9YPoXOansKbN/+hr74mnJwDZgJwOdTOD
-so9yGsXZ6dB8fn1iqM+SMxHSDs1k3FcyZ3bYtpRmHEZEBtYOE7H/RLWnCwQF5GKV
-GxjXAeNe1nqxO0yf+Y/XgDn1xiGN/42MF8VBglU1d+IaFNHb644BT0iO2GGjXsis
-yUJjqTMfgrYqsQu0zFGWgNLgbPlvILi5CbEKlH8pT/9wi9Jc7sj1mVe7fVFOhXPJ
-7l5G2zKgKvkokxlmaE4EqYHMWQQRzG9Hz+d3+JpEoEO1sf0TWOhLwUp4/N6ZAv0/
-lN3azsZKuip9S6T+W4O9UKiP0yRip2dF0IZI/gdDswkNJv8TU2n5JQaR5jEJWdtw
-9ReDs2E7NlKm/m6cK9OtbKCWQRc2DcuKntw8MB40XlqL5gtFolHTxk2XzSfjpj9y
-VmSklk8guoGOQB7+X3yVisA1jB0NNc1F7XVV9N8dSp0INDxx6a2qQLXXvoasYz+l
-QSB7TEk6xgsOJyuiBy2GaELJOXi9KnrUOZZiDCx5fC4K0YfatCw=
-=O9ev
------END PGP SIGNATURE-----
-
---jastyiiobfjmpo6r--
 
