@@ -1,179 +1,106 @@
-Return-Path: <linux-kernel+bounces-307167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C2AC964960
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 17:04:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E766496496A
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 17:05:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6BB4DB2918E
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:04:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 056D8B25BA2
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 15:05:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B2021B3F1D;
-	Thu, 29 Aug 2024 15:02:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VgeFwcRk"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A05E1B2EF1;
+	Thu, 29 Aug 2024 15:03:18 +0000 (UTC)
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A79A1B3F0F
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 15:02:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20AF31B14F6;
+	Thu, 29 Aug 2024 15:03:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724943751; cv=none; b=bsZBjb7yumSTkMPt9gxuPXsw41fa+0eLzdCP5YDivl3LfSp+psSrCPeEWyrMmrASescxW37pAW6AmZZu06rnw+Dk0h5a6NAFqT3aeoE5rH3olvGy277bQwanShMlxO9fG4l8rOFStVjkzJl+5sT77s8zvwCwcYkfVWdWMMM2oDk=
+	t=1724943797; cv=none; b=CEZ8rJ4TDNgf8K5wAZL6Us6ygnkTXW5fSfBl9CkBrFYDJTu2rEmG55Vd00ZgvfJMPrDjsR4jjz5oalvwycx9WlPXtqn5WRpJxxHKsIOtPkFZH10szaEYK46OJn3dYhqoy7DcLMFrMKhZnrfyndG7DUSh1P9e9BQ7mm2+Swyr6kA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724943751; c=relaxed/simple;
-	bh=Cs1G3Km11lKVbLwuzqXspUq0kocgRC5HF81O9ABdTIs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ffdO5sNneNjd6WXb/Nj4LXaVVste1C+pWborjuC9V3fR9Iy3u3M0munP8EzG/mJh7ibvNwIAyUYxxaSn4utva9YTdkPBc0GGCxdKjfIK90hJoArc6g0WpJuOm/MzONDkg39I8Ucut8LIx4ZPzZh51HMV9uoJ/N+Lh0cQA2fuZ3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VgeFwcRk; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-20353e5de9cso229185ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 08:02:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724943749; x=1725548549; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Q8Xok/aj4CcH+x0fW9fszJu1Uo+wA+cbGvy4Plgbunk=;
-        b=VgeFwcRkEeIvkMID/hovXJ/6WUgNpA1anhIWz9HhBPyqsSCUCjjWpNJAb2xvOMp8+Z
-         0DufmlUuoaXfkKJvz+sMSmOMTOsHXE81WbSbDA0s5Y87j9BnRz1zAg/ByTNN5j572j3N
-         FpNHrXb0X6Vg+5NxtWcPdGH1iO0vbVTI2jzu6XqJQw0aTTzQpioztkdRaiQkbwVX2kBW
-         Z3OVOhk9i7UD/YcMvvVfKghvT5VXenqP2S8utkZJlkzWTIL6T2gn6U52Bd/VsJRcGogx
-         +xaozNmv5pOLpfL/B/WS9jKl1L7u7iVn586GYM3dvZnu0luznqBcJ6Q80AZUGkB8nqUF
-         7j5A==
+	s=arc-20240116; t=1724943797; c=relaxed/simple;
+	bh=dr45XjTQ8FHb7CPbxsL5rHjPqCMMvoo4rwFxQtyYNz8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mxRXyewobxjZ1EUn4tzujZQybgG75cJKnuvmpxIDK9SX7+ZJoUtWGlw4YlNu8GUbOtr6f6TpCAEggZOlLeE5gZmK6q7tg38Mmk9uMMqPMinQLzDGAhNk1ag6h+p4tjtGdbeuhyclFl2A7lA7gikb8tKhTmzw1Mnge+L2ReFAL5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a868d7f92feso89090166b.2;
+        Thu, 29 Aug 2024 08:03:15 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724943749; x=1725548549;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Q8Xok/aj4CcH+x0fW9fszJu1Uo+wA+cbGvy4Plgbunk=;
-        b=ixRvJu3JxMOhthO/s43V3IuSgBZ7a04opgqnasC1glTz5G6zT+fSMEh2vswl0F6wgy
-         F73pMIcx++E8+yDmB9C63BL35imULzmrf6bF1Bh1VUSgdDKZl8U+R5XaB5+d/kIXQAg5
-         7gmWlwXJ1l4cIncFXMkzXoYURygh9tmFDX2DfaATn7D+VXp6Kv9ouYTNq77i2TU8vNE+
-         uSGXUdtSK+Ui0f5UN0EnhnDwv6gR6Jetx7pOHqHnXZlEm4/ua0etv1KCwtnnZXB5Ysrg
-         xKbOK+gXuzY3qRg8THLTRUocXp7U92m4ab4xPVTFbrqodaSu6lUpCQhygn/owOzxWOV9
-         1Pqg==
-X-Forwarded-Encrypted: i=1; AJvYcCVKVVKWtvqVEKiVSU0JCnpFAQu5JQ8w4rI5CwYzYRgWViiyQ6h9WuoTsdRDiKHs+47OEOgEGvSqHM/h7SM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzgwKsVCtOsZ0ZS73EMfMKk2v6nDz1Xk4tJJD9gvnGYg/6FQWc9
-	522PXL3twfBFX4KexZnH3PXp9UITSL+5bf53a2HPV6A9O5dO2cVVOys8CtHQwpIGBZaY1q5qE64
-	GQrOghX+K/aLEMoEpRblPKTWxPcevjbUya4zD
-X-Google-Smtp-Source: AGHT+IEgzSL7E+FoXmdOkwmpU8nb2C/I8uvJwxWSGmckCGCthEaA8NcbZvddARC4UJaGvXsxQWrx8Ws7gZmgk6Q/SBs=
-X-Received: by 2002:a17:903:2348:b0:201:daee:6fac with SMTP id
- d9443c01a7336-2050d20274cmr3489725ad.16.1724943748890; Thu, 29 Aug 2024
- 08:02:28 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724943794; x=1725548594;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/boQQ5nSp0lspsyalK+l9WbjfJD/McCNrO/o7qkR35I=;
+        b=AZJxQlyidqo4xs2iPb5V1mnuwYypWTq+Zac7VeceXtkVhYHLbygp4UOplebwhkBoFB
+         UuHaqyrUKN4PVum1hkix7TieWOgoU58EaY4tgJqQ85Bz/NTI73OBhXhjoHztwy67ckXH
+         DN93l8RPi+i4FGJJF3yFvG5NDZNMEk8qNn0QHn/l5xb+9L8RUN2zzDGoHJrtuYhU85yg
+         9c/Z2c/FTu45VQQ32TkL9rISHEB7gDV5MxMiiqX/PX5ibt6eSSMoXlSBH2qpEinxmlMG
+         lfx7pMf3sVevkRfl7xaQ24NzpN1/XYi7ftjXX4PuAFc8ipztfwNFCjXwE/Pce0uKcVEp
+         nNHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW5CAq2RmGA+k6Wh+7udqMgW7Mc6b6HMYC/IBC3D1pr97Vn/9DEaZuAbWTboyJMeWQ8elJ3DftLRGJ5LgocJaXD@vger.kernel.org, AJvYcCWEj/uzlwf3r4NqRcneUDFzoohH/Oju544VHTi+h6LaBYCACqWudCxmBuQadDaJxiwcaFXvul4EhZq0cH0=@vger.kernel.org, AJvYcCX42xvS9DnereH/W8ETpYWoPODnV4vuq/fFP+wAQtKTFYXO1ocQsHDYXaI28q499s+XBPI3ysFw@vger.kernel.org, AJvYcCXMvpk5QMIM5dAvY5y0w4Ldf/zhRLd/yZ0eqT2YzwI0zS4dzKH42utl+Q568MLeT4VDBWnedKD3Ff0ydI/V8fzp@vger.kernel.org
+X-Gm-Message-State: AOJu0YyuxlJ4a3HqAXJAZBodddxW/phjU7RkV7ublqafiwGTdtBryWpv
+	6m9CWx+lFhFCrOtikiZ5EOs8OteYno584KQaa14TwiycyMdbEUg/
+X-Google-Smtp-Source: AGHT+IGX0vjuiRrrF7Q4njAuRfTDg0gEtXtmJJt2CXIg/Fo8ez2WU8vK5t79ZjAVn5JzsszqFoh+Hw==
+X-Received: by 2002:a17:906:7308:b0:a7d:3cf6:48d1 with SMTP id a640c23a62f3a-a897f8d50a3mr254539366b.32.1724943791598;
+        Thu, 29 Aug 2024 08:03:11 -0700 (PDT)
+Received: from gmail.com (fwdproxy-lla-000.fbsv.net. [2a03:2880:30ff::face:b00c])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c226c6a2a6sm792032a12.7.2024.08.29.08.03.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Aug 2024 08:03:11 -0700 (PDT)
+Date: Thu, 29 Aug 2024 08:03:08 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: fw@strlen.de, davem@davemloft.net, edumazet@google.com,
+	pabeni@redhat.com, Pablo Neira Ayuso <pablo@netfilter.org>,
+	Jozsef Kadlecsik <kadlec@netfilter.org>,
+	David Ahern <dsahern@kernel.org>, Shuah Khan <shuah@kernel.org>,
+	rbc@meta.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	netfilter-devel@vger.kernel.org,
+	"open list:NETFILTER" <coreteam@netfilter.org>,
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>
+Subject: Re: [PATCH nf-next v3 1/2] netfilter: Make IP_NF_IPTABLES_LEGACY
+ selectable
+Message-ID: <ZtCNrKwfPx6dhORU@gmail.com>
+References: <20240827145242.3094777-1-leitao@debian.org>
+ <20240827145242.3094777-2-leitao@debian.org>
+ <20240828074240.2abaa74c@kernel.org>
+ <Zs88pbEadxLWLLbn@gmail.com>
+ <20240828114123.3c85a9a5@kernel.org>
+ <ZtBIgekUyptmCqRa@gmail.com>
+ <20240829075303.775fce1d@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240809072532.work.266-kees@kernel.org> <20240809073309.2134488-2-kees@kernel.org>
-In-Reply-To: <20240809073309.2134488-2-kees@kernel.org>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Thu, 29 Aug 2024 08:02:13 -0700
-Message-ID: <CAJuCfpFY9=NOftvaKqkuohZH9L1QTHshORXeqLomrHBPPTd9kw@mail.gmail.com>
-Subject: Re: [PATCH 2/5] codetag: Run module_load hooks for builtin codetags
-To: Kees Cook <kees@kernel.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>, Kent Overstreet <kent.overstreet@linux.dev>, 
-	Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>, 
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org, 
-	"GONG, Ruiqi" <gongruiqi@huaweicloud.com>, Jann Horn <jannh@google.com>, 
-	Matteo Rizzo <matteorizzo@google.com>, jvoisin <julien.voisin@dustri.org>, 
-	Xiu Jianfeng <xiujianfeng@huawei.com>, linux-kernel@vger.kernel.org, 
-	linux-hardening@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240829075303.775fce1d@kernel.org>
 
-On Fri, Aug 9, 2024 at 12:33=E2=80=AFAM Kees Cook <kees@kernel.org> wrote:
->
-> The module_load callback should still run for builtin codetags that
-> define it, even in a non-modular kernel. (i.e. for the cmod->mod =3D=3D N=
-ULL
-> case).
->
-> Signed-off-by: Kees Cook <kees@kernel.org>
+On Thu, Aug 29, 2024 at 07:53:03AM -0700, Jakub Kicinski wrote:
+> On Thu, 29 Aug 2024 03:08:01 -0700 Breno Leitao wrote:
+> > > There are various configs in the tree. Grep for the configs you convert
+> > > from select to depends on, they will all need updating.  
+> > 
+> > I am looking at all files that depend on these Kconfig options, and
+> > there are a lot of tests.
+> > 
+> > Thinking more about the problem, it doesn't seem to be a good idea to
+> > change dependency from all NF modules to NF_IPTABLES_LEGACY. In other
+> > words, the `s/selects/depends on/` is the part that is causing all this
+> > hassle, and it seems unnecessary.
+> > 
+> > That said, I would suggest we do not change the dependency, and keep the
+> > "select NF_IPTABLES_LEGACY", and keep NF_IPTABLES_LEGACY user selectable.
+> 
+> Good idea, sounds much simpler!
 
-Hi Kees,
-I finally got some time and started reviewing your patches.
-Coincidentally I recently posted a fix for this issue at
-https://lore.kernel.org/all/20240828231536.1770519-1-surenb@google.com/
-Your fix is missing a small part when codetag_module_init() is using
-mod->name while struct module is undefined (CONFIG_MODULES=3Dn) and you
-should see this build error:
-
-In file included from ./include/linux/kernel.h:31,
-                 from ./include/linux/cpumask.h:11,
-                 from ./include/linux/smp.h:13,
-                 from ./include/linux/lockdep.h:14,
-                 from ./include/linux/radix-tree.h:14,
-                 from ./include/linux/idr.h:15,
-                 from lib/codetag.c:3:
-lib/codetag.c: In function =E2=80=98codetag_module_init=E2=80=99:
-  CC      drivers/acpi/acpica/extrace.o
-lib/codetag.c:167:34: error: invalid use of undefined type =E2=80=98struct =
-module=E2=80=99
-  167 |                         mod ? mod->name : "(built-in)");
-      |                                  ^~
-
-Thanks,
-Suren.
-
-
-> ---
-> Cc: Suren Baghdasaryan <surenb@google.com>
-> Cc: Kent Overstreet <kent.overstreet@linux.dev>
-> Cc: Vlastimil Babka <vbabka@suse.cz>
-> Cc: Christoph Lameter <cl@linux.com>
-> Cc: Pekka Enberg <penberg@kernel.org>
-> Cc: David Rientjes <rientjes@google.com>
-> Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Roman Gushchin <roman.gushchin@linux.dev>
-> Cc: Hyeonggon Yoo <42.hyeyoo@gmail.com>
-> Cc: linux-mm@kvack.org
-> ---
->  lib/codetag.c | 5 +----
->  1 file changed, 1 insertion(+), 4 deletions(-)
->
-> diff --git a/lib/codetag.c b/lib/codetag.c
-> index 5ace625f2328..ef7634c7ee18 100644
-> --- a/lib/codetag.c
-> +++ b/lib/codetag.c
-> @@ -125,7 +125,6 @@ static inline size_t range_size(const struct codetag_=
-type *cttype,
->                         cttype->desc.tag_size;
->  }
->
-> -#ifdef CONFIG_MODULES
->  static void *get_symbol(struct module *mod, const char *prefix, const ch=
-ar *name)
->  {
->         DECLARE_SEQ_BUF(sb, KSYM_NAME_LEN);
-> @@ -199,6 +198,7 @@ static int codetag_module_init(struct codetag_type *c=
-ttype, struct module *mod)
->         return 0;
->  }
->
-> +#ifdef CONFIG_MODULES
->  void codetag_load_module(struct module *mod)
->  {
->         struct codetag_type *cttype;
-> @@ -248,9 +248,6 @@ bool codetag_unload_module(struct module *mod)
->
->         return unload_ok;
->  }
-> -
-> -#else /* CONFIG_MODULES */
-> -static int codetag_module_init(struct codetag_type *cttype, struct modul=
-e *mod) { return 0; }
->  #endif /* CONFIG_MODULES */
->
->  struct codetag_type *
-> --
-> 2.34.1
->
+Thanks, I will submit the patch soon.
+--breno
 
