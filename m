@@ -1,109 +1,128 @@
-Return-Path: <linux-kernel+bounces-307463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 193B4964DDB
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 20:39:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3A66964DF6
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 20:44:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39DE41C2308B
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 18:39:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82E77B211D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 18:44:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1C681BAED4;
-	Thu, 29 Aug 2024 18:38:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B0D81B9B38;
+	Thu, 29 Aug 2024 18:44:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bb9OFmzR"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="cbjseovY"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71CE91BA88A;
-	Thu, 29 Aug 2024 18:38:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AA531B86E9;
+	Thu, 29 Aug 2024 18:44:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724956687; cv=none; b=TQXAYVpdWOFu3J/B6LRmpbJMi0KGjvJw2oIwwunIByPsuSlL/qZeU28goszbfIwOI5AjjaUR3Hb3QxUUjaN0eR8vvKmgG3FzDUnRNobIWhAezBOVPJrV27sdJX7UcU5LJNf7s0NmhubvEzVg0PqYaLh7+G+lC//wDz5LeuyeGIY=
+	t=1724957068; cv=none; b=f5SeOau4Esvc8OR+b/ihUmGLCEWcuUlC4hAUnKHklVi2jOP9b4aSB03winu35hO6O0krBpXBkFbEBjOF5ZSZPKEFW/f+kMfdooTxCpMvNfjftbPBNP1L3GcmD993iGdNEV5GmzfHdRAIinFJMcgqACBWuXFTBEGtQE8MGhCvc30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724956687; c=relaxed/simple;
-	bh=kn6kId+WElwQbJomtHV8/JDSRr2Vt/uvyhu71qrhJIU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XBf1693SmHrisB3YRFYsFJvoF0lbrWOpPZVGpC5/aNPgQniYRZG+QhuJUXv4lpy2wCazOoZfVp95aDOkwLIyXyLJVQCPFHI96GLYGBJONNXPHPBlcX3p7tFnXgxk6MlJgDOqeamiSgnbGjsuvZbvf88h5QEmmA2z335J4tJ5mhM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bb9OFmzR; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3718c176ed7so622253f8f.2;
-        Thu, 29 Aug 2024 11:38:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724956684; x=1725561484; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/A8H3hn9t/qDw+QP/avd33PJtlpDZ3DcFKIA/WZ8eDE=;
-        b=bb9OFmzRqYzNqCZQaPqSA0+x1zs0X5lSuroWCwz9E8mE/E97QvAimGn4rFqOH9uNQb
-         Q1g6UBG9zDNzmebSorYatDCkIugvxxnD976w4/H8lEL9+UvzdxMrpAkjtgvZjL9H4fiZ
-         vb9Tl2TKNppBRazo62ozn56J35dFyP1u9JbHG5lEsshe6RSWO8mZillU5K0Fof6bNDMR
-         I07tRPH7bt+dz24hEV9E5F2VXerCNN09BWrAlBL40ilVZwcZTjjSkI9B/BJeJqPyakWo
-         Lyp3lisGXWKKuUzMswSnmgjJkn7P6RlO/Yd4vISQTm7UQCz2RjUb0ZXC59a59dY6MmLk
-         /f+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724956684; x=1725561484;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/A8H3hn9t/qDw+QP/avd33PJtlpDZ3DcFKIA/WZ8eDE=;
-        b=Y032HFtVyc45nXkUVV5va5CegbmdOAMfSEmWNa5tv+xj+hETqJ6lZkJwoUZdo4baOG
-         Ndqxs2eZHLjsYhE4tcqJNCPP6p8F6ONOl3+CDSTnZT0mCRhn88B9JXyPHyp7cqECKrjh
-         zQ7k5LJWBHlSPivslHjY0oOUJiXAtoiPNab/IZL9vovFhgBN/JVYvrh8VDwNTihU8nwX
-         PbUK1mhHa4v4vrs1LHe1qPe+o3+YBVi+tjANET11M1EFMh/XPtpJPuJ1WrwZfI7Tpbnk
-         bUZRud3eEbt7as86/pL7xim28MFlwQuHgxAhP3QjTzqsVLBMNNW/ELOJAkDA0IHMCfXP
-         inhA==
-X-Forwarded-Encrypted: i=1; AJvYcCUQS6zWJvcYxnG6ixv9kYbls/0xrX+sMmN3mrRlFkdj20LsesqEBQx8KLtsy9qG9BQ7FhtO/saA5rcSw+lS@vger.kernel.org, AJvYcCWMqGEE7Rf/ix855uTL9rcIZ1WWAWQNEfq2SNiPc5Re4NsHrKAFGza4OHwNF4l2Y/nNbak=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpCalo9gE5nrThf6/+ldgHh/1t4IuCb2sHkxocIq7fbo+r/+2X
-	ebYZMSDFdNqNVmInFxJPpJYhwVaLl7J67fYLcyMfr7HWOgGjFgjVRSMaQ2aus/rs9xBUEoIxmkp
-	hYPO9G/LRamG9px+u36yhfLcjbTg=
-X-Google-Smtp-Source: AGHT+IEpycbQ0gGT9DmLqoX/3ROWtk622CylKyxWyGjJ8NxhSqRwXh3B5yOCS7cg08e/Ywg1tr9bu4/+OWlp25bkJQY=
-X-Received: by 2002:a05:6000:1802:b0:371:a844:d326 with SMTP id
- ffacd0b85a97d-3749b57febemr2595945f8f.43.1724956683502; Thu, 29 Aug 2024
- 11:38:03 -0700 (PDT)
+	s=arc-20240116; t=1724957068; c=relaxed/simple;
+	bh=Jx/BFerNDf7r5tR1yNitkZFck465J+ltG0IRRiB5vtA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sVRlwcu8raTgMtwedrMuo+4P1+s+1BsSxHJz53YrR649EZMYEFfBf0OgHVv5EZkp5kyB2k6qUBeG1C1inuiVk5aQZu04/0y7n9deD/qJLpBthzhP764NKFRZ2Nbi9uIf52eQL/ofN1t2HFqGO/hgnejfqlmW0OxuUMc7sU9JnW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=cbjseovY reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
+ id 49512f7242cb57d7; Thu, 29 Aug 2024 20:44:24 +0200
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id B7F1A6A8C15;
+	Thu, 29 Aug 2024 20:44:23 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1724957064;
+	bh=Jx/BFerNDf7r5tR1yNitkZFck465J+ltG0IRRiB5vtA=;
+	h=From:Subject:Date;
+	b=cbjseovY4lVygyiB81PefKCkpynKJ7qZiPXxX2pwj8A3xtl/1STyjA34kVQlYNT9A
+	 WkZHMn/+9Ks56G21WxzEY+mDgpS3/suwViaLrqOWJp9O4873OchyM2IC8inuph6SPS
+	 0qCkd+gFPjmnVWr584rS7kaYxJWMHG4YqmqbUPep1FrrP5DoeeDrOtAYf4si8jQJ9N
+	 CFuVTSxOLhPieoa1EBFXOnrpXon0jReNBTW4qn036w2XrhY3yN12doFuqdSkPsrqJ+
+	 rsnWmLbO8fIagQaMfbGIch+x1Pq652AX7M3EjRsonZeFXdI4FAu+pHwGO4MRNpWv6G
+	 RHDs6CaLEwM1A==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux ACPI <linux-acpi@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Bob Moore <robert.moore@intel.com>,
+ Saket Dumbre <saket.dumbre@intel.com>
+Subject:
+ [PATCH v1 13/20] ACPICA: Add support for supressing leading zeros in hex
+ strings
+Date: Thu, 29 Aug 2024 20:38:31 +0200
+Message-ID: <23640949.6Emhk5qWAg@rjwysocki.net>
+In-Reply-To: <5819337.DvuYhMxLoT@rjwysocki.net>
+References: <5819337.DvuYhMxLoT@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <AM6PR03MB58482E9A154910D06A9E58B499962@AM6PR03MB5848.eurprd03.prod.outlook.com>
-In-Reply-To: <AM6PR03MB58482E9A154910D06A9E58B499962@AM6PR03MB5848.eurprd03.prod.outlook.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Thu, 29 Aug 2024 11:37:51 -0700
-Message-ID: <CAADnVQ+P=j0MTkyDD0vYcaqU-qqdE_+mi+gDaqDsLqTXWNPHwA@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v3 1/2] bpf: Make the pointer returned by iter
- next method valid
-To: Juntong Deng <juntong.deng@outlook.com>
-Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	John Fastabend <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Eddy Z <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
-	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Kumar Kartikeya Dwivedi <memxor@gmail.com>, snorcht@gmail.com, bpf <bpf@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddrudefgedguddvjecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpeeltdeikeekkeevieektefggfetueetfeejveejgeduledvudehieeuvdeiheeiveenucffohhmrghinhepghhithhhuhgsrdgtohhmnecukfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhjfiesrhhjfiihshhotghkihdrnhgvthdpnhgspghrtghpthhtohepgedprhgtphhtthhopehlihhnuhigqdgrtghpihesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehrohgsvghrthdrmhhoohhrvgesihhnthgvlhdrtghomhdprhgtphhtthhopehsrghkvghtrdguuhhmsghrvgesihhnthgvlhdrtghomh
+X-DCC--Metrics: v370.home.net.pl 1024; Body=4 Fuz1=4 Fuz2=4
 
-On Thu, Aug 29, 2024 at 3:45=E2=80=AFAM Juntong Deng <juntong.deng@outlook.=
-com> wrote:
->
->                 if (prev_st)
-> @@ -12860,6 +12867,16 @@ static int check_kfunc_call(struct bpf_verifier_=
-env *env, struct bpf_insn *insn,
->                         /* For mark_ptr_or_null_reg, see 93c230e3f5bd6 */
->                         regs[BPF_REG_0].id =3D ++env->id_gen;
->                 }
-> +
-> +               if (is_iter_next_kfunc(&meta) && base_type(regs[BPF_REG_0=
-].type) !=3D PTR_TO_MEM) {
+From: Armin Wolf <W_Armin@gmx.de>
 
-The !=3D PTR_TO_MEM part is a bit ugly.
+ACPICA commit 86289439d9f8b9eda28c249da66ae230d6439491
 
-Why not do it in {} scope right above?
-Just move it up by a few lines?
-Right after regs[BPF_REG_0].type =3D PTR_TO_BTF_ID;
+Currently the leading_zeros argument has no effect when
+converting hex integers. Fix that.
+
+Link: https://github.com/acpica/acpica/commit/86289439
+Signed-off-by: Armin Wolf <W_Armin@gmx.de>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/acpi/acpica/exconvrt.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/acpi/acpica/exconvrt.c b/drivers/acpi/acpica/exconvrt.c
+index 4e8ab3c26565..9647325d290d 100644
+--- a/drivers/acpi/acpica/exconvrt.c
++++ b/drivers/acpi/acpica/exconvrt.c
+@@ -270,6 +270,7 @@ acpi_ex_convert_to_ascii(u64 integer,
+ 	u32 decimal_length;
+ 	u32 remainder;
+ 	u8 supress_zeros = !leading_zeros;
++	u8 hex_char;
+ 
+ 	ACPI_FUNCTION_ENTRY();
+ 
+@@ -330,8 +331,17 @@ acpi_ex_convert_to_ascii(u64 integer,
+ 
+ 			/* Get one hex digit, most significant digits first */
+ 
+-			string[k] = (u8)
++			hex_char = (u8)
+ 			    acpi_ut_hex_to_ascii_char(integer, ACPI_MUL_4(j));
++
++			/* Supress leading zeros until the first non-zero character */
++
++			if (hex_char == ACPI_ASCII_ZERO && supress_zeros) {
++				continue;
++			}
++
++			supress_zeros = FALSE;
++			string[k] = hex_char;
+ 			k++;
+ 		}
+ 		break;
+-- 
+2.43.0
+
+
+
+
 
