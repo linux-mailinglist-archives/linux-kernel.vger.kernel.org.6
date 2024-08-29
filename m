@@ -1,164 +1,115 @@
-Return-Path: <linux-kernel+bounces-307638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D04039650A7
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 22:18:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5EA09650AC
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 22:18:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBB321C22EAE
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 20:18:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D5DA2814F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 20:18:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E14981B8EBD;
-	Thu, 29 Aug 2024 20:18:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 537621BB6A1;
+	Thu, 29 Aug 2024 20:18:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="YOvqDJwq"
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05olkn2022.outbound.protection.outlook.com [40.92.89.22])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Al6imJ8D"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F7221B8EAE;
-	Thu, 29 Aug 2024 20:18:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.89.22
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724962697; cv=fail; b=nTG2jS0PFSo8tNBcAPWiuERwiWfz8LG/Q4nKJq+LDprVtsSDYJHiyZiYimYEOOGGBKB7bnlpBLb4MIrrXgjyjoTfyxvxDSYm+euf3dsZfd3c4B1KR8QLYREqqpzEnZQsvOrzPizIPPfUaVE16bHxquelOVCxAJiRMBNgp/T5K/E=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724962697; c=relaxed/simple;
-	bh=Tq1LQ0wEo9Ieiexf8t+BGUOIU2R3kjWACrt/ZmqMcOA=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=grkCCwqYf3yUhrD7v0Fw68e1MqXWNaQTjc9TyUXbAfWo8JoeqhSV2WKWObn4zxi13Bw4htcFbwPE9PyeJdni3O7dr7klE5Z9u8YbVftbALafDyBosT5pRQH1LcaeX9afkOMblZx5LBngbjBdt4gas9oME8FHx88DM9dLGvoHeNY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=YOvqDJwq; arc=fail smtp.client-ip=40.92.89.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=TkbFoish0sgz+wQMmn0FAPT6d0cuxVb6b5VEEiNGDsxo1YDSEok7QxX/8faD3j3k7PeeppvwZeO5r/mYCrhDvOw0ccivnY7rXTzpL/zuWG7QcPeKHmijR2roU1dxQV3vR8hMD18ehBkiL6eGDdaK9qNkIw4y4x6B2WhLtfX8094Bcal7J5uKQNRn+H32U0Wc/V0ojrf9OqRYLl49gO1KSrC+rX1+XDzRvm4RH8osMdeIOhlJCXNe7qJ30vmETOFeAm/UKT9JBaFh+GZGjwW+S8k8DdjUK/rDTyUXxygvh6L94WfxmpEqjVOBStTqAGt19YhDBkyGIVSi4JEuYJa1fA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+Sd5M5oSqrC6GqDCVTMCHMocjj4EVK1pDTkdchZl6mo=;
- b=aDrVTi2v/QhayTmsg71GfBtC0a1TPzLYqElxgkrW9mtwT2+nQIyWiVFvYe6t1OVx2zEwaaizfRlATIPSE++Jt2JVUzzHVCQmue7QODo31T6i6jNrKVuUBBdl8PFX3pf2cCvQ2csxymuyLlDXMT1Q47Dz5xOLelcE2eHgkDb7rg3PHRdAKpCqiCnspVHqwQkk2yK0xfpwBxUu81M+GaVu5iI2ZiFSmpAZrBXKFqCok5RMW7azmaDiEFtCFAjI/Vszl0V++OmeVqsOpp1ilD0O0XOVYcQZeerfDrBa+T8+7UlVn5zi92kjy9i89yXMJ2ZS4T9G/26wxLA2F7g8+xjW2w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+Sd5M5oSqrC6GqDCVTMCHMocjj4EVK1pDTkdchZl6mo=;
- b=YOvqDJwqboeDNEFzGEA35wiYdfm4Dzt9gof6DWMfVBGgZ6nJaCU15UE88OlVAX5GnsjMQzaoA6JK88E5aqcsiOCqTnKxq5Kk0u1UpClIYxGwUxvyr7QnXPLmgXCTICJUAl2iPrCd1CX+yqG3GA4ulSNj315Jrxqe1q58rQJ8PvO3PbNvw58u0LlS/g1BYCqxWVKDeIVhe0cIPbQa6yq1N8lxRPY2D9hoIaWn97SbeiCVBBf/THcRnQdxsFqD+9kVDi9jKfknT3DFbbZ69uHCZTKySyCgDtbWO7TYOS9sVJUSlK61Tl90kao2R9ZxUG45/U8QqUNdtxYzBGdaEQCO8g==
-Received: from AM6PR03MB5848.eurprd03.prod.outlook.com (2603:10a6:20b:e4::10)
- by GV1PR03MB10409.eurprd03.prod.outlook.com (2603:10a6:150:163::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.28; Thu, 29 Aug
- 2024 20:18:10 +0000
-Received: from AM6PR03MB5848.eurprd03.prod.outlook.com
- ([fe80::4b97:bbdb:e0ac:6f7]) by AM6PR03MB5848.eurprd03.prod.outlook.com
- ([fe80::4b97:bbdb:e0ac:6f7%4]) with mapi id 15.20.7897.021; Thu, 29 Aug 2024
- 20:18:10 +0000
-Message-ID:
- <AM6PR03MB5848D364CD9297DE667B401999962@AM6PR03MB5848.eurprd03.prod.outlook.com>
-Date: Thu, 29 Aug 2024 21:18:08 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next v3 1/2] bpf: Make the pointer returned by iter
- next method valid
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>,
- John Fastabend <john.fastabend@gmail.com>,
- Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
- <martin.lau@linux.dev>, Eddy Z <eddyz87@gmail.com>,
- Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
- KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
- Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
- Kumar Kartikeya Dwivedi <memxor@gmail.com>, snorcht@gmail.com,
- bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-References: <AM6PR03MB58482E9A154910D06A9E58B499962@AM6PR03MB5848.eurprd03.prod.outlook.com>
- <CAADnVQ+P=j0MTkyDD0vYcaqU-qqdE_+mi+gDaqDsLqTXWNPHwA@mail.gmail.com>
-Content-Language: en-US
-From: Juntong Deng <juntong.deng@outlook.com>
-In-Reply-To: <CAADnVQ+P=j0MTkyDD0vYcaqU-qqdE_+mi+gDaqDsLqTXWNPHwA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TMN: [211YcQJYdt2hyKCc5HI2e4SkjgM66viY]
-X-ClientProxiedBy: AM4PR07CA0026.eurprd07.prod.outlook.com
- (2603:10a6:205:1::39) To AM6PR03MB5848.eurprd03.prod.outlook.com
- (2603:10a6:20b:e4::10)
-X-Microsoft-Original-Message-ID:
- <b4d3143d-6ec9-4373-8f0e-f30dde2544be@outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C374E1BAEDE;
+	Thu, 29 Aug 2024 20:18:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724962714; cv=none; b=o9b0i7MjIN8jKCUocQeCcvlT4nwPXlV7GQ5JknnVCjQ6jSaAxYgBWuJGLwEF/L/XKTcJ948anz0Sno2SlpP/1bRWaOOExjM0ARmsmH+Dr/cbrVsd0aqNJjx8V1QclnK0povqYaRRIiqGkonqOMMG3FSR7tMrp8P8Kkp9JnoaGPY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724962714; c=relaxed/simple;
+	bh=SKWfYrbBH0IoRJ/3tiqPCXJ5zpPI+w9UX0N3O8LojwM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XQ1iO7ArXpgOLRa4GYDf/7dCnat0mczASCtCy1TprqGiVbFkmIb1eX+mLgLQyrUNuC8ocfr7pcNLAQ7m7dz3OorN67QRpU6OF0gQIxWu18L5yNVjqTe6N5Z3S7V+BiWUE0vKoX6RQMOy7hAg1+ZDhve0mll2cc697HeRrayoJQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Al6imJ8D; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724962713; x=1756498713;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=SKWfYrbBH0IoRJ/3tiqPCXJ5zpPI+w9UX0N3O8LojwM=;
+  b=Al6imJ8DledFZGYRGw7GZxoaM46NvseFe4A8hnfiBkIb6ia1zxFrKYVO
+   NnarmasluwOxVoHzTzpAt0ochUQKDKwz0ptng5ZMBtCJKCHUCmJDiWhPj
+   Td4MSwHh5BHRUB84yrGH27M8bbWChHNAsY4dRi7e7HrfsaKUXa6QCJP/Z
+   A12yBjE/r5E8lQvWR2tSCSGhABkFhn4C8LKHSpXl8tHSVeLM1YGlfAfHK
+   7XbRF9J4kH7JPdsr2yQGC8RCdE4aGm+m4cV3cxdJxwuwZk2PVksKNCaLL
+   UgQnr9pRSLNmzIj7IzeNbigZrEjNjBGaSzSTnP24y+Gcl2Z429/3dZWFp
+   A==;
+X-CSE-ConnectionGUID: 0uxEcvlyR8KJyKAjA5Y05w==
+X-CSE-MsgGUID: 4r4iOB6DSei0maF5qUMcew==
+X-IronPort-AV: E=McAfee;i="6700,10204,11179"; a="34992815"
+X-IronPort-AV: E=Sophos;i="6.10,186,1719903600"; 
+   d="scan'208";a="34992815"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 13:18:32 -0700
+X-CSE-ConnectionGUID: 8MEbzyTCSCGD5Ve/3diPvw==
+X-CSE-MsgGUID: 5Q+KPRAZSs65U8HIgdNAVw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,186,1719903600"; 
+   d="scan'208";a="86922584"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 13:18:28 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sjlb7-000000039IC-169l;
+	Thu, 29 Aug 2024 23:18:25 +0300
+Date: Thu, 29 Aug 2024 23:18:25 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Vasileios Amoiridis <vassilisamir@gmail.com>
+Cc: jic23@kernel.org, lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, ang.iglesiasg@gmail.com,
+	linus.walleij@linaro.org, biju.das.jz@bp.renesas.com,
+	javier.carrasco.cruz@gmail.com, semen.protsenko@linaro.org,
+	579lpy@gmail.com, ak@it-klinger.de, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	christophe.jaillet@wanadoo.fr
+Subject: Re: [PATCH v4 2/7] iio: pressure: bmp280: Add support for bmp280
+ soft reset
+Message-ID: <ZtDXkZQh689PGtrb@smile.fi.intel.com>
+References: <20240828205128.92145-1-vassilisamir@gmail.com>
+ <20240828205128.92145-3-vassilisamir@gmail.com>
+ <ZtBlLqLgpi2h6kMl@smile.fi.intel.com>
+ <20240829190004.GB3493@vamoiridPC>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM6PR03MB5848:EE_|GV1PR03MB10409:EE_
-X-MS-Office365-Filtering-Correlation-Id: ddc198bd-9266-4029-fd9b-08dcc867b37a
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|5072599009|8060799006|461199028|6090799003|19110799003|15080799006|3412199025|440099028;
-X-Microsoft-Antispam-Message-Info:
-	6idH1qiVRuFaanJ2zX9izeiBmI6/9TIQdJQIVYucbaRwpetZMt6sd8wwWeh+ZA/A4iykVb68To/iPrI0LBKabUaNkrev/9cpcd0fuJpiIgu0yMllGOsj0C6HrgeTrBYCJ2w+RvnHr/UReZIXjZ/yBA2m/vBC1LpVB8WPVrIFIdU4pCzjXuoaIgDsRMxGzizMX+nAO0tRd7IKZOHOFVVusFfulJ+2ysM0vzMBbwfSL9GskPT+u6iEzMO8RlqnMAL1VX/ajfMmbpDSgMmTzVbjG5wN92qGGH3FZCjWPYcDiXncixdz6o1ytSU3JYJqOYj1Qf1B3xRoc9zGL8cU3tidCAJYqVCppmkdYkf5dAP8ff+SA68JnTF48ucDWC+tTh2kxd04CWeMFNUEXOxZjlDGHqrEWVdmx9c5AfqElj0qcTpEJ+XrqbPLcfnfRa97tiI3QnTbw3eGDNEeMCEEdNDuAT0Rf63bhKd0PSYh/7nRM9SE+/jgERNXlw0kqyhnk48fPwVTK2zEyMjKeoJewEcYkileqpESJziUuxkifbQyNOoSOEHindQX4d8mOfSOvyJUNdj4aZ+LGZ+r8n3MybkVujlij9rtiY51EXgCuZksJgjK2fLxOHlfVLTzwB8TSBbaX59vJwRtc0GiontBjO59A92Rt9/rO1f6wkbEkyCZGt6rDb5K8GK7qnzdmEP9g4B7yU4rv/oQd1JHLGdX2ZxxMilOvyfwyHopqegOaJOzSiqhkI4SmC+n/OepjDqBsprGTHmEFiwQ4tXm3s7G/6doixjp8ZoMfmUmlrHapl3YGXY=
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?VXU1VU5uUzIrYUo2b09HakdEUHRqRUNCaC9KSmFCSkVaQVpOV1FZZTVFSXlC?=
- =?utf-8?B?ejRvRzQvSXV1OUFEd1ptRm42YVZUV3JPSXVUbGxlZnBlZWNYMzIzMUJoclNT?=
- =?utf-8?B?Q0ZoQ3FRRkFvcVI0MnF6cTdyYjVwQnhjTStMZXArWjUrbjlWR1JvdFlXUThi?=
- =?utf-8?B?aS9zT1FuTEtLdG90a0g5U3JZTTUxOVZJUENlS3gzTm1KMERzTFM4eVJzRG51?=
- =?utf-8?B?NENCakpDMGFrR29qeldXZTRQWitmR2huUkFpa2E0SzByRzJjTUEwMFJUOFUv?=
- =?utf-8?B?ODJtaTZYaUVxSFBYYkswSXNFS3lCazVBcTVsL1JvZ1ZiN1p6TEVDM3ZPTXQy?=
- =?utf-8?B?ZmdMcWc0SXMzdVdqaGwrUDF2NzF5NHpEYldUWCs1L0QwOGMwUzA4eTkxQ0Y1?=
- =?utf-8?B?ajFFc0xSUS9TTmVGSGhZT2FvZGlIa3ZtWTAvaUtVTkx4UXhLTEZYTWY4NUxF?=
- =?utf-8?B?RE8vRVNrNFJpWnN6QkYxL3o4amtLQ29NY2tPQk5lQzZBaUVmWVBwWkFHZjly?=
- =?utf-8?B?V0hGYlFDelBVSGFzYzZUeFZKdTU4ajUwSExvSnpoajJ6elpDRlEvOUt5K0FH?=
- =?utf-8?B?Nzdid1F0WEJnUzBSWktqUThLcnZ4MWtQV05OeEt4QWdJbDY2WlpsOGxGenhM?=
- =?utf-8?B?U3Z5VTNmeHB5U01oRytjdk5wR2t1a2liNFdVK2k0Y0ZGM01OWFVOWmZqbmgw?=
- =?utf-8?B?dHpQUDBEUjRQclNWczlsRFNaWkw4Rm0yTU1tQ2dtVlVTaVR2ZTF2K0JDRll5?=
- =?utf-8?B?R294WStxY3Y3SmdPVjY3KzNMOGo4MDVwYitMOUgxNWlQcUp0Y0M4bUNqZXI0?=
- =?utf-8?B?UlhGTFVYekZ5Qm5qbXZqRTZBL2NKWW85NnBGa2Rjek9rVWI3eDlWayt5L25Z?=
- =?utf-8?B?ZXB2TGFxM0FmMzJyUStubFFIT21tUGtSOXl5SktjYndLaG41ZnpyR09LSytp?=
- =?utf-8?B?QVhwOEZSdk9rQUREYWYrWFY3bzBwcGNJaGt2NVNNVFRjYXd1cU85VGVXYzI0?=
- =?utf-8?B?ZWJPMG9JY0pqNEliOFp5REJxY29jOEl0MG1PaGQ4UktXT05nTTZpNzFHR25S?=
- =?utf-8?B?TGUwR2Y1OHB1Tnp5YWVTb1I3T21YejIrWTlBK2IvQWFjQWROdG5PbEVBZmxk?=
- =?utf-8?B?S1NPL0ZuTFVsYVhQZE1xV3hubG81RDJCa1ZnY2h5bDJQRXJDNGV3VHhubHV1?=
- =?utf-8?B?QTRMV201d1JFd2prcFRjU3o0ZlIzRVF4emw4czYwZ2J3a2FXWEdFMndBTDNk?=
- =?utf-8?B?RG5leFV5RCtXVVVwa2Z3cHJkNXVONmEzaDhrRkF3UENOMDFXVEJKZXJPVjNQ?=
- =?utf-8?B?VEpzbFF6WHYzQjdtV0JRQnhqMmtsSkNORkpERndSQ1VNanRGU0JEczNyeVhx?=
- =?utf-8?B?bzdPK25XUHRrR1VSSytiSThEUWE2L2d6UUdGbkJhVWJKODlWUkZ1aVZKUUw1?=
- =?utf-8?B?VHUvRWM0QmJZc0Jmc2JubG1sS2Q3NUNjRDMzMGdWK1JSejEvUmtnTCtOdW1L?=
- =?utf-8?B?Tld4Z3hqZlBwaXlONTBEQjlyWXJaZGhrSWkycTlYSHg5UnFIeTdjODl5d1RJ?=
- =?utf-8?B?YlFERkdSUU1tMjQ1dWNSTk1iY05oVzRJK0dZRHdDcm1DNkV5Q3ZteGkwRy96?=
- =?utf-8?B?M2VtZURTVDV4Q284T2ZJNFE2VDF4MkM4Y29ERlFkdFo0amRBZEpTZVFDczcr?=
- =?utf-8?Q?Yfi6Lm3OcLpgwfKh399N?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ddc198bd-9266-4029-fd9b-08dcc867b37a
-X-MS-Exchange-CrossTenant-AuthSource: AM6PR03MB5848.eurprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Aug 2024 20:18:10.0125
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR03MB10409
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240829190004.GB3493@vamoiridPC>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On 8/29/24 19:37, Alexei Starovoitov wrote:
-> On Thu, Aug 29, 2024 at 3:45 AM Juntong Deng <juntong.deng@outlook.com> wrote:
->>
->>                  if (prev_st)
->> @@ -12860,6 +12867,16 @@ static int check_kfunc_call(struct bpf_verifier_env *env, struct bpf_insn *insn,
->>                          /* For mark_ptr_or_null_reg, see 93c230e3f5bd6 */
->>                          regs[BPF_REG_0].id = ++env->id_gen;
->>                  }
->> +
->> +               if (is_iter_next_kfunc(&meta) && base_type(regs[BPF_REG_0].type) != PTR_TO_MEM) {
+On Thu, Aug 29, 2024 at 09:00:04PM +0200, Vasileios Amoiridis wrote:
+> On Thu, Aug 29, 2024 at 03:10:22PM +0300, Andy Shevchenko wrote:
+> > On Wed, Aug 28, 2024 at 10:51:22PM +0200, Vasileios Amoiridis wrote:
+
+...
+
+> > Yes, it's up to 84 characters long, but I think it improves readability.
 > 
-> The != PTR_TO_MEM part is a bit ugly.
-> 
-> Why not do it in {} scope right above?
-> Just move it up by a few lines?
-> Right after regs[BPF_REG_0].type = PTR_TO_BTF_ID;
+> In all the previous cases though, shouldn't checkpatch.pl generate errors?
 
-You are right, I eliminated the != PTR_TO_MEM part and sent the
-version 4 patch set:
+No, much earlier than 100 characters relaxed limit was introduced, checkpatch
+stopped complaining on long string literals.
 
-https://lore.kernel.org/bpf/AM6PR03MB584869F8B448EA1C87B7CDA399962@AM6PR03MB5848.eurprd03.prod.outlook.com/T/#t
+> I didn't notice that they were below 80 chars and I never checked more
+> because checkpatch.pl didn't say anything...
+
+Exactly! This is old (6+ years?) feature.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
