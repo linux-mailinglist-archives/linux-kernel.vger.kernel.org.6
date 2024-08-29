@@ -1,205 +1,120 @@
-Return-Path: <linux-kernel+bounces-306722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-306723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59BCF964291
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:04:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF5AE964292
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 13:05:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0D541F26846
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 11:04:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 56107B252CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2024 11:05:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E158190660;
-	Thu, 29 Aug 2024 11:04:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1679F190471;
+	Thu, 29 Aug 2024 11:04:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QnkHVNUC"
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GAprF7WR"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFC6518CBF8
-	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 11:04:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6C28647
+	for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 11:04:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724929489; cv=none; b=qHB9FYi+wWzzuk4LtpaLt5z1qB0gm8jebU3gC/6IOxtEQU0OuIeicoJL8FkcWd9tgHvjdgjQ/zM/Pu7uj18FoFL0JJYLBDXBRZGMY1dd+PAE3GdWlu7P5DnUkWRuCFrxn0tqZ5NDg5hnZQfySFbzGdzcXc8TLcgb+20Xxj8kCak=
+	t=1724929497; cv=none; b=Q10+EnQbVrWHR63vYcmORgm1xjIW6c5rsm7gtAoPvWvMo4uM3hbyvAi8tbIzQheh+9XiqFZBuPDo+ZKUkeaLDcptTh5IeXAVKms32p5BoZ4mMb92hRiPRHuKBemVs6XcSU6lHBT7a1FnNKAdkWXsCTtjVx8FQZCdmbZSysv6aNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724929489; c=relaxed/simple;
-	bh=SuJnZpdAxoeFpIzEyQVPxQjoerz6lR0kP5Jy2SKVxy0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iaXo3c1sMyoKjUtjX4TCP50plr+zxytxHmzxwhqhqWFXn0uFxDCr8sH1yHY8mf+7e/4oYONsfeuZnj+AzQ9d0pMoYTTqSUv/9SB2T/L/T9PsN0KpKt6bc1XRQ6q9EjtlsaEsXKA5+JsUKz0waXZhff9mudxzQvEWXV21XZE7HmY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QnkHVNUC; arc=none smtp.client-ip=209.85.128.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-699ac6dbf24so5158137b3.3
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 04:04:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724929487; x=1725534287; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=+w6aWurefHFOT/q/zcqS9miwYxvHRLqdgWPtHwfRoIA=;
-        b=QnkHVNUC0wppo3xbGcb0E6F4xa+tE+4mRgQj8J+DMs/9cfW4DJu5RRLsC56j5HB9HN
-         nT/KQ2Ahh7y5wmOVfr0RpF84iNkAf5BIDRVNtKGdBlyvg1EKU1XTc+OfcoIojk3dYHBO
-         2BIiCRqmHj26aARSHcRvMx6Hj+Ps/yNBo2wCyyUqZHz52aa+9vcs5/pKjPsrZrI2YEjN
-         qUcVyb3EEDeOVYDCeWyqAYytmzmW8qVGkcsSXd1ASw9KtW/+W25n5bpu8KD3ekglM2AY
-         cVPDFZl14kMWNG8mdwWjcjwl0Sk9uaRrkK+rB9mWRNH9Ha8eM2f1Zlg0Ba2FFCKBrxpP
-         vKUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724929487; x=1725534287;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+w6aWurefHFOT/q/zcqS9miwYxvHRLqdgWPtHwfRoIA=;
-        b=joc/QyhBKBWn287r7SE1MrIXfdKqSIKQHv8H8Z/OkTSAN4qwIpUvMkk3IOKDtsDryq
-         m8aVe3nRigmGLnx080qDZNQ2/ONppTawQ0DqGxMflTYqNb6yeMK2YjFARsM/21HiI4Ry
-         hdfjDu5XGqHUY9kNq9w9UasZWq4cuq/qvcVlBEH9pBkiHCnrnww7EfpdvWHV7DXGEnql
-         S8Urtx+W51oOfj3JiGKKV/QBnFLmsaeo3igV730aJXRLeeG1/94FzG7Ptlt7EDbZ0zwe
-         M2vNnruJBmQIOdf29V/glCB8pct11K0rXmZYymIRcdNqO2bDx8dDh8fQw4PyewJMpBW5
-         sm/A==
-X-Forwarded-Encrypted: i=1; AJvYcCV1a9cCzrZSNg/QOCvcx8cMnQtSzPrkEBGIbyI+xkkO4uSj8Apw4tC/w4fT9ygCoNEj3j6WYEqEND6R53k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywaaoxm0xQMIjyCmttVIOSWBmUPZtPOiq7HOu78m2JG97hvsuQC
-	N/tX/TJrya+ouPU53ET8ZmZGnOLjeNWu3w4Dp+ZkI/GfR0ebSna8zGHJAjtf/J6usM0FeOnCaHq
-	H6R/CkqnuGV9qvsJ4mpF9OiJLmVf2JPggeKLM/Q==
-X-Google-Smtp-Source: AGHT+IHgFWrfqg6VxD076bV1Ahvq7Va1k0veH8KaE24wYRXR1wihBNHx2f8OBxAR3Yx4Q/qCQP65lTON7r6fXvuKmkg=
-X-Received: by 2002:a05:690c:6e10:b0:6b4:b45:2f1 with SMTP id
- 00721157ae682-6d277a7a8b4mr30321547b3.34.1724929486478; Thu, 29 Aug 2024
- 04:04:46 -0700 (PDT)
+	s=arc-20240116; t=1724929497; c=relaxed/simple;
+	bh=J6fvJlJc/Ob8k1M+y/Rml88PewDlhA9IfR+J4mDzajQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NEZrdzP46vEV7PR8+fj3Prn/HIwd1jA0iERQy0bQbrmY7K6A8rxO8/LSf09aGRl81GspebNZEPUY5ol3SzBajO4aaLbfkShH7u7bgAdikAtUmjfjTEaxcOEFTJqaHIBSsAX9vuGND68dBSmKa6LVnArgqG968gia89jOZwQSSjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GAprF7WR; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724929486; x=1756465486;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=J6fvJlJc/Ob8k1M+y/Rml88PewDlhA9IfR+J4mDzajQ=;
+  b=GAprF7WRhaEuGW96Z9bcuYzRF4gnUWxQfHjLtVtXjjVDpO0RPJ+3afNa
+   vsZo+cIVUq9cjWGNviZFNN9blXE6zwQ+5+KIX25XGNphmJPJP9xqsy59F
+   A+RF11vUfyHbbGoX+d30+okMZXZoBztV44topazJ1s9oXKQf9gPDrAVCq
+   3ZfF1kejnk8vrJkFIdIhGBJG6DQpCr79vdnnPN3UYP3xTZNV9B5PUJSQX
+   JkE9BXdHyXSpmxcwOG9au4dj2QwvafFkgfxRqsVfIyDVt/PZdWHYOzwmQ
+   MpR+58q9JpecEimNrkXjV7+JdaDvAGf1Hw5ypM0+cHEb1nhurdhQmUI9U
+   g==;
+X-CSE-ConnectionGUID: LNguGdhxTVGA7J6Du8lTvQ==
+X-CSE-MsgGUID: G4oobcafSIuml4AX8VQG6Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11178"; a="23088381"
+X-IronPort-AV: E=Sophos;i="6.10,185,1719903600"; 
+   d="scan'208";a="23088381"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 04:04:45 -0700
+X-CSE-ConnectionGUID: u7l1uVU4SdCcFyOucV3HEA==
+X-CSE-MsgGUID: MCF9pKvkTJa3Qep55W5U1Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,185,1719903600"; 
+   d="scan'208";a="63224001"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 04:04:43 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sjcxE-00000002yKA-2tDH;
+	Thu, 29 Aug 2024 14:04:40 +0300
+Date: Thu, 29 Aug 2024 14:04:40 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+	Guruvendra Punugupati <Guruvendra.Punugupati@amd.com>,
+	Krishnamoorthi M <krishnamoorthi.m@amd.com>,
+	linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 1/6] i3c: mipi-i3c-hci: Add AMDI5017 ACPI ID to the
+ I3C Support List
+Message-ID: <ZtBVyJZc03EixpPT@smile.fi.intel.com>
+References: <20240829091713.736217-1-Shyam-sundar.S-k@amd.com>
+ <20240829091713.736217-2-Shyam-sundar.S-k@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240829-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-8-v1-0-bdb05b4b5a2e@linaro.org>
- <20240829-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-8-v1-4-bdb05b4b5a2e@linaro.org>
-In-Reply-To: <20240829-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-8-v1-4-bdb05b4b5a2e@linaro.org>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Thu, 29 Aug 2024 14:04:34 +0300
-Message-ID: <CAA8EJprKnd269S_KMVUDk7UfT-c4ighPq4VkX-nEkwGg8ys1cQ@mail.gmail.com>
-Subject: Re: [PATCH 04/21] drm/msm/dsi: support DSC configurations with
- slice_per_pkt > 1
-To: Jun Nie <jun.nie@linaro.org>
-Cc: Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, linux-arm-msm@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, Jonathan Marek <jonathan@marek.ca>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240829091713.736217-2-Shyam-sundar.S-k@amd.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Thu, 29 Aug 2024 at 13:19, Jun Nie <jun.nie@linaro.org> wrote:
->
-> From: Jonathan Marek <jonathan@marek.ca>
->
-> MSM display controller support multiple slice to be sent in a single DSC
-> packet.
+On Thu, Aug 29, 2024 at 02:47:08PM +0530, Shyam Sundar S K wrote:
+> The current driver code lacks the necessary plumbing for ACPI IDs,
+> preventing the mipi-i3c-hci driver from being loaded on x86
+> platforms that advertise I3C ACPI support.
+> 
+> Add the AMDI5017 ACPI ID to the list of supported IDs.
 
-This is not MSM-specific. It is allowed per the standard.
+...
 
-> Add a dsc_slice_per_pkt field to mipi_dsi_device struct and
-> support this field in msm mdss driver.
+>  static struct platform_driver i3c_hci_driver = {
+>  	.probe = i3c_hci_probe,
+>  	.remove_new = i3c_hci_remove,
+>  	.driver = {
+>  		.name = "mipi-i3c-hci",
 
-This doesn't describe why this is necessary at all. Is it a fix or a feature?
+>  		.of_match_table = of_match_ptr(i3c_hci_of_match),
 
->
-> Note that the removed "pkt_per_line = slice_per_intf * slice_per_pkt"
-> comment is incorrect.
->
-> Signed-off-by: Jonathan Marek <jonathan@marek.ca>
-> Signed-off-by: Jun Nie <jun.nie@linaro.org>
-> ---
->  drivers/gpu/drm/msm/dsi/dsi_host.c | 25 ++++++++++---------------
->  include/drm/drm_mipi_dsi.h         |  2 ++
->  2 files changed, 12 insertions(+), 15 deletions(-)
->
-> diff --git a/drivers/gpu/drm/msm/dsi/dsi_host.c b/drivers/gpu/drm/msm/dsi/dsi_host.c
-> index 5abade8f26b88..36f0470cdf588 100644
-> --- a/drivers/gpu/drm/msm/dsi/dsi_host.c
-> +++ b/drivers/gpu/drm/msm/dsi/dsi_host.c
-> @@ -157,6 +157,7 @@ struct msm_dsi_host {
->
->         struct drm_display_mode *mode;
->         struct drm_dsc_config *dsc;
-> +       unsigned int dsc_slice_per_pkt;
->
->         /* connected device info */
->         unsigned int channel;
-> @@ -861,17 +862,10 @@ static void dsi_update_dsc_timing(struct msm_dsi_host *msm_host, bool is_cmd_mod
->         slice_per_intf = msm_dsc_get_slices_per_intf(dsc, hdisplay);
->
->         total_bytes_per_intf = dsc->slice_chunk_size * slice_per_intf;
-> -       bytes_per_pkt = dsc->slice_chunk_size; /* * slice_per_pkt; */
-> +       bytes_per_pkt = dsc->slice_chunk_size * msm_host->dsc_slice_per_pkt;
->
->         eol_byte_num = total_bytes_per_intf % 3;
-> -
-> -       /*
-> -        * Typically, pkt_per_line = slice_per_intf * slice_per_pkt.
-> -        *
-> -        * Since the current driver only supports slice_per_pkt = 1,
-> -        * pkt_per_line will be equal to slice per intf for now.
-> -        */
-> -       pkt_per_line = slice_per_intf;
-> +       pkt_per_line = slice_per_intf / msm_host->dsc_slice_per_pkt;
->
->         if (is_cmd_mode) /* packet data type */
->                 reg = DSI_COMMAND_COMPRESSION_MODE_CTRL_STREAM0_DATATYPE(MIPI_DSI_DCS_LONG_WRITE);
-> @@ -1019,12 +1013,8 @@ static void dsi_timing_setup(struct msm_dsi_host *msm_host, bool is_bonded_dsi)
->                 else
->                         /*
->                          * When DSC is enabled, WC = slice_chunk_size * slice_per_pkt + 1.
-> -                        * Currently, the driver only supports default value of slice_per_pkt = 1
-> -                        *
-> -                        * TODO: Expand mipi_dsi_device struct to hold slice_per_pkt info
-> -                        *       and adjust DSC math to account for slice_per_pkt.
->                          */
-> -                       wc = msm_host->dsc->slice_chunk_size + 1;
-> +                       wc = msm_host->dsc->slice_chunk_size * msm_host->dsc_slice_per_pkt + 1;
->
->                 dsi_write(msm_host, REG_DSI_CMD_MDP_STREAM0_CTRL,
->                         DSI_CMD_MDP_STREAM0_CTRL_WORD_COUNT(wc) |
-> @@ -1629,8 +1619,13 @@ static int dsi_host_attach(struct mipi_dsi_host *host,
->         msm_host->lanes = dsi->lanes;
->         msm_host->format = dsi->format;
->         msm_host->mode_flags = dsi->mode_flags;
-> -       if (dsi->dsc)
-> +       if (dsi->dsc) {
->                 msm_host->dsc = dsi->dsc;
-> +               msm_host->dsc_slice_per_pkt = dsi->dsc_slice_per_pkt;
-> +               /* for backwards compatibility, assume 1 if not set */
-> +               if (!msm_host->dsc_slice_per_pkt)
-> +                       msm_host->dsc_slice_per_pkt = 1;
-> +       }
->
->         ret = dsi_dev_attach(msm_host->pdev);
->         if (ret)
-> diff --git a/include/drm/drm_mipi_dsi.h b/include/drm/drm_mipi_dsi.h
-> index 0f520eeeaa8e3..1c1b56077d44a 100644
-> --- a/include/drm/drm_mipi_dsi.h
-> +++ b/include/drm/drm_mipi_dsi.h
-> @@ -182,6 +182,7 @@ struct mipi_dsi_device_info {
->   * be set to the real limits of the hardware, zero is only accepted for
->   * legacy drivers
->   * @dsc: panel/bridge DSC pps payload to be sent
-> + * @dsc_slice_per_pkt: number of DSC slices to be sent as in a single packet
->   */
->  struct mipi_dsi_device {
->         struct mipi_dsi_host *host;
-> @@ -196,6 +197,7 @@ struct mipi_dsi_device {
->         unsigned long hs_rate;
->         unsigned long lp_rate;
->         struct drm_dsc_config *dsc;
-> +       unsigned int dsc_slice_per_pkt;
+A side note (not sure if it anyhow might be related to your kernel
+configurations and builds): There is an ongoing activity to kill
+of_match_ptr() for good (as it's more harmful than useful). It _might_ be
+that in ACPI only kernel configurations dangling i3c_hci_of_match appears
+which compiler will warn about.
+
+> +		.acpi_match_table = i3c_hci_acpi_match,
+>  	},
 >  };
->
->  /**
->
-> --
-> 2.34.1
->
-
 
 -- 
-With best wishes
-Dmitry
+With Best Regards,
+Andy Shevchenko
+
+
 
