@@ -1,111 +1,123 @@
-Return-Path: <linux-kernel+bounces-308739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9374F966119
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 13:56:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E2E16966116
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 13:56:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F8AB282580
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 11:56:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A185B28237F
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 11:56:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D98A0199FBB;
-	Fri, 30 Aug 2024 11:56:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D04A19992C;
+	Fri, 30 Aug 2024 11:56:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="K43oIYq+"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="m53Qcfe5"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78F9119994F
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 11:56:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A76614EC41;
+	Fri, 30 Aug 2024 11:56:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725018970; cv=none; b=UxNF+2cUgrz7vOz8ggvk1tZZaeWDwNmTVV7ux38H0ZqGGh/dHHZD81XbVrSE87r/Iojx0zQCraHAj2T2QOPfQrixD3FttVDliyfSn0c946HUPjsT/eEAXr5dGCCuujm12H0U+d2kK1E0l91TieUvLv/Es9GN9PD3Z8YyBdNjIHE=
+	t=1725018967; cv=none; b=hwJYw3wd5rEeBTfDo+gf3LA31BHqWCL/5meBVRqpjo3oaP7N1QvAUPVPQWiHBJlsAlNdI6AqBkJJMX4yO0jAGuUQDQ35XqzFU9mNwmBL/1Tcf/4+hn+3OiAeJYZGwfgELBPxuDYztQH66uZS3Nu0twE7puxwamTmeiEd+yb/9fk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725018970; c=relaxed/simple;
-	bh=g0qYXdweblof+d4zDg0csLIusMtS4NAWZKZItJ2G/hc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MfS0uTuh+lXHcxr0aJxazuTHQa/nW7jmL3LZEuqLH0ImHiWuHqOWv2qhp/29eCp8Fwar+00RE4tkI0dAId266h8V/oVBUs/1QgXFIQwfPLVF4vT3GpTSq/MMyXP6rSMplqjJgWh2Lscyn5M6SpXMbLDiczuT8nqon8vmcpm02sg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=K43oIYq+; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5334a8a1af7so1776261e87.2
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 04:56:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725018966; x=1725623766; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=g0qYXdweblof+d4zDg0csLIusMtS4NAWZKZItJ2G/hc=;
-        b=K43oIYq+FfJsFMjjg5nndElG68IoSrOuMZfmij8JKMRBPCWwF01IcrT84A+YIo3jm4
-         BpvWUIRwcUWArmtoSe0+gnKFWUwqr1HIuumvXij+o4iVGlaynYi46eIjiVM3c1+RRkp0
-         +cvN8jg+YJ02k1FUPxLWoFLVl43N+4YL/4PDwKVmERdIbWcFtmlOiTcISsi3t8LqlxDP
-         xi5ZHwBhmclBybHUPbRlL7fhq9lAX4a+TNWuWFx7Q9ZVIcKwc2IzURSayZjzDEmXB6xP
-         gT2jne04hMh8eANrGD0KIpZfFDt8csdqJ9FkBF+ABRok0J3zjvx5XC8f2gYuuuXmu4N8
-         az5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725018966; x=1725623766;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=g0qYXdweblof+d4zDg0csLIusMtS4NAWZKZItJ2G/hc=;
-        b=WpZWiH1AnhLgGxeGE/MHUDf/MFA66UZlIczx1n93erKuCOejEEg561v+43Dq2Ujzm0
-         g7HesqzXHJWGXfUbZd7rqG3tsjv8T9k4f0Y+5C+xfcpcNvr7NSbb/iPsBy+uDw4rtweb
-         odmmEtecOzOtvpWabMHhPYcb5DDgday0upy/koBYJoBcrVageKrtQQSDK+yLAGwJQh38
-         zUrv+PANLlWJI9FwQHgKXfONxi0ebhMM3QFk0jcXdHpm33PvIlPH1eGq3GYCinbevfSM
-         w1DZHK1vxrAHBbYUTEISuRQFPjzVID8WNJv/vP83U5rsSHvU7ttBUVL5PKx3pwU+LSRi
-         Mtvw==
-X-Forwarded-Encrypted: i=1; AJvYcCU9kzBwyZiQK44u1Ol6UFGKbTiJq+z0uxIbmH0dtJeZsxUarA7SU2RJyIGJtmgo912PvRQxq6ST/c1RToQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy71tDSTlQiv1ktqB6qrFVh5rD7dtUxoqvIr+gce7BgLJrJ5hl6
-	wIBrl0LQZZJ3BBGUcWwf1zeXF8IcqLX9YuqftMEXry/3pW05+pG8IZ74xCgrCJ1kEYbwbWeWs9a
-	B9tEwaAU9CQQdzeTKrlRSr0aqM0yum1UeIGyBcx1e3pci4RFi
-X-Google-Smtp-Source: AGHT+IEhVXXIgwo/6ASpdFFF5AZjaTOeKyyZK0GOqTEt+wGYPxxNJSILIeAnEbT6DYaa/jQlNjiZpOVwSqoK7dzPOr4=
-X-Received: by 2002:a05:6512:e94:b0:533:483f:9563 with SMTP id
- 2adb3069b0e04-53546b8d711mr1185811e87.45.1725018965745; Fri, 30 Aug 2024
- 04:56:05 -0700 (PDT)
+	s=arc-20240116; t=1725018967; c=relaxed/simple;
+	bh=N4EnbV+vH2+NmjnRoAsap91PvDS0Eur6swEdvFRdWpM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=KH5Own2azTZF0iOQRPZeUiSzQR6loUCwYHJOofiHZ2ZGgrpIMny0rR6BC7QwySeT8BiQ3Z1GECkc89eUez9RyZNrq4GIHRNEnKmdMwXbXZWW67jYiW56V8o//uvK3FCFNtwRPD2znaqxR63D0z/WDzZDJ5dmokFGe1cCDczqBis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=m53Qcfe5; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725018962; x=1756554962;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=N4EnbV+vH2+NmjnRoAsap91PvDS0Eur6swEdvFRdWpM=;
+  b=m53Qcfe53wyOtK39OsoNrUV/JNKFykFxC8YK0X/jf/GXm88sKK92qus+
+   E7D9gDFxEE5ViPkRHUU5cjev2i0W2CaATnZIwOmXZ8kBODvxRAQWf+0CS
+   Bd3Eb2s4pIdlltF9Nye6nKOC2VB2/6KFauzVrVNvY1UTuXKNmuxQb9lck
+   u1Pmmx+d4RqsJfcynSi7FCPtaQ75Ote0uXuHGanU45nBH7kLa4eFnT+Ac
+   B0YucA01mKMOYUNBzYSkvlxwUJWAHLUCb5xMlNRIsbtYBvApbH4CdvqVF
+   wErPWzwdRwePIwTyG95xM8jlaLEfMtP6QcuUMHeXTL19w6Z2rhX+7ZbB5
+   Q==;
+X-CSE-ConnectionGUID: ndQJbe42S2mrLJWhJ5I7eg==
+X-CSE-MsgGUID: X+pN3g0aS5qq8qq2QWAsqw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11179"; a="34226843"
+X-IronPort-AV: E=Sophos;i="6.10,188,1719903600"; 
+   d="scan'208";a="34226843"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Aug 2024 04:56:01 -0700
+X-CSE-ConnectionGUID: vlZ38EGxRHK0ideqvjH64A==
+X-CSE-MsgGUID: l1RMm7HPS/Gem9BmMfDdaw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,188,1719903600"; 
+   d="scan'208";a="64064486"
+Received: from mwiniars-desk2.ger.corp.intel.com ([10.245.246.70])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Aug 2024 04:55:59 -0700
+Message-ID: <e38630e41353d083f7c0f4d726218aa5f3b36827.camel@linux.intel.com>
+Subject: Re: [RFC PATCH 1/2] bdev: add support for CPU latency PM QoS tuning
+From: Tero Kristo <tero.kristo@linux.intel.com>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Fri, 30 Aug 2024 14:55:56 +0300
+In-Reply-To: <e5e97bad-075a-4d78-af78-3bbc124c06b1@kernel.dk>
+References: <20240829075423.1345042-1-tero.kristo@linux.intel.com>
+	 <20240829075423.1345042-2-tero.kristo@linux.intel.com>
+	 <e5e97bad-075a-4d78-af78-3bbc124c06b1@kernel.dk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3-0ubuntu1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240814061315.112564-1-manikandan.m@microchip.com>
- <20240814061315.112564-5-manikandan.m@microchip.com> <275606ea-2740-471c-b998-353ab6808591@tuxon.dev>
-In-Reply-To: <275606ea-2740-471c-b998-353ab6808591@tuxon.dev>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 30 Aug 2024 13:55:54 +0200
-Message-ID: <CACRpkdZbGqy+z+JoMoMXt0jmCCjuHUVj0q6p7QS1VBAKby57sA@mail.gmail.com>
-Subject: Re: [PATCH v4 4/4] dt-bindings: pinctrl: Convert Atmel PIO3 pinctrl
- to json-schema
-To: claudiu beznea <claudiu.beznea@tuxon.dev>
-Cc: Manikandan Muralidharan <manikandan.m@microchip.com>, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, nicolas.ferre@microchip.com, 
-	alexandre.belloni@bootlin.com, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Sat, Aug 24, 2024 at 4:35=E2=80=AFPM claudiu beznea <claudiu.beznea@tuxo=
-n.dev> wrote:
-> On 14.08.2024 09:13, Manikandan Muralidharan wrote:
-> > Convert Atmel PIO3 pinctrl binding document to DT schema format
-> > json-schema.
-> >
-> > Signed-off-by: Manikandan Muralidharan <manikandan.m@microchip.com>
-> > Acked-by: Linus Walleij <linus.walleij@linaro.org>
-> > Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
->
-> Applied to at91-dt, thanks!
->
-> Hi, Linus,
->
-> I took your Acked-by as an OK to apply this to at91-dt. Let me know if I
-> should revert it.
+On Thu, 2024-08-29 at 05:37 -0600, Jens Axboe wrote:
+> On 8/29/24 1:18 AM, Tero Kristo wrote:
+> > diff --git a/block/bio.c b/block/bio.c
+> > index e9e809a63c59..6c46d75345d7 100644
+> > --- a/block/bio.c
+> > +++ b/block/bio.c
+> > @@ -282,6 +282,8 @@ void bio_init(struct bio *bio, struct
+> > block_device *bdev, struct bio_vec *table,
+> > =C2=A0	bio->bi_max_vecs =3D max_vecs;
+> > =C2=A0	bio->bi_io_vec =3D table;
+> > =C2=A0	bio->bi_pool =3D NULL;
+> > +
+> > +	bdev_update_cpu_latency_pm_qos(bio->bi_bdev);
+> > =C2=A0}
+> > =C2=A0EXPORT_SYMBOL(bio_init);
+>=20
+> This is entirely the wrong place to do this, presumably it should be
+> done at IO dispatch time, not when something initializes a bio.
+>=20
+> And also feels like entirely the wrong way to go about this, adding
+> overhead to potentially each IO dispatch, of which there can be
+> millions
+> per second.
 
-No problem, as long as it merges just go ahead.
+Any thoughts where it could/should be added?
 
-Yours,
-Linus Walleij
+I moved the bdev_* callback from bio_init to the below location and it
+seems to work also:
+
+diff --git a/block/blk-mq.c b/block/blk-mq.c
+index 3b4df8e5ac9e..d97a3a4252de 100644
+--- a/block/blk-mq.c
++++ b/block/blk-mq.c
+@@ -2706,6 +2706,7 @@ static void __blk_mq_flush_plug_list(struct
+request_queue *q,
+ {
+        if (blk_queue_quiesced(q))
+                return;
++       bdev_update_cpu_latency_pm_qos(q->disk->part0);
+        q->mq_ops->queue_rqs(&plug->mq_list);
+ }
+=20
+
 
