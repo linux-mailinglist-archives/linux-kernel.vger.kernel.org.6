@@ -1,143 +1,245 @@
-Return-Path: <linux-kernel+bounces-309091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A8CC966616
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 17:51:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AF063966620
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 17:53:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 169A41F23D87
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 15:51:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 325AD1F24ADE
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 15:53:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E21CEEEC3;
-	Fri, 30 Aug 2024 15:51:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CBA71B81C5;
+	Fri, 30 Aug 2024 15:53:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="SjD9dN+d"
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="R0IZ2yDI"
+Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 283B11B252B
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 15:51:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 077E11B652F
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 15:53:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725033078; cv=none; b=kChxkIe/I1+LwodMB7g0h7UUMg8WvSS2fGwDJ/Fb9I3+GjhJMccbh5QAFjExH5m0N5gn4njkyHr/J9oCmtC9Bks2JigOFpQOQiN2ExUIVBMIHwc3kleLUXfXlxr1zIFRkxHsPeFcNTSQ1/1TFmiYpp24qaJ5vMisApYIcgMT7W4=
+	t=1725033191; cv=none; b=PW0FL0JZnJF49wVqraoN2DZG9KThyAJSkyWLMWv7ZW/NC9z8x0Th+ZDmeE1XOxxZcDzfVH3gdbkhZxHaH5UGjgKvwm/LLj3zxCL6EXijBmuK7A00btd8xIP3978IcxMEpfnFe+KmTA8NFHB3FXmLBst4YkhYQJaCkzItWMDja8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725033078; c=relaxed/simple;
-	bh=M470PoS6Oq4sCGdF76Au7i7QwRTmAbmd8J4ltRBQsBs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=U6p9dOpwX5HX9ILOYqWJ9dEwjxCJKEZyg279d+u6gtF70jNYH0jZbv6uD+FEOiGe99BPUcolh0KjGyl93aikiSPhBY4HV3a4C+1nuc9nJzFRrcJlzLn9k6/RpUvNbj4wPHZV1FWY70q8XThiBGjh5X1gze4FU4imVZfAg7pNakc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=SjD9dN+d; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1725033063;
-	bh=M470PoS6Oq4sCGdF76Au7i7QwRTmAbmd8J4ltRBQsBs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=SjD9dN+duK2XIKi+fBN1tQmDRKWFbWOf/EFBxkeESmcbsr9SVc5NBlvKKCF/ZESW8
-	 Ju7YzgNWZgVV+ORVFPr1bb3rQDinyBdgHN7syvgpDXTjc2k2Khpfho3LL+SY065AiA
-	 q9K1OcKDNUJ5bSnbTFnknyEsn+9muKUSHZueYqIXlnJq+JEcaq9MHGfTULTHnUtrm0
-	 oXeaWw4T94ejl4ZMtafOGToXTwqq3Stln0+J/sxVKxPtuZKPPow9Ur3JxEw4FI7PEf
-	 ipsjCy/1V28brKVxjTWMmEH2E246cQ/BBh8ACzGHfQEM67LQclsSO2dbCiTe19xV55
-	 Cwtv7+6cPx5SA==
-Received: from [172.16.0.134] (96-127-217-162.qc.cable.ebox.net [96.127.217.162])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4WwN0l0kMWz1JZJ;
-	Fri, 30 Aug 2024 11:51:03 -0400 (EDT)
-Message-ID: <86bb4c08-5706-4902-9ef5-a336123ba8e1@efficios.com>
-Date: Fri, 30 Aug 2024 11:50:40 -0400
+	s=arc-20240116; t=1725033191; c=relaxed/simple;
+	bh=qsW4FlIIfZADyer+mOTLs3Dec7N90OtmhGbZyPEGz2k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sQRaF+fcItuGh3/F6saloOcliRxSpQva6CqmJiAgNkqxm9EnCDwuiv/5/ZcZbW9Mo+AtbQrMu40Tq8nYkW/GbIp4Me3XBvSN/4cWaYrSXLbHFgzPvWwJACsvhSND0S9vX+yuOAZRuC3h3tvXvkBDn32AqwEnK8548672C9MyLr8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=R0IZ2yDI; arc=none smtp.client-ip=209.85.167.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-oi1-f180.google.com with SMTP id 5614622812f47-3df0d7734fbso207586b6e.3
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 08:53:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1725033189; x=1725637989; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=w1kleSOg8vL34NiCGn9nqKVN6gqzoun/xCRiElWIius=;
+        b=R0IZ2yDId6zSaB7mdkEf6+MDFzL1AIA7YJXuLm8bCYdxLJuZVAqWCYH6znH7Y1OV33
+         v8BNYew4i2zDSf8JP3HOITPK4vbyxPBCRbwD9ZvLct62cdzDZzxaO/hD3EK/TIV5vRtW
+         L01TkSPRyNcSV7rLTMTfPLgjR1fu1mN6B7VVs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725033189; x=1725637989;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=w1kleSOg8vL34NiCGn9nqKVN6gqzoun/xCRiElWIius=;
+        b=vRyHdQU5iXbOtw5Mrq4ErEuWGGeiMny+yUArVOKuLY+SrEkqOYApVfb3RI9ED2+k4E
+         Zg4fw82vgFMfis3uEpwljClcu4P9lpYeBDmF/vne33CuXHId+iy2XvTeetdRem2ahEwi
+         GgkLuT5oEuIPgMQLAMlJYW03m3TRUoTXjxPGIwR0W8HwzFiqiMgGPxpI77Ke5o+so/DY
+         mDfwaO9cT0e2SC/BHZCy1DjNHxgkVKHM0pqnaXpZqtySJWOkmhpI9LRvo79qfuzN7/CW
+         2yqeqqSL/MV53sWuNNRhnMkcsfj7b8Gvk7kYgVFVjYFmK1kBIRBlC/epckDhAbYBG73g
+         8OHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVDXCFLGVcuiZK2aWQ7gWEa27/0Jg2sZvhzjZ7SEFyseveNlPmxV8tkMU9G+9XG9ac1tLHKiE67Mib6StI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YydD62n/09fX0IMSWBNmOnIIMvv7zJYKHBdHmzJyRS7Bct6w/do
+	KqnhSwh3wmM0C2wBanopqVUNKs3k/oTQHpm7CGeFmu5esayohWI59hU0DiE14rbhxLzlzxcW1sb
+	JcVk53DFCMGRPqXrVBS0LVM/tLUUSrqeC0/qj
+X-Google-Smtp-Source: AGHT+IFZoOc4OSRPXPIUfZBqHojHFqN6vZ6Boo4DEXXuYIpSR8r9zMBaustrBst6g13zZa+5yjghU8cVM0qraZJwXqQ=
+X-Received: by 2002:a05:6870:71c6:b0:254:d417:351f with SMTP id
+ 586e51a60fabf-277b0b79a69mr1381287fac.1.1725033188911; Fri, 30 Aug 2024
+ 08:53:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/6] lib: Fix test_find_first_and_bit and
- test_find_next_and_bit benchmark
-To: Yury Norov <yury.norov@gmail.com>
-Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>, linux-kernel@vger.kernel.org
-References: <20240829135926.926603-1-mathieu.desnoyers@efficios.com>
- <20240829135926.926603-5-mathieu.desnoyers@efficios.com>
- <ZtHpZzYE62qMvIFY@yury-ThinkPad>
-Content-Language: en-US
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-In-Reply-To: <ZtHpZzYE62qMvIFY@yury-ThinkPad>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240829214352.963001-1-jeffxu@chromium.org> <20240829214352.963001-4-jeffxu@chromium.org>
+ <q3xvzsnyltr2gdgnecgw74umi2yrjvimkxo7bvgnqb4darakzw@jahjkavgcyfm>
+In-Reply-To: <q3xvzsnyltr2gdgnecgw74umi2yrjvimkxo7bvgnqb4darakzw@jahjkavgcyfm>
+From: Jeff Xu <jeffxu@chromium.org>
+Date: Fri, 30 Aug 2024 08:52:56 -0700
+Message-ID: <CABi2SkUtCqLj49rpm4+vB1+SqaT9YAuAVwVj6PpaDbkJStZSVg@mail.gmail.com>
+Subject: Re: [PATCH v2 3/4] selftests/mm: mseal_test add more tests for mmap
+To: Pedro Falcato <pedro.falcato@gmail.com>
+Cc: akpm@linux-foundation.org, linux-kselftest@vger.kernel.org, 
+	linux-mm@kvack.org, linux-hardening@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, willy@infradead.org, lorenzo.stoakes@oracle.com, 
+	broonie@kernel.org, vbabka@suse.cz, Liam.Howlett@oracle.com, 
+	rientjes@google.com, keescook@chromium.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2024-08-30 17:46, Yury Norov wrote:
-> On Thu, Aug 29, 2024 at 09:59:24AM -0400, Mathieu Desnoyers wrote:
->> Modify test_find_first_bit so it modifies a local copy of bitmap rather
->> than modifying the input bitmap, which removes the requirement of
->> placing it last in the tests.
->>
->> Calls to test_find_first_and_bit and test_find_next_and_bit are placed
->> after test_find_first_bit, which makes them use a bitmap entirely filled
->> rather than the expected bitmap (random-filled or sparse).
->>
->> Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
->> Cc: Yury Norov <yury.norov@gmail.com>
->> Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
->> ---
->>   lib/find_bit_benchmark.c | 10 ++++++----
->>   1 file changed, 6 insertions(+), 4 deletions(-)
->>
->> diff --git a/lib/find_bit_benchmark.c b/lib/find_bit_benchmark.c
->> index d3fb09e6eff1..aee2ebb6b3cd 100644
->> --- a/lib/find_bit_benchmark.c
->> +++ b/lib/find_bit_benchmark.c
->> @@ -30,18 +30,20 @@ static DECLARE_BITMAP(bitmap, BITMAP_LEN) __initdata;
->>   static DECLARE_BITMAP(bitmap2, BITMAP_LEN) __initdata;
->>   
->>   /*
->> - * This is Schlemiel the Painter's algorithm. It should be called after
->> - * all other tests for the same bitmap because it sets all bits of bitmap to 1.
->> + * This is Schlemiel the Painter's algorithm.
->>    */
-> 
-> Good to drop it, moreover, the comment is incorrect - we set all bits
-> to 0, not 1.
-> 
->>   static int __init test_find_first_bit(void *bitmap, unsigned long len)
->>   {
->> +	static DECLARE_BITMAP(cp, BITMAP_LEN) __initdata;
-> 
-> This days we can allocate automatic variables, which is better than
-> statics:
-> 
->     unsigned long *cp __free(bitmap) = bitmap_alloc(len, GFP_KERNEL);
-> 
-> If no objections, I can fix it inplace. The rest of the series looks
-> good. I'll add it in bitmap-for-next for testing shortly.
+Hi Pedro
 
-I'm ok with the in-place fix, thanks!
+On Fri, Aug 30, 2024 at 5:57=E2=80=AFAM Pedro Falcato <pedro.falcato@gmail.=
+com> wrote:
+>
+> On Thu, Aug 29, 2024 at 09:43:51PM GMT, jeffxu@chromium.org wrote:
+> > From: Jeff Xu <jeffxu@chromium.org>
+> >
+> > Add sealing test to cover mmap for
+> > Expand/shrink across vmas.
+> > Reuse the same address in !MAP_FIXED case.
+> >
+> > Signed-off-by: Jeff Xu <jeffxu@chromium.org>
+> > ---
+> >  tools/testing/selftests/mm/mseal_test.c | 125 +++++++++++++++++++++++-
+> >  1 file changed, 124 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/tools/testing/selftests/mm/mseal_test.c b/tools/testing/se=
+lftests/mm/mseal_test.c
+> > index ae06c354220d..d83538039e76 100644
+> > --- a/tools/testing/selftests/mm/mseal_test.c
+> > +++ b/tools/testing/selftests/mm/mseal_test.c
+> > @@ -2222,6 +2222,122 @@ static void test_munmap_free_multiple_ranges(bo=
+ol seal)
+> >       REPORT_TEST_PASS();
+> >  }
+> >
+> > +static void test_seal_mmap_expand_seal_middle(bool seal)
+> > +{
+> > +     void *ptr;
+> > +     unsigned long page_size =3D getpagesize();
+> > +     unsigned long size =3D 12 * page_size;
+> > +     int ret;
+> > +     void *ret2;
+> > +     int prot;
+> > +
+> > +     setup_single_address(size, &ptr);
+> > +     FAIL_TEST_IF_FALSE(ptr !=3D (void *)-1);
+> > +     /* ummap last 4 pages. */
+> > +     ret =3D sys_munmap(ptr + 8 * page_size, 4 * page_size);
+> > +     FAIL_TEST_IF_FALSE(!ret);
+> > +
+> > +     size =3D get_vma_size(ptr, &prot);
+> > +     FAIL_TEST_IF_FALSE(size =3D=3D 8 * page_size);
+> > +     FAIL_TEST_IF_FALSE(prot =3D=3D 0x4);
+> > +
+> > +     if (seal) {
+> > +             ret =3D sys_mseal(ptr + 4 * page_size, 4 * page_size);
+> > +             FAIL_TEST_IF_FALSE(!ret);
+> > +     }
+> > +
+> > +     /* use mmap to expand. */
+> > +     ret2 =3D mmap(ptr, 12 * page_size, PROT_READ,
+> > +                     MAP_ANONYMOUS | MAP_PRIVATE | MAP_FIXED, -1, 0);
+>
+> This is not expansion, but overwriting. Expansion is allowed through an a=
+djacent mmap + mseal (which will merge the two VMAs).
 
-Mathieu
+The mmap is trying to expand the address range beginning from ptr
+(size 8 * page_size) to 12 * page_size. This is overwrite + expansion.
 
-> 
-> Thanks,
-> Yury
-> 
->>   	unsigned long i, cnt;
->>   	ktime_t time;
->>   
->> +	bitmap_copy(cp, bitmap, BITMAP_LEN);
->> +
->>   	time = ktime_get();
->>   	for (cnt = i = 0; i < len; cnt++) {
->> -		i = find_first_bit(bitmap, len);
->> -		__clear_bit(i, bitmap);
->> +		i = find_first_bit(cp, len);
->> +		__clear_bit(i, cp);
->>   	}
->>   	time = ktime_get() - time;
->>   	pr_err("find_first_bit:     %18llu ns, %6ld iterations\n", time, cnt);
->> -- 
->> 2.39.2
+>
+> > +     if (seal) {
+> > +             FAIL_TEST_IF_FALSE(ret2 =3D=3D MAP_FAILED);
+> > +             FAIL_TEST_IF_FALSE(errno =3D=3D EPERM);
+> > +
+> > +             size =3D get_vma_size(ptr, &prot);
+> > +             FAIL_TEST_IF_FALSE(size =3D=3D 4 * page_size);
+> > +             FAIL_TEST_IF_FALSE(prot =3D=3D 0x4);
+> > +
+> > +             size =3D get_vma_size(ptr + 4 * page_size, &prot);
+> > +             FAIL_TEST_IF_FALSE(size =3D=3D 4 * page_size);
+> > +             FAIL_TEST_IF_FALSE(prot =3D=3D 0x4);
+> > +     } else
+> > +             FAIL_TEST_IF_FALSE(ret2 =3D=3D ptr);
+> > +
+> > +     REPORT_TEST_PASS();
+> > +}
+> > +
+> > +static void test_seal_mmap_shrink_seal_middle(bool seal)
+> > +{
+> > +     void *ptr;
+> > +     unsigned long page_size =3D getpagesize();
+> > +     unsigned long size =3D 12 * page_size;
+> > +     int ret;
+> > +     void *ret2;
+> > +     int prot;
+> > +
+> > +     setup_single_address(size, &ptr);
+> > +     FAIL_TEST_IF_FALSE(ptr !=3D (void *)-1);
+> > +
+> > +     if (seal) {
+> > +             ret =3D sys_mseal(ptr + 4 * page_size, 4 * page_size);
+> > +             FAIL_TEST_IF_FALSE(!ret);
+> > +     }
+> > +
+> > +     /* use mmap to shrink. */
+> > +     ret2 =3D mmap(ptr, 7 * page_size, PROT_READ,
+> > +                     MAP_ANONYMOUS | MAP_PRIVATE | MAP_FIXED, -1, 0);
+>
+> This is also a partial overwrite.
+The mmap is trying to shrink the address range beginning from ptr
+(size 12 * page_size) to 8 * page_size. This is overwrite + shrink.
 
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
+>
+> > +     if (seal) {
+> > +             FAIL_TEST_IF_FALSE(ret2 =3D=3D MAP_FAILED);
+> > +             FAIL_TEST_IF_FALSE(errno =3D=3D EPERM);
+> > +
+> > +             size =3D get_vma_size(ptr, &prot);
+> > +             FAIL_TEST_IF_FALSE(size =3D=3D 4 * page_size);
+> > +             FAIL_TEST_IF_FALSE(prot =3D=3D 0x4);
+> > +
+> > +             size =3D get_vma_size(ptr + 4 * page_size, &prot);
+> > +             FAIL_TEST_IF_FALSE(size =3D=3D 4 * page_size);
+> > +             FAIL_TEST_IF_FALSE(prot =3D=3D 0x4);
+> > +
+> > +             size =3D get_vma_size(ptr + 4 * page_size, &prot);
+> > +             FAIL_TEST_IF_FALSE(size =3D=3D 4 * page_size);
+> > +             FAIL_TEST_IF_FALSE(prot =3D=3D 0x4);
+> > +     } else
+> > +             FAIL_TEST_IF_FALSE(ret2 =3D=3D ptr);
+> > +
+> > +     REPORT_TEST_PASS();
+> > +}
+> > +
+> > +static void test_seal_mmap_reuse_addr(bool seal)
+> > +{
+> > +     void *ptr;
+> > +     unsigned long page_size =3D getpagesize();
+> > +     unsigned long size =3D page_size;
+> > +     int ret;
+> > +     void *ret2;
+> > +     int prot;
+> > +
+> > +     setup_single_address(size, &ptr);
+> > +     FAIL_TEST_IF_FALSE(ptr !=3D (void *)-1);
+> > +
+> > +     if (seal) {
+> > +             ret =3D sys_mseal(ptr, size);
+> > +             FAIL_TEST_IF_FALSE(!ret);
+> > +     }
+> > +
+> > +     /* use mmap to change protection. */
+> > +     ret2 =3D mmap(ptr, size, PROT_NONE,
+> > +                     MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
+> > +
+>
+> This is also an overwrite. You're semantically testing the same thing, an=
+d testing the same regions of code.
 
+This is not overwriting. MAP_FIXED is not used.
+
+-Jeff
+
+> These 3 tests are all kind of the same thing.
+>
+> --
+> Pedro
 
