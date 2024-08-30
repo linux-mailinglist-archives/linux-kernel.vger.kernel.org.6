@@ -1,78 +1,91 @@
-Return-Path: <linux-kernel+bounces-309336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A934F966906
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 20:38:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07BCE96690F
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 20:40:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D791A1C2383F
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 18:38:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B817B282547
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 18:40:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 478631BDAB6;
-	Fri, 30 Aug 2024 18:37:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F08EE1BD00C;
+	Fri, 30 Aug 2024 18:40:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AzEt4ONz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EoHkIgda"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E0341BC07B
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 18:37:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B11C3DBB6;
+	Fri, 30 Aug 2024 18:40:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725043060; cv=none; b=nrrc4381c4DKxC4P3qhTgUvDJ8M1V57jsRiXI9Lx6hvN0zP21HrExBQqx8VjlNJfLMzxfu0/mWEVSL6ApNPxxHsFHC5Tmzkoh9jMSMU24LSQqaUOJjJqGGGdaCP8DuNXmDH0VWBleZEuYfnugPh21d7V8TGSHWbmSRah4FFY8d0=
+	t=1725043229; cv=none; b=tsyK8EoeVQ9kXSCwY1IcQqt0T34FQi5kD4z4QOiLNFfrrq3BUE3ZmF+8ILbZ1JlRo2egkpxgf3sUmlL8KEUcfDvsMIU12qL9pu8ywecrf70sE+Rhz7LXPdL+/5hQ6Fg1xunSKrjmanROYwOGE+2Oz72KkIH83BFGWuUSpLJp+rA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725043060; c=relaxed/simple;
-	bh=x7Nwo9/SzBkpy1lULtDHM+dumOUJPEPWqgDyR4gwQBE=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=r3qU3fr9fJAOhuK12+3KjMA6vbjj84BKe+SNJX7KsXHAP9wXAeK/IPPdZPeBIEafCB7VEwNIN+2V7vwO6WFb0GaXNUKvl3zI3yyVProE+jimTZPxkvQzykyT/d8JaQB5A9TgSn9sg2OZ0c9gY/P9FZ511WLREDH9rhfU1Y2pfzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AzEt4ONz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FB35C4CEC2;
-	Fri, 30 Aug 2024 18:37:40 +0000 (UTC)
+	s=arc-20240116; t=1725043229; c=relaxed/simple;
+	bh=2/Lde77M57/uft20yZsYU2AJIk+qjlCHEXdgpvBhzNU=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=HT+2tJdH3oHFlz7R6GrHnj1VdeZPfy9yImH+s6X15PEgn0Mn7ot21H0VZRBeOMUwJqK032Uzy13XDm73NxHimgjVzGUuhlSwR1x/bXtl+ZpiEWAzW97QkQ0o+ancisHgjjOZ6nJrj7DJp64kCd5ISuGNmmQdaWsjUJ2e3L7ctTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EoHkIgda; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE1FBC4CEC8;
+	Fri, 30 Aug 2024 18:40:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725043060;
-	bh=x7Nwo9/SzBkpy1lULtDHM+dumOUJPEPWqgDyR4gwQBE=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=AzEt4ONzF5lWf3Wr7DLe7amccw6MrWt994lvj97mhmJDYaN0II8qj40OL9CndJc+6
-	 ZKxJPY9SqCNRBML2smIMQFZ1PjpHUyaex94DLLWmfs+uY35x+z6+KOpnukqCHn3bgC
-	 dWlmgTEA/ACqfE/zBrTo3+kgxRvWiRdEWyiajZLfEsBt2Z78nAZtA735TpBbMwKhF5
-	 M8i+5+fj7EyV3V4qUYVIvwNt0waKm4YAyr34KOumtKzI6TZWQnCDR0a1+1upU2tEj2
-	 0DpTmAWlUYZDAKioifIGad1NJOWVvuxLPYxJdBUeOvsi1gc/NCkH8fmC3mCUp1aw9O
-	 0/ggi4JcdFONA==
+	s=k20201202; t=1725043228;
+	bh=2/Lde77M57/uft20yZsYU2AJIk+qjlCHEXdgpvBhzNU=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=EoHkIgdaKe7W/x+CVN0adQ9gxGvdBS5uTNtwD9iTSAwhmSWNBqgxECr2RCKvhGOhy
+	 lK5LObzbw8RTjmIj+2FRReto4s2C9sd+AjL42cfanuumofffErYsce5+lFVC3NSB4d
+	 713FYVQEcKsIL0H0H33bzgVgiaC1+8WcK4baFqlYuf+wfP0EFFmSit1olyVgWtxLrl
+	 R9nWhzDdZq9n3IXkw+ycaI6Pubgm/4rUpopnW6BGA3gdR+ZSyUl1UmzIUvTwGRUoKy
+	 wcwpBnGg/h0MMjD0pP9JbbKBamvGKcJDtF9dyO90L2z0mXknQt1HrBA6SYfapv636J
+	 fVZEy1e3OfaAg==
 Received: from ip-10-30-226-235.us-west-2.compute.internal (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 205493809A80;
-	Fri, 30 Aug 2024 18:37:42 +0000 (UTC)
-Subject: Re: [GIT PULL]: soundwire fixes for v6.11
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <ZtHAoNLCzDeXh1z1@vaman>
-References: <ZtHAoNLCzDeXh1z1@vaman>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <ZtHAoNLCzDeXh1z1@vaman>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/vkoul/soundwire.git tags/soundwire-6.11-fixes
-X-PR-Tracked-Commit-Id: ab8d66d132bc8f1992d3eb6cab8d32dda6733c84
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 8d80c9903e3f6f9a99e8fd4374c2cf0745d0b708
-Message-Id: <172504306212.2681732.2551327948505140302.pr-tracker-bot@kernel.org>
-Date: Fri, 30 Aug 2024 18:37:42 +0000
-To: Vinod Koul <vkoul@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 73D4A3809A82;
+	Fri, 30 Aug 2024 18:40:30 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next] Documentation: Add missing fields to net_cachelines
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172504323046.2682525.188474389406773601.git-patchwork-notify@kernel.org>
+Date: Fri, 30 Aug 2024 18:40:30 +0000
+References: <20240829155742.366584-1-jdamato@fastly.com>
+In-Reply-To: <20240829155742.366584-1-jdamato@fastly.com>
+To: Joe Damato <jdamato@fastly.com>
+Cc: netdev@vger.kernel.org, mkarsten@uwaterloo.ca, edumazet@google.com,
+ kuba@kernel.org, davem@davemloft.net, pabeni@redhat.com, corbet@lwn.net,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-The pull request you sent on Fri, 30 Aug 2024 18:22:48 +0530:
+Hello:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/vkoul/soundwire.git tags/soundwire-6.11-fixes
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/8d80c9903e3f6f9a99e8fd4374c2cf0745d0b708
+On Thu, 29 Aug 2024 15:57:42 +0000 you wrote:
+> Two fields, page_pools and *irq_moder, were added to struct net_device
+> in commit 083772c9f972 ("net: page_pool: record pools per netdev") and
+> commit f750dfe825b9 ("ethtool: provide customized dim profile
+> management"), respectively.
+> 
+> Add both to the net_cachelines documentation, as well.
+> 
+> [...]
 
-Thank you!
+Here is the summary with links:
+  - [net-next] Documentation: Add missing fields to net_cachelines
+    https://git.kernel.org/netdev/net-next/c/6af91e3d2cfc
 
+You are awesome, thank you!
 -- 
 Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
