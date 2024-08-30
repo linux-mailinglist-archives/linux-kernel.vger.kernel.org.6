@@ -1,163 +1,131 @@
-Return-Path: <linux-kernel+bounces-308109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BC56965762
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 08:11:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 215B3965766
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 08:12:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D712284110
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 06:11:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53A121C20372
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 06:12:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 735E11531C1;
-	Fri, 30 Aug 2024 06:11:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AADBF1531C1;
+	Fri, 30 Aug 2024 06:12:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="JDfMqMoD";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="zUVLLfle";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="JDfMqMoD";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="zUVLLfle"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="GaaKR42r"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 137E714C596;
-	Fri, 30 Aug 2024 06:11:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1256481DB;
+	Fri, 30 Aug 2024 06:12:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724998264; cv=none; b=grx4TdPsfhVI40vFJ2aXRI4hFbr3E5pjeY3GzjRNykes/yBTsnMdZrJHZM8Wspb5uaUGwlYHyBn4dWi+731WGWwc+b5vMLCovHUDbVafHNxX/7AB4x44ihJrZ24I+nHsiyKJQDzIDRU5Lv1cltFBQV8dFS6oMws3g3jn6Hi3TCU=
+	t=1724998332; cv=none; b=AT+1qwvPWx4FkYFa3NSTwFrmXHAqzTb75/eBFydCxLBF0bxZE14fQ07lB5G4RlP9JDh1bmjFh1flj5HOm2o84IJs2v/11JGz1AYyVGFYlW6QhsFJSQo27hcZUSN9IBTsaryDvW57u4ixWHkxV5vXNocenuTCruwhJYTgu8U8Fwg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724998264; c=relaxed/simple;
-	bh=g5qiXH6/WtVjU3jF2wRxOveJ9MIcV4A0/6sKE7TEqiM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UA0Y0vdKDYFNHNG0Kh1jCSlA9KQAgh2aAFiqVLO6cRkYZs3JsvzN5CTcpRwePIq21oPB+gsamMfn9pOC8PsXR1ISn4Ne5oysBXa7rpmwGVs75WyhmJAleNzOYg+DZeXuZJIDpOdQ/JUjTerhzu8a8dtDsF4eLMPvzZyO22ml9JA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=JDfMqMoD; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=zUVLLfle; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=JDfMqMoD; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=zUVLLfle; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 3E5AB1F7A0;
-	Fri, 30 Aug 2024 06:11:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1724998261; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PwD1A+dPCAQTtJUtxAfsvK6ToX4dZSDfYvcEiw+etw4=;
-	b=JDfMqMoDN3c6QjxNybEbVOAxAyTIMbjnFSsak255GdZM+fsIXxggkCrMx5NOn/tq8LIrM9
-	H7BRPyZkKBfhWMMhTHMZOrRoLFf0iNYNnrS4j8wtHS73lbW54I23fkhc5aa1Lf28aiCIQE
-	bHW6GRFwLfibWZkVHGJnsz/uj7wkgkQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1724998261;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PwD1A+dPCAQTtJUtxAfsvK6ToX4dZSDfYvcEiw+etw4=;
-	b=zUVLLfleivqOuGeSvJTH7GvjB4icviBsxydl1mNXu1N+xYMn48Amd+PjTIgLVBQYFC1zHF
-	PucOn+V7bEmJ5OAQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1724998261; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PwD1A+dPCAQTtJUtxAfsvK6ToX4dZSDfYvcEiw+etw4=;
-	b=JDfMqMoDN3c6QjxNybEbVOAxAyTIMbjnFSsak255GdZM+fsIXxggkCrMx5NOn/tq8LIrM9
-	H7BRPyZkKBfhWMMhTHMZOrRoLFf0iNYNnrS4j8wtHS73lbW54I23fkhc5aa1Lf28aiCIQE
-	bHW6GRFwLfibWZkVHGJnsz/uj7wkgkQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1724998261;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PwD1A+dPCAQTtJUtxAfsvK6ToX4dZSDfYvcEiw+etw4=;
-	b=zUVLLfleivqOuGeSvJTH7GvjB4icviBsxydl1mNXu1N+xYMn48Amd+PjTIgLVBQYFC1zHF
-	PucOn+V7bEmJ5OAQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C905513A3D;
-	Fri, 30 Aug 2024 06:11:00 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id xq8TL3Ri0WYoTQAAD6G6ig
-	(envelope-from <hare@suse.de>); Fri, 30 Aug 2024 06:11:00 +0000
-Message-ID: <4dfed593-5b0c-4565-a6dd-108f1b1fe961@suse.de>
-Date: Fri, 30 Aug 2024 08:11:00 +0200
+	s=arc-20240116; t=1724998332; c=relaxed/simple;
+	bh=LSNxO6sFebrhQiVeGhHLcgjRgxU3KR/BCfC7qN5Q08I=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=jZ/E9OWnNzMWjbKFXBbxFZSaH+mOS2HXGCTVXHbeMrDmyweVqfsBu2U6mgXcEKPNE8m+wcmMbA9/fqF9d6xhsETQIIo4aPgafwlF3gQAF2kTij9pmkgjlvnVYT6ua/hkSXKKKw6vYiGinmBJ6zMvBaPeQBXAGWfi8Tg7qmcyUjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=GaaKR42r; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [192.168.29.25] (unknown [IPv6:2405:201:2015:f873:55f8:639e:8e9f:12ec])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 6CF40229;
+	Fri, 30 Aug 2024 08:10:55 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1724998258;
+	bh=LSNxO6sFebrhQiVeGhHLcgjRgxU3KR/BCfC7qN5Q08I=;
+	h=From:Subject:Date:To:Cc:From;
+	b=GaaKR42rgLf2d1olXsyWhoIrkCGJ3DZjMNO7y21HdEXrzZFomF5orEaLxSADCmZVU
+	 5HrQzKev/j5hXk7rPuM9MRTZxObbvRAGCpjwJ46VaP3jQkn9sJ4F/qVRwRJhUUL22K
+	 KfWbUvQUJ62NyO6a1Dws6WyzV1uIxbvSRd8nIC7E=
+From: Umang Jain <umang.jain@ideasonboard.com>
+Subject: [PATCH v4 0/2] media: imx335: Fix reset-gpio handling
+Date: Fri, 30 Aug 2024 11:41:50 +0530
+Message-Id: <20240830-imx335-vflip-v4-0-cb9f20fc7b87@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fs: drop GFP_NOFAIL mode from alloc_page_buffers
-Content-Language: en-US
-To: Jan Kara <jack@suse.cz>, Michal Hocko <mhocko@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-raid@vger.kernel.org,
- linux-kernel@vger.kernel.org, Song Liu <song@kernel.org>,
- Yu Kuai <yukuai3@huawei.com>, Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Michal Hocko <mhocko@suse.com>
-References: <20240829130640.1397970-1-mhocko@kernel.org>
- <20240829191746.tsrojxj3kntt4jhp@quack3>
-From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <20240829191746.tsrojxj3kntt4jhp@quack3>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.997];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:mid,suse.com:email,imap1.dmz-prg2.suse.org:helo,suse.cz:email]
-X-Spam-Score: -4.30
-X-Spam-Flag: NO
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKZi0WYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyTHQUlJIzE
+ vPSU3UzU4B8JSMDIxMDC2MD3czcCmNjU92ytJzMAl3zNNMUkySTFAODtFQloJaCotS0zAqwcdG
+ xtbUA5YvHAV4AAAA=
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, 
+ "Paul J. Murphy" <paul.j.murphy@intel.com>, 
+ Daniele Alessandrelli <daniele.alessandrelli@intel.com>, 
+ Sakari Ailus <sakari.ailus@linux.intel.com>, 
+ Martina Krasteva <martinax.krasteva@intel.com>
+Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, 
+ Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, 
+ Kieran Bingham <kieran.bingham@ideasonboard.com>, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Umang Jain <umang.jain@ideasonboard.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ stable@vger.kernel.org
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1724998323; l=1475;
+ i=umang.jain@ideasonboard.com; s=20240731; h=from:subject:message-id;
+ bh=LSNxO6sFebrhQiVeGhHLcgjRgxU3KR/BCfC7qN5Q08I=;
+ b=9vlxnyuGZ/VzIRIJKJ/rr/w8RNFAHS7Pjh3PKKSi5XXtvYXkHOp4NJBSthjHbb7ENuqATsM4v
+ EzieYwWZJXCCpeThAgn71733n5+CuoG42Mi4ywTU4SANAox3kEzfbel
+X-Developer-Key: i=umang.jain@ideasonboard.com; a=ed25519;
+ pk=7pvnIBNsDpFUMiph0Vlhrr01+rAn5fSIn/QtDeLeXL0=
 
-On 8/29/24 21:17, Jan Kara wrote:
-> On Thu 29-08-24 15:06:40, Michal Hocko wrote:
->> From: Michal Hocko <mhocko@suse.com>
->>
->> There is only one called of alloc_page_buffers and it doesn't require
->> __GFP_NOFAIL so drop this allocation mode.
->>
->> Signed-off-by: Michal Hocko <mhocko@suse.com>
-> 
-> Looks good. Feel free to add:
-> 
-> Reviewed-by: Jan Kara <jack@suse.cz>
-> 
-> Although even better fix would be to convert the last remaining caller of
-> alloc_page_buffers() to folio_alloc_buffers()... But that may be more
-> difficult.
-> 
-Already done by Pankajs large-block patchset, currently staged in vfs.git.
+These couple of patches intends to fix the reset-gpio handling
+for imx335 driver.
 
-Cheers,
+Patch 1/2 mentions reset-gpio polarity in DT binding example.
 
-Hannes
+Patch 2/2 fixes the logical value of reset-gpio during
+power-on/power-off sequence.
+
+--
+Changes in v4:
+- rework 2/2 commit message
+- Explain conclusions for 2/2 patch, in the '---' section.
+
+Changes in v3:
+- Rework 1/2 commit message
+- Fix gpio include in DT example in 1/2
+- Remove not-so-informative XCLR comment in 2/2
+
+Changes in v2:
+- Also include reset-gpio polarity, mention in DT binding
+- Add Fixes tag in 2/2
+- Set the reset line to high during init time in 2/2
+
+Link to v2:
+https://lore.kernel.org/linux-media/20240729110437.199428-1-umang.jain@ideasonboard.com/
+
+Link to v1:
+https://lore.kernel.org/linux-media/tyo5etjwsfznuk6vzwqmcphbu4pz4lskrg3fjieojq5qc3mg6s@6jbwavmapwmf/T/#m189ccfa77ddceda6c3b29be3306f1a27ed0934d6
+
+Signed-off-by: Umang Jain <umang.jain@ideasonboard.com>
+---
+Umang Jain (2):
+      dt-bindings: media: imx335: Add reset-gpios to the DT example
+      media: imx335: Fix reset-gpio handling
+
+ Documentation/devicetree/bindings/media/i2c/sony,imx335.yaml | 4 ++++
+ drivers/media/i2c/imx335.c                                   | 9 ++++-----
+ 2 files changed, 8 insertions(+), 5 deletions(-)
+---
+base-commit: 393556c9f56ced8d9776c32ce99f34913cfd904e
+change-id: 20240830-imx335-vflip-7f5d4b4d00fe
+
+Best regards,
 -- 
-Dr. Hannes Reinecke                  Kernel Storage Architect
-hare@suse.de                                +49 911 74053 688
-SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
-HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
+Umang Jain <umang.jain@ideasonboard.com>
 
 
