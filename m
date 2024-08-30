@@ -1,97 +1,131 @@
-Return-Path: <linux-kernel+bounces-307953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3D6596558C
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 05:08:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0EE896558F
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 05:12:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2294E1C21E06
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 03:08:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59DB01F24086
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 03:12:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B87581386DA;
-	Fri, 30 Aug 2024 03:08:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="kKyaOBzY"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6F95481AB;
-	Fri, 30 Aug 2024 03:08:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19AB913665B;
+	Fri, 30 Aug 2024 03:12:23 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A14D481AB
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 03:12:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724987306; cv=none; b=AuCE6C94DLlTJzFctEchmx+kmC4dcg0plStIQLjt/6+h6LlpUC1Sb3Qk20W48y/BGCD9bj4Jxbg9nznK5c+3jY/5tPxHaoKC+7x+Uhl6Ldsn8F4oVbyeYC7XkgepzxN9fSI7/zFry9pxTIJy10ildjBfLnlGe8dMKAwbMSwaojI=
+	t=1724987542; cv=none; b=CKPMoGHZBsG1Q7uO76HNAUzKYpd8cLUF+7wHtRzuKiSIhn6r3ii5FP22DwelY2Cu0F5xyr4T0xyyAFpNXH/fXwAmTlNul3ZKgDoZ5+qTgo4eXQwgoY2EOLi7CFjT+IqarwaNDfO9X89iCUzurNpms9S/MyGWQUQqIUo84gM/004=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724987306; c=relaxed/simple;
-	bh=5ixJunBE8y+Kj6i0hhw2cohe7nD9zRu7+vWcZYif9aE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=Olm5WSlpu22w3lFAZ/ljPFiwNYkCUdEFocAYqNKga0ufEpJH4z1gSCakYse/Yx2K9Pl2hwzpaSprT8J1F26j0g7SEwVfzuMMR52CmKLtf8W/0TvUhWGLW/MPefsGKXPNF5HTh0mJXB7/ePuWSgLOtpTM8iMoYEjY09XWTinxB+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=kKyaOBzY reason="signature verification failed"; arc=none smtp.client-ip=117.135.210.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=9MmQwQUdKpfDgkcA2ZVUpT1iPlD+2kyrSpDicx4p2XY=; b=k
-	KyaOBzYjECnaq5WD6UFIriD46uoAz7pwBXhNRy/qu6Fvz06AcaYtbGlQlGUOV7eH
-	19t/SSBbWaO7Y3BO5w2OYApiB52kkAc3R3Kx5T5m/t0NnBfJioHOWbB2mhNl6ZTa
-	oqbYETBHosmFy9Lw/XmTTZzpRB/yBmA880eenFPhyQ=
-Received: from 00107082$163.com ( [111.35.190.113] ) by
- ajax-webmail-wmsvr-40-114 (Coremail) ; Fri, 30 Aug 2024 11:08:10 +0800
- (CST)
-Date: Fri, 30 Aug 2024 11:08:10 +0800 (CST)
-From: "David Wang" <00107082@163.com>
-To: "Kent Overstreet" <kent.overstreet@linux.dev>
-Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Subject: Re:Re: [BUG?] bcachefs: keep writing to device when there is no
- high-level I/O activity.
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
- Copyright (c) 2002-2024 www.mailtech.cn 163com
-In-Reply-To: <y336p7vehwl6rpi5lfht6znaosnaqk3tvigzxcda7oi6ukk3o4@p4imj4wzcxjb>
-References: <20240827094933.6363-1-00107082@163.com>
- <y336p7vehwl6rpi5lfht6znaosnaqk3tvigzxcda7oi6ukk3o4@p4imj4wzcxjb>
-X-NTES-SC: AL_Qu2ZBvWTuEoi5iGcZekXn0oTju85XMCzuv8j3YJeN500oyTy/xAkZW9eNkPH+ceVNiCjoAiXQClr+vR3Z7lHQq1UOAHQbzjInozLXdfo8g3o
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=GBK
+	s=arc-20240116; t=1724987542; c=relaxed/simple;
+	bh=8YOzYnu9nUupDIcVBx5GKlwyRFiuUjbB7ECFrS5PqPs=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=TrXWVM/Y7a8x3jV6IBXbse7zUq4XsrTdTElFeVo5uCCsb/IO7jBrgw4f8oxrqzyG14YcN3RnFUJZGizRR2gIdjq9l/tM3CZz49ifyrWj/InAqUpecGlZivQ87HPWvJkv58oiwVxQfvCN1VPScDkR8RPIU2I09UstFN90nl2UPG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-39d28a70743so12961105ab.0
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 20:12:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724987540; x=1725592340;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=u2X9cgzIusJJpRm4ht66Xz9QGYg4njF2L5m9NAeBrq0=;
+        b=xJz3q5T4yQ6NNH2sAHuzxQ9e05Twpuh+FsUcUEzH7S70j609DZcy53cwOf345jX2tu
+         62PonMBvCg/mpOdSl9GoRQIMzEVwURs3BVvi3ed0D8ghrnu/ccavTK2fHTSbKUavh/Z4
+         3f1urkqKJeLuS9w34DjMaKaNaraJi7ICEh7rV80YVabekxzJwjcXq4+4CkVjEsciLcbK
+         a7JsGPo8c5WI4jtd0G6DbT7egzVZMCpK6F+w7W8c17PbsXMqHN8DEobTu3M5bGqIAxVF
+         Dwa+CcvbMa3ZgEZZ7TxKJx1WR93Nz0QPI5c/3P6qq7kSU93XE1EUmkzo/WfcCNiAARqs
+         +4kw==
+X-Gm-Message-State: AOJu0YwgdjetuEyy4lPnjwq1vu7sXdIsJvWLVFymO0K3mZOZOAOgKOlC
+	em6pMxrLxKvDwC1rlcg8Yfb6Pg/XAowdPKX6BvjsF05u7rDO+hSTjZ/MyBRiWbymQLRajxv9G+E
+	zXyF99pJ/hgIOzvMCDFNgfVFubtbpP/YPOXHE+TroW0hiXgrouGiCzGA=
+X-Google-Smtp-Source: AGHT+IFIKN6XQ9uqJ3clcosM5x+Jm4HIMjZwTUVcYOOAmnEsRJxnYW1/yh7PziUX2CxqZtEhSD+rKG1TqPIKwMNoogNniCpVr4P2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <51c30c17.3440.191a141321f.Coremail.00107082@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:_____wD33yabN9FmVrdOAA--.58957W
-X-CM-SenderInfo: qqqrilqqysqiywtou0bp/1tbiqQxKqmVOCh0U0wAGs4
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+X-Received: by 2002:a05:6e02:1d02:b0:39d:268a:e920 with SMTP id
+ e9e14a558f8ab-39f413ce342mr499755ab.3.1724987540098; Thu, 29 Aug 2024
+ 20:12:20 -0700 (PDT)
+Date: Thu, 29 Aug 2024 20:12:20 -0700
+In-Reply-To: <000000000000be46510620da5362@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000091e02f0620ddf5cf@google.com>
+Subject: Re: [syzbot] Re: [syzbot] [net?] WARNING in hsr_fill_frame_info
+From: syzbot <syzbot+3d602af7549af539274e@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-SGksIApBdCAyMDI0LTA4LTI4IDAwOjE3OjEyLCAiS2VudCBPdmVyc3RyZWV0IiA8a2VudC5vdmVy
-c3RyZWV0QGxpbnV4LmRldj4gd3JvdGU6Cj5PbiBUdWUsIEF1ZyAyNywgMjAyNCBhdCAwNTo0OToz
-M1BNIEdNVCwgRGF2aWQgV2FuZyB3cm90ZToKPj4gSGksCj4+IAo+PiBJIHdhcyB1c2luZyB0d28g
-cGFydGl0aW9ucyBvbiBzYW1lIG52bWUgZGV2aWNlIHRvIGNvbXBhcmUgZmlsZXN5c3RlbSBwZXJm
-b3JtYW5jZSwKPj4gYW5kIEkgY29uc2lzdGFudGx5IG9ic2VydmVkIGEgc3RyYW5nZSBiZWhhdmlv
-cjoKPj4gCj4+IEFmdGVyIDEwIG1pbnV0ZXMgZmlvIHRlc3Qgd2l0aCBiY2FjaGVmcyBvbiBvbmUg
-cGFydGl0aW9uLCBwZXJmb3JtYW5jZSBkZWdyYWRlCj4+IHNpZ25pZmljYW50bHkgZm9yIG90aGVy
-IGZpbGVzeXN0ZW1zIG9uIG90aGVyIHBhcnRpdGlvbiAoc2FtZSBkZXZpY2UpLgo+PiAKPj4gCWV4
-dDQgIDE1ME0vcyAtLT4gMTQzTS9zCj4+IAl4ZnMgICAxNTBNL3MgLS0+IDEzNE0vcwo+PiAJYnRy
-ZnMgMTI3TS9zIC0tPiAxMDhNL3MKPj4gCj4+IFNldmVyYWwgcm91bmQgdGVzdHMgc2hvdyB0aGUg
-c2FtZSBwYXR0ZXJuIHRoYXQgYmNhY2hlZnMgc2VlbXMgb2NjdXB5IHNvbWUgZGV2aWNlIHJlc291
-cmNlCj4+IGV2ZW4gd2hlbiB0aGVyZSBpcyBubyBoaWdoLWxldmVsIEkvTy4KPgo+VGhpcyBpcyBp
-cyBhIGtub3duIGlzc3VlLCBpdCBzaG91bGQgYmUgZWl0aGVyIGpvdXJuYWwgcmVjbGFpbSBvcgo+
-cmViYWxhbmNlLgo+Cj4oV2UgY291bGQgdXNlIHNvbWUgYmV0dGVyIHN0YXRzIHRvIHNlZSBleGFj
-dGx5IHdoaWNoIGl0IGlzKQo+CgoKSSBrcHJvYmUgYmNoMl9zdWJtaXRfd2Jpb19yZXBsaWNhcyBh
-bmQgdGhlbiBiY2gyX2J0cmVlX25vZGVfd3JpdGUsIGNvbmZpcm1lZCB0aGF0CnRoZSBiYWNrZ3Jv
-dW5kIHdyaXRlcyB3ZXJlIGZyb20gYmNoMl9qb3VybmFsX3JlY2xhaW1fdGhyZWFkLgooQW5kIHRo
-ZW4sIGJ5IHNraW1taW5nIHRoZSBjb2RlIGluIF9fYmNoMl9qb3VybmFsX3JlY2xhaW0sIEkgbm90
-aWNlZCB0aG9zZSB0cmFjZV9hbmRfY291bnQgc3RhdHMpCgoKCj5UaGUgYWxnb3JpdGhtIGZvciBo
-b3cgd2UgZG8gYmFja2dyb3VuZCB3b3JrIG5lZWRzIHRvIGNoYW5nZTsgSSd2ZQo+d3JpdHRlbiB1
-cCBhIG5ldyBvbmUgYnV0IEknbSBhIHdheXMgb2ZmIGZyb20gaGF2aW5nIHRpbWUgdG8gaW1wbGVt
-ZW50IGl0Cj4KPmh0dHBzOi8vZXZpbHBpZXBpcmF0ZS5vcmcvZ2l0L2JjYWNoZWZzLmdpdC9jb21t
-aXQvP2g9YmNhY2hlZnMtZ2FyYmFnZSZpZD00N2E0YjU3NGZiNDIwYWE4MjRhYWQyMjI0MzZmNGMy
-OTRkYWY2NmFlCj4KPkNvdWxkIGJlIGEgZnVuIG9uZSBmb3Igc29tZW9uZSBuZXcgdG8gdGFrZSBv
-bi4KPgo+PiAKCkEgRnVuIGFuZCBzY2FyeSBvbmUuLi4uCkZvciB0aGUgaXNzdWUgaW4gdGhpcyB0
-aHJlYWQsIApJIHRoaW5rICppZGxlKiBzaG91bGQgYmUgZGVmaW5lZCB0byBiZSBkZXZpY2Ugd2lk
-ZToKd2hlbiBiY2FjaGVmcyBpcyBpZGxlIHdoaWxlIG90aGVyIEZTIG9uIHRoZSBzYW1lIGJsb2Nr
-IGRldmljZSBpcyBidXN5LCB0aG9zZSBiYWNrZ3JvdW5kIHRocmVhZHMgc2hvdWxkIGJlIHRocm90
-dGxlZCB0byBzb21lIGRlZ3JlZS4KCgpUaGFua3MKRGF2aWQKCgoK
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
+
+***
+
+Subject: Re: [syzbot] [net?] WARNING in hsr_fill_frame_info
+Author: lizhi.xu@windriver.com
+
+missing lock before call hsr_forward_skb
+
+#syz test
+
+diff --git a/net/hsr/hsr_device.c b/net/hsr/hsr_device.c
+index e4cc6b78dcfc..32b43bd9f542 100644
+--- a/net/hsr/hsr_device.c
++++ b/net/hsr/hsr_device.c
+@@ -405,11 +405,15 @@ static void hsr_announce(struct timer_list *t)
+ 
+ 	rcu_read_lock();
+ 	master = hsr_port_get_hsr(hsr, HSR_PT_MASTER);
++	if (!master)
++		goto out;
++
+ 	hsr->proto_ops->send_sv_frame(master, &interval, master->dev->dev_addr);
+ 
+ 	if (is_admin_up(master->dev))
+ 		mod_timer(&hsr->announce_timer, jiffies + interval);
+ 
++out:
+ 	rcu_read_unlock();
+ }
+ 
+@@ -427,6 +431,9 @@ static void hsr_proxy_announce(struct timer_list *t)
+ 	 * of SAN nodes stored in ProxyNodeTable.
+ 	 */
+ 	interlink = hsr_port_get_hsr(hsr, HSR_PT_INTERLINK);
++	if (!interlink)
++		goto out;
++
+ 	list_for_each_entry_rcu(node, &hsr->proxy_node_db, mac_list) {
+ 		if (hsr_addr_is_redbox(hsr, node->macaddress_A))
+ 			continue;
+@@ -440,6 +447,7 @@ static void hsr_proxy_announce(struct timer_list *t)
+ 
+ 		mod_timer(&hsr->announce_proxy_timer, jiffies + interval);
+ 	}
++out:
+ 
+ 	rcu_read_unlock();
+ }
+diff --git a/net/hsr/hsr_slave.c b/net/hsr/hsr_slave.c
+index af6cf64a00e0..3971dbc0644a 100644
+--- a/net/hsr/hsr_slave.c
++++ b/net/hsr/hsr_slave.c
+@@ -67,7 +67,9 @@ static rx_handler_result_t hsr_handle_frame(struct sk_buff **pskb)
+ 		skb_set_network_header(skb, ETH_HLEN + HSR_HLEN);
+ 	skb_reset_mac_len(skb);
+ 
++	spin_lock_bh(&hsr->seqnr_lock);
+ 	hsr_forward_skb(skb, port);
++	spin_unlock_bh(&hsr->seqnr_lock);
+ 
+ finish_consume:
+ 	return RX_HANDLER_CONSUMED;
 
