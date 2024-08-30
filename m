@@ -1,95 +1,131 @@
-Return-Path: <linux-kernel+bounces-308855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39E779662C3
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 15:17:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5CDE9662C5
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 15:17:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6DE8A1C23290
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 13:17:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 72236B2144C
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 13:17:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 873381A4B9C;
-	Fri, 30 Aug 2024 13:17:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E41651ACDEF;
+	Fri, 30 Aug 2024 13:17:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XuV78ntK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uYgN5f+h"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4B8E13635B;
-	Fri, 30 Aug 2024 13:17:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EE8518EFD2;
+	Fri, 30 Aug 2024 13:17:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725023831; cv=none; b=XEOVllOVxL5LjcJmTz3HdZCYJCED54bt0jpjySyQ4E3O4QRpC8bpXpwfNIlS5FneHTC50Zw2suWzOkuW2BQ9TtpxeBLm6S7IvUWRLZy339wOmzYI5/n3hXxXE3l8Spad52HEhxfzcONIU5hV8wPDTgyavMeLeY8EX5d+YH/Tn/M=
+	t=1725023856; cv=none; b=SckaW4ifcW3xx44ErxvNkk4A9lgHqj2zDnRj8tTIzqvfDFf+wvxXWe/z4uR0AIN0lI0/h5qDwEqV1G81Vcy4j0nVSDzX2MJx0and30CVsXPcUcwWdXt9PHyoecJ7YDKnSx8B1Du+fywg2AMnWdy/Pd6DbGknttsP7Ynegv35Tic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725023831; c=relaxed/simple;
-	bh=TcDTJRaPELReivBPxvvSd+y7D7MEGkufPnGS3PdYcyU=;
+	s=arc-20240116; t=1725023856; c=relaxed/simple;
+	bh=mfeW/dQ8kjLmkQq9sv1rxcQaPZFy1TbjCAt7LHtG9VQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RIUbiATsGZ7/SRPn3u6hAC5lxA1RL/pA7tflfE1ARUliVw2Uq7Vq3oPUfCQpPsokVWbaEuMceC2F9zOefAMhrwF37Vj3Jq9s8ZLZYfXLeNmR3VnXz813kutl23Fvz5pIRseEdifQDckUTyyteBnO8gC/FnmCFHL4gbplH4ZJOLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XuV78ntK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7071AC4CEC2;
-	Fri, 30 Aug 2024 13:17:09 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=bdIACfBAim/3yuXT8rbAq42F9ZI8fpCVQMbfCEWXaS/W4V/rGh7NDQuurw6UAoQ+1UtM9WKN44rn0Ht3q2FrkBm3fRL8p3ZlIks2XW466+wg4qgiBCDTlYxmBwKfDjz5cyguGhTq3ETFxJRQTKwH++A47IdyacNrcgTE5yKlbDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uYgN5f+h; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E2BBC4CEC2;
+	Fri, 30 Aug 2024 13:17:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725023831;
-	bh=TcDTJRaPELReivBPxvvSd+y7D7MEGkufPnGS3PdYcyU=;
+	s=k20201202; t=1725023855;
+	bh=mfeW/dQ8kjLmkQq9sv1rxcQaPZFy1TbjCAt7LHtG9VQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XuV78ntKfPJzbcgh8/mlP1vsTNFoyq5Lm32o+gVEnycpdMQkUcleum03MJ5nip1bw
-	 KKtcS8zbrGF5WtohSodiEjzf2ZN+iOiCTUQAzGQ6w652hCPo7DWYOK7COZzJq1cg8h
-	 ZskxYyMtYjbid+vDs7U00rjB3lxlul/kWXlgZ4akJmDGLJ1TzpnsCmG3w3HfBP0Su2
-	 5MKkEiIiORRIDP5omslbsqoxOxwGR1D54Y9U2s+hZtSAsrGeOF5Yr8fGstKfV0pEEN
-	 lMT+axfxXTZEt0/pp9+kO+ExITl8tXRf/d4DFcqGQtSIU2DlV+KEj94GsAfw8RbPtb
-	 +QsamTjDWt+Fg==
-Date: Fri, 30 Aug 2024 15:17:06 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Thorsten Blum <thorsten.blum@toblux.com>
-Cc: netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Simon Horman <horms@kernel.org>, dhowells@redhat.com, 
-	jlayton@kernel.org
-Subject: Re: [RESEND PATCH] fscache: Remove duplicate included header
-Message-ID: <20240830-weihnachten-umtreiben-d3a9f1aee2e7@brauner>
-References: <20240628062329.321162-2-thorsten.blum@toblux.com>
- <20240628-dingfest-gemessen-756a29e9af0b@brauner>
- <4A2EAFA2-842F-46EF-995E-7843937E8CD5@toblux.com>
+	b=uYgN5f+h+BXRZpCe7XalhR1miF+MuQMUE0/q6qeTB6nOx+4FxLm/+nNOfhdULO5Vx
+	 bNkNLgbLU4MLFbZb/4bxqsNZXeLpJ4WsXvADrMoHrpMsszaQ7lMsRfi5OC9x6A8Lql
+	 vY4qkERRq0CqFm8KIRJ9NUuPcxt3luobX9bqw9/eMPO/G7Qfyn8akRGOkPXjflGxIo
+	 q7C5m3f93p8GAR2HaqEiez9+eP076avfoseLdtLFeUGBm5LOzkCUGdiS2ojjFbPY7S
+	 /MuR8EkZJLp+/rLYTBjDYLEE0KKBvWkb08YVYb4GVQkZgah6Er5xom9aZiTxzTPwY4
+	 Otln68+WykiSw==
+Date: Fri, 30 Aug 2024 10:17:32 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org, Song Liu <song@kernel.org>,
+	bpf@vger.kernel.org
+Subject: Re: [PATCH 1/3] perf lock contention: Handle error in a single place
+Message-ID: <ZtHGbFyJYLzzVRou@x1>
+References: <20240830065150.1758962-1-namhyung@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <4A2EAFA2-842F-46EF-995E-7843937E8CD5@toblux.com>
+In-Reply-To: <20240830065150.1758962-1-namhyung@kernel.org>
 
-On Thu, Aug 29, 2024 at 02:29:34PM GMT, Thorsten Blum wrote:
-> On 28. Jun 2024, at 10:44, Christian Brauner <brauner@kernel.org> wrote:
-> > On Fri, 28 Jun 2024 08:23:30 +0200, Thorsten Blum wrote:
-> >> Remove duplicate included header file linux/uio.h
-> >> 
-> >> 
-> > 
-> > Applied to the vfs.netfs branch of the vfs/vfs.git tree.
-> > Patches in the vfs.netfs branch should appear in linux-next soon.
-> > 
-> > Please report any outstanding bugs that were missed during review in a
-> > new review to the original patch series allowing us to drop it.
-> > 
-> > It's encouraged to provide Acked-bys and Reviewed-bys even though the
-> > patch has now been applied. If possible patch trailers will be updated.
-> > 
-> > Note that commit hashes shown below are subject to change due to rebase,
-> > trailer updates or similar. If in doubt, please check the listed branch.
-> > 
-> > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-> > branch: vfs.netfs
-> > 
-> > [1/1] fscache: Remove duplicate included header
-> >      https://git.kernel.org/vfs/vfs/c/5094b901bedc
-> 
-> Hi Christian,
-> 
-> I just noticed that this patch never made it into linux-next and I 
-> can't find it in the vfs.netfs branch either. Any ideas?
+On Thu, Aug 29, 2024 at 11:51:48PM -0700, Namhyung Kim wrote:
+> It has some duplicate codes to do the same job.  Let's add a label and
+> goto there to handle errors in a single place.
 
-Picked into vfs.fixes.
+Thanks, applied to perf-tools-next,
+
+- Arnaldo
+ 
+> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> ---
+>  tools/perf/util/bpf_skel/lock_contention.bpf.c | 16 ++++------------
+>  1 file changed, 4 insertions(+), 12 deletions(-)
+> 
+> diff --git a/tools/perf/util/bpf_skel/lock_contention.bpf.c b/tools/perf/util/bpf_skel/lock_contention.bpf.c
+> index d931a898c434..e8a6f6463019 100644
+> --- a/tools/perf/util/bpf_skel/lock_contention.bpf.c
+> +++ b/tools/perf/util/bpf_skel/lock_contention.bpf.c
+> @@ -439,11 +439,8 @@ int contention_end(u64 *ctx)
+>  
+>  	duration = bpf_ktime_get_ns() - pelem->timestamp;
+>  	if ((__s64)duration < 0) {
+> -		pelem->lock = 0;
+> -		if (need_delete)
+> -			bpf_map_delete_elem(&tstamp, &pid);
+>  		__sync_fetch_and_add(&time_fail, 1);
+> -		return 0;
+> +		goto out;
+>  	}
+>  
+>  	switch (aggr_mode) {
+> @@ -477,11 +474,8 @@ int contention_end(u64 *ctx)
+>  	data = bpf_map_lookup_elem(&lock_stat, &key);
+>  	if (!data) {
+>  		if (data_map_full) {
+> -			pelem->lock = 0;
+> -			if (need_delete)
+> -				bpf_map_delete_elem(&tstamp, &pid);
+>  			__sync_fetch_and_add(&data_fail, 1);
+> -			return 0;
+> +			goto out;
+>  		}
+>  
+>  		struct contention_data first = {
+> @@ -502,10 +496,7 @@ int contention_end(u64 *ctx)
+>  				data_map_full = 1;
+>  			__sync_fetch_and_add(&data_fail, 1);
+>  		}
+> -		pelem->lock = 0;
+> -		if (need_delete)
+> -			bpf_map_delete_elem(&tstamp, &pid);
+> -		return 0;
+> +		goto out;
+>  	}
+>  
+>  	__sync_fetch_and_add(&data->total_time, duration);
+> @@ -517,6 +508,7 @@ int contention_end(u64 *ctx)
+>  	if (data->min_time > duration)
+>  		data->min_time = duration;
+>  
+> +out:
+>  	pelem->lock = 0;
+>  	if (need_delete)
+>  		bpf_map_delete_elem(&tstamp, &pid);
+> -- 
+> 2.46.0.469.g59c65b2a67-goog
 
