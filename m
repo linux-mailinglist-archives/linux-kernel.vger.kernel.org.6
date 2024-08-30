@@ -1,61 +1,61 @@
-Return-Path: <linux-kernel+bounces-308720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7EEB9660DB
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 13:34:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FE1C9660DA
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 13:34:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0E429B2281D
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 11:34:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3816D2874FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 11:34:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8559C199933;
-	Fri, 30 Aug 2024 11:34:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59714199FA4;
+	Fri, 30 Aug 2024 11:34:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="ZGJ6VYGR"
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="AxFW/NxR"
 Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010051.outbound.protection.outlook.com [52.101.69.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1607718F2DA;
-	Fri, 30 Aug 2024 11:34:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81B5C195FD1;
+	Fri, 30 Aug 2024 11:34:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.51
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725017642; cv=fail; b=OZ+kjmBxEzHsD3CEPg01Yn0u2cCHJ7yiWl1Rqh4Uzy81QYojHTbjm4O2qxCI+hNSEd3QFybIfXB9wA8jyqsaBmWCk/C0joHT5yhkrGI45uvH22ZQPs8hQBd3JR4xpEI/ws6anNOcUnEJ1wVNF1kYTg8INkVBQAM0UxEQhPDlpEI=
+	t=1725017644; cv=fail; b=pwo7VO1hupCH32QFG+WJeUJJ028QDw/kdoYtKeH51ktrRdFM3gSQqyQqGriCiIvD34Lq9tp+EmzujNukV6JFwDm5T1SG8VPX1OXs/YoJuBeZf/0QoiTj0dJkTkFXk7rXdx5agA8CNEc+mcAah8AGuqp483XWhfW5zRjBjg3TZ4Y=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725017642; c=relaxed/simple;
-	bh=k2scHyf6OSuMxh5CzZ/MP7k6s8cxb53ZLbVQlE+byVE=;
+	s=arc-20240116; t=1725017644; c=relaxed/simple;
+	bh=Psw9es/bwBXUPaPDc69w/OzVcFaerox26gHFiTahjuE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=lj/5H7iv8B7CVhK7kSxsD6RqzpbsSqfmUcCFuEhOw4QDIy4jbexPo203kxZ+s+fUIiOkAlcXwFSR4M1/rzDbQp0vRqcZnnRdyoXuH6VyTH0TcdtjkVC4pB9xQwAFvrdcBl1v1RuYdTGelLCYlnatIZtPD8e2HGTcbaGUmKdT5j8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=ZGJ6VYGR; arc=fail smtp.client-ip=52.101.69.51
+	 Content-Type:MIME-Version; b=hpbb+hqiMBtJpopnhr9THi7x0Tu8Jo6gCRFViu2FLs7VxpQC6jDqzCceAmTiApcFSsr0crHRY56LObzhr3AZI5UVZFBs9jEjz/JioTKnBSnNJgkLbll9+W3NMLamUahWuUTnaV9DpDs/P+DUN/RZV0LpxQ+rvs90peuUqvE8qgM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=AxFW/NxR; arc=fail smtp.client-ip=52.101.69.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=w1yzJVPJaE8HCTBBihN7/JTV/N9/7hJ+xJbByX7cxIVygmPtZljwcT5/n5UBkTq48wVg72OC2RxIxcrBnWBQPWprkj5+toqJ9XsVKaYbr9/eiaA2qV8sw3UxrvSTDYySdlstc3k01+fap7QL0mV+lk0G3yv0MXS6gNfkfJqghyCZbuZWhJ1Bp11Cqy9+R8RCn979wyVICZwhmQnbnk/BaXAb8sw0HoEP3nvINKEjZoVXDcgIqZU5ErX16vVPjIUOFNxSVpCaccERF9mmfltzqUUhA8QBolvslf7Pfe7W8XAR2P4SmICE6DNAzEXtrBA6WbgGUhqFzYsdc7zBtbw17A==
+ b=p5xrDDIihyCL4/4Jn5o4zJFAdwgb+gJnxxlR5pU5uaM3lGgfAoHNMPgVmgxiRnpFhig0tgOAXJq9AJlHikYULfOrR0wjTieDmsHAat/uPtUHVL8mEiIRLgUXU5BQRzsHZS3YXcVf3Ix97dY+qnDez0T6mU/TggyOIp2KVRRn0H2neny3juFkoosLI9+jasKzC6NtzYA3OuKmiN+m0ZpL654FbDwSIYPOEyx893BHwK4b1BHBgUztMMwFvSnPoPXrA4vpntLEcQt7q7WI97djFJn+i7rvJMNMRZUYm1p8palEA8GrRBENyGamogSqL2tURPfvaEPbqG0AQnrJgVdNKg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=sqO1yM02EPVE/MRqZEDoEpructK2fSSxMXpHFhTn5Pk=;
- b=KVkvksB2c5vxvsPXUTsmkk7j+2BWpL8hSxp2/iJkRCFLy59I0/gxxadvhZZnlBgZd8I1qz5lheDhDLvSmqIuSIosBStolPTJtbMEm10jQIwo3kNmW/4T2ZsA5sFDdcHwoHR8lSJYv0ztlypSiVVDTr8zvlz6jD/HUIubnAcJgKP1X4e1zbjOuWOCr4/FDv3ko5NCHCVXpi9tLo8zHjJRF9G9xfbpBVtiEkvWEHwRQG/Bhw+x07yENBOOIiorEesHtIf0BKXJ+h1QgFZWaaH8ZFLu66QFAh4/MvF7p9j1CIpfewc/9rncRkhUmWCCYV70kAtIGQsJaGQopV2NjI+gsA==
+ bh=mvHzmfEJzKOOu0trhKsIW2ufkKHjYtYZp708X87SZIw=;
+ b=ha2/PGhrDLE0zDpsv9DvaQdONH6HEytjkM7SFgqT33yB865onvDuFyspsMmgNbtyj9YQRD3NmCgouINBEL0jjzDBsRpuRBx66/BnlXDiYftvLQTBOt4dCXMi6kr3P/H4HNPdGEFBHCUME/qNUmhs8QbVXrt/VM6BJF87L85/CbRZsPy/o+2PcWmX2zqzAIwlvsWxBof32/yYUKz0f7cbSmPCTDUbKCGx5Fs6zdfuNxgvfror6Cp9DU5lyYt0p/a0vHhaRjdrHP8cXyg/qiNpMfP43xz5rQ0d4c3g1GVh7xReHEvhqaIxpfFIWbJIXSv+wC7JxMgZw5zgznvQoRUlzg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
  dkim=pass header.d=oss.nxp.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
  s=selector1-NXP1-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sqO1yM02EPVE/MRqZEDoEpructK2fSSxMXpHFhTn5Pk=;
- b=ZGJ6VYGR/pTyd6ibMbgybpLJePyox8zjkIE+phhCVUeHtrrIzKeW92aN9SgHk8exzzSdMuiGYM8VkbHrMVixbLUDXFVJlNoCk2rTZz8JG/ByMN3pBXi9IYyGzwSvOYpdS/9GNkW7eDW8bV+xfBecd8rTFslouCdEdPSIQlnFeCOEtP7tzxHOa7XFxcX9sC3u1ZBShIMRacL0i2owi1iCSuhkd4tAMxNGAA7Y/gBjA39CLNVQPSu1S8oed7pAH1s++TDWETETRwtUIyXgdjIOMAxEZJa85jRZqmuCVrwH1hrYsTSBYrXDhXpNe6zR2c1bEah9Adp0qfGywZeSZuL0cQ==
+ bh=mvHzmfEJzKOOu0trhKsIW2ufkKHjYtYZp708X87SZIw=;
+ b=AxFW/NxR5UqFMYYxu7tNj+eTjKuuJuBymxSq+SZvbR1saWWVpsOFb+kepJt6jD6JEr+VDZn5+NDlLwZ6wRGbJeGq3IkjBxul2x2EBWROaDEu4WUsECHVKLkXUQ6RJGi0zSmrgKJevLyX59e2i8iabSR5g38Sn0QD+ehU/bMBmX84KeKj63yvh6Vk8LOyzYOgpICWKgLEq/744l98M8WzPSuwq47W6xbBhe5/H1PK18NDKvDFHflIf6n24QwRfUpgg5bLsvuQW9s5XXlo3xNvS0AhZpSGuBcU6kkw8+w3TIWG/yuB+B4Lfu3rU8BjNkIvX7fa7fhG3ns9jlSUrQ3ODA==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=oss.nxp.com;
 Received: from DU0PR04MB9251.eurprd04.prod.outlook.com (2603:10a6:10:352::15)
  by VI1PR04MB6989.eurprd04.prod.outlook.com (2603:10a6:803:131::15) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.28; Fri, 30 Aug
- 2024 11:33:54 +0000
+ 2024 11:33:56 +0000
 Received: from DU0PR04MB9251.eurprd04.prod.outlook.com
  ([fe80::708f:69ee:15df:6ebd]) by DU0PR04MB9251.eurprd04.prod.outlook.com
  ([fe80::708f:69ee:15df:6ebd%7]) with mapi id 15.20.7897.027; Fri, 30 Aug 2024
- 11:33:54 +0000
+ 11:33:56 +0000
 From: Ciprian Costea <ciprianmarian.costea@oss.nxp.com>
 To: Chester Lin <chester62515@gmail.com>,
 	Matthias Brugger <mbrugger@suse.com>,
@@ -72,18 +72,17 @@ Cc: Pengutronix Kernel Team <kernel@pengutronix.de>,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	NXP S32 Linux Team <s32@nxp.com>,
-	Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>,
-	Radu Pirea <radu-nicolae.pirea@nxp.com>
-Subject: [PATCH v2 1/2] arm64: dts: s32g: Add S32G2/S32G3 uSDHC pinmux
-Date: Fri, 30 Aug 2024 14:33:46 +0300
-Message-ID: <20240830113347.4048370-2-ciprianmarian.costea@oss.nxp.com>
+	Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
+Subject: [PATCH v2 2/2] arm64: dts: s32g2: Disable support for SD/eMMC UHS mode
+Date: Fri, 30 Aug 2024 14:33:47 +0300
+Message-ID: <20240830113347.4048370-3-ciprianmarian.costea@oss.nxp.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240830113347.4048370-1-ciprianmarian.costea@oss.nxp.com>
 References: <20240830113347.4048370-1-ciprianmarian.costea@oss.nxp.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: AM0PR07CA0022.eurprd07.prod.outlook.com
- (2603:10a6:208:ac::35) To DU0PR04MB9251.eurprd04.prod.outlook.com
+X-ClientProxiedBy: AM0PR07CA0020.eurprd07.prod.outlook.com
+ (2603:10a6:208:ac::33) To DU0PR04MB9251.eurprd04.prod.outlook.com
  (2603:10a6:10:352::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -94,485 +93,137 @@ MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: DU0PR04MB9251:EE_|VI1PR04MB6989:EE_
-X-MS-Office365-Filtering-Correlation-Id: 350342ae-3518-4deb-f4a2-08dcc8e7a0f0
+X-MS-Office365-Filtering-Correlation-Id: 147eae14-b570-438c-4f7b-08dcc8e7a1fb
 X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|366016|376014;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?aERvYnlRR05uRWhodkpuTjMxU3IwNWNUSzBGSHpoZlRzK3FCOW9GaDZ3RWRT?=
- =?utf-8?B?cXUvaHlpdG5qKzAyM2x4djNiYitlNUMvNkE0VW9qa0QxbzcvL2NkaTM5UlNa?=
- =?utf-8?B?S2ZZY3NsZ2xzdDhnazdzVzNoN3k2aFRtT0VuTVhKZTdLd3N6Y0VUanhpZVVs?=
- =?utf-8?B?bng0SktsNTdra0lBZDhNUFdIaENkUkFnN05rUzg4OExUcEtKUitYMXpkTVVQ?=
- =?utf-8?B?RmtWcDF3TE1xbmxjMGlUNlZiOFBHakJzbVQ2L0FLTzVjWnArVDhZR1M5ckpK?=
- =?utf-8?B?SS9DeGlObmVPbGVPOEQxSXhDWmZNbVUxQy9UaVozRUU0ZXdGRUNMNTR0dWhB?=
- =?utf-8?B?QjZYa2IrNmZwSCtacWJsNS9OaVVINitNejY5TUlnUkUwYUExNU5MYUtBOFN0?=
- =?utf-8?B?ak85dTJ2VFkrYW55dzBEYWxhUTRRRlVKME1yeE43ZHNNaUVZWFlSdTkwOC9P?=
- =?utf-8?B?ZnRSQUZEN1JNWExNQmkxWWNWdlF5YVhFMGRSR2N6d3c5N0xhMkpGRWZ5RFlP?=
- =?utf-8?B?MVNGWHpvbFZZd1ZWVGR5ek50bUdqTG9qNnltNGJ2SG1ZMlRZZ0QwZUw2Tytj?=
- =?utf-8?B?VmQraDR0b093cy8xNEk0amYzQnQwMUsrTUFjTlAyTW5LbWRxSG9vMFRTUEx5?=
- =?utf-8?B?Tzl1N0l6VURxZC9pQkU0UThzVFNJNVVHV0o1YXNXa0NjRDIycGtHdU83ZGdZ?=
- =?utf-8?B?akVzSUM2RWtDM3FDb25PU25tNC9BQ2UzUUNJMHdXbjVicktEOGxxS3d2em01?=
- =?utf-8?B?NU84bk81VUlFK2JTZ0dMZHdVVVJyNFYzSURZWjR3KzV4b0c5N1lSVlEvc0lj?=
- =?utf-8?B?WjBMaGhqcHdWQnpnUW1yY1YzTFdsSFk2b1lBTUxVeTNQOVhiTGJINlNBSTVT?=
- =?utf-8?B?cmJVM3pQM2FOTUNucFYzTnhMY3o1cEs4TTd5WEdMdXUyWEZiMVlKTHBON2o3?=
- =?utf-8?B?ZWx0VDlGMjdyYTRtUWdSdU10RHpnWmFrMFlrUTAzanRXdDg1dGh4RkNDTjE5?=
- =?utf-8?B?ZFR6VVRQV1RjdWZtazlaRTFPd1Y3aU9ObGIxbVhDWU1YZzJ6RXVLTzdkZDZM?=
- =?utf-8?B?SGVwdm5oaWFXUGhpY0NTWVlQMlJYcFV0Mk9FVWZhRzBuM3ZFSUVMeXFsdUVo?=
- =?utf-8?B?ZDA0U1p6czFNSFROb1NrTHJhVUFSNmozK21aU1NjVGluTHBBSiticVJBMGpa?=
- =?utf-8?B?V3RsR2NPNlFkSmZCanpBY3grY3J2V2IwdytrYUN5RnErUVhJU3pmNW5pbHVB?=
- =?utf-8?B?QlptTklFQ2NpQ1hTVUFpQlQvZTNCZGJXbi96Y3lpaStVZXNKWUR2NXdiL2Js?=
- =?utf-8?B?cmhBTEhadTA1ZmdmZ3RVR3JwUWswS2s2VzdaUmpLdHp5S3NMRjVtc1h6U0xu?=
- =?utf-8?B?RC81d3NaVklyTEpaVE90cEZ4dmxRMGdWMVJBMmQ5R3BKMXBYdTRSK1d3UXVQ?=
- =?utf-8?B?MDA5QTYwcThjSkNoYWowbWI3RnQrYlJSU0w0N3dNZzRZWk1KVndSY1Y3OWUx?=
- =?utf-8?B?UFV6UjhxeDNaL3NXWTBScFE0VHlPbTc1aWFEeG03SkpNRzQ3dmRwRytHNWIz?=
- =?utf-8?B?RFBjcENOSENnWXhaZ3V4Y3NYanFRRDArR0EydlF0c25JQUhLd1FFb0RKc01y?=
- =?utf-8?B?WFl4RVhkMHBIMU0vVDlGL2xmUitUY1pCRVBGV1ZpM2ZUTlh1WUQzYkdieTh6?=
- =?utf-8?B?aU9jVnZBV1NwcTh2aktlajFsam0yTDVJL09JbmY5cnJBNWh3NUtpTG0rYWNN?=
- =?utf-8?B?UVBVQ1BZd2F0ZGJiU2ZRTEI1UW5DeTNndHFNbUVUOWJxbnM1U0FFbGhmSGNT?=
- =?utf-8?B?L0lvMGtXMlpwb2FUYnhOQT09?=
+	=?utf-8?B?MGU5N290MlZwZmtCbHFsOXREM1JvZkVPczRKWFNUMEZBTVFibkR0WFVNTzVW?=
+ =?utf-8?B?VDhoRDdiT1o2Vmh1SHRJN0FCcEtobGZFMWM2bWRLL1lKTXZBUHE1YUp4UGFB?=
+ =?utf-8?B?KzNFMHpVT0ZielpGK1p4M3VXUmlFYTNucXF6dTY4STN0ekV0dGFQNDYrYTNL?=
+ =?utf-8?B?TkhaMytrMGxCaWtEOUJRbXVWdFlYMjY4Q29FZVN6aysyMktLajZncnY4TlY3?=
+ =?utf-8?B?aUtpOHZIdC9sS3kwS0RWZmlkbm9wcUUrNTVnSHRDaEhPeEtpZTZnSkZpMUY0?=
+ =?utf-8?B?U3M1a2lZZEQ0RmJZdjlhc0tOSkdUZWJZQ2s1VzRydXRpdW5ieXRoaGJlNHpa?=
+ =?utf-8?B?WEM3OHZWbUJmS1R0QVdNVVhoS0YrY2RwK3hPdjBoVW9COGE5MUMrb1M1eFM0?=
+ =?utf-8?B?ZkhNa1ZzNjNsRythRDhyd3lkcU85U0p0WmdLS1prOG1GTzRoa0g4dEdUaEdn?=
+ =?utf-8?B?K3VQYlBCd3dQTzU2RGNTUngzQ3NMZHA4dTVPaUVYY25oSU84ZkFmeitQb2th?=
+ =?utf-8?B?dnpiRnRJci9IS2FDUUFqbEViMW1WQ24zcFE4cWlTV1V3TkZlRVFjQzlKTHY0?=
+ =?utf-8?B?MXBRdUhhcmE0a0xJbCtwR3A0Z0d1ODJPZEFtU3NlL2pFbE4wU1BkdEhHV2Zn?=
+ =?utf-8?B?NVNGWkNzVWtQY0MyTUU4UGIzRkErV2luSXJvL015UkhqRFQwNEg0Mmx1alFv?=
+ =?utf-8?B?Q1JHT1NRNmJrVEVTWlpFMmd6eHdqSVFIMnlqV1BrSjl0UEhsWjErRFA5NDhy?=
+ =?utf-8?B?WjFmSENYcXpBVStCN1k4b2ZJdExlYjZUdlFJc1Q0a1d5bEpVMXNMREU0a2Za?=
+ =?utf-8?B?U0gyaEJkdzZHeTduMTJ0Y0xDeG5waXl4ZlNLVUVDYmJ0L0pMM0FWaVEyeVJU?=
+ =?utf-8?B?L05pWGpTZ2ZLeGJ0STdjMEVpVlptaTdCdlFlQVhFaEhKN3dDaWxhcVFjTGtY?=
+ =?utf-8?B?cEZPWDd1VzNZSC9HNXdUblRUZHVNYko0ZmhKSXUvVTRqUEoySDl3Z3RTTVlF?=
+ =?utf-8?B?TDc0cnVxTXpnR3ArT3d3UGRBZ214Z2Exb01hMUlHRlo3VStoSUJyYnFmT1Zh?=
+ =?utf-8?B?VXdUdDhUWTV6N3pqSkxqWjMvek1iSHV1NVJZMDlqTHhHTDNvRnJlV1UwSjEr?=
+ =?utf-8?B?b1Vpcit3OGc3cHlHS1k0R3pnQnplbFNIOHpZYXBxeTNzbU9oRjhnLzlYS0pt?=
+ =?utf-8?B?cmJsWnk1ckRkeTVBVlViVnp2dmxMcmJ2N0ZwWWlXRDZ4aU1Jb05EVjFWYUxU?=
+ =?utf-8?B?THM0OUtBbWc3SWhvekFneEJXczVLOHhraVMwb0x1dkJwWUtDOWpFMnNsTUFh?=
+ =?utf-8?B?WS9QTnUxVG9rQkg1Y0FnbWlBMFNnRGM5SzNxQ1dXK2ZJU3crQXZuazE2OWg0?=
+ =?utf-8?B?a0dzN0o1eWpyZTRQK0dBZFA2cjlmVjdibjNYWmNGZGEvQ1dwMVZNZGpNUE5p?=
+ =?utf-8?B?Q2RwYW9jVFBDbDNPWlFUMHJaQ3QwbGowRFp6YTZ6M3FDbis4NXhZYmJVSzdt?=
+ =?utf-8?B?RTRnRDkrNzNtQS9pall5TnlmWXB3TGRNUTNpamdOMTZER1QzS1dEemVrNFFM?=
+ =?utf-8?B?RDQwVTJvZU0xa2xVemF5aW81VDRCMFNyMlZHZ01tTlIzSWd1N3JzVFV3S0E1?=
+ =?utf-8?B?ZFlnYy83ZGtMa0lWYWVJUVdWU3BXU1hNYkM0YmtoaUZjZXNjek5sbStISlBk?=
+ =?utf-8?B?MEY0UE00UE5TRXpGekt4RkNVRDlCczhUdHJYdWJZNGNNQk5rL1pwdmswM3Qz?=
+ =?utf-8?B?dGVOVklSdDFjYTNYeE85VStuSTNHdXBJS3pmUXpGOWxXL0hqdVhscTd4RFls?=
+ =?utf-8?B?SGc0YjFDY1lJVDVqUC9UUT09?=
 X-Forefront-Antispam-Report:
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9251.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(366016)(376014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?N3J4R29uUHdpSnJQRUFQS1ZLY3ltb1ZyOWtJdm9aMUF2TDFMUk9panpzVGJK?=
- =?utf-8?B?RUgxWVJLQU96WHB6alRoTTRMSTM0VHlNNGVWRW8ySlUzUlpVS1lQTThGR05n?=
- =?utf-8?B?aHVab2xIeDAxRjlUSm53bm1vMTRlNndHcnZ1R3A1WitJWmR3QVNiaGV6RnZZ?=
- =?utf-8?B?akdqSTlmc3JoTDF4dys3d1RBN3NiQ2xyNFVESSt0eUtmODhrSnlRMm11M3U2?=
- =?utf-8?B?QjdmSEYveGdUWGNieXBhWkZ5cW8wRytKVjI5QWJhVWswWUxZMzl4UGJIN0pU?=
- =?utf-8?B?WmQ4a2xWZmZFYmp3ZXRKYldENEhPMFpCbkZEdFVodHpzU3ZLUnNOVzdKUVFw?=
- =?utf-8?B?RE9oOWJSTG85MUdYdjNHLy85TjA2K2hFZTZUTWpjZHM3OXBWNk8yVnFwM3JO?=
- =?utf-8?B?U1phTFMxUEk2SWtVM3JtUndXcU9WaVJwNDBjSDJXVWpjVytzcUZjRi9MSHZJ?=
- =?utf-8?B?WnNYSDQxNjZjemNRUFpBTlNhVmZtTXd2VFNZVlp6RnlYdC9OVE9iRnlSUGVv?=
- =?utf-8?B?WkE1MHJvRExEbkRkNjhEQ3dyRkRIZ1ozUExEWmhpVVdtczAvYlBKcEl3ZFhm?=
- =?utf-8?B?VmhIZzZLd1k0MUpRdkpIYXp4TERKMFp6UGRoYVhCUlBLUlZPYkc1TUdiOFVa?=
- =?utf-8?B?Z2hCb3FxK2NPaHBybVZQd21QWHZWMm04NzdvN1BBNnNwNkpyWGNCcmdQVlFJ?=
- =?utf-8?B?b0h1YW43TVk1eGhib0tpSGlHSVVwNFpXbytRL3gzbTJ6QWJlTmEwWUpCdFFo?=
- =?utf-8?B?RkswVDVOTEdDWHpPTDdML0RvcXM2NGZKdllhekVBazhVV3JuSUI2MkgyN3FD?=
- =?utf-8?B?MWZxU2xqbmV6UWlZNXV3UGhoOG43QkVvaVl6a285YUNpT0R1Y0FhcFZoQTZ4?=
- =?utf-8?B?bVlRL2ppUDBEUXJZclJuTjVadEF0ckpPbzA1QnFWS3Z4T1pPNFkxWG15Rjg1?=
- =?utf-8?B?QktuREVCR3ArK0dBNGJXMG43VjMvMGoxQTFlK3R2QTc3UCs2Z1FDeTc3WEpU?=
- =?utf-8?B?eWJyT3RrWEUzUldmaEFRbzl1TWZpUzlqUWhhSklMZHIrUWJxL24wV2hZcjli?=
- =?utf-8?B?OW00Nmk0Y3AzUCtYUnc0WWU1OG1iY0pvTWlFVGh5TkhyUUpJQ042WXl0Nkpk?=
- =?utf-8?B?YTNuVmVHWWdhb3MrQWtwU0VxWjZGK1V0NlBEV0gvK2Jsc0F6WnYrT3U4TmZF?=
- =?utf-8?B?YUxOVlpOV0x5YmxCMFBFMUJmbTM5cUdvUjdsRGpnVFRPNWtjemRJczBlRm1m?=
- =?utf-8?B?OG8zQmpUYyt3SVpSOUNhci9NbTVza2RrenlMbDlPWHVaRExlaVIyRERBcmRm?=
- =?utf-8?B?TU8veFdtOWNwaVlrQ3l3ZE9SZTRSc0VpUmdvSDhTcUsyeklINzhPcm5NYVpL?=
- =?utf-8?B?ZTlNRFkwNTA1blpNYVhhRmVIaXgyWlczYVNmVkNjUlFpU2Jkazlwd1Ezc0c1?=
- =?utf-8?B?aVNJckh2QnpuVXlHeFdzVlNJRUs1WkEwLzZjZFdJNk5oaW13YXV3WlhlZm8x?=
- =?utf-8?B?TitoR1NvVW56VDEwclc4aUVhalJBS09QQ05rVmJqZXFRdmJxY1F4NnByK0Qy?=
- =?utf-8?B?dUx1MFRmYk9INU1EMWM4d085aFdyd2ppMjlYYlduSER1ZDZJM2VDSkY1eWlV?=
- =?utf-8?B?VE5QRmQzUmU0QWp2RmwvMGVqNGN4LzJCQWNqbVBzSHU1SHl2ampIUVZxNUJB?=
- =?utf-8?B?ek95UVl4QjlrVnJDWG13czdkcEcvcVBvUmVTM2tnbHZhRzIrVWxuQWNna0R5?=
- =?utf-8?B?d0ZPbWVMN0Jsa0xjb0kxcnVrTUs1RTRTZkJOYjBlK0p1d0s3elo1NnE4TlRL?=
- =?utf-8?B?NmdRR0hsZjA5YkZNMFFuTWlQdy85a2V4d3hRUW5BK0plVTIwRUlkMmE2YnZz?=
- =?utf-8?B?YW80YzlwVG9xajFIZHFqN21kQ21WaXRVVW1SMjhmRzdybS9FaWl3cFNDSlA2?=
- =?utf-8?B?WW5XdnBiRWl2cm9DMzNtb3RNL29BY3o5WlJ1RFFrVHduc0tybHBZaThYOHhw?=
- =?utf-8?B?Y1JUNWJ6M1RQYnJkM0NKbnVKM1hHNk5ZbmJyb3BaZ2FuNWdxUVE1RzVMaFRX?=
- =?utf-8?B?d0xad05hektlQUdzWGZJMk1YRk5MZ2VmZWhETUU0TUU4MllnRUhnU3lZalJv?=
- =?utf-8?B?amxNOGhZMGhqUUtpK1RlZUdYRTR2bVVEc1RHdnBFNjQyVmpUS3BSZnIzOG1Q?=
- =?utf-8?B?V2c9PQ==?=
+	=?utf-8?B?TXZsRUNmN1ZIRjV3UW1CbytIVW83d0hBYUNFaDRRaHF2dkorL1FycUJ4Mkts?=
+ =?utf-8?B?Zmdza0NCeUJDNW5vckZuSmx6YzJ6ZWZ4Rm9oMUlUTGd1YnE2T3R6QTVVcWhU?=
+ =?utf-8?B?NlA5dUMzVGVydWF6SmpIR05ackVnNWZrVUVvVmF3TWFUY3pyeStOVVRnR1FV?=
+ =?utf-8?B?OHlkZms0N3NvYWFtN0xwc205dEpmMmxMWDhLdlBVUTZNa2t5Rjh0d2lhQlJn?=
+ =?utf-8?B?aEFQSmJzY1BleW5MY2dxeWdsRWZLeDVFZmlmOVJMVjdYMUFlc3ptOHR4R1hu?=
+ =?utf-8?B?alVRNmJvOW5lV01nNzd6L2VJblBvNFRhUmJWc1lSQlBMRi95cXI1ZzRxTGI4?=
+ =?utf-8?B?eXRiQWhybGxZRFpMamZUT2JlRkpvV21sVWNNTmYwUHpCeU1Nbi9aTW9NeFl1?=
+ =?utf-8?B?UGpIemYrQTBjTmJIMGEzcXFSUU50R0trSFF5N1hsVHV1dVgwSHJsbTVPWVVP?=
+ =?utf-8?B?K2h4OU1VcnMzRkZXL21mQkVQYzUzZXZLcXVCU0lWTTFaT2FpSWR6alBra2xi?=
+ =?utf-8?B?QVBpU00zRWkwVlpkWG5BUjlydzNzY1R0ai9HTG93RHFRem1waEh6SUY5UkJw?=
+ =?utf-8?B?TjJVUjgwbXdDWVBucmNwS3RReW8rOUdOM201UytWT2ZFSytyU0lOK0dBd2s4?=
+ =?utf-8?B?UlNQYWhpSFRrbTg1Z1Vtc0hoaURJdXlzR2o1RFRMdEdxTENZNmFPT1VWSXZS?=
+ =?utf-8?B?ZnpiaXpkRzk0Si9OditYd0gzRDRFMWZMWFNIb1h5aFViRllKKzlQRDA4clgv?=
+ =?utf-8?B?b2hzTC80NW0yUTVveVByamZGLzVYVzFhTkU3S1Vjc0hqME9wazFJZ0ZXZS9i?=
+ =?utf-8?B?bGd6ekRBNTF6M0ljcGNhZ1QzcVNvd1ltRjBha2Q2WGh1THgyV25YallUTWN4?=
+ =?utf-8?B?Vyt1R2V5dW5pa1ltYVBxV2JpdjV1NldIc2NKNjNvdWcyZ2FWYnR3a1g0dUlo?=
+ =?utf-8?B?aU9COVo3Qi9XUEtleTNONnhoR09jR216Mk5PS2g2SlBuL1I2QzJoMEhld2ZU?=
+ =?utf-8?B?MzlTZFN5QUVmSkV1M0FMeUx1OTRmMmJuSHJCVFkrVUwxc1I3NndtY1I3NUFT?=
+ =?utf-8?B?b09HdDNiY3o2SjRHa1Q4VUdPZFhwOHVXNkxNRTg1ZTh5aU0vaWVCdzBIT1Bj?=
+ =?utf-8?B?Z3N2Y24vNFowdlNRNkd2Vm9FZWdBOHRXbnN4Tlp6bDlDSm9rUTZvckFEUXhs?=
+ =?utf-8?B?M2JrVjVkNDBDVVdYUnpLc3pXOGp5eTYyWHd0ZFUvdHFyODkwRFNFZ0VmT1or?=
+ =?utf-8?B?TDNBNTlhcW15ekEzQkU2bmFueWJnUUFVTDlMbU1BUmZFNXNkS0VSZkxXdGM2?=
+ =?utf-8?B?MEhpTnd6QzVycWUrckRXSmdCdEJrUmFwMXA3cERwUGJYQS9TRE0xZnpYNHdm?=
+ =?utf-8?B?bFFwL1dZNm5KQlpBbDhTMVcrTHpHcGJ0dHB0dnZUNDJUVVFkbmVYbUlQRUNT?=
+ =?utf-8?B?MTJ3TWk4czVzVEN0N09DODViZlVuTS9WZFR6RTkyb3EybDZoamluTFlOdmJE?=
+ =?utf-8?B?VktsQkdKeHBYMWpkcDIwZTRrcHoxeW1FaVZlb2dWdGNaYzAzS1dzR1dlRTRW?=
+ =?utf-8?B?M2ZuT3BjRWhQOVZoZzNNSG5sYVczcEZoRnFiTG1zOVBPZnlPR3hwNHpYT1d0?=
+ =?utf-8?B?WUZkaUIwY3JEN0lQS3VEU0xubS9Oak9WVDZQajNRcmxleEJhRFRZNnZHeWpq?=
+ =?utf-8?B?UjJoYzhad1B3RjdKZlBuM1FPK2JkdVNyRURzYUtCcjJhd2V1bndGVE5XSEtn?=
+ =?utf-8?B?RnZydUFMZDJHeXl1WFJDRUwwYUtrb0UxM3BFOGlsdFhPWG9XMmRrVnRTVkJP?=
+ =?utf-8?B?MHZhUGxlVGRZeHVXbzlaM1ZQbmVTR2I2TFRXTnRDN0JjQTFFN0xQbmVrd3lF?=
+ =?utf-8?B?UFRaakM4c0tLdi9xSHU2VXpOblVHdEpla0t6dUc2M1Y2NWZ2UGluSzZWMmZZ?=
+ =?utf-8?B?R05hM09LSFJidHJkb2ozSVpHWVRLUCtuVGNyaXk1bWxhVEF4QjQ5aWpycUlq?=
+ =?utf-8?B?MU9TYVVDMmZOdndrUWJGRzVNNjYzSEg0aTgvQnZvc0dzeHNISWZ3UmFmTUI4?=
+ =?utf-8?B?UlpTS29uZEtOczdicGpNV3d1Y1BmaGhqNXRWWktPT1l0TWhQQVNwQmU0YXlq?=
+ =?utf-8?B?bTNEY01xd0NlVUpRcERXTEUwSkNXK1FORkRTTkRZSndhdlhjUDUxUzk5UG5T?=
+ =?utf-8?B?QXc9PQ==?=
 X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 350342ae-3518-4deb-f4a2-08dcc8e7a0f0
+X-MS-Exchange-CrossTenant-Network-Message-Id: 147eae14-b570-438c-4f7b-08dcc8e7a1fb
 X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9251.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Aug 2024 11:33:54.4388
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Aug 2024 11:33:56.1709
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: WFfN0BXvgfTX+WbNeYmAgxiqs7uqTTU+lfc1JSM3/sktoZgEP4tyXPNFil7NLtB7EPXl47tpIaq+6kCdEHCc382sbtzxx0l1fNJrmNlWsw4=
+X-MS-Exchange-CrossTenant-UserPrincipalName: U5/GBxhBhiA9NN3VipitvQlRUp9yOIzeWuP+hzFGKHRAzIVSrWK9Vjf6caOoOep6HoAXclJCEMN7VQit/MmUv9Spg+5kKUuH7MEHOKCOdvE=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB6989
 
 From: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
 
-Adding 100mhz & 200mhz pinmux support for uSDHC helps to enable
-higher speed modes for SD (SDR50, DDR50, SDR104) and
-eMMC (such as HS200, HS400/HS400ES).
+Disable SD/eMMC UHS modes for NXP boards which do not set VCCQ voltage
+supply to 1.8V by default, such as S32G274A-EVB and S32G274A-RDB2.
 
-Signed-off-by: Radu Pirea <radu-nicolae.pirea@nxp.com>
 Signed-off-by: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
 ---
- arch/arm64/boot/dts/freescale/s32g2.dtsi      | 153 ++++++++++++++++++
- .../arm64/boot/dts/freescale/s32g274a-evb.dts |   4 +
- .../boot/dts/freescale/s32g274a-rdb2.dts      |   4 +
- arch/arm64/boot/dts/freescale/s32g3.dtsi      | 153 ++++++++++++++++++
- .../boot/dts/freescale/s32g399a-rdb3.dts      |   4 +
- 5 files changed, 318 insertions(+)
+ arch/arm64/boot/dts/freescale/s32g274a-evb.dts  | 1 +
+ arch/arm64/boot/dts/freescale/s32g274a-rdb2.dts | 9 +++++++++
+ 2 files changed, 10 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/freescale/s32g2.dtsi b/arch/arm64/boot/dts/freescale/s32g2.dtsi
-index fa054bfe7d5c..7be430b78c83 100644
---- a/arch/arm64/boot/dts/freescale/s32g2.dtsi
-+++ b/arch/arm64/boot/dts/freescale/s32g2.dtsi
-@@ -162,6 +162,159 @@ jtag-grp4 {
- 					slew-rate = <166>;
- 				};
- 			};
-+
-+			pinctrl_usdhc0: usdhc0grp-pins {
-+				usdhc0-grp0 {
-+					pinmux = <0x2e1>,
-+						 <0x381>;
-+					output-enable;
-+					bias-pull-down;
-+					slew-rate = <150>;
-+				};
-+
-+				usdhc0-grp1 {
-+					pinmux = <0x2f1>,
-+						 <0x301>,
-+						 <0x311>,
-+						 <0x321>,
-+						 <0x331>,
-+						 <0x341>,
-+						 <0x351>,
-+						 <0x361>,
-+						 <0x371>;
-+					output-enable;
-+					input-enable;
-+					bias-pull-up;
-+					slew-rate = <150>;
-+				};
-+
-+				usdhc0-grp2 {
-+					pinmux = <0x391>;
-+					output-enable;
-+					slew-rate = <150>;
-+				};
-+
-+				usdhc0-grp3 {
-+					pinmux = <0x3a0>;
-+					input-enable;
-+					slew-rate = <150>;
-+				};
-+
-+				usdhc0-grp4 {
-+					pinmux = <0x2032>,
-+						 <0x2042>,
-+						 <0x2052>,
-+						 <0x2062>,
-+						 <0x2072>,
-+						 <0x2082>,
-+						 <0x2092>,
-+						 <0x20a2>,
-+						 <0x20b2>,
-+						 <0x20c2>;
-+				};
-+			};
-+
-+			pinctrl_usdhc0_100mhz: usdhc0-100mhzgrp-pins {
-+				usdhc0-100mhz-grp0 {
-+					pinmux = <0x2e1>,
-+						 <0x381>;
-+					output-enable;
-+					bias-pull-down;
-+					slew-rate = <150>;
-+				};
-+
-+				usdhc0-100mhz-grp1 {
-+					pinmux = <0x2f1>,
-+						 <0x301>,
-+						 <0x311>,
-+						 <0x321>,
-+						 <0x331>,
-+						 <0x341>,
-+						 <0x351>,
-+						 <0x361>,
-+						 <0x371>;
-+					output-enable;
-+					input-enable;
-+					bias-pull-up;
-+					slew-rate = <150>;
-+				};
-+
-+				usdhc0-100mhz-grp2 {
-+					pinmux = <0x391>;
-+					output-enable;
-+					slew-rate = <150>;
-+				};
-+
-+				usdhc0-100mhz-grp3 {
-+					pinmux = <0x3a0>;
-+					input-enable;
-+					slew-rate = <150>;
-+				};
-+
-+				usdhc0-100mhz-grp4 {
-+					pinmux = <0x2032>,
-+						 <0x2042>,
-+						 <0x2052>,
-+						 <0x2062>,
-+						 <0x2072>,
-+						 <0x2082>,
-+						 <0x2092>,
-+						 <0x20a2>,
-+						 <0x20b2>,
-+						 <0x20c2>;
-+				};
-+			};
-+
-+			pinctrl_usdhc0_200mhz: usdhc0-200mhzgrp-pins {
-+				usdhc0-200mhz-grp0 {
-+					pinmux = <0x2e1>,
-+						 <0x381>;
-+					output-enable;
-+					bias-pull-down;
-+					slew-rate = <208>;
-+				};
-+
-+				usdhc0-200mhz-grp1 {
-+					pinmux = <0x2f1>,
-+						 <0x301>,
-+						 <0x311>,
-+						 <0x321>,
-+						 <0x331>,
-+						 <0x341>,
-+						 <0x351>,
-+						 <0x361>,
-+						 <0x371>;
-+					output-enable;
-+					input-enable;
-+					bias-pull-up;
-+					slew-rate = <208>;
-+				};
-+
-+				usdhc0-200mhz-grp2 {
-+					pinmux = <0x391>;
-+					output-enable;
-+					slew-rate = <208>;
-+				};
-+
-+				usdhc0-200mhz-grp3 {
-+					pinmux = <0x3a0>;
-+					input-enable;
-+					slew-rate = <208>;
-+				};
-+
-+				usdhc0-200mhz-grp4 {
-+					pinmux = <0x2032>,
-+						 <0x2042>,
-+						 <0x2052>,
-+						 <0x2062>,
-+						 <0x2072>,
-+						 <0x2082>,
-+						 <0x2092>,
-+						 <0x20a2>,
-+						 <0x20b2>,
-+						 <0x20c2>;
-+				};
-+			};
- 		};
- 
- 		uart0: serial@401c8000 {
 diff --git a/arch/arm64/boot/dts/freescale/s32g274a-evb.dts b/arch/arm64/boot/dts/freescale/s32g274a-evb.dts
-index dbe498798bd9..7ab917f547ef 100644
+index 7ab917f547ef..b9a119eea2b7 100644
 --- a/arch/arm64/boot/dts/freescale/s32g274a-evb.dts
 +++ b/arch/arm64/boot/dts/freescale/s32g274a-evb.dts
-@@ -34,6 +34,10 @@ &uart0 {
- };
- 
- &usdhc0 {
-+	pinctrl-names = "default", "state_100mhz", "state_200mhz";
-+	pinctrl-0 = <&pinctrl_usdhc0>;
-+	pinctrl-1 = <&pinctrl_usdhc0_100mhz>;
-+	pinctrl-2 = <&pinctrl_usdhc0_200mhz>;
+@@ -39,5 +39,6 @@ &usdhc0 {
+ 	pinctrl-1 = <&pinctrl_usdhc0_100mhz>;
+ 	pinctrl-2 = <&pinctrl_usdhc0_200mhz>;
  	disable-wp;
++	no-1-8-v;
  	status = "okay";
  };
 diff --git a/arch/arm64/boot/dts/freescale/s32g274a-rdb2.dts b/arch/arm64/boot/dts/freescale/s32g274a-rdb2.dts
-index ab1e5caaeae7..8739f63771bc 100644
+index 8739f63771bc..aaa61a8ad0da 100644
 --- a/arch/arm64/boot/dts/freescale/s32g274a-rdb2.dts
 +++ b/arch/arm64/boot/dts/freescale/s32g274a-rdb2.dts
-@@ -40,6 +40,10 @@ &uart1 {
- };
- 
- &usdhc0 {
-+	pinctrl-names = "default", "state_100mhz", "state_200mhz";
-+	pinctrl-0 = <&pinctrl_usdhc0>;
-+	pinctrl-1 = <&pinctrl_usdhc0_100mhz>;
-+	pinctrl-2 = <&pinctrl_usdhc0_200mhz>;
+@@ -45,5 +45,14 @@ &usdhc0 {
+ 	pinctrl-1 = <&pinctrl_usdhc0_100mhz>;
+ 	pinctrl-2 = <&pinctrl_usdhc0_200mhz>;
  	disable-wp;
++	/* Remove no-1-8-v to enable higher speed modes for SD card.
++	 * However, this is not enough to enable HS400 or HS200 modes for eMMC.
++	 * In this case, the position of the resistor R797 must be changed
++	 * from A to B before removing the property.
++	 * If the property is removed without changing the resistor position,
++	 * HS*00 may be enabled, but the interface might be unstable because of
++	 * the wrong VCCQ voltage applied to the eMMC.
++	 */
++	no-1-8-v;
  	status = "okay";
  };
-diff --git a/arch/arm64/boot/dts/freescale/s32g3.dtsi b/arch/arm64/boot/dts/freescale/s32g3.dtsi
-index b4226a9143c8..6c572ffe37ca 100644
---- a/arch/arm64/boot/dts/freescale/s32g3.dtsi
-+++ b/arch/arm64/boot/dts/freescale/s32g3.dtsi
-@@ -219,6 +219,159 @@ jtag-grp4 {
- 					slew-rate = <166>;
- 				};
- 			};
-+
-+			pinctrl_usdhc0: usdhc0grp-pins {
-+				usdhc0-grp0 {
-+					pinmux = <0x2e1>,
-+						 <0x381>;
-+					output-enable;
-+					bias-pull-down;
-+					slew-rate = <150>;
-+				};
-+
-+				usdhc0-grp1 {
-+					pinmux = <0x2f1>,
-+						 <0x301>,
-+						 <0x311>,
-+						 <0x321>,
-+						 <0x331>,
-+						 <0x341>,
-+						 <0x351>,
-+						 <0x361>,
-+						 <0x371>;
-+					output-enable;
-+					input-enable;
-+					bias-pull-up;
-+					slew-rate = <150>;
-+				};
-+
-+				usdhc0-grp2 {
-+					pinmux = <0x391>;
-+					output-enable;
-+					slew-rate = <150>;
-+				};
-+
-+				usdhc0-grp3 {
-+					pinmux = <0x3a0>;
-+					input-enable;
-+					slew-rate = <150>;
-+				};
-+
-+				usdhc0-grp4 {
-+					pinmux = <0x2032>,
-+						 <0x2042>,
-+						 <0x2052>,
-+						 <0x2062>,
-+						 <0x2072>,
-+						 <0x2082>,
-+						 <0x2092>,
-+						 <0x20a2>,
-+						 <0x20b2>,
-+						 <0x20c2>;
-+				};
-+			};
-+
-+			pinctrl_usdhc0_100mhz: usdhc0-100mhzgrp-pins {
-+				usdhc0-100mhz-grp0 {
-+					pinmux = <0x2e1>,
-+						 <0x381>;
-+					output-enable;
-+					bias-pull-down;
-+					slew-rate = <150>;
-+				};
-+
-+				usdhc0-100mhz-grp1 {
-+					pinmux = <0x2f1>,
-+						 <0x301>,
-+						 <0x311>,
-+						 <0x321>,
-+						 <0x331>,
-+						 <0x341>,
-+						 <0x351>,
-+						 <0x361>,
-+						 <0x371>;
-+					output-enable;
-+					input-enable;
-+					bias-pull-up;
-+					slew-rate = <150>;
-+				};
-+
-+				usdhc0-100mhz-grp2 {
-+					pinmux = <0x391>;
-+					output-enable;
-+					slew-rate = <150>;
-+				};
-+
-+				usdhc0-100mhz-grp3 {
-+					pinmux = <0x3a0>;
-+					input-enable;
-+					slew-rate = <150>;
-+				};
-+
-+				usdhc0-100mhz-grp4 {
-+					pinmux = <0x2032>,
-+						 <0x2042>,
-+						 <0x2052>,
-+						 <0x2062>,
-+						 <0x2072>,
-+						 <0x2082>,
-+						 <0x2092>,
-+						 <0x20a2>,
-+						 <0x20b2>,
-+						 <0x20c2>;
-+				};
-+			};
-+
-+			pinctrl_usdhc0_200mhz: usdhc0-200mhzgrp-pins {
-+				usdhc0-200mhz-grp0 {
-+					pinmux = <0x2e1>,
-+						 <0x381>;
-+					output-enable;
-+					bias-pull-down;
-+					slew-rate = <208>;
-+				};
-+
-+				usdhc0-200mhz-grp1 {
-+					pinmux = <0x2f1>,
-+						 <0x301>,
-+						 <0x311>,
-+						 <0x321>,
-+						 <0x331>,
-+						 <0x341>,
-+						 <0x351>,
-+						 <0x361>,
-+						 <0x371>;
-+					output-enable;
-+					input-enable;
-+					bias-pull-up;
-+					slew-rate = <208>;
-+				};
-+
-+				usdhc0-200mhz-grp2 {
-+					pinmux = <0x391>;
-+					output-enable;
-+					slew-rate = <208>;
-+				};
-+
-+				usdhc0-200mhz-grp3 {
-+					pinmux = <0x3a0>;
-+					input-enable;
-+					slew-rate = <208>;
-+				};
-+
-+				usdhc0-200mhz-grp4 {
-+					pinmux = <0x2032>,
-+						 <0x2042>,
-+						 <0x2052>,
-+						 <0x2062>,
-+						 <0x2072>,
-+						 <0x2082>,
-+						 <0x2092>,
-+						 <0x20a2>,
-+						 <0x20b2>,
-+						 <0x20c2>;
-+				};
-+			};
- 		};
- 
- 		uart0: serial@401c8000 {
-diff --git a/arch/arm64/boot/dts/freescale/s32g399a-rdb3.dts b/arch/arm64/boot/dts/freescale/s32g399a-rdb3.dts
-index 176e5af191c8..828e353455b5 100644
---- a/arch/arm64/boot/dts/freescale/s32g399a-rdb3.dts
-+++ b/arch/arm64/boot/dts/freescale/s32g399a-rdb3.dts
-@@ -40,6 +40,10 @@ &uart1 {
- };
- 
- &usdhc0 {
-+	pinctrl-names = "default", "state_100mhz", "state_200mhz";
-+	pinctrl-0 = <&pinctrl_usdhc0>;
-+	pinctrl-1 = <&pinctrl_usdhc0_100mhz>;
-+	pinctrl-2 = <&pinctrl_usdhc0_200mhz>;
- 	bus-width = <8>;
- 	disable-wp;
- 	status = "okay";
 -- 
 2.45.2
 
