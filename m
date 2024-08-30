@@ -1,186 +1,133 @@
-Return-Path: <linux-kernel+bounces-308276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09CBA9659AC
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:12:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 488CB9659D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:15:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 60197B21E92
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 08:12:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A06B1C2246B
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 08:15:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27779166F3F;
-	Fri, 30 Aug 2024 08:12:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5613B16EB42;
+	Fri, 30 Aug 2024 08:14:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="p+0ucVEV"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jlmG2C8p"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2C6714EC4C
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 08:12:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 732B416CD33;
+	Fri, 30 Aug 2024 08:14:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725005535; cv=none; b=gWCmeObuEF0yYx2cgHTe8qN7Ek1cA74RUBaz88RKF2rJutWlv3EU1EwEgvnpIXrqb1zURiByN3HYGlWt4y9Z9sr2ywYnbcfKNp5Vs/Qaf7lNd7cRxCEl2OeOFcgKd32zftpXDyA2GPs5VGj61dEv3/bZI+mt72Iv5WewLsZAfyc=
+	t=1725005655; cv=none; b=CtYYaFHiyzmUsMkmOsiKJT1hwESQsvQZUjvBCAsYGPRdPK4mJOGyg7RjDc3sbQmv2RYavX6pFxkRoaCXKuYuzM9/9MVePsakoUd6WB19EcNuii8j3/2wzBch6qh0+JuZ+dlIv9lcFjcnGJYO+bKffgZu8/MUwinuZH4ZY28rBFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725005535; c=relaxed/simple;
-	bh=Q5bXYbl4dV+VYYIPMv/Rb99ZiL+XzXzN25xBOihod3Y=;
+	s=arc-20240116; t=1725005655; c=relaxed/simple;
+	bh=lGlK/huPst/Uj54bD7qm1iAGK0SCBjHujklkB/TCQhE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Edkqy4vBk81gb54KbBoOeba7ObHy7DwKQCpLpiIWov9DU+LtiTqZC4sjbddxrX5OdyAO2G3PwFA3SuZdMNzahrKODuYaKZx6+JqhTWSQoMx4S2lyyVL+mhM2gm/+HKYpdeu+f1jW7g0LUNlhDDAxR7wNieyhM5XahmL9W+0Tr70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=p+0ucVEV; arc=none smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-7cd9e634ea9so1081553a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 01:12:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725005533; x=1725610333; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=aUHV0wbyIdVXwPB5dolmt5OPeFFiHv5Yfm1U7ilTAZ0=;
-        b=p+0ucVEVXbe6yrAIbm1gphBMUslR2F4/xe2krIfjfb8iIaFeOtWQnUuvAkkKkl7pcX
-         r277bZSPnxaIvv0qMY6RQX1FPryNiOj1AB+4stXyEqg76ey1XTNAFgMGjhRAjYOgrvjQ
-         CQOM9LAveneujVIMciWzPzZogQezRqnnY8mHytTHaPDEVB8OL7Az4lC/X7XWWT4wNTol
-         CYrUNoaN7X0h/treDopdYBupQQFw/bdNXN5repbBDmUn3Ao8SKxc2dm9avRQbi6vq9AR
-         u/GM1nbdAM2JRJ+vTQJm7XxAss9JfV4Rxvoomz3NqOkS3zPMXdBgUg+SfjCH+fBkVZzj
-         lcqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725005533; x=1725610333;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aUHV0wbyIdVXwPB5dolmt5OPeFFiHv5Yfm1U7ilTAZ0=;
-        b=ZoUrWlKcznrsGpEj9c9guFzP0z4w3dN27xAM97xynBgBAk8OERA0IcFrcqpXuzHlYF
-         vhrC2EZNdRycWz/NU/t3b4qNtRRemds7H+UXk8TGb4Z4upsXgfui1CPI2W40+u9Vf4hS
-         UafWP5Jm5xgmEwnPoY/g8Dqfy6KalidzK7GI4uVCKvn29nLqJusG+lLG7wXF3YVmod0T
-         1wTC7QIP7/4eBDqSe5QgEiV0SNQjHcrJelZRRQAz7CgOQ6gv0/orCapqb6P6u5AmEwSS
-         hlAEsm0abc5mflaXBZLWndExm2NPp8jPJ+DsbGUo6+xNKnBw9paR7Yfm3BvRKqLADB2S
-         ZQLw==
-X-Forwarded-Encrypted: i=1; AJvYcCW5M1FX6v5h7XQvg2hP9mBPmxhyGOQJTPR24nLadvz6sP2oVQdyhYt9LSABOhgYwgm8/aAIKyGP+muy3Rg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyC6griw7ov55EMdwzSnoTmJ/6O4Gc73UNDktjyzRrHyGBIVWPo
-	JsOKnQVC52dWfuIFxYbvFfhy22jEg/0ehJJZKgv/p4oc5tDD1LManwlHeGLuJQ==
-X-Google-Smtp-Source: AGHT+IE/BW3u6yWbfrYcy/l5d0lHQgaNZ0qFHfjJAZ8BG59rWjAxYM55Dn1n/0jPPnypv9IrkiwExw==
-X-Received: by 2002:a17:903:35ce:b0:202:1a0b:7cfd with SMTP id d9443c01a7336-2050c3dbf8fmr54516345ad.28.1725005532965;
-        Fri, 30 Aug 2024 01:12:12 -0700 (PDT)
-Received: from thinkpad ([117.193.213.95])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20515551e79sm22132855ad.248.2024.08.30.01.12.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Aug 2024 01:12:12 -0700 (PDT)
-Date: Fri, 30 Aug 2024 13:42:05 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: lpieralisi@kernel.org, kw@linux.com, bhelgaas@google.com,
-	robh@kernel.org, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Subject: Re: [PATCH v2] PCI: qcom-ep: Enable controller resources like PHY
- only after refclk is available
-Message-ID: <20240830081205.x3ucsausk5znk27e@thinkpad>
-References: <20240829164455.ts2j46dfxwp3pa2f@thinkpad>
- <20240829170624.GA67120@bhelgaas>
+	 Content-Type:Content-Disposition:In-Reply-To; b=TcdO9/zWUJ+s1mhMGdmvPu5m3bBkv/1WmGVceOfcquhW0Af2m5bQj8Ex1xzMTZymGrb717rIoyaAaX+bgquBw3rtzwizrvSJL0Se6PBdg0imgKoG1NbuNdEp0hQhH3xKYGDl22hGgZKc9qPUT5wvL+xxRWDNw0xSKvJuUtzlAR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jlmG2C8p; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725005653; x=1756541653;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=lGlK/huPst/Uj54bD7qm1iAGK0SCBjHujklkB/TCQhE=;
+  b=jlmG2C8p1bbQq57HkNeyZCIWvD2K/RB/4rJzPBSW/3dEo2WhmxZeE8yf
+   iHJogG8pWotQE25OGpzoWOtSyOhrE6JR9bIEYe5Ju8mzphTlZwsvdIeTZ
+   CCE5GYdEl54vryBkkZUFrWDrO0LFJifT+/wO4TQ/LWn7+RohniTi1+vY6
+   5RJJ87ytYFsDpW9mGkPfBYSdfvMegszmaoE9+wBWiZ18Lm4RMEQY4K1Nn
+   wHAjytYoCJxIjpn6ScjmdtOPeZC13x1MJyuWWEMey34lGGpUi/1YWJlc8
+   exWBKrbw9DcfQwIEF1hxCMF+OD7e3apm9ryOoN5uzs824xll5F0p3E2QI
+   g==;
+X-CSE-ConnectionGUID: r5jAXTRpQ1eI9+oECssKVw==
+X-CSE-MsgGUID: rSB+q0lMT4moOHfx/fnTaw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11179"; a="26532991"
+X-IronPort-AV: E=Sophos;i="6.10,188,1719903600"; 
+   d="scan'208";a="26532991"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Aug 2024 01:12:59 -0700
+X-CSE-ConnectionGUID: TsPEtp8iQj+FOhXnxY9XMw==
+X-CSE-MsgGUID: wFox/84oTFKcyBEbHcGt7A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,188,1719903600"; 
+   d="scan'208";a="64567628"
+Received: from kuha.fi.intel.com ([10.237.72.185])
+  by orviesa008.jf.intel.com with SMTP; 30 Aug 2024 01:12:54 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Fri, 30 Aug 2024 11:12:52 +0300
+Date: Fri, 30 Aug 2024 11:12:52 +0300
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: "Christian A. Ehrhardt" <lk@c--e.de>
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Anurag Bijea <icaliberdev@gmail.com>,
+	Christian Heusel <christian@heusel.eu>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Jameson Thies <jthies@google.com>,
+	Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
+Subject: Re: [PATCH v2 1/2] usb: typec: ucsi: Enable ASUS zenbook quirk for
+ VivoBooks
+Message-ID: <ZtF/BJMls7kuD2dt@kuha.fi.intel.com>
+References: <20240829100109.562429-1-lk@c--e.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240829170624.GA67120@bhelgaas>
+In-Reply-To: <20240829100109.562429-1-lk@c--e.de>
 
-On Thu, Aug 29, 2024 at 12:06:24PM -0500, Bjorn Helgaas wrote:
-> On Thu, Aug 29, 2024 at 10:14:55PM +0530, Manivannan Sadhasivam wrote:
-> > On Thu, Aug 29, 2024 at 07:38:08AM -0500, Bjorn Helgaas wrote:
-> > > On Thu, Aug 29, 2024 at 11:07:20AM +0530, Manivannan Sadhasivam wrote:
-> > > > On Wed, Aug 28, 2024 at 03:59:45PM -0500, Bjorn Helgaas wrote:
-> > > > > On Wed, Aug 28, 2024 at 07:31:08PM +0530, Manivannan Sadhasivam wrote:
-> > > > > > qcom_pcie_enable_resources() is called by qcom_pcie_ep_probe() and it
-> > > > > > enables the controller resources like clocks, regulator, PHY. On one of the
-> > > > > > new unreleased Qcom SoC, PHY enablement depends on the active refclk. And
-> > > > > > on all of the supported Qcom endpoint SoCs, refclk comes from the host
-> > > > > > (RC). So calling qcom_pcie_enable_resources() without refclk causes the
-> > > > > > whole SoC crash on the new SoC.
-> > > > > > 
-> > > > > > qcom_pcie_enable_resources() is already called by
-> > > > > > qcom_pcie_perst_deassert() when PERST# is deasserted, and refclk is
-> > > > > > available at that time.
-> > > > > > 
-> > > > > > Hence, remove the unnecessary call to qcom_pcie_enable_resources() from
-> > > > > > qcom_pcie_ep_probe() to prevent the crash.
-> > > > > > 
-> > > > > > Fixes: 869bc5253406 ("PCI: dwc: ep: Fix DBI access failure for drivers requiring refclk from host")
-> > > > > > Tested-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > > > > > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > > > > > ---
-> > > > > > 
-> > > > > > Changes in v2:
-> > > > > > 
-> > > > > > - Changed the patch description to mention the crash clearly as suggested by
-> > > > > >   Bjorn
-> > > > > 
-> > > > > Clearly mentioning the crash as rationale for the change is *part* of
-> > > > > what I was looking for.
-> > > > > 
-> > > > > The rest, just as important, is information about what sort of crash
-> > > > > this is, because I hope and suspect the crash is recoverable, and we
-> > > > > *should* recover from it because PERST# may occur at arbitrary times,
-> > > > > so trying to avoid it is never going to be reliable.
-> > > > 
-> > > > I did mention 'whole SoC crash' which typically means unrecoverable
-> > > > state as the SoC would crash (not just the driver). On Qcom SoCs,
-> > > > this will also lead the SoC to boot into EDL (Emergency Download)
-> > > > mode so that the users can collect dumps on the crash.
-> > > 
-> > > IIUC we're talking about an access to a PHY register, and the access
-> > > requires Refclk from the host.  I assume the SoC accesses the register
-> > > by doing an MMIO load.  If nothing responds, I assume the SoC would
-> > > take a machine check or similar because there's no data to complete
-> > > the load instruction.  So I assume again that the Linux on the SoC
-> > > doesn't know how to recover from such a machine check?  If that's the
-> > > scenario, is the machine check unrecoverable in principle, or is it
-> > > potentially recoverable but nobody has done the work to do it?  My
-> > > guess would be the latter, because the former would mean that it's
-> > > impossible to build a robust endpoint around this SoC.  But obviously
-> > > this is all complete speculation on my part.
-> > 
-> > Atleast on Qcom SoCs, doing a MMIO read without enabling the
-> > resources would result in a NoC (Network On Chip) error, which then
-> > end up as an exception to the Trustzone and Trustzone will finally
-> > convert it to a SoC crash so that the users could take a crash dump
-> > and do the analysis on why the crash has happened.
-> > 
-> > I know that it may sound strange to developers coming from x86 world
-> > :)
+Hi, Christian,
+
+Sorry, I did not look at this properly in v1.
+
+On Thu, Aug 29, 2024 at 12:01:08PM +0200, Christian A. Ehrhardt wrote:
+> The quirk for some ASUS zenbook models is required for
+> ASUS VivoBooks. Apply the quirk to these as well.
 > 
-> It's only strange if the system design forces a crash for events that
-> happen in normal operation.  Sounds like part of the problem here is
-> the non-SRIS mode that depends on Refclk from the host.  That and the
-> fact that operating in non-SRIS mode has an unavoidable race where
-> PERST# from the host at the wrong time can crash the endpoint.
+> This is part of the fix for the builtin keyboard on ASUS
+> VivoBooks.
+
+I think that explanation goes to patch 2/2 and vise versa.
+
+> Reported-by: Anurag Bijea <icaliberdev@gmail.com>
+> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=219108
+> Bisected-by: Christian Heusel <christian@heusel.eu>
+> Fixes: de52aca4d9d5 ("usb: typec: ucsi: Never send a lone connector change ack")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Christian A. Ehrhardt <lk@c--e.de>
+> ---
+>  drivers/usb/typec/ucsi/ucsi.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
 > 
+> diff --git a/drivers/usb/typec/ucsi/ucsi.c b/drivers/usb/typec/ucsi/ucsi.c
+> index 4039851551c1..540cb1d2822c 100644
+> --- a/drivers/usb/typec/ucsi/ucsi.c
+> +++ b/drivers/usb/typec/ucsi/ucsi.c
+> @@ -38,6 +38,10 @@
+>  
+>  void ucsi_notify_common(struct ucsi *ucsi, u32 cci)
+>  {
+> +	/* Ignore bogus data in CCI if busy indicator is set. */
+> +	if (cci & UCSI_CCI_BUSY)
+> +		return;
 
-Precisely.
+This does not look correct. Doesn't this mean you'll timeout always if
+BUSY is set?
 
-> I think users of non-SRIS mode need to be aware of this issue, and
-> this patch to narrow the race window, but not close it completely, is
-> one good place to mention it.
-> 
+Couldn't you just check the BUSY as the first action, and then clear
+the other bits in CCI if it is set, if that is the problem?
 
-Okay. I'll mention it in patch description.
+Btw. Does 4f322657ade1 ("usb: typec: ucsi: Call CANCEL from single
+location") affect the situation in any way?
 
-> > But this NoC error is something NVidia has also reported before, so
-> > I wouldn't assume that this is a Qcom specific issue but rather for
-> > SoCs depending on refclk from host.
-> 
-> Are there other drivers that need a similar band-aid?
-> 
-
-AFAIK, only tegra194 and qcom-pcie-ep drivers require refclk from host. Rest of
-the endpoint drivers seem to have independent clock.
-
-- Mani
+thanks,
 
 -- 
-மணிவண்ணன் சதாசிவம்
+heikki
 
