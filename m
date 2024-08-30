@@ -1,139 +1,165 @@
-Return-Path: <linux-kernel+bounces-308905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EDC5966388
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 15:57:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5058D966389
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 15:58:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B4251F24C90
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 13:57:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 833E41C22F4D
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 13:58:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B727D1B1D5D;
-	Fri, 30 Aug 2024 13:57:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 872221B1D41;
+	Fri, 30 Aug 2024 13:58:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ODIyyxfR"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="14esvp6w";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="PA1KOILx";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="14esvp6w";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="PA1KOILx"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CDB4179652;
-	Fri, 30 Aug 2024 13:57:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D95B81AF4FE;
+	Fri, 30 Aug 2024 13:58:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725026251; cv=none; b=jXsdOfjpn1FYQdbTPpRNB607MJzSadBCPMQmTSZ6utDNCK99rJAPgryrBuYNo2CHB6wzKtseif4KYR4aCTHT1mcEcdtN1NTRgMh4LynMQiwPQcqugVIwMOnZOeu44kU0OSMEO1/RGZA788U/tHmbjQkPPExxBrRWK+KzDCo3AP4=
+	t=1725026283; cv=none; b=ZfKuH0vLo+VaAukzAwNfahCtlv8omG1Gpgx8GmiItOapdLkxVxNyUInl87701PQ6P0Jg8Q4vhI5wvlCMdKmWlFbwJcrEhFXiY2xyc8+9jVtPuuhcOM1FRM1Yb4JcUZni0IRZqz69I0EW/AdhU+KY5a4zQNfPkQfVPHNRYvOWre4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725026251; c=relaxed/simple;
-	bh=zbsxPfwaGioyk3vzNd7TZ+fws8QWWmM/wVKo78ysYUA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=CuuzuiH/DHfJ/f0kbHZ0ge8Y/XIP5B3lo9oVWthakOLeiuQHP+pxT5eyEbJhAlxTQCTSVA9p5iliVYH+D8U3jHSQ+sBKujOeHSWLrWEdSFTnYt4M8/vPY/cU0y8xQIseJ25t41ROO64jetLNt0cR8AgnYr1SVBnUNBCT7RzmTXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ODIyyxfR; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47UDvNB7017791;
-	Fri, 30 Aug 2024 08:57:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1725026243;
-	bh=mNEeyjy6cbgjkLcIEQVWG1qzIGE7ZhsXUJX1Fa/WPKs=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=ODIyyxfR7uX7Dfan2+bQNRmiDnbmqPOxfe4WIuGzSKUA141jJFHHQh2sn/8OhOFhC
-	 bxse8Fr89RXhj7oSB5GA5q1pDLAi98sLOSVtRRYByDmdz0WzbzpGFixfa2zkn0BS9e
-	 Op/czvKxwfIZT96IdzisBepOSXuJfu/HSpBW50I0=
-Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47UDvMgS113506;
-	Fri, 30 Aug 2024 08:57:22 -0500
-Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 30
- Aug 2024 08:57:22 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 30 Aug 2024 08:57:22 -0500
-Received: from [10.249.141.75] ([10.249.141.75])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47UDvIYT083496;
-	Fri, 30 Aug 2024 08:57:18 -0500
-Message-ID: <bb36b4e1-c8c3-45aa-a2d2-056ef4a6e448@ti.com>
-Date: Fri, 30 Aug 2024 19:27:17 +0530
+	s=arc-20240116; t=1725026283; c=relaxed/simple;
+	bh=fNP/V7dYneE4KrBy5FIhrpMOmupW0xBkMLpX0tjt7ZY=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=jhMF5m1RATdmEDeE6P8HPZZBvPEKmN53t05ME01Y4ZSpR5blXzowI6a2TvNxxERAXm4kQAFn8ETS9HKenc/kTr9N2CCevAykRLtKr8JEvHtkQeTCS5TwRy/fPB/n0LC56o70KK89Vi7BxahdRn3I/ZbE7Z/2VNVMxVwPixflYs4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=14esvp6w; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=PA1KOILx; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=14esvp6w; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=PA1KOILx; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from pobox.suse.cz (unknown [10.100.2.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id C267621A3F;
+	Fri, 30 Aug 2024 13:57:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1725026279; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MfJEI21qPCGoeKZ7JbTIdFZ4xvDmSN0m0l1JyKtgXfE=;
+	b=14esvp6wihncIn7uwdmhrx6M6d2XLBUcbyUsIM+LdyitLTSGkc6JzQWNHAc6su8SoJHDtW
+	ELMQm2K1yPfaoPG9ABFKqQNPx9OURjftxbMmXcmzI9hVAMdIYDXdtswnHSxEZwcdhSwZ/A
+	I42lawYqIpZC8tbSsxqbUEHQZXV/h8I=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1725026279;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MfJEI21qPCGoeKZ7JbTIdFZ4xvDmSN0m0l1JyKtgXfE=;
+	b=PA1KOILxne5tbPJSbiRs+J+3pRo6shJ6h5Y27oGU91XA296ZOhbbuJqgATjihaRsAeJYM8
+	n8WvzRWvx2ZUiBCQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1725026279; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MfJEI21qPCGoeKZ7JbTIdFZ4xvDmSN0m0l1JyKtgXfE=;
+	b=14esvp6wihncIn7uwdmhrx6M6d2XLBUcbyUsIM+LdyitLTSGkc6JzQWNHAc6su8SoJHDtW
+	ELMQm2K1yPfaoPG9ABFKqQNPx9OURjftxbMmXcmzI9hVAMdIYDXdtswnHSxEZwcdhSwZ/A
+	I42lawYqIpZC8tbSsxqbUEHQZXV/h8I=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1725026279;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MfJEI21qPCGoeKZ7JbTIdFZ4xvDmSN0m0l1JyKtgXfE=;
+	b=PA1KOILxne5tbPJSbiRs+J+3pRo6shJ6h5Y27oGU91XA296ZOhbbuJqgATjihaRsAeJYM8
+	n8WvzRWvx2ZUiBCQ==
+Date: Fri, 30 Aug 2024 15:57:59 +0200 (CEST)
+From: Miroslav Benes <mbenes@suse.cz>
+To: Song Liu <song@kernel.org>
+cc: live-patching@vger.kernel.org, linux-kernel@vger.kernel.org, 
+    linux-trace-kernel@vger.kernel.org, jpoimboe@kernel.org, jikos@kernel.org, 
+    pmladek@suse.com, joe.lawrence@redhat.com, nathan@kernel.org, 
+    morbo@google.com, justinstitt@google.com, mcgrof@kernel.org, 
+    thunder.leizhen@huawei.com, kees@kernel.org, kernel-team@meta.com, 
+    mmaurer@google.com, samitolvanen@google.com, mhiramat@kernel.org, 
+    rostedt@goodmis.org
+Subject: Re: [PATCH v3 0/2] Fix kallsyms with CONFIG_LTO_CLANG
+In-Reply-To: <20240807220513.3100483-1-song@kernel.org>
+Message-ID: <alpine.LSU.2.21.2408301556120.1124@pobox.suse.cz>
+References: <20240807220513.3100483-1-song@kernel.org>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/2] arm64: dts: ti: k3-j722s-evm: Enable
- Inter-Processor Communication
-To: Beleswar Padhi <b-padhi@ti.com>, <nm@ti.com>, <vigneshr@ti.com>,
-        <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>
-CC: <j-choudhary@ti.com>, <vaishnav.a@ti.com>, <afd@ti.com>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <u-kumar1@ti.com>
-References: <20240829060932.3441295-1-b-padhi@ti.com>
- <20240829060932.3441295-3-b-padhi@ti.com>
-Content-Language: en-US
-From: "Kumar, Udit" <u-kumar1@ti.com>
-In-Reply-To: <20240829060932.3441295-3-b-padhi@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_TWELVE(0.00)[19];
+	RCVD_COUNT_ZERO(0.00)[0];
+	MID_RHS_MATCH_FROMTLD(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email]
+X-Spam-Score: -4.30
+X-Spam-Flag: NO
 
+Hi,
 
-On 8/29/2024 11:39 AM, Beleswar Padhi wrote:
-> From: Apurva Nandan <a-nandan@ti.com>
->
-> The K3 J722S-EVM platform is based on the J722S SoC which has one
-> single-core Arm Cortex-R5F processor in each of the WAKEUP, MCU and MAIN
-> voltage domain, and two C71x DSP subsystems in MAIN voltage domain.
->
-> The Inter-Processor communication between the A72 cores and these R5F
+On Wed, 7 Aug 2024, Song Liu wrote:
 
-Should be A53 core not A72
+> With CONFIG_LTO_CLANG, the compiler/linker adds .llvm.<hash> suffix to
+> local symbols to avoid duplications. Existing scripts/kallsyms sorts
+> symbols without .llvm.<hash> suffix. However, this causes quite some
+> issues later on. Some users of kallsyms, such as livepatch, have to match
+> symbols exactly.
+> 
+> Address this by sorting full symbols at build time, and let kallsyms
+> lookup APIs to match the symbols exactly.
+> 
+> Changes v2 => v3:
+> 1. Remove the _without_suffix APIs, as kprobe will not use them.
+>    (Masami Hiramatsu)
+> 
+> v2: https://lore.kernel.org/live-patching/20240802210836.2210140-1-song@kernel.org/T/#u
+> 
+> Changes v1 => v2:
+> 1. Update the APIs to remove all .XXX suffixes (v1 only removes .llvm.*).
+> 2. Rename the APIs as *_without_suffix. (Masami Hiramatsu)
+> 3. Fix another user from kprobe. (Masami Hiramatsu)
+> 4. Add tests for the new APIs in kallsyms_selftests.
+> 
+> v1: https://lore.kernel.org/live-patching/20240730005433.3559731-1-song@kernel.org/T/#u
+> 
+> Song Liu (2):
+>   kallsyms: Do not cleanup .llvm.<hash> suffix before sorting symbols
+>   kallsyms: Match symbols exactly with CONFIG_LTO_CLANG
+> 
+>  kernel/kallsyms.c          | 55 +++++---------------------------------
+>  kernel/kallsyms_selftest.c | 22 +--------------
+>  scripts/kallsyms.c         | 31 ++-------------------
+>  scripts/link-vmlinux.sh    |  4 ---
+>  4 files changed, 9 insertions(+), 103 deletions(-)
 
-> and DSP remote cores is achieved through shared memory and Mailboxes.
-> Thus, add the memory carveouts and enable the mailbox clusters required
-> for communication.
->
-> Also, The remoteproc firmware like of R5F and DSPs in the MAIN voltage
-> domain use timers. Therefore, change the status of the timer nodes to
-> "reserved" to avoid any clash during booting of remotecores. Usage is
-> described as below:
->
-> 	+===================+=============+
-> 	|  Remoteproc Node  | Timer Node  |
-> 	+===================+=============+
-> 	| main_r5fss0_core0 | main_timer0 |
-> 	+-------------------+-------------+
-> 	| c7x_0             | main_timer1 |
-> 	+-------------------+-------------+
-> 	| c7x_1             | main_timer2 |
-> 	+-------------------+-------------+
->
-> Signed-off-by: Apurva Nandan <a-nandan@ti.com>
-> [ Enabled mailbox instances and Reserved timer nodes ]
-> Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
-> [..]
->   
-> +&mailbox0_cluster0 {
-> +	status = "okay";
-> +
-> +	mbox_r5_0: mbox-r5-0 {
+I was on holiday most of August and the patch set has been merged but let 
+me at least add
 
-Could you choose name like mbox_wkup_r5_0 like other name of mbox
+Acked-by: Miroslav Benes <mbenes@suse.cz>
 
+here since I participated in the discussion at the beginning.
 
-> +		ti,mbox-rx = <0 0 0>;
-> +		ti,mbox-tx = <1 0 0>;
-> +	};
-> +};
-> +
-> +&mailbox0_cluster1 {
-> +	status = "okay";
-> +
-> +	mbox_mcu_r5_0: mbox-mcu-r5-0 {
-> +		ti,mbox-rx = <0 0 0>;
-> +		ti,mbox-tx = <1 0 0>;
-> [..]
+Thank you for cleaning it up!
+
+Miroslav
 
