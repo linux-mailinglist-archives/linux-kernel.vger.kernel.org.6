@@ -1,130 +1,228 @@
-Return-Path: <linux-kernel+bounces-308231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 273EE9658FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 09:46:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80539965904
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 09:46:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A5D91F26653
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 07:46:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39D39287633
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 07:46:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D662D15C157;
-	Fri, 30 Aug 2024 07:46:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB02814F9F4;
+	Fri, 30 Aug 2024 07:46:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="KkNtioU+"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="lJo0tKGF"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D5FF7F6;
-	Fri, 30 Aug 2024 07:46:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D65B15855F
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 07:46:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725003964; cv=none; b=r0KoKgs7L4nEWZg6DpqOMpVU4A02E1zVvFBs4NN1MVVu9ZFL6VrqiX7J+d8Gesz2+aWHR46a6EzYQevM6ib6wWMV9O+Xo346r/9dmAUYHDWsfIwSPgFGWT9szFIIwy1KwWfbT1Xw+AqsZXaywyCDv0ACx6ZpIQ1lFc7iHFgkhS8=
+	t=1725003997; cv=none; b=eslNnYnd/8Rk4MWLZZkK7I9KNp+6P2uYMWWB+de4WXdr2qvtfIyPUkZGaR6GG9ll/+rb/SPduxWKB3O6QR/U1+mi7PVhph4TR1OvRmGTiErDtdRIvCwcShRLpzUUC798iHX2WuxVN8NkNA43UE37GVfjtm+Vi4A5lW2e0zaFA/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725003964; c=relaxed/simple;
-	bh=MBG3deIbw+rMvYu6ZqyReRJigYRReHsdhyGiXcxZ4Cg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TITfu9h3Y9apnE0ozrVy4Sf6vOGRMYS+I/slICLpj1bk79b7tkh2UTzG2gDt6oyQKdfP7GP3qSGnG/sPKQoCFvGrBtUob+YIYpKZWpEm8342q24drAi0h4SgCsgua8Pun/pwx74lP6qplW5Znki4MMpwjc+BPZ2N76sWTKOw3Xo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=KkNtioU+; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 36B771BF209;
-	Fri, 30 Aug 2024 07:45:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1725003953;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VpebzrTQoNRUKh5ynrlO5Iu8naFvX7FtDOTwf/qOm4A=;
-	b=KkNtioU+WkZU8XZauR1n22NpmH71HFly2u9LmqlUqpZSjxsw4D3GNaQ5b8RXOdRP1vIblG
-	1BuAc/S3FaJlaTnMaxMPR0UE6gbAg476eLE/QamnjS9z+uIOF2mwRoIfCgwHv835j1RtvW
-	m0zsNyod3wMcqq8cnPB1jN2H1P6rmLDO9HHI5S1UQ/laGZiXm+EjSjV2R6wuv2noboi4nH
-	3Pq8Msc6rC+4ul0Zncwyhvt9s65q90WrR6JI+3/LBW8ChufwLbugaEO9c6DU+S+OwMiqoi
-	p4PFJKlUzZmlxJsYYFb4y8Su6oy3DiguDX/0m3yFr7XoBLtTPvwInK9gm+PLaw==
-Date: Fri, 30 Aug 2024 09:45:49 +0200
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, <michal.simek@amd.com>,
- <richard@nod.at>, <vigneshr@ti.com>, <liang.yang@amlogic.com>,
- <neil.armstrong@linaro.org>, <khilman@baylibre.com>,
- <jbrunet@baylibre.com>, <martin.blumenstingl@googlemail.com>,
- <matthias.bgg@gmail.com>, <angelogioacchino.delregno@collabora.com>,
- <heiko@sntech.de>, <mcoquelin.stm32@gmail.com>,
- <alexandre.torgue@foss.st.com>, <wens@csie.org>,
- <jernej.skrabec@gmail.com>, <samuel@sholland.org>, <kees@kernel.org>,
- <gustavoars@kernel.org>, <linux@treblig.org>, <robh@kernel.org>,
- <u.kleine-koenig@pengutronix.de>, <erick.archer@gmx.com>,
- <christophe.jaillet@wanadoo.fr>, <val@packett.cool>,
- <christophe.kerello@foss.st.com>, <linux-mtd@lists.infradead.org>,
- <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
- <linux-amlogic@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
- <linux-renesas-soc@vger.kernel.org>, <linux-rockchip@lists.infradead.org>,
- <linux-stm32@st-md-mailman.stormreply.com>, <jic23@kernel.org>
-Subject: Re: [PATCH -next RESEND 00/10] mtd: Use
- for_each_child_of_node_scoped()
-Message-ID: <20240830094549.1c513ba2@xps-13>
-In-Reply-To: <c29263ae-89f1-edd7-003a-bd03cdddc821@huawei.com>
-References: <20240826094328.2991664-1-ruanjinjie@huawei.com>
-	<20240826115213.389acaef@xps-13>
-	<f7430f87-88d2-4c08-bc1e-6bb3da4e332c@kernel.org>
-	<20240826144917.2c4e202d@xps-13>
-	<c29263ae-89f1-edd7-003a-bd03cdddc821@huawei.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1725003997; c=relaxed/simple;
+	bh=8CU1P6WAQvvcoraNUl37TtxDUg5r8wJ99DEgd6QZG8U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GTojDUV9lW/AIHSBgKGWOSjWipvpOPWGErIEJ5J/Z4I0WpvL1OVzq8LnAVRvvMWhOGBIXABzvy+eC4+wUADVKr8KQrW/etJSX+JUf9+E6OkXX3T+ZHBinObK6QWIMwojHN18x/Rs86eC3ulwBq3wr7tl+JoSXtKJzevi43atsa8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=lJo0tKGF; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-42bbd16fca8so1819635e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 00:46:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1725003993; x=1725608793; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wqwNCAVndatJ1EwadF1jO4GFKnqTtSQZTTqLPFzpvTE=;
+        b=lJo0tKGFn7WVN7eOnDzwtLO1Nyrl2uaD1Q0dftRGWBp6VeHhxnS6UrWg96BvFn0vC/
+         jL/dckyUdKGv5Rxbq8FYwi2RQyK2iGt6A1WXrcjcb8ozgd70e+1/y+R7Oi7tSbKQ6kUf
+         qmr4Dsmts9L0RJ1IALrt0q5aOm1t6t1vRDIfy8E0YzTNDhmzKooDaDHk6MoMXQUAdMtV
+         ejLcZR9JplhlOt5JIFKGj41edB4d+XJeT3rJXt7QzzkXrLjrWBPN0YVsj4USmyW5mSAg
+         oBnj6OTtT+fnZeoH92xuT4nzPFKWo/5chcc48yVIM3ObfC+TfzErqUAZrqQ4hh90B4sz
+         VS4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725003993; x=1725608793;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wqwNCAVndatJ1EwadF1jO4GFKnqTtSQZTTqLPFzpvTE=;
+        b=Buuo0ib7KUXNBDej0XWVjtnWNryFFUxYCPcFTWmPqAK0zYT+p7CT5i8oo3XqnJKwuI
+         h5shXe1QchO12oBnLp7AvUC8NBu5Tg0xQ6IZNOO7Sag2w6ZT3GFcXigEdWFWvUPk3JfR
+         mny7wWLGuVSVwA2Ec2MfElAED3ZSx+Jc0vsE+wM0U0ND9Fk3ujPhL10tCtqUbYxgiFrf
+         f0oIQv5BbLMPgQOhz20BG+flx2dBbPzW0m22cuS2FrthXe4+Mo9ERjFpDjyuQ/GzeJOe
+         W82rvCv/66w24aOlyh94I3GR66rYrhsLlHPUHbapEq/DL07nK4C4C7qw/xfu9BHgPbZ0
+         rkqw==
+X-Forwarded-Encrypted: i=1; AJvYcCWg3OzYECA6bICQ4jksIcFmVFOIzqma2x6QVOWv2uzsAOHI4eYCdFvl3ABqQmYgnPFeprnFjyjKZdVzRhA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXl6jw1Fpy4SL90YAMZ/ww52ORyG4iDp3q6FkgWVZtLk+TlZ0j
+	guapuxHm+NhU1f/qWH4Jp4hQyMT9CAj3IgPvUdX0qqeKtXiMiyDNfYANdTtokLk=
+X-Google-Smtp-Source: AGHT+IFkYMhDP90/F4TlkJBeT5Z08EDkAO3NPVbMOXNAPCc7UfNbxHw5ib8RmZ+yDAptsKKSxnbDOg==
+X-Received: by 2002:a05:600c:5110:b0:426:6710:223c with SMTP id 5b1f17b1804b1-42bb029371cmr45972405e9.9.1725003992337;
+        Fri, 30 Aug 2024 00:46:32 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.144])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ba63965dbsm72613745e9.6.2024.08.30.00.46.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 30 Aug 2024 00:46:31 -0700 (PDT)
+Message-ID: <8b6fc67d-5e07-4403-ac07-6ad0b9d61882@tuxon.dev>
+Date: Fri, 30 Aug 2024 10:46:28 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/3] clk: renesas: rzg2l-cpg: Use GENPD_FLAG_* flags
+ instead of local ones
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, wim@linux-watchdog.org,
+ linux@roeck-us.net, ulf.hansson@linaro.org,
+ linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
+ linux-pm@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20240828140602.1006438-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240828140602.1006438-2-claudiu.beznea.uj@bp.renesas.com>
+ <CAMuHMdX+Q99MvQRZcwGbk8F8SiAUzRU_t2QmRuO_6etAqqXskg@mail.gmail.com>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+Content-Language: en-US
+In-Reply-To: <CAMuHMdX+Q99MvQRZcwGbk8F8SiAUzRU_t2QmRuO_6etAqqXskg@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: miquel.raynal@bootlin.com
+Content-Transfer-Encoding: 8bit
 
-Jinjie,
+Hi, Geert,
 
-ruanjinjie@huawei.com wrote on Fri, 30 Aug 2024 14:34:38 +0800:
+On 29.08.2024 15:32, Geert Uytterhoeven wrote:
+> Hi Claudiu,
+> 
+> On Wed, Aug 28, 2024 at 4:06 PM Claudiu <claudiu.beznea@tuxon.dev> wrote:
+>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>
+>> For watchdog PM domain it is necessary to provide GENPD_FLAG_IRQ_SAFE flag
+>> to be able to power on the watchdog PM domain from atomic context. For
+>> this, adjust the current infrastructure to be able to provide GENPD_FLAG_*
+>> for individual PM domains.
+>>
+>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> 
+> Thanks for your patch!
+> 
+>> --- a/drivers/clk/renesas/rzg2l-cpg.c
+>> +++ b/drivers/clk/renesas/rzg2l-cpg.c
+>> @@ -1680,11 +1680,13 @@ static int rzg2l_cpg_power_off(struct generic_pm_domain *domain)
+>>         return 0;
+>>  }
+>>
+>> -static int __init rzg2l_cpg_pd_setup(struct rzg2l_cpg_pd *pd, bool always_on)
+>> +static int __init rzg2l_cpg_pd_setup(struct rzg2l_cpg_pd *pd, u32 genpd_flags,
+>> +                                    bool always_on)
+> 
+> You don't need always_on, as that should already be reflected in
+> genpd_flags.
 
-> On 2024/8/26 20:49, Miquel Raynal wrote:
-> > Hi Krzysztof,
-> >=20
-> > krzk@kernel.org wrote on Mon, 26 Aug 2024 12:19:07 +0200:
-> >  =20
-> >> On 26/08/2024 11:52, Miquel Raynal wrote: =20
-> >>> Hi Jinjie,
-> >>>
-> >>> ruanjinjie@huawei.com wrote on Mon, 26 Aug 2024 17:43:18 +0800:
-> >>>    =20
-> >>>> Use scoped for_each_available_child_of_node_scoped() when iterating =
-over
-> >>>> device nodes to make code a bit simpler.   =20
-> >>>
-> >>> Why is this a resend ? Did I miss a previous iteration?   =20
-> >>
-> >> You were not cc-ed on previous iteration. I asked for proper split
-> >> between subsystems and sending to maintainers, thus this resend. =20
-> >=20
-> > Ok. Makes sense, and the patchset looks fine. =20
->=20
-> Hi, Miquel,
->=20
-> Could this series be merged, thank you!
+OK.
 
-You've sent this series on Monday, we are Friday. I answered a first
-time within 5h and reviewed it within 8h. So that means I will take the
-patchset:
-- when I have the time to do so
-- after several days to give a chance to other to review it as well
-- unless someone speaks up against it in a "reasonable time frame"
-- unless a robot that parses the patches on the mailing lists complains
-  about it (usually within few days, up to a week).
+> 
+> Also, you could do without passing genpd_flags, if the caller would have
+> initialized pd->genpd.flags (it already initializes pd->genpd.name).
 
-In general, a good rule of thumb is to refrain yourself from pinging
-within 2 weeks for non-urgent matters like this series.
+That could be done, indeed.
 
-Thanks,
-Miqu=C3=A8l
+> 
+>>  {
+>>         struct dev_power_governor *governor;
+>>
+>> -       pd->genpd.flags |= GENPD_FLAG_PM_CLK | GENPD_FLAG_ACTIVE_WAKEUP;
+>> +       pd->genpd.flags |= GENPD_FLAG_PM_CLK | GENPD_FLAG_ACTIVE_WAKEUP |
+>> +                          genpd_flags;
+> 
+> Change not needed if the caller would have initialized flags.
+
+OK
+
+> 
+>>         pd->genpd.attach_dev = rzg2l_cpg_attach_dev;
+>>         pd->genpd.detach_dev = rzg2l_cpg_detach_dev;
+>>         if (always_on) {
+> 
+> The next line is
+> 
+>     pd->genpd.flags |= GENPD_FLAG_ALWAYS_ON;
+> 
+> which should already be the case if always_on is true, so it can
+> be removed.
+
+OK
+
+> 
+>> @@ -1712,7 +1714,7 @@ static int __init rzg2l_cpg_add_clk_domain(struct rzg2l_cpg_priv *priv)
+>>
+>>         pd->genpd.name = np->name;
+> 
+> pd->genpd.flags = GENPD_FLAG_ALWAYS_ON;
+
+Agree.
+
+> 
+>>         pd->priv = priv;
+>> -       ret = rzg2l_cpg_pd_setup(pd, true);
+>> +       ret = rzg2l_cpg_pd_setup(pd, 0, true);
+> 
+> s/0/GENPD_FLAG_ALWAYS_ON/, FWIW ;-)
+> 
+>>         if (ret)
+>>                 return ret;
+>>
+>> @@ -1777,7 +1779,8 @@ static int __init rzg2l_cpg_add_pm_domains(struct rzg2l_cpg_priv *priv)
+>>                 return ret;
+>>
+>>         for (unsigned int i = 0; i < info->num_pm_domains; i++) {
+>> -               bool always_on = !!(info->pm_domains[i].flags & RZG2L_PD_F_ALWAYS_ON);
+>> +               u32 genpd_flags = info->pm_domains[i].genpd_flags;
+>> +               bool always_on = !!(genpd_flags & GENPD_FLAG_ALWAYS_ON);
+>>                 struct rzg2l_cpg_pd *pd;
+>>
+>>                 pd = devm_kzalloc(dev, sizeof(*pd), GFP_KERNEL);
+>> @@ -1789,7 +1792,7 @@ static int __init rzg2l_cpg_add_pm_domains(struct rzg2l_cpg_priv *priv)
+> 
+> You can add
+> 
+>     pd->genpd.flags = info->pm_domains[i].genpd_flags;
+> 
+> above.
+
+OK
+
+> 
+>>                 pd->id = info->pm_domains[i].id;
+>>                 pd->priv = priv;
+>>
+>> -               ret = rzg2l_cpg_pd_setup(pd, always_on);
+>> +               ret = rzg2l_cpg_pd_setup(pd, genpd_flags, always_on);
+>>                 if (ret)
+>>                         return ret;
+> 
+> What about moving the conditional call to rzg2l_cpg_power_on()
+> below to rzg2l_cpg_pd_setup()? Then this function no longer needs
+> the always_on flag.
+
+That could be done but I think it will involve an extra power on/power off
+cycle for the unused domains.
+
+Thank you for your review,
+Claudiu Beznea
+
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
 
