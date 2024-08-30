@@ -1,132 +1,91 @@
-Return-Path: <linux-kernel+bounces-309130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90D9396668B
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 18:11:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCDD696668F
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 18:12:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C18B2824E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 16:11:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91A591F234D2
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 16:12:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 456141B81AB;
-	Fri, 30 Aug 2024 16:11:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DF071B86D3;
+	Fri, 30 Aug 2024 16:12:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="sQT/VZHi"
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y1Qk91PC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E6CB1B4C51
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 16:11:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BECD7199FB7;
+	Fri, 30 Aug 2024 16:12:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725034285; cv=none; b=tTwlYacQCL/u9IPRDp5NkrId6vR2Rmp0BW5RNzWts/yqZ/GDtj7q12fQl8mK7lKY32bAIpFqWI0Je+hSuO2RhS7a0+s0bsguo9M7fAhi90YUuA2dfujl6VRHZJ6w+HJUA7iBQok9AN3MQcOnD/F6l7xPflyubAuhj2lKgp/d9zs=
+	t=1725034345; cv=none; b=tDMCl1hyyOEZE/mOVRCNC5qXCuo3Tj7RLg8s0ZCVT2dLA9mmkPWP2s47ACPe+z13c1LmEaZbLwFToLNimoTasyp6pYxvMWIg9k/3mSfBFJxq27yD7Umy19C2D/H/kOSl74B9oNliSiQuzjndnFxMRgd3G0wk7FgY5W1ndJiUUbo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725034285; c=relaxed/simple;
-	bh=SazL0GeHUvqITaELsOdk/Z+Qai6Y7zQpEB/FKqn5ElQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rNusk6nSBuRF5HfZdu3NNIoNTVFqvS7ocUJhVtilUs2mKK54oAu+Chgh6T+5DdPiIV5932TmPBXlMK2di9hc3ykoKA9luQHrVz1LeRDpPKz9/EYurdlBGyyC6ZWJinVTtfB9rNOKf2k0y8Dl/7xgMNtYfQuUFYrzrnitYT0uwfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=sQT/VZHi; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1725034282;
-	bh=SazL0GeHUvqITaELsOdk/Z+Qai6Y7zQpEB/FKqn5ElQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=sQT/VZHi90WwfGh1B6N76OUNrjSRk+4McPwu5/2Zya56g6FV/sS7fht1n0FR2GM/n
-	 whJ5t5Y1rUX7eiWMJFcCSW1D4dIhZ5jGsxu+OKot9gyvyDi2qiZQAIC/XvHANKifoR
-	 NC/zQoMeP5EA5vnFXQw1+K5p40LYS7puPSeeS+hRb8B/zv0kd74R0bOL1I61JqWiec
-	 WnBMyS+1uCcgzABoh5zk8ckzT8djH8ehofy/frFDDTjD3uRjSY2oSQwsmgTUe7Irsl
-	 JDvloiKAqPpXTN0+eebKfTNnSuP2G+noqLFZCH1GAc1KYRqUcCYvbr+aogriGYBQLt
-	 pbRGcCuhZXk0w==
-Received: from [172.16.0.134] (96-127-217-162.qc.cable.ebox.net [96.127.217.162])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4WwNSB1tFdz1Jjq;
-	Fri, 30 Aug 2024 12:11:22 -0400 (EDT)
-Message-ID: <3469aa9d-5883-4e02-bfa6-b36f49c207c3@efficios.com>
-Date: Fri, 30 Aug 2024 12:10:59 -0400
+	s=arc-20240116; t=1725034345; c=relaxed/simple;
+	bh=Si9Ss41/+FpMC/kmn+RNcS7uGCQxnjo7fqJtXiUe7rY=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SB+qL5keTZtaXTN8pj6pMXGZ+j5FOd4mXVe26DKoBEU8I8Ot+JDk8UZh8JEKTLTOmioNy3ikxuFAVvyNNVjW2qWvDNLJCx7QgzUX0/Fc/21PJZ/BcByo5mzdSwn8iYokNhnyrLWdxJQSdcqvrDB4coC5/y207BkjNRH9JWxmLNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y1Qk91PC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77CECC4CEC2;
+	Fri, 30 Aug 2024 16:12:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725034345;
+	bh=Si9Ss41/+FpMC/kmn+RNcS7uGCQxnjo7fqJtXiUe7rY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Y1Qk91PCVg8lVtNAePi3XgtsIE2Sin/oP99Y26+Nw2BuFD2KhdfjJ+a7lIMJ14lT6
+	 yOT5WOgYmWpRwFEBlZhdArGQoVsyigGlULa7M44PYY6JYSGugmk1mCjoV14c6Zyp73
+	 YfxGqsit2zZxierblbS9AskJ/ralGWZV7WpA3BHrp/3TB3d6/Yo8s6gWMp11cVvPGY
+	 bn9YtCvgI+7VETfSsQMMSwB+rofCVvlN/k4W0+OykiLQZ4WifO4VQnnxxgAaGnFdCe
+	 v6qw+b5PBxBBoR9xPECJY+MxqKESQysxeVoEy6kK9NKhryefxIjqT3c7lgzc5MvfvV
+	 HmPnKjg16GBRA==
+From: Will Deacon <will@kernel.org>
+To: Catalin Marinas <catalin.marinas@arm.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Mark Brown <broonie@kernel.org>
+Cc: kernel-team@android.com,
+	Will Deacon <will@kernel.org>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Andre Przywara <andre.przywara@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] kselftest/arm64: Actually test SME vector length changes via sigreturn
+Date: Fri, 30 Aug 2024 17:12:09 +0100
+Message-Id: <172501878542.2592028.14001650150204173729.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20240829-arm64-sme-signal-vl-change-test-v1-1-42d7534cb818@kernel.org>
+References: <20240829-arm64-sme-signal-vl-change-test-v1-1-42d7534cb818@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/6] lib: Extend bitmap find binary operations
-To: Yury Norov <yury.norov@gmail.com>
-Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>, linux-kernel@vger.kernel.org
-References: <20240829135926.926603-1-mathieu.desnoyers@efficios.com>
- <ZtHrl_1DEku-VeQV@yury-ThinkPad>
-Content-Language: en-US
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-In-Reply-To: <ZtHrl_1DEku-VeQV@yury-ThinkPad>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On 2024-08-30 17:56, Yury Norov wrote:
-> On Thu, Aug 29, 2024 at 09:59:20AM -0400, Mathieu Desnoyers wrote:
->> Extend bitmap find.h and cpumask.h with additional binary operations
->> such as "nor".
->>
->> Also extend the testing and benchmark coverage of those bitmap find with
->> binary operations.
->>
->> This is useful for NUMA-aware rseq concurrency IDs which depend on this
->> series.
->   
-> Hi Mathieu,
+On Thu, 29 Aug 2024 18:20:09 +0100, Mark Brown wrote:
+> The test case for SME vector length changes via sigreturn use a bit too
+> much cut'n'paste and only actually changed the SVE vector length in the
+> test itself. Andre's recent factoring out of the initialisation code caused
+> this to be exposed and the test to start failing. Fix the test to actually
+> cover the thing it's supposed to test.
 > 
-> Thanks for the series! I appreciate your time nailing it down, and
-> especially the tests provided. A couple nits is that we don't need
-> an 'extern' specifier,  and would better avoid local statics, even
-> in tests.
-
-OK. I've mostly followed the style present in the files I modified.
-I'm OK if you change that in place.
-
 > 
-> I'll fix that inplace and apply in bitmap-for-next. Can you share
-> a link for your work that requires the new API? I need to point it
-> when sending a merge request.
+> [...]
 
-Here is the latest version posted, before I split the bitmap patches
-into a serparate series:
+Applied to arm64 (for-next/selftests), thanks!
 
-https://lore.kernel.org/lkml/20240823185946.418340-1-mathieu.desnoyers@efficios.com/
+[1/1] kselftest/arm64: Actually test SME vector length changes via sigreturn
+      https://git.kernel.org/arm64/c/6f0315330af7
 
-Please note that I am currently doing additional tests/benchmarks/schedstat
-instrumentation and bug fixes on the RSEQ numa-aware patch.
-
-Thanks,
-
-Mathieu
-
-> 
-> Thanks,
-> Yury
->   
->> Mathieu Desnoyers (6):
->>    lib: Clarify comment on top of find_next_andnot_bit
->>    lib: Implement find_{first,next,nth}_nor_bit, for_each_nor_bit,
->>      find_first_andnot_bit
->>    lib: test bitmap sets binary operation iterators
->>    lib: Fix test_find_first_and_bit and test_find_next_and_bit benchmark
->>    lib: benchmark bitmap sets binary operation find
->>    cpumask: Implement cpumask_{first,next}_{nor,andnot}
->>
->>   include/linux/cpumask.h  |  60 +++++++++++++++++++
->>   include/linux/find.h     | 124 +++++++++++++++++++++++++++++++++++++--
->>   lib/find_bit.c           |  36 ++++++++++++
->>   lib/find_bit_benchmark.c | 103 ++++++++++++++++++++++++++++++--
->>   lib/test_bitmap.c        |  81 +++++++++++++++++++++++++
->>   5 files changed, 396 insertions(+), 8 deletions(-)
->>
->> -- 
->> 2.39.2
-
+Cheers,
 -- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
+Will
 
+https://fixes.arm64.dev
+https://next.arm64.dev
+https://will.arm64.dev
 
