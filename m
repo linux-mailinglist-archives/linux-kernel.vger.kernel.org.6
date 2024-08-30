@@ -1,135 +1,126 @@
-Return-Path: <linux-kernel+bounces-308813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FEE9966216
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 14:55:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59DDD96621C
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 14:56:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E48851F24CB3
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:55:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05A901F24520
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:56:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E24DA19995B;
-	Fri, 30 Aug 2024 12:55:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AFD819ABBD;
+	Fri, 30 Aug 2024 12:56:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JxbYVh6O"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="1oQccz+x"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3216312F59C
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 12:55:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50F6216DC3D;
+	Fri, 30 Aug 2024 12:56:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725022537; cv=none; b=ctKzo9HcBgv8IYL93x943oA8+JUBOtBkVQvx5Xt0CBzdVAKWPX7bFlISccUn7BOv0I+VEkfOITiaop4qyWNhVgEiePpLRlsWTuU+rkLSaGkWshLdww9u3oO/BWFKKtAbeZq+ewQgHxz7CnX9Els39vkUgBTGJ8X7T9qt8I0lANM=
+	t=1725022603; cv=none; b=qSO7xdE5oFKrIpX4xfcbcRbkKlIyvaTX7GZd/sWhxY9zD8orkDUa1pQEo0kGrxa/rzFsSxLzJn6iQEG9JmHRra0XtO0VyGNvBekEq2OWsuUB7vuz38AzvtMdgHN2BENnR54jawr/sT8Ynm/rr6R7rEpoVLNDaLBXJSBwF6uLf+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725022537; c=relaxed/simple;
-	bh=D8fj5tYcuhTn43Bgmhsg1l+CgGyqJD3ygW88NFNqy4I=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Uz7trRBuZQl7EQRQAn0VVxl/W3HzIuKhqPGQGZ9z3qGtu19/Dv/54sYw4ZKItpJEctKOGStVFd9/7Ks+E44V/e8MoU6RcpNUzuhNBpVNaplz+PftSubrCdYlMWecvNaqMjJAK2rIww1L+XL7UYgGEs6dsnwEPmuDDsapeAabrKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JxbYVh6O; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EC2FC4CEC2;
-	Fri, 30 Aug 2024 12:55:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725022536;
-	bh=D8fj5tYcuhTn43Bgmhsg1l+CgGyqJD3ygW88NFNqy4I=;
-	h=Date:From:To:Cc:Subject:From;
-	b=JxbYVh6OtKW3fSNHc3fG9OlAkF3E7mdsdIK7rSGmzy3YAWm6mfooFZxOVq2jnbpp/
-	 9YwUiA3EX8akD18R1r7I5VfVGsavfzlHtTu0y5zbaPVhQgoMUsZzy8lO6iRvqcbuBZ
-	 kDv+84mcAZCFYEInmW8yWIn2fQitgrSOm/iRQDRjpoM3LTKMNa3ThKuI/GnfptMHrY
-	 jYTO49/wZ6B8N/kqOQK5/UDcROF4MZAq+lavmBp0WWIG0DzUu1kiLZcsp2f/ERbO4w
-	 lWSCGBCKxQIs55xDMRCSRVzVN5MfuKktGpIKONCnLOlg/c6R1N6E/ZSe2P9Jv5mvN8
-	 7hWZ3PJ4Yd4ag==
-Date: Fri, 30 Aug 2024 18:25:33 +0530
-From: Vinod Koul <vkoul@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL]: Generic phy fixes for v6.11
-Message-ID: <ZtHBRVSH6wyIvU+b@vaman>
+	s=arc-20240116; t=1725022603; c=relaxed/simple;
+	bh=HDdh0qw8j46tMuVtpmR8HaScjp3wTf6OwP0fyiqI3T0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L9tipzIam84yrWSXpBUzTF/tcSdi9ZA0gpVW0j+ZVXriCP6WJnmJTMvLPSWRhtseTbigLA+9ORGl9foT+1oVkR/J5yQmcmFUvB+2+QfvereOqqprJJIXgWmhbKgaKkcM8r2XIcZ0KGwpRK+R4lHbSoFbyaAnTwc8N1ElIP0ykxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=1oQccz+x; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CD60C4CEC2;
+	Fri, 30 Aug 2024 12:56:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1725022603;
+	bh=HDdh0qw8j46tMuVtpmR8HaScjp3wTf6OwP0fyiqI3T0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=1oQccz+xZwRmnQq64cq6k543woWMPa1J5UAJWOf/gFnfXB5DpzIyJgLpoGTPP6emF
+	 cz+BUl9UGjQ6w2Cd59SLhsknxnqEzAE3OySGGiAwTZZyVPBStQnZbqfBqKq2jnSqs0
+	 wI5myt960HRb7AssjmwM2SIbh253J+EfYmY0Pjcg=
+Date: Fri, 30 Aug 2024 14:56:39 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Shivani Agarwal <shivani.agarwal@broadcom.com>
+Cc: stable@vger.kernel.org, longman@redhat.com, lizefan.x@bytedance.com,
+	tj@kernel.org, hannes@cmpxchg.org, mkoutny@suse.com,
+	adityakali@google.com, sergeh@kernel.org, cgroups@vger.kernel.org,
+	linux-kernel@vger.kernel.org, ajay.kaher@broadcom.com,
+	alexey.makhalov@broadcom.com, vasavi.sirnapalli@broadcom.com,
+	Chen Ridong <chenridong@huawei.com>,
+	Sasha Levin <sashal@kernel.org>
+Subject: Re: [PATCH v5.10-v5.15] cgroup/cpuset: Prevent UAF in
+ proc_cpuset_show()
+Message-ID: <2024083031-jinx-erupt-6780@gregkh>
+References: <20240830050453.692795-1-shivani.agarwal@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="/xZ6BnYIQSePr9QK"
-Content-Disposition: inline
-
-
---/xZ6BnYIQSePr9QK
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240830050453.692795-1-shivani.agarwal@broadcom.com>
 
-Hello Linus,
+On Thu, Aug 29, 2024 at 10:04:53PM -0700, Shivani Agarwal wrote:
+> From: Chen Ridong <chenridong@huawei.com>
+> 
+> [ Upstream commit 1be59c97c83ccd67a519d8a49486b3a8a73ca28a ]
+> 
+> An UAF can happen when /proc/cpuset is read as reported in [1].
+> 
+> This can be reproduced by the following methods:
+> 1.add an mdelay(1000) before acquiring the cgroup_lock In the
+>  cgroup_path_ns function.
+> 2.$cat /proc/<pid>/cpuset   repeatly.
+> 3.$mount -t cgroup -o cpuset cpuset /sys/fs/cgroup/cpuset/
+> $umount /sys/fs/cgroup/cpuset/   repeatly.
+> 
+> The race that cause this bug can be shown as below:
+> 
+> (umount)		|	(cat /proc/<pid>/cpuset)
+> css_release		|	proc_cpuset_show
+> css_release_work_fn	|	css = task_get_css(tsk, cpuset_cgrp_id);
+> css_free_rwork_fn	|	cgroup_path_ns(css->cgroup, ...);
+> cgroup_destroy_root	|	mutex_lock(&cgroup_mutex);
+> rebind_subsystems	|
+> cgroup_free_root	|
+> 			|	// cgrp was freed, UAF
+> 			|	cgroup_path_ns_locked(cgrp,..);
+> 
+> When the cpuset is initialized, the root node top_cpuset.css.cgrp
+> will point to &cgrp_dfl_root.cgrp. In cgroup v1, the mount operation will
+> allocate cgroup_root, and top_cpuset.css.cgrp will point to the allocated
+> &cgroup_root.cgrp. When the umount operation is executed,
+> top_cpuset.css.cgrp will be rebound to &cgrp_dfl_root.cgrp.
+> 
+> The problem is that when rebinding to cgrp_dfl_root, there are cases
+> where the cgroup_root allocated by setting up the root for cgroup v1
+> is cached. This could lead to a Use-After-Free (UAF) if it is
+> subsequently freed. The descendant cgroups of cgroup v1 can only be
+> freed after the css is released. However, the css of the root will never
+> be released, yet the cgroup_root should be freed when it is unmounted.
+> This means that obtaining a reference to the css of the root does
+> not guarantee that css.cgrp->root will not be freed.
+> 
+> Fix this problem by using rcu_read_lock in proc_cpuset_show().
+> As cgroup_root is kfree_rcu after commit d23b5c577715
+> ("cgroup: Make operations on the cgroup root_list RCU safe"),
+> css->cgroup won't be freed during the critical section.
+> To call cgroup_path_ns_locked, css_set_lock is needed, so it is safe to
+> replace task_get_css with task_css.
+> 
+> [1] https://syzkaller.appspot.com/bug?extid=9b1ff7be974a403aa4cd
+> 
+> Fixes: a79a908fd2b0 ("cgroup: introduce cgroup namespaces")
+> Signed-off-by: Chen Ridong <chenridong@huawei.com>
+> Signed-off-by: Tejun Heo <tj@kernel.org>
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
+> Signed-off-by: Shivani Agarwal <shivani.agarwal@broadcom.com>
+> ---
+>  kernel/cgroup/cpuset.c | 13 +++++++++----
+>  1 file changed, 9 insertions(+), 4 deletions(-)
 
-Please pull to receive couple of phy driver fixes.
+Now queued up, thanks.
 
-The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
-
-  Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/phy/linux-phy.git tags/phy-=
-fixes-6.11
-
-for you to fetch changes up to 5af9b304bc6010723c02f74de0bfd24ff19b1a10:
-
-  phy: xilinx: phy-zynqmp: Fix SGMII linkup failure on resume (2024-08-05 2=
-1:46:58 +0530)
-
-----------------------------------------------------------------
-phy fixes for 6.11
-
- - Qualcomm QMP X1E80100 PCIe Gen4 PHY initialisation fix
- - Freescale imx8mq tuning parameter name fix
- - Samsung exynos5 fir for error code in probe()
- - Xilinx Zynqmp SGMII linkup failure fix
-
-----------------------------------------------------------------
-Abel Vesa (1):
-      phy: qcom: qmp-pcie: Fix X1E80100 PCIe Gen4 PHY initialisation
-
-Dan Carpenter (1):
-      phy: exynos5-usbdrd: fix error code in probe()
-
-Piyush Mehta (1):
-      phy: xilinx: phy-zynqmp: Fix SGMII linkup failure on resume
-
-Xu Yang (1):
-      phy: fsl-imx8mq-usb: fix tuning parameter name
-
- drivers/phy/freescale/phy-fsl-imx8mq-usb.c |  2 +-
- drivers/phy/qualcomm/phy-qcom-qmp-pcie.c   | 23 ++++++++----
- drivers/phy/samsung/phy-exynos5-usbdrd.c   |  2 +-
- drivers/phy/xilinx/phy-zynqmp.c            | 56 ++++++++++++++++++++++++++=
-++++
- 4 files changed, 74 insertions(+), 9 deletions(-)
-
---=20
-~Vinod
-
---/xZ6BnYIQSePr9QK
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE+vs47OPLdNbVcHzyfBQHDyUjg0cFAmbRwUUACgkQfBQHDyUj
-g0eX9RAAuLy+uikE8cyzIoyViytHWRFT0ngvDVxU32H3u5QMaIqYQlh4xOG6AzTu
-uDNZXDfv+m9DjOvALNaUfrMmsx3teckvjUT8RJvWFWHV3EJfNH5xZV/+tpu++Xv2
-BCXEi/WSkY6Nnd4C3ah/818+Mw8/Pv8gMptatqN/a45wXzBggAGpUd92O28z61/v
-YI5oYmNLqnKGWePFYqDAxfFj3q8P2PsBR2SLFXlfx8f9yVr76MvylQofzakPsO+6
-EEWb0/YCJlyfX8tpw/GZqF/fTHFuCGQU852rseyoR88ONNpQBA0W/5Z4OeogIFAA
-OHq6ejYYbI6x4tzJUNArzCQ5wzSpRcWArLrFEgW7D4Xt6k7ZVwu79IWg8i9wfS2c
-cDNR20+0qhXRB85M7Rl3TYSFbOpYVi39K5wngNVCMM2rnZWTZ2Mo98RrVW+gTFGZ
-jCRbUGp7HmAUyk9fjLWlQHHo6k+huXBkczzqXxzMwMlNL6uHpRcL87pgRecS99AM
-wmEwd2gXeQ6BAP9EgmJ9kdqVxK0U/doWELHgccKy6wuRRkioIPslUH4XwbB7884Z
-uaYwVOb9iW/Kch3ncD794COyExWDePnlDoUOZ9nzaa4NKP/9LBsL34Yb0yB/ouXG
-qrSb3DsZsZigF2vMW2pHxm90Io/OQocAnNynw4NFV/udWiTTpOg=
-=/PBy
------END PGP SIGNATURE-----
-
---/xZ6BnYIQSePr9QK--
+greg k-h
 
