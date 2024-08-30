@@ -1,108 +1,162 @@
-Return-Path: <linux-kernel+bounces-308565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A44A2965EDE
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:23:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44744965EDF
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:23:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6BF81C240D5
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:23:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BDBAAB27B6F
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:23:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE4C818F2F1;
-	Fri, 30 Aug 2024 10:17:26 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9493818FC78;
+	Fri, 30 Aug 2024 10:18:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HZsROsnO"
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE2D718C348;
-	Fri, 30 Aug 2024 10:17:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 560D616CD1D
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 10:18:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725013046; cv=none; b=TNe0n9FUFHFEKwmd21oeNCULOSGEPZQhLBkhwJscVoNEdh9iAJHwaS/XODenk5HywgpF/Xf6+PrYfgmDY8rsyFtlKFCvGD1NYs1G9b8GDf+AK3Ot90IBqWyeTV0HeGOoPox2Fc9/cq8RiI2IfXtLXTDBG2uQfeBYvKuRosQ9qZ8=
+	t=1725013096; cv=none; b=oazaswL72ileOQUDJsJYEd2VwBCcxkyYYa9oxqMyJplslG2m7Ddhf57Hvb/kLlnjf+H8wtL4p20556q6dXpJQswZ1IyM0MIbTBXhfMUSUW7XvwtWruGvDMBXaMzo8hjLT80durHhxUiQ2z/rvXg1F+OVl2o94NM98TBGKBnSW74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725013046; c=relaxed/simple;
-	bh=hUbjT7qj0ylI5uwOskrsSChPh/FbefLjixfh3uDGogk=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rrqfjjY7IpCH7xvJjOC6oi66nG9rPNuigS0UrGKebik8QYVkigLx3Q1AX8q1EbXbBULKKScnJsDlX2a1ImQBh9ez+xxHC6x7MHOP3IEqSvI9mxA2KVvARTXqSbd292yJS6rRgPdcaLZftsoiZyrPMwDFZyw5/CoTkmeIyw0Chq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4WwDbS1Gyqz1j7q0;
-	Fri, 30 Aug 2024 18:17:08 +0800 (CST)
-Received: from kwepemd200024.china.huawei.com (unknown [7.221.188.85])
-	by mail.maildlp.com (Postfix) with ESMTPS id D4E221400D7;
-	Fri, 30 Aug 2024 18:17:21 +0800 (CST)
-Received: from localhost.huawei.com (10.90.30.45) by
- kwepemd200024.china.huawei.com (7.221.188.85) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 30 Aug 2024 18:17:21 +0800
-From: Chenghai Huang <huangchenghai2@huawei.com>
-To: <herbert@gondor.apana.org.au>, <davem@davemloft.net>
-CC: <linux-kernel@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
-	<fanghao11@huawei.com>, <liulongfang@huawei.com>, <shenyang39@huawei.com>,
-	<songzhiqi1@huawei.com>, <qianweili@huawei.com>, <linwenkai6@hisilicon.com>,
-	<taoqi10@huawei.com>, <wangzhou1@hisilicon.com>, <huangchenghai2@huawei.com>
-Subject: [PATCH 3/3] crypto: hisilicon/trng - modifying the order of header files
-Date: Fri, 30 Aug 2024 18:17:18 +0800
-Message-ID: <20240830101718.3193159-4-huangchenghai2@huawei.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20240830101718.3193159-1-huangchenghai2@huawei.com>
-References: <20240830101718.3193159-1-huangchenghai2@huawei.com>
+	s=arc-20240116; t=1725013096; c=relaxed/simple;
+	bh=PetK3Lc5AxGaeJOb4DCw0HX/+hPiWmg/Q4goL3s/Idw=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=r2QYhZdHlQrHr+mO42wbXCAbov3KPPpFZzhsUSZd0YmfA9phYsigmMsRHnR0MkHJIuRsuxmrSPMArj4ArLU3SwAOROScjeCqgxeTVnQcZbZpqqP9LJYKnbsk7IpmM3S8L+q3E7ChQEKb6KYnXEcmbWx1Zro+EpUC2nuOGrqdSYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HZsROsnO; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-7bb75419123so1010767a12.3
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 03:18:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1725013094; x=1725617894; darn=vger.kernel.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=RhjXrY66aQqjBoYOxAvINjNegNxb7ZOaXewyBkVrXPY=;
+        b=HZsROsnOHLWMdpuWNWkJlWEYO6lJOc1C3qkpIZhZBSdybR92540kv633cjd2wHYKN3
+         L5Q0E/NJ3dOBDGp50GFiufaKLa9LTDWZ1ifJVRKeOwnLdSX756iCz9SXvouJNvX3vHj/
+         +gpeBYXp4qLX2/EDBPEfrNjiVlgttq9oNg/n6RMsp+5Ksdx2Sf4rtdjD3jB84zO0gEGU
+         7gnwwm8Cyg1Lplvg0s56kVJL6/KzTLoaA645U/0ePYSdFXDSEaIYzRflBGV1B9I2ItNV
+         yKWjyEQqYW4J3ToWVyyrPCklwSDepP33iB5eYuCbUbdCiyXcJikfQdkeeOVJUM0xUVst
+         jpww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725013094; x=1725617894;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RhjXrY66aQqjBoYOxAvINjNegNxb7ZOaXewyBkVrXPY=;
+        b=NqlkTD92w6KnAqY75lmsODauZQK9bnw9I8ejlbox9JFz9pKMY++kdJnAX47Pynnz14
+         dxrXP7TSJE7Es67Spq54sTvdeSozv9EC3nxHIHdHFERqSCc83lEWlHfdDkWfYnZVxo19
+         j5s40VMcQk6YmMJtsVudzeu8Ydtn+qKFxetTmFWeIylJQZoVOHb04CCrNMFCWkbRhHRW
+         HwTp3czMsDOCHewV72qeo59s0rb6s8MlF6CRqKOa9z5IHmDcjEDfN0hGBFzDWLCzFCYm
+         1ivJfedlYXz0NMVPtMc2ptqYEPj/AB5/9bVvgXRM3twIXwmmNh9XW3qo7ZXDQpNwm4FK
+         RfwA==
+X-Forwarded-Encrypted: i=1; AJvYcCVaalp+5yt5gGJQ/l5LHzz74wvQJja36siNTcX86Jk47F/zAZ4A5aKeBqiOx91TNjIBXg4i4/+N8fPh8nY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSoMekXllsKG7xBuNoBuSRbl3b5WpYyXuEgqXGtCtqknLQYqAv
+	Nt/RLI4MbMZfxT2kBz/aUyjkjYZBrMcoHhQQf0VBuxcmY0aEACkHpnhIptGbHQ==
+X-Google-Smtp-Source: AGHT+IESiNr+ViFs8CZa9rAsO5YWji9DJdOcgxH36+ht1foL3djmeL/yUo6l5fw66rlGTYuFv4zHzQ==
+X-Received: by 2002:a17:90b:17c7:b0:2d3:c089:84b with SMTP id 98e67ed59e1d1-2d8564cf3c0mr5704198a91.29.1725013094189;
+        Fri, 30 Aug 2024 03:18:14 -0700 (PDT)
+Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d85b39d03asm3372089a91.43.2024.08.30.03.18.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Aug 2024 03:18:13 -0700 (PDT)
+Date: Fri, 30 Aug 2024 03:18:11 -0700 (PDT)
+From: Hugh Dickins <hughd@google.com>
+To: Baolin Wang <baolin.wang@linux.alibaba.com>
+cc: Hugh Dickins <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
+    willy@infradead.org, david@redhat.com, wangkefeng.wang@huawei.com, 
+    chrisl@kernel.org, ying.huang@intel.com, 21cnbao@gmail.com, 
+    ryan.roberts@arm.com, shy828301@gmail.com, ziy@nvidia.com, 
+    ioworker0@gmail.com, da.gomez@samsung.com, p.raghav@samsung.com, 
+    linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 4/9] mm: filemap: use xa_get_order() to get the swap
+ entry order
+In-Reply-To: <3c7e4800-ec9c-4288-85bf-89f3fef18827@linux.alibaba.com>
+Message-ID: <e88b1850-ca36-aec5-ad27-0b2753c836f5@google.com>
+References: <cover.1723434324.git.baolin.wang@linux.alibaba.com> <6876d55145c1cc80e79df7884aa3a62e397b101d.1723434324.git.baolin.wang@linux.alibaba.com> <d3dc75e2-40a7-8439-734c-19d83707164c@google.com> <3c020874-4cf3-418c-b89b-4e6ed158e5b9@linux.alibaba.com>
+ <c336e6e4-da7f-b714-c0f1-12df715f2611@google.com> <3c7e4800-ec9c-4288-85bf-89f3fef18827@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemd200024.china.huawei.com (7.221.188.85)
+Content-Type: multipart/mixed; boundary="-1463770367-1789196680-1725013093=:16809"
 
-Header files is included Order-ref: standard library headers,
-OS library headers, and project-specific headers. This patch
-modifies the order of header files according to suggestions.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-In addition, use %u to print unsigned int variables to prevent
-overflow.
+---1463770367-1789196680-1725013093=:16809
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-Signed-off-by: Chenghai Huang <huangchenghai2@huawei.com>
----
- drivers/crypto/hisilicon/trng/trng.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+On Thu, 29 Aug 2024, Baolin Wang wrote:
+> On 2024/8/29 16:07, Hugh Dickins wrote:
+=2E..
+> >=20
+> > Fix below.  Successful testing on mm-everything-2024-08-24-07-21 (well,
+> > that minus the commit which spewed warnings from bootup) confirmed it.
+> > But testing on mm-everything-2024-08-28-21-38 very quickly failed:
+> > unrelated to this series, presumably caused by patch or patches added
+> > since 08-24, one kind of crash on one machine (some memcg thing called
+> > from isolate_migratepages_block), another kind of crash on another (som=
+e
+> > memcg thing called from __read_swap_cache_async), I'm exhausted by now
+> > but will investigate later in the day (or hope someone else has).
+>=20
+> I saw the isolate_migratepages_block crash issue on
+> mm-everything-2024-08-28-09-32, and I reverted Kefeng's series "[PATCH 0/=
+4]
+> mm: convert to folio_isolate_movable()", the isolate_migratepages_block i=
+ssue
+> seems to be resolved (at least I can not reproduce it).
+>=20
+> And I have already pointed out some potential issues in Kefeng=E2=80=99s =
+series[1].
+> Andrew has dropped this series from mm-everything-2024-08-28-21-38. Howev=
+er,
+> you can still encounter the isolate_migratepages_block issue on
+> mm-everything-2024-08-28-21-38, while I cannot, weird.
 
-diff --git a/drivers/crypto/hisilicon/trng/trng.c b/drivers/crypto/hisilicon/trng/trng.c
-index 451b167bcc73..66c551ecdee8 100644
---- a/drivers/crypto/hisilicon/trng/trng.c
-+++ b/drivers/crypto/hisilicon/trng/trng.c
-@@ -1,6 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0
- /* Copyright (c) 2019 HiSilicon Limited. */
- 
-+#include <crypto/internal/rng.h>
- #include <linux/acpi.h>
- #include <linux/crypto.h>
- #include <linux/err.h>
-@@ -13,7 +14,6 @@
- #include <linux/mutex.h>
- #include <linux/platform_device.h>
- #include <linux/random.h>
--#include <crypto/internal/rng.h>
- 
- #define HISI_TRNG_REG		0x00F0
- #define HISI_TRNG_BYTES		4
-@@ -121,7 +121,7 @@ static int hisi_trng_generate(struct crypto_rng *tfm, const u8 *src,
- 	u32 i;
- 
- 	if (dlen > SW_DRBG_BLOCKS_NUM * SW_DRBG_BYTES || dlen == 0) {
--		pr_err("dlen(%d) exceeds limit(%d)!\n", dlen,
-+		pr_err("dlen(%u) exceeds limit(%d)!\n", dlen,
- 			SW_DRBG_BLOCKS_NUM * SW_DRBG_BYTES);
- 		return -EINVAL;
- 	}
--- 
-2.33.0
+It was not that issue: isolate_migratepages_block() turned out to be an
+innocent bystander in my case: and I didn't see it crash there again,
+but in a variety of other memcg places, many of them stat updates.
 
+The error came from a different series, fix now posted:
+https://lore.kernel.org/linux-mm/56d42242-37fe-b94f-d3cb-00673f1e5efb@googl=
+e.com/T/#u
+
+>=20
+> > [PATCH] mm: filemap: use xa_get_order() to get the swap entry order: fi=
+x
+> >=20
+> > find_lock_entries(), used in the first pass of shmem_undo_range() and
+> > truncate_inode_pages_range() before partial folios are dealt with, has
+> > to be careful to avoid those partial folios: as its doc helpfully says,
+> > "Folios which are partially outside the range are not returned".  Of
+> > course, the same must be true of any value entries returned, otherwise
+> > truncation and hole-punch risk erasing swapped areas - as has been seen=
+=2E
+> >=20
+> > Rewrite find_lock_entries() to emphasize that, following the same patte=
+rn
+> > for folios and for value entries.
+> >=20
+> > Adjust find_get_entries() slightly, to get order while still holding
+> > rcu_read_lock(), and to round down the updated start: good changes, lik=
+e
+> > find_lock_entries() now does, but it's unclear if either is ever import=
+ant.
+> >=20
+> > Signed-off-by: Hugh Dickins <hughd@google.com>
+>=20
+> Thanks Hugh. The changes make sense to me.
+
+Thanks!
+Hugh
+---1463770367-1789196680-1725013093=:16809--
 
