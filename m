@@ -1,73 +1,65 @@
-Return-Path: <linux-kernel+bounces-309135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BA8B966696
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 18:13:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1CF1966697
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 18:13:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 27F6AB24A6C
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 16:13:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF2AF1C23F1A
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 16:13:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 184BA1B86EA;
-	Fri, 30 Aug 2024 16:12:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC6FE1BAEF0;
+	Fri, 30 Aug 2024 16:12:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IlgeXMb0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A7Nb0SDW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 575F61BA895;
-	Fri, 30 Aug 2024 16:12:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C3141B8E91;
+	Fri, 30 Aug 2024 16:12:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725034359; cv=none; b=kpEuxqCl0pqtS6J4yjdFZPYD76Fs0uD5JIjvqIzW0EhRXCiH+oO6TZXdOc3spYDzb927HvGvaBtzpiflmOp2jcm6q4PEJ2w2urTFRegWfcqXWi83DlWA4p4yFi5Vug7l3pqs8ww848FpgZu68MNHCiot+JHKohVcZfkVwgliW64=
+	t=1725034362; cv=none; b=J5MDnVqHNBJkrg5FeEPHfFUA0aUM1EIhWqmxtYO2QqduqpfOO7S5js90hEw2xEuZdDDPjVboALzgQGi7h9whjrbFfCs1dT87Hqn0QfL5QRQWMqidTZaXEKjU9fym9wIRSei1fC7wH/LzgMs9g2sX6wh2uqirN7J7E5MZZjUXK2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725034359; c=relaxed/simple;
-	bh=3WluTfM/2AVhxXsBLbvXkfr2Sb1Vu7quEX6AURpIYLE=;
+	s=arc-20240116; t=1725034362; c=relaxed/simple;
+	bh=4vUSzrtzbqxF4YHTsqrl1m40oJesI+VvMoFuE5sdrvI=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qeqO0gjPGZuRiuSTXSvljmzzE8BSZv+e2KfY/s9xztGTH0MulFRxKhYAkgFDoCGZVcHoUXl2TIHD0QfRB/dAgVYiUYPQs251b/nrpAiercvSZTybzZNIYf3DyPMXaGHPq+oA67X5wwA9+rjMjvKqZh97+JNJTiqTmTinLMIjbe4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IlgeXMb0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D521C4CECE;
-	Fri, 30 Aug 2024 16:12:35 +0000 (UTC)
+	 MIME-Version:Content-Type; b=XvqNf8Y1KkZ3ydx9CF5lkIfGI9rr2+JQG2Ni/ZbjUwoCL2u509I3JFAqHuDL/qMpcbulsFNWosn6DD94422z2t6z4Z0142fmLibyr4EJwuuk0gTaB6DRtzZDl+zWpgPBICg79etd/w6OSVSS/nNezj5CDagjBqwzgZVjD2fvP6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A7Nb0SDW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48698C4CEC2;
+	Fri, 30 Aug 2024 16:12:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725034358;
-	bh=3WluTfM/2AVhxXsBLbvXkfr2Sb1Vu7quEX6AURpIYLE=;
+	s=k20201202; t=1725034361;
+	bh=4vUSzrtzbqxF4YHTsqrl1m40oJesI+VvMoFuE5sdrvI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=IlgeXMb0X4+qYvg0gChNumy+x9ky+IO+bQnWAcrv3u6WHp06a7VWn7swrgwYZIlRr
-	 L1N+EWl8JXzffHxEM57PlHWH1d2NyS/kWOERzXBa5F74vkcX0HhnZocWLX5o7v7SFS
-	 XECCrpQjiNxQjZBQlHCg8DazRKGqS34tVz/7R7TxveJgo0ebQuqiYIV3dm7JS9el/6
-	 bqh4ffYP9h9J4Ro1Dw+NGki6Tqcg+KT2oHn5HgzFilMcN9375o8dJkme9I2abig4KR
-	 vLuZn+KVW61A2l9ESZorJNqsz5s8oPVyC4b6bzjlZlWyqvFcKNtdJWyMjWEVKdU+t1
-	 CNNye97Dw74/Q==
+	b=A7Nb0SDWG2mx1Wusjg0AiHgDIGEbKYmmcaS+2HKO3Km94KVHn9xxcaOLTv3YsK3hN
+	 owgtQbn3jpJIbOpqNywqUkOrKa/nJ5L/kZHx/PPbQqnHuN3ZEK+r3GfLm92utYu2vR
+	 R5DZFs2zKf4ja0MOeKdQ6cJz/IAPr52fQewuaDNA6DcdXPf9z/QmdVXVlv8v9xCcq2
+	 d0V0Xhf1S1Cx2zUWy/xoAvo9psRcRljcIPOMNmZJjSczA7qPU9PsI7KLP4OoabzCtN
+	 JjqbGiLbEBfa7q+q2pLJGJbhb69wZDdMHJmcaGFs/5bceFrhG58/TTZnGt0pSvCmgu
+	 y9nFHAje7j16w==
 From: Will Deacon <will@kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
+To: linux-kernel@vger.kernel.org,
+	iommu@lists.linux.dev,
 	linux-arm-kernel@lists.infradead.org,
-	linux-doc@vger.kernel.org,
-	D Scott Phillips <scott@os.amperecomputing.com>
-Cc: kernel-team@android.com,
+	robin.murphy@arm.com,
+	joro@8bytes.org,
+	Mostafa Saleh <smostafa@google.com>
+Cc: catalin.marinas@arm.com,
+	kernel-team@android.com,
 	Will Deacon <will@kernel.org>,
-	Besar Wicaksono <bwicaksono@nvidia.com>,
-	Easwar Hariharan <eahariha@linux.microsoft.com>,
-	Rob Herring <robh@kernel.org>,
-	Andre Przywara <andre.przywara@arm.com>,
-	linux-kernel@vger.kernel.org,
-	patches@amperecomputing.com,
-	Marc Zyngier <maz@kernel.org>,
-	kvmarm@lists.linux.dev,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>
-Subject: Re: [PATCH v2] arm64: errata: Enable the AC03_CPU_38 workaround for ampere1a
-Date: Fri, 30 Aug 2024 17:12:13 +0100
-Message-Id: <172502412797.2650729.128588861974374748.b4-ty@kernel.org>
+	jean-philippe@linaro.org,
+	jgg@ziepe.ca,
+	nicolinc@nvidia.com,
+	mshavit@google.com
+Subject: Re: [PATCH v4 0/2] Fix handling of S2 stalls
+Date: Fri, 30 Aug 2024 17:12:14 +0100
+Message-Id: <172503018121.1633151.4148376979460234025.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20240827211701.2216719-1-scott@os.amperecomputing.com>
-References: <20240827211701.2216719-1-scott@os.amperecomputing.com>
+In-Reply-To: <20240830110349.797399-1-smostafa@google.com>
+References: <20240830110349.797399-1-smostafa@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,16 +69,23 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-On Tue, 27 Aug 2024 14:17:01 -0700, D Scott Phillips wrote:
-> The ampere1a cpu is affected by erratum AC04_CPU_10 which is the same
-> bug as AC03_CPU_38. Add ampere1a to the AC03_CPU_38 workaround midr list.
+On Fri, 30 Aug 2024 11:03:46 +0000, Mostafa Saleh wrote:
+> While debugging something else, I spent hours looking at hexdumps of
+> STEs, CDs and commands while comparing them against the arch specs,
+> where I noticed a minor violation in the driver regarding handling of
+> S2S bit in the STE.
 > 
+> This has been there for ages, so it’s highly unlikely that any HW (if
+> it exists with such features) running Linux is affected.
 > 
+> [...]
 
-Applied to arm64 (for-next/errata), thanks!
+Applied to will (for-joerg/arm-smmu/updates), thanks!
 
-[1/1] arm64: errata: Enable the AC03_CPU_38 workaround for ampere1a
-      https://git.kernel.org/arm64/c/db0d8a84348b 
+[1/2] iommu/arm-smmu-v3: Match Stall behaviour for S2
+      https://git.kernel.org/will/c/ce7cb08e22e0
+[2/2] iommu/arm-smmu-v3-test: Test masters with stall enabled
+      https://git.kernel.org/will/c/070e326f327a
 
 Cheers,
 -- 
