@@ -1,125 +1,148 @@
-Return-Path: <linux-kernel+bounces-309102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17304966635
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 17:56:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C26D96662B
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 17:55:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8BD228372E
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 15:56:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B9901F24CBE
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 15:55:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBE711B81D2;
-	Fri, 30 Aug 2024 15:55:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="KP06SRYp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B4011B81A7;
-	Fri, 30 Aug 2024 15:55:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A3971B790A;
+	Fri, 30 Aug 2024 15:54:52 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B5C61B6558;
+	Fri, 30 Aug 2024 15:54:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725033321; cv=none; b=Xe2bzlH4qYUotFzQiyo7ZO8u/SYwVwQ82jnnoE5Q3NOdd8nf6u6SAZhL5dEuq6lydkP1qBCzuI2djd70TW1rBrf12/qBf6btkZxSippBwSb9YVrjuOMr1q+cHOajjAojSrobowvTei41Atcj4e0iL9nO5c//IVRgF2sYXKvAoE4=
+	t=1725033292; cv=none; b=VKO/k9LvImOeI5zgPuRiNUQjilwboBMmdGT9x6fiQ8ag6QKP1EXoD7Wf1ZqxXhB5P3ygWhVAghOdNsJb6Avd/bWjhw78tLP6hKVv89ZrUDHjMtycCNq2gyAKg/GmXUrnlS+snH+L7HSO7vGDfTNKwlzPD8JIW6K3C/oQLvzOXLg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725033321; c=relaxed/simple;
-	bh=Ck6noLRVux54nCOdg2o5naLnHS6SnnWMtuEu+100PFo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=f6lTuOc9fceZBOmNysjJ4txRPQHxSvsNZtoXOSh+i8MClLAMPMpLYoFQ7wJXuhDJSvFyYijBJ6Qjw+s4VKQ1vkUIMCKKJlzyVWhWdtD+hyV/4aYs6xkfXQ9VN1GQR5veSf8zAW4o8oXwXdz5i/Swn2OBKUeVFQFHspk7djUJG0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=KP06SRYp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 230F0C4CEC2;
-	Fri, 30 Aug 2024 15:55:20 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="KP06SRYp"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1725033318;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IlVS0E6igPOLQqCo4YoSnHQENqvVfPFsir+QHAoHcCA=;
-	b=KP06SRYpyIlzOSc1mRAOQ7EMTJNeKpy5dr27CqLsQkiiYXYBgEEVwMZROQfRbwlFvpUqsq
-	iXmZNQbWLW/N7LiC97SmxJvq7aKwK35vhrEgQQT95Xr7uKN/g0PBYfukLli6MfwguxH7pE
-	tc6KInHCFeQH7afLluKVMYirawCgdfg=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id a0f4f698 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Fri, 30 Aug 2024 15:55:18 +0000 (UTC)
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: broonie@kernel.org,
-	Shuah Khan <shuah@kernel.org>,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>
-Subject: [PATCH v2] selftests: vDSO: fix cross build for getrandom and chacha tests
-Date: Fri, 30 Aug 2024 17:54:35 +0200
-Message-ID: <20240830155513.493854-1-Jason@zx2c4.com>
-In-Reply-To: <dd1d8f71-28ab-44db-819e-90aff2f9b9be@sirena.org.uk>
-References: <dd1d8f71-28ab-44db-819e-90aff2f9b9be@sirena.org.uk>
+	s=arc-20240116; t=1725033292; c=relaxed/simple;
+	bh=RhTIzyvlvUjOM/TDuhq57upaMaC1n7ZRsS3E3E7lMcQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OmfEKyTVD0FAfOtGedjAjFy8W3k2LLmV/uwLVBr0EUH+c77eXVL58mIaN1E8gNyNxxeTt+nJGZm1y6GLnLK7/j4hzLiXnd3mawZjrUW4oI12Dpol/ZPeWOudMVMP1iWjBMkDyS77igiwYN0B4ijkSqbyeSTKJLIyrqlMlOICxkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C59C11063;
+	Fri, 30 Aug 2024 08:55:14 -0700 (PDT)
+Received: from [10.1.30.22] (e122027.cambridge.arm.com [10.1.30.22])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 543CC3F762;
+	Fri, 30 Aug 2024 08:54:45 -0700 (PDT)
+Message-ID: <2e8caa91-bf66-4555-87b3-52f469b2c7ef@arm.com>
+Date: Fri, 30 Aug 2024 16:54:43 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 05/19] arm64: Detect if in a realm and set RIPAS RAM
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: kvm@vger.kernel.org, kvmarm@lists.linux.dev, Marc Zyngier
+ <maz@kernel.org>, Will Deacon <will@kernel.org>,
+ James Morse <james.morse@arm.com>, Oliver Upton <oliver.upton@linux.dev>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
+ <yuzenghui@huawei.com>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Joey Gouly <joey.gouly@arm.com>,
+ Alexandru Elisei <alexandru.elisei@arm.com>,
+ Christoffer Dall <christoffer.dall@arm.com>, Fuad Tabba <tabba@google.com>,
+ linux-coco@lists.linux.dev,
+ Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
+ Gavin Shan <gshan@redhat.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
+ Alper Gun <alpergun@google.com>
+References: <20240819131924.372366-1-steven.price@arm.com>
+ <20240819131924.372366-6-steven.price@arm.com> <ZsxTDBm57ga6MkPu@arm.com>
+From: Steven Price <steven.price@arm.com>
+Content-Language: en-GB
+In-Reply-To: <ZsxTDBm57ga6MkPu@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Mark Brown <broonie@kernel.org>
+On 26/08/2024 11:03, Catalin Marinas wrote:
+> On Mon, Aug 19, 2024 at 02:19:10PM +0100, Steven Price wrote:
+>> +static bool rsi_version_matches(void)
+>> +{
+>> +	unsigned long ver_lower, ver_higher;
+>> +	unsigned long ret = rsi_request_version(RSI_ABI_VERSION,
+>> +						&ver_lower,
+>> +						&ver_higher);
+>> +
+>> +	if (ret == SMCCC_RET_NOT_SUPPORTED)
+>> +		return false;
+>> +
+>> +	if (ret != RSI_SUCCESS) {
+>> +		pr_err("RME: RMM doesn't support RSI version %lu.%lu. Supported range: %lu.%lu-%lu.%lu\n",
+>> +		       RSI_ABI_VERSION_MAJOR, RSI_ABI_VERSION_MINOR,
+>> +		       RSI_ABI_VERSION_GET_MAJOR(ver_lower),
+>> +		       RSI_ABI_VERSION_GET_MINOR(ver_lower),
+>> +		       RSI_ABI_VERSION_GET_MAJOR(ver_higher),
+>> +		       RSI_ABI_VERSION_GET_MINOR(ver_higher));
+>> +		return false;
+>> +	}
+>> +
+>> +	pr_info("RME: Using RSI version %lu.%lu\n",
+>> +		RSI_ABI_VERSION_GET_MAJOR(ver_lower),
+>> +		RSI_ABI_VERSION_GET_MINOR(ver_lower));
+>> +
+>> +	return true;
+>> +}
+> 
+> I don't have the spec at hand now (on a plane) but given the possibility
+> of a 1.0 guest regressing on later RMM versions, I wonder whether we
+> should simply bail out if it's not an exact version match. I forgot what
+> the spec says about returned ranges (they were pretty confusing last
+> time I checked).
 
-Unlike the check for the standalone x86 test, the check for building the
-vDSO getrandom and chacaha tests looks at the architecture for the host
-rather than the architecture for the target when deciding if they should
-be built. Since the chacha test includes some assembler code this means
-that cross building with x86 as either the target or host is broken. Use
-a check for ARCH instead.
+Well the idea at least is that the RMM can tell us that it is providing
+a 1.0 compatible interface. So it might be supporting 1.x but it's
+promising that what it's providing is 1.0 compatible.
 
-This also handles s a small complication in conditionalizing on x86_64
-but not x86, which requires defining the standard SRCARCH variable and
-being careful about which uname-m substitutions are done.
+Indeed the spec allows the RMM to emulate 1.0 while supporting a higher
+(incompatible) interface as well - which is where the version ranges
+come in. So in the future we might negotiate versions with the RMM, or
+opportunistically use newer features if the RMM provides them. But
+obviously for now the guest is only 1.0.
 
-Fixes: 4920a2590e91 ("selftests/vDSO: add tests for vgetrandom")
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
----
-Mark - is this okay with you? I fixed the issue I mentioned.
+I'd prefer not to add an exact version match because then upgrading the
+RMM would break existing guests and would probably lead to pressure for
+the RMM to simply lie to guests to avoid them breaking on upgrade.
 
- tools/testing/selftests/vDSO/Makefile | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+>> +
+>> +void __init arm64_rsi_setup_memory(void)
+>> +{
+>> +	u64 i;
+>> +	phys_addr_t start, end;
+>> +
+>> +	if (!is_realm_world())
+>> +		return;
+>> +
+>> +	/*
+>> +	 * Iterate over the available memory ranges and convert the state to
+>> +	 * protected memory. We should take extra care to ensure that we DO NOT
+>> +	 * permit any "DESTROYED" pages to be converted to "RAM".
+>> +	 *
+>> +	 * BUG_ON is used because if the attempt to switch the memory to
+>> +	 * protected has failed here, then future accesses to the memory are
+>> +	 * simply going to be reflected as a SEA (Synchronous External Abort)
+>> +	 * which we can't handle.  Bailing out early prevents the guest limping
+>> +	 * on and dying later.
+>> +	 */
+>> +	for_each_mem_range(i, &start, &end) {
+>> +		BUG_ON(rsi_set_memory_range_protected_safe(start, end));
+>> +	}
+> 
+> Would it help debugging if we print the memory ranges as well rather
+> than just a BUG_ON()?
+> 
 
-diff --git a/tools/testing/selftests/vDSO/Makefile b/tools/testing/selftests/vDSO/Makefile
-index e21e78aae24d..5ead6b1f0478 100644
---- a/tools/testing/selftests/vDSO/Makefile
-+++ b/tools/testing/selftests/vDSO/Makefile
-@@ -1,6 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0
--uname_M := $(shell uname -m 2>/dev/null || echo not)
--ARCH ?= $(shell echo $(uname_M) | sed -e s/i.86/x86/ -e s/x86_64/x86/)
-+ARCH ?= $(shell uname -m | sed -e s/i.86/x86/)
-+SRCARCH := $(subst x86_64,x86,$(ARCH))
- 
- TEST_GEN_PROGS := vdso_test_gettimeofday
- TEST_GEN_PROGS += vdso_test_getcpu
-@@ -10,7 +10,7 @@ ifeq ($(ARCH),$(filter $(ARCH),x86 x86_64))
- TEST_GEN_PROGS += vdso_standalone_test_x86
- endif
- TEST_GEN_PROGS += vdso_test_correctness
--ifeq ($(uname_M),x86_64)
-+ifeq ($(ARCH),$(filter $(ARCH),x86_64))
- TEST_GEN_PROGS += vdso_test_getrandom
- TEST_GEN_PROGS += vdso_test_chacha
- endif
-@@ -38,8 +38,8 @@ $(OUTPUT)/vdso_test_getrandom: CFLAGS += -isystem $(top_srcdir)/tools/include \
-                                          $(KHDR_INCLUDES) \
-                                          -isystem $(top_srcdir)/include/uapi
- 
--$(OUTPUT)/vdso_test_chacha: $(top_srcdir)/tools/arch/$(ARCH)/vdso/vgetrandom-chacha.S
-+$(OUTPUT)/vdso_test_chacha: $(top_srcdir)/tools/arch/$(SRCARCH)/vdso/vgetrandom-chacha.S
- $(OUTPUT)/vdso_test_chacha: CFLAGS += -idirafter $(top_srcdir)/tools/include \
--                                      -idirafter $(top_srcdir)/arch/$(ARCH)/include \
-+                                      -idirafter $(top_srcdir)/arch/$(SRCARCH)/include \
-                                       -idirafter $(top_srcdir)/include \
-                                       -D__ASSEMBLY__ -Wa,--noexecstack
--- 
-2.46.0
+Yes that would probably be useful - I'll fix that.
+
+Thanks,
+Steve
 
 
