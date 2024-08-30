@@ -1,196 +1,137 @@
-Return-Path: <linux-kernel+bounces-308514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 968AD965DF4
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:05:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AEF04965DEE
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:05:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBB361C23171
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:05:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D744A1C230D6
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:05:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B111F18A959;
-	Fri, 30 Aug 2024 10:04:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02F7117ADE2;
+	Fri, 30 Aug 2024 10:04:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HqQVoxM1"
-Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GUqgc0af"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAE77186618;
-	Fri, 30 Aug 2024 10:04:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F49517D358;
+	Fri, 30 Aug 2024 10:04:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725012293; cv=none; b=dqA5eaHBoyVXBdIuWFC5N2gEFztBFhvgQ/7hvKv2LYU4w9FHot37sfs3sDa27mg/0edIUrbjCJ4UE/EaoijSfaPVdx+mjrxijxgwzvIt+bRwEKvNFtqgmpJpbpITIgsgNIoGZKUf2T7CRS4ks5uZjNXd5xo7uk3PMrgKUb6XHJI=
+	t=1725012289; cv=none; b=W3AJ1FuHZZcr66n1o8dlwDp/OdhEbte8gT3028mIUaUA/QPYnjBx8KDegzeZvmehDFyEKBesKCQFF8fvO/dykhEbcZ+h9SS/cXbKgsWuegdCyh7ZiefeJzH90FXp2QHas2Y0CrwTMQpho6AwDZreYjEVwX1L67y13oimyQPWTuM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725012293; c=relaxed/simple;
-	bh=I4j6m2ue+2oFeLC3LpeXOA7UHaZhu5FNAIPV7H15v4o=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fpCZIsnYXi7tPM3z+pV6eGfNvpKo8boim8VjvzJmvst6kg+uRUIi/mPjEVX/MmYouauh4EXX04RkKKSmpvuNIyEocnTrhw08LlsSKwSnmamiUW44WDFuTs+KAysCwKIJnuagGI0/wkqoLVyY6VsHwPZLsU26QMp+Jp9uyaxqyk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HqQVoxM1; arc=none smtp.client-ip=209.85.210.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-709340f1cb1so595982a34.3;
-        Fri, 30 Aug 2024 03:04:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725012291; x=1725617091; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=y9HM33kRGSHCEaJuDM+XKG3QBl4KNlRa8+XSdjB42Js=;
-        b=HqQVoxM1iGnK8tB1zhxSB4cpQUocIPw2Q8c8qOZxCRsw2ZcZSBYVXe8RwxvKtpKCWp
-         7I/VOGU5UFs2DJfyIVF8EmYuYYiDFLp0dnErSYi3cwXipyGGadf2AoXKi8JaaGiAOVkL
-         rxOzKZvETbU4xWHOus27H6og33c/umyKo5WrliMLJ8DHlntEuV8tlLER4PAVNsdaf+aX
-         bCY1JNaQRxIgN7r5xUaM/mSffnOrzxkKyPpHn6ihaS+CQ3BzWlk97GazS92E9iFSNGXF
-         V4JIfCwVgPt3nS6ZBjAF9OJvsELHsPARkf5f582i5g6tMoTWemGNbxEbkYhWZB1AKAyM
-         kNzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725012291; x=1725617091;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=y9HM33kRGSHCEaJuDM+XKG3QBl4KNlRa8+XSdjB42Js=;
-        b=tUpDltv41EHl0Cje/m+Mfkghfma649wltoBIIL5EnDwQA/xVuV1eSgavJpvUE+rPrF
-         ZXoxDkskWgPcPrNxT+OeHq7N+/PEX44m2QAGPMIOw6LQkCqQIs7MHy6AbrQelvObY5Oy
-         fH7vQwu2Wukky8gfz1M3Hml2e0iOqoQMjTV4WDj6m4UsJnHSWUQAQrfQiRwZV3IygTN0
-         eQV0zGjJC6AxSrnL6OFq+zS8hzC8q5J8sPeU5m9hLrZCh4EhPcy0rqEP7/goylzSsWLK
-         DVtMo0DOuF7FU5Nxyk0ricLuGhehCsv/tCAdTb7mHYgTqac9enpRi17SMzf+qTtQfJWH
-         QhhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVhC7RmxpclTDOHZMhqd66oQ+szGv3vRlnB3ZC4JVKHdrNsyR4af3uPL4x7nFJ/cgz7RPIiWD0A8o7TkX3E@vger.kernel.org, AJvYcCX1hT1l234bvXppNc3W+FpfAp3+j2V8MgzPndh7JmSKjjGuf9N6ru1OpqZsiMsy3ZQbTB80tnvtt34=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzy9CrqMVwYLAZ55iiZOurRgsI8DWHXjp2DS8Ac7kTi3L6mvCOs
-	0op6vzFVAE69HvxFN6nGdry1/m/XAcefmTv4dRaztQkOjyuYSPnU
-X-Google-Smtp-Source: AGHT+IFnFxgDYehxBOjERbSY3E6IQRb/Eo5/olia1KlgsAQYx6fH7Gfn02t5h6FRR0dUftMkedAUyg==
-X-Received: by 2002:a05:6830:2682:b0:704:45b7:8ffc with SMTP id 46e09a7af769-70f5c49e963mr5658027a34.32.1725012290746;
-        Fri, 30 Aug 2024 03:04:50 -0700 (PDT)
-Received: from localhost (fwdproxy-ash-013.fbsv.net. [2a03:2880:20ff:d::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c340c0020esm13219306d6.50.2024.08.30.03.04.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Aug 2024 03:04:49 -0700 (PDT)
-From: Usama Arif <usamaarif642@gmail.com>
-To: akpm@linux-foundation.org,
-	linux-mm@kvack.org
-Cc: hannes@cmpxchg.org,
-	riel@surriel.com,
-	shakeel.butt@linux.dev,
-	roman.gushchin@linux.dev,
-	yuzhao@google.com,
-	david@redhat.com,
-	npache@redhat.com,
-	baohua@kernel.org,
-	ryan.roberts@arm.com,
-	rppt@kernel.org,
-	willy@infradead.org,
-	cerasuolodomenico@gmail.com,
-	ryncsn@gmail.com,
-	corbet@lwn.net,
-	linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	kernel-team@meta.com,
-	Usama Arif <usamaarif642@gmail.com>
-Subject: [PATCH v5 6/6] mm: add sysfs entry to disable splitting underused THPs
-Date: Fri, 30 Aug 2024 11:03:40 +0100
-Message-ID: <20240830100438.3623486-7-usamaarif642@gmail.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20240830100438.3623486-1-usamaarif642@gmail.com>
-References: <20240830100438.3623486-1-usamaarif642@gmail.com>
+	s=arc-20240116; t=1725012289; c=relaxed/simple;
+	bh=nrhuo3AulwFUMj/O06VuyuZ3G9jy2pcDg8Ldwc2SYbE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=m4WYa50jqIIE/jcAjBR0f0e1+M6eMK12yCm4es+euqaZfns0lOg3DXllwAkBRlsL5Cjdv4CJGlXeZgRMwXoFmevzg/Q4gvWJ+qrGZCQbTeaV5TMjxifl4QTZNR6qyEOODD54Qrsw3XfErHYETQyMLxjAWobUYzFlqiV2itLamLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GUqgc0af; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 891ACC4CEC4;
+	Fri, 30 Aug 2024 10:04:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725012288;
+	bh=nrhuo3AulwFUMj/O06VuyuZ3G9jy2pcDg8Ldwc2SYbE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=GUqgc0afS9oZavrwGGTvgec6FUYGhxwODI28SEhZISGlXP03UplNgBvpJLwaC+oPd
+	 5Lbk3SEDufKqUxKLWZDbGTruUVGmTOlTYkQMOv20RFP+d9kJCarCwvqkHKLNwLsbzd
+	 pylnsr6tvZTx7S9GB71rOrlMyA4+021X8D07DK17lQAkQ6h8h/8mN/3OUkvHty07uq
+	 3aGBefvfmE0WnHM6XK2uVP17cm0jGNRWjp6/HvGALTZe1nsJNXP3WJ/0rnggm0qcW7
+	 gNjP2soDnzz43TYIDIAX3FE5B32fj1K9ucYs2mk2NIKiUyiPaFi9zgih77UfyZBMDb
+	 ohxODyJ9twnIA==
+Message-ID: <c0e90bac-56dd-497a-9337-74d10fba95a4@kernel.org>
+Date: Fri, 30 Aug 2024 12:04:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/9] dt-bindings: soc: renesas: Document RZ/V2H EVK
+ board
+To: Prabhakar <prabhakar.csengg@gmail.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>,
+ Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20240828124134.188864-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240828124134.188864-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240828124134.188864-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-If disabled, THPs faulted in or collapsed will not be added to
-_deferred_list, and therefore won't be considered for splitting under
-memory pressure if underused.
+On 28/08/2024 14:41, Prabhakar wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> 
+> Add "renesas,rzv2h-evk" which targets the Renesas RZ/V2H ("R9A09G057")
+> EVK board.
+> 
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Acked-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
+> Hi Rob, I have restored your Ack with the below change, I hope that's OK.
+> 
+> Cheers, Prabhakar
+> 
+> v1->v4
+> - Updated 'renesas,gp-evk # GP-EVK' -> 'renesas,rzv2h-evk # RZ/V2H EVK'
+> - Updated commit message
 
-Signed-off-by: Usama Arif <usamaarif642@gmail.com>
----
- Documentation/admin-guide/mm/transhuge.rst | 10 +++++++++
- mm/huge_memory.c                           | 26 ++++++++++++++++++++++
- 2 files changed, 36 insertions(+)
+To clarify I don't have objections:
 
-diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
-index aca0cff852b8..cfdd16a52e39 100644
---- a/Documentation/admin-guide/mm/transhuge.rst
-+++ b/Documentation/admin-guide/mm/transhuge.rst
-@@ -202,6 +202,16 @@ PMD-mappable transparent hugepage::
- 
- 	cat /sys/kernel/mm/transparent_hugepage/hpage_pmd_size
- 
-+All THPs at fault and collapse time will be added to _deferred_list,
-+and will therefore be split under memory presure if they are considered
-+"underused". A THP is underused if the number of zero-filled pages in
-+the THP is above max_ptes_none (see below). It is possible to disable
-+this behaviour by writing 0 to shrink_underused, and enable it by writing
-+1 to it::
-+
-+	echo 0 > /sys/kernel/mm/transparent_hugepage/shrink_underused
-+	echo 1 > /sys/kernel/mm/transparent_hugepage/shrink_underused
-+
- khugepaged will be automatically started when PMD-sized THP is enabled
- (either of the per-size anon control or the top-level control are set
- to "always" or "madvise"), and it'll be automatically shutdown when
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index a97aeffc55d6..0993dfe9ae94 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -74,6 +74,7 @@ static unsigned long deferred_split_count(struct shrinker *shrink,
- 					  struct shrink_control *sc);
- static unsigned long deferred_split_scan(struct shrinker *shrink,
- 					 struct shrink_control *sc);
-+static bool split_underused_thp = true;
- 
- static atomic_t huge_zero_refcount;
- struct folio *huge_zero_folio __read_mostly;
-@@ -440,6 +441,27 @@ static ssize_t hpage_pmd_size_show(struct kobject *kobj,
- static struct kobj_attribute hpage_pmd_size_attr =
- 	__ATTR_RO(hpage_pmd_size);
- 
-+static ssize_t split_underused_thp_show(struct kobject *kobj,
-+			    struct kobj_attribute *attr, char *buf)
-+{
-+	return sysfs_emit(buf, "%d\n", split_underused_thp);
-+}
-+
-+static ssize_t split_underused_thp_store(struct kobject *kobj,
-+			     struct kobj_attribute *attr,
-+			     const char *buf, size_t count)
-+{
-+	int err = kstrtobool(buf, &split_underused_thp);
-+
-+	if (err < 0)
-+		return err;
-+
-+	return count;
-+}
-+
-+static struct kobj_attribute split_underused_thp_attr = __ATTR(
-+	shrink_underused, 0644, split_underused_thp_show, split_underused_thp_store);
-+
- static struct attribute *hugepage_attr[] = {
- 	&enabled_attr.attr,
- 	&defrag_attr.attr,
-@@ -448,6 +470,7 @@ static struct attribute *hugepage_attr[] = {
- #ifdef CONFIG_SHMEM
- 	&shmem_enabled_attr.attr,
- #endif
-+	&split_underused_thp_attr.attr,
- 	NULL,
- };
- 
-@@ -3601,6 +3624,9 @@ void deferred_split_folio(struct folio *folio, bool partially_mapped)
- 	if (folio_order(folio) <= 1)
- 		return;
- 
-+	if (!partially_mapped && !split_underused_thp)
-+		return;
-+
- 	/*
- 	 * The try_to_unmap() in page reclaim path might reach here too,
- 	 * this may cause a race condition to corrupt deferred split queue.
--- 
-2.43.5
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+Best regards,
+Krzysztof
 
 
