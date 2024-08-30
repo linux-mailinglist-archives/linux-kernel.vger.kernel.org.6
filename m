@@ -1,119 +1,274 @@
-Return-Path: <linux-kernel+bounces-309376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E911966980
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 21:26:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 350F6966981
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 21:27:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48A42285A00
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 19:26:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A49E1C20FC0
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 19:27:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 436C81BD02C;
-	Fri, 30 Aug 2024 19:26:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 607B01BCA10;
+	Fri, 30 Aug 2024 19:26:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZradwWnG"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OuDuz92m"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF7FB1BBBCC
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 19:26:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E87D1BD4EF
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 19:26:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725046003; cv=none; b=UUepBlCoIXXVJ26Su7p7+vFokT2ihZo/D9soebleWQkrRxcKlXekd8789K+85cYE4vyjUeh67fuKLX58tTjwjM5+S/dEMmCVgk4JX22YpuEeDkFUEyu7IL2GQ5CJj6ViCe1YmumbHVm967jXz8wsW8zuIZ/pO4tg6/TqOQfCfLo=
+	t=1725046008; cv=none; b=GxCXASq5jzdn0k8E6JH2VHUSjGcKsk/5/p5T45qGv4Hp7aOGPHBbetgdWvSOQTcm5yc5v7B6niRrRDwZiELixsDP72X0f7vHl+vqvz/hvOkE/4ox8ixz7NOVGE4my0AZMSyQOnFRedIwpf9M2TEWZdD1IulwBosI8GEiw0PAo8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725046003; c=relaxed/simple;
-	bh=8QVHSbxNTzTLHDg1HVfV1vyaxEg8m3Y3kEmk4ONuLIw=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=SqzBQ+vSKQxric+wyARlNE1N7aZ7vSuaH5uuCHEYv7NDdFe1P2s/T+8r8tRaRqOAZDqt2vV4C7wUd88oo96oeBaVi8huU/+p0dm7PhE3wRTahVyBCrzxZSXEy2V+ChIAsMnEp/63RXLkWzFz3zErnytuYQrnZ05b+3XIk0+yHvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--tjmercier.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZradwWnG; arc=none smtp.client-ip=209.85.210.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--tjmercier.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-7141ab07fddso1937913b3a.0
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 12:26:40 -0700 (PDT)
+	s=arc-20240116; t=1725046008; c=relaxed/simple;
+	bh=jLQQcel5PV+WlQ1BFVs90K/OYnQEHFS+vlO4si99VM4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=E6maQ4tDZbzZ7l6K0A2s4aTw1U64MXI1iOqH4qTPfTqdWdt9gpWO/xzP9glxBb2p4/HCaIsrTtujWWoaLgJ5/Gb5URiLu3r8GtYgO2sMqPie4lIlRrMDsGFRclGP0G4K1ZdzF5zIC3fmWuDtDNlo74A+OVrdxj8lcA8LhkNO21w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OuDuz92m; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5c210e23651so2398291a12.3
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 12:26:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725046000; x=1725650800; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=FuDRdZr3lnXIzC7C2IwkgUCCNdeMT8LTC1OgvHLHr0o=;
-        b=ZradwWnG8IGjO1RyDHLcT1zpjxOiiS8oTt5cQ2TqaPIlVryG5CVghopJTjq5sAAQCp
-         EDlLJxcZrD3MQnj8P7rLI5jDr74RgzzYSqoF8USz4zV9xz7Efdkna5V6lqpRz8skk+z2
-         oR0DgvIIXL5FDc4c5N3HJvDgii64X3kIV7ItTWi9M98NOxSVxnOMmYpicIgvCkfvllMK
-         fpD/KbvqLRE2FGefXlqlEPpMytlLb7zzPBbmDBFVQVpzaca09BkMu3LcWoMjyNO8MPyK
-         wsrWPDNZvd9BlIXGYSUFZWTDGqU4kzhFlnRd+eF6TrtT5ul5hyIXu02fQVsOudKUTrfE
-         f0Mw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725046000; x=1725650800;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+        d=gmail.com; s=20230601; t=1725046004; x=1725650804; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=FuDRdZr3lnXIzC7C2IwkgUCCNdeMT8LTC1OgvHLHr0o=;
-        b=Gnc+mXnbkQ0nz2iKogD89jMNgKhzzC5tT9JagRuegY3Un8z2gTQROeE2y1r4w6cKNN
-         9/Fbc33dRFh7oWP88Ml1yYMsjQhYmiO1Oue+sqqOrq/bvk45ki6uGWcT6Jk6DL8w8Brr
-         0qeqwOFmZeHt9PdLe+4EfByQPrn2pWSQsCfmGHErOkuE90kvT0JlOSoWOGNzQF4TjVMX
-         tv39CiRufAc/Zw82g8FQDHrlfnzLpbQUFZVentOfKtrr7V3MT8TmKJnOeqZokqxSRwiu
-         gBOL+sMkRuHO6+Bj3COYPdLaII6fpOWGLpMwIxIZKg/+jj0k+gvzi1mPJFme4pgAyFwP
-         Rypw==
-X-Forwarded-Encrypted: i=1; AJvYcCU92k32gxKSfo3hZf0gJIYxYF5WcNFPKuSXLVXbLRQgkdEDiYHkJzqBnroyI0vnWGURBte6hINn5MJHFOc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsCEEveaA/pRXcYXiTg9vOy3A7cp1cHzIMe0s/959mMPcRDMa2
-	JgTHAG6I29eG72iCA4V971VuGF5C3geQJpQtCqfGogg1OLKOxbP66vt+Zn5YyrFHtAUf7gTcUDZ
-	EseUO+VCgzbdFUA==
-X-Google-Smtp-Source: AGHT+IEYDT5yTYPujoEQ0Ej+aCUk5iv9pvxNQHghRZEWhY4u/r1jH/tjVnZ/WpOzBL4HVQ0C2o97rg0PjRinvWA=
-X-Received: from tj-virt.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5683])
- (user=tjmercier job=sendgmr) by 2002:a05:6a00:8585:b0:714:1436:1cef with SMTP
- id d2e1a72fcca58-717307cbc9bmr7143b3a.6.1725045999943; Fri, 30 Aug 2024
- 12:26:39 -0700 (PDT)
-Date: Fri, 30 Aug 2024 19:26:26 +0000
+        bh=0FWycbDpSx8vg0t6wE+nnwIbgPDqipzBuDgw3Tji2GQ=;
+        b=OuDuz92mXkcRvcnSi9ptAxF8E3TDuziQ0fCYKsPvkGNiVQyfMYqcdVbO9FHIH7OCcv
+         cguFq5y0+9zCGLgfzsHsPboljIxODhAFIoFs5BgIkUy0FfVaGfuSflU0EBZfDiFkcuwH
+         FzT0hqSXyh1OQsBcyYwv0uS5ZbyxjYbxt4hsv+82tPYfjnSHnsD9fByO5fWydkK3okHc
+         CJ4EttdunlavGYfnXQ9kEpgAVPfDsj1WA8qx5ywLqRA+hlpZS9wEs7OKrwpQOOzSiHWC
+         ywTnsFwN0P2RUk0uWmwPsJH/7d1NFLNjcwYNzYNMy0HuEw6VtQ1/haJrRIl7wBswkken
+         MFkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725046004; x=1725650804;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0FWycbDpSx8vg0t6wE+nnwIbgPDqipzBuDgw3Tji2GQ=;
+        b=Y8giLXJKfdDPlSThDMw7MgXq63N6+x+J01l2HbRxpiWTEOrArqpRF3LC8LYLMC4T8M
+         lYMEMQGtV5662TWPLw+va7BID9LqW8EyIWxT8uuByULNVWRFDJMecm0McfIri2IuxsCM
+         VRZun7LMAmCYh7Cko4lr+lP9ECbq4GGDzFu0zHOD2SnZSKgpDapeOZuTHw/KhvY/TmcJ
+         B7uUzFUVI0GVsIvzK11v8Z4u7+LZr8x7jN6294jlMOYzZ43xJFzV3b05CBtR1dTbiN9B
+         fyJFCRSOrVOvWvMCIq+2QDfcpm2B4o+8sLnBq5/jEDmzCN1YtS7G4fcl6zfyxSergWCV
+         qQ/g==
+X-Forwarded-Encrypted: i=1; AJvYcCVN46YOuhs6EL7oG2kZtfc8t2fczqosyMCW9RtXTex3w6QGjfQco/r+7cQGOOH/pK4qjtFJLjX2JNQ0ddM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4Mhi2dNPadTLTbCM4CAD9YbSfn5q0RDRYgabOcZu9nOFGEWn9
+	l2LLWvMblX+NMX5grqTXXM9q7viQpuD1DOVRPLTeNgQklPpfgLvL
+X-Google-Smtp-Source: AGHT+IHoZrMTkgpE3zH9JVHmFsPalLgB3vZzGbS+/nX4TW9rtd8ROdubRCjKRrq12NMbVoZ8mQ5CaQ==
+X-Received: by 2002:a05:6402:2814:b0:5c0:a8b1:ca8a with SMTP id 4fb4d7f45d1cf-5c2437312d7mr349708a12.11.1725046003099;
+        Fri, 30 Aug 2024 12:26:43 -0700 (PDT)
+Received: from [192.168.0.104] (p57ba2f9b.dip0.t-ipconnect.de. [87.186.47.155])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c2455908eesm1922a12.55.2024.08.30.12.26.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 30 Aug 2024 12:26:42 -0700 (PDT)
+Message-ID: <496aa12c-16c2-4050-8f55-caa584116c58@gmail.com>
+Date: Fri, 30 Aug 2024 21:26:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.46.0.469.g59c65b2a67-goog
-Message-ID: <20240830192627.2546033-1-tjmercier@google.com>
-Subject: [PATCH] dma-buf: heaps: Fix off-by-one in CMA heap fault handler
-From: "T.J. Mercier" <tjmercier@google.com>
-To: Sumit Semwal <sumit.semwal@linaro.org>, 
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
-	John Stultz <jstultz@google.com>, "T.J. Mercier" <tjmercier@google.com>, 
-	"=?UTF-8?q?Christian=20K=C3=B6nig?=" <christian.koenig@amd.com>
-Cc: android-mm@google.com, Xingyu Jin <xingyuj@google.com>, stable@vger.kernel.org, 
-	John Stultz <john.stultz@linaro.org>, Brian Starkey <brian.starkey@arm.com>, 
-	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] Staging: rtl8192e: Add spaces around operators.
+To: Tree Davies <tdavies@darkphysics.net>, gregkh@linuxfoundation.org,
+ anjan@momi.ca
+Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20240830020508.532945-1-tdavies@darkphysics.net>
+ <20240830020508.532945-4-tdavies@darkphysics.net>
+Content-Language: en-US
+From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
+In-Reply-To: <20240830020508.532945-4-tdavies@darkphysics.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Until VM_DONTEXPAND was added in commit 1c1914d6e8c6 ("dma-buf: heaps:
-Don't track CMA dma-buf pages under RssFile") it was possible to obtain
-a mapping larger than the buffer size via mremap and bypass the overflow
-check in dma_buf_mmap_internal. When using such a mapping to attempt to
-fault past the end of the buffer, the CMA heap fault handler also checks
-the fault offset against the buffer size, but gets the boundary wrong by
-1. Fix the boundary check so that we don't read off the end of the pages
-array and insert an arbitrary page in the mapping.
+On 8/30/24 04:05, Tree Davies wrote:
+> Add spaces around arithmetic and bitwise operators to improve
+> readability of the code.
+> 
+> Signed-off-by: Tree Davies <tdavies@darkphysics.net>
+> ---
+>   drivers/staging/rtl8192e/rtllib.h | 62 +++++++++++++++----------------
+>   1 file changed, 31 insertions(+), 31 deletions(-)
+> 
+> diff --git a/drivers/staging/rtl8192e/rtllib.h b/drivers/staging/rtl8192e/rtllib.h
+> index 76f53b797644..17a6fb565c9d 100644
+> --- a/drivers/staging/rtl8192e/rtllib.h
+> +++ b/drivers/staging/rtl8192e/rtllib.h
+> @@ -339,12 +339,12 @@ enum rt_op_mode {
+>   
+>   #define	FC_QOS_BIT					BIT(7)
+>   #define is_data_frame(pdu)	(((pdu[0] & 0x0C) == 0x08) ? true : false)
+> -#define	is_legacy_data_frame(pdu)	(is_data_frame(pdu) && (!(pdu[0]&FC_QOS_BIT)))
+> +#define	is_legacy_data_frame(pdu)	(is_data_frame(pdu) && (!(pdu[0] & FC_QOS_BIT)))
+>   #define is_qos_data_frame(pframe)			\
+> -	((*(u16 *)pframe&(IEEE80211_STYPE_QOS_DATA|RTLLIB_FTYPE_DATA)) ==	\
+> -	(IEEE80211_STYPE_QOS_DATA|RTLLIB_FTYPE_DATA))
+> -#define frame_order(pframe)     (*(u16 *)pframe&IEEE80211_FCTL_ORDER)
+> -#define SN_LESS(a, b)		(((a-b)&0x800) != 0)
+> +	((*(u16 *)pframe & (IEEE80211_STYPE_QOS_DATA | RTLLIB_FTYPE_DATA)) ==	\
+> +	(IEEE80211_STYPE_QOS_DATA | RTLLIB_FTYPE_DATA))
+> +#define frame_order(pframe)     (*(u16 *)pframe & IEEE80211_FCTL_ORDER)
+> +#define SN_LESS(a, b)		(((a - b) & 0x800) != 0)
+>   #define SN_EQUAL(a, b)	(a == b)
+>   #define MAX_DEV_ADDR_SIZE 8
+>   
+> @@ -414,13 +414,13 @@ enum _REG_PREAMBLE_MODE {
+>   #define WLAN_GET_SEQ_FRAG(seq) ((seq) & RTLLIB_SCTL_FRAG)
+>   #define WLAN_GET_SEQ_SEQ(seq)  (((seq) & RTLLIB_SCTL_SEQ) >> 4)
+>   
+> -#define RTLLIB_STATMASK_SIGNAL (1<<0)
+> -#define RTLLIB_STATMASK_RSSI (1<<1)
+> -#define RTLLIB_STATMASK_NOISE (1<<2)
+> +#define RTLLIB_STATMASK_SIGNAL (1 << 0)
+> +#define RTLLIB_STATMASK_RSSI (1 << 1)
+> +#define RTLLIB_STATMASK_NOISE (1 << 2)
+>   #define RTLLIB_STATMASK_WEMASK 0x7
+>   
+> -#define RTLLIB_CCK_MODULATION    (1<<0)
+> -#define RTLLIB_OFDM_MODULATION   (1<<1)
+> +#define RTLLIB_CCK_MODULATION    (1 << 0)
+> +#define RTLLIB_OFDM_MODULATION   (1 << 1)
+>   
+>   #define RTLLIB_CCK_RATE_LEN		4
+>   #define RTLLIB_CCK_RATE_1MB			0x02
+> @@ -507,11 +507,11 @@ struct rtllib_frag_entry {
+>   
+>   struct rtllib_device;
+>   
+> -#define SEC_ACTIVE_KEY    (1<<4)
+> -#define SEC_AUTH_MODE     (1<<5)
+> -#define SEC_UNICAST_GROUP (1<<6)
+> -#define SEC_LEVEL	 (1<<7)
+> -#define SEC_ENABLED       (1<<8)
+> +#define SEC_ACTIVE_KEY    (1 << 4)
+> +#define SEC_AUTH_MODE     (1 << 5)
+> +#define SEC_UNICAST_GROUP (1 << 6)
+> +#define SEC_LEVEL	 (1 << 7)
+> +#define SEC_ENABLED       (1 << 8)
+>   
+>   #define SEC_LEVEL_0      0 /* None */
+>   #define SEC_LEVEL_1      1 /* WEP 40 and 104 bit */
+> @@ -696,17 +696,17 @@ union frameqos {
+>   #define MAX_WPA_IE_LEN 64
+>   #define MAX_WZC_IE_LEN 256
+>   
+> -#define NETWORK_EMPTY_ESSID (1<<0)
+> -#define NETWORK_HAS_OFDM    (1<<1)
+> -#define NETWORK_HAS_CCK     (1<<2)
+> +#define NETWORK_EMPTY_ESSID (1 << 0)
+> +#define NETWORK_HAS_OFDM    (1 << 1)
+> +#define NETWORK_HAS_CCK     (1 << 2)
+>   
+>   /* QoS structure */
+> -#define NETWORK_HAS_QOS_PARAMETERS      (1<<3)
+> -#define NETWORK_HAS_QOS_INFORMATION     (1<<4)
+> +#define NETWORK_HAS_QOS_PARAMETERS      (1 << 3)
+> +#define NETWORK_HAS_QOS_INFORMATION     (1 << 4)
+>   #define NETWORK_HAS_QOS_MASK	    (NETWORK_HAS_QOS_PARAMETERS | \
+>   					 NETWORK_HAS_QOS_INFORMATION)
+>   /* 802.11h */
+> -#define NETWORK_HAS_ERP_VALUE	   (1<<10)
+> +#define NETWORK_HAS_ERP_VALUE	   (1 << 10)
+>   
+>   #define QOS_QUEUE_NUM		   4
+>   #define QOS_OUI_LEN		     3
+> @@ -996,8 +996,8 @@ enum rtl_link_state {
+>   #define DEFAULT_MAX_SCAN_AGE (15 * HZ)
+>   #define DEFAULT_FTS 2346
+>   
+> -#define CFG_RTLLIB_RESERVE_FCS (1<<0)
+> -#define CFG_RTLLIB_COMPUTE_FCS (1<<1)
+> +#define CFG_RTLLIB_RESERVE_FCS (1 << 0)
+> +#define CFG_RTLLIB_COMPUTE_FCS (1 << 1)
+>   
+>   struct tx_pending {
+>   	int frag;
+> @@ -1288,7 +1288,7 @@ struct rtllib_device {
+>   	u16 scan_watch_dog;
+>   
+>   	/* map of allowed channels. 0 is dummy */
+> -	u8 active_channel_map[MAX_CHANNEL_NUMBER+1];
+> +	u8 active_channel_map[MAX_CHANNEL_NUMBER + 1];
+>   
+>   	int rate;       /* current rate */
+>   	int basic_rate;
+> @@ -1486,32 +1486,32 @@ struct rtllib_device {
+>   /* Uses the channel change callback directly
+>    * instead of [start/stop] scan callbacks
+>    */
+> -#define IEEE_SOFTMAC_SCAN (1<<2)
+> +#define IEEE_SOFTMAC_SCAN (1 << 2)
+>   
+>   /* Perform authentication and association handshake */
+> -#define IEEE_SOFTMAC_ASSOCIATE (1<<3)
+> +#define IEEE_SOFTMAC_ASSOCIATE (1 << 3)
+>   
+>   /* Generate probe requests */
+> -#define IEEE_SOFTMAC_PROBERQ (1<<4)
+> +#define IEEE_SOFTMAC_PROBERQ (1 << 4)
+>   
+>   /* Generate response to probe requests */
+> -#define IEEE_SOFTMAC_PROBERS (1<<5)
+> +#define IEEE_SOFTMAC_PROBERS (1 << 5)
+>   
+>   /* The ieee802.11 stack will manage the netif queue
+>    * wake/stop for the driver, taking care of 802.11
+>    * fragmentation. See softmac.c for details.
+>    */
+> -#define IEEE_SOFTMAC_TX_QUEUE (1<<7)
+> +#define IEEE_SOFTMAC_TX_QUEUE (1 << 7)
+>   
+>   /* Uses only the softmac_data_hard_start_xmit
+>    * even for TX management frames.
+>    */
+> -#define IEEE_SOFTMAC_SINGLE_QUEUE (1<<8)
+> +#define IEEE_SOFTMAC_SINGLE_QUEUE (1 << 8)
+>   
+>   /* Generate beacons.  The stack will enqueue beacons
+>    * to the card
+>    */
+> -#define IEEE_SOFTMAC_BEACONS (1<<6)
+> +#define IEEE_SOFTMAC_BEACONS (1 << 6)
+>   
+>   static inline void *rtllib_priv(struct net_device *dev)
+>   {
 
-Reported-by: Xingyu Jin <xingyuj@google.com>
-Fixes: a5d2d29e24be ("dma-buf: heaps: Move heap-helper logic into the cma_heap implementation")
-Cc: stable@vger.kernel.org # Applicable >= 5.10. Needs adjustments only for 5.10.
-Signed-off-by: T.J. Mercier <tjmercier@google.com>
----
- drivers/dma-buf/heaps/cma_heap.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hi Tree,
 
-diff --git a/drivers/dma-buf/heaps/cma_heap.c b/drivers/dma-buf/heaps/cma_heap.c
-index c384004b918e..93be88b805fe 100644
---- a/drivers/dma-buf/heaps/cma_heap.c
-+++ b/drivers/dma-buf/heaps/cma_heap.c
-@@ -165,7 +165,7 @@ static vm_fault_t cma_heap_vm_fault(struct vm_fault *vmf)
- 	struct vm_area_struct *vma = vmf->vma;
- 	struct cma_heap_buffer *buffer = vma->vm_private_data;
- 
--	if (vmf->pgoff > buffer->pagecount)
-+	if (vmf->pgoff >= buffer->pagecount)
- 		return VM_FAULT_SIGBUS;
- 
- 	return vmf_insert_pfn(vma, vmf->address, page_to_pfn(buffer->pages[vmf->pgoff]));
--- 
-2.46.0.469.g59c65b2a67-goog
+in many of the above cases checkpatch is asking for using the BIT macro. 
+So when you add the spaces to those lines the next change requested by 
+ckeckpatch is the BIT macro. I think we should switch only once.
+Find examples below:
+
+CHECK: Prefer using the BIT macro
+#44: FILE: drivers/staging/rtl8192e/rtllib.h:417:
++#define RTLLIB_STATMASK_SIGNAL (1 << 0)
+
+CHECK: Prefer using the BIT macro
+#45: FILE: drivers/staging/rtl8192e/rtllib.h:418:
++#define RTLLIB_STATMASK_RSSI (1 << 1)
+
+CHECK: Prefer using the BIT macro
+#46: FILE: drivers/staging/rtl8192e/rtllib.h:419:
++#define RTLLIB_STATMASK_NOISE (1 << 2)
+
+CHECK: Prefer using the BIT macro
+#51: FILE: drivers/staging/rtl8192e/rtllib.h:422:
++#define RTLLIB_CCK_MODULATION    (1 << 0)
+
+CHECK: Prefer using the BIT macro
+#52: FILE: drivers/staging/rtl8192e/rtllib.h:423:
++#define RTLLIB_OFDM_MODULATION   (1 << 1)
+
+Thanks for your support.
+
+Bye Philipp
+
 
 
