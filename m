@@ -1,91 +1,261 @@
-Return-Path: <linux-kernel+bounces-308645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5461D965FE2
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 13:02:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB7CE965FF4
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 13:05:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8699D1C22981
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 11:02:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 68803B27F93
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 11:03:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD6C81946C4;
-	Fri, 30 Aug 2024 11:01:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94B56199FC6;
+	Fri, 30 Aug 2024 11:01:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R1vVcUTP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="J8I/Qr4O"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D46E3190671;
-	Fri, 30 Aug 2024 11:01:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71994192D83
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 11:01:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725015694; cv=none; b=EfJPRXQAHQ6otj2KNCrMoHG1GBaZgsiqzn/nrI0xolxoninTggGo8pKHvktoROC7wGsbAzJLiLkRz8ZhM4uplUyHyt+eElVHQP5FYzoUy87iePylUn2oebMplPkLLZUjdOejbD3xt5CYmNWbfYgk9m2YmBJ7DeeqXK1/Jfjd3+g=
+	t=1725015711; cv=none; b=BfvQliJ35nCILKjRHoAKicIUPHsdwAwWyKq2oiu+B7Px4vdDb1cNGchjwSinm2pfzR5t9gfhTM/poG+IQO9724LMwq01X+O9lk/cbCFOyigGAu82ckS91y4WdHyu4mLn61xy7qxSQqZiec/03VJWzuE4C8oa4kp/YagOHTppflY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725015694; c=relaxed/simple;
-	bh=yaJeRuRQQyP3DjjG5GehxvL4FJ/rh3ymGrsYnYVWGWc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HKhp2Yg8S3/khR/vktAgI6byVhANYQKjbPYm/h4b247IylKP6oEOdXsjI8tRPSoUsaODSaiEVGwIbTTRpPbXOp9HDtP0m8SNU3lENJm8RHFzh7v+geK2yrY6QWIYEM9GQsTII2XgbIhwIqydKppmxysyb2CUKCWbkJvNrA2h37g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R1vVcUTP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08586C4CEC2;
-	Fri, 30 Aug 2024 11:01:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725015694;
-	bh=yaJeRuRQQyP3DjjG5GehxvL4FJ/rh3ymGrsYnYVWGWc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=R1vVcUTPNlaGZHDGvi2Nt85L2PWpInQ4x7SCqtbYI8QXiJIiGSB0NTqfd86BDtpRK
-	 ytCRgtIjNZQz4SjhimshFoVSoS+xP1I6aH1wmFX7WUpL78vaE4dEdr5viiGYgjYXTz
-	 XOwM6VfshXyman8p+I9Y5yecMdCGl4yIhkIZC+BhP6F0wPw6TjSLnFaKh/Ox/WFDkh
-	 FE4HIfgWGVZxEeSrro0sY/JDmpWO8xNttg5H8Sd3OGyJFLW+bYu0U0AkSqipbtxOPp
-	 qhuGoaxk+WYdRbog0Fa/YAqXBybSjTJoNPhw7r1FW+8Nhw1EfOO1xnwHPVIn2/09so
-	 azX6KHQq0x6LQ==
-Date: Fri, 30 Aug 2024 13:01:29 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Michal Hocko <mhocko@suse.com>
-Cc: Hannes Reinecke <hare@suse.de>, Jan Kara <jack@suse.cz>, 
-	linux-fsdevel@vger.kernel.org, linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Song Liu <song@kernel.org>, Yu Kuai <yukuai3@huawei.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH] fs: drop GFP_NOFAIL mode from alloc_page_buffers
-Message-ID: <20240830-formel-abklopfen-fa1249f5904d@brauner>
-References: <20240829130640.1397970-1-mhocko@kernel.org>
- <20240829191746.tsrojxj3kntt4jhp@quack3>
- <4dfed593-5b0c-4565-a6dd-108f1b1fe961@suse.de>
- <ZtGTEOEgf4XuUu7F@tiehlicka>
+	s=arc-20240116; t=1725015711; c=relaxed/simple;
+	bh=vKuqrREFoyvNII2hKWu6ERx+NwtKfKPfclPhKNWBpcU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oUEiGUYYDCGiHRB4yiEAhaNQ2N+BhHIl6Tx2n5BGbkqig0AIACXQLJWv8oa3yF5w7FzY+hI50gbuKUf8F9JJ+IwcvngCOaY241d5YbBldnuWrMvqc6OvlDuU6TT/x8b0dyYt252+ypRF4nPRvmpKfvUWUnOMHJUGZawyLwXV8Kg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=J8I/Qr4O; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a8682bb5e79so210899766b.2
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 04:01:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1725015708; x=1725620508; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2EYt5CjZw8GMvNmBrdKaiFdyeo95V7Mi0tOgxw58DFA=;
+        b=J8I/Qr4ObV02wpXlORZ6FZtS7DV083WRP0PhxIztYVTddfGpGZWqoOyaNp4sldwBl3
+         IjwOthhCbFpX1sU/LWw9XUMentS9hxlHpiJL8Hv+YSK03XAiFmEM7ujpc+QWkTPugdBK
+         9bdIXXnpmtN4KUPaIgdliCq4Vau1qpIYS99wBi7TaGno9cZcMs3xm+k5t5RTyiIRwoqY
+         +z1t0KrRNgrXQgWqYd43C0eW2Qz1tAzUv0IWCP9MKHVC85sGDo9Ui0gWxuGnpUuDvjKG
+         wAYXS9+qm/4mRWXclkl0csCC+KTUk3F22aDP3lTVvP5yLj5h2+yfPWURmna2r+pY96gK
+         rTAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725015708; x=1725620508;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2EYt5CjZw8GMvNmBrdKaiFdyeo95V7Mi0tOgxw58DFA=;
+        b=YAkPbyx9piJLGVlc1L915oObwkvvVWA7FN+KGJNlw4rF7aCPokE3YHKxJWYO4H8671
+         1MErDQFnq1n0pbPG4LsgzT4gz/GnE2NOQ1ubKwYGMjh/zLpPlT5ikTlcU80h+qS1MIlk
+         f74A8AoAgZW1wt/MncYLOLnLDYhCS6z+B9IO0FxfCxtW0K/UfWkb7d+2QzdTidkai6op
+         MPKxw6rE+VNSG1PBeB/f6nKqLzv2EN7FYHGFLgfBmYKgsYnprPWwdgfbiwhQdeIvp7oC
+         QMrv8Hpx8JSv4JwV9H/y9NChogTNklzJlatbgcGOEeCwotW79wT+ZVe+TsmXdJvWqMiz
+         xNSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXZjg5/c5DkBd0NI0/Oz25kLw6jvDIq/S7jYNYZNT8VS777Ru1QzidwjQbwtsYxxTlVs6u1Z/i1N9AcG5M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YydDVXOIQPIX23c4BId1dYFcSa+U9HBOx56SbjLpmCRjzm5gtml
+	kzccbZZriyThlQ9FvuDEFmHHFSm5v8ehFaE9CogfEdoe7pEX7c9hdubfswk6EqM=
+X-Google-Smtp-Source: AGHT+IGJSthKCfRuG0EfBT7hp8LTjNlZyvfJkFtLrLvBxC+A+ma+JX+ok/9kRYFdp3AvMkYm1QW9xw==
+X-Received: by 2002:a17:907:1c22:b0:a86:85eb:bdd1 with SMTP id a640c23a62f3a-a897f8bcb7dmr447901466b.31.1725015707149;
+        Fri, 30 Aug 2024 04:01:47 -0700 (PDT)
+Received: from [10.20.4.146] (212-5-158-102.ip.btc-net.bg. [212.5.158.102])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a89891daf81sm201796966b.163.2024.08.30.04.01.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 30 Aug 2024 04:01:46 -0700 (PDT)
+Message-ID: <412ea31c-5edb-4985-9bc5-3e3f628d4945@suse.com>
+Date: Fri, 30 Aug 2024 14:01:43 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ZtGTEOEgf4XuUu7F@tiehlicka>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 5/8] x86/virt/tdx: Start to track all global metadata
+ in one structure
+To: Kai Huang <kai.huang@intel.com>, dave.hansen@intel.com,
+ kirill.shutemov@linux.intel.com, tglx@linutronix.de, bp@alien8.de,
+ peterz@infradead.org, mingo@redhat.com, hpa@zytor.com,
+ dan.j.williams@intel.com, seanjc@google.com, pbonzini@redhat.com
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+ rick.p.edgecombe@intel.com, isaku.yamahata@intel.com, chao.gao@intel.com,
+ binbin.wu@linux.intel.com, adrian.hunter@intel.com
+References: <cover.1724741926.git.kai.huang@intel.com>
+ <994a0df50534c404d1b243a95067860fc296172a.1724741926.git.kai.huang@intel.com>
+From: Nikolay Borisov <nik.borisov@suse.com>
+Content-Language: en-US
+In-Reply-To: <994a0df50534c404d1b243a95067860fc296172a.1724741926.git.kai.huang@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, Aug 30, 2024 at 11:38:24AM GMT, Michal Hocko wrote:
-> On Fri 30-08-24 08:11:00, Hannes Reinecke wrote:
-> > On 8/29/24 21:17, Jan Kara wrote:
-> > > On Thu 29-08-24 15:06:40, Michal Hocko wrote:
-> > > > From: Michal Hocko <mhocko@suse.com>
-> > > > 
-> > > > There is only one called of alloc_page_buffers and it doesn't require
-> > > > __GFP_NOFAIL so drop this allocation mode.
-> > > > 
-> > > > Signed-off-by: Michal Hocko <mhocko@suse.com>
-> > > 
-> > > Looks good. Feel free to add:
-> > > 
-> > > Reviewed-by: Jan Kara <jack@suse.cz>
-> > > 
-> > > Although even better fix would be to convert the last remaining caller of
-> > > alloc_page_buffers() to folio_alloc_buffers()... But that may be more
-> > > difficult.
-> > > 
-> > Already done by Pankajs large-block patchset, currently staged in vfs.git.
+
+
+On 27.08.24 г. 10:14 ч., Kai Huang wrote:
+> The TDX module provides a set of "global metadata fields".  They report
+> things like TDX module version, supported features, and fields related
+> to create/run TDX guests and so on.
 > 
-> Which branch should I be looking at?
+> Currently the kernel only reads "TD Memory Region" (TDMR) related fields
+> for module initialization.  There are immediate needs which require the
+> TDX module initialization to read more global metadata including module
+> version, supported features and "Convertible Memory Regions" (CMRs).
+> 
+> Also, KVM will need to read more metadata fields to support baseline TDX
+> guests.  In the longer term, other TDX features like TDX Connect (which
+> supports assigning trusted IO devices to TDX guest) may also require
+> other kernel components such as pci/vt-d to access global metadata.
+> 
+> To meet all those requirements, the idea is the TDX host core-kernel to
+> to provide a centralized, canonical, and read-only structure for the
+> global metadata that comes out from the TDX module for all kernel
+> components to use.
+> 
+> As the first step, introduce a new 'struct tdx_sys_info' to track all
+> global metadata fields.
+> 
+> TDX categories global metadata fields into different "Class"es.  E.g.,
+> the TDMR related fields are under class "TDMR Info".  Instead of making
+> 'struct tdx_sys_info' a plain structure to contain all metadata fields,
+> organize them in smaller structures based on the "Class".
+> 
+> This allows those metadata fields to be used in finer granularity thus
+> makes the code more clear.  E.g., the construct_tdmr() can just take the
+> structure which contains "TDMR Info" metadata fields.
+> 
+> Add a new function get_tdx_sys_info() as the placeholder to read all
+> metadata fields, and call it at the beginning of init_tdx_module().  For
+> now it only calls get_tdx_sys_info_tdmr() to read TDMR related fields.
+> 
+> Note there is a functional change: get_tdx_sys_info_tdmr() is moved from
+> after build_tdx_memlist() to before it, but it is fine to do so.
+> 
+> Signed-off-by: Kai Huang <kai.huang@intel.com>
+> ---
+> 
+> v2 -> v3:
+>   - Split out the part to rename 'struct tdx_tdmr_sysinfo' to 'struct
+>     tdx_sys_info_tdmr'.
+> 
+> 
+> ---
+>   arch/x86/virt/vmx/tdx/tdx.c | 19 ++++++++++++-------
+>   arch/x86/virt/vmx/tdx/tdx.h | 36 +++++++++++++++++++++++++++++-------
+>   2 files changed, 41 insertions(+), 14 deletions(-)
+> 
+> diff --git a/arch/x86/virt/vmx/tdx/tdx.c b/arch/x86/virt/vmx/tdx/tdx.c
+> index 1cd9035c783f..24eb289c80e8 100644
+> --- a/arch/x86/virt/vmx/tdx/tdx.c
+> +++ b/arch/x86/virt/vmx/tdx/tdx.c
+> @@ -318,6 +318,11 @@ static int get_tdx_sys_info_tdmr(struct tdx_sys_info_tdmr *sysinfo_tdmr)
+>   	return ret;
+>   }
+>   
+> +static int get_tdx_sys_info(struct tdx_sys_info *sysinfo)
 
-Hi Michal, Hannes should be referring to:
-https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/log/?h=vfs.blocksize
+A more apt name for this function would be init_tdx_sys_info, because it 
+will be executed only once during module initialization and it's really 
+initialising those values.
+
+Given how complex TDX turns out to be it will be best if one off init 
+functions are prefixed with 'init_'.
+
+
+> +{
+> +	return get_tdx_sys_info_tdmr(&sysinfo->tdmr);
+> +}
+> +
+>   /* Calculate the actual TDMR size */
+>   static int tdmr_size_single(u16 max_reserved_per_tdmr)
+>   {
+> @@ -1090,9 +1095,13 @@ static int init_tdmrs(struct tdmr_info_list *tdmr_list)
+>   
+>   static int init_tdx_module(void)
+>   {
+> -	struct tdx_sys_info_tdmr sysinfo_tdmr;
+> +	struct tdx_sys_info sysinfo;
+>   	int ret;
+>   
+> +	ret = get_tdx_sys_info(&sysinfo);
+> +	if (ret)
+> +		return ret;
+> +
+>   	/*
+>   	 * To keep things simple, assume that all TDX-protected memory
+>   	 * will come from the page allocator.  Make sure all pages in the
+> @@ -1109,17 +1118,13 @@ static int init_tdx_module(void)
+>   	if (ret)
+>   		goto out_put_tdxmem;
+>   
+> -	ret = get_tdx_sys_info_tdmr(&sysinfo_tdmr);
+> -	if (ret)
+> -		goto err_free_tdxmem;
+> -
+>   	/* Allocate enough space for constructing TDMRs */
+> -	ret = alloc_tdmr_list(&tdx_tdmr_list, &sysinfo_tdmr);
+> +	ret = alloc_tdmr_list(&tdx_tdmr_list, &sysinfo.tdmr);
+>   	if (ret)
+>   		goto err_free_tdxmem;
+>   
+>   	/* Cover all TDX-usable memory regions in TDMRs */
+> -	ret = construct_tdmrs(&tdx_memlist, &tdx_tdmr_list, &sysinfo_tdmr);
+> +	ret = construct_tdmrs(&tdx_memlist, &tdx_tdmr_list, &sysinfo.tdmr);
+>   	if (ret)
+>   		goto err_free_tdmrs;
+>   
+> diff --git a/arch/x86/virt/vmx/tdx/tdx.h b/arch/x86/virt/vmx/tdx/tdx.h
+> index 8aabd03d8bf5..4cddbb035b9f 100644
+> --- a/arch/x86/virt/vmx/tdx/tdx.h
+> +++ b/arch/x86/virt/vmx/tdx/tdx.h
+> @@ -100,13 +100,6 @@ struct tdx_memblock {
+>   	int nid;
+>   };
+>   
+> -/* "TDMR info" part of "Global Scope Metadata" for constructing TDMRs */
+> -struct tdx_sys_info_tdmr {
+> -	u16 max_tdmrs;
+> -	u16 max_reserved_per_tdmr;
+> -	u16 pamt_entry_size[TDX_PS_NR];
+> -};
+> -
+>   /* Warn if kernel has less than TDMR_NR_WARN TDMRs after allocation */
+>   #define TDMR_NR_WARN 4
+>   
+> @@ -119,4 +112,33 @@ struct tdmr_info_list {
+>   	int max_tdmrs;	/* How many 'tdmr_info's are allocated */
+>   };
+>   
+> +/*
+> + * Kernel-defined structures to contain "Global Scope Metadata".
+> + *
+> + * TDX global metadata fields are categorized by "Class"es.  See the
+> + * "global_metadata.json" in the "TDX 1.5 ABI Definitions".
+> + *
+> + * 'struct tdx_sys_info' is the main structure to contain all metadata
+> + * used by the kernel.  It contains sub-structures with each reflecting
+> + * the "Class" in the 'global_metadata.json'.
+> + *
+> + * Note the structure name may not exactly follow the name of the
+> + * "Class" in the TDX spec, but the comment of that structure always
+> + * reflect that.
+> + *
+> + * Also note not all metadata fields in each class are defined, only
+> + * those used by the kernel are.
+> + */
+> +
+> +/* Class "TDMR info" */
+> +struct tdx_sys_info_tdmr {
+> +	u16 max_tdmrs;
+> +	u16 max_reserved_per_tdmr;
+> +	u16 pamt_entry_size[TDX_PS_NR];
+> +};
+> +
+> +struct tdx_sys_info {
+> +	struct tdx_sys_info_tdmr tdmr;
+> +};
+> +
+>   #endif
 
