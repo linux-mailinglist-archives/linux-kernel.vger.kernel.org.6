@@ -1,64 +1,47 @@
-Return-Path: <linux-kernel+bounces-308771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 173D9966193
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 14:26:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 48C68966195
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 14:26:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A6E13B23AF9
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:26:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D6EF6B23F2C
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:26:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CC2C1A287B;
-	Fri, 30 Aug 2024 12:24:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9829B1A4B7B;
+	Fri, 30 Aug 2024 12:24:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="F1HE8OVo"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WEQpzjRR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAA4615C12D;
-	Fri, 30 Aug 2024 12:24:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C580D1A2C35;
+	Fri, 30 Aug 2024 12:24:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725020666; cv=none; b=aG/lWWS906nkr5DYu89X6XT5gqOpQDbK6nFmSUl9N3v/zUFQtG1dc2a2pm7kZk39gJDpK8BhI8n56kwLzan2Gw6GP+mgKU74XmiVlodN1Kg1fO+pXBWrrN0jJkUtEjfpfTUojhtFnJoOZ7TxQoXUQ4PXUjDWHbAhI2fI0thyQng=
+	t=1725020667; cv=none; b=u0S2aKY0X03QMsdilL2ateaIvprz3bqc1Grz8k9sLxrsfQYH4B1ewoqPk8nPnzPQQf+Xf0SuSzcxwTcg2EeljIQT+w1aOh6Gyl4Quoqu5wLDz143RsKjs5m5fxiBE6HzFJ3ClQempshQUBbrUARzL2a6+LlW4lsC8o6uM654gko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725020666; c=relaxed/simple;
-	bh=cLyAG02PLUqREwBipCL05oGCPOekRFHbgr03E3ZyY1Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ssk8C/SVnI5nZXHPWYPPPp37cV3hHO9+/4z8qi6KITtJEL0B+JfDvQ+lQM6agoNCB/t/Eo+qJZyiSXvqzB89PerNC+w6Zaey56hsBYJYDvPiBg6XjFMpLy7llq7OWJa2DGqHL9uXx2CJk0KiwyTLQETW0G1Kc9NtqGkteVnm9C4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=F1HE8OVo; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1725020665; x=1756556665;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=cLyAG02PLUqREwBipCL05oGCPOekRFHbgr03E3ZyY1Q=;
-  b=F1HE8OVo/jy4yPEP3wIwAB4wTXSXRWIj8sUsJKuXkyj9uptMK8nJgECt
-   CArhlwsHbJcOYUH6MKYB/YjPVLYvvgR7Yj199zyeU7RaqIqbgXALMZ3mi
-   g5+8AKWj3SHWjsNYMgX/8FrrBrRd7cFOo+SZkT8rKxMjGDJKg8LsDIexZ
-   h5dsmDuC2Kvk5dI8lDOSxMMK2hyVez2/Fk2rkOX8k6l7tP0mwg8/k9tQc
-   ejmdxNdyi1W9Q4OqJ91Gbq0981j/6mtLD/9XNTmZZK3J3lls9P1hPLgLw
-   B2O4q5I8YAFh77AKuCtRURefqijh9T9tEw4etssvw16bF+KZ1VDuAmWmn
-   Q==;
-X-CSE-ConnectionGUID: jhUv9V1rRKaOEQO/6ledWg==
-X-CSE-MsgGUID: NRqdXd9sSZeGPjy2o7JxcQ==
-X-IronPort-AV: E=Sophos;i="6.10,188,1719903600"; 
-   d="scan'208";a="31097803"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 30 Aug 2024 05:24:24 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Fri, 30 Aug 2024 05:23:58 -0700
-Received: from [10.159.224.217] (10.10.85.11) by chn-vm-ex02.mchp-main.com
- (10.10.85.144) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
- Transport; Fri, 30 Aug 2024 05:23:57 -0700
-Message-ID: <8ddf8cc7-0611-4c04-b814-be13ae14dedf@microchip.com>
-Date: Fri, 30 Aug 2024 14:24:18 +0200
+	s=arc-20240116; t=1725020667; c=relaxed/simple;
+	bh=Fye5UJaT5Z6qElniiFFVhG1gjqZp/bvz7JiyCKZVrEI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dkRgXAe/Nr0SCTrd65mAQk3OyblWIsiVH+UpbkbrXjjF6WH8KA+9LU8kAnfk7xOdkKX3HWcclPNtAAMjosJDBlPNzwZiDxuUvKOwbPVFldaxyDJmS/1RafRMuAks+omJN+BjpyZtnfPz5RVS54J1sckRN2Cw1Jaukm5NX/0+VSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WEQpzjRR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0E41C4CEC2;
+	Fri, 30 Aug 2024 12:24:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725020667;
+	bh=Fye5UJaT5Z6qElniiFFVhG1gjqZp/bvz7JiyCKZVrEI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=WEQpzjRRxsJ0GlLTZibav07DzRRwi2ebpa8UfEv89WyXteZpRuofmiRoWTqIXB/zK
+	 T/YA5u+bBkBO6e6B1iJSB77IywTdwunsHiYWm7hJhvYPqmXTKASGEVkorgsFNBebyT
+	 gjp7XUz7VyyOjLrm3VjiRN4LVvHCIpHu+Pye1sS5SgjdCmoIl0BYzPm+L+NsA3hegy
+	 v2MNuo396r/F0MJRYoeu+/ZNkX6VHu9+50RBlvjdXXW9MR1DjG93cFx8d9hgQAohaY
+	 8EYQZOyjVK8TulhQxU0g1ZyQb0YfkgGur0tA33h0wfohkCts3jRoG+fxf76s+SQVY+
+	 QdOEwcXx1oGLA==
+Message-ID: <1edc1fdb-ccf9-4dec-9669-d8c33511c7b0@kernel.org>
+Date: Fri, 30 Aug 2024 14:24:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,102 +49,73 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/7] dmaengine:at_hdmac:Use devm_clk_get_enabled()
- helpers
-Content-Language: en-US, fr-FR
-To: Liao Yuanhong <liaoyuanhong@vivo.com>, <vkoul@kernel.org>
-CC: <dmaengine@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <imx@lists.linux.dev>
-References: <20240830094118.15458-1-liaoyuanhong@vivo.com>
- <20240830094118.15458-3-liaoyuanhong@vivo.com>
-From: Nicolas Ferre <nicolas.ferre@microchip.com>
-Organization: microchip
-In-Reply-To: <20240830094118.15458-3-liaoyuanhong@vivo.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Subject: Re: [PATCH 2/2] clk: qcom: gcc-sm8550: Don't park the USB RCG at
+ registration time
+To: Stephen Boyd <swboyd@chromium.org>, Bjorn Andersson
+ <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Stephen Boyd <sboyd@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ patches@lists.linux.dev, linux-clk@vger.kernel.org,
+ Konrad Dybcio <konradybcio@kernel.org>, Taniya Das <quic_tdas@quicinc.com>,
+ Amit Pundir <amit.pundir@linaro.org>
+References: <20240819233628.2074654-1-swboyd@chromium.org>
+ <20240819233628.2074654-3-swboyd@chromium.org>
+ <CAE-0n52rYVs81jtnFHyfc+K4wECvyCKmnHu2w9JhPNqvMYEeOA@mail.gmail.com>
+Content-Language: en-US
+From: Konrad Dybcio <konradybcio@kernel.org>
+In-Reply-To: <CAE-0n52rYVs81jtnFHyfc+K4wECvyCKmnHu2w9JhPNqvMYEeOA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 30/08/2024 at 11:41, Liao Yuanhong wrote:
-> Use devm_clk_get_enabled() instead of clk functions in at_hdmac.
+On 27.08.2024 8:12 PM, Stephen Boyd wrote:
+> Quoting Stephen Boyd (2024-08-19 16:36:27)
+>> Amit Pundir reports that audio and USB-C host mode stops working if the
+>> gcc_usb30_prim_master_clk_src clk is registered and
+>> clk_rcg2_shared_init() parks it on XO. Skip parking this clk at
+>> registration time to fix those issues.
+>>
+>> Partially revert commit 01a0a6cc8cfd ("clk: qcom: Park shared RCGs upon
+>> registration") by skipping the parking bit for this clk, but keep the
+>> part where we cache the config register. That's still necessary to
+>> figure out the true parent of the clk at registration time.
+>>
+>> Fixes: 01a0a6cc8cfd ("clk: qcom: Park shared RCGs upon registration")
+>> Fixes: 929c75d57566 ("clk: qcom: gcc-sm8550: Mark RCGs shared where applicable")
+>> Cc: Konrad Dybcio <konradybcio@kernel.org>
+>> Cc: Bjorn Andersson <andersson@kernel.org>
+>> Cc: Taniya Das <quic_tdas@quicinc.com>
+>> Reported-by: Amit Pundir <amit.pundir@linaro.org>
+>> Closes: https://lore.kernel.org/CAMi1Hd1KQBE4kKUdAn8E5FV+BiKzuv+8FoyWQrrTHPDoYTuhgA@mail.gmail.com
+>> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+>> ---
+>>  drivers/clk/qcom/clk-rcg.h    |  1 +
+>>  drivers/clk/qcom/clk-rcg2.c   | 30 ++++++++++++++++++++++++++++++
+>>  drivers/clk/qcom/gcc-sm8550.c |  2 +-
+>>  3 files changed, 32 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
+>> index d7414361e432..8e0f3372dc7a 100644
+>> --- a/drivers/clk/qcom/clk-rcg.h
+>> +++ b/drivers/clk/qcom/clk-rcg.h
+>> @@ -198,6 +198,7 @@ extern const struct clk_ops clk_byte2_ops;
+>>  extern const struct clk_ops clk_pixel_ops;
+>>  extern const struct clk_ops clk_gfx3d_ops;
+>>  extern const struct clk_ops clk_rcg2_shared_ops;
+>> +extern const struct clk_ops clk_rcg2_shared_no_init_park_ops;
+> 
+> I'm considering inverting these two rcg2_shared clk_ops so that only a
+> few clks are parked at clk registration time, to minimize the impact of
+> commit 01a0a6cc8cfd ("clk: qcom: Park shared RCGs upon registration").
+> We're up to three or four band-aids, that we can probably wait on
+> applying if we make all the shared RCGs determine the correct parent at
+> registration time but skip the parking, except for the display clks on
+> sc7180 where that exposes another problem with shared parents getting
+> turned off during probe. It's possible that other SoCs will want to park
+> their display clks as well to avoid that secondary problem, but it can
+> be an opt-in case instead of a change to all shared RCGs.
 
-I don't see how it could work: so please disregard at_hdmac when playing 
-with "simplification". No subsequent version of this thing please.
+Are all cases that need the parking obvious like it was the case on 7180,
+i.e. some downstream branch is stuck and there's complaining in dmesg?
 
-NACK (again).
-
-Best regards,
-   Nicolas
-
-> Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
-> ---
-> v2:remove modifications related to the resume operation.
-> ---
->   drivers/dma/at_hdmac.c | 16 ++--------------
->   1 file changed, 2 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/dma/at_hdmac.c b/drivers/dma/at_hdmac.c
-> index 40052d1bd0b5..2274aeb58271 100644
-> --- a/drivers/dma/at_hdmac.c
-> +++ b/drivers/dma/at_hdmac.c
-> @@ -1975,20 +1975,16 @@ static int __init at_dma_probe(struct platform_device *pdev)
->          atdma->dma_device.cap_mask = plat_dat->cap_mask;
->          atdma->all_chan_mask = (1 << plat_dat->nr_channels) - 1;
-> 
-> -       atdma->clk = devm_clk_get(&pdev->dev, "dma_clk");
-> +       atdma->clk = devm_clk_get_enabled(&pdev->dev, "dma_clk");
->          if (IS_ERR(atdma->clk))
->                  return PTR_ERR(atdma->clk);
-> 
-> -       err = clk_prepare_enable(atdma->clk);
-> -       if (err)
-> -               return err;
-> -
->          /* force dma off, just in case */
->          at_dma_off(atdma);
-> 
->          err = request_irq(irq, at_dma_interrupt, 0, "at_hdmac", atdma);
->          if (err)
-> -               goto err_irq;
-> +               return err;
-> 
->          platform_set_drvdata(pdev, atdma);
-> 
-> @@ -2105,8 +2101,6 @@ static int __init at_dma_probe(struct platform_device *pdev)
->          dma_pool_destroy(atdma->lli_pool);
->   err_desc_pool_create:
->          free_irq(platform_get_irq(pdev, 0), atdma);
-> -err_irq:
-> -       clk_disable_unprepare(atdma->clk);
->          return err;
->   }
-> 
-> @@ -2130,16 +2124,11 @@ static void at_dma_remove(struct platform_device *pdev)
->                  atc_disable_chan_irq(atdma, chan->chan_id);
->                  list_del(&chan->device_node);
->          }
-> -
-> -       clk_disable_unprepare(atdma->clk);
->   }
-> 
->   static void at_dma_shutdown(struct platform_device *pdev)
->   {
-> -       struct at_dma   *atdma = platform_get_drvdata(pdev);
-> -
->          at_dma_off(platform_get_drvdata(pdev));
-> -       clk_disable_unprepare(atdma->clk);
->   }
-> 
->   static int at_dma_prepare(struct device *dev)
-> @@ -2194,7 +2183,6 @@ static int at_dma_suspend_noirq(struct device *dev)
-> 
->          /* disable DMA controller */
->          at_dma_off(atdma);
-> -       clk_disable_unprepare(atdma->clk);
->          return 0;
->   }
-> 
-> --
-> 2.25.1
-> 
-> 
-
+Konrad
 
