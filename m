@@ -1,101 +1,226 @@
-Return-Path: <linux-kernel+bounces-308890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63A25966343
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 15:44:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91673966355
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 15:46:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F87C283C9A
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 13:44:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4864228433A
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 13:46:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9BD71AD5EB;
-	Fri, 30 Aug 2024 13:44:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="O2k0hWVq"
-Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 727A3172BD0
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 13:44:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B4BE1AD9FC;
+	Fri, 30 Aug 2024 13:46:05 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B56E4288DB;
+	Fri, 30 Aug 2024 13:46:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725025450; cv=none; b=B+za1GwZdG+xKfavr0fZQQGBfUG3xpemZLemPivNOHFwGUIyyWSQ81SSgij99Gak8PFLow8GKwJmZG14vZjQkRpWGDuV6OPbfu7KplItiSZq+UMnFmI9Q7bUbE3y9ejSYvkWBBJq8Pc8gZtjqW81D6RV9klBJdveVs/L+Nd/yD4=
+	t=1725025564; cv=none; b=lEd5IhBB58ygoHY9IHH5hdU3U99666t/kgkWYOySZ3a8W+9MsJkjK0iiT6jek+XnnFJrCFOmSjj93vky++q8ld8i9QUFlHx5o8znrKj3h7bsiWR51Dj4CwphQBDG7L1cBUoJpMr2zkwy7kD/PjiwuKEe6HXdCmd/U+S0d+glXCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725025450; c=relaxed/simple;
-	bh=djdNbVmrsW6hw8WUj/Mlg46zFCWw3zbmK3wHUsqxZrQ=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=L/4qwfYUSCCyff5nnUdSiOPPXs3+uIAYXttlxNvzftEc050hy3R1lxx6OQoFIB/2bcJvgE5Dct0kqoApVwGDRWxWJuK0fg0Pdg/S3RMXuPE75xWi8xJyajR7n5tAmtXZue1YEAJ0SZm7f1J6pLBHE14zqtKVKpb1A59vN5ucl9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=O2k0hWVq; arc=none smtp.client-ip=185.70.43.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1725025446; x=1725284646;
-	bh=djdNbVmrsW6hw8WUj/Mlg46zFCWw3zbmK3wHUsqxZrQ=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=O2k0hWVqhq8TMzWrtg0Zx0rjM0N6EwyUo9dJeYEnA44tPUt5JAS+yn50H1g8isKWX
-	 GjQ+4FBomSLb157NXqpBlaPCJhDpHTVvBuMndGSVBZ8+vrV6JOtQBfqT5JAKwMIe6L
-	 5gLRnxGCOgHWBEJpywLas+0m0L/steoQEJmh6uoUAi7EyQ4mPDo6BY7Zaq1pDR9c33
-	 FMRjfenAzeWAU2SHKk+20FyAxUA6c9Dlg17E8LABBcNEjABAblNN0I2bVPipujitMo
-	 c25uNvuV2VtwtXUrd+rvok6WCxSgVg+mx/noG3ojDLBI5dplLGMzNiPJWpug7tz/29
-	 s4lRbFT7wWPyQ==
-Date: Fri, 30 Aug 2024 13:44:00 +0000
-To: Danilo Krummrich <dakr@kernel.org>, ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@samsung.com, aliceryhl@google.com, akpm@linux-foundation.org
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: daniel.almeida@collabora.com, faith.ekstrand@collabora.com, boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v6 01/26] rust: alloc: add `Allocator` trait
-Message-ID: <097db593-d25c-4a87-97e1-b7214b4606da@proton.me>
-In-Reply-To: <20240816001216.26575-2-dakr@kernel.org>
-References: <20240816001216.26575-1-dakr@kernel.org> <20240816001216.26575-2-dakr@kernel.org>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 22877c4c02f7adf62ef126904bffd48369a0b00c
+	s=arc-20240116; t=1725025564; c=relaxed/simple;
+	bh=4rx5MJaU7mW3Sv3wIWFvKKmuNzdHoavdGmHau0vT6Bo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=geh2y5LOvkqljzwPwrtGwP3gi5PYfnGCCGZukeZuVFKz5KOecGxJgeqUH7YDiyzmVYCJjT5uab0qyw2Xu5UFbyeoEQhLcay13VGwxgKj4RJs5vKWcrPLOc6C1vTZTxvpDcAUSp53tX3JAo9OLBf7MAmLdB/I+trhad4W+yPSnoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 209C71063;
+	Fri, 30 Aug 2024 06:46:27 -0700 (PDT)
+Received: from e133380.arm.com (e133380.arm.com [10.1.197.59])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C1D713F66E;
+	Fri, 30 Aug 2024 06:45:57 -0700 (PDT)
+Date: Fri, 30 Aug 2024 14:45:11 +0100
+From: Dave Martin <Dave.Martin@arm.com>
+To: Devarsh Thakkar <devarsht@ti.com>
+Cc: mchehab@kernel.org, hverkuil-cisco@xs4all.nl,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	sebastian.fricke@collabora.com, linux-doc@vger.kernel.org,
+	praneeth@ti.com, nm@ti.com, vigneshr@ti.com, s-jain1@ti.com,
+	r-donadkar@ti.com, b-brnich@ti.com, detheridge@ti.com,
+	p-mantena@ti.com, vijayp@ti.com, andi.shyti@linux.intel.com,
+	nicolas@ndufresne.ca, andriy.shevchenko@linux.intel.com,
+	jirislaby@kernel.org, davidgow@google.com, dlatypov@google.com,
+	corbet@lwn.net, broonie@kernel.org, jani.nikula@intel.com,
+	rdunlap@infradead.org, nik.borisov@suse.com
+Subject: Re: [PATCH v2 1/6] math.h: Add macros for rounding to the closest
+ value
+Message-ID: <ZtHM5+SJ15Db+P2z@e133380.arm.com>
+References: <20240826150822.4057164-1-devarsht@ti.com>
+ <20240826150822.4057164-2-devarsht@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240826150822.4057164-2-devarsht@ti.com>
 
-On 16.08.24 02:10, Danilo Krummrich wrote:
-> +/// The kernel's [`Allocator`] trait.
-> +///
-> +/// An implementation of [`Allocator`] can allocate, re-allocate and fre=
-e memory buffer described
-> +/// via [`Layout`].
-> +///
-> +/// [`Allocator`] is designed to be implemented as a ZST; [`Allocator`] =
-functions do not operate on
-> +/// an object instance.
-> +///
-> +/// In order to be able to support `#[derive(SmartPointer)]` later on, w=
-e need to avoid a design
-> +/// that requires an `Allocator` to be instantiated, hence its functions=
- must not contain any kind
-> +/// of `self` parameter.
-> +///
-> +/// # Safety
-> +///
-> +/// A memory allocation returned from an allocator must remain valid unt=
-il it is explicitly freed.
-> +///
-> +/// Any pointer to a valid memory allocation must be valid to be passed =
-to any other [`Allocator`]
-> +/// function of the same type.
-> +///
-> +/// Implementers must ensure that all trait functions abide by the guara=
-ntees documented in the
-> +/// `# Guarantees` sections.
+On Mon, Aug 26, 2024 at 08:38:17PM +0530, Devarsh Thakkar wrote:
+> Add below rounding related macros:
+> 
+> round_closest_up(x, y) : Rounds x to the closest multiple of y where y is a
+> power of 2, with a preference to round up in case two nearest values are
+> possible.
+> 
+> round_closest_down(x, y) : Rounds x to the closest multiple of y where y is
+> a power of 2, with a preference to round down in case two nearest values
+> are possible.
+> 
+> roundclosest(x, y) : Rounds x to the closest multiple of y, this macro
+> should generally be used only when y is not multiple of 2 as otherwise
+> round_closest* macros should be used which are much faster.
+> 
+> Examples:
+>  * round_closest_up(17, 4) = 16
+>  * round_closest_up(15, 4) = 16
+>  * round_closest_up(14, 4) = 16
+>  * round_closest_down(17, 4) = 16
+>  * round_closest_down(15, 4) = 16
+>  * round_closest_down(14, 4) = 12
+>  * roundclosest(21, 5) = 20
+>  * roundclosest(19, 5) = 20
+>  * roundclosest(17, 5) = 15
+> 
+> Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
+> Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+> NOTE: This patch is inspired from the Mentor Graphics IPU driver [1]
+> which uses similar macro locally and which is updated in further patch
+> in the series to use this generic macro instead along with other drivers
+> having similar requirements.
+> 
+> Link: https://elixir.bootlin.com/linux/v6.8.9/source/drivers/gpu/ipu-v3/ipu-image-convert.c#L480 [1]
+> 
+> Past discussions and alignment on this:
+> https://lore.kernel.org/all/7e3ad816-6a2a-4e02-9b41-03a8562812ad@ti.com/#r
+> https://lore.kernel.org/all/ZkISG6p1tn9Do-xY@smile.fi.intel.com/#r
+> https://lore.kernel.org/all/ZlTt-YWzyRyhmT9n@smile.fi.intel.com/
+> https://lore.kernel.org/all/ZmHDWeuezCEgj20m@smile.fi.intel.com/
+> https://lore.kernel.org/all/ZloMFfGKLry6EWNL@smile.fi.intel.com/
+> 
+> Changelog:
+> V2:
+> - Fix grammar in macro description
+> - Update roundclosest macro to use roundup to avoid overflow scenario
+> ---
+>  include/linux/math.h | 63 ++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 63 insertions(+)
+> 
+> diff --git a/include/linux/math.h b/include/linux/math.h
+> index f5f18dc3616b..b59a02a007d7 100644
+> --- a/include/linux/math.h
+> +++ b/include/linux/math.h
+> @@ -34,6 +34,52 @@
+>   */
+>  #define round_down(x, y) ((x) & ~__round_mask(x, y))
+>  
+> +/**
+> + * round_closest_up - round closest to be multiple of the specified value
+> + *                    (which is power of 2) with preference to rounding up
+> + * @x: the value to round
+> + * @y: multiple to round closest to (must be a power of 2)
+> + *
+> + * Rounds @x to the closest multiple of @y (which must be a power of 2).
+> + * The value can be rounded up or rounded down depending on the rounded
+> + * value's closeness to the specified value. Also, there can be two closest
+> + * values, i.e. the difference between the specified value and its rounded-up
+> + * and rounded-down values could be the same. In that case, the rounded-up
+> + * value is preferred.
+> + *
+> + * To perform arbitrary rounding to the closest value (not multiple of 2), use
+> + * roundclosest().
+> + *
+> + * Examples:
+> + * * round_closest_up(17, 4) = 16
+> + * * round_closest_up(15, 4) = 16
+> + * * round_closest_up(14, 4) = 16
+> + */
+> +#define round_closest_up(x, y) round_down((x) + (y) / 2, (y))
+> +
+> +/**
+> + * round_closest_down - round closest to be multiple of the specified value
+> + *                      (which is power of 2) with preference to rounding down
+> + * @x: the value to round
+> + * @y: multiple to round closest to (must be a power of 2)
+> + *
+> + * Rounds @x to the closest multiple of @y (which must be a power of 2).
+> + * The value can be rounded up or rounded down depending on the rounded
+> + * value's closeness to the specified value. Also, there can be two closest
+> + * values, i.e. the difference between the specified value and its rounded-up
+> + * and rounded-down values could be the same. In that case, the rounded-down
+> + * value is preferred.
+> + *
+> + * To perform arbitrary rounding to the closest value (not multiple of 2), use
+> + * roundclosest().
+> + *
+> + * Examples:
+> + * * round_closest_down(17, 4) = 16
+> + * * round_closest_down(15, 4) = 16
+> + * * round_closest_down(14, 4) = 12
+> + */
+> +#define round_closest_down(x, y) round_up((x) - (y) / 2, (y))
+> +
+>  #define DIV_ROUND_UP __KERNEL_DIV_ROUND_UP
+>  
+>  #define DIV_ROUND_DOWN_ULL(ll, d) \
+> @@ -77,6 +123,23 @@
+>  }							\
+>  )
+>  
+> +/**
+> + * roundclosest - round to the nearest multiple
+> + * @x: the value to round
+> + * @y: multiple to round nearest to
+> + *
+> + * Rounds @x to the nearest multiple of @y.
+> + * The rounded value can be greater or less than @x depending
+> + * upon its nearness to @x. If @y is always a power of 2, consider
+> + * using the faster round_closest_up() or round_closest_down().
+> + *
+> + * Examples:
+> + * * roundclosest(21, 5) = 20
+> + * * roundclosest(19, 5) = 20
+> + * * roundclosest(17, 5) = 15
+> + */
+> +#define roundclosest(x, y) roundup((x) - (y) / 2, (y))
 
-Can you make a bullet point list out of these three paragraphs?
+roundup() looks like it already does the wrong thing for negative
+numbers:
 
----
-Cheers,
-Benno
+	roundup(-10, 5)
+	= (-10 + 4) / 5 * 5
+	= -6 / 5 * 5
+	= -1 * 5
+	= -5
 
+(DIV_ROUND_UP looks less broken in this regard, though it's complicated
+and I haven't tried to understand it fully.)
 
+Disregarding the issue of negative inputs, the proposed definition of
+roundclosest() looks like it still doesn't always do the right thing
+close to the upper limits of types, even when the expected result is
+representable in the type.
+
+For example, if I've understood this correctly, we can get:
+
+	roundclosest(0xFFFFFFFFU, 0xFFFFU)
+	= roundup(0xFFFFFFFF - 0x7FFFU, 0xFFFFU)
+	= roundup(0xFFFF8000, 0xFFFFU)
+	= ((0xFFFF8000 + (0xFFFFU - 1)) / 0xFFFFU) * 0xFFFFU
+	= ((0xFFFF8000 + 0xFFFEU) / 0xFFFFU) * 0xFFFFU
+	= (0x00007FFE / 0xFFFFU) * 0xFFFFU
+	= 0
+
+(Expected result: 0x00010001U * 0xFFFFU, = 0xFFFFFFFFU.)
+
+I suppose this could be documented around, but it seems like a
+potential trap and not something the caller would expect.
+
+Cheers
+---Dave
 
