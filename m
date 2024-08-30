@@ -1,85 +1,153 @@
-Return-Path: <linux-kernel+bounces-309405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 553109669FA
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 21:41:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A6399669FE
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 21:43:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F31FB1F25259
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 19:41:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5746B280F56
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 19:43:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBFAD1BD4E5;
-	Fri, 30 Aug 2024 19:41:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D10F1BD038;
+	Fri, 30 Aug 2024 19:42:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n+PqU9xa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="FpGoxpbY"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B99E33CD1;
-	Fri, 30 Aug 2024 19:41:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CF1933CD1;
+	Fri, 30 Aug 2024 19:42:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725046902; cv=none; b=pSuftqqSZBuic2yLNBtB5IiD/4+NNPm39ZLPOV4quAjQpS76H1e+wJBgO/JmW1sAa9efb1OoXoTx0InukEJ2PROZ5imzvDWGQARVJx37IvKDSY6ImWDrPcvaVjrDHIgEZKTJTuJ/VypjA59tH+lRyF86fvlxRf+MboIIGRpCwXE=
+	t=1725046973; cv=none; b=FbmG8tkYThVbt9s1UnpxseHZDzR1CgdAHeYJ15V8smbkALv65chRW9ATOqEAs764ZRwdH/jDZSZu0Tw2VzgLRFjSXLhc8RzDj1fGyLd6qxkOMgbMSKVfbCYYrPO24sLpcUnEQ/GDrlZsFZa0m0ukd2uDTT4S0P7k0fBU+tKA+5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725046902; c=relaxed/simple;
-	bh=YmAVUv/qdETNoSJhr+xIDAhJhvlKSU3g1VMNFU4pj9k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LG2Rtxi8+8lBAEt48tTDFRCU+ZnvJ4Lkbc7Fm9edklM1DBUZSvReDsUcxvy/WwmDDQFOeMu01xR6FVkpnGuBfL4ky1XhQejAGledcRpNAmio2543eOETfOxNxtcVFM9ysjBW43u9JQd5jJcdh/2gHgqoWt8WqwdUbf9bI6MQ4iM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n+PqU9xa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85D9DC4CEC2;
-	Fri, 30 Aug 2024 19:41:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725046901;
-	bh=YmAVUv/qdETNoSJhr+xIDAhJhvlKSU3g1VMNFU4pj9k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=n+PqU9xalkg9dGJCeo1NRyvwCGkZAsNMsBn9iC+LsLAvIjD1FQ2Xe3tD80uB8NT9P
-	 5Wabgylq4ZN0dzLwoKFzwA0XTM51wfDV2y3zRPFXk3Qk96gQkWIQiNGlTbVXugq9BD
-	 eZXQ0VviS7QxPXCfPs8PnXVOAHNBfpiNHTsW1k75D7jVhbDQw8gVTMpDQu8mcglSiD
-	 +0/E28Byh8Lf3e3FvZmP8qPAfEWsD9502NfSfXKuqWYQXMJaGhmy5EZEL22dFOyBlr
-	 4Rn5VyUtMxqbtw+QaHfEy/Xg9No9N91TadDim9Wsye7Yd1QNhiTC4FW5wlXQsruQnU
-	 9NRF0VkUcve9g==
-Date: Fri, 30 Aug 2024 09:41:40 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Joshua Hahn <joshua.hahnjy@gmail.com>
-Cc: cgroups@vger.kernel.org, hannes@cmpxchg.org,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	lizefan.x@bytedance.com, mkoutny@suse.com, shuah@kernel.org
-Subject: Re: [PATCH v2 1/2] Tracking cgroup-level niced CPU time
-Message-ID: <ZtIgdEt9RSU4MCIP@slm.duckdns.org>
-References: <20240830141939.723729-1-joshua.hahnjy@gmail.com>
- <20240830141939.723729-2-joshua.hahnjy@gmail.com>
+	s=arc-20240116; t=1725046973; c=relaxed/simple;
+	bh=VkvmwOBTAbY4H3cu7EBu9vnJCjHiUPba1qZ0hdED++4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=rqye/j6rIUqT7BYgodNDCD0PaskDremtY52zL67xUxiiRgrrbWaADZ2CEoU+EtXAhSQFUTNk/lpt1HiLIZ3bluFn2bXk73VtPtQob7pgZp6PDaQfVPKYkBkwz+kwW7AwSPDqE6HXyDOxoKhXly0fbzlg/A/ffvQQ7b/XZxr3qvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=FpGoxpbY; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47UFNwNf026547;
+	Fri, 30 Aug 2024 19:42:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	WQgQSOmOou41lnjoOVdQJ1WiykWFVVUCp0NkH8CM0ck=; b=FpGoxpbYrTu5QaY/
+	A0UvBNbYdubJ6iwapbNkHL9YOf+v7DNSP+y/BVoiWYUrdtmTbvWARrVRhFEbii0H
+	jhucTi5kSxS0ISL4np8zvqJVCHNkZXUDWZmuVkV2AQBc0c069uTm34pmS0OKWT3Y
+	xqDEbi1FPGqe1Zak7TW1FubbRIYeFqLfmQkILBV1MFzwdxLFRKTJQp7l07+xb4vr
+	99VPp7GZrWh8ug05ic3XfMxI4hxZYhT0KzyP2rTpZNH+Q5Wa35noDDF+7jffBqEA
+	ogx0Q16MMcjRBAJIQA0F3EeB4nfb6GeOD4o36Keb0++WYK0lpDl9mZG0xyT3mYHn
+	MSnWaw==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 419puvj0mt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 30 Aug 2024 19:42:38 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47UJgbCr000412
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 30 Aug 2024 19:42:37 GMT
+Received: from [10.134.70.212] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 30 Aug
+ 2024 12:42:30 -0700
+Message-ID: <092a7427-8971-4ee4-a417-52653ed892a4@quicinc.com>
+Date: Fri, 30 Aug 2024 12:42:26 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240830141939.723729-2-joshua.hahnjy@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 02/21] drm: print clone mode status in atomic state
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Rob Clark <robdclark@gmail.com>, <quic_abhinavk@quicinc.com>,
+        Sean Paul
+	<sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        "David
+ Airlie" <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+        "Maarten
+ Lankhorst" <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard
+	<mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>, <quic_ebharadw@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        Rob Clark <robdclark@chromium.org>
+References: <20240829-concurrent-wb-v1-0-502b16ae2ebb@quicinc.com>
+ <20240829-concurrent-wb-v1-2-502b16ae2ebb@quicinc.com>
+ <e3moledbfob2xkgxpbta3onlzc5yi6u7cbsmuo5ao4qq7nyyhj@lr32vqnjzkbi>
+Content-Language: en-US
+From: Jessica Zhang <quic_jesszhan@quicinc.com>
+In-Reply-To: <e3moledbfob2xkgxpbta3onlzc5yi6u7cbsmuo5ao4qq7nyyhj@lr32vqnjzkbi>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: Q3rFbF65V4GUkrvwZWoJL0bf-rlb0wYf
+X-Proofpoint-GUID: Q3rFbF65V4GUkrvwZWoJL0bf-rlb0wYf
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-30_10,2024-08-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ mlxlogscore=999 priorityscore=1501 bulkscore=0 impostorscore=0
+ adultscore=0 malwarescore=0 phishscore=0 lowpriorityscore=0 mlxscore=0
+ spamscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408300151
 
-On Fri, Aug 30, 2024 at 07:19:38AM -0700, Joshua Hahn wrote:
-> From: Joshua Hahn <joshua.hahn6@gmail.com>
+
+
+On 8/30/2024 9:38 AM, Dmitry Baryshkov wrote:
+> On Thu, Aug 29, 2024 at 01:48:23PM GMT, Jessica Zhang wrote:
+>> Add clone mode status to the DRM atomic print state
+>>
+>> Signed-off-by: Jessica Zhang <quic_jesszhan@quicinc.com>
+>> ---
+>>   drivers/gpu/drm/drm_atomic.c | 1 +
+>>   1 file changed, 1 insertion(+)
+>>
+>> diff --git a/drivers/gpu/drm/drm_atomic.c b/drivers/gpu/drm/drm_atomic.c
+>> index 07b4b394e3bf..145d6a758d4d 100644
+>> --- a/drivers/gpu/drm/drm_atomic.c
+>> +++ b/drivers/gpu/drm/drm_atomic.c
+>> @@ -455,6 +455,7 @@ static void drm_atomic_crtc_print_state(struct drm_printer *p,
+>>   	drm_printf(p, "\tconnector_mask=%x\n", state->connector_mask);
+>>   	drm_printf(p, "\tencoder_mask=%x\n", state->encoder_mask);
+>>   	drm_printf(p, "\tmode: " DRM_MODE_FMT "\n", DRM_MODE_ARG(&state->mode));
+>> +	drm_printf(p, "\tin_clone_mode=%d\n", drm_crtc_in_clone_mode(crtc->state));
 > 
-> Cgroup-level CPU statistics currently include time spent on
-> user/system processes, but do not include niced CPU time (despite
-> already being tracked). This patch exposes niced CPU time to the
-> userspace, allowing users to get a better understanding of their
-> hardware limits and can facilitate more informed workload distribution.
+> We have encoder_mask two lines above. What is the benefit of having the
+> separate in_clone_mode?
+
+Hi Dmitry,
+
+I was thinking that this would be an easy way to note if a CRTC was in 
+clone mode, but I can see why this is redundant.
+
+Will drop this patch.
+
+Thanks,
+
+Jessica Zhang
+
 > 
-> A new field 'ntime' is added to struct cgroup_base_stat as opposed to
-> struct task_cputime to minimize footprint.
-
-Patch looks fine to me but can you please do the followings?
-
-- Add subsystem prefix to the patch titles. Look other commits for examples.
-
-- Add Signed-off-by to both.
-
-Thanks.
-
--- 
-tejun
+>>   
+>>   	if (crtc->funcs->atomic_print_state)
+>>   		crtc->funcs->atomic_print_state(p, state);
+>>
+>> -- 
+>> 2.34.1
+>>
+> 
+> -- 
+> With best wishes
+> Dmitry
 
