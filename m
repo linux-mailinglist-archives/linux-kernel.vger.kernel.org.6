@@ -1,112 +1,125 @@
-Return-Path: <linux-kernel+bounces-308586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62AD6965F2F
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:29:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88E62965F39
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:30:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DA261F28E3F
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:29:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2185C289DC3
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:30:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 158481917F1;
-	Fri, 30 Aug 2024 10:28:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 199D6192D8C;
+	Fri, 30 Aug 2024 10:28:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="HUsFWtlW"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fXYck+dX"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D36317D375;
-	Fri, 30 Aug 2024 10:28:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D538F17C7B2;
+	Fri, 30 Aug 2024 10:28:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725013711; cv=none; b=Yk1zy8cOMdtbfACns1DoKV4WafkhOHU/w9eATmlLhyWInE3OqxPEqOU6tYnvRAUzLbbgigTbrX2AB7I0fndGXYcFM9VcSHi8C/xcLTDx3rWusG7K6h1NGqYbWR1OqoY46QOu6F+IjOBnlnfElmPKNNpxc54qpBNy7KF5TN4hk4E=
+	t=1725013721; cv=none; b=rDJv2+JCcsYP/AdLctFCQoA5XBaMbpUWrLiyLBUXj2/ICfeDXXdHcZUaL9DeAI7F3GRi5rMuEua6RHlANVhceWe0FV9juJ1Kh3tvgpb5/EO5UvJ29mWEK3Id4nY6Xj/f4cNzWujU5JtMK4/K02LSMKF5bRSeTor2Xa39HAaojHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725013711; c=relaxed/simple;
-	bh=NdghgHFvzG1MpM+aBjKDpQN039vumSxfcn1T406Z3ZU=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=lkqGq6Z1miXqF3JgDJmqTuiiL9O+Nrer+YPs+YX5BRnSmMm6ibdrVOcoiI/maCiLMVHkanOHpSeI2SuQEfRYBOiIPUSTH2j9XQb9yb8XOnNi+r0PJt8YRbUdFe3tHbkm/F6I5zXjkIwq2+d1JOlbq1uABJyJyHN0d0V336fLR6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=HUsFWtlW; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47UASOge059515;
-	Fri, 30 Aug 2024 05:28:24 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1725013704;
-	bh=4v0txenOCN9l16vss+K3ILdyxnDp9LZiJ22Nj2+eVKk=;
-	h=From:To:CC:Subject:Date;
-	b=HUsFWtlWEt364cr1auK9RSqtpMrY20HC4yx7y+KpVoydxHu6Xzt5MIs5WHHSATjPr
-	 bJQR/psPmerA7cfytTndZNDbJSSacOT/IVy+mrj8xqkQjH+tKjQh8sleBM+uhOCdMA
-	 BqEUCj5BiOzI/h0nUw7cgcWn5o+d577LmtUnkvDY=
-Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47UASOjC012538
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 30 Aug 2024 05:28:24 -0500
-Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 30
- Aug 2024 05:28:23 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 30 Aug 2024 05:28:23 -0500
-Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47UASNC0111661;
-	Fri, 30 Aug 2024 05:28:23 -0500
-From: Nishanth Menon <nm@ti.com>
-To: Conor Dooley <conor+dt@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Rob Herring <robh@kernel.org>
-CC: Tero Kristo <kristo@kernel.org>, Vignesh Raghavendra <vigneshr@ti.com>,
-        Nishanth Menon <nm@ti.com>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        Siddharth Vadapalli <s-vadapalli@ti.com>
-Subject: [PATCH] arm64: dts: ti: k3-j721s2-evm-gesi-exp-board: Rename gpio-hog node name
-Date: Fri, 30 Aug 2024 05:28:22 -0500
-Message-ID: <20240830102822.3970269-1-nm@ti.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1725013721; c=relaxed/simple;
+	bh=hXUY+AQd6KJpCly0JZEeWSdkAfynclTeDsNGVvGmBQw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LvHGlWWrSzkbs3Ctore7E3gCcueqA4zhg7cBwTx9neMp0lLGrTXbsYe3SISHAdW00lMfZ8NE5MRYzKIkiFMq9orQG7YRF0SuMsWvcZF5T0BSDdA8e7zCLTNeFSggbD2gqWqHMA7dI4CkNmtmp01FkTKB/SzN8b0/uwTxi/9u5IA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fXYck+dX; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725013720; x=1756549720;
+  h=date:from:to:cc:subject:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=hXUY+AQd6KJpCly0JZEeWSdkAfynclTeDsNGVvGmBQw=;
+  b=fXYck+dXnhmraMZF9KKsC8g7QX8lmlm7E+K9NlYJn9jd86xPglw3IgaG
+   0aaDZJf2hXnq+57NOnLny9ugiAwWKRm+w2c2pHg8HQydPZ2zr7vH1u7Qw
+   qyZb2wZwK5YH67h//lQpXgCoRkw9qjhzbcYJLVR0NPHfnpRBv3F8yEDQO
+   kFa0XTHX2YHBEKLqaB5MvIiJxw7FBsZ5atjilPJC5HuhhAveppDoeo20U
+   7rB6XW6D6Bg19J7OptCDYWnWamBk+b0vD93TRMZ65z3wfAS1EyltNhnxU
+   9BIdNIw+ZIBhfWSbm/P0LiKipMU6RSyPP4LG24/x02RqvX+MaK4RxL22g
+   A==;
+X-CSE-ConnectionGUID: 2QXNpAs5Sl6tLFxl8iiMmQ==
+X-CSE-MsgGUID: 63YCZ9tcTIOtDOOjygSh/w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11179"; a="23805790"
+X-IronPort-AV: E=Sophos;i="6.10,188,1719903600"; 
+   d="scan'208";a="23805790"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Aug 2024 03:28:39 -0700
+X-CSE-ConnectionGUID: AX2UbQRzQ16Zj3rO651L/Q==
+X-CSE-MsgGUID: tY2MFGHtRx6L5tVXAWCgDQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,188,1719903600"; 
+   d="scan'208";a="63557482"
+Received: from mtkaczyk-mobl.ger.corp.intel.com (HELO localhost) ([10.245.96.27])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Aug 2024 03:28:36 -0700
+Date: Fri, 30 Aug 2024 12:28:31 +0200
+From: Mariusz Tkaczyk <mariusz.tkaczyk@linux.intel.com>
+To: Yu Kuai <yukuai1@huaweicloud.com>
+Cc: mariusz.tkaczyk@intel.com, song@kernel.org, linux-raid@vger.kernel.org,
+ linux-kernel@vger.kernel.org, yukuai3@huawei.com, yi.zhang@huawei.com,
+ yangerkun@huawei.com
+Subject: Re: [PATCH md-6.12 3/7] md: don't record new badblocks for faulty
+ rdev
+Message-ID: <20240830122831.0000127d@linux.intel.com>
+In-Reply-To: <20240830072721.2112006-4-yukuai1@huaweicloud.com>
+References: <20240830072721.2112006-1-yukuai1@huaweicloud.com>
+	<20240830072721.2112006-4-yukuai1@huaweicloud.com>
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Organization: Texas Instruments, Inc.
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Fix the gpio hog node name to p15-hog to match up with gpio-hog
-convention. This fixes dtbs_check warning:
-p15: $nodename:0: 'p15' does not match '^(hog-[0-9]+|.+-hog(-[0-9]+)?)$'
+On Fri, 30 Aug 2024 15:27:17 +0800
+Yu Kuai <yukuai1@huaweicloud.com> wrote:
 
-Signed-off-by: Nishanth Menon <nm@ti.com>
----
-Cc: Siddharth Vadapalli <s-vadapalli@ti.com>
+> From: Yu Kuai <yukuai3@huawei.com>
+> 
+> Faulty will be checked before issuing IO to the rdev, however, rdev can
+> be faulty at any time, hence it's possible that rdev_set_badblocks()
+> will be called for faulty rdev. In this case, mddev->sb_flags will be
+> set and some other path can be blocked by updating super block.
+> 
+> Since faulty rdev will not be accesed anymore, there is no need to
+> record new babblocks for faulty rdev and forcing updating super block.
+> 
+> Noted this is not a bugfix, just prevent updating superblock in some
+> corner cases, and will help to slice a bug related to external
+> metadata[1].
+> 
+> [1]
+> https://lore.kernel.org/all/f34452df-810b-48b2-a9b4-7f925699a9e7@linux.intel.com/
+> 
+> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+> ---
+>  drivers/md/md.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/drivers/md/md.c b/drivers/md/md.c
+> index 675d89597c7b..a3f7f407fe42 100644
+> --- a/drivers/md/md.c
+> +++ b/drivers/md/md.c
+> @@ -9757,6 +9757,10 @@ int rdev_set_badblocks(struct md_rdev *rdev, sector_t
+> s, int sectors, {
+>  	struct mddev *mddev = rdev->mddev;
+>  	int rv;
+> +
+> +	if (test_bit(Faulty, &rdev->flags))
+> +		return 1;
+> +
 
-This seemed to trivial to add fixes tag, so skipped.
+Blame is volatile, this is why we need a comment here :)
+Otherwise, someone may remove that.
 
- arch/arm64/boot/dts/ti/k3-j721s2-evm-gesi-exp-board.dtso | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm64/boot/dts/ti/k3-j721s2-evm-gesi-exp-board.dtso b/arch/arm64/boot/dts/ti/k3-j721s2-evm-gesi-exp-board.dtso
-index 1be28283c7d9..8583178fa1f3 100644
---- a/arch/arm64/boot/dts/ti/k3-j721s2-evm-gesi-exp-board.dtso
-+++ b/arch/arm64/boot/dts/ti/k3-j721s2-evm-gesi-exp-board.dtso
-@@ -48,7 +48,7 @@ J721S2_IOPAD(0x09c, PIN_OUTPUT, 6) /* (T24) MCASP0_AXR11.RGMII1_TX_CTL */
- };
- 
- &exp1 {
--	p15 {
-+	p15-hog {
- 		/* P15 - EXP_MUX2 */
- 		gpio-hog;
- 		gpios = <13 GPIO_ACTIVE_HIGH>;
-
-base-commit: d2bafcf224f3911b183113b2fcb536c9e90684a3
--- 
-2.46.0
-
+Thanks,
+Mariusz
 
