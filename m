@@ -1,246 +1,213 @@
-Return-Path: <linux-kernel+bounces-308347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AF32965A99
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:42:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 550BB965A9E
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:42:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 802511F239F3
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 08:42:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B6D6282164
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 08:42:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4457A16DC26;
-	Fri, 30 Aug 2024 08:42:26 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C70416726E
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 08:42:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29F7616DC27;
+	Fri, 30 Aug 2024 08:42:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IqyVOyCA"
+Received: from mail-oo1-f42.google.com (mail-oo1-f42.google.com [209.85.161.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ECE616D9A7
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 08:42:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725007345; cv=none; b=hjkPdIstaE3ympD/zM/BRHxIqSoX7Z6p3Ib6ztXpUhNFge998vv+gLKpLEMxid1GK522PkiTYCGmTkrCmme+61gtU+5V+7xV8wNlMeceEE0bs/SFrR2Miy8dUGoQ86ZNyWtRP//P/nNkJPOSkC2K63Vx9mgD3IhROtXVdChXnZg=
+	t=1725007368; cv=none; b=sWyWkzGrTkDrO9mBVN/oK6uQwOCB0H+Dks5K/LE/2pDsykcC8uz037EcjBzV7PzJ3NiSO3IbwdXGNfhoCKT7HQmhNUUdy7SqyOSeFKamhWsaZVMshnQWhqtB4mVvlCdvTcpYNia+Rb1EG2+oUHD8uwirqKOz6ucfGaSEbP3xKw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725007345; c=relaxed/simple;
-	bh=bLMrpbo6a9HmoNlufuB2nr3rQCvRo/fuQxMuhFzkLUs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=mMfxZBLvxCueDAbugt6yos1Ljm32NYsAk9vCxl4Em0fUmWnObzD3ZJGDb2o+EwdjmXwF+o6+RKAW6MjMIrY36W24WsN73qzst5TSrxpxaJmGWWTx+oCIHeauIHZRHxGyQTEsEPUdGL+ShUYYgg/w4PK18yeIUWKeQ9C0JzACV/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AB1401063;
-	Fri, 30 Aug 2024 01:42:49 -0700 (PDT)
-Received: from e116581.blr.arm.com (e116581.arm.com [10.162.40.24])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 0DE073F762;
-	Fri, 30 Aug 2024 01:42:14 -0700 (PDT)
-From: Dev Jain <dev.jain@arm.com>
-To: akpm@linux-foundation.org,
-	david@redhat.com,
-	willy@infradead.org,
-	kirill.shutemov@linux.intel.com
-Cc: ryan.roberts@arm.com,
-	anshuman.khandual@arm.com,
-	catalin.marinas@arm.com,
-	cl@gentwo.org,
-	vbabka@suse.cz,
-	mhocko@suse.com,
-	apopple@nvidia.com,
-	dave.hansen@linux.intel.com,
-	will@kernel.org,
-	baohua@kernel.org,
-	jack@suse.cz,
-	mark.rutland@arm.com,
-	hughd@google.com,
-	aneesh.kumar@kernel.org,
-	yang@os.amperecomputing.com,
-	peterx@redhat.com,
-	ioworker0@gmail.com,
-	jglisse@google.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	Dev Jain <dev.jain@arm.com>
-Subject: [PATCH 2/2] mm: Allocate THP on hugezeropage wp-fault
-Date: Fri, 30 Aug 2024 14:11:17 +0530
-Message-Id: <20240830084117.4079805-3-dev.jain@arm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240830084117.4079805-1-dev.jain@arm.com>
-References: <20240830084117.4079805-1-dev.jain@arm.com>
+	s=arc-20240116; t=1725007368; c=relaxed/simple;
+	bh=3HZp0lzLztTvVH8SqxLgBJ8KySpa1DaNcgUQkAFt00k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EOu5eOb+JneyNuC//2Gd+hZOkVXRNQDpOeAJrTelEUK3PxhmMf3l6cbFspWdV/XmVtHPwt1oZHIxFcSN4+u5tYZQvlWRWvBSjyNkMAKfkMOhYjdsu0Ag0cT7XBfZWqzbF6b90UPKVXqAVbksf2hkKfzidmriDi0Ckpj3Rd5sTKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IqyVOyCA; arc=none smtp.client-ip=209.85.161.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-5dccc6cdc96so963835eaf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 01:42:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725007364; x=1725612164; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hFoJ8uGU6Wt+2B+a3U8PT9o5qr4L6h8Nf/lLSdsGyCQ=;
+        b=IqyVOyCAFA3zEgqjMLKlw3dt2A9ExgUu8lqdrp4x+OEnmbhAMHgWVDsHugaHIIrrvJ
+         Mj2RrlY/kSOSN+4eXTNb9bB2B0FQ1127x2L4M25lNBmaSklo4zk36dCXOAj56nF4KjVz
+         xteAzXHjy6kVAdRkgSshOMAQtDMSs4fwE5B/+mAMsrB3opLAyoEK7BwWiuBNZYyj7CHX
+         1wzuwUMs0hP2LBgMsYiCx0mLaE0NpGJByOINsjvWtFkFOyjhDDqXhabMKTDdRe301CC5
+         qEakr/W0058gHbvATJQMpAvwnrzPoIu8NT11VE6wGxg7jErQ++Fr5NHuc+uEhLAJU85f
+         c6cg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725007364; x=1725612164;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hFoJ8uGU6Wt+2B+a3U8PT9o5qr4L6h8Nf/lLSdsGyCQ=;
+        b=A9ocEMibVD9cnmLXPYuidMnBhpDetbwQ7pZqx+YqK7GUlAkleNHzsS2Fi9O+sn5mKh
+         HjT88eeSwMKZy3GvquXf+qEyEr2X4iHdN9LHLkq0SzRF/V+j4+NvIOnbWA6Pju48MscA
+         XN1H1Q/e7qWdeLz3YsDsNAEmQye22vRoj2OwQkb77Tgz80GRm5GSD14cEiLkYpFM0vkz
+         yu/vPWnYylLS+DzzWNZYU2WsK1giGlmWkgnEv3zZvLkOMYna2YSh1sNZ8vnvneEIHmXL
+         HI2Ba969JqpLf9+DsyWU/wwk7Q4uW5lVncvHTpS3pOU1M3D5hWrVECxYxHzd0A4w3SWE
+         Y45g==
+X-Gm-Message-State: AOJu0YylfBp5SwNxjTYQQrhj/tvVUnzWC1D/suDsRSuSphWa9rIp/Q/5
+	ezvtPnJ8fSSVuXFs7zaN/kFBOnPObZdoy5WS/wWq42FPKuV28TBOsovodlGjf+KwguPwnuL/H53
+	4jUh2CTLPFMoVHUqpgNtcjTGPWQ86F1ETq6mZQg==
+X-Google-Smtp-Source: AGHT+IHBEq2kXBcob7OwHZwxMgPl68xRTiaqYdA20dFyB6L5ns13TYFSRrWJQJLVdlnc+h48Q+Hs/qXBirYHpgAHAeU=
+X-Received: by 2002:a05:6820:2216:b0:5d6:ae6:a852 with SMTP id
+ 006d021491bc7-5dfacf28289mr1998086eaf.6.1725007364035; Fri, 30 Aug 2024
+ 01:42:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240830070351.2855919-1-jens.wiklander@linaro.org>
+ <20240830070351.2855919-4-jens.wiklander@linaro.org> <3bqb6mktkvbdl6h4eekad4mpjhyvzx7mjidhnanboygbwu2asz@6ros56bp6isd>
+In-Reply-To: <3bqb6mktkvbdl6h4eekad4mpjhyvzx7mjidhnanboygbwu2asz@6ros56bp6isd>
+From: Jens Wiklander <jens.wiklander@linaro.org>
+Date: Fri, 30 Aug 2024 10:42:32 +0200
+Message-ID: <CAHUa44Fd-Eo5-CUfxDgCFpRVbJP0gzA7LX_-5=cBfBd8NxhpDw@mail.gmail.com>
+Subject: Re: [RFC PATCH 3/4] dt-bindings: reserved-memory: add linaro,restricted-heap
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linaro-mm-sig@lists.linaro.org, op-tee@lists.trustedfirmware.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+	Olivier Masse <olivier.masse@nxp.com>, Thierry Reding <thierry.reding@gmail.com>, 
+	Yong Wu <yong.wu@mediatek.com>, Sumit Semwal <sumit.semwal@linaro.org>, 
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
+	John Stultz <jstultz@google.com>, "T . J . Mercier" <tjmercier@google.com>, 
+	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Sumit Garg <sumit.garg@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Introduce do_huge_zero_wp_pmd() to handle wp-fault on a hugezeropage and
-replace it with a PMD-mapped THP. Change the helpers introduced in the
-previous patch to flush TLB entry corresponding to the hugezeropage,
-and preserve PMD uffd-wp marker. In case of failure, fallback to
-splitting the PMD.
+On Fri, Aug 30, 2024 at 10:20=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.o=
+rg> wrote:
+>
+> On Fri, Aug 30, 2024 at 09:03:50AM +0200, Jens Wiklander wrote:
+> > From: Olivier Masse <olivier.masse@nxp.com>
+> >
+> > DMABUF reserved memory definition for OP-TEE secure data path feature.
+> >
+> > Signed-off-by: Olivier Masse <olivier.masse@nxp.com>
+> > Signed-off-by: Jens Wiklander <jens.wiklander@linaro.org>
+> > ---
+> >  .../linaro,restricted-heap.yaml               | 56 +++++++++++++++++++
+> >  1 file changed, 56 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/reserved-memory/l=
+inaro,restricted-heap.yaml
+> >
+> > diff --git a/Documentation/devicetree/bindings/reserved-memory/linaro,r=
+estricted-heap.yaml b/Documentation/devicetree/bindings/reserved-memory/lin=
+aro,restricted-heap.yaml
+> > new file mode 100644
+> > index 000000000000..0ab87cf02775
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/reserved-memory/linaro,restrict=
+ed-heap.yaml
+> > @@ -0,0 +1,56 @@
+> > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/reserved-memory/linaro,restricted-h=
+eap.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Linaro Secure DMABUF Heap
+> > +
+> > +maintainers:
+> > +  - Olivier Masse <olivier.masse@nxp.com>
+> > +
+> > +description:
+> > +  Linaro OP-TEE firmware needs a reserved memory for the
+> > +  Secure Data Path feature (aka SDP).
+> > +  The purpose is to provide a restricted memory heap which allow
+> > +  the normal world OS (REE) to allocate/free restricted buffers.
+> > +  The TEE is reponsible for protecting the SDP memory buffers.
+> > +  TEE Trusted Application can access restricted memory references
+> > +  provided as parameters (DMABUF file descriptor).
+>
+> And what is the difference from regular reserved memory? Why it cannot
+> be used?
 
-Signed-off-by: Dev Jain <dev.jain@arm.com>
----
- include/linux/huge_mm.h |  7 ++++
- mm/huge_memory.c        | 76 +++++++++++++++++++++++++++++++++++------
- mm/memory.c             |  5 +--
- 3 files changed, 76 insertions(+), 12 deletions(-)
+Good question. I need a compatible =3D "linaro,restricted-heap" to find
+it, but it appears that's permitted with regular reserved memory.
+Let's drop this patch. Thanks for pointing me in the right direction.
 
-diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-index e25d9ebfdf89..375dba4fb130 100644
---- a/include/linux/huge_mm.h
-+++ b/include/linux/huge_mm.h
-@@ -9,6 +9,13 @@
- #include <linux/kobject.h>
- 
- vm_fault_t do_huge_pmd_anonymous_page(struct vm_fault *vmf);
-+vm_fault_t thp_fault_alloc(gfp_t gfp, int order, struct vm_area_struct *vma,
-+			   unsigned long haddr, struct folio **foliop,
-+			   unsigned long addr);
-+void map_pmd_thp(struct folio *folio, struct vm_fault *vmf,
-+		 struct vm_area_struct *vma, unsigned long haddr,
-+		 pgtable_t pgtable)
-+	__releases(vmf->ptl);
- int copy_huge_pmd(struct mm_struct *dst_mm, struct mm_struct *src_mm,
- 		  pmd_t *dst_pmd, pmd_t *src_pmd, unsigned long addr,
- 		  struct vm_area_struct *dst_vma, struct vm_area_struct *src_vma);
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index e5b568e2bb34..0f8b2e224795 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -943,9 +943,9 @@ unsigned long thp_get_unmapped_area(struct file *filp, unsigned long addr,
- }
- EXPORT_SYMBOL_GPL(thp_get_unmapped_area);
- 
--static vm_fault_t thp_fault_alloc(gfp_t gfp, int order, struct vm_area_struct *vma,
--				  unsigned long haddr, struct folio **foliop,
--				  unsigned long addr)
-+vm_fault_t thp_fault_alloc(gfp_t gfp, int order, struct vm_area_struct *vma,
-+			   unsigned long haddr, struct folio **foliop,
-+			   unsigned long addr)
- {
- 	struct folio *folio = vma_alloc_folio(gfp, order, vma, haddr, true);
- 
-@@ -984,22 +984,30 @@ static void __thp_fault_success_stats(struct vm_area_struct *vma, int order)
- 	count_memcg_event_mm(vma->vm_mm, THP_FAULT_ALLOC);
- }
- 
--static void map_pmd_thp(struct folio *folio, struct vm_fault *vmf,
--			struct vm_area_struct *vma, unsigned long haddr,
--			pgtable_t pgtable)
-+void map_pmd_thp(struct folio *folio, struct vm_fault *vmf,
-+		 struct vm_area_struct *vma, unsigned long haddr,
-+		 pgtable_t pgtable)
- 	__releases(vmf->ptl)
- {
--	pmd_t entry;
-+	pmd_t entry, old_pmd;
-+	bool is_pmd_none = pmd_none(*vmf->pmd);
- 
- 	entry = mk_huge_pmd(&folio->page, vma->vm_page_prot);
- 	entry = maybe_pmd_mkwrite(pmd_mkdirty(entry), vma);
- 	folio_add_new_anon_rmap(folio, vma, haddr, RMAP_EXCLUSIVE);
- 	folio_add_lru_vma(folio, vma);
--	pgtable_trans_huge_deposit(vma->vm_mm, vmf->pmd, pgtable);
-+	if (!is_pmd_none) {
-+		old_pmd = pmdp_huge_clear_flush(vma, haddr, vmf->pmd);
-+		if (pmd_uffd_wp(old_pmd))
-+			entry = pmd_mkuffd_wp(entry);
-+	}
-+	if (pgtable)
-+		pgtable_trans_huge_deposit(vma->vm_mm, vmf->pmd, pgtable);
- 	set_pmd_at(vma->vm_mm, haddr, vmf->pmd, entry);
- 	update_mmu_cache_pmd(vma, vmf->address, vmf->pmd);
- 	add_mm_counter(vma->vm_mm, MM_ANONPAGES, HPAGE_PMD_NR);
--	mm_inc_nr_ptes(vma->vm_mm);
-+	if (is_pmd_none)
-+		mm_inc_nr_ptes(vma->vm_mm);
- 	spin_unlock(vmf->ptl);
- 	__thp_fault_success_stats(vma, HPAGE_PMD_ORDER);
- }
-@@ -1577,6 +1585,47 @@ void huge_pmd_set_accessed(struct vm_fault *vmf)
- 	spin_unlock(vmf->ptl);
- }
- 
-+static vm_fault_t do_huge_zero_wp_pmd_locked(struct vm_fault *vmf,
-+					     unsigned long haddr)
-+{
-+	struct vm_area_struct *vma = vmf->vma;
-+	gfp_t gfp = vma_thp_gfp_mask(vma);
-+	struct folio *folio = NULL;
-+	vm_fault_t ret;
-+
-+	ret = thp_fault_alloc(gfp, HPAGE_PMD_ORDER, vma, haddr, &folio,
-+			      vmf->address);
-+	if (ret)
-+		goto unlock;
-+	ret = check_stable_address_space(vma->vm_mm);
-+	if (ret)
-+		goto unlock;
-+	map_pmd_thp(folio, vmf, vma, haddr, NULL);
-+	return 0;
-+
-+unlock:
-+	spin_unlock(vmf->ptl);
-+	return ret;
-+}
-+
-+static vm_fault_t do_huge_zero_wp_pmd(struct vm_fault *vmf, unsigned long haddr)
-+{
-+	struct vm_area_struct *vma = vmf->vma;
-+	struct mmu_notifier_range range;
-+	vm_fault_t ret = 0;
-+
-+	mmu_notifier_range_init(&range, MMU_NOTIFY_CLEAR, 0, vma->vm_mm, haddr,
-+				haddr + HPAGE_PMD_SIZE);
-+	mmu_notifier_invalidate_range_start(&range);
-+	vmf->ptl = pmd_lock(vma->vm_mm, vmf->pmd);
-+	if (likely(pmd_same(pmdp_get(vmf->pmd), vmf->orig_pmd)))
-+		ret = do_huge_zero_wp_pmd_locked(vmf, haddr);
-+	else
-+		spin_unlock(vmf->ptl);
-+	mmu_notifier_invalidate_range_end(&range);
-+	return ret;
-+}
-+
- vm_fault_t do_huge_pmd_wp_page(struct vm_fault *vmf)
- {
- 	const bool unshare = vmf->flags & FAULT_FLAG_UNSHARE;
-@@ -1589,8 +1638,15 @@ vm_fault_t do_huge_pmd_wp_page(struct vm_fault *vmf)
- 	vmf->ptl = pmd_lockptr(vma->vm_mm, vmf->pmd);
- 	VM_BUG_ON_VMA(!vma->anon_vma, vma);
- 
--	if (is_huge_zero_pmd(orig_pmd))
-+	if (is_huge_zero_pmd(orig_pmd)) {
-+		vm_fault_t ret = do_huge_zero_wp_pmd(vmf, haddr);
-+
-+		if (!(ret & VM_FAULT_FALLBACK))
-+			return ret;
-+
-+		/* Fallback to splitting PMD if THP cannot be allocated */
- 		goto fallback;
-+	}
- 
- 	spin_lock(vmf->ptl);
- 
-diff --git a/mm/memory.c b/mm/memory.c
-index 3c01d68065be..c081a25f5173 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -5409,9 +5409,10 @@ static inline vm_fault_t wp_huge_pmd(struct vm_fault *vmf)
- 	if (vma_is_anonymous(vma)) {
- 		if (likely(!unshare) &&
- 		    userfaultfd_huge_pmd_wp(vma, vmf->orig_pmd)) {
--			if (userfaultfd_wp_async(vmf->vma))
-+			if (!userfaultfd_wp_async(vmf->vma))
-+				return handle_userfault(vmf, VM_UFFD_WP);
-+			if (!is_huge_zero_pmd(vmf->orig_pmd))
- 				goto split;
--			return handle_userfault(vmf, VM_UFFD_WP);
- 		}
- 		return do_huge_pmd_wp_page(vmf);
- 	}
--- 
-2.30.2
+>
+> > +
+> > +allOf:
+> > +  - $ref: "reserved-memory.yaml"
+>
+> It does not look like you tested the bindings, at least after quick
+> look. Please run  (see
+> Documentation/devicetree/bindings/writing-schema.rst for instructions).
+> Maybe you need to update your dtschema and yamllint.
 
+You're right, sorry.
+
+>
+> > +
+> > +properties:
+> > +  compatible:
+> > +    const: linaro,restricted-heap
+> > +
+> > +  reg:
+> > +    description:
+> > +      Region of memory reserved for OP-TEE SDP feature
+> > +
+> > +  no-map:
+> > +    $ref: /schemas/types.yaml#/definitions/flag
+> > +    description:
+> > +      Avoid creating a virtual mapping of the region as part of the OS=
+'
+> > +      standard mapping of system memory.
+> > +
+> > +unevaluatedProperties: false
+>
+> This goes after "required:" block.
+
+OK
+
+>
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +  - no-map
+> > +
+> > +examples:
+> > +  - |
+> > +  reserved-memory {
+> > +    #address-cells =3D <2>;
+> > +    #size-cells =3D <2>;
+> > +
+> > +    sdp@3e800000 {
+> > +      compatible =3D "linaro,restricted-heap";
+> > +      no-map;
+> > +      reg =3D <0 0x3E800000 0 0x00400000>;
+>
+> lowercase hex
+>
+
+OK
+
+
+Thanks,
+Jens
+
+> Best regards,
+> Krzysztof
+>
 
