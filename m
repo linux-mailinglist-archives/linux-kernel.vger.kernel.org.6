@@ -1,99 +1,111 @@
-Return-Path: <linux-kernel+bounces-308202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1A79965898
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 09:32:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30D0B96589E
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 09:32:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F514287F07
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 07:32:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E10942875C4
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 07:32:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42E481581EB;
-	Fri, 30 Aug 2024 07:31:28 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1A1C165F04;
+	Fri, 30 Aug 2024 07:31:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XhrmPKcj"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2C6713632B
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 07:31:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F070156668
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 07:31:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725003087; cv=none; b=sQG+btx4ySi+oU9xAMqn7z14C9BROXmvI53hVSE7xI2dha5EUC+FV6H7PqX2LaUxlS8Jm/VZT8m8L5qD+NMyV5kqpmLbe3LtOBUqsSRZzS3OAmQnPfuZz3azNsv86IKwlg5Gkt0KcYGWJKqa0gizwoD3sfwB2ubMkwm4vhM+B4k=
+	t=1725003111; cv=none; b=QTJ+tbkUyUkKuLLkvRy+ewmNrXGhj2JgXNWsuRpxDu6E8L5zZdV1MK1x2Niyl84SKOnAv2R0n2fsjrbZ/NYzuCac1vfGtszLfY1n9dCrRpQmD32k/rWIsursObgYxD3LsiN+NhR24gvEG7bbhhNkEQbuvgfVwOf6hVXVhEVRVCE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725003087; c=relaxed/simple;
-	bh=f2CXaZ7kFJEKY/8Eh5PZaP4Xu3ad0gz/EM/05oCdOk4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gkV/qZ4U5JD0SG4fy5hUN+uEQNxOxyzAS/Sm/zTrOR29pY8jh3iAgADIMr43owIwIoW0DcuyFIg1pW3LmngKoV/7HUP0jpzjkPg2+1GR0kq0kH53JYLoc8z6Dhz6mHe3WE1KegOj5Zt5My9o2Qd3X7rHQbKVmaM5oE7xB924r7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sjw6D-0004kD-R1; Fri, 30 Aug 2024 09:31:13 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sjw6C-0046AF-Fm; Fri, 30 Aug 2024 09:31:12 +0200
-Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sjw6C-00EQow-1C;
-	Fri, 30 Aug 2024 09:31:12 +0200
-Date: Fri, 30 Aug 2024 09:31:12 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Stefan Eichenberger <eichest@gmail.com>
-Cc: kernel@pengutronix.de, andi.shyti@kernel.org, shawnguo@kernel.org,
-	s.hauer@pengutronix.de, festevam@gmail.com, Frank.Li@nxp.com,
-	francesco.dolcini@toradex.com, linux-i2c@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Stefan Eichenberger <stefan.eichenberger@toradex.com>
-Subject: Re: [PATCH v2 2/4] i2c: imx: separate atomic, dma and non-dma use
- case
-Message-ID: <ZtF1QBjbBtN7N4Oh@pengutronix.de>
-References: <20240819072052.8722-1-eichest@gmail.com>
- <20240819072052.8722-3-eichest@gmail.com>
+	s=arc-20240116; t=1725003111; c=relaxed/simple;
+	bh=/BF3Mtwg6srczrK0gXdSoxW7WjXjan/9I5SDH1dgtos=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NlfsNoHUj3ReXK3G8K1I941PZwNib8y6yU+5ZV4Ymc8sj5Ol3vTUGWiaa+jxKhh4L85E6dFHu750glRf9+F8EIckvLZmv/xC37HICcv0nrytc8hXjChW2YiHu7lhxSF4fb16QhoI8u97Hb/av4JttevmDi1AuZ6Ul62T1RKXeWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XhrmPKcj; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-53436e04447so1657763e87.1
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 00:31:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725003107; x=1725607907; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WnQ9t5Rq6Ye4qiPnOnfkP6uRSdsutN06WdOcZC3ZNb8=;
+        b=XhrmPKcjXPLqQi7IKVU0ZxQn5GK1Q47KEw+7F2aYT1cUnyChkNqODsOvMcNRXdSaSq
+         ZKUTSy+OgMhT311zo7UAwaw3IBXXH6zAcEyp2InvA14VWZPr5jyx2J6yT0tuYLIujOxK
+         tWz0xLQbz5Xbres6Ce8Ft4k8UwDoHKiCgCatnovxblvop9kLGVjs5JicXjvHAqhbAR1I
+         mypNKeXJPBwW4Ba3wOZ2uJFFh1wjoNsoJXFjOy63OEJIZFxlbrfgSigSmhC1p6cHwwcf
+         lsTqGBurMwMTon5MUizKMs5o6d4j2hAJABJNbTKopUKpY69Z+FkK6W0I5UZ+t4gKS35E
+         /bOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725003107; x=1725607907;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WnQ9t5Rq6Ye4qiPnOnfkP6uRSdsutN06WdOcZC3ZNb8=;
+        b=AJS4imY11/IO/dFHMp+mTsraGp2C4uaEqZqc9SZHjiEJiPlANIX4QmYFJRCIKHHyHy
+         eFL1LHuKpe1sUJH0+OfLLcIdaOe69e+0H/rzNOeEQ0QN6pjuBHriAMVfghq5ekwO/ItV
+         mo7PfaxNOoL+2sVhZhiTr080SNwhsLAeyong09xGsqR/8BQWQVfYl1AWNY6/sVSo323e
+         R8OIbjY3vTBRwmdnfz0CAQOx3YannxX9I2wmVHhwh1r0BqcFAynEO+MoZWOGGgL6AuS3
+         7NX/Mpbp0R0lgYQhYTY2sWX8eFrWsEg51Svgay2nmMlfvez7WfI2bk5thmmNEduw6vfI
+         g5LQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUOIj1dW+WaPnYKML0HlQkVv+T9ebVJFIu1zfU0ZUG4tFPYWG3/WesetG7QZ7xw1eP/NdGZF8dQVwWtSxs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfAZnbyRM3aCNrUtBZbNg/tQDKM/np6JpUAQJGhhGW+0vIDwLS
+	ENxCxOBvm84v4DOwG64gb3QH6UGxJw7eimRdS7wDuSIJJ1/KLQbB0lMikynFykgnfuMI8sFZgLc
+	RWcKL9xsNmPAIJM3H4fnqq2i83cU6IZqdKuj4tQ==
+X-Google-Smtp-Source: AGHT+IEy6GDdzZX832XifIDiNs5ko5Dg6wvMflkVB0YvEDS8bSkJzhZUdu4FTj8dRQ0wPTZdoBdg/6GpBHq0+WQefyE=
+X-Received: by 2002:a05:6512:234e:b0:52f:c398:8780 with SMTP id
+ 2adb3069b0e04-535463273bbmr436517e87.18.1725003106843; Fri, 30 Aug 2024
+ 00:31:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240819072052.8722-3-eichest@gmail.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+References: <20240827122011.30158-1-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20240827122011.30158-1-krzysztof.kozlowski@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 30 Aug 2024 09:31:35 +0200
+Message-ID: <CACRpkdbdATtCC_c+daHgzjX7ZsD=sS6gxztubkG28_7Fop+Xhg@mail.gmail.com>
+Subject: Re: [GIT PULL] pinctrl: samsung: drivers for v6.12
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Sylwester Nawrocki <snawrocki@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Peter Griffin <peter.griffin@linaro.org>, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 19, 2024 at 09:19:08AM +0200, Stefan Eichenberger wrote:
-> From: Stefan Eichenberger <stefan.eichenberger@toradex.com>
-> 
-> Separate the atomic, dma and non-dma use case as a preparation step for
-> moving the non-dma use case to the isr to avoid rescheduling while a
-> transfer is in progress.
-> 
-> Signed-off-by: Stefan Eichenberger <stefan.eichenberger@toradex.com>
-> Reviewed-by: Frank Li <Frank.Li@nxp.com>
+On Tue, Aug 27, 2024 at 2:20=E2=80=AFPM Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
 
-I would prefer to rename i2c_imx_start_read() to i2c_imx_prepare_read()
-With this change: Acked-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f01=
+7b:
+>
+>   Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
+>
+> are available in the Git repository at:
+>
+>   https://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/samsung.git tag=
+s/samsung-pinctrl-6.12
+>
+> for you to fetch changes up to 39dbbd4e6778ac5580313ba34409855250633c61:
+>
+>   pinctrl: samsung: Use kmemdup_array instead of kmemdup for multiple all=
+ocation (2024-08-23 15:40:55 +0200)
 
-Thank you!
+Pulled into my devel branch for v6.12!
 
-Regards,
-Oleksij
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Thanks a lot Krzysztof, excellent work as always.
+
+Yours,
+Linus Walleij
 
