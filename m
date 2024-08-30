@@ -1,144 +1,117 @@
-Return-Path: <linux-kernel+bounces-308261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 942D696597F
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:07:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE511965982
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:08:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B936B256D6
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 08:07:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BFFE1F23E9F
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 08:08:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A18F16A95A;
-	Fri, 30 Aug 2024 08:07:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0393D16D4E5;
+	Fri, 30 Aug 2024 08:07:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AX3msNia"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JgqgEnA1"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72DE3380;
-	Fri, 30 Aug 2024 08:07:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F40516D325
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 08:07:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725005243; cv=none; b=jL+pPacjc4T8m1ZTVZdzfKnsK7Fn++uotrWROQY7x1nW4C/uNumb7cpCkDeE7u3LGVDL39t0PiphS34OXfVrCpxSzQJE5p7bDQEvMcPgeHt4T2+VatSI+AChKqY0xakiYvPlcre14+ADsbewnmFOR9149I9D7MbHhAhngE1QV9Y=
+	t=1725005250; cv=none; b=nYVTnFCC/kkRDUvOUSxWrH/ZCuLhEZpY5FHFbeUoCmUT93Gbx/cOMMfzxvpQ+R/u8TozOWB7p8jDv7OMK3yvlxYcsFF01Ox1u/npB3MYNxmzNq5fLYXWGt6qRPK62aBQPjrXctL8j2squZtWNygWlHSfkS8E+/xkndL5OY3PjbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725005243; c=relaxed/simple;
-	bh=oLHU393aOI74one4bM2/16vkRyntHkVb7AeFOSEhgM0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=V1saoaiwptyuzQuvUYe/Ircg6P5bbtjQ0rFredcdBYve9ez8OVL6uNXCAPwIZaWyVG6f5VtwsTDq/49IoDL/K7fI1Lsfw0KYgV/MIh/UhtGDlp3B+dwnK1S+Mja4dW8dey0ejwZBTTe3gaDjubXPyKQqadzht8XhzL0UBjP+Er4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AX3msNia; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2ECE4C4CEC2;
-	Fri, 30 Aug 2024 08:07:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725005243;
-	bh=oLHU393aOI74one4bM2/16vkRyntHkVb7AeFOSEhgM0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=AX3msNiaJREpa3GNaGSE2/Ap92b3xaKP+PesYvUjG0UVT5v+Va2M4OAt+uszuErH3
-	 LeZ7V181uC1LcGtD/YUvCtxCC7nltsA5aMADF5+znjdIJox6UVmcfzX07SXLjtnn6e
-	 qcO0V7nEzegISJ5dYDhzfOZ8NpA7idzH14RxHrSHhrol9pAUmUlDR64tEgr8a16y/v
-	 XneZIQhpI6jUghQHqYxUH2RDqNjBkUmLcPBPsjBE7OOM/zqIWg/Uv5K7Yvt03O5tbQ
-	 9VV9tNlidrMOO7O7h9JBO6ItE+hZcXpMV2/UPpKcGP7ad6C7WNG9krUValbjShO/it
-	 yi4x0vR8HRCvw==
-Message-ID: <650ec430-715a-41d5-bbac-15dece73c632@kernel.org>
-Date: Fri, 30 Aug 2024 10:07:19 +0200
+	s=arc-20240116; t=1725005250; c=relaxed/simple;
+	bh=djhJwdPEBClU58p/NBjRr2izhAJvns+9St76RaABT5A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uufVZpZEgk8gPRmaAsp+frG57J9kwYdkqgnFcZclqasExzZMOH42Y7rg1NdP9GYe9N7Y3QaOADnr4tEOdASSVEDHUyQvNWI89jC/6g8HbFLkwVFzVXEp2XXr/CZIBt4/LUer5YgHUA0xtcVKWnzyyWuA3Mwk4RVf2zbZxFyxxXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JgqgEnA1; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2f3f90295a9so16850961fa.0
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 01:07:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725005247; x=1725610047; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=eF2+sx/rSYChOj/2mau28Wj23L44k4ntysCb18YnwTo=;
+        b=JgqgEnA1GPu7FZrOeNdQmoRqABnpwiHSzp3d7emwxHIRj9Wgnzq6PBGDNmnnBzmYYL
+         x3LJwz+R7IBqQ40+k3rKDXrIJ88L3napEvpMBG+7wMkS2FNPZRZXM5omkQn5btl7byXt
+         qpIYkacHPwzKEkgCY2knnkHGpf6kJVKT/dt/oq2RMflfVwM+9JDSPAa54gjP6AlAI+aY
+         4/8cLkk7IBqihSjKWPzqJcf/8pWJ5uZrRT2yAC/37o6f+43adSwwhD9iEgTnftbJMdbU
+         Cw9sfjNnx6ssKHEl3igS+VacFhu7r8gc+Vjq1U5UKET8ln8qTBjtXr/+GHXIM2Itzv1g
+         A0BA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725005247; x=1725610047;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eF2+sx/rSYChOj/2mau28Wj23L44k4ntysCb18YnwTo=;
+        b=Acdl/bOo7PgSFap7N1zNheiHSjQXpTy9d4sYW+GV8h0SyK0kqmWra7nXHCRamXglqj
+         J9Bs3ZIvEz6Tqy84Xb1D0hDm1Fz3V7c/Krx7E51ebkSDhExM/7sd5JfS9XpXYImrA3QN
+         aFpGvZN4u3cMhOeAOV2aSPNLjEHlbdBACDmgN1C6AD8f+VreJrDDnxJ/J3IzB2hxMWro
+         Q2dGkx7jbEfxz7LT1lIdITNpfU90bXtZhMDQYpqysdR2De0c3KUraaSwAbgT9A5RyZeX
+         sYQtrsZOwxAJrAUG2eSN7Xn9brVLNV0aurtdxus2EsHTitoqqbHGGgS/ViobxmLKKM3n
+         fKyw==
+X-Forwarded-Encrypted: i=1; AJvYcCXSiGL3TkPhfa0Wo/x64omW5Wzp33UNU0tNrsQpeEBNats8w00dTvdDgxMYg5HPMLyAIAC3IZPoT+K/Rgc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMBRoQkcRfY1oN8Gbcrxgm/ru9bG2LsfBbGhZqjJ48QSspCrx2
+	qMo3v125Lu3a5NsCBfEU3z1pacPSpxwvXjTAhk+c0BHapuyccS5pwhpRbsXtYdo=
+X-Google-Smtp-Source: AGHT+IGLGyFncOCO8wysxVTyS2DCKX0ca/6jgHo5yOoDP9+DIjbDvXHAA6oekjEyFn5hFdhhY5PoUA==
+X-Received: by 2002:a2e:701:0:b0:2ef:27ab:40e6 with SMTP id 38308e7fff4ca-2f61055b5d9mr33274671fa.49.1725005246070;
+        Fri, 30 Aug 2024 01:07:26 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f614f4ac91sm5326961fa.72.2024.08.30.01.07.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Aug 2024 01:07:25 -0700 (PDT)
+Date: Fri, 30 Aug 2024 11:07:23 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: srinivas.kandagatla@linaro.org
+Cc: broonie@kernel.org, perex@perex.cz, tiwai@suse.com, 
+	alsa-devel@alsa-project.org, linux-arm-msm@vger.kernel.org, linux-sound@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, amit.pundir@linaro.org
+Subject: Re: [PATCH v2] ASoC: codecs: lpass-va-macro: set the default codec
+ version for sm8250
+Message-ID: <rlb53soai6dhhfcnpwmdyqgblsbofngh2ewub6hphh2d43oofy@arcqq7edrm6c>
+References: <20240816091210.50172-1-srinivas.kandagatla@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] tty: serial: ma35d1: Simplify with dev_err_probe()
-To: Yu Jiaoliang <yujiaoliang@vivo.com>, Jacky Huang <ychuang3@nuvoton.com>,
- Shan-Chun Hung <schung@nuvoton.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
-Cc: opensource.kernel@vivo.com
-References: <20240829085316.3144246-1-yujiaoliang@vivo.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240829085316.3144246-1-yujiaoliang@vivo.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240816091210.50172-1-srinivas.kandagatla@linaro.org>
 
-On 29/08/2024 10:53, Yu Jiaoliang wrote:
-> Error handling in probe() can be a bit simpler with dev_err_probe().
+On Fri, Aug 16, 2024 at 10:12:10AM GMT, srinivas.kandagatla@linaro.org wrote:
+> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 > 
-> Signed-off-by: Yu Jiaoliang <yujiaoliang@vivo.com>
+> sm8250 and sc7280 have lpass codec version 1.0, as these are very old
+> platforms, they do not have a reliable way to get the codec version
+> from core_id registers.
+> 
+> On codec versions below 2.0, even though the core_id registers are
+> available to read, the values of these registers are not unique to be
+> able to determine the version of the codec dynamically.
+> 
+> Add the version info into of_data, so that driver does not need to use
+> core_id registers to get version number for such situations.
+> 
+> Fixes: 378918d59181 ("ASoC: codecs: lpass-macro: add helpers to get codec version")
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 > ---
->  drivers/tty/serial/ma35d1_serial.c | 7 +++----
->  1 file changed, 3 insertions(+), 4 deletions(-)
+> Changes since v1:
+> 	- updated commit text to add more details
 > 
-> diff --git a/drivers/tty/serial/ma35d1_serial.c b/drivers/tty/serial/ma35d1_serial.c
-> index 3b4206e815fe..09d42a4054b3 100644
-> --- a/drivers/tty/serial/ma35d1_serial.c
-> +++ b/drivers/tty/serial/ma35d1_serial.c
-> @@ -692,10 +692,9 @@ static int ma35d1serial_probe(struct platform_device *pdev)
->  		return -ENODEV;
->  
->  	ret = of_alias_get_id(pdev->dev.of_node, "serial");
-> -	if (ret < 0) {
-> -		dev_err(&pdev->dev, "failed to get alias/pdev id, errno %d\n", ret);
-> -		return ret;
-> -	}
-> +	if (ret < 0)
-> +		return dev_err_probe(&pdev->dev, ret, "failed to get alias/pdev id\n");
+>  sound/soc/codecs/lpass-va-macro.c | 11 ++++++++++-
+>  1 file changed, 10 insertions(+), 1 deletion(-)
+> 
 
-This is kind of silly... You change part which cannot defer, but you
-leave second dev_err() intact which actually would benefit from handling
-defer and dev_err_probe().
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-You either do not understand the function at all or you split patches in
-some artificial, fake way just to generate multiple patches.
-
-That's pointless.
-
-Best regards,
-Krzysztof
-
+-- 
+With best wishes
+Dmitry
 
