@@ -1,207 +1,88 @@
-Return-Path: <linux-kernel+bounces-308559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D13A2965ED0
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:21:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14607965ED2
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:22:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5547C1F28BB5
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:21:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 784F9B2758E
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:22:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CD4F17C9F9;
-	Fri, 30 Aug 2024 10:15:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8037A17E019;
+	Fri, 30 Aug 2024 10:15:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="v6cvODdy"
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="aBFJJW+r"
+Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEA2F17C7B6
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 10:15:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5A4F17C9F1
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 10:15:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725012912; cv=none; b=PNkFrrDZZzly+wIPrHaf3e4xwagb4Zpjg8lLTiFkxw7O6FAajHf2A5VBXnldXjf/IdW4Z7LqJ3l/mPoj5O477TYzpJY/znI19iOc5H6ZYQ2VfbthpDEcKsQWb7pcIr9tzDiSXLu6mvX9q0ZV8oLXeurKN80AskKBiDB9JsAI11k=
+	t=1725012913; cv=none; b=aa6XIwBP4NhuEeuKM2EsWU2ISWt4ZZFMI30AQaFQWl2dwaH9R0Pwdb4V5+IZBZ8GNpud1Mp3FI+YPEP2BhQL1UD6nBzkzkrTd+UfD+LnPNtBFe9y7VC9BG7Ms6nhL1+H9OqVgn/vEgnboH/osWosm+dSk6N4GpXWdtzY52NQh50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725012912; c=relaxed/simple;
-	bh=WKHyjE3GWAJVo9iMvBZPS4A1pN7WDzTJ8ZSgL8cSjms=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YqE7oNQAw/oF6iUHFhz0NMtforslBCIEioMZV9Fpx7LO14ThD4AVoFtC2eWTlmJWVgWIcpMwvBs2jyG4jdcNL5IgdvEQgz+9/rnvncmMvhHAGFtWf+ZAzemALv1ihl0NgdWSXAlNkxu0sbgiltK3fxQIaVc+ns0TXxalfWJQeeo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=v6cvODdy; arc=none smtp.client-ip=209.85.219.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e115c8aa51fso1740538276.1
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 03:15:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725012909; x=1725617709; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=UwkZJIL6lWhl6ByZiDGKwgiO886aZ7Ma/SrA3D4RrxQ=;
-        b=v6cvODdys7plPt3vu8Eqr0XhICPBTt88oMP6Ko8Al5fdivava+zdXj1xvS/gyXExTI
-         ZVm/1iwRG0TWtHZhTDrEddWmvm3CXqDcGx9dnWEuPytTmEYALrPDvzXHhu+ra2ogzu6N
-         XDiz7pG5A/ZmSjw5PB3NkqvNhGrQVjPy5FD5VUJjBZ0oDydmI6FRsm52b1ewYrq9fsft
-         mluuIsoVQXvU9mC5P+CT2K2BLEfYs/7RzNn2PHxzji5A4jmIrX4HdJWoVRUjddgCC8/v
-         mXji55ZTMyM5A/JqXlfsI8zxve7NxUW+2KkyTuA/qg5DejTMOti/W3PBzHidY04pKb7L
-         ZnxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725012909; x=1725617709;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UwkZJIL6lWhl6ByZiDGKwgiO886aZ7Ma/SrA3D4RrxQ=;
-        b=TgSZ7gjUrnnMh0vX2R+XUnmtAem9awyLo2QSNw6GjLLhBosC0bOCalEzwwPe5rR+fa
-         gQZ+WdZhNJbYI+ZJ9GGaPh5mSm+CdK1Ba/ksXmUrKpsIDrkDQ+Ve3pwVWIJ6dZhyCt5x
-         cHghBY0EsNcH/ctJLAw7Mrs+MaOEa7DnQkHkx9qdIBGXBiLQ+G/nfiEro/RGXAKW6YiH
-         KnbG7WFoq+L92uKMiv2zec8X5ttQEIfySA6IphftLURARjwknOMxudNF3rorTBRVfsVQ
-         npqj39ZzsHPK6zGDI/MRfjyJTiCwGBsNoFE2JnOgk8HqLdm8IlSEx/sdeVcpOJ6cyJmf
-         8E9w==
-X-Forwarded-Encrypted: i=1; AJvYcCXufWrnQ50cqgaAMGacJ0912RTuQsdWbjgXZIHNrX1SBbqxS6fM6XgJDQBVzN9ttzoslP2kUzGzzSNRnIw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3139odBHzKmBWaH6BodtoA9/12JM4Ps2dHBUPY/OTq+VTg+1V
-	e0tyWuDVQE6kp1zMRtYAl2kbCE+Er/UPTO2z9hiWbs4jvxLaebwiITRpvQ9nU+n//3vO+noxhab
-	hEcAL9tEkjZtqjP9MwsPYcRyv6p3dAA0o8JKyrw==
-X-Google-Smtp-Source: AGHT+IENC1Eou3o76ET+fArBcJHz5tLkQ1M6jag1cqYy++ImNouJ6bItdx2SVPKjxSeyzrzWnSwjb3NJLNY42U4Z7/o=
-X-Received: by 2002:a05:6902:1384:b0:e0e:cb25:c413 with SMTP id
- 3f1490d57ef6-e1a7a1d369emr1888445276.52.1725012909519; Fri, 30 Aug 2024
- 03:15:09 -0700 (PDT)
+	s=arc-20240116; t=1725012913; c=relaxed/simple;
+	bh=ZR+3QqzT/pKEtLj8xun3aa5haR+iOhO+Azte1KQgwqM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=M+dw/kLYyh2wRBtgq0eOzy+NuD4om3p/Ss44y0N1qRyzvjbnL4ZOE0lMoHWvEapyXCwlRZ9UwC5fr+siMyw7lQ++YFgLdbBxOIQSv3J4CNSrhO4GKhktnGYwfMySjDlUT1dqD0wLUYJ6NZw0CtpuaWYPgyakbQYq0Fr1vGIGDs8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=aBFJJW+r; arc=none smtp.client-ip=95.215.58.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <5f4990d1-1734-41f6-b54f-5e44c370410e@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1725012909;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZR+3QqzT/pKEtLj8xun3aa5haR+iOhO+Azte1KQgwqM=;
+	b=aBFJJW+rGylYQv56Yqwe/cCk8clZLd/IQ77nLAo26VOGn0PidhGsCe7YZ24aAZzztQYlzx
+	KqractwJnuI/JIyrX5Wa5wlR7YrknMjP9Su/sovSNUJ2h0qNzI4uPQMFKIf99d5iaBhsAH
+	ZWcyZGiKHcaRHbw+iochG2819DjnlJI=
+Date: Fri, 30 Aug 2024 18:15:00 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240822152801.602318-1-claudiu.beznea.uj@bp.renesas.com>
- <CAPDyKFrS4Dhd7DZa2zz=oPro1TiTJFix0awzzzp8Qatm-8Z2Ug@mail.gmail.com> <99bef301-9f6c-4797-b47e-c83e56dfbda9@tuxon.dev>
-In-Reply-To: <99bef301-9f6c-4797-b47e-c83e56dfbda9@tuxon.dev>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Fri, 30 Aug 2024 12:14:33 +0200
-Message-ID: <CAPDyKFrVS2vpsJqTvjKCJ7ADqXc4D4k2eeCBsaK4T+=pXDnKUA@mail.gmail.com>
-Subject: Re: [PATCH 00/16] Add initial USB support for the Renesas RZ/G3S SoC
-To: claudiu beznea <claudiu.beznea@tuxon.dev>
-Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, p.zabel@pengutronix.de, geert+renesas@glider.be, 
-	magnus.damm@gmail.com, gregkh@linuxfoundation.org, mturquette@baylibre.com, 
-	sboyd@kernel.org, yoshihiro.shimoda.uh@renesas.com, 
-	biju.das.jz@bp.renesas.com, linux-phy@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-usb@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
-	linux-pm@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH] docs/zh_CN: add the translation of kbuild/gcc-plugins.rst
+To: Dongliang Mu <mudongliangabcd@gmail.com>
+Cc: Dongliang Mu <dzm91@hust.edu.cn>, Alex Shi <alexs@kernel.org>,
+ Yanteng Si <siyanteng@loongson.cn>, Jonathan Corbet <corbet@lwn.net>,
+ Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling
+ <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
+ hust-os-kernel-patches@googlegroups.com, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+References: <20240828074305.314666-1-dzm91@hust.edu.cn>
+ <04184aa1-475e-4e1f-9e05-21f59a0787d3@linux.dev>
+ <2e6e368f-0f2a-4724-892e-06cfe3fba97e@linux.dev>
+ <CAD-N9QUBwM-Y1pwEiu5sLGaVVxL_taj-EBYnjUuc4k2hyJ2xbw@mail.gmail.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: YanTeng Si <si.yanteng@linux.dev>
+In-Reply-To: <CAD-N9QUBwM-Y1pwEiu5sLGaVVxL_taj-EBYnjUuc4k2hyJ2xbw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, 30 Aug 2024 at 10:22, claudiu beznea <claudiu.beznea@tuxon.dev> wrote:
->
-> Hi, Ulf,
->
-> On 29.08.2024 18:26, Ulf Hansson wrote:
-> > On Thu, 22 Aug 2024 at 17:28, Claudiu <claudiu.beznea@tuxon.dev> wrote:
-> >>
-> >> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> >>
-> >> Hi,
-> >>
-> >> Series adds initial USB support for the Renesas RZ/G3S SoC.
-> >>
-> >> Series is split as follows:
-> >>
-> >> - patch 01/16           - add clock reset and power domain support for USB
-> >> - patch 02-04/16        - add reset control support for a USB signal
-> >>                           that need to be controlled before/after
-> >>                           the power to USB area is turned on/off.
-> >>
-> >>                           Philipp, Ulf, Geert, all,
-> >>
-> >>                           I detailed my approach for this in patch
-> >>                           04/16, please have a look and let me know
-> >>                           your input.
-> >
-> > I have looked briefly. Your suggested approach may work, but I have a
-> > few thoughts, see below.
-> >
-> > If I understand correctly, it is the consumer driver for the device
-> > that is attached to the USB power domain that becomes responsible for
-> > asserting/de-asserting this new signal. Right?
->
-> Right!
->
-> >
-> > In this regard, please note that the consumer driver doesn't really
-> > know when the power domain really gets powered-on/off. Calling
-> > pm_runtime_get|put*() is dealing with the reference counting. For
-> > example, a call to pm_runtime_get*() just makes sure that the PM
-> > domain gets-or-remains powered-on. Could this be a problem from the
-> > reset-signal point of view?
->
-> It should be safe. From the HW manual I understand the hardware block is
-> something like the following:
->
->
->                   USB area
->          +-------------------------+
->          |                         |
->          | PHY --->USB controller  |
-> SYSC --> |  ^                      |
->          |  |                      |
->          | PHY reset               |
->          +-------------------------+
->
-> Where:
-> - SYSC is the system controller that controls the new signal for which
->   I'm requesting opinions in this series
-> - PHY reset: is the block controlling the PHYs
-> - PHY: is the block controlling the USB PHYs
-> - USB controller: is the USB controller
->
-> Currently, I passed the SYSC signal handling to the PHY reset driver; w/o
-> PHY reset the rest of the USB logic cannot work (neither PHY block nor USB
-> controller).
->
-> Currently, the PHY reset driver call pm_runtime_resume_and_get() in probe
-> and pm_runtime_put() in remove. The struct reset_control_ops::{assert,
-> deassert} only set specific bits in registers (no pm_runtime* calls).
 
-Thanks for clarifying!
 
-For my understanding, in what register range do these bits belong? Is
-it the USB logic or in the PM domain logic, or something else.
 
->
-> The PHY driver is taking its PHY reset in probe and release it in remove().
-> With this approach the newly introduced SYSC signal will be
-> de-asserted/asserted only in the PHY reset probe/remove (either if it is
-> handled though PM domain or reset control signal).
->
-> If the SYSC signal would be passed to all the blocks in the USB area (and
-> it would be handled though PM domains) it should be no problem either,
-> AFAICT, because of reference counting the pm_runtime_get|put*() is taking
-> care of. As the PHY reset is the root node the in the devices node tree for
-> USB the reference counting should work, too (I may miss something though,
-> please correct me if I'm wrong).
->
-> If the SYSC signal would be handled though a reset control driver (as
-> proposed in this series) and we want to pass this reference to all the
-> blocks in the USB area then we can request the reset signal as shared and,
-> AFAIK, this is also reference counted. The devices node tree should help
-> with the order, too, if I'm not wrong.
+在 2024/8/30 16:17, Dongliang Mu 写道:
+>>>> +一旦它们的实用性得到验证，目标就是将这些功能添加到 GCC（和
+>>>> Clang）的上游，然后在
+>>>> +所有支持的 GCC 版本都支持这些功能后，再将它们从内核中移除。
+>> 目标是 进上游后 把 功能 移除。
+>> Can we re-polish it here?
+> 一旦它们的实用性得到验证，这些功能将被添加到 GCC（和 Clang）的上游。
+> 随后，在所有支持的 GCC 版本都支持这些功能后，它们会被从内核中移除。
+> How about this?
+Great!
 
-Reference counting a reset signal sounds a bit weird to me, but I
-guess it can work. :-)
-
-To sum up from my side;
-
-As long as it's fine that we may end up asserting/de-asserting the
-reset-signal, without actually knowing if the PM domain is getting
-turn-on/off, then using a reset-control like what you propose seems
-okay to me.
-
-If not, there are two other options that can be considered I think.
-*) Using the genpd on/off notifiers, to really allow the consumer
-driver of the reset-control to know when the PM domain gets turned
-on/off.
-**) Move the entire reset handling into the PM domain provider, as it
-obviously knows when the domain is getting turned on/off.
-
-Thanks again for your explanations!
-
-Kind regards
-Uffe
+Thanks,
+Yanteng
 
