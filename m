@@ -1,141 +1,162 @@
-Return-Path: <linux-kernel+bounces-309577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A085966CFB
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 01:45:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9B2A966CFF
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 01:45:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 518101C22083
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 23:45:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 678962815C6
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 23:45:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1E4A17BB0F;
-	Fri, 30 Aug 2024 23:45:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7542A192587;
+	Fri, 30 Aug 2024 23:45:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XHHAI1eQ"
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="n5E5gcI8"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68A8517C20F
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 23:45:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36FD218F2FA
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 23:45:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725061519; cv=none; b=HImAkLPGFO3vtKzp0offByhVO2iJCFom4MIDH7ch6qIsaECqjk/jb+l2n3RTUDFrvfnmMSoQsOgzNgkXFWYHEGVpcbOs704tuJ0BqZ/ouKmI3US98i77sq3ajQi/SVMvB5/RhQ+E9F7UUZ/azNiCTt1Usiowxq9Q5leS87FnCok=
+	t=1725061520; cv=none; b=TDzNiZgC/+6As2jXF7YKA0Qs/RT3oY6CGBJy9ry6xBirucRHsMxVbCVtux/LsiJypvyxBmkI61eX75nY2rzMkYb6vrFILtWGC+ddcXqHUDADrW+W2xBwjXVbIo9MfHUTARs8nuG6Tx9SJh4hwBr46Ge6NH8u3k7Z2ZmiHWNKc80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725061519; c=relaxed/simple;
-	bh=BJrJHWK2hrRviWc8RTcAUobYhqxsaxKanbop8FqZH3w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=P1NrPMouPHeKh+d3XM7ZV4tHH9WZ1Td+h3py2oGD3/bCm/vWiNZZ4NmaFXpIMLBFz++CEfa93WnRpuO9vC7a29odjsyaw0ndo6pSpcdBQHz4F7XZPyhkpERDWO49N4FUUkC7+ZBAFmg8X8M9Ikd+ZvXFP2+a5paxZytpkClQH94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XHHAI1eQ; arc=none smtp.client-ip=209.85.128.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6b8d96aa4c3so20148577b3.1
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 16:45:17 -0700 (PDT)
+	s=arc-20240116; t=1725061520; c=relaxed/simple;
+	bh=wMq8fcpcUbfH9RqkPRWJri2Nj7kzPTs23AYrLOXTvkk=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=NJCZN2oBVqqm/8QPSHuoNitmYJRW9EPfK4cqT6szps0mHaO3AhFwLh9yOdSEwxNcnXV+6SoFshnHxFmJZVrYCgrOGm8pAojaa3cDgVoPAavtGMUR97L7ilT9Fa14JPrkWSeG7QmH3J58wIHdPjpiJ1MKAg7SuzX6xCa3UvgjAwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=n5E5gcI8; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-690404fd230so41257037b3.3
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 16:45:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725061516; x=1725666316; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=s6RDRV/2cMLBxQkdzyFPsx7+tarsO2IXXvRThC1aAb4=;
-        b=XHHAI1eQL60aX69x6/I7Zm4WA6bX4rxWBSF+lOSPxKd1r1G+V0SVZZ1/B2QE1cfpff
-         tt+j6SY/wmRRO7BQWtpWZtC3lJScrIPAvAKDN30rvqARw86rDD1b3x7lmH/1qsVzXN2s
-         8LRIvnxRHzSP6Qc/kJwmpHw+spNUmk7uS87VMBOOj3o00/TMQTGRZtC/ggN6GnK8KvdZ
-         K4LQ9qFZLT8/+NT1NNcVoGcE/RBZEhIEd1YIVQZLMJSnXqRY0PLFNNlsATMaxQK0xe0Z
-         1I0j+X8PRuYoWtirH5dMaDhZ6rE7Hj/1/NGRAmdGbGqBryhrjG2LTwue/WtY/5W4papy
-         smQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725061516; x=1725666316;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=google.com; s=20230601; t=1725061518; x=1725666318; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=s6RDRV/2cMLBxQkdzyFPsx7+tarsO2IXXvRThC1aAb4=;
-        b=HhLrkw7oH7x6da5jOySLj3WxtBoFRnUJnS0wi/s9qxLyYFn8PisGgjB22uN13tCzuA
-         ZN+nkxYfpsambDhX8ruRX838nYsDcrlNTliC43/WOfHv34vJFZ9tlJ2qcweNkxVjMKPP
-         CNf7/D39bQUjAMvGl2NthN2Vo+pt8qVWBuGBpvSWGd8MxpseWV7aJNydWGqGtjMpTuFs
-         cUdmF00NwiZpVbgWqHorT8VbhhjRClb22I05EHqFYVJcW2hF7O1RjGJJeqtyUp+R9Df0
-         jHwMv9Tuh2ogStCr2CzINEyGJBE56xIDgM8obNaBFoToHyRrVei18w7k6DNNrai1JA3E
-         SI9A==
-X-Forwarded-Encrypted: i=1; AJvYcCXDmhmMCp1T6TlPME5h9YYFpMLlAfHCHIM1FZIh1f0J1GbKHrOBYUzofpV8/C8czSFOVmTDXOti8dcwDKA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7E39j4XZbcCrSue0Kqw1nGmQTJt30dntFIpalPh/p0MOh+U3Q
-	8JeiJ48FK6wy74AghpTW9WBUhHiwNzXG0VrfetaOG7TSbEdH4ZRFZfRDeKrhh6oIOTmPtejSOUm
-	TwO2UYlnrR9lQG7L+ylyaXcGc7INnr7CvvY3LbA==
-X-Google-Smtp-Source: AGHT+IHfhSbm43+Kc4Ly206lcH17lzoQ0MsCuKhc2fSpqgnSY7QJASQeQlrIK7n1P7aXyz3Fk75oT++EVgArwU/kRyY=
-X-Received: by 2002:a05:690c:660b:b0:6be:28ab:d873 with SMTP id
- 00721157ae682-6d40d88b9e1mr47313387b3.2.1725061516161; Fri, 30 Aug 2024
- 16:45:16 -0700 (PDT)
+        bh=rJOwOLrN9fCKsj31ZOyoET6NEGryeoiVS8pcmwkgvZY=;
+        b=n5E5gcI83b6uAQivqmHbIds7cjNDsSTx3PZ/W+u4/PY/dkjMRvPen6mAwR9wk3cJ14
+         9AMEEPrB6kqbJ5cu2An8sP6HQL0b0PL/4gjFazpS5gs1XdWGvIloIg+27HH+YMUE0NhL
+         zsyHSmKiQfrUelXPXV5KHXZ3KQbb15fp9viAuAxkrHeqEWZxawelKH86+c3d1NqCH9h7
+         iLd0Pgo+6a2xsRZFzapOiFrPbGr1LSUadUur6NMXXoC5YL72GUcyWiE9D+hvfkikmRuh
+         ujJwzxQqZHOcNpTblUoEg9bOd8uwEGyV0iA6o9KXd56sJonojpTH6THnNlFzczqhWo2R
+         0iJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725061518; x=1725666318;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=rJOwOLrN9fCKsj31ZOyoET6NEGryeoiVS8pcmwkgvZY=;
+        b=JOK+WLNw1YZe6b4SptdLdDhzeFgGbAY841UbOIGvRxXOjbLtmSH+t0INBdXmRFZuGn
+         4IExNmsce92nOo49oDRHMdj8nFK8HmKJpxwxUFVFdcEtDbQZoLrzioWve9kzFYno3RwE
+         4ctA5pu5HXczIUMFWlEvr0l8DgqCsbDxFMskgopXc6KqQzk8Z+CEi/twlnbvIOUue9wA
+         t5wOjnPpY3sdoloWU7+oTnu13CsldbX35Gc9lDQBq90eh0xeq5XclH1a6vk725kYZGZ+
+         aIMorpzvuVK5WhFMb7bVuhPUKsKcCPx1mlBhUgEvEhSVS4jpgDiH0um6Ud92MQ8wkMKj
+         rkJA==
+X-Forwarded-Encrypted: i=1; AJvYcCWxltK0VmzOeJDCPlMPQmtG7YE7NliF9MaHb7kAuBChoYnI6IZwsF9E2M6pp6V/ddqrIQ0R6U0U6lxXbLg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLmznnXOylg3U7cSzNxL1zg4QjChYYC7xGlUkNzJOA9cJcr/Qy
+	QLjv6VgXFXBcKgYVWol2KO64FNP2ahVYaEd/nXVl1xWNpJqYtWnyWYt6lAbviyZGFkgF6WW5tEa
+	7UQ==
+X-Google-Smtp-Source: AGHT+IH1lPOudhT62PJGTofQxOruBAiqUYlrCNQI4oNs0c97UCsba7G2Vigk3ybkwDh2sT9EBq08lseCwvI=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:6902:2493:b0:e0e:4350:d7de with SMTP id
+ 3f1490d57ef6-e1a7a1786a0mr6613276.9.1725061518076; Fri, 30 Aug 2024 16:45:18
+ -0700 (PDT)
+Date: Fri, 30 Aug 2024 16:45:16 -0700
+In-Reply-To: <CABgObfZSCZ-dgK3zWao573+RmZSPhnaoMsrify9-48UVhbKVdw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240830-nxp-ptn3222-v2-0-4c6d8535cf6c@linaro.org>
- <20240830-nxp-ptn3222-v2-2-4c6d8535cf6c@linaro.org> <6fcaa893-70a4-44f4-afc0-853799e30774@quicinc.com>
-In-Reply-To: <6fcaa893-70a4-44f4-afc0-853799e30774@quicinc.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Sat, 31 Aug 2024 02:45:05 +0300
-Message-ID: <CAA8EJpoTb_-HtBPv2=FecHvtHYQD4ipqfq3C98ky=qXEXB=_6Q@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] phy: add NXP PTN3222 eUSB2 to USB2 redriver
-To: Song Xue <quic_songxue@quicinc.com>
-Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, linux-phy@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+References: <20240608000639.3295768-1-seanjc@google.com> <20240608000639.3295768-2-seanjc@google.com>
+ <efb9af41-21ed-4b97-8c67-40d6cda10484@redhat.com> <Zr4TPVQ_SNEKyfUz@google.com>
+ <CABgObfZSCZ-dgK3zWao573+RmZSPhnaoMsrify9-48UVhbKVdw@mail.gmail.com>
+Message-ID: <ZtJZjIRdiN8e5_Es@google.com>
+Subject: Re: [PATCH v3 1/8] KVM: Use dedicated mutex to protect
+ kvm_usage_count to avoid deadlock
+From: Sean Christopherson <seanjc@google.com>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Chao Gao <chao.gao@intel.com>, Kai Huang <kai.huang@intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, 31 Aug 2024 at 02:13, Song Xue <quic_songxue@quicinc.com> wrote:
-> On 8/30/2024 4:20 PM, Dmitry Baryshkov wrote:
-> > The NXP PTN3222 is the single-port eUSB2 to USB2 redriver that performs
-> > translation between eUSB2 and USB2 signalling schemes. It supports all
-> > three data rates: Low Speed, Full Speed and High Speed.
+On Thu, Aug 15, 2024, Paolo Bonzini wrote:
+> On Thu, Aug 15, 2024 at 4:40=E2=80=AFPM Sean Christopherson <seanjc@googl=
+e.com> wrote:
 > >
-> > The reset state enables autonegotiation of the PHY role and of the data
-> > rate, so no additional programming is required.
+> > On Wed, Aug 14, 2024, Paolo Bonzini wrote:
+> > > On 6/8/24 02:06, Sean Christopherson wrote:
+> > > > Use a dedicated mutex to guard kvm_usage_count to fix a potential d=
+eadlock
+> > > > on x86 due to a chain of locks and SRCU synchronizations.  Translat=
+ing the
+> > > > below lockdep splat, CPU1 #6 will wait on CPU0 #1, CPU0 #8 will wai=
+t on
+> > > > CPU2 #3, and CPU2 #7 will wait on CPU1 #4 (if there's a writer, due=
+ to the
+> > > > fairness of r/w semaphores).
+> > > >
+> > > >      CPU0                     CPU1                     CPU2
+> > > > 1   lock(&kvm->slots_lock);
+> > > > 2                                                     lock(&vcpu->m=
+utex);
+> > > > 3                                                     lock(&kvm->sr=
+cu);
+> > > > 4                            lock(cpu_hotplug_lock);
+> > > > 5                            lock(kvm_lock);
+> > > > 6                            lock(&kvm->slots_lock);
+> > > > 7                                                     lock(cpu_hotp=
+lug_lock);
+> > > > 8   sync(&kvm->srcu);
+> > > >
+> > > > Note, there are likely more potential deadlocks in KVM x86, e.g. th=
+e same
+> > > > pattern of taking cpu_hotplug_lock outside of kvm_lock likely exist=
+s with
+> > > > __kvmclock_cpufreq_notifier()
+> > >
+> > > Offhand I couldn't see any places where {,__}cpufreq_driver_target() =
+is
+> > > called within cpus_read_lock().  I didn't look too closely though.
 > >
-> > Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
-> > Tested-by: Konrad Dybcio <konradybcio@kernel.org>
-> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > ---
-> >   drivers/phy/Kconfig           |  11 ++++
-> >   drivers/phy/Makefile          |   1 +
-> >   drivers/phy/phy-nxp-ptn3222.c | 123 ++++++++++++++++++++++++++++++++++++++++++
-> >   3 files changed, 135 insertions(+)
-
-[trimmed]
-
-> > +
-> > +MODULE_DESCRIPTION("NXP PTN3222 eUSB2 Redriver driver");
-> > +MODULE_LICENSE("GPL");
+> > Anyways...
 > >
-> The I2C driver just realizes the function on reset and PWR. What about
-> other I2C driver function like I2C interface operations,
+> >   cpuhp_cpufreq_online()
+> >   |
+> >   -> cpufreq_online()
+> >      |
+> >      -> cpufreq_gov_performance_limits()
+> >         |
+> >         -> __cpufreq_driver_target()
+> >            |
+> >            -> __target_index()
+>=20
+> Ah, I only looked in generic code.
+>=20
+> Can you add a comment to the comment message suggesting switching the vm_=
+list
+> to RCU? All the occurrences of list_for_each_entry(..., &vm_list, ...) se=
+em
+> amenable to that, and it should be as easy to stick all or part of
+> kvm_destroy_vm() behind call_rcu().
 
-I don't quite understand what you mean by this. Could you please clarify?
++1 to the idea of making vm_list RCU-protected, though I think we'd want to=
+ use
+SRCU, e.g. set_nx_huge_pages() currently takes eash VM's slots_lock while p=
+urging
+possible NX hugepages.
 
->  auto-suspend,
-
-I think you mean pm_runtime here. It's a valid case, but granted that
-it should stay enabled when USB controller is enabled, the gain should
-be pretty limited. I'll consider a followup patch implementing
-pm_runtime for the sake of being able to disable I2C host if DWC3
-controller disables the PHY.
-
-> remote wakeup,
-
-Not supported by design. PTN3222 doesn't have IRQ pins to report
-events to the host.
-
-> memory maps etc.
-
-huh?
-
->  Who will enable these? I think it is not
-> incomplete I2C driver, if on someday, ptn3222 is used as I2C device.
-
-Well, I'm using it as an I2C device.
-
--- 
-With best wishes
-Dmitry
+And I think kvm_destroy_vm() can simply do a synchronize_srcu() after remov=
+ing
+the VM from the list.  Trying to put kvm_destroy_vm() into an RCU callback =
+would
+probably be a bit of a disaster, e.g. kvm-intel.ko in particular currently =
+does
+some rather nasty things while destory a VM.
 
