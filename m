@@ -1,96 +1,215 @@
-Return-Path: <linux-kernel+bounces-308786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D92669661C6
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 14:31:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE3C69661CB
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 14:31:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 828311F21B75
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:31:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 771E0281F77
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:31:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C685019ABAF;
-	Fri, 30 Aug 2024 12:30:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jkY6uLmv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09CC5192D75;
-	Fri, 30 Aug 2024 12:30:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22930199FBA;
+	Fri, 30 Aug 2024 12:31:27 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6587B192581;
+	Fri, 30 Aug 2024 12:31:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725021025; cv=none; b=U0hCHmsrFVxmFHHnovaZkOk9OteMoOfO4iGLMTwaoYVV4wrq2mvgugq/r4vlH0Q/MJhSGywRMjULtDlmJi2zmFylQ/ln4pDwN7YDhX2mi+FcrFFL/ieRyJVwTEuOXLoVCSXPXaUUZ2fQkeP1AJNvsypGBZ14csBJoLA9uO41ft4=
+	t=1725021086; cv=none; b=fFvhmBKaiNdo/KrAOKcO7zL6JzFAINc+smUXTVCyW5hn9XocOUj5lcw7dVV1uNcnkJVHLNtAi/Ra17pS8tg5LOSKvhNMcLpHrzJl8hdASi0VrSt15zoa7ktdeAWLWOrI3hOMod0D1Ld9gJFMq0yAWKuacEDiF2HQrv5Ge+sybH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725021025; c=relaxed/simple;
-	bh=xgMZfXbzDCIWmQ0U4CZQEU03diJia9Y6QR0RLV86l2s=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=a9Tnm6qQvtge6o5fDWwi6rX0Y5UseKEMjksKKvzYn+NjqLt85hoG0lfBgJrt6HyOxBP7Aesw5kgSoVSZE6ak78KCxHlhUorxZ7vSfLvxaBXp7WY7tuzJADYSmoIF0eMzudLD/5kqFUXMlCdjBupZkz65BM0Fv9Txhn7uqWRQpZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jkY6uLmv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE73FC4CEC6;
-	Fri, 30 Aug 2024 12:30:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725021024;
-	bh=xgMZfXbzDCIWmQ0U4CZQEU03diJia9Y6QR0RLV86l2s=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=jkY6uLmvtylqu+4aAYJtIIMIDp+ExzAWwSr/s9dUmudyR+TZZ3DuRhHpA1lo+g0lV
-	 O8V9+Y2bujTC3cEPb8dlxceoK/OtVIEdOVURQyTAbicVTq31GV6ouJTDp1f9xH4sDR
-	 xses22Cg0J43kMWyi25IcN891USavNyHI+FUUgr8WEEEfOAxSZo/y1bJ7o/fh/3yxB
-	 7U/F6DzTG0c4lNFsr0cYdTGp4TzwXGvYPR0zOOh3iEssvvMxzTed6vlQ8kAFGO9uZt
-	 gLCpeQ347QMz2dtKga/EgfqztuI3S2+Ezxcfzihfxz45Y6P+xCqJA44zITZsusCEbK
-	 RTe2LHvTbUoMQ==
-Received: from ip-10-30-226-235.us-west-2.compute.internal (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 611DF3809A81;
-	Fri, 30 Aug 2024 12:30:26 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1725021086; c=relaxed/simple;
+	bh=oof5KM6kmb1k0VNrztj4BbtVdtVtzGXFeVrQdpuiNh8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JaBbMTzmPuTl7ZtsGB0wuKCTKbtlcy7aghVJLUbLmdrGdBQTZK+a+Jf2HMH7hdiah5mR74Pg3OZQudrYDgkshuoLKzQvKRycBym/+pTqtmxr1yQyw3YyHpZXzNC2n3nZ/m+BlvMVKJCsGyPiTMreM7fFbf0qF84DpQexVXGgs0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1592A152B;
+	Fri, 30 Aug 2024 05:31:50 -0700 (PDT)
+Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 229553F762;
+	Fri, 30 Aug 2024 05:31:22 -0700 (PDT)
+Message-ID: <35849d74-1197-446b-9a4c-1b8aabb38427@arm.com>
+Date: Fri, 30 Aug 2024 13:31:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v14 5/6] iommu/arm-smmu: add ACTLR data and support for
+ SC7280
+To: Bibek Kumar Patro <quic_bibekkum@quicinc.com>,
+ Will Deacon <will@kernel.org>
+Cc: robdclark@gmail.com, joro@8bytes.org, jgg@ziepe.ca, jsnitsel@redhat.com,
+ robh@kernel.org, krzysztof.kozlowski@linaro.org, quic_c_gdjako@quicinc.com,
+ dmitry.baryshkov@linaro.org, konrad.dybcio@linaro.org,
+ iommu@lists.linux.dev, linux-arm-msm@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240816174259.2056829-1-quic_bibekkum@quicinc.com>
+ <20240816174259.2056829-6-quic_bibekkum@quicinc.com>
+ <20240823155918.GD525@willie-the-truck>
+ <3ae75a75-1717-40b6-9149-bc3673d520d6@quicinc.com>
+ <20240827124714.GB4772@willie-the-truck>
+ <b335452a-977e-41cc-9424-a2244fbe20de@quicinc.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <b335452a-977e-41cc-9424-a2244fbe20de@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net,v7] net/smc: prevent NULL pointer dereference in txopt_get
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172502102638.2576424.109691224137525490.git-patchwork-notify@kernel.org>
-Date: Fri, 30 Aug 2024 12:30:26 +0000
-References: <20240829035648.262912-1-aha310510@gmail.com>
-In-Reply-To: <20240829035648.262912-1-aha310510@gmail.com>
-To: Jeongjun Park <aha310510@gmail.com>
-Cc: wenjia@linux.ibm.com, jaka@linux.ibm.com, alibuda@linux.alibaba.com,
- tonylu@linux.alibaba.com, guwen@linux.alibaba.com, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- dust.li@linux.alibaba.com, linux-s390@vger.kernel.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- syzkaller@googlegroups.com
 
-Hello:
-
-This patch was applied to netdev/net.git (main)
-by David S. Miller <davem@davemloft.net>:
-
-On Thu, 29 Aug 2024 12:56:48 +0900 you wrote:
-> Since smc_inet6_prot does not initialize ipv6_pinfo_offset, inet6_create()
-> copies an incorrect address value, sk + 0 (offset), to inet_sk(sk)->pinet6.
+On 30/08/2024 11:00 am, Bibek Kumar Patro wrote:
 > 
-> In addition, since inet_sk(sk)->pinet6 and smc_sk(sk)->clcsock practically
-> point to the same address, when smc_create_clcsk() stores the newly
-> created clcsock in smc_sk(sk)->clcsock, inet_sk(sk)->pinet6 is corrupted
-> into clcsock. This causes NULL pointer dereference and various other
-> memory corruptions.
 > 
-> [...]
+> On 8/27/2024 6:17 PM, Will Deacon wrote:
+>> On Mon, Aug 26, 2024 at 04:33:24PM +0530, Bibek Kumar Patro wrote:
+>>>
+>>>
+>>> On 8/23/2024 9:29 PM, Will Deacon wrote:
+>>>> On Fri, Aug 16, 2024 at 11:12:58PM +0530, Bibek Kumar Patro wrote:
+>>>>> Add ACTLR data table for SC7280 along with support for
+>>>>> same including SC7280 specific implementation operations.
+>>>>>
+>>>>> Signed-off-by: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
+>>>>> ---
+>>>>>    drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c | 58 
+>>>>> +++++++++++++++++++++-
+>>>>>    1 file changed, 57 insertions(+), 1 deletion(-)
+>>>>>
+>>>>> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c 
+>>>>> b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
+>>>>> index dc143b250704..a776c7906c76 100644
+>>>>> --- a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
+>>>>> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
+>>>>> @@ -31,6 +31,55 @@
+>>>>>    #define PREFETCH_MODERATE    (2 << PREFETCH_SHIFT)
+>>>>>    #define PREFETCH_DEEP        (3 << PREFETCH_SHIFT)
+>>>>>
+>>>>> +static const struct actlr_config sc7280_apps_actlr_cfg[] = {
+>>>>> +    { 0x0800, 0x04e0, PREFETCH_DEFAULT | CMTLB },
+>>>>> +    { 0x0900, 0x0402, PREFETCH_SHALLOW | CPRE | CMTLB },
+>>>>> +    { 0x0901, 0x0000, PREFETCH_SHALLOW | CPRE | CMTLB },
+>>>>> +    { 0x0d01, 0x0000, PREFETCH_SHALLOW | CPRE | CMTLB },
+>>>>> +    { 0x1181, 0x0420, PREFETCH_DEEP | CPRE | CMTLB },
+>>>>> +    { 0x1182, 0x0420, PREFETCH_DEEP | CPRE | CMTLB },
+>>>>> +    { 0x1183, 0x0420, PREFETCH_DEEP | CPRE | CMTLB },
+>>>>> +    { 0x1184, 0x0420, PREFETCH_DEEP | CPRE | CMTLB },
+>>>>> +    { 0x1185, 0x0420, PREFETCH_DEEP | CPRE | CMTLB },
+>>>>> +    { 0x1186, 0x0420, PREFETCH_DEEP | CPRE | CMTLB },
+>>>>> +    { 0x1187, 0x0420, PREFETCH_DEEP | CPRE | CMTLB },
+>>>>> +    { 0x1188, 0x0420, PREFETCH_DEEP | CPRE | CMTLB },
+>>>>> +    { 0x1189, 0x0420, PREFETCH_DEEP | CPRE | CMTLB },
+>>>>> +    { 0x118b, 0x0420, PREFETCH_DEEP | CPRE | CMTLB },
+>>>>> +    { 0x118c, 0x0420, PREFETCH_DEEP | CPRE | CMTLB },
+>>>>> +    { 0x118d, 0x0420, PREFETCH_DEEP | CPRE | CMTLB },
+>>>>> +    { 0x118e, 0x0420, PREFETCH_DEEP | CPRE | CMTLB },
+>>>>> +    { 0x118f, 0x0420, PREFETCH_DEEP | CPRE | CMTLB },
+>>>>> +    { 0x2000, 0x0020, PREFETCH_DEFAULT | CMTLB },
+>>>>> +    { 0x2040, 0x0000, PREFETCH_DEFAULT | CMTLB },
+>>>>> +    { 0x2062, 0x0000, PREFETCH_DEFAULT | CMTLB },
+>>>>> +    { 0x2080, 0x0020, PREFETCH_DEFAULT | CMTLB },
+>>>>> +    { 0x20c0, 0x0020, PREFETCH_DEFAULT | CMTLB },
+>>>>> +    { 0x2100, 0x0020, PREFETCH_DEFAULT | CMTLB },
+>>>>> +    { 0x2140, 0x0000, PREFETCH_DEFAULT | CMTLB },
+>>>>> +    { 0x2180, 0x0020, PREFETCH_SHALLOW | CPRE | CMTLB },
+>>>>> +    { 0x2181, 0x0004, PREFETCH_SHALLOW | CPRE | CMTLB },
+>>>>> +    { 0x2183, 0x0000, PREFETCH_SHALLOW | CPRE | CMTLB },
+>>>>> +    { 0x2184, 0x0020, PREFETCH_SHALLOW | CPRE | CMTLB },
+>>>>> +    { 0x2187, 0x0000, PREFETCH_SHALLOW | CPRE | CMTLB },
+>>>>> +};
+>>>>> +
+>>>>> +static const struct actlr_config sc7280_gfx_actlr_cfg[] = {
+>>>>> +    { 0x0000, 0x07ff, PREFETCH_DEEP | CPRE | CMTLB },
+>>>>> +};
+>>>>
+>>>> It's Will "stuck record" Deacon here again to say that I don't think
+>>>> this data belongs in the driver.
+>>>>
+>>>
+>>> Hi Will,
+>>>
+>>> It will be difficult to reach a consensus here, with Robin and the DT 
+>>> folks
+>>> okay to keep it in the driver, while you believe it doesn't belong 
+>>> there.
+>>>
+>>> Robin, Rob, could you please share your thoughts on concluding the 
+>>> placement
+>>> of this prefetch data?
+>>>
+>>> As discussed earlier [1], the prefetch value for each client doesn’t 
+>>> define
+>>> the hardware topology and is implementation-defined register writes 
+>>> used by
+>>> the software driver.
+>>
+>> It does reflect the hardware topology though, doesn't it? Those magic hex
+>> masks above refer to stream ids, so the table is hard-coding the prefetch
+>> values for particular matches.
+> 
+> That is correct in the sense that stream id is mapped to context bank
+> where these configurations are applied.
+> However the other part of it is implementation-defined register/values
+> for which community opinion was register/value kind of data, should not
+> belong to device tree and are not generally approved of.
+> 
+> Would also like to point out that the prefetch values are recommended
+> settings and doesn’t mean these are the only configuration which would
+> work for the soc.
+> So the SID-to-prefetch isn't strictly SoC defined but is a software
+> configuration, IMO.
 
-Here is the summary with links:
-  - [net,v7] net/smc: prevent NULL pointer dereference in txopt_get
-    https://git.kernel.org/netdev/net/c/98d4435efcbf
+What's particularly confusing is that most of the IDs encoded here don't 
+actually seem to line up with what's in the respective SoC DTSIs...
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+However by this point I'm wary of whether we've lost sight of *why* 
+we're doing this, and that we're deep into begging the question of 
+whether identifying devices by StreamID is the right thing to do in the 
+first place. For example, as best I can tell from a quick skim, we have 
+over 2 dozen lines of data here which all serve the exact same purpose 
+of applying PREFETCH_DEEP | CPRE | CMTLB to instances of 
+"qcom,fastrpc-compute-cb". In general it seems unlikely that the same 
+device would want wildly different prefetch settings across different 
+SoCs, or even between different instances in the same SoC, so I'm really 
+coming round to the conclusion that this data would probably be best 
+handled as an extension of the existing qcom_smmu_client_of_match mechanism.
 
+Thanks,
+Robin.
 
+> 
+>> If I run on a different SoC configuration > with the same table, then 
+>> the prefetch settings will be applied to the
+>> wrong devices. How is that not hardware topology?
+>>
+> 
+> The configuration table is tied to SoC compatible string however as I
+> mentioned above, its basically a s/w recommended setting.
+> (using prefetch settings other than the recommended values e.g 
+> PREFECH_DEFAULT instead of PREFETCH_DEEP would not render the device 
+> unusable unlike changing stream-ids which can make it unusable).
+> 
+> Since it is implementation specific we cannot have a generic DT binding,
+> tying stream ids to these recommended settings.
+> Even with qcom specific binding due to dependency on implementation, not
+> sure if we would be able to maintain consistency.
+> 
+> So from maintenance perspective carrying these in driver appear to be
+> simpler/flexible. And if it doesn’t violate existing precedence, we
+> would prefer to carry it that way.
+> 
+> This parallels how _"QoS settings"_ are handled within the driver 
+> (similar to this example [1]).
+> 
+> [1]. 
+> https://lore.kernel.org/linux-arm-msm/20231030-sc8280xp-dpu-safe-lut-v1-1-6d485d7b428f@quicinc.com/#t
+> 
+> Thanks & regards,
+> Bibek
+> 
+>> WIll
 
