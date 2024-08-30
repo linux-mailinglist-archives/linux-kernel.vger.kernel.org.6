@@ -1,226 +1,408 @@
-Return-Path: <linux-kernel+bounces-308892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91673966355
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 15:46:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C7E7E96634F
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 15:45:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4864228433A
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 13:46:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8073B283905
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 13:45:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B4BE1AD9FC;
-	Fri, 30 Aug 2024 13:46:05 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B56E4288DB;
-	Fri, 30 Aug 2024 13:46:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E9E51AD5EB;
+	Fri, 30 Aug 2024 13:45:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HNtOm81v"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD1332206E;
+	Fri, 30 Aug 2024 13:45:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725025564; cv=none; b=lEd5IhBB58ygoHY9IHH5hdU3U99666t/kgkWYOySZ3a8W+9MsJkjK0iiT6jek+XnnFJrCFOmSjj93vky++q8ld8i9QUFlHx5o8znrKj3h7bsiWR51Dj4CwphQBDG7L1cBUoJpMr2zkwy7kD/PjiwuKEe6HXdCmd/U+S0d+glXCI=
+	t=1725025538; cv=none; b=PC0efRyEp7ol6/LS4UOrqEc8V20mJAA/eWyzivvAGaiYTDJ9nmuiW3sCxem5i//2H9nVeJNfVKDA6oyCig6a4QIHfOuamts5GLWLwQv+u8TZ2i16C9xZ3kshHD+R3bIKBxlgVK8vhq1UMGfZQSD0vZ3Dw+DsDi4UYNtknVirDuY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725025564; c=relaxed/simple;
-	bh=4rx5MJaU7mW3Sv3wIWFvKKmuNzdHoavdGmHau0vT6Bo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=geh2y5LOvkqljzwPwrtGwP3gi5PYfnGCCGZukeZuVFKz5KOecGxJgeqUH7YDiyzmVYCJjT5uab0qyw2Xu5UFbyeoEQhLcay13VGwxgKj4RJs5vKWcrPLOc6C1vTZTxvpDcAUSp53tX3JAo9OLBf7MAmLdB/I+trhad4W+yPSnoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 209C71063;
-	Fri, 30 Aug 2024 06:46:27 -0700 (PDT)
-Received: from e133380.arm.com (e133380.arm.com [10.1.197.59])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C1D713F66E;
-	Fri, 30 Aug 2024 06:45:57 -0700 (PDT)
-Date: Fri, 30 Aug 2024 14:45:11 +0100
-From: Dave Martin <Dave.Martin@arm.com>
-To: Devarsh Thakkar <devarsht@ti.com>
-Cc: mchehab@kernel.org, hverkuil-cisco@xs4all.nl,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	sebastian.fricke@collabora.com, linux-doc@vger.kernel.org,
-	praneeth@ti.com, nm@ti.com, vigneshr@ti.com, s-jain1@ti.com,
-	r-donadkar@ti.com, b-brnich@ti.com, detheridge@ti.com,
-	p-mantena@ti.com, vijayp@ti.com, andi.shyti@linux.intel.com,
-	nicolas@ndufresne.ca, andriy.shevchenko@linux.intel.com,
-	jirislaby@kernel.org, davidgow@google.com, dlatypov@google.com,
-	corbet@lwn.net, broonie@kernel.org, jani.nikula@intel.com,
-	rdunlap@infradead.org, nik.borisov@suse.com
-Subject: Re: [PATCH v2 1/6] math.h: Add macros for rounding to the closest
- value
-Message-ID: <ZtHM5+SJ15Db+P2z@e133380.arm.com>
-References: <20240826150822.4057164-1-devarsht@ti.com>
- <20240826150822.4057164-2-devarsht@ti.com>
+	s=arc-20240116; t=1725025538; c=relaxed/simple;
+	bh=8cyvDmBlLdyJ6zWWHWSbPYiq6VdvYJ7GLQPgGEAcEp8=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tq3jjCPIYYe48B3GoFsWthixkbs4b579RbgSQOHiiZCbnw6X7K0/simSzJJHnytWTuWIB9kyVvtFc3K9+NVsISF/qRMM0QlvWmTh9gYday0M01jb9pJ8qD4zZhIWrwCLJPaCFz8Ieiv+ueMaGF5Cjaa1/foQ81StFkOa9rgpaMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HNtOm81v; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-428101fa30aso16775405e9.3;
+        Fri, 30 Aug 2024 06:45:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725025535; x=1725630335; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=pvk5xj5HcQs8F8Y9lix/vFgo6lKGMY7Ot7HFz02xoSA=;
+        b=HNtOm81vxujhdJZCIK37u4T0/LQWIAvin8mn9LTi2X/kqNFkD737LRk74sDpRPdinj
+         lfLi9X+HPqq/T+7q2NazZsvCgsY7ZdzUvGfct3RF1aEBx1XQ5yOYiPOdKNRIzFGW/l8o
+         Fuc4vFIh6NrgCg+dUpf5DUWswCoDaUtagChQTwZ8/DePxhqUxePPzPYWrxKIKkAoWn8k
+         txc0mWSlpFh0i93AZwyGbDZ4oahf9rJm/OMD5KWNJAkyUeLJ/jvr9LITePrUMtTwnYw1
+         QHyP3u4Bo44uEKbzBNGYwgnUHcsqTkKII/uWyvzYw6dLorz0TSOUtNZSnitQUmkk74xb
+         2jYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725025535; x=1725630335;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pvk5xj5HcQs8F8Y9lix/vFgo6lKGMY7Ot7HFz02xoSA=;
+        b=srup60ozyiUIhfgECAyM1Zl0qrkXaL8GztxzLQtqKh2OvbxEB+/xXAIVFCjkOd5cX5
+         D3TOPjmGb35Frbauw7pgepB4cate0Rz4k+PWY/wORZKUxoKwn4dqLOG4bXVwJNT6bqbl
+         mmNrZVpR3aJvfM3a58nXPM1fxtnXrRGHlohjNL7792gSN/sakPrENjuwry2UzLREgbUX
+         9xfZFs5iC3rDrJE0klfx9RciCU0zv4W4TToz5k0ppdcP5bv3wKd1Lo/6elyA/KrlWtHo
+         bECrziAxx0NrqRCWmGh1w1TsRbsv2dQExPZclfXAGAo9ylbgN2ti3uVdh61TKqOcfjBa
+         ic9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUGUlvecXFIEJ8M+V5/tSBCcnC5AV1Xb49KTUqiiDDAjZf+2XPSAT/4bKzFFLovG4YzcbI=@vger.kernel.org, AJvYcCVhk6CpVieWYBPH6YXV8c4WxkrnmbAGALqp27aoMonDJb04Rr1QLKBFfKWJZdeHCUKH4jNqlXk9FiARN7ng@vger.kernel.org, AJvYcCVs/m2fH6CbHgHb9GEYwRqiNmPqYidA9KiGTss7jQv08djhOe7iVgAOZ/DinuUJMB2n1Hl4Nup3To83gn3p6Q9JWGal@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVV89/K+9FgrZmPhal+oEQYahbyIlss/IeZcPVm5n66VYoJL2e
+	nyxaDIZTnp0X1kD+MouVpdhakQ9MhoVmYcEFkMcqfAUORxZ9Tf6Z
+X-Google-Smtp-Source: AGHT+IG1irtMijjcjuapScPlFGSv1lbeL0zHht56vvPfbZLTQboZ7Hw3pgObdnFpA//+pSxOplLgVA==
+X-Received: by 2002:a05:600c:4f8d:b0:428:141b:ddfc with SMTP id 5b1f17b1804b1-42bb27ba52fmr50700575e9.31.1725025534651;
+        Fri, 30 Aug 2024 06:45:34 -0700 (PDT)
+Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bb6df1066sm46736995e9.18.2024.08.30.06.45.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Aug 2024 06:45:34 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Fri, 30 Aug 2024 15:45:32 +0200
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Jiri Olsa <olsajiri@gmail.com>, Andrii Nakryiko <andrii@kernel.org>,
+	linux-trace-kernel@vger.kernel.org, peterz@infradead.org,
+	oleg@redhat.com, rostedt@goodmis.org, mhiramat@kernel.org,
+	bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+	paulmck@kernel.org, willy@infradead.org, surenb@google.com,
+	akpm@linux-foundation.org, linux-mm@kvack.org
+Subject: Re: [PATCH v4 4/8] uprobes: travers uprobe's consumer list
+ locklessly under SRCU protection
+Message-ID: <ZtHM_C1NmDSKL0pi@krava>
+References: <20240829183741.3331213-1-andrii@kernel.org>
+ <20240829183741.3331213-5-andrii@kernel.org>
+ <ZtD_x9zxLjyhS37Z@krava>
+ <CAEf4Bzb3mCWK5St51bRDnQ1b-aTj=2w6bi6MkZydW48s=R+CCA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240826150822.4057164-2-devarsht@ti.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEf4Bzb3mCWK5St51bRDnQ1b-aTj=2w6bi6MkZydW48s=R+CCA@mail.gmail.com>
 
-On Mon, Aug 26, 2024 at 08:38:17PM +0530, Devarsh Thakkar wrote:
-> Add below rounding related macros:
+On Thu, Aug 29, 2024 at 04:31:18PM -0700, Andrii Nakryiko wrote:
+> On Thu, Aug 29, 2024 at 4:10 PM Jiri Olsa <olsajiri@gmail.com> wrote:
+> >
+> > On Thu, Aug 29, 2024 at 11:37:37AM -0700, Andrii Nakryiko wrote:
+> > > uprobe->register_rwsem is one of a few big bottlenecks to scalability of
+> > > uprobes, so we need to get rid of it to improve uprobe performance and
+> > > multi-CPU scalability.
+> > >
+> > > First, we turn uprobe's consumer list to a typical doubly-linked list
+> > > and utilize existing RCU-aware helpers for traversing such lists, as
+> > > well as adding and removing elements from it.
+> > >
+> > > For entry uprobes we already have SRCU protection active since before
+> > > uprobe lookup. For uretprobe we keep refcount, guaranteeing that uprobe
+> > > won't go away from under us, but we add SRCU protection around consumer
+> > > list traversal.
+> > >
+> > > Lastly, to keep handler_chain()'s UPROBE_HANDLER_REMOVE handling simple,
+> > > we remember whether any removal was requested during handler calls, but
+> > > then we double-check the decision under a proper register_rwsem using
+> > > consumers' filter callbacks. Handler removal is very rare, so this extra
+> > > lock won't hurt performance, overall, but we also avoid the need for any
+> > > extra protection (e.g., seqcount locks).
+> > >
+> > > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+> > > ---
+> > >  include/linux/uprobes.h |   2 +-
+> > >  kernel/events/uprobes.c | 104 +++++++++++++++++++++++-----------------
+> > >  2 files changed, 62 insertions(+), 44 deletions(-)
+> > >
+> > > diff --git a/include/linux/uprobes.h b/include/linux/uprobes.h
+> > > index 9cf0dce62e4c..29c935b0d504 100644
+> > > --- a/include/linux/uprobes.h
+> > > +++ b/include/linux/uprobes.h
+> > > @@ -35,7 +35,7 @@ struct uprobe_consumer {
+> > >                               struct pt_regs *regs);
+> > >       bool (*filter)(struct uprobe_consumer *self, struct mm_struct *mm);
+> > >
+> > > -     struct uprobe_consumer *next;
+> > > +     struct list_head cons_node;
+> > >  };
+> > >
+> > >  #ifdef CONFIG_UPROBES
+> > > diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+> > > index 8bdcdc6901b2..97e58d160647 100644
+> > > --- a/kernel/events/uprobes.c
+> > > +++ b/kernel/events/uprobes.c
+> > > @@ -59,7 +59,7 @@ struct uprobe {
+> > >       struct rw_semaphore     register_rwsem;
+> > >       struct rw_semaphore     consumer_rwsem;
+> > >       struct list_head        pending_list;
+> > > -     struct uprobe_consumer  *consumers;
+> > > +     struct list_head        consumers;
+> > >       struct inode            *inode;         /* Also hold a ref to inode */
+> > >       struct rcu_head         rcu;
+> > >       loff_t                  offset;
+> > > @@ -783,6 +783,7 @@ static struct uprobe *alloc_uprobe(struct inode *inode, loff_t offset,
+> > >       uprobe->inode = inode;
+> > >       uprobe->offset = offset;
+> > >       uprobe->ref_ctr_offset = ref_ctr_offset;
+> > > +     INIT_LIST_HEAD(&uprobe->consumers);
+> > >       init_rwsem(&uprobe->register_rwsem);
+> > >       init_rwsem(&uprobe->consumer_rwsem);
+> > >       RB_CLEAR_NODE(&uprobe->rb_node);
+> > > @@ -808,32 +809,19 @@ static struct uprobe *alloc_uprobe(struct inode *inode, loff_t offset,
+> > >  static void consumer_add(struct uprobe *uprobe, struct uprobe_consumer *uc)
+> > >  {
+> > >       down_write(&uprobe->consumer_rwsem);
+> > > -     uc->next = uprobe->consumers;
+> > > -     uprobe->consumers = uc;
+> > > +     list_add_rcu(&uc->cons_node, &uprobe->consumers);
+> > >       up_write(&uprobe->consumer_rwsem);
+> > >  }
+> > >
+> > >  /*
+> > >   * For uprobe @uprobe, delete the consumer @uc.
+> > > - * Return true if the @uc is deleted successfully
+> > > - * or return false.
+> > > + * Should never be called with consumer that's not part of @uprobe->consumers.
+> > >   */
+> > > -static bool consumer_del(struct uprobe *uprobe, struct uprobe_consumer *uc)
+> > > +static void consumer_del(struct uprobe *uprobe, struct uprobe_consumer *uc)
+> > >  {
+> > > -     struct uprobe_consumer **con;
+> > > -     bool ret = false;
+> > > -
+> > >       down_write(&uprobe->consumer_rwsem);
+> > > -     for (con = &uprobe->consumers; *con; con = &(*con)->next) {
+> > > -             if (*con == uc) {
+> > > -                     *con = uc->next;
+> > > -                     ret = true;
+> > > -                     break;
+> > > -             }
+> > > -     }
+> > > +     list_del_rcu(&uc->cons_node);
+> > >       up_write(&uprobe->consumer_rwsem);
+> > > -
+> > > -     return ret;
+> > >  }
+> > >
+> > >  static int __copy_insn(struct address_space *mapping, struct file *filp,
+> > > @@ -929,7 +917,8 @@ static bool filter_chain(struct uprobe *uprobe, struct mm_struct *mm)
+> > >       bool ret = false;
+> > >
+> > >       down_read(&uprobe->consumer_rwsem);
+> > > -     for (uc = uprobe->consumers; uc; uc = uc->next) {
+> > > +     list_for_each_entry_srcu(uc, &uprobe->consumers, cons_node,
+> > > +                              srcu_read_lock_held(&uprobes_srcu)) {
+> > >               ret = consumer_filter(uc, mm);
+> > >               if (ret)
+> > >                       break;
+> > > @@ -1125,18 +1114,29 @@ void uprobe_unregister(struct uprobe *uprobe, struct uprobe_consumer *uc)
+> > >       int err;
+> > >
+> > >       down_write(&uprobe->register_rwsem);
+> > > -     if (WARN_ON(!consumer_del(uprobe, uc))) {
+> > > -             err = -ENOENT;
+> > > -     } else {
+> > > -             err = register_for_each_vma(uprobe, NULL);
+> > > -             /* TODO : cant unregister? schedule a worker thread */
+> > > -             if (unlikely(err))
+> > > -                     uprobe_warn(current, "unregister, leaking uprobe");
+> > > -     }
+> > > +     consumer_del(uprobe, uc);
+> > > +     err = register_for_each_vma(uprobe, NULL);
+> > >       up_write(&uprobe->register_rwsem);
+> > >
+> > > -     if (!err)
+> > > -             put_uprobe(uprobe);
+> > > +     /* TODO : cant unregister? schedule a worker thread */
+> > > +     if (unlikely(err)) {
+> > > +             uprobe_warn(current, "unregister, leaking uprobe");
+> > > +             goto out_sync;
+> > > +     }
+> > > +
+> > > +     put_uprobe(uprobe);
+> > > +
+> > > +out_sync:
+> > > +     /*
+> > > +      * Now that handler_chain() and handle_uretprobe_chain() iterate over
+> > > +      * uprobe->consumers list under RCU protection without holding
+> > > +      * uprobe->register_rwsem, we need to wait for RCU grace period to
+> > > +      * make sure that we can't call into just unregistered
+> > > +      * uprobe_consumer's callbacks anymore. If we don't do that, fast and
+> > > +      * unlucky enough caller can free consumer's memory and cause
+> > > +      * handler_chain() or handle_uretprobe_chain() to do an use-after-free.
+> > > +      */
+> > > +     synchronize_srcu(&uprobes_srcu);
+> > >  }
+> > >  EXPORT_SYMBOL_GPL(uprobe_unregister);
+> > >
+> > > @@ -1214,13 +1214,20 @@ EXPORT_SYMBOL_GPL(uprobe_register);
+> > >  int uprobe_apply(struct uprobe *uprobe, struct uprobe_consumer *uc, bool add)
+> > >  {
+> > >       struct uprobe_consumer *con;
+> > > -     int ret = -ENOENT;
+> > > +     int ret = -ENOENT, srcu_idx;
+> > >
+> > >       down_write(&uprobe->register_rwsem);
+> > > -     for (con = uprobe->consumers; con && con != uc ; con = con->next)
+> > > -             ;
+> > > -     if (con)
+> > > -             ret = register_for_each_vma(uprobe, add ? uc : NULL);
+> > > +
+> > > +     srcu_idx = srcu_read_lock(&uprobes_srcu);
+> > > +     list_for_each_entry_srcu(con, &uprobe->consumers, cons_node,
+> > > +                              srcu_read_lock_held(&uprobes_srcu)) {
+> > > +             if (con == uc) {
+> > > +                     ret = register_for_each_vma(uprobe, add ? uc : NULL);
+> > > +                     break;
+> > > +             }
+> > > +     }
+> > > +     srcu_read_unlock(&uprobes_srcu, srcu_idx);
+> > > +
+> > >       up_write(&uprobe->register_rwsem);
+> > >
+> > >       return ret;
+> > > @@ -2085,10 +2092,12 @@ static void handler_chain(struct uprobe *uprobe, struct pt_regs *regs)
+> > >       struct uprobe_consumer *uc;
+> > >       int remove = UPROBE_HANDLER_REMOVE;
+> > >       bool need_prep = false; /* prepare return uprobe, when needed */
+> > > +     bool has_consumers = false;
+> > >
+> > > -     down_read(&uprobe->register_rwsem);
+> > >       current->utask->auprobe = &uprobe->arch;
+> > > -     for (uc = uprobe->consumers; uc; uc = uc->next) {
+> > > +
+> > > +     list_for_each_entry_srcu(uc, &uprobe->consumers, cons_node,
+> > > +                              srcu_read_lock_held(&uprobes_srcu)) {
+> > >               int rc = 0;
+> > >
+> > >               if (uc->handler) {
+> > > @@ -2101,17 +2110,24 @@ static void handler_chain(struct uprobe *uprobe, struct pt_regs *regs)
+> > >                       need_prep = true;
+> > >
+> > >               remove &= rc;
+> > > +             has_consumers = true;
+> > >       }
+> > >       current->utask->auprobe = NULL;
+> > >
+> > >       if (need_prep && !remove)
+> > >               prepare_uretprobe(uprobe, regs); /* put bp at return */
+> > >
+> > > -     if (remove && uprobe->consumers) {
+> > > -             WARN_ON(!uprobe_is_active(uprobe));
+> > > -             unapply_uprobe(uprobe, current->mm);
+> > > +     if (remove && has_consumers) {
+> > > +             down_read(&uprobe->register_rwsem);
+> > > +
+> > > +             /* re-check that removal is still required, this time under lock */
+> > > +             if (!filter_chain(uprobe, current->mm)) {
+> >
+> > sorry for late question, but I do not follow this change..
+> >
+> > at this point we got 1 as handler's return value from all the uprobe's consumers,
+> > why do we need to call filter_chain in here.. IIUC this will likely skip over
+> > the removal?
+> >
 > 
-> round_closest_up(x, y) : Rounds x to the closest multiple of y where y is a
-> power of 2, with a preference to round up in case two nearest values are
-> possible.
+> Because we don't hold register_rwsem we are now racing with
+> registration. So while we can get all consumers at the time we were
+> iterating over the consumer list to request deletion, a parallel CPU
+> can add another consumer that needs this uprobe+PID combination. So if
+> we don't double-check, we are risking having a consumer that will not
+> be triggered for the desired process.
 > 
-> round_closest_down(x, y) : Rounds x to the closest multiple of y where y is
-> a power of 2, with a preference to round down in case two nearest values
-> are possible.
-> 
-> roundclosest(x, y) : Rounds x to the closest multiple of y, this macro
-> should generally be used only when y is not multiple of 2 as otherwise
-> round_closest* macros should be used which are much faster.
-> 
-> Examples:
->  * round_closest_up(17, 4) = 16
->  * round_closest_up(15, 4) = 16
->  * round_closest_up(14, 4) = 16
->  * round_closest_down(17, 4) = 16
->  * round_closest_down(15, 4) = 16
->  * round_closest_down(14, 4) = 12
->  * roundclosest(21, 5) = 20
->  * roundclosest(19, 5) = 20
->  * roundclosest(17, 5) = 15
-> 
-> Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
-> Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
-> NOTE: This patch is inspired from the Mentor Graphics IPU driver [1]
-> which uses similar macro locally and which is updated in further patch
-> in the series to use this generic macro instead along with other drivers
-> having similar requirements.
-> 
-> Link: https://elixir.bootlin.com/linux/v6.8.9/source/drivers/gpu/ipu-v3/ipu-image-convert.c#L480 [1]
-> 
-> Past discussions and alignment on this:
-> https://lore.kernel.org/all/7e3ad816-6a2a-4e02-9b41-03a8562812ad@ti.com/#r
-> https://lore.kernel.org/all/ZkISG6p1tn9Do-xY@smile.fi.intel.com/#r
-> https://lore.kernel.org/all/ZlTt-YWzyRyhmT9n@smile.fi.intel.com/
-> https://lore.kernel.org/all/ZmHDWeuezCEgj20m@smile.fi.intel.com/
-> https://lore.kernel.org/all/ZloMFfGKLry6EWNL@smile.fi.intel.com/
-> 
-> Changelog:
-> V2:
-> - Fix grammar in macro description
-> - Update roundclosest macro to use roundup to avoid overflow scenario
-> ---
->  include/linux/math.h | 63 ++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 63 insertions(+)
-> 
-> diff --git a/include/linux/math.h b/include/linux/math.h
-> index f5f18dc3616b..b59a02a007d7 100644
-> --- a/include/linux/math.h
-> +++ b/include/linux/math.h
-> @@ -34,6 +34,52 @@
->   */
->  #define round_down(x, y) ((x) & ~__round_mask(x, y))
->  
-> +/**
-> + * round_closest_up - round closest to be multiple of the specified value
-> + *                    (which is power of 2) with preference to rounding up
-> + * @x: the value to round
-> + * @y: multiple to round closest to (must be a power of 2)
-> + *
-> + * Rounds @x to the closest multiple of @y (which must be a power of 2).
-> + * The value can be rounded up or rounded down depending on the rounded
-> + * value's closeness to the specified value. Also, there can be two closest
-> + * values, i.e. the difference between the specified value and its rounded-up
-> + * and rounded-down values could be the same. In that case, the rounded-up
-> + * value is preferred.
-> + *
-> + * To perform arbitrary rounding to the closest value (not multiple of 2), use
-> + * roundclosest().
-> + *
-> + * Examples:
-> + * * round_closest_up(17, 4) = 16
-> + * * round_closest_up(15, 4) = 16
-> + * * round_closest_up(14, 4) = 16
-> + */
-> +#define round_closest_up(x, y) round_down((x) + (y) / 2, (y))
-> +
-> +/**
-> + * round_closest_down - round closest to be multiple of the specified value
-> + *                      (which is power of 2) with preference to rounding down
-> + * @x: the value to round
-> + * @y: multiple to round closest to (must be a power of 2)
-> + *
-> + * Rounds @x to the closest multiple of @y (which must be a power of 2).
-> + * The value can be rounded up or rounded down depending on the rounded
-> + * value's closeness to the specified value. Also, there can be two closest
-> + * values, i.e. the difference between the specified value and its rounded-up
-> + * and rounded-down values could be the same. In that case, the rounded-down
-> + * value is preferred.
-> + *
-> + * To perform arbitrary rounding to the closest value (not multiple of 2), use
-> + * roundclosest().
-> + *
-> + * Examples:
-> + * * round_closest_down(17, 4) = 16
-> + * * round_closest_down(15, 4) = 16
-> + * * round_closest_down(14, 4) = 12
-> + */
-> +#define round_closest_down(x, y) round_up((x) - (y) / 2, (y))
-> +
->  #define DIV_ROUND_UP __KERNEL_DIV_ROUND_UP
->  
->  #define DIV_ROUND_DOWN_ULL(ll, d) \
-> @@ -77,6 +123,23 @@
->  }							\
->  )
->  
-> +/**
-> + * roundclosest - round to the nearest multiple
-> + * @x: the value to round
-> + * @y: multiple to round nearest to
-> + *
-> + * Rounds @x to the nearest multiple of @y.
-> + * The rounded value can be greater or less than @x depending
-> + * upon its nearness to @x. If @y is always a power of 2, consider
-> + * using the faster round_closest_up() or round_closest_down().
-> + *
-> + * Examples:
-> + * * roundclosest(21, 5) = 20
-> + * * roundclosest(19, 5) = 20
-> + * * roundclosest(17, 5) = 15
-> + */
-> +#define roundclosest(x, y) roundup((x) - (y) / 2, (y))
+> Does it make sense? Given removal is rare, it's ok to take lock if we
+> *suspect* removal, and then check authoritatively again under lock.
 
-roundup() looks like it already does the wrong thing for negative
-numbers:
+with this change the probe will not get removed in the attached test,
+it'll get 2 hits, without this change just 1 hit
 
-	roundup(-10, 5)
-	= (-10 + 4) / 5 * 5
-	= -6 / 5 * 5
-	= -1 * 5
-	= -5
+but I'm not sure it's a big problem, because seems like that's not the
+intended way the removal should be used anyway, as explained by Oleg [1]
 
-(DIV_ROUND_UP looks less broken in this regard, though it's complicated
-and I haven't tried to understand it fully.)
+jirka
 
-Disregarding the issue of negative inputs, the proposed definition of
-roundclosest() looks like it still doesn't always do the right thing
-close to the upper limits of types, even when the expected result is
-representable in the type.
 
-For example, if I've understood this correctly, we can get:
+[1] https://lore.kernel.org/linux-trace-kernel/ZtHKTtn7sqaLeVxV@krava/T/#m07cdc37307cfd06f17f5755a067c9b300a19ee78
 
-	roundclosest(0xFFFFFFFFU, 0xFFFFU)
-	= roundup(0xFFFFFFFF - 0x7FFFU, 0xFFFFU)
-	= roundup(0xFFFF8000, 0xFFFFU)
-	= ((0xFFFF8000 + (0xFFFFU - 1)) / 0xFFFFU) * 0xFFFFU
-	= ((0xFFFF8000 + 0xFFFEU) / 0xFFFFU) * 0xFFFFU
-	= (0x00007FFE / 0xFFFFU) * 0xFFFFU
-	= 0
-
-(Expected result: 0x00010001U * 0xFFFFU, = 0xFFFFFFFFU.)
-
-I suppose this could be documented around, but it seems like a
-potential trap and not something the caller would expect.
-
-Cheers
----Dave
+---
+diff --git a/tools/testing/selftests/bpf/prog_tests/uprobe_multi_test.c b/tools/testing/selftests/bpf/prog_tests/uprobe_multi_test.c
+index bf6ca8e3eb13..86d37a8e6169 100644
+--- a/tools/testing/selftests/bpf/prog_tests/uprobe_multi_test.c
++++ b/tools/testing/selftests/bpf/prog_tests/uprobe_multi_test.c
+@@ -6,6 +6,7 @@
+ #include "uprobe_multi.skel.h"
+ #include "uprobe_multi_bench.skel.h"
+ #include "uprobe_multi_usdt.skel.h"
++#include "uprobe_multi_removal.skel.h"
+ #include "bpf/libbpf_internal.h"
+ #include "testing_helpers.h"
+ #include "../sdt.h"
+@@ -687,6 +688,28 @@ static void test_bench_attach_usdt(void)
+ 	printf("%s: detached in %7.3lfs\n", __func__, detach_delta);
+ }
+ 
++static void test_removal(void)
++{
++	struct uprobe_multi_removal *skel = NULL;
++	int err;
++
++	skel = uprobe_multi_removal__open_and_load();
++	if (!ASSERT_OK_PTR(skel, "uprobe_multi_removal__open_and_load"))
++		return;
++
++	err = uprobe_multi_removal__attach(skel);
++	if (!ASSERT_OK(err, "uprobe_multi_removal__attach"))
++		goto cleanup;
++
++	uprobe_multi_func_1();
++	uprobe_multi_func_1();
++
++	ASSERT_EQ(skel->bss->test, 1, "test");
++
++cleanup:
++	uprobe_multi_removal__destroy(skel);
++}
++
+ void test_uprobe_multi_test(void)
+ {
+ 	if (test__start_subtest("skel_api"))
+@@ -703,4 +726,6 @@ void test_uprobe_multi_test(void)
+ 		test_bench_attach_usdt();
+ 	if (test__start_subtest("attach_api_fails"))
+ 		test_attach_api_fails();
++	if (test__start_subtest("removal"))
++		test_removal();
+ }
+diff --git a/tools/testing/selftests/bpf/progs/uprobe_multi_removal.c b/tools/testing/selftests/bpf/progs/uprobe_multi_removal.c
+new file mode 100644
+index 000000000000..0a948cc1e05b
+--- /dev/null
++++ b/tools/testing/selftests/bpf/progs/uprobe_multi_removal.c
+@@ -0,0 +1,16 @@
++// SPDX-License-Identifier: GPL-2.0
++#include "vmlinux.h"
++#include <bpf/bpf_helpers.h>
++#include <bpf/bpf_tracing.h>
++#include <bpf/usdt.bpf.h>
++
++char _license[] SEC("license") = "GPL";
++
++int test;
++
++SEC("uprobe.multi//proc/self/exe:uprobe_multi_func_1")
++int uprobe(struct pt_regs *ctx)
++{
++	test++;
++	return 1;
++}
 
