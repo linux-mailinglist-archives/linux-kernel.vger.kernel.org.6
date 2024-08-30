@@ -1,187 +1,187 @@
-Return-Path: <linux-kernel+bounces-308325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99BB3965A5C
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:31:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AA96965A5E
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:31:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B90A21C223F0
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 08:31:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 929F0B216FE
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 08:31:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26BA116D31C;
-	Fri, 30 Aug 2024 08:31:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E513C16D4E6;
+	Fri, 30 Aug 2024 08:31:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="JhWXyjBV"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DT4Fb4hV"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 012141531FC;
-	Fri, 30 Aug 2024 08:30:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E89D165EED
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 08:31:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725006660; cv=none; b=SCV0FG0JaIdgotuADv+nd5l++SNsseyArhGltb4UH3A/l3g677j1M8VrocTOUnkCUwD61J8RX8Zr4fhbcyPx0fLqbh1UjUs+EiMC27RG+0rfyn9Uj+3c9y4itpUopyYU6Mt8vDHB1FznxBdzbNmxhr28QluBB6xBMoo/wshNM7k=
+	t=1725006677; cv=none; b=ZU35T2ejTruaWi71w4FTIXEdlalHSACmOPnwhFcXXI/V7a6Gkgs4yT8fKsJ8GnvmJIn7BLHvUVLutHnn/iU37uxIve5dpUpLKG6ey2oBr8xB+Y68ABhS8SMy1tStMYKYspHorCgONz+gVToZUc4/n/fZgz7hmAx7pjQ3S0dQzy8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725006660; c=relaxed/simple;
-	bh=u5uHgC0EmSMlqRY96JwJkgnF/6XfOMDCloJGGj6hDnM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=F1PazH0HANAbOGSIXj/HYKCqVzv6JljcK1vvylH5CCvq7ZcgOwYXksb0kCvH8cpWpy1vzXIVHWAFnUZJxlIlQ9aqoJ35QXPPl1QUq3UsD17oNg5PoXgvL+dB9plbXXGPr+FH40axUfQteufVTQFMjOCNemZ91wEnXAY07uJdOG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=JhWXyjBV; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47U3ewrG010341;
-	Fri, 30 Aug 2024 08:30:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=d
-	w//9Q4kI10o5QwvEsOAODMUsSmDDkvgUrYDnLcsmfI=; b=JhWXyjBVoYEARBpXe
-	U20jFIQd08/8SgreeHHvqYePNuupSxpNl+TtSn4XoQTzxwJk6tkQ49w3bK4u7a9f
-	ZDS8O7ZqFWzZr3vfklWB+NBzbpTlmNyn/gPRZd0E5zIaXR3QTJtDIQkloLX2LBI7
-	yHv0+HTub3SIUr2tnhJ6HF76A3eahdRWsLOpKzHp1xhXz9nRsAdrBGbEf7sPiewu
-	GE3Zf4LJvSsBQ9gSpSeqr6QbJXKtHbYpm7jdvtXwMgwRaPQ/qev9yBoqu8ZMjuwj
-	MuH+Rg5GcixvTG05dMSZl2A6jYGOvBgVoUSusnsg3AR+WEKhZtBt9eu7h1/yx3A5
-	5JJ/A==
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 419q8udn8f-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 30 Aug 2024 08:30:28 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 47U6DDtQ024673;
-	Fri, 30 Aug 2024 08:30:27 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 417vj3t6uh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 30 Aug 2024 08:30:27 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 47U8UPFC50463168
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 30 Aug 2024 08:30:25 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A48882004F;
-	Fri, 30 Aug 2024 08:30:25 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 2B5672004B;
-	Fri, 30 Aug 2024 08:30:22 +0000 (GMT)
-Received: from [9.195.47.156] (unknown [9.195.47.156])
-	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 30 Aug 2024 08:30:21 +0000 (GMT)
-Message-ID: <6961a047-979b-40c2-bfc6-d8eddd96694c@linux.ibm.com>
-Date: Fri, 30 Aug 2024 14:00:20 +0530
+	s=arc-20240116; t=1725006677; c=relaxed/simple;
+	bh=W4okSxmdibTCn4ziAba4VGtgI7xYbgEeikC4yFQw8CU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oqRGOk0jRZVfc9vguTcmt9K7mKHjAiGQ9Qtbdh25udu7WyasT2eL82yFMVFOoZhnPeK3URCOv28fz7OJ4IaT8ZzYcpQW0kC2sAsQGylucV2pRcCKl8gbingNVVojMr4M80NQTLX9+cH+viwucShYxdy+WWupYHQ13x1a0uBvCbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DT4Fb4hV; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-20202df1c2fso18178765ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 01:31:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725006675; x=1725611475; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=71rVnXw0i65nBGRwE4R/+KzqRSoKmH4Qt/FxgbttMc8=;
+        b=DT4Fb4hVH+BY7wLSIg6B1gJ0VgZ0wEJXZbeymx+LdZGM4xopYR3+NLR/ozBGtFQGsV
+         11/viWBGLzBCYafXWwCS7N2xMvHz0wTR+1JwEyQb7OQ/vcVx6NymvkXGq7jtrzOb2wU0
+         m6SilvOp5kzs0KnATYXscG10bKHuLX7fgPaxQSAT3GoFiroksQKmwGFgobSBENqA+L2I
+         5oVr4GMQhZIdB3WtHEVatLNLZoYJwXlWuqvOOo9RRtG2XlWtz2r+unMvmL99ui9bINs3
+         oDhjGjyPprcKJw11SISJNKDyN66Cwg/EoxJoIgkX7zKhjoDuoAyeBIoFiq6mugI4Qmg+
+         5tyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725006675; x=1725611475;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=71rVnXw0i65nBGRwE4R/+KzqRSoKmH4Qt/FxgbttMc8=;
+        b=QS5KL63U3vQzHHyR7l3RoFmc0l4Nr8RapGXTuwL4n4+CHm6/FpAV1dz9TA3GR/CyxJ
+         rBxRnw8Mv9tzqxxWomq5TuXSllRXil8bL5J88NSDaRT5ZTure622dTnrBtxv2q24gWhq
+         rWjC42DokW8WbI+kolRnE+hGGHyO57La25LXrfyyaiCawmfe2FvbmTp0k5Jvm6viV51j
+         g7gpn6WiUY5g1ekx+1f0n4A+uxwhtc6b8I5srm3+UsfW5btSSBfst5OF97syFXkIRZaF
+         Yuw3X0vS4El3KMGDD/JZ3SbSU4ldRappLzxKPY74N0XFQ2o0x4drh1FN7rtlaLWr7OEQ
+         rCqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVnQa2cgs/Xaoya0FKehvNmP7ohhFIxWoUxgjrJpB6SI0G8380PC1xtwLWTLsldBk3ZuiUvO/Fxvlp4PAs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz550qE1nI3xdf18Ur5g8n01zX1fm9cTLHu98RILjuJbRpjiSbI
+	m+eNFQoXyHN6qYkZzPCWe6iK80WJQnaYpj9gT1ZTjxQEJRB+HXGztj5UuTZmYA==
+X-Google-Smtp-Source: AGHT+IGs0iZhk5gbNHCq9v3dOuBh9ghvFXrEwtCBFsFu89+XnsnXwVtuLJqucrsOrTkycWidun15HA==
+X-Received: by 2002:a17:902:e546:b0:1fb:9cbf:b4e3 with SMTP id d9443c01a7336-205286b87a6mr26698865ad.22.1725006674696;
+        Fri, 30 Aug 2024 01:31:14 -0700 (PDT)
+Received: from thinkpad ([117.193.213.95])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2051554cbf1sm22384655ad.240.2024.08.30.01.31.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Aug 2024 01:31:14 -0700 (PDT)
+Date: Fri, 30 Aug 2024 14:01:07 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Benjamin Bara <bbara93@gmail.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Alexander Stein <alexander.stein@ew.tq-group.com>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Benjamin Bara <benjamin.bara@skidata.com>
+Subject: Re: [PATCH v2 1/2] media: i2c: imx290: Check for availability in
+ probe()
+Message-ID: <20240830083107.4h5ryhcq6e6e5dw3@thinkpad>
+References: <20240828-imx290-avail-v2-0-bd320ac8e8fa@skidata.com>
+ <20240828-imx290-avail-v2-1-bd320ac8e8fa@skidata.com>
+ <20240829131909.GD12951@pendragon.ideasonboard.com>
+ <20240829163247.ovsst5ipecthtc6u@thinkpad>
+ <20240829164843.GA15799@pendragon.ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] cpufreq: intel_pstate: Set asymmetric CPU capacity
- on hybrid systems
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: x86 Maintainers <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Ricardo Neri <ricardo.neri@intel.com>, Tim Chen <tim.c.chen@intel.com>
-References: <3310447.aeNJFYEL58@rjwysocki.net>
- <1979653.PYKUYFuaPT@rjwysocki.net>
-From: Shrikanth Hegde <sshegde@linux.ibm.com>
-Content-Language: en-US
-In-Reply-To: <1979653.PYKUYFuaPT@rjwysocki.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 2i3L1xT1w7HH9Hrd5cxiGo0LyzGYvlOJ
-X-Proofpoint-ORIG-GUID: 2i3L1xT1w7HH9Hrd5cxiGo0LyzGYvlOJ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-30_03,2024-08-29_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- lowpriorityscore=0 clxscore=1011 bulkscore=0 phishscore=0 mlxscore=0
- malwarescore=0 mlxlogscore=999 spamscore=0 priorityscore=1501 adultscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408300059
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240829164843.GA15799@pendragon.ideasonboard.com>
 
-
-
-On 8/28/24 17:18, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Thu, Aug 29, 2024 at 07:48:43PM +0300, Laurent Pinchart wrote:
+> Hi Manivannan,
 > 
-[...]
->   
-> +static void hybrid_update_capacity(struct cpudata *cpu)
-> +{
-> +	unsigned int max_cap_perf;
-> +
-> +	mutex_lock(&hybrid_capacity_lock);
-> +
-> +	if (!hybrid_max_perf_cpu)
-> +		goto unlock;
-> +
-> +	/*
-> +	 * The maximum performance of the CPU may have changed, but assume
-> +	 * that the performance of the other CPUs has not changed.
-> +	 */
-> +	max_cap_perf = hybrid_max_perf_cpu->capacity_perf;
-> +
-> +	intel_pstate_get_hwp_cap(cpu);
-> +
-> +	hybrid_get_capacity_perf(cpu);
-> +	/* Should hybrid_max_perf_cpu be replaced by this CPU? */
-> +	if (cpu->capacity_perf > max_cap_perf) {
-> +		hybrid_max_perf_cpu = cpu;
-> +		hybrid_set_capacity_of_cpus();
-> +		goto unlock;
-> +	}
-> +
-> +	/* If this CPU is hybrid_max_perf_cpu, should it be replaced? */
-> +	if (cpu == hybrid_max_perf_cpu && cpu->capacity_perf < max_cap_perf) {
-> +		hybrid_update_cpu_scaling();
-> +		goto unlock;
-> +	}
-
-I assume this CPU capacity is based on freq. It doesnt change based on 
-irq, any upper scheduler classes such dl, rt right?
-
-can capacity_perf change slightly or it can change such that it always 
-changes to next possible level? The reason, if it can change slightly, 
-but cpu is still hybrid_max_perf_cpu, it would end up accessing all the 
-percpu structures and change it, that would be costly on larger systems.
-
-
-> +
-> +	hybrid_set_cpu_capacity(cpu);
-> +
-> +unlock:
-> +	mutex_unlock(&hybrid_capacity_lock);
-> +}
-> +
->   static void intel_pstate_hwp_set(unsigned int cpu)
->   {
->   	struct cpudata *cpu_data = all_cpu_data[cpu];
-> @@ -1070,6 +1240,22 @@ static void intel_pstate_hwp_offline(str
->   		value |= HWP_ENERGY_PERF_PREFERENCE(HWP_EPP_POWERSAVE);
->   
->   	wrmsrl_on_cpu(cpu->cpu, MSR_HWP_REQUEST, value);
-> +
-> +	mutex_lock(&hybrid_capacity_lock);
-> +
-> +	if (!hybrid_max_perf_cpu) {
-> +		mutex_unlock(&hybrid_capacity_lock);
-> +
-> +		return;
-> +	}
-> +
-> +	if (hybrid_max_perf_cpu == cpu)
-> +		hybrid_update_cpu_scaling();
-> +
-> +	mutex_unlock(&hybrid_capacity_lock);
-> +
-> +	/* Reset the capacity of the CPU going offline to the initial value. */
-> +	hybrid_clear_cpu_capacity(cpu->cpu);
+> On Thu, Aug 29, 2024 at 10:02:47PM +0530, Manivannan Sadhasivam wrote:
+> > On Thu, Aug 29, 2024 at 04:19:09PM +0300, Laurent Pinchart wrote:
+> > 
+> > Hi Laurent,
+> > 
+> > [...]
+> > 
+> > > > +		dev_err(dev, "Sensor is not in standby mode\n");
+> > > > +		ret = -ENODEV;
+> > > > +		goto err_pm;
+> > > > +	}
+> > > > +
+> > > 
+> > > My last concern is about accessing hardware at probe time. There are
+> > > known cases where this is problematic. They can be split in two
+> > > categories, systems that exhibit unwanted side effects when powering the
+> > > sensor up, and systems where the sensor can't be accessed at probe time.
+> > > 
+> > > The two issues I can think of in the first category is devices that have
+> > > a camera privacy light that could cause worries among users if it
+> > > flashes at boot time, and devices that agressively optimize boot time.
+> > > 
+> > > In the second category, I know that some people use camera serdes
+> > > (FPD-Link, GMSL, ...) that are controlled by userspace. As they should
+> > > instead use kernel drivers for those components, upstream may not care
+> > > too much about this use case. Another issue I was told about was a
+> > > device booting in temperatures that were too low for the camera to
+> > > operate, which then needed half an hour to heat the device enclosure
+> > > before the sensor and serdes could be accessed. That's a bit extreme,
+> > > but it sounds like a valid use case to me.
+> > > 
+> > > What do we do with those cases ? Detecting devices at probe time does
+> > > have value, so I think it should be a policy decision. We may want to
+> > > convey some of that information through DT properties (I'm not sure what
+> > > would be acceptable there though). In any case, that's quite a bit of
+> > > yak shaving, so I'm inclined to accept this series (or rather its next
+> > > version), given that quite a few other camera sensor drivers detect the
+> > > device at probe time. I would however like feedback on the problem to
+> > > try and find a good solution.
+> > 
+> > Most of the issues you mentioned applies to other hardware peripherals also IMO.
+> > And it is common for the drivers to read registers and make sure the device is
+> > detected on the bus during probe().
 > 
+> That's true. I think the problem affects different device types
+> differently though, and this may (or may not) call for different
+> solutions.
+> 
+> > If an usecase doesn't want to read the
+> > registers during probe time, then they _should_not_ build the driver as built-in
+> > rather make it as a loadable module and load it whenever necessary. This applies
+> > to boot time optimization as well.
+> 
+> For most of the use cases I listed I agree with you. One exception is
+> the privacy light issue. Regardless of when the camera sensor driver is
+> loaded, powering the device at probe time will flash the privacy light.
+> Doing so later than boot time would probably make the issue even worse,
+> I would worry more if I saw my webcam privacy light flashing at a random
+> point after boot time.
+> 
+
+I'm not familiar with the privacy light feature in camera sensors, but is there
+no way to prevent it from enabling by default? If that's not possible, it makes
+sense to disable it using a DT property as it is a hardware feature.
+
+> > A DT property wouldn't be feasible as DT is supposed to describe the hardware,
+> > not the usecase.
+> 
+> I think that rule is typically slightly relaxed, by allowing in DT
+> system descriptions, not just hardware descriptions. Otherwise we
+> wouldn't allow things like reserved memory ranges. Describing that a
+> camera sensor has a privacy light, in a way that would allow drivers to
+> avoid powering up the device at probe time without requiring much
+> duplicated code in all drivers, would in my opinion be an acceptable DT
+> usage.
+> 
+
+Well, I agree with you. As I said above, privacy light is a hardware feature, so
+we can enable/disable it using a DT property. My comment about the DT property
+applies only to detecting the devices during probe time, which is a
+driver/usecase dependent feature.
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
