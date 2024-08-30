@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-308664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69CAF966004
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 13:07:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F7B2966005
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 13:08:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E48E1C2239C
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 11:07:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9944283D2A
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 11:07:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 616E01B1D62;
-	Fri, 30 Aug 2024 11:04:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 569B4192D7C;
+	Fri, 30 Aug 2024 11:04:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d/Lxw7Mp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lCPF6eHZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41AF31B1D47
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 11:04:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 479811B1D5F
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 11:04:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725015876; cv=none; b=HHryNMt2OTKVB7c3LxoZIooQM03UcjRMKjtvK5b8o1gjgO0H+UAho9koTcIzxp6QhwwlLIBW6a3GToluMxFvZLo21SHMMgKNprDnlu6MKLvIkJeIuwEaH051R00qCQLW+hCofTxWNzMA8UILEJd6X/I+zGD9jekoTLiUQW91fsU=
+	t=1725015877; cv=none; b=W19TqdETl8ClEhORU96NH73HyOuy1+2qAVn0NYLj6pUIh3Qi9mz1y9Fx7fvPIZ64w5ycBwH0Pvxfha19WcFu5TnQDMHSnIZrtdGKtWQ0dsZPdtFL+0dfYoD671vk9nrV/kw5hA7X6S6O2fKQ2wFbI0A4bOmZXYUjietFqIwvYGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725015876; c=relaxed/simple;
-	bh=4aAT3sq2Akzz4xoZoBWFndyFASZxLnhjnDg4MWuOPRs=;
+	s=arc-20240116; t=1725015877; c=relaxed/simple;
+	bh=lUh8Aedgv8tc8oDpPohyk/Cd29grYQZyx9Rw2Lh5QQc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WYIdQW3K2hrS0auegZt1pvACpl/NlVD/hkp6zoKdG4QVnrj4/y9/Q3Q8RkhgMIIN69wd7R7vYysEIlXyh6cXn8hOaUYi1KJl+Uq8Cgh8maI/zgQyQAzL6kgSuHGOvJylcF16DrIV7cQJS9tp4m13xQhJ1Uh0RB5kDiHj+XKCMj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d/Lxw7Mp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B8E6C4CEC4;
-	Fri, 30 Aug 2024 11:04:35 +0000 (UTC)
+	 MIME-Version; b=gy1RcEQOPoh16zuDIrGz20jihPB9ngDtSmzneY8OK73mpAOd5La9lXaX/v3ATcTfCytv+0Few04Nr+ZHgPPoLd2Pr1H7Vyx00BNUK1/JA5CUPR1vYNLO33HtazpnOMx4W2I30a++AYuL9bXEEZhrzoheOHZvemySsFnLCL/b9nU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lCPF6eHZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC2D5C4CEC6;
+	Fri, 30 Aug 2024 11:04:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725015875;
-	bh=4aAT3sq2Akzz4xoZoBWFndyFASZxLnhjnDg4MWuOPRs=;
+	s=k20201202; t=1725015876;
+	bh=lUh8Aedgv8tc8oDpPohyk/Cd29grYQZyx9Rw2Lh5QQc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=d/Lxw7MpQZhsaiScUATqJ6HL88QxfgBE4VlXsbKMz2gOc9jA4OdhGF5DCw7hzaIwm
-	 TkQWrulmf0BAcvHMoZIQkwu2eE5KlFsY5Zl+iGONaYyRv2wqOgO4RhNapZWSomphtW
-	 TNoz+nu2zoj4tsFV6ewAiSOGWXd422x3G3LpkcNVlu8e/BPTnYP13C8+ECYyPi4HrG
-	 2s7ZBh5bgrr//EOWAdy27AeuR2fKOuH8PWpPeZ6IRbIN1aUh3EXXluhkpDeeSGXd21
-	 BgatVcZo7q4qgK5H0qFhba8Yx+8MZcnNv7LubYxc8b3dDn+OcAExoW4umc0POLDUoe
-	 rQUjUta4sIx8Q==
+	b=lCPF6eHZnD+OxTItvRilpWaEiSAZwuJFqAxhl0r8PPR1cQs9NYw3RBvkERhtSMm71
+	 NR/5kkLsMB8VSjHJyN4K+Ouq5xqAe3NzQ5u9OwO3Q/ONp6Xl+30We5WWhWCkTrgWdV
+	 Hb/pEDF5FUPlf/9IW7dc/Cy88LTVmaabkYwkj80kg0ZYs0IuC/V3jKnrQWbxMK6URC
+	 HivxdqaYSi2Xue4Gk/mtyTYBKgF1gMYcvJdPaK/hnUDRGrIMl1Xfh0nCKvGkG0Az8t
+	 kK6J3F2DCR0fNed7Pscz48Rirf9DLKy4S1PGaknxtUGmT+SrF7e0utFGnI1YAn4VTX
+	 Ha+iEQRirsgAg==
 From: Tejun Heo <tj@kernel.org>
 To: void@manifault.com
 Cc: kernel-team@meta.com,
@@ -49,9 +49,9 @@ Cc: kernel-team@meta.com,
 	Changwoo Min <multics69@gmail.com>,
 	Andrea Righi <andrea.righi@linux.dev>,
 	Dan Schatzberg <schatzberg.dan@gmail.com>
-Subject: [PATCH 10/11] sched_ext: Implement scx_bpf_dispatch[_vtime]_from_dsq()
-Date: Fri, 30 Aug 2024 01:03:54 -1000
-Message-ID: <20240830110415.116090-11-tj@kernel.org>
+Subject: [PATCH 11/11] scx_qmap: Implement highpri boosting
+Date: Fri, 30 Aug 2024 01:03:55 -1000
+Message-ID: <20240830110415.116090-12-tj@kernel.org>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <20240830110415.116090-1-tj@kernel.org>
 References: <20240830110415.116090-1-tj@kernel.org>
@@ -63,22 +63,13 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Once a task is put into a DSQ, the allowed operations are fairly limited.
-Tasks in the built-in local and global DSQs are executed automatically and,
-ignoring dequeue, there is only one way a task in a user DSQ can be
-manipulated - scx_bpf_consume() moves the first task to the dispatching
-local DSQ. This inflexibility sometimes gets in the way and is an area where
-multiple feature requests have been made.
+Implement a silly boosting mechanism for nice -20 tasks. The only purpose is
+demonstrating and testing scx_bpf_dispatch_from_dsq(). The boosting only
+works within SHARED_DSQ and makes only minor differences with increased
+dispatch batch (-b).
 
-Implement scx_bpf_dispatch[_vtime]_from_dsq(), which can be called during
-DSQ iteration and can move the task to any DSQ - local DSQs, global DSQ and
-user DSQs. The kfuncs can be called from ops.dispatch() and any BPF context
-which dosen't hold a rq lock including BPF timers and SYSCALL programs.
-
-This is an expansion of an earlier patch which only allowed moving into the
-dispatching local DSQ:
-
-  http://lkml.kernel.org/r/Zn4Cw4FDTmvXnhaf@slm.duckdns.org
+This exercises moving tasks to a user DSQ and all local DSQs from
+ops.dispatch() and BPF timerfn.
 
 Signed-off-by: Tejun Heo <tj@kernel.org>
 Cc: Daniel Hodges <hodges.daniel.scott@gmail.com>
@@ -87,268 +78,312 @@ Cc: Changwoo Min <multics69@gmail.com>
 Cc: Andrea Righi <andrea.righi@linux.dev>
 Cc: Dan Schatzberg <schatzberg.dan@gmail.com>
 ---
- kernel/sched/ext.c                       | 180 ++++++++++++++++++++++-
- tools/sched_ext/include/scx/common.bpf.h |   8 +
- 2 files changed, 186 insertions(+), 2 deletions(-)
+ tools/sched_ext/scx_qmap.bpf.c | 142 ++++++++++++++++++++++++++++++---
+ tools/sched_ext/scx_qmap.c     |  11 ++-
+ 2 files changed, 139 insertions(+), 14 deletions(-)
 
-diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-index df33524d68f3..96b8cc490841 100644
---- a/kernel/sched/ext.c
-+++ b/kernel/sched/ext.c
-@@ -1067,6 +1067,11 @@ static __always_inline bool scx_kf_allowed_on_arg_tasks(u32 mask,
- 	return true;
- }
- 
-+static bool scx_kf_allowed_if_unlocked(void)
-+{
-+	return !current->scx.kf_mask;
-+}
-+
- /**
-  * nldsq_next_task - Iterate to the next task in a non-local DSQ
-  * @dsq: user dsq being interated
-@@ -5461,7 +5466,7 @@ __bpf_kfunc_start_defs();
-  * scx_bpf_dispatch - Dispatch a task into the FIFO queue of a DSQ
-  * @p: task_struct to dispatch
-  * @dsq_id: DSQ to dispatch to
-- * @slice: duration @p can run for in nsecs
-+ * @slice: duration @p can run for in nsecs, 0 to keep the current value
-  * @enq_flags: SCX_ENQ_*
-  *
-  * Dispatch @p into the FIFO queue of the DSQ identified by @dsq_id. It is safe
-@@ -5511,7 +5516,7 @@ __bpf_kfunc void scx_bpf_dispatch(struct task_struct *p, u64 dsq_id, u64 slice,
-  * scx_bpf_dispatch_vtime - Dispatch a task into the vtime priority queue of a DSQ
-  * @p: task_struct to dispatch
-  * @dsq_id: DSQ to dispatch to
-- * @slice: duration @p can run for in nsecs
-+ * @slice: duration @p can run for in nsecs, 0 to keep the current value
-  * @vtime: @p's ordering inside the vtime-sorted queue of the target DSQ
-  * @enq_flags: SCX_ENQ_*
-  *
-@@ -5552,6 +5557,117 @@ static const struct btf_kfunc_id_set scx_kfunc_set_enqueue_dispatch = {
- 	.set			= &scx_kfunc_ids_enqueue_dispatch,
+diff --git a/tools/sched_ext/scx_qmap.bpf.c b/tools/sched_ext/scx_qmap.bpf.c
+index 892278f12dce..11b8e22128e1 100644
+--- a/tools/sched_ext/scx_qmap.bpf.c
++++ b/tools/sched_ext/scx_qmap.bpf.c
+@@ -27,6 +27,8 @@
+ enum consts {
+ 	ONE_SEC_IN_NS		= 1000000000,
+ 	SHARED_DSQ		= 0,
++	HIGHPRI_DSQ		= 1,
++	HIGHPRI_WEIGHT		= 8668,		/* this is what -20 maps to */
  };
  
-+static bool scx_dispatch_from_dsq(struct bpf_iter_scx_dsq_kern *kit,
-+				  struct task_struct *p, u64 dsq_id,
-+				  u64 slice, u64 vtime, u64 enq_flags)
-+{
-+	struct scx_dispatch_q *src_dsq = kit->dsq, *dst_dsq;
-+	struct rq *this_rq, *src_rq, *dst_rq, *locked_rq;
-+	bool dispatched = false;
-+	bool in_balance;
-+	unsigned long flags;
-+
-+	if (!scx_kf_allowed_if_unlocked() && !scx_kf_allowed(SCX_KF_DISPATCH))
-+		return false;
-+
-+	/*
-+	 * Can be called from either ops.dispatch() locking this_rq() or any
-+	 * context where no rq lock is held. If latter, lock @p's task_rq which
-+	 * we'll likely need anyway.
-+	 */
-+	src_rq = task_rq(p);
-+
-+	local_irq_save(flags);
-+	this_rq = this_rq();
-+	in_balance = this_rq->scx.flags & SCX_RQ_IN_BALANCE;
-+
-+	if (in_balance) {
-+		if (this_rq != src_rq) {
-+			raw_spin_rq_unlock(this_rq);
-+			raw_spin_rq_lock(src_rq);
-+		}
-+	} else {
-+		raw_spin_rq_lock(src_rq);
-+	}
-+
-+	locked_rq = src_rq;
-+	raw_spin_lock(&src_dsq->lock);
-+
-+	/*
-+	 * Did someone else get to it? @p could have already left $src_dsq, got
-+	 * re-enqueud, or be in the process of being consumed by someone else.
-+	 */
-+	if (unlikely(p->scx.dsq != src_dsq ||
-+		     u32_before(kit->dsq_seq, p->scx.dsq_seq) ||
-+		     p->scx.holding_cpu >= 0) ||
-+	    WARN_ON_ONCE(src_rq != task_rq(p))) {
-+		raw_spin_unlock(&src_dsq->lock);
-+		goto out;
-+	}
-+
-+	/* @p is still on $src_dsq and stable, determine the destination */
-+	dst_dsq = find_dsq_for_dispatch(this_rq, dsq_id, p);
-+
-+	if (dst_dsq->id == SCX_DSQ_LOCAL) {
-+		dst_rq = container_of(dst_dsq, struct rq, scx.local_dsq);
-+		if (!task_can_run_on_remote_rq(p, dst_rq, true)) {
-+			dst_dsq = &scx_dsq_global;
-+			dst_rq = src_rq;
-+		}
-+	} else {
-+		/* no need to migrate if destination is a non-local DSQ */
-+		dst_rq = src_rq;
-+	}
-+
-+	/*
-+	 * Move @p into $dst_dsq. If $dst_dsq is the local DSQ of a different
-+	 * CPU, @p will be migrated.
-+	 */
-+	if (dst_dsq->id == SCX_DSQ_LOCAL) {
-+		/* @p is going from a non-local DSQ to a local DSQ */
-+		if (src_rq == dst_rq) {
-+			task_unlink_from_dsq(p, src_dsq);
-+			move_local_task_to_local_dsq(p, enq_flags,
-+						     src_dsq, dst_rq);
-+			raw_spin_unlock(&src_dsq->lock);
-+		} else {
-+			raw_spin_unlock(&src_dsq->lock);
-+			move_remote_task_to_local_dsq(p, enq_flags,
-+						      src_rq, dst_rq);
-+			locked_rq = dst_rq;
-+		}
-+	} else {
-+		/*
-+		 * @p is going from a non-local DSQ to a non-local DSQ. As
-+		 * $src_dsq is already locked, do an abbreviated dequeue.
-+		 */
-+		task_unlink_from_dsq(p, src_dsq);
-+		p->scx.dsq = NULL;
-+		raw_spin_unlock(&src_dsq->lock);
-+
-+		p->scx.dsq_vtime = vtime;
-+		dispatch_enqueue(dst_dsq, p, enq_flags);
-+	}
-+
-+	if (slice)
-+		p->scx.slice = slice;
-+	else
-+		p->scx.slice = p->scx.slice ?: 1;
-+
-+	dispatched = true;
-+out:
-+	if (in_balance) {
-+		if (this_rq != locked_rq) {
-+			raw_spin_rq_unlock(locked_rq);
-+			raw_spin_rq_lock(this_rq);
-+		}
-+	} else {
-+		raw_spin_rq_unlock_irqrestore(locked_rq, flags);
-+	}
-+
-+	return dispatched;
-+}
-+
- __bpf_kfunc_start_defs();
+ char _license[] SEC("license") = "GPL";
+@@ -36,10 +38,12 @@ const volatile u32 stall_user_nth;
+ const volatile u32 stall_kernel_nth;
+ const volatile u32 dsp_inf_loop_after;
+ const volatile u32 dsp_batch;
++const volatile bool highpri_boosting;
+ const volatile bool print_shared_dsq;
+ const volatile s32 disallow_tgid;
+ const volatile bool suppress_dump;
  
- /**
-@@ -5631,12 +5747,70 @@ __bpf_kfunc bool scx_bpf_consume(u64 dsq_id)
- 	}
++u64 nr_highpri_queued;
+ u32 test_error_cnt;
+ 
+ UEI_DEFINE(uei);
+@@ -95,6 +99,7 @@ static u64 core_sched_tail_seqs[5];
+ /* Per-task scheduling context */
+ struct task_ctx {
+ 	bool	force_local;	/* Dispatch directly to local_dsq */
++	bool	highpri;
+ 	u64	core_sched_seq;
+ };
+ 
+@@ -122,6 +127,7 @@ struct {
+ /* Statistics */
+ u64 nr_enqueued, nr_dispatched, nr_reenqueued, nr_dequeued, nr_ddsp_from_enq;
+ u64 nr_core_sched_execed;
++u64 nr_expedited_local, nr_expedited_remote, nr_expedited_lost, nr_expedited_from_timer;
+ u32 cpuperf_min, cpuperf_avg, cpuperf_max;
+ u32 cpuperf_target_min, cpuperf_target_avg, cpuperf_target_max;
+ 
+@@ -140,17 +146,25 @@ static s32 pick_direct_dispatch_cpu(struct task_struct *p, s32 prev_cpu)
+ 	return -1;
  }
  
-+/**
-+ * scx_bpf_dispatch_from_dsq - Move a task from DSQ iteration to a DSQ
-+ * @it__iter: DSQ iterator in progress
-+ * @p: task to transfer
-+ * @dsq_id: DSQ to move @p to
-+ * @slice: duration @p can run for in nsecs, 0 to keep the current value
-+ * @enq_flags: SCX_ENQ_*
-+ *
-+ * Transfer @p which is on the DSQ currently iterated by @it__iter to the DSQ
-+ * specified by @dsq_id. All DSQs - local DSQs, global DSQ and user DSQs - can
-+ * be the destination.
-+ *
-+ * For the transfer to be successful, @p must still be on the DSQ and have been
-+ * queued before the DSQ iteration started. This function doesn't care whether
-+ * @p was obtained from the DSQ iteration. @p just has to be on the DSQ and have
-+ * been queued before the iteration started.
-+ *
-+ * Can be called from ops.dispatch() or any BPF context which doesn't hold a rq
-+ * lock (e.g. BPF timers or SYSCALL programs).
-+ *
-+ * Returns %true if @p has been consumed, %false if @p had already been consumed
-+ * or dequeued.
-+ */
-+__bpf_kfunc bool scx_bpf_dispatch_from_dsq(struct bpf_iter_scx_dsq *it__iter,
-+					   struct task_struct *p, u64 dsq_id,
-+					   u64 slice, u64 enq_flags)
++static struct task_ctx *lookup_task_ctx(struct task_struct *p)
 +{
-+	return scx_dispatch_from_dsq((struct bpf_iter_scx_dsq_kern *)it__iter,
-+				     p, dsq_id, slice, 0, enq_flags);
++	struct task_ctx *tctx;
++
++	if (!(tctx = bpf_task_storage_get(&task_ctx_stor, p, 0, 0))) {
++		scx_bpf_error("task_ctx lookup failed");
++		return NULL;
++	}
++	return tctx;
 +}
 +
-+/**
-+ * scx_bpf_dispatch_vtime_from_dsq - Move a task from DSQ iteration to a PRIQ DSQ
-+ * @it__iter: DSQ iterator in progress
-+ * @p: task to transfer
-+ * @dsq_id: DSQ to move @p to
-+ * @slice: duration @p can run for in nsecs, 0 to keep the current value
-+ * @vtime: @p's ordering inside the vtime-sorted queue of the target DSQ
-+ * @enq_flags: SCX_ENQ_*
-+ *
-+ * Transfer @p which is on the DSQ currently iterated by @it__iter to the
-+ * priority queue of the DSQ specified by @dsq_id. The destination must be a
-+ * user DSQ as only user DSQs support priority queue.
-+ *
-+ * All other aspects are identical to scx_bpf_dispatch_from_dsq(). See
-+ * scx_bpf_dispatch_vtime() for more information on @vtime.
-+ */
-+__bpf_kfunc bool scx_bpf_dispatch_vtime_from_dsq(struct bpf_iter_scx_dsq *it__iter,
-+						 struct task_struct *p, u64 dsq_id,
-+						 u64 slice, u64 vtime, u64 enq_flags)
-+{
-+	return scx_dispatch_from_dsq((struct bpf_iter_scx_dsq_kern *)it__iter,
-+				     p, dsq_id, slice, vtime,
-+				     enq_flags | SCX_ENQ_DSQ_PRIQ);
+ s32 BPF_STRUCT_OPS(qmap_select_cpu, struct task_struct *p,
+ 		   s32 prev_cpu, u64 wake_flags)
+ {
+ 	struct task_ctx *tctx;
+ 	s32 cpu;
+ 
+-	tctx = bpf_task_storage_get(&task_ctx_stor, p, 0, 0);
+-	if (!tctx) {
+-		scx_bpf_error("task_ctx lookup failed");
++	if (!(tctx = lookup_task_ctx(p)))
+ 		return -ESRCH;
+-	}
+ 
+ 	cpu = pick_direct_dispatch_cpu(p, prev_cpu);
+ 
+@@ -197,11 +211,8 @@ void BPF_STRUCT_OPS(qmap_enqueue, struct task_struct *p, u64 enq_flags)
+ 	if (test_error_cnt && !--test_error_cnt)
+ 		scx_bpf_error("test triggering error");
+ 
+-	tctx = bpf_task_storage_get(&task_ctx_stor, p, 0, 0);
+-	if (!tctx) {
+-		scx_bpf_error("task_ctx lookup failed");
++	if (!(tctx = lookup_task_ctx(p)))
+ 		return;
+-	}
+ 
+ 	/*
+ 	 * All enqueued tasks must have their core_sched_seq updated for correct
+@@ -256,6 +267,10 @@ void BPF_STRUCT_OPS(qmap_enqueue, struct task_struct *p, u64 enq_flags)
+ 		return;
+ 	}
+ 
++	if (highpri_boosting && p->scx.weight >= HIGHPRI_WEIGHT) {
++		tctx->highpri = true;
++		__sync_fetch_and_add(&nr_highpri_queued, 1);
++	}
+ 	__sync_fetch_and_add(&nr_enqueued, 1);
+ }
+ 
+@@ -272,13 +287,89 @@ void BPF_STRUCT_OPS(qmap_dequeue, struct task_struct *p, u64 deq_flags)
+ 
+ static void update_core_sched_head_seq(struct task_struct *p)
+ {
+-	struct task_ctx *tctx = bpf_task_storage_get(&task_ctx_stor, p, 0, 0);
+ 	int idx = weight_to_idx(p->scx.weight);
++	struct task_ctx *tctx;
+ 
+-	if (tctx)
++	if ((tctx = lookup_task_ctx(p)))
+ 		core_sched_head_seqs[idx] = tctx->core_sched_seq;
+-	else
+-		scx_bpf_error("task_ctx lookup failed");
 +}
 +
- __bpf_kfunc_end_defs();
- 
- BTF_KFUNCS_START(scx_kfunc_ids_dispatch)
- BTF_ID_FLAGS(func, scx_bpf_dispatch_nr_slots)
- BTF_ID_FLAGS(func, scx_bpf_dispatch_cancel)
- BTF_ID_FLAGS(func, scx_bpf_consume)
-+BTF_ID_FLAGS(func, scx_bpf_dispatch_from_dsq, KF_RCU)
-+BTF_ID_FLAGS(func, scx_bpf_dispatch_vtime_from_dsq, KF_RCU)
- BTF_KFUNCS_END(scx_kfunc_ids_dispatch)
- 
- static const struct btf_kfunc_id_set scx_kfunc_set_dispatch = {
-@@ -5733,6 +5907,8 @@ __bpf_kfunc_end_defs();
- 
- BTF_KFUNCS_START(scx_kfunc_ids_unlocked)
- BTF_ID_FLAGS(func, scx_bpf_create_dsq, KF_SLEEPABLE)
-+BTF_ID_FLAGS(func, scx_bpf_dispatch_from_dsq, KF_RCU)
-+BTF_ID_FLAGS(func, scx_bpf_dispatch_vtime_from_dsq, KF_RCU)
- BTF_KFUNCS_END(scx_kfunc_ids_unlocked)
- 
- static const struct btf_kfunc_id_set scx_kfunc_set_unlocked = {
-diff --git a/tools/sched_ext/include/scx/common.bpf.h b/tools/sched_ext/include/scx/common.bpf.h
-index 20280df62857..ef018071da31 100644
---- a/tools/sched_ext/include/scx/common.bpf.h
-+++ b/tools/sched_ext/include/scx/common.bpf.h
-@@ -35,6 +35,8 @@ void scx_bpf_dispatch_vtime(struct task_struct *p, u64 dsq_id, u64 slice, u64 vt
- u32 scx_bpf_dispatch_nr_slots(void) __ksym;
- void scx_bpf_dispatch_cancel(void) __ksym;
- bool scx_bpf_consume(u64 dsq_id) __ksym;
-+bool scx_bpf_dispatch_from_dsq(struct bpf_iter_scx_dsq *it__iter, struct task_struct *p, u64 dsq_id, u64 slice, u64 enq_flags) __ksym __weak;
-+bool scx_bpf_dispatch_vtime_from_dsq(struct bpf_iter_scx_dsq *it__iter, struct task_struct *p, u64 dsq_id, u64 slice, u64 vtime, u64 enq_flags) __ksym __weak;
- u32 scx_bpf_reenqueue_local(void) __ksym;
- void scx_bpf_kick_cpu(s32 cpu, u64 flags) __ksym;
- s32 scx_bpf_dsq_nr_queued(u64 dsq_id) __ksym;
-@@ -62,6 +64,12 @@ bool scx_bpf_task_running(const struct task_struct *p) __ksym;
- s32 scx_bpf_task_cpu(const struct task_struct *p) __ksym;
- struct rq *scx_bpf_cpu_rq(s32 cpu) __ksym;
- 
 +/*
-+ * Use the following as @it__iter when calling
-+ * scx_bpf_dispatch[_vtime]_from_dsq() from within bpf_for_each() loops.
++ * To demonstrate the use of scx_bpf_dispatch_from_dsq(), implement silly
++ * selective priority boosting mechanism by scanning SHARED_DSQ looking for
++ * highpri tasks, moving them to HIGHPRI_DSQ and then consuming them first. This
++ * makes minor difference only when dsp_batch is larger than 1.
++ *
++ * scx_bpf_dispatch[_vtime]_from_dsq() are allowed both from ops.dispatch() and
++ * non-rq-lock holding BPF programs. As demonstration, this function is called
++ * from qmap_dispatch() and monitor_timerfn().
 + */
-+#define BPF_FOR_EACH_ITER	(&___it)
++static bool dispatch_highpri(bool from_timer)
++{
++	struct task_struct *p;
++	s32 this_cpu = bpf_get_smp_processor_id();
 +
- static inline __attribute__((format(printf, 1, 2)))
- void ___scx_bpf_bstr_format_checker(const char *fmt, ...) {}
++	/* scan SHARED_DSQ and move highpri tasks to HIGHPRI_DSQ */
++	bpf_for_each(scx_dsq, p, SHARED_DSQ, 0) {
++		struct task_ctx *tctx;
++
++		/* BPF workaround: iterated task is not trusted, look up again */
++		p = bpf_task_from_pid(p->pid);
++		if (!p)
++			continue;
++
++		if (!(tctx = lookup_task_ctx(p))) {
++			bpf_task_release(p);
++			return false;
++		}
++
++		if (tctx->highpri)
++			scx_bpf_dispatch_from_dsq(BPF_FOR_EACH_ITER, p,
++						  HIGHPRI_DSQ, 0, 0);
++
++		bpf_task_release(p);
++	}
++
++	/*
++	 * Scan HIGHPRI_DSQ and dispatch until a task that can run on this CPU
++	 * is found.
++	 */
++	bpf_for_each(scx_dsq, p, HIGHPRI_DSQ, 0) {
++		bool dispatched = false;
++		s32 cpu;
++
++		/* BPF workaround: iterated task is not trusted, look up again */
++		p = bpf_task_from_pid(p->pid);
++		if (!p)
++			continue;
++
++		if (bpf_cpumask_test_cpu(this_cpu, p->cpus_ptr))
++			cpu = this_cpu;
++		else
++			cpu = scx_bpf_pick_any_cpu(p->cpus_ptr, 0);
++
++		if (scx_bpf_dispatch_from_dsq(BPF_FOR_EACH_ITER, p,
++					      SCX_DSQ_LOCAL_ON | cpu, 0,
++					      SCX_ENQ_PREEMPT)) {
++			if (cpu == this_cpu) {
++				dispatched = true;
++				__sync_fetch_and_add(&nr_expedited_local, 1);
++			} else {
++				__sync_fetch_and_add(&nr_expedited_remote, 1);
++			}
++			if (from_timer)
++				__sync_fetch_and_add(&nr_expedited_from_timer, 1);
++		} else {
++			__sync_fetch_and_add(&nr_expedited_lost, 1);
++		}
++
++		bpf_task_release(p);
++
++		if (dispatched)
++			return true;
++	}
++
++	return false;
+ }
  
+ void BPF_STRUCT_OPS(qmap_dispatch, s32 cpu, struct task_struct *prev)
+@@ -289,7 +380,10 @@ void BPF_STRUCT_OPS(qmap_dispatch, s32 cpu, struct task_struct *prev)
+ 	void *fifo;
+ 	s32 i, pid;
+ 
+-	if (scx_bpf_consume(SHARED_DSQ))
++	if (dispatch_highpri(false))
++		return;
++
++	if (!nr_highpri_queued && scx_bpf_consume(SHARED_DSQ))
+ 		return;
+ 
+ 	if (dsp_inf_loop_after && nr_dispatched > dsp_inf_loop_after) {
+@@ -326,6 +420,8 @@ void BPF_STRUCT_OPS(qmap_dispatch, s32 cpu, struct task_struct *prev)
+ 
+ 		/* Dispatch or advance. */
+ 		bpf_repeat(BPF_MAX_LOOPS) {
++			struct task_ctx *tctx;
++
+ 			if (bpf_map_pop_elem(fifo, &pid))
+ 				break;
+ 
+@@ -333,13 +429,25 @@ void BPF_STRUCT_OPS(qmap_dispatch, s32 cpu, struct task_struct *prev)
+ 			if (!p)
+ 				continue;
+ 
++			if (!(tctx = lookup_task_ctx(p))) {
++				bpf_task_release(p);
++				return;
++			}
++
++			if (tctx->highpri)
++				__sync_fetch_and_sub(&nr_highpri_queued, 1);
++
+ 			update_core_sched_head_seq(p);
+ 			__sync_fetch_and_add(&nr_dispatched, 1);
++
+ 			scx_bpf_dispatch(p, SHARED_DSQ, slice_ns, 0);
+ 			bpf_task_release(p);
++
+ 			batch--;
+ 			cpuc->dsp_cnt--;
+ 			if (!batch || !scx_bpf_dispatch_nr_slots()) {
++				if (dispatch_highpri(false))
++					return;
+ 				scx_bpf_consume(SHARED_DSQ);
+ 				return;
+ 			}
+@@ -649,6 +757,10 @@ static void dump_shared_dsq(void)
+ 
+ static int monitor_timerfn(void *map, int *key, struct bpf_timer *timer)
+ {
++	bpf_rcu_read_lock();
++	dispatch_highpri(true);
++	bpf_rcu_read_unlock();
++
+ 	monitor_cpuperf();
+ 
+ 	if (print_shared_dsq)
+@@ -670,6 +782,10 @@ s32 BPF_STRUCT_OPS_SLEEPABLE(qmap_init)
+ 	if (ret)
+ 		return ret;
+ 
++	ret = scx_bpf_create_dsq(HIGHPRI_DSQ, -1);
++	if (ret)
++		return ret;
++
+ 	timer = bpf_map_lookup_elem(&monitor_timer, &key);
+ 	if (!timer)
+ 		return -ESRCH;
+diff --git a/tools/sched_ext/scx_qmap.c b/tools/sched_ext/scx_qmap.c
+index c9ca30d62b2b..ac45a02b4055 100644
+--- a/tools/sched_ext/scx_qmap.c
++++ b/tools/sched_ext/scx_qmap.c
+@@ -29,6 +29,7 @@ const char help_fmt[] =
+ "  -l COUNT      Trigger dispatch infinite looping after COUNT dispatches\n"
+ "  -b COUNT      Dispatch upto COUNT tasks together\n"
+ "  -P            Print out DSQ content to trace_pipe every second, use with -b\n"
++"  -H            Boost nice -20 tasks in SHARED_DSQ, use with -b\n"
+ "  -d PID        Disallow a process from switching into SCHED_EXT (-1 for self)\n"
+ "  -D LEN        Set scx_exit_info.dump buffer length\n"
+ "  -S            Suppress qmap-specific debug dump\n"
+@@ -63,7 +64,7 @@ int main(int argc, char **argv)
+ 
+ 	skel = SCX_OPS_OPEN(qmap_ops, scx_qmap);
+ 
+-	while ((opt = getopt(argc, argv, "s:e:t:T:l:b:Pd:D:Spvh")) != -1) {
++	while ((opt = getopt(argc, argv, "s:e:t:T:l:b:PHd:D:Spvh")) != -1) {
+ 		switch (opt) {
+ 		case 's':
+ 			skel->rodata->slice_ns = strtoull(optarg, NULL, 0) * 1000;
+@@ -86,6 +87,9 @@ int main(int argc, char **argv)
+ 		case 'P':
+ 			skel->rodata->print_shared_dsq = true;
+ 			break;
++		case 'H':
++			skel->rodata->highpri_boosting = true;
++			break;
+ 		case 'd':
+ 			skel->rodata->disallow_tgid = strtol(optarg, NULL, 0);
+ 			if (skel->rodata->disallow_tgid < 0)
+@@ -121,6 +125,11 @@ int main(int argc, char **argv)
+ 		       skel->bss->nr_reenqueued, skel->bss->nr_dequeued,
+ 		       skel->bss->nr_core_sched_execed,
+ 		       skel->bss->nr_ddsp_from_enq);
++		printf("         exp_local=%"PRIu64" exp_remote=%"PRIu64" exp_timer=%"PRIu64" exp_lost=%"PRIu64"\n",
++		       skel->bss->nr_expedited_local,
++		       skel->bss->nr_expedited_remote,
++		       skel->bss->nr_expedited_from_timer,
++		       skel->bss->nr_expedited_lost);
+ 		if (__COMPAT_has_ksym("scx_bpf_cpuperf_cur"))
+ 			printf("cpuperf: cur min/avg/max=%u/%u/%u target min/avg/max=%u/%u/%u\n",
+ 			       skel->bss->cpuperf_min,
 -- 
 2.46.0
 
