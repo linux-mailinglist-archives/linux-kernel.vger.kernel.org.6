@@ -1,111 +1,148 @@
-Return-Path: <linux-kernel+bounces-307980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE1F49655DB
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 05:46:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB16F9655E3
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 05:48:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AC72283ED0
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 03:46:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 51EBDB2380D
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 03:48:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB83713BC39;
-	Fri, 30 Aug 2024 03:46:35 +0000 (UTC)
-Received: from omta001.cacentral1.a.cloudfilter.net (omta001.cacentral1.a.cloudfilter.net [3.97.99.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FBB713DDA3;
+	Fri, 30 Aug 2024 03:48:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lGjHJHZh"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3D8E1369AE
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 03:46:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.97.99.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1823C53389;
+	Fri, 30 Aug 2024 03:48:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724989595; cv=none; b=CJcSRdWlt15LRUWGQnG6H46+6c+i1cfiBm3MHxcPP/IYJkZb+KRQ+ZUycvZbx1O0ucy5Bnp69qztuuWNCIQks2iU9ngfZZKFWcwyeZ8RIOXNQbk6uqW89UggcE3GQS87TpRM/yDzysGoaDtVqLfohBX/fYQrKzN14y9NYDo7Q60=
+	t=1724989726; cv=none; b=UnAkgZt+6hOQNG8940MZ+ln7bu6gDdWQJXTfyt1E15w98OqMGl9oP7BIR4oqFl3YC24IUT+TjL/uX0byfTOif8WRDpx6FiBX+wi+8sgtvZb+X9zAqFxotuqJNjG5qMt7VUz/gQBtGffP1WZPM82WCRvOlkUNAMjR6FSPaMa0wLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724989595; c=relaxed/simple;
-	bh=I4MLJvPcC4ROIRlHe9VBbeY/xKuQDgMDbge5iwTw77g=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=Buzl2nc1GOiac4js24Md4leuO9pmRMFnAF+tOF0N3WUz9G1SIexqKP8tfFDSIsFFLj+OSESfHSzNMJ2K4WXfi2o19y6FUXKjEy62rMREps5GjGgXQqMCzHsq2cFrl+JYjBzmYeN/3BFsfC4NixCtRFW8VrIL1N5Cd7eBptTTUyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuyoix.net; spf=pass smtp.mailfrom=tuyoix.net; arc=none smtp.client-ip=3.97.99.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuyoix.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuyoix.net
-Received: from shw-obgw-4003a.ext.cloudfilter.net ([10.228.9.183])
-	by cmsmtp with ESMTPS
-	id jhw0sMAFL9TOUjsZEsP8tg; Fri, 30 Aug 2024 03:44:56 +0000
-Received: from fanir.tuyoix.net ([68.150.218.192])
-	by cmsmtp with ESMTP
-	id jsZCsRJ7vE0IVjsZDsdo1K; Fri, 30 Aug 2024 03:44:55 +0000
-X-Authority-Analysis: v=2.4 cv=cI9DsUeN c=1 sm=1 tr=0 ts=66d14037
- a=LfNn7serMq+1bQZBlMsSfQ==:117 a=LfNn7serMq+1bQZBlMsSfQ==:17
- a=IkcTkHD0fZMA:10 a=yoJbH4e0A30A:10 a=M51BFTxLslgA:10 a=3I1X_3ewAAAA:8
- a=VwQbUJbxAAAA:8 a=Z7GQwIsQ4rWEbV4-UEIA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=VG9N9RgkD3hcbI6YpJ1l:22
-Received: from tuyoix.net (fanir.tuyoix.net [192.168.144.16])
-	(authenticated bits=0)
-	by fanir.tuyoix.net (8.18.1/8.18.1) with ESMTPSA id 47U3irgA024918
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-	Thu, 29 Aug 2024 21:44:54 -0600
-Date: Thu, 29 Aug 2024 21:44:53 -0600 (MDT)
-From: =?UTF-8?Q?Marc_Aur=C3=A8le_La_France?= <tsi@tuyoix.net>
-To: Eric Sandeen <sandeen@redhat.com>
-cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Christian Brauner <brauner@kernel.org>,
-        David Howells <dhowells@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] debugfs show actual source in /proc/mounts
-In-Reply-To: <alpine.WNT.2.20.2408181925400.3116@CLUIJ>
-Message-ID: <883a7548-9e67-ccf6-23b7-c4e37934f840@tuyoix.net>
-References: <e439fae2-01da-234b-75b9-2a7951671e27@tuyoix.net> <2024081303-bakery-rewash-4c1a@gregkh> <0798a2cf-b43b-4c17-94a0-142314d80f5b@redhat.com> <alpine.WNT.2.20.2408181925400.3116@CLUIJ>
+	s=arc-20240116; t=1724989726; c=relaxed/simple;
+	bh=I5wE2DCU3Fw9EyO+Kp45gHJsKgpYXZwW6ryuWdo18CM=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=U5p5ulIPBOHdDIxmd1oPzHamuq77MjWNqH51wpWb8xMSIi7KNqiO3denQDmSwJkM49RrwtFOO+rY81IDPrYUVHmhs8yU0ZDA1URJZLhqR1DvncYV60pEriF+ryf7C0tN0+3vuHzWmhVxQHPs09iEeNL1m0Nrmu9g/secDhvzqBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lGjHJHZh; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-715e3e03831so1302732b3a.2;
+        Thu, 29 Aug 2024 20:48:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724989724; x=1725594524; darn=vger.kernel.org;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qbsfqCs5csSDvxpE96NTbhH7GVwWt1XCT6ArdWTDKno=;
+        b=lGjHJHZh+0jj60PgvYeJBXGXsNR91wAkzdQ543ATj+UHX3eIAgBEpLz3kFLJCHsS1e
+         7Z7He7i5WIr/33p53adoqa1AimecqVgqd8x7XeABAxtPCwa1Ea7KyVoc5Gzi5xVu4r0+
+         yojmYukmB1aLvd+TwpPJrTo3nyhqdA5qDS28T/gzSNRFzyN3bexAGljS+KoxIh8mGzs7
+         NakHIT86mdgnjX12pHGKh1fSofx9fR6Q6VRPI1vTET2wZl1aq7MPAzA7NQFTNvt3EYd+
+         m2VhMYuBYUwsq5hgLVRyCqnmJdgzlU5zZUB4qxGZ4nqYNlKP5Osg1JtxJfwwQndP9Fdv
+         zk4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724989724; x=1725594524;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qbsfqCs5csSDvxpE96NTbhH7GVwWt1XCT6ArdWTDKno=;
+        b=OpX78lOW6gQMwd7zZx1hiu04cPRQPjnjVKnxS0mSAaMHKmMzSpvooxG7w0wv9dz5FF
+         Wx4iU8Y0u1aZfzJJFZdhguaQgseX7F0DuPPbqxz3VUDR1SWGdpK/YxGeBKfoGJ9BWxw3
+         3hogkr9nWPXX5Y524kheK0khWFiR+swZuQ1MCuw4FN6/izJMokTUcx/1CaTThH8eVwdg
+         MbuNFf4Gp0xygQkU8D01nBFnqFaIrNlDUdeVCDYDr55kEod115/6gGcGXlMhXYFB5Gpt
+         EoBCidavkUlad52AEJXkd0pmjj3KRD5fOV4IltJADzbIu5uVeNESKAuSKgiAXEZzm7CD
+         Z9/A==
+X-Forwarded-Encrypted: i=1; AJvYcCU6ttp9ztpRJu+6wk7Gxn1351wWhbjSencsET3baGiJWHAc/dvUQO9dS2G5wyyGM1B97EVMpaCWX0o=@vger.kernel.org, AJvYcCXm3vZhAUCg525sv6TsRzg198elLxzGIiPbeY3ol6NcsQ9g0atN+QAt9TiImMaB2MjX+gZklwdH6fCEXe9A@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5mm0DZlKbq8Zwn0gkCptuDZfVNqMYGWB8pIjxitJi/gr247CV
+	OinmTojTsebHG76zaavAAA3K+74LsvHy7X9Cg3BH/djCl7alFa4=
+X-Google-Smtp-Source: AGHT+IG3pIEbVlY0gXmkEN2xlmwfRwBfNFoebUp1tCda4OOj4xC208HlKYVhFM2v0yuqkG1ZSsDaQQ==
+X-Received: by 2002:a05:6a20:9e49:b0:1ca:edd5:9254 with SMTP id adf61e73a8af0-1cce100b937mr4232979637.16.1724989723905;
+        Thu, 29 Aug 2024 20:48:43 -0700 (PDT)
+Received: from localhost (2001-b400-e338-dab5-746d-1a82-f21e-bb0a.emome-ip6.hinet.net. [2001:b400:e338:dab5:746d:1a82:f21e:bb0a])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-205152cd8d6sm18391205ad.71.2024.08.29.20.48.42
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 29 Aug 2024 20:48:43 -0700 (PDT)
+From: Tyrone Ting <warp5tw@gmail.com>
+X-Google-Original-From: Tyrone Ting <kfting@nuvoton.com>
+To: avifishman70@gmail.com,
+	tmaimon77@gmail.com,
+	tali.perry1@gmail.com,
+	venture@google.com,
+	yuenn@google.com,
+	benjaminfair@google.com,
+	andi.shyti@kernel.org,
+	andriy.shevchenko@linux.intel.com,
+	wsa@kernel.org,
+	rand.sec96@gmail.com,
+	wsa+renesas@sang-engineering.com,
+	warp5tw@gmail.com,
+	tali.perry@nuvoton.com,
+	Avi.Fishman@nuvoton.com,
+	tomer.maimon@nuvoton.com,
+	KWLIU@nuvoton.com,
+	JJLIU0@nuvoton.com,
+	kfting@nuvoton.com
+Cc: openbmc@lists.ozlabs.org,
+	linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/7] i2c: npcm: Bug fixes read/write operation, checkpatch
+Date: Fri, 30 Aug 2024 11:46:33 +0800
+Message-Id: <20240830034640.7049-1-kfting@nuvoton.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-X-CMAE-Envelope: MS4xfHqC1pKhAmpRzafGTDNTCvTxtMaT9ZLoDz9zbGQEhGEAY24DcwLcEe7UViohuEmlhDsTyFo4jDBmYR1U9PL8B0uwdZexnI4O7t3pwImtYOMcUboL+F6i
- 5dar6TgdOUtut6EvARwWeHivTqkmD2Y5f9AJ516duQ2T1Ys+gaIVTQjGWaNodbqB0XAMK5VgZNVw+57JWO1Go9Rab59PfMN3vGM4Tr+wqPX1y16c5PY/hui3
- 1kCK8tt4WHmQMBqc6hfjo9CoRGOEqf46IcM6wsAlX/5zfaNi1kEZrUemrMJXmvnhGK2TIf3Y/lASpP9WWqXoBjLoPwT6zLSZo6Hva7aMfHdZ4dRrFp3qitET
- 9GniGNjG
 
-After commit 0c07c273a5fe ("debugfs: continue to ignore unknown mount
-options"), debugfs displays "none" in /proc/mounts instead of the actual
-source.  Fix this by recognising its "source" mount option.
+This patchset includes the following fixes:
 
-Signed-off-by: Marc Aurèle La France <tsi@tuyoix.net>
-Fixes: 0c07c273a5fe ("debugfs: continue to ignore unknown mount options")
-Cc: stable@vger.kernel.org # 6.10.x: 9f111059e725: fs_parse: add uid & gid option option parsing helpers
-Cc: stable@vger.kernel.org # 6.10.x: 49abee5991e1: debugfs: Convert to new uid/gid option parsing helpers
+- Restore the npcm_i2caddr array length to fix the smatch warning.
+- Enable the target functionality in the interrupt handling routine 
+  when the i2c transfer is about to finish.
+- Correct the read/write operation procedure.
+- Introduce a software flag to handle the bus error (BER) condition
+  which is not caused by the i2c transfer.
+- Modify timeout calculation.
+- Assign the client address earlier logically.
+- Use an i2c frequency table for the frequency parameters assignment.
+- Coding style fix.
 
-diff -NRapruz -X /etc/diff.excludes linux-6.11.0-rc2/fs/debugfs/inode.c devel-6.11.0-rc2/fs/debugfs/inode.c
---- linux-6.11.0-rc5/fs/debugfs/inode.c
-+++ devel-6.11.0-rc5/fs/debugfs/inode.c
-@@ -89,12 +89,14 @@ enum {
- 	Opt_uid,
- 	Opt_gid,
- 	Opt_mode,
-+	Opt_source,
- };
+The NPCM I2C driver is tested on NPCM750 and NPCM845 evaluation boards.
 
- static const struct fs_parameter_spec debugfs_param_specs[] = {
- 	fsparam_gid	("gid",		Opt_gid),
- 	fsparam_u32oct	("mode",	Opt_mode),
- 	fsparam_uid	("uid",		Opt_uid),
-+	fsparam_string	("source",	Opt_source),
- 	{}
- };
+Addressed comments from:
+- kernel test robot : https://lore.kernel.org/oe-kbuild-all/
+  202408080319.de2B6PgU-lkp@intel.com/
+- Dan Carpenter : https://lore.kernel.org/all/202408130818
+  .FgDP5uNm-lkp@intel.com/
+- Andrew Jeffery : https://lore.kernel.org/lkml/
+  20240807100244.16872-7-kfting@nuvoton.com/T/
+  #m3ed3351bf59675bfe0de89c75aae1fb26cad5567
 
-@@ -126,6 +128,12 @@ static int debugfs_parse_param(struct fs_context *fc, struct fs_parameter *param)
- 	case Opt_mode:
- 		opts->mode = result.uint_32 & S_IALLUGO;
- 		break;
-+	case Opt_source:
-+		if (fc->source)
-+			return invalfc(fc, "Multiple sources specified");
-+		fc->source = param->string;
-+		param->string = NULL;
-+		break;
- 	/*
- 	 * We might like to report bad mount options here;
- 	 * but traditionally debugfs has ignored all mount options
+Changes since version 1:
+- Restore the npcm_i2caddr array length to fix the smatch warning.
+- Remove unused variables.
+- Handle the condition where scl_table_cnt reaches to the maximum value.
+- Fix the checkpatch warning.
+
+Charles Boyer (1):
+  i2c: npcm: Enable slave in eob interrupt
+
+Tyrone Ting (6):
+  i2c: npcm: restore slave addresses array length
+  i2c: npcm: correct the read/write operation procedure
+  i2c: npcm: use a software flag to indicate a BER condition
+  i2c: npcm: Modify timeout evaluation mechanism
+  i2c: npcm: Modify the client address assignment
+  i2c: npcm: use i2c frequency table
+
+ drivers/i2c/busses/i2c-npcm7xx.c | 276 +++++++++++++++++++------------
+ 1 file changed, 172 insertions(+), 104 deletions(-)
+
+
+base-commit: 5be63fc19fcaa4c236b307420483578a56986a37
+-- 
+2.34.1
+
 
