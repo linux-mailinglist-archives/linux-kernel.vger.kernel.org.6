@@ -1,99 +1,106 @@
-Return-Path: <linux-kernel+bounces-308574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99747965F03
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:26:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84B97965F12
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:27:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD1481C248D0
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:26:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40C6728E790
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:27:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1656517D896;
-	Fri, 30 Aug 2024 10:22:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="lROkO8R6"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A0C018FDA3;
+	Fri, 30 Aug 2024 10:24:37 +0000 (UTC)
+Received: from SHSQR01.spreadtrum.com (unknown [222.66.158.135])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B358B178378;
-	Fri, 30 Aug 2024 10:22:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BD1218F2C3;
+	Fri, 30 Aug 2024 10:24:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725013368; cv=none; b=LtE96exNH2t+erC9hbql1bfKkVkMahk5KgLeSLnDWTmshJ6VpvY1Y/5FNpu6ZP1yg4mWeufs7oTm+3fTG6bmHxPKsKgq2kSzfNHA27mc4YFL2IHaoFBfMM5/21SRjzx/smFFqTC+fFApBUAkh20eVDQUAtpaPvuvVk32Sjt1kbU=
+	t=1725013477; cv=none; b=salSplvbBEvEynAEpeJcr0lV8Z9s5BvtYvggW5dF99PXeu0j0LGCeXfYvZgrEX204zkdoSOCvMOB1XizUWx2q+TCJuW7c92UbYg3HtFqSiIqTisXRPy6r0KhDhZN55INOdBzeTyIirmn2OfYu1V30Zm+M4BNMWfDN5ys/AL1aCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725013368; c=relaxed/simple;
-	bh=dQzQQaW/lJQe5gEqWz7/siYJFCDJ0BBsoSUipXH98P0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Dp7l6tBOS4ox+3Zqb8HufqUEuugmai5dSUUG+cgGR6Syuks1QpuBE+3pInKpDOqreAY7h82xoSQotl6vNMURLywyyapFXkh6VmXIr35wh+1oVhGjs7gIj/i3f5m/jQ7UEkkFZNCKwDv11hUF/MXVeA4JOwghilR/ggCrDQBQ+Bw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=lROkO8R6; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1725013362;
-	bh=dQzQQaW/lJQe5gEqWz7/siYJFCDJ0BBsoSUipXH98P0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lROkO8R69ThIazwkifncYI+/Jp6q7etFprg1o+WwsZkYQHS6hdFbVfrxZLUdCXLrK
-	 PJvQlrgai0wA4VU6Z8q2EaoML8jVa8la6pLGqK7nNOjbJqFyOXzpWGaCW8uWV8hOaY
-	 0OQmPwhpvjpqUZJN2u7OxTU923ux+jDBK1WU0Y8o=
-Date: Fri, 30 Aug 2024 12:22:42 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Helge Deller <deller@gmx.de>
-Cc: Daniel Vetter <daniel@ffwll.ch>, linux-fbdev@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, Bert Karwatzki <spasswolf@web.de>, 
-	"Borah, Chaitanya Kumar" <chaitanya.kumar.borah@intel.com>, intel-gfx@lists.freedesktop.org, 
-	"Kurmi, Suresh Kumar" <suresh.kumar.kurmi@intel.com>, "Saarinen, Jani" <jani.saarinen@intel.com>
-Subject: Re: [PATCH] fbdev: Introduce devm_register_framebuffer()
-Message-ID: <7a35a26c-a80b-419a-b2dc-f5c207c540b6@t-8ch.de>
-References: <20240830-fbdev-devm_register_framebuffer-v1-1-6d4186519c68@weissschuh.net>
- <729c4f82-a683-4302-b4ae-f591ac04daa1@gmx.de>
+	s=arc-20240116; t=1725013477; c=relaxed/simple;
+	bh=Y5AZNuvvj1CyJkOhIAY6s+QK+ZUYCcxTrKP89Vs3CGk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=cSfd6rPSTWBS2Y3w2qpUgkZOLs+Q+HJZzsxKlMCa4H7BSp2WulmbJ5sArYKt5vD6XF9iQVVeZqdizPSCW+eOCxZ38Ji2zyHinFihqv3U4nJtJG3Li1oNxRXERqOldrszGDeCCOuJnTva1ahWdewXKy0SCqr7anSkz2CuVh/h7gE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
+Received: from dlp.unisoc.com ([10.29.3.86])
+	by SHSQR01.spreadtrum.com with ESMTP id 47UAMm7u031638;
+	Fri, 30 Aug 2024 18:22:48 +0800 (+08)
+	(envelope-from Yibin.Ding@unisoc.com)
+Received: from SHDLP.spreadtrum.com (bjmbx02.spreadtrum.com [10.0.64.8])
+	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4WwDZ36m2wz2N5cJc;
+	Fri, 30 Aug 2024 18:15:55 +0800 (CST)
+Received: from tj10379pcu.spreadtrum.com (10.5.32.15) by
+ BJMBX02.spreadtrum.com (10.0.64.8) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.23; Fri, 30 Aug 2024 18:22:46 +0800
+From: Yibin Ding <Yibin.Ding@unisoc.com>
+To: <djakov@kernel.org>, <gregkh@linuxfoundation.org>, <rafael@kernel.org>
+CC: <yibin.ding01@gmail.com>, <niuzhiguo84@gmail.com>,
+        <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <Hao_hao.Wang@unisoc.com>, <Ke.Wang@unisoc.com>
+Subject: [PATCH 1/2] interconnect: Add character pointer initialization
+Date: Fri, 30 Aug 2024 18:22:44 +0800
+Message-ID: <20240830102244.409058-1-Yibin.Ding@unisoc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <729c4f82-a683-4302-b4ae-f591ac04daa1@gmx.de>
+Content-Type: text/plain
+X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
+ BJMBX02.spreadtrum.com (10.0.64.8)
+X-MAIL:SHSQR01.spreadtrum.com 47UAMm7u031638
 
-On 2024-08-30 12:16:46+0000, Helge Deller wrote:
-> On 8/30/24 11:45, Thomas Weißschuh wrote:
-> > Introduce a device-managed variant of register_framebuffer() which
-> > automatically unregisters the framebuffer on device destruction.
-> > This can simplify the error handling and resource management in drivers.
-> > 
-> > Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
-> > ---
-> > This is a fixed resend of [0], which was broken.
-> > Thanks to Bert [1], and Chaitanya Kumar [2]
-> > for reporting the issue.
-> > 
-> > [0] https://lore.kernel.org/lkml/20240827-efifb-sysfs-v1-3-c9cc3e052180@weissschuh.net/
-> > [1] https://lore.kernel.org/lkml/20240829224124.2978-1-spasswolf@web.de/
-> > [2] https://lore.kernel.org/lkml/SJ1PR11MB612925C1C533C09F8F62F7CBB9972@SJ1PR11MB6129.namprd11.prod.outlook.com/
-> 
-> I've applied this patch to the fbdev git tree.
-> Please double check at
-> https://git.kernel.org/pub/scm/linux/kernel/git/deller/linux-fbdev.git/log/?h=for-next
+From: Yibin Ding <Yibin.ding@unisoc.com>
 
-Looks good.
-Sorry for the extra effort necessary.
+When accessing a node whose data type is a character pointer and has not
+been initialized, a crash will occur due to accessing a null pointer. So
+it is necessary to add the operation of initializing the character pointer.
+Since the debugfs_write_file_str() function performs a kfree() operation
+on the node data, memory is allocated to the node pointer during
+initialization will be released when data is written to the node.
 
-> Can you please check if this fixes this new report too:
-> https://marc.info/?l=linux-fbdev&m=172500784802901&w=2
+Signed-off-by: Yibin Ding <Yibin.ding@unisoc.com>
+---
+ drivers/interconnect/debugfs-client.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-I double check it and am decently sure it's the same issue.
-It tries to unregister the framebuffer but then notices that it never
-was registered in the first place.
+diff --git a/drivers/interconnect/debugfs-client.c b/drivers/interconnect/debugfs-client.c
+index bc3fd8a7b9eb..d62ba56b7bbe 100644
+--- a/drivers/interconnect/debugfs-client.c
++++ b/drivers/interconnect/debugfs-client.c
+@@ -16,6 +16,7 @@
+ #undef INTERCONNECT_ALLOW_WRITE_DEBUGFS
+ 
+ #if defined(INTERCONNECT_ALLOW_WRITE_DEBUGFS) && defined(CONFIG_DEBUG_FS)
++#define INITNODE_SIZE 1
+ 
+ static LIST_HEAD(debugfs_paths);
+ static DEFINE_MUTEX(debugfs_lock);
+@@ -147,8 +148,13 @@ int icc_debugfs_client_init(struct dentry *icc_dir)
+ 
+ 	client_dir = debugfs_create_dir("test_client", icc_dir);
+ 
+-	debugfs_create_str("src_node", 0600, client_dir, &src_node);
+-	debugfs_create_str("dst_node", 0600, client_dir, &dst_node);
++	src_node = kzalloc(INITNODE_SIZE, GFP_KERNEL);
++	dst_node = kzalloc(INITNODE_SIZE, GFP_KERNEL);
++
++	if (src_node)
++		debugfs_create_str("src_node", 0600, client_dir, &src_node);
++	if (dst_node)
++		debugfs_create_str("dst_node", 0600, client_dir, &dst_node);
+ 	debugfs_create_file("get", 0200, client_dir, NULL, &icc_get_fops);
+ 	debugfs_create_u32("avg_bw", 0600, client_dir, &avg_bw);
+ 	debugfs_create_u32("peak_bw", 0600, client_dir, &peak_bw);
+-- 
+2.25.1
 
-> > Helge, I didn't document the function devm_unregister_framebuffer() as
-> > it is only an internal helper and will ever only used by one user,
-> > similar to other helpers in fbmem.c.
-> 
-> Ok.
-> 
-> Helge
 
