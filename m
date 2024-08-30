@@ -1,135 +1,145 @@
-Return-Path: <linux-kernel+bounces-309223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C18B9667BA
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 19:13:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 263EF9667BE
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 19:14:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 416D8286F7D
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 17:13:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6C3F1F25BD3
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 17:14:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDADA1BA891;
-	Fri, 30 Aug 2024 17:13:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EDD71BAEF1;
+	Fri, 30 Aug 2024 17:14:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UEou5jgV"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G451Q+L3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9FC11BA272
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 17:13:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76A281BAEE3;
+	Fri, 30 Aug 2024 17:14:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725038004; cv=none; b=VMPNv+sHhMTkqS0bDeptxiK6udjYtHGkIAlGblLtyNkTIPPLmeU2zLWBRTySWRS/3wNYyB0Isj3D6JziHHHAoHZ/9AXIUcb7wZkyj6prG6MEnfcp04GJgBUu/uwz7BPSdz1qDRmM7nGciyPmCkBr7ly86tZ8q6mwDkbT4g07S6Q=
+	t=1725038059; cv=none; b=P6HtSpOMsaLJk/M3uebLSV3YJrJPbdbe8V/eH8KFASDGd8QZcCAPwTy1Ji9Ngf1tvq3N563ZFZuvfhOKgTqIFSb4gA4Bww2Qi8W875ewGQnqKjc1JFQ55tl1xTDa7N35x1952Eq18zWBmTCgziCFgAiZ4j9zPuPm2QRfi1v8btk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725038004; c=relaxed/simple;
-	bh=EejAFGHDc4+wHkURmZqyaIGTECLuPeJKxd/AqA2a8IA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ax+i1hv1c8wRjGCfP60Vcz9xGaFwHGCi52wGj3Qjdkle+JV2mM6FPDGsN/7MCojEkwM4PYhg7+DdmSydtQuVrKbTPYTmUxr5/o27jLbkLGdM7rLnzs5fmmvrPPtdGVrxitBcwQmuEs/dCa6/wiaadGBOfzphQJp9w4jldABwM68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UEou5jgV; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-534366c1aa2so2197319e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 10:13:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725038000; x=1725642800; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=WuoWF+ip5aM6TEiw7ZGe1txftEmX/FKCbSWMdfUV8/A=;
-        b=UEou5jgVbVusNVWztTT+S0Vb5r5YKunq1LiqBGnSNgzmG6EJa77SuHShiY6tzvqQLG
-         FPfQghKRRIOaeoGnHCk3PheZFUzgbQz6mylbIN+4P47Zl5miQVn8loxR0l8nNxZSgh2U
-         7YuYa12Q++aBFXaSbs3yGpLK1qXbP2lGyjJGV57PYSi57DgA6s7JCMRQyPEz3OxWhxUh
-         BP3oJ0s7/77bDfKOaM3AdS/CXSXy7kCCd33MEsNvL+ktX/gUuVL+0yrWbLJZoD+Xo0Wg
-         Q8skY1sJyIH5eOT9wOLZHj+pQFW0WOW6/fwgLs2q353F2tQ0/hx1h9XqWTDsXcfHfmtq
-         aF1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725038000; x=1725642800;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WuoWF+ip5aM6TEiw7ZGe1txftEmX/FKCbSWMdfUV8/A=;
-        b=Qvll4tHLK9KLYWScz855HIdkINpWim5rJcg/6TngstuIX3rcgzsYg2nzjuq++gSBUX
-         9SdqOsgn5T5pOH7l9ParZTxSRY64ZFB4bCR5vCu3KbbMo1DtxYsugYl1H8ISoJNyBi2F
-         Hky1yW3yn0E4llrdm1uVt54HGQDhIzz+z6AA4nRs0lg/Nopx0CL2fwu+hV8gfA+HH5CB
-         DdzNzinBTOJEZZDQYTEAU9nXn/vHwIyBrUSgP2kihcpa1j1X1JokMl40kw/7AiZLsKo2
-         r+9AvIyQgUR9IK0tgqY7yTmsXebpfCveRDYiXaBdYXPmcEN5j/nzVepeOsfqDoUX6GGc
-         RB4g==
-X-Forwarded-Encrypted: i=1; AJvYcCUWwiWI+ggp5Maknj2uwvvjp/ARpsPVTa85t9SbhrA6OJxNuRO5/8YkCUGFiaUbnsXsRU+qCxwqsS/g4h4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4xg8+CvN2TVTo/ry7uL+Bg9Jx2URUF8T7xn37fUiLmu0N5vow
-	64V5BnsVpciECxZJdtdOMvis7arFIeneE04YB9QUh3FaoSC9eZQ9Aa3BdVmpQ7Y=
-X-Google-Smtp-Source: AGHT+IGpRicXrqdm01FNs2Xf4peUE9dkraN2jSOKc/ODVytIJ0oIAMDjBRGLiHk0ZMkrGisuSp5+Cw==
-X-Received: by 2002:a05:6512:2308:b0:52e:9fd3:f0ca with SMTP id 2adb3069b0e04-53546b2c402mr2032494e87.33.1725037999329;
-        Fri, 30 Aug 2024 10:13:19 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5354079b76asm695592e87.43.2024.08.30.10.13.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Aug 2024 10:13:18 -0700 (PDT)
-Date: Fri, 30 Aug 2024 20:13:17 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Jessica Zhang <quic_jesszhan@quicinc.com>
-Cc: Rob Clark <robdclark@gmail.com>, quic_abhinavk@quicinc.com, 
-	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, quic_ebharadw@quicinc.com, linux-arm-msm@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	Rob Clark <robdclark@chromium.org>
-Subject: Re: [PATCH 08/21] drm/msm/dpu: add CWB entry to catalog for SM8650
-Message-ID: <audsl366wkyqlizb254haxchirlgycr4wpgmp7sbkmynafivoq@pyanmqyfwj7b>
-References: <20240829-concurrent-wb-v1-0-502b16ae2ebb@quicinc.com>
- <20240829-concurrent-wb-v1-8-502b16ae2ebb@quicinc.com>
+	s=arc-20240116; t=1725038059; c=relaxed/simple;
+	bh=ajZD+MTyKZARFyIT3+mQii7dHcoc5L9nz2SJ3VG7Ms0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=amYQTOPLcSgAZ+7I0ya4r1yOwTVNyKsEkxUwAlVeXDA7a1Upo9ZnB1DZUOBRony0QD6QTHGFRs/7XdeoSin66NVJ8UwVnOr98UXZP2Uce8PENSbeyvkw3ssMMwUuNHJ983cntDnIIu550bwGt9pkyrR1B9AaG+YKR1UaNp+ATaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G451Q+L3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93311C4CEC7;
+	Fri, 30 Aug 2024 17:14:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725038059;
+	bh=ajZD+MTyKZARFyIT3+mQii7dHcoc5L9nz2SJ3VG7Ms0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=G451Q+L3fByFCqoi3F0vPAlPFRbTw3iilXQr+lEQFLb1SjJTCo91RhE68KbEKjhbv
+	 VyjhiO+Ch8RNUkgKJ7l+g1pWVPL3Ie8dkzvhHySp8jMFFqG9QQG9UrzWTZIkYuIpNS
+	 Axt4O1u3gktuY4rc1oGerNkUopQB/YItBVjK9IZCXb7cjnT/1ww3twzjcBbWRiV+Rc
+	 59LnVtVNjhDr6hYpzAM74Sa4mV/kLOkD927aw3v+Ydpra7nKkbtkXnvM3FIypg8YSg
+	 h3LfHhLcPphBzr9nlQKWlAlA4C+BxS16wUboVGpPblnVbhU+2JyDywjt2DZdTp4+Ai
+	 ARmXqrm1kkiDQ==
+Message-ID: <b1d1f523-6852-4877-be73-85cb6728d9a8@kernel.org>
+Date: Fri, 30 Aug 2024 19:14:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240829-concurrent-wb-v1-8-502b16ae2ebb@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] ASoC: codecs: Switch to use dev_err_probe()
+To: Yang Ruibin <11162571@vivo.com>, Lars-Peter Clausen <lars@metafoo.de>,
+ =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ alsa-devel@alsa-project.org, linux-sound@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: opensource.kernel@vivo.com
+References: <20240830014733.3467006-1-11162571@vivo.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240830014733.3467006-1-11162571@vivo.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Aug 29, 2024 at 01:48:29PM GMT, Jessica Zhang wrote:
-> From: Esha Bharadwaj <quic_ebharadw@quicinc.com>
+On 30/08/2024 03:47, Yang Ruibin wrote:
+> Using dev_err_probe() instead of dev_err() in probe() simplifies
+> the error path and standardizes the format of the error code.
 > 
-> Add new block for concurrent writeback mux to HW catalog and change
-> pingpong index names to distinguish between general use pingpong blocks
-> and pingpong blocks dedicated for concurrent writeback
-
-Please split into two commits.
-
-> 
-> Signed-off-by: Esha Bharadwaj <quic_ebharadw@quicinc.com>
-> Signed-off-by: Jessica Zhang <quic_jesszhan@quicinc.com>
+> Signed-off-by: Yang Ruibin <11162571@vivo.com>
 > ---
->  .../drm/msm/disp/dpu1/catalog/dpu_10_0_sm8650.h    | 29 +++++++++++++++++++---
->  .../gpu/drm/msm/disp/dpu1/catalog/dpu_8_1_sm8450.h |  4 +--
->  .../gpu/drm/msm/disp/dpu1/catalog/dpu_9_0_sm8550.h |  4 +--
->  .../drm/msm/disp/dpu1/catalog/dpu_9_2_x1e80100.h   |  4 +--
->  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h     | 13 ++++++++++
->  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h        |  8 +++---
->  6 files changed, 48 insertions(+), 14 deletions(-)
+>  sound/soc/codecs/ad1980.c   |  8 +++-----
+>  sound/soc/codecs/adau1701.c | 19 +++++++------------
+>  sound/soc/codecs/ssm2602.c  |  6 ++----
+>  3 files changed, 12 insertions(+), 21 deletions(-)
 > 
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_10_0_sm8650.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_10_0_sm8650.h
-> index eb5dfff2ec4f..ce2773029763 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_10_0_sm8650.h
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_10_0_sm8650.h
-> @@ -252,25 +252,25 @@ static const struct dpu_pingpong_cfg sm8650_pp[] = {
->  		.merge_3d = MERGE_3D_2,
->  		.intr_done = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR2, 31),
->  	}, {
-> -		.name = "pingpong_6", .id = PINGPONG_6,
-> +		.name = "pingpong_6", .id = PINGPONG_CWB_0,
 
-Should we also rename such blocks?
+...
 
->  		.base = 0x66000, .len = 0,
->  		.features = BIT(DPU_PINGPONG_DITHER),
->  		.sblk = &sc7280_pp_sblk,
->  		.merge_3d = MERGE_3D_3,
+> diff --git a/sound/soc/codecs/ssm2602.c b/sound/soc/codecs/ssm2602.c
+> index c29324403..153eb55a3 100644
+> --- a/sound/soc/codecs/ssm2602.c
+> +++ b/sound/soc/codecs/ssm2602.c
+> @@ -605,10 +605,8 @@ static int ssm260x_component_probe(struct snd_soc_component *component)
+>  	int ret;
+>  
+>  	ret = regmap_write(ssm2602->regmap, SSM2602_RESET, 0);
+> -	if (ret < 0) {
+> -		dev_err(component->dev, "Failed to issue reset: %d\n", ret);
+> -		return ret;
+> -	}
+> +	if (ret < 0)
+> +		return dev_err_probe(component->dev, ret, "Failed to issue reset\n");
 
+After quick look, I think this might not be a probe path, thus the code
+might not be correct.
 
--- 
-With best wishes
-Dmitry
+Best regards,
+Krzysztof
+
 
