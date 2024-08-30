@@ -1,145 +1,125 @@
-Return-Path: <linux-kernel+bounces-308977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95B0696648E
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 16:52:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65281966491
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 16:52:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47A941F24F31
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 14:52:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E4378B203CA
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 14:52:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A51B11B3B19;
-	Fri, 30 Aug 2024 14:51:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C5C51B4C2D;
+	Fri, 30 Aug 2024 14:52:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="keXX7Cms"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="vo+INVHa"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54B2918FDA7;
-	Fri, 30 Aug 2024 14:51:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BAFE18FDA7;
+	Fri, 30 Aug 2024 14:52:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725029517; cv=none; b=b9md6qmOlLeskBsc7Bif6WktRPkYv29I5lzkBIARwNuUKMo4DTMlVz4eHiohV9Q88IegWtO6GgZj8bIUav3D6J88BzCsW4A89Cw/5jmhl/abIm1zu7yECKL6ByKY15jj+eKnzVER83Pg2KBnABH/w2BN04l211egXAw0cWfiX40=
+	t=1725029523; cv=none; b=cd1qPWQN3QlqDkZq8tA2jGH98436UF+pLkmWAq1pdIHOdUHP37hhAX8NQK489/cuYAXsCu6kQ2bqfi6Zq0a9jdYQl24psqb3vkFTV3DnTi0ksFuy5BW83MiqM/SWUpP5ZDE802fGBII8zdOfUGKOrp2iEw+2t57mGGiPuKk5aa8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725029517; c=relaxed/simple;
-	bh=zU+svjlKF/2e4UUrvfiN7V/JtaJgwQswUZSaJy6T60Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=mJFUo72sTg3dU0YWTJTr/fWKAyRva+0ZRKFFP0k9lD5yQKP4lU0M5gielI6bC4n4v8rBe2LRh1Humit5ecGQfXycfUncyuAgSiCaDc51nllgJTlgV8LKHCxy/O4aEya1ezQ0GtkkKxjrZhPcij0a1CRr0SEhDcKRzesKuWSxj0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=keXX7Cms; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47U7RPZv013565;
-	Fri, 30 Aug 2024 14:51:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	zU+svjlKF/2e4UUrvfiN7V/JtaJgwQswUZSaJy6T60Y=; b=keXX7CmspAeYm/OF
-	WM/G2FXxl9g3jh45R0ax9R6Z03iiRSk8a13mpEhlJ1KmwWQC1T8ZF8UZQ0gSOgfZ
-	Bso0LvMVCqjwqDlMeGs9FOL3bffA10YCkF+5yPClUQL1AFpnEg1BAstmcfbLZNK2
-	AYDaS/m6pN11eAkmiARfvQTzlKmSr91ELLvExnWddM/mg/VpPHV+TmypRk9yi7JY
-	uwRoluUBWmym2HmxPLQk+1i7p1uKtOiJTbgtxCP27Hd70MsYsNrqVjZ16uTESxX6
-	r4l+9G0znVQ10vA3HvQOg1JmoI9At6hu13rkcYeWNtVErVcqywOJKPYVj21MhggV
-	w99KYg==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 419px5s2bs-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 30 Aug 2024 14:51:10 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47UEp9BP025912
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 30 Aug 2024 14:51:09 GMT
-Received: from [10.110.28.107] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 30 Aug
- 2024 07:51:05 -0700
-Message-ID: <fdca4af1-a625-4eb8-a5e9-60ffd285af33@quicinc.com>
-Date: Fri, 30 Aug 2024 07:51:05 -0700
+	s=arc-20240116; t=1725029523; c=relaxed/simple;
+	bh=JcTnkU7pr13R4zExJGsVutJ8y24F+DvuJFCKNDtoM44=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=jbGrTjjLPmmJO4woRto587M/bilAQMtB55B69DhHtA9mSIMNCl7Zyknf8KS1iawx/Jmyfl/OjwTt1UO8CtiV9o3L9bJYAot8NjG9jUpvEVFxWs3KcguLciJO35BGl2BLKIUyjfqj1Hiafo1I4a+cNT9l7sApyBbPXTthFMEdugs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=vo+INVHa; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1725029522; x=1756565522;
+  h=from:subject:date:message-id:mime-version:
+   content-transfer-encoding:to:cc;
+  bh=JcTnkU7pr13R4zExJGsVutJ8y24F+DvuJFCKNDtoM44=;
+  b=vo+INVHaach8ddcd1RlABbb8uwzTXpzI2qY5qC1ezbI7YW5EIF8Q1a4H
+   utXapGTJ/IyX5wnZUqeg0J3cW3IcLiau7U1tgdydRYJhPZR7VoUZNMiZF
+   RgpTOLJMi3MvO+dqpFchSm6abEVjAF+S2nV/WZrGkBFgBNoWiV4Uh8TvK
+   Hnaz0D7ZKAjjuTXlY/9mtmugN1FZc1UE/z8rXZn6XJf2Gz7SXD+1p8czk
+   e10AuLoYGvrvS+WWKZ37oNq3olyNX0f8Z0g4yYNHZZrC1xyF2FaIHMs/P
+   iBXviXcX/Ngl7ermFxwlmJpJEDQaaNN14uBY6GTogtgQRtu+c7jIV7Hkm
+   w==;
+X-CSE-ConnectionGUID: 97HzC2AdRWaAlgmYy3Tgsw==
+X-CSE-MsgGUID: AZ2hZn5oQHemjakCGe+N9w==
+X-IronPort-AV: E=Sophos;i="6.10,189,1719903600"; 
+   d="scan'208";a="262052123"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 30 Aug 2024 07:52:01 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Fri, 30 Aug 2024 07:51:41 -0700
+Received: from che-lt-i70843lx.mchp-main.com (10.10.85.11) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
+ 15.1.2507.35 via Frontend Transport; Fri, 30 Aug 2024 07:51:31 -0700
+From: Dharma Balasubiramani <dharma.b@microchip.com>
+Subject: [PATCH v3 0/2] Update sdhci-atmel dt-binding documentation
+Date: Fri, 30 Aug 2024 20:21:19 +0530
+Message-ID: <20240830-atmel-sdhci-v3-0-7c97a0872af4@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 21/22] ARM: dt: GIC: add extended SPI specifier
-To: Rob Herring <robh@kernel.org>
-CC: <andersson@kernel.org>, <konradybcio@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <rafael@kernel.org>, <viresh.kumar@linaro.org>,
-        <herbert@gondor.apana.org.au>, <davem@davemloft.net>,
-        <sudeep.holla@arm.com>, <andi.shyti@kernel.org>, <tglx@linutronix.de>,
-        <will@kernel.org>, <joro@8bytes.org>, <jassisinghbrar@gmail.com>,
-        <lee@kernel.org>, <linus.walleij@linaro.org>, <amitk@kernel.org>,
-        <thara.gopinath@gmail.com>, <broonie@kernel.org>,
-        <wim@linux-watchdog.org>, <linux@roeck-us.net>, <robin.murphy@arm.com>,
-        <cristian.marussi@arm.com>, <rui.zhang@intel.com>,
-        <lukasz.luba@arm.com>, <vkoul@kernel.org>, <quic_gurus@quicinc.com>,
-        <agross@kernel.org>, <bartosz.golaszewski@linaro.org>,
-        <quic_rjendra@quicinc.com>, <robimarko@gmail.com>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-        <linux-crypto@vger.kernel.org>, <arm-scmi@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-i2c@vger.kernel.org>,
-        <iommu@lists.linux.dev>, <linux-gpio@vger.kernel.org>,
-        <linux-serial@vger.kernel.org>, <linux-spi@vger.kernel.org>,
-        <linux-watchdog@vger.kernel.org>, <kernel@quicinc.com>,
-        <quic_psodagud@quicinc.com>, <quic_tsoni@quicinc.com>,
-        <quic_shazhuss@quicinc.com>
-References: <20240828203721.2751904-1-quic_nkela@quicinc.com>
- <20240828203721.2751904-22-quic_nkela@quicinc.com>
- <20240829185240.GA914553-robh@kernel.org>
- <de0c40c2-3627-4c63-9112-4eb13cf75c0a@quicinc.com>
- <CAL_JsqKS1pB9GMjEwji_XO_DmrKs4J6GkcxpRkUqcAAHwCseQg@mail.gmail.com>
-Content-Language: en-US
-From: Nikunj Kela <quic_nkela@quicinc.com>
-In-Reply-To: <CAL_JsqKS1pB9GMjEwji_XO_DmrKs4J6GkcxpRkUqcAAHwCseQg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 6b-3vOaXGsYsKH_DEtulg_cOaF8YTRTW
-X-Proofpoint-GUID: 6b-3vOaXGsYsKH_DEtulg_cOaF8YTRTW
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-30_09,2024-08-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 clxscore=1015
- adultscore=0 suspectscore=0 lowpriorityscore=0 mlxlogscore=831 spamscore=0
- priorityscore=1501 bulkscore=0 mlxscore=0 malwarescore=0 impostorscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
- definitions=main-2408300113
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGfc0WYC/32MSwrCMBQAr1KyNpJPtYkr7yEu2tcX88A2JSlBK
+ b27aZciLmdgZmEJI2Fil2phETMlCmMBfagY+HZ8IKe+MFNC1cJowdt5wCdPvQfiYFurukaKs6p
+ ZKaaIjl777XYv7CnNIb73eZab/f3JkgsuJGoEA9aI+joQxACepiOEgW2vrP70qvRd407GNtppB
+ 9/9uq4ftU2Uz+oAAAA=
+To: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>, Alexandre Belloni
+	<alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Aubin Constans <aubin.constans@microchip.com>
+CC: <linux-mmc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	Dharma Balasubiramani <dharma.b@microchip.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1725029490; l=1267;
+ i=dharma.b@microchip.com; s=20240209; h=from:subject:message-id;
+ bh=JcTnkU7pr13R4zExJGsVutJ8y24F+DvuJFCKNDtoM44=;
+ b=45xE/P1RWOEMYhzADg9jmgCBTqfX67aRcs8EFsqAh5R/7e0VTwoqUKeVCBjIRtOPailSqdJBQ
+ TyfZhrPFPk7DtWDtiWxd94gACy7PRgL2BpLAHlZ73MXBE8G2WSusVc3
+X-Developer-Key: i=dharma.b@microchip.com; a=ed25519;
+ pk=kCq31LcpLAe9HDfIz9ZJ1U7T+osjOi7OZSbe0gqtyQ4=
 
+This patch series converts the sdhci-atmel dt-binding to yaml format and adds
+the sama7d65,sama7g5 compatibles to the list.
 
-On 8/30/2024 7:44 AM, Rob Herring wrote:
-> On Thu, Aug 29, 2024 at 2:02 PM Nikunj Kela <quic_nkela@quicinc.com> wrote:
->>
->> On 8/29/2024 11:52 AM, Rob Herring wrote:
->>> On Wed, Aug 28, 2024 at 01:37:20PM -0700, Nikunj Kela wrote:
->>>> Add interrupt specifier for extended SPI interrupts.
->>> What's an "extended SPI"? Is this a GIC spec thing? If so, what version?
->> Extended SPI is an extended range of SPI interrupts supported by GIC.
->>
->> Excerpt below from
->> Documentation/devicetree/bindings/interrupt-controller/arm,gic-v3.yaml
->>
->> "The 1st cell is the interrupt type; 0 for SPI interrupts, 1 for PPI
->> interrupts, 2 for interrupts in the Extended SPI range, 3 for the
->> Extended PPI range. Other values are reserved for future use."
->>
->> "The 2nd cell contains the interrupt number for the interrupt type. SPI
->> interrupts are in the range [0-987]. PPI interrupts are in the range
->> [0-15]. Extented SPI interrupts are in the range [0-1023]. Extended PPI
->> interrupts are in the range [0-127]."
-> Looks like you should add EPPI define too while you're here.
->
-> Rob
+Signed-off-by: Dharma Balasubiramani <dharma.b@microchip.com>
+---
+Changes in v3:
+- update the items in clocks instead of plain description.
+- move the items list to clock-names.
+- since baseclk is must, change maxitems to minitems: 3, and modify the
+  conditional bits accordingly.
+- Link to v2: https://lore.kernel.org/r/20240830-atmel-sdhci-v2-0-b7f58973f3fc@microchip.com
 
-Sure Rob. I can add that. Generally, there is an ask for a usecase
-before we push anything that is used in DT. I won't have any usecase to
-show for EPPI.
+Changes in v2:
+- Add missing deleted file to the patch 
+"Documentation/devicetree/bindings/mmc/sdhci-atmel.txt"
+- Link to v1: https://lore.kernel.org/r/20240830-atmel-sdhci-v1-0-01e3ec8c9804@microchip.com
 
+---
+Dharma Balasubiramani (2):
+      dt-bindings: mmc: sdhci-atmel: Convert to json schema
+      dt-bindings: mmc: atmel,sama5d2-sdhci: Add sama7d65 compatible
+
+ .../bindings/mmc/atmel,sama5d2-sdhci.yaml          | 95 ++++++++++++++++++++++
+ .../devicetree/bindings/mmc/sdhci-atmel.txt        | 35 --------
+ 2 files changed, 95 insertions(+), 35 deletions(-)
+---
+base-commit: 4b7d983dd85a5cdf4938f4a0a93adedf697ac04d
+change-id: 20240830-atmel-sdhci-c9a92b710624
+
+Best regards,
+-- 
+Dharma Balasubiramani <dharma.b@microchip.com>
 
 
