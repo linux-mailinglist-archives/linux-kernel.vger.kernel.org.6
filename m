@@ -1,106 +1,123 @@
-Return-Path: <linux-kernel+bounces-309211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 294CB96678D
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 19:02:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 897AF966793
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 19:05:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C83A11F24E2A
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 17:02:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46EB9286C8A
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 17:05:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD6641B3B2D;
-	Fri, 30 Aug 2024 17:02:41 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 745B64B5AE
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 17:02:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0E941B9B28;
+	Fri, 30 Aug 2024 17:04:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nFGiZtTV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A4A416C68F;
+	Fri, 30 Aug 2024 17:04:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725037361; cv=none; b=InMfhq0EEQ2lv8mEVbCvYIT1syiGsiATIEBnhoF5fJ4866QoZuLZmWhkt2bW3oQuY9vmHhq5u2dIggxTvQ8X1EX/GALDR+dspiqpXEKZMKtkUlAdbwVtQICMv1jp7eG3nBfCL4JGPjBniELB4sftihbWL6tuswLo6Ej6rFeulPU=
+	t=1725037494; cv=none; b=tmqnW+qdbN5K2MI7HOdlVzKjUUEbYG7D9C83QlACnro+UXIqm8h7UiOXHSgfCURTk/i63t4KMzHU3ZEk9wJpKRJYUnuv1Rj7iqG5gEXKwuTm11N1Tq0z7ss1Oz6KVlDHzBRIooptMmVsK3wZb4BreE5O4qPTRtC4swFwn/gNzqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725037361; c=relaxed/simple;
-	bh=Nj/aMAhItkBEFA253aJJn+6DPehCDcVHyJfTY5N7N78=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YBmjyhJ8PNeU26lXO9FYfX0fUTjVp1fbfAcfYkOPomxf5JcnLYF6TL+s0BlpJeIVu7VrQaTXK1/Wm7rbSOYGr86yodRnfBuodkfDsM4Tm8hw+5Fc9rLwiadljMbU06f1qZQgG07gDqR83HL1Ji7JBzeGEm8TDqCIK+npxzG6Y94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D6F701063;
-	Fri, 30 Aug 2024 10:03:04 -0700 (PDT)
-Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 188D13F66E;
-	Fri, 30 Aug 2024 10:02:36 -0700 (PDT)
-Message-ID: <19c91b5f-e615-4198-b9e3-d0d00084d139@arm.com>
-Date: Fri, 30 Aug 2024 18:02:35 +0100
+	s=arc-20240116; t=1725037494; c=relaxed/simple;
+	bh=xIXAMIe5hLeQUFpwywsJ8g5KP7dZuff50VDK4ECjhaQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PYeVPVPOlqPQWLI5e7uFX5svpltQE3/y5fZoSYbV1H6pJGq5nj/jr8q+kVyehvtVOa8L0SxARDWqO6yZDTjTYDoZA6+fWME/tOoD0jhIkIS5TD+MLsxoYbcHf5caTP6wy7n7gkJkxaLdZ8ufYPm7vC4kZFEy10HjSkl3bjBpAtM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nFGiZtTV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32E95C4CEC2;
+	Fri, 30 Aug 2024 17:04:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725037493;
+	bh=xIXAMIe5hLeQUFpwywsJ8g5KP7dZuff50VDK4ECjhaQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nFGiZtTVGSMcAvzTDKKMPKU9t254eb1MRqstsx3+2wi7SnROqSDh21xZ9yJMc+sme
+	 g0yvyDsJeCojACLE1s9CQXEPLA7hgyBJn1ZAkHeMUhHREV/QzOD4Dr9CxoRWLyjRIB
+	 Oop5Z8PNSHkHP6P/Xzs6eWiCQpG+xQkMxywEPVt80Lup3BdgkKC1XiVPMGIogi6/1E
+	 CQGvNOxr1OYofJdERSgID4GHEsMtkSvBlXfuj6788/Qw2eab6sil6o9Rh4GrkA9x6d
+	 n9asGsqSMCPmeqwy1GAgZ+ZSIqPiQ0S8hix+olAAS9AwbGCl29Gbq3urMDZ74j0m4C
+	 47WrsXy/moEwg==
+Date: Fri, 30 Aug 2024 18:04:49 +0100
+From: Simon Horman <horms@kernel.org>
+To: Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: clang-built-linux <llvm@lists.linux.dev>,
+	Netdev <netdev@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	lkft-triage@lists.linaro.org,
+	Linux Regressions <regressions@lists.linux.dev>,
+	Anders Roxell <anders.roxell@linaro.org>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Florian Westphal <fw@strlen.de>,
+	Steffen Klassert <steffen.klassert@secunet.com>
+Subject: Re: net/xfrm/xfrm_policy.c:1286:8: error: variable 'dir' is
+ uninitialized when used here [-Werror,-Wuninitialized]
+Message-ID: <20240830170449.GX1368797@kernel.org>
+References: <CA+G9fYtemFfuhc7=eNyP3TezM9Euc8sFtHe4GDR4Z9XdHzXSJA@mail.gmail.com>
+ <20240830164706.GW1368797@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/2] iommu/arm-smmu-v3: Match Stall behaviour for S2
-To: Nicolin Chen <nicolinc@nvidia.com>, Mostafa Saleh <smostafa@google.com>
-Cc: linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, will@kernel.org, joro@8bytes.org,
- jean-philippe@linaro.org, jgg@ziepe.ca, mshavit@google.com
-References: <20240830110349.797399-1-smostafa@google.com>
- <20240830110349.797399-2-smostafa@google.com>
- <ZtHznQwkJmugKef2@Asurada-Nvidia>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <ZtHznQwkJmugKef2@Asurada-Nvidia>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240830164706.GW1368797@kernel.org>
 
-On 30/08/2024 5:30 pm, Nicolin Chen wrote:
-> On Fri, Aug 30, 2024 at 11:03:47AM +0000, Mostafa Saleh wrote:
->   
->> According to the spec (ARM IHI 0070 F.b), in
->> "5.5 Fault configuration (A, R, S bits)":
->>      A STE with stage 2 translation enabled and STE.S2S == 0 is
->>      considered ILLEGAL if SMMU_IDR0.STALL_MODEL == 0b10.
->>
->> Also described in the pseudocode “SteIllegal()”
->>      if STE.Config == '11x' then
->>          [..]
->>          if eff_idr0_stall_model == '10' && STE.S2S == '0' then
->>              // stall_model forcing stall, but S2S == 0
->>              return TRUE;
->>
->> Which means, S2S must be set when stall model is
->> "ARM_SMMU_FEAT_STALL_FORCE", but currently the driver ignores that.
->>
->> Although, the driver can do the minimum and only set S2S for
->> “ARM_SMMU_FEAT_STALL_FORCE”, it is more consistent to match S1
->> behaviour, which also sets it for “ARM_SMMU_FEAT_STALL” if the
->> master has requested stalls.
+On Fri, Aug 30, 2024 at 05:47:06PM +0100, Simon Horman wrote:
+> + Florian, Steffen
 > 
-> If I read the SteIllegal() correctly, it seems S2S would conflict
-> against the STE.EATS settings?
+> On Fri, Aug 30, 2024 at 12:15:10PM +0530, Naresh Kamboju wrote:
+> > The x86_64 defconfig builds failed on today's Linux next-20240829
+> > due to following build warnings / errors.
+> > 
+> > Regressions:
+> > * i386, build
+> >   - clang-18-defconfig
+> >   - clang-nightly-defconfig
+> > 
+> > * x86_64, build
+> >   - clang-18-lkftconfig
+> >   - clang-18-lkftconfig-compat
+> >   - clang-18-lkftconfig-kcsan
+> >   - clang-18-lkftconfig-no-kselftest-frag
+> >   - clang-18-x86_64_defconfig
+> >   - clang-nightly-lkftconfig
+> >   - clang-nightly-lkftconfig-kselftest
+> >   - clang-nightly-x86_64_defconfig
+> >   - rustclang-nightly-lkftconfig-kselftest
+> > 
+> > first seen on next-20240829.
+> >   Good: next-20240828
+> >   BAD:  next-20240829
+> > 
+> > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> > 
+> > build log:
+> > --------
+> > net/xfrm/xfrm_policy.c:1286:8: error: variable 'dir' is uninitialized
+> > when used here [-Werror,-Wuninitialized]
+> >  1286 |                 if ((dir & XFRM_POLICY_MASK) == XFRM_POLICY_OUT) {
+> >       |                      ^~~
+> > net/xfrm/xfrm_policy.c:1257:9: note: initialize the variable 'dir' to
+> > silence this warning
+> >  1257 |         int dir;
+> >       |                ^
+> >       |                 = 0
+> > 1 error generated.
 > 
-> // Check ATS configuration
-> if ((sec_sid == SS_NonSecure && SMMU_IDR0.ATS == '1') ||
->      (sec_sid == SS_Realm && SMMU_R_IDR0.ATS == '1')) &&
->      STE.Config != 'x00' then
->      // Needs to be NS/Realm, ATS enabled, and not Bypass
->          if STE.EATS == '01' && STE.S2S == '1' then
->              // Full ATS mode
->              if STE.Config == '11x' || constr_unpred_EATS_S2S then
->                  // if stage 2 enabled or CONSTRAINED UNPREDICTABLE for SMMUv3.0
->                  return TRUE;
-> 	
-> So, if master->stall_enabled and master->ats_enabled, there would
-> be a bad STE?
+> I believe that is due to
+> commit 08c2182cf0b4 ("xfrm: policy: use recently added helper in more places")
+> 
+> I will work on a fix to initialise dir in the loop where it is used.
 
-Indeed, but as discussed previously, to get there would require either 
-firmware or hardware to bogusly advertise both stall and ATS 
-capabilities for the same device, which we decided is beyond the scope 
-of what's worth trying to reason about. If a nonsensical system leads to 
-obviously blowing up with C_BAD_STE, that's arguably not such a bad thing.
-
-Thanks,
-Robin.
+Patch is here:
+- [PATCH ipsec-next] xfrm: Initialise dir in xfrm_hash_rebuild()
+  https://lore.kernel.org/netdev/20240830-xfrm_hash_rebuild-dir-v1-1-f75092d07e1b@kernel.org/T/#u
 
