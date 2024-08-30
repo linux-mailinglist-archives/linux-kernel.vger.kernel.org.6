@@ -1,123 +1,119 @@
-Return-Path: <linux-kernel+bounces-308778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF7BB9661A4
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 14:28:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C4D89661AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 14:29:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C8F6281585
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:28:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B6EF1F21398
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:29:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE997199FCC;
-	Fri, 30 Aug 2024 12:28:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uMGTTGx8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B9F31A2850;
+	Fri, 30 Aug 2024 12:29:00 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D474199FC2;
-	Fri, 30 Aug 2024 12:28:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68624199FA4;
+	Fri, 30 Aug 2024 12:28:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725020920; cv=none; b=Dc1PT8WXAVHeKvIB/v6wB+ZoTxjM1KnXjz+zwhsQ6NvhCtfppXK8NQL7o7xBn3ApcLHut6CeMAkCOoZGRPmCudXNxgpjnB32UiUF0/CUmUESc1JT/8Zcrq9vAoywMJnNf/4ukh6e2+wx94QDR/Q2zPo1zc+RJm2vYOwIh3mcHeY=
+	t=1725020940; cv=none; b=kw4EwxKc8ECWGBtw57srqal613bKu/22hJbN8HVGIA7V6AzIorjVME/zwrh2/mmidC8HHF5QCnXcBUzBX6aPWDKdUTNXA02LvGjxHX5TCIX/i3tyFAUCtThrH5QCqq15Fdgr8KcH57etdusVb8FwQz7Fr6avemlgxDPtynodjbY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725020920; c=relaxed/simple;
-	bh=zO4wCnBxkRXI4i7T5gLDq8jp8Mqm7VeBGA6ulGBi90g=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WYEYgc5opKenxYK579Zch+IJuc3bbikV9oVWcc0y4ErK0vWYDG8Hqbh3Nky9NOHvt7DJqkBMguNT2Rn5BExZBL1ksykFseYJlrUq1Bba4Mv52ocEftrRK9C1Pd5M3eeFXSr1m301Z28Y4sGYUrM04GoGTfqJy9Sd8Jr137Iyk4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uMGTTGx8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96B95C4CEC8;
-	Fri, 30 Aug 2024 12:28:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725020919;
-	bh=zO4wCnBxkRXI4i7T5gLDq8jp8Mqm7VeBGA6ulGBi90g=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=uMGTTGx8s5zmmy3/df69HrZEHIrifn0gDansnbCAJgTGbTtDclef3IKWPrpklEnPr
-	 ELsNmyQs8e69sUiNCtm/TkT0WXtdqF9hheMKjklQ8C1Kkh/6C9oCFkmU0QjkaN5AaM
-	 AUcrHUyqdMutMujyrs0nVmeXggVkztoWHE3rFppU+7lecAUWcziH7YdOSDOWWQQZyB
-	 oTzcFdhR8/khxQyd3V0JenFzXGwf8Br6rvPNfCW08bDJim1Ltc/HeUlyywyqY/Z1kM
-	 Ln8ygNn+e3DfuSpYf0/tKWADFAJILzYQ6i+xpbKbnJgwNN4A/0fp73lIKR+8zLOsy7
-	 Z3t6HLh+c+jDA==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1sk0k1-008EPI-01;
-	Fri, 30 Aug 2024 13:28:37 +0100
-Date: Fri, 30 Aug 2024 13:28:36 +0100
-Message-ID: <868qwew5xn.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Sebastian Ene <sebastianene@google.com>
-Cc: akpm@linux-foundation.org,
-	alexghiti@rivosinc.com,
-	ankita@nvidia.com,
-	ardb@kernel.org,
-	catalin.marinas@arm.com,
-	christophe.leroy@csgroup.eu,
-	james.morse@arm.com,
-	vdonnefort@google.com,
-	mark.rutland@arm.com,
-	oliver.upton@linux.dev,
-	rananta@google.com,
-	ryan.roberts@arm.com,
-	shahuang@redhat.com,
-	suzuki.poulose@arm.com,
-	will@kernel.org,
-	yuzenghui@huawei.com,
-	kvmarm@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
+	s=arc-20240116; t=1725020940; c=relaxed/simple;
+	bh=oJ1xcMwdmfR/v7V7BgzIj/WZTewzoHvz/SQaj3yOdaw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Oe/nEkNVAUmf6N/DbS0tZT8d5YsuYvJ2Z/pAKnwOqJFE6NBpkxm0WyjnOpScDjIFKFnXXBM9vEYUZOyWu5xL/w+vcKya5jknvtNX5OwQPvKZPZYDeykaYrHF45SjrtnWm46crhG/cnistvOk7yKFqE4vAjF7867jCWVATBHFPqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4WwHWS32fZz9sSK;
+	Fri, 30 Aug 2024 14:28:52 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id hqpSmI7yge0W; Fri, 30 Aug 2024 14:28:52 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4WwHWR5DWgz9sS8;
+	Fri, 30 Aug 2024 14:28:51 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id A1C238B764;
+	Fri, 30 Aug 2024 14:28:51 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id TbYxRHbKDEWk; Fri, 30 Aug 2024 14:28:51 +0200 (CEST)
+Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.234.133])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 263AD8B799;
+	Fri, 30 Aug 2024 14:28:51 +0200 (CEST)
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+To: Shuah Khan <shuah@kernel.org>,
+	Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Andy Lutomirski <luto@mit.edu>,
+	"H. Peter Anvin" <hpa@linux.intel.com>,
+	Mark Brown <broonie@kernel.org>,
+	"Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+	linux-kselftest@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	kernel-team@android.com
-Subject: Re: [PATCH v9 2/5] arm64: ptdump: Expose the attribute parsing functionality
-In-Reply-To: <20240827084549.45731-3-sebastianene@google.com>
-References: <20240827084549.45731-1-sebastianene@google.com>
-	<20240827084549.45731-3-sebastianene@google.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH 2/5] selftests: vdso: Fix vdso_config for powerpc
+Date: Fri, 30 Aug 2024 14:28:36 +0200
+Message-ID: <f6b730b24361e4154019ec5fefdb8b9b10afb396.1725020674.git.christophe.leroy@csgroup.eu>
+X-Mailer: git-send-email 2.44.0
+In-Reply-To: <6c5da802e72befecfa09046c489aa45d934d611f.1725020674.git.christophe.leroy@csgroup.eu>
+References: <6c5da802e72befecfa09046c489aa45d934d611f.1725020674.git.christophe.leroy@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: sebastianene@google.com, akpm@linux-foundation.org, alexghiti@rivosinc.com, ankita@nvidia.com, ardb@kernel.org, catalin.marinas@arm.com, christophe.leroy@csgroup.eu, james.morse@arm.com, vdonnefort@google.com, mark.rutland@arm.com, oliver.upton@linux.dev, rananta@google.com, ryan.roberts@arm.com, shahuang@redhat.com, suzuki.poulose@arm.com, will@kernel.org, yuzenghui@huawei.com, kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-team@android.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1725020918; l=1294; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=oJ1xcMwdmfR/v7V7BgzIj/WZTewzoHvz/SQaj3yOdaw=; b=ola5krc4mogdL/CH2op9DISC1pgL83EAmvQG0ipPNvIi4OTmpyR5rqdBXqAi/GUztMEdV3jnO AA4aGWq4LdpCk99ICkbprGAUK68fxmfkBshaZFfPlqnNGAlyTYJjTq4
+X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
+Content-Transfer-Encoding: 8bit
 
-On Tue, 27 Aug 2024 09:45:45 +0100,
-Sebastian Ene <sebastianene@google.com> wrote:
-> 
-> Reuse the descriptor parsing functionality to keep the same output format
-> as the original ptdump code.
+Running vdso_test_correctness on powerpc64 gives the following warning:
 
-This sentence seems either out of place or missing something, because
-this change it not reusing anything...
+  ~ # ./vdso_test_correctness
+  Warning: failed to find clock_gettime64 in vDSO
 
-> In order for this to happen, move the state
-> tracking objects into a common header.
+This is because vdso_test_correctness was built with VDSO_32BIT defined.
 
-... but instead doing this ^^^.
+__powerpc__ macro is defined on both powerpc32 and powerpc64 so
+__powerpc64__ needs to be checked first in vdso_config.h
 
-I propose to rewrite the commit message as:
+Fixes: 693f5ca08ca0 ("kselftest: Extend vDSO selftest")
+Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+---
+ tools/testing/selftests/vDSO/vdso_config.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-"Adding a new page-table dumper for stage-2 requires parsing the page
-tables, and reusing the descriptor parsing functionality would help
-keeping the same output format as the original ptdump code.
-
-In order for this to happen, move the state tracking object
-definitions into a common header."
-
-Shout if you object to it!
-
-Thanks,
-
-	M.
-
+diff --git a/tools/testing/selftests/vDSO/vdso_config.h b/tools/testing/selftests/vDSO/vdso_config.h
+index 7b543e7f04d7..00bfed6e4922 100644
+--- a/tools/testing/selftests/vDSO/vdso_config.h
++++ b/tools/testing/selftests/vDSO/vdso_config.h
+@@ -18,13 +18,13 @@
+ #elif defined(__aarch64__)
+ #define VDSO_VERSION		3
+ #define VDSO_NAMES		0
+-#elif defined(__powerpc__)
++#elif defined(__powerpc64__)
+ #define VDSO_VERSION		1
+ #define VDSO_NAMES		0
+-#define VDSO_32BIT		1
+-#elif defined(__powerpc64__)
++#elif defined(__powerpc__)
+ #define VDSO_VERSION		1
+ #define VDSO_NAMES		0
++#define VDSO_32BIT		1
+ #elif defined (__s390__)
+ #define VDSO_VERSION		2
+ #define VDSO_NAMES		0
 -- 
-Without deviation from the norm, progress is not possible.
+2.44.0
+
 
