@@ -1,39 +1,73 @@
-Return-Path: <linux-kernel+bounces-308489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AE0F965DA7
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 11:58:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19E96965DA9
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 11:58:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C3BF1C22C53
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 09:58:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97D241F2778E
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 09:58:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19504170A06;
-	Fri, 30 Aug 2024 09:58:09 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22D38EEB7;
-	Fri, 30 Aug 2024 09:58:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E19615689B;
+	Fri, 30 Aug 2024 09:58:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="x8o3c4Ro"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE1B413A261
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 09:58:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725011888; cv=none; b=FGVjbdrgDiwYDtTJEG8CWXMoD62A/tM2FLi0Fx6MfXVUs00Ap/UtL6lTt1ERw/uVhk5HODnZgFZJIr8R0bvGHwxfymQH7XUvGUTGaPShDB3jyHv9ynCTROVtfgjAMNyEnGR2znSE22E9d0cy4yZHJ5h4ylZlwtys8owp+sk3Eyg=
+	t=1725011905; cv=none; b=dTAqjiuRy6g2YFzt/FBHvctMuhkn1IPvEc1Kx66KT3kIFknVipIxhigOX5lTwJBJwb6f+ilE0rHGXf5wNf55FplrsJ0aNdq5PABCD2E37vi5ljpfIFOxlYzzjN4XstLMhm5v8pCShRYeSJPI2dgXcfQRkppg1rgMSJTtQBWYVeI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725011888; c=relaxed/simple;
-	bh=o3aAKAo/Uo0zC6D4o15oa4oyPdGyHv9/ZZ0sRamhuBk=;
+	s=arc-20240116; t=1725011905; c=relaxed/simple;
+	bh=0mSmz5WpliiVjMmizDHsmRyqv1dRHJ9TTKc4+NrQ2g8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JOnQRRmMLpj5ZcFyiVMX0mj5kZe1kXjQLYkqBl+rpGt+Xtw7/TaYhGGy9WxbS09HmMaGH7JJz+UlSFUz7txPNY0KnAzHsVAUNeOLxJbqzPBJfLRUM68FbdulKPr0ZEkNvoOv2MoVY/D7JDYaTkaQQdoPmX5wwjJhxnK5kP/oUvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 609BC1063;
-	Fri, 30 Aug 2024 02:58:31 -0700 (PDT)
-Received: from [10.57.86.160] (unknown [10.57.86.160])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 49AC63F762;
-	Fri, 30 Aug 2024 02:58:03 -0700 (PDT)
-Message-ID: <ea224d97-44bb-45d0-b7f1-71e6287d8a8f@arm.com>
-Date: Fri, 30 Aug 2024 10:57:56 +0100
+	 In-Reply-To:Content-Type; b=hxiaMBuJDvyqiA/6oHwWj86D8OWf/n/v9Jpl89zbFoNXgVwmsEVhNV9iBasLGO7nanXqYLCoOs/sWAbB3B/uE57yt8URQ0REVu3EQeMzX9KLoVFveL8ajRAOlaSnvBXYHBFlbLFflEiTOxn5WbO2TrixN/FyhCV2X953D9DBBOM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=x8o3c4Ro; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42812945633so14329875e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 02:58:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725011902; x=1725616702; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=mK8Ziwx48ZLun9eMEMGl1IMQeFQSPXpJOVp3edXBndA=;
+        b=x8o3c4Ro3u51FXy2NAHvmMj0WKe6ZXAhrY0f19YcMA44wgwObY73gJhmVh33pKwIOS
+         V39uiijyimaXFycifrhM+CqSDrkh4dkbINu0/Fx3wF5ON73OE9A0XguaRSdCSJ4r/d/6
+         wG/BQnKfuKzevxwVs44IkUxhqoMviPPIj6sGz1HANzXEMzM8fH/JjAcROwX3NQHht1sA
+         xglHLuz3e/UHx3NvFDaAxTtmpEbMM7vABRgkNb1+2hLxKI5veTCZP3Dnmdvtv5vhJnKI
+         mDm5V8kduzkUpFbWsc8YGIbbrb8h/UBvAg5SmzILWW3nrtC78Rs7toMKIEuKl+FhIgrv
+         L6PQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725011902; x=1725616702;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mK8Ziwx48ZLun9eMEMGl1IMQeFQSPXpJOVp3edXBndA=;
+        b=f7BVa6Lun90pvncTi8wQVsldYgYFCVK5OA8UqAaYjEilp635fdqYBXaoMHxf8lnrzL
+         fppZgczWmhm6Qyw2zdT4ohDEnO4ADP6xSS/usa04MXTi6RDRwzMkDHGU1RK5N4L+FgDo
+         xCxy9ukxvBFkg8Q6Kt2iwgID3sN0Emx8oR6w1vID9iqS1WJrUGq/9dVabRgeDZnPpK4j
+         EGdrsrLcWB67gykw/Powww6v9L3NglGkmj5PELmQKbrKaIONMwFraz8ceAMtIRDkdB5O
+         WgvWGtHibxbyFGNXeGy6hr6hdPBEPRjiTkKYm4UU7ApMzzynpWGds+V0uswJ0JXh99Jp
+         k5TQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXDs5Wbi3v/Lr0481GqMzNgI/zkizdF7gN+dFDmjqpDlir3X8auohRDECuxhmNB278GfCo9cFgk6IVMZMk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJ3bhSZXQpe5aVpOq+SrPni83FOnnCQ0bpzcMZFBl5okQ2HeIA
+	vHI7iSLqixYi4MVVzfY8wL82OkPpnDRPFv7c5oUmu8qpq+nCtNqWCR5TojkS9zQ=
+X-Google-Smtp-Source: AGHT+IHXWFppzEMO2FQFtiexm/hflVeUc7nTy9Cnb3zVw2dmZw6g9Sd2w7f3/H3Ooqd+K8VqAuPnKg==
+X-Received: by 2002:a05:600c:1c83:b0:428:2e9:6573 with SMTP id 5b1f17b1804b1-42bb025bfebmr44911705e9.17.1725011901252;
+        Fri, 30 Aug 2024 02:58:21 -0700 (PDT)
+Received: from [192.168.1.3] ([89.47.253.130])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bbd1eee1bsm9060265e9.9.2024.08.30.02.58.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 30 Aug 2024 02:58:20 -0700 (PDT)
+Message-ID: <aa159649-4274-4bc4-94fe-f9d112b198df@linaro.org>
+Date: Fri, 30 Aug 2024 10:58:19 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,93 +75,117 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] kselftest/arm64: Actually test SME vector length changes
- via sigreturn
-To: Mark Brown <broonie@kernel.org>, Catalin Marinas
- <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Shuah Khan <shuah@kernel.org>
-Cc: Shuah Khan <skhan@linuxfoundation.org>,
- linux-arm-kernel@lists.infradead.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240829-arm64-sme-signal-vl-change-test-v1-1-42d7534cb818@kernel.org>
+Subject: Re: [PATCH] perf scripts python arm-cs-trace-disasm.py: Skip disasm
+ if address continuity is broken
+To: Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
+ Mike Leach <mike.leach@linaro.org>
+Cc: Leo Yan <leo.yan@arm.com>, scclevenger@os.amperecomputing.com,
+ acme@redhat.com, coresight@lists.linaro.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ darren@os.amperecomputing.com, james.clark@arm.com, suzuki.poulose@arm.com,
+ Al.Grant@arm.com
+References: <20240719092619.274730-1-gankulkarni@os.amperecomputing.com>
+ <ae1b2d8c-588a-4f0a-b3c9-c869f8dd0f25@os.amperecomputing.com>
+ <00fac24c-d664-4ebb-8c60-f4697b7f76c1@linaro.org>
+ <8b53a424-19f7-4042-a2db-e1c5d051f9cc@os.amperecomputing.com>
+ <6adf84fa-b755-4d7a-957a-9bf01e442238@linaro.org>
+ <d71dff17-6f1e-4a67-89c6-7ecc86af0f3a@linaro.org>
+ <6f535bb6-2cee-48e6-93f1-ea19887bae74@os.amperecomputing.com>
+ <027c76a9-9bd4-43e9-a170-8391a0037291@linaro.org>
+ <3d7a6f93-0555-48fa-99cb-bf26b53c2da5@os.amperecomputing.com>
+ <d6170beb-754e-4be3-8ff7-18acddccf077@linaro.org>
+ <4dd7f210-c03e-4203-b8e9-1c26a7f8fe79@arm.com>
+ <c73573e7-206e-4a6c-b6c6-27903978d0aa@linaro.org>
+ <CAJ9a7VhJFNxPCVva5tS51SBaxx76nFq9in0MGJe2jEwbVdSTkA@mail.gmail.com>
+ <27912fc6-8419-4828-82a7-dacde5b4a759@linaro.org>
+ <CAJ9a7Vg3W0NseXes3_irgkyeDKjhWqw5YMRghguHJZS73p9SJQ@mail.gmail.com>
+ <36f947ef-c2a7-486a-b905-f0529308b06e@linaro.org>
+ <51661f76-c02a-49fb-8d68-53a8549acd19@os.amperecomputing.com>
 Content-Language: en-US
-From: Andre Przywara <andre.przywara@arm.com>
-In-Reply-To: <20240829-arm64-sme-signal-vl-change-test-v1-1-42d7534cb818@kernel.org>
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <51661f76-c02a-49fb-8d68-53a8549acd19@os.amperecomputing.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi,
 
-On 29/08/2024 18:20, Mark Brown wrote:
-> The test case for SME vector length changes via sigreturn use a bit too
-> much cut'n'paste and only actually changed the SVE vector length in the
-> test itself. Andre's recent factoring out of the initialisation code caused
-> this to be exposed and the test to start failing. Fix the test to actually
-> cover the thing it's supposed to test.
 
-Yes, I came to the same conclusion. The device I tested the original 
-patch on only had one VL, so the whole test was skipped, and I didn't 
-see the problem. Now re-tested on the FVP.
-
-> Fixes: 4963aeb35a9e ("kselftest/arm64: signal: Add SME signal handling tests")
-> Signed-off-by: Mark Brown <broonie@kernel.org>
-
-Reviewed-by: Andre Przywara <andre.przywara@arm.com>
-Tested-by: Andre Przywara <andre.przywara@arm.com>
-
-Thanks,
-Andre.
-
-> ---
->   .../arm64/signal/testcases/fake_sigreturn_sme_change_vl.c  | 14 +++++++-------
->   1 file changed, 7 insertions(+), 7 deletions(-)
+On 23/08/2024 10:57 am, Ganapatrao Kulkarni wrote:
 > 
-> diff --git a/tools/testing/selftests/arm64/signal/testcases/fake_sigreturn_sme_change_vl.c b/tools/testing/selftests/arm64/signal/testcases/fake_sigreturn_sme_change_vl.c
-> index cb8c051b5c8f..dfd6a2badf9f 100644
-> --- a/tools/testing/selftests/arm64/signal/testcases/fake_sigreturn_sme_change_vl.c
-> +++ b/tools/testing/selftests/arm64/signal/testcases/fake_sigreturn_sme_change_vl.c
-> @@ -35,30 +35,30 @@ static int fake_sigreturn_ssve_change_vl(struct tdescr *td,
->   {
->   	size_t resv_sz, offset;
->   	struct _aarch64_ctx *head = GET_SF_RESV_HEAD(sf);
-> -	struct sve_context *sve;
-> +	struct za_context *za;
->   
->   	/* Get a signal context with a SME ZA frame in it */
->   	if (!get_current_context(td, &sf.uc, sizeof(sf.uc)))
->   		return 1;
->   
->   	resv_sz = GET_SF_RESV_SIZE(sf);
-> -	head = get_header(head, SVE_MAGIC, resv_sz, &offset);
-> +	head = get_header(head, ZA_MAGIC, resv_sz, &offset);
->   	if (!head) {
-> -		fprintf(stderr, "No SVE context\n");
-> +		fprintf(stderr, "No ZA context\n");
->   		return 1;
->   	}
->   
-> -	if (head->size != sizeof(struct sve_context)) {
-> +	if (head->size != sizeof(struct za_context)) {
->   		fprintf(stderr, "Register data present, aborting\n");
->   		return 1;
->   	}
->   
-> -	sve = (struct sve_context *)head;
-> +	za = (struct za_context *)head;
->   
->   	/* No changes are supported; init left us at minimum VL so go to max */
->   	fprintf(stderr, "Attempting to change VL from %d to %d\n",
-> -		sve->vl, vls[0]);
-> -	sve->vl = vls[0];
-> +		za->vl, vls[0]);
-> +	za->vl = vls[0];
->   
->   	fake_sigreturn(&sf, sizeof(sf), 0);
->   
+> Hi James/Mike,
 > 
-> ---
-> base-commit: b18bbfc14a38b5234e09c2adcf713e38063a7e6e
-> change-id: 20240829-arm64-sme-signal-vl-change-test-cebe4035856a
+> On 23-08-2024 02:33 pm, James Clark wrote:
+>>
+>>
+>> On 19/08/2024 11:59 am, Mike Leach wrote:
+>>> Hi,
+>>>
+>>> A new branch of OpenCSD is available - ocsd-consistency-checks-1.5.4-rc1
+>>>
+>>> Testing I managed to do confirms the N atom on unconditional branches
+>>> appear to work. I do not have a test case for the range
+>>> discontinuities.
+>>>
+>>> The checks are enabled using operation flags on decoder creation. See
+>>> the docs for details.
+>>>
+>>> Mike
+>>>
+>>
+>> Hi Mike,
+>>
+>> I tested the new OpenCSD and I don't see the error anymore in the
+>> disassembly script. I'm not sure if we need to go any further and add
+>> the backwards check, it looks like just a later symptom and the checks
+>> that you've added already prevent it.
+>>
+>> If you release a new version I can send the perf patch. I was going to
+>> use these flags if that looks right to you? As far as I know that's the
+>> set that can be always on and won't fail on bad hardware?
+>>
+>> I also assumed that ETM4_OPFLG_PKTDEC_AA64_OPCODE_CHK can be given even
+>> for etmv3 and it's just a nop?
+>>
+>> diff --git a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c 
+>> b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
+>> index e917985bbbe6..90967fd807e6 100644
+>> --- a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
+>> +++ b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
+>> @@ -685,9 +685,14 @@ cs_etm_decoder__create_etm_decoder(struct 
+>> cs_etm_decoder_params *d_params,
+>>                  return 0;
+>>
+>>          if (d_params->operation == CS_ETM_OPERATION_DECODE) {
+>> +               int decode_flags = OCSD_CREATE_FLG_FULL_DECODER;
+>> +#ifdef OCSD_OPFLG_N_UNCOND_DIR_BR_CHK
+>> +               decode_flags |= OCSD_OPFLG_N_UNCOND_DIR_BR_CHK | 
+>> OCSD_OPFLG_CHK_RANGE_CONTINUE |
+>> +                               ETM4_OPFLG_PKTDEC_AA64_OPCODE_CHK;
+>> +#endif
+>>                  if (ocsd_dt_create_decoder(decoder->dcd_tree,
+>>                                             decoder->decoder_name,
+>> -                                          OCSD_CREATE_FLG_FULL_DECODER,
+>> +                                          decode_flags,
+>>                                             trace_config, &csid))
+>>                          return -1;
+>>
 > 
-> Best regards,
+> I tried Mike's branch with above James's patch and still the segfault is 
+> happening to us.
+> 
+
+Looks like the Perf bug is only on the timestamped decode path, you can 
+force timeless as a workaround. Timestamps aren't used by the 
+disassembly script anyway:
+
+   --itrace=Zb
+
+Full command:
+
+   perf script -i ./kcore -s python:tools/perf/scripts/python/arm-cs-\
+      trace-disasm.py --itrace=Zb -- -k ./kcore/kcore_dir/kcore
+
+You can also disable timestamps when recording then you don't need the 
+itrace option. This will save you a lot of data anyway.
+
+But I'm still working on the proper fix.
 
