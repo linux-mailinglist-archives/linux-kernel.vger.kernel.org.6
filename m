@@ -1,170 +1,86 @@
-Return-Path: <linux-kernel+bounces-308741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3973896612A
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 13:58:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E5DB96612D
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 13:58:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 90823B21E8A
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 11:58:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D7D61C23842
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 11:58:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAABD197512;
-	Fri, 30 Aug 2024 11:58:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 478BD199FB2;
+	Fri, 30 Aug 2024 11:58:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="bHY+Ir/Y"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="A99KWBxM"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C53D414EC41
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 11:58:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6A54199927;
+	Fri, 30 Aug 2024 11:58:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725019104; cv=none; b=MCI5gpl4qCSKeCL0WUPw6ogAk2s6NBL5V+8CiaPhPvKt2LP0fgJHBhnxv4u5RU8Y4HFYkOj+77I/fcpqghe1NRumj/75YGmx+GrwE74ActNDiK89dfgVMqPR/1Jb3svK8eTe1aPg4WbC0/7qGtyemz1IBHjIOdTVGu57NJGSyqY=
+	t=1725019107; cv=none; b=fZz5WgA6BPLZXfOobCNctMpts1pUyIMualXCdjE4Ls5MnAx9lO0tYOrIhCQnEj3eGyiUPCA2EhsFU5felkrxxqyiGrPUpV4LX/60C0Cj5BsDPYTWRIGNcRW6fuz6g23+Moh7LHvBnh831Vj8RMuDMQC0nWJyn24rXnvWXU6zvKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725019104; c=relaxed/simple;
-	bh=HvSB4cOBqCOy8cPGNoJ7ibHlaiOl/vV4P/lzLmaTHU8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r/isBYgETqQndjErBBL/ImJaNWwAIZNRGbdp1R26NUPfTk9dGHyHVnkHqNJgcycQ97EBMUa0jVDiyKduSFf8/uvlc61H+Mc3mPKhgLJ83HGzmQmkaA0MRfbyEp8Gxnl3dxok+Weu3UMQnLqiqGS/X+k7wVqX2ag1lGZRtbOwBLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=bHY+Ir/Y; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-42bb8cf8abeso11972795e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 04:58:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1725019101; x=1725623901; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=R/ZmkthQxbD6V/BZNBsTW2rTGIetq2FpOcyt+DGfaOM=;
-        b=bHY+Ir/Y0Q3xM1oWuZFeGj2Zu6iS1Irc10MTCrI3sOO4gdcy0vE2ENF8/7mbGf7zOS
-         m3bbkCXdlHLKVCPEiNpPc6i0Dgp4awPlhoQMPRHetxS8h6U50O0ede4n/0zESssLsesu
-         xUBLo3jF+ND3kwD69982qVZqVF47ntcoX72w1rcUSX4RZcf+1+Oys7qveRFMuApN46gJ
-         Yq0+6sPw7ME8fWsRB9iM8JALwaspno9NC6YpiAF9o0APYl0Tdebt1aBzj4GZVG0ggwSD
-         MJR3KnP23/1UlDpPhAUhXKlSGLo2MTEpOiSkbCnXiJ8CCSiAyR5/SWmeNR9A82Ts20Yg
-         LIrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725019101; x=1725623901;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=R/ZmkthQxbD6V/BZNBsTW2rTGIetq2FpOcyt+DGfaOM=;
-        b=soH5ZXwhVSMfhKUm75FfSlJFUOb/c1eulF9FPfR30HvrTAB8M2gYx2E/LOum/bz9Zq
-         fRb3OrYaS/bIRbP2i7VYUd6a8TAs1SWMENlxDVga8dQKXvsh8wVN9lrtVFE7kV8KeUQN
-         Tf8k5hv0CZ7uBdt5RbCfCRpa2UYwDNGIV/H7YO601RMm4fxhjr0fn9He1qtJ88wBww1B
-         xlnWXBkIIiKfVnXpRY69oOv9XFGKUQmcoMS3934iKT2ariBbBsBXJc2wpw2RNuuDhrMy
-         igYnjlmhab0OnWZ2gxsT2Ys7Lsn7IHgrpNaQvnqGW/tducCylrtdi8SEJ7iB2uT8XzsL
-         RbAw==
-X-Forwarded-Encrypted: i=1; AJvYcCVL9g+FFnm5WkRD59QvgiHUmwnmHfQZQ8s1MBTH3Ckme+9j2GJa4l7vSnitT86V/92lQa1aUJu5Q7qV6hc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyF+tVIHY3WEKbtEZEiRAVGtZWNnuruz4m57ZVLuKgoJ+PRmA/T
-	86TjY4PNVNoioocQ8QhzIsNBFgHhe2fBnP9vLUQVdj98LZbhJ5Z+CZVGUUcMns4=
-X-Google-Smtp-Source: AGHT+IFzYA7AZ7liIiwfeRU2/wB4g/pDYvGX+i+cDd+u5PekZ13lqdSLE2abq0T2/0yeckMQce+6BA==
-X-Received: by 2002:a05:600c:4586:b0:427:9922:4526 with SMTP id 5b1f17b1804b1-42bb01ae423mr49199545e9.7.1725019100856;
-        Fri, 30 Aug 2024 04:58:20 -0700 (PDT)
-Received: from localhost (109-81-82-19.rct.o2.cz. [109.81.82.19])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-374b960ef94sm565620f8f.103.2024.08.30.04.58.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Aug 2024 04:58:20 -0700 (PDT)
-Date: Fri, 30 Aug 2024 13:58:19 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: Zhiguo Jiang <justinjiang@vivo.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Christoph Hellwig <hch@infradead.org>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, opensource.kernel@vivo.com
-Subject: Re: [PATCH] mm: fix vmalloc memcg accounting issue
-Message-ID: <ZtGz28j4T5tTUEUQ@tiehlicka>
-References: <20240830113956.1355-1-justinjiang@vivo.com>
+	s=arc-20240116; t=1725019107; c=relaxed/simple;
+	bh=E7pEDWEStrAaG2FKZhDY2UHnf6lFd/Hl1n8C0FnGH3g=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=AXE8s+UM/StZaSXLskE01EiTIPPbpY/Bjf83IK06VEOqSsZiGjEt2EUNhmw310bBQbJDQxTcm4d2R1JAF1xo3Rvgwj7EZ3FF+f4H223TO6knZP5kJaEAQSbgU8QhOnv2eZUUwxb/pyOLpQnpyI8hr6iRmdePVgLSr1M62bS2ZBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=A99KWBxM; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=zewzSXQ3UbL9TPbGHpoYN2Ss1C7MaZ+YxfmHenSYXnM=;
+	t=1725019106; x=1726228706; b=A99KWBxM8HLBm34VEZ/RxppB38aZL+DwFRR5GYgEyltwztl
+	bLkVkH5onjHKf092sFTuQg/bTMdnh01DlkaaOUOdB2PIOddE93JDTqKVBkj82nUmFdQE3yEsmw59k
+	jbGF1cFeNrZ9eUEp6f6TAznaUUIZSm4AQJYZu64ln6qlSiS2yonqPkO5a1Y85BJ0LEscCbZK80mwP
+	ajOfFe5/7SmPcgOhCZ+7Ou75ZmjD4GxIs+VTrZr1yTEMKxH+raEw5mKZs1Wt6Q8KCk2kgaW9xswqO
+	8EAXPdhHMEiEK1x7JWQuNAGr+9SZI97vl5VA53/Ok+SH7bztQKdfGPJdhQX9eNWQ==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.97)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1sk0Gj-0000000BMZP-22gU;
+	Fri, 30 Aug 2024 13:58:21 +0200
+Message-ID: <192a1df2754eade22b68da5d8652dc996f2330e9.camel@sipsolutions.net>
+Subject: Re: [PATCH] wifi: mwifiex: Ensure all STA and AP use the same
+ channel
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Sascha Hauer <s.hauer@pengutronix.de>, Kalle Valo <kvalo@kernel.org>
+Cc: Brian Norris <briannorris@chromium.org>, Francesco Dolcini
+	 <francesco@dolcini.it>, linux-wireless@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Date: Fri, 30 Aug 2024 13:58:20 +0200
+In-Reply-To: <ZtGnWC7SPHt7Vbbp@pengutronix.de>
+References: 
+	<20240830-mwifiex-check-channel-v1-1-b04e075c9184@pengutronix.de>
+	 <8734mmuyq9.fsf@kernel.org> <ZtGnWC7SPHt7Vbbp@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240830113956.1355-1-justinjiang@vivo.com>
+X-malware-bazaar: not-scanned
 
-On Fri 30-08-24 19:39:56, Zhiguo Jiang wrote:
-> The oepration of adding 1 for the MEMCG_VMALLOC count value has a
-> judgment "if (gfp_mask & __GFP_ACCOUNT)" in vmalloc(), but subtracting
-> 1 does not have this judgment in vfree(), which leads to the non-aligned
-> count value operation. This patch fixes this issue.
+On Fri, 2024-08-30 at 13:04 +0200, Sascha Hauer wrote:
+>=20
+> Related: num_different_channels is exposed to userspace, but outside the
+> MAC80211 layer there is nothing in the kernel that enforces this
+> restriction.  Am I missing something or is this just an open patch
+> opportunity?
+>=20
 
-Are you really observing this or have you just concluded this from
-reading the code?
+It is, or was least was, non-trivial to do in cfg80211 since it
+isn't/wasn't always fully aware of what's going on. mac80211 does this
+by calling into some helper functions with an appropriate description of
+what's happening, any other driver could do that too.
 
-AFAIR mod_memcg_page_state will not account if page doesn't have memcg
-associated with it which means it is not charged.
-
-> Signed-off-by: Zhiguo Jiang <justinjiang@vivo.com>
-> ---
->  include/linux/vmalloc.h |  1 +
->  mm/vmalloc.c            | 13 ++++++++++---
->  2 files changed, 11 insertions(+), 3 deletions(-)
-> 
-> diff --git a/include/linux/vmalloc.h b/include/linux/vmalloc.h
-> index ad2ce7a6ab7a..0253feec371f
-> --- a/include/linux/vmalloc.h
-> +++ b/include/linux/vmalloc.h
-> @@ -38,6 +38,7 @@ struct iov_iter;		/* in uio.h */
->  #define VM_DEFER_KMEMLEAK	0
->  #endif
->  #define VM_SPARSE		0x00001000	/* sparse vm_area. not all pages are present. */
-> +#define VM_MEMCG_ACCOUNT	0x00002000	/* mark vm pages alloced with __GFP_ACCOUNT for memcg accounting. */
->  
->  /* bits [20..32] reserved for arch specific ioremap internals */
->  
-> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> index d977c280b1c4..aff1bf7a8798
-> --- a/mm/vmalloc.c
-> +++ b/mm/vmalloc.c
-> @@ -3125,6 +3125,12 @@ static struct vm_struct *__get_vm_area_node(unsigned long size,
->  		size += PAGE_SIZE;
->  
->  	area->flags = flags;
-> +	/*
-> +	 * Set memcg accounting flag in vm_struct, used for
-> +	 * vfree() align vmalloc here.
-> +	 */
-> +	if (gfp_mask & __GFP_ACCOUNT)
-> +		area->flags |= VM_MEMCG_ACCOUNT;
->  	area->caller = caller;
->  
->  	va = alloc_vmap_area(size, align, start, end, node, gfp_mask, 0, area);
-> @@ -3367,7 +3373,9 @@ void vfree(const void *addr)
->  		struct page *page = vm->pages[i];
->  
->  		BUG_ON(!page);
-> -		mod_memcg_page_state(page, MEMCG_VMALLOC, -1);
-> +
-> +		if (vm->flags & VM_MEMCG_ACCOUNT)
-> +			mod_memcg_page_state(page, MEMCG_VMALLOC, -1);
->  		/*
->  		 * High-order allocs for huge vmallocs are split, so
->  		 * can be freed as an array of order-0 allocations
-> @@ -3662,7 +3670,7 @@ static void *__vmalloc_area_node(struct vm_struct *area, gfp_t gfp_mask,
->  		node, page_order, nr_small_pages, area->pages);
->  
->  	atomic_long_add(area->nr_pages, &nr_vmalloc_pages);
-> -	if (gfp_mask & __GFP_ACCOUNT) {
-> +	if (area->flags & VM_MEMCG_ACCOUNT) {
->  		int i;
->  
->  		for (i = 0; i < area->nr_pages; i++)
-> @@ -3813,7 +3821,6 @@ void *__vmalloc_node_range_noprof(unsigned long size, unsigned long align,
->  		}
->  		goto fail;
->  	}
-> -
->  	/*
->  	 * Prepare arguments for __vmalloc_area_node() and
->  	 * kasan_unpoison_vmalloc().
-> -- 
-> 2.39.0
-> 
-
--- 
-Michal Hocko
-SUSE Labs
+johannes
 
