@@ -1,110 +1,195 @@
-Return-Path: <linux-kernel+bounces-309354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C31D96694A
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 21:09:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D41296694F
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 21:10:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F14C1C2209A
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 19:09:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44F9328518A
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 19:10:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D0531BC07D;
-	Fri, 30 Aug 2024 19:09:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C65E51BC9E9;
+	Fri, 30 Aug 2024 19:10:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jjoUL+si"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FLdaTgMe"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F275713B297;
-	Fri, 30 Aug 2024 19:09:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 817B813B297;
+	Fri, 30 Aug 2024 19:09:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725044968; cv=none; b=r+RpaARA5RbTX+oz+JCG7N/xPiNdDfujBJgKHqUoXzbO8qse2+7oB5e5/0RRAD3rUAuJ74uGg4LaaLMbjoUWAq7rO7XAMqK5kbgFS8r1k1Ax2jeFtZMJs2WsWMKgE0qHS52VsfuAxOCMdd8Uv6aQsSCZrx9JaxPt/Yjm4WrP9jU=
+	t=1725045001; cv=none; b=BUNTovb7c3lYbjsKTRILBaP7+71jKDvyvCeAS21D6EhTp8e3MwfEScL7beFihCUC+EBNWQVxRlziLPjunECWSllFJ+6Z6U/x54jPWbr9ZKyVzVVpDfDVqU7YWWQlObhAFY12URvCQYHyrmYQE7hJqQH1bQjWUvccU709N3kO8/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725044968; c=relaxed/simple;
-	bh=+H0oADayPpchtoOuk5ksPNnleoX4Wx+gcrhLBOfKGMI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bBESUOuEpVgrsTvSvCZWtcatC4p8LG1bNrWdelDbGBTDe57xU33n76X/uA1KMR7vNksVWpgwR4N1/oUcSmxJOaeWxDtg/z397SPLzyD6kSbw47tdcNLcc0/iqGK14zj5bAcaOVRBQHpw2xQT6Kwz04Xu0n0kl2wZdzDUcxXkYQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jjoUL+si; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725044967; x=1756580967;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=+H0oADayPpchtoOuk5ksPNnleoX4Wx+gcrhLBOfKGMI=;
-  b=jjoUL+si15agwbApo35m77vuL6YKrI9Y9jcKnLRRJXZSSk72xXA9KJCK
-   gAtLvCo+caWCwKJX3km5qj9AQ989Tp1KOb+iEGXtoyOGPiNiAnYSkYIcV
-   0Z/e48Ah2IALExVqZMW1/kE3TDAfccFCTUJ+G5QQ3Lnbm5wiGQt8Oa66q
-   VOB9djaUYdLVtrOCwTCNx6T5MaFBT0LrurDlQsqoGVa/BLLUj66hIKLT8
-   /qQZcIpxT2ugYZBzzGaRQ8SzFfUytkkKZxLwhWl7NwueTxJpZfcLIuaIv
-   HcIf5afxCPE4AEHTwipe+gus5QTVwvuntsA2AhhNkOLOS+lucvL/8d+M9
-   g==;
-X-CSE-ConnectionGUID: Yz1ns0/0Q/2ityo3rw2Clg==
-X-CSE-MsgGUID: M6fp1ZlKQAGMj3krgOmkTg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11180"; a="27577960"
-X-IronPort-AV: E=Sophos;i="6.10,189,1719903600"; 
-   d="scan'208";a="27577960"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Aug 2024 12:09:27 -0700
-X-CSE-ConnectionGUID: 2PoVBcedSxShNUBTl4RoXg==
-X-CSE-MsgGUID: VSjPd05BTo6/syzb1qATZQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,189,1719903600"; 
-   d="scan'208";a="68379302"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Aug 2024 12:09:23 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sk6za-00000003SIx-3oo9;
-	Fri, 30 Aug 2024 22:09:06 +0300
-Date: Fri, 30 Aug 2024 22:09:06 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: "Ma, Hao" <hao.ma@intel.com>
-Cc: Mark Brown <broonie@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Daniel Mack <daniel@zonque.org>,
-	Haojian Zhuang <haojian.zhuang@gmail.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	"Li, Lili" <lili.li@intel.com>
-Subject: Re: [PATCH v1 1/2] spi: pxa2xx: Do not override dev->platform_data
- on probe
-Message-ID: <ZtIY0jkEkX54u7AK@smile.fi.intel.com>
-References: <20240822113408.750831-1-andriy.shevchenko@linux.intel.com>
- <20240822113408.750831-2-andriy.shevchenko@linux.intel.com>
- <CO1PR11MB5204FD6B12B682AAFB5B813F8B972@CO1PR11MB5204.namprd11.prod.outlook.com>
+	s=arc-20240116; t=1725045001; c=relaxed/simple;
+	bh=9v4c6eYe6XInWfwmmXNcdoZYfz7QVGmeCfxTCFEj3wo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gLCMwnSEfi9nYZZngsljB9ycH1kGqynEPTk5dASpE1IaRmaNqTpGNzYa9WtgJmX33Vfp3PL3OAI61w/HnDjYAyakS6dD/rfsZyPTz1qtQ8EEC7RskaihwZV389ehE/ocCD3eQXTUWDRUDN8PqrUrwgreEDtrMnbZLUtyCK9tOl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FLdaTgMe; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2d87a57c06fso105720a91.2;
+        Fri, 30 Aug 2024 12:09:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725044999; x=1725649799; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kiQ1ufq0LJDmNAhzzm7F4UAH4C8ldiYpmNwSTNOtiQE=;
+        b=FLdaTgMemSmzWqVk6zPh3nbt76i82rfUkzFo7gJ4ggODnIz3ZQNpYu/g8TsvPTohtS
+         K13k7oj9F249NbHbxZIUQHr28zOK3cP7gpHR8zCmd4XBuckasGlMhSS4eGgeFLx3DEoJ
+         Ti5CvzAU9RqK8zlI6itwaWZ29LW7lPb8UR7ZYJjnH1naHW1DbNi01q1mh72QLDw3y1Ls
+         0zS0wDuILOgTHATVlwj++VXlX7Vr8/pLnOvydLDZWlUJConrwaNzqLU+/DTcfBrIZOUK
+         akYroobrNLexyevDJTGGMjT7FcXx3PE3MTqqA8GYNsLZt1wnjmvaBicauX966hCVaSxQ
+         tbaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725044999; x=1725649799;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kiQ1ufq0LJDmNAhzzm7F4UAH4C8ldiYpmNwSTNOtiQE=;
+        b=E3tOXgQUphu+r+wRkGTuOjnGKqWavyD/6w053+Q/Ewf3TxwB8XoRaBH251SdFocixj
+         ktIkvSdgV6ww0zoQSDSNg7zG7xiqV2Kr/1evKOwehI7zKyCOe0irUz+HtxQTeweS56MT
+         PuOZa8d0JqUhr5D6Q5e7f3PuttO/veFi57B8hefyMINo0JWhjqqvXr787pZLCu/dcS/W
+         W46M0A83mLLA6bEvRsgNoYZkzq2RY6w9Mr96vrNcloiXOpV3BjflpzGUdrYZzjEeKAri
+         r+auyMZ4+EVHXN1/0WlZSL04A1sx8D2A1cPK3MV6Cz6ggkLFyXr9Canz/NmvbHVjFvMo
+         43/w==
+X-Forwarded-Encrypted: i=1; AJvYcCUkd8irS9EFnfvYedzk9DviAh5ta6gkzXhZ4/Dw0aZ++K3E850GJV3TO90BgwjlUoy8c7QLxNBgBPZxQ0Nh@vger.kernel.org, AJvYcCWRJ3sQ1FNyjiLMM9V5O6nkk50lTju5Nx89CnB8wOYU3xjb32klfNr2P05i7Klqo4vx+KUTRYCPujwUF/22@vger.kernel.org
+X-Gm-Message-State: AOJu0YxlyvE1wbWsGaqVMuXtgQtB/2X2UH8O7D68B7dUsaEUrYTYe0TG
+	Ek5tPp85Cuu2iLGk8Z/B8g0oi1a0qzru1TODFk/pTH8KCNCvk3NxALRtGhrT9u+Yut9dSD7q6Bp
+	6w7YzcQ75zB2+mzdGyXlQqTdLXMg=
+X-Google-Smtp-Source: AGHT+IFLdzRNSJoZ7XESTDoYRzQrEdC8kcWMd8Fgqi1Pn13p4zB6Vr7SKOtwpkRilwX7Ji1V/XFn1RrfBI1xcCqPa6w=
+X-Received: by 2002:a17:90b:4b4a:b0:2d3:c34b:a071 with SMTP id
+ 98e67ed59e1d1-2d86b814c6dmr1831729a91.3.1725044998757; Fri, 30 Aug 2024
+ 12:09:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CO1PR11MB5204FD6B12B682AAFB5B813F8B972@CO1PR11MB5204.namprd11.prod.outlook.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20240830-preemption-a750-t-v2-0-86aeead2cd80@gmail.com>
+ <20240830-preemption-a750-t-v2-4-86aeead2cd80@gmail.com> <CAF6AEGtxCnoyrEHPknV7C9XO3OcTpSOmGq-j2K7UDKXF1j0ssA@mail.gmail.com>
+ <CACu1E7FC_gPXHm4g7f0iv551orxfh=V_sJF47=6TC+nWdMyTMg@mail.gmail.com> <CAF6AEGvkds04G1XzVr8433S1Za_xZZSkmrWNaH-gUw6cH+cSUw@mail.gmail.com>
+In-Reply-To: <CAF6AEGvkds04G1XzVr8433S1Za_xZZSkmrWNaH-gUw6cH+cSUw@mail.gmail.com>
+From: Connor Abbott <cwabbott0@gmail.com>
+Date: Fri, 30 Aug 2024 20:09:47 +0100
+Message-ID: <CACu1E7HC_u0WZ5ayXhm3z-Q5Do7tnwQLGdJ5feD99aOB52H1ug@mail.gmail.com>
+Subject: Re: [PATCH v2 4/9] drm/msm/A6xx: Implement preemption for A7XX targets
+To: Rob Clark <robdclark@gmail.com>
+Cc: Antonino Maniscalco <antomani103@gmail.com>, Sean Paul <sean@poorly.run>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, linux-arm-msm@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, Sharat Masetty <smasetty@codeaurora.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 30, 2024 at 04:48:26AM +0000, Ma, Hao wrote:
-> Hi,Andriy,
-> 
-> I merged following patches and tested it works.
-> 
->       [PATCH v1 1/2] spi: pxa2xx: Do not override dev->platform_data on probe
->       [PATCH v1 2/2] spi: pxa2xx: Move PM runtime handling to the glue drivers
-> 
-> Tested-by: Hao Ma <hao.ma@intel.com >
+On Fri, Aug 30, 2024 at 8:00=E2=80=AFPM Rob Clark <robdclark@gmail.com> wro=
+te:
+>
+> On Fri, Aug 30, 2024 at 11:54=E2=80=AFAM Connor Abbott <cwabbott0@gmail.c=
+om> wrote:
+> >
+> > On Fri, Aug 30, 2024 at 7:08=E2=80=AFPM Rob Clark <robdclark@gmail.com>=
+ wrote:
+> > >
+> > > On Fri, Aug 30, 2024 at 8:33=E2=80=AFAM Antonino Maniscalco
+> > > <antomani103@gmail.com> wrote:
+> > > >
+> > > > This patch implements preemption feature for A6xx targets, this all=
+ows
+> > > > the GPU to switch to a higher priority ringbuffer if one is ready. =
+A6XX
+> > > > hardware as such supports multiple levels of preemption granulariti=
+es,
+> > > > ranging from coarse grained(ringbuffer level) to a more fine graine=
+d
+> > > > such as draw-call level or a bin boundary level preemption. This pa=
+tch
+> > > > enables the basic preemption level, with more fine grained preempti=
+on
+> > > > support to follow.
+> > > >
+> > > > Signed-off-by: Sharat Masetty <smasetty@codeaurora.org>
+> > > > Signed-off-by: Antonino Maniscalco <antomani103@gmail.com>
+> > > > Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8650-Q=
+RD
+> > > > ---
+> > > >  drivers/gpu/drm/msm/Makefile              |   1 +
+> > > >  drivers/gpu/drm/msm/adreno/a6xx_gpu.c     | 323 ++++++++++++++++++=
++++-
+> > > >  drivers/gpu/drm/msm/adreno/a6xx_gpu.h     | 168 ++++++++++++
+> > > >  drivers/gpu/drm/msm/adreno/a6xx_preempt.c | 431 ++++++++++++++++++=
+++++++++++++
+> > > >  drivers/gpu/drm/msm/msm_ringbuffer.h      |   7 +
+> > > >  5 files changed, 921 insertions(+), 9 deletions(-)
+> > > >
+> > >
+> > > [snip]
+> > >
+> > > > +
+> > > > +int a6xx_preempt_submitqueue_setup(struct msm_gpu *gpu,
+> > > > +               struct msm_gpu_submitqueue *queue)
+> > > > +{
+> > > > +       void *ptr;
+> > > > +
+> > > > +       /*
+> > > > +        * Create a per submitqueue buffer for the CP to save and r=
+estore user
+> > > > +        * specific information such as the VPC streamout data.
+> > > > +        */
+> > > > +       ptr =3D msm_gem_kernel_new(gpu->dev, A6XX_PREEMPT_USER_RECO=
+RD_SIZE,
+> > > > +                       MSM_BO_WC, gpu->aspace, &queue->bo, &queue-=
+>bo_iova);
+> > >
+> > > Can this be MSM_BO_MAP_PRIV?  Otherwise it is visible (and writeable)
+> > > by other proceess's userspace generated cmdstream.
+> > >
+> > > And a similar question for the scratch_bo..  I'd have to give some
+> > > thought to what sort of mischief could be had, but generall kernel
+> > > mappings that are not MAP_PRIV are a thing to be careful about.
+> > >
+> >
+> > It seems like the idea behind this is that it's supposed to be
+> > per-context. kgsl allocates it as part of the context, as part of the
+> > userspace address space, and then in order to know which user record
+> > to use when preempting, before each submit (although really it only
+> > needs to be done when setting the pagetable) it does a CP_MEM_WRITE of
+> > the user record address to a scratch buffer holding an array of the
+> > current user record for each ring. Then when preempting it reads the
+> > address for the next ring from the scratch buffer and sets it. I think
+> > we need to do that dance too.
+>
+> Moving it into userspace's address space (vm) would be better.
+>
+> I assume the preempt record is where state is saved/restored?  So
+> would need to be in kernel aspace/vm?  Or is the fw changing ttbr0
+> after saving state but before restoring?
+>
+> BR,
+> -R
 
-Thank you for confirming that it works!
+The preempt record is split into a number of pieces, each with their
+own address. One of those pieces is the SMMU record with ttbr0 and
+other SMMU things. Another piece is the "private" context record with
+sensitive things like RB address/rptr/wptr, although actually the bulk
+of the registers are saved here. Then the user or "non-private" record
+is its own piece, which is presumably saved before switching ttbr0 and
+restored after the SMMU record is restored and ttbr0 is switched.
 
--- 
-With Best Regards,
-Andy Shevchenko
+Connor
 
-
+>
+> > Connor
+> >
+> > > BR,
+> > > -R
 
