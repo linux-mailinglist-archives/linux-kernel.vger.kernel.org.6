@@ -1,93 +1,88 @@
-Return-Path: <linux-kernel+bounces-308211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86FDA9658B9
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 09:37:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96DF29658F1
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 09:45:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45380281A70
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 07:37:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5432F287764
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 07:45:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F9101586CB;
-	Fri, 30 Aug 2024 07:37:29 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01D111531CB
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 07:37:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB9F0158A23;
+	Fri, 30 Aug 2024 07:44:17 +0000 (UTC)
+Received: from cmccmta1.chinamobile.com (cmccmta4.chinamobile.com [111.22.67.137])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C22F1581EB
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 07:44:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.137
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725003448; cv=none; b=rrKV0+/hHG0+oXHXmK0x5i/E/EtdVSb7Kpl95zOiJcPYRsHuhypaS6X0vcXr1f+4CXG8ANqKRDkhNqw2LuReVw94vLJGJbSqkIp7A9XwlGEuVOnO55FL2OHGLcZXk9O5fdD+YoLLVK/UeHcn77BWF9PcfmHumOv8mJIbryez6Nk=
+	t=1725003857; cv=none; b=p7Gfh2CSFrSX2FAQMfhsOo9dRbMePYXCQstHfQvB71uSerhDk/N7qUs52U/sQd9l1HB4cPL5QHe2IFpR9Zyz3vxy+LkGyqfazqgUxACeCGGdm+ElsDlhFFQDH+lpaP36Ggolb/apZHgNEmECfQjcZyHIk8xblJPKEaRNhrPFkT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725003448; c=relaxed/simple;
-	bh=EBqHwxvdQVyhbuiFBoLIU4AmBPq9DuPoCbMZM/JAWHM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TWid0tECsy9fjhofiz3E9lflR/WhdzIfxNProi8+8lUVOuOvrlAHbVJj5fwb0wOtpBwQwU02Y2E0bDjt4ljKlOy9lyNj9VN/QN3zbNeCsfwJ/ZnMXGUgNMcV38dFn6mJYWSTGUx1vp/7cT4FjrOaVOyqya4oFXPwBcacwnrBq3c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sjwC3-0000Kx-Ay; Fri, 30 Aug 2024 09:37:15 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sjwC2-0046DZ-9c; Fri, 30 Aug 2024 09:37:14 +0200
-Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sjwC2-00EQsl-0Z;
-	Fri, 30 Aug 2024 09:37:14 +0200
-Date: Fri, 30 Aug 2024 09:37:14 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Stefan Eichenberger <eichest@gmail.com>
-Cc: kernel@pengutronix.de, andi.shyti@kernel.org, shawnguo@kernel.org,
-	s.hauer@pengutronix.de, festevam@gmail.com, Frank.Li@nxp.com,
-	francesco.dolcini@toradex.com, linux-i2c@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	s=arc-20240116; t=1725003857; c=relaxed/simple;
+	bh=s+b8Q4G2WSnUCM7oCRuGYmgDVZU2AImlsdTGDGOuSaE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Y5LzeHg7MbgHe/+Zjax7cTF7TBO7deNfl6Slx5KKvuM8DcOaB/D8WQ0cbKV9YiSTWVIyNbnTyx7P/4jRCPE3LakQ08nlCwu0G4ABeyshE5ssdNVyMqsGRB7Xa+o+KNQT+aK1kFUEyNhWsFqYULe73BUBxm1h2SXQVz9TT4NWZeU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.137
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app04-12004 (RichMail) with SMTP id 2ee466d17845d86-8e679;
+	Fri, 30 Aug 2024 15:44:05 +0800 (CST)
+X-RM-TRANSID:2ee466d17845d86-8e679
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from localhost.localdomain (unknown[223.108.79.100])
+	by rmsmtp-syy-appsvr10-12010 (RichMail) with SMTP id 2eea66d1783210e-d2d23;
+	Fri, 30 Aug 2024 15:44:05 +0800 (CST)
+X-RM-TRANSID:2eea66d1783210e-d2d23
+From: bajing <bajing@cmss.chinamobile.com>
+To: gregkh@linuxfoundation.org
+Cc: arve@android.com,
+	tkjos@android.com,
+	maco@android.com,
+	joel@joelfernandes.org,
+	brauner@kernel.org,
+	cmllamas@google.com,
+	surenb@google.com,
 	linux-kernel@vger.kernel.org,
-	Stefan Eichenberger <stefan.eichenberger@toradex.com>
-Subject: Re: [PATCH v2 3/4] i2c: imx: use readb_relaxed and writeb_relaxed
-Message-ID: <ZtF2qj2cIjULy-RY@pengutronix.de>
-References: <20240819072052.8722-1-eichest@gmail.com>
- <20240819072052.8722-4-eichest@gmail.com>
+	bajing <bajing@cmss.chinamobile.com>
+Subject: [PATCH] android: binder: modify incorrect comments
+Date: Fri, 30 Aug 2024 15:37:43 +0800
+Message-Id: <20240830073743.2052-1-bajing@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240819072052.8722-4-eichest@gmail.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 19, 2024 at 09:19:09AM +0200, Stefan Eichenberger wrote:
-> From: Stefan Eichenberger <stefan.eichenberger@toradex.com>
-> 
-> Use the relaxed version of readb and writeb to reduce overhead. It is
-> safe to use the relaxed version because we either do not rely on dma
-> completion, or we use a dma callback to ensure that the dma transfer is
-> complete before we continue.
-> 
-> Signed-off-by: Stefan Eichenberger <stefan.eichenberger@toradex.com>
+The comment for binder_proc_unlock was incorrect, so it should be modified.
 
-Acked-by: Oleksij Rempel <o.rempel@pengutronix.de>
+Signed-off-by: bajing <bajing@cmss.chinamobile.com>
+---
+ drivers/android/binder.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/android/binder.c b/drivers/android/binder.c
+index fc55b5d0e4f3..578861d57045 100644
+--- a/drivers/android/binder.c
++++ b/drivers/android/binder.c
+@@ -277,7 +277,7 @@ _binder_proc_lock(struct binder_proc *proc, int line)
+ }
+ 
+ /**
+- * binder_proc_unlock() - Release spinlock for given binder_proc
++ * binder_proc_unlock() - Release outer lock for given binder_proc
+  * @proc:                struct binder_proc to acquire
+  *
+  * Release lock acquired via binder_proc_lock()
 -- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+2.33.0
+
+
+
 
