@@ -1,201 +1,226 @@
-Return-Path: <linux-kernel+bounces-308115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D240965774
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 08:13:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32964965779
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 08:14:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B00F11F26662
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 06:13:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA5DB284EFC
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 06:14:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD922152170;
-	Fri, 30 Aug 2024 06:13:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DFCA1531EF;
+	Fri, 30 Aug 2024 06:13:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mdQY4DwX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFE89136E3F;
-	Fri, 30 Aug 2024 06:13:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="AIv9nXQw"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C12E614F9F4;
+	Fri, 30 Aug 2024 06:13:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724998426; cv=none; b=p0DTvP5RAvlrkQ5jlgCHW6ZOAcvsgSfKdkBnFKs9XE7Ca/fTPSGMnaZbFB8Xyv1nMUyN106UL4P0Gx1Vehw2w4KO/m9RWXWiOIj5cWbdiwmwMoVw3YRTFQyGAhRQv0J90uMuAPZOwJK6W9USPA1b5hNbOFqz83ad5rzJHc38gjg=
+	t=1724998437; cv=none; b=sooWfdVWpeLi1FzmLLfpgnx017y18XUmU5wQCgbpLYAwwJHzqlkqzchev5j0jzXvFNyrB+r6hSVBZIDGZeT4jlw26bQQs3M97Dg2RK/ydkkSH4ZVGl98NgJYrBghXQ5YZvBBZ+JV6xEnzONvt3w1HtPcEjl6FlgoHzfjhnCwWbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724998426; c=relaxed/simple;
-	bh=apBdBhGYDEIgPSX8O85iHr2OVAYQZauF8WnD58crLVw=;
+	s=arc-20240116; t=1724998437; c=relaxed/simple;
+	bh=p37CJIbeVvxUnXIiq+2XX77bD1ppgbxyfDuu2ZWeuzs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ESqttQR/k/SXwPmBouT27W7NkyYog5kZFWZIEMa8EaOAa64D0PZoJ/YZPI7SxT3JfaLjqn059KK+EKmvP+SEj+5ooEpL27BEVoWW7cKk2Wz5Cc/Wmv9koxuas7Z/H5WKKwPfefwnTu2aCMrQDS+CjvFL+bSbdwR/0J6U1HHDv6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mdQY4DwX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA2FDC4CEC4;
-	Fri, 30 Aug 2024 06:13:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724998425;
-	bh=apBdBhGYDEIgPSX8O85iHr2OVAYQZauF8WnD58crLVw=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=Itp5xKVcjc7eyOX9EBKI1Q0s0AyTgi2/5RGisY+Fcsws+2lN8iao1XP0IcK+PoM30C2IpAp6ukz7PP1IynDUlUSgGPEx/Gl7NVSrAeRLgcr2lr++3/Yle8K76Y8+1MUIHUimS85iZjkMVCPZHiORs9yHIDYy4dPP8WqEYrI9RoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=AIv9nXQw; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1134)
+	id 5A83020B7165; Thu, 29 Aug 2024 23:13:55 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 5A83020B7165
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1724998435;
+	bh=xCOyMDJIpLS4T3O8nkaE9qmCOU+j9U5LKWcYQs6GEfc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mdQY4DwX+SmrhNvdHvXMX+yZs0g3qsdTp5fhCufHsca8W7Pp7uZIQtUekflhHUxsq
-	 z2pAweXKH2W+iHjMSg/Kf9IKzCXRNFEJ3Nq2CXmsif8gRoWMuWH5180k/l9bAbFind
-	 yy8oU4tcCg6iLm5lo9R3pQfWEdiOZICd7e0IP7PST2ARZcW8+IbYhiEmkpVS8GevKt
-	 Q8+7tXLuyNANpRPSXmNUGWigDV5+tfB0zcl7Kt9TVbIzAS/NfoayLuL2aqyDejjC+X
-	 gsLIjUuSmSGdzBOd2yVMYqvGkKmeERtmgOKXvda6yU4i22zD25/n7ULi+NAHqXh8Zz
-	 Nl3bZF3SXAFmQ==
-Date: Thu, 29 Aug 2024 23:13:42 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: kan.liang@linux.intel.com
-Cc: peterz@infradead.org, mingo@redhat.com, tglx@linutronix.de,
-	acme@kernel.org, mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-	irogers@google.com, adrian.hunter@intel.com,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	ravi.bangoria@amd.com, sandipan.das@amd.com,
-	atrajeev@linux.vnet.ibm.com, luogengkun@huaweicloud.com,
-	ak@linux.intel.com
-Subject: Re: [RFC PATCH] perf: New start period for the freq mode
-Message-ID: <ZtFjFpg0MCcLbgnq@google.com>
-References: <20240829152036.3923842-1-kan.liang@linux.intel.com>
+	b=AIv9nXQwENmbAc6VrQ9aTwjjGRZCCYPLMNWX6HzghLrifLjjvI7Zvndn/8E+JVN2y
+	 J3OBZ8OPSOyOchOajM86xk1S3XS/vpls8V9RwPA2U1KlTBbtSq3eyH0+JSF3XgmCM/
+	 +9bTB5pno5ZSXaS1Pq+YIxQMNKVGcIZJWoHdp3uQ=
+Date: Thu, 29 Aug 2024 23:13:55 -0700
+From: Shradha Gupta <shradhagupta@linux.microsoft.com>
+To: Souradeep Chakrabarti <schakrabarti@linux.microsoft.com>
+Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
+	decui@microsoft.com, davem@davemloft.net, longli@microsoft.com,
+	ssengar@linux.microsoft.com, linux-hyperv@vger.kernel.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-rdma@vger.kernel.org, schakrabarti@microsoft.com,
+	stable@vger.kernel.org
+Subject: Re: [PATCH V3 net] net: mana: Fix error handling in
+ mana_create_txq/rxq's NAPI cleanup
+Message-ID: <20240830061355.GA2986@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+References: <1724920610-15546-1-git-send-email-schakrabarti@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240829152036.3923842-1-kan.liang@linux.intel.com>
+In-Reply-To: <1724920610-15546-1-git-send-email-schakrabarti@linux.microsoft.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 
-Hi Kan,
-
-On Thu, Aug 29, 2024 at 08:20:36AM -0700, kan.liang@linux.intel.com wrote:
-> From: Kan Liang <kan.liang@linux.intel.com>
+On Thu, Aug 29, 2024 at 01:36:50AM -0700, Souradeep Chakrabarti wrote:
+> Currently napi_disable() gets called during rxq and txq cleanup,
+> even before napi is enabled and hrtimer is initialized. It causes
+> kernel panic.
 > 
-> The freq mode is the current default mode of Linux perf. 1 period is
-> used as a start period. The period is auto-adjusted in each tick or an
-> overflow to meet the frequency target.
+> ? page_fault_oops+0x136/0x2b0
+>   ? page_counter_cancel+0x2e/0x80
+>   ? do_user_addr_fault+0x2f2/0x640
+>   ? refill_obj_stock+0xc4/0x110
+>   ? exc_page_fault+0x71/0x160
+>   ? asm_exc_page_fault+0x27/0x30
+>   ? __mmdrop+0x10/0x180
+>   ? __mmdrop+0xec/0x180
+>   ? hrtimer_active+0xd/0x50
+>   hrtimer_try_to_cancel+0x2c/0xf0
+>   hrtimer_cancel+0x15/0x30
+>   napi_disable+0x65/0x90
+>   mana_destroy_rxq+0x4c/0x2f0
+>   mana_create_rxq.isra.0+0x56c/0x6d0
+>   ? mana_uncfg_vport+0x50/0x50
+>   mana_alloc_queues+0x21b/0x320
+>   ? skb_dequeue+0x5f/0x80
 > 
-> The start period 1 is too low and may trigger some issues.
-> - Many HWs do not support period 1 well.
->   https://lore.kernel.org/lkml/875xs2oh69.ffs@tglx/
-> - For an event that occurs frequently, period 1 is too far away from the
->   real period. Lots of the samples are generated at the beginning.
->   The distribution of samples may not be even.
-> 
-> It's hard to find a universal start period for all events. The idea is
-> only to give an estimate for the popular HW and HW cache events. For the
-> rest of the events, start from the lowest possible recommended value.
-> 
-> Only the Intel event list JSON file provides the recommended SAV
-> (sample after value) for each event. The estimation is based on the
-> Intel's SAV.
-> 
-> This patch implements a generic perf_freq_start_period() which impacts
-> all ARCHs.
-> If the other ARCHs don't like the start period, a per-pmu
-> (*freq_start_period) may be introduced instead. Or make it a __weak
-> function.
-> The other option would be exposing a start_period knob in the sysfs or a
-> per-event config. So the end users can set their preferred start period.
-> Please let me know your thoughts.
-> 
-> SW events may need to be specially handled, which is not implemented in
-> the patch.
-
-Sounds like a per-pmu callback is fine.  PMUs don't have the callback
-(including SW) can use 1 same as of now.
-
-Thanks,
-Namhyung
-
-> 
-> Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+> Cc: stable@vger.kernel.org
+> Fixes: e1b5683ff62e ("net: mana: Move NAPI from EQ to CQ")
+> Signed-off-by: Souradeep Chakrabarti <schakrabarti@linux.microsoft.com>
+> Reviewed-by: Haiyang Zhang <haiyangz@microsoft.com>
+> Reviewed-by: Shradha Gupta <shradhagupta@linux.microsoft.com>
 > ---
->  kernel/events/core.c | 65 +++++++++++++++++++++++++++++++++++++++++++-
->  1 file changed, 64 insertions(+), 1 deletion(-)
+> V3 -> V2:
+> Instead of using napi internal attribute, using an atomic
+> attribute to verify napi is initialized for a particular txq / rxq.
 > 
-> diff --git a/kernel/events/core.c b/kernel/events/core.c
-> index 4b855b018a79..7a028474caef 100644
-> --- a/kernel/events/core.c
-> +++ b/kernel/events/core.c
-> @@ -12017,6 +12017,69 @@ static void account_event(struct perf_event *event)
->  	account_pmu_sb_event(event);
->  }
+> V2 -> V1:
+> Addressed the comment on cleaning up napi for the queues,
+> where queue creation was successful.
+> ---
+>  drivers/net/ethernet/microsoft/mana/mana_en.c | 30 ++++++++++++-------
+>  include/net/mana/mana.h                       |  4 +++
+>  2 files changed, 24 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/microsoft/mana/mana_en.c b/drivers/net/ethernet/microsoft/mana/mana_en.c
+> index 39f56973746d..bd303c89cfa6 100644
+> --- a/drivers/net/ethernet/microsoft/mana/mana_en.c
+> +++ b/drivers/net/ethernet/microsoft/mana/mana_en.c
+> @@ -1872,10 +1872,12 @@ static void mana_destroy_txq(struct mana_port_context *apc)
 >  
-> +static u64 perf_freq_start_period(struct perf_event *event)
-> +{
-> +	int type = event->attr.type;
-> +	u64 config, factor;
-> +
-> +	/*
-> +	 * The 127 is the lowest possible recommended SAV (sample after value)
-> +	 * for a 4000 freq (default freq), according to Intel event list JSON
-> +	 * file, which is the only JSON file that provides a recommended value.
-> +	 */
-> +	factor = 127 * 4000;
-> +	if (type != PERF_TYPE_HARDWARE && type != PERF_TYPE_HW_CACHE)
-> +		goto end;
-> +
-> +	/*
-> +	 * The estimation of the start period in the freq mode is
-> +	 * based on the below assumption.
-> +	 *
-> +	 * For a cycles or an instructions event, 1GHZ of the
-> +	 * underlying platform, 1 IPC. The workload is idle 50% time.
-> +	 * The start period = 1,000,000,000 * 1 / freq / 2.
-> +	 *		    = 500,000,000 / freq
-> +	 *
-> +	 * Usually, the branch-related events occur less than the
-> +	 * instructions event. According to the Intel event list JSON
-> +	 * file, the SAV (sample after value) of a branch-related event
-> +	 * is usually 1/4 of an instruction event.
-> +	 * The start period of branch-related events = 125,000,000 / freq.
-> +	 *
-> +	 * The cache-related events occurs even less. The SAV is usually
-> +	 * 1/20 of an instruction event.
-> +	 * The start period of cache-related events = 25,000,000 / freq.
-> +	 */
-> +	config = event->attr.config & PERF_HW_EVENT_MASK;
-> +	if (type == PERF_TYPE_HARDWARE) {
-> +		switch (config) {
-> +		case PERF_COUNT_HW_CPU_CYCLES:
-> +		case PERF_COUNT_HW_INSTRUCTIONS:
-> +		case PERF_COUNT_HW_BUS_CYCLES:
-> +		case PERF_COUNT_HW_STALLED_CYCLES_FRONTEND:
-> +		case PERF_COUNT_HW_STALLED_CYCLES_BACKEND:
-> +		case PERF_COUNT_HW_REF_CPU_CYCLES:
-> +			factor = 500000000;
-> +			break;
-> +		case PERF_COUNT_HW_BRANCH_INSTRUCTIONS:
-> +		case PERF_COUNT_HW_BRANCH_MISSES:
-> +			factor = 125000000;
-> +			break;
-> +		case PERF_COUNT_HW_CACHE_REFERENCES:
-> +		case PERF_COUNT_HW_CACHE_MISSES:
-> +			factor = 25000000;
-> +			break;
-> +		default:
-> +			goto end;
+>  	for (i = 0; i < apc->num_queues; i++) {
+>  		napi = &apc->tx_qp[i].tx_cq.napi;
+> -		napi_synchronize(napi);
+> -		napi_disable(napi);
+> -		netif_napi_del(napi);
+> -
+> +		if (atomic_read(&apc->tx_qp[i].txq.napi_initialized)) {
+> +			napi_synchronize(napi);
+> +			napi_disable(napi);
+> +			netif_napi_del(napi);
+> +			atomic_set(&apc->tx_qp[i].txq.napi_initialized, 0);
 > +		}
+>  		mana_destroy_wq_obj(apc, GDMA_SQ, apc->tx_qp[i].tx_object);
+>  
+>  		mana_deinit_cq(apc, &apc->tx_qp[i].tx_cq);
+> @@ -1931,6 +1933,7 @@ static int mana_create_txq(struct mana_port_context *apc,
+>  		txq->ndev = net;
+>  		txq->net_txq = netdev_get_tx_queue(net, i);
+>  		txq->vp_offset = apc->tx_vp_offset;
+> +		atomic_set(&txq->napi_initialized, 0);
+>  		skb_queue_head_init(&txq->pending_skbs);
+>  
+>  		memset(&spec, 0, sizeof(spec));
+> @@ -1997,6 +2000,7 @@ static int mana_create_txq(struct mana_port_context *apc,
+>  
+>  		netif_napi_add_tx(net, &cq->napi, mana_poll);
+>  		napi_enable(&cq->napi);
+> +		atomic_set(&txq->napi_initialized, 1);
+>  
+>  		mana_gd_ring_cq(cq->gdma_cq, SET_ARM_BIT);
+>  	}
+> @@ -2023,14 +2027,18 @@ static void mana_destroy_rxq(struct mana_port_context *apc,
+>  
+>  	napi = &rxq->rx_cq.napi;
+>  
+> -	if (validate_state)
+> -		napi_synchronize(napi);
+> +	if (atomic_read(&rxq->napi_initialized)) {
+>  
+> -	napi_disable(napi);
+> +		if (validate_state)
+> +			napi_synchronize(napi);
+
+Is this validate_state flag still needed? The new napi_initialized
+variable will make sure the napi_synchronize() is called only for rxqs
+that have napi_enabled.
+
+Regards,
+Shradha.
+
+>  
+> -	xdp_rxq_info_unreg(&rxq->xdp_rxq);
+> +		napi_disable(napi);
+>  
+> -	netif_napi_del(napi);
+> +		netif_napi_del(napi);
+> +		atomic_set(&rxq->napi_initialized, 0);
 > +	}
 > +
-> +	if (type == PERF_TYPE_HW_CACHE)
-> +		factor = 25000000;
-> +end:
-> +	return DIV_ROUND_UP_ULL(factor, event->attr.sample_freq);
-> +}
-> +
->  /*
->   * Allocate and initialize an event structure
->   */
-> @@ -12140,7 +12203,7 @@ perf_event_alloc(struct perf_event_attr *attr, int cpu,
->  	hwc = &event->hw;
->  	hwc->sample_period = attr->sample_period;
->  	if (attr->freq && attr->sample_freq)
-> -		hwc->sample_period = 1;
-> +		hwc->sample_period = perf_freq_start_period(event);
->  	hwc->last_period = hwc->sample_period;
+> +	xdp_rxq_info_unreg(&rxq->xdp_rxq);
 >  
->  	local64_set(&hwc->period_left, hwc->sample_period);
+>  	mana_destroy_wq_obj(apc, GDMA_RQ, rxq->rxobj);
+>  
+> @@ -2199,6 +2207,7 @@ static struct mana_rxq *mana_create_rxq(struct mana_port_context *apc,
+>  	rxq->num_rx_buf = RX_BUFFERS_PER_QUEUE;
+>  	rxq->rxq_idx = rxq_idx;
+>  	rxq->rxobj = INVALID_MANA_HANDLE;
+> +	atomic_set(&rxq->napi_initialized, 0);
+>  
+>  	mana_get_rxbuf_cfg(ndev->mtu, &rxq->datasize, &rxq->alloc_size,
+>  			   &rxq->headroom);
+> @@ -2286,6 +2295,8 @@ static struct mana_rxq *mana_create_rxq(struct mana_port_context *apc,
+>  
+>  	napi_enable(&cq->napi);
+>  
+> +	atomic_set(&rxq->napi_initialized, 1);
+> +
+>  	mana_gd_ring_cq(cq->gdma_cq, SET_ARM_BIT);
+>  out:
+>  	if (!err)
+> @@ -2336,7 +2347,6 @@ static void mana_destroy_vport(struct mana_port_context *apc)
+>  		rxq = apc->rxqs[rxq_idx];
+>  		if (!rxq)
+>  			continue;
+> -
+>  		mana_destroy_rxq(apc, rxq, true);
+>  		apc->rxqs[rxq_idx] = NULL;
+>  	}
+> diff --git a/include/net/mana/mana.h b/include/net/mana/mana.h
+> index 7caa334f4888..be75abd63dc8 100644
+> --- a/include/net/mana/mana.h
+> +++ b/include/net/mana/mana.h
+> @@ -98,6 +98,8 @@ struct mana_txq {
+>  
+>  	atomic_t pending_sends;
+>  
+> +	atomic_t napi_initialized;
+> +
+>  	struct mana_stats_tx stats;
+>  };
+>  
+> @@ -335,6 +337,8 @@ struct mana_rxq {
+>  	bool xdp_flush;
+>  	int xdp_rc; /* XDP redirect return code */
+>  
+> +	atomic_t napi_initialized;
+> +
+>  	struct page_pool *page_pool;
+>  
+>  	/* MUST BE THE LAST MEMBER:
 > -- 
-> 2.38.1
+> 2.34.1
+> 
 > 
 
