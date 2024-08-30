@@ -1,112 +1,100 @@
-Return-Path: <linux-kernel+bounces-308850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2EF49662AE
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 15:12:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FC6E9662B1
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 15:13:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21DE81C23337
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 13:12:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2978283ABB
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 13:13:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADE381AD5F4;
-	Fri, 30 Aug 2024 13:12:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ty5bAm6t"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DE0F1ACDE8;
+	Fri, 30 Aug 2024 13:13:24 +0000 (UTC)
+Received: from Chamillionaire.breakpoint.cc (Chamillionaire.breakpoint.cc [91.216.245.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D35861509BF;
-	Fri, 30 Aug 2024 13:12:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF0D918E378;
+	Fri, 30 Aug 2024 13:13:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.216.245.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725023545; cv=none; b=tZhIi89nC4kZzkx9UYNeiADPGulmpKVTxzyDFay9iPtJokwS+lq8e2fspG+A9wEGYlbnB6BXuZQmBtIzGSR7r9U88IECc4htqMSO96lF5gGMc6QjCIos2KcxNfoLuuhv28GHM1ge/ueTbdouzr7E9e7b0qjkis3bi3o426LTbjU=
+	t=1725023603; cv=none; b=Gic514dwopIDkttq3NSZ6eaCBVLtgyELAEFzJD4a7EA5mB8LJW58QFPRBg4ZSxQw6xawA1L//IqxUSpTJ8vB5HX1HgUhgDKUS7Ei/kO9vPx3rvQknMcU7Gp5b9uVkeXiljNCKP4hLJz9Ru9623akt7/SKs7M1uD1rAHaYbcl1CM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725023545; c=relaxed/simple;
-	bh=WndIbO8xrC2aIrGdqBcilJuDXzO/BXzIA8VlzOJWcDo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mc5Ianf6Qbk43jxiIjfMDTV5/OIoagTHVTLJQK/MkOc8h9JP8kO3u5zcEPHYsLPyUhTM93LZPXFS61TADHOHjEa7Ra0SoPwaQWYIYvcngVy3iOI7/Nzp67Ky518HGyaimIOd0q8lcd+EoXiFi6rUfqreFIBcCmPF8yq/FUrp4qc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ty5bAm6t; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D2B4C4CEC2;
-	Fri, 30 Aug 2024 13:12:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725023543;
-	bh=WndIbO8xrC2aIrGdqBcilJuDXzO/BXzIA8VlzOJWcDo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Ty5bAm6tFv6bg4YA3HAyot4VdLW2RJKGdG1xvdXVogremu8LD3BqEh4VHwGPQbh1p
-	 g5wB6d5xMedceeupVFRBiOJF2X1RQbXR7I/eTH3weokE6ad0t6Ezo6vHjcDKPVbTlB
-	 Z3S4gJVFjrB6hycktKp1ueGv6wungGZ3cKnt0wXInlgTLGxuCAHj3w8ZYHqjF+GFUB
-	 QTyvsjOBPVrVpsZuumcYH8TAjCVp5l1eYu4rXoVRWjPjq8sCLqJLVtHIh6i3fVU/nI
-	 SVYRAvH1Ts46AhfsHIwkNzc0SvAJDkfT/NWnyDPoWUXLCHntm7LX/eW8iyDDIh7MGs
-	 GI0a1819kd2HQ==
-From: Christian Brauner <brauner@kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Paulo Alcantara <pc@manguebit.com>,
-	Tom Talpey <tom@talpey.com>,
-	Dominique Martinet <asmadeus@codewreck.org>,
-	Jeff Layton <jlayton@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	netfs@lists.linux.dev,
-	linux-afs@lists.infradead.org,
-	linux-cifs@vger.kernel.org,
-	linux-nfs@vger.kernel.org,
-	ceph-devel@vger.kernel.org,
-	v9fs@lists.linux.dev,
-	linux-erofs@lists.ozlabs.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Miklos Szeredi <miklos@szeredi.hu>,
-	Trond Myklebust <trond.myklebust@hammerspace.com>,
-	Christoph Hellwig <hch@lst.de>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	devel@lists.orangefs.org,
-	Steve French <sfrench@samba.org>
-Subject: Re: (subset) [PATCH 4/6] mm: Fix filemap_invalidate_inode() to use invalidate_inode_pages2_range()
-Date: Fri, 30 Aug 2024 15:12:02 +0200
-Message-ID: <20240830-anteil-haarfarbe-d11935ac1017@brauner>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240828210249.1078637-5-dhowells@redhat.com>
-References: <20240828210249.1078637-1-dhowells@redhat.com> <20240828210249.1078637-5-dhowells@redhat.com>
+	s=arc-20240116; t=1725023603; c=relaxed/simple;
+	bh=vXsAUmIP0ndJHVKKf2umETwRW6OCDiKxwEQ/7S+lOa8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bSUFhg2VzKwAJAeYwUjGSXKjxnBzBRGSILMiH4217lAfMc57SrzBxdACPG4LO4ZEo9L0iHMD6PF1/u7gmUHOg9JHQ12M18XUK0eXdTXdLHnibKK/OacU/spJe6bpjDnB92VXf+eLED9saEqe2/rs5rzoDBSbPvGE5aTeYfKcoV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de; spf=pass smtp.mailfrom=strlen.de; arc=none smtp.client-ip=91.216.245.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=strlen.de
+Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.92)
+	(envelope-from <fw@strlen.de>)
+	id 1sk1Qz-0007WC-RR; Fri, 30 Aug 2024 15:13:01 +0200
+Date: Fri, 30 Aug 2024 15:13:01 +0200
+From: Florian Westphal <fw@strlen.de>
+To: Breno Leitao <leitao@debian.org>
+Cc: Florian Westphal <fw@strlen.de>, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	Pablo Neira Ayuso <pablo@netfilter.org>,
+	Jozsef Kadlecsik <kadlec@netfilter.org>,
+	David Ahern <dsahern@kernel.org>, rbc@meta.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	netfilter-devel@vger.kernel.org,
+	"open list:NETFILTER" <coreteam@netfilter.org>
+Subject: Re: [PATCH nf-next v4 1/2] netfilter: Make IP6_NF_IPTABLES_LEGACY
+ selectable
+Message-ID: <20240830131301.GA28856@breakpoint.cc>
+References: <20240829161656.832208-1-leitao@debian.org>
+ <20240829161656.832208-2-leitao@debian.org>
+ <20240829162512.GA14214@breakpoint.cc>
+ <ZtG/Ai88bIRFZZ6Y@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1253; i=brauner@kernel.org; h=from:subject:message-id; bh=WndIbO8xrC2aIrGdqBcilJuDXzO/BXzIA8VlzOJWcDo=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRdPKr76Dezq5ehzM4jKYrG1ftWrXx6vvm+7LaNC7uZV E+srfHd1FHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjCRR5oM/1T7Tb2YfR5sYXnu FDtjHaviHxfHAmW1+apKn47PLwxJcWBkWDj/YHmXY6+ZxwZFZ420TYu1Jiiw5DG/WmQs9an18sQ 6HgA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZtG/Ai88bIRFZZ6Y@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Wed, 28 Aug 2024 22:02:45 +0100, David Howells wrote:
-> Fix filemap_invalidate_inode() to use invalidate_inode_pages2_range()
-> rather than truncate_inode_pages_range().  The latter clears the
-> invalidated bit of a partial pages rather than discarding it entirely.
-> This causes copy_file_range() to fail on cifs because the partial pages at
-> either end of the destination range aren't evicted and reread, but rather
-> just partly cleared.
+Breno Leitao <leitao@debian.org> wrote:
+> Hello Florian,
 > 
-> [...]
+> On Thu, Aug 29, 2024 at 06:25:12PM +0200, Florian Westphal wrote:
+> > Breno Leitao <leitao@debian.org> wrote:
+> > > This option makes IP6_NF_IPTABLES_LEGACY user selectable, giving
+> > > users the option to configure iptables without enabling any other
+> > > config.
+> > 
+> > I don't get it.
+> > 
+> > IP(6)_NF_IPTABLES_LEGACY without iptable_filter, mangle etc.
+> > is useless,
+> 
+> Correct. We need to have iptable_filter, mangle, etc available.
+> 
+> I would like to have ip6_tables as built-in
+> (IP(6)_NF_IPTABLES_LEGACY=y), all the other tables built as modules.
+> 
+> So, I am used to a configure similar to the following (before
+> a9525c7f6219c ("netfilter: xtables: allow xtables-nft only builds"))
+> 
+> 	CONFIG_IP6_NF_IPTABLES=y
+> 	CONFIG_IP6_NF_MANGLE=m
+> 	CONFIG_IP6_NF_RAW=m
+> 	...
+> 
+> After a9525c7f6219c ("netfilter: xtables: allow xtables-nft only
+> builds"), the same configuration is not possible anymore, because 
+> CONFIG_IP6_NF_IPTABLES is not user selectable anymore, thus, in order to
+> set it as built-in (=y), I need to set the tables as =y.
 
-Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-Patches in the vfs.fixes branch should appear in linux-next soon.
+Good, I was worried  there was a functional regression here, but
+this is more "matter of taste" then.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fixes
-
-[4/6] mm: Fix filemap_invalidate_inode() to use invalidate_inode_pages2_range()
-      https://git.kernel.org/vfs/vfs/c/c26096ee0278
+I thunk patch is fine, I will try to add the relevant
+depends-on change some time in the near future.
 
