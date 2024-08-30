@@ -1,132 +1,118 @@
-Return-Path: <linux-kernel+bounces-307945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A553965549
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 04:34:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 002D1965558
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 04:40:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8244C1C229EB
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 02:34:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CE651F242EE
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 02:40:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF0DD1292CE;
-	Fri, 30 Aug 2024 02:34:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9C8982D98;
+	Fri, 30 Aug 2024 02:40:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MqTsl9jB"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WnH8e2lq"
+Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75DCA1D1315;
-	Fri, 30 Aug 2024 02:34:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D877380;
+	Fri, 30 Aug 2024 02:40:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724985270; cv=none; b=fBfJuwL3tW+IQULllC+ZSUewybQtp90ypOy8vnVpQQhGLmnkxo4RLc9SeJcLfsH2QdJlnw06yyRtvtT0d5CsoohYxjFELSZdyvAS+DpXYl2z2zrlDnRpZKy4YRq4CPkicJHJlUStgVZshTvRtheLDtSRPCUBxSeevmK6pxJNp+4=
+	t=1724985636; cv=none; b=c27Mns++6aTYWt8dpUllI3v8Eu2HxTpXov0IizlQkzNoNUWbIFaegMYYQC6p0OWuyNGIofbFBh77a8uloWRazddqrN1YcnGagpuKsTodYzOvH2pJjlPg6TIdHfjng6Mfea1MLidPQaSFQ9jedhEKrMtsSCArYVLE64nV0fWsF04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724985270; c=relaxed/simple;
-	bh=LOof/t2NUWiTeBa2AsgWfvL+WqDqQ6X+dghfFyiWXTI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=F+QwXQUL0f74LJMKHquoh1tH8i+ZOIydkzJy4zTj/Rr3yoLlhynp7W+f7dvdYe+PHtpqMQnXb1nv9hvf2yTfbT4ykW2K7B0NRpm/Fve53RF2hMjK+lAZCQX+M5anlyA+oibAKHMqjrBwqa/Ee6+y/u+mqCf1Xm3PKpcLp99TLkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MqTsl9jB; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1724985636; c=relaxed/simple;
+	bh=epwxn7dBqW32cxf+5xRIHwjWlChko6uUxNTcXACtVFY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hMrp2QlxsliT2ITx07kDZNuFhrO77hpmMua9NYi+AbefCNnRtnHoCjM2jIz8pP94d9SRQ0tK+SNk8uLKkfnJRtMGNnxn1YilVgurJ21SiYkEUmiAeTcEWLeYaUxBdQ+UMGtwNlKp/yOwntMhI23ldLQuJ8HeDV/mqz31Jd2Y0yE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WnH8e2lq; arc=none smtp.client-ip=209.85.161.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5c218866849so1614546a12.0;
-        Thu, 29 Aug 2024 19:34:28 -0700 (PDT)
+Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-5da6865312eso874071eaf.3;
+        Thu, 29 Aug 2024 19:40:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724985267; x=1725590067; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=h8Ad0vhCQH1uXxmJFwkA6/WDAbjLvvOwQmA263Zu0vg=;
-        b=MqTsl9jB22+wLsu8CWlHTeTdVqWUdDxjg1ois4E/Lba2haGI+4rR00c0d+KR5DBtQf
-         NkBJdq5JxDo4AtqXNGN20fI5wlePDBVl71EX7lEBn3MDaJ2bTWZr5QhSKLu3GhbuBm1i
-         Q+ipM0I7zOUxiyS5idubYhSSVTXKD5NkTQ+tlXTgjjIPsZMgfI9yLLyf4+4EeJ5wlD9T
-         czSa3phJBwNFqacdthAvMACwvafhz4EVrM9rQmEdL2vfC3WxNeyxfK61LSalmWnyJOY0
-         ZiiitQdbTWtxnlxvSyzDzFjiCok0nO8gd9Dn8jIR8mVVlmjjop7MYsfO7/DjfVKuNNch
-         VcMw==
+        d=gmail.com; s=20230601; t=1724985632; x=1725590432; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=J+HVqijkTIXEILMWbpv1Z9naApBVGhXsa5ns2Qf6WFs=;
+        b=WnH8e2lqEwRGzzSzPyGOloyBGOV1n0ZkjPfoPKlWGp/shdi1qo63MMuUZlfElm7HQf
+         jlXzyiI3OQ3PuWCgEcSsV1l/8fHDeLllxFJG+sP55PmnYQgolVhp2AbOVZADQo6kq1Gy
+         dQiRccNdN4js2jCfARtKt1HHtRVESQLkw01x3y/heNJSFSWvVqw35/UOQQGgvyr9WdOL
+         99XqnPFdFTO6JVEm+I7aZCXkq9ug1qcyD2O6Nvee3D1MDFTOEh/L0mQnR6QgReXqaqDy
+         QLiIpqltfRbYfhbqhhYujSvCmyIllAlTTwJQD85qOrxMzNJmuip6l8b/Pj8ZaG7YXsDu
+         yXaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724985267; x=1725590067;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1724985632; x=1725590432;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=h8Ad0vhCQH1uXxmJFwkA6/WDAbjLvvOwQmA263Zu0vg=;
-        b=Ku2r8MqpNEoJx9FuYizdU2smTfSa/EKGKN1FyAeDPMQA7rYtTRRFDQ37BOVISz6Cjf
-         O2Kwf02cbQ9XieIcUnPU1nXuLLM8s9AEvx2bB3iLGGueORbtOUAif4E6jiV6sMWa+ChS
-         bQdE/BhMwSuOEegXQfPs4fGq2tVzlEJuCcRurkzRr6RleVImS5aqCjgsdm10upzgKod0
-         E40OhBBafUCduNPrRrN1gGgQvhokP/bTmqbJc3dAtGqqYkyT72oo2D3I+z1gx6LJyykF
-         Pio8WfiSY3Jd5ntzbp9B8uwgQnAC7LXWNs/iO67Ag7/GogSkmHCxBGv0G8WCdKpG0ia7
-         VoDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU/+rKLGCGCHST40bQKQQb3fO3WHI7i5a1qcIRe2Kp7OHnMEKyd9H9erZIMYc884ecUZyKVO7hbqUMRnfoi@vger.kernel.org, AJvYcCUv+1QlSmKsXPs0O/bcC+R2Qcqf8tSwcwhxD1f58nt30ErYsX0dnKNVO5IFs+fk9FPgdasLEPcuA9RC@vger.kernel.org, AJvYcCVUMoLFAdC5mpAylzKKq2CkRbPJdVIRcfxLarvUVLILkjYSFxRxCBhwTEEnh3J+QCTd2l981pKCqemo@vger.kernel.org, AJvYcCX/Bb6qoRsOrQZwiLZP4cwLy05iVIhDJBuSS1npoAq/KEFxx816QB+HvHDHEXAgaGsGN5PPO9zkGi5Jpg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YygAqk6RFzKVf8l/E3+yvJFFNQvDW7fxJZlFb6KFeZ2wWhjD6Dz
-	uC8z4thxonXvdggdAXjCaPmNERdUap70K5/GO6eLUgcRr2pgBh7GX9Gt0HVGGagc5FhRIlsy2TW
-	FsirAUY1v7VBf7K4C2XfB9uvJJn0=
-X-Google-Smtp-Source: AGHT+IFQrNg75kF7kiJPUlYxIIiKf55yBoI6UVMLJgvVyo5i04fsIpAbiwR+z3ZW+wSuT9d0rrkbPaENP1uLevEziZQ=
-X-Received: by 2002:a05:6402:3201:b0:5be:e01c:6b5f with SMTP id
- 4fb4d7f45d1cf-5c21ed9feb2mr4182113a12.33.1724985266036; Thu, 29 Aug 2024
- 19:34:26 -0700 (PDT)
+        bh=J+HVqijkTIXEILMWbpv1Z9naApBVGhXsa5ns2Qf6WFs=;
+        b=kNPhTKL+euIuqvnhVYDTVJI0jJxnlrWsNgNeWTc4fzrPwHkqR2GEsMJvc6ZQIp/tX4
+         0mkENpeRbO1xbosmvcZ/qrTbnKn8yhel5OgzcPMQ//ICE7oQrW4NzWFvWPMyVWJFnHLV
+         hZWbP22BMc1JstIzlIuTGmhras1ToHK0kp/T07uqA/L8OYsVlGu6CkE6uqO7+I3DQeDu
+         JNYS7VkA/xNDCPzZNlXFCwLQfKCNoUL+/7pio1+Bheds1/pMk5/9uQtEhHolXz7PqFjm
+         G4TXAPu6zk+FoXmp2pg96oH67VoNxEpVESUt3na9Uw+C4ZUvkbQpkXtEK4qkycYa4wK9
+         lL5A==
+X-Forwarded-Encrypted: i=1; AJvYcCWdS03qTb8oIEV9A67n5VwmO+BnZvcRpq3BLQtWciHgfNfXLcUt24RjgQJFifwF0lcOgrS+yZFvfQx6EQ==@vger.kernel.org, AJvYcCXwOiQMbfUzjKr0Ycdoby3e5iGobovU6ezAyT7d1TYC39h5WQau9RBpeGKwlZgxOoXEGB/sT8OVHLUt5bZe@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGfIB02KTpHIBiwMlJ5gc45QtNu4JimMtPBKqskAdDlDyGlNXU
+	g9TuHTLAfmMFDd1NpObatQpsJnMCNpK7BmsrAWSTx7PqldDLBxp66wM2Ow==
+X-Google-Smtp-Source: AGHT+IFeJaGN5mhTTn2+192nZeojLKG3FQ+88WTKHQwotYDdZrCrJcC0qo8ocLGWSVNXGmE/FO9HaQ==
+X-Received: by 2002:a05:6358:b00f:b0:1ac:1492:8d5a with SMTP id e5c5f4694b2df-1b603c3bc36mr635115755d.14.1724985632329;
+        Thu, 29 Aug 2024 19:40:32 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-715e55b4c9csm1798483b3a.88.2024.08.29.19.40.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Aug 2024 19:40:31 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Thu, 29 Aug 2024 19:40:29 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Loic Guegan <loic.guegan@mailbox.org>
+Cc: Jean Delvare <jdelvare@suse.com>, linux-kernel@vger.kernel.org,
+	linux-hwmon@vger.kernel.org
+Subject: Re: [PATCH] hwmon: Add support for the INA260 chip to the INA219 and
+ compatibles driver
+Message-ID: <80ad5b6b-36b5-4d16-8bdb-93b94401a8a8@roeck-us.net>
+References: <ZOILXb-1ObJRB1ck@lguegan-thinkpad>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240809-loongson1-dma-v12-0-d9469a4a6b85@gmail.com> <172495263311.385951.8113964072819506950.b4-ty@kernel.org>
-In-Reply-To: <172495263311.385951.8113964072819506950.b4-ty@kernel.org>
-From: Keguang Zhang <keguang.zhang@gmail.com>
-Date: Fri, 30 Aug 2024 10:33:49 +0800
-Message-ID: <CAJhJPsVVSCnhS0dMXu-e0XTc-eHounx9RX7MZnCogJx-tBRerw@mail.gmail.com>
-Subject: Re: [PATCH v12 0/2] Add support for Loongson1 APB DMA
-To: Vinod Koul <vkoul@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, linux-mips@vger.kernel.org, dmaengine@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Conor Dooley <conor.dooley@microchip.com>, Jiaxun Yang <jiaxun.yang@flygoat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZOILXb-1ObJRB1ck@lguegan-thinkpad>
 
-On Fri, Aug 30, 2024 at 1:30=E2=80=AFAM Vinod Koul <vkoul@kernel.org> wrote=
-:
->
->
-> On Fri, 09 Aug 2024 18:30:57 +0800, Keguang Zhang wrote:
-> > Add the driver and dt-binding document for Loongson1 APB DMA.
-> >
-> > Changes in v12:
-> > - Delete superfluous blank lines in the examples section.
-> > - Move the call to devm_request_irq() into ls1x_dma_alloc_chan_resource=
-s()
-> >   to use dma_chan_name() as a parameter.
-> > - Move the call to devm_free_irq() into ls1x_dma_free_chan_resources() =
-accordingly.
-> > - Rename ls1x_dma_alloc_llis() to ls1x_dma_prep_lli().
-> > - Merge ls1x_dma_free_lli() into ls1x_dma_free_desc().
-> > - Add ls1x_dma_synchronize().
-> > - Fix the error handling of ls1x_dma_probe().
-> > - Some minor fixes and improvements.
-> > - Link to v11: https://lore.kernel.org/r/20240802-loongson1-dma-v11-0-8=
-5392357d4e0@gmail.com
-> >
-> > [...]
->
-> Applied, thanks!
->
-Great!
-Thanks very much!
+Hi,
 
-> [1/2] dt-bindings: dma: Add Loongson-1 APB DMA
->       commit: 7ea270bb93e4ce165bb4f834c29c05e9815b6ca8
-> [2/2] dmaengine: Loongson1: Add Loongson-1 APB DMA driver
->       commit: e06c432312148ddb550ec55b004e32671657ea23
->
-> Best regards,
-> --
-> ~Vinod
->
->
+On Sun, Aug 20, 2023 at 02:47:25PM +0200, Loic Guegan wrote:
+> This patch allows to retrieve current, bus voltage and power
+> measurements from the INA260 using its default configuration.
+> 
+> As the INA260 provides integrated shunt, the "ishunt" configuration
+> parameter is introduced. As such, proper attributes can be attached
+> with hwmon and shunt calibration related routnies can be ignored. In
+> addition, the actual INA2XX current register address differ from the
+> INA260 as it does not provide a shunt register. Thus, a specific
+> register address INA2XX_CURRENT_ISHUNT for chips with integrated
+> shunts is proposed.
+> 
+> Signed-off-by: Loic Guegan <loic.guegan@mailbox.org>
 
+This patch will no longer apply after the series at
+https://lore.kernel.org/linux-hwmon/20240830010554.1462861-1-linux@roeck-us.net/T/#t
+is accepted and applied. It is also less than perfect since it does not 
+support current limits. Adjusting the driver to support ina260 should be
+much more straightforward after the above patches are applied. I'll send a
+follow-up series of patches after I was able to test it with a real chip
+(I am currently waiting for an evaluation board to arrive).
 
---=20
-Best regards,
+In case anyone is curious, the (untested) patches necessary to support
+INA260 are available in the hwmon-staging and testing branches of
+git://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git
 
-Keguang Zhang
+Guenter
 
