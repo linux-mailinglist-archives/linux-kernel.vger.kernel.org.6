@@ -1,230 +1,232 @@
-Return-Path: <linux-kernel+bounces-308721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FE1C9660DA
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 13:34:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68BDD9660DE
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 13:35:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3816D2874FA
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 11:34:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F9871F22C01
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 11:35:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59714199FA4;
-	Fri, 30 Aug 2024 11:34:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5055218EFE6;
+	Fri, 30 Aug 2024 11:35:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="AxFW/NxR"
-Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010051.outbound.protection.outlook.com [52.101.69.51])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WgRgi67l"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81B5C195FD1;
-	Fri, 30 Aug 2024 11:34:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.51
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725017644; cv=fail; b=pwo7VO1hupCH32QFG+WJeUJJ028QDw/kdoYtKeH51ktrRdFM3gSQqyQqGriCiIvD34Lq9tp+EmzujNukV6JFwDm5T1SG8VPX1OXs/YoJuBeZf/0QoiTj0dJkTkFXk7rXdx5agA8CNEc+mcAah8AGuqp483XWhfW5zRjBjg3TZ4Y=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725017644; c=relaxed/simple;
-	bh=Psw9es/bwBXUPaPDc69w/OzVcFaerox26gHFiTahjuE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=hpbb+hqiMBtJpopnhr9THi7x0Tu8Jo6gCRFViu2FLs7VxpQC6jDqzCceAmTiApcFSsr0crHRY56LObzhr3AZI5UVZFBs9jEjz/JioTKnBSnNJgkLbll9+W3NMLamUahWuUTnaV9DpDs/P+DUN/RZV0LpxQ+rvs90peuUqvE8qgM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=AxFW/NxR; arc=fail smtp.client-ip=52.101.69.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=p5xrDDIihyCL4/4Jn5o4zJFAdwgb+gJnxxlR5pU5uaM3lGgfAoHNMPgVmgxiRnpFhig0tgOAXJq9AJlHikYULfOrR0wjTieDmsHAat/uPtUHVL8mEiIRLgUXU5BQRzsHZS3YXcVf3Ix97dY+qnDez0T6mU/TggyOIp2KVRRn0H2neny3juFkoosLI9+jasKzC6NtzYA3OuKmiN+m0ZpL654FbDwSIYPOEyx893BHwK4b1BHBgUztMMwFvSnPoPXrA4vpntLEcQt7q7WI97djFJn+i7rvJMNMRZUYm1p8palEA8GrRBENyGamogSqL2tURPfvaEPbqG0AQnrJgVdNKg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=mvHzmfEJzKOOu0trhKsIW2ufkKHjYtYZp708X87SZIw=;
- b=ha2/PGhrDLE0zDpsv9DvaQdONH6HEytjkM7SFgqT33yB865onvDuFyspsMmgNbtyj9YQRD3NmCgouINBEL0jjzDBsRpuRBx66/BnlXDiYftvLQTBOt4dCXMi6kr3P/H4HNPdGEFBHCUME/qNUmhs8QbVXrt/VM6BJF87L85/CbRZsPy/o+2PcWmX2zqzAIwlvsWxBof32/yYUKz0f7cbSmPCTDUbKCGx5Fs6zdfuNxgvfror6Cp9DU5lyYt0p/a0vHhaRjdrHP8cXyg/qiNpMfP43xz5rQ0d4c3g1GVh7xReHEvhqaIxpfFIWbJIXSv+wC7JxMgZw5zgznvQoRUlzg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mvHzmfEJzKOOu0trhKsIW2ufkKHjYtYZp708X87SZIw=;
- b=AxFW/NxR5UqFMYYxu7tNj+eTjKuuJuBymxSq+SZvbR1saWWVpsOFb+kepJt6jD6JEr+VDZn5+NDlLwZ6wRGbJeGq3IkjBxul2x2EBWROaDEu4WUsECHVKLkXUQ6RJGi0zSmrgKJevLyX59e2i8iabSR5g38Sn0QD+ehU/bMBmX84KeKj63yvh6Vk8LOyzYOgpICWKgLEq/744l98M8WzPSuwq47W6xbBhe5/H1PK18NDKvDFHflIf6n24QwRfUpgg5bLsvuQW9s5XXlo3xNvS0AhZpSGuBcU6kkw8+w3TIWG/yuB+B4Lfu3rU8BjNkIvX7fa7fhG3ns9jlSUrQ3ODA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from DU0PR04MB9251.eurprd04.prod.outlook.com (2603:10a6:10:352::15)
- by VI1PR04MB6989.eurprd04.prod.outlook.com (2603:10a6:803:131::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.28; Fri, 30 Aug
- 2024 11:33:56 +0000
-Received: from DU0PR04MB9251.eurprd04.prod.outlook.com
- ([fe80::708f:69ee:15df:6ebd]) by DU0PR04MB9251.eurprd04.prod.outlook.com
- ([fe80::708f:69ee:15df:6ebd%7]) with mapi id 15.20.7897.027; Fri, 30 Aug 2024
- 11:33:56 +0000
-From: Ciprian Costea <ciprianmarian.costea@oss.nxp.com>
-To: Chester Lin <chester62515@gmail.com>,
-	Matthias Brugger <mbrugger@suse.com>,
-	Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: Pengutronix Kernel Team <kernel@pengutronix.de>,
-	linux-arm-kernel@lists.infradead.org,
-	imx@lists.linux.dev,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	NXP S32 Linux Team <s32@nxp.com>,
-	Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
-Subject: [PATCH v2 2/2] arm64: dts: s32g2: Disable support for SD/eMMC UHS mode
-Date: Fri, 30 Aug 2024 14:33:47 +0300
-Message-ID: <20240830113347.4048370-3-ciprianmarian.costea@oss.nxp.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240830113347.4048370-1-ciprianmarian.costea@oss.nxp.com>
-References: <20240830113347.4048370-1-ciprianmarian.costea@oss.nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: AM0PR07CA0020.eurprd07.prod.outlook.com
- (2603:10a6:208:ac::33) To DU0PR04MB9251.eurprd04.prod.outlook.com
- (2603:10a6:10:352::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9576418CC1E
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 11:35:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725017728; cv=none; b=tNVRHu911JlXJU5mCSfFAeKOXTLl3BPOZGzDpRdbmSEGzW0/KJ3es+PBB0sl7DRClCsPaS0RJVamcv/KXMLIuiNi2AyZLHlgrODMV/7E8WicHy2E4Eu/F83rYtyeOGuTz22FIiy6pGwe3uqMBj2lwBM6Z3xKraX+3LWtlNTKjMU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725017728; c=relaxed/simple;
+	bh=UeGZVoJV7CHsrrYPjHdplLAZFH7WuRH3o+A5uDfsIfw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DG13L+FzlRsP/nHMRTNOgNB2clVfrScVDvBhdaPtkihueCAS3OAirwFsQPkqD8ZI6wtJrKbx3vd5tU6QW6K9xzceEtylEuXJA4yF4ju5VdyEI0DkoHvHMjVB3dbnOo6WmmvY+PT2qMhicC+2oezdExXRvYpylkSHNnX1TuTN1JI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WgRgi67l; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725017726; x=1756553726;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=UeGZVoJV7CHsrrYPjHdplLAZFH7WuRH3o+A5uDfsIfw=;
+  b=WgRgi67lhdevXXNivsgwWc1LjEnDLiUHkJZO1U3SoLRRf00qtDdXsyYj
+   VNKoMOQ7KfQxtPhSS9S5rkvUat+YTkiLZ/ApeIpQr19RDlUT/5iB7o+Hb
+   qNIVqn9zv0zctVXhZljwptkghiFLwO7R4S4HFk/amsrRTJROncpmyve9r
+   JVX7/dbAOBrBzVL6JRquIdKkFBAgRspOVEnFnwuAjAFPaFZcuBzUhcNDx
+   Y8j1lXzbdmFTFlsByPLrhvfdCQTT+WEo1iSGuGYQFXGsesG0fviWScKhu
+   nn1e6cJsHVS/lsrWNmwkEZBS3zYMIbA2HGPHX6VYpEK3VBSd0mm5vZ8kI
+   Q==;
+X-CSE-ConnectionGUID: CWPt7pw+SCGfwUOlF9igXg==
+X-CSE-MsgGUID: 6sYzs0DGRumHnBSOyYJvmg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11179"; a="23222421"
+X-IronPort-AV: E=Sophos;i="6.10,188,1719903600"; 
+   d="scan'208";a="23222421"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Aug 2024 04:35:26 -0700
+X-CSE-ConnectionGUID: pd7FzVPmRRiu910O0E2tIw==
+X-CSE-MsgGUID: 4PRXSzI2RCa4OW3c2tojaw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,188,1719903600"; 
+   d="scan'208";a="63886926"
+Received: from stinkpipe.fi.intel.com (HELO stinkbox) ([10.237.72.74])
+  by fmviesa008.fm.intel.com with SMTP; 30 Aug 2024 04:35:22 -0700
+Received: by stinkbox (sSMTP sendmail emulation); Fri, 30 Aug 2024 14:35:21 +0300
+Date: Fri, 30 Aug 2024 14:35:21 +0300
+From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+To: Yulia Garbovich <yulia.garbovich@arm.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+	tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch,
+	liviu.dudau@arm.com, rosen.zhelev@arm.com, nd@arm.com
+Subject: Re: [PATCH] drm: drm_fourcc: adding 10/12/14 bit formats
+Message-ID: <ZtGuedfBo4RZDCL2@intel.com>
+References: <20240829102038.2274242-1-yulia.garbovich@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU0PR04MB9251:EE_|VI1PR04MB6989:EE_
-X-MS-Office365-Filtering-Correlation-Id: 147eae14-b570-438c-4f7b-08dcc8e7a1fb
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?MGU5N290MlZwZmtCbHFsOXREM1JvZkVPczRKWFNUMEZBTVFibkR0WFVNTzVW?=
- =?utf-8?B?VDhoRDdiT1o2Vmh1SHRJN0FCcEtobGZFMWM2bWRLL1lKTXZBUHE1YUp4UGFB?=
- =?utf-8?B?KzNFMHpVT0ZielpGK1p4M3VXUmlFYTNucXF6dTY4STN0ekV0dGFQNDYrYTNL?=
- =?utf-8?B?TkhaMytrMGxCaWtEOUJRbXVWdFlYMjY4Q29FZVN6aysyMktLajZncnY4TlY3?=
- =?utf-8?B?aUtpOHZIdC9sS3kwS0RWZmlkbm9wcUUrNTVnSHRDaEhPeEtpZTZnSkZpMUY0?=
- =?utf-8?B?U3M1a2lZZEQ0RmJZdjlhc0tOSkdUZWJZQ2s1VzRydXRpdW5ieXRoaGJlNHpa?=
- =?utf-8?B?WEM3OHZWbUJmS1R0QVdNVVhoS0YrY2RwK3hPdjBoVW9COGE5MUMrb1M1eFM0?=
- =?utf-8?B?ZkhNa1ZzNjNsRythRDhyd3lkcU85U0p0WmdLS1prOG1GTzRoa0g4dEdUaEdn?=
- =?utf-8?B?K3VQYlBCd3dQTzU2RGNTUngzQ3NMZHA4dTVPaUVYY25oSU84ZkFmeitQb2th?=
- =?utf-8?B?dnpiRnRJci9IS2FDUUFqbEViMW1WQ24zcFE4cWlTV1V3TkZlRVFjQzlKTHY0?=
- =?utf-8?B?MXBRdUhhcmE0a0xJbCtwR3A0Z0d1ODJPZEFtU3NlL2pFbE4wU1BkdEhHV2Zn?=
- =?utf-8?B?NVNGWkNzVWtQY0MyTUU4UGIzRkErV2luSXJvL015UkhqRFQwNEg0Mmx1alFv?=
- =?utf-8?B?Q1JHT1NRNmJrVEVTWlpFMmd6eHdqSVFIMnlqV1BrSjl0UEhsWjErRFA5NDhy?=
- =?utf-8?B?WjFmSENYcXpBVStCN1k4b2ZJdExlYjZUdlFJc1Q0a1d5bEpVMXNMREU0a2Za?=
- =?utf-8?B?U0gyaEJkdzZHeTduMTJ0Y0xDeG5waXl4ZlNLVUVDYmJ0L0pMM0FWaVEyeVJU?=
- =?utf-8?B?L05pWGpTZ2ZLeGJ0STdjMEVpVlptaTdCdlFlQVhFaEhKN3dDaWxhcVFjTGtY?=
- =?utf-8?B?cEZPWDd1VzNZSC9HNXdUblRUZHVNYko0ZmhKSXUvVTRqUEoySDl3Z3RTTVlF?=
- =?utf-8?B?TDc0cnVxTXpnR3ArT3d3UGRBZ214Z2Exb01hMUlHRlo3VStoSUJyYnFmT1Zh?=
- =?utf-8?B?VXdUdDhUWTV6N3pqSkxqWjMvek1iSHV1NVJZMDlqTHhHTDNvRnJlV1UwSjEr?=
- =?utf-8?B?b1Vpcit3OGc3cHlHS1k0R3pnQnplbFNIOHpZYXBxeTNzbU9oRjhnLzlYS0pt?=
- =?utf-8?B?cmJsWnk1ckRkeTVBVlViVnp2dmxMcmJ2N0ZwWWlXRDZ4aU1Jb05EVjFWYUxU?=
- =?utf-8?B?THM0OUtBbWc3SWhvekFneEJXczVLOHhraVMwb0x1dkJwWUtDOWpFMnNsTUFh?=
- =?utf-8?B?WS9QTnUxVG9rQkg1Y0FnbWlBMFNnRGM5SzNxQ1dXK2ZJU3crQXZuazE2OWg0?=
- =?utf-8?B?a0dzN0o1eWpyZTRQK0dBZFA2cjlmVjdibjNYWmNGZGEvQ1dwMVZNZGpNUE5p?=
- =?utf-8?B?Q2RwYW9jVFBDbDNPWlFUMHJaQ3QwbGowRFp6YTZ6M3FDbis4NXhZYmJVSzdt?=
- =?utf-8?B?RTRnRDkrNzNtQS9pall5TnlmWXB3TGRNUTNpamdOMTZER1QzS1dEemVrNFFM?=
- =?utf-8?B?RDQwVTJvZU0xa2xVemF5aW81VDRCMFNyMlZHZ01tTlIzSWd1N3JzVFV3S0E1?=
- =?utf-8?B?ZFlnYy83ZGtMa0lWYWVJUVdWU3BXU1hNYkM0YmtoaUZjZXNjek5sbStISlBk?=
- =?utf-8?B?MEY0UE00UE5TRXpGekt4RkNVRDlCczhUdHJYdWJZNGNNQk5rL1pwdmswM3Qz?=
- =?utf-8?B?dGVOVklSdDFjYTNYeE85VStuSTNHdXBJS3pmUXpGOWxXL0hqdVhscTd4RFls?=
- =?utf-8?B?SGc0YjFDY1lJVDVqUC9UUT09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9251.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?TXZsRUNmN1ZIRjV3UW1CbytIVW83d0hBYUNFaDRRaHF2dkorL1FycUJ4Mkts?=
- =?utf-8?B?Zmdza0NCeUJDNW5vckZuSmx6YzJ6ZWZ4Rm9oMUlUTGd1YnE2T3R6QTVVcWhU?=
- =?utf-8?B?NlA5dUMzVGVydWF6SmpIR05ackVnNWZrVUVvVmF3TWFUY3pyeStOVVRnR1FV?=
- =?utf-8?B?OHlkZms0N3NvYWFtN0xwc205dEpmMmxMWDhLdlBVUTZNa2t5Rjh0d2lhQlJn?=
- =?utf-8?B?aEFQSmJzY1BleW5MY2dxeWdsRWZLeDVFZmlmOVJMVjdYMUFlc3ptOHR4R1hu?=
- =?utf-8?B?alVRNmJvOW5lV01nNzd6L2VJblBvNFRhUmJWc1lSQlBMRi95cXI1ZzRxTGI4?=
- =?utf-8?B?eXRiQWhybGxZRFpMamZUT2JlRkpvV21sVWNNTmYwUHpCeU1Nbi9aTW9NeFl1?=
- =?utf-8?B?UGpIemYrQTBjTmJIMGEzcXFSUU50R0trSFF5N1hsVHV1dVgwSHJsbTVPWVVP?=
- =?utf-8?B?K2h4OU1VcnMzRkZXL21mQkVQYzUzZXZLcXVCU0lWTTFaT2FpSWR6alBra2xi?=
- =?utf-8?B?QVBpU00zRWkwVlpkWG5BUjlydzNzY1R0ai9HTG93RHFRem1waEh6SUY5UkJw?=
- =?utf-8?B?TjJVUjgwbXdDWVBucmNwS3RReW8rOUdOM201UytWT2ZFSytyU0lOK0dBd2s4?=
- =?utf-8?B?UlNQYWhpSFRrbTg1Z1Vtc0hoaURJdXlzR2o1RFRMdEdxTENZNmFPT1VWSXZS?=
- =?utf-8?B?ZnpiaXpkRzk0Si9OditYd0gzRDRFMWZMWFNIb1h5aFViRllKKzlQRDA4clgv?=
- =?utf-8?B?b2hzTC80NW0yUTVveVByamZGLzVYVzFhTkU3S1Vjc0hqME9wazFJZ0ZXZS9i?=
- =?utf-8?B?bGd6ekRBNTF6M0ljcGNhZ1QzcVNvd1ltRjBha2Q2WGh1THgyV25YallUTWN4?=
- =?utf-8?B?Vyt1R2V5dW5pa1ltYVBxV2JpdjV1NldIc2NKNjNvdWcyZ2FWYnR3a1g0dUlo?=
- =?utf-8?B?aU9COVo3Qi9XUEtleTNONnhoR09jR216Mk5PS2g2SlBuL1I2QzJoMEhld2ZU?=
- =?utf-8?B?MzlTZFN5QUVmSkV1M0FMeUx1OTRmMmJuSHJCVFkrVUwxc1I3NndtY1I3NUFT?=
- =?utf-8?B?b09HdDNiY3o2SjRHa1Q4VUdPZFhwOHVXNkxNRTg1ZTh5aU0vaWVCdzBIT1Bj?=
- =?utf-8?B?Z3N2Y24vNFowdlNRNkd2Vm9FZWdBOHRXbnN4Tlp6bDlDSm9rUTZvckFEUXhs?=
- =?utf-8?B?M2JrVjVkNDBDVVdYUnpLc3pXOGp5eTYyWHd0ZFUvdHFyODkwRFNFZ0VmT1or?=
- =?utf-8?B?TDNBNTlhcW15ekEzQkU2bmFueWJnUUFVTDlMbU1BUmZFNXNkS0VSZkxXdGM2?=
- =?utf-8?B?MEhpTnd6QzVycWUrckRXSmdCdEJrUmFwMXA3cERwUGJYQS9TRE0xZnpYNHdm?=
- =?utf-8?B?bFFwL1dZNm5KQlpBbDhTMVcrTHpHcGJ0dHB0dnZUNDJUVVFkbmVYbUlQRUNT?=
- =?utf-8?B?MTJ3TWk4czVzVEN0N09DODViZlVuTS9WZFR6RTkyb3EybDZoamluTFlOdmJE?=
- =?utf-8?B?VktsQkdKeHBYMWpkcDIwZTRrcHoxeW1FaVZlb2dWdGNaYzAzS1dzR1dlRTRW?=
- =?utf-8?B?M2ZuT3BjRWhQOVZoZzNNSG5sYVczcEZoRnFiTG1zOVBPZnlPR3hwNHpYT1d0?=
- =?utf-8?B?WUZkaUIwY3JEN0lQS3VEU0xubS9Oak9WVDZQajNRcmxleEJhRFRZNnZHeWpq?=
- =?utf-8?B?UjJoYzhad1B3RjdKZlBuM1FPK2JkdVNyRURzYUtCcjJhd2V1bndGVE5XSEtn?=
- =?utf-8?B?RnZydUFMZDJHeXl1WFJDRUwwYUtrb0UxM3BFOGlsdFhPWG9XMmRrVnRTVkJP?=
- =?utf-8?B?MHZhUGxlVGRZeHVXbzlaM1ZQbmVTR2I2TFRXTnRDN0JjQTFFN0xQbmVrd3lF?=
- =?utf-8?B?UFRaakM4c0tLdi9xSHU2VXpOblVHdEpla0t6dUc2M1Y2NWZ2UGluSzZWMmZZ?=
- =?utf-8?B?R05hM09LSFJidHJkb2ozSVpHWVRLUCtuVGNyaXk1bWxhVEF4QjQ5aWpycUlq?=
- =?utf-8?B?MU9TYVVDMmZOdndrUWJGRzVNNjYzSEg0aTgvQnZvc0dzeHNISWZ3UmFmTUI4?=
- =?utf-8?B?UlpTS29uZEtOczdicGpNV3d1Y1BmaGhqNXRWWktPT1l0TWhQQVNwQmU0YXlq?=
- =?utf-8?B?bTNEY01xd0NlVUpRcERXTEUwSkNXK1FORkRTTkRZSndhdlhjUDUxUzk5UG5T?=
- =?utf-8?B?QXc9PQ==?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 147eae14-b570-438c-4f7b-08dcc8e7a1fb
-X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9251.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Aug 2024 11:33:56.1709
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: U5/GBxhBhiA9NN3VipitvQlRUp9yOIzeWuP+hzFGKHRAzIVSrWK9Vjf6caOoOep6HoAXclJCEMN7VQit/MmUv9Spg+5kKUuH7MEHOKCOdvE=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB6989
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240829102038.2274242-1-yulia.garbovich@arm.com>
+X-Patchwork-Hint: comment
 
-From: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
+On Thu, Aug 29, 2024 at 01:20:38PM +0300, Yulia Garbovich wrote:
+> Adding the following formats
+>      - DRM_FORMAT_RX106
+>      - DRM_FORMAT_GXRX106106
+>      - DRM_FORMAT_RX124
+>      - DRM_FORMAT_GXRX124124
+>      - DRM_FORMAT_AXBXGXRX124124124124
+>      - DRM_FORMAT_RX142
+>      - DRM_FORMAT_GXRX142142
+>      - DRM_FORMAT_AXBXGXRX142142142142
+> 
+> They are useful for communicating Bayer data between ISPs and GPU by emulating GL_R16UI and GL_RG16UI formats
+> Signed-off-by: Yulia Garbovich <yulia.garbovich@arm.com>
+> ---
+>  drivers/gpu/drm/drm_fourcc.c  |  8 +++++
+>  include/uapi/drm/drm_fourcc.h | 61 +++++++++++++++++++++++++++++++++--
+>  2 files changed, 67 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/drm_fourcc.c b/drivers/gpu/drm/drm_fourcc.c
+> index 193cf8ed7912..cd5f467edfeb 100644
+> --- a/drivers/gpu/drm/drm_fourcc.c
+> +++ b/drivers/gpu/drm/drm_fourcc.c
+> @@ -170,6 +170,9 @@ const struct drm_format_info *__drm_format_info(u32 format)
+>  		{ .format = DRM_FORMAT_R8,		.depth = 8,  .num_planes = 1, .cpp = { 1, 0, 0 }, .hsub = 1, .vsub = 1 },
+>  		{ .format = DRM_FORMAT_R10,		.depth = 10, .num_planes = 1, .cpp = { 2, 0, 0 }, .hsub = 1, .vsub = 1 },
+>  		{ .format = DRM_FORMAT_R12,		.depth = 12, .num_planes = 1, .cpp = { 2, 0, 0 }, .hsub = 1, .vsub = 1 },
+> +		{ .format = DRM_FORMAT_RX106,	.depth = 0,  .num_planes = 1, .cpp = { 2, 0, 0 }, .hsub = 1, .vsub = 1 },
+> +		{ .format = DRM_FORMAT_RX124,	.depth = 0,  .num_planes = 1, .cpp = { 2, 0, 0 }, .hsub = 1, .vsub = 1 },
+> +		{ .format = DRM_FORMAT_RX142,	.depth = 0,  .num_planes = 1, .cpp = { 2, 0, 0 }, .hsub = 1, .vsub = 1 },
+>  		{ .format = DRM_FORMAT_RGB332,		.depth = 8,  .num_planes = 1, .cpp = { 1, 0, 0 }, .hsub = 1, .vsub = 1 },
+>  		{ .format = DRM_FORMAT_BGR233,		.depth = 8,  .num_planes = 1, .cpp = { 1, 0, 0 }, .hsub = 1, .vsub = 1 },
+>  		{ .format = DRM_FORMAT_XRGB4444,	.depth = 0,  .num_planes = 1, .cpp = { 2, 0, 0 }, .hsub = 1, .vsub = 1 },
+> @@ -200,6 +203,9 @@ const struct drm_format_info *__drm_format_info(u32 format)
+>  		{ .format = DRM_FORMAT_XBGR8888,	.depth = 24, .num_planes = 1, .cpp = { 4, 0, 0 }, .hsub = 1, .vsub = 1 },
+>  		{ .format = DRM_FORMAT_RGBX8888,	.depth = 24, .num_planes = 1, .cpp = { 4, 0, 0 }, .hsub = 1, .vsub = 1 },
+>  		{ .format = DRM_FORMAT_BGRX8888,	.depth = 24, .num_planes = 1, .cpp = { 4, 0, 0 }, .hsub = 1, .vsub = 1 },
+> +		{ .format = DRM_FORMAT_GXRX106106,	.depth = 0,  .num_planes = 1, .cpp = { 4, 0, 0 }, .hsub = 1, .vsub = 1 },
+> +		{ .format = DRM_FORMAT_GXRX124124,	.depth = 0,  .num_planes = 1, .cpp = { 4, 0, 0 }, .hsub = 1, .vsub = 1 },
+> +		{ .format = DRM_FORMAT_GXRX142142,	.depth = 0,  .num_planes = 1, .cpp = { 4, 0, 0 }, .hsub = 1, .vsub = 1 },
+>  		{ .format = DRM_FORMAT_RGB565_A8,	.depth = 24, .num_planes = 2, .cpp = { 2, 1, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true },
+>  		{ .format = DRM_FORMAT_BGR565_A8,	.depth = 24, .num_planes = 2, .cpp = { 2, 1, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true },
+>  		{ .format = DRM_FORMAT_XRGB2101010,	.depth = 30, .num_planes = 1, .cpp = { 4, 0, 0 }, .hsub = 1, .vsub = 1 },
+> @@ -219,6 +225,8 @@ const struct drm_format_info *__drm_format_info(u32 format)
+>  		{ .format = DRM_FORMAT_ARGB16161616F,	.depth = 0,  .num_planes = 1, .cpp = { 8, 0, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true },
+>  		{ .format = DRM_FORMAT_ABGR16161616F,	.depth = 0,  .num_planes = 1, .cpp = { 8, 0, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true },
+>  		{ .format = DRM_FORMAT_AXBXGXRX106106106106, .depth = 0, .num_planes = 1, .cpp = { 8, 0, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true },
+> +		{ .format = DRM_FORMAT_AXBXGXRX124124124124, .depth = 0, .num_planes = 1, .cpp = { 8, 0, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true },
+> +		{ .format = DRM_FORMAT_AXBXGXRX142142142142, .depth = 0, .num_planes = 1, .cpp = { 8, 0, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true },
+>  		{ .format = DRM_FORMAT_XRGB16161616,	.depth = 0,  .num_planes = 1, .cpp = { 8, 0, 0 }, .hsub = 1, .vsub = 1 },
+>  		{ .format = DRM_FORMAT_XBGR16161616,	.depth = 0,  .num_planes = 1, .cpp = { 8, 0, 0 }, .hsub = 1, .vsub = 1 },
+>  		{ .format = DRM_FORMAT_ARGB16161616,	.depth = 0,  .num_planes = 1, .cpp = { 8, 0, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true },
+> diff --git a/include/uapi/drm/drm_fourcc.h b/include/uapi/drm/drm_fourcc.h
+> index 84d502e42961..30d0f4b6247a 100644
+> --- a/include/uapi/drm/drm_fourcc.h
+> +++ b/include/uapi/drm/drm_fourcc.h
+> @@ -146,6 +146,24 @@ extern "C" {
+>  /* 12 bpp Red (direct relationship between channel value and brightness) */
+>  #define DRM_FORMAT_R12		fourcc_code('R', '1', '2', ' ') /* [15:0] x:R 4:12 little endian */
+>  
+> +/*
+> + * 1-component 16 bpp format that has a 10-bit R component in the top 10 bits of the word
+> + * in bytes 0..1 with the bottom 6 bits of the word unused
+> + */
+> +#define DRM_FORMAT_RX106	fourcc_code('R', '0', '1', '0') /* [15:0] R:x 10:6 */
 
-Disable SD/eMMC UHS modes for NXP boards which do not set VCCQ voltage
-supply to 1.8V by default, such as S32G274A-EVB and S32G274A-RDB2.
+All drm formats are supposed to have explicit endianness.
 
-Signed-off-by: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
----
- arch/arm64/boot/dts/freescale/s32g274a-evb.dts  | 1 +
- arch/arm64/boot/dts/freescale/s32g274a-rdb2.dts | 9 +++++++++
- 2 files changed, 10 insertions(+)
+> +
+> +/*
+> + * 1-component 16 bpp format that has a 12-bit R component in the top 12 bits of the word
+> + * in bytes 0..1 with the bottom 4 bits of the word unused
+> + */
+> +#define DRM_FORMAT_RX124	fourcc_code('R', '0', '1', '2') /* [15:0] R:x 12:4 */
+> +
+> +/*
+> + * 1-component 16 bpp format that has a 14-bit R component in the top 14 bits of the word
+> + * in bytes 0..1 with the bottom 2 bits of the word unused
+> + */
+> +#define DRM_FORMAT_RX142	fourcc_code('R', '0', '1', '4') /* [15:0] R:x 14:2 */
+> +
+>  /* 16 bpp Red (direct relationship between channel value and brightness) */
+>  #define DRM_FORMAT_R16		fourcc_code('R', '1', '6', ' ') /* [15:0] R little endian */
+>  
+> @@ -157,6 +175,27 @@ extern "C" {
+>  #define DRM_FORMAT_RG1616	fourcc_code('R', 'G', '3', '2') /* [31:0] R:G 16:16 little endian */
+>  #define DRM_FORMAT_GR1616	fourcc_code('G', 'R', '3', '2') /* [31:0] G:R 16:16 little endian */
+>  
+> + /*
+> + * 2-component  32bpp  format that has a 10-bit R component in the top 10 bits of the word
+> + * in bytes 0..1, and a 10-bit G component in the top 10 bits of the word in bytes 2..3,
+> + * with the bottom 6 bits of each word unused.
+> + */
+> +#define DRM_FORMAT_GXRX106106	fourcc_code('G', 'R', '1', '0') /* [31:0] G:x:R:x 10:6:10:6 */
+> +
+> +/*
+> + * 2-component  32bpp  format that has a 12-bit R component in the top 12 bits of the word
+> + * in bytes 0..1, and a 12-bit G component in the top 12 bits of the word in bytes 2..3,
+> + * with the bottom 4 bits of each word unused.
+> + */
+> +#define DRM_FORMAT_GXRX124124	fourcc_code('G', 'R', '1', '2') /* [31:0] G:x:R:x 12:4:12:4 */
+> +
+> +/*
+> + * 2-component  32bpp  format that has a 14-bit R component in the top 14 bits of the word
+> + * in bytes 0..1, and a 14-bit G component in the top 14 bits of the word in bytes 2..3,
+> + * with the bottom 2 bits of each word unused.
+> + */
+> +#define DRM_FORMAT_GXRX142142	fourcc_code('G', 'R', '1', '4') /* [31:0] G:x:R:x 14:2:14:2 */
+> +
+>  /* 8 bpp RGB */
+>  #define DRM_FORMAT_RGB332	fourcc_code('R', 'G', 'B', '8') /* [7:0] R:G:B 3:3:2 */
+>  #define DRM_FORMAT_BGR233	fourcc_code('B', 'G', 'R', '8') /* [7:0] B:G:R 2:3:3 */
+> @@ -229,11 +268,29 @@ extern "C" {
+>  #define DRM_FORMAT_ABGR16161616F fourcc_code('A', 'B', '4', 'H') /* [63:0] A:B:G:R 16:16:16:16 little endian */
+>  
+>  /*
+> - * RGBA format with 10-bit components packed in 64-bit per pixel, with 6 bits
+> - * of unused padding per component:
+> + * 4-component, 64bpp format that has a 10-bit R component in the top 10 bits of the word in bytes 0..1,
+> + * a 10-bit G component in the top 10 bits of the word in bytes 2..3, a 10-bit B component in the top 10 bits of the word
+> + * in bytes 4..5, and a 10-bit A component in the top 10 bits of the word in bytes 6..7,
+> + * with the bottom 6 bits of each word unused.
+>   */
+>  #define DRM_FORMAT_AXBXGXRX106106106106 fourcc_code('A', 'B', '1', '0') /* [63:0] A:x:B:x:G:x:R:x 10:6:10:6:10:6:10:6 little endian */
+>  
+> +/*
+> + * 4-component, 64bpp format that has a 12-bit R component in the top 12bits of the word in bytes 0..1,
+> + * a 12-bit G component in the top 12 bits of the word in bytes 2..3, a 12-bit B component in the top 12 bits of the word
+> + * in bytes 4..5, and a 12-bit A component in the top 12 bits of the word in bytes 6..7,
+> + * with the bottom 4 bits of each word unused.
+> + */
+> +#define DRM_FORMAT_AXBXGXRX124124124124	fourcc_code('A', 'B', '1', '2') /* [63:0] A:x:B:x:G:x:R:x 12:4:12:4:12:4:12:4 */
+> +
+> +/*
+> + * 4-component, 64bpp format that has a 14-bit R component in the top 14 bits of the word in bytes 0..1,
+> + * a 14-bit G component in the top 14 bits of the word in bytes 2..3, a 14-bit B component in the top 14 bits of the word
+> + * in bytes 4..5, and a 14-bit A component in the top 14 bits of the word in bytes 6..7,
+> + * with the bottom 2 bits of each word unused.
+> + */
+> +#define DRM_FORMAT_AXBXGXRX142142142142	fourcc_code('A', 'B', '1', '4') /* [63:0] A:x:B:x:G:x:R:x 14:2:14:2:14:2:14:2 */
+> +
+>  /* packed YCbCr */
+>  #define DRM_FORMAT_YUYV		fourcc_code('Y', 'U', 'Y', 'V') /* [31:0] Cr0:Y1:Cb0:Y0 8:8:8:8 little endian */
+>  #define DRM_FORMAT_YVYU		fourcc_code('Y', 'V', 'Y', 'U') /* [31:0] Cb0:Y1:Cr0:Y0 8:8:8:8 little endian */
+> -- 
+> 2.34.1
 
-diff --git a/arch/arm64/boot/dts/freescale/s32g274a-evb.dts b/arch/arm64/boot/dts/freescale/s32g274a-evb.dts
-index 7ab917f547ef..b9a119eea2b7 100644
---- a/arch/arm64/boot/dts/freescale/s32g274a-evb.dts
-+++ b/arch/arm64/boot/dts/freescale/s32g274a-evb.dts
-@@ -39,5 +39,6 @@ &usdhc0 {
- 	pinctrl-1 = <&pinctrl_usdhc0_100mhz>;
- 	pinctrl-2 = <&pinctrl_usdhc0_200mhz>;
- 	disable-wp;
-+	no-1-8-v;
- 	status = "okay";
- };
-diff --git a/arch/arm64/boot/dts/freescale/s32g274a-rdb2.dts b/arch/arm64/boot/dts/freescale/s32g274a-rdb2.dts
-index 8739f63771bc..aaa61a8ad0da 100644
---- a/arch/arm64/boot/dts/freescale/s32g274a-rdb2.dts
-+++ b/arch/arm64/boot/dts/freescale/s32g274a-rdb2.dts
-@@ -45,5 +45,14 @@ &usdhc0 {
- 	pinctrl-1 = <&pinctrl_usdhc0_100mhz>;
- 	pinctrl-2 = <&pinctrl_usdhc0_200mhz>;
- 	disable-wp;
-+	/* Remove no-1-8-v to enable higher speed modes for SD card.
-+	 * However, this is not enough to enable HS400 or HS200 modes for eMMC.
-+	 * In this case, the position of the resistor R797 must be changed
-+	 * from A to B before removing the property.
-+	 * If the property is removed without changing the resistor position,
-+	 * HS*00 may be enabled, but the interface might be unstable because of
-+	 * the wrong VCCQ voltage applied to the eMMC.
-+	 */
-+	no-1-8-v;
- 	status = "okay";
- };
 -- 
-2.45.2
-
+Ville Syrjälä
+Intel
 
