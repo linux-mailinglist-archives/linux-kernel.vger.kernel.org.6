@@ -1,140 +1,123 @@
-Return-Path: <linux-kernel+bounces-308582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA030965F1B
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:28:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07D5C965F23
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:28:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 699241F21991
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:28:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F602288050
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:28:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7315517C9E3;
-	Fri, 30 Aug 2024 10:26:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45F27188CBC;
+	Fri, 30 Aug 2024 10:27:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FD45vVW/"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="EgYiu1u1"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A3C917BB0C
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 10:26:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D56B17B4FE;
+	Fri, 30 Aug 2024 10:27:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725013581; cv=none; b=aKQ6/Y/qUTlQCaKjtdiRKqX0G1fY+y6nTGcyqYq/kPgBuq2OplA9RgArAiryB0zG1JpxYE6/cJlsf2FKaG2FSmdXHGewEE5jPEutt54goHaT6tLazLzo4ivec/S3gwuHLpjRoqdeRXEiz4Y8aoo4DxP73DICrEaEWeYfqAP2ygA=
+	t=1725013639; cv=none; b=iral3qtZoIt9jVEj4YtZL0SX7UA4xBJPiJK9IcW38rQX/XYoNwStZHodfgG8sCl/LgGfRMfdR2QGkdC4RSs3xVraiid7a8qj6blPJXVpnKhLX/W90cu0lM4NvUMhByKAmntzVBrZ1fOA9+w/Eo+x1R2JHOQ4OXZE17lplt483UQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725013581; c=relaxed/simple;
-	bh=WQ99LJYivjNjc/YxBFt3pqsTi3RuoGAipkdSws+qEm8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NdVMlegWbT8tMv4UBjyKjW+6y6szbI/LWz6UtIdzFRy3EgrACuCtacrMqFEnb/yMgg67msBd89BER+lQlUJpiLYj+D/3Rb7r09u2XYQXsnGpzpFV28thOKFQDo4C8k+jT9YWeQr3Gw4EwCaLEY4mMq2MwVbMFy8jIq2MStmsCWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FD45vVW/; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-428243f928fso18499925e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 03:26:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725013578; x=1725618378; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Wn4eD9yWatFflL2/3CKv6e2tbHrAQe8FmHkt92+sPt4=;
-        b=FD45vVW/M9U/x4LU4WhZao9HoHd7uwDaRLLX7OmeKnYd1f9k3G5sEQ3iTHaC9GsuZv
-         f7sizrMi3cuujDs64Cw8xyp3UUoogOCIbU7K2XcvEtda0Cspck4JnAh8aCvtEK+QNVyv
-         Bhx+Wv8H7yva8o22GKfzN3ieWV/ZynWIO5tDj8hfFTsvTYCV07c0K8+6w+PGWPsZvazQ
-         vKCcmAi8nSIma1yKYgC8x88WybVtWTaRsykJe34tfs8JNtEuoqHswPzkMNZaqWOmM0eh
-         vB5I8rTPmSB5bN9WVofpWOx2T2GFD2ABFVY1KSuYjvc2C1h/fxnYeS18sJC5GVHOIgLi
-         5uOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725013578; x=1725618378;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Wn4eD9yWatFflL2/3CKv6e2tbHrAQe8FmHkt92+sPt4=;
-        b=u6SvYC1WoMmbWAvo+zP8RLFpi/s6UGkZaIYK4l0+cRHSGjrFh/6qFHNeRZCyojIZSO
-         X6pmTZND2t6G8KW24v8/Crwj8GFZnh2d1yaLMd5kFtONV9XS5jXNJaGuKjdOEwY/JyZ5
-         AXBEysjm/IQQdjo7X3zwdCT1zGULE9ODcWtAw4YmLz62mW9DInJrm8vDLat+YythoHVQ
-         RRhQAYyeK96WLSt7HReGvMFWqHT8jYC7skJLFblkNmiGq8qXWe5+RcAZflJxrweY81jr
-         f64pHQRmDeQD5gRlHMaSFPqLH8BJdFUiDAVbUOdecw/4VWcPgTJ3B9p7UIjubh4l5dQt
-         XyuA==
-X-Forwarded-Encrypted: i=1; AJvYcCU7h0wveYryh9juFNuE1+6U4dzYuPaWIbVXj0gYknzUPLKD+1dM8eCabEDshz7GHoxByY2XkFSa0toFfFo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyn/4FdpRjftK82LaQ3KxXR06IhDmFl7MwcvK5HTMbW973G8G+u
-	p09LwVzO2XhCXhcL83iu+SitnglmjGMR7ddHzxa4ANg275kQqWKdE73KRAIbqA==
-X-Google-Smtp-Source: AGHT+IHI/5ydMtgQPWhtQcchOILEP7cSDqvBil+uOoViRI+AG38bTMnFmDMcZTINUD1xJvmzIZz6LQ==
-X-Received: by 2002:a05:600c:3b10:b0:426:6ed5:fcb with SMTP id 5b1f17b1804b1-42bb01ae1fbmr57292825e9.4.1725013577995;
-        Fri, 30 Aug 2024 03:26:17 -0700 (PDT)
-Received: from google.com (203.75.199.104.bc.googleusercontent.com. [104.199.75.203])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ba7b4271fsm70580775e9.29.2024.08.30.03.26.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Aug 2024 03:26:17 -0700 (PDT)
-Date: Fri, 30 Aug 2024 11:26:12 +0100
-From: Vincent Donnefort <vdonnefort@google.com>
-To: Sebastian Ene <sebastianene@google.com>
-Cc: akpm@linux-foundation.org, alexghiti@rivosinc.com, ankita@nvidia.com,
-	ardb@kernel.org, catalin.marinas@arm.com,
-	christophe.leroy@csgroup.eu, james.morse@arm.com,
-	mark.rutland@arm.com, maz@kernel.org, oliver.upton@linux.dev,
-	rananta@google.com, ryan.roberts@arm.com, shahuang@redhat.com,
-	suzuki.poulose@arm.com, will@kernel.org, yuzenghui@huawei.com,
-	kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, kernel-team@android.com
-Subject: Re: [PATCH v9 5/5] KVM: arm64: Introduce the PTDUMP_STAGE2_DEBUGFS
- config
-Message-ID: <ZtGeRNhMv1f3M2lh@google.com>
-References: <20240827084549.45731-1-sebastianene@google.com>
- <20240827084549.45731-6-sebastianene@google.com>
+	s=arc-20240116; t=1725013639; c=relaxed/simple;
+	bh=n5x96yz0plQXi0jNRmIFh/xZ8EZ6kyjM+6+zAuiZYPs=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=k8vYOPHvyG3gpjrg+OezuPjMz/MTdfZ2QWe0G3YpPAQCBzmS++OEp+JT/0UBAVP1ezsBVPwbfRroQmbniBkePkR5egNI+TlKuWVMsvFnKJRw/yrly4bcn/W15anH4tB3QYAwHWIiG7Bj27hmA3OLMOG7AiFW1705KQdu5DK6KGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=EgYiu1u1; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47UARAb1059403;
+	Fri, 30 Aug 2024 05:27:10 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1725013630;
+	bh=SWIJULiquba5lxHob3BxH9YjKU7LdekAg30JvEMazqM=;
+	h=From:To:CC:Subject:Date;
+	b=EgYiu1u13UiA3sdBymMUKPXi1IixCWce0ZCt98bPQWK8ZcOofpOt/iGmZDggPpAhI
+	 hFSvaTRCq0jD1CI7DvvLtDQDsvCQRjhORQajSiQk2w6Siq06FLOR3gCG3skSPtXK1u
+	 6B3BLpRA7fJlRllmlDT4Yk7Ha4yVUe5eOxOSRXXM=
+Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47UARA1D125739;
+	Fri, 30 Aug 2024 05:27:10 -0500
+Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 30
+ Aug 2024 05:27:10 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 30 Aug 2024 05:27:10 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47UARAXX120457;
+	Fri, 30 Aug 2024 05:27:10 -0500
+From: Nishanth Menon <nm@ti.com>
+To: Conor Dooley <conor+dt@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Rob Herring <robh@kernel.org>
+CC: Tero Kristo <kristo@kernel.org>, Vignesh Raghavendra <vigneshr@ti.com>,
+        Nishanth Menon <nm@ti.com>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        Roger
+ Quadros <rogerq@kernel.org>
+Subject: [PATCH] arm64: dts: ti: k3-am642-evm-nand: Rename pinctrl node and gpio-hog names
+Date: Fri, 30 Aug 2024 05:27:09 -0500
+Message-ID: <20240830102709.3970209-1-nm@ti.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240827084549.45731-6-sebastianene@google.com>
+Organization: Texas Instruments, Inc.
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Tue, Aug 27, 2024 at 08:45:48AM +0000, Sebastian Ene wrote:
-> When this config is enabled, it exposes the stage-2 pagetable layout
-> through a debugfs file.
-> 
-> Signed-off-by: Sebastian Ene <sebastianene@google.com>
+Rename the pin mux and gpio-hog node names to match up with binding
+rules. This fixes dtbs_check warnings:
+'gpmc0-pins-default' does not match any of the regexes: '-pins(-[0-9]+)?$|-pin$', 'pinctrl-[0-9]+'
+'gpio0-36' does not match '^(hog-[0-9]+|.+-hog(-[0-9]+)?)$'
 
-It doesn't feel like having a separated patch for Kconfig brings anything and
-I would have squashed it with the previous change.
+Signed-off-by: Nishanth Menon <nm@ti.com>
+---
+Cc: Roger Quadros <rogerq@kernel.org>
 
-Otherwise:
+This is a trivial fix, so applying Fixes seemed over-board.
 
-Reviewed-by: Vincent Donnefort <vdonnefort@google.com>
+ arch/arm64/boot/dts/ti/k3-am642-evm-nand.dtso | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> ---
->  arch/arm64/kvm/Kconfig | 17 +++++++++++++++++
->  1 file changed, 17 insertions(+)
-> 
-> diff --git a/arch/arm64/kvm/Kconfig b/arch/arm64/kvm/Kconfig
-> index 8304eb342be9..ead632ad01b4 100644
-> --- a/arch/arm64/kvm/Kconfig
-> +++ b/arch/arm64/kvm/Kconfig
-> @@ -66,4 +66,21 @@ config PROTECTED_NVHE_STACKTRACE
->  
->  	  If unsure, or not using protected nVHE (pKVM), say N.
->  
-> +config PTDUMP_STAGE2_DEBUGFS
-> +	bool "Present the stage-2 pagetables to debugfs"
-> +	depends on KVM
-> +	depends on DEBUG_KERNEL
-> +	depends on DEBUG_FS
-> +	depends on GENERIC_PTDUMP
-> +	select PTDUMP_CORE
-> +	default n
-> +	help
-> +	  Say Y here if you want to show the stage-2 kernel pagetables
-> +	  layout in a debugfs file. This information is only useful for kernel developers
-> +	  who are working in architecture specific areas of the kernel.
-> +	  It is probably not a good idea to enable this feature in a production
-> +	  kernel.
-> +
-> +	  If in doubt, say N.
-> +
->  endif # VIRTUALIZATION
-> -- 
-> 2.46.0.295.g3b9ea8a38a-goog
-> 
+diff --git a/arch/arm64/boot/dts/ti/k3-am642-evm-nand.dtso b/arch/arm64/boot/dts/ti/k3-am642-evm-nand.dtso
+index f08c0e272b53..f91589818e32 100644
+--- a/arch/arm64/boot/dts/ti/k3-am642-evm-nand.dtso
++++ b/arch/arm64/boot/dts/ti/k3-am642-evm-nand.dtso
+@@ -12,7 +12,7 @@
+ #include "k3-pinctrl.h"
+ 
+ &main_pmx0 {
+-	gpmc0_pins_default: gpmc0-pins-default {
++	gpmc0_pins_default: gpmc0-default-pins {
+ 		bootph-all;
+ 		pinctrl-single,pins = <
+ 			AM64X_IOPAD(0x0094, PIN_INPUT, 7) /* (T19) GPMC0_BE1n.GPIO0_36 */
+@@ -50,7 +50,7 @@ AM64X_IOPAD(0x00a4, PIN_OUTPUT, 0) /* (N17) GPMC0_DIR */
+ };
+ 
+ &main_gpio0 {
+-	gpio0-36 {
++	gpmc0-hog {
+ 		bootph-all;
+ 		gpio-hog;
+ 		gpios = <36 0>;
+
+base-commit: d2bafcf224f3911b183113b2fcb536c9e90684a3
+prerequisite-patch-id: a9c45d98345ca492c945cd5050191ad605de242b
+-- 
+2.46.0
+
 
