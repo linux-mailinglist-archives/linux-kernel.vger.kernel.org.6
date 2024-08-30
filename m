@@ -1,113 +1,110 @@
-Return-Path: <linux-kernel+bounces-308291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F7449659DD
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:16:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6B3C9659E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:16:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F412B23222
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 08:16:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7287A28964D
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 08:16:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B4AB16DC26;
-	Fri, 30 Aug 2024 08:15:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F4F616E862;
+	Fri, 30 Aug 2024 08:15:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ERpoDkUg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="OV4pZMn5"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE0A416D9B8
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 08:15:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC6E6145FE5;
+	Fri, 30 Aug 2024 08:15:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725005707; cv=none; b=ojVd3aawEPRBk55WTLsPvg9zEgXGfSpJm5tOW72gTLhie40iMpAvcWWzv1/p+zJ59S2Xk/xm0yu++qeOSNfp12bkSMXp0DVCqggfwHDZ897pEHvrGzuAFechn78nj+HBWIz56zWmi1McYDiDyDSQq834uz9L+aV4AtUpW9p24FI=
+	t=1725005718; cv=none; b=Nam2HWrZZTt8lu+q0zPdC/t6PiHzD/p+Swp3ozZP9nSnFBi7Pu8a4TbiAjQdtPnTLD/0TlUWeoYmLrUOoWvWJ7OxKXhwW01jRvR8EnXcVCD6evhoH5xdXf6UGo8fz5QTtFO/8BHS6bf6fx61ZkpV68IVUod9sZozgrBVbncSHrw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725005707; c=relaxed/simple;
-	bh=qPF+SE/ZS1bZ4RP2qS5zH7GzisZUNjOOKL3u+ENBFgo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NtUBOryAhQW3Af0Gi/ZSP5texbSxj8aJGqvo7PQJW3z7EGs2lQZmmVibrHJVhBtbSpACKgYyVGm7PIDSUX6L6jAtd0Dn+64uZdpr+OfPwC5SvIfztfFHDzaDDkQfSiLaqcFGdy2xIaQNOgbVFsa/KBang+MK87NnE+3NkwKeRXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ERpoDkUg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DB74C4AF0C
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 08:15:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725005707;
-	bh=qPF+SE/ZS1bZ4RP2qS5zH7GzisZUNjOOKL3u+ENBFgo=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=ERpoDkUgCz9ox9sNSKkuN45U5mLTlL0lHdrgjx9gntxlpQOCWHKAh+z3pQcYp8uKT
-	 9fZKmA4j3T50CLUhRbGXWdNjKY4kTZZizmq/LjVpNJ0R2e19TBAf1+5vEoDnPEsZt7
-	 caAhYG+UPoVTgV/PJmD2KXuFkCHGu7EQM3Qoylzy6GyFr0LsFbk5u7LLpUvbH0HlBp
-	 4PhehkEzC233hC47kNsQljeEIEa/Iax24YihguvQqEH08581CY7k5bSoVXrXntqfCy
-	 dNs+tVZqmC9IrpWExadPNyMgq8hL9Zx/4x76lTK0yfdd3NqMPAfXgpDFnxaHQh1XSx
-	 89sJiyXzAMaeA==
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2f401c20b56so22500491fa.0
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 01:15:07 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVFEEbbk2ifeoT71KyxT3SptqvJYtbVrr13h9l7q4b1876vrPG9SYgOybheeqnjYFnNP/9X5jw0fZNsU2w=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxe41gpbSoxppovcNBXlb60l6074tBw8WqJkHn2hm090lM5bQtC
-	p0Edif55Ff/1Exs9EtT/FqNXyDyfynM9jfTR8A7zE7qAQI/z1F53fJLWQnvrfB43cQoHUFk0xh6
-	HJQbsvf4AeyDlVwcHfUBxsvQ55no=
-X-Google-Smtp-Source: AGHT+IGaoNywe2WLkPQn2rHBMQhYNNd3kvikRfVNi9+Laag9UZfnfSzA2+5RrriZvtP5GexEVNoHLdQAEhAeD9PIpZg=
-X-Received: by 2002:a05:6512:1396:b0:533:426a:d52f with SMTP id
- 2adb3069b0e04-5353ebafce7mr2008067e87.11.1725005705524; Fri, 30 Aug 2024
- 01:15:05 -0700 (PDT)
+	s=arc-20240116; t=1725005718; c=relaxed/simple;
+	bh=PfHArUCNsji7Qaj8ax6hw5+hylGxkzu9WNEGxCTgLaw=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=gNcDwA58SUEutPnREY86qxoy731VEjKWCzi7jiFbG8NDvuso4oXlqIdx6UpCz4+rja225kWNbQlJlb1MZ/L0bm5sunSHXd3VEEcO+Ji2X1g6cPVvJ55i/ilblaBxLOp1iR2TaenQNTPGXPik1OwvIkuYX9YUbq08DGQZ/dwJno4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=OV4pZMn5; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1725005716; x=1756541716;
+  h=from:subject:date:message-id:mime-version:
+   content-transfer-encoding:to:cc;
+  bh=PfHArUCNsji7Qaj8ax6hw5+hylGxkzu9WNEGxCTgLaw=;
+  b=OV4pZMn5bUciz7hcFlbcpJCWWUBLzJ7gmXSwadnUNWrhJXY2ECxijzi4
+   eYEHcN+dAxZQxax4fmydOC3+bqojyhrQHSPVt8QiwDeN8Z7hj0/o9jc/A
+   ueG+rhj5hwcRgPRZpZIxa5HXL8IA2APEGAdAnK14RQwQFY+dmpogKVHud
+   MpnRL+3WRenGxaq5vopHGIjRMxzOI15d9nsPn92xlAz2o5j0pxPmnug26
+   zHS6HI1OAmwg/FoAGDsH59VxEHJcmpe7FhPjRqvPypKm2NmhuicbN8OYn
+   KZgs+iLmHhzC1YejaIdZEzwt7E/ewj3UgjfE9YIFS6Kx1NtQCosm9GUbR
+   A==;
+X-CSE-ConnectionGUID: VAeSbLWdTTSEy+nkApU6cw==
+X-CSE-MsgGUID: 6kyWpNZIQDmjs3DNedyvWA==
+X-IronPort-AV: E=Sophos;i="6.10,188,1719903600"; 
+   d="scan'208";a="34149871"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 30 Aug 2024 01:15:15 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Fri, 30 Aug 2024 01:15:10 -0700
+Received: from che-lt-i70843lx.mchp-main.com (10.10.85.11) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
+ 15.1.2507.35 via Frontend Transport; Fri, 30 Aug 2024 01:15:05 -0700
+From: Dharma Balasubiramani <dharma.b@microchip.com>
+Subject: [PATCH 0/2] Update sdhci-atmel dt-binding documentation
+Date: Fri, 30 Aug 2024 13:44:57 +0530
+Message-ID: <20240830-atmel-sdhci-v1-0-01e3ec8c9804@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240830080020.33666-1-rongqianfeng@vivo.com>
-In-Reply-To: <20240830080020.33666-1-rongqianfeng@vivo.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Fri, 30 Aug 2024 10:14:54 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXGhiz5SHxABi5UwZvd_Lx-EpvfQ2_isPu-X7jmi3dogdg@mail.gmail.com>
-Message-ID: <CAMj1kXGhiz5SHxABi5UwZvd_Lx-EpvfQ2_isPu-X7jmi3dogdg@mail.gmail.com>
-Subject: Re: [PATCH] arm64/mm: Delete __init region from memblock.reserved
-To: Rong Qianfeng <rongqianfeng@vivo.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Baoquan He <bhe@redhat.com>, 
-	Petr Tesarik <ptesarik@suse.com>, Baruch Siach <baruch@tkos.co.il>, 
-	"Mike Rapoport (IBM)" <rppt@kernel.org>, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, opensource.kernel@vivo.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAIF/0WYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDC2MD3cSS3NQc3eKUjORM3WTLREujJHNDAzMjEyWgjoKi1LTMCrBp0bG
+ 1tQAtHdlBXQAAAA==
+To: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>, Alexandre Belloni
+	<alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Aubin Constans <aubin.constans@microchip.com>
+CC: <linux-mmc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	Dharma Balasubiramani <dharma.b@microchip.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1725005704; l=650;
+ i=dharma.b@microchip.com; s=20240209; h=from:subject:message-id;
+ bh=PfHArUCNsji7Qaj8ax6hw5+hylGxkzu9WNEGxCTgLaw=;
+ b=xuunt1qKYh/CxFxG1Otc8rzrVLQAdVWaQ88Zq0afbCUpdOrpwXBa8pE59KojYsDokKlrHINVV
+ 6hoqS4fxOadDuQtxGH7DFM8rHjUYJ22dIu+X99wI9tlPRoZWUXhvfrp
+X-Developer-Key: i=dharma.b@microchip.com; a=ed25519;
+ pk=kCq31LcpLAe9HDfIz9ZJ1U7T+osjOi7OZSbe0gqtyQ4=
 
-Hi Rong,
+This patch series converts the sdhci-atmel dt-binding to yaml format and adds
+the sama7d65,sama7g5 compatibles to the list.
 
-On Fri, 30 Aug 2024 at 10:00, Rong Qianfeng <rongqianfeng@vivo.com> wrote:
->
-> If CONFIG_ARCH_KEEP_MEMBLOCK is enabled, the memory information in
-> memblock will be retained. We release the __init memory here, and
-> we should also delete the corresponding region in memblock.reserved.
->
-> Signed-off-by: Rong Qianfeng <rongqianfeng@vivo.com>
-> ---
->  arch/arm64/mm/init.c | 7 +++++++
->  1 file changed, 7 insertions(+)
->
-> diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
-> index bfb10969cbf0..99cfa217e905 100644
-> --- a/arch/arm64/mm/init.c
-> +++ b/arch/arm64/mm/init.c
-> @@ -402,6 +402,13 @@ void __init mem_init(void)
->
->  void free_initmem(void)
->  {
-> +       if (IS_ENABLED(CONFIG_ARCH_KEEP_MEMBLOCK)) {
+Signed-off-by: Dharma Balasubiramani <dharma.b@microchip.com>
+---
+Dharma Balasubiramani (2):
+      dt-bindings: mmc: sdhci-atmel: Convert to json schema
+      dt-bindings: mmc: atmel,sama5d2-sdhci: Add sama7d65 compatible
 
-This is always true on arm64
+ .../bindings/mmc/atmel,sama5d2-sdhci.yaml          | 103 +++++++++++++++++++++
+ 1 file changed, 103 insertions(+)
+---
+base-commit: 985bf40edf4343dcb04c33f58b40b4a85c1776d4
+change-id: 20240830-atmel-sdhci-c9a92b710624
 
-> +               unsigned long aligned_begin = ALIGN_DOWN((u64)__init_begin, PAGE_SIZE);
-> +               unsigned long aligned_end = ALIGN((u64)__init_end, PAGE_SIZE);
-> +
-> +               memblock_free((void *)aligned_begin, aligned_end - aligned_begin);
-> +       }
-> +
+Best regards,
+-- 
+Dharma Balasubiramani <dharma.b@microchip.com>
 
-What does this achieve? The memory is already being reused by the page
-allocator (due to free_reserved_area()), and the memblock allocator is
-no longer usable at this point anyway.
-
->         free_reserved_area(lm_alias(__init_begin),
->                            lm_alias(__init_end),
->                            POISON_FREE_INITMEM, "unused kernel");
 
