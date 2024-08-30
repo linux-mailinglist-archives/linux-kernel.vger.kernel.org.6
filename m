@@ -1,63 +1,55 @@
-Return-Path: <linux-kernel+bounces-309473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8563B966B05
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 22:56:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA1DA966B07
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 22:57:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4282928167E
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 20:56:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DCB8F1C219A7
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 20:57:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 011011C0DDE;
-	Fri, 30 Aug 2024 20:56:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 297CD1C0DE0;
+	Fri, 30 Aug 2024 20:57:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="gmGMHDFE"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hxdt0rhJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7E5C15C153;
-	Fri, 30 Aug 2024 20:56:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 651DE1BDAB5;
+	Fri, 30 Aug 2024 20:57:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725051377; cv=none; b=JJoUBj2ehAZwlGIFOKRSAqTtrRyp6nVp2WR+0aeq1FPuzjqh6R0TMYddp5QEFlovhyRyRT89EZFiMJBIwMq0yzOwiN8hyYh3/H24Fx3w1Yrr/HpkhLbagWotU9cT02NA6xvQRsdo4VUq3mu85uQjx6Dk38i+CrlOoGaykKmJQl4=
+	t=1725051456; cv=none; b=apbF7CjXCUf+pmItafUpLHn1y8GOLAqYVY0V13tIMxFbBXWAYXTDIzuNHAAB6vGycZ7J6X6NhkhAueYFXb0akIY0oDG/xPF7E272bIuJlo6jdnI0zWBrrnZzFpLudnOxtdRq3FRiwfX7NqK7sXSe4xaWd5s6E/e2rL6S06z2QXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725051377; c=relaxed/simple;
-	bh=1tx2x86giGSIv8JiQzXU/mxGEbNA9IFBR5H8EhMpjBs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PUktF55J+bWy1pS5r2E9SflUnu3uAj2Gzx58GIzlNf4UU0Dmja1X+5tF1VKvI7NzILCe1lIzkObSHbMMRersiozgzzC0jjEvn8nqaQF4V+6kqP3+i3QmaZIo1s2P87IodXQi1AnvRMW35t3BuS7qDeJS1CQ1dd5haAIhjh+E8iA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=gmGMHDFE; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=UVZGQRW9Ken7HNme42NE5TCtOSWgwWn4aMTFggNfm8o=; b=gmGMHDFEQNAMv7GhbyEDmEOg66
-	2VAQCZWXcEUO52EhEqYUoKTQ+iuLfst/vYC2qnhAQlw3DA6dWXV3vIgPodRHgSpmeCMaTyy1QYMQt
-	LDKodTXriAX8VpKwPKvO/KaVyP0BFEbo3AS7EfrLRg9DnSpj3kgQuPZR9eSwxGcTF/ok=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sk8f9-006AD4-C9; Fri, 30 Aug 2024 22:56:07 +0200
-Date: Fri, 30 Aug 2024 22:56:07 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc: davem@davemloft.net, Pantelis Antoniou <pantelis.antoniou@gmail.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
-	Herve Codina <herve.codina@bootlin.com>,
-	Simon Horman <horms@kernel.org>, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH net-next v2 1/7] net: ethernet: fs_enet: convert to SPDX
-Message-ID: <65bccc31-4756-45ea-ae81-a0686c632229@lunn.ch>
-References: <20240829161531.610874-1-maxime.chevallier@bootlin.com>
- <20240829161531.610874-2-maxime.chevallier@bootlin.com>
+	s=arc-20240116; t=1725051456; c=relaxed/simple;
+	bh=U4FLLiC46YTJ1zWKSr1e04/tjfLXMDEd1NZ5lGlraVE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=SQcWr6deMrbOP+lhOHKWVw5OtbrXyki0GtwYBPrRQ/yOoSjL0XnJI65o62bzs1kog71zJsryP4Om9Uowrjm/Y2iu7oCXdSRtNeuTM8rztFFnjk/qEunEijWqtszUBZXOGtneL2ls70lMGSAJOkM/uUToCuJ6nfLEQ3x4WXUdToM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hxdt0rhJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A81D7C4CEC2;
+	Fri, 30 Aug 2024 20:57:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725051456;
+	bh=U4FLLiC46YTJ1zWKSr1e04/tjfLXMDEd1NZ5lGlraVE=;
+	h=Date:From:To:Cc:Subject:From;
+	b=hxdt0rhJ6o2njsxXo7SY61hN0A9XCEH9oQcSC2yxtjK+Lc/ViihufOlNb8QMUlThU
+	 CmfHxUDTqt63ZZcNLz3xBayAUIWJec8CtSKqgcza/UfE1ZHcOnp8Za6m4bZ/sWt1Ft
+	 ZkuBEbxeUqVn//gEDXLXhlnV0LLXL3IP/6wCe+qkNaHWyBQcz2QgFpW9QBPpXFyMRK
+	 0OXQjdoptObJRQsEyaRNWHc/TBtgct7ClP2Qw37BkUAjx6Sf+RBEnJH1g0oHzHUJLo
+	 SiXMA45/Kq6q2eJeS4WnsTW2L5g0O/BSdF3hRkXZuA8MqVQe2E4gJh+TSJLeLqA9aR
+	 K4nvdEaus6XNA==
+Date: Fri, 30 Aug 2024 15:57:33 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Frank Li <Frank.Li@nxp.com>
+Subject: [GIT PULL] PCI fixes for v6.11
+Message-ID: <20240830205733.GA126293@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,17 +58,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240829161531.610874-2-maxime.chevallier@bootlin.com>
 
-On Thu, Aug 29, 2024 at 06:15:24PM +0200, Maxime Chevallier wrote:
-> The ENET driver has SPDX tags in the header files, but they were missing
-> in the C files. Change the licence information to SPDX format.
-> 
-> Acked-by: Christophe Leroy <christophe.leroy@csgroup.eu>
-> Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
-> Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+  Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
 
-    Andrew
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git pci-v6.11-fixes-2
+
+for you to fetch changes up to 150b572a7c1df30f5d32d87ad96675200cca7b80:
+
+  MAINTAINERS: PCI: Add NXP PCI controller mailing list imx@lists.linux.dev (2024-08-30 13:07:21 -0500)
+
+----------------------------------------------------------------
+- Add Manivannan Sadhasivam as PCI native host bridge and endpoint driver
+  reviewer (Manivannan Sadhasivam)
+
+- Disable MHI RAM data parity error interrupt for qcom SA8775P SoC to work
+  around hardware erratum that causes a constant stream of interrupts
+  (Manivannan Sadhasivam)
+
+- Don't try to fall back to qcom Operating Performance Points (OPP) support
+  unless the platform actually supports OPP (Manivannan Sadhasivam)
+
+- Add imx@lists.linux.dev mailing list to MAINTAINERS for NXP layerscape
+  and imx6 PCI controller drivers (Frank Li)
+
+----------------------------------------------------------------
+Frank Li (1):
+      MAINTAINERS: PCI: Add NXP PCI controller mailing list imx@lists.linux.dev
+
+Manivannan Sadhasivam (3):
+      MAINTAINERS: Add Manivannan Sadhasivam as Reviewer for PCI native host bridge and endpoint drivers
+      PCI: qcom-ep: Disable MHI RAM data parity error interrupt for SA8775P SoC
+      PCI: qcom: Use OPP only if the platform supports it
+
+ MAINTAINERS                               |  3 +++
+ drivers/pci/controller/dwc/pcie-qcom-ep.c | 13 +++++++++++++
+ drivers/pci/controller/dwc/pcie-qcom.c    |  7 +++++--
+ 3 files changed, 21 insertions(+), 2 deletions(-)
 
