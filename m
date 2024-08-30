@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-309462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61721966AF4
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 22:52:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6567966AF5
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 22:52:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB617B219D2
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 20:52:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A348C283964
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 20:52:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 929AA1C1ACB;
-	Fri, 30 Aug 2024 20:51:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1163F1C1ADF;
+	Fri, 30 Aug 2024 20:51:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KF6V+2LU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LuY3lw/o"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C082A1C1AB3;
-	Fri, 30 Aug 2024 20:51:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58D301C0DC5
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 20:51:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725051105; cv=none; b=L2g0/GhQ0ESn8/zG3ViPZxfDejqUlowCaRQEjejcubKgH6HQrh9k12aIx5ruae9YMH5T5/T726uvWa2QUR0rM/+1LNhk2Vil/pydZ/ZnCF0dugFveneatVPg/M0g78KYyGtt/6/ZgLFQue1d7LVaxdKKDRIid9UbREslP2WCEJ0=
+	t=1725051107; cv=none; b=tpEz1KN3rFUTYl+iLYx9F9VirosvEHzijlhuaFU98gR92qt8jSPPps/0NFWH94nbNZ/naxh+4yKr1/4UEe7memB4TqVxbXJGzmVB9eSqUHGT/ZNrykOCbEivv7UMhblViBwD9SsXTSSfjJQH4VlPISIhauZBNAb9VhfPXK6cyis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725051105; c=relaxed/simple;
-	bh=tQRa7q0D+LkWLy/OI2DyVMxkZHU1QU8d28Z3XzOwl90=;
+	s=arc-20240116; t=1725051107; c=relaxed/simple;
+	bh=+uGLknkE6IoO7a90AR+5N+DJ4wXbk1knYsF6gQ4Z0iU=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=cGj0/8SHIuZfPGYncluE5XWsTeT3RYCplJ1WNVMEjx+kcW0VTNh/iKJBrHMi26dWFAStFp8i/90zKQ83ZoJh4MsrUk30os7QChqW/VZNCx25DGDVywJDx2S6LbNyU3HZzkm/9VFb/J93cA6h/YXoeP8zgl3FwHhMh1hHoU7l6hk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KF6V+2LU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BF52C4CEC2;
-	Fri, 30 Aug 2024 20:51:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725051105;
-	bh=tQRa7q0D+LkWLy/OI2DyVMxkZHU1QU8d28Z3XzOwl90=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=KF6V+2LUggpoxduIVgSjPBj9ABhgGMXDEoPRaogn0sAWI+CGGYjfuuZhHGf1r5hW2
-	 TfgaB+e1PFbZROMBvLetywx1IXyGfwBMtA1NBM0BOkJySLwUu9mmhGA53/lHeUD/Ae
-	 xiT3yxk/uIicALyS4A/udF9W7fOCpS3wfkI6SGxz1wQ1Q8y8uX/kNLewAqkkPYjH6z
-	 rRmjmwf2Jo9rVPn5Sanbf54gRIOkCObjU8QTeK+G3u1z9Cpxynx4PpX5bfWcAdhOeO
-	 XgazP+c4L2iJNsmSURTTpb+adhPkLsTuOzSPH7hw7dxQchFHZ+Pz8VtLghPcOSJXV1
-	 P2czZgwDsal2w==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAE223809A80;
+	 In-Reply-To:To:Cc; b=JlIK1IMhoOX6DbEzPledO+tsO0P7syEcSr/VbOPwTDmqJnUy9zON5Agy80ZnQofpaOLKR7nw5D6xvBsSWkPNKqc1jk39z8FUHk7TDjat3l19s9J032l2auR8YEodqVba/OS/wYEmdMciZJnfWFnz6eZVqtDOmt/w2H4+mzbbJvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LuY3lw/o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3921C4CEC6;
 	Fri, 30 Aug 2024 20:51:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725051106;
+	bh=+uGLknkE6IoO7a90AR+5N+DJ4wXbk1knYsF6gQ4Z0iU=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=LuY3lw/o8cVgpsG0zbxiatyxvXTQqqsXeepFteXMMYvxLJCC0o2bVYp081n77XiWI
+	 VOHpM4dQUlKXlDyLPShI+nnB+JNP4895XkICs1aSsmfL4fZzx/Dgm4raGw3QAwD7Xv
+	 buQKS79wFpF2mQBvTzh0vJYznWS+1/lngLkTxpz+JMpMlCPFd5i+5zTvNTF9DW51Dc
+	 aXX0aPhDtuHfTpuZ6WsY7V9d15K2i9h3IbBhoE1hsWwx9+OVb9cWvPWpCSCiS2i0GY
+	 kerj/6Ft2ze9AA83B9gKwUBPIQb1CLGVHY4y5snf+9lCuUnrxDf9asWEBEyqKDc0GP
+	 W6RZcQplP69sg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70ECC3809A80;
+	Fri, 30 Aug 2024 20:51:48 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,15 +51,15 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [f2fs-dev] [PATCH] f2fs: Use sysfs_emit_at() to simplify code
+Subject: Re: [f2fs-dev] [PATCH RESEND] f2fs: Use sysfs_emit_at() to simplify code
 From: patchwork-bot+f2fs@kernel.org
 Message-Id: 
- <172505110550.2712133.8948730888225333311.git-patchwork-notify@kernel.org>
-Date: Fri, 30 Aug 2024 20:51:45 +0000
-References: <0afb817e75a84859e1a86e1a7ba2041a9b852b6e.1723117820.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <0afb817e75a84859e1a86e1a7ba2041a9b852b6e.1723117820.git.christophe.jaillet@wanadoo.fr>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: jaegeuk@kernel.org, chao@kernel.org, kernel-janitors@vger.kernel.org,
+ <172505110700.2712133.2963157749047738751.git-patchwork-notify@kernel.org>
+Date: Fri, 30 Aug 2024 20:51:47 +0000
+References: <20240815004728.983290-1-chao@kernel.org>
+In-Reply-To: <20240815004728.983290-1-chao@kernel.org>
+To: Chao Yu <chao@kernel.org>
+Cc: jaegeuk@kernel.org, christophe.jaillet@wanadoo.fr,
  linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
 Hello:
@@ -67,18 +67,18 @@ Hello:
 This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Thu,  8 Aug 2024 13:50:46 +0200 you wrote:
+On Thu, 15 Aug 2024 08:47:28 +0800 you wrote:
+> From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> 
 > This file already uses sysfs_emit(). So be consistent and also use
 > sysfs_emit_at().
 > 
 > This slightly simplifies the code and makes it more readable.
 > 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> 
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev] f2fs: Use sysfs_emit_at() to simplify code
+  - [f2fs-dev,RESEND] f2fs: Use sysfs_emit_at() to simplify code
     https://git.kernel.org/jaegeuk/f2fs/c/f7a678bbe5a8
 
 You are awesome, thank you!
