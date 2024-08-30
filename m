@@ -1,97 +1,299 @@
-Return-Path: <linux-kernel+bounces-308908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C473296638F
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 16:00:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E25C966396
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 16:01:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0229B1C231F7
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 14:00:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA051B20A1C
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 14:01:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A0541B151B;
-	Fri, 30 Aug 2024 13:59:59 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 310871AF4F8;
+	Fri, 30 Aug 2024 14:01:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="TNOLma2S"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C79921B013F;
-	Fri, 30 Aug 2024 13:59:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 599CC14C583;
+	Fri, 30 Aug 2024 14:01:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725026399; cv=none; b=X6gBUh9LGJvsSIzoE3YTQt3eVOW86mBJ6QHvwmOgRUvnp3NUoifot6JBFw0IwMuhMRyWnL7qSSbdlk402e8MlKc9+uymhuKo19XxOU43LQX6Raod1g6fbse0jVewJCS4zImGflX57xr0JDdyQxd4txkDC3NzdejPzzY2Yq3NqK4=
+	t=1725026475; cv=none; b=gtGO/vZKFuOdEvwxTHA5zhN7QKGcgb3HH+GrZvDF7dlZtvU6MTM30co8l7MIcUkxZd4jj9PJI67fBTffp1B0V1dB+r/b01JvYpOH7ZILjbfcUAKCrf3Cxd0NHETLAYnL6yP92FXoVzC4/lW6az/63ud4rMxAg5SrizUb0d3UFPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725026399; c=relaxed/simple;
-	bh=bselyroxCpJGOSKatFYEgv8MGFuDJbZUWr4MgP+zWbo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lhnBxwqi/3VUhFyhqrIlOtjT0AxDrcBEuLP8eSW5AUNVPy27jZATMh7P/B/fRg7OlDJ3VKuT5dRkt9wl0FATszMWFjhnWA2/6oY1RTfXU7QIlIWZPQJQWoBbdyDdoLcIqwiFTnF4TmaMDksoFH3q8vZQx8a1ooBOs7tYwDI9GOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
-	by APP-05 (Coremail) with SMTP id zQCowAD33zpQ0NFmzL19Cw--.1712S2;
-	Fri, 30 Aug 2024 21:59:50 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: broonie@kernel.org,
-	grant.likely@secretlab.ca,
-	akpm@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org,
-	Ma Ke <make24@iscas.ac.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH] powerpc/5200: handle irq_of_parse_and_map() errors
-Date: Fri, 30 Aug 2024 21:59:43 +0800
-Message-Id: <20240830135943.3443245-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1725026475; c=relaxed/simple;
+	bh=C3Z5y1dZOZfTSlzzdZ3/9AIABWli/jqJ/ZeVwJiVOQQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hdZnvU7jra3jzFDehsjF7GyajrPQdpw0naQ5lOj24K/78ohO/lNr3qx8TLTmyxAxdUCmVz5qpWv71fauDbAxkQMB7ibkiLxCwWUQz7Wb/iffNGdcNqa7NRn82qvtsZEd/BxesjtAKwHUAT4WCgk0qql7/PJ6PPbUo7BP4tj+B5A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=TNOLma2S; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=WqHlY3J3Gy3ZFqJuFIwq7pRT1lHolLR9IJzBOcAVQGY=; b=TNOLma2SJCXG8AVIBzYNlsD/xa
+	G46eYL+kNlkblraHzw4xj3BvIhUjBKU0zFjC8/5uhvpkXLRpPiX0r4geWa2IL+AchJv+wxHeKHvOp
+	O6jT3vxgUrot0IHKuv1DAFxHZ8l0+RZ89DCe19uS35vDVoEzlkgC4P0WwjzmaPk+g4Ow=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sk2BH-0068Ei-UX; Fri, 30 Aug 2024 16:00:51 +0200
+Date: Fri, 30 Aug 2024 16:00:51 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Roger Quadros <rogerq@kernel.org>
+Cc: MD Danish Anwar <danishanwar@ti.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Jan Kiszka <jan.kiszka@siemens.com>,
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	Jacob Keller <jacob.e.keller@intel.com>,
+	Diogo Ivo <diogo.ivo@siemens.com>, Simon Horman <horms@kernel.org>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Paolo Abeni <pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, srk@ti.com,
+	Vignesh Raghavendra <vigneshr@ti.com>
+Subject: Re: [PATCH net-next v3 3/6] net: ti: icssg-prueth: Add support for
+ HSR frame forward offload
+Message-ID: <177dd95f-8577-4096-a3e8-061d29b88e9c@lunn.ch>
+References: <20240828091901.3120935-1-danishanwar@ti.com>
+ <20240828091901.3120935-4-danishanwar@ti.com>
+ <22f5442b-62e6-42d0-8bf8-163d2c4ea4bd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowAD33zpQ0NFmzL19Cw--.1712S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7JrWfuF17Kr4DCryUGr17KFg_yoWDXrcEka
-	12gry7XrW8AFs3t3WSgr4rZryjqr4fAF1vq3yDta9xK39xuFyIvr4v9F98WFsrCryUAFyx
-	C3y7GryUArn3JjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbVkFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
-	Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
-	0DM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
-	64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8Jw
-	Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAG
-	YxC7MxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r
-	1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CE
-	b7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0x
-	vE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAI
-	cVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2Kf
-	nxnUUI43ZEXa7VUjJ3vUUUUUU==
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <22f5442b-62e6-42d0-8bf8-163d2c4ea4bd@kernel.org>
 
-Zero and negative number is not a valid IRQ for in-kernel code and the
-irq_of_parse_and_map() function returns zero on error.  So this check for
-valid IRQs should only accept values > 0.
+On Fri, Aug 30, 2024 at 04:27:34PM +0300, Roger Quadros wrote:
+> 
+> 
+> On 28/08/2024 12:18, MD Danish Anwar wrote:
+> > Add support for offloading HSR port-to-port frame forward to hardware.
+> > When the slave interfaces are added to the HSR interface, the PRU cores
+> > will be stopped and ICSSG HSR firmwares will be loaded to them.
+> > 
+> > Similarly, when HSR interface is deleted, the PRU cores will be stopped
+> > and dual EMAC firmware will be loaded to them.
+> 
+> And what happens if we first started with switch mode and then switched to HSR mode?
+> Is this case possible and if yes should it revert to the last used mode
+> instead of forcing to dual EMAC mode?
+> 
+> > 
+> > This commit also renames some APIs that are common between switch and
+> > hsr mode with '_fw_offload' suffix.
+> > 
+> > Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
+> > ---
+> >  .../net/ethernet/ti/icssg/icssg_classifier.c  |   1 +
+> >  drivers/net/ethernet/ti/icssg/icssg_config.c  |  18 +--
+> >  drivers/net/ethernet/ti/icssg/icssg_prueth.c  | 117 +++++++++++++++++-
+> >  drivers/net/ethernet/ti/icssg/icssg_prueth.h  |   6 +
+> >  4 files changed, 130 insertions(+), 12 deletions(-)
+> > 
+> > diff --git a/drivers/net/ethernet/ti/icssg/icssg_classifier.c b/drivers/net/ethernet/ti/icssg/icssg_classifier.c
+> > index 9ec504d976d6..833ca86d0b71 100644
+> > --- a/drivers/net/ethernet/ti/icssg/icssg_classifier.c
+> > +++ b/drivers/net/ethernet/ti/icssg/icssg_classifier.c
+> > @@ -290,6 +290,7 @@ void icssg_class_set_host_mac_addr(struct regmap *miig_rt, const u8 *mac)
+> >  		     mac[2] << 16 | mac[3] << 24));
+> >  	regmap_write(miig_rt, MAC_INTERFACE_1, (u32)(mac[4] | mac[5] << 8));
+> >  }
+> > +EXPORT_SYMBOL_GPL(icssg_class_set_host_mac_addr);
+> >  
+> >  void icssg_class_set_mac_addr(struct regmap *miig_rt, int slice, u8 *mac)
+> >  {
+> > diff --git a/drivers/net/ethernet/ti/icssg/icssg_config.c b/drivers/net/ethernet/ti/icssg/icssg_config.c
+> > index dae52a83a378..7b2e6c192ff3 100644
+> > --- a/drivers/net/ethernet/ti/icssg/icssg_config.c
+> > +++ b/drivers/net/ethernet/ti/icssg/icssg_config.c
+> > @@ -107,7 +107,7 @@ static const struct map hwq_map[2][ICSSG_NUM_OTHER_QUEUES] = {
+> >  	},
+> >  };
+> >  
+> > -static void icssg_config_mii_init_switch(struct prueth_emac *emac)
+> > +static void icssg_config_mii_init_fw_offload(struct prueth_emac *emac)
+> >  {
+> >  	struct prueth *prueth = emac->prueth;
+> >  	int mii = prueth_emac_slice(emac);
+> > @@ -278,7 +278,7 @@ static int emac_r30_is_done(struct prueth_emac *emac)
+> >  	return 1;
+> >  }
+> >  
+> > -static int prueth_switch_buffer_setup(struct prueth_emac *emac)
+> > +static int prueth_fw_offload_buffer_setup(struct prueth_emac *emac)
+> >  {
+> >  	struct icssg_buffer_pool_cfg __iomem *bpool_cfg;
+> >  	struct icssg_rxq_ctx __iomem *rxq_ctx;
+> > @@ -424,7 +424,7 @@ static void icssg_init_emac_mode(struct prueth *prueth)
+> >  	icssg_class_set_host_mac_addr(prueth->miig_rt, mac);
+> >  }
+> >  
+> > -static void icssg_init_switch_mode(struct prueth *prueth)
+> > +static void icssg_init_fw_offload_mode(struct prueth *prueth)
+> >  {
+> >  	u32 addr = prueth->shram.pa + EMAC_ICSSG_SWITCH_DEFAULT_VLAN_TABLE_OFFSET;
+> >  	int i;
+> > @@ -455,8 +455,8 @@ int icssg_config(struct prueth *prueth, struct prueth_emac *emac, int slice)
+> >  	struct icssg_flow_cfg __iomem *flow_cfg;
+> >  	int ret;
+> >  
+> > -	if (prueth->is_switch_mode)
+> > -		icssg_init_switch_mode(prueth);
+> > +	if (prueth->is_switch_mode || prueth->is_hsr_offload_mode)
+> > +		icssg_init_fw_offload_mode(prueth);
+> >  	else
+> >  		icssg_init_emac_mode(prueth);
+> >  
+> > @@ -472,8 +472,8 @@ int icssg_config(struct prueth *prueth, struct prueth_emac *emac, int slice)
+> >  	regmap_update_bits(prueth->miig_rt, ICSSG_CFG_OFFSET,
+> >  			   ICSSG_CFG_DEFAULT, ICSSG_CFG_DEFAULT);
+> >  	icssg_miig_set_interface_mode(prueth->miig_rt, slice, emac->phy_if);
+> > -	if (prueth->is_switch_mode)
+> > -		icssg_config_mii_init_switch(emac);
+> > +	if (prueth->is_switch_mode || prueth->is_hsr_offload_mode)
+> > +		icssg_config_mii_init_fw_offload(emac);
+> >  	else
+> >  		icssg_config_mii_init(emac);
+> >  	icssg_config_ipg(emac);
+> > @@ -498,8 +498,8 @@ int icssg_config(struct prueth *prueth, struct prueth_emac *emac, int slice)
+> >  	writeb(0, config + SPL_PKT_DEFAULT_PRIORITY);
+> >  	writeb(0, config + QUEUE_NUM_UNTAGGED);
+> >  
+> > -	if (prueth->is_switch_mode)
+> > -		ret = prueth_switch_buffer_setup(emac);
+> > +	if (prueth->is_switch_mode || prueth->is_hsr_offload_mode)
+> > +		ret = prueth_fw_offload_buffer_setup(emac);
+> >  	else
+> >  		ret = prueth_emac_buffer_setup(emac);
+> >  	if (ret)
+> > diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.c b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
+> > index 641e54849762..f4fd346fe6f5 100644
+> > --- a/drivers/net/ethernet/ti/icssg/icssg_prueth.c
+> > +++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
+> > @@ -13,6 +13,7 @@
+> >  #include <linux/dma/ti-cppi5.h>
+> >  #include <linux/etherdevice.h>
+> >  #include <linux/genalloc.h>
+> > +#include <linux/if_hsr.h>
+> >  #include <linux/if_vlan.h>
+> >  #include <linux/interrupt.h>
+> >  #include <linux/kernel.h>
+> > @@ -40,6 +41,8 @@
+> >  #define DEFAULT_PORT_MASK	1
+> >  #define DEFAULT_UNTAG_MASK	1
+> >  
+> > +#define NETIF_PRUETH_HSR_OFFLOAD_FEATURES	NETIF_F_HW_HSR_FWD
+> > +
+> >  /* CTRLMMR_ICSSG_RGMII_CTRL register bits */
+> >  #define ICSSG_CTRL_RGMII_ID_MODE                BIT(24)
+> >  
+> > @@ -118,6 +121,19 @@ static irqreturn_t prueth_tx_ts_irq(int irq, void *dev_id)
+> >  	return IRQ_HANDLED;
+> >  }
+> >  
+> > +static struct icssg_firmwares icssg_hsr_firmwares[] = {
+> > +	{
+> > +		.pru = "ti-pruss/am65x-sr2-pru0-pruhsr-fw.elf",
+> > +		.rtu = "ti-pruss/am65x-sr2-rtu0-pruhsr-fw.elf",
+> > +		.txpru = "ti-pruss/am65x-sr2-txpru0-pruhsr-fw.elf",
+> > +	},
+> > +	{
+> > +		.pru = "ti-pruss/am65x-sr2-pru1-pruhsr-fw.elf",
+> > +		.rtu = "ti-pruss/am65x-sr2-rtu1-pruhsr-fw.elf",
+> > +		.txpru = "ti-pruss/am65x-sr2-txpru1-pruhsr-fw.elf",
+> > +	}
+> > +};
+> > +
+> >  static struct icssg_firmwares icssg_switch_firmwares[] = {
+> >  	{
+> >  		.pru = "ti-pruss/am65x-sr2-pru0-prusw-fw.elf",
+> > @@ -152,6 +168,8 @@ static int prueth_emac_start(struct prueth *prueth, struct prueth_emac *emac)
+> >  
+> >  	if (prueth->is_switch_mode)
+> >  		firmwares = icssg_switch_firmwares;
+> > +	else if (prueth->is_hsr_offload_mode)
+> > +		firmwares = icssg_hsr_firmwares;
+> >  	else
+> >  		firmwares = icssg_emac_firmwares;
+> >  
+> > @@ -726,6 +744,19 @@ static void emac_ndo_set_rx_mode(struct net_device *ndev)
+> >  	queue_work(emac->cmd_wq, &emac->rx_mode_work);
+> >  }
+> >  
+> > +static int emac_ndo_set_features(struct net_device *ndev,
+> > +				 netdev_features_t features)
+> > +{
+> > +	netdev_features_t hsr_feature_present = ndev->features & NETIF_PRUETH_HSR_OFFLOAD_FEATURES;
+> > +	netdev_features_t hsr_feature_wanted = features & NETIF_PRUETH_HSR_OFFLOAD_FEATURES;
+> > +	bool hsr_change_request = ((hsr_feature_wanted ^ hsr_feature_present) != 0);
+> 
+> This is quite hard to read for me.
+> why not just do this instead?
+> 
+> 	netdev_features_t changed = netdev->features ^ feattures;
+> 
+> Then check and ack on individual features that you want to act upon.
+> 
+> 	if (changed & NETIF_F_HW_HSR_FWD) {
+> 		if (features & NETIF_F_HW_HSR_FWD)
+> 			/* enable HSR FWD feature */
+> 		else
+> 			/* disable HSR FWD feature */
+> 	}
+> 
+> 	if (changed) {
+> 		ndev->features = features;
+> 		return 1;
+> 	}
+> 
+> >From include/linux/netdevice.h
+> 
+>  * int (*ndo_set_features)(struct net_device *dev, netdev_features_t features);
+>  *	Called to update device configuration to new features. Passed
+>  *	feature set might be less than what was returned by ndo_fix_features()).
+>  *	Must return >0 or -errno if it changed dev->features itself.
+> 
+> Can you please check that if we are not in dual emac mode then we should
+> error out if any HSR feature is requested to be set.
 
-Cc: stable@vger.kernel.org
-Fixes: 42bbb70980f3 ("powerpc/5200: Add mpc5200-spi (non-PSC) device driver")
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
----
- drivers/spi/spi-mpc52xx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This is where all the shenanigans with firmware makes things complex.
 
-diff --git a/drivers/spi/spi-mpc52xx.c b/drivers/spi/spi-mpc52xx.c
-index d5ac60c135c2..b49155a25694 100644
---- a/drivers/spi/spi-mpc52xx.c
-+++ b/drivers/spi/spi-mpc52xx.c
-@@ -472,7 +472,7 @@ static int mpc52xx_spi_probe(struct platform_device *op)
- 	INIT_WORK(&ms->work, mpc52xx_spi_wq);
- 
- 	/* Decide if interrupts can be used */
--	if (ms->irq0 && ms->irq1) {
-+	if (ms->irq0 > 0 && ms->irq1 > 0) {
- 		rc = request_irq(ms->irq0, mpc52xx_spi_irq, 0,
- 				  "mpc5200-spi-modf", ms);
- 		rc |= request_irq(ms->irq1, mpc52xx_spi_irq, 0,
--- 
-2.25.1
+One of these options say 'If the interface is used for HSR, offload it
+to hardware if possible'. You should be able to set this flag
+anytime. It only has any effect when an interface is put into HSR
+mode, or if it is already in HSR mode. Hence, the firmware running
+right now should not matter.
 
+I suspect the same is true for many of these flags.
+
+> As you mentioned there are some contstraints on what HSR features can be
+> enabled individually.
+> "2) Inorder to enable hsr-tag-ins-offload, hsr-dup-offload
+>    must also be enabled as these are tightly coupled in
+>    the firmware implementation."
+> You could do this check there by setting/clearing both features in tandem
+> if either one was set/cleared.
+
+Software HSR should always work. Offloading is generally thought as
+accelerating this, if the hardware supports the current
+configuration. When offloading, if the hardware cannot support the
+current configuration, in general it should return -EOPNOTSUPP, and
+the software will keep doing the work.
+
+It is not particularly friendly, more of a documentation issue, but
+the user needs to set the options the correct way for offload to
+work. Otherwise it keeps chugging along in software. I would not
+expect to see any error messages when offload is not possible.
+
+	Andrew
 
