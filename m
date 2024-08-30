@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-309309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DD109668BD
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 20:12:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D4A39668C1
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 20:13:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 363951F24A8C
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 18:12:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 29B59B23B31
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 18:13:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FA231BC07D;
-	Fri, 30 Aug 2024 18:12:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FD7E1BB69B;
+	Fri, 30 Aug 2024 18:13:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e7EdwN+p"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vuj57+yZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EA0C1BB69B;
-	Fri, 30 Aug 2024 18:12:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7C1D61FEB;
+	Fri, 30 Aug 2024 18:13:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725041521; cv=none; b=pu66y0xIC+mebkAXmpAP/ZTPU7uoa5AD5qbWrUtvt5qYTnYccfyzgd0DxBfQDGEbyUpADq3b9a4U3v12Mx0z6dO27kqhuhJ8SQmn2/QAtuq/2cbGQkmJbBIJY2lhhFRZFS/QXUiWth6A3v+bWteKqtIigchwdIHtQ70hMKeCTRM=
+	t=1725041595; cv=none; b=tkkvONQT0FOuGlYhibXBg73X38jSx4cPbIw3M1Nql2GLpKWszVLxxYChAFXKb/DJvtPCB8bpFWCmlSnZMpSCEC6WhuAA/jNhPfSaszMqY4umkQMGs1Bzw3Dte/7AHdt8hbU479JJKe1pMdq5FMg1hOD0G8pPG5lqZSfcOqvqqr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725041521; c=relaxed/simple;
-	bh=xpYyuX0+gUF5Mr4Gy27M6rUHT7DG7qFpyaRUFs1fINQ=;
+	s=arc-20240116; t=1725041595; c=relaxed/simple;
+	bh=j+yMI6qduG3PdvFwg3MIqdALhP3dTdBzU3QYRJJdr6c=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eAnlL7bWQdTfuj2BiF+nqHzEm75hCMJ2tU71c82zynPGN8WddEK4V4f7Q+dVhlESvm0Esw2H8SQk/jtR9HwbLICqogLBT57lwt30+fMy0wXtJ/VLBnQV9EEWpjGZ5qVjqLMczVaOwuezLyntmQS9gP11CujiTi9GAwaJIRupJD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e7EdwN+p; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B71CC4CEC2;
-	Fri, 30 Aug 2024 18:11:58 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=P1KT3BIghFMi9cxVE4WYavPCJJ/j3alL5A3til++JVRNgtOE4VObWf1FPejz+QyTv45OG5eKpbvI4MLCUqnsaKe3fsamN1xnhd8CmTwLql+mJKOSPj9g8ux+6IyQLD5p7pTGbm9RCyDWRB1tZAvHCGLVaVZMuKFSK2IDUzmvhNY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vuj57+yZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B68EDC4CEC7;
+	Fri, 30 Aug 2024 18:13:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725041521;
-	bh=xpYyuX0+gUF5Mr4Gy27M6rUHT7DG7qFpyaRUFs1fINQ=;
+	s=k20201202; t=1725041595;
+	bh=j+yMI6qduG3PdvFwg3MIqdALhP3dTdBzU3QYRJJdr6c=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=e7EdwN+pkhzNHUcwqv8wfZVevDEJBapJcmzG6Jk1rAJLxf9LrH3YUM2RY9MbUF5ei
-	 yW0uVBlMM5yzW2UwridP296ef7R0Os0aVWDAqF3NEZALie1VMFYHl93eyUwchzRs/C
-	 0oaDMxA1Q2Wej3GelQTGD3zFzqdS6W/SKNFm/zDZBLVSBpl95AeILPHnwHQQrYJz9S
-	 CT/iit1wc6eNQzc+xgFjvKWpaY1/FAEPqEXtfBb+y07lPDvqXtfYPm7zLeMYGp9hjf
-	 tn84tTZFSMR4SqSWUKVr5vo6dospqjNURGkNOs3IlOvjuhK6DmbziqqCO4vTmiWnKP
-	 nJ0l2QyiwAZ+g==
-Message-ID: <6829a2e4-f7e0-4f34-8702-e00b005e9e0c@kernel.org>
-Date: Fri, 30 Aug 2024 20:11:56 +0200
+	b=Vuj57+yZkJ4mplTamYamxDuaPPcBgFBTtZgdMsYewvs/UzOtqIOuC7UYGYz+VnrvR
+	 aonpaPlIsEj5PN5MfYnSj1wxlefDWTfNxsQBIih6XIsPUO0acet2BEO41Yk3FXtWPJ
+	 LmDXbuML3Z5lUFoXoUnVpILQXkz9xLSwduNKjyCcz41rQwuAXXiMRaxPXQdENEM6ou
+	 XIbdfOlu9oWFk94XZJMhmCiMmsIbnOmBBog6Zev0W+HuTJsc9eYI9uOWjbfbyxRBeB
+	 Ka2B2RQ39TRzMVP59rvKbsMEzPG42VopCv4tUnLriylDNq3q4EAWsFiKdL0ClA11Y1
+	 jkJG0NgRgHDfQ==
+Message-ID: <0ea33217-321e-40e5-a2f0-77693fa7e3f0@kernel.org>
+Date: Fri, 30 Aug 2024 20:13:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,12 +49,12 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/7] dmaengine:Use devm_clk_get_enabled() helpers
-To: vkoul@kernel.org
-Cc: Liao Yuanhong <liaoyuanhong@vivo.com>, dmaengine@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- imx@lists.linux.dev
-References: <20240830094118.15458-1-liaoyuanhong@vivo.com>
+Subject: Re: [PATCH v1] pmdomain: bcm: Convert to use dev_err_probe()
+To: ulf.hansson@linaro.org
+Cc: florian.fainelli@broadcom.com, Shen Lichuan <shenlichuan@vivo.com>,
+ bcm-kernel-feedback-list@broadcom.com, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, opensource.kernel@vivo.com, rafal@milecki.pl
+References: <20240830113206.5427-1-shenlichuan@vivo.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -100,30 +100,32 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240830094118.15458-1-liaoyuanhong@vivo.com>
+In-Reply-To: <20240830113206.5427-1-shenlichuan@vivo.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 30/08/2024 11:41, Liao Yuanhong wrote:
-> The devm_clk_get_enabled() helpers:
->     - call devm_clk_get()
->     - call clk_prepare_enable() and register what is needed in order to
->      call clk_disable_unprepare() when needed, as a managed resource.
+On 30/08/2024 13:32, Shen Lichuan wrote:
+> Use dev_err_probe() to simplify the error path and unify a message
+> template.
 > 
-> This simplifies the code and avoids the calls to clk_disable_unprepare().
-> ---
-> v2:remove inappropriate modifications, configure COMPILE_TEST for easy
-> testing, add devm_clk_getprepaed() for imx sdma device.
-> ---
+> Using this helper is totally fine even if err is known to never
+> be -EPROBE_DEFER.
 > 
+> The benefit compared to a normal dev_err() is the standardized format
+> of the error code, it being emitted symbolically and the fact that
+> the error code is returned which allows more compact error paths.
+> 
+> Signed-off-by: Shen Lichuan <shenlichuan@vivo.com>
+> ---
+>  drivers/pmdomain/bcm/bcm-pmb.c | 6 ++----
 
-Vinod,
+Ulf,
 
 Since ~2 weeks there is tremendous amount of trivial patches coming from
 vivo.com. I identified at least 6 buggy, where the contributor did not
 understand the code. Not sure about intention, but I advise extra
-carefulness
-when dealing with these "trivial" improvements.
+carefulness when dealing with these "trivial" improvements (because we
+tend to apply things which look trivial).
 
 Best regards,
 Krzysztof
