@@ -1,117 +1,225 @@
-Return-Path: <linux-kernel+bounces-307897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5A359654BD
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 03:33:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AE0AC9654BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 03:34:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C8321C21681
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 01:33:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B730C1C2158A
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 01:34:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8317A4D8CB;
-	Fri, 30 Aug 2024 01:33:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="V1fpOC4+"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 226DD42048;
+	Fri, 30 Aug 2024 01:34:15 +0000 (UTC)
+Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C26221D12FB;
-	Fri, 30 Aug 2024 01:32:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D2F4175A6
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 01:34:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724981582; cv=none; b=OMcCT1VleElGt9Om27wfKKBvEoOCrddxhXRFyAwFyxvamxKIpEu1Y++tqNZzKRTZrRRDG5RbmolbJuj+P+lHVp6KqajB3TCyCywGA9fm33dJWg+6utw1LMjYcUzkKVtbhoSWvJ2uvDsOnnFYhZT5Ncg9GYcSpYfBRWQg097Y9Ks=
+	t=1724981654; cv=none; b=iBTi0L8IUfaNFz0GVBEPJk9xgTUMKQVNUZXDUnvaQ/ERUmMhwJpa4rOW9iVVj4KvpJ/vefHIeUEsxCnLXKy5OoJoeX7uqnZSpb770UUEYe9RGRRJ3EaUZCdInpGwZusPLGSBMGoVBjTtcuDBtCIxj30b2H+Hrj2itsb6DFQLsNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724981582; c=relaxed/simple;
-	bh=Yi1Fdhj9/53RRfCFGvoVxhFJoGCv/N8eBAbHIaM5mkw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=B3s1nX12xlrfqeZln7DOgAW10z2lh014s+wy/j5bOVpkjF7wl5INHMINovkvFpPVRGJn6FvEHZ+GzoqYtzv7FYfMxSAB+GzMkHRmjAT7yToj/9BJRuXCCQWdVzGQ8muvdUz29n4cQeF9vEf/6XTrTOaGhPo+hMNMg4LxfTpOT3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=V1fpOC4+; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1724981572;
-	bh=67rtekJghnS3QXmSRsr2ESJaIvxwUWmhUoXjwqC+Nkk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=V1fpOC4+8Fv4gyE5KVhK3CUT0Q8ysPoQewzqOzl+YDkZt++E0wePuHsDw7XYO27+A
-	 hjeK8BEwQ8kGpNKj4VThTVPV2odfZp3HOdp0ymBgyJSjecXMhllVlYI10u2NGODcR2
-	 SW/BxqT/5QAhwGicVmZc63AlV1ai/hGPi7iOgOki3j1+uVncYPv/i+SkW4628ozGFt
-	 /d6S0aEpoHMSM+xby0qBJ1lXmSBaLrMu8SwKvyNidWrjA1wjk7cRKPi3ClgT/5lbfz
-	 EjWRoac3otwRTwm1MBKmcGDJLBch7IfM1pZeHMx+PEqeydH6UE7hwYGSDr458UzKUS
-	 6BSsjMYCr19XQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Ww0yW0Cjtz4wd0;
-	Fri, 30 Aug 2024 11:32:50 +1000 (AEST)
-Date: Fri, 30 Aug 2024 11:32:49 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Daniel Borkmann <daniel@iogearbox.net>, Alexei Starovoitov
- <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, Christian Brauner
- <brauner@kernel.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>, Networking
- <netdev@vger.kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the bpf-next tree
-Message-ID: <20240830113249.0c03687d@canb.auug.org.au>
-In-Reply-To: <20240814112504.42f77e3c@canb.auug.org.au>
-References: <20240814112504.42f77e3c@canb.auug.org.au>
+	s=arc-20240116; t=1724981654; c=relaxed/simple;
+	bh=nF8/VzsIFv0V1VTfuX4AC1/VWxvlyjhfSA2Oxy3QEHk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=WDLKd+j5aVxnXA0UoAcWg6/nytPPJEiN+sm3LNRvd/wiWkXVE8cX5wIpN6ugsR/rkzGr36TxLJ+VCxivLyqRklZpDEAv8P36SUCXLn0gRfPOFSV7Fcg6yAWerksc8U5uCCOgPrnetwbB6xZCjsN2CH6pl13YyNkFg0nHo8qzDn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4Ww0zm0r92z1S9T8;
+	Fri, 30 Aug 2024 09:33:56 +0800 (CST)
+Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
+	by mail.maildlp.com (Postfix) with ESMTPS id 13F851401E9;
+	Fri, 30 Aug 2024 09:34:10 +0800 (CST)
+Received: from [10.67.109.254] (10.67.109.254) by
+ kwepemh500013.china.huawei.com (7.202.181.146) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 30 Aug 2024 09:34:09 +0800
+Message-ID: <3386ad7d-1834-3a81-d9b7-2aab2e8b48d0@huawei.com>
+Date: Fri, 30 Aug 2024 09:34:08 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/jcdeaMnhlMF.q7rBpk6pC2/";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+Subject: Re: [RESEND PATCH V4 3/3] riscv: mm: Add uffd write-protect support
+Content-Language: en-US
+To: Chunyan Zhang <zhangchunyan@iscas.ac.cn>, Paul Walmsley
+	<paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
+	<aou@eecs.berkeley.edu>, Andrew Morton <akpm@linux-foundation.org>, Alexandre
+ Ghiti <alex@ghiti.fr>
+CC: <linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>, Chunyan
+ Zhang <zhang.lyra@gmail.com>
+References: <20240830011101.3189522-1-zhangchunyan@iscas.ac.cn>
+ <20240830011101.3189522-4-zhangchunyan@iscas.ac.cn>
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+In-Reply-To: <20240830011101.3189522-4-zhangchunyan@iscas.ac.cn>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemh500013.china.huawei.com (7.202.181.146)
 
---Sig_/jcdeaMnhlMF.q7rBpk6pC2/
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
 
-On Wed, 14 Aug 2024 11:25:04 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> Caused by commit
->=20
->   1da91ea87aef ("introduce fd_file(), convert all accessors to it.")
->=20
-> interacting with commits
->=20
->   1a61c9d6ec1d ("xattr: handle AT_EMPTY_PATH when setting xattrs")
->   278397b2c592 ("xattr: handle AT_EMPTY_PATH when getting xattrs")
->   5560ab7ee32e ("xattr: handle AT_EMPTY_PATH when listing xattrs")
->   33fce6444e7d ("xattr: handle AT_EMPTY_PATH when removing xattrs")
->=20
-> from the vfs-brauner tree.
+On 2024/8/30 9:11, Chunyan Zhang wrote:
+> Reuse PTE bit(9) to do uffd-wp tracking and make it mutually exclusive
+> with soft-dirty and DEVMAP which all use this PTE bit.
+> 
+> Additionally for tracking the uffd-wp state as a PTE swap bit,
+> we use swap entry pte bit(4) which is also used by swap
+> soft-dirty tracking.
+> 
+> Signed-off-by: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
 
-It looks like he bpf-next tree has lost the above commit, so I have
-removed my merge fix patches.
+Hi, I have submitted a similar patch below before rebased on commit
+216e04bf1e4d ("riscv: mm: Add support for ZONE_DEVICE")
+has been removed:
 
---=20
-Cheers,
-Stephen Rothwell
+https://lore.kernel.org/all/20240730095325.3540198-1-ruanjinjie@huawei.com/
 
---Sig_/jcdeaMnhlMF.q7rBpk6pC2/
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbRIUEACgkQAVBC80lX
-0Gzy1QgAhLCqNHQvJF2U11mJXrIe/7b5wi0QNw+Y9R7Qy3S3lslZ7oOyyzM5rKl8
-fjJJk0YYhK/2fMm5ZgPJYRbm/ykj9+2rgoaQPXdvKH3g/RnKkGZwGNNj7c4qkpOu
-srlC54nmsyXemwUVzU5cyLzgTYgnhh2arWgMpF7ANHElp2LjF7o8maJbTt+Nrroo
-vef9TKILab2TiZRMS4u8ozi/63uoStXJYH8A8D/9JKFEi6x0/khsBFa4Ph0rwoYJ
-EUigIPCiv03rMniYRM/8XqcTuWkG2AB4oE5k2uPMoYM07WCinWlicv6/Y7nncZbE
-7eBTeAneJK6Kg3zdrUr9+DOKYTbtQQ==
-=cYOL
------END PGP SIGNATURE-----
-
---Sig_/jcdeaMnhlMF.q7rBpk6pC2/--
+> ---
+>  arch/riscv/Kconfig                    |  7 +++
+>  arch/riscv/include/asm/pgtable-bits.h | 13 ++++++
+>  arch/riscv/include/asm/pgtable.h      | 66 ++++++++++++++++++++++++++-
+>  3 files changed, 85 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+> index f1460fc01cd4..aa595a5ed4b8 100644
+> --- a/arch/riscv/Kconfig
+> +++ b/arch/riscv/Kconfig
+> @@ -971,6 +971,13 @@ config RISCV_HAS_SOFT_DIRTY
+>  	help
+>  	  The PTE bit(9) is used for soft-dirty tracking.
+>  
+> +config RISCV_HAS_USERFAULTFD_WP
+> +	bool "userfaultfd write protection"
+> +	select HAVE_ARCH_USERFAULTFD_WP
+> +	depends on USERFAULTFD
+> +	help
+> +	  The PTE bit(9) is used for userfaultfd write-protected
+> +	  tracking.
+>  endchoice
+>  
+>  endmenu # "Kernel features"
+> diff --git a/arch/riscv/include/asm/pgtable-bits.h b/arch/riscv/include/asm/pgtable-bits.h
+> index c6d51fe9fc6f..7de16141c049 100644
+> --- a/arch/riscv/include/asm/pgtable-bits.h
+> +++ b/arch/riscv/include/asm/pgtable-bits.h
+> @@ -38,6 +38,19 @@
+>  #define _PAGE_SWP_SOFT_DIRTY	0
+>  #endif /* CONFIG_MEM_SOFT_DIRTY */
+>  
+> +#ifdef CONFIG_HAVE_ARCH_USERFAULTFD_WP
+> +/*
+> + * CONFIG_HAVE_ARCH_USERFAULTFD_WP is mutually exclusive with
+> + * HAVE_ARCH_SOFT_DIRTY so we can use the same bit for uffd-wp
+> + * and soft-dirty tracking.
+> + */
+> +#define _PAGE_UFFD_WP		(1 << 9) /* RSW: 0x2 for uffd-wp tracking */
+> +#define _PAGE_SWP_UFFD_WP	_PAGE_USER
+> +#else
+> +#define _PAGE_UFFD_WP		0
+> +#define _PAGE_SWP_UFFD_WP	0
+> +#endif
+> +
+>  #define _PAGE_TABLE     _PAGE_PRESENT
+>  
+>  /*
+> diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
+> index d41507919ef2..6ce4c9ba862a 100644
+> --- a/arch/riscv/include/asm/pgtable.h
+> +++ b/arch/riscv/include/asm/pgtable.h
+> @@ -417,6 +417,38 @@ static inline pte_t pte_wrprotect(pte_t pte)
+>  	return __pte(pte_val(pte) & ~(_PAGE_WRITE));
+>  }
+>  
+> +#ifdef CONFIG_HAVE_ARCH_USERFAULTFD_WP
+> +static inline int pte_uffd_wp(pte_t pte)
+> +{
+> +	return pte_val(pte) & _PAGE_UFFD_WP;
+> +}
+> +
+> +static inline pte_t pte_mkuffd_wp(pte_t pte)
+> +{
+> +	return pte_wrprotect(__pte(pte_val(pte) | _PAGE_UFFD_WP));
+> +}
+> +
+> +static inline pte_t pte_clear_uffd_wp(pte_t pte)
+> +{
+> +	return __pte(pte_val(pte) & ~(_PAGE_UFFD_WP));
+> +}
+> +
+> +static inline int pte_swp_uffd_wp(pte_t pte)
+> +{
+> +	return pte_val(pte) & _PAGE_SWP_UFFD_WP;
+> +}
+> +
+> +static inline pte_t pte_swp_mkuffd_wp(pte_t pte)
+> +{
+> +	return pte_wrprotect(__pte(pte_val(pte) | _PAGE_SWP_UFFD_WP));
+> +}
+> +
+> +static inline pte_t pte_swp_clear_uffd_wp(pte_t pte)
+> +{
+> +	return __pte(pte_val(pte) & ~(_PAGE_SWP_UFFD_WP));
+> +}
+> +#endif /* CONFIG_HAVE_ARCH_USERFAULTFD_WP */
+> +
+>  /* static inline pte_t pte_mkread(pte_t pte) */
+>  
+>  static inline pte_t pte_mkwrite_novma(pte_t pte)
+> @@ -783,6 +815,38 @@ static inline pmd_t pmd_mkdevmap(pmd_t pmd)
+>  	return pte_pmd(pte_mkdevmap(pmd_pte(pmd)));
+>  }
+>  
+> +#ifdef CONFIG_HAVE_ARCH_USERFAULTFD_WP
+> +static inline int pmd_uffd_wp(pmd_t pmd)
+> +{
+> +	return pte_uffd_wp(pmd_pte(pmd));
+> +}
+> +
+> +static inline pmd_t pmd_mkuffd_wp(pmd_t pmd)
+> +{
+> +	return pte_pmd(pte_mkuffd_wp(pmd_pte(pmd)));
+> +}
+> +
+> +static inline pmd_t pmd_clear_uffd_wp(pmd_t pmd)
+> +{
+> +	return pte_pmd(pte_clear_uffd_wp(pmd_pte(pmd)));
+> +}
+> +
+> +static inline int pmd_swp_uffd_wp(pmd_t pmd)
+> +{
+> +	return pte_swp_uffd_wp(pmd_pte(pmd));
+> +}
+> +
+> +static inline pmd_t pmd_swp_mkuffd_wp(pmd_t pmd)
+> +{
+> +	return pte_pmd(pte_swp_mkuffd_wp(pmd_pte(pmd)));
+> +}
+> +
+> +static inline pmd_t pmd_swp_clear_uffd_wp(pmd_t pmd)
+> +{
+> +	return pte_pmd(pte_swp_clear_uffd_wp(pmd_pte(pmd)));
+> +}
+> +#endif /* CONFIG_HAVE_ARCH_USERFAULTFD_WP */
+> +
+>  #ifdef CONFIG_HAVE_ARCH_SOFT_DIRTY
+>  static inline int pmd_soft_dirty(pmd_t pmd)
+>  {
+> @@ -907,7 +971,7 @@ extern pmd_t pmdp_collapse_flush(struct vm_area_struct *vma,
+>   * Format of swap PTE:
+>   *	bit            0:	_PAGE_PRESENT (zero)
+>   *	bit       1 to 3:       _PAGE_LEAF (zero)
+> - *	bit	       4:	_PAGE_SWP_SOFT_DIRTY
+> + *	bit	       4:	_PAGE_SWP_SOFT_DIRTY or _PAGE_SWP_UFFD_WP
+>   *	bit            5:	_PAGE_PROT_NONE (zero)
+>   *	bit            6:	exclusive marker
+>   *	bits      7 to 11:	swap type
 
