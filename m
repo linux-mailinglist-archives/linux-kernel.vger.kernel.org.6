@@ -1,56 +1,64 @@
-Return-Path: <linux-kernel+bounces-308631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 083F6965FBA
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:57:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D11D6965FBC
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:57:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B4C11C239C8
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:57:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BE041F2212A
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:57:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1F05190696;
-	Fri, 30 Aug 2024 10:57:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CED0F18FDDA;
+	Fri, 30 Aug 2024 10:57:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="RJxUdJY2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gt3qmPvY"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D15BB15C147;
-	Fri, 30 Aug 2024 10:57:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 196B815C147;
+	Fri, 30 Aug 2024 10:57:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725015428; cv=none; b=XysLSJDM/nd+cE72U/7D6jTxKOSzdj6+jPyNFcqhF7iScqqIs2pgTkRAiUu0isWay2yEw2EzwG0PIKUvYwN6Xb4ahfElo9iRx4QgsN9xQ/1jcOIbZDv7dW6Kjj2JfbPrUQwUBjsSkOdOyym37Abd3msw83GpNwjp7667phdD8+g=
+	t=1725015455; cv=none; b=ECO5Cf56Pqy1IC9AXRzUat/LACnjnsm4R29tpfdK14Sem8vKi0cpeD+PGUk4yaYKqlOUc7ePxt06eo5HodI7eM61bPCLDdzrWUrL8lw6dxPDa1Lw07ZBLbm0qyqZYGih67/VrPgyoesPJTpryE+Dt5I//N3d5CIZnNerRdD4I80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725015428; c=relaxed/simple;
-	bh=KsqVa04H80GFdfyL//UXuhuLq0MIdj7cLJLjxKOxZW8=;
+	s=arc-20240116; t=1725015455; c=relaxed/simple;
+	bh=ynbAFWuspTvAxIDVBDSLIUOKEfrOG3Reb+vJBsOmIOs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OPZYqedN7U9IDE02caszUdXcMqedeuD1UmgVD+KU0fu5WRjY3veDzQepGpFn4I7visCwHuIJqgxE2yn0HMXZ4fUoyraMI0kq6SjtXrE4m+q8hS5zPIy3p9v0ixXAwp656mmDRymV0+sSFtkEtBwTNFRNxEf/HGpcCvtdZhKzPT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=RJxUdJY2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D31B7C4CEC6;
-	Fri, 30 Aug 2024 10:57:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1725015427;
-	bh=KsqVa04H80GFdfyL//UXuhuLq0MIdj7cLJLjxKOxZW8=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZfHIeWKVmx4Vlp5jO3+2oFi7r01esf+TcECRHwwxhfh3yE7q082YjDl9z5x7x36bClo2FST55/9v9HYiasPlj/wwvvNhXHt5bMZgHmwWBGI9SvtBYC0l00DxiNISTT4fqk0jRYvb4IgiSaZn1CkvA/FKN6HjvgZzIDsW1ZuBrpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gt3qmPvY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6412DC4CEC2;
+	Fri, 30 Aug 2024 10:57:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725015454;
+	bh=ynbAFWuspTvAxIDVBDSLIUOKEfrOG3Reb+vJBsOmIOs=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RJxUdJY2wJt8pkSEYlwS/tGiQF0pu0zigwsvo43z04O+5gl6hy+aK1d7JbRID5lR5
-	 l05lsHl10GspJDQyp+XlGQlznSL0L4VAoL/dLA2d67W5tMctNiSNbpjwZOIPGooCky
-	 WzXFY5MoEo/UEAVPdFsTKaL29j/D5wwiuj81eios=
-Date: Fri, 30 Aug 2024 12:57:04 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, allen.lkml@gmail.com
-Subject: Re: [PATCH 5.15 000/479] 5.15.165-rc3 review
-Message-ID: <2024083051-nutshell-trend-602a@gregkh>
-References: <20240817075228.220424500@linuxfoundation.org>
- <1c83d94d-1b56-4bd9-8a96-c5062c238c06@sirena.org.uk>
+	b=Gt3qmPvYnzBpq92O2vv2AFYzVeAgpZuLM8K3hqdYn4yraRrB6l20Kxhsbgky5VAtJ
+	 NPj7e1ZqaWNpV0kBRtrVwZ5dSW4B413dERpWJ0HNbpxQ1BRPxhRyO4dO8xNITwLCHQ
+	 R/2ff/N00Qji+Om1Hu6ALgvFXPiyqhWAa5YmkhJifzqxCyka8Gn2UXey36UDbXMlyk
+	 u1m/2+2FZUGEsnII9cPy+Sb+d5zqJETSNomvGady6ugv7UODnaynOwZ/aP2klSSeE9
+	 Mci2uP7xUT2kjs29cU9/cAiI355Eh5Cau1ZGDoWbHK6T9ZBfwIK/e9xP1RICOmKmel
+	 jKYJBZsJxPd3w==
+Date: Fri, 30 Aug 2024 12:57:29 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>, 
+	mszeredi@redhat.com, stgraber@stgraber.org, linux-fsdevel@vger.kernel.org, 
+	Seth Forshee <sforshee@kernel.org>, Amir Goldstein <amir73il@gmail.com>, 
+	Bernd Schubert <bschubert@ddn.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 2/9] fs/fuse: add FUSE_OWNER_UID_GID_EXT extension
+Message-ID: <20240830-quantenphysik-kraulen-6ca8cfcaed70@brauner>
+References: <20240108120824.122178-3-aleksandr.mikhalitsyn@canonical.com>
+ <CAJfpegtixg+NRv=hUhvkjxFaLqb_Vhb6DSxmRNxXD-GHAGiHGg@mail.gmail.com>
+ <CAEivzxeva5ipjihSrMa4u=uk9sDm9DNg9cLoYg0O6=eU2jLNQQ@mail.gmail.com>
+ <CAJfpegsqPz+8iDVZmmSHn09LZ9fMwyYzb+Kib4258y8jSafsYQ@mail.gmail.com>
+ <20240829-hurtig-vakuum-5011fdeca0ed@brauner>
+ <CAJfpegsVY97_5mHSc06mSw79FehFWtoXT=hhTUK_E-Yhr7OAuQ@mail.gmail.com>
+ <CAEivzxdPmLZ7rW1aUtqxzJEP0_ScGTnP2oRhJO2CRWS8fb3OLQ@mail.gmail.com>
+ <CAJfpegvC9Ekp7+PUpmkTRsAvUq2pH2UMAHc7dOOCXAdbfHPvwg@mail.gmail.com>
+ <CAEivzxd1NtpY_GNnN2=bzwoejn7uUK6Quj_f0_LnnJTBxkE8zQ@mail.gmail.com>
+ <CAJfpegtHQsEUuFq1k4ZbTD3E1h-GsrN3PWyv7X8cg6sfU_W2Yw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,50 +67,17 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1c83d94d-1b56-4bd9-8a96-c5062c238c06@sirena.org.uk>
+In-Reply-To: <CAJfpegtHQsEUuFq1k4ZbTD3E1h-GsrN3PWyv7X8cg6sfU_W2Yw@mail.gmail.com>
 
-On Tue, Aug 20, 2024 at 03:43:44PM +0100, Mark Brown wrote:
-> On Sat, Aug 17, 2024 at 10:00:38AM +0200, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 5.15.165 release.
-> > There are 479 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
+On Thu, Aug 29, 2024 at 08:58:55PM GMT, Miklos Szeredi wrote:
+> On Thu, 29 Aug 2024 at 19:41, Aleksandr Mikhalitsyn
+> <aleksandr.mikhalitsyn@canonical.com> wrote:
 > 
-> This breaks the build of at least the KVM selftests on arm64 for me:
+> > Let's think about it a bit more and if you confirm that we want to go
+> > this way, then I'll rework my patches.
 > 
-> In file included from dirty_log_test.c:15:
-> ../../../../tools/include/linux/bitmap.h: In function ‘bitmap_zero’:
-> ../../../../tools/include/linux/bitmap.h:33:34: warning: implicit declaration of
->  function ‘ALIGN’ [-Wimplicit-function-declaration]
->    33 | #define bitmap_size(nbits)      (ALIGN(nbits, BITS_PER_LONG) / BITS_PER_
-> BYTE)
->       |                                  ^~~~~
-> ../../../../tools/include/linux/bitmap.h:40:32: note: in expansion of macro ‘bit
-> map_size’
->    40 |                 memset(dst, 0, bitmap_size(nbits));
->       |                                ^~~~~~~~~~~
-> /usr/bin/ld: /tmp/cc4JPVlx.o: in function `bitmap_alloc':
-> /build/stage/linux/tools/testing/selftests/kvm/../../../../tools/include/linux/b
-> itmap.h:126: undefined reference to `ALIGN'
-> /usr/bin/ld: /build/stage/linux/tools/testing/selftests/kvm/../../../../tools/in
-> clude/linux/bitmap.h:126: undefined reference to `ALIGN'
-> collect2: error: ld returned 1 exit status
-> 
-> This bisects down to:
-> 
-> 9853a5bed65d507048dbe772bb84e6f905b772a3 is the first bad commit
-> commit 9853a5bed65d507048dbe772bb84e6f905b772a3
-> Author: Alexander Lobakin <aleksander.lobakin@intel.com>
-> Date:   Wed Mar 27 16:23:49 2024 +0100
-> 
->     bitmap: introduce generic optimized bitmap_size()
->     
->     commit a37fbe666c016fd89e4460d0ebfcea05baba46dc upstream.
-> 
-> A similar issue appears to affect at least the 5.10 -rc.
+> And ACK from Christian would be good.
 
-Thanks, I think I've fixed this up in the queues now.
-
-greg k-h
+Yeah, that all sounds good to me. I think Alex just followed the
+cephfs precedent.
 
