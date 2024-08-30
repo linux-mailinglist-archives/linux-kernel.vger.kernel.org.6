@@ -1,282 +1,201 @@
-Return-Path: <linux-kernel+bounces-308114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 085E5965773
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 08:13:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D240965774
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 08:13:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CEDF1C20B9B
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 06:13:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B00F11F26662
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 06:13:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 531791509A8;
-	Fri, 30 Aug 2024 06:13:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD922152170;
+	Fri, 30 Aug 2024 06:13:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="OGKTsuXK"
-Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mdQY4DwX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 158AC1509A4
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 06:13:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFE89136E3F;
+	Fri, 30 Aug 2024 06:13:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724998419; cv=none; b=kc94CqebEAs7ZmsiwkYOC24UxZ3QYvcqj+aUZwJI8ppI6frfMvQFFDUjCB6cVmkbxM8uBYpVF76sCzlBLnuQ9eN5WhiGlCTlxAsStFw1hngM5nvSFC8cxnMRDDrkXftqp34ZQSYGuklypO/hTE+paUR63ZVtoL+u9VybIILDeXA=
+	t=1724998426; cv=none; b=p0DTvP5RAvlrkQ5jlgCHW6ZOAcvsgSfKdkBnFKs9XE7Ca/fTPSGMnaZbFB8Xyv1nMUyN106UL4P0Gx1Vehw2w4KO/m9RWXWiOIj5cWbdiwmwMoVw3YRTFQyGAhRQv0J90uMuAPZOwJK6W9USPA1b5hNbOFqz83ad5rzJHc38gjg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724998419; c=relaxed/simple;
-	bh=Szw/m1kpcox6QzCG5M/Ll9tQigntyXNmtuPxVGtRryc=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=gOGtOa9umJnJLhp3meXEx3gKhglhIrWTX5c12T8yz0AOj9HUHlcx28pIUQGKYk+rkZU684ML97cBWJGEA/Tp1/bXzb9wh1RcTqwXEjhgjSx2brotP4kJew6vDJz7jUTk3aSy0SQ/fS0xXcg7A6qapE9ppYC2TfPO/gAKxzMzacw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=OGKTsuXK; arc=none smtp.client-ip=95.215.58.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <2e6e368f-0f2a-4724-892e-06cfe3fba97e@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1724998412;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2m0qz/oyn3UjH+b9LuMdU8KCsrU/kiOsmLYV8sbVKEQ=;
-	b=OGKTsuXKLdrQpxCO7DWP7yRgtnsLsWtC4hFWXpny7PFVVO2i3Oi1ZQZ0SsrULWKCG/iRRk
-	+kxvJ0vU3vNQZIfnvo9qNocTEK87jrqgOMd+ovWcSYGefR/PUD+RNLXVlxR2oa8TunEi72
-	rD3gm+lqz9OsTY3PFOKIX0eB4hCDitE=
-Date: Fri, 30 Aug 2024 14:13:24 +0800
+	s=arc-20240116; t=1724998426; c=relaxed/simple;
+	bh=apBdBhGYDEIgPSX8O85iHr2OVAYQZauF8WnD58crLVw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ESqttQR/k/SXwPmBouT27W7NkyYog5kZFWZIEMa8EaOAa64D0PZoJ/YZPI7SxT3JfaLjqn059KK+EKmvP+SEj+5ooEpL27BEVoWW7cKk2Wz5Cc/Wmv9koxuas7Z/H5WKKwPfefwnTu2aCMrQDS+CjvFL+bSbdwR/0J6U1HHDv6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mdQY4DwX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA2FDC4CEC4;
+	Fri, 30 Aug 2024 06:13:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724998425;
+	bh=apBdBhGYDEIgPSX8O85iHr2OVAYQZauF8WnD58crLVw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mdQY4DwX+SmrhNvdHvXMX+yZs0g3qsdTp5fhCufHsca8W7Pp7uZIQtUekflhHUxsq
+	 z2pAweXKH2W+iHjMSg/Kf9IKzCXRNFEJ3Nq2CXmsif8gRoWMuWH5180k/l9bAbFind
+	 yy8oU4tcCg6iLm5lo9R3pQfWEdiOZICd7e0IP7PST2ARZcW8+IbYhiEmkpVS8GevKt
+	 Q8+7tXLuyNANpRPSXmNUGWigDV5+tfB0zcl7Kt9TVbIzAS/NfoayLuL2aqyDejjC+X
+	 gsLIjUuSmSGdzBOd2yVMYqvGkKmeERtmgOKXvda6yU4i22zD25/n7ULi+NAHqXh8Zz
+	 Nl3bZF3SXAFmQ==
+Date: Thu, 29 Aug 2024 23:13:42 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: kan.liang@linux.intel.com
+Cc: peterz@infradead.org, mingo@redhat.com, tglx@linutronix.de,
+	acme@kernel.org, mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+	irogers@google.com, adrian.hunter@intel.com,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	ravi.bangoria@amd.com, sandipan.das@amd.com,
+	atrajeev@linux.vnet.ibm.com, luogengkun@huaweicloud.com,
+	ak@linux.intel.com
+Subject: Re: [RFC PATCH] perf: New start period for the freq mode
+Message-ID: <ZtFjFpg0MCcLbgnq@google.com>
+References: <20240829152036.3923842-1-kan.liang@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] docs/zh_CN: add the translation of kbuild/gcc-plugins.rst
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: YanTeng Si <si.yanteng@linux.dev>
-To: Dongliang Mu <dzm91@hust.edu.cn>, Alex Shi <alexs@kernel.org>,
- Yanteng Si <siyanteng@loongson.cn>, Jonathan Corbet <corbet@lwn.net>,
- Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling
- <morbo@google.com>, Justin Stitt <justinstitt@google.com>
-Cc: hust-os-kernel-patches@googlegroups.com, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-References: <20240828074305.314666-1-dzm91@hust.edu.cn>
- <04184aa1-475e-4e1f-9e05-21f59a0787d3@linux.dev>
-Content-Language: en-US
-In-Reply-To: <04184aa1-475e-4e1f-9e05-21f59a0787d3@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240829152036.3923842-1-kan.liang@linux.intel.com>
 
+Hi Kan,
 
+On Thu, Aug 29, 2024 at 08:20:36AM -0700, kan.liang@linux.intel.com wrote:
+> From: Kan Liang <kan.liang@linux.intel.com>
+> 
+> The freq mode is the current default mode of Linux perf. 1 period is
+> used as a start period. The period is auto-adjusted in each tick or an
+> overflow to meet the frequency target.
+> 
+> The start period 1 is too low and may trigger some issues.
+> - Many HWs do not support period 1 well.
+>   https://lore.kernel.org/lkml/875xs2oh69.ffs@tglx/
+> - For an event that occurs frequently, period 1 is too far away from the
+>   real period. Lots of the samples are generated at the beginning.
+>   The distribution of samples may not be even.
+> 
+> It's hard to find a universal start period for all events. The idea is
+> only to give an estimate for the popular HW and HW cache events. For the
+> rest of the events, start from the lowest possible recommended value.
+> 
+> Only the Intel event list JSON file provides the recommended SAV
+> (sample after value) for each event. The estimation is based on the
+> Intel's SAV.
+> 
+> This patch implements a generic perf_freq_start_period() which impacts
+> all ARCHs.
+> If the other ARCHs don't like the start period, a per-pmu
+> (*freq_start_period) may be introduced instead. Or make it a __weak
+> function.
+> The other option would be exposing a start_period knob in the sysfs or a
+> per-event config. So the end users can set their preferred start period.
+> Please let me know your thoughts.
+> 
+> SW events may need to be specially handled, which is not implemented in
+> the patch.
 
-
-在 2024/8/29 18:22, YanTeng Si 写道:
->
->
->
-> 在 2024/8/28 15:42, Dongliang Mu 写道:
->> Finish the translation of kbuild/gcc-plugins.rst and move gcc-plugins
->> from TODO to the main body.
->>
->> Update to commit 3832d1fd84b6 ("docs/core-api: expand Fedora 
->> instructions
->> for GCC plugins")
->>
->> Signed-off-by: Dongliang Mu <dzm91@hust.edu.cn>
->> ---
->>   .../translations/zh_CN/kbuild/gcc-plugins.rst | 126 ++++++++++++++++++
->>   .../translations/zh_CN/kbuild/index.rst       |   2 +-
->>   2 files changed, 127 insertions(+), 1 deletion(-)
->>   create mode 100644 
->> Documentation/translations/zh_CN/kbuild/gcc-plugins.rst
->>
->> diff --git a/Documentation/translations/zh_CN/kbuild/gcc-plugins.rst 
->> b/Documentation/translations/zh_CN/kbuild/gcc-plugins.rst
->> new file mode 100644
->> index 000000000000..214945a4ecf3
->> --- /dev/null
->> +++ b/Documentation/translations/zh_CN/kbuild/gcc-plugins.rst
->> @@ -0,0 +1,126 @@
->> +.. SPDX-License-Identifier: GPL-2.0
->> +
->> +.. include:: ../disclaimer-zh_CN.rst
->> +
->> +:Original: Documentation/kbuild/gcc-plugins.rst
->> +:Translator: 慕冬亮 Dongliang Mu <dzm91@hust.edu.cn>
->> +
->> +================
->> +GCC 插件基础设施
->> +================
->> +
->> +
->
->> +介绍
->> +============
-> Please trim the length of the equal sign line.
->> +
->> +GCC 插件是为编译器提供额外功能的可加载模块 
->> [1]_。它们对于运行时插装和静态分析非常有用。
->> +我们可以在编译过程中通过回调 [2]_，GIMPLE [3]_，IPA [4]_ 和 RTL Passes 
->> [5]_
->> +（译者注：Pass 
->> 是编译器所采用的一种结构化技术，用于完成编译对象的分析、优化或转换等功能） 
->>
->> +来分析、修改和添加更多的代码。
->> +
->> +内核的 GCC 
->> 插件基础设施支持构建树外模块、交叉编译和在单独的目录中构建。插件源文件必须由 
->>
->> +C++ 编译器编译。
->> +
->> +目前 GCC 插件基础设施只支持一些架构。搜索 "select HAVE_GCC_PLUGINS" 
->> 来查找支持
->> +GCC 插件的架构。
->> +
->> +这个基础设施是从 grsecurity [6]_  和 PaX [7]_ 移植过来的。
->> +
->> +--
->> +
->> +.. [1] https://gcc.gnu.org/onlinedocs/gccint/Plugins.html
->> +.. [2] https://gcc.gnu.org/onlinedocs/gccint/Plugin-API.html#Plugin-API
->> +.. [3] https://gcc.gnu.org/onlinedocs/gccint/GIMPLE.html
->> +.. [4] https://gcc.gnu.org/onlinedocs/gccint/IPA.html
->> +.. [5] https://gcc.gnu.org/onlinedocs/gccint/RTL.html
->> +.. [6] https://grsecurity.net/
->> +.. [7] https://pax.grsecurity.net/
->> +
->> +
->
->> +目的
->> +=======
->
-> I will continue reviewing later or tomorrow.
->
->
-> Thank,
-> Yanteng
->> +
->> +GCC 插件的设计目的是提供一个场所，用于试验 GCC 或 Clang 
->> 上游没有的潜在编译器功能。
-How about:
-GCC 插件的设计目的是提供一个用于试验 GCC 或 Clang 
-上游没有的潜在编译器功能的场所。
->>
->> +一旦它们的实用性得到验证，目标就是将这些功能添加到 GCC（和 
->> Clang）的上游，然后在
->> +所有支持的 GCC 版本都支持这些功能后，再将它们从内核中移除。
-目标是 进上游后 把 功能 移除。
-Can we re-polish it here?
->> +
->> +具体来说，新插件应该只实现上游编译器（GCC 和 Clang）不支持的功能。
->> +
->> +当 Clang 中存在 GCC 中不存在的某项功能时，应努力将该功能上传到上游 
->> GCC（而不仅仅
-应努力将该功能做到 GCC上游
->> +是作为内核专用的 GCC 插件），以使整个生态都能从中受益。
->> +
->> +类似的，如果 GCC 插件提供的功能在 Clang 中 **不** 
->> 存在，但该功能被证明是有用的，也应
-
->> +努力将该功能上传到 GCC（和 Clang）。
-
->> +
->> +在上游 GCC 提供了某项功能后，该插件将无法在相应的 GCC 
->> 版本（以及更高版本）下编译。
->> +一旦所有内核支持的 GCC 版本都提供了该功能，该插件将从内核中移除。
->> +
->> +
->> +文件
->> +=====
->> +
->> +**$(src)/scripts/gcc-plugins**
->> +
->> +    这是 GCC 插件的目录。
->> +
->> +**$(src)/scripts/gcc-plugins/gcc-common.h**
->> +
->> +    这是 GCC 插件的兼容性头文件。
->> +    应始终包含它，而不是单独的 GCC 头文件。
->> +
->> +**$(src)/scripts/gcc-plugins/gcc-generate-gimple-pass.h,
->> +$(src)/scripts/gcc-plugins/gcc-generate-ipa-pass.h,
->> +$(src)/scripts/gcc-plugins/gcc-generate-simple_ipa-pass.h,
->> +$(src)/scripts/gcc-plugins/gcc-generate-rtl-pass.h**
->> +
->> +    这些头文件可以自动生成 GIMPLE、SIMPLE_IPA、IPA 和 RTL passes 
->> 的注册结构。
->> +    与手动创建结构相比，它们更受欢迎。
->> +
->> +
->> +用法
->> +=====
->> +
->> +你必须为你的 GCC 版本安装 GCC 插件头文件，以 Ubuntu 上的 gcc-10 为例::
->> +
->> +    apt-get install gcc-10-plugin-dev
->> +
->> +或者在 Fedora 上::
->> +
->> +    dnf install gcc-plugin-devel libmpc-devel
->> +
->> +或者在 Fedora 上使用包含插件的交叉编译器时::
->> +
->> +    dnf install libmpc-devel
->> +
->> +在内核配置中启用 GCC 插件基础设施与一些你想使用的插件::
->> +
->> +    CONFIG_GCC_PLUGINS=y
->> +    CONFIG_GCC_PLUGIN_LATENT_ENTROPY=y
->> +    ...
->> +
->> +运行 gcc（本地或交叉编译器），确保能够检测到插件头文件::
->> +
->> +    gcc -print-file-name=plugin
->> +    CROSS_COMPILE=arm-linux-gnu- ${CROSS_COMPILE}gcc 
->> -print-file-name=plugin
->> +
->> +"plugin" 这个词意味着它们没有被检测到::
->> +
->> +    plugin
->> +
->> +完整的路径则表示插件已经被检测到::
->> +
->> +       /usr/lib/gcc/x86_64-redhat-linux/12/plugin
->> +
->> +编译包括插件在内的最小工具集::
->> +
->> +    make scripts
->> +
->> +或者直接在内核中运行 make，使用循环复杂性 GCC 插件编译整个内核。
->> +
->> +
->> +4. 如何添加新的 GCC 插件
->> +==============================
->> +
->> +GCC 插件位于 scripts/gcc-plugins/。你需要将插件源文件放在 
->> scripts/gcc-plugins/ 目录下。
->> +子目录创建并不支持，你必须添加在 
->> scripts/gcc-plugins/Makefile、scripts/Makefile.gcc-plugins
->> +和相关的 Kconfig 文件中。
->> diff --git a/Documentation/translations/zh_CN/kbuild/index.rst 
->> b/Documentation/translations/zh_CN/kbuild/index.rst
->> index d906a4e88d0f..b51655d981f6 100644
->> --- a/Documentation/translations/zh_CN/kbuild/index.rst
->> +++ b/Documentation/translations/zh_CN/kbuild/index.rst
->> @@ -13,6 +13,7 @@
->>       :maxdepth: 1
->>         headers_install
->> +    gcc-plugins
->>     TODO:
->>   @@ -24,7 +25,6 @@ TODO:
->>   - modules
->>   - issues
->>   - reproducible-builds
->> -- gcc-plugins
->>   - llvm
->>     .. only::  subproject and html
+Sounds like a per-pmu callback is fine.  PMUs don't have the callback
+(including SW) can use 1 same as of now.
 
 Thanks,
-Yanteng
->
->
+Namhyung
 
+> 
+> Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+> ---
+>  kernel/events/core.c | 65 +++++++++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 64 insertions(+), 1 deletion(-)
+> 
+> diff --git a/kernel/events/core.c b/kernel/events/core.c
+> index 4b855b018a79..7a028474caef 100644
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -12017,6 +12017,69 @@ static void account_event(struct perf_event *event)
+>  	account_pmu_sb_event(event);
+>  }
+>  
+> +static u64 perf_freq_start_period(struct perf_event *event)
+> +{
+> +	int type = event->attr.type;
+> +	u64 config, factor;
+> +
+> +	/*
+> +	 * The 127 is the lowest possible recommended SAV (sample after value)
+> +	 * for a 4000 freq (default freq), according to Intel event list JSON
+> +	 * file, which is the only JSON file that provides a recommended value.
+> +	 */
+> +	factor = 127 * 4000;
+> +	if (type != PERF_TYPE_HARDWARE && type != PERF_TYPE_HW_CACHE)
+> +		goto end;
+> +
+> +	/*
+> +	 * The estimation of the start period in the freq mode is
+> +	 * based on the below assumption.
+> +	 *
+> +	 * For a cycles or an instructions event, 1GHZ of the
+> +	 * underlying platform, 1 IPC. The workload is idle 50% time.
+> +	 * The start period = 1,000,000,000 * 1 / freq / 2.
+> +	 *		    = 500,000,000 / freq
+> +	 *
+> +	 * Usually, the branch-related events occur less than the
+> +	 * instructions event. According to the Intel event list JSON
+> +	 * file, the SAV (sample after value) of a branch-related event
+> +	 * is usually 1/4 of an instruction event.
+> +	 * The start period of branch-related events = 125,000,000 / freq.
+> +	 *
+> +	 * The cache-related events occurs even less. The SAV is usually
+> +	 * 1/20 of an instruction event.
+> +	 * The start period of cache-related events = 25,000,000 / freq.
+> +	 */
+> +	config = event->attr.config & PERF_HW_EVENT_MASK;
+> +	if (type == PERF_TYPE_HARDWARE) {
+> +		switch (config) {
+> +		case PERF_COUNT_HW_CPU_CYCLES:
+> +		case PERF_COUNT_HW_INSTRUCTIONS:
+> +		case PERF_COUNT_HW_BUS_CYCLES:
+> +		case PERF_COUNT_HW_STALLED_CYCLES_FRONTEND:
+> +		case PERF_COUNT_HW_STALLED_CYCLES_BACKEND:
+> +		case PERF_COUNT_HW_REF_CPU_CYCLES:
+> +			factor = 500000000;
+> +			break;
+> +		case PERF_COUNT_HW_BRANCH_INSTRUCTIONS:
+> +		case PERF_COUNT_HW_BRANCH_MISSES:
+> +			factor = 125000000;
+> +			break;
+> +		case PERF_COUNT_HW_CACHE_REFERENCES:
+> +		case PERF_COUNT_HW_CACHE_MISSES:
+> +			factor = 25000000;
+> +			break;
+> +		default:
+> +			goto end;
+> +		}
+> +	}
+> +
+> +	if (type == PERF_TYPE_HW_CACHE)
+> +		factor = 25000000;
+> +end:
+> +	return DIV_ROUND_UP_ULL(factor, event->attr.sample_freq);
+> +}
+> +
+>  /*
+>   * Allocate and initialize an event structure
+>   */
+> @@ -12140,7 +12203,7 @@ perf_event_alloc(struct perf_event_attr *attr, int cpu,
+>  	hwc = &event->hw;
+>  	hwc->sample_period = attr->sample_period;
+>  	if (attr->freq && attr->sample_freq)
+> -		hwc->sample_period = 1;
+> +		hwc->sample_period = perf_freq_start_period(event);
+>  	hwc->last_period = hwc->sample_period;
+>  
+>  	local64_set(&hwc->period_left, hwc->sample_period);
+> -- 
+> 2.38.1
+> 
 
