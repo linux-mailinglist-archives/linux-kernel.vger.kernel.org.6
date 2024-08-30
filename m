@@ -1,119 +1,135 @@
-Return-Path: <linux-kernel+bounces-309291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08C1896689B
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 20:02:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FC7D96689F
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 20:02:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA747285561
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 18:02:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 290F6280D30
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 18:02:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCCCA1BC09A;
-	Fri, 30 Aug 2024 18:01:49 +0000 (UTC)
-Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7A131BC9ED;
+	Fri, 30 Aug 2024 18:02:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="AnHHLPis"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 994021BAEFB
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 18:01:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 335EB1BAEF6
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 18:02:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725040909; cv=none; b=KYgMCPZjIzIFLNs9Layo5wuBGAVnvWvDtYMT6m0R7NR8l9LGZ3QxdG6o/C/fqeaqag63LQXooQxLLBMdxTDV5PK3IKBJy2342bds+OZ0r0VXfsjSWy7muzCd9rxYUiP/0cEeI28HQRqcGZ9mf7MyfpMP4uVmo4g3L/EU44mqaxM=
+	t=1725040965; cv=none; b=l8pycFG6+WSeHHBtohCO6AO6RhUJQ7c8wvpl6RSP7Xm26cpIN5uUDo6hX1x49DmjXTbMVIlvYT1nHaRL/uE7m0mHPNBstdSTq8q+FVBW0rzH716V8WXVoqu+dGz643h5Wmb/gfpzIkWIHlAIcNY8rxhrE4hAwbqFFioPt564c9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725040909; c=relaxed/simple;
-	bh=Wkn0NEovL5pCoQtw6/Lg6viGcF8IybsMpWYEL2WoUK0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bjnSP4Z9slsb2Fa9RDHyu+L53Ga+C0Gu7OCBHIv00kJBa1V06NSHY4yKwDtfIN2WXSyHVGTpiR1hza+t2v26wWfbLhqEkuJCD09LdSetfMyHgO6bzqJDqdceaR+cE0f+eZLa5GjaTc3u3WKaO9a+UCHz7hAzlP2iVh7G17ueAxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=manifault.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=manifault.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6c331543ef0so11763646d6.1
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 11:01:47 -0700 (PDT)
+	s=arc-20240116; t=1725040965; c=relaxed/simple;
+	bh=T3aBJ9fnmYj5an6GZeg3uLH3LGkl+XZDCDWyiQZyo/k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MOXfjAUm0nOKgBGIWfqGvwortUlBvMod3G1GLDmOT8FTp4pi+hjWF+sa4vUZy4vivy6MiMy+yBkd6CYgJ7j2khAluoYyb8uzg1oLNBF/fgKedHejd1ehG6kDzW0UI5Pt/zroIjb2dgAl4qQxiJ7lQ/1t01gs0VXzddBW+qgf3Js=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=AnHHLPis; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-205371a8af0so529975ad.2
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 11:02:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1725040962; x=1725645762; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=w7BWq7oVdU2RJCnx+Dm004xyt6dkCplP5f/XTiAPqqc=;
+        b=AnHHLPisqQVt//9IJIJ9+MsSngY4EUwaI5DB71ABvYgKXN4aNizEdQ6rImw6azABbz
+         s+PLk4LK+MrOiI8o39XrQHQhEtM1SppV08pGYrRpALXcaaPZfDNa0wlLbJuqVfYRZl90
+         SLSF5mO6BgLfyIZkNxChrA+TZ7Rgv/56ZCQ30=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725040906; x=1725645706;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Wkn0NEovL5pCoQtw6/Lg6viGcF8IybsMpWYEL2WoUK0=;
-        b=CZ/uQrAvQPVe5LeChb5dhQMOee5JtRlFQlhU6aRRxRMHWg4rKD8FkmPKWQZyigFGqN
-         NSPkBd0fkNyXfXoflVtspBDD8FBog8WO6mlphUXtfss6Qzw4AO3WwIQps9vnObqlB+S0
-         X51LwU7IjCV1Zu34n+vx1HvhcL4MsS61bQ+pyjuCydAGa6w0vAhN6DnznxwKEUFhID23
-         T8v/2SelZh+On3SHhknbwwjOWzY86cKNuZevL00BiVvlXRTmmhHrUumwCF1w/BB0vSs7
-         tykTwrgssHPSbRR2IdDMLLHhy+7vzs8M+EEJHA2Rfo6sTBMSJvx4sssdh4xsn0mFrVFZ
-         39vw==
-X-Gm-Message-State: AOJu0YzEcNGcKkrNpDgZKWLwcDU8ei6N/G0ychVTOF97sCJIKFypRDoR
-	bj6YBazi7EW+7OvMyWRMu/3Ub+wXAocMfwnoQd8mQjqY/kEZNYu0
-X-Google-Smtp-Source: AGHT+IGi8PtFIdGpLbtbMSqPQ5nsIzNW3hmafcEJy3zWtjxNxMjT3PYH8lHOx/IGULdUFR1lo94v9Q==
-X-Received: by 2002:a05:6214:4a01:b0:6bd:70ce:e413 with SMTP id 6a1803df08f44-6c35540cd90mr3362506d6.30.1725040906276;
-        Fri, 30 Aug 2024 11:01:46 -0700 (PDT)
-Received: from maniforge (c-76-141-129-107.hsd1.il.comcast.net. [76.141.129.107])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c340bff5bfsm16727946d6.36.2024.08.30.11.01.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Aug 2024 11:01:45 -0700 (PDT)
-Date: Fri, 30 Aug 2024 13:01:43 -0500
-From: David Vernet <void@manifault.com>
-To: Tejun Heo <tj@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-	kernel-team@meta.com
-Subject: Re: [PATCH v2 2/2 sched_ext/for-6.12] sched_ext: Use
- sched_clock_cpu() instead of rq_clock_task() in touch_core_sched()
-Message-ID: <20240830180143.GF5055@maniforge>
-References: <ZtGkPKgoE5BeI7fN@slm.duckdns.org>
- <ZtGkgCEkgNLzjxUC@slm.duckdns.org>
- <ZtIHYe4DgGlu8k1n@slm.duckdns.org>
+        d=1e100.net; s=20230601; t=1725040962; x=1725645762;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=w7BWq7oVdU2RJCnx+Dm004xyt6dkCplP5f/XTiAPqqc=;
+        b=UeO7nJeHAZH6S5UB55vIT1VKp552CTQi1jGJhha0/uVfHH/eQAPyCjEGtXfAe2U7WI
+         xfVa+4hS6/vodK2CD3GgKVWSmxYOMVmKy6vxbJnCCnwWKst051GHSlblV7vEGeDIVPpi
+         xyQqF/JCGb2maWyybw+gbd7wKVu2kE/QuEroF1ua+71AKRkGR9iy2QigadaZE4CB3uHL
+         /n43094EMolYZf7LuTW9bYlKBu253yUumQjmmTaNORX84ulHqL+WPCjhQW6Uw3qddt7E
+         G0ASTH/E0UmC4iP21DM0Ssb3+EbJrTbTedoi35Z95ucJDetT8M30q7CR81e9iUq26qds
+         lsfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVp7YUnepvr/TNDiPQsbQjbZeEMKjv3LqR7o133EZA3eDjAv5+i58x+Fawy/jyjqCDms9C+Q7UyVkxm3uM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmUs0rOI0Jw3FzT6Muuzve/LCQTPx55hkPkNqRJe9vrTddANR4
+	6yNOLXORh19GrFnXzLNTXZl4zq21lV5mBY6hZabb5SUyrSf1eyKUbFsd61EXZA==
+X-Google-Smtp-Source: AGHT+IFfg3nmCpS6l8tCSIgiK8ygtmcd3GUg9HFT26UxW+AIXZxfWCUoJstGo9qdujnZ6B7n8WVNZQ==
+X-Received: by 2002:a17:902:cecd:b0:1fc:5cc8:bb1b with SMTP id d9443c01a7336-2052773ab73mr19021075ad.7.1725040961241;
+        Fri, 30 Aug 2024 11:02:41 -0700 (PDT)
+Received: from localhost (150.12.83.34.bc.googleusercontent.com. [34.83.12.150])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-205155671bdsm29574215ad.302.2024.08.30.11.02.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 30 Aug 2024 11:02:40 -0700 (PDT)
+From: jeffxu@chromium.org
+To: akpm@linux-foundation.org
+Cc: linux-kselftest@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-hardening@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	pedro.falcato@gmail.com,
+	willy@infradead.org,
+	lorenzo.stoakes@oracle.com,
+	broonie@kernel.org,
+	vbabka@suse.cz,
+	Liam.Howlett@oracle.com,
+	rientjes@google.com,
+	keescook@chromium.org,
+	Jeff Xu <jeffxu@chromium.org>
+Subject: [PATCH v3 0/5] Increase mseal test coverage
+Date: Fri, 30 Aug 2024 18:02:32 +0000
+Message-ID: <20240830180237.1220027-1-jeffxu@chromium.org>
+X-Mailer: git-send-email 2.46.0.469.g59c65b2a67-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="NNswZFIh3UIH4OeF"
-Content-Disposition: inline
-In-Reply-To: <ZtIHYe4DgGlu8k1n@slm.duckdns.org>
-User-Agent: Mutt/2.2.13 (00d56288) (2024-03-09)
+Content-Transfer-Encoding: 8bit
+
+From: Jeff Xu <jeffxu@chromium.org>
+
+This series increase the test coverage of mseal_test by:
+
+Add check for vma_size, prot, and error code for existing tests.
+Add more testcases for madvise, munmap, mmap and mremap to cover
+sealing in different scenarios.
+
+The increase test coverage hopefully help to prevent future regression.
+It doesn't change any existing mm api's semantics, i.e. it will pass on
+linux main and 6.10 branch.
+
+Note: in order to pass this test in mm-unstable, mm-unstable must have
+Liam's fix on mmap [1]
+
+[1] https://lore.kernel.org/linux-kselftest/vyllxuh5xbqmaoyl2mselebij5ox7cseekjcvl5gmzoxxwd2he@hxi4mpjanxzt/#t
+
+History:
+V3:
+- no-functional change, incooperate feedback from Pedro Falcato
+
+V2:
+- https://lore.kernel.org/linux-kselftest/20240829214352.963001-1-jeffxu@chromium.org/
+- remove the mmap fix (Liam R. Howlett will fix it separately)
+- Add cover letter (Lorenzo Stoakes)
+- split the testcase for ease of review (Mark Brown)
+
+V1:
+- https://lore.kernel.org/linux-kselftest/20240828225522.684774-1-jeffxu@chromium.org/
 
 
---NNswZFIh3UIH4OeF
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Jeff Xu (5):
+  selftests/mseal_test: Check vma_size, prot, error code.
+  selftests/mseal: add sealed madvise type
+  selftests/mseal: munmap across multiple vma ranges.
+  selftests/mseal: add more tests for mmap
+  selftests/mseal: add more tests for mremap
 
-On Fri, Aug 30, 2024 at 07:54:41AM -1000, Tejun Heo wrote:
-> Since 3cf78c5d01d6 ("sched_ext: Unpin and repin rq lock from
-> balance_scx()"), sched_ext's balance path terminates rq_pin in the outerm=
-ost
-> function. This is simpler and in line with what other balance functions a=
-re
-> doing but it loses control over rq->clock_update_flags which makes
-> assert_clock_udpated() trigger if other CPUs pins the rq lock.
->=20
-> The only place this matters is touch_core_sched() which uses the timestamp
-> to order tasks from sibling rq's. Switch to sched_clock_cpu(). Later, it =
-may
-> be better to use per-core dispatch sequence number.
->=20
-> v2: Use sched_clock_cpu() instead of ktime_get_ns() per David.
->=20
-> Signed-off-by: Tejun Heo <tj@kernel.org>
-> Fixes: 3cf78c5d01d6 ("sched_ext: Unpin and repin rq lock from balance_scx=
-()")
-> Cc: David Vernet <void@manifault.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
+ tools/testing/selftests/mm/mseal_test.c | 830 ++++++++++++++++++++++--
+ 1 file changed, 763 insertions(+), 67 deletions(-)
 
-Acked-by: David Vernet <void@manifault.com>
+-- 
+2.46.0.469.g59c65b2a67-goog
 
---NNswZFIh3UIH4OeF
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEARYKAB0WIQRBxU1So5MTLwphjdFZ5LhpZcTzZAUCZtIJBwAKCRBZ5LhpZcTz
-ZIYJAQCdYxgMELf+q/vFrKrBoEn9X0lxej0CT2EuGACsCXd8VwEAkA624PfK1nuV
-tZZx1/ohkQFEtv8U54R6wne2YCvjngw=
-=poOo
------END PGP SIGNATURE-----
-
---NNswZFIh3UIH4OeF--
 
