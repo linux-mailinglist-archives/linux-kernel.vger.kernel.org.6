@@ -1,203 +1,131 @@
-Return-Path: <linux-kernel+bounces-309310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1782D9668BE
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 20:13:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DD109668BD
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 20:12:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 871571F249E1
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 18:13:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 363951F24A8C
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 18:12:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 136461BD039;
-	Fri, 30 Aug 2024 18:12:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FA231BC07D;
+	Fri, 30 Aug 2024 18:12:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="KCJhDUSZ"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e7EdwN+p"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E3761BD028;
-	Fri, 30 Aug 2024 18:12:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EA0C1BB69B;
+	Fri, 30 Aug 2024 18:12:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725041533; cv=none; b=uDIvXp2qCzQImMT8UH2D0X/LyYc/imX7XYGpePHdTjQa28S3HEFrIEP9Uen6OMulJ8qLLM+BrwQeKUk7gvuHq/+iU2Ommb8cVpLx/SlrqtDrLtXtUghkjbUNcyc//zgSeoSRYzIc5q8ztUgBjOuGHSygfXmGsdQh4p8YXu3cs0E=
+	t=1725041521; cv=none; b=pu66y0xIC+mebkAXmpAP/ZTPU7uoa5AD5qbWrUtvt5qYTnYccfyzgd0DxBfQDGEbyUpADq3b9a4U3v12Mx0z6dO27kqhuhJ8SQmn2/QAtuq/2cbGQkmJbBIJY2lhhFRZFS/QXUiWth6A3v+bWteKqtIigchwdIHtQ70hMKeCTRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725041533; c=relaxed/simple;
-	bh=zCoUzhBmmznMWx4k3BDtIQPSY2o2y+jlLkHJ2jYaVUU=;
+	s=arc-20240116; t=1725041521; c=relaxed/simple;
+	bh=xpYyuX0+gUF5Mr4Gy27M6rUHT7DG7qFpyaRUFs1fINQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Yy7rAjFxXKaJwhY2gYCndG3kO5255i/yL+TBHfdrSSUec/j+SxDwuytVmN7oTb8l3ZoiaFdVYKqspwUBTlDxBZW/fOQ5vIEvG90A4K2H+vf7CSJytod+kgrRFwB5jxtG/mXXn23TupXQcW85eS+sLCZazIMrdhc03uQKmmpM6Tg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=KCJhDUSZ; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=28Z7dlWcO7m9gkU3DOzwuYm7qBeow4XlSUU1VNXqCuM=; b=KCJhDUSZXjqCXyf6ktd33IQgT2
-	oAAS/t7P+5fmOFj5q8ftN2N0OIByUsie0WiIxFaKnmOrOmB5sI7zja5AbFIaUFThjBX6e06rnevWj
-	1Huq33OngdJz/bAYJTSPwf1328zmWAx/E+Nl8Hk4ffOdfSIC7UKNWEKMxPCF8WbDGNDSgT6J8jrsi
-	WlgdVrzqdnrBrJLAgk3Sp/4F792EYW74wRQVr06ZEg/FLfcBqP4FAKAwVLmunNp9oQapsLc6JakIc
-	L9zTQgLdcK4BxCSwBfZ3HAoSE2lLbss1059yuc45J4n/3uLvSbK1kKKH164xrpV+ZPZGsJ+LqoVVR
-	jAIJOA3g==;
-Received: from [177.76.152.96] (helo=[192.168.1.60])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1sk65l-007FKs-2N; Fri, 30 Aug 2024 20:11:24 +0200
-Message-ID: <d1e65436-b49b-76b1-01d4-2be2a0eb0f3a@igalia.com>
-Date: Fri, 30 Aug 2024 15:11:13 -0300
+	 In-Reply-To:Content-Type; b=eAnlL7bWQdTfuj2BiF+nqHzEm75hCMJ2tU71c82zynPGN8WddEK4V4f7Q+dVhlESvm0Esw2H8SQk/jtR9HwbLICqogLBT57lwt30+fMy0wXtJ/VLBnQV9EEWpjGZ5qVjqLMczVaOwuezLyntmQS9gP11CujiTi9GAwaJIRupJD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e7EdwN+p; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B71CC4CEC2;
+	Fri, 30 Aug 2024 18:11:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725041521;
+	bh=xpYyuX0+gUF5Mr4Gy27M6rUHT7DG7qFpyaRUFs1fINQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=e7EdwN+pkhzNHUcwqv8wfZVevDEJBapJcmzG6Jk1rAJLxf9LrH3YUM2RY9MbUF5ei
+	 yW0uVBlMM5yzW2UwridP296ef7R0Os0aVWDAqF3NEZALie1VMFYHl93eyUwchzRs/C
+	 0oaDMxA1Q2Wej3GelQTGD3zFzqdS6W/SKNFm/zDZBLVSBpl95AeILPHnwHQQrYJz9S
+	 CT/iit1wc6eNQzc+xgFjvKWpaY1/FAEPqEXtfBb+y07lPDvqXtfYPm7zLeMYGp9hjf
+	 tn84tTZFSMR4SqSWUKVr5vo6dospqjNURGkNOs3IlOvjuhK6DmbziqqCO4vTmiWnKP
+	 nJ0l2QyiwAZ+g==
+Message-ID: <6829a2e4-f7e0-4f34-8702-e00b005e9e0c@kernel.org>
+Date: Fri, 30 Aug 2024 20:11:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH] powerpc/fadump, x86/sev: Inform about unconditionally
- enabling crash_kexec_post_notifiers
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/7] dmaengine:Use devm_clk_get_enabled() helpers
+To: vkoul@kernel.org
+Cc: Liao Yuanhong <liaoyuanhong@vivo.com>, dmaengine@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ imx@lists.linux.dev
+References: <20240830094118.15458-1-liaoyuanhong@vivo.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-To: Stephen Brennan <stephen.s.brennan@oracle.com>,
- kexec@lists.infradead.org, linuxppc-dev@lists.ozlabs.org, x86@kernel.org
-Cc: bhe@redhat.com, vgoyal@redhat.com, dyoung@redhat.com, mpe@ellerman.id.au,
- npiggin@gmail.com, christophe.leroy@csgroup.eu, naveen@kernel.org,
- hbathini@linux.ibm.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, hpa@zytor.com, ashish.kalra@amd.com,
- michael.roth@amd.com, brijesh.singh@amd.com, thomas.lendacky@amd.com,
- linux-kernel@vger.kernel.org, linux-debuggers@vger.kernel.org,
- kernel@gpiccoli.net, kernel-dev@igalia.com
-References: <20240830141752.460173-1-gpiccoli@igalia.com>
- <87bk19rj5u.fsf@oracle.com>
-From: "Guilherme G. Piccoli" <gpiccoli@igalia.com>
-In-Reply-To: <87bk19rj5u.fsf@oracle.com>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240830094118.15458-1-liaoyuanhong@vivo.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 30/08/2024 14:54, Stephen Brennan wrote:
-> [...]
-> Could we maybe go further than this, and delete the public declarations
-> of crash_kexec_post_notifiers in "include/linux"? (I see two). We could
-> replace the users that set it to true with a function that logs the
-> change so that it's impossible for new code to set it directly without
-> notifying the user. Something like this? Compile tested only for x86.
+On 30/08/2024 11:41, Liao Yuanhong wrote:
+> The devm_clk_get_enabled() helpers:
+>     - call devm_clk_get()
+>     - call clk_prepare_enable() and register what is needed in order to
+>      call clk_disable_unprepare() when needed, as a managed resource.
 > 
-> commit da8691a25d7b0c2f914720bc054dd1d9dbe4b373
-> Author: Stephen Brennan <stephen.s.brennan@oracle.com>
-> Date:   Fri Aug 30 10:49:24 2024 -0700
-> 
->     panic: make crash_kexec_post_notifiers private
->     
->     This requires that any in-kernel user setting it directly must log the
->     reason so that users are aware their panic behavior may be different
->     from their configuration.
->     
->     Signed-off-by: Stephen Brennan <stephen.s.brennan@oracle.com>
+> This simplifies the code and avoids the calls to clk_disable_unprepare().
+> ---
+> v2:remove inappropriate modifications, configure COMPILE_TEST for easy
+> testing, add devm_clk_getprepaed() for imx sdma device.
+> ---
 > 
 
-Thanks Stephen! I'm totally into that, your approach is very good.
-Cheers,
+Vinod,
 
+Since ~2 weeks there is tremendous amount of trivial patches coming from
+vivo.com. I identified at least 6 buggy, where the contributor did not
+understand the code. Not sure about intention, but I advise extra
+carefulness
+when dealing with these "trivial" improvements.
 
-Guilherme
+Best regards,
+Krzysztof
 
-
-> diff --git a/arch/powerpc/kernel/fadump.c b/arch/powerpc/kernel/fadump.c
-> index a612e7513a4f8..9966f29409599 100644
-> --- a/arch/powerpc/kernel/fadump.c
-> +++ b/arch/powerpc/kernel/fadump.c
-> @@ -1818,7 +1818,7 @@ int __init setup_fadump(void)
->  	 * lets panic() function take crash friendly path before panic
->  	 * notifiers are invoked.
->  	 */
-> -	crash_kexec_post_notifiers = true;
-> +	enable_crash_kexec_post_notifiers("PPC/fadump");
->  
->  	return 1;
->  }
-> diff --git a/arch/x86/virt/svm/sev.c b/arch/x86/virt/svm/sev.c
-> index 0ce17766c0e52..6e9f5f8d13cc5 100644
-> --- a/arch/x86/virt/svm/sev.c
-> +++ b/arch/x86/virt/svm/sev.c
-> @@ -256,7 +256,7 @@ static int __init snp_rmptable_init(void)
->  	 * Setting crash_kexec_post_notifiers to 'true' to ensure that SNP panic
->  	 * notifier is invoked to do SNP IOMMU shutdown before kdump.
->  	 */
-> -	crash_kexec_post_notifiers = true;
-> +	enable_crash_kexec_post_notifiers("AMD/SEV");
->  
->  	return 0;
->  
-> diff --git a/drivers/hv/hv_common.c b/drivers/hv/hv_common.c
-> index 9c452bfbd5719..fa3bbb66235de 100644
-> --- a/drivers/hv/hv_common.c
-> +++ b/drivers/hv/hv_common.c
-> @@ -303,8 +303,7 @@ int __init hv_common_init(void)
->  	if (ms_hyperv.misc_features & HV_FEATURE_GUEST_CRASH_MSR_AVAILABLE) {
->  		u64 hyperv_crash_ctl;
->  
-> -		crash_kexec_post_notifiers = true;
-> -		pr_info("Hyper-V: enabling crash_kexec_post_notifiers\n");
-> +		enable_crash_kexec_post_notifiers("Hyper-V");
->  
->  		/*
->  		 * Panic message recording (sysctl_record_panic_msg)
-> diff --git a/include/linux/panic.h b/include/linux/panic.h
-> index 54d90b6c5f47b..697184664c6f4 100644
-> --- a/include/linux/panic.h
-> +++ b/include/linux/panic.h
-> @@ -31,8 +31,6 @@ extern int sysctl_panic_on_rcu_stall;
->  extern int sysctl_max_rcu_stall_to_panic;
->  extern int sysctl_panic_on_stackoverflow;
->  
-> -extern bool crash_kexec_post_notifiers;
-> -
->  extern void __stack_chk_fail(void);
->  void abort(void);
->  
-> diff --git a/include/linux/panic_notifier.h b/include/linux/panic_notifier.h
-> index 41e32483d7a7b..97c31cf5c2fdb 100644
-> --- a/include/linux/panic_notifier.h
-> +++ b/include/linux/panic_notifier.h
-> @@ -7,6 +7,6 @@
->  
->  extern struct atomic_notifier_head panic_notifier_list;
->  
-> -extern bool crash_kexec_post_notifiers;
-> +void enable_crash_kexec_post_notifiers(const char *reason);
->  
->  #endif	/* _LINUX_PANIC_NOTIFIERS_H */
-> diff --git a/kernel/crash_core.c b/kernel/crash_core.c
-> index 63cf89393c6eb..634c6b99717c5 100644
-> --- a/kernel/crash_core.c
-> +++ b/kernel/crash_core.c
-> @@ -33,6 +33,9 @@
->  /* Per cpu memory for storing cpu states in case of system crash. */
->  note_buf_t __percpu *crash_notes;
->  
-> +/* Defined in kernel/panic.c and needed here, but not intended to be public. */
-> +extern bool crash_kexec_post_notifiers;
-> +
->  #ifdef CONFIG_CRASH_DUMP
->  
->  int kimage_crash_copy_vmcoreinfo(struct kimage *image)
-> diff --git a/kernel/panic.c b/kernel/panic.c
-> index 2a0449144f82e..f4ae3abbea7ed 100644
-> --- a/kernel/panic.c
-> +++ b/kernel/panic.c
-> @@ -137,6 +137,12 @@ static long no_blink(int state)
->  	return 0;
->  }
->  
-> +void enable_crash_kexec_post_notifiers(const char *reason)
-> +{
-> +	crash_kexec_post_notifiers = true;
-> +	pr_info("%s: enabling crash_kexec_post_notifiers\n", reason);
-> +}
-> +
->  /* Returns how long it waited in ms */
->  long (*panic_blink)(int state);
->  EXPORT_SYMBOL(panic_blink);
-> 
 
