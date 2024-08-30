@@ -1,86 +1,108 @@
-Return-Path: <linux-kernel+bounces-308074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 784309656EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 07:29:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF5CF9656EC
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 07:32:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB5F01C212F4
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 05:29:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 625832847C6
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 05:32:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6CB414D715;
-	Fri, 30 Aug 2024 05:29:25 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACBCFEEB7;
-	Fri, 30 Aug 2024 05:29:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAA9914D294;
+	Fri, 30 Aug 2024 05:32:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="f+v7izWE"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67D6A4683;
+	Fri, 30 Aug 2024 05:32:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724995765; cv=none; b=PS6hewzayDKzW6jZiQWSvBp1QfXSTzuRVZfU0rVokeqAfOYuQAq4B5xPDdqE006w5SdeOuMw3kamIx+WuGu+m5JMo2H8c2X+3gcs7LNHbLRJlTyl+5GrfLXu58lgON0x2Sl4bX5oFqOka7dZcgJphKs1zugqDK9uV0YDJZVGRKo=
+	t=1724995936; cv=none; b=YbKq7I+dZHGZDvUQaW99eH43HgRlQr1Qz2SvpbJWlR8CoDyVXneSqmjt9crmCTisN5pAz4M+0brseUUsJLsIaSP0X8dYGkWz18VRKOHwMxnaJ/KsFZ/H5wt8x4jdgi3dHSVhZ5mwzD1GIhAuj9zptw/i4rKgTnNtm8GQvVDO8tw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724995765; c=relaxed/simple;
-	bh=Crpk8GurwSOfIGtyT66VOvfMGfIPnQObVQrPOCzNSg0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BDpGDdr7a9VdsmCro9y1IJgJwCkCOAkzSx67gf4OsZh7pGaSQJ1ZiJ3PpF9KB3VNNAXSPyZXQMu9BG5Iv12b6UEEDAWSALeANvxhlfAI3c71FDAES2g/01tfJtAvIiNTw+IdbhPwNCZNJAhu2pTUeX6L3KlLtmw6FtqRyVOw3Ac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BF71C1063;
-	Thu, 29 Aug 2024 22:29:48 -0700 (PDT)
-Received: from e116581.blr.arm.com (e116581.arm.com [10.162.40.24])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id AE0073F66E;
-	Thu, 29 Aug 2024 22:29:18 -0700 (PDT)
-From: Dev Jain <dev.jain@arm.com>
-To: shuah@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kselftest@vger.kernel.org,
-	Catalin.Marinas@arm.com,
-	will@kernel.org
-Cc: broonie@kernel.org,
-	ryan.roberts@arm.com,
-	Anshuman.Khandual@arm.com,
-	aneesh.kumar@kernel.org,
-	linux-kernel@vger.kernel.org,
-	Dev Jain <dev.jain@arm.com>
-Subject: [PATCH] kselftest/arm64: Fix build warnings for ptrace
-Date: Fri, 30 Aug 2024 10:59:11 +0530
-Message-Id: <20240830052911.4040970-1-dev.jain@arm.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1724995936; c=relaxed/simple;
+	bh=J8z+rX2pZ9+dry5/V78IuKVUK+zB38v/cOVOuHDyB3c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=g5kSngGM8WcnhV0cJPCtKem6V8ZFKW6/DZOaN/+dsuEDFcOrl3A7taPhzONshEe8Wx7li9J9fBmWeVse8m+SWjk0bPCs5P88ZZlalChK/ebTYQJn2Q2UdnCW4f8aWwjsbVG8CFQQGMweCIhIj5zJNOu2Nqmcpu0vB17WyY9thLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=f+v7izWE; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724995934; x=1756531934;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=J8z+rX2pZ9+dry5/V78IuKVUK+zB38v/cOVOuHDyB3c=;
+  b=f+v7izWEoxw3+23vC7nxf11EeljlISv36z8ndMZlKw8kTGa83LchApdf
+   FlrOWmMWkzHK0pW/dFMJm+RfF/malGBz5Pm42X/pyqty3Mb6DGb7+Rvyb
+   Ch1s51vvBJRGgNNQToHDNoSzwKc0Z0olGSs0Bemy9I0FEw561UfKLce6Z
+   2xaZxf/YoXwZiCTfvs1TPhWOS2ML7ANfhim67ZUmOVtflZQOzyn9X060V
+   my8xCcYUjEc5FXmD1Lr7da1nG69Nw029gnBOMsFdkVsiPtnDYkH1Epp3U
+   GwO9OJ0VWL86SZR6jIpuvzR2SatBpJG7JBmzje4jFmJgZcealSu1bWLWr
+   A==;
+X-CSE-ConnectionGUID: gOkJtxMcSXW8fO8YqjVkWQ==
+X-CSE-MsgGUID: MjX9OLfrR06TVUn4pn3+Og==
+X-IronPort-AV: E=McAfee;i="6700,10204,11179"; a="23506980"
+X-IronPort-AV: E=Sophos;i="6.10,187,1719903600"; 
+   d="scan'208";a="23506980"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 22:32:14 -0700
+X-CSE-ConnectionGUID: 1hD+BdonSIy1j5hsg4VUXg==
+X-CSE-MsgGUID: 4JHvl8W1SymzfRRkMO4V+w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,187,1719903600"; 
+   d="scan'208";a="68610544"
+Received: from unknown (HELO [10.237.72.151]) ([10.237.72.151])
+  by orviesa003.jf.intel.com with ESMTP; 29 Aug 2024 22:32:11 -0700
+Message-ID: <708aabde-58fb-48ea-80af-bcbf60d95a81@linux.intel.com>
+Date: Fri, 30 Aug 2024 08:32:09 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/1] i2c: designware: Consolidate PM ops
+To: "Goswami, Sanket" <Sanket.Goswami@amd.com>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Andi Shyti <andi.shyti@kernel.org>, linux-i2c@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>,
+ Jan Dabros <jsd@semihalf.com>, Narasimhan.V@amd.com,
+ Borislav Petkov <bp@alien8.de>, Kim Phillips <kim.phillips@amd.com>,
+ Shyam-sundar.S-k@amd.com
+References: <20240827150101.2171107-1-andriy.shevchenko@linux.intel.com>
+ <9d424592-c157-417a-9d6e-d12d80e19829@amd.com>
+Content-Language: en-US
+From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+In-Reply-To: <9d424592-c157-417a-9d6e-d12d80e19829@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-A "%s" is missing in ksft_exit_fail_msg(); instead, use the newly
-introduced ksft_exit_fail_perror().
-
-Signed-off-by: Dev Jain <dev.jain@arm.com>
----
- tools/testing/selftests/arm64/abi/ptrace.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/tools/testing/selftests/arm64/abi/ptrace.c b/tools/testing/selftests/arm64/abi/ptrace.c
-index e4fa507cbdd0..b51d21f78cf9 100644
---- a/tools/testing/selftests/arm64/abi/ptrace.c
-+++ b/tools/testing/selftests/arm64/abi/ptrace.c
-@@ -163,10 +163,10 @@ static void test_hw_debug(pid_t child, int type, const char *type_name)
- static int do_child(void)
- {
- 	if (ptrace(PTRACE_TRACEME, -1, NULL, NULL))
--		ksft_exit_fail_msg("PTRACE_TRACEME", strerror(errno));
-+		ksft_exit_fail_perror("PTRACE_TRACEME");
- 
- 	if (raise(SIGSTOP))
--		ksft_exit_fail_msg("raise(SIGSTOP)", strerror(errno));
-+		ksft_exit_fail_perror("raise(SIGSTOP)");
- 
- 	return EXIT_SUCCESS;
- }
--- 
-2.30.2
-
+On 8/29/24 5:55 PM, Goswami, Sanket wrote:
+> Adding Shyam (as he asked me to check this change on AMD systems)
+> 
+> On 8/27/2024 8:30 PM, Andy Shevchenko wrote:
+>> We have the same (*) PM ops in the PCI and plaform drivers.
+>> Instead, consolidate that PM ops under exported variable and
+>> deduplicate them.
+>>
+>> *)
+>> With the subtle ACPI and P-Unit behaviour differences in PCI case.
+>> But this is not a problem as for ACPI we need to take care of the
+>> P-Unit semaphore anyway and calling PM ops for PCI makes sense as
+>> it might provide specific operation regions in ACPI (however there
+>> are no known devices on market that are using it with PCI enabled I2C).
+>> Note, the clocks are not in use in the PCI case.
+>>
+>> Reviewed-by: Andi Shyti <andi.shyti@kernel.org>
+>> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> 
+> Tested-by: Sanket Goswami <Sanket.Goswami@amd.com>
+> 
+Acked-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
 
