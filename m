@@ -1,114 +1,268 @@
-Return-Path: <linux-kernel+bounces-308134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F89E9657A8
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 08:34:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBB939657BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 08:35:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D8BE28563B
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 06:34:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B845B20A34
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 06:35:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E92114F9C5;
-	Fri, 30 Aug 2024 06:34:47 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E8F214F9CA;
+	Fri, 30 Aug 2024 06:35:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="T5ZYxwBi"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 547481D131D;
-	Fri, 30 Aug 2024 06:34:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 404F91D131D
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 06:35:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724999687; cv=none; b=AwlbsQCHew+NesI4b2CA46RqzaJCCtX1RI1siD6tdPcLhrKob5W1M91RpEberp9EmORhyQK8GQdUJMcDqjn1B6ouLDavO1yiSl4SQ2gxvfrXz6R+iSakrWB7MflnbSRWqqr4prhLoCcOi2Mmcsk5e1bW2nMkAgAkYV/xmuh9u/k=
+	t=1724999746; cv=none; b=hayZUlUQZ2r1u5rihVrzcYrOs+D1/p1DkAl9R3K74F647elzyqBqeRecA0kZ2oIqKeV5UTgk95hKgxNiDqGH1HNmh+BRrUjnRM7M5vGQXIYOpkENcUmoRF2FVpEwbyyTyQ9pqwI9cdtHXP2imq6yWiA73M9ZH/RVK6RX8eWmCCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724999687; c=relaxed/simple;
-	bh=kUpqT8jMjevQ7Wt6Fg62s/nEvpFn2mHHVE8PIYca72A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=XarqE0snQi2c0Xpqr18Iq9r/mMaGBa6n55uKFWrBbSBtEQuwKJ12FpP7ExSlnRQJrGoPmL8xbkyTMRlR3gzgmIdQADKJRA44ULCpZ+kYSozxjcT+L/Nt7cnlthEKGK6ArJfuaHyRE7VYoWIPGEzBwuNmFyeEuIQKQH/FsgidyPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4Ww7dp3fr0z18MyV;
-	Fri, 30 Aug 2024 14:33:50 +0800 (CST)
-Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
-	by mail.maildlp.com (Postfix) with ESMTPS id 14CA1140202;
-	Fri, 30 Aug 2024 14:34:41 +0800 (CST)
-Received: from [10.67.109.254] (10.67.109.254) by
- kwepemh500013.china.huawei.com (7.202.181.146) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 30 Aug 2024 14:34:39 +0800
-Message-ID: <c29263ae-89f1-edd7-003a-bd03cdddc821@huawei.com>
-Date: Fri, 30 Aug 2024 14:34:38 +0800
+	s=arc-20240116; t=1724999746; c=relaxed/simple;
+	bh=IZNxyZci2WhOM1xNxtSJe4DcL2Y0BPK3U7DbfR6uLdA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MNWOWyahhfeS+FCXrJyWoqyHm0DlTXge73B8EjGEyWC9obgtikvCsHg9zxpa4PbSbhpw2Dvrkz4zfyHsRVus37A94BxAOS3vcslcz2JRQR8uyTm8EWBFFKmTqBt9mk9NhvuZFyICyz/WyKC43ghsALHdUlNWrVKYFopg8i9me4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=T5ZYxwBi; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724999743;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HrWNOiIuuwv6rUwr8p842oSg3wAC+6BD/WbJwvg4yP0=;
+	b=T5ZYxwBiPXCGID/xMCm0RWkZA7UkEkmUaDQpMB9GiSVcRBxfkpyOnV4HAoE5VPYTJ1D9Uu
+	+46RsAEWGB8oNqG4LlPAmePpnDvnQru9nhUfHOqHIw5KSsw+nmjRzgM1ydjZp70Wu7ZBUk
+	HY35HPnUllCGlaHi2u9AYSTUYGYWgoU=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-59-JmQCpNOLOBqYBCgbQINbGQ-1; Fri,
+ 30 Aug 2024 02:35:37 -0400
+X-MC-Unique: JmQCpNOLOBqYBCgbQINbGQ-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5487419560B1;
+	Fri, 30 Aug 2024 06:35:35 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.42])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id ABB3E19560AD;
+	Fri, 30 Aug 2024 06:35:32 +0000 (UTC)
+Date: Fri, 30 Aug 2024 14:35:28 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Dave Vasilevsky <dave@vasilevsky.ca>
+Cc: akpm@linux-foundation.org, glaubitz@physik.fu-berlin.de,
+	linuxppc-dev@lists.ozlabs.org, linux-sh@vger.kernel.org,
+	mpe@ellerman.id.au, kexec@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Reimar =?iso-8859-1?Q?D=F6ffinger?= <Reimar.Doeffinger@gmx.de>
+Subject: Re: [PATCH] crash: Default to CRASH_DUMP=n when support for it is
+ unlikely
+Message-ID: <ZtFoMMsS5PuFw3LF@MiWiFi-R3L-srv>
+References: <20240823125156.104775-1-dave@vasilevsky.ca>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH -next RESEND 00/10] mtd: Use
- for_each_child_of_node_scoped()
-Content-Language: en-US
-To: Miquel Raynal <miquel.raynal@bootlin.com>, Krzysztof Kozlowski
-	<krzk@kernel.org>
-CC: <michal.simek@amd.com>, <richard@nod.at>, <vigneshr@ti.com>,
-	<liang.yang@amlogic.com>, <neil.armstrong@linaro.org>,
-	<khilman@baylibre.com>, <jbrunet@baylibre.com>,
-	<martin.blumenstingl@googlemail.com>, <matthias.bgg@gmail.com>,
-	<angelogioacchino.delregno@collabora.com>, <heiko@sntech.de>,
-	<mcoquelin.stm32@gmail.com>, <alexandre.torgue@foss.st.com>, <wens@csie.org>,
-	<jernej.skrabec@gmail.com>, <samuel@sholland.org>, <kees@kernel.org>,
-	<gustavoars@kernel.org>, <linux@treblig.org>, <robh@kernel.org>,
-	<u.kleine-koenig@pengutronix.de>, <erick.archer@gmx.com>,
-	<christophe.jaillet@wanadoo.fr>, <val@packett.cool>,
-	<christophe.kerello@foss.st.com>, <linux-mtd@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-amlogic@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-renesas-soc@vger.kernel.org>, <linux-rockchip@lists.infradead.org>,
-	<linux-stm32@st-md-mailman.stormreply.com>, <jic23@kernel.org>
-References: <20240826094328.2991664-1-ruanjinjie@huawei.com>
- <20240826115213.389acaef@xps-13>
- <f7430f87-88d2-4c08-bc1e-6bb3da4e332c@kernel.org>
- <20240826144917.2c4e202d@xps-13>
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-In-Reply-To: <20240826144917.2c4e202d@xps-13>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemh500013.china.huawei.com (7.202.181.146)
+In-Reply-To: <20240823125156.104775-1-dave@vasilevsky.ca>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-
-
-On 2024/8/26 20:49, Miquel Raynal wrote:
-> Hi Krzysztof,
+On 08/23/24 at 08:51am, Dave Vasilevsky wrote:
+> Fixes boot failures on 6.9 on PPC_BOOK3S_32 machines using
+> Open Firmware. On these machines, the kernel refuses to boot
+> from non-zero PHYSICAL_START, which occurs when CRASH_DUMP is on.
 > 
-> krzk@kernel.org wrote on Mon, 26 Aug 2024 12:19:07 +0200:
+> Since most PPC_BOOK3S_32 machines boot via Open Firmware, it should
+> default to off for them. Users booting via some other mechanism
+> can still turn it on explicitly.
 > 
->> On 26/08/2024 11:52, Miquel Raynal wrote:
->>> Hi Jinjie,
->>>
->>> ruanjinjie@huawei.com wrote on Mon, 26 Aug 2024 17:43:18 +0800:
->>>   
->>>> Use scoped for_each_available_child_of_node_scoped() when iterating over
->>>> device nodes to make code a bit simpler.  
->>>
->>> Why is this a resend ? Did I miss a previous iteration?  
->>
->> You were not cc-ed on previous iteration. I asked for proper split
->> between subsystems and sending to maintainers, thus this resend.
-> 
-> Ok. Makes sense, and the patchset looks fine.
+> Also defaults to CRASH_DUMP=n on sh.
 
-Hi, Miquel,
+The overrall looks good to me except of the CRASH_DUMP=n on sh, do you
+have a comment about the reasoning since you have discussed with John?
+Is it because of below config items?
 
-Could this series be merged, thank you!
+arch/sh/Kconfig:
+config ARCH_SUPPORTS_CRASH_DUMP
+        def_bool BROKEN_ON_SMP
+...
+config PHYSICAL_START
+        hex "Physical address where the kernel is loaded" if (EXPERT || CRASH_DUMP)
+        default MEMORY_START
+	...
 
 > 
-> Jinjie, please always include a changelog when you send new versions,
-> and explanations for a RESEND.
+> Signed-off-by: Dave Vasilevsky <dave@vasilevsky.ca>
+> Reported-by: Reimar Döffinger <Reimar.Doeffinger@gmx.de>
+> Closes: https://lists.debian.org/debian-powerpc/2024/07/msg00001.html
+> Fixes: 75bc255a7444 ("crash: clean up kdump related config items")
+> ---
+>  arch/arm/Kconfig       | 3 +++
+>  arch/arm64/Kconfig     | 3 +++
+>  arch/loongarch/Kconfig | 3 +++
+>  arch/mips/Kconfig      | 3 +++
+>  arch/powerpc/Kconfig   | 4 ++++
+>  arch/riscv/Kconfig     | 3 +++
+>  arch/s390/Kconfig      | 3 +++
+>  arch/sh/Kconfig        | 3 +++
+>  arch/x86/Kconfig       | 3 +++
+>  kernel/Kconfig.kexec   | 2 +-
+>  10 files changed, 29 insertions(+), 1 deletion(-)
 > 
-> Thanks,
-> MiquÃ¨l
+> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+> index 54b2bb817a7f..200995052690 100644
+> --- a/arch/arm/Kconfig
+> +++ b/arch/arm/Kconfig
+> @@ -1597,6 +1597,9 @@ config ATAGS_PROC
+>  config ARCH_SUPPORTS_CRASH_DUMP
+>  	def_bool y
+>  
+> +config ARCH_DEFAULT_CRASH_DUMP
+> +	def_bool y
+> +
+>  config AUTO_ZRELADDR
+>  	bool "Auto calculation of the decompressed kernel image address" if !ARCH_MULTIPLATFORM
+>  	default !(ARCH_FOOTBRIDGE || ARCH_RPC || ARCH_SA1100)
+> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+> index a2f8ff354ca6..43e08cc8204f 100644
+> --- a/arch/arm64/Kconfig
+> +++ b/arch/arm64/Kconfig
+> @@ -1558,6 +1558,9 @@ config ARCH_DEFAULT_KEXEC_IMAGE_VERIFY_SIG
+>  config ARCH_SUPPORTS_CRASH_DUMP
+>  	def_bool y
+>  
+> +config ARCH_DEFAULT_CRASH_DUMP
+> +	def_bool y
+> +
+>  config ARCH_HAS_GENERIC_CRASHKERNEL_RESERVATION
+>  	def_bool CRASH_RESERVE
+>  
+> diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
+> index 70f169210b52..ce232ddcd27d 100644
+> --- a/arch/loongarch/Kconfig
+> +++ b/arch/loongarch/Kconfig
+> @@ -599,6 +599,9 @@ config ARCH_SUPPORTS_KEXEC
+>  config ARCH_SUPPORTS_CRASH_DUMP
+>  	def_bool y
+>  
+> +config ARCH_DEFAULT_CRASH_DUMP
+> +	def_bool y
+> +
+>  config ARCH_SELECTS_CRASH_DUMP
+>  	def_bool y
+>  	depends on CRASH_DUMP
+> diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
+> index 60077e576935..b547f4304d0c 100644
+> --- a/arch/mips/Kconfig
+> +++ b/arch/mips/Kconfig
+> @@ -2881,6 +2881,9 @@ config ARCH_SUPPORTS_KEXEC
+>  config ARCH_SUPPORTS_CRASH_DUMP
+>  	def_bool y
+>  
+> +config ARCH_DEFAULT_CRASH_DUMP
+> +	def_bool y
+> +
+>  config PHYSICAL_START
+>  	hex "Physical address where the kernel is loaded"
+>  	default "0xffffffff84000000"
+> diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+> index d7b09b064a8a..0f3c1f958eac 100644
+> --- a/arch/powerpc/Kconfig
+> +++ b/arch/powerpc/Kconfig
+> @@ -682,6 +682,10 @@ config RELOCATABLE_TEST
+>  config ARCH_SUPPORTS_CRASH_DUMP
+>  	def_bool PPC64 || PPC_BOOK3S_32 || PPC_85xx || (44x && !SMP)
+>  
+> +config ARCH_DEFAULT_CRASH_DUMP
+> +	bool
+> +	default y if !PPC_BOOK3S_32
+> +
+>  config ARCH_SELECTS_CRASH_DUMP
+>  	def_bool y
+>  	depends on CRASH_DUMP
+> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+> index 0f3cd7c3a436..eb247b5ee569 100644
+> --- a/arch/riscv/Kconfig
+> +++ b/arch/riscv/Kconfig
+> @@ -880,6 +880,9 @@ config ARCH_SUPPORTS_KEXEC_PURGATORY
+>  config ARCH_SUPPORTS_CRASH_DUMP
+>  	def_bool y
+>  
+> +config ARCH_DEFAULT_CRASH_DUMP
+> +	def_bool y
+> +
+>  config ARCH_HAS_GENERIC_CRASHKERNEL_RESERVATION
+>  	def_bool CRASH_RESERVE
+>  
+> diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
+> index a822f952f64a..05a1fb408471 100644
+> --- a/arch/s390/Kconfig
+> +++ b/arch/s390/Kconfig
+> @@ -275,6 +275,9 @@ config ARCH_SUPPORTS_CRASH_DUMP
+>  	  This option also enables s390 zfcpdump.
+>  	  See also <file:Documentation/arch/s390/zfcpdump.rst>
+>  
+> +config ARCH_DEFAULT_CRASH_DUMP
+> +	def_bool y
+> +
+>  menu "Processor type and features"
+>  
+>  config HAVE_MARCH_Z10_FEATURES
+> diff --git a/arch/sh/Kconfig b/arch/sh/Kconfig
+> index 1aa3c4a0c5b2..b04cfa23378c 100644
+> --- a/arch/sh/Kconfig
+> +++ b/arch/sh/Kconfig
+> @@ -549,6 +549,9 @@ config ARCH_SUPPORTS_KEXEC
+>  config ARCH_SUPPORTS_CRASH_DUMP
+>  	def_bool BROKEN_ON_SMP
+>  
+> +config ARCH_DEFAULT_CRASH_DUMP
+> +	def_bool n
+> +
+>  config ARCH_SUPPORTS_KEXEC_JUMP
+>  	def_bool y
+>  
+> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+> index 007bab9f2a0e..aa4666bb9e9c 100644
+> --- a/arch/x86/Kconfig
+> +++ b/arch/x86/Kconfig
+> @@ -2087,6 +2087,9 @@ config ARCH_SUPPORTS_KEXEC_JUMP
+>  config ARCH_SUPPORTS_CRASH_DUMP
+>  	def_bool X86_64 || (X86_32 && HIGHMEM)
+>  
+> +config ARCH_DEFAULT_CRASH_DUMP
+> +	def_bool y
+> +
+>  config ARCH_SUPPORTS_CRASH_HOTPLUG
+>  	def_bool y
+>  
+> diff --git a/kernel/Kconfig.kexec b/kernel/Kconfig.kexec
+> index 6c34e63c88ff..4d111f871951 100644
+> --- a/kernel/Kconfig.kexec
+> +++ b/kernel/Kconfig.kexec
+> @@ -97,7 +97,7 @@ config KEXEC_JUMP
+>  
+>  config CRASH_DUMP
+>  	bool "kernel crash dumps"
+> -	default y
+> +	default ARCH_DEFAULT_CRASH_DUMP
+>  	depends on ARCH_SUPPORTS_CRASH_DUMP
+>  	depends on KEXEC_CORE
+>  	select VMCORE_INFO
+> -- 
+> 2.34.1
+> 
+
 
