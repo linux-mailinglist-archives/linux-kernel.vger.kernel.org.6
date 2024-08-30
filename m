@@ -1,102 +1,187 @@
-Return-Path: <linux-kernel+bounces-308323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C3FF965A55
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:30:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99BB3965A5C
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:31:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0861D28D681
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 08:30:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B90A21C223F0
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 08:31:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7927516D9C0;
-	Fri, 30 Aug 2024 08:30:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26BA116D31C;
+	Fri, 30 Aug 2024 08:31:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n87VcqIl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="JhWXyjBV"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94A2514F13A;
-	Fri, 30 Aug 2024 08:30:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 012141531FC;
+	Fri, 30 Aug 2024 08:30:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725006617; cv=none; b=SlNdlHqH7U2FKGQhEk2Q0UPfNWrGaHH/eEX2S3fvUkXv/BakBkYSxE/KGe7+BTVmYHn7C8bgzKVcnKboiiLxbePSyHGTd8TVrbQMiHCnvmnWGuY6S+WAXlU3n5k3fHuDVtdtxOed7TY56gxmvXzJ/vSODTCg7XfLEXCBefXavog=
+	t=1725006660; cv=none; b=SCV0FG0JaIdgotuADv+nd5l++SNsseyArhGltb4UH3A/l3g677j1M8VrocTOUnkCUwD61J8RX8Zr4fhbcyPx0fLqbh1UjUs+EiMC27RG+0rfyn9Uj+3c9y4itpUopyYU6Mt8vDHB1FznxBdzbNmxhr28QluBB6xBMoo/wshNM7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725006617; c=relaxed/simple;
-	bh=+qWkkkxG743ImM/aahK9UM7XRQPRK07QH/l7Lrn/2g4=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=QLA2jMZC7TtrZ845uPtYsmT1I9L9tEthhxCaC/M2X7no9RcVqSgonYO4n3KxvhjPwhx/sdYH8VlD2TYje42vTPbZz1qh/b82M8yxivM2NfpzmnrqktOiSS/ptzlnTEsO8GstPxoetU2GAHHa94IgHNJQuezCu/I8FoWY2MKaWNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n87VcqIl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1355C4CEC2;
-	Fri, 30 Aug 2024 08:30:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725006617;
-	bh=+qWkkkxG743ImM/aahK9UM7XRQPRK07QH/l7Lrn/2g4=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=n87VcqIld4h3oj7jmm7RfOPl4zckDOEs8srTmVTODlJPFoBWJTdLkpxKb/TTrDPNI
-	 RpHdWXpgebIFMc/qPmm4qzLIU/IUXikZBg9fEljw5P/AOGdNBkoPI9gH5NVY29Dhxj
-	 0X1uhyjUZT+Aui4Sd6KyzejiYNza+LZ5CXen9SIXDTegOWyX/nTpdat55CRq0o5GTY
-	 kwc8M8dElgz1oXzLOA1CYsDOeadPufbX+4woWWT7nRP10Yqzc9IYsRuD24HA4Io+QG
-	 F5nYBaRSeP36LV/Z3WWPzyZZZEr6rtTbrq62Rxt/JKgxUcvItsy5MM3zN18fyGINmP
-	 7xquAQuP5GK1g==
-From: Lee Jones <lee@kernel.org>
-To: linux-kernel@vger.kernel.org, 
- Detlev Casanova <detlev.casanova@collabora.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- Andi Shyti <andi.shyti@kernel.org>, Lee Jones <lee@kernel.org>, 
- Ulf Hansson <ulf.hansson@linaro.org>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Jiri Slaby <jirislaby@kernel.org>, Mark Brown <broonie@kernel.org>, 
- Wim Van Sebroeck <wim@linux-watchdog.org>, 
- Guenter Roeck <linux@roeck-us.net>, Chris Morgan <macromorgan@hotmail.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Tim Lunn <tim@feathertop.org>, 
- Chukun Pan <amadeus@jmu.edu.cn>, Muhammed Efe Cetin <efectn@protonmail.com>, 
- Andy Yan <andyshrk@163.com>, Jagan Teki <jagan@edgeble.ai>, 
- Dragan Simic <dsimic@manjaro.org>, Ondrej Jirman <megi@xff.cz>, 
- Jimmy Hon <honyuenkwun@gmail.com>, Elon Zhang <zhangzj@rock-chips.com>, 
- Finley Xiao <finley.xiao@rock-chips.com>, 
- Elaine Zhang <zhangqing@rock-chips.com>, Liang Chen <cl@rock-chips.com>, 
- Yifeng Zhao <yifeng.zhao@rock-chips.com>, 
- Jisheng Zhang <jszhang@kernel.org>, Jamie Iles <jamie@jamieiles.com>, 
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org, 
- linux-i2c@vger.kernel.org, linux-mmc@vger.kernel.org, 
- linux-serial@vger.kernel.org, linux-spi@vger.kernel.org, 
- linux-watchdog@vger.kernel.org, kernel@collabora.com, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <01020191998a2fd4-4d7b091c-9c4c-4067-b8d9-fe7482074d6d-000000@eu-west-1.amazonses.com>
-References: <20240828151028.41255-1-detlev.casanova@collabora.com>
- <01020191998a2fd4-4d7b091c-9c4c-4067-b8d9-fe7482074d6d-000000@eu-west-1.amazonses.com>
-Subject: Re: (subset) [PATCH v3 04/11] dt-bindings: mfd: syscon: Add rk3576
- QoS register compatible
-Message-Id: <172500660860.97285.13837050366813522297.b4-ty@kernel.org>
-Date: Fri, 30 Aug 2024 09:30:08 +0100
+	s=arc-20240116; t=1725006660; c=relaxed/simple;
+	bh=u5uHgC0EmSMlqRY96JwJkgnF/6XfOMDCloJGGj6hDnM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=F1PazH0HANAbOGSIXj/HYKCqVzv6JljcK1vvylH5CCvq7ZcgOwYXksb0kCvH8cpWpy1vzXIVHWAFnUZJxlIlQ9aqoJ35QXPPl1QUq3UsD17oNg5PoXgvL+dB9plbXXGPr+FH40axUfQteufVTQFMjOCNemZ91wEnXAY07uJdOG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=JhWXyjBV; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47U3ewrG010341;
+	Fri, 30 Aug 2024 08:30:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=d
+	w//9Q4kI10o5QwvEsOAODMUsSmDDkvgUrYDnLcsmfI=; b=JhWXyjBVoYEARBpXe
+	U20jFIQd08/8SgreeHHvqYePNuupSxpNl+TtSn4XoQTzxwJk6tkQ49w3bK4u7a9f
+	ZDS8O7ZqFWzZr3vfklWB+NBzbpTlmNyn/gPRZd0E5zIaXR3QTJtDIQkloLX2LBI7
+	yHv0+HTub3SIUr2tnhJ6HF76A3eahdRWsLOpKzHp1xhXz9nRsAdrBGbEf7sPiewu
+	GE3Zf4LJvSsBQ9gSpSeqr6QbJXKtHbYpm7jdvtXwMgwRaPQ/qev9yBoqu8ZMjuwj
+	MuH+Rg5GcixvTG05dMSZl2A6jYGOvBgVoUSusnsg3AR+WEKhZtBt9eu7h1/yx3A5
+	5JJ/A==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 419q8udn8f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 30 Aug 2024 08:30:28 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 47U6DDtQ024673;
+	Fri, 30 Aug 2024 08:30:27 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 417vj3t6uh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 30 Aug 2024 08:30:27 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 47U8UPFC50463168
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 30 Aug 2024 08:30:25 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A48882004F;
+	Fri, 30 Aug 2024 08:30:25 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2B5672004B;
+	Fri, 30 Aug 2024 08:30:22 +0000 (GMT)
+Received: from [9.195.47.156] (unknown [9.195.47.156])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 30 Aug 2024 08:30:21 +0000 (GMT)
+Message-ID: <6961a047-979b-40c2-bfc6-d8eddd96694c@linux.ibm.com>
+Date: Fri, 30 Aug 2024 14:00:20 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.13.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/2] cpufreq: intel_pstate: Set asymmetric CPU capacity
+ on hybrid systems
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: x86 Maintainers <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Ricardo Neri <ricardo.neri@intel.com>, Tim Chen <tim.c.chen@intel.com>
+References: <3310447.aeNJFYEL58@rjwysocki.net>
+ <1979653.PYKUYFuaPT@rjwysocki.net>
+From: Shrikanth Hegde <sshegde@linux.ibm.com>
+Content-Language: en-US
+In-Reply-To: <1979653.PYKUYFuaPT@rjwysocki.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 2i3L1xT1w7HH9Hrd5cxiGo0LyzGYvlOJ
+X-Proofpoint-ORIG-GUID: 2i3L1xT1w7HH9Hrd5cxiGo0LyzGYvlOJ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-30_03,2024-08-29_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ lowpriorityscore=0 clxscore=1011 bulkscore=0 phishscore=0 mlxscore=0
+ malwarescore=0 mlxlogscore=999 spamscore=0 priorityscore=1501 adultscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408300059
 
-On Wed, 28 Aug 2024 15:10:55 +0000, Detlev Casanova wrote:
-> Document rk3576 compatible for QoS registers.
+
+
+On 8/28/24 17:18, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 > 
+[...]
+>   
+> +static void hybrid_update_capacity(struct cpudata *cpu)
+> +{
+> +	unsigned int max_cap_perf;
+> +
+> +	mutex_lock(&hybrid_capacity_lock);
+> +
+> +	if (!hybrid_max_perf_cpu)
+> +		goto unlock;
+> +
+> +	/*
+> +	 * The maximum performance of the CPU may have changed, but assume
+> +	 * that the performance of the other CPUs has not changed.
+> +	 */
+> +	max_cap_perf = hybrid_max_perf_cpu->capacity_perf;
+> +
+> +	intel_pstate_get_hwp_cap(cpu);
+> +
+> +	hybrid_get_capacity_perf(cpu);
+> +	/* Should hybrid_max_perf_cpu be replaced by this CPU? */
+> +	if (cpu->capacity_perf > max_cap_perf) {
+> +		hybrid_max_perf_cpu = cpu;
+> +		hybrid_set_capacity_of_cpus();
+> +		goto unlock;
+> +	}
+> +
+> +	/* If this CPU is hybrid_max_perf_cpu, should it be replaced? */
+> +	if (cpu == hybrid_max_perf_cpu && cpu->capacity_perf < max_cap_perf) {
+> +		hybrid_update_cpu_scaling();
+> +		goto unlock;
+> +	}
+
+I assume this CPU capacity is based on freq. It doesnt change based on 
+irq, any upper scheduler classes such dl, rt right?
+
+can capacity_perf change slightly or it can change such that it always 
+changes to next possible level? The reason, if it can change slightly, 
+but cpu is still hybrid_max_perf_cpu, it would end up accessing all the 
+percpu structures and change it, that would be costly on larger systems.
+
+
+> +
+> +	hybrid_set_cpu_capacity(cpu);
+> +
+> +unlock:
+> +	mutex_unlock(&hybrid_capacity_lock);
+> +}
+> +
+>   static void intel_pstate_hwp_set(unsigned int cpu)
+>   {
+>   	struct cpudata *cpu_data = all_cpu_data[cpu];
+> @@ -1070,6 +1240,22 @@ static void intel_pstate_hwp_offline(str
+>   		value |= HWP_ENERGY_PERF_PREFERENCE(HWP_EPP_POWERSAVE);
+>   
+>   	wrmsrl_on_cpu(cpu->cpu, MSR_HWP_REQUEST, value);
+> +
+> +	mutex_lock(&hybrid_capacity_lock);
+> +
+> +	if (!hybrid_max_perf_cpu) {
+> +		mutex_unlock(&hybrid_capacity_lock);
+> +
+> +		return;
+> +	}
+> +
+> +	if (hybrid_max_perf_cpu == cpu)
+> +		hybrid_update_cpu_scaling();
+> +
+> +	mutex_unlock(&hybrid_capacity_lock);
+> +
+> +	/* Reset the capacity of the CPU going offline to the initial value. */
+> +	hybrid_clear_cpu_capacity(cpu->cpu);
 > 
-
-Applied, thanks!
-
-[04/11] dt-bindings: mfd: syscon: Add rk3576 QoS register compatible
-        commit: 2f9709b8541dc742235743d19b8a6e2baa2e81d4
-
---
-Lee Jones [李琼斯]
-
 
