@@ -1,247 +1,203 @@
-Return-Path: <linux-kernel+bounces-308382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2928F965C3C
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 11:01:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 553EA965C3D
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 11:02:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DF9A1C23171
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 09:01:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 84260B20628
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 09:02:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C82BE16EB7E;
-	Fri, 30 Aug 2024 09:01:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2228D16DEBC;
+	Fri, 30 Aug 2024 09:02:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="kF58sBm6"
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="j3Ol0zLq"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F9911537D1;
-	Fri, 30 Aug 2024 09:01:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57B03BA3D
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 09:02:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725008491; cv=none; b=UlSHaoV9A5UvaV0TKuIN3G583YX3sSeW08swospLhYzMqHrXOAE7u9++blq/d5gD1BlzcFdfgzbEdqgKVvmo/uCguPlKO4obmJASROUJXykN3SOGupgnVMb0j/6YYCfA1uIEy/Dxlm2f7SqubqZ28x0fHiQ8cQCT/CsD5+sFP80=
+	t=1725008526; cv=none; b=exdkYyjkNZW8HmOZSQuJq0mSoStgRU/pmYFIoLv7yjATCCWOH/DGMnWW2nJ6WnPpyfvRKoEGNVUHjv7bEpSFd+eiuaf8SYtYvN632K0SqPb4AZ4JdZVypr+Xjv2rMFa9jNmx0xZKFFzK8+DDDujNNBlt+Mh8lvOqY4aghZMuIqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725008491; c=relaxed/simple;
-	bh=aQcccC/pwXrZ5BASCm+J8C0zEShLh8Jf8cfyHqH0B70=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Fk0emy/0X+qBce5VQA0gV9BNNTf2+/xPeDNbkHQG3DjMDzRsf2YA/vOB5YThrZstOcKvNNvC8NiwNr3WY6OCR+juCzduP0ZQNBvvY5mga+knb4WiUdPVAmfBVoW6KQUHOPizBo4AYB42/VZeBXY8/yS3jgNQCpWpwC2DmEzLe/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=kF58sBm6; arc=none smtp.client-ip=85.214.62.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from localhost.localdomain (85-222-111-42.dynamic.chello.pl [85.222.111.42])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-	(No client certificate requested)
-	(Authenticated sender: lukma@denx.de)
-	by phobos.denx.de (Postfix) with ESMTPSA id 1B3F688D74;
-	Fri, 30 Aug 2024 11:01:26 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-	s=phobos-20191101; t=1725008486;
-	bh=2tjNE1MMuJ9pQoQqSYZdXnlM2vXm9UQ78avNU8WXADE=;
-	h=From:To:Cc:Subject:Date:From;
-	b=kF58sBm6nZBKgANBt2Uw0Ov2n6bj2GklWmGx2HALoHqiy9x+GssBQRIshlYfJ6ykB
-	 gDkkDQ240BxLOWfy04RdVFEXnhqNAOl9AD4966pbQ+cWUU4j7Ucga4R4xARG75LLZg
-	 NRtK0jbNdgmU8aIYjiqRB58QsD1pwAL03RlzSyprLG/DjjikaTee1ddVzL+FOuBlJS
-	 Uo/a0EJdwaM2pPq9hrJzz8nwDKZuXw66U6/f34GAlQj5oIx4IgJJm2BpaSD5d+DdpF
-	 KDNBD0qtSBtaf9FN8bPhdgDMJIjJmbJ+CYmmyngTOsjjYAVgD6rHjonzb8JEwlz8az
-	 i8pzl7BwdlY8A==
-From: Lukasz Majewski <lukma@denx.de>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	devicetree@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Lukasz Majewski <lukma@denx.de>,
-	Conor Dooley <conor.dooley@microchip.com>
-Subject: [PATCH v5] ASoC: dt-bindings: Convert mxs-saif.txt to fsl,imx28-saif.yaml (imx28 saif)
-Date: Fri, 30 Aug 2024 11:01:11 +0200
-Message-Id: <20240830090111.3591648-1-lukma@denx.de>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1725008526; c=relaxed/simple;
+	bh=8DztmzV3LQLLMtrO6fQkPg3OK93aMwCcntMehDDYkOw=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=kFY4+6uyHtX99/OEzzBsMCq2Voa9G40tAfRJ3jxsfHOk3wDfB7M2T5UyvKVxhlB+OUy/aIQM8A7xr0DdPsCYOyN3IfWvOshEJCXFNnpv6KMSq1PSstPKy3UjdS7comYXvXvn62EsvBn3EBUGdxfjWSqwmaocUXDhWp7bjiiAC08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=j3Ol0zLq; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725008525; x=1756544525;
+  h=date:from:to:cc:subject:message-id;
+  bh=8DztmzV3LQLLMtrO6fQkPg3OK93aMwCcntMehDDYkOw=;
+  b=j3Ol0zLqlkm+M4NKVpgkdMbCY7f0vuno7sSW1w9CBEwU2GvjFJXf0pZD
+   n1tKb2o0ShL9e6MmE/IhKpZAB7HqEIkEkL2+En51iRQej1EqiRcEjmUKp
+   SWrDtFOYYQe4cjcvyHDBldR+HB0Bmvi1lid2vhzkndO/LW+10+771xuZd
+   KkOORCAbKMyIBh/0dSzz6tEmIx9IsrCDrCgc0krrx6/HRkR1K/32+Wgn7
+   6QCYoq1ZGwx+/n8NWsn03olqYzugylOHQgUGyzSaNjHaaZ5uCVKnFzarC
+   JPR+OfRa5LIY6AhIAwb1EYxoH5+mSbeVDiAYF3MdLhbGkmBG9wO/h/78g
+   g==;
+X-CSE-ConnectionGUID: uMkEiDGqQki/GVRDUV9Geg==
+X-CSE-MsgGUID: 5WVJEipCSKCRyW/8wCZnQg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11179"; a="27401999"
+X-IronPort-AV: E=Sophos;i="6.10,188,1719903600"; 
+   d="scan'208";a="27401999"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Aug 2024 02:02:04 -0700
+X-CSE-ConnectionGUID: JdflyowERu+MyD9gUXpH0Q==
+X-CSE-MsgGUID: Y4UPYE4ATWaEegY2Mk5ykA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,188,1719903600"; 
+   d="scan'208";a="63533714"
+Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
+  by fmviesa007.fm.intel.com with ESMTP; 30 Aug 2024 02:02:02 -0700
+Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sjxW3-0001Ig-3D;
+	Fri, 30 Aug 2024 09:01:59 +0000
+Date: Fri, 30 Aug 2024 17:01:52 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:master] BUILD SUCCESS
+ a85536e1bce722cb184abbac98068217874bdd6e
+Message-ID: <202408301749.P4p6NtCz-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
-X-Virus-Status: Clean
 
-The 'fsl,imx28-saif' compatible has already the mxs-saif.txt description.
-This patch converts (and removes it) this file to fsl,imx28-saif.yaml.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git master
+branch HEAD: a85536e1bce722cb184abbac98068217874bdd6e  Merge branch into tip/master: 'x86/timers'
 
-Changes for the mxs-saif.txt:
-- Adds 'clocks', '#clock-cells' and '#sound-dai-cells' properties
-- Provide device description
+elapsed time: 2789m
 
-Signed-off-by: Lukasz Majewski <lukma@denx.de>
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+configs tested: 111
+configs skipped: 4
 
----
-Changes for v5:
-- Keep 'saif0' label
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-Changes for v4:
-- Change file name to match compatible (fsl,imx28-saif.yaml)
-- Remove 'saif0' and 'saif1' labels as those are not needed in the
-  example node
+tested configs:
+alpha                             allnoconfig   gcc-13.3.0
+alpha                            allyesconfig   gcc-13.3.0
+alpha                               defconfig   gcc-13.3.0
+arc                              allmodconfig   gcc-13.2.0
+arc                               allnoconfig   gcc-13.2.0
+arc                              allyesconfig   gcc-13.2.0
+arc                                 defconfig   gcc-13.2.0
+arc                     haps_hs_smp_defconfig   gcc-13.2.0
+arc                            hsdk_defconfig   gcc-13.2.0
+arc                   randconfig-001-20240830   gcc-13.2.0
+arc                   randconfig-002-20240830   gcc-13.2.0
+arc                    vdk_hs38_smp_defconfig   gcc-13.2.0
+arm                              allmodconfig   gcc-14.1.0
+arm                               allnoconfig   clang-20
+arm                              allyesconfig   gcc-14.1.0
+arm                         axm55xx_defconfig   clang-20
+arm                                 defconfig   clang-14
+arm                          ixp4xx_defconfig   gcc-14.1.0
+arm                         mv78xx0_defconfig   clang-20
+arm                        neponset_defconfig   gcc-14.1.0
+arm                   randconfig-001-20240830   gcc-14.1.0
+arm                   randconfig-002-20240830   clang-20
+arm                   randconfig-003-20240830   clang-20
+arm                   randconfig-004-20240830   gcc-14.1.0
+arm                         s5pv210_defconfig   gcc-14.1.0
+arm64                             allnoconfig   gcc-14.1.0
+arm64                               defconfig   gcc-14.1.0
+arm64                 randconfig-001-20240830   clang-14
+arm64                 randconfig-002-20240830   gcc-14.1.0
+arm64                 randconfig-003-20240830   clang-20
+arm64                 randconfig-004-20240830   clang-20
+csky                              allnoconfig   gcc-14.1.0
+csky                                defconfig   gcc-14.1.0
+csky                  randconfig-001-20240830   gcc-14.1.0
+csky                  randconfig-002-20240830   gcc-14.1.0
+hexagon                          allmodconfig   clang-20
+hexagon                           allnoconfig   clang-20
+hexagon                             defconfig   clang-20
+hexagon               randconfig-001-20240830   clang-20
+i386                             allmodconfig   gcc-12
+i386                              allnoconfig   gcc-12
+i386                             allyesconfig   gcc-12
+i386         buildonly-randconfig-001-20240830   gcc-12
+i386         buildonly-randconfig-002-20240830   gcc-12
+i386         buildonly-randconfig-003-20240830   gcc-12
+i386         buildonly-randconfig-004-20240830   clang-18
+i386         buildonly-randconfig-005-20240830   gcc-12
+i386         buildonly-randconfig-006-20240830   clang-18
+i386                                defconfig   clang-18
+i386                  randconfig-001-20240830   clang-18
+i386                  randconfig-002-20240830   gcc-12
+i386                  randconfig-003-20240830   gcc-12
+i386                  randconfig-004-20240830   clang-18
+i386                  randconfig-005-20240830   clang-18
+i386                  randconfig-006-20240830   gcc-12
+i386                  randconfig-011-20240830   gcc-12
+i386                  randconfig-012-20240830   clang-18
+i386                  randconfig-013-20240830   gcc-12
+i386                  randconfig-014-20240830   gcc-12
+i386                  randconfig-015-20240830   clang-18
+i386                  randconfig-016-20240830   gcc-12
+loongarch                        allmodconfig   gcc-14.1.0
+loongarch                         allnoconfig   gcc-14.1.0
+m68k                             allmodconfig   gcc-14.1.0
+m68k                              allnoconfig   gcc-14.1.0
+m68k                             allyesconfig   gcc-14.1.0
+m68k                        m5407c3_defconfig   gcc-14.1.0
+m68k                          sun3x_defconfig   gcc-14.1.0
+microblaze                       allmodconfig   gcc-14.1.0
+microblaze                        allnoconfig   gcc-14.1.0
+microblaze                       allyesconfig   gcc-14.1.0
+mips                              allnoconfig   gcc-14.1.0
+mips                      fuloong2e_defconfig   gcc-13.2.0
+mips                   sb1250_swarm_defconfig   gcc-14.1.0
+nios2                             allnoconfig   gcc-14.1.0
+openrisc                          allnoconfig   gcc-14.1.0
+openrisc                         allyesconfig   gcc-14.1.0
+openrisc                            defconfig   gcc-14.1.0
+parisc                           allmodconfig   gcc-14.1.0
+parisc                            allnoconfig   gcc-14.1.0
+parisc                           allyesconfig   gcc-14.1.0
+parisc                              defconfig   gcc-14.1.0
+powerpc                          allmodconfig   gcc-14.1.0
+powerpc                           allnoconfig   gcc-14.1.0
+powerpc                   currituck_defconfig   clang-20
+powerpc                     mpc5200_defconfig   clang-14
+powerpc                 mpc837x_rdb_defconfig   gcc-14.1.0
+riscv                            allmodconfig   clang-20
+riscv                             allnoconfig   gcc-14.1.0
+riscv                               defconfig   clang-20
+s390                             allmodconfig   clang-20
+s390                              allnoconfig   clang-20
+s390                             allyesconfig   gcc-14.1.0
+s390                                defconfig   clang-20
+sh                               allmodconfig   gcc-14.1.0
+sh                                allnoconfig   gcc-14.1.0
+sh                               allyesconfig   gcc-14.1.0
+sh                                  defconfig   gcc-14.1.0
+sparc                            allmodconfig   gcc-14.1.0
+sparc64                             defconfig   gcc-14.1.0
+um                               allmodconfig   clang-20
+um                                allnoconfig   clang-17
+um                               allyesconfig   gcc-12
+um                                  defconfig   clang-20
+um                             i386_defconfig   gcc-12
+um                           x86_64_defconfig   clang-15
+x86_64                            allnoconfig   clang-18
+x86_64                           allyesconfig   clang-18
+x86_64                              defconfig   gcc-11
+x86_64                          rhel-8.3-rust   clang-18
+xtensa                            allnoconfig   gcc-14.1.0
 
-Changes for v3:
-- Add #clock-cells property
-
-Changes for v2:
-- Remove mxs-saif.txt
-- Add description with information about extensions required for this
-  device's current DTS description
----
- .../bindings/sound/fsl,imx28-saif.yaml        | 82 +++++++++++++++++++
- .../devicetree/bindings/sound/mxs-saif.txt    | 41 ----------
- 2 files changed, 82 insertions(+), 41 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/sound/fsl,imx28-saif.yaml
- delete mode 100644 Documentation/devicetree/bindings/sound/mxs-saif.txt
-
-diff --git a/Documentation/devicetree/bindings/sound/fsl,imx28-saif.yaml b/Documentation/devicetree/bindings/sound/fsl,imx28-saif.yaml
-new file mode 100644
-index 000000000000..4f55288e11e2
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/fsl,imx28-saif.yaml
-@@ -0,0 +1,82 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/sound/fsl,imx28-saif.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Freescale MXS Serial Audio Interface (SAIF)
-+
-+maintainers:
-+  - Lukasz Majewski <lukma@denx.de>
-+
-+allOf:
-+  - $ref: dai-common.yaml#
-+
-+description:
-+  The SAIF is based on I2S module that is used to communicate with audio codecs,
-+  but only with half-duplex manner (i.e. it can either transmit or receive PCM
-+  audio).
-+
-+properties:
-+  compatible:
-+    const: fsl,imx28-saif
-+
-+  reg:
-+    maxItems: 1
-+
-+  "#sound-dai-cells":
-+    const: 0
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  dmas:
-+    maxItems: 1
-+
-+  dma-names:
-+    const: rx-tx
-+
-+  "#clock-cells":
-+    description: Configure the I2S device as MCLK clock provider.
-+    const: 0
-+
-+  clocks:
-+    maxItems: 1
-+
-+  fsl,saif-master:
-+    description: Indicate that saif is a slave and its phandle points to master
-+    $ref: /schemas/types.yaml#/definitions/phandle
-+
-+required:
-+  - compatible
-+  - reg
-+  - "#sound-dai-cells"
-+  - interrupts
-+  - dmas
-+  - dma-names
-+  - clocks
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    saif0: saif@80042000 {
-+        compatible = "fsl,imx28-saif";
-+        reg = <0x80042000 2000>;
-+        #sound-dai-cells = <0>;
-+        interrupts = <59>;
-+        dmas = <&dma_apbx 4>;
-+        dma-names = "rx-tx";
-+        #clock-cells = <0>;
-+        clocks = <&clks 53>;
-+    };
-+    saif@80046000 {
-+        compatible = "fsl,imx28-saif";
-+        reg = <0x80046000 2000>;
-+        #sound-dai-cells = <0>;
-+        interrupts = <58>;
-+        dmas = <&dma_apbx 5>;
-+        dma-names = "rx-tx";
-+        clocks = <&clks 53>;
-+        fsl,saif-master = <&saif0>;
-+    };
-diff --git a/Documentation/devicetree/bindings/sound/mxs-saif.txt b/Documentation/devicetree/bindings/sound/mxs-saif.txt
-deleted file mode 100644
-index 7ba07a118e37..000000000000
---- a/Documentation/devicetree/bindings/sound/mxs-saif.txt
-+++ /dev/null
-@@ -1,41 +0,0 @@
--* Freescale MXS Serial Audio Interface (SAIF)
--
--Required properties:
--- compatible: Should be "fsl,<chip>-saif"
--- reg: Should contain registers location and length
--- interrupts: Should contain ERROR interrupt number
--- dmas: DMA specifier, consisting of a phandle to DMA controller node
--  and SAIF DMA channel ID.
--  Refer to dma.txt and fsl-mxs-dma.txt for details.
--- dma-names: Must be "rx-tx".
--
--Optional properties:
--- fsl,saif-master: phandle to the master SAIF.  It's only required for
--  the slave SAIF.
--
--Note: Each SAIF controller should have an alias correctly numbered
--in "aliases" node.
--
--Example:
--
--aliases {
--	saif0 = &saif0;
--	saif1 = &saif1;
--};
--
--saif0: saif@80042000 {
--	compatible = "fsl,imx28-saif";
--	reg = <0x80042000 2000>;
--	interrupts = <59>;
--	dmas = <&dma_apbx 4>;
--	dma-names = "rx-tx";
--};
--
--saif1: saif@80046000 {
--	compatible = "fsl,imx28-saif";
--	reg = <0x80046000 2000>;
--	interrupts = <58>;
--	dmas = <&dma_apbx 5>;
--	dma-names = "rx-tx";
--	fsl,saif-master = <&saif0>;
--};
 -- 
-2.39.2
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
