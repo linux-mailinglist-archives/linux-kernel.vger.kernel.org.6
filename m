@@ -1,198 +1,218 @@
-Return-Path: <linux-kernel+bounces-308349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8EF7965A9F
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:44:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53342965AA2
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:44:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D9C61F23FD3
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 08:44:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A16E28218B
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 08:44:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D01C16DC29;
-	Fri, 30 Aug 2024 08:44:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3918116DC33;
+	Fri, 30 Aug 2024 08:44:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="ZjV3gnLR"
-Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2048.outbound.protection.outlook.com [40.107.117.48])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b="qP8dd8v7"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED25916C877;
-	Fri, 30 Aug 2024 08:44:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.48
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725007445; cv=fail; b=ripg/Cf2M51hxIT8CY6qQOhsyRI1JJYA44Y9JyWHGH64pYF95SQa4yCfwJqkFcbaEplxWrKBm3qJ27Hzkzxw8JfpXBisyiYQhG+hAG2YiYcHe06wuej0FthUeKaR5c+5fjRhxomHQ5OrKGmaJ5i234KZ74/TdfgKHdVxNzi0NxM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725007445; c=relaxed/simple;
-	bh=nsTxJ5BbmEaEIKATMqhweGGtxAeYJUjUvRgrA3BPyZE=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=DjkC5nEBu8OxgUUojH1iDs3xikBiROamvizHxNpX8pMHYRXKEAyqQeLKiIthartIeSy/u3orjrt9LZEzHiJGU9MaK4Wauc3hT3RYV4q0eDo9/zmkevcMWUW6IKYfxbDX5nQ449p9xtUqH1azBCCCphqlEDHIaNV0X1BOv4YQT0k=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=ZjV3gnLR; arc=fail smtp.client-ip=40.107.117.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=XvoHKIiYeLyzu5D3p+Busd7jlUgSjwykEB7XQO5/bBvuIuUuWgx+koY7aypCwf4Xrh3QVyF6n+XaIcTLbSeHFd58rnxdPeU4A0Lpb8aMLlPaB8RViPKibDoe2Yrq0CYj5jbeCn8ywT97fENI51g9wkkHwvF9jIBnW8iQp9CvHsF66vHpFbfj9JZuwTTspib+ycSaOepvww9nnLcg0DGZb73Z600vda/O3eFMjm0TohpMM++T34IJj0ZfgAzpqFI+ONc4zj1cthC+OBkELnHXKfYWb//U/CdwAFs6lOB0r1OBMR3bJm+J7r7ECtaOqES36NUpozCvCwqV3uFgSQa8RQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=mbt5pSVLf+x36XmfMjNOLkergrkNyOe5t1VYIFLXNWI=;
- b=eM1z8EoLuW8eQ5Oiu8pV19CfTtDpa72sf7U9M7CmY+yHDZ3MUQnYxt6DfXKgAPoNVj16USxCHjdptWCAWATNiWsNarcPjX0D02Ke0MKPERLdeVz0ac91e/LXU5SA1F9QoP4qb3KWVF58CkmpsiS5qHaGCqEk5dFEN2zRwNkcamBvoiSbmG6g6PxJYhaXu5v6SFbgYhNp0SoeOH8R5ojoBQjwBpXS5iVOn4Ey7MXExRctLCgva/KpseKu7/C/H1SSjDuoXZFLQqSDRUMLmlrC9M5efn3hitbfZg5lFlFhRzzMMB3Mm59F6JJJO7f+e5yrVgEkwO/l1aeEQBzn9Rtu6Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mbt5pSVLf+x36XmfMjNOLkergrkNyOe5t1VYIFLXNWI=;
- b=ZjV3gnLR9/F3WaEi07XIZ9+enl6a+nyp4T8OvtX268zaf3xufAGwKpbunh8nnB5YmR4/xL7uAI8pqkTyqvEJxDEs9B1XR98oaVaSSEqZVedf2VbsQZEEhaqvVfs+gmBkOUZTYV5FaOnMfNd/JkkAQ/Mzgwch1OfEvHy/TguZEqR/06ymQP6r2XQK3oOM+EqP/29Df7xsLN+S2T/fvHO3mg3b8FUOxUrwNUiMDmBoluyip7B3qDV2miXD3/VoV+ahIZL8SujChWFAQKbdkiOcjOwhntWguIO73LcQYnztBY6YiPSO18+nYaTmyue/tND3beKTl3oTG9PUqTtsCwkqdg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from KL1PR0601MB4113.apcprd06.prod.outlook.com (2603:1096:820:31::7)
- by SEYPR06MB6681.apcprd06.prod.outlook.com (2603:1096:101:16e::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Fri, 30 Aug
- 2024 08:43:58 +0000
-Received: from KL1PR0601MB4113.apcprd06.prod.outlook.com
- ([fe80::7e85:dad0:3f7:78a1]) by KL1PR0601MB4113.apcprd06.prod.outlook.com
- ([fe80::7e85:dad0:3f7:78a1%4]) with mapi id 15.20.7918.019; Fri, 30 Aug 2024
- 08:43:58 +0000
-From: Yan Zhen <yanzhen@vivo.com>
-To: ckeepax@opensource.cirrus.com,
-	rf@opensource.cirrus.com,
-	linus.walleij@linaro.org
-Cc: linux-sound@vger.kernel.org,
-	patches@opensource.cirrus.com,
-	linux-kernel@vger.kernel.org,
-	opensorce.kernel@vivo.com,
-	Yan Zhen <yanzhen@vivo.com>
-Subject: [PATCH v3] pinctrl: madera: Simplify with dev_err_probe()
-Date: Fri, 30 Aug 2024 16:43:09 +0800
-Message-Id: <20240830084309.395129-1-yanzhen@vivo.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TYAPR01CA0235.jpnprd01.prod.outlook.com
- (2603:1096:404:11e::31) To KL1PR0601MB4113.apcprd06.prod.outlook.com
- (2603:1096:820:31::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3EB216C877;
+	Fri, 30 Aug 2024 08:44:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725007462; cv=none; b=FIUUKq9pPNDY1GZQp0PvRbvBFK0kSeFNvetVVl01VGtyNwdEQfrIbrvmYDb3Zlx6Irpoz0DvhFd7bk4DchTz6hDnvzF7v8cD/Ms7ppM8pTIx3Vh5/wAjT26gS0QHOfZ3ddWVBwBUi+Y8Yhh43ibh0YnMEL28h0t2mae9/anBj5k=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725007462; c=relaxed/simple;
+	bh=5l9LT+yQd21wKn8z3Hdv6J3wVHOt//7jH6sgUAebt4Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XXlZK/iCTuLdPEvvK2wqBLLOxp11UmgcEj30pC9uNCa4FoGKztLtSEonEhp9t2WHiI1vZ0cwL9MrgAW0OtjhRYMStw2nxmNnOf65Wma5bOhz7o/3UGWsiw3G8EG0gYeZ6HzeZzdPqaoYusezATTXw5ZNVmA1sc9Vg1o8grdgpn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b=qP8dd8v7; arc=none smtp.client-ip=212.227.15.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1725007450; x=1725612250; i=deller@gmx.de;
+	bh=aSOFcQ9mNY2G8yraHCG3PXqH/Av6bV+gKpHSyyMmSOw=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=qP8dd8v7bocDxP3C+rBerpfLJhdSR5WrH2o5HBqhaBkdDp7tSuXN7I8GRQn3Z+YY
+	 QXLERWXcfOo+SXLArOU+hQRm9IrMnWRICbk865KqGHx1bKLTINStE9sspgO/A1Zq8
+	 Di7oNcJGlm831GPptJdRbo1PUQbtti2+YR2uDrKRuG1x3uxN/9bXzuWw/UCKx+hWe
+	 KpMHQr+rQnbQW60sIpaQ3ROoHkr5YnVfyQkOu6x3HOJl6fp9RdjK6Bw3M+km6D2tz
+	 61v5ueknJNJA7R5+Y5nlnRFJYhtRW5zDMrXRzGvbuZviRLIjDwXRgoBhLNL0VgzyT
+	 UFf6K5HWGpNwZOLf/w==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.20.55] ([109.250.63.126]) by mail.gmx.net (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MdNcA-1sAcUE0W00-00fslE; Fri, 30
+ Aug 2024 10:44:10 +0200
+Message-ID: <72396a87-bc41-4b15-924b-7bcd6851bed9@gmx.de>
+Date: Fri, 30 Aug 2024 10:44:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: KL1PR0601MB4113:EE_|SEYPR06MB6681:EE_
-X-MS-Office365-Filtering-Correlation-Id: 30c8e4b1-5fc9-4af7-1df2-08dcc8cfe383
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|376014|366016|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?XVtnJQTzjNMvwrdk/70jaMcJTtsUYYeLJ8spGrQk3XmUePPZfejPEo62k3La?=
- =?us-ascii?Q?2kf0aoWfg7k/5B7C2ALKEZ9ePzkRn0LBigS10Ytjwx7qRdPmqrB47hizj3Id?=
- =?us-ascii?Q?ZwHc8SeaEU0LkKxZqa6896yA2udSQUxCPYtYaoziD7GMG8aXlFhxIxvkA57q?=
- =?us-ascii?Q?Dw8qScERgbuDGX1zpf5yA0/bbPkuISTvr9NiuhtLSO8sh0wGMXuTyS/t5s60?=
- =?us-ascii?Q?Ha+wpVKKM+W8glJc8v5hfLbOjOHdJHW8WnLMFMs0g8w+GsNQ8a4aR5miRf68?=
- =?us-ascii?Q?baHwSYEeigHiHy3vRxP51rx17hHS9TiUGalrBbiQ8L5z6RJ812q/xll3zp6G?=
- =?us-ascii?Q?kE7jq8M0xqKBgljogPFSbKnaipgB87JIBDhHTLgZLOZYO62M/wF51daEa/Uo?=
- =?us-ascii?Q?FCxnLvr+db8jdJM1Usot5C+BuxzZfusXzA4VHaB6V5FUCZdxBFoN1EpVYnjT?=
- =?us-ascii?Q?YwbThlOhmkkrjNGFXa5FV1exXvK6Jls3gQ99M38Sqi31rwrtM4OlcTH41ot1?=
- =?us-ascii?Q?e1rQMIDBaQIgmMykSe9g5xJBFCri6ES1lw7Fztx/rAFKPZ95Uq5m7MKZuq4j?=
- =?us-ascii?Q?Qre47o45zdUVnyzELCCKu9VzsfLcz8H3JHdsG4c7NSK2Kg5nTq+Q9ZjzONkR?=
- =?us-ascii?Q?LuVja3I+S0xKyjDLvGWBebHHm/tNNvj+KuL+yEw7e60KN9zuwk/V8g/VIQan?=
- =?us-ascii?Q?iYMnBa9wni9bbn/5YXtzEZ8TiI3XKaHrUOTIkWkINu2HLdCNqaa9p435aoAY?=
- =?us-ascii?Q?+WkThZIP5FQi+HWE0PboaIOB+xumgc6SkGrqGRKF2DuMcXK8TufFHcLS+Yt7?=
- =?us-ascii?Q?QCo9Y/gAo0gBscZIYNCwdjOXkODsc6ltWYwoVPKqy1Hme1+JHW8RqkZOvJZ7?=
- =?us-ascii?Q?qj/UFm+cwft+qrIFTNXYgA8ZICBK6GFiUTaYuQjkecGolErIsix73JciPjcw?=
- =?us-ascii?Q?cadziJSKU4jamPzEb54W+0RHBE91xnQVTIeLnQTeveJwnYneXjRL1rI6s8vk?=
- =?us-ascii?Q?k20it+DWMioNfdA352W+hhL/2abClVv/BjJwdxHfwiXEOhJeobIT4g6P6GEK?=
- =?us-ascii?Q?/hQVGLCcn2hI5VNrLVGHsUy7tkPH1e4SazVPOZNLQsfFq8gb97Dg9wMzf6so?=
- =?us-ascii?Q?9BOBAMTv+QQ3KiujrkV+Wd6G5KmltIrHxM2ObZkyS+psXDjchMQi49Ijk7gv?=
- =?us-ascii?Q?uxKfM8IgRrXl6NAr49wtk/WPVJPRW5olnZpgp4sLQ++Q7qYvFsql36sOFi0F?=
- =?us-ascii?Q?mDcRLPB2zC6Bi2Ryy7Ef8cVcLt0+iaU2KVAJV7tsEMeqv/9YITfp5pUxdrVc?=
- =?us-ascii?Q?JvvTwqEumwMLeeg5bw87XbPFM20NOWGW6rDunDDyjeNy+m2+SkUo65Dj08EU?=
- =?us-ascii?Q?pRv7kZrpMX1LedQGKKcIrFgyYReP5l0HTpuOV8/8z2QEFjj1Kg=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR0601MB4113.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?z8Uj1bVNq1I9r+g/tB4EuYr5JVNu13ky8W8EZFO8xypezJ28cnBliL0JHZMJ?=
- =?us-ascii?Q?cs7R94KJHOyaIl46VoNgiqWQN8uAF9s1mYJn59AT22BidN3xCDRLfcbePeJW?=
- =?us-ascii?Q?MXP7Ort5E21ygxgQNbUab809o8N20R9NIu8EUD+X2mdzymyWgUJFdeh+yVmK?=
- =?us-ascii?Q?MH5mLC3etfKnIqXprBgPiDi7K1deo9vbOllg2eVNQFOpv1jC2FuxcbHSpTl2?=
- =?us-ascii?Q?vGq3s/05yIeB7xlel4xf0NMdrprGyQ8786n11Fau3Hghl1aQIQUoziylNl8g?=
- =?us-ascii?Q?LidWhvj9mq6J9mMjR59P8iu8dMta4hOx0b4IRSb2F3sGXAd++vy8ss5loxqX?=
- =?us-ascii?Q?00uNeAnaFynxWMV5j95zCfR/JBgarsDSKvz9GGONbxmDlwvM9dXrEPsJ06ZU?=
- =?us-ascii?Q?6lx9D1KAxIZeMe2ap7eU/awLVaRoYwEGVm7Ktl+man09r8O17x7tB4qXipOc?=
- =?us-ascii?Q?HzhtBy7jm3D9sj5es2tlzlDvBMRxP1KdCtkVWBfLWNzdy9LvOHRLJz67a18g?=
- =?us-ascii?Q?QWiHV74fqOcBKyZIta0bVCE6oMBSNzwsocwi7en3gNzL4WY9vxxKitK4YkQP?=
- =?us-ascii?Q?1PBej5+KkktNo1OOc+sXP1eu7bxGOMC839fIgFiE8Qd0cGPNn4uuCi3grqKa?=
- =?us-ascii?Q?y7apWeX8Cc1uh5S4SMlzYlHOXFgEbscQqT7GQskAhFuzizC9TnxNCZXAq4b/?=
- =?us-ascii?Q?g5/0Gn5L6TPorf/3MwVOUy1i15G0xSmgYQY4nV8xWLUOWbALWbrd71B2JYWc?=
- =?us-ascii?Q?Ze5qORWPNwHoEpKn5ZwEk0HyXJxIdJh4DZPrpUplH3BLHXQVnmAMm/LXT6+y?=
- =?us-ascii?Q?rVP1SbKIsHVa8jox0sfZQj6gHXMGVODRTw5VhhFAL0iAeqXc3kJNBl/AwFBz?=
- =?us-ascii?Q?mk/pIll8gL3ZvyIVxDp5kIRym4wevJqvEo67rNd0sTFB/ydtMF4JCRxa2sxD?=
- =?us-ascii?Q?SKUAU3V/l9/U7fQrSSGLR0+FYv2XSjOJSL51Q7Ic6A6lT4oURblnGnyPsNIb?=
- =?us-ascii?Q?flDz9vPCR5iJkbs+HgYs2LWX743FxzluvVs9MWgL5k0OwnDolWIn1WYCRl1h?=
- =?us-ascii?Q?TLIKVUKHiZrLeVkloFizCFW8YEunuh1upys/ZT4n2jxfT/qI1q2zAZb8RDe5?=
- =?us-ascii?Q?Y3Lf+TqJhxsdNYXr9AyQ72Qela0g6Y+T89PkNiP+LqRrG7TgkMVUuosFr+c1?=
- =?us-ascii?Q?zO2daevB7CO70z9x0GevXAzgBEtjxMj+GZ8kSwFbtfCoph2tgMffTFILjOmj?=
- =?us-ascii?Q?9w/EcukBRMn1EvRw5xAB2s/bAdabFT1blyGHYK8wdc2HDvJkChIARfRSuZoO?=
- =?us-ascii?Q?g5uRqV0g6xAp1Q5Vcb6/G1uCHQOiiotjVtzBdmX7qqaZNsx9xoTndZIE+NnL?=
- =?us-ascii?Q?JS1VG7DSw5n+dkRZZU/xFTyQjGd6/cUcx4QGE2y/O/w0JM1dHx8VQBsCqZVp?=
- =?us-ascii?Q?Bmebt5YE4QShvedyxsUL3Umy8lVlvZkw1QjTNV1Cqoc6rgLuod8b1t1BTdws?=
- =?us-ascii?Q?Th+UNDOkvJzQ89v+TyN8FwJSBSfVELo4zDZJq9HC+cXnapsST886b4rAS0xY?=
- =?us-ascii?Q?OYurXUVYda49bT0wH32qaVfWn8kVgh04ZYYepMmQ?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 30c8e4b1-5fc9-4af7-1df2-08dcc8cfe383
-X-MS-Exchange-CrossTenant-AuthSource: KL1PR0601MB4113.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Aug 2024 08:43:58.6385
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: kvUKXlpe9F106mB4D8OxCPEt0wMSNJ2phs92+pRY2WSIkh4Zw41miRXe7KhXdm6UaAJXcSgiNDgoaxM5lZ/N5g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR06MB6681
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/5] fbdev: Introduce devm_register_framebuffer()
+To: Bert Karwatzki <spasswolf@web.de>, =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?=
+ <linux@weissschuh.net>
+Cc: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, Daniel Vetter <daniel@ffwll.ch>,
+ Peter Jones <pjones@redhat.com>
+References: <20240827-efifb-sysfs-v1-0-c9cc3e052180@weissschuh.net>
+ <20240827-efifb-sysfs-v1-3-c9cc3e052180@weissschuh.net>
+ <8b52669c-4c99-45e2-8b5e-9348e5e00f70@t-8ch.de>
+ <7fec4df2e44ea2b11ac617d1a4ed5cbb49214f7b.camel@web.de>
+Content-Language: en-US
+From: Helge Deller <deller@gmx.de>
+Autocrypt: addr=deller@gmx.de; keydata=
+ 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
+In-Reply-To: <7fec4df2e44ea2b11ac617d1a4ed5cbb49214f7b.camel@web.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:hngS1JXrPj/9htsgwIquLsRFYuB5Hf1vJt3rU6gnfiHS/enuoNy
+ +diz/OCKx2Hu2r6QAD/QgQfDzoAhrDIciJBgLIPVR0BGKm7+Ai/HTJ3WXp5jVnaHK9sVB2J
+ u9QZfTzcJFihG/oBVmXCGzTsoJDVd/F1Rn81wUiKdYhl8nC7x1NF8JsJe85VM4MPlSvq7oK
+ 5+Rbr/1J0/GbO/TCzYIXQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:98pAO8mO7IY=;88wlBK4YOwUq3AiS/SleQQaZwBO
+ IU4+tmVeP1yAc3WzZqvOx5jk104a34FrWjxLlPdStEjxAr1MchzywH+CcPF9RXZaEnQcw5vxO
+ N0VYozJULHLa1j3/4xPOCHVsYTYJOniS6TPbm4bQIUCJAC82oFnNUx56dv0Syy8lS6x4s42a6
+ +YzHMOg0dADIZaMNk95qBFquwWyRVjKRQ5WwoW7GL+f0yFVjUFEWTtGyFSW7nMOx6wC0BLKbD
+ 4xNWeGOFJJkTrrW1JqXmSes4TRnUVDy6v4DTRzJZZiplQs+Yj//HkvMX039/QNkNgoTa+0VdA
+ /cx8UaCyPpQ7fzFHMFvNhUIS5cW1BAHGrSw6rAHNOAzkC9RW39DMdWUCGOdV6SDIuL1hqYE1d
+ 8PtFvAOEXZ88rPxhRukp/pK8Ol4EdtRj8L1NzcaQ+6d6kfu2f0GefuI595WmQF71rueQ/OiAd
+ 6A7OS0bROTbEs803lWLWYTAOFUr4aN/Cdo7S17kyumRogiCxCZZXaiGSLV5urDTxXuzmSsmCd
+ 7uVR6FeBzYVFGlSaZDAojJ4zIuA9wKhVA0fi0gzbtfRypTGVXYmuWekcFX1jq+xhM8p3sS2i0
+ axqxcqPrMV1gCFh445p9E3VD9gx3umFxS+LfmTKCJCAjBH8+++sDri7mv5w9JMI/A3F+NUAiT
+ XHqOJbbSI3pELFHZ6/YmAXCBQIcBXJ3AyivP7JpiSy78SNHtfzQK8UfJbLb2NtxZFfhvTuXcO
+ r+ZBdqsVcCPTeHRSMqBGAl9fQiW50yDmIIS9L80ETvjRHAreyg9lG/Az+7WOubiifXNgq8Vfa
+ Abph6iIT2ys0UR1WHEi4tQng==
 
-Switch to use dev_err_probe() to simplify the error path and
-unify a message template.
+On 8/30/24 10:25, Bert Karwatzki wrote:
+> Am Freitag, dem 30.08.2024 um 09:17 +0200 schrieb Thomas Wei=C3=9Fschuh:
+>> Hi everybody,
+>>
+>> On 2024-08-27 17:25:14+0000, Thomas Wei=C3=9Fschuh wrote:
+>>> Introduce a device-managed variant of register_framebuffer() which
+>>> automatically unregisters the framebuffer on device destruction.
+>>> This can simplify the error handling and resource management in driver=
+s.
+>>
+>> Bert reported that this series broke his framebuffer ([0], [1]).
+>>
+>> [0] https://lore.kernel.org/lkml/20240829224124.2978-1-spasswolf@web.de=
+/
+>> [1] https://lore.kernel.org/lkml/20240829230438.3226-1-spasswolf@web.de=
+/
+>>
+>>> Signed-off-by: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
+>>> ---
+>>>   drivers/video/fbdev/core/fbmem.c | 24 ++++++++++++++++++++++++
+>>>   include/linux/fb.h               |  1 +
+>>>   2 files changed, 25 insertions(+)
+>>>
+>>> diff --git a/drivers/video/fbdev/core/fbmem.c b/drivers/video/fbdev/co=
+re/fbmem.c
+>>> index 4c4ad0a86a50..d17a2daa2483 100644
+>>> --- a/drivers/video/fbdev/core/fbmem.c
+>>> +++ b/drivers/video/fbdev/core/fbmem.c
+>>> @@ -544,6 +544,30 @@ unregister_framebuffer(struct fb_info *fb_info)
+>>
+>> [..]
+>>
+>>> +/**
+>>> + *	devm_register_framebuffer - resource-managed frame buffer device r=
+egistration
+>>> + *	@dev: device the framebuffer belongs to
+>>> + *	@fb_info: frame buffer info structure
+>>> + *
+>>> + *	Registers a frame buffer device @fb_info to device @dev.
+>>> + *
+>>> + *	Returns negative errno on error, or zero for success.
+>>> + *
+>>> + */
+>>> +int
+>>> +devm_register_framebuffer(struct device *dev, struct fb_info *fb_info=
+)
+>>> +{
+>>> +	return devm_add_action_or_reset(dev, devm_unregister_framebuffer, fb=
+_info);
+>>> +}
+>>> +EXPORT_SYMBOL(devm_register_framebuffer);
+>>
+>> This implementation is wrong, it never actually registers the
+>> framebuffer. It should look like this:
+>>
+>> int
+>> devm_register_framebuffer(struct device *dev, struct fb_info *fb_info)
+>> {
+>> 	int ret;
+>>
+>> 	ret =3D register_framebuffer(fb_info);
+>> 	if (ret)
+>> 		return ret;
+>>
+>> 	return devm_add_action_or_reset(dev, devm_unregister_framebuffer, fb_i=
+nfo);
+>> }
+>> EXPORT_SYMBOL(devm_register_framebuffer);
+>>
+>> Bert, could you test this?
+>> Helge, do you want me to resend the series, minus the original patch 1?
+>
+> Yes, this works for me. Thanks!
 
-Using this helper is totally fine even if err is known to never
-be -EPROBE_DEFER.
+Good.
 
-The benefit compared to a normal dev_err() is the standardized format
-of the error code, it being emitted symbolically and the fact that
-the error code is returned which allows more compact error paths. 
+Thomas, please just resend the fixed patch #3 (this one).
+And maybe you want to document devm_unregister_framebuffer()
+similiar to what you added for devm_register_framebuffer() ?
 
-Signed-off-by: Yan Zhen <yanzhen@vivo.com>
----
-
-Changes in v3:
--Rewrite the subject as 'pinctrl: madera:'.
-
- drivers/pinctrl/cirrus/pinctrl-madera-core.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/pinctrl/cirrus/pinctrl-madera-core.c b/drivers/pinctrl/cirrus/pinctrl-madera-core.c
-index 898b197c3738..2932d7aba725 100644
---- a/drivers/pinctrl/cirrus/pinctrl-madera-core.c
-+++ b/drivers/pinctrl/cirrus/pinctrl-madera-core.c
-@@ -1063,12 +1063,9 @@ static int madera_pin_probe(struct platform_device *pdev)
- 	if (pdata->gpio_configs) {
- 		ret = pinctrl_register_mappings(pdata->gpio_configs,
- 						pdata->n_gpio_configs);
--		if (ret) {
--			dev_err(priv->dev,
--				"Failed to register pdata mappings (%d)\n",
--				ret);
--			return ret;
--		}
-+		if (ret)
-+			return dev_err_probe(priv->dev, ret,
-+						"Failed to register pdata mappings\n");
- 	}
- 
- 	ret = pinctrl_enable(priv->pctl);
--- 
-2.34.1
-
+Helge
 
