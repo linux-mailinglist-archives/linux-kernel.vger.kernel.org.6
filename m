@@ -1,152 +1,239 @@
-Return-Path: <linux-kernel+bounces-309484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA758966B31
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 23:19:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89B6A966B38
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 23:22:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E2091F22F9A
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 21:19:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68A3B28440E
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 21:22:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C12F1C1734;
-	Fri, 30 Aug 2024 21:18:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C2C21C1739;
+	Fri, 30 Aug 2024 21:22:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="L9hwri+C"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k79a1sHZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08829166F0D;
-	Fri, 30 Aug 2024 21:18:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49BC516DEC8;
+	Fri, 30 Aug 2024 21:22:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725052732; cv=none; b=J3Y74+ANKy5DKvrXUkbem7LLP49KFHjpWJqWy6leilWrEFIb/A3wd5YexHXP3Rbf4kIJRiz7pX1TrVisCfT005DstHrBwlpayGsK3xipSp2daA0aj2wk5yo2HZJFdJmgtsbZzwDr6hBqQAgnYUM0fws2UV2ScOyWqQ16Nt6Bo+s=
+	t=1725052957; cv=none; b=KbR1lbNezAiorEzMicG3T+0fB4GHmxQ4J99vIdZB5iv5lrRc1YfqPg7LLRcen5XFzxuRmm7l4Mbon7tEI/clajOeUqKodIxezvH+KFUx/blEdw3da5HsuyJLSg9QoQ0MEbCZyhG6N4dJB+4TIIb4gKMVZGiKbvP4daaCDhMvwOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725052732; c=relaxed/simple;
-	bh=gsfgghxOYA6vxWAxZ6UzDRTkDtGXPHwsiZSUMh4YAI8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FYV2C+2Je0gdnUdQdBRCjPCnMwlQF0ER1JRWlY2iO5EC15/OHPxKrIhiRCaSmQhNiKtvU+XjOTNwBiSLiCbpryv8VKZvk4tBu/fxEh1jsqfmW3Ocr6FP2ORWq7JvKnrmRUuuckWSZz4LDtl0ufFVhrf16chxPI2LWlTPAxlzf6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=L9hwri+C; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725052731; x=1756588731;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=gsfgghxOYA6vxWAxZ6UzDRTkDtGXPHwsiZSUMh4YAI8=;
-  b=L9hwri+CVGMT8UONN4YBpXnrUfGaYENe+7myHCgzWtKOjVDhOrDG4AAg
-   +SsG+L6w6KzCTgRvJA7dHq0GDRvsElXCOqmPo5pseM4FT0WRUUSUZoVwK
-   NGFmgvlV8J2JVBk1FXop49O3IG/pu+H/jKHqC6u3tbWC+/EMATkwAZuTb
-   3ltAP2CUsH2DKafTHE09LrenAe9turvr9+gUHR0OVDyha2QuP7vA6+Bwk
-   LGab43iFzP8j/juihPxfLJ/hbVY6sxGVi9QUsz7Sw8dtlxBxJ3DnMPhv7
-   IMEkLOGcuWHuwSY78mjy+5rtG3JTrzgQPjEBSRD6+Kwy2ZTNF9nqPs1CW
-   Q==;
-X-CSE-ConnectionGUID: d55ueN5qRsqw6h/WyEoMdA==
-X-CSE-MsgGUID: qgg8TIz2QWiN2aj63T6mFA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11180"; a="23590588"
-X-IronPort-AV: E=Sophos;i="6.10,189,1719903600"; 
-   d="scan'208";a="23590588"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Aug 2024 14:18:50 -0700
-X-CSE-ConnectionGUID: XCArOf3+SGe5+JnbyiICoA==
-X-CSE-MsgGUID: k1VBgXP+SbO6QdLcXSXzmA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,189,1719903600"; 
-   d="scan'208";a="94817714"
-Received: from cmdeoliv-mobl.amr.corp.intel.com (HELO [10.125.108.69]) ([10.125.108.69])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Aug 2024 14:18:50 -0700
-Message-ID: <19dcfa1b-08fa-4a0b-9a9d-5df80fa94a41@intel.com>
-Date: Fri, 30 Aug 2024 14:18:35 -0700
+	s=arc-20240116; t=1725052957; c=relaxed/simple;
+	bh=Os5/RnZW/qxRUPFtDFX+ps/hR3vJ2+KZ7bqf+kBiu4A=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZoX0EBizdsdboNIBDZo1fCpMdmPRCNmHBzT2kiY3cfSnz5OhQNOzqRxINZwZ+rhrbnUfrjD5U60j9p+RR+eUpPdLuopiU8DbdyzV7h8hvEG6hacH7OA4hZQgfMCS4axnEJKsWdh8g02QOClY6gRhRE16NPgex+Zwix9vxtmeLZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k79a1sHZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19BC7C4CEC2;
+	Fri, 30 Aug 2024 21:22:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725052956;
+	bh=Os5/RnZW/qxRUPFtDFX+ps/hR3vJ2+KZ7bqf+kBiu4A=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=k79a1sHZWgmD+qU9X/BFm8jZz/ibRtrDooiosh7d3quD3PRy2dWG1DWmsfi5Ndwo/
+	 j3Anf5hYMoIA9Udx2exvruzhenHdm17ZnEvPz7j/riF5N43ea7uBLxQWOyy+twcGy0
+	 kKJAqkbsYVs1q8GYyVqNCSY/DSdWfToh0Lef2HBRe2sKbZVwpyW+rleUzXhrE0UPmZ
+	 9olAOvAANAKXiddbZgocTj0uRpytTbtVDaiGoWPrCxDif2id30qWK6L1S7mKXXtEKo
+	 Nivi9HcC549ljZisC3y+UCwyInzkQIkNMuaSImFzFrnEqiWr+ei+gOvGN9sDbBDjj1
+	 tybSSzU50CHGw==
+Date: Fri, 30 Aug 2024 14:22:35 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Joe Damato <jdamato@fastly.com>
+Cc: netdev@vger.kernel.org, edumazet@google.com, amritha.nambiar@intel.com,
+ sridhar.samudrala@intel.com, sdf@fomichev.me, bjorn@rivosinc.com,
+ hch@infradead.org, willy@infradead.org, willemdebruijn.kernel@gmail.com,
+ skhawaja@google.com, Martin Karsten <mkarsten@uwaterloo.ca>, Donald Hunter
+ <donald.hunter@gmail.com>, "David S. Miller" <davem@davemloft.net>, Paolo
+ Abeni <pabeni@redhat.com>, Jesper Dangaard Brouer <hawk@kernel.org>, Xuan
+ Zhuo <xuanzhuo@linux.alibaba.com>, Daniel Jurgens <danielj@nvidia.com>,
+ open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next 5/5] netdev-genl: Support setting per-NAPI
+ config values
+Message-ID: <20240830142235.352dbad5@kernel.org>
+In-Reply-To: <ZtGiNF0wsCRhTtOF@LQ3V64L9R2>
+References: <20240829131214.169977-1-jdamato@fastly.com>
+	<20240829131214.169977-6-jdamato@fastly.com>
+	<20240829153105.6b813c98@kernel.org>
+	<ZtGiNF0wsCRhTtOF@LQ3V64L9R2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 06/25] x86/virt/tdx: Export TDX KeyID information
-To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
- "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
- "pbonzini@redhat.com" <pbonzini@redhat.com>,
- "seanjc@google.com" <seanjc@google.com>
-Cc: "Li, Xiaoyao" <xiaoyao.li@intel.com>,
- "tony.lindgren@linux.intel.com" <tony.lindgren@linux.intel.com>,
- "Huang, Kai" <kai.huang@intel.com>,
- "isaku.yamahata@gmail.com" <isaku.yamahata@gmail.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20240812224820.34826-1-rick.p.edgecombe@intel.com>
- <20240812224820.34826-7-rick.p.edgecombe@intel.com>
- <614ab01d-eb99-48b8-8517-7438ca6cfef2@intel.com>
- <43af672ad0dbdeefaa45f72fa7a4ae68bc5d0fb6.camel@intel.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <43af672ad0dbdeefaa45f72fa7a4ae68bc5d0fb6.camel@intel.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 8/30/24 12:16, Edgecombe, Rick P wrote:
-...>> In other words, should we export the global KeyID, or export a
-function
->> to do the flush and then never actually expose the KeyID?
+On Fri, 30 Aug 2024 11:43:00 +0100 Joe Damato wrote:
+> On Thu, Aug 29, 2024 at 03:31:05PM -0700, Jakub Kicinski wrote:
+> > On Thu, 29 Aug 2024 13:12:01 +0000 Joe Damato wrote:  
+> > > +	napi = napi_by_id(napi_id);
+> > > +	if (napi)
+> > > +		err = netdev_nl_napi_set_config(napi, info);
+> > > +	else
+> > > +		err = -EINVAL;  
+> > 
+> > if (napi) {
+> > ...
+> > } else {
+> > 	NL_SET_BAD_ATTR(info->extack, info->attrs[NETDEV_A_NAPI_ID])
+> > 	err = -ENOENT;
+> > }  
 > 
-> We could split it into two helpers if we wanted to remove the export of
-> tdx_global_keyid. One for global key id and one that only takes TD range key
-> ids. Adding more layers is a downside.
+> Thanks, I'll make that change in the v2.
+> 
+> Should I send a Fixes for the same pattern in
+> netdev_nl_napi_get_doit ?
 
-I do like the idea of exporting a couple of helpers that are quite hard
-to misuse instead of exporting the variable.
+SG, standalone patch is good, FWIW, no need to add to the series.
 
-> Separate from Dave's question, I wonder if we should open code set_hkid_to_hpa()
-> inside tdh_phymem_page_wbinvd(). The signature could change to
-> tdh_phymem_page_wbinvd(hpa_t pa, u16 hkid). set_hkid_to_hpa() is very
-> lightweight, so I don't think doing it outside the loop is much gain. It makes
-> the code cleaner.
+> > > +      doc: Set configurable NAPI instance settings.  
+> > 
+> > We should pause and think here how configuring NAPI params should
+> > behave. NAPI instances are ephemeral, if you close and open the
+> > device (or for some drivers change any BPF or ethtool setting)
+> > the NAPIs may get wiped and recreated, discarding all configuration.
+> > 
+> > This is not how the sysfs API behaves, the sysfs settings on the device
+> > survive close. It's (weirdly?) also not how queues behave, because we
+> > have struct netdev{_rx,}_queue to store stuff persistently. Even tho
+> > you'd think queues are as ephemeral as NAPIs if not more.
+> > 
+> > I guess we can either document this, and move on (which may be fine,
+> > you have more practical experience than me). Or we can add an internal
+> > concept of a "channel" (which perhaps maybe if you squint is what
+> > ethtool -l calls NAPIs?) or just "napi_storage" as an array inside
+> > net_device and store such config there. For simplicity of matching
+> > config to NAPIs we can assume drivers add NAPI instances in order. 
+> > If driver wants to do something more fancy we can add a variant of
+> > netif_napi_add() which specifies the channel/storage to use.
+> > 
+> > Thoughts? I may be overly sensitive to the ephemeral thing, maybe
+> > I work with unfortunate drivers...  
+> 
+> Thanks for pointing this out. I think this is an important case to
+> consider. Here's how I'm thinking about it.
+> 
+> There are two cases:
+> 
+> 1) sysfs setting is used by existing/legacy apps: If the NAPIs are
+> discarded and recreated, the code I added to netif_napi_add_weight
+> in patch 1 and 3 should take care of that case preserving how sysfs
+> works today, I believe. I think we are good on this case ?
 
-Yeah, do what's cleanest.  This is all super cold code.
+Agreed.
 
+> 2) apps using netlink to set various custom settings. This seems
+> like a case where a future extension can be made to add a notifier
+> for NAPI changes (like the netdevice notifier?).
+
+Yes, the notifier may help, but it's a bit of a stop gap / fallback.
+
+> If you think this is a good idea, then we'd do something like:
+>   1. Document that the NAPI settings are wiped when NAPIs are wiped
+>   2. In the future (not part of this series) a NAPI notifier is
+>      added
+>   3. User apps can then listen for NAPI create/delete events
+>      and update settings when a NAPI is created. It would be
+>      helpful, I think, for user apps to know about NAPI
+>      create/delete events in general because it means NAPI IDs are
+>      changing.
+> 
+> One could argue:
+> 
+>   When wiping/recreating a NAPI for an existing HW queue, that HW
+>   queue gets a new NAPI ID associated with it. User apps operating
+>   at this level probably care about NAPI IDs changing (as it affects
+>   epoll busy poll). Since the settings in this series are per-NAPI
+>   (and not per HW queue), the argument could be that user apps need
+>   to setup NAPIs when they are created and settings do not persist
+>   between NAPIs with different IDs even if associated with the same
+>   HW queue.
+
+IDK if the fact that NAPI ID gets replaced was intentional in the first
+place. I would venture a guess that the person who added the IDs was
+working with NICs which have stable NAPI instances once the device is
+opened. This is, unfortunately, not universally the case.
+
+I just poked at bnxt, mlx5 and fbnic and all of them reallocate NAPIs
+on an open device. Closer we get to queue API the more dynamic the whole
+setup will become (read: the more often reconfigurations will happen).
+
+> Admittedly, from the perspective of a user it would be nice if a new
+> NAPI created for an existing HW queue retained the previous
+> settings so that I, as the user, can do less work.
+> 
+> But, what happens if a HW queue is destroyed and recreated? Will any
+> HW settings be retained? And does that have any influence on what we
+> do in software? See below.
+
+Up to the driver, today. But settings we store in queue structs in 
+the core are not wiped.
+
+> This part of your message:
+> 
+> > we can assume drivers add NAPI instances in order. If driver wants
+> > to do something more fancy we can add a variant of
+> > netif_napi_add() which specifies the channel/storage to use.  
+> 
+> assuming drivers will "do a thing", so to speak, makes me uneasy.
+
+Yeah.. :(
+
+> I started to wonder: how do drivers handle per-queue HW IRQ coalesce
+> settings when queue counts increase? It's a different, but adjacent
+> problem, I think.
+> 
+> I tried a couple experiments on mlx5 and got very strange results
+> suitable for their own thread and I didn't want to get this thread
+> too far off track.
+
+Yes, but ethtool is an old shallow API from the times when semantics
+were simpler. It's precisely this mess which we try to avoid by storing
+more of the config in the core, in a consistent fashion.
+
+> I think you have much more practical experience when it comes to
+> dealing with drivers, so I am happy to follow your lead on this one,
+> but assuming drivers will "do a thing" seems mildly scary to me with
+> limited driver experience.
+> 
+> My two goals with this series are:
+>   1. Make it possible to set these values per NAPI
+>   2. Unblock the IRQ suspension series by threading the suspend
+>      parameter through the code path carved in this series
+> 
+> So, I'm happy to proceed with this series as you prefer whether
+> that's documentation or "napi_storage"; I think you are probably the
+> best person to answer this question :)
+
+How do you feel about making this configuration opt-in / require driver
+changes? What I'm thinking is that having the new "netif_napi_add()"
+variant (or perhaps extending netif_napi_set_irq()) to take an extra
+"index" parameter would make the whole thing much simpler.
+
+Index would basically be an integer 0..n, where n is the number of
+IRQs configured for the driver. The index of a NAPI instance would
+likely match the queue ID of the queue the NAPI serves.
+
+We can then allocate an array of "napi_configs" in net_device -
+like we allocate queues, the array size would be max(num_rx_queue,
+num_tx_queues). We just need to store a couple of ints so it will
+be tiny compared to queue structs, anyway.
+
+The NAPI_SET netlink op can then work based on NAPI index rather 
+than the ephemeral NAPI ID. It can apply the config to all live
+NAPI instances with that index (of which there really should only 
+be one, unless driver is mid-reconfiguration somehow but even that
+won't cause issues, we can give multiple instances the same settings)
+and also store the user config in the array in net_device.
+
+When new NAPI instance is associate with a NAPI index it should get
+all the config associated with that index applied.
+
+Thoughts? Does that makes sense, and if so do you think it's an
+over-complication?
 
