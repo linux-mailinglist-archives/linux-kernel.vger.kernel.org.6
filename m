@@ -1,147 +1,174 @@
-Return-Path: <linux-kernel+bounces-308754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D43196616B
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 14:18:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF64096616E
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 14:18:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF238283C05
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:18:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 673751F259D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:18:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 578E3199FDC;
-	Fri, 30 Aug 2024 12:18:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81B5A199FBF;
+	Fri, 30 Aug 2024 12:18:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YX6Gpw1i"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="v6IbNiMQ"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 964D516F0DD;
-	Fri, 30 Aug 2024 12:18:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CE4916F0DD
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 12:18:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725020300; cv=none; b=UzLAl+rnpPaxdQS5JdChZII0tJ90XvYwhgzgWuKZl3guOUarCAsnVRr6dQ33SEjBrCvY1Eg9unj/QbxQLZ7/BDSpD2p1QVtmwywhe8UiL+39Sz7TZgmR8EOu4+68I+oc/i1giD37mOOV9sAJeRAilZAtCuJ8er7W3yV79khiYms=
+	t=1725020321; cv=none; b=bj26kdBoGtYpE7nBSaBFQkmsHr6vlSAiRsIBjKkhd5jEhtQ4cnQQO05V3gTxqu6s43mzjM/0CL/h4xjyIIvGCG/8PH5l3LDRBBgeepod5wMVH93RherzuoTXpo+K6WblslVyc2HALyI7pyRwG6clgRUevFXXPCNyJ+0MN8r7YQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725020300; c=relaxed/simple;
-	bh=fzW3G+TfB+bO5ebL/bX9LdeCTen9lbExGhAdJz/gUE8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JCOYKhNKdjUkdcVhM/ZCo+oFU42QmpQJuYH2L8iFPtW2daQpwZmiOMVj7MrDE0wrORDCBfVyq3vQwj38PFDFslDTGxFuYBV0q7FLkJNcNghOrugRiaiiHNGhmT79puVsk7Ap+cp7UvAFoyXZMpgUBnFmBpsVJlHgXp/NYRetDp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YX6Gpw1i; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15310C4CECD;
-	Fri, 30 Aug 2024 12:18:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725020300;
-	bh=fzW3G+TfB+bO5ebL/bX9LdeCTen9lbExGhAdJz/gUE8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=YX6Gpw1iAM1qcXKu7BASnn7Qo45teZi4XXjDrmwn/Vm4TnZW3bXHuZf+aIV8rnhz0
-	 7VJ9gf240vFlFx69v7Gytuo+daKbx/S4payvqKJCL+wpO6Oj2vwKuHWo7VYnjGJPaH
-	 41rQ1hCheK7YWyiteSj1QCLB193pxleVPtw7pyJvPaKHgasT2isgNCGwpSMjSXlqGC
-	 ec5a8ppcWoJn+0Tc8EDxaWlAPdgEfZCp/oJarZBv6gWXXd/cQRri2pRcMwEFPnD7H/
-	 vm9Fdfxn+WilUW8TBmM/UkaC0ahgKu+wuig8BUCdyRxxq9ujl/xkxdJs1NJJWOBhSV
-	 9hwmywR7owrdQ==
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2050b059357so14245875ad.2;
-        Fri, 30 Aug 2024 05:18:20 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXia+W3NVa7gtupN3ZW7E5a69dWHXAOBZKOExiNEcgK+aMknr1uJU1/LCEnqrMbp1sJTt5eBeIBLeoF@vger.kernel.org, AJvYcCXuq8I5bvvPEh33rK6ZFWaVaR3JSkTHIYpHcXe73y9u4n/hIbGZ2kafFllWjG6v7/R8v8TSOnU0iSgfGXWi@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBycV7wOumDV8CFvOKEhOdZ1otB3WiZgZFO0yAW5NiEcV+R1jN
-	Nw6Zl4xA3U7JRdkR6FJ5FYiy4yqMqp8LhpMDhFs7DcCuHMOnV/cWw/JRO71Qr3yrYgSY3u7nYjx
-	sLEH2iC0Xoy+hE830XxKtOpbhNg==
-X-Google-Smtp-Source: AGHT+IF2p5CQY3b8HPQl1+/RqA1ZHqHcuWEQh2qoVHx4PAKoc7yqtJdfN0iZ0lNlEvXu5ud9ENOdM8aJpEyK48XB/pY=
-X-Received: by 2002:a17:903:124c:b0:202:18de:b419 with SMTP id
- d9443c01a7336-2050c524e84mr78003075ad.63.1725020299631; Fri, 30 Aug 2024
- 05:18:19 -0700 (PDT)
+	s=arc-20240116; t=1725020321; c=relaxed/simple;
+	bh=as9bZ18482ds0DVCSos5+kV1IKZSHcbXBC2Asfcgf6o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lDDS4YTXWvxL0CT61FeIu4tgg1j55anxAh6dcB23B24pqOu/wblNpvBECJTSChmubEAvPLci/oIBuxP1RRuA1VrBLrgEfaVW917tzOGZjI3i1mtvnPsxhkYo/CpjuLwISfmRYEv4qt9Ono+eCj5Cq0trTH4HcPuBHi+rjXJXzQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=v6IbNiMQ; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-714263cb074so1299958b3a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 05:18:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725020319; x=1725625119; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=eJplX0nrFE2YsBh7KtLRDZWDD5YD99Qk9xo9Crw/Jk0=;
+        b=v6IbNiMQ8JhpLXKK+ggz29HUQAAKSSjHbR9FyuXwqJ4mRAaGsZhQKT9iXBbYkecHsb
+         9q/PoIneWFhh17hdSLyM39M0Ww8Tz3kCPXGLUvEZGLpMhIlaRDK7yFzrHkfVJJY6ER/G
+         SX+ZdpBrZzWqJbLZEk13AQPH65mY5zXv8RE/Rn/HE6L83ENX2OjtCwpr59Qa+y0uFGQw
+         i4DLMKvfs90RCwbWO7jj2VJMnJNXNpqbVhETRxXAC6B84Tt8sjAKTt2oOsPUhMdwxlGA
+         1kKqHj16TaPjvE7TpTzTzdCF0TzptHP0wvPDBqPcfBVLugfzk//kY/5+qg++6vuS0AV0
+         0ZpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725020319; x=1725625119;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=eJplX0nrFE2YsBh7KtLRDZWDD5YD99Qk9xo9Crw/Jk0=;
+        b=FkKovzx/SrZDSLk7L9pUn0e35o0ltTUKJZDVP01VX5e/MOpbcb8nz71IJvN7IUl9G3
+         TxZKrTFMofrBxPvdy5Pyu2ykaSwiwv1sAGY46prX3TgErNDNnjcidvO+x9pHq95+4bq9
+         bTGnxS2iPOX1pmbX9ZQ1L7j1cBDTBpayuERmohh16CrpQzOn/ifTbgtffu5XcHRG+JGA
+         0txqLflC/gRWa6Vz9ze3qxZd0gMBsaaoh3HPSROG7lG8vx+a9LKSvdINvA1JAk8Dv+UF
+         V3rL4ZAmxnQSRmzYMAtP6Okw4rMxeqS5KbPHTt7zAoGx24WwyyhnGnIdB4DSZ60jpg26
+         OJxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXIdCgWc6knL6CX2PxY4r+hgzeTUWpNNG8HgMrtAX3ujaZzvRlWGiUMrW/UyfGXC5dooErO6j9HLbQBx7o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwomBmn3D9LO9i8nxdt5MMvNbWsyTOO6MdeVxm83P+oR8c9iQ/+
+	lua2lpWmUW7K7Nx8ZVnVqNZVEz7xIS9c0SsjnebSq2uD/qN7sfqIXLmEWaJD1Q==
+X-Google-Smtp-Source: AGHT+IF8bmE5S2LuE60AnWdDtjWDZkmqQ9ygryaZA4rPxnm/Svh7hutBAGdVKk3XDfWvFmcWIRODRw==
+X-Received: by 2002:a05:6a20:e196:b0:1c6:cb01:db61 with SMTP id adf61e73a8af0-1cce101a84dmr6071301637.28.1725020319526;
+        Fri, 30 Aug 2024 05:18:39 -0700 (PDT)
+Received: from thinkpad ([117.193.213.95])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7d22e9be991sm2847738a12.75.2024.08.30.05.18.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Aug 2024 05:18:39 -0700 (PDT)
+Date: Fri, 30 Aug 2024 17:48:34 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Slark Xiao <slark_xiao@163.com>
+Cc: mhi@lists.linux.dev, linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] bus: mhi: host: pci_generic: Enable trigger_edl
+ for Foxconn SDX55/SDX65/SDX24 products
+Message-ID: <20240830121834.e6zhtqj6pwgbxpsr@thinkpad>
+References: <20240725022941.65948-1-slark_xiao@163.com>
+ <20240725022941.65948-2-slark_xiao@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240830084544.2898512-1-rohiagar@chromium.org> <20240830084544.2898512-2-rohiagar@chromium.org>
-In-Reply-To: <20240830084544.2898512-2-rohiagar@chromium.org>
-From: Chun-Kuang Hu <chunkuang.hu@kernel.org>
-Date: Fri, 30 Aug 2024 20:18:33 +0800
-X-Gmail-Original-Message-ID: <CAAOTY_-1bT-=jU4vCZTfe18Ks6WiAL=7M3y0eK3DyGkfWmsFKA@mail.gmail.com>
-Message-ID: <CAAOTY_-1bT-=jU4vCZTfe18Ks6WiAL=7M3y0eK3DyGkfWmsFKA@mail.gmail.com>
-Subject: Re: [PATCH v4 1/3] dt-bindings: display: mediatek: dpi: Add power domains
-To: Rohit Agarwal <rohiagar@chromium.org>
-Cc: chunkuang.hu@kernel.org, p.zabel@pengutronix.de, airlied@gmail.com, 
-	daniel@ffwll.ch, maarten.lankhorst@linux.intel.com, mripard@kernel.org, 
-	tzimmermann@suse.de, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com, 
-	ck.hu@mediatek.com, jitao.shi@mediatek.com, dri-devel@lists.freedesktop.org, 
-	linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240725022941.65948-2-slark_xiao@163.com>
 
-Hi, Rohit:
+On Thu, Jul 25, 2024 at 10:29:41AM +0800, Slark Xiao wrote:
+> Since generic trigger_edl mechanism has been imported, all
+> products support firehose download shall enable 'edl_trigger'.
+> 
+> Signed-off-by: Slark Xiao <slark_xiao@163.com>
 
-Rohit Agarwal <rohiagar@chromium.org> =E6=96=BC 2024=E5=B9=B48=E6=9C=8830=
-=E6=97=A5 =E9=80=B1=E4=BA=94 =E4=B8=8B=E5=8D=884:46=E5=AF=AB=E9=81=93=EF=BC=
-=9A
->
-> Add power domain binding to the mediatek DPI controller
-> for MT8186.
-> Also, add power domain binding for other SoCs like
-> MT6795 and MT8173 that already had power domain property.
+Applied to mhi-next!
 
-For this patch, applied to mediatek-drm-next [1], thanks.
+- Mani
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/chunkuang.hu/linux.git/=
-log/?h=3Dmediatek-drm-next
-
-Regards,
-Chun-Kuang.
-
->
-> Signed-off-by: Rohit Agarwal <rohiagar@chromium.org>
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Reviewed-by: CK Hu <ck.hu@mediatek.com>
 > ---
->  .../bindings/display/mediatek/mediatek,dpi.yaml | 17 +++++++++++++++++
->  1 file changed, 17 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,=
-dpi.yaml b/Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.=
-yaml
-> index 5ca7679d5427..3a82aec9021c 100644
-> --- a/Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.yam=
-l
-> +++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.yam=
-l
-> @@ -62,6 +62,9 @@ properties:
->        - const: default
->        - const: sleep
->
-> +  power-domains:
-> +    maxItems: 1
-> +
->    port:
->      $ref: /schemas/graph.yaml#/properties/port
->      description:
-> @@ -76,6 +79,20 @@ required:
->    - clock-names
->    - port
->
-> +allOf:
-> +  - if:
-> +      not:
-> +        properties:
-> +          compatible:
-> +            contains:
-> +              enum:
-> +                - mediatek,mt6795-dpi
-> +                - mediatek,mt8173-dpi
-> +                - mediatek,mt8186-dpi
-> +    then:
-> +      properties:
-> +        power-domains: false
-> +
->  additionalProperties: false
->
->  examples:
-> --
-> 2.46.0.469.g59c65b2a67-goog
->
+>  drivers/bus/mhi/host/pci_generic.c | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+> 
+> diff --git a/drivers/bus/mhi/host/pci_generic.c b/drivers/bus/mhi/host/pci_generic.c
+> index f159a9dd53e7..565b280c539e 100644
+> --- a/drivers/bus/mhi/host/pci_generic.c
+> +++ b/drivers/bus/mhi/host/pci_generic.c
+> @@ -434,6 +434,7 @@ static const struct mhi_controller_config modem_foxconn_sdx72_config = {
+>  static const struct mhi_pci_dev_info mhi_foxconn_sdx55_info = {
+>  	.name = "foxconn-sdx55",
+>  	.edl = "qcom/sdx55m/foxconn/prog_firehose_sdx55.mbn",
+> +	.edl_trigger = true,
+>  	.config = &modem_foxconn_sdx55_config,
+>  	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
+>  	.dma_data_width = 32,
+> @@ -444,6 +445,7 @@ static const struct mhi_pci_dev_info mhi_foxconn_sdx55_info = {
+>  static const struct mhi_pci_dev_info mhi_foxconn_t99w175_info = {
+>  	.name = "foxconn-t99w175",
+>  	.edl = "qcom/sdx55m/foxconn/prog_firehose_sdx55.mbn",
+> +	.edl_trigger = true,
+>  	.config = &modem_foxconn_sdx55_config,
+>  	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
+>  	.dma_data_width = 32,
+> @@ -454,6 +456,7 @@ static const struct mhi_pci_dev_info mhi_foxconn_t99w175_info = {
+>  static const struct mhi_pci_dev_info mhi_foxconn_dw5930e_info = {
+>  	.name = "foxconn-dw5930e",
+>  	.edl = "qcom/sdx55m/foxconn/prog_firehose_sdx55.mbn",
+> +	.edl_trigger = true,
+>  	.config = &modem_foxconn_sdx55_config,
+>  	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
+>  	.dma_data_width = 32,
+> @@ -463,6 +466,8 @@ static const struct mhi_pci_dev_info mhi_foxconn_dw5930e_info = {
+>  
+>  static const struct mhi_pci_dev_info mhi_foxconn_t99w368_info = {
+>  	.name = "foxconn-t99w368",
+> +	.edl = "qcom/sdx65m/foxconn/prog_firehose_lite.elf",
+> +	.edl_trigger = true,
+>  	.config = &modem_foxconn_sdx55_config,
+>  	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
+>  	.dma_data_width = 32,
+> @@ -472,6 +477,8 @@ static const struct mhi_pci_dev_info mhi_foxconn_t99w368_info = {
+>  
+>  static const struct mhi_pci_dev_info mhi_foxconn_t99w373_info = {
+>  	.name = "foxconn-t99w373",
+> +	.edl = "qcom/sdx65m/foxconn/prog_firehose_lite.elf",
+> +	.edl_trigger = true,
+>  	.config = &modem_foxconn_sdx55_config,
+>  	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
+>  	.dma_data_width = 32,
+> @@ -481,6 +488,8 @@ static const struct mhi_pci_dev_info mhi_foxconn_t99w373_info = {
+>  
+>  static const struct mhi_pci_dev_info mhi_foxconn_t99w510_info = {
+>  	.name = "foxconn-t99w510",
+> +	.edl = "qcom/sdx24m/foxconn/prog_firehose_sdx24.mbn,
+> +	.edl_trigger = true,
+>  	.config = &modem_foxconn_sdx55_config,
+>  	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
+>  	.dma_data_width = 32,
+> @@ -490,6 +499,8 @@ static const struct mhi_pci_dev_info mhi_foxconn_t99w510_info = {
+>  
+>  static const struct mhi_pci_dev_info mhi_foxconn_dw5932e_info = {
+>  	.name = "foxconn-dw5932e",
+> +	.edl = "qcom/sdx65m/foxconn/prog_firehose_lite.elf",
+> +	.edl_trigger = true,
+>  	.config = &modem_foxconn_sdx55_config,
+>  	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
+>  	.dma_data_width = 32,
+> -- 
+> 2.25.1
+> 
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
