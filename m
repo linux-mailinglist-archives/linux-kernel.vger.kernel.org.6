@@ -1,135 +1,102 @@
-Return-Path: <linux-kernel+bounces-308788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E18319661CE
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 14:32:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A8289661D2
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 14:33:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91259B2A7C0
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:31:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B69D5B28BD3
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:33:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AEEF19882E;
-	Fri, 30 Aug 2024 12:31:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80CAA199FB7;
+	Fri, 30 Aug 2024 12:33:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CTfdZrgw"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DyVkyWb+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E936556440;
-	Fri, 30 Aug 2024 12:31:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1FD312F59C;
+	Fri, 30 Aug 2024 12:33:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725021109; cv=none; b=OP9Ts1YK+fRAi3gW1opJt8ghJq9qc6e/MiahvI6s3zTLUfGE7x6gN4BeuK0VRhW6/e3Ou3GJGbzlIozwMXW17+1jMtyczkExNJB/SXrijbDfSBFwt0VDHxqBj0OHB2HiEVIYk4Ts4L5LRzv+FZYaPX3Cn6lhsurKh/9tkcC3QwE=
+	t=1725021199; cv=none; b=uujqJOzd3VPCeZw/QSUlorXkZmPesfTTvVjsBCunYIHHE/TUBCfSsV9RuWfchavpDsk2GCFmvrIb0iPONmumqc30lPwJUqFvkBjaAOpI7mw9YTFM+cNIXhZNYvWdum3WlgqBJKix2ppnzKBI72OgH2mrNWdbkjBo8x5El7JCphE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725021109; c=relaxed/simple;
-	bh=m5Gh38p4UDxwQowc8pKIPA80Tfc5OBdPbIKq5RsI8js=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ogp8mNtLQ5QBDxnxkNGi4gmQaevDeW3HG+fqT2ypjVIC8JVRvml74i9M8dlX1JfZYog2zu1+dC1I7v8lCCfGybFVRfzZr7uAeWM/KJaAp5u/k7kSycncU2T+MQ4nPO2nXjyLv/1vuEKleKxKbcAjrrQtGjBBhls8iRl+Ez0N2/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CTfdZrgw; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-42bbbff40bbso5020535e9.2;
-        Fri, 30 Aug 2024 05:31:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725021106; x=1725625906; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ohDjUIiSvToxlJbMqL5nyB0BrdhKvUaZXF1JCyJv4sY=;
-        b=CTfdZrgwwUIiCrCWhm3QzRs3zeHmyBvhWYKhL/N9Dh/PrOVcUqJPCeK21v+GRhcM+4
-         RLBRrP2hxyuc8i+Ge9v3qfGWlSWIbBFqvGrJOmeNnetlGYiXyqvhi6HvkNmvojoTcnww
-         X83iN9rnwdEub/u5alqiyQ+WMJn1s0PM5om6pEYvXezw1YM09/G09KqZMqDMMS25h+Wu
-         268k7ln6ib0ABCUElyZnQurfi9FhtBsV2ql0JDsUY1NVW+QAH1TRYBwroTXMjbQJrYd4
-         0StTAUelx+hRwur2FuLGMZ/0xxNblzTwna8Sje3NcNcBGJpv/cy2tj3OXxNut+L7NltH
-         orNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725021106; x=1725625906;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ohDjUIiSvToxlJbMqL5nyB0BrdhKvUaZXF1JCyJv4sY=;
-        b=UQwraRIi+5K03irU6LkkZZEScayU3iVT6GCckLjFCKuuejeVH3pyhyxjHLbP1Kdqms
-         tEx3BrOI+TvUWL55WpyNJgeCdOLqciXfzljP2MFR0Bn7RkwO+GJQn90KToSYFOj7MQyU
-         iFWA6flceLqIlQyXGRJ2qs0AedwZBIFID/naLXIlBYwU38JDeucCTzYN8sY+Jjxn9Nzw
-         +h9oTT605UD73SyghdxnDvToDmQgda1YAholof5IKJ0l6zb1dJSnpBTUsQnWFXtd+DqW
-         Rj0vxMfzOGtjYpu6f5o5ytkNyzC6HaNMdohGSEfx7xLN4/UWloxwuI9y5gsM4xa1+dtt
-         1pCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUL+8dfheQW19RCuHMIocuD7NwvrALycly9wrtfrJQ6rd3VL4mUU+ZaLQSybZN5QnybrCsOgMVX2gt1a7C2kf4=@vger.kernel.org, AJvYcCW8rI+u3N7536pYR3BBP5MvI3skUgReikLzpbzpmHCwf0mFplupnM1LTCz7ka8YvKjBeZjIcOEDMDv2NHS3@vger.kernel.org, AJvYcCXVXMHeS9aMIIZLg0P6FnXfNnAxVKDpJ8vyFtV32jRZTsmKxNsNKvbkJ3zwk404kpIoLH5o5f2lmr3BTbXxTPY6@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYOlM+eOt1A8yaIbXAlnQeNFj4Qsv6QMFffPB+CXwKZvijQ49v
-	a9Rv/1mFyX1GMyyZnq3Q8JsaUwlwjavLezfsPIzNEiG3sHY+nZGw
-X-Google-Smtp-Source: AGHT+IHmGTbedrMJCDroV7oNwxn3M3Ss6No5PIHgV866gcjj3PkKjQVFejaxDgbKL/toPUYO0S1drg==
-X-Received: by 2002:a05:600c:997:b0:42b:ac3f:f5c with SMTP id 5b1f17b1804b1-42bbb436de5mr14103315e9.26.1725021105330;
-        Fri, 30 Aug 2024 05:31:45 -0700 (PDT)
-Received: from PC-PEDRO-ARCH ([2001:8a0:7862:ea00:1d36:5f53:3f57:14ad])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3749efbf406sm3842829f8f.115.2024.08.30.05.31.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Aug 2024 05:31:44 -0700 (PDT)
-Date: Fri, 30 Aug 2024 13:31:42 +0100
-From: Pedro Falcato <pedro.falcato@gmail.com>
-To: jeffxu@chromium.org
-Cc: akpm@linux-foundation.org, linux-kselftest@vger.kernel.org, 
-	linux-mm@kvack.org, linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	willy@infradead.org, lorenzo.stoakes@oracle.com, broonie@kernel.org, vbabka@suse.cz, 
-	Liam.Howlett@oracle.com, rientjes@google.com, keescook@chromium.org
-Subject: Re: [PATCH v2 0/4] Increase mseal test coverage
-Message-ID: <ixoelxclkikscysvlmfbvciyig7pqjbuwwhhgawk6fy4iookya@kmsjo3oetgw5>
-References: <20240829214352.963001-1-jeffxu@chromium.org>
+	s=arc-20240116; t=1725021199; c=relaxed/simple;
+	bh=4e1kkLC2cNy76ieaQd3T4nEl/kPvRvCtCwI78CJppNI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ABnbCO+IX3nFmCqrwm0WGTFQeplrFE/CJNWQxLTulGT193O2FgCSl+UNZ2IU3N2bzVYtJSg/3B3M7K8v9FnBynmPSTzKbZlTXvR61Jookgr6G4spGnL97eS/tLKeBwpmooyxxB6yY6uISgS+vI1vzV7rI0yNUOsC2AvshqikNdA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DyVkyWb+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72D46C4CEC2;
+	Fri, 30 Aug 2024 12:33:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725021199;
+	bh=4e1kkLC2cNy76ieaQd3T4nEl/kPvRvCtCwI78CJppNI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=DyVkyWb+2R6W5cH+q9RVz3c/TeDJQB8QeM8w3VhdzLK0gTIHXFgTWevEXUxsdTzqi
+	 5eD24D/sseeBkZiRgGxcNuBo0AxHbF8j7h1rwDiHUrj3yNUWrazImW4em22r/a63Lo
+	 dAESUWctA6okDIUl/ZHkgCllBdkrAy8dmJ4sriy/BLLeKCWIAjTJNb+z/uLBFzrFmt
+	 tXTUqGW7YkcNAA96rqRDBru2L09mNG2LLkxombQ0f9DkNbifYQIOl88p7VfeRAMKFs
+	 bHXZ1V8oZVFWOkqRPQIkFO9gj++o8GlNNu1mmEAHyyjjQ7M74gc5lHnxKETT3Nl/0j
+	 p6VIbvhBIziuw==
+Message-ID: <7a02001f-98f8-4c44-93b6-83e167e54428@kernel.org>
+Date: Fri, 30 Aug 2024 15:33:12 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240829214352.963001-1-jeffxu@chromium.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/2] arm64: dts: ti: Add k3-am67a-beagley-ai
+To: Robert Nelson <robertcnelson@gmail.com>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Vignesh Raghavendra <vigneshr@ti.com>,
+ Nishanth Menon <nm@ti.com>, Andrew Davis <afd@ti.com>,
+ Jai Luthra <j-luthra@ti.com>, Siddharth Vadapalli <s-vadapalli@ti.com>,
+ Jared McArthur <j-mcarthur@ti.com>, Andrei Aldea <a-aldea@ti.com>,
+ Jason Kridner <jkridner@beagleboard.org>,
+ Deepak Khatri <lorforlinux@beagleboard.org>,
+ Drew Fustini <drew@beagleboard.org>
+References: <20240829213929.48540-1-robertcnelson@gmail.com>
+ <20240829213929.48540-2-robertcnelson@gmail.com>
+Content-Language: en-US
+From: Roger Quadros <rogerq@kernel.org>
+In-Reply-To: <20240829213929.48540-2-robertcnelson@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Aug 29, 2024 at 09:43:48PM GMT, jeffxu@chromium.org wrote:
-> From: Jeff Xu <jeffxu@chromium.org>
-> 
-> This series increase the test coverage of mseal_test by:
-> 
-> Add check for vma_size, prot, and error code for existing tests.
-> Add more testcases for madvise, munmap, mmap and mremap to cover
-> sealing in different scenarios.
-> 
-> The increase test coverage hopefully help to prevent future regression.
-> It doesn't change any existing mm api's semantics, i.e. it will pass on
-> linux main and 6.10 branch.
 
-I do want to be clear that we shouldn't confuse "test coverage" with being unequivocally good
-if it has the possibility to paint ourselves into an API corner where details that should be left
-unspecified are instead set in stone (e.g do we want to test how mprotect behaves if it finds an msealed
-vma midway? no, apart from the property that really matters in this case (that sealed vmas remain untouched)).
 
+On 30/08/2024 00:39, Robert Nelson wrote:
+> BeagleBoard.org BeagleY-AI is an easy to use, affordable open source
+> hardware single board computer based on the Texas Instruments AM67A,
+> which features a quad-core 64-bit Arm CPU subsystem, 2 general-purpose
+> digital-signal-processors (DSP) and matrix-multiply-accelerators (MMA),
+> GPU, vision and deep learning accelerators, and multiple Arm Cortex-R5
+> cores for low-power, low-latency GPIO control.
 > 
-> Note: in order to pass this test in mm-unstable, mm-unstable must have
-> Liam's fix on mmap [1]
+> https://beagley-ai.org/
+> https://openbeagle.org/beagley-ai/beagley-ai
 > 
-> [1] https://lore.kernel.org/linux-kselftest/vyllxuh5xbqmaoyl2mselebij5ox7cseekjcvl5gmzoxxwd2he@hxi4mpjanxzt/#t
-> 
-> History:
-> V2:
-> - remove the mmap fix (Liam R. Howlett will fix it separately)
-> - Add cover letter (Lorenzo Stoakes)
-> - split the testcase for ease of review (Mark Brown)
-> 
-> V1:
-> - https://lore.kernel.org/linux-kselftest/20240828225522.684774-1-jeffxu@chromium.org/
-> 
-> Jeff Xu (4):
->   selftests/mm: mseal_test, add vma size check
->   selftests/mm: mseal_test add sealed madvise type
->   selftests/mm: mseal_test add more tests for mmap
->   selftests/mm: mseal_test add more tests for mremap
->
+> Signed-off-by: Robert Nelson <robertcnelson@gmail.com>
+> CC: Rob Herring <robh@kernel.org>
+> CC: Krzysztof Kozlowski <krzk+dt@kernel.org>
+> CC: Conor Dooley <conor+dt@kernel.org>
+> CC: Vignesh Raghavendra <vigneshr@ti.com>
+> CC: Nishanth Menon <nm@ti.com>
+> CC: Andrew Davis <afd@ti.com>
+> CC: Jai Luthra <j-luthra@ti.com>
+> CC: Roger Quadros <rogerq@kernel.org>
+> CC: Siddharth Vadapalli <s-vadapalli@ti.com>
+> CC: Jared McArthur <j-mcarthur@ti.com>
+> CC: Andrei Aldea <a-aldea@ti.com>
+> CC: Jason Kridner <jkridner@beagleboard.org>
+> CC: Deepak Khatri <lorforlinux@beagleboard.org>
+> CC: Drew Fustini <drew@beagleboard.org>
 
-nit: Please follow a more standard commit naming scheme like
-	selftests/mm: <change description>
-or
-	selftests/mseal: <change description>
-
--- 
-Pedro
+Reviewed-by: Roger Quadros <rogerq@kernel.org>
 
