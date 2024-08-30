@@ -1,144 +1,130 @@
-Return-Path: <linux-kernel+bounces-308230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D47F9658F3
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 09:45:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 273EE9658FF
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 09:46:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AFFAB1C24C0E
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 07:45:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A5D91F26653
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 07:46:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54DE216190B;
-	Fri, 30 Aug 2024 07:44:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D662D15C157;
+	Fri, 30 Aug 2024 07:46:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XZQ7phyN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="KkNtioU+"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B3EB15C154;
-	Fri, 30 Aug 2024 07:44:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D5FF7F6;
+	Fri, 30 Aug 2024 07:46:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725003869; cv=none; b=FsFe1pnU9rX8lRzNPceyVlgX78/nkgn7N8bcQR+uO12aFp8Ncoajw/L/kafwuLqC7pcbj4YiAKDqpgeujTqE9YJQkU1CXh1aqUIJu0pc9a8WTyt8SAXqXiBW8dfMsUYXZXYuIBSZEVqnii9julfKcryKRROXd4bcv9kMBOnmiZY=
+	t=1725003964; cv=none; b=r0KoKgs7L4nEWZg6DpqOMpVU4A02E1zVvFBs4NN1MVVu9ZFL6VrqiX7J+d8Gesz2+aWHR46a6EzYQevM6ib6wWMV9O+Xo346r/9dmAUYHDWsfIwSPgFGWT9szFIIwy1KwWfbT1Xw+AqsZXaywyCDv0ACx6ZpIQ1lFc7iHFgkhS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725003869; c=relaxed/simple;
-	bh=ab9E8yRsVsHNSM1VcLw6wnCuw/OKKKTdW168xZIgIJ4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RW/Ur0TXMGZeinaiRxtKJ6z9jBXLrwl4Zx6SHX0P77ck2bBinXPDLjj4tM0xbXHroyo/mIQz3RimRbB+tuh96QyPyqcRNLkv2y8i2K5idnWzAS0C+4nVrihC3nierTpS+cx4S7L8QbUeaGkm0pOgCkcu1iHeeRyCaNlTPQVpxH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XZQ7phyN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 242F5C4CEC2;
-	Fri, 30 Aug 2024 07:44:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725003869;
-	bh=ab9E8yRsVsHNSM1VcLw6wnCuw/OKKKTdW168xZIgIJ4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=XZQ7phyNKtZDX4or/EXnonJV+IXRySCOITTQgFC3nAfJkGcwv5cBgyOgzkghlE4T/
-	 OPVQVey6bW+y090lIzs3/L1XoZpsapLBMxQRlC8SqQppy3WB2OvE8gOsFqvq0eC9xr
-	 VarKorz25elSSfFj73qUjYePvecRFUhdsdbdcIcjFNkby7Kc6QK0ZPxvXZyf6gtjxe
-	 ob/f7E6TV+hw536dhN5WAc8tEU+BV/AOu0mf26wOXSEGHRa+N23KIh1wFha6iYgWxQ
-	 scs4aVkAs+GB8TsO9IaAx4sEdw8CiA43jc+qvehsIXhWdBbdqEWD6OS9U58ojgQAul
-	 W6e8YActPrU7A==
-From: Alexey Gladkov <legion@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org,
-	linux-kbuild@vger.kernel.org
-Cc: Masahiro Yamada <masahiroy@kernel.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Alan Maguire <alan.maguire@oracle.com>
-Subject: [PATCH v4] bpf: Remove custom build rule
-Date: Fri, 30 Aug 2024 09:43:50 +0200
-Message-ID: <20240830074350.211308-1-legion@kernel.org>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <CAADnVQL4Cy-F_=RJy_=3v97mfaMRWGp54xN-t9QzOqY3+hoghg@mail.gmail.com>
-References: <CAADnVQL4Cy-F_=RJy_=3v97mfaMRWGp54xN-t9QzOqY3+hoghg@mail.gmail.com>
+	s=arc-20240116; t=1725003964; c=relaxed/simple;
+	bh=MBG3deIbw+rMvYu6ZqyReRJigYRReHsdhyGiXcxZ4Cg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TITfu9h3Y9apnE0ozrVy4Sf6vOGRMYS+I/slICLpj1bk79b7tkh2UTzG2gDt6oyQKdfP7GP3qSGnG/sPKQoCFvGrBtUob+YIYpKZWpEm8342q24drAi0h4SgCsgua8Pun/pwx74lP6qplW5Znki4MMpwjc+BPZ2N76sWTKOw3Xo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=KkNtioU+; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 36B771BF209;
+	Fri, 30 Aug 2024 07:45:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1725003953;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VpebzrTQoNRUKh5ynrlO5Iu8naFvX7FtDOTwf/qOm4A=;
+	b=KkNtioU+WkZU8XZauR1n22NpmH71HFly2u9LmqlUqpZSjxsw4D3GNaQ5b8RXOdRP1vIblG
+	1BuAc/S3FaJlaTnMaxMPR0UE6gbAg476eLE/QamnjS9z+uIOF2mwRoIfCgwHv835j1RtvW
+	m0zsNyod3wMcqq8cnPB1jN2H1P6rmLDO9HHI5S1UQ/laGZiXm+EjSjV2R6wuv2noboi4nH
+	3Pq8Msc6rC+4ul0Zncwyhvt9s65q90WrR6JI+3/LBW8ChufwLbugaEO9c6DU+S+OwMiqoi
+	p4PFJKlUzZmlxJsYYFb4y8Su6oy3DiguDX/0m3yFr7XoBLtTPvwInK9gm+PLaw==
+Date: Fri, 30 Aug 2024 09:45:49 +0200
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Jinjie Ruan <ruanjinjie@huawei.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, <michal.simek@amd.com>,
+ <richard@nod.at>, <vigneshr@ti.com>, <liang.yang@amlogic.com>,
+ <neil.armstrong@linaro.org>, <khilman@baylibre.com>,
+ <jbrunet@baylibre.com>, <martin.blumenstingl@googlemail.com>,
+ <matthias.bgg@gmail.com>, <angelogioacchino.delregno@collabora.com>,
+ <heiko@sntech.de>, <mcoquelin.stm32@gmail.com>,
+ <alexandre.torgue@foss.st.com>, <wens@csie.org>,
+ <jernej.skrabec@gmail.com>, <samuel@sholland.org>, <kees@kernel.org>,
+ <gustavoars@kernel.org>, <linux@treblig.org>, <robh@kernel.org>,
+ <u.kleine-koenig@pengutronix.de>, <erick.archer@gmx.com>,
+ <christophe.jaillet@wanadoo.fr>, <val@packett.cool>,
+ <christophe.kerello@foss.st.com>, <linux-mtd@lists.infradead.org>,
+ <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+ <linux-amlogic@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
+ <linux-renesas-soc@vger.kernel.org>, <linux-rockchip@lists.infradead.org>,
+ <linux-stm32@st-md-mailman.stormreply.com>, <jic23@kernel.org>
+Subject: Re: [PATCH -next RESEND 00/10] mtd: Use
+ for_each_child_of_node_scoped()
+Message-ID: <20240830094549.1c513ba2@xps-13>
+In-Reply-To: <c29263ae-89f1-edd7-003a-bd03cdddc821@huawei.com>
+References: <20240826094328.2991664-1-ruanjinjie@huawei.com>
+	<20240826115213.389acaef@xps-13>
+	<f7430f87-88d2-4c08-bc1e-6bb3da4e332c@kernel.org>
+	<20240826144917.2c4e202d@xps-13>
+	<c29263ae-89f1-edd7-003a-bd03cdddc821@huawei.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-According to the documentation, when building a kernel with the C=2
-parameter, all source files should be checked. But this does not happen
-for the kernel/bpf/ directory.
+Jinjie,
 
-$ touch kernel/bpf/core.o
-$ make C=2 CHECK=true kernel/bpf/core.o
+ruanjinjie@huawei.com wrote on Fri, 30 Aug 2024 14:34:38 +0800:
 
-Outputs:
+> On 2024/8/26 20:49, Miquel Raynal wrote:
+> > Hi Krzysztof,
+> >=20
+> > krzk@kernel.org wrote on Mon, 26 Aug 2024 12:19:07 +0200:
+> >  =20
+> >> On 26/08/2024 11:52, Miquel Raynal wrote: =20
+> >>> Hi Jinjie,
+> >>>
+> >>> ruanjinjie@huawei.com wrote on Mon, 26 Aug 2024 17:43:18 +0800:
+> >>>    =20
+> >>>> Use scoped for_each_available_child_of_node_scoped() when iterating =
+over
+> >>>> device nodes to make code a bit simpler.   =20
+> >>>
+> >>> Why is this a resend ? Did I miss a previous iteration?   =20
+> >>
+> >> You were not cc-ed on previous iteration. I asked for proper split
+> >> between subsystems and sending to maintainers, thus this resend. =20
+> >=20
+> > Ok. Makes sense, and the patchset looks fine. =20
+>=20
+> Hi, Miquel,
+>=20
+> Could this series be merged, thank you!
 
-  CHECK   scripts/mod/empty.c
-  CALL    scripts/checksyscalls.sh
-  DESCEND objtool
-  INSTALL libsubcmd_headers
-  CC      kernel/bpf/core.o
+You've sent this series on Monday, we are Friday. I answered a first
+time within 5h and reviewed it within 8h. So that means I will take the
+patchset:
+- when I have the time to do so
+- after several days to give a chance to other to review it as well
+- unless someone speaks up against it in a "reasonable time frame"
+- unless a robot that parses the patches on the mailing lists complains
+  about it (usually within few days, up to a week).
 
-As can be seen the compilation is done, but CHECK is not executed. This
-happens because kernel/bpf/Makefile has defined its own rule for
-compilation and forgotten the macro that does the check.
+In general, a good rule of thumb is to refrain yourself from pinging
+within 2 weeks for non-urgent matters like this series.
 
-There is no need to duplicate the build code, and this rule can be
-removed to use generic rules.
-
-Acked-by: Masahiro Yamada <masahiroy@kernel.org>
-Tested-by: Oleg Nesterov <oleg@redhat.com>
-Tested-by: Alan Maguire <alan.maguire@oracle.com>
-Signed-off-by: Alexey Gladkov <legion@kernel.org>
----
- kernel/bpf/Makefile       | 6 ------
- kernel/bpf/btf_iter.c     | 2 ++
- kernel/bpf/btf_relocate.c | 2 ++
- kernel/bpf/relo_core.c    | 2 ++
- 4 files changed, 6 insertions(+), 6 deletions(-)
- create mode 100644 kernel/bpf/btf_iter.c
- create mode 100644 kernel/bpf/btf_relocate.c
- create mode 100644 kernel/bpf/relo_core.c
-
-diff --git a/kernel/bpf/Makefile b/kernel/bpf/Makefile
-index 0291eef9ce92..9b9c151b5c82 100644
---- a/kernel/bpf/Makefile
-+++ b/kernel/bpf/Makefile
-@@ -52,9 +52,3 @@ obj-$(CONFIG_BPF_PRELOAD) += preload/
- obj-$(CONFIG_BPF_SYSCALL) += relo_core.o
- obj-$(CONFIG_BPF_SYSCALL) += btf_iter.o
- obj-$(CONFIG_BPF_SYSCALL) += btf_relocate.o
--
--# Some source files are common to libbpf.
--vpath %.c $(srctree)/kernel/bpf:$(srctree)/tools/lib/bpf
--
--$(obj)/%.o: %.c FORCE
--	$(call if_changed_rule,cc_o_c)
-diff --git a/kernel/bpf/btf_iter.c b/kernel/bpf/btf_iter.c
-new file mode 100644
-index 000000000000..0e2c66a52df9
---- /dev/null
-+++ b/kernel/bpf/btf_iter.c
-@@ -0,0 +1,2 @@
-+// SPDX-License-Identifier: (LGPL-2.1 OR BSD-2-Clause)
-+#include "../../tools/lib/bpf/btf_iter.c"
-diff --git a/kernel/bpf/btf_relocate.c b/kernel/bpf/btf_relocate.c
-new file mode 100644
-index 000000000000..c12ccbf66507
---- /dev/null
-+++ b/kernel/bpf/btf_relocate.c
-@@ -0,0 +1,2 @@
-+// SPDX-License-Identifier: (LGPL-2.1 OR BSD-2-Clause)
-+#include "../../tools/lib/bpf/btf_relocate.c"
-diff --git a/kernel/bpf/relo_core.c b/kernel/bpf/relo_core.c
-new file mode 100644
-index 000000000000..aa822c9fcfde
---- /dev/null
-+++ b/kernel/bpf/relo_core.c
-@@ -0,0 +1,2 @@
-+// SPDX-License-Identifier: (LGPL-2.1 OR BSD-2-Clause)
-+#include "../../tools/lib/bpf/relo_core.c"
--- 
-2.46.0
-
+Thanks,
+Miqu=C3=A8l
 
