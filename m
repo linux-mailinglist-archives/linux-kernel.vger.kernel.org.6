@@ -1,146 +1,178 @@
-Return-Path: <linux-kernel+bounces-308984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D17439664A1
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 16:55:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D559E9664B2
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 16:56:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84330285FA2
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 14:55:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DC92287A00
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 14:56:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC3591B2EF0;
-	Fri, 30 Aug 2024 14:55:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E70351B3B2F;
+	Fri, 30 Aug 2024 14:56:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jirIoIPP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="B2dtcPaL"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 094B1192D77;
-	Fri, 30 Aug 2024 14:55:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F33E1B2ED5;
+	Fri, 30 Aug 2024 14:56:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725029713; cv=none; b=Ua8/eZNKyc9d4zen5bJqm8lTw7OzHzMllXvVuVpERC5cmtjUj7SHg9smGkD6xWvasxWShcHxY+cACiEHt5uSNLmFqCuG2tm5UNcXsPHev9VH5t3kHbBKDkKkoCRGD6kc+TH/qH1W6FMvWHYk4u2HARrKDEgeUYMBZobvYojbzUM=
+	t=1725029787; cv=none; b=lAEvuG0rChGz1JeUQ5Jngm/gFigorkIHJI4uf9r9UafEiWnUsDCBYk/y+X0uZW2KdIf6Grx/49Dd2iXd/BkUhIpL1V41mHu3DVeXIVFkKr4Ad8S3OyI5B5+/JfB7gwBeegXD42Ew1YCcJhlXFPtaKV5VmQF6cCoa4QP/6Z4xgRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725029713; c=relaxed/simple;
-	bh=9FTsVXS5gV6o6qLuJP6JjRydy1fTYjBjAK227EtLTU4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g444ok6Z6Bo+YfsEOMvwo7GCgpZg1gql76QsiUw4KHYgk3aoqWi8dpHe7i//I96dvuoR1EgGDFirzm4EkpUdVUEJPfTJyrr11ytCL3VJQERvEDq3y3qnojD/ZnvnQCw8WEvj3rHlpmJDRHVD5aDY9yw6kM+BH5uXpWq/iH5dZ2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jirIoIPP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF5EBC4CEC2;
-	Fri, 30 Aug 2024 14:55:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725029711;
-	bh=9FTsVXS5gV6o6qLuJP6JjRydy1fTYjBjAK227EtLTU4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jirIoIPPFjw0IxjqZulDpWUEt/3grrBuV0v1E14wpzj/zCAEfRFvyhY0fH0O0Lf6X
-	 +6ct6fwCyeyB9w/6Dj3WMPPDyiz/0KyznuwmrF0LnpgBa8KRJrFewbCUWY4Dz88oek
-	 SW49Ir10VIuF7QnQDv3IGxSD/HzVRgo6WRtUSLoq/qJz7J06aT6G1v9cmRXKZXJ74+
-	 bTl5DGpLduY5VJJRcW7nD3y2QZcm4k/tEYhiVe01uNv1Ay3Wrn0BvvqwWUL7LyZlRK
-	 mQWyH9R/Y7wpFz7Ov4eCgtuUxMtmOkKFjgyDw/JzzdMggIHLE+trhFO0fsCRRry+vY
-	 FAcW/g8m/fmAw==
-Date: Fri, 30 Aug 2024 15:55:06 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Christian Bruel <christian.bruel@foss.st.com>
-Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, mcoquelin.stm32@gmail.com,
-	alexandre.torgue@foss.st.com, p.zabel@pengutronix.de,
-	linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	fabrice.gasnier@foss.st.com
-Subject: Re: [PATCH v4 1/5] dt-bindings: phy: Add STM32MP25 COMBOPHY bindings
-Message-ID: <20240830-jumbo-wriggly-39c84108371b@spud>
-References: <20240828143452.1407532-1-christian.bruel@foss.st.com>
- <20240828143452.1407532-2-christian.bruel@foss.st.com>
- <20240828-handsfree-overarch-cd1af26cb0c5@spud>
- <005a2f7d-ab46-46c8-a0cc-b343685caf7c@foss.st.com>
- <20240829-manifesto-tray-65443d6e7e6e@spud>
- <777a92d9-ed52-4fa1-b235-e3a4a6321634@foss.st.com>
+	s=arc-20240116; t=1725029787; c=relaxed/simple;
+	bh=HOSF8ykokzGj565EbQP8vVNTMTY1jPDC04y84KqAwBs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=QXpW6IXM99d4mLzrCq4fprHmLZXW8133uF0kDcm2wGq4/BnMd87r0WM6xG6JJTjLk6n7i8CFwnlq+0H7djQjGWm4LsF9X3xtczr2220QI29VidNJAg7IWpNUbBZQRMtL8vV8pknPa436qxuaYj9gsrKHwvj0zA1nwxBG0MB1GPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=B2dtcPaL; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47U84iKL007721;
+	Fri, 30 Aug 2024 14:55:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	sMOYdqpHR+jylrSdCdHY5P/j3IfMgumYyO5vaWdtRxc=; b=B2dtcPaLZAlSp4ta
+	NmtwkNZJqMPxHlYWx0uU8eqz/oRVGNTS3PYaLq80IrUB5sekdlQs+6M/Hw+ZRKD6
+	d+rtVQos2J/4xQTo6dPJVtCFPBcbcXZGCAKJBcX7ZSTAyCjGHwSjS4BlLyY1KD0z
+	rgXnETJcdEk0LQTc3bypEwkptcB3M9kPhcAKXxcp2hqHprLDN4/Y0QkOPobclLnK
+	MO+lCbG7SMGs8AMHnTMEdGP67pVEU7DvmnDSthpQMn68+WttPUve6HcEDEI8z3Fq
+	+uNwsDq7DTezOpSZ9/78Qk3IosQKQTm0kXtLetNrsItOCfjy9U2XV3VHEVKbH1Jm
+	VzVb9A==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 419pv0h631-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 30 Aug 2024 14:55:40 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47UEtc23006572
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 30 Aug 2024 14:55:38 GMT
+Received: from [10.110.28.107] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 30 Aug
+ 2024 07:55:34 -0700
+Message-ID: <b8cbaa23-ca1e-4192-a5d0-d0973916926d@quicinc.com>
+Date: Fri, 30 Aug 2024 07:55:34 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="vp/iFskmsMfOFY45"
-Content-Disposition: inline
-In-Reply-To: <777a92d9-ed52-4fa1-b235-e3a4a6321634@foss.st.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 16/22] dt-bindings: qcom: geni-se: document support for
+ SA8255P
+Content-Language: en-US
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: <andersson@kernel.org>, <konradybcio@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <rafael@kernel.org>,
+        <viresh.kumar@linaro.org>, <herbert@gondor.apana.org.au>,
+        <davem@davemloft.net>, <sudeep.holla@arm.com>, <andi.shyti@kernel.org>,
+        <tglx@linutronix.de>, <will@kernel.org>, <joro@8bytes.org>,
+        <jassisinghbrar@gmail.com>, <lee@kernel.org>,
+        <linus.walleij@linaro.org>, <amitk@kernel.org>,
+        <thara.gopinath@gmail.com>, <broonie@kernel.org>,
+        <wim@linux-watchdog.org>, <linux@roeck-us.net>, <robin.murphy@arm.com>,
+        <cristian.marussi@arm.com>, <rui.zhang@intel.com>,
+        <lukasz.luba@arm.com>, <vkoul@kernel.org>, <quic_gurus@quicinc.com>,
+        <agross@kernel.org>, <bartosz.golaszewski@linaro.org>,
+        <quic_rjendra@quicinc.com>, <robimarko@gmail.com>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+        <linux-crypto@vger.kernel.org>, <arm-scmi@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-i2c@vger.kernel.org>,
+        <iommu@lists.linux.dev>, <linux-gpio@vger.kernel.org>,
+        <linux-serial@vger.kernel.org>, <linux-spi@vger.kernel.org>,
+        <linux-watchdog@vger.kernel.org>, <kernel@quicinc.com>,
+        <quic_psodagud@quicinc.com>, <quic_tsoni@quicinc.com>,
+        <quic_shazhuss@quicinc.com>, Praveen Talari <quic_ptalari@quicinc.com>
+References: <20240828203721.2751904-1-quic_nkela@quicinc.com>
+ <20240828203721.2751904-17-quic_nkela@quicinc.com>
+ <zzznoxebkrksnpzmk55cff3wz5lhb7dd3qzcvtzkjjv2usmvbr@ebmlirkmahoj>
+ <5ce821d8-ebf6-484c-9f0b-e78c227d799c@quicinc.com>
+ <1941ebf9-8bcf-49f5-bf69-cb2c66435b9b@kernel.org>
+From: Nikunj Kela <quic_nkela@quicinc.com>
+In-Reply-To: <1941ebf9-8bcf-49f5-bf69-cb2c66435b9b@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: P8CHtT4ahaeWh1f5LR3CsMBwdiaWy7Zc
+X-Proofpoint-ORIG-GUID: P8CHtT4ahaeWh1f5LR3CsMBwdiaWy7Zc
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-30_09,2024-08-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 clxscore=1015
+ priorityscore=1501 impostorscore=0 suspectscore=0 lowpriorityscore=0
+ malwarescore=0 spamscore=0 mlxlogscore=999 mlxscore=0 bulkscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408300114
 
 
---vp/iFskmsMfOFY45
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 8/30/2024 2:58 AM, Krzysztof Kozlowski wrote:
+> On 29/08/2024 16:23, Nikunj Kela wrote:
+>> On 8/29/2024 12:42 AM, Krzysztof Kozlowski wrote:
+>>> On Wed, Aug 28, 2024 at 01:37:15PM -0700, Nikunj Kela wrote:
+>>>> Add "qcom,sa8255p-geni-se-qup" compatible for representing QUP on
+>>>> SA8255p.
+>>>>
+>>>> Clocks are being managed by the firmware VM and not required on
+>>>> SA8255p Linux VM hence removing it from required list.
+>>>>
+>>>> CC: Praveen Talari <quic_ptalari@quicinc.com>
+>>>> Signed-off-by: Nikunj Kela <quic_nkela@quicinc.com>
+>>>> ---
+>>>>  .../bindings/soc/qcom/qcom,geni-se.yaml       | 47 +++++++++++++++++--
+>>>>  1 file changed, 43 insertions(+), 4 deletions(-)
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.yaml b/Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.yaml
+>>>> index 7b031ef09669..40e3a3e045da 100644
+>>>> --- a/Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.yaml
+>>>> +++ b/Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.yaml
+>>>> @@ -22,17 +22,16 @@ properties:
+>>>>      enum:
+>>>>        - qcom,geni-se-qup
+>>>>        - qcom,geni-se-i2c-master-hub
+>>>> +      - qcom,sa8255p-geni-se-qup
+>>> Same problems. If you decide to use generic compatibles, it means it
+>>> covers all devices. Otherwise it does not make any sense.
+>> Hi Krzysztof,
+>>
+>> SA8255p platform is not compatible with generic ones. At the time
+>> generic compatibles were added, no one thought of such platform will
+> That's kind of obvious and expected yet these were added...
+>
+>> appear in future. Please advise what should we do in this case?
+> I don't know. We keep telling - do not use generic compatibles, because
+> you will have something like this, but people use generic compatibles -
+> so what can I say? I told you so?
+>
+> Can we get agreement that using generic compatibles is a wrong idea? Or
+> sort of promise - we won't use them? Or policy? I don't know, we can
+> move on assuming this was a mistake 8 years ago, approaches evolve,
+> reviews change, but I am just afraid I will be repeating the same to
+> several future contributions and every time come with long arguments
+> exhausting my energy - don't add generic compatibles.
+>
+> If devices are not compatible, I suggest different bindings.
+>
+> Best regards,
+> Krzysztof
 
-On Fri, Aug 30, 2024 at 02:53:15PM +0200, Christian Bruel wrote:
->=20
-> On 8/29/24 18:44, Conor Dooley wrote:
-> > On Thu, Aug 29, 2024 at 01:06:53PM +0200, Christian Bruel wrote:
-> > > On 8/28/24 18:11, Conor Dooley wrote:
-> > > > On Wed, Aug 28, 2024 at 04:34:48PM +0200, Christian Bruel wrote:
+Hi Krzysztof,
 
-> > > > > +  st,syscfg:
-> > > > > +    $ref: /schemas/types.yaml#/definitions/phandle
-> > > > > +    description: Phandle to the SYSCON entry required for config=
-uring PCIe
-> > > > > +      or USB3.
-> > > > Why is a phandle required for this lookup, rather than doing it by
-> > > > compatible?
-> > > the phandle is used to select the sysconf SoC configuration register
-> > > depending on the PCIe/USB3 mode (selected by=A0xlate function), so it=
-'s not
-> > > like a lookup here.
-> > If "syscon_regmap_lookup_by_phandle()" is not a lookup, then I do not
-> > know what is. An example justification for it would be that there are
-> > multiple combophys on the same soc, each using a different sysconf
-> > region. Your dts suggests that is not the case though, since you have
-> > st,syscfg =3D <&syscfg>; in it, rather than st,syscfg =3D <&syscfg0>;.
->=20
-> I didn't get your suggestion earlier to use "syscon_regmap_lookup_by_comp=
-atible()".
->=20
-> We have several other syscon in the other. That's why we choose a direct =
-syscfg phandle
+I will bring your concerns (raised above) to Qualcomm leads' attention.
+Thank you for your feedback and support.
 
-In the other what? SoCs?
+Thanks,
 
-Way I see it, if you're going to support different socs in the same
-driver, it's almost a certainty that the offsets within a syscon that
-particular features lie at are going to change between socs, so even if
-you have a phandle you're going to need to have the offsets in your
-match data. And if you're going to have offsets in match data, you may
-as well have the compatibles for the syscon in match data too.
-If the layout of the syscon hasn't changed between devices, then you
-should have a fallback compatible for the syscon too, making
-syscon_regmap_lookup_by_compatible() function without changes to the
-driver.
+-Nikunj
 
-If you do have multiple syscons, but they do different things, they
-should have different compatibles, so having multiple syscons doesn't
-justify using a property for this either in and of itself. If you have
-multiple syscons with the same layout (and therefore the same
-compatible) then a phandle makes sense, but if that's the case then you
-almost certainly have multiple combophys too! Otherwise, if you have one
-syscon, but the controls for more than one combophy are in it, then
-having a phandle _with an offset_ makes sense.
-
-If you know there are other SoCs with more than one combo phy, do they
-use different syscons, or is the same syscon used for more than one
-combophy?
-
---vp/iFskmsMfOFY45
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZtHdSgAKCRB4tDGHoIJi
-0pGbAQCKAWCZmjg06h86FVbvpXKdo/qvENzO4ym5L15FMJIkNAEAtFIoyWzGJo7B
-vhqqrWfJ39dnSjvWdg+xaa8Og8rsAgM=
-=DAUE
------END PGP SIGNATURE-----
-
---vp/iFskmsMfOFY45--
+>
 
