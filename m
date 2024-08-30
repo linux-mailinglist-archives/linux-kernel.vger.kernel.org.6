@@ -1,185 +1,118 @@
-Return-Path: <linux-kernel+bounces-308963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B05CB966459
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 16:45:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10421966463
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 16:45:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 694BF28314D
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 14:45:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C0801C23B2A
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 14:45:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29E381B1D7F;
-	Fri, 30 Aug 2024 14:44:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BE731B2EFA;
+	Fri, 30 Aug 2024 14:44:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b9Q+EPet"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X8hU75Rq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58DA018EFEE;
-	Fri, 30 Aug 2024 14:44:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 627131B252B;
+	Fri, 30 Aug 2024 14:44:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725029083; cv=none; b=aDO2eXfl6f+MXvmBYaZCJ+8MOvYiu0vJCcMOTjKYdfGboK9n8C1IbejdqrEe0oeGknWUN/nP1mgAdkak2xmCQvmHbdS05MtHp2CBapX5U/pgfwSGPsZjybxVmJDIlWhA4h1Tod69tLqVSAQlAZijXG2tV3R0vobOFZ3PDZ/vm3o=
+	t=1725029096; cv=none; b=csvKFWy7+Ba7Lqv2oTQ/ExD4ND9bKlrSWg62sIEnZDjOcqqtXtLRuowDFmb29szoj9dgZv14zYgsX/ArFgNhKt9+2VyJG6jdTLSd0GEV0vIihnV8E2F31RoeNbg4nxpDrED2B8lS+uqtdku3fALjEzwx9iCPJD+DU6FD0Tt6pqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725029083; c=relaxed/simple;
-	bh=ztG9aO/UPReKf8rYuGZUvZxefpK4v5qH4ddRdTzZmr4=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lAO13cg6D7lWBhsOVVohhn8sCfwRAVAQauYex4l6wkSVjvtHkXNsnIS3ZiM3F5pVgRq1p+1AB+pfRNGpLCQet48ZGjdATQkgEqlt8tG1OsvAKQJnSKJmxGQdhtsNczpzK0b1M5Q38Go6gbmCPbiSFr873vRe8rY9WpbrOmxgqJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b9Q+EPet; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE61CC4CEC2;
-	Fri, 30 Aug 2024 14:44:42 +0000 (UTC)
+	s=arc-20240116; t=1725029096; c=relaxed/simple;
+	bh=6f2WgrwM+oBYMEbFA/A5ogXzYsctqgEAAF3bpBkOzoI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=U0+8JWN6f2jlfnE/CKfxCUwLg7427Ll8/09EnwO9VnUlAE6l3Ob0qAT8TdzG3KJ8UqctI97oIjWXiaWO8EQL+TyIs9+OEaXeBy0bsLdt9JAvi1DIfu5IvgAcPljdJBUbcMmJiK5wAzTD7NXoNY0n1PT+FAtmNO4YeJpVe+mSa6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X8hU75Rq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05761C4AF0C;
+	Fri, 30 Aug 2024 14:44:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725029082;
-	bh=ztG9aO/UPReKf8rYuGZUvZxefpK4v5qH4ddRdTzZmr4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=b9Q+EPetA1udPy1i03GtJtRiriTR2PXXX+wB9E+ZgwOIuMvVYAqcQZvYMoCRAMTAk
-	 hjE32N4c33gt1+rgl8XnR7KSaPUxCOReJjXmPs9JFR33Kq7XKm4khcHI+569qTkWnb
-	 a/dIy09EPpD4cB8l/GqbR9ba72bTN96useOrb3nP/GNjoD40uVRZP3rT9fGmD+n+pt
-	 Qnoa82Ft0ssEtUNCezWZaFa0p1cDzWuIIbLeU7/uWWi0GdL3vcnz5dyzmnw4dw7l34
-	 MnqLNrnriBpLMG6tZWqyOe1syj/u5C635lI2BsPgDqsWKzhFKeEdXZA1bhkWhlRFeA
-	 dc6T6ZxQtbybg==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1sk2rg-008GiT-8i;
-	Fri, 30 Aug 2024 15:44:40 +0100
-Date: Fri, 30 Aug 2024 15:44:39 +0100
-Message-ID: <864j72vzmw.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Sebastian Ene <sebastianene@google.com>
-Cc: akpm@linux-foundation.org,
-	alexghiti@rivosinc.com,
-	ankita@nvidia.com,
-	ardb@kernel.org,
-	catalin.marinas@arm.com,
-	christophe.leroy@csgroup.eu,
-	james.morse@arm.com,
-	vdonnefort@google.com,
-	mark.rutland@arm.com,
-	oliver.upton@linux.dev,
-	rananta@google.com,
-	ryan.roberts@arm.com,
-	shahuang@redhat.com,
-	suzuki.poulose@arm.com,
-	will@kernel.org,
-	yuzenghui@huawei.com,
-	kvmarm@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	kernel-team@android.com
-Subject: Re: [PATCH v9 0/5] arm64: ptdump: View the second stage page-tables
-In-Reply-To: <20240827084549.45731-1-sebastianene@google.com>
-References: <20240827084549.45731-1-sebastianene@google.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=k20201202; t=1725029096;
+	bh=6f2WgrwM+oBYMEbFA/A5ogXzYsctqgEAAF3bpBkOzoI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=X8hU75RqiVjleNV2CmnO+SkF/2Gn01NxdY0DInl/ArQXvSPxnVAj8dDUcEFMn66zY
+	 +3mmWMmWZuwLV241PoaoXTaVJN6okrGd3xlKS4iiQht/2gZ+1eTIyGBx9wKZXvlFGj
+	 3piz2KI5T5BE8Udz0v/zWytv1bJWYexgTAtDXUMV7dcCSEhWaBr6Ymnh52s7xOCWi/
+	 Rzjurj2cPgwlqVqTjF29w/qxo2ErO2qxkd24o/C9u7tWMTtApIvh7CqiRO5LgTiebA
+	 8qN3SyuOnxabblpMgVOvpH7hOYdVFa/2TWorxZVq+PRS7XYrxC5gzClsWNBrdcaet1
+	 WKbMGJrZBR2WA==
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-53346132348so2451821e87.2;
+        Fri, 30 Aug 2024 07:44:55 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUtHGLGGQWB4NpN8+TFkHv3tKgTwHMCshJBAdYevdzcFRElqDC3thtrdv/4O/cVhMkgkdiA/Gb6ULw4@vger.kernel.org, AJvYcCUvyLGVtg70+qCaIqX8e8tgJjW5aXUKbTBvOD02f7EEorzw9VpKd+VAr6pnKRnHO9ig6BUg2T42MKEfd9imCDs=@vger.kernel.org, AJvYcCV2yfXRoNw9qOYLx6i7NolXZpPiuZRqAaXsFOUfYNv+XaVZoWZOWeuH51kbMmUqnqllONJ/CgXQMNy0KQ==@vger.kernel.org, AJvYcCV7c23bkeml06Z9T03kidlGbx1icDUCo3iw/q6PtS4Emt5F9ZrH2NQIycCkvzcj7Mz8/1JbSJbdq2U=@vger.kernel.org, AJvYcCVj9FYbbAIT/qwUTYwWdKplR5JfFZDyTepXswF7toh9Kogyo6lXQrpPR55auYH/kpgpkgTGycnNJIaR@vger.kernel.org, AJvYcCW1Bty/9LPUwre2I8eSsqkkbVrU+OIaOQYW6AeO5eU72KsPub8Ri3LMFTjIwwLg/nJCjvpqUGypc6kg+NAc@vger.kernel.org, AJvYcCWDvZ+g2Tc0eU32cfS2KZ7gKKiNNQyjJIVdd627HHTnZDXnumsIusG4hO/UDsBvM9OSN7wJwy4P07/QfQ==@vger.kernel.org, AJvYcCWJde+cuo4yUft1e1TJImgMJkKcstpI1+jYOqrYCvNQyEKX4a3ix1DVmOrtbsvM6gxQXpQq1PI07rHHYZZnVA==@vger.kernel.org, AJvYcCWPmZvJo7dz5Lm+3B1YPMT+nJf8wFoFHKuOLrtVNYpneOisOXl+gDNnfiaiOJR8hYjg9QlVC1dZMAwB+0aK@vger.kernel.org, AJvYcCWUYQyeDAWBGcGe
+ VV/ekxnSJMvKmjuEeY5zkri4zwyxEsVpyIXzT0EgDpscv+uO3X1AxNBc8/KFBsm0DkR5@vger.kernel.org, AJvYcCXuNDzqObOPbbapyj+yS64zEkVGxCITQF1cVUXX2lYww86JTMnzmeM1vg0w9lae5MVPmYtXn/UZlQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2/V7vkaptSvwm/nhuzNK3FZiC3W+SsM9b/3OjNDKreR3qx7Lz
+	DojmKY4pqyBsOCmblwmMYtaRqbwHiAtJYZZaTfo9sXVfyNebgJrowoiNly/Nl+n09uyzXZIq+s3
+	CloeRYEOplWbkM/vKwYutQzUIcQ==
+X-Google-Smtp-Source: AGHT+IHNK+9MXGVAZLBYt9qXZDqL92+9Mw4J9z0N2JZfmchRYYjKoFr1fQ6DbSfpa5bXY7t46hBzKKVI680zgd+zxWw=
+X-Received: by 2002:a05:6512:2345:b0:52f:c833:861a with SMTP id
+ 2adb3069b0e04-53546bb06dfmr1793360e87.51.1725029094340; Fri, 30 Aug 2024
+ 07:44:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: sebastianene@google.com, akpm@linux-foundation.org, alexghiti@rivosinc.com, ankita@nvidia.com, ardb@kernel.org, catalin.marinas@arm.com, christophe.leroy@csgroup.eu, james.morse@arm.com, vdonnefort@google.com, mark.rutland@arm.com, oliver.upton@linux.dev, rananta@google.com, ryan.roberts@arm.com, shahuang@redhat.com, suzuki.poulose@arm.com, will@kernel.org, yuzenghui@huawei.com, kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-team@android.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+References: <20240828203721.2751904-1-quic_nkela@quicinc.com>
+ <20240828203721.2751904-22-quic_nkela@quicinc.com> <20240829185240.GA914553-robh@kernel.org>
+ <de0c40c2-3627-4c63-9112-4eb13cf75c0a@quicinc.com>
+In-Reply-To: <de0c40c2-3627-4c63-9112-4eb13cf75c0a@quicinc.com>
+From: Rob Herring <robh@kernel.org>
+Date: Fri, 30 Aug 2024 09:44:41 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqKS1pB9GMjEwji_XO_DmrKs4J6GkcxpRkUqcAAHwCseQg@mail.gmail.com>
+Message-ID: <CAL_JsqKS1pB9GMjEwji_XO_DmrKs4J6GkcxpRkUqcAAHwCseQg@mail.gmail.com>
+Subject: Re: [PATCH 21/22] ARM: dt: GIC: add extended SPI specifier
+To: Nikunj Kela <quic_nkela@quicinc.com>
+Cc: andersson@kernel.org, konradybcio@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, rafael@kernel.org, viresh.kumar@linaro.org, 
+	herbert@gondor.apana.org.au, davem@davemloft.net, sudeep.holla@arm.com, 
+	andi.shyti@kernel.org, tglx@linutronix.de, will@kernel.org, joro@8bytes.org, 
+	jassisinghbrar@gmail.com, lee@kernel.org, linus.walleij@linaro.org, 
+	amitk@kernel.org, thara.gopinath@gmail.com, broonie@kernel.org, 
+	wim@linux-watchdog.org, linux@roeck-us.net, robin.murphy@arm.com, 
+	cristian.marussi@arm.com, rui.zhang@intel.com, lukasz.luba@arm.com, 
+	vkoul@kernel.org, quic_gurus@quicinc.com, agross@kernel.org, 
+	bartosz.golaszewski@linaro.org, quic_rjendra@quicinc.com, robimarko@gmail.com, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+	linux-crypto@vger.kernel.org, arm-scmi@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org, 
+	iommu@lists.linux.dev, linux-gpio@vger.kernel.org, 
+	linux-serial@vger.kernel.org, linux-spi@vger.kernel.org, 
+	linux-watchdog@vger.kernel.org, kernel@quicinc.com, quic_psodagud@quicinc.com, 
+	quic_tsoni@quicinc.com, quic_shazhuss@quicinc.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Seb,
+On Thu, Aug 29, 2024 at 2:02=E2=80=AFPM Nikunj Kela <quic_nkela@quicinc.com=
+> wrote:
+>
+>
+> On 8/29/2024 11:52 AM, Rob Herring wrote:
+> > On Wed, Aug 28, 2024 at 01:37:20PM -0700, Nikunj Kela wrote:
+> >> Add interrupt specifier for extended SPI interrupts.
+> > What's an "extended SPI"? Is this a GIC spec thing? If so, what version=
+?
+>
+> Extended SPI is an extended range of SPI interrupts supported by GIC.
+>
+> Excerpt below from
+> Documentation/devicetree/bindings/interrupt-controller/arm,gic-v3.yaml
+>
+> "The 1st cell is the interrupt type; 0 for SPI interrupts, 1 for PPI
+> interrupts, 2 for interrupts in the Extended SPI range, 3 for the
+> Extended PPI range. Other values are reserved for future use."
+>
+> "The 2nd cell contains the interrupt number for the interrupt type. SPI
+> interrupts are in the range [0-987]. PPI interrupts are in the range
+> [0-15]. Extented SPI interrupts are in the range [0-1023]. Extended PPI
+> interrupts are in the range [0-127]."
 
-On Tue, 27 Aug 2024 09:45:43 +0100,
-Sebastian Ene <sebastianene@google.com> wrote:
-> 
-> Hi,
-> 
-> 
-> This series extends the ptdump support to allow dumping the guest
-> stage-2 pagetables. When CONFIG_PTDUMP_STAGE2_DEBUGFS is enabled, ptdump
-> registers the new following files under debugfs:
-> - /sys/debug/kvm/<guest_id>/stage2_page_tables
-> - /sys/debug/kvm/<guest_id>/stage2_levels
-> - /sys/debug/kvm/<guest_id>/ipa_range
-> 
-> This allows userspace tools (eg. cat) to dump the stage-2 pagetables by
-> reading the 'stage2_page_tables' file.
-> The output format has the following fields:
-> <IPA range> <size> <level> <access permissions> <mem_attributes>
-> 
-> Below is the output of a guest stage-2 pagetable dump running under Qemu.
-> After a VM is created, the following files are available:
-> 
-> # cat /sys/kernel/debug/kvm/256-4/stage2_levels 
-> 4
-> # cat /sys/kernel/debug/kvm/256-4/ipa_range 
-> 44
-> # cat /sys/kernel/debug/kvm/256-4/stage2_page_tables 
-> ---[ Guest IPA ]---
-> 0x0000000000000000-0x0000000001000000          16M 2
-> 0x0000000001000000-0x0000000001020000         128K 3
-> 0x0000000001020000-0x0000000001021000           4K 3   R W X AF    
-> 0x0000000001021000-0x0000000001200000        1916K 3
-> 0x0000000001200000-0x0000000040000000        1006M 2
-> 0x0000000040000000-0x0000000080000000           1G 0
-> 0x0000000080000000-0x0000000081200000          18M 2   R W   AF BLK
-> 0x0000000081200000-0x0000000081a00000           8M 2   R W X AF BLK
-> 0x0000000081a00000-0x0000000081c00000           2M 2   R W   AF BLK
-> 0x0000000081c00000-0x0000000082200000           6M 2   R W X AF BLK
-> 0x0000000082200000-0x0000000082400000           2M 2   R W   AF BLK
-> 0x0000000082400000-0x0000000082800000           4M 2   R W X AF BLK
-> 0x0000000082800000-0x0000000082a00000           2M 2   R W   AF BLK
-> 0x0000000082a00000-0x0000000082c00000           2M 2
-> 0x0000000082c00000-0x0000000083200000           6M 2   R W X AF BLK
-> 0x0000000083200000-0x0000000083400000           2M 2
-> 0x0000000083400000-0x0000000083a00000           6M 2   R W X AF BLK
-> 0x0000000083a00000-0x000000008fe00000         196M 2
-> 0x000000008fe00000-0x0000000090000000           2M 2   R W   AF BLK
-> 0x0000000090000000-0x0000000099400000         148M 2
-> 0x0000000099400000-0x0000000099600000           2M 2   R W X AF BLK
-> 0x0000000099600000-0x000000009b600000          32M 2
-> 0x000000009b600000-0x000000009be00000           8M 2   R W X AF BLK
-> 0x000000009be00000-0x000000009c000000           2M 2   R W   AF BLK
-> 0x000000009c000000-0x00000000c0000000         576M 2
+Looks like you should add EPPI define too while you're here.
 
-I've been giving this a go on my test systems with 16k pages, and it
-doesn't really work as advertised:
-
-root@babette:/sys/kernel/debug/kvm# cat 2573-13/stage2_*
-2
----[ Guest IPA ]---
-0x0000000000000000-0x0000000008000000         128M 
-0x0000000008000000-0x00000000090a0000       17024K 3
-0x00000000090a0000-0x00000000090a4000          16K 3   R W X AF    
-0x00000000090a4000-0x000000000a000000       15728K 3
-
-Only 16kB mapped? This is a full Linux guest running the Debian
-installer, and just the kernel is about 20MB (the VM has 4GB of RAM,
-and is using QEMU as the VMM)
-
-So clearly something isn't playing as expected. Also, this '128M'
-without a level being displayed makes me wonder. It is probably the
-QEMU flash, but then the rest of the addresses don't make much sense
-(RAM on QEMU is at 1GB, not at 128MB.
-
-On another system with kvmtool, I get something similar:
-
-root@duodenum:/home/maz# cat /sys/kernel/debug/kvm/*/stage2_*
-2
----[ Guest IPA ]---
-0x0000000000000000-0x0000000001020000       16512K 3
-0x0000000001020000-0x0000000001024000          16K 3   R W X AF    
-0x0000000001024000-0x0000000002000000       16240K 3
-
-and kvmtool places the RAM at 2GB. Clearly not what we're seeing here.
-
-Could you please verify this?
-
-Thanks,
-
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
+Rob
 
