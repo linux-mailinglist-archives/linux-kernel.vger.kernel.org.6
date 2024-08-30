@@ -1,116 +1,111 @@
-Return-Path: <linux-kernel+bounces-309344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7062596692C
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 20:52:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B34996692F
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 20:53:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88E1C1C231D2
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 18:52:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1DA11F25176
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 18:53:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A1231BCA05;
-	Fri, 30 Aug 2024 18:52:44 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7276F1BC9FB;
+	Fri, 30 Aug 2024 18:53:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="k6bJBYbK"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36BE51BB69B;
-	Fri, 30 Aug 2024 18:52:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 318BC1BB69B;
+	Fri, 30 Aug 2024 18:53:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725043964; cv=none; b=ZrMHWGfYpn2RSJFrgqQdynyOEwhoZ4QT0uAtAaehZTPrDKFVQzNY/DptSeDDXL/WxGSJnqqG876KLDpMF/vcOHHnSn9FZUn+qLynEUXC3tG2ZiDPcNroCQYQWJX2ZZsXH+3baItJy36nK+KQ/RFQuN904+HflRrRdy9tr8gg5n4=
+	t=1725044007; cv=none; b=AHkllDcV9mALnoUAE8C8jMZhtsX6tAg6bTQTcdd1KnmNCo8F1yz75gI9TkTdgEBAK0ln4rM7I/suphS2Z+C2pBt3gp0fLdWSZSRgGcaTw08R2N7thGo2yiHXMipiwtZH6GiJaE8uHwovCE4omYX42RghT+2xB5OC3EdotJQMOQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725043964; c=relaxed/simple;
-	bh=kPiLDQ8HQsZ7OY2s7jtUVwKAWbrRXvStaSUX+5VHXqg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MSw2zZm4rOFiwni7YV532TOmNrd5CZGVXYRrFRBgPg9q4Cx+DBBIK1TYIfHGP/zGlZ7ejGY/04tkMkZPgUOe/HkVElRd1HfbsVXq0mqmXv4K6SSYifPGCk7YaeQHWAJOQzGpYffZp549G0cXZ9YuJknUe3ZdqOxKon1cGtwBIEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4WwS2H2zdLz9sSN;
-	Fri, 30 Aug 2024 20:52:39 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id 3f9-XC2A1YeT; Fri, 30 Aug 2024 20:52:39 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4WwS2H1wnjz9sSK;
-	Fri, 30 Aug 2024 20:52:39 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 28C2A8B794;
-	Fri, 30 Aug 2024 20:52:39 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id h0_TT9jQfciA; Fri, 30 Aug 2024 20:52:39 +0200 (CEST)
-Received: from [192.168.234.133] (unknown [192.168.234.133])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 428938B764;
-	Fri, 30 Aug 2024 20:52:38 +0200 (CEST)
-Message-ID: <ef38cd36-3e15-4608-8b72-87cf7621cce6@csgroup.eu>
-Date: Fri, 30 Aug 2024 20:52:37 +0200
+	s=arc-20240116; t=1725044007; c=relaxed/simple;
+	bh=BGlzmqgvPIIGb+VPycp9h6zWdRuotXk72Lf+amaqtmg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V0uwjf3aFE+lHOMIlz1OvlCoWzG5Q00gUO0B88LJrsk52jVO5FdttJbJPzMwxWQSJLSQmoiYY0gA5e5ZcDZ+R4ILkO/uaxgdZpda/yFWRUrf5G50+DKMDmlueGX/g4KiIyto9Tj4FKeUAO6fkCd6gUJeI5qanD57uDV7ZXsRYo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=k6bJBYbK; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725044006; x=1756580006;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=BGlzmqgvPIIGb+VPycp9h6zWdRuotXk72Lf+amaqtmg=;
+  b=k6bJBYbK6RNuMIX9zIQg2lHDN2wsbnUgMZFPkM6S3Ha6wexU6A5p1cvD
+   ILMuDX9WSHXg+ASXIm6btvQJvUnRZ2UCripJpyQFdViydIuYJdAYtaosP
+   tnFs31A4Vniq7xSFUBxjUSWEELHYktD3COvBCHSA++BglsbcrzVO4iEwa
+   O6nw4eQkgsSJrWx2YRc4/LO6pnuEimRpONTX1TJq91xMY2+SQo0/8vCFo
+   IlB4HN+Hj0BjR0V1x3FSQXtD1dVCmGxvnU9Ejr8vYr9p6vZ4623g9IXGu
+   1LpQAjaVJ//wJxzQ0YZCgV7QjsYGLFavyBgzcSwHpB7gXK+Kve1v1d0Pw
+   g==;
+X-CSE-ConnectionGUID: EMa2VK8+RNOpPkRhTbkqWQ==
+X-CSE-MsgGUID: ALvpq5x/R4iLf+n/8dCVCw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11180"; a="34312006"
+X-IronPort-AV: E=Sophos;i="6.10,189,1719903600"; 
+   d="scan'208";a="34312006"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Aug 2024 11:53:25 -0700
+X-CSE-ConnectionGUID: We+Tq9daTamQdLh2iK+DMg==
+X-CSE-MsgGUID: qaZcjNDIR7K7Bkr8K/iYYQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,189,1719903600"; 
+   d="scan'208";a="63927671"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Aug 2024 11:53:24 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sk6kK-00000003S12-3Qdd;
+	Fri, 30 Aug 2024 21:53:20 +0300
+Date: Fri, 30 Aug 2024 21:53:06 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>
+Subject: Re: [PATCH v2 6/6] pinctrl: intel: Introduce
+ for_each_intel_gpio_group() helper et al.
+Message-ID: <ZtIVEuGOzuA0wnSw@smile.fi.intel.com>
+References: <20240829140406.357612-1-andriy.shevchenko@linux.intel.com>
+ <20240829140406.357612-7-andriy.shevchenko@linux.intel.com>
+ <20240830045039.GU1532424@black.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/5] powerpc/vdso: Wire up getrandom() vDSO
- implementation on PPC32
-To: "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Naveen N Rao <naveen@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling
- <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
- Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, linux-kselftest@vger.kernel.org,
- llvm@lists.linux.dev, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-trace-kernel@vger.kernel.org,
- Adhemerval Zanella <adhemerval.zanella@linaro.org>,
- Xi Ruoyao <xry111@xry111.site>
-References: <cover.1725031952.git.christophe.leroy@csgroup.eu>
- <e7e4c6d36cf98229850c333f113bcea909564501.1725031952.git.christophe.leroy@csgroup.eu>
- <ZtHwnc4AZuRULkom@zx2c4.com>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <ZtHwnc4AZuRULkom@zx2c4.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240830045039.GU1532424@black.fi.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
+On Fri, Aug 30, 2024 at 07:50:39AM +0300, Mika Westerberg wrote:
+> On Thu, Aug 29, 2024 at 04:59:20PM +0300, Andy Shevchenko wrote:
 
+...
 
-Le 30/08/2024 à 18:17, Jason A. Donenfeld a écrit :
-> On Fri, Aug 30, 2024 at 05:57:08PM +0200, Christophe Leroy wrote:
->> @@ -14,6 +14,10 @@ ifeq ($(uname_M),x86_64)
->>   TEST_GEN_PROGS += vdso_test_getrandom
->>   TEST_GEN_PROGS += vdso_test_chacha
->>   endif
->> +ifeq ($(ARCH),powerpc)
->> +TEST_GEN_PROGS += vdso_test_getrandom
->> +TEST_GEN_PROGS += vdso_test_chacha
->> +endif
+> > +#define for_each_intel_pin_community(pctrl, community)					\
+> > +	for (unsigned int __ci = 0;							\
+> > +	     __ci < pctrl->ncommunities && (community = &pctrl->communities[__ci]);	\
+> > +	     __ci++)									\
+> > +
 > 
-> FYI, as of [1], you should now be able to add powerpc to the filter list
-> instead of having to duplicate a new stanza:
-> 
-> [1] https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fgit.kernel.org%2Fpub%2Fscm%2Flinux%2Fkernel%2Fgit%2Fcrng%2Frandom.git%2Fcommit%2F%3Fid%3Dbbaae98172ed284fc0d5d39cc0d68f5d06164f06&data=05%7C02%7Cchristophe.leroy%40csgroup.eu%7C4f51736c027a44cc7df908dcc90f46d6%7C8b87af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638606314665557021%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C0%7C%7C%7C&sdata=UtLdKTuEaZVhsguKa7kX1TBJ%2BvvQtl7DmU9hSBeThWo%3D&reserved=0
+> These look more readable, thanks. Just one comment. Can you move all
+> them here at the top of the file so all the variants are close to each
+> other? You can do that while applying.
 
-I'm a bit sceptic with that commit. IIUC you are changing the meaning of 
-$ARCH. How does that fit with the $ARCH we give when we cross-build or 
-with the ARCH which is set by the top-level Makefile in 
-tools/testing/selftests ?
+The rest three moved here.
 
-Also, wouldn't there be a way to use scripts/subarch.include instead of 
-opencoding ?
+Pushed to my review and testing queue, thanks!
 
-Afterall, would it be a problem to build it even for i386 ? It should 
-now be ignored anyway with your new commit f78280b1a3ce ("selftests: 
-vDSO: skip getrandom test if architecture is unsupported")
+-- 
+With Best Regards,
+Andy Shevchenko
 
-Christophe
+
 
