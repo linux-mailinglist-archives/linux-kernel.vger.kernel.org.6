@@ -1,92 +1,143 @@
-Return-Path: <linux-kernel+bounces-309167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC7129666F2
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 18:31:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 698889666FC
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 18:32:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A38901F21670
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 16:31:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FB8C284629
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 16:32:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 667FF1B9B57;
-	Fri, 30 Aug 2024 16:30:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0179B1B5EAF;
+	Fri, 30 Aug 2024 16:31:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VmkXB920"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="OtbZu1T3"
+Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 946631B5820;
-	Fri, 30 Aug 2024 16:30:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77CB514B949;
+	Fri, 30 Aug 2024 16:31:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725035429; cv=none; b=bu4EAXTLASn2UMnCbyabpl1pDaJR7x6a2Y2l7cllaCua98SDMKB9RrjdMvqn/AYAHdRVY1xAlYm6ZgOT/OCJSllClXfnRuEcSdlVVA8TEKf3VNi0WiWswRRdEkqt/2ULFlSyB+RjLf9OdSDBI6MgcLlOuXF0OlKOAcgRi53WH8s=
+	t=1725035517; cv=none; b=iQ1kDynyix1EPs7kNk6j63fKlQISkDruHtSw2wc0eWZRfpft4FQqYpVEKpNfNB95fPf+KMtwV7Y5yWHALL68f8vf15ycTDeLF49NYVBhN3WpiVraliYIGIWYMDeTqCJoeY2KviS8adl/uDUaG8prfgWNxVri9qmaE6m7ORzEtI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725035429; c=relaxed/simple;
-	bh=bCs8J24OrCsuXi/AU51XMMjmTi4TErRq+PY+G1NjgNU=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=B/5XxCov1CzbgUXoyXEs4EsiOdvlcSJT3sSp99uPLCHk5+czaJ0+2xLBsFwXK89kGuNVMRgMtYj0i3ODFf9nu14YZcxoDUNJ5YzvPXDYaB28Fw80FB/ZkwOyWJNP6V2RspyY9ToneLnlPN9UoJ/0dHGkeJYKLnG7mmpyAQOw0io=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VmkXB920; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BE7BC4CEC9;
-	Fri, 30 Aug 2024 16:30:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725035429;
-	bh=bCs8J24OrCsuXi/AU51XMMjmTi4TErRq+PY+G1NjgNU=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=VmkXB920mzE1Vc79BOe5gafEE59d5LkoZ62gFay51iasfkUH5qD5wrfbcGPO/gRM0
-	 ioAhKuCVZjoh5qv/TLCgFwHcbBRFIDbxYkaqHRiu7T2t+OxlX5StWeewM4mRNl2TDj
-	 j8mCclSHG6qUAN7+9w9ekxqIsu+3NpBTdiEE0dPwqAuxybgx72BvJWIESkMByr2xJt
-	 09Zbk6Ae0n/BXPCsTC9SK14glNlxc1GSk2m1YZdyCYE+YD6GMQaimQ0r42sNFYSyHd
-	 hXmePidKJiWvRns5Fvd7YRitqJYxU+WmUVKOYw2t19yq8Hizt4b2xrICqIbx/q52Le
-	 /q6RKze7rCrdg==
-Received: from ip-10-30-226-235.us-west-2.compute.internal (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id CD5B93809A83;
-	Fri, 30 Aug 2024 16:30:30 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1725035517; c=relaxed/simple;
+	bh=3BJIlDR+E6wpbgaIMfqeLxo7CRcaljbWFDg6cgsfwhQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=myzbVTdHlcUJ5jrp+Mqhi8Uz2aRFrpQOFtXI+FZDOvY5VTNsw+VSwfobxtdYRFcF0P1Aclb/VfeJcYLPVbtpruzOeokB35t2gQStPPUcgpsz8YieZuWokiYe2c0CgwAFYOpA/j8BaawK7CFCdIJToXK3Wo92ggbsOFurx7Ron4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=OtbZu1T3; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47UC9Gn2029818;
+	Fri, 30 Aug 2024 18:31:33 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	c55TnbAQcwEgANv3HCyH02RkCKFOHECJ/MLSerth/Vc=; b=OtbZu1T3bv6bIYrM
+	YH0HaKycTAdjRZ+QfOArDjgnyCuET++v1a/df1HPttksgFl5gMUJzEBvv1B19HIc
+	R8MFNjPpQlLABnBPCxVlQrm15sTIVyN6xgfqnzRCzvtVurxyXFXbNO9ZUiqhF7dG
+	EQIKa13ThNP7MoqCkEtC1Ufn6+1XJp+3VP5KbfmAo4SOo9eJrfNBJ18OQdZw3Zlz
+	BJ/ISbOFvy8WjUdoGs6oBfLeXU1b6bM81ZOOJqQKDQW74qi+NXdEimRHtJZXuLRb
+	JyIgC4b5gI96N/8kkKxw/8UxAGpBz01mqZX+lG27s/ov019+0ar2gnzIfIuDmzeS
+	J3e0lw==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 41b14tbrbh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 30 Aug 2024 18:31:33 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 3CCC34002D;
+	Fri, 30 Aug 2024 18:31:29 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 8188F27F641;
+	Fri, 30 Aug 2024 18:30:38 +0200 (CEST)
+Received: from [10.252.12.18] (10.252.12.18) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Fri, 30 Aug
+ 2024 18:30:37 +0200
+Message-ID: <44ad0f01-4701-45e9-a3cb-e89222f8c60e@foss.st.com>
+Date: Fri, 30 Aug 2024 18:30:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v3] Bluetooth: btrtl: Set msft ext address filter quirk
-From: patchwork-bot+bluetooth@kernel.org
-Message-Id: 
- <172503543083.2648350.2018898674342580580.git-patchwork-notify@kernel.org>
-Date: Fri, 30 Aug 2024 16:30:30 +0000
-References: <20240829034627.676529-1-hildawu@realtek.com>
-In-Reply-To: <20240829034627.676529-1-hildawu@realtek.com>
-To: Hilda Wu <hildawu@realtek.com>
-Cc: marcel@holtmann.org, luiz.dentz@gmail.com,
- linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
- alex_lu@realsil.com.cn, max.chou@realtek.com, kidman@realtek.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] dt-bindings: arm: stm32: Add compatible strings
+ for Protonic boards
+To: Oleksij Rempel <o.rempel@pengutronix.de>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        <kernel@pengutronix.de>, <linux-kernel@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <netdev@vger.kernel.org>
+References: <20240809091615.3535447-1-o.rempel@pengutronix.de>
+Content-Language: en-US
+From: Alexandre TORGUE <alexandre.torgue@foss.st.com>
+In-Reply-To: <20240809091615.3535447-1-o.rempel@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-30_10,2024-08-30_01,2024-05-17_01
 
-Hello:
+Hi
 
-This patch was applied to bluetooth/bluetooth-next.git (master)
-by Luiz Augusto von Dentz <luiz.von.dentz@intel.com>:
-
-On Thu, 29 Aug 2024 11:46:27 +0800 you wrote:
-> For tracking multiple devices concurrently with a condition.
-> The patch enables the HCI_QUIRK_USE_MSFT_EXT_ADDRESS_FILTER quirk
-> on RTL8852B controller.
+On 8/9/24 11:16, Oleksij Rempel wrote:
+> Add compatible strings for Protonic MECIO1r0 and MECT1S boards to the
+> STM32MP151-based boards section and Protonic MECIO1r1 board to the
+> STM32MP153-based boards section.
 > 
-> The quirk setting is based on this commit.
-> Commit 9e14606d8f38 ("Bluetooth: msft: Extended monitor tracking by
-> address filter")
+> MECIO1 is an I/O and motor control board used in blood sample analysis
+> machines. MECT1S is a 1000Base-T1 switch for internal machine networks
+> of blood sample analysis machines.
 > 
-> [...]
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>   Documentation/devicetree/bindings/arm/stm32/stm32.yaml | 8 ++++++++
+>   1 file changed, 8 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/stm32/stm32.yaml b/Documentation/devicetree/bindings/arm/stm32/stm32.yaml
+> index 58099949e8f3a..703d4b574398d 100644
+> --- a/Documentation/devicetree/bindings/arm/stm32/stm32.yaml
+> +++ b/Documentation/devicetree/bindings/arm/stm32/stm32.yaml
+> @@ -54,6 +54,8 @@ properties:
+>         - description: ST STM32MP151 based Boards
+>           items:
+>             - enum:
+> +              - prt,mecio1r0 # Protonic MECIO1r0
+> +              - prt,mect1s   # Protonic MECT1S
+>                 - prt,prtt1a   # Protonic PRTT1A
+>                 - prt,prtt1c   # Protonic PRTT1C
+>                 - prt,prtt1s   # Protonic PRTT1S
+> @@ -71,6 +73,12 @@ properties:
+>             - const: dh,stm32mp151a-dhcor-som
+>             - const: st,stm32mp151
+>   
+> +      - description: ST STM32MP153 based Boards
+> +        items:
+> +          - enum:
+> +              - prt,mecio1r1   # Protonic MECIO1r1
+> +          - const: st,stm32mp153
+> +
+>         - description: DH STM32MP153 DHCOM SoM based Boards
+>           items:
+>             - const: dh,stm32mp153c-dhcom-drc02
 
-Here is the summary with links:
-  - [v3] Bluetooth: btrtl: Set msft ext address filter quirk
-    https://git.kernel.org/bluetooth/bluetooth-next/c/e278dcc0a237
+Applied on stm32-next.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Thanks
+Alex
 
