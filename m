@@ -1,120 +1,148 @@
-Return-Path: <linux-kernel+bounces-308507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F184A965DE5
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:04:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3324F965DCE
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:02:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3067B1C2200E
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:04:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65AB21C22E51
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:02:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59DBB17B50D;
-	Fri, 30 Aug 2024 10:04:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="jVMPthfN"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F81917E000;
+	Fri, 30 Aug 2024 10:01:36 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBD2817A5B5;
-	Fri, 30 Aug 2024 10:04:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F043317C9E3
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 10:01:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725012268; cv=none; b=J0+W4X6lEMzlCcRrsyclder3raQlDeB/A4yiGZv3p/v2h2nEEgi5CAPkhlbxMDOsdbi96HtWgYr1if36qSb5faU+SNBuKIGXidVNV6cW9UcnSFmIaao5mNN4lzGVVHdaMNVfMBKJjfcXaQT097//+2F6fa5Z9LccoI7j77iZhMQ=
+	t=1725012095; cv=none; b=oQasfqHsoZ8oMhPZwgCPkgvp5P4bVvjR1A1urOssZ3vifwwZlqaw7pIXv3ZNakj8i7uKs8dFV6xVJQPGA+xUA3BVniLpCD0Cg7XeMaktlqLC/JYPKBAiQ0uBnq12DUCmcJLyLDpQktalv1h9aXOJRpekzZiLiP038fR27R9epKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725012268; c=relaxed/simple;
-	bh=+P3HICJbHit9OzS3+mJBWKnoatrjLDoXQuJ6FTKpTkE=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cGjkehCa0AA9pJatIQyBQt6xBhLUhNM+VB1qOiN8ZdHUt8k32/fMszylJXLno5J3Jbm03Jftg1KXJUUAP07h+2Jv44+WlI+PecE6BFnlLHGwW3d9i4zNufIoPSi+CYGzwiELAJS4uSjufC6+5p2U5l+PgNeE3GFEIflfLnoOAVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=jVMPthfN; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47UA47OJ089536;
-	Fri, 30 Aug 2024 05:04:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1725012247;
-	bh=E89eBoPBmEm1hejQC0BVgc26P7ikPAipuU2/0Io9WPg=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=jVMPthfN1Osegc0OA78atURzJOmYo6u3r0O3bceb8Dzu7+h01ojUmdpJezkDRngW4
-	 OXX2qOFvzRQ9fYVngswEGefVA3efkmjl0N4ufqhq7VvQ/f1UJmNJfGe1S/88bDnUOC
-	 rcAaURj8BSd1Zx4jYGRUTZcRMRWPSpYdEbKTFnsE=
-Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47UA47n0014921
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 30 Aug 2024 05:04:07 -0500
-Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 30
- Aug 2024 05:04:07 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 30 Aug 2024 05:04:07 -0500
-Received: from localhost (lcpd911.dhcp.ti.com [172.24.227.68])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47UA466e084667;
-	Fri, 30 Aug 2024 05:04:06 -0500
-Date: Fri, 30 Aug 2024 15:34:05 +0530
-From: Dhruva Gole <d-gole@ti.com>
-To: Nishanth Menon <nm@ti.com>
-CC: "H. Nikolaus Schaller" <hns@goldelico.com>,
-        Viresh Kumar
-	<viresh.kumar@linaro.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Kevin
- Hilman <khilman@kernel.org>, Tony Lindgren <tony@atomide.com>,
-        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <bb@ti.com>
-Subject: Re: [PATCH] cpufreq: ti-cpufreq: Introduce quirks to handle syscon
- fails appropriately
-Message-ID: <20240830100405.czxtrwmhlhbwlya6@lcpd911>
-References: <20240828131915.3198081-1-nm@ti.com>
+	s=arc-20240116; t=1725012095; c=relaxed/simple;
+	bh=6g7CK3OGqT00ZaRKzaRMV5Bga33IQARjCHRsRRokcJ0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gUzznx2abh2f1p48p0COgJi/MS9xiWom+g8eYElY7jjc9oY2EBGm2nZZ06lcCEfmWGHfVRl3xcpnws29hAakmcWyu4u7m0ZrP8fHZqxhDoSsedPTBp3FDjUBakC6Glm9Op0Syco+IGxRx4GfGd0bSb8MSjDMpOSRX+mcmzcCtpY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4WwDF22Kqmz2Cp1T
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 18:01:10 +0800 (CST)
+Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
+	by mail.maildlp.com (Postfix) with ESMTPS id 2F65C1400D7
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 18:01:24 +0800 (CST)
+Received: from huawei.com (10.90.53.73) by kwepemh500013.china.huawei.com
+ (7.202.181.146) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 30 Aug
+ 2024 18:01:23 +0800
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+To: <tglx@linutronix.de>, <linux-kernel@vger.kernel.org>
+CC: <ruanjinjie@huawei.com>
+Subject: [PATCH] genirq: Fix IRQ_MOVE_PENDING try set when CONFIG_GENERIC_PENDING_IRQ not set
+Date: Fri, 30 Aug 2024 18:09:23 +0800
+Message-ID: <20240830100923.3818817-1-ruanjinjie@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240828131915.3198081-1-nm@ti.com>
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemh500013.china.huawei.com (7.202.181.146)
 
-Hi,
+The irqd_set_move_pending() and irq_copy_pending() appear in pairs, but
+irq_copy_pending() is empty when CONFIG_GENERIC_PENDING_IRQ is not set,
+irqd_set_move_pending always set IRQD_SETAFFINITY_PENDING flag.
 
-On Aug 28, 2024 at 08:19:15 -0500, Nishanth Menon wrote:
-> Commit b4bc9f9e27ed ("cpufreq: ti-cpufreq: add support for omap34xx
-> and omap36xx") introduced special handling for OMAP3 class devices
-> where syscon node may not be present. However, this also creates a bug
-> where the syscon node is present, however the offset used to read
-> is beyond the syscon defined range.
-> 
-> Fix this by providing a quirk option that is populated when such
-> special handling is required. This allows proper failure for all other
-> platforms when the syscon node and efuse offsets are mismatched.
-> 
-> Fixes: b4bc9f9e27ed ("cpufreq: ti-cpufreq: add support for omap34xx and omap36xx")
-> Signed-off-by: Nishanth Menon <nm@ti.com>
-> ---
-> 
-> NOTE: this combined with https://lore.kernel.org/r/20240828121008.3066002-1-nm@ti.com
-> has created a bunch of un-intended bugs on other TI SoCs such
-> as seen in https://lore.kernel.org/all/20240826-opp-v3-1-0934f8309e13@ti.com/
-> https://lore.kernel.org/all/20240827131342.6wrielete3yeoinl@bryanbrattlof.com/
-> etc.
+And before commit 1fa46f1f0709 ("genirq: Simplify affinity related code"),
+if the config not set, IRQ_MOVE_PENDING will not try set and
+desc->pending_mask will not be copied no matter what. Fix it by combining
+them to align with them, and define empty for both if the config
+is not enabled.
 
-I have been able to verify that this doesn't cause any regressions on
-AM62x cpufreq, logs [0]. I also applied the other syscon patch mentioned
-above. So,
+Fixes: 1fa46f1f0709 ("genirq: Simplify affinity related code")
+Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+---
+ kernel/irq/internals.h |  7 +++++--
+ kernel/irq/manage.c    | 19 +++++--------------
+ 2 files changed, 10 insertions(+), 16 deletions(-)
 
-Tested-by: Dhruva Gole <d-gole@ti.com>
-
-[0] https://gist.github.com/DhruvaG2000/153b5511889180ee54703603428fb77e
-
+diff --git a/kernel/irq/internals.h b/kernel/irq/internals.h
+index fe0272cd84a5..f3d83f3745cb 100644
+--- a/kernel/irq/internals.h
++++ b/kernel/irq/internals.h
+@@ -428,8 +428,11 @@ static inline bool irq_move_pending(struct irq_data *data)
+ 	return irqd_is_setaffinity_pending(data);
+ }
+ static inline void
+-irq_copy_pending(struct irq_desc *desc, const struct cpumask *mask)
++irq_set_copy_pending(struct irq_data *data, const struct cpumask *mask)
+ {
++	struct irq_desc *desc = irq_data_to_desc(data);
++
++	irqd_set_move_pending(data);
+ 	cpumask_copy(desc->pending_mask, mask);
+ }
+ static inline void
+@@ -456,7 +459,7 @@ static inline bool irq_move_pending(struct irq_data *data)
+ 	return false;
+ }
+ static inline void
+-irq_copy_pending(struct irq_desc *desc, const struct cpumask *mask)
++irq_set_copy_pending(struct irq_data *data, const struct cpumask *mask)
+ {
+ }
+ static inline void
+diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
+index f0803d6bd296..d03c3c4a869c 100644
+--- a/kernel/irq/manage.c
++++ b/kernel/irq/manage.c
+@@ -293,23 +293,16 @@ int irq_do_set_affinity(struct irq_data *data, const struct cpumask *mask,
+ 	return ret;
+ }
+ 
+-#ifdef CONFIG_GENERIC_PENDING_IRQ
+ static inline int irq_set_affinity_pending(struct irq_data *data,
+ 					   const struct cpumask *dest)
+ {
+-	struct irq_desc *desc = irq_data_to_desc(data);
+-
+-	irqd_set_move_pending(data);
+-	irq_copy_pending(desc, dest);
++	irq_set_copy_pending(data, dest);
++#ifdef CONFIG_GENERIC_PENDING_IRQ
+ 	return 0;
+-}
+ #else
+-static inline int irq_set_affinity_pending(struct irq_data *data,
+-					   const struct cpumask *dest)
+-{
+ 	return -EBUSY;
+-}
+ #endif
++}
+ 
+ static int irq_try_set_affinity(struct irq_data *data,
+ 				const struct cpumask *dest, bool force)
+@@ -365,10 +358,8 @@ int irq_set_affinity_locked(struct irq_data *data, const struct cpumask *mask,
+ 
+ 	if (irq_can_move_pcntxt(data) && !irqd_is_setaffinity_pending(data)) {
+ 		ret = irq_try_set_affinity(data, mask, force);
+-	} else {
+-		irqd_set_move_pending(data);
+-		irq_copy_pending(desc, mask);
+-	}
++	} else
++		irq_set_copy_pending(data, mask);
+ 
+ 	if (desc->affinity_notify) {
+ 		kref_get(&desc->affinity_notify->kref);
 -- 
-Best regards,
-Dhruva Gole
-Texas Instruments Incorporated
+2.34.1
+
 
