@@ -1,185 +1,233 @@
-Return-Path: <linux-kernel+bounces-309022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBB4996654F
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 17:25:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B8DA966562
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 17:26:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E7D1EB21E0E
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 15:25:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB842B20D00
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 15:26:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 639211B5315;
-	Fri, 30 Aug 2024 15:25:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D39121B6539;
+	Fri, 30 Aug 2024 15:26:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="PjJ/GGJz";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="R/iTWHJh";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="b3LaU4/L";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="kVhVRxbY"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eh/KlOCB"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8635DEACD;
-	Fri, 30 Aug 2024 15:25:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10DE81B581C;
+	Fri, 30 Aug 2024 15:26:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725031543; cv=none; b=cFjsDT2tRJADkBWaFIcGGHO4KFMmLzPOFVsagpnOk6nZK3SUOQTXYEsZZ3KY39LC786Ltn3Az2vcq2xIOqMG5K9C8/jIcDFw9Yta1GjgiRZOtLuu0ZXEohcBFZ6WnemVuM7dNOzyUhthnsLJ7QcFrrhbv5l4zpTM2cmSFyZaiWM=
+	t=1725031583; cv=none; b=Doq6gnLvY/6+S/WynQuvRidUm6TXF2PzGsX3kW791LTlwz3kNmka8jyBoWSQYKUecVsWOtujkRmjc221Z6wLxFK3x1RUXb3s1w+qzaADwmpnfx5Q8wdDjISWguw0nTSMdr2bQlI6v16UA8m4HxTdkWV25+vdZ5YevyJ7uMdPZgY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725031543; c=relaxed/simple;
-	bh=iNp6n/jsH71QB5oDAhRZb0TAOpaKlbAuJNW//GZ1g44=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tKVAhg5BhvoAfPBUzuqK62hgY4rFWxIixqtt0TurYeqo0rkazw/Jl06d7puzoI3Pp8vdxA84s9zaGmFfOGTKcMzktGtQaTUHwHWXtqVIhPUocNAP2+aLWwOITaCGEWENbebH0o3jcNkx+elitUIqizxJkOnhZkgnNakXsd4tZrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=PjJ/GGJz; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=R/iTWHJh; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=b3LaU4/L; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=kVhVRxbY; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 3E5831F7D7;
-	Fri, 30 Aug 2024 15:25:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1725031539; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XWnzRDtYyiKw4+/tQoF82vYW5iToq0BDKNejq3/tEfI=;
-	b=PjJ/GGJz/HPNIwxTYmQLnQVqQhnIPSG5hlOD15O3/cEExasyt6JbkegPLNQ0fbj5WSw+CA
-	eq1IuQ13AFR/ZTev6jiyB9ka2u9/5wE+C05Vj6+Km5UkBQ8PZrFMqGRbvTyKJpBG8UGEQ7
-	GvCgHC6Ned/EgsVo/g47UCNnQGTRCE0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1725031539;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XWnzRDtYyiKw4+/tQoF82vYW5iToq0BDKNejq3/tEfI=;
-	b=R/iTWHJhvXOWOm35QXFdoQpgreMc3S3+OkDUaQofGb/WV0ZFjE9srlc4cmqFZwOHvbEb4+
-	9ed+5RAwYGom3pBQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1725031538; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XWnzRDtYyiKw4+/tQoF82vYW5iToq0BDKNejq3/tEfI=;
-	b=b3LaU4/LNz2Ztgx6PoNo9qffokU3etG2y3fudDe+hX+OCc67YBzyQllbrGViRips59msZa
-	DHJVxMosYBjjnlQlnapOJS4DPBryhJeq1X4lLqkVVDGjJHyrAirM81Sn6Z8J88uwvB5+Jm
-	jTaV/UiHtK4IpyWY0016sQObLswCrlQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1725031538;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XWnzRDtYyiKw4+/tQoF82vYW5iToq0BDKNejq3/tEfI=;
-	b=kVhVRxbY+uTv1eXdfW7326R2MlZWqBxgd9tjLG1jLWYqGVysANrvajdy953rh0Lil5O97a
-	JAMAWHQD5V5JSnBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 24D0A13A3D;
-	Fri, 30 Aug 2024 15:25:38 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Dx0vCHLk0WZ+ewAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Fri, 30 Aug 2024 15:25:38 +0000
-Message-ID: <f62e400e-49ab-4d0a-b2e2-c3bbb66c2ab1@suse.cz>
-Date: Fri, 30 Aug 2024 17:25:37 +0200
+	s=arc-20240116; t=1725031583; c=relaxed/simple;
+	bh=xsFTu4zK6e/bQKyKpNXx4yuqJpMh03KU59hP5ZIhsFo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eNShblW7HsshQbdlcbVDyQS+RNTUB34mazGyeUImT+MAK9SpoXHdkVKpr9fWhOTKmDsgEnCCFD1lh5z/qZILAsOfv1T4QLmRzjp4+fvSQ3ogZDbFiTlm6EvVKjK921mTCsbeVRdwtQ9v/nl2ndn+mO5Mc6+QEbTPIUspmoMFo6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eh/KlOCB; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725031582; x=1756567582;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=xsFTu4zK6e/bQKyKpNXx4yuqJpMh03KU59hP5ZIhsFo=;
+  b=eh/KlOCBuzkHHqPwn3kNgFkz01JTt8Lm9thbJh88UzfXEylMClA7VMhH
+   7JMsgntE4hteSujXxl+bK/9GrA1keboxvxGaY7M//pt4GdMFqrxSVMTO/
+   JJegXOEW3rsOgsyxATfA78UIDUkXKXtombxAKLAVrsAcRsU+lWatQPTju
+   bQZrfDowEn3mmRU+tcj1vwQqWWydbQYyGva8VlUE/y+xdabRC03hmLWOi
+   gxy5CavtgUGsliXFDP4gUEFHk/8wuCzLRsR3CbEyQh/mHOVXoWalHyn7F
+   gZezg7aTxxGGQ1gHbNx32+x2yfif0K5mErSW/Q7EgGNt0dqgjCRvT7sFF
+   g==;
+X-CSE-ConnectionGUID: BRXH8Rl7TLqgUtQhMNlyGQ==
+X-CSE-MsgGUID: W8jgzZTdQ5C2m5IOIeWWvA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11180"; a="13299643"
+X-IronPort-AV: E=Sophos;i="6.10,189,1719903600"; 
+   d="scan'208";a="13299643"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Aug 2024 08:26:20 -0700
+X-CSE-ConnectionGUID: qSo7wQuiRQOgWqbJHGSuaA==
+X-CSE-MsgGUID: xWQhpaPgQ7q/KjwQk08jIw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,189,1719903600"; 
+   d="scan'208";a="63941617"
+Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
+  by fmviesa008.fm.intel.com with ESMTP; 30 Aug 2024 08:26:15 -0700
+Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sk3Vt-0001a2-19;
+	Fri, 30 Aug 2024 15:26:13 +0000
+Date: Fri, 30 Aug 2024 23:26:09 +0800
+From: kernel test robot <lkp@intel.com>
+To: Casey Schaufler <casey@schaufler-ca.com>, paul@paul-moore.com,
+	linux-security-module@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, jmorris@namei.org,
+	serge@hallyn.com, keescook@chromium.org,
+	john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+	stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
+	selinux@vger.kernel.org, mic@digikod.net,
+	linux-integrity@vger.kernel.org, audit@vger.kernel.org,
+	Todd Kjos <tkjos@google.com>
+Subject: Re: [PATCH v2 10/13] LSM: Create new security_cred_getlsmblob LSM
+ hook
+Message-ID: <202408302309.08WssiJu-lkp@intel.com>
+References: <20240830003411.16818-11-casey@schaufler-ca.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] bcachefs: Switch to memalloc_flags_do() for vmalloc
- allocations
-Content-Language: en-US
-To: Yafang Shao <laoar.shao@gmail.com>, Dave Chinner <david@fromorbit.com>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>,
- Michal Hocko <mhocko@suse.com>, Matthew Wilcox <willy@infradead.org>,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Dave Chinner <dchinner@redhat.com>
-References: <20240828140638.3204253-1-kent.overstreet@linux.dev>
- <Zs9xC3OJPbkMy25C@casper.infradead.org>
- <gutyvxwembnzaoo43dzvmnpnbmj6pzmypx5kcyor3oeomgzkva@6colowp7crgk>
- <Zs959Pa5H5WeY5_i@tiehlicka>
- <xxs3s22qmlzby3ligct7x5a3fbzzjfdqqt7unmpih64dk3kdyx@vml4m27gpujw>
- <ZtBWxWunhXTh0bhS@tiehlicka>
- <wjfubyrzk4ovtuae5uht7uhhigkrym2anmo5w5vp7xgq3zss76@s2uy3qindie4>
- <ZtCFP5w6yv/aykui@dread.disaster.area>
- <CALOAHbCssCSb7zF6VoKugFjAQcMACmOTtSCzd7n8oGfXdsxNsg@mail.gmail.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-In-Reply-To: <CALOAHbCssCSb7zF6VoKugFjAQcMACmOTtSCzd7n8oGfXdsxNsg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Score: -2.80
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	URIBL_BLOCKED(0.00)[suse.cz:mid,fromorbit.com:email,imap1.dmz-prg2.suse.org:helo];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	ARC_NA(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com,fromorbit.com];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	MID_RHS_MATCH_FROM(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,fromorbit.com:email,suse.cz:mid]
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240830003411.16818-11-casey@schaufler-ca.com>
 
-On 8/30/24 11:14, Yafang Shao wrote:
-> On Thu, Aug 29, 2024 at 10:29 PM Dave Chinner <david@fromorbit.com> wrote:
-> 
-> Hello Dave,
-> 
-> I've noticed that XFS has increasingly replaced kmem_alloc() with
-> __GFP_NOFAIL. For example, in kernel 4.19.y, there are 0 instances of
-> __GFP_NOFAIL under fs/xfs, but in kernel 6.1.y, there are 41
-> occurrences. In kmem_alloc(), there's an explicit
-> memalloc_retry_wait() to throttle the allocator under heavy memory
-> pressure, which aligns with your filesystem design. However, using
-> __GFP_NOFAIL removes this throttling mechanism, potentially causing
-> issues when the system is under heavy memory load. I'm concerned that
-> this shift might not be a beneficial trend.
-> 
-> We have been using XFS for our big data servers for years, and it has
-> consistently performed well with older kernels like 4.19.y. However,
-> after upgrading all our servers from 4.19.y to 6.1.y over the past two
-> years, we have frequently encountered livelock issues caused by memory
-> exhaustion. To mitigate this, we've had to limit the RSS of
-> applications, which isn't an ideal solution and represents a worrying
-> trend.
+Hi Casey,
 
-By "livelock issues caused by memory exhaustion" you mean the long-standing
-infamous issue that the system might become thrashing for the remaining
-small amount of page cache, and anonymous memory being swapped out/in,
-instead of issuing OOM, because there's always just enough progress of the
-reclaim to keep going, but the system isn't basically doing anything else?
+kernel test robot noticed the following build warnings:
 
-I think that's related to near-exhausted memory by userspace, so I'm not
-sure why XFS would be to blame here.
+[auto build test WARNING on pcmoore-audit/next]
+[also build test WARNING on pcmoore-selinux/next zohar-integrity/next-integrity linus/master v6.11-rc5 next-20240830]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-That said, if memalloc_retry_wait() is indeed a useful mechanism, maybe we
-could perform it inside the page allocator itself for __GFP_NOFAIL?
+url:    https://github.com/intel-lab-lkp/linux/commits/Casey-Schaufler/LSM-Add-the-lsmblob-data-structure/20240830-085050
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/audit.git next
+patch link:    https://lore.kernel.org/r/20240830003411.16818-11-casey%40schaufler-ca.com
+patch subject: [PATCH v2 10/13] LSM: Create new security_cred_getlsmblob LSM hook
+config: i386-buildonly-randconfig-006-20240830 (https://download.01.org/0day-ci/archive/20240830/202408302309.08WssiJu-lkp@intel.com/config)
+compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240830/202408302309.08WssiJu-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408302309.08WssiJu-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   In file included from kernel/dma/swiotlb.c:53:
+   In file included from include/trace/events/swiotlb.h:41:
+   In file included from include/trace/define_trace.h:102:
+   In file included from include/trace/trace_events.h:21:
+   In file included from include/linux/trace_events.h:10:
+   In file included from include/linux/perf_event.h:62:
+   include/linux/security.h:1199:3: error: use of undeclared identifier 'secid'
+    1199 |         *secid = 0;
+         |          ^
+>> kernel/dma/swiotlb.c:639:20: warning: shift count >= width of type [-Wshift-count-overflow]
+     638 |                 if (IS_ENABLED(CONFIG_ZONE_DMA32) &&
+         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     639 |                     phys_limit < DMA_BIT_MASK(64) &&
+         |                     ~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~
+     640 |                     !(gfp & (__GFP_DMA32 | __GFP_DMA)))
+         |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/dma-mapping.h:77:54: note: expanded from macro 'DMA_BIT_MASK'
+      77 | #define DMA_BIT_MASK(n) (((n) == 64) ? ~0ULL : ((1ULL<<(n))-1))
+         |                                                      ^
+   include/linux/compiler.h:55:47: note: expanded from macro 'if'
+      55 | #define if(cond, ...) if ( __trace_if_var( !!(cond , ## __VA_ARGS__) ) )
+         |                            ~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/compiler.h:57:52: note: expanded from macro '__trace_if_var'
+      57 | #define __trace_if_var(cond) (__builtin_constant_p(cond) ? (cond) : __trace_if_value(cond))
+         |                                                    ^~~~
+>> kernel/dma/swiotlb.c:639:20: warning: shift count >= width of type [-Wshift-count-overflow]
+     638 |                 if (IS_ENABLED(CONFIG_ZONE_DMA32) &&
+         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     639 |                     phys_limit < DMA_BIT_MASK(64) &&
+         |                     ~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~
+     640 |                     !(gfp & (__GFP_DMA32 | __GFP_DMA)))
+         |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/dma-mapping.h:77:54: note: expanded from macro 'DMA_BIT_MASK'
+      77 | #define DMA_BIT_MASK(n) (((n) == 64) ? ~0ULL : ((1ULL<<(n))-1))
+         |                                                      ^
+   include/linux/compiler.h:55:47: note: expanded from macro 'if'
+      55 | #define if(cond, ...) if ( __trace_if_var( !!(cond , ## __VA_ARGS__) ) )
+         |                            ~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/compiler.h:57:61: note: expanded from macro '__trace_if_var'
+      57 | #define __trace_if_var(cond) (__builtin_constant_p(cond) ? (cond) : __trace_if_value(cond))
+         |                                                             ^~~~
+>> kernel/dma/swiotlb.c:639:20: warning: shift count >= width of type [-Wshift-count-overflow]
+     638 |                 if (IS_ENABLED(CONFIG_ZONE_DMA32) &&
+         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     639 |                     phys_limit < DMA_BIT_MASK(64) &&
+         |                     ~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~
+     640 |                     !(gfp & (__GFP_DMA32 | __GFP_DMA)))
+         |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/dma-mapping.h:77:54: note: expanded from macro 'DMA_BIT_MASK'
+      77 | #define DMA_BIT_MASK(n) (((n) == 64) ? ~0ULL : ((1ULL<<(n))-1))
+         |                                                      ^
+   include/linux/compiler.h:55:47: note: expanded from macro 'if'
+      55 | #define if(cond, ...) if ( __trace_if_var( !!(cond , ## __VA_ARGS__) ) )
+         |                            ~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/compiler.h:57:86: note: expanded from macro '__trace_if_var'
+      57 | #define __trace_if_var(cond) (__builtin_constant_p(cond) ? (cond) : __trace_if_value(cond))
+         |                                                                     ~~~~~~~~~~~~~~~~~^~~~~
+   include/linux/compiler.h:68:3: note: expanded from macro '__trace_if_value'
+      68 |         (cond) ?                                        \
+         |          ^~~~
+   3 warnings and 1 error generated.
 
 
+vim +639 kernel/dma/swiotlb.c
 
+79636caad3618e Petr Tesarik 2023-08-01  602  
+79636caad3618e Petr Tesarik 2023-08-01  603  /**
+79636caad3618e Petr Tesarik 2023-08-01  604   * swiotlb_alloc_tlb() - allocate a dynamic IO TLB buffer
+79636caad3618e Petr Tesarik 2023-08-01  605   * @dev:	Device for which a memory pool is allocated.
+79636caad3618e Petr Tesarik 2023-08-01  606   * @bytes:	Size of the buffer.
+79636caad3618e Petr Tesarik 2023-08-01  607   * @phys_limit:	Maximum allowed physical address of the buffer.
+79636caad3618e Petr Tesarik 2023-08-01  608   * @gfp:	GFP flags for the allocation.
+79636caad3618e Petr Tesarik 2023-08-01  609   *
+79636caad3618e Petr Tesarik 2023-08-01  610   * Return: Allocated pages, or %NULL on allocation failure.
+79636caad3618e Petr Tesarik 2023-08-01  611   */
+79636caad3618e Petr Tesarik 2023-08-01  612  static struct page *swiotlb_alloc_tlb(struct device *dev, size_t bytes,
+79636caad3618e Petr Tesarik 2023-08-01  613  		u64 phys_limit, gfp_t gfp)
+79636caad3618e Petr Tesarik 2023-08-01  614  {
+79636caad3618e Petr Tesarik 2023-08-01  615  	struct page *page;
+79636caad3618e Petr Tesarik 2023-08-01  616  
+79636caad3618e Petr Tesarik 2023-08-01  617  	/*
+79636caad3618e Petr Tesarik 2023-08-01  618  	 * Allocate from the atomic pools if memory is encrypted and
+79636caad3618e Petr Tesarik 2023-08-01  619  	 * the allocation is atomic, because decrypting may block.
+79636caad3618e Petr Tesarik 2023-08-01  620  	 */
+79636caad3618e Petr Tesarik 2023-08-01  621  	if (!gfpflags_allow_blocking(gfp) && dev && force_dma_unencrypted(dev)) {
+79636caad3618e Petr Tesarik 2023-08-01  622  		void *vaddr;
+79636caad3618e Petr Tesarik 2023-08-01  623  
+79636caad3618e Petr Tesarik 2023-08-01  624  		if (!IS_ENABLED(CONFIG_DMA_COHERENT_POOL))
+79636caad3618e Petr Tesarik 2023-08-01  625  			return NULL;
+79636caad3618e Petr Tesarik 2023-08-01  626  
+79636caad3618e Petr Tesarik 2023-08-01  627  		return dma_alloc_from_pool(dev, bytes, &vaddr, gfp,
+79636caad3618e Petr Tesarik 2023-08-01  628  					   dma_coherent_ok);
+79636caad3618e Petr Tesarik 2023-08-01  629  	}
+79636caad3618e Petr Tesarik 2023-08-01  630  
+79636caad3618e Petr Tesarik 2023-08-01  631  	gfp &= ~GFP_ZONEMASK;
+79636caad3618e Petr Tesarik 2023-08-01  632  	if (phys_limit <= DMA_BIT_MASK(zone_dma_bits))
+79636caad3618e Petr Tesarik 2023-08-01  633  		gfp |= __GFP_DMA;
+79636caad3618e Petr Tesarik 2023-08-01  634  	else if (phys_limit <= DMA_BIT_MASK(32))
+79636caad3618e Petr Tesarik 2023-08-01  635  		gfp |= __GFP_DMA32;
+79636caad3618e Petr Tesarik 2023-08-01  636  
+a5e3b127455d07 Petr Tesarik 2023-11-02  637  	while (IS_ERR(page = alloc_dma_pages(gfp, bytes, phys_limit))) {
+79636caad3618e Petr Tesarik 2023-08-01  638  		if (IS_ENABLED(CONFIG_ZONE_DMA32) &&
+79636caad3618e Petr Tesarik 2023-08-01 @639  		    phys_limit < DMA_BIT_MASK(64) &&
+79636caad3618e Petr Tesarik 2023-08-01  640  		    !(gfp & (__GFP_DMA32 | __GFP_DMA)))
+79636caad3618e Petr Tesarik 2023-08-01  641  			gfp |= __GFP_DMA32;
+79636caad3618e Petr Tesarik 2023-08-01  642  		else if (IS_ENABLED(CONFIG_ZONE_DMA) &&
+79636caad3618e Petr Tesarik 2023-08-01  643  			 !(gfp & __GFP_DMA))
+79636caad3618e Petr Tesarik 2023-08-01  644  			gfp = (gfp & ~__GFP_DMA32) | __GFP_DMA;
+79636caad3618e Petr Tesarik 2023-08-01  645  		else
+79636caad3618e Petr Tesarik 2023-08-01  646  			return NULL;
+79636caad3618e Petr Tesarik 2023-08-01  647  	}
+79636caad3618e Petr Tesarik 2023-08-01  648  
+79636caad3618e Petr Tesarik 2023-08-01  649  	return page;
+79636caad3618e Petr Tesarik 2023-08-01  650  }
+79636caad3618e Petr Tesarik 2023-08-01  651  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
