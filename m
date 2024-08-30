@@ -1,87 +1,81 @@
-Return-Path: <linux-kernel+bounces-309146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62DB79666B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 18:19:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33F529666B2
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 18:18:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3F2D1F21E1F
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 16:19:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2E471F218F9
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 16:18:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3B851BAED9;
-	Fri, 30 Aug 2024 16:18:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D08371B5EC2;
+	Fri, 30 Aug 2024 16:18:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WNDhWc51"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="O1H9mzd+"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B22301B5EB7;
-	Fri, 30 Aug 2024 16:18:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D79F1B5813;
+	Fri, 30 Aug 2024 16:18:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725034705; cv=none; b=b8eftrLIgqVBJEVIkQQvNGVKWp8OQs3hGj5naS2bqDWtvj4BYb+K6ursjSPKshHqFUVX52QsBN3N/EcEVUzVFjH8HJ41r8RWDbmgb1SxhgGHuGAOWB24oaDTRTM82QZkpfkBafdnbMUAwm4fEE5JOLtFyxNaL/Kvh8WS7P5e/9o=
+	t=1725034702; cv=none; b=cHBjj+juGjeyZh9VQj31e+0AzZXttko7XfdX3y2OhAN1NLd8tV0+P1GqRCjdskz5rnmt3emNpK9ZQBWOYgagbdQUqZmZ+oZgIo6V9jHWCdI8O2xKd8WZcrDepmQ8WnxAm+sI5Q7nhINNu2ORzdp7qcK/zrdReCusM74SIFrTgpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725034705; c=relaxed/simple;
-	bh=BHdDxWxftTd+NhLkgGG1bavh6T1vX+aER+Sv1ZHn7+o=;
+	s=arc-20240116; t=1725034702; c=relaxed/simple;
+	bh=DO78Muknig9uLuHIr6AaX8YDe6MmUYrrNJiE1yiyh+w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ry8OuxjMXMgvcMMmYsKrZgM+MKeFK4TNRT8pzAodAn1SN783Gx/p+/x1RFUyQiFcmICVj4UWndHK0r9aGgmhPBEtd5xqF2sEexxzs//AaVAf1Z2D7JdZUuXNfRIf4UCRRnoFaADy3hPQrgCcXcxRXWdrCWU0SJsCTFICjuxm3KU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WNDhWc51; arc=none smtp.client-ip=192.198.163.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=HN+DJ+Z8RdlNzDyJkxWt/ywdg659HfFQc1sH2+yIAMDr7zE5NtKSvccQHO08HGH50XZVssgJj6Et/3se4QfNoTRlM5l+r4sIQO8Xfz6oouwjXmfrtSbHmPsjiiFsby/QehzAFU3YZuSNbWbwt/mbPVUDKClpugLWSfgj/QJtCVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=O1H9mzd+; arc=none smtp.client-ip=192.198.163.18
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725034702; x=1756570702;
+  t=1725034701; x=1756570701;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=BHdDxWxftTd+NhLkgGG1bavh6T1vX+aER+Sv1ZHn7+o=;
-  b=WNDhWc51ZWymm276jUVZL0RpnJ3Oe+h0uF6Udh6PW+iiFmlJaB7NmU5/
-   g33Bchc/pmYOZcrqHgaMC4dTxXQ1K47lC+37g+1QDXPxzRHH/8QHGq2YG
-   ylnF9NvjYRhGgoYyIDS4cyTKvcGpnK3TOvtEMvJS4npvMKnLbVpulO2mH
-   DX2ZGL4oqbWNklwNnGYUJT4FDUG78htNpFxIzH97NV/lUD7MW1+rHIWHR
-   FhwZbUtltXkFHcSn6jWaR7bCpuJi4fGG1InnNbxjtW6QPVdCzneP7yZa+
-   evB0geGGRz5uThM5sG4jSckPBHbl+fYQISMhRF84Hfjhpf5sveVsea6gw
+  bh=DO78Muknig9uLuHIr6AaX8YDe6MmUYrrNJiE1yiyh+w=;
+  b=O1H9mzd+Hwlz5gwZ46xdCxwaQMD8UsGj+oBU7oIWyoRManAJJUd/6Keo
+   /d9KUE6kB91ilWpMPU/Dm6f4QrMT5wifQq5T4MvQTl1z8yD/0sZhsGBBW
+   8eAHeKGV9g700DR6C7T3EEGzwT05mNBjqih5BvppueaQZiyR0O41EMoz6
+   Jvvtpi+2yjxOLFqUk7BJqs3OMDZEUAD+kVPrR91OJusSE6AapOU2IetnI
+   9fBX6al5QxfKx0s3ZmFwWcgiCDSxocgHdKa2gxyneBy2VJbXE3l0kHcAM
+   zcqao9iS0G7rO1qQimNqgUv+KnSQ6pmvfi5kQIsfd9LMDqmbQje87fk7l
    Q==;
-X-CSE-ConnectionGUID: Po13A0ypSA+ziW9fxh9cAA==
-X-CSE-MsgGUID: zrwKsiIuQWevxTJxmDK2Yw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11180"; a="23201135"
+X-CSE-ConnectionGUID: OTQTYBxUTmKeOqslJPAZDg==
+X-CSE-MsgGUID: E/uTCHznQyedAbwnyAN9pw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11180"; a="23201123"
 X-IronPort-AV: E=Sophos;i="6.10,189,1719903600"; 
-   d="scan'208";a="23201135"
+   d="scan'208";a="23201123"
 Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Aug 2024 09:18:21 -0700
-X-CSE-ConnectionGUID: scwKR1YqSBO+WJXI0k+PTQ==
-X-CSE-MsgGUID: cCC4RtAKQyWaaqCcWzXWWg==
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Aug 2024 09:18:20 -0700
+X-CSE-ConnectionGUID: ZmpClZ4hQiSdhPeamVJM7Q==
+X-CSE-MsgGUID: nUiw9z3xSnu9BstrvjHnZw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.10,189,1719903600"; 
-   d="scan'208";a="64134779"
+   d="scan'208";a="64134769"
 Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
   by fmviesa010.fm.intel.com with ESMTP; 30 Aug 2024 09:18:17 -0700
 Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1sk4KF-0001dV-0P;
+	id 1sk4KF-0001dS-0L;
 	Fri, 30 Aug 2024 16:18:15 +0000
-Date: Sat, 31 Aug 2024 00:18:10 +0800
+Date: Sat, 31 Aug 2024 00:18:11 +0800
 From: kernel test robot <lkp@intel.com>
-To: Joe Damato <jdamato@fastly.com>, netdev@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, edumazet@google.com,
-	amritha.nambiar@intel.com, sridhar.samudrala@intel.com,
-	sdf@fomichev.me, bjorn@rivosinc.com, hch@infradead.org,
-	willy@infradead.org, willemdebruijn.kernel@gmail.com,
-	skhawaja@google.com, kuba@kernel.org,
-	Joe Damato <jdamato@fastly.com>,
-	Martin Karsten <mkarsten@uwaterloo.ca>,
-	Paolo Abeni <pabeni@redhat.com>, Jiri Pirko <jiri@resnulli.us>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Breno Leitao <leitao@debian.org>,
-	Johannes Berg <johannes.berg@intel.com>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 3/5] net: napi: Make gro_flush_timeout per-NAPI
-Message-ID: <202408310043.fmwHg8BS-lkp@intel.com>
-References: <20240829131214.169977-4-jdamato@fastly.com>
+To: Adhemerval Zanella <adhemerval.zanella@linaro.org>,
+	"Jason A . Donenfeld" <Jason@zx2c4.com>,
+	Theodore Ts'o <tytso@mit.edu>, linux-kernel@vger.kernel.org,
+	linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-arch@vger.kernel.org,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+	Eric Biggers <ebiggers@kernel.org>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev
+Subject: Re: [PATCH v2] aarch64: vdso: Wire up getrandom() vDSO implementation
+Message-ID: <202408310030.S5ZNwLWz-lkp@intel.com>
+References: <20240829201728.2825-1-adhemerval.zanella@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,92 +84,106 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240829131214.169977-4-jdamato@fastly.com>
+In-Reply-To: <20240829201728.2825-1-adhemerval.zanella@linaro.org>
 
-Hi Joe,
+Hi Adhemerval,
 
 kernel test robot noticed the following build errors:
 
-[auto build test ERROR on net-next/main]
+[auto build test ERROR on crng-random/master]
+[also build test ERROR on next-20240830]
+[cannot apply to arm64/for-next/core shuah-kselftest/next shuah-kselftest/fixes linus/master v6.11-rc5]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Joe-Damato/net-napi-Make-napi_defer_hard_irqs-per-NAPI/20240829-211617
-base:   net-next/main
-patch link:    https://lore.kernel.org/r/20240829131214.169977-4-jdamato%40fastly.com
-patch subject: [PATCH net-next 3/5] net: napi: Make gro_flush_timeout per-NAPI
-config: loongarch-allmodconfig (https://download.01.org/0day-ci/archive/20240831/202408310043.fmwHg8BS-lkp@intel.com/config)
-compiler: loongarch64-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240831/202408310043.fmwHg8BS-lkp@intel.com/reproduce)
+url:    https://github.com/intel-lab-lkp/linux/commits/Adhemerval-Zanella/aarch64-vdso-Wire-up-getrandom-vDSO-implementation/20240830-041912
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/crng/random.git master
+patch link:    https://lore.kernel.org/r/20240829201728.2825-1-adhemerval.zanella%40linaro.org
+patch subject: [PATCH v2] aarch64: vdso: Wire up getrandom() vDSO implementation
+config: arm64-allyesconfig (https://download.01.org/0day-ci/archive/20240831/202408310030.S5ZNwLWz-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 46fe36a4295f05d5d3731762e31fc4e6e99863e9)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240831/202408310030.S5ZNwLWz-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408310043.fmwHg8BS-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408310030.S5ZNwLWz-lkp@intel.com/
 
 All errors (new ones prefixed by >>):
 
-   In file included from include/linux/minmax.h:5,
-                    from include/linux/jiffies.h:8,
-                    from include/net/pkt_sched.h:5,
-                    from drivers/net/ethernet/intel/idpf/idpf.h:12,
-                    from drivers/net/ethernet/intel/idpf/idpf_dev.c:4:
-   include/linux/build_bug.h:78:41: error: static assertion failed: "offsetof(struct idpf_q_vector, __cacheline_group_end__read_write) - offsetofend(struct idpf_q_vector, __cacheline_group_begin__read_write) == (424 + 2 * sizeof(struct dim))"
-      78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
-         |                                         ^~~~~~~~~~~~~~
-   include/linux/build_bug.h:77:34: note: in expansion of macro '__static_assert'
-      77 | #define static_assert(expr, ...) __static_assert(expr, ##__VA_ARGS__, #expr)
-         |                                  ^~~~~~~~~~~~~~~
-   include/net/libeth/cache.h:17:9: note: in expansion of macro 'static_assert'
-      17 |         static_assert(offsetof(type, __cacheline_group_end__##grp) -          \
-         |         ^~~~~~~~~~~~~
-   include/net/libeth/cache.h:62:9: note: in expansion of macro 'libeth_cacheline_group_assert'
-      62 |         libeth_cacheline_group_assert(type, read_write, rw);                  \
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/net/ethernet/intel/idpf/idpf_txrx.h:475:1: note: in expansion of macro 'libeth_cacheline_set_assert'
-     475 | libeth_cacheline_set_assert(struct idpf_q_vector, 104,
-         | ^~~~~~~~~~~~~~~~~~~~~~~~~~~
->> include/linux/build_bug.h:78:41: error: static assertion failed: "sizeof(struct idpf_q_vector) == ((((((104)) + ((__typeof__((104)))(((1 << 6))) - 1)) & ~((__typeof__((104)))(((1 << 6))) - 1)) + ((((424 + 2 * sizeof(struct dim))) + ((__typeof__((424 + 2 * sizeof(struct dim))))(((1 << 6))) - 1)) & ~((__typeof__((424 + 2 * sizeof(struct dim))))(((1 << 6))) - 1)) + ((((8 + sizeof(cpumask_var_t))) + ((__typeof__((8 + sizeof(cpumask_var_t))))(((1 << 6))) - 1)) & ~((__typeof__((8 + sizeof(cpumask_var_t))))(((1 << 6))) - 1))))"
-      78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
-         |                                         ^~~~~~~~~~~~~~
-   include/linux/build_bug.h:77:34: note: in expansion of macro '__static_assert'
-      77 | #define static_assert(expr, ...) __static_assert(expr, ##__VA_ARGS__, #expr)
-         |                                  ^~~~~~~~~~~~~~~
-   include/net/libeth/cache.h:21:9: note: in expansion of macro 'static_assert'
-      21 |         static_assert(sizeof(type) == (sz))
-         |         ^~~~~~~~~~~~~
-   include/net/libeth/cache.h:48:9: note: in expansion of macro '__libeth_cacheline_struct_assert'
-      48 |         __libeth_cacheline_struct_assert(type, __libeth_cls(__VA_ARGS__));    \
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/net/libeth/cache.h:64:9: note: in expansion of macro 'libeth_cacheline_struct_assert'
-      64 |         libeth_cacheline_struct_assert(type, ro, rw, c)
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/net/ethernet/intel/idpf/idpf_txrx.h:475:1: note: in expansion of macro 'libeth_cacheline_set_assert'
-     475 | libeth_cacheline_set_assert(struct idpf_q_vector, 104,
-         | ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+   In file included from arch/arm64/kernel/asm-offsets.c:10:
+   In file included from include/linux/arm_sdei.h:8:
+   In file included from include/acpi/ghes.h:5:
+   In file included from include/acpi/apei.h:9:
+   In file included from include/linux/acpi.h:39:
+   In file included from include/acpi/acpi_io.h:7:
+   In file included from arch/arm64/include/asm/acpi.h:14:
+   In file included from include/linux/memblock.h:12:
+   In file included from include/linux/mm.h:2228:
+   include/linux/vmstat.h:503:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     503 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     504 |                            item];
+         |                            ~~~~
+   include/linux/vmstat.h:510:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     510 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     511 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/vmstat.h:517:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     517 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   include/linux/vmstat.h:523:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     523 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     524 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+   4 warnings generated.
+   In file included from <built-in>:4:
+   In file included from lib/vdso/getrandom.c:8:
+   In file included from include/linux/mm.h:2228:
+   include/linux/vmstat.h:503:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     503 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     504 |                            item];
+         |                            ~~~~
+   include/linux/vmstat.h:510:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     510 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     511 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/vmstat.h:517:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     517 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   include/linux/vmstat.h:523:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     523 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     524 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+   In file included from <built-in>:4:
+   In file included from lib/vdso/getrandom.c:12:
+   In file included from arch/arm64/include/asm/vdso/getrandom.h:8:
+>> arch/arm64/include/asm/vdso.h:25:10: fatal error: 'generated/vdso-offsets.h' file not found
+      25 | #include <generated/vdso-offsets.h>
+         |          ^~~~~~~~~~~~~~~~~~~~~~~~~~
+   4 warnings and 1 error generated.
+   make[3]: *** [scripts/Makefile.build:244: arch/arm64/kernel/vdso/vgetrandom.o] Error 1
+   make[3]: Target 'include/generated/vdso-offsets.h' not remade because of errors.
+   make[3]: Target 'arch/arm64/kernel/vdso/vdso.so' not remade because of errors.
+   make[2]: *** [arch/arm64/Makefile:217: vdso_prepare] Error 2
+   make[2]: Target 'prepare' not remade because of errors.
+   make[1]: *** [Makefile:224: __sub-make] Error 2
+   make[1]: Target 'prepare' not remade because of errors.
+   make: *** [Makefile:224: __sub-make] Error 2
+   make: Target 'prepare' not remade because of errors.
 
 
-vim +78 include/linux/build_bug.h
+vim +25 arch/arm64/include/asm/vdso.h
 
-bc6245e5efd70c Ian Abbott       2017-07-10  60  
-6bab69c65013be Rasmus Villemoes 2019-03-07  61  /**
-6bab69c65013be Rasmus Villemoes 2019-03-07  62   * static_assert - check integer constant expression at build time
-6bab69c65013be Rasmus Villemoes 2019-03-07  63   *
-6bab69c65013be Rasmus Villemoes 2019-03-07  64   * static_assert() is a wrapper for the C11 _Static_assert, with a
-6bab69c65013be Rasmus Villemoes 2019-03-07  65   * little macro magic to make the message optional (defaulting to the
-6bab69c65013be Rasmus Villemoes 2019-03-07  66   * stringification of the tested expression).
-6bab69c65013be Rasmus Villemoes 2019-03-07  67   *
-6bab69c65013be Rasmus Villemoes 2019-03-07  68   * Contrary to BUILD_BUG_ON(), static_assert() can be used at global
-6bab69c65013be Rasmus Villemoes 2019-03-07  69   * scope, but requires the expression to be an integer constant
-6bab69c65013be Rasmus Villemoes 2019-03-07  70   * expression (i.e., it is not enough that __builtin_constant_p() is
-6bab69c65013be Rasmus Villemoes 2019-03-07  71   * true for expr).
-6bab69c65013be Rasmus Villemoes 2019-03-07  72   *
-6bab69c65013be Rasmus Villemoes 2019-03-07  73   * Also note that BUILD_BUG_ON() fails the build if the condition is
-6bab69c65013be Rasmus Villemoes 2019-03-07  74   * true, while static_assert() fails the build if the expression is
-6bab69c65013be Rasmus Villemoes 2019-03-07  75   * false.
-6bab69c65013be Rasmus Villemoes 2019-03-07  76   */
-6bab69c65013be Rasmus Villemoes 2019-03-07  77  #define static_assert(expr, ...) __static_assert(expr, ##__VA_ARGS__, #expr)
-6bab69c65013be Rasmus Villemoes 2019-03-07 @78  #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
-6bab69c65013be Rasmus Villemoes 2019-03-07  79  
-07a368b3f55a79 Maxim Levitsky   2022-10-25  80  
+0a7927d2b89e55 Adhemerval Zanella 2024-08-29  24  
+9031fefde6f2ac Will Deacon        2012-03-05 @25  #include <generated/vdso-offsets.h>
+9031fefde6f2ac Will Deacon        2012-03-05  26  
 
 -- 
 0-DAY CI Kernel Test Service
