@@ -1,112 +1,85 @@
-Return-Path: <linux-kernel+bounces-309404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98DA09669F7
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 21:40:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 553109669FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 21:41:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56CFC2813C8
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 19:40:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F31FB1F25259
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 19:41:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D56591BCA1E;
-	Fri, 30 Aug 2024 19:40:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBFAD1BD4E5;
+	Fri, 30 Aug 2024 19:41:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ku6SQfVc"
-Received: from out-175.mta0.migadu.com (out-175.mta0.migadu.com [91.218.175.175])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n+PqU9xa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34DD133CD1
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 19:40:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B99E33CD1;
+	Fri, 30 Aug 2024 19:41:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725046830; cv=none; b=QS+lz1INRzXZEL9e7X9+bOWRJEqGNHdTvk6OX5a7zsSjguL33tb/AiinLmwJCOfBgoXwg3LuB5VUASjR98LCmVQnytyUhiC+Jn7E8lZBetGUj0soulCpBIdi2HOKfrmhzbp2V4oxZkH2tW/4cgKSynP4uinu+7Y7s2lLZolIxwE=
+	t=1725046902; cv=none; b=pSuftqqSZBuic2yLNBtB5IiD/4+NNPm39ZLPOV4quAjQpS76H1e+wJBgO/JmW1sAa9efb1OoXoTx0InukEJ2PROZ5imzvDWGQARVJx37IvKDSY6ImWDrPcvaVjrDHIgEZKTJTuJ/VypjA59tH+lRyF86fvlxRf+MboIIGRpCwXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725046830; c=relaxed/simple;
-	bh=Uq22PjTwuKDZqezS2o6pKqU0faLiwSgaVD8tjT0+Gyg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=od7XvRJNvZI0t8UIvS5mvMFnBKa/pBlIp+V4H8Hd9lKK6v9K0Jm+FiQae5VYQh94jXxoE1DqQ+tpZ6sDhDT6t+7DbfNTSjXH110/4WeSu4h3nMZaoIxC3iZBXJsrhIxXP0iR6ao8VweWMry8cOnybFHJ04ZRLUrDxihqVXho0D8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ku6SQfVc; arc=none smtp.client-ip=91.218.175.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <761c07a9-a507-44a6-94e5-69655881c137@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1725046824;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=P23hzakT4iTBeTQQZIxqORb4IwFukzfuhRAvyZU6U08=;
-	b=ku6SQfVc3QfWZJGgEvQbT0ayyu3NFuPKSTJ5kiD1Vo1ZCqFOPC0+mk243x+a2dS2qz/2VI
-	sFqqa1ANZBkQgaQtJq8jrE+xFSbT4c9B71Wn17Y+rMJGK/Dg5MgDevRbpmpzci3T6rD3Di
-	9E0F7HgDi7P26Eak0vEoBDPmH0KYgqE=
-Date: Sat, 31 Aug 2024 03:40:11 +0800
+	s=arc-20240116; t=1725046902; c=relaxed/simple;
+	bh=YmAVUv/qdETNoSJhr+xIDAhJhvlKSU3g1VMNFU4pj9k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LG2Rtxi8+8lBAEt48tTDFRCU+ZnvJ4Lkbc7Fm9edklM1DBUZSvReDsUcxvy/WwmDDQFOeMu01xR6FVkpnGuBfL4ky1XhQejAGledcRpNAmio2543eOETfOxNxtcVFM9ysjBW43u9JQd5jJcdh/2gHgqoWt8WqwdUbf9bI6MQ4iM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n+PqU9xa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85D9DC4CEC2;
+	Fri, 30 Aug 2024 19:41:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725046901;
+	bh=YmAVUv/qdETNoSJhr+xIDAhJhvlKSU3g1VMNFU4pj9k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=n+PqU9xalkg9dGJCeo1NRyvwCGkZAsNMsBn9iC+LsLAvIjD1FQ2Xe3tD80uB8NT9P
+	 5Wabgylq4ZN0dzLwoKFzwA0XTM51wfDV2y3zRPFXk3Qk96gQkWIQiNGlTbVXugq9BD
+	 eZXQ0VviS7QxPXCfPs8PnXVOAHNBfpiNHTsW1k75D7jVhbDQw8gVTMpDQu8mcglSiD
+	 +0/E28Byh8Lf3e3FvZmP8qPAfEWsD9502NfSfXKuqWYQXMJaGhmy5EZEL22dFOyBlr
+	 4Rn5VyUtMxqbtw+QaHfEy/Xg9No9N91TadDim9Wsye7Yd1QNhiTC4FW5wlXQsruQnU
+	 9NRF0VkUcve9g==
+Date: Fri, 30 Aug 2024 09:41:40 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Joshua Hahn <joshua.hahnjy@gmail.com>
+Cc: cgroups@vger.kernel.org, hannes@cmpxchg.org,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	lizefan.x@bytedance.com, mkoutny@suse.com, shuah@kernel.org
+Subject: Re: [PATCH v2 1/2] Tracking cgroup-level niced CPU time
+Message-ID: <ZtIgdEt9RSU4MCIP@slm.duckdns.org>
+References: <20240830141939.723729-1-joshua.hahnjy@gmail.com>
+ <20240830141939.723729-2-joshua.hahnjy@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [v2] drm/etnaviv: Clear the __GFP_HIGHMEM bit in GFP_HIGHUSER
- with 32 address
-To: "Wang, Xiaolei" <Xiaolei.Wang@windriver.com>,
- "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
- "linux+etnaviv@armlinux.org.uk" <linux+etnaviv@armlinux.org.uk>,
- "christian.gmeiner@gmail.com" <christian.gmeiner@gmail.com>,
- "airlied@gmail.com" <airlied@gmail.com>, "daniel@ffwll.ch" <daniel@ffwll.ch>
-Cc: "etnaviv@lists.freedesktop.org" <etnaviv@lists.freedesktop.org>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <MW5PR11MB57648F441CEDD36E614E31EA95812@MW5PR11MB5764.namprd11.prod.outlook.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Sui Jingfeng <sui.jingfeng@linux.dev>
-In-Reply-To: <MW5PR11MB57648F441CEDD36E614E31EA95812@MW5PR11MB5764.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240830141939.723729-2-joshua.hahnjy@gmail.com>
 
-Hi, Xiaolei
+On Fri, Aug 30, 2024 at 07:19:38AM -0700, Joshua Hahn wrote:
+> From: Joshua Hahn <joshua.hahn6@gmail.com>
+> 
+> Cgroup-level CPU statistics currently include time spent on
+> user/system processes, but do not include niced CPU time (despite
+> already being tracked). This patch exposes niced CPU time to the
+> userspace, allowing users to get a better understanding of their
+> hardware limits and can facilitate more informed workload distribution.
+> 
+> A new field 'ntime' is added to struct cgroup_base_stat as opposed to
+> struct task_cputime to minimize footprint.
 
+Patch looks fine to me but can you please do the followings?
 
-On 2024/8/16 09:55, Wang, Xiaolei wrote:
-> Ping ...
+- Add subsystem prefix to the patch titles. Look other commits for examples.
 
-I think, the more proper fix that Lucas hint
-is to modify the 'priv->shm_gfp_mask' variable
-in the|etnaviv_bind() function|. Say:
-|Use "priv->shm_gfp_mask = GFP_USER | __GFP_RETRY_MAYFAIL | __GFP_NOWARN;"|
+- Add Signed-off-by to both.
 
-instead of
-
-|"priv->shm_gfp_mask = ||GFP_HIGHUSER||| __GFP_RETRY_MAYFAIL | __GFP_NOWARN;|"
-
-
-Right?
-
-> thanks
-> xiaolei
->
-> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gpu.c b/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
-> index 7c7f97793ddd..0e6bdf2d028b 100644
-> --- a/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
-> +++ b/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
-> @@ -844,8 +844,10 @@ int etnaviv_gpu_init(struct etnaviv_gpu *gpu)
->            * request pages for our SHM backend buffers from the DMA32 zone to
->            * hopefully avoid performance killing SWIOTLB bounce buffering.
->            */
-> -       if (dma_addressing_limited(gpu->dev))
-> +       if (dma_addressing_limited(gpu->dev)) {
->                   priv->shm_gfp_mask |= GFP_DMA32;
-> +               priv->shm_gfp_mask &= ~__GFP_HIGHMEM;
-> +       }
->
->           /* Create buffer: */
->           ret = etnaviv_cmdbuf_init(priv->cmdbuf_suballoc, &gpu->buffer,
+Thanks.
 
 -- 
-Best regards,
-Sui
-
+tejun
 
