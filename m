@@ -1,165 +1,169 @@
-Return-Path: <linux-kernel+bounces-308959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC6D496644C
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 16:37:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 632F6966453
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 16:42:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79354282D5E
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 14:37:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDC9C283E99
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 14:42:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9C1C1B2EC8;
-	Fri, 30 Aug 2024 14:37:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E24B1B2ECD;
+	Fri, 30 Aug 2024 14:42:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UePCUnYy"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="VE2F64yp"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61B451B2510
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 14:37:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73CD91B1D65
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 14:41:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725028637; cv=none; b=IBQyGxm7vUBHphtZjNV1GRkoC/bQfM5RTxBboomCCLnYs41M/UZcSUEwFSRXIdxu4U78sRx/+G7DkAjLebvSRoZ+YQyhqAfPPxmH/yIhBgAujHJ7JZJD2gAmfubaxyt08rP4eHzphZc4/5+rQPpKdLXRdT8YTCjbyh9iZ8Te4bw=
+	t=1725028920; cv=none; b=FDSf7CmL6AELC04dcyCVY8BP7tNqayNwc1C8tm7og9T8CO8xovKp8iBlygbx6l7X8kY70ud8ABJ9O11oE+et1pIOiDxAkKU7XHBvfEpOESfDsjbdmyJFbV96ZoZSiV3mejQo7CkC/kYdl9nhHn7eJqTxJVB3Uky8NGOsUhwjCWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725028637; c=relaxed/simple;
-	bh=V3LYwBVfusskf5TId8gLHE1yuDhwHuX77AKmxh+YuxY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=BqPytGb1xaz8C82mW3nR6v0uqEyO1BRdnGEJSu8d6ao4JtjpDObi/cd1oIpyhOzzgjKsm7i7Mo+xMACk0fxRPLq6ZHu/lxKMaHbKcYoo9zeq+QhoipAVRZGxDubpwq7rXY+bDBXD3Y12g1JIOG+N4g6neSBSHMKnTC8dOSQ38fw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UePCUnYy; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725028634;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oXMp7uWH/N7bIuo3ya5a5ES0R5pph2PC7v2bOFZblKs=;
-	b=UePCUnYyXk+PFcNmjuZjGe7zVNvMLNmcSJeQRjtgPCjazAWSSbjS4pMuP7Ta0SIU36tm4D
-	MCfNgBWS94mbHNzde6uSIidMAhJcXmwWDb1MCB6UO4XfnnIFx9FuRJ315Mm5kMxxgLiIjW
-	QGHVf/44rWLrW24XkBd8N0ja05O0tmY=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-633-OahdVQjrPyeBJTbjceppDQ-1; Fri, 30 Aug 2024 10:37:13 -0400
-X-MC-Unique: OahdVQjrPyeBJTbjceppDQ-1
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-37493941575so1363431f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 07:37:12 -0700 (PDT)
+	s=arc-20240116; t=1725028920; c=relaxed/simple;
+	bh=aqoPT5D1ENl0ti1ADY6E5B0Gfn/Pns5uo4/sjOkHmi8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=n9MEvan5XUcAa3vH42mkXIUIVyEdqEzTZ63q4ToHr5gptLfo19Oi8YzbuEPpNP5ZMggOqccq+iGbDBLeK7tvRzauy6FgPxwRE31D16tDlXk+ia8otJOuOvOwumDn8YHpLn1itShjfRwbYS1S9afE8vbBoe0Z53ncJ3v/DbXK4C0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=VE2F64yp; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42bbd16fca8so5323095e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 07:41:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1725028916; x=1725633716; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=YMkK63StFSEj3t7KmBlixKLHPRFtUAQAc/1SVpQYMaI=;
+        b=VE2F64yp0mUta7f3by47HxlC0CW1NWu30m8XsAL9wCPPhbC5CbPKBUvOer4JYIkERT
+         JCpppiCAf+e8RRKtpe6WX7buaQzsA3bC+Dc12HGyMhd0V7kMGPI3CYEBqMi9U4Wok+L7
+         4KZVKtXK6+I+qofWLhbq6XjcMkgwnufS2SSJ1mmVKm5jsiIQLc2hGZ9hkpuqLdWjRj8Z
+         DQthTrag45UvXhCNNyOfXyHq+1sB/HJRn0EZA1sfR5wxxnt/8sywblVp+LNLPpazIcp1
+         o/hCfdIiVwu0kjS+iRa3XoDKV1t5hRUVUpq2IhipuxRcOfXGJAnKAVX41ISJHvN7HsOW
+         BKRg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725028632; x=1725633432;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oXMp7uWH/N7bIuo3ya5a5ES0R5pph2PC7v2bOFZblKs=;
-        b=tBtDnHF/CJLZKDktJBPrUh3g16TTr5Rrv880S5C272SumcUvcf5/z60DiNWGu54fiL
-         YOIVjm7owXdA/PgD7SY+lDxuGH67tFb2BT6PtFYUnN0xsKNnE567325Rtll55NnXdjJ6
-         UH2NmkPpXe3kNCAW8KBZszbFigiWJ6hiWwc/Nf9zGm5cDdTqwg4WhqHXSE+X1pyL9HoJ
-         hheE0sYVwtldNuFDScCqj5uYYsMFKI10S234clmsyj6gqIxlmqoCGwVxv9i89Z90Nfzu
-         ZbuiViFwnr7NzVBWbmM4De7F7KGuQTfYK9liB6DZX6dINnABDu3wYSI08Zptb/BzR0mF
-         UJQg==
-X-Forwarded-Encrypted: i=1; AJvYcCVw/zurtRaChLCn2rvSNQ3qfrUwQAL9gcgurVWceJbKvaFa8tNU5jHLTBEKs4BZfHX7MLCfzZ0PE0J/p+I=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0qJgWAlVdJgAAvIqHTFfU34KoXzGvvLPiKCmnqqvhQJ0VdbEw
-	HqDCkrT0e6ooECej58UqAgbSBZvqgaN8hCoLm7DcjMSBYtNs52WybbcNC6eUqIQIXHF3t6ro2W5
-	az1XMM3v1spSiYMrsj3GlBffOfsZemVN2X2B7uLilgNn9G2WVPXoLwvpkaXrpkw==
-X-Received: by 2002:adf:e105:0:b0:371:8a3a:680a with SMTP id ffacd0b85a97d-3749b56145amr4121126f8f.32.1725028631779;
-        Fri, 30 Aug 2024 07:37:11 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHFYgXNQ2yY6fOL1KrOlEnGq7ndk/i4ruj17NaJHBuCgglUICGU9LPO8teX4/pN12Jf+eJJPg==
-X-Received: by 2002:adf:e105:0:b0:371:8a3a:680a with SMTP id ffacd0b85a97d-3749b56145amr4121106f8f.32.1725028631239;
-        Fri, 30 Aug 2024 07:37:11 -0700 (PDT)
-Received: from fedora (g2.ign.cz. [91.219.240.8])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3749ef81146sm4175385f8f.82.2024.08.30.07.37.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Aug 2024 07:37:10 -0700 (PDT)
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Gerd Hoffmann <kraxel@redhat.com>, Paolo Bonzini <pbonzini@redhat.com>,
- kvm@vger.kernel.org, rcu@vger.kernel.org, linux-kernel@vger.kernel.org,
- Kevin Tian <kevin.tian@intel.com>, Yan Zhao <yan.y.zhao@intel.com>, Yiwei
- Zhang <zzyiwei@google.com>, Lai Jiangshan <jiangshanlai@gmail.com>, "Paul
- E. McKenney" <paulmck@kernel.org>, Josh Triplett <josh@joshtriplett.org>
-Subject: Re: [PATCH 5/5] KVM: VMX: Always honor guest PAT on CPUs that
- support self-snoop
-In-Reply-To: <87seumt89u.fsf@redhat.com>
-References: <20240309010929.1403984-1-seanjc@google.com>
- <20240309010929.1403984-6-seanjc@google.com> <877cbyuzdn.fsf@redhat.com>
- <vuwlkftomgsnzsywjyxw6rcnycg3bve3o53svvxg3vd6xpok7o@k4ktmx5tqtmz>
- <871q26unq8.fsf@redhat.com> <ZtHOr-kCqvCdUc_A@google.com>
- <87seumt89u.fsf@redhat.com>
-Date: Fri, 30 Aug 2024 16:37:10 +0200
-Message-ID: <87plpqt6uh.fsf@redhat.com>
+        d=1e100.net; s=20230601; t=1725028916; x=1725633716;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YMkK63StFSEj3t7KmBlixKLHPRFtUAQAc/1SVpQYMaI=;
+        b=w+l75q371HOiIp6tCXBtvGetQ0aLkcAbH7+zxdxCQhZYVBQRWjNlvktvFDnokUrOFW
+         lvw8r3WAUlaQchrVEa/4KLtIcWIzTj2+m+nbbzZUoRqOyJ9zpPqwrgDCFJxHeO1X0nGx
+         PBz3PRGzn5A7s23Akx9OsFPtFaiCQNsVy6ZrMhUXOUuVW6ensOLY4wPcZqfG2UFRrUFj
+         gqZLoNjveMJtUFUhyCD5Qs1jcaJI1pUSKmpqblXip3CpS6TMHX7ckIgix5lcM+nYbx35
+         oN4bFWqwBysPfb6O+hl5C1URhg6txceyYKT6E8bubZJzUxcSfh9XBwB9+zif9aBEoncL
+         5WSw==
+X-Forwarded-Encrypted: i=1; AJvYcCUkymp7p7Wz3A9aoguAlkiXQ318DvkhmZg7QFOlCI9pe2+xk98wLeNLTexzwKe/tH6giC/TzaDMy+5fHgU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUeH8K3vNlhL6JQU7jy8mcucTOaeaYh4XxwGgmsQgClzT0wz60
+	VptiNWrGwE5nwLBUKNGgg4taIlBVTABV/lkjV6V1Xr0sCRHEpRE4ZG9JvYGDmCg=
+X-Google-Smtp-Source: AGHT+IHAFajC0IWDt2mPBWlkJZ5+gerJhXD2edqigkulSWR24gj1LguIFBW9kc2K9b8oGlAGaxfihg==
+X-Received: by 2002:a05:600c:434a:b0:426:63b8:2cce with SMTP id 5b1f17b1804b1-42bb2a1abb9mr53933325e9.7.1725028915645;
+        Fri, 30 Aug 2024 07:41:55 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.144])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bb6df1066sm48148425e9.18.2024.08.30.07.41.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 30 Aug 2024 07:41:55 -0700 (PDT)
+Message-ID: <5f968f2a-012c-4b39-af78-1eafa483c9a0@tuxon.dev>
+Date: Fri, 30 Aug 2024 17:41:53 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/3] clk: renesas: rzg2l-cpg: Use GENPD_FLAG_* flags
+ instead of local ones
+Content-Language: en-US
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, wim@linux-watchdog.org,
+ linux@roeck-us.net, ulf.hansson@linaro.org,
+ linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
+ linux-pm@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20240828140602.1006438-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240828140602.1006438-2-claudiu.beznea.uj@bp.renesas.com>
+ <CAMuHMdX+Q99MvQRZcwGbk8F8SiAUzRU_t2QmRuO_6etAqqXskg@mail.gmail.com>
+ <8b6fc67d-5e07-4403-ac07-6ad0b9d61882@tuxon.dev>
+ <CAMuHMdUqVcojRoPAEuZ8a9Y-iHm4b185StD73FpQoRFsEiZ8oQ@mail.gmail.com>
+ <194e87f4-7eab-4bfb-833a-27fabd2d5205@tuxon.dev>
+ <CAMuHMdWKVfUn5Xy+vxT3puNT+AKLZtm7o=QBysWxfjk434yUJA@mail.gmail.com>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <CAMuHMdWKVfUn5Xy+vxT3puNT+AKLZtm7o=QBysWxfjk434yUJA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Vitaly Kuznetsov <vkuznets@redhat.com> writes:
+Hi, Geert,
 
-> Sean Christopherson <seanjc@google.com> writes:
->
->> On Fri, Aug 30, 2024, Vitaly Kuznetsov wrote:
->>> Gerd Hoffmann <kraxel@redhat.com> writes:
->>> 
->>> >> Necroposting!
->>> >> 
->>> >> Turns out that this change broke "bochs-display" driver in QEMU even
->>> >> when the guest is modern (don't ask me 'who the hell uses bochs for
->>> >> modern guests', it was basically a configuration error :-). E.g:
->>> >
->>> > qemu stdvga (the default display device) is affected too.
->>> >
->>> 
->>> So far, I was only able to verify that the issue has nothing to do with
->>> OVMF and multi-vcpu, it reproduces very well with
->>> 
->>> $ qemu-kvm -machine q35,accel=kvm,kernel-irqchip=split -name guest=c10s
->>> -cpu host -smp 1 -m 16384 -drive file=/var/lib/libvirt/images/c10s-bios.qcow2,if=none,id=drive-ide0-0-0
->>> -device ide-hd,bus=ide.0,unit=0,drive=drive-ide0-0-0,id=ide0-0-0,bootindex=1
->>> -vnc :0 -device VGA -monitor stdio --no-reboot
->>> 
->>> Comparing traces of working and broken cases, I couldn't find anything
->>> suspicious but I may had missed something of course. For now, it seems
->>> like a userspace misbehavior resulting in a segfault.
+On 30.08.2024 17:26, Geert Uytterhoeven wrote:
+> Hi Claudiu,
+> 
+> On Fri, Aug 30, 2024 at 4:07 PM claudiu beznea <claudiu.beznea@tuxon.dev> wrote:
+>> On 30.08.2024 11:06, Geert Uytterhoeven wrote:
+>>> On Fri, Aug 30, 2024 at 9:46 AM claudiu beznea <claudiu.beznea@tuxon.dev> wrote:
+>>>> On 29.08.2024 15:32, Geert Uytterhoeven wrote:
+>>>>> On Wed, Aug 28, 2024 at 4:06 PM Claudiu <claudiu.beznea@tuxon.dev> wrote:
+>>>>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>>>>>
+>>>>>> For watchdog PM domain it is necessary to provide GENPD_FLAG_IRQ_SAFE flag
+>>>>>> to be able to power on the watchdog PM domain from atomic context. For
+>>>>>> this, adjust the current infrastructure to be able to provide GENPD_FLAG_*
+>>>>>> for individual PM domains.
+>>>>>>
+>>>>>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>>
+>>>>>> --- a/drivers/clk/renesas/rzg2l-cpg.c
+>>>>>> +++ b/drivers/clk/renesas/rzg2l-cpg.c
+>>>
+>>>>>
+>>>>>>                 pd->id = info->pm_domains[i].id;
+>>>>>>                 pd->priv = priv;
+>>>>>>
+>>>>>> -               ret = rzg2l_cpg_pd_setup(pd, always_on);
+>>>>>> +               ret = rzg2l_cpg_pd_setup(pd, genpd_flags, always_on);
+>>>>>>                 if (ret)
+>>>>>>                         return ret;
+>>>>>
+>>>>> What about moving the conditional call to rzg2l_cpg_power_on()
+>>>>> below to rzg2l_cpg_pd_setup()? Then this function no longer needs
+>>>>> the always_on flag.
+>>>>
+>>>> That could be done but I think it will involve an extra power on/power off
+>>>> cycle for the unused domains.
+>>>
+>>> Still only to be done for the always-on domain, of course.
+>>> Anyway, up to you.
 >>
->> Guest userspace?
+>> I checked your proposal. If unconditional power on is going to be done for
+>> all the registered domains it may happen to register domains for which
+>> there are no enabled nodes in device tree and thus the domains to remain on
+>> (because the driver enables it under the hood and the genpd core doesn't
+>> know about it).
 >>
->
-> Yes? :-) As Gerd described, video memory is "mapped into userspace so
-> the wayland / X11 display server can software-render into the buffer"
-> and it seems that wayland gets something unexpected in this memory and
-> crashes. 
+>> With unconditional power on and the current DTSes the following domains
+>> remain on after booting with r9a08g045s33-smarc.dtb:
+>> - sdhi2
+>> - i2c2
+>> - i2c3
+>>
+>> as the domains are registered and powered (while registered) but the nodes
+>> are not enabled in DT.
+> 
+> To make it clear: I did not suggest doing an unconditional power-on.
+> I merely suggested moving the conditional power-on from
+> rzg2l_cpg_add_pm_domains() to rzg2l_cpg_pd_setup().
 
-Also, I don't know if it helps or not, but out of two hunks in
-377b2f359d1f, it is the vmx_get_mt_mask() one which brings the
-issue. I.e. the following is enough to fix things:
+Ah, I see. That can be done. Sorry for confusion.
 
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index f18c2d8c7476..733a0c45d1a6 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -7659,13 +7659,11 @@ u8 vmx_get_mt_mask(struct kvm_vcpu *vcpu, gfn_t gfn, bool is_mmio)
- 
-        /*
-         * Force WB and ignore guest PAT if the VM does NOT have a non-coherent
--        * device attached and the CPU doesn't support self-snoop.  Letting the
--        * guest control memory types on Intel CPUs without self-snoop may
--        * result in unexpected behavior, and so KVM's (historical) ABI is to
--        * trust the guest to behave only as a last resort.
-+        * device attached.  Letting the guest control memory types on Intel
-+        * CPUs may result in unexpected behavior, and so KVM's ABI is to trust
-+        * the guest to behave only as a last resort.
-         */
--       if (!static_cpu_has(X86_FEATURE_SELFSNOOP) &&
--           !kvm_arch_has_noncoherent_dma(vcpu->kvm))
-+       if (!kvm_arch_has_noncoherent_dma(vcpu->kvm))
-                return (MTRR_TYPE_WRBACK << VMX_EPT_MT_EPTE_SHIFT) | VMX_EPT_IPAT_BIT;
- 
-        return (MTRR_TYPE_WRBACK << VMX_EPT_MT_EPTE_SHIFT);
+Thank you,
+Claudiu Beznea
 
-
--- 
-Vitaly
-
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
 
