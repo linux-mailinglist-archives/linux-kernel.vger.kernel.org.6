@@ -1,238 +1,337 @@
-Return-Path: <linux-kernel+bounces-309126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9278C96667D
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 18:08:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 18DB2966679
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 18:08:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE42BB221A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 16:08:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 35628B21B23
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 16:08:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46D061B8E86;
-	Fri, 30 Aug 2024 16:08:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E51A1B81C3;
+	Fri, 30 Aug 2024 16:08:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Em0t3yBR"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="SR/9c5JA"
+Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89DA41B5EC2;
-	Fri, 30 Aug 2024 16:08:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15AAB4D8AE
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 16:08:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725034103; cv=none; b=VO+04gMULc1ZFQ4anmh5JpTDbRO7605TVs7UIpIrEG+d+7BPPnWq6HsXnxaBHvcHtCcZdqTtZMXE9cFLd/pK62BUBQZgypxyD/7UIq0lSPHpygq5KF5a6uNMZYd4Hbdn0Wbmw6CQBvfCkw+jqioTvhy9QuzJBZa1Cpcwgk2Pu/o=
+	t=1725034101; cv=none; b=F42cHGHVv/nKpL5bBvjZOhYc2hZUDqwZulGcRNZqjKZbacD13iInhEDj/kuQ6qoD4IdF89gRteKh8CcGE6ntkrHABtY5cVY+nxWbvhFhIPjhlTZDndEVX5r+uyyDtoTVWzrouqAYLd0eVwtyz4HS2iq5Ke3wYWy5R1ACFbnsnYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725034103; c=relaxed/simple;
-	bh=NQvkHbKFvCNmAk13O0Hw0+Go2GG2xCkOaQ+cBqqlySY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MTPynz9TZZ7gLF8LwKIPGRXWZ9Gt355h/L6E1yIllRO/qH9r+zSw3mgiAHBbBiqPLXEz98EWl1WGCHezPJzm1QyF5sNiw3x9h6A4KHmJoRrTm7YlAsVyuZUd6H0d62d52hpHAMC99NcTe/3/T0E+dF7nltWGwLQkJ/aW+jxOQzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Em0t3yBR; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725034102; x=1756570102;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=NQvkHbKFvCNmAk13O0Hw0+Go2GG2xCkOaQ+cBqqlySY=;
-  b=Em0t3yBRqOUmsfaPqA4IAQq8Q7ow5sL6oiubbBhZ8MSXW3VMFvKFlHSJ
-   0q676kWrPqEeORiM756nHYwTiagO1Edn6F8E/slxoRJFgvE820dgXlv0w
-   FyIQcrTtAExlgXCR78lK4XwfyvCMSrBbxb1FGkq806wO3AtAFDZwSmV1E
-   XD5pGE/czFbuV1i8BGcQZwQ7ddNprbBWQmgKuHF3mj4DO6pKORYyNCauB
-   WtlYY+UOPWsk/6jMO8t7OLZxZtoq2EnvCa1mN6QMXvdtjdhZbJhmDUXbG
-   o+cywhEkXllkyVToAGuLzE+aUtSHcWTLYITtOWQlgDQQtaXPHO0RILDo4
-   A==;
-X-CSE-ConnectionGUID: zYjzy1UES4OWZY7xxII6oQ==
-X-CSE-MsgGUID: DwiCuyqNTzC0w1aoRHk49Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11180"; a="34255326"
-X-IronPort-AV: E=Sophos;i="6.10,189,1719903600"; 
-   d="scan'208";a="34255326"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Aug 2024 09:08:21 -0700
-X-CSE-ConnectionGUID: dUUB7NMLS0i/oQh7OvxTUA==
-X-CSE-MsgGUID: LVikeV91R/i9tICoQsoktg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,189,1719903600"; 
-   d="scan'208";a="94674482"
-Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
-  by orviesa002.jf.intel.com with ESMTP; 30 Aug 2024 09:08:17 -0700
-Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sk4AY-0001cu-2r;
-	Fri, 30 Aug 2024 16:08:14 +0000
-Date: Sat, 31 Aug 2024 00:07:37 +0800
-From: kernel test robot <lkp@intel.com>
-To: Billy Tsai <billy_tsai@aspeedtech.com>, linus.walleij@linaro.org,
-	brgl@bgdev.pl, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, joel@jms.id.au, andrew@codeconstruct.com.au,
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org, BMC-SW@aspeedtech.com
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev
-Subject: Re: [PATCH v2 3/4] gpio: aspeed: Create llops to handle hardware
- access
-Message-ID: <202408302344.bCpCF6bu-lkp@intel.com>
-References: <20240830034047.2251482-4-billy_tsai@aspeedtech.com>
+	s=arc-20240116; t=1725034101; c=relaxed/simple;
+	bh=d7bW5ItJ77tkm4VSI99P2mukTBHVVYrpWlCNCSdu7SA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ehhuoYDp9iHtR3wsRQeuH2bSqSqJsy8vIAc7K5Mxw7RsBVMYV+9SmCNa+aXP4LWZFTM9LK/nq8qHHlXjgBC+Ik7xF3+F0AHk7WGyRfqaVnvFzBgthLt35f4oyD+ZDhjwKMPHv3PXWqbTzvdSaWZu3XePR7FNdHjVcs5MZRNATt0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=SR/9c5JA; arc=none smtp.client-ip=167.114.26.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
+	s=smtpout1; t=1725034096;
+	bh=d7bW5ItJ77tkm4VSI99P2mukTBHVVYrpWlCNCSdu7SA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=SR/9c5JA/ODFyClK/vXDthYPXr8mdiv6PwiJ4f9h4IZtNabaFYpY18Y4X00pcIIiK
+	 6l91Z+Bg5NlLCkGKWUgO7EhpoMz6Nb2qAvjNuMeCyivv6RWCvb9Gr7Aa+wNXfrYdhK
+	 80jWhUcDfp8GM9QxNun03ohi8SNnlGhOyC8F3QqFIHDUNYBPgz2kznn6puNWIh+kDo
+	 DbqZerm697r9pS+NDbNtoFIXqHzts+qx4HEFQJmtVvyFIK4nSKujldRxW/SqUtFK8s
+	 QqcREcZjOBZdkTXG8am5C/cFaH1qftS+nvnNteItoTlFJ57vbT5rMayINXsvHSon7C
+	 AAFYwAV0rURYA==
+Received: from [172.16.0.134] (96-127-217-162.qc.cable.ebox.net [96.127.217.162])
+	by smtpout.efficios.com (Postfix) with ESMTPSA id 4WwNNb6sT9z1JXT;
+	Fri, 30 Aug 2024 12:08:15 -0400 (EDT)
+Message-ID: <ab577998-946a-4844-a67f-60d17a31ed3c@efficios.com>
+Date: Fri, 30 Aug 2024 12:07:53 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240830034047.2251482-4-billy_tsai@aspeedtech.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 5/6] lib: benchmark bitmap sets binary operation find
+To: Yury Norov <yury.norov@gmail.com>
+Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>, linux-kernel@vger.kernel.org
+References: <20240829135926.926603-1-mathieu.desnoyers@efficios.com>
+ <20240829135926.926603-6-mathieu.desnoyers@efficios.com>
+ <ZtHptgtLhgpGQTga@yury-ThinkPad>
+Content-Language: en-US
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+In-Reply-To: <ZtHptgtLhgpGQTga@yury-ThinkPad>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Billy,
+On 2024-08-30 17:48, Yury Norov wrote:
+> On Thu, Aug 29, 2024 at 09:59:25AM -0400, Mathieu Desnoyers wrote:
+>> Benchmark the following bitmap find functions applying binary operations
+>> on sets of two bitmaps:
+>>
+>> - find_first_andnot_bit,
+>> - find_first_nor_bit,
+>> - find_next_andnot_bit,
+>> - find_next_nor_bit,
+>> - find_next_or_bit.
+>>
+>> Note that find_first_or_bit is not part of the current API, so it is not
+>> covered.
+> 
+> Can you please show how the test output looks on your system now? I'll
+> add that in commit message.
 
-kernel test robot noticed the following build warnings:
+Start testing find_bit() with random-filled bitmap
+find_next_bit:                  576314 ns, 163810 iterations
+find_next_zero_bit:             626847 ns, 163871 iterations
+find_last_bit:                  465050 ns, 163810 iterations
+find_nth_bit:                  2720718 ns,  16329 iterations
+find_first_bit:                1409431 ns,  16330 iterations
+find_first_and_bit:           15216406 ns,  40975 iterations
+find_next_and_bit:              324624 ns,  81708 iterations
+find_first_andnot_bit:           23856039 ns,  40955 iterations
+find_next_andnot_bit:              327734 ns,  82103 iterations
+find_first_nor_bit:           21911075 ns,  40956 iterations
+find_next_nor_bit:              345315 ns,  81919 iterations
+find_next_or_bit:              886338 ns, 245762 iterations
 
-[auto build test WARNING on brgl/gpio/for-next]
-[also build test WARNING on linus/master v6.11-rc5 next-20240830]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Start testing find_bit() with sparse bitmap
+find_next_bit:                    8870 ns,    656 iterations
+find_next_zero_bit:            1188951 ns, 327025 iterations
+find_last_bit:                    8380 ns,    656 iterations
+find_nth_bit:                  1110068 ns,    655 iterations
+find_first_bit:                 455799 ns,    656 iterations
+find_first_and_bit:               6521 ns,      2 iterations
+find_next_and_bit:                3540 ns,      2 iterations
+find_first_andnot_bit:             785844 ns,    655 iterations
+find_next_andnot_bit:                8950 ns,    655 iterations
+find_first_nor_bit:          338646832 ns, 326373 iterations
+find_next_nor_bit:             1264144 ns, 326372 iterations
+find_next_or_bit:               14020 ns,   1309 iterations
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Billy-Tsai/dt-bindings-gpio-aspeed-ast2400-gpio-Support-ast2700/20240830-114325
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gpio/for-next
-patch link:    https://lore.kernel.org/r/20240830034047.2251482-4-billy_tsai%40aspeedtech.com
-patch subject: [PATCH v2 3/4] gpio: aspeed: Create llops to handle hardware access
-config: i386-buildonly-randconfig-004-20240830 (https://download.01.org/0day-ci/archive/20240830/202408302344.bCpCF6bu-lkp@intel.com/config)
-compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240830/202408302344.bCpCF6bu-lkp@intel.com/reproduce)
+Relevant lscpu output:
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408302344.bCpCF6bu-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/gpio/gpio-aspeed.c:394:6: warning: variable 'copro' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
-     394 |         if (gpio->llops->copro_request)
-         |             ^~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/gpio/gpio-aspeed.c:399:6: note: uninitialized use occurs here
-     399 |         if (copro && gpio->llops->copro_release)
-         |             ^~~~~
-   drivers/gpio/gpio-aspeed.c:394:2: note: remove the 'if' if its condition is always true
-     394 |         if (gpio->llops->copro_request)
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     395 |                 copro = gpio->llops->copro_request(gpio, offset);
-   drivers/gpio/gpio-aspeed.c:391:12: note: initialize the variable 'copro' to silence this warning
-     391 |         bool copro;
-         |                   ^
-         |                    = 0
-   drivers/gpio/gpio-aspeed.c:415:6: warning: variable 'copro' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
-     415 |         if (gpio->llops->copro_request)
-         |             ^~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/gpio/gpio-aspeed.c:418:6: note: uninitialized use occurs here
-     418 |         if (copro && gpio->llops->copro_release)
-         |             ^~~~~
-   drivers/gpio/gpio-aspeed.c:415:2: note: remove the 'if' if its condition is always true
-     415 |         if (gpio->llops->copro_request)
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     416 |                 copro = gpio->llops->copro_request(gpio, offset);
-   drivers/gpio/gpio-aspeed.c:408:12: note: initialize the variable 'copro' to silence this warning
-     408 |         bool copro;
-         |                   ^
-         |                    = 0
-   drivers/gpio/gpio-aspeed.c:438:6: warning: variable 'copro' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
-     438 |         if (gpio->llops->copro_request)
-         |             ^~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/gpio/gpio-aspeed.c:443:6: note: uninitialized use occurs here
-     443 |         if (copro && gpio->llops->copro_release)
-         |             ^~~~~
-   drivers/gpio/gpio-aspeed.c:438:2: note: remove the 'if' if its condition is always true
-     438 |         if (gpio->llops->copro_request)
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     439 |                 copro = gpio->llops->copro_request(gpio, offset);
-   drivers/gpio/gpio-aspeed.c:431:12: note: initialize the variable 'copro' to silence this warning
-     431 |         bool copro;
-         |                   ^
-         |                    = 0
-   drivers/gpio/gpio-aspeed.c:502:6: warning: variable 'copro' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
-     502 |         if (gpio->llops->copro_request)
-         |             ^~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/gpio/gpio-aspeed.c:507:6: note: uninitialized use occurs here
-     507 |         if (copro && gpio->llops->copro_release)
-         |             ^~~~~
-   drivers/gpio/gpio-aspeed.c:502:2: note: remove the 'if' if its condition is always true
-     502 |         if (gpio->llops->copro_request)
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     503 |                 copro = gpio->llops->copro_request(gpio, offset);
-   drivers/gpio/gpio-aspeed.c:495:12: note: initialize the variable 'copro' to silence this warning
-     495 |         bool copro;
-         |                   ^
-         |                    = 0
-   drivers/gpio/gpio-aspeed.c:528:6: warning: variable 'copro' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
-     528 |         if (gpio->llops->copro_request)
-         |             ^~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/gpio/gpio-aspeed.c:533:6: note: uninitialized use occurs here
-     533 |         if (copro && gpio->llops->copro_release)
-         |             ^~~~~
-   drivers/gpio/gpio-aspeed.c:528:2: note: remove the 'if' if its condition is always true
-     528 |         if (gpio->llops->copro_request)
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     529 |                 copro = gpio->llops->copro_request(gpio, offset);
-   drivers/gpio/gpio-aspeed.c:517:12: note: initialize the variable 'copro' to silence this warning
-     517 |         bool copro;
-         |                   ^
-         |                    = 0
-   drivers/gpio/gpio-aspeed.c:589:6: warning: variable 'copro' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
-     589 |         if (gpio->llops->copro_request)
-         |             ^~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/gpio/gpio-aspeed.c:596:6: note: uninitialized use occurs here
-     596 |         if (copro && gpio->llops->copro_release)
-         |             ^~~~~
-   drivers/gpio/gpio-aspeed.c:589:2: note: remove the 'if' if its condition is always true
-     589 |         if (gpio->llops->copro_request)
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     590 |                 copro = gpio->llops->copro_request(gpio, offset);
-   drivers/gpio/gpio-aspeed.c:561:12: note: initialize the variable 'copro' to silence this warning
-     561 |         bool copro;
-         |                   ^
-         |                    = 0
-   drivers/gpio/gpio-aspeed.c:659:6: warning: variable 'copro' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
-     659 |         if (gpio->llops->copro_request)
-         |             ^~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/gpio/gpio-aspeed.c:664:6: note: uninitialized use occurs here
-     664 |         if (copro && gpio->llops->copro_release)
-         |             ^~~~~
-   drivers/gpio/gpio-aspeed.c:659:2: note: remove the 'if' if its condition is always true
-     659 |         if (gpio->llops->copro_request)
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     660 |                 copro = gpio->llops->copro_request(gpio, offset);
-   drivers/gpio/gpio-aspeed.c:656:12: note: initialize the variable 'copro' to silence this warning
-     656 |         bool copro;
-         |                   ^
-         |                    = 0
-   7 warnings generated.
+Architecture:             x86_64
+   CPU op-mode(s):         32-bit, 64-bit
+   Address sizes:          52 bits physical, 57 bits virtual
+   Byte Order:             Little Endian
+CPU(s):                   384
+   On-line CPU(s) list:    0-383
+Vendor ID:                AuthenticAMD
+   Model name:             AMD EPYC 9654 96-Core Processor
+     CPU family:           25
+     Model:                17
+     Thread(s) per core:   2
+     Core(s) per socket:   96
+     Socket(s):            2
+     Stepping:             1
+     Frequency boost:      enabled
+     CPU(s) scaling MHz:   100%
+     CPU max MHz:          3709.0000
+     CPU min MHz:          400.0000
+     BogoMIPS:             4799.80
+     Flags:                fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx mmxext
+                           fxsr_opt pdpe1gb rdtscp lm constant_tsc rep_good amd_lbr_v2 nopl xtopology nonstop_tsc cpuid extd_apicid aperfmperf rap
+                           l pni pclmulqdq monitor ssse3 fma cx16 pcid sse4_1 sse4_2 x2apic movbe popcnt aes xsave avx f16c rdrand lahf_lm cmp_leg
+                           acy svm extapic cr8_legacy abm sse4a misalignsse 3dnowprefetch osvw ibs skinit wdt tce topoext perfctr_core perfctr_nb
+                           bpext perfctr_llc mwaitx cpb cat_l3 cdp_l3 hw_pstate ssbd mba perfmon_v2 ibrs ibpb stibp ibrs_enhanced vmmcall fsgsbase
+                            bmi1 avx2 smep bmi2 erms invpcid cqm rdt_a avx512f avx512dq rdseed adx smap avx512ifma clflushopt clwb avx512cd sha_ni
+                            avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local user_shstk avx512_b
+                           f16 clzero irperf xsaveerptr rdpru wbnoinvd amd_ppin cppc arat npt lbrv svm_lock nrip_save tsc_scale vmcb_clean flushby
+                           asid decodeassists pausefilter pfthreshold avic v_vmsave_vmload vgif x2avic v_spec_ctrl vnmi avx512vbmi umip pku ospke
+                           avx512_vbmi2 gfni vaes vpclmulqdq avx512_vnni avx512_bitalg avx512_vpopcntdq la57 rdpid overflow_recov succor smca fsrm
+                            flush_l1d debug_swap
+Virtualization features:
+   Virtualization:         AMD-V
+Caches (sum of all):
+   L1d:                    6 MiB (192 instances)
+   L1i:                    6 MiB (192 instances)
+   L2:                     192 MiB (192 instances)
+   L3:                     768 MiB (24 instances)
+NUMA:
+   NUMA node(s):           24
+   NUMA node0 CPU(s):      0-7,192-199
+   NUMA node1 CPU(s):      8-15,200-207
+   NUMA node2 CPU(s):      16-23,208-215
+   NUMA node3 CPU(s):      24-31,216-223
+   NUMA node4 CPU(s):      32-39,224-231
+   NUMA node5 CPU(s):      40-47,232-239
+   NUMA node6 CPU(s):      48-55,240-247
+   NUMA node7 CPU(s):      56-63,248-255
+   NUMA node8 CPU(s):      64-71,256-263
+   NUMA node9 CPU(s):      72-79,264-271
+   NUMA node10 CPU(s):     80-87,272-279
+   NUMA node11 CPU(s):     88-95,280-287
+   NUMA node12 CPU(s):     96-103,288-295
+   NUMA node13 CPU(s):     104-111,296-303
+   NUMA node14 CPU(s):     112-119,304-311
+   NUMA node15 CPU(s):     120-127,312-319
+   NUMA node16 CPU(s):     128-135,320-327
+   NUMA node17 CPU(s):     136-143,328-335
+   NUMA node18 CPU(s):     144-151,336-343
+   NUMA node19 CPU(s):     152-159,344-351
+   NUMA node20 CPU(s):     160-167,352-359
+   NUMA node21 CPU(s):     168-175,360-367
+   NUMA node22 CPU(s):     176-183,368-375
+   NUMA node23 CPU(s):     184-191,376-383
+Vulnerabilities:
+   Gather data sampling:   Not affected
+   Itlb multihit:          Not affected
+   L1tf:                   Not affected
+   Mds:                    Not affected
+   Meltdown:               Not affected
+   Mmio stale data:        Not affected
+   Reg file data sampling: Not affected
+   Retbleed:               Not affected
+   Spec rstack overflow:   Vulnerable
+   Spec store bypass:      Vulnerable
+   Spectre v1:             Vulnerable: __user pointer sanitization and usercopy barriers only; no swapgs barriers
+   Spectre v2:             Vulnerable; IBPB: disabled; STIBP: disabled; PBRSB-eIBRS: Not affected; BHI: Not affected
+   Srbds:                  Not affected
+   Tsx async abort:        Not affected
 
 
-vim +394 drivers/gpio/gpio-aspeed.c
 
-   385	
-   386	static void aspeed_gpio_set(struct gpio_chip *gc, unsigned int offset,
-   387				    int val)
-   388	{
-   389		struct aspeed_gpio *gpio = gpiochip_get_data(gc);
-   390		unsigned long flags;
-   391		bool copro;
-   392	
-   393		raw_spin_lock_irqsave(&gpio->lock, flags);
- > 394		if (gpio->llops->copro_request)
-   395			copro = gpio->llops->copro_request(gpio, offset);
-   396	
-   397		__aspeed_gpio_set(gc, offset, val);
-   398	
-   399		if (copro && gpio->llops->copro_release)
-   400			gpio->llops->copro_release(gpio, offset);
-   401		raw_spin_unlock_irqrestore(&gpio->lock, flags);
-   402	}
-   403	
+> 
+>>
+>> Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+>> Cc: Yury Norov <yury.norov@gmail.com>
+>> Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+>> ---
+>>   lib/find_bit_benchmark.c | 93 ++++++++++++++++++++++++++++++++++++++++
+>>   1 file changed, 93 insertions(+)
+>>
+>> diff --git a/lib/find_bit_benchmark.c b/lib/find_bit_benchmark.c
+>> index aee2ebb6b3cd..3b16254dec23 100644
+>> --- a/lib/find_bit_benchmark.c
+>> +++ b/lib/find_bit_benchmark.c
+>> @@ -70,6 +70,44 @@ static int __init test_find_first_and_bit(void *bitmap, const void *bitmap2, uns
+>>   	return 0;
+>>   }
+>>   
+>> +static int __init test_find_first_andnot_bit(void *bitmap, const void *bitmap2, unsigned long len)
+>> +{
+>> +	static DECLARE_BITMAP(cp, BITMAP_LEN) __initdata;
+>> +	unsigned long i, cnt;
+>> +	ktime_t time;
+>> +
+>> +	bitmap_copy(cp, bitmap, BITMAP_LEN);
+>> +
+>> +	time = ktime_get();
+>> +	for (cnt = i = 0; i < len; cnt++) {
+>> +		i = find_first_andnot_bit(cp, bitmap2, len);
+>> +		__clear_bit(i, cp);
+>> +	}
+>> +	time = ktime_get() - time;
+>> +	pr_err("find_first_andnot_bit: %18llu ns, %6ld iterations\n", time, cnt);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int __init test_find_first_nor_bit(void *bitmap, const void *bitmap2, unsigned long len)
+>> +{
+>> +	static DECLARE_BITMAP(cp, BITMAP_LEN) __initdata;
+>> +	unsigned long i, cnt;
+>> +	ktime_t time;
+>> +
+>> +	bitmap_copy(cp, bitmap, BITMAP_LEN);
+>> +
+>> +	time = ktime_get();
+>> +	for (cnt = i = 0; i < len; cnt++) {
+>> +		i = find_first_nor_bit(cp, bitmap2, len);
+>> +		__set_bit(i, cp);
+>> +	}
+>> +	time = ktime_get() - time;
+>> +	pr_err("find_first_nor_bit: %18llu ns, %6ld iterations\n", time, cnt);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>>   static int __init test_find_next_bit(const void *bitmap, unsigned long len)
+>>   {
+>>   	unsigned long i, cnt;
+>> @@ -148,6 +186,51 @@ static int __init test_find_next_and_bit(const void *bitmap,
+>>   	return 0;
+>>   }
+>>   
+>> +static int __init test_find_next_andnot_bit(const void *bitmap,
+>> +		const void *bitmap2, unsigned long len)
+>> +{
+>> +	unsigned long i, cnt;
+>> +	ktime_t time;
+>> +
+>> +	time = ktime_get();
+>> +	for (cnt = i = 0; i < BITMAP_LEN; cnt++)
+>> +		i = find_next_andnot_bit(bitmap, bitmap2, BITMAP_LEN, i + 1);
+>> +	time = ktime_get() - time;
+>> +	pr_err("find_next_andnot_bit:  %18llu ns, %6ld iterations\n", time, cnt);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int __init test_find_next_nor_bit(const void *bitmap,
+>> +		const void *bitmap2, unsigned long len)
+>> +{
+>> +	unsigned long i, cnt;
+>> +	ktime_t time;
+>> +
+>> +	time = ktime_get();
+>> +	for (cnt = i = 0; i < BITMAP_LEN; cnt++)
+>> +		i = find_next_nor_bit(bitmap, bitmap2, BITMAP_LEN, i + 1);
+>> +	time = ktime_get() - time;
+>> +	pr_err("find_next_nor_bit:  %18llu ns, %6ld iterations\n", time, cnt);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int __init test_find_next_or_bit(const void *bitmap,
+>> +		const void *bitmap2, unsigned long len)
+>> +{
+>> +	unsigned long i, cnt;
+>> +	ktime_t time;
+>> +
+>> +	time = ktime_get();
+>> +	for (cnt = i = 0; i < BITMAP_LEN; cnt++)
+>> +		i = find_next_or_bit(bitmap, bitmap2, BITMAP_LEN, i + 1);
+>> +	time = ktime_get() - time;
+>> +	pr_err("find_next_or_bit:  %18llu ns, %6ld iterations\n", time, cnt);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>>   static int __init find_bit_test(void)
+>>   {
+>>   	unsigned long nbits = BITMAP_LEN / SPARSE;
+>> @@ -169,6 +252,11 @@ static int __init find_bit_test(void)
+>>   	test_find_first_bit(bitmap, BITMAP_LEN / 10);
+>>   	test_find_first_and_bit(bitmap, bitmap2, BITMAP_LEN / 2);
+>>   	test_find_next_and_bit(bitmap, bitmap2, BITMAP_LEN);
+>> +	test_find_first_andnot_bit(bitmap, bitmap2, BITMAP_LEN / 2);
+>> +	test_find_next_andnot_bit(bitmap, bitmap2, BITMAP_LEN);
+>> +	test_find_first_nor_bit(bitmap, bitmap2, BITMAP_LEN / 2);
+>> +	test_find_next_nor_bit(bitmap, bitmap2, BITMAP_LEN);
+>> +	test_find_next_or_bit(bitmap, bitmap2, BITMAP_LEN);
+>>   
+>>   	pr_err("\nStart testing find_bit() with sparse bitmap\n");
+>>   
+>> @@ -187,6 +275,11 @@ static int __init find_bit_test(void)
+>>   	test_find_first_bit(bitmap, BITMAP_LEN);
+>>   	test_find_first_and_bit(bitmap, bitmap2, BITMAP_LEN);
+>>   	test_find_next_and_bit(bitmap, bitmap2, BITMAP_LEN);
+>> +	test_find_first_andnot_bit(bitmap, bitmap2, BITMAP_LEN);
+>> +	test_find_next_andnot_bit(bitmap, bitmap2, BITMAP_LEN);
+>> +	test_find_first_nor_bit(bitmap, bitmap2, BITMAP_LEN);
+>> +	test_find_next_nor_bit(bitmap, bitmap2, BITMAP_LEN);
+>> +	test_find_next_or_bit(bitmap, bitmap2, BITMAP_LEN);
+>>   
+>>   	/*
+>>   	 * Everything is OK. Return error just to let user run benchmark
+>> -- 
+>> 2.39.2
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
+
 
