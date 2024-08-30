@@ -1,134 +1,173 @@
-Return-Path: <linux-kernel+bounces-308456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C12FF965D27
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 11:40:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11C39965D29
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 11:41:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E0F1280FD6
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 09:40:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 072D01C2327F
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 09:41:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5AEC171E68;
-	Fri, 30 Aug 2024 09:40:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5F7017ADF8;
+	Fri, 30 Aug 2024 09:40:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Mngs+Txj"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="LYRJvtsf"
+Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 137991B813;
-	Fri, 30 Aug 2024 09:40:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F7CB4D8B1
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 09:40:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725010844; cv=none; b=tNHoYYc4tWdjivHJVfeGSUOnnabgxPYyd85OyN5AtVclINesfuIOTBrKiADggKllO5/kaImbkvTCksARcfuxHbfenCMYQ8dvqmwEXbDO5Tltf8ypeLoipv92Z/P2YOvX2k671SAQEWuuluWq2X12oCQRdzUhq33rogqL5RAcaqE=
+	t=1725010846; cv=none; b=KRLJ+LrzHq3PdX9lgflznn8s3SF4tBuRSZNFKW5v7c9tcGZRyIvVy0tB3H+SZauawa8TsNLxOl5bIWgS3lZSiELwA00CQIBe24/xx4/uQ5+2dsfcpZ2zPDPHJrdNt2CPfEM84Vv2oAJDoPRM51CViAZs6cxESQsRdDGOAOSijrw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725010844; c=relaxed/simple;
-	bh=VeRHZcyQioypojD697TKsqrUCI2DJnsnCk+RuNMdkqM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pQSLfGmxMeRZ1ffov9ehTqSVDlWxa1Iuewj/TM1jBmfzVnqcAy/4s9aYMZ2XP0e1pTN4DSwnjbpQhylS1lWYQbWlq01/a5G0tuThsIFMZZClJnuJRn3CSaQ3X3rmTcUbLUZ3/Oec0tgNMiCmQ1uerzT+zP8uNbg+68rfgu3RZCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Mngs+Txj; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725010842; x=1756546842;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=VeRHZcyQioypojD697TKsqrUCI2DJnsnCk+RuNMdkqM=;
-  b=Mngs+TxjlF9nm6rkDes1mY5rVFDtzydq7DNeOL37yCX0yK8lznHiN0Pr
-   VktffZqYirewu2n+0SOMNlHX6C6enWb0tXYtTxQ/+SPJdJbmd0tCttd9c
-   Hjc8vIBhypfcQCwBn9KOTK90MHqLw6Un+WJ4CLm5y+FRD2kpN1f4XvxP2
-   zHdvfP5a1kq/wABx557j2EIzKoaF11tzL7PepP8uOf+a0rT42D3cx9YAw
-   WCogVUZFZfvaXqdGEf6p8TNkOAOT9Yqwia/e7aHy2wM7idMa6mjFxHJkT
-   CAE1L3Yu7cucXKZWjZEs32shR1lygMvDxKnYP4anVB21jThp73FIqg+3+
-   Q==;
-X-CSE-ConnectionGUID: zVv4eHprSNCh1Cn1ikGj/Q==
-X-CSE-MsgGUID: 6ZhCjGWdRaasu9aOev8fNw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11179"; a="26540850"
-X-IronPort-AV: E=Sophos;i="6.10,188,1719903600"; 
-   d="scan'208";a="26540850"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Aug 2024 02:40:41 -0700
-X-CSE-ConnectionGUID: fHGeEDbHS1qoGB2b9ouMvQ==
-X-CSE-MsgGUID: lVfD84pxRcSqI86ah845aQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,188,1719903600"; 
-   d="scan'208";a="94581473"
-Received: from sschumil-mobl2.ger.corp.intel.com (HELO tlindgre-MOBL1) ([10.245.246.63])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Aug 2024 02:40:36 -0700
-Date: Fri, 30 Aug 2024 12:40:31 +0300
-From: Tony Lindgren <tony.lindgren@linux.intel.com>
-To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-Cc: "seanjc@google.com" <seanjc@google.com>,
-	"Huang, Kai" <kai.huang@intel.com>,
-	"Li, Xiaoyao" <xiaoyao.li@intel.com>,
-	"isaku.yamahata@gmail.com" <isaku.yamahata@gmail.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"Zhao, Yan Y" <yan.y.zhao@intel.com>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"pbonzini@redhat.com" <pbonzini@redhat.com>,
-	"nik.borisov@suse.com" <nik.borisov@suse.com>,
-	"sean.j.christopherson@intel.com" <sean.j.christopherson@intel.com>,
-	"Wang, Wei W" <wei.w.wang@intel.com>,
-	"Yamahata, Isaku" <isaku.yamahata@intel.com>
-Subject: Re: [PATCH 13/25] KVM: TDX: create/destroy VM structure
-Message-ID: <ZtGTj40bKDVss_Mv@tlindgre-MOBL1>
-References: <20240812224820.34826-1-rick.p.edgecombe@intel.com>
- <20240812224820.34826-14-rick.p.edgecombe@intel.com>
- <e7c16241-100a-4830-9628-65edb44ca78d@suse.com>
- <850ef710eac95a5c36863c94e1b31a8090eb8a2a.camel@intel.com>
- <ZsV9qouTem-ynGJA@tlindgre-MOBL1>
- <0e283ec8bfee66c01f49529f924a0a8c43d22657.camel@intel.com>
+	s=arc-20240116; t=1725010846; c=relaxed/simple;
+	bh=hzbU49Sq3FhZCW5U8bGXiDSV2SwH/h9uDVxO3w2q3Ao=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gk6cOFSQWv334MMovPgwwOkNoPkqzhsNxKzqLgQ1rc+TfgthR+1tKOf48IeTqwi62Jhc907szbu94G4p2TmUANs/h8eNUhgaAPxOQKHZJt4wfTRQZ7JBT9j6Lgr877AJK9FpXHWILsJtdLtPRfsuO4UGAxe4gjbGcUaghXkts3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=LYRJvtsf; arc=none smtp.client-ip=115.124.30.118
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1725010841; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=NTWTxWBlbt/PspruXxyx6IIkE+rfvDFhUTVl3u6Gibc=;
+	b=LYRJvtsf/kj1WWRr76kj5+OP0dgxzIBjvb0ADYq2IIh15zE8lgCiUMKeYeUdBZbYC4uFGmon+5FHEW17MgBVGuIGZZjsMdMZ7a75krzQxfz9KzLg8MRfZ92PE3TJ3Utbw8BCdWTMou2T3N4wweHT8SqgZ7k3W+tzk3hzqnYWEwI=
+Received: from 30.221.128.136(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0WDwWZaN_1725010839)
+          by smtp.aliyun-inc.com;
+          Fri, 30 Aug 2024 17:40:40 +0800
+Message-ID: <07dea72e-8b93-4095-9347-4ff765a2539d@linux.alibaba.com>
+Date: Fri, 30 Aug 2024 17:40:39 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <0e283ec8bfee66c01f49529f924a0a8c43d22657.camel@intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] ocfs2: fix null-ptr-deref when journal load failed.
+To: Julian Sun <sunjunchao2870@gmail.com>, ocfs2-devel@lists.linux.dev
+Cc: lbec@evilplan.org, mark@fasheh.com,
+ syzbot+05b9b39d8bdfe1a0861f@syzkaller.appspotmail.com,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Heming Zhao <heming.zhao@suse.com>
+References: <20240823083150.17590-1-sunjunchao2870@gmail.com>
+Content-Language: en-US
+From: Joseph Qi <joseph.qi@linux.alibaba.com>
+In-Reply-To: <20240823083150.17590-1-sunjunchao2870@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Aug 21, 2024 at 04:52:14PM +0000, Edgecombe, Rick P wrote:
-> On Wed, 2024-08-21 at 08:39 +0300, Tony Lindgren wrote:
-> > > Hmm, we would have to make SEAMCALLs to spin on that lock, where as mutexes
-> > > can
-> > > sleep. I suspect that is where it came from. But we are trying to make the
-> > > code
-> > > simple and obviously correct and add optimizations later. This might fit
-> > > that
-> > > pattern, especially since it is just used during VM creation and teardown.
-> > 
-> > For handling the busy retries for SEAMCALL callers, we could just use
-> > iopoll.h read_poll_timeout(). I think it can handle toggling the resume
-> > bit while looping, need to test that though. See for example the
-> > smp_func_do_phymem_cache_wb() for toggling the resume variable.
+
+
+On 8/23/24 4:31 PM, Julian Sun wrote:
+> During the mounting process, if journal_reset() fails
+> because of too short journal, then lead to
+> jbd2_journal_load() fails with NULL j_sb_buffer.
+> Subsequently, ocfs2_journal_shutdown() calls
+> jbd2_journal_flush()->jbd2_cleanup_journal_tail()->
+> __jbd2_update_log_tail()->jbd2_journal_update_sb_log_tail()
+> ->lock_buffer(journal->j_sb_buffer), resulting in a
+> null-pointer dereference error.
 > 
-> Nice. It seems worth trying to me.
+> To resolve this issue, a new state OCFS2_JOURNAL_INITED
+> has been introduced to replace the previous functionality
+> of OCFS2_JOURNAL_LOADED, the original OCFS2_JOURNAL_LOADED
+> is only set when ocfs2_journal_load() is successful.
+> The jbd2_journal_flush() function is allowed to be called
+> only when this flag is set. The logic here is that if the
+> journal has even not been successfully loaded, there is
+> no need to flush the journal.
+> 
+> Link: https://syzkaller.appspot.com/bug?extid=05b9b39d8bdfe1a0861f
+> Reported-by: syzbot+05b9b39d8bdfe1a0861f@syzkaller.appspotmail.com
+> Signed-off-by: Julian Sun <sunjunchao2870@gmail.com>
+> ---
+>  fs/ocfs2/journal.c | 9 ++++++---
+>  fs/ocfs2/journal.h | 1 +
+>  2 files changed, 7 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/ocfs2/journal.c b/fs/ocfs2/journal.c
+> index 530fba34f6d3..da0ffcc5de0a 100644
+> --- a/fs/ocfs2/journal.c
+> +++ b/fs/ocfs2/journal.c
+> @@ -968,7 +968,7 @@ int ocfs2_journal_init(struct ocfs2_super *osb, int *dirty)
+>  
+>  	ocfs2_set_journal_params(osb);
+>  
+> -	journal->j_state = OCFS2_JOURNAL_LOADED;
+> +	journal->j_state = OCFS2_JOURNAL_INITED;
+>  
+>  	status = 0;
+>  done:
+> @@ -1039,6 +1039,7 @@ void ocfs2_journal_shutdown(struct ocfs2_super *osb)
+>  	int status = 0;
+>  	struct inode *inode = NULL;
+>  	int num_running_trans = 0;
+> +	enum ocfs2_journal_state state;
+>  
+>  	BUG_ON(!osb);
+>  
+> @@ -1047,8 +1048,9 @@ void ocfs2_journal_shutdown(struct ocfs2_super *osb)
+>  		goto done;
+>  
+>  	inode = journal->j_inode;
+> +	state = journal->j_state;
+>  
+> -	if (journal->j_state != OCFS2_JOURNAL_LOADED)
+> +	if (state != OCFS2_JOURNAL_INITED && state != OCFS2_JOURNAL_LOADED)
+>  		goto done;
+>  
+>  	/* need to inc inode use count - jbd2_journal_destroy will iput. */
+> @@ -1076,7 +1078,7 @@ void ocfs2_journal_shutdown(struct ocfs2_super *osb)
+>  
+>  	BUG_ON(atomic_read(&(osb->journal->j_num_trans)) != 0);
+>  
+> -	if (ocfs2_mount_local(osb)) {
+> +	if (ocfs2_mount_local(osb) && state == OCFS2_JOURNAL_LOADED) {
 
-To recap on this, using iopoll for smp_func_do_phymem_cache_wb() would look like:
+The only intent of the new introduced state is to identify if journal is
+truly loaded or not.
+So it seems that the simplest way to fix this is just check JBD2_LOADED
+here.
 
-static void smp_func_do_phymem_cache_wb(void *unused)
-{
-	u64 status = 0;
-	int err;
-
-	err = read_poll_timeout_atomic(tdh_phymem_cache_wb, status,
-				       status != TDX_INTERRUPTED_RESUMABLE,
-				       1, 1000, 0, !!status);
-	if (WARN_ON_ONCE(err)) {
-		pr_err("TDH_PHYMEM_CACHE_WB timed out: 0x%llx\n", status);
-		return;
-	}
+if (ocfs2_mount_local(osb) &&
+    (journal->j_journal->j_flags & JBD2_LOADED)) {
 	...
 }
 
-For the retry flag toggling with the !!status, I think it's best to add a TDX
-specific tdx_read_poll_timeout_atomic() macro.
+BTW, could you please also replace 'osb->journal->j_num_trans' to
+'journal->j_num_trans'?
 
-Regards,
+>  		jbd2_journal_lock_updates(journal->j_journal);
+>  		status = jbd2_journal_flush(journal->j_journal, 0);
+>  		jbd2_journal_unlock_updates(journal->j_journal);
+> @@ -1174,6 +1176,7 @@ int ocfs2_journal_load(struct ocfs2_journal *journal, int local, int replayed)
+>  		}
+>  	} else
+>  		osb->commit_task = NULL;
+> +	journal->j_state = OCFS2_JOURNAL_LOADED;
 
-Tony
+It seems that this has to be moved just after jbd2_journal_load().
+Anyway, I don't think we have to introduce a new state. See above.
+
+Joseph
+
+>  
+>  done:
+>  	return status;
+> diff --git a/fs/ocfs2/journal.h b/fs/ocfs2/journal.h
+> index e3c3a35dc5e0..a80f76a8fa0e 100644
+> --- a/fs/ocfs2/journal.h
+> +++ b/fs/ocfs2/journal.h
+> @@ -15,6 +15,7 @@
+>  
+>  enum ocfs2_journal_state {
+>  	OCFS2_JOURNAL_FREE = 0,
+> +	OCFS2_JOURNAL_INITED,
+>  	OCFS2_JOURNAL_LOADED,
+>  	OCFS2_JOURNAL_IN_SHUTDOWN,
+>  };
 
