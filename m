@@ -1,190 +1,192 @@
-Return-Path: <linux-kernel+bounces-307856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36C77965403
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 02:33:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E11BE96542F
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 02:44:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5589C1C22511
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 00:33:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A4D728521C
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 00:44:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 154344A24;
-	Fri, 30 Aug 2024 00:33:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4829E6FB8;
+	Fri, 30 Aug 2024 00:44:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Y/mPb8MP"
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="lNvWH0bD"
+Received: from sonic312-31.consmr.mail.ne1.yahoo.com (sonic312-31.consmr.mail.ne1.yahoo.com [66.163.191.212])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A053623B1
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 00:33:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E782A567F
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 00:44:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.191.212
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724978020; cv=none; b=LjNHcaS8V5V3u5pxZSOO1DAE+tf4lv0xTXsWYKboeNduPBzTZiJ6UzCq5Msidp0Winm0gnmv+9e/VlaodOOFF5Eknf9Q5oGqyRsOKiMLRkqLdM7vWWdopSG9EopM/kuEZ8ZvslL+Z4yoEZnMbDxu71fyatII9s1aUO6q4EiU09E=
+	t=1724978670; cv=none; b=iE8CWGyk9zaWoU5aUw4z9qx8+aph3vyStzOTRnx1OrwGTZXgtCbdPY/bgGTYrDt9UQvrDATJKPu0ACCbFpYXYuqKnmxplx3S88p+b6OLxEtKG/nmKTKaXuRgzmb2eVfwFwkfW/nAHR6HIUUwgwPw2epe5RA7JTybJWkJbjm0bR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724978020; c=relaxed/simple;
-	bh=SH85gWPyWDBMrPTxg5hwF9eFmgdFespsOtsowukOS9M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cQpVtPUNgmyjmOJDRmPLAtnbsTuGx9q6XOrtP139DNLNWQJt7PUz73Xl3IYLl0mlScdA3BAMxR+1V4WxmpNM80SJ+ACcCNvomiRra85bQLbtJgnImVco8dFZQ3XbITcIsxp6yZ1U0KS9dKm1K/QvdQh0UapGvbs892r04+ZYLyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Y/mPb8MP; arc=none smtp.client-ip=209.85.128.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-6ca1d6f549eso14984697b3.0
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 17:33:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724978017; x=1725582817; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=v0c5SIq1ErU8LqTXRTvzlDlvgCjUaMFsATO9CN846VQ=;
-        b=Y/mPb8MPTl65Z1Otvjjg8QrPKfmi9jSRHvdEgOC4zgsd4p7GjDnZPPK+nAl+fa5M2v
-         bxhTKYv8lTTavySyVmlsRerzHbY1ce40NVdgo6wvWBz69J1qSl6HWkyXCgLXEfo+PjmD
-         xtvpEXcJhpwWry7RF3rd4dmzrrX9GRVBp44gvGfgyU/o8cFBOWvgBzs7bCk/9qDus6Au
-         XWBUC+YMRPKEknZksVMA7thsO627YTW90nPl48XxIbrY0TJ2av0q4mhXczMBpR9vwtSL
-         GjsJn9jeTZbe84C0MpI//f6LPy7vWMONAUE4IEJ8+aIniS0H8M01TMdA20d9YSAAX9ss
-         oPtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724978017; x=1725582817;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=v0c5SIq1ErU8LqTXRTvzlDlvgCjUaMFsATO9CN846VQ=;
-        b=Uyki8ckwWYmzPZNYMqHINaQahq5Vm5d0J/k3mQ0R0zGlbk/D92a8L4IfOCEmxmh+pw
-         mTVRjcvROW/XN7iu/zGIPgPxOga6GMj1vlMh13SHjoro3Mh6vkDTsNJEkM74mLkhwHds
-         3OfUsA1tJapOH3Aom0vp3/Ff3L+rPlj1lkDhtbGqcQNm4NpMFEjttPUeaDa79LlF7nji
-         fgnyTA9fN8PRE6L2K4i5XqfijwW9xXLOaPzrZNQSBf/LBHUj1nhKU50cpEGsQwYd2Wwy
-         yBSmG2qmq6kq8HifKapx/c+mEXonOdfj2IKESxht5+OEFgqlKsvGohE46YYXEAOjYx4I
-         kLxg==
-X-Forwarded-Encrypted: i=1; AJvYcCU92eSeCbqNl3VDfjxt1AbmadWtxZvlkrm8LfvUAq5TEUzFr/ckwwVTDaqq6CZwpLjhcqGbsuyc/rjBupE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyAI4tDQTg8iSVuZUoVNvVcCY5EeTIM5JYB5X+ShIFGl5jTU8Sl
-	TDaqY1OzRLpsWZl7mcHUKIlncbmDRtbNsHR3WOKReXBBv9jsC0Gj6jY5svT+jZ2oDwfjxpevyjE
-	+eU1K3pq1BZJJkBkZ5H+tmBXeKbgSvT/hjAlx
-X-Google-Smtp-Source: AGHT+IE56ditvMsqd+EwyV0AwwWQn10JX3FwGZqO74Otl79fYNdQirjfyiEfOM48/ZWOjAG0+PeTvxcA3jfyHAIhk/4=
-X-Received: by 2002:a05:690c:f84:b0:62c:e6c0:e887 with SMTP id
- 00721157ae682-6d40d88eabfmr4560677b3.9.1724978017312; Thu, 29 Aug 2024
- 17:33:37 -0700 (PDT)
+	s=arc-20240116; t=1724978670; c=relaxed/simple;
+	bh=uBf0mBIUv1rjOA94/InHCZo+azAEq2EXToYV0dHTVXU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:References; b=ZZoSXYiln1Dj6RKIvtNXuP2nk4NrzYEBCax7iuw8QocQSim6FXnsusRh4ROqMP2mw5Jexx8i3W61sg0YI+PD3e6+OUdwVbleoH3TZ878PM1QbB+UA5JGumtaAVGFgT2aWIrpT2jcSizPu+TYjtSmCvs3mS2g4CpAwZYrKYgqv7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=lNvWH0bD; arc=none smtp.client-ip=66.163.191.212
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1724978668; bh=ZdBhIYEn/EPdtiJut86o4A8qrqlJM345imzubnSFQQg=; h=From:To:Cc:Subject:Date:References:From:Subject:Reply-To; b=lNvWH0bDU2SgdvbB4jElxM2RvObI/9mq0Cy4z86trxVFSJSvUBpNwObBYQi20AcRsHJn+huAcuQ/Dxsy5n5MIisPdAJiOf2rOwMk1xeYXhY62UBS7cqF7nE6zWSKBAy2bohrA8440/orjC0az91PfUT624CYDrQFOfrHRWwqwibL3lUORJrHHA6NZMNi6g0wBlO7xSIyipejzxkIx6F8cPGUE+0RLDsNJQdJURjF+GZu/stoit3tKlzVTuj+kaCcL7ItOlp6n1NBkCuzw0vMZVKhDRWaqHpEpIHVM1zsbY+1XO47rBsha9oo8EOlbUYU28224sY0FitSBFtJAmvQ6A==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1724978668; bh=kM8aAHikVUiNKwWHginQd/xyI+nBRiaNP7JWRKRJo90=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=F2j8r/UTI36D9o2w8pAXkaEhh0PedDuEKZAQ4ZapxufZapyQxE4U6bYxSqmi4BHVOkL9OQYjc7ug/d+6sy50NIbZKMlzufZ2OS0ghpwnIeB8AZFHeRvW04dnSFikRSgE2VVnMBxcpbEH0bXj8Pk+zI3u6sAwhEFyWL8ytoYwLyAONGA/6tnFS1mh8HLmxy4sn1Q4nccDHJSS1Qe/bTY0/+Wg8ndD2T5MAg319mQ4R4N55zh7CwQiEtjpnH85Sv8P9uHNDD96aUD6R4+bToK4soWcQFhVWEEIvbEGICkwyWHp1aZCh63U5pXNneZ+OdNflThslg7rCXGAPXBuDpKhMA==
+X-YMail-OSG: Hd5Wz7wVM1lDWF1STJD8ErzrGjGSwnvIXyV9RUXNQgtwLH8_5zLIVmgcAbYfG9I
+ vODkJAQlJnMkFd3mdInKMMCrgCLih3W65ZTFqaOUBsqNw.D6IeraeJB_ePYsqqVanJoiUW6SUjf.
+ gmx9sFM5Xr8osnJo4WqcjxLE3bfxH7xn68i8LptSd8DwQka8EPylCvdC3sVZjVCPKDi1yiBPjJ3y
+ d254UwI7J35y31ufhYYwHvAGIV19zKjrOeEmPX.rHvOtfmsSWqBSHb.Q05XEQ35mafItXuVLPLK_
+ WGCFkDyQo6alhdvaH898c6kAZTAoNraX4QVAuNGaQEMqZQlCxPbRnPucPYl7EEdnnl3YpG4uD1Tl
+ 4YzOUPGLrzY1.dev6oEjlcFn9zcHwrroPGnKZwuQOhO846RK6Rp.STYahi4.cszLD1V27p3fr.Wf
+ pg0eWkEyzwcmjCV8.7Vm0LsgIaHpwBKzQRkS0kSqDngczVfHJCPy2GWrI2f1Vf1CeVMVMNHZMeIW
+ 5njXq8EZcFBvtQCL9TVBju7YB3mmx7lQbqFJ.wSg4GfDCYZsZ4WVmQQd314x1a9epWtidtx8j1ac
+ LR8crR8h8cXc0xqkC2jtEhiuQoHaQApAXk4csj1KRDxkoEdzs4VaYjgUgphSbNeSMKQ1J5x1v1WQ
+ Ayx7cYQsljOCYQBOIJ5T3r2HFnVIPGkd0j8owgDyPC0RL4z65Lu1TPEgy0NX4T3n3cBKH5MWZq5t
+ W2JFPDsclAlEWWa.PMsV_oTsuXg16O_rEVp_mBWxV9pU6U4DYcE3NzzQcF6Abz1qPzoxE1SYu1pd
+ z9.M1dPgE5zUy.BJDVfr_2XKaWSE1XVRpgzRWABWAPszMpHqw5WR2W52VJUxNRtCy1q0JHWUVsDU
+ zwHUOvggJWbHbphcXG.rlGr5bZ9T7RDM8ZalghQY13nKJrHychRcNyvqFYRD_B1jZE3cXprLN3PH
+ RmUK0WL4qjX0_xwoHg_uH371oK3GYXhPKPP7zQLyfp2rl9JjFZgeRGzmLfVrIR00E3y1Tp2V5aEa
+ r.TpaoLBH7WBL.5I9ZpmRarx5fGHNLceYGGdx7PNZ3syTmVnIbDJMxBOZbhxb4tjb3zzoinfgRLL
+ Xl6QS.uR69iflxCM6g09k85Xirkax8oaJ9dOa8zgYdqkv12h2aH0SdwK8zkNmPCsErsQR8JS1UV2
+ eDd7v_fz8.9sMyAdL1w6_d2ljyWTDfZdlRf3anEaY.qO2xu7U8tfPQ7yHLoIYs8jKf0Q.JH.rM9c
+ yjzazmVqrivLk1bIoRWYrjjJjVnI4Z8V4Z_CJxT.av8PcO9zqLC8qfKFHIluSMr.SnmalFFzZN9b
+ eFWr_pYAijTIuLT8PeKbyCylcKHUk1sumjb9vUF0nTJjr1Ic7cKwmHu8VHYNx6ZIn.Bz2S7kCpm5
+ 9QeVhDSCOL1vwAXViCYw3fjO2RlpGqpin2MS7GFaoyhh4rhw3qTZ2PJKuT2elTShDcZUm1P2AXMn
+ in.WNp268uHI2cgt2WAq4d_mVCJRXW.vXbmIFAJaO1g1vBMy5F2otC.PVJFr1l92R6_cw7eT2c7d
+ kttqD2bZ9bppL28gyMdvF3lqA3uA_JqoJNltMtMvjWkZRfBOUEoaNZrN55nUG17TN5EPyiZh9L_Y
+ iegPPwGYkh23Zo3G4BeLROmetWhOVTFkANPjrg6wFlZcwQBOZWT4FM6VIe99Bqd_bW_jC3Yuq47p
+ W_i4H5gfKGOIKsCVPGvAFsgrufMKnDf0UnLkgfJu5PT9B7f4XLPmjaVlyQP6dc8ABDWmvkiCtrce
+ pIkm80bw2ee.P9VPkvJy_A9yO4trAaAZKXxKYFdANJJjQwYP7zzsWYjsc8D.2slQ3jwfIFneouoV
+ E6mUyOqt5KRPZiYsj6Npr_Wz0NJAiHesY7MmfgPclb1DbZtowzOvGhZ_qlpYhhCN1Q4vnB1.CyS7
+ 4M1k8TUSpnV_ldq76Y3YoBm0KjKSkJqaQu.QVQ7lv2KLHIxpDpz20LoRv66wBcnQNZDkUF5UCXxA
+ I5JQNFRPb.FNPqehNmxcKovpu9rEAQi7DsmfNdVRt6kstUrsJ8a9YtMLq6SzY8NIoZWIufbNTQel
+ FclZUlhnwM5RfBQKjFy5c787D1i2kCoXXBUisSGvOXG0wMKDApXmlcmuyzHiUF8nLaso3aRpwB_W
+ TK79KAyKTb5DdufCWBM5fUVfpPudBCbV_LirbFmU9wQBEX8Zak_qitME.IQD4MpL7zKcIoLEWXUC
+ HY0oISmvVATa1J74vyxVYPLlYKKHA_yI9_2GBZAfYohf.xr8m_X7uohiToNbWrHa1ZvOU.1fKQFD
+ zjmSluRQeYZT0ez.bOJV3pstlHN0a
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 6f727ff2-846e-4c00-9702-48cdc60f900a
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic312.consmr.mail.ne1.yahoo.com with HTTP; Fri, 30 Aug 2024 00:44:28 +0000
+Received: by hermes--production-gq1-5d95dc458-gnv6n (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 5da78dbe3e0c562970426cfb16ce357c;
+          Fri, 30 Aug 2024 00:34:14 +0000 (UTC)
+From: Casey Schaufler <casey@schaufler-ca.com>
+To: casey@schaufler-ca.com,
+	paul@paul-moore.com,
+	linux-security-module@vger.kernel.org
+Cc: jmorris@namei.org,
+	serge@hallyn.com,
+	keescook@chromium.org,
+	john.johansen@canonical.com,
+	penguin-kernel@i-love.sakura.ne.jp,
+	stephen.smalley.work@gmail.com,
+	linux-kernel@vger.kernel.org,
+	selinux@vger.kernel.org,
+	mic@digikod.net
+Subject: [PATCH v2 00/13] LSM: Move away from secids
+Date: Thu, 29 Aug 2024 17:33:58 -0700
+Message-ID: <20240830003411.16818-1-casey@schaufler-ca.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240724011037.3671523-1-jthoughton@google.com>
- <20240724011037.3671523-4-jthoughton@google.com> <CADrL8HV5M-n72KDseDKWpGrUVMjC147Jqz98PxyG2ZeRVbFu8g@mail.gmail.com>
- <Zr_y7Fn63hdowfYM@google.com> <CAOUHufYc3hr-+fp14jgEkDN++v6t-z-PRf1yQdKtnje6SgLiiA@mail.gmail.com>
- <ZsOuEP6P0v45ffC0@linux.dev>
-In-Reply-To: <ZsOuEP6P0v45ffC0@linux.dev>
-From: James Houghton <jthoughton@google.com>
-Date: Thu, 29 Aug 2024 17:33:00 -0700
-Message-ID: <CADrL8HWf-Onu=4ONBO1CFZ1Tqj5bee=+NnRC333aKqkUy+0Sxg@mail.gmail.com>
-Subject: Re: [PATCH v6 03/11] KVM: arm64: Relax locking for kvm_test_age_gfn
- and kvm_age_gfn
-To: Oliver Upton <oliver.upton@linux.dev>
-Cc: Yu Zhao <yuzhao@google.com>, Sean Christopherson <seanjc@google.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Ankit Agrawal <ankita@nvidia.com>, Axel Rasmussen <axelrasmussen@google.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, David Matlack <dmatlack@google.com>, 
-	David Rientjes <rientjes@google.com>, James Morse <james.morse@arm.com>, 
-	Jason Gunthorpe <jgg@ziepe.ca>, Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>, 
-	Raghavendra Rao Ananta <rananta@google.com>, Ryan Roberts <ryan.roberts@arm.com>, 
-	Shaoqin Huang <shahuang@redhat.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
-	Wei Xu <weixugc@google.com>, Will Deacon <will@kernel.org>, Zenghui Yu <yuzenghui@huawei.com>, 
-	kvmarm@lists.linux.dev, kvm@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+References: <20240830003411.16818-1-casey.ref@schaufler-ca.com>
 
-On Mon, Aug 19, 2024 at 1:42=E2=80=AFPM Oliver Upton <oliver.upton@linux.de=
-v> wrote:
->
-> On Fri, Aug 16, 2024 at 07:03:27PM -0600, Yu Zhao wrote:
-> > On Fri, Aug 16, 2024 at 6:46=E2=80=AFPM Sean Christopherson <seanjc@goo=
-gle.com> wrote:
->
-> [...]
->
-> > > Were you expecting vCPU runtime to improve (more)?  If so, lack of mo=
-vement could
-> > > be due to KVM arm64 taking mmap_lock for read when handling faults:
+Many of the Linux Security Module (LSM) interfaces use u32
+security ID values (secids) to identify module specific security
+attributes. This is an artifact of the SELinux security server
+architecture and compromises made to allow security attributes
+to be associated with networking mechanisms. There are significant
+performance implications to using this approach, as access control
+decisions must map the secids to the real data to be used. There is
+also impact on the audit system, which must provide textual values
+for security attributes.
 
-I had no real expectation. I was hoping that maybe there could be a
-vCPU runtime improvement, given that user_mem_abort() (being called
-because we're faulting memory in continuously in this test) has to
-take the KVM MMU lock for reading, and aging is taking it for reading
-vs. writing. I think that's why aging is a lot slower when using the
-write lock: it is waiting for the readers to drop the lock, but I
-guess the delay on the *readers* due to the pending writer seems to be
-pretty minimal.
+The secid based interfaces are also constrained to supporting a
+single security module. There are clever mechanisms for representing
+multiple 32 bit values in a single 32 bit value, but they add overhead
+and complexity. While the issue of multiple concurrent security modules
+is not explicity addressed here, the move away from secids is required
+to make that possible.
 
-> > >
-> > > https://lore.kernel.org/all/Zr0ZbPQHVNzmvwa6@google.com
-> >
-> > For the above test, I don't think it's mmap_lock
->
-> Yeah, I don't think this is related to the mmap_lock.
->
-> James is likely using hardware that has FEAT_HAFDBS, so vCPUs won't
-> fault for an Access flag update. Even if he's on a machine w/o it,
-> Access flag faults are handled outside the mmap_lock.
+Most uses of secids can be replaced by a security module specific
+value. In SELinux this remains a u32 secid. In Smack the value is
+a pointer into the system label list. In AppArmor a pointer to a
+security context can be used. Because the active security module can
+be specified at boot time using the "security=" or "lsm=" flags,
+the system must be able to use any of the possible values.
 
-Yeah I was running on Ampere Altra CPUs.
+A struct lsmblob is introduced to contain the attribute values.
+This struct includes a member for each of the security modules that
+are built into the kernel. Where possible, uses of secids are
+replaced with a lsmblob. LSM interfaces have been modified to use
+lsmblob pointers instead of secids in most cases. Some new interfaces
+have been introduced where it is not practical to replace an existing
+secid interface. This occurs in several networking code paths.
 
-> Forcing SW management of the AF at stage-2 would be the best case for
-> demonstrating the locking improvement:
->
-> diff --git a/arch/arm64/kvm/hyp/pgtable.c b/arch/arm64/kvm/hyp/pgtable.c
-> index a24a2a857456..a640e8a8c6ea 100644
-> --- a/arch/arm64/kvm/hyp/pgtable.c
-> +++ b/arch/arm64/kvm/hyp/pgtable.c
-> @@ -669,8 +669,6 @@ u64 kvm_get_vtcr(u64 mmfr0, u64 mmfr1, u32 phys_shift=
-)
->          * happen to be running on a design that has unadvertised support=
- for
->          * HAFDBS. Here be dragons.
->          */
-> -       if (!cpus_have_final_cap(ARM64_WORKAROUND_AMPERE_AC03_CPU_38))
-> -               vtcr |=3D VTCR_EL2_HA;
->  #endif /* CONFIG_ARM64_HW_AFDBM */
->
->         if (kvm_lpa2_is_enabled())
+https://github.com/cschaufler/lsm-stacking.git#lsmblob-6.11-rc3#lsmblob-6.11-rc3-v2
 
-Thanks!
+Revisons:
 
-> Changing the config option would work too, but I wasn't sure if
-> FEAT_HAFDBS on the primary MMU influenced MGLRU heuristics.
+v2: Feedback on v1
+    - Share common code in apparmor_*_to_secctx()
+    - Remove stale review tags
+    - Fix mistakes in comments
 
-Indeed, disabling CONFIG_ARM64_HW_AFDBM will cause MGLRU not to do aging.
+Casey Schaufler (13):
+  LSM: Add the lsmblob data structure.
+  LSM: Use lsmblob in security_audit_rule_match
+  LSM: Add lsmblob_to_secctx hook
+  Audit: maintain an lsmblob in audit_context
+  LSM: Use lsmblob in security_ipc_getsecid
+  Audit: Update shutdown LSM data
+  LSM: Use lsmblob in security_current_getsecid
+  LSM: Use lsmblob in security_inode_getsecid
+  Audit: use an lsmblob in audit_names
+  LSM: Create new security_cred_getlsmblob LSM hook
+  Audit: Change context data from secid to lsmblob
+  Netlabel: Use lsmblob for audit data
+  LSM: Remove lsmblob scaffolding
 
-> > -- the reclaim path,
-> > e.g., when zswapping guest memory, has two stages: aging (scanning
-> > PTEs) and eviction (unmapping PTEs). Only testing the former isn't
-> > realistic at all.
->
-> AIUI, the intention of this test data is to provide some justification
-> for why Marc + I should consider the locking change *outside* of any
-> MMU notifier changes. So from that POV, this is meant as a hacked
-> up microbenchmark and not meant to be realistic.
->
-> And really, the arm64 change has nothing to do with this series at
-> this point, which is disappointing. In the interest of moving this
-> feature along for both architectures, would you be able help James
-> with:
->
->  - Identifying a benchmark that you believe is realistic
->
->  - Suggestions on how to run that benchmark on Google infrastructure
->
-> Asking since you had a setup / data earlier on when you were carrying
-> the series. Hopefully with supportive data we can get arm64 to opt-in
-> to HAVE_KVM_MMU_NOTIFIER_YOUNG_FAST_ONLY as well.
+ include/linux/lsm/apparmor.h          |  17 +++++
+ include/linux/lsm/bpf.h               |  16 ++++
+ include/linux/lsm/selinux.h           |  16 ++++
+ include/linux/lsm/smack.h             |  17 +++++
+ include/linux/lsm_hook_defs.h         |  20 +++--
+ include/linux/security.h              |  90 ++++++++++++++++++----
+ include/net/netlabel.h                |   2 +-
+ kernel/audit.c                        |  21 +++---
+ kernel/audit.h                        |   7 +-
+ kernel/auditfilter.c                  |   9 ++-
+ kernel/auditsc.c                      |  61 ++++++++-------
+ net/netlabel/netlabel_unlabeled.c     |   2 +-
+ net/netlabel/netlabel_user.c          |   7 +-
+ net/netlabel/netlabel_user.h          |   2 +-
+ security/apparmor/audit.c             |   4 +-
+ security/apparmor/include/audit.h     |   2 +-
+ security/apparmor/include/secid.h     |   2 +
+ security/apparmor/lsm.c               |  17 +++--
+ security/apparmor/secid.c             |  21 +++++-
+ security/integrity/ima/ima.h          |   6 +-
+ security/integrity/ima/ima_api.c      |   6 +-
+ security/integrity/ima/ima_appraise.c |   6 +-
+ security/integrity/ima/ima_main.c     |  60 +++++++--------
+ security/integrity/ima/ima_policy.c   |  20 ++---
+ security/security.c                   | 105 ++++++++++++++++++--------
+ security/selinux/hooks.c              |  49 +++++++-----
+ security/selinux/include/audit.h      |   5 +-
+ security/selinux/ss/services.c        |   7 +-
+ security/smack/smack_lsm.c            |  97 +++++++++++++++---------
+ security/smack/smackfs.c              |   4 +-
+ 30 files changed, 471 insertions(+), 227 deletions(-)
+ create mode 100644 include/linux/lsm/apparmor.h
+ create mode 100644 include/linux/lsm/bpf.h
+ create mode 100644 include/linux/lsm/selinux.h
+ create mode 100644 include/linux/lsm/smack.h
 
-I'll keep trying some other approaches I can take for getting similar
-testing that Yu had; it is somewhat difficult for me to reproduce
-those tests (and it really shouldn't be.... sorry).
+-- 
+2.46.0
 
-I think it makes most sense for me to drop the arm64 patch for now and
-re-propose it (or something stronger) alongside enabling aging. Does
-that sound ok?
 
