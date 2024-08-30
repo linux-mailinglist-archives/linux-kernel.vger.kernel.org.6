@@ -1,97 +1,149 @@
-Return-Path: <linux-kernel+bounces-309476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4226966B0B
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 23:00:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1F1F966B12
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 23:03:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13C0F1C21ABC
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 21:00:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C0E61F25D5F
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 21:03:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7FDA1C1721;
-	Fri, 30 Aug 2024 21:00:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 359D91BF7FD;
+	Fri, 30 Aug 2024 21:03:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="ODMqYvFw"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Qqgxawc3"
+Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A82871BE259;
-	Fri, 30 Aug 2024 21:00:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08EAE14C585
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 21:03:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725051622; cv=none; b=HH68z9hEfQsUS2cayy37Hpqn6NTato2kxJokVX8c4aWaafnixtTR2xv64VU0Pz2YOj1/9lqUQG/Gcj9vuQH/laGyW5hH7G+QiKl6RQ6fj5lj0xTJor+XB1qQE4+QQYPqMl8eOaKmqlCvAtDYmQF0komDy4oK+vtuQfPCIyC3i+Q=
+	t=1725051795; cv=none; b=ShW2fcsGH/SQW5xZ5Drw31P8yJhfP1Pgfr6zu1ALgAboTSqpdIN1s5aC1ebZGd+bE146iOU/oHr/xjb3m+8xborolJ6BZNMcWI32hPUAlV7/hz3rEv1acRkLztOruWYQNr+oGnlkgpF9xt2YSsCtLX/huauZjDwGRvnK8g8M5pE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725051622; c=relaxed/simple;
-	bh=EuJxsRZqSRptjHeV2I+tD0QyjFPtJ80vfoL2f9+YKTc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lmQZhPsqZOuLb6KOOI1AB1KPFCmhIp+ZQXtPA5A8om61Grn24sTwkEIuCDaJ2VVWEYVxIuAjlrqpv53POw/A1QvkRa+/9SneRD9GZ0ggCxxoHIudkloSmbKUo+4F11P099skVhHt1JDB1pXnk4idqIHqYvq+x2tep1526+loVhc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=ODMqYvFw; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=5jMQ5PsZq54MPA7xWEMe58isTrj2xTtba8YYcseqKz0=; b=ODMqYvFwI2/7zngbRJ8po0zcdS
-	IObsoE5VEzrCyVYeBDba3DRuy+VJr8fcSnuw6+oHO32nAlof71NRP7zd6ivHaC1uO9tipJ8otsuLs
-	iJx2RQyetokWBwk/p4yUtTJBsE8oLQrNJo93KPAqhnrNB44f3rMYAw0be6/eGkn4/sOA=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sk8j6-006ADw-By; Fri, 30 Aug 2024 23:00:12 +0200
-Date: Fri, 30 Aug 2024 23:00:12 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc: davem@davemloft.net, Pantelis Antoniou <pantelis.antoniou@gmail.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
-	Herve Codina <herve.codina@bootlin.com>,
-	Simon Horman <horms@kernel.org>, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH net-next v2 2/7] net: ethernet: fs_enet: cosmetic cleanups
-Message-ID: <0232c636-112e-4345-b70d-90f8696704ff@lunn.ch>
-References: <20240829161531.610874-1-maxime.chevallier@bootlin.com>
- <20240829161531.610874-3-maxime.chevallier@bootlin.com>
+	s=arc-20240116; t=1725051795; c=relaxed/simple;
+	bh=GM2DasHGqCYJLkfNS5cdCpPdhI//xS+swpIq2EhE22c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JDuT+AyBXETQrfrvxhTJgPwzYD4QiTu/te9le1i/BlWUutyFagvmaELJyeTyo5U7hTw4Uq7Ro7SGpsbVy3YHItMpga2r9+aS5DX/qoXX2cl6G/54F03APmFDJrUCzBcnx3uhZOfFGSOg05V3IyGrxz4vBRdvb9unlvdQvE1l4Vc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Qqgxawc3; arc=none smtp.client-ip=91.218.175.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <e0d206be-7ad1-4b80-9f58-88eb0cf1ce74@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1725051790;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=r4OEWcEhfJSfSlYo07oIFQ/4ZIDOB0tVXO3csQokwug=;
+	b=Qqgxawc3kIVrVt+sccZg/wjFrWmXtPLJB3tMu6J+z1+015puL9Pan0j99RMTXSWBvb8t3J
+	2xBeYejFXk7YEnJ9xZtPodwURTbitUqYubrYi/Vi1o5+3a4S86gq7i3ZXHzieksdOJFPCY
+	fTQARNgfb7S2AV4nmLqeckDGc7QtFwY=
+Date: Sat, 31 Aug 2024 05:03:01 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240829161531.610874-3-maxime.chevallier@bootlin.com>
+Subject: Re: [v2] drm/etnaviv: Clear the __GFP_HIGHMEM bit in GFP_HIGHUSER
+ with 32 address
+To: "Wang, Xiaolei" <Xiaolei.Wang@windriver.com>,
+ "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
+ "linux+etnaviv@armlinux.org.uk" <linux+etnaviv@armlinux.org.uk>,
+ "christian.gmeiner@gmail.com" <christian.gmeiner@gmail.com>,
+ "airlied@gmail.com" <airlied@gmail.com>, "daniel@ffwll.ch" <daniel@ffwll.ch>
+Cc: "etnaviv@lists.freedesktop.org" <etnaviv@lists.freedesktop.org>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <MW5PR11MB57648F441CEDD36E614E31EA95812@MW5PR11MB5764.namprd11.prod.outlook.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Sui Jingfeng <sui.jingfeng@linux.dev>
+In-Reply-To: <MW5PR11MB57648F441CEDD36E614E31EA95812@MW5PR11MB5764.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-> @@ -235,15 +219,15 @@ static int fs_enet_napi(struct napi_struct *napi, int budget)
->  			if (pkt_len <= fpi->rx_copybreak) {
->  				/* +2 to make IP header L1 cache aligned */
->  				skbn = netdev_alloc_skb(dev, pkt_len + 2);
-> -				if (skbn != NULL) {
-> +				if (skbn) {
->  					skb_reserve(skbn, 2);	/* align IP header */
-> -					skb_copy_from_linear_data(skb,
-> -						      skbn->data, pkt_len);
-> +					skb_copy_from_linear_data(skb, skbn->data,
-> +								  pkt_len);
->  					swap(skb, skbn);
->  					dma_sync_single_for_cpu(fep->dev,
-> -						CBDR_BUFADDR(bdp),
-> -						L1_CACHE_ALIGN(pkt_len),
-> -						DMA_FROM_DEVICE);
-> +								CBDR_BUFADDR(bdp),
-> +								L1_CACHE_ALIGN(pkt_len),
-> +								DMA_FROM_DEVICE);
+Hi, Xiaolei
 
-The indentation level here suggest refactoring into helpers might be
-nice. But not a prerequisite for merging.
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Thanks for your nice catch! I have more to say.
 
-    Andrew
+On 2024/8/16 09:55, Wang, Xiaolei wrote:
+> Ping ...
+
+32 address -> 32-bit address,
+
+Perhaps, we could improve the commit title a little bit
+by writing a more accurate sentence if possible, say:
+
+drm/etnaviv: Properly request pages from DMA32 zone when needed
+
+or
+
+drm/etnaviv: Request pages from DMA32 zone on addressing_limited
+
+
+> thanks
+> xiaolei
+
+Vivante GPU is a 32-bit GPU, it do can access 40-bit physical address via its MMU(IOMMU).
+But this is only possible *after* the MMU has been setup(initialized). Before GPU page
+table is setup(and flush-ed into the GPU's TLB), the device can only access 32-bit
+physical addresses and the addresses has to be physical continues in ranges.
+
+The GPU page tables (GART) and command buffer has to reside in low 4GB address.
+
+> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gpu.c b/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
+> index 7c7f97793ddd..0e6bdf2d028b 100644
+> --- a/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
+> +++ b/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
+> @@ -844,8 +844,10 @@ int etnaviv_gpu_init(struct etnaviv_gpu *gpu)
+>            * request pages for our SHM backend buffers from the DMA32 zone to
+>            * hopefully avoid performance killing SWIOTLB bounce buffering.
+>            */
+> -       if (dma_addressing_limited(gpu->dev))
+> +       if (dma_addressing_limited(gpu->dev)) {
+>                   priv->shm_gfp_mask |= GFP_DMA32;
+> +               priv->shm_gfp_mask &= ~__GFP_HIGHMEM;
+> +       }
+
+The code here  still looks itchy and risky,
+because for a i.MX8 SoC with multiple vivante GPU core.
+We will modify priv->shm_gfp_mask *multiple* time.
+
+For the 2D core and the 3D core have different DMA addressing constraint.
+Then, only the last(latest) modify will be effective. This lead to the
+probe order dependent.
+
+However this may not be a problem in practice, as usually, all vivante
+GPUs in the system will share the same DMA constraints. And the driver
+assume that.
+
+But then, we probably still should not modify the global shared GFP
+mask multiple time.
+
+Now that we do assume that all vivante GPUs in the system share the
+same DMA constraints. And the DMA constraints information has been
+assigned to the virtual master. The right time to modify the
+`priv->shm_gfp_mask` should be in the etnaviv_bind() function. as
+this can eliminate overlap(repeat) stores.
+
+
+Please consider move the entire if() {} to etnaviv_bind(), just below
+where the 'priv->shm_gfp_mask' was initially initialized.
+
+or alternatively we can just hard-code to use low 4GM memmory only:
+
+priv->shm_gfp_mask = GFP_USER | GFP_DMA32 | __GFP_RETRY_MAYFAIL | __GFP_NOWARN;
+
+
+Best regards,
+Sui
+
+>           /* Create buffer: */
+>           ret = etnaviv_cmdbuf_init(priv->cmdbuf_suballoc, &gpu->buffer,
 
