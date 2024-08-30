@@ -1,54 +1,72 @@
-Return-Path: <linux-kernel+bounces-308130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59F479657A0
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 08:30:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA9139657A2
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 08:31:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F41D21F251F0
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 06:30:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE0F61C22A73
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 06:31:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E24B152E17;
-	Fri, 30 Aug 2024 06:30:17 +0000 (UTC)
-Received: from bmailout1.hostsharing.net (bmailout1.hostsharing.net [83.223.95.100])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8B4914D420;
+	Fri, 30 Aug 2024 06:31:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bpN9Li1t"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAFBA14D71D;
-	Fri, 30 Aug 2024 06:30:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.95.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5627A14C5AE
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 06:30:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724999416; cv=none; b=OjhDRE3ubDIFKEqINxuPvXIqcC3zcR3vEBSLczTmFQr0kMKn0VC9+IiHOAyyF7nHgRlXLtWe5O+3++AoXW7atID0Yi7/9P0TyFqJGWpWJBz+4v809J6UpFpdHwWXObhRYwW35zvtii82UywRi58387wBj5BPYaXay/dgDZBffHE=
+	t=1724999461; cv=none; b=uv3mmybnQfUQZBMmh/bK3bwcyQQfELB0Iff5A6bNXdZn/sGT8VXda4wwGNxzmmnBtScD3ktps3TdOJKrBxMNVIcSM7FLNCenlHpI7ttCNHIRtA0n2i7t5HjUfRpluqGa1pt7DYSsfKLs7m/yxNSML+44axwAJo8urt6w2bU88mg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724999416; c=relaxed/simple;
-	bh=lPbDnoIYYT+OPMoFM9FRA/Gip0DGARusSAmuTjihBlc=;
+	s=arc-20240116; t=1724999461; c=relaxed/simple;
+	bh=rOfnV1h6ePy1h6vtm1Oq8aYzjVxASebDiR+MQrFTMaE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TMU0zcvYI4uARG//aaL1R0IyI96Ul3a3PlBKq2TLBjLpBLIw4pPeojST6zfcf8a8kQ8kfnKqyxQgu0Ys9iuKm5NwySXyIxAB80RFutLvZjab1ZrDy2KYT2CJ7zqd/RsmpNngDlbqC2HuKGh1AAFTFvsz8lXoO6T/uAKM2FZth6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.95.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+	 Content-Type:Content-Disposition:In-Reply-To; b=bJpUg1/oPLIdNXj1BRI9KLUVK3ejX+u9xDg40PZhDYi7iUThg5knn3V+kI5FY7gc/cd0jhZ4CBCeJhDwqUS1ZuH3+njDaFP4N/KQSurgVf4i5yV5GEA6kf10WEbMPdcnq0J+OtqZdDCpFP7BAdjLfsDgIJ5Io3cNUvKZX6/K/Z4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bpN9Li1t; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724999458;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5rxQOV0U9jos/ewQUlBldN7ZSJbrE3k5eVCijlLXnUk=;
+	b=bpN9Li1t7xMvRTpMqP0BBSRWa7VgakCU1hfgKDVxKX0pieF6T9H3Nu94NJYvvFRPI0CZq4
+	O8tHQXfFIwpmLUDcVAz5MCWnMB7rJUHFLtTNq0wAQUbRVtNFeRv51tr6bz0ZS73eM3MPGE
+	ERr2YW4NiWvjRLCg2arRkJJRJgPPr3U=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-650-u30SmAoyMdqFmu6gfgZuwQ-1; Fri,
+ 30 Aug 2024 02:30:53 -0400
+X-MC-Unique: u30SmAoyMdqFmu6gfgZuwQ-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout1.hostsharing.net (Postfix) with ESMTPS id 9989B3000C785;
-	Fri, 30 Aug 2024 08:30:03 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id 92D6D357A40; Fri, 30 Aug 2024 08:30:03 +0200 (CEST)
-Date: Fri, 30 Aug 2024 08:30:03 +0200
-From: Lukas Wunner <lukas@wunner.de>
-To: Gonglei <arei.gonglei@huawei.com>
-Cc: linux-kernel@vger.kernel.org, virtualization@lists.linux-foundation.org,
-	linux-crypto@vger.kernel.org,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"Michael S . Tsirkin" <mst@redhat.com>,
-	Baolin Wang <baolin.wang@linaro.org>, longpeng2@huawei.com,
-	wu.wubin@huawei.com
-Subject: Re: [PATCH] virtio-crypto: support crypto engine framework
-Message-ID: <ZtFm60YSk9BsAjYV@wunner.de>
-References: <1482821347-47664-1-git-send-email-arei.gonglei@huawei.com>
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3AC2E19560B1;
+	Fri, 30 Aug 2024 06:30:51 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.42])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3990E1955F35;
+	Fri, 30 Aug 2024 06:30:48 +0000 (UTC)
+Date: Fri, 30 Aug 2024 14:30:45 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Dave Vasilevsky <dave@vasilevsky.ca>
+Cc: glaubitz@physik.fu-berlin.de, linuxppc-dev@lists.ozlabs.org,
+	linux-sh@vger.kernel.org, mpe@ellerman.id.au,
+	kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Reimar =?iso-8859-1?Q?D=F6ffinger?= <Reimar.Doeffinger@gmx.de>
+Subject: Re: [PATCH] crash: Default to CRASH_DUMP=n when support for it is
+ unlikely
+Message-ID: <ZtFnFaHfh09wOw6o@MiWiFi-R3L-srv>
+References: <20240823125156.104775-1-dave@vasilevsky.ca>
+ <ZtE5Z/gDR1WixG9S@MiWiFi-R3L-srv>
+ <1568b378-5592-4d23-a572-4e09f3996331@vasilevsky.ca>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,41 +75,26 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1482821347-47664-1-git-send-email-arei.gonglei@huawei.com>
+In-Reply-To: <1568b378-5592-4d23-a572-4e09f3996331@vasilevsky.ca>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Tue, Dec 27, 2016 at 02:49:07PM +0800, Gonglei wrote:
-> crypto engine was introduced since 'commit 735d37b5424b ("crypto: engine
-> - Introduce the block request crypto engine framework")' which uses work
-> queue to realize the asynchronous processing for ablk_cipher and ahash.
+On 08/29/24 at 11:37pm, Dave Vasilevsky wrote:
+> On 2024-08-29 23:15, Baoquan He wrote:
+> >> +config ARCH_DEFAULT_CRASH_DUMP
+> >> +	def_bool n
+> > 
+> > If we don't add ARCH_DEFAULT_CRASH_DUMP at all in sh arch, the
+> > CRASH_DUMP will be off by default according to the below new definition
+> > of CRASH_DUMP?
 > 
-> For virtio-crypto device, I register an engine for each
-> data virtqueue so that we can use the capability of
-> multiple data queues in future.
+> Yes, that's true. But if we don't add it at all in sh arch, it looks confusing
+> in the search feature of menuconfig:
+> 
+> > Symbol: ARCH_DEFAULT_CRASH_DUMP [=ARCH_DEFAULT_CRASH_DUMP]
+> > Type  : unknown
+> 
+> So I thought it was better to explicitly set it to 'n'. What do you think?
 
-The above got applied as d79b5d0bbf2e.
+If so, better adding it. Thanks.
 
-What's the benefit of this change?
-
-virtio has its own queue for requests.  Adding a crypto_engine puts
-a queue in front of that.  So now there's a queue feeding a queue.
-That seems to be a roundabout way of doing things, so I'm wondering
-why this change was made?  It seems to introduce complexity and
-overhead with no apparent benefit.
-
-The reason I'm asking is that I'm splitting sign/verify out of
-virtio_crypto_akcipher_algs.c:
-
-https://lore.kernel.org/all/ZscuLueUKl9rcCGr@wunner.de/
-
-Nowadays sign/verify is no longer asynchronous.  However the
-crypto_engine indirection forces me to introduce a sig_request
-struct which stores the input/output parameters for a sign/verify
-operation, so that the crypto_engine can consume it asynchronously.
-
-I'm tempted to instead remove crypto_engine support from
-virtio_crypto_core.c to ease migration to synchronous sign/verify.
-
-Thanks,
-
-Lukas
 
