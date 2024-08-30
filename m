@@ -1,164 +1,200 @@
-Return-Path: <linux-kernel+bounces-308442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 448CE965D03
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 11:34:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4DA6965D07
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 11:34:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B77561F21381
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 09:34:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA47A1C23F12
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 09:34:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97F2217A5AA;
-	Fri, 30 Aug 2024 09:34:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD962171650;
+	Fri, 30 Aug 2024 09:34:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hcyBQB5G"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hgWMtuhL";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="UY/Ua2wp";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hgWMtuhL";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="UY/Ua2wp"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 283B3175D4E
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 09:33:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00F4B16D9AA;
+	Fri, 30 Aug 2024 09:34:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725010440; cv=none; b=Y7UuFYKVYoP8CZwx7UnAOcPTwVUDOYL5erLQTpD7/29gKh0KcGYv7ShDn1Blw02YlckJXvmkP8EXfBqV4emhbImHncheoP04PIEDkWuMNXDw/FwI0Inl5ty/FYH4Mbf/8nwntMpuyWcfAu6LRviCfStBjIbN+K8gl8BcIZS+6FY=
+	t=1725010460; cv=none; b=tUaX46L1E3IEZ8MQN2TOFY+b0OSzVZsrDOD9bGKgedGmJ7lq6x2Ym2Uy0voNAttvHH7yIGPX1+Z10V25Css0QH7dZyyvei4/95D8hwPNzsGP6BnqRkVbQ5dLEfz6JRIJ+1vI+wIzc7IUAmHpDdlpl6K5ek6rG9I8FbpSu/WYfp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725010440; c=relaxed/simple;
-	bh=5yslXqhvWQX9TnBSismjUh88BdfvlGVmkN25fRbxHH4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e7xC6KqW8vCmGkTcOD+gVVheS3GqmY4YP2PIuF5QijgvZ64Q1nnIsmGwuexsWu3XP2435eeCshojMf3LVW5HV7emZMpwh8Rs5GJTBKQTd4n9rvfGPb3uLWRIvd2EUyRIQ4gKcIWrUYwrRDTwuletJBsBtCLDg6iJ2PfmlzCV8JM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hcyBQB5G; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-42bbbe94b88so566755e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 02:33:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725010437; x=1725615237; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=pGZek37s7JUS9g9ervJ2hRM13bZo2pmesux2WExpQN8=;
-        b=hcyBQB5GftII3BLkLnFzIcMznhMJV3Wp5Ue4LD0/Uvo3sVvsRFf6pI/lSlWXuemLnh
-         Rw9JAYfRxDIyvwHb+8DNM+ovCyN4qUIYqXWk7kD3w4HezEO257LJGb/1pzvE933cpd0r
-         nwt4MR59ob9nx2qRTRFktcseiE4i+oWdcUkOUbIh700kj7FTlDm/fKW3Wb5U18x/glC+
-         9oCGtMvdZbDpcdVtZ2PJO1oxRwz4FC20txv5zOKlhugHe8JDwXE+ltIQ/wwB7T6SC0+E
-         yORAmT04xmvxw7IF45v8JWzgfVjiKVzhEbagoI4O3mj5B5t8I59uv5IEvZJrBXoE3G7d
-         c7MQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725010437; x=1725615237;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pGZek37s7JUS9g9ervJ2hRM13bZo2pmesux2WExpQN8=;
-        b=Fo8SX8w4gPosDfb5wsCf3jmki5qYLs9kTo+EJ+C+DAHWQvRZV1Ws/obk7mkSlqfIjt
-         /66kcIim0b6sva+XlSJYPNb7KqFcaFRSOHdKy9dfcsy1qA1RGGgqmqZRV6fzpTvfCaqP
-         iCRnoYISVjoya+y13Ua/JSIgzzXgdDD2MoawGZomYQoap6JhRMdIej69gwB3wwplgm3o
-         NUFsYefh/5SiWEL5SHYoGDoUpwCdv0bNeHcZ5wYiA44jXxpCst7T2qg8RM3q0n4S7IG+
-         rhTSYy9pwia3vZm7dTJc718oYzg0QsZURntptGGh6Y4jEJd6pzqEr0dxyMtUymZgm+fu
-         UuAg==
-X-Forwarded-Encrypted: i=1; AJvYcCWq3zhql/ZHiP6tW753bnH8l/x/BUYAAK2kzPSa4pU/C3DXeM1X8QdZQYfcogXCPOC6N7j2+8Lb4iH9YRs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIl5AuJPlZyn3YXbml5zGrQzVpKYldBz6gdfusWgQl9/hPH1xw
-	6zcRm10XdhH8raUL8F8EEUrdvVm93ioesT1P3FTCaumJ/MfmCLEHCgPRGa0eGRE=
-X-Google-Smtp-Source: AGHT+IE+rnx/YrsfDOYvW2dfT+oacSiNX/1n93tiIETgoAZ48JpJutDBDzth7kSn1IPt8lBVd3JHmQ==
-X-Received: by 2002:a05:600c:a49:b0:426:6cd1:d104 with SMTP id 5b1f17b1804b1-42bbb43a575mr7096425e9.4.1725010437310;
-        Fri, 30 Aug 2024 02:33:57 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.222.82])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bba3f2875sm18328365e9.41.2024.08.30.02.33.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 30 Aug 2024 02:33:56 -0700 (PDT)
-Message-ID: <54632ada-d657-4c73-a88c-469eb6066608@linaro.org>
-Date: Fri, 30 Aug 2024 11:33:54 +0200
+	s=arc-20240116; t=1725010460; c=relaxed/simple;
+	bh=5xzxu4uvuew94qkeV4W1RIusju+T2Ow4WlvX452sg0s=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=lNb+5w/0nR7/jfwMfHYF5BYia7uVjyrUdRyhSkDAmUaWBL2fT30JoKsGXbQlFs9oOtM1OseZwTb26B4/Xm4tAgGgX9h8EhtMuKtadeoO3+grIIBIimCwC2+CRItR8JIDdR5kRttO0cEuTLIrWbZpNj1NBQHeX6tU/ZiVTn5E6pg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hgWMtuhL; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=UY/Ua2wp; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hgWMtuhL; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=UY/Ua2wp; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from pobox.suse.cz (unknown [10.100.2.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 367E2219B5;
+	Fri, 30 Aug 2024 09:34:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1725010456; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zlm4X4QOcGE6DHm7ygOQKPj87QXS/m+PxWQiajETJgk=;
+	b=hgWMtuhLo3K1c0F/7FQO84/drBRMdGrmqVLt5Q4ZDR5yVqjcBFe55w4ZNclIAWQpbzdttx
+	XO27BnSJsL+nCxpNixi18Q2hHy6s2EA3yQcjDdtd3QEZfhoTrlVxm23T7Iw1HRk/aTuXoO
+	bOWZDEOEyjMJASeuiCaygjZGgeJcY7w=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1725010456;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zlm4X4QOcGE6DHm7ygOQKPj87QXS/m+PxWQiajETJgk=;
+	b=UY/Ua2wpu1Pi9WP40gpnvfMrtOZWdIEEXjIBDMWnIOkYDwLjSfTvohNm3LjoXLABynH0L1
+	aYsnLKW9+zdhpFBQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1725010456; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zlm4X4QOcGE6DHm7ygOQKPj87QXS/m+PxWQiajETJgk=;
+	b=hgWMtuhLo3K1c0F/7FQO84/drBRMdGrmqVLt5Q4ZDR5yVqjcBFe55w4ZNclIAWQpbzdttx
+	XO27BnSJsL+nCxpNixi18Q2hHy6s2EA3yQcjDdtd3QEZfhoTrlVxm23T7Iw1HRk/aTuXoO
+	bOWZDEOEyjMJASeuiCaygjZGgeJcY7w=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1725010456;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zlm4X4QOcGE6DHm7ygOQKPj87QXS/m+PxWQiajETJgk=;
+	b=UY/Ua2wpu1Pi9WP40gpnvfMrtOZWdIEEXjIBDMWnIOkYDwLjSfTvohNm3LjoXLABynH0L1
+	aYsnLKW9+zdhpFBQ==
+Date: Fri, 30 Aug 2024 11:34:16 +0200 (CEST)
+From: Miroslav Benes <mbenes@suse.cz>
+To: Sami Tolvanen <samitolvanen@google.com>
+cc: Masahiro Yamada <masahiroy@kernel.org>, 
+    Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+    Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+    Matthew Maurer <mmaurer@google.com>, Alex Gaynor <alex.gaynor@gmail.com>, 
+    Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>, 
+    Petr Pavlu <petr.pavlu@suse.com>, Neal Gompa <neal@gompa.dev>, 
+    Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>, 
+    Asahi Linux <asahi@lists.linux.dev>, linux-kbuild@vger.kernel.org, 
+    linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org, 
+    rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v2 16/19] gendwarfksyms: Add support for reserved structure
+ fields
+In-Reply-To: <20240815173903.4172139-37-samitolvanen@google.com>
+Message-ID: <alpine.LSU.2.21.2408301114000.1124@pobox.suse.cz>
+References: <20240815173903.4172139-21-samitolvanen@google.com> <20240815173903.4172139-37-samitolvanen@google.com>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 02/17] arm64: dts: qcom: msm: change labels to
- lower-case
-To: Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, cros-qcom-dts-watchers@chromium.org
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240829-dts-qcom-label-v2-0-5deaada3e6b2@linaro.org>
- <20240829-dts-qcom-label-v2-2-5deaada3e6b2@linaro.org>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzTRLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnp5c3p0b2Yua296bG93c2tpQGxpbmFyby5vcmc+wsGUBBMBCgA+FiEE
- m9B+DgxR+NWWd7dUG5NDfTtBYpsFAmI+BxMCGwMFCRRfreEFCwkIBwIGFQoJCAsCBBYCAwEC
- HgECF4AACgkQG5NDfTtBYptgbhAAjAGunRoOTduBeC7V6GGOQMYIT5n3OuDSzG1oZyM4kyvO
- XeodvvYv49/ng473E8ZFhXfrre+c1olbr1A8pnz9vKVQs9JGVa6wwr/6ddH7/yvcaCQnHRPK
- mnXyP2BViBlyDWQ71UC3N12YCoHE2cVmfrn4JeyK/gHCvcW3hUW4i5rMd5M5WZAeiJj3rvYh
- v8WMKDJOtZFXxwaYGbvFJNDdvdTHc2x2fGaWwmXMJn2xs1ZyFAeHQvrp49mS6PBQZzcx0XL5
- cU9ZjhzOZDn6Apv45/C/lUJvPc3lo/pr5cmlOvPq1AsP6/xRXsEFX/SdvdxJ8w9KtGaxdJuf
- rpzLQ8Ht+H0lY2On1duYhmro8WglOypHy+TusYrDEry2qDNlc/bApQKtd9uqyDZ+rx8bGxyY
- qBP6bvsQx5YACI4p8R0J43tSqWwJTP/R5oPRQW2O1Ye1DEcdeyzZfifrQz58aoZrVQq+innR
- aDwu8qDB5UgmMQ7cjDSeAQABdghq7pqrA4P8lkA7qTG+aw8Z21OoAyZdUNm8NWJoQy8m4nUP
- gmeeQPRc0vjp5JkYPgTqwf08cluqO6vQuYL2YmwVBIbO7cE7LNGkPDA3RYMu+zPY9UUi/ln5
- dcKuEStFZ5eqVyqVoZ9eu3RTCGIXAHe1NcfcMT9HT0DPp3+ieTxFx6RjY3kYTGLOwU0EVUNc
- NAEQAM2StBhJERQvgPcbCzjokShn0cRA4q2SvCOvOXD+0KapXMRFE+/PZeDyfv4dEKuCqeh0
- hihSHlaxTzg3TcqUu54w2xYskG8Fq5tg3gm4kh1Gvh1LijIXX99ABA8eHxOGmLPRIBkXHqJY
- oHtCvPc6sYKNM9xbp6I4yF56xVLmHGJ61KaWKf5KKWYgA9kfHufbja7qR0c6H79LIsiYqf92
- H1HNq1WlQpu/fh4/XAAaV1axHFt/dY/2kU05tLMj8GjeQDz1fHas7augL4argt4e+jum3Nwt
- yupodQBxncKAUbzwKcDrPqUFmfRbJ7ARw8491xQHZDsP82JRj4cOJX32sBg8nO2N5OsFJOcd
- 5IE9v6qfllkZDAh1Rb1h6DFYq9dcdPAHl4zOj9EHq99/CpyccOh7SrtWDNFFknCmLpowhct9
- 5ZnlavBrDbOV0W47gO33WkXMFI4il4y1+Bv89979rVYn8aBohEgET41SpyQz7fMkcaZU+ok/
- +HYjC/qfDxT7tjKXqBQEscVODaFicsUkjheOD4BfWEcVUqa+XdUEciwG/SgNyxBZepj41oVq
- FPSVE+Ni2tNrW/e16b8mgXNngHSnbsr6pAIXZH3qFW+4TKPMGZ2rZ6zITrMip+12jgw4mGjy
- 5y06JZvA02rZT2k9aa7i9dUUFggaanI09jNGbRA/ABEBAAHCwXwEGAEKACYCGwwWIQSb0H4O
- DFH41ZZ3t1Qbk0N9O0FimwUCYDzvagUJFF+UtgAKCRAbk0N9O0Fim9JzD/0auoGtUu4mgnna
- oEEpQEOjgT7l9TVuO3Qa/SeH+E0m55y5Fjpp6ZToc481za3xAcxK/BtIX5Wn1mQ6+szfrJQ6
- 59y2io437BeuWIRjQniSxHz1kgtFECiV30yHRgOoQlzUea7FgsnuWdstgfWi6LxstswEzxLZ
- Sj1EqpXYZE4uLjh6dW292sO+j4LEqPYr53hyV4I2LPmptPE9Rb9yCTAbSUlzgjiyyjuXhcwM
- qf3lzsm02y7Ooq+ERVKiJzlvLd9tSe4jRx6Z6LMXhB21fa5DGs/tHAcUF35hSJrvMJzPT/+u
- /oVmYDFZkbLlqs2XpWaVCo2jv8+iHxZZ9FL7F6AHFzqEFdqGnJQqmEApiRqH6b4jRBOgJ+cY
- qc+rJggwMQcJL9F+oDm3wX47nr6jIsEB5ZftdybIzpMZ5V9v45lUwmdnMrSzZVgC4jRGXzsU
- EViBQt2CopXtHtYfPAO5nAkIvKSNp3jmGxZw4aTc5xoAZBLo0OV+Ezo71pg3AYvq0a3/oGRG
- KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
- fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240829-dts-qcom-label-v2-2-5deaada3e6b2@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Score: -2.80
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	RCVD_COUNT_ZERO(0.00)[0];
+	TAGGED_RCPT(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MID_RHS_MATCH_FROMTLD(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[kernel.org,linuxfoundation.org,google.com,gmail.com,garyguo.net,suse.com,gompa.dev,marcan.st,jannau.net,lists.linux.dev,vger.kernel.org];
+	RCPT_COUNT_TWELVE(0.00)[18];
+	FROM_EQ_ENVFROM(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_SOME(0.00)[]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On 29/08/2024 14:34, Krzysztof Kozlowski wrote:
-> DTS coding style expects labels to be lowercase.  No functional impact.
-> Verified with comparing decompiled DTB (dtx_diff and fdtdump+diff).
+Hi,
+
+On Thu, 15 Aug 2024, Sami Tolvanen wrote:
+
+> Distributions that want to maintain a stable kABI need the ability to
+> add reserved fields to kernel data structures that they anticipate
+> will be modified during the ABI support timeframe, either by LTS
+> updates or backports.
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->  arch/arm64/boot/dts/qcom/msm8916.dtsi           | 100 ++++++++++-----------
->  arch/arm64/boot/dts/qcom/msm8939.dtsi           | 110 ++++++++++++------------
->  arch/arm64/boot/dts/qcom/msm8953.dtsi           |  68 +++++++--------
->  arch/arm64/boot/dts/qcom/msm8976.dtsi           |  32 +++----
->  arch/arm64/boot/dts/qcom/msm8992-lg-h815.dts    |  12 +--
->  arch/arm64/boot/dts/qcom/msm8992.dtsi           |   4 +-
->  arch/arm64/boot/dts/qcom/msm8994.dtsi           |  52 +++++------
->  arch/arm64/boot/dts/qcom/msm8996.dtsi           |  54 ++++++------
->  arch/arm64/boot/dts/qcom/msm8998-clamshell.dtsi |  32 +++----
->  arch/arm64/boot/dts/qcom/msm8998.dtsi           |  92 ++++++++++----------
->  arch/arm64/boot/dts/qcom/sdm632.dtsi            |  26 +++---
->  11 files changed, 291 insertions(+), 291 deletions(-)
+> With genksyms, developers would typically hide changes to the reserved
+> fields from version calculation with #ifndef __GENKSYMS__, which would
+> result in the symbol version not changing even though the actual type
+> of the reserved field changes. When we process precompiled object
+> files, this is again not an option.
 > 
+> To support stable symbol versions for reserved fields, change the
+> union type processing to recognize field name prefixes, and if the
+> union contains a field name that starts with __kabi_reserved, only use
+> the type of that field for computing symbol versions. In other words,
+> let's assume we have a structure where we want to reserve space for
+> future changes:
+> 
+>   struct struct1 {
+>     long a;
+>     long __kabi_reserved_0; /* reserved for future use */
+>   };
+>   struct struct1 exported;
+> 
+> gendwarfksyms --debug produces the following output:
+> 
+>   variable structure_type struct1 {
+>     member base_type long int byte_size(8) encoding(5) data_member_location(0),
+>     member base_type long int byte_size(8) encoding(5) data_member_location(8),
+>   } byte_size(16);
+>   #SYMVER exported 0x67997f89
+> 
+> To take the reserved field into use, a distribution would replace it
+> with a union, with one of the fields keeping the __kabi_reserved name
+> prefix for the original type:
+> 
+>   struct struct1 {
+>     long a;
+>     union {
+>       long __kabi_reserved_0;
+>       struct {
+>           int b;
+>           int v;
+>       };
+>     };
 
-v3 will be needed, I forgot to update arm32.
+yes, this is one of the approaches we use in SLES. We add kabi paddings 
+to some structures in advance (see [1] as a random example) and then use 
+it later if needed.
 
-Best regards,
-Krzysztof
+It is not the only approach. Much more often we do not have a padding and 
+use alignment holes ([5]), addition of a new member to the end of a 
+structure ([2] or [3]) and such "tricks" ([4] for a newly fully defined 
+structure).
 
+It is not feasible to add kabi paddings to all structures. We also have a 
+different approach to kabi in terms of its coverage than RHEL does for 
+example (as far as I know).
+
+Not sure if it is interesting to upstream but I wanted to mention that it 
+is not only about the ability to add reserved fields to kernel structures 
+in practice.
+
+Regards,
+Miroslav
+
+[1] https://github.com/SUSE/kernel-source/blob/SLE15-SP6/patches.suse/crypto-add-suse_kabi_padding.patch
+[2] https://github.com/SUSE/kernel-source/blob/SLE15-SP6/patches.kabi/0001-iommu-Add-static-iommu_ops-release_domain.patch
+[3] https://github.com/SUSE/kernel-source/blob/SLE15-SP6/patches.kabi/nfs-Block-on-write-congestion-kabi-fixup.patch.
+[4] https://github.com/SUSE/kernel-source/blob/SLE15-SP6/patches.kabi/of-kabi-workaround.patch
+[5] https://github.com/SUSE/kernel-source/blob/SLE15-SP6/patches.kabi/KVM-x86-Snapshot-if-a-vCPU-s-vendor-model-is-AMD-vs..patch
 
