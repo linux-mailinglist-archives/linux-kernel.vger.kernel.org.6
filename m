@@ -1,182 +1,174 @@
-Return-Path: <linux-kernel+bounces-308774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B41496619A
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 14:27:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5450E96619D
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 14:27:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44E6F285069
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:27:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D56001F282AB
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:27:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91FB31AF4C9;
-	Fri, 30 Aug 2024 12:25:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0529199FC5;
+	Fri, 30 Aug 2024 12:27:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OkmLrCdU"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="NBM7DXFQ"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B0B1199951
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 12:25:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3545E1D1312
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 12:27:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725020738; cv=none; b=jB/jyOnkCt4OSqaOr0PUgUozsdq2n9Ij+5Acl1KjOQ4CAqzxTxO8wqeqVzX51xeVSlWObeHk8CoNKMNdjOTC9HRKs3vHktz3oVEoD/cKQ9vFhYK23w0Ae2nbWLrMB0ti9XJRBMvgRJ9cFardXQ6t214lWh60NZRvBmQqNFzKem0=
+	t=1725020842; cv=none; b=srfpYdReDt9YFMzA/ICV6DmuQaXKni/2HwFEDRia0dEj/NJMc4jKftpLo6rTWhoy1789pTiqj+74Yc29LBpq9iVQDY4Fo5TOIG4oNpcSmCG/0ynLfWrueOX/oTwdCMhJyuqVRN4ge7oQ1pl7BOM+8m+im3ynzDa1vK/0o6P6Brc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725020738; c=relaxed/simple;
-	bh=ZJIoVMrN5tVfBU8IiNUdDELSsGNEPIxY9OghGj9phH8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F1JRrTGOlDqNyISL1ZcPX6GlUX/5iH7H98Z8fp7Q297dLnbEuOSTYdPRcFgbajfdllD1m3wqdNkMLAMgVOo7SSIu0vkLeVhkILAOiEFeM6oJFJt9DaICj/su4s39w5lKPEgE/28ZH47PSt0gcg/dXergY3kP3/+Wp7jwxT0IZu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OkmLrCdU; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-201d5af11a4so15999095ad.3
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 05:25:36 -0700 (PDT)
+	s=arc-20240116; t=1725020842; c=relaxed/simple;
+	bh=ur0JWyShQgoQopaWpJTcRJZt1xbVa2943ENTjGpAUA0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uog47MzQNmtXWcSAoAoZC1OOG/sfQ3P0Lt3YN3foKUgma6mGBGH1mMpCAgjM5M0BR+pJuiJGb9XrAFq6pZAtPy4WIZ1ruI5UWbOtUm+NccP8ddK9e9liH8CTlIKbiS9K6zfjrwOrcn8FPCMgdwDLSUiAHnguJTYypwmgbuyM3uo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=NBM7DXFQ; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a86acbaddb4so211712866b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 05:27:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725020736; x=1725625536; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Tvr2SUWpmWtOp9UmogzHV9P0BvUVUcD5qSF6lHdZQB8=;
-        b=OkmLrCdUzfdMGNZe2/WgL1u7q039o7DXsRiF+MpU5ePdTDXZzg4PCtaLRwtl+lxNAk
-         npjRA3wDGR3hnT3RPwfZh0SgGWhxr0QbMoHGuEn5z0I1UIf5AMZLd/YgfxF1TaiTS2UP
-         tOC01GnnCmdVxuhSFQ/KapSeC88B8nvNKfj+8h7LKUmaPGLa/xqedxK/ERRN9ydt+8rV
-         BjSXpiVpgphxdPZx3hlS31ntJNkSsRHzn+fsYSvtqqnqGPgrHjSnuT9AYiEpAMiEhJo9
-         jaEoftu3A1lNIBhWp7W1QVyLjDS323twWVQ1ZAgzzQFmtBXLNnbdVSdsvku1ftvvfwQu
-         GJ5g==
+        d=suse.com; s=google; t=1725020837; x=1725625637; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=NE74wxGwsCKlZLA7ems9OjPNaFhB2GRCRAeyjJDrX+w=;
+        b=NBM7DXFQ7FAn9p5WN8EEnw05TWWPWz74cF0NOTkymuOV+t2oieDmEywtvnTBLtiAu/
+         40YlrsBOv2qfBlljLBm5f1pRKt+TySpbYLzgjhyPEuXh2WG+o9qUwypnNkwXB8/RR5Us
+         8YivUMUPHtZQbYdp8ACM7xaRx3R0eRSEI4c/7AMb0fE49F2EbBBB1nBGVKnGQKjPNGdk
+         EG1ALELVj/GkQuS+lDHdP5iP+WxtKCjzpI1S4Hz4c+MQp6ZrEKwaoQWJRYtY3kGNqNgy
+         bz1JEuA10uspqGVayQktX24jL0h0LS6JsBFznzE7esJ+CrJAvawdu5W3NqJ/u/lARi63
+         mJxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725020736; x=1725625536;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1725020837; x=1725625637;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Tvr2SUWpmWtOp9UmogzHV9P0BvUVUcD5qSF6lHdZQB8=;
-        b=HQ29KvLBvEQJayGcu5USJ9sBzaEiKnF5cEkjnYIxrV1iBJUfYYQTIoSc+l98rrpwZh
-         vTX7IDRo55J8CKDYlud8/lCRE72epphaquEBVaqAJ6jKWQdnbhaOXwN4lTQyCrtfWUfh
-         +NpDUW1NHiv60xPjMkzQjoXl+rcrbEvsAYZocDAny8C+xIoTHMdtciesRSUttOLJInOu
-         rsyiCcdHPKX3HoekH12sdY/rTZ3VeSNIqMu6/PdMot1cGxTCm01Clj9o9dOstsj9OwC7
-         SZa0M7cmmqGhm7xqThAkeg9h8F4UGTWYgoO4a8q5bCZwPJxbf3+P6LDOkp7qoFJVuvNh
-         j3kg==
-X-Forwarded-Encrypted: i=1; AJvYcCXkRTpvblTFfltHy1/QHVZZ6Qyn2jji/qfm9xglM2gTe5JHK28EyQF+wvrojNsh7OIxtqhTDJXMQF3uY9I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVB+v2scVO0gidv1WKQ2j0p0AkxgSaZRSQVNIiCmGWfOFf1JKs
-	pciv7TndHEb7A7gHaK5Ij1Zu+GBIXSZjLKnZWD/xuOoGOJVBtMojRJHfN2uttAeLHha7+uOk1ys
-	=
-X-Google-Smtp-Source: AGHT+IHLe9KO8QuO+A1TTfdJl2QU4JSom//0uSpdDP64Y03ex+rqWZCqhG3zsGqpapOUxoW7qTxcqg==
-X-Received: by 2002:a17:902:e882:b0:202:51ca:9823 with SMTP id d9443c01a7336-2050c4526e7mr63604495ad.46.1725020736332;
-        Fri, 30 Aug 2024 05:25:36 -0700 (PDT)
-Received: from thinkpad ([117.193.213.95])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-205155564dfsm25797685ad.266.2024.08.30.05.25.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Aug 2024 05:25:35 -0700 (PDT)
-Date: Fri, 30 Aug 2024 17:55:29 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Benjamin Bara <bbara93@gmail.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Alexander Stein <alexander.stein@ew.tq-group.com>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Benjamin Bara <benjamin.bara@skidata.com>
-Subject: Re: [PATCH v2 1/2] media: i2c: imx290: Check for availability in
- probe()
-Message-ID: <20240830122529.6dcqamcxk6crfpvb@thinkpad>
-References: <20240828-imx290-avail-v2-0-bd320ac8e8fa@skidata.com>
- <20240828-imx290-avail-v2-1-bd320ac8e8fa@skidata.com>
- <20240829131909.GD12951@pendragon.ideasonboard.com>
- <20240829163247.ovsst5ipecthtc6u@thinkpad>
- <20240829164843.GA15799@pendragon.ideasonboard.com>
- <20240830083107.4h5ryhcq6e6e5dw3@thinkpad>
- <20240830092526.GE25163@pendragon.ideasonboard.com>
+        bh=NE74wxGwsCKlZLA7ems9OjPNaFhB2GRCRAeyjJDrX+w=;
+        b=faecQ4v8O6ivakSD4DzmBfOCtqupdawtK4mzq9AzocG0AG+bGRAhC3hmW6Wmy057uL
+         mmeD1JZY1XN//h3w5owi1AqnWqWNdMKjSsa9gQ8HsYbnuV5vLnLwEZac9SYJ6rXlPZZf
+         Yy/4D0VymuhyTdHANl1I0eCx9rzqyiZAJ4Uj0SpJTyph3HLOVH0jME0iob3FRTDVKTwD
+         7+PJEY6de7tthu8siJb/mabaJS2o0EKFSUHN+iJa48lstQTOqoeso7Pz4/+/VTLrVjEw
+         hq+zjP/vCLqOVTQTF6FYzCzkcktCuI4lhbp/bgJa7FChEJvRF1yY0Kpw48/1fXvqtGOF
+         Djgg==
+X-Forwarded-Encrypted: i=1; AJvYcCV5uiKQmYuQuDakMb0KmmY82gqGGG3Q4wnQQHDIJe9FcL1pAcpf4nuaLr82t2lnEslunVyMkdqtyfUZmLU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyh9Ze7ocT22xfNwzCsYsza+PWS1tHugAZ9huAETq/XqEd8YrPd
+	GetS1ff4dJHLdlU7jNKrgztgqZqUy8M9nTR/vl0tqUAs4KoeyFLO3ULkpumjJso=
+X-Google-Smtp-Source: AGHT+IFwGTUaqlFFzSyRSdCyCgSrH1k0+wuZKY9klMeJF2RQGjHYW71f2iHG128z/xGmHE0xY1TD2A==
+X-Received: by 2002:a17:907:6d28:b0:a86:a9a4:69fa with SMTP id a640c23a62f3a-a897fa72317mr519196666b.43.1725020837027;
+        Fri, 30 Aug 2024 05:27:17 -0700 (PDT)
+Received: from [10.20.4.146] (212-5-158-102.ip.btc-net.bg. [212.5.158.102])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8989035f02sm210237266b.89.2024.08.30.05.27.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 30 Aug 2024 05:27:16 -0700 (PDT)
+Message-ID: <02c06646-a8c9-45ae-9836-33f70aefccea@suse.com>
+Date: Fri, 30 Aug 2024 15:27:12 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 7/8] x86/virt/tdx: Reduce TDMR's reserved areas by
+ using CMRs to find memory holes
+To: Kai Huang <kai.huang@intel.com>, dave.hansen@intel.com,
+ kirill.shutemov@linux.intel.com, tglx@linutronix.de, bp@alien8.de,
+ peterz@infradead.org, mingo@redhat.com, hpa@zytor.com,
+ dan.j.williams@intel.com, seanjc@google.com, pbonzini@redhat.com
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+ rick.p.edgecombe@intel.com, isaku.yamahata@intel.com, chao.gao@intel.com,
+ binbin.wu@linux.intel.com, adrian.hunter@intel.com
+References: <cover.1724741926.git.kai.huang@intel.com>
+ <9b55398a1537302fb7135330dba54e79bfabffb1.1724741926.git.kai.huang@intel.com>
+From: Nikolay Borisov <nik.borisov@suse.com>
+Content-Language: en-US
+In-Reply-To: <9b55398a1537302fb7135330dba54e79bfabffb1.1724741926.git.kai.huang@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240830092526.GE25163@pendragon.ideasonboard.com>
 
-On Fri, Aug 30, 2024 at 12:25:26PM +0300, Laurent Pinchart wrote:
-> On Fri, Aug 30, 2024 at 02:01:07PM +0530, Manivannan Sadhasivam wrote:
-> > On Thu, Aug 29, 2024 at 07:48:43PM +0300, Laurent Pinchart wrote:
-> > > On Thu, Aug 29, 2024 at 10:02:47PM +0530, Manivannan Sadhasivam wrote:
-> > > > On Thu, Aug 29, 2024 at 04:19:09PM +0300, Laurent Pinchart wrote:
-> > > > 
-> > > > Hi Laurent,
-> > > > 
-> > > > [...]
-> > > > 
-> > > > > > +		dev_err(dev, "Sensor is not in standby mode\n");
-> > > > > > +		ret = -ENODEV;
-> > > > > > +		goto err_pm;
-> > > > > > +	}
-> > > > > > +
-> > > > > 
-> > > > > My last concern is about accessing hardware at probe time. There are
-> > > > > known cases where this is problematic. They can be split in two
-> > > > > categories, systems that exhibit unwanted side effects when powering the
-> > > > > sensor up, and systems where the sensor can't be accessed at probe time.
-> > > > > 
-> > > > > The two issues I can think of in the first category is devices that have
-> > > > > a camera privacy light that could cause worries among users if it
-> > > > > flashes at boot time, and devices that agressively optimize boot time.
-> > > > > 
-> > > > > In the second category, I know that some people use camera serdes
-> > > > > (FPD-Link, GMSL, ...) that are controlled by userspace. As they should
-> > > > > instead use kernel drivers for those components, upstream may not care
-> > > > > too much about this use case. Another issue I was told about was a
-> > > > > device booting in temperatures that were too low for the camera to
-> > > > > operate, which then needed half an hour to heat the device enclosure
-> > > > > before the sensor and serdes could be accessed. That's a bit extreme,
-> > > > > but it sounds like a valid use case to me.
-> > > > > 
-> > > > > What do we do with those cases ? Detecting devices at probe time does
-> > > > > have value, so I think it should be a policy decision. We may want to
-> > > > > convey some of that information through DT properties (I'm not sure what
-> > > > > would be acceptable there though). In any case, that's quite a bit of
-> > > > > yak shaving, so I'm inclined to accept this series (or rather its next
-> > > > > version), given that quite a few other camera sensor drivers detect the
-> > > > > device at probe time. I would however like feedback on the problem to
-> > > > > try and find a good solution.
-> > > > 
-> > > > Most of the issues you mentioned applies to other hardware peripherals also IMO.
-> > > > And it is common for the drivers to read registers and make sure the device is
-> > > > detected on the bus during probe().
-> > > 
-> > > That's true. I think the problem affects different device types
-> > > differently though, and this may (or may not) call for different
-> > > solutions.
-> > > 
-> > > > If an usecase doesn't want to read the
-> > > > registers during probe time, then they _should_not_ build the driver as built-in
-> > > > rather make it as a loadable module and load it whenever necessary. This applies
-> > > > to boot time optimization as well.
-> > > 
-> > > For most of the use cases I listed I agree with you. One exception is
-> > > the privacy light issue. Regardless of when the camera sensor driver is
-> > > loaded, powering the device at probe time will flash the privacy light.
-> > > Doing so later than boot time would probably make the issue even worse,
-> > > I would worry more if I saw my webcam privacy light flashing at a random
-> > > point after boot time.
-> > 
-> > I'm not familiar with the privacy light feature in camera sensors, but is there
-> > no way to prevent it from enabling by default? If that's not possible, it makes
-> > sense to disable it using a DT property as it is a hardware feature.
+
+
+On 27.08.24 г. 10:14 ч., Kai Huang wrote:
+<snip>
+
+> [2] Convertible Memory Regions of the problematic platform:
 > 
-> The whole point of the privacy light is that it shouldn't be possible to
-> disable it by software. Otherwise malicious software could try to work
-> around it. On many devices it is hardwired to one of the camera sensor's
-> power supplies.
+>    virt/tdx: CMR: [0x100000, 0x6f800000)
+>    virt/tdx: CMR: [0x100000000, 0x107a000000)
+>    virt/tdx: CMR: [0x1080000000, 0x207c000000)
+>    virt/tdx: CMR: [0x2080000000, 0x307c000000)
+>    virt/tdx: CMR: [0x3080000000, 0x407c000000)
 > 
+> Fixes: dde3b60d572c9 ("x86/virt/tdx: Designate reserved areas for all TDMRs")
+> Signed-off-by: Kai Huang <kai.huang@intel.com>
+> ---
 
-Ah okay, please forgive my ignorance here. But still I'm not sure about the DT
-usage. Maybe it is best to send out a bindings patch and see what the
-maintainers have to say?
+<snpi>
 
-- Mani
+> ---
+>   arch/x86/virt/vmx/tdx/tdx.c | 105 ++++++++++++++++++++++++++++++------
+>   arch/x86/virt/vmx/tdx/tdx.h |  13 +++++
+>   2 files changed, 102 insertions(+), 16 deletions(-)
+> 
+> diff --git a/arch/x86/virt/vmx/tdx/tdx.c b/arch/x86/virt/vmx/tdx/tdx.c
+> index 0fb673dd43ed..fa335ab1ae92 100644
+> --- a/arch/x86/virt/vmx/tdx/tdx.c
+> +++ b/arch/x86/virt/vmx/tdx/tdx.c
+> @@ -331,6 +331,72 @@ static int get_tdx_sys_info_version(struct tdx_sys_info_version *sysinfo_version
+>   	return ret;
+>   }
+>   
+> +/* Update the @sysinfo_cmr->num_cmrs to trim tail empty CMRs */
+> +static void trim_empty_tail_cmrs(struct tdx_sys_info_cmr *sysinfo_cmr)
+> +{
+> +	int i;
+> +
+> +	for (i = 0; i < sysinfo_cmr->num_cmrs; i++) {
+> +		u64 cmr_base = sysinfo_cmr->cmr_base[i];
+> +		u64 cmr_size = sysinfo_cmr->cmr_size[i];
+> +
+> +		if (!cmr_size) {
+> +			WARN_ON_ONCE(cmr_base);
+> +			break;
+> +		}
+> +
+> +		/* TDX architecture: CMR must be 4KB aligned */
+> +		WARN_ON_ONCE(!PAGE_ALIGNED(cmr_base) ||
+> +				!PAGE_ALIGNED(cmr_size));
+> +	}
+> +
+> +	sysinfo_cmr->num_cmrs = i;
+> +}
+> +
+> +static int get_tdx_sys_info_cmr(struct tdx_sys_info_cmr *sysinfo_cmr)
+> +{
+> +	int i, ret = 0;
+> +
+> +#define TD_SYSINFO_MAP_CMR_INFO(_field_id, _member)	\
+> +	TD_SYSINFO_MAP(_field_id, sysinfo_cmr, _member)
+> +
+> +	TD_SYSINFO_MAP_CMR_INFO(NUM_CMRS, num_cmrs);
+> +
+> +	if (ret)
+> +		return ret;
+> +
+> +	for (i = 0; i < sysinfo_cmr->num_cmrs; i++) {
+> +		TD_SYSINFO_MAP_CMR_INFO(CMR_BASE(i), cmr_base[i]);
 
--- 
-மணிவண்ணன் சதாசிவம்
+Yeah, this is just golden, not only are you going through 3 levels of 
+indirection to expand the TD_SYSINFO_MAP but you also top it with one 
+final one MD_FIELD_ID_CMR_BASE(i). I'm fine with the CMR_BASE/SIZE 
+macros, but the way you introduce 3 levels of macros just to avoid typing
+
+TD_SYSINFO_MAP(foo, bar, zoo)
+
+makes no sense.
+
+<snip>
 
