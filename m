@@ -1,131 +1,123 @@
-Return-Path: <linux-kernel+bounces-307954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0EE896558F
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 05:12:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64CD4965594
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 05:16:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59DB01F24086
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 03:12:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F1781F24782
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 03:16:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19AB913665B;
-	Fri, 30 Aug 2024 03:12:23 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB2A313A242;
+	Fri, 30 Aug 2024 03:16:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Bkm+kCp1"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A14D481AB
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 03:12:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DF154C7E
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 03:16:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724987542; cv=none; b=CKPMoGHZBsG1Q7uO76HNAUzKYpd8cLUF+7wHtRzuKiSIhn6r3ii5FP22DwelY2Cu0F5xyr4T0xyyAFpNXH/fXwAmTlNul3ZKgDoZ5+qTgo4eXQwgoY2EOLi7CFjT+IqarwaNDfO9X89iCUzurNpms9S/MyGWQUQqIUo84gM/004=
+	t=1724987768; cv=none; b=ndLn8oWNM80N5eogJwVREZkDo7HcQNprOn0o8Kgf2vg9ywfqcE1WhPlMNimGKm7/AMCk4iTC4N15inITdnTqjhCK406UcrLxllj+pJ2zlYZRIkmwBzS3UZjEUf95aRwt5fRR7aAcvSWPURJ/5Bjs1dVD4N8Bwm6SKvn4wTUfva0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724987542; c=relaxed/simple;
-	bh=8YOzYnu9nUupDIcVBx5GKlwyRFiuUjbB7ECFrS5PqPs=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=TrXWVM/Y7a8x3jV6IBXbse7zUq4XsrTdTElFeVo5uCCsb/IO7jBrgw4f8oxrqzyG14YcN3RnFUJZGizRR2gIdjq9l/tM3CZz49ifyrWj/InAqUpecGlZivQ87HPWvJkv58oiwVxQfvCN1VPScDkR8RPIU2I09UstFN90nl2UPG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-39d28a70743so12961105ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 20:12:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724987540; x=1725592340;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=u2X9cgzIusJJpRm4ht66Xz9QGYg4njF2L5m9NAeBrq0=;
-        b=xJz3q5T4yQ6NNH2sAHuzxQ9e05Twpuh+FsUcUEzH7S70j609DZcy53cwOf345jX2tu
-         62PonMBvCg/mpOdSl9GoRQIMzEVwURs3BVvi3ed0D8ghrnu/ccavTK2fHTSbKUavh/Z4
-         3f1urkqKJeLuS9w34DjMaKaNaraJi7ICEh7rV80YVabekxzJwjcXq4+4CkVjEsciLcbK
-         a7JsGPo8c5WI4jtd0G6DbT7egzVZMCpK6F+w7W8c17PbsXMqHN8DEobTu3M5bGqIAxVF
-         Dwa+CcvbMa3ZgEZZ7TxKJx1WR93Nz0QPI5c/3P6qq7kSU93XE1EUmkzo/WfcCNiAARqs
-         +4kw==
-X-Gm-Message-State: AOJu0YwgdjetuEyy4lPnjwq1vu7sXdIsJvWLVFymO0K3mZOZOAOgKOlC
-	em6pMxrLxKvDwC1rlcg8Yfb6Pg/XAowdPKX6BvjsF05u7rDO+hSTjZ/MyBRiWbymQLRajxv9G+E
-	zXyF99pJ/hgIOzvMCDFNgfVFubtbpP/YPOXHE+TroW0hiXgrouGiCzGA=
-X-Google-Smtp-Source: AGHT+IFIKN6XQ9uqJ3clcosM5x+Jm4HIMjZwTUVcYOOAmnEsRJxnYW1/yh7PziUX2CxqZtEhSD+rKG1TqPIKwMNoogNniCpVr4P2
+	s=arc-20240116; t=1724987768; c=relaxed/simple;
+	bh=NaHwV1FmZk3Fpu1NKCZliEKzQe8Q0O8LMhXv7yyOkjw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ea3kPXbzaPAxyO0ZBRT7o7rJNOWN+prdGFBob929DtmOFuDdhe8Yf/rNOcgVNqm6M4S/t299OJewRsCMhCn9MnlUAO2nCt80SeSjveYQk/DdtQ4Tf9i5aiLINMpso/me2UPvbBVSmg3VkJJOJoHAcqfbbLkU9J3NMvV1p2+qbOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Bkm+kCp1; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724987765;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0Y16gZ5ll9x+ZZRQurc1f4Q2jGpW469PmPcdJZo7k8I=;
+	b=Bkm+kCp1nF/aynI+HfPIbF2tL5QkvM4rpWGtm+MfdPiSarZKfvR/9HBufxLPrCf5tjGqhm
+	rcH2xzHbh0gJhA4/PmCMh7V9vHkWtgqmHoGLgqF+z2ARk3MNvdE+MPZxq3yTVn3+Akn/bL
+	iXywMoh8yuWcd1udvxo9zBHRY7mNn+c=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-146-E_cgXM_TMY2lLDSNHnmYZA-1; Thu,
+ 29 Aug 2024 23:16:01 -0400
+X-MC-Unique: E_cgXM_TMY2lLDSNHnmYZA-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E21241955D55;
+	Fri, 30 Aug 2024 03:15:57 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.42])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3149E1955F1B;
+	Fri, 30 Aug 2024 03:15:55 +0000 (UTC)
+Date: Fri, 30 Aug 2024 11:15:51 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Dave Vasilevsky <dave@vasilevsky.ca>
+Cc: glaubitz@physik.fu-berlin.de, linuxppc-dev@lists.ozlabs.org,
+	linux-sh@vger.kernel.org, mpe@ellerman.id.au,
+	kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Reimar =?iso-8859-1?Q?D=F6ffinger?= <Reimar.Doeffinger@gmx.de>
+Subject: Re: [PATCH] crash: Default to CRASH_DUMP=n when support for it is
+ unlikely
+Message-ID: <ZtE5Z/gDR1WixG9S@MiWiFi-R3L-srv>
+References: <20240823125156.104775-1-dave@vasilevsky.ca>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d02:b0:39d:268a:e920 with SMTP id
- e9e14a558f8ab-39f413ce342mr499755ab.3.1724987540098; Thu, 29 Aug 2024
- 20:12:20 -0700 (PDT)
-Date: Thu, 29 Aug 2024 20:12:20 -0700
-In-Reply-To: <000000000000be46510620da5362@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000091e02f0620ddf5cf@google.com>
-Subject: Re: [syzbot] Re: [syzbot] [net?] WARNING in hsr_fill_frame_info
-From: syzbot <syzbot+3d602af7549af539274e@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240823125156.104775-1-dave@vasilevsky.ca>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+Hi Dave,
 
-***
+On 08/23/24 at 08:51am, Dave Vasilevsky wrote:
+......snip..
+> diff --git a/arch/sh/Kconfig b/arch/sh/Kconfig
+> index 1aa3c4a0c5b2..b04cfa23378c 100644
+> --- a/arch/sh/Kconfig
+> +++ b/arch/sh/Kconfig
+> @@ -549,6 +549,9 @@ config ARCH_SUPPORTS_KEXEC
+>  config ARCH_SUPPORTS_CRASH_DUMP
+>  	def_bool BROKEN_ON_SMP
+>  
+> +config ARCH_DEFAULT_CRASH_DUMP
+> +	def_bool n
 
-Subject: Re: [syzbot] [net?] WARNING in hsr_fill_frame_info
-Author: lizhi.xu@windriver.com
+If we don't add ARCH_DEFAULT_CRASH_DUMP at all in sh arch, the
+CRASH_DUMP will be off by default according to the below new definition
+of CRASH_DUMP?
 
-missing lock before call hsr_forward_skb
+Thanks
+Baoquan
 
-#syz test
+> +
+>  config ARCH_SUPPORTS_KEXEC_JUMP
+>  	def_bool y
+>  
+......  
+> diff --git a/kernel/Kconfig.kexec b/kernel/Kconfig.kexec
+> index 6c34e63c88ff..4d111f871951 100644
+> --- a/kernel/Kconfig.kexec
+> +++ b/kernel/Kconfig.kexec
+> @@ -97,7 +97,7 @@ config KEXEC_JUMP
+>  
+>  config CRASH_DUMP
+>  	bool "kernel crash dumps"
+> -	default y
+> +	default ARCH_DEFAULT_CRASH_DUMP
+>  	depends on ARCH_SUPPORTS_CRASH_DUMP
+>  	depends on KEXEC_CORE
+>  	select VMCORE_INFO
+> -- 
+> 2.34.1
+> 
 
-diff --git a/net/hsr/hsr_device.c b/net/hsr/hsr_device.c
-index e4cc6b78dcfc..32b43bd9f542 100644
---- a/net/hsr/hsr_device.c
-+++ b/net/hsr/hsr_device.c
-@@ -405,11 +405,15 @@ static void hsr_announce(struct timer_list *t)
- 
- 	rcu_read_lock();
- 	master = hsr_port_get_hsr(hsr, HSR_PT_MASTER);
-+	if (!master)
-+		goto out;
-+
- 	hsr->proto_ops->send_sv_frame(master, &interval, master->dev->dev_addr);
- 
- 	if (is_admin_up(master->dev))
- 		mod_timer(&hsr->announce_timer, jiffies + interval);
- 
-+out:
- 	rcu_read_unlock();
- }
- 
-@@ -427,6 +431,9 @@ static void hsr_proxy_announce(struct timer_list *t)
- 	 * of SAN nodes stored in ProxyNodeTable.
- 	 */
- 	interlink = hsr_port_get_hsr(hsr, HSR_PT_INTERLINK);
-+	if (!interlink)
-+		goto out;
-+
- 	list_for_each_entry_rcu(node, &hsr->proxy_node_db, mac_list) {
- 		if (hsr_addr_is_redbox(hsr, node->macaddress_A))
- 			continue;
-@@ -440,6 +447,7 @@ static void hsr_proxy_announce(struct timer_list *t)
- 
- 		mod_timer(&hsr->announce_proxy_timer, jiffies + interval);
- 	}
-+out:
- 
- 	rcu_read_unlock();
- }
-diff --git a/net/hsr/hsr_slave.c b/net/hsr/hsr_slave.c
-index af6cf64a00e0..3971dbc0644a 100644
---- a/net/hsr/hsr_slave.c
-+++ b/net/hsr/hsr_slave.c
-@@ -67,7 +67,9 @@ static rx_handler_result_t hsr_handle_frame(struct sk_buff **pskb)
- 		skb_set_network_header(skb, ETH_HLEN + HSR_HLEN);
- 	skb_reset_mac_len(skb);
- 
-+	spin_lock_bh(&hsr->seqnr_lock);
- 	hsr_forward_skb(skb, port);
-+	spin_unlock_bh(&hsr->seqnr_lock);
- 
- finish_consume:
- 	return RX_HANDLER_CONSUMED;
 
