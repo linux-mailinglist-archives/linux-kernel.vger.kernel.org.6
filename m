@@ -1,188 +1,163 @@
-Return-Path: <linux-kernel+bounces-308108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0E0596575E
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 08:10:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BC56965762
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 08:11:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEEF3283B1F
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 06:10:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D712284110
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 06:11:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A054D53389;
-	Fri, 30 Aug 2024 06:10:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 735E11531C1;
+	Fri, 30 Aug 2024 06:11:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Wigjlgn+"
-Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="JDfMqMoD";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="zUVLLfle";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="JDfMqMoD";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="zUVLLfle"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0166145FE5
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 06:10:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 137E714C596;
+	Fri, 30 Aug 2024 06:11:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724998242; cv=none; b=YPS8vzWULg/2eUF0zw5/akplaZ1y5XveXo9NWQ36jWowL1XWe1+0QNB88OPAbo56H+qdX52jgNuYOjq5VJsOY/stIJosVRuw//bOQ83Uo/At8/RoLZcZjQ36TId+RRJ4lL1T6NvrXtR+eZ8wFJFDf0o31mqKvgSBKk6Z5dMCarU=
+	t=1724998264; cv=none; b=grx4TdPsfhVI40vFJ2aXRI4hFbr3E5pjeY3GzjRNykes/yBTsnMdZrJHZM8Wspb5uaUGwlYHyBn4dWi+731WGWwc+b5vMLCovHUDbVafHNxX/7AB4x44ihJrZ24I+nHsiyKJQDzIDRU5Lv1cltFBQV8dFS6oMws3g3jn6Hi3TCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724998242; c=relaxed/simple;
-	bh=nkHJbeEg0+QEjgdCbTpKvNB45+hmK9J6uhHUFwVHosU=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=bSFJ2RXz8PKFexgDBYBnYwtxcetX+1mUcLkxrixkOXZGyRWrLLqb+S+MmHmQuQw/kb2C/glId8GhC2LEHLEzx/AFGekSVwbYsKpqqDVgnBYt5rCm5BIQBTn+ihjTEdp244Advpr7/qvqtJRl+7B82hmKntRn/ywLrMBU4HK6K08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Wigjlgn+; arc=none smtp.client-ip=95.215.58.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Content-Type: text/plain;
-	charset=us-ascii
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1724998239;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1724998264; c=relaxed/simple;
+	bh=g5qiXH6/WtVjU3jF2wRxOveJ9MIcV4A0/6sKE7TEqiM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UA0Y0vdKDYFNHNG0Kh1jCSlA9KQAgh2aAFiqVLO6cRkYZs3JsvzN5CTcpRwePIq21oPB+gsamMfn9pOC8PsXR1ISn4Ne5oysBXa7rpmwGVs75WyhmJAleNzOYg+DZeXuZJIDpOdQ/JUjTerhzu8a8dtDsF4eLMPvzZyO22ml9JA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=JDfMqMoD; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=zUVLLfle; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=JDfMqMoD; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=zUVLLfle; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 3E5AB1F7A0;
+	Fri, 30 Aug 2024 06:11:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1724998261; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=nkHJbeEg0+QEjgdCbTpKvNB45+hmK9J6uhHUFwVHosU=;
-	b=Wigjlgn+sIZ3NIO96mtgt0axwGAJBzKGSc1KMvciFjPOCGlYdCNu5D48n351f/f7R7IK5S
-	4xp05lYeArtrcngFl+gGUYx7YKrPOMOUPi0fGuzMKMRM7eIPyBsxEMxsffQQm5bZ2QJIu3
-	XSPiLgY/5PlPdxI00yzLKHgZfuUGY2E=
+	bh=PwD1A+dPCAQTtJUtxAfsvK6ToX4dZSDfYvcEiw+etw4=;
+	b=JDfMqMoDN3c6QjxNybEbVOAxAyTIMbjnFSsak255GdZM+fsIXxggkCrMx5NOn/tq8LIrM9
+	H7BRPyZkKBfhWMMhTHMZOrRoLFf0iNYNnrS4j8wtHS73lbW54I23fkhc5aa1Lf28aiCIQE
+	bHW6GRFwLfibWZkVHGJnsz/uj7wkgkQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1724998261;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PwD1A+dPCAQTtJUtxAfsvK6ToX4dZSDfYvcEiw+etw4=;
+	b=zUVLLfleivqOuGeSvJTH7GvjB4icviBsxydl1mNXu1N+xYMn48Amd+PjTIgLVBQYFC1zHF
+	PucOn+V7bEmJ5OAQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1724998261; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PwD1A+dPCAQTtJUtxAfsvK6ToX4dZSDfYvcEiw+etw4=;
+	b=JDfMqMoDN3c6QjxNybEbVOAxAyTIMbjnFSsak255GdZM+fsIXxggkCrMx5NOn/tq8LIrM9
+	H7BRPyZkKBfhWMMhTHMZOrRoLFf0iNYNnrS4j8wtHS73lbW54I23fkhc5aa1Lf28aiCIQE
+	bHW6GRFwLfibWZkVHGJnsz/uj7wkgkQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1724998261;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PwD1A+dPCAQTtJUtxAfsvK6ToX4dZSDfYvcEiw+etw4=;
+	b=zUVLLfleivqOuGeSvJTH7GvjB4icviBsxydl1mNXu1N+xYMn48Amd+PjTIgLVBQYFC1zHF
+	PucOn+V7bEmJ5OAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C905513A3D;
+	Fri, 30 Aug 2024 06:11:00 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id xq8TL3Ri0WYoTQAAD6G6ig
+	(envelope-from <hare@suse.de>); Fri, 30 Aug 2024 06:11:00 +0000
+Message-ID: <4dfed593-5b0c-4565-a6dd-108f1b1fe961@suse.de>
+Date: Fri, 30 Aug 2024 08:11:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
-Subject: Re: [PATCH v1] memcg: add charging of already allocated slab objects
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Muchun Song <muchun.song@linux.dev>
-In-Reply-To: <nt5zhccndtrj2pyyjm6wkah4iizzijdamaqce24t7nqioy4c5y@3vtipktwtzkn>
-Date: Fri, 30 Aug 2024 14:09:57 +0800
-Cc: Roman Gushchin <roman.gushchin@linux.dev>,
- Andrew Morton <akpm@linux-foundation.org>,
- Johannes Weiner <hannes@cmpxchg.org>,
- Michal Hocko <mhocko@kernel.org>,
- Vlastimil Babka <vbabka@suse.cz>,
- David Rientjes <rientjes@google.com>,
- Hyeonggon Yoo <42.hyeyoo@gmail.com>,
- Eric Dumazet <edumazet@google.com>,
- "David S . Miller" <davem@davemloft.net>,
- Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>,
- Linux Memory Management List <linux-mm@kvack.org>,
- LKML <linux-kernel@vger.kernel.org>,
- Meta kernel team <kernel-team@meta.com>,
- cgroups@vger.kernel.org,
- netdev <netdev@vger.kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <6088647D-147A-4704-BBA1-8CEDEDAE2885@linux.dev>
-References: <20240826232908.4076417-1-shakeel.butt@linux.dev>
- <Zs1CuLa-SE88jRVx@google.com>
- <yiyx4fh6dklqpexfstkzp3gf23hjpbjujci2o6gs7nb4sutzvb@b5korjrjio3m>
- <EA5F7851-B519-4570-B299-8A096A09D6E7@linux.dev>
- <a5rzw7uuf7pgrhhut7keoy66c6u4rgiuxx2qmwywbvl2iktfku@23dzxczejcet>
- <97F404E9-C3C2-4BD2-9539-C40237E71B2B@linux.dev>
- <nt5zhccndtrj2pyyjm6wkah4iizzijdamaqce24t7nqioy4c5y@3vtipktwtzkn>
-To: Shakeel Butt <shakeel.butt@linux.dev>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fs: drop GFP_NOFAIL mode from alloc_page_buffers
+Content-Language: en-US
+To: Jan Kara <jack@suse.cz>, Michal Hocko <mhocko@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-raid@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Song Liu <song@kernel.org>,
+ Yu Kuai <yukuai3@huawei.com>, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Michal Hocko <mhocko@suse.com>
+References: <20240829130640.1397970-1-mhocko@kernel.org>
+ <20240829191746.tsrojxj3kntt4jhp@quack3>
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <20240829191746.tsrojxj3kntt4jhp@quack3>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.997];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:mid,suse.com:email,imap1.dmz-prg2.suse.org:helo,suse.cz:email]
+X-Spam-Score: -4.30
+X-Spam-Flag: NO
 
+On 8/29/24 21:17, Jan Kara wrote:
+> On Thu 29-08-24 15:06:40, Michal Hocko wrote:
+>> From: Michal Hocko <mhocko@suse.com>
+>>
+>> There is only one called of alloc_page_buffers and it doesn't require
+>> __GFP_NOFAIL so drop this allocation mode.
+>>
+>> Signed-off-by: Michal Hocko <mhocko@suse.com>
+> 
+> Looks good. Feel free to add:
+> 
+> Reviewed-by: Jan Kara <jack@suse.cz>
+> 
+> Although even better fix would be to convert the last remaining caller of
+> alloc_page_buffers() to folio_alloc_buffers()... But that may be more
+> difficult.
+> 
+Already done by Pankajs large-block patchset, currently staged in vfs.git.
 
+Cheers,
 
-> On Aug 29, 2024, at 23:49, Shakeel Butt <shakeel.butt@linux.dev> =
-wrote:
->=20
-> On Thu, Aug 29, 2024 at 10:36:01AM GMT, Muchun Song wrote:
->>=20
->>=20
->>> On Aug 29, 2024, at 03:03, Shakeel Butt <shakeel.butt@linux.dev> =
-wrote:
->>>=20
->>> Hi Muchun,
->>>=20
->>> On Wed, Aug 28, 2024 at 10:36:06AM GMT, Muchun Song wrote:
->>>>=20
->>>>=20
->>>>> On Aug 28, 2024, at 01:23, Shakeel Butt <shakeel.butt@linux.dev> =
-wrote:
->>>>>=20
->>> [...]
->>>>>>=20
->>>>>> Does it handle the case of a too-big-to-be-a-slab-object =
-allocation?
->>>>>> I think it's better to handle it properly. Also, why return false =
-here?
->>>>>>=20
->>>>>=20
->>>>> Yes I will fix the too-big-to-be-a-slab-object allocations. I =
-presume I
->>>>> should just follow the kfree() hanlding on !folio_test_slab() i.e. =
-that
->>>>> the given object is the large or too-big-to-be-a-slab-object.
->>>>=20
->>>> Hi Shakeel,
->>>>=20
->>>> If we decide to do this, I suppose you will use =
-memcg_kmem_charge_page
->>>> to charge big-object. To be consistent, I suggest renaming =
-kmem_cache_charge
->>>> to memcg_kmem_charge to handle both slab object and big-object. And =
-I saw
->>>> all the functions related to object charging is moved to =
-memcontrol.c (e.g.
->>>> __memcg_slab_post_alloc_hook), so maybe we should also do this for
->>>> memcg_kmem_charge?
->>>>=20
->>>=20
->>> If I understand you correctly, you are suggesting to handle the =
-general
->>> kmem charging and slab's large kmalloc (size > =
-KMALLOC_MAX_CACHE_SIZE)
->>> together with memcg_kmem_charge(). However that is not possible due =
-to
->>> slab path updating NR_SLAB_UNRECLAIMABLE_B stats while no updates =
-for
->>> this stat in the general kmem charging path =
-(__memcg_kmem_charge_page in
->>> page allocation code path).
->>>=20
->>> Also this general kmem charging path is used by many other users =
-like
->>> vmalloc, kernel stack and thus we can not just plainly stuck updates =
-to
->>> NR_SLAB_UNRECLAIMABLE_B in that path.
->>=20
->> Sorry, maybe I am not clear . To make sure we are on the same page, =
-let
->> me clarify my thought. In your v2, I thought if we can rename
->> kmem_cache_charge() to memcg_kmem_charge() since kmem_cache_charge()
->> already has handled both big-slab-object (size > =
-KMALLOC_MAX_CACHE_SIZE)
->> and small-slab-object cases. You know, we have a function of
->> memcg_kmem_charge_page() which could be used for charging =
-big-slab-object
->> but not small-slab-object. So I thought maybe memcg_kmem_charge() is =
-a
->> good name for it to handle both cases. And if we do this, how about =
-moving
->> this new function to memcontrol.c since all memcg charging functions =
-are
->> moved to memcontrol.c instead of slub.c.
->>=20
->=20
-> Oh you want the core function to be in memcontrol.c. I don't have any
-> strong opinion where the code should exist but I do want the interface
-> to still be kmem_cache_charge() because that is what we are providing =
-to
-> the users which charging slab objects. Yes some of those might be
-> big-slab-objects but that is transparent to the users.
->=20
-> Anyways, for now I will go with my current approach but on the =
-followup
-> will explore and discuss with you on which code should exist in which
-> file. I hope that is acceptable to you.
-
-Fine. No problem.
-
-Thanks.
-
->=20
-> thanks,
-> Shakeel
-
+Hannes
+-- 
+Dr. Hannes Reinecke                  Kernel Storage Architect
+hare@suse.de                                +49 911 74053 688
+SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
 
