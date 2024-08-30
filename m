@@ -1,123 +1,169 @@
-Return-Path: <linux-kernel+bounces-308583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07D5C965F23
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:28:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EFC99965F2E
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:29:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F602288050
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:28:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E575028F074
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:29:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45F27188CBC;
-	Fri, 30 Aug 2024 10:27:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3DCF18FC68;
+	Fri, 30 Aug 2024 10:28:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="EgYiu1u1"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Q9WYMPUR"
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D56B17B4FE;
-	Fri, 30 Aug 2024 10:27:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 597FF18E379
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 10:28:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725013639; cv=none; b=iral3qtZoIt9jVEj4YtZL0SX7UA4xBJPiJK9IcW38rQX/XYoNwStZHodfgG8sCl/LgGfRMfdR2QGkdC4RSs3xVraiid7a8qj6blPJXVpnKhLX/W90cu0lM4NvUMhByKAmntzVBrZ1fOA9+w/Eo+x1R2JHOQ4OXZE17lplt483UQ=
+	t=1725013682; cv=none; b=qUiKA9Zaup/CF/xPDYoxIizIyw5LRjSrn9QiHlzkXP2QjXEI8V1bw7sw5wKL8/WpHNbTvqEz6BAILVNLbAXHacHxG50r6IcbhCniKKQK2cB9XeDUXgWXfxj4ZhFd/p3GF+ZR0cFp4UTzPCzPdfFzY/isLzSEpyNOLmoGW9gBLy8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725013639; c=relaxed/simple;
-	bh=n5x96yz0plQXi0jNRmIFh/xZ8EZ6kyjM+6+zAuiZYPs=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=k8vYOPHvyG3gpjrg+OezuPjMz/MTdfZ2QWe0G3YpPAQCBzmS++OEp+JT/0UBAVP1ezsBVPwbfRroQmbniBkePkR5egNI+TlKuWVMsvFnKJRw/yrly4bcn/W15anH4tB3QYAwHWIiG7Bj27hmA3OLMOG7AiFW1705KQdu5DK6KGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=EgYiu1u1; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47UARAb1059403;
-	Fri, 30 Aug 2024 05:27:10 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1725013630;
-	bh=SWIJULiquba5lxHob3BxH9YjKU7LdekAg30JvEMazqM=;
-	h=From:To:CC:Subject:Date;
-	b=EgYiu1u13UiA3sdBymMUKPXi1IixCWce0ZCt98bPQWK8ZcOofpOt/iGmZDggPpAhI
-	 hFSvaTRCq0jD1CI7DvvLtDQDsvCQRjhORQajSiQk2w6Siq06FLOR3gCG3skSPtXK1u
-	 6B3BLpRA7fJlRllmlDT4Yk7Ha4yVUe5eOxOSRXXM=
-Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47UARA1D125739;
-	Fri, 30 Aug 2024 05:27:10 -0500
-Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 30
- Aug 2024 05:27:10 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 30 Aug 2024 05:27:10 -0500
-Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47UARAXX120457;
-	Fri, 30 Aug 2024 05:27:10 -0500
-From: Nishanth Menon <nm@ti.com>
-To: Conor Dooley <conor+dt@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Rob Herring <robh@kernel.org>
-CC: Tero Kristo <kristo@kernel.org>, Vignesh Raghavendra <vigneshr@ti.com>,
-        Nishanth Menon <nm@ti.com>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        Roger
- Quadros <rogerq@kernel.org>
-Subject: [PATCH] arm64: dts: ti: k3-am642-evm-nand: Rename pinctrl node and gpio-hog names
-Date: Fri, 30 Aug 2024 05:27:09 -0500
-Message-ID: <20240830102709.3970209-1-nm@ti.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1725013682; c=relaxed/simple;
+	bh=pMI90KbqudBvHNSXSKjN0yDaohkTey7HoNjDb2rpmqE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=d0ExZkqcVLDzp0E8B5WAKAtO9/nrRDu+9j0WyUwFsaSdp/sZLR0Mx9ibWv+wKH2pCMMlyqvA2jHrvibbnix/jzRB0GZG3quw/iNsv85kZnGgAAAkWTg6G1SF7IhTcMFiHraMrA0nIJQ6vx2Pqs1xj5i8nKQFo7AoKwslhIiIrdk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Q9WYMPUR; arc=none smtp.client-ip=209.85.219.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e1a7c25e350so492059276.3
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 03:28:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725013679; x=1725618479; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RaANdRMqGTHrITO34e72PLfanbHHgulA2aOEsmQ72uE=;
+        b=Q9WYMPURyM8Ubb9lD8vs2Jav/ZAp9c+7ozzBICLaS008jTIXxvcG/UBUbAc50gA8jK
+         5CAu8zDktm1XPSUS+Xr0lf85OWtnD6Rutq6qlmNxaFRnmlfcWJk8DQA19BAvSvkJn8wW
+         dUdpydn081mPKLdVdGp4YZpl2KbLZ28sQQcWslzWQcSM0vSFqNvj/vrnub2fRrrFdqeY
+         vt8+PwwQSY21ZekMMjgmzqw0+h8mzuo15VTNmICSkcLcvtc/2W+ZEGzuee7ReFutCdGh
+         apQ9LSzP5QhhpBR0kA2HjXexKfwAC1wWTK7i1sOypVpDNiYUeiZ3Csaxzt4iPkMw9k4G
+         +fTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725013679; x=1725618479;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RaANdRMqGTHrITO34e72PLfanbHHgulA2aOEsmQ72uE=;
+        b=Qu65/GKJXxj1g/j0aD4a/na9hVXvQOEDbitwdmH1weSi4fjPWcXfJ+HCZYgqmAKr5E
+         n136YyOWZTX0UJF3acm46wsv+kXumwoVTzxRYnA0eNUkXIhDIyScBcKMYdm2w0ZpO/+4
+         MwvUawh1h0ZsREAry2BkMy1M1g1RC4QzVzuOJI49za6dq3dumG0DEc59kUBJNc10unO1
+         jtJj2tjzNpDIkWvUDyup88snb9oHcvRLn/N0DV6hJ15/TcdQeWqSc2Od74jT4rvlSPs4
+         mEnbz5oxqYjTZUumEoST5fuAddshTbBliBps5StEN+HBrLeyDQ+WziUDnW9vBJkHPE04
+         cTaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCULrF3+O8dEDE8Me8y5dea7tYbnNL7c/uhfuuoK+YMOf9ENfWZ0aY4PJiUsrxlF6astCxLfsrGpHGt7O5g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhxSnjVYek4W0/u/04UIJRH+hAblbsYPbNNDA3naWskngmV+ds
+	JQmiV2rlSMgDNwvWZUQXW7wIRKgS0mbRdAhQOC/KbbRcMZWImZrB3sbxhtzNTSae4f39Uy0Z/vT
+	rrCeE4tgl1JvYk21SNFKfO6BhknfkBk+XAWrxCg==
+X-Google-Smtp-Source: AGHT+IHD0Ca1b20qhfzhusSSGfDPMwq7sv7n4QQ2HQLit3WnJLdBel3AT0b+UM+MqPCx/P4KLADReUQAYSd3jSFYE1k=
+X-Received: by 2002:a05:6902:2b09:b0:e0e:877b:2792 with SMTP id
+ 3f1490d57ef6-e1a7a0091d2mr1858033276.17.1725013679204; Fri, 30 Aug 2024
+ 03:27:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Organization: Texas Instruments, Inc.
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <CAPDyKFrN9L+u_X7Ur+j--i-tewd31EXzwCojOP+Sxuyxpk4Phg@mail.gmail.com>
+ <20240830024750.2908738-1-xirui.zhang@vivo.com>
+In-Reply-To: <20240830024750.2908738-1-xirui.zhang@vivo.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Fri, 30 Aug 2024 12:27:23 +0200
+Message-ID: <CAPDyKFrBSOwzn--m321VhRKM-J-9x9BkoPw7+TBWcOE5LpS4HQ@mail.gmail.com>
+Subject: Re: [PATCH 0/9] mmc: convert to devm_clk_get_enabled() API
+To: zhangxirui <xirui.zhang@vivo.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: adrian.hunter@intel.com, bastien.curutchet@bootlin.com, festevam@gmail.com, 
+	imx@lists.linux.dev, jh80.chung@samsung.com, kernel@pengutronix.de, 
+	linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, michal.simek@amd.com, 
+	nico@fluxnic.net, orito.takao@socionext.com, rric@kernel.org, 
+	s.hauer@pengutronix.de, shawnguo@kernel.org, sugaya.taichi@socionext.com, 
+	u.kleine-koenig@pengutronix.de
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Rename the pin mux and gpio-hog node names to match up with binding
-rules. This fixes dtbs_check warnings:
-'gpmc0-pins-default' does not match any of the regexes: '-pins(-[0-9]+)?$|-pin$', 'pinctrl-[0-9]+'
-'gpio0-36' does not match '^(hog-[0-9]+|.+-hog(-[0-9]+)?)$'
++ Stephen
 
-Signed-off-by: Nishanth Menon <nm@ti.com>
----
-Cc: Roger Quadros <rogerq@kernel.org>
+On Fri, 30 Aug 2024 at 04:32, zhangxirui <xirui.zhang@vivo.com> wrote:
+>
+> On Wed, 28 Aug 2024 at 17:11, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>
+> > On Tue, 27 Aug 2024 at 09:34, zhangxirui <xirui.zhang@vivo.com> wrote:
+> > >
+> > > This series use devm_clk_get_enabled() to simplify code
+> > > and avoids the calls to clk_disable_unprepare()
+> >
+> > I agree that it simplifies code - but it also changes the behaviour,
+> > in which order clocks are getting unprepared/disabled during the
+> > ->remove() phase. In other words, this needs to be thoroughly tested
+> > and not just considered as a trivial cleanup series.
+> >
+> > For example, if there is a PM domain attached to the mmc host device,
+> > is it really okay to allow powering-off the PM domain before the
+> > clocks are being gated? This could potentially happen if we apply the
+> > $subject series.
+>
+> Thanks for the reply, are you saying that merging the above patch will
+> lead to the following issue?
+>
+> before=EF=BC=9A
+> bus_remove -> driver_remove -> clk unprepare
+>            -> dev_pm_domain_detach
+>            -> device_unbind_cleanup
+> after=EF=BC=9A
+> bus_remove -> driver_remove (delete clk unprepare)
+>            -> dev_pm_domain_detach
+>            -> device_unbind_cleanup (devm_clk_get_enbaled ->relase(clk un=
+prepare))
 
-This is a trivial fix, so applying Fixes seemed over-board.
+Correct!
 
- arch/arm64/boot/dts/ti/k3-am642-evm-nand.dtso | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> But I think this issue is not only specific to the MMC host, it will also
+> occur with other devices, if there is a PM domain attachded an use devm_c=
+lk_get_enbaled API.
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am642-evm-nand.dtso b/arch/arm64/boot/dts/ti/k3-am642-evm-nand.dtso
-index f08c0e272b53..f91589818e32 100644
---- a/arch/arm64/boot/dts/ti/k3-am642-evm-nand.dtso
-+++ b/arch/arm64/boot/dts/ti/k3-am642-evm-nand.dtso
-@@ -12,7 +12,7 @@
- #include "k3-pinctrl.h"
- 
- &main_pmx0 {
--	gpmc0_pins_default: gpmc0-pins-default {
-+	gpmc0_pins_default: gpmc0-default-pins {
- 		bootph-all;
- 		pinctrl-single,pins = <
- 			AM64X_IOPAD(0x0094, PIN_INPUT, 7) /* (T19) GPMC0_BE1n.GPIO0_36 */
-@@ -50,7 +50,7 @@ AM64X_IOPAD(0x00a4, PIN_OUTPUT, 0) /* (N17) GPMC0_DIR */
- };
- 
- &main_gpio0 {
--	gpio0-36 {
-+	gpmc0-hog {
- 		bootph-all;
- 		gpio-hog;
- 		gpios = <36 0>;
+Right. Which kind of questions whether the API is really that useful,
+from a cleanup point of view.
 
-base-commit: d2bafcf224f3911b183113b2fcb536c9e90684a3
-prerequisite-patch-id: a9c45d98345ca492c945cd5050191ad605de242b
--- 
-2.46.0
+>
+> So, can we solve this problem by swap device_ubind_cleanup and dev_pm_dom=
+ain_detach ?
+> clk unprepare -> power off not power off -> clk unprepare
 
+That may work, I don't know.
+
+Another option is simply to avoid using devm_clk_get_enabled(), unless
+you know that the HW can cope with the potentially changed behaviour.
+
+I have looped in Stephen to allow him to provide us his thoughts
+around this too.
+
+>
+> bus_remove -> driver_remove
+>            -> device_unbind_cleanup
+>            -> dev_pm_domain_detach
+>
+> Thanks.
+>
+> > >
+> > > zhangxirui (9):
+> > >   mmc: cavium-thunderx: Use devm_clk_get_enabled() helpers
+> > >   mmc: davinci_mmc: Use devm_clk_get_enabled() helpers
+> > >   mmc: dw_mmc-hi3798cv200: Use devm_clk_get_enabled() helpers
+> > >   mmc: mvsdio: Use devm_clk_get_enabled() helpers
+> > >   mmc: mxcmmc: Use devm_clk_get_enabled() helpers
+> > >   mmc: mxs-mmc: Use devm_clk_get_enabled() helpers
+> > >   mmc: sdhci: milbeaut: Use devm_clk_get_enabled() helpers
+> > >   mmc: sdhci-of-arasan: Use devm_clk_get_enabled() helpers
+> > >   mmc: sdhci_f_sdh30: Use devm_clk_get_enabled() helpers
+
+Kind regards
+Uffe
 
