@@ -1,136 +1,109 @@
-Return-Path: <linux-kernel+bounces-308097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92C1A96572E
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 07:57:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3026A965734
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 07:57:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B876E1C22BE2
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 05:57:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 579C01C22E63
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 05:57:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DF411531D4;
-	Fri, 30 Aug 2024 05:56:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EECB01531C9;
+	Fri, 30 Aug 2024 05:57:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="R9ncg7g/"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="muRvcvCe"
+Received: from mail-oi1-f171.google.com (mail-oi1-f171.google.com [209.85.167.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 032C914A603;
-	Fri, 30 Aug 2024 05:56:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4C9B14B061
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 05:57:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724997400; cv=none; b=Rkx4YO15VnM2w4buZw1nV35p/3oPC8Z1nj0e7ZvqvkvZKxcBncAT7F4hML7DrIur2MuVOdEcWjjuAYi07caOzJAIqUQsJ73T6lrsF7Za0eWEWwBqgYOUYngWXoCJ5ovgZTdNJlC1yHkDB2NezlIC6b3B2RVO75xfVaQ0x9/JD/g=
+	t=1724997431; cv=none; b=m2aYXh7qOjssgFtZvJhZ7YgnElfucPe62O6hFyI5nHwbIXYijx3kXC2bgOY79o0ZPXAYn9Z4nmSh5YVBto5/RV9Nx/Zq9ejtgWQdLeMNyM9dovpES+RTk9uW5yjXmQBLXO0eNiRB5ZC+ygkZIwzmUV8DcDJEkKwa41695r0tGb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724997400; c=relaxed/simple;
-	bh=cMoYR2+lL+zTWmUeEiZIZmwGSiC2Mz51wmGtrZkVE4Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bx7nMex9qAGQci0nEEY/RD4mNjQtIcQVJIt6Y1lczUKkK1lZ+GLvHhh28K49r3AvMmR/y5ehK7QRaAintSpC8EltfIPFx8UAMmD++CdbjTe9wNbYbdTRNVNqspO+yRSuswzhfD0aSxDKhp7kXrnm4miAEl/OUQK5zISFd98EvCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=R9ncg7g/; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724997399; x=1756533399;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=cMoYR2+lL+zTWmUeEiZIZmwGSiC2Mz51wmGtrZkVE4Y=;
-  b=R9ncg7g/SF1zq7cftgRWxkf2VipPgh/cTgg0h6Bz40ClripvnojT563r
-   LH5AUV/WeFBpN3W58QgpGvE/8ZQ1AheJ5bkX7ITv/Xh0N0J7mFSRgVt0j
-   FqFw0cJ+hmlqK5JDuufEHsDqLaJ5ZDUOG6R+AnDusA3hsV++q6jhkTWEx
-   YNQAVu9sTFO6tBs67tC2IoaMmdTVSxKZrsQpOInjtN8YEpIaetkYD0AY2
-   mbqhTUFSSlBHBL8qzW6DZmPuP4AH057h+JoFuzzXtVvKaHTtNXgLHRARI
-   ZU7OQ3369dbkrxHwlPYO4Fgc3vJOUSv68oS7Ativ+hvy6/grugav6/R6s
-   Q==;
-X-CSE-ConnectionGUID: YuNLxGg9S5KddOLPUVjxFQ==
-X-CSE-MsgGUID: +CH4pKK7QhutUPSHpJbgaQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11179"; a="49009775"
-X-IronPort-AV: E=Sophos;i="6.10,187,1719903600"; 
-   d="scan'208";a="49009775"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 22:56:38 -0700
-X-CSE-ConnectionGUID: RtiO9UGQQjezeJIRqv1OUg==
-X-CSE-MsgGUID: eWqTYxmIRe+0sEEFrgr6LQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,187,1719903600"; 
-   d="scan'208";a="63790147"
-Received: from sschumil-mobl2.ger.corp.intel.com (HELO tlindgre-MOBL1) ([10.245.246.63])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 22:56:33 -0700
-Date: Fri, 30 Aug 2024 08:56:27 +0300
-From: Tony Lindgren <tony.lindgren@linux.intel.com>
-To: Isaku Yamahata <isaku.yamahata@intel.com>
-Cc: "Huang, Kai" <kai.huang@intel.com>,
-	"Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
-	"seanjc@google.com" <seanjc@google.com>,
-	"pbonzini@redhat.com" <pbonzini@redhat.com>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"isaku.yamahata@gmail.com" <isaku.yamahata@gmail.com>,
-	"Li, Xiaoyao" <Xiaoyao.Li@intel.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Binbin Wu <binbin.wu@linux.intel.com>,
-	"Yao, Yuan" <yuan.yao@intel.com>,
-	"isaku.yamahata@linux.intel.com" <isaku.yamahata@linux.intel.com>
-Subject: Re: [PATCH 05/25] KVM: TDX: Add helper functions to print TDX
- SEAMCALL error
-Message-ID: <ZtFfC0P1slHZjOVV@tlindgre-MOBL1>
-References: <20240812224820.34826-1-rick.p.edgecombe@intel.com>
- <20240812224820.34826-6-rick.p.edgecombe@intel.com>
- <ZruKrWWDtB+E3kwr@ls.amr.corp.intel.com>
- <61b550ed-c5d1-44a6-89de-cfa04ddd59c8@intel.com>
- <Zrv649ijpYchVlyL@ls.amr.corp.intel.com>
+	s=arc-20240116; t=1724997431; c=relaxed/simple;
+	bh=EVTXf/DONCxrQFC0k4tFvKek06ZwX1QujVc0QdJjtiA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LJtOym284Xersstb9R1kK0SEqFsEUuexpYnR85LbSDWZWDLLWcSuTafNRGZ0Nj/el5STT2ONe2jqvU+oezHohkeo94a51ZC3N+TFoqsQLnGSMNOaNA/SAOFjZVOqg2IB951PpQ5WcQacX2Ath1j0rVeomJYjccQ/tROZRxdjkBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=muRvcvCe; arc=none smtp.client-ip=209.85.167.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-oi1-f171.google.com with SMTP id 5614622812f47-3df096e70f1so827227b6e.3
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 22:57:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google; t=1724997429; x=1725602229; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+bS4Vcno3eV2Qn/byTVlsNhExHrNUmtKjgh9WYM/zcU=;
+        b=muRvcvCeY6dBvd3163VWvs96UcjV67HJDEGM8OHgVj1I5pDRiRCQjxUhc4eWv1EVwx
+         n8cZmSaIcGsp1eE/Mta/vr1e9C8FWgBxt6vfSQVVCujOO5eVjSAUTK+eTmsV6peFPHAV
+         6BFp9hQg2/7H6kxhkpkSiDtdTClpcDACL7NgI/BInmmWdKvHa7zW7tYBTkM/KCM3WCCR
+         a5pk602HA6cWOhyXBKenM1xuOdgJBiExbZeHwVXA/Q3delfJevQv3vSV3Lb2TdqkUrJR
+         CTqXbOPYhOrV5ZR0WLhb34zDcwYlE/GT6TDS5vraXMr2CqwsfxmU81U7MDwN/E7kZSmV
+         RAdQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724997429; x=1725602229;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+bS4Vcno3eV2Qn/byTVlsNhExHrNUmtKjgh9WYM/zcU=;
+        b=WlF+GlGZQNtEUwa+H0mDDFOsFImZBJqq7FhjqQ6EiwtKPNM28qNR6XPwp2bBb99HF5
+         3FuB/eiDdZ0eTo07MIBr1EkrMKJnk9KKRLRFSgEkhkdGZ63lsWK9E6Ir48XO76qQdKeC
+         iZTTBqlUHImyk6ODCUNpLikblLOtPOevaD+CjOhhzLRHPzzYD7ft+yaAjYfVrd8/VemE
+         L3QajNPCh1XHK+lWH/Fd2tJzWu4ee1ETzvI/+nLAU4YWbmjeyMBG6N0SGYSAg6Y4JRtx
+         wIslELoeNZ+eYGBoUXQiH8Cy6HphQor//rPQMDDdmdYlfg87tDKhQfShN1m/9r6lXQk6
+         mWrA==
+X-Forwarded-Encrypted: i=1; AJvYcCW5Oy++ZALG4G15upxdm3uNS9HB+A3EWn1ubyAsiYuw+AB4/IVBVqw+39+6F4XZ65xNOW4a+yD6q7LelJY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwrERA/Jv9vJvF4DPOMm8eZN/3PUsrg00oamZ0vZE+fUchgfiQB
+	zCbzvKl0ZLIPM500AgGbYFRk1o1s7saincQhgtqA3UFlRUl2BBALRsx9bhCvNAfPJvN9dVlKBay
+	DN0ZjNo75LvV5RD2DJebXhvtbIXiVRsoqnu33Dw==
+X-Google-Smtp-Source: AGHT+IF+bvBOzP8WPuHP2wswdhxLCrRjaJRkPZE2kRmeOLYycfULGuDXQiQa0ow1QrMYQIBLSiVTZE6myPNKH1Jcjkc=
+X-Received: by 2002:a05:6808:11cb:b0:3d6:5791:a378 with SMTP id
+ 5614622812f47-3df05e22510mr5366568b6e.17.1724997428847; Thu, 29 Aug 2024
+ 22:57:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zrv649ijpYchVlyL@ls.amr.corp.intel.com>
+References: <20240829033904.477200-1-nick.hu@sifive.com> <20240829033904.477200-3-nick.hu@sifive.com>
+ <87o75ba1hx.ffs@tglx>
+In-Reply-To: <87o75ba1hx.ffs@tglx>
+From: Nick Hu <nick.hu@sifive.com>
+Date: Fri, 30 Aug 2024 13:56:58 +0800
+Message-ID: <CAKddAkBM6BW9BXYumiG8JzbTFRD1pgp=b0fcb=KBW6ysjPf8Qg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] time-riscv: Stop stimecmp when cpu hotplug
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: greentime.hu@sifive.com, zong.li@sifive.com, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@ucw.cz>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	Andrew Jones <ajones@ventanamicro.com>, Conor Dooley <conor.dooley@microchip.com>, 
+	Samuel Holland <samuel.holland@sifive.com>, Sunil V L <sunilvl@ventanamicro.com>, 
+	linux-pm@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 13, 2024 at 05:31:31PM -0700, Isaku Yamahata wrote:
-> On Wed, Aug 14, 2024 at 10:34:11AM +1200,
-> "Huang, Kai" <kai.huang@intel.com> wrote:
-> 
-> > 
-> > > > +#define pr_tdx_error(__fn, __err)	\
-> > > > +	pr_err_ratelimited("SEAMCALL %s failed: 0x%llx\n", #__fn, __err)
-> > > > +
-> > > > +#define pr_tdx_error_N(__fn, __err, __fmt, ...)		\
-> > > > +	pr_err_ratelimited("SEAMCALL %s failed: 0x%llx, " __fmt, #__fn, __err,  __VA_ARGS__)
-> > > 
-> > > Stringify in the inner macro results in expansion of __fn.  It means value
-> > > itself, not symbolic string.  Stringify should be in the outer macro.
-> > > "SEAMCALL 7 failed" vs "SEAMCALL TDH_MEM_RANGE_BLOCK failed"
-> > > 
-> > > #define __pr_tdx_error_N(__fn_str, __err, __fmt, ...)           \
-> > >          pr_err_ratelimited("SEAMCALL " __fn_str " failed: 0x%llx, " __fmt,  __err,  __VA_ARGS__)
-> > > 
-> > > #define pr_tdx_error_N(__fn, __err, __fmt, ...)         \
-> > >          __pr_tdx_error_N(#__fn, __err, __fmt, __VA_ARGS__)
-> > > 
-> > > #define pr_tdx_error_1(__fn, __err, __rcx)              \
-> > >          __pr_tdx_error_N(#__fn, __err, "rcx 0x%llx\n", __rcx)
-> > > 
-> > > #define pr_tdx_error_2(__fn, __err, __rcx, __rdx)       \
-> > >          __pr_tdx_error_N(#__fn, __err, "rcx 0x%llx, rdx 0x%llx\n", __rcx, __rdx)
-> > > 
-> > > #define pr_tdx_error_3(__fn, __err, __rcx, __rdx, __r8) \
-> > >          __pr_tdx_error_N(#__fn, __err, "rcx 0x%llx, rdx 0x%llx, r8 0x%llx\n", __rcx, __rdx, __r8)
-> > > 
-> > 
-> > You are right.  Thanks for catching this!
-> > 
-> > The above code looks good to me, except we don't need pr_tdx_error_N()
-> > anymore.
-> > 
-> > I think we can just replace the old pr_tdx_error_N() with your
-> > __pr_tdx_error_N().
-> 
-> Agreed, we don't have the direct user of pr_tdx_error_N().
+Hi Thomas
 
-I'll do a patch for these changes.
+On Thu, Aug 29, 2024 at 9:43=E2=80=AFPM Thomas Gleixner <tglx@linutronix.de=
+> wrote:
+>
+> On Thu, Aug 29 2024 at 11:39, Nick Hu wrote:
+>
+> clocksource/drivers/timer-riscv: is the proper prefix
+>
+> Thanks,
+>
+>         tglx
+>
+Thanks, I'll update it in the next version
 
-Tony
+Regards,
+Nick
 
