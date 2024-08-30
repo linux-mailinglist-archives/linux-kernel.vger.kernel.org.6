@@ -1,162 +1,135 @@
-Return-Path: <linux-kernel+bounces-308566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44744965EDF
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:23:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EF5D965EE6
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:24:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BDBAAB27B6F
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:23:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 925331C24431
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:23:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9493818FC78;
-	Fri, 30 Aug 2024 10:18:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HZsROsnO"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 867CA192D92;
+	Fri, 30 Aug 2024 10:19:05 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 560D616CD1D
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 10:18:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9556918FDA9
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 10:19:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725013096; cv=none; b=oazaswL72ileOQUDJsJYEd2VwBCcxkyYYa9oxqMyJplslG2m7Ddhf57Hvb/kLlnjf+H8wtL4p20556q6dXpJQswZ1IyM0MIbTBXhfMUSUW7XvwtWruGvDMBXaMzo8hjLT80durHhxUiQ2z/rvXg1F+OVl2o94NM98TBGKBnSW74=
+	t=1725013145; cv=none; b=GLNBR92veQY3DIwVr7996E02bspqRvLMVLEFWQnyZmp4zIB7oPRP4HfvFkVKmmyitnnq/+DoO5hyUXPuQ0elRSncRTmjtKlXKqPcKUAlo4lQR8ttl97o0yWyhyqE6UQy6iOzMcavIn5p9keDR12GBy5gQUH51D5XVAkUdn7lyAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725013096; c=relaxed/simple;
-	bh=PetK3Lc5AxGaeJOb4DCw0HX/+hPiWmg/Q4goL3s/Idw=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=r2QYhZdHlQrHr+mO42wbXCAbov3KPPpFZzhsUSZd0YmfA9phYsigmMsRHnR0MkHJIuRsuxmrSPMArj4ArLU3SwAOROScjeCqgxeTVnQcZbZpqqP9LJYKnbsk7IpmM3S8L+q3E7ChQEKb6KYnXEcmbWx1Zro+EpUC2nuOGrqdSYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HZsROsnO; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-7bb75419123so1010767a12.3
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 03:18:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725013094; x=1725617894; darn=vger.kernel.org;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=RhjXrY66aQqjBoYOxAvINjNegNxb7ZOaXewyBkVrXPY=;
-        b=HZsROsnOHLWMdpuWNWkJlWEYO6lJOc1C3qkpIZhZBSdybR92540kv633cjd2wHYKN3
-         L5Q0E/NJ3dOBDGp50GFiufaKLa9LTDWZ1ifJVRKeOwnLdSX756iCz9SXvouJNvX3vHj/
-         +gpeBYXp4qLX2/EDBPEfrNjiVlgttq9oNg/n6RMsp+5Ksdx2Sf4rtdjD3jB84zO0gEGU
-         7gnwwm8Cyg1Lplvg0s56kVJL6/KzTLoaA645U/0ePYSdFXDSEaIYzRflBGV1B9I2ItNV
-         yKWjyEQqYW4J3ToWVyyrPCklwSDepP33iB5eYuCbUbdCiyXcJikfQdkeeOVJUM0xUVst
-         jpww==
+	s=arc-20240116; t=1725013145; c=relaxed/simple;
+	bh=E92vPcDUNH2H6tXKAyZSvRlnQzJMyeSx5qItmxkxsNE=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=oC28CJ3HHUb5kPTlqtXQhoFgHwpQ6T3vSfamj2Rx/CHa1xW8ctACQDVJq0eEgk9Gylgm7WWVo9J6a5Ff6kP2SKSUMR+lyaynY9cVKwVb1TrvtXiykEd42ozI49PTMtPKtoTyyT62HudGP6gQUUGBhoPAm/6rWaIUMx1eAP+oAJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-82a2723a5aeso56794039f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 03:19:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725013094; x=1725617894;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RhjXrY66aQqjBoYOxAvINjNegNxb7ZOaXewyBkVrXPY=;
-        b=NqlkTD92w6KnAqY75lmsODauZQK9bnw9I8ejlbox9JFz9pKMY++kdJnAX47Pynnz14
-         dxrXP7TSJE7Es67Spq54sTvdeSozv9EC3nxHIHdHFERqSCc83lEWlHfdDkWfYnZVxo19
-         j5s40VMcQk6YmMJtsVudzeu8Ydtn+qKFxetTmFWeIylJQZoVOHb04CCrNMFCWkbRhHRW
-         HwTp3czMsDOCHewV72qeo59s0rb6s8MlF6CRqKOa9z5IHmDcjEDfN0hGBFzDWLCzFCYm
-         1ivJfedlYXz0NMVPtMc2ptqYEPj/AB5/9bVvgXRM3twIXwmmNh9XW3qo7ZXDQpNwm4FK
-         RfwA==
-X-Forwarded-Encrypted: i=1; AJvYcCVaalp+5yt5gGJQ/l5LHzz74wvQJja36siNTcX86Jk47F/zAZ4A5aKeBqiOx91TNjIBXg4i4/+N8fPh8nY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSoMekXllsKG7xBuNoBuSRbl3b5WpYyXuEgqXGtCtqknLQYqAv
-	Nt/RLI4MbMZfxT2kBz/aUyjkjYZBrMcoHhQQf0VBuxcmY0aEACkHpnhIptGbHQ==
-X-Google-Smtp-Source: AGHT+IESiNr+ViFs8CZa9rAsO5YWji9DJdOcgxH36+ht1foL3djmeL/yUo6l5fw66rlGTYuFv4zHzQ==
-X-Received: by 2002:a17:90b:17c7:b0:2d3:c089:84b with SMTP id 98e67ed59e1d1-2d8564cf3c0mr5704198a91.29.1725013094189;
-        Fri, 30 Aug 2024 03:18:14 -0700 (PDT)
-Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d85b39d03asm3372089a91.43.2024.08.30.03.18.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Aug 2024 03:18:13 -0700 (PDT)
-Date: Fri, 30 Aug 2024 03:18:11 -0700 (PDT)
-From: Hugh Dickins <hughd@google.com>
-To: Baolin Wang <baolin.wang@linux.alibaba.com>
-cc: Hugh Dickins <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
-    willy@infradead.org, david@redhat.com, wangkefeng.wang@huawei.com, 
-    chrisl@kernel.org, ying.huang@intel.com, 21cnbao@gmail.com, 
-    ryan.roberts@arm.com, shy828301@gmail.com, ziy@nvidia.com, 
-    ioworker0@gmail.com, da.gomez@samsung.com, p.raghav@samsung.com, 
-    linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 4/9] mm: filemap: use xa_get_order() to get the swap
- entry order
-In-Reply-To: <3c7e4800-ec9c-4288-85bf-89f3fef18827@linux.alibaba.com>
-Message-ID: <e88b1850-ca36-aec5-ad27-0b2753c836f5@google.com>
-References: <cover.1723434324.git.baolin.wang@linux.alibaba.com> <6876d55145c1cc80e79df7884aa3a62e397b101d.1723434324.git.baolin.wang@linux.alibaba.com> <d3dc75e2-40a7-8439-734c-19d83707164c@google.com> <3c020874-4cf3-418c-b89b-4e6ed158e5b9@linux.alibaba.com>
- <c336e6e4-da7f-b714-c0f1-12df715f2611@google.com> <3c7e4800-ec9c-4288-85bf-89f3fef18827@linux.alibaba.com>
+        d=1e100.net; s=20230601; t=1725013142; x=1725617942;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cZwEs243YnoTjv7mRJam4tBLXDmD+xDF+1bP+8r8g0E=;
+        b=NgyrCwLGIapfhUbDB8++9afTR6iX4lSaE5aFDDXIGx7kqY2qp7wSRF7EoppSvpoPFa
+         m21S+lRQn9YJU/gZZzCAdqD6L8yTe/GnAxio3oftf6B4ohkhsIobLRnhWGeFixIIptFe
+         zU7eSCKqwkRe6vRf2/4NiYvBvEn3gWwMI2Yh1sTKbu78u7mdpW/DosbDYim8YjyGT9kf
+         qA1W8asKc43u/5crbPQqBqSL+bBodgy0eU5kL8xhyvvswpJqsIoKDw853GI2WyASNshG
+         uzbf3/wBgznCGqfKIB+C122ZGm8zx1Fcyr9oS07fWVUDvYfTegmyy9ajQGB3YXizCeaL
+         SLYA==
+X-Forwarded-Encrypted: i=1; AJvYcCXhnZBNu5M9kLgDGdum4X64xV2RT/hvX0O19DUFi+oHca9rKy4zR1Fk4rLhj8rStqUYns6GB7Ly8dhRTIo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCl3D1hpyMz4PgT4S7g0GJ07RdieQLMG57VMdYpw9Zr+T2RSoC
+	PyNd+gT5tViTryxOo1+vFvewJt12QHNv9inHO1uJE7IGnsV9qVQ0oXLvMhTdHRfNAyYj82vFiW/
+	UFRcuA2OEWAnUkjtRCQnVZffk9Hx6cz6q/mlffzvMNJAXnL3+f1PcO9I=
+X-Google-Smtp-Source: AGHT+IFMiJ32db5lCffYpTxI1K34TKvT7SlmN4c4BQpJtea95Em5wyGT7ZDH04JbzrzXtpNDNJ8O69kA7RP2TO2zuSXuSjgMhZLg
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="-1463770367-1789196680-1725013093=:16809"
+X-Received: by 2002:a05:6638:1507:b0:4b7:c9b5:6765 with SMTP id
+ 8926c6da1cb9f-4d017ee3993mr59704173.5.1725013141879; Fri, 30 Aug 2024
+ 03:19:01 -0700 (PDT)
+Date: Fri, 30 Aug 2024 03:19:01 -0700
+In-Reply-To: <df7fc9c1863f353091cfcb84f04e365aa4609bab.camel@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000008e11ef0620e3eb6a@google.com>
+Subject: Re: [syzbot] [iomap?] [xfs?] WARNING in iomap_write_begin
+From: syzbot <syzbot+296b1c84b9cbf306e5a0@syzkaller.appspotmail.com>
+To: brauner@kernel.org, chandan.babu@oracle.com, djwong@kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-xfs@vger.kernel.org, sunjunchao2870@gmail.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Hello,
 
----1463770367-1789196680-1725013093=:16809
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+WARNING in iomap_write_begin
 
-On Thu, 29 Aug 2024, Baolin Wang wrote:
-> On 2024/8/29 16:07, Hugh Dickins wrote:
-=2E..
-> >=20
-> > Fix below.  Successful testing on mm-everything-2024-08-24-07-21 (well,
-> > that minus the commit which spewed warnings from bootup) confirmed it.
-> > But testing on mm-everything-2024-08-28-21-38 very quickly failed:
-> > unrelated to this series, presumably caused by patch or patches added
-> > since 08-24, one kind of crash on one machine (some memcg thing called
-> > from isolate_migratepages_block), another kind of crash on another (som=
-e
-> > memcg thing called from __read_swap_cache_async), I'm exhausted by now
-> > but will investigate later in the day (or hope someone else has).
->=20
-> I saw the isolate_migratepages_block crash issue on
-> mm-everything-2024-08-28-09-32, and I reverted Kefeng's series "[PATCH 0/=
-4]
-> mm: convert to folio_isolate_movable()", the isolate_migratepages_block i=
-ssue
-> seems to be resolved (at least I can not reproduce it).
->=20
-> And I have already pointed out some potential issues in Kefeng=E2=80=99s =
-series[1].
-> Andrew has dropped this series from mm-everything-2024-08-28-21-38. Howev=
-er,
-> you can still encounter the isolate_migratepages_block issue on
-> mm-everything-2024-08-28-21-38, while I cannot, weird.
+XFS (loop0): Mounting V5 Filesystem bfdc47fc-10d8-4eed-a562-11a831b3f791
+XFS (loop0): Ending clean mount
+XFS (loop0): Quotacheck needed: Please wait.
+XFS (loop0): Quotacheck: Done.
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 6077 at fs/iomap/buffered-io.c:727 __iomap_write_begin fs/iomap/buffered-io.c:727 [inline]
+WARNING: CPU: 0 PID: 6077 at fs/iomap/buffered-io.c:727 iomap_write_begin+0x13f0/0x16f0 fs/iomap/buffered-io.c:830
+Modules linked in:
+CPU: 0 UID: 0 PID: 6077 Comm: syz.0.15 Not tainted 6.11.0-rc2-syzkaller-00111-gee9a43b7cfe2-dirty #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+RIP: 0010:__iomap_write_begin fs/iomap/buffered-io.c:727 [inline]
+RIP: 0010:iomap_write_begin+0x13f0/0x16f0 fs/iomap/buffered-io.c:830
+Code: b5 0d 01 90 48 c7 c7 a0 54 fa 8b e8 da 19 2b ff 90 0f 0b 90 90 e9 74 ef ff ff e8 5b f1 68 ff e9 4b f6 ff ff e8 51 f1 68 ff 90 <0f> 0b 90 bb fb ff ff ff e9 e9 fe ff ff e8 3e f1 68 ff 90 0f 0b 90
+RSP: 0018:ffffc90003e977c0 EFLAGS: 00010293
+RAX: ffffffff822a858f RBX: 0000000000000080 RCX: ffff888020aeda00
+RDX: 0000000000000000 RSI: 0000000000000080 RDI: 0000000000000000
+RBP: ffffc90003e97a50 R08: ffffffff822a8294 R09: 1ffff11004494cf9
+R10: dffffc0000000000 R11: ffffed1004494cfa R12: ffffc90003e979b0
+R13: ffffc90003e97bf0 R14: ffffc90003e97990 R15: 0000000000000800
+FS:  00007f4d396276c0(0000) GS:ffff8880b9200000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000020001000 CR3: 0000000023f3a000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ iomap_unshare_iter fs/iomap/buffered-io.c:1351 [inline]
+ iomap_file_unshare+0x460/0x780 fs/iomap/buffered-io.c:1391
+ xfs_reflink_unshare+0x173/0x5f0 fs/xfs/xfs_reflink.c:1681
+ xfs_file_fallocate+0x6be/0xa50 fs/xfs/xfs_file.c:997
+ vfs_fallocate+0x553/0x6c0 fs/open.c:334
+ ksys_fallocate fs/open.c:357 [inline]
+ __do_sys_fallocate fs/open.c:365 [inline]
+ __se_sys_fallocate fs/open.c:363 [inline]
+ __x64_sys_fallocate+0xbd/0x110 fs/open.c:363
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f4d387779f9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f4d39627038 EFLAGS: 00000246 ORIG_RAX: 000000000000011d
+RAX: ffffffffffffffda RBX: 00007f4d38905f80 RCX: 00007f4d387779f9
+RDX: 0000000000000000 RSI: 0000000000000040 RDI: 0000000000000006
+RBP: 00007f4d387e58ee R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000002000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f4d38905f80 R15: 00007ffd9e61c108
+ </TASK>
 
-It was not that issue: isolate_migratepages_block() turned out to be an
-innocent bystander in my case: and I didn't see it crash there again,
-but in a variety of other memcg places, many of them stat updates.
 
-The error came from a different series, fix now posted:
-https://lore.kernel.org/linux-mm/56d42242-37fe-b94f-d3cb-00673f1e5efb@googl=
-e.com/T/#u
+Tested on:
 
->=20
-> > [PATCH] mm: filemap: use xa_get_order() to get the swap entry order: fi=
-x
-> >=20
-> > find_lock_entries(), used in the first pass of shmem_undo_range() and
-> > truncate_inode_pages_range() before partial folios are dealt with, has
-> > to be careful to avoid those partial folios: as its doc helpfully says,
-> > "Folios which are partially outside the range are not returned".  Of
-> > course, the same must be true of any value entries returned, otherwise
-> > truncation and hole-punch risk erasing swapped areas - as has been seen=
-=2E
-> >=20
-> > Rewrite find_lock_entries() to emphasize that, following the same patte=
-rn
-> > for folios and for value entries.
-> >=20
-> > Adjust find_get_entries() slightly, to get order while still holding
-> > rcu_read_lock(), and to round down the updated start: good changes, lik=
-e
-> > find_lock_entries() now does, but it's unclear if either is ever import=
-ant.
-> >=20
-> > Signed-off-by: Hugh Dickins <hughd@google.com>
->=20
-> Thanks Hugh. The changes make sense to me.
+commit:         ee9a43b7 Merge tag 'net-6.11-rc3' of git://git.kernel...
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=173e3eeb980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=9358cc4a2e37fd30
+dashboard link: https://syzkaller.appspot.com/bug?extid=296b1c84b9cbf306e5a0
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=16b67cdb980000
 
-Thanks!
-Hugh
----1463770367-1789196680-1725013093=:16809--
 
