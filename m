@@ -1,181 +1,142 @@
-Return-Path: <linux-kernel+bounces-308333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDFE7965A71
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:36:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38CB3965A7B
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:37:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9730C286E99
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 08:36:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D60DA1F246E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 08:37:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2155A16D317;
-	Fri, 30 Aug 2024 08:36:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D440416E875;
+	Fri, 30 Aug 2024 08:36:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MWtnQLDE"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CBpYtFLO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3DEB16D332
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 08:36:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F81616726E;
+	Fri, 30 Aug 2024 08:36:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725006962; cv=none; b=kRHl0xe4TVLoZ3wUsqChBKdHDeq6CmmJ/ThgIfzrRDtivCX1hEn4dGtaLsUyIqEkbflrLOoEA+RZ1BEG3AE9BtcpR7Sn0E5Mc9NAOVO/5PmIJevp1eAFruDWmkP10XmCBZCTDDdPrR6Fl98Px3NgwL9m0TmjZ9/NFjD0KuOetuU=
+	t=1725007005; cv=none; b=lZfeCbg8HuiFAtxk5SyldPmrVJ1S6wX6Ed3sTmnFltwCCSKkkURhQYkJAU7dzFWCIXwXkBi6xB4MqWEKWwHJKKTdJD76xwTvAUE7hSuBjs0uL1r8hs6/NmXhcCXP9KYLKQU9ycz1+9+Gj3CQ8K7iMLhH5O70pXDx44QhG8Nb8fA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725006962; c=relaxed/simple;
-	bh=AQdl9xmsK8ZMt1kvTa1HmFVUzpMAE8Xf7jM0R7oI+ZA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FAJQX3hAAy1ZVBC7NrK2BH18dkAoGXfZwye1aaeOdJ4dLvwbMnsJJcYAsUmufg3erjvavrYvDUa/HTXy+pkasPG+JOw3f+i9FBQogut3t2o93QzzHu2n7rBUaXHtV3x3opCo+7USarRpYLvS4tXrWxi5Fin5xPLvvA6g5y4eOdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MWtnQLDE; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2d1daa2577bso1157145a91.2
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 01:36:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725006960; x=1725611760; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=HRHmHWrP9aGbtsGBj3sSUa2W5O9vCt0AWItUOkadt2Y=;
-        b=MWtnQLDEotjVGwRD8x2jJQlPXUavaLCtAok/8AauIKs8WgpKFuVk5dfUSdnXya6hFb
-         7xDyebGN3RKnW0xAbTarnWJjq5CG4LSjmNG7xKybp9ifd2Qo2swh5Qe3oUmdjXNpiBBk
-         WJr9vCbtQiBmxt1bAfVNgvcnGbJ+Xo9oO//0csk3YgOQXZfKTi0pnWymStsbVTe8Sww7
-         Rg18jgVpcNhV1T/mOV8xNnp7UQU9LNRwN+tmvwe8JjDvvUcfqOag2yD2rAB9O8PzfOSG
-         snw1T629O+zDuEbz+DxCZkbGb2pzwr1C9z5WL8Qh8q7KupWuU71XjPtoy1ahvPZ+7oXd
-         1NgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725006960; x=1725611760;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HRHmHWrP9aGbtsGBj3sSUa2W5O9vCt0AWItUOkadt2Y=;
-        b=q4jqd5nxgbpAtXh40cQU12j8+pHQG57pNktObTmlvTSVbYG4psjTgQETf3BiCXjJHc
-         ec4PzFfolHGT3Z6mKWGatoTMi6wCkmNh3ChklEsocYa90esDwPqKGlLuuYtZyUHJsUJJ
-         5y856E2INHA1M+kRLTNsAiwxS69mORNrSoHLM++R5xBjMTWjgetypNhmbHQTI7fj+Yxr
-         HOjlhhuzIR4oYCDf61vAU3eFfQYIJ36Mf85v5U0Q+WhHPKZ5ay+SIsltx18dagYi0pl9
-         ZrDX9Zhht94AvlSQ1rSJ3OsEbQZUKYZFTjYSV3AiNNW6h33vDA8xvjQ49lIoThyWmQl+
-         sb7g==
-X-Forwarded-Encrypted: i=1; AJvYcCVYROyrOkBQwKkHnJkuWsBilnTLK+SYmu0LHZzdI7o3JkqlRscJDPRBbvEGn5WOLlOandFKqqgO68UhCkA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSylqpz9YOyIkhkewznX/0itp/4/8oga6Gxy8rdWY1Puuuyq9K
-	OuHFu42iZIZtmpC8S5IIzMrScILNnBOAkf4SVArtFLcpePH5HQG8Vd8kIJ1vOw==
-X-Google-Smtp-Source: AGHT+IEg701oVGHlnE52pK3OQhbcRTjhhzAp3dBmqRMQAHDvR10F57i/IZHuH1pve1bxSwuJqV6lAQ==
-X-Received: by 2002:a17:90b:4b01:b0:2d3:ce8d:f7f1 with SMTP id 98e67ed59e1d1-2d8561c7556mr6135729a91.25.1725006960007;
-        Fri, 30 Aug 2024 01:36:00 -0700 (PDT)
-Received: from thinkpad ([117.193.213.95])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d85b39ce64sm3134091a91.39.2024.08.30.01.35.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Aug 2024 01:35:59 -0700 (PDT)
-Date: Fri, 30 Aug 2024 14:05:51 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Sricharan R <quic_srichara@quicinc.com>
-Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	vkoul@kernel.org, kishon@kernel.org, andersson@kernel.org,
-	konradybcio@kernel.org, p.zabel@pengutronix.de,
-	dmitry.baryshkov@linaro.org, quic_nsekar@quicinc.com,
-	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-phy@lists.infradead.org, robimarko@gmail.com
-Subject: Re: [PATCH V2 2/6] dt-bindings: PCI: qcom: Add IPQ5108 SoC
-Message-ID: <20240830083551.yazww3kj2shf4ocq@thinkpad>
-References: <20240827045757.1101194-1-quic_srichara@quicinc.com>
- <20240827045757.1101194-3-quic_srichara@quicinc.com>
+	s=arc-20240116; t=1725007005; c=relaxed/simple;
+	bh=rJyYG8x4HwXbnbnZuaSHxe8M9ayrEbzJjZvJ9a22QKk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Sg97uh0B70RWc/bhKe3X2DCjHbxbCyMvudNOMdXqlRTEsXLSm/DEpigzHOi57BvcZ4bxgp1fBbr8rAnGvtmMommTrTjKuT0yXQQt+blte0+ifTynZhP3rD0dVJsdMX5agaAWUcAxJ5ts3142bJOLFT9wqqJdCz7mFHetwc9tTMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CBpYtFLO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 95F05C4CEC4;
+	Fri, 30 Aug 2024 08:36:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725007004;
+	bh=rJyYG8x4HwXbnbnZuaSHxe8M9ayrEbzJjZvJ9a22QKk=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=CBpYtFLOHup2miwNHdSeQcRWqntedYCXAOaVx70Elra2RKVzeuNtd1xYTsoR4MpGs
+	 LCwq7pRd/QjLrYV3ybuoKYBOIHjn7N2amqmjqhVhbLFi3ZfYiKDL2dn7/vFN5c2tHE
+	 lM+Fx5c2NfpI21PrrulUOW4dfjwdqVDsvMfKd/vfvE961chqXXECqzyOGt/WqSrQwm
+	 OUl2p//w1N/5xKFzG/FZK6dGOUw9E1TwdlFLZ3UqUv1kcQTYIAynQG0BlPdMiAMQE2
+	 K3bOeW0m7FPkz6mm+UWGX8jCxsgvu+tnqgdThpC1AF3jFAJimOCbamxuaqRBIemx3i
+	 rgFB5xvRgR4Gw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 866E7C83F0B;
+	Fri, 30 Aug 2024 08:36:44 +0000 (UTC)
+From: =?utf-8?q?T=C3=B3th_J=C3=A1nos_via_B4_Relay?= <devnull+gomba007.gmail.com@kernel.org>
+Subject: [PATCH v7 0/3] Add support for the DFRobot SD2405AL I2C RTC
+ Module.
+Date: Fri, 30 Aug 2024 10:36:38 +0200
+Message-Id: <20240830-rtc-sd2405al-v7-0-2f7102621b1d@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240827045757.1101194-3-quic_srichara@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAJaE0WYC/3XPzWpDIRCG4VsJrmvR0dFjV72P0sX4lwhJTtFwa
+ Ann3muyqQhdfsLzMt5ZS7Wkxt4Od1bTVlpZr33YlwMLJ7oeEy+xbwYCtDDC8noLvMU+kM6chNN
+ WWRusiqyTr5py+X7mPj77PpV2W+vPs77Jx+s/oU1yyVGhszJZWox5P16onF/DemGP0AYDlm7C0
+ LFyPhE4H4FwxmrAICasOjYY0XshKaOYsR6xnrDuGDz4YNFlt+QZ4x9eYJkwcsFdUnnJhImMn7E
+ Z8fxn07HOPifoVxHZEe/7/gvVAk6G2QEAAA==
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org, 
+ devicetree@vger.kernel.org, 
+ =?utf-8?q?T=C3=B3th_J=C3=A1nos?= <gomba007@gmail.com>, 
+ =?utf-8?q?Cs=C3=B3k=C3=A1s_Bence?= <csokas.bence@prolan.hu>, 
+ Conor Dooley <conor.dooley@microchip.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1725007003; l=2108;
+ i=gomba007@gmail.com; s=20230706; h=from:subject:message-id;
+ bh=rJyYG8x4HwXbnbnZuaSHxe8M9ayrEbzJjZvJ9a22QKk=;
+ b=525FC78kRnPXjhZWL8drpjIfoqNadR4Cf3V4Ssrmy/bjLZ93lwqRhUvSaBa20AAd+gWUUWfap
+ TnqK2kEbdlmB12i+lMlcHpMVSD18qhANAGOxWNhy0JlGon2UPmLlDqk
+X-Developer-Key: i=gomba007@gmail.com; a=ed25519;
+ pk=iY9MjPCbud82ULS2PQJIq3QwjKyP/Sg730I6T2M8Y5U=
+X-Endpoint-Received: by B4 Relay for gomba007@gmail.com/20230706 with
+ auth_id=60
+X-Original-From: =?utf-8?q?T=C3=B3th_J=C3=A1nos?= <gomba007@gmail.com>
+Reply-To: gomba007@gmail.com
 
-On Tue, Aug 27, 2024 at 10:27:53AM +0530, Sricharan R wrote:
-> From: Nitheesh Sekar <quic_nsekar@quicinc.com>
-> 
-> Add support for the PCIe controller on the Qualcomm
-> IPQ5108 SoC to the bindings.
-> 
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Signed-off-by: Nitheesh Sekar <quic_nsekar@quicinc.com>
-> Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+This patch series adds a driver and the documentation for the SD2405AL I2C RTC.
 
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Signed-off-by: Tóth János <gomba007@gmail.com>
+---
+Changes in v7:
+- Split the documentation patch.
+- Add tags.
+- Link to v6: https://lore.kernel.org/r/20240829-rtc-sd2405al-v6-0-4fbfe2624aa7@gmail.com
 
-- Mani
+Changes in v6:
+- Add missing To-s and Cc-s.
+- Rebased onto v6.11-rc5
+- Link to v5: https://lore.kernel.org/r/20240828-rtc-sd2405al-v5-0-9e3f8fa5ea6b@gmail.com
 
-> ---
->  [v2] Added reviewed by tag
-> 
->  .../devicetree/bindings/pci/qcom,pcie.yaml    | 35 +++++++++++++++++++
->  1 file changed, 35 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/pci/qcom,pcie.yaml b/Documentation/devicetree/bindings/pci/qcom,pcie.yaml
-> index f867746b1ae5..c12efa27b8d8 100644
-> --- a/Documentation/devicetree/bindings/pci/qcom,pcie.yaml
-> +++ b/Documentation/devicetree/bindings/pci/qcom,pcie.yaml
-> @@ -21,6 +21,7 @@ properties:
->            - qcom,pcie-apq8064
->            - qcom,pcie-apq8084
->            - qcom,pcie-ipq4019
-> +          - qcom,pcie-ipq5018
->            - qcom,pcie-ipq6018
->            - qcom,pcie-ipq8064
->            - qcom,pcie-ipq8064-v2
-> @@ -312,6 +313,39 @@ allOf:
->              - const: ahb # AHB reset
->              - const: phy_ahb # PHY AHB reset
->  
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - qcom,pcie-ipq5018
-> +    then:
-> +      properties:
-> +        clocks:
-> +          minItems: 6
-> +          maxItems: 6
-> +        clock-names:
-> +          items:
-> +            - const: iface # PCIe to SysNOC BIU clock
-> +            - const: axi_m # AXI Master clock
-> +            - const: axi_s # AXI Slave clock
-> +            - const: ahb # AHB clock
-> +            - const: aux # Auxiliary clock
-> +            - const: axi_bridge # AXI bridge clock
-> +        resets:
-> +          minItems: 8
-> +          maxItems: 8
-> +        reset-names:
-> +          items:
-> +            - const: pipe # PIPE reset
-> +            - const: sleep # Sleep reset
-> +            - const: sticky # Core sticky reset
-> +            - const: axi_m # AXI master reset
-> +            - const: axi_s # AXI slave reset
-> +            - const: ahb # AHB reset
-> +            - const: axi_m_sticky # AXI master sticky reset
-> +            - const: axi_s_sticky # AXI slave sticky reset
-> +
->    - if:
->        properties:
->          compatible:
-> @@ -503,6 +537,7 @@ allOf:
->                enum:
->                  - qcom,pcie-apq8064
->                  - qcom,pcie-ipq4019
-> +                - qcom,pcie-ipq5018
->                  - qcom,pcie-ipq8064
->                  - qcom,pcie-ipq8064v2
->                  - qcom,pcie-ipq8074
-> -- 
-> 2.34.1
-> 
+Changes in v5:
+- Rework based on Alexandre Belloni's suggestions.
+- Drop explicit initialization of struct i2c_device_id::driver_data.
+- Add documentation.
+- Link to v4: https://lore.kernel.org/r/20240624-rtc-sd2405al-v4-1-2b2bc759f98f@gmail.com
 
+Changes in v4:
+- Implement more comprehensive data validation.
+- Inline some temporary variables.
+- Link to v3: https://lore.kernel.org/r/20240620-rtc-sd2405al-v3-1-65d5bb01af50@gmail.com
+
+Changes in v3:
+- #define-s of registers are reworked.
+- Minor revisions based on the reviewer's suggestions.
+- Link to v2: https://lore.kernel.org/r/20240619-rtc-sd2405al-v2-1-39bea29bd2a5@gmail.com
+
+Changes in v2:
+- Refactored based on reviewer's suggestions.
+- I couldn't get the I2C IRQ to work on Raspberry Pi 4, so alarm is
+  skipped.
+- Link to v1: https://lore.kernel.org/r/20240607-rtc-sd2405al-v1-1-535971e7a866@gmail.com
+
+---
+Tóth János (3):
+      drivers: rtc: Add driver for SD2405AL.
+      dt-bindings: rtc: Add support for SD2405AL.
+      dt-bindings: vendor-prefixes: Add DFRobot.
+
+ .../devicetree/bindings/rtc/trivial-rtc.yaml       |   2 +
+ .../devicetree/bindings/vendor-prefixes.yaml       |   2 +
+ MAINTAINERS                                        |   6 +
+ drivers/rtc/Kconfig                                |  10 +
+ drivers/rtc/Makefile                               |   1 +
+ drivers/rtc/rtc-sd2405al.c                         | 227 +++++++++++++++++++++
+ 6 files changed, 248 insertions(+)
+---
+base-commit: 5be63fc19fcaa4c236b307420483578a56986a37
+change-id: 20240607-rtc-sd2405al-a0947377c73d
+
+Best regards,
 -- 
-மணிவண்ணன் சதாசிவம்
+Tóth János <gomba007@gmail.com>
+
+
 
