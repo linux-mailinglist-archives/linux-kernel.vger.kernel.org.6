@@ -1,257 +1,256 @@
-Return-Path: <linux-kernel+bounces-308044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80FEA96567C
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 06:39:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B453F965681
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 06:40:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A812280EBB
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 04:39:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D49C281480
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 04:40:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38DB616D4D6;
-	Fri, 30 Aug 2024 04:36:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DA0114D420;
+	Fri, 30 Aug 2024 04:39:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MeXxu3Mb"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r457JfOt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8215E16BE18
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 04:36:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C8C113E3F5;
+	Fri, 30 Aug 2024 04:39:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724992587; cv=none; b=m9l0dubvtzNlXYZqVZfOgG/MHtnM6pQ94Ty3vYn3EmKQI/7eQ4CMfqIjuOUPukqe48ewsUKOqM3aX/noxHx/Tc/L/meHB4sEmjNJFu2xwTTfZp2XWqhg13pau2Q/g5X/0TFpgcu/LG269aDuX8x8O1QrYOEWnqhUtC7RQZxLYjs=
+	t=1724992797; cv=none; b=DkfxeIX86fPp8KS8mFP3P6CDZCi9OG58BRGi0fzfz1Y/lT3xfhc+Op0LeIdHU0iIjn/1jRohT/tqplYhDJO5AyymxgflsgwRgGxNDMvYIL7bY+1oo/3MraasGk9A8T1rOsRzk09IKMmdYjiNXVEWDP/JGeAtuDbrNiDGRLVm+qs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724992587; c=relaxed/simple;
-	bh=f8gTFb2B6g+nTdEPEoEjRizoL0QZCxVbzC4A0L6M8Vc=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=TO1KsvXZrt1paoazcyemkfjM9KWgWBNh0SOTQ/FX68PJQ1PJmSfCoSjOSpPm46qrX22JpzJK+7wihIu0kOqLjS3Tf4iOGyOi8hNW8NlptVwQspesiSbOTfDHMwadY0GpHJkIcs9gnEMbjfaHViEf9drmI9uFwSUnnoKwJYrOsqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MeXxu3Mb; arc=none smtp.client-ip=209.85.215.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-7d1fa104852so1336196a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 21:36:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724992585; x=1725597385; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=ifnPkNWOuuY4EYgQ8TsiC+nc4mt99+bHFrgN10JBfbg=;
-        b=MeXxu3Mb7yA9R9ZgDcoHbh3Na+WLUKC9rGjSUbwhjoq+NDWtLuSjVKBCIf/cUfyaUj
-         jWgXuG+Zjlf8XeXB9Gx3rnTjxk3KQxX5Qx+KXnRBfqYZ74IXomtuiDDQSmdbLLo+4BiU
-         6G4cIk3LL1tUBlHiX4BkrA+MJYsSwF3F9e5L/cK2ygaTwdMGgKND17hEcO0VDnUYMfvc
-         X0PFbg3uVVK6HQWusc7KI5GAUXhjnk50khfS3oy6EUkrwXczytLN//PvARukHShRQseu
-         Jhjjc88E1d9LqG2ti9IvzNP2/IZXthcy0569qSJbFaRo3kn9sMqpw6e9UFRtzX9+Oo8R
-         T7Uw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724992585; x=1725597385;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ifnPkNWOuuY4EYgQ8TsiC+nc4mt99+bHFrgN10JBfbg=;
-        b=uaiIax+/0wB9jtkUrx72QpOJhPmomRwAfjjqcnl76hyDVwunCzZ1S9YBG6dPI84keH
-         rWf381zUx8pdYCjBcb9Y6H2NLODMgBMcsB8JgPa6L0R3lyaDSfzBqVuV9uWZJKEu1L1O
-         +ydqOO5/+CP9j6jDz2FgiNnBI+wYLOX9gjaP4SBkHx2GnCLf9gCLght51R6P6mX3NkFn
-         XAfTd6eBdiRMeR3wI7j8ZfPt1UeWKCbhs9HagGhWDGQnB6I6cccbVxk27xgqiqmLFKGW
-         2AiHStaPHzXqz+3sxRq78Mc30IySbJmFd2k0pI36uUUgTnDKenxqRL57hW2a+1z/Hs/k
-         YINA==
-X-Forwarded-Encrypted: i=1; AJvYcCXAFtfK6DDSl7zolIT60da3z1A+OS2iH804+WvekLtNs6UxiEb4NLv6tZz97nSi8UUcjTo7+B2kqFEqVOU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMnIEq0PNKiRinM44sncfDugM8sgsti817EfbW+8ytWQoPA/r/
-	We7DjMKNlBYj++i8FGVWi00d+Sg0kR0+ptFXmiMBgQAJ2tyKsNzJNixzK3mrf4BSVMsOJagBRox
-	M2A==
-X-Google-Smtp-Source: AGHT+IFbr9dMQrR+mXp/rGgRu95zX7CYqRN/pGYBvf5wJW9KzwkznUNDOT/XrC79C9bzXvvgnK+ABsLgkRI=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:903:2310:b0:202:3bed:1dab with SMTP id
- d9443c01a7336-20527a4fdc0mr46745ad.6.1724992584767; Thu, 29 Aug 2024 21:36:24
- -0700 (PDT)
-Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Thu, 29 Aug 2024 21:36:00 -0700
-In-Reply-To: <20240830043600.127750-1-seanjc@google.com>
+	s=arc-20240116; t=1724992797; c=relaxed/simple;
+	bh=6fawuMmQETiBDWzELiPYS+rDeo28n5CAKxJCNKIchlE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=brFiqyiAopqdSIfx8jGHj2e/p5g9yRvH9oNl27CYHkcAM3ny7EY+2bdX2VdstRlk3Ery9iLxhwjwc7Bh7bjhWPt5dGYu1/JUHSDMixP/mHOSondef4o9alqdAyMUWaqB8zPDsMnwvNW4bedKR2BQXjfr2rDIN/gu2sdl66NJrNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r457JfOt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 064F1C4CEC4;
+	Fri, 30 Aug 2024 04:39:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724992796;
+	bh=6fawuMmQETiBDWzELiPYS+rDeo28n5CAKxJCNKIchlE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=r457JfOtDIPEHtBIKHOUdQ31Q9p1jmYhqmToe7QeD4DLNLDqKDZwJVsv1xnvj1isk
+	 1OHkpN/yBGR3w2kRYta90lCDGBDaijKbLCbbggYpZhTLkp/49wAJXftKCplfx0MdFY
+	 qzPR4CkAkZ0DAqguPoRfoB0f4vz78HWlKzObUb8+UbcEC/sTXwQenYnVwNHKrKHXgb
+	 AmCq78cfMWlXBoxQKIx0qhjl2xIupOr4/zjrCEwkJ9XJQE9PfgVGzrh36DufmYgtvV
+	 qHXfSOV7Qn4tiHylftx1SFR1qLcOVTZSWcTtx26C+UUzlb9xjRDeJInnjsXssKbFS6
+	 Ym2ruECD+z5RQ==
+Date: Thu, 29 Aug 2024 21:39:54 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Nick Terrell <terrelln@fb.com>, Yanteng Si <siyanteng@loongson.cn>,
+	Yicong Yang <yangyicong@hisilicon.com>,
+	James Clark <james.clark@linaro.org>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 5/8] perf header: Allow attributes to be written after
+ data
+Message-ID: <ZtFNGuwj0WzRQ8fd@google.com>
+References: <20240829150154.37929-1-irogers@google.com>
+ <20240829150154.37929-6-irogers@google.com>
+ <ZtDMf886_1vXWt49@x1>
+ <CAP-5=fURe7yVy6OGWdKn1eSzsdfZPyvvc5fRMPeNAjukaWOe1w@mail.gmail.com>
+ <ZtDg2BAI0V5zKpjn@x1>
+ <CAP-5=fXa0r7sD9xbtBVbJQFgnq=3i-cnj6gUX9tze0JyhLhvZw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240830043600.127750-1-seanjc@google.com>
-X-Mailer: git-send-email 2.46.0.469.g59c65b2a67-goog
-Message-ID: <20240830043600.127750-11-seanjc@google.com>
-Subject: [PATCH v4 10/10] KVM: x86: Register "emergency disable" callbacks
- when virt is enabled
-From: Sean Christopherson <seanjc@google.com>
-To: Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>, 
-	Oliver Upton <oliver.upton@linux.dev>, Tianrui Zhao <zhaotianrui@loongson.cn>, 
-	Bibo Mao <maobibo@loongson.cn>, Huacai Chen <chenhuacai@kernel.org>, 
-	Anup Patel <anup@brainfault.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Sean Christopherson <seanjc@google.com>
-Cc: kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	kvmarm@lists.linux.dev, loongarch@lists.linux.dev, linux-mips@vger.kernel.org, 
-	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Chao Gao <chao.gao@intel.com>, 
-	Kai Huang <kai.huang@intel.com>, Farrah Chen <farrah.chen@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAP-5=fXa0r7sD9xbtBVbJQFgnq=3i-cnj6gUX9tze0JyhLhvZw@mail.gmail.com>
 
-Register the "disable virtualization in an emergency" callback just
-before KVM enables virtualization in hardware, as there is no functional
-need to keep the callbacks registered while KVM happens to be loaded, but
-is inactive, i.e. if KVM hasn't enabled virtualization.
+On Thu, Aug 29, 2024 at 02:42:38PM -0700, Ian Rogers wrote:
+> On Thu, Aug 29, 2024 at 1:58 PM Arnaldo Carvalho de Melo
+> <acme@kernel.org> wrote:
+> >
+> > On Thu, Aug 29, 2024 at 01:12:32PM -0700, Ian Rogers wrote:
+> > > On Thu, Aug 29, 2024 at 12:31 PM Arnaldo Carvalho de Melo
+> > > <acme@kernel.org> wrote:
+> > > >
+> > > > On Thu, Aug 29, 2024 at 08:01:51AM -0700, Ian Rogers wrote:
+> > > > > With a file, to write data an offset needs to be known. Typically data
+> > > > > follows the event attributes in a file. However, if processing a pipe
+> > > > > the number of event attributes may not be known. It is convenient in
+> > > > > that case to write the attributes after the data. Expand
+> > > > > perf_session__do_write_header to allow this when the data offset and
+> > > > > size are known.
+> > > > >
+> > > > > This approach may be useful for more than just taking a pipe file to
+> > > > > write into a data file, `perf inject --itrace` will reserve and
+> > > > > additional 8kb for attributes, which would be unnecessary if the
+> > > > > attributes were written after the data.
+> > > > >
+> > > > > Signed-off-by: Ian Rogers <irogers@google.com>
+> > > > > ---
+> > > > >  tools/perf/util/header.c | 106 +++++++++++++++++++++++++--------------
+> > > > >  1 file changed, 67 insertions(+), 39 deletions(-)
+> > > > >
+> > > > > diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
+> > > > > index 65c9086610cb..4eb39463067e 100644
+> > > > > --- a/tools/perf/util/header.c
+> > > > > +++ b/tools/perf/util/header.c
+> > > > > @@ -3676,32 +3676,50 @@ int perf_header__write_pipe(int fd)
+> > > > >  static int perf_session__do_write_header(struct perf_session *session,
+> > > > >                                        struct evlist *evlist,
+> > > > >                                        int fd, bool at_exit,
+> > > > > -                                      struct feat_copier *fc)
+> > > > > +                                      struct feat_copier *fc,
+> > > > > +                                      bool write_attrs_after_data)
+> > > > >  {
+> > > > >       struct perf_file_header f_header;
+> > > > > -     struct perf_file_attr   f_attr;
+> > > > >       struct perf_header *header = &session->header;
+> > > > >       struct evsel *evsel;
+> > > > >       struct feat_fd ff = {
+> > > > >               .fd = fd,
+> > > > >       };
+> > > > > -     u64 attr_offset;
+> > > > > +     u64 attr_offset = sizeof(f_header), attr_size = 0;
+> > > > >       int err;
+> > > > >
+> > > > > -     lseek(fd, sizeof(f_header), SEEK_SET);
+> > > > > +     if (write_attrs_after_data && at_exit) {
+> > > > > +             /*
+> > > > > +              * Write features at the end of the file first so that
+> > > > > +              * attributes may come after them.
+> > > > > +              */
+> > > > > +             if (!header->data_offset && header->data_size) {
+> > > > > +                     pr_err("File contains data but offset unknown\n");
+> > > > > +                     err = -1;
+> > > > > +                     goto err_out;
+> > > > > +             }
+> > > > > +             header->feat_offset = header->data_offset + header->data_size;
+> > > > > +             err = perf_header__adds_write(header, evlist, fd, fc);
+> > > > > +             if (err < 0)
+> > > > > +                     goto err_out;
+> > > > > +             attr_offset = lseek(fd, 0, SEEK_CUR);
+> > > > > +     } else {
+> > > > > +             lseek(fd, attr_offset, SEEK_SET);
+> > > > > +     }
+> > > > >
+> > > > >       evlist__for_each_entry(session->evlist, evsel) {
+> > > > > -             evsel->id_offset = lseek(fd, 0, SEEK_CUR);
+> > > > > -             err = do_write(&ff, evsel->core.id, evsel->core.ids * sizeof(u64));
+> > > > > -             if (err < 0) {
+> > > > > -                     pr_debug("failed to write perf header\n");
+> > > > > -                     free(ff.buf);
+> > > > > -                     return err;
+> > > > > +             evsel->id_offset = attr_offset;
+> > > > > +             /* Avoid writing at the end of the file until the session is exiting. */
+> > > > > +             if (!write_attrs_after_data || at_exit) {
+> > > > > +                     err = do_write(&ff, evsel->core.id, evsel->core.ids * sizeof(u64));
+> > > > > +                     if (err < 0) {
+> > > > > +                             pr_debug("failed to write perf header\n");
+> > > > > +                             goto err_out;
+> > > > > +                     }
+> > > > >               }
+> > > > > +             attr_offset += evsel->core.ids * sizeof(u64);
+> > > >
+> > > > So in the past we were using lseek(fd, 0, SEEK_CUR) to set the
+> > > > evsel->id_offset, now you're assuming that do_write will honour the size
+> > > > parameter, i.e. write evsel->core.ids * sizeof(u64), but:
+> > > >
+> > > > /* Return: 0 if succeeded, -ERR if failed. */
+> > > > int do_write(struct feat_fd *ff, const void *buf, size_t size)
+> > > > {
+> > > >         if (!ff->buf)
+> > > >                 return __do_write_fd(ff, buf, size);
+> > > >         return __do_write_buf(ff, buf, size);
+> > > > }
+> > > >
+> > > > And then:
+> > > >
+> > > > static int __do_write_fd(struct feat_fd *ff, const void *buf, size_t size)
+> > > > {
+> > > >         ssize_t ret = writen(ff->fd, buf, size);
+> > > >
+> > > >         if (ret != (ssize_t)size)
+> > > >                 return ret < 0 ? (int)ret : -1;
+> > > >         return 0;
+> > > > }
+> > > >
+> > > > I see that writen calls ion that even has a BUG_ON() if it doesn't write
+> > > > exactly the requested size bytes, I got distracted with __do_write_fd
+> > > > extra check that ret != size returning ret if not negative...
+> > > >
+> > > > I.e. your code _should_ be equivalent due to the check in ion(), and
+> > > > taking that as an assumption you reduce the number of lseek syscalls,
+> > > > which is a good thing...
+> > > >
+> > > > I was just trying to see that the !write_attrs_after_data case was
+> > > > _exactly_ the same as before, which it doesn't look like it is :-\
+> > >
+> > > I'm not seeing the difference. Before:
+> >
+> > You noticed the difference: before we used lseek to get the current
+> > offset to use, afterwards we moved to doing plain math.
+> >
+> > So I had to check if we could assume that, and with the current code
+> > structure, yes, we can assume that, so seems safe, but it is different
+> > and if the assumption somehow breaks, as the code in __do_write_fd()
+> > guard against (unneeded at the moment as ion has even a BUG_ON for that
+> > not to happen), then the offset will not be where the data is.
+> >
+> > Using lseek() is more costly (syscalls) but it is the ultimate answer to
+> > get where in the file the current offset is.
+> >
+> > So that is the difference I noticed.
+> >
+> > Doing multiple things in the same patch causes these reviewing delays,
+> > doubts, its something we discussed multiple times in the past, and that
+> > continue to cause these discussions.
+> 
+> Right, but it is something of an unfortunate coincidence of how the
+> code is structured. The fact that writing the header updates
+> data_offset which is a thing that other things depend upon while
+> depending on its value itself, etc. - ie the function does more than
+> just a write, it also sometimes computes the layout, has inbuilt
+> assumptions on the values lseek will return, and so on. To get to this
+> final structure took a fair few iterations and I've separated this
+> change out from the bulk in the next change to keep the patch size
+> down. I could have done a patch switching from lseeks to math, then a
+> patch to add write_attrs_after_data. It probably would have yielded
+> about 4 lines of shared code, more lines that would have been deleted,
+> while creating quite a bit of work for me. Ideally when these
+> functions were created there would have been far more liberal use of
+> things like immutability, so side-effects are minimized. Yes I could
+> refactor everything, but time..
 
-Note, unregistering the callback every time the last VM is destroyed could
-have measurable latency due to the synchronize_rcu() needed to ensure all
-references to the callback are dropped before KVM is unloaded.  But the
-latency should be a small fraction of the total latency of disabling
-virtualization across all CPUs, and userspace can set enable_virt_at_load
-to completely eliminate the runtime overhead.
+Maybe I'm too naive but can we skip header updates on pipe data?  I'm
+curious if this makes sense..
 
-Add a pointer in kvm_x86_ops to allow vendor code to provide its callback.
-There is no reason to force vendor code to do the registration, and either
-way KVM would need a new kvm_x86_ops hook.
+Thanks,
+Namhyung
 
-Suggested-by: Kai Huang <kai.huang@intel.com>
-Reviewed-by: Chao Gao <chao.gao@intel.com>
-Reviewed-by: Kai Huang <kai.huang@intel.com>
-Acked-by: Kai Huang <kai.huang@intel.com>
-Tested-by: Farrah Chen <farrah.chen@intel.com>
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
- arch/x86/include/asm/kvm_host.h |  3 +++
- arch/x86/kvm/svm/svm.c          |  5 +----
- arch/x86/kvm/vmx/main.c         |  2 ++
- arch/x86/kvm/vmx/vmx.c          |  6 +-----
- arch/x86/kvm/vmx/x86_ops.h      |  1 +
- arch/x86/kvm/x86.c              | 10 ++++++++++
- 6 files changed, 18 insertions(+), 9 deletions(-)
 
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index cb3b5f107c6e..aa9eea61a092 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -36,6 +36,7 @@
- #include <asm/kvm_page_track.h>
- #include <asm/kvm_vcpu_regs.h>
- #include <asm/hyperv-tlfs.h>
-+#include <asm/reboot.h>
+diff --git a/tools/perf/builtin-inject.c b/tools/perf/builtin-inject.c
+index a7c859db2e15..b36f84f29295 100644
+--- a/tools/perf/builtin-inject.c
++++ b/tools/perf/builtin-inject.c
+@@ -2341,6 +2341,9 @@ int cmd_inject(int argc, const char **argv)
+        if (ret)
+                goto out_delete;
  
- #define __KVM_HAVE_ARCH_VCPU_DEBUGFS
- 
-@@ -1631,6 +1632,8 @@ struct kvm_x86_ops {
- 
- 	int (*enable_virtualization_cpu)(void);
- 	void (*disable_virtualization_cpu)(void);
-+	cpu_emergency_virt_cb *emergency_disable_virtualization_cpu;
++       if (data.is_pipe)
++               inject.is_pipe = true;
 +
- 	void (*hardware_unsetup)(void);
- 	bool (*has_emulated_msr)(struct kvm *kvm, u32 index);
- 	void (*vcpu_after_set_cpuid)(struct kvm_vcpu *vcpu);
-diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-index a9adbe10c12e..9a0506ef87df 100644
---- a/arch/x86/kvm/svm/svm.c
-+++ b/arch/x86/kvm/svm/svm.c
-@@ -4982,6 +4982,7 @@ static struct kvm_x86_ops svm_x86_ops __initdata = {
- 	.hardware_unsetup = svm_hardware_unsetup,
- 	.enable_virtualization_cpu = svm_enable_virtualization_cpu,
- 	.disable_virtualization_cpu = svm_disable_virtualization_cpu,
-+	.emergency_disable_virtualization_cpu = svm_emergency_disable_virtualization_cpu,
- 	.has_emulated_msr = svm_has_emulated_msr,
- 
- 	.vcpu_create = svm_vcpu_create,
-@@ -5410,8 +5411,6 @@ static struct kvm_x86_init_ops svm_init_ops __initdata = {
- static void __svm_exit(void)
- {
- 	kvm_x86_vendor_exit();
--
--	cpu_emergency_unregister_virt_callback(svm_emergency_disable_virtualization_cpu);
- }
- 
- static int __init svm_init(void)
-@@ -5427,8 +5426,6 @@ static int __init svm_init(void)
- 	if (r)
- 		return r;
- 
--	cpu_emergency_register_virt_callback(svm_emergency_disable_virtualization_cpu);
--
- 	/*
- 	 * Common KVM initialization _must_ come last, after this, /dev/kvm is
- 	 * exposed to userspace!
-diff --git a/arch/x86/kvm/vmx/main.c b/arch/x86/kvm/vmx/main.c
-index 4a5bf92edccf..7e2e78a14257 100644
---- a/arch/x86/kvm/vmx/main.c
-+++ b/arch/x86/kvm/vmx/main.c
-@@ -25,6 +25,8 @@ struct kvm_x86_ops vt_x86_ops __initdata = {
- 
- 	.enable_virtualization_cpu = vmx_enable_virtualization_cpu,
- 	.disable_virtualization_cpu = vmx_disable_virtualization_cpu,
-+	.emergency_disable_virtualization_cpu = vmx_emergency_disable_virtualization_cpu,
-+
- 	.has_emulated_msr = vmx_has_emulated_msr,
- 
- 	.vm_size = sizeof(struct kvm_vmx),
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index cf7d937bfd2c..89682832dded 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -755,7 +755,7 @@ static int kvm_cpu_vmxoff(void)
- 	return -EIO;
- }
- 
--static void vmx_emergency_disable_virtualization_cpu(void)
-+void vmx_emergency_disable_virtualization_cpu(void)
- {
- 	int cpu = raw_smp_processor_id();
- 	struct loaded_vmcs *v;
-@@ -8584,8 +8584,6 @@ static void __vmx_exit(void)
- {
- 	allow_smaller_maxphyaddr = false;
- 
--	cpu_emergency_unregister_virt_callback(vmx_emergency_disable_virtualization_cpu);
--
- 	vmx_cleanup_l1d_flush();
- }
- 
-@@ -8632,8 +8630,6 @@ static int __init vmx_init(void)
- 		pi_init_cpu(cpu);
- 	}
- 
--	cpu_emergency_register_virt_callback(vmx_emergency_disable_virtualization_cpu);
--
- 	vmx_check_vmcs12_offsets();
- 
- 	/*
-diff --git a/arch/x86/kvm/vmx/x86_ops.h b/arch/x86/kvm/vmx/x86_ops.h
-index 205692c43a8e..b6a7cfc6ae31 100644
---- a/arch/x86/kvm/vmx/x86_ops.h
-+++ b/arch/x86/kvm/vmx/x86_ops.h
-@@ -15,6 +15,7 @@ void vmx_hardware_unsetup(void);
- int vmx_check_processor_compat(void);
- int vmx_enable_virtualization_cpu(void);
- void vmx_disable_virtualization_cpu(void);
-+void vmx_emergency_disable_virtualization_cpu(void);
- int vmx_vm_init(struct kvm *kvm);
- void vmx_vm_destroy(struct kvm *kvm);
- int vmx_vcpu_precreate(struct kvm *kvm);
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 431358167fa8..f72e5d89e942 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -12512,6 +12512,16 @@ void kvm_vcpu_deliver_sipi_vector(struct kvm_vcpu *vcpu, u8 vector)
- }
- EXPORT_SYMBOL_GPL(kvm_vcpu_deliver_sipi_vector);
- 
-+void kvm_arch_enable_virtualization(void)
-+{
-+	cpu_emergency_register_virt_callback(kvm_x86_ops.emergency_disable_virtualization_cpu);
-+}
-+
-+void kvm_arch_disable_virtualization(void)
-+{
-+	cpu_emergency_unregister_virt_callback(kvm_x86_ops.emergency_disable_virtualization_cpu);
-+}
-+
- int kvm_arch_enable_virtualization_cpu(void)
- {
- 	struct kvm *kvm;
--- 
-2.46.0.469.g59c65b2a67-goog
+        if (!data.is_pipe && inject.output.is_pipe) {
+                ret = perf_header__write_pipe(perf_data__fd(&inject.output));
+                if (ret < 0) {
 
 
