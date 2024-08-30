@@ -1,82 +1,107 @@
-Return-Path: <linux-kernel+bounces-308269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19D00965995
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:10:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EAF1965997
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:11:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 902C0B229A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 08:10:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF234282423
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 08:11:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 186D7166F15;
-	Fri, 30 Aug 2024 08:10:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AEB716C688;
+	Fri, 30 Aug 2024 08:10:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="JORgyirg"
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OhNsIyEK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5003A158528;
-	Fri, 30 Aug 2024 08:10:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CAB51509A8;
+	Fri, 30 Aug 2024 08:10:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725005443; cv=none; b=LdhdZrCZyJew7FVm3hHped9dx5BY0UMl/GNGSRLl8Lc1r3uk/VEYpbxs8Li50TKAmt8MmfQ+9S+NL6nYPqRD3QowcUFZvEbsd/xUDPu7mHRACf+3AyCLWdkakO9M2c+BN2KXBXW/SpWB9lkCkH26k+cR11uGSp88NnU0oyUweEQ=
+	t=1725005450; cv=none; b=hNOZszWxDgN48KJdw9ABkWgfH6DNuYAQn4L4cw+SBj+iifuRCMWt0nHvjheJ7gqD9Be7SOda6gOZSUQKY1x3lwhct4ZT9N9QJnm3R1K8kApjHC/EDqAgtJDMZLKf9vcbo2jylBPk5dGLKcklDfr+X+4mNq9DzySPorfSKETYjHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725005443; c=relaxed/simple;
-	bh=ZygKSRZowQbgdebKmZAcW/XeSZFFXj2C5+igaleld5M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BXUC5R3BSfOv05AfFcnTQt46w2oZGK62azdSut0tb0jB/+CV87wf9GNbyT1EakfQhuh32aHaTNM0dhsrfAj6mouXtBvD39foJcK7kJeR1piAHGkPagMhSkeSE1gRYsBFoUhkjszcvOuiFY/7OIL9+HK4VjavEDeV2eimvt1wouk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=JORgyirg; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
-Received: from gaggiata.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
-	by mail11.truemail.it (Postfix) with ESMTPA id B424021155;
-	Fri, 30 Aug 2024 10:10:30 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1725005430;
-	bh=ZygKSRZowQbgdebKmZAcW/XeSZFFXj2C5+igaleld5M=;
-	h=Received:From:To:Subject;
-	b=JORgyirgBevfFN5PDFqTWzJbIRyiWh7gCFs2GiCt8uDd2WBscilhcQEeehcpY7AiI
-	 4A0o1mg1DZRdvy2f2CeDInaRhzZ7ARHOYT+Xz9rofztwmVJuXxGfEd5q15BCEbdq0i
-	 9cbmeDbvCd0seljVWAlK0IHGI8y0j+7ZwbtV9nB1wHeVvm0FGJfl65xvvUU1rnBY2l
-	 GapyENkn36S0Ni6pZqVc5KGM4VgRjW4H9jUrUsCqRJyvsmq3ZC7IZ5b3b0EDv+xL+N
-	 3lI7KDdzd/sgCgdJSLUQPdgUkADgV/sIG53GXqUfemPrPGR+nA16/VpDWTy3BMjzzX
-	 Yz0HHPuXbtu8g==
-Received: by gaggiata.pivistrello.it (Postfix, from userid 1000)
-	id 67B3A7F9D0; Fri, 30 Aug 2024 10:10:30 +0200 (CEST)
-Date: Fri, 30 Aug 2024 10:10:30 +0200
-From: Francesco Dolcini <francesco@dolcini.it>
-To: David Lin <yu-hao.lin@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-	briannorris@chromium.org, kvalo@kernel.org, francesco@dolcini.it,
-	tsung-hsien.hsieh@nxp.com
-Subject: Re: [PATCH] wifi: mwifiex: avoid AP and STA running on different
- channel
-Message-ID: <ZtF-dgrx28yZKG2O@gaggiata.pivistrello.it>
-References: <20240830030630.825818-1-yu-hao.lin@nxp.com>
+	s=arc-20240116; t=1725005450; c=relaxed/simple;
+	bh=xYuItBQNMP96MzefUyk+q8WjjT2Y1ucVlzEXtvlMHcs=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=jqR0G/JrN7XwOdE3wz6EbjYZ9QBpzkfNBhEommXLLMG8Eh+ykDf2MTO0ZXhrHfU2EbEIyvWrtut3qB8ukj8rb9J8k3DHI0mCHwhPvTk9Fdk9DkridfWhxShq+9PuRZrFh5aJcSjvUndyUWOg5KmDrLHBOKlelOY1GXAfccJdWYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OhNsIyEK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EA72C4CEC2;
+	Fri, 30 Aug 2024 08:10:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725005450;
+	bh=xYuItBQNMP96MzefUyk+q8WjjT2Y1ucVlzEXtvlMHcs=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=OhNsIyEK3V2pCrW3tzn7S5hCisdmB5E7oCfj25Oo0JKAAK/Ujg7pBCHKQSugzFyQu
+	 UFXzC0iB4ftTxjcrMOUucHRNlgoVhvUnxMBlfRlTJpVqbO6f3pcWSbuZYpxFd+Vv58
+	 BpPAenoG07doPHMHViJIFhtwq6o09PH3ifnCqogtyn15eeDynet6mz08iSVdq9bF8u
+	 IvmINMgaqU3z8r+lKg4E15douPhE9VqP3LR9fEY6GgF1RGoTLwQQEX6ficnww3IYA8
+	 swmt4k0NWxFg+yOzlLsIq7D5pNZCzBsVZ38wZ3hNGjsy1G0jrHsOfgTreO5fEJ3hSg
+	 hRnQD6f+DVunw==
+From: Vinod Koul <vkoul@kernel.org>
+To: Kishon Vijay Abraham I <kishon@kernel.org>, Ray Jui <rjui@broadcom.com>, 
+ Scott Branden <sbranden@broadcom.com>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ Chunfeng Yun <chunfeng.yun@mediatek.com>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, 
+ linux-arm-msm@vger.kernel.org
+In-Reply-To: <20240826-phy-of-node-scope-v1-0-5b4d82582644@linaro.org>
+References: <20240826-phy-of-node-scope-v1-0-5b4d82582644@linaro.org>
+Subject: Re: [PATCH 00/11] phy: simplify with cleanup.h and few other ideas
+Message-Id: <172500544630.434293.13040748970370817856.b4-ty@kernel.org>
+Date: Fri, 30 Aug 2024 13:40:46 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240830030630.825818-1-yu-hao.lin@nxp.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
-+Sascha, that just sent a patch to handle the same issue.
 
-On Fri, Aug 30, 2024 at 11:06:30AM +0800, David Lin wrote:
-> Current firmware doesn't support AP and STA running on different
-> channels simultaneously.
-> FW crash would occur in such case.
-> This patch avoids the issue by disabling AP and STA to run on
-> different channels.
+On Mon, 26 Aug 2024 12:07:16 +0200, Krzysztof Kozlowski wrote:
+> Make code simpler with scoped/cleanup.h/dev_err_probe.
+> 
+> Best regards,
+> Krzysztof
+> 
 
-Is this a generic issue of specific of some firmware version? Asking since the
-driver as you know is supporting multiple Wi-Fi device.
+Applied, thanks!
 
-Francesco
+[01/11] phy: broadcom: bcm-cygnus-pcie: Simplify with scoped for each OF child loop
+        commit: e33525de6c3c7780564e0859ea6daef27309995b
+[02/11] phy: broadcom: brcm-sata: Simplify with scoped for each OF child loop
+        commit: a7f1dbf479d2a3cbf2a25bd186bbe15efd17d849
+[03/11] phy: cadence: sierra: Simplify with scoped for each OF child loop
+        commit: 612f9fcb435fdc9abd46b6339c9000cef6d323a2
+[04/11] phy: hisilicon: usb2: Simplify with scoped for each OF child loop
+        commit: 93cab07a02f08e4a2837dd22280b741ba0a7a541
+[05/11] phy: mediatek: tphy: Simplify with scoped for each OF child loop
+        commit: d2714416770ed0cecaf69eaff34d20817f2c3bea
+[06/11] phy: mediatek: xsphy: Simplify with scoped for each OF child loop
+        commit: 77df35acd182a23c117a937ffd6b0830a5428649
+[07/11] phy: qcom: qmp-pcie-msm8996: Simplify with scoped for each OF child loop
+        commit: 608863e1e600a4d91b00dddd6ff11eda1cbebaa5
+[08/11] phy: ti: am654-serdes: Use scoped device node handling to simplify error paths
+        commit: 29b44a38503856952862c710d47d933c0173fd04
+[09/11] phy: ti: gmii-sel: Simplify with dev_err_probe()
+        commit: 27a4046255377eb0faab5c41fd271b1acab1ac41
+[10/11] phy: ti: j721e-wiz: Drop OF node reference earlier for simpler code
+        commit: afd7aaf3ecaf1b247db1294ef0687fb3cb530213
+[11/11] phy: ti: j721e-wiz: Simplify with scoped for each OF child loop
+        commit: 0d5a213c2eae880e0f7f8bc252314bae194d68d8
+
+Best regards,
+-- 
+~Vinod
+
 
 
