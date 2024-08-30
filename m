@@ -1,53 +1,49 @@
-Return-Path: <linux-kernel+bounces-308598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05EA3965F59
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:36:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13BC0965F5C
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:37:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB915282CC4
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:36:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4696F1C2221F
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:37:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8294717C22E;
-	Fri, 30 Aug 2024 10:36:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="xw93+ttS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85CE8186605;
+	Fri, 30 Aug 2024 10:36:50 +0000 (UTC)
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C249015C147;
-	Fri, 30 Aug 2024 10:36:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B16E216C877;
+	Fri, 30 Aug 2024 10:36:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725014162; cv=none; b=rdEZ3lVFnYzGUooUJeygVzs8WuJbctFx+QNkB2fDm1vnMCb9ql625G1KYvXN4aZxRuQTKisOHvO0Eh2z5lgHqdft6p7gO8keAI00kZblKEb7WEUGRmdF2Mm6E5ALmqdGDgmX1LoFIXQ23vWacGRGfjdXWsz1MDo8Juw+wUYbqkk=
+	t=1725014210; cv=none; b=Y3w/qlUc1msHYDQGsQa0Fv+QweYsvsuUZKzU5aIfx+r7IECZT9CyKcByU3aGnHmkgG/bVYo2jOd50KBNLYX3xylmsRNgG+fVLGnGmtO/RSVN48U0pRc/R3/v+HVNJS3BtuaRcI6FxpeF8LveqWRQGcWZBUVgts9pgtWIyG42zFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725014162; c=relaxed/simple;
-	bh=/1qHgvh8lwhrV0MkTfCTb/ns8Yv2zQi2oDX8Nmhr2Dc=;
+	s=arc-20240116; t=1725014210; c=relaxed/simple;
+	bh=jF2QMu9IY8eTSqDkYdpxOVExKVuW9wRtm+UWp71AO3w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jpQqiavkBX/+SK2CnrFwmaoVp2aInx7lBHOGeRB6rfAKatfjnagXx2bJ5jS732jgQWorXHqqYva793bdcDPDUCYT8+byTjow+ruybr6JUI23UXzT1gUyyISZoew9H2gI+ACo/A+hbXj/zpb/wyb9ra6ve+K5QcAErEPl8DTHzmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=xw93+ttS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0E8BC4CEC2;
-	Fri, 30 Aug 2024 10:36:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1725014162;
-	bh=/1qHgvh8lwhrV0MkTfCTb/ns8Yv2zQi2oDX8Nmhr2Dc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=xw93+ttSnVCZa+2A0v5skhHZ71hew76eQmVhMwggOyg6eUdkfJIURtbHKb95huT/Z
-	 WuZrg5Vo3DJo8JisM1C74+yqBgFc2YPjcngI28o/8zm+pKS1YeQmTGEc+0dd83O4Vq
-	 5oe1Zs4EQ5ZLI5ubVI+CFU0DjA1vkmQEYBDDfFuk=
-Date: Fri, 30 Aug 2024 12:35:59 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Yibin Ding <Yibin.Ding@unisoc.com>
-Cc: djakov@kernel.org, rafael@kernel.org, yibin.ding01@gmail.com,
-	niuzhiguo84@gmail.com, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Hao_hao.Wang@unisoc.com,
-	Ke.Wang@unisoc.com
-Subject: Re: [PATCH 2/2] debugfs: Fix crash problem caused by accessing
- uninitialized nodes
-Message-ID: <2024083023-unblended-poise-ab28@gregkh>
-References: <20240830102314.409307-1-Yibin.Ding@unisoc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=MqB1gpx0bA6NQo1WEYa5bEUuVzRImyhVWHhUsgo2nH/Hq4TjMHXuM2nbpS3epT1FbY3+2Utp/nSHddZ/bYg0sP0cef8Yvrm05owfbIbyAGOf665yI/fc+29qVlm/MvQYeMw6bK9zc+i09uEDKJj7SlWaMdlDFtFcFIojY7RpykE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1sjyqx-008Uog-1U;
+	Fri, 30 Aug 2024 18:36:25 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 30 Aug 2024 18:36:24 +0800
+Date: Fri, 30 Aug 2024 18:36:24 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Yue Haibing <yuehaibing@huawei.com>
+Cc: davem@davemloft.net, clabbe@baylibre.com, linus.walleij@linaro.org,
+	atenart@kernel.org, arno@natisbad.org, bbrezillon@kernel.org,
+	thomas.lendacky@amd.com, linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH -next 0/6] Cleanup unused function declarations
+Message-ID: <ZtGgqISfvQNdt0fN@gondor.apana.org.au>
+References: <20240820082525.259337-1-yuehaibing@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,39 +52,34 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240830102314.409307-1-Yibin.Ding@unisoc.com>
+In-Reply-To: <20240820082525.259337-1-yuehaibing@huawei.com>
 
-On Fri, Aug 30, 2024 at 06:23:14PM +0800, Yibin Ding wrote:
-> From: Yibin Ding <Yibin.ding@unisoc.com>
+On Tue, Aug 20, 2024 at 04:25:19PM +0800, Yue Haibing wrote:
+> Cleanup unused declarations for crypto driver subsystem.
 > 
-> For uninitialized nodes such as
-> /sys/kernel/debug/interconnect/test_client/dst_node, if the cat operation
-> is performed directly without writing content to the node, it will cause
-> a crash due to accessing a null pointer. So it is necessary to add a null
-> pointer check in the debugfs_read_file_str() function.
+> Yue Haibing (6):
+>   crypto: safexcel - Remove unused declaration
+>     safexcel_ring_first_rptr()
+>   crypto: sl3516 - Remove unused declaration sl3516_ce_enqueue()
+>   crypto: octeontx - Remove unused declaration otx_cpt_callback()
+>   crypto: ccp - Remove unused declaration sp_get_master()
+>   crypto: amlogic - Remove unused declaration meson_enqueue()
+>   crypto: crypto4xx - Remove unused declaration crypto4xx_free_ctx()
 > 
-> Signed-off-by: Yibin Ding <Yibin.ding@unisoc.com>
-> ---
->  fs/debugfs/file.c | 4 ++++
->  1 file changed, 4 insertions(+)
+>  drivers/crypto/amcc/crypto4xx_core.h             | 1 -
+>  drivers/crypto/amlogic/amlogic-gxl.h             | 2 --
+>  drivers/crypto/ccp/sp-dev.h                      | 1 -
+>  drivers/crypto/gemini/sl3516-ce.h                | 2 --
+>  drivers/crypto/inside-secure/safexcel.h          | 1 -
+>  drivers/crypto/marvell/octeontx/otx_cptvf_algs.h | 1 -
+>  6 files changed, 8 deletions(-)
 > 
-> diff --git a/fs/debugfs/file.c b/fs/debugfs/file.c
-> index c6f4a9a98b85..8bbe7df6dfd1 100644
-> --- a/fs/debugfs/file.c
-> +++ b/fs/debugfs/file.c
-> @@ -970,6 +970,10 @@ ssize_t debugfs_read_file_str(struct file *file, char __user *user_buf,
->  		return ret;
->  
->  	str = *(char **)file->private_data;
-> +	if (!str) {
-> +		debugfs_file_put(dentry);
-> +		return -EINVAL;
-> +	}
+> -- 
+> 2.34.1
 
-How can private_data be NULL now with patch 1 in this series?  I guess
-the allocation could fail, but really, how can it?
-
-thanks,
-
-greg k-h
+All applied.  Thanks.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
