@@ -1,145 +1,129 @@
-Return-Path: <linux-kernel+bounces-309518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CEDB966C36
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 00:22:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EDDB966C38
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 00:23:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77514284286
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 22:22:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB5431F23D14
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 22:23:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22B9E1C1AA8;
-	Fri, 30 Aug 2024 22:22:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9D431C1AA2;
+	Fri, 30 Aug 2024 22:23:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=cristian.ciocaltea@collabora.com header.b="ft7x5kfX"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T4RVNyaY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8D3B136337;
-	Fri, 30 Aug 2024 22:22:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725056563; cv=pass; b=Pubc11FeNvog2tQUvyrXdWMChxAQDMQhLCd8aNAxNLcNGmptXn93R3KgKrYE7OK0cEm3Uqu3xqexjW/hk9J1VJayjPqCppMQRqkyhhnzXJwa7uWosnsRIjfFPyH41loEhYqxsyC1VdAxigVt5bPwgl4OmARQ+f8YP6t55C5K1/s=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725056563; c=relaxed/simple;
-	bh=8KdzrkiTCS4+gtZ06eotVmsrEANc5d+xnrjxoY3+PP4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gtnphKLVudzrX+narZMF1kBdvA7CFef26cnI4Ks0lcBb78gpQUUOVUoIuHFUtNz76Qqkt7ISP2GhVJ+Bx3unEIKVJw54AokUmVM9x414nrlQO4LOrO429FXwjT3oGfvX2Kb+tweYzuFtuV8moczUA2AUNCkjClzjVep+BQi7SwI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=cristian.ciocaltea@collabora.com header.b=ft7x5kfX; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Delivered-To: kernel@collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1725056517; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=VP8/aryapCMCOF1SvDqoG+mRd3WtRhCLgjOtagvUQv3gqKX4nVkiuEvUgItXy/JgzrdG3C5lJxhaCzEFhCN9V2fPKpzRLSqDac2xAP6Bs9VpQuoldASU00MihKa733wg54HZlQi6dH9O0yjl5DTZqDLownvRG3jYFfyQ4JwpHHw=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1725056517; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=LhR+kXGC+DFHGvsEu1DDE6tCIMiI45kjz9hxbZ3s88o=; 
-	b=OHX6tglUjZBxq6KskH5aloVBl/7MZVJGxFkVt83NERgb20gLMVjBDUECe1g53MSgXD1ofJUCXTWs9xoGXYd4IG10yS3JTp/nn63ANpsMMXAXWFa3a5CeIqj/DME/Zq0A22S0OIyhg8WonQpkORQycXgUzBDx1l8i9F6Ka3d3+PQ=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=cristian.ciocaltea@collabora.com;
-	dmarc=pass header.from=<cristian.ciocaltea@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1725056517;
-	s=zohomail; d=collabora.com; i=cristian.ciocaltea@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=LhR+kXGC+DFHGvsEu1DDE6tCIMiI45kjz9hxbZ3s88o=;
-	b=ft7x5kfX3ak042gww8Zh/AvfQWRO3NFXaFPMO99JnFMaRWRXu0K0NgTlk+aX4t/c
-	5h6Wjxh83wq2oxv5xioutYFwnVetxj1ZXfwqzmWCxrsq2oNLsYfeGUYpCzKLsBc85fQ
-	N40NdU5mslkZ/wmUBzKgqD58Ro1Gtdi3G9LRZPIU=
-Received: by mx.zohomail.com with SMTPS id 1725056516094200.5079858589844;
-	Fri, 30 Aug 2024 15:21:56 -0700 (PDT)
-Message-ID: <34422b7a-ce70-445d-a574-60ac36322119@collabora.com>
-Date: Sat, 31 Aug 2024 01:21:48 +0300
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31DCD136337;
+	Fri, 30 Aug 2024 22:23:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725056615; cv=none; b=QXADGMwp0x8mACNQubr4gXn5AWGF3ykYZt0NZUv6WjDCToyu6xJJyekpxcqC7CDwkS72pBNkSfchr4t0ASStuGpdPfCIHTC2fmre/8135/3EU/qXA7iCN2pmPMt2hCnfY240hUjJ0I+wMEaZF/ugUihg5wji0Y7NxcArbjJPm64=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725056615; c=relaxed/simple;
+	bh=B8VQl5DFu5C3eYK4CExKtHZCyDO+jvgcRht3lHI+Qwk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VeHl/zROMjC3o+cMtu7Zni2ilPpyFnjPFKNdH7TQ+JxucVnzOa/wXnny7qFUbU4tF0HhSOf/qKmVHK/Ojx3kYkQyrAlrRN+FuMxYSDHi2eBvoWkseicnWbfpcgqP6JK4YT2Mf1qJ0Yzd36lCJJHosAYJ+EnF4SyX+XURL/9pIvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T4RVNyaY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29B00C4CEC2;
+	Fri, 30 Aug 2024 22:23:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725056614;
+	bh=B8VQl5DFu5C3eYK4CExKtHZCyDO+jvgcRht3lHI+Qwk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=T4RVNyaYiUfiztps76wYOxGaAqTvFn+2fD8jyGJ++g9hwSXomSRSCAxX6lMqk5WiV
+	 WiSN5NDTvtZdzrMlROpKcPYo+KT868J09a3CRHAcZyjStASEKAFtJcx1tMg0/dLkb3
+	 i9bXSK0iwk+HTSTVKuwdk8QUuxddV9g5le8w5GFLR6pJr1dykZYSFSVL2PRXWvqS7R
+	 06dbdfXtsJ0wr9iof+QpVFVbL/2BDJ3gEhTLBsUl9JUw3bgQTXh+HpaFN4bMTeQoTb
+	 i1KbBWvhvqDmPwjT/C0ycd317d05VzqFu+dnQdCF3muJoMRScrySTvDOWZc8ttZ1WA
+	 R+6jahvx1fUCw==
+Date: Fri, 30 Aug 2024 15:23:32 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+	Yang Ruibin <11162571@vivo.com>, Daniel Mack <daniel@zonque.org>,
+	Haojian Zhuang <haojian.zhuang@gmail.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, opensource.kernel@vivo.com,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v2] drivers: spi: Insert the missing pci_dev_put()before
+ return
+Message-ID: <20240830222332.GA3862110@thelio-3990X>
+References: <20240829033511.1917015-1-11162571@vivo.com>
+ <CAMuHMdWNjo69_W6f+R9QJJOf8uF0htg2XazeS-yjugJv3UM+kg@mail.gmail.com>
+ <0a906ee9-7b28-45e4-be67-ab3b6c5f89b1@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/4] drm/bridge: synopsys: Add DW HDMI QP TX Controller
- support library
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Daniel Vetter <daniel@ffwll.ch>, Sandy Huang <hjc@rock-chips.com>,
- =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
- Andy Yan <andy.yan@rock-chips.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Mark Yao <markyao0591@gmail.com>,
- Sascha Hauer <s.hauer@pengutronix.de>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
- kernel@collabora.com, Alexandre ARNOUD <aarnoud@me.com>,
- Luis de Arquer <ldearquer@gmail.com>, Algea Cao <algea.cao@rock-chips.com>
-References: <20240819-b4-rk3588-bridge-upstream-v4-0-6417c72a2749@collabora.com>
- <20240819-b4-rk3588-bridge-upstream-v4-2-6417c72a2749@collabora.com>
- <20240827-armored-magnificent-badger-ffb025@houat>
-Content-Language: en-US
-From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-In-Reply-To: <20240827-armored-magnificent-badger-ffb025@houat>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <0a906ee9-7b28-45e4-be67-ab3b6c5f89b1@sirena.org.uk>
 
-On 8/27/24 11:58 AM, Maxime Ripard wrote:
-> On Mon, Aug 19, 2024 at 01:29:29AM GMT, Cristian Ciocaltea wrote:
->> +static irqreturn_t dw_hdmi_qp_main_hardirq(int irq, void *dev_id)
->> +{
->> +	struct dw_hdmi_qp *hdmi = dev_id;
->> +	struct dw_hdmi_qp_i2c *i2c = hdmi->i2c;
->> +	u32 stat;
->> +
->> +	stat = dw_hdmi_qp_read(hdmi, MAINUNIT_1_INT_STATUS);
->> +
->> +	i2c->stat = stat & (I2CM_OP_DONE_IRQ | I2CM_READ_REQUEST_IRQ |
->> +			    I2CM_NACK_RCVD_IRQ);
->> +
->> +	if (i2c->stat) {
->> +		dw_hdmi_qp_write(hdmi, i2c->stat, MAINUNIT_1_INT_CLEAR);
->> +		complete(&i2c->cmp);
->> +	}
->> +
->> +	if (stat)
->> +		return IRQ_HANDLED;
->> +
->> +	return IRQ_NONE;
->> +}
+On Fri, Aug 30, 2024 at 08:57:47PM +0100, Mark Brown wrote:
+> On Fri, Aug 30, 2024 at 10:55:06AM +0200, Geert Uytterhoeven wrote:
+> > On Thu, Aug 29, 2024 at 5:35 AM Yang Ruibin <11162571@vivo.com> wrote:
 > 
-> If the scrambler is enabled, you need to deal with hotplug. On hotplug,
-> the monitor will drop its TMDS ratio and scrambling status, but the
-> driver will keep assuming it's been programmed.
+> > > -       if (ret)
+> > > +       if (ret) {
+> > > +               pci_dev_put(dma_dev);
 > 
-> If you don't have a way to deal with hotplug yet, then I'd suggest to
-> just drop the scrambler setup for now.
+> > dma_dev is still uninitialized at this point.
+> 
+> I'm a bit concerned that this isn't picked up by an allmodconfig with
+> the -Werror...  I'm currently using GCC 12 for that.
 
-Thanks for the heads up!
+It shows up with -Wmaybe-uninitialized for GCC but that's disabled for
+the normal kernel build with commit 78a5255ffb6a ("Stop the ad-hoc games
+with -Wno-maybe-initialized"). With GCC 12:
 
-HPD is partially handled by the RK platform driver, which makes use of
-drm_helper_hpd_irq_event(). Since the bridge sets DRM_BRIDGE_OP_DETECT
-flag, the dw_hdmi_qp_bridge_detect() callback gets executed, which in turn
-verifies the PHY status via ->read_hpd() implemented as
-dw_hdmi_qp_rk3588_read_hpd() in the platform driver.
+  drivers/spi/spi-pxa2xx-pci.c: In function ‘mrfld_spi_setup’:
+  drivers/spi/spi-pxa2xx-pci.c:228:17: error: ‘dma_dev’ may be used uninitialized [-Werror=maybe-uninitialized]
+    228 |                 pci_dev_put(dma_dev);
+        |                 ^~~~~~~~~~~~~~~~~~~~
+  drivers/spi/spi-pxa2xx-pci.c:198:25: note: ‘dma_dev’ was declared here
+    198 |         struct pci_dev *dma_dev;
+        |                         ^~~~~~~
+  drivers/spi/spi-pxa2xx-pci.c: In function ‘lpss_spi_setup’:
+  drivers/spi/spi-pxa2xx-pci.c:150:17: error: ‘dma_dev’ may be used uninitialized [-Werror=maybe-uninitialized]
+    150 |                 pci_dev_put(dma_dev);
+        |                 ^~~~~~~~~~~~~~~~~~~~
+  drivers/spi/spi-pxa2xx-pci.c:100:25: note: ‘dma_dev’ was declared here
+    100 |         struct pci_dev *dma_dev;
+        |                         ^~~~~~~
 
-During my testing so far it worked reliably when switching displays with
-different capabilities.  I don't have a 4K@60Hz display at the moment, but
-used the HDMI RX port on the Rock 5B board in a loopback connection to
-verify this mode, which triggered the high TMDS clock ratio and scrambling
-setup as well.
+Clang has it under -Wuninitialized, where it was caught with a regular
+allmodconfig build:
 
-I just submitted v5 [1] where I reworked a bit the scrambling handling,
-which allowed for some code simplification.
+  drivers/spi/spi-pxa2xx-pci.c:150:15: error: variable 'dma_dev' is uninitialized when used here [-Werror,-Wuninitialized]
+    150 |                 pci_dev_put(dma_dev);
+        |                             ^~~~~~~
+  drivers/spi/spi-pxa2xx-pci.c:100:25: note: initialize the variable 'dma_dev' to silence this warning
+    100 |         struct pci_dev *dma_dev;
+        |                                ^
+        |                                 = NULL
+  drivers/spi/spi-pxa2xx-pci.c:228:15: error: variable 'dma_dev' is uninitialized when used here [-Werror,-Wuninitialized]
+    228 |                 pci_dev_put(dma_dev);
+        |                             ^~~~~~~
+  drivers/spi/spi-pxa2xx-pci.c:198:25: note: initialize the variable 'dma_dev' to silence this warning
+    198 |         struct pci_dev *dma_dev;
+        |                                ^
+        |                                 = NULL
 
-[1] https://lore.kernel.org/lkml/20240831-b4-rk3588-bridge-upstream-v5-0-9503bece0136@collabora.com/
+Perhaps a KCFLAGS=-Wmaybe-uninitialized in your make command or adding
 
-Regards,
-Cristian
+  subdir-ccflags-$(CONFIG_CC_IS_GCC) := -Wmaybe-uninitialized
 
+to the makefiles of the drivers that you maintain might not be a bad
+idea.
+
+Cheers,
+Nathan
 
