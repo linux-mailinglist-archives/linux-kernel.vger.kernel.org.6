@@ -1,44 +1,45 @@
-Return-Path: <linux-kernel+bounces-309565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06573966CE0
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 01:29:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAA9D966CE2
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 01:29:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B851228476B
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 23:29:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28F5C1C227B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 23:29:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A36318E341;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88AA918FC70;
 	Fri, 30 Aug 2024 23:29:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F7ekMyTU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tc3vUnY4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50FC2178389
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 23:29:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1DC2189B86
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 23:29:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725060552; cv=none; b=nM9VKSPRKeg/TK5jXw8bDan5RIO7TW26TDaGV/i6zU1rUm5jNTKGsnkp7oaMXwXjqI8jO6HBQyhPMgSMH9Gg8ruPWshiWXW8EGU0NSTXnYISW4yskBiZ3qqPAgD3tyPBvIqe5ZNZv0yHQ7BX2QqYieNFiDhfsIVf8OD2vInjisg=
+	t=1725060552; cv=none; b=mrwvCKpV7v/0lr04Ineu+unfphsW84l0uFm6yVIkagnGIJblmHu3O5KxcAq8jJistZOyPvimVg35yjPqHkwpTQojGUGxmHc9Mo99qsmXYRubGgVjprZ/VkCO4n4XpuEUBYF7R+e03i5ZJbvVkwfSIOgZLhQIzU/eubSkIN1ktrM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1725060552; c=relaxed/simple;
-	bh=V9kYcsA5oxmJbTnxP/uw209RZRlY9o37zXTZdKLuG+g=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bUreqDgqnmi9B0+8YLFwURSPRQiCvW0fkeABFBNpOAfOM0lAP6SDaVRcqVheZrEY+dM1xUpOuohvJEWgRBsxCW87Folgu9GOyrF4ZJQewM0hkCkKRO/eQ0/5EhIS5WWlzwOTUKa5XdIJv9RHK6ApeRkK+0uFZpeVmK3i8bxNhko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F7ekMyTU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 502DEC4CECF;
+	bh=Z35wGoOvlGoZEMj7VNvwpNtCUeWsIs1LrPL4WtnqMGU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=b9Wn8wuy/yQ6l5wyrJhsMjECeveXo52Tu9qhUrwQ7j+t52HjBB7qR1TG/uajgrXt4owSqxUYNjO/q7oIty6AskazLrgWf82BZlnan4jX2GkEvTc7M05TVbB2nkrf4bW5PTmRPKAIAMs3hxty9al7X6fAweJzRsOoo/YOi3yB8nM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tc3vUnY4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7526C4CECB;
 	Fri, 30 Aug 2024 23:29:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725060551;
-	bh=V9kYcsA5oxmJbTnxP/uw209RZRlY9o37zXTZdKLuG+g=;
-	h=From:To:Cc:Subject:Date:From;
-	b=F7ekMyTUi2cwmFPCgeKaJ005AY5M3mM9UsZofNjEtkpzoYB9Pke/XG73Mq9FUx12n
-	 aetFB0Uf6gwQ8G2WQCLhkYvKtmNsKKFFrHv6dcqc8B7USN4oJL6PqlortN74NBGZmT
-	 Hukp+YSzq16uINFij4iH3Jf5B2AaklQtThpBzMBb/ruqjhg8UV7LyxhN/WEdxVv6b4
-	 AZfnDG8x1eFtT3U/3Q06Y7AQGc1aCHlXfZvFnyyQNFIsyB9Aok7dyV61zyw97WU45y
-	 3gwx4HO9OnTkfrxjTAWeYLsYFKZd+3qcYtQYvbI06RKgrF/4ZLD/oqBptcNSjhUmYb
-	 cVBco/B1CA9Cw==
+	s=k20201202; t=1725060552;
+	bh=Z35wGoOvlGoZEMj7VNvwpNtCUeWsIs1LrPL4WtnqMGU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Tc3vUnY4nXFpgu6SoQwIbgTReaJHCi3sccMjUw/J68E2WxXbxOEDXT9j9kpbalEar
+	 +LocJVAtB/9F1spKDMU6IunQmkl6PKIGf8unNbPuFQ06+A+dJPoyj43sh7dN2qjsSX
+	 ZtG/vGCliYVDdlhznYDTy3zeMIX+r4Pj1XSESotmKJS1IPJNHRNWDlaroFdhJNsEaP
+	 5GpMOAjjxdawhhXJR5L7dARlIvHounzgO+wMG/0evtL07q/FwH+X7ml45XTLdu/tsg
+	 6H7yTxEWq/i7eHsAq7cvqfc+8qoF5KwPj6LzMK9RvMw2bcOHi2O+xxO0P6Qyvz8qh7
+	 EI3RsvboYKpNA==
 From: Namhyung Kim <namhyung@kernel.org>
 To: Peter Zijlstra <peterz@infradead.org>,
 	Ingo Molnar <mingo@kernel.org>
@@ -49,10 +50,12 @@ Cc: Kan Liang <kan.liang@linux.intel.com>,
 	LKML <linux-kernel@vger.kernel.org>,
 	Stephane Eranian <eranian@google.com>,
 	Ravi Bangoria <ravi.bangoria@amd.com>
-Subject: [RFC/PATCH 0/4] perf: Relax privilege restriction on AMD IBS (v2)
-Date: Fri, 30 Aug 2024 16:29:06 -0700
-Message-ID: <20240830232910.1839548-1-namhyung@kernel.org>
+Subject: [RFC/PATCH 1/4] perf/core: Add PERF_FORMAT_DROPPED
+Date: Fri, 30 Aug 2024 16:29:07 -0700
+Message-ID: <20240830232910.1839548-2-namhyung@kernel.org>
 X-Mailer: git-send-email 2.46.0.469.g59c65b2a67-goog
+In-Reply-To: <20240830232910.1839548-1-namhyung@kernel.org>
+References: <20240830232910.1839548-1-namhyung@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,48 +64,122 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Hello,
+When a perf_event is dropped due to some kind of (SW-based) filter, it
+won't generate sample data.  For example, software events drops samples
+when it doesn't match to privilege from exclude_{user,kernel}.
 
-This is RFC v2 to allow AMD IBS to regular users on the default settings
-where kernel-level profiling is disabled.  Currently AMD IBS doesn't
-allow any kind of exclusion in the event attribute.  But users needs to
-set attr.exclude_kernel to open an event on such an environment.
+In order to account such dropped samples, add a new counter in the
+perf_event, and let users can read(2) the number with the new
+PERF_FORMAT_DROPPED like the lost sample count.
 
-v2) changes
-
-* add PERF_FORMAT_DROPPED
-* account dropped sw events and from BPF handler
-* use precise RIP from IBS record
-
-v1) https://lore.kernel.org/lkml/20240822230816.564262-1-namhyung@kernel.org/
-
-While IBS doesn't support hardware level privilege filters, the kernel
-can allow the event and drop samples belongs to the kernel like in the
-software events.
-
-In order to count those dropped samples correctly, I'd propose a new
-read format PERF_FORMAT_DROPPED same as we did for the lost samples.
-With this, it can count dropped samples in the software events and
-from the BPF overflow handler as well.
-
-Let me know what you think.
-
-Thanks,
-Namhyung
-
-
-Namhyung Kim (4):
-  perf/core: Add PERF_FORMAT_DROPPED
-  perf/core: Export perf_exclude_event()
-  perf/core: Account dropped samples from BPF
-  perf/x86: Relax privilege filter restriction on AMD IBS
-
- arch/x86/events/amd/ibs.c       | 13 +++++++++++--
- include/linux/perf_event.h      |  3 +++
+Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+---
+ include/linux/perf_event.h      |  1 +
  include/uapi/linux/perf_event.h |  5 ++++-
- kernel/events/core.c            | 27 ++++++++++++++++++++++-----
- 4 files changed, 40 insertions(+), 8 deletions(-)
+ kernel/events/core.c            | 12 ++++++++++++
+ 3 files changed, 17 insertions(+), 1 deletion(-)
 
+diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+index 701549967c18..955d39543398 100644
+--- a/include/linux/perf_event.h
++++ b/include/linux/perf_event.h
+@@ -809,6 +809,7 @@ struct perf_event {
+ 	u64				id;
+ 
+ 	atomic64_t			lost_samples;
++	atomic64_t			dropped_samples;
+ 
+ 	u64				(*clock)(void);
+ 	perf_overflow_handler_t		overflow_handler;
+diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
+index 58daf6156fd0..6f19d4f74823 100644
+--- a/include/uapi/linux/perf_event.h
++++ b/include/uapi/linux/perf_event.h
+@@ -347,6 +347,7 @@ enum {
+  *	  { u64		time_running; } && PERF_FORMAT_TOTAL_TIME_RUNNING
+  *	  { u64		id;           } && PERF_FORMAT_ID
+  *	  { u64		lost;         } && PERF_FORMAT_LOST
++ *	  { u64		dropped;      } && PERF_FORMAT_DROPPED
+  *	} && !PERF_FORMAT_GROUP
+  *
+  *	{ u64		nr;
+@@ -355,6 +356,7 @@ enum {
+  *	  { u64		value;
+  *	    { u64	id;           } && PERF_FORMAT_ID
+  *	    { u64	lost;         } && PERF_FORMAT_LOST
++ *	    { u64	dropped;      } && PERF_FORMAT_DROPPED
+  *	  }		cntr[nr];
+  *	} && PERF_FORMAT_GROUP
+  * };
+@@ -365,8 +367,9 @@ enum perf_event_read_format {
+ 	PERF_FORMAT_ID				= 1U << 2,
+ 	PERF_FORMAT_GROUP			= 1U << 3,
+ 	PERF_FORMAT_LOST			= 1U << 4,
++	PERF_FORMAT_DROPPED			= 1U << 5,
+ 
+-	PERF_FORMAT_MAX = 1U << 5,		/* non-ABI */
++	PERF_FORMAT_MAX = 1U << 6,		/* non-ABI */
+ };
+ 
+ #define PERF_ATTR_SIZE_VER0	64	/* sizeof first published struct */
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index c6a720f41225..4d72538628ee 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -5679,6 +5679,8 @@ static int __perf_read_group_add(struct perf_event *leader,
+ 		values[n++] = primary_event_id(leader);
+ 	if (read_format & PERF_FORMAT_LOST)
+ 		values[n++] = atomic64_read(&leader->lost_samples);
++	if (read_format & PERF_FORMAT_DROPPED)
++		values[n++] = atomic64_read(&leader->dropped_samples);
+ 
+ 	for_each_sibling_event(sub, leader) {
+ 		values[n++] += perf_event_count(sub, false);
+@@ -5686,6 +5688,8 @@ static int __perf_read_group_add(struct perf_event *leader,
+ 			values[n++] = primary_event_id(sub);
+ 		if (read_format & PERF_FORMAT_LOST)
+ 			values[n++] = atomic64_read(&sub->lost_samples);
++		if (read_format & PERF_FORMAT_DROPPED)
++			values[n++] = atomic64_read(&sub->dropped_samples);
+ 	}
+ 
+ unlock:
+@@ -5751,6 +5755,8 @@ static int perf_read_one(struct perf_event *event,
+ 		values[n++] = primary_event_id(event);
+ 	if (read_format & PERF_FORMAT_LOST)
+ 		values[n++] = atomic64_read(&event->lost_samples);
++	if (read_format & PERF_FORMAT_DROPPED)
++		values[n++] = atomic64_read(&event->dropped_samples);
+ 
+ 	if (copy_to_user(buf, values, n * sizeof(u64)))
+ 		return -EFAULT;
+@@ -7348,6 +7354,8 @@ static void perf_output_read_one(struct perf_output_handle *handle,
+ 		values[n++] = primary_event_id(event);
+ 	if (read_format & PERF_FORMAT_LOST)
+ 		values[n++] = atomic64_read(&event->lost_samples);
++	if (read_format & PERF_FORMAT_DROPPED)
++		values[n++] = atomic64_read(&event->dropped_samples);
+ 
+ 	__output_copy(handle, values, n * sizeof(u64));
+ }
+@@ -7386,6 +7394,8 @@ static void perf_output_read_group(struct perf_output_handle *handle,
+ 		values[n++] = primary_event_id(leader);
+ 	if (read_format & PERF_FORMAT_LOST)
+ 		values[n++] = atomic64_read(&leader->lost_samples);
++	if (read_format & PERF_FORMAT_DROPPED)
++		values[n++] = atomic64_read(&leader->dropped_samples);
+ 
+ 	__output_copy(handle, values, n * sizeof(u64));
+ 
+@@ -7401,6 +7411,8 @@ static void perf_output_read_group(struct perf_output_handle *handle,
+ 			values[n++] = primary_event_id(sub);
+ 		if (read_format & PERF_FORMAT_LOST)
+ 			values[n++] = atomic64_read(&sub->lost_samples);
++		if (read_format & PERF_FORMAT_DROPPED)
++			values[n++] = atomic64_read(&sub->dropped_samples);
+ 
+ 		__output_copy(handle, values, n * sizeof(u64));
+ 	}
 -- 
 2.46.0.469.g59c65b2a67-goog
 
