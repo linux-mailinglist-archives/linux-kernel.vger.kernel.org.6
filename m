@@ -1,127 +1,96 @@
-Return-Path: <linux-kernel+bounces-309197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA519966742
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 18:46:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E04DC966744
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 18:46:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77FF4287362
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 16:46:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DAD92872D8
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 16:46:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F2CF1B8EBA;
-	Fri, 30 Aug 2024 16:44:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58C321B86E6;
+	Fri, 30 Aug 2024 16:46:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="pOMb1304"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LBwUpI+O"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05F1C1B5313;
-	Fri, 30 Aug 2024 16:44:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 972941B3B10;
+	Fri, 30 Aug 2024 16:46:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725036296; cv=none; b=Cznkj3KwN0osqlPhjz4lpkI89/9lq68MFPYTDFOYawKpoU6z/w5b9J3ZFw+oJuJmP+B0P513WTobUsUW6c8sQ2pPBJ99WBXBdnUDibMvW93AfhUMlI84CQAW48B3uBfIJH6NW/snxNOkrweKH779pj1ArZ3IypSj6MY3fZCJFpI=
+	t=1725036393; cv=none; b=q7eUT7S5VEq9TdU72p/JAgq8jrfTPYUXpoaMJUJ/9LzJxoIPgJD29KrLoNUJBjWL0rY8UM2QXfKehtW9+2PTtyR8Xw8OFczHYdWUAiXNkUQ1WOakJJ2F2i5eow3Xq+yXAJJ3Xhng52um8Y3DRATDLrSaa/GvsKhkr8yhvgdGcB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725036296; c=relaxed/simple;
-	bh=cAx/CkSWaWBsOEdX3c4Sy30s5GhSkh62nw8fBxVHlBI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Da4MMt9Ch3XDPpndtH3DHb3ePwxwCHsI5Dn4EshuBc0GxUvhk2Aaj1MoNFV8FsrL407y5/+26bCpOiBlWsS5EE6bPQKuaU3f3RCYN/LpcyRB7ThK7uW06bZxW42+rlHS43kY/kVog+eek71+4Xnr7m085GoV09YUkGezptYnT5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=pOMb1304; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47UFI2jI028797;
-	Fri, 30 Aug 2024 16:44:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	PTXvTkGDdGSjOfgJlvddv1N2iFsBozj7rOvj7GAdUJQ=; b=pOMb1304Cbvlf3TN
-	8p83Z/mIQfgAaovKh4Z/wSAJ1KQcsjCsBu3n7jfTST58JbXbRMRtwh1ZaPUl6H55
-	aN2+BxJ2a57zT3D/pjUa/RTZ+gt5RONggAGfdkwCbp4tCvGZz7MgPjaCXLYOHXXU
-	9mvA14URxvZS5JrNbpqAkPxkGXKIDhYPDNDYSARJvu1ar1CPb8sWbXQVzGOEx2iZ
-	30hV3X1pAz2v4gFNcMgYYglQSLFC7zP0yGC7nyVjqJ0JtPvxQ2z5IJhPITYtR/vA
-	HCpdCP0+EABsyu2hTzZbThYRbgL9bGF0DfsAcx4oYNxZD501CM6CtirbKk7D1cET
-	G5y2ag==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41ax4mk8x4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 30 Aug 2024 16:44:42 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47UGifL2032621
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 30 Aug 2024 16:44:41 GMT
-Received: from [10.110.126.215] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 30 Aug
- 2024 09:44:40 -0700
-Message-ID: <9b495b92-5b6f-4a8f-8877-fef111b7259c@quicinc.com>
-Date: Fri, 30 Aug 2024 09:44:40 -0700
+	s=arc-20240116; t=1725036393; c=relaxed/simple;
+	bh=j2pAcpMVTJjKxG4sxxU8zeRMM4mJvAZnC2+vSeYq+sg=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=TEs4y2GRfafclvL2Cuu33k+YYmAYqHwQ5eD/IL8f+EqtKmQFbQJSYIt/xhsGOu2EK+TpZzCF/h9/JdPM1Ws+99ZuNzN4NnSu9RvF1FNEkVU//BDVE1qvHDgfjHE7/ts6jGbfa/rbSHJnn+R1K8fkBcK7y8dEnKLsBlk8+aqvVwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LBwUpI+O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AB70C4CEC2;
+	Fri, 30 Aug 2024 16:46:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725036393;
+	bh=j2pAcpMVTJjKxG4sxxU8zeRMM4mJvAZnC2+vSeYq+sg=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=LBwUpI+O1L1OfbbLmMYpzgFJ+wD2pWOycAcUrqQXdvE3lGZHKbIWFPWYaCdbpoaNC
+	 Y8pqd49yK8HFYmgPXzRJX1GKYjK6tuQGYHHmlShpp8S/alsXA/SEuqd/aZYGtb/gbY
+	 zU0RZiSpBzOEc1yuhe+v2tNhsXlhJan2h35z2jC39dncTaPOK/TNfTZnlh/b9dPc8i
+	 Keo5lSw11Zay25Xb56E31PRqO/OwQNpupW/4DmzL4nTZrHwLs/AFZ4c6lMDW7U13Mz
+	 S+WFxL495tczRaPAHno19S1ef5Of+WY1nuYoxs4ejw1QH2anu3KqBhl4+obagihyYk
+	 IFzuMPCukrbpA==
+From: Mark Brown <broonie@kernel.org>
+To: mika.westerberg@linux.intel.com, Charles Han <hanchunchao@inspur.com>
+Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240830074106.8744-1-hanchunchao@inspur.com>
+References: <20240830074106.8744-1-hanchunchao@inspur.com>
+Subject: Re: [PATCH] spi: intel: Add check devm_kasprintf() returned value
+Message-Id: <172503639203.177300.15277718564430681896.b4-ty@kernel.org>
+Date: Fri, 30 Aug 2024 17:46:32 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/7] dt-bindings: arm: Add support for Coresight TGU
- trace
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        songchai
-	<quic_songchai@quicinc.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        "Mike
- Leach" <mike.leach@linaro.org>,
-        James Clark <james.clark@arm.com>,
-        "Alexander
- Shishkin" <alexander.shishkin@linux.intel.com>,
-        Andy Gross
-	<agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Rob Herring
-	<robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <coresight@lists.linaro.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>
-References: <20240830092311.14400-1-quic_songchai@quicinc.com>
- <20240830092311.14400-2-quic_songchai@quicinc.com>
- <0a79b9df-4ca4-4dc8-9930-3fa1dc7d3174@kernel.org>
-Content-Language: en-US
-From: Trilok Soni <quic_tsoni@quicinc.com>
-In-Reply-To: <0a79b9df-4ca4-4dc8-9930-3fa1dc7d3174@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: NwKB0PFUnUcS7bfCt6_Q1lyvobbJ-T_m
-X-Proofpoint-ORIG-GUID: NwKB0PFUnUcS7bfCt6_Q1lyvobbJ-T_m
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-30_10,2024-08-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=788
- impostorscore=0 spamscore=0 suspectscore=0 adultscore=0 priorityscore=1501
- lowpriorityscore=0 bulkscore=0 malwarescore=0 phishscore=0 mlxscore=0
- clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408300128
+X-Mailer: b4 0.15-dev-37811
 
-On 8/30/2024 3:11 AM, Krzysztof Kozlowski wrote:
->> Add a new coresight-tgu.yaml file to describe the bindings required to
->> define the TGU in the device trees.
->>
->> Signed-off-by: songchai <quic_songchai@quicinc.com>
-> It feels like you are using login name as real name. Please investigate
-> this and confirm whether latin transcription/transliteration of your
-> name is like above.
+On Fri, 30 Aug 2024 15:41:06 +0800, Charles Han wrote:
+> intel_spi_populate_chip() use devm_kasprintf() to set pdata->name.
+> This can return a NULL pointer on failure but this returned value
+> is not checked.
+> 
+> 
 
-It should be "Signed-off-by: Sam Chai <quic_songchai@quicinc.com>" ? 
+Applied to
 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
--- 
----Trilok Soni
+Thanks!
+
+[1/1] spi: intel: Add check devm_kasprintf() returned value
+      commit: 2920294686ec23211637998f3ec386dfd3d784a6
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
 
