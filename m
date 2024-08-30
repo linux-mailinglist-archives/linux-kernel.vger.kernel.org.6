@@ -1,65 +1,70 @@
-Return-Path: <linux-kernel+bounces-309132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98B79966691
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 18:12:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6724966692
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 18:13:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2353CB24079
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 16:12:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBB5E1C23A04
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 16:13:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F9121B8EBF;
-	Fri, 30 Aug 2024 16:12:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E73D11B9B4C;
+	Fri, 30 Aug 2024 16:12:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OE6a5UTp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oIvQ8xI5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9460B1B8EA1;
-	Fri, 30 Aug 2024 16:12:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 329CF1B81C3;
+	Fri, 30 Aug 2024 16:12:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725034348; cv=none; b=pWuqpRn006RyDsMQlMtIbYEIAU4jfQvmUHmMnTqXGPKqNBEakR+11RvFdm7Yqu6Rq3EtYmcXYKxicqtv/n/qZxeL3N0co9xXZ7uQh24LUYkvBhZQ+LtekpkTu9xbgprZOCWxGVehIhoYPfjmD0bvLqV/BKcDH0ULL+tlV4hr48c=
+	t=1725034352; cv=none; b=fsF99+4iKr3pmu+8msRS3cZlMEPnwLJNmyeiQ0SRpYhNnpjxPbdya/RRJDcK/qvVv2gMLSEMfQpQtAkVV9VZM4+TvmkdYtVMeBFBoLuDg7JT3oQWRvKXrrvx0GYAmJF7TZpMuBWmwUIUSgmYxU0h0yOMy/tA6+DjrZwFzzje2+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725034348; c=relaxed/simple;
-	bh=4olgMWFnqRfGAJn/hf7MsiFxqfy7g60SbC+PBtuV+5o=;
+	s=arc-20240116; t=1725034352; c=relaxed/simple;
+	bh=g9XfvD3q/Dl8PLtHo/kQwHc+kLWhm5eWuih+JylYTPM=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XmPINmoUoOTyuFFxBZw81agdMm5JgxDtmOcZeHKgWKwpESeVZ57I1fZmjqwsE6rzJc+krEC1qTH/PoRdvf5p96vdVDTrdE6MrxKABhbLBcBEM7qJ/bDvGcgWM11Z2poF59+wnDqcxB2SzbM425n2c99UK7KaFJmxaDaIeeBKD7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OE6a5UTp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCE75C4CEC5;
-	Fri, 30 Aug 2024 16:12:25 +0000 (UTC)
+	 MIME-Version:Content-Type; b=Fl2mFghdoD4tIw3ux4pi44KBO0DlXYyb6KO8Z2cWAmY2siXEgihhAjCc/Dm1/ceuqJjV/TnD3egoYZ9OqF04X9uTLMb+zlUqisTD1yi3y4/isGhX2DDORoaHK87TpZ1kYDOhLQIfnVOfEzBc5cyRoQDBSCc4i6Sax32eD7K/eEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oIvQ8xI5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6FB6C4CEC2;
+	Fri, 30 Aug 2024 16:12:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725034348;
-	bh=4olgMWFnqRfGAJn/hf7MsiFxqfy7g60SbC+PBtuV+5o=;
+	s=k20201202; t=1725034351;
+	bh=g9XfvD3q/Dl8PLtHo/kQwHc+kLWhm5eWuih+JylYTPM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=OE6a5UTpOBfCZY9myh8N9H06FPMjyUTF6rUP/qRbibt+0DssVH2OGW20sKA6nhpCJ
-	 swbRqJdN3agDCvSLCL+mx0lBXrR7rpBUITdTRznmFpIYNlOTUSS0iKIEP+wzV7/au/
-	 f8VjuCYG1iSNh+bYNdqDIOX8Ysmhl3A3bQLqqtAOT237tlPVXWgv/jBEpgyYMjw96F
-	 /mmRCkF2yV0NwEvBq3EtDZKONDJCyNJMya0rURSSlKH1rcmHcpWlJ1x+gYvAtuZLpQ
-	 v+KbPVdqcRkgNakRTJmC3PqaBG9XP+SHrgAqnMsc45DoL3fpWMSguQ341naPAwm2cd
-	 OrSOEgqno9mug==
+	b=oIvQ8xI55U6+R+O9IUubidSB5JhbqvFcQrMgEk53F2adJN5+xg0OltcyjjgJeuIni
+	 M6dpheSuwFrWjx2C5E2n3FXxP8uEo2aYc76/CmXUGgzDFA30SUsmO8cvqpJtRCXymo
+	 Q4AsK0c8Q76hAdlU82d2YM0bzddAPLaZSWW/I9coboruTKrWQti6D78kqAG/e4M5B8
+	 UDZG04SkNt5bSNWgAEXhnIYhkP9+j8OEkIEh1oNr7zpV/kq5BLeCQBms+JvuBZqpqI
+	 zRyKQM9N2pNikoCPzz/+O/XKWxgP0yt6GrjhmAFVYGMjpUgaAe+2bHmSQ2kFRAfA2I
+	 6gP/kH7Qudwog==
 From: Will Deacon <will@kernel.org>
-To: shuah@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kselftest@vger.kernel.org,
-	Catalin.Marinas@arm.com,
-	Dev Jain <dev.jain@arm.com>
+To: linux-arm-kernel@lists.infradead.org,
+	James Clark <james.clark@linaro.org>
 Cc: catalin.marinas@arm.com,
 	kernel-team@android.com,
 	Will Deacon <will@kernel.org>,
-	broonie@kernel.org,
-	ryan.roberts@arm.com,
-	Anshuman.Khandual@arm.com,
-	aneesh.kumar@kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] kselftest/arm64: Fix build warnings for ptrace
-Date: Fri, 30 Aug 2024 17:12:10 +0100
-Message-Id: <172503160799.3257459.1776623794579336427.b4-ty@kernel.org>
+	peterz@infradead.org,
+	Al Grant <al.grant@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v3] drivers/perf: arm_spe: Use perf_allow_kernel() for permissions
+Date: Fri, 30 Aug 2024 17:12:11 +0100
+Message-Id: <172501332409.1008166.7238309612916378266.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20240830052911.4040970-1-dev.jain@arm.com>
-References: <20240830052911.4040970-1-dev.jain@arm.com>
+In-Reply-To: <20240827145113.1224604-1-james.clark@linaro.org>
+References: <20240827145113.1224604-1-james.clark@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,16 +74,20 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-On Fri, 30 Aug 2024 10:59:11 +0530, Dev Jain wrote:
-> A "%s" is missing in ksft_exit_fail_msg(); instead, use the newly
-> introduced ksft_exit_fail_perror().
+On Tue, 27 Aug 2024 15:51:12 +0100, James Clark wrote:
+> Use perf_allow_kernel() for 'pa_enable' (physical addresses),
+> 'pct_enable' (physical timestamps) and context IDs. This means that
+> perf_event_paranoid is now taken into account and LSM hooks can be used,
+> which is more consistent with other perf_event_open calls. For example
+> PERF_SAMPLE_PHYS_ADDR uses perf_allow_kernel() rather than just
+> perfmon_capable().
 > 
-> 
+> [...]
 
-Applied to arm64 (for-next/selftests), thanks!
+Applied to arm64 (for-next/perf), thanks!
 
-[1/1] kselftest/arm64: Fix build warnings for ptrace
-      https://git.kernel.org/arm64/c/d736d4fc7630
+[1/1] drivers/perf: arm_spe: Use perf_allow_kernel() for permissions
+      https://git.kernel.org/arm64/c/5e9629d0ae97
 
 Cheers,
 -- 
