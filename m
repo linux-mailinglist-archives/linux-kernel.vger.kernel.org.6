@@ -1,127 +1,182 @@
-Return-Path: <linux-kernel+bounces-308752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A99B196615C
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 14:12:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24AB5966177
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 14:22:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48AA21F2822A
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:12:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCCD21F22891
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:22:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9242F19995B;
-	Fri, 30 Aug 2024 12:12:46 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7E5317BB0C;
-	Fri, 30 Aug 2024 12:12:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B2A819ABD5;
+	Fri, 30 Aug 2024 12:22:09 +0000 (UTC)
+Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0206D17ADF8;
+	Fri, 30 Aug 2024 12:22:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725019966; cv=none; b=FWk1V6Q0XcP/V5vzQrxgifevgpmv8kZiM/3NYTBKNw5NwqOBhM3S4XmRllVGhFrFodHWiFIGGElutlShpC9XZBrznpT/U57nv/nc8/PR99sl2hzaFdaxLYIo0qZtZFL3jJi1YalyuNyedV4HpTtGC67j/ESpbR5P2JvtT/HYg7k=
+	t=1725020528; cv=none; b=A789a+NTZ3t5loSir6SjmvonL+8VPsOWf/Ta5kIbeSc4sehx/ddl9GMul+DVD7RnLUGXdfjH33cwpyt7vyiFLoMCUgZ8UFZ6t6l5uYlnqa5Ik/BDisu/AVDFESKE1uhO5R+xp5wuWnlwyqRDtm30Tqt5UWjeA286zUFW3UKL+jE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725019966; c=relaxed/simple;
-	bh=5efDUvWPJTQzrLZn1kIQh/Y0LwK0Dnn/sLPIabxchwo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=A3CwvRYax8Qu6ms5lIdF3+EOdikFjoSikxZaQCSt8TTc0+61+AeVyoVvE0UKm/vpzZscU40Idbo5S03oFRkhVDLYlITI+Q5U2pjPUypSzxNRKjQQWRPkYgy7q1bZ0j2UvQaley+4X66kzOkPRbdUEUGzDVrPdaghTwX/Fn8ebwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7829F339;
-	Fri, 30 Aug 2024 05:13:03 -0700 (PDT)
-Received: from [10.2.76.71] (e132581.arm.com [10.2.76.71])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E88EF3F762;
-	Fri, 30 Aug 2024 05:12:34 -0700 (PDT)
-Message-ID: <655edf2e-8e0d-4c00-91a1-1af58593f597@arm.com>
-Date: Fri, 30 Aug 2024 13:12:33 +0100
+	s=arc-20240116; t=1725020528; c=relaxed/simple;
+	bh=oPbDa16YJxkHf5+H9dpshoX4Hx8uDzq1EJYPPb9lb1c=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=h1GknKkmwz7/v/SnEnOYb6yoyt5ERCI65MVMcxcoY8CU0mGEZa8hfSdCRM7SB7hlDzbv1TO8M3XK8Hof37ruRNsuoKlmkJsTWnM8/5LJmclhBnH7dJo85Z7qwETCm1XffFcIHY3NEtrWyOfT9UVr2jSnbDkujmCN+wWNJ9dF0Qk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4WwHMG4JDZz1S9P9;
+	Fri, 30 Aug 2024 20:21:46 +0800 (CST)
+Received: from kwepemm000007.china.huawei.com (unknown [7.193.23.189])
+	by mail.maildlp.com (Postfix) with ESMTPS id 29589180041;
+	Fri, 30 Aug 2024 20:22:01 +0800 (CST)
+Received: from localhost.localdomain (10.90.30.45) by
+ kwepemm000007.china.huawei.com (7.193.23.189) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 30 Aug 2024 20:22:00 +0800
+From: Jijie Shao <shaojijie@huawei.com>
+To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>
+CC: <shenjian15@huawei.com>, <wangpeiyang1@huawei.com>,
+	<liuyonglong@huawei.com>, <chenhao418@huawei.com>, <shaojijie@huawei.com>,
+	<sudongming1@huawei.com>, <xujunsheng@huawei.com>, <shiyongbang@huawei.com>,
+	<libaihan@huawei.com>, <andrew@lunn.ch>, <jdamato@fastly.com>,
+	<horms@kernel.org>, <jonathan.cameron@huawei.com>,
+	<shameerali.kolothum.thodi@huawei.com>, <salil.mehta@huawei.com>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH V6 net-next 00/11] Add support of HIBMCGE Ethernet Driver
+Date: Fri, 30 Aug 2024 20:15:53 +0800
+Message-ID: <20240830121604.2250904-1-shaojijie@huawei.com>
+X-Mailer: git-send-email 2.30.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/9] perf: arm_spe: Introduce 'lds' capacity
-To: Will Deacon <will@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
- <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
- John Garry <john.g.garry@oracle.com>, Namhyung Kim <namhyung@kernel.org>,
- Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>,
- Jonathan Cameron <jonathan.cameron@huawei.com>,
- Yicong Yang <yangyicong@hisilicon.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- coresight@lists.linaro.org, linux-perf-users@vger.kernel.org
-References: <20240827164417.3309560-1-leo.yan@arm.com>
- <20240827164417.3309560-2-leo.yan@arm.com>
- <20240830103834.GA8000@willie-the-truck>
-Content-Language: en-US
-From: Leo Yan <leo.yan@arm.com>
-In-Reply-To: <20240830103834.GA8000@willie-the-truck>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemm000007.china.huawei.com (7.193.23.189)
 
-On 8/30/24 11:38, Will Deacon wrote:
-> On Tue, Aug 27, 2024 at 05:44:09PM +0100, Leo Yan wrote:
->> This commit adds a new entry 'lds' in the capacity folder. 'lds' stands
->> for "loaded data source". When its value is 1, it indicates the data
->> source implemented, and data source packets will be recorded in the
->> trace data.
->>
->> Signed-off-by: Leo Yan <leo.yan@arm.com>
->> ---
->>   drivers/perf/arm_spe_pmu.c | 3 +++
->>   1 file changed, 3 insertions(+)
->>
->> diff --git a/drivers/perf/arm_spe_pmu.c b/drivers/perf/arm_spe_pmu.c
->> index 9100d82bfabc..81c1e7627721 100644
->> --- a/drivers/perf/arm_spe_pmu.c
->> +++ b/drivers/perf/arm_spe_pmu.c
->> @@ -110,6 +110,7 @@ enum arm_spe_pmu_buf_fault_action {
->>   /* This sysfs gunk was really good fun to write. */
->>   enum arm_spe_pmu_capabilities {
->>        SPE_PMU_CAP_ARCH_INST = 0,
->> +     SPE_PMU_CAP_LDS,
->>        SPE_PMU_CAP_ERND,
->>        SPE_PMU_CAP_FEAT_MAX,
->>        SPE_PMU_CAP_CNT_SZ = SPE_PMU_CAP_FEAT_MAX,
->> @@ -118,6 +119,7 @@ enum arm_spe_pmu_capabilities {
->>
->>   static int arm_spe_pmu_feat_caps[SPE_PMU_CAP_FEAT_MAX] = {
->>        [SPE_PMU_CAP_ARCH_INST] = SPE_PMU_FEAT_ARCH_INST,
->> +     [SPE_PMU_CAP_LDS]       = SPE_PMU_FEAT_LDS,
->>        [SPE_PMU_CAP_ERND]      = SPE_PMU_FEAT_ERND,
->>   };
->>
->> @@ -160,6 +162,7 @@ static ssize_t arm_spe_pmu_cap_show(struct device *dev,
->>
->>   static struct attribute *arm_spe_pmu_cap_attr[] = {
->>        SPE_CAP_EXT_ATTR_ENTRY(arch_inst, SPE_PMU_CAP_ARCH_INST),
->> +     SPE_CAP_EXT_ATTR_ENTRY(lds, SPE_PMU_CAP_LDS),
->>        SPE_CAP_EXT_ATTR_ENTRY(ernd, SPE_PMU_CAP_ERND),
->>        SPE_CAP_EXT_ATTR_ENTRY(count_size, SPE_PMU_CAP_CNT_SZ),
->>        SPE_CAP_EXT_ATTR_ENTRY(min_interval, SPE_PMU_CAP_MIN_IVAL),
-> 
-> What will userspace do with this? I don't think you can turn LDS on/off,
-> so either you'll get the data source packet or you won't.
+This patch set adds the support of Hisilicon BMC Gigabit Ethernet Driver.
 
-Yes, LDS bit does not work as a switch.
+This patch set includes basic Rx/Tx functionality. It also includes
+the registration and interrupt codes.
 
-The tool in the userspace will record the LDS bit into the metadata. During
-decoding phase, it reads out the LDS from metadata. Based on it, the perf
-tool can know if the data source is supported or not, if yes then decode the
-data source packet.
+This work provides the initial support to the HIBMCGE and
+would incrementally add features or enhancements.
 
-Another point is how to decide the data source packet format. Now we maintain
-a CPU list for tracking CPU variants which support data source trace. For long
-term, I would like the tool can based on hardware feature (e.g. a ID register
-in Arm SPE) to decide the data source format, so far it is absent. This is why
-LDS bit + CPU list is a more reliable way. See some discussion [1].
+---
+ChangeLog:
+v5 -> v6:
+  - Delete netif_carrier_off() in .ndo_open() and .ndo_stop(),
+    suggested by Jakub and Andrew.
+  - Remove hbg_txrx_init() from probe path, alloc ring buffer in .ndo_open(),
+    and release ring buffer in .ndo_stop(), suggested by Jakub and Andrew.
+  v5: https://lore.kernel.org/all/20240827131455.2919051-1-shaojijie@huawei.com/
+v4 -> v5:
+  - Delete unnecessary semicolon, suggested by Jakub.
+  v4: https://lore.kernel.org/all/20240826081258.1881385-1-shaojijie@huawei.com/
+v3 -> v4:
+  - Delete INITED_STATE in priv, suggested by Andrew.
+  - Delete unnecessary defensive code in hbg_phy_start()
+    and hbg_phy_stop(), suggested by Andrew.
+  v3: https://lore.kernel.org/all/20240822093334.1687011-1-shaojijie@huawei.com/
+v2 -> v3:
+  - Add "select PHYLIB" in Kconfig, reported by Jakub.
+  - Use ndo_validate_addr() instead of is_valid_ether_addr()
+    in dev_set_mac_address(), suggested by Jakub and Andrew.
+  v2: https://lore.kernel.org/all/20240820140154.137876-1-shaojijie@huawei.com/
+v1 -> v2:
+  - fix build errors reported by kernel test robot <lkp@intel.com>
+    Closes: https://lore.kernel.org/oe-kbuild-all/202408192219.zrGff7n1-lkp@intel.com/
+    Closes: https://lore.kernel.org/oe-kbuild-all/202408200026.q20EuSHC-lkp@intel.com/
+  v1: https://lore.kernel.org/all/20240819071229.2489506-1-shaojijie@huawei.com/
+RFC v2 -> v1:
+  - Use FIELD_PREP/FIELD_GET instead of union, suggested by Andrew.
+  - Delete unnecessary defensive code, suggested by Andrew.
+  - A few other minor changes.
+  RFC v2: https://lore.kernel.org/all/20240813135640.1694993-1-shaojijie@huawei.com/
+RFC v1 -> RFC v2:
+  - Replace linkmode_copy() with phy_remove_link_mode() to
+    simplify the PHY configuration process, suggested by Andrew.
+  - Delete hbg_get_link_status() from the scheduled task, suggested by Andrew.
+  - Delete validation for mtu in hbg_net_change_mtu(), suggested by Andrew.
+  - Delete validation for mac address in hbg_net_set_mac_address(),
+    suggested by Andrew.
+  - Use napi_complete_done() to simplify the process, suggested by Joe Damato.
+  - Use ethtool_op_get_link(), phy_ethtool_get_link_ksettings(),
+    and phy_ethtool_set_link_ksettings() to simplify the code, suggested by Andrew.
+  - Add the check on the return value of phy_connect_direct(),
+    suggested by Jonathan.
+  - Adjusted the layout to place the fields and register definitions
+    in one place, suggested by Jonathan.
+  - Replace request_irq with devm_request_irq, suggested by Jonathan.
+  - Replace BIT_MASK() with BIT(), suggested by Jonathan.
+  - Introduce irq_handle in struct hbg_irq_info in advance to reduce code changes,
+    suggested by Jonathan.
+  - Delete workqueue for this patch set, suggested by Jonathan.
+  - Support to compile this driver on all arch in Kconfig,
+    suggested by Andrew and Jonathan.
+  - Add a patch to add is_valid_ether_addr check in dev_set_mac_address,
+    suggested by Andrew.
+  - A few other minor changes.
+  RFC v1: https://lore.kernel.org/all/20240731094245.1967834-1-shaojijie@huawei.com/
+---
 
-Thanks,
-Leo
+Jijie Shao (11):
+  net: hibmcge: Add pci table supported in this module
+  net: hibmcge: Add read/write registers supported through the bar space
+  net: hibmcge: Add mdio and hardware configuration supported in this
+    module
+  net: hibmcge: Add interrupt supported in this module
+  net: hibmcge: Implement some .ndo functions
+  net: hibmcge: Implement .ndo_start_xmit function
+  net: hibmcge: Implement rx_poll function to receive packets
+  net: hibmcge: Implement some ethtool_ops functions
+  net: hibmcge: Add a Makefile and update Kconfig for hibmcge
+  net: hibmcge: Add maintainer for hibmcge
+  net: add ndo_validate_addr check in dev_set_mac_address
 
-[1] https://lore.kernel.org/linux-perf-users/Zl9jLtiFagBcH7oH@J2N7QTR9R3/
+ MAINTAINERS                                   |   7 +
+ drivers/net/ethernet/hisilicon/Kconfig        |  16 +-
+ drivers/net/ethernet/hisilicon/Makefile       |   1 +
+ .../net/ethernet/hisilicon/hibmcge/Makefile   |  10 +
+ .../ethernet/hisilicon/hibmcge/hbg_common.h   | 137 ++++++
+ .../ethernet/hisilicon/hibmcge/hbg_ethtool.c  |  17 +
+ .../ethernet/hisilicon/hibmcge/hbg_ethtool.h  |  11 +
+ .../net/ethernet/hisilicon/hibmcge/hbg_hw.c   | 281 ++++++++++++
+ .../net/ethernet/hisilicon/hibmcge/hbg_hw.h   |  59 +++
+ .../net/ethernet/hisilicon/hibmcge/hbg_irq.c  | 125 ++++++
+ .../net/ethernet/hisilicon/hibmcge/hbg_irq.h  |  11 +
+ .../net/ethernet/hisilicon/hibmcge/hbg_main.c | 257 +++++++++++
+ .../net/ethernet/hisilicon/hibmcge/hbg_mdio.c | 245 ++++++++++
+ .../net/ethernet/hisilicon/hibmcge/hbg_mdio.h |  12 +
+ .../net/ethernet/hisilicon/hibmcge/hbg_reg.h  | 143 ++++++
+ .../net/ethernet/hisilicon/hibmcge/hbg_txrx.c | 422 ++++++++++++++++++
+ .../net/ethernet/hisilicon/hibmcge/hbg_txrx.h |  37 ++
+ net/core/dev.c                                |   5 +
+ 18 files changed, 1795 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/Makefile
+ create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/hbg_common.h
+ create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/hbg_ethtool.c
+ create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/hbg_ethtool.h
+ create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/hbg_hw.c
+ create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/hbg_hw.h
+ create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/hbg_irq.c
+ create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/hbg_irq.h
+ create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/hbg_main.c
+ create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/hbg_mdio.c
+ create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/hbg_mdio.h
+ create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/hbg_reg.h
+ create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/hbg_txrx.c
+ create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/hbg_txrx.h
+
+-- 
+2.33.0
+
 
