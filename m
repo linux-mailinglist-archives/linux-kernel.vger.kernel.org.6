@@ -1,318 +1,554 @@
-Return-Path: <linux-kernel+bounces-308926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 961F49663DC
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 16:12:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E23869663D9
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 16:11:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D634283383
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 14:12:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 129211C2142A
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 14:11:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7154816D4E5;
-	Fri, 30 Aug 2024 14:11:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E88C17BB1E;
+	Fri, 30 Aug 2024 14:11:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rhKSJIgV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s2BBDoN9"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55E1C1B2506;
-	Fri, 30 Aug 2024 14:11:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58C9616D4E5;
+	Fri, 30 Aug 2024 14:11:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725027103; cv=none; b=PYzvv8G/zsOI/hf/OjizDX00p5w+ZjV+4bVttYSSopwietN+4V6q/NVZtd4f6F14y4bc+4OJTDNQmpt7K0ANwVSwsNU4Z+NXikgpcb1EQITAQWQYjDh3dOzirX5vl1GxFgbPUp4/vkccee828yJseNv/0Jhg9UW/Z/3+Huonxnw=
+	t=1725027098; cv=none; b=Oc/5UXp9T6fb/tTrtZJHrKBwxI+azEDGI51YHJX66aTVv/dTfGQKb8GCqdE8DGtis9Fj7BdI7o2QNLtC0HcPzsK8cUhnexy52dAWgeeR26YpU2Nz898W1zYsa6p335qMkYaUU59i8cOpgchJr0CUC9HeXNAH/TqaoyFoa2xQ13k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725027103; c=relaxed/simple;
-	bh=ch8Utom+56+XDFDbn3FU+sYc1K0Xb7UEZ5WQPpM5Tb0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Mf5YPC0yNP9X8TwCd9jm7eFFjphpR8jsIkhfVZPR9tVgGgsjVlMw3r5auaioOz2DEuXrqmTGZXFmMSFNr38VCB2FffwVDlYXigx7B3SeBnQDW754ba5QyKwjZ/VlITX6GUwgtr/MOv3/lgjz/zYObhVsNVPx08XjXaONEPwbZrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rhKSJIgV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D3A2C4AF09;
-	Fri, 30 Aug 2024 14:11:42 +0000 (UTC)
+	s=arc-20240116; t=1725027098; c=relaxed/simple;
+	bh=s2RnCgdUW78FLTSGRkUu69/vbK6m5rPyk++vKoilaSI=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=RPFXdyGHf3yXv6uEIrR9c5VZhlF88hlXlDEzfO8RlnBC2H98Wxz0IosfovloNPBbaLz0XLvfVftrhLafkMn3DQPtHHXegbhL7H+yCkmXyEpVu5dj34vQoUwabUeNlimht0zHyJ6kv8/66NNDzwhMyYBy1CnfA9POO5R5uXRPH/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s2BBDoN9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C870C4CEDF;
+	Fri, 30 Aug 2024 14:11:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725027102;
-	bh=ch8Utom+56+XDFDbn3FU+sYc1K0Xb7UEZ5WQPpM5Tb0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=rhKSJIgVXAJcIIBKVQ5S1zArqjnbThz3xFzHl3wZqv7dZwkMs0KBYXHgGey+Xwv4r
-	 f3FBXvxVxG5IVKWJv68qPBLfVZJs3rUhMfeMijPEkkmveKCrmwtKh8qLNtzBZUTovg
-	 gcbPl3ZbsiAOxnxjnX6/btcO4Qk0nBZC4tco/aiZWsBoM6dL4BMp3gpFATOLF3VIJZ
-	 YPA+SVyMCTIbOcCcJbdVUr2e33DEcvlTcacmDRbmo6mMCCQmh6kog1VIBlQeIpXmzb
-	 d0WKmSMOg50ck5bHPl4uGYo22k7oviuqmj/ILIWxWdzLueAibKKTH53GwebvsRX/zb
-	 yhG/M1H698JoA==
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2f401b2347dso17140791fa.1;
-        Fri, 30 Aug 2024 07:11:42 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWfChxQe/Z3H8kNZwu69USPdBJh50aIVGhDv8rq4/7qA/2hgKDPbKEfWrnXh0fEpb42jvCksomLFtnakg0Z@vger.kernel.org, AJvYcCXOAU3yKalcrQerhU63tTAqlQMeRCdVaK2Ie/aQWtBDW8sZDYCmZHX9ev602pFSGV6orp668HYnF4Ze/Yyl@vger.kernel.org, AJvYcCXdsuo04eef1Dg8XceqXdKQG6slnRfAFa1TXpCq+tM7skjHgIwvxDqD+/X1TySGbaem2DNvRlXFuCny@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMXN7xR8U4ToGDUiKeMfwBDbOg0p/vGX7KRCF9bV6O2MerJhBt
-	b0lz9cwNDvuVBO0ZaP/n7x1fvFm1lr+ekQTBrJhdInerBSyOEEdzf/ImF6/UlaOOH9Lj4ZjQtiQ
-	GC/u1vPJTE1O9u/pWlkPVe3NHORA=
-X-Google-Smtp-Source: AGHT+IGiNNIe4grFCSjxYEqSnqQsOiH7XwhNWIjK0meKiNuL/INJUoIL0DANP+RT2C1dTcJ4zfatNi8NnI5TRaXEni0=
-X-Received: by 2002:a05:651c:504:b0:2f1:59d5:ac01 with SMTP id
- 38308e7fff4ca-2f61e06f834mr10448761fa.14.1725027100557; Fri, 30 Aug 2024
- 07:11:40 -0700 (PDT)
+	s=k20201202; t=1725027097;
+	bh=s2RnCgdUW78FLTSGRkUu69/vbK6m5rPyk++vKoilaSI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=s2BBDoN9eb5za9c2qsSN5belvV1iyjPnAztDT5L40J+MYfnUkfs+lCNF8+T52s76Q
+	 6d5xWEh/XdDil7BHF+beou61ZBczjyUPou9b0Es+MXZ7jGuijwWCZVcbeHOoPv+nM7
+	 0iqOVbUDr42+5B0r9qbJCfby/ZfLjaoMqu1e3KEIxyxQyLkxC572YK/HQViNdgSWM9
+	 LGemWZtuw11q7c2c23FeQfsdrGcuFDRDT2b1KKew5sKTqBEoFbfxr7t2grZzIf/Jr8
+	 UNELwLNmc2WjfsR+hLn9ZmbXSOwiX34eLPTYJOWTgRCleqvPq4nFm+p+UNwNWDYyTQ
+	 uVAmW8X5J247Q==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1sk2Le-008GGZ-JB;
+	Fri, 30 Aug 2024 15:11:34 +0100
+Date: Fri, 30 Aug 2024 15:11:34 +0100
+Message-ID: <865xriw161.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Vincent Donnefort <vdonnefort@google.com>, Sebastian Ene <sebastianene@google.com>
+Cc:	akpm@linux-foundation.org,
+	alexghiti@rivosinc.com,
+	ankita@nvidia.com,
+	ardb@kernel.org,
+	catalin.marinas@arm.com,
+	christophe.leroy@csgroup.eu,
+	james.morse@arm.com,
+	mark.rutland@arm.com,
+	oliver.upton@linux.dev,
+	rananta@google.com,
+	ryan.roberts@arm.com,
+	shahuang@redhat.com,
+	suzuki.poulose@arm.com,
+	will@kernel.org,
+	yuzenghui@huawei.com,
+	kvmarm@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	kernel-team@android.com
+Subject: Re: [PATCH v9 4/5] KVM: arm64: Register ptdump with debugfs on guest creation
+In-Reply-To: <ZtGd9UEudn8Z0IlG@google.com>
+References: <20240827084549.45731-1-sebastianene@google.com>
+	<20240827084549.45731-5-sebastianene@google.com>
+	<ZtGd9UEudn8Z0IlG@google.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240829201728.2825-1-adhemerval.zanella@linaro.org>
-In-Reply-To: <20240829201728.2825-1-adhemerval.zanella@linaro.org>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Fri, 30 Aug 2024 16:11:29 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXEnYW7ft3e-bSqWRLhickUeOkaWwtVVSxi49jski6T2iQ@mail.gmail.com>
-Message-ID: <CAMj1kXEnYW7ft3e-bSqWRLhickUeOkaWwtVVSxi49jski6T2iQ@mail.gmail.com>
-Subject: Re: [PATCH v2] aarch64: vdso: Wire up getrandom() vDSO implementation
-To: Adhemerval Zanella <adhemerval.zanella@linaro.org>
-Cc: "Jason A . Donenfeld" <Jason@zx2c4.com>, "Theodore Ts'o" <tytso@mit.edu>, linux-kernel@vger.kernel.org, 
-	linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-arch@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Eric Biggers <ebiggers@kernel.org>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: vdonnefort@google.com, sebastianene@google.com, akpm@linux-foundation.org, alexghiti@rivosinc.com, ankita@nvidia.com, ardb@kernel.org, catalin.marinas@arm.com, christophe.leroy@csgroup.eu, james.morse@arm.com, mark.rutland@arm.com, oliver.upton@linux.dev, rananta@google.com, ryan.roberts@arm.com, shahuang@redhat.com, suzuki.poulose@arm.com, will@kernel.org, yuzenghui@huawei.com, kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-team@android.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Thu, 29 Aug 2024 at 22:17, Adhemerval Zanella
-<adhemerval.zanella@linaro.org> wrote:
+On Fri, 30 Aug 2024 11:24:53 +0100,
+Vincent Donnefort <vdonnefort@google.com> wrote:
+> 
+> Hi Seb,
+> 
+> Thanks for the respin.
+> 
+> On Tue, Aug 27, 2024 at 08:45:47AM +0000, Sebastian Ene wrote:
+> > While arch/*/mem/ptdump handles the kernel pagetable dumping code,
+> > introduce KVM/ptdump to show the guest stage-2 pagetables. The
+> > separation is necessary because most of the definitions from the
+> > stage-2 pagetable reside in the KVM path and we will be invoking
+> > functionality specific to KVM.
+> > 
+> > When a guest is created, register a new file entry under the guest
+> > debugfs dir which allows userspace to show the contents of the guest
+> > stage-2 pagetables when accessed.
+> > 
+> > Signed-off-by: Sebastian Ene <sebastianene@google.com>
+> 
+> I only have some nits, otherwise:
+> 
+> Reviewed-by: Vincent Donnefort <vdonnefort@google.com>
+> 
+> > ---
+> >  arch/arm64/include/asm/kvm_host.h |   6 +
+> >  arch/arm64/kvm/Makefile           |   1 +
+> >  arch/arm64/kvm/arm.c              |   1 +
+> >  arch/arm64/kvm/ptdump.c           | 247 ++++++++++++++++++++++++++++++
+> >  4 files changed, 255 insertions(+)
+> >  create mode 100644 arch/arm64/kvm/ptdump.c
+> > 
+> > diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
+> > index a33f5996ca9f..4acd589f086b 100644
+> > --- a/arch/arm64/include/asm/kvm_host.h
+> > +++ b/arch/arm64/include/asm/kvm_host.h
+> > @@ -1473,4 +1473,10 @@ void kvm_set_vm_id_reg(struct kvm *kvm, u32 reg, u64 val);
+> >  		(pa + pi + pa3) == 1;					\
+> >  	})
+> >  
+> > +#ifdef CONFIG_PTDUMP_STAGE2_DEBUGFS
+> > +void kvm_s2_ptdump_create_debugfs(struct kvm *kvm);
+> > +#else
+> > +static inline void kvm_s2_ptdump_create_debugfs(struct kvm *kvm) {}
+> > +#endif /* CONFIG_PTDUMP_STAGE2_DEBUGFS */
+> > +
+> >  #endif /* __ARM64_KVM_HOST_H__ */
+> > diff --git a/arch/arm64/kvm/Makefile b/arch/arm64/kvm/Makefile
+> > index 86a629aaf0a1..e4233b323a73 100644
+> > --- a/arch/arm64/kvm/Makefile
+> > +++ b/arch/arm64/kvm/Makefile
+> > @@ -27,6 +27,7 @@ kvm-y += arm.o mmu.o mmio.o psci.o hypercalls.o pvtime.o \
+> >  
+> >  kvm-$(CONFIG_HW_PERF_EVENTS)  += pmu-emul.o pmu.o
+> >  kvm-$(CONFIG_ARM64_PTR_AUTH)  += pauth.o
+> > +kvm-$(CONFIG_PTDUMP_STAGE2_DEBUGFS) += ptdump.o
+> >  
+> >  always-y := hyp_constants.h hyp-constants.s
+> >  
+> > diff --git a/arch/arm64/kvm/arm.c b/arch/arm64/kvm/arm.c
+> > index 9bef7638342e..b9fd928d3477 100644
+> > --- a/arch/arm64/kvm/arm.c
+> > +++ b/arch/arm64/kvm/arm.c
+> > @@ -228,6 +228,7 @@ vm_fault_t kvm_arch_vcpu_fault(struct kvm_vcpu *vcpu, struct vm_fault *vmf)
+> >  void kvm_arch_create_vm_debugfs(struct kvm *kvm)
+> >  {
+> >  	kvm_sys_regs_create_debugfs(kvm);
+> > +	kvm_s2_ptdump_create_debugfs(kvm);
+> >  }
+> >  
+> >  static void kvm_destroy_mpidr_data(struct kvm *kvm)
+> > diff --git a/arch/arm64/kvm/ptdump.c b/arch/arm64/kvm/ptdump.c
+> > new file mode 100644
+> > index 000000000000..e72a928d4445
+> > --- /dev/null
+> > +++ b/arch/arm64/kvm/ptdump.c
+> > @@ -0,0 +1,247 @@
+> > +// SPDX-License-Identifier: GPL-2.0-only
+> > +/*
+> > + * Debug helper used to dump the stage-2 pagetables of the system and their
+> > + * associated permissions.
+> > + *
+> > + * Copyright (C) Google, 2024
+> > + * Author: Sebastian Ene <sebastianene@google.com>
+> > + */
+> > +#include <linux/debugfs.h>
+> > +#include <linux/kvm_host.h>
+> > +#include <linux/seq_file.h>
+> > +
+> > +#include <asm/kvm_pgtable.h>
+> > +#include <asm/kvm_host.h>
+> 
+> nit: I believe you wanted to follow the alphabetical order, if that is the case,
+> kvm_host.h then kvm_pgtable.h
+> 
+> > +#include <asm/ptdump.h>
+> > +
+> > +
+> 
+> nit: don't think double empty are a rule, I would remove it.
+> 
+> > +#define MARKERS_LEN		(2)
+> 
+> nit: The brackets are not necessary for MARKERS_LEN.
+> 
+> > +#define KVM_PGTABLE_MAX_LEVELS	(KVM_PGTABLE_LAST_LEVEL + 1)
+> > +
+> > +struct kvm_ptdump_guest_state {
+> > +	struct kvm		*kvm;
+> > +	struct ptdump_pg_state	parser_state;
+> > +	struct addr_marker	ipa_marker[MARKERS_LEN];
+> > +	struct ptdump_pg_level	level[KVM_PGTABLE_MAX_LEVELS];
+> > +	struct ptdump_range	range[MARKERS_LEN];
+> > +};
+> > +
+> > +static const struct ptdump_prot_bits stage2_pte_bits[] = {
+> > +	{
+> > +		.mask	= PTE_VALID,
+> > +		.val	= PTE_VALID,
+> > +		.set	= " ",
+> > +		.clear	= "F",
+> 
+> This is effectively never used because an invalid PTE is 0 and note_page() won't
+> print it. This probably can be removed?
+
+Yeah, I can't see how we are going to trigger that one given that
+PTE_VALID must be set, and that we only print something if the bit is
+clear.
+
+Seb?
+
 >
-> Hook up the generic vDSO implementation to the aarch64 vDSO data page.
-> The _vdso_rng_data required data is placed within the _vdso_data vvar
-> page, by using a offset larger than the vdso_data.
->
-> The vDSO function requires a ChaCha20 implementation that does not
-> write to the stack, and that can do an entire ChaCha20 permutation.
-> The one provided is based on the current chacha-neon-core.S and uses NEON
-> on the permute operation. The fallback for chips that do not support
-> NEON issues the syscall.
->
-> This also passes the vdso_test_chacha test along with
-> vdso_test_getrandom. The vdso_test_getrandom bench-single result on
-> Neoverse-N1 shows:
->
->    vdso: 25000000 times in 0.746506464 seconds
->    libc: 25000000 times in 8.849179444 seconds
-> syscall: 25000000 times in 8.818726425 seconds
->
-> Changes from v1:
-> - Fixed style issues and typos.
-> - Added fallback for systems without NEON support.
-> - Avoid use of non-volatile vector registers in neon chacha20.
-> - Use c-getrandom-y for vgetrandom.c.
-> - Fixed TIMENS vdso_rnd_data access.
->
-> Signed-off-by: Adhemerval Zanella <adhemerval.zanella@linaro.org>
-> ---
-...
-> diff --git a/arch/arm64/kernel/vdso/vgetrandom-chacha.S b/arch/arm64/kernel/vdso/vgetrandom-chacha.S
-> new file mode 100644
-> index 000000000000..9ebf12a09c65
-> --- /dev/null
-> +++ b/arch/arm64/kernel/vdso/vgetrandom-chacha.S
-> @@ -0,0 +1,168 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +#include <linux/linkage.h>
-> +#include <asm/cache.h>
-> +#include <asm/assembler.h>
-> +
-> +       .text
-> +
-> +#define state0         v0
-> +#define state1         v1
-> +#define state2         v2
-> +#define state3         v3
-> +#define copy0          v4
-> +#define copy1          v5
-> +#define copy2          v6
-> +#define copy3          v7
-> +#define copy3_d                d7
-> +#define one_d          d16
-> +#define one_q          q16
-> +#define tmp            v17
-> +#define rot8           v18
-> +
+> > +	}, {
+> > +		.mask	= KVM_PTE_LEAF_ATTR_LO_S2_S2AP_R | PTE_VALID,
+> > +		.val	= KVM_PTE_LEAF_ATTR_LO_S2_S2AP_R | PTE_VALID,
+> > +		.set	= "R",
+> > +		.clear	= " ",
+> > +	}, {
+> > +		.mask	= KVM_PTE_LEAF_ATTR_LO_S2_S2AP_W | PTE_VALID,
+> > +		.val	= KVM_PTE_LEAF_ATTR_LO_S2_S2AP_W | PTE_VALID,
+> > +		.set	= "W",
+> > +		.clear	= " ",
+> > +	}, {
+> > +		.mask	= KVM_PTE_LEAF_ATTR_HI_S2_XN | PTE_VALID,
+> > +		.val	= PTE_VALID,
+> > +		.set	= " ",
+> > +		.clear	= "X",
+> > +	}, {
+> > +		.mask	= KVM_PTE_LEAF_ATTR_LO_S2_AF | PTE_VALID,
+> > +		.val	= KVM_PTE_LEAF_ATTR_LO_S2_AF | PTE_VALID,
+> > +		.set	= "AF",
+> > +		.clear	= "  ",
+> > +	}, {
+> > +		.mask	= PTE_TABLE_BIT | PTE_VALID,
+> > +		.val	= PTE_VALID,
+> > +		.set	= "BLK",
+> > +		.clear	= "   ",
+> > +	},
+> > +};
+> > +
+> > +static int kvm_ptdump_visitor(const struct kvm_pgtable_visit_ctx *ctx,
+> > +			      enum kvm_pgtable_walk_flags visit)
+> > +{
+> > +	struct ptdump_pg_state *st = ctx->arg;
+> > +	struct ptdump_state *pt_st = &st->ptdump;
+> > +
+> > +	note_page(pt_st, ctx->addr, ctx->level, ctx->old);
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static int kvm_ptdump_build_levels(struct ptdump_pg_level *level, u32 start_lvl)
+> > +{
+> > +	u32 i;
+> > +	u64 mask;
+> > +
+> > +	if (WARN_ON_ONCE(start_lvl >= KVM_PGTABLE_LAST_LEVEL))
+> > +		return -EINVAL;
+> > +
+> > +	mask = 0;
+> > +	for (i = 0; i < ARRAY_SIZE(stage2_pte_bits); i++)
+> > +		mask |= stage2_pte_bits[i].mask;
+> > +
+> > +	for (i = start_lvl; i < KVM_PGTABLE_MAX_LEVELS; i++) {
+> > +		snprintf(level[i].name, sizeof(level[i].name), "%d", i);
+> 
+> %u, i being unsigned.
+> 
+> > +
+> > +		level[i].num	= ARRAY_SIZE(stage2_pte_bits);
+> > +		level[i].bits	= stage2_pte_bits;
+> > +		level[i].mask	= mask;
+> > +	}
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static struct kvm_ptdump_guest_state *kvm_ptdump_parser_create(struct kvm *kvm)
+> > +{
+> > +	struct kvm_ptdump_guest_state *st;
+> > +	struct kvm_s2_mmu *mmu = &kvm->arch.mmu;
+> > +	struct kvm_pgtable *pgtable = mmu->pgt;
+> > +	int ret;
+> > +
+> > +	st = kzalloc(sizeof(struct kvm_ptdump_guest_state), GFP_KERNEL_ACCOUNT);
+> > +	if (!st)
+> > +		return ERR_PTR(-ENOMEM);
+> > +
+> > +	ret = kvm_ptdump_build_levels(&st->level[0], pgtable->start_level);
+> > +	if (ret) {
+> > +		kfree(st);
+> > +		return ERR_PTR(ret);
+> > +	}
+> > +
+> > +	st->ipa_marker[0].name		= "Guest IPA";
+> > +	st->ipa_marker[1].start_address = BIT(pgtable->ia_bits);
+> > +	st->range[0].end		= BIT(pgtable->ia_bits);
+> > +
+> > +	st->kvm				= kvm;
+> > +	st->parser_state = (struct ptdump_pg_state) {
+> > +		.marker		= &st->ipa_marker[0],
+> > +		.level		= -1,
+> > +		.pg_level	= &st->level[0],
+> > +		.ptdump.range	= &st->range[0],
+> > +		.start_address	= 0,
+> > +	};
+> > +
+> > +	return st;
+> > +}
+> > +
+> > +static int kvm_ptdump_guest_show(struct seq_file *m, void *unused)
+> > +{
+> > +	int ret;
+> > +	struct kvm_ptdump_guest_state *st = m->private;
+> > +	struct kvm *kvm = st->kvm;
+> > +	struct kvm_s2_mmu *mmu = &kvm->arch.mmu;
+> > +	struct ptdump_pg_state *parser_state = &st->parser_state;
+> > +	struct kvm_pgtable_walker walker = (struct kvm_pgtable_walker) {
+> > +		.cb	= kvm_ptdump_visitor,
+> > +		.arg	= parser_state,
+> > +		.flags	= KVM_PGTABLE_WALK_LEAF,
+> > +	};
+> > +
+> > +	parser_state->seq = m;
+> > +
+> > +	write_lock(&kvm->mmu_lock);
+> > +	ret = kvm_pgtable_walk(mmu->pgt, 0, BIT(mmu->pgt->ia_bits), &walker);
+> > +	write_unlock(&kvm->mmu_lock);
+> > +
+> > +	return ret;
+> > +}
+> > +
+> > +static int kvm_ptdump_guest_open(struct inode *m, struct file *file)
+> > +{
+> > +	struct kvm *kvm = m->i_private;
+> > +	struct kvm_ptdump_guest_state *st;
+> > +	int ret;
+> > +
+> > +	if (!kvm_get_kvm_safe(kvm))
+> > +		return -ENOENT;
+> > +
+> > +	st = kvm_ptdump_parser_create(kvm);
+> > +	if (IS_ERR(st)) {
+> > +		ret = PTR_ERR(st);
+> > +		goto free_with_kvm_ref;
+> > +	}
+> > +
+> > +	ret = single_open(file, kvm_ptdump_guest_show, st);
+> > +	if (!ret)
+> > +		return 0;
+> > +
+> > +	kfree(st);
+> > +free_with_kvm_ref:
+> 
+> nit: I believe kfree understands IS_ERR() so you could have a simple "err:"
+> label covering all the error path.
 
-Please make a note somewhere around here that you are deliberately
-avoiding d8-d15 because they are callee-save in user space.
+I couldn't find such handling in kfree(). Could you point be to it?
 
-> +/*
-> + * ARM64 ChaCha20 implementation meant for vDSO.  Produces a given positive
-> + * number of blocks of output with nonce 0, taking an input key and 8-bytes
-> + * counter.  Importantly does not spill to the stack.
-> + *
-> + * void __arch_chacha20_blocks_nostack(uint8_t *dst_bytes,
-> + *                                    const uint8_t *key,
-> + *                                    uint32_t *counter,
-> + *                                    size_t nblocks)
-> + *
-> + *     x0: output bytes
-> + *     x1: 32-byte key input
-> + *     x2: 8-byte counter input/output
-> + *     x3: number of 64-byte block to write to output
-> + */
-> +SYM_FUNC_START(__arch_chacha20_blocks_nostack)
-> +
-> +       /* copy0 = "expand 32-byte k" */
-> +       adr_l           x8, CTES
-> +       ld1             {copy0.4s}, [x8]
-> +       /* copy1,copy2 = key */
-> +       ld1             { copy1.4s, copy2.4s }, [x1]
-> +       /* copy3 = counter || zero nonce  */
-> +       ldr             copy3_d, [x2]
-> +
-> +       adr_l           x8, ONE
-> +       ldr             one_q, [x8]
-> +
-> +       adr_l           x10, ROT8
-> +       ld1             {rot8.4s}, [x10]
+> 
+> > +	kvm_put_kvm(kvm);
+> > +	return ret;
+> > +}
+> > +
+> > +static int kvm_ptdump_guest_close(struct inode *m, struct file *file)
+> > +{
+> > +	struct kvm *kvm = m->i_private;
+> > +	void *st = ((struct seq_file *)file->private_data)->private;
+> > +
+> > +	kfree(st);
+> > +	kvm_put_kvm(kvm);
+> > +
+> > +	return single_release(m, file);
+> > +}
+> > +
+> > +static const struct file_operations kvm_ptdump_guest_fops = {
+> > +	.open		= kvm_ptdump_guest_open,
+> > +	.read		= seq_read,
+> > +	.llseek		= seq_lseek,
+> > +	.release	= kvm_ptdump_guest_close,
+> > +};
+> > +
+> > +static int kvm_pgtable_debugfs_show(struct seq_file *m, void *unused)
+> > +{
+> > +	const struct file *file = m->file;
+> > +	struct kvm_pgtable *pgtable = m->private;
+> > +
+> > +	if (!strcmp(file_dentry(file)->d_iname, "ipa_range"))
 
-These immediate loads are forcing the vDSO to have a .rodata section,
-which is best avoided, given that this is mapped into every user space
-program.
+I really dislike this sort of construct, and I'd rather we pick the
+correct callback by construction rather than relying on a string
+comparison. See below for a suggestion.
 
-Either use the existing mov_q macro and then move the values into SIMD
-registers, or compose the required vectors in a different way.
+> > +		seq_printf(m, "%2u\n", pgtable->ia_bits);
+> > +	else if (!strcmp(file_dentry(file)->d_iname, "stage2_levels"))
+> > +		seq_printf(m, "%1d\n", KVM_PGTABLE_LAST_LEVEL - pgtable->start_level + 1);
+> 
+> nit: KVM_PGTABLE_MAX_LEVELS - pgtable->start_level ?
+> 
+> > +	return 0;
+> > +}
+> > +
+> > +static int kvm_pgtable_debugfs_open(struct inode *m, struct file *file)
+> > +{
+> > +	struct kvm *kvm = m->i_private;
+> > +	struct kvm_pgtable *pgtable;
+> > +	int ret;
+> > +
+> > +	if (!kvm_get_kvm_safe(kvm))
+> > +		return -ENOENT;
+> > +
+> > +	pgtable = kvm->arch.mmu.pgt;
+> > +
+> > +	ret = single_open(file, kvm_pgtable_debugfs_show, pgtable);
+> > +	if (ret < 0)
+> > +		kvm_put_kvm(kvm);
+> > +	return ret;
+> > +}
+> > +
+> > +static int kvm_pgtable_debugfs_close(struct inode *m, struct file *file)
+> > +{
+> > +	struct kvm *kvm = m->i_private;
+> > +
+> > +	kvm_put_kvm(kvm);
+> > +	return single_release(m, file);
+> > +}
+> > +
+> > +static const struct file_operations kvm_pgtable_debugfs_fops = {
+> > +	.open		= kvm_pgtable_debugfs_open,
+> > +	.read		= seq_read,
+> > +	.llseek		= seq_lseek,
+> > +	.release	= kvm_pgtable_debugfs_close,
+> > +};
+> > +
+> > +void kvm_s2_ptdump_create_debugfs(struct kvm *kvm)
+> > +{
+> > +	debugfs_create_file("stage2_page_tables", 0400, kvm->debugfs_dentry,
+> > +			    kvm, &kvm_ptdump_guest_fops);
+> > +	debugfs_create_file("ipa_range", 0400, kvm->debugfs_dentry, kvm,
+> > +			    &kvm_pgtable_debugfs_fops);
+> > +	debugfs_create_file("stage2_levels", 0400, kvm->debugfs_dentry,
+> > +			    kvm, &kvm_pgtable_debugfs_fops);
+> > +}
 
-E.g., with one_v == v16,
+I'd expect something like this instead:
 
-movi one_v.2s, #1
-uzp1 one_v.4s, one_v.4s, one_v.4s
+diff --git a/arch/arm64/kvm/ptdump.c b/arch/arm64/kvm/ptdump.c
+index e72a928d4445..c11ea355aa51 100644
+--- a/arch/arm64/kvm/ptdump.c
++++ b/arch/arm64/kvm/ptdump.c
+@@ -192,19 +191,24 @@ static const struct file_operations kvm_ptdump_guest_fops = {
+ 	.release	= kvm_ptdump_guest_close,
+ };
+ 
+-static int kvm_pgtable_debugfs_show(struct seq_file *m, void *unused)
++static int kvm_pgtable_range_show(struct seq_file *m, void *unused)
++{
++	struct kvm_pgtable *pgtable = m->private;
++
++	seq_printf(m, "%2u\n", pgtable->ia_bits);
++	return 0;
++}
++
++static int kvm_pgtable_levels_show(struct seq_file *m, void *unused)
+ {
+-	const struct file *file = m->file;
+ 	struct kvm_pgtable *pgtable = m->private;
+ 
+-	if (!strcmp(file_dentry(file)->d_iname, "ipa_range"))
+-		seq_printf(m, "%2u\n", pgtable->ia_bits);
+-	else if (!strcmp(file_dentry(file)->d_iname, "stage2_levels"))
+-		seq_printf(m, "%1d\n", KVM_PGTABLE_LAST_LEVEL - pgtable->start_level + 1);
++	seq_printf(m, "%1d\n", KVM_PGTABLE_LAST_LEVEL - pgtable->start_level + 1);
+ 	return 0;
+ }
+ 
+-static int kvm_pgtable_debugfs_open(struct inode *m, struct file *file)
++static int kvm_pgtable_debugfs_open(struct inode *m, struct file *file,
++				    int (*show)(struct seq_file *, void *))
+ {
+ 	struct kvm *kvm = m->i_private;
+ 	struct kvm_pgtable *pgtable;
+@@ -215,12 +219,22 @@ static int kvm_pgtable_debugfs_open(struct inode *m, struct file *file)
+ 
+ 	pgtable = kvm->arch.mmu.pgt;
+ 
+-	ret = single_open(file, kvm_pgtable_debugfs_show, pgtable);
++	ret = single_open(file, show, pgtable);
+ 	if (ret < 0)
+ 		kvm_put_kvm(kvm);
+ 	return ret;
+ }
+ 
++static int kvm_pgtable_range_open(struct inode *m, struct file *file)
++{
++	return kvm_pgtable_debugfs_open(m, file, kvm_pgtable_range_show);
++}
++
++static int kvm_pgtable_levels_open(struct inode *m, struct file *file)
++{
++	return kvm_pgtable_debugfs_open(m, file, kvm_pgtable_levels_show);
++}
++
+ static int kvm_pgtable_debugfs_close(struct inode *m, struct file *file)
+ {
+ 	struct kvm *kvm = m->i_private;
+@@ -229,8 +243,15 @@ static int kvm_pgtable_debugfs_close(struct inode *m, struct file *file)
+ 	return single_release(m, file);
+ }
+ 
+-static const struct file_operations kvm_pgtable_debugfs_fops = {
+-	.open		= kvm_pgtable_debugfs_open,
++static const struct file_operations kvm_pgtable_range_fops = {
++	.open		= kvm_pgtable_range_open,
++	.read		= seq_read,
++	.llseek		= seq_lseek,
++	.release	= kvm_pgtable_debugfs_close,
++};
++
++static const struct file_operations kvm_pgtable_levels_fops = {
++	.open		= kvm_pgtable_levels_open,
+ 	.read		= seq_read,
+ 	.llseek		= seq_lseek,
+ 	.release	= kvm_pgtable_debugfs_close,
+@@ -241,7 +262,7 @@ void kvm_s2_ptdump_create_debugfs(struct kvm *kvm)
+ 	debugfs_create_file("stage2_page_tables", 0400, kvm->debugfs_dentry,
+ 			    kvm, &kvm_ptdump_guest_fops);
+ 	debugfs_create_file("ipa_range", 0400, kvm->debugfs_dentry, kvm,
+-			    &kvm_pgtable_debugfs_fops);
++			    &kvm_pgtable_range_fops);
+ 	debugfs_create_file("stage2_levels", 0400, kvm->debugfs_dentry,
+-			    kvm, &kvm_pgtable_debugfs_fops);
++			    kvm, &kvm_pgtable_levels_fops);
+ }
 
-puts the correct value in one_d, uses 1 instruction and 16 bytes of
-rodata less, and avoids a memory access.
 
-The ROT8 + tbl can be replaced by shl/sri (see below)
+Thanks,
 
-> +.Lblock:
-> +       /* copy state to auxiliary vectors for the final add after the permute.  */
-> +       mov             state0.16b, copy0.16b
-> +       mov             state1.16b, copy1.16b
-> +       mov             state2.16b, copy2.16b
-> +       mov             state3.16b, copy3.16b
-> +
-> +       mov             w4, 20
-> +.Lpermute:
-> +       /*
-> +        * Permute one 64-byte block where the state matrix is stored in the four NEON
-> +        * registers state0-state3.  It performs matrix operations on four words in parallel,
-> +        * but requires shuffling to rearrange the words after each round.
-> +        */
-> +
-> +.Ldoubleround:
-> +       /* state0 += state1, state3 = rotl32(state3 ^ state0, 16) */
-> +       add             state0.4s, state0.4s, state1.4s
-> +       eor             state3.16b, state3.16b, state0.16b
-> +       rev32           state3.8h, state3.8h
-> +
-> +       /* state2 += state3, state1 = rotl32(state1 ^ state2, 12) */
-> +       add             state2.4s, state2.4s, state3.4s
-> +       eor             tmp.16b, state1.16b, state2.16b
-> +       shl             state1.4s, tmp.4s, #12
-> +       sri             state1.4s, tmp.4s, #20
-> +
-> +       /* state0 += state1, state3 = rotl32(state3 ^ state0, 8) */
-> +       add             state0.4s, state0.4s, state1.4s
-> +       eor             state3.16b, state3.16b, state0.16b
-> +       tbl             state3.16b, {state3.16b}, rot8.16b
-> +
+	M.
 
-This can be changed to the below, removing the need for the ROT8 vector
-
-eor   tmp.16b, state3.16b, state0.16b
-shl   state3.4s, tmp.4s, #8
-sri   state3.4s, tmp.4s, #24
-
-> +       /* state2 += state3, state1 = rotl32(state1 ^ state2, 7) */
-> +       add             state2.4s, state2.4s, state3.4s
-> +       eor             tmp.16b, state1.16b, state2.16b
-> +       shl             state1.4s, tmp.4s, #7
-> +       sri             state1.4s, tmp.4s, #25
-> +
-> +       /* state1[0,1,2,3] = state1[1,2,3,0] */
-> +       ext             state1.16b, state1.16b, state1.16b, #4
-> +       /* state2[0,1,2,3] = state2[2,3,0,1] */
-> +       ext             state2.16b, state2.16b, state2.16b, #8
-> +       /* state3[0,1,2,3] = state3[1,2,3,0] */
-> +       ext             state3.16b, state3.16b, state3.16b, #12
-> +
-> +       /* state0 += state1, state3 = rotl32(state3 ^ state0, 16) */
-> +       add             state0.4s, state0.4s, state1.4s
-> +       eor             state3.16b, state3.16b, state0.16b
-> +       rev32           state3.8h, state3.8h
-> +
-> +       /* state2 += state3, state1 = rotl32(state1 ^ state2, 12) */
-> +       add             state2.4s, state2.4s, state3.4s
-> +       eor             tmp.16b, state1.16b, state2.16b
-> +       shl             state1.4s, tmp.4s, #12
-> +       sri             state1.4s, tmp.4s, #20
-> +
-> +       /* state0 += state1, state3 = rotl32(state3 ^ state0, 8) */
-> +       add             state0.4s, state0.4s, state1.4s
-> +       eor             state3.16b, state3.16b, state0.16b
-> +       tbl             state3.16b, {state3.16b}, rot8.16b
-> +
-> +       /* state2 += state3, state1 = rotl32(state1 ^ state2, 7) */
-> +       add             state2.4s, state2.4s, state3.4s
-> +       eor             tmp.16b, state1.16b, state2.16b
-> +       shl             state1.4s, tmp.4s, #7
-> +       sri             state1.4s, tmp.4s, #25
-> +
-> +       /* state1[0,1,2,3] = state1[3,0,1,2] */
-> +       ext             state1.16b, state1.16b, state1.16b, #12
-> +       /* state2[0,1,2,3] = state2[2,3,0,1] */
-> +       ext             state2.16b, state2.16b, state2.16b, #8
-> +       /* state3[0,1,2,3] = state3[1,2,3,0] */
-> +       ext             state3.16b, state3.16b, state3.16b, #4
-> +
-> +       subs            w4, w4, #2
-> +       b.ne            .Ldoubleround
-> +
-> +       /* output0 = state0 + state0 */
-> +       add             state0.4s, state0.4s, copy0.4s
-> +       /* output1 = state1 + state1 */
-> +       add             state1.4s, state1.4s, copy1.4s
-> +       /* output2 = state2 + state2 */
-> +       add             state2.4s, state2.4s, copy2.4s
-> +       /* output2 = state3 + state3 */
-> +       add             state3.4s, state3.4s, copy3.4s
-> +       st1             { state0.4s - state3.4s }, [x0]
-> +
-> +       /* ++copy3.counter */
-> +       add             copy3_d, copy3_d, one_d
-> +
-
-This 'add' clears the upper half of the SIMD register, which is where
-the zero nonce lives. So this happens to be correct, but it is not
-very intuitive, so perhaps a comment would be in order here.
-
-> +       /* output += 64, --nblocks */
-> +       add             x0, x0, 64
-> +       subs            x3, x3, #1
-> +       b.ne            .Lblock
-> +
-> +       /* counter = copy3.counter */
-> +       str             copy3_d, [x2]
-> +
-> +       /* Zero out the potentially sensitive regs, in case nothing uses these again. */
-> +       eor             state0.16b, state0.16b, state0.16b
-> +       eor             state1.16b, state1.16b, state1.16b
-> +       eor             state2.16b, state2.16b, state2.16b
-> +       eor             state3.16b, state3.16b, state3.16b
-> +       eor             copy1.16b, copy1.16b, copy1.16b
-> +       eor             copy2.16b, copy2.16b, copy2.16b
-
-This is not x86 - no need to use XOR to clear registers, you can just
-use 'movi reg.16b, #0' here.
-
-> +       ret
-> +SYM_FUNC_END(__arch_chacha20_blocks_nostack)
-> +
-> +        .section        ".rodata", "a", %progbits
-> +        .align          L1_CACHE_SHIFT
-> +
-> +CTES:  .word           1634760805, 857760878,  2036477234, 1797285236
-> +ONE:    .xword         1, 0
-> +ROT8:  .word           0x02010003, 0x06050407, 0x0a09080b, 0x0e0d0c0f
-> +
-> +emit_aarch64_feature_1_and
-...
+-- 
+Without deviation from the norm, progress is not possible.
 
