@@ -1,278 +1,337 @@
-Return-Path: <linux-kernel+bounces-308743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12E25966134
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 13:59:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D50596613B
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 14:01:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 380601C232DE
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 11:59:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B04021F29520
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:01:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E96D8199941;
-	Fri, 30 Aug 2024 11:59:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2148C19994F;
+	Fri, 30 Aug 2024 12:01:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="bco1LBrB"
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="HR87ffzn"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68DC7196D9D
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 11:59:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 383D81917C8
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 12:01:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725019151; cv=none; b=osshGocG32sYWRfj6IpOA6gIwm/vv/pReODNiqBbPnM+ijO14NSd5ppiCsRRLq0WEkA3FIcd9ApV7DrXpn9RpKTUMpyTojVt1tW0Bxw29CrmY+wX5PCMRdYsemyRkzNO9GPMQIvUJwRdt8e6tjZmxFrqwmzyKRJ5TN23mSX9rxQ=
+	t=1725019275; cv=none; b=lxsfwdqkfDwdzTj/KimJfPXFjQbQYpsmePeQWmTIemrIfCx28OZMj06wdLLpwZUAmEYIC2cCZRaWWjciG6GDt+ET56E2rpqW4qlqYhTHGTdo89Cx7XN6uT0r1raZpiI6Tre0seN8dWC98DmyKYM1hRgd/Qfc/FDnlMEPIxejko4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725019151; c=relaxed/simple;
-	bh=Do/dKTgzKyjKV3wG/nTXEGEsup4OPV6FVk1d8aqBgs0=;
-	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:References; b=EGCyiwzt0CFCqHj1+RFGiM2vp7qhCdD3xnnEWCaHE+mxFJ2pjQOcZzBipEVqHvzyoQwTz5ZppbK8mPNQoosA/gV93oPggtOepBP/IxaBoGG+n+qpPMZdPLRxsT6C+K7oxzNa3Fe1EtKSV9xtNgD6zcTiXFITDSGWNq3GaNu7J+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=bco1LBrB; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20240830115901euoutp011fea811ebfef8d06a3e3397640161e92~wf8TuTc7G2720227202euoutp01c
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 11:59:01 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20240830115901euoutp011fea811ebfef8d06a3e3397640161e92~wf8TuTc7G2720227202euoutp01c
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1725019141;
-	bh=8HWjlCk36MrIJSrgWwx1NmtEBTy4vjMaSH0kx3VdLd0=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=bco1LBrBZupyWRz52Pcm5M6dAIAykk31d/RkDfQNKXJ7uayVO6zP95i/US3ZvPNGI
-	 UGcD3Hb7EtaAZ61gBAczrPe3HG1lme8djLaUgcpFQbjGc1kc3m6p8fCgY8VdxPAd5F
-	 uWasUKsIotVxKNri48tHnu8pTSjE7jEwXA92xc4A=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-	20240830115900eucas1p1904693aec6c26d37328f2ce5ba0b66ee~wf8TPibCT2191621916eucas1p1Q;
-	Fri, 30 Aug 2024 11:59:00 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-	eusmges1new.samsung.com (EUCPMTA) with SMTP id 5C.35.09624.404B1D66; Fri, 30
-	Aug 2024 12:59:00 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240830115859eucas1p2e384f48594d104a5fc9fb24e87c6fd24~wf8SlIV_t0820908209eucas1p2L;
-	Fri, 30 Aug 2024 11:58:59 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240830115859eusmtrp18799b0ad847be3279ca20891fbd4c7ad~wf8SkCqRi2130721307eusmtrp1n;
-	Fri, 30 Aug 2024 11:58:59 +0000 (GMT)
-X-AuditID: cbfec7f2-bfbff70000002598-d3-66d1b404249a
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-	eusmgms2.samsung.com (EUCPMTA) with SMTP id D2.B8.19096.304B1D66; Fri, 30
-	Aug 2024 12:58:59 +0100 (BST)
-Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20240830115859eusmtip155b93040a53676de393ba4eb081c20f4~wf8SPiRhu1205512055eusmtip1b;
-	Fri, 30 Aug 2024 11:58:59 +0000 (GMT)
-Received: from localhost (106.110.32.87) by CAMSVWEXC02.scsc.local
-	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-	Fri, 30 Aug 2024 12:58:58 +0100
-Date: Fri, 30 Aug 2024 13:58:58 +0200
-From: Daniel Gomez <da.gomez@samsung.com>
-To: Luis Chamberlain <mcgrof@kernel.org>
-CC: Zi Yan <ziy@nvidia.com>, Matthew Wilcox <willy@infradead.org>, "Sven
- Schnelle" <svens@linux.ibm.com>, "Pankaj Raghav (Samsung)"
-	<kernel@pankajraghav.com>, <brauner@kernel.org>,
-	<akpm@linux-foundation.org>, <chandan.babu@oracle.com>,
-	<linux-fsdevel@vger.kernel.org>, <djwong@kernel.org>, <hare@suse.de>,
-	<gost.dev@samsung.com>, <linux-xfs@vger.kernel.org>, <hch@lst.de>,
-	<david@fromorbit.com>, <yang@os.amperecomputing.com>,
-	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-	<john.g.garry@oracle.com>, <cl@os.amperecomputing.com>,
-	<p.raghav@samsung.com>, <ryan.roberts@arm.com>, David Howells
-	<dhowells@redhat.com>, <linux-s390@vger.kernel.org>
-Subject: Re: [PATCH v13 04/10] mm: split a folio in minimum folio order
- chunks
-Message-ID: <20240830115858.fzsmindasycwphkv@AALNPWDAGOMEZ1.aal.scsc.local>
+	s=arc-20240116; t=1725019275; c=relaxed/simple;
+	bh=bHtLDn0Wsn5DAZMI5MFUbrKX2XmlMvWqakZmLM6IBYI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AmGIAhvYCVmDlM6U5a8Ul20taHC8dwjPaAhfw1MiMzx3M1ZJpHZF1aaoB2QYNOPOkGY7K/npV4nse5gJ8tqfXvXR9PnyMh5+JoXzs/ljUjROJMEmMpVzCr2ehyktg0UIVXod9bdQ2c+GRJL4rnDqQtdfwBmOmiW96RuSRhzf0Fo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=HR87ffzn; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-71433cba1b7so1302340b3a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 05:01:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1725019271; x=1725624071; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=S+J8nDWKmcjiFDnbhyvi48+lL6iNF2GBrnR+36Q3WWM=;
+        b=HR87ffznTvXUBVDqLT0Z4TyfiJv/hQJBadGdPOm0cPr1GttjDAUsT+BxpmeoVD7nfq
+         AyudgW9pKpsCEb4yI0/zZim6+8TLjZGJ5eI+A3dY+rTyIlJIwdmRJLJ7lEOS2rpXMQXP
+         S+Et94PzArmnmHKqtAFollNazm9/1up+tBAg45u8N6zo31PooiofebtH65t9qsa9HAE6
+         D98rmmDMrOyPATCqoZjtvhTG4DDJB3WD736dqpi8gCkf9BT+AWYUrdsMLKsoudEGkixk
+         csRgKFAj5GF6s84c0H9lGrJg8F3YPHbOle7uDSF7qO+Fkfd0lK3p7NhdO+gCQYZ5Rwz/
+         vaTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725019271; x=1725624071;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=S+J8nDWKmcjiFDnbhyvi48+lL6iNF2GBrnR+36Q3WWM=;
+        b=Bkgib9s8CYAnrla+cNTLfb1c/9e+gp2eldkMNtJrbDYd234WFDDKc4qoeqHHPwxNo5
+         UP7t8udYRD4RdRkLtSftQfYOwehe5EzR27rOI3O9l/xc00+aMADVq2CPMCNa7+p2qWe3
+         dXd17nuhPnTfmewjRjLXXBhPsY0vGzqD9K0A3Ey9fcxlj1pMmP/96aOZv+d90j4a+mZK
+         DDqgmtfPZyg4rE7WCS30AJQevtv6AQ+QyzD/8Zn2eYuBc9Iq/cOFYoURPsDWbzVO/Cb0
+         6CMM03JNcdskTUQLtRZuNf8ayG9zwJZVLV9RFdejsFyr4mBaEzPhrvPnzEaa7XOnCUuK
+         87tQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVl0Jwye3qTTz70b50xgPJum0njW+/BtmzxSr/Cc1VGw/LD96QntaVVujDc4uI2IeIquCP6hIkk9vE7drk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyri+wBDj4iQ1Z0P2ZOGYa1Cl1UFmdDPcwiM8btvYjyX3qv7Fk/
+	IUCZWwPtU5tP4Jpwf/qOFDhakc+6EFHvQPFHYElYa7Zp6Uez7bC3yiuty7AuTbw=
+X-Google-Smtp-Source: AGHT+IGKLvAFAz/eBLXMb30uIZ9vdANBzSIr6ORPbKAbI0x7ooOqoOsCu8d84XfIMHbv7krKGeaTpw==
+X-Received: by 2002:a05:6a00:981:b0:706:58ef:613 with SMTP id d2e1a72fcca58-715dfc72cfdmr7188548b3a.27.1725019269804;
+        Fri, 30 Aug 2024 05:01:09 -0700 (PDT)
+Received: from [192.168.68.110] ([177.170.227.130])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-715e569ef15sm2599685b3a.105.2024.08.30.05.01.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 30 Aug 2024 05:01:09 -0700 (PDT)
+Message-ID: <3fdb33d3-16cd-49a6-bad7-81631f99c291@ventanamicro.com>
+Date: Fri, 30 Aug 2024 09:01:02 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 3/7] iommu/riscv: Add RISC-V IOMMU PCIe device driver
+To: Jim Shu <jim.shu@sifive.com>, Tomasz Jeznach <tjeznach@rivosinc.com>
+Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+ Robin Murphy <robin.murphy@arm.com>, Paul Walmsley
+ <paul.walmsley@sifive.com>, Anup Patel <apatel@ventanamicro.com>,
+ devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
+ Albert Ou <aou@eecs.berkeley.edu>, linux@rivosinc.com,
+ linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+ Sebastien Boeuf <seb@rivosinc.com>, iommu@lists.linux.dev,
+ Palmer Dabbelt <palmer@dabbelt.com>, Nick Kossifidis <mick@ics.forth.gr>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-riscv@lists.infradead.org,
+ Lu Baolu <baolu.lu@linux.intel.com>, Zong Li <zong.li@sifive.com>
+References: <cover.1718388908.git.tjeznach@rivosinc.com>
+ <e2792d6559f9f3e02b2243538647ef60f14176fd.1718388909.git.tjeznach@rivosinc.com>
+ <CALw707q=B4h4CF3CvJOiRMMYqzvO_NG+taMLzZquCP=A9bgu0g@mail.gmail.com>
+Content-Language: en-US
+From: Daniel Henrique Barboza <dbarboza@ventanamicro.com>
+In-Reply-To: <CALw707q=B4h4CF3CvJOiRMMYqzvO_NG+taMLzZquCP=A9bgu0g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZtEHPAsIHKxUHBZX@bombadil.infradead.org>
-X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
-	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprMJsWRmVeSWpSXmKPExsWy7djP87osWy6mGbx9ImExZ/0aNovXhz8x
-	Wlw6Kmexbu1DJostx+4xWrxr+s1icfkJn8WeRZOYLFauPspkceHXDkaLMy8/s1js2XsSKLlr
-	DpvFvTX/WS0mLGxmttj1Zwe7xY0JTxktenZPZbRYtn4tu8XvH0AlvUtOslvMPnqP3UHMY828
-	NYwepxZJeGxeoeWxaVUnm8emT5PYPU7M+M3iMWHRAUaP3Tcb2Dx6m9+xeXx8eovFo/vyDXaP
-	sysdPd7vu8rmsfl0tcfnTXIB/FFcNimpOZllqUX6dglcGRuutzIVdGpVbLj2iLWB8YxiFyMn
-	h4SAicS/iz9Yuxi5OIQEVjBK3G5+yQ7hfGGU+HPvDCOE85lR4nrTUjaYlqdf30MlljNK9B17
-	jlB1qG0h1LDNjBI3Nj4Ga2ERUJWYuGAXM4jNJqApse/kJnYQW0RAQ2LfhF4mkAZmgfmsElPX
-	nQdLCAsESOx6+5ERxOYV8Ja4PfcYC4QtKHFy5hMgmwOoQVNi/S59CFNaYvk/DpAKZgF5ieat
-	s8FWcQqYSXzceZ8R4mpFiRkTV7JA2LUSp7bcAlsrIbCSS+LEvw4miISLxN/V16EahCVeHd/C
-	DmHLSJye3APVnC6xZN0sKLtAYs/tWawgN0gIWEv0ncmBCDtK7HqzlRkizCdx460gxGl8EpO2
-	TYcK80p0tAlNYFSZheStWQhvzUJ4axaStxYwsqxiFE8tLc5NTy02zEst1ytOzC0uzUvXS87P
-	3cQITLen/x3/tINx7quPeocYmTgYDzFKcDArifCeOH42TYg3JbGyKrUoP76oNCe1+BCjNAeL
-	kjivaop8qpBAemJJanZqakFqEUyWiYNTqoFpaqeqgMClu6Eugf+M4xhXf5myljlTZ6ehL7v9
-	Ut8ptisPvuCyncrcsTB/8eSmml3p27tePVx55NNyu0MNB+Tq2R1vexgHuxYuVvHfL8V1LF96
-	nfEDXpmfguWTsnKdT0Uk6WcmV7v1xUe1lTI07JAt2X3lyPqqwtWN+Syx332MVvJJxN1x2GdX
-	VlC5oMg+2O+U1Pf2Pl97Tm13FVad7S35MbUnK90zdjz60v6r9nVM9Lxc61M7FP+6WXgcPXd1
-	s/YVEdljLz/OUdXjvLg291lyDpfA+eKvy3b4e+lMTpAWmHuZ3+DuZx/VCW95+s+KzOybV2Cq
-	X+h81m0+t2iHP3eG0fvVx33CRO5dOxRyWomlOCPRUIu5qDgRAJcpHyAmBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrHKsWRmVeSWpSXmKPExsVy+t/xu7rMWy6mGbzboGoxZ/0aNovXhz8x
-	Wlw6Kmexbu1DJostx+4xWrxr+s1icfkJn8WeRZOYLFauPspkceHXDkaLMy8/s1js2XsSKLlr
-	DpvFvTX/WS0mLGxmttj1Zwe7xY0JTxktenZPZbRYtn4tu8XvH0AlvUtOslvMPnqP3UHMY828
-	NYwepxZJeGxeoeWxaVUnm8emT5PYPU7M+M3iMWHRAUaP3Tcb2Dx6m9+xeXx8eovFo/vyDXaP
-	sysdPd7vu8rmsfl0tcfnTXIB/FF6NkX5pSWpChn5xSW2StGGFkZ6hpYWekYmlnqGxuaxVkam
-	Svp2NimpOZllqUX6dgl6GRuutzIVdGpVbLj2iLWB8YxiFyMnh4SAicTTr+8Zuxi5OIQEljJK
-	XLi/kgkiISOx8ctVVghbWOLPtS42iKKPjBK9s/8yQzibGSX2bf/DDlLFIqAqMXHBLmYQm01A
-	U2LfyU1gcREBDYl9E3qZQBqYBeayShz8OQFshbCAn8TC1dvZQGxeAW+J23OPsUBMXcAs8fX0
-	HUaIhKDEyZlPgBIcQN2aEut36UOY0hLL/3GAVDALyEs0b50NtpdTwEzi4877jBBXK0rMmLiS
-	BcKulfj89xnjBEaRWUiGzkIYOgth6CwkQxcwsqxiFEktLc5Nzy020itOzC0uzUvXS87P3cQI
-	TEjbjv3csoNx5auPeocYmTgYDzFKcDArifCeOH42TYg3JbGyKrUoP76oNCe1+BCjKTCEJjJL
-	iSbnA1NiXkm8oZmBqaGJmaWBqaWZsZI4L9uV82lCAumJJanZqakFqUUwfUwcnFINTEWW07fe
-	CSyVS+H43la/5eLmTg9/k0keUiuVs60YCl3Fr/rMc9uzqP51+vq+gp/NXx+YTeP5/ds9za3d
-	q3Img+La86F3lle8uLliwcXNcX7ab9ktmeIOLF70+l26bVrzeSfNYpWqNS86+/dafp1su7Ph
-	qvdV61TTVTs1GG5a1yU8Eny47Y6rUt+NBdsiZ1vv41rx9GLYx9+Rew3XiOckCF4oWnfnHNuf
-	tvMqj36aLNr+/fG2iD0XlHXV/zJNlCqzvbhQSkfuGoMy/7JMh7kWK10Tlb7f187ZFbzyoouk
-	peb91uMqsnwLsu7td2k5Lreia+WPZbtPcm00vOR/hWH201kHf27sXZX3bPqCisMnH3srsRRn
-	JBpqMRcVJwIAFUFGDdEDAAA=
-X-CMS-MailID: 20240830115859eucas1p2e384f48594d104a5fc9fb24e87c6fd24
-X-Msg-Generator: CA
-X-RootMTR: 20240829234204eucas1p26c2785f434a9355a4b20ac3499e9c0f2
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20240829234204eucas1p26c2785f434a9355a4b20ac3499e9c0f2
-References: <20240822135018.1931258-1-kernel@pankajraghav.com>
-	<20240822135018.1931258-5-kernel@pankajraghav.com>
-	<yt9dttf3r49e.fsf@linux.ibm.com> <ZtDCErRjh8bC5Y1r@bombadil.infradead.org>
-	<ZtDSJuI2hYniMAzv@casper.infradead.org>
-	<221FAE59-097C-4D31-A500-B09EDB07C285@nvidia.com>
-	<CGME20240829234204eucas1p26c2785f434a9355a4b20ac3499e9c0f2@eucas1p2.samsung.com>
-	<ZtEHPAsIHKxUHBZX@bombadil.infradead.org>
 
-On Thu, Aug 29, 2024 at 04:41:48PM -0700, Luis Chamberlain wrote:
-> On Thu, Aug 29, 2024 at 06:12:26PM -0400, Zi Yan wrote:
-> > The issue is that the change to split_huge_page() makes split_huge_page_to_list_to_order()
-> > unlocks the wrong subpage. split_huge_page() used to pass the “page” pointer
-> > to split_huge_page_to_list_to_order(), which keeps that “page” still locked.
-> > But this patch changes the “page” passed into split_huge_page_to_list_to_order()
-> > always to the head page.
-> > 
-> > This fixes the crash on my x86 VM, but it can be improved:
-> > 
-> > diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-> > index 7c50aeed0522..eff5d2fb5d4e 100644
-> > --- a/include/linux/huge_mm.h
-> > +++ b/include/linux/huge_mm.h
-> > @@ -320,10 +320,7 @@ bool can_split_folio(struct folio *folio, int *pextra_pins);
-> >  int split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
-> >                 unsigned int new_order);
-> >  int split_folio_to_list(struct folio *folio, struct list_head *list);
-> > -static inline int split_huge_page(struct page *page)
-> > -{
-> > -       return split_folio(page_folio(page));
-> > -}
-> > +int split_huge_page(struct page *page);
-> >  void deferred_split_folio(struct folio *folio);
-> > 
-> >  void __split_huge_pmd(struct vm_area_struct *vma, pmd_t *pmd,
-> > diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> > index c29af9451d92..4d723dab4336 100644
-> > --- a/mm/huge_memory.c
-> > +++ b/mm/huge_memory.c
-> > @@ -3297,6 +3297,25 @@ int split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
-> >         return ret;
-> >  }
-> > 
-> > +int split_huge_page(struct page *page)
-> > +{
-> > +       unsigned int min_order = 0;
-> > +       struct folio *folio = page_folio(page);
-> > +
-> > +       if (folio_test_anon(folio))
-> > +               goto out;
-> > +
-> > +       if (!folio->mapping) {
-> > +               if (folio_test_pmd_mappable(folio))
-> > +                       count_vm_event(THP_SPLIT_PAGE_FAILED);
-> > +               return -EBUSY;
-> > +       }
-> > +
-> > +       min_order = mapping_min_folio_order(folio->mapping);
-> > +out:
-> > +       return split_huge_page_to_list_to_order(page, NULL, min_order);
-> > +}
-> > +
-> >  int split_folio_to_list(struct folio *folio, struct list_head *list)
-> >  {
-> >         unsigned int min_order = 0;
-> 
-> 
-> Confirmed, and also although you suggest it can be improved, I thought
-> that we could do that by sharing more code and putting things in the
-> headers, the below also fixes this but tries to share more code, but
-> I think it is perhaps less easier to understand than your patch.
-> 
-> So I think your patch is cleaner and easier as a fix.
 
-I reproduced it in arm64 as well. And both fixes provided solved the issue.
+
+On 8/30/24 4:04 AM, Jim Shu wrote:
+> Hi Tomasz,
+> 
+> QEMU RISC-V IOMMU will switch the PCIe vendor/device ID to Red Hat one
+> [1] in the latest v6 patch.
+> Will we also support the PCIe ID of Red Hat one in the Linux driver?
+> 
+> [1] https://patchew.org/QEMU/20240801154334.1009852-1-dbarboza@ventanamicro.com/20240801154334.1009852-5-dbarboza@ventanamicro.com/
+
+The QEMU-side background of this change: the original patches from Tomasz was
+hardcoding a Rivos PCI ID, i.e. the device was being registered as a Rivos IOMMU
+PCI device. The thing is that there isn't anything  Rivos specific in the QEMU
+IOMMU emulation, since we're adhering to the riscv-iommu spec entirely (with a
+couple of design choices here and there), thus we decided it would be better to
+get a generic PCI IOMMU ID.
+
+Red Hat was kind enough to gave us one from their PCI ID space, since RVI didn't
+bother getting an ID for this reference device, and we're using the Red Hat ID
+in the QEMU emulation. The QEMU IOMMU PCI device is by default reported as
+1b36:0014 (PCI_VENDOR_ID_REDHAT : PCI_DEVICE_ID_REDHAT_RISCV_IOMMU).
+
+This change happened in v3, sent in May 2024:
+
+https://lore.kernel.org/qemu-riscv/20240523173955.1940072-1-dbarboza@ventanamicro.com/
+
+This change would make the QEMU IOMMU PCI device incompatible with this kernel
+support, so we added a capability to set the PCI ID for the device in the QEMU
+command line. To make the IOMMU PCI device work with the current kernel support, that
+is being set to a Rivos PCI device, change the vendor/device ID to match what the
+kernel driver expects:
+
+(...)  -device riscv-iommu-pci,vendor-id=0x1efd,device-id=0xedf1
+
+The ability to set vendor-id/device-id of this device will allow an easier development
+of other proprietary IOMMU PCI drivers, i.e. it's not a hack to make the current kernel
+support work.
+
+As for this kernel support, I didn't fully review it to see if there is a Rivos specific
+behavior being implemented. If this isn't the case perhaps there is a case to be made
+to also make the kernel driver more generic - in this case feel free to use the same as
+QEMU is going to use (PCI_VENDOR_ID_REDHAT : PCI_DEVICE_ID_REDHAT_RISCV_IOMMU - 1b36:0014).
+
+
+Thanks,
+
+Daniel
+
 
 > 
-> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-> index c275aa9cc105..99cd9c7bf55b 100644
-> --- a/include/linux/huge_mm.h
-> +++ b/include/linux/huge_mm.h
-> @@ -97,6 +97,7 @@ extern struct kobj_attribute thpsize_shmem_enabled_attr;
->  	(!!thp_vma_allowable_orders(vma, vm_flags, tva_flags, BIT(order)))
->  
->  #define split_folio(f) split_folio_to_list(f, NULL)
-> +#define split_folio_to_list(f, list) split_page_folio_to_list(&f->page, f, list)
->  
->  #ifdef CONFIG_PGTABLE_HAS_HUGE_LEAVES
->  #define HPAGE_PMD_SHIFT PMD_SHIFT
-> @@ -331,10 +332,11 @@ unsigned long thp_get_unmapped_area_vmflags(struct file *filp, unsigned long add
->  bool can_split_folio(struct folio *folio, int caller_pins, int *pextra_pins);
->  int split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
->  		unsigned int new_order);
-> -int split_folio_to_list(struct folio *folio, struct list_head *list);
-> +int split_page_folio_to_list(struct page *page, struct folio *folio,
-> +			     struct list_head *list);
->  static inline int split_huge_page(struct page *page)
->  {
-> -	return split_folio(page_folio(page));
-> +	return split_page_folio_to_list(page, page_folio(page), NULL);
->  }
->  void deferred_split_folio(struct folio *folio);
->  
-> @@ -511,7 +513,9 @@ static inline int split_huge_page(struct page *page)
->  	return 0;
->  }
->  
-> -static inline int split_folio_to_list(struct folio *folio, struct list_head *list)
-> +static inline int split_page_folio_to_list(struct page *page,
-> +					   struct folio *folio,
-> +					   struct list_head *list)
->  {
->  	return 0;
->  }
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index 169f1a71c95d..b115bfe63b52 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -3529,7 +3529,8 @@ int split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
->  	return ret;
->  }
->  
-> -int split_folio_to_list(struct folio *folio, struct list_head *list)
-> +int split_page_folio_to_list(struct page *page, struct folio *folio,
-> +			     struct list_head *list)
->  {
->  	unsigned int min_order = 0;
->  
-> @@ -3544,8 +3545,7 @@ int split_folio_to_list(struct folio *folio, struct list_head *list)
->  
->  	min_order = mapping_min_folio_order(folio->mapping);
->  out:
-> -	return split_huge_page_to_list_to_order(&folio->page, list,
-> -							min_order);
-> +	return split_huge_page_to_list_to_order(page, list, min_order);
->  }
->  
->  void __folio_undo_large_rmappable(struct folio *folio)
+> 
+> Regards,
+> Jim Shu
+> 
+> 
+> 
+> On Sat, Jun 15, 2024 at 1:29 PM Tomasz Jeznach <tjeznach@rivosinc.com> wrote:
+>>
+>> Introduce device driver for PCIe implementation
+>> of RISC-V IOMMU architected hardware.
+>>
+>> IOMMU hardware and system support for MSI or MSI-X is
+>> required by this implementation.
+>>
+>> Vendor and device identifiers used in this patch
+>> matches QEMU implementation of the RISC-V IOMMU PCIe
+>> device, from Rivos VID (0x1efd) range allocated by the PCI-SIG.
+>>
+>> MAINTAINERS | added iommu-pci.c already covered by matching pattern.
+>>
+>> Link: https://lore.kernel.org/qemu-devel/20240307160319.675044-1-dbarboza@ventanamicro.com/
+>> Co-developed-by: Nick Kossifidis <mick@ics.forth.gr>
+>> Signed-off-by: Nick Kossifidis <mick@ics.forth.gr>
+>> Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
+>> Signed-off-by: Tomasz Jeznach <tjeznach@rivosinc.com>
+>> ---
+>>   drivers/iommu/riscv/Kconfig     |   5 ++
+>>   drivers/iommu/riscv/Makefile    |   1 +
+>>   drivers/iommu/riscv/iommu-pci.c | 119 ++++++++++++++++++++++++++++++++
+>>   3 files changed, 125 insertions(+)
+>>   create mode 100644 drivers/iommu/riscv/iommu-pci.c
+>>
+>> diff --git a/drivers/iommu/riscv/Kconfig b/drivers/iommu/riscv/Kconfig
+>> index 5dcc5c45aa50..c071816f59a6 100644
+>> --- a/drivers/iommu/riscv/Kconfig
+>> +++ b/drivers/iommu/riscv/Kconfig
+>> @@ -13,3 +13,8 @@ config RISCV_IOMMU
+>>
+>>            Say Y here if your SoC includes an IOMMU device implementing
+>>            the RISC-V IOMMU architecture.
+>> +
+>> +config RISCV_IOMMU_PCI
+>> +       def_bool y if RISCV_IOMMU && PCI_MSI
+>> +       help
+>> +         Support for the PCIe implementation of RISC-V IOMMU architecture.
+>> diff --git a/drivers/iommu/riscv/Makefile b/drivers/iommu/riscv/Makefile
+>> index e4c189de58d3..f54c9ed17d41 100644
+>> --- a/drivers/iommu/riscv/Makefile
+>> +++ b/drivers/iommu/riscv/Makefile
+>> @@ -1,2 +1,3 @@
+>>   # SPDX-License-Identifier: GPL-2.0-only
+>>   obj-$(CONFIG_RISCV_IOMMU) += iommu.o iommu-platform.o
+>> +obj-$(CONFIG_RISCV_IOMMU_PCI) += iommu-pci.o
+>> diff --git a/drivers/iommu/riscv/iommu-pci.c b/drivers/iommu/riscv/iommu-pci.c
+>> new file mode 100644
+>> index 000000000000..e675acceb290
+>> --- /dev/null
+>> +++ b/drivers/iommu/riscv/iommu-pci.c
+>> @@ -0,0 +1,119 @@
+>> +// SPDX-License-Identifier: GPL-2.0-only
+>> +
+>> +/*
+>> + * Copyright © 2022-2024 Rivos Inc.
+>> + * Copyright © 2023 FORTH-ICS/CARV
+>> + *
+>> + * RISCV IOMMU as a PCIe device
+>> + *
+>> + * Authors
+>> + *     Tomasz Jeznach <tjeznach@rivosinc.com>
+>> + *     Nick Kossifidis <mick@ics.forth.gr>
+>> + */
+>> +
+>> +#include <linux/compiler.h>
+>> +#include <linux/init.h>
+>> +#include <linux/iommu.h>
+>> +#include <linux/kernel.h>
+>> +#include <linux/pci.h>
+>> +
+>> +#include "iommu-bits.h"
+>> +#include "iommu.h"
+>> +
+>> +/* Rivos Inc. assigned PCI Vendor and Device IDs */
+>> +#ifndef PCI_VENDOR_ID_RIVOS
+>> +#define PCI_VENDOR_ID_RIVOS             0x1efd
+>> +#endif
+>> +
+>> +#ifndef PCI_DEVICE_ID_RIVOS_IOMMU
+>> +#define PCI_DEVICE_ID_RIVOS_IOMMU       0xedf1
+>> +#endif
+>> +
+>> +static int riscv_iommu_pci_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+>> +{
+>> +       struct device *dev = &pdev->dev;
+>> +       struct riscv_iommu_device *iommu;
+>> +       int rc, vec;
+>> +
+>> +       rc = pcim_enable_device(pdev);
+>> +       if (rc)
+>> +               return rc;
+>> +
+>> +       if (!(pci_resource_flags(pdev, 0) & IORESOURCE_MEM))
+>> +               return -ENODEV;
+>> +
+>> +       if (pci_resource_len(pdev, 0) < RISCV_IOMMU_REG_SIZE)
+>> +               return -ENODEV;
+>> +
+>> +       rc = pcim_iomap_regions(pdev, BIT(0), pci_name(pdev));
+>> +       if (rc)
+>> +               return dev_err_probe(dev, rc, "pcim_iomap_regions failed\n");
+>> +
+>> +       iommu = devm_kzalloc(dev, sizeof(*iommu), GFP_KERNEL);
+>> +       if (!iommu)
+>> +               return -ENOMEM;
+>> +
+>> +       iommu->dev = dev;
+>> +       iommu->reg = pcim_iomap_table(pdev)[0];
+>> +
+>> +       pci_set_master(pdev);
+>> +       dev_set_drvdata(dev, iommu);
+>> +
+>> +       /* Check device reported capabilities / features. */
+>> +       iommu->caps = riscv_iommu_readq(iommu, RISCV_IOMMU_REG_CAPABILITIES);
+>> +       iommu->fctl = riscv_iommu_readl(iommu, RISCV_IOMMU_REG_FCTL);
+>> +
+>> +       /* The PCI driver only uses MSIs, make sure the IOMMU supports this */
+>> +       switch (FIELD_GET(RISCV_IOMMU_CAPABILITIES_IGS, iommu->caps)) {
+>> +       case RISCV_IOMMU_CAPABILITIES_IGS_MSI:
+>> +       case RISCV_IOMMU_CAPABILITIES_IGS_BOTH:
+>> +               break;
+>> +       default:
+>> +               return dev_err_probe(dev, -ENODEV,
+>> +                                    "unable to use message-signaled interrupts\n");
+>> +       }
+>> +
+>> +       /* Allocate and assign IRQ vectors for the various events */
+>> +       rc = pci_alloc_irq_vectors(pdev, 1, RISCV_IOMMU_INTR_COUNT,
+>> +                                  PCI_IRQ_MSIX | PCI_IRQ_MSI);
+>> +       if (rc <= 0)
+>> +               return dev_err_probe(dev, -ENODEV,
+>> +                                    "unable to allocate irq vectors\n");
+>> +
+>> +       iommu->irqs_count = rc;
+>> +       for (vec = 0; vec < iommu->irqs_count; vec++)
+>> +               iommu->irqs[vec] = msi_get_virq(dev, vec);
+>> +
+>> +       /* Enable message-signaled interrupts, fctl.WSI */
+>> +       if (iommu->fctl & RISCV_IOMMU_FCTL_WSI) {
+>> +               iommu->fctl ^= RISCV_IOMMU_FCTL_WSI;
+>> +               riscv_iommu_writel(iommu, RISCV_IOMMU_REG_FCTL, iommu->fctl);
+>> +       }
+>> +
+>> +       return riscv_iommu_init(iommu);
+>> +}
+>> +
+>> +static void riscv_iommu_pci_remove(struct pci_dev *pdev)
+>> +{
+>> +       struct riscv_iommu_device *iommu = dev_get_drvdata(&pdev->dev);
+>> +
+>> +       riscv_iommu_remove(iommu);
+>> +}
+>> +
+>> +static const struct pci_device_id riscv_iommu_pci_tbl[] = {
+>> +       {PCI_VENDOR_ID_RIVOS, PCI_DEVICE_ID_RIVOS_IOMMU,
+>> +        PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0},
+>> +       {0,}
+>> +};
+>> +
+>> +static struct pci_driver riscv_iommu_pci_driver = {
+>> +       .name = KBUILD_MODNAME,
+>> +       .id_table = riscv_iommu_pci_tbl,
+>> +       .probe = riscv_iommu_pci_probe,
+>> +       .remove = riscv_iommu_pci_remove,
+>> +       .driver = {
+>> +               .suppress_bind_attrs = true,
+>> +       },
+>> +};
+>> +
+>> +builtin_pci_driver(riscv_iommu_pci_driver);
+>> --
+>> 2.34.1
+>>
+>>
+>> _______________________________________________
+>> linux-riscv mailing list
+>> linux-riscv@lists.infradead.org
+>> http://lists.infradead.org/mailman/listinfo/linux-riscv
+> 
 
