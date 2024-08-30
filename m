@@ -1,313 +1,249 @@
-Return-Path: <linux-kernel+bounces-308537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B90D6965E30
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:14:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D83D965E50
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:15:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DCE9F1C24D01
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:14:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42ED91C24F14
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:15:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CAF018991C;
-	Fri, 30 Aug 2024 10:11:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B0B718DF66;
+	Fri, 30 Aug 2024 10:11:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NWw21wlV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FphOJAR4"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C23C189B9E;
-	Fri, 30 Aug 2024 10:11:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCBBB18E344
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 10:11:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725012687; cv=none; b=ZD/sDjLHPdd4s3esGV5r75ZzYpTEkQFM9Wiz72zv4jlBZc2a9WqGI8Vt1omc9vSIGF7sGdXaVksw68Xjh1GIh0kdjVPlUy56guq3FAbgVP+JRySCd6HzmIg7MumZA+4bj0uZU0cHpUiPBG883/XIsTkNwwSv+kmBVKS+Ihk+4ZY=
+	t=1725012714; cv=none; b=TC4+3Td3w8Af4mlm5bE4aiITAeKuIxIPQWuGIobgHjcB5pqUiwkU0//b1c/xA33ILLnfvcfCaiPjlLNLHNGW8aHy6jzVbTTEDJNirON6frz/TiSovEfSbmbRnHzeAyJM50yOghtYbAvlrwP/DopmX86kQlgUNwHgR1HkJkwdXo4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725012687; c=relaxed/simple;
-	bh=SNJUm5M4m6/Ol3FXxzaJa4l8sLQfdcQU5E9AymsEN2g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=n4cJjv+wJAcCNWsoMFXp3KlaSmCIo/yQFSkzwETogAkJcVF0CSHavI65wqd8GCemmjIflDO2wAn9CldWyXL7/VwgVaBTvKTVcUFg5TjX4ePBNOo/HMJ8cBeDE1A/iPPhxasOaevePHJ+Rmolwe1eq5mlthwnjT/+ht2Fsv7NJCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NWw21wlV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 481FBC4CEC6;
-	Fri, 30 Aug 2024 10:11:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725012686;
-	bh=SNJUm5M4m6/Ol3FXxzaJa4l8sLQfdcQU5E9AymsEN2g=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=NWw21wlVyfWEBrS68LaNiH6zLQLL1y8oJtacSZMH6nd9veMnBBGeDsg9OgDudxjhz
-	 m4P592lGL8ep0sfwzcEhyrs1hCJkAD4p3ieHwaSHiJfzKo1CQypX3B6AwXXplsemFT
-	 1uBe1zoGtsz7iBjX7ZHr62ZoVyRQjhN1ofKMAPS+m6UXgBO3sBMd4o9v0mmdsfRtVl
-	 ScwYpjC0PaLJb9QsBlfKCJnvkmWGvYiFXbviaLdXJfThOFxl+yTekM7czUZmxkQlKU
-	 dsBnEc2Hyla7Zs8CMIqaVknX/Ih3y0STDqB8KtWHUQ7a+n16wSQ/BtLYMwfRI+Hs7u
-	 dalSkkMUlss2w==
-Message-ID: <0a79b9df-4ca4-4dc8-9930-3fa1dc7d3174@kernel.org>
-Date: Fri, 30 Aug 2024 12:11:19 +0200
+	s=arc-20240116; t=1725012714; c=relaxed/simple;
+	bh=26Ca6vMm1oviq71AbCgAIOw9/GdoUlRwpZXXZkEb4Fk=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=IzHI45Ud6wJ6NMtuw834eWMeb4EMSge+ceuwnsntO45UXmm5yvegdNdklzdQkACS5YVVT+839vz0aN2z+m1u4oUokgNx3pH0BxJZ83V2D84yba/sAdlrgdUyuQfyWcevqIDUIYOnroDO+NsIKLITT0TkfymQe3yQZa7RVKtogxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FphOJAR4; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1fee6435a34so12301475ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 03:11:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725012712; x=1725617512; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=26Ca6vMm1oviq71AbCgAIOw9/GdoUlRwpZXXZkEb4Fk=;
+        b=FphOJAR4ndyvT4AdQhxc/LH/aMbCZKurogIajrDUUbAWrsxLsIlS7T4BxPMnxwexbk
+         MQwCxKBYA2sKlp5MCr3x+smcrdkD36kssgDMBZAWByFSUYMsv0wh3gT4o24RHtJ8BjsX
+         wrpIz3po9rGDODrvq6QwsYKYPw8eCuQeDLNd+6dwC9dtvMh1SOytEzDwQNh+bBJLUGBT
+         At97C+l1cprin9ub6+UL6ivtLWmLLOt6phm9RTu6bCo1udbrv3YnFZ4ovJ1CJ/M98OM4
+         o9JL5Y0eur5RymU222V9rDoe4tnOMhI9hm5ZB1LMCLqM69OX9T+h6b13mcH+70uSyWkF
+         7fnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725012712; x=1725617512;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=26Ca6vMm1oviq71AbCgAIOw9/GdoUlRwpZXXZkEb4Fk=;
+        b=wGHO/Xp0dOQDnaDZwajYqHBLwQY5uP/Bs75dHQ8/BBBzp9PfKiawcDMpZFS78ayM7l
+         7aUC0RhMlKLPQbxyvpSm5TyuUJHzsMRrS7Nmz/a2e2hHXfR58lvVVs6WeJXEgfXjgoid
+         fJ57GNeyYTBls3olcTi93SVO1mff90iyl1UPCacs1N02StGpNLrFgwybU3WJ517IkEYY
+         dJybDMCKx2VraO7Bsvx+U2spTvK6VKb35HRq+BR5KrVMzkgihhtHNSmtwBu1DF3k5spK
+         p5NShegZnANQ2EV76Zi1ZSV4bSYMilDfvEIJvlscDrEXjs+FtXPVvVqKQBoDkkUKLMUN
+         t+0g==
+X-Forwarded-Encrypted: i=1; AJvYcCWeRnhBPWh0/GJXSLnrhSHq3vk1vrCBn7EIG0W/Vj7Q3G/9HTR2bDWGV0uEQdAt9jPHwHnbkutyCPVTBEk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1l6EAsQvHlAZlBgcVUaI63qCEUYudkY5oItx4YbWZnAb07dRH
+	3V6fmAqXZ+qScBWFAozBqYKvWg6tBcB+6Lq/NcyQOBORnuSUGpMX
+X-Google-Smtp-Source: AGHT+IEPl32t/Wy2FfG64Z9IGfE7a6++/+S6tHLrG4sBCisl4W+4mnWpNDiEmFvkNBahXNHCyeWqgg==
+X-Received: by 2002:a17:902:c94b:b0:202:1176:5e39 with SMTP id d9443c01a7336-2050c4891cdmr51843845ad.56.1725012711735;
+        Fri, 30 Aug 2024 03:11:51 -0700 (PDT)
+Received: from [127.0.0.1] ([103.85.75.88])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-205152b33eesm24116395ad.32.2024.08.30.03.11.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Aug 2024 03:11:51 -0700 (PDT)
+Message-ID: <cf4174af158587cabd525ae23d35c0b399eade47.camel@gmail.com>
+Subject: Re: [PATCH v2] ocfs2: fix null-ptr-deref when journal load failed.
+From: Julian Sun <sunjunchao2870@gmail.com>
+To: Joseph Qi <joseph.qi@linux.alibaba.com>, ocfs2-devel@lists.linux.dev
+Cc: lbec@evilplan.org, mark@fasheh.com, 
+	syzbot+05b9b39d8bdfe1a0861f@syzkaller.appspotmail.com, 
+	"linux-kernel@vger.kernel.org"
+	 <linux-kernel@vger.kernel.org>, Heming Zhao <heming.zhao@suse.com>
+Date: Fri, 30 Aug 2024 18:11:48 +0800
+In-Reply-To: <07dea72e-8b93-4095-9347-4ff765a2539d@linux.alibaba.com>
+References: <20240823083150.17590-1-sunjunchao2870@gmail.com>
+	 <07dea72e-8b93-4095-9347-4ff765a2539d@linux.alibaba.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/7] dt-bindings: arm: Add support for Coresight TGU
- trace
-To: songchai <quic_songchai@quicinc.com>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
- <mike.leach@linaro.org>, James Clark <james.clark@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Andy Gross <agross@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-kernel@vger.kernel.org, coresight@lists.linaro.org,
- linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20240830092311.14400-1-quic_songchai@quicinc.com>
- <20240830092311.14400-2-quic_songchai@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
- QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
- gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
- /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
- iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
- VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
- 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
- xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
- eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
- AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
- MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
- Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
- ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
- vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
- oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
- lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
- t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
- uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
- 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
- 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240830092311.14400-2-quic_songchai@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-On 30/08/2024 11:23, songchai wrote:
-> The Trigger Generation Unit (TGU) is designed to detect patterns or
-> sequences within a specific region of the System on Chip (SoC). Once
-> configured and activated, it monitors sense inputs and can detect a
-> pre-programmed state or sequence across clock cycles, subsequently
-> producing a trigger.
-> 
->    TGU configuration space
->         offset table
->  x-------------------------x
->  |                         |
->  |                         |
->  |                         |                           Step configuration
->  |                         |                             space layout
->  |   coresight management  |                           x-------------x
->  |        registers        |                     |---> |             |
->  |                         |                     |     |  reserve    |
->  |                         |                     |     |             |
->  |-------------------------|                     |     |-------------|
->  |                         |                     |     | prioroty[3] |
->  |         step[7]         |<--                  |     |-------------|
->  |-------------------------|   |                 |     | prioroty[2] |
->  |                         |   |                 |     |-------------|
->  |           ...           |   |Steps region     |     | prioroty[1] |
->  |                         |   |                 |     |-------------|
->  |-------------------------|   |                 |     | prioroty[0] |
->  |                         |<--                  |     |-------------|
->  |         step[0]         |-------------------->      |             |
->  |-------------------------|                           |  condition  |
->  |                         |                           |             |
->  |     control and status  |                           x-------------x
->  |           space         |                           |             |
->  x-------------------------x                           |Timer/Counter|
->                                                        |             |
-> 						       x-------------x
-> TGU Configuration in Hardware
-> 
-> The TGU provides a step region for user configuration, similar
-> to a flow chart. Each step region consists of three register clusters:
-> 
-> 1.Priority Region: Sets the required signals with priority.
-> 2.Condition Region: Defines specific requirements (e.g., signal A
-> reaches three times) and the subsequent action once the requirement is
-> met.
-> 3.Timer/Counter (Optional): Provides timing or counting functionality.
-> 
-> Add a new coresight-tgu.yaml file to describe the bindings required to
-> define the TGU in the device trees.
-> 
-> Signed-off-by: songchai <quic_songchai@quicinc.com>
+On Fri, 2024-08-30 at 17:40 +0800, Joseph Qi wrote:
+>=20
+>=20
+> On 8/23/24 4:31 PM, Julian Sun wrote:
+> > During the mounting process, if journal_reset() fails
+> > because of too short journal, then lead to
+> > jbd2_journal_load() fails with NULL j_sb_buffer.
+> > Subsequently, ocfs2_journal_shutdown() calls
+> > jbd2_journal_flush()->jbd2_cleanup_journal_tail()->
+> > __jbd2_update_log_tail()->jbd2_journal_update_sb_log_tail()
+> > ->lock_buffer(journal->j_sb_buffer), resulting in a
+> > null-pointer dereference error.
+> >=20
+> > To resolve this issue, a new state OCFS2_JOURNAL_INITED
+> > has been introduced to replace the previous functionality
+> > of OCFS2_JOURNAL_LOADED, the original OCFS2_JOURNAL_LOADED
+> > is only set when ocfs2_journal_load() is successful.
+> > The jbd2_journal_flush() function is allowed to be called
+> > only when this flag is set. The logic here is that if the
+> > journal has even not been successfully loaded, there is
+> > no need to flush the journal.
+> >=20
+> > Link: https://syzkaller.appspot.com/bug?extid=3D05b9b39d8bdfe1a0861f
+> > Reported-by: syzbot+05b9b39d8bdfe1a0861f@syzkaller.appspotmail.com
+> > Signed-off-by: Julian Sun <sunjunchao2870@gmail.com>
+> > ---
+> > =C2=A0fs/ocfs2/journal.c | 9 ++++++---
+> > =C2=A0fs/ocfs2/journal.h | 1 +
+> > =C2=A02 files changed, 7 insertions(+), 3 deletions(-)
+> >=20
+> > diff --git a/fs/ocfs2/journal.c b/fs/ocfs2/journal.c
+> > index 530fba34f6d3..da0ffcc5de0a 100644
+> > --- a/fs/ocfs2/journal.c
+> > +++ b/fs/ocfs2/journal.c
+> > @@ -968,7 +968,7 @@ int ocfs2_journal_init(struct ocfs2_super *osb,
+> > int *dirty)
+> > =C2=A0
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0ocfs2_set_journal_param=
+s(osb);
+> > =C2=A0
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0journal->j_state =3D OCFS2_J=
+OURNAL_LOADED;
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0journal->j_state =3D OCFS2_J=
+OURNAL_INITED;
+> > =C2=A0
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0status =3D 0;
+> > =C2=A0done:
+> > @@ -1039,6 +1039,7 @@ void ocfs2_journal_shutdown(struct
+> > ocfs2_super *osb)
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0int status =3D 0;
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0struct inode *inode =3D=
+ NULL;
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0int num_running_trans =
+=3D 0;
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0enum ocfs2_journal_state sta=
+te;
+> > =C2=A0
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0BUG_ON(!osb);
+> > =C2=A0
+> > @@ -1047,8 +1048,9 @@ void ocfs2_journal_shutdown(struct
+> > ocfs2_super *osb)
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0goto done;
+> > =C2=A0
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0inode =3D journal->j_in=
+ode;
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0state =3D journal->j_state;
+> > =C2=A0
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (journal->j_state !=3D OC=
+FS2_JOURNAL_LOADED)
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (state !=3D OCFS2_JOURNAL=
+_INITED && state !=3D
+> > OCFS2_JOURNAL_LOADED)
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0goto done;
+> > =C2=A0
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0/* need to inc inode us=
+e count - jbd2_journal_destroy will
+> > iput. */
+> > @@ -1076,7 +1078,7 @@ void ocfs2_journal_shutdown(struct
+> > ocfs2_super *osb)
+> > =C2=A0
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0BUG_ON(atomic_read(&(os=
+b->journal->j_num_trans)) !=3D 0);
+> > =C2=A0
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (ocfs2_mount_local(osb)) =
+{
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (ocfs2_mount_local(osb) &=
+& state =3D=3D
+> > OCFS2_JOURNAL_LOADED) {
+>=20
+> The only intent of the new introduced state is to identify if journal
+> is
+> truly loaded or not.
+> So it seems that the simplest way to fix this is just check
+> JBD2_LOADED
+> here.
+>=20
+> if (ocfs2_mount_local(osb) &&
+> =C2=A0=C2=A0=C2=A0 (journal->j_journal->j_flags & JBD2_LOADED)) {
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0...
+> }
+Hi, Joseph, thanks for your review and comments.=C2=A0
 
-It feels like you are using login name as real name. Please investigate
-this and confirm whether latin transcription/transliteration of your
-name is like above.
+Yeah! It's absolutely the simplest and cleanest way to fix this issue.
+Thanks for your suggestion.
+>=20
+> BTW, could you please also replace 'osb->journal->j_num_trans' to
+> 'journal->j_num_trans'?
+Sure.
+>=20
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0jbd2_journal_lock_updates(journal->j_journal);
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0status =3D jbd2_journal_flush(journal->j_journal=
+, 0);
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0jbd2_journal_unlock_updates(journal->j_journal);
+> > @@ -1174,6 +1176,7 @@ int ocfs2_journal_load(struct ocfs2_journal
+> > *journal, int local, int replayed)
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0}
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0} else
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0osb->commit_task =3D NULL;
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0journal->j_state =3D OCFS2_J=
+OURNAL_LOADED;
+>=20
+> It seems that this has to be moved just after jbd2_journal_load().
+> Anyway, I don't think we have to introduce a new state. See above.
+>=20
+Agreed. And now OCFS2_JOURNAL_LOADED is set when ocfs2_journal_init()
+succeed, it may led to some misunderstanding: the journal was not
+really loaded when OCFS2_JOURNAL_LOADED was set. I would like to rename
+it to OCFS2_JOURNAL_INITED in another patch to make it clearer.
+> Joseph
+>=20
+> > =C2=A0
+> > =C2=A0done:
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0return status;
+> > diff --git a/fs/ocfs2/journal.h b/fs/ocfs2/journal.h
+> > index e3c3a35dc5e0..a80f76a8fa0e 100644
+> > --- a/fs/ocfs2/journal.h
+> > +++ b/fs/ocfs2/journal.h
+> > @@ -15,6 +15,7 @@
+> > =C2=A0
+> > =C2=A0enum ocfs2_journal_state {
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0OCFS2_JOURNAL_FREE =3D =
+0,
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0OCFS2_JOURNAL_INITED,
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0OCFS2_JOURNAL_LOADED,
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0OCFS2_JOURNAL_IN_SHUTDO=
+WN,
+> > =C2=A0};
 
-> ---
->  .../bindings/arm/qcom,coresight-tgu.yaml      | 136 ++++++++++++++++++
->  1 file changed, 136 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/arm/qcom,coresight-tgu.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/qcom,coresight-tgu.yaml b/Documentation/devicetree/bindings/arm/qcom,coresight-tgu.yaml
-> new file mode 100644
-> index 000000000000..c261252e33e0
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/arm/qcom,coresight-tgu.yaml
-> @@ -0,0 +1,136 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +# Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/arm/qcom,coresight-tgu.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Trigger Generation Unit - TGU
-> +
-> +description: |
-> +  The Trigger Generation Unit (TGU) is a Data Engine which can be utilized
-> +  to sense a plurality of signals and create a trigger into the CTI or
-> +  generate interrupts to processors. The TGU is like the trigger circuit
-> +  of a Logic Analyzer.The corresponding trigger logic can be realized by
-> +  configuring the conditions for each step after sensing the signal.
-> +  Once setup and enabled, it will observe sense inputs and based upon
-> +  the activity of those inputs, even over clock cycles, may detect a
-> +  preprogrammed state/sequence and then produce a trigger or interrupt.
-> +
-> +  The primary use case of the TGU is to detect patterns or sequences on a
-> +  given set of signals within some region of the SoC.
-> +
-> +maintainers:
-> +  - Mao Jinlong <quic_jinlmao@quicinc.com>
-> +  - Sam Chai <quic_songchai@quicinc.com>
-> +
-> +# Need a custom select here or 'arm,primecell' will match on lots of nodes
-> +select:
-> +  properties:
-> +    compatible:
-> +      contains:
-> +        enum:
-> +          - qcom,coresight-tgu
-> +  required:
-> +    - compatible
-> +
-> +properties:
-> +  $nodename:
-> +    pattern: "^tgu(@[0-9a-f]+)$"
-
-Drop the pattern (and anyway @ is not optional).
-
-> +  compatible:
-> +    items:
-> +      - const: qcom,coresight-tgu
-> +      - const: arm,primecell
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    maxItems: 1
-> +
-> +  clock-names:
-> +    items:
-> +      - const: apb_pclk
-> +
-> +  qcom,tgu-steps:
-> +    description:
-> +      The trigger logic is realized by configuring each step after sensing
-> +      the signal. The parameter here is used to describe the maximum of steps
-> +      that could be configured in the current TGU.
-
-Why this is board or SoC level property? All below also feel like
-unnecessary stuff from downstream.
-
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    minimum: 1
-> +    maximum: 8
-> +
-> +  qcom,tgu-regs:
-> +    description:
-> +      There are some "groups" register clusters in each step, which are used to configure the signal
-> +      that we want to detect.Meanwhile, each group has its own priority, and the priority increases
-> +      with number of groups.For example, group3 has a higher priority than group2 ,the signal configured
-> +      in group3 will be sensed more preferentially than the signal which is configured in group2.
-> +      The parameter here is used to describe the signal number that each group could be configured.
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    minimum: 1
-> +    maximum: 18
-> +
-> +  qcom,tgu-conditions:
-> +    description:
-> +      A condition sets a specific requirement for a step and defines the subsequent
-> +      action once the requirement is met. For example, in step two, if signal A is
-> +      detected three times, the process jumps back to step one. The parameter describes
-> +      the register number for each functionality, whether it is setting a specific
-> +      requirement or defining a subsequent action.
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    minimum: 1
-> +    maximum: 4
-> +
-> +  qcom,tgu-timer-counters:
-> +    description:
-> +      TGU has timer and counter which are used to set some requirement on each step.
-> +      For example, we could use counter to create a trigger into CTI once TGU senses
-> +      the target signal three times.This parameter is used to describe the number of
-> +      Timers/Counters in TGU.
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    minimum: 0
-> +    maximum: 2
-> +
-> +  in-ports:
-> +    $ref: /schemas/graph.yaml#/properties/ports
-> +    additionalProperties: false
-> +
-> +    properties:
-> +      port:
-> +        description: AXI Slave connected to another Coresight component
-> +        $ref: /schemas/graph.yaml#/properties/port
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - clock-names
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  # minimum TGU definition.
-
-Drop comment
-
-> +  - |
-> +    tgu@10b0e000 {
-> +        compatible = "qcom,coresight-tgu", "arm,primecell";
-> +        reg = <0x10b0e000 0x1000>;
-> +
-Best regards,
-Krzysztof
-
+Thanks,
+--=20
+Julian Sun <sunjunchao2870@gmail.com>
 
