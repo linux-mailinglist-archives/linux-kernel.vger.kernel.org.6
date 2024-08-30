@@ -1,201 +1,185 @@
-Return-Path: <linux-kernel+bounces-308257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DDEF965969
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:06:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9393B965961
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:05:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B36631F2328F
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 08:06:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B86051C20372
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 08:05:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5F7E16B390;
-	Fri, 30 Aug 2024 08:06:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KXMurrdJ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D3A916B390;
+	Fri, 30 Aug 2024 08:05:24 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DE7A1662E9
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 08:06:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56E7D166F00
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 08:05:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725005190; cv=none; b=cFOAYK0FoJV3TNNa71F9DpJ9NxeZFRU80oOOrnLYPX5mX1c5ja0Z6NZooe+CuzaDo7mzBCC0FCUIjPztn19AEiJYVby3oVs06jOwI1vhqDdlGBEsmtrjwdYUL5zU5oQ+ntnR1QvD/OVNNB3boO+piNHlY+iLQAc1Fff3jHzotIo=
+	t=1725005123; cv=none; b=fS9EBQhfSAkbnOSb6FdnQsWCta0hvC6nwzoSO9xJ4hVMM9e5h6ArDgXnILtTQhLh8sy0GzUX8D05Fhfot956tdLRulIr2dBiuEeMvB4Ui058+6BUEBuRLsJZSvmlUqdqmMrfeBVqa/z4qOVUG/ZrEVNkMgvxcaCynGygTjfs1iU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725005190; c=relaxed/simple;
-	bh=71gPXzApkUJkbbo3sc3sJH3nklCpJRWVUVpfiyyleDM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=K9eqgNAM7GMtcliwVCJE1Az9vFpzmTF/Ev8p4tJ5ponH0aKA7zTpNGKK8zw4gxSIiOnnqAiPAvYLl1RerMyEIEXfQxxcTp/F0vMKfBvl7aI1FgnocNsHxSsC1zrbNn40n+21dGS3fwbqU8zfBIjmZKmsT5PzYBc1vje5ShCgX+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KXMurrdJ; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1725005187;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=71gPXzApkUJkbbo3sc3sJH3nklCpJRWVUVpfiyyleDM=;
-	b=KXMurrdJSWi/NjM0k0S7xW0yLSH8wUpRXZDKD0zETzSpwA5Ze3rxY2Plp1CCtHqJD/IG6t
-	gSPai8A6cevo2/PivW2T0y43BmUo1g9To0FRX5lYJkyS5EUphW/ugf3c50ctDqCAgLWnO3
-	db0zIYPmxZKZEz7ebBFEArJsXD0gBfA=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-650-nzP_3dZrNICKhSWuOSIwsw-1; Fri, 30 Aug 2024 04:05:17 -0400
-X-MC-Unique: nzP_3dZrNICKhSWuOSIwsw-1
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-428e0d30911so14397025e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 01:05:17 -0700 (PDT)
+	s=arc-20240116; t=1725005123; c=relaxed/simple;
+	bh=5bxH43X77Gu2Y9/t8j76aLLa2m9qKHtm2jfHVQ3UmXc=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=E7jHL90dr+S7470gp6f9F/Lyoc60iUE3YcH2u2B1FO3em6jwVdIB1/Iey9iRqqW76sIfP0PgYSQDfNY/ZvFR/6xmye4Jh8yZPld1Ab5XL98A6bXfhEgH/5y2fGMFYMirVqKuEy3PuGxbm//SibrAzBPzXE5xJ1svQDytlTeqY3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-39d244820edso16403655ab.3
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 01:05:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725005116; x=1725609916;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+        d=1e100.net; s=20230601; t=1725005121; x=1725609921;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=71gPXzApkUJkbbo3sc3sJH3nklCpJRWVUVpfiyyleDM=;
-        b=KVpV+OMNFknA08T0L+m6Z7TnvgMIgR5NZTp9wthpcja/Jk1utiDfmInGi4h+6CmTMm
-         EGkkH91tUQhOCzrr1ZDSLXRjVZj1xSGS75Hpbv+bF+8YialM18nwht+j/ORZntGRzm13
-         u2CIZc++2ISxk8d0mcQIcFMwiVYEebmzgGKzOBbCWuvSA//I9NMtTv91+mC3KKWb8Xdf
-         /G2hlAec3G5PL+lUY8b9ld33XRxFox7X1NMMW4lzDajz2Av959nizrsc/1xevfxAZSlC
-         tmV8xv3JQXBDKgvngrLNCZpN+DOx1yD6l8Snfo+OipzozWtBCqNnbtDI2NpF+W+SUG2A
-         nL+A==
-X-Forwarded-Encrypted: i=1; AJvYcCVDrdi6Th8VJjg/EWij061VjL3Sw06i6MlktvbBSmi4bhSPVZ0zy9d0YfyWJ9+zbnrKXKXWSX6MSrGGKIg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyP5TuK+AflshOqCVDS/uv6SeuJE6squ+eDywTlA4HcDqhq9lrk
-	2kWFVnKjxfCXnn1K7tsqpQJsQ7PDFkc9mwMQl439+jSVUiSVAGcAB/3LL7aRsHLoYm6mPHMwufF
-	vgeiPn/ORaFgWRmu0tp//lyt8NnGt8e7PBi0mnmKCKJcuzxWD0Aw3y1eWD+W5jw==
-X-Received: by 2002:a05:600c:1914:b0:42b:afbb:1704 with SMTP id 5b1f17b1804b1-42bb0281326mr42324695e9.6.1725005115859;
-        Fri, 30 Aug 2024 01:05:15 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IElMHHa1ss0AjuIdZRhm4Z2kioy67ZZmuCCx+UBXe8jQVj10UPNfr/s1tjKN2uvyTW+vaIl2g==
-X-Received: by 2002:a05:600c:1914:b0:42b:afbb:1704 with SMTP id 5b1f17b1804b1-42bb0281326mr42324235e9.6.1725005115323;
-        Fri, 30 Aug 2024 01:05:15 -0700 (PDT)
-Received: from eisenberg.fritz.box (200116b82d2f1b0080ee39dcd7d81ce9.dip.versatel-1u1.de. [2001:16b8:2d2f:1b00:80ee:39dc:d7d8:1ce9])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3749ef7f329sm3287195f8f.70.2024.08.30.01.05.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Aug 2024 01:05:14 -0700 (PDT)
-Message-ID: <ff637570c16c6a15be414839ec4878e49ecd2350.camel@redhat.com>
-Subject: Re: [PATCH v5 6/7] vdpa: solidrun: Fix UB bug with devres
-From: Philipp Stanner <pstanner@redhat.com>
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, Jens Axboe
- <axboe@kernel.dk>,  Wu Hao <hao.wu@intel.com>, Tom Rix <trix@redhat.com>,
- Moritz Fischer <mdf@kernel.org>, Xu Yilun <yilun.xu@intel.com>, Andy
- Shevchenko <andy@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
- <kuba@kernel.org>,  Paolo Abeni <pabeni@redhat.com>, Bjorn Helgaas
- <bhelgaas@google.com>, Alvaro Karsz <alvaro.karsz@solid-run.com>, Jason
- Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Eugenio
- =?ISO-8859-1?Q?P=E9rez?= <eperezma@redhat.com>, Richard Cochran
- <richardcochran@gmail.com>, Damien Le Moal <dlemoal@kernel.org>, Hannes
- Reinecke <hare@suse.de>, John Garry <john.g.garry@oracle.com>,
- linux-block@vger.kernel.org,  linux-kernel@vger.kernel.org,
- linux-fpga@vger.kernel.org,  linux-gpio@vger.kernel.org,
- netdev@vger.kernel.org, linux-pci@vger.kernel.org, 
- virtualization@lists.linux.dev, stable@vger.kernel.org, Christophe JAILLET
- <christophe.jaillet@wanadoo.fr>
-Date: Fri, 30 Aug 2024 10:05:12 +0200
-In-Reply-To: <20240829110902-mutt-send-email-mst@kernel.org>
-References: <20240829141844.39064-1-pstanner@redhat.com>
-	 <20240829141844.39064-7-pstanner@redhat.com>
-	 <20240829102320-mutt-send-email-mst@kernel.org>
-	 <CAHp75Ve7O6eAiNx0+v_SNR2vuYgnkeWrPD1Umb1afS3pf7m8MQ@mail.gmail.com>
-	 <20240829104124-mutt-send-email-mst@kernel.org>
-	 <2cc5984b65beb6805f8d60ffd9627897b65b7700.camel@redhat.com>
-	 <20240829110902-mutt-send-email-mst@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+        bh=U9D39ijUcX6E97R2kAMdljqeFOm8YJ4EqXsQjchNZiY=;
+        b=V1Jxurnui4epkpi7z8uBFyec7twVy4BT11fRcWXsR4stgX6UH+HswwjAUebwDAaHfu
+         E0ERz/TC4802JfltOVBI+9xQ0X21HG8eMM9uq53Fn9E1TX/QvJcNEKwvXtBQES8gS0EK
+         Sc8MCITk4Hiwsr1MB1T2ybs+VpYQIcuQvLLfqy3mncFVmDD8go6jkLLVSrg1qe7/x0vj
+         ZTNaDl2U55yCDG92p9f0RvzhbeiEzmXBP8pHO3Uq9Sg2qAh1wzWm/m70SxclS6JJUWy1
+         fRAQ1fRq6E3VCo3Rz1AOizM8uvoI2IFrAopU6x3iueFZPqJaJkJTpHczbA4Y6KCUznn1
+         lmSg==
+X-Forwarded-Encrypted: i=1; AJvYcCV0X2+NdNQ69r4E/QM5NFJLHytgn0zBriW9sU5mFlebqu3gOXs6kcRctpjdro31RQyrjdnKTFKdwhG96GE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDB7DG361qLmMsAq8ZH7E6jqBF6EQyCLA/n6wmeXAyk2hWk+pP
+	QMgiLgkMvL2tp27E0NAr+vsWsoK0zhL9TNQApaQS2mdWIbz52n2FEuzxQsyhPrQjVxj1A08Roty
+	8VoQ0/0gv1tw6I9L2ldb+RPFCjQ5BEbnGlFtDj0R6w16MCiqvKCMJmJQ=
+X-Google-Smtp-Source: AGHT+IH6dTGzDaHrL29Cb2aP05jI7sTyMfIbtjCfwK9fwwhTB7LcWl252s1jdPMPExyEnJ6/XTmAd/D8Zrder1VHeO2X1txxNHvh
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Received: by 2002:a92:c54a:0:b0:39b:2133:8ee5 with SMTP id
+ e9e14a558f8ab-39f40ed447cmr493765ab.1.1725005121545; Fri, 30 Aug 2024
+ 01:05:21 -0700 (PDT)
+Date: Fri, 30 Aug 2024 01:05:21 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000817cf10620e20d33@google.com>
+Subject: [syzbot] [cgroups?] [mm?] KCSAN: data-race in mem_cgroup_iter / mem_cgroup_iter
+From: syzbot <syzbot+e099d407346c45275ce9@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, cgroups@vger.kernel.org, hannes@cmpxchg.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, mhocko@kernel.org, 
+	muchun.song@linux.dev, roman.gushchin@linux.dev, shakeel.butt@linux.dev, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 2024-08-29 at 11:10 -0400, Michael S. Tsirkin wrote:
-> On Thu, Aug 29, 2024 at 04:49:50PM +0200, Philipp Stanner wrote:
-> > On Thu, 2024-08-29 at 10:41 -0400, Michael S. Tsirkin wrote:
-> > > On Thu, Aug 29, 2024 at 05:26:39PM +0300, Andy Shevchenko wrote:
-> > > > On Thu, Aug 29, 2024 at 5:23=E2=80=AFPM Michael S. Tsirkin
-> > > > <mst@redhat.com>
-> > > > wrote:
-> > > > >=20
-> > > > > On Thu, Aug 29, 2024 at 04:16:25PM +0200, Philipp Stanner
-> > > > > wrote:
-> > > > > > In psnet_open_pf_bar() and snet_open_vf_bar() a string
-> > > > > > later
-> > > > > > passed to
-> > > > > > pcim_iomap_regions() is placed on the stack. Neither
-> > > > > > pcim_iomap_regions() nor the functions it calls copy that
-> > > > > > string.
-> > > > > >=20
-> > > > > > Should the string later ever be used, this, consequently,
-> > > > > > causes
-> > > > > > undefined behavior since the stack frame will by then have
-> > > > > > disappeared.
-> > > > > >=20
-> > > > > > Fix the bug by allocating the strings on the heap through
-> > > > > > devm_kasprintf().
-> > > > > >=20
-> > > > > > Cc: stable@vger.kernel.org=C2=A0=C2=A0=C2=A0 # v6.3
-> > > > > > Fixes: 51a8f9d7f587 ("virtio: vdpa: new SolidNET DPU
-> > > > > > driver.")
-> > > > > > Reported-by: Christophe JAILLET
-> > > > > > <christophe.jaillet@wanadoo.fr>
-> > > > > > Closes:
-> > > > > > https://lore.kernel.org/all/74e9109a-ac59-49e2-9b1d-d825c9c9f89=
-1@wanadoo.fr/
-> > > > > > Suggested-by: Andy Shevchenko <andy@kernel.org>
-> > > > > > Signed-off-by: Philipp Stanner <pstanner@redhat.com>
-> > > > >=20
-> > > > > Post this separately, so I can apply?
-> > > >=20
-> > > > Don't you use `b4`? With it it as simple as
-> > > >=20
-> > > > =C2=A0 b4 am -P 6 $MSG_ID_OF_THIS_SERIES
-> > > >=20
-> > > > --=20
-> > > > With Best Regards,
-> > > > Andy Shevchenko
-> > >=20
-> > > I can do all kind of things, but if it's posted as part of a
-> > > patchset,
-> > > it is not clear to me this has been tested outside of the
-> > > patchset.
-> > >=20
-> >=20
-> > Separating it from the series would lead to merge conflicts,
-> > because
-> > patch 7 depends on it.
-> >=20
-> > If you're responsible for vdpa in general I could send patches 6
-> > and 7
-> > separately to you.
-> >=20
-> > But number 7 depends on number 1, because pcim_iounmap_region()
-> > needs
-> > to be public. So if patches 1-5 enter through a different tree than
-> > yours, that could be a problem.
-> >=20
-> >=20
-> > P.
->=20
-> Defer 1/7 until after the merge window, this is what is normally
-> done.
+Hello,
 
-1 cannot be deferred. Take a look what 1 does.
+syzbot found the following issue on:
 
-Your message is not comprehensible. Be so kind and write some more
-sentences.
-*What* is normally done? Sending patches? It's up to subsystem
-maintainers to queue them for the right cycle.
+HEAD commit:    20371ba12063 Merge tag 'drm-fixes-2024-08-30' of https://g..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=107a8463980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=6fafac02e339cc84
+dashboard link: https://syzkaller.appspot.com/bug?extid=e099d407346c45275ce9
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-> Adding new warnings is not nice, anyway.
+Unfortunately, I don't have any reproducer for this issue yet.
 
-What?
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/4a8763df1c20/disk-20371ba1.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/f9678a905383/vmlinux-20371ba1.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/ef6e49adc393/bzImage-20371ba1.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+e099d407346c45275ce9@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KCSAN: data-race in mem_cgroup_iter / mem_cgroup_iter
+
+read-write to 0xffff888114b82668 of 4 bytes by task 5527 on cpu 1:
+ mem_cgroup_iter+0x28e/0x380 mm/memcontrol.c:1080
+ shrink_node_memcgs mm/vmscan.c:5924 [inline]
+ shrink_node+0x74a/0x1d40 mm/vmscan.c:5948
+ shrink_zones mm/vmscan.c:6192 [inline]
+ do_try_to_free_pages+0x3c6/0xc50 mm/vmscan.c:6254
+ try_to_free_mem_cgroup_pages+0x1f3/0x4f0 mm/vmscan.c:6586
+ try_charge_memcg+0x2bc/0x810 mm/memcontrol.c:2210
+ try_charge mm/memcontrol-v1.h:20 [inline]
+ charge_memcg mm/memcontrol.c:4439 [inline]
+ mem_cgroup_swapin_charge_folio+0x107/0x1a0 mm/memcontrol.c:4524
+ __read_swap_cache_async+0x2b7/0x520 mm/swap_state.c:516
+ swap_cluster_readahead+0x276/0x3f0 mm/swap_state.c:680
+ swapin_readahead+0xe4/0x760 mm/swap_state.c:882
+ do_swap_page+0x3da/0x1ef0 mm/memory.c:4119
+ handle_pte_fault mm/memory.c:5524 [inline]
+ __handle_mm_fault mm/memory.c:5664 [inline]
+ handle_mm_fault+0x8cb/0x2a30 mm/memory.c:5832
+ do_user_addr_fault arch/x86/mm/fault.c:1338 [inline]
+ handle_page_fault arch/x86/mm/fault.c:1481 [inline]
+ exc_page_fault+0x3b9/0x650 arch/x86/mm/fault.c:1539
+ asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
+
+read to 0xffff888114b82668 of 4 bytes by task 5528 on cpu 0:
+ mem_cgroup_iter+0xba/0x380 mm/memcontrol.c:1018
+ shrink_node_memcgs mm/vmscan.c:5869 [inline]
+ shrink_node+0x458/0x1d40 mm/vmscan.c:5948
+ shrink_zones mm/vmscan.c:6192 [inline]
+ do_try_to_free_pages+0x3c6/0xc50 mm/vmscan.c:6254
+ try_to_free_mem_cgroup_pages+0x1f3/0x4f0 mm/vmscan.c:6586
+ try_charge_memcg+0x2bc/0x810 mm/memcontrol.c:2210
+ try_charge mm/memcontrol-v1.h:20 [inline]
+ charge_memcg mm/memcontrol.c:4439 [inline]
+ mem_cgroup_swapin_charge_folio+0x107/0x1a0 mm/memcontrol.c:4524
+ __read_swap_cache_async+0x2b7/0x520 mm/swap_state.c:516
+ swap_cluster_readahead+0x276/0x3f0 mm/swap_state.c:680
+ swapin_readahead+0xe4/0x760 mm/swap_state.c:882
+ do_swap_page+0x3da/0x1ef0 mm/memory.c:4119
+ handle_pte_fault mm/memory.c:5524 [inline]
+ __handle_mm_fault mm/memory.c:5664 [inline]
+ handle_mm_fault+0x8cb/0x2a30 mm/memory.c:5832
+ do_user_addr_fault arch/x86/mm/fault.c:1389 [inline]
+ handle_page_fault arch/x86/mm/fault.c:1481 [inline]
+ exc_page_fault+0x296/0x650 arch/x86/mm/fault.c:1539
+ asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
+ __get_user_8+0x11/0x20 arch/x86/lib/getuser.S:94
+ fetch_robust_entry kernel/futex/core.c:783 [inline]
+ exit_robust_list+0x31/0x280 kernel/futex/core.c:811
+ futex_cleanup kernel/futex/core.c:1043 [inline]
+ futex_exit_release+0xe3/0x130 kernel/futex/core.c:1144
+ exit_mm_release+0x1a/0x30 kernel/fork.c:1637
+ exit_mm+0x38/0x190 kernel/exit.c:544
+ do_exit+0x55e/0x1720 kernel/exit.c:869
+ do_group_exit+0x102/0x150 kernel/exit.c:1031
+ get_signal+0xf2f/0x1080 kernel/signal.c:2917
+ arch_do_signal_or_restart+0x95/0x4b0 arch/x86/kernel/signal.c:310
+ exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0x59/0x130 kernel/entry/common.c:218
+ do_syscall_64+0xd6/0x1c0 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+value changed: 0x00000522 -> 0x00000528
+
+Reported by Kernel Concurrency Sanitizer on:
+CPU: 0 UID: 0 PID: 5528 Comm: syz.3.488 Not tainted 6.11.0-rc5-syzkaller-00176-g20371ba12063 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+==================================================================
+syz.3.488 (5528) used greatest stack depth: 9096 bytes left
 
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
->=20
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
