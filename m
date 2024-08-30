@@ -1,99 +1,144 @@
-Return-Path: <linux-kernel+bounces-308228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF47F9658F0
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 09:45:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D47F9658F3
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 09:45:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6CA24B24F6F
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 07:45:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AFFAB1C24C0E
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 07:45:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C42416D4DA;
-	Fri, 30 Aug 2024 07:43:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54DE216190B;
+	Fri, 30 Aug 2024 07:44:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="K60/ssKV"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XZQ7phyN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2FD216D4D0;
-	Fri, 30 Aug 2024 07:43:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B3EB15C154;
+	Fri, 30 Aug 2024 07:44:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725003809; cv=none; b=NeAtiCcxocTK/M80eF5z/se0MO4No8/L37WKeoS0V+qf1y5zmJcG/bc3OjyBOIzPdFHwzfPQRWvkvfkFG3bvzwuoiHC/EKkFqvaYV5STA7Cp21lTfacPkzHSfQx8Q6LsVtdw8pQRhaMdKRblfVoObqY+JGcrAa+lMNHgU62VlTc=
+	t=1725003869; cv=none; b=FsFe1pnU9rX8lRzNPceyVlgX78/nkgn7N8bcQR+uO12aFp8Ncoajw/L/kafwuLqC7pcbj4YiAKDqpgeujTqE9YJQkU1CXh1aqUIJu0pc9a8WTyt8SAXqXiBW8dfMsUYXZXYuIBSZEVqnii9julfKcryKRROXd4bcv9kMBOnmiZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725003809; c=relaxed/simple;
-	bh=SGppUcr3XcDzCZT35NF9reldjtBurwIRnByI8W4UlK4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=E8cYqe8YRg6g/abBo7T5SeGesXWA0+CckwSjKpJRpPjQTgDFS9+cWCQs1lad4uTyfZSgrmBpZUDROARCm46AXFdJLFnenyfy/FoRn99XxNWEcl1A0FfZtwpVAqFVcFiYsa5MhNZgnkHsx73ToAwo8FmbrE1MTU+xGBsADRSUBjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=K60/ssKV; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 5B88D40010;
-	Fri, 30 Aug 2024 07:43:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1725003805;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UYDF/qFiFyKUZMLDs2FqY4OyzGLxagNS91tJHlcxSSE=;
-	b=K60/ssKVG65HW2bGYxyZ7uSdjk+XLrBgxnduxGwqi5TuDvKQTjFLKJPdM7N6OvaR1ChJPs
-	tgVdZLy8GNaBLbkG7f4bItSegRW4GRw9n72ClsCR/IcDoaHXmBLf+6h2b6P2Bi2cfetoY2
-	witJju4T0r3cZzNP8nm6TnfrLVsN9YQpbPtWFP0d1oqwzlfttRkvV3MzVfgJdL5rky1hSF
-	WqUhniEoykKkxctojqPmKwE4uMWoV3Tt2cjhtjP9HgrJhSbF4LkxubIYpX8jbGP1127ind
-	9V853RFiwqLdnEzMkRi1n/gBIFbE0o6520zLYvHCBNcNHMwHVPLhJzD3dG8NLw==
-Message-ID: <c16370e5-2b65-4288-9f99-50e8faa9c8ea@bootlin.com>
-Date: Fri, 30 Aug 2024 09:43:23 +0200
+	s=arc-20240116; t=1725003869; c=relaxed/simple;
+	bh=ab9E8yRsVsHNSM1VcLw6wnCuw/OKKKTdW168xZIgIJ4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=RW/Ur0TXMGZeinaiRxtKJ6z9jBXLrwl4Zx6SHX0P77ck2bBinXPDLjj4tM0xbXHroyo/mIQz3RimRbB+tuh96QyPyqcRNLkv2y8i2K5idnWzAS0C+4nVrihC3nierTpS+cx4S7L8QbUeaGkm0pOgCkcu1iHeeRyCaNlTPQVpxH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XZQ7phyN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 242F5C4CEC2;
+	Fri, 30 Aug 2024 07:44:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725003869;
+	bh=ab9E8yRsVsHNSM1VcLw6wnCuw/OKKKTdW168xZIgIJ4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=XZQ7phyNKtZDX4or/EXnonJV+IXRySCOITTQgFC3nAfJkGcwv5cBgyOgzkghlE4T/
+	 OPVQVey6bW+y090lIzs3/L1XoZpsapLBMxQRlC8SqQppy3WB2OvE8gOsFqvq0eC9xr
+	 VarKorz25elSSfFj73qUjYePvecRFUhdsdbdcIcjFNkby7Kc6QK0ZPxvXZyf6gtjxe
+	 ob/f7E6TV+hw536dhN5WAc8tEU+BV/AOu0mf26wOXSEGHRa+N23KIh1wFha6iYgWxQ
+	 scs4aVkAs+GB8TsO9IaAx4sEdw8CiA43jc+qvehsIXhWdBbdqEWD6OS9U58ojgQAul
+	 W6e8YActPrU7A==
+From: Alexey Gladkov <legion@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org,
+	linux-kbuild@vger.kernel.org
+Cc: Masahiro Yamada <masahiroy@kernel.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Alan Maguire <alan.maguire@oracle.com>
+Subject: [PATCH v4] bpf: Remove custom build rule
+Date: Fri, 30 Aug 2024 09:43:50 +0200
+Message-ID: <20240830074350.211308-1-legion@kernel.org>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <CAADnVQL4Cy-F_=RJy_=3v97mfaMRWGp54xN-t9QzOqY3+hoghg@mail.gmail.com>
+References: <CAADnVQL4Cy-F_=RJy_=3v97mfaMRWGp54xN-t9QzOqY3+hoghg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] wifi: wilc1000: fix potential RCU dereference issue in
- wilc_parse_join_bss_param
-To: Jiawei Ye <jiawei.ye@foxmail.com>, ajay.kathat@microchip.com,
- claudiu.beznea@tuxon.dev, kvalo@kernel.org
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <tencent_466225AA599BA49627FB26F707EE17BC5407@qq.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>
-In-Reply-To: <tencent_466225AA599BA49627FB26F707EE17BC5407@qq.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-GND-Sasl: alexis.lothore@bootlin.com
 
-Hello,
+According to the documentation, when building a kernel with the C=2
+parameter, all source files should be checked. But this does not happen
+for the kernel/bpf/ directory.
 
-On 8/29/24 10:17, Jiawei Ye wrote:
-> In the `wilc_parse_join_bss_param` function, the TSF field of the `ies`
-> structure is accessed after the RCU read-side critical section is
-> unlocked. According to RCU usage rules, this is illegal. Reusing this
-> pointer can lead to unpredictable behavior, including accessing memory
-> that has been updated or causing use-after-free issues.
-> 
-> This possible bug was identified using a static analysis tool developed
-> by myself, specifically designed to detect RCU-related issues.
-> 
-> To address this, the TSF value is now stored in a local variable
-> `ies_tsf` before the RCU lock is released. The `param->tsf_lo` field is
-> then assigned using this local variable, ensuring that the TSF value is
-> safely accessed.
-> 
-> Fixes: 205c50306acf ("wifi: wilc1000: fix RCU usage in connect path")
-> Signed-off-by: Jiawei Ye <jiawei.ye@foxmail.com>
+$ touch kernel/bpf/core.o
+$ make C=2 CHECK=true kernel/bpf/core.o
 
-I guess you are right, that indeed looks like a miss from 205c50306acf. And I
-guess it needs wilc to receive packets with P2P info in it to trigger a RCU splat.
+Outputs:
 
-Reviewed-by: Alexis Lothoré <alexis.lothore@bootlin.com>
+  CHECK   scripts/mod/empty.c
+  CALL    scripts/checksyscalls.sh
+  DESCEND objtool
+  INSTALL libsubcmd_headers
+  CC      kernel/bpf/core.o
 
+As can be seen the compilation is done, but CHECK is not executed. This
+happens because kernel/bpf/Makefile has defined its own rule for
+compilation and forgotten the macro that does the check.
+
+There is no need to duplicate the build code, and this rule can be
+removed to use generic rules.
+
+Acked-by: Masahiro Yamada <masahiroy@kernel.org>
+Tested-by: Oleg Nesterov <oleg@redhat.com>
+Tested-by: Alan Maguire <alan.maguire@oracle.com>
+Signed-off-by: Alexey Gladkov <legion@kernel.org>
+---
+ kernel/bpf/Makefile       | 6 ------
+ kernel/bpf/btf_iter.c     | 2 ++
+ kernel/bpf/btf_relocate.c | 2 ++
+ kernel/bpf/relo_core.c    | 2 ++
+ 4 files changed, 6 insertions(+), 6 deletions(-)
+ create mode 100644 kernel/bpf/btf_iter.c
+ create mode 100644 kernel/bpf/btf_relocate.c
+ create mode 100644 kernel/bpf/relo_core.c
+
+diff --git a/kernel/bpf/Makefile b/kernel/bpf/Makefile
+index 0291eef9ce92..9b9c151b5c82 100644
+--- a/kernel/bpf/Makefile
++++ b/kernel/bpf/Makefile
+@@ -52,9 +52,3 @@ obj-$(CONFIG_BPF_PRELOAD) += preload/
+ obj-$(CONFIG_BPF_SYSCALL) += relo_core.o
+ obj-$(CONFIG_BPF_SYSCALL) += btf_iter.o
+ obj-$(CONFIG_BPF_SYSCALL) += btf_relocate.o
+-
+-# Some source files are common to libbpf.
+-vpath %.c $(srctree)/kernel/bpf:$(srctree)/tools/lib/bpf
+-
+-$(obj)/%.o: %.c FORCE
+-	$(call if_changed_rule,cc_o_c)
+diff --git a/kernel/bpf/btf_iter.c b/kernel/bpf/btf_iter.c
+new file mode 100644
+index 000000000000..0e2c66a52df9
+--- /dev/null
++++ b/kernel/bpf/btf_iter.c
+@@ -0,0 +1,2 @@
++// SPDX-License-Identifier: (LGPL-2.1 OR BSD-2-Clause)
++#include "../../tools/lib/bpf/btf_iter.c"
+diff --git a/kernel/bpf/btf_relocate.c b/kernel/bpf/btf_relocate.c
+new file mode 100644
+index 000000000000..c12ccbf66507
+--- /dev/null
++++ b/kernel/bpf/btf_relocate.c
+@@ -0,0 +1,2 @@
++// SPDX-License-Identifier: (LGPL-2.1 OR BSD-2-Clause)
++#include "../../tools/lib/bpf/btf_relocate.c"
+diff --git a/kernel/bpf/relo_core.c b/kernel/bpf/relo_core.c
+new file mode 100644
+index 000000000000..aa822c9fcfde
+--- /dev/null
++++ b/kernel/bpf/relo_core.c
+@@ -0,0 +1,2 @@
++// SPDX-License-Identifier: (LGPL-2.1 OR BSD-2-Clause)
++#include "../../tools/lib/bpf/relo_core.c"
 -- 
-Alexis Lothoré, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.46.0
 
 
