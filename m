@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-307861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BEBF965417
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 02:37:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FF48965422
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 02:39:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 242D4284FBB
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 00:37:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B238E1F23FAD
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 00:39:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BD514428;
-	Fri, 30 Aug 2024 00:37:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FDFA23BE;
+	Fri, 30 Aug 2024 00:39:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="CyM0juYX"
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="S2E4hCKJ"
 Received: from sonic308-16.consmr.mail.ne1.yahoo.com (sonic308-16.consmr.mail.ne1.yahoo.com [66.163.187.39])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37F7E23BE
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 00:37:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 571233FF1
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 00:39:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.187.39
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724978256; cv=none; b=X3xiQI+15iRBCqFRaYpzOiVzEoR4V4nO/8f0Srl74CBEXzvfZNPngIidiV1Fh8LeTC/G2DbS+qb/Hh/JpHCzIzkQ9354EG9j2KlxHKnQa3Icm1ebfvIEd+BUv6GyTFX0GpoE/GedqTxN6uy/NWP1LX8G7+LcgTXYYoQ/2ko/r04=
+	t=1724978351; cv=none; b=EHUqZ9tn6wIPcrQ9ymV3Sc2D5SNQemcx3zsbGjqE3uiu++8wFGvJEeB640isGTBi8mif+PU/iKnkwNwTqDFI3k8rDc3U2nBS9tDk/x6bbSt1erLDu9T5NFLlXTEq33ayPje7+5h+612y/Ny0y31SlG6wcVhWaR7/gn4nWcxGN84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724978256; c=relaxed/simple;
-	bh=97NwEi/HLiTvn4HtJu8laGSoEHnPmQULTM6fH20IBnc=;
+	s=arc-20240116; t=1724978351; c=relaxed/simple;
+	bh=pJHWjaiTkXt7S881LFOol1koX7x6cURvzQhGiG2TnJw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=n2xBzLRfpnWzCcJo/Aj8MpacJ6nzheoJ40M5F9HU5cFp3EVvYQo+2FbBxaQuroUG9Ek6ZPlExYfH4v/JyjnLOlvWP0O8PQ5SauNw1VyRsYKTKeMLHzRAwKbTK+pgmm/PWyMi6fpTO3DGgrwQRqdAriMb3d3bdRMXxr09+ZkSA1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=CyM0juYX; arc=none smtp.client-ip=66.163.187.39
+	 MIME-Version; b=FSGrr4gfK0MAQi8SGESpDzdKOJP6fQPhPioQDL40eNgKpAFLY7K2ERn2H0oAn1cavneunQH/JDr+yzu9o+9jQqGD6e7kFi4ySvqkSx/Ik6M8G4vjE0qSMVwNL7+Oh8Tp3U7+6RLGR6Sbd7sv/nZygMmqP8o99AWJYqWw9kr1sTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=S2E4hCKJ; arc=none smtp.client-ip=66.163.187.39
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1724978253; bh=/mjQGqO0ODaV6PNm1DLRoitVFkvqws60YMTQzri2i30=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=CyM0juYXAtctLGqnxq2wrt0GQoHHckVDNNeX4hPIf3cn7M5cV8JZ5Qore1qnWi6YUFyChVPqOpgOPkwB0NWEsRh8BfN+AOrg9Y/a5vpZew4OqVPSSPQ/zaYnF+krrGj90N/0sx3Pk8K9zMCnjQdXQFFMRe+Ch6cTx02JmvMfuHpfTIyQDWQgl5tlTnURbvn3wzu9CZ3PzY4Cv3t+v1pXYghVX79BdLF7iTDuyzqSclkJnrbnl36eliR10j2gx7VvrOeXa4EG3tdWxlBMnQ0PHWFPW9STNM1iXFLFx/Qu+XT9Do6r11HBkhFn/5G+hNwZ8HJEflKuC4CKGOa+6huB6A==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1724978253; bh=jBNw2ic06F5C1Kg9IntO5T1gZOc8fHtGVkbcjeUmikL=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=lo3XfDK58RQlXh0HKMNcMw+17U4jbRuNV6oYeHBuLbwS84zQqjxx9jTIvLXZvibfVhTv3zKzPEyYkRJOAeNUAUihvA8m3dEu9F49hXGamhX7eSmkR0IU9SkBbrNeBKU8qlnCRj77xc9rpy41n1/wS85qMQ4/QIsdKu5cfkINkcXRhKElu1jErd72sz9UvOFHvCQ5MWk5kgA/YAKhIxssGkP2aAKwI3uBEukQelj6ygR70ZOETaUXJDF5uke+YP6wLnJo7WIRG2L6t/LsTBjIpzPib+F5g4rs4upoiZ3UI9wMr78ZZjMC5l5M0gowmT1A/anomVvHRgTfzbSzE9ZO1Q==
-X-YMail-OSG: 9gwFqNAVM1nd2E2A31esWDjNyrjZmYbtVeTlRz5aOeqqMWMyZN1pVDA6.ezRgay
- 9h8CMGNCaMTDX8SJGtP99qFtWrMvSU8n_s6wbdebIDPdOMneM0QKlYc36IOuA4MUH1uS347BveCL
- 12.tUQuk6Tg2ZLA3lIeTvDWll.zwr2pk3boqXXIcR.7iUzmmdGri8SQE_Gxut8xdI9Ug.H.JyLaW
- CI6sGCtZinrAG0obJjU7qy7tfIBKrQOgzeLNCrVNl8NF2SDtunb0R9eyMfSeSzYIB5pnMED3lQWF
- pN6Dyt88UwnxgjZJKiAru4LH85_FxT7rYb9a7xvAqccJ4YPPtsJHUv1rFsmBw3BUGcNJ_tjOViPd
- 9PMpgrl4Fhwo3HvSm9J813UshbKwPOgQp2.rfiICaf1jTidmDSeoRWKpFXkwaipy51sX3DA8yLJN
- DbogqYV510uld0P.aLXLXKOuKfcueOaZYe9MPLAZlHJ1JfaZBOV1vyha92rCX.hmJ8YNncqpWI1K
- WJdU7cvs2aZ_xij8sEh59BpGqH2ghbqzyIfCSqOqmDQ51t.7d3kaTmS76bmG8z2sCkQaeyK7Wp4_
- 0d9B9qFYZoQGkx7uH_43Qdxcw_NE6gMQZJu.i1O6CHGJgURJaD1ay64wLhkNS2JlXPfth_5u1wIO
- LvWgsqH5ZJdusq43b82K5FCtKjHMSd_nkvfhIuJzHm2bfP.8bc5o4kPdsiJWFSz26FHn1pUa5l5S
- hVhNCwai6NGAsqmbwlMQdfBb0HCpOfoiUwGO8CezpiW1V3gdfSlK1PHnjCXAEpBNQR9h23P.RcJg
- 9bhvMj2HvjZQMYUPbakO0P7VXap8hgPve.IftfTkHvrp.sCgg_vK0wWijIUjljFrX8dIT8X4xMzW
- jtDvs416ZGmAVUeieWhktuF1FEpgpDrPQJEx3zxFnmJYXEF2Rjwc1aGrsrVrhE54ss7Q6ak8eAdt
- 4ImFTjTuL63SWnmf6KtfZpjPoxFVUmk7OHgcAswyawCY2MJkkx9eT1dym1EsZCW0cMqLdxLsrI25
- 6ZLN4i6oWMLbOnvJ.qofSutLMhVbqZg_lPNNIbW0et6j6wj.qplNc8jKT7hO3yepywM.zuqCM435
- vT0DnWeGN7fjmbjQUkLd2VrDmnU704g559lf6XS.f6.5JNNAYqRc1cw5l51uVBNbv9sEcXlMdZxT
- .NRi66TlnSVWalU95oyI7BazZKmU.BUKlA1LKVd10w6asC8Ec8lpM65P.EpEKl4kku09xfmclbF_
- 8Og9y.st4Ala2656uc6F_OviishCJBD2jNjs8i3Ff9Glnn002u3RR4Wqe54w16UOT44vMLwQ_.3g
- p6dnDkU1LNXiMOC.Aqu73CWN7GiGIx2qTT7hHQTvRQqBrqmQYiw4XNfesAaVq44oedanGCB5Ip2g
- D8yGJs1b8RQ2T4dqCrqqRijOaJ2jMcc_4xkmMGLLi16_MFNdFEWkbAIKIYFuIk_XiRKJPDvAJpDS
- amPqh.NpALm4gj4ed0LL.jvpJMlppnloe0c5nm6RPi2sAgV.PO5fRFB7O78eItUZfvYpqzY1GVZ_
- EWz1fmh5uIXnXfpnw6sy3GVzeYIUuznweC40vqXq7TZBCpLqw5zNwtkj5SD4L0E_VvdxS0.e6O0Q
- apvT5g3nRsftfr_seMozHl7QZjxQ4earJ7ICHYDvlm7rx3mnC.LV5IN7O8ytEA1VTR3dZ1Nk1hsR
- igt_qvMrnyxIjUMhrXZrId..9Sb_NxiUS3jz9yqP3_d9Qy.t_K0FsLcz1kNu9YwUK2fAJNvZbpnN
- ofDVMR35hqL1xs8duNaQiG4ioUb.1K0zIdfw5mBIhMVsH9byXy9rRyF5rDM5PJ5TJ62qUfzNm7j3
- bDZ3kEtb_TNWR4V4aUc7TeMQOhq9dQ_B.Zo4SzLmqUz1fZ_wlFG001bHFEzmX9VN0QzV7s9HlfAM
- 7NxZ2jQrnitZzmwsxxw89i6Xc7umg6T4EyMv4.WUaEG1frrGP3PV7h21UCM_RLCfFoyg6SOLrLhV
- .mHSXppGiTQSOb2mk6KguT33oA1mxRDQ_9YiwvthMrGl6FbKcwtR7QP048thaTAAbnI0clSuIM8c
- 0ijKF_yXVEsw65tWwZE2_EGFnDDIuz1IUbWA87dNPd5kTdPP2Z8Z21T.cEM34hqQ47aWHda5qA0b
- Mr7X.E4BjF8XWP_Es_8UcUfOhtLHr3D6WUQgWswU1gEo_J5BkUZNdkTDShfcbvH9nEJphwzUnjZz
- 2B2BfRiD7TI6Im.Yahe5S.7XJy_lSSFKifdVO9376GTf7Ybka4UyhbqBDYxQgj4KxxWO4OvsGLqX
- nL33qydMv1PO8C1Dg91nYIG1hl8oHsqv9rQ--
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1724978348; bh=2a9n7n90q8lbb8Znd4oPOhNXPgdgICjDBwLf6y4cXd0=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=S2E4hCKJTYsRSTVB7o2Fnkq429rAiX5BubaFNT9cN78yucqa10Rgn+SSxuwOv3D6A8c0TKkfYA/EvP/RNFherdubhVRa/2uAN3khLMKiNJu5RrbAxeMrXQKmiP0i7bvh/BLgV+WrCtQQ7Hq+9kffn7fowJGZshU3lRScovpWi7in4eYqYvCD71hCqrxHrmL44JmNQvup5CDJE5x4AYqgdb6FvDQP5knuL9bOSF+7wQBUdZvxzf+t8eoltYUe8fWM+g/m5clowe0l4jtlC9jZkU/kFCVIttY6e+h7Zjya/f1MiX19oDDteGTbodgVfFG9OPnz3L10SFEC/C0p9Y04gQ==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1724978348; bh=WBqc7csfuYkXjYkQqnY26fmaes7RIrzBBocMd8ci4MY=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=TLMiJjW6fMgT6SbGqr4rbIFdS6uhx5hDC8hwi1nS2rkJW1j0Km+8KlEnteh3dBJkaQEL7OjegHu/wyVCbUrt4G/LjLrGFkyMnU8/INiLj7MO6uCpoELHNQ94MxVrVUekcTC3Y0HIOa9jczTIH4yRhtl5WaBGljY0tGxiHQ0EVjPG8ss8+ZAIENn6qX/Pb0UaURN/5LgbxAtRYgxxvAZ40sse+wfZ3TkOuRRiITFrANNeWHl3DLifWX7u0l6rQA0I5WeifEPoDoz5LqgS7EO8lmxWs2Ybh6ANHYrFY8hkgooa3biTOna0247Cmb2VIaIQeklDwy/jAIrOyewiHS8A7w==
+X-YMail-OSG: k8nbyVMVM1k1Wx383cE6.UWnuhZ2Ru6iRZXuEmL5qHMIdQ5iwjbk3Gl2WG2uppw
+ C0fFE95.TVqyCDpSIhD2dZOwW7CfBwhgz0Pq87CiMgD5DcNM7X5pU51fHoFFBsfIfjuuCP8IH2O2
+ xicOZclVgFgNDPHWw7zuZgMmg9jpf8Du5Ymc5YwAtW6r1h5DquYnhFQzArPkjTPIYmbJFJUfA5i3
+ UOMP_eiOwg7JZclP1bKIEeveXPktg1VHxI5ITZk5FeO1xTtJ7ay2YBr7vQbmPVfw.2XkW52Mn4Em
+ TbwRbyzakuhD2ml3CT_Tb3bfpy9cvTz2W6K3PDst4qiJ4twnvmjW_JuoizElXIeKPbEmf7oit3mR
+ CwFhA2F6iwrDQj29dxNw.83.nYWNyExr10PU0AOSAOnqkcyF5F_oxHn5VvgUQ_h1QUc9UBrLIh7v
+ h1.4zYRlxDb0vvUP5B6n_EAAqFt839IEFj_rk0UlLYWsj2ih.EUijkWnUhCGBI5TKQnjqdqyI_mJ
+ j6KIXmgseCRIVv9yFHGsUJJlhxQc5._nKADkT_Q6An_Z.8.tomH0h9VC.kut2ELOVbwqNHWU0FMq
+ yWhJD22jtfk5dqYQwWx0FPtCr3kSTFHCHoJROY8nXEH3AKPHEK585fdcOTqFbY5qSDTXZME4RetC
+ jcAx8yCriAtlTwlwSXccwvq9v8e4.7Mz8EPJjzpte.HzDL.HmZhaaO1eLv9890gibN9toORL1L5W
+ 58nENx4xNFVVRVT41y20XG6vB3Q0gO9VcyYOCTU0jY2Z8z1LiNJD1WVJpUF3zLjL_KKozVeX6LB5
+ LDclAoRhZHOwMGbpeQW6qmhYONlZ17OxVUJeeu4YybPNQHpMiOZkPO5x.uFAUvtMWIyO6KIH4g9s
+ xGfi5bnkbYrKCgM0IAekF.lxYDgZ0LFZouaZalOg7VpJunFs3y4vZzbXtSJDFyRPdNlliRMv2yIZ
+ hg9Eo4bZNkAsPzNyzC3Uk_7J3e._HtAg17xPeZYiK9F64GAjBl_qc9Xwh58Abt7UR0CYx6Ljuyri
+ 9gXwxBtx23CQSecfqYnKfdirAQnWzkDgjaReFT3N_eR0TsfTFFTtNHyF8uKkBOsGumVOWC41pT2V
+ ._AY9i1caUJgM43MNYHAKtgyUrAByy5A5imgq7GAqShrF4pyVLsh4FOeEvmWmPRxFGSX9VTBY2o.
+ u4cvvh71neY9UzOSXl8dXEkeLvxmANwxTAuHSbWEtahiUAibCVSDuYQUXrIITpgf2RuhRhEG2wC.
+ L_QEJ.jbTttTBDCUoHEqhL67njn2kgKU4EtJOSWUdolowrq3aaMM4kfrkgm5Rerf_krSOCLKMLPZ
+ lOG13i0STtPiVoFfffD.eVYCfr0alZzOONLgn6Bxs2f_RfAdgx25oZDBe8MpR3KlFfZi1IFRIsTs
+ Yr7i3gW4CehUL23ToHkCwqsbSaWA.1.BcD_YeGdm03Ci56KC6cUsj1rDQ1BTB3Q.To6NQe.cI.r_
+ eoLxmeNR8XNVlb5oPS5M5uXn2Wg6kFRvzckl8qytX182xGHEShg1FneX0WGMXjxGko2VuenoCwOX
+ Qaa5AhQoTbr8v_RQQ1tFcwLSXbcVM7.teyx2tmSTBjbcY7AjQ8psDRaNJ5rdjfF9MJleUkU71OSR
+ hNBFdtRlQfhEDKqsOsCWn.zik5gCnlkz5h7cklctrjoDNbVuIOAW6oBlIuGuOXRcNPHoJCksqeyP
+ r9S5.lwsdxDyMYSmvAVnRtcTNW2_4J_gfMwf9rSP99yhsKgaQ._zQfKsA3JnDYYAmn5adt7e.U5m
+ .tD8dIcFlRM6h6BfNFV6LiOg61k9NP5efKSoW7H8vZCyynIqEzQmzDJuylm4MwjiRU5pVB0pCbGl
+ gOhId0IoAbSoc4pxD.hluqP7SvGRm6.Ko4bl9cjLkdUVQhxiwDpaoTnf3MBTC.HK46aJtRrBmll9
+ lBeWRnwHVn0SHWo_f3UW9yVmdWGAtOMkQOsdn1BOlWHYkoLBf3x8Npsc8GujPfN0w6Z1bSM22glW
+ abTMSjQYeipvkAgWudWDEW35tGtt4b5Pbgk4bC1ic.QptgDG92TzmzlJ_l.fRQEDiDLEtP8.6RVK
+ 4xq5ep4F14uLVP7Q.8RUT5ve_5.wb4pqyMqWluvbrUadkOV4mlbwqWzqaHv.3.BZshuTY7CFA61C
+ e9e3SEV5rq9W6VOedp6lm5bl2sa39Vd4UMasGIzoH24H3_lFCc4PDTjKEUkDKfz3qJyUp2Ro.oGI
+ YIeaFY8jpm9cKCeFGKw1We667h7PbMnchD2M_X.h10CR568XgoYv2L98rp8141H7X0azZYKB2Ntt
+ M3tXooysq5g80iXpKj3oBYa3peTTRoBn6_D3tIA--
 X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 47e835f7-f3de-48a1-9acf-0c4e25ad667a
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.ne1.yahoo.com with HTTP; Fri, 30 Aug 2024 00:37:33 +0000
-Received: by hermes--production-gq1-5d95dc458-jflr5 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID f4d7fb0b22ad2b46e66df0183031cfdb;
-          Fri, 30 Aug 2024 00:37:30 +0000 (UTC)
+X-Sonic-ID: f53caa68-4b28-49c0-9c20-d7287074aed0
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.ne1.yahoo.com with HTTP; Fri, 30 Aug 2024 00:39:08 +0000
+Received: by hermes--production-gq1-5d95dc458-jflr5 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 35a934a1749a25fd4473b6654327c16f;
+          Fri, 30 Aug 2024 00:39:04 +0000 (UTC)
 From: Casey Schaufler <casey@schaufler-ca.com>
 To: casey@schaufler-ca.com,
 	paul@paul-moore.com,
@@ -81,11 +81,10 @@ Cc: jmorris@namei.org,
 	stephen.smalley.work@gmail.com,
 	linux-kernel@vger.kernel.org,
 	selinux@vger.kernel.org,
-	mic@digikod.net,
-	linux-integrity@vger.kernel.org
-Subject: [PATCH v2 08/13] LSM: Use lsmblob in security_inode_getsecid
-Date: Thu, 29 Aug 2024 17:34:06 -0700
-Message-ID: <20240830003411.16818-9-casey@schaufler-ca.com>
+	mic@digikod.net
+Subject: [PATCH v2 09/13] Audit: use an lsmblob in audit_names
+Date: Thu, 29 Aug 2024 17:34:07 -0700
+Message-ID: <20240830003411.16818-10-casey@schaufler-ca.com>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <20240830003411.16818-1-casey@schaufler-ca.com>
 References: <20240830003411.16818-1-casey@schaufler-ca.com>
@@ -97,208 +96,90 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Change the security_inode_getsecid() interface to fill in a
-lsmblob structure instead of a u32 secid. This allows for its
-callers to gather data from all registered LSMs. Data is provided
-for IMA and audit. Change the name to security_inode_getlsmblob().
+Replace the osid field in the audit_names structure with a
+lsmblob structure. This accommodates the use of an lsmblob in
+security_audit_rule_match() and security_inode_getsecid().
 
 Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-Cc: linux-integrity@vger.kernel.org
-Cc: selinux@vger.kernel.org
 ---
- include/linux/lsm_hook_defs.h       |  3 ++-
- include/linux/security.h            |  7 ++++---
- kernel/auditsc.c                    |  6 +++++-
- security/integrity/ima/ima_policy.c |  3 +--
- security/security.c                 | 11 +++++------
- security/selinux/hooks.c            | 15 +++++++++------
- security/smack/smack_lsm.c          | 12 +++++++-----
- 7 files changed, 33 insertions(+), 24 deletions(-)
+ kernel/audit.h   |  2 +-
+ kernel/auditsc.c | 20 +++++---------------
+ 2 files changed, 6 insertions(+), 16 deletions(-)
 
-diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index 06c60f1aefa7..4fd508841a6e 100644
---- a/include/linux/lsm_hook_defs.h
-+++ b/include/linux/lsm_hook_defs.h
-@@ -175,7 +175,8 @@ LSM_HOOK(int, -EOPNOTSUPP, inode_setsecurity, struct inode *inode,
- 	 const char *name, const void *value, size_t size, int flags)
- LSM_HOOK(int, 0, inode_listsecurity, struct inode *inode, char *buffer,
- 	 size_t buffer_size)
--LSM_HOOK(void, LSM_RET_VOID, inode_getsecid, struct inode *inode, u32 *secid)
-+LSM_HOOK(void, LSM_RET_VOID, inode_getlsmblob, struct inode *inode,
-+	 struct lsmblob *blob)
- LSM_HOOK(int, 0, inode_copy_up, struct dentry *src, struct cred **new)
- LSM_HOOK(int, -EOPNOTSUPP, inode_copy_up_xattr, struct dentry *src,
- 	 const char *name)
-diff --git a/include/linux/security.h b/include/linux/security.h
-index b28f2f7fe4ef..4fe6f64cc3b4 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -440,7 +440,7 @@ int security_inode_getsecurity(struct mnt_idmap *idmap,
- 			       void **buffer, bool alloc);
- int security_inode_setsecurity(struct inode *inode, const char *name, const void *value, size_t size, int flags);
- int security_inode_listsecurity(struct inode *inode, char *buffer, size_t buffer_size);
--void security_inode_getsecid(struct inode *inode, u32 *secid);
-+void security_inode_getlsmblob(struct inode *inode, struct lsmblob *blob);
- int security_inode_copy_up(struct dentry *src, struct cred **new);
- int security_inode_copy_up_xattr(struct dentry *src, const char *name);
- int security_kernfs_init_security(struct kernfs_node *kn_dir,
-@@ -1046,9 +1046,10 @@ static inline int security_inode_listsecurity(struct inode *inode, char *buffer,
- 	return 0;
- }
- 
--static inline void security_inode_getsecid(struct inode *inode, u32 *secid)
-+static inline void security_inode_getlsmblob(struct inode *inode,
-+					     struct lsmblob *blob)
- {
--	*secid = 0;
-+	lsmblob_init(blob);
- }
- 
- static inline int security_inode_copy_up(struct dentry *src, struct cred **new)
+diff --git a/kernel/audit.h b/kernel/audit.h
+index b1f2de4d4f1e..6c664aed8f89 100644
+--- a/kernel/audit.h
++++ b/kernel/audit.h
+@@ -82,7 +82,7 @@ struct audit_names {
+ 	kuid_t			uid;
+ 	kgid_t			gid;
+ 	dev_t			rdev;
+-	u32			osid;
++	struct lsmblob		oblob;
+ 	struct audit_cap_data	fcap;
+ 	unsigned int		fcap_ver;
+ 	unsigned char		type;		/* record type */
 diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-index 1f05445978f9..eb1c64a2af31 100644
+index eb1c64a2af31..886564532bbe 100644
 --- a/kernel/auditsc.c
 +++ b/kernel/auditsc.c
-@@ -2276,13 +2276,17 @@ static void audit_copy_inode(struct audit_names *name,
+@@ -698,19 +698,15 @@ static int audit_filter_rules(struct task_struct *tsk,
+ 			if (f->lsm_rule) {
+ 				/* Find files that match */
+ 				if (name) {
+-					/* scaffolding */
+-					blob.scaffold.secid = name->osid;
+ 					result = security_audit_rule_match(
+-								&blob,
++								&name->oblob,
+ 								f->type,
+ 								f->op,
+ 								f->lsm_rule);
+ 				} else if (ctx) {
+ 					list_for_each_entry(n, &ctx->names_list, list) {
+-						/* scaffolding */
+-						blob.scaffold.secid = n->osid;
+ 						if (security_audit_rule_match(
+-								&blob,
++								&n->oblob,
+ 								f->type,
+ 								f->op,
+ 								f->lsm_rule)) {
+@@ -1562,13 +1558,11 @@ static void audit_log_name(struct audit_context *context, struct audit_names *n,
+ 				 from_kgid(&init_user_ns, n->gid),
+ 				 MAJOR(n->rdev),
+ 				 MINOR(n->rdev));
+-	if (n->osid != 0) {
++	if (lsmblob_is_set(&n->oblob)) {
+ 		char *ctx = NULL;
+ 		u32 len;
+ 
+-		if (security_secid_to_secctx(
+-			n->osid, &ctx, &len)) {
+-			audit_log_format(ab, " osid=%u", n->osid);
++		if (security_lsmblob_to_secctx(&n->oblob, &ctx, &len)) {
+ 			if (call_panic)
+ 				*call_panic = 2;
+ 		} else {
+@@ -2276,17 +2270,13 @@ static void audit_copy_inode(struct audit_names *name,
  			     const struct dentry *dentry,
  			     struct inode *inode, unsigned int flags)
  {
-+	struct lsmblob blob;
-+
+-	struct lsmblob blob;
+-
  	name->ino   = inode->i_ino;
  	name->dev   = inode->i_sb->s_dev;
  	name->mode  = inode->i_mode;
  	name->uid   = inode->i_uid;
  	name->gid   = inode->i_gid;
  	name->rdev  = inode->i_rdev;
--	security_inode_getsecid(inode, &name->osid);
-+	security_inode_getlsmblob(inode, &blob);
-+	/* scaffolding */
-+	name->osid = blob.scaffold.secid;
+-	security_inode_getlsmblob(inode, &blob);
+-	/* scaffolding */
+-	name->osid = blob.scaffold.secid;
++	security_inode_getlsmblob(inode, &name->oblob);
  	if (flags & AUDIT_INODE_NOEVAL) {
  		name->fcap_ver = -1;
  		return;
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index 33bdbd031673..35a8d3435507 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -649,8 +649,7 @@ static bool ima_match_rules(struct ima_rule_entry *rule,
- 		case LSM_OBJ_USER:
- 		case LSM_OBJ_ROLE:
- 		case LSM_OBJ_TYPE:
--			/* scaffolding */
--			security_inode_getsecid(inode, &blob.scaffold.secid);
-+			security_inode_getlsmblob(inode, &blob);
- 			rc = ima_filter_rule_match(&blob, lsm_rule->lsm[i].type,
- 						   Audit_equal,
- 						   lsm_rule->lsm[i].rule);
-diff --git a/security/security.c b/security/security.c
-index b6e28e20ac51..c2be9798c012 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -2622,16 +2622,15 @@ int security_inode_listsecurity(struct inode *inode,
- EXPORT_SYMBOL(security_inode_listsecurity);
- 
- /**
-- * security_inode_getsecid() - Get an inode's secid
-+ * security_inode_getlsmblob() - Get an inode's LSM data
-  * @inode: inode
-- * @secid: secid to return
-+ * @blob: lsm specific information to return
-  *
-- * Get the secid associated with the node.  In case of failure, @secid will be
-- * set to zero.
-+ * Get the lsm specific information associated with the node.
-  */
--void security_inode_getsecid(struct inode *inode, u32 *secid)
-+void security_inode_getlsmblob(struct inode *inode, struct lsmblob *blob)
- {
--	call_void_hook(inode_getsecid, inode, secid);
-+	call_void_hook(inode_getlsmblob, inode, blob);
- }
- 
- /**
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index af48b8f868b7..f5d09beeef0f 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -3505,15 +3505,18 @@ static int selinux_inode_listsecurity(struct inode *inode, char *buffer, size_t
- 	return len;
- }
- 
--static void selinux_inode_getsecid(struct inode *inode, u32 *secid)
-+static void selinux_inode_getlsmblob(struct inode *inode, struct lsmblob *blob)
- {
- 	struct inode_security_struct *isec = inode_security_novalidate(inode);
--	*secid = isec->sid;
-+
-+	blob->selinux.secid = isec->sid;
-+	/* scaffolding */
-+	blob->scaffold.secid = isec->sid;
- }
- 
- static int selinux_inode_copy_up(struct dentry *src, struct cred **new)
- {
--	u32 sid;
-+	struct lsmblob blob;
- 	struct task_security_struct *tsec;
- 	struct cred *new_creds = *new;
- 
-@@ -3525,8 +3528,8 @@ static int selinux_inode_copy_up(struct dentry *src, struct cred **new)
- 
- 	tsec = selinux_cred(new_creds);
- 	/* Get label from overlay inode and set it in create_sid */
--	selinux_inode_getsecid(d_inode(src), &sid);
--	tsec->create_sid = sid;
-+	selinux_inode_getlsmblob(d_inode(src), &blob);
-+	tsec->create_sid = blob.selinux.secid;
- 	*new = new_creds;
- 	return 0;
- }
-@@ -7211,7 +7214,7 @@ static struct security_hook_list selinux_hooks[] __ro_after_init = {
- 	LSM_HOOK_INIT(inode_getsecurity, selinux_inode_getsecurity),
- 	LSM_HOOK_INIT(inode_setsecurity, selinux_inode_setsecurity),
- 	LSM_HOOK_INIT(inode_listsecurity, selinux_inode_listsecurity),
--	LSM_HOOK_INIT(inode_getsecid, selinux_inode_getsecid),
-+	LSM_HOOK_INIT(inode_getlsmblob, selinux_inode_getlsmblob),
- 	LSM_HOOK_INIT(inode_copy_up, selinux_inode_copy_up),
- 	LSM_HOOK_INIT(inode_copy_up_xattr, selinux_inode_copy_up_xattr),
- 	LSM_HOOK_INIT(path_notify, selinux_path_notify),
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index fcacc59faf33..88e7ac15ca62 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -1649,15 +1649,17 @@ static int smack_inode_listsecurity(struct inode *inode, char *buffer,
- }
- 
- /**
-- * smack_inode_getsecid - Extract inode's security id
-+ * smack_inode_getlsmblob - Extract inode's security id
-  * @inode: inode to extract the info from
-- * @secid: where result will be saved
-+ * @blob: where result will be saved
-  */
--static void smack_inode_getsecid(struct inode *inode, u32 *secid)
-+static void smack_inode_getlsmblob(struct inode *inode, struct lsmblob *blob)
- {
- 	struct smack_known *skp = smk_of_inode(inode);
- 
--	*secid = skp->smk_secid;
-+	blob->smack.skp = skp;
-+	/* scaffolding */
-+	blob->scaffold.secid = skp->smk_secid;
- }
- 
- /*
-@@ -5128,7 +5130,7 @@ static struct security_hook_list smack_hooks[] __ro_after_init = {
- 	LSM_HOOK_INIT(inode_getsecurity, smack_inode_getsecurity),
- 	LSM_HOOK_INIT(inode_setsecurity, smack_inode_setsecurity),
- 	LSM_HOOK_INIT(inode_listsecurity, smack_inode_listsecurity),
--	LSM_HOOK_INIT(inode_getsecid, smack_inode_getsecid),
-+	LSM_HOOK_INIT(inode_getlsmblob, smack_inode_getlsmblob),
- 
- 	LSM_HOOK_INIT(file_alloc_security, smack_file_alloc_security),
- 	LSM_HOOK_INIT(file_ioctl, smack_file_ioctl),
 -- 
 2.46.0
 
