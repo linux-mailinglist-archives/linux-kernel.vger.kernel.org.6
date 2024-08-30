@@ -1,153 +1,153 @@
-Return-Path: <linux-kernel+bounces-309562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 453F8966CD4
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 01:21:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9CD3966CD5
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 01:21:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B68A6B22FA2
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 23:20:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2890F1C225B7
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 23:21:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1AA018E344;
-	Fri, 30 Aug 2024 23:20:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADB7318DF77;
+	Fri, 30 Aug 2024 23:21:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XvbWrE1b"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XUwKCxWr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1105178361;
-	Fri, 30 Aug 2024 23:20:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E911716D4E8
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 23:21:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725060049; cv=none; b=sQN7S1PXARZFucKkg3H/7ixcEl/GHW2QvIAlpKfLAR8RJDJgvWIdjzrfDOtk787884bqSW7JSdVFOnQ5k8M42bPBh6+UpcnNjTw4PKbMoQlc4yWzx7r7qs/FC+jPIp60dd2/MWwGzaA6P+b8xwJylLZbP83uPwQ7cOihVRkGkZQ=
+	t=1725060094; cv=none; b=qGejVc1iUAoR3/LZq0OJyexFBo0Ze9eJ4xqEZvFp1KBYBLKt5y5Y43joP3LhP1O3r2DUSqoHqO8aJWZu0rrxyPWvMF9ymG+i1fDq1O0s9K5o+lh5PpZa8d2n8G9J4+w996l7jOKe/okngnqFpBip39bJ3/O6MBsBg0BSxHvj/Zo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725060049; c=relaxed/simple;
-	bh=nPwrvEN9XYrbT3J+y8lcXmeIHnztMSIuwQQIDpKMEbw=;
+	s=arc-20240116; t=1725060094; c=relaxed/simple;
+	bh=5kQ5XAoyoKFTewRRACml0pmLhqwmlzoDXNmRegMVqYo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gRvK+TmuHW7AyH8ObQi6wL/CyXMefaIkP/YlH0d7vnYBIm+3qZ8lZlvjMURjQg2/xmDCBqN7cWZrsRdZGR7HFpAT0Oa2kLLAcTBr8O9JYMtCNrnk+Sb3rDGThEWMpjpBhe/uiCIb4vJwg+otKpivlTKG51W/Ie95R3c+5o+z+3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XvbWrE1b; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725060047; x=1756596047;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=nPwrvEN9XYrbT3J+y8lcXmeIHnztMSIuwQQIDpKMEbw=;
-  b=XvbWrE1bdyBWhAkL9P0LByjqexq/pnj1saMZfpNwjhZj/hj7ko79XSdH
-   tToN4R9cRi/M8Zi1q4JNiy2gl2D5IrzPl1rwf3nv2nrBX1rpPN6OcjBWW
-   lTl1MImKdN2esZo8PHJMEyN2mKpYJNpCVfQZVUYqB0b3dX/0/Ka4Vs/Ml
-   WpL/rvWtCMgek1LJ9d+2j4tBSzNyYv+qsoqoKUFyS3S2DmtvKWFSH2tRU
-   MBV0xCBeQTt4RVcBtMzVQXMj1v5XmOv4icx4NOuLFdvBSjY759Ic7GCk6
-   wBlaXeMddnlks7ddIC/cgx0FGoYM12dhXdbD9+JEp1I+JoLvwvWfx/IGk
-   A==;
-X-CSE-ConnectionGUID: +CV7hI3FSwmBgNfsgNEJsA==
-X-CSE-MsgGUID: TvA5UZZVRJS2bHZyN/f29A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11180"; a="35127151"
-X-IronPort-AV: E=Sophos;i="6.10,190,1719903600"; 
-   d="scan'208";a="35127151"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Aug 2024 16:20:46 -0700
-X-CSE-ConnectionGUID: MIvltLxURYi6utmjs8MKtg==
-X-CSE-MsgGUID: X1M4ydP+RYiEybVXoNsE0A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,190,1719903600"; 
-   d="scan'208";a="63990529"
-Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
-  by orviesa009.jf.intel.com with ESMTP; 30 Aug 2024 16:20:42 -0700
-Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1skAv1-0002Ck-1t;
-	Fri, 30 Aug 2024 23:20:39 +0000
-Date: Sat, 31 Aug 2024 07:19:50 +0800
-From: kernel test robot <lkp@intel.com>
-To: ende.tan@starfivetech.com, netdev@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, andrew@lunn.ch,
-	alexandre.torgue@foss.st.com, joabreu@synopsys.com,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, mcoquelin.stm32@gmail.com,
-	linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, leyfoon.tan@starfivetech.com,
-	minda.chen@starfivetech.com, endeneer@gmail.com,
-	Tan En De <ende.tan@starfivetech.com>
-Subject: Re: [net-next,v3,1/1] net: stmmac: Batch set RX OWN flag and other
- flags
-Message-ID: <202408310604.E3C4zDID-lkp@intel.com>
-References: <20240829134043.323855-1-ende.tan@starfivetech.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=T/Up4c44bvqHwxZiz3Fy62C+4sJTqlGvIX+dBnVjupfcIqeBGG3Q2i0qG5qCpIP7UnsPJhUD3Y4yZFz5t8QCLrkJ+qh0xy0iqmI2Z6nRxGa3jHyC9T7tEd62WIiQk2qrcOyfQmvzPJ7r3ajfBFFbV7YyWXaNk2NNsyDXBtAQt4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XUwKCxWr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B72BC4CEC2;
+	Fri, 30 Aug 2024 23:21:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725060093;
+	bh=5kQ5XAoyoKFTewRRACml0pmLhqwmlzoDXNmRegMVqYo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XUwKCxWr00OtFL5EyPVrZ+OEr9fAJiP2GLXqwBc44RH3A60QVfmsyvbsbjIzTlpz2
+	 lDg12/LbYrtbM/a/zli50B2dj64iVWMZc5oTOUj+vqtcmiWzC01D2qMHT2BQsl97I4
+	 RRYajFDqySVHC9jU7QDMl1wyuxUryv6lbTCt1HS1j5W0tJIbefOIw+V2rzCp+cg6Un
+	 NVDnNk7OknJaSdxONiAkLXvhKmzkZWDjTvk9EtWu+eyqlKVluCtY1OovQOQFLbuVzh
+	 2vgchdbJxMg8DnC/EwG+RPedwfOWELvxm4UFrjt1byj+229QlRNLTfuG2AgC48eTYV
+	 k+d8bQrNhZaFQ==
+Date: Fri, 30 Aug 2024 16:21:32 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Rik van Riel <riel@surriel.com>
+Cc: Hugh Dickins <hughd@google.com>, kernel-team@meta.com,
+	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, Dave Chinner <dchinner@redhat.com>,
+	Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [PATCH] mm,tmpfs: consider end of file write in shmem_is_huge
+Message-ID: <20240830232132.GG6257@frogsfrogsfrogs>
+References: <20240829235415.57374fc3@imladris.surriel.com>
+ <20240830055244.GD6257@frogsfrogsfrogs>
+ <97ba80061354fef89349a70e1cb8eb34dd7730f3.camel@surriel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20240829134043.323855-1-ende.tan@starfivetech.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <97ba80061354fef89349a70e1cb8eb34dd7730f3.camel@surriel.com>
 
-Hi,
+On Fri, Aug 30, 2024 at 09:11:32AM -0400, Rik van Riel wrote:
+> On Thu, 2024-08-29 at 22:52 -0700, Darrick J. Wong wrote:
+> > On Thu, Aug 29, 2024 at 11:54:15PM -0400, Rik van Riel wrote:
+> > > 
+> > > @@ -196,7 +196,7 @@ xfile_store(
+> > >  		unsigned int	len;
+> > >  		unsigned int	offset;
+> > >  
+> > > -		if (shmem_get_folio(inode, pos >> PAGE_SHIFT,
+> > > &folio,
+> > > +		if (shmem_get_folio(inode, pos >> PAGE_SHIFT, 0,
+> > > &folio,
+> > 
+> > Technically speaking, the "0" here could be (pos + count), though for
+> > the current xfile users this isn't likely to make much difference
+> > because online fsck's index building only appends small amounts of
+> > data
+> > (i.e. not larger than a PAGE_SIZE) at a time.
+> > 
+> > >  				SGP_CACHE) < 0)
+> 
+> With SGP_CACHE, won't shmem_get_folio simply refuse to allocate
+> any pages beyond the end of the inode?
 
-kernel test robot noticed the following build warnings:
+Yes, though we're careful to i_size_write appropriate beforehand such
+that @index is always within EOF.
 
-[auto build test WARNING on linus/master]
-[also build test WARNING on horms-ipvs/master v6.11-rc5 next-20240830]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+--D
 
-url:    https://github.com/intel-lab-lkp/linux/commits/ende-tan-starfivetech-com/net-stmmac-Batch-set-RX-OWN-flag-and-other-flags/20240829-214324
-base:   linus/master
-patch link:    https://lore.kernel.org/r/20240829134043.323855-1-ende.tan%40starfivetech.com
-patch subject: [net-next,v3,1/1] net: stmmac: Batch set RX OWN flag and other flags
-config: x86_64-randconfig-r132-20240830 (https://download.01.org/0day-ci/archive/20240831/202408310604.E3C4zDID-lkp@intel.com/config)
-compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240831/202408310604.E3C4zDID-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408310604.E3C4zDID-lkp@intel.com/
-
-sparse warnings: (new ones prefixed by >>)
->> drivers/net/ethernet/stmicro/stmmac/dwxgmac2_descs.c:59:21: sparse: sparse: incorrect type in initializer (different base types) @@     expected unsigned int [usertype] flags @@     got restricted __le32 [usertype] @@
-   drivers/net/ethernet/stmicro/stmmac/dwxgmac2_descs.c:59:21: sparse:     expected unsigned int [usertype] flags
-   drivers/net/ethernet/stmicro/stmmac/dwxgmac2_descs.c:59:21: sparse:     got restricted __le32 [usertype]
->> drivers/net/ethernet/stmicro/stmmac/dwxgmac2_descs.c:62:24: sparse: sparse: invalid assignment: |=
-   drivers/net/ethernet/stmicro/stmmac/dwxgmac2_descs.c:62:24: sparse:    left side has type unsigned int
-   drivers/net/ethernet/stmicro/stmmac/dwxgmac2_descs.c:62:24: sparse:    right side has type restricted __le32
-   drivers/net/ethernet/stmicro/stmmac/dwxgmac2_descs.c:64:17: sparse: sparse: invalid assignment: |=
-   drivers/net/ethernet/stmicro/stmmac/dwxgmac2_descs.c:64:17: sparse:    left side has type restricted __le32
-   drivers/net/ethernet/stmicro/stmmac/dwxgmac2_descs.c:64:17: sparse:    right side has type unsigned int
-   drivers/net/ethernet/stmicro/stmmac/dwxgmac2_descs.c:110:23: sparse: sparse: restricted __le32 degrades to integer
-   drivers/net/ethernet/stmicro/stmmac/dwxgmac2_descs.c:110:50: sparse: sparse: restricted __le32 degrades to integer
---
->> drivers/net/ethernet/stmicro/stmmac/dwmac4_descs.c:189:21: sparse: sparse: incorrect type in initializer (different base types) @@     expected unsigned int [usertype] flags @@     got restricted __le32 [usertype] @@
-   drivers/net/ethernet/stmicro/stmmac/dwmac4_descs.c:189:21: sparse:     expected unsigned int [usertype] flags
-   drivers/net/ethernet/stmicro/stmmac/dwmac4_descs.c:189:21: sparse:     got restricted __le32 [usertype]
->> drivers/net/ethernet/stmicro/stmmac/dwmac4_descs.c:192:23: sparse: sparse: invalid assignment: |=
-   drivers/net/ethernet/stmicro/stmmac/dwmac4_descs.c:192:23: sparse:    left side has type unsigned int
-   drivers/net/ethernet/stmicro/stmmac/dwmac4_descs.c:192:23: sparse:    right side has type restricted __le32
-   drivers/net/ethernet/stmicro/stmmac/dwmac4_descs.c:194:17: sparse: sparse: invalid assignment: |=
-   drivers/net/ethernet/stmicro/stmmac/dwmac4_descs.c:194:17: sparse:    left side has type restricted __le32
-   drivers/net/ethernet/stmicro/stmmac/dwmac4_descs.c:194:17: sparse:    right side has type unsigned int
-
-vim +59 drivers/net/ethernet/stmicro/stmmac/dwxgmac2_descs.c
-
-    56	
-    57	static void dwxgmac2_set_rx_owner(struct dma_desc *p, int disable_rx_ic)
-    58	{
-  > 59		u32 flags = cpu_to_le32(XGMAC_RDES3_OWN);
-    60	
-    61		if (!disable_rx_ic)
-  > 62			 flags |= cpu_to_le32(XGMAC_RDES3_IOC);
-    63	
-    64		p->des3 |= flags;
-    65	}
-    66	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+>         if (sgp <= SGP_CACHE &&
+>             ((loff_t)index << PAGE_SHIFT) >= i_size_read(inode))
+>                 return -EINVAL;
+> 
+> > >  			break;
+> > >  		if (filemap_check_wb_err(inode->i_mapping, 0)) {
+> > > @@ -267,7 +267,7 @@ xfile_get_folio(
+> > >  		i_size_write(inode, pos + len);
+> > >  
+> > >  	pflags = memalloc_nofs_save();
+> > > -	error = shmem_get_folio(inode, pos >> PAGE_SHIFT, &folio,
+> > > +	error = shmem_get_folio(inode, pos >> PAGE_SHIFT, 0,
+> > > &folio,
+> > 
+> > This 0 could be pos + len, since the only caller is xfarray_sort,
+> > which
+> > runs much faster when it can heapsort a large folio's worth of data
+> > at a
+> > time.
+> > 
+> > >  			(flags & XFILE_ALLOC) ? SGP_CACHE :
+> > > SGP_READ);
+> 
+> The same applies here.
+> 
+> > >  	memalloc_nofs_restore(pflags);
+> > >  	if (error)
+> > > diff --git a/fs/xfs/xfs_buf_mem.c b/fs/xfs/xfs_buf_mem.c
+> > > index 9bb2d24de709..07bebbfb16ee 100644
+> > > --- a/fs/xfs/xfs_buf_mem.c
+> > > +++ b/fs/xfs/xfs_buf_mem.c
+> > > @@ -149,7 +149,7 @@ xmbuf_map_page(
+> > >  		return -ENOMEM;
+> > >  	}
+> > >  
+> > > -	error = shmem_get_folio(inode, pos >> PAGE_SHIFT, &folio,
+> > > SGP_CACHE);
+> > > +	error = shmem_get_folio(inode, pos >> PAGE_SHIFT, 0,
+> > > &folio, SGP_CACHE);
+> > 
+> > The "0" here could be (pos + BBTOB(bp->length)) since we're likely
+> > going
+> > to write there soon.  Granted, no current user of xmbufs actually
+> > uses a
+> > blocksize larger than PAGE_SIZE, but in theory we could someday turn
+> > that on.
+> > 
+> > Everything below here looks sane enough to me, but I'm not that much
+> > of
+> > an expert on mm/ things outside of the pagecache and shmem.c.
+> 
+> ... and here.
+> 
+> XFS is no using an SGP flag that allows shmem_get_folio to allocate
+> a page beyond the end of the i_size.
+> 
+> -- 
+> All Rights Reversed.
 
