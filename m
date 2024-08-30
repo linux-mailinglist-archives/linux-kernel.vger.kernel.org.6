@@ -1,61 +1,80 @@
-Return-Path: <linux-kernel+bounces-309331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D27069668FB
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 20:33:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 619E3966900
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 20:36:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9096C285742
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 18:33:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B946285788
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 18:36:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32A321BC9ED;
-	Fri, 30 Aug 2024 18:33:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD30D1BC099;
+	Fri, 30 Aug 2024 18:36:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DEr97Gw2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iU5/2uLR"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7021E136353;
-	Fri, 30 Aug 2024 18:33:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40DFF14831C;
+	Fri, 30 Aug 2024 18:36:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725042822; cv=none; b=cUKRRPjFT9UXEw9UhW19oWQcKWQjPmGY1M4367RjhA1Ci/I8Fyh90nC4LZS6kulKdppfaRQQCD8utgZuBAL5lcl36YSY25fViGgQBalWL2Pk3H3/C/WqM5ulii2ab5ypUyxKi38gigDkyjZISmAuMN+9/G8NKPReXr3rayq5nEo=
+	t=1725043001; cv=none; b=ElzZmzBJp1jcZGIAaFP2ZFVofvBH+GiszuRK7XG/xf0cWZTGQgGszVxxNmaMLUhPqFnUFw+gjfRMbjQ71691y4g7af/yHLHewoJwYGJPzcdSkH2spEAeAG+byzHtGWkSxY1kEjr0vZ9C2e/ffoRxMORpdA0WUzAE44n+Q3OmA8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725042822; c=relaxed/simple;
-	bh=jyNW/B6IwX0dc05FsIycRog/dbgRkTJ8KMkJ+70Y+RA=;
+	s=arc-20240116; t=1725043001; c=relaxed/simple;
+	bh=rI/rbGiMk2OYoAJWrDTPYBZiOMXUdMM4JWp7f0WuIPE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g/wGHiK3k7KdbCzYtNOAyFS8Acan5UB9pK4tsDkXZLR4WPiOpo6VDx59H8NNEFjwMlhCVaBSjzZUNX3KnjkkbtyFtFN2CwZWint1b5/WIb7QC9GBhGkQGgCIqrx63MHNC6lQ+V5nJ4dMOh9lZR4swpOGpqgmio7cAazJIDIBRww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DEr97Gw2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CBC9C4CEC2;
-	Fri, 30 Aug 2024 18:33:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725042822;
-	bh=jyNW/B6IwX0dc05FsIycRog/dbgRkTJ8KMkJ+70Y+RA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DEr97Gw297SQrBxo6TEztgHZWSrTFaBhW65TOIw0M+eje04S5x0Fehr9EIsfNu/Yo
-	 cAKZhGXb2bX4V+YXauvKvw+0cXTlAmsnmkDjCelW8e2JeZ39yE/GzaGNsRG5uGVrc7
-	 v8U1wRrLBlE+emqEVVzHzS1WFD2um+aCoZ4aPldtzK76vjX3uApmNuRKOtc6GOjarG
-	 8EYre9NvXdhRkmQpgru+kK1p+1/4llfLQA6Mcmr8tV7sH/+MKd0rKK7HIRpaJnRWjV
-	 JvFEFPLxTHl4M7PN1vfR0MDykkCRMmRzNrdN46Lk8cMQGfFWhG9PSSKFiPC9kZR749
-	 j4VzuC33+ti/Q==
-Date: Fri, 30 Aug 2024 19:33:37 +0100
-From: Simon Horman <horms@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Shen Lichuan <shenlichuan@vivo.com>, alex.aring@gmail.com,
-	stefan@datenfreihafen.org, miquel.raynal@bootlin.com,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, linux-wpan@vger.kernel.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	opensource.kernel@vivo.com
-Subject: Re: [PATCH v1] ieee802154: at86rf230: Simplify with dev_err_probe()
-Message-ID: <20240830183337.GF1368797@kernel.org>
-References: <20240830081402.21716-1-shenlichuan@vivo.com>
- <20240830160228.GU1368797@kernel.org>
- <c87f7ab7-2c8c-4c08-b686-12c56fe3edeb@kernel.org>
- <20240830181625.GD1368797@kernel.org>
- <b4026df9-059e-447a-ace3-340ba32cb62f@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=KDTaNunKf3pH5IkCzrAwmfnQSj17KmBnmdzbRDkEvvyVsNdCvZ9RqbcheCsK/4XrUhYL9QPC1ZyebP4xqZ1UWEG7mFrX9bU2sSv3RVGO/7kDNzDsAEeE2N+sxeJXnzUZ53NzaaIKrik5OXQsPK7rEiq9zaQPE7LH7nAgNiRkeLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iU5/2uLR; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725042999; x=1756578999;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=rI/rbGiMk2OYoAJWrDTPYBZiOMXUdMM4JWp7f0WuIPE=;
+  b=iU5/2uLRdgssESOa3BDi/dLyUyfnZkXvd5az/mF0tfmzR6BL7rCpF5Jh
+   8T3mfQ0VJB/DR/2urABgJyGDrHKW8bWYXR4NZn7kwt6/mZPEfzEPls+nH
+   bEkuiYLizy6O+9X5k+44KFIdV0qhVlyOk/DDqjLVUz/0IcBXyKK3W/90d
+   Fy24esvP5FKlNYC1Z5XiHZj4Zq7hIzXmEmNKYi7U3fL646WiXQtNh1gVk
+   bNLYWzyLQ78p4IQ/w+XkEKxBxcG0Uin5++6jTk1oElq7gk2MpzyjCHOU+
+   faINB2wrk7ZZVMSePubgkW58zJjk5Rg1ZwNtMlkY/uuJzkGkPFbCwFqGo
+   w==;
+X-CSE-ConnectionGUID: PhJCCUCuRIGngxUGhpCRjw==
+X-CSE-MsgGUID: 5/V1NYaGQLKKH3lUQ+kLJQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11180"; a="23833565"
+X-IronPort-AV: E=Sophos;i="6.10,189,1719903600"; 
+   d="scan'208";a="23833565"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Aug 2024 11:36:38 -0700
+X-CSE-ConnectionGUID: lkOQGzLOQb+l11QS6SB70g==
+X-CSE-MsgGUID: Z0sY8LeNRMG8e9gok0U7sw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,189,1719903600"; 
+   d="scan'208";a="101468049"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Aug 2024 11:36:35 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sk6U4-00000003Riz-3AXw;
+	Fri, 30 Aug 2024 21:36:32 +0300
+Date: Fri, 30 Aug 2024 21:36:32 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: "Goswami, Sanket" <Sanket.Goswami@amd.com>
+Cc: Andi Shyti <andi.shyti@kernel.org>, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Jan Dabros <jsd@semihalf.com>, Narasimhan.V@amd.com,
+	Borislav Petkov <bp@alien8.de>, Kim Phillips <kim.phillips@amd.com>,
+	Shyam-sundar.S-k@amd.com
+Subject: Re: [PATCH v2 1/1] i2c: designware: Consolidate PM ops
+Message-ID: <ZtIRMLwJhKHGVwNv@smile.fi.intel.com>
+References: <20240827150101.2171107-1-andriy.shevchenko@linux.intel.com>
+ <9d424592-c157-417a-9d6e-d12d80e19829@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,69 +83,34 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <b4026df9-059e-447a-ace3-340ba32cb62f@kernel.org>
+In-Reply-To: <9d424592-c157-417a-9d6e-d12d80e19829@amd.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Fri, Aug 30, 2024 at 08:27:02PM +0200, Krzysztof Kozlowski wrote:
-> On 30/08/2024 20:16, Simon Horman wrote:
-> > On Fri, Aug 30, 2024 at 07:43:30PM +0200, Krzysztof Kozlowski wrote:
-> >> On 30/08/2024 18:02, Simon Horman wrote:
-> >>> On Fri, Aug 30, 2024 at 04:14:02PM +0800, Shen Lichuan wrote:
-> >>>> Use dev_err_probe() to simplify the error path and unify a message
-> >>>> template.
-> >>>>
-> >>>> Using this helper is totally fine even if err is known to never
-> >>>> be -EPROBE_DEFER.
-> >>>>
-> >>>> The benefit compared to a normal dev_err() is the standardized format
-> >>>> of the error code, it being emitted symbolically and the fact that
-> >>>> the error code is returned which allows more compact error paths.
-> >>>>
-> >>>> Signed-off-by: Shen Lichuan <shenlichuan@vivo.com>
-> >>>
-> >>> ...
-> >>>
-> >>>> @@ -1576,9 +1574,8 @@ static int at86rf230_probe(struct spi_device *spi)
-> >>>>  
-> >>>>  	lp->regmap = devm_regmap_init_spi(spi, &at86rf230_regmap_spi_config);
-> >>>>  	if (IS_ERR(lp->regmap)) {
-> >>>> -		rc = PTR_ERR(lp->regmap);
-> >>>> -		dev_err(&spi->dev, "Failed to allocate register map: %d\n",
-> >>>> -			rc);
-> >>>> +		dev_err_probe(&spi->dev, PTR_ERR(lp->regmap),
-> >>>> +			      "Failed to allocate register map\n");
-> >>>>  		goto free_dev;
-> >>>
-> >>> After branching to dev_free the function will return rc.
-> >>> So I think it still needs to be set a in this error path.
-> >>
-> >> Another bug introduced by @vivo.com.
-> >>
-> >> Since ~2 weeks there is tremendous amount of trivial patches coming from
-> >> vivo.com. I identified at least 5 buggy, where the contributor did not
-> >> understand the code.
-> >>
-> >> All these "trivial" improvements should be really double-checked.
+On Thu, Aug 29, 2024 at 08:25:27PM +0530, Goswami, Sanket wrote:
+> Adding Shyam (as he asked me to check this change on AMD systems)
+> On 8/27/2024 8:30 PM, Andy Shevchenko wrote:
+> > We have the same (*) PM ops in the PCI and plaform drivers.
+> > Instead, consolidate that PM ops under exported variable and
+> > deduplicate them.
 > > 
-> > Are you concerned about those that have been accepted?
+> > *)
+> > With the subtle ACPI and P-Unit behaviour differences in PCI case.
+> > But this is not a problem as for ACPI we need to take care of the
+> > P-Unit semaphore anyway and calling PM ops for PCI makes sense as
+> > it might provide specific operation regions in ACPI (however there
+> > are no known devices on market that are using it with PCI enabled I2C).
+> > Note, the clocks are not in use in the PCI case.
+> > 
+> > Reviewed-by: Andi Shyti <andi.shyti@kernel.org>
+> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 > 
-> Yes, both posted and accepted. I was doing brief review (amazingly
-> useless 2 hours...) what's on the list and so far I think there are 6
-> cases of wrong/malicious dev_err_probe(). One got accepted, I sent a revert:
-> https://lore.kernel.org/all/20240830170014.15389-1-krzysztof.kozlowski@linaro.org/
+> Tested-by: Sanket Goswami <Sanket.Goswami@amd.com>
 
-Thanks, I see that.
+Thank you! Andi, can you apply this now?
 
-> But the amount of flood from vivo.com started somehow around 20th of
-> August (weirdly after I posted set of cleanups and got review from
-> Jonathan...), is just over-whelming. And many are just ridiculously
-> split, like converting one dev_err->dev_err_probe in the driver, leaving
-> rest untouched.
+-- 
+With Best Regards,
+Andy Shevchenko
 
-Yes, I have also noticed a significant number of patches.
-
-> I think this was some sort of trivial automation, thus none of the
-> patches were actually reviewed before posting.
-
-Interesting theory.
 
 
