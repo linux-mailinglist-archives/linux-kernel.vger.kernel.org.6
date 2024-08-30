@@ -1,337 +1,239 @@
-Return-Path: <linux-kernel+bounces-308744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D50596613B
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 14:01:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C1B496613C
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 14:01:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B04021F29520
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:01:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B59BC28446D
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:01:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2148C19994F;
-	Fri, 30 Aug 2024 12:01:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 066A619993D;
+	Fri, 30 Aug 2024 12:01:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="HR87ffzn"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="il15+mHZ";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="ZirAUA1F"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 383D81917C8
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 12:01:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725019275; cv=none; b=lxsfwdqkfDwdzTj/KimJfPXFjQbQYpsmePeQWmTIemrIfCx28OZMj06wdLLpwZUAmEYIC2cCZRaWWjciG6GDt+ET56E2rpqW4qlqYhTHGTdo89Cx7XN6uT0r1raZpiI6Tre0seN8dWC98DmyKYM1hRgd/Qfc/FDnlMEPIxejko4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725019275; c=relaxed/simple;
-	bh=bHtLDn0Wsn5DAZMI5MFUbrKX2XmlMvWqakZmLM6IBYI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AmGIAhvYCVmDlM6U5a8Ul20taHC8dwjPaAhfw1MiMzx3M1ZJpHZF1aaoB2QYNOPOkGY7K/npV4nse5gJ8tqfXvXR9PnyMh5+JoXzs/ljUjROJMEmMpVzCr2ehyktg0UIVXod9bdQ2c+GRJL4rnDqQtdfwBmOmiW96RuSRhzf0Fo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=HR87ffzn; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-71433cba1b7so1302340b3a.0
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 05:01:12 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0931119343E
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 12:01:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725019309; cv=fail; b=amgmL3hhtIGH81yoY/jLYCIuN3ckyPe3+wKCny9ScCMNgcIWnAEWxTssz0ZhRE8p8BbcUT7x4rb3nEjyFriY2Wi/PaQ9MttZHCwbf+KcpYoHefZVT0S7uFekzgp2+3j0AFOU3R/5o/Wh1M4vbzNSEhtF0m7IK4VoGH1Co5iVZbY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725019309; c=relaxed/simple;
+	bh=dO7GdfLA4GjBteexcbeOMMcYKbSdWJR8TNXVAWrHEWU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=SI3EDfwfupfSF9Lwwh/qih5x+Ng6R78/cJb1WmcvcISOJGtHTeTM4srbMPpa5jc4Dr07jFlEmk/9wIdICbtFDBccWRgWbFXH4AYfT6S9LXYv03WmpPSBS7E8oFn/vNNPNMPLpMx41IptiRJMS6xnwH9TlgGrUwjxO9yW/fzcnjI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=il15+mHZ; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=ZirAUA1F; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47U7tVe8021710;
+	Fri, 30 Aug 2024 12:01:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	date:from:to:cc:subject:message-id:references:content-type
+	:in-reply-to:mime-version; s=corp-2023-11-20; bh=dO7GdfLA4GjBtee
+	xcbeOMMcYKbSdWJR8TNXVAWrHEWU=; b=il15+mHZvw6S8C9VFGEBPIfAVLlRJnB
+	SH3eQwO4H9eiFNFApAofnD+oZMj0XvtpkKsIPXYl7CGTdFlKJE98EUlI2o43USK3
+	uci1HDRv6kKhwYyhzbQTmnHZafAfKdlk8OFEexm/NGx5EUIrYgCVAzfqmcP8HTBi
+	/hb3xFcpFYtzkBj67NjOpWJ74P20w5iIHRbsvhnH+acf2ptzjA3U4oWnrbhkAmiW
+	YclAr35uW8jdwOD+0Z9K7jLmmxwt5tE8eDwwUVYz19TiAua7x8/WXYE26uoW7r48
+	cIeggjY9j+tdXpdb/Ded+s8fNeYsoud5c0JC65+ASkDxiVAIOeQh+sw==
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 41ax0gsgwb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 30 Aug 2024 12:01:32 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 47UBekGc020188;
+	Fri, 30 Aug 2024 12:01:32 GMT
+Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2042.outbound.protection.outlook.com [104.47.66.42])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 418j8rqsb7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 30 Aug 2024 12:01:32 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=F8xqe3fkGQlc2UxInfqqKPRziL5/5D4OIwEaS3gYGmKSrftTCuxuWdxR78EcYTID9N4aPeBacrWl002KhRTYreEoHsz10/hA5qv7FZZbd7laVacUD3xrBHsUNVuC1u9DK6bMAsiFzV1+eVNyUdrUHzawDNYnx6YxprJUnDNqP+l+svw9dEZOFjiQzUjSJW0tAZuyL/Icu4m+x36BqEfXlhXbehgH2p7QWYjFzddWJ48D/bdMoe3Ol3HDpIfuLAudYPs6EvNZA8OYnEoh1A+C2Sm9V6Mr7e7ZYRsK7jd7sqbgukfeWh/i7XGsd9w3edEaJh9pKnU+eryBoIfbJw25Ig==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=dO7GdfLA4GjBteexcbeOMMcYKbSdWJR8TNXVAWrHEWU=;
+ b=V5b+UsbFDjzi/J5W44lWaroXe6Ng/cOaZWOiQ9Dlf28kzIMXUBQOj2327m2x42sk4tB2kakcP/02MOQPT+tPXwWh2mmeDTjwq6XqILGZTaFaUa8HMe/CFu718SQpQZiWppsaQ33MT6va/+IJEC0DoC2j+NC4RY8W91wJGb8lL33ELNndGWQ6ObH6gGoVZ+oizHNYkqiFQAZ/I6R/GH2fZkKi6yeYWXXkYrUMQFDlSjO9jk+YD3/Gh6FvDbMGwhSxzDYMdpz0UpPkYioT/gKTNOJeq2gO+N24QWvePZFVOisoHhxO4/pZLVMisSxIz8xvwdE7ADQVZ8W71RJhMQDyeQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1725019271; x=1725624071; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=S+J8nDWKmcjiFDnbhyvi48+lL6iNF2GBrnR+36Q3WWM=;
-        b=HR87ffznTvXUBVDqLT0Z4TyfiJv/hQJBadGdPOm0cPr1GttjDAUsT+BxpmeoVD7nfq
-         AyudgW9pKpsCEb4yI0/zZim6+8TLjZGJ5eI+A3dY+rTyIlJIwdmRJLJ7lEOS2rpXMQXP
-         S+Et94PzArmnmHKqtAFollNazm9/1up+tBAg45u8N6zo31PooiofebtH65t9qsa9HAE6
-         D98rmmDMrOyPATCqoZjtvhTG4DDJB3WD736dqpi8gCkf9BT+AWYUrdsMLKsoudEGkixk
-         csRgKFAj5GF6s84c0H9lGrJg8F3YPHbOle7uDSF7qO+Fkfd0lK3p7NhdO+gCQYZ5Rwz/
-         vaTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725019271; x=1725624071;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=S+J8nDWKmcjiFDnbhyvi48+lL6iNF2GBrnR+36Q3WWM=;
-        b=Bkgib9s8CYAnrla+cNTLfb1c/9e+gp2eldkMNtJrbDYd234WFDDKc4qoeqHHPwxNo5
-         UP7t8udYRD4RdRkLtSftQfYOwehe5EzR27rOI3O9l/xc00+aMADVq2CPMCNa7+p2qWe3
-         dXd17nuhPnTfmewjRjLXXBhPsY0vGzqD9K0A3Ey9fcxlj1pMmP/96aOZv+d90j4a+mZK
-         DDqgmtfPZyg4rE7WCS30AJQevtv6AQ+QyzD/8Zn2eYuBc9Iq/cOFYoURPsDWbzVO/Cb0
-         6CMM03JNcdskTUQLtRZuNf8ayG9zwJZVLV9RFdejsFyr4mBaEzPhrvPnzEaa7XOnCUuK
-         87tQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVl0Jwye3qTTz70b50xgPJum0njW+/BtmzxSr/Cc1VGw/LD96QntaVVujDc4uI2IeIquCP6hIkk9vE7drk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyri+wBDj4iQ1Z0P2ZOGYa1Cl1UFmdDPcwiM8btvYjyX3qv7Fk/
-	IUCZWwPtU5tP4Jpwf/qOFDhakc+6EFHvQPFHYElYa7Zp6Uez7bC3yiuty7AuTbw=
-X-Google-Smtp-Source: AGHT+IGKLvAFAz/eBLXMb30uIZ9vdANBzSIr6ORPbKAbI0x7ooOqoOsCu8d84XfIMHbv7krKGeaTpw==
-X-Received: by 2002:a05:6a00:981:b0:706:58ef:613 with SMTP id d2e1a72fcca58-715dfc72cfdmr7188548b3a.27.1725019269804;
-        Fri, 30 Aug 2024 05:01:09 -0700 (PDT)
-Received: from [192.168.68.110] ([177.170.227.130])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-715e569ef15sm2599685b3a.105.2024.08.30.05.01.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 30 Aug 2024 05:01:09 -0700 (PDT)
-Message-ID: <3fdb33d3-16cd-49a6-bad7-81631f99c291@ventanamicro.com>
-Date: Fri, 30 Aug 2024 09:01:02 -0300
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dO7GdfLA4GjBteexcbeOMMcYKbSdWJR8TNXVAWrHEWU=;
+ b=ZirAUA1F54EPrEOTX3RhTobDSaRmJydjEdT7RMyvTMkyTKJ1d+EVZb+MzTL62wnzjNu0ob3N5wc5kAjWEzj7Djs7UOczqDoFf78f9k3o8pJRsxk5s8ykJeFzjYsTnw//OdYtIBHOQEvS3MiV0AL9HJnaaH7FpgkkRap+67r7ARg=
+Received: from SJ0PR10MB5613.namprd10.prod.outlook.com (2603:10b6:a03:3d0::5)
+ by PH0PR10MB5547.namprd10.prod.outlook.com (2603:10b6:510:da::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.14; Fri, 30 Aug
+ 2024 12:01:27 +0000
+Received: from SJ0PR10MB5613.namprd10.prod.outlook.com
+ ([fe80::4239:cf6f:9caa:940e]) by SJ0PR10MB5613.namprd10.prod.outlook.com
+ ([fe80::4239:cf6f:9caa:940e%5]) with mapi id 15.20.7918.019; Fri, 30 Aug 2024
+ 12:01:27 +0000
+Date: Fri, 30 Aug 2024 13:01:19 +0100
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: Petr Spacek <pspacek@isc.org>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Liam Howlett <liam.howlett@oracle.com>
+Subject: Re: [PATCH RFC] mm: mmap: Change DEFAULT_MAX_MAP_COUNT to INT_MAX
+Message-ID: <82960a7e-9013-475e-9b80-7b29a5667482@lucifer.local>
+References: <20240830095636.572947-1-pspacek@isc.org>
+ <90f07fec-3f46-4b38-86fd-07c9f8201904@lucifer.local>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <90f07fec-3f46-4b38-86fd-07c9f8201904@lucifer.local>
+X-ClientProxiedBy: LO4P265CA0011.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:2ad::19) To SJ0PR10MB5613.namprd10.prod.outlook.com
+ (2603:10b6:a03:3d0::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 3/7] iommu/riscv: Add RISC-V IOMMU PCIe device driver
-To: Jim Shu <jim.shu@sifive.com>, Tomasz Jeznach <tjeznach@rivosinc.com>
-Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
- Robin Murphy <robin.murphy@arm.com>, Paul Walmsley
- <paul.walmsley@sifive.com>, Anup Patel <apatel@ventanamicro.com>,
- devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
- Albert Ou <aou@eecs.berkeley.edu>, linux@rivosinc.com,
- linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
- Sebastien Boeuf <seb@rivosinc.com>, iommu@lists.linux.dev,
- Palmer Dabbelt <palmer@dabbelt.com>, Nick Kossifidis <mick@ics.forth.gr>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-riscv@lists.infradead.org,
- Lu Baolu <baolu.lu@linux.intel.com>, Zong Li <zong.li@sifive.com>
-References: <cover.1718388908.git.tjeznach@rivosinc.com>
- <e2792d6559f9f3e02b2243538647ef60f14176fd.1718388909.git.tjeznach@rivosinc.com>
- <CALw707q=B4h4CF3CvJOiRMMYqzvO_NG+taMLzZquCP=A9bgu0g@mail.gmail.com>
-Content-Language: en-US
-From: Daniel Henrique Barboza <dbarboza@ventanamicro.com>
-In-Reply-To: <CALw707q=B4h4CF3CvJOiRMMYqzvO_NG+taMLzZquCP=A9bgu0g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ0PR10MB5613:EE_|PH0PR10MB5547:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2c3a7d37-4466-416d-ece4-08dcc8eb7a0c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?MrTXShMCapZjgCixDWHHrKu9Ir1RJguszHZzoPDJCg+EeowSXhRAqnOqAK4L?=
+ =?us-ascii?Q?DyXFWKvB+jTTbn0zoPXc5s3yV1tcmN+A640oDOdwO9vK7OBhX6KxZ6NLHyal?=
+ =?us-ascii?Q?UK/PiwtAEMw816x8GQYCNA2VIxXyHks22XyLbiDAr7/XwHIEHzFTPOb+cUua?=
+ =?us-ascii?Q?bDM8A1IT9H1xXcRAgy9ADef1FUh/FutedYnAYLshr+BFB1c3of4KEX4Xrov+?=
+ =?us-ascii?Q?VyecEDM84qeD2rKDvclht9szgqVcGAMPL/BIPnxIF42IMUQwgs5KHsNReZWW?=
+ =?us-ascii?Q?HwJU+ysypfsdDZY9aJhVbB2k5l43OJueYv8mWK4Xz/P3DOk8yvp37lgTbKwv?=
+ =?us-ascii?Q?IATJh1cfIwi77mATfancwj2VO0UoxJ8v3/Ial/7sAy3HA7rHrQtUElypghvq?=
+ =?us-ascii?Q?PF9fM417x7lU+ta7y87i87EhAgF6fuC+7hdgzEXFP6/ml1CzSYLsMC51M/c0?=
+ =?us-ascii?Q?OGOp8ugTTeLaxvXPt3Ft/juj51mrYBOBqRVoAVhtHaoeghl/WWEIx8zvhusT?=
+ =?us-ascii?Q?G1X8+jmXQ9MuDSsPxWR5hTh9y1IrsAas1WWJ6hktBxRdBTa9v8rRRQtLlzOB?=
+ =?us-ascii?Q?/PGB3KrXT6YtGJSokcyvOU/GKd2oPIhU5Qr2FdNZYgtFWZgSvDIKa0U7w4eY?=
+ =?us-ascii?Q?cOpSDcmMDwGXpP8REA2fFgJF8e1abzBeRi+rc8XcsOSResbcgyy82OGuIo7O?=
+ =?us-ascii?Q?j6q7f2+ybvipHlOveTYou/RG9gdN0Rp8CMlB4phZkaalCS8rFjTtnEwnlVO6?=
+ =?us-ascii?Q?noYZsoAJFG0Ph7X2Mx6rpiF8VdS4WhfOoIa5Tu1sxn97iVJuBt3PZDQrOkeZ?=
+ =?us-ascii?Q?Y4G556nOt6vab1bNHNLmJVcVfrM5tzsCnaydlWqDGrGKlaevllpyEJpU4ydV?=
+ =?us-ascii?Q?0nc3gUYa8j4Yoc52KGMTWrWFfM7mtXc5rc+qZAYqA9wSAiIH8DnHY1F1Uhva?=
+ =?us-ascii?Q?DmN61yQLEGt+Ak0cYrxJtzhTCn6fBNB0NlUM80cZ+SXqW4Ml7dSuBvtbeqez?=
+ =?us-ascii?Q?Y7oPftY5P6Qyj0Z8xOky81HHvCrctc6cRj9zzIOTXeDkJ6OGk1P2Vp5IwYcM?=
+ =?us-ascii?Q?4iM8Cfzf8uwwr48HxzUIr2tkT8UZJQLW2Hw2L7GS/Ma1po8lg+xzdpZVosbJ?=
+ =?us-ascii?Q?IxOVz7oSk+VahcV6JJl9zN6unwCqUQ0ttNMeeaIxvRJA4VgcHqujpUzCVS6w?=
+ =?us-ascii?Q?3gXwjQ0HYN8K7fJEJViOodmryRFnWlq1RUvkPSfPqnydsepNoITIu48kWfsf?=
+ =?us-ascii?Q?cHCUONpiNiIiZVmJ2wbDi7rwhkbmcfyX6vR7eJkOIu8HmuO2HhwIQFJE7vSP?=
+ =?us-ascii?Q?nNLya6Whfl3I+Rr9NwQ1+G4y3CH+Y9krRa8p1yvQYGXFkQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR10MB5613.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?TtcxsdYBws+WqgdLjvkEKIKrqkUYgpZFJQGEcuw09czc4eq918axqQkwxm8B?=
+ =?us-ascii?Q?WivQSLoR9m+J+u4neI3/SWxKzD7JAx+0KZXg2e7K1/uCi4GaRUR++Zd/Ghp4?=
+ =?us-ascii?Q?QZlSxgO9L7B2/vXLLccgD7H5rJA36gj75xS6t8q0uIpIUY2Ev8CK7zDmIZS4?=
+ =?us-ascii?Q?pgNx4gsdg0l/VV3YcqiJ41C1ztUi3WD5NdK7Aj/eQqb0vwHV1Mnc+yRiIp8h?=
+ =?us-ascii?Q?a7UR07AzFpw+802DBd/Y91n3DTZeXfu1V23G5OWMV9xQRjlIuvcYjDFHzh6J?=
+ =?us-ascii?Q?h1MXExfMkZfhPM7bHAVr8rBTz5nXodL7SSj9Go72cp6gN4aGtOQNbsK+R4bF?=
+ =?us-ascii?Q?Irvb0ooRtjDNTRiRytGLwIBkq/egwvGFnfPdLUlfJ08vF6dfH2oeZ2IJrDVc?=
+ =?us-ascii?Q?Mzpx6NzBWd58SCcGQyQ88X1V+8Y/fK98/KqCLMPB2+PUJy7Cn3VXfh+RMheL?=
+ =?us-ascii?Q?P+jhPnEWIU7cEq9o2qhShicRSRBjweT31qLEcO2GrzAxUBcx6ktYFYWCwdls?=
+ =?us-ascii?Q?F4OaBE+JckzqLhglywKoyz3MipBum6PhurkeQx+ZHv5XVD+j+GgAXDW1apcv?=
+ =?us-ascii?Q?jRdJB6sK11FRJJWt+B7lFVta2/BTT2PUj2js6BXLqYeWuWFNl6tP0mrc/jLA?=
+ =?us-ascii?Q?WbOeBP2+hNR6HacZ+U+PfCyeJy4DpO7dJQ+i2g+nZEy+P19h0XoMPV0/xx03?=
+ =?us-ascii?Q?Pj4lm+YREQnSgkLgJzoBCR82EfVMWdRWnCcfMmsOZK4omAqVIlqqqreUBqf2?=
+ =?us-ascii?Q?s6WShDcBefBzaj2nlguIWGRxXdiAzCtszirKG9QNAD7+PuqwC8CK4Fi6oTOu?=
+ =?us-ascii?Q?MlmhN5D+UIsFSYpcQF7oYkbp1hKEj5ifmuRMF3T8a0qjspJvGtl1ZuZB9diu?=
+ =?us-ascii?Q?T9fVKb35/THw2bDxqMY8aFg0pNDCa/UVhMNB/BfY3Bz3CTtp/ljs6QBr8l1i?=
+ =?us-ascii?Q?pWMZ1KOsTZS1QUBeghAlGPIMg1X2LhEZLW2YiZLLhOoKBCPGfXK+FkssCPDw?=
+ =?us-ascii?Q?O/pL2Re2VgNBX0NPHSq5izOlE2QqMnr/hIn25LM/PDgf8pEQ1uSUuzMrFRbM?=
+ =?us-ascii?Q?MXlmInKuUP2PkzSiNq3JEc/mRuqYJ8wx+zdWUoAWiEVI78zaKg4fDiqQG1uc?=
+ =?us-ascii?Q?HIEGLmG1nsg3K3niLrRxDRwsronLisqtMfuMu/7uz2SZNzu6WXRzrQJqXSil?=
+ =?us-ascii?Q?LpLpDFGVM/amH/1kka9zqw2mn9BI738B9dnhthsrWNmWAHALBYkSf77Zqzv1?=
+ =?us-ascii?Q?RgAw64heLEwPwD+jfpAsywNaTxglj72U+Bf8E9pJN5y/yCDCozRpy/jOOD5Y?=
+ =?us-ascii?Q?DoLlWMzgEXOFz5YvvX+FJAbz/Mz7mgX/UGTj62EsdjXaaHxtna0PqeB7nDDP?=
+ =?us-ascii?Q?Rp3IDTdOJ1z1fdu1JQg5D2jQiGHytVZl33Q6o5Jpz+S2757v9VJewuryHwj8?=
+ =?us-ascii?Q?ThpsZ7/TZySAzn+x4WNZmqwnnTM3kn+gy7D6hKRyo9zT0RFkhdjYwc9Mfjbe?=
+ =?us-ascii?Q?KWcqWlXKRL/hvMInSOezzjsyOlga0+9G+1P3Xi1kAQDuOjad6boAa83kprqg?=
+ =?us-ascii?Q?zpQtk6cDDjf9+9pU6MjkZiojzuUzIWbCziD6+Su6kayrhf+nSQR/PuuZ6gEk?=
+ =?us-ascii?Q?FCT7RNTfl2pBZHa4lSkYs4VPrnoQHXqxRk6UmzXwpGgCRt2UDu6f5zekYl/U?=
+ =?us-ascii?Q?aMHDxA=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	49c4DMXy9LDhCrs2DudXplxfEs19JmqcpCFee2SXEdiA919pvFtIKmZd6jZAqPogllNPjLRyhf+Q6zuctUvhWFN3LozfUhi0LY4fQV9mMCc/bNTNTR3MhQG4sM4pXyz+C2kyoDt8xbxxDyZKsTgTadf/fKm5xTONZC6q0v8qzujzGlUYIFXdjQ0C/+guXqbtknt8Hl+Ip3NYHqnKLkOQlTTKFXJH48pFDOHAz3pLzulXNXJer6f2klQk2kCiQF6L8zQSzdUHdKf2bSsDpZUCZ7IXRivWiumxAL/OD8gJUMx+cl3ksbIoQJjn9ASfJlAducPkIAlTX0pJT9gqSgKnN5QRBCvTYDvs+QpIxYB/kuxBQrKwbeyMevvFc3wfq1Oc2BCu6E+G9klcx89XrZG/KXv54GBXnniX+SrQFjZAw9D31TZZJ8BcuN7zNIBX9gSXsm1+t88LeURDyHJmXQHqmkMEPzdq2JT6GuVMCeLYSl7INyD+uAwdSZ4vLcSEUZigpkqUM3txMqkD4l7mBOtbPCZ2BTlvHohxkqzM7anHEDwHPVq5Xrp7vdlI5t+10Nmzbf8MUrzaAd22XMvv2PpPqkb83/gp+lTsGfitliAUxqs=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2c3a7d37-4466-416d-ece4-08dcc8eb7a0c
+X-MS-Exchange-CrossTenant-AuthSource: SJ0PR10MB5613.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Aug 2024 12:01:27.1696
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: +lDaxV14/QqtLXfh72T2Jf93ph/LiDay5ROsJLrac6u2JyiuUBUoIwEj/IqkTXLBVG45eQom+ILBClgYRjRr08orZogiEU51gBuPQgzNzhc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR10MB5547
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-30_06,2024-08-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 mlxlogscore=999
+ adultscore=0 mlxscore=0 spamscore=0 malwarescore=0 phishscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2407110000 definitions=main-2408300091
+X-Proofpoint-GUID: frj95kXgTykFv49c3-x3OJXB_H6aWsXA
+X-Proofpoint-ORIG-GUID: frj95kXgTykFv49c3-x3OJXB_H6aWsXA
 
+On Fri, Aug 30, 2024 at 12:41:37PM GMT, Lorenzo Stoakes wrote:
+> On Fri, Aug 30, 2024 at 11:56:36AM GMT, Petr Spacek wrote:
+> > From: Petr Spacek <pspacek@isc.org>
+> >
+> > Raise default sysctl vm.max_map_count to INT_MAX, which effectively
+> > disables the limit for all sane purposes. The sysctl is kept around in
+> > case there is some use-case for this limit.
+> >
+> > The old default value of vm.max_map_count=65530 provided compatibility
+> > with ELF format predating year 2000 and with binutils predating 2010. At
+> > the same time the old default caused issues with applications deployed
+> > in 2024.
+> >
+> > State since 2012: Linux 3.2.0 correctly generates coredump from a
+> > process with 100 000 mmapped files. GDB 7.4.1, binutils 2.22 work with
+> > this coredump fine and can actually read data from the mmaped addresses.
+> >
+> > Signed-off-by: Petr Spacek <pspacek@isc.org>
+>
+> NACK.
 
+Sorry this may have come off as more hostile than intended... we are
+welcoming of patches, promise :)
 
-On 8/30/24 4:04 AM, Jim Shu wrote:
-> Hi Tomasz,
-> 
-> QEMU RISC-V IOMMU will switch the PCIe vendor/device ID to Red Hat one
-> [1] in the latest v6 patch.
-> Will we also support the PCIe ID of Red Hat one in the Linux driver?
-> 
-> [1] https://patchew.org/QEMU/20240801154334.1009852-1-dbarboza@ventanamicro.com/20240801154334.1009852-5-dbarboza@ventanamicro.com/
+It is only because we want to be _super_ careful about things like this
+that can have potentially problematic impact if you have a buggy program
+that allocates too many VMAs.
 
-The QEMU-side background of this change: the original patches from Tomasz was
-hardcoding a Rivos PCI ID, i.e. the device was being registered as a Rivos IOMMU
-PCI device. The thing is that there isn't anything  Rivos specific in the QEMU
-IOMMU emulation, since we're adhering to the riscv-iommu spec entirely (with a
-couple of design choices here and there), thus we decided it would be better to
-get a generic PCI IOMMU ID.
+It is a NACK, but it's a NACK because of the limit being so high.
 
-Red Hat was kind enough to gave us one from their PCI ID space, since RVI didn't
-bother getting an ID for this reference device, and we're using the Red Hat ID
-in the QEMU emulation. The QEMU IOMMU PCI device is by default reported as
-1b36:0014 (PCI_VENDOR_ID_REDHAT : PCI_DEVICE_ID_REDHAT_RISCV_IOMMU).
+With steam I believe it is a product of how it performs allocations, and
+unfortunately this causes it to allocate quite a bit more than you would
+expect.
 
-This change happened in v3, sent in May 2024:
+With jemalloc() that seems strange, perhaps buggy behaviour?
 
-https://lore.kernel.org/qemu-riscv/20240523173955.1940072-1-dbarboza@ventanamicro.com/
+It may be reasonable to adjust the default limit higher, and I'm not
+opposed to that, but it might be tricky to find a level that is sensible
+across all arches including ones with significantly smaller memory
+availability.
 
-This change would make the QEMU IOMMU PCI device incompatible with this kernel
-support, so we added a capability to set the PCI ID for the device in the QEMU
-command line. To make the IOMMU PCI device work with the current kernel support, that
-is being set to a Rivos PCI device, change the vendor/device ID to match what the
-kernel driver expects:
+This is what makes choosing this value tricky, thanks for you analysis as
+to the original choice which does seem less applicable now, but choosing
+something sensible here might be tricky.
 
-(...)  -device riscv-iommu-pci,vendor-id=0x1efd,device-id=0xedf1
+Also there may be _somebody_ out there relying on this limit being quite so
+low.
 
-The ability to set vendor-id/device-id of this device will allow an easier development
-of other proprietary IOMMU PCI drivers, i.e. it's not a hack to make the current kernel
-support work.
-
-As for this kernel support, I didn't fully review it to see if there is a Rivos specific
-behavior being implemented. If this isn't the case perhaps there is a case to be made
-to also make the kernel driver more generic - in this case feel free to use the same as
-QEMU is going to use (PCI_VENDOR_ID_REDHAT : PCI_DEVICE_ID_REDHAT_RISCV_IOMMU - 1b36:0014).
-
-
-Thanks,
-
-Daniel
-
-
-> 
-> 
-> Regards,
-> Jim Shu
-> 
-> 
-> 
-> On Sat, Jun 15, 2024 at 1:29 PM Tomasz Jeznach <tjeznach@rivosinc.com> wrote:
->>
->> Introduce device driver for PCIe implementation
->> of RISC-V IOMMU architected hardware.
->>
->> IOMMU hardware and system support for MSI or MSI-X is
->> required by this implementation.
->>
->> Vendor and device identifiers used in this patch
->> matches QEMU implementation of the RISC-V IOMMU PCIe
->> device, from Rivos VID (0x1efd) range allocated by the PCI-SIG.
->>
->> MAINTAINERS | added iommu-pci.c already covered by matching pattern.
->>
->> Link: https://lore.kernel.org/qemu-devel/20240307160319.675044-1-dbarboza@ventanamicro.com/
->> Co-developed-by: Nick Kossifidis <mick@ics.forth.gr>
->> Signed-off-by: Nick Kossifidis <mick@ics.forth.gr>
->> Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
->> Signed-off-by: Tomasz Jeznach <tjeznach@rivosinc.com>
->> ---
->>   drivers/iommu/riscv/Kconfig     |   5 ++
->>   drivers/iommu/riscv/Makefile    |   1 +
->>   drivers/iommu/riscv/iommu-pci.c | 119 ++++++++++++++++++++++++++++++++
->>   3 files changed, 125 insertions(+)
->>   create mode 100644 drivers/iommu/riscv/iommu-pci.c
->>
->> diff --git a/drivers/iommu/riscv/Kconfig b/drivers/iommu/riscv/Kconfig
->> index 5dcc5c45aa50..c071816f59a6 100644
->> --- a/drivers/iommu/riscv/Kconfig
->> +++ b/drivers/iommu/riscv/Kconfig
->> @@ -13,3 +13,8 @@ config RISCV_IOMMU
->>
->>            Say Y here if your SoC includes an IOMMU device implementing
->>            the RISC-V IOMMU architecture.
->> +
->> +config RISCV_IOMMU_PCI
->> +       def_bool y if RISCV_IOMMU && PCI_MSI
->> +       help
->> +         Support for the PCIe implementation of RISC-V IOMMU architecture.
->> diff --git a/drivers/iommu/riscv/Makefile b/drivers/iommu/riscv/Makefile
->> index e4c189de58d3..f54c9ed17d41 100644
->> --- a/drivers/iommu/riscv/Makefile
->> +++ b/drivers/iommu/riscv/Makefile
->> @@ -1,2 +1,3 @@
->>   # SPDX-License-Identifier: GPL-2.0-only
->>   obj-$(CONFIG_RISCV_IOMMU) += iommu.o iommu-platform.o
->> +obj-$(CONFIG_RISCV_IOMMU_PCI) += iommu-pci.o
->> diff --git a/drivers/iommu/riscv/iommu-pci.c b/drivers/iommu/riscv/iommu-pci.c
->> new file mode 100644
->> index 000000000000..e675acceb290
->> --- /dev/null
->> +++ b/drivers/iommu/riscv/iommu-pci.c
->> @@ -0,0 +1,119 @@
->> +// SPDX-License-Identifier: GPL-2.0-only
->> +
->> +/*
->> + * Copyright © 2022-2024 Rivos Inc.
->> + * Copyright © 2023 FORTH-ICS/CARV
->> + *
->> + * RISCV IOMMU as a PCIe device
->> + *
->> + * Authors
->> + *     Tomasz Jeznach <tjeznach@rivosinc.com>
->> + *     Nick Kossifidis <mick@ics.forth.gr>
->> + */
->> +
->> +#include <linux/compiler.h>
->> +#include <linux/init.h>
->> +#include <linux/iommu.h>
->> +#include <linux/kernel.h>
->> +#include <linux/pci.h>
->> +
->> +#include "iommu-bits.h"
->> +#include "iommu.h"
->> +
->> +/* Rivos Inc. assigned PCI Vendor and Device IDs */
->> +#ifndef PCI_VENDOR_ID_RIVOS
->> +#define PCI_VENDOR_ID_RIVOS             0x1efd
->> +#endif
->> +
->> +#ifndef PCI_DEVICE_ID_RIVOS_IOMMU
->> +#define PCI_DEVICE_ID_RIVOS_IOMMU       0xedf1
->> +#endif
->> +
->> +static int riscv_iommu_pci_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
->> +{
->> +       struct device *dev = &pdev->dev;
->> +       struct riscv_iommu_device *iommu;
->> +       int rc, vec;
->> +
->> +       rc = pcim_enable_device(pdev);
->> +       if (rc)
->> +               return rc;
->> +
->> +       if (!(pci_resource_flags(pdev, 0) & IORESOURCE_MEM))
->> +               return -ENODEV;
->> +
->> +       if (pci_resource_len(pdev, 0) < RISCV_IOMMU_REG_SIZE)
->> +               return -ENODEV;
->> +
->> +       rc = pcim_iomap_regions(pdev, BIT(0), pci_name(pdev));
->> +       if (rc)
->> +               return dev_err_probe(dev, rc, "pcim_iomap_regions failed\n");
->> +
->> +       iommu = devm_kzalloc(dev, sizeof(*iommu), GFP_KERNEL);
->> +       if (!iommu)
->> +               return -ENOMEM;
->> +
->> +       iommu->dev = dev;
->> +       iommu->reg = pcim_iomap_table(pdev)[0];
->> +
->> +       pci_set_master(pdev);
->> +       dev_set_drvdata(dev, iommu);
->> +
->> +       /* Check device reported capabilities / features. */
->> +       iommu->caps = riscv_iommu_readq(iommu, RISCV_IOMMU_REG_CAPABILITIES);
->> +       iommu->fctl = riscv_iommu_readl(iommu, RISCV_IOMMU_REG_FCTL);
->> +
->> +       /* The PCI driver only uses MSIs, make sure the IOMMU supports this */
->> +       switch (FIELD_GET(RISCV_IOMMU_CAPABILITIES_IGS, iommu->caps)) {
->> +       case RISCV_IOMMU_CAPABILITIES_IGS_MSI:
->> +       case RISCV_IOMMU_CAPABILITIES_IGS_BOTH:
->> +               break;
->> +       default:
->> +               return dev_err_probe(dev, -ENODEV,
->> +                                    "unable to use message-signaled interrupts\n");
->> +       }
->> +
->> +       /* Allocate and assign IRQ vectors for the various events */
->> +       rc = pci_alloc_irq_vectors(pdev, 1, RISCV_IOMMU_INTR_COUNT,
->> +                                  PCI_IRQ_MSIX | PCI_IRQ_MSI);
->> +       if (rc <= 0)
->> +               return dev_err_probe(dev, -ENODEV,
->> +                                    "unable to allocate irq vectors\n");
->> +
->> +       iommu->irqs_count = rc;
->> +       for (vec = 0; vec < iommu->irqs_count; vec++)
->> +               iommu->irqs[vec] = msi_get_virq(dev, vec);
->> +
->> +       /* Enable message-signaled interrupts, fctl.WSI */
->> +       if (iommu->fctl & RISCV_IOMMU_FCTL_WSI) {
->> +               iommu->fctl ^= RISCV_IOMMU_FCTL_WSI;
->> +               riscv_iommu_writel(iommu, RISCV_IOMMU_REG_FCTL, iommu->fctl);
->> +       }
->> +
->> +       return riscv_iommu_init(iommu);
->> +}
->> +
->> +static void riscv_iommu_pci_remove(struct pci_dev *pdev)
->> +{
->> +       struct riscv_iommu_device *iommu = dev_get_drvdata(&pdev->dev);
->> +
->> +       riscv_iommu_remove(iommu);
->> +}
->> +
->> +static const struct pci_device_id riscv_iommu_pci_tbl[] = {
->> +       {PCI_VENDOR_ID_RIVOS, PCI_DEVICE_ID_RIVOS_IOMMU,
->> +        PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0},
->> +       {0,}
->> +};
->> +
->> +static struct pci_driver riscv_iommu_pci_driver = {
->> +       .name = KBUILD_MODNAME,
->> +       .id_table = riscv_iommu_pci_tbl,
->> +       .probe = riscv_iommu_pci_probe,
->> +       .remove = riscv_iommu_pci_remove,
->> +       .driver = {
->> +               .suppress_bind_attrs = true,
->> +       },
->> +};
->> +
->> +builtin_pci_driver(riscv_iommu_pci_driver);
->> --
->> 2.34.1
->>
->>
->> _______________________________________________
->> linux-riscv mailing list
->> linux-riscv@lists.infradead.org
->> http://lists.infradead.org/mailman/listinfo/linux-riscv
-> 
+[snip]
 
