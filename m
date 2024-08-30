@@ -1,111 +1,111 @@
-Return-Path: <linux-kernel+bounces-308624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7572E965FAE
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:55:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61538965FA5
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:53:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E26D2B278D2
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:53:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D800B282898
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:53:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6875918FDD2;
-	Fri, 30 Aug 2024 10:52:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A51E918FDCD;
+	Fri, 30 Aug 2024 10:53:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r7P1obs1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="NRWVImWb"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6B3A18E742
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 10:52:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 296A117B4F9;
+	Fri, 30 Aug 2024 10:53:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725015169; cv=none; b=irJduOwfwEqnRgciUMqAtNmR32nNSHOkF0bCdVVgT8lSj4LMv/tEpPUBtNmUaTMGFWFLY4QOZPZgfRyt9ArWqfZSGeY1dp2yQKiBu6d3V5DkVN34QgQFKk9/WMD5KTpcgsmcZPpFzWDwZh0mUICgtjr3fkGJ4ucIqffRTHo/CKc=
+	t=1725015212; cv=none; b=SiOhhujogsS9WXzM0dXILuxdaw9VOXK3xp2InHCcA7B74fchVamoYfQEquy4WXKA0zEMvxDHDeGBaALo9Masai7xWPXznibxsUPxQsvYvi5rvP4IedIinrkTdaNGjqjEglOOp/IZ362EG/awfop2ExdHqIBjaIXd+pVf56ToC4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725015169; c=relaxed/simple;
-	bh=FTNxL7e/JKQ9rEkZvlMHczZsUneiqRibtUpAmYHVFFI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Lx0KJtOas2MXi21hZmOm+G5WDYIG9yvHhccqNxu21uu3CgodZ6gJsjhbQh71ZyJWgdemKqYKvtT/R54/pg066rq/Txl7MjnV/8CMilQvF9jlnmxHEY3oAsalbL2EP9cqn+q9khsPenZurBCAFbgEUDuhrTWRoz9sxG9kdlh7jr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r7P1obs1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 322F0C4CEC4;
-	Fri, 30 Aug 2024 10:52:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725015169;
-	bh=FTNxL7e/JKQ9rEkZvlMHczZsUneiqRibtUpAmYHVFFI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=r7P1obs1V5Vc87D51Oop8cXBsIVaPtItCUFC7837z2X8p7k92epsouaXcmnc1waAN
-	 2pP2ZDO7xH2ngDh8hd1hCEVFl3vDWY4MpS79tH2TB/RpP01QH+/ufJnjndmQd2m7IN
-	 7NTvLaZ7hBzIRVZuXUBJaHwNcv+IuKl8gs06bthN0EibAlNLPt66jyAiqPqq5mLons
-	 SVgU0HFJtJH911S/PBK39qkxfi70tTxp7afft0cSCNhgNl2dmoMhCzHG7i2gsvdngQ
-	 s5XJI0fo+htEzgIYb7TnCg7rOKgfakNPP3krxXf3ELTcEN3CHUFA71VS6tshJIdn2l
-	 vHKaOKEpLZc/w==
-Date: Fri, 30 Aug 2024 00:52:48 -1000
-From: Tejun Heo <tj@kernel.org>
-To: David Vernet <void@manifault.com>
-Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-	kernel-team@meta.com
-Subject: [PATCH 2/2 sched_ext/for-6.12] sched_ext: Use ktime_get_ns() instead
- of rq_clock_task() in touch_core_sched()
-Message-ID: <ZtGkgCEkgNLzjxUC@slm.duckdns.org>
-References: <ZtGkPKgoE5BeI7fN@slm.duckdns.org>
+	s=arc-20240116; t=1725015212; c=relaxed/simple;
+	bh=O9KGuHA2ZA1Eb8lRka+CR0EIeZxGOlxwyRPT8n1DNts=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=AZ+uaKMWjTJZ2ASNLOdcu+QiJz3A+FnNtlOyPb/c9gji5gomFnsiYfzHihUITG1ElbZSWx9S0ICArTfTsR/pFkBNCHqBXGl8xkO6/N1cTYwk7ACQ9B4bSPY8R87G4+OIlrPhu8TsMGfETCW7zJNZBggNu3rCxFwb5X/WfTeBDw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=NRWVImWb; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47UArMIc101755;
+	Fri, 30 Aug 2024 05:53:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1725015202;
+	bh=KUOgx+nr0Fdd/U00rm4qzZJfvik05ytOlpn9p/ouBH8=;
+	h=From:To:CC:Subject:Date;
+	b=NRWVImWbs7jZ12VLz4r/DKXBGPc8M0cu20KRKBPDV+v3Z156O5hiYonuviIyP77TQ
+	 6K853QRxazjjAm68VhX+HX8PEgNWvKaw1SOdnsFlHq76kyANFBBEIujPajRucveRbb
+	 X8Ae5HLweEExBElldZspQhgYsmOmm9JfGgYxnus4=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47UArMRk012191
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 30 Aug 2024 05:53:22 -0500
+Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 30
+ Aug 2024 05:53:22 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 30 Aug 2024 05:53:21 -0500
+Received: from uda0492258.dhcp.ti.com (uda0492258.dhcp.ti.com [10.24.72.81])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47UArHDB009586;
+	Fri, 30 Aug 2024 05:53:18 -0500
+From: Siddharth Vadapalli <s-vadapalli@ti.com>
+To: <vkoul@kernel.org>, <kishon@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <sjakhade@cadence.com>,
+        <yamonkar@cadence.com>
+CC: <linux-phy@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <nm@ti.com>, <srk@ti.com>, <s-vadapalli@ti.com>
+Subject: [PATCH] dt-bindings: phy: cadence-sierra: Allow PHY types QSGMII and SGMII
+Date: Fri, 30 Aug 2024 16:23:16 +0530
+Message-ID: <20240830105316.1824319-1-s-vadapalli@ti.com>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZtGkPKgoE5BeI7fN@slm.duckdns.org>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Since sched_ext: Unpin and repin rq lock from balance_scx(), sched_ext's
-balance path terminates rq_pin in the outermost function. This is simpler
-and in line with what other balance functions are doing but it loses control
-over rq->clock_update_flags which makes assert_clock_udpated() trigger if
-other CPUs pins the rq lock.
+The Sierra SERDES can be configured for QSGMII and SGMII protocols. Hence,
+update the bindings to treat "PHY_TYPE_QSGMII" and "PHY_TYPE_SGMII" as
+valid values for the "cdns,phy-type" property.
 
-The only place this matters is touch_core_sched() which uses the timestamp
-to order tasks from sibling rq's. For now, switch to ktime_get_ns(). Later,
-it'd be better to use per-core dispatch sequence number.
-
-Signed-off-by: Tejun Heo <tj@kernel.org>
-Fixes: 3cf78c5d01d6 ("sched_ext: Unpin and repin rq lock from balance_scx()")
-Cc: Peter Zijlstra <peterz@infradead.org>
+Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
 ---
- kernel/sched/ext.c |   10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
 
---- a/kernel/sched/ext.c
-+++ b/kernel/sched/ext.c
-@@ -1453,13 +1453,20 @@ static void schedule_deferred(struct rq
-  */
- static void touch_core_sched(struct rq *rq, struct task_struct *p)
- {
-+	lockdep_assert_rq_held(rq);
-+
- #ifdef CONFIG_SCHED_CORE
- 	/*
- 	 * It's okay to update the timestamp spuriously. Use
- 	 * sched_core_disabled() which is cheaper than enabled().
-+	 *
-+	 * TODO: ktime_get_ns() is used because rq_clock_task() can't be used as
-+	 * SCX balance path doesn't pin the rq. As this is used to determine
-+	 * ordering between tasks of sibling CPUs, it'd be better to use
-+	 * per-core dispatch sequence instead.
- 	 */
- 	if (!sched_core_disabled())
--		p->scx.core_sched_at = rq_clock_task(rq);
-+		p->scx.core_sched_at = ktime_get_ns();
- #endif
- }
+Hello,
+
+This patch is based on linux-next tagged next-20240830.
+
+Regards,
+Siddharth.
+
+ Documentation/devicetree/bindings/phy/phy-cadence-sierra.yaml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Documentation/devicetree/bindings/phy/phy-cadence-sierra.yaml b/Documentation/devicetree/bindings/phy/phy-cadence-sierra.yaml
+index 37f028f7a095..137ac5703853 100644
+--- a/Documentation/devicetree/bindings/phy/phy-cadence-sierra.yaml
++++ b/Documentation/devicetree/bindings/phy/phy-cadence-sierra.yaml
+@@ -96,7 +96,7 @@ patternProperties:
+           Specifies the type of PHY for which the group of PHY lanes is used.
+           Refer include/dt-bindings/phy/phy.h. Constants from the header should be used.
+         $ref: /schemas/types.yaml#/definitions/uint32
+-        enum: [2, 4]
++        enum: [2, 4, 8, 9]
  
-@@ -1476,7 +1483,6 @@ static void touch_core_sched(struct rq *
- static void touch_core_sched_dispatch(struct rq *rq, struct task_struct *p)
- {
- 	lockdep_assert_rq_held(rq);
--	assert_clock_updated(rq);
- 
- #ifdef CONFIG_SCHED_CORE
- 	if (SCX_HAS_OP(core_sched_before))
+       cdns,num-lanes:
+         description:
+-- 
+2.40.1
+
 
