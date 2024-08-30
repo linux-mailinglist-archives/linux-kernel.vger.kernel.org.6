@@ -1,158 +1,83 @@
-Return-Path: <linux-kernel+bounces-309446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6506966AC0
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 22:37:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 276F9966AC2
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 22:38:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CB731F23B3D
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 20:37:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5AC351C2194A
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 20:38:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49E461BF80C;
-	Fri, 30 Aug 2024 20:37:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F04B11BF814;
+	Fri, 30 Aug 2024 20:37:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LQUVzpUS"
-Received: from mail-oi1-f171.google.com (mail-oi1-f171.google.com [209.85.167.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="pcNSW/bU"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 758B71BD00F;
-	Fri, 30 Aug 2024 20:37:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E6AD6026A;
+	Fri, 30 Aug 2024 20:37:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725050235; cv=none; b=IrJWyp37IotElfTV3/aQzpj+Bdi4NpzebeM9Fp8mdtdSy/IHmpTzPX+4f2GVAZxUoKclXiUtGSGYPtQE5gb3i5+oNO8vZ0SRxxqWF7xqtOtQ8J/Jvmvftrs40aQWMVPhQUfQBynPlPPez9rUh30UJuety3WagZsHRhGFUBZJ8/I=
+	t=1725050276; cv=none; b=L21klzhwhjTKCKzdSiNDmiN15hsjl/Ja4UvOG5jN4m0/N+zVm7dm4qcJcVAIQX/fyKN27Zrux7OqTqlPDs9svyaLAZ6yD3k8dBv5d/nAQrYK/nt2jjLjr2cnDvgsx8HIQ2n8gVZSNiKrzkntRsbD2t7XjLIBPJWP4TXtS/ntcvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725050235; c=relaxed/simple;
-	bh=c3WCB+XMKHkIhwbiRpzvW51j6lByBKQZ9lpJoC1uMRw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HBCO68Hfa+O7i70QAkU2lvCpSm+rc7SM5K+DVb5D/F/7qlNboBYTzkyXPvTXfTOXc5w7bLlYhEppUKqs1znkOnRTFBsjLjgXFCN4eC8kmjgkh7fVLvryJBDrWodPk77rawhbaS5Wz177RXvl8KIEMRmqaCEkmvX9CQCPFXdCAhg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LQUVzpUS; arc=none smtp.client-ip=209.85.167.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f171.google.com with SMTP id 5614622812f47-3de13126957so1443653b6e.0;
-        Fri, 30 Aug 2024 13:37:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725050232; x=1725655032; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=o+kQe6VsLr0w8NPho0fLf/Dst/MLp8Ox6OpvKwqHs6A=;
-        b=LQUVzpUSt+zTPdpk8JdEpd+f3doxiaIIaKDNxViiQp0jsBdJ19n1IdsMYap2L+ROog
-         uv+q1JEKmNDr2FTNFfJI06osT118lzUTv4sxqkrpg0rilompUy6P0EiF530cv2CDicLZ
-         szjnZ0jK5bjx/TiJ3Szt/3QZz/I/8UM3NEpwJb+mesK3U5xkBpHWEmxCYeHxwdMtLP4Z
-         M6FnfqSQUc7Uqb8HjdSa35WL1jD2MEu0I2CUEQ21Utdix5TGjSRxfnq9EQZiIQfeycz6
-         IXVoJ/2r3zX4A+CFDTU25vwk8JsIyeXzvkPXPRsGKrLakput1VBIozDyqyrdNltAfP9j
-         x6Pg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725050232; x=1725655032;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=o+kQe6VsLr0w8NPho0fLf/Dst/MLp8Ox6OpvKwqHs6A=;
-        b=F4IVQg0c+HlVjaQ5BOuMEVXq5Gl10sZNLARyhslIM4fLnhfETxokrk6xJQTZvfQoYA
-         1g/BaU86iVJQW4xXYGFL9uRGrXmtG4zFrvS265J0EfmXD+07YH2lACwehHRek/cwfngg
-         ENuWiRqtkV5pLkZrdBokpe3nLYEDWiejyTuIAxg1Bu1KcMbJzpCwwcbMR1rmLa89RlDk
-         tY86VZaL9K3AFPeQVm3V1PkoEXGBofuEo84tEfTSsxBCN2XvKO4trEsN5kN9iGpSRjba
-         Lp6OsztNtchNQi9mW6fo0D72tXxW3mI3Q1N6ky6qGH6r748y11zhCOqSN3Zj0id0N+0u
-         ciGA==
-X-Forwarded-Encrypted: i=1; AJvYcCV+vdjSO11vvjqG2XaNKvuZn410bZ5Htxt78pSBp+LF+8EmmZ5x6VsR870djo7bR60xdIFkyb/J/OzIoQmv@vger.kernel.org, AJvYcCWwdY8EcR6DrtKoN/edvdDvvh5fvEluy4PyrKGi+vp/3a6cfETgern3/+Jijhay+NDILhnTd9f2qcxysMEg@vger.kernel.org
-X-Gm-Message-State: AOJu0YydbZj7Ng0xHTerIB3cECz4AiWpt1vYAr+OdZsfOl9tRxkcjK9J
-	sc5VvplcQwo0cLmoMc6pxnyewYpEZHcOAjgpm/xQpchAcozlUK4DEfq2oZA+1L6oJN9wv5lT5xC
-	BiY5Zs2xgDZ71+xHhHEvD5KKOXZ8=
-X-Google-Smtp-Source: AGHT+IGBK5VzsLTg+8hHTDlEwYoRoCMP3HK0fagxgjtTycr60ZVf6Hnz+b7BKk+/0NUyK2hlKcW4jKAotktIaq2r89c=
-X-Received: by 2002:a05:6808:144c:b0:3da:bc80:b233 with SMTP id
- 5614622812f47-3df05d6e387mr8639762b6e.17.1725050232471; Fri, 30 Aug 2024
- 13:37:12 -0700 (PDT)
+	s=arc-20240116; t=1725050276; c=relaxed/simple;
+	bh=ezl1IoVRKWzsp4pTDRmeO434a3tD5Tz5LMAhKhLI6Kg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T9A9W+eZgF67Qq0GEFh4kqlkMpTaAGVRMzN5jCk1LNxBWn2zcZxOzunlWD0eZszW5UKo4691ZiTP+U07lgCSK01fFYtzh30gpm+TIzjLJi2jUBfQzFLq55b2x0yNFA+YMhQbY8cVn2k3nD+3jWpQqijyqgFitEhS7AQ9DH78qTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=pcNSW/bU; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=S3as/TbL7oCPIyfayJUlYsN7QNULpTuaU7qxLfDmGs4=; b=pcNSW/bUX/fNOHF/KqNrBHAemX
+	hoTNxogtdVA8NEpXdM3Sr0km93zCrgl9L5fpysKgAln6OphdwYDODJ0/P/21rLE8fJRbEzUuCC67z
+	kkPWQdMz+JoYoOcwTJU2y+HDzr8Xufo4rG1W9lcuH4nYwAJK7fmluzSh/vCUPb141JOg=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sk8NL-006A8v-8N; Fri, 30 Aug 2024 22:37:43 +0200
+Date: Fri, 30 Aug 2024 22:37:43 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Raju Lakkaraju <Raju.Lakkaraju@microchip.com>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, linux@armlinux.org.uk,
+	kuba@kernel.org, hkallweit1@gmail.com, richardcochran@gmail.com,
+	rdunlap@infradead.org, Bryan.Whitehead@microchip.com,
+	edumazet@google.com, pabeni@redhat.com,
+	linux-kernel@vger.kernel.org, horms@kernel.org,
+	UNGLinuxDriver@microchip.com
+Subject: Re: [PATCH net-next V4 1/5] net: phylink: Add
+ phylink_set_fixed_link() to configure fixed link state in phylink
+Message-ID: <02820cac-6020-48c4-bddf-745ca5586f0a@lunn.ch>
+References: <20240829055132.79638-1-Raju.Lakkaraju@microchip.com>
+ <20240829055132.79638-2-Raju.Lakkaraju@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240830-preemption-a750-t-v2-0-86aeead2cd80@gmail.com> <20240830-preemption-a750-t-v2-4-86aeead2cd80@gmail.com>
-In-Reply-To: <20240830-preemption-a750-t-v2-4-86aeead2cd80@gmail.com>
-From: Rob Clark <robdclark@gmail.com>
-Date: Fri, 30 Aug 2024 13:36:59 -0700
-Message-ID: <CAF6AEGuMah=C_i1qqaAP+Pz5t=bX5+Tq4Mq6HXoSeyWpaj7Cqw@mail.gmail.com>
-Subject: Re: [PATCH v2 4/9] drm/msm/A6xx: Implement preemption for A7XX targets
-To: Antonino Maniscalco <antomani103@gmail.com>
-Cc: Sean Paul <sean@poorly.run>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	Abhinav Kumar <quic_abhinavk@quicinc.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, linux-arm-msm@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, Sharat Masetty <smasetty@codeaurora.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240829055132.79638-2-Raju.Lakkaraju@microchip.com>
 
-On Fri, Aug 30, 2024 at 8:33=E2=80=AFAM Antonino Maniscalco
-<antomani103@gmail.com> wrote:
->
-> This patch implements preemption feature for A6xx targets, this allows
-> the GPU to switch to a higher priority ringbuffer if one is ready. A6XX
-> hardware as such supports multiple levels of preemption granularities,
-> ranging from coarse grained(ringbuffer level) to a more fine grained
-> such as draw-call level or a bin boundary level preemption. This patch
-> enables the basic preemption level, with more fine grained preemption
-> support to follow.
->
-> Signed-off-by: Sharat Masetty <smasetty@codeaurora.org>
-> Signed-off-by: Antonino Maniscalco <antomani103@gmail.com>
-> Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8650-QRD
-> ---
->  drivers/gpu/drm/msm/Makefile              |   1 +
->  drivers/gpu/drm/msm/adreno/a6xx_gpu.c     | 323 +++++++++++++++++++++-
->  drivers/gpu/drm/msm/adreno/a6xx_gpu.h     | 168 ++++++++++++
->  drivers/gpu/drm/msm/adreno/a6xx_preempt.c | 431 ++++++++++++++++++++++++=
-++++++
->  drivers/gpu/drm/msm/msm_ringbuffer.h      |   7 +
->  5 files changed, 921 insertions(+), 9 deletions(-)
->
+On Thu, Aug 29, 2024 at 11:21:28AM +0530, Raju Lakkaraju wrote:
+> From: Russell King <linux@armlinux.org.uk>
+> 
+> The function allows for the configuration of a fixed link state for a given
+> phylink instance. This addition is particularly useful for network devices that
+> operate with a fixed link configuration, where the link parameters do not change
+> dynamically. By using `phylink_set_fixed_link()`, drivers can easily set up
+> the fixed link state during initialization or configuration changes.
+> 
+> Signed-off-by: Russell King <linux@armlinux.org.uk>
+> Signed-off-by: Raju Lakkaraju <Raju.Lakkaraju@microchip.com>
 
-[snip]
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-> +void a6xx_preempt_trigger(struct msm_gpu *gpu)
-> +{
-> +       struct adreno_gpu *adreno_gpu =3D to_adreno_gpu(gpu);
-> +       struct a6xx_gpu *a6xx_gpu =3D to_a6xx_gpu(adreno_gpu);
-> +       u64 preempt_offset_priv_secure;
-> +       unsigned long flags;
-> +       struct msm_ringbuffer *ring;
-> +       uint64_t user_ctx_iova;
-> +       unsigned int cntl;
-> +
-> +       if (gpu->nr_rings =3D=3D 1)
-> +               return;
-> +
-> +       /*
-> +        * Lock to make sure another thread attempting preemption doesn't=
- skip it
-> +        * while we are still evaluating the next ring. This makes sure t=
-he other
-> +        * thread does start preemption if we abort it and avoids a soft =
-lock.
-> +        */
-> +       spin_lock_irqsave(&a6xx_gpu->eval_lock, flags);
-> +
-> +       /*
-> +        * Try to start preemption by moving from NONE to START. If
-> +        * unsuccessful, a preemption is already in flight
-> +        */
-> +       if (!try_preempt_state(a6xx_gpu, PREEMPT_NONE, PREEMPT_START)) {
-> +               spin_unlock_irqrestore(&a6xx_gpu->eval_lock, flags);
-> +               return;
-> +       }
-> +
-> +       cntl =3D (((a6xx_gpu->preempt_level << 6) & 0xC0) |
-> +               ((a6xx_gpu->skip_save_restore << 9) & 0x200) |
-> +               ((a6xx_gpu->uses_gmem << 8) & 0x100) | 0x1);
-
-nit, could we define these fields in the xml, and not open-code
-register building?
-
-BR,
--R
+    Andrew
 
