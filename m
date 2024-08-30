@@ -1,97 +1,90 @@
-Return-Path: <linux-kernel+bounces-309049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 673F9966587
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 17:32:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AC7896659F
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 17:33:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 994201C22A5E
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 15:32:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDB42286721
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 15:33:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FA1C1BD50B;
-	Fri, 30 Aug 2024 15:29:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6E7F1B6522;
+	Fri, 30 Aug 2024 15:30:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XPhCVHgS"
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="LbxW5qED"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E56E1BC9FB
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 15:29:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F416EEC9;
+	Fri, 30 Aug 2024 15:30:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725031773; cv=none; b=VxWhAbSR2tvNJtu9VqQ69owKtMGJ24wv4xmfOlRKqmDBDv3EJ6q9Z+/CGnYP38sq+mJ5AYkEUtYMtgtVsjid+Z+Fh7KerLi7Bsp6fdjJwvzysLI8IlIchB6J1WJlM2iUf8nv4z8qK+wXYc6RFZOgL7V4s/d+x50RRYPf/w9P6Mk=
+	t=1725031813; cv=none; b=gnBessskoJZH0mhqzDOK9IcIP36mwVZ5zLQwdbMqPB7eD9cyW/GTz3WOVK/2vREPX7xOGHV+G6GxU/dSsmMWRLzx7Osw6OYNxn//0b/QOxuFSdUP0PcSTe6n9ICE4wHmIzl+dEuZr/uXFKOzB70thpslcJ8riRCr26lFjUSs5yk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725031773; c=relaxed/simple;
-	bh=M4bDsHwjmBNjfe/UWNRn/3FxrHfZZWijHkVxDhuFGuQ=;
+	s=arc-20240116; t=1725031813; c=relaxed/simple;
+	bh=V2VJ12EQT4i6n4aeoiaDxyllMlqthEmdNScFeTWz9Gc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b6m/4L/HnuGwPQr3yiRLJwyKl57JyvrvSjQuWTF5KNWzc3PCQWJhSydhY6UT57siLE+p7rENz9zBgEpEjVIW59lytT1smoMpfUAs1+zm/N0sytj7nndOjLVir6hS3X4K4TXailuBHIjmsIEYDY/Vk48t6IukuveLjIqRw7NWxzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XPhCVHgS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 521EFC4CEC2;
-	Fri, 30 Aug 2024 15:29:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725031773;
-	bh=M4bDsHwjmBNjfe/UWNRn/3FxrHfZZWijHkVxDhuFGuQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XPhCVHgSQ5bPygJ8OZVdTGiBEmV9Dp4YR4CfnFGbBjkBC0h5bnN/i7BbawR+SWvcl
-	 jQOwvzS2ySSfQ9gMo1zPgXHmjeFi7z85QvwLcq28nPm6rH+711FiiKVUc3O2yS3kjX
-	 dSgplhb0/HMGUpuRWxauFiw0GlMT/XlxSw08XTKqtlAI/1ZM5VPCIPsWGcJp8H0L77
-	 GFuAqW9l7QAG4YO5QjkYT5I5CvtrmhkOmYKU/R7X+pQ+5LzCTfUkAgX2RNsMyDZ2jL
-	 I/ZILDcWcLwkQP4Um9CG9W86vj9LAngVEElUxdSDKQFmskj0serpTeAdnW36BeeYSw
-	 4DSwulP/6YGSA==
-Date: Fri, 30 Aug 2024 16:29:29 +0100
-From: Mark Brown <broonie@kernel.org>
-To: "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc: adhemerval.zanella@linaro.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] selftests: vDSO: quash clang omitted parameter warning
- in getrandom test
-Message-ID: <be19c940-fce5-4d04-9d5c-414e68839d88@sirena.org.uk>
-References: <ZtHjejGdhZnZu4WQ@zx2c4.com>
- <20240830152429.490640-1-Jason@zx2c4.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=DidCtSRXUgZCD8vExuRJcAsHq06qlPcytioR/apsCMtDr6/ZVQrZJJ6f76wV89gBzUn627Zs92skUw94IdcjmClV/1Q0hL7ByK1qX5fprZ56Vq7VGTtDPNPRjko3ZsEj2O/BzjV3a3NIxVoglRAn15UOQP3uJqjWeXx87emSMA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=LbxW5qED; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39FF2C4CEC2;
+	Fri, 30 Aug 2024 15:30:12 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="LbxW5qED"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1725031809;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TS8nVZqiFVKrs+/FUWrxZIU1v/CNzMC33eCO9K4Uobg=;
+	b=LbxW5qED90WneHoVKo5ut0ooOGXlLEj23y8j28oyQWipIBHXkNhAIM49N7cmXW0Hkisq5N
+	TFD4fpf81DjgHrnNfCYxWzYevM8hxURnHSdCM8PP04dXHbuwmfKmkr04uddwZ0x0Z2WHfO
+	94jHWbtd+dSV66NG2XRR8RUnhz6W0X8=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 044db95b (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Fri, 30 Aug 2024 15:30:09 +0000 (UTC)
+Date: Fri, 30 Aug 2024 17:30:07 +0200
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] selftest/vDSO: Fix cross build for the random tests
+Message-ID: <ZtHlf1qaXTPwJQkJ@zx2c4.com>
+References: <20240830-vdso-chacha-build-v1-1-78f93d2a142f@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="pan753wPjYecaX8y"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240830152429.490640-1-Jason@zx2c4.com>
-X-Cookie: for ARTIFICIAL FLAVORING!!
+In-Reply-To: <20240830-vdso-chacha-build-v1-1-78f93d2a142f@kernel.org>
 
+On Fri, Aug 30, 2024 at 03:06:35PM +0100, Mark Brown wrote:
+> Unlike the check for the standalone x86 test the check for building the
+> vDSO getrandom and chacaha tests looks at the architecture for the host
+> rather than the architecture for the target when deciding if they should
+> be built. Since the chacha test includes some assembler code this means
+> that cross building with x86 as either the target or host is broken. Use
+> a check for ARCH instead.
+> 
+> Fixes: 4920a2590e91 ("selftests/vDSO: add tests for vgetrandom")
+> Signed-off-by: Mark Brown <broonie@kernel.org>
 
---pan753wPjYecaX8y
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks for the patch. Seems reasonable; I'll queue it up.
 
-On Fri, Aug 30, 2024 at 05:23:52PM +0200, Jason A. Donenfeld wrote:
-> When building with clang, there's this warning:
->=20
-> vdso_test_getrandom.c:145:40: warning: omitting the parameter name in a f=
-unction definition is a C23 extension [-Wc23-extensions]
->   145 | static void *test_vdso_getrandom(void *)
+> ---
+> The x86_64 build is still broken for me because nothing installs
+> tools/arch/x86_64/vdso/vgetrandom-chacha.S (I beleive it's supposed to
+> be copied from ./arch/x86/entry/vdso/vgetrandom-chacha.S but I don't see
+> how?) but this at least fixes all the other architectures.
 
-> Add the named ctx parameter to quash it.
+There should be a symlink installed for that. Are you using this tree?
 
-Reviewed-by: Mark Brown <broonie@kernel.org>
+https://git.kernel.org/pub/scm/linux/kernel/git/crng/random.git
 
---pan753wPjYecaX8y
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbR5VgACgkQJNaLcl1U
-h9BTDAf/YAt2RN/ePS9u5IwkWH2qWTIaNY5FeZ/FWZFNUxoVI1WOs5EovkDSvz7p
-9SjyfeVsVi/LpjBQtEcOKiCJ2ktn+ZNwYhvt6Knx0i8JcbZ9SvA2RrNxqvaGGyO1
-GmPKB3Rn6eNUg6EtAnywuUUzSn9XtvJMBaaYJmb6UBwjhlQE61ULYFBfzdKjJGIx
-JdJExm+72eRzIOJxJkTmwipfBc9Yyo27+y38/s0RyXqFNU5DXfXPPOovKCZU6BDW
-2DA+NciAsHf9Ba/X3qIOC7LWM5Izcoou4GlBaj13l3kPEyI7PtjpYkGhs27+WlE7
-yughm1T60tBevi+pYkvWjdtZoYBd2w==
-=vlJp
------END PGP SIGNATURE-----
-
---pan753wPjYecaX8y--
+That's where all these fixups are going for 6.12. (And yea, there are a
+lot.)
 
