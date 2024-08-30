@@ -1,89 +1,135 @@
-Return-Path: <linux-kernel+bounces-308748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00835966146
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 14:04:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 671A8966155
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 14:06:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A02601C23720
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:04:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1197A1F24160
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:06:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99073199954;
-	Fri, 30 Aug 2024 12:04:06 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7194E199953;
+	Fri, 30 Aug 2024 12:06:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="MWzljtrn"
+Received: from out203-205-221-210.mail.qq.com (out203-205-221-210.mail.qq.com [203.205.221.210])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD67B1917C8
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 12:04:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 357721917C8;
+	Fri, 30 Aug 2024 12:06:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.210
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725019446; cv=none; b=ALsw8seKZ2njCqHS14h2pqHe+tLDi8pPNBysbzK/2WxO5DZN4W5a0UY7OwNXNHBi3VMGYJy8xw2mxaEYSAbJZ/Q1M1ZrgVakb3gymiTiF0xzSPiTh55NAxiBApILnfl7gvSsb2tB3GxLm2U/WN+YaeILeLlradcvyA8boYMiVic=
+	t=1725019569; cv=none; b=mMyzeeeAg5Po5w95kBBsGJVrwy7jqrusmpj0SJxBgBNmVBmjN6ec2c8LRkOyy+kpK11GI9syWwi3tBMI1iDitb7+xcuOEikUWf+bmLyFeoWTGK8is5TFrVp9+LHnC0dUVeqQbJl3ct1/saix1ykHw1FTEkb6uQ2/bK9Na3YH8kM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725019446; c=relaxed/simple;
-	bh=LzYJkrUnXtqxg2sI+D1UMYC84BooZXybirjBd4noWGE=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=tFI7f35ggXgjuQfPRKLCBCGx0mjHgUmSUvnXZ8TxM36Gn0Itt+Ktl3uoTFaqJv5Gxr9NEdGnIQcfXsii2yTPStrlcdY5r8FD7hlyiiYbjWWyggCUr91fgz+nTAyW9czenNlJw+/InwTITzj8Sq+Yd6yWllXfqCDHg1P/CxSZcAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-8223c3509a9so176656739f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 05:04:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725019444; x=1725624244;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rHDsUT4NRjm0E62nv5pzyF9OkIWVCQzkDjrSQv8pAQQ=;
-        b=t6ahIoPRNKqVsCtZf+8FZA6bq4vjNRXmzRePddd+/jn4kDCgrtr7nBzxnLgDXoq3Qc
-         WVH2haYQY9B0bEqRemSEKglBwYg+drafY1kcKWGu4bAaV1JnTodmWwDokgYeyEkq8C+G
-         O+nelTyyLdbhOl+qxei3da2sB3OkpubuJ3jo0VoNYXWxlNnAvdtooInd6PQBosa+v7Y1
-         J+HRT0Wc0pb/NHpLXXkGwyYuxkXL5WuMu6aEGjjL2nJiih6WlntfAQWLj4TsibDzCx28
-         gMNWHsZys9610N1pCjLbk3vIUj4/sxFxycvrLh02bxGx2Ylp6/40K89YO/Q0NWZ301B6
-         1Tqg==
-X-Forwarded-Encrypted: i=1; AJvYcCUOIH7/jNCdQheCs6cLL1xKCFDbB7EPo1O63buUYAJ2nmgLoXayeyVcF1rNqv3Gdj7KmOE2cDH+aqZeYMw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRIYYMsa9qw4UDAqsdqfr5rsqcYDS8p4djU9r5rMm17kRRPkZZ
-	UI9pDoO4PmBXpuhGDwv0dO2zuh2u5CRoFpTH5Oiyir7xY2dCkRVRMti7yccLOZAFg+UHByD2CuL
-	52LZJqk1MynnBRXJAFWLZ/+d6p1SDgTFwog15OKj1HBxUcgr9Pdacq7M=
-X-Google-Smtp-Source: AGHT+IHkeMWqDAvDeGYJgg5YMOaQK7jdsKqdGcqreZ4lgwJEgGVi024TdtI8UpS+TYuDnfDMd5R10l/KDFcFhGhDgP0x6rTs28HB
+	s=arc-20240116; t=1725019569; c=relaxed/simple;
+	bh=vExsAHAoGllOr1t2tx2Hu9Hx8Zr9OFpwTAEbV5uIQKI=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=KFGCua45jvSgJ6at0J1BrlyE07W0rat2eeTV+OUCuJlYs590Fpa0VntoaEsSRRmFh3Szf4Ah1oUNORq4FbMBFjBnRoFARIbm/Yn6JvX9YNlh7xJ+gfc9vGBJkCfej8Zjc7h1V4ErIfW4lgprysGQcykGboxlZdk2Cgt4Cz9LqjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=MWzljtrn; arc=none smtp.client-ip=203.205.221.210
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1725019557;
+	bh=OA1aR3D6P1yKqxLc97SjhIL90dq/6HD+PrvzA+JcrbM=;
+	h=From:To:Cc:Subject:Date;
+	b=MWzljtrnq74Ov4lDNkBlbDjH0kc+IdRrvSDrKHMpC/UHwJwVIvaJpeBYAWfopBS91
+	 /BMpZCJ+MzKOa8dZjo/TaKUgIcoDPYXPqo4zQkOiKyReuH+saE7JTfyLQQmwY/OJeM
+	 MYfQKVEkpI2hgQr2w7d+TYj9zQYKu4GYg8dSOGRc=
+Received: from localhost.localdomain ([114.246.200.160])
+	by newxmesmtplogicsvrszc5-2.qq.com (NewEsmtp) with SMTP
+	id 9B9724D; Fri, 30 Aug 2024 20:02:27 +0800
+X-QQ-mid: xmsmtpt1725019347t06pasczv
+Message-ID: <tencent_A64CA96B962349E369B349EA01EBC53C3505@qq.com>
+X-QQ-XMAILINFO: NC4p7XQIBeahN2F7hMEA1AVw+JUb7RBJt6sTjs23qCy/OS5FN4fOGKhiTx4KdQ
+	 D/HZi7E1nEusnimX1P2/8k+Iy9G6z1dD4iTIDMtCCN6aHgXGwUFTQ8h1Wn9aB1zsY9+TNABMdVxo
+	 hPjy2LfueW00uXt2E8iRr0wbOayJ5VoWbhEXFqwJa4hHdparD3tlPlgvvFFhd1+vCl16Ss5st04P
+	 tFHhUMPS27Iay60LoGHeoM2JyT4/JHdKNqcK1tueNLcxX3N7gkX6nYN32U3MSVN8vvrtWqNq+rr3
+	 UzCOkyxGIxDJsqe2No5yd4GthrX7VXZsWqkK4dnX4NQRMTWbYDKGCN+D8A0WaqzBYgpV8B+a8AHy
+	 C0+lhohDqukjNq521opqeX2yRaRY89KBJlda+U+n14DFty6SrHUa6uKOquSRAy0+ru2Dw+EdLGxu
+	 tgFyG6BHEhzXWdq0fsZhVzS2Tlp/BrJaUE4A2MUaeyIjte1xhXN8YneNKpbuXz0E3lcPC8bbzKbr
+	 gx585I2MAD2KvQGIv77trrQqHq+VNH+N01SbHsLKw5Q278JSivg4d2K6nigIk6tO0OnunRW3PopU
+	 mEV2vq++QWfyx5OXlJFIPQC5J0XvL/oe2KyTZxe94RLYpaLIMsoueVDek4LNlDT3lTSg+F+BVbYX
+	 b3zNum3vklVkwlJDEFs3bMzI51CNSjNyOj5hRz0gyukHw1lRv1rAgw4bbwzLaZRIRAzWkR3agmq9
+	 EhJCWS8S6EJFbgvhHVnkHLTO7EW6gpyCi3bis/kyEZgzi4MUU3p0MTmQ/DoGQIum8ZeIHYfv7I28
+	 ipTZ/ZZgJlnyUyF1+AipASAhbEaSJovXl+V0Q3xZmA5TPU8FhZ6VGRGQQokGxsAa95VqLtEfBzoL
+	 vggH5WA65f4rMyRglkwinvFLBWbcv7d8bt8sE20cA8376QBO3mR5EmulFrTMUAF7HZXwfErQSboq
+	 MJfsrvtKapFaF33B2TWB/k3fN6CdPlpir7OSdy2D9Kj5Nf09uUpWyoPUWS7TdE+SehLoZt7Y5Ttb
+	 xgSltRo4UtXARiGDilj9e8W1f4E2DhcRjdpjvLlaebE1eubDuaa/awcioNQIo=
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+From: Jiawei Ye <jiawei.ye@foxmail.com>
+To: kvalo@kernel.org,
+	jjohnson@kernel.org,
+	corbet@lwn.net
+Cc: linux-wireless@vger.kernel.org,
+	ath11k@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] ath11k: Fix potential RCU dereference issue in ath11k_debugfs_htt_ext_stats_handler
+Date: Fri, 30 Aug 2024 12:02:27 +0000
+X-OQ-MSGID: <20240830120227.1025690-1-jiawei.ye@foxmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:8907:b0:4c0:838e:9fd1 with SMTP id
- 8926c6da1cb9f-4d017ed76a4mr83432173.5.1725019443909; Fri, 30 Aug 2024
- 05:04:03 -0700 (PDT)
-Date: Fri, 30 Aug 2024 05:04:03 -0700
-In-Reply-To: <20240830113130.165574-1-sunjunchao2870@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000002f63ae0620e563e2@google.com>
-Subject: Re: [syzbot] [iomap?] [xfs?] WARNING in iomap_write_begin
-From: syzbot <syzbot+296b1c84b9cbf306e5a0@syzkaller.appspotmail.com>
-To: brauner@kernel.org, chandan.babu@oracle.com, djwong@kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-xfs@vger.kernel.org, sunjunchao2870@gmail.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+In the `ath11k_debugfs_htt_ext_stats_handler` function, the `ar` pointer
+obtained via RCU lock is accessed after the RCU read-side critical
+section might be unlocked. According to RCU usage rules, this is illegal.
+Reusing this pointer can lead to unpredictable behavior, including
+accessing memory that has been updated or causing use-after-free issues.
+The `ath12k_debugfs_htt_ext_stats_handler` function in the
+`drivers/net/wireless/ath/ath12k/debugfs_htt_stats.c` file provides a good
+example to follow for addressing this issue.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+This possible bug was identified using a static analysis tool developed
+by myself, specifically designed to detect RCU-related issues.
 
-Reported-by: syzbot+296b1c84b9cbf306e5a0@syzkaller.appspotmail.com
-Tested-by: syzbot+296b1c84b9cbf306e5a0@syzkaller.appspotmail.com
+To address this issue, the RCU read lock is now kept until all accesses
+to the `ar` pointer are completed. A `goto exit` statement is introduced
+to ensure that the RCU read unlock is called appropriately, regardless of
+the function's exit path.
 
-Tested on:
+Signed-off-by: Jiawei Ye <jiawei.ye@foxmail.com>
+---
+ drivers/net/wireless/ath/ath11k/debugfs_htt_stats.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-commit:         ee9a43b7 Merge tag 'net-6.11-rc3' of git://git.kernel...
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=14a8e347980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9358cc4a2e37fd30
-dashboard link: https://syzkaller.appspot.com/bug?extid=296b1c84b9cbf306e5a0
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=13101f8d980000
+diff --git a/drivers/net/wireless/ath/ath11k/debugfs_htt_stats.c b/drivers/net/wireless/ath/ath11k/debugfs_htt_stats.c
+index 870e86a31bf8..325377e00818 100644
+--- a/drivers/net/wireless/ath/ath11k/debugfs_htt_stats.c
++++ b/drivers/net/wireless/ath/ath11k/debugfs_htt_stats.c
+@@ -4572,15 +4572,14 @@ void ath11k_debugfs_htt_ext_stats_handler(struct ath11k_base *ab,
+ 	pdev_id = FIELD_GET(HTT_STATS_COOKIE_LSB, cookie);
+ 	rcu_read_lock();
+ 	ar = ath11k_mac_get_ar_by_pdev_id(ab, pdev_id);
+-	rcu_read_unlock();
+ 	if (!ar) {
+ 		ath11k_warn(ab, "failed to get ar for pdev_id %d\n", pdev_id);
+-		return;
++		goto exit;
+ 	}
+ 
+ 	stats_req = ar->debug.htt_stats.stats_req;
+ 	if (!stats_req)
+-		return;
++		goto exit;
+ 
+ 	spin_lock_bh(&ar->debug.htt_stats.lock);
+ 
+@@ -4599,6 +4598,8 @@ void ath11k_debugfs_htt_ext_stats_handler(struct ath11k_base *ab,
+ 
+ 	if (send_completion)
+ 		complete(&stats_req->cmpln);
++exit:
++	rcu_read_unlock();
+ }
+ 
+ static ssize_t ath11k_read_htt_stats_type(struct file *file,
+-- 
+2.34.1
 
-Note: testing is done by a robot and is best-effort only.
 
