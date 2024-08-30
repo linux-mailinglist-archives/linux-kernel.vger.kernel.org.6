@@ -1,340 +1,201 @@
-Return-Path: <linux-kernel+bounces-308253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69A0A96595F
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:05:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DDEF965969
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:06:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F0CA28154A
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 08:05:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B36631F2328F
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 08:06:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5748F166F0A;
-	Fri, 30 Aug 2024 08:05:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5F7E16B390;
+	Fri, 30 Aug 2024 08:06:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=mary.guillemard@collabora.com header.b="AZsD1QXA"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KXMurrdJ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 874C116190B
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 08:05:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725005121; cv=pass; b=lHae4bj7RUCDXhKnVl6/7iaN59TDMnd716Oh3SVzv4p/iaJJEo+MXfJFpPw+cdZN1UvA/t7wmMXv5VWeOXbePOROIVQOR0wVSk5OjUe3lNxf1cPY+mDAhocIajVk/Tb9Jr3V981kuno5j/VPPyV2/rtgOHQxPxeE+NPDnN5Zyi4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725005121; c=relaxed/simple;
-	bh=xu96FJRi1B5cKIaBAXsYn62yHVzF0RWehNyUJA+zRUw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VuqdY/p5kt4LVboatb6on7TF8syK2zPCaXGEWB89D9UlpxdnjdUQF1sX0IGM+p1dePVDiEIbP2U+6b/hcWsy+2qG1F/bLjaZzxR2WptR986tNF8ObKB40fs/sNzWet6k+H68K3LZYilnGrQ5bJJxEXEkD0QEy+NuhLb9SYQ1+5M=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=mary.guillemard@collabora.com header.b=AZsD1QXA; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Delivered-To: kernel@collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1725005102; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=CVxeSOctJTmA7Ut9nVLZW38P3ecXYY1P1mg+su3XGG6Bs3q8Ao8YLyqheIshsvy8hTKbNEWy0k+XQIoTVArQ1SKspkC929GU/WVYVlOVoQRNfkw2SLMfJUAUnKsbI18SoSCeFIiNKtvKxdcKBeUvogxefPtshyjVvJHzuR/5PNk=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1725005102; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=5ajYkd4eRomYZsQcvoDBlY+ZV0yLaH0KXxX1AuIprVs=; 
-	b=ljjzsT7JSDsjlCTclLTTTJqgpMjjiLgmctST+J5raVJbJ2jtObRfp2SIG/i61gBnjfXEGq2+UJlEX/Ibq5z/tvo3bKk359F+pZ1L6QzdxS+2MIAx3t/JzB4fE5W2qRTicMFIhtq6iXBA28AOp8MYSkMtJ6poG7osnJG1AgEVtys=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=mary.guillemard@collabora.com;
-	dmarc=pass header.from=<mary.guillemard@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1725005102;
-	s=zohomail; d=collabora.com; i=mary.guillemard@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=5ajYkd4eRomYZsQcvoDBlY+ZV0yLaH0KXxX1AuIprVs=;
-	b=AZsD1QXABAgBOnBjCmhbwvWUMDqtEYrENTG1YGod9ir9dIbwhxVmCeQHwKBmsEvN
-	TomEBT2G24NT2tyFIWNogSBzH1LlXsyeaAcJ/MV8Q7Lyr2NEdLwzBy8fzb7cAeubwwP
-	gOeK3E16gMn+vFT/FlxKAOw1YQGU6maftZt/T9so=
-Received: by mx.zohomail.com with SMTPS id 1725005099443412.49504026312945;
-	Fri, 30 Aug 2024 01:04:59 -0700 (PDT)
-From: Mary Guillemard <mary.guillemard@collabora.com>
-To: linux-kernel@vger.kernel.org
-Cc: kernel@collabora.com,
-	Mary Guillemard <mary.guillemard@collabora.com>,
-	Mihail Atanassov <mihail.atanassov@arm.com>,
-	Boris Brezillon <boris.brezillon@collabora.com>,
-	Steven Price <steven.price@arm.com>,
-	Liviu Dudau <liviu.dudau@arm.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org
-Subject: [PATCH v4] drm/panthor: Add DEV_QUERY_TIMESTAMP_INFO dev query
-Date: Fri, 30 Aug 2024 10:03:50 +0200
-Message-ID: <20240830080349.24736-2-mary.guillemard@collabora.com>
-X-Mailer: git-send-email 2.46.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DE7A1662E9
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 08:06:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725005190; cv=none; b=cFOAYK0FoJV3TNNa71F9DpJ9NxeZFRU80oOOrnLYPX5mX1c5ja0Z6NZooe+CuzaDo7mzBCC0FCUIjPztn19AEiJYVby3oVs06jOwI1vhqDdlGBEsmtrjwdYUL5zU5oQ+ntnR1QvD/OVNNB3boO+piNHlY+iLQAc1Fff3jHzotIo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725005190; c=relaxed/simple;
+	bh=71gPXzApkUJkbbo3sc3sJH3nklCpJRWVUVpfiyyleDM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=K9eqgNAM7GMtcliwVCJE1Az9vFpzmTF/Ev8p4tJ5ponH0aKA7zTpNGKK8zw4gxSIiOnnqAiPAvYLl1RerMyEIEXfQxxcTp/F0vMKfBvl7aI1FgnocNsHxSsC1zrbNn40n+21dGS3fwbqU8zfBIjmZKmsT5PzYBc1vje5ShCgX+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KXMurrdJ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725005187;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=71gPXzApkUJkbbo3sc3sJH3nklCpJRWVUVpfiyyleDM=;
+	b=KXMurrdJSWi/NjM0k0S7xW0yLSH8wUpRXZDKD0zETzSpwA5Ze3rxY2Plp1CCtHqJD/IG6t
+	gSPai8A6cevo2/PivW2T0y43BmUo1g9To0FRX5lYJkyS5EUphW/ugf3c50ctDqCAgLWnO3
+	db0zIYPmxZKZEz7ebBFEArJsXD0gBfA=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-650-nzP_3dZrNICKhSWuOSIwsw-1; Fri, 30 Aug 2024 04:05:17 -0400
+X-MC-Unique: nzP_3dZrNICKhSWuOSIwsw-1
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-428e0d30911so14397025e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 01:05:17 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725005116; x=1725609916;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=71gPXzApkUJkbbo3sc3sJH3nklCpJRWVUVpfiyyleDM=;
+        b=KVpV+OMNFknA08T0L+m6Z7TnvgMIgR5NZTp9wthpcja/Jk1utiDfmInGi4h+6CmTMm
+         EGkkH91tUQhOCzrr1ZDSLXRjVZj1xSGS75Hpbv+bF+8YialM18nwht+j/ORZntGRzm13
+         u2CIZc++2ISxk8d0mcQIcFMwiVYEebmzgGKzOBbCWuvSA//I9NMtTv91+mC3KKWb8Xdf
+         /G2hlAec3G5PL+lUY8b9ld33XRxFox7X1NMMW4lzDajz2Av959nizrsc/1xevfxAZSlC
+         tmV8xv3JQXBDKgvngrLNCZpN+DOx1yD6l8Snfo+OipzozWtBCqNnbtDI2NpF+W+SUG2A
+         nL+A==
+X-Forwarded-Encrypted: i=1; AJvYcCVDrdi6Th8VJjg/EWij061VjL3Sw06i6MlktvbBSmi4bhSPVZ0zy9d0YfyWJ9+zbnrKXKXWSX6MSrGGKIg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyP5TuK+AflshOqCVDS/uv6SeuJE6squ+eDywTlA4HcDqhq9lrk
+	2kWFVnKjxfCXnn1K7tsqpQJsQ7PDFkc9mwMQl439+jSVUiSVAGcAB/3LL7aRsHLoYm6mPHMwufF
+	vgeiPn/ORaFgWRmu0tp//lyt8NnGt8e7PBi0mnmKCKJcuzxWD0Aw3y1eWD+W5jw==
+X-Received: by 2002:a05:600c:1914:b0:42b:afbb:1704 with SMTP id 5b1f17b1804b1-42bb0281326mr42324695e9.6.1725005115859;
+        Fri, 30 Aug 2024 01:05:15 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IElMHHa1ss0AjuIdZRhm4Z2kioy67ZZmuCCx+UBXe8jQVj10UPNfr/s1tjKN2uvyTW+vaIl2g==
+X-Received: by 2002:a05:600c:1914:b0:42b:afbb:1704 with SMTP id 5b1f17b1804b1-42bb0281326mr42324235e9.6.1725005115323;
+        Fri, 30 Aug 2024 01:05:15 -0700 (PDT)
+Received: from eisenberg.fritz.box (200116b82d2f1b0080ee39dcd7d81ce9.dip.versatel-1u1.de. [2001:16b8:2d2f:1b00:80ee:39dc:d7d8:1ce9])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3749ef7f329sm3287195f8f.70.2024.08.30.01.05.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Aug 2024 01:05:14 -0700 (PDT)
+Message-ID: <ff637570c16c6a15be414839ec4878e49ecd2350.camel@redhat.com>
+Subject: Re: [PATCH v5 6/7] vdpa: solidrun: Fix UB bug with devres
+From: Philipp Stanner <pstanner@redhat.com>
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, Jens Axboe
+ <axboe@kernel.dk>,  Wu Hao <hao.wu@intel.com>, Tom Rix <trix@redhat.com>,
+ Moritz Fischer <mdf@kernel.org>, Xu Yilun <yilun.xu@intel.com>, Andy
+ Shevchenko <andy@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
+ Bartosz Golaszewski <brgl@bgdev.pl>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+ <kuba@kernel.org>,  Paolo Abeni <pabeni@redhat.com>, Bjorn Helgaas
+ <bhelgaas@google.com>, Alvaro Karsz <alvaro.karsz@solid-run.com>, Jason
+ Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Eugenio
+ =?ISO-8859-1?Q?P=E9rez?= <eperezma@redhat.com>, Richard Cochran
+ <richardcochran@gmail.com>, Damien Le Moal <dlemoal@kernel.org>, Hannes
+ Reinecke <hare@suse.de>, John Garry <john.g.garry@oracle.com>,
+ linux-block@vger.kernel.org,  linux-kernel@vger.kernel.org,
+ linux-fpga@vger.kernel.org,  linux-gpio@vger.kernel.org,
+ netdev@vger.kernel.org, linux-pci@vger.kernel.org, 
+ virtualization@lists.linux.dev, stable@vger.kernel.org, Christophe JAILLET
+ <christophe.jaillet@wanadoo.fr>
+Date: Fri, 30 Aug 2024 10:05:12 +0200
+In-Reply-To: <20240829110902-mutt-send-email-mst@kernel.org>
+References: <20240829141844.39064-1-pstanner@redhat.com>
+	 <20240829141844.39064-7-pstanner@redhat.com>
+	 <20240829102320-mutt-send-email-mst@kernel.org>
+	 <CAHp75Ve7O6eAiNx0+v_SNR2vuYgnkeWrPD1Umb1afS3pf7m8MQ@mail.gmail.com>
+	 <20240829104124-mutt-send-email-mst@kernel.org>
+	 <2cc5984b65beb6805f8d60ffd9627897b65b7700.camel@redhat.com>
+	 <20240829110902-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
 
-Expose timestamp information supported by the GPU with a new device
-query.
+On Thu, 2024-08-29 at 11:10 -0400, Michael S. Tsirkin wrote:
+> On Thu, Aug 29, 2024 at 04:49:50PM +0200, Philipp Stanner wrote:
+> > On Thu, 2024-08-29 at 10:41 -0400, Michael S. Tsirkin wrote:
+> > > On Thu, Aug 29, 2024 at 05:26:39PM +0300, Andy Shevchenko wrote:
+> > > > On Thu, Aug 29, 2024 at 5:23=E2=80=AFPM Michael S. Tsirkin
+> > > > <mst@redhat.com>
+> > > > wrote:
+> > > > >=20
+> > > > > On Thu, Aug 29, 2024 at 04:16:25PM +0200, Philipp Stanner
+> > > > > wrote:
+> > > > > > In psnet_open_pf_bar() and snet_open_vf_bar() a string
+> > > > > > later
+> > > > > > passed to
+> > > > > > pcim_iomap_regions() is placed on the stack. Neither
+> > > > > > pcim_iomap_regions() nor the functions it calls copy that
+> > > > > > string.
+> > > > > >=20
+> > > > > > Should the string later ever be used, this, consequently,
+> > > > > > causes
+> > > > > > undefined behavior since the stack frame will by then have
+> > > > > > disappeared.
+> > > > > >=20
+> > > > > > Fix the bug by allocating the strings on the heap through
+> > > > > > devm_kasprintf().
+> > > > > >=20
+> > > > > > Cc: stable@vger.kernel.org=C2=A0=C2=A0=C2=A0 # v6.3
+> > > > > > Fixes: 51a8f9d7f587 ("virtio: vdpa: new SolidNET DPU
+> > > > > > driver.")
+> > > > > > Reported-by: Christophe JAILLET
+> > > > > > <christophe.jaillet@wanadoo.fr>
+> > > > > > Closes:
+> > > > > > https://lore.kernel.org/all/74e9109a-ac59-49e2-9b1d-d825c9c9f89=
+1@wanadoo.fr/
+> > > > > > Suggested-by: Andy Shevchenko <andy@kernel.org>
+> > > > > > Signed-off-by: Philipp Stanner <pstanner@redhat.com>
+> > > > >=20
+> > > > > Post this separately, so I can apply?
+> > > >=20
+> > > > Don't you use `b4`? With it it as simple as
+> > > >=20
+> > > > =C2=A0 b4 am -P 6 $MSG_ID_OF_THIS_SERIES
+> > > >=20
+> > > > --=20
+> > > > With Best Regards,
+> > > > Andy Shevchenko
+> > >=20
+> > > I can do all kind of things, but if it's posted as part of a
+> > > patchset,
+> > > it is not clear to me this has been tested outside of the
+> > > patchset.
+> > >=20
+> >=20
+> > Separating it from the series would lead to merge conflicts,
+> > because
+> > patch 7 depends on it.
+> >=20
+> > If you're responsible for vdpa in general I could send patches 6
+> > and 7
+> > separately to you.
+> >=20
+> > But number 7 depends on number 1, because pcim_iounmap_region()
+> > needs
+> > to be public. So if patches 1-5 enter through a different tree than
+> > yours, that could be a problem.
+> >=20
+> >=20
+> > P.
+>=20
+> Defer 1/7 until after the merge window, this is what is normally
+> done.
 
-Mali uses an external timer as GPU system time. On ARM, this is wired to
-the generic arch timer so we wire cntfrq_el0 as device frequency.
+1 cannot be deferred. Take a look what 1 does.
 
-This new uAPI will be used in Mesa to implement timestamp queries and
-VK_KHR_calibrated_timestamps.
+Your message is not comprehensible. Be so kind and write some more
+sentences.
+*What* is normally done? Sending patches? It's up to subsystem
+maintainers to queue them for the right cycle.
 
-Since this extends the uAPI and because userland needs a way to advertise
-those features conditionally, this also bumps the driver minor version.
+> Adding new warnings is not nice, anyway.
 
-v2:
-- Rewrote to use GPU timestamp register
-- Added timestamp_offset to drm_panthor_timestamp_info
-- Add missing include for arch_timer_get_cntfrq
-- Rework commit message
+What?
 
-v3:
-- Add panthor_gpu_read_64bit_counter
-- Change panthor_gpu_read_timestamp to use
-  panthor_gpu_read_64bit_counter
 
-v4:
-- Fix multiple typos in uAPI documentation
-- Mention behavior when the timestamp frequency is unknown
-- Use u64 instead of unsigned long long
-  for panthor_gpu_read_timestamp
-- Apply r-b from Mihail
 
-Signed-off-by: Mary Guillemard <mary.guillemard@collabora.com>
-Reviewed-by: Mihail Atanassov <mihail.atanassov@arm.com>
----
- drivers/gpu/drm/panthor/panthor_drv.c | 43 +++++++++++++++++++++++-
- drivers/gpu/drm/panthor/panthor_gpu.c | 47 +++++++++++++++++++++++++++
- drivers/gpu/drm/panthor/panthor_gpu.h |  4 +++
- include/uapi/drm/panthor_drm.h        | 22 +++++++++++++
- 4 files changed, 115 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/panthor/panthor_drv.c b/drivers/gpu/drm/panthor/panthor_drv.c
-index b5e7b919f241..444e3bb1cfb5 100644
---- a/drivers/gpu/drm/panthor/panthor_drv.c
-+++ b/drivers/gpu/drm/panthor/panthor_drv.c
-@@ -3,6 +3,10 @@
- /* Copyright 2019 Linaro, Ltd., Rob Herring <robh@kernel.org> */
- /* Copyright 2019 Collabora ltd. */
- 
-+#ifdef CONFIG_ARM_ARCH_TIMER
-+#include <asm/arch_timer.h>
-+#endif
-+
- #include <linux/list.h>
- #include <linux/module.h>
- #include <linux/of_platform.h>
-@@ -164,6 +168,7 @@ panthor_get_uobj_array(const struct drm_panthor_obj_array *in, u32 min_stride,
- 	_Generic(_obj_name, \
- 		 PANTHOR_UOBJ_DECL(struct drm_panthor_gpu_info, tiler_present), \
- 		 PANTHOR_UOBJ_DECL(struct drm_panthor_csif_info, pad), \
-+		 PANTHOR_UOBJ_DECL(struct drm_panthor_timestamp_info, current_timestamp), \
- 		 PANTHOR_UOBJ_DECL(struct drm_panthor_sync_op, timeline_value), \
- 		 PANTHOR_UOBJ_DECL(struct drm_panthor_queue_submit, syncs), \
- 		 PANTHOR_UOBJ_DECL(struct drm_panthor_queue_create, ringbuf_size), \
-@@ -750,10 +755,33 @@ static void panthor_submit_ctx_cleanup(struct panthor_submit_ctx *ctx,
- 	kvfree(ctx->jobs);
- }
- 
-+static int panthor_query_timestamp_info(struct panthor_device *ptdev,
-+					struct drm_panthor_timestamp_info *arg)
-+{
-+	int ret;
-+
-+	ret = pm_runtime_resume_and_get(ptdev->base.dev);
-+	if (ret)
-+		return ret;
-+
-+#ifdef CONFIG_ARM_ARCH_TIMER
-+	arg->timestamp_frequency = arch_timer_get_cntfrq();
-+#else
-+	arg->timestamp_frequency = 0;
-+#endif
-+	arg->current_timestamp = panthor_gpu_read_timestamp(ptdev);
-+	arg->timestamp_offset = panthor_gpu_read_timestamp_offset(ptdev);
-+
-+	pm_runtime_put(ptdev->base.dev);
-+	return 0;
-+}
-+
- static int panthor_ioctl_dev_query(struct drm_device *ddev, void *data, struct drm_file *file)
- {
- 	struct panthor_device *ptdev = container_of(ddev, struct panthor_device, base);
- 	struct drm_panthor_dev_query *args = data;
-+	struct drm_panthor_timestamp_info timestamp_info;
-+	int ret;
- 
- 	if (!args->pointer) {
- 		switch (args->type) {
-@@ -765,6 +793,10 @@ static int panthor_ioctl_dev_query(struct drm_device *ddev, void *data, struct d
- 			args->size = sizeof(ptdev->csif_info);
- 			return 0;
- 
-+		case DRM_PANTHOR_DEV_QUERY_TIMESTAMP_INFO:
-+			args->size = sizeof(timestamp_info);
-+			return 0;
-+
- 		default:
- 			return -EINVAL;
- 		}
-@@ -777,6 +809,14 @@ static int panthor_ioctl_dev_query(struct drm_device *ddev, void *data, struct d
- 	case DRM_PANTHOR_DEV_QUERY_CSIF_INFO:
- 		return PANTHOR_UOBJ_SET(args->pointer, args->size, ptdev->csif_info);
- 
-+	case DRM_PANTHOR_DEV_QUERY_TIMESTAMP_INFO:
-+		ret = panthor_query_timestamp_info(ptdev, &timestamp_info);
-+
-+		if (ret)
-+			return ret;
-+
-+		return PANTHOR_UOBJ_SET(args->pointer, args->size, timestamp_info);
-+
- 	default:
- 		return -EINVAL;
- 	}
-@@ -1372,6 +1412,7 @@ static void panthor_debugfs_init(struct drm_minor *minor)
- /*
-  * PanCSF driver version:
-  * - 1.0 - initial interface
-+ * - 1.1 - adds DEV_QUERY_TIMESTAMP_INFO query
-  */
- static const struct drm_driver panthor_drm_driver = {
- 	.driver_features = DRIVER_RENDER | DRIVER_GEM | DRIVER_SYNCOBJ |
-@@ -1385,7 +1426,7 @@ static const struct drm_driver panthor_drm_driver = {
- 	.desc = "Panthor DRM driver",
- 	.date = "20230801",
- 	.major = 1,
--	.minor = 0,
-+	.minor = 1,
- 
- 	.gem_create_object = panthor_gem_create_object,
- 	.gem_prime_import_sg_table = drm_gem_shmem_prime_import_sg_table,
-diff --git a/drivers/gpu/drm/panthor/panthor_gpu.c b/drivers/gpu/drm/panthor/panthor_gpu.c
-index 5251d8764e7d..2d3529a0b156 100644
---- a/drivers/gpu/drm/panthor/panthor_gpu.c
-+++ b/drivers/gpu/drm/panthor/panthor_gpu.c
-@@ -480,3 +480,50 @@ void panthor_gpu_resume(struct panthor_device *ptdev)
- 	panthor_gpu_irq_resume(&ptdev->gpu->irq, GPU_INTERRUPTS_MASK);
- 	panthor_gpu_l2_power_on(ptdev);
- }
-+
-+/**
-+ * panthor_gpu_read_64bit_counter() - Read a 64-bit counter at a given offset.
-+ * @ptdev: Device.
-+ * @reg: The offset of the register to read.
-+ *
-+ * Return: The counter value.
-+ */
-+static u64
-+panthor_gpu_read_64bit_counter(struct panthor_device *ptdev, u32 reg)
-+{
-+	u32 hi, lo;
-+
-+	do {
-+		hi = gpu_read(ptdev, reg + 0x4);
-+		lo = gpu_read(ptdev, reg);
-+	} while (hi != gpu_read(ptdev, reg + 0x4));
-+
-+	return ((u64)hi << 32) | lo;
-+}
-+
-+/**
-+ * panthor_gpu_read_timestamp() - Read the timestamp register.
-+ * @ptdev: Device.
-+ *
-+ * Return: The GPU timestamp value.
-+ */
-+u64 panthor_gpu_read_timestamp(struct panthor_device *ptdev)
-+{
-+	return panthor_gpu_read_64bit_counter(ptdev, GPU_TIMESTAMP_LO);
-+}
-+
-+/**
-+ * panthor_gpu_read_timestamp_offset() - Read the timestamp offset register.
-+ * @ptdev: Device.
-+ *
-+ * Return: The GPU timestamp offset value.
-+ */
-+u64 panthor_gpu_read_timestamp_offset(struct panthor_device *ptdev)
-+{
-+	u32 hi, lo;
-+
-+	hi = gpu_read(ptdev, GPU_TIMESTAMP_OFFSET_HI);
-+	lo = gpu_read(ptdev, GPU_TIMESTAMP_OFFSET_LO);
-+
-+	return ((u64)hi << 32) | lo;
-+}
-diff --git a/drivers/gpu/drm/panthor/panthor_gpu.h b/drivers/gpu/drm/panthor/panthor_gpu.h
-index bba7555dd3c6..7f6133a66127 100644
---- a/drivers/gpu/drm/panthor/panthor_gpu.h
-+++ b/drivers/gpu/drm/panthor/panthor_gpu.h
-@@ -5,6 +5,8 @@
- #ifndef __PANTHOR_GPU_H__
- #define __PANTHOR_GPU_H__
- 
-+#include <linux/types.h>
-+
- struct panthor_device;
- 
- int panthor_gpu_init(struct panthor_device *ptdev);
-@@ -48,5 +50,7 @@ int panthor_gpu_l2_power_on(struct panthor_device *ptdev);
- int panthor_gpu_flush_caches(struct panthor_device *ptdev,
- 			     u32 l2, u32 lsc, u32 other);
- int panthor_gpu_soft_reset(struct panthor_device *ptdev);
-+u64 panthor_gpu_read_timestamp(struct panthor_device *ptdev);
-+u64 panthor_gpu_read_timestamp_offset(struct panthor_device *ptdev);
- 
- #endif
-diff --git a/include/uapi/drm/panthor_drm.h b/include/uapi/drm/panthor_drm.h
-index 926b1deb1116..95e3a984c69a 100644
---- a/include/uapi/drm/panthor_drm.h
-+++ b/include/uapi/drm/panthor_drm.h
-@@ -260,6 +260,9 @@ enum drm_panthor_dev_query_type {
- 
- 	/** @DRM_PANTHOR_DEV_QUERY_CSIF_INFO: Query command-stream interface information. */
- 	DRM_PANTHOR_DEV_QUERY_CSIF_INFO,
-+
-+	/** @DRM_PANTHOR_DEV_QUERY_TIMESTAMP_INFO: Query timestamp information. */
-+	DRM_PANTHOR_DEV_QUERY_TIMESTAMP_INFO,
- };
- 
- /**
-@@ -377,6 +380,25 @@ struct drm_panthor_csif_info {
- 	__u32 pad;
- };
- 
-+/**
-+ * struct drm_panthor_timestamp_info - Timestamp information
-+ *
-+ * Structure grouping all queryable information relating to the GPU timestamp.
-+ */
-+struct drm_panthor_timestamp_info {
-+	/**
-+	 * @timestamp_frequency: The frequency of the timestamp timer or 0 if
-+	 * unknown.
-+	 */
-+	__u64 timestamp_frequency;
-+
-+	/** @current_timestamp: The current timestamp. */
-+	__u64 current_timestamp;
-+
-+	/** @timestamp_offset: The offset of the timestamp timer. */
-+	__u64 timestamp_offset;
-+};
-+
- /**
-  * struct drm_panthor_dev_query - Arguments passed to DRM_PANTHOR_IOCTL_DEV_QUERY
-  */
-
-base-commit: e75356ef5baef69e9f577023c453d91a902dc082
--- 
-2.46.0
+>=20
 
 
