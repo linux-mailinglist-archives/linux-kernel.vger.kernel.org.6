@@ -1,156 +1,292 @@
-Return-Path: <linux-kernel+bounces-307951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0F0096556F
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 04:56:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDB6796558B
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 05:07:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9074E286D75
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 02:56:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4AA721F23CB0
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 03:07:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A383913632B;
-	Fri, 30 Aug 2024 02:56:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A0F41386DA;
+	Fri, 30 Aug 2024 03:07:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mnAfWtjg"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Cwkj9/+q"
+Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010005.outbound.protection.outlook.com [52.101.69.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1046E4D8B1
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 02:56:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724986610; cv=none; b=nf6sLFI0F4Ks2TsMKqw98YD1Nt/ox03zaC6nbBXHVoT8ZN7oMcULJyDTg3c15BqgwXh5EB75nw+0c8reu8ZRXLwe3zvrSvF6X2xh3m6BL5vpf/4wVgaptcbWfn6fPzEOKT2Kk3wSvZEEfNWPiU31wonixtcg7tfBrSzqxIcTjfY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724986610; c=relaxed/simple;
-	bh=aQar/z5yi0IpojdwMgkqYFs3xDJDSY9fiPUMmksM4S8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DWTLe/vJAsw8oDGC0p84+xHiI6otIjU3fhLSKeTM1l2cEA8tBjdQ9YHRW7APR0zpGH4LSFYRLS3Umr1JlyGVtq+D77UEstqlAFdarzVRd5DBAt5k9eVxUzWA7QSTR6gy+qlfibfHgObYpJRjf6HdlbWOcoMaOsGgZfsNP+c5jBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mnAfWtjg; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724986610; x=1756522610;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=aQar/z5yi0IpojdwMgkqYFs3xDJDSY9fiPUMmksM4S8=;
-  b=mnAfWtjgs4BbQgdM2Hfn7xO0tkI/ErqcidJiqWVWHzAPNhWHNd/2oB+n
-   xQreHx7njmlkrDo1Q0BH2vYrGq/uB7jl6Mx6prUpQd18TZL8Tz5DBVULA
-   nVQUklgdTzAeFOFq2Qz7oGd09DycceNu4TWBLOv/sVPktXSC1yRmdIJsm
-   dnWZfbDx6tgJ4+sPfO+qH2sHGs1yBR2a1wJM6GT9XYIGZiWv34nPR44d0
-   GGnpdUOBj+4Uc8cRGX7ntCo0kcmBhioMDuueobJNE3PvyESHsOrP7e9lB
-   xYnBaU4hVLHND3ZZ/y51K1crWItNOL1k6UV9PdII3MsZOUgnhf9/W0zFu
-   A==;
-X-CSE-ConnectionGUID: qShrqyXoQRSHfdh7lwFl7w==
-X-CSE-MsgGUID: fPoK7FWkQq6noYZA5lXsdA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11179"; a="27410988"
-X-IronPort-AV: E=Sophos;i="6.10,187,1719903600"; 
-   d="scan'208";a="27410988"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 19:56:49 -0700
-X-CSE-ConnectionGUID: Os+YLIpdR12mibT760u3Lw==
-X-CSE-MsgGUID: xeBI/GFKQrWE7cs7NAiYMQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,187,1719903600"; 
-   d="scan'208";a="63957854"
-Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 29 Aug 2024 19:56:46 -0700
-Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sjroa-0000vz-1n;
-	Fri, 30 Aug 2024 02:56:44 +0000
-Date: Fri, 30 Aug 2024 10:55:48 +0800
-From: kernel test robot <lkp@intel.com>
-To: Theodore Dubois <tblodt@icloud.com>, linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, Theodore Dubois <tblodt@icloud.com>,
-	Ryan Houdek <sonicadvance1@gmail.com>,
-	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
-	David Hildenbrand <david@redhat.com>,
-	"Eric W. Biederman" <ebiederm@xmission.com>,
-	Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH] prctl: allow prctl_set_mm_exe_file without unmapping old
- exe
-Message-ID: <202408301005.IiGdSjk2-lkp@intel.com>
-References: <20240827215930.24703-1-tblodt@icloud.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E9047C6E6;
+	Fri, 30 Aug 2024 03:07:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.5
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724987230; cv=fail; b=D+6s6atSyKrT8+gH54sFUs0TWTMl9rS8k1yyaIMb7ch/ZDuX0OZaB9AobiOhHsTkA9CPU8Y5vmO212iF6AviaZYiD82scJCTA+jLqRr92zTEoslpbFzsXOkv6EGSfaeUsRviArstSk3FkjTWfW7au3rqIbfEmjBHXef+zi5x4IQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724987230; c=relaxed/simple;
+	bh=YRntEfECwaPCxbEvgLRfdhB7GnKmKfB2c4awT99Kw2g=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=ZV4dMLocSmx1tnYGM0eGhWsPn2OE5Qms1Gq6bnhhR2MDuST2mApT+7tsQF2xWsIY3IwgKV4d2NsqAbKZA1/x9nTtEguRd5MYTyDHluXOoGbg9mNwGPCBfjgQjBgvLGa97Ocd6EJ+NA/Pzxb7hqRB7EtIQ48gefN1wCm1nJUCusY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Cwkj9/+q; arc=fail smtp.client-ip=52.101.69.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=AwKVqijmTNVxiA8gxnxoml2wiOWKRfl3Uld40OSVSI/xcX8J9IvkOcs4zty1yZExiKsY8z5RTojrQXUg70tboZjC9e/GOeoXDKzAMuUTU/Zrxvt1sVDR2LZSatfCsv5jgpYjyk+cP6oeaWLANHVbBuIVsEHkrNzNE7QWzlt8xJTPU15C/mkBUS0JcNv/Lq8LKcGLE8ik6WTPOPkVfDwp9IoHwKkm5OUQb2MIkTtFhV68Fzlc5GrnBeT0vlXJ8kamEgsvevmkshtRk9xJt+iz4KBjdCFaDlNt+NR9YVNSpA1iLwYRiaNcWIHh8RsXhC1LpS82+zb0Kl7oTlfOnmxv6Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=I1b3r7y8/NNkbGd441bKfOof9R8IWwfQzq6ZwqQnJmA=;
+ b=HyyZcmAfAse8Yd0QOQe8AYdMdeled6fn/LSS7NfO324vUCde44QwJc6u+1hMOjDxOcUHDBeenzHmQizQ61svzrq/YM5cmh0UQcaVZjpqMnjwUtmtgHs4yx0AHbW1nQay14O2m0iRQw7OoU+60au6lrRDCM2FyFyWrUm+M86gh0tFCnn+zc9MpEeUDbFhMUs6hP/9eAnptKILxba8H5I/4cC91/95SJapuLK7x9F8udiNl58plZAWENIFqpgzaSSd/sKu4HkLS2Vc2CarBZ3rsR+BxlDKekV2gwMUFIiM/sW8x347AcASS/MxYDjNgA9fyHaD/iTMr+8XoclrLreIPQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=I1b3r7y8/NNkbGd441bKfOof9R8IWwfQzq6ZwqQnJmA=;
+ b=Cwkj9/+q+3EvA/hfw9moi6TBywPbpGSIBq9Pii2A8bUs4ZykeC4dOwduUriBuZVVCJQ1gFBDDHceWo1Q7K5O85evqlJAR54drtb82JB+0FyS2RPiGVTUBsBk5llE4lCEK27aDXsMlMjFXnFsmLew1CV/T6eStd300ofH2TFCME2h9fFsrVA9w04gFhQWvD0wG2/87aLdGKGXbvFllPnKm4SngjAautwzCFG8govRqzMR+WVP4+fINeNY6HFSIxW7tjgKftMc02i9Zv6UUpcHDjqXxkbJ4OwNnANUqhpV3dn/zlQfKTO2jSolczirybOK4k7g5g+MH6dU31r7LHrogQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PA4PR04MB9638.eurprd04.prod.outlook.com (2603:10a6:102:273::20)
+ by GVXPR04MB10048.eurprd04.prod.outlook.com (2603:10a6:150:118::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.20; Fri, 30 Aug
+ 2024 03:07:04 +0000
+Received: from PA4PR04MB9638.eurprd04.prod.outlook.com
+ ([fe80::f950:3bb6:6848:2257]) by PA4PR04MB9638.eurprd04.prod.outlook.com
+ ([fe80::f950:3bb6:6848:2257%5]) with mapi id 15.20.7897.027; Fri, 30 Aug 2024
+ 03:07:04 +0000
+From: David Lin <yu-hao.lin@nxp.com>
+To: linux-wireless@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	briannorris@chromium.org,
+	kvalo@kernel.org,
+	francesco@dolcini.it,
+	tsung-hsien.hsieh@nxp.com,
+	David Lin <yu-hao.lin@nxp.com>
+Subject: [PATCH] wifi: mwifiex: avoid AP and STA running on different channel
+Date: Fri, 30 Aug 2024 11:06:30 +0800
+Message-Id: <20240830030630.825818-1-yu-hao.lin@nxp.com>
+X-Mailer: git-send-email 2.25.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: AM0PR04CA0058.eurprd04.prod.outlook.com
+ (2603:10a6:208:1::35) To PA4PR04MB9638.eurprd04.prod.outlook.com
+ (2603:10a6:102:273::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240827215930.24703-1-tblodt@icloud.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PA4PR04MB9638:EE_|GVXPR04MB10048:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7d76cf31-b9a1-4bc0-d0a4-08dcc8a0d315
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|52116014|376014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?ridTcZDPB4i79wQ9TXUAunaVVDORHhzr6FHOMp7AMnlVOXAGUAXjhj9l8tDk?=
+ =?us-ascii?Q?TYOUCzIQsyKYapxQOpQJTFxyUd/okwAU5CrqdFQNYvoMD2b6E1w+B6IhgJ9b?=
+ =?us-ascii?Q?CwjTrqg/ODdD3o6X31yluzv3KV+i3vHXTFiaDSMjaB0VtHYP+s75XjK4Vu1U?=
+ =?us-ascii?Q?0eaGfyRmINbCuIq2py4Fou0m6rUMLfykUS8sdzDsZZ0lNN7OO4MFXeXantjG?=
+ =?us-ascii?Q?KcbpiK1tb/j7VfnBLtEJHADDxKDIMuI/n5lkRPD3OPnjI2QwZSUdVbzv8PMv?=
+ =?us-ascii?Q?a4OiH8K0UYyczN+V0u39CBaKoSSbwoPPP11CEwDEb64X1W1I0vaUWGD0QjEG?=
+ =?us-ascii?Q?ZlcuEFQfrdFfQmBoMinQRRiKBuqnR5a4KU6S/Sun8JJi6VsUUYlh12bLu/HG?=
+ =?us-ascii?Q?9MEWupRNSZ+WiZz6OJka1cgyodlJ6BHIMbqjyRURv+ulGwNW47OmOaI3tfbB?=
+ =?us-ascii?Q?hwQt5xnFrTR37+BX5qWAqOif27gcKijW8pVdoJk0NyvKPxSleGe2KhbQTUmZ?=
+ =?us-ascii?Q?X3qw9r8Rv+SK++RTTPlpXfYFS2yjrz8Txpqv9/8YsU8v+Jxk7BpcyVN/Uvot?=
+ =?us-ascii?Q?a/xqi3DZdzIB4Oux1wD0S5PMd56T8+s6OxqDbhyvd3BL30x5a/1WqbnvcgyB?=
+ =?us-ascii?Q?4H+cLj55DQ2YOx6To1lg5DY8GxonFkIgn+nHNGE/mgFnO3mdcXqa9/+0EX2y?=
+ =?us-ascii?Q?q1c9PB2sFOA7b/mS0nbyLtktR9IwSzpwZYD/A8Tvvu+6oa960uR1fuWH4cfs?=
+ =?us-ascii?Q?o/13f4OC4Y5RHdHmt9Y8/wtZBPp9jdokHL4l3xEtv/S2RYIKEYxWmeVFr87k?=
+ =?us-ascii?Q?x4LdwegECo7CAxxGS+rR97qty+OvDAd7C7PytebNihnxWC0LxUZrCZWEoLrU?=
+ =?us-ascii?Q?mc+LK4Lw/CiDSx0ZW/CFjqv8rE3S0Y8jmA5Lz40ofCvaR7f+g18GPJC1tk9G?=
+ =?us-ascii?Q?cx3Voq2jZkmYqgBTeGlHLbJkMx27HM7pqS8M5QfmMMrHYWIxN97BkKSaiszh?=
+ =?us-ascii?Q?oMStfLD2ysMLDvQnCrluMZG1xlxo2zO5elCxpj8aNONziL5eP551XYrtjclw?=
+ =?us-ascii?Q?v9FeEWrh65r4JfGpScm9g3NiIoURVb1wARS3HTj7ctT0ioLrGq40RElvItEY?=
+ =?us-ascii?Q?dc60cz916bkupHNoQrOWnCV5eZtrgq6paa1CdePtZ4/FqJfwlJCqpPQ3YwpA?=
+ =?us-ascii?Q?Y1beySYpAf+le08baqwfJdDUWuSGg3cBENWoSExhVXoN9EFjAGRvjb8yo2+u?=
+ =?us-ascii?Q?tjSscAQeUCkMvohrLvRpddha816YbfNw5Yi7wwROkMqh82mqEdWsY4SkZR1w?=
+ =?us-ascii?Q?K9vhLldRsEyWBWlaOPvJlyHe5QNUcoSxmkyZvMT+K0WYSATFFh06tg2pgsrA?=
+ =?us-ascii?Q?mgW5KnQCku7XAgLcCl1U88kD2vVs+mgLA+p9AWhUC3WWXUIhlw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA4PR04MB9638.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(52116014)(376014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?nkvdZG3TH3ZYTG6g/my9v5tP6ks2AN1pFiy0k4395bkQYh/mOg5z7lNWyLMg?=
+ =?us-ascii?Q?RZ0+2sERBMvxo8q95FKLHWjdy6yI4QmnuHbsrEjGQtMIaMvQmfyzEb/kz7AH?=
+ =?us-ascii?Q?qu8lBXMpXJPXMPMaY/LLVapvgi+3kDzkyboaKGJeAiDOuuddJxhmydDdvM+k?=
+ =?us-ascii?Q?TUoa5c7ML+ADLwp+E17rXEdlsEDt1aThaS9gGJkqWFKR4OAkb5mZ3DBDCYIY?=
+ =?us-ascii?Q?Uwo7lnomCpDjZydKTzFL2LVeAfni1oblMgZ66mgigcd7JNqmUES0HoYVHoET?=
+ =?us-ascii?Q?8wsG5DrI0bPVqfJfGfgjuFePjaRsPPQVZFAPrs2b0UFXAQ7HHY4MZwMy7xHC?=
+ =?us-ascii?Q?amTlzDIXm7q21eOmd8oLgCBukgO7vJRjBHoDg9gJb/jzhDk53dJFKrPKFh7w?=
+ =?us-ascii?Q?q/ZDM7trzstA0CCLx8YLIFjExnzBmyhD6GQ5LMQxinw2WGU5cm5M2oqhoIZW?=
+ =?us-ascii?Q?ZV8R/RfNZwRst/GJ9jAFimbCV9vfXGbVMPVc5CnSEzOacz8c7Kys1osf5KRY?=
+ =?us-ascii?Q?71pS0VU+smaqYAFeulD57pEVeeyGTaCzq6Xt6ecx04FpNSTGD7rk1r2HaM/t?=
+ =?us-ascii?Q?AYXFmgR7GNY8FYBnkWxXWMq6XNea+Filt3xxTqs8xIlMc768yqF7vCs+aXov?=
+ =?us-ascii?Q?bXomAQ3mw0rElXxBIlp5TN8xRTgRQQ9XVwW4FbacfqCCG5euG8oRI1oIhGj0?=
+ =?us-ascii?Q?+6A/KLGs+boEGVnlaEIIhp1zeo89hVWY8RGve5vE8p8OqtKfC+3lM6FjtAdY?=
+ =?us-ascii?Q?WACPG9aEIPoQAWy5bo/7k4T6DF4vdn+vEe0/wsqFqj4HglTZkYQRgN+CwtqM?=
+ =?us-ascii?Q?UhfmDUCYGTm/3My9SmnaqzoCiSs9yzHaIpU4r8VJpW/nhZV39nDVSpYTNDT/?=
+ =?us-ascii?Q?quPAUWBeHQD2uOYJIwtv8zdkUQJuFrGFXh+o2tuRl8GNOm6/GkxjBnD4hZQ6?=
+ =?us-ascii?Q?+87TdmP2c7wtjCD3GYDrbUm2FyI+s+Wz6kyzw8T3pDZN1iHAcFWPVeGg2i2z?=
+ =?us-ascii?Q?D1HBbvj9go6czGsCyOkzVqLOyr2tK9UlpqKOocop+VzGHk7uhWpqXDOXzp8g?=
+ =?us-ascii?Q?w6ZjKj2PIuYNCUv+C5U9AZWJU0EASDVhi9DC4rAr+LrIXWvbnau9BxGIwA07?=
+ =?us-ascii?Q?ZWBvKxapiDzSs25wrh1RasnQpYJRw31p1yLv59BTiRxg3+YCbcQ/qPC0o1bt?=
+ =?us-ascii?Q?wOADfTD9ttwndw55oNPdDxtkPcwuw4qlqD2Pccr1ST4KEMNQ0jeT+CSAU12+?=
+ =?us-ascii?Q?AcZNGFlOtsFu/L4kNuCxbWr1tUD3FSL7NF0j00WizwMHfvJRV+71x8hdNhlF?=
+ =?us-ascii?Q?GEpGUKyWSxSNwleJBJ2eV2wcXFcVn+Zppq7hJHqX2ZftB7E58OsFT0pYGrKo?=
+ =?us-ascii?Q?cni0f5vn61UX5THarqkgw97y34003aGTQjkZPCFXAgeqCAl0lR6tw1j9ozij?=
+ =?us-ascii?Q?IOXrRPxBMHSnJfuncdRjvgSoEMJXMwJHkBb3rQYaa5wUmPwncjzGnODPct6X?=
+ =?us-ascii?Q?Eyf1jstU90iVGnYCwJcJVF1ywW6P1sV1n1AB6dT+kZ+QpGA8HEsRq54uGnaZ?=
+ =?us-ascii?Q?FPVgeGb8mXK7jxr+GWBSgOL//zCgxTWpvCtlHcWF?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7d76cf31-b9a1-4bc0-d0a4-08dcc8a0d315
+X-MS-Exchange-CrossTenant-AuthSource: PA4PR04MB9638.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Aug 2024 03:07:04.4809
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: MqqVu8CC74RuxOxo7tG9ru3b8dNsH596YcZM2o9E2I0ca30RTEad74M24z5Qj0/uPqpz3k6GIqnpaSE4Tc4T9w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR04MB10048
 
-Hi Theodore,
+Current firmware doesn't support AP and STA running on different
+channels simultaneously.
+FW crash would occur in such case.
+This patch avoids the issue by disabling AP and STA to run on
+different channels.
 
-kernel test robot noticed the following build errors:
+Signed-off-by: David Lin <yu-hao.lin@nxp.com>
+---
+ .../net/wireless/marvell/mwifiex/cfg80211.c   | 71 +++++++++++++++++--
+ 1 file changed, 66 insertions(+), 5 deletions(-)
 
-[auto build test ERROR on kees/for-next/pstore]
-[also build test ERROR on kees/for-next/kspp linus/master v6.11-rc5 next-20240829]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+diff --git a/drivers/net/wireless/marvell/mwifiex/cfg80211.c b/drivers/net/wireless/marvell/mwifiex/cfg80211.c
+index 722ead51e912..53fce5eccc69 100644
+--- a/drivers/net/wireless/marvell/mwifiex/cfg80211.c
++++ b/drivers/net/wireless/marvell/mwifiex/cfg80211.c
+@@ -781,11 +781,9 @@ mwifiex_cfg80211_set_wiphy_params(struct wiphy *wiphy, u32 changed)
+ 		break;
+ 
+ 	case MWIFIEX_BSS_ROLE_STA:
+-		if (priv->media_connected) {
+-			mwifiex_dbg(adapter, ERROR,
+-				    "cannot change wiphy params when connected");
+-			return -EINVAL;
+-		}
++		if (priv->media_connected)
++			break;
++
+ 		if (changed & WIPHY_PARAM_RTS_THRESHOLD) {
+ 			ret = mwifiex_set_rts(priv,
+ 					      wiphy->rts_threshold);
+@@ -2065,10 +2063,37 @@ static int mwifiex_cfg80211_start_ap(struct wiphy *wiphy,
+ {
+ 	struct mwifiex_uap_bss_param *bss_cfg;
+ 	struct mwifiex_private *priv = mwifiex_netdev_get_priv(dev);
++	struct mwifiex_adapter *adapter = priv->adapter;
++	struct mwifiex_private *tmp_priv;
++	int i;
++	struct mwifiex_current_bss_params *bss_params;
++	enum nl80211_band band;
++	int freq;
+ 
+ 	if (GET_BSS_ROLE(priv) != MWIFIEX_BSS_ROLE_UAP)
+ 		return -1;
+ 
++	for (i = 0; i < MWIFIEX_MAX_BSS_NUM; i++) {
++		tmp_priv = adapter->priv[i];
++		if (tmp_priv == priv)
++			continue;
++		if (GET_BSS_ROLE(tmp_priv) == MWIFIEX_BSS_ROLE_STA &&
++		    tmp_priv->media_connected) {
++			bss_params = &tmp_priv->curr_bss_params;
++			band = mwifiex_band_to_radio_type(bss_params->band);
++			freq = ieee80211_channel_to_frequency
++			       (bss_params->bss_descriptor.channel, band);
++			if (!ieee80211_channel_equal
++			     (params->chandef.chan,
++			      ieee80211_get_channel(wiphy, freq))) {
++				mwifiex_dbg
++				(priv->adapter, MSG,
++				 "AP and STA must operate on same channel\n");
++				return -EOPNOTSUPP;
++			}
++		}
++	}
++
+ 	bss_cfg = kzalloc(sizeof(struct mwifiex_uap_bss_param), GFP_KERNEL);
+ 	if (!bss_cfg)
+ 		return -ENOMEM;
+@@ -2437,6 +2462,8 @@ mwifiex_cfg80211_connect(struct wiphy *wiphy, struct net_device *dev,
+ 	struct mwifiex_adapter *adapter = priv->adapter;
+ 	struct cfg80211_bss *bss = NULL;
+ 	int ret;
++	struct mwifiex_private *tmp_priv;
++	int i;
+ 
+ 	if (GET_BSS_ROLE(priv) != MWIFIEX_BSS_ROLE_STA) {
+ 		mwifiex_dbg(adapter, ERROR,
+@@ -2451,6 +2478,22 @@ mwifiex_cfg80211_connect(struct wiphy *wiphy, struct net_device *dev,
+ 		return -EALREADY;
+ 	}
+ 
++	for (i = 0; i < MWIFIEX_MAX_BSS_NUM; i++) {
++		tmp_priv = adapter->priv[i];
++		if (tmp_priv == priv)
++			continue;
++		if (GET_BSS_ROLE(tmp_priv) == MWIFIEX_BSS_ROLE_UAP &&
++		    netif_carrier_ok(tmp_priv->netdev) &&
++		    cfg80211_chandef_valid(&tmp_priv->bss_chandef)) {
++			if (!ieee80211_channel_equal
++			     (sme->channel, tmp_priv->bss_chandef.chan)) {
++				mwifiex_dbg(adapter, ERROR,
++					    "STA/AP must on the same channel\n");
++				return -EOPNOTSUPP;
++			}
++		}
++	}
++
+ 	if (priv->scan_block)
+ 		priv->scan_block = false;
+ 
+@@ -4285,6 +4328,8 @@ mwifiex_cfg80211_authenticate(struct wiphy *wiphy,
+ 	u32 tx_control = 0, pkt_type = PKT_TYPE_MGMT;
+ 	u8 trans = 1, status_code = 0;
+ 	u8 *varptr;
++	struct mwifiex_private *tmp_priv;
++	int i;
+ 
+ 	if (GET_BSS_ROLE(priv) == MWIFIEX_BSS_ROLE_UAP) {
+ 		mwifiex_dbg(priv->adapter, ERROR, "Interface role is AP\n");
+@@ -4298,6 +4343,22 @@ mwifiex_cfg80211_authenticate(struct wiphy *wiphy,
+ 		return -EINVAL;
+ 	}
+ 
++	for (i = 0; i < MWIFIEX_MAX_BSS_NUM; i++) {
++		tmp_priv = adapter->priv[i];
++		if (tmp_priv == priv)
++			continue;
++		if (GET_BSS_ROLE(tmp_priv) == MWIFIEX_BSS_ROLE_UAP &&
++		    netif_carrier_ok(tmp_priv->netdev) &&
++		    cfg80211_chandef_valid(&tmp_priv->bss_chandef)) {
++			if (!ieee80211_channel_equal
++			    (req->bss->channel, tmp_priv->bss_chandef.chan)) {
++				mwifiex_dbg(adapter, ERROR,
++					    "STA/AP must on the same channel\n");
++				return -EOPNOTSUPP;
++			}
++		}
++	}
++
+ 	if (priv->auth_alg != WLAN_AUTH_SAE &&
+ 	    (priv->auth_flag & HOST_MLME_AUTH_PENDING)) {
+ 		mwifiex_dbg(priv->adapter, ERROR, "Pending auth on going\n");
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Theodore-Dubois/prctl-allow-prctl_set_mm_exe_file-without-unmapping-old-exe/20240828-060019
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git for-next/pstore
-patch link:    https://lore.kernel.org/r/20240827215930.24703-1-tblodt%40icloud.com
-patch subject: [PATCH] prctl: allow prctl_set_mm_exe_file without unmapping old exe
-config: x86_64-defconfig (https://download.01.org/0day-ci/archive/20240830/202408301005.IiGdSjk2-lkp@intel.com/config)
-compiler: gcc-11 (Debian 11.3.0-12) 11.3.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240830/202408301005.IiGdSjk2-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408301005.IiGdSjk2-lkp@intel.com/
-
-All error/warnings (new ones prefixed by >>):
-
-   kernel/fork.c: In function 'replace_mm_exe_file':
->> kernel/fork.c:1439:9: error: 'old_exe_file' undeclared (first use in this function); did you mean 'new_exe_file'?
-    1439 |         old_exe_file = rcu_dereference_raw(mm->exe_file);
-         |         ^~~~~~~~~~~~
-         |         new_exe_file
-   kernel/fork.c:1439:9: note: each undeclared identifier is reported only once for each function it appears in
->> kernel/fork.c:1433:13: warning: unused variable 'ret' [-Wunused-variable]
-    1433 |         int ret = 0;
-         |             ^~~
-
-
-vim +1439 kernel/fork.c
-
-3864601387cf41 Jiri Slaby              2011-05-26  1421  
-35d7bdc86031a2 David Hildenbrand       2021-04-23  1422  /**
-35d7bdc86031a2 David Hildenbrand       2021-04-23  1423   * replace_mm_exe_file - replace a reference to the mm's executable file
-ff0712ea71f173 Matthew Wilcox (Oracle  2023-08-24  1424)  * @mm: The mm to change.
-ff0712ea71f173 Matthew Wilcox (Oracle  2023-08-24  1425)  * @new_exe_file: The new file to use.
-35d7bdc86031a2 David Hildenbrand       2021-04-23  1426   *
-a7031f14525751 Mateusz Guzik           2023-08-14  1427   * This changes mm's executable file (shown as symlink /proc/[pid]/exe).
-35d7bdc86031a2 David Hildenbrand       2021-04-23  1428   *
-35d7bdc86031a2 David Hildenbrand       2021-04-23  1429   * Main user is sys_prctl(PR_SET_MM_MAP/EXE_FILE).
-35d7bdc86031a2 David Hildenbrand       2021-04-23  1430   */
-35d7bdc86031a2 David Hildenbrand       2021-04-23  1431  int replace_mm_exe_file(struct mm_struct *mm, struct file *new_exe_file)
-35d7bdc86031a2 David Hildenbrand       2021-04-23  1432  {
-35d7bdc86031a2 David Hildenbrand       2021-04-23 @1433  	int ret = 0;
-35d7bdc86031a2 David Hildenbrand       2021-04-23  1434  
-35d7bdc86031a2 David Hildenbrand       2021-04-23  1435  	get_file(new_exe_file);
-fe69d560b5bd9e David Hildenbrand       2021-04-23  1436  
-a7031f14525751 Mateusz Guzik           2023-08-14  1437  	/* set the new file */
-a7031f14525751 Mateusz Guzik           2023-08-14  1438  	mmap_write_lock(mm);
-a7031f14525751 Mateusz Guzik           2023-08-14 @1439  	old_exe_file = rcu_dereference_raw(mm->exe_file);
-a7031f14525751 Mateusz Guzik           2023-08-14  1440  	rcu_assign_pointer(mm->exe_file, new_exe_file);
-a7031f14525751 Mateusz Guzik           2023-08-14  1441  	mmap_write_unlock(mm);
-a7031f14525751 Mateusz Guzik           2023-08-14  1442  
-2a010c41285345 Christian Brauner       2024-05-31  1443  	if (old_exe_file)
-35d7bdc86031a2 David Hildenbrand       2021-04-23  1444  		fput(old_exe_file);
-35d7bdc86031a2 David Hildenbrand       2021-04-23  1445  	return 0;
-35d7bdc86031a2 David Hildenbrand       2021-04-23  1446  }
-3864601387cf41 Jiri Slaby              2011-05-26  1447  
-
+base-commit: ae98f5c9fd8ba84cd408b41faa77e65bf1b4cdfa
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.34.1
+
 
