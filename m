@@ -1,243 +1,203 @@
-Return-Path: <linux-kernel+bounces-307930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B07D965513
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 04:07:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BE0B965516
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 04:08:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 171BF1F2183D
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 02:07:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CBAD1F211B1
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 02:08:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E980514C59B;
-	Fri, 30 Aug 2024 02:05:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5FC474C08;
+	Fri, 30 Aug 2024 02:08:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=darkphysics.net header.i=@darkphysics.net header.b="mUplYA/8"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=hammerspace.com header.i=@hammerspace.com header.b="Jw/oOMVS"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2135.outbound.protection.outlook.com [40.107.93.135])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F799135417
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 02:05:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724983516; cv=none; b=csl4JirBrYLUPvgMDMbgoEmOoxoQOdQUtEKUN2IiVZh3/2FUTt+mcGUDbbQ6v/Z7EzUF5xkSLsTla5Wl5ktqejaKhcngchgEIVVnjTgRIwTWQJiMI0O3ATchmx9T1/wo+/AGBPqIjjrkBo+3e3mdRoSgnG6imz5RYpkbT+h0g8s=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724983516; c=relaxed/simple;
-	bh=RbULwptBNsQzLDugQEUPGZRs+tEtmEkTlsEW1ExqCd8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Tn+noX5wja7QRqfl8lBvqglBcDj8uwotzKJ0bEd6u6KXoZaAvFKsyn7BYPWfGKcXAJWVH6MehKvhnBXpbVnS10ztorx5ZnAZSjeW0y0EdPchu4GsZ8F05dF4TI+qfK5Wzuoex0zZMFjJa4WrHa5Aw4qohZsOpY/6OP5G70guiao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=darkphysics.net; spf=pass smtp.mailfrom=darkphysics.net; dkim=pass (2048-bit key) header.d=darkphysics.net header.i=@darkphysics.net header.b=mUplYA/8; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=darkphysics.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=darkphysics.net
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-201fba05363so11815005ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 19:05:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=darkphysics.net; s=google; t=1724983514; x=1725588314; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hsD9LbYpzmdL2ZeNCROIWLwhmARjVZHTeH3nqMJ/Ph0=;
-        b=mUplYA/8LE+/0gNjuon7dUSqhK5kKfl+yynvwGObX7NTzGXkcZmMJVEvHiIIxI0qAB
-         SbQXFHzWZeIWxRFolGeUkBGamxvAHK/L+Ro5/ii/ZWShLqkiKSUHLcZJxm4M0XYvvJrn
-         63jJAM2xxawcnHE+okcnxNpGnbiwYWSK9tLt1djGOkLs5N4OhbqSDdHOMSJbyhldz9E9
-         vEC9Cip0/gUNkD8rqDQ4SJo84O54D7sFFJ7sNJdZDOohj6toes55rLKqQ+LHrQVyy5hw
-         M6AWh7cVbroSddF1lI3Y+6dlDiY+RujqaBerRpiI47uRDAcUbcO37fW9eAvkWCYbUmut
-         6A0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724983514; x=1725588314;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hsD9LbYpzmdL2ZeNCROIWLwhmARjVZHTeH3nqMJ/Ph0=;
-        b=pcpSZN9CcQ5VxqFbCkSwRDiFDlqU9OFT2CZCqhn/ZjddwlcKmWqKmnw+7Q1qdVSZKe
-         6Im8Pn0UpgEK9iHoXkoAPouyZxq7cnTuJJckXSs439QrkVVhf5TR0ydFTegB3lQKCtwi
-         A6RAQkp2/CzeE3A45WqdQa/8SKatIBIxNi/o1bYbmOG4NfOM6auGxuthtwM7eYB18OQ5
-         5AlSHJFvmn8x32KYa60oAxJmhGBr0sLxqS9FlhlsVAtOj6XPU8zzjb41QG2Gz2aHn720
-         UeldQ3O9hZuVfIyVYYH9jvn2VIC0NegjuHR0C3wN+XAe21NuuK1zvrOu/fwRDjUrriKC
-         07yg==
-X-Forwarded-Encrypted: i=1; AJvYcCU4DIu6fYX1o8YPtHBV78vvHH6PSXpJ4csK2p2nycAND97giAyB+iCraTHduNgC8GNiNW1m0Sbt7+36KsE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJJkXj0GHFbC95v5aAfOkKItz2T9lwj5S4PqHJZqMcNnKUXxo0
-	cfa2I8YXzOr49BGBdp5D8tEVHOnuFiEHY6ojXoN+iIgn9KhC8X+p9tqf9QASLTs=
-X-Google-Smtp-Source: AGHT+IEbrhKrkG/YPfdNtcnK7FFbWYMk2XQ5TxnLnCiZ/69HTpUofKUKGToIshgEqOGqJ9UraCWlfw==
-X-Received: by 2002:a17:902:cece:b0:1fc:6901:9c35 with SMTP id d9443c01a7336-2050c23ca2amr57985555ad.20.1724983513650;
-        Thu, 29 Aug 2024 19:05:13 -0700 (PDT)
-Received: from lunchbox.darkphysics (c-73-83-183-190.hsd1.wa.comcast.net. [73.83.183.190])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20515534444sm17643255ad.147.2024.08.29.19.05.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 19:05:13 -0700 (PDT)
-From: Tree Davies <tdavies@darkphysics.net>
-To: gregkh@linuxfoundation.org,
-	philipp.g.hortmann@gmail.com,
-	anjan@momi.ca
-Cc: linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Tree Davies <tdavies@darkphysics.net>
-Subject: [PATCH 3/3] Staging: rtl8192e: Add spaces around operators.
-Date: Thu, 29 Aug 2024 19:05:08 -0700
-Message-Id: <20240830020508.532945-4-tdavies@darkphysics.net>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20240830020508.532945-1-tdavies@darkphysics.net>
-References: <20240830020508.532945-1-tdavies@darkphysics.net>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F16B55D8F0;
+	Fri, 30 Aug 2024 02:08:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.135
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724983695; cv=fail; b=jpuAjnJd3AYhPfTgV/e56WuS9VTzed+tgbECni5u8wdiwr7Y0om1ggVoPut61wb2NuTEwpgAvazoxYl6J7n0wfTfmPwY5dh7G9HNebh36qjlOdJEs31shT11trj1nWbL+lukuJcpb9Dkq6D5/mn1AL0pRXat5IZHPd4D3W+tGWI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724983695; c=relaxed/simple;
+	bh=Co2td06DvVAjrKYU0ltoT1PXXJyt4cDjQeXu3ZridIs=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=RZfINBOzs2sHY/HmV9TnoknAGcRCQaUDR+qky1Q/vs8QNIK3oWIU5+8gUAAWi+9g7QRsXsmfrEo6stidRoAenOR7XEURVrluup+QiSnkHVflPOK3i2N+IY1OGqAjWLmvUySIzq6Fq1FavW2J1ITPQbBRaHPDyOj0kGie1jyOIPE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hammerspace.com; spf=pass smtp.mailfrom=hammerspace.com; dkim=pass (1024-bit key) header.d=hammerspace.com header.i=@hammerspace.com header.b=Jw/oOMVS; arc=fail smtp.client-ip=40.107.93.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hammerspace.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hammerspace.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Nb8R6O3urw7fbrpqUoCSSR77VET4UXLZuerRRZdqRjMKVkC0XaJHUhI28HdFYlbIW2W9kxuBMOnPiq+VztKmg14iVzYjiH0i7qwLANezp9cA5MQg3tEs1mESgZnM7VaVAMK7UuQqUNW++ZuneuqNfUVWQ52bVnnyUTDWcykgKCKJkxfzeaKmrHlC0YsdV33h7GADVqsUkVWnEgT2MitufoSZIoLnPBL1gs4/NC6CDYD5NPJ/1De86LyVwO2w7IbrRQ8nYQqJfcqX6u7yVldewuMCzq98kSEesDu0vIe7FevkXmoIwKRP3akvorxT9cESZRnri9YjILqJF0KQMclUag==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Co2td06DvVAjrKYU0ltoT1PXXJyt4cDjQeXu3ZridIs=;
+ b=buTRKVbGVQqsfO3bmARuSdv4+uwv1CAKvBRw6WqAhy2uyYMgIvkrYV3BulvSFwH1COupo6sqKJkr7ViglsqOb6wBA9B1EzdWGV9GMy1eMd0TrbApv009V53036dPt4kiup6mhmMVDZtwRC6LLlAXAMWRKIetioBiLTBvpRo5f9XxME6akO+Uvmqb02zGEIkfXV8DtrPDOcl7AvsQbxw5vIVsczau81A1V6CFVq419Wz2Y+X6ZqmyDuypmco5M3fZdxk7vVkI5ovgsdODLSEbkWaLm0F4cTivbnPtH42emNpJU+hrFobPaCx0saTfUAJ6eJoNehSmC1rX/4VhcAfSqA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=hammerspace.com; dmarc=pass action=none
+ header.from=hammerspace.com; dkim=pass header.d=hammerspace.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hammerspace.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Co2td06DvVAjrKYU0ltoT1PXXJyt4cDjQeXu3ZridIs=;
+ b=Jw/oOMVSE874+OuqcT3y+kUzWjdUg8QobKUnZldHq2+HddguLGciDLdcUpk9N+54wcIGB9Fg5TA1OtC4gRbIcN4lVpLDQ9TPBQ/Nmp1RLSS8SCc7vioaCaFVCW3C9udsRCa3gtqrngrXmIG/ZP501CGBoFypU82G0ljM2CHXQEI=
+Received: from CH0PR13MB5084.namprd13.prod.outlook.com (2603:10b6:610:111::7)
+ by DS7PR13MB4669.namprd13.prod.outlook.com (2603:10b6:5:3a3::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.28; Fri, 30 Aug
+ 2024 02:08:10 +0000
+Received: from CH0PR13MB5084.namprd13.prod.outlook.com
+ ([fe80::67bb:bacd:2321:1ecb]) by CH0PR13MB5084.namprd13.prod.outlook.com
+ ([fe80::67bb:bacd:2321:1ecb%4]) with mapi id 15.20.7918.019; Fri, 30 Aug 2024
+ 02:08:10 +0000
+From: Trond Myklebust <trondmy@hammerspace.com>
+To: "davem@davemloft.net" <davem@davemloft.net>, "chuck.lever@oracle.com"
+	<chuck.lever@oracle.com>, "anna@kernel.org" <anna@kernel.org>,
+	"pabeni@redhat.com" <pabeni@redhat.com>, "jlayton@kernel.org"
+	<jlayton@kernel.org>, "edumazet@google.com" <edumazet@google.com>,
+	"kuba@kernel.org" <kuba@kernel.org>, "yanzhen@vivo.com" <yanzhen@vivo.com>
+CC: "opensource.kernel@vivo.com" <opensource.kernel@vivo.com>,
+	"okorniev@redhat.com" <okorniev@redhat.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>, "tom@talpey.com" <tom@talpey.com>,
+	"Dai.Ngo@oracle.com" <Dai.Ngo@oracle.com>, "linux-nfs@vger.kernel.org"
+	<linux-nfs@vger.kernel.org>, "neilb@suse.de" <neilb@suse.de>
+Subject: Re: [PATCH net-next v1] sunrpc: Use ERR_CAST() to return
+Thread-Topic: [PATCH net-next v1] sunrpc: Use ERR_CAST() to return
+Thread-Index: AQHa+n3yO+KBUksFpUy0zaD9UE/y27I/De0A
+Date: Fri, 30 Aug 2024 02:08:09 +0000
+Message-ID: <dd97ad2754112d8b9251fc1a1ce0cd15fbfa7eb4.camel@hammerspace.com>
+References: <20240830014216.3464642-1-yanzhen@vivo.com>
+In-Reply-To: <20240830014216.3464642-1-yanzhen@vivo.com>
+Accept-Language: en-US, en-GB
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=hammerspace.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: CH0PR13MB5084:EE_|DS7PR13MB4669:EE_
+x-ms-office365-filtering-correlation-id: 4abce49b-407f-43b9-90f4-08dcc898988e
+x-ms-exchange-atpmessageproperties: SA
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|7416014|376014|1800799024|366016|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?U3YzeVkwZXZVaGxsOW8xNVRPcWJGRmo1dVhXdWJkZ0VOMEhMUHJFY28raXFK?=
+ =?utf-8?B?cUc0ZmtYbWV5YmN5U2c2RDRUelVZNUF6UlM5dytZVTNKRS9VNW56QktaVFZl?=
+ =?utf-8?B?Zi84dWZDWEVPWjNyTXkyM3VPcmR1ZlJOenp6bi83aFVTQjlvWjErN2tVeTVD?=
+ =?utf-8?B?bzlXZlZBdU9OVmtJS25GcS80M3dMcExTeUlyZEEwV1RmN1h2a0tuU3BIWkpB?=
+ =?utf-8?B?RzdYOHJOZ2VEWll3ZkVQcVJKOUxZYjNzOUNrQmJnWG9aSEorY0tGVWhldmpS?=
+ =?utf-8?B?S1h2RFRrakR5UXg3dmtVMW1qNDJFelp0amVQR284b3k4QXlxUE1haXVxZU5U?=
+ =?utf-8?B?Vk5acDRHbTV0aXoxZVd0dk9ZbnEwSDZMdSs3blY4NE5nZXFDZDBoZmhma1Mw?=
+ =?utf-8?B?RVoyelBUMGc3L3pFdzA1aXZIWDN4cVVxejh1ekJwT1VNWHFjSzI1UG11blRo?=
+ =?utf-8?B?T0pOMDNsMkdibkxsLzhCS083VVloL0w2KzdlbHhBM3ErWVN2Zko1REZtOVAx?=
+ =?utf-8?B?RERRbkhPZmVvZkRiZTNWd0d1VTRIUnluRHVNL1pVN3F5dUk3Zmo1c2hDR3lE?=
+ =?utf-8?B?dlBOcmRwVFg0T2dFSHk2OGFMUTFzdVh4TzBsVGx3azI5RXNIaG1MaUlrb1pQ?=
+ =?utf-8?B?ZTZ1MFh0VklTaFp1MXJkWm5iNFhvK3Q5eWs3bGR3YWJoNDBLTi8yeGtBTlZo?=
+ =?utf-8?B?N1c1Y0tpd3VFUTZJbFVaTkxVZ2NFN2pGTC9ZZmJhd2svaFJwYW91L1NoWFJC?=
+ =?utf-8?B?NnRNellDQ2pWWXdFc3NOMklJUFZxeVhjaUJyZmVHbmlqMWxwNzhuNWtRNGoz?=
+ =?utf-8?B?UzVySkNBekFGV21CRWozTHR6T1YxQnlMcXE4TlVVdEUvRDFHbXFIY3pVRUt0?=
+ =?utf-8?B?RXlxV09xL3IvY2tyY2ZacVFudnlOVk9jRWs4eFRQNWs3YnVQb3J1aWV5K09K?=
+ =?utf-8?B?WmpoNndiSUVEQVFCbWJrYmtXTzFzUGltUjV0ZGx4bU90bTUwUlV5VkpNWlFY?=
+ =?utf-8?B?K0lmQzRCc2VJeVczeU96ZW9McEMxbHkvcTM4cjB3NzVBS0J5L090UExVei84?=
+ =?utf-8?B?Z0FOaVFyN0tKVGVhbENWR3A2VmxtcW5YcHRFZnZNcHVHWE1KaEZ6MkZiV0J3?=
+ =?utf-8?B?RFZITjRyWklzWHhhRW9BNSt0cS9ZbjFCOGFqTGRpUlJPUlJPbEtoZXhydlBS?=
+ =?utf-8?B?dVZKYVBlTktUNHgwcEdzaWNuOTNOalZGclc0YWVQMnFMRktmVGgraDhXaHdK?=
+ =?utf-8?B?Q1VwRVZJR0VBUTd3cVRXaE85NWk3SkdITVBBV2Y0MUNGcWw4Y2grbVVmTVBO?=
+ =?utf-8?B?VWhWYkpLY2pjU0I3N1dTdGVmZm5EVm0vNGFBcDdGMXdQOEpEVXNmRy9zSFpP?=
+ =?utf-8?B?cUNFTXFsTTlVRCtaRmNRRHRmOVNzMVA1YXlNU0dGeG50WlA5eEdmMTBzbnVG?=
+ =?utf-8?B?TWdZR2lMeEZyN0p5WXdqUXhUSllFRzUxZHlHWWppd1d4eEtQWmdYVVdpYldq?=
+ =?utf-8?B?QVgybW9Xc1RMajFUTHFETHlIZWFSUmJybkpsazNYY3BWYnM3dWhxZUNpWlE3?=
+ =?utf-8?B?bjNIc0FrQml2enJsNWNvMjdpMVF0VGJRRVNmeE9sWjRNMlptdUR6Q0x5akVk?=
+ =?utf-8?B?eGlTRXFmZitheExqL1YzTEF3NU1XN0ZqYzlUclJRT2NrcFVEdmh2YTRYaGJq?=
+ =?utf-8?B?dHhHZVdzeUxndTVqUVVIbVQyMFp3b01YTWprdmpoTHdUdkdtc3ZLNi8zWHhF?=
+ =?utf-8?B?THRKVFpOaTlVMjBhNjAzd2NIc3lHc1laWkRXeUFMVDJVVjF5aWZ6Q0k0UktZ?=
+ =?utf-8?B?V1h4ZWRIOU9hK3RsWWFXVjZOSit5RnM3dkQ4OEJqTUwwQmVwUWwyaTJmbEpl?=
+ =?utf-8?B?UXRaQVdKUUpPY1grczZVRzB6Q3oyZHVFSmc2bVVMdWRMY0E9PQ==?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR13MB5084.namprd13.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?V2Q1MTJ6YnZtb1ZpYXRTRFd3d2VNa09hWnFkZjZ3dTJGYmNVSldEWTZxOXZk?=
+ =?utf-8?B?WmZrbHdSMk9iQXR5RExYYkNpMFJQUVN5WnpxMUJTd2hmU2hBMlJXak1hMnFY?=
+ =?utf-8?B?YTNCaFhReU1oNmxidDg3VWJCL083eUh5a3hnelVrKzVQb0I4ME1WRS8rRnpL?=
+ =?utf-8?B?TUpDT0o3V2tndzdSZFJ4dGp5OHVNbmJRdm5XdG42a05VeTNrNjNubS93YXBw?=
+ =?utf-8?B?amt6NE5sVE9NaEs3cmpyYzlPTEJNSzYwWTdHTnBpelNUYlZVZWFHMXBWb2xy?=
+ =?utf-8?B?Vnk0Rk41aE1XeXdkbU1rTjl5Q3pyQ3U5RXlzNEQ3QnE2aFRPN0pETTl6OVR4?=
+ =?utf-8?B?dzh6bks5OVl3SGcxSU9zUXNZd1ozY3Y1MnNJamdCbGx0YnZrdUM5NnlMYTNQ?=
+ =?utf-8?B?ZzdaTlQrS2hJVS9XQjI4V21OZVRXZll3d0xVWThSd1UwS2UydEFPTEhYQlZm?=
+ =?utf-8?B?NTdGc3FST1hqTzl6VUVIazdLUVJMN3JPZTZoUnpnejd5M0FkQ05oUVFkZEx4?=
+ =?utf-8?B?YjF1UzBPcko1NGRYeHR6Y3ZEVEl1cDBOdDNDbUFwdkxJNlM1WDMrMFVyTHE1?=
+ =?utf-8?B?K0ZHNGRXamJTTG5Pc0Zxb04xU0pJYVZDTzRTMldKVWFOc0gyeFAvdmdSNXhz?=
+ =?utf-8?B?OHk0TGdEa3FETXk4YkNKaWRjOFFRZWM3Yk9LTDRVdjA0RG1lOWFranVwT0g2?=
+ =?utf-8?B?L0hTWlRkRVNwb3A4TERKd080OEZjTDNybXFuUzZhSHJYQ0pZTFRldDAyK2hS?=
+ =?utf-8?B?bTNzbExLZ2l4RlJPOTIyeGlVbFFlZUFvSzdwbEN5anRRY0VOanBZR2VvVlhh?=
+ =?utf-8?B?a00yeExUdDV4WUNyTDNqK2ZGWDJ2SkhCTTNCaVE3a1dyR0Q4d3pTSzF3dTNq?=
+ =?utf-8?B?bXFwTUoyUlM1bnNaNmtza0JWekIyNFFMZDdkcHFTanZPRitCUzlSWmZwSCtE?=
+ =?utf-8?B?SlBreWMwWHIyb001eVNycTNmN1haWnZVdlFaYzRlamtxL3pybGxZMStCcjFQ?=
+ =?utf-8?B?cWYyMDZKR0dZOGg3SnhBMk1IUU15dTl0K0l5SlFZRUNxekxuWnlGektpeE5H?=
+ =?utf-8?B?YmpjckdITU5FQzVpcEo3bU1Ua1ZEckZ3aUd1NnhLdFRRY09lUFROalpKTjdv?=
+ =?utf-8?B?NTgveFR4cU54aFRPeFBtb1NDTWFsNWNEaVBZT2JJc3BtbnZHSDZzRGduNW9I?=
+ =?utf-8?B?a3pQZVJQMGQwMExTOTBBQkpBRlRsU1lXMW9mTFNIc2xsREVmN241b3Bob1NO?=
+ =?utf-8?B?b3BYVFBwNkU5MFpibmdHdHArMkg4dFVVY2VBeEhzVEVEbC9sRDNBRmJxb2ox?=
+ =?utf-8?B?c2dHWTVtc09va250clBHc1RUcjVXWVQ0NTdBckd4cWNMTmpwR1FRTEVPSFZF?=
+ =?utf-8?B?TXNqY1p6a1FRMU9MK3hXVU5ZYnhwVEFlZTFOSUVIcnhMOVNmZEhCZFZRM3Jw?=
+ =?utf-8?B?eWltMDF4VUkwNTg3Y25TeEpQWWdnODBxMGZyVzRSY1diRUYzMFYxUnZZTDRE?=
+ =?utf-8?B?NFJsVThFS2wzc2xoUTNQVXArOU5Jb3BKcmZwcC9NWHV2ZFM5b2VsM2tScUYy?=
+ =?utf-8?B?bXY1UzJ6WVJaV09YNzNMVUlPK0lIMFpyejh5WTZqajVGaEtNZHFDZXAzVk5L?=
+ =?utf-8?B?cTJvZ1ByYy9uSnJYQXZFTmNkaVhCMzNOTDJDQzU2SVdSTWhBWUdjSURsU1Zj?=
+ =?utf-8?B?d2g1b0d1SFFuTDI0WnIrUldiQ3ZzUnJBWlBlaEkyL0lXelJFWkFyREwvbVJL?=
+ =?utf-8?B?UFhsOEx2NnBDSE1EcmhKZEdMa0h2cm1wRDZ1cTVvbVYxb1MrRllhR3N5OEl5?=
+ =?utf-8?B?aVNRa0EwT2I5TmtNQ0xYOFcxbFc4QXB2YzBJaitoakkrYzRld0llRldqV0Fs?=
+ =?utf-8?B?NmQvZ1JNSDlFMTVqSEdGTVZuTUdGZ1c0Sk80YVQ2WW4yZi9PWWttcXdFU0Jv?=
+ =?utf-8?B?Y1QzbnEwaTZYWXpycmNrdEx0bnBjYVBZTTB1cUJxWXZFVDVWM1F5QVFyY1hC?=
+ =?utf-8?B?L3ZLYU5DeGp4ZmRKcDdwZkgySXNGYmM4dERwVTBYK3M5NXY2RUI1MSt1NnNm?=
+ =?utf-8?B?MHhhZUhzUExsRGdLUlRqMHd2eUlmc25QMXhEUXlTcmM4ZHVoekJMd1VML1h5?=
+ =?utf-8?B?dVZ1d2hZdCtVeG4yd0dVZ1dFemVHaE5HMlZyZ1llUkpCblR5V0haRFVKL2Rz?=
+ =?utf-8?B?Q3c9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <0476E4CD52C2314990D6338CA9B5ADCF@namprd13.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: hammerspace.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CH0PR13MB5084.namprd13.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4abce49b-407f-43b9-90f4-08dcc898988e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Aug 2024 02:08:09.9212
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 0d4fed5c-3a70-46fe-9430-ece41741f59e
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: ULuKzW8gRzQJqWyJuX/qZ8FSOrlPeAetlLb0AE6Twoj5Pxc9ZtVaKCHSw965Ejn5ghTzwMd7fd+6H5AVwShkBg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR13MB4669
 
-Add spaces around arithmetic and bitwise operators to improve
-readability of the code.
-
-Signed-off-by: Tree Davies <tdavies@darkphysics.net>
----
- drivers/staging/rtl8192e/rtllib.h | 62 +++++++++++++++----------------
- 1 file changed, 31 insertions(+), 31 deletions(-)
-
-diff --git a/drivers/staging/rtl8192e/rtllib.h b/drivers/staging/rtl8192e/rtllib.h
-index 76f53b797644..17a6fb565c9d 100644
---- a/drivers/staging/rtl8192e/rtllib.h
-+++ b/drivers/staging/rtl8192e/rtllib.h
-@@ -339,12 +339,12 @@ enum rt_op_mode {
- 
- #define	FC_QOS_BIT					BIT(7)
- #define is_data_frame(pdu)	(((pdu[0] & 0x0C) == 0x08) ? true : false)
--#define	is_legacy_data_frame(pdu)	(is_data_frame(pdu) && (!(pdu[0]&FC_QOS_BIT)))
-+#define	is_legacy_data_frame(pdu)	(is_data_frame(pdu) && (!(pdu[0] & FC_QOS_BIT)))
- #define is_qos_data_frame(pframe)			\
--	((*(u16 *)pframe&(IEEE80211_STYPE_QOS_DATA|RTLLIB_FTYPE_DATA)) ==	\
--	(IEEE80211_STYPE_QOS_DATA|RTLLIB_FTYPE_DATA))
--#define frame_order(pframe)     (*(u16 *)pframe&IEEE80211_FCTL_ORDER)
--#define SN_LESS(a, b)		(((a-b)&0x800) != 0)
-+	((*(u16 *)pframe & (IEEE80211_STYPE_QOS_DATA | RTLLIB_FTYPE_DATA)) ==	\
-+	(IEEE80211_STYPE_QOS_DATA | RTLLIB_FTYPE_DATA))
-+#define frame_order(pframe)     (*(u16 *)pframe & IEEE80211_FCTL_ORDER)
-+#define SN_LESS(a, b)		(((a - b) & 0x800) != 0)
- #define SN_EQUAL(a, b)	(a == b)
- #define MAX_DEV_ADDR_SIZE 8
- 
-@@ -414,13 +414,13 @@ enum _REG_PREAMBLE_MODE {
- #define WLAN_GET_SEQ_FRAG(seq) ((seq) & RTLLIB_SCTL_FRAG)
- #define WLAN_GET_SEQ_SEQ(seq)  (((seq) & RTLLIB_SCTL_SEQ) >> 4)
- 
--#define RTLLIB_STATMASK_SIGNAL (1<<0)
--#define RTLLIB_STATMASK_RSSI (1<<1)
--#define RTLLIB_STATMASK_NOISE (1<<2)
-+#define RTLLIB_STATMASK_SIGNAL (1 << 0)
-+#define RTLLIB_STATMASK_RSSI (1 << 1)
-+#define RTLLIB_STATMASK_NOISE (1 << 2)
- #define RTLLIB_STATMASK_WEMASK 0x7
- 
--#define RTLLIB_CCK_MODULATION    (1<<0)
--#define RTLLIB_OFDM_MODULATION   (1<<1)
-+#define RTLLIB_CCK_MODULATION    (1 << 0)
-+#define RTLLIB_OFDM_MODULATION   (1 << 1)
- 
- #define RTLLIB_CCK_RATE_LEN		4
- #define RTLLIB_CCK_RATE_1MB			0x02
-@@ -507,11 +507,11 @@ struct rtllib_frag_entry {
- 
- struct rtllib_device;
- 
--#define SEC_ACTIVE_KEY    (1<<4)
--#define SEC_AUTH_MODE     (1<<5)
--#define SEC_UNICAST_GROUP (1<<6)
--#define SEC_LEVEL	 (1<<7)
--#define SEC_ENABLED       (1<<8)
-+#define SEC_ACTIVE_KEY    (1 << 4)
-+#define SEC_AUTH_MODE     (1 << 5)
-+#define SEC_UNICAST_GROUP (1 << 6)
-+#define SEC_LEVEL	 (1 << 7)
-+#define SEC_ENABLED       (1 << 8)
- 
- #define SEC_LEVEL_0      0 /* None */
- #define SEC_LEVEL_1      1 /* WEP 40 and 104 bit */
-@@ -696,17 +696,17 @@ union frameqos {
- #define MAX_WPA_IE_LEN 64
- #define MAX_WZC_IE_LEN 256
- 
--#define NETWORK_EMPTY_ESSID (1<<0)
--#define NETWORK_HAS_OFDM    (1<<1)
--#define NETWORK_HAS_CCK     (1<<2)
-+#define NETWORK_EMPTY_ESSID (1 << 0)
-+#define NETWORK_HAS_OFDM    (1 << 1)
-+#define NETWORK_HAS_CCK     (1 << 2)
- 
- /* QoS structure */
--#define NETWORK_HAS_QOS_PARAMETERS      (1<<3)
--#define NETWORK_HAS_QOS_INFORMATION     (1<<4)
-+#define NETWORK_HAS_QOS_PARAMETERS      (1 << 3)
-+#define NETWORK_HAS_QOS_INFORMATION     (1 << 4)
- #define NETWORK_HAS_QOS_MASK	    (NETWORK_HAS_QOS_PARAMETERS | \
- 					 NETWORK_HAS_QOS_INFORMATION)
- /* 802.11h */
--#define NETWORK_HAS_ERP_VALUE	   (1<<10)
-+#define NETWORK_HAS_ERP_VALUE	   (1 << 10)
- 
- #define QOS_QUEUE_NUM		   4
- #define QOS_OUI_LEN		     3
-@@ -996,8 +996,8 @@ enum rtl_link_state {
- #define DEFAULT_MAX_SCAN_AGE (15 * HZ)
- #define DEFAULT_FTS 2346
- 
--#define CFG_RTLLIB_RESERVE_FCS (1<<0)
--#define CFG_RTLLIB_COMPUTE_FCS (1<<1)
-+#define CFG_RTLLIB_RESERVE_FCS (1 << 0)
-+#define CFG_RTLLIB_COMPUTE_FCS (1 << 1)
- 
- struct tx_pending {
- 	int frag;
-@@ -1288,7 +1288,7 @@ struct rtllib_device {
- 	u16 scan_watch_dog;
- 
- 	/* map of allowed channels. 0 is dummy */
--	u8 active_channel_map[MAX_CHANNEL_NUMBER+1];
-+	u8 active_channel_map[MAX_CHANNEL_NUMBER + 1];
- 
- 	int rate;       /* current rate */
- 	int basic_rate;
-@@ -1486,32 +1486,32 @@ struct rtllib_device {
- /* Uses the channel change callback directly
-  * instead of [start/stop] scan callbacks
-  */
--#define IEEE_SOFTMAC_SCAN (1<<2)
-+#define IEEE_SOFTMAC_SCAN (1 << 2)
- 
- /* Perform authentication and association handshake */
--#define IEEE_SOFTMAC_ASSOCIATE (1<<3)
-+#define IEEE_SOFTMAC_ASSOCIATE (1 << 3)
- 
- /* Generate probe requests */
--#define IEEE_SOFTMAC_PROBERQ (1<<4)
-+#define IEEE_SOFTMAC_PROBERQ (1 << 4)
- 
- /* Generate response to probe requests */
--#define IEEE_SOFTMAC_PROBERS (1<<5)
-+#define IEEE_SOFTMAC_PROBERS (1 << 5)
- 
- /* The ieee802.11 stack will manage the netif queue
-  * wake/stop for the driver, taking care of 802.11
-  * fragmentation. See softmac.c for details.
-  */
--#define IEEE_SOFTMAC_TX_QUEUE (1<<7)
-+#define IEEE_SOFTMAC_TX_QUEUE (1 << 7)
- 
- /* Uses only the softmac_data_hard_start_xmit
-  * even for TX management frames.
-  */
--#define IEEE_SOFTMAC_SINGLE_QUEUE (1<<8)
-+#define IEEE_SOFTMAC_SINGLE_QUEUE (1 << 8)
- 
- /* Generate beacons.  The stack will enqueue beacons
-  * to the card
-  */
--#define IEEE_SOFTMAC_BEACONS (1<<6)
-+#define IEEE_SOFTMAC_BEACONS (1 << 6)
- 
- static inline void *rtllib_priv(struct net_device *dev)
- {
--- 
-2.30.2
-
+T24gRnJpLCAyMDI0LTA4LTMwIGF0IDA5OjQyICswODAwLCBZYW4gWmhlbiB3cm90ZToNCj4gVXNp
+bmcgRVJSX0NBU1QoKSBpcyBtb3JlIHJlYXNvbmFibGUgYW5kIHNhZmVyLCBXaGVuIGl0IGlzIG5l
+Y2Vzc2FyeQ0KPiB0byBjb252ZXJ0IHRoZSB0eXBlIG9mIGFuIGVycm9yIHBvaW50ZXIgYW5kIHJl
+dHVybiBpdC4NCg0Kc3RhdGljIGlubGluZSB2b2lkICogX19tdXN0X2NoZWNrIEVSUl9DQVNUKF9f
+Zm9yY2UgY29uc3Qgdm9pZCAqcHRyKQ0Kew0KICAgICAgICAvKiBjYXN0IGF3YXkgdGhlIGNvbnN0
+ICovDQogICAgICAgIHJldHVybiAodm9pZCAqKSBwdHI7DQp9DQoNClRoYXQgZnVuY3Rpb24gaXMg
+bGl0ZXJhbGx5IGp1c3QgZG9pbmcgYW4gaW1wbGljaXQgY2FzdCBmcm9tIHdoYXRldmVyDQpwb2lu
+dGVyIHR5cGUgaXQgaXMgbm93LCB0byBhICdjb25zdCB2b2lkIConIGFuZCB0aGVuIHRvIGEgJ3Zv
+aWQgKicsDQp3aGljaCB0aGVuIGdldHMgaW1wbGljaXRseSBjYXN0IHRvIHdoYXRldmVyIHR5cGUg
+dGhlIGNhbGxlciBpcw0KZXhwZWN0aW5nLiBFeGFjdGx5IGhvdyBpcyB0aGF0ICJzYWZlciIgdGhh
+biB0aGUgY3VycmVudCBleHBsaWNpdCBjYXN0Pw0KDQpXaGlsZSBpdCBpcyBncmVhdCB0aGF0IEVS
+Ul9DQVNUKCkgZXhpc3RzLCBhbmQgSSBhZ3JlZSB0aGF0IGl0IHNob3VsZCBiZQ0KcHJlZmVycmVk
+IGluIG5ld2VyIGNvZGUgZm9yIHRoZSAoc29sZSAoISkpIHJlYXNvbiB0aGF0IGl0IGRvY3VtZW50
+cw0KdGhhdCB3ZSBleHBlY3QgdGhpcyB0byBiZSBhbiBlcnJvciwgSSBzZWUgbm8gcmVhc29uIHdo
+eSBpdCBpcw0KaW1wZXJhdGl2ZSB0byBhcHBseSB0aGF0IGNoYW5nZSB0byBleGlzdGluZyBjb2Rl
+LiBQYXJ0aWN1bGFybHkgbm90IGFzIGENCnN0YW5kYWxvbmUgcGF0Y2guDQoNClNvIE5BQ0sgZm9y
+IG5vdy4NCg0KDQotLSANClRyb25kIE15a2xlYnVzdA0KTGludXggTkZTIGNsaWVudCBtYWludGFp
+bmVyLCBIYW1tZXJzcGFjZQ0KdHJvbmQubXlrbGVidXN0QGhhbW1lcnNwYWNlLmNvbQ0KDQoNCg==
 
