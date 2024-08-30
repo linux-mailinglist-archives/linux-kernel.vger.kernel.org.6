@@ -1,97 +1,318 @@
-Return-Path: <linux-kernel+bounces-308924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4BC89663D8
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 16:11:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 961F49663DC
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 16:12:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DA351F217BC
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 14:11:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D634283383
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 14:12:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 760DF1B1D75;
-	Fri, 30 Aug 2024 14:11:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7154816D4E5;
+	Fri, 30 Aug 2024 14:11:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="N2eMQhH9"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rhKSJIgV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 287471B1D56
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 14:11:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55E1C1B2506;
+	Fri, 30 Aug 2024 14:11:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725027066; cv=none; b=HswhbCwYk6kYD+FbO4dBTM1Pvta4iHxbfrjM5MLbCeW4Pp1kLZWBPBxWgOwOAmYMDiRSiTA/AtCoL+zo5K9Ohkk4FAmEGMIkuaQSZt+A+4iTclJguFPaIv4y3ByUawXlMO5VxxxwzSmIerIZCY2M1G2J9tVlbMdzhd34PgzjDtw=
+	t=1725027103; cv=none; b=PYzvv8G/zsOI/hf/OjizDX00p5w+ZjV+4bVttYSSopwietN+4V6q/NVZtd4f6F14y4bc+4OJTDNQmpt7K0ANwVSwsNU4Z+NXikgpcb1EQITAQWQYjDh3dOzirX5vl1GxFgbPUp4/vkccee828yJseNv/0Jhg9UW/Z/3+Huonxnw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725027066; c=relaxed/simple;
-	bh=Kxo4HM8TfxhVMBqZvduTJba+uKnQyaKejzhBmWp0U+Q=;
+	s=arc-20240116; t=1725027103; c=relaxed/simple;
+	bh=ch8Utom+56+XDFDbn3FU+sYc1K0Xb7UEZ5WQPpM5Tb0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=V6csiLutxDjHgdvS6JdOfvsbTfANeeR65WoBl2IYyzoXYDKOeldiXjrYqptu23Xn0a3Phdew0V1rfjpGM1ZYKXisqURYt9QBQKJGIefMvZll39pDpejA5T7KPtlKZHeNoL1HGSxvMbiZZwtHniK/Icqo9Y6U2rSCSMccfkV37LA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=N2eMQhH9; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5343617fdddso3372542e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 07:11:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725027062; x=1725631862; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Kxo4HM8TfxhVMBqZvduTJba+uKnQyaKejzhBmWp0U+Q=;
-        b=N2eMQhH9RLyDAfTGhaQ6A1VYOnC9U+Qnxb3P1PZYUxoFPrJMX6GEdx9zg+PAxvgkLb
-         /VF8vKxjnlhAc7WVVE7c7+3GemYQZ9fr6tc3KZETBCy6LdheLzhMuXVIU0ts1Gufjii0
-         S122HqHVNrt75WzEuybeWgeZQIBmLbFxFCmaDeU0mnDd1xRexOFPdrhdVVXBnmOji7CK
-         o0NknaFoqJnI3qF240zpngIGu/7UbKXffhfYkIFhKLmtIGVwWlZNziXkBSd2KzZnTE3u
-         /uwQxa4pQOsosi9utUrJI53GsEeTrsVnNPZp6IzF2+7Vl54hnqFLfaKu9AybD3cfECMn
-         8l7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725027062; x=1725631862;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Kxo4HM8TfxhVMBqZvduTJba+uKnQyaKejzhBmWp0U+Q=;
-        b=agtUcIJHbF7uNy+rM9O3ZhnuAMpoCVp0TvhEUbRVeGKtcoVP/jdLxZ8MY4cwc4MWCE
-         UKslR8KFQrhIYD7Cl2uHeqe0lnf60P0/uR5B6nyJCYosuoxKRoeh3qKsfAnlc48vWkse
-         TWDCQQg6VeaHzi2V4dXCOiPP+OeYqzjewgEoEbZB9F+oSORPxrV4R1XO8fwl1K4VxjMm
-         lZO0VrN8noDZAkYROfmO8D0tYvfvgNeOmgSmhYeZoaCgxP6jgdSRkMJy3kuOBS5IJXoa
-         kXJUTC9yHxMWzSNB/VWBM78NozqnPNwME51Y/5mQPC/bCoHiN9ZKfRKNFMvzUc+k71Z5
-         jo1A==
-X-Forwarded-Encrypted: i=1; AJvYcCXMqphOXX070Jh1ZAfBVHXfa0xgEL24zuCoKJhJAatOqtXcnOLwt+Sw2N7nK36kjebDQsk2g5dzfnI7PNE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyuBzLCCSNaPSNVRVBa0840KPcfvaSFMjdrDdQ3AxLoDHg2s8wS
-	HuuCdi5+kxPlyOQppOcQmDYYc/fXpHSL9HRAIozc1d8CxzFKYX1m7OgDd7v30qhBmzdNa2XuX9h
-	ydmeCV/fwVTFvmVtdXllRU5H+Q7oCwGik7PqIAA==
-X-Google-Smtp-Source: AGHT+IEgOnI27T01MkcIfr0sPFDlCvh+HVrjFg8GLB5sUtmwg7JKQJFudrMfin7GG+p5U0cHUwxzx9gE/DikJRKk24I=
-X-Received: by 2002:a05:6512:33d4:b0:533:4497:9f29 with SMTP id
- 2adb3069b0e04-53546b55282mr1789833e87.31.1725027061611; Fri, 30 Aug 2024
- 07:11:01 -0700 (PDT)
+	 To:Cc:Content-Type; b=Mf5YPC0yNP9X8TwCd9jm7eFFjphpR8jsIkhfVZPR9tVgGgsjVlMw3r5auaioOz2DEuXrqmTGZXFmMSFNr38VCB2FffwVDlYXigx7B3SeBnQDW754ba5QyKwjZ/VlITX6GUwgtr/MOv3/lgjz/zYObhVsNVPx08XjXaONEPwbZrM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rhKSJIgV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D3A2C4AF09;
+	Fri, 30 Aug 2024 14:11:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725027102;
+	bh=ch8Utom+56+XDFDbn3FU+sYc1K0Xb7UEZ5WQPpM5Tb0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=rhKSJIgVXAJcIIBKVQ5S1zArqjnbThz3xFzHl3wZqv7dZwkMs0KBYXHgGey+Xwv4r
+	 f3FBXvxVxG5IVKWJv68qPBLfVZJs3rUhMfeMijPEkkmveKCrmwtKh8qLNtzBZUTovg
+	 gcbPl3ZbsiAOxnxjnX6/btcO4Qk0nBZC4tco/aiZWsBoM6dL4BMp3gpFATOLF3VIJZ
+	 YPA+SVyMCTIbOcCcJbdVUr2e33DEcvlTcacmDRbmo6mMCCQmh6kog1VIBlQeIpXmzb
+	 d0WKmSMOg50ck5bHPl4uGYo22k7oviuqmj/ILIWxWdzLueAibKKTH53GwebvsRX/zb
+	 yhG/M1H698JoA==
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2f401b2347dso17140791fa.1;
+        Fri, 30 Aug 2024 07:11:42 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWfChxQe/Z3H8kNZwu69USPdBJh50aIVGhDv8rq4/7qA/2hgKDPbKEfWrnXh0fEpb42jvCksomLFtnakg0Z@vger.kernel.org, AJvYcCXOAU3yKalcrQerhU63tTAqlQMeRCdVaK2Ie/aQWtBDW8sZDYCmZHX9ev602pFSGV6orp668HYnF4Ze/Yyl@vger.kernel.org, AJvYcCXdsuo04eef1Dg8XceqXdKQG6slnRfAFa1TXpCq+tM7skjHgIwvxDqD+/X1TySGbaem2DNvRlXFuCny@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMXN7xR8U4ToGDUiKeMfwBDbOg0p/vGX7KRCF9bV6O2MerJhBt
+	b0lz9cwNDvuVBO0ZaP/n7x1fvFm1lr+ekQTBrJhdInerBSyOEEdzf/ImF6/UlaOOH9Lj4ZjQtiQ
+	GC/u1vPJTE1O9u/pWlkPVe3NHORA=
+X-Google-Smtp-Source: AGHT+IGiNNIe4grFCSjxYEqSnqQsOiH7XwhNWIjK0meKiNuL/INJUoIL0DANP+RT2C1dTcJ4zfatNi8NnI5TRaXEni0=
+X-Received: by 2002:a05:651c:504:b0:2f1:59d5:ac01 with SMTP id
+ 38308e7fff4ca-2f61e06f834mr10448761fa.14.1725027100557; Fri, 30 Aug 2024
+ 07:11:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240829131907.541466-1-liaochen4@huawei.com> <20240829131907.541466-4-liaochen4@huawei.com>
-In-Reply-To: <20240829131907.541466-4-liaochen4@huawei.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 30 Aug 2024 16:10:50 +0200
-Message-ID: <CACRpkdafzWBQ97up6hMBp_tBajfooTp4fW1E2hvc2pLuB46q6Q@mail.gmail.com>
-Subject: Re: [PATCH -next 3/3] ata: sata_gemini: Enable module autoloading
-To: Liao Chen <liaochen4@huawei.com>
-Cc: linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org, s.shtylyov@omp.ru, 
-	dlemoal@kernel.org, cassel@kernel.org
+References: <20240829201728.2825-1-adhemerval.zanella@linaro.org>
+In-Reply-To: <20240829201728.2825-1-adhemerval.zanella@linaro.org>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Fri, 30 Aug 2024 16:11:29 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXEnYW7ft3e-bSqWRLhickUeOkaWwtVVSxi49jski6T2iQ@mail.gmail.com>
+Message-ID: <CAMj1kXEnYW7ft3e-bSqWRLhickUeOkaWwtVVSxi49jski6T2iQ@mail.gmail.com>
+Subject: Re: [PATCH v2] aarch64: vdso: Wire up getrandom() vDSO implementation
+To: Adhemerval Zanella <adhemerval.zanella@linaro.org>
+Cc: "Jason A . Donenfeld" <Jason@zx2c4.com>, "Theodore Ts'o" <tytso@mit.edu>, linux-kernel@vger.kernel.org, 
+	linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-arch@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Eric Biggers <ebiggers@kernel.org>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 29, 2024 at 3:27=E2=80=AFPM Liao Chen <liaochen4@huawei.com> wr=
-ote:
-
-> Add MODULE_DEVICE_TABLE(), so modules could be properly autoloaded based
-> on the alias from of_device_id table.
+On Thu, 29 Aug 2024 at 22:17, Adhemerval Zanella
+<adhemerval.zanella@linaro.org> wrote:
 >
-> Signed-off-by: Liao Chen <liaochen4@huawei.com>
+> Hook up the generic vDSO implementation to the aarch64 vDSO data page.
+> The _vdso_rng_data required data is placed within the _vdso_data vvar
+> page, by using a offset larger than the vdso_data.
+>
+> The vDSO function requires a ChaCha20 implementation that does not
+> write to the stack, and that can do an entire ChaCha20 permutation.
+> The one provided is based on the current chacha-neon-core.S and uses NEON
+> on the permute operation. The fallback for chips that do not support
+> NEON issues the syscall.
+>
+> This also passes the vdso_test_chacha test along with
+> vdso_test_getrandom. The vdso_test_getrandom bench-single result on
+> Neoverse-N1 shows:
+>
+>    vdso: 25000000 times in 0.746506464 seconds
+>    libc: 25000000 times in 8.849179444 seconds
+> syscall: 25000000 times in 8.818726425 seconds
+>
+> Changes from v1:
+> - Fixed style issues and typos.
+> - Added fallback for systems without NEON support.
+> - Avoid use of non-volatile vector registers in neon chacha20.
+> - Use c-getrandom-y for vgetrandom.c.
+> - Fixed TIMENS vdso_rnd_data access.
+>
+> Signed-off-by: Adhemerval Zanella <adhemerval.zanella@linaro.org>
+> ---
+...
+> diff --git a/arch/arm64/kernel/vdso/vgetrandom-chacha.S b/arch/arm64/kernel/vdso/vgetrandom-chacha.S
+> new file mode 100644
+> index 000000000000..9ebf12a09c65
+> --- /dev/null
+> +++ b/arch/arm64/kernel/vdso/vgetrandom-chacha.S
+> @@ -0,0 +1,168 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +#include <linux/linkage.h>
+> +#include <asm/cache.h>
+> +#include <asm/assembler.h>
+> +
+> +       .text
+> +
+> +#define state0         v0
+> +#define state1         v1
+> +#define state2         v2
+> +#define state3         v3
+> +#define copy0          v4
+> +#define copy1          v5
+> +#define copy2          v6
+> +#define copy3          v7
+> +#define copy3_d                d7
+> +#define one_d          d16
+> +#define one_q          q16
+> +#define tmp            v17
+> +#define rot8           v18
+> +
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Please make a note somewhere around here that you are deliberately
+avoiding d8-d15 because they are callee-save in user space.
 
-Yours,
-Linus Walleij
+> +/*
+> + * ARM64 ChaCha20 implementation meant for vDSO.  Produces a given positive
+> + * number of blocks of output with nonce 0, taking an input key and 8-bytes
+> + * counter.  Importantly does not spill to the stack.
+> + *
+> + * void __arch_chacha20_blocks_nostack(uint8_t *dst_bytes,
+> + *                                    const uint8_t *key,
+> + *                                    uint32_t *counter,
+> + *                                    size_t nblocks)
+> + *
+> + *     x0: output bytes
+> + *     x1: 32-byte key input
+> + *     x2: 8-byte counter input/output
+> + *     x3: number of 64-byte block to write to output
+> + */
+> +SYM_FUNC_START(__arch_chacha20_blocks_nostack)
+> +
+> +       /* copy0 = "expand 32-byte k" */
+> +       adr_l           x8, CTES
+> +       ld1             {copy0.4s}, [x8]
+> +       /* copy1,copy2 = key */
+> +       ld1             { copy1.4s, copy2.4s }, [x1]
+> +       /* copy3 = counter || zero nonce  */
+> +       ldr             copy3_d, [x2]
+> +
+> +       adr_l           x8, ONE
+> +       ldr             one_q, [x8]
+> +
+> +       adr_l           x10, ROT8
+> +       ld1             {rot8.4s}, [x10]
+
+These immediate loads are forcing the vDSO to have a .rodata section,
+which is best avoided, given that this is mapped into every user space
+program.
+
+Either use the existing mov_q macro and then move the values into SIMD
+registers, or compose the required vectors in a different way.
+
+E.g., with one_v == v16,
+
+movi one_v.2s, #1
+uzp1 one_v.4s, one_v.4s, one_v.4s
+
+puts the correct value in one_d, uses 1 instruction and 16 bytes of
+rodata less, and avoids a memory access.
+
+The ROT8 + tbl can be replaced by shl/sri (see below)
+
+> +.Lblock:
+> +       /* copy state to auxiliary vectors for the final add after the permute.  */
+> +       mov             state0.16b, copy0.16b
+> +       mov             state1.16b, copy1.16b
+> +       mov             state2.16b, copy2.16b
+> +       mov             state3.16b, copy3.16b
+> +
+> +       mov             w4, 20
+> +.Lpermute:
+> +       /*
+> +        * Permute one 64-byte block where the state matrix is stored in the four NEON
+> +        * registers state0-state3.  It performs matrix operations on four words in parallel,
+> +        * but requires shuffling to rearrange the words after each round.
+> +        */
+> +
+> +.Ldoubleround:
+> +       /* state0 += state1, state3 = rotl32(state3 ^ state0, 16) */
+> +       add             state0.4s, state0.4s, state1.4s
+> +       eor             state3.16b, state3.16b, state0.16b
+> +       rev32           state3.8h, state3.8h
+> +
+> +       /* state2 += state3, state1 = rotl32(state1 ^ state2, 12) */
+> +       add             state2.4s, state2.4s, state3.4s
+> +       eor             tmp.16b, state1.16b, state2.16b
+> +       shl             state1.4s, tmp.4s, #12
+> +       sri             state1.4s, tmp.4s, #20
+> +
+> +       /* state0 += state1, state3 = rotl32(state3 ^ state0, 8) */
+> +       add             state0.4s, state0.4s, state1.4s
+> +       eor             state3.16b, state3.16b, state0.16b
+> +       tbl             state3.16b, {state3.16b}, rot8.16b
+> +
+
+This can be changed to the below, removing the need for the ROT8 vector
+
+eor   tmp.16b, state3.16b, state0.16b
+shl   state3.4s, tmp.4s, #8
+sri   state3.4s, tmp.4s, #24
+
+> +       /* state2 += state3, state1 = rotl32(state1 ^ state2, 7) */
+> +       add             state2.4s, state2.4s, state3.4s
+> +       eor             tmp.16b, state1.16b, state2.16b
+> +       shl             state1.4s, tmp.4s, #7
+> +       sri             state1.4s, tmp.4s, #25
+> +
+> +       /* state1[0,1,2,3] = state1[1,2,3,0] */
+> +       ext             state1.16b, state1.16b, state1.16b, #4
+> +       /* state2[0,1,2,3] = state2[2,3,0,1] */
+> +       ext             state2.16b, state2.16b, state2.16b, #8
+> +       /* state3[0,1,2,3] = state3[1,2,3,0] */
+> +       ext             state3.16b, state3.16b, state3.16b, #12
+> +
+> +       /* state0 += state1, state3 = rotl32(state3 ^ state0, 16) */
+> +       add             state0.4s, state0.4s, state1.4s
+> +       eor             state3.16b, state3.16b, state0.16b
+> +       rev32           state3.8h, state3.8h
+> +
+> +       /* state2 += state3, state1 = rotl32(state1 ^ state2, 12) */
+> +       add             state2.4s, state2.4s, state3.4s
+> +       eor             tmp.16b, state1.16b, state2.16b
+> +       shl             state1.4s, tmp.4s, #12
+> +       sri             state1.4s, tmp.4s, #20
+> +
+> +       /* state0 += state1, state3 = rotl32(state3 ^ state0, 8) */
+> +       add             state0.4s, state0.4s, state1.4s
+> +       eor             state3.16b, state3.16b, state0.16b
+> +       tbl             state3.16b, {state3.16b}, rot8.16b
+> +
+> +       /* state2 += state3, state1 = rotl32(state1 ^ state2, 7) */
+> +       add             state2.4s, state2.4s, state3.4s
+> +       eor             tmp.16b, state1.16b, state2.16b
+> +       shl             state1.4s, tmp.4s, #7
+> +       sri             state1.4s, tmp.4s, #25
+> +
+> +       /* state1[0,1,2,3] = state1[3,0,1,2] */
+> +       ext             state1.16b, state1.16b, state1.16b, #12
+> +       /* state2[0,1,2,3] = state2[2,3,0,1] */
+> +       ext             state2.16b, state2.16b, state2.16b, #8
+> +       /* state3[0,1,2,3] = state3[1,2,3,0] */
+> +       ext             state3.16b, state3.16b, state3.16b, #4
+> +
+> +       subs            w4, w4, #2
+> +       b.ne            .Ldoubleround
+> +
+> +       /* output0 = state0 + state0 */
+> +       add             state0.4s, state0.4s, copy0.4s
+> +       /* output1 = state1 + state1 */
+> +       add             state1.4s, state1.4s, copy1.4s
+> +       /* output2 = state2 + state2 */
+> +       add             state2.4s, state2.4s, copy2.4s
+> +       /* output2 = state3 + state3 */
+> +       add             state3.4s, state3.4s, copy3.4s
+> +       st1             { state0.4s - state3.4s }, [x0]
+> +
+> +       /* ++copy3.counter */
+> +       add             copy3_d, copy3_d, one_d
+> +
+
+This 'add' clears the upper half of the SIMD register, which is where
+the zero nonce lives. So this happens to be correct, but it is not
+very intuitive, so perhaps a comment would be in order here.
+
+> +       /* output += 64, --nblocks */
+> +       add             x0, x0, 64
+> +       subs            x3, x3, #1
+> +       b.ne            .Lblock
+> +
+> +       /* counter = copy3.counter */
+> +       str             copy3_d, [x2]
+> +
+> +       /* Zero out the potentially sensitive regs, in case nothing uses these again. */
+> +       eor             state0.16b, state0.16b, state0.16b
+> +       eor             state1.16b, state1.16b, state1.16b
+> +       eor             state2.16b, state2.16b, state2.16b
+> +       eor             state3.16b, state3.16b, state3.16b
+> +       eor             copy1.16b, copy1.16b, copy1.16b
+> +       eor             copy2.16b, copy2.16b, copy2.16b
+
+This is not x86 - no need to use XOR to clear registers, you can just
+use 'movi reg.16b, #0' here.
+
+> +       ret
+> +SYM_FUNC_END(__arch_chacha20_blocks_nostack)
+> +
+> +        .section        ".rodata", "a", %progbits
+> +        .align          L1_CACHE_SHIFT
+> +
+> +CTES:  .word           1634760805, 857760878,  2036477234, 1797285236
+> +ONE:    .xword         1, 0
+> +ROT8:  .word           0x02010003, 0x06050407, 0x0a09080b, 0x0e0d0c0f
+> +
+> +emit_aarch64_feature_1_and
+...
 
