@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-308510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D628965DEB
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:05:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57D4A965DF1
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:05:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BABD51C2327F
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:05:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 848CAB20D72
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:05:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8628117C9F6;
-	Fri, 30 Aug 2024 10:04:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7DA3188A37;
+	Fri, 30 Aug 2024 10:04:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RKxa2nEz"
-Received: from mail-oo1-f48.google.com (mail-oo1-f48.google.com [209.85.161.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CJSkLNDu"
+Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B63C917B50D;
-	Fri, 30 Aug 2024 10:04:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93EA017C23D;
+	Fri, 30 Aug 2024 10:04:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725012287; cv=none; b=oTgrjB3G9vEq4vt0MsJyPfwJPU/04hpxmJoil6MQqfdTic0NaWXqoIZYFEib4pNVxi7HgOnxKH9saGMOTm6K7EXublLqrgXzSQIPwj1dWHv6JIsJQpV3tJRAYvxlo6qPBzZTYn2nJLpv0yZIv386Ya2B/aCH3Rx9Yvs3q/n9/Lk=
+	t=1725012291; cv=none; b=HXjdxSrQChIXaXIsOsiea5yct9ZhQqxDx9J5rl1gvMedvWos2IT9hmxafQG5HZiCvvF6sFcwctDmImYgBGkxsEX8jlnIJqtoPwHHp7UwYDgeyEFGMQLqyPn2X9r32QQqIO3QaPm4E/h5EOF2ycFQg93fl8HmnXKGLfLqWtQLfJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725012287; c=relaxed/simple;
-	bh=Fdz8y4Ewmwe+LSgIoQD8kMMFXF75XcNR2I94nxW1Epg=;
+	s=arc-20240116; t=1725012291; c=relaxed/simple;
+	bh=JRI/TG5tsEH+6PDoJbWTW8KeioTYkt/ObSbGirGtVEw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gWgd+rCvnTElN1sJM7oelGkdBTpXWaLYLzZxv3ub29QUJzCqa831x3HFB7jqkMZfZpclnv4bambP+m25+CZ7aY2cUK6TfvOS5Lz4HbdvPg0AWogSRzBLJMoY6J1Bg44anYl3cg9NIQyzBT/m090CKM4gpLAMhbzLBeXqo9nxcnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RKxa2nEz; arc=none smtp.client-ip=209.85.161.48
+	 MIME-Version; b=lgmNjreM1MEV4qlk0xLsCc75mNZdaFDqHe/kFf/oV48mKs+jAt7FPwfhbfZR4JWk3XkhLQ1A+u5DXtFnCwYgKpE3hne3o6l3gdlMHhO0dmXTFaUM0IDM41Pwv2HbH5cFLIJYhS8/BIcvKYEJ5U6CBdAPBT3CjyNuRhYSTVKs6WE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CJSkLNDu; arc=none smtp.client-ip=209.85.160.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-5de8b17db8dso915449eaf.2;
-        Fri, 30 Aug 2024 03:04:45 -0700 (PDT)
+Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-2705dd4ba64so875950fac.3;
+        Fri, 30 Aug 2024 03:04:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725012285; x=1725617085; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1725012286; x=1725617086; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=lsaItdHLrkOs94vXPLpVeca+5XkpGp6YNABO6738q6c=;
-        b=RKxa2nEzIgS8iRBBDoYChz1KnryiKd44u0gyOMcPv4IWE4sOU7Rp/TpQQZRiKfwmuX
-         9fwvD/K5Sgc5ga/q6xgEWKM0f/8LB55wLP8cuVt28EkmzCjaeMyYr4pqLwnvpsFRJRCg
-         FX4BlIf8nr152J3Nz25M31xhqzRSnWdxSwRzF1QZb8xvpGrkNGiJQzetWyu2UNAMjkoT
-         PVfIAaZreiUSHU9IFBD3lU9SWtGDT4Sr74fmDD6u2MvImc78QwKq/OSmp6/sj/bspOwi
-         rxrtZCY8hLJ4COxhnmGTSzuneECXLTTw15sIkzqkicOPildbZkpGc7km/GSc8d2zJQ6/
-         FACw==
+        bh=ozbFo2ch+MkbZ+krZSCzDhOFvoowl/UCaYy4gtivTp4=;
+        b=CJSkLNDuOJm6z6TgviQwW3i534TxivFX1WToPFfOFZgBBBqFC0g7sJKrrhUUHXPtRm
+         8iUll/7HAiy1mAdNRm0DOTSdeQULKgYBL5xfrAipnwflDo8dpiRDMhwUfU1t1fnpBAi4
+         4inVZsiAgV+QPMqm87u4qzVio4zM8nAnQE7HIZ1btSD4EROwrzR8mdPI0UkMC8vlaCY9
+         f24FLHb1m4jKrAmJCiT1GX9vIh+fNso8dQRa3GBBZSWoGuUxlOMRmnIKf6vWqc+7wabw
+         iQVt/71MV0nMW4B/ifiqmuJBXf5T18BsXFIgS+v3x3qVYeqRe+UrU3lf0aWt4J2gj3tZ
+         /wXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725012285; x=1725617085;
+        d=1e100.net; s=20230601; t=1725012286; x=1725617086;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=lsaItdHLrkOs94vXPLpVeca+5XkpGp6YNABO6738q6c=;
-        b=Ncwsn7tU1ap22sCPOIf0z/SgSmKXJmp6zgPERAZb72JyN0BDqMMVdElrl6SN+TFoVC
-         hEceLA06BDSAQ6ljNtuXZfU0sgTDACflfrqss/+CdhdJ6qZZPG/1N/sgqvJ+nCmAXhQ4
-         /Yr7BFCUQIWN7mq8CoD8+OdS8uOnVcDzH41ffl56FjzHH9902LkQxqd0P8gxf0Juj3pL
-         rhyHsuhp1RpA2ASO1qROKZg5OlDXbsD9MT2Wb1hxmNeHWOh1vj9JL9fdeuYorJNpj8ni
-         BC5lvg9fXyGDrdrC/Q6GVvROO6arVLYBxHg2MToCj6Haq0Hq8+Ly2EkzUB365Y2ITTy9
-         2B6A==
-X-Forwarded-Encrypted: i=1; AJvYcCULtefZeqs0l8JYQ8eAUxH2KXYpBxSQfSr6T7GuxBQY5TDppKR7vliV4XzB8cIcA1oUwRSXTBqqXRTnrZbY@vger.kernel.org, AJvYcCXCASqz6MYR1+fqj5+i55BJ23iFINYJyy6b0QzgzX6DddzGMk2/YoNr3ZvsBiQ+eo2dZjOfIEGZTw4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3z7wDmfsYvFmNgRg4nTMhY/0jmmECCqD5Y8kmn04TEo2gNEtt
-	8HRg4b/7vSXXhg5TYBz6v2NsiOdWQYVNHjo4E8aMb8tLjTp0PaONNjx6qd09
-X-Google-Smtp-Source: AGHT+IHVXyDvTPcFg0d6jozxHg1gXGpjAfSA3ZiESWLvV7o1PUmHfmhl+s0Gs537cY51gwYtkOJCDA==
-X-Received: by 2002:a05:6820:1c9a:b0:5d5:bce7:677 with SMTP id 006d021491bc7-5dfacf2ff24mr1741737eaf.7.1725012284525;
-        Fri, 30 Aug 2024 03:04:44 -0700 (PDT)
-Received: from localhost (fwdproxy-ash-113.fbsv.net. [2a03:2880:20ff:71::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c340c96856sm13189406d6.89.2024.08.30.03.04.43
+        bh=ozbFo2ch+MkbZ+krZSCzDhOFvoowl/UCaYy4gtivTp4=;
+        b=GzV/A1i4vG5kuKUd+Io5AHE/X6fveKU3AzFyi8VQeUPYuJMj6NiGPSZ7AZBWEM248C
+         ZhKtLMUdgSku3po3VByDjtCrngTq9SI8NCZdWeEKQO5smNZyRK2qWoUdPacyxwetRc1g
+         qb3f6c1CJzcvt64a2EArnxsP1yuLSpKN3kEKfKtw9CWQIk0q7gktrzwBCSbLn0F/Ekss
+         x5glVy+FhpHJgh/O8w4y9z1zvLljvfni4aFR27N3XbJh84I22X8GazwANyzK1AhPj3AO
+         CLItLpVIINUcgUcAa1zeAFYFLIBIvTSeEAk6KpHmki2VFKFDO2mOkKlDxL8ql9a1GVMP
+         cg1w==
+X-Forwarded-Encrypted: i=1; AJvYcCW8SuUH1aWFw/Q6HNdYE5blGzQW3lw2AcuonuWdNRZjlQ5WePZZoQC7DV4dWZwzsfVdMaZJQ7ewfG5cF+sN@vger.kernel.org, AJvYcCXGaGfBs+ZzIZCchSPdAxlRw120IGxPfMp/rxaZbXqBWenQGl3jut34ZqdjlIf4GdvET03Hn9YROWk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFRuzuRZjm8omV4xgJYbGCQxdGb2iX8Hjdr5RQR11WghQRtyGh
+	/gf9lKq1Iu+v/hlVtYWrOZLn6ouNHFin5yBy2L8qtiYOkk8Ir9//
+X-Google-Smtp-Source: AGHT+IFoXn0hlKtDOWPBmBf5kINkjOtVZEqP5VHvyK8WGYNnu5Y+WFxUha8zAkckLlImFFhEi3Na6w==
+X-Received: by 2002:a05:6870:2046:b0:270:1dab:64a9 with SMTP id 586e51a60fabf-277900c10d2mr6589971fac.14.1725012286247;
+        Fri, 30 Aug 2024 03:04:46 -0700 (PDT)
+Received: from localhost (fwdproxy-ash-003.fbsv.net. [2a03:2880:20ff:3::face:b00c])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a806c4a6e6sm129878685a.64.2024.08.30.03.04.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Aug 2024 03:04:43 -0700 (PDT)
+        Fri, 30 Aug 2024 03:04:45 -0700 (PDT)
 From: Usama Arif <usamaarif642@gmail.com>
 To: akpm@linux-foundation.org,
 	linux-mm@kvack.org
@@ -86,11 +86,11 @@ Cc: hannes@cmpxchg.org,
 	linux-kernel@vger.kernel.org,
 	linux-doc@vger.kernel.org,
 	kernel-team@meta.com,
-	Shuang Zhai <zhais@google.com>,
+	Alexander Zhu <alexlzhu@fb.com>,
 	Usama Arif <usamaarif642@gmail.com>
-Subject: [PATCH v5 2/6] mm: remap unused subpages to shared zeropage when splitting isolated thp
-Date: Fri, 30 Aug 2024 11:03:36 +0100
-Message-ID: <20240830100438.3623486-3-usamaarif642@gmail.com>
+Subject: [PATCH v5 3/6] mm: selftest to verify zero-filled pages are mapped to zeropage
+Date: Fri, 30 Aug 2024 11:03:37 +0100
+Message-ID: <20240830100438.3623486-4-usamaarif642@gmail.com>
 X-Mailer: git-send-email 2.43.5
 In-Reply-To: <20240830100438.3623486-1-usamaarif642@gmail.com>
 References: <20240830100438.3623486-1-usamaarif642@gmail.com>
@@ -102,243 +102,163 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Yu Zhao <yuzhao@google.com>
+From: Alexander Zhu <alexlzhu@fb.com>
 
-Here being unused means containing only zeros and inaccessible to
-userspace. When splitting an isolated thp under reclaim or migration,
-the unused subpages can be mapped to the shared zeropage, hence saving
-memory. This is particularly helpful when the internal
-fragmentation of a thp is high, i.e. it has many untouched subpages.
+When a THP is split, any subpage that is zero-filled will be mapped
+to the shared zeropage, hence saving memory. Add selftest to verify
+this by allocating zero-filled THP and comparing RssAnon before and
+after split.
 
-This is also a prerequisite for THP low utilization shrinker which will
-be introduced in later patches, where underutilized THPs are split, and
-the zero-filled pages are freed saving memory.
-
-Signed-off-by: Yu Zhao <yuzhao@google.com>
-Tested-by: Shuang Zhai <zhais@google.com>
+Signed-off-by: Alexander Zhu <alexlzhu@fb.com>
+Acked-by: Rik van Riel <riel@surriel.com>
 Signed-off-by: Usama Arif <usamaarif642@gmail.com>
 ---
- include/linux/rmap.h |  7 ++++-
- mm/huge_memory.c     |  8 ++---
- mm/migrate.c         | 72 ++++++++++++++++++++++++++++++++++++++------
- mm/migrate_device.c  |  4 +--
- 4 files changed, 75 insertions(+), 16 deletions(-)
+ .../selftests/mm/split_huge_page_test.c       | 71 +++++++++++++++++++
+ tools/testing/selftests/mm/vm_util.c          | 22 ++++++
+ tools/testing/selftests/mm/vm_util.h          |  1 +
+ 3 files changed, 94 insertions(+)
 
-diff --git a/include/linux/rmap.h b/include/linux/rmap.h
-index 91b5935e8485..d5e93e44322e 100644
---- a/include/linux/rmap.h
-+++ b/include/linux/rmap.h
-@@ -745,7 +745,12 @@ int folio_mkclean(struct folio *);
- int pfn_mkclean_range(unsigned long pfn, unsigned long nr_pages, pgoff_t pgoff,
- 		      struct vm_area_struct *vma);
- 
--void remove_migration_ptes(struct folio *src, struct folio *dst, bool locked);
-+enum rmp_flags {
-+	RMP_LOCKED		= 1 << 0,
-+	RMP_USE_SHARED_ZEROPAGE	= 1 << 1,
-+};
-+
-+void remove_migration_ptes(struct folio *src, struct folio *dst, int flags);
- 
- /*
-  * rmap_walk_control: To control rmap traversing for specific needs
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 0c48806ccb9a..af60684e7c70 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -3020,7 +3020,7 @@ bool unmap_huge_pmd_locked(struct vm_area_struct *vma, unsigned long addr,
- 	return false;
+diff --git a/tools/testing/selftests/mm/split_huge_page_test.c b/tools/testing/selftests/mm/split_huge_page_test.c
+index e5e8dafc9d94..eb6d1b9fc362 100644
+--- a/tools/testing/selftests/mm/split_huge_page_test.c
++++ b/tools/testing/selftests/mm/split_huge_page_test.c
+@@ -84,6 +84,76 @@ static void write_debugfs(const char *fmt, ...)
+ 	write_file(SPLIT_DEBUGFS, input, ret + 1);
  }
  
--static void remap_page(struct folio *folio, unsigned long nr)
-+static void remap_page(struct folio *folio, unsigned long nr, int flags)
- {
- 	int i = 0;
- 
-@@ -3028,7 +3028,7 @@ static void remap_page(struct folio *folio, unsigned long nr)
- 	if (!folio_test_anon(folio))
- 		return;
- 	for (;;) {
--		remove_migration_ptes(folio, folio, true);
-+		remove_migration_ptes(folio, folio, RMP_LOCKED | flags);
- 		i += folio_nr_pages(folio);
- 		if (i >= nr)
- 			break;
-@@ -3240,7 +3240,7 @@ static void __split_huge_page(struct page *page, struct list_head *list,
- 
- 	if (nr_dropped)
- 		shmem_uncharge(folio->mapping->host, nr_dropped);
--	remap_page(folio, nr);
-+	remap_page(folio, nr, PageAnon(head) ? RMP_USE_SHARED_ZEROPAGE : 0);
- 
- 	/*
- 	 * set page to its compound_head when split to non order-0 pages, so
-@@ -3542,7 +3542,7 @@ int split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
- 		if (mapping)
- 			xas_unlock(&xas);
- 		local_irq_enable();
--		remap_page(folio, folio_nr_pages(folio));
-+		remap_page(folio, folio_nr_pages(folio), 0);
- 		ret = -EAGAIN;
- 	}
- 
-diff --git a/mm/migrate.c b/mm/migrate.c
-index 6f9c62c746be..d039863e014b 100644
---- a/mm/migrate.c
-+++ b/mm/migrate.c
-@@ -204,13 +204,57 @@ bool isolate_folio_to_list(struct folio *folio, struct list_head *list)
- 	return true;
- }
- 
-+static bool try_to_map_unused_to_zeropage(struct page_vma_mapped_walk *pvmw,
-+					  struct folio *folio,
-+					  unsigned long idx)
++static char *allocate_zero_filled_hugepage(size_t len)
 +{
-+	struct page *page = folio_page(folio, idx);
-+	bool contains_data;
-+	pte_t newpte;
-+	void *addr;
++	char *result;
++	size_t i;
 +
-+	VM_BUG_ON_PAGE(PageCompound(page), page);
-+	VM_BUG_ON_PAGE(!PageAnon(page), page);
-+	VM_BUG_ON_PAGE(!PageLocked(page), page);
-+	VM_BUG_ON_PAGE(pte_present(*pvmw->pte), page);
++	result = memalign(pmd_pagesize, len);
++	if (!result) {
++		printf("Fail to allocate memory\n");
++		exit(EXIT_FAILURE);
++	}
 +
-+	if (folio_test_mlocked(folio) || (pvmw->vma->vm_flags & VM_LOCKED) ||
-+	    mm_forbids_zeropage(pvmw->vma->vm_mm))
-+		return false;
++	madvise(result, len, MADV_HUGEPAGE);
 +
-+	/*
-+	 * The pmd entry mapping the old thp was flushed and the pte mapping
-+	 * this subpage has been non present. If the subpage is only zero-filled
-+	 * then map it to the shared zeropage.
-+	 */
-+	addr = kmap_local_page(page);
-+	contains_data = memchr_inv(addr, 0, PAGE_SIZE);
-+	kunmap_local(addr);
++	for (i = 0; i < len; i++)
++		result[i] = (char)0;
 +
-+	if (contains_data)
-+		return false;
-+
-+	newpte = pte_mkspecial(pfn_pte(my_zero_pfn(pvmw->address),
-+					pvmw->vma->vm_page_prot));
-+	set_pte_at(pvmw->vma->vm_mm, pvmw->address, pvmw->pte, newpte);
-+
-+	dec_mm_counter(pvmw->vma->vm_mm, mm_counter(folio));
-+	return true;
++	return result;
 +}
 +
-+struct rmap_walk_arg {
-+	struct folio *folio;
-+	bool map_unused_to_zeropage;
-+};
++static void verify_rss_anon_split_huge_page_all_zeroes(char *one_page, int nr_hpages, size_t len)
++{
++	unsigned long rss_anon_before, rss_anon_after;
++	size_t i;
 +
- /*
-  * Restore a potential migration pte to a working pte entry
-  */
- static bool remove_migration_pte(struct folio *folio,
--		struct vm_area_struct *vma, unsigned long addr, void *old)
-+		struct vm_area_struct *vma, unsigned long addr, void *arg)
- {
--	DEFINE_FOLIO_VMA_WALK(pvmw, old, vma, addr, PVMW_SYNC | PVMW_MIGRATION);
-+	struct rmap_walk_arg *rmap_walk_arg = arg;
-+	DEFINE_FOLIO_VMA_WALK(pvmw, rmap_walk_arg->folio, vma, addr, PVMW_SYNC | PVMW_MIGRATION);
- 
- 	while (page_vma_mapped_walk(&pvmw)) {
- 		rmap_t rmap_flags = RMAP_NONE;
-@@ -234,6 +278,9 @@ static bool remove_migration_pte(struct folio *folio,
- 			continue;
- 		}
- #endif
-+		if (rmap_walk_arg->map_unused_to_zeropage &&
-+		    try_to_map_unused_to_zeropage(&pvmw, folio, idx))
-+			continue;
- 
- 		folio_get(folio);
- 		pte = mk_pte(new, READ_ONCE(vma->vm_page_prot));
-@@ -312,14 +359,21 @@ static bool remove_migration_pte(struct folio *folio,
-  * Get rid of all migration entries and replace them by
-  * references to the indicated page.
-  */
--void remove_migration_ptes(struct folio *src, struct folio *dst, bool locked)
-+void remove_migration_ptes(struct folio *src, struct folio *dst, int flags)
- {
-+	struct rmap_walk_arg rmap_walk_arg = {
-+		.folio = src,
-+		.map_unused_to_zeropage = flags & RMP_USE_SHARED_ZEROPAGE,
-+	};
++	if (!check_huge_anon(one_page, 4, pmd_pagesize)) {
++		printf("No THP is allocated\n");
++		exit(EXIT_FAILURE);
++	}
 +
- 	struct rmap_walk_control rwc = {
- 		.rmap_one = remove_migration_pte,
--		.arg = src,
-+		.arg = &rmap_walk_arg,
- 	};
- 
--	if (locked)
-+	VM_BUG_ON_FOLIO((flags & RMP_USE_SHARED_ZEROPAGE) && (src != dst), src);
++	rss_anon_before = rss_anon();
++	if (!rss_anon_before) {
++		printf("No RssAnon is allocated before split\n");
++		exit(EXIT_FAILURE);
++	}
 +
-+	if (flags & RMP_LOCKED)
- 		rmap_walk_locked(dst, &rwc);
- 	else
- 		rmap_walk(dst, &rwc);
-@@ -934,7 +988,7 @@ static int writeout(struct address_space *mapping, struct folio *folio)
- 	 * At this point we know that the migration attempt cannot
- 	 * be successful.
- 	 */
--	remove_migration_ptes(folio, folio, false);
-+	remove_migration_ptes(folio, folio, 0);
- 
- 	rc = mapping->a_ops->writepage(&folio->page, &wbc);
- 
-@@ -1098,7 +1152,7 @@ static void migrate_folio_undo_src(struct folio *src,
- 				   struct list_head *ret)
++	/* split all THPs */
++	write_debugfs(PID_FMT, getpid(), (uint64_t)one_page,
++		      (uint64_t)one_page + len, 0);
++
++	for (i = 0; i < len; i++)
++		if (one_page[i] != (char)0) {
++			printf("%ld byte corrupted\n", i);
++			exit(EXIT_FAILURE);
++		}
++
++	if (!check_huge_anon(one_page, 0, pmd_pagesize)) {
++		printf("Still AnonHugePages not split\n");
++		exit(EXIT_FAILURE);
++	}
++
++	rss_anon_after = rss_anon();
++	if (rss_anon_after >= rss_anon_before) {
++		printf("Incorrect RssAnon value. Before: %ld After: %ld\n",
++		       rss_anon_before, rss_anon_after);
++		exit(EXIT_FAILURE);
++	}
++}
++
++void split_pmd_zero_pages(void)
++{
++	char *one_page;
++	int nr_hpages = 4;
++	size_t len = nr_hpages * pmd_pagesize;
++
++	one_page = allocate_zero_filled_hugepage(len);
++	verify_rss_anon_split_huge_page_all_zeroes(one_page, nr_hpages, len);
++	printf("Split zero filled huge pages successful\n");
++	free(one_page);
++}
++
+ void split_pmd_thp(void)
  {
- 	if (page_was_mapped)
--		remove_migration_ptes(src, src, false);
-+		remove_migration_ptes(src, src, 0);
- 	/* Drop an anon_vma reference if we took one */
- 	if (anon_vma)
- 		put_anon_vma(anon_vma);
-@@ -1336,7 +1390,7 @@ static int migrate_folio_move(free_folio_t put_new_folio, unsigned long private,
- 		lru_add_drain();
+ 	char *one_page;
+@@ -431,6 +501,7 @@ int main(int argc, char **argv)
  
- 	if (old_page_state & PAGE_WAS_MAPPED)
--		remove_migration_ptes(src, dst, false);
-+		remove_migration_ptes(src, dst, 0);
+ 	fd_size = 2 * pmd_pagesize;
  
- out_unlock_both:
- 	folio_unlock(dst);
-@@ -1474,7 +1528,7 @@ static int unmap_and_move_huge_page(new_folio_t get_new_folio,
++	split_pmd_zero_pages();
+ 	split_pmd_thp();
+ 	split_pte_mapped_thp();
+ 	split_file_backed_thp();
+diff --git a/tools/testing/selftests/mm/vm_util.c b/tools/testing/selftests/mm/vm_util.c
+index 5a62530da3b5..d8d0cf04bb57 100644
+--- a/tools/testing/selftests/mm/vm_util.c
++++ b/tools/testing/selftests/mm/vm_util.c
+@@ -12,6 +12,7 @@
  
- 	if (page_was_mapped)
- 		remove_migration_ptes(src,
--			rc == MIGRATEPAGE_SUCCESS ? dst : src, false);
-+			rc == MIGRATEPAGE_SUCCESS ? dst : src, 0);
+ #define PMD_SIZE_FILE_PATH "/sys/kernel/mm/transparent_hugepage/hpage_pmd_size"
+ #define SMAP_FILE_PATH "/proc/self/smaps"
++#define STATUS_FILE_PATH "/proc/self/status"
+ #define MAX_LINE_LENGTH 500
  
- unlock_put_anon:
- 	folio_unlock(dst);
-diff --git a/mm/migrate_device.c b/mm/migrate_device.c
-index 8d687de88a03..9cf26592ac93 100644
---- a/mm/migrate_device.c
-+++ b/mm/migrate_device.c
-@@ -424,7 +424,7 @@ static unsigned long migrate_device_unmap(unsigned long *src_pfns,
- 			continue;
+ unsigned int __page_size;
+@@ -171,6 +172,27 @@ uint64_t read_pmd_pagesize(void)
+ 	return strtoul(buf, NULL, 10);
+ }
  
- 		folio = page_folio(page);
--		remove_migration_ptes(folio, folio, false);
-+		remove_migration_ptes(folio, folio, 0);
- 
- 		src_pfns[i] = 0;
- 		folio_unlock(folio);
-@@ -840,7 +840,7 @@ void migrate_device_finalize(unsigned long *src_pfns,
- 			dst = src;
- 		}
- 
--		remove_migration_ptes(src, dst, false);
-+		remove_migration_ptes(src, dst, 0);
- 		folio_unlock(src);
- 
- 		if (folio_is_zone_device(src))
++unsigned long rss_anon(void)
++{
++	unsigned long rss_anon = 0;
++	FILE *fp;
++	char buffer[MAX_LINE_LENGTH];
++
++	fp = fopen(STATUS_FILE_PATH, "r");
++	if (!fp)
++		ksft_exit_fail_msg("%s: Failed to open file %s\n", __func__, STATUS_FILE_PATH);
++
++	if (!check_for_pattern(fp, "RssAnon:", buffer, sizeof(buffer)))
++		goto err_out;
++
++	if (sscanf(buffer, "RssAnon:%10lu kB", &rss_anon) != 1)
++		ksft_exit_fail_msg("Reading status error\n");
++
++err_out:
++	fclose(fp);
++	return rss_anon;
++}
++
+ bool __check_huge(void *addr, char *pattern, int nr_hpages,
+ 		  uint64_t hpage_size)
+ {
+diff --git a/tools/testing/selftests/mm/vm_util.h b/tools/testing/selftests/mm/vm_util.h
+index 9007c420d52c..2eaed8209925 100644
+--- a/tools/testing/selftests/mm/vm_util.h
++++ b/tools/testing/selftests/mm/vm_util.h
+@@ -39,6 +39,7 @@ unsigned long pagemap_get_pfn(int fd, char *start);
+ void clear_softdirty(void);
+ bool check_for_pattern(FILE *fp, const char *pattern, char *buf, size_t len);
+ uint64_t read_pmd_pagesize(void);
++unsigned long rss_anon(void);
+ bool check_huge_anon(void *addr, int nr_hpages, uint64_t hpage_size);
+ bool check_huge_file(void *addr, int nr_hpages, uint64_t hpage_size);
+ bool check_huge_shmem(void *addr, int nr_hpages, uint64_t hpage_size);
 -- 
 2.43.5
 
