@@ -1,116 +1,78 @@
-Return-Path: <linux-kernel+bounces-307873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B29496543D
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 02:49:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6450C965444
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 02:51:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A91BB23B4F
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 00:48:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01ABA1F26AE6
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 00:51:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A29FD1D1307;
-	Fri, 30 Aug 2024 00:48:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6718F4C7C;
+	Fri, 30 Aug 2024 00:51:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="etGcMieZ"
-Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D/3fHpeF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F2814409
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 00:48:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAFA42599
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 00:51:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724978931; cv=none; b=er8m3Kine37llHi9EmmA0wjLpGb2x52wEq/gE+YObleHb5sZdtMg8MSk2L4nhicUq4aRePxePHRJCyXWcLKbsHWmCLypf9PrA66Mdlix9osbW75IDZzZMOsLRCACYyYG1MtG8s/CfZOgymmIBhs9ASb6uNbwm/CW9Tnyi11abwU=
+	t=1724979082; cv=none; b=Ycy/XU3SDkLumXpY92hrGcMmvvtu+tRU66hNKkUHVAtVLjMKU1XJPN00PmjL04+vyDqNu2EFxfe6Hosfqtdmx1JgO0bZ/il5Vt3CtuDRhgPnQA+Rhmy95JnS7jHgm8hSimV4xg5Gxo0JxtEH0R3+Q8tEmCRMn+i3/Eb2eyl6ikI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724978931; c=relaxed/simple;
-	bh=nvcQIMZEY/YWAkKwga+QFpE6n7wQ4iqysMtfgZ97hsg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vh4q8sHpnZYErs4/ENah1xBhYgISbcvRj7oYF7XZTxQlHsDEMMyyGFwxH1aLx6RgcujriXmPTTPIzEiTyCfQ/yKsPNEVZxc4AToD+CjB8EC0P9xESqRAkz3es6G7Dx4BLSx7P5ikLpQvffdL1lwZAN3CiCVabuZk1trtbWhQoiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=etGcMieZ; arc=none smtp.client-ip=91.218.175.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Thu, 29 Aug 2024 17:48:36 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1724978927;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8y2Kll8nT4BLVzBidS9pKQWgrXMIL/ggfNq4v3iS4Ns=;
-	b=etGcMieZiC3utjViFAlpI9Q6jTA2GrUhjR3APrcFmjnyykescLwEzzLIR567rkcuifxprw
-	492V+ebcrM2d4UHpenLZhBbJ/dJVOb5hUVdap+Mqd3d+QYeJ/tL9FfAttCtER+CVTJnnCs
-	yWusU8FlhB1MN5HoGZPcNZMz3fz9HqM=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Oliver Upton <oliver.upton@linux.dev>
-To: James Houghton <jthoughton@google.com>
-Cc: Yu Zhao <yuzhao@google.com>, Sean Christopherson <seanjc@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Ankit Agrawal <ankita@nvidia.com>,
-	Axel Rasmussen <axelrasmussen@google.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	David Matlack <dmatlack@google.com>,
-	David Rientjes <rientjes@google.com>,
-	James Morse <james.morse@arm.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-	Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>,
-	Raghavendra Rao Ananta <rananta@google.com>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Shaoqin Huang <shahuang@redhat.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Wei Xu <weixugc@google.com>, Will Deacon <will@kernel.org>,
-	Zenghui Yu <yuzenghui@huawei.com>, kvmarm@lists.linux.dev,
-	kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCH v6 03/11] KVM: arm64: Relax locking for kvm_test_age_gfn
- and kvm_age_gfn
-Message-ID: <ZtEW5Iym5QsJbONM@linux.dev>
-References: <20240724011037.3671523-1-jthoughton@google.com>
- <20240724011037.3671523-4-jthoughton@google.com>
- <CADrL8HV5M-n72KDseDKWpGrUVMjC147Jqz98PxyG2ZeRVbFu8g@mail.gmail.com>
- <Zr_y7Fn63hdowfYM@google.com>
- <CAOUHufYc3hr-+fp14jgEkDN++v6t-z-PRf1yQdKtnje6SgLiiA@mail.gmail.com>
- <ZsOuEP6P0v45ffC0@linux.dev>
- <CADrL8HWf-Onu=4ONBO1CFZ1Tqj5bee=+NnRC333aKqkUy+0Sxg@mail.gmail.com>
+	s=arc-20240116; t=1724979082; c=relaxed/simple;
+	bh=98To16Pw25J/JIE9h+sXbpZyl6yq3vWHnjtVFDfFHOA=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=OxcFk0O9nFPDyEYe8fuOP8KxzhbQGVGqPjPahiFu1z5Nn8o4bz0eT4YvfG19J9hREAI3G7YIyg4awM6AzmmCxWBve9qvv+iiZPsM/Q8QcDu4H2w20x/+p/qS0DzzbGIhNFBZ8vLtdHc6gxI+JzkcBv8Hlsg7IY3rzw0mXuyxYoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D/3fHpeF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83F19C4CEC1;
+	Fri, 30 Aug 2024 00:51:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724979082;
+	bh=98To16Pw25J/JIE9h+sXbpZyl6yq3vWHnjtVFDfFHOA=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=D/3fHpeFFQ223L+0TMe1fuoseZrcSkqAAMBTNUn5XxHgaY3d1B8HYjqI+myTzq9CF
+	 zoVZ6qeu8GuqC9q6g9mhOsYL6zNd4yzK+g12kJN4msLVui/6ti54wl3LgMME8CwjLG
+	 RvwAWbok16iBKzd5bkUN7JdiKuYASlOU6d61TfhwEAPVzp8xK6ixwtC4drROEe5Ve7
+	 +P2wNPJr9cIazyP1KRo2knKjsUgdy/aEefXj74g71aAANR7b6PA8DAwTVecrL1lUfa
+	 4qOtaiFrEmu8AI6Kg6JRx5a/BVBBmZPC81JKoA5yL/1zeI2o8CwNuRWBGVH8qDCeET
+	 E2vNBNEKuFaWA==
+Received: from ip-10-30-226-235.us-west-2.compute.internal (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 1B70C3805D82;
+	Fri, 30 Aug 2024 00:51:24 +0000 (UTC)
+Subject: Re: [GIT PULL] execve fix for v6.11-rc6
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <202408291304.2B20D61BE4@keescook>
+References: <202408291304.2B20D61BE4@keescook>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <202408291304.2B20D61BE4@keescook>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git tags/execve-v6.11-rc6
+X-PR-Tracked-Commit-Id: c6a09e342f8e6d3cac7f7c5c14085236aca284b9
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 1b5fe53681d9c388f1600310fe3488091701d4d0
+Message-Id: <172497908410.2127991.8173501789036292167.pr-tracker-bot@kernel.org>
+Date: Fri, 30 Aug 2024 00:51:24 +0000
+To: Kees Cook <kees@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, Greg Ungerer <gerg@kernel.org>, Kees Cook <kees@kernel.org>, Max Filippov <jcmvbkbc@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CADrL8HWf-Onu=4ONBO1CFZ1Tqj5bee=+NnRC333aKqkUy+0Sxg@mail.gmail.com>
-X-Migadu-Flow: FLOW_OUT
 
-On Thu, Aug 29, 2024 at 05:33:00PM -0700, James Houghton wrote:
-> On Mon, Aug 19, 2024 at 1:42 PM Oliver Upton <oliver.upton@linux.dev> wrote:
-> > Asking since you had a setup / data earlier on when you were carrying
-> > the series. Hopefully with supportive data we can get arm64 to opt-in
-> > to HAVE_KVM_MMU_NOTIFIER_YOUNG_FAST_ONLY as well.
-> 
-> I'll keep trying some other approaches I can take for getting similar
-> testing that Yu had; it is somewhat difficult for me to reproduce
-> those tests (and it really shouldn't be.... sorry).
+The pull request you sent on Thu, 29 Aug 2024 13:05:01 -0700:
 
-No need to apologize. Getting good test hardware for arm64 is a complete
-chore. Sure would love a functional workstation with cores from this
-decade...
+> https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git tags/execve-v6.11-rc6
 
-> I think it makes most sense for me to drop the arm64 patch for now and
-> re-propose it (or something stronger) alongside enabling aging. Does
-> that sound ok?
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/1b5fe53681d9c388f1600310fe3488091701d4d0
 
-I'm a bit disappointed that we haven't gotten forward progress on the
-arm64 patches, but I also recognize this is the direction of travel as
-the x86 patches are shaping up.
-
-So yeah, I'm OK with it, but I'd love to get the arm64 side sorted out
-soon while the context is still fresh.
+Thank you!
 
 -- 
-Thanks,
-Oliver
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
