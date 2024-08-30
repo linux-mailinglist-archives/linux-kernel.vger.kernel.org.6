@@ -1,283 +1,388 @@
-Return-Path: <linux-kernel+bounces-308994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EC1B9664F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 17:05:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B44A9664F2
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 17:05:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C62F1283730
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 15:05:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D47B5283F2E
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 15:05:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E02BD1B3B35;
-	Fri, 30 Aug 2024 15:04:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 695D51B4C49;
+	Fri, 30 Aug 2024 15:04:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dnxEC0hH"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jc0ISY5B"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3770761FCE;
-	Fri, 30 Aug 2024 15:04:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725030293; cv=fail; b=Sqpmeh1DMhviNGW3ib5y+Sltur4zeuhCAHpP+X2q1E0aRZxPXxo6cZ7DVAfnd2gHGbw84cWEESvuSCo5Xl40auTgnLMbFgbJV4n7ugeFOV4VPi4U4QWofZW4R4h9SPBp5Sd2Fr0z0a3+ccUNaZFrOAIhRUYB+v9p3R2Pt/P9GCI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725030293; c=relaxed/simple;
-	bh=QJCOyV/EnbQILguUTj0zgC99zjAgEDbIJ1Qvv1ToMJM=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=VlYu0jnpWJ6rZ+9cd6vOpUq3DVs9Hn0vXJn6fnKQg0Iri1bzeF+2m0s8e0pWJG97BL9hQAyBgWEV7zGjpDSS64Y1GKBemwtigqrJdwYBOlWFCE8ffnvFDRQE0WipYKTKlT/0XYM9dAnowSuVhkQq4jC9EgKnMpT7qhJV2pu/FUs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dnxEC0hH; arc=fail smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725030293; x=1756566293;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=QJCOyV/EnbQILguUTj0zgC99zjAgEDbIJ1Qvv1ToMJM=;
-  b=dnxEC0hHjkN9dmeYy8EvPSpE+lL32NfWgx3HYRBEcPe6R6XBjMEx/r4p
-   WzdoRnNH1hNgMaeV6DC+vL+KqZ2YLp9+775WChy+c+g1m32u++reYswUo
-   1nE76H00MWtGhQkSNjlQcySHvn4hc23776P3X+iiPpJbnO7dSyB4XvFv8
-   6VDGnt/epMqp+zcfABXDotUgBSu167tT4S/EpoIp3KCztrkTRyhZk4EmS
-   WbXRYemqw27EhPLEJKyXa6vTaO5R3QxawFQzItl6mRAPpHvOFuR4c9elH
-   ViiG9YXXa2vCTvHT0C8SobIZDa12UnthEQvOy+AJwgBezr6YLwoPyb/Yj
-   g==;
-X-CSE-ConnectionGUID: oinRtpTBQNiPc8SFJqbWyw==
-X-CSE-MsgGUID: VSIi/dcvRKatAcSU3uDdmA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11180"; a="27553321"
-X-IronPort-AV: E=Sophos;i="6.10,189,1719903600"; 
-   d="scan'208";a="27553321"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Aug 2024 08:04:51 -0700
-X-CSE-ConnectionGUID: tYtgg7JqSoq0taGl8H+8xQ==
-X-CSE-MsgGUID: 2y5lnRR2R4u9xURL7SwXOA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,189,1719903600"; 
-   d="scan'208";a="68068808"
-Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
-  by fmviesa003.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 30 Aug 2024 08:04:50 -0700
-Received: from fmsmsx611.amr.corp.intel.com (10.18.126.91) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Fri, 30 Aug 2024 08:04:50 -0700
-Received: from fmsmsx602.amr.corp.intel.com (10.18.126.82) by
- fmsmsx611.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Fri, 30 Aug 2024 08:04:49 -0700
-Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
- fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Fri, 30 Aug 2024 08:04:49 -0700
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (104.47.58.100)
- by edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 30 Aug 2024 08:04:48 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Ih0OApl6bBEwrrlLAlOmJobo5rr8aJHp+fwi5MNhw7FRFy1d1aTgM6pyXsNeX5tBnkwNerzq2rhLuR63E7wN9LLW4yyROxe5+dvAtT3/4bLT5EfDr/UPZoyOHPb0r37uWcYuC1bMzF8XLgkTnKUZ2iTXpLAI9i+0A8p4BqNNV7oA4bHvZIVkOgBCf60aD+mAbwdhW1HTnPoMYvnaMv2cSAtaSm+d7OmJ7SsHPRHVjHTu5WJQ6CfDWTthUfITysx4IyPfCyfJmwKqXzBLsYJUyGCHOF/b+Jzl4GPmHwHkS9IolHj5gxql0fReGRfoQ5xQVCRsyQpfZNdEfGVjxYfvgw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=gDeBnbtEXNMZh0Ydu5QrtIXhasBqSWSd5REDEL9t+Ps=;
- b=KP20Ig98dlZHJymz65fIgX4fZETqivwqnEINRUYZtpS6vkFTvSnPbZjsrKvRwSLahKcoORJI2iIKPJG9t1U/ye08zvYH1fDPlbkeXSPjRLtTHjJ2To7sS4Q0mZB7LSdsTfw0TaM+jQcwFuZL16DYLLt+Lb17PVnP+3qJQNJ5kqcEwZ81DgNbGhbFcgZHsSc6ydAWNgcxnj87M+ZurWkPaxEMr86h1JQUIr6bjqPGD+5jmMS3wjxypsrIxbipeMkevoBJXKqklIdo3L35aC7ZlaHH9IgJfjU0/nhdRsBVfGJym831Jaip9bG2Bck1wMzTuvjIpxwGNmtkNa8jcRnjzQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS0PR11MB8718.namprd11.prod.outlook.com (2603:10b6:8:1b9::20)
- by DS7PR11MB7950.namprd11.prod.outlook.com (2603:10b6:8:e0::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.20; Fri, 30 Aug
- 2024 15:04:41 +0000
-Received: from DS0PR11MB8718.namprd11.prod.outlook.com
- ([fe80::4b3b:9dbe:f68c:d808]) by DS0PR11MB8718.namprd11.prod.outlook.com
- ([fe80::4b3b:9dbe:f68c:d808%5]) with mapi id 15.20.7875.019; Fri, 30 Aug 2024
- 15:04:41 +0000
-Message-ID: <c5896f81-5c32-43f0-8641-81fdb4710a4b@intel.com>
-Date: Fri, 30 Aug 2024 17:04:10 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v2 07/12] net: vxlan: add skb drop reasons to
- vxlan_rcv()
-To: Menglong Dong <menglong8.dong@gmail.com>
-CC: <idosch@nvidia.com>, <kuba@kernel.org>, <davem@davemloft.net>,
-	<edumazet@google.com>, <pabeni@redhat.com>, <dsahern@kernel.org>,
-	<dongml2@chinatelecom.cn>, <amcohen@nvidia.com>, <gnault@redhat.com>,
-	<bpoirier@nvidia.com>, <b.galvani@gmail.com>, <razor@blackwall.org>,
-	<petrm@nvidia.com>, <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>
-References: <20240830020001.79377-1-dongml2@chinatelecom.cn>
- <20240830020001.79377-8-dongml2@chinatelecom.cn>
-From: Alexander Lobakin <aleksander.lobakin@intel.com>
-Content-Language: en-US
-In-Reply-To: <20240830020001.79377-8-dongml2@chinatelecom.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: ZR2P278CA0074.CHEP278.PROD.OUTLOOK.COM
- (2603:10a6:910:52::8) To DS0PR11MB8718.namprd11.prod.outlook.com
- (2603:10b6:8:1b9::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A049218FC81
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 15:04:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725030295; cv=none; b=O6KOiQ9lBRziLvPPWXH6Dg2Lqac2HZ+L2woz/hP+UvyEnAb1yq43m51onRgOPgZx3ITgsYgbNIwJAFWVXH9FHt9kWdpaeXO9qCHZBHC4WEojxxpj24xrau9134X8ftgLw5JYf2ztl6P1BD+XJEcJbrPRqT1i5L0r45J62RzXivM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725030295; c=relaxed/simple;
+	bh=/hYLmsccyGXFbEOm4jxIhXP4niP6DVnr5Xdlmu37HFQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Chu40Qr+amk2cz5WYxfxAOdbtVHs5KUyjHPQqErlito5bZFcsoyDO9qZqOHLgS9S/hrmaSg+ds9Q/CfB8aqI1esflWNHphLDI8TM2Oj3wNaPbtVp6x/Dw0dd/1U+VNfZeXLWdawmTSsmDa2/IX0kWlsccGtR1RPfMEs7/fRWSZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jc0ISY5B; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2d88690837eso228494a91.2
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 08:04:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725030293; x=1725635093; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kBk/l+T4HXvk+AVkOwAVZKFz1g5wdfRHfu9ue3giLSU=;
+        b=jc0ISY5BGw+imapowQCmBcR9LBzkTuAmk8VQn35ohsqVUMuv/8bEzKcWhOfm+LxVlK
+         Bd1Lkc/dDBFQFLz3IpEkW6jFl9GJk88RGkUAzYLHL6GyZO9zzXkiBBPKJoQg5QFmTRU4
+         FRGkuFwjWbXMz7Vn2nERLu4Cf0pty1HdRSUkybcLNigUd7bh0zZX5uA3WUN+ieKri6pX
+         ZpJQ5ci9U+rNshQDICiirU4siU+cZQcDf5zcGIWs/YuBOMg2uwJRPW+j4wLQAAvqsRBG
+         2fUL52+I2D72VmrEIRATXmL3IPpkZ+VxHmc9StxX3e6/+H4et6C264uRnWX7CO3Gs/ia
+         w+CA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725030293; x=1725635093;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kBk/l+T4HXvk+AVkOwAVZKFz1g5wdfRHfu9ue3giLSU=;
+        b=VgzDjm3prnnYIKtq7xmFHYapbEjNOHuC8DHhmSz6k25WyK9gsjgbspD4U5RZRHAx+X
+         BjC5+pDd7lM7leNCw5nxva1nO3chffR2cROgKINOZPdlrJejvsCVSwE+HJ1UkDa7QgNE
+         WsBJDTO7di0+GGwP60d5bYAt+cD/685oXO8L7Q/0OnGbpzUpAPsLJyFFKYFo2U1S7lMi
+         vkOHJd3V1Zi6QpOnJgDspaB4m4xEOxL4ytDfLGx9AxRH8MaUccZP+vPJia4PUNXTmTS8
+         mHLf+cX9UihimsTPRkZadaW6frZneSmLIxWemlBbScgn5OLwkxVQpg87tDfMoKy88PeJ
+         JYNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUQf8F5f/7ocVLS+qRsV69mumX7arfrntegRIIyomMLGXMbLa1JhNQoL9d2XUh0HwnKh7+UTGhIALmozLA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPSdzGLApkzoyxHiKv5GLJx0D86sc/kMRVNbHZgWBL+Zw2HTNq
+	DBSed41LxlOooXpoJLUjAQ6LLL52yzKVSejydJVpnJRTJnqzpHYJy5SXEtYWf7HAK8M9MHJTHzO
+	jPzBtUMhos2ICZ71/366QH1t/9+0=
+X-Google-Smtp-Source: AGHT+IEYy5lTAhm3Y+CSPGGrkr7wRV6sxUsNdvFOyLCzwEm0bJOGPS7fdYdivnicdN7hfiB6bDk4FkGUuh20aRsbtZQ=
+X-Received: by 2002:a17:90b:33ca:b0:2cd:2c4d:9345 with SMTP id
+ 98e67ed59e1d1-2d8561711d0mr6729408a91.6.1725030292426; Fri, 30 Aug 2024
+ 08:04:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB8718:EE_|DS7PR11MB7950:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8dc94c03-dae3-4eb1-7a57-08dcc905133f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?L0tpaVVsbWVCbHQxYVk3WStZMGFnZFdMZDJySHlucWxMREpKZ1BhOTgvSmhR?=
- =?utf-8?B?MmNCK1BjRE4rR3VEUzV2d3A2SGwzY08xWm9admtkK0NNN3JWUXdNTk55d3pk?=
- =?utf-8?B?NnRBR0NseW5ocDZNUE1VTG1hM05aMTQ0L3p3Wnh4MEM4cXhkQS90WkZaUkZ2?=
- =?utf-8?B?S2VrMlIyOHZsVHRUcGQ4RkhtMDZGd21JZ1BReDBMYVM4Z2crbURWZVVkTTJX?=
- =?utf-8?B?elpYdlpYNTRQdlRwSHpoVkRKNHY5M2J5OHhtS0p0VVQveGhzVk4zaWYzZE15?=
- =?utf-8?B?cXhPRGFlQ0I1enRCeWMzK2JBREdEN2w3cjAxRC95K2pCbzRkSWNiV0kwcEww?=
- =?utf-8?B?MnltUUZDVzFYaloyQVd0S2hhL25NYlBSbXZ5RkZCT3ZDL29tOEV6TzUxa0tN?=
- =?utf-8?B?RHZ5NWpaVUFSR3BVUHhYWnB4bm5KeG5ZTzc4QkVzdFdFc004d3plZVF5eWpo?=
- =?utf-8?B?R011VUh5bEllWFFMMkxicmZsZ0J0R2ZMRHJSZjV6eFI0cElwZkZ3K0xIL3RH?=
- =?utf-8?B?emk2Vm9aODhNUzFhMDRieHRQTy9iTmhYeXIrVmdyOHNvYTV2VDFuSW9FL2VZ?=
- =?utf-8?B?RDJuL1Ayb0NSWjd1MFVDM25IeWZzN09OTjBRdmhPQ2d2RWxjTWN6L25EeGgv?=
- =?utf-8?B?SjB3OEJFcWxrQmd3WUdOSU5uYTA1WUUxU2NmM3B5SUI2cnk4RitJOHlOK1VW?=
- =?utf-8?B?aktkMHpJT1NIMFZQZzhoOEdOVnU1RW5Bbyt3UUZpR1JNRXFLeFh5SXgxeG1U?=
- =?utf-8?B?cmk0YWNFT092YjFYVmR1TlQyNTNINkE3aE1HbzQ2amc5YXN0UG9sVEwya2pO?=
- =?utf-8?B?cDhqSTBIM0xXSHVhTWkwTURhRWllVjJMTmxMd3RxNnlFYlBVbU5TS2NSdFNT?=
- =?utf-8?B?VHN4VGtwYlY3d3A2MFN6K0pOamo2TS8xOEVJdkRYMDJTQUU0MHc5SmZoa1dD?=
- =?utf-8?B?UllmSEh5cEwzVTYxZTRacWlybzA4Mmc0eEJ0NnpzTEZwMU1sK2VTY0lnRTE3?=
- =?utf-8?B?MlJQYksrekxCS0RvTVpvRG5OZDVlTStudHVKVVBEeFVqbUZ3cGhaVjF3bnp0?=
- =?utf-8?B?V1F3Z1RiZER5M2tZOERUQnVpZjFPNjN5VlA3emQ0c2lXa1Z2TWlHTUtuaC9n?=
- =?utf-8?B?cFVvQnN0cGhPSHdpRmpJRVFWNElWMkpQVXJTWlBjZjhuZlROYWRySzZjUWF2?=
- =?utf-8?B?eDRMcmpkS2Q3aHpRUVd5bjg4dlVFOTU3ME1wRXVNcGxvNXNsYzdqc29zNGhX?=
- =?utf-8?B?S1ZOM0Y5YkZpKzl6UTRkWWQ3Z21NNFpwZ0NqaEJyOHFNY1kvc3dkRUFwVEFJ?=
- =?utf-8?B?WDZoL2lqS2VnWWNpMDZGV2V3TjYxY3pBM3UrclpCWUhZN0dZYitrU0V0ZUxs?=
- =?utf-8?B?SHFDdSt2cjZLSEpKc0x4UE1ycnY4YXpoUjFSWS9xWlQ2TjdqcWdKc2IyRVVq?=
- =?utf-8?B?MTdZTldaYno5RS9CNk03N2VhVTZ1SUR6UkhDcmk3akhNQ2t6RHQ3TEVpRWhW?=
- =?utf-8?B?QzlPcTFlSzh4UTFNdEVRc0l0OVp4SERxcnpnVmpmYjBuNHhab201ZXY0WmFr?=
- =?utf-8?B?QnR5dHJweGhNcTUxdDBHcFU4QU9TdDd4WkhtdmY5TjZ4V2gycS9CZzRLY2ND?=
- =?utf-8?B?UmJacXJ0Qjk4Q1ZCRlR4cGMyV2YzVmpnY1NWOXBGWng4Z0xpZkxqTkszdnhT?=
- =?utf-8?B?TEJ2WWlVWGdRdWcxT3JwckU4SHFxTng3TDVPNk1jMFA5eHpqVWd3blFZYVFa?=
- =?utf-8?B?VGtuMmgyUm50dTFlS085ak5sejZoeU1UMFZGdTJJSXNXMkN6YStIYiswbTdI?=
- =?utf-8?B?dHpUdlYxa0xvQ3MrcmdFdz09?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR11MB8718.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?R1RBelVkbFZUOGhnVmRmb1Juam1WNnNHQXF5dUpRTktQbDJhekdGSlQ2RUpx?=
- =?utf-8?B?UEtKWHJuOGpVaWp1RDd4eS9BV2I5RzVQM1NnZWpUdmttL2kxVTJYVFVJVEVl?=
- =?utf-8?B?SjNEVlJMenRRVW1HbmpGWGRMYWRKdzd0Z0dseWJvSENCUkJRb2JWWExjNC9R?=
- =?utf-8?B?ZUVWa056VW5tRWNhS3p5L0R3N0c5MFVpWG5xeWRpTFhLUmhJdHpCZmQ0UzRm?=
- =?utf-8?B?N3NpUHZEWENTdnJRbXE4eXd0clphTW55NXV2WEd1VlZxT1lBb3NyeWY4OG5r?=
- =?utf-8?B?SWdvL1NoVDk1WjJXeE1LWUNNeFd1ZDNsUG5LODVQa0Qvb1drK0lRNWR2bDZh?=
- =?utf-8?B?bG5hRy9kOGpTY0FEKzE3cHFaazFjZFowRjh3ME56d09SSngxNnFONHY5ZEtT?=
- =?utf-8?B?NkVkRUR3QmhNcmlHdEE2TERpZ1pFN3lrSjcrc1F6Qmw4UHdzL2FUcWVWRE4y?=
- =?utf-8?B?RlYxS1gzc2JwLzNNTkNJV0kxalRrbjB0WU1vZm9iczJYVFNnd0xVRXk0ckN5?=
- =?utf-8?B?Vy9rMTdNTXYzcEFVTzdYSzRTa05IZjN5bXNRUW1jdEdRWURlK2xudGpGTEJv?=
- =?utf-8?B?UFJ5djN2TTdUdXREZWNuM3Z5ZlZBdnlDZDdzcUN3RTJTbGtiVXgweEh2VDE5?=
- =?utf-8?B?UFp2K2gyRkZXY3dHUmlXVmtjQzF2S0U4WUpqWE9sNmJ3NjdFem9kMlNibjMy?=
- =?utf-8?B?ejYrUTdVYTlsUkNJekR5Y3hxV1F5dVB4MklmdGM1WDl2WmY0YUpaN2FTMjd1?=
- =?utf-8?B?VUVVVlZxblpDcnRNN1FCeEhjVG1qaWg2cU9odGxrMHJIWFNPSHlmMVQ2bDBD?=
- =?utf-8?B?MmdRcGNwdnR2MUxGSmJoNUNUMHM2TWtPMlQySlU3dnNoRVRWbS80TW8xYW54?=
- =?utf-8?B?c0g3MGJKSEJDRGlEQlF6TGw4ZWxnUTBlVkxwY1B3QlcrNXpLdmZsV3pIcHBY?=
- =?utf-8?B?R3g2aU1XT1hVR0RkbFZqMkFoeVJuSHI5MGdUWGl5eGczTWhCVE5BLy9hL1kr?=
- =?utf-8?B?VUNpekptaTZhbmg5cjRBUDJJYVdTTWZIVWFGdHllaE9vTmtzeno2YlVhbmsx?=
- =?utf-8?B?elltTUoyZVlrYlBrV3VybjduZzlJMTRVQlhEa2daZWdzeGNyRDZpRHVBRHV5?=
- =?utf-8?B?YVN5K0plUGY1dTBDUU9wcUxNNE1yMENFcVlDREk0TTdTVWZtTS9YRHkyc3Q1?=
- =?utf-8?B?RGFBY2tSbjgvOERMemFvMjhGTDhVNGhRTnEwVGJ2d2E2K2sxUUFHem1QTkdz?=
- =?utf-8?B?NXE4SWhubjFCMXVmMjdlYVJwTGowbDNJeU1IdjlzeUhvb0VkT1RnZHd0OVRm?=
- =?utf-8?B?YVRzZjVLQUU0QkJmbzJybUhESEZsRlV1dTZGNWlnWS9aVHZKTTBIdlI2WXBC?=
- =?utf-8?B?L04yejNNTzZMQmM3TWZSYURiSTYvVXBNcXpLN21HczNhYzd4Unh3Z3pMTzgz?=
- =?utf-8?B?aWVyNEN1cjYxOGZjUTNzU2V3N1FWcXFqTTg0SE10S2ZUSlNtN2dTMTVHY05q?=
- =?utf-8?B?c0lBZEw4L2ZyT3pwbk81MFZPSVltZFRWQ1N0aGJTcjVwSGN6U0Z3cWZTNG1J?=
- =?utf-8?B?SjV0b3ZqK0wvb2dkcTNvdlozb0dXcUc4L3Z5aXVYMzUxUXRQTGVYMUltUEFC?=
- =?utf-8?B?bWlXbnlqTi9KRCs3M0VaaGJCZ2hQbTBrbjhmWUl1K0Q0TC82OFk4TFhmNlpR?=
- =?utf-8?B?RTVPS2RLQWNTNmZ4OThTS04xdk5TYnYrTGMxblMwNTV3dFlTa1ltNENlN0di?=
- =?utf-8?B?dUtEeVIva2dOYXZtTUNyTHMycEIvVGtSMXJ0N1lqaUl1SUJnVEVoNUlwNzdu?=
- =?utf-8?B?allIT3hIbzdZcHJxY0VCdEpXbDZvT1pBdU5vRWpXbi9JODRpVVY4M0pDdjlR?=
- =?utf-8?B?WEhIRWVhQVdRZlJDanFYbW03cjMyNkprOEJZdFM2b0w5eC91dURJcTh3NDY4?=
- =?utf-8?B?TU9JZTFLL1ZXcURNRVNOckNOeGxYenRSNFJreVh2cExZS3V3WDV1dXdodjIy?=
- =?utf-8?B?VUZabmZtK05HZWdXVTFFLzczSjkrc3Q1c1Q5eGo4dkdZNVBLRXd5Qkt6MVZN?=
- =?utf-8?B?bzA2Qi9mdk1wYk5VemFIWTFEZUJuOHRQR2IwbWhCZDNEakRRYnlKZ2J2NTBw?=
- =?utf-8?B?a0orRndDSlBNcUx1NW8yZzE0dytEV2phMlQ1dzM0UVB0WDQ0ZjJOMk8zeXh5?=
- =?utf-8?B?U1E9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8dc94c03-dae3-4eb1-7a57-08dcc905133f
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB8718.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Aug 2024 15:04:41.7960
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: AVGx910BdixHeqzSStU0QH3rb3IIaVnJYn/9mh638e6As6wqOAK7m1Vb3qupEZBLhu/b7rKPYRt7YQsuptMS+CVwAuxABneU8koVoaicY0Y=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR11MB7950
-X-OriginatorOrg: intel.com
+References: <20240830032442.226031-1-aford173@gmail.com> <20240830032442.226031-3-aford173@gmail.com>
+ <ZtFfBs4HEShmJKsi@atmark-techno.com>
+In-Reply-To: <ZtFfBs4HEShmJKsi@atmark-techno.com>
+From: Adam Ford <aford173@gmail.com>
+Date: Fri, 30 Aug 2024 10:04:41 -0500
+Message-ID: <CAHCN7x+xy+Y6o++Y5NdZaBJUsHV9Ru_2PwuH6G-2oz1juO=+rQ@mail.gmail.com>
+Subject: Re: [RFC V3 3/3] phy: freescale: fsl-samsung-hdmi: Support dynamic integer
+To: Dominique Martinet <dominique.martinet@atmark-techno.com>
+Cc: linux-phy@lists.infradead.org, linux-imx@nxp.com, festevam@gmail.com, 
+	frieder.schrempf@kontron.de, aford@beaconembedded.com, 
+	Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, 
+	Marco Felsch <m.felsch@pengutronix.de>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, 
+	Lucas Stach <l.stach@pengutronix.de>, linux-kernel@vger.kernel.org, 
+	Makoto Sato <makoto.sato@atmark-techno.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Menglong Dong <menglong8.dong@gmail.com>
-Date: Fri, 30 Aug 2024 09:59:56 +0800
+On Fri, Aug 30, 2024 at 12:56=E2=80=AFAM Dominique Martinet
+<dominique.martinet@atmark-techno.com> wrote:
+>
+> Adam Ford wrote on Thu, Aug 29, 2024 at 10:24:27PM -0500:
+> > There is currently a look-up table for a variety of resolutions.
+> > Since the phy has the ability to dynamically calculate the values
+> > necessary to use the intger divider which should allow more
+> > resolutions without having to update the look-up-table.
+> >
+> > If the lookup table cannot find an exact match, fall back to the
+> > dynamic calculator of the integer divider.
+> >
+> > Previously, the value of P was hard-coded to 1, this required an
+> > update to the phy_pll_cfg table to add in the extra value into the
+> > table, so if the value of P is calculated to be something else
+> > by the PMS calculator, the calculated_phy_pll_cfg structure
+> > can be used instead without having to keep track of which method
+> > was used.
+>
+> Thank you!
+>
+> I've updated to v3 and we must have missed something fiddling with v1
+> but our 31.5MHz-only screen turns on with this!
+>
+> Unfortunately among the other odd devices we support, there's one
+> whose native resolution only supports 83.5MHz, and that doesn't come out
+> right with the integer divider (that function returns 83.2MHz, which is
+> 0.4%off)
+> If we force the round/set rate functions to prefer the calculated value
+> and allow that in imx8mp_hdmi_check_clk_rate (dw_hdmi-imx.c) then it
+> also works, so I don't think we actually need to affine the model...
+> Coming back to what Lucas replied to my initial mail HDMI would also a
+> rate mismatch of =C2=B10.5%, so the integer calculator works for all the
+> frequencies we've currently added manually if we fix the check to allow
+> that as well:
+> 32000000: found 32000000 (100.0% match): p 1 / m 80 / s 12
+> 51200000: found 51200000 (100.0% match): p 1 / m 64 / s 6
+> 65000000: found 64800000 (99.6% match): p 1 / m 54 / s 4
+> 71000000: found 70800000 (99.7% match): p 1 / m 59 / s 4
+> 83500000: found 83200000 (99.6% match): p 1 / m 104 / s 6
+>
+> (only actually tested 51.2 and 83.5 here, we don't have all the hardware
+> available; I'll try to play with normal monitors that support more modes
+> once the patch gets further finalized)
+>
+>
+> So, as far as I'm concerned I'd be happy to move forward with that and
+> will backport this to our tree/remove our kludged values, would "just"
+> need to properly pick the closest value if no exact match instead of
+> always falling back to the table (or just remove the table altogether if
+> we can test a few monitors?)
 
-> Introduce skb drop reasons to the function vxlan_rcv(). Following new
-> vxlan drop reasons are added:
-> 
->   VXLAN_DROP_INVALID_HDR
->   VXLAN_DROP_VNI_NOT_FOUND
-> 
-> And Following core skb drop reason is added:
+I took that step on my local build machine to remove the integer
+divider stuff from the LUT since it can be found automatically.  I
+haven't committed them yet, but I'll likely add it to the series once
+submit it without the RFC.
 
-"the following", lowercase + "the".
+I am also likely to update the rounding function to look at the delta
+between the closest LUT clock value and the closest integer clock
+value and use whichever is closest to the desired value.
 
-> 
->   SKB_DROP_REASON_IP_TUNNEL_ECN
-> 
-> Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
 
-[...]
-
-> @@ -23,6 +25,14 @@ enum vxlan_drop_reason {
->  	 * one pointing to a nexthop
->  	 */
->  	VXLAN_DROP_ENTRY_EXISTS,
-> +	/**
-> +	 * @VXLAN_DROP_INVALID_HDR: the vxlan header is invalid, such as:
-
-Same as before, "VXLAN" in uppercase I'd say.
-
-> +	 * 1) the reserved fields are not zero
-> +	 * 2) the "I" flag is not set
-> +	 */
-> +	VXLAN_DROP_INVALID_HDR,
-> +	/** @VXLAN_DROP_VNI_NOT_FOUND: no vxlan device found for the vni */
-
-^
-
-> +	VXLAN_DROP_VNI_NOT_FOUND,
+>
+> A couple of style nitpicks below
+>
+> > diff --git a/drivers/phy/freescale/phy-fsl-samsung-hdmi.c b/drivers/phy=
+/freescale/phy-fsl-samsung-hdmi.c
+> > index a700a300dc6f..3fab40cde40d 100644
+> > --- a/drivers/phy/freescale/phy-fsl-samsung-hdmi.c
+> > +++ b/drivers/phy/freescale/phy-fsl-samsung-hdmi.c
+> > @@ -16,6 +16,8 @@
+> >
+> >  #define PHY_REG(reg)         (reg * 4)
+> >
+> > +#define REG01_PMS_P_MASK     GENMASK(3, 0)
+> > +#define REG03_PMS_S_MASK     GENMASK(7, 4)
+> >  #define REG12_CK_DIV_MASK    GENMASK(5, 4)
+> >  #define REG13_TG_CODE_LOW_MASK       GENMASK(7, 0)
+> >  #define REG14_TOL_MASK               GENMASK(7, 4)
+> > @@ -29,281 +31,296 @@
+> >  #define REG34_PLL_LOCK               BIT(6)
+> >  #define REG34_PHY_CLK_READY  BIT(5)
+> >
+> > -#define PHY_PLL_DIV_REGS_NUM 6
+> > +#ifndef MHZ
+> > +#define MHZ  (1000UL * 1000UL)
+> > +#endif
+> > +
+> > +#define PHY_PLL_DIV_REGS_NUM 7
+> >
+> >  struct phy_config {
+> >       u32     pixclk;
+> >       u8      pll_div_regs[PHY_PLL_DIV_REGS_NUM];
+> >  };
+> >
+> > +/*
+> > + * The calculated_phy_pll_cfg only handles integer divider for PMS onl=
+y,
+> > + * meaning the last four entries will be fixed, but the first three wi=
+ll
+> > + * be calculated by the PMS calculator
+> > + */
+> > +static struct phy_config calculated_phy_pll_cfg =3D {
+>
+> I'd change cur_cfg from pointer to the struct itself like this (partial
+> patch that probably won't even apply on your branch:)
+> ----
+> diff --git a/drivers/phy/freescale/phy-fsl-samsung-hdmi.c b/drivers/phy/f=
+reescale/phy-fsl-samsung-hdmi.c
+> index 9048cdc760c2..d7124604819c 100644
+> --- a/drivers/phy/freescale/phy-fsl-samsung-hdmi.c
+> +++ b/drivers/phy/freescale/phy-fsl-samsung-hdmi.c
+> @@ -402,7 +402,7 @@ struct fsl_samsung_hdmi_phy {
+>
+>         /* clk provider */
+>         struct clk_hw hw;
+> -       const struct phy_config *cur_cfg;
+> +       struct phy_config cur_cfg;
 >  };
-
-[...]
-
->  	if (!raw_proto) {
-> -		if (!vxlan_set_mac(vxlan, vs, skb, vni))
-> +		reason = vxlan_set_mac(vxlan, vs, skb, vni);
-> +		if (reason)
->  			goto drop;
-
-This piece must go in the previous patch, see my comment there.
-
-[...]
-
-> @@ -1814,8 +1830,9 @@ static int vxlan_rcv(struct sock *sk, struct sk_buff *skb)
->  	return 0;
->  
->  drop:
-> +	reason = reason ?: SKB_DROP_REASON_NOT_SPECIFIED;
-
-Is this possible that @reason will be 0 (NOT_DROPPED_YET) here? At the
-beginning of the function, it's not initialized, then each error path
-sets it to a specific value. In most paths, you check for it being != 0
-as a sign of error, so I doubt it can be 0 here.
-
->  	/* Consume bad packet */
-> -	kfree_skb(skb);
-> +	kfree_skb_reason(skb, reason);
->  	return 0;
+>
+>  static inline struct fsl_samsung_hdmi_phy *
+> @@ -562,9 +562,9 @@ static int phy_clk_set_rate(struct clk_hw *hw,
+>         if (i < 0)
+>                 return -EINVAL;
+>
+> -       phy->cur_cfg =3D &phy_pll_cfg[i];
+> +       phy->cur_cfg =3D phy_pll_cfg[i];
+>
+> -       return fsl_samsung_hdmi_phy_configure(phy, phy->cur_cfg);
+> +       return fsl_samsung_hdmi_phy_configure(phy, &phy->cur_cfg);
 >  }
+>
+>  static const struct clk_ops phy_clk_ops =3D {
+> ----
+>
+> Then you can just set it directly for calculated values.
+> But conceptually it's the same, just one less indirection.
 
-Thanks,
-Olek
+I was thinking about that, but I wasn't sure the impact of
+un-const-ing would have on the LUT.
+
+Using the extra indirection minimizes the impact of changes to the LUT
+and how its handled by the compiler.
+
+adam
+>
+> > @@ -406,6 +424,76 @@ fsl_samsung_hdmi_phy_configure_pll_lock_det(struct=
+ fsl_samsung_hdmi_phy *phy,
+> >              phy->regs + PHY_REG(14));
+> >  }
+> >
+> > +static unsigned long fsl_samsung_hdmi_phy_find_pms(unsigned long fout,=
+ u8 *p, u16 *m, u8 *s)
+> > +{
+> > +     unsigned long best_freq =3D 0;
+> > +     u32 min_delta =3D 0xffffffff;
+> > +     u8 _p, best_p;
+> > +     u16 _m, best_m;
+> > +     u8 _s, best_s;
+> > +
+> > +     /* The ref manual states the values of 'P' rannge from 1 to 11 */
+>
+> typo: range
+>
+> > +     for (_p =3D 1; _p <=3D 11; ++_p) {
+> > +             for (_s =3D 1; _s <=3D 16; ++_s) {
+> > +                     u64 tmp;
+> > +                     u32 delta;
+> > +
+> > +                     /* s must be one or even */
+> > +                     if (_s > 1 && (_s & 0x01) =3D=3D 1)
+> > +                             _s++;
+> > +
+> > +                     /* _s cannot be 14 per the TRM */
+> > +                     if (_s =3D=3D 14)
+> > +                             continue;
+> > +
+> > +                     /*
+> > +                      * TODO: Ref Manual doesn't state the range of _m
+> > +                      * so this should be further refined if possible.
+> > +                      * This range was set based on the original value=
+s
+> > +                      * in the look-up table
+> > +                      */
+> > +                     tmp =3D (u64)fout * (_p * _s);
+> > +                     do_div(tmp, 24 * MHZ);
+> > +                     _m =3D tmp;
+> > +                     if (_m < 0x30 || _m > 0x7b)
+> > +                             continue;
+> > +
+> > +                     /*
+> > +                      * Rev 2 of the Ref Manual states the
+> > +                      * VCO can range between 750MHz and
+> > +                      * 3GHz.  The VCO is assumed to be _m x
+> > +                      * the reference frequency of 24MHz divided
+> > +                      * by the prescaler, _p
+> > +                      */
+> > +                     tmp =3D (u64)_m * 24 * MHZ;
+> > +                     do_div(tmp, _p);
+> > +                     if (tmp < 750 * MHZ ||
+> > +                         tmp > 3000 * MHZ)
+> > +                             continue;
+> > +
+> > +                     tmp =3D (u64)_m * 24 * MHZ;
+> > +                     do_div(tmp, _p * _s);
+> > +
+> > +                     delta =3D abs(fout - tmp);
+> > +                     if (delta < min_delta) {
+> > +                             best_p =3D _p;
+> > +                             best_s =3D _s;
+> > +                             best_m =3D _m;
+> > +                             min_delta =3D delta;
+> > +                             best_freq =3D tmp;
+> > +                     }
+> > +             }
+> > +     }
+> > +
+> > +     if (best_freq) {
+> > +             *p =3D best_p;
+> > +             *m =3D best_m;
+> > +             *s =3D best_s;
+> > +     }
+> > +
+> > +     return best_freq;
+> > +}
+> > +
+> >  static int fsl_samsung_hdmi_phy_configure(struct fsl_samsung_hdmi_phy =
+*phy,
+> >                                         const struct phy_config *cfg)
+> >  {
+> > @@ -419,13 +507,13 @@ static int fsl_samsung_hdmi_phy_configure(struct =
+fsl_samsung_hdmi_phy *phy,
+> >       for (i =3D 0; i < ARRAY_SIZE(common_phy_cfg); i++)
+> >               writeb(common_phy_cfg[i].val, phy->regs + common_phy_cfg[=
+i].reg);
+> >
+> > -     /* set individual PLL registers PHY_REG2 ... PHY_REG7 */
+> > +     /* set individual PLL registers PHY_REG1 ... PHY_REG7 */
+> >       for (i =3D 0; i < PHY_PLL_DIV_REGS_NUM; i++)
+> > -             writeb(cfg->pll_div_regs[i], phy->regs + PHY_REG(2) + i *=
+ 4);
+> > +             writeb(cfg->pll_div_regs[i], phy->regs + PHY_REG(1) + i *=
+ 4);
+> >
+> > -     /* High nibble of pll_div_regs[1] contains S which also gets writ=
+ten to REG21 */
+> > +     /* High nibble of PHY_REG3 and low nibble of PHY_REG21 both conta=
+in 'S' */
+> >       writeb(REG21_SEL_TX_CK_INV | FIELD_PREP(REG21_PMS_S_MASK,
+> > -            cfg->pll_div_regs[1] >> 4), phy->regs + PHY_REG(21));
+> > +            cfg->pll_div_regs[2] >> 4), phy->regs + PHY_REG(21));
+> >
+> >       fsl_samsung_hdmi_phy_configure_pll_lock_det(phy, cfg);
+> >
+> > @@ -453,29 +541,70 @@ static unsigned long phy_clk_recalc_rate(struct c=
+lk_hw *hw,
+> >  static long phy_clk_round_rate(struct clk_hw *hw,
+> >                              unsigned long rate, unsigned long *parent_=
+rate)
+> >  {
+> > +     u32 int_div_clk;
+> >       int i;
+> > +     u16 m;
+> > +     u8 p, s;
+> > +
+> > +     /* If the clock is out of range return error instead of searching=
+ */
+> > +     if (rate > 297000000 || rate < 22250000)
+> > +             return -EINVAL;
+> >
+> > +     /* Check the look-up table */
+> >       for (i =3D ARRAY_SIZE(phy_pll_cfg) - 1; i >=3D 0; i--)
+> >               if (phy_pll_cfg[i].pixclk <=3D rate)
+> > -                     return phy_pll_cfg[i].pixclk;
+> > +                     break;
+> > +     /* If the rate is an exact match, return it now */
+> > +     if (rate =3D=3D phy_pll_cfg[i].pixclk)
+> > +             return phy_pll_cfg[i].pixclk;
+> > +
+> > +     /*
+> > +      * The math on the lookup table shows the PMS math yields a
+> > +      * frequency 5 x pixclk.
+> > +      * When we check the integer divider against the desired rate,
+> > +      * multiply the rate x 5 and then divide the outcome by 5.
+> > +      */
+> > +     int_div_clk =3D fsl_samsung_hdmi_phy_find_pms(rate * 5, &p, &m, &=
+s) / 5;
+>
+> I'd move that comment and both multiplication and division inside
+> fsl_samsung_hdmi_phy_find_pms, since it's a property of the computation
+> (not having the comment made me ask last time, with the comment it's
+> fine -- thanks for adding these comments, very helpful.)
+>
+> --
+> Dominique
+>
+>
 
