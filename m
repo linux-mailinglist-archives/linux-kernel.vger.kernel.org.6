@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-309284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AF5396687E
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 19:58:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8544496687F
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 19:58:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E7FE1C23AFD
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 17:58:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 437A1285364
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 17:58:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3602C1BC07B;
-	Fri, 30 Aug 2024 17:57:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCE721BBBD1;
+	Fri, 30 Aug 2024 17:58:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DsbkSudJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bu0TnJwK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 752F81BBBF7;
-	Fri, 30 Aug 2024 17:57:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1878214F135;
+	Fri, 30 Aug 2024 17:58:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725040675; cv=none; b=bj8cym7S2gDn4tYCXtAI5omjPHO+TUXHx+z3jK+HMIeNGrSfcQhu1pAGJSGpNbor66LXd/FgV7PZoJj0T2JPXXrf1Pymb4t/9QbD6Q7cVcW6F5UM4HqMEP/Yai0hPcBqOeKGNIQQEnNhD+DrZTgAtHdMVC/Xv+K1XW+0T0xb8FQ=
+	t=1725040733; cv=none; b=cZu1xrvcBS/eyY8Bba8DyOsAiO6EBT+dYhtXAh686VA2gcEdsb16ap3p/hmcF1juug/bsEDZHUqrM77GVJpj+OOh+WeL6LRPkk9eLECvi7cdzzbLYcij/jGfMSp9U8ciZrqctY5glzK/07mqg56n3vNBFDeQ0hFh1S7ky4eAwwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725040675; c=relaxed/simple;
-	bh=N4wzFdRzDHIbVEm7OtN48I2pX8fJILbCYFl+cACPP+w=;
+	s=arc-20240116; t=1725040733; c=relaxed/simple;
+	bh=82sBKM9Hz4XlGAKWcB7uoD2JtJLEt7xjq+RCXb8zAiY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cXFWZgjRjwQ/hg/Rl93tin4ZIVA4ILy7i/CtbX8DJMUscA7WijU9wcN/MBXaTeHNzFK6KLzd86ouVbSnx/dgPqgDkOJxmBYLAXXUlsPZNN/dH0cEsPe5VgKLSy8y6P8qvzsrEsIRzmZJaJxYk9Xa5QFZW71taUcJmhdbH/sp+4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DsbkSudJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8522AC4CEC4;
-	Fri, 30 Aug 2024 17:57:51 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=N1LX+sjJTk748aPkkhlfA0R/eWQc4iTqBVYiAac/CViF+Y5knoIajOrM18J6TdFh9O9I8dWReKlh+dD3kzlpgSpLEHNQjNqcZ2rl7/ZUKh+AWcQPJF1p2yCa1YHkObtb68ZCVc+0YNLabWz2d3QKQZmCgfICem5VOPiutwimpd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bu0TnJwK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D20DC4CEC2;
+	Fri, 30 Aug 2024 17:58:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725040675;
-	bh=N4wzFdRzDHIbVEm7OtN48I2pX8fJILbCYFl+cACPP+w=;
+	s=k20201202; t=1725040732;
+	bh=82sBKM9Hz4XlGAKWcB7uoD2JtJLEt7xjq+RCXb8zAiY=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=DsbkSudJrxcV8w82uplQdFabGbkRE5eupJ5ttk+gcBoyeXXfvOKz0AuQeKTMDEM5B
-	 kKTmooVhlrtUuHLVDTuT0L2gwt2q+gypL8iO93QzCETxkF+7PSFK5A6syQKUj8PmxX
-	 /6QmpOEdTww1sYR5OjpnMcSDvMtASYV9ElvcFurXeI0qwvKz1MUOhEhGrFx2fZX8YB
-	 n+5y3k/+04AWdc9EYrO17ij5d7/ij5NHYH9EmeX1F/pkXS1E0cq3qt88J4QDp3T0M8
-	 H6bXmmI3xrIIhSbCIXc8fDRfHI92d9DMvF7u5Rt/jK2UJM+HEgjMALWAIznrmgmV8z
-	 r9IMZ2oXrQ+0A==
-Message-ID: <71c83616-ea3d-48a4-a722-2fca696a96d1@kernel.org>
-Date: Fri, 30 Aug 2024 19:57:49 +0200
+	b=bu0TnJwK7rFdYSI2qzyHXrtdDeNds/0LE8KTw+ah8teUZwBilbYY3F1GtSFxN6fJp
+	 j6bfJR6fvOEk7mzKsg6GELQNnUqK0pZJe4VfPVKtV+BQZZQc+sUS39M5XIIq0Jbkvb
+	 jNNj599knBqF9TP22vwhB5ld6nVK3EAf8cE4HkvcaSr6n/rPRLPNR93VBHIGjNU1GP
+	 Wg4MrQPVVDGvdTYVSN0/hoCq3GxSzocJZY5TxQPbS7T60yocUcApXTbjGH95acyKwk
+	 V+v/X9EYjiNkQ7eh9KcM5eG55kISEcFvQ0A2uZJNiAVQDkUAlXbKj1Ox7Y5NxFoJ8H
+	 McaxD4NsiguNg==
+Message-ID: <95ae31c7-3dcf-49a9-9ba7-8538ae43134e@kernel.org>
+Date: Fri, 30 Aug 2024 19:58:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,12 +49,14 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] pinctrl: madera: Simplify with dev_err_probe()
-To: Yan Zhen <yanzhen@vivo.com>, ckeepax@opensource.cirrus.com,
- rf@opensource.cirrus.com, linus.walleij@linaro.org
-Cc: linux-sound@vger.kernel.org, patches@opensource.cirrus.com,
- linux-kernel@vger.kernel.org, opensorce.kernel@vivo.com
-References: <20240830084309.395129-1-yanzhen@vivo.com>
+Subject: Re: [PATCH v2] irqchip: Simplify with dev_err_probe()
+To: Charles Keepax <ckeepax@opensource.cirrus.com>,
+ Yan Zhen <yanzhen@vivo.com>
+Cc: rf@opensource.cirrus.com, tglx@linutronix.de,
+ linux-sound@vger.kernel.org, patches@opensource.cirrus.com,
+ linux-kernel@vger.kernel.org, opensource.kernel@vivo.com
+References: <20240830070504.289450-1-yanzhen@vivo.com>
+ <ZtGAJ0JnVAUMrG6j@opensource.cirrus.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -100,36 +102,30 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240830084309.395129-1-yanzhen@vivo.com>
+In-Reply-To: <ZtGAJ0JnVAUMrG6j@opensource.cirrus.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 30/08/2024 10:43, Yan Zhen wrote:
+On 30/08/2024 10:17, Charles Keepax wrote:
+> On Fri, Aug 30, 2024 at 03:05:04PM +0800, Yan Zhen wrote:
+>> Switch to use dev_err_probe() to simplify the error path and
+>> unify a message template.
+>>
+>> Using this helper is totally fine even if err is known to never
+>> be -EPROBE_DEFER.
+>>
+>> The benefit compared to a normal dev_err() is the standardized format
+>> of the error code, it being emitted symbolically and the fact that
+>> the error code is returned which allows more compact error paths. 
+>>
+>> Signed-off-by: Yan Zhen <yanzhen@vivo.com>
+>> ---
 > 
-> diff --git a/drivers/pinctrl/cirrus/pinctrl-madera-core.c b/drivers/pinctrl/cirrus/pinctrl-madera-core.c
-> index 898b197c3738..2932d7aba725 100644
-> --- a/drivers/pinctrl/cirrus/pinctrl-madera-core.c
-> +++ b/drivers/pinctrl/cirrus/pinctrl-madera-core.c
-> @@ -1063,12 +1063,9 @@ static int madera_pin_probe(struct platform_device *pdev)
->  	if (pdata->gpio_configs) {
->  		ret = pinctrl_register_mappings(pdata->gpio_configs,
->  						pdata->n_gpio_configs);
-> -		if (ret) {
-> -			dev_err(priv->dev,
-> -				"Failed to register pdata mappings (%d)\n",
-> -				ret);
-> -			return ret;
-> -		}
-> +		if (ret)
-> +			return dev_err_probe(priv->dev, ret,
-> +						"Failed to register pdata mappings\n");
+> Subject line probably should be irqchip/madera: but otherwise:
+> 
+> Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 
-Another example, one of many from @vivo.com, where you touch one line
-and leave everything else not modified.
-
-Are you going to send 5 different patches - one per each line? You
-generate tremendous amount of work for reviewers, just to ramp up your
-stats in company.
+No, this must stop. Do not change one line per patch.
 
 Best regards,
 Krzysztof
