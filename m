@@ -1,96 +1,117 @@
-Return-Path: <linux-kernel+bounces-309198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E04DC966744
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 18:46:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E99D6966746
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 18:47:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DAD92872D8
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 16:46:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FC701F25AF1
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 16:47:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58C321B86E6;
-	Fri, 30 Aug 2024 16:46:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EC151B81CF;
+	Fri, 30 Aug 2024 16:47:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LBwUpI+O"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tJH3CHZ5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 972941B3B10;
-	Fri, 30 Aug 2024 16:46:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A4A1135417;
+	Fri, 30 Aug 2024 16:47:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725036393; cv=none; b=q7eUT7S5VEq9TdU72p/JAgq8jrfTPYUXpoaMJUJ/9LzJxoIPgJD29KrLoNUJBjWL0rY8UM2QXfKehtW9+2PTtyR8Xw8OFczHYdWUAiXNkUQ1WOakJJ2F2i5eow3Xq+yXAJJ3Xhng52um8Y3DRATDLrSaa/GvsKhkr8yhvgdGcB0=
+	t=1725036431; cv=none; b=TtQJhMCXIUbAbfE45dy53vKnAC9/2N5SJ/TCchN1bNwCIu1ZPBOcfpUz2OyyP0nycV3ZmTWdUWDuAD8C096YlZIMpaQ5+amuZiT2DYqGPf5YB6ASictz7Lyxp4hLhuuZhFb7HbIIfwgn+GBAJuZd2fGsdnFmqmmLTtxsuFE8oOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725036393; c=relaxed/simple;
-	bh=j2pAcpMVTJjKxG4sxxU8zeRMM4mJvAZnC2+vSeYq+sg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=TEs4y2GRfafclvL2Cuu33k+YYmAYqHwQ5eD/IL8f+EqtKmQFbQJSYIt/xhsGOu2EK+TpZzCF/h9/JdPM1Ws+99ZuNzN4NnSu9RvF1FNEkVU//BDVE1qvHDgfjHE7/ts6jGbfa/rbSHJnn+R1K8fkBcK7y8dEnKLsBlk8+aqvVwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LBwUpI+O; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AB70C4CEC2;
-	Fri, 30 Aug 2024 16:46:32 +0000 (UTC)
+	s=arc-20240116; t=1725036431; c=relaxed/simple;
+	bh=SQ9lisFf3o2BYvsuSUZxqA756vneQkERg1IHs9y7+2U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q25TmDs9nnk3XnXOZ26BG9O40rOx/2qrB/7kMCoTTracjAMVpI51Betp4IzIfcXdzuBvPmNXNO21OMzftTd71q/ueTGn+4hARR3nMWANkqIWO9SluU42tkouIOvEuxdtniGeC5hLhrnGWTByOnfOEZtP0gocBbfySaMxpyRvbGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tJH3CHZ5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6259CC4CEC2;
+	Fri, 30 Aug 2024 16:47:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725036393;
-	bh=j2pAcpMVTJjKxG4sxxU8zeRMM4mJvAZnC2+vSeYq+sg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=LBwUpI+O1L1OfbbLmMYpzgFJ+wD2pWOycAcUrqQXdvE3lGZHKbIWFPWYaCdbpoaNC
-	 Y8pqd49yK8HFYmgPXzRJX1GKYjK6tuQGYHHmlShpp8S/alsXA/SEuqd/aZYGtb/gbY
-	 zU0RZiSpBzOEc1yuhe+v2tNhsXlhJan2h35z2jC39dncTaPOK/TNfTZnlh/b9dPc8i
-	 Keo5lSw11Zay25Xb56E31PRqO/OwQNpupW/4DmzL4nTZrHwLs/AFZ4c6lMDW7U13Mz
-	 S+WFxL495tczRaPAHno19S1ef5Of+WY1nuYoxs4ejw1QH2anu3KqBhl4+obagihyYk
-	 IFzuMPCukrbpA==
-From: Mark Brown <broonie@kernel.org>
-To: mika.westerberg@linux.intel.com, Charles Han <hanchunchao@inspur.com>
-Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240830074106.8744-1-hanchunchao@inspur.com>
-References: <20240830074106.8744-1-hanchunchao@inspur.com>
-Subject: Re: [PATCH] spi: intel: Add check devm_kasprintf() returned value
-Message-Id: <172503639203.177300.15277718564430681896.b4-ty@kernel.org>
-Date: Fri, 30 Aug 2024 17:46:32 +0100
+	s=k20201202; t=1725036431;
+	bh=SQ9lisFf3o2BYvsuSUZxqA756vneQkERg1IHs9y7+2U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tJH3CHZ5gvbxgDXWGNcfzdnvIvn8SjQVjbZCguHKlh7jlJEWllIn2YJ0z6MkikHoO
+	 1LCaCYw4Us647LL95BmKualhQ9e7L7zfD1MIijQegb2T8R70/Dvz5pl5DJ6HwHivmn
+	 saeq9Hsaj9k5f0cvorRJxsJRaTQXqA2ByduO/L0Kt3SS06DyOM7H5t4o7kDepaFsK0
+	 fQghHCtIcO9hnUjmFZNI907G0Mk+qonm5jg7RnP9FsKFdY3gRoOeO8cTjdKih/+OHq
+	 xFLbRU/9s8Arpi5e7UVLS+JKydUnvZNVp9EV50SrgT1TNJ+pbl44qiJXcjqLp1riBn
+	 Z+021KZnlApcw==
+Date: Fri, 30 Aug 2024 17:47:06 +0100
+From: Simon Horman <horms@kernel.org>
+To: Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: clang-built-linux <llvm@lists.linux.dev>,
+	Netdev <netdev@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	lkft-triage@lists.linaro.org,
+	Linux Regressions <regressions@lists.linux.dev>,
+	Anders Roxell <anders.roxell@linaro.org>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Florian Westphal <fw@strlen.de>,
+	Steffen Klassert <steffen.klassert@secunet.com>
+Subject: Re: net/xfrm/xfrm_policy.c:1286:8: error: variable 'dir' is
+ uninitialized when used here [-Werror,-Wuninitialized]
+Message-ID: <20240830164706.GW1368797@kernel.org>
+References: <CA+G9fYtemFfuhc7=eNyP3TezM9Euc8sFtHe4GDR4Z9XdHzXSJA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-37811
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+G9fYtemFfuhc7=eNyP3TezM9Euc8sFtHe4GDR4Z9XdHzXSJA@mail.gmail.com>
 
-On Fri, 30 Aug 2024 15:41:06 +0800, Charles Han wrote:
-> intel_spi_populate_chip() use devm_kasprintf() to set pdata->name.
-> This can return a NULL pointer on failure but this returned value
-> is not checked.
++ Florian, Steffen
+
+On Fri, Aug 30, 2024 at 12:15:10PM +0530, Naresh Kamboju wrote:
+> The x86_64 defconfig builds failed on today's Linux next-20240829
+> due to following build warnings / errors.
 > 
+> Regressions:
+> * i386, build
+>   - clang-18-defconfig
+>   - clang-nightly-defconfig
 > 
+> * x86_64, build
+>   - clang-18-lkftconfig
+>   - clang-18-lkftconfig-compat
+>   - clang-18-lkftconfig-kcsan
+>   - clang-18-lkftconfig-no-kselftest-frag
+>   - clang-18-x86_64_defconfig
+>   - clang-nightly-lkftconfig
+>   - clang-nightly-lkftconfig-kselftest
+>   - clang-nightly-x86_64_defconfig
+>   - rustclang-nightly-lkftconfig-kselftest
+> 
+> first seen on next-20240829.
+>   Good: next-20240828
+>   BAD:  next-20240829
+> 
+> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> 
+> build log:
+> --------
+> net/xfrm/xfrm_policy.c:1286:8: error: variable 'dir' is uninitialized
+> when used here [-Werror,-Wuninitialized]
+>  1286 |                 if ((dir & XFRM_POLICY_MASK) == XFRM_POLICY_OUT) {
+>       |                      ^~~
+> net/xfrm/xfrm_policy.c:1257:9: note: initialize the variable 'dir' to
+> silence this warning
+>  1257 |         int dir;
+>       |                ^
+>       |                 = 0
+> 1 error generated.
 
-Applied to
+I believe that is due to
+commit 08c2182cf0b4 ("xfrm: policy: use recently added helper in more places")
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
-
-Thanks!
-
-[1/1] spi: intel: Add check devm_kasprintf() returned value
-      commit: 2920294686ec23211637998f3ec386dfd3d784a6
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+I will work on a fix to initialise dir in the loop where it is used.
 
