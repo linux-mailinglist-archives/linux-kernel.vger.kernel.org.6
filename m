@@ -1,157 +1,337 @@
-Return-Path: <linux-kernel+bounces-308379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1365F965C34
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:58:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 16EEC965C37
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:59:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF3C12840EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 08:58:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3817283727
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 08:59:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A202F16EB4C;
-	Fri, 30 Aug 2024 08:58:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0714E16DEB5;
+	Fri, 30 Aug 2024 08:59:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="M2gIsqHR"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12olkn2044.outbound.protection.outlook.com [40.92.23.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eZRkFZrj"
+Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4206216DC3C
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 08:58:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.23.44
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725008328; cv=fail; b=KHY6VfAUQoLePxsqTyXwgf0mrKRxaC8c21eEkLrGVAwW+g1CPdyxUwdZd6YkxERFXUIGRTP+vuNvelNOcFgbrZGmJGMVtEd/EKUX2tVDH+wFZiVcjJMEanVmVNaB2cYlQccUMlZPMaE/lkf6THZUPJzABPzXUv95FDvYaP6w5xI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725008328; c=relaxed/simple;
-	bh=Gzd8T9wtih6Y/lSp8zYbk91EumqLd24Oe1Yqkifoeo4=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=OU/uYJS6mhWoZ10TsXOHImQw+nU9gvUlA68kE5BQNs3QC6HvK9YsdU8TCKSsgtgQZ1Ud1+eg/9dYSiVdQsbn/pL+5mGNKNnJ8NfIvgwZiHTHtVYyW/nrod5gJs37C7TReAjwOqMzPjSCLQbRX71EvpN1d8w+V9uRplMamNCg0yc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=M2gIsqHR; arc=fail smtp.client-ip=40.92.23.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=GDcO2ailjoUgvllx57i4RLPp4G+iyxDC9cwifWw4uP4y27CTWGXIkCugLUfVxTf93OfotqeXzs6J53s3UnGqUURVPnDtcaGGtUddLR4Nqt44vzYN9uqztt378z+STgMUE3UifgxI7rz2agodQpCW17YUZFj4imkvo5JaCj3g3KP7TBwJh/e26nshnUL8pje5Gp/mKtWuK+1thbdxQVpW1RTdVG/DyoaPq6f1Qq8CEgC/1fAWZJI0D79YNWDqOy7lzAVjeD8c9MlOg7v1ftRrLjjB3fFim1CKc35/KHTDEMQC1FbOKhLVSZehSn383bFq+XnCYnVapMYRd1dIIg3SOA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=EY7cJiGNlW/HoTLS65mW/8yDGu5LMyCWCnbfrkSvfbc=;
- b=bYg1Bnf9EP3ArCZFbiLDFm7rzqLaabRS9ya2TW2S97NUVogtLgIwxU8lpdHEdfoAZPXuDDZXz1I6K5qUQa1OVG9mGWJId2EaX5NdMIascpMiD7raDGrB2GwpmpJpKS1x5RcjL4eYmRFTJ45t/sBxI2UeogOdeTe9F5DntRspceYDi9JVLb+/fqx0pzVoOC71s/JYU8Xdyk84i6ROKdpiZMMCK8XLGRlbwSncV+pxDgNByiL2E4wy11gN+X8Pm/gXH8UruPcH4VdMEmiX5ubB83uE6vSC3t87rfDEoQGn88kcjHYxlXiauN4/tDeIvtshPCbzzCqOpbQgZB7+B585Lw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=EY7cJiGNlW/HoTLS65mW/8yDGu5LMyCWCnbfrkSvfbc=;
- b=M2gIsqHRD2udKS1NfTFL4uMKmMmG2w9ySVFvyAoyGVAhn7m4UdBtoLG3jRFRwLDZLIKXavEIp/3t45C2bfEWuvNDpSSKpQDS/81e8Nvd4I7iRLF5cgN2Z+SNbmC1WRdt4IL1LTGJJ+dNT4m4KDCAB5O7EEYlEP1bhOlWThVy86khiElIPh0xGCpB3OdeJEFWMgn13jA34jAhoBOMR8PcMwawbC6M1YKeaMfMAujsD6Txt4gMkUo0Edq8JVJ/LyuPkLJrxSIJdNonq5NiNIk0aKmcnzF8t2xs2B/q4x0wjEqVajsUGUnz+4GVAmi8aTnZFwn/Rkj5RrjgjhWigiAOaQ==
-Received: from IA1PR20MB4953.namprd20.prod.outlook.com (2603:10b6:208:3af::19)
- by CH3PR20MB7520.namprd20.prod.outlook.com (2603:10b6:610:1e5::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.20; Fri, 30 Aug
- 2024 08:58:45 +0000
-Received: from IA1PR20MB4953.namprd20.prod.outlook.com
- ([fe80::ab0b:c0d3:1f91:d149]) by IA1PR20MB4953.namprd20.prod.outlook.com
- ([fe80::ab0b:c0d3:1f91:d149%4]) with mapi id 15.20.7897.021; Fri, 30 Aug 2024
- 08:58:45 +0000
-From: Inochi Amaoto <inochiama@outlook.com>
-To: Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Guo Ren <guoren@kernel.org>,
-	Inochi Amaoto <inochiama@outlook.com>,
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Sunil V L <sunilvl@ventanamicro.com>,
-	Anup Patel <apatel@ventanamicro.com>,
-	Hal Feng <hal.feng@starfivetech.com>
-Cc: linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] riscv: defconfig: Enable pinctrl support for CV18XX Series SoC
-Date: Fri, 30 Aug 2024 16:57:38 +0800
-Message-ID:
- <IA1PR20MB4953FF3C0CA0B51962DBE892BB972@IA1PR20MB4953.namprd20.prod.outlook.com>
-X-Mailer: git-send-email 2.46.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-TMN: [ZehtY5qKqkdrKYQa2pZ9s9weFCU+z9o2UzN29Anjw9s=]
-X-ClientProxiedBy: TYCP286CA0292.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:3c8::17) To IA1PR20MB4953.namprd20.prod.outlook.com
- (2603:10b6:208:3af::19)
-X-Microsoft-Original-Message-ID:
- <20240830085744.888525-1-inochiama@outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 620D416DC2E
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 08:59:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.180
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725008353; cv=none; b=WVGkpA5dgUCrX2WIrUMB6r/Rdq+B/YOJIX9mY8EV+qGeVP7AdrOC2zg1CtHWIyt9ANPVnnh/H62C65ux4eF7DlRHZtkdOyXLIaT8plEUzPOudbEs/itgVH2tPtPkZeYrmtbPcgm/O2LcZ+kT4Q4xcF/vuGOETN8sca1cDmvQBWU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725008353; c=relaxed/simple;
+	bh=onA0Rhh+UzLqUP5jEJTgKgOSRj6UGJ9Pt5npI0Xahjo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GurdfreeRVkkd7ANIWp2J7kG6DWL3gezJES5G755tn9pJJTgj6V2o1as7O4XYpzLodmFolBOfuqDBoqLi6Mj28ZHuY763svkn5dDKXzTsyat7/Ho27jh7QZU9IJGhBHMKfwbNATywiZZZxf3VacJBbZv40cjyzE904ukPE7Y/jA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eZRkFZrj; arc=none smtp.client-ip=209.85.167.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oi1-f180.google.com with SMTP id 5614622812f47-3df0dc53ec1so708637b6e.1
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 01:59:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725008350; x=1725613150; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=71qAjwrIo/FbmBz5Myk4n9y6EiwPiLE9Dng5NwJZ7Bo=;
+        b=eZRkFZrjc0iKE9K16Fib4cMqp7Z/uq7YEjfEO5nRqCMWTWbMQw5ylQFSHNQrGklfWM
+         B2kKewDJhItywraG/5kjtqYyllONRyMGtBX0i0XGTrT3MqMz+NfPVkJF0UCdjXNLbvLT
+         9uCs6sR+t7NKZzcsUAitcgKMkpybg6il9tEvOHFd0Kw/PMEjEL4cOr3ZzIL6QDaDxVC0
+         tHer7UjbzbuNQ4QXz7rQ2q7JD2ZqXdoHOTsBTrxDKZE+1AlLmJphFXXqQ5sn+FR82fqS
+         I67RdvfsfnZVTRxKDle9yOIlW750vJHz7zhraKTAl+s6eJ7FNsL1FT8bGd2PYCRn+iK6
+         BEZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725008350; x=1725613150;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=71qAjwrIo/FbmBz5Myk4n9y6EiwPiLE9Dng5NwJZ7Bo=;
+        b=PzWziIVElxPN6eFOt/bnoNlfVH+KkRliXwVHiKiIHMRbAOm9efKTS9ZR4L+lbjQqUT
+         inVAMBRJe1cvKVxYtLbXXZiH4PrnIZWaSUODjvRQtAmShlcLKmC0x0dQnr6FM83uviiG
+         Ja3qyS7WA6F0P+AMzUp1JUhuEgAJ+4NHavDe9Wy9Ws287kQxqGdGVenHJDPZBi5OBc5f
+         liL/QE7NW4UzGG8alW5NU8SWlNnUEcKf+70MHpZWl5GUlvmMvX+n8v/Wn5Ioq0IJPVuI
+         tMH6QqQ3EIxAjqFJ1zaC3kgZy+TDvso7uEtX2/bb6eIldrP6PHP4WAppnrJYLgNypWyS
+         MXiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVDTIW7xloTV7l6MC4J2/AuICZc8YHaljFHiEkoDUHk9VHaUwnFkOgC/Uc88n2RU5efmiBLgG+Z6Dmd9Rs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzx+08ndypd2+cHcnjJ0CcfRuDP7kvX9OI99A6c26x6WIqgKRbW
+	+nj1cy8qeoFT9vJGOA+bjfxjgXYrJANxWwmvmYlm4isX5ElRQoRLYRPMHZfukQ==
+X-Google-Smtp-Source: AGHT+IGJE/0+ObI0CkZ+IOdkM1nwpEnemU7pt2j1Bs59c55j95S6Wc2rMVcunwSLXz0CAPYJaOw1vg==
+X-Received: by 2002:a05:6808:1242:b0:3d9:384a:7e1a with SMTP id 5614622812f47-3df05c4e59amr5026350b6e.1.1725008350377;
+        Fri, 30 Aug 2024 01:59:10 -0700 (PDT)
+Received: from thinkpad ([117.193.213.95])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7d22e9d721dsm2512363a12.87.2024.08.30.01.59.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Aug 2024 01:59:10 -0700 (PDT)
+Date: Fri, 30 Aug 2024 14:29:01 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Sricharan R <quic_srichara@quicinc.com>
+Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	vkoul@kernel.org, kishon@kernel.org, andersson@kernel.org,
+	konradybcio@kernel.org, p.zabel@pengutronix.de,
+	dmitry.baryshkov@linaro.org, quic_nsekar@quicinc.com,
+	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-phy@lists.infradead.org, robimarko@gmail.com
+Subject: Re: [PATCH V2 5/6] arm64: dts: qcom: ipq5018: Add PCIe related nodes
+Message-ID: <20240830085901.oeiuuijlvq2ydho2@thinkpad>
+References: <20240827045757.1101194-1-quic_srichara@quicinc.com>
+ <20240827045757.1101194-6-quic_srichara@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA1PR20MB4953:EE_|CH3PR20MB7520:EE_
-X-MS-Office365-Filtering-Correlation-Id: b0eda9b7-69e8-465c-4d63-08dcc8d1f42d
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|8060799006|19110799003|461199028|5072599009|15080799006|440099028|3412199025|1710799026;
-X-Microsoft-Antispam-Message-Info:
-	AmIkoMwlrL/asu3nsvzaSifmjCwC7f5ri9MnoLRMd6MRvFRDurhqnVgdEIWRxZ0rTpvYsul1dsKM1gaAseCF0L029IWADo+m+aM7LbGBu8vZQBappKTHV0df5sHFlF68HYNhu2OnL24s9TDsu+HsdfwwRoX7B181m5z52HQn3epZebaDQ7PI6KpNes8H/aCwHk3GiEHNBw5FZNkWGIq6V3tzvTy3n09LXoxwrsTJTNwAgcS38s3TC1v8asI44dZjI8azGxuXCVwKtdaD2kDFJwp6A7wT0S5/KiBcqbrvbL3qYJjnvDgBYAYzv0dw9snP9PFpnS/IhSbtwuWdn78w4sgi3+CiJG6oZT6cCEHtr4CW1VV+LPXOUh3I+gFVP1hyptHPpk+U+8gGXIuXRdz6CkipRWwL558yvel6iwxwtEUh1KI9txYpXPMEPIoQj0RLVTYpxJojxZOjd2yvCJZ4DLqfGJ2QkXuq5SNScbzB/pF7glMRjRi6UAKv4jKwl+PSF0a4LV80Tussc6dKbBuI8bWCI28DUrocpXiL8B9+fceGY3zAlV90gpTCqP80AvAClWhtrns48eW7/W8odfE6fRfYNrG9z76ZV4vnXoWZk9djM+dtFcjRS8o8/IfGRuvilebHW4CDNt6+J1YEilHftR4zd/yeGApv0WCOvHudGZzf8+iZj2OP7rh9B+708hnT1R4zJ2IGmHEQohUH4l4ZPX+2V+n/x3hGL9xl7qzc5Ao=
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?vFbz2wSJVOxv9PIPjfAFpzx22NNpTkzTJRNbFVvqs4bhvI0+9iHkWJmicn4U?=
- =?us-ascii?Q?U2Ol0wSyWx6vEsKq4fkxXKFcx+Wva4wQiMoRWr5mKg27zOpnRL1OZJyVm+/2?=
- =?us-ascii?Q?LxH6sLXuhS39wUG4JGZuML+gkn3ASkVvSGqKR+dcXInRGShqqS3pyt6yLjRm?=
- =?us-ascii?Q?sBFmfTgSJlurWD8o9+in44X6L5JT7G+PIwzTyx/WBdT2aoUtnbkBvZMrK5aO?=
- =?us-ascii?Q?wpLANGvSztlUrtTyKerZKDCYo97XQLoMvRpTlj6CwPVnEglb6hC/YBARzIEF?=
- =?us-ascii?Q?hJtJx8nnVMKtC3d9s0fo2kNX1Y9SdzXaz/kM2O+49gk1X12oWIgeTJxnSdPv?=
- =?us-ascii?Q?rX2QJcSg6g9d/G8UsdK6i8/LO9oBVJfZgjJCFemp9+yPnOT65XKqI+gvpOZo?=
- =?us-ascii?Q?xeMENJez5q1xfnxnLFWCt3hK8AXBhm1Xt50uRSfWsSMrdg/pBu0LfbQFvG4n?=
- =?us-ascii?Q?JiyFi1RlbONQyUxQhEL5jkIUDjelfYe/p76ElDdzzJxYbV0yYn+SZvCnKnOP?=
- =?us-ascii?Q?37fM7yhd2hy0N0qDzV6EKPCZREE/wE0kxhLLp5tTOmVE5/VhR8e2fmyn9hIF?=
- =?us-ascii?Q?7rF5pzwRFbxBWavvS64n4BJ9x6RDPKwoSEz0tDPegVmufjrc9TTRY+Kc1tRH?=
- =?us-ascii?Q?MbnCugG1624GpcC0+EDlRlJqLfTb97n/L+AXCnZA3olpVAB707StLYYbaYsr?=
- =?us-ascii?Q?3MCU0MH0HEq5ig64pUpFoQPYOHbLb6Oy3tn2ap7GauoAj200M13jLxqXOS6J?=
- =?us-ascii?Q?KF7kIn78Xrqzpkb/PPVsOzrhgkET/K/QmQdRpvCDoW7gG7NuoSc6RFT8bZTH?=
- =?us-ascii?Q?yJBOmZyBBUMICjcAGBPrMUzwNGwU22WBLEfLmvwCQeyvWWt7dR2gXmUGSqJp?=
- =?us-ascii?Q?MZDyhaV5RG+aE7Z72a4v/sBm3nnzm5WUDz/2VLx5Pk+/5WgKAsqF2J04PMgH?=
- =?us-ascii?Q?WSuT8xeAQCndEn/92j+rNyRGua/RaCyD6Khfn7FmrZT54k9SXig2KyfnvaoB?=
- =?us-ascii?Q?vVSI6lVRVGRQwOSXKeqgvmBg8POmR7ohXfVQcQ0yIp1NGumBspNAWlu0OLhd?=
- =?us-ascii?Q?LxkK59OleD9jhjQY9GjW/RtRszy9LGgJdVBuaVLMbcb4pXbdQg9hbXQkKPfH?=
- =?us-ascii?Q?qwznyBIcZRLpc6JgNJGr6rygzpKM5yMYfS3cpTcJNESK4OVoukjIhcg13dop?=
- =?us-ascii?Q?Ax+sZzhYwW2y5Ove2+8uzhQOzgZ6s4vpek+MM+pe+KCf7kG0y8kCchRvaSdY?=
- =?us-ascii?Q?dUUpzyEmO7cPYtnEuLNR?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b0eda9b7-69e8-465c-4d63-08dcc8d1f42d
-X-MS-Exchange-CrossTenant-AuthSource: IA1PR20MB4953.namprd20.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Aug 2024 08:58:45.1956
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR20MB7520
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240827045757.1101194-6-quic_srichara@quicinc.com>
 
-Enable pinctrl driver for the whole CV18XX series.
+On Tue, Aug 27, 2024 at 10:27:56AM +0530, Sricharan R wrote:
+> From: Nitheesh Sekar <quic_nsekar@quicinc.com>
+> 
+> Add phy and controller nodes for a 2-lane Gen2 and
+> 1-lane Gen2 PCIe buses.
+> 
+> Signed-off-by: Nitheesh Sekar <quic_nsekar@quicinc.com>
+> Signed-off-by: Sricharan R <quic_srichara@quicinc.com>
+> ---
+>  [v2] Removed relocatable flags,  removed assigned-clock-rates,
+>       fixed rest of the cosmetic comments.
+> 
+>  arch/arm64/boot/dts/qcom/ipq5018.dtsi | 168 +++++++++++++++++++++++++-
+>  1 file changed, 166 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/ipq5018.dtsi b/arch/arm64/boot/dts/qcom/ipq5018.dtsi
+> index 7e6e2c121979..dd5d6b7ff094 100644
+> --- a/arch/arm64/boot/dts/qcom/ipq5018.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/ipq5018.dtsi
+> @@ -9,6 +9,7 @@
+>  #include <dt-bindings/interrupt-controller/arm-gic.h>
+>  #include <dt-bindings/clock/qcom,gcc-ipq5018.h>
+>  #include <dt-bindings/reset/qcom,gcc-ipq5018.h>
+> +#include <dt-bindings/gpio/gpio.h>
+>  
+>  / {
+>  	interrupt-parent = <&intc>;
+> @@ -143,7 +144,33 @@ usbphy0: phy@5b000 {
+>  			resets = <&gcc GCC_QUSB2_0_PHY_BCR>;
+>  
+>  			#phy-cells = <0>;
+> +		};
+> +
+> +		pcie_x1phy: phy@7e000{
+> +			compatible = "qcom,ipq5018-uniphy-pcie-gen2x1";
+> +			reg = <0x0007e000 0x800>;
+> +			#phy-cells = <0>;
+> +			#clock-cells = <0>;
+> +			clocks = <&gcc GCC_PCIE1_PIPE_CLK>;
+> +			clock-names = "pipe";
+> +			assigned-clocks = <&gcc GCC_PCIE1_PIPE_CLK>;
+> +			resets = <&gcc GCC_PCIE1_PHY_BCR>,
+> +				 <&gcc GCC_PCIE1PHY_PHY_BCR>;
+> +			reset-names = "phy", "common";
+> +			status = "disabled";
+> +		};
+>  
+> +		pcie_x2phy: phy@86000{
+> +			compatible = "qcom,ipq5018-uniphy-pcie-gen2x2";
+> +			reg = <0x00086000 0x1000>;
+> +			#phy-cells = <0>;
+> +			#clock-cells = <0>;
+> +			clocks = <&gcc GCC_PCIE0_PIPE_CLK>;
+> +			clock-names = "pipe";
+> +			assigned-clocks = <&gcc GCC_PCIE0_PIPE_CLK>;
+> +			resets = <&gcc GCC_PCIE0_PHY_BCR>,
+> +				 <&gcc GCC_PCIE0PHY_PHY_BCR>;
+> +			reset-names = "phy", "common";
+>  			status = "disabled";
+>  		};
+>  
+> @@ -170,8 +197,8 @@ gcc: clock-controller@1800000 {
+>  			reg = <0x01800000 0x80000>;
+>  			clocks = <&xo_board_clk>,
+>  				 <&sleep_clk>,
+> -				 <0>,
+> -				 <0>,
+> +				 <&pcie_x2phy>,
+> +				 <&pcie_x1phy>,
+>  				 <0>,
+>  				 <0>,
+>  				 <0>,
+> @@ -387,6 +414,143 @@ frame@b128000 {
+>  				status = "disabled";
+>  			};
+>  		};
+> +
+> +		pcie0: pci@80000000 {
 
-Signed-off-by: Inochi Amaoto <inochiama@outlook.com>
----
- arch/riscv/configs/defconfig | 4 ++++
- 1 file changed, 4 insertions(+)
+pcie@
 
-diff --git a/arch/riscv/configs/defconfig b/arch/riscv/configs/defconfig
-index 0d678325444f..cd7980df4759 100644
---- a/arch/riscv/configs/defconfig
-+++ b/arch/riscv/configs/defconfig
-@@ -167,6 +167,10 @@ CONFIG_SPI_RSPI=m
- CONFIG_SPI_SIFIVE=y
- CONFIG_SPI_SUN6I=y
- # CONFIG_PTP_1588_CLOCK is not set
-+CONFIG_PINCTRL_SOPHGO_CV1800B=y
-+CONFIG_PINCTRL_SOPHGO_CV1812H=y
-+CONFIG_PINCTRL_SOPHGO_SG2000=y
-+CONFIG_PINCTRL_SOPHGO_SG2002=y
- CONFIG_GPIO_SIFIVE=y
- CONFIG_POWER_RESET_GPIO_RESTART=y
- CONFIG_SENSORS_SFCTEMP=m
+> +			compatible = "qcom,pcie-ipq5018";
+> +			reg =  <0x80000000 0xf1d>,
+> +			       <0x80000f20 0xa8>,
+> +			       <0x80001000 0x1000>,
+> +			       <0x00078000 0x3000>,
+> +			       <0x80100000 0x1000>;
+
+Are you sure that the config space is only 4K?
+
+> +			reg-names = "dbi", "elbi", "atu", "parf", "config";
+> +			device_type = "pci";
+> +			linux,pci-domain = <0>;
+> +			bus-range = <0x00 0xff>;
+> +			num-lanes = <1>;
+> +			max-link-speed = <2>;
+> +			#address-cells = <3>;
+> +			#size-cells = <2>;
+> +
+> +			phys = <&pcie_x1phy>;
+> +			phy-names ="pciephy";
+> +
+> +			ranges = <0x01000000 0 0x80200000 0x80200000 0 0x00100000
+
+Please check the value of this field in other SoCs.
+
+> +				  0x02000000 0 0x80300000 0x80300000 0 0x10000000>;
+> +
+> +			#interrupt-cells = <1>;
+> +			interrupt-map-mask = <0 0 0 0x7>;
+> +			interrupt-map = <0 0 0 1 &intc 0 0 142 IRQ_TYPE_LEVEL_HIGH>,
+> +					<0 0 0 2 &intc 0 0 143 IRQ_TYPE_LEVEL_HIGH>,
+> +					<0 0 0 3 &intc 0 0 144 IRQ_TYPE_LEVEL_HIGH>,
+> +					<0 0 0 4 &intc 0 0 145 IRQ_TYPE_LEVEL_HIGH>;
+> +
+> +			interrupts = <GIC_SPI 119 IRQ_TYPE_LEVEL_HIGH>;
+> +			interrupt-names = "global_irq";
+
+I'm pretty sure that this SoC has SPI based MSI interrupts. So they should be
+described even though ITS is supported.
+
+> +
+> +			clocks = <&gcc GCC_SYS_NOC_PCIE1_AXI_CLK>,
+> +				 <&gcc GCC_PCIE1_AXI_M_CLK>,
+> +				 <&gcc GCC_PCIE1_AXI_S_CLK>,
+> +				 <&gcc GCC_PCIE1_AHB_CLK>,
+> +				 <&gcc GCC_PCIE1_AUX_CLK>,
+> +				 <&gcc GCC_PCIE1_AXI_S_BRIDGE_CLK>;
+> +
+> +			clock-names = "iface",
+> +				      "axi_m",
+> +				      "axi_s",
+> +				      "ahb",
+> +				      "aux",
+> +				      "axi_bridge";
+> +
+> +			resets = <&gcc GCC_PCIE1_PIPE_ARES>,
+> +				 <&gcc GCC_PCIE1_SLEEP_ARES>,
+> +				 <&gcc GCC_PCIE1_CORE_STICKY_ARES>,
+> +				 <&gcc GCC_PCIE1_AXI_MASTER_ARES>,
+> +				 <&gcc GCC_PCIE1_AXI_SLAVE_ARES>,
+> +				 <&gcc GCC_PCIE1_AHB_ARES>,
+> +				 <&gcc GCC_PCIE1_AXI_MASTER_STICKY_ARES>,
+> +				 <&gcc GCC_PCIE1_AXI_SLAVE_STICKY_ARES>;
+> +
+> +			reset-names = "pipe",
+> +				      "sleep",
+> +				      "sticky",
+> +				      "axi_m",
+> +				      "axi_s",
+> +				      "ahb",
+> +				      "axi_m_sticky",
+> +				      "axi_s_sticky";
+> +
+> +			msi-map = <0x0 &v2m0 0x0 0xff8>;
+> +			status = "disabled";
+
+Please add the rootport node also as like other SoCs.
+
+Above comments applies to below PCIe node.
+
+- Mani
+
+> +		};
+> +
+> +		pcie1: pci@a0000000 {
+> +			compatible = "qcom,pcie-ipq5018";
+> +			reg =  <0xa0000000 0xf1d>,
+> +			       <0xa0000f20 0xa8>,
+> +			       <0xa0001000 0x1000>,
+> +			       <0x00080000 0x3000>,
+> +			       <0xa0100000 0x1000>;
+> +			reg-names = "dbi", "elbi", "atu", "parf", "config";
+> +			device_type = "pci";
+> +			linux,pci-domain = <1>;
+> +			bus-range = <0x00 0xff>;
+> +			num-lanes = <2>;
+> +			max-link-speed = <2>;
+> +			#address-cells = <3>;
+> +			#size-cells = <2>;
+> +
+> +			phys = <&pcie_x2phy>;
+> +			phy-names ="pciephy";
+> +
+> +			ranges = <0x01000000 0 0xa0200000 0xa0200000 0 0x00100000
+> +				  0x02000000 0 0xa0300000 0xa0300000 0 0x10000000>;
+> +
+> +			#interrupt-cells = <1>;
+> +			interrupt-map-mask = <0 0 0 0x7>;
+> +			interrupt-map = <0 0 0 1 &intc 0 0 75 IRQ_TYPE_LEVEL_HIGH>,
+> +					<0 0 0 2 &intc 0 0 78 IRQ_TYPE_LEVEL_HIGH>,
+> +					<0 0 0 3 &intc 0 0 79 IRQ_TYPE_LEVEL_HIGH>,
+> +					<0 0 0 4 &intc 0 0 83 IRQ_TYPE_LEVEL_HIGH>;
+> +
+> +			interrupts = <GIC_SPI 51 IRQ_TYPE_LEVEL_HIGH>;
+> +			interrupt-names = "global_irq";
+> +
+> +			clocks = <&gcc GCC_SYS_NOC_PCIE0_AXI_CLK>,
+> +				 <&gcc GCC_PCIE0_AXI_M_CLK>,
+> +				 <&gcc GCC_PCIE0_AXI_S_CLK>,
+> +				 <&gcc GCC_PCIE0_AHB_CLK>,
+> +				 <&gcc GCC_PCIE0_AUX_CLK>,
+> +				 <&gcc GCC_PCIE0_AXI_S_BRIDGE_CLK>;
+> +
+> +			clock-names = "iface",
+> +				      "axi_m",
+> +				      "axi_s",
+> +				      "ahb",
+> +				      "aux",
+> +				      "axi_bridge";
+> +
+> +			resets = <&gcc GCC_PCIE0_PIPE_ARES>,
+> +				 <&gcc GCC_PCIE0_SLEEP_ARES>,
+> +				 <&gcc GCC_PCIE0_CORE_STICKY_ARES>,
+> +				 <&gcc GCC_PCIE0_AXI_MASTER_ARES>,
+> +				 <&gcc GCC_PCIE0_AXI_SLAVE_ARES>,
+> +				 <&gcc GCC_PCIE0_AHB_ARES>,
+> +				 <&gcc GCC_PCIE0_AXI_MASTER_STICKY_ARES>,
+> +				 <&gcc GCC_PCIE0_AXI_SLAVE_STICKY_ARES>;
+> +
+> +			reset-names = "pipe",
+> +				      "sleep",
+> +				      "sticky",
+> +				      "axi_m",
+> +				      "axi_s",
+> +				      "ahb",
+> +				      "axi_m_sticky",
+> +				      "axi_s_sticky";
+> +
+> +			msi-map = <0x0 &v2m0 0x0 0xff8>;
+> +			status = "disabled";
+> +		};
+> +
+>  	};
+>  
+>  	timer {
+> -- 
+> 2.34.1
+> 
+
 -- 
-2.46.0
-
+மணிவண்ணன் சதாசிவம்
 
