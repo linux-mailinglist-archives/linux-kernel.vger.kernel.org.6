@@ -1,416 +1,252 @@
-Return-Path: <linux-kernel+bounces-307858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F11C96540C
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 02:35:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C95DE96541C
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 02:38:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2C2E1C224C8
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 00:35:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D6411F25209
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 00:38:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A22786FA8;
-	Fri, 30 Aug 2024 00:35:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99EEF4A1D;
+	Fri, 30 Aug 2024 00:38:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rUL57YyC"
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="ef7eWCdt"
+Received: from IND01-BMX-obe.outbound.protection.outlook.com (mail-bmxind01olkn2094.outbound.protection.outlook.com [40.92.103.94])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACDB52572
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 00:35:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724978140; cv=none; b=VeRXEcfD6iaM//rOoPM9IMfMFPuoUfWXP8AE4DJQ25sNm2i7iSWLeBMrDR8jRD8KopFjg7zuzVAoIgBpfvhwTEJKafGLZYZ9cf0b2k8AX8NnxZI9L7A1pIbZBg7w16FPBvs47uatd3BbWsju8n+zdywkQMtifQGLmAej7eWtJQU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724978140; c=relaxed/simple;
-	bh=naxGprowjEdjnmJ251fm+t/J3r2TO8+VD4wY+E/O1Ws=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=in+mhpWr8lzerZB5r0DXC3Gkq+t8y5ge2MZv1M3FaKZ3ZPyC7JmWGZsxkbNbUeioxtXUmZtLx1XOI9NTRlDuF0uRVnylJTILnx0IBGRe9YpCOjvRy53iLjUlkJ2mioJ6LWLXib0odxHhHoMuVYwyvLMHQOm4JkBO59rN90ub2WU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rUL57YyC; arc=none smtp.client-ip=209.85.219.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e1205de17aaso1379560276.2
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 17:35:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1724978138; x=1725582938; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+TNka9vd5JXf53shoZJCdocIPoVkda4RXWlcGSY44+M=;
-        b=rUL57YyCqOCg9fg2s9JF7yklRa94UcZdQvnbUd77V826IKhx5Un2TJIfWHd/gyAUzJ
-         HO/9pnwOPUk5XwJhK1OzJKmZ1qXmlQpShZS1FPiWgQAeJOwuqCrwv+XJXzPjKvL86rI9
-         0LJeYDVcNoha5e2txCIaLCRJDUwC7dIiZXPTxwFqyeYexomXJ96iZ5wPGknufnCa8inS
-         SEzBCuFDRSekpDXAwJytrx/URsRJCT79jmoGQk8CTolLdx7ipc/aBOkvPMv5wKCa+wlN
-         8NxVtuW8YTl9NfRDHNn9wcGvWPOwK1QaaJbGIiLVW8vnpfAbJdaq7t6sC3pPgW9izJIk
-         Tbiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724978138; x=1725582938;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+TNka9vd5JXf53shoZJCdocIPoVkda4RXWlcGSY44+M=;
-        b=Ol84uuoPyFU04EZOVxTyKejUvzjbpKAH2mSCKH0pOgLMqe1JqYdm+HF75O8lmqLlFJ
-         i8V0OBlbJiIN0cpdU3yFpA/E1BX0YxduZNwQ2FlIg2GRWEKMbzyKYyoAR8mSUZWxUjZk
-         dEjyeM97YHqw9QV9TeKvCOVid50d213CBbcSsQiGLfEf7jRa9QDs8pKRENxx7KMobiNO
-         qC6LUtlEiuUUY3I/PtZclaZ9458Nz+xmh+LTNHSiQ6dvTL97pMtRBz+olz2DSRO4BaW2
-         YvS1rf+p5mqO4Y3OG9KqligTARsyMSzl70PqVMdzliojtjQUg4pLblFhjMbCVMJLcqyp
-         9cmw==
-X-Forwarded-Encrypted: i=1; AJvYcCX2MinUbwye3Qv+KKZ34ezBtmzm2HpJW7Ymmf7lUX8TDNtuqE5si2M24ky1e87lwQg7C+Yy8yvs40/j5TU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6dZlY5irRPT9A/gFLLRUKh5XGDgkTzEClS+I832EO32fCVvRe
-	u9+7uPKeUlQGvhqlYgK78Udoyf0qeN9OYM+fhAbypMUyP2/3K3nCs0/7TzrMxTQuAASPA1NXXp3
-	LaJ6nNuvK+El7R/o1XEldWjDTnLkTEkMNK56A
-X-Google-Smtp-Source: AGHT+IHGGoRCfmvp4fUpMCFvBy1BBzHFHrDm0larnXWV+XPd8x/YAfZRmgba0cFiXNndcnOr0sPomBSZ5ocJlkYWUy4=
-X-Received: by 2002:a05:6902:1584:b0:e16:6c41:1601 with SMTP id
- 3f1490d57ef6-e1a7a15de23mr625233276.33.1724978137240; Thu, 29 Aug 2024
- 17:35:37 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 609364690;
+	Fri, 30 Aug 2024 00:38:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.103.94
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724978294; cv=fail; b=gpemzOP7jnP84OKLfFEPXSg7vf5LGxut0W5kKyI60TN+C5HaSzXFpukC7MAS+EhJT/yjZoSbfJ9JpU0CTG3pqvlsygjq8BfUgu4Q9Vyl66xWdLvfqp0X3lgrY5bm5z9+yqFVG2roGf/hkxyXwr8FCL96XyvgxEevtUnDRHS/dzk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724978294; c=relaxed/simple;
+	bh=1Jt3qmxDRII6BcYejnLo0jgQTn1UNscU1quDA/DUpbI=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=daDcVFTCJYiBiKV4k06upmZfUObCf0Sf26cVvaw70M/ZRB/Y2Z9ssDfdVCIUHXq/0I7bvaaQa9yM6wjY4KCh1HF9NnJa+6SEMJwWQaNweoauJBT+iwlKk+eX7EgCwdHCG53al8LwWBE+WZmpDZQ8BkKdTZPkwvhEUJqjRl3OxPA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=ef7eWCdt; arc=fail smtp.client-ip=40.92.103.94
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Ltie8+sMpsyscBktnoms4Nj2MT4cKgkRBb0VPeRWOyk8gCDn6X1C91gASVPeF405ZdbMiwA7jvCXeJgChXH2ugKz0GGc/7ytlO0zwM//ThC4Whizbd29cBzSE0gxxZw/SawCgm8zJttBdpEYrsQc56G6/FXgQ4i0ow+L4DUDYndmk1HcyvsQmfDTYk4P3TU4IukUBlS+5DYzJYoOFXmTC2nXtAf8YDzTibyml7+NQGF8IEQd02agkUIzf6FaAbNomx/EMTSiGNXCdTp2oMVyyNspmCXywlrt0qN5enN47whhiXhad+gzDy7dGbH6lKyHGlMiA1CxfjR85WmM+NVklA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ubaVuQ8h27Ml98HZcEN9lYK8gHSIrxa/JRN3erGOcnU=;
+ b=Xowv4I27gIOmhOk36Ol8HJbdHmetgz7d25DclnHwO7qblvGpm0maOOqNyk+HY99wgxcGFNWM8+E7EmslvWfb42vSMH7QGW2UiT6NH/UbDzyT05liWll1gCusC3omhiVxZHaTCisor2M04CuJJBa2ZLd0CGBBGz4fM8epSdwAmJaj7miTFBrOGCzhr4HBdEoSNAcJlwdB5CeuF2yLXflefKgt5G1jSx2oFbcH0/KuZ6dabd19fEa06IiajX6fxWqRGv1HYDfr5rA1KSH+mGtCaV6IUMxM5jgfQEova+FEuiS994nCisKHWlBzVXKn7gC3k/T/ROfsOlIM2UD6Rc0epw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ubaVuQ8h27Ml98HZcEN9lYK8gHSIrxa/JRN3erGOcnU=;
+ b=ef7eWCdt9XpU6pK3A+WXkx/XFWU6zJZMH2VV9CTzic0nujBq6kigMUhFCfR3k3NwJnnwJb0cZk5lASvOmJtpRs3l5HrOAaFnFg26pjQOoCE2gBHGb2XmGwmpG24HjNIsXHTDuLqF+SSqC94ERXR4FYwglh7Ix3MQjfcMeKdvjoXMIhc2BQz+e7g8FKY6LdGV/hMli0hQFh8ELrs1ywxA9P0ickuHoh7W0tbT2lt3DZnXK9hjOep+4fQ55XZ2cMIrIk2UEYhdOYihENxVssmIten7n1+y+qTHGBlybGeCfK+vZfgYLX3HlnbkqJTwNmZyQ/69hOPs2Vb2UG4vkaQulg==
+Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:138::5)
+ by MA0P287MB1576.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:fb::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.28; Fri, 30 Aug
+ 2024 00:37:45 +0000
+Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+ ([fe80::a94:ad0a:9071:806c]) by MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+ ([fe80::a94:ad0a:9071:806c%6]) with mapi id 15.20.7897.027; Fri, 30 Aug 2024
+ 00:37:45 +0000
+Message-ID:
+ <MA0P287MB2822AC58BC43FDE03802E773FE972@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
+Date: Fri, 30 Aug 2024 08:37:28 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 4/4] riscv: dts: sophgo: Add LicheeRV Nano board device
+ tree
+To: Inochi Amaoto <inochiama@outlook.com>,
+ Thomas Bonnefille <thomas.bonnefille@bootlin.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Paul Walmsley
+ <paul.walmsley@sifive.com>, Chao Wei <chao.wei@sophgo.com>,
+ Conor Dooley <conor@kernel.org>
+Cc: Albert Ou <aou@eecs.berkeley.edu>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Samuel Holland <samuel.holland@sifive.com>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ =?UTF-8?Q?Miqu=C3=A8l_Raynal?= <miquel.raynal@bootlin.com>,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-riscv@lists.infradead.org
+References: <20240711-sg2002-v4-0-d97ec2367095@bootlin.com>
+ <20240711-sg2002-v4-4-d97ec2367095@bootlin.com>
+ <IA1PR20MB4953612773890B94FFD0C9EABB962@IA1PR20MB4953.namprd20.prod.outlook.com>
+From: Chen Wang <unicorn_wang@outlook.com>
+In-Reply-To: <IA1PR20MB4953612773890B94FFD0C9EABB962@IA1PR20MB4953.namprd20.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TMN: [c5DH7VgKmTay6Wqzg3F09+5gjkHXCPRJ]
+X-ClientProxiedBy: TYAPR03CA0012.apcprd03.prod.outlook.com
+ (2603:1096:404:14::24) To MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:a01:138::5)
+X-Microsoft-Original-Message-ID:
+ <a3296aad-a576-4999-8d45-47ad6c97f41a@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240724011037.3671523-1-jthoughton@google.com>
- <20240724011037.3671523-3-jthoughton@google.com> <Zr_3Vohvzt0KmFiN@google.com>
-In-Reply-To: <Zr_3Vohvzt0KmFiN@google.com>
-From: James Houghton <jthoughton@google.com>
-Date: Thu, 29 Aug 2024 17:35:01 -0700
-Message-ID: <CADrL8HWQqVm5VbNnR6iMEZF17+nuO_Y25m6uuScCBVSE_YCTdg@mail.gmail.com>
-Subject: Re: [PATCH v6 02/11] KVM: x86: Relax locking for kvm_test_age_gfn and kvm_age_gfn
-To: Sean Christopherson <seanjc@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Ankit Agrawal <ankita@nvidia.com>, Axel Rasmussen <axelrasmussen@google.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, David Matlack <dmatlack@google.com>, 
-	David Rientjes <rientjes@google.com>, James Morse <james.morse@arm.com>, 
-	Jason Gunthorpe <jgg@ziepe.ca>, Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>, 
-	Oliver Upton <oliver.upton@linux.dev>, Raghavendra Rao Ananta <rananta@google.com>, 
-	Ryan Roberts <ryan.roberts@arm.com>, Shaoqin Huang <shahuang@redhat.com>, 
-	Suzuki K Poulose <suzuki.poulose@arm.com>, Wei Xu <weixugc@google.com>, 
-	Will Deacon <will@kernel.org>, Yu Zhao <yuzhao@google.com>, Zenghui Yu <yuzenghui@huawei.com>, 
-	kvmarm@lists.linux.dev, kvm@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MA0P287MB2822:EE_|MA0P287MB1576:EE_
+X-MS-Office365-Filtering-Correlation-Id: 913bc18d-d5ba-4830-3740-08dcc88bf748
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|15080799006|8060799006|5072599009|19110799003|6090799003|461199028|1602099012|440099028|4302099013|3412199025;
+X-Microsoft-Antispam-Message-Info:
+	4fgmQtVxbfE0ROywALEv40kgQkP7NjvGbpDBN3gdVrGXChSZ139PAC8DuL5YedpyldAu3sm1hCA9l0khZAYC1GdmFxCXc5tQowpnCtlEkPCFhqMBGvIJPL8MUQuF4h6GhKF8ftwhz2ZNV8KoQZ7pJccLnEUcKJtnqEjggG6d8urBIHbWDij2NxYVIRYxv2FBeogNyaSzYOiLiJPd6oVov4+n8uIRYaYzn/eRh7PrPe7li2uwLh+ef/s/m6cxLe3VbH0mLQvyahzC6fAmAJuD3zrsQ1mSbVuvuzStcOGt8KOfHGTF4vbbThKcdkuZM4fTGaL+3MfvNipR1VM0GH6AvRlQ+IRmi7x5e1fpO1JuZm0PP3UoezQQIKY8zFJLZ3X26aVo5d+3r6Qy8apZ+ZHsLEGfRwCSZ0k8CHwNjmazsNJ3df4UCYhP9EtQezigtLW7ZGsxXzFgjirVA/sSHhH1rCbEBMoJORJ/CSNKDHLOxpsUnIHa8DaPTYjd3uWdhh3bFddaCERyytxEE4eLZaXS63C51YpB22JgeXL467rBAFejDquLpCV5CjbBUdZXHlzIt3WNNdEJQqgojofhLSdFCnzXTqbc+AnjGckJBwjCqACvmgXdBuU7cgTItApoEA/hokXg2+TnquwEC/xMucuQtdUIZA+7B1Cw51Q9ro1ozyj9Bjv03UILoqxQYGy/QvpdvuQ+vJAcLOSLx0hmz9Fmkei+j9D3nvJfaAGKTrxF9b1sFN411pW5beNoj5BmXwebyA5fx6ca/PuSitHzzp0DlCLZvGfoA3k9RnWXWrLgnAZZeZxV8Ir0Bb6tqib/9Hi7MMUCyKeugIj1BmEAcEtLEg==
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?NDUxeUlKb3g5Q0hXVW1kL0RKdkVFcE43VWgzdzNZaDM3ay9ES00yWXhYajB4?=
+ =?utf-8?B?K2FqQnd3UmUrYTlRWmRtU2tvMHBGUUpTV1Q2VjAzc3BXU21jUFF5bVM2bklw?=
+ =?utf-8?B?T0twNG1QbkR1T2ovTFdYZCs2TDNXZ2t3ZW82SnJSMktJSytKZ2lhazdQZXA3?=
+ =?utf-8?B?LytPUElpTURkeU90YXVkWlJ5UEI0VHYzcXhTbkhRbWdQNDRSSUpZSWhrdmJy?=
+ =?utf-8?B?MXBlNkFobi9VcW8wdUdGRW1aY0x0a0VzV2U3OXhUdTJGUVpWZkxoNVdRRCtt?=
+ =?utf-8?B?ZlJqZEoyLzE5NTA0NVRCNzlqYUdTQThEL0VwSHE3VTN6eldjeWJSTkRwSlNt?=
+ =?utf-8?B?MWdGdEhIYkpxZ0RTV2kxZGdLS2J0NEpQbENoUlVRZTNmRzVqNEhBZTE2Q2Vx?=
+ =?utf-8?B?TjEvbVZWUExOMzlzS2kwZ3cyYjRFQlZDTVJKaWhSV0l2ZHU0RXBnbHZoejJL?=
+ =?utf-8?B?eHFOTWFFNTVaTU43MjJTWjYxZjdsalJaWUoxdmJRdVZqL0V0SGJxUkhENHZG?=
+ =?utf-8?B?eHZHcHZBdlJ1dFVsVGFMbEFpZE9JWmRJbVBnZ0Z2MFZsYXBBOUlBS2VBUXRU?=
+ =?utf-8?B?aFFra2NoL1VDWFlCS0I5T0VCbE9qUUMzNzdMSWExYzNUUWVHdnl2Slo4Rk5E?=
+ =?utf-8?B?M1RDZXRUVE4vUjMwcm9oeVlNY1N0YWdzblJqUVd6RDhudXVGVzNnL21VUCtx?=
+ =?utf-8?B?MThFQ3JNZmwrMmZsaVJPRUpyWXBjNit2VFQyMXVZL3diNExPOWtPMVQ1UlNB?=
+ =?utf-8?B?YWZlSmx3bXhrOG4zYkdVVVhRd1FUWW5jaWc2UWNibmlmNkZKUHp4eHBudnYv?=
+ =?utf-8?B?QnhDQk9ZRmJ2bVgzYWN6dkJLYWlBMG94RXJPQ2ZHSVFRQXh6dkJ2T0tMUHRU?=
+ =?utf-8?B?MXpWa2Y1M0NQalg2ZVVOeFRaS0NJYjhrWHUyTVNXeHBiSlV4K3JhTTVxdkIy?=
+ =?utf-8?B?MUdob0N0S2gycVVXeHdXWVZEWklXZXJBaTN3VVZSV2lZc1ZrWDVJSXJpbU1a?=
+ =?utf-8?B?WUE4RVNsQzZTYWhQN01QbWN5c0hPZEJya1F0cFlCL1FucmJQQzB1c0lqYUh0?=
+ =?utf-8?B?eWlPS3VqamdoK0RZMjMwNjFWMFNCWmpnV2piVjVISi9qWXRuQ01lUW9nZHg0?=
+ =?utf-8?B?SXhadENseHVqSW1sVFZvSVJPSENZZUxUc25JdDJlRWdoNFc2eFFhdUY2ZXlo?=
+ =?utf-8?B?QTdsY3FCZ3h5THdzWlF5VUZRc3hRd0RDNTRkTk84bDY4eU5YUnNkcDdOejht?=
+ =?utf-8?B?TGorU05xWjdrQ2ZJOTMrRElTMmdpR2c4YkV0VzFvS1FOS2RLVXlXNlB0WTEy?=
+ =?utf-8?B?REREMXlZNk91VWNINWhud2sxWkNUbFlST211YU9CR0Z4bDQvVDV1Q2JYN2la?=
+ =?utf-8?B?WW9TNzE4aTA4STNBQWw3VDJKd3NmclFMNVBQR2hqQVliS1BIR2lNUjRPZ0tL?=
+ =?utf-8?B?ZkZmMmgxMDBSM0JqYW9LcTZBSFNPSUJnNWlIOVRsMVJTTzFsRjhJK1B0NVRB?=
+ =?utf-8?B?STNzRzdqT1VKY2hrUEUrQjF0REZjdjRkVUlRdXNBNjVtMjZYc1hIR2M1L0NE?=
+ =?utf-8?B?S0VGY2l5NzZENUtsVGh3dXRaU2JpTFl4OGgvYU9xQnhLSzgvbTdlazV1ZTJD?=
+ =?utf-8?B?WWJ5bHhYWEdISTI4TytGRlRSMEkzVXVoV1BmV2tKUWlsUktuOTA3blV6SVp3?=
+ =?utf-8?Q?f8X1DVb/CMJ02VxeRf3g?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 913bc18d-d5ba-4830-3740-08dcc88bf748
+X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Aug 2024 00:37:45.6296
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MA0P287MB1576
 
-On Fri, Aug 16, 2024 at 6:05=E2=80=AFPM Sean Christopherson <seanjc@google.=
-com> wrote:
->
-> On Wed, Jul 24, 2024, James Houghton wrote:
-> > Walk the TDP MMU in an RCU read-side critical section.
->
-> ...without holding mmu_lock, while doing xxx.  There are a lot of TDP MMU=
- walks,
-> pand they all need RCU protection.
 
-Added "without holding mmu_lock when harvesting and potentially
-updating age information on sptes".
+On 2024/8/29 13:52, Inochi Amaoto wrote:
+> On Thu, Jul 11, 2024 at 12:01:31PM GMT, Thomas Bonnefille wrote:
+>> LicheeRV Nano B [1] is an embedded development platform based on the SOPHGO
+>> SG2002 chip, the B(ase) version is deprived of Wifi/Bluetooth and Ethernet.
+>>
+>> Add only support for UART and SDHCI.
+>>
+>> Link: https://wiki.sipeed.com/hardware/en/lichee/RV_Nano/1_intro.html [1]
+>>
+>> Signed-off-by: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
+>> ---
+>>   arch/riscv/boot/dts/sophgo/Makefile                |  1 +
+>>   .../boot/dts/sophgo/sg2002-licheerv-nano-b.dts     | 54 ++++++++++++++++++++++
+>>   2 files changed, 55 insertions(+)
+>>
+>> diff --git a/arch/riscv/boot/dts/sophgo/Makefile b/arch/riscv/boot/dts/sophgo/Makefile
+>> index 57ad82a61ea6..47d4243a8f35 100644
+>> --- a/arch/riscv/boot/dts/sophgo/Makefile
+>> +++ b/arch/riscv/boot/dts/sophgo/Makefile
+>> @@ -1,4 +1,5 @@
+>>   # SPDX-License-Identifier: GPL-2.0
+>>   dtb-$(CONFIG_ARCH_SOPHGO) += cv1800b-milkv-duo.dtb
+>>   dtb-$(CONFIG_ARCH_SOPHGO) += cv1812h-huashan-pi.dtb
+>> +dtb-$(CONFIG_ARCH_SOPHGO) += sg2002-licheerv-nano-b.dtb
+>>   dtb-$(CONFIG_ARCH_SOPHGO) += sg2042-milkv-pioneer.dtb
+>> diff --git a/arch/riscv/boot/dts/sophgo/sg2002-licheerv-nano-b.dts b/arch/riscv/boot/dts/sophgo/sg2002-licheerv-nano-b.dts
+>> new file mode 100644
+>> index 000000000000..fc98b6a0ddf7
+>> --- /dev/null
+>> +++ b/arch/riscv/boot/dts/sophgo/sg2002-licheerv-nano-b.dts
+>> @@ -0,0 +1,54 @@
+>> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
+>> +/*
+>> + * Copyright (C) 2024 Thomas Bonnefille <thomas.bonnefille@bootlin.com>
+>> + */
+>> +
+>> +/dts-v1/;
+>> +
+>> +#include "sg2002.dtsi"
+>> +
+>> +/ {
+>> +	model = "LicheeRV Nano B";
+>> +	compatible = "sipeed,licheerv-nano-b", "sipeed,licheerv-nano", "sophgo,sg2002";
+>> +
+>> +	aliases {
+>> +		gpio0 = &gpio0;
+>> +		gpio1 = &gpio1;
+>> +		gpio2 = &gpio2;
+>> +		gpio3 = &gpio3;
+>> +		serial0 = &uart0;
+>> +		serial1 = &uart1;
+>> +		serial2 = &uart2;
+>> +		serial3 = &uart3;
+>> +		serial4 = &uart4;
+>> +	};
+>> +
+>> +	chosen {
+>> +		stdout-path = "serial0:115200n8";
+>> +	};
+>> +};
+>> +
+>> +&osc {
+>> +	clock-frequency = <25000000>;
+>> +};
+>> +
+>> +&sdhci0 {
+>> +	status = "okay";
+>> +	bus-width = <4>;
+>> +	no-1-8-v;
+>> +	no-mmc;
+>> +	no-sdio;
+>> +	disable-wp;
+>> +};
+>> +
+>> +&uart0 {
+>> +	status = "okay";
+>> +};
+>> +
+>> +&uart1 {
+>> +	status = "okay";
+>> +};
+>> +
+>> +&i2c0 {
+>> +	status = "okay";
+>> +};
+>>
+>> -- 
+>> 2.45.2
+>>
+> Have you test you patch with a real board? Especially
+> for device "uart1" and "i2c0", I suspect your
+> configuartion does not work by default.
 
-> > This requires a way to do RCU-safe walking of the tdp_mmu_roots; do thi=
-s with
-> > a new macro. The PTE modifications are now done atomically, and
-> > kvm_tdp_mmu_spte_need_atomic_write() has been updated to account for th=
-e fact
-> > that kvm_age_gfn can now lockless update the accessed bit and the R/X b=
-its).
-> >
-> > If the cmpxchg for marking the spte for access tracking fails, we simpl=
-y
-> > retry if the spte is still a leaf PTE. If it isn't, we return false
-> > to continue the walk.
->
-> Please avoid pronouns.  E.g. s/we/KVM (and adjust grammar as needed), so =
-that
-> it's clear what actor in particular is doing the retry.
+Hi, Thomas Bonnefille,
 
-Fixed. Though, I have also changed this to reflect the change in the
-retry logic I've made, given your other comment.
+Can you please double check and feedback, I want to confirm this before 
+acking this change.
 
-> > Harvesting age information from the shadow MMU is still done while
-> > holding the MMU write lock.
-> >
-> > Suggested-by: Yu Zhao <yuzhao@google.com>
-> > Signed-off-by: James Houghton <jthoughton@google.com>
-> > ---
-> >  arch/x86/include/asm/kvm_host.h |  1 +
-> >  arch/x86/kvm/Kconfig            |  1 +
-> >  arch/x86/kvm/mmu/mmu.c          | 10 ++++-
-> >  arch/x86/kvm/mmu/tdp_iter.h     | 27 +++++++------
-> >  arch/x86/kvm/mmu/tdp_mmu.c      | 67 +++++++++++++++++++++++++--------
-> >  5 files changed, 77 insertions(+), 29 deletions(-)
-> >
-> > diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm=
-_host.h
-> > index 950a03e0181e..096988262005 100644
-> > --- a/arch/x86/include/asm/kvm_host.h
-> > +++ b/arch/x86/include/asm/kvm_host.h
-> > @@ -1456,6 +1456,7 @@ struct kvm_arch {
-> >        * tdp_mmu_page set.
-> >        *
-> >        * For reads, this list is protected by:
-> > +      *      RCU alone or
-> >        *      the MMU lock in read mode + RCU or
-> >        *      the MMU lock in write mode
-> >        *
-> > diff --git a/arch/x86/kvm/Kconfig b/arch/x86/kvm/Kconfig
-> > index 4287a8071a3a..6ac43074c5e9 100644
-> > --- a/arch/x86/kvm/Kconfig
-> > +++ b/arch/x86/kvm/Kconfig
-> > @@ -23,6 +23,7 @@ config KVM
-> >       depends on X86_LOCAL_APIC
-> >       select KVM_COMMON
-> >       select KVM_GENERIC_MMU_NOTIFIER
-> > +     select KVM_MMU_NOTIFIER_YOUNG_LOCKLESS
-> >       select HAVE_KVM_IRQCHIP
-> >       select HAVE_KVM_PFNCACHE
-> >       select HAVE_KVM_DIRTY_RING_TSO
-> > diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-> > index 901be9e420a4..7b93ce8f0680 100644
-> > --- a/arch/x86/kvm/mmu/mmu.c
-> > +++ b/arch/x86/kvm/mmu/mmu.c
-> > @@ -1633,8 +1633,11 @@ bool kvm_age_gfn(struct kvm *kvm, struct kvm_gfn=
-_range *range)
-> >  {
-> >       bool young =3D false;
-> >
-> > -     if (kvm_memslots_have_rmaps(kvm))
-> > +     if (kvm_memslots_have_rmaps(kvm)) {
-> > +             write_lock(&kvm->mmu_lock);
-> >               young =3D kvm_handle_gfn_range(kvm, range, kvm_age_rmap);
-> > +             write_unlock(&kvm->mmu_lock);
-> > +     }
-> >
-> >       if (tdp_mmu_enabled)
-> >               young |=3D kvm_tdp_mmu_age_gfn_range(kvm, range);
-> > @@ -1646,8 +1649,11 @@ bool kvm_test_age_gfn(struct kvm *kvm, struct kv=
-m_gfn_range *range)
-> >  {
-> >       bool young =3D false;
-> >
-> > -     if (kvm_memslots_have_rmaps(kvm))
-> > +     if (kvm_memslots_have_rmaps(kvm)) {
-> > +             write_lock(&kvm->mmu_lock);
-> >               young =3D kvm_handle_gfn_range(kvm, range, kvm_test_age_r=
-map);
-> > +             write_unlock(&kvm->mmu_lock);
-> > +     }
-> >
-> >       if (tdp_mmu_enabled)
-> >               young |=3D kvm_tdp_mmu_test_age_gfn(kvm, range);
-> > diff --git a/arch/x86/kvm/mmu/tdp_iter.h b/arch/x86/kvm/mmu/tdp_iter.h
-> > index 2880fd392e0c..510936a8455a 100644
-> > --- a/arch/x86/kvm/mmu/tdp_iter.h
-> > +++ b/arch/x86/kvm/mmu/tdp_iter.h
-> > @@ -25,6 +25,13 @@ static inline u64 kvm_tdp_mmu_write_spte_atomic(tdp_=
-ptep_t sptep, u64 new_spte)
-> >       return xchg(rcu_dereference(sptep), new_spte);
-> >  }
-> >
-> > +static inline u64 tdp_mmu_clear_spte_bits_atomic(tdp_ptep_t sptep, u64=
- mask)
-> > +{
-> > +     atomic64_t *sptep_atomic =3D (atomic64_t *)rcu_dereference(sptep)=
-;
-> > +
-> > +     return (u64)atomic64_fetch_and(~mask, sptep_atomic);
-> > +}
-> > +
-> >  static inline void __kvm_tdp_mmu_write_spte(tdp_ptep_t sptep, u64 new_=
-spte)
-> >  {
-> >       KVM_MMU_WARN_ON(is_ept_ve_possible(new_spte));
-> > @@ -32,10 +39,11 @@ static inline void __kvm_tdp_mmu_write_spte(tdp_pte=
-p_t sptep, u64 new_spte)
-> >  }
-> >
-> >  /*
-> > - * SPTEs must be modified atomically if they are shadow-present, leaf
-> > - * SPTEs, and have volatile bits, i.e. has bits that can be set outsid=
-e
-> > - * of mmu_lock.  The Writable bit can be set by KVM's fast page fault
-> > - * handler, and Accessed and Dirty bits can be set by the CPU.
-> > + * SPTEs must be modified atomically if they have bits that can be set=
- outside
-> > + * of the mmu_lock. This can happen for any shadow-present leaf SPTEs,=
- as the
-> > + * Writable bit can be set by KVM's fast page fault handler, the Acces=
-sed and
-> > + * Dirty bits can be set by the CPU, and the Accessed and R/X bits can=
- be
-> > + * cleared by age_gfn_range.
-> >   *
-> >   * Note, non-leaf SPTEs do have Accessed bits and those bits are
-> >   * technically volatile, but KVM doesn't consume the Accessed bit of
-> > @@ -46,8 +54,7 @@ static inline void __kvm_tdp_mmu_write_spte(tdp_ptep_=
-t sptep, u64 new_spte)
-> >  static inline bool kvm_tdp_mmu_spte_need_atomic_write(u64 old_spte, in=
-t level)
-> >  {
-> >       return is_shadow_present_pte(old_spte) &&
-> > -            is_last_spte(old_spte, level) &&
-> > -            spte_has_volatile_bits(old_spte);
-> > +            is_last_spte(old_spte, level);
-> >  }
-> >
-> >  static inline u64 kvm_tdp_mmu_write_spte(tdp_ptep_t sptep, u64 old_spt=
-e,
-> > @@ -63,12 +70,8 @@ static inline u64 kvm_tdp_mmu_write_spte(tdp_ptep_t =
-sptep, u64 old_spte,
-> >  static inline u64 tdp_mmu_clear_spte_bits(tdp_ptep_t sptep, u64 old_sp=
-te,
-> >                                         u64 mask, int level)
-> >  {
-> > -     atomic64_t *sptep_atomic;
-> > -
-> > -     if (kvm_tdp_mmu_spte_need_atomic_write(old_spte, level)) {
-> > -             sptep_atomic =3D (atomic64_t *)rcu_dereference(sptep);
-> > -             return (u64)atomic64_fetch_and(~mask, sptep_atomic);
-> > -     }
-> > +     if (kvm_tdp_mmu_spte_need_atomic_write(old_spte, level))
-> > +             return tdp_mmu_clear_spte_bits_atomic(sptep, mask);
-> >
-> >       __kvm_tdp_mmu_write_spte(sptep, old_spte & ~mask);
-> >       return old_spte;
-> > diff --git a/arch/x86/kvm/mmu/tdp_mmu.c b/arch/x86/kvm/mmu/tdp_mmu.c
-> > index c7dc49ee7388..3f13b2db53de 100644
-> > --- a/arch/x86/kvm/mmu/tdp_mmu.c
-> > +++ b/arch/x86/kvm/mmu/tdp_mmu.c
-> > @@ -29,6 +29,11 @@ static __always_inline bool kvm_lockdep_assert_mmu_l=
-ock_held(struct kvm *kvm,
-> >
-> >       return true;
-> >  }
-> > +static __always_inline bool kvm_lockdep_assert_rcu_read_lock_held(void=
-)
-> > +{
-> > +     WARN_ON_ONCE(!rcu_read_lock_held());
-> > +     return true;
-> > +}
->
-> I doubt KVM needs a manual WARN, the RCU deference stuff should yell loud=
-ly if
-> something is missing an rcu_read_lock().
+As you know, rc6 will come next week and I'm planning a pr next week.
 
-You're right -- removed.
+Regards,
 
-> >  void kvm_mmu_uninit_tdp_mmu(struct kvm *kvm)
-> >  {
-> > @@ -178,6 +183,15 @@ static struct kvm_mmu_page *tdp_mmu_next_root(stru=
-ct kvm *kvm,
-> >                    ((_only_valid) && (_root)->role.invalid))) {        =
-       \
-> >               } else
-> >
-> > +/*
-> > + * Iterate over all TDP MMU roots in an RCU read-side critical section=
-.
-> > + */
-> > +#define for_each_tdp_mmu_root_rcu(_kvm, _root, _as_id)                =
-               \
-> > +     list_for_each_entry_rcu(_root, &_kvm->arch.tdp_mmu_roots, link)  =
-       \
->
-> This should just process valid roots:
->
-> https://lore.kernel.org/all/20240801183453.57199-7-seanjc@google.com
+Chen
 
-Thanks! I've added `|| (_root)->role.invalid)` to the below
-conditional expression, and I've renamed the macro to
-for_each_valid_tdp_mmu_root_rcu.
 
-> > +             if (kvm_lockdep_assert_rcu_read_lock_held() &&           =
-       \
-> > +                 (_as_id >=3D 0 && kvm_mmu_page_as_id(_root) !=3D _as_=
-id)) {     \
-> > +             } else
-> > +
-> >  #define for_each_tdp_mmu_root(_kvm, _root, _as_id)                   \
-> >       __for_each_tdp_mmu_root(_kvm, _root, _as_id, false)
-> >
-> > @@ -1224,6 +1238,27 @@ static __always_inline bool kvm_tdp_mmu_handle_g=
-fn(struct kvm *kvm,
-> >       return ret;
-> >  }
-> >
-> > +static __always_inline bool kvm_tdp_mmu_handle_gfn_lockless(
-> > +             struct kvm *kvm,
-> > +             struct kvm_gfn_range *range,
-> > +             tdp_handler_t handler)
->
-> Please burn all the Google3 from your brain, and code ;-)
-
-I indented this way to avoid going past the 80 character limit. I've
-adjusted it to be more like the other functions in this file.
-
-Perhaps I should put `static __always_inline bool` on its own line?
-
->
-> > +     struct kvm_mmu_page *root;
-> > +     struct tdp_iter iter;
-> > +     bool ret =3D false;
-> > +
-> > +     rcu_read_lock();
-> > +
-> > +     for_each_tdp_mmu_root_rcu(kvm, root, range->slot->as_id) {
-> > +             tdp_root_for_each_leaf_pte(iter, root, range->start, rang=
-e->end)
-> > +                     ret |=3D handler(kvm, &iter, range);
-> > +     }
-> > +
-> > +     rcu_read_unlock();
-> > +
-> > +     return ret;
-> > +}
-> > +
-> >  /*
-> >   * Mark the SPTEs range of GFNs [start, end) unaccessed and return non=
--zero
-> >   * if any of the GFNs in the range have been accessed.
-> > @@ -1237,28 +1272,30 @@ static bool age_gfn_range(struct kvm *kvm, stru=
-ct tdp_iter *iter,
-> >  {
-> >       u64 new_spte;
-> >
-> > +retry:
-> >       /* If we have a non-accessed entry we don't need to change the pt=
-e. */
-> >       if (!is_accessed_spte(iter->old_spte))
-> >               return false;
-> >
-> >       if (spte_ad_enabled(iter->old_spte)) {
-> > -             iter->old_spte =3D tdp_mmu_clear_spte_bits(iter->sptep,
-> > -                                                      iter->old_spte,
-> > -                                                      shadow_accessed_=
-mask,
-> > -                                                      iter->level);
-> > +             iter->old_spte =3D tdp_mmu_clear_spte_bits_atomic(iter->s=
-ptep,
-> > +                                             shadow_accessed_mask);
-> >               new_spte =3D iter->old_spte & ~shadow_accessed_mask;
-> >       } else {
-> > -             /*
-> > -              * Capture the dirty status of the page, so that it doesn=
-'t get
-> > -              * lost when the SPTE is marked for access tracking.
-> > -              */
-> > +             new_spte =3D mark_spte_for_access_track(iter->old_spte);
-> > +             if (__tdp_mmu_set_spte_atomic(iter, new_spte)) {
-> > +                     /*
-> > +                      * The cmpxchg failed. If the spte is still a
-> > +                      * last-level spte, we can safely retry.
-> > +                      */
-> > +                     if (is_shadow_present_pte(iter->old_spte) &&
-> > +                         is_last_spte(iter->old_spte, iter->level))
-> > +                             goto retry;
->
-> Do we have a feel for how often conflicts actually happen?  I.e. is it wo=
-rth
-> retrying and having to worry about infinite loops, however improbable the=
-y may
-> be?
-
-I'm not sure how common this is. I think it's probably better not to
-retry actually. If the cmpxchg fails, this spte is probably young
-anyway, so I can just `return true` instead of potentially retrying.
-This is all best-effort anyway.
 
