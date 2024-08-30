@@ -1,541 +1,474 @@
-Return-Path: <linux-kernel+bounces-308729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 060BD9660FA
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 13:47:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC9C79660FE
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 13:50:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E02A1F26113
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 11:47:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64CB328769D
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 11:50:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCFD519992C;
-	Fri, 30 Aug 2024 11:46:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A533A18F2D5;
+	Fri, 30 Aug 2024 11:50:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mUP3cNtv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=softing.com header.i=@softing.com header.b="Ec5+5DmT"
+Received: from FR5P281CU006.outbound.protection.outlook.com (mail-germanywestcentralazon11022134.outbound.protection.outlook.com [40.107.149.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7348516EB42;
-	Fri, 30 Aug 2024 11:46:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725018416; cv=none; b=fpU2y6EzcVuQVilS1ww0/BJ8B023hul1EoU3sO9dlkiQ5RwCNy4CmiR/Yx8wSdhKVESZ+wAUZoF8i2bWTqyBrpY6ufPcw9aTBtGdHuZPlHULb4nQlnkBj8UY2UjlAtDIPJDvWuXk8YTlBBX0mXNETx687f00WCFQVUudOzGJxxw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725018416; c=relaxed/simple;
-	bh=2lUeWspGgAucZpchR/saBa93aR3n5RRxVgjybjC6n5w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bcPWN82eCsf0gQqgBTVJev08tqgfHNxfPZG2fKp+QC3YosgNJ4S35gAHhnde56nrxAXqWdnmefOgM9Cu6L8RSrFRiu9S/raa45f4p2b7nvnPHuCIAmJjkTR1NSLlPmWnDvqoaYJRmbGOdGh5PopOQOGi9Vp+Ey4i7ijpEbgDBPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mUP3cNtv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5D67C4CEC2;
-	Fri, 30 Aug 2024 11:46:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725018416;
-	bh=2lUeWspGgAucZpchR/saBa93aR3n5RRxVgjybjC6n5w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mUP3cNtv/Gr2QyViycy87GFpMi+z6031pfNdAPkrpo5zX/m9bFITD61MbY8SjklUd
-	 HImkEJeTgWFiOry03z9Xk3gDRhcbnkZhWfWlYYjF2DOiRZvaKGiO59a1AAofkRotpE
-	 uFpRjxTJBSsqQ+0yBBKY74EtMe+Sq19o7F4TaxsUP2pzo00Yqu76OVnHCZ8akuM+4O
-	 EqByjOkXrUAIwE6NinFX0NZbnOJrqIYbfmdn+CE1AonkopVUA3G41y81QlOlOkE1LF
-	 LFWPKWqbi5Fk5knFgBiy/bDkX1ayYiydvLstFSDEAHnifHrScMWL/EO6spKNgR1NOf
-	 LEEfvfiSmlLDQ==
-Date: Fri, 30 Aug 2024 12:46:45 +0100
-From: Will Deacon <will@kernel.org>
-To: Adhemerval Zanella <adhemerval.zanella@linaro.org>
-Cc: "Jason A . Donenfeld" <Jason@zx2c4.com>, Theodore Ts'o <tytso@mit.edu>,
-	linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-arch@vger.kernel.org,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Eric Biggers <ebiggers@kernel.org>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>, ardb@kernel.org
-Subject: Re: [PATCH v2] aarch64: vdso: Wire up getrandom() vDSO implementation
-Message-ID: <20240830114645.GA8219@willie-the-truck>
-References: <20240829201728.2825-1-adhemerval.zanella@linaro.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5C11170A01;
+	Fri, 30 Aug 2024 11:49:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.149.134
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725018601; cv=fail; b=JaHoU96si9Sk4W6dvdbneJ8Iugesbqnvoiklq+TpDsNUblDlnLTanSknpRb52EXGKouOx2n+i0VTNldfFvxqDc8jlrUmEzEUBRgP0VtYl4l6K8VBbVZ5NN0bkot3t/e4qfl8QkH+qJv4XCqOHUGh4UUHU+QqrK78tOou/yjtJnQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725018601; c=relaxed/simple;
+	bh=mp8KqmPVjYY5HQzruIpwFh6Ey5YjF5BvF/QPV880OVg=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=liEuunTiTwVN4tIC85YGd3SAQpv8ceyp42fUfmC3v1B7BK9f6BO1EYeDk3OYTv+z/0kYRUoYIoWCRojoF0dI+lO2gH2/uAJ2ahnChaut/ABOR9fmmTWay2JeEMhajo3JrKUCjhQSMOTnz7Slnexz2kOR/0t3w0HDZq0NF7/95gQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=Softing.com; spf=pass smtp.mailfrom=Softing.com; dkim=pass (2048-bit key) header.d=softing.com header.i=@softing.com header.b=Ec5+5DmT; arc=fail smtp.client-ip=40.107.149.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=Softing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=Softing.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QW3i5nFCoZv3XPUHdUouwAMj+rs+vBjlG3aMnrRjtI5/PTDAjV0FVwO9P65178znL3/8LabmpFWQcWWU2cFcJWfIuf8Zc9H42fzoSmzEoAgdxWMZXGOXREEDgx+qFukOriGVZwiiDD2B62CcQaRonQAJ3EqdxJMaGESLLrz0sOcuFA+PNqKlR2+i4Q7yZcm/5QUAvzUAMYVHdKT9++iAitRCsPDJsdIYeu6Uxw3/CUl+J9TybOI/5XPERQNsAhI+zKwQRVJJidwfK98FQkOvHuqFsVyCUaslE6DcSOqfzDfov+tTwB02h/lVLHWovytbkUiwE1/XYXXGxLcIbVzFbg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=EemrGTTmrZgaozT/sfY3WA1Qdii7epm7DQ3Rv/82ues=;
+ b=uaEA20yKtWwYwJFsCp5X1GEpNSFocGTxOyYyvSwCjS/XEN9xmY5OOG8bOMefV4kxVqCLf/jBLtNoO1lo3Ncp18A4R3sXj+TyRviEe5k1uZ9qD+AWCavj2R1lUnP8hzFEIPxjLXxGNPe5k50xH2Ecw/NyO7UJhVho6kaLjvVpDWCQo1Mkg13UJmX5+vA85ZAGK/N8jyOrI/2C3nLYsNd2ODUVHmnG9nwP4KVjLMr+6hhR8mJbWCZG5+guNnYXlBfYK4lneFhwDSZ7niwRsrNd4q9nmQbGwDZiimhxVrjtl+ZgrJFVxMDYH5o/BA7Nm9qOiGXB1yOx7FC6hMtNaWdfvg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=softing.com; dmarc=pass action=none header.from=softing.com;
+ dkim=pass header.d=softing.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=softing.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=EemrGTTmrZgaozT/sfY3WA1Qdii7epm7DQ3Rv/82ues=;
+ b=Ec5+5DmTaRf+zLSMb7Yiy4STmDmQIpgDNgSYuNjzaAMhyMni4HEXscmoD9N0vYLHMeu4aGgk2kX2gc1Vbtan7CnpJrm39gJtFQkp/DVIoMiIViwTLv7kMdZ8IojMFXCkDZDureGgaR9vUVA5AvKWcu/97I7Rwr7kxpxf9iMZKfEXa/CvUHHUvp+LD1Iz+YYKT17qaBqebT9KEDBwVoNs1tqI3yuI9DrIRRUHZ26tskqykprzb/JdDTGrWCjZa7Lhp1MVM9wIgnu7Lmvr92AUDvuyYcpDyoqMZjjLvyXfupW8WEORmARKmdn5EhcX+59icE8HdwjU3yRqhCX85g5pXg==
+Received: from BE1P281MB2420.DEUP281.PROD.OUTLOOK.COM (2603:10a6:b10:43::7) by
+ FR5P281MB4123.DEUP281.PROD.OUTLOOK.COM (2603:10a6:d10:106::11) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7897.28; Fri, 30 Aug 2024 11:49:53 +0000
+Received: from BE1P281MB2420.DEUP281.PROD.OUTLOOK.COM
+ ([fe80::8de2:b2ba:4092:939a]) by BE1P281MB2420.DEUP281.PROD.OUTLOOK.COM
+ ([fe80::8de2:b2ba:4092:939a%6]) with mapi id 15.20.7918.019; Fri, 30 Aug 2024
+ 11:49:53 +0000
+From: "Sperling, Tobias" <Tobias.Sperling@Softing.com>
+To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-hwmon@vger.kernel.org" <linux-hwmon@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+CC: "jdelvare@suse.com" <jdelvare@suse.com>, "linux@roeck-us.net"
+	<linux@roeck-us.net>, "robh@kernel.org" <robh@kernel.org>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org"
+	<conor+dt@kernel.org>, "corbet@lwn.net" <corbet@lwn.net>, "Sperling, Tobias"
+	<Tobias.Sperling@Softing.com>
+Subject: [PATCH 1/2] dt-bindings: hwmon: Introduce ADS71x8
+Thread-Topic: [PATCH 1/2] dt-bindings: hwmon: Introduce ADS71x8
+Thread-Index: Adr60bwOPjoiJD3QTreu2+tBMAOlGg==
+Date: Fri, 30 Aug 2024 11:49:53 +0000
+Message-ID:
+ <BE1P281MB24208CB90AF549578AA5C384EF972@BE1P281MB2420.DEUP281.PROD.OUTLOOK.COM>
+Accept-Language: de-DE, en-US
+Content-Language: de-DE
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=Softing.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BE1P281MB2420:EE_|FR5P281MB4123:EE_
+x-ms-office365-filtering-correlation-id: 15995782-8292-4e7d-6e6f-08dcc8e9dc9f
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|366016|376014|7416014|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?L+02nldvPKSnq0IkiWMVs3e0jh8waoyn5bRs5h0eMeEiWAmka9VbkeD4d3eE?=
+ =?us-ascii?Q?KvFJZXnPj+O6LSKvoDPmxXoOKI3QlxME38DAbdb60ZOs+rLrakzSD8ArauEo?=
+ =?us-ascii?Q?6SFliBXNQg7C9PSvIkoaQO26ViNl56xLPG0tM4k872KAjoZ9SMUU8ZiBLZMD?=
+ =?us-ascii?Q?Br2R/HWNRcL44uUJOUXEsZsHxA5bLNYdKtPTp8iWO+iauZMsqSiUPQ4e25aB?=
+ =?us-ascii?Q?GxhutVrGnYM5bNFT4qbko+PTXQXh/Kflwx+To/KM9HGlx4A2EnC72WsfpWVy?=
+ =?us-ascii?Q?PfeoRuUujFIgYy+PuwjTRHFOJVu0akBObnCqPQTsanRj+fbaQHeWbpCxj5VM?=
+ =?us-ascii?Q?g+CS7wVTs6eP7vwHgybQ5ye80fReX3yUxh3tQ072ElFNzlqDfkSLfJ4TBmmd?=
+ =?us-ascii?Q?RWQRCo7OoHHCcEFmyoKYpTLqH7nXc+uXIjrqnaxt3QvTCysJ535hS8iN58k1?=
+ =?us-ascii?Q?He7zPg5QDQuNmVEk4KWB+A3almIHqmAfz+4EZCsBT30wjg4j05J0L1/1C4sp?=
+ =?us-ascii?Q?uVYoaCRwVEkbbpicy4VV5DVF8sIFEz1ckw35R4f5MmM7UH2dLT++U99z6b/o?=
+ =?us-ascii?Q?w6/VkYFu5+k1hdQvH4847ZLZlnjLZeOlA8WNWExFHqEj2HLtBK4mQ7jWnyuF?=
+ =?us-ascii?Q?eIZkQVGFfaCDLbknBXD9sifSGXBcLyO91ZvgUpapmpOiiA71QOOY+HneunBM?=
+ =?us-ascii?Q?+8PXDmvgIU0S321NZn45jyT6um4/Dnftx2ojgn7BDK3tl/3wVgIFIYBG1c74?=
+ =?us-ascii?Q?8BN4I4chjTsjMnlPQ0BmRwJtq/5t+b0oliSDRNFP/yBV771TqOfeJ1AH5eho?=
+ =?us-ascii?Q?81LC/BdyZbOgnjDpAQembbqU9qzPgP/PhpZVO1XCWFrXzj9/QBYxv4x8jDym?=
+ =?us-ascii?Q?04eQenNpN+T62Erjpv0r+yntHdE6W6ji8G0nQfpY5YBlfKX1aKfZO9fVAeep?=
+ =?us-ascii?Q?HuYzuh7din6qoMmQ1xx4FqyZG43RBPge1pKBMUen0L8W8Efg5JrWVjNoEZKc?=
+ =?us-ascii?Q?qwbjsCg9pV3wB/OQ2+9f5kf23gzjyzfqzknvs8A9zdrjdzc5G7+fAbUaDY0J?=
+ =?us-ascii?Q?+SSuaXcLLZ42m6M+4bbD1+Sqdg5EXGB2xIncrTgzTgupZwP1KIlja10CgHnM?=
+ =?us-ascii?Q?WGX1ycsNUq1uIl8P23nThkLObeRMEBDTnHRD9lm1TV9ZMt+15f7NHL5yLz1a?=
+ =?us-ascii?Q?vOKdufcp0NnK4+mS8+SnSpoHOocGAFplUt5+5KSR6Acs3gp3r1OTU27Xet2H?=
+ =?us-ascii?Q?IXey7sU3FXsu1r6QkykHy9snmAjjFVvwoAdzUSik8NgPYQCbW1+tzj6zpXn1?=
+ =?us-ascii?Q?OUq2gEFNKndVow4QDcLYtsKuiqWSz4SYxl63tTNiSQcmQL9yvLCzybY6Y5MJ?=
+ =?us-ascii?Q?lXjCV24=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BE1P281MB2420.DEUP281.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(38070700018);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?Ux8PwsKhNQBdybb2XiSpszwOPVf/A1VFha3Sv+9VeuHsx7S59DxX9DXYufDZ?=
+ =?us-ascii?Q?yNlWJ3X1nitHjAgc/J7Ff3Wiz2eKkgqtVWAMq7XbbRsK8e1UkUjTP0jtOR1J?=
+ =?us-ascii?Q?XkAnMU8h+gx82zWL4BKoLw/47xpiWaY3/FG9FoO52nynyqw92YsdekBba4d7?=
+ =?us-ascii?Q?vDA5iBI1hXVsyZ+OOZ6HO4TD8280t0SRYtKVOULwZgNGdHM2TKse92a7vInk?=
+ =?us-ascii?Q?CzsPf/Hfw4oenySxjyT34suzMcrS87Za3ir51PP1RfJcJJ0rjiV7bpVCUsIH?=
+ =?us-ascii?Q?HchntIqy8r1aGld1ZY9LMiNjOF6VcVITIGAhetOYEY2VAxun5x4EjJoe8nuj?=
+ =?us-ascii?Q?hFe7iinhdXtBm70LDjMhFB3TnUQiklp2fb6rDGfjRrffzUwj4MzAb4P713jd?=
+ =?us-ascii?Q?WUHkwYdQQ6Zze6v1+iFiCN/LnVrEHcIuP7ArfQxcQGICmUaa3w/CDN9DS0iW?=
+ =?us-ascii?Q?lxtkFxuIf+57ryouDbGvH3KJn8Ieg0VQWxhApwN73aCTBFdy9p1R/UbngolO?=
+ =?us-ascii?Q?VDUyHMxtG4+/N1YDQ/EaMp9CaRRaO7fO+l492UUUsS8Z9H9+HTyZP7boWDCg?=
+ =?us-ascii?Q?y6BcumRKbwZ7S42XzDcLftNyg+7sYIMiPievFjqQ+Qlr1kaVT82CvkA9NFGv?=
+ =?us-ascii?Q?JtEC/ZZIMg8SDesAkfIvZ3W4doGuVHRvKlEo3Co5RSrtexegBKv+gCOjgtGV?=
+ =?us-ascii?Q?LKiPIm05bCHQEU/by5s/GsGFuBn1lvnB4MdunZTIVrWv3WuIge0j+FL/V5Qk?=
+ =?us-ascii?Q?7B0MpnKaPlPUDOQ2xNBo7O7rSuTZbXaLSZH+A4XTo2fs10usZ56XhzJSOdLi?=
+ =?us-ascii?Q?3DPSaZgGsCbRgux8OLlNQYZrVGH9sxYXP4o6b5ogPGCFUqY8C3pePsqYytAg?=
+ =?us-ascii?Q?kqHA6OMGpnfNaj6w2UI7MnOusnHGDKWO9jnGfPhTOpgHgpvg4PzNsdipljNS?=
+ =?us-ascii?Q?1hqnd1+SE0cYbzfLYW/axNK/ohPAWeNxaj1II7K9L51sl68cCTkh9QDhzInQ?=
+ =?us-ascii?Q?HUtjxAOkya0flMtUZYjqENIpcgi/t8mtRQ5lp659FrKnBya4NUX9beBQow/I?=
+ =?us-ascii?Q?r8TuozOlKGuoEHhV7jbYyt8dyrAax2qgG733oZw0l1RpTKlh3hKxvYIMaWPu?=
+ =?us-ascii?Q?AM1IsGjfNA1GfdPj9qzsnn3V+LOmHfaz1JBADNhARYIAx7ZolkioEHC9bdq0?=
+ =?us-ascii?Q?6kiFMA85oPfO0sNceT0J9FtPS+hiN9ILHTehvoLLspEJBvWfp/z7CNYkKaHj?=
+ =?us-ascii?Q?b09gFQJQZneWjxtJ6AQSEAnzjwzwzT6nG9rw8740MrXG9VOfE55vXgNWEnnp?=
+ =?us-ascii?Q?/iobe4u/N+8Qsc+ivItmJRLJncTrhL4ksQ9lvo24Wvtb1tx4nP6aKTbvtBet?=
+ =?us-ascii?Q?fpF6ZnwgZxccog95NFHjdMtwVYgMTODIpqkTTvcUHl01QiugvfZPFL9wpLXX?=
+ =?us-ascii?Q?Lv/B9P1C1lN2dG11xSmlHTC5mb3uWFgcQOk6ZH/+Y+Mb0SpOO4xTVpIlXB+y?=
+ =?us-ascii?Q?fwdNq/f3UhcrvrpnnTzGnaNICzpDMtc/tPHr3FNtGRzslZ9QgInmjxHgHnMn?=
+ =?us-ascii?Q?AKSHr3jyI1f7CKb6pef4zHvg5C9BZ8J0+OlnmvzlS0YbumC04rMVJzK490BS?=
+ =?us-ascii?Q?hLy8L5P3tzClHALkxBLIHpDXGn/cIUly8+02gws31VO7CQmG9utZ+yk8i9DH?=
+ =?us-ascii?Q?ILvV3g=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240829201728.2825-1-adhemerval.zanella@linaro.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-OriginatorOrg: softing.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BE1P281MB2420.DEUP281.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: 15995782-8292-4e7d-6e6f-08dcc8e9dc9f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Aug 2024 11:49:53.3571
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: fe3606fa-d397-4238-9997-68dcd7851f64
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: /gtlp5yFwp+n9up8BuRBA8p/+xA8ovvcKqQ9OmJfC+1Yk0v2ItfZ1LZ91gAVQuLmXcPLKIsMGvrBw3qUENpdvYhB1n/zrlVAuIld6eYmpCA=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: FR5P281MB4123
 
-On Thu, Aug 29, 2024 at 08:17:14PM +0000, Adhemerval Zanella wrote:
-> Hook up the generic vDSO implementation to the aarch64 vDSO data page.
-> The _vdso_rng_data required data is placed within the _vdso_data vvar
-> page, by using a offset larger than the vdso_data.
-> 
-> The vDSO function requires a ChaCha20 implementation that does not
-> write to the stack, and that can do an entire ChaCha20 permutation.
-> The one provided is based on the current chacha-neon-core.S and uses NEON
-> on the permute operation. The fallback for chips that do not support
-> NEON issues the syscall.
-> 
-> This also passes the vdso_test_chacha test along with
-> vdso_test_getrandom. The vdso_test_getrandom bench-single result on
-> Neoverse-N1 shows:
-> 
->    vdso: 25000000 times in 0.746506464 seconds
->    libc: 25000000 times in 8.849179444 seconds
-> syscall: 25000000 times in 8.818726425 seconds
-> 
-> Changes from v1:
-> - Fixed style issues and typos.
-> - Added fallback for systems without NEON support.
-> - Avoid use of non-volatile vector registers in neon chacha20.
-> - Use c-getrandom-y for vgetrandom.c.
-> - Fixed TIMENS vdso_rnd_data access.
-> 
-> Signed-off-by: Adhemerval Zanella <adhemerval.zanella@linaro.org>
-> ---
->  arch/arm64/Kconfig                         |   1 +
->  arch/arm64/include/asm/vdso.h              |   6 +
->  arch/arm64/include/asm/vdso/getrandom.h    |  49 ++++++
->  arch/arm64/include/asm/vdso/vsyscall.h     |  10 ++
->  arch/arm64/kernel/vdso.c                   |   6 -
->  arch/arm64/kernel/vdso/Makefile            |  11 +-
->  arch/arm64/kernel/vdso/vdso                |   1 +
->  arch/arm64/kernel/vdso/vdso.lds.S          |   4 +
->  arch/arm64/kernel/vdso/vgetrandom-chacha.S | 168 +++++++++++++++++++++
->  arch/arm64/kernel/vdso/vgetrandom.c        |  15 ++
->  lib/vdso/getrandom.c                       |   1 +
->  tools/arch/arm64/vdso                      |   1 +
->  tools/include/linux/compiler.h             |   4 +
->  tools/testing/selftests/vDSO/Makefile      |   5 +-
+From b2e04ce5500faf274654be5284be9db4f3abefce Mon Sep 17 00:00:00 2001
+From: Tobias Sperling <tobias.sperling@softing.com>
+Date: Fri, 23 Aug 2024 12:08:33 +0200
+Subject: [PATCH 1/2] dt-bindings: hwmon: Introduce ADS71x8
 
-Please can you split the tools/ changes into a separate patch?
+Add documentation for the driver of ADS7128 and ADS7138 12-bit, 8-channel
+analog-to-digital converters. These ADCs have a wide operating range and
+a wide feature set. Communication is based on an I2C interface.
+The driver provides the functionality of manually reading single channels
+or sequentially reading all channels automatically.
 
->  14 files changed, 273 insertions(+), 9 deletions(-)
->  create mode 100644 arch/arm64/include/asm/vdso/getrandom.h
->  create mode 120000 arch/arm64/kernel/vdso/vdso
->  create mode 100644 arch/arm64/kernel/vdso/vgetrandom-chacha.S
->  create mode 100644 arch/arm64/kernel/vdso/vgetrandom.c
->  create mode 120000 tools/arch/arm64/vdso
-> 
-> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-> index a2f8ff354ca6..7f7424d1b3b8 100644
-> --- a/arch/arm64/Kconfig
-> +++ b/arch/arm64/Kconfig
-> @@ -262,6 +262,7 @@ config ARM64
->  	select TRACE_IRQFLAGS_NMI_SUPPORT
->  	select HAVE_SOFTIRQ_ON_OWN_STACK
->  	select USER_STACKTRACE_SUPPORT
-> +	select VDSO_GETRANDOM
->  	help
->  	  ARM 64-bit (AArch64) Linux support.
->  
-> diff --git a/arch/arm64/include/asm/vdso.h b/arch/arm64/include/asm/vdso.h
-> index 4305995c8f82..18407b757c95 100644
-> --- a/arch/arm64/include/asm/vdso.h
-> +++ b/arch/arm64/include/asm/vdso.h
-> @@ -16,6 +16,12 @@
->  
->  #ifndef __ASSEMBLY__
->  
-> +enum vvar_pages {
-> +	VVAR_DATA_PAGE_OFFSET,
-> +	VVAR_TIMENS_PAGE_OFFSET,
-> +	VVAR_NR_PAGES,
-> +};
-> +
->  #include <generated/vdso-offsets.h>
->  
->  #define VDSO_SYMBOL(base, name)						   \
-> diff --git a/arch/arm64/include/asm/vdso/getrandom.h b/arch/arm64/include/asm/vdso/getrandom.h
-> new file mode 100644
-> index 000000000000..fca66ba49d4c
-> --- /dev/null
-> +++ b/arch/arm64/include/asm/vdso/getrandom.h
-> @@ -0,0 +1,49 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +
-> +#ifndef __ASM_VDSO_GETRANDOM_H
-> +#define __ASM_VDSO_GETRANDOM_H
-> +
-> +#ifndef __ASSEMBLY__
-> +
-> +#include <asm/vdso.h>
-> +#include <asm/unistd.h>
-> +#include <vdso/datapage.h>
-> +
-> +/**
-> + * getrandom_syscall - Invoke the getrandom() syscall.
-> + * @buffer:	Destination buffer to fill with random bytes.
-> + * @len:	Size of @buffer in bytes.
-> + * @flags:	Zero or more GRND_* flags.
-> + * Returns:	The number of random bytes written to @buffer, or a negative value indicating an error.
-> + */
-> +static __always_inline ssize_t getrandom_syscall(void *_buffer, size_t _len, unsigned int _flags)
-> +{
-> +	register void *buffer asm ("x0") = _buffer;
-> +	register size_t len asm ("x1") = _len;
-> +	register unsigned int flags asm ("x2") = _flags;
-> +	register long ret asm ("x0");
-> +	register long nr asm ("x8") = __NR_getrandom;
-> +
-> +	asm volatile(
-> +	"       svc #0\n"
-> +	: "=r" (ret)
-> +	: "r" (buffer), "r" (len), "r" (flags), "r" (nr)
-> +	: "memory");
-> +
-> +	return ret;
-> +}
-> +
-> +static __always_inline const struct vdso_rng_data *__arch_get_vdso_rng_data(void)
-> +{
-> +	/*
-> +	 * If a task belongs to a time namespace then a namespace the real
-> +	 * VVAR page is mapped with the VVAR_TIMENS_PAGE_OFFSET.
-> +	 */
+Signed-off-by: Tobias Sperling <tobias.sperling@softing.com>
+---
+ .../devicetree/bindings/hwmon/ti,ads71x8.yaml |  85 +++++++++++
+ Documentation/hwmon/ads71x8.rst               | 140 ++++++++++++++++++
+ Documentation/hwmon/index.rst                 |   1 +
+ 3 files changed, 226 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/hwmon/ti,ads71x8.yaml
+ create mode 100644 Documentation/hwmon/ads71x8.rst
 
-This comment doesn't make sense.
+diff --git a/Documentation/devicetree/bindings/hwmon/ti,ads71x8.yaml b/Docu=
+mentation/devicetree/bindings/hwmon/ti,ads71x8.yaml
+new file mode 100644
+index 000000000000..e422c4ebd207
+--- /dev/null
++++ b/Documentation/devicetree/bindings/hwmon/ti,ads71x8.yaml
+@@ -0,0 +1,85 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++
++$id: http://devicetree.org/schemas/hwmon/ti,ads71x8.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Texas Instruments ADS7128/ADS7138 Analog to Digital Converter (ADC)
++
++maintainers:
++  - None
++
++description: |
++  The ADS7128 is 12-Bit, 8-Channel Sampling Analog to Digital Converter (A=
+DC)
++  with an I2C interface.
++
++  Datasheets:
++    https://www.ti.com/product/ADS7128
++    https://www.ti.com/product/ADS7138
++
++properties:
++  compatible:
++    enum:
++      - ti,ads7128
++      - ti,ads7138
++
++  reg:
++    maxItems: 1
++
++  avdd-supply:
++    description:
++      The regulator used as analog supply voltage as well as reference vol=
+tage.
++
++  ti,mode:
++    $ref: /schemas/types.yaml#/definitions/uint8
++    description: |
++      Operation mode
++      Mode 0 - Manual mode. A channel is only sampled when the according i=
+nput
++        in the sysfs is read.
++      Mode 1 - Auto mode. All channels are automatically sampled sequentia=
+lly.
++        Reading an input returns the last valid sample. In this mode furth=
+er
++        features like statistics and interrupts are available.
++    default: 0
++
++  ti,interval:
++    $ref: /schemas/types.yaml#/definitions/uint16
++    description: |
++      Only considered in mode 1!
++      Interval in microseconds a new sample is triggered. Is set to closes=
+t
++      possible interval, see datasheet.
++    default: 1
++
++  interrupts:
++    description: |
++      Only considered in mode 1!
++      Interrupt specifier the device's ALERT pin is connected to. Level mu=
+st be
++      IRQ_TYPE_LEVEL_LOW. If not configured the digital window comparator =
+(DWC)
++      is not available.
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++  - avdd-supply
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/irq.h>
++    i2c {
++        #address-cells =3D <1>;
++        #size-cells =3D <0>;
++
++        ads7138@10 {
++            compatible =3D "ti,ads7138";
++            reg =3D <0x10>;
++            avdd-supply =3D <&reg_stb_3v3>;
++            ti,mode =3D /bits/ 8 <1>;
++            ti,interval =3D /bits/ 16 <1000>;
++            interrupt-parent =3D <&gpio2>;
++            interrupts =3D <12 IRQ_TYPE_LEVEL_LOW>;
++            status =3D "okay";
++        };
++    };
+diff --git a/Documentation/hwmon/ads71x8.rst b/Documentation/hwmon/ads71x8.=
+rst
+new file mode 100644
+index 000000000000..383669c1f8c5
+--- /dev/null
++++ b/Documentation/hwmon/ads71x8.rst
+@@ -0,0 +1,140 @@
++.. SPDX-License-Identifier: GPL-2.0-or-later
++
++Kernel driver ads71x8
++=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
++
++Supported chips:
++
++  * Texas Instruments ADS7138
++
++	Prefix: 'ads7128'
++
++	Datasheet: Publicly available at the Texas Instruments website:
++	http://focus.ti.com/lit/ds/symlink/ads7128.pdf
++
++  * Texas Instruments ADS7138
++
++	Prefix: 'ads7138'
++
++	Datasheet: Publicly available at the Texas Instruments website:
++	http://focus.ti.com/lit/ds/symlink/ads7138.pdf
++
++Author: Tobias Sperling <tobias.sperling@softing.com>
++	(based on ads7828 by Steve Hardy)
++
++Description
++-----------
++
++This driver implements support for the Texas Instruments ADS7128 and ADS71=
+38,
++which are 8-channel 12-bit A/D converters.
++
++The chip requires an external analog supply voltage AVDD which is also use=
+d as
++reference voltage. If it is missing or too low, the chip won't show up as =
+I2C
++device.
++
++The driver can be run in different modes. In manual mode a new (averaged) =
+sample
++is created when the according input is read.
++
++In auto mode all channels are sampled sequentially automatically. Reading =
+an
++input returns the last valid sample. In this mode there are also further
++features like statistics and the possibility to trigger an interrupt if a
++voltage drops/raises below/above a specific value (DWC - Digital Window
++Comparator).
++The overall update time (after which all channels are updated) depends on =
+the
++number of samples, the update interval and the amount of channels (8).
++
++	update time =3D samples * update_interval * 8
++
++There is no reliable way to identify this chip, so the driver will not sca=
+n
++some addresses to try to auto-detect it. That means that you will have to
++statically declare the device in the device tree.
++
++sysfs-Interface
++---------------
++
++The following interfaces are available in all modes.
++
+++----------------+----+---------------------------------------------+
++| in[0-7]_input  | ro | Voltage in mV sampled at channel [0-7]      |
+++----------------+----+---------------------------------------------+
++| samples        | rw | Number of samples used for averaging 1-128. |
++|                |    | Automatically set to closest power of 2.    |
+++----------------+----+---------------------------------------------+
++| calibrate      | rw | Write any value greater than 0 to trigger   |
++|                |    | self-calibration. Reads as 0 if finished.   |
+++----------------+----+---------------------------------------------+
++
++If the device is running in auto mode there are also the following interfa=
+ces.
++
+++------------------+----+-------------------------------------------------=
+----+
++| in[0-7]_max      | ro | Maximum value in mV that occurred at channel [0-=
+7]  |
+++------------------+----+-------------------------------------------------=
+----+
++| in[0-7]_min      | ro | Minimal value in mV that occurred at channel [0-=
+7]  |
+++------------------+----+-------------------------------------------------=
+----+
++| update_interval  | ro | Time in microseconds after which the next sample=
+ is |
++|                  |    | executed.                                       =
+    |
+++------------------+----+-------------------------------------------------=
+----+
++
++If the device is running in auto mode and the interrupt is configured also=
+ the
++following interfaces are added. If CONFIG_SYSFS is set in the kernel
++configuration it is also possible to poll the 'alrarms', see example below=
+.
++
+++--------------------+----+-----------------------------------------------=
+----+
++| alarms             | ro | | Contains the flags of DWC events. Once read =
+it  |
++|                    |    |   is reset to 0.                              =
+    |
++|                    |    | | BIT0 equals the low event flag of channel 0.=
+    |
++|                    |    | | BIT7 equals the low event flag of channel 7.=
+    |
++|                    |    | | BIT8 equals the high event flag of channel 0=
+.   |
++|                    |    | | BIT15 equals the high event flag of channel =
+7.  |
+++--------------------+----+-----------------------------------------------=
+----+
++| in[0-7]_max_alarm  | rw | Set high threshold in mV of DWC for channel [0=
+-7] |
+++--------------------+----+-----------------------------------------------=
+----+
++| in[0-7]_min_alarm  | rw | Set low threshold in mV of DWC for channel [0-=
+7]  |
+++--------------------+----+-----------------------------------------------=
+----+
++
++Example
++-------
++
++.. code:: c
++
++	#include <stdio.h>
++	#include <stdlib.h>
++	#include <fcntl.h>
++	#include <sys/select.h>
++	#include <unistd.h>
++
++	int main(void)
++	{
++		int		retval, fd;
++		fd_set	exceptfds;
++		char	buf[16];
++
++		fd =3D open("/sys/class/hwmon/hwmon1/alarms", O_RDONLY);
++
++		while (1) {
++
++			FD_ZERO(&exceptfds);
++			FD_SET(fd, &exceptfds);
++
++			/* Must be assigned to 'exceptional conditions'. For poll() use
++				POLLPRI. */
++			retval =3D select(fd + 1, NULL, NULL, &exceptfds, NULL);
++			if (retval =3D=3D -1)
++				perror("select()");
++			else if (retval) {
++				/* Close and reopen is required, since it's a sysfs file */
++				close(fd);
++				fd =3D open("/sys/class/hwmon/hwmon1/alarms", O_RDONLY);
++				retval =3D read(fd, buf, sizeof(buf));
++				printf("Received: %.*s\n", retval,buf);
++			}
++		}
++
++	close(fd);
++	exit(EXIT_SUCCESS);
++	}
++
++Notes
++-----
++
++TODO support for GPIOs, ADC hysteresis and counts is missing yet.
+diff --git a/Documentation/hwmon/index.rst b/Documentation/hwmon/index.rst
+index 913c11390a45..a54df7af27ea 100644
+--- a/Documentation/hwmon/index.rst
++++ b/Documentation/hwmon/index.rst
+@@ -33,6 +33,7 @@ Hardware Monitoring Kernel Drivers
+    adm1275
+    adm9240
+    adp1050
++   ads71x8
+    ads7828
+    adt7410
+    adt7411
+--=20
+2.39.2
 
-> +	if (IS_ENABLED(CONFIG_TIME_NS) && _vdso_data->clock_mode == VDSO_CLOCKMODE_TIMENS)
-> +		return (void*)&_vdso_rng_data + VVAR_TIMENS_PAGE_OFFSET * PAGE_SIZE;
-> +	return &_vdso_rng_data;
-> +}
-> +
-> +#endif /* !__ASSEMBLY__ */
-> +
-> +#endif /* __ASM_VDSO_GETRANDOM_H */
-> diff --git a/arch/arm64/include/asm/vdso/vsyscall.h b/arch/arm64/include/asm/vdso/vsyscall.h
-> index f94b1457c117..2a87f0e1b144 100644
-> --- a/arch/arm64/include/asm/vdso/vsyscall.h
-> +++ b/arch/arm64/include/asm/vdso/vsyscall.h
-> @@ -2,8 +2,11 @@
->  #ifndef __ASM_VDSO_VSYSCALL_H
->  #define __ASM_VDSO_VSYSCALL_H
->  
-> +#define __VDSO_RND_DATA_OFFSET  480
-
-Why 480?
-
-> +
->  #ifndef __ASSEMBLY__
->  
-> +#include <asm/vdso.h>
->  #include <linux/timekeeper_internal.h>
->  #include <vdso/datapage.h>
->  
-> @@ -21,6 +24,13 @@ struct vdso_data *__arm64_get_k_vdso_data(void)
->  }
->  #define __arch_get_k_vdso_data __arm64_get_k_vdso_data
->  
-> +static __always_inline
-> +struct vdso_rng_data *__arm64_get_k_vdso_rnd_data(void)
-> +{
-> +	return (void*)vdso_data + __VDSO_RND_DATA_OFFSET;
-> +}
-> +#define __arch_get_k_vdso_rng_data __arm64_get_k_vdso_rnd_data
-> +
->  static __always_inline
->  void __arm64_update_vsyscall(struct vdso_data *vdata, struct timekeeper *tk)
->  {
-> diff --git a/arch/arm64/kernel/vdso.c b/arch/arm64/kernel/vdso.c
-> index 89b6e7840002..706c9c3a7a50 100644
-> --- a/arch/arm64/kernel/vdso.c
-> +++ b/arch/arm64/kernel/vdso.c
-> @@ -34,12 +34,6 @@ enum vdso_abi {
->  	VDSO_ABI_AA32,
->  };
->  
-> -enum vvar_pages {
-> -	VVAR_DATA_PAGE_OFFSET,
-> -	VVAR_TIMENS_PAGE_OFFSET,
-> -	VVAR_NR_PAGES,
-> -};
-> -
->  struct vdso_abi_info {
->  	const char *name;
->  	const char *vdso_code_start;
-> diff --git a/arch/arm64/kernel/vdso/Makefile b/arch/arm64/kernel/vdso/Makefile
-> index d11da6461278..50246a38d6bd 100644
-> --- a/arch/arm64/kernel/vdso/Makefile
-> +++ b/arch/arm64/kernel/vdso/Makefile
-> @@ -9,7 +9,7 @@
->  # Include the generic Makefile to check the built vdso.
->  include $(srctree)/lib/vdso/Makefile
->  
-> -obj-vdso := vgettimeofday.o note.o sigreturn.o
-> +obj-vdso := vgettimeofday.o note.o sigreturn.o vgetrandom.o vgetrandom-chacha.o
->  
->  # Build rules
->  targets := $(obj-vdso) vdso.so vdso.so.dbg
-> @@ -40,13 +40,22 @@ CFLAGS_REMOVE_vgettimeofday.o = $(CC_FLAGS_FTRACE) -Os $(CC_FLAGS_SCS) \
->  				$(RANDSTRUCT_CFLAGS) $(GCC_PLUGINS_CFLAGS) \
->  				$(CC_FLAGS_LTO) $(CC_FLAGS_CFI) \
->  				-Wmissing-prototypes -Wmissing-declarations
-> +CFLAGS_REMOVE_vgetrandom.o = $(CC_FLAGS_FTRACE) -Os $(CC_FLAGS_SCS) \
-> +			     $(RANDSTRUCT_CFLAGS) $(GCC_PLUGINS_CFLAGS) \
-> +			     $(CC_FLAGS_LTO) $(CC_FLAGS_CFI) \
-> +			     -Wmissing-prototypes -Wmissing-declarations
->  
->  CFLAGS_vgettimeofday.o = -O2 -mcmodel=tiny -fasynchronous-unwind-tables
-> +CFLAGS_vgetrandom.o = -O2 -mcmodel=tiny -fasynchronous-unwind-tables
-
-You're using identical CFLAGS_ and CFLAGS_REMOVE_ definitions for
-vgettimeofdat.o and vgetrandom.o. Please refactor this so that they use
-common definitions.
-
-> diff --git a/arch/arm64/kernel/vdso/vdso b/arch/arm64/kernel/vdso/vdso
-> new file mode 120000
-> index 000000000000..233c7a26f6e5
-> --- /dev/null
-> +++ b/arch/arm64/kernel/vdso/vdso
-> @@ -0,0 +1 @@
-> +../../../arch/arm64/kernel/vdso
-> \ No newline at end of file
-> diff --git a/arch/arm64/kernel/vdso/vdso.lds.S b/arch/arm64/kernel/vdso/vdso.lds.S
-> index 45354f2ddf70..f204a9ddc833 100644
-> --- a/arch/arm64/kernel/vdso/vdso.lds.S
-> +++ b/arch/arm64/kernel/vdso/vdso.lds.S
-> @@ -11,7 +11,9 @@
->  #include <linux/const.h>
->  #include <asm/page.h>
->  #include <asm/vdso.h>
-> +#include <asm/vdso/vsyscall.h>
->  #include <asm-generic/vmlinux.lds.h>
-> +#include <vdso/datapage.h>
->  
->  OUTPUT_FORMAT("elf64-littleaarch64", "elf64-bigaarch64", "elf64-littleaarch64")
->  OUTPUT_ARCH(aarch64)
-> @@ -19,6 +21,7 @@ OUTPUT_ARCH(aarch64)
->  SECTIONS
->  {
->  	PROVIDE(_vdso_data = . - __VVAR_PAGES * PAGE_SIZE);
-> +	PROVIDE(_vdso_rng_data = _vdso_data + __VDSO_RND_DATA_OFFSET);
->  #ifdef CONFIG_TIME_NS
->  	PROVIDE(_timens_data = _vdso_data + PAGE_SIZE);
->  #endif
-> @@ -102,6 +105,7 @@ VERSION
->  		__kernel_gettimeofday;
->  		__kernel_clock_gettime;
->  		__kernel_clock_getres;
-> +		__kernel_getrandom;
->  	local: *;
->  	};
->  }
-> diff --git a/arch/arm64/kernel/vdso/vgetrandom-chacha.S b/arch/arm64/kernel/vdso/vgetrandom-chacha.S
-> new file mode 100644
-> index 000000000000..9ebf12a09c65
-> --- /dev/null
-> +++ b/arch/arm64/kernel/vdso/vgetrandom-chacha.S
-> @@ -0,0 +1,168 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +#include <linux/linkage.h>
-> +#include <asm/cache.h>
-> +#include <asm/assembler.h>
-> +
-> +	.text
-> +
-> +#define state0		v0
-> +#define state1		v1
-> +#define state2		v2
-> +#define state3		v3
-> +#define copy0		v4
-> +#define copy1		v5
-> +#define copy2		v6
-> +#define copy3		v7
-> +#define copy3_d		d7
-> +#define one_d		d16
-> +#define one_q		q16
-> +#define tmp		v17
-> +#define rot8		v18
-> +
-> +/*
-> + * ARM64 ChaCha20 implementation meant for vDSO.  Produces a given positive
-> + * number of blocks of output with nonce 0, taking an input key and 8-bytes
-> + * counter.  Importantly does not spill to the stack.
-> + *
-> + * void __arch_chacha20_blocks_nostack(uint8_t *dst_bytes,
-> + *				       const uint8_t *key,
-> + * 				       uint32_t *counter,
-> + *				       size_t nblocks)
-> + *
-> + * 	x0: output bytes
-> + *	x1: 32-byte key input
-> + *	x2: 8-byte counter input/output
-> + *	x3: number of 64-byte block to write to output
-> + */
-> +SYM_FUNC_START(__arch_chacha20_blocks_nostack)
-
-Is there any way we can reuse the existing code in
-crypto/chacha-neon-core.S for this? It looks to my untrained eye like
-this is an arbitrarily different implementation to what we already have.
-
-> +	/* copy0 = "expand 32-byte k" */
-> +	adr_l		x8, CTES
-> +	ld1		{copy0.4s}, [x8]
-> +	/* copy1,copy2 = key */
-> +	ld1		{ copy1.4s, copy2.4s }, [x1]
-> +	/* copy3 = counter || zero nonce  */
-> +	ldr		copy3_d, [x2]
-> +
-> +	adr_l		x8, ONE
-> +	ldr		one_q, [x8]
-> +
-> +	adr_l		x10, ROT8
-> +	ld1		{rot8.4s}, [x10]
-> +.Lblock:
-> +	/* copy state to auxiliary vectors for the final add after the permute.  */
-> +	mov		state0.16b, copy0.16b
-> +	mov		state1.16b, copy1.16b
-> +	mov		state2.16b, copy2.16b
-> +	mov		state3.16b, copy3.16b
-> +
-> +	mov		w4, 20
-> +.Lpermute:
-> +	/*
-> +	 * Permute one 64-byte block where the state matrix is stored in the four NEON
-> +	 * registers state0-state3.  It performs matrix operations on four words in parallel,
-> +	 * but requires shuffling to rearrange the words after each round.
-> +	 */
-> +
-> +.Ldoubleround:
-> +	/* state0 += state1, state3 = rotl32(state3 ^ state0, 16) */
-> +	add		state0.4s, state0.4s, state1.4s
-> +	eor		state3.16b, state3.16b, state0.16b
-> +	rev32		state3.8h, state3.8h
-> +
-> +	/* state2 += state3, state1 = rotl32(state1 ^ state2, 12) */
-> +	add		state2.4s, state2.4s, state3.4s
-> +	eor		tmp.16b, state1.16b, state2.16b
-> +	shl		state1.4s, tmp.4s, #12
-> +	sri		state1.4s, tmp.4s, #20
-> +
-> +	/* state0 += state1, state3 = rotl32(state3 ^ state0, 8) */
-> +	add		state0.4s, state0.4s, state1.4s
-> +	eor		state3.16b, state3.16b, state0.16b
-> +	tbl		state3.16b, {state3.16b}, rot8.16b
-> +
-> +	/* state2 += state3, state1 = rotl32(state1 ^ state2, 7) */
-> +	add		state2.4s, state2.4s, state3.4s
-> +	eor		tmp.16b, state1.16b, state2.16b
-> +	shl		state1.4s, tmp.4s, #7
-> +	sri		state1.4s, tmp.4s, #25
-> +
-> +	/* state1[0,1,2,3] = state1[1,2,3,0] */
-> +	ext		state1.16b, state1.16b, state1.16b, #4
-> +	/* state2[0,1,2,3] = state2[2,3,0,1] */
-> +	ext		state2.16b, state2.16b, state2.16b, #8
-> +	/* state3[0,1,2,3] = state3[1,2,3,0] */
-> +	ext		state3.16b, state3.16b, state3.16b, #12
-> +
-> +	/* state0 += state1, state3 = rotl32(state3 ^ state0, 16) */
-> +	add		state0.4s, state0.4s, state1.4s
-> +	eor		state3.16b, state3.16b, state0.16b
-> +	rev32		state3.8h, state3.8h
-> +
-> +	/* state2 += state3, state1 = rotl32(state1 ^ state2, 12) */
-> +	add		state2.4s, state2.4s, state3.4s
-> +	eor		tmp.16b, state1.16b, state2.16b
-> +	shl		state1.4s, tmp.4s, #12
-> +	sri		state1.4s, tmp.4s, #20
-> +
-> +	/* state0 += state1, state3 = rotl32(state3 ^ state0, 8) */
-> +	add		state0.4s, state0.4s, state1.4s
-> +	eor		state3.16b, state3.16b, state0.16b
-> +	tbl		state3.16b, {state3.16b}, rot8.16b
-> +
-> +	/* state2 += state3, state1 = rotl32(state1 ^ state2, 7) */
-> +	add		state2.4s, state2.4s, state3.4s
-> +	eor		tmp.16b, state1.16b, state2.16b
-> +	shl		state1.4s, tmp.4s, #7
-> +	sri		state1.4s, tmp.4s, #25
-> +
-> +	/* state1[0,1,2,3] = state1[3,0,1,2] */
-> +	ext		state1.16b, state1.16b, state1.16b, #12
-> +	/* state2[0,1,2,3] = state2[2,3,0,1] */
-> +	ext		state2.16b, state2.16b, state2.16b, #8
-> +	/* state3[0,1,2,3] = state3[1,2,3,0] */
-> +	ext		state3.16b, state3.16b, state3.16b, #4
-> +
-> +	subs		w4, w4, #2
-> +	b.ne		.Ldoubleround
-> +
-> +	/* output0 = state0 + state0 */
-> +	add		state0.4s, state0.4s, copy0.4s
-> +	/* output1 = state1 + state1 */
-> +	add		state1.4s, state1.4s, copy1.4s
-> +	/* output2 = state2 + state2 */
-> +	add		state2.4s, state2.4s, copy2.4s
-> +	/* output2 = state3 + state3 */
-> +	add		state3.4s, state3.4s, copy3.4s
-> +	st1		{ state0.4s - state3.4s }, [x0]
-> +
-> +	/* ++copy3.counter */
-> +	add		copy3_d, copy3_d, one_d
-> +
-> +	/* output += 64, --nblocks */
-> +	add		x0, x0, 64
-> +	subs		x3, x3, #1
-> +	b.ne		.Lblock
-> +
-> +	/* counter = copy3.counter */
-> +	str		copy3_d, [x2]
-> +
-> +	/* Zero out the potentially sensitive regs, in case nothing uses these again. */
-> +	eor		state0.16b, state0.16b, state0.16b
-> +	eor		state1.16b, state1.16b, state1.16b
-> +	eor		state2.16b, state2.16b, state2.16b
-> +	eor		state3.16b, state3.16b, state3.16b
-> +	eor		copy1.16b, copy1.16b, copy1.16b
-> +	eor		copy2.16b, copy2.16b, copy2.16b
-> +	ret
-> +SYM_FUNC_END(__arch_chacha20_blocks_nostack)
-> +
-> +        .section        ".rodata", "a", %progbits
-> +        .align          L1_CACHE_SHIFT
-> +
-> +CTES:	.word		1634760805, 857760878, 	2036477234, 1797285236
-> +ONE:    .xword		1, 0
-> +ROT8:	.word		0x02010003, 0x06050407, 0x0a09080b, 0x0e0d0c0f
-> +
-> +emit_aarch64_feature_1_and
-> diff --git a/arch/arm64/kernel/vdso/vgetrandom.c b/arch/arm64/kernel/vdso/vgetrandom.c
-> new file mode 100644
-> index 000000000000..0833d25f3121
-> --- /dev/null
-> +++ b/arch/arm64/kernel/vdso/vgetrandom.c
-> @@ -0,0 +1,15 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +typeof(__cvdso_getrandom) __kernel_getrandom;
-> +
-> +ssize_t __kernel_getrandom(void *buffer, size_t len, unsigned int flags, void *opaque_state, size_t opaque_len)
-> +{
-> +	asm goto (
-> +	ALTERNATIVE("b %[fallback]", "nop", RM64_HAS_FPSIMD) : : : : fallback);
-
-"RM64_HAS_FPSIMD". Are you sure you've tested this?
-
-> +	return __cvdso_getrandom(buffer, len, flags, opaque_state, opaque_len);
-> +
-> +fallback:
-> +	if (unlikely(opaque_len == ~0UL && !buffer && !len && !flags))
-> +		return -ENOSYS;
-> +	return getrandom_syscall(buffer, len, flags);
-> +}
-> diff --git a/lib/vdso/getrandom.c b/lib/vdso/getrandom.c
-> index 938ca539aaa6..7c9711248d9b 100644
-> --- a/lib/vdso/getrandom.c
-> +++ b/lib/vdso/getrandom.c
-> @@ -5,6 +5,7 @@
->  
->  #include <linux/array_size.h>
->  #include <linux/minmax.h>
-> +#include <linux/mm.h>
->  #include <vdso/datapage.h>
->  #include <vdso/getrandom.h>
->  #include <vdso/unaligned.h>
-
-Looks like this should be a separate change?
-
-Will
 
