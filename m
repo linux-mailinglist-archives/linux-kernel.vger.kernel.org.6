@@ -1,201 +1,124 @@
-Return-Path: <linux-kernel+bounces-309175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C49B396670D
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 18:36:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6FF5966712
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 18:39:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E97BE1C22944
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 16:36:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63E83B20C9B
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 16:39:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D94D41B3B2D;
-	Fri, 30 Aug 2024 16:36:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56A021B5820;
+	Fri, 30 Aug 2024 16:39:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="i+md4WnA"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vW+gA4aY"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CE5D13BAE2;
-	Fri, 30 Aug 2024 16:35:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A3DE1B2EC5
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 16:39:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725035761; cv=none; b=Cxw2UYNMKfvN5bZxwmv85KOxumPuf9yApu5QZUa7BOlfkOmGAegxW5J+f8gs77JJtK5rUIYjtyzmY04xxVYuqYY1E7G0VGGDXUv/BAgSiYkKppTXZUqIqwDjzeUblC+SOIZzwc013P57shYySDGzHOJQ82vI68M4BRZaQC1okOY=
+	t=1725035944; cv=none; b=KP2g7HKeFIBN7DoIJEhy+xCMzZXRS+wiLhvFvvsdPkMbPtHgCtRO5AQEsH8nhwMsc8Jszy6sUcpcoyIHVcZXA/qcvwYYBm/c1Xj0NtJ0UWyFj/OeBhnS7s4lwK/xRnFPVDA7+/Vo6EzjUIr5e9MMbIQ9MVXo0e0NT1Y+w4vaohM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725035761; c=relaxed/simple;
-	bh=rgX8SAslmVIKpEMoWAeWNHrbuviZUn9GPTO/3yea1tg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=cagYBrYXPSmtHTGGSudv4QKIdOZ+dTvX9CjtGnFiYCl0kYozgKHtDGXGeZ5CWJhb3ILVtqf7/qi1u2YjFdkIIeIl7CNaxUWmg4yQIrD6t7DpyYKa2yNQUj/GCwecact0zyR/OAssTwdTvTByrkwNAdJz3sA1QlSMuTTcoEzjpuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=i+md4WnA; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47UGHBPg028956;
-	Fri, 30 Aug 2024 16:35:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	+3jUVHCU8Z6xeBgVwpy69fXyaiHuZQoYJBZ0GepdZzw=; b=i+md4WnAbwS2YHOf
-	7otXOJtq3A8XLxV05jC4Uf0dX+cN9G0iGJ7cZ9AY4py06mUjJBIT5lCaxUSDmAvP
-	B6QnNT4qtNqwE9klx57IGUpJ6oTrepQ9lIGrnlrq7OjJZK2FvzYUZcjkTArLpO8O
-	rvVjz+gKYU0pVT74xaw2lKpd6euPtJ/ndnKl7HVUblomKQWiSJghhHo8khUd3vQ6
-	NWhsdgxb0a4mVHCgRuhGe365anQyL2aU16OFgKLCvqfRIUTvqNlNUATFmMMU15er
-	cOWle63Rptl2J2dUPz9D8LDTupXrrhPESd5sKOHmuuRv90nGTtCTV5M8P9NDUNA3
-	buySjg==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41ax4mk8aa-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 30 Aug 2024 16:35:39 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47UGZcF5019043
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 30 Aug 2024 16:35:38 GMT
-Received: from [10.110.11.12] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 30 Aug
- 2024 09:35:35 -0700
-Message-ID: <6408bb64-4ab7-4d46-9c15-d7eddc9d4e39@quicinc.com>
-Date: Fri, 30 Aug 2024 09:35:29 -0700
+	s=arc-20240116; t=1725035944; c=relaxed/simple;
+	bh=9CFrXcknrszqO6vd2KlpPYg8IThO+L2g2ySYied+bck=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bPW2mtFe1i2AoWc36WaqXnU3FT1mYg12gvoN2UmuqfJ10piINan+NaSTGDvU9VufbMhinKtutX+VkpCT23xWYsOQLRQVdAHuTv6TgJcMjjA8/B9GfbBVtXCNUVHAobvT0RaJMwfNNQ05/4XSp2sFr1+aZ6Q+TDH3svy9bTzmubk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vW+gA4aY; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2ef27bfd15bso19331771fa.2
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 09:39:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725035940; x=1725640740; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=uwq4R/f36WQQ1Swarqd8PQ+Sx4wkeeX3AmNPKu0eUyY=;
+        b=vW+gA4aYHPc+EChNPqOxONHp8YrUAeErN35Y2n/PlIAEa8b5Trkcc1qjhJNMQJGIXy
+         tp8ksY62SKCiutYpWyBMQSIFyZL31WHRZM64r5Q4ngDG4SxAf0BTmbDkTgNhfesZa8bf
+         eGhF7Ry71UdxX/wMM2Qp6MxZJAhbbFJQFdcEsaREKRmJmvNAj7TKKb5M8dcitSRv031i
+         QH+Wn1fr8pcFr3I9WMpJEPB2ae8zBdcxBK1EDA8XyFRVoo5NI1p+aAI4Wt8HG4YlppOw
+         tfVrIeXYI53+TUgjBkbYwc+4G0Jj4NvjcN6QwjwhNghKT1wtKCtoNkAPA6QR8F8C/SAc
+         yDGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725035940; x=1725640740;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uwq4R/f36WQQ1Swarqd8PQ+Sx4wkeeX3AmNPKu0eUyY=;
+        b=uX22diKk/RqkwkDAvFJMfqtBWIRkZ9eNf1Bhlq+AdCPkbPDK7F44/XezIAWehKOm07
+         CQu6ITd1qErDYp+htAn5z1ZOgNe18ohri7Um7upEfi0cXIQctL//m/cntwbFWJp7pCwk
+         WWTx7T7LXrTK6+kh95zUeTKHF3kB4Wgkw1Jw0Q0vmga7ppuY2t/5c7D4M1yMpmahTEJF
+         p4v8CuBf+dVAKK+wVf1UTZIaAD++qMoah/ye9+8hIWL+pXKxwoM458D6mxieNKKmqtye
+         HHwBK2LEbTHb7D6eS2S7HWR91ds+IqgdTpHG/tzOPu1QuIJHblGkgr12BpXieQppEKjj
+         cKsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV+HR9XbADslVeQGYupo31H3hsqbdorcucQWDrAbm55FVnlZyeW4t0Sqh4oT790ey+sVcxY2ePkUebf3Sk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YziUAqLtxNk2LmkFiA04ibOiYHM1P+tNGTo+YK6orqrJm7IJbUa
+	/ImWV51+JqouMKqUub+6vuksF+LsSWemVYbw1Hjvkc+dZ2xHrmXSFmNRE+SE0+c=
+X-Google-Smtp-Source: AGHT+IGXlaawo+aNd8bvyU9hJTs0LcQHomL+gI7bfl9YYFu3/2gV7tZKCkjm/N27yB8W8cQUyGkfZg==
+X-Received: by 2002:a2e:3213:0:b0:2f3:f6fa:cfd2 with SMTP id 38308e7fff4ca-2f6106d6968mr40049701fa.25.1725035939563;
+        Fri, 30 Aug 2024 09:38:59 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f615194f19sm7176211fa.130.2024.08.30.09.38.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Aug 2024 09:38:58 -0700 (PDT)
+Date: Fri, 30 Aug 2024 19:38:57 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Jessica Zhang <quic_jesszhan@quicinc.com>
+Cc: Rob Clark <robdclark@gmail.com>, quic_abhinavk@quicinc.com, 
+	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, quic_ebharadw@quicinc.com, linux-arm-msm@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	Rob Clark <robdclark@chromium.org>
+Subject: Re: [PATCH 02/21] drm: print clone mode status in atomic state
+Message-ID: <e3moledbfob2xkgxpbta3onlzc5yi6u7cbsmuo5ao4qq7nyyhj@lr32vqnjzkbi>
+References: <20240829-concurrent-wb-v1-0-502b16ae2ebb@quicinc.com>
+ <20240829-concurrent-wb-v1-2-502b16ae2ebb@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 0/2] Dynamic Allocation of the reserved_mem array
-To: Andy Shevchenko <andy@black.fi.intel.com>
-CC: <robh@kernel.org>, <saravanak@google.com>, <klarasmodin@gmail.com>,
-        <aisheng.dong@nxp.com>, <hch@lst.de>, <m.szyprowski@samsung.com>,
-        <robin.murphy@arm.com>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>,
-        <will@kernel.org>, <catalin.marinas@arm.com>, <kernel@quicinc.com>
-References: <20240809184814.2703050-1-quic_obabatun@quicinc.com>
- <ZsN_p9l8Pw2_X3j3@black.fi.intel.com>
-Content-Language: en-US
-From: Oreoluwa Babatunde <quic_obabatun@quicinc.com>
-In-Reply-To: <ZsN_p9l8Pw2_X3j3@black.fi.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 8OGfLwHxQzNOXyFcTrfSGvoGgJ59vzu8
-X-Proofpoint-ORIG-GUID: 8OGfLwHxQzNOXyFcTrfSGvoGgJ59vzu8
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-30_10,2024-08-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
- impostorscore=0 spamscore=0 suspectscore=0 adultscore=0 priorityscore=1501
- lowpriorityscore=0 bulkscore=0 malwarescore=0 phishscore=0 mlxscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408300127
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240829-concurrent-wb-v1-2-502b16ae2ebb@quicinc.com>
 
+On Thu, Aug 29, 2024 at 01:48:23PM GMT, Jessica Zhang wrote:
+> Add clone mode status to the DRM atomic print state
+> 
+> Signed-off-by: Jessica Zhang <quic_jesszhan@quicinc.com>
+> ---
+>  drivers/gpu/drm/drm_atomic.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/gpu/drm/drm_atomic.c b/drivers/gpu/drm/drm_atomic.c
+> index 07b4b394e3bf..145d6a758d4d 100644
+> --- a/drivers/gpu/drm/drm_atomic.c
+> +++ b/drivers/gpu/drm/drm_atomic.c
+> @@ -455,6 +455,7 @@ static void drm_atomic_crtc_print_state(struct drm_printer *p,
+>  	drm_printf(p, "\tconnector_mask=%x\n", state->connector_mask);
+>  	drm_printf(p, "\tencoder_mask=%x\n", state->encoder_mask);
+>  	drm_printf(p, "\tmode: " DRM_MODE_FMT "\n", DRM_MODE_ARG(&state->mode));
+> +	drm_printf(p, "\tin_clone_mode=%d\n", drm_crtc_in_clone_mode(crtc->state));
 
-On 8/19/2024 10:23 AM, Andy Shevchenko wrote:
-> On Fri, Aug 09, 2024 at 11:48:12AM -0700, Oreoluwa Babatunde wrote:
->> The reserved_mem array is used to store data for the different
->> reserved memory regions defined in the DT of a device.  The array
->> stores information such as region name, node reference, start-address,
->> and size of the different reserved memory regions.
->>
->> The array is currently statically allocated with a size of
->> MAX_RESERVED_REGIONS(64). This means that any system that specifies a
->> number of reserved memory regions greater than MAX_RESERVED_REGIONS(64)
->> will not have enough space to store the information for all the regions.
->>
->> This can be fixed by making the reserved_mem array a dynamically sized
->> array which is allocated using memblock_alloc() based on the exact
->> number of reserved memory regions defined in the DT.
->>
->> On architectures such as arm64, memblock allocated memory is not
->> writable until after the page tables have been setup.
->> This is an issue because the current implementation initializes the
->> reserved memory regions and stores their information in the array before
->> the page tables are setup. Hence, dynamically allocating the
->> reserved_mem array and attempting to write information to it at this
->> point will fail.
->>
->> Therefore, the allocation of the reserved_mem array will need to be done
->> after the page tables have been setup, which means that the reserved
->> memory regions will also need to wait until after the page tables have
->> been setup to be stored in the array.
->>
->> When processing the reserved memory regions defined in the DT, these
->> regions are marked as reserved by calling memblock_reserve(base, size).
->> Where:  base = base address of the reserved region.
->> 	size = the size of the reserved memory region.
->>
->> Depending on if that region is defined using the "no-map" property,
->> memblock_mark_nomap(base, size) is also called.
->>
->> The "no-map" property is used to indicate to the operating system that a
->> mapping of the specified region must NOT be created. This also means
->> that no access (including speculative accesses) is allowed on this
->> region of memory except when it is coming from the device driver that
->> this region of memory is being reserved for.[1]
->>
->> Therefore, it is important to call memblock_reserve() and
->> memblock_mark_nomap() on all the reserved memory regions before the
->> system sets up the page tables so that the system does not unknowingly
->> include any of the no-map reserved memory regions in the memory map.
->>
->> There are two ways to define how/where a reserved memory region is
->> placed in memory:
->> i) Statically-placed reserved memory regions
->> i.e. regions defined with a set start address and size using the
->>      "reg" property in the DT.
->> ii) Dynamically-placed reserved memory regions.
->> i.e. regions defined by specifying a range of addresses where they can
->>      be placed in memory using the "alloc_ranges" and "size" properties
->>      in the DT.
->>
->> The dynamically-placed reserved memory regions get assigned a start
->> address only at runtime. And this needs to  be done before the page
->> tables are setup so that memblock_reserve() and memblock_mark_nomap()
->> can be called on the allocated region as explained above.
->> Since the dynamically allocated reserved_mem array can only be
->> available after the page tables have been setup, the information for
->> the dynamically-placed reserved memory regions needs to be stored
->> somewhere temporarily until the reserved_mem array is available.
->>
->> Therefore, this series makes use of a temporary static array to store
->> the information of the dynamically-placed reserved memory regions until
->> the reserved_mem array is allocated.
->> Once the reserved_mem array is available, the information is copied over
->> from the temporary array into the reserved_mem array, and the memory for
->> the temporary array is freed back to the system.
->>
->> The information for the statically-placed reserved memory regions does
->> not need to be stored in a temporary array because their starting
->> address is already stored in the devicetree.
->> Once the reserved_mem array is allocated, the information for the
->> statically-placed reserved memory regions is added to the array.
->>
->> Note:
->> Because of the use of a temporary array to store the information of the
->> dynamically-placed reserved memory regions, there still exists a
->> limitation of 64 for this particular kind of reserved memory regions.
->> >From my observation, these regions are typically small in number and
->> hence I expect this to not be an issue for now.
->
-> This series (in particular the first patch) broke boot on Intel Meteor
-> Lake-P. Taking Linux next of 20240819 with these being reverted makes
-> things work again.
->
-> Taking into account bisectability issue (that's how I noticed the issue
-> in the first place) I think it would be nice to have no such patches at
-> all in the respective subsystem tree. On my side I may help with testing
-> whatever solution or next version provides.
-Hi Andy,
+We have encoder_mask two lines above. What is the benefit of having the
+separate in_clone_mode?
 
-I have re-uploaded another version of my patches.
-Please can you help test it on your platform to confirm
-that the issue is no longer present?
-https://lore.kernel.org/all/20240830162857.2821502-1-quic_obabatun@quicinc.com/
+>  
+>  	if (crtc->funcs->atomic_print_state)
+>  		crtc->funcs->atomic_print_state(p, state);
+> 
+> -- 
+> 2.34.1
+> 
 
-Thank you!
-Oreoluwa
+-- 
+With best wishes
+Dmitry
 
