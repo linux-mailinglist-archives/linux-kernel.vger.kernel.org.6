@@ -1,112 +1,138 @@
-Return-Path: <linux-kernel+bounces-308715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86A259660C8
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 13:31:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB6849660CB
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 13:32:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 436D22898EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 11:31:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54B071F29A99
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 11:32:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9ECB13C3D5;
-	Fri, 30 Aug 2024 11:31:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CFE3192D90;
+	Fri, 30 Aug 2024 11:31:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fuij65pU"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Di4xAqLA"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9350E17ADEB;
-	Fri, 30 Aug 2024 11:31:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E02A417BB0A;
+	Fri, 30 Aug 2024 11:31:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725017496; cv=none; b=S8avFLR3GXzP1ile3u2jajN+7DwW+4Vj2bjYAwDGA1g5WPc66iB6Qp1ASUTSzNSZTuKLvv0e470QXmaUa1P7LO1QBEE9h5/NCMr5vF8IyMVU59MpU2dhFGnhoPRGDUV7p+15WG9239JJn/aEZuURrWdg8e3N+OasWUVKCnx2G38=
+	t=1725017507; cv=none; b=lfDtOuKCAPHOzFjGejOpWgoQdPjhER1bMAjjkxEiIYa4U+iwvJ92s2S41Y1+iMe24ihlsPvBrToQEEop+DPGIVaDc6KNz5578QBywHD/xkpfyO1jU5WmNmnMNsaQ4cCu6tr8Ty+v7U6ZG1Aq6iCqvg8ZPkLCNqljjQ3k2Dj67aE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725017496; c=relaxed/simple;
-	bh=BEseMaH/R26oENGgZC1y8ZUAeWSWb0ov7ljLsQGQL5g=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=jfPDjFSuxx4hBqayxEXF6vLQe3zFAuCwjLP0ygmwWGxr9m4LwKJAX05M5ILAwVBkz1Yu2L9Y+sVotxIZ5quLfQoTlwnyjmFKYsYE+ZkslaLiBYa3UKHQuFWNPiLvEztRXYGfIuxRwgoz1M7TNIJrdFsC6AphTSdoeiynMS9gW7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fuij65pU; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-70cec4aa1e4so1182099b3a.1;
-        Fri, 30 Aug 2024 04:31:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725017494; x=1725622294; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SFHF8CkCSJECTVcPI7L3d3vdcCaiUuTgwTRGi6N0+KM=;
-        b=fuij65pUOklz4SFHmCElfwuyE665HS3yR7kEopSIyZQeUMk9Tjz0NXjLyWM4Yod/Yi
-         vufGwTV0nPTGcL0rSxlJ8XTe0gNrSs5LJMmpWZ2DwwJqL13wonzhe52iBgibHES4gy2v
-         rTjqaZYuFTlUkQWa4AetPwWSleQ316SvwmO78bcYLJqQiEiums16xmX53lqRTSzkb8FU
-         ZgdF3jG7x0dJKgfn7wY8QGEmj2GCv0gmbATjflH+RFEBUmOHJLOjujk2NLOzbcbmlea6
-         Ql2QOf+rLo9ti8OajnPsk4WRvH/P68+8+8FkQiyi03GDT/qKFxOuEDWNJeQxdKlV3Zil
-         js4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725017494; x=1725622294;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SFHF8CkCSJECTVcPI7L3d3vdcCaiUuTgwTRGi6N0+KM=;
-        b=UXL/Vw0X8ouHvtQu+6PDQbCuc8XD4YadlEEo8HA47m+6o+RgW2DLkBae14LDwwbd6k
-         z9x1rpSaUAHTarb5SFrIeSzBI0Z6alc0Wx/59tOCNPdQj7NaKmBmHobRx3LYWBsx8+fs
-         UFWVBdJnYjSeTp7BJxbqeAW2DMg/9TSetDONlNpSa2D2mhnszNAbZxuakvSRgTl2Y4Fw
-         T+ZhKyc2iJnPk3z28manp1ABbMcXNja9T3jv3WLFyuK7BOjZhe9JYaj3fOozjFgUbpFU
-         FHE3LjC8AJDwft6N/RsH6jswxn1uDOPnBrOZ+5sB19+njqqVsfD5uyQPFTeZk/rTl0lg
-         KE0A==
-X-Forwarded-Encrypted: i=1; AJvYcCUdsr2IyHkb3mIbZNwO0N5SxoTG5eiCNWONA0AE1CALYmpqGMgCrn1WffDZE6qg5+odFsVI68+hfAtb@vger.kernel.org, AJvYcCUx59fLPtpsi432J8Gk18I3NJWgbxSrRXLKGsWvJFsaNRSGhQTzydxQaY2thJOTbQloxclnAuX1G2cqSrRu@vger.kernel.org, AJvYcCVCB9UJt36jJExtZQNGtyo5E/d26vbozvas+utZURlkJJoVUhOQe3wUJ/tKBkD10xZ6JxWUE/GXbfPckN1T@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3MHPknya1zg64a+LKE0RANSsQo8fAK6h1waSBtYPVtazWyZhd
-	ZuAVdvcv27/JcJLYSWxhw+Mjxp3x/nSplCjp45Aa9F4Vfl1DwZXz
-X-Google-Smtp-Source: AGHT+IH5Hvvt5LsiN3gjHVMOELcNkoiyya11sfbL9JT4CUB7pFtIBW7+HZ9dcHBmVWJOiOqr6somEw==
-X-Received: by 2002:a05:6a00:1409:b0:714:1311:cd24 with SMTP id d2e1a72fcca58-715dfba79bcmr6392117b3a.5.1725017493588;
-        Fri, 30 Aug 2024 04:31:33 -0700 (PDT)
-Received: from localhost ([114.242.33.243])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-715e55a6ad9sm2551051b3a.84.2024.08.30.04.31.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Aug 2024 04:31:33 -0700 (PDT)
-From: Julian Sun <sunjunchao2870@gmail.com>
-To: sunjunchao2870@gmail.com
-Cc: brauner@kernel.org,
-	chandan.babu@oracle.com,
-	djwong@kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-xfs@vger.kernel.org,
-	syzbot+296b1c84b9cbf306e5a0@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [iomap?] [xfs?] WARNING in iomap_write_begin
-Date: Fri, 30 Aug 2024 19:31:30 +0800
-Message-Id: <20240830113130.165574-1-sunjunchao2870@gmail.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <df7fc9c1863f353091cfcb84f04e365aa4609bab.camel@gmail.com>
-References: <df7fc9c1863f353091cfcb84f04e365aa4609bab.camel@gmail.com>
+	s=arc-20240116; t=1725017507; c=relaxed/simple;
+	bh=YkWpl99ADp00PTbnerWY1taC+nN4P78uHCamb3Y1YCE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=FeRDf4n/ZfBqKd/j6Eyncdbd1hthwtcuUx+4y/uSWkzVZflh4y2JtbQaV4vgatDTFe4sXFu5OZFZV8VR7LzvCujafspRVMFAyiorB+etJ2qM63y3yrrj2SWVkZ2oY+v5ZanYEEBGmylXFV1kxZGvdzd/ZE+yVgRF+XbNaYmivug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Di4xAqLA; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47UBVdQV070277;
+	Fri, 30 Aug 2024 06:31:39 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1725017499;
+	bh=Sw3OmQAxPKmlZz5JNo3EyM7bMOOW0KcfzHrl+gM1ueU=;
+	h=From:To:CC:Subject:Date;
+	b=Di4xAqLA5SR8ngVHPZDBXgwiefDYLv8zkkA6hEEZZyKGRjggDXJ3UJ4XThEUoh5/H
+	 qOc/p9OKL+1JEqq4/m+QotHzSj68wgfcOnOYeYlDI7ZzwuhK24yu4iX3QhwWkQnek2
+	 1JnPqKokhtH4c/EK4Ybc/crfKrT2brGNb5FCxsWk=
+Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47UBVd3W029545;
+	Fri, 30 Aug 2024 06:31:39 -0500
+Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 30
+ Aug 2024 06:31:38 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 30 Aug 2024 06:31:38 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47UBVcrN049020;
+	Fri, 30 Aug 2024 06:31:38 -0500
+From: Nishanth Menon <nm@ti.com>
+To: Conor Dooley <conor+dt@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Rob Herring <robh@kernel.org>
+CC: Tero Kristo <kristo@kernel.org>, Vignesh Raghavendra <vigneshr@ti.com>,
+        Nishanth Menon <nm@ti.com>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        Dhruva
+ Gole <d-gole@ti.com>, Roger Quadros <rogerq@kernel.org>
+Subject: [PATCH V2] arm64: dts: ti: k3-am642-evm-nand: Rename pinctrl node and gpio-hog names
+Date: Fri, 30 Aug 2024 06:31:37 -0500
+Message-ID: <20240830113137.3986091-1-nm@ti.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Organization: Texas Instruments, Inc.
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-The patch passed test locally, and the patch in the link 
-appears to be messed up. Please retest.
+Rename the pin mux and gpio-hog node names to match up with binding
+rules. This fixes dtbs_check warnings:
+'gpmc0-pins-default' does not match any of the regexes: '-pins(-[0-9]+)?$|-pin$', 'pinctrl-[0-9]+'
+'gpio0-36' does not match '^(hog-[0-9]+|.+-hog(-[0-9]+)?)$'
 
-#syz test: upstream ee9a43b7cfe2
+While at it, change the phandle name to be consistent with the pinctrl
+naming.
 
-diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
-index 72c981e3dc92..6216c31aa3cc 100644
---- a/fs/xfs/xfs_iomap.c
-+++ b/fs/xfs/xfs_iomap.c
-@@ -1162,6 +1162,9 @@ xfs_buffered_write_iomap_begin(
- 	if (error)
- 		goto out_unlock;
+Reviewed-by: Dhruva Gole <d-gole@ti.com>
+Signed-off-by: Nishanth Menon <nm@ti.com>
+---
+
+Changes since V1:
+* Picked up Reviewed-by
+* Updated phandle name to match up with with standard pin naming.
+
+V1: https://lore.kernel.org/linux-arm-kernel/20240830102709.3970209-1-nm@ti.com/
+
+ arch/arm64/boot/dts/ti/k3-am642-evm-nand.dtso | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/ti/k3-am642-evm-nand.dtso b/arch/arm64/boot/dts/ti/k3-am642-evm-nand.dtso
+index f08c0e272b53..92faf762894c 100644
+--- a/arch/arm64/boot/dts/ti/k3-am642-evm-nand.dtso
++++ b/arch/arm64/boot/dts/ti/k3-am642-evm-nand.dtso
+@@ -12,7 +12,7 @@
+ #include "k3-pinctrl.h"
  
-+	/* Get extent info that may updated by xfs_bmapi_reserve_delalloc() */
-+	xfs_iext_lookup_extent(ip, &ip->i_df, offset_fsb, &icur, &imap);
-+
- 	/*
- 	 * Flag newly allocated delalloc blocks with IOMAP_F_NEW so we punch
- 	 * them out if the write happens to fail.
+ &main_pmx0 {
+-	gpmc0_pins_default: gpmc0-pins-default {
++	gpmc0_default_pins: gpmc0-default-pins {
+ 		bootph-all;
+ 		pinctrl-single,pins = <
+ 			AM64X_IOPAD(0x0094, PIN_INPUT, 7) /* (T19) GPMC0_BE1n.GPIO0_36 */
+@@ -50,7 +50,7 @@ AM64X_IOPAD(0x00a4, PIN_OUTPUT, 0) /* (N17) GPMC0_DIR */
+ };
+ 
+ &main_gpio0 {
+-	gpio0-36 {
++	gpmc0-hog {
+ 		bootph-all;
+ 		gpio-hog;
+ 		gpios = <36 0>;
+@@ -67,7 +67,7 @@ &elm0 {
+ &gpmc0 {
+ 	status = "okay";
+ 	pinctrl-names = "default";
+-	pinctrl-0 = <&gpmc0_pins_default>;
++	pinctrl-0 = <&gpmc0_default_pins>;
+ 	#address-cells = <2>;
+ 	#size-cells = <1>;
+ 
+
+base-commit: 20371ba120635d9ab7fc7670497105af8f33eb08
+-- 
+2.46.0
+
 
