@@ -1,104 +1,215 @@
-Return-Path: <linux-kernel+bounces-308807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2AB896620A
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 14:52:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7649996620D
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 14:53:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9008128165E
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:52:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 605011C22F01
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:53:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A90E819ABAF;
-	Fri, 30 Aug 2024 12:52:36 +0000 (UTC)
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BE961A287B;
+	Fri, 30 Aug 2024 12:52:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lgz2qLS2"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4C3C179652;
-	Fri, 30 Aug 2024 12:52:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1A59179652;
+	Fri, 30 Aug 2024 12:52:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725022356; cv=none; b=QtbnSj4gzSAay1FzAxpseshJum5mzy7xpDyhJObP8Inhra7WyJXZYwuF6JryUG2VwzRaKC4a5L1GtMJmBEru5TcbCgeZn9pNksILZDly/cEjKXdlpT+ducW5AuPISAQFMZYkgGYkTX+XbJgxON4A97INb0Bo9/y/x1dHjCdhZGE=
+	t=1725022373; cv=none; b=KlGB5wQ4p1i71PthqWgmHifIRHoPGOoOK1aocVuMqYZiodvTX2yg3n4M23O3nGDo4CDWUgeISpeBC0tU7ahwy0T+QfUJOfXXWpxJFw/l1Grgb23Djs35q1s06aiCmpZwz9pYhVOWWlcLibYY1LNsw+pKxAMFwmBtYPOqdI67oNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725022356; c=relaxed/simple;
-	bh=Dxd+8h2+3gt8NubO3TPwI1zrCjlxTOnQv/3bwoZTPoE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=l33x2dAXkQ1SIH7eBvxQ3+9mt6Q4dFRJj+UILZ6QBrzQBDkVZpwUSMjuNVP6F/Y8iw3Vwg5ZuHzJbK3xsxQRn0sCKHSv4g1NZejnXVTRUGBUMW32ECjRnTgYbCvbd6+CPCzMuv1LlZZLjrwx17wXejI8ji1yHGAJlZsEfFqhMuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
-	by APP-03 (Coremail) with SMTP id rQCowABnbPh1wNFmIyaOCw--.2806S2;
-	Fri, 30 Aug 2024 20:52:08 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: alain.volmat@foss.st.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	daniel@ffwll.ch,
-	benjamin.gaignard@linaro.org,
-	vincent.abriou@st.com
-Cc: dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Ma Ke <make24@iscas.ac.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH] drm/sti: avoid potential dereference of error pointers in sti_gdp_atomic_check
-Date: Fri, 30 Aug 2024 20:52:04 +0800
-Message-Id: <20240830125204.3433408-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1725022373; c=relaxed/simple;
+	bh=arnodLySQ2biQkWEI7752R6tKFP1HasII4QgKAhxAcc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iQqC4jrjGGQtcNLro8I138frQcsOyp9aknpSNSRXFo9cFAvnBuqhFFbpR3hzHCn0QNYPC05ZuDu21FnlgYF9qxp87r5a3luYmw9fGa7PM11isaz1G3aHYsUss972SsdlvjS8dORgKliCyTk+m9h87Lfuw48KfaRvQuRRuqtE/jg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lgz2qLS2; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42bb8cf8a5bso11676685e9.2;
+        Fri, 30 Aug 2024 05:52:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725022370; x=1725627170; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=B/570cclLdWZD3k/8NAqWM1ozjFwAOjURdHiI/FEaSk=;
+        b=lgz2qLS2VioFVRrLhF0B2W7AOVrjRu2dMJbb1NLxnItYV2PYlKGNcAmbsUGdzj1UC2
+         6sXEXc3cKsC2RseFQ2mWYUYwLRQCDt7iDroD/l7f+lmBI6OETZmdU8hB0FdqNEDI7Pez
+         VCozYkM/kOmnRZa8bn6evGlX1B5YGXuqgNohnjsn9/jwgDVMkK6Ysdji9a3ixlkl1Cf/
+         uSBNDmi594DhE1HBG/PoVkNwbp/CGUGSpyj/b1Hi+rmHTyC7jNFEkmjgWPj7AM+HMcPd
+         D96yE4RNI+WSsjgBW3SExKw1gNmzyYvW3GN1wO1l7DrVhdi7ze+DVCxXXGuqCwJ7Jf4n
+         iVnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725022370; x=1725627170;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=B/570cclLdWZD3k/8NAqWM1ozjFwAOjURdHiI/FEaSk=;
+        b=V6H4pl7AvcpMAk6oXzGH5NkqC1hfP5HhXJWLk38E9tZFsZ2Jy44nTebEdTO5NapxUq
+         5saE8LvCuT2WsL9furuusa4LnxAXyItScqiAfFOyyAIlKaU4UPeQD2uJlGYk7DB+u4aB
+         b+500z99OkFQa9iVsBYikCqXouHB36WRWqc7Y7XER8MVvIxlhoIZ89ctHrUNIXF+m7GE
+         ZYYFoMhDEJvv7BoDQHBvM7WBWZhKy8qGnbykhD8NA8vtcuWMtp67RfZKen0qIiycLBGk
+         6YGtQTpM8SIh2eGIUXlb25giniiAGyoArYbvDVL6y9X8SNKDSPvIJePGQXRGtFDXxn3g
+         MduQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVfGQgOAmJh63eViU2hdYy6Tu0Di0c0RQ50EBpZaaxNVXfR2QFkJaI2qwbHFnOo2UOobY+HATPZijBYGPc6@vger.kernel.org, AJvYcCW06geAkufUf364xLHSE0+121PjasCzwxrdNXLtT5y9CoVbYbBZPmeRGBRE5kQtt/Gk9PbmTyaL2bQD5SKf0tE=@vger.kernel.org, AJvYcCWeGCXVEbAyAyG1tcA8arkX5qOWiR6Nwj/svQuW24XXdrvPXqOtrSYuu7ZRWcRvPDCEWxzzb3nZi2Z5gRFSN9f0@vger.kernel.org
+X-Gm-Message-State: AOJu0Yym6EyvnPVOshOcEPJyZdw4W2jl6fgBbwBQWNUtrA5RatzMVBwP
+	tHC//hvoHFGBSPUF/38AQpnR0QwLtDU/Z5Jd/Wi/DRkTtJ1nYjAM
+X-Google-Smtp-Source: AGHT+IEvj0O5jYf+isd21q/xr6784Ev1IwUiwpxzlwD7cJKfBGrepY5KrM3e7ldnpMLsNkHBHXaNyw==
+X-Received: by 2002:a05:600c:1914:b0:426:5269:9838 with SMTP id 5b1f17b1804b1-42bb0242552mr50403875e9.4.1725022369524;
+        Fri, 30 Aug 2024 05:52:49 -0700 (PDT)
+Received: from PC-PEDRO-ARCH ([2001:8a0:7862:ea00:1d36:5f53:3f57:14ad])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bb6e33d60sm45802415e9.43.2024.08.30.05.52.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Aug 2024 05:52:49 -0700 (PDT)
+Date: Fri, 30 Aug 2024 13:52:46 +0100
+From: Pedro Falcato <pedro.falcato@gmail.com>
+To: jeffxu@chromium.org
+Cc: akpm@linux-foundation.org, linux-kselftest@vger.kernel.org, 
+	linux-mm@kvack.org, linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	willy@infradead.org, lorenzo.stoakes@oracle.com, broonie@kernel.org, vbabka@suse.cz, 
+	Liam.Howlett@oracle.com, rientjes@google.com, keescook@chromium.org
+Subject: Re: [PATCH v2 2/4] selftests/mm: mseal_test add sealed madvise type
+Message-ID: <ggnces6muodr4q27yuprhyhjovn7vlaj4pdnmte44kg2of62sx@ihwlrb52hsmm>
+References: <20240829214352.963001-1-jeffxu@chromium.org>
+ <20240829214352.963001-3-jeffxu@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:rQCowABnbPh1wNFmIyaOCw--.2806S2
-X-Coremail-Antispam: 1UD129KBjvdXoWruF4kGrW7Gw18WF43uryrXrb_yoWfZwcEga
-	1UXrnYkry7GF1jv3WjywnxAasakFZY9F48Xa48tay3ArWDtry8X3y2gF1rKF1UWa1jqF1D
-	ta1xu3s0gr9akjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbfAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
-	Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
-	0DM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
-	64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8Jw
-	Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAG
-	YxC7M4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7V
-	AKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCj
-	r7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6x
-	IIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAI
-	w20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x
-	0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VU122NtUUUUU==
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240829214352.963001-3-jeffxu@chromium.org>
 
-The return value of drm_atomic_get_crtc_state() needs to be
-checked. To avoid use of error pointer 'crtc_state' in case
-of the failure.
+On Thu, Aug 29, 2024 at 09:43:50PM GMT, jeffxu@chromium.org wrote:
+> From: Jeff Xu <jeffxu@chromium.org>
+> 
+> Add a testcase to cover all sealed madvise type.
+> 
+> Signed-off-by: Jeff Xu <jeffxu@chromium.org>
+> ---
+>  tools/testing/selftests/mm/mseal_test.c | 108 +++++++++++++++++++++++-
+>  1 file changed, 107 insertions(+), 1 deletion(-)
+> 
+> diff --git a/tools/testing/selftests/mm/mseal_test.c b/tools/testing/selftests/mm/mseal_test.c
+> index adc646cf576c..ae06c354220d 100644
+> --- a/tools/testing/selftests/mm/mseal_test.c
+> +++ b/tools/testing/selftests/mm/mseal_test.c
+> @@ -2121,6 +2121,107 @@ static void test_seal_madvise_nodiscard(bool seal)
+>  	REPORT_TEST_PASS();
+>  }
+>  
+> +static void test_seal_discard_madvise_advice(void)
+> +{
+> +	void *ptr;
+> +	unsigned long page_size = getpagesize();
+> +	unsigned long size = 4 * page_size;
+> +	int ret;
+> +	int sealed_advice[] = {MADV_FREE, MADV_DONTNEED,
+> +		MADV_DONTNEED_LOCKED, MADV_REMOVE,
+> +		MADV_DONTFORK, MADV_WIPEONFORK};
+> +	int size_sealed_advice = sizeof(sealed_advice) / sizeof(int);
+> +
+> +	setup_single_address(size, &ptr);
+> +	FAIL_TEST_IF_FALSE(ptr != (void *)-1);
+> +
+> +	ret = seal_single_address(ptr, size);
+> +	FAIL_TEST_IF_FALSE(!ret);
+> +
+> +	for (int i = 0; i < size_sealed_advice; i++) {
+> +		ret = sys_madvise(ptr, size, sealed_advice[i]);
+> +		FAIL_TEST_IF_FALSE(ret < 0);
+> +		FAIL_TEST_IF_FALSE(errno == EPERM);
+> +	}
+> +
+> +	REPORT_TEST_PASS();
+> +}
 
-Cc: stable@vger.kernel.org
-Fixes: dd86dc2f9ae1 ("drm/sti: implement atomic_check for the planes")
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
----
- drivers/gpu/drm/sti/sti_gdp.c | 3 +++
- 1 file changed, 3 insertions(+)
+This can replace some of the other 9 discard tests already there, no?
 
-diff --git a/drivers/gpu/drm/sti/sti_gdp.c b/drivers/gpu/drm/sti/sti_gdp.c
-index 43c72c2604a0..f046f5f7ad25 100644
---- a/drivers/gpu/drm/sti/sti_gdp.c
-+++ b/drivers/gpu/drm/sti/sti_gdp.c
-@@ -638,6 +638,9 @@ static int sti_gdp_atomic_check(struct drm_plane *drm_plane,
- 
- 	mixer = to_sti_mixer(crtc);
- 	crtc_state = drm_atomic_get_crtc_state(state, crtc);
-+	if (IS_ERR(crtc_state))
-+		return PTR_ERR(crtc_state);
-+
- 	mode = &crtc_state->mode;
- 	dst_x = new_plane_state->crtc_x;
- 	dst_y = new_plane_state->crtc_y;
+> +
+> +static void test_munmap_free_multiple_ranges(bool seal)
+> +{
+> +	void *ptr;
+> +	unsigned long page_size = getpagesize();
+> +	unsigned long size = 8 * page_size;
+> +	int ret;
+> +	int prot;
+> +
+> +	setup_single_address(size, &ptr);
+> +	FAIL_TEST_IF_FALSE(ptr != (void *)-1);
+> +
+> +	/* unmap one page from beginning. */
+> +	ret = sys_munmap(ptr, page_size);
+> +	FAIL_TEST_IF_FALSE(!ret);
+> +
+> +	/* unmap one page from middle. */
+> +	ret = sys_munmap(ptr + 4 * page_size, page_size);
+> +	FAIL_TEST_IF_FALSE(!ret);
+> +
+> +	size = get_vma_size(ptr + page_size, &prot);
+> +	FAIL_TEST_IF_FALSE(size == 3 * page_size);
+> +	FAIL_TEST_IF_FALSE(prot == 4);
+> +
+> +	size = get_vma_size(ptr +  5 * page_size, &prot);
+> +	FAIL_TEST_IF_FALSE(size == 3 * page_size);
+> +	FAIL_TEST_IF_FALSE(prot == 4);
+> +
+> +
+> +	/* seal the last page */
+> +	if (seal) {
+> +		ret = sys_mseal(ptr + 7 * page_size, page_size);
+> +		FAIL_TEST_IF_FALSE(!ret);
+> +
+> +		size = get_vma_size(ptr +  1 * page_size, &prot);
+> +		FAIL_TEST_IF_FALSE(size == 3 * page_size);
+> +		FAIL_TEST_IF_FALSE(prot == 4);
+> +
+> +		size = get_vma_size(ptr +  5 * page_size, &prot);
+> +		FAIL_TEST_IF_FALSE(size == 2 * page_size);
+> +		FAIL_TEST_IF_FALSE(prot == 4);
+> +
+> +		size = get_vma_size(ptr +  7 * page_size, &prot);
+> +		FAIL_TEST_IF_FALSE(size == 1 * page_size);
+> +		FAIL_TEST_IF_FALSE(prot == 4);
+> +	}
+> +
+> +	/* munmap all 8  pages from beginning */
+> +	ret = sys_munmap(ptr, 8 * page_size);
+> +	if (seal) {
+> +		FAIL_TEST_IF_FALSE(ret);
+> +
+> +		/* verify mapping are not changed */
+> +		size = get_vma_size(ptr + 1 * page_size, &prot);
+> +		FAIL_TEST_IF_FALSE(size == 3 * page_size);
+> +		FAIL_TEST_IF_FALSE(prot == 4);
+> +
+> +		size = get_vma_size(ptr +  5 * page_size, &prot);
+> +		FAIL_TEST_IF_FALSE(size == 2 * page_size);
+> +		FAIL_TEST_IF_FALSE(prot == 4);
+> +
+> +		size = get_vma_size(ptr +  7 * page_size, &prot);
+> +		FAIL_TEST_IF_FALSE(size == 1 * page_size);
+> +		FAIL_TEST_IF_FALSE(prot == 4);
+> +	} else {
+> +		FAIL_TEST_IF_FALSE(!ret);
+> +
+> +		for (int i = 0; i < 8; i++) {
+> +			size = get_vma_size(ptr, &prot);
+> +			FAIL_TEST_IF_FALSE(size == 0);
+> +		}
+> +	}
+> +
+> +	REPORT_TEST_PASS();
+> +}
+
+Unrelated munmap change.
+
 -- 
-2.25.1
-
+Pedro
 
