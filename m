@@ -1,187 +1,172 @@
-Return-Path: <linux-kernel+bounces-308094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82CAE965722
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 07:53:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 692F0965729
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 07:56:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4270D28628E
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 05:53:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A4FECB23125
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 05:56:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76DD214EC40;
-	Fri, 30 Aug 2024 05:53:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1224614E2C1;
+	Fri, 30 Aug 2024 05:56:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="IYhvq1pa"
-Received: from mail-oi1-f170.google.com (mail-oi1-f170.google.com [209.85.167.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YTbGKm/h"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15CE414B081
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 05:53:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACA1422615;
+	Fri, 30 Aug 2024 05:56:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724997204; cv=none; b=GdrvNdQ7aP2xsHqlPvwAFv5xMQQbd4b5Xfhsqk3pAKuHBtKU3DBdKdvPkLexw5jRNUBnHtGydmLOAVRI2mtPiOz6FEh7z4fyewn5LbyQOxl6Wh/FggVEBcZmxQ66Y5E/MyHABRqcu4cGQpC9v03VUDhCJV6mHEkCo2GZkjgMxbU=
+	t=1724997376; cv=none; b=kSfRoqJWgY3WY8/1HsDhl6umX8nbLPyIrj796YpWa3mQPRYUc1ymeHawJb4GKJraiONeAaug6TY+7hDwkzKSykIATmglbrzuFeb9uvMztAVFgYpEBak8XNWaNG+WYKz4qg4V+bvs8K2pQGhENqPKtvnAv60489SkFbVvkMG50dA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724997204; c=relaxed/simple;
-	bh=0KJsWXgafS+B8UIQCLLWs5s8Q+F/hXdfLnoVDgs5X94=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pqKSpcRPKgTUBC0iYUOuPloAxqA739H7LEqZt3ZFJ3yzRd1cFFlyZ54W5anf1Bvkn4NtusqhlNj+tkUpJuyNvCUu//y7nlvXJQO97UmjRIwCo7K3b/G5AANVwgAmfpONQ/1itzkrFzrGy1QDpHTlJeKC6wbjVZp3ffHOVLkN9w8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=IYhvq1pa; arc=none smtp.client-ip=209.85.167.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-oi1-f170.google.com with SMTP id 5614622812f47-3df0ec140dcso487818b6e.1
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 22:53:22 -0700 (PDT)
+	s=arc-20240116; t=1724997376; c=relaxed/simple;
+	bh=cyUGBPH6jtevEUyJoznq85ftO2ISltRLuMtmf7myHkM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GUDcJqY+dx5uhExDTGx+2x27iEk+WtmlIEVeDGb91+96qJGfXSIP30CLP5G2PxK/Q3OdNf74Ab3jc0TtJZ2dV8f2ESXjN+B9e5+lsnUhXNw/sMEVFR+hliLZ15VehpMVG2/FFXzmKNBzL3/ks/jUuN0XIF0RRdJ3hBRVg0f6zco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YTbGKm/h; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a7a81bd549eso142767666b.3;
+        Thu, 29 Aug 2024 22:56:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1724997202; x=1725602002; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=T3Jt+xqdS9PmDCVfg7T2ZaIXSXLuqHnsCyhxBsg/hkk=;
-        b=IYhvq1pa8Gy3FSHxSQTaI8BbOkGSjvPCz5sm1tBYayWjRZvo9KFmbnwK7tUWvaCetY
-         vX1LzMAyvmGtw23SDL0/+yhdIthOTjvKkZxCh2g7tWr2VmXr7K66D98pFBqs3pqCEBmv
-         nnsPuDY4wo78WvdvX/D8HMya33buIuwp29doWqQEEMB+dBkzPRKW4/dGH/Kab/32NjQM
-         Q8ULeqHqYqACGc4YbpiStyjh+Et6iEJA+D6aw0mq2MQLA0yVIj/xFJgzSzvjGxJS+Flq
-         7jqEXN+93BceXgOWbBXaWeZftDLee1zn2aP2PANvQt5Tzcup7FjWrNj7+/Eal0BriQ26
-         42mA==
+        d=gmail.com; s=20230601; t=1724997373; x=1725602173; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=dmaK9yXGDkfaaoKQC0QquO3O2dAxsqNTqltc0sGWtbA=;
+        b=YTbGKm/hbJN7qnekdmP4ty22iQjRJpRdrVGMD6c9enwlgzKIYREXqIgEB+0F3PEihM
+         q0tYrQAseZZRMfGJd2ysO8PpzAJFrFk/FYY/vtTcbn71f0nOjvoik8Y4TlSBxlDXWZha
+         oBbxhE/3h49H+S+WthBx0FRHM9UUK+M5WczH+ZBc41/Bls/GdQhXDLgDyiz2s+Jyl94Q
+         1CYAm91fzRfJaXCBj65OIMQ/68zBnEayUvzLWF48bNsbQT9byWzTAhwshg5iHO6EBIE2
+         rQjwN+wH0jz/ih2bnKjTTQWI98lkWdBc5JYBOwOOYrzoVJtx48ByeCwro1Tqsyv0bxwl
+         Nt8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724997202; x=1725602002;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=T3Jt+xqdS9PmDCVfg7T2ZaIXSXLuqHnsCyhxBsg/hkk=;
-        b=tA1uaEomLKrSuufUHJ3TeoEFl+TXwmZJXfI7YUHvRCTTksYAzVFloMp0/EWzUWdwqZ
-         fS/7yfjokDiI8D0+oEERVmCs86MNrjTOah+3aMUp4KUGyT7SAVX1YgUSeXxmO513YBc6
-         VY1o9d5+0ER4YcAgPYBDqLcsBf7xGNCRSYpXJ263dfghHVq1Wi15i/wpeZNPe2c+7RVU
-         3JBeUibkwL6H5a2urGMAjEQGRr7wqJ4HUec6c5Xsrr3NgaeuKgV28Ta7jNoy2rjqoZ69
-         f/e5iiWB4cH6RIFDbgU8AuOtdl8NSGBdP3MZRLF+weJB/qDvbqWtnAZP+lhOC9oWKp6A
-         l7ww==
-X-Forwarded-Encrypted: i=1; AJvYcCV/KawihLMl4ZsTWaRoZ9GFCusqLVm3mp6JRWIS5jFK8KX7+eCHaGJJhjxnei6JKKMqt9idJd3SJyKZgVM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YznQlDP7nFaK/Y8Jjk1rant2OOHl9fUGIXG8n5EfMMn9Rj+clna
-	5IR0PjKbG/RmJenOknFqGR+fW2bd5kOLgbG9+vh+aXW2wvSX+5cAJfhT3MsNOz3eKlGyNoUZvR8
-	rH9TmQX0FE+D287+2m+IiUWFzSyA6JDIAA8hKrA==
-X-Google-Smtp-Source: AGHT+IH6bpYCNGGrkPgr+I0PGiNrrtq4i4l0rhoyVcVkBQzkAFDJbUNNEJuggk2fcve7C32y2tW3EhGtZ8PKnDywHKA=
-X-Received: by 2002:a05:6808:222a:b0:3df:101c:cc38 with SMTP id
- 5614622812f47-3df1285dc3fmr489365b6e.1.1724997201924; Thu, 29 Aug 2024
- 22:53:21 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724997373; x=1725602173;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dmaK9yXGDkfaaoKQC0QquO3O2dAxsqNTqltc0sGWtbA=;
+        b=hp7AdJoCH9eQuB2F0uwGMAZsmaCNz3hE4C7o/+opiClm+ri5zthbHD+dlulPdSgPuU
+         ZYspHBDegugxuyEyLvVRexBn/kzsuxDYOcrYVN36SKDIEEoeS9g980YzfKnGMOu0BqCs
+         I5O0662bfSQb87udBNdU4nZZ6MWgS6yZsQbk/H9q5oaOX6GNtGTKa3u2D1+lTAH9h7+e
+         uaQrYeOH2SDg6mdZO3VvooC7Sb3do03byOlDDM2V55zLqEkuH3nTWTtXpFMqaDMhCcWh
+         DCA/QXdqL7OCsZhofFNIsgLKlqG8wyAtnelT4YOWtBeZY+AxfSFtzUA4LzqonBI670e5
+         1Myg==
+X-Forwarded-Encrypted: i=1; AJvYcCUHbKh0N5vpP6WjtUy0+Zly/e8NVxkwKOI89/s0cZxt2/Af5Fpub+vYxZywXHW4DddpESjxOti1hVSaJDYY@vger.kernel.org, AJvYcCWRhvWloCPbgFhgsyeLRCC9gSodCSlLZB49ASvZzbg7ddSKjdSMdjPSFHdDqZviAOqPxH+vJYqBCqda@vger.kernel.org
+X-Gm-Message-State: AOJu0YzbRRPQxJYmuyKafsyA6ygVLf4U7nd2wmDGS24Obd0ZAPwJBxJu
+	uoRz0MfsFt21ToWFYiztdxvQNbciW87S0uQVCYTUWHCZQwu4GFuT
+X-Google-Smtp-Source: AGHT+IHsULRYo9z1QH/4NddIBdvBMbhvn5uaP3O5ds2dgND2gDpY2sp9hvDc1u8QCplg2dXc3rihbA==
+X-Received: by 2002:a17:907:3fa7:b0:a86:b00a:7a27 with SMTP id a640c23a62f3a-a897fad07f9mr360474066b.60.1724997372587;
+        Thu, 29 Aug 2024 22:56:12 -0700 (PDT)
+Received: from ?IPV6:2a01:c23:c577:dc00:45fe:38ba:a095:abab? (dynamic-2a01-0c23-c577-dc00-45fe-38ba-a095-abab.c23.pool.telefonica.de. [2a01:c23:c577:dc00:45fe:38ba:a095:abab])
+        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-a8988ff0465sm170202766b.29.2024.08.29.22.56.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 29 Aug 2024 22:56:12 -0700 (PDT)
+Message-ID: <974bbb25-3b27-4f53-be35-4bfda17b8c7e@gmail.com>
+Date: Fri, 30 Aug 2024 07:56:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240829033904.477200-1-nick.hu@sifive.com> <20240829033904.477200-2-nick.hu@sifive.com>
- <20240829-fb7bda6b46302b65b2f89d20@orel>
-In-Reply-To: <20240829-fb7bda6b46302b65b2f89d20@orel>
-From: Nick Hu <nick.hu@sifive.com>
-Date: Fri, 30 Aug 2024 13:53:11 +0800
-Message-ID: <CAKddAkBks46LEdmFfkDuwoCc-kxcf1KpghiROuh-JeNorHrMRQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] riscv: Add stimecmp save and restore
-To: Andrew Jones <ajones@ventanamicro.com>
-Cc: greentime.hu@sifive.com, zong.li@sifive.com, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@ucw.cz>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Conor Dooley <conor.dooley@microchip.com>, 
-	Samuel Holland <samuel.holland@sifive.com>, Sunil V L <sunilvl@ventanamicro.com>, 
-	linux-pm@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 0/5] pinctrl: intel: High impedance impl. and cleanups
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>,
+ Linus Walleij <linus.walleij@linaro.org>
+References: <20240828184018.3097386-1-andriy.shevchenko@linux.intel.com>
+ <Zs-B9m4jO9x3wX4d@smile.fi.intel.com>
+Content-Language: en-US
+From: Heiner Kallweit <hkallweit1@gmail.com>
+Autocrypt: addr=hkallweit1@gmail.com; keydata=
+ xsFNBF/0ZFUBEAC0eZyktSE7ZNO1SFXL6cQ4i4g6Ah3mOUIXSB4pCY5kQ6OLKHh0FlOD5/5/
+ sY7IoIouzOjyFdFPnz4Bl3927ClT567hUJJ+SNaFEiJ9vadI6vZm2gcY4ExdIevYHWe1msJF
+ MVE4yNwdS+UsPeCF/6CQQTzHc+n7DomE7fjJD5J1hOJjqz2XWe71fTvYXzxCFLwXXbBiqDC9
+ dNqOe5odPsa4TsWZ09T33g5n2nzTJs4Zw8fCy8rLqix/raVsqr8fw5qM66MVtdmEljFaJ9N8
+ /W56qGCp+H8Igk/F7CjlbWXiOlKHA25mPTmbVp7VlFsvsmMokr/imQr+0nXtmvYVaKEUwY2g
+ 86IU6RAOuA8E0J5bD/BeyZdMyVEtX1kT404UJZekFytJZrDZetwxM/cAH+1fMx4z751WJmxQ
+ J7mIXSPuDfeJhRDt9sGM6aRVfXbZt+wBogxyXepmnlv9K4A13z9DVLdKLrYUiu9/5QEl6fgI
+ kPaXlAZmJsQfoKbmPqCHVRYj1lpQtDM/2/BO6gHASflWUHzwmBVZbS/XRs64uJO8CB3+V3fa
+ cIivllReueGCMsHh6/8wgPAyopXOWOxbLsZ291fmZqIR0L5Y6b2HvdFN1Xhc+YrQ8TKK+Z4R
+ mJRDh0wNQ8Gm89g92/YkHji4jIWlp2fwzCcx5+lZCQ1XdqAiHQARAQABzSZIZWluZXIgS2Fs
+ bHdlaXQgPGhrYWxsd2VpdDFAZ21haWwuY29tPsLBjgQTAQgAOBYhBGxfqY/yOyXjyjJehXLe
+ ig9U8DoMBQJf9GRVAhsDBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAAAoJEHLeig9U8DoMSycQ
+ AJbfg8HZEK0ljV4M8nvdaiNixWAufrcZ+SD8zhbxl8GispK4F3Yo+20Y3UoZ7FcIidJWUUJL
+ axAOkpI/70YNhlqAPMsuudlAieeYZKjIv1WV5ucNZ3VJ7dC+dlVqQdAr1iD869FZXvy91KhJ
+ wYulyCf+s4T9YgmLC6jLMBZghKIf1uhSd0NzjyCqYWbk2ZxByZHgunEShOhHPHswu3Am0ftt
+ ePaYIHgZs+Vzwfjs8I7EuW/5/f5G9w1vibXxtGY/GXwgGGHRDjFM7RSprGOv4F5eMGh+NFUJ
+ TU9N96PQYMwXVxnQfRXl8O6ffSVmFx4H9rovxWPKobLmqQL0WKLLVvA/aOHCcMKgfyKRcLah
+ 57vGC50Ga8oT2K1g0AhKGkyJo7lGXkMu5yEs0m9O+btqAB261/E3DRxfI1P/tvDZpLJKtq35
+ dXsj6sjvhgX7VxXhY1wE54uqLLHY3UZQlmH3QF5t80MS7/KhxB1pO1Cpcmkt9hgyzH8+5org
+ +9wWxGUtJWNP7CppY+qvv3SZtKJMKsxqk5coBGwNkMms56z4qfJm2PUtJQGjA65XWdzQACib
+ 2iaDQoBqGZfXRdPT0tC1H5kUJuOX4ll1hI/HBMEFCcO8++Bl2wcrUsAxLzGvhINVJX2DAQaF
+ aNetToazkCnzubKfBOyiTqFJ0b63c5dqziAgzsFNBF/0ZFUBEADF8UEZmKDl1w/UxvjeyAeX
+ kghYkY3bkK6gcIYXdLRfJw12GbvMioSguvVzASVHG8h7NbNjk1yur6AONfbUpXKSNZ0skV8V
+ fG+ppbaY+zQofsSMoj5gP0amwbwvPzVqZCYJai81VobefTX2MZM2Mg/ThBVtGyzV3NeCpnBa
+ 8AX3s9rrX2XUoCibYotbbxx9afZYUFyflOc7kEpc9uJXIdaxS2Z6MnYLHsyVjiU6tzKCiVOU
+ KJevqvzPXJmy0xaOVf7mhFSNQyJTrZpLa+tvB1DQRS08CqYtIMxRrVtC0t0LFeQGly6bOngr
+ ircurWJiJKbSXVstLHgWYiq3/GmCSx/82ObeLO3PftklpRj8d+kFbrvrqBgjWtMH4WtK5uN5
+ 1WJ71hWJfNchKRlaJ3GWy8KolCAoGsQMovn/ZEXxrGs1ndafu47yXOpuDAozoHTBGvuSXSZo
+ ythk/0EAuz5IkwkhYBT1MGIAvNSn9ivE5aRnBazugy0rTRkVggHvt3/7flFHlGVGpBHxFUwb
+ /a4UjJBPtIwa4tWR8B1Ma36S8Jk456k2n1id7M0LQ+eqstmp6Y+UB+pt9NX6t0Slw1NCdYTW
+ gJezWTVKF7pmTdXszXGxlc9kTrVUz04PqPjnYbv5UWuDd2eyzGjrrFOsJEi8OK2d2j4FfF++
+ AzOMdW09JVqejQARAQABwsF2BBgBCAAgFiEEbF+pj/I7JePKMl6Fct6KD1TwOgwFAl/0ZFUC
+ GwwACgkQct6KD1TwOgxUfg//eAoYc0Vm4NrxymfcY30UjHVD0LgSvU8kUmXxil3qhFPS7KA+
+ y7tgcKLHOkZkXMX5MLFcS9+SmrAjSBBV8omKoHNo+kfFx/dUAtz0lot8wNGmWb+NcHeKM1eb
+ nwUMOEa1uDdfZeKef/U/2uHBceY7Gc6zPZPWgXghEyQMTH2UhLgeam8yglyO+A6RXCh+s6ak
+ Wje7Vo1wGK4eYxp6pwMPJXLMsI0ii/2k3YPEJPv+yJf90MbYyQSbkTwZhrsokjQEaIfjrIk3
+ rQRjTve/J62WIO28IbY/mENuGgWehRlTAbhC4BLTZ5uYS0YMQCR7v9UGMWdNWXFyrOB6PjSu
+ Trn9MsPoUc8qI72mVpxEXQDLlrd2ijEWm7Nrf52YMD7hL6rXXuis7R6zY8WnnBhW0uCfhajx
+ q+KuARXC0sDLztcjaS3ayXonpoCPZep2Bd5xqE4Ln8/COCslP7E92W1uf1EcdXXIrx1acg21
+ H/0Z53okMykVs3a8tECPHIxnre2UxKdTbCEkjkR4V6JyplTS47oWMw3zyI7zkaadfzVFBxk2
+ lo/Tny+FX1Azea3Ce7oOnRUEZtWSsUidtIjmL8YUQFZYm+JUIgfRmSpMFq8JP4VH43GXpB/S
+ OCrl+/xujzvoUBFV/cHKjEQYBxo+MaiQa1U54ykM2W4DnHb1UiEf5xDkFd4=
+In-Reply-To: <Zs-B9m4jO9x3wX4d@smile.fi.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Andrew
+On 28.08.2024 22:00, Andy Shevchenko wrote:
+> +Cc: Heiner
+> 
+> On Wed, Aug 28, 2024 at 09:38:33PM +0300, Andy Shevchenko wrote:
+>> We would need a high impedance implementation for a quirk, so here it
+>> is. While doing this series I also noticed a couple of opportunities
+>> to clean up, hence two more patches (1st and 5th).
+> 
+> Sorry it took a while to actually start implementing the quirk for your case.
+> Here I'm asking for the following things:
+> 
+> 1) what is the marketing name of the device you have problems with?
+> (I believe it's available on the free market, correct?);
+> 
 
-On Thu, Aug 29, 2024 at 3:59=E2=80=AFPM Andrew Jones <ajones@ventanamicro.c=
-om> wrote:
->
-> On Thu, Aug 29, 2024 at 11:38:59AM GMT, Nick Hu wrote:
-> > If the HW support the SSTC extension, we should save and restore the
-> > stimecmp register while cpu non retention suspend.
-> >
-> > Signed-off-by: Nick Hu <nick.hu@sifive.com>
-> > ---
-> >  arch/riscv/include/asm/suspend.h |  4 ++++
-> >  arch/riscv/kernel/suspend.c      | 13 +++++++++++++
-> >  2 files changed, 17 insertions(+)
-> >
-> > diff --git a/arch/riscv/include/asm/suspend.h b/arch/riscv/include/asm/=
-suspend.h
-> > index 4ffb022b097f..ffaac2efabb5 100644
-> > --- a/arch/riscv/include/asm/suspend.h
-> > +++ b/arch/riscv/include/asm/suspend.h
-> > @@ -16,6 +16,10 @@ struct suspend_context {
-> >       unsigned long envcfg;
-> >       unsigned long tvec;
-> >       unsigned long ie;
-> > +#if __riscv_xlen < 64
-> > +     unsigned long stimecmph;
-> > +#endif
->
-> I'm not sure the reduction in struct size is worth the #ifdeffery. If we
-> just always add stimecmph, then we can also change the #ifdef's below to
-> if's, i.e. if (__riscv_xlen < 64), which should still remove the code fro=
-m
-> 64-bit builds.
->
-> Or maybe we need something like
->
-> #if __riscv_xlen < 64
-> #define csrh_write(r, v) csr_write(r, v)
-> #else
-> #define csrh_write(r, v)
-> #endif
->
-> in asm/csr.h and then use it for all the *h csrs, but keep the #if in
-> the struct.
->
-> Thanks,
-> drew
->
-If no other comment, I'll choose the csrh_write() because it can save
-some memory and update in the next version.
-Thanks for the suggestion!
+Device is a dirt-cheap mini pc, marketed as Chatreey T9. It's available
+on the free market, right. Dmesg says:
+DMI: Default string Default string/Default string, BIOS ADLN.M6.SODIMM.ZB.CY.015 08/08/2023
 
-> > +     unsigned long stimecmp;
-> >  #ifdef CONFIG_MMU
-> >       unsigned long satp;
-> >  #endif
-> > diff --git a/arch/riscv/kernel/suspend.c b/arch/riscv/kernel/suspend.c
-> > index c8cec0cc5833..3afd86e1abf7 100644
-> > --- a/arch/riscv/kernel/suspend.c
-> > +++ b/arch/riscv/kernel/suspend.c
-> > @@ -19,6 +19,12 @@ void suspend_save_csrs(struct suspend_context *conte=
-xt)
-> >       context->tvec =3D csr_read(CSR_TVEC);
-> >       context->ie =3D csr_read(CSR_IE);
-> >
-> > +     if (riscv_has_extension_unlikely(RISCV_ISA_EXT_SSTC)) {
-> > +             context->stimecmp =3D csr_read(CSR_STIMECMP);
-> > +#if __riscv_xlen < 64
-> > +             context->stimecmph =3D csr_read(CSR_STIMECMPH);
-> > +#endif
-> > +     }
-> >       /*
-> >        * No need to save/restore IP CSR (i.e. MIP or SIP) because:
-> >        *
-> > @@ -42,6 +48,13 @@ void suspend_restore_csrs(struct suspend_context *co=
-ntext)
-> >       csr_write(CSR_TVEC, context->tvec);
-> >       csr_write(CSR_IE, context->ie);
-> >
-> > +     if (riscv_has_extension_unlikely(RISCV_ISA_EXT_SSTC)) {
-> > +             csr_write(CSR_STIMECMP, context->stimecmp);
-> > +#if __riscv_xlen < 64
-> > +             csr_write(CSR_STIMECMPH, context->stimecmph);
-> > +#endif
-> > +     }
-> > +
-> >  #ifdef CONFIG_MMU
-> >       csr_write(CSR_SATP, context->satp);
-> >  #endif
-> > --
-> > 2.34.1
-> >
+> 2) does it have any BIOS updates and, if it has, does it fix the issue?
+> 
+No BIOS updates.
 
-Regards,
-Nick
+> 3) can you apply patches 2,3,4,5 from this series (the first one is buggy and
+> not needed for you) and replace the hack I mentioned earlier with
+> 
+> 	ret = intel_gpio_set_high_impedance(pctrl, 3);
+> 	if (ret)
+> 		return ret;
+> 
+> somewhere at the end of intel_pinctrl_probe()?
+> 
+> Does it still work as expected?
+> 
+> 
+I will check.
+
 
