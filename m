@@ -1,86 +1,106 @@
-Return-Path: <linux-kernel+bounces-309549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA090966CA6
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 00:42:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26A9F966CA9
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 00:47:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6472FB20B93
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 22:42:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8502284642
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 22:47:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14A481C230D;
-	Fri, 30 Aug 2024 22:42:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DBF618950B;
+	Fri, 30 Aug 2024 22:47:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BDZ4f1rf"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iRSRONkE"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF17414E2E1;
-	Fri, 30 Aug 2024 22:42:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2869F17C205
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 22:47:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725057749; cv=none; b=K621zopeW3KqI9xkZkvr+YAzNhsui7oG0aWhPT0fKEjvzbRVD6t9XKH96x3ytV/SOzJkfFyX4F7c6fhtTgqkkBlQEPoVJOQ++Iqgq45+R/TS5bjWY3WIKQH4SfP4Y3a/GZMaouSbh5HIkUPTVduzfTlV2PT4g05CxXP0nkMd/RU=
+	t=1725058030; cv=none; b=ZZrfJEE63EKgH8Q1fCMZ73WUQ9FxP0sIIETNLiWRuaHE+wtLUfXbb/tqYEzTs7Ld8Qcs7Bxh/pOFkcUsqhkbQEg5oEYczRuGah5M8HMJcaDrFt83Y3B6DM2ZZIFUFlUfwXENiJQKOzbsxlHYpQE2sz+BpkWmbAdX+ImWpKEc7QA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725057749; c=relaxed/simple;
-	bh=vdiME2Hn+nceXHKlGGuy8E8NsiATQrqZAVsIIadpM48=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G//nCwaBWsDOMhCqpz8+y4cpBNTSZkuuUjsJNwk0aaD6SfDGffuALPlWtiKH//9a8MLs6NWgbNa727CG/O+QxRZdmHNaxlPj9vjyG3eKUvYZgwBGDK4GIh5KqfaCdevJXl7gFLnZmFUhf6f9D3B2U18d6UmTATB1UDKLcHUwMrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=BDZ4f1rf; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=prD1VbZIGGQBOBhoPQZxAl0J7UvFLgR9rwzDdD+A1yk=; b=BDZ4f1rfbUU0cNa3RjQjHVEIPD
-	2atkufySHAnFtxNOrM9lrvBqHeRCTMey4djRkrxXjjBRVIdqAiJrTFRNKcv+TVm4r/JF68KrbA8GB
-	Knbkeqbi7nJ7u78S1s4KyoTL1t/N1ivAIn1ASz8yrMQ/AGnRow5JKxrVBMTPQgIbN4F5GgJjWlWTL
-	71gV6qs3ruMVT6juiEhemhzKZygpcH4Sh5Rk5h1h4WV/oTR2fG5r40tdHlCajRNVj+NkfMPTW9wq7
-	Hz0G/SD+5k1B/6TI30ujQEslSYgH6MrrAU/1/ykAYkbRP8clSHTgJaHlruizNJT0eyNwe5NGL6x4F
-	Ze/IG8TA==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1skAJi-00000003jZo-3U82;
-	Fri, 30 Aug 2024 22:42:06 +0000
-Date: Fri, 30 Aug 2024 23:42:06 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Pankaj Raghav <kernel@pankajraghav.com>
-Cc: Luis Chamberlain <mcgrof@kernel.org>, Zi Yan <ziy@nvidia.com>,
-	Sven Schnelle <svens@linux.ibm.com>, brauner@kernel.org,
-	akpm@linux-foundation.org, chandan.babu@oracle.com,
-	linux-fsdevel@vger.kernel.org, djwong@kernel.org, hare@suse.de,
-	gost.dev@samsung.com, linux-xfs@vger.kernel.org, hch@lst.de,
-	david@fromorbit.com, yang@os.amperecomputing.com,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	john.g.garry@oracle.com, cl@os.amperecomputing.com,
-	p.raghav@samsung.com, ryan.roberts@arm.com,
-	David Howells <dhowells@redhat.com>, linux-s390@vger.kernel.org
-Subject: Re: [PATCH v13 04/10] mm: split a folio in minimum folio order chunks
-Message-ID: <ZtJKvuF8086rj1dq@casper.infradead.org>
-References: <20240822135018.1931258-1-kernel@pankajraghav.com>
- <20240822135018.1931258-5-kernel@pankajraghav.com>
- <yt9dttf3r49e.fsf@linux.ibm.com>
- <ZtDCErRjh8bC5Y1r@bombadil.infradead.org>
- <ZtDSJuI2hYniMAzv@casper.infradead.org>
- <221FAE59-097C-4D31-A500-B09EDB07C285@nvidia.com>
- <ZtEHPAsIHKxUHBZX@bombadil.infradead.org>
- <2477a817-b482-43ed-9fd3-a7f8f948495f@pankajraghav.com>
+	s=arc-20240116; t=1725058030; c=relaxed/simple;
+	bh=FcERWZl1wa1DugmkSLGflqWj3fp23asXRiIxBMGAnUM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qYuIhTqSeQK6ek3O917FmCdBBBzHGjfWfO56dTilEZYnaVsu71/bU4rIU9fFxZJUCfadLOTkOyS8lbSY8NjFgt0kB5gTkRz5Bjqhu5Rb6pHLx8j6imamliYqRrWXvXRDazOgcXO58b1ilgqeEv+chCE5yNfKAhQA+HsoFVmsbXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iRSRONkE; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5334a8a1b07so2819370e87.1
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 15:47:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725058027; x=1725662827; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FcERWZl1wa1DugmkSLGflqWj3fp23asXRiIxBMGAnUM=;
+        b=iRSRONkEwds+0Z2B3BS/qBG/xWaD4a2ZBX0GqOUsh2h3gHOq4+rGtuJxF2vWURl9TR
+         ihi2Hb/iGyPVYYd4suql36XcT6aUz3x9DDmlEzQ/GVpfKEdgsqkpgtneMP6a1CP0Ps1/
+         tp5zpo0kUCtFbvSsygvskeT9+DKj4PiltYXZrdmr09xx1JaY/ptv1pSx9hlEBiZqOZW4
+         +R0mLhThJJYvtE+/yHmx29mnh9HRIjeFfJA1hrai2jbc7PK6aYIh/rwI3YSeuJGvKDZf
+         1Zvgh2lvZHf7Uze+RtVVgVr6F7od7QBVLnlqgZXJFtGgq2ASvaMPmo85nCOPS8lvlL+f
+         pVvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725058027; x=1725662827;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FcERWZl1wa1DugmkSLGflqWj3fp23asXRiIxBMGAnUM=;
+        b=SOsjEkKwe0/y0iiiRuNvqORYbe/aikf8Fuc2Q6GeDflSuRM2vNvG3CNsbriPnUkNtw
+         rh8M38OxWn4Z+xJwqCOfxwSsx0vpTs43G69XpN0ckMdm/vXVVm4ZTT6Wms2F2BWhkhT/
+         DlYlJ868HkOhbPYDWx3AFQhcxnZAnGsd5SNMDcstppvBOoOoeFkXxHaK7TLwu+sTfUVf
+         1u0NxfV6BEmjMnZ2ZvUPiNLDrGaEpKqJoCKVmy2ojBfWTO/XNKd43+/wAJ50Xomlr/7c
+         ItENgm5V2khuxZeWEyDJOJQS5MS4XCSzSINXJnIFjeMGKMrKAJ/37+rHvHsmEXcqSxBo
+         uqTw==
+X-Forwarded-Encrypted: i=1; AJvYcCVqhJOdWp6aPXVgUV6KAdaWCxpDFCWKHuwSQ1EAZFMrAMyqNquhOwC+OohxNVTy6JPMoUnStPXFjlURyv8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywn2AksC+uzdETAdiLORDENpcnuGNYYI2VS2NmP9IgklYbe8zsr
+	J8pzARV9GMBmAEPLighUzwehFNKeJXIcuMKMTdGzl4xnCEn9Y3B7CoKkIgMhpKDfnGdvgk1kd9n
+	QU1DJ5uBbbLNxUdX6Iu79HKp8Wl7pyL9zQTk2EQ==
+X-Google-Smtp-Source: AGHT+IE6Pux6xBCNKx6NzrDxkiMvpKkwNksEL+SETGgBL6cWj2r/5BXlHPx1T6w7EQGMUKy947gNiEBsSCvPbrCisNU=
+X-Received: by 2002:a05:6512:2346:b0:52d:582e:410f with SMTP id
+ 2adb3069b0e04-53546ba061fmr2649566e87.46.1725058026553; Fri, 30 Aug 2024
+ 15:47:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2477a817-b482-43ed-9fd3-a7f8f948495f@pankajraghav.com>
+References: <20230113205922.2312951-1-andreas@kemnade.info>
+ <CAMRc=Mf4-8AfTHLrvaF14tc2TJatxZJWnMOF-1G8HmDhPKSFAw@mail.gmail.com> <CAFLxGvyX1Q8qGXkWW+JiyQSfP=1dFzeZ7C4OCJHk2pFGX7zygw@mail.gmail.com>
+In-Reply-To: <CAFLxGvyX1Q8qGXkWW+JiyQSfP=1dFzeZ7C4OCJHk2pFGX7zygw@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Sat, 31 Aug 2024 00:46:55 +0200
+Message-ID: <CACRpkdZY5CROs9EeRSYnOzFvr_Xgnw66ziKqYH2LE=MQe4OWLg@mail.gmail.com>
+Subject: Re: [PATCH] gpio: omap: use dynamic allocation of base
+To: Richard Weinberger <richard.weinberger@gmail.com>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Andreas Kemnade <andreas@kemnade.info>, grygorii.strashko@ti.com, 
+	ssantosh@kernel.org, khilman@kernel.org, linux-omap@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 30, 2024 at 04:59:57PM +0200, Pankaj Raghav wrote:
-> It feels a bit weird to pass both folio and the page in `split_page_folio_to_list()`.
+On Thu, Aug 29, 2024 at 10:52=E2=80=AFAM Richard Weinberger
+<richard.weinberger@gmail.com> wrote:
 
-We do that in the rmap code.
+> > This could potentially break some legacy user-space programs using
+> > sysfs but whatever, let's apply it and see if anyone complains.
+>
+> FWIW, this broke users pace on my side.
+> Not a super big deal, I'll just revert this patch for now.
+> Maybe the application in question can get rewritten to find the gpio by l=
+abel.
 
-But this is not a performance path.  We should keep this as simple as
-possible.
+Ugh we might need to back this out if the userspace is critical
+and you need it.
+
+Ideally userspace should use libgpiod for GPIO access, but I understand
+if it's a higher bar.
+
+Yours,
+Linus Walleij
 
