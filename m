@@ -1,175 +1,443 @@
-Return-Path: <linux-kernel+bounces-309137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0050966698
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 18:13:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B77FE96669D
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 18:15:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A5C31F21B11
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 16:13:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E847AB251D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 16:14:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B2EF199FB7;
-	Fri, 30 Aug 2024 16:13:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE1771B81D4;
+	Fri, 30 Aug 2024 16:14:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="utARIRH2"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Rrn2DSFS"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3241F1B81AB
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 16:13:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A18CA1B3B15;
+	Fri, 30 Aug 2024 16:14:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725034387; cv=none; b=jM5AEuy/tlYhx3m5i/CLLPBlhB9JO1AveTdIX1tUHc9nWSXapsAKykf1JEQOsURSnCToLw9dXzP3clYD5/cu/H6FWMw7iUHgixPeqqeUm6PmjqMoxszDwVcMbPu8V2nD0Rp0DoV8punNQBFpLQYEjcImopEiXB6rbAfUwjgijno=
+	t=1725034490; cv=none; b=J/eRFgxY+jwaySfaKhOiGsfMzzbdy4+kIhoOUgMjbfjm1AdyCHEAQzfVOGKpG1LLwGMuIXOGLTaooYBvhl3doJq1cUhGmysM3DNrceF8eIr0rKYrjTpB13RKVtIcuQbyPLoeOiH+QbkZvzumbfwkxF+3dfFJ0fpG0YxdW8kEonI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725034387; c=relaxed/simple;
-	bh=GBW0OUkfNOg6jUGnbPNWRKROaH/VSriIJgC2jITV0XA=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=FdekwO2nMdOdIrR7rJg97IQLup3U+LkwbOASimMAS+dnLZikHTczJ7nuFASnV93KzYbOPMaXgbUifkc3LnwJ8Pk3PEwzARfC4SpX9L0cIlTfIcMvdlQUxFPNC4KFAFfvUzO5EpupSoqpTpoiaZO9TGj9jPxSrdnHWbSdzd1BCNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=utARIRH2; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-690404fd230so34239157b3.3
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 09:13:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725034385; x=1725639185; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=B8wKzeaoF86EzgRdZ5mXtZV5B8jehTSk9n/aFQzfv58=;
-        b=utARIRH2MFeEQSa3VlPb4WL+3sTKRQZduClJcswl9FncywwMI1iGMmAw4WxSgTr/gf
-         BWTP0lr6+hoLod9o0x0EdkL5Khba/h52MQZrssPhHldAK0mryLvcic/8m2ueU30IA4k3
-         KcHjO+A4/S96Kfyfw4dFdjQi/7isOsFco/aont2o1eh25eRgF1sikhjjHf8SmAZqoz0i
-         suL6G2dhdYTWwcpzxLTs9e/nxbQ08y8i4OVkvHtxHQjIJqJsxzoDzaPvUV9TfdvZSmN4
-         o49M56NsDgWKlAbui5Aj1dRcPHZxw17zyzGm8rKYxMG4Xum1WCaN2GVZEw6wGvXbpF2B
-         687g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725034385; x=1725639185;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=B8wKzeaoF86EzgRdZ5mXtZV5B8jehTSk9n/aFQzfv58=;
-        b=mMGBL4xJrLXSRzhG8s5Bq7FDlsv8ea/iXAAf07TFHdM7IkkpCSqpWYlqfXhppzkmdv
-         89h2LenB6a9RP4eLU51hwv+J3b/Kgdhlh/mY9I9zozVcKrt5KXPldk+XfMsMDT/XcZIJ
-         RZ67vxzD9NDFDym1rxs9SHQjihFjH/Xvl8605AiR5RCjR75fs6F1L+oGpeKXKLWeXnLO
-         GuNGWtKVGJJCgfVfrthaHvNVku7ocs046dk9LJUlweapYwfOuBChQDnTS3mfT9lQaEY7
-         OFRX7tKaq0ZP+i1X9X7g1WjXMg/2s3DbiVPRe5UrakbYF3na1RoxXHlhO4FwWXhm+LMm
-         wu5w==
-X-Forwarded-Encrypted: i=1; AJvYcCVqd4aXEaOQ8ZZA3X8P7el/+uvEQ0AaiEhND2V/gToiRpseMgIJzhfXZ+wX0DZCf23y4dK6IrbvWHilzu4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmnQ2QBk8pIpgx8MPcEnZ637vwhaCFaqGxwZ0XIPsQjaLBI8gw
-	RH1VT/n8hpRD+USFSU3eb43B3ache+dG8xezm2AzMgN2R2bWEdllkjOBbKARLBFaDwTBcg2FbbC
-	6xw==
-X-Google-Smtp-Source: AGHT+IEMDNHweiA16k7gDHYb4p0wHpx39yD8IKXuwa99sr0oK8AtMZWM3VLmiFaMmPW/1iktaQ/NFFz+fLg=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:690c:5608:b0:6d4:d6de:3e35 with SMTP id
- 00721157ae682-6d4d6de43aamr16677b3.8.1725034385169; Fri, 30 Aug 2024 09:13:05
- -0700 (PDT)
-Date: Fri, 30 Aug 2024 09:13:03 -0700
-In-Reply-To: <87plpqt6uh.fsf@redhat.com>
+	s=arc-20240116; t=1725034490; c=relaxed/simple;
+	bh=NN9VSKTvIYHW3SnEM888qBMhmMJQ1wtkT+yOjZNy+QM=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=dVkHniPp3/dkj6yUzTzErIUKGRKVGt+WNz/WhUfmDoUoZsb8cciyFAvO0SDFQBs+nI1/nTNlVC2HWJc8I9sCMpUjjJyvbz0knJB3qjJn1vMz7B74/f7XGCIfUJA5OzfVAOkYPkQHgyPjKDCLNBK8xArBM6ujDo5cQCjehLNN9A8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Rrn2DSFS; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47UB3gE3019114;
+	Fri, 30 Aug 2024 16:14:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	VZrnNBL7I4XhqC/aUmfu5AS2H3LiK/Wb3MzVoBHbfpA=; b=Rrn2DSFSak9os5uN
+	GBenUoe1/CHZxITXKmCCJxQSCtAqYf68h6xl3QwziFwZ5nFPOXzaUnoYlq7YrWr4
+	dA1FH+qeBNonCF+xpu0OBWE6J+EZ8CTnjOKyP59+nnfLnMPJRdG22hOMXrzjTCWC
+	2koJWgPmCUGwCblb+801e8Yq+vTfp2NeQ7uZtzgL1nrR7cW1XejBW/zebAwvISF3
+	JzvmONFRoW7IMMrTRbolARMLL6+CBM+gyq2W6YAaKVfFI5vpkA9AUy8K/BYkKGHl
+	1nX2brSGo+KTyvQfL5vbc7kKDbEQDPjwPBdKXu9hCv8/iOjJ141iIhdbzf157JJD
+	QNYUJQ==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 419px5sbtw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 30 Aug 2024 16:14:37 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47UGEaQ7031412
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 30 Aug 2024 16:14:36 GMT
+Received: from [10.253.37.6] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 30 Aug
+ 2024 09:14:31 -0700
+Message-ID: <7736d0d0-634d-403d-b70f-f33b7402456c@quicinc.com>
+Date: Sat, 31 Aug 2024 00:14:28 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240309010929.1403984-1-seanjc@google.com> <20240309010929.1403984-6-seanjc@google.com>
- <877cbyuzdn.fsf@redhat.com> <vuwlkftomgsnzsywjyxw6rcnycg3bve3o53svvxg3vd6xpok7o@k4ktmx5tqtmz>
- <871q26unq8.fsf@redhat.com> <ZtHOr-kCqvCdUc_A@google.com> <87seumt89u.fsf@redhat.com>
- <87plpqt6uh.fsf@redhat.com>
-Message-ID: <ZtHvjzBFUbG3fcMc@google.com>
-Subject: Re: [PATCH 5/5] KVM: VMX: Always honor guest PAT on CPUs that support self-snoop
-From: Sean Christopherson <seanjc@google.com>
-To: Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc: Gerd Hoffmann <kraxel@redhat.com>, Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, 
-	rcu@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Kevin Tian <kevin.tian@intel.com>, Yan Zhao <yan.y.zhao@intel.com>, 
-	Yiwei Zhang <zzyiwei@google.com>, Lai Jiangshan <jiangshanlai@gmail.com>, 
-	"Paul E. McKenney" <paulmck@kernel.org>, Josh Triplett <josh@joshtriplett.org>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/4] clk: qcom: Add CMN PLL clock controller driver for
+ IPQ SoC
+From: Jie Luo <quic_luoj@quicinc.com>
+To: Stephen Boyd <sboyd@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh@kernel.org>, Will Deacon <will@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <quic_kkumarcs@quicinc.com>,
+        <quic_suruchia@quicinc.com>, <quic_pavir@quicinc.com>,
+        <quic_linchen@quicinc.com>, <quic_leiwei@quicinc.com>,
+        <bartosz.golaszewski@linaro.org>, <srinivas.kandagatla@linaro.org>
+References: <20240827-qcom_ipq_cmnpll-v3-0-8e009cece8b2@quicinc.com>
+ <20240827-qcom_ipq_cmnpll-v3-2-8e009cece8b2@quicinc.com>
+ <d7b374670eb2f6d442f351106ab1221a.sboyd@kernel.org>
+ <7f4d41a0-b1b9-4b63-8590-63f4fcf1a359@quicinc.com>
+Content-Language: en-US
+In-Reply-To: <7f4d41a0-b1b9-4b63-8590-63f4fcf1a359@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: WFG3QQgXfTCrVmL52j1EqBDD-VXTwPpj
+X-Proofpoint-GUID: WFG3QQgXfTCrVmL52j1EqBDD-VXTwPpj
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-30_10,2024-08-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 clxscore=1015
+ adultscore=0 suspectscore=0 lowpriorityscore=0 mlxlogscore=999 spamscore=0
+ priorityscore=1501 bulkscore=0 mlxscore=0 malwarescore=0 impostorscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2408300123
 
-On Fri, Aug 30, 2024, Vitaly Kuznetsov wrote:
-> Vitaly Kuznetsov <vkuznets@redhat.com> writes:
+Hi Stephen,
+Please find below a minor update to my earlier message on clk_ops usage.
+
+On 8/28/2024 1:44 PM, Jie Luo wrote:
 > 
-> > Sean Christopherson <seanjc@google.com> writes:
-> >
-> >> On Fri, Aug 30, 2024, Vitaly Kuznetsov wrote:
-> >>> Gerd Hoffmann <kraxel@redhat.com> writes:
-> >>> 
-> >>> >> Necroposting!
-> >>> >> 
-> >>> >> Turns out that this change broke "bochs-display" driver in QEMU even
-> >>> >> when the guest is modern (don't ask me 'who the hell uses bochs for
-> >>> >> modern guests', it was basically a configuration error :-). E.g:
-> >>> >
-> >>> > qemu stdvga (the default display device) is affected too.
-> >>> >
-> >>> 
-> >>> So far, I was only able to verify that the issue has nothing to do with
-> >>> OVMF and multi-vcpu, it reproduces very well with
-> >>> 
-> >>> $ qemu-kvm -machine q35,accel=kvm,kernel-irqchip=split -name guest=c10s
-> >>> -cpu host -smp 1 -m 16384 -drive file=/var/lib/libvirt/images/c10s-bios.qcow2,if=none,id=drive-ide0-0-0
-> >>> -device ide-hd,bus=ide.0,unit=0,drive=drive-ide0-0-0,id=ide0-0-0,bootindex=1
-> >>> -vnc :0 -device VGA -monitor stdio --no-reboot
-> >>> 
-> >>> Comparing traces of working and broken cases, I couldn't find anything
-> >>> suspicious but I may had missed something of course. For now, it seems
-> >>> like a userspace misbehavior resulting in a segfault.
-> >>
-> >> Guest userspace?
-> >>
-> >
-> > Yes? :-) As Gerd described, video memory is "mapped into userspace so
-> > the wayland / X11 display server can software-render into the buffer"
-> > and it seems that wayland gets something unexpected in this memory and
-> > crashes. 
 > 
-> Also, I don't know if it helps or not, but out of two hunks in
-> 377b2f359d1f, it is the vmx_get_mt_mask() one which brings the
-> issue. I.e. the following is enough to fix things:
+> On 8/28/2024 7:50 AM, Stephen Boyd wrote:
+>> Quoting Luo Jie (2024-08-27 05:46:00)
+>>> diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+>>> index 8a6f0dabd02f..35f656146de7 100644
+>>> --- a/drivers/clk/qcom/Makefile
+>>> +++ b/drivers/clk/qcom/Makefile
+>>> @@ -29,6 +29,7 @@ obj-$(CONFIG_CLK_X1E80100_TCSRCC) += tcsrcc-x1e80100.o
+>>>   obj-$(CONFIG_CLK_QCM2290_GPUCC) += gpucc-qcm2290.o
+>>>   obj-$(CONFIG_IPQ_APSS_PLL) += apss-ipq-pll.o
+>>>   obj-$(CONFIG_IPQ_APSS_6018) += apss-ipq6018.o
+>>> +obj-$(CONFIG_IPQ_CMN_PLL) += clk-ipq-cmn-pll.o
+>>
+>> I don't see many other filenames with clk- prefix in this directory, so
+>> probably drop it.
 > 
-> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-> index f18c2d8c7476..733a0c45d1a6 100644
-> --- a/arch/x86/kvm/vmx/vmx.c
-> +++ b/arch/x86/kvm/vmx/vmx.c
-> @@ -7659,13 +7659,11 @@ u8 vmx_get_mt_mask(struct kvm_vcpu *vcpu, gfn_t gfn, bool is_mmio)
->  
->         /*
->          * Force WB and ignore guest PAT if the VM does NOT have a non-coherent
-> -        * device attached and the CPU doesn't support self-snoop.  Letting the
-> -        * guest control memory types on Intel CPUs without self-snoop may
-> -        * result in unexpected behavior, and so KVM's (historical) ABI is to
-> -        * trust the guest to behave only as a last resort.
-> +        * device attached.  Letting the guest control memory types on Intel
-> +        * CPUs may result in unexpected behavior, and so KVM's ABI is to trust
-> +        * the guest to behave only as a last resort.
->          */
-> -       if (!static_cpu_has(X86_FEATURE_SELFSNOOP) &&
-> -           !kvm_arch_has_noncoherent_dma(vcpu->kvm))
-> +       if (!kvm_arch_has_noncoherent_dma(vcpu->kvm))
->                 return (MTRR_TYPE_WRBACK << VMX_EPT_MT_EPTE_SHIFT) | VMX_EPT_IPAT_BIT;
->  
->         return (MTRR_TYPE_WRBACK << VMX_EPT_MT_EPTE_SHIFT);
+> OK.
+> 
+>>
+>>>   obj-$(CONFIG_IPQ_GCC_4019) += gcc-ipq4019.o
+>>>   obj-$(CONFIG_IPQ_GCC_5018) += gcc-ipq5018.o
+>>>   obj-$(CONFIG_IPQ_GCC_5332) += gcc-ipq5332.o
+>>> diff --git a/drivers/clk/qcom/clk-ipq-cmn-pll.c b/drivers/clk/qcom/ 
+>>> clk-ipq-cmn-pll.c
+>>> new file mode 100644
+>>> index 000000000000..a9775c39b2f3
+>>> --- /dev/null
+>>> +++ b/drivers/clk/qcom/clk-ipq-cmn-pll.c
+>>> @@ -0,0 +1,241 @@
+>>> +// SPDX-License-Identifier: GPL-2.0-only
+>>> +/*
+>>> + * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights 
+>>> reserved.
+>>> + */
+>>> +
+>>> +/*
+>>> + * CMN PLL block expects the reference clock from on-board Wi-Fi 
+>>> block, and
+>>> + * supplies fixed rate clocks as output to the Ethernet hardware 
+>>> blocks.
+>>> + * The Ethernet related blocks include PPE (packet process engine) 
+>>> and the
+>>> + * external connected PHY (or switch) chip receiving clocks from the 
+>>> CMN PLL.
+>>> + *
+>>> + * On the IPQ9574 SoC, There are three clocks with 50 MHZ, one clock 
+>>> with
+>>> + * 25 MHZ which are output from the CMN PLL to Ethernet PHY (or 
+>>> switch),
+>>> + * and one clock with 353 MHZ to PPE.
+>>> + *
+>>> + *               +---------+
+>>> + *               |   GCC   |
+>>> + *               +--+---+--+
+>>> + *           AHB CLK|   |SYS CLK
+>>> + *                  V   V
+>>> + *          +-------+---+------+
+>>> + *          |                  +-------------> eth0-50mhz
+>>> + * REF CLK  |     IPQ9574      |
+>>> + * -------->+                  +-------------> eth1-50mhz
+>>> + *          |  CMN PLL block   |
+>>> + *          |                  +-------------> eth2-50mhz
+>>> + *          |                  |
+>>> + *          +---------+--------+-------------> eth-25mhz
+>>> + *                    |
+>>> + *                    V
+>>> + *                    ppe-353mhz
+>>> + */
+>>> +
+>>> +#include <dt-bindings/clock/qcom,ipq-cmn-pll.h>
+>>
+>> Include dt-bindings after linux please.
+> 
+> OK, will update.
+> 
+>>
+>>> +#include <linux/bitfield.h>
+>>> +#include <linux/clk.h>
+>>> +#include <linux/clk-provider.h>
+>>> +#include <linux/delay.h>
+>>> +#include <linux/io.h>
+>>> +#include <linux/iopoll.h>
+>>> +#include <linux/of.h>
+>>> +#include <linux/of_address.h>
+>>> +#include <linux/platform_device.h>
+>>> +#include <linux/slab.h>
+>>> +
+>>> +#define CMN_PLL_REFCLK_SRC_SELECTION           0x28
+>>> +#define CMN_PLL_REFCLK_SRC_DIV                 GENMASK(9, 8)
+>>> +
+>>> +#define CMN_PLL_LOCKED                         0x64
+>>> +#define CMN_PLL_CLKS_LOCKED                    BIT(8)
+>>> +
+>>> +#define CMN_PLL_POWER_ON_AND_RESET             0x780
+>>> +#define CMN_ANA_EN_SW_RSTN                     BIT(6)
+>>> +
+>>> +#define CMN_PLL_REFCLK_CONFIG                  0x784
+>>> +#define CMN_PLL_REFCLK_EXTERNAL                        BIT(9)
+>>> +#define CMN_PLL_REFCLK_DIV                     GENMASK(8, 4)
+>>> +#define CMN_PLL_REFCLK_INDEX                   GENMASK(3, 0)
+>>> +
+>>> +#define CMN_PLL_CTRL                           0x78c
+>>> +#define CMN_PLL_CTRL_LOCK_DETECT_EN            BIT(15)
+>>> +
+>>> +/**
+>>> + * struct cmn_pll_fixed_output_clk - CMN PLL output clocks information
+>>> + * @id:        Clock specifier to be supplied
+>>> + * @name: Clock name to be registered
+>>> + * @rate: Clock rate
+>>> + */
+>>> +struct cmn_pll_fixed_output_clk {
+>>> +       unsigned int id;
+>>> +       const char *name;
+>>> +       const unsigned long rate;
+>>> +};
+>>> +
+>>> +#define CLK_PLL_OUTPUT(_id, _name, _rate) {            \
+>>> +       .id = _id,                                      \
+>>> +       .name = _name,                                  \
+>>> +       .rate = _rate,                                  \
+>>> +}
+>>> +
+>>> +static const struct cmn_pll_fixed_output_clk ipq9574_output_clks[] = {
+>>> +       CLK_PLL_OUTPUT(PPE_353MHZ_CLK, "ppe-353mhz", 353000000UL),
+>>> +       CLK_PLL_OUTPUT(ETH0_50MHZ_CLK, "eth0-50mhz", 50000000UL),
+>>> +       CLK_PLL_OUTPUT(ETH1_50MHZ_CLK, "eth1-50mhz", 50000000UL),
+>>> +       CLK_PLL_OUTPUT(ETH2_50MHZ_CLK, "eth2-50mhz", 50000000UL),
+>>> +       CLK_PLL_OUTPUT(ETH_25MHZ_CLK, "eth-25mhz", 25000000UL),
+>>> +};
+>>> +
+>>> +static int ipq_cmn_pll_config(struct device *dev, unsigned long 
+>>> parent_rate)
+>>> +{
+>>> +       void __iomem *base;
+>>> +       u32 val;
+>>> +
+>>> +       base = devm_of_iomap(dev, dev->of_node, 0, NULL);
+>>
+>> Use platform_device APIs please. This is a platform driver.
+> 
+> OK. Will update to use API devm_platform_ioremap_resource().
+> 
+>>
+>>> +       if (IS_ERR(base))
+>>> +               return PTR_ERR(base);
+>>> +
+>>> +       val = readl(base + CMN_PLL_REFCLK_CONFIG);
+>>> +       val &= ~(CMN_PLL_REFCLK_EXTERNAL | CMN_PLL_REFCLK_INDEX);
+>>> +
+>>> +       /*
+>>> +        * Configure the reference input clock selection as per the 
+>>> given rate.
+>>> +        * The output clock rates are always of fixed value.
+>>> +        */
+>>> +       switch (parent_rate) {
+>>> +       case 25000000:
+>>> +               val |= FIELD_PREP(CMN_PLL_REFCLK_INDEX, 3);
+>>> +               break;
+>>> +       case 31250000:
+>>> +               val |= FIELD_PREP(CMN_PLL_REFCLK_INDEX, 4);
+>>> +               break;
+>>> +       case 40000000:
+>>> +               val |= FIELD_PREP(CMN_PLL_REFCLK_INDEX, 6);
+>>> +               break;
+>>> +       case 48000000:
+>>> +               val |= FIELD_PREP(CMN_PLL_REFCLK_INDEX, 7);
+>>> +               break;
+>>> +       case 50000000:
+>>> +               val |= FIELD_PREP(CMN_PLL_REFCLK_INDEX, 8);
+>>> +               break;
+>>> +       case 96000000:
+>>> +               val |= FIELD_PREP(CMN_PLL_REFCLK_INDEX, 7);
+>>> +               val &= ~CMN_PLL_REFCLK_DIV;
+>>> +               val |= FIELD_PREP(CMN_PLL_REFCLK_DIV, 2);
+>>> +               break;
+>>> +       default:
+>>> +               return -EINVAL;
+>>> +       }
+>>
+>> Why isn't this done with struct clk_ops::set_rate() or clk_ops::init()?
+> 
+> OK, I will move this code into the clk_ops::init().
 
-Hmm, that suggests the guest kernel maps the buffer as WC.  And looking at the
-bochs driver, IIUC, the kernel mappings via ioremap() are UC-, not WC.  So it
-could be that userspace doesn't play nice with WC, but could it also be that the
-QEMU backend doesn't play nice with WC (on Intel)?
+This code is expected to be executed once for initializing the CMN PLL
+to enable output clocks, and requires the parent clock rate to be
+available. However the parent clock rate is not available in the
+clk_ops::init(). Hence clk_ops::set_rate() seems to be the right option
+for this. Please let us know if this approach is fine. Thanks.
 
-Given that this is a purely synthetic device, is there any reason to use UC or WC?
-I.e. can the bochs driver configure its VRAM buffers to be WB?  It doesn't look
-super easy (the DRM/TTM code has so. many. layers), but it appears doable.  Since
-the device only exists in VMs, it's possible the bochs driver has never run on
-Intel CPUs with WC memtype.
+> 
+>>
+>>> +
+>>> +       writel(val, base + CMN_PLL_REFCLK_CONFIG);
+>>> +
+>>> +       /* Update the source clock rate selection. Only 96 MHZ uses 
+>>> 0. */
+>>> +       val = readl(base + CMN_PLL_REFCLK_SRC_SELECTION);
+>>> +       val &= ~CMN_PLL_REFCLK_SRC_DIV;
+>>> +       if (parent_rate != 96000000)
+>>> +               val |= FIELD_PREP(CMN_PLL_REFCLK_SRC_DIV, 1);
+>>> +
+>>> +       writel(val, base + CMN_PLL_REFCLK_SRC_SELECTION);
+>>> +
+>>> +       /* Enable PLL locked detect. */
+>>> +       val = readl(base + CMN_PLL_CTRL);
+>>> +       val |= CMN_PLL_CTRL_LOCK_DETECT_EN;
+>>> +       writel(val, base + CMN_PLL_CTRL);
+>>> +
+>>> +       /*
+>>> +        * Reset the CMN PLL block to ensure the updated configurations
+>>> +        * take effect.
+>>> +        */
+>>> +       val = readl(base + CMN_PLL_POWER_ON_AND_RESET);
+>>> +       val &= ~CMN_ANA_EN_SW_RSTN;
+>>> +       writel(val, base + CMN_PLL_POWER_ON_AND_RESET);
+>>> +       usleep_range(1000, 1200);
+>>> +
+>>> +       val |= CMN_ANA_EN_SW_RSTN;
+>>> +       writel(val, base + CMN_PLL_POWER_ON_AND_RESET);
+>>> +
+>>> +       /* Stability check of CMN PLL output clocks. */
+>>> +       return readl_poll_timeout(base + CMN_PLL_LOCKED, val,
+>>> +                                 (val & CMN_PLL_CLKS_LOCKED),
+>>> +                                 100, 100000);
+>>> +}
+>>> +
+>>> +static int ipq_cmn_pll_clk_register(struct device *dev, const char 
+>>> *parent)
+>>
+>> Please don't use string names to describe topology.
+> 
+> 
+> OK, I will update to use an instance of 'struct clk_parent_data' to
+> describe the parent clock. This will be part of clk_hw instance that we
+> will define now, to represent the PLL clock and its ops (such as .init)
+> along with the parent.
+> 
+>>
+>>> +{
+>>> +       const struct cmn_pll_fixed_output_clk *fixed_clk;
+>>> +       struct clk_hw_onecell_data *data;
+>>> +       unsigned int num_clks;
+>>> +       struct clk_hw *hw;
+>>> + +
+>>> +       num_clks = ARRAY_SIZE(ipq9574_output_clks);
+>>> +       fixed_clk = ipq9574_output_clks;
+>>> +
+>>> +       data = devm_kzalloc(dev, struct_size(data, hws, num_clks), 
+>>> GFP_KERNEL);
+>>> +       if (!data)
+>>> +               return -ENOMEM;
+>>> +
+>>> +       for (i = 0; i < num_clks; i++) {
+>>> +               hw = devm_clk_hw_register_fixed_rate(dev, 
+>>> fixed_clk[i].name,
+>>> +                                                    parent, 0,
+>>> +                                                    fixed_clk[i].rate);
+>>> +               if (IS_ERR(hw))
+>>> +                       return PTR_ERR(hw);
+>>> +
+>>> +               data->hws[fixed_clk[i].id] = hw;
+>>> +       }
+>>> +       data->num = num_clks;
+>>> +
+>>> +       return devm_of_clk_add_hw_provider(dev, 
+>>> of_clk_hw_onecell_get, data);
+>>> +}
+>>> +
+>>> +static int ipq_cmn_pll_clk_probe(struct platform_device *pdev)
+>>> +{
+>>> +       struct device *dev = &pdev->dev;
+>>> +       struct clk *clk;
+>>> +       int ret;
+>>> +
+>>> +       /*
+>>> +        * To access the CMN PLL registers, the GCC AHB & SYSY clocks
+>>> +        * for CMN PLL block need to be enabled.
+>>> +        */
+>>> +       clk = devm_clk_get_enabled(dev, "ahb");
+>>> +       if (IS_ERR(clk))
+>>> +               return dev_err_probe(dev, PTR_ERR(clk),
+>>> +                                    "Enable AHB clock failed\n");
+>>> +
+>>> +       clk = devm_clk_get_enabled(dev, "sys");
+>>> +       if (IS_ERR(clk))
+>>> +               return dev_err_probe(dev, PTR_ERR(clk),
+>>> +                                    "Enable SYS clock failed\n");
+>>
+>> Usually qcom clk drivers do this with pm_clk_add() and runtime PM. Why
+>> can't that be done here?
+> 
+> Yes, the pm_clk_add() can be used to manage clocks, I will udpate to use
+> the PM framework. Thanks for the suggestion.
+> 
+>>
+>>> +
+>>> +       clk = devm_clk_get(dev, "ref");
+>>> +       if (IS_ERR(clk))
+>>> +               return dev_err_probe(dev, PTR_ERR(clk),
+>>> +                                    "Get reference clock failed\n");
+>>
+>> We don't want clk providers to be clk consumers. Presumably this is the
+>> PLL's parent clk, and so the frequency should be passed to the clk_ops
+>> via the parent rate.
+> 
+> Yes, this is the PLL's parent clock. OK, I will remove this code and 
+> update to use clk_parent_data to describe this parent clock.
+> 
+>>
+>>> +
+>>> +       /* Configure CMN PLL to apply the reference clock. */
+>>> +       ret = ipq_cmn_pll_config(dev, clk_get_rate(clk));
+>>> +       if (ret)
+>>> +               return dev_err_probe(dev, ret, "Configure CMN PLL 
+>>> failed\n");
+>>> +
+>>> +       return ipq_cmn_pll_clk_register(dev, __clk_get_name(clk));
+>>> +}
+>>> +
+>>> +static const struct of_device_id ipq_cmn_pll_clk_ids[] = {
+>>> +       { .compatible = "qcom,ipq9574-cmn-pll", },
+>>> +       { }
+>>> +};
+>>
+>> module device table?
+>>
+> I will add the MODULE_DEVICE_TABLE.
+> 
+> 
 
-The one thing that confuses and concerns me is that this broke in the first place.
-KVM has honored guest PAT on SVM since forever, which is why I/we had decent
-confidence KVM could honor guest PAT on VMX without breaking anything.  SVM (NPT)
-has an explicitlyed document special "WC+" memtype, where guest=WC && host=WB == WC+,
-and WC+ accesses snoop caches on all CPUs.
-
-But per Intel engineers, Intel CPUs with self-snoop are supposed to snoop caches
-on all processors too.
-
-I assume this same setup works fine on AMD/SVM?  If so, we probably need to do
-more digging before fudging around this in the guest.
 
