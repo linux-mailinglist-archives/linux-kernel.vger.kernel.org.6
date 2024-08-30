@@ -1,201 +1,383 @@
-Return-Path: <linux-kernel+bounces-309219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3F4D9667A9
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 19:10:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E22639667AF
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 19:11:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 26D97B26A74
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 17:10:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9AA2E281F7D
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 17:11:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D6821BA272;
-	Fri, 30 Aug 2024 17:10:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA62F1BAEFB;
+	Fri, 30 Aug 2024 17:10:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LQODLueL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e5FOBkzQ"
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73563135417;
-	Fri, 30 Aug 2024 17:10:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00FDF1BAEC8;
+	Fri, 30 Aug 2024 17:10:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725037828; cv=none; b=P7dtHuRaC1YIxarYYw8i6n2LkpiXBCRUjsWguOxfCn2TxE+8oSB48mRTnc43RIm5WgxQnFC9JnnUpC2/TG15FjG34LSP4sxDxNZ8XZGAtT0LIb5ENUVa8ALqW2kNCLmbMHIXd/o+OZwfvI4TyMFse5vgCIj/gFED3/59eKnrmEE=
+	t=1725037854; cv=none; b=HM2KXzeCojIp5c7KDctNH6sil/2VlnB5VcRfQam9Gy+F0Z5IQeSG6Xlndxn+pSAAfAhKtJI1nCFDpjb53skx7HfExgs/3+5OEq+OdWUawqpyJjD2w2flK4Hnff1l+iv0ZOC30fajzJcoQxwAusqJJm6m6fMaSPmAj5Ybxt5DUUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725037828; c=relaxed/simple;
-	bh=xXaOa1EOcgjVMDBY0/KOJQlAxgyqOnhlk926ATOqOOM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=d4yfQ9j0KOaVyCQz9gVWQsahGfiIGj8NIkF3R/irEUYBXzZKT1yrMRzSnpxEHvs/HxjBo9IsN+ffifX5kJVbEGyEkuTRbvCS3NnLjUGBIjnJQI+MKhLFF8HhwMlbdrLxG2hoY+xA3mWphnzrnqPvAqhFyvIV6WzZ5/8lG7XkepU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LQODLueL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EB3DC4CEC2;
-	Fri, 30 Aug 2024 17:10:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725037828;
-	bh=xXaOa1EOcgjVMDBY0/KOJQlAxgyqOnhlk926ATOqOOM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=LQODLueLXD1OGVoqZ0DZDOaOiLcR/drcYGrn04Z1cXQ1Ncn+ytMOJbYgM+LglmEem
-	 aAvmCoP3vNo+aHDjpZ+gx8K6rzlEV51mkczDcCDXdUzn9ShDH/5omaNeyOVJp2wOvG
-	 5Okpji5VPdB66JvqenoPWJxJvuH7+9IGrR0wLafWCkQpbVbXHuRPjSldN11GaBZFKF
-	 JPJnq7O7R24fbbWPr7cys1eDBsK9Yuya5ViSLR/M4YiUj0AB9VNN38ZpxqKzTK0UMp
-	 yLYeI2ANvEwc9+UyZF7DebjYrWx1uBDBYynpWxsvBqP0m2uiWDzW8zkCXx1J3p83aZ
-	 VCrQ8WVQZAt8w==
-Message-ID: <4e2ad62b-b11e-40db-9cd9-a26f7642c735@kernel.org>
-Date: Fri, 30 Aug 2024 19:10:20 +0200
+	s=arc-20240116; t=1725037854; c=relaxed/simple;
+	bh=77x4awRdT9Y/eD2B9Y75VmTh/DpYuU329niKtHTqOxs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=e/Mbn9JlvpfBc7xi+IHgZhEcvtAjCsFTOO2vYh/We0/Mv7pUjHO4dGTpBkCjCX0vBSg1MtfbGaboKn/OD3eVezOKXOZMEggN3DAi9ht37D4LI1Q5tCwQD2a31rXKFGS2Ni9rvW/D0eguPjxFDp99RCTJ4B4oQJ+wgJjMnYJaj+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e5FOBkzQ; arc=none smtp.client-ip=209.85.222.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7a812b64d1cso62689185a.0;
+        Fri, 30 Aug 2024 10:10:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725037852; x=1725642652; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=m22aemZpiQj+0DI+8D9LCjeFsoRiZWdwmvwgcVkCN90=;
+        b=e5FOBkzQW3zfPL+pyuNqyE3uHmSeYg2zalshew3iGhmOTrVhpubAmWIn0UB77XxdoI
+         A1+JiHEqX5Moekhgu9jD+LZbRSp08RBty8hEO8BBP+S5u/croHfNa/vBWFvVdcn/TEuN
+         YXHQf6xFgMeAH53TAzhJLYTuFFv61cd1D1aw5nMfk6C0gkI0nzEucvrsWDcZD6gdIXoV
+         G+2tXFugj5nzFNUwZ6YrAVf/aWGUVd0sHHsYlaXJge+wt3e4ugUPCDRCN/Qd9tGsDg7W
+         XvmnKuDcNrm+LG4KLgRNoxcrKB1Klo24mNrgr+1Kq4Myj3ShlRjPFlfMBuntESSarQg8
+         TXxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725037852; x=1725642652;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=m22aemZpiQj+0DI+8D9LCjeFsoRiZWdwmvwgcVkCN90=;
+        b=gqNFFTbuQcuW1JFgjGA0dz/FAzPLyCpBNT+M3981+fvlBbe5YfwDWGZp8b+s3NoOne
+         5x3E7uHy8WCRWZb/F/WUpNL/XKg0yD51sykjVOZPmU6yiZcK6lkM7QitHHAWm1ya+Yeq
+         +NHkgwJ8hpwV08nKBfHHZMwq6rkTh9kBZ3rXXpLfXS3gbSYHso2s7QOpOodNrKbOzQPO
+         gV8EBOyjH5lgXQc4q57JVeUbjP7lG0O4CH/ohjoGiMSR9d2fboXeyn45aMG4K7T5R4Za
+         2Vs69dyZwUSbsg+HsoMkqG2AuG9ZI2omAZ3GVOtvEcAI3y+0VjdTEKCfXkppmzJFeOGi
+         J96w==
+X-Forwarded-Encrypted: i=1; AJvYcCUdo8dFXKA9mfpN4h5TZpbvcZlJ1D9IFgpvV9kxkel3njGIxj1dfSC0N7Fl22qvXq7yYjCsZPWwYNYIGhZS@vger.kernel.org, AJvYcCWxA9db6KzPiHli8XJOPS/frZN/RVBbX1W6Bs3auAGgZ6dl935chFPSu9LwoMkIjJ6+XoeUHBErSy2V9cVbBw==@vger.kernel.org, AJvYcCX5EETe7AFkrn+MTteqcd9LzTbpsuGHMSnyrULzY5xQ4ycD19EMdvfvZyCdyxjA+tdQ9NWiw7k9DTA=@vger.kernel.org, AJvYcCXZorYNs7c715rMxtYus30K7mQFwT2wyzQKtZTiRKPQjD8D7ArrJYaTRWwgnPttLOO75lquwjqGMq1gxLBu0myG3Q==@vger.kernel.org, AJvYcCXg/lltuDcQ7UBweAZYrTBqQweyfx42KflJ+nhZHi23BIBpTM64O7/TkyqMlc3V/PcLzZef1onvWswe@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyvv8HBNDTt8fu8/rDN+PB7spFSoO7j3lg3HTPkFLDwHrS/WjTp
+	TxKQO5U9oBA7IGimFdFfAJkOSGm5fxUyyZxvkK5cIQMCbp8eDYcUd8O1zNY1AYUoSxMCNkRpFMo
+	obWHNHaZwPUa3J9g7C3F/WQKcReA=
+X-Google-Smtp-Source: AGHT+IFiy5ZgKngfuId1l5QoqvXMu004sTLyuhO900bVIDkVXDUUxF01S6jdIKQcwTC//HK6Z/vhWR6WlKpSSP/q6Vk=
+X-Received: by 2002:a05:620a:1a1a:b0:7a2:c2a:c9f8 with SMTP id
+ af79cd13be357-7a804187309mr806207185a.1.1725037851328; Fri, 30 Aug 2024
+ 10:10:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] drivers: spi: Insert the missing pci_dev_put()before
- return
-To: Jakub Kicinski <kuba@kernel.org>,
- Geert Uytterhoeven <geert@linux-m68k.org>,
- "David S. Miller" <davem@davemloft.net>, Mark Brown <broonie@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Paolo Abeni <pabeni@redhat.com>
-Cc: Daniel Mack <daniel@zonque.org>, Haojian Zhuang
- <haojian.zhuang@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>,
- linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org,
- linux-kernel@vger.kernel.org, opensource.kernel@vivo.com,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Yang Ruibin <11162571@vivo.com>
-References: <20240829033511.1917015-1-11162571@vivo.com>
- <CAMuHMdWNjo69_W6f+R9QJJOf8uF0htg2XazeS-yjugJv3UM+kg@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <CAMuHMdWNjo69_W6f+R9QJJOf8uF0htg2XazeS-yjugJv3UM+kg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20240828-exportfs-u64-mount-id-v3-0-10c2c4c16708@cyphar.com>
+ <20240828103706.2393267-1-cyphar@cyphar.com> <20240828103706.2393267-2-cyphar@cyphar.com>
+In-Reply-To: <20240828103706.2393267-2-cyphar@cyphar.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Fri, 30 Aug 2024 19:10:39 +0200
+Message-ID: <CAOQ4uxjzpoUtH9OGYmj8K4FF0V4J8vi1W6Ry0Po1RoZ70vQ_fA@mail.gmail.com>
+Subject: Re: [PATCH xfstests v1 2/2] open_by_handle: add tests for u64 mount ID
+To: Aleksa Sarai <cyphar@cyphar.com>
+Cc: fstests@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Chuck Lever <chuck.lever@oracle.com>, 
+	Jeff Layton <jlayton@kernel.org>, Alexander Aring <alex.aring@gmail.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	"Liang, Kan" <kan.liang@linux.intel.com>, Christoph Hellwig <hch@infradead.org>, 
+	Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org, 
+	linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-api@vger.kernel.org, linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 30/08/2024 10:55, Geert Uytterhoeven wrote:
-> Hi Yang,
-> 
-> On Thu, Aug 29, 2024 at 5:35 AM Yang Ruibin <11162571@vivo.com> wrote:
->> Increase the reference count by calling pci_get_slot(), and remember to
->> decrement the reference count by calling pci_dev_put().
->>
->> Signed-off-by: Yang Ruibin <11162571@vivo.com>
-> 
-> Thanks for your patch, which is now commit 8a0ec8c2d736961f ("spi:
-> Insert the missing pci_dev_put()before return") in spi/for-next.
-> 
->> --- a/drivers/spi/spi-pxa2xx-pci.c
->> +++ b/drivers/spi/spi-pxa2xx-pci.c
->> @@ -146,8 +146,10 @@ static int lpss_spi_setup(struct pci_dev *dev, struct pxa2xx_spi_controller *c)
->>         c->num_chipselect = 1;
->>
->>         ret = pxa2xx_spi_pci_clk_register(dev, ssp, 50000000);
->> -       if (ret)
->> +       if (ret) {
->> +               pci_dev_put(dma_dev);
-> 
-> dma_dev is still uninitialized at this point.
-> 
->>                 return ret;
->> +       }
->>
->>         dma_dev = pci_get_slot(dev->bus, PCI_DEVFN(PCI_SLOT(dev->devfn), 0));
-> 
-> dma_dev is initialized only here...
-> 
->>         ret = devm_add_action_or_reset(&dev->dev, lpss_dma_put_device, dma_dev);
-> 
-> ... and freed automatically by lpss_dma_put_device() in case of
-> any later failures since commit 609d7ffdc42199a0 ("spi: pxa2xx-pci:
-> Balance reference count for PCI DMA device") in v5.18.
-> 
->> @@ -222,8 +224,10 @@ static int mrfld_spi_setup(struct pci_dev *dev, struct pxa2xx_spi_controller *c)
->>         }
->>
->>         ret = pxa2xx_spi_pci_clk_register(dev, ssp, 25000000);
->> -       if (ret)
->> +       if (ret) {
->> +               pci_dev_put(dma_dev);
->>                 return ret;
->> +       }
->>
->>         dma_dev = pci_get_slot(dev->bus, PCI_DEVFN(21, 0));
->>         ret = devm_add_action_or_reset(&dev->dev, lpss_dma_put_device, dma_dev);
-> 
-> Likewise.
-> 
-> Hence this patch is not needed, and introduced two bugs.
+On Wed, Aug 28, 2024 at 12:37=E2=80=AFPM Aleksa Sarai <cyphar@cyphar.com> w=
+rote:
+>
+> Now that open_by_handle_at(2) can return u64 mount IDs, do some tests to
+> make sure they match properly as part of the regular open_by_handle
+> tests.
+>
+> Link: https://lore.kernel.org/all/20240801-exportfs-u64-mount-id-v3-0-be5=
+d6283144a@cyphar.com/
+> Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
+> ---
+>  src/open_by_handle.c | 123 ++++++++++++++++++++++++++++++++-----------
+>  tests/generic/426    |   1 +
+>  2 files changed, 93 insertions(+), 31 deletions(-)
+>
+> diff --git a/src/open_by_handle.c b/src/open_by_handle.c
+> index d9c802ca9bd1..cbd68aeadac1 100644
+> --- a/src/open_by_handle.c
+> +++ b/src/open_by_handle.c
+> @@ -86,10 +86,15 @@ Examples:
+>  #include <errno.h>
+>  #include <linux/limits.h>
+>  #include <libgen.h>
+> +#include <stdint.h>
+>
+>  #include <sys/stat.h>
+>  #include "statx.h"
+>
+> +#ifndef AT_HANDLE_MNT_ID_UNIQUE
+> +#      define AT_HANDLE_MNT_ID_UNIQUE 0x001
+> +#endif
+> +
+>  #define MAXFILES 1024
+>
+>  struct handle {
+> @@ -99,7 +104,7 @@ struct handle {
+>
+>  void usage(void)
+>  {
+> -       fprintf(stderr, "usage: open_by_handle [-cludmrwapknhs] [<-i|-o> =
+<handles_file>] <test_dir> [num_files]\n");
+> +       fprintf(stderr, "usage: open_by_handle [-cludMmrwapknhs] [<-i|-o>=
+ <handles_file>] <test_dir> [num_files]\n");
+>         fprintf(stderr, "\n");
+>         fprintf(stderr, "open_by_handle -c <test_dir> [N] - create N test=
+ files under test_dir, try to get file handles and exit\n");
+>         fprintf(stderr, "open_by_handle    <test_dir> [N] - get file hand=
+les of test files, drop caches and try to open by handle\n");
+> @@ -111,6 +116,7 @@ void usage(void)
+>         fprintf(stderr, "open_by_handle -l <test_dir> [N] - create hardli=
+nks to test files, drop caches and try to open by handle\n");
+>         fprintf(stderr, "open_by_handle -u <test_dir> [N] - unlink (hardl=
+inked) test files, drop caches and try to open by handle\n");
+>         fprintf(stderr, "open_by_handle -d <test_dir> [N] - unlink test f=
+iles and hardlinks, drop caches and try to open by handle\n");
+> +       fprintf(stderr, "open_by_handle -M <test_dir> [N] - confirm that =
+the mount id returned by name_to_handle_at matches the mount id in statx\n"=
+);
+>         fprintf(stderr, "open_by_handle -m <test_dir> [N] - rename test f=
+iles, drop caches and try to open by handle\n");
+>         fprintf(stderr, "open_by_handle -p <test_dir>     - create/delete=
+ and try to open by handle also test_dir itself\n");
+>         fprintf(stderr, "open_by_handle -i <handles_file> <test_dir> [N] =
+- read test files handles from file and try to open by handle\n");
+> @@ -120,6 +126,81 @@ void usage(void)
+>         exit(EXIT_FAILURE);
+>  }
+>
+> +int do_name_to_handle_at(const char *fname, struct file_handle *fh, int =
+bufsz,
+> +                        int checkmountid)
+> +{
+> +       int ret;
+> +       int mntid_short;
+> +
+> +       uint64_t mntid_unique;
+> +       uint64_t statx_mntid_short =3D 0, statx_mntid_unique =3D 0;
+> +       struct handle dummy_fh;
+> +
+> +       if (checkmountid) {
+> +               struct statx statxbuf;
+> +
+> +               /* Get both the short and unique mount id. */
+> +               if (statx(AT_FDCWD, fname, 0, STATX_MNT_ID, &statxbuf) < =
+0) {
+> +                       fprintf(stderr, "%s: statx(STATX_MNT_ID): %m\n", =
+fname);
+> +                       return EXIT_FAILURE;
+> +               }
+> +               if (!(statxbuf.stx_mask & STATX_MNT_ID)) {
+> +                       fprintf(stderr, "%s: no STATX_MNT_ID in stx_mask\=
+n", fname);
+> +                       return EXIT_FAILURE;
+> +               }
+> +               statx_mntid_short =3D statxbuf.stx_mnt_id;
+> +
+> +               if (statx(AT_FDCWD, fname, 0, STATX_MNT_ID_UNIQUE, &statx=
+buf) < 0) {
+> +                       fprintf(stderr, "%s: statx(STATX_MNT_ID_UNIQUE): =
+%m\n", fname);
+> +                       return EXIT_FAILURE;
 
-Cc Greg, Jakub, David and Paolo,
+This failure will break the test on LTS kernels  - we don't want that.
+Instead I think you should:
+- drop the -M option
+- get statx_mntid_unique here IF kernel supports STATX_MNT_ID_UNIQUE
+and then...
 
-It seems Vivo (at least two persons from vivo.com) is sending patches
-generated through some sort of automation without really knowing what
-they were doing. All of the patches look like innocent
-cleanups/simplifications/fixes, but they do more.
+> +               }
+> +               if (!(statxbuf.stx_mask & STATX_MNT_ID_UNIQUE)) {
+> +                       fprintf(stderr, "%s: no STATX_MNT_ID_UNIQUE in st=
+x_mask\n", fname);
+> +                       return EXIT_FAILURE;
+> +               }
+> +               statx_mntid_unique =3D statxbuf.stx_mnt_id;
+> +       }
+> +
+> +       fh->handle_bytes =3D bufsz;
+> +       ret =3D name_to_handle_at(AT_FDCWD, fname, fh, &mntid_short, 0);
+> +       if (bufsz < fh->handle_bytes) {
+> +               /* Query the filesystem required bufsz and the file handl=
+e */
+> +               if (ret !=3D -1 || errno !=3D EOVERFLOW) {
+> +                       fprintf(stderr, "%s: unexpected result from name_=
+to_handle_at: %d (%m)\n", fname, ret);
+> +                       return EXIT_FAILURE;
+> +               }
+> +               ret =3D name_to_handle_at(AT_FDCWD, fname, fh, &mntid_sho=
+rt, 0);
+> +       }
+> +       if (ret < 0) {
+> +               fprintf(stderr, "%s: name_to_handle: %m\n", fname);
+> +               return EXIT_FAILURE;
+> +       }
+> +
+> +       if (checkmountid) {
+> +               if (mntid_short !=3D (int) statx_mntid_short) {
+> +                       fprintf(stderr, "%s: name_to_handle_at returned a=
+ different mount ID to STATX_MNT_ID: %u !=3D %lu\n", fname, mntid_short, st=
+atx_mntid_short);
+> +                       return EXIT_FAILURE;
+> +               }
+> +
+> +               /*
+> +                * Get the unique mount ID. We don't need to get another =
+copy of the
+> +                * handle so store it in a dummy struct.
+> +                */
+> +               dummy_fh.fh.handle_bytes =3D fh->handle_bytes;
+> +               if (name_to_handle_at(AT_FDCWD, fname, &dummy_fh.fh, (int=
+ *) &mntid_unique, AT_HANDLE_MNT_ID_UNIQUE) < 0) {
+> +                       fprintf(stderr, "%s: name_to_handle_at(AT_HANDLE_=
+MNT_ID_UNIQUE): %m\n", fname);
+> +                       return EXIT_FAILURE;
+> +               }
+> +
+> +               if (mntid_unique !=3D statx_mntid_unique) {
+> +                       fprintf(stderr, "%s: name_to_handle_at(AT_HANDLE_=
+MNT_ID_UNIQUE) returned a different mount ID to STATX_MNT_ID_UNIQUE: %lu !=
+=3D %lu\n", fname, mntid_unique, statx_mntid_unique);
+> +                       return EXIT_FAILURE;
+> +               }
 
-This patch here looks like introducing two bugs.
+- check statx_mntid_unique here IFF statx_mntid_unique is set
+- always check statx_mntid_short (what could be a reason to not check it?)
 
-These patches:
-1. https://lore.kernel.org/all/20240830033251.232992-1-yujiaoliang@vivo.com/
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+>  int main(int argc, char **argv)
+>  {
+>         int     i, c;
+> @@ -132,19 +213,20 @@ int main(int argc, char **argv)
+>         char    fname2[PATH_MAX];
+>         char    *test_dir;
+>         char    *mount_dir;
+> -       int     mount_fd, mount_id;
+> +       int     mount_fd;
+>         char    *infile =3D NULL, *outfile =3D NULL;
+>         int     in_fd =3D 0, out_fd =3D 0;
+>         int     numfiles =3D 1;
+>         int     create =3D 0, delete =3D 0, nlink =3D 1, move =3D 0;
+>         int     rd =3D 0, wr =3D 0, wrafter =3D 0, parent =3D 0;
+>         int     keepopen =3D 0, drop_caches =3D 1, sleep_loop =3D 0;
+> +       int     checkmountid =3D 0;
+>         int     bufsz =3D MAX_HANDLE_SZ;
+>
+>         if (argc < 2)
+>                 usage();
+>
+> -       while ((c =3D getopt(argc, argv, "cludmrwapknhi:o:sz")) !=3D -1) =
+{
+> +       while ((c =3D getopt(argc, argv, "cludMmrwapknhi:o:sz")) !=3D -1)=
+ {
+>                 switch (c) {
+>                 case 'c':
+>                         create =3D 1;
+> @@ -172,6 +254,9 @@ int main(int argc, char **argv)
+>                         delete =3D 1;
+>                         nlink =3D 0;
+>                         break;
+> +               case 'M':
+> +                       checkmountid =3D 1;
+> +                       break;
+>                 case 'm':
+>                         move =3D 1;
+>                         break;
+> @@ -307,21 +392,9 @@ int main(int argc, char **argv)
+>                                 return EXIT_FAILURE;
+>                         }
+>                 } else {
+> -                       handle[i].fh.handle_bytes =3D bufsz;
+> -                       ret =3D name_to_handle_at(AT_FDCWD, fname, &handl=
+e[i].fh, &mount_id, 0);
+> -                       if (bufsz < handle[i].fh.handle_bytes) {
+> -                               /* Query the filesystem required bufsz an=
+d the file handle */
+> -                               if (ret !=3D -1 || errno !=3D EOVERFLOW) =
+{
+> -                                       fprintf(stderr, "Unexpected resul=
+t from name_to_handle_at(%s)\n", fname);
+> -                                       return EXIT_FAILURE;
+> -                               }
+> -                               ret =3D name_to_handle_at(AT_FDCWD, fname=
+, &handle[i].fh, &mount_id, 0);
+> -                       }
+> -                       if (ret < 0) {
+> -                               strcat(fname, ": name_to_handle");
+> -                               perror(fname);
+> +                       ret =3D do_name_to_handle_at(fname, &handle[i].fh=
+, bufsz, checkmountid);
+> +                       if (ret < 0)
+>                                 return EXIT_FAILURE;
+> -                       }
+>                 }
+>                 if (keepopen) {
+>                         /* Open without close to keep unlinked files arou=
+nd */
+> @@ -349,21 +422,9 @@ int main(int argc, char **argv)
+>                                 return EXIT_FAILURE;
+>                         }
+>                 } else {
+> -                       dir_handle.fh.handle_bytes =3D bufsz;
+> -                       ret =3D name_to_handle_at(AT_FDCWD, test_dir, &di=
+r_handle.fh, &mount_id, 0);
+> -                       if (bufsz < dir_handle.fh.handle_bytes) {
+> -                               /* Query the filesystem required bufsz an=
+d the file handle */
+> -                               if (ret !=3D -1 || errno !=3D EOVERFLOW) =
+{
+> -                                       fprintf(stderr, "Unexpected resul=
+t from name_to_handle_at(%s)\n", dname);
+> -                                       return EXIT_FAILURE;
+> -                               }
+> -                               ret =3D name_to_handle_at(AT_FDCWD, test_=
+dir, &dir_handle.fh, &mount_id, 0);
+> -                       }
+> -                       if (ret < 0) {
+> -                               strcat(dname, ": name_to_handle");
+> -                               perror(dname);
+> +                       ret =3D do_name_to_handle_at(test_dir, &dir_handl=
+e.fh, bufsz, checkmountid);
+> +                       if (ret < 0)
+>                                 return EXIT_FAILURE;
+> -                       }
+>                 }
+>                 if (out_fd) {
+>                         ret =3D write(out_fd, (char *)&dir_handle, sizeof=
+(*handle));
+> diff --git a/tests/generic/426 b/tests/generic/426
+> index 25909f220e1e..df481c58562c 100755
+> --- a/tests/generic/426
+> +++ b/tests/generic/426
+> @@ -51,6 +51,7 @@ test_file_handles $testdir -d
+>  # Check non-stale handles to linked files
+>  create_test_files $testdir
+>  test_file_handles $testdir
+> +test_file_handles $testdir -M
 
-2. https://lore.kernel.org/all/20240828122650.1324246-1-11162571@vivo.com/
-(I sent a revert for this)
+I see no reason to add option -M and add a second invocation.
 
-3. https://lore.kernel.org/all/20240829072016.2329466-1-11162571@vivo.com/
+Something I am missing?
 
-and probably more...
-
-introduce dev_err_probe() outside of probe path which is not desired,
-because it marks a probed (working) device as deferred.
-
-The patches look trivial and/or helpful, so people tend to accept them
-through default trust.
-
-I kindly suggest reverse - do not trust them by default and instead do a
-thorough review before accepting any cleanup/trivial patch from @vivo.com.
-
-Best regards,
-Krzysztof
-
+Thanks,
+Amir.
 
