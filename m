@@ -1,138 +1,110 @@
-Return-Path: <linux-kernel+bounces-309353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0ED31966945
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 21:05:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C31D96694A
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 21:09:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 420131C2322A
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 19:05:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F14C1C2209A
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 19:09:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 378151BB69B;
-	Fri, 30 Aug 2024 19:04:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D0531BC07D;
+	Fri, 30 Aug 2024 19:09:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="05cdAgAn"
-Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com [209.85.167.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jjoUL+si"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 016B01B375E
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 19:04:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F275713B297;
+	Fri, 30 Aug 2024 19:09:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725044696; cv=none; b=PwobuBittNUaQOtooIzYNBhlcnQZWV6vy7ceCLGVqEWzo2U0tkQuFO/7QU17WcvrLCSD1n6rg5nL19rhhG7zuO6hjggMAcOVWHt3wDfmuWXyU/BahPoh/mckwmXdViDJfuQcfW6xX8vb8tfQ8Ym0YDj2+a6qwPc78DjPUGJ9bfo=
+	t=1725044968; cv=none; b=r+RpaARA5RbTX+oz+JCG7N/xPiNdDfujBJgKHqUoXzbO8qse2+7oB5e5/0RRAD3rUAuJ74uGg4LaaLMbjoUWAq7rO7XAMqK5kbgFS8r1k1Ax2jeFtZMJs2WsWMKgE0qHS52VsfuAxOCMdd8Uv6aQsSCZrx9JaxPt/Yjm4WrP9jU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725044696; c=relaxed/simple;
-	bh=k0LS5qtBUswMgqvBfneiqFMpv3IOMEx9hyg1k8+1YPM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VJ4Oqu+Mv/X0KJeIRDKBUgmzovQxmnyJp92o3TQtONuo6sLoBMYoC71P4hi2aois5jIXcpeKU1jVYKXkZl67rAi/i/dzQV1ljOEpe8evQGtshAcxT+fee7iAPzMS+TqeRSFsU5OLFyiaedxmHb2OkwIPDiGylQYCR5fR2hWHrHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=05cdAgAn; arc=none smtp.client-ip=209.85.167.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-oi1-f174.google.com with SMTP id 5614622812f47-3df0df4814eso1090473b6e.2
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 12:04:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725044694; x=1725649494; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2+oed5X3ICd5fPpoJH1QwaNbZnd+/2NqwMirUoUrwaQ=;
-        b=05cdAgAnYcQGkomCEufhYs8qmpB3wgHyUrb3b5KD5UNQKRu+S0phtePBH4kj9XY//Z
-         6tg1DXlyLmzYkH5kQF3wIvyMO+KoF9XIZw3/F1GIcGmM+0qdoFMHix3bnwneKrhcXE9n
-         OIVKLHuGFR7DWqMUNF+xfO9Peva7ZHiXvhFQwVK5xxjwMf2rZLp0Ip7SHS2Fy0PTeaUg
-         Dh89kJUlc8vgVuSbIYOoXQKU21A4K/I4lirKRMFj61vmzJFD0QfiiGbKpPH5Ri/aRU62
-         KaivOgqolS8BwRv02E6tueZUdVCG0olDnkhDeR8XKOg2YdbAtfVSsXvpeLaj3sjio67U
-         Or1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725044694; x=1725649494;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2+oed5X3ICd5fPpoJH1QwaNbZnd+/2NqwMirUoUrwaQ=;
-        b=CDfQg1j3FfN2wXU36/FMjJtwC0EmbHzH1O+2OWk+vzxG+QKWGIQu2z/RL8fmFCqqEq
-         Da04rIOsaVE0wrxNSpdMcpTgp8gItlSSsQXcPMYnUxHuJ1CsIOvelydaaaMfAwhaocfo
-         5gzD+/aMYigDspvaIWDUIZeu02L8/9RdUWkaXxs0yCOoXCkQDLBrmWWoWQB3fTZHXazZ
-         MYbbma60yPy2LKRdsi7UprhQwDQu0pCkN/Be11rpK9wltY9oStKvrxToB6Zn0cJ8PSNW
-         NuTWVckMOKIMyi+EwGVkG9pziCQfY2HEhZgMadVW+ijtEi/VYDPI4EJqMhhCagNsoqZ4
-         4jKg==
-X-Forwarded-Encrypted: i=1; AJvYcCXWLAMSyeMgacvhys6LzR22fMvFAcK/ik6yerej5LBRGguYnSBRVq9qrvnF+JO0nj2LAG5YEIuZjJfPv2c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUNrOE0W7ldcuzPMqdpQ0Lbiqxg30VIZx87wyZxRCDVbYOIyQI
-	3zsLd2whhMg1OHnc2yYKKWOwCTysw3DcGnV3+T6qvlFEQr4A85EtX4JBQhfEe4i9tdZ4XbJvRCz
-	zQHaNr0BUOmRdlO/BaqwghY5T/nzDDHIHj+n6
-X-Google-Smtp-Source: AGHT+IHX9aU8yWEDpT+grmlscohk5Q8oTiUVyrd49xn2AheCv+N+Z7EnIH9qwE1WwtSRS8d6p9mAAqZrO4lBWzUbTTs=
-X-Received: by 2002:a05:6808:4c0e:b0:3d9:2601:891c with SMTP id
- 5614622812f47-3df05dbe483mr6485390b6e.30.1725044693783; Fri, 30 Aug 2024
- 12:04:53 -0700 (PDT)
+	s=arc-20240116; t=1725044968; c=relaxed/simple;
+	bh=+H0oADayPpchtoOuk5ksPNnleoX4Wx+gcrhLBOfKGMI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bBESUOuEpVgrsTvSvCZWtcatC4p8LG1bNrWdelDbGBTDe57xU33n76X/uA1KMR7vNksVWpgwR4N1/oUcSmxJOaeWxDtg/z397SPLzyD6kSbw47tdcNLcc0/iqGK14zj5bAcaOVRBQHpw2xQT6Kwz04Xu0n0kl2wZdzDUcxXkYQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jjoUL+si; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725044967; x=1756580967;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=+H0oADayPpchtoOuk5ksPNnleoX4Wx+gcrhLBOfKGMI=;
+  b=jjoUL+si15agwbApo35m77vuL6YKrI9Y9jcKnLRRJXZSSk72xXA9KJCK
+   gAtLvCo+caWCwKJX3km5qj9AQ989Tp1KOb+iEGXtoyOGPiNiAnYSkYIcV
+   0Z/e48Ah2IALExVqZMW1/kE3TDAfccFCTUJ+G5QQ3Lnbm5wiGQt8Oa66q
+   VOB9djaUYdLVtrOCwTCNx6T5MaFBT0LrurDlQsqoGVa/BLLUj66hIKLT8
+   /qQZcIpxT2ugYZBzzGaRQ8SzFfUytkkKZxLwhWl7NwueTxJpZfcLIuaIv
+   HcIf5afxCPE4AEHTwipe+gus5QTVwvuntsA2AhhNkOLOS+lucvL/8d+M9
+   g==;
+X-CSE-ConnectionGUID: Yz1ns0/0Q/2ityo3rw2Clg==
+X-CSE-MsgGUID: M6fp1ZlKQAGMj3krgOmkTg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11180"; a="27577960"
+X-IronPort-AV: E=Sophos;i="6.10,189,1719903600"; 
+   d="scan'208";a="27577960"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Aug 2024 12:09:27 -0700
+X-CSE-ConnectionGUID: 2PoVBcedSxShNUBTl4RoXg==
+X-CSE-MsgGUID: VSjPd05BTo6/syzb1qATZQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,189,1719903600"; 
+   d="scan'208";a="68379302"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Aug 2024 12:09:23 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sk6za-00000003SIx-3oo9;
+	Fri, 30 Aug 2024 22:09:06 +0300
+Date: Fri, 30 Aug 2024 22:09:06 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: "Ma, Hao" <hao.ma@intel.com>
+Cc: Mark Brown <broonie@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Daniel Mack <daniel@zonque.org>,
+	Haojian Zhuang <haojian.zhuang@gmail.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	"Li, Lili" <lili.li@intel.com>
+Subject: Re: [PATCH v1 1/2] spi: pxa2xx: Do not override dev->platform_data
+ on probe
+Message-ID: <ZtIY0jkEkX54u7AK@smile.fi.intel.com>
+References: <20240822113408.750831-1-andriy.shevchenko@linux.intel.com>
+ <20240822113408.750831-2-andriy.shevchenko@linux.intel.com>
+ <CO1PR11MB5204FD6B12B682AAFB5B813F8B972@CO1PR11MB5204.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240827230753.2073580-1-kinseyho@google.com> <20240827230753.2073580-5-kinseyho@google.com>
- <56d42242-37fe-b94f-d3cb-00673f1e5efb@google.com> <CAF6N3nVWPJT+qrcz2jGw+sNoKge1qgDGSYg5f0Ur8a6O8ziUQg@mail.gmail.com>
-In-Reply-To: <CAF6N3nVWPJT+qrcz2jGw+sNoKge1qgDGSYg5f0Ur8a6O8ziUQg@mail.gmail.com>
-From: Yu Zhao <yuzhao@google.com>
-Date: Fri, 30 Aug 2024 13:04:17 -0600
-Message-ID: <CAOUHufbREU2C0_r3K7Aqj01nYW+WeWyoPJZAkHkTM+6nbUsWGw@mail.gmail.com>
-Subject: Re: [PATCH mm-unstable v3 4/5] mm: restart if multiple traversals raced
-To: Kinsey Ho <kinseyho@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins <hughd@google.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, 
-	Yosry Ahmed <yosryahmed@google.com>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
-	Shakeel Butt <shakeel.butt@linux.dev>, Muchun Song <muchun.song@linux.dev>, 
-	Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>, mkoutny@suse.com, 
-	baolin.wang@linux.alibaba.com, tjmercier@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CO1PR11MB5204FD6B12B682AAFB5B813F8B972@CO1PR11MB5204.namprd11.prod.outlook.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Fri, Aug 30, 2024 at 11:45=E2=80=AFAM Kinsey Ho <kinseyho@google.com> wr=
-ote:
->
-> On Fri, Aug 30, 2024 at 3:04=E2=80=AFAM Hugh Dickins <hughd@google.com> w=
-rote:
-> >
-> > mm-unstable commit 954dd0848c61 needs the fix below to be merged in;
-> > but the commit after it (the 5/5) then renames "memcg" to "next",
-> > so that one has to be adjusted too.
-> >
-> > [PATCH] mm: restart if multiple traversals raced: fix
-> >
-> > mem_cgroup_iter() reset memcg to NULL before the goto restart, so that
-> > goto out_unlock does not then return an ungotten memcg, causing oopses
-> > on stale memcg in many places (often in memcg_rstat_updated()).
-> >
-> > Signed-off-by: Hugh Dickins <hughd@google.com>
-> > ---
-> >  mm/memcontrol.c | 1 +
-> >  1 file changed, 1 insertion(+)
-> >
-> > diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> > index 6f66ac0ad4f0..dd82dd1e1f0a 100644
-> > --- a/mm/memcontrol.c
-> > +++ b/mm/memcontrol.c
-> > @@ -1049,6 +1049,7 @@ struct mem_cgroup *mem_cgroup_iter(struct mem_cgr=
-oup *root,
-> >                 if (cmpxchg(&iter->position, pos, memcg) !=3D pos) {
-> >                         if (css && css !=3D &root->css)
-> >                                 css_put(css);
-> > +                       memcg =3D NULL;
-> >                         goto restart;
-> >                 }
-> >
-> > --
-> > 2.35.3
->
-> Hi Andrew,
->
-> Would you prefer that I resend the series with Hugh's fix inserted?
+On Fri, Aug 30, 2024 at 04:48:26AM +0000, Ma, Hao wrote:
+> Hi,Andriy,
+> 
+> I merged following patches and tested it works.
+> 
+>       [PATCH v1 1/2] spi: pxa2xx: Do not override dev->platform_data on probe
+>       [PATCH v1 2/2] spi: pxa2xx: Move PM runtime handling to the glue drivers
+> 
+> Tested-by: Hao Ma <hao.ma@intel.com >
 
-Please send a new version to get this properly fixed, preferably move
-the initialization of `memcg` from the declaration to right below
-`restart`, and also add the following footers:
+Thank you for confirming that it works!
 
-Reported-by: syzbot+e099d407346c45275ce9@syzkaller.appspotmail.com
-Closes: https://lore.kernel.org/000000000000817cf10620e20d33@google.com/
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
