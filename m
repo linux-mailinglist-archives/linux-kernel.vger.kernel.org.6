@@ -1,148 +1,100 @@
-Return-Path: <linux-kernel+bounces-308499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3324F965DCE
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:02:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07D3A965E2D
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:14:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65AB21C22E51
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:02:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F10CB23F5D
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:14:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F81917E000;
-	Fri, 30 Aug 2024 10:01:36 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36E57187843;
+	Fri, 30 Aug 2024 10:11:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MgI12sEg"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F043317C9E3
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 10:01:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF00917BB17;
+	Fri, 30 Aug 2024 10:11:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725012095; cv=none; b=oQasfqHsoZ8oMhPZwgCPkgvp5P4bVvjR1A1urOssZ3vifwwZlqaw7pIXv3ZNakj8i7uKs8dFV6xVJQPGA+xUA3BVniLpCD0Cg7XeMaktlqLC/JYPKBAiQ0uBnq12DUCmcJLyLDpQktalv1h9aXOJRpekzZiLiP038fR27R9epKg=
+	t=1725012680; cv=none; b=g8usNO3BQ3IjeN8hUcaO+t6sM9LgCUtDn4UxAw4KhsaMwpGttlaVLJgqfhCzn8O3lU6vwbo4Tjxk582jRKCH4T0hsDDjBoeY9EKPC1/jV7MwKyzcaqoxbu+8duRoonnUgcu+3A4AGFOkqWPHRw/pApMBc7YX3fYMpX0Hb1HuNls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725012095; c=relaxed/simple;
-	bh=6g7CK3OGqT00ZaRKzaRMV5Bga33IQARjCHRsRRokcJ0=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gUzznx2abh2f1p48p0COgJi/MS9xiWom+g8eYElY7jjc9oY2EBGm2nZZ06lcCEfmWGHfVRl3xcpnws29hAakmcWyu4u7m0ZrP8fHZqxhDoSsedPTBp3FDjUBakC6Glm9Op0Syco+IGxRx4GfGd0bSb8MSjDMpOSRX+mcmzcCtpY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4WwDF22Kqmz2Cp1T
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 18:01:10 +0800 (CST)
-Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
-	by mail.maildlp.com (Postfix) with ESMTPS id 2F65C1400D7
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 18:01:24 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by kwepemh500013.china.huawei.com
- (7.202.181.146) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 30 Aug
- 2024 18:01:23 +0800
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-To: <tglx@linutronix.de>, <linux-kernel@vger.kernel.org>
-CC: <ruanjinjie@huawei.com>
-Subject: [PATCH] genirq: Fix IRQ_MOVE_PENDING try set when CONFIG_GENERIC_PENDING_IRQ not set
-Date: Fri, 30 Aug 2024 18:09:23 +0800
-Message-ID: <20240830100923.3818817-1-ruanjinjie@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1725012680; c=relaxed/simple;
+	bh=mzpoRm6pkWleBrw0wleX4p6vApAgUsGuMXqYcVu4waM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lKee66HoKUuwuHN290S2RlkJIdqUDRZxyceDik4JzC392a36zCf0EdjejT34p+35Ny+1thRu/+aqPyWAEiIOECL4Sdk+Tpeiaxuwhn+Qi3YhHhEh5cSxcNAlnR03FcILwZ38eHOlc48GUZ71uA1zHZPDNOmH5jgA5GvaGC3UTXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MgI12sEg; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725012679; x=1756548679;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=mzpoRm6pkWleBrw0wleX4p6vApAgUsGuMXqYcVu4waM=;
+  b=MgI12sEgRbm39334K+AAaz60K/9yHrggeh/yHCcHFvQ1aynZUgBZluVZ
+   JzS5Y11CUe/8J5CgbRjiNFL8LTKfoyNbWlA8Ov0cuvhTvBUkD1qqGzEpe
+   ly3Nyd5loJf0cABXzeDowIpc9Ii69fOmuLFlpi6p1CLn6fLTwLfRoYlHH
+   psF4bxdku5FPSMhzqWwRLjFzA/D/hXPwaNdRQ3RtBYx+5bAf8VIAEcDTq
+   O3TPPwpvEtBhknN9uSOfAJ5lQPIVIPn1r2PhcX5Gzwt1dOpqVLVcxWVS7
+   0LkXA/lCjH7dyB+P/qddoC7m8mGXx78ioqLyUR4/xvHzkdUaGTLAt9nrH
+   g==;
+X-CSE-ConnectionGUID: fzxIv760RDKICvG7UzPBBQ==
+X-CSE-MsgGUID: 6pKAfOeYTQS1Ms5f07YOwQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11179"; a="34218680"
+X-IronPort-AV: E=Sophos;i="6.10,188,1719903600"; 
+   d="scan'208";a="34218680"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Aug 2024 03:11:18 -0700
+X-CSE-ConnectionGUID: UdDa5sGcRTmh0+HQzTNJ/A==
+X-CSE-MsgGUID: d92XtbghTcSNVx17hlh1Og==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,188,1719903600"; 
+   d="scan'208";a="63481267"
+Received: from ltuz-desk.ger.corp.intel.com (HELO [10.245.246.101]) ([10.245.246.101])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Aug 2024 03:11:12 -0700
+Message-ID: <ec7d01d4-7887-4a61-9387-9669762c35aa@linux.intel.com>
+Date: Fri, 30 Aug 2024 10:28:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemh500013.china.huawei.com (7.202.181.146)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v26 09/33] ALSA: Add USB audio device jack type
+To: Wesley Cheng <quic_wcheng@quicinc.com>, srinivas.kandagatla@linaro.org,
+ mathias.nyman@intel.com, perex@perex.cz, conor+dt@kernel.org,
+ dmitry.torokhov@gmail.com, corbet@lwn.net, broonie@kernel.org,
+ lgirdwood@gmail.com, tiwai@suse.com, krzk+dt@kernel.org,
+ Thinh.Nguyen@synopsys.com, bgoswami@quicinc.com, robh@kernel.org,
+ gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-sound@vger.kernel.org, linux-input@vger.kernel.org,
+ linux-usb@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-doc@vger.kernel.org, alsa-devel@alsa-project.org
+References: <20240829194105.1504814-1-quic_wcheng@quicinc.com>
+ <20240829194105.1504814-10-quic_wcheng@quicinc.com>
+Content-Language: en-US
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+In-Reply-To: <20240829194105.1504814-10-quic_wcheng@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The irqd_set_move_pending() and irq_copy_pending() appear in pairs, but
-irq_copy_pending() is empty when CONFIG_GENERIC_PENDING_IRQ is not set,
-irqd_set_move_pending always set IRQD_SETAFFINITY_PENDING flag.
 
-And before commit 1fa46f1f0709 ("genirq: Simplify affinity related code"),
-if the config not set, IRQ_MOVE_PENDING will not try set and
-desc->pending_mask will not be copied no matter what. Fix it by combining
-them to align with them, and define empty for both if the config
-is not enabled.
 
-Fixes: 1fa46f1f0709 ("genirq: Simplify affinity related code")
-Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
----
- kernel/irq/internals.h |  7 +++++--
- kernel/irq/manage.c    | 19 +++++--------------
- 2 files changed, 10 insertions(+), 16 deletions(-)
+On 8/29/24 21:40, Wesley Cheng wrote:
+> Add an USB jack type, in order to support notifying of a valid USB audio
+> device.  Since USB audio devices can have a slew of different
+> configurations that reach beyond the basic headset and headphone use cases,
+> classify these devices differently.
+> 
+> Signed-off-by: Wesley Cheng <quic_wcheng@quicinc.com>
 
-diff --git a/kernel/irq/internals.h b/kernel/irq/internals.h
-index fe0272cd84a5..f3d83f3745cb 100644
---- a/kernel/irq/internals.h
-+++ b/kernel/irq/internals.h
-@@ -428,8 +428,11 @@ static inline bool irq_move_pending(struct irq_data *data)
- 	return irqd_is_setaffinity_pending(data);
- }
- static inline void
--irq_copy_pending(struct irq_desc *desc, const struct cpumask *mask)
-+irq_set_copy_pending(struct irq_data *data, const struct cpumask *mask)
- {
-+	struct irq_desc *desc = irq_data_to_desc(data);
-+
-+	irqd_set_move_pending(data);
- 	cpumask_copy(desc->pending_mask, mask);
- }
- static inline void
-@@ -456,7 +459,7 @@ static inline bool irq_move_pending(struct irq_data *data)
- 	return false;
- }
- static inline void
--irq_copy_pending(struct irq_desc *desc, const struct cpumask *mask)
-+irq_set_copy_pending(struct irq_data *data, const struct cpumask *mask)
- {
- }
- static inline void
-diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
-index f0803d6bd296..d03c3c4a869c 100644
---- a/kernel/irq/manage.c
-+++ b/kernel/irq/manage.c
-@@ -293,23 +293,16 @@ int irq_do_set_affinity(struct irq_data *data, const struct cpumask *mask,
- 	return ret;
- }
- 
--#ifdef CONFIG_GENERIC_PENDING_IRQ
- static inline int irq_set_affinity_pending(struct irq_data *data,
- 					   const struct cpumask *dest)
- {
--	struct irq_desc *desc = irq_data_to_desc(data);
--
--	irqd_set_move_pending(data);
--	irq_copy_pending(desc, dest);
-+	irq_set_copy_pending(data, dest);
-+#ifdef CONFIG_GENERIC_PENDING_IRQ
- 	return 0;
--}
- #else
--static inline int irq_set_affinity_pending(struct irq_data *data,
--					   const struct cpumask *dest)
--{
- 	return -EBUSY;
--}
- #endif
-+}
- 
- static int irq_try_set_affinity(struct irq_data *data,
- 				const struct cpumask *dest, bool force)
-@@ -365,10 +358,8 @@ int irq_set_affinity_locked(struct irq_data *data, const struct cpumask *mask,
- 
- 	if (irq_can_move_pcntxt(data) && !irqd_is_setaffinity_pending(data)) {
- 		ret = irq_try_set_affinity(data, mask, force);
--	} else {
--		irqd_set_move_pending(data);
--		irq_copy_pending(desc, mask);
--	}
-+	} else
-+		irq_set_copy_pending(data, mask);
- 
- 	if (desc->affinity_notify) {
- 		kref_get(&desc->affinity_notify->kref);
--- 
-2.34.1
+Reviewed-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 
 
