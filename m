@@ -1,122 +1,166 @@
-Return-Path: <linux-kernel+bounces-309491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 726D8966B50
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 23:33:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE457966B52
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 23:34:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 274F91F230EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 21:33:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 876DB1F235C7
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 21:34:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F128176FAB;
-	Fri, 30 Aug 2024 21:33:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98D4F176AB6;
+	Fri, 30 Aug 2024 21:34:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IpqsT6Fq"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="PUIc+SDy"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F034165EEE;
-	Fri, 30 Aug 2024 21:33:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9D8115C153;
+	Fri, 30 Aug 2024 21:34:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725053606; cv=none; b=O2szaRj2JelQyMnBcplQetq7e5GiNVu9NLYSMN9ja4A2xFPadzCSsQSg4z4xAX5lDcoJ42xlPLN9nM3M3Vd+PVvBLLQwjOSgjj2wnBcmPqCBIVW7v3zWq1/IMorH5IFYEYUojeIdW2lb3R+38ci6fLcOXM8AHb2O7vU2/bbsx2g=
+	t=1725053657; cv=none; b=BqUOwztjOKxeLT/twePkOchAp6+NyIS2Bs57ORPMn83oImxkhLfpGlCOca3KmV3pyLM2b5CtOEYekC6xDQEZnIa2DEi6fDUYiMklFYAYbbJERBlGI2m8rtvoUo8fhRZUjwbw7LaXOwTU6BIGaQCFVH9fOCbyQJH+6ZB3FaMM6xI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725053606; c=relaxed/simple;
-	bh=3hHh6QkwjX+ddtDXWIk8bS3LNqXLHCDM+UQ5tkrH/04=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZZoAQ2C9CSZnn3TeVATs8+iKqJIjzFHsVKj5w8A4DfY24C1o+MnEIDGxwp6V/5mr7+ev/0k8JEhUZLrLBD4CpqO37zkqcKAzL3VNxaBCfWpgzaXttuk8c79kSWOeowsQH0D3Zgwhi7fDBbOnA/L9Y3MXZswyAI9bOSMA6F4/MZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IpqsT6Fq; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42c7856ed66so919695e9.3;
-        Fri, 30 Aug 2024 14:33:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725053604; x=1725658404; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=nES7xIJBc8m6VU/Qr8ew7rkXFFCnkrcppk+/bV6qTG0=;
-        b=IpqsT6FqXoFIOco7n911zkOtlAjC+bXFrX0NXwN92jLY+2P6iK2G1uLdfpE+e99U/w
-         5lmQ2nkBB+xrk7aKM0IOTb5UoSlp8cmwW3uYhuE9O9NZjYUDTRCaSZPdlUOwZy4Mcm2U
-         QTsV+q5R2ra/0kDPQtFVJmmVgQqsCjRNBkO43ddcyTN5FVwr1pwV/441HNe0zRqNIgMC
-         TyGyn4UpiHBpgcNNYb1zKmj9Zl/LGS4EhDGmHxtbS67J3CevGvgNBVxrb+QU1/LX6SD5
-         FscJCNn2NAR+o4CcK1TurW/C1XE2l/pk33QjCkpNnfM+N8Z52qPw/V2seklVEP4n1RAo
-         r4bA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725053604; x=1725658404;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nES7xIJBc8m6VU/Qr8ew7rkXFFCnkrcppk+/bV6qTG0=;
-        b=cO2qMVYQ9QQnZWzD+rQ0LrVWXxIcksVvM4IMsxhh23dFTObhLRFJ1DdHdEypNLy+0w
-         paz2rzcVVJZeiZwByW+W4Nrs8kNhV2od+u0FYjmTERADtqAIoyO74oFMrVO87C76qgXq
-         Y4fw2tbN3J+0sMPdSp6devzVKQrsQrTfTzjG3M40UtlPPwyhm6gyQ0a0aZ1g+vvaQ569
-         qb7R3bqT+xhWfsHEHRwQIqQjvnqJFZRUS+q1fNhdGIPPJj4iK2ELth3VrTul4ZNi/LNO
-         uhYHbBzKTXak0LzT1TTcLM+U4vmZPIc99OXt6I6C95CgXJ0Cw415iX5jyLYTOUkdrYhJ
-         OJ/A==
-X-Forwarded-Encrypted: i=1; AJvYcCXZlw341lUaOw6LQ2uI9zh3K+Qo4ldcRbNW92ugQ5cQuwpM/3MR1qHpNPOf3dDHpW6+5P3K0uvHDU0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxA9woodvm7nxeYFFMf5KJXK2bUZ3kH78ba1jxAp+vXq22cCeYg
-	mSY8ItinpSsYOokKtff/vA0lipko0oIO8ai8jNkQN1k+Y0/LzpcHxIaTdYGb
-X-Google-Smtp-Source: AGHT+IEm/sX0ynE48i0egEp37W8hSbgFLtHGas9MHJUWTwbU+YcLNCyj8lF77xGp2rt1DRdOFszUXQ==
-X-Received: by 2002:a05:600c:3d9a:b0:426:63ff:f763 with SMTP id 5b1f17b1804b1-42bb27bdffemr51771935e9.36.1725053602995;
-        Fri, 30 Aug 2024 14:33:22 -0700 (PDT)
-Received: from ?IPV6:2a02:6b6f:e750:7600:c5:51ce:2b5:970b? ([2a02:6b6f:e750:7600:c5:51ce:2b5:970b])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ba639687csm90360475e9.8.2024.08.30.14.33.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 30 Aug 2024 14:33:22 -0700 (PDT)
-Message-ID: <3f79211f-f82c-4e41-9b40-e0abcbb4bdf0@gmail.com>
-Date: Fri, 30 Aug 2024 22:33:22 +0100
+	s=arc-20240116; t=1725053657; c=relaxed/simple;
+	bh=6JkLzJUtUYqH168S14hpBrlJnWK/5jDaKFH7dIaPYv8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Yud4c6jDOclR8dFlqrMG5zIn1LY0RPTemrrSLnZoABGkfnNoDwzjWcNWSkgdjfIP5w7x20bSoUxWAXpv0v1Byq6W7m/PhAPAnsyLUmgVayW7sfNxbY3lZUbkPzbxK474h3P7vVwe4nYAZErLS1ptLpynXUNpiGupakvAtUSCDF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=PUIc+SDy; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1725053653;
+	bh=6JkLzJUtUYqH168S14hpBrlJnWK/5jDaKFH7dIaPYv8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PUIc+SDyLrk3dIz0InmtjLeET5JiIGzd/rJ1IRjfH1V9O+k8e/UmMFIylwYkQX49A
+	 u+/CYAWO5xaf2XXpgf4pX6Xbm3D42p2n66k+irK+7HjYGi1C483T2GXW+sBksym46t
+	 AEbqDjrjZBg6qcPbRey6TF0HOFpJeMITR3cK4NLdjJGyDeOVK4romujn4EXCwHzC4b
+	 4HZ3wTNmSCx9eFNSwgs4R20d3m9O5Tvo6MsD2BcqTfoBreQh82rNus9//yuIxjETbg
+	 6XlEAKSMqjnQGLuX6Tax/4PoNkltGy9+ZSDNjMenk31IxygQGyABWxW2bMDriRSIGJ
+	 OuvY1sRgQBftQ==
+Received: from notapiano (pool-100-2-116-133.nycmny.fios.verizon.net [100.2.116.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nfraprado)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 8E4B717E14D5;
+	Fri, 30 Aug 2024 23:34:12 +0200 (CEST)
+Date: Fri, 30 Aug 2024 17:34:10 -0400
+From: =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>
+To: Pin-yen Lin <treapking@chromium.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	"open list:ARM/Mediatek SoC support" <linux-kernel@vger.kernel.org>,
+	"moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>,
+	"moderated list:ARM/Mediatek SoC support" <linux-arm-kernel@lists.infradead.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	Fabien Parent <fparent@baylibre.com>
+Subject: Re: [RESEND PATCH v2 2/2] arm64: dts: mediatek: mt8183-pumpkin: add
+ HDMI support
+Message-ID: <c0597ae3-8849-4311-bab6-1c01575ec5e0@notapiano>
+References: <20240819120735.1508789-1-treapking@chromium.org>
+ <20240819120735.1508789-2-treapking@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] tpm: do not ignore memblock_reserve return value
-To: Gregory Price <gourry@gourry.net>, linux-efi@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, ardb@kernel.org
-References: <20240830132303.6665-1-gourry@gourry.net>
- <20240830132303.6665-2-gourry@gourry.net>
-Content-Language: en-US
-From: Usama Arif <usamaarif642@gmail.com>
-In-Reply-To: <20240830132303.6665-2-gourry@gourry.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240819120735.1508789-2-treapking@chromium.org>
 
-
-
-On 30/08/2024 09:23, Gregory Price wrote:
-> tpm code currently ignores a relevant failure case silently.
-> Add an error to make this failure non-silent.
+On Mon, Aug 19, 2024 at 08:05:56PM +0800, Pin-yen Lin wrote:
+> From: Fabien Parent <fparent@baylibre.com>
 > 
-> Signed-off-by: Gregory Price <gourry@gourry.net>
+> The MT8183 Pumpkin board has a micro-HDMI connector. HDMI support is
+> provided by an IT66121 DPI <-> HDMI bridge.
+> 
+> This commit enables DPI and add the node for the IT66121 bridge.
+
+Make it imperative [1]:
+
+Enable the DPI and add the node for the IT66121 bridge.
+
+[1] https://www.kernel.org/doc/html/latest/process/submitting-patches.html#describe-your-changes
+
+> 
+> Signed-off-by: Fabien Parent <fparent@baylibre.com>
+
+You should also add a Co-developed-by tag for yourself since you made (or will
+make) changes to this commit.
+
+> Signed-off-by: Pin-yen Lin <treapking@chromium.org>
+> 
 > ---
->  drivers/firmware/efi/tpm.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/firmware/efi/tpm.c b/drivers/firmware/efi/tpm.c
-> index 9c3613e6af15..b6939a6d44d9 100644
-> --- a/drivers/firmware/efi/tpm.c
-> +++ b/drivers/firmware/efi/tpm.c
-> @@ -61,7 +61,11 @@ int __init efi_tpm_eventlog_init(void)
->  	}
->  
->  	tbl_size = sizeof(*log_tbl) + log_tbl->size;
-> -	memblock_reserve(efi.tpm_log, tbl_size);
-> +	if (memblock_reserve(efi.tpm_log, tbl_size)) {
-> +		pr_err("TPM Event Log memblock reserve fails 0x%lx - %x\n",
-> +		       efi.tpm_log, tbl_size);
-> +		goto out;
-> +	}
->  
->  	if (efi.tpm_final_log == EFI_INVALID_TABLE_ADDR) {
->  		pr_info("TPM Final Events table not present\n");
+> (no changes since v1)
+> 
+>  .../boot/dts/mediatek/mt8183-pumpkin.dts      | 121 ++++++++++++++++++
+>  1 file changed, 121 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/mediatek/mt8183-pumpkin.dts b/arch/arm64/boot/dts/mediatek/mt8183-pumpkin.dts
+> index 1aa668c3ccf9..ecc237355b56 100644
+> --- a/arch/arm64/boot/dts/mediatek/mt8183-pumpkin.dts
+> +++ b/arch/arm64/boot/dts/mediatek/mt8183-pumpkin.dts
+[..]
+> @@ -120,6 +132,41 @@ &i2c6 {
+>  	pinctrl-0 = <&i2c6_pins>;
+>  	status = "okay";
+>  	clock-frequency = <100000>;
+> +	#address-cells = <1>;
+> +	#size-cells = <0>;
+> +
+> +	it66121hdmitx: hdmitx@4c {
+> +		compatible = "ite,it66121";
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&ite_pins>;
+> +		vcn33-supply = <&mt6358_vcn33_wifi_reg>;
 
-This was not a proper fix for the issue, sent a bit quickly!
+As pointed out by lkp this label doesn't exist:
+https://lore.kernel.org/all/202408200703.MYO1s3Ne-lkp@intel.com/
 
-I have sent it here https://lore.kernel.org/all/20240830212852.2794145-1-usamaarif642@gmail.com/
+See 9a8014b1d4d2 ("arm64: dts: mediatek: mt6358: Merge ldo_vcn33_* regulators").
 
+> +		vcn18-supply = <&mt6358_vcn18_reg>;
+> +		vrf12-supply = <&mt6358_vrf12_reg>;
+> +		reset-gpios = <&pio 160 GPIO_ACTIVE_LOW>;
+> +		interrupt-parent = <&pio>;
+> +		interrupts = <4 IRQ_TYPE_LEVEL_LOW>;
+> +		reg = <0x4c>;
+
+Please take a look at https://docs.kernel.org/devicetree/bindings/dts-coding-style.html
+for among other things, suggested ordering of properties in nodes. reg is
+commonly the second property.
+
+> +
+> +		ports {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +
+> +			port@0 {
+> +				reg = <0>;
+
+Add a blank line here.
+
+> +				it66121_in: endpoint {
+> +					bus-width = <12>;
+> +					remote-endpoint = <&dpi_out>;
+> +				};
+> +			};
+> +
+> +			port@1 {
+> +				reg = <1>;
+
+Ditto.
+
+Reviewed-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+
+Thanks,
+Nícolas
 
