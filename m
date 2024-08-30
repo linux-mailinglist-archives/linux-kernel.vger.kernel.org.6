@@ -1,61 +1,47 @@
-Return-Path: <linux-kernel+bounces-309328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E44D9668F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 20:30:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A475A9668F4
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 20:32:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1ACEB2847AF
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 18:30:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D39381C21DF9
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 18:32:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 613DA1BC9F4;
-	Fri, 30 Aug 2024 18:30:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C638C1BC9F4;
+	Fri, 30 Aug 2024 18:32:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="CF+Cqugv"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pamn89j0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A538136353;
-	Fri, 30 Aug 2024 18:30:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09DF9136353;
+	Fri, 30 Aug 2024 18:32:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725042637; cv=none; b=coCnS7VV6OECDTgjtB1DsnYVTjBSERJx/LmMmi5jIJfRiMLj9oCYUki/YaKESTT6icvW2pUwPULfGFJEPOkPnW6Dtn+f8cR5mmwxhCWBb/oyGw7ffAOciIBbys/EfIbeX9PR0FK4Dcur9p3zoz1eTBpEqSBd+tc9Jw6urCiYaDM=
+	t=1725042725; cv=none; b=LSZioxSlLE1msu1+PDITdddz3fn7SeVcSbGjCPd3PT022jrkal4o2H+PM6o1VpJnnnZ8KbQb3IEyO39UMYsv/xwroDQXIQenMQNvNZ5Fc/SZ8iTD/xcnu0FLU0Pd4L1YPFmC4CjxGdDgL0U3gpFlbLus8kvwUSIT24Y12GefacY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725042637; c=relaxed/simple;
-	bh=fH2Jp83DT0nnZfcR5go8oS1EOcfKbfB2+QGFbM+syNg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=PC+XeEy2VUSkxzzvGX0TtaecnDAvW3piC0+aQl2HicbNgx993wU3N5rIOOxaORpLQx4W3TlhnAVikBC9F+7bE+QsQ9yFLrMOHN3V30M3HjXSdTnQwam1kKskcL3oJHDqLNjrtmtsa0UdpT05dBbwlVU5nb08NMTjHrWa0WYP7mY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=CF+Cqugv; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47UIUPtk080819;
-	Fri, 30 Aug 2024 13:30:25 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1725042625;
-	bh=jHEa1WSAt7/ZTUf0s7cB0K91wd9S8ZH92X+c2jpZJrA=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=CF+CqugvrGh6GSR/Vbimz6/+IxmKWqxEPavqnYDoLk37qyTaruajQz8e91gCBmJ20
-	 3c2nnA/ynqW4oSMDof061W4fMjgmcnEc242bsc+S+I9u8C+bNrrlyRfQZlmfM4oNKh
-	 jbiIkjDmafSJRDmBcjadA2bTTr2gAR6RQaw8g8iI=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47UIUPZX017362;
-	Fri, 30 Aug 2024 13:30:25 -0500
-Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 30
- Aug 2024 13:30:24 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 30 Aug 2024 13:30:24 -0500
-Received: from [128.247.81.191] (uda0499903.dhcp.ti.com [128.247.81.191])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47UIUOx5118074;
-	Fri, 30 Aug 2024 13:30:24 -0500
-Message-ID: <4c694d18-040f-4520-bce2-e56ab15f25f3@ti.com>
-Date: Fri, 30 Aug 2024 13:30:24 -0500
+	s=arc-20240116; t=1725042725; c=relaxed/simple;
+	bh=hWtLpIWvqEvReRcHaPcEw00Mk0XIi7ijVLXPTPQRs9U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=e7YQKFAbwIQfZ+rVAnTJxCUvxN4fxwFCJM4mmEFzPqprheiv7X7n2dnuIEgPOrSNgewFWiTZJMPB4AcgIVlMFZIOhZ8cCk1wco91VxM4h+meVzFYG8dNe5OstJFObEodcEXvg59b//v+BOCpLk2USg2/jgAReNMfS9zfjTrdBHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pamn89j0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C0BEC4CEC2;
+	Fri, 30 Aug 2024 18:32:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725042724;
+	bh=hWtLpIWvqEvReRcHaPcEw00Mk0XIi7ijVLXPTPQRs9U=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=pamn89j0MOafH4BA2vS5QWAmLMJc4f75lhdNxrHSD248aFe3Ay6glIi5FzEccF3jU
+	 OkwLJBUVm/TFqZERK3GeEerYj95T+VfSDgzKlkDnBZpHIbLVN+LDSlC64lO50L75D3
+	 RDognNc57Gz0Dk+PUoXu+2TUWaZLaN0f252mp8WHm72MTSXAoEn49JbuKqPjjy/VMK
+	 49lCjS3ldHxQqIrQk6P/Efjc0QKhLQHHrzgzx9ibdpYIJGb1uG+aFu5vcG7nYH9F7B
+	 pzb0oaH6Ajg+/zivEXwsQjbu/jQ6cje22VLgyjW4PWqAmSFj63xwl5ooyvLUbm3GYd
+	 8aiKkkt1C0UEg==
+Message-ID: <f3388c4c-52f7-49f8-8a30-08665856637d@kernel.org>
+Date: Fri, 30 Aug 2024 20:31:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,54 +49,102 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/2] dt-bindings: arm: ti: Add BeagleY-AI
-To: Robert Nelson <robertcnelson@gmail.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-CC: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Nishanth Menon
-	<nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-        Tero Kristo
-	<kristo@kernel.org>, Rob Herring <robh@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>, Andrew Davis <afd@ti.com>,
-        Andrei Aldea
-	<a-aldea@ti.com>,
-        Jason Kridner <jkridner@beagleboard.org>,
-        Deepak Khatri
-	<lorforlinux@beagleboard.org>,
-        Drew Fustini <drew@beagleboard.org>
-References: <20240829213929.48540-1-robertcnelson@gmail.com>
+Subject: Re: [PATCH v1] i2c: max2175: Simplify with dev_err_probe()
+To: Yan Zhen <yanzhen@vivo.com>, rashanmu@gmail.com, mchehab@kernel.org,
+ Andi Shyti <andi.shyti@kernel.org>, Wolfram Sang <wsa@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+ opensource.kernel@vivo.com
+References: <20240828094521.978220-1-yanzhen@vivo.com>
 Content-Language: en-US
-From: Jared McArthur <j-mcarthur@ti.com>
-In-Reply-To: <20240829213929.48540-1-robertcnelson@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240828094521.978220-1-yanzhen@vivo.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On 8/29/24 16:39, Robert Nelson wrote:
-> This board is based on ti,j722s family using the am67a variation.
->
-> https://beagley-ai.org/
-> https://openbeagle.org/beagley-ai/beagley-ai
->
-> Signed-off-by: Robert Nelson <robertcnelson@gmail.com>
-> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> CC: Nishanth Menon <nm@ti.com>
-> CC: Vignesh Raghavendra <vigneshr@ti.com>
-> CC: Tero Kristo <kristo@kernel.org>
-> CC: Rob Herring <robh@kernel.org>
-> CC: Conor Dooley <conor+dt@kernel.org>
-> CC: Andrew Davis <afd@ti.com>
-> CC: Jared McArthur <j-mcarthur@ti.com>
-> CC: Andrei Aldea <a-aldea@ti.com>
-> CC: Jason Kridner <jkridner@beagleboard.org>
-> CC: Deepak Khatri <lorforlinux@beagleboard.org>
-> CC: Drew Fustini <drew@beagleboard.org>
+On 28/08/2024 11:45, Yan Zhen wrote:
+> Switch to use dev_err_probe() to simplify the error path and
+> unify a message template.
+> 
+> Using this helper is totally fine even if err is known to never 
+> be -EPROBE_DEFER.
+> 
+> The benefit compared to a normal dev_err() is the standardized format
+> of the error code, it being emitted symbolically and the fact that
+> the error code is returned which allows more compact error paths.
+> 
+> Signed-off-by: Yan Zhen <yanzhen@vivo.com>
+> ---
+>  drivers/media/i2c/max2175.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/media/i2c/max2175.c b/drivers/media/i2c/max2175.c
+> index bf02ca23a284..700a70a6cee3 100644
+> --- a/drivers/media/i2c/max2175.c
+> +++ b/drivers/media/i2c/max2175.c
+> @@ -1299,9 +1299,8 @@ static int max2175_probe(struct i2c_client *client)
+>  		ret = max2175_refout_load_to_bits(client, refout_load,
+>  						  &refout_bits);
+>  		if (ret) {
+> -			dev_err(&client->dev, "invalid refout_load %u\n",
+> -				refout_load);
 
-Reviewed-by: Jared McArthur <j-mcarthur@ti.com>
--- 
-Best,
-Jared McArthur
+Another example, one of many from @vivo.com, where you touch one line
+and leave everything else not modified.
+
+Are you going to send 5 different patches - one per each line? You
+generate tremendous amount of work for reviewers to handle this.
+
+Since ~2 weeks there is tremendous amount of trivial patches coming from
+vivo.com. I identified at least 6 buggy, where the contributor did not
+understand the code. Not sure about intention, but I advise extra
+carefulness when dealing with these "trivial" improvements (because we
+tend to apply things which look trivial).
+
+
+Best regards,
+Krzysztof
 
 
