@@ -1,193 +1,184 @@
-Return-Path: <linux-kernel+bounces-307949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC42A96556B
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 04:53:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2AD696556E
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 04:56:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11D5D1F24300
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 02:53:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5CC52864F1
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 02:56:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E81B7133987;
-	Fri, 30 Aug 2024 02:53:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9472A136337;
+	Fri, 30 Aug 2024 02:56:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="Me5Kghpb"
-Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2082.outbound.protection.outlook.com [40.107.117.82])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="CHoKoGvU"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26DCBEEC3
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 02:53:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.82
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724986412; cv=fail; b=C0U0dvwYBOzHhrrkxNGRII+zetakrPyoA238TZjkDkjLYpIK+CUucHGNrVan35EI0Ookma2PWIe2BvrEAe8+3W7YlbtitrDkq5WoGbszr57Oj2fAQvZGvcC7wHM43h0xuw1ODUW52bRsISskRJWwr18v5hEIu08qhkuOuh2gbus=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724986412; c=relaxed/simple;
-	bh=B2czNGqGNI4EtcYlFPHt2gX/sleCtpRu/FfaeKZu2VU=;
-	h=Message-ID:Date:From:Subject:To:Cc:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=HlObq6dKA1bMHuHTO+Nk1ORhqq0R5ZPaL60SO11/a/dLpjkrnqinhY/X8Snh3TsxeHHHtWUT/lm0C8/0e3I7BiwuEVInREm0F06WXgSP+bXLleieegTJYxCvn8j+2IFntHeNxfn/dAqJlKqkeOkFa4vIdV+gsVYme/M0W694aW4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=Me5Kghpb; arc=fail smtp.client-ip=40.107.117.82
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=mvJR4UAU+Hc5DA/sJtjfz8HMfexYjhf5iUHpWWP45c6zEMNWOMd0jel0H+XWoMrBlW5LrMtdvllpjDXvYFMXfah3oAJExYY+p3BdjSfWTsD4cHC2U9HPgIr6oIxUF4aisy/9eJZlJFwl2gOsI+Mme3uit970tSln0EkeBD+Q+Qwt6eNH+iENWliZflRN3d9c22inkXe2JeYsN58L3t3F9jzm5fvQmPRZxGVSr8O0gPgUbsEx+6CFIPo3rMDu//z/0d7Jmc6lXyq3WGeeXmf86bD3ZrihLGwCdvinL9P12nNJ+5YroJ7GrwkAnJGsVd2JMdm2X8eV9Mh9OkcqkDhRVw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=lN7tmZt/glISgy3zLkQ2c4OykI1P22OykqdSycLJCiM=;
- b=Uok3ZLvWyYCOxAYpiOD+SWQF7fMZoJZtVSLPgFO4uRAiBHwDiJwrLta3iIHEhabnpS83flE6bvx2SLjlhj4cCfcAKuquXEkgXABDIy7CjBp4ZNUszB0SDzZzfWc41U5VlvDDJGnNcLFkWC0HD81sUYt/xI4PZJiqUhMzeJRzvY2YdtATM8MDPFw46tfcvNhZ01apNEYZ1N+RrlUnE49zmLNBQOiu+H1k8ura5Fbi7DY2XoBTWW2Ip7MOWDlR+9mNzXBMrFULXXahulp6w5ZMnVkgOK4/DILOJ95B8yrLU8ERzwlZmLa2wG+vLF4C6qI3LZKPnvAhLylwEZ3NHfYT5A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lN7tmZt/glISgy3zLkQ2c4OykI1P22OykqdSycLJCiM=;
- b=Me5Kghpb1vo56FR+ExsDIuVAPYnyd68BEfooYbXarWstRAXAZSUHYMieXxkBhodtMMoSAJ/t0MKnrzzNp2ralccpxylcpeKm+caY04IsHQ3jzw0xZ11R5ffVCerPYu78An2WB91tC0OyuOz15evyXwQdh5R1QLxQGWVWl2Uw23CmSHxQrfGD2FpA92igbbgF8se7CvfBG8feh1OX2mRl+Sw9Kmoe2kwRTFFowpI9eXvKXq9w6Hcy88Qx3DSWUbX6WBPnpQxgTSlsTlHsgiP5PdGRVbuNNAFmLvzTKvjI6MsVb62nZ7yzDR6evUZorTyemzrUaVefOSUMgE5U+vw/Gg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from TYZPR06MB5709.apcprd06.prod.outlook.com (2603:1096:400:283::14)
- by SEZPR06MB5270.apcprd06.prod.outlook.com (2603:1096:101:79::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.28; Fri, 30 Aug
- 2024 02:53:23 +0000
-Received: from TYZPR06MB5709.apcprd06.prod.outlook.com
- ([fe80::bc46:cc92:c2b6:cd1a]) by TYZPR06MB5709.apcprd06.prod.outlook.com
- ([fe80::bc46:cc92:c2b6:cd1a%4]) with mapi id 15.20.7897.027; Fri, 30 Aug 2024
- 02:53:22 +0000
-Message-ID: <e891a5cf-613d-4d7e-b146-798f60777a63@vivo.com>
-Date: Fri, 30 Aug 2024 10:53:18 +0800
-User-Agent: Mozilla Thunderbird
-From: Yuesong Li <liyuesong@vivo.com>
-Subject: Re: [PATCH v1] kernel:time:hrtimer: Use helper function
- hrtimer_is_queued()
-To: Thomas Gleixner <tglx@linutronix.de>, anna-maria@linutronix.de,
- frederic@kernel.org
-Cc: linux-kernel@vger.kernel.org, opensource.kernel@vivo.com
-References: <20240821094633.161298-1-liyuesong@vivo.com> <874j739x57.ffs@tglx>
-In-Reply-To: <874j739x57.ffs@tglx>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SG2PR02CA0027.apcprd02.prod.outlook.com
- (2603:1096:3:18::15) To TYZPR06MB5709.apcprd06.prod.outlook.com
- (2603:1096:400:283::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B8DF4879B
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 02:55:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724986560; cv=none; b=OdDfjCfLryHmDpSY/hCom8WXTIVrA5HMDgBUU5+pQ2YYSwPqgBO5yAGrghrrTWjj3SR5IVqGepaRYdoyBn0dFSAfFQJhsdqknMTMruc4fpey6nh8Zn/dX1uWXzGfYEk2pI/n9BRtMQZcYDEw+LjJ2v9VS6n32eZX1lamEEFbKEo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724986560; c=relaxed/simple;
+	bh=0EFniWYpHhsJb8FrdPLeExLhBz8HAE5CjvnzkalyGtY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=eeSuqREjZmR2stDtSst5dpaa9gC3aJpO1mD3HEUnI2s88tOMuogHGFoNt4YN7HVNlywJmE9GIcXEV4a24sWre+xRVJqfTvLZHT6Sj/SgYy/fPG89ftOovbxng9iIMq89DH3RoV7c6lVx4GTIp+KdiGO1C18aUyKzfkt7iSdruj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=CHoKoGvU; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2025031eb60so11685645ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 19:55:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1724986558; x=1725591358; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=aZPZfZqC3mBdycoYdenoJPylLkOydS6FcokJngh3hNI=;
+        b=CHoKoGvUYG+cqNvqgleP9sg6RhwI/0T3/8OQUvOA0OP8Mlo/OaYqu0uqF32F22tBVP
+         DHZ0ZA5t7vzSg5sb1xV+SOfDJhuY4UsvGaElWME0OApcBhURlprAo4dxYtXJiWKrNBQI
+         N0w8vp6FKLCUOGebTgYTvGKQTmKgeVQjoODm8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724986558; x=1725591358;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aZPZfZqC3mBdycoYdenoJPylLkOydS6FcokJngh3hNI=;
+        b=u4VSooTnTwS9lKPpwT5Qyfq6k/nTEgeOSAxsTpxihWAmgBUmPwEgcrZIa+41bODBLc
+         K3Y0eEp8Rb1ws0Ze07ZuCeZjIyna7RxK4TSB/yYRLSGB9uOITjgcYnVGaU9qwQKwM59u
+         +IqvpVqqOu9/Nov1MUKf/yeQKfgq6LNaP2BEYIOq6mNlNnsbECpiUrVUBv9NvD5/KYmq
+         z4SN1rfeIcoZ52myI8TrCCpvPdiGrAkZK0uI9JxmH+eSzW4DsvP1fZMxZKxFNJx4NFPl
+         vXSIMAsbfQNwCXnTaRGbr+SlzKRFrQh4nSkzNJS+2QU1ocoAF3E7xp8ZOcaaeJJgs75p
+         YqPw==
+X-Forwarded-Encrypted: i=1; AJvYcCVIu0m8ChhCM3StUVuSqvETl2Cj5Qzfy+/AxPuAD3NG59pv7mfw5jvrUqE2qRu6JGfyQ7JrA45K4vGazdY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7S6x+jpNGJFOr+sbFhCseYyk8MWQgMcFsaA1i3do+pFkO/pl2
+	ZFDnjpx9himsjY0kEPhv8ooxayP0vj2OXw99r27raHVkk+1IzGVBoA04AXkMBg==
+X-Google-Smtp-Source: AGHT+IF86Ys1NtYkMlA8W6bC13Z56ZAIJWWnVmkRBC+DeA4gimJaHXVyKNtbRuRVktDoB9Dg/oYgpQ==
+X-Received: by 2002:a17:902:ec88:b0:202:883:bd6 with SMTP id d9443c01a7336-2050c4c8a3fmr67819605ad.63.1724986558232;
+        Thu, 29 Aug 2024 19:55:58 -0700 (PDT)
+Received: from shivania.eng.vmware.com ([66.170.99.1])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2051555a29asm17871795ad.272.2024.08.29.19.55.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Aug 2024 19:55:57 -0700 (PDT)
+From: Shivani Agarwal <shivani.agarwal@broadcom.com>
+To: longman@redhat.com,
+	lizefan.x@bytedance.com,
+	tj@kernel.org,
+	hannes@cmpxchg.org,
+	mkoutny@suse.com,
+	adityakali@google.com,
+	sergeh@kernel.org,
+	cgroups@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: ajay.kaher@broadcom.com,
+	alexey.makhalov@broadcom.com,
+	vasavi.sirnapalli@broadcom.com,
+	Chen Ridong <chenridong@huawei.com>,
+	Sasha Levin <sashal@kernel.org>,
+	Shivani Agarwal <shivani.agarwal@broadcom.com>
+Subject: [PATCH v5.10-v5.15] cgroup/cpuset: Prevent UAF in proc_cpuset_show()
+Date: Thu, 29 Aug 2024 19:55:45 -0700
+Message-Id: <20240830025545.692351-1-shivani.agarwal@broadcom.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYZPR06MB5709:EE_|SEZPR06MB5270:EE_
-X-MS-Office365-Filtering-Correlation-Id: 853b123e-4bf6-4df3-c7d0-08dcc89ee94b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|52116014|376014|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?eWtJUzhWNWgwMk5QUWloeE1XL1F3TzZmVlkxOS84cGxiVDMyR3BHQStlcFpI?=
- =?utf-8?B?STA1QU9UbzMrVmZxbXVqa1F1MlNUSHJrUUc2YlRqYXhhWnZZN1VwVWRqODVm?=
- =?utf-8?B?ZlF5YlJyZTNWM0ZzSVpRcUNGWGp4SHhHYW5aMHoyQjlqOWtFSmNlQ3RSZ2JE?=
- =?utf-8?B?RE02NGJKbVQ4algvUndqOG1aU3pHOU1nSytQUmZQTDMrajFtZ3h6QUI5QURn?=
- =?utf-8?B?VHBRdWxYZjVQRm5PVVMwaTNUYmNZTWxUZ0h0YXR3QnJENnJBcG9mbmN5aS9N?=
- =?utf-8?B?TnBSSzllZnByUXUwcFBSb3RtR002STRWRHZSL0ZEZVdWaFI5Wi9VajZJMUY5?=
- =?utf-8?B?ZEVHNFBrTUMzWE45TEtEVW9TUTlmT01Xa2ZHa3l4UGZGSG1VS1hVUXBqeHFa?=
- =?utf-8?B?b0xmTE5Zd0xRUTZveUR2eEprdCtqZDRlVUhjNmVTU1FDVjY0aEpPQ0p4UXpM?=
- =?utf-8?B?MWdoSmFnakxxR3czTW9VYkxYYVZIVE1jV0o1bXA4WjdrS1l5UDZkRXY1blhw?=
- =?utf-8?B?OHluODBRdUU2d0JNZDZqUHMrUDFjVXhKOEFWaWRCQ2s4Qi9QWTlBc1BzZ3hi?=
- =?utf-8?B?VUdUUlVnV25URkdkN05jd0dwekFhTm1GNStlMjZzb2RZd2M0VzhUUHZteE5J?=
- =?utf-8?B?aGkvY2tKdVoxZjc3OTJ2dmc0RGd1Tjd1VGkxOWpNeTNNUkUzcVlLbEo3S2Jo?=
- =?utf-8?B?Ui9tZ0tBL3F3WVFhYSt6WDRSRWVhZUM1STY3bVRBcGZFcFNYeit4bmNCa2ZU?=
- =?utf-8?B?cHJWd0dzRmMzcW1QZ3h4aUdiZEpodGZmL1NKVXZkTUpvN0RxYzJqR3ExaC9R?=
- =?utf-8?B?cmtQa25ZMzdTQi9aSVFRNmFYYlF0TElOYmVNT2pxSThrZW1jQ09RMVArVHlx?=
- =?utf-8?B?dEhwdlBIMFg2dlhCcUczcDl2R2dXaG55UTJBb2tKQWtUSjVVOHZHV0NnM3Ix?=
- =?utf-8?B?c0xLcXFqeWlMeHZBZXBzS1pCTm1uNkMwZkhRMFJzOXlYeHpMWklRNHNWMXpo?=
- =?utf-8?B?TmQ0SDRFL2RDaXNDYy9IT0NDb0JKYXdVaTU1V2cvOTRRK1hpU1EvN2pVOUY0?=
- =?utf-8?B?VVNVWGNjTTNJWWFlV2lVd2l4YmFRME11aUlZN1VnMmR5LzJPMDdlVWdVZ0s1?=
- =?utf-8?B?VkdYTHhndW9WbzFzbUlVQUl6Y1lObjN5c29RYWhpdmtiYzJXTzBqdk1pNVJX?=
- =?utf-8?B?M1IyU2dkL3ZsRnZpMTkwNWVJZUtJU3NOelVtV25QbTBXUkZsWlhRTldHbWg4?=
- =?utf-8?B?MWhKVEhFci9pNUUrdll4MkxUclc2V21wSmhwWFdYWElxdHdYQS9ET1k3U0Vr?=
- =?utf-8?B?MWpsVHMzQkdqamdLellsQjRXQjBNTFdOT21HQlhJMTJVYmY2cDFGdU9WT3cz?=
- =?utf-8?B?YVhOczdtT2wxMGhNSkhRUmNHRDRiZjhhd3RsMjFaU3lYeTg2ejFLLzhQZ1Vp?=
- =?utf-8?B?MG4vRm91SWhsK0pSWFNQYjAxNWxwTjh4WDlVV0IvSTlLeHk4V3hIaytNL1g1?=
- =?utf-8?B?T3RKQ3QzVVQzam9XQk5vWjJFb1dmN1hOMDFoL21nZjdSSnlnNWYwMldLZnB5?=
- =?utf-8?B?RzA2RmFwSExaQ3Y1V0VEWm13WFF4NnlwQzg4NWNTL3Rrc3gxeFhpbURHUXYv?=
- =?utf-8?B?VE5heVAvdnlMV3ZkSTl1ZDN3ZHRWQ2poYzZqTHpYdjdLa0RjK3VBVFliaUNh?=
- =?utf-8?B?Wk1UTkpmd3BUVzZzSkFlek13dmVweWs4NGQzcWJ0SlErby9wSUZiVEoyMVoy?=
- =?utf-8?B?OUo1TkdqMkFlTzJ4cWxLa3hoWmFVYVdkUXFsQUJnMm40OEJiQ3dDdnZtcWFI?=
- =?utf-8?B?cTVXSHRvQnNETGVVby9OS1NGRjV2a0VvckoyUm1rMmc3S0phM3haeTBxNGpJ?=
- =?utf-8?B?UXVQdy8vZlgrcUdVQlJ5ZXJhTVFJUXM4bUtraGQ0SXd2cFE9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR06MB5709.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(52116014)(376014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Y29OZ1o5Rk5uYlArSWlvRU54MUxPTHl3eXpady9HeFI4dDh4TTFySUkwY2Ev?=
- =?utf-8?B?LzVYc1lLYXR6QTB3R0FHY0oyMzlVeGZ5M3EvdS9WRHFmQzk2SFdJOWd2OUE2?=
- =?utf-8?B?bWpmc25pM04zY0ZXajJsUXRLSEZQS0RmYm1LdExLV0cxdUwwazVsRmVXUGNw?=
- =?utf-8?B?c1ZYUnNaMHRaT2VMR0x1dGw5UnVCeENEL05NdkZrekhuRkE4aU1heEc2cXBx?=
- =?utf-8?B?NnVxSDNsYkwvNi9VYjJLR2dmYUJZSHNSMzAwb21aYWNkUkhHU3ArM1dkcHVD?=
- =?utf-8?B?MnI2bXMwT1VaQjNzaXNiMkFRbE52T3J5aVZITWphODZaMDUzelllK296WXdV?=
- =?utf-8?B?Rk81NXhCNGdFejdJcXpLZFVNTGkwWS9DdFdvcENiY21FQWNkdFY4cE1CN0Vp?=
- =?utf-8?B?N00rOUg2S0M2RmVhUkJXVjBNUzJlYmY1bitvZDl4ZDJTVDFwSzlQdjRaVWJ2?=
- =?utf-8?B?NnNyR3pkTDBsVnRlK3BsNHJwNDNmbzR0VnltMHAzM3RTRHcvUGJOS3AzZVB2?=
- =?utf-8?B?cFFmNGYvMmovSGFqaTN3eWl0amc4b01xTXhMWFZmeWsrV3l3YkhhMXhrUWNX?=
- =?utf-8?B?Q1NMNHBmVFhQTUFGVi8ybE9OdzlPS1BiV295TWNNVm9pcDNDQlBCeWZYQThW?=
- =?utf-8?B?NkhFdVZoZnMzbUlTMG4rRmtwbk10cUg1SkxkWVpFb0F5bzM2Tmk3U0VoZHFL?=
- =?utf-8?B?YTRQdDFNTDRjSWNNWnNSSDgzUHRYQ01uaU9UeDZtbURQUno5NUQvYjB4dnA2?=
- =?utf-8?B?NC96NkNNMTNZSGVWd2g4dXBPVU1VM0dlN1RzNUZJVTFsVGIvYWJhYVNFU0d4?=
- =?utf-8?B?akZhSlQyRzBkUHBQNXFaTERvUVMxL2EwUE9mSFRnZU9vODNHQ3JaTU0vOGYx?=
- =?utf-8?B?eEZCUUM4UWh3dFFjVXM3dkYyVWpSYXZCdy9tRzEvR0ZpY0RnazFMSmtkMTh1?=
- =?utf-8?B?R04zL3d0eFJId0F1aDV1NllkQkl2YkZQNTlud3U1RHdpZ0dYUUthYlFPZjhM?=
- =?utf-8?B?NS9VQW9wOXl6WVo5MHd6Z3Z5T284bXpia0VJWFovZFplRXpkSHg0UG14VTBM?=
- =?utf-8?B?RjdKd3A5TjkwL1JPd3hxMzVya0xHVDRWSTcwcm1DblJDRi80Z0NYMncra0sv?=
- =?utf-8?B?ZHRWTVJ4N3NHaUJPQ3Z2OWc3cGtYcEVna2U5SEVFVVJRc1hreWZ6N1dvY0Yv?=
- =?utf-8?B?VmpnaGY0UGRaaXRZY1krMDV3MXVMaDN3S3ZRMDhDanBpRFpMeGpGOE1mUDJt?=
- =?utf-8?B?VDVsejRVbWN1WjN4cVhkZ21oNXIvc0w2ZWlwWXdoeWhqcnExV3B2QnA2L0Fj?=
- =?utf-8?B?RFR0ZU80SktHYUw1MVRDWkU1eFFEK01uYngrWGE1dzllNnlmYVFHMWFFQjZX?=
- =?utf-8?B?QTZ0cVJBWFovVldFTHlvVEZIdk44NkEwa3JnWjd0UENWdVllSUJyVEEzVFcz?=
- =?utf-8?B?QmxaUm5jWXhYYTl1UGFYbDZNMlJxMlh6OGladHVHajdyZGFjdnVNSDJsM0Fi?=
- =?utf-8?B?UnhDMElnbmxxS2psVVpaNjFWdU9RRjRsaUhmUThBNzhiWmFXMFJUR0pYckFG?=
- =?utf-8?B?dHpodmtUeFVYaXFtN2U1Sld3THk5aXJxNW8wWjJBWEM3ZlhJY1F5U3hPTENY?=
- =?utf-8?B?aE5IZXhZYlF6bGFIQS9ndWtMNjJZcVlKOEI4bW1SZmFla1dKNUJ2blpOa2FZ?=
- =?utf-8?B?bXNYc3BFQk1PWldpdFhYeHhlZ0xJZFQ2UUYvUnZ2SUlFc1FIc0Nnc25jN2RX?=
- =?utf-8?B?NnZ2cHJBbTRJcDVOLzc0NnJBOTNESUVNbm1qVFNzelRRalRRS2RtT1ptSFNJ?=
- =?utf-8?B?akhVc0t4Z2RVSjVSdFBJS2pmRWNPc3pWNlZrYjNmNzdjSWNPR005QlM1Y2Zk?=
- =?utf-8?B?QUFIY2xmeDZSejNqVEQ2cyswR2RKbmpuV2NQSjQwZFlvT1FVMTExd3lha1lh?=
- =?utf-8?B?VU5EK1hSbksrczFyc1AySWx5UmtVSzZrdFJqZ1djQk5HemNrNE44SGlYZEFh?=
- =?utf-8?B?VlhtQmw5OTdCOTVmUkIrbURFNEdzOXBVTzQ5T1dJWUYyQkNzR3IyNkpmYkJI?=
- =?utf-8?B?OWU2Ni9NeHk2MDBHRU1PNU1mcnAxU2xMcEdkTWh0SFROUzBZL29FQ29MYlJI?=
- =?utf-8?Q?GKZLqujCppLgNdByKS+En2k+4?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 853b123e-4bf6-4df3-c7d0-08dcc89ee94b
-X-MS-Exchange-CrossTenant-AuthSource: TYZPR06MB5709.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Aug 2024 02:53:22.6410
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ZZnOdPmnAj08OBTmfnYfKeHrlD4lvf0zV++mV2fDaFbjw7z2u6NRH4MH925kE7NVjnvmeDswMqpNOATEvBs+TA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR06MB5270
+Content-Transfer-Encoding: 8bit
 
+From: Chen Ridong <chenridong@huawei.com>
 
-On 2024/8/29 23:17, Thomas Gleixner wrote:
-> On Wed, Aug 21 2024 at 17:46, Yuesong Li wrote:
->
-> Please add a proper subsystem prefix to the subject.
->                                                                                                                                                                                                                                                                                                                                git log --oneline $FILE
-> gives you a decent hint
-I will send a v2 if you agree with my reason.
->> The helper function hrtimer_is_queued() checks whether the timer is
->> on one of the queues. Replace the raw check.
-> Why? What's the benefit of this change?
-Compare to raw check ,I think this makes the text more readable.
->
-> Thanks,
->
->          tglx
+[ Upstream commit 1be59c97c83ccd67a519d8a49486b3a8a73ca28a ]
 
-Best Regards,
+An UAF can happen when /proc/cpuset is read as reported in [1].
 
-Yuesong
+This can be reproduced by the following methods:
+1.add an mdelay(1000) before acquiring the cgroup_lock In the
+ cgroup_path_ns function.
+2.$cat /proc/<pid>/cpuset   repeatly.
+3.$mount -t cgroup -o cpuset cpuset /sys/fs/cgroup/cpuset/
+$umount /sys/fs/cgroup/cpuset/   repeatly.
+
+The race that cause this bug can be shown as below:
+
+(umount)		|	(cat /proc/<pid>/cpuset)
+css_release		|	proc_cpuset_show
+css_release_work_fn	|	css = task_get_css(tsk, cpuset_cgrp_id);
+css_free_rwork_fn	|	cgroup_path_ns(css->cgroup, ...);
+cgroup_destroy_root	|	mutex_lock(&cgroup_mutex);
+rebind_subsystems	|
+cgroup_free_root	|
+			|	// cgrp was freed, UAF
+			|	cgroup_path_ns_locked(cgrp,..);
+
+When the cpuset is initialized, the root node top_cpuset.css.cgrp
+will point to &cgrp_dfl_root.cgrp. In cgroup v1, the mount operation will
+allocate cgroup_root, and top_cpuset.css.cgrp will point to the allocated
+&cgroup_root.cgrp. When the umount operation is executed,
+top_cpuset.css.cgrp will be rebound to &cgrp_dfl_root.cgrp.
+
+The problem is that when rebinding to cgrp_dfl_root, there are cases
+where the cgroup_root allocated by setting up the root for cgroup v1
+is cached. This could lead to a Use-After-Free (UAF) if it is
+subsequently freed. The descendant cgroups of cgroup v1 can only be
+freed after the css is released. However, the css of the root will never
+be released, yet the cgroup_root should be freed when it is unmounted.
+This means that obtaining a reference to the css of the root does
+not guarantee that css.cgrp->root will not be freed.
+
+Fix this problem by using rcu_read_lock in proc_cpuset_show().
+As cgroup_root is kfree_rcu after commit d23b5c577715
+("cgroup: Make operations on the cgroup root_list RCU safe"),
+css->cgroup won't be freed during the critical section.
+To call cgroup_path_ns_locked, css_set_lock is needed, so it is safe to
+replace task_get_css with task_css.
+
+[1] https://syzkaller.appspot.com/bug?extid=9b1ff7be974a403aa4cd
+
+Fixes: a79a908fd2b0 ("cgroup: introduce cgroup namespaces")
+Signed-off-by: Chen Ridong <chenridong@huawei.com>
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Shivani Agarwal <shivani.agarwal@broadcom.com>
+---
+ kernel/cgroup/cpuset.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
+
+diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+index 9f2a93c82..731547a0d 100644
+--- a/kernel/cgroup/cpuset.c
++++ b/kernel/cgroup/cpuset.c
+@@ -22,6 +22,7 @@
+  *  distribution for more details.
+  */
+ 
++#include "cgroup-internal.h"
+ #include <linux/cpu.h>
+ #include <linux/cpumask.h>
+ #include <linux/cpuset.h>
+@@ -3725,10 +3726,14 @@ int proc_cpuset_show(struct seq_file *m, struct pid_namespace *ns,
+ 	if (!buf)
+ 		goto out;
+ 
+-	css = task_get_css(tsk, cpuset_cgrp_id);
+-	retval = cgroup_path_ns(css->cgroup, buf, PATH_MAX,
+-				current->nsproxy->cgroup_ns);
+-	css_put(css);
++	rcu_read_lock();
++	spin_lock_irq(&css_set_lock);
++	css = task_css(tsk, cpuset_cgrp_id);
++	retval = cgroup_path_ns_locked(css->cgroup, buf, PATH_MAX,
++				       current->nsproxy->cgroup_ns);
++	spin_unlock_irq(&css_set_lock);
++	rcu_read_unlock();
++
+ 	if (retval >= PATH_MAX)
+ 		retval = -ENAMETOOLONG;
+ 	if (retval < 0)
+-- 
+2.39.4
 
 
