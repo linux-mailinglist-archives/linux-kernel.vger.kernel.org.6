@@ -1,111 +1,99 @@
-Return-Path: <linux-kernel+bounces-308914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A972F9663A6
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 16:05:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E83699663A4
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 16:04:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 529791F23018
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 14:05:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4C70284373
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 14:04:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DFD91B2526;
-	Fri, 30 Aug 2024 14:04:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="oV0O0fTB"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 456FA1B1D60;
+	Fri, 30 Aug 2024 14:04:31 +0000 (UTC)
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64C631B2509;
-	Fri, 30 Aug 2024 14:04:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B24014C583;
+	Fri, 30 Aug 2024 14:04:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725026672; cv=none; b=MbPeAyQxuvkroFHoIn5yDErtuyPu0iwXaHpZytnjSa+qbPlYkffxjW+/3MOn2zJOW4eH9qJumFLfWKmPcDU2EY/M03RMCK0TD5PwM68IGvvOhU+eyAO78pthlto4ilspos1Y4hdEGWnlTQZXn6irIOhAXbYO7e765s5bx8hHbCw=
+	t=1725026670; cv=none; b=qx32TZLDtV50xZ63w5iu3VMliU4U+YFX1YHyii4hEPVHZ+l1hM1rpHBnxoASlss4tiz7/M4bvGUMq+06MuySvbfX8y8hooe4jZOA9UxfcC2t666iGvBvTZpRFdxCV0d47B5gsS2PvNYmw+SoCYbRb+eAtnX6vDe6+DgYVVSbNpg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725026672; c=relaxed/simple;
-	bh=ordtzeKGfZ9tzbNzAMjuXb1IZc/l+GZwq+W62hzwnn4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FJVmP0+phHmPcxAJpS6R/1QBJfPG/Z57XeM0RC/jHnRRfK4gpm8g/sHiahIdvZfxGtCfGFLypS7+GIKbnennwzVxGgLV3KA8ROoyW+kTcKmAKPTO6X8iHosqWTjhxDPSXmsMP7wUTXP903sYCNtXt03cbWPF7xP9dS5kT+DISWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=oV0O0fTB; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:
-	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=g7u3JY1dUMc3W4JVQxtJZrZEzcHPVuAghUUeOne4iAY=; b=oV0O0fTBZZfPvlMEar3HxRPa0R
-	60yLSGtHnZeL//MGhGu2vHwUSUo5HxT8qquoOyBGnBJNR7LJE1NUbQ05R0hqFX+0Fi/e1l1wa/ctr
-	G8fnCLEOVdVU2mg3Dnc3k7sAP1m2w0+tnKWn+lFobslVpqkPbK2uPvDm3wmQgxMBnbntetzGHLqiD
-	+oiuRhbx7V/x2BisNbLierYpDp154lb/OHLrlQgI46cSo8M9hj/zPAiXTCmZz4bZVOhI8CeNi7b3l
-	XcKv2NoG3gg0a2k/b1ezD4vA3ZLg6YmD7aRuiBwc4eZ5ixf21Q4aNuCakkxZDC6BvpILj+qISMj/v
-	gK6Dsy4Q==;
-Received: from [177.76.152.96] (helo=localhost)
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1sk2Ea-007AjX-Ae; Fri, 30 Aug 2024 16:04:16 +0200
-From: "Guilherme G. Piccoli" <gpiccoli@igalia.com>
-To: kexec@lists.infradead.org,
-	linux-doc@vger.kernel.org
-Cc: bhe@redhat.com,
-	vgoyal@redhat.com,
-	dyoung@redhat.com,
-	corbet@lwn.net,
-	linux-kernel@vger.kernel.org,
-	linux-debuggers@vger.kernel.org,
-	stephen.s.brennan@oracle.com,
-	kernel@gpiccoli.net,
-	kernel-dev@igalia.com,
-	"Guilherme G. Piccoli" <gpiccoli@igalia.com>
-Subject: [PATCH] Documentation: Improve crash_kexec_post_notifiers description
-Date: Fri, 30 Aug 2024 11:03:22 -0300
-Message-ID: <20240830140401.458542-1-gpiccoli@igalia.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1725026670; c=relaxed/simple;
+	bh=EDtGzwDCPpYma4gnssN7F4ucACRd/1Y8fuu4+Tm63qg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TkfT13p269rkhNMVLPr2lH/JljMPKGmzZVPPfj3CUXgMOkt7ttcMN6TuyvqsYRm5KP96XxZN12Da9gjdN7u+UhAnzAhLWZcE8Mkf4dkVIaFPXvdx+eQjpmwj65hSNe1LqpX5Ez8stfq+1crT8MU6YIwamA57tAZhQtdZxRs45yw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a86acbaddb4so225051666b.1;
+        Fri, 30 Aug 2024 07:04:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725026667; x=1725631467;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kre/ss1tAIgkBsnhcPCuIO9koTZFsoyZNAoGRxFRJ0M=;
+        b=GhxzIuYF2Ehf8QDgpMm2f4oz2M7TWjiTJeC0aLZOQ/nDkNk5s1dxo1iL+EiW/VpZfJ
+         noplzcCKa/uG4BkUY9iWiLq8X8T3xhE+9LkpmhgUBZNxPSch01CmQqMQ3KW288uyfDpc
+         pKH1PvZ6JgJrao1Nsg4+mDJSnqCkZ/cU2OAEc+cjUlJ797wSmowToXqdJtWVNBOkpVi/
+         TWHkI1x/BnePDOvYackHnZWQZkYegJ8ikUItOFHnBoyHniVaZBjYrILXnhrTTd0Vu45k
+         gf0kyViGjOL4aKns7iKGsg5lDswgCEulhGHUb1ZRAlwUmnt3hiCxtEk7JPDl2kZ/7O5a
+         kYcA==
+X-Forwarded-Encrypted: i=1; AJvYcCVUWmvGLw+tTnTDy9b7jGY9Rt2YPPhZElhat8Hi0Hk8Dq2i5kGRdepj6UllCHxfQyqF0qec+kXhRpn5bNE=@vger.kernel.org, AJvYcCWGHK1uV0zDMGssPT+620CHhFj3v1NdOyWi8TLIVd+ETUU4EEumDhU/8p2+4omji3U+QAJVDcJd@vger.kernel.org, AJvYcCWX9gh/awOcx8JBT4f3XQGUEpNJhlBkfn1aRQDYw09dU6Z/KMtMFpuiDNMKRo1vjn3/ZjBjpGAlFsuYLv9E+dR1@vger.kernel.org
+X-Gm-Message-State: AOJu0YySCcaVxMnWm72XPcrYpuS4DwWs/857CpRazobJOjeJbn8FzHMi
+	DKT8tHLQaMVmSMgGuqLM1VUiNpsHlscO3nelB99y/xuhvsAmcRL6nPFscw==
+X-Google-Smtp-Source: AGHT+IEom8Az9pSeNbX3ZL6UGkMDeP8c/1RMej6RxBKGaptLTJ+h8+ZIbCFiUUKuv4UfTxKedSJjHQ==
+X-Received: by 2002:a17:906:6a18:b0:a77:deb2:8b01 with SMTP id a640c23a62f3a-a897f789470mr586363966b.1.1725026666524;
+        Fri, 30 Aug 2024 07:04:26 -0700 (PDT)
+Received: from gmail.com (fwdproxy-lla-116.fbsv.net. [2a03:2880:30ff:74::face:b00c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8988feb580sm218859566b.37.2024.08.30.07.04.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Aug 2024 07:04:25 -0700 (PDT)
+Date: Fri, 30 Aug 2024 07:04:23 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Florian Westphal <fw@strlen.de>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, Pablo Neira Ayuso <pablo@netfilter.org>,
+	Jozsef Kadlecsik <kadlec@netfilter.org>,
+	David Ahern <dsahern@kernel.org>, rbc@meta.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	netfilter-devel@vger.kernel.org,
+	"open list:NETFILTER" <coreteam@netfilter.org>
+Subject: Re: [PATCH nf-next v4 1/2] netfilter: Make IP6_NF_IPTABLES_LEGACY
+ selectable
+Message-ID: <ZtHRZwYGQDVueUlY@gmail.com>
+References: <20240829161656.832208-1-leitao@debian.org>
+ <20240829161656.832208-2-leitao@debian.org>
+ <20240829162512.GA14214@breakpoint.cc>
+ <ZtG/Ai88bIRFZZ6Y@gmail.com>
+ <20240830131301.GA28856@breakpoint.cc>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240830131301.GA28856@breakpoint.cc>
 
-Be more clear about the downsides, the upsides (yes, there are some!)
-and about code that unconditionally sets that.
+Hello Florian,
 
-Signed-off-by: Guilherme G. Piccoli <gpiccoli@igalia.com>
----
- Documentation/admin-guide/kernel-parameters.txt | 16 ++++++++++------
- 1 file changed, 10 insertions(+), 6 deletions(-)
+On Fri, Aug 30, 2024 at 03:13:01PM +0200, Florian Westphal wrote:
+> > After a9525c7f6219c ("netfilter: xtables: allow xtables-nft only
+> > builds"), the same configuration is not possible anymore, because 
+> > CONFIG_IP6_NF_IPTABLES is not user selectable anymore, thus, in order to
+> > set it as built-in (=y), I need to set the tables as =y.
+> 
+> Good, I was worried  there was a functional regression here, but
+> this is more "matter of taste" then.
+> 
+> I thunk patch is fine, I will try to add the relevant
+> depends-on change some time in the near future.
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index efc52ddc6864..cb25dc5cbe9a 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -913,12 +913,16 @@
- 			the parameter has no effect.
- 
- 	crash_kexec_post_notifiers
--			Run kdump after running panic-notifiers and dumping
--			kmsg. This only for the users who doubt kdump always
--			succeeds in any situation.
--			Note that this also increases risks of kdump failure,
--			because some panic notifiers can make the crashed
--			kernel more unstable.
-+			Only jump to kdump kernel after running the panic
-+			notifiers and dumping kmsg. This option increases the
-+			risks of a kdump failure, since some panic notifiers
-+			can make the crashed kernel more unstable. As a bright
-+			side, it might allow to collect more data on dmesg like
-+			stack traces from other CPUs or extra data dumped by
-+			panic_print. This is usually only for users who doubt
-+			kdump will succeed every time. Notice that some code
-+			enables this option unconditionally, like Hyper-V,
-+			PowerPC (fadump) and AMD SEV.
- 
- 	crashkernel=size[KMG][@offset[KMG]]
- 			[KNL,EARLY] Using kexec, Linux can switch to a 'crash kernel'
--- 
-2.46.0
-
+I am more than happy to do it, if you wish. I just want to decouple both
+changes from each other.
 
