@@ -1,117 +1,98 @@
-Return-Path: <linux-kernel+bounces-308320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE1D9965A4A
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:28:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F85E965A57
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:30:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 793EA28D33F
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 08:28:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52CCB1F26B8A
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 08:30:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06F4116D4CB;
-	Fri, 30 Aug 2024 08:28:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D671F16DEA5;
+	Fri, 30 Aug 2024 08:30:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GFyz2gkn"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I/8z+twJ"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D47DD49625;
-	Fri, 30 Aug 2024 08:28:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA62416726E;
+	Fri, 30 Aug 2024 08:30:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725006491; cv=none; b=o65BVKgA7L3sa6qmxGVMfmHZmXDKowWBlnrk2+Zl9+AtA6pmOjltffhFLt3tc+N7WqqtykBrpGopsc8jNQa6utTKGBtxmLquEQx2rXRL64lJeiAR5gWVVCgkZWZ+6QGqE4AIW8Q9+vSq7AEqp0V+79jnLcHszUIVuvhmA7jA+Rw=
+	t=1725006624; cv=none; b=kiSMRosnDz3+DzeAk/fE2XQAD1iZUmZenn/3fc/wGZTjVtErojBOyxlioK3CiT4dv1BT/Ftl/hM1zL6NnoVCe/D77Pr25tKKuri0l44xTXpslCH0YuxQ9d+9GF+zhDrZ5dlETldj/aids6BznWVAvqr0A+5/8FzLY5aaU7lcliI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725006491; c=relaxed/simple;
-	bh=1CayOtffUqgYgyBF6mx88/fzOGczsfgglMDZaVTevPM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ft56rjPgy/ZNfAnZ6GLlb4sMnTKdHphH6PKCe4XFKs6aaMoT1ZMgbivtIM6OVqOcQgecLpXU+c2Ir1emRO4hAQTqtXK2srwWTK6aT3jRFkUDinFYROTr4zYjdz2uBDCQkqreCpAybxatTSNwADFqYKLfDJD/83APwIKLT4W91KQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GFyz2gkn; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725006490; x=1756542490;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=1CayOtffUqgYgyBF6mx88/fzOGczsfgglMDZaVTevPM=;
-  b=GFyz2gkngDScidu5e9yu0Up8xYfln6iWTBgkyfdIIFutITCBOxWxZ4Gt
-   KQK4r5T8s1rGzKAuBQ1dTZcXOfJESu+41W60ip6uu+G0eI8NTg1LLBlP2
-   4Z5C2DaK0jRiqdohfd6iVvUgN8ax1Diyp44wHU//DIjrdo7hd6FYo74/N
-   mgCKxUmQGvSK3cXd1PbSJh0WXa2eZbqdSHcTr7VJFj9Hy5gWaKqTbvtDJ
-   pnsyTSNVk3A8Xp1O9h2jtdJ+Ml6FeSEEoL1BB2p7HIsp01tBXKuTCpe7q
-   Hudn3LwqWoINndbQ4IKtr7GfdSrbbNs1xnvllkr9vEVUMkebyzCHMlfmM
-   A==;
-X-CSE-ConnectionGUID: 5+xr+/+zQ1OpBt0Xy6gYMA==
-X-CSE-MsgGUID: kM/S5TQFSgWcWX6sQHZymQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11179"; a="26534879"
-X-IronPort-AV: E=Sophos;i="6.10,188,1719903600"; 
-   d="scan'208";a="26534879"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Aug 2024 01:28:09 -0700
-X-CSE-ConnectionGUID: Ar3Gh/53QMWdDJtMHvk19A==
-X-CSE-MsgGUID: j5jrXK30QUK1L1DDaznfgg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,188,1719903600"; 
-   d="scan'208";a="94662490"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Aug 2024 01:28:05 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id 97A6611F843;
-	Fri, 30 Aug 2024 11:28:01 +0300 (EEST)
-Date: Fri, 30 Aug 2024 08:28:01 +0000
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Umang Jain <umang.jain@ideasonboard.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	"Paul J. Murphy" <paul.j.murphy@intel.com>,
-	Daniele Alessandrelli <daniele.alessandrelli@intel.com>,
-	Martina Krasteva <martinax.krasteva@intel.com>,
-	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	Kieran Bingham <kieran.bingham@ideasonboard.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v4 0/2] media: imx335: Fix reset-gpio handling
-Message-ID: <ZtGCkQtGYndCK1Aw@kekkonen.localdomain>
-References: <20240830-imx335-vflip-v4-0-cb9f20fc7b87@ideasonboard.com>
+	s=arc-20240116; t=1725006624; c=relaxed/simple;
+	bh=/dAWWQ2rfUnLrQq9TUaj1Fx1ebkqv7dCSYmP/QGJuDk=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=iP/QLc2Yk9Nc2A81tqWvcbwDmdvk92pX7Z20jBH+Zcvb9b8yuyVLMmE05ZzCMRVzHbngKDH+uDL0bx38+i4tb7wP1Z0OB0rDx7Q/wCmFQTupqdLFPsdMF4q2bOyKOOCB6f3x49NE6hliatdUJNeUz9HwnuB0WbxHMOgRySkNs18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I/8z+twJ; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-7140ff4b1e9so1323949b3a.3;
+        Fri, 30 Aug 2024 01:30:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725006622; x=1725611422; darn=vger.kernel.org;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=RRQZdX3CMtZuwTy9SAGSEIfOLAyvK8r1+K1io/zIo2o=;
+        b=I/8z+twJ53NQQVyMFcTliKwknqW3wIDAjNeao7w3F7ncywgt3cfH8gfhHHWgJYgf3+
+         IQJNAewEyIHxjbvu2elqgMrv1MFQ+h8JdELJLx19Ba9rVl3Sz4yF70ER4KHn4nQfZdUv
+         7kl6lKSSEDQjrGsEZ2H1njpq7jBH9Ddv4Rp2MdrP706lFMHWcnpxVc5ng0a6zWJVH1Yk
+         SIH/Wp9ejQUsFwfOv153K9nne7tqUrMUDKtot1fC92rTz/5BkWhnrho0R988IDqm0+DK
+         49MwXfpk1MvjLIBnpKFXRLvXsW5W9C13cZGmCKWWul4Emokb4zyE+wTdTEhIYwxuaaTv
+         W5MA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725006622; x=1725611422;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RRQZdX3CMtZuwTy9SAGSEIfOLAyvK8r1+K1io/zIo2o=;
+        b=Xkvk4e1ICg/CPswBM43/U7586YXyaVHgQ2PX4hxMRD0+U2b2hhvfMbFiSK7y4yvun4
+         C+m9PcbwAF6LN7gBIKthiPRgXiTw1n2SqneO5ks/NOKcaDkvKddFA1xsHm2rABOTqxzC
+         L5x0/0WydNUkOcxAcFyqpqbc9YkMTy+qOmSoN25/EZJ8Wwo8Hc3JL39p6t2NhPLRdMG9
+         AXkSgByC9D5fPeldyB7o/5zIm7w1Q9D9y6wFAoZjCFujnnz4iH9crELRv3zbkRrEaQWb
+         fNCRvBHnfpL/LTgKHNDqnrXmhekpSSkbXzKb+OSZEytHWNlq1hXh6MBIg1zHKsXRyR/g
+         qb2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVNHrru2UQPItgvuFl0AuCfeJrTMoalw0rWMeyBTqwzFRPcpeT/pZRCY1DjXaiuG4mQOctvk5kkCR83@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhINvC9lgh/cU/M8jT0cqWfuZfz7f5mOx0sFORTOzCrH8xvCEU
+	R4u7XLB09Xj4XakGRbFVZhROlwQaGEofn/Mg23F9O14BuIaLdFoD
+X-Google-Smtp-Source: AGHT+IEyRr3Hw4NRGFiX8qgplrPe1z0khhV9ICsdC+PRrgwuwvwL6BISgqltF7QSTC8DG5W6Nyvgpg==
+X-Received: by 2002:a05:6a00:91a8:b0:714:2198:26b9 with SMTP id d2e1a72fcca58-715dfbe07a3mr5713640b3a.13.1725006621939;
+        Fri, 30 Aug 2024 01:30:21 -0700 (PDT)
+Received: from dw-tp ([129.41.58.7])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-715e56d771csm2266959b3a.165.2024.08.30.01.30.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Aug 2024 01:30:21 -0700 (PDT)
+From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+To: Ojaswin Mujoo <ojaswin@linux.ibm.com>, linux-ext4@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>
+Cc: linux-kernel@vger.kernel.org, Kemeng Shi <shikemeng@huaweicloud.com>
+Subject: Re: [PATCH v3 2/2] ext4: Convert EXT4_B2C(sbi->s_stripe) users to EXT4_NUM_B2C
+In-Reply-To: <e0c0a3b58a40935a1361f668851d041575861411.1725002410.git.ojaswin@linux.ibm.com>
+Date: Fri, 30 Aug 2024 13:58:53 +0530
+Message-ID: <87bk1aza62.fsf@gmail.com>
+References: <3a493bb503c3598e25dcfbed2936bb2dff3fece7.1725002410.git.ojaswin@linux.ibm.com> <e0c0a3b58a40935a1361f668851d041575861411.1725002410.git.ojaswin@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240830-imx335-vflip-v4-0-cb9f20fc7b87@ideasonboard.com>
 
-On Fri, Aug 30, 2024 at 11:41:50AM +0530, Umang Jain wrote:
-> These couple of patches intends to fix the reset-gpio handling
-> for imx335 driver.
-> 
-> Patch 1/2 mentions reset-gpio polarity in DT binding example.
-> 
-> Patch 2/2 fixes the logical value of reset-gpio during
-> power-on/power-off sequence.
-> 
-> --
-> Changes in v4:
-> - rework 2/2 commit message
-> - Explain conclusions for 2/2 patch, in the '---' section.
+Ojaswin Mujoo <ojaswin@linux.ibm.com> writes:
 
-Thanks, Umang!
+> Although we have checks to make sure s_stripe is a multiple of cluster
+> size, in case we accidentally end up with a scenario where this is not
+> the case, use EXT4_NUM_B2C() so that we don't end up with unexpected
+> cases where EXT4_B2C(stripe) becomes 0.
+>
+> Also make the is_stripe_aligned check in regular_allocator a bit more
+> robust while we are at it. This should ideally have no functional change
+> unless we have a bug somewhere causing (stripe % cluster_size != 0)
+>
+> Reviewed-by: Kemeng Shi <shikemeng@huaweicloud.com>
+> Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
 
-I've applied these in my tree.
+Thanks for addressing the review comment. LGTM. 
+Please feel free to add - 
 
--- 
-Sakari Ailus
+Reviewed-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com> 
 
