@@ -1,90 +1,149 @@
-Return-Path: <linux-kernel+bounces-309051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AC7896659F
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 17:33:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E34CB9665C6
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 17:37:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDB42286721
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 15:33:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0C81281DC6
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 15:37:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6E7F1B6522;
-	Fri, 30 Aug 2024 15:30:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9949852F6F;
+	Fri, 30 Aug 2024 15:34:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="LbxW5qED"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aqGpU9gN"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F416EEC9;
-	Fri, 30 Aug 2024 15:30:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D613345C0B;
+	Fri, 30 Aug 2024 15:34:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725031813; cv=none; b=gnBessskoJZH0mhqzDOK9IcIP36mwVZ5zLQwdbMqPB7eD9cyW/GTz3WOVK/2vREPX7xOGHV+G6GxU/dSsmMWRLzx7Osw6OYNxn//0b/QOxuFSdUP0PcSTe6n9ICE4wHmIzl+dEuZr/uXFKOzB70thpslcJ8riRCr26lFjUSs5yk=
+	t=1725032048; cv=none; b=NxKDF6RTZNUA5k0Je1OBBamQQviiuNA7YQLLa5ENNyZICzwHaugGE78UNPqM3wc+ZhiDxPd/E0KK7N86/KriZx/IYR0gkuVK9tJW5MbMNXo6Z9znIhpl1cMkWhDSHcRNZuRAzw8enq4DIWe+Px1hCu/pHZCp0cAWKvnb0sfb9/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725031813; c=relaxed/simple;
-	bh=V2VJ12EQT4i6n4aeoiaDxyllMlqthEmdNScFeTWz9Gc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DidCtSRXUgZCD8vExuRJcAsHq06qlPcytioR/apsCMtDr6/ZVQrZJJ6f76wV89gBzUn627Zs92skUw94IdcjmClV/1Q0hL7ByK1qX5fprZ56Vq7VGTtDPNPRjko3ZsEj2O/BzjV3a3NIxVoglRAn15UOQP3uJqjWeXx87emSMA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=LbxW5qED; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39FF2C4CEC2;
-	Fri, 30 Aug 2024 15:30:12 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="LbxW5qED"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1725031809;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TS8nVZqiFVKrs+/FUWrxZIU1v/CNzMC33eCO9K4Uobg=;
-	b=LbxW5qED90WneHoVKo5ut0ooOGXlLEj23y8j28oyQWipIBHXkNhAIM49N7cmXW0Hkisq5N
-	TFD4fpf81DjgHrnNfCYxWzYevM8hxURnHSdCM8PP04dXHbuwmfKmkr04uddwZ0x0Z2WHfO
-	94jHWbtd+dSV66NG2XRR8RUnhz6W0X8=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 044db95b (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Fri, 30 Aug 2024 15:30:09 +0000 (UTC)
-Date: Fri, 30 Aug 2024 17:30:07 +0200
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] selftest/vDSO: Fix cross build for the random tests
-Message-ID: <ZtHlf1qaXTPwJQkJ@zx2c4.com>
-References: <20240830-vdso-chacha-build-v1-1-78f93d2a142f@kernel.org>
+	s=arc-20240116; t=1725032048; c=relaxed/simple;
+	bh=SnJjIE4aJi7goKoUT2vPrbpSERDXPoBU01P8N44zpQA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EawfVmnnxkcZk4aWhpx8kc7YUQesIiMGpTgj24GipgzacME4zJHJ+hf2qty5m43EMQA76cbDQlpis+Gi0Ice87V3Hiir+ZULXi0pUZjj/ITxtoN/VZ5VAjlFjVDGKdcDWjWsoOMcKRJd1AnSrK20oJch0s9A2UuL0b4vMay76rs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aqGpU9gN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 388ACC4CEC2;
+	Fri, 30 Aug 2024 15:32:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725032048;
+	bh=SnJjIE4aJi7goKoUT2vPrbpSERDXPoBU01P8N44zpQA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=aqGpU9gND0Xkx2vgNd9t5Za4V97d9Cg8CYp6r3V1pI5XqBX+ryJTGfCYF393sgWMp
+	 udA35bMV+/RdjUSCmPILaQrP6QypMGkGC+euyaI4g424v8sG6ypwp0brztQhsqmyU6
+	 3SFQz52gQWvXzyBlMVXkjYGhqkoA09zryH9UOuHTd88LxUwufiAWvt/a/NZuBJPxRh
+	 NoYh6oe8XulWJgdVcK6gOrL1g1L1eR1PSyfKz1A9TrPvHXxfqbxwdmf6pOGQ1Tj0Xw
+	 aXhzfEp8HUWWVLEvAMBBHyOUNUeBEG1RWsKWxypYCNAFCi91wekdFo3uBkA4Krafvk
+	 MKc0PyGl6E6cA==
+Message-ID: <08e8f26a-d87e-4d3e-9896-b809d5f0c3a0@kernel.org>
+Date: Fri, 30 Aug 2024 17:31:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240830-vdso-chacha-build-v1-1-78f93d2a142f@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] soc: qcom: pbs: Simplify with dev_err_probe()
+To: Dan Carpenter <dan.carpenter@linaro.org>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Yu Jiaoliang
+ <yujiaoliang@vivo.com>, Bjorn Andersson <andersson@kernel.org>,
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ opensource.kernel@vivo.com
+References: <20240829124813.3264437-1-yujiaoliang@vivo.com>
+ <894145dc-46fb-451f-a461-d0b9ff1e50dd@kernel.org>
+ <10fad15b-d2a6-4ec1-8af7-bde8f7bf39be@kernel.org>
+ <63162b67-22ef-482f-9600-861e9dbaf4fc@stanley.mountain>
+Content-Language: en-US
+From: Konrad Dybcio <konradybcio@kernel.org>
+In-Reply-To: <63162b67-22ef-482f-9600-861e9dbaf4fc@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 30, 2024 at 03:06:35PM +0100, Mark Brown wrote:
-> Unlike the check for the standalone x86 test the check for building the
-> vDSO getrandom and chacaha tests looks at the architecture for the host
-> rather than the architecture for the target when deciding if they should
-> be built. Since the chacha test includes some assembler code this means
-> that cross building with x86 as either the target or host is broken. Use
-> a check for ARCH instead.
+On 30.08.2024 5:19 PM, Dan Carpenter wrote:
+> On Fri, Aug 30, 2024 at 12:03:20PM +0200, Konrad Dybcio wrote:
+>> On 30.08.2024 10:08 AM, Krzysztof Kozlowski wrote:
+>>> On 29/08/2024 14:48, Yu Jiaoliang wrote:
+>>>> Error handling in probe() can be a bit simpler with dev_err_probe().
+>>>>
+>>>> Signed-off-by: Yu Jiaoliang <yujiaoliang@vivo.com>
+>>>> ---
+>>>>  drivers/soc/qcom/qcom-pbs.c | 7 +++----
+>>>>  1 file changed, 3 insertions(+), 4 deletions(-)
+>>>>
+>>>> diff --git a/drivers/soc/qcom/qcom-pbs.c b/drivers/soc/qcom/qcom-pbs.c
+>>>> index 77a70d3d0d0b..ab9de12ec901 100644
+>>>> --- a/drivers/soc/qcom/qcom-pbs.c
+>>>> +++ b/drivers/soc/qcom/qcom-pbs.c
+>>>> @@ -201,10 +201,9 @@ static int qcom_pbs_probe(struct platform_device *pdev)
+>>>>  	}
+>>>>  
+>>>>  	ret = device_property_read_u32(pbs->dev, "reg", &val);
+>>>> -	if (ret < 0) {
+>>>> -		dev_err(pbs->dev, "Couldn't find reg, ret = %d\n", ret);
+>>>> -		return ret;
+>>>> -	}
+>>>> +	if (ret < 0)
+>>>> +		return dev_err_probe(pbs->dev, ret, "Couldn't find reg\n");
+>>>
+>>> This cannot defer, so not much benefits. And you ignore other place in
+>>> the probe()... That's like a weird pattern with all your patches change
+>>> something irrelevant, but leave other places unchanged.
+>>>
+>>> That's pointless and churn.
+>>
+>> Hm, that's a good point.. Maybe the static checker folks could come up
+>> with a way that would find functions that call something that can defer
+>> at one point or another and suggest (not) using dev_err_probe with W=1/2..
+>> (although that is probably not going to be very high prio given all the
+>> other static checker issues we're still yet to resolve)
+>>
+>> Unless we have something like that already? +CC Dan
 > 
-> Fixes: 4920a2590e91 ("selftests/vDSO: add tests for vgetrandom")
-> Signed-off-by: Mark Brown <broonie@kernel.org>
+> I believe these patches are from people writing their own Coccinelle scripts to
+> do the conversions.  There aren't any published scripts which care one way or
+> the other.
+> 
+> device_property_read_u32() can't return -EPROBE_DEFER.  It's documented in a
+> comment.  So this is just a question of preferred style.  There isn't a kernel
+> wide preferred style on this.  Some maintainers prefer to not use dev_err_probe()
+> where it "doesn't make sense because ret isn't -EPROBE_DEFER".  Other maintainers
+> use it all the time even for error code literals like:
+> 	return dev_err_probe(pbs->dev, -EINVAL, "invalid input.\n");
+> Because "it's cleaner, more uniform and only takes one line".  I think Julia
+> said she didn't want to get involved with this debate and I definitely don't.
 
-Thanks for the patch. Seems reasonable; I'll queue it up.
+Personally, I don't mind either.. so longer as it's consistent within
+the file
 
-> ---
-> The x86_64 build is still broken for me because nothing installs
-> tools/arch/x86_64/vdso/vgetrandom-chacha.S (I beleive it's supposed to
-> be copied from ./arch/x86/entry/vdso/vgetrandom-chacha.S but I don't see
-> how?) but this at least fixes all the other architectures.
+> 
+> There are a few things which we could do:
+> 
+> 1) Returning -EPROBE_DEFER to an ioctl or something besides a probe()
+>    This is a bug right?  -EPROBE_DEFER is basically kernel internal for probe()
+>    functions.  It tried to write this but it was complicated so I gave up.
 
-There should be a symlink installed for that. Are you using this tree?
+Maybe call_tree.pl can somehow be used with an if name[-5:] == "probe"
+or something along those lines..
 
-https://git.kernel.org/pub/scm/linux/kernel/git/crng/random.git
+> 
+> 2) Printing an error message for -EPROBE_DEFER warnings
+>    I've written this check and I can test it tonight.
+> 
+> 3) Not propagating the -EPROBE_DEFER returns
+>    This shouldn't be too hard to write.
+> 
+> Let me add a KTODO in case anyone wants to do this before I get around to it.
+> 
+> KTODO: write Smatch EPROBE_DEFER warnings
 
-That's where all these fixups are going for 6.12. (And yea, there are a
-lot.)
+Thanks!
+
+Konrad
 
