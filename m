@@ -1,100 +1,119 @@
-Return-Path: <linux-kernel+bounces-309513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC148966C1D
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 00:12:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13B08966C25
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 00:16:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 780BC28500D
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 22:12:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 473FC1C21747
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 22:16:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BDC11C173D;
-	Fri, 30 Aug 2024 22:12:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25C0A1C1AA3;
+	Fri, 30 Aug 2024 22:16:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="H2Dgv1vb"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="BiJI/+ia"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3304B1C173A
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 22:12:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5CD91BDAB1;
+	Fri, 30 Aug 2024 22:16:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725055928; cv=none; b=JSeXA9cZuyjWkgmWsd0XPlRcxyvZ46tJH1e6ABKDIT8XmvoQXlQ6nSFY9fz0b2GByFW5LxtHHLYcNkkt9uYHJXpr5S0Erd8v1vS0SZdDrwfFuDQUgsBq7VaDHOKFND1CBlZD64D5jrsezF1PfPfpaMaZcblJvQ86FSIuapIrz2g=
+	t=1725056177; cv=none; b=NNp4/diLn/EPJPDLUtmh4bugKuLWRsmuwbNMmjFwXpsuYNBoQtcIqGfgE26P/OQL9zLEDxCq1DsjC8EhJajWhPnJHmKWIYbe/0X+HJv8/e+MyypPtHoNKd8FjB2sOxvau5n1akGETEwlJk/dVXkdQOOlrFsdO/1ZxZpW3jZpuQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725055928; c=relaxed/simple;
-	bh=Rwh8M6A1//w3NduZYo3bZPoTmO8CDMDW24C3pIoKiLU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=o4+60Q1YLB4ftLxGCbzO2+Xh3EjsIJpb6Pj324k4mfNxI5dt6/QbPzZyJgOIQtd1qQ0WzZjrPbCuAVtxIsOw0U1d+p6k0OO8WKDdXiVJbdGU+frDjSI3czhdUniVukfU4DGTds2Fnbkc1yvCFidMKmzx1mFWUzxQ8eJlqGl529c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=H2Dgv1vb; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-5334fdabefbso2855917e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 15:12:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725055924; x=1725660724; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Rwh8M6A1//w3NduZYo3bZPoTmO8CDMDW24C3pIoKiLU=;
-        b=H2Dgv1vbz0E50G7x1JyVf+8owrVBoyf6hZ5NR3lu6mkU6QdLMz/t2w/b5PUbZbxaQU
-         z8dF43kmaTBpYd67RBQotoUptMSD5isDVgmYYLJONy2UssQtAb1p68jXphCJE+3gTEap
-         SN9hZCnm/2RegmtJHjoukyeld4GI5v03/+SUJGFhPafJnyIWANAu610jQpDNs5QEo4Mv
-         XM0ECqsoF2TKaJHAcLHNVmNwkyVw+XEh3PEGVtgylwx+2Yupg/unFfg2MiX1p6UZl4x1
-         /mdxrF/+PprovTMmRQVnl5fn/o3q6J46xXdgh3eq5ON1lG3P+8FeQROOrm4/FDC7qkkl
-         gGzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725055924; x=1725660724;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Rwh8M6A1//w3NduZYo3bZPoTmO8CDMDW24C3pIoKiLU=;
-        b=Iv0w+PybWzF7WyG0dpkUHuN9yF9Dzt9iMLLw3DgWwPtrhw/N5AWUVmTa+aXJZdqO4X
-         d2o9neeK9gRK1KedkckJ3eDFHvRY5T9+0P/7muSX4wRfv+tRiBUNGL1focccPT48CrGZ
-         7zChETouofTjqaqWvorVeZOHeBSZRO9e3p9M0SKQoBFhy9uJBsaFK0gfpciB8nd9E8uP
-         ev3kHXiwYTllprZU8YVMfNLng+XKR3gurnU1DsJMy2haqr6tZzteE/PH3wdt8IUOEpM4
-         iwTp9d5dQVYAuXoTng+2cyQ6r+lszIK1K61+34wR6u4q31op6mUHdCVoVl3W/o1x1TZP
-         vw3g==
-X-Forwarded-Encrypted: i=1; AJvYcCXRE+/qJZjbrFBEfMOOeRVEloIFUIhM/Jor4Wx3PDCpZQjx62dUuVNchxnOjI8DLCScWNMQpQKkpBzzFXY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqQj/r8qbZ7X7+yvn+IQbtqtk04bLm7SUHkMxOWNzJuB3L7wqC
-	rLQ0D2uJndAxlb7M9+5Mrfags95kbuY3t17YiXGkSjb7JOmO/UOD2Tg1Pe978FNnMoDKrW63F3f
-	acxKtIL4k4GgOytt4E2k7K0u1efhJZ5IM9RYGkA==
-X-Google-Smtp-Source: AGHT+IG2GimMLBi5lPm379Nq+PM2LjCqEC72eUxNPBP5FlNmfqi3CtzsuE6fdy7fqHbWAp4512GJZfLvCgLXmPidcY4=
-X-Received: by 2002:a05:6512:2308:b0:534:53ce:54a8 with SMTP id
- 2adb3069b0e04-5354636e9f9mr1052118e87.30.1725055923441; Fri, 30 Aug 2024
- 15:12:03 -0700 (PDT)
+	s=arc-20240116; t=1725056177; c=relaxed/simple;
+	bh=eiAiaAMxrnwkQh8OZNgENo2OCIGfzf4Ul9qhg+3zyfY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=QTq1jHFT8kZLQJMI/7JEKgoIT+cuCU3c1DHR/kjPhmxbaAtII/hrlHcR3qnroYamIMPCIXozSYpshPMQFHklRJxwAR7XOipmj2tBvZzOOfv2eHdd/GWbMKLMiFgVEph7akFdU9aeVg7hBfn8w8+LZCmGKw5emGsn4mkuU43Jbqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=BiJI/+ia; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47UFsQJk023319;
+	Fri, 30 Aug 2024 22:16:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	naL+DF9ioWHaYPmy57myekiuG522s2M1hb98q4d0hHk=; b=BiJI/+iae4Z7E9jd
+	nyfk1m73von9yTfpP9jgnjoNzImr1W6Xu6KiNyybLgpxlj6+Fxhkwlzj2+L59lhW
+	8lXaVRUqojol6WnJWKf+jt8z4zlMY/uynqCWxAI9Dcku4soOMiEwiu++8VNd6NSa
+	1/IBC/cjxnYugpwYM9lQpfS6liHs8PYV6/9CLG1QA5D58/bYszfFrGTj3iYbKeY9
+	1WSAutdpTbroE/t6xNO9wpxRUbVhIo3jAAKblVnjhPc5Q8L787iLKkNC2HWwI58T
+	1wmMjfAY4Qzl2Aw4vz5/3CW/jOufE5tht1JQ23FJaXtSV5bcRUUAmXKm7/RJOvB4
+	qxZIjw==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41a612r7hr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 30 Aug 2024 22:16:01 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47UMG05Y032297
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 30 Aug 2024 22:16:00 GMT
+Received: from [10.110.126.215] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 30 Aug
+ 2024 15:15:59 -0700
+Message-ID: <02138a65-4cd7-4423-886d-35ad86afcff0@quicinc.com>
+Date: Fri, 30 Aug 2024 15:15:58 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240826095306.1420628-1-andriy.shevchenko@linux.intel.com>
-In-Reply-To: <20240826095306.1420628-1-andriy.shevchenko@linux.intel.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Sat, 31 Aug 2024 00:11:52 +0200
-Message-ID: <CACRpkdabwp611SQDDkDRDT3EG-SVirLu3Eg1P6X+BLOxLdGtyg@mail.gmail.com>
-Subject: Re: [PATCH v1 1/1] pinctrl: stmfx: Use string_choices API instead of
- ternary operator
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, 
-	linux-gpio@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/7] dt-bindings: arm: Add support for Coresight TGU
+ trace
+To: songchai <quic_songchai@quicinc.com>,
+        Suzuki K Poulose
+	<suzuki.poulose@arm.com>,
+        Mike Leach <mike.leach@linaro.org>, James Clark
+	<james.clark@arm.com>,
+        Alexander Shishkin
+	<alexander.shishkin@linux.intel.com>,
+        Andy Gross <agross@kernel.org>,
+        "Bjorn
+ Andersson" <andersson@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <coresight@lists.linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>
+References: <20240830092311.14400-1-quic_songchai@quicinc.com>
+ <20240830092311.14400-2-quic_songchai@quicinc.com>
+Content-Language: en-US
+From: Trilok Soni <quic_tsoni@quicinc.com>
+In-Reply-To: <20240830092311.14400-2-quic_songchai@quicinc.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: exG77MoKoMk6EyX4HCq-mfpniNBrNMYr
+X-Proofpoint-ORIG-GUID: exG77MoKoMk6EyX4HCq-mfpniNBrNMYr
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-30_11,2024-08-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 malwarescore=0
+ phishscore=0 spamscore=0 mlxlogscore=712 adultscore=0 impostorscore=0
+ mlxscore=0 suspectscore=0 bulkscore=0 lowpriorityscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408300173
 
-On Mon, Aug 26, 2024 at 11:53=E2=80=AFAM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
+On 8/30/2024 2:23 AM, songchai wrote:
+>  |                         |                     |     |             |
+>  |-------------------------|                     |     |-------------|
+>  |                         |                     |     | prioroty[3] |
 
-> Use modern string_choices API instead of manually determining the
-> output using ternary operator.
->
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Patch applied!
+s/prioroty/priority 
 
-Yours,
-Linus Walleij
+-- 
+---Trilok Soni
+
 
