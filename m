@@ -1,135 +1,178 @@
-Return-Path: <linux-kernel+bounces-308174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64DCA965843
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 09:20:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90C0B965846
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 09:21:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 899EF1C223F0
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 07:20:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B29D1F225A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 07:21:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C04FC155C80;
-	Fri, 30 Aug 2024 07:20:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F98C155332;
+	Fri, 30 Aug 2024 07:21:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="joBH0amu"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="SKfxxul8"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CA9C14EC48
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 07:20:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A045B14B96F;
+	Fri, 30 Aug 2024 07:21:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725002415; cv=none; b=jjClt13htQv1flQDQSJl1jGlJXgPd/pNGti6xM70op0uvKvgyBe9AqJktX3PWbtlcv9iHznE4VB2DbOInCUZBEFdgxLSp4OPSGFFex5c5pr37GmeFDmuH8wUhOrEWnJHewzKxksQctSvwNebchFhaO0hZjZS5UH4b2JSgWLtcW8=
+	t=1725002486; cv=none; b=cqKLiVIlvyjM7+c/qsPYl/f/FzCwf3yBLnpx/mnALWIVqpzAemoSQsPRzJklsl8kFCKkKG55VMm49qg3b+Wp1nLXFKHucxggcHemxbnteFSUAUf8HVQAFt1rVWaWbj9UWV6wxkSleKD+aZZLBYqqkXWaPU8cuNmuUDWXhMB+uUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725002415; c=relaxed/simple;
-	bh=HLaqna6UCuIrOsmYb1PawOtU1637YFWvoiEdQ3WVIvQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jXiHCiRYZbChjBBXR605XDplwEQup+XywZKhOkm/64zqeXdfbvOYLVu6vibGWkoTcjzVZVbdTY0LsNjDc7PY32PFwJzSEu8qsL8TeR89rcysjJdGExIcVOLv8ObLPCEwAf8Cxf+apc+ORmC/30f7dd0t5P8e3dRIi1+dA4Cr8jM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=joBH0amu; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2f3fea6a0a9so14086421fa.0
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 00:20:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725002411; x=1725607211; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3qiXwyV3htRr/C+q00ThbxxW4I9Cl0S2rzv2BfSX2XE=;
-        b=joBH0amuZpBKyGqaJtPqzzegijjS50M4tXjk8LFHCMGa9oGTVNbBs1udaNr602W2WT
-         4xdG9K9J+IXAhMn2CX9uWbtRe7I++LOA+blDXWboGMjWLTxqbUypPoJFgeaQBPK/fOr5
-         CrludGWJ0ZBMpqblO99/Qyg7ckv1tlCURDn3rUqGoC0YOCpmCbJW2Ab92R+8NFn3N2Pr
-         lUa1PLpiPEw9oKoYgaccdpKFo4yL2+GrCU8rXl1TClSVeQOvvloKXh7UCKbVQngLvkJ0
-         d51G7tshDXD4+RUyYMwOCUvYi/52COj8nF/0Az5yn+M/UKTra/j06NKvbeTgkOoVAA3c
-         IDew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725002411; x=1725607211;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3qiXwyV3htRr/C+q00ThbxxW4I9Cl0S2rzv2BfSX2XE=;
-        b=vhJSRS+OsU/YcXBXvMeN3YWLdDyIjLqBQtLEapuoJU3eWayFJji+SOMdT0IA498qIl
-         oH6WhvZlUa+qAu+2XIyTpoNWKsmAVI7KxwACrzHzPydN9hi9ETT5W8el7VtDC6WSIYN+
-         hZLvd3N6hUjBnXDDgBNnq3tIN8JHS6ULiECA3DlRhYzTOckXRxOAzpJ1QL8zRWB4xKX+
-         h1/6iE94omKnBxLX+WZyKMF9hXvkVG/vw+/qDTsUS1dmaIuvA0B+pSfhNmrKvQKmRvzl
-         s7a8hGKMJ6QxrHeHfFuewAtyHp+dIUEn0P+GmH1ONqkQPnvy+yzEFViA6G+N8yXkxQ3i
-         6mXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUMp8vaBeCRpz4WH4/uqEFkEx2tUKKAPL846HFXtiVnVEdXS50lb4nk99+RMEKWkOKGU888UFt51Sp1Ygk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yztf4iCNZDgC8ptWnrbyY7E37PrlY2AhjrYGf2wXKRMGzOiRn/2
-	xeCA3dgWvk9+pYmhcj6kp4ps7N5Y/GTt2anbQKH/LVNuJ51PPfKXAshh8vR7yWA=
-X-Google-Smtp-Source: AGHT+IHr64ktPPLwO8bWL9kuJHNB6sUG3ObN0WP5rN3nb+epYFlsrNNeuu9wmeVfANO5vZbNzp/aoQ==
-X-Received: by 2002:a2e:a99c:0:b0:2ef:2f8a:52d5 with SMTP id 38308e7fff4ca-2f61e05c9cfmr5342641fa.8.1725002410729;
-        Fri, 30 Aug 2024 00:20:10 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f6151828c3sm5066641fa.109.2024.08.30.00.20.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Aug 2024 00:20:10 -0700 (PDT)
-Date: Fri, 30 Aug 2024 10:20:08 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Manish Pandey <quic_mapa@quicinc.com>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, 
-	linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	quic_nitirawa@quicinc.com, quic_bhaskarv@quicinc.com, quic_narepall@quicinc.com, 
-	quic_rampraka@quicinc.com, quic_cang@quicinc.com, quic_nguyenb@quicinc.com, 
-	stable@vger.kernel.org
-Subject: Re: [PATCH V4] scsi: ufs: qcom: update MODE_MAX cfg_bw value
-Message-ID: <a7v4sgkh5f67hmbrpf4hukgt652qzkgaykszsbzbed44bnh2m7@xaspg6nxxduf>
-References: <20240829123938.31115-1-quic_mapa@quicinc.com>
+	s=arc-20240116; t=1725002486; c=relaxed/simple;
+	bh=jq4bncMwMkl0430k+uXECYWWTZkB+/4nLk0Je8j0h+Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QU6O17mhqZfA15y/yxU/vPlOIXGBgPdVm2YxFZb0zvuJ2hEGYJBKa7B9wm/BZ7w8hhwjcPxHAdyWHESwQ6fuO5begW8Zam3NZqAB/XacRmVqG0SYjrFK3g2P8h4YgOipInRvLcSqKTeG+PkdhV8jTNvzarW1MDstO0JKwzRPcGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=SKfxxul8; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47U1w02m030895;
+	Fri, 30 Aug 2024 07:21:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
+	:to:cc:subject:date:message-id:mime-version
+	:content-transfer-encoding; s=pp1; bh=ZJkNeenMmW6BJIAEBK8uintqQE
+	wEhJo/rpjuBPDz6nE=; b=SKfxxul8/mk4uYDpyCH1ObNmZWZli8S+wz7e1QyHHz
+	5gyTnE/Lzjy6Xx9/ZknwXS4kQdDY4RX7+8G887env3+d0tteM+/L3h6j2lFvFA8w
+	KhJgws5IHZXxEvYKfKUvPZtoWQ4NVQvNMNggDTNH6W2lTUUXLLDdt0XlkIy95V/1
+	v/qCUUZ2kj4Koe3RWg1ezBXX+Gbpbpwzn1caaihjI11r5VVcNq2uxafRiKeAjJQy
+	cXI0ng5cyzoyIHiap4W/tkxOJGP6Z8blQnQ5nzxQm0vsYWRxuLQpq7AlKMO6z3xx
+	OJ/7aCGfmUYwigZajH8+Om0dP7LVyE8czArG013DT5jw==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 419q8r58at-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 30 Aug 2024 07:21:14 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 47U7LEF7028094;
+	Fri, 30 Aug 2024 07:21:14 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 419q8r58am-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 30 Aug 2024 07:21:14 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 47U57dMx003114;
+	Fri, 30 Aug 2024 07:21:13 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 417tuqa7fu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 30 Aug 2024 07:21:13 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 47U7LBvP55902678
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 30 Aug 2024 07:21:11 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7496920043;
+	Fri, 30 Aug 2024 07:21:11 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 35F2320040;
+	Fri, 30 Aug 2024 07:21:10 +0000 (GMT)
+Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com.com (unknown [9.195.46.118])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 30 Aug 2024 07:21:10 +0000 (GMT)
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: linux-ext4@vger.kernel.org, "Theodore Ts'o" <tytso@mit.edu>
+Cc: Ritesh Harjani <ritesh.list@gmail.com>, linux-kernel@vger.kernel.org,
+        Kemeng Shi <shikemeng@huaweicloud.com>,
+        syzbot+1ad8bac5af24d01e2cbd@syzkaller.appspotmail.com
+Subject: [PATCH v3 1/2] ext4: Check stripe size compatibility on remount as well
+Date: Fri, 30 Aug 2024 12:50:57 +0530
+Message-ID: <3a493bb503c3598e25dcfbed2936bb2dff3fece7.1725002410.git.ojaswin@linux.ibm.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240829123938.31115-1-quic_mapa@quicinc.com>
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: XHsaaV84QxtTyp2oorMA4x1dIMqoW42j
+X-Proofpoint-ORIG-GUID: rnMEagZGPgpCPLAzDeDGrWY7lDBj_6FD
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-30_02,2024-08-29_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
+ clxscore=1015 priorityscore=1501 mlxlogscore=999 spamscore=0 mlxscore=0
+ suspectscore=0 lowpriorityscore=0 impostorscore=0 malwarescore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408300051
 
-On Thu, Aug 29, 2024 at 06:09:38PM GMT, Manish Pandey wrote:
-> The cfg_bw value for max mode is incorrect for the Qualcomm SoC.
-> Update it to the correct value for cfg_bw max mode.
-> 
-> Fixes: 03ce80a1bb86 ("scsi: ufs: qcom: Add support for scaling interconnects")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Manish Pandey <quic_mapa@quicinc.com>
-> ---
-> Changes from v3:
-> - Cced stable@vger.kernel.org.
-> 
-> Changes from v2:
-> - Addressed Mani comment, added fixes tag.
+We disable stripe size in __ext4_fill_super if it is not a multiple of
+the cluster ratio however this check is missed when trying to remount.
+This can leave us with cases where stripe < cluster_ratio after
+remount:set making EXT4_B2C(sbi->s_stripe) become 0 that can cause some
+unforeseen bugs like divide by 0.
 
-Mani also asked you to provide details, why the value is considered to
-be incorrect. You have responded in the email, but instead those details
-should have gone to the commit message. Please fix it accordingly.
+Fix that by adding the check in remount path as well.
 
-> 
-> Changes from v1:
-> - Updated commit message.
-> ---
->  drivers/ufs/host/ufs-qcom.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
-> index c87fdc849c62..ecdfff2456e3 100644
-> --- a/drivers/ufs/host/ufs-qcom.c
-> +++ b/drivers/ufs/host/ufs-qcom.c
-> @@ -93,7 +93,7 @@ static const struct __ufs_qcom_bw_table {
->  	[MODE_HS_RB][UFS_HS_G3][UFS_LANE_2] = { 1492582,	204800 },
->  	[MODE_HS_RB][UFS_HS_G4][UFS_LANE_2] = { 2915200,	409600 },
->  	[MODE_HS_RB][UFS_HS_G5][UFS_LANE_2] = { 5836800,	819200 },
-> -	[MODE_MAX][0][0]		    = { 7643136,	307200 },
-> +	[MODE_MAX][0][0]		    = { 7643136,	819200 },
->  };
->  
->  static void ufs_qcom_get_default_testbus_cfg(struct ufs_qcom_host *host);
-> -- 
-> 2.17.1
-> 
+Reported-by: syzbot+1ad8bac5af24d01e2cbd@syzkaller.appspotmail.com
+Tested-by: syzbot+1ad8bac5af24d01e2cbd@syzkaller.appspotmail.com
+Reviewed-by: Kemeng Shi <shikemeng@huaweicloud.com>
+Reviewed-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+Fixes: c3defd99d58c ("ext4: treat stripe in block unit")
+Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+---
+ fs/ext4/super.c | 29 ++++++++++++++++++++++-------
+ 1 file changed, 22 insertions(+), 7 deletions(-)
 
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index 58423e6bf3d0..0ba9c4e8ec44 100644
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -5173,6 +5173,18 @@ static int ext4_block_group_meta_init(struct super_block *sb, int silent)
+ 	return 0;
+ }
+ 
++/*
++ * It's hard to get stripe aligned blocks if stripe is not aligned with
++ * cluster, just disable stripe and alert user to simplify code and avoid
++ * stripe aligned allocation which will rarely succeed.
++ */
++static bool ext4_is_stripe_incompatible(struct super_block *sb, unsigned long stripe)
++{
++	struct ext4_sb_info *sbi = EXT4_SB(sb);
++	return (stripe > 0 && sbi->s_cluster_ratio > 1 &&
++		stripe % sbi->s_cluster_ratio != 0);
++}
++
+ static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
+ {
+ 	struct ext4_super_block *es = NULL;
+@@ -5280,13 +5292,7 @@ static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
+ 		goto failed_mount3;
+ 
+ 	sbi->s_stripe = ext4_get_stripe_size(sbi);
+-	/*
+-	 * It's hard to get stripe aligned blocks if stripe is not aligned with
+-	 * cluster, just disable stripe and alert user to simpfy code and avoid
+-	 * stripe aligned allocation which will rarely successes.
+-	 */
+-	if (sbi->s_stripe > 0 && sbi->s_cluster_ratio > 1 &&
+-	    sbi->s_stripe % sbi->s_cluster_ratio != 0) {
++	if (ext4_is_stripe_incompatible(sb, sbi->s_stripe)) {
+ 		ext4_msg(sb, KERN_WARNING,
+ 			 "stripe (%lu) is not aligned with cluster size (%u), "
+ 			 "stripe is disabled",
+@@ -6450,6 +6456,15 @@ static int __ext4_remount(struct fs_context *fc, struct super_block *sb)
+ 
+ 	}
+ 
++	if ((ctx->spec & EXT4_SPEC_s_stripe) &&
++	    ext4_is_stripe_incompatible(sb, ctx->s_stripe)) {
++		ext4_msg(sb, KERN_WARNING,
++			 "stripe (%lu) is not aligned with cluster size (%u), "
++			 "stripe is disabled",
++			 ctx->s_stripe, sbi->s_cluster_ratio);
++		ctx->s_stripe = 0;
++	}
++
+ 	/*
+ 	 * Changing the DIOREAD_NOLOCK or DELALLOC mount options may cause
+ 	 * two calls to ext4_should_dioread_nolock() to return inconsistent
 -- 
-With best wishes
-Dmitry
+2.43.5
+
 
