@@ -1,150 +1,126 @@
-Return-Path: <linux-kernel+bounces-309282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB32396687A
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 19:56:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8145C96687D
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 19:57:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55A7B1F2425F
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 17:56:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FAF7285592
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 17:57:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C80821BBBCA;
-	Fri, 30 Aug 2024 17:56:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C0541BBBD1;
+	Fri, 30 Aug 2024 17:57:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qy4RASa9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=timsurber.de header.i=@timsurber.de header.b="MgYECC4u"
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FDD014E2E9;
-	Fri, 30 Aug 2024 17:56:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D31291BB6AA;
+	Fri, 30 Aug 2024 17:57:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725040580; cv=none; b=TQ7Kwqsep8IOZNccHQopD+jUE05ZNMcdlrnBnjjTdLlzctLFJozZm0d4okz1gEqlHTexW8WMp37TGH2VnwqnOz7j9eqkN0iUud3VIL+TQnc26rGQqcCPdl4MuBmkM3eMb2bvHyft7rQqXNulptqYSIrDyl7tFz0vQzDahPPZMyw=
+	t=1725040672; cv=none; b=UITnVCsRN4aG6LNsGQKJmZM3xl4B2JFmJaU1ZbDU7pRsqCZseLFHhaJvDbTZpZfPptOk6CKw4jsLIaPr9OZvq943VWREHAHoKLYwlg3dOgieA6NTaDAkNrK80mnveG/XeVun35/NCWpwkwdjqwOvNtO8RDaA/mJW0C/Bw6z9Ujc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725040580; c=relaxed/simple;
-	bh=wESxdFugx2eesG5eK8a08iV4T0y3t+JDuu+QI5JHjBA=;
+	s=arc-20240116; t=1725040672; c=relaxed/simple;
+	bh=5vQbUdosrU/yTRdTrAox/PElYAJjmCmVJzOlgIjGJTU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=u12HH4tkYuJBOHdWaeWQxZegGRMaxa/CaO19z2Yv7G6AuMUlXAknsvyFZBT7lq+v377ShtijMGzU33OjXh3Vrv8hPRvwrvpUZ8Tx6HAmzzgAHvVdUXiFDhD3qbf+AW0rdIS1bFTZCynIRvGJGEaK1FH13W1qz3G7YNeGnXA1VsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qy4RASa9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01B41C4CEC2;
-	Fri, 30 Aug 2024 17:56:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725040579;
-	bh=wESxdFugx2eesG5eK8a08iV4T0y3t+JDuu+QI5JHjBA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Qy4RASa9rmg1r2gMoiBDyMU+J/wTEMAQmGusuEbQmvv+ZcYrikWf2k9kfE8TzjNQS
-	 Q64k/Z+wqgqSVJqagRSRd3FR6o0VsfeF9dMa4pVx/0h1S+g/v6QhQc5+JVZFdVHkhZ
-	 kTgkdUgKWhj+0Wu/TWrfZwVy6qZsrVWTnqQBv8NA9cXh1RXTpuK0l5FaXCjwT7EVkq
-	 CbHz05fQzBpNJeDDIwZwujKYAn766ZQniPD8Qy4ikG7KhfDUQLJYNQ/hkEW05F0e1g
-	 yMpDl9a8CqnoI29QDvXk9p+e5yjrn/nwt3UMLnV7wvK+zTrKBUS8kdHtuYqF2K0WIK
-	 PVaJh3MVwFbPA==
-Message-ID: <ecbea95e-e48a-4792-97cc-1c325cc7765e@kernel.org>
-Date: Fri, 30 Aug 2024 19:56:13 +0200
+	 In-Reply-To:Content-Type; b=l99f3GWYfthduGiL5DVjbUMQ+HpFXKo/J8y2cHTU88yIx3P1xO7v9nV+ZvIdlnlrEYPGwvoOkvbVG4zcLtejCwHhrfFzUFRbIifL+f+MOxtVXM8kIOm56LaFFjyewWuckCEVfu3TN7bD8HMMW/j+Mho8yB4jSidNTX6DAqOQgVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=timsurber.de; spf=pass smtp.mailfrom=timsurber.de; dkim=pass (2048-bit key) header.d=timsurber.de header.i=@timsurber.de header.b=MgYECC4u; arc=none smtp.client-ip=80.241.56.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=timsurber.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=timsurber.de
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4WwQpq3GlZz9spR;
+	Fri, 30 Aug 2024 19:57:39 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=timsurber.de;
+	s=MBO0001; t=1725040659;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rcXqt0dYIT9vRx69oGyb9WwTkuVz/EwOMSocKSZQGlM=;
+	b=MgYECC4utjEgVJSCS+UumB4MPCY/YW4L6q4p0FNVeCzidHhxVjefQlEqGGykmcVMMnbeAU
+	81IDHm16l3ILUnbwxFRh6SbePow2F2JwmwX7XDu0uPRP2MoM9BJKTnjenpWQg1pyKlr7SU
+	s2HmeXXoD2UWMzXru/bOiJZOiFszPcUKPL4dyt+iWg91apiCgZJU+Y1NE4/2ATEcUCtPr4
+	yt5AZi7NiZFeaYyvt4IFjfCMVEU4j1N4oynnnxCvYOWuGjN/e0wkjWAPNr71Ud2fA5OLSx
+	Vn1h29Q8rxzAm2rWkWRwYYS9iKR6YEoRFpDQohhdGhq9pOFRQZbiwsROf47cAw==
+Message-ID: <f7f30cbc-1bae-440e-b6e5-d50f2deb8847@timsurber.de>
+Date: Fri, 30 Aug 2024 19:57:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] irqchip: madera: Simplify with dev_err_probe()
-To: Yan Zhen <yanzhen@vivo.com>, ckeepax@opensource.cirrus.com,
- rf@opensource.cirrus.com, tglx@linutronix.de
-Cc: linux-sound@vger.kernel.org, patches@opensource.cirrus.com,
- linux-kernel@vger.kernel.org, opensorce.kernel@vivo.com
-References: <20240830084620.396417-1-yanzhen@vivo.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v2 2/2] arm64: dts: rockchip: Add RGA2 support to rk3588
+To: Jianfeng Liu <liujianfeng1994@gmail.com>,
+ linux-rockchip@lists.infradead.org
+Cc: Diederik de Haas <didi.debian@cknow.org>,
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+ Stephen Rothwell <sfr@canb.auug.org.au>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240604163408.1863080-1-liujianfeng1994@gmail.com>
+ <20240604163408.1863080-3-liujianfeng1994@gmail.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240830084620.396417-1-yanzhen@vivo.com>
-Content-Type: text/plain; charset=UTF-8
+From: Tim Surber <me@timsurber.de>
+In-Reply-To: <20240604163408.1863080-3-liujianfeng1994@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 4WwQpq3GlZz9spR
 
-On 30/08/2024 10:46, Yan Zhen wrote:
-> Switch to use dev_err_probe() to simplify the error path and
-> unify a message template.
-> 
-> Using this helper is totally fine even if err is known to never
-> be -EPROBE_DEFER.
-> 
-> The benefit compared to a normal dev_err() is the standardized format
-> of the error code, it being emitted symbolically and the fact that
-> the error code is returned which allows more compact error paths. 
-> 
-> Signed-off-by: Yan Zhen <yanzhen@vivo.com>
-> ---
-> 
-> Changes in v3:
-> -Rewrite the subject as 'irqchip: madera:'.
-> 
->  drivers/irqchip/irq-madera.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/irqchip/irq-madera.c b/drivers/irqchip/irq-madera.c
-> index acceb6e7fa95..d5ad4466a140 100644
-> --- a/drivers/irqchip/irq-madera.c
-> +++ b/drivers/irqchip/irq-madera.c
-> @@ -199,9 +199,8 @@ static int madera_irq_probe(struct platform_device *pdev)
->  		ret = regmap_update_bits(madera->regmap, MADERA_IRQ1_CTRL,
->  					 MADERA_IRQ_POL_MASK, 0);
->  		if (ret) {
-> -			dev_err(&pdev->dev,
-> -				"Failed to set IRQ polarity: %d\n", ret);
-> -			return ret;
-> +			return dev_err_probe(&pdev->dev, ret,
-> +						"Failed to set IRQ polarity");
+Hi Jianfeng,
 
-Another example, one of many from @vivo.com, where you touch one line
-and leave everything else.
+I've tested RGA2 now for a while on a RK3588 board and it works correctly.
 
-Are you going to send 5 different patches - one per each line? It's
-nonsense.
+Of course it has to be updated and moved to probably rk3588-base.dtsi now.
+
+With this done:
+
+Tested-by: Tim Surber <me@timsurber.de>
 
 Best regards,
-Krzysztof
 
+Tim Surber
+
+On 04.06.24 18:34, Jianfeng Liu wrote:
+> RK3588 also features a RGA2 block. Add the necessary device tree
+> node.
+>
+> Signed-off-by: Jianfeng Liu <liujianfeng1994@gmail.com>
+>
+> ---
+>
+> Changes in v2:
+> - Sort node by bus-address based on next-20240604
+>
+>   arch/arm64/boot/dts/rockchip/rk3588s.dtsi | 11 +++++++++++
+>   1 file changed, 11 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3588s.dtsi b/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
+> index 6ac5ac8b48a..beebc4dc0e7 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
+> +++ b/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
+> @@ -1159,6 +1159,17 @@ power-domain@RK3588_PD_SDMMC {
+>   		};
+>   	};
+>   
+> +	rga: rga@fdb80000 {
+> +		compatible = "rockchip,rk3588-rga", "rockchip,rk3288-rga";
+> +		reg = <0x0 0xfdb80000 0x0 0x180>;
+> +		interrupts = <GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH 0>;
+> +		clocks = <&cru ACLK_RGA2>, <&cru HCLK_RGA2>, <&cru CLK_RGA2_CORE>;
+> +		clock-names = "aclk", "hclk", "sclk";
+> +		resets = <&cru SRST_RGA2_CORE>, <&cru SRST_A_RGA2>, <&cru SRST_H_RGA2>;
+> +		reset-names = "core", "axi", "ahb";
+> +		power-domains = <&power RK3588_PD_VDPU>;
+> +	};
+> +
+>   	av1d: video-codec@fdc70000 {
+>   		compatible = "rockchip,rk3588-av1-vpu";
+>   		reg = <0x0 0xfdc70000 0x0 0x800>;
 
