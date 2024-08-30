@@ -1,87 +1,183 @@
-Return-Path: <linux-kernel+bounces-308041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F38D0965674
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 06:38:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0328996565B
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 06:36:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A99D61F242C6
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 04:38:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A473B22082
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 04:36:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8392C166F06;
-	Fri, 30 Aug 2024 04:36:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFDEE14D296;
+	Fri, 30 Aug 2024 04:36:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PaV4FV3z"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="I3jTaKVv"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2780C15CD4D
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 04:36:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A614142624
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 04:36:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724992582; cv=none; b=PPGpGdExfFKk6eBIpvGexFevRtnHi7eGV2XHsgzA8R9PvozfzHqIq/AHxYRCTLSXHWNo6qd0cTSJVDRWAWb+Mlgriw3gYf8icziA9NQ0ki0vsqf94Fnaq5mtlVo+dHJffmVRR+Ke42GnH1h8+vQJr8nTFBIZYAxKkH5D9n/BXgc=
+	t=1724992567; cv=none; b=qravYjtEsoaJLRemCnA1BPqPL/aYQ7qL14SrUoYux6igf6f/5PZ17/bTO0+Ly2E7ZMfIDWCROTRUzPi3LLS4b/IlwNO4qz1brDbiejF4vClXkHGaJbhkZCzHvke984AtltGxjDWNYjgEgvBia3yN2CCEjLPFw/sSmOfOOFkDEJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724992582; c=relaxed/simple;
-	bh=HJ1J3DG8YKPkZK5xlFm3cde9CtJ0eqnDLgKsmATOB5g=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=XsjDNXKCCIdNna87iRLRiSQzzNJmRYD53tmlaRVMjl+/1iusOJPVDK93UMklMqIATY/ZIUUzCuReOKUIVYtxmE7qoO7jP+wbuLHJrZP27/j6Umalf5+xuAeflN0CcFcsvUWvVlPT8K46ShNMpihIafJzDuV0/TKqIvovip/NhN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PaV4FV3z; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-533461323cdso1686362e87.2
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 21:36:20 -0700 (PDT)
+	s=arc-20240116; t=1724992567; c=relaxed/simple;
+	bh=Led2wy/kfxWSht1BA326pNMoaxCFzvQe40FiQLSX4f0=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=WXlTdtmxl0FnxYazUuDd+Yn0i6g05bvGWEEyVY+s5/vxrwtKL6gSHCv2G61bh3RBEHegRTD0MAZgjcTwSFcKHUlvF1C7WGBICY6lb/ZKaCxqeJKvM0jbNX7R7ccpSykuSIH4aA9TLvUT4cNwwIw/0f8EEd5IkOU1JILJeOxUAvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=I3jTaKVv; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e02b5792baaso2368622276.2
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 21:36:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724992578; x=1725597378; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=HJ1J3DG8YKPkZK5xlFm3cde9CtJ0eqnDLgKsmATOB5g=;
-        b=PaV4FV3zShLpKc1sY7rAk2clMEe1SndAP6zymMkEL+gQpvQ+exztgoQ5k8p3ltgwZt
-         +97YqjB9dBvYXV9/xud+Zby9Rt4+6v8GjKhb7lZAeQAMgN7KHi0tQQTBv45IumpvXgOH
-         T4OVi//z1TOxLK50lEb3XeaxUOJ/eK8K7cSVzhVRhwAplGdKIU5akkdvQUi/EnkCFYmx
-         0Qhi4i/fUkJj3G6zlFoCygXR+RhW9LA8sl6JuMRFeXVDS11culYspiXQZqgEl9FY8Uk9
-         s82xM2lh7lDX7tUj3Sz+KB7SoLMNzT4LMDjHyWgoouRzCYjrjBG9YLIvgFTbs9uSabAz
-         fxtQ==
+        d=google.com; s=20230601; t=1724992564; x=1725597364; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0RRTA1H5OtG+8qgMxGB5BU8t5Dbb6+roBouJjwlrdgk=;
+        b=I3jTaKVvSwE/KtQ7Gjb5BfgeW74AbMZXdMd50OELHdNaXPqphorlBhHngKTTsDt8kH
+         mfT7xURAbwQC0l4fGw/gBCnRqED/xIkkY+cFhV1sfEPn/xxNO5znQc7dcXU8yit2lNcw
+         F4Wf1Zb4Lr9ICRtn+7IvQB8RbjFu2dgl2iFE3C62GJiWT/Oi+zKaPFyaJMWy1i+ZtDo5
+         An/HH50oUxq9frz0zjzWRsEsGICBIf2SzJ6oSHcVM/jYu7pNVhAnvEtMn47bPwOq7iNB
+         voFePML9lE8wAZxLZe+oUMFH4BoSm3AsSxs6+os+3R8rTCZui2Y+dRUAZgDge/16vrSy
+         V6pg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724992578; x=1725597378;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HJ1J3DG8YKPkZK5xlFm3cde9CtJ0eqnDLgKsmATOB5g=;
-        b=PKhDPFHySajFu+usDYH7J71ZE2iHa6MLuuROryHDe++yutbRHtdX0s1azzWww1kg37
-         tcXaFqQ9DO3+p/LQ7mIQPLSOV6FFAyCTunaixKAk28HfbX3wN4qNIEezmWN8uG2kjNt1
-         heXSvIJav7AO5a6O4Aomd7NI+iGXfVYpM/vo6uNWtjCaBMGIagGiclk54Mj9j+STIumn
-         Ecr+t9UsUX14OPeEJLUkIclL57UlqE4qwovDmVZyNY547fRIErOcA7cGQcOeF7EsdP6+
-         yA36cxoC9o4aEkL2RQH0oxg/VVf8UKDMytyru+Qm1QIKO1pn3A/DHTtgbD4/qBx1IqfE
-         xVbg==
-X-Gm-Message-State: AOJu0Yz4zpOqK9/gASi/3daRv6z39W/ojfPtC9GqixZW1McMlL+EK2We
-	TSD+/Qnrpy2p8Z2pfuAeFTcjkWbaIkzRtXQSy4Qcw5qytLLHSG/cA1rTZAAS7d2WXfz9Mas9zBN
-	bRPrFZd092IKqIFbpesAqxJ2JohVJR67K
-X-Google-Smtp-Source: AGHT+IEwPtUF4qRSUJYoOB0nZtjA8uscO/MP+ti/GvD1TO9t6pYmrUuyBtlLoRqeoI1ZHAYuF9KzMVQa9Pksgbno7a0=
-X-Received: by 2002:a05:6512:ad1:b0:52e:9f76:53dc with SMTP id
- 2adb3069b0e04-53546a59f62mr500708e87.0.1724992577587; Thu, 29 Aug 2024
- 21:36:17 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724992564; x=1725597364;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0RRTA1H5OtG+8qgMxGB5BU8t5Dbb6+roBouJjwlrdgk=;
+        b=MDcuBDE5XMpiEiOyDt3uTKFD1R52oSVxdb1ukDzfEHw1opXMrBQK52bkiexLIwMzM2
+         ippKxs7x9WEcHyBjkdUoG/cf1bFzrZBm7xepkrbQ+PPvwdvUMt8D98jrHrXaE8o/0Hmw
+         waUifPkJoPeNhd8W1kZkL2qZZhT27uUZRXh9XsaEaW9TbGTarhIwJVHMzup+A7UtSoDY
+         xhzL1l0SSsIjfkik+RrqOmk+gZkShsKiO34hGgvuEbGDC3VD68eWrFv7KVLY4JORGCi1
+         +CBlj10nc584EFIqSnOE5/z77rFqs7lgHHweltZMIhrBTA236Lumr/YiF8rP2g+IjQqF
+         bmFg==
+X-Forwarded-Encrypted: i=1; AJvYcCUTJ1Bhws0Q4IXjjtr8jG4cVsF4he2Dq6Dypxt2avwb9D4gPKS5iOIBuUQZ+1vW0luxVDj9Rwf691asmq0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRdoMwDMJa+UllTeMHdSaBznhBzG2VD/lH7XlYGJwvR5jGAENo
+	P/sPNGnIogE4z3F+GjdCibgDlE3/mS7EWB5gKU0Dzh0W/EH4GrLOssVx/YHCR9lK4+VMu/FbTwx
+	DOQ==
+X-Google-Smtp-Source: AGHT+IG+hqynsJ7hdgdKV9gAtkROKS2qGVXayEmYSbfKtO5Jo9FgRfejcOxvLz+XMdzoh9wRJFEwtKQxRPs=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a25:278a:0:b0:e0b:a712:2ceb with SMTP id
+ 3f1490d57ef6-e1a79ff35c5mr30969276.5.1724992564279; Thu, 29 Aug 2024 21:36:04
+ -0700 (PDT)
+Reply-To: Sean Christopherson <seanjc@google.com>
+Date: Thu, 29 Aug 2024 21:35:50 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-From: Lee Thomas Stephen <lee.iitb@gmail.com>
-Date: Fri, 30 Aug 2024 10:05:38 +0530
-Message-ID: <CAG7s96VLsbPoa5ihEu=b3kU51x3XSe24x5XkxMg8cQ2aYtJ22g@mail.gmail.com>
-Subject: [Off Topic] Hello World
-To: Linux Kernel Malining List <linux-kernel@vger.kernel.org>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.46.0.469.g59c65b2a67-goog
+Message-ID: <20240830043600.127750-1-seanjc@google.com>
+Subject: [PATCH v4 00/10] KVM: Register cpuhp/syscore callbacks when enabling virt
+From: Sean Christopherson <seanjc@google.com>
+To: Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>, 
+	Oliver Upton <oliver.upton@linux.dev>, Tianrui Zhao <zhaotianrui@loongson.cn>, 
+	Bibo Mao <maobibo@loongson.cn>, Huacai Chen <chenhuacai@kernel.org>, 
+	Anup Patel <anup@brainfault.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Sean Christopherson <seanjc@google.com>
+Cc: kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	kvmarm@lists.linux.dev, loongarch@lists.linux.dev, linux-mips@vger.kernel.org, 
+	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Chao Gao <chao.gao@intel.com>, 
+	Kai Huang <kai.huang@intel.com>, Farrah Chen <farrah.chen@intel.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-It is great to see citizens of the world of many countries of many
-races and genders collaborate without fear and in peace.
-Problem Solving is one area that people here excel at.
-What if they could do something about problems like violence between
-and inside countries of the world?
-Please think about it.
+Register KVM's cpuhp and syscore callbacks when enabling virtualization in
+hardware, as the sole purpose of said callbacks is to disable and re-enable
+virtualization as needed.
 
-=E2=80=94
-Lee
+The primary motivation for this series is to simplify dealing with enabling
+virtualization for Intel's TDX, which needs to enable virtualization
+when kvm-intel.ko is loaded, i.e. long before the first VM is created.
+
+That said, this is a nice cleanup on its own.  By registering the callbacks
+on-demand, the callbacks themselves don't need to check kvm_usage_count,
+because their very existence implies a non-zero count.
+
+Patch 1 (re)adds a dedicated lock for kvm_usage_count.  Hopefully it's a
+temporary lock, as we can likely fix the cpus_read_lock() vs. kvm_lock mess
+for good by switching vm_list to an (S)RCU-protected list.
+
+v4:
+ - Collect more reviews.
+ - Fix documentation for kvm_usage_lock. [Kai]
+ - Add a blurb in locking.rst to call out that cpus_read_lock() vs kvm_lock is
+   a general problem.
+ - Add a paragraph in the locking patch to suggest switching vm_list to an
+   (S)RCU-protected list, so that walkers don't need to take kvm_lock.
+ - Add an example call chain for the other cpus_read_lock() vs kvm_lock issues
+   that are lurking.
+ - Enable the module param by default from the get-go. [Paolo]
+ - Rename even more APIs/symbols (all of 'em I could find). [Paolo]
+ - Clarify that it's the 0=>1 VM creation that's problematic, not simply the
+   creation of the very first VM. [Paolo]
+ - Document enable_virt_at_load, and call out the (dis)advantages of enabling
+   virtualization when KVM is loaded.
+ - Drop the WARN on kvm_usage_count being elevated at the end of
+   kvm_uninit_virtualization(), as it's annoyingly difficult to keep the WARN
+   and still allow arch code (i.e. TDX) to enable virtualization during setup.
+
+v3:
+ - https://lore.kernel.org/all/20240608000639.3295768-1-seanjc@google.com
+ - Collect reviews/acks.
+ - Switch to kvm_usage_lock in a dedicated patch, Cc'd for stable@. [Chao]
+ - Enable virt at load by default. [Chao]
+ - Add comments to document how kvm_arch_{en,dis}able_virtualization() fit
+   into the overall flow. [Kai]
+
+v2:
+ - https://lore.kernel.org/all/20240522022827.1690416-1-seanjc@google.com
+ - Use a dedicated mutex to avoid lock inversion issues between kvm_lock and
+   the cpuhp lock.
+ - Register emergency disable callbacks on-demand. [Kai]
+ - Drop an unintended s/junk/ign rename. [Kai]
+ - Decrement kvm_usage_count on failure. [Chao]
+
+v1: https://lore.kernel.org/all/20240425233951.3344485-1-seanjc@google.com
+
+Sean Christopherson (10):
+  KVM: Use dedicated mutex to protect kvm_usage_count to avoid deadlock
+  KVM: Register cpuhp and syscore callbacks when enabling hardware
+  KVM: Rename symbols related to enabling virtualization hardware
+  KVM: Rename arch hooks related to per-CPU virtualization enabling
+  KVM: MIPS: Rename virtualization {en,dis}abling APIs to match common
+    KVM
+  KVM: x86: Rename virtualization {en,dis}abling APIs to match common
+    KVM
+  KVM: Add a module param to allow enabling virtualization when KVM is
+    loaded
+  KVM: Add arch hooks for enabling/disabling virtualization
+  x86/reboot: Unconditionally define cpu_emergency_virt_cb typedef
+  KVM: x86: Register "emergency disable" callbacks when virt is enabled
+
+ .../admin-guide/kernel-parameters.txt         |  17 ++
+ Documentation/virt/kvm/locking.rst            |  31 +-
+ arch/arm64/kvm/arm.c                          |   6 +-
+ arch/loongarch/kvm/main.c                     |   4 +-
+ arch/mips/include/asm/kvm_host.h              |   4 +-
+ arch/mips/kvm/mips.c                          |   8 +-
+ arch/mips/kvm/vz.c                            |   8 +-
+ arch/riscv/kvm/main.c                         |   4 +-
+ arch/x86/include/asm/kvm-x86-ops.h            |   4 +-
+ arch/x86/include/asm/kvm_host.h               |   7 +-
+ arch/x86/include/asm/reboot.h                 |   2 +-
+ arch/x86/kvm/svm/svm.c                        |  19 +-
+ arch/x86/kvm/vmx/main.c                       |   6 +-
+ arch/x86/kvm/vmx/vmx.c                        |  10 +-
+ arch/x86/kvm/vmx/x86_ops.h                    |   5 +-
+ arch/x86/kvm/x86.c                            |  26 +-
+ include/linux/kvm_host.h                      |  18 +-
+ virt/kvm/kvm_main.c                           | 270 +++++++++---------
+ 18 files changed, 251 insertions(+), 198 deletions(-)
+
+
+base-commit: 15e1c3d65975524c5c792fcd59f7d89f00402261
+-- 
+2.46.0.469.g59c65b2a67-goog
+
 
