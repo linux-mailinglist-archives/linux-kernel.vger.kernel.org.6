@@ -1,112 +1,133 @@
-Return-Path: <linux-kernel+bounces-308488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0449B965DA3
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 11:55:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AE0F965DA7
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 11:58:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3A3C1F273A9
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 09:55:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C3BF1C22C53
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 09:58:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18DA3EEB7;
-	Fri, 30 Aug 2024 09:54:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="MruBwDWj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A73416D302
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 09:54:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19504170A06;
+	Fri, 30 Aug 2024 09:58:09 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22D38EEB7;
+	Fri, 30 Aug 2024 09:58:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725011684; cv=none; b=ZPcjO3Qv2daC13fOvjzymRwkz1Tq/xORp9MFQI2hqE2w5lNdwzoPw6EeWgiLZe1VqhBPRITy1kWh+fXAgKnJTedRgEXX+A23GfO3LjgnP8cBHvTdZkfKFLWgSB9O+5m7PkNGRwcxFx/Day5opPU5PSOQIGYRt+l/kP0eh9vXnlU=
+	t=1725011888; cv=none; b=FGVjbdrgDiwYDtTJEG8CWXMoD62A/tM2FLi0Fx6MfXVUs00Ap/UtL6lTt1ERw/uVhk5HODnZgFZJIr8R0bvGHwxfymQH7XUvGUTGaPShDB3jyHv9ynCTROVtfgjAMNyEnGR2znSE22E9d0cy4yZHJ5h4ylZlwtys8owp+sk3Eyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725011684; c=relaxed/simple;
-	bh=WCI0Vt9AB44ldzS+OK0FeFtsUPiajmnCOLbxk1FwJeM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E3f4L+j/lOfq5GLREziSsP3QgImwLoW8tC7Isu3Wl4JiYoWcchVrH+8lUGE2ngGuXBV6MyL0LhO2MvzzZuFyrKVotnR1scm06FEB7ITfZQOVDlzCS7nIZfm97BwIk3eJzKc8oHYAxW/J4mrJ2b8xQMT7PJKPvLbA39Gl/fWc4Gg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=MruBwDWj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24C76C4CEC2;
-	Fri, 30 Aug 2024 09:54:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1725011683;
-	bh=WCI0Vt9AB44ldzS+OK0FeFtsUPiajmnCOLbxk1FwJeM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MruBwDWjB6Cf2v2eQBOjAbDjvfxfmbDjD5r2OubO+mhO4s8Ka8Mro0QScCAGYRHMb
-	 Nbs6qqAyomlVQzlxDGnSakEj/47QyuDckqOeB1bWkB0xaNfSxPCThLxXXpi1xkxbXD
-	 dPS6XVVkP4IecsqMiBJA/ISHyl721M5fRgD44MdY=
-Date: Fri, 30 Aug 2024 11:54:40 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Uros Bizjak <ubizjak@gmail.com>
-Cc: linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rafael@kernel.org>
-Subject: Re: [PATCH] devres: Correclty strip percpu address space of
- devm_free_percpu() argument
-Message-ID: <2024083059-crummy-backrest-3b6c@gregkh>
-References: <20240830083406.9695-1-ubizjak@gmail.com>
+	s=arc-20240116; t=1725011888; c=relaxed/simple;
+	bh=o3aAKAo/Uo0zC6D4o15oa4oyPdGyHv9/ZZ0sRamhuBk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JOnQRRmMLpj5ZcFyiVMX0mj5kZe1kXjQLYkqBl+rpGt+Xtw7/TaYhGGy9WxbS09HmMaGH7JJz+UlSFUz7txPNY0KnAzHsVAUNeOLxJbqzPBJfLRUM68FbdulKPr0ZEkNvoOv2MoVY/D7JDYaTkaQQdoPmX5wwjJhxnK5kP/oUvc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 609BC1063;
+	Fri, 30 Aug 2024 02:58:31 -0700 (PDT)
+Received: from [10.57.86.160] (unknown [10.57.86.160])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 49AC63F762;
+	Fri, 30 Aug 2024 02:58:03 -0700 (PDT)
+Message-ID: <ea224d97-44bb-45d0-b7f1-71e6287d8a8f@arm.com>
+Date: Fri, 30 Aug 2024 10:57:56 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240830083406.9695-1-ubizjak@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] kselftest/arm64: Actually test SME vector length changes
+ via sigreturn
+To: Mark Brown <broonie@kernel.org>, Catalin Marinas
+ <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Shuah Khan <shuah@kernel.org>
+Cc: Shuah Khan <skhan@linuxfoundation.org>,
+ linux-arm-kernel@lists.infradead.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240829-arm64-sme-signal-vl-change-test-v1-1-42d7534cb818@kernel.org>
+Content-Language: en-US
+From: Andre Przywara <andre.przywara@arm.com>
+In-Reply-To: <20240829-arm64-sme-signal-vl-change-test-v1-1-42d7534cb818@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 30, 2024 at 10:33:52AM +0200, Uros Bizjak wrote:
-> devm_free_percpu() calls devres_release() with a pointer in percpu
-> address space. devres_release() expects pointers in the generic address
-> space, so address space needs to be stripped from the argument.
-> 
-> When strict percpu address space checks are enabled, then the current
-> direct cast from the percpu address space to the generic address space
-> fails the compilation on x86_64 with:
-> 
-> devres.c:1234:32: error: cast to generic address space pointer from disjoint ‘__seg_gs’ address space pointer
-> 
-> Add intermediate casts to unsigned long to remove address space of
-> the pointer before casting it to the generic AS, as advised in [1]
-> and [2].
-> 
-> Side note: sparse still requires __force, although the documentation
-> [2] allows casts to unsigned long without __force attribute.
-> 
-> Found by GCC's named address space checks.
-> 
-> There were no changes in the resulting object file.
-> 
-> [1] https://gcc.gnu.org/onlinedocs/gcc/Named-Address-Spaces.html#x86-Named-Address-Spaces
-> [2] https://sparse.docs.kernel.org/en/latest/annotations.html#address-space-name
-> 
-> Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+Hi,
+
+On 29/08/2024 18:20, Mark Brown wrote:
+> The test case for SME vector length changes via sigreturn use a bit too
+> much cut'n'paste and only actually changed the SVE vector length in the
+> test itself. Andre's recent factoring out of the initialisation code caused
+> this to be exposed and the test to start failing. Fix the test to actually
+> cover the thing it's supposed to test.
+
+Yes, I came to the same conclusion. The device I tested the original 
+patch on only had one VL, so the whole test was skipped, and I didn't 
+see the problem. Now re-tested on the FVP.
+
+> Fixes: 4963aeb35a9e ("kselftest/arm64: signal: Add SME signal handling tests")
+> Signed-off-by: Mark Brown <broonie@kernel.org>
+
+Reviewed-by: Andre Przywara <andre.przywara@arm.com>
+Tested-by: Andre Przywara <andre.przywara@arm.com>
+
+Thanks,
+Andre.
+
 > ---
->  drivers/base/devres.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>   .../arm64/signal/testcases/fake_sigreturn_sme_change_vl.c  | 14 +++++++-------
+>   1 file changed, 7 insertions(+), 7 deletions(-)
 > 
-> diff --git a/drivers/base/devres.c b/drivers/base/devres.c
-> index a2ce0ead06a6..2152eec0c135 100644
-> --- a/drivers/base/devres.c
-> +++ b/drivers/base/devres.c
-> @@ -1231,6 +1231,6 @@ void devm_free_percpu(struct device *dev, void __percpu *pdata)
->  	 * devm_free_pages() does.
->  	 */
->  	WARN_ON(devres_release(dev, devm_percpu_release, devm_percpu_match,
-> -			       (__force void *)pdata));
-> +			       (void *)(__force unsigned long)pdata));
->  }
->  EXPORT_SYMBOL_GPL(devm_free_percpu);
-> -- 
-> 2.46.0
+> diff --git a/tools/testing/selftests/arm64/signal/testcases/fake_sigreturn_sme_change_vl.c b/tools/testing/selftests/arm64/signal/testcases/fake_sigreturn_sme_change_vl.c
+> index cb8c051b5c8f..dfd6a2badf9f 100644
+> --- a/tools/testing/selftests/arm64/signal/testcases/fake_sigreturn_sme_change_vl.c
+> +++ b/tools/testing/selftests/arm64/signal/testcases/fake_sigreturn_sme_change_vl.c
+> @@ -35,30 +35,30 @@ static int fake_sigreturn_ssve_change_vl(struct tdescr *td,
+>   {
+>   	size_t resv_sz, offset;
+>   	struct _aarch64_ctx *head = GET_SF_RESV_HEAD(sf);
+> -	struct sve_context *sve;
+> +	struct za_context *za;
+>   
+>   	/* Get a signal context with a SME ZA frame in it */
+>   	if (!get_current_context(td, &sf.uc, sizeof(sf.uc)))
+>   		return 1;
+>   
+>   	resv_sz = GET_SF_RESV_SIZE(sf);
+> -	head = get_header(head, SVE_MAGIC, resv_sz, &offset);
+> +	head = get_header(head, ZA_MAGIC, resv_sz, &offset);
+>   	if (!head) {
+> -		fprintf(stderr, "No SVE context\n");
+> +		fprintf(stderr, "No ZA context\n");
+>   		return 1;
+>   	}
+>   
+> -	if (head->size != sizeof(struct sve_context)) {
+> +	if (head->size != sizeof(struct za_context)) {
+>   		fprintf(stderr, "Register data present, aborting\n");
+>   		return 1;
+>   	}
+>   
+> -	sve = (struct sve_context *)head;
+> +	za = (struct za_context *)head;
+>   
+>   	/* No changes are supported; init left us at minimum VL so go to max */
+>   	fprintf(stderr, "Attempting to change VL from %d to %d\n",
+> -		sve->vl, vls[0]);
+> -	sve->vl = vls[0];
+> +		za->vl, vls[0]);
+> +	za->vl = vls[0];
+>   
+>   	fake_sigreturn(&sf, sizeof(sf), 0);
+>   
 > 
-
-What commit id does this fix?
-
-thanks,
-
-greg k-h
+> ---
+> base-commit: b18bbfc14a38b5234e09c2adcf713e38063a7e6e
+> change-id: 20240829-arm64-sme-signal-vl-change-test-cebe4035856a
+> 
+> Best regards,
 
