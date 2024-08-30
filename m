@@ -1,113 +1,334 @@
-Return-Path: <linux-kernel+bounces-308917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E8EB9663B1
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 16:06:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 366B49663BD
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 16:08:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADC4F1C23392
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 14:06:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59C8B1C233AC
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 14:08:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ABFC1B1D43;
-	Fri, 30 Aug 2024 14:06:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1777A1B1D7B;
+	Fri, 30 Aug 2024 14:08:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JRsGyQhM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZDG5lHwe"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACDED1509BF;
-	Fri, 30 Aug 2024 14:06:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725026804; cv=none; b=d4cZlHzVyK/j48fs1s2Y5au36yb4q4UXjqvof5gxJmkFMKFGbHHaf9H8jsagjsi14LF9P3Y6m1dicgCQ4Kw6KvUlA/W/4TsqYYUML0HYIL6LWVWtOcgQKqsjxjGVHlXt9CGpLuhOoyKfX4A4rIbzUEWc1z/nSLIHFMd/laQtDK8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725026804; c=relaxed/simple;
-	bh=abEBYONWeURF/GdWgpitku0C1PUWqrVWKruQgBNNids=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=bSuWaBkuC4+tKc5UIpBXKNg0fXJcnJx0vunxcY9EFU/xfXxMtgJh5Maxg/dnE/UZTCFBpeGR51NUvYAi7wKXAy/oM4eXy1u6dGU4yFi/+OjnkPgTi79ThnOivU1pUI6tOOp3tJN26o5c3GG3jtq8CRbP9L5M/lovMO4gK1FGx4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JRsGyQhM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0035C4CEDB;
-	Fri, 30 Aug 2024 14:06:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725026804;
-	bh=abEBYONWeURF/GdWgpitku0C1PUWqrVWKruQgBNNids=;
-	h=From:Date:Subject:To:Cc:From;
-	b=JRsGyQhMxJ1Eiksxgq3fkcObUdJoTqTG4uppHFgc/flynZp/Ng2i0rJNC1WmYJiQw
-	 lKCXQOJtGBqX9Ydhb14NB7+nUu7M1v8c6D0MNDGF+kuYPTDMxjXfxDEi37XBEoJxnZ
-	 gcDortLTd7bpbZBpYHjZr7cBZcvrm7GZ84i8fMkiRCqnnDDNaNyp1CEVDsjMVCDwjW
-	 Cng+DMxucDyJ4EaY4Tm7j7IPhlqNGFRclc3pekYDYZj6On5Wk+3imu71iSj7AZezOB
-	 ksGXSSY3m6lzktK4XwjEmkE7KGTqq5592DW3v21wPk362CLBIoDICeQcaq6xGJR+rs
-	 peAVqTtOnsrSg==
-From: Mark Brown <broonie@kernel.org>
-Date: Fri, 30 Aug 2024 15:06:35 +0100
-Subject: [PATCH] selftest/vDSO: Fix cross build for the random tests
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26FEB17BB1E;
+	Fri, 30 Aug 2024 14:07:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.16
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725026880; cv=fail; b=alUdDjbjt8EFAAKXDZydh5QmblJSw/nOi6+AvqZUOlXaSlt+JCDyyYsUrLstoOZU1qwagWUtzxMZqX8ionGIIleSl5DFiB2aIQ7U/ykLEISxSQ1vowlxU373VJWl/7CosrYRUfwp25ZlqBJOMgtzteknjuUnrhfhPbr+Uwfis0c=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725026880; c=relaxed/simple;
+	bh=spGXc46EntNutza4nWJuTQmTWYyiQfgS2EVZC3zSmG8=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=QRqWf6FqeRxbQBpL9xonOxmWaiQ77g4e/iYNh68MjZln8hubKz1dl+qo6uXGZnzrJ7gU/5eVL64UVHjVAVyFgDSAehJ3/NwcJl3KyqKRQRkk/PNrx6A2OPKDbO8zVvIUhVVXs4/Ph7tz+NKqEuFBrKg5cXG5VESJS5Id9jJJwJU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZDG5lHwe; arc=fail smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725026879; x=1756562879;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=spGXc46EntNutza4nWJuTQmTWYyiQfgS2EVZC3zSmG8=;
+  b=ZDG5lHwewSswoZ+iuXNhiVRbCd8BsULBC8t/wvlbHZIV9IYX6YuAyl4W
+   xLjRluOgR3in9C88iNXDSzmQRQCNHF33iEiqHMAe1QrBRfYISzqGU4eT7
+   jwySpEbMieXxwPvHjV3Cq6U2hmv5Y4hyBo6hsd/qCELiRqF36A8+lt19s
+   AweX0jbWoy6R4DZ7UJ0hJwTv5ISeiBAuK4cUemUGy4i+avW4q9ZhU/CWB
+   az69XHWiq9VgDYbvsTY72AI2cOc5QzRxcninHJrDVrbabbMaA5YErYYOI
+   zg9Q+p5Kq4MogruZ6GFef/TqTkfTEM77mz6dCNwsAYBNghppUfmO/y/tO
+   A==;
+X-CSE-ConnectionGUID: jdBn9WcNTWSZ+HtJeSeE4Q==
+X-CSE-MsgGUID: sntPFV9MTPu46RnuXrH0AA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11180"; a="13298366"
+X-IronPort-AV: E=Sophos;i="6.10,189,1719903600"; 
+   d="scan'208";a="13298366"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Aug 2024 07:07:58 -0700
+X-CSE-ConnectionGUID: N20bNCLgTw2ZCCHOn188qw==
+X-CSE-MsgGUID: 5F3HmzoiT0WCaaLpfB39yA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,189,1719903600"; 
+   d="scan'208";a="63734176"
+Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
+  by orviesa010.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 30 Aug 2024 07:07:58 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 30 Aug 2024 07:07:56 -0700
+Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Fri, 30 Aug 2024 07:07:56 -0700
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.41) by
+ edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 30 Aug 2024 07:07:56 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ksnIGYZjJQaNF5p7kOxCUiRe4Esz//x6hd55TMTcGsv/QL/dd2cLH+0EviTBG1wTxveNz8w3cH0IK8oTITtk7lVCIKKwSuB0CJwPqBK1R9WkuvSByPPsFqbI9cD/V1C7xzbzQtfxygvSlH2+WS/Sucbi6OPTbg4y7cWVNswbj05TFs+VYs7JlSJdilS7VlzF3RMIpizhtyrEh9Qojlvk7F25rIFmoTyjY8oHvr4nlpDZ5iOUG6SvdEAMTht5TkM1ZEreTk054ugwSz5g4DnrVrsdz9s98vOPCgrgvx227h9arAIZgmSg5fVqx3GdJIv971EsQjwvl+Chx6ghKi5e5g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=P3s9QNZnAYBmNpTHxt/jYVFxHVmu7LPdzX7VogaKV7Y=;
+ b=oDV9pB4TukcZswDAUlD/PWPMMBI0rZgmgUwv2KpP59i3gyHhDM3xuKSi5YWB3qcW4Uf7lugLOnu4BGryENv971a+mUd/pKW/vmAsoOk4VM5DvJYFp/E0B914qdXYmFCLJ+jR44dvQOnQYAIwDRK6u42OZ3YeRGvrLzwg3LpTz21PkEJDSnLjwSG2aQLn9cuuocSpo9jrHD7Xv/+sbfKgvtko5Tk9UOvhI3xSWdQ32tYBipjzpoku2suXBTFsddJKoatEttuwQvmeXeuIwgAsGLF4IYHG15Evr6jR98jiXQBA3BcIWOdKvD1+SlekxTU+FFb4QJ99ftyf5Ry57lU8pA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS0PR11MB8718.namprd11.prod.outlook.com (2603:10b6:8:1b9::20)
+ by CY5PR11MB6258.namprd11.prod.outlook.com (2603:10b6:930:25::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.30; Fri, 30 Aug
+ 2024 14:07:52 +0000
+Received: from DS0PR11MB8718.namprd11.prod.outlook.com
+ ([fe80::4b3b:9dbe:f68c:d808]) by DS0PR11MB8718.namprd11.prod.outlook.com
+ ([fe80::4b3b:9dbe:f68c:d808%5]) with mapi id 15.20.7875.019; Fri, 30 Aug 2024
+ 14:07:52 +0000
+Message-ID: <728d4ad3-bd32-4bbe-bbd1-cd2c62df1fad@intel.com>
+Date: Fri, 30 Aug 2024 16:07:20 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v3 3/6] net: ti: icssg-prueth: Add support for
+ HSR frame forward offload
+To: MD Danish Anwar <danishanwar@ti.com>
+CC: Andrew Lunn <andrew@lunn.ch>, Dan Carpenter <dan.carpenter@linaro.org>,
+	Jan Kiszka <jan.kiszka@siemens.com>, Javier Carrasco
+	<javier.carrasco.cruz@gmail.com>, Jacob Keller <jacob.e.keller@intel.com>,
+	Diogo Ivo <diogo.ivo@siemens.com>, Simon Horman <horms@kernel.org>, "Richard
+ Cochran" <richardcochran@gmail.com>, Paolo Abeni <pabeni@redhat.com>, "Jakub
+ Kicinski" <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>, "David S.
+ Miller" <davem@davemloft.net>, <linux-kernel@vger.kernel.org>,
+	<netdev@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<srk@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>, Roger Quadros
+	<rogerq@kernel.org>
+References: <20240828091901.3120935-1-danishanwar@ti.com>
+ <20240828091901.3120935-4-danishanwar@ti.com>
+From: Alexander Lobakin <aleksander.lobakin@intel.com>
+Content-Language: en-US
+In-Reply-To: <20240828091901.3120935-4-danishanwar@ti.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: ZR0P278CA0181.CHEP278.PROD.OUTLOOK.COM
+ (2603:10a6:910:44::14) To DS0PR11MB8718.namprd11.prod.outlook.com
+ (2603:10b6:8:1b9::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240830-vdso-chacha-build-v1-1-78f93d2a142f@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAOrR0WYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDC2MD3bKU4nxdoBQQ6SaVZuak6FqkGJtbWCalmVmaJisB9RUUpaZlVoD
- NjI6trQUAxS5RS2MAAAA=
-To: Shuah Khan <shuah@kernel.org>, "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Mark Brown <broonie@kernel.org>
-X-Mailer: b4 0.15-dev-37811
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1593; i=broonie@kernel.org;
- h=from:subject:message-id; bh=abEBYONWeURF/GdWgpitku0C1PUWqrVWKruQgBNNids=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBm0dHxCKnbF4HVb7+ZyWJRSFnXLyRXFqig2i34/S1C
- pJIuiMOJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZtHR8QAKCRAk1otyXVSH0OC7B/
- 4hi9Hayq1LNVE3MLEl3QmzakeufvKlzwofo9PS4WWX3MsT/R85SiuMrg8u30C78MVNUE4+8BIa8aM9
- qmJIm3fkB6A50fER9q8sy4GvpLDfK3UB4C/1pVP79JRYPQAdbwu4/qe/K8Do2YI3anYMNDjz7ycNYK
- SMMVKztczfNb74s6uz0tOecfdYEbi35Vk3jNF9cfZ7L8jpt3JZJycS0qF/1wMvQg6dURk7bqL4K7r7
- iM7rS8n2zzwvwOSqV5tZGwlozoip+Pic8ZFx5xnkPgXTX5bTdt4FLR5yp8L7brAJBhLc6iNgNJfdJ6
- wAtT2m8kL/o5OG+zESw3Zw2tCWHPLt
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR11MB8718:EE_|CY5PR11MB6258:EE_
+X-MS-Office365-Filtering-Correlation-Id: 852a2c75-63d6-4f4e-daf5-08dcc8fd2315
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|1800799024|376014;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?YUVHcERhUThtc3BidEpQM2lsRFljb1FON0J2K2RHTFR4Y2M0R3hCOEJ1Wkkx?=
+ =?utf-8?B?K2dhRnRCNC82NjVhTVYySG9VY01YeG1meHhCZXVXLyt2ZC80MU9LU0tsa2ZQ?=
+ =?utf-8?B?UXFCNjNVdDVvZ1gwaGFuaEgxbnh0dXRQcWRUQVRKYVNTazZWWDRVaGE3a2VW?=
+ =?utf-8?B?SGpNMjlWTHJlclRWYjBMT200NnVVVEFLTU9NSjNCdVBqeXBvZzR0ZVdNNi85?=
+ =?utf-8?B?cmpLRFhMUkduVi9wUkxLSFlBVytmUkdNTy9Gd0xtQldzeUNZS1kvSU1qQWM2?=
+ =?utf-8?B?LzZCMUhwZWdQLzNaL1JTUWFaN1k1aW1wU05ISjlTMG5McmVVUmtrcm1Uc0Ro?=
+ =?utf-8?B?Sy9RbDdRQ1hVYzFYQjY0NUdmcUsvSU9PQ2NtL1dLT1QydmUvaEV2K083ZzNF?=
+ =?utf-8?B?N0twaWR4VUZxMEZmMzkrWFkxRm0xbkV4MzBhVjVWOGQzTEI2Ry9BQ29vQVhU?=
+ =?utf-8?B?ZU54bGZQY21yTFBLTlJsdVdVN010SW9mK3R1MXJJRnZub3JhNnNDZVZ0OVRm?=
+ =?utf-8?B?ZkxDTlNwUUs5UkN0THlDL1owSE54VWx5WDZRRlZ0OGp1bVdZMnhiRE9CTGhV?=
+ =?utf-8?B?NHQySzZnRUgwOW8zbDAydWVlZmVXSWoyd3lLNlNaZjE3S21kbExYU2o5eEw3?=
+ =?utf-8?B?SGNxdUFydkJxQjg2Zm9JNGtQWEFKV0M3Q09GM2pyNWcya25FQXZXMFlBZHJl?=
+ =?utf-8?B?VW9tN2IxUWlBL1RYNTY2SHNTYnFxanY2RXl4V1BmK0VjRTByNU1GZEprTUlE?=
+ =?utf-8?B?R3NvWFp4REh5WWZlVE5UZEM3OTBVYkxybW85anVZQ2dtcWs1Z3c5c0g2MzZt?=
+ =?utf-8?B?NjhGYmFoU3ZFL2orbVJydGZiZWRBdmdIYXRXMEkzVThzSmRna1RubDBOalpi?=
+ =?utf-8?B?TllWZnFGbDVZRkErKy83NEF4VytMenJ0VnN0T2VqUmtBamQ4cmRIN3JiZXNB?=
+ =?utf-8?B?eUh1R09lTHgyMXJGNURiMTk1a0d5K0dhUUZtVmRFME5jMnh3OThlNnZJaUJG?=
+ =?utf-8?B?STB4bE53RGUxcXZLdnprWThJbEZtdEJxYjBJZjVlNS9WRldDUi81TDU0MDBm?=
+ =?utf-8?B?ZlE1WCtrOFdyWFU4V2lpWXNuUlRQQjMvMkx5T3Zndlp0L1BrYXpiZGFyOEgx?=
+ =?utf-8?B?KzRlMVVGREhiZlh1QmRLN2w5QUJ6N2FBRXVtdC9jRUwrcE9tcElWc0dDa0tu?=
+ =?utf-8?B?cXFSK1I5U2NCK2hWdDMrWDFRRXdKUTYxWDJMNk8vUjVJZ1BKV2QrK3ZtYk1G?=
+ =?utf-8?B?SkxYc3hZMU9sTE9HUVljZUdHSHl4dks2NkpSN01RbjZ4ZGZMQ0tjaUpBRVFN?=
+ =?utf-8?B?blBubHdNQjZMQVVhNklYcmQ4UjdFNXREazBZRk8yeDNqc3NPc1RBQ3VvRmpV?=
+ =?utf-8?B?eTIzWFFaa0dNdkYzMlhIYlZ5Q2FUcmdYcGNUZEJqWWpOZEwvM3VMVUgwVk5E?=
+ =?utf-8?B?WTFFVFBjNjFvUXRBRHNvWTAydnByMDR5VW1PY3BvTGUvUGtaR2krV1pPUUYw?=
+ =?utf-8?B?K0gvczExcytqakZ2MjhtYVM1dWVQL2VtS0lMWkV4TVJOVlp0UlhUckRocURj?=
+ =?utf-8?B?eVN0SmZpbHFybWsvQlV0YXc2RWlBMG92TmxJaDlmbTEyUkw5SS9GdFlnc1Fq?=
+ =?utf-8?B?dThJdmJ6WGdSZjlTSjRUbUJoazBvbCt3eUMzR3RaNHZCWkt4WThUVDB0T2lV?=
+ =?utf-8?B?eTdpQ01ZUnY1VWc2TXpDZUVlaUJYVlpETm0yMDlKckxZNzdlaE9NVG9hTWNk?=
+ =?utf-8?B?RFZiTDVBMHFUb2trd2N2WWJlT0dONDB5a1ZaRkswbVJVZExMWnhUZGFQdFBV?=
+ =?utf-8?B?aHJPY2U3ck9mQkxlWXgwUT09?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR11MB8718.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?c0xURGtLNWQraU5UcFNiK2pTeksySkxGN0N1NVh3TEtvbVMvMVdZVHJGS2Q3?=
+ =?utf-8?B?Y3AvU3ZRMHJzVWxURE5qNXF0eDA5WGFHUEVicnU2TjZqNzhUMjJVOGJyTVpQ?=
+ =?utf-8?B?Nm9CKzFSRS9yL2srM0xoeDlPdG1BOFhPOXdGUlJVeEtLbW84ZytVamkxTUxJ?=
+ =?utf-8?B?R0FiZXFRQnRCWEV5ZHRuM1lPT1FkVmZnUlJGTTg5NDFhK2s1WFpFN3NQeCsx?=
+ =?utf-8?B?Z0ZXTUdVMWlrS0R5RlpDcUdaWU5idng1Mk9iaFRHaVZiYjZkbFowR0ZQaERI?=
+ =?utf-8?B?MmZaaEtML1NaRktMbi9sLy9MZEF1a1p1K3QyMjUwRS9GMEVOQXVUcXg5YzVO?=
+ =?utf-8?B?L2VRemNMOEsvVWFJT0Y0Y1pkQzVEckFKZVRkbDJSZUJvczlNdjFWQ2pTN1RC?=
+ =?utf-8?B?WFpWN3BNSExZNGVoM2VqamlSUXFpcDBWTmtyZmFNOEw4MUszclo4N3ZmcHNq?=
+ =?utf-8?B?aGdGL0lVWjI3NXc1RlBrOWlCN1FWZGJwR1hWSWRyYW9mV0JSL0YrQ1o4VHVk?=
+ =?utf-8?B?dzB3bWdOaThybmtLQjAxRkVjRzFPSm85NTMxWXNPNW9lK2srWit1aitHa3NR?=
+ =?utf-8?B?bUpmQXJXLzl4UStsM0ZYdlNqTnVpbnp6ejd5c085eEhGdTFTYTJqa1I1THdJ?=
+ =?utf-8?B?YzFkWVkrM1NtUkZCbzFWRjlQVWd6NE94bGdNckRXcjNGcXpwdDB4MzNIUXRk?=
+ =?utf-8?B?WkVsTUpXTmMwZE9ja1pBUHJocGJrWFVxSzFJZ09YcFdveUwvdnl0MWxDR1RH?=
+ =?utf-8?B?RzBYMTFmQnh3QnVZSUQvZUk4c29hcFQ2dHNPbm1FQ0djL01yVVhpTjIrbmJx?=
+ =?utf-8?B?N3RQL28wbFhUSURpc3pLQWt0N0I0WEV1UzV4M092QU1IY3NLdnVJb25nVWV3?=
+ =?utf-8?B?MFNFejBxQUkreit3MWRNQVVwdG04T1EzOEpYT1BjWittL2FWTEJ2WDc0Ulkx?=
+ =?utf-8?B?c0k3NTZmZzVEUTlQZ05DTUNkM3pYVnc4Q2Juc043RFhCa2p5VlA3MTVHRWlM?=
+ =?utf-8?B?MW1XbWEzNmFQK1NTbk9TUGE2VWlFcXg1Wmp1NlFmVlNHbE9MTXBaQmdXaFN0?=
+ =?utf-8?B?SEJFRDJvK25ZbFp0NksvbWhGWmlXbThSdWNGNnVXZHEwUHJjMklZNjBhK1ZR?=
+ =?utf-8?B?QjVzMVRkMjd1RC9MbnVFNWF6TmtPSzFYeGw2T3dOV21ZSitZM0MzTWl5TktL?=
+ =?utf-8?B?QzFPK2xpT3RGM2Erak8ybi9ieW9keE9uNm1Nc2pVM2J4UEFXUy9DOXczSlpa?=
+ =?utf-8?B?eGp1V2JpWlQ2MTZkY0ZhdndqQU4vN3F5N3dNTUpRSHV0UjZOQXJocmdUTkVS?=
+ =?utf-8?B?TnlsY0JqaERmdVovZ0Y2VHlaRDl0MWFzN1R2dW5UbkllYnovRU9NSzJNYWNQ?=
+ =?utf-8?B?TCtXczQ3a0FVMVBlQXc5YmlWSUVyWWNKV01iaGF2Z0dmTVdhZmVGU3dEUXBR?=
+ =?utf-8?B?WkRaYXZVQUVNNDRINkdMZkxLYmVCdFZvN1lLdXFjaFZ2aGtwQWFrUEowbEZt?=
+ =?utf-8?B?bUhuWFpMQlQ3U3dqTGp1THdSbEV3dHhwUDVwZXV5NEgzWTU0cFgzY2pORFpW?=
+ =?utf-8?B?U1NBbVNpUkJOYXdDSnR1KzQ4S2M5aGR5WXdmSHAwUVZ4WXNVaU1xNEdLVnNa?=
+ =?utf-8?B?WDZpUTBCaWpKZ0hBSTRTM0tYQnBTbzB1T0hTaHZyb0h1bjZGT29YbDhoTTR4?=
+ =?utf-8?B?K0M5ZFZnQTY4WEluekZNcTNLR1BGektnd3BFOGo4MVVTUzVIbjFJUmh5MnVP?=
+ =?utf-8?B?Vm90U1haekNLNC84TVpLdkVaUThIQzl3emw2L0ZJcE1Majg2aExqUTc2QWRF?=
+ =?utf-8?B?aFNGQllXam1PRERZbEkrTkl3VXpxQkg4WjJ6YXdGZHVWb095bkVaUWdwWG9Y?=
+ =?utf-8?B?UDNqVjRmOXlFWEREZTFNakhDWnRkVURCbkdnUlJsRGFXdXoyYm1MTzk1UVVW?=
+ =?utf-8?B?MEJUMVphSmNQVHdOTEtlM1FYRzhlQ2FmaWNyaERadEhMNTVrUmtUQ3NBV1Iz?=
+ =?utf-8?B?RnhST2xLS2VuSDJwNisvZURUMGpZbmNiRFplOVB2dDJFQmlGUGJWNCtnMHU3?=
+ =?utf-8?B?Zitsb25ybFNEL25SM2lSTzg5QTFqM2F2b2VjYjl4ZmhOZk8zbXRSTlVuWEsw?=
+ =?utf-8?B?L1hhdExZbGlpVU1YdUV1MnJER2FCditLM0xXMkdBbWtBcGhGVDI5RWRUOUxa?=
+ =?utf-8?B?Ymc9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 852a2c75-63d6-4f4e-daf5-08dcc8fd2315
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB8718.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Aug 2024 14:07:52.2009
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: n9dgtlw8UFJwKfBWc6W+sFhibPnMR3yJioeXITf0L40+xo2UC8rtURpWf7YzJ5kWFFOQ/me7GvTXYe3B2Wu5Q4zOUkjvpiITe1xHnEU+hts=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR11MB6258
+X-OriginatorOrg: intel.com
 
-Unlike the check for the standalone x86 test the check for building the
-vDSO getrandom and chacaha tests looks at the architecture for the host
-rather than the architecture for the target when deciding if they should
-be built. Since the chacha test includes some assembler code this means
-that cross building with x86 as either the target or host is broken. Use
-a check for ARCH instead.
+From: Md Danish Anwar <danishanwar@ti.com>
+Date: Wed, 28 Aug 2024 14:48:58 +0530
 
-Fixes: 4920a2590e91 ("selftests/vDSO: add tests for vgetrandom")
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
-The x86_64 build is still broken for me because nothing installs
-tools/arch/x86_64/vdso/vgetrandom-chacha.S (I beleive it's supposed to
-be copied from ./arch/x86/entry/vdso/vgetrandom-chacha.S but I don't see
-how?) but this at least fixes all the other architectures.
----
- tools/testing/selftests/vDSO/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> Add support for offloading HSR port-to-port frame forward to hardware.
+> When the slave interfaces are added to the HSR interface, the PRU cores
+> will be stopped and ICSSG HSR firmwares will be loaded to them.
+> 
+> Similarly, when HSR interface is deleted, the PRU cores will be stopped
+> and dual EMAC firmware will be loaded to them.
+> 
+> This commit also renames some APIs that are common between switch and
+> hsr mode with '_fw_offload' suffix.
 
-diff --git a/tools/testing/selftests/vDSO/Makefile b/tools/testing/selftests/vDSO/Makefile
-index e21e78aae24d..7fb59310718c 100644
---- a/tools/testing/selftests/vDSO/Makefile
-+++ b/tools/testing/selftests/vDSO/Makefile
-@@ -10,7 +10,7 @@ ifeq ($(ARCH),$(filter $(ARCH),x86 x86_64))
- TEST_GEN_PROGS += vdso_standalone_test_x86
- endif
- TEST_GEN_PROGS += vdso_test_correctness
--ifeq ($(uname_M),x86_64)
-+ifeq ($(ARCH),$(filter $(ARCH),x86_64))
- TEST_GEN_PROGS += vdso_test_getrandom
- TEST_GEN_PROGS += vdso_test_chacha
- endif
+[...]
 
----
-base-commit: 985bf40edf4343dcb04c33f58b40b4a85c1776d4
-change-id: 20240830-vdso-chacha-build-8d3789bf695c
+> @@ -726,6 +744,19 @@ static void emac_ndo_set_rx_mode(struct net_device *ndev)
+>  	queue_work(emac->cmd_wq, &emac->rx_mode_work);
+>  }
+>  
+> +static int emac_ndo_set_features(struct net_device *ndev,
+> +				 netdev_features_t features)
+> +{
+> +	netdev_features_t hsr_feature_present = ndev->features & NETIF_PRUETH_HSR_OFFLOAD_FEATURES;
 
-Best regards,
--- 
-Mark Brown <broonie@kernel.org>
+Maybe you could give this definition and/or this variable shorter names,
+so that you won't cross 80 cols?
 
+> +	netdev_features_t hsr_feature_wanted = features & NETIF_PRUETH_HSR_OFFLOAD_FEATURES;
+
+(same)
+
+> +	bool hsr_change_request = ((hsr_feature_wanted ^ hsr_feature_present) != 0);
+
+You don't need to compare with zero. Just = a ^ b. Type `bool` takes
+care of this.
+
+> +
+> +	if (hsr_change_request)
+> +		ndev->features = features;
+
+Does it mean you reject any feature change except HSR?
+
+> +
+> +	return 0;
+> +}
+> +
+>  static const struct net_device_ops emac_netdev_ops = {
+>  	.ndo_open = emac_ndo_open,
+>  	.ndo_stop = emac_ndo_stop,
+> @@ -737,6 +768,7 @@ static const struct net_device_ops emac_netdev_ops = {
+>  	.ndo_eth_ioctl = icssg_ndo_ioctl,
+>  	.ndo_get_stats64 = icssg_ndo_get_stats64,
+>  	.ndo_get_phys_port_name = icssg_ndo_get_phys_port_name,
+> +	.ndo_set_features = emac_ndo_set_features,
+>  };
+>  
+>  static int prueth_netdev_init(struct prueth *prueth,
+> @@ -865,6 +897,7 @@ static int prueth_netdev_init(struct prueth *prueth,
+>  	ndev->ethtool_ops = &icssg_ethtool_ops;
+>  	ndev->hw_features = NETIF_F_SG;
+>  	ndev->features = ndev->hw_features;
+> +	ndev->hw_features |= NETIF_F_HW_HSR_FWD;
+
+Why not HSR_OFFLOAD right away, so that you wouldn't need to replace
+this line with the mentioned def a commit later?
+
+>  
+>  	netif_napi_add(ndev, &emac->napi_rx, icssg_napi_rx_poll);
+>  	hrtimer_init(&emac->rx_hrtimer, CLOCK_MONOTONIC,
+
+[...]
+
+> +	prueth->hsr_members |= BIT(emac->port_id);
+> +	if (!prueth->is_switch_mode && !prueth->is_hsr_offload_mode) {
+> +		if (prueth->hsr_members & BIT(PRUETH_PORT_MII0) &&
+> +		    prueth->hsr_members & BIT(PRUETH_PORT_MII1)) {
+> +			if (!(emac0->ndev->features & NETIF_PRUETH_HSR_OFFLOAD_FEATURES) &&
+> +			    !(emac1->ndev->features & NETIF_PRUETH_HSR_OFFLOAD_FEATURES))
+> +				return -EOPNOTSUPP;
+> +			prueth->is_hsr_offload_mode = true;
+> +			prueth->default_vlan = 1;
+> +			emac0->port_vlan = prueth->default_vlan;
+> +			emac1->port_vlan = prueth->default_vlan;
+> +			icssg_change_mode(prueth);
+> +			dev_dbg(prueth->dev, "Enabling HSR offload mode\n");
+
+netdev_dbg()?
+
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static void prueth_hsr_port_unlink(struct net_device *ndev)
+> +{
+> +	struct prueth_emac *emac = netdev_priv(ndev);
+> +	struct prueth *prueth = emac->prueth;
+> +	struct prueth_emac *emac0;
+> +	struct prueth_emac *emac1;
+> +
+> +	emac0 = prueth->emac[PRUETH_MAC0];
+> +	emac1 = prueth->emac[PRUETH_MAC1];
+> +
+> +	prueth->hsr_members &= ~BIT(emac->port_id);
+> +	if (prueth->is_hsr_offload_mode) {
+> +		prueth->is_hsr_offload_mode = false;
+> +		emac0->port_vlan = 0;
+> +		emac1->port_vlan = 0;
+> +		prueth->hsr_dev = NULL;
+> +		prueth_emac_restart(prueth);
+> +		dev_dbg(prueth->dev, "Enabling Dual EMAC mode\n");
+
+(same here and in all the places below)
+
+> +	}
+> +}
+
+Thanks,
+Olek
 
