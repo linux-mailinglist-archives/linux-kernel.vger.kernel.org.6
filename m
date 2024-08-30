@@ -1,154 +1,149 @@
-Return-Path: <linux-kernel+bounces-308769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4E5396618D
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 14:26:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61C7696618F
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 14:26:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CBF3289791
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:26:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19C561F2824C
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:26:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5761199FBB;
-	Fri, 30 Aug 2024 12:23:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E40119ABB7;
+	Fri, 30 Aug 2024 12:23:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kitfTdpu"
-Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZJex0kCn"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7556B195985;
-	Fri, 30 Aug 2024 12:23:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD97D19ABAC;
+	Fri, 30 Aug 2024 12:23:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725020611; cv=none; b=tNOmy7NplYUAZTx7F2H5zaOPKdJFkWOneCSAwAi09IwMCHa/cO1+Kbizp43XlL0P0+Xd6VGVrshESH4YPv2rINCEV9zoz5Iq8zunfqdshkslEV6pIMiYvP3wB2TsC77kD4hzY/BL/zrpfmWtne8vHtw6QkZO9KMQVw60vRB2MeA=
+	t=1725020617; cv=none; b=gW0g9vm9AAPeskCC6JeMgglXZtMX6jOpz6MUf/pVRLRXwe6hayLHlI9sGD1VXXAYmManAKT552dCSDvrnMQsuqYcprF7floT6zJq+EzpDgA5FILGcjfjbS+sQ2PJMMNz7f1s705vVHnlfa336EJIeySFoaXYzGlEGa0Urba3zqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725020611; c=relaxed/simple;
-	bh=BlLyslQpDGEzBxuUDe8Cov1IXreDXWei8o6rlcjjJik=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CRUj4bKoFhBUWkwz+7xSAmHLhCjX4yMMxB4W/FGi1E0idksu1dl3LYqv+4/qwX/oLU+M6U73AeL3PMp6c7NhXJ9Ah9y0vfzAUu69cTGKtlST/zRZg/X0aX+0SoFM2FYSMkWbsFGw0S2KrW9QmtOhReKKB3NBaOb4iwy7m6GFWso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kitfTdpu; arc=none smtp.client-ip=209.85.219.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e165825ebfdso1734266276.0;
-        Fri, 30 Aug 2024 05:23:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725020608; x=1725625408; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ubwn7IgLAh1kgKkNxqu475mnJWVnidsj1Cts8mO7ZEg=;
-        b=kitfTdpup/HVzomLKblsw9asQZfTrh3xqonw0VFYnWJYvUsunVGHRoe+i1WmkVYIKD
-         hmJ0ozueT3PKUXxsUBU9t1GQL9JvFz261gRTnabFxtOXfm3KJjFMU9BvGfqogwZLDnzg
-         1a5exs56ojm7WZUJvtJaC5sySdevTcFcQHkb4J4A9Fg8vMDSgbG96u/zoHGFh5XkZa3V
-         O+erS8gID3bXKYIgGG5mp49QZp1qoXKGKiRDLVHiCU+wDVFnaYoA/LHZ2hZP8mXOj05H
-         XLcsNn8gkFwR4X/y+gooD5AnkR5SEe3WTHjCrsL6Fj3TpeTSE7yda0oGn11Xh7+bYAX8
-         0Sdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725020608; x=1725625408;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ubwn7IgLAh1kgKkNxqu475mnJWVnidsj1Cts8mO7ZEg=;
-        b=wmj+51Xeid78pFxcp4n6IF1KDDmjUPgI3Cc+XuZG3zGTjGSEGVBO9Al/Zd/MWnRbzF
-         KabclFzELwctBzqapHVsn7gWbOT+ewJ7hnKf4ughLMTmdVcf2z+31R1k3nIdbtD10LDj
-         tbQsuIijQPDWk+S+v5Nx2l5GuRMOXJQpMDrfu+py1tMYxrnEInRAknVf0gL5cd1a3Qir
-         sLf4oFa2vjsegetDBxSSfsEsLFK4Ry5varKbaDtS3WFcj3+JrHDyrO2y0V98UgWCa79r
-         d/xqI2mNDTt/bz4HZdtTIaT62u7subQA/b+8MxkFQkg6ImmG5Ur2LxXs/KQjkNA3WZJg
-         6d0A==
-X-Forwarded-Encrypted: i=1; AJvYcCUDRpyBWyVDeueaiQcfRM/DoY/AAEQ6LkCnRD8BigXivOXiHCO9txp/yrVo3kglpol8dfS3Q1tMHDfqTMPc9w==@vger.kernel.org, AJvYcCVlhzdYo/eoZXXRBV65ENSvfM1bfPgwsZiLoNIYYdRwk8F64nRPZp4iao/AAuo5OghlprBKtQJFV3K8fjw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHaDshTt0noqqGIlCRj3E61Wh1xSEmth3teH1e5cxZ5PbEKF26
-	87w6uO0iLgsSjXlKulxSgvmo7KNKSdBTm81dcvDFvmMt7rrdBXF3sYMhE4Ovp9lu8Bd/6fzdSUg
-	9yDyDlhdJzNKoBR+/k/xv0vX4H+/KDCZv+CA=
-X-Google-Smtp-Source: AGHT+IHTB+yOd4+mCdfPLF2/afYOkSh7cvSfBcQPadfdS+q/5wmplT1oDdKEYQtNW+IxYUeKU7q8XY1eQti43GTMalg=
-X-Received: by 2002:a05:6902:2586:b0:e04:e298:3749 with SMTP id
- 3f1490d57ef6-e1a7a025ecbmr2129733276.33.1725020608094; Fri, 30 Aug 2024
- 05:23:28 -0700 (PDT)
+	s=arc-20240116; t=1725020617; c=relaxed/simple;
+	bh=cxrQeFVCyW/V+8awK9/tTd4oB2KNPfWEV4kRyotwVsU=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=gJVNlcP95QkAVwD9cd7WO0HWEEGNmYe9rBvRorl2tYgK6leU/SmG96zMfGJBXmV8oUT8Gh/FQ7QI19ann4Anf2qN93XNZi2wjV/qb4N5Y5xrNThCpyTIVSeGMswOxtK0Gf/uYKII8yYyfqpY7FjJTll8abbEIYbbIZfN0N2bYnM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZJex0kCn; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725020617; x=1756556617;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=cxrQeFVCyW/V+8awK9/tTd4oB2KNPfWEV4kRyotwVsU=;
+  b=ZJex0kCnJz6gqfJKCbZjt5UBDlOWImjjgAi3wXtAYiJ8liiLB12AP6fD
+   1wv4EaSHQSmobMPV/jQCGe9ePHmq5RCMbPA1zMqvTIMSDHLe6FqxkTL9v
+   7+vxTw+oTyMm2d0r68RCfyOwSm3BtzMs24LFLk6Du49AZY9oV8ZyxAHxf
+   nCYtavW2OUKBE5suK/izd1xbPYNdNtzHIQcXDd/zjjM9Fdz9rk1hXet2F
+   ny2BODgScsas9WJ42cRawpnoYf0vbu9CqSpfBvfhMW0ESTBmQh/tsTQzw
+   D19/PjjmiF0yUydnsEi47/Ld50CRZAQnWujDHVgoBXlJQ3cAqAYB8AFtk
+   Q==;
+X-CSE-ConnectionGUID: mUmqHuP5SFSmKhS00cvecg==
+X-CSE-MsgGUID: 3YCGlbEXQje3LrHVVqmcZQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11179"; a="27422922"
+X-IronPort-AV: E=Sophos;i="6.10,188,1719903600"; 
+   d="scan'208";a="27422922"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Aug 2024 05:23:36 -0700
+X-CSE-ConnectionGUID: d/hHSfZ2SOKCjMdhZ5I6EQ==
+X-CSE-MsgGUID: NGJStJN1Sn6X9IfbN8Sc8Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,188,1719903600"; 
+   d="scan'208";a="68033775"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.245.174])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Aug 2024 05:23:31 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Fri, 30 Aug 2024 15:23:28 +0300 (EEST)
+To: Bjorn Helgaas <bhelgaas@google.com>
+cc: linux-pci@vger.kernel.org, Mahesh J Salgaonkar <mahesh@linux.ibm.com>, 
+    Oliver O'Halloran <oohall@gmail.com>, Lukas Wunner <lukas@wunner.de>, 
+    linuxppc-dev@lists.ozlabs.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v5 0/7] PCI: Consolidate TLP Log reading and printing
+In-Reply-To: <20240514113109.6690-1-ilpo.jarvinen@linux.intel.com>
+Message-ID: <076a7814-1ab9-a6a1-6b08-3f414595c6ba@linux.intel.com>
+References: <20240514113109.6690-1-ilpo.jarvinen@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240722101443.10768-1-feilv@asrmicro.com> <CAOQ4uxhP03BHK8gDmeySxkacGvy9BToZkb5nTgaegWxJPAuG8A@mail.gmail.com>
- <CAJfpegtPOgowkK5EHxNZnuHDo9AZTbF2-zxMc99rvWL44rdMXQ@mail.gmail.com>
- <CAOQ4uxiYGsKzMZ73=WLZqseU=ibboFtPfqpeGtmFWYY3uxjMvw@mail.gmail.com>
- <CAOQ4uxi-BuKU-AbyydVB2c8z0DiPP-Ednu+bN3JB2Cqf7rZamA@mail.gmail.com>
- <CAJfpegt=BLfdb5GRbsOHheStve8S57V9XRDN_cNKcxst2dKZzw@mail.gmail.com>
- <CAOQ4uxhtoAL43d5HcVEsAH2EtgiT8h6RkjymNhTcP5nnG1h09g@mail.gmail.com>
- <CAOQ4uxjkVcY7z8JCshmsCfn1=JUcxDG8vyJQ+ssdeBmGrZ=eKg@mail.gmail.com> <4ec356a473294dd3aab94a66c528eb2e@exch01.asrmicro.com>
-In-Reply-To: <4ec356a473294dd3aab94a66c528eb2e@exch01.asrmicro.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 30 Aug 2024 14:23:16 +0200
-Message-ID: <CAOQ4uxgKC1SgjMWre=fUb00v8rxtd6sQi-S+dxR8oDzAuiGu8g@mail.gmail.com>
-Subject: Re: [PATCH V2] ovl: fsync after metadata copy-up via mount option "fsync=strict"
-To: =?UTF-8?B?THYgRmVp77yI5ZCV6aOe77yJ?= <feilv@asrmicro.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, 
-	"linux-unionfs@vger.kernel.org" <linux-unionfs@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	=?UTF-8?B?WHUgTGlhbmdode+8iOW+kOiJr+iZju+8iQ==?= <lianghuxu@asrmicro.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/mixed; boundary="8323328-1575701497-1725020608=:1027"
 
-On Fri, Aug 30, 2024 at 1:52=E2=80=AFPM Lv Fei=EF=BC=88=E5=90=95=E9=A3=9E=
-=EF=BC=89 <feilv@asrmicro.com> wrote:
->
-> > On Thu, Aug 29, 2024 at 6:23=E2=80=AFPM Amir Goldstein <amir73il@gmail.=
-com> wrote:
-> > >
-> > > On Thu, Aug 29, 2024 at 2:51=E2=80=AFPM Miklos Szeredi <miklos@szered=
-i.hu> wrote:
-> > > >
-> > > > On Thu, 29 Aug 2024 at 12:29, Amir Goldstein <amir73il@gmail.com> w=
-rote:
-> > > >
-> > > > > But maybe we can ignore crash safety of metacopy on ubifs, becaus=
-e
-> > > > > 1. the ubifs users may not be using this feature 2. ubifs may be
-> > > > > nice and takes care of ordering O_TMPFILE
-> > > > >     metadata updates before exposing the link
-> > > > >
-> > > > > Then we can do the following:
-> > > > > IF (metacopy_enabled)
-> > > > >     fsync only in ovl_copy_up_file() ELSE
-> > > > >     fsync only in ovl_copy_up_metadata()
-> > > > >
-> > > > > Let me know what you think.
-> > > >
-> > > > Sounds like a good compromise.
-> > > >
-> > >
-> > > Fei,
-> > >
-> > > Could you please test the attached patch and confirm that your use
-> > > case does not depend on metacopy enabled?
-> > >
-> > > In any case, I am holding on to your patch in case someone reports a
-> > > performance regression with this unconditional fsync approach.
-> > >
-> >
-> > Well, it's a good thing that I took Miklois' advice to make the fsync o=
-ption implicit, because > the original patch had 2 bugs detected by fstest:
-> > 1. missing O_LARGEFILE
-> > 2. trying to fsync special files
-> >
-> > Please see uptodate patch at:
-> > https://github.com/amir73il/linux/commits/ovl-fsync/
-> >
-> > If there are no complaints, I will queue this up for v6.12.
-> > Fei, please provide your Tested-by.
->
-> We do not enable metacopy.
-> Tested this patch and it also solved our issue.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Hi Fei,
+--8323328-1575701497-1725020608=:1027
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-Thanks for approving.
-I added Reported-and-tested-by and pushed to overlayfs-next.
+On Tue, 14 May 2024, Ilpo J=C3=A4rvinen wrote:
 
-Now we just need to hope that users won't come shouting about
-performance regressions.
+> This series has the remaining patches of the AER & DPC TLP Log handling
+> consolidation and now includes a few minor improvements to the earlier
+> accepted TLP Logging code.
+>=20
+> v5:
+> - Fix build with AER=3Dy and DPC=3Dn
+> - Match kerneldoc and function parameter name
 
-Thanks,
-Amir.
+Hi Bjorn,
+
+A gentle reminder, could you take a look at this series (and perhaps also=
+=20
+the one which introduces the Flit mode support on top of this series).
+
+--=20
+ i.
+
+> v4:
+> - Added patches:
+> =09- Remove EXPORT of pcie_read_tlp_log()
+> =09- Moved code to pcie/tlp.c and build only with AER enabled
+> =09- Match variables in prototype and function
+> =09- int -> unsigned int conversion
+> =09- eetlp_prefix_max into own patch
+> - struct pcie_tlp_log param consistently called "log" within tlp.c
+> - Moved function prototypes into drivers/pci/pci.h
+> - Describe AER/DPC differences more clearly in one commit message
+>=20
+> v3:
+> - Small rewording in a commit message
+>=20
+> v2:
+> - Don't add EXPORT()s
+> - Don't include igxbe changes
+> - Don't use pr_cont() as it's incompatible with pci_err() and according
+>   to Andy Shevchenko should not be used in the first place
+>=20
+> Ilpo J=C3=A4rvinen (7):
+>   PCI: Don't expose pcie_read_tlp_log() outside of PCI subsystem
+>   PCI: Move TLP Log handling to own file
+>   PCI: Make pcie_read_tlp_log() signature same
+>   PCI: Use unsigned int i in pcie_read_tlp_log()
+>   PCI: Store # of supported End-End TLP Prefixes
+>   PCI: Add TLP Prefix reading into pcie_read_tlp_log()
+>   PCI: Create helper to print TLP Header and Prefix Log
+>=20
+>  drivers/pci/ats.c             |   2 +-
+>  drivers/pci/pci.c             |  28 ---------
+>  drivers/pci/pci.h             |   9 +++
+>  drivers/pci/pcie/Makefile     |   2 +-
+>  drivers/pci/pcie/aer.c        |  14 ++---
+>  drivers/pci/pcie/dpc.c        |  14 ++---
+>  drivers/pci/pcie/tlp.c        | 109 ++++++++++++++++++++++++++++++++++
+>  drivers/pci/probe.c           |  14 +++--
+>  include/linux/aer.h           |   3 +-
+>  include/linux/pci.h           |   2 +-
+>  include/uapi/linux/pci_regs.h |   2 +
+>  11 files changed, 143 insertions(+), 56 deletions(-)
+>  create mode 100644 drivers/pci/pcie/tlp.c
+>=20
+>=20
+--8323328-1575701497-1725020608=:1027--
 
