@@ -1,538 +1,117 @@
-Return-Path: <linux-kernel+bounces-309526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06722966C55
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 00:27:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 32EAB966C54
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 00:27:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3570284E22
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 22:27:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4EFB284D4D
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 22:27:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24BB11C1ACC;
-	Fri, 30 Aug 2024 22:27:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EED501C1AC9;
+	Fri, 30 Aug 2024 22:27:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Boud+8qt"
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fb/BnSF9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05DF81C1755
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 22:27:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 375D11C1AB2;
+	Fri, 30 Aug 2024 22:27:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725056847; cv=none; b=IDGKB6QMhXRB7KLZLIY2tFbrUd7PrFWDaGRU285S8/UGSp++fN+JD44tJNdv1yxUsdEiZw9TaFoVvI6uxNXtTZhbmDrKPnOgfJ+5MTv/rtDSvKOGsiImQ2IQ/2UNIU76jPimSL22UyGT+yCoCKQF9A08OIR+3N354gpa5Cj7lsI=
+	t=1725056848; cv=none; b=PWC/0TZ5WNWFAebfgt8OOyvo6OHs2Rkym/Sl5r003WaqN1xnbxVKyxaGiDpSFWQC8haQiGn8Q6LoSCKmZb+1Lpugyh6UQndhto29T1Kxoi/Xg6PEprHQNd+yDO3wLN4q3iCYr3vWsPw/mQa5pXgSOmWqBOyIg96yRhXUL+ReNak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725056847; c=relaxed/simple;
-	bh=PS4qrz7HD24jFDAaKohT3DS0VGv34tiVvYaV/B02vn8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ntEu5sU/sgXr+cnWVra2eubFsDiXuMGehPEx4vl+meTlSbSszw0G1tbdO54RBHu93T2e9GgD5MDXYftUoJ0+YjCTKg/1RTxOQmAjq3xPipWpgllVuhNcOl8JRjksxSS5tegZX5osZLz2SdO33AkW02clSy9s8Cjf6/HVdfzEg2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Boud+8qt; arc=none smtp.client-ip=209.85.128.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-6c0e22218d0so26211207b3.0
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 15:27:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725056844; x=1725661644; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=s2YyHYQPYgxsMsPEBmOViYLSp8VfKsvDm7dsGMy40Fw=;
-        b=Boud+8qt2FEpV19JJJR2loSasAbaomDODwA+TM/WPI3IQJWP5M2X7XrbOb4tJvm0lV
-         zX924+kMU7g07HOFpWybOCOE1EmvFh4RLR2nC7yGDLOU5bfbsJT7TIGFfxXlbB/xjn0Q
-         Hcvk0h5/08hZpVVO/iIHwUTnpPmM15+hYDsvYAV1hkwNW+tlzpOgQGeXhTGO3T1WvWi9
-         7lUmobeEw9zwjkx8x60o5r0iCpZ3nsQMCeT+k2Si63T2veQKyfYHcdmNmOD8YYTFaiXA
-         JZiz64o4ylEsdxFBvNiv1RM3fdMngZru3zli/ULLbuGd8pim0tEO1ABPccVDh3yo2BQk
-         YpBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725056844; x=1725661644;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=s2YyHYQPYgxsMsPEBmOViYLSp8VfKsvDm7dsGMy40Fw=;
-        b=CfpJ+s1nIR0DHWqICS+XBwI4gV48P9ofLSosLttAAa3jioUtm64wPeM++PqNJz+d9u
-         w7e/m3k44GS1OwTc8yzHQZ0knd7rQhCFHtbKGZ9mJ/9o899lnNPKbVPnZTyRro9ZmzP9
-         6X6wa+Az6NvjsACFk7E+vxKnEKYvXcF05VkQU+Utq08H1A8aczWvc2k/nskawVBf1eRM
-         uyMfdAN0HzaUFJWmkCqBXAn3oO8Qf3ljLQwG0ASZGENKEjPwANrVk6KXLscSx4IIrwQB
-         nrIYuo9m5/YLLlxsAGpBE2ySonq0LCTvd+IifkZElkFnMqMCfbLA9U+uZaDUqEe0vplF
-         gmQg==
-X-Forwarded-Encrypted: i=1; AJvYcCUCrJBJRyxApH4zpa9AP0EZN0WltZm4DvxiojC3VEhTLHPomt6+OrCHoD0/cEo+LvTVrfqO2sXgiGU0tzc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywy0NFESfD1FoEJefhM4hEJMD7m1QEl2MVY9Z2PFhPSXnFH5pHO
-	BDDcCCcdpUwrgKKHcTa4kb+NTDMUSbES2JT7xJUJwTDtn7hpNDBMhHGfOOemYjCsduUeChbKcle
-	5MHj/7ldV+ECLMegreutCz/Aa4MdphnZIH/V77A==
-X-Google-Smtp-Source: AGHT+IG5eeD0svxWOfKQwLe6u0kOlsZgvlnrOv/bBgjzxMzWKdezSyNigVWnbhK/aYuDYPPFgPzzOaztniLlErcg8Yk=
-X-Received: by 2002:a05:690c:dc1:b0:643:92a8:ba00 with SMTP id
- 00721157ae682-6d40b0f7ea3mr46607747b3.0.1725056843655; Fri, 30 Aug 2024
- 15:27:23 -0700 (PDT)
+	s=arc-20240116; t=1725056848; c=relaxed/simple;
+	bh=g/nQQCp6AK3traRxcfLlXkc/ho/0LhHnh3lCJ34af04=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=JSiriH7bpRnQQ1qtAQ8y1Kdo6bSZntCpIsrr7sZ6MVdKqEEwdwPNl66pNaVZZ291s7//KmvyePsXiMwSzzEl8aK5g/j/i95WiD0WSqgQnt7zBLxZI/7cnYoDCS8SzdSo1TcEZ6kSzvEGE76zyHWRGbVJNfhzQIgQKCayG0HIbtU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fb/BnSF9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A441BC4CEC2;
+	Fri, 30 Aug 2024 22:27:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725056847;
+	bh=g/nQQCp6AK3traRxcfLlXkc/ho/0LhHnh3lCJ34af04=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=Fb/BnSF9lSfpbQEHcj/Q+pu+3IAYKqPCBSFj100U71Nyv6rhTINPSZBAKnFGoBx0p
+	 zgUN/masru/l2SrOzYbAsju3xsKj7m/ki627iJi4lWq8s3H0Qa7yzi+vPRansF0gLj
+	 yUYorGBTVpttT+OQ/LgogAdex+J5NhKu2hLDfid/yoSF0ICp/qtuf56IjP1pWlYwCa
+	 SNpeoItwVpIqTviMurjDxej+AKve0zxf2841oTAiMrrQmJ9UwYNti5s0gIWq+4Ubrf
+	 y8GBVG5iicHVRq1tMerypa7inA46EiQDYHnppqQyWdLEC6m+XeTtGJ78Gsnrj0a5XE
+	 4cte/s7qGk3jA==
+Message-ID: <79cb209c6c5a14ae4d6a015f714c58d4.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240829-concurrent-wb-v1-0-502b16ae2ebb@quicinc.com>
- <20240829-concurrent-wb-v1-14-502b16ae2ebb@quicinc.com> <yohtzxysheoybac24hxil6zzzsqi4inx6oh6x7vaoj5lvtdf3u@vd5nax37ilqd>
- <a73def5c-46f6-4467-958d-20f28ce8ad2c@quicinc.com>
-In-Reply-To: <a73def5c-46f6-4467-958d-20f28ce8ad2c@quicinc.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Sat, 31 Aug 2024 01:27:12 +0300
-Message-ID: <CAA8EJppTqdCvaxBwretFVM6wV-NOLpxNGJCyxO8EXvvqZXF=sw@mail.gmail.com>
-Subject: Re: [PATCH 14/21] drm/msm/dpu: Reserve resources for CWB
-To: Jessica Zhang <quic_jesszhan@quicinc.com>
-Cc: Rob Clark <robdclark@gmail.com>, quic_abhinavk@quicinc.com, 
-	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, quic_ebharadw@quicinc.com, 
-	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	Rob Clark <robdclark@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <a87f99e02f3e9c40c8b9638a8a5a9c5b55aca68c.camel@maquefel.me>
+References: <20240715-ep93xx-v11-0-4e924efda795@maquefel.me> <20240715-ep93xx-v11-3-4e924efda795@maquefel.me> <020c15c9939c1c4cfac925942a582cee.sboyd@kernel.org> <a87f99e02f3e9c40c8b9638a8a5a9c5b55aca68c.camel@maquefel.me>
+Subject: Re: [PATCH v11 03/38] clk: ep93xx: add DT support for Cirrus EP93xx
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+To: Michael Turquette <mturquette@baylibre.com>, Nikita Shubin <nikita.shubin@maquefel.me>, Nikita Shubin via B4 Relay <devnull+nikita.shubin.maquefel.me@kernel.org>
+Date: Fri, 30 Aug 2024 15:27:25 -0700
+User-Agent: alot/0.10
 
-On Fri, 30 Aug 2024 at 23:28, Jessica Zhang <quic_jesszhan@quicinc.com> wrote:
-> On 8/30/2024 10:25 AM, Dmitry Baryshkov wrote:
-> > On Thu, Aug 29, 2024 at 01:48:35PM GMT, Jessica Zhang wrote:
-> >> Reserve dedicated pingpong blocks for CWB
-> >
-> > Please explain design ideas. Having just a single phrase is usually not
-> > enough.
-> >
-> >>
-> >> Signed-off-by: Jessica Zhang <quic_jesszhan@quicinc.com>
-> >> ---
-> >>   drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c | 17 ++++++--
-> >>   drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h |  1 +
-> >>   drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c      | 65 +++++++++++++++++++++++++++++
-> >>   3 files changed, 79 insertions(+), 4 deletions(-)
-> >>
-> >> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-> >> index 36b677cf9c7a..f1bd14d1f89e 100644
-> >> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-> >> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-> >> @@ -2,7 +2,7 @@
-> >>   /*
-> >>    * Copyright (C) 2013 Red Hat
-> >>    * Copyright (c) 2014-2018, 2020-2021 The Linux Foundation. All rights reserved.
-> >> - * Copyright (c) 2022-2023 Qualcomm Innovation Center, Inc. All rights reserved.
-> >> + * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
-> >>    *
-> >>    * Author: Rob Clark <robdclark@gmail.com>
-> >>    */
-> >> @@ -1054,6 +1054,7 @@ static void dpu_encoder_virt_atomic_mode_set(struct drm_encoder *drm_enc,
-> >>      struct dpu_hw_blk *hw_ctl[MAX_CHANNELS_PER_ENC];
-> >>      struct dpu_hw_blk *hw_dsc[MAX_CHANNELS_PER_ENC];
-> >>      int num_pp, num_dsc;
-> >> +    bool is_cwb_encoder;
-> >>      unsigned int dsc_mask = 0;
-> >>      int i;
-> >>
-> >> @@ -1067,6 +1068,8 @@ static void dpu_encoder_virt_atomic_mode_set(struct drm_encoder *drm_enc,
-> >>
-> >>      priv = drm_enc->dev->dev_private;
-> >>      dpu_kms = to_dpu_kms(priv->kms);
-> >> +    is_cwb_encoder = drm_crtc_in_clone_mode(crtc_state) &&
-> >> +            dpu_enc->disp_info.intf_type == INTF_WB;
-> >>
-> >>      global_state = dpu_kms_get_existing_global_state(dpu_kms);
-> >>      if (IS_ERR_OR_NULL(global_state)) {
-> >> @@ -1077,9 +1080,15 @@ static void dpu_encoder_virt_atomic_mode_set(struct drm_encoder *drm_enc,
-> >>      trace_dpu_enc_mode_set(DRMID(drm_enc));
-> >>
-> >>      /* Query resource that have been reserved in atomic check step. */
-> >> -    num_pp = dpu_rm_get_assigned_resources(&dpu_kms->rm, global_state,
-> >> -            drm_enc->crtc, DPU_HW_BLK_PINGPONG, hw_pp,
-> >> -            ARRAY_SIZE(hw_pp));
-> >> +    if (is_cwb_encoder)
-> >> +            num_pp = dpu_rm_get_assigned_resources(&dpu_kms->rm, global_state,
-> >> +                    drm_enc->crtc, DPU_HW_BLK_DCWB_PINGPONG, hw_pp,
-> >> +                    ARRAY_SIZE(hw_pp));
-> >> +    else
-> >> +            num_pp = dpu_rm_get_assigned_resources(&dpu_kms->rm, global_state,
-> >> +                    drm_enc->crtc, DPU_HW_BLK_PINGPONG, hw_pp,
-> >> +                    ARRAY_SIZE(hw_pp));
-> >
-> > Why is this necessary? Can we still use DPU_HW_BLK_PINGPONG?
->
-> Hi Dmitry,
->
-> Since both regular non-cwb pingpongs and pingpongs dedicated for cwb
-> both share the same pingpong_to_crtc_id map, I need a way to distinguish
-> between the real-time and dedicated cwb pingpongs.
->
-> If I don't do that, get_assigned_resources would populate the hw_pp
-> array for both the real-time and WB encoders with *only* the real-time
-> display pingpongs.
+Quoting Nikita Shubin (2024-08-30 02:23:12)
+> Hello Stephen!
+>=20
+> On Wed, 2024-08-28 at 13:44 -0700, Stephen Boyd wrote:
+> > Quoting Nikita Shubin via B4 Relay (2024-07-15 01:38:07)
+> > > diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+> > > index 3e9099504fad..234b0a8b7650 100644
+> > > --- a/drivers/clk/Kconfig
+> > > +++ b/drivers/clk/Kconfig
+> > > @@ -218,6 +218,14 @@ config COMMON_CLK_EN7523
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 This driver pr=
+ovides the fixed clocks and gates present
+> > > on Airoha
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ARM silicon.
+> > > =C2=A0
+> > > +config COMMON_CLK_EP93XX
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bool "Clock driver for Cirrus L=
+ogic ep93xx SoC"
+> >=20
+> > tristate?
+> >=20
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 depends on ARCH_EP93XX || COMPI=
+LE_TEST
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 select MFD_SYSCON
+> >=20
+> > Why is this selecting syscon?
+> >=20
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 select REGMAP
+> >=20
+> > Is this needed either?
+>=20
+> Indeed REGMAP is selected by COMMON_CLK, MFD_SYSCON not required, but
+> it needs AUXILIARY_BUS.
 
-I see. It looks like PINGPONG blocks should be allocated / filled
-per-encoder, not per-CRTC. Likewise CDM is encoder-specific, not
-CRTC-specific.
-Does that solve the issue?
+I don't see REGMAP selected by COMMON_CLK. Did I miss something?
 
->
-> >
-> >> +
-> >>      dpu_rm_get_assigned_resources(&dpu_kms->rm, global_state,
-> >>                      drm_enc->crtc, DPU_HW_BLK_CTL, hw_ctl, ARRAY_SIZE(hw_ctl));
-> >>
-> >> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h
-> >> index c43cb55fe1d2..c87790a1b940 100644
-> >> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h
-> >> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h
-> >> @@ -77,6 +77,7 @@ enum dpu_hw_blk_type {
-> >>      DPU_HW_BLK_LM,
-> >>      DPU_HW_BLK_CTL,
-> >>      DPU_HW_BLK_PINGPONG,
-> >> +    DPU_HW_BLK_DCWB_PINGPONG,
-> >>      DPU_HW_BLK_INTF,
-> >>      DPU_HW_BLK_WB,
-> >>      DPU_HW_BLK_DSPP,
-> >> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c
-> >> index 13f84375e15d..afad26556cd5 100644
-> >> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c
-> >> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c
-> >> @@ -236,6 +236,48 @@ static int _dpu_rm_get_lm_peer(struct dpu_rm *rm, int primary_idx)
-> >>      return -EINVAL;
-> >>   }
-> >>
-> >> +static int _dpu_rm_reserve_cwb_pingpong(struct dpu_rm *rm,
-> >> +            struct dpu_global_state *global_state, uint32_t crtc_id,
-> >> +            struct msm_display_topology *topology)
-> >> +{
-> >> +    int num_cwb_pp = topology->num_lm, cwb_pp_count = 0;
-> >> +    int cwb_pp_idx[MAX_BLOCKS];
-> >> +
-> >> +    /*
-> >> +     * Reserve additional dedicated CWB pingpong blocks for each mixer
-> >> +     *
-> >> +     * TODO: add support for reserving non-dedicated CWB pingpong blocks
-> >> +     */
-> >> +    for (int i = 0; i < ARRAY_SIZE(rm->mixer_blks) &&
-> >> +                    cwb_pp_count < num_cwb_pp; i++) {
-> >> +            for (int j = PINGPONG_CWB_0 - PINGPONG_0;
-> >> +                            j < ARRAY_SIZE(rm->pingpong_blks); j++) {
-> >
-> > Alignment...
->
-> Ack -- for future reference, should I always align the second line with
-> the bracket of the previous line?
->
-> I thought the general guideline was 2 tabs, but I might be misremembering.
+>=20
+> > > +#define devm_ep93xx_clk_hw_register_fixed_rate_parent_data(dev,
+> > > name, parent_data, flags, fixed_rate)=C2=A0 \
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 __clk_hw_register_fixed_rate((d=
+ev), NULL, (name), NULL,
+> > > NULL, \
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 (pare=
+nt_data), (flags),
+> > > (fixed_rate), 0, 0, true)
+> >=20
+> > Is this to workaround a missing
+> > devm_clk_hw_register_fixed_rate_parent_data() macro?
+>=20
+> Yes, if it's okay - i'll fire next revision, all other comments are
+> acknowledged.
+>=20
 
-I can't find the textual reference, however .clang-format in the root
-dir has 'AlignAfterOpenBracket: Align'. I'm more or less ignorant for
-the function argument alignment (especially if an old function is
-being modified), but aligning the conditions and loops makes it easier
-to read the code.
-
->
-> Thanks,
->
-> Jessica Zhang
->
-> >
-> >> +                    /*
-> >> +                     * Odd LMs must be assigned to odd pingpongs and even
-> >> +                     * LMs with even pingpongs
-> >> +                     */
-> >> +                    if (reserved_by_other(global_state->pingpong_to_crtc_id,
-> >> +                                            j, crtc_id) ||
-> >> +                                    i % 2 != j % 2)
-> >> +                            continue;
-> >> +
-> >> +                    cwb_pp_idx[cwb_pp_count] = j;
-> >> +                    cwb_pp_count++;
-> >> +                    break;
-> >> +            }
-> >> +    }
-> >> +
-> >> +    if (cwb_pp_count != num_cwb_pp) {
-> >> +            DPU_ERROR("Unable to reserve all cwb pingpongs\n");
-> >> +            return -ENAVAIL;
-> >> +    }
-> >> +
-> >> +    for (int i = 0; i < cwb_pp_count; i++)
-> >> +            global_state->pingpong_to_crtc_id[cwb_pp_idx[i]] = crtc_id;
-> >> +
-> >> +    return 0;
-> >> +}
-> >> +
-> >>   /**
-> >>    * _dpu_rm_check_lm_and_get_connected_blks - check if proposed layer mixer meets
-> >>    * proposed use case requirements, incl. hardwired dependent blocks like
-> >> @@ -617,6 +659,14 @@ static int _dpu_rm_make_reservation(
-> >>              return ret;
-> >>      }
-> >>
-> >> +    if (topology->cwb_enabled) {
-> >> +            ret = _dpu_rm_reserve_cwb_pingpong(rm, global_state,
-> >> +                            crtc_id, topology);
-> >> +            if (ret) {
-> >> +                    DPU_ERROR("unable to find appropriate dcwb pingpongs\n");
-> >> +                    return ret;
-> >> +            }
-> >> +    }
-> >>
-> >>      ret = _dpu_rm_reserve_ctls(rm, global_state, crtc_id,
-> >>                      topology);
-> >> @@ -706,6 +756,7 @@ int dpu_rm_get_assigned_resources(struct dpu_rm *rm,
-> >>
-> >>      switch (type) {
-> >>      case DPU_HW_BLK_PINGPONG:
-> >> +    case DPU_HW_BLK_DCWB_PINGPONG:
-> >>              hw_blks = rm->pingpong_blks;
-> >>              hw_to_crtc_id = global_state->pingpong_to_crtc_id;
-> >>              max_blks = ARRAY_SIZE(rm->pingpong_blks);
-> >> @@ -745,6 +796,20 @@ int dpu_rm_get_assigned_resources(struct dpu_rm *rm,
-> >>              if (hw_to_crtc_id[i] != crtc_id)
-> >>                      continue;
-> >>
-> >> +            if (type == DPU_HW_BLK_PINGPONG) {
-> >> +                    struct dpu_hw_pingpong *pp = to_dpu_hw_pingpong(hw_blks[i]);
-> >> +
-> >> +                    if (pp->idx >= PINGPONG_CWB_0)
-> >> +                            continue;
-> >> +            }
-> >> +
-> >> +            if (type == DPU_HW_BLK_DCWB_PINGPONG) {
-> >> +                    struct dpu_hw_pingpong *pp = to_dpu_hw_pingpong(hw_blks[i]);
-> >> +
-> >> +                    if (pp->idx < PINGPONG_CWB_0)
-> >> +                            continue;
-> >> +            }
-> >> +
-> >>              if (num_blks == blks_size) {
-> >>                      DPU_ERROR("More than %d resources assigned to crtc %d\n",
-> >>                                blks_size, crtc_id);
-> >>
-> >> --
-> >> 2.34.1
-> >>
-> >
-> > --
-> > With best wishes
-> > Dmitry
-
-
-
--- 
-With best wishes
-Dmitry
-
-On Fri, 30 Aug 2024 at 23:28, Jessica Zhang <quic_jesszhan@quicinc.com> wrote:
->
->
->
-> On 8/30/2024 10:25 AM, Dmitry Baryshkov wrote:
-> > On Thu, Aug 29, 2024 at 01:48:35PM GMT, Jessica Zhang wrote:
-> >> Reserve dedicated pingpong blocks for CWB
-> >
-> > Please explain design ideas. Having just a single phrase is usually not
-> > enough.
-> >
-> >>
-> >> Signed-off-by: Jessica Zhang <quic_jesszhan@quicinc.com>
-> >> ---
-> >>   drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c | 17 ++++++--
-> >>   drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h |  1 +
-> >>   drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c      | 65 +++++++++++++++++++++++++++++
-> >>   3 files changed, 79 insertions(+), 4 deletions(-)
-> >>
-> >> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-> >> index 36b677cf9c7a..f1bd14d1f89e 100644
-> >> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-> >> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-> >> @@ -2,7 +2,7 @@
-> >>   /*
-> >>    * Copyright (C) 2013 Red Hat
-> >>    * Copyright (c) 2014-2018, 2020-2021 The Linux Foundation. All rights reserved.
-> >> - * Copyright (c) 2022-2023 Qualcomm Innovation Center, Inc. All rights reserved.
-> >> + * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
-> >>    *
-> >>    * Author: Rob Clark <robdclark@gmail.com>
-> >>    */
-> >> @@ -1054,6 +1054,7 @@ static void dpu_encoder_virt_atomic_mode_set(struct drm_encoder *drm_enc,
-> >>      struct dpu_hw_blk *hw_ctl[MAX_CHANNELS_PER_ENC];
-> >>      struct dpu_hw_blk *hw_dsc[MAX_CHANNELS_PER_ENC];
-> >>      int num_pp, num_dsc;
-> >> +    bool is_cwb_encoder;
-> >>      unsigned int dsc_mask = 0;
-> >>      int i;
-> >>
-> >> @@ -1067,6 +1068,8 @@ static void dpu_encoder_virt_atomic_mode_set(struct drm_encoder *drm_enc,
-> >>
-> >>      priv = drm_enc->dev->dev_private;
-> >>      dpu_kms = to_dpu_kms(priv->kms);
-> >> +    is_cwb_encoder = drm_crtc_in_clone_mode(crtc_state) &&
-> >> +            dpu_enc->disp_info.intf_type == INTF_WB;
-> >>
-> >>      global_state = dpu_kms_get_existing_global_state(dpu_kms);
-> >>      if (IS_ERR_OR_NULL(global_state)) {
-> >> @@ -1077,9 +1080,15 @@ static void dpu_encoder_virt_atomic_mode_set(struct drm_encoder *drm_enc,
-> >>      trace_dpu_enc_mode_set(DRMID(drm_enc));
-> >>
-> >>      /* Query resource that have been reserved in atomic check step. */
-> >> -    num_pp = dpu_rm_get_assigned_resources(&dpu_kms->rm, global_state,
-> >> -            drm_enc->crtc, DPU_HW_BLK_PINGPONG, hw_pp,
-> >> -            ARRAY_SIZE(hw_pp));
-> >> +    if (is_cwb_encoder)
-> >> +            num_pp = dpu_rm_get_assigned_resources(&dpu_kms->rm, global_state,
-> >> +                    drm_enc->crtc, DPU_HW_BLK_DCWB_PINGPONG, hw_pp,
-> >> +                    ARRAY_SIZE(hw_pp));
-> >> +    else
-> >> +            num_pp = dpu_rm_get_assigned_resources(&dpu_kms->rm, global_state,
-> >> +                    drm_enc->crtc, DPU_HW_BLK_PINGPONG, hw_pp,
-> >> +                    ARRAY_SIZE(hw_pp));
-> >
-> > Why is this necessary? Can we still use DPU_HW_BLK_PINGPONG?
->
-> Hi Dmitry,
->
-> Since both regular non-cwb pingpongs and pingpongs dedicated for cwb
-> both share the same pingpong_to_crtc_id map, I need a way to distinguish
-> between the real-time and dedicated cwb pingpongs.
->
-> If I don't do that, get_assigned_resources would populate the hw_pp
-> array for both the real-time and WB encoders with *only* the real-time
-> display pingpongs.
->
-> >
-> >> +
-> >>      dpu_rm_get_assigned_resources(&dpu_kms->rm, global_state,
-> >>                      drm_enc->crtc, DPU_HW_BLK_CTL, hw_ctl, ARRAY_SIZE(hw_ctl));
-> >>
-> >> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h
-> >> index c43cb55fe1d2..c87790a1b940 100644
-> >> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h
-> >> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h
-> >> @@ -77,6 +77,7 @@ enum dpu_hw_blk_type {
-> >>      DPU_HW_BLK_LM,
-> >>      DPU_HW_BLK_CTL,
-> >>      DPU_HW_BLK_PINGPONG,
-> >> +    DPU_HW_BLK_DCWB_PINGPONG,
-> >>      DPU_HW_BLK_INTF,
-> >>      DPU_HW_BLK_WB,
-> >>      DPU_HW_BLK_DSPP,
-> >> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c
-> >> index 13f84375e15d..afad26556cd5 100644
-> >> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c
-> >> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c
-> >> @@ -236,6 +236,48 @@ static int _dpu_rm_get_lm_peer(struct dpu_rm *rm, int primary_idx)
-> >>      return -EINVAL;
-> >>   }
-> >>
-> >> +static int _dpu_rm_reserve_cwb_pingpong(struct dpu_rm *rm,
-> >> +            struct dpu_global_state *global_state, uint32_t crtc_id,
-> >> +            struct msm_display_topology *topology)
-> >> +{
-> >> +    int num_cwb_pp = topology->num_lm, cwb_pp_count = 0;
-> >> +    int cwb_pp_idx[MAX_BLOCKS];
-> >> +
-> >> +    /*
-> >> +     * Reserve additional dedicated CWB pingpong blocks for each mixer
-> >> +     *
-> >> +     * TODO: add support for reserving non-dedicated CWB pingpong blocks
-> >> +     */
-> >> +    for (int i = 0; i < ARRAY_SIZE(rm->mixer_blks) &&
-> >> +                    cwb_pp_count < num_cwb_pp; i++) {
-> >> +            for (int j = PINGPONG_CWB_0 - PINGPONG_0;
-> >> +                            j < ARRAY_SIZE(rm->pingpong_blks); j++) {
-> >
-> > Alignment...
->
-> Ack -- for future reference, should I always align the second line with
-> the bracket of the previous line?
->
-> I thought the general guideline was 2 tabs, but I might be misremembering.
->
-> Thanks,
->
-> Jessica Zhang
->
-> >
-> >> +                    /*
-> >> +                     * Odd LMs must be assigned to odd pingpongs and even
-> >> +                     * LMs with even pingpongs
-> >> +                     */
-> >> +                    if (reserved_by_other(global_state->pingpong_to_crtc_id,
-> >> +                                            j, crtc_id) ||
-> >> +                                    i % 2 != j % 2)
-> >> +                            continue;
-> >> +
-> >> +                    cwb_pp_idx[cwb_pp_count] = j;
-> >> +                    cwb_pp_count++;
-> >> +                    break;
-> >> +            }
-> >> +    }
-> >> +
-> >> +    if (cwb_pp_count != num_cwb_pp) {
-> >> +            DPU_ERROR("Unable to reserve all cwb pingpongs\n");
-> >> +            return -ENAVAIL;
-> >> +    }
-> >> +
-> >> +    for (int i = 0; i < cwb_pp_count; i++)
-> >> +            global_state->pingpong_to_crtc_id[cwb_pp_idx[i]] = crtc_id;
-> >> +
-> >> +    return 0;
-> >> +}
-> >> +
-> >>   /**
-> >>    * _dpu_rm_check_lm_and_get_connected_blks - check if proposed layer mixer meets
-> >>    * proposed use case requirements, incl. hardwired dependent blocks like
-> >> @@ -617,6 +659,14 @@ static int _dpu_rm_make_reservation(
-> >>              return ret;
-> >>      }
-> >>
-> >> +    if (topology->cwb_enabled) {
-> >> +            ret = _dpu_rm_reserve_cwb_pingpong(rm, global_state,
-> >> +                            crtc_id, topology);
-> >> +            if (ret) {
-> >> +                    DPU_ERROR("unable to find appropriate dcwb pingpongs\n");
-> >> +                    return ret;
-> >> +            }
-> >> +    }
-> >>
-> >>      ret = _dpu_rm_reserve_ctls(rm, global_state, crtc_id,
-> >>                      topology);
-> >> @@ -706,6 +756,7 @@ int dpu_rm_get_assigned_resources(struct dpu_rm *rm,
-> >>
-> >>      switch (type) {
-> >>      case DPU_HW_BLK_PINGPONG:
-> >> +    case DPU_HW_BLK_DCWB_PINGPONG:
-> >>              hw_blks = rm->pingpong_blks;
-> >>              hw_to_crtc_id = global_state->pingpong_to_crtc_id;
-> >>              max_blks = ARRAY_SIZE(rm->pingpong_blks);
-> >> @@ -745,6 +796,20 @@ int dpu_rm_get_assigned_resources(struct dpu_rm *rm,
-> >>              if (hw_to_crtc_id[i] != crtc_id)
-> >>                      continue;
-> >>
-> >> +            if (type == DPU_HW_BLK_PINGPONG) {
-> >> +                    struct dpu_hw_pingpong *pp = to_dpu_hw_pingpong(hw_blks[i]);
-> >> +
-> >> +                    if (pp->idx >= PINGPONG_CWB_0)
-> >> +                            continue;
-> >> +            }
-> >> +
-> >> +            if (type == DPU_HW_BLK_DCWB_PINGPONG) {
-> >> +                    struct dpu_hw_pingpong *pp = to_dpu_hw_pingpong(hw_blks[i]);
-> >> +
-> >> +                    if (pp->idx < PINGPONG_CWB_0)
-> >> +                            continue;
-> >> +            }
-> >> +
-> >>              if (num_blks == blks_size) {
-> >>                      DPU_ERROR("More than %d resources assigned to crtc %d\n",
-> >>                                blks_size, crtc_id);
-> >>
-> >> --
-> >> 2.34.1
-> >>
-> >
-> > --
-> > With best wishes
-> > Dmitry
-
-
-
--- 
-With best wishes
-Dmitry
+Can you add the macro so others can use it in another patch?
 
