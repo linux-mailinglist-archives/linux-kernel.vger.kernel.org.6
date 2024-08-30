@@ -1,73 +1,77 @@
-Return-Path: <linux-kernel+bounces-308065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0E339656CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 07:16:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0F8D9656CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 07:18:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D45431C22BFF
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 05:16:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C9EBB23004
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 05:18:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17AEB14D293;
-	Fri, 30 Aug 2024 05:16:34 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1505FEEB7;
-	Fri, 30 Aug 2024 05:16:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B130E14C588;
+	Fri, 30 Aug 2024 05:18:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ho+5EnUp"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A160A13C672
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 05:18:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724994993; cv=none; b=tRQGqkxm4cpm6fkf8sSSeaxQOEgECmDJHIkQHJzwTCaSxHS3as9bul59F+ysJjCebJv0/oibAqWJpKCmTQiIXH09bw11ZCQyD+2dybZpbuylTFIRjWfaZ6dOD+mKl/ZZH5qHHWLND9a/vLmLi/xw28m76t1kcy89aWAJGrhu4qY=
+	t=1724995097; cv=none; b=L6NDTf0pf/h+IlYnBViQURo4whhf8CDQ+518O1iZ9yOHz1lGEF1LokGu/TvnN1XbxFz3+8iQFcKNdiFENMzYBNcizG8TJvf8nrz+z04mul74y/C3K3i09OwqootoJqllJyL4yqECoTXPxeDPliJYoN9B0E+cK2tB54Ug1CF1NLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724994993; c=relaxed/simple;
-	bh=KijCHr4lbm49o3SgoZp2sxJkChsaExW/zVUnh4L+WmQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=uowQbw/QVq7M+1oBcBG+pQFrqPam2mKlQDNG8iXk0W71/Qq4xz3QynXUrr0DwJvrWMspwkhJSXhdAgtkNEx/CEnrKFqx02FQ4LzJsjBurZnlPC4k1Cwt4MNt9maWtWrrS+eCf3TTCUPqa9xm7pCic4Cn96OymPOQ13/yqMbSV2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 270A51063;
-	Thu, 29 Aug 2024 22:16:56 -0700 (PDT)
-Received: from e116581.blr.arm.com (e116581.arm.com [10.162.40.24])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 855F83F66E;
-	Thu, 29 Aug 2024 22:16:19 -0700 (PDT)
-From: Dev Jain <dev.jain@arm.com>
-To: akpm@linux-foundation.org,
-	shuah@kernel.org,
-	david@redhat.com,
-	willy@infradead.org
-Cc: ryan.roberts@arm.com,
-	anshuman.khandual@arm.com,
-	catalin.marinas@arm.com,
-	cl@gentwo.org,
-	vbabka@suse.cz,
-	mhocko@suse.com,
-	apopple@nvidia.com,
-	osalvador@suse.de,
-	baolin.wang@linux.alibaba.com,
-	dave.hansen@linux.intel.com,
-	will@kernel.org,
-	baohua@kernel.org,
-	ioworker0@gmail.com,
-	gshan@redhat.com,
-	mark.rutland@arm.com,
-	kirill.shutemov@linux.intel.com,
-	hughd@google.com,
-	aneesh.kumar@kernel.org,
-	yang@os.amperecomputing.com,
-	peterx@redhat.com,
-	broonie@kernel.org,
-	mgorman@techsingularity.net,
-	ying.huang@intel.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org,
-	Dev Jain <dev.jain@arm.com>
-Subject: [PATCH] selftests/mm: Relax test to fail after 100 migration failures
-Date: Fri, 30 Aug 2024 10:46:09 +0530
-Message-Id: <20240830051609.4037834-1-dev.jain@arm.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1724995097; c=relaxed/simple;
+	bh=t4kbdGAxtPguU+bAxcGS2rq6P+WLCvz4IOBMCY7MIKE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cpkYUDoo24ZumXXSB04CFCEw2/q9IfT9N8x+xpM+E+WPH/rhQ63unuDuO/68PZHC4DZDJA5KBZHAMeR/w2zPath9XgM6hj74HMHkDl+Rd+ecooCSzNua2H/VU9JBGwesF3IIQeghQK7dR5voIkQJ4jNFVZcE/+eHNKNoqu0WguM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ho+5EnUp; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-715c160e231so1178068b3a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 22:18:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724995095; x=1725599895; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ssc6z58Q9ZpbGeFW4UOcRDaOLol5H9gcdkFINcBIMq0=;
+        b=ho+5EnUpM78E6IdDe62wDqomoT7EXvEWCzvowyWOBMmIj+by+pKse4LGqa2qTZ6LVn
+         3MoL8ilrt/Aky4Z1w5XHuYYsUwC0Hgn5YWziMpKDWk3GSy5zpx2u1QvsgqBXjvOiYSxq
+         pC/PaIvDroZPQYgWy70B1rn5oQby6xregh3dC8e+ZRUiryRGy1sS/suy+ZuzcYxilMSv
+         YR8KEz+R8sqXkIOFX+6civ80akb7Sl/758CHQVgQ3t/dPYHqMav8zQKC5epIxFklX0kr
+         SYvRo/RiJZViyq+sPdAVLGCwTm34omTL+9+PbXVZ4/X8KSoLF1P7VVPPWDS9g2/9z+aK
+         IB+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724995095; x=1725599895;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ssc6z58Q9ZpbGeFW4UOcRDaOLol5H9gcdkFINcBIMq0=;
+        b=Z7R1i+5ixf9Kw3eBveA87AOPsqsvKCQg/bW3MWXNJgqOLyhw1l/49as0hYIBJRspfQ
+         Irgc53InCElAI50uwUtzFa97iQG7NrcEtj3GCX/Qy5iyJo9aDMyOqCQkg1fRM0W+eHaF
+         V+9OhncPi+mwBf81B8/LfHz0b2RU07/JKUGNAmL69vkh9Uc6Nzq6wId2h1JX9mFhjNQk
+         /aPLwlq2GdSaqNNWsUMB4zTLAFLsWcLyCR9NRdasTX8zMT/FA2kvJvk5ky5034J7jmwB
+         gizf2BChvLUZLfTG9NdC5PDIlekrY7mS30a2x4amwFjZD99fd2JjQ9IaiM+yReumR43y
+         3bDA==
+X-Gm-Message-State: AOJu0Yzqux0d23dk7rR6rOaWI25siE72595YvIE7mU3Z/KQmkn96t9WR
+	x0tnKtkMMqAsdFGKIGSxReuPEFCOTiQLkmXAo57zMT8QMoM5e54H1P1Ec/n6ldw=
+X-Google-Smtp-Source: AGHT+IEPva632bmQqJBFKxEikCEAtW8zvLrbfVLcHcMd2B/A84V4ALPqbhoFVkZqv80iEMAfbk4CdQ==
+X-Received: by 2002:a05:6a00:3d0f:b0:714:24dd:b3ca with SMTP id d2e1a72fcca58-715dfccb2d1mr6894479b3a.24.1724995094788;
+        Thu, 29 Aug 2024 22:18:14 -0700 (PDT)
+Received: from fedora.. ([106.219.166.11])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-715e557b960sm1973127b3a.41.2024.08.29.22.18.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Aug 2024 22:18:14 -0700 (PDT)
+From: Riyan Dhiman <riyandhiman14@gmail.com>
+To: gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-staging@lists.linux.dev,
+	Riyan Dhiman <riyandhiman14@gmail.com>
+Subject: [PATCH] staging: vme_user: changed geoid data type from int to u32
+Date: Fri, 30 Aug 2024 10:48:07 +0530
+Message-ID: <20240830051807.4397-1-riyandhiman14@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,81 +80,79 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-It was recently observed at [1] that during the folio unmapping stage
-of migration, when the PTEs are cleared, a racing thread faulting on that
-folio may increase the refcount of the folio, sleep on the folio lock
-(the migration path has the lock), and migration ultimately fails
-when asserting the actual refcount against the expected. Thereby,
-the migration selftest fails on shared-anon mappings.
-The above enforces the fact that migration is a best-effort service,
-therefore, it is wrong to fail the test for just a single failure;
-hence, fail the test after 100 consecutive failures (where 100 is
-still a subjective choice). Note that, this has no effect on the
-execution time of the test since that is controlled by a timeout.
+Geoid is a module parameter which is set by root user.
+Its valid values are between 0 and VME_MAX_SLOTS. So, changing data type
+of geoid from int to u32 since it will always be positive.
 
-[1] https://lore.kernel.org/all/20240801081657.1386743-1-dev.jain@arm.com/
-
-Signed-off-by: Dev Jain <dev.jain@arm.com>
-Suggested-by: David Hildenbrand <david@redhat.com>
-Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
-Tested-by: Ryan Roberts <ryan.roberts@arm.com>
+Signed-off-by: Riyan Dhiman <riyandhiman14@gmail.com>
 ---
-The above patch was part of the following:
-https://lore.kernel.org/all/20240809103129.365029-1-dev.jain@arm.com/
-I decided to send it separately since it should be applied
-nevertheless.
+ drivers/staging/vme_user/vme_fake.c   | 6 +++---
+ drivers/staging/vme_user/vme_tsi148.c | 6 +++---
+ 2 files changed, 6 insertions(+), 6 deletions(-)
 
- tools/testing/selftests/mm/migration.c | 17 +++++++++++------
- 1 file changed, 11 insertions(+), 6 deletions(-)
-
-diff --git a/tools/testing/selftests/mm/migration.c b/tools/testing/selftests/mm/migration.c
-index 6908569ef406..64bcbb7151cf 100644
---- a/tools/testing/selftests/mm/migration.c
-+++ b/tools/testing/selftests/mm/migration.c
-@@ -15,10 +15,10 @@
- #include <signal.h>
- #include <time.h>
+diff --git a/drivers/staging/vme_user/vme_fake.c b/drivers/staging/vme_user/vme_fake.c
+index c4fb2b65154c..4a59c9069605 100644
+--- a/drivers/staging/vme_user/vme_fake.c
++++ b/drivers/staging/vme_user/vme_fake.c
+@@ -79,7 +79,7 @@ struct fake_driver {
+ };
  
--#define TWOMEG (2<<20)
--#define RUNTIME (20)
--
--#define ALIGN(x, a) (((x) + (a - 1)) & (~((a) - 1)))
-+#define TWOMEG		(2<<20)
-+#define RUNTIME		(20)
-+#define MAX_RETRIES	100
-+#define ALIGN(x, a)	(((x) + (a - 1)) & (~((a) - 1)))
+ /* Module parameter */
+-static int geoid;
++static u32 geoid;
  
- FIXTURE(migration)
- {
-@@ -65,6 +65,7 @@ int migrate(uint64_t *ptr, int n1, int n2)
- 	int ret, tmp;
- 	int status = 0;
- 	struct timespec ts1, ts2;
-+	int failures = 0;
+ static const char driver_name[] = "vme_fake";
  
- 	if (clock_gettime(CLOCK_MONOTONIC, &ts1))
- 		return -1;
-@@ -79,13 +80,17 @@ int migrate(uint64_t *ptr, int n1, int n2)
- 		ret = move_pages(0, 1, (void **) &ptr, &n2, &status,
- 				MPOL_MF_MOVE_ALL);
- 		if (ret) {
--			if (ret > 0)
-+			if (ret > 0) {
-+				/* Migration is best effort; try again */
-+				if (++failures < MAX_RETRIES)
-+					continue;
- 				printf("Didn't migrate %d pages\n", ret);
-+			}
- 			else
- 				perror("Couldn't migrate pages");
- 			return -2;
- 		}
--
-+		failures = 0;
- 		tmp = n2;
- 		n2 = n1;
- 		n1 = tmp;
+@@ -1059,7 +1059,7 @@ static int __init fake_init(void)
+ 	struct vme_slave_resource *slave_image;
+ 	struct vme_lm_resource *lm;
+ 
+-	if (geoid < 0 || geoid >= VME_MAX_SLOTS) {
++	if (geoid >= VME_MAX_SLOTS) {
+ 		pr_err("VME geographical address must be between 0 and %d (exclusive), but got %d\n",
+ 			VME_MAX_SLOTS, geoid);
+ 		return -EINVAL;
+@@ -1289,7 +1289,7 @@ static void __exit fake_exit(void)
+ }
+ 
+ MODULE_PARM_DESC(geoid, "Set geographical addressing");
+-module_param(geoid, int, 0);
++module_param(geoid, uint, 0);
+ 
+ MODULE_DESCRIPTION("Fake VME bridge driver");
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/staging/vme_user/vme_tsi148.c b/drivers/staging/vme_user/vme_tsi148.c
+index 6b6ad781b966..31a44025e08f 100644
+--- a/drivers/staging/vme_user/vme_tsi148.c
++++ b/drivers/staging/vme_user/vme_tsi148.c
+@@ -36,7 +36,7 @@ static void tsi148_remove(struct pci_dev *);
+ 
+ /* Module parameter */
+ static bool err_chk;
+-static int geoid;
++static u32 geoid;
+ 
+ static const char driver_name[] = "vme_tsi148";
+ 
+@@ -2252,7 +2252,7 @@ static int tsi148_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 	struct vme_dma_resource *dma_ctrlr;
+ 	struct vme_lm_resource *lm;
+ 
+-	if (geoid < 0 || geoid >= VME_MAX_SLOTS) {
++	if (geoid >= VME_MAX_SLOTS) {
+ 		dev_err(&pdev->dev, "VME geographical address must be between 0 and %d (exclusive), but got %d\n",
+ 			VME_MAX_SLOTS, geoid);
+ 		return -EINVAL;
+@@ -2631,7 +2631,7 @@ MODULE_PARM_DESC(err_chk, "Check for VME errors on reads and writes");
+ module_param(err_chk, bool, 0);
+ 
+ MODULE_PARM_DESC(geoid, "Override geographical addressing");
+-module_param(geoid, int, 0);
++module_param(geoid, uint, 0);
+ 
+ MODULE_DESCRIPTION("VME driver for the Tundra Tempe VME bridge");
+ MODULE_LICENSE("GPL");
 -- 
-2.30.2
+2.46.0
 
 
