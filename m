@@ -1,203 +1,141 @@
-Return-Path: <linux-kernel+bounces-309427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDE95966A55
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 22:19:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1C08966A5A
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 22:21:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E25311C21E7E
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 20:19:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C8131F23A80
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 20:21:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD00D1BF7E1;
-	Fri, 30 Aug 2024 20:19:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3D5A1BFDF1;
+	Fri, 30 Aug 2024 20:21:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X7YJx/Md"
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DC+xa4pV"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F6A11BDAA8;
-	Fri, 30 Aug 2024 20:19:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74AA11BF7EA
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 20:21:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725049176; cv=none; b=eJR9QlTihaAZD1htz5R/63QsR4gdGAEWlkSeDkgw4RtCfI5x6ll51+4ptuGchBduGAnuVasSS71zrcybQS+NqlquDYul3GIAE5fAANXosINBOr9azvtyPo7WXnPW8zOz5Vn4XB9+HpS3WtpKk745FKFKOvCik+edgnjNNt+HdX8=
+	t=1725049277; cv=none; b=dxuG+gN1TgfwhES6Z2Z7HhQiLyXX1VxgmxN93ynb5+uWJfpGI1wJHZ04481r6t0ftGSu/e9jfxTFPNCAPa4B9zXVpvqKFs0eLYOPsxfAz7Q4O8qo0b8znCKuqurmOWqVOG9JefywVUf7TMQSO7/xTvZPPrL/9A6YCcnAGaQ3Nzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725049176; c=relaxed/simple;
-	bh=CA/8qwLC1gx9titJsX+DLlyoihYXtx4lY2lxiaQFbYg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NYJ/t8rY2kCCVkWGhKnexa1F0XgetClFPgLIxgkVEgjfMwcFJcA2vV0v983Vsu0Vy1eNkiGvYZVAGdEZY/gsdv7QTo+i9HWgKH5qdqZ1JNCMOOMmJq8/HT26wc7v2u54J67RBjeJd57SZg2uLQ+TWlPbXPaRoywoOXjgXLsKfuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X7YJx/Md; arc=none smtp.client-ip=209.85.160.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4567f52bf69so12698281cf.0;
-        Fri, 30 Aug 2024 13:19:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725049173; x=1725653973; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/XF2CCk23AXoNXAR3JERc7dhnx9x0OQne16QxjEFvAk=;
-        b=X7YJx/MdyZ1Qw6iua1KWQ3rok/0vOVUDn5sXh81a8yC+GeUnyVDP+Dg40HblKCeJ8t
-         pVUPcWB6p9XrcBLmiZTcKUXyiZRWV1Dt9ISnJ1O96j0czBcZfqaCaxhhNGgrSMzhvpZa
-         wvazlnJBfyPjIoVXIZIRqXtEmGslb0WczdtrbNM4bDJSOLnG1cftZkIwNvCY7J/EDDp0
-         T6yRMz+Z2FMWoH+c6IQCHxf07d+o5Sy8DxgWC6daratg3OgrkrHUSISRzN6rAvIBgjls
-         Xlpa1VEO5prkEcxz1R0k+GybiFE8qR/AIv8NLI1veBVNJarujuM7Bj6XQbuNLbnHGxT6
-         zJ0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725049173; x=1725653973;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/XF2CCk23AXoNXAR3JERc7dhnx9x0OQne16QxjEFvAk=;
-        b=NHlQBLOB6gMehsg1bxRKCtpzufnQtUTK7o2vyDZ60Vn/zaw+6w+Gb7Gadsy3IeMV6s
-         28qfwnAWnWyNGuzg9Xoroi2F9ARri4IyYQh8dwbrTsiLQbHg7baVwW8EeVNSBq6NtIns
-         ZxMvgrpioA8AfhjXjZiX2/owRkHVkvvafiYtrgVC5LHHEo8qdFzYUVwtzeS3FFhyZ+3a
-         r6W2AIyybrFUlLsMTZFeDlgxzcGY7WM/S4aKmw25vCya2PcEwL2bxK+oiYYJdum0pUtP
-         r42fbD2H7CW5YNL4HcqXTsFImdSidGA2lEXFfh90yPv86Au76jLOIcUvmqxmfZ92ojTJ
-         kTIA==
-X-Forwarded-Encrypted: i=1; AJvYcCUSbhC+CZvY8cWR2CA6sqt2tpAoyBNr2nc9xufqPLNa6LovA9RXoo8SRB811FXrs6eA0MWWs/eiAnyrdkmb@vger.kernel.org, AJvYcCXmAMrSDl/hL+uqF1kNn879QNwKwXc+vOKSPjQTt9S5WecWWGVw3VDDyp4WSqfBta3YVcvNmCIq4cQmwXK5@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+GhYTrZi748U/uuB3mXdXSF0S3xa+vY9NgUIaosk19lVRMn+H
-	+euOc+TYjrrc0eSARJ2aTulXRw8AvAdv9SRsDTSOFADsV/AKRzARbFePg/0PWQ+2rfCOHRp75IC
-	AyKf93G5MLbjl7ZaWuZ+VA1roIEA=
-X-Google-Smtp-Source: AGHT+IEbVq+/79QI8yiA1p0TDT2cuUCFuQUZF7ZEmD+/cAnli7i1ZZyhRnvuKVZ0QWlKpg7d3md068N+yPyRH4s8AN8=
-X-Received: by 2002:a05:622a:1f06:b0:44f:f14c:6a63 with SMTP id
- d75a77b69052e-4574e7e9540mr5395701cf.11.1725049173223; Fri, 30 Aug 2024
- 13:19:33 -0700 (PDT)
+	s=arc-20240116; t=1725049277; c=relaxed/simple;
+	bh=tlG9Z3SWZS45Au6orXQjCifgDXL/6bzfSjTyzN+bf2c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eYS/aw+/iaCiLqjavl9YLNw/0krXzJFatncRwpItjPmwCTRTDoyhOF87Ygtz4uLMAcrXjC3PvJS6DRQjjs+x1zNbBWnjAXIJP6GXn7bfQPkpP1uwPGpZ8yyBdQimLa6oSQAcaXUERIOxXIfI/jtc1/2LhNU8pTGbG6JT+TDlFXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DC+xa4pV; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725049274;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tlG9Z3SWZS45Au6orXQjCifgDXL/6bzfSjTyzN+bf2c=;
+	b=DC+xa4pVYRGaqwy8i8gvwuKgdqnAQDnF3HlOIt82y2VD2RYFOe9FY+pzMLYSZSx5lv3BbO
+	Ii9ORby8V/2i5+8cnMOkn9kWiLA4dBSDzc22/VrzVFq0NXLI1Dn7MKNGU28hDu2NNcbF+4
+	G67+iSwyxjjnIZAcmL10RHdGz67aYsI=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-54-H6sJ7imwP5qkwnjaTwy5Iw-1; Fri,
+ 30 Aug 2024 16:21:08 -0400
+X-MC-Unique: H6sJ7imwP5qkwnjaTwy5Iw-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DA2AB19560A6;
+	Fri, 30 Aug 2024 20:21:05 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.148])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 02C8119560A3;
+	Fri, 30 Aug 2024 20:20:59 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Fri, 30 Aug 2024 22:20:57 +0200 (CEST)
+Date: Fri, 30 Aug 2024 22:20:50 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Jiri Olsa <olsajiri@gmail.com>, Andrii Nakryiko <andrii@kernel.org>,
+	linux-trace-kernel@vger.kernel.org, peterz@infradead.org,
+	rostedt@goodmis.org, mhiramat@kernel.org, bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org, paulmck@kernel.org,
+	willy@infradead.org, surenb@google.com, akpm@linux-foundation.org,
+	linux-mm@kvack.org
+Subject: Re: [PATCH v4 4/8] uprobes: travers uprobe's consumer list
+ locklessly under SRCU protection
+Message-ID: <20240830202050.GA7440@redhat.com>
+References: <20240829183741.3331213-1-andrii@kernel.org>
+ <20240829183741.3331213-5-andrii@kernel.org>
+ <ZtD_x9zxLjyhS37Z@krava>
+ <CAEf4Bzb3mCWK5St51bRDnQ1b-aTj=2w6bi6MkZydW48s=R+CCA@mail.gmail.com>
+ <ZtHM_C1NmDSKL0pi@krava>
+ <20240830143151.GC20163@redhat.com>
+ <CAEf4BzbOjB9Str9-ea6pa46sRDdHJF5mb0rj1dyJquvBT-9vnw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240830-preemption-a750-t-v2-0-86aeead2cd80@gmail.com>
- <20240830-preemption-a750-t-v2-4-86aeead2cd80@gmail.com> <CAF6AEGtxCnoyrEHPknV7C9XO3OcTpSOmGq-j2K7UDKXF1j0ssA@mail.gmail.com>
- <CACu1E7FC_gPXHm4g7f0iv551orxfh=V_sJF47=6TC+nWdMyTMg@mail.gmail.com>
- <CAF6AEGvkds04G1XzVr8433S1Za_xZZSkmrWNaH-gUw6cH+cSUw@mail.gmail.com> <CACu1E7HC_u0WZ5ayXhm3z-Q5Do7tnwQLGdJ5feD99aOB52H1ug@mail.gmail.com>
-In-Reply-To: <CACu1E7HC_u0WZ5ayXhm3z-Q5Do7tnwQLGdJ5feD99aOB52H1ug@mail.gmail.com>
-From: Rob Clark <robdclark@gmail.com>
-Date: Fri, 30 Aug 2024 13:19:19 -0700
-Message-ID: <CAF6AEGve5AiOujFUjnwhaXwu6VDU0rLBfDzSJn66+h12dG1haA@mail.gmail.com>
-Subject: Re: [PATCH v2 4/9] drm/msm/A6xx: Implement preemption for A7XX targets
-To: Connor Abbott <cwabbott0@gmail.com>
-Cc: Antonino Maniscalco <antomani103@gmail.com>, Sean Paul <sean@poorly.run>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, linux-arm-msm@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, Sharat Masetty <smasetty@codeaurora.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEf4BzbOjB9Str9-ea6pa46sRDdHJF5mb0rj1dyJquvBT-9vnw@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On Fri, Aug 30, 2024 at 12:09=E2=80=AFPM Connor Abbott <cwabbott0@gmail.com=
-> wrote:
->
-> On Fri, Aug 30, 2024 at 8:00=E2=80=AFPM Rob Clark <robdclark@gmail.com> w=
-rote:
-> >
-> > On Fri, Aug 30, 2024 at 11:54=E2=80=AFAM Connor Abbott <cwabbott0@gmail=
-.com> wrote:
-> > >
-> > > On Fri, Aug 30, 2024 at 7:08=E2=80=AFPM Rob Clark <robdclark@gmail.co=
-m> wrote:
-> > > >
-> > > > On Fri, Aug 30, 2024 at 8:33=E2=80=AFAM Antonino Maniscalco
-> > > > <antomani103@gmail.com> wrote:
-> > > > >
-> > > > > This patch implements preemption feature for A6xx targets, this a=
-llows
-> > > > > the GPU to switch to a higher priority ringbuffer if one is ready=
-. A6XX
-> > > > > hardware as such supports multiple levels of preemption granulari=
-ties,
-> > > > > ranging from coarse grained(ringbuffer level) to a more fine grai=
-ned
-> > > > > such as draw-call level or a bin boundary level preemption. This =
-patch
-> > > > > enables the basic preemption level, with more fine grained preemp=
-tion
-> > > > > support to follow.
-> > > > >
-> > > > > Signed-off-by: Sharat Masetty <smasetty@codeaurora.org>
-> > > > > Signed-off-by: Antonino Maniscalco <antomani103@gmail.com>
-> > > > > Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8650=
--QRD
-> > > > > ---
-> > > > >  drivers/gpu/drm/msm/Makefile              |   1 +
-> > > > >  drivers/gpu/drm/msm/adreno/a6xx_gpu.c     | 323 ++++++++++++++++=
-+++++-
-> > > > >  drivers/gpu/drm/msm/adreno/a6xx_gpu.h     | 168 ++++++++++++
-> > > > >  drivers/gpu/drm/msm/adreno/a6xx_preempt.c | 431 ++++++++++++++++=
-++++++++++++++
-> > > > >  drivers/gpu/drm/msm/msm_ringbuffer.h      |   7 +
-> > > > >  5 files changed, 921 insertions(+), 9 deletions(-)
-> > > > >
-> > > >
-> > > > [snip]
-> > > >
-> > > > > +
-> > > > > +int a6xx_preempt_submitqueue_setup(struct msm_gpu *gpu,
-> > > > > +               struct msm_gpu_submitqueue *queue)
-> > > > > +{
-> > > > > +       void *ptr;
-> > > > > +
-> > > > > +       /*
-> > > > > +        * Create a per submitqueue buffer for the CP to save and=
- restore user
-> > > > > +        * specific information such as the VPC streamout data.
-> > > > > +        */
-> > > > > +       ptr =3D msm_gem_kernel_new(gpu->dev, A6XX_PREEMPT_USER_RE=
-CORD_SIZE,
-> > > > > +                       MSM_BO_WC, gpu->aspace, &queue->bo, &queu=
-e->bo_iova);
-> > > >
-> > > > Can this be MSM_BO_MAP_PRIV?  Otherwise it is visible (and writeabl=
-e)
-> > > > by other proceess's userspace generated cmdstream.
-> > > >
-> > > > And a similar question for the scratch_bo..  I'd have to give some
-> > > > thought to what sort of mischief could be had, but generall kernel
-> > > > mappings that are not MAP_PRIV are a thing to be careful about.
-> > > >
-> > >
-> > > It seems like the idea behind this is that it's supposed to be
-> > > per-context. kgsl allocates it as part of the context, as part of the
-> > > userspace address space, and then in order to know which user record
-> > > to use when preempting, before each submit (although really it only
-> > > needs to be done when setting the pagetable) it does a CP_MEM_WRITE o=
-f
-> > > the user record address to a scratch buffer holding an array of the
-> > > current user record for each ring. Then when preempting it reads the
-> > > address for the next ring from the scratch buffer and sets it. I thin=
-k
-> > > we need to do that dance too.
-> >
-> > Moving it into userspace's address space (vm) would be better.
-> >
-> > I assume the preempt record is where state is saved/restored?  So
-> > would need to be in kernel aspace/vm?  Or is the fw changing ttbr0
-> > after saving state but before restoring?
-> >
-> > BR,
-> > -R
->
-> The preempt record is split into a number of pieces, each with their
-> own address. One of those pieces is the SMMU record with ttbr0 and
-> other SMMU things. Another piece is the "private" context record with
-> sensitive things like RB address/rptr/wptr, although actually the bulk
-> of the registers are saved here. Then the user or "non-private" record
-> is its own piece, which is presumably saved before switching ttbr0 and
-> restored after the SMMU record is restored and ttbr0 is switched.
+On 08/30, Andrii Nakryiko wrote:
 >
 
-Ok, and all these are offsets in the preempt record.. but that part is
-allocated with MAP_PRIV, so that part should be ok.
+Andrii, let me reply to your email "out of order". First of all:
 
-Why is the VPC streamout state handled differently?
+> Can we please let me land these patches first? It's been a while. I
+> don't think anything is really broken with the logic.
 
-BR,
--R
+OK, agreed.
+
+I'll probably write another email (too late for me today), but I agree
+that "avoid register_rwsem in handler_chain" is obviously a good goal,
+lets discuss the possible cleanups or even fixlets later, when this
+series is already applied.
+
+
+
+> On Fri, Aug 30, 2024 at 7:33 AM Oleg Nesterov <oleg@redhat.com> wrote:
+> >
+> > No, I think you found a problem. UPROBE_HANDLER_REMOVE can be lost if
+> > uc->filter == NULL of if it returns true. See another reply I sent a
+> > minute ago.
+> >
+>
+> For better or worse, but I think there is (or has to be) and implicit
+> contract that if uprobe (or uretprobe for that matter as well, but
+> that's a separate issue) handler can return UPROBE_HANDLER_REMOVE,
+> then it *has to* also provide filter.
+
+IOW, uc->handler and uc->filter must be consistent. But the current API
+doesn't require this contract, so this patch adds a difference which I
+didn't notice when I reviewed this change.
+
+(In fact I noticed the difference, but I thought that it should be fine).
+
+> If it doesn't provide filter
+> callback, it doesn't care about PID filtering and thus can't and
+> shouldn't cause unregistration.
+
+At first glance I disagree, but see above.
+
+> > I think the fix is simple, plus we need to cleanup this logic anyway,
+> > I'll try to send some code on Monday.
+
+Damn I am stupid. Nothing new ;) The "simple" fix I had in mind can't work.
+But we can do other things which we can discuss later.
+
+Oleg.
+
 
