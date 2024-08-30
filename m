@@ -1,106 +1,69 @@
-Return-Path: <linux-kernel+bounces-308593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B335965F4F
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:32:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC173965F51
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:32:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D13DB2A0C6
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:32:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 48DBBB22531
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:32:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9BC518E355;
-	Fri, 30 Aug 2024 10:31:49 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10130188A27;
-	Fri, 30 Aug 2024 10:31:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6577817C22E;
+	Fri, 30 Aug 2024 10:31:56 +0000 (UTC)
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33DF77173C;
+	Fri, 30 Aug 2024 10:31:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725013909; cv=none; b=BS2MRh2W20t5GXh7phuGShJZA9kc1iNVDJM2WeSZQtyvf5BBKQPP6WV7ZGKvuTitO0osbcHjCKU5ErnO3qSQFh4JP0P4d/CyNLFQTg6M0XJyzszYHKVSuKXYNcaonjrUBULJKkthkn5YdElkTIuUwDPgUMDlwcaKbxKd65p6KIc=
+	t=1725013916; cv=none; b=cv+DbI8ZGdMOFhTRXHo89nCzZ9tdCAlcZiT2GJKfu7o4dATyfQwSETPrUunWGY3QcLBlTXKKZlIbHAvZlmY9/6MHdfUzqsKDeI5khEfySuzfqfXc5ogNUQISBg94yOgHV0x0K3BAj1F3KjzZB7Q3Om2CJLA7WSO42iICRvp/AYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725013909; c=relaxed/simple;
-	bh=8SD+wl0TVMXNGrfNXjbzyBYDvKcVCD6qD/wBmBGuR+8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=SWGHH2tpBBfXhBkIH1sgBiCrylUqZmzkc/+rQ2LCYUg8MoNOg446lif7bq5dxbBPIoslA8FjJfMtSwGs/2i51TVzH1BHriTIQPdKSTVTDPjzw2QsOjJEBZ30JQFChQghSWfR2BdsYPBhl8ymIGZGTb0qzETv4jXdS7PrgWN9DUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CA09C1515;
-	Fri, 30 Aug 2024 03:32:13 -0700 (PDT)
-Received: from e129823.cambridge.arm.com (e129823.arm.com [10.1.197.6])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 413AF3F762;
-	Fri, 30 Aug 2024 03:31:45 -0700 (PDT)
-From: Levi Yun <yeoreum.yun@arm.com>
-To: peterz@infradead.org,
-	mingo@redhat.com,
-	acme@kernel.org,
-	namhyung@kernel.org,
-	mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org,
-	irogers@google.com,
-	adrian.hunter@intel.com,
-	kan.liang@linux.intel.com,
-	james.clark@linaro.org,
-	asmadeus@codewreck.org,
-	yangjihong1@huawei.com
-Cc: linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Levi Yun <yeoreum.yun@arm.com>
-Subject: [PATCH 2/2] perf stat: Stop repeating when ref_perf_stat() returns -1
-Date: Fri, 30 Aug 2024 11:31:16 +0100
-Message-Id: <20240830103116.2117896-3-yeoreum.yun@arm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240830103116.2117896-1-yeoreum.yun@arm.com>
-References: <20240830103116.2117896-1-yeoreum.yun@arm.com>
+	s=arc-20240116; t=1725013916; c=relaxed/simple;
+	bh=V331VKn18d/1qv7waeAlGnxPu8LthkeCfhTt7Ao7Hfo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q7bakX4gq7BSahwEUV/uQ3kWJqi2+IPvI0ruWV13LxKe5t5HV6MyH6Q2PZ6DCIAuATP/whfJirHeYQBYg/sebtU5xkFIhWqx3HZXZLVAP4z4rufOBVerGf+Ziws/L6tCv5arrP/zaJFT/HYW6UiDsryoROVdWBRWSBGT6zU82bc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1sjymS-008UhT-0F;
+	Fri, 30 Aug 2024 18:31:46 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 30 Aug 2024 18:31:45 +0800
+Date: Fri, 30 Aug 2024 18:31:45 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Thorsten Blum <thorsten.blum@toblux.com>
+Cc: davem@davemloft.net, linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] crypto: jitter - Use min() to simplify
+ jent_read_entropy()
+Message-ID: <ZtGfkaNFfYZMenc3@gondor.apana.org.au>
+References: <20240819141843.875665-2-thorsten.blum@toblux.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240819141843.875665-2-thorsten.blum@toblux.com>
 
-Exit when run_perf_stat() returns an error to avoid continuously
-repeating the same error message. It's not expected that COUNTER_FATAL
-or internal errors are recoverable so there's no point in retrying.
+On Mon, Aug 19, 2024 at 04:18:44PM +0200, Thorsten Blum wrote:
+> Use the min() macro to simplify the jent_read_entropy() function and
+> improve its readability.
+> 
+> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+> ---
+>  crypto/jitterentropy.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
 
-This fixes the following flood of error messages for permission issues,
-for example when perf_event_paranoid==3:
-  perf stat -r 1044 -- false
-
-  Error:
-  Access to performance monitoring and observability operations is limited.
-  ...
-  Error:
-  Access to performance monitoring and observability operations is limited.
-  ...
-  (repeating for 1044 times).
-
-Signed-off-by: Levi Yun <yeoreum.yun@arm.com>
----
- tools/perf/builtin-stat.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-index 954eb37ce7b8..18197ded88a7 100644
---- a/tools/perf/builtin-stat.c
-+++ b/tools/perf/builtin-stat.c
-@@ -2875,7 +2875,10 @@ int cmd_stat(int argc, const char **argv)
- 			evlist__reset_prev_raw_counts(evsel_list);
- 
- 		status = run_perf_stat(argc, argv, run_idx);
--		if (forever && status != -1 && !interval) {
-+		if (status == -1)
-+			break;
-+
-+		if (forever && !interval) {
- 			print_counters(NULL, argc, argv);
- 			perf_stat__reset_stats();
- 		}
+Patch applied.  Thanks.
 -- 
-LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
-
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
