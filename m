@@ -1,332 +1,278 @@
-Return-Path: <linux-kernel+bounces-307998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89B25965606
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 05:58:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58C9B965616
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 06:01:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1597F286CD6
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 03:58:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 89897B21AF5
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 04:01:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 225051482E2;
-	Fri, 30 Aug 2024 03:58:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B63B14B949;
+	Fri, 30 Aug 2024 04:01:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="kKGeTYzl"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10olkn2029.outbound.protection.outlook.com [40.92.40.29])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="K7rRcVgl";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="U2mjjVbJ"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6A883FF1;
-	Fri, 30 Aug 2024 03:58:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.40.29
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42D2913BC39
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 04:01:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724990302; cv=fail; b=eFTBo3i/Ljr7p9J1vNx7uIfA6Z5nXYqSwqIoDSMCtZSrI6SPvzHDpE/KORKNDlQqhRCdByHA2i9aYO32UkykwXqqrJZntLzFSXebIseDG+/kWmvZyxtzEqcVAvcpVX5M3+6tqvVGMdJb0QhTsdoZhcfPoJrlaYJUWhvl0fbUoHU=
+	t=1724990490; cv=fail; b=Wz2/Sey5BDXY4DtcIqy+q7C8HbqakBSHa3aHxrrmc3qr7UJ/M7XiBJLPcxjeW2HkgzweI98ANqeaxSBvlgAID9cBFNTTzzcqQHrHLpZYOHbydByt3MXZ6kn1ucEnX3X8sPrsD9My1dFg5wCrt4igVSCU3keQs4jVJnkJ+8U0qKs=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724990302; c=relaxed/simple;
-	bh=jPcciqwgxZdPPl5o7GuGG+IYM/LeORIt5qI+6yU+8GA=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=p+SoG+DUhv0b5x377w1Ek9eUlnZdudhn6JXVCdWO62QhTkk/sW6ZuWoQnWHoYf9AtVUZFRa9BoUNBUou6od9S0tbQo8HLux5AhN53sfcRqhQ+g8Ph/LcRm3AUnrl0BkzGzscOtaOrAEVQSsr1r8YPf5DovBLwxguaMDSww/lgrY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=kKGeTYzl; arc=fail smtp.client-ip=40.92.40.29
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+	s=arc-20240116; t=1724990490; c=relaxed/simple;
+	bh=nsUPmsjg+N1xr/gikDYAoOgx/dxrW9lI4CS8101IUnc=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=DMSVdqJFnFjVM398/04tMXTwvLvIfa8BAEuzL8dX8D6BpjAUDxfZ8SLOtqqfuslU4KW/LKgetXxK6KhFmWHwWIhdhJWB0fefUO5zONWrtzxhu33IB86XPVuWmM/YDwYJG/UWje30ZZyulBeumnJYpT9zRgZTagkGN8QV84OE8Gc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=K7rRcVgl; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=U2mjjVbJ; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47U2t2W6018749;
+	Fri, 30 Aug 2024 04:01:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	from:to:cc:subject:date:message-id:content-transfer-encoding
+	:content-type:mime-version; s=corp-2023-11-20; bh=8TaEHyVkYheU3Y
+	BYOjCKigBaNc77WEZ3ittTdgRElQE=; b=K7rRcVgl1i47gnXGNGavAZ9scOhYoq
+	r/Va8rpFTeoF7WnUsoG/OnDrDVdG92daZUuTZXRkF0nPwI+0hpFMxj3J6w0LJMJG
+	H2qMZ8yfMNAwvYH4Q/UeSmpAFOfDkBGF3LdpHxufcIQSoJBB9ZQg4S2jWHBWyo5r
+	HBOF6pnLJdQR8FkMd3iK42YuiJKTmz9IgoimHkQyACJWPXLjn+ILKdeRpzYtncEw
+	OMaoGrawqCnM6BM8SsYr/7+GnyXIzc0aI18K3/INefDNgAiZVjwSTct+3JQltKJ8
+	uiQ3REhDKxrawuuJsy2xoO+nnKXfmkmu8fHbjc7n8UeLaaqjVfvlHZww==
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 41b5q381h5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 30 Aug 2024 04:01:10 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 47U2Cu6U034855;
+	Fri, 30 Aug 2024 04:01:09 GMT
+Received: from nam11-co1-obe.outbound.protection.outlook.com (mail-co1nam11lp2176.outbound.protection.outlook.com [104.47.56.176])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4189swukex-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 30 Aug 2024 04:01:09 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=lpTMbQ+yLSQKd35VAZ4ztd6UTqs+EpvRrLzYc48KWjz8ZWwdpGhG5IX2IL1QG5DJstQ5DmGF0dgHFUlSVxxTEpH6Qll+vHrCAJtMaAqJ/B6uZBymK9UiLkeEZh+/G8TLsgbRj4bTT1afqBIMFwefS5RAJ3z2Q6DKPdriuzSRsnBh7rDhFVBT6+EgG02jKZJ/iPmJSyLmEZNqYvdEQCfC/+8W5HS4c3pRl91+MXbj0oEshf2vaJz7/lt7KoCtBu3xfZ77FM7LqdobSfvuZkNgq8WT0q8GJETnuJyEl30PB+rWk50kfg6S+qtFMlHJrHfaDFCsgeEW6c4mDclADn4e6g==
+ b=Yz1WbMPH/0xC6Jafv4C47D0Tbp/8iWmYGhYUl46Ngxs74tiGqMHpRs4cwhpLG/k99BjH0VIPXQhYdeBAi+OR5MFOr4WPn4VNj9kJcLPnZCne2zZScUjtCE7IxpoylDSYAnnKNugpeOiyUj3AF/4RyTPG9QoadBODgi1njJXHa+vxoIIjBo1W1/m1yJv1fOoWFChIkC8bzd6obSzWRqWOOTLeUREhU5BEEbcwKvxDfsxMwOP/YiJQ1+aDzDKMvZb/VOTrhNSykMtcYVMAbj45t6m9Gv85TGpnqgaB+1y0aPyJjNxhaIfA6w+W6k5CHl7oIf7qYkZt4KU2ZkmfWuKF6Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jPcciqwgxZdPPl5o7GuGG+IYM/LeORIt5qI+6yU+8GA=;
- b=DBFqZB4arMhqG55vBpsDbGMMS8lT85aLKyMiOL6hebArZBIsDLKNQnliaTVeNwWbeMLFHZ45E8a5ILMAqhYjRMbqbzZ5LIUUEcPyCuUjLEz+hWAJZCFknPnGy4SFWFmp0HXBkQg2QikTYz7W07ZLKMADa/Fq/xsidtrK0DQk/2h/Z3Mkdwh0Z1qzSeasNKPHU+8IC1y/5WtrzL5faitr3qzGR9kMVX6fFFJzFlf/m+rXXVj3kcUwuuZDSMseauXhxDnp55Yr1tbSH7MGCqROrxBoQZZYypnQzP4/IjUEyq7/PcfC06Wfpg3+QFrAqEPdozDWMKPfmor1Rm6HSpuyWw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
+ bh=8TaEHyVkYheU3YBYOjCKigBaNc77WEZ3ittTdgRElQE=;
+ b=x71GlPgC+4evwmEN4a9gbvfkCuIBGfDsOKVstqsdJDRjQv8kZukepLvnTGFK4EC9qPCFVPl4fS85qf2h094b/4CSL3siixW6Fx7R5Rp+KF2uuP/8T1y9rqoZtkEqS4N+jf9Y6rMYwTn1FlAzSpudVTATFcc8F5DVbQu+PIsaVc0uK9aoODHJ9W1zFZQrS2u78CKQSTy5hJrS0eaVer995UhewTLkZAu4XprjpniPjdVfV7Sf+DA9nd8zJnvaGLhcslzm89owzqEsnrw1BzF2vZ0EMInoaFpLMRJpOZS6BaW8Y9gBjnMXmX9RkPPO8WKwnKBsbb46sGQBlApf1Xoreg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jPcciqwgxZdPPl5o7GuGG+IYM/LeORIt5qI+6yU+8GA=;
- b=kKGeTYzl5ABk0+auMYYbFZxq8u7RCp4I5RnoakfTAmrzcknSBaM/5keotJg+jlttY6fPdsgKqFTlaukQUv1ta1Jj+h4jiwgi598CFg0xImrBp5iIEudSsSYsicNKnk+d5Iq4/51r24w7PpACD6v/LaKT/OmmiM+oAUTXGTz7IXLtEiekwd8p+Q3hLL8fGllxVpUrJyEg2TVOaVhwkPJkjnavxVLcCD48j3aQqrhyXBtiDmriL+FOQuabU+2TZvuxUEYt1vV8xDgmo13tpdxbPrK8jdHO13mw8MYfjdypl4RVRIM8ART7VEbuMkhgirgYO+Xuf9yGe3FjBKHmPvNqvQ==
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
- by PH0PR02MB9308.namprd02.prod.outlook.com (2603:10b6:510:288::10) with
+ bh=8TaEHyVkYheU3YBYOjCKigBaNc77WEZ3ittTdgRElQE=;
+ b=U2mjjVbJiMnjmXgOPdTCEMLtPMplKMzAmeKw36MPyrAWfr6bANF05Sq4SdSSaGHqw9EEsmpEpphkVQhAiinyGsRPJ8g013ix6eQalh+M+pppTuhTd2MH7pB/W/BoimKZrmN/9ga997DrBDFP6soQ7vXZZ3+Ww46iuHu4A+ujkHA=
+Received: from DS0PR10MB7933.namprd10.prod.outlook.com (2603:10b6:8:1b8::15)
+ by CYXPR10MB7949.namprd10.prod.outlook.com (2603:10b6:930:e3::5) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.28; Fri, 30 Aug
- 2024 03:58:16 +0000
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df%6]) with mapi id 15.20.7875.018; Fri, 30 Aug 2024
- 03:58:16 +0000
-From: Michael Kelley <mhklinux@outlook.com>
-To: Robin Murphy <robin.murphy@arm.com>, =?iso-8859-2?Q?Petr_Tesa=F8=EDk?=
-	<petr@tesarici.cz>
-CC: "kbusch@kernel.org" <kbusch@kernel.org>, "axboe@kernel.dk"
-	<axboe@kernel.dk>, "sagi@grimberg.me" <sagi@grimberg.me>,
-	"James.Bottomley@HansenPartnership.com"
-	<James.Bottomley@HansenPartnership.com>, "martin.petersen@oracle.com"
-	<martin.petersen@oracle.com>, "kys@microsoft.com" <kys@microsoft.com>,
-	"haiyangz@microsoft.com" <haiyangz@microsoft.com>, "wei.liu@kernel.org"
-	<wei.liu@kernel.org>, "decui@microsoft.com" <decui@microsoft.com>,
-	"hch@lst.de" <hch@lst.de>, "m.szyprowski@samsung.com"
-	<m.szyprowski@samsung.com>, "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-	"linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-	"linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>
-Subject: RE: [RFC 0/7] Introduce swiotlb throttling
-Thread-Topic: [RFC 0/7] Introduce swiotlb throttling
-Thread-Index: AQHa9MJuV8zHlUlbFEOu4P5Y/AqjALI8msyAgAARKQCAAHGNgIACBi6w
-Date: Fri, 30 Aug 2024 03:58:16 +0000
-Message-ID:
- <SN6PR02MB4157DA9719D1F6EEC4F00E57D4972@SN6PR02MB4157.namprd02.prod.outlook.com>
-References: <20240822183718.1234-1-mhklinux@outlook.com>
- <efc1eafc-dba4-4991-9f9a-58ceca1d9a35@arm.com>
- <20240828150356.46d3d3dc@mordecai.tesarici.cz>
- <bb7dd4ca-948f-4af7-b2ac-3ca02e82699f@arm.com>
-In-Reply-To: <bb7dd4ca-948f-4af7-b2ac-3ca02e82699f@arm.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-tmn: [XnpFdCy9JpXFM4vaUkM7MP1hn62bVrVO]
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|PH0PR02MB9308:EE_
-x-ms-office365-filtering-correlation-id: e77092f7-9564-4a2a-469f-08dcc8a7fa3f
-x-microsoft-antispam:
- BCL:0;ARA:14566002|461199028|8060799006|15080799006|19110799003|56899033|440099028|3412199025|102099032;
-x-microsoft-antispam-message-info:
- aPivHA7xj6RKuxZVK/mXErjbvwleqZnT+UzQL9I+rUtWExOCWwEJ0NA3u9kLmednAD2ECOHEhc4w7JlOUbxfnQB9Stk/YErHwEFYQu3skUgPcoJDmDd7TS2WJFqNoTFEStAibERrtDwdUFRO++PVm19c3KWxr/vOhpwDrXN3PXEL7ksPmX4GAEyWDZXZ4md/4BKsf7b8NLsO+ABx/Zm7QYBLcbgMi7eyrYZtlKMmwTldVEopK1aAnxgJUMmwOFMo7IAyscc6u3jX+swF2iVsa+9CUQVlg+zh9GmlZA4LKU0MYyltx6+3+vONyTd/CXKSP+hWjdlzxCxCTbLnvJVgiVwDOgHdOPrbjr7pfoPECI1qHxDZDKKJzYRPhPQ/Tj/UahSNOm4WrDBeY4mFv4G/vY3EiKirRM2hoi2WnXUUuTyu+bz9Vbea9Hv0JXz6Ox34T5si5B3UW0QD1sQKrkbQoBgL6xuVi/H4j/+L8X5vEbOqwyp/z4ollTLVgXDwoqAl3j8oXsl0/J5zYFfGnpEakgVrM7t09wGjhhhH00Afc+wv19giutEefC7dV7JBS8IDwsXkv/28cia4HvihusJsIGcItD/JsnClTnIjeXP4FKJz/GnfdxygWQMTXX3NBlw29j7e8KVepM4VPklyjA0tpQ9EjkZZqs24Q6ogL73yxh7SmNHEADqtO3WjcHKAiYzI
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-8859-2?Q?KACHvPkVyfmJYRzbfqDqKxJyqYh8AYKBa/PvNsUQC9FocSTXxZLxTBmKQI?=
- =?iso-8859-2?Q?a22fLRwXNONVSkTEKIdTWU/cFLcXtZdp2H/SUzG6reGnfPvU4XFa5lvR4y?=
- =?iso-8859-2?Q?TQH9oVEcS8ov0gb8VqOAYNwn8BUD0A1U/YHDiA3yrKn71kPgFbwROOfbYu?=
- =?iso-8859-2?Q?nyLRXRoyjvnJk/WyriLF/qOjYhA1dgNkEU7CgtyNEAqZr+Ue24rYwEYjaP?=
- =?iso-8859-2?Q?th2IhTbTKcdWDr8mJz3+elkEEMGnafbWYugdK+uIEZShr6zqtTGxMbau0C?=
- =?iso-8859-2?Q?2kvvMux3qkf7LBxuJ4qbBus5X3tUEPeciK2JQSJCsWmc0YS1ltpF7Lam2e?=
- =?iso-8859-2?Q?dStb+xX4n5FK4CvFTAxexo39zn48Dmq5zpbDzq7FaKw22ecE35ZOgse93w?=
- =?iso-8859-2?Q?ncjr4jq40Vp0eH4vIhk3EDQDmX6O4OXEkDfrLHPbOVDktoYlpP8bIjFeGR?=
- =?iso-8859-2?Q?EbAZ+pqYAdo1KFC4a4DBHkY7qaGjgA++A/N9XUp08eDnUsRSXi2hTh/Pw6?=
- =?iso-8859-2?Q?GoY2+3Z/9yJaCDB6QhjkpXPQ3w8nXxfjY7eAop5V5EgpAGZQSgUSomxmsx?=
- =?iso-8859-2?Q?3vVQUCUjjX/I7XpIAofy/3a/fJI75lTg83z1aO3GrUlruo6yqy2CzOiQID?=
- =?iso-8859-2?Q?zcnirkNLbtvQGobV9ZP4unlvIHXE/fNPmvJAYeFzlBOW5Aj7NOZer5/HuD?=
- =?iso-8859-2?Q?gia2Fuf3vBY/tPSyjeI+zMTLWXTyFdnTqtdt4Ei8Gi46Rlj1Q/xG4kPcvP?=
- =?iso-8859-2?Q?wzT46fWA3RMiI0CdaY/8LPqjroBGncboLtJTJWNOuky0Bp49SWwnf4CJJ3?=
- =?iso-8859-2?Q?CvxZgv48HsOQX26VtM5sXJ2A3lneEkFsEzSccn1/rwFsSP0Bs3ZlYE9Ge+?=
- =?iso-8859-2?Q?yFYgZRP7xIsOUZz3xsy/2MhCllPJl/TER8/0dzxkdv7arfxOre5p/MI2U1?=
- =?iso-8859-2?Q?yH4Ogx1T3Xobg7sLccXGg1M4aEJafvNZuUtgUspFXeNpbAp8Ku5tZJycQ5?=
- =?iso-8859-2?Q?KoEo2ELysfutcBM9qZdcCz4pWJmmUkib+5prPQF7h5sJ+q8DtzI7CDaaM0?=
- =?iso-8859-2?Q?F4/WEd/eG9UdCDGb3GBeTFsr9FMPryHnSNzRv10XHbRsV7msK69226N4zt?=
- =?iso-8859-2?Q?/r2uRGknQMRHsfKJhEIkQlVbXW5i0LANhRp5qxpZclc1mSxLmq0Z8MAY/V?=
- =?iso-8859-2?Q?vpnY35Vr5kFGhOCU8smBPPqrdLE4H69RRLvhO+IHgz5WsOTQJI+MRNh1RU?=
- =?iso-8859-2?Q?eShmC3xGgNIaspaG2blbPW3RhYNB7SMlCT9PIVgmQ=3D?=
-Content-Type: text/plain; charset="iso-8859-2"
-Content-Transfer-Encoding: quoted-printable
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.20; Fri, 30 Aug
+ 2024 04:01:06 +0000
+Received: from DS0PR10MB7933.namprd10.prod.outlook.com
+ ([fe80::2561:85b0:ae8f:9490]) by DS0PR10MB7933.namprd10.prod.outlook.com
+ ([fe80::2561:85b0:ae8f:9490%3]) with mapi id 15.20.7918.019; Fri, 30 Aug 2024
+ 04:01:05 +0000
+From: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Suren Baghdasaryan <surenb@google.com>,
+        Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+        Matthew Wilcox <willy@infradead.org>, Vlastimil Babka <vbabka@suse.cz>,
+        sidhartha.kumar@oracle.com, Bert Karwatzki <spasswolf@web.de>,
+        Jiri Olsa <olsajiri@gmail.com>, Kees Cook <kees@kernel.org>,
+        "Paul E . McKenney" <paulmck@kernel.org>,
+        Jeff Xu <jeffxu@chromium.org>,
+        "Liam R. Howlett" <Liam.Howlett@oracle.com>
+Subject: [PATCH v8 00/21] Avoid MAP_FIXED gap exposure
+Date: Fri, 30 Aug 2024 00:00:40 -0400
+Message-ID: <20240830040101.822209-1-Liam.Howlett@oracle.com>
+X-Mailer: git-send-email 2.43.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: YT4PR01CA0421.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:10b::23) To DS0PR10MB7933.namprd10.prod.outlook.com
+ (2603:10b6:8:1b8::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: outlook.com
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR10MB7933:EE_|CYXPR10MB7949:EE_
+X-MS-Office365-Filtering-Correlation-Id: 88ea3e84-6fc7-49dc-a6bd-08dcc8a85f14
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?DOY21GBuhbhW+1okf1RLSk1UGfWqsN98D63FGXUC5EDgCEDu1ZQy5N9MRv/b?=
+ =?us-ascii?Q?liBMBUAP1l4qJepdwfoPVQQTIxVpdq3QvEgx6Xw8cHtfDZ64CiOGKdMv8Ql3?=
+ =?us-ascii?Q?loX2jD5iMgV3Ew8GowZDEodMlUpxGNIb8qgklS0B5jtY5Acl7v1DmJFkDOt4?=
+ =?us-ascii?Q?FSh/ePmigu8ycazG6goMZNSvOVjyJLh7kInFu9GVsHZjVldQAb4lyPPLHOqD?=
+ =?us-ascii?Q?xXTRJN5FxM2cUdIsCMrbek4rrsMYqBIV+QzZF+VLofkbVsXv1xowPI03EmGV?=
+ =?us-ascii?Q?25y3sMHn0mdTFe00hHlb/EvTocdzHL8swbOclajWIbFNmH5zpI5K++qeJVqL?=
+ =?us-ascii?Q?ZVNIQSxqfTrgpH5rCFs1pJa8QuW7fQVKgkgd88lzGMM8eVhTo8aw6kKVJcNd?=
+ =?us-ascii?Q?t4mWytcH4ygAKYw1PnkTC4WJNeysZMr9/NUgsa1405swAXWSW+S9W9XXOliJ?=
+ =?us-ascii?Q?XxL48gIEvHweZmo8r6tC2icbeAJpYkNua/sU6o6QS68J1u+0e4fKNzclQNp7?=
+ =?us-ascii?Q?baBEl5VxTajCYTIHioQszBksbPwk7YK6iF5q1o2rczGNNIrp9fs+2bH0yP+x?=
+ =?us-ascii?Q?AQBX1JOKuTEXrMYGxB9Iq2ESUBx1WzPzpjN791jGkAUp3OtcU5NczTSYNyFW?=
+ =?us-ascii?Q?vJvJOj2oW8SiRZkBe1laK3iyJVG+A6dBBQvSp0hRhIpMs4Mxz+gtGpEuD0cE?=
+ =?us-ascii?Q?0xrm6ObE77IkyBHG1P1N7LhJx2AEwRPf91pPteDvOxH8DbkyEBC5H4VvmZh3?=
+ =?us-ascii?Q?mMSszLbcgCNjV22BjrUakS6PnYZaWm+4NjXjNJfgmMXFR98BnYrD8I4CNp4J?=
+ =?us-ascii?Q?8nZGTSeiT4I/MhJWkthuD1X1g0vmccIGXwWvKPiaXtqqjo0rOM8OCaMbbkZw?=
+ =?us-ascii?Q?2uSCEgoHyuWwdfUADGehDWgONB8OUX2k0r4bdu9RvoAeSUiALfEc1F8oxKGc?=
+ =?us-ascii?Q?wKsG6c5iBBA1Mqp4arC4GIQlJXZCEWZyuylZLQFkUkKg2ZD99bCkzN5E1nZW?=
+ =?us-ascii?Q?Ew3HGxdwgF0Q3H126IXIcke0XkI5hRgedj4of3DqXVpscvqun6o3XMj3johT?=
+ =?us-ascii?Q?vrS2H2TMxlf5fYrp1GtVU2xJYl9I0HMV7zRj3cc7iy+cpfPUdyBFaxdfafCD?=
+ =?us-ascii?Q?AVpAuQadj1CqzsyByJrCGrAnCIxx4K589Pf43MWrxBXTrt0HVFrKx5lxQTkB?=
+ =?us-ascii?Q?Ytvrjbf5ZIH+oJx9olhwfXWl7nPYI0RG324cbQl7tmm7F3nXjmI/LqKvDsiK?=
+ =?us-ascii?Q?7AV5CLrYt1bVY7kHxM/XNVG2zF2P/dHs9AADZgsIumJLBE7wOAfAtekGHNTa?=
+ =?us-ascii?Q?c7I=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR10MB7933.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?wGych3WZCi/xX7yzBWk8C8NwtlW2AX1lRfwfvjY9gxhSD+RBaClUfmA7rHst?=
+ =?us-ascii?Q?/RBBqX4TbJU6HO7CnxKYXkNjs8g/pvadKxhwxsBlKwvN66AOmnipq7nQHf4O?=
+ =?us-ascii?Q?tCEV2ThnD2c1y2cohRlu5GH8Ur1GPVQAblQ/4pzKQg6kXprg0Cn5MNOfPoWk?=
+ =?us-ascii?Q?oAGCv6JEWv+n/3BX55a7S8zQ44+OF8IZxCfsqCa+8FWtuox3Yt2rRx3eJFac?=
+ =?us-ascii?Q?bzYEWEJyHIYG4aSD1YCPg5M9JPX6T/VJ1BuHaH+ov4cJVBfMN3pP2gLL/iXP?=
+ =?us-ascii?Q?UYnX99DRXvW0vmnQ3ZGxd6/Prs64VFXNCIxDgJZeL6Ouzq4rzVEnPNZStNnH?=
+ =?us-ascii?Q?C4QgdVKH2tY/tkQaxB6GwNkIyp5OLMtfZQLIX790nhC5cKa31UrVv+WWbKNP?=
+ =?us-ascii?Q?j7WMYe+yYQzNdliqhCXjWL1p0j04JVcCz/7Dxu8rcPp63qC0ABSUlWB4kAzj?=
+ =?us-ascii?Q?l1nr23J3wiVSJPD4c8qX9E0T9I+omegvjyt2crVXD+8wRufxFeV3ZTADQ6YG?=
+ =?us-ascii?Q?IUkVLA8bay2/r2/IS0KAZU87yHpCRZVCv5yNNBjfNI7mVA0Fu3HIUAAlzlCv?=
+ =?us-ascii?Q?0O2Yyni3r6VW0ILLBCyx/gzl7XR5hSvnY6HnxWoxGaOr2vyytbhoPngSyM27?=
+ =?us-ascii?Q?by2ihmT1THsZkCK2w9OOi8dpNdUkVbsDZQ/f28PVrp0guRk94WJDU39ba2To?=
+ =?us-ascii?Q?odBjmAzJE7wQ15+CNGvC297ecCenGjwCjiBopinp5FPtPpbpkOjWyw056SYz?=
+ =?us-ascii?Q?T8EK+rzznE/sTO3KM8rbBvIUz3Y1N01Q8v4Fu1pFW39pHjQaXAYFFvCibjQl?=
+ =?us-ascii?Q?b1X4ff0rOM1lS5iTEeFCchee4dhKTm2aJK0XiZTcgFmS00CAZiH0geKD6ws8?=
+ =?us-ascii?Q?CdHZiuATG+JVR0qOhfS7jK44eELTxxJEjgZYYEyNx+ZacVy2PAPoKemMfmZG?=
+ =?us-ascii?Q?rEIfoPOxdN78e/adc1uVU4bKyK1VozL9DLMRk1ANnqJtI5/j87waBEvygNvr?=
+ =?us-ascii?Q?NyxgFu5wz44XPmG2J4RkfwIOXuC/AjBir1OK2lN+ukXFUJQshNi2DpezAPAR?=
+ =?us-ascii?Q?4yLUPasgKm44QYfhMYaiEw/rjk1OvXuoEDAdgC+fE0As8uOuZ2Dbc3NTU/f5?=
+ =?us-ascii?Q?uqqK28SP2njzeuuamuGZbWT2D5ttfvWnAY+LcYJCQujZpHooK8Imbs8JYgQS?=
+ =?us-ascii?Q?feVJ6r+FKRNewRhF5FuEsLhg70GmRWV3oJZVfgWysD7yu4Qw+cfsFlGcO34c?=
+ =?us-ascii?Q?1k/cAc2ipKPMxGNNUb5FSahg2+L8aHT87fdJDll1lBC5RpaBHcIAqy+/sY4a?=
+ =?us-ascii?Q?LV9h3ndNtkhnjjME02g4c6KrxEdJNB2Rx5fs5SbO3w5IdRELjYGUs9vv5oyM?=
+ =?us-ascii?Q?EzoWwhi09JNXlP0o/OW9xGOKf6pqB1A/+RWp2x+LOzgYvmnVHcDUYPHJYedQ?=
+ =?us-ascii?Q?gscFdRmHAUxf33CaNA/XE8cMqXlylIIdzCt2OzopcJt0jrV93QPYwv/f1ts7?=
+ =?us-ascii?Q?rbvvdPNconF22rGGQqqP0/LH+hNyEQ5liVmgDl9QKpHDZ0IboY0UIYRwITwI?=
+ =?us-ascii?Q?oY5akceajJbGf/dpHhc5fu4nysvHZA7MN835fU99?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	aCrKLPwHQ7XBQtV3+wtCcEgZk6XySXKprLsyuS50avWVhNlTWm+0juE3hhuhRwvBC3NnxEsL/mGqsiCks5D7P0Yi5Gg8MW97CKfjwGL0/RHQpOAU6bqJo2A8gEuyXx8iQo0vnjlHMtDUVAmPMjtN1IagkbEFaW8G3dqEV0OJy+UlfJqlPybSOiOTGX8KAQ0XVX3J8MG//OSQ5NWEvSfTmOKwFkkTCN7vJGI9E1v/Ciwt9AnHXS5xd3Dr9Q3uOT5vP8UVH8daho40z4GRHqSEHyhKNBP5uCbM8hdB1ztsQUXAU+EuXdnQ6j4vPjNHglZfVKIh3oLBXQpi4GpUdauKNGFiQETuhlFaERWnzmAySY6r7jK47LmzTHCotSsNuGY8E+x8EUZ7K7nhbOFyyB5iRAqidpYjPgsvjccLjhTzlzsNlKtIZwgjetCjlwrFptqAdCuEOXjKMgvtgmN7hw/cMu1dMBMXAg2H9rdsnnLl9otcYh9bvgSGccz6q4BUGQsImw9VK12JbVUoIbjq1F80aETSfNAAJs3Gmv5kTIPRCdRk+KFagbhE+9AwTqB+Yo886x29qSUdCdfagubdZeZmbL1AXyG+eDD01lHHJwNJZyw=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 88ea3e84-6fc7-49dc-a6bd-08dcc8a85f14
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR10MB7933.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: e77092f7-9564-4a2a-469f-08dcc8a7fa3f
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Aug 2024 03:58:16.2933
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Aug 2024 04:01:05.6628
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR02MB9308
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: mQAXk1/PHl+Rsa5htqiJ/FwMp2ZGJVhjjIFkHGRfrZYKw+NNCbQDVg2JadD/fO/Yt3QKvFWXaerX/Rw2YNVFQg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYXPR10MB7949
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-30_02,2024-08-29_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 spamscore=0 suspectscore=0
+ mlxlogscore=999 malwarescore=0 bulkscore=0 phishscore=0 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2407110000
+ definitions=main-2408300028
+X-Proofpoint-GUID: qcw__-AfEBcpGPNXlgcAYpJlU30m9sJg
+X-Proofpoint-ORIG-GUID: qcw__-AfEBcpGPNXlgcAYpJlU30m9sJg
 
-From: Robin Murphy <robin.murphy@arm.com> Sent: Wednesday, August 28, 2024 =
-12:50 PM
->=20
-> On 2024-08-28 2:03 pm, Petr Tesa=F8=EDk wrote:
-> > On Wed, 28 Aug 2024 13:02:31 +0100
-> > Robin Murphy <robin.murphy@arm.com> wrote:
-> >
-> >> On 2024-08-22 7:37 pm, mhkelley58@gmail.com wrote:
-> >>> From: Michael Kelley <mhklinux@outlook.com>
-> >>>
-> >>> Background
-> >>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> >>> Linux device drivers may make DMA map/unmap calls in contexts that
-> >>> cannot block, such as in an interrupt handler. Consequently, when a
-> >>> DMA map call must use a bounce buffer, the allocation of swiotlb
-> >>> memory must always succeed immediately. If swiotlb memory is
-> >>> exhausted, the DMA map call cannot wait for memory to be released. Th=
-e
-> >>> call fails, which usually results in an I/O error.
-> >>>
-> >>> Bounce buffers are usually used infrequently for a few corner cases,
-> >>> so the default swiotlb memory allocation of 64 MiB is more than
-> >>> sufficient to avoid running out and causing errors. However, recently
-> >>> introduced Confidential Computing (CoCo) VMs must use bounce buffers
-> >>> for all DMA I/O because the VM's memory is encrypted. In CoCo VMs
-> >>> a new heuristic allocates ~6% of the VM's memory, up to 1 GiB, for
-> >>> swiotlb memory. This large allocation reduces the likelihood of a
-> >>> spike in usage causing DMA map failures. Unfortunately for most
-> >>> workloads, this insurance against spikes comes at the cost of
-> >>> potentially "wasting" hundreds of MiB's of the VM's memory, as swiotl=
-b
-> >>> memory can't be used for other purposes.
-> >>>
-> >>> Approach
-> >>> =3D=3D=3D=3D=3D=3D=3D=3D
-> >>> The goal is to significantly reduce the amount of memory reserved as
-> >>> swiotlb memory in CoCo VMs, while not unduly increasing the risk of
-> >>> DMA map failures due to memory exhaustion.
-> >>
-> >> Isn't that fundamentally the same thing that SWIOTLB_DYNAMIC was alrea=
-dy
-> >> meant to address? Of course the implementation of that is still young
-> >> and has plenty of scope to be made more effective, and some of the ide=
-as
-> >> here could very much help with that, but I'm struggling a little to se=
-e
-> >> what's really beneficial about having a completely disjoint mechanism
-> >> for sitting around doing nothing in the precise circumstances where it
-> >> would seem most possible to allocate a transient buffer and get on wit=
-h it.
-> >
-> > This question can be probably best answered by Michael, but let me give
-> > my understanding of the differences. First the similarity: Yes, one
-> > of the key new concepts is that swiotlb allocation may block, and I
-> > introduced a similar attribute in one of my dynamic SWIOTLB patches; it
-> > was later dropped, but dynamic SWIOTLB would still benefit from it.
-> >
-> > More importantly, dynamic SWIOTLB may deplete memory following an I/O
-> > spike. I do have some ideas how memory could be returned back to the
-> > allocator, but the code is not ready (unlike this patch series).
-> > Moreover, it may still be a better idea to throttle the devices
-> > instead, because returning DMA'able memory is not always cheap. In a
-> > CoCo VM, this memory must be re-encrypted, and that requires a
-> > hypercall that I'm told is expensive.
->=20
-> Sure, making a hypercall in order to progress is expensive relative to
-> being able to progress without doing that, but waiting on a lock for an
-> unbounded time in the hope that other drivers might release their DMA
-> mappings soon represents a potentially unbounded expense, since it
-> doesn't even carry any promise of progress at all=20
+It is now possible to walk the vma tree using the rcu read locks and is
+beneficial to do so to reduce lock contention.  Doing so while a
+MAP_FIXED mapping is executing means that a reader may see a gap in the
+vma tree that should never logically exist - and does not when using the
+mmap lock in read mode.  The temporal gap exists because mmap_region()
+calls munmap() prior to installing the new mapping.
 
-FWIW, the implementation in this patch set guarantees forward
-progress for throttled requests as long as drivers that use MAY_BLOCK
-are well-behaved.
+This patch set stops rcu readers from seeing the temporal gap by
+splitting up the munmap() function into two parts.  The first part
+prepares the vma tree for modifications by doing the necessary splits
+and tracks the vmas marked for removal in a side tree.  The second part
+completes the munmapping of the vmas after the vma tree has been
+overwritten (either by a MAP_FIXED replacement vma or by a NULL in the
+munmap() case).
 
-> - oops userspace just
-> filled up SWIOTLB with a misguided dma-buf import and now the OS has
-> livelocked on stalled I/O threads fighting to retry :(
->=20
-> As soon as we start tracking thresholds etc. then that should equally
-> put us in the position to be able to manage the lifecycle of both
-> dynamic and transient pools more effectively - larger allocations which
-> can be reused by multiple mappings until the I/O load drops again could
-> amortise that initial cost quite a bit.
+Please note that rcu walkers will still be able to see a temporary state
+of split vmas that may be in the process of being removed, but the
+temporal gap will not be exposed.  vma_start_write() are called on both
+parts of the split vma, so this state is detectable.
 
-I'm not understanding what you envision here. Could you elaborate?
-With the current implementation of SWIOTLB_DYNAMIC, dynamic
-pools are already allocated with size MAX_PAGE_ORDER (or smaller
-if that size isn't available). That size really isn't big enough in CoCo
-VMs with more than 16 vCPUs since we want to split the allocation
-into per-CPU areas. To fix this, we would need to support swiotlb
-pools that are stitched together from multiple contiguous physical
-memory ranges. That probably could be done, but I don't see how
-it's related to thresholds.
+If existing vmas have a vm_ops->close(), then they will be called prior
+to mapping the new vmas (and ptes are cleared out).  Without calling
+->close(), hugetlbfs tests fail (hugemmap06 specifically) due to
+resources still being marked as 'busy'.  Unfortunately, calling the
+corresponding ->open() may not restore the state of the vmas, so it is
+safer to keep the existing failure scenario where a gap is inserted and
+never replaced.  The failure scenario is in its own patch (0015) for
+traceability.
 
->=20
-> Furthermore I'm not entirely convinced that the rationale for throttling
-> being beneficial is even all that sound. Serialising requests doesn't
-> make them somehow use less memory, it just makes them use it...
-> serially. If a single CPU is capable of queueing enough requests at once
-> to fill the SWIOTLB, this is going to do absolutely nothing; if two CPUs
-> are capable of queueing enough requests together to fill the SWIOTLB,
-> making them take slightly longer to do so doesn't inherently mean
-> anything more than reaching the same outcome more slowly.
+RFC: https://lore.kernel.org/linux-mm/20240531163217.1584450-1-Liam.Howlett@oracle.com/
+v1: https://lore.kernel.org/linux-mm/20240611180200.711239-1-Liam.Howlett@oracle.com/
+v2: https://lore.kernel.org/all/20240625191145.3382793-1-Liam.Howlett@oracle.com/
+v3: https://lore.kernel.org/linux-mm/20240704182718.2653918-1-Liam.Howlett@oracle.com/
+v4: https://lore.kernel.org/linux-mm/20240710192250.4114783-1-Liam.Howlett@oracle.com/
+v5: https://lore.kernel.org/linux-mm/20240717200709.1552558-1-Liam.Howlett@oracle.com/
+v6: https://lore.kernel.org/all/20240820235730.2852400-1-Liam.Howlett@oracle.com/
+v7: https://lore.kernel.org/all/20240822192543.3359552-1-Liam.Howlett@oracle.com/
 
-I don't get your point. My intent with throttling is that it caps the
-system-wide high-water mark for swiotlb memory usage, without
-causing I/O errors due to DMA map failures. Without
-SWIOTLB_DYNAMIC, the original boot-time allocation size is the limit
-for swiotlb memory usage, and DMA map fails if the system-wide
-high-water mark tries to rise above that limit. With SWIOTLB_DYNAMIC,
-the current code continues to allocate additional system memory and
-turn it into swiotlb memory, with no limit. There probably *should*
-be a limit, even for SWIOTLB_DYNAMIC.
-=20
-I've run "fio" loads with and without throttling as implemented in this
-patch set. Without SWIOTLB_DYNAMIC and no throttling, it's pretty
-easy to reach the limit and get I/O errors due to DMA map failure. With
-throttling and the same "fio" load, the usage high-water mark stays
-near the throttling threshold, with no I/O errors. The limit should be
-set large enough for a workload to operate below the throttling
-threshold. But if the threshold is exceeded, throttling should avoid a
-big failure due to DMA map failures.
+Changes since v7:
 
-My mental model here is somewhat like blk-mq tags. There's a fixed
-number allocated with the storage controller. Block I/O requests must
-get a tag, and if one isn't available, the requesting thread is pended
-until one becomes available. The fixed number of tags is the limit, but
-the requestor doesn't get an error if a tag isn't available -- it just
-waits. The fixed number of tags necessarily imposes a kind of
-resource limit on block I/O requests, rather than just always allocating
-an additional tag if there's a request that can't get an existing tag. I th=
-ink
-the same model makes sense for swiotlb memory when the device
-driver can support it.
+This is all the patches I've sent for v7 fixups plus the return code for
+mseal().  The incorrect return code was introduced in an earlier patch
+and then modified (still incorrectly) later, so this version will
+hopefully bisect cleanly.
 
-> At worst, if a
-> thread is blocked from polling for completion and releasing a bunch of
-> mappings of already-finished descriptors because it's stuck on an unfair
-> lock trying to get one last one submitted, then throttling has actively
-> harmed the situation.
+- Fixed return type of vms_gather_munmap_vmas() to -ENOMEM or -EPERM
+- Passed through error returned from vms_gather_munmap_vmas() in
+  mmap_region() - Thanks Jeff
+- Added review tag on last patch - Thanks Lorenzo
+- Added #ifdef CONFIG_MMU to vma.h where necessary - Thanks Lorenzo,
+  Bert, and Geert
+- Fix null pointer dereference in vms_abort_munmap_vmas() - Thanks Dan
 
-OK, yes, I can understand there might be an issue with a driver (like
-NVMe) that supports polling. I'll look at that more closely and see
-if there is.
+Liam R. Howlett (21):
+  mm/vma: Correctly position vma_iterator in __split_vma()
+  mm/vma: Introduce abort_munmap_vmas()
+  mm/vma: Introduce vmi_complete_munmap_vmas()
+  mm/vma: Extract the gathering of vmas from do_vmi_align_munmap()
+  mm/vma: Introduce vma_munmap_struct for use in munmap operations
+  mm/vma: Change munmap to use vma_munmap_struct() for accounting and
+    surrounding vmas
+  mm/vma: Extract validate_mm() from vma_complete()
+  mm/vma: Inline munmap operation in mmap_region()
+  mm/vma: Expand mmap_region() munmap call
+  mm/vma: Support vma == NULL in init_vma_munmap()
+  mm/mmap: Reposition vma iterator in mmap_region()
+  mm/vma: Track start and end for munmap in vma_munmap_struct
+  mm: Clean up unmap_region() argument list
+  mm/mmap: Avoid zeroing vma tree in mmap_region()
+  mm: Change failure of MAP_FIXED to restoring the gap on failure
+  mm/mmap: Use PHYS_PFN in mmap_region()
+  mm/mmap: Use vms accounted pages in mmap_region()
+  ipc/shm, mm: Drop do_vma_munmap()
+  mm: Move may_expand_vm() check in mmap_region()
+  mm/vma: Drop incorrect comment from vms_gather_munmap_vmas()
+  mm/vma.h: Optimise vma_munmap_struct
 
->=20
-> AFAICS this is dependent on rather particular assumptions of driver
-> behaviour in terms of DMA mapping patterns and interrupts, plus the
-> overall I/O workload shape, and it's not clear to me how well that
-> really generalises.
->=20
-> > In short, IIUC it is faster in a CoCo VM to delay some requests a bit
-> > than to grow the swiotlb.
->=20
-> I'm not necessarily disputing that for the cases where the assumptions
-> do hold, it's still more a question of why those two things should be
-> separate and largely incompatible (I've only skimmed the patches here,
-> but my impression is that it doesn't look like they'd play all that
-> nicely together if both enabled).
+ include/linux/mm.h |   6 +-
+ ipc/shm.c          |   8 +-
+ mm/mmap.c          | 140 +++++++++---------
+ mm/vma.c           | 362 +++++++++++++++++++++++++++------------------
+ mm/vma.h           | 168 ++++++++++++++++++---
+ 5 files changed, 434 insertions(+), 250 deletions(-)
 
-As I've mulled over your comments the past day, I'm not sure the two
-things really are incompatible or even overlapping. To me it seems like
-SWIOTLB_DYNAMIC is about whether the swiotlb memory is pre-allocated
-at boot time, or allocated as needed. But SWIOTLB_DYNAMIC currently
-doesn't have a limit to how much it will allocate, and it probably should.
-(Though SWIOTLB_DYNAMIC has a limit imposed upon it if there's isn't
-enough contiguous physical memory to grow the swiotlb pool.) Given a
-limit, both the pre-allocate case and allocate-as-needed case have the
-same question about what to do when the limit is reached. In both cases,
-we're generally forced to set the limit pretty high, because DMA map
-failures occur if you broach the limit. Throttling is about dealing with
-the limit in a better way when permitted by the driver. That in turn
-allows setting a tighter limit and not having to overprovision the
-swiotlb memory.
+-- 
+2.43.0
 
-> To me it would make far more sense for
-> this to be a tuneable policy of a more holistic SWIOTLB_DYNAMIC itself,
-> i.e. blockable calls can opportunistically wait for free space up to a
-> well-defined timeout, but then also fall back to synchronously
-> allocating a new pool in order to assure a definite outcome of success
-> or system-is-dying-level failure.
-
-Yes, I can see value in the kind of interaction you describe before any
-limits are approached. But to me the primary question is dealing better
-with the limit.
-
-Michael=20
-
->=20
-> Thanks,
-> Robin.
 
