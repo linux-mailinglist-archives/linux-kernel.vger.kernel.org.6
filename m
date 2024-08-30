@@ -1,135 +1,129 @@
-Return-Path: <linux-kernel+bounces-309121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01882966673
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 18:05:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88AF4966674
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 18:05:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3AD3281A3F
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 16:05:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C2CEBB212F9
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 16:05:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D70071B81D9;
-	Fri, 30 Aug 2024 16:04:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="Ceyzy7XX"
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32E471B81C5;
+	Fri, 30 Aug 2024 16:05:03 +0000 (UTC)
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BED1192D94;
-	Fri, 30 Aug 2024 16:04:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D96D1B5313;
+	Fri, 30 Aug 2024 16:05:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725033892; cv=none; b=czPo0TIPXCzoB8WqDd8Dhm4rVutaXS4UTKSVm0Wfn4oTPOcMiBtnKWpnBFXnekBhHuJmVwPil71wVykbDhsrIxcMogMtZ7m7wUJWbOhvmlaEG2UheoDM6XLuIl+pKR0u9REhCQa6es/J5gnW72M3GmvZkw4JCgurpOXXHJJj72k=
+	t=1725033902; cv=none; b=e3w+MgU7uD3k6Dv5vqpq7oHUzrQX2tQF/DF5lZ9AKGZ9bqsS9hFuapr2rlbfdehhE5mNKOqLklXHE1oEuChL4kuTWG7yuPu7HdGhzBtlI/aeiTpaYPhu+zVjhW/NSTC0KiODKn3hkLiv9pNNe0txCCqK3t86A24GzTZ9wl5103Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725033892; c=relaxed/simple;
-	bh=tZPGX375hrHPLr/sCSsEXe8qXLuw2fMVtSvmTjhg2+I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=PSal8O05ubzcOAS+nlYaxnGF8KnFr+VdSOjpP8ZeIrp+9gHO0weZa64v0JoiObUrs0k/d8nSKP6WAEbRC6pblQIssIX+C+p2GQDyptgxlF4v2zIkNEzPkSoFWXxuxES7venzRXbcDg7RbNiPo8PCDr6GFX62kq2fiU5OYv74xj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=Ceyzy7XX; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47UC9P4e003064;
-	Fri, 30 Aug 2024 18:04:27 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	XdUP22qiupn7VHmQeEXg1uHZc5JhTQw6VLVbjHWHSAA=; b=Ceyzy7XXvW2Y5JKO
-	0Zw3oPGw9VBzZNNikFHAodvW7B3UyEbcrVIzE0IsECIJiXGVLkkhAk8TfkIjjdDk
-	AiLPLZSeAly39Mbr4Jw+BsQGvy45mb3iWSIsZqiPxPPvGKJn4VvPM10Hvjd4+qX1
-	/H8OncgKoBC4zZUQrNa5W7DDL6/H/T7TJUIE/jVBYYEc26C01NkDy4bV5R3zVvkv
-	HiJ8JB+gK0cXi5aklnHlFnkKJJ/Kf0B8/kiMypMYZndLOTCnmsDxEFbDexgGxaqG
-	Nr+8FOx/8Lyy9TgtBgSMvm9Q46O9CUEzVRWm6kdE7oOQvq8V6bvNaXCFD85qY1Hc
-	V7SSzA==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 41b14uknss-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 30 Aug 2024 18:04:27 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 20CEE4002D;
-	Fri, 30 Aug 2024 18:04:22 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 5553D27C231;
-	Fri, 30 Aug 2024 18:03:32 +0200 (CEST)
-Received: from [10.252.12.18] (10.252.12.18) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Fri, 30 Aug
- 2024 18:03:31 +0200
-Message-ID: <60f38cec-1942-41a1-9d5e-0eeaaeed0667@foss.st.com>
-Date: Fri, 30 Aug 2024 18:03:30 +0200
+	s=arc-20240116; t=1725033902; c=relaxed/simple;
+	bh=0PHexi5FCDXG5r1ICUuIysKsDC3B3eyH4Ldpm4z7DiI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Gon1LERlskkChJJdUW0n5jFhsKxBaMor7HxMc8yXsmcUkfPM7oLLVZJk4WtVSgpFRYIGiBkf2sixwNzCe5pt9f3pQPv4fXJqcwsmks984lT2S5yOzxmzyFUKfL/2NPTkWXIl1CSopDH+/XewBppLOOOLSdiIvUENictGN0Q5SeE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-71431524f33so1559493b3a.1;
+        Fri, 30 Aug 2024 09:05:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725033901; x=1725638701;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JUpaf8BqvRvM7Np4XiIINOjrDZkTcAXavhuqF36JwdI=;
+        b=IIT5H27ZUvMk4PBVJoRarPTt9/l23fb0wq3SNuQKTKpICbnSPnXoe9A1QT/eDsm2xq
+         byLAK9yKKE2uO3ayPUqa/KixY1Kb6Z+Wzz16rdGTXPshlujpcMc1AKWEdFCN0upKiSN1
+         7wtVJLyoD26lfYVl0B/xrtSI29sSzLRSp4k+kEPPgQp4GFcu5moCcZ0hmT6RUoqOQ1bv
+         jIMWeV2xgOMfQkFg4bnc50bR8TKLaTkEC3L2YDsIeDxgvbtm9Kxp7E6VTZU6JEO3b9Bt
+         /+9yK1PfOZX6SM5NeGFcFO9zZWotqyXjyF3chQ0eJtxQff1XQ7XeVcZ7MQubB1/iDGz1
+         Desw==
+X-Forwarded-Encrypted: i=1; AJvYcCUO+lNOCbluykz4l9Lv+hCvQ3/VaVhHrkjGrl2vUBH+t0xx95A9011kIKfqSxMhIEMxdHCnaKA7A9zsKyc=@vger.kernel.org, AJvYcCUgejKlYoOX0jnBrgKNH4JawbpQVPPQFrQMRDqPaQYyUsFmb3t5iF4S18AVHzIxJjooJWX32JQ/UO+5AW+1LuGHWA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/Nao5QsfvkK7HXad0ijjMesy0a3Yq+HUUZW3wJE2THovCGCs3
+	+GZlssgpiz/v7MfOavaMwCzT8aG3CGIGddo+962Gjq8S6c8axA+fqNpu+KXyNhIea3JKYGtFYn5
+	ttCZ5yeQsmq8y3pR7rzVh0uAXBgs=
+X-Google-Smtp-Source: AGHT+IFBrIo9zzBAxPH4X8y6loDwLwSYh9hMwKgrQhhfEH6LT8RhylD6QGYpRHDoeLggQp3h7ohucZ35yXb9YnbL68E=
+X-Received: by 2002:a17:90a:bc89:b0:2d8:8991:211f with SMTP id
+ 98e67ed59e1d1-2d889912298mr854196a91.28.1725033900524; Fri, 30 Aug 2024
+ 09:05:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] arm: dts: st: stm32mp151a-prtt1l: Fix QSPI
- configuration
-To: Oleksij Rempel <o.rempel@pengutronix.de>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: Ahmad Fatoum <a.fatoum@pengutronix.de>, <kernel@pengutronix.de>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <netdev@vger.kernel.org>
-References: <20240812104142.2123970-1-o.rempel@pengutronix.de>
-Content-Language: en-US
-From: Alexandre TORGUE <alexandre.torgue@foss.st.com>
-In-Reply-To: <20240812104142.2123970-1-o.rempel@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-30_10,2024-08-30_01,2024-05-17_01
+References: <20240829150154.37929-1-irogers@google.com> <20240829150154.37929-6-irogers@google.com>
+ <ZtDMf886_1vXWt49@x1> <CAP-5=fURe7yVy6OGWdKn1eSzsdfZPyvvc5fRMPeNAjukaWOe1w@mail.gmail.com>
+ <ZtDg2BAI0V5zKpjn@x1> <CAP-5=fXa0r7sD9xbtBVbJQFgnq=3i-cnj6gUX9tze0JyhLhvZw@mail.gmail.com>
+ <ZtFNGuwj0WzRQ8fd@google.com> <CAP-5=fUjjOLJ2fUd5gN7SbS0Apgtqft0RCP1HpghFxRt==LOCg@mail.gmail.com>
+In-Reply-To: <CAP-5=fUjjOLJ2fUd5gN7SbS0Apgtqft0RCP1HpghFxRt==LOCg@mail.gmail.com>
+From: Namhyung Kim <namhyung@kernel.org>
+Date: Fri, 30 Aug 2024 09:04:48 -0700
+Message-ID: <CAM9d7cg0WpMnRja1z0a+R2BN8TicgB=Y4EDt=95383gFaqQKZA@mail.gmail.com>
+Subject: Re: [PATCH v1 5/8] perf header: Allow attributes to be written after data
+To: Ian Rogers <irogers@google.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	Nick Terrell <terrelln@fb.com>, Yanteng Si <siyanteng@loongson.cn>, 
+	Yicong Yang <yangyicong@hisilicon.com>, James Clark <james.clark@linaro.org>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Oleksij,
-
-On 8/12/24 12:41, Oleksij Rempel wrote:
-> Rename 'pins1' to 'pins' in the qspi_bk1_pins_a node to correct the
-> subnode name. The incorrect name caused the configuration to be
-> applied to the wrong subnode, resulting in QSPI not working properly.
-> 
-> Some additional changes was made:
-> - To avoid this kind of regression, all references to pin configuration
->    nodes are now referenced directly using the format &{label/subnode}.
-> - /delete-property/ bias-disable; was added everywhere where bias-pull-up
->    is used
-> - redundant properties like driver-push-pull are removed
-> 
-> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-> Reviewed-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
-> ---
-> changes v3:
-> - extend comment message
-> ---
->   arch/arm/boot/dts/st/stm32mp151a-prtt1a.dts  |  12 +-
->   arch/arm/boot/dts/st/stm32mp151a-prtt1c.dts  | 108 +++++++---------
->   arch/arm/boot/dts/st/stm32mp151a-prtt1l.dtsi | 126 +++++++++----------
->   arch/arm/boot/dts/st/stm32mp151a-prtt1s.dts  |  16 +--
->   4 files changed, 116 insertions(+), 146 deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/st/stm32mp151a-prtt1a.dts b/arch/arm/boot/dts/st/stm32mp151a-prtt1a.dts
-> index 75874eafde11e..8e1dd84e0c0a4 100644
-> --- a/arch/arm/boot/dts/st/stm32mp151a-prtt1a.dts
-> +++ b/arch/arm/boot/dts/st/stm32mp151a-prtt1a.dts
-> @@ -28,16 +28,12 @@ phy0: ethernet-phy@0 {
->   	};
->   };
+On Thu, Aug 29, 2024 at 10:03=E2=80=AFPM Ian Rogers <irogers@google.com> wr=
+ote:
 >
-...
+> On Thu, Aug 29, 2024 at 9:39=E2=80=AFPM Namhyung Kim <namhyung@kernel.org=
+> wrote:
+> > Maybe I'm too naive but can we skip header updates on pipe data?  I'm
+> > curious if this makes sense..
+> >
+> > Thanks,
+> > Namhyung
+> >
+> >
+> > diff --git a/tools/perf/builtin-inject.c b/tools/perf/builtin-inject.c
+> > index a7c859db2e15..b36f84f29295 100644
+> > --- a/tools/perf/builtin-inject.c
+> > +++ b/tools/perf/builtin-inject.c
+> > @@ -2341,6 +2341,9 @@ int cmd_inject(int argc, const char **argv)
+> >         if (ret)
+> >                 goto out_delete;
+> >
+> > +       if (data.is_pipe)
+> > +               inject.is_pipe =3D true;
+> > +
+>
+> I'm not sure what you are saying. We can't know definitively if the
+> input is a pipe style file or pipe until the header is read, which is
+> part of session__new and something we pass whether we want to repipe
+> the header or not. So we've made a decision or not to repipe but
+> opening the header may change the decision that was already made. As
+> you say we can opportunistically just copy/repipe the header if we
+> know the input and output types match, but:
+> 1) generating the header isn't that much work,
+> 2) if the header needs to change for extra attributes, such as with
+> some of the auxiliary flags, then the repiped header was no good
+> anyway.
+> Trying to keep header repiping alive for inject, the only use, is
+> weird given all the gotchas. I think it is simpler to open, know what
+> we're dealing with, then generate the output header accordingly -
+> possibly synthesizing events for the attributes in the case of file to
+> pipe.
 
-Applied on stm32-next.
+I'm ok with removing repipe in session__new.  What I want is
+not to overwrite the file header for a data file containing pipe
+header.  In your example, 'perf record -o- > a.data' should have
+the pipe header in a.data.  Then b.data from perf inject should
+have the pipe header as well, right?  Then we don't need to
+worry about the rewrite IIUC.
 
-Thanks
-Alex
+Thanks,
+Namhyung
 
