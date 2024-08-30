@@ -1,131 +1,114 @@
-Return-Path: <linux-kernel+bounces-308903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A4F6966381
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 15:57:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 719A5966386
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 15:57:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D1971C23290
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 13:57:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B07C1F24F12
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 13:57:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C82B81B151B;
-	Fri, 30 Aug 2024 13:57:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25AF01B1D79;
+	Fri, 30 Aug 2024 13:57:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sKWlfmLq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3M58Dtm8"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DCA415852C;
-	Fri, 30 Aug 2024 13:57:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E4D91A7AC7
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 13:57:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725026230; cv=none; b=fPvpSbaBvYZgep/Dr4WLwn9fNxdpn3WAgxG6ux7IvBtSR0PTI9803DlHEFSXRR7mcinsXxfdYUNBEkFC/ofCULEdjopy/3zrzWVSc6Ef8h3NM4QYlqpCR7YOnbmFVlJSiy7L/q6NSZskcAnlqlHR/AxOXVA4CD8MavUK9q5nfBA=
+	t=1725026239; cv=none; b=WkwrFhe7DQEQpQe9c7K90Omwju/pruMxowS4wN/CnoHaqZ4QwJtSWr0KAoWcilYluoy2xNMgnKMqf5IwjijnUBlxRDNjjDcVVuNmVkNZF+Q0QnP5/P8j2SlcHcrwLoM0niHpwlxVqUfj9YDnHEdXcQH7GVB61lF95Hns+pDUddM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725026230; c=relaxed/simple;
-	bh=PUtTNLbt6A2sNCbjzHkOLHcI/puW7x5xKfmRvOTpgso=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HxINPjPGLT4I9C1D9C2zYecxvBazxryoaYZZ1vMYL4U1MasLLzf1FkMsLG5pPBao3cIPqiHJcyPZjr+SVhwnWKPA5+z+tEmFkGbRE/wB+/UPqkeT/lWzxkkXVxcq4Pzxt0uZ85h9N4/839FG2uogS4kBVwACw2zkvryg0JEJbNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sKWlfmLq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91CBCC4CEC5;
-	Fri, 30 Aug 2024 13:57:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725026229;
-	bh=PUtTNLbt6A2sNCbjzHkOLHcI/puW7x5xKfmRvOTpgso=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=sKWlfmLqZNMT4KeOaoblI7EzuUpx7SpaeCfGCVJiEV9D/O96U5vcES0Qw0U3ZawTc
-	 nLXs9G/RUCzEKK5cKN469V7pT2NpG6C8/C7oT4FUFVcf9jdQFjyZoRr+j2qE9T3NmX
-	 gY7erPfv2Clj7IcuQSV+xcc9JLFN2JpVRP2SZ+th3zilEGBr4s0M1HwTVsbmayg+vD
-	 N4EbQzm3EMKg7ERHM4EjhwsrmZpNCitZHqxjRzWjrzHY2pBuw6amhEwfdJ+ADRMwNc
-	 pTugsPmjgKXmLfMdUSVNgVMc8pokrB/FCxXPKsaqOnWpH7MH3SLzlc436NOm7PnOKd
-	 4l18usHE4niPQ==
-Received: by mail-oo1-f43.google.com with SMTP id 006d021491bc7-5d5c7f24372so1107942eaf.0;
-        Fri, 30 Aug 2024 06:57:09 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVb9VpFe2O+0uzIJa3U/UF5ljnwWLPWhfUQcpcv1MIMLVxqmSHmfIzsjA3upFOy60o2XWnbM/TSKYE=@vger.kernel.org, AJvYcCXI9ld2hLr0gUi3+rxUNvvZjE/3NaCGNF5WN3O+ILrTfCEANQwNZeB4ixxo/xXjPt6udRT9emtTsk5CVSiV@vger.kernel.org, AJvYcCXoyrBAHt/1HwrmboHKxNb8FAO8oWKyv7cFDRygVscYhpRGwM12A9N3wv8S9P4LXNoHjW/gIl78WpNo@vger.kernel.org
-X-Gm-Message-State: AOJu0YwO1+EScUlC9rXyYwQ1GfdEJifvK1X0pTDyi3HHsanXmetN6fmx
-	vuXKHTA/YNYQ3XsnVZWfVL1izmLdy4HwsBnpm4m5SiEfkmpEUCZ4vnJHa10oj/ltXn3P6ADkEFS
-	j1w/0nGYuG6BPYq38FcALrcG4o1k=
-X-Google-Smtp-Source: AGHT+IEJSjNl67ew/kPaMpct4NgygqQiWkyvtbM7YadAynGTKeolN8FmwqNdGcIY5gfAP4/ZbIo37K3xsytT3gP5a9s=
-X-Received: by 2002:a05:6820:2707:b0:5d5:d7fc:955c with SMTP id
- 006d021491bc7-5dfacf88d18mr2406264eaf.5.1725026228895; Fri, 30 Aug 2024
- 06:57:08 -0700 (PDT)
+	s=arc-20240116; t=1725026239; c=relaxed/simple;
+	bh=NUlKGhIyCsQGFAYIgqP91JPxVHe0dLUWSGpMcalpvoU=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=apxMb4NFs77aBVaYI4W0kzne3r+iXizQ/HHZDIQzAO5MNqCeRiMZZBwFhSGb20E5oaPYAEi9E3hPPlnwpUEgfqwk7Sj1z9H9dS6UVOjccv+Q1vNpqz4GpeO8CctGxCFkLg7vWbhtuq/FmW48ufknXkzAneeCa5iDJz81MtQGNKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3M58Dtm8; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-2052918b4f4so7078605ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 06:57:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1725026236; x=1725631036; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=58CvTL6COAyoekWQp05GB8r3Lb0Xc+vxoLW2O7LrDWY=;
+        b=3M58Dtm8nuNnYELdLnsGKD+ir1BUWYX6KMaWNsdRaZlwUBjlODenA7kthE1jBOAUou
+         ImtzeOJ2e68tgG+fdGNq2kPdTJvjZAseXOybzuNqxF93qfmN4/SLr4yPdIQ6YQjPTO/u
+         5qNdRvUl1NbK8rrNaEQh5uaG4V5R9zepM163/bERDS7YXIB5c0KextBqXF8tfiw0PKNt
+         YfVDSkNCbWkVYkZKVDbbgi6oPi8/QFSiypLGtqE2RsKJ06emUyTlX4ZZA1QwVpIfySex
+         3oGLPOfa3iwUQR875Zs4igODpfEJfNtvHOEb0Ol2QUeWNE9rnF/OXm56pVsyIICKf8F8
+         zyNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725026236; x=1725631036;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=58CvTL6COAyoekWQp05GB8r3Lb0Xc+vxoLW2O7LrDWY=;
+        b=Q/ijO+0jcrrkZhbxX7QrLC7Sx92oYxw9lrN4HUOkOc8ST99e4PzVBgLBb79kAQZvcc
+         u/0vqeGx2jobaX5zLcP7MCSVan7aQJakTHwoxpHm9GvIGHWK0QRGqwdh71ZCSrLLNBQX
+         BoIcM9rnjX+W87YhuokWhLJvf//HU7HuN+fwqTJF1POR16t1sPJEs6YvbskpNr9dot9h
+         9d1FKVryUrDtmhQK/0GCJVb/llysX5UWFeHBs0Ev5hStwxnB92ji/9w6K7vCKwk36Xx7
+         CaXkIaJ8JOEx6WI0k/+WUeuOcDX2KPWiomyPf7fWuc1aFD1kQQwQGxMjPb+FhL6QVlN3
+         nMvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUe0XAkHkYDx678zbAMRbPZu5ESVreUduFM/ByR4dVYxWnVAs39J2fpQra+DDdrlx+UcAOQxqhnCzG6III=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzagnANtqy5nrcvOnwpgGyd1WD4VR072IzajpqoNPOH9Vae071g
+	fpFSbZSuO4WRyRrcPLuzxYLh0Rn3l9CASvWflxANcdU4BAPsCPYAATTm5wQgBNXEAk92cXF7M+t
+	nHg==
+X-Google-Smtp-Source: AGHT+IExGR2RCNKu/4M4z4IiNUcplAydPr67v3iYUD8ZfSJDuu52D1tVexWQwhZuKUP8XxVYEYjpc6MqNEc=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a17:902:f90b:b0:1fd:9d0c:999e with SMTP id
+ d9443c01a7336-2052857ddfamr344725ad.9.1725026235523; Fri, 30 Aug 2024
+ 06:57:15 -0700 (PDT)
+Date: Fri, 30 Aug 2024 06:57:14 -0700
+In-Reply-To: <1f037b5604deb5f83f05e709b2edf3063372518f.camel@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <2803b89021f991662b000f50e45dbaebdcca438a.1724729626.git.len.brown@intel.com>
- <CAJZ5v0jcOUoN6gDDFkufu8xWF-BHXaSKnXqraHsTkq8JanJXuQ@mail.gmail.com>
- <CAJvTdKkucaRVDZm6EVeUxwyrQexyuYd7ECUBSkpP0nC9PwzspA@mail.gmail.com>
- <CAJZ5v0jvYitb7DLyLkqTRv0TT=6yBHDvEvb8tJLzAOVKa3hqnQ@mail.gmail.com>
- <CAJZ5v0gxVqrASiuJq=UX9jyZsG=XvriFn2=7CPmG6-1sKbmPEQ@mail.gmail.com>
- <CAJvTdK=-ETniiwzwLYH14+TeU0kA49gvTnqyRxH7-Hc6tzTBUw@mail.gmail.com>
- <CAJvTdKmpfs_nh4J0R8T=1P9WaAJ-nJ+mKj=rT3tqMpmvpUTisA@mail.gmail.com>
- <87frqoig98.fsf@somnus> <CAJZ5v0gTfhTQ4AMZ+ukuJZEG=RRo-wbPsf7NPbWA0snDeA5ivQ@mail.gmail.com>
- <878qwf9w84.fsf@somnus> <CAJvTdKmbwtrUmCAJxXb7UVJuVAyMLec2AF--AHbiy+YNhOg5-Q@mail.gmail.com>
-In-Reply-To: <CAJvTdKmbwtrUmCAJxXb7UVJuVAyMLec2AF--AHbiy+YNhOg5-Q@mail.gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 30 Aug 2024 15:56:57 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0gE07+Nin5Weji20M-xOmjyWrixQU5PUnzZt=YWeH+-YA@mail.gmail.com>
-Message-ID: <CAJZ5v0gE07+Nin5Weji20M-xOmjyWrixQU5PUnzZt=YWeH+-YA@mail.gmail.com>
-Subject: Re: [PATCH] ACPI: Remove msleep() bloat from acpi_os_sleep()
-To: Len Brown <lenb@kernel.org>
-Cc: Anna-Maria Behnsen <anna-maria@linutronix.de>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, linux-acpi@vger.kernel.org, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Frederic Weisbecker <frederic@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Jonathan Corbet <corbet@lwn.net>, 
-	Andrew Morton <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+References: <20240830043600.127750-1-seanjc@google.com> <20240830043600.127750-2-seanjc@google.com>
+ <1f037b5604deb5f83f05e709b2edf3063372518f.camel@intel.com>
+Message-ID: <ZtHPusyTNkQ_a1Y-@google.com>
+Subject: Re: [PATCH v4 01/10] KVM: Use dedicated mutex to protect
+ kvm_usage_count to avoid deadlock
+From: Sean Christopherson <seanjc@google.com>
+To: Kai Huang <kai.huang@intel.com>
+Cc: "zhaotianrui@loongson.cn" <zhaotianrui@loongson.cn>, 
+	"oliver.upton@linux.dev" <oliver.upton@linux.dev>, "chenhuacai@kernel.org" <chenhuacai@kernel.org>, 
+	"maobibo@loongson.cn" <maobibo@loongson.cn>, "palmer@dabbelt.com" <palmer@dabbelt.com>, 
+	"maz@kernel.org" <maz@kernel.org>, "pbonzini@redhat.com" <pbonzini@redhat.com>, 
+	"anup@brainfault.org" <anup@brainfault.org>, "paul.walmsley@sifive.com" <paul.walmsley@sifive.com>, 
+	"aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>, Chao Gao <chao.gao@intel.com>, 
+	"kvm-riscv@lists.infradead.org" <kvm-riscv@lists.infradead.org>, 
+	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>, 
+	"loongarch@lists.linux.dev" <loongarch@lists.linux.dev>, 
+	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
+	"linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>, Farrah Chen <farrah.chen@intel.com>
+Content-Type: text/plain; charset="us-ascii"
 
-On Fri, Aug 30, 2024 at 7:55=E2=80=AFAM Len Brown <lenb@kernel.org> wrote:
->
-> On Thu, Aug 29, 2024 at 11:37=E2=80=AFAM Anna-Maria Behnsen
-> <anna-maria@linutronix.de> wrote:
->
-> > I created a patch for fsleep() - only complie tested - which should mak=
-e
-> > sure that the slack is maximum 25%. What do you think about it? Might i=
-t
-> > be helpful?
->
-> If the purpose of using msleep instead of usleep_range is to lower
-> the cost of the timer sub-system....
->
-> then I'm not sure that choosing to do an msleep instead of a usleep_range
-> based on the timer duration makes any sense.
->
-> The lighter overhead of the msleep is something that is more important
-> when there are more timers.  More timers is not the same as longer timers=
-.
+On Fri, Aug 30, 2024, Kai Huang wrote:
+> 
+> > Reviewed-by: Kai Huang <kai.huang@intel.com>
+> > Acked-by: Kai Huang <kai.huang@intel.com>
+> > 
+> 
+> Hmm I must have done a lot for me to receive two credits (and for most patches
+> in this series) :-)
+> 
+> I think one Reviewed-by tag is good enough :-)
 
-My understanding is that when a new timer is added, it is not actually
-known how many timers there are overall in use in the system, so it is
-generally better to use a more lightweight variant in case there are
-many of them.
+Heh, indeed.  b4 has made me very lazy; I just `b4 am` the patches and let b4
+grab all the trailers.  I'm guessing something went awry in that flow (or maybe
+you acked a previous version or something?)
 
-However, the more lightweight variant is not suitable for short sleep
-durations because it adds bloat of 2 jiffies (after the recent change
-from Anna-Maria), so the idea is to start using msleep() at the point
-when the bloat added by it starts to be comparable to the delta
-between the usleep_range() arguments (used for short sleeps).
-
-Now, because it is not known exactly what timer precision is required,
-some assumptions need to be made and IMV it is reasonable to assume
-that the actual sleep duration is expected to be somewhat greater than
-requested, but it is also not expected to be much greater than
-requested, so using a fraction of the requested sleep time as the
-usleep_range() makes sense to me.
-
-Of course, you can argue that in the ACPI case there are those
-high-count loops and so more exact sleep durations are better, but
-realistically this is mostly about system suspend/resume times and the
-difference is not something that cannot be tolerated in that case IMV.
-Also it would be better to avoid running those high-count loops in the
-first place.
-
-Overall, if my understanding is correct, I generally agree with
-Anna-Maria's approach.
+Anyways, one of Paolo or I can clean this up when applying, assuming we remember
+to do so...
 
