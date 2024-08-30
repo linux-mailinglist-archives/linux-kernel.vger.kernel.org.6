@@ -1,170 +1,113 @@
-Return-Path: <linux-kernel+bounces-308404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1009965C81
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 11:15:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5D81965C7D
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 11:14:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1BC52B24F0E
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 09:15:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62D9228962F
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 09:14:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA8A6171644;
-	Fri, 30 Aug 2024 09:15:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24CC1170822;
+	Fri, 30 Aug 2024 09:14:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OdHjZUX+"
-Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="QqYfZ5hL"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E3721649C6;
-	Fri, 30 Aug 2024 09:15:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90631165EED
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 09:14:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725009308; cv=none; b=Mw3eRViZWNzQQr9eC4sTY1u3h6eQqYqJyjCeS5Eht8oLOlEXGQFwDJvIxBu3UYihnhIQv8NjSCsZYC+L/yIhYQIu/yQuKFBI7nscmrTyzL3TtQA1I2WsojqPbRpJ4C463uHh+1YCw2rYu19aam7UpBzH6JQ0yAsq1pfZdBsUvps=
+	t=1725009285; cv=none; b=DrLauEvLwmC9OILwWseuNJZnHcAoBIErj0sU8D8lpxJJzStLkbQkj3Aljmu84PKkUzpfbBV56qgK+tY3MMpbm0ZgMpxnnpDY/EWTqvYKItQXt/Xw9YrIrRHfIx4KacGoccGGjfvuCCvYYwpPGbq9iA+OzjtSex5By6Wf4iOh0KQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725009308; c=relaxed/simple;
-	bh=e7MDYm2G5kiu3Jy622lzL6g9yh8iKw8UGxxsmI61Kyo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KjvrnCbQ4yMZ95pHpAR6F12x0GH6OcxrEXvyXJZdGfUUEmKsJULQmLPfj+egIihfDRIXbGxb/EOmPdepSWLoihVsr6Y4ybkAYj1t/gTanVqcIWim5Jekg903G7h80pWNC1O1g6PvvDjkbWEQgv3Xxi1MsgZSTp9BNcYoeZaVFzA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OdHjZUX+; arc=none smtp.client-ip=209.85.219.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-6bf9ac165d3so8955546d6.0;
-        Fri, 30 Aug 2024 02:15:06 -0700 (PDT)
+	s=arc-20240116; t=1725009285; c=relaxed/simple;
+	bh=MunnVq1WWPfhulh5ublCo8ivCjgw6ojCfob+0vtSfi4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LpEME1wfbzIFxOZDaKFw0wkR/7ZQJ6NWW01h+2vAl+YrdVmeU1MlaPHRHfVqYWdo+mgZJ3dewXrq3h6yJB1Bcc3CBsTN2FbLAkVIH1bpNwUPXY37606J9t3xNGDC/SYXM1Lr4utjx2i8l8WsOPEo0Yf5HS0OyNCN9sPy9oangZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=QqYfZ5hL; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a7aa086b077so155271766b.0
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 02:14:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725009305; x=1725614105; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YMYjxf06/xzrVFnQjfFIBLlkRu6WKAwRmwgAflzV1Nk=;
-        b=OdHjZUX+iYnZPF8s0LxpiSsAifLfMqldpWtXiXXgL0eFI69D9wr33+p3VRswgg0KbD
-         WR1QDLYH7BVPRRr6UyCnjs8LxefFMPxXJpReyOIVav4DgXHPIFu29WaKwpnTTvb7zLkM
-         ml08PWDtLIzTQNg+yDkzePJA2IOPZsvsSOh2rqjvMPp6F40Yp9OJ1EHj/9amuCp0E3Ii
-         cuIBg8iEHZZ8t4XiMo77VOl4Eoc6G7MxhaGqCCUDZH56XinZDDE5IQ/apU3vBHrKC7cV
-         WyMaCzeoxcxCM/u/zMHypxq4ebQjVN8895iahFh+TE9WWHZD8XnWko5otHuIOW15YDYg
-         W2Cg==
+        d=suse.com; s=google; t=1725009281; x=1725614081; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=dCpWiuYzwJ/FauLPmsqDAK2T4ZYA4VoIq/mWU+rdRSc=;
+        b=QqYfZ5hLq0ypboJ6yPa6PI/cwgQJ8qWKLrViJ1uBcDTorND0H/kXZOCaEfCO6VRbEE
+         Gs7a/1cCe1nZgVL+GqOhHUmdp2J3aR31/+n+PK/AxdhSv2pDoibZOaOXtacqA3KlZfFe
+         DlL8oZWEvdc8depAixo4EhEEieui7bv46/P5/lLDRYHdPGEtNjreyJvX5lA1oTrsw3nz
+         IsKcIAF19mE/LW1ndoio8tOfSiD4gPt6t1wEz96OoGPTkXfa4T+crybDgtRrdoaOIhdy
+         WpdWp8uzlA8sSb7JtNViBWf3SSjVNqn/bWyJ/NaHihgf5i3ccGt6kO+FctxQZMAC0HQI
+         IPeA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725009305; x=1725614105;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YMYjxf06/xzrVFnQjfFIBLlkRu6WKAwRmwgAflzV1Nk=;
-        b=IXnYwBn5sc/gOZFg7HzRjO8Z2Ql37PogoipFWDAa4kuXzsE+GrgFw6HIj+TGrCBi7I
-         T+5AtpKyUzzFGiZSvOIHxmRRof4Xeg8KfbzlTZNL+axpj7D8TDMQXbAyy3qZKXmiykC1
-         n+uNH+O87UyDJoKdvx+Txc8H+PEFvtQBvx+LpNIYYRlt+NAVX0NyRgqSOQJUlJz7/dRQ
-         LvoiQi+vZqu/jRhD5LrEjyX9EwvKc9UgJTZIXoWE3yMUepSPZgHXplNYPVN/6ECU7EQI
-         k1EeZpQAu3Mrq836eP1GJYlWKAIzZgyhC5PZWmm8pcikWYtyfR4XHlP9Nj1BI3fOfUMl
-         zruw==
-X-Forwarded-Encrypted: i=1; AJvYcCWN0MPX+uN7cEi+w6cQTMkGQDD86h/CtLGK+bT01WpdLmR5mqMtVKybpbzjGsxfY2IIUXz37GAPYCj2xuPe@vger.kernel.org, AJvYcCXqk0EhwI5qG22y6E2Ogp/wK2mLYEVvWhc8EjiYDvkLaM3jBvopaCv0nE0ERfjUfB7oagGeoXvEWh9aoB8X@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkqpUGPXzKccu/zBzyO6vIdQbzunqnnJ8nYhR5Gxev/6YrSdAs
-	R6LIO2se33sdkc4aaLVIAoRGZ03+7ASu9E1C87ajDis4+GYvDLp8xLdrWwullsKZMEsar8i3pSJ
-	vSF/0ghsjfAUT0zTG/b6gZ9+h08w=
-X-Google-Smtp-Source: AGHT+IHPz7RwNRoySa4cVAgVqyXEx7uUIhjwxzkc5uRcUJ/q8SAC8Z4h+mjIUB24TBnUS1LnBmmacRsc+acMxQH2sD0=
-X-Received: by 2002:a05:6214:4408:b0:6b5:936d:e5e9 with SMTP id
- 6a1803df08f44-6c33e6254eemr63713016d6.26.1725009305147; Fri, 30 Aug 2024
- 02:15:05 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725009281; x=1725614081;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dCpWiuYzwJ/FauLPmsqDAK2T4ZYA4VoIq/mWU+rdRSc=;
+        b=d4TUY1EOuGhNOKodckgHSYvhh8GLk94KFxtRcla7vrDudKLKWldP6xTxzvkRYynazQ
+         t8HoVq34xsDcHAwtl3XzGtra3LOKQYGnh1EPrufq8wxJO/asakW0axW48yYkX7XiAR0M
+         vptGcpfh1UWusOBNEd7IPNQEUJJBP9zgoGWqxBhOMB9ssvnkXAA+mgeCI+f6VxEkbyyX
+         l4hEraH5BMm1uKnoD5UbkaDP1VZyDd98TZ9DNUe9g33l5fDa/BH7fTuFin8MNCN1ISXj
+         5mkPI9eQBtfydek131DJVD4flKMOcteVDwxSosXTAI8jgiHh64dgSozvbV/54iZQgPV8
+         DT8w==
+X-Forwarded-Encrypted: i=1; AJvYcCXBGAarAI86a1nyXTdnF/myzuIFodlvBA4lU04H12mdpteJ9KUo9i44p6DQIbpjGV4b4JlEImM8B3qFqoc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzY1nWTj+dp8U7SyPBBZBMaDK8ew//2iIaWc8OyNvBjF2dTp8FF
+	iD+ZRLKesv6oqNkFfWflTchb8ass+joChAfOLfcZNvS99PfGAJxWzMmFd3QwMb4=
+X-Google-Smtp-Source: AGHT+IFAr1LxcA7An7pzAxQ81bnftOoBZ24oOM6gpjEcc9xyIM4qbjIqXwvlNIMbdUQuIuTDlnqWQA==
+X-Received: by 2002:a17:907:7d93:b0:a86:746a:dced with SMTP id a640c23a62f3a-a897f822f9bmr481910566b.19.1725009280520;
+        Fri, 30 Aug 2024 02:14:40 -0700 (PDT)
+Received: from [10.20.4.146] (212-5-158-102.ip.btc-net.bg. [212.5.158.102])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a89891a3ceasm190249166b.115.2024.08.30.02.14.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 30 Aug 2024 02:14:40 -0700 (PDT)
+Message-ID: <8c651be6-aa5a-4ae6-b58e-aac2efa31de0@suse.com>
+Date: Fri, 30 Aug 2024 12:14:37 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240828140638.3204253-1-kent.overstreet@linux.dev>
- <Zs9xC3OJPbkMy25C@casper.infradead.org> <gutyvxwembnzaoo43dzvmnpnbmj6pzmypx5kcyor3oeomgzkva@6colowp7crgk>
- <Zs959Pa5H5WeY5_i@tiehlicka> <xxs3s22qmlzby3ligct7x5a3fbzzjfdqqt7unmpih64dk3kdyx@vml4m27gpujw>
- <ZtBWxWunhXTh0bhS@tiehlicka> <wjfubyrzk4ovtuae5uht7uhhigkrym2anmo5w5vp7xgq3zss76@s2uy3qindie4>
- <ZtCFP5w6yv/aykui@dread.disaster.area>
-In-Reply-To: <ZtCFP5w6yv/aykui@dread.disaster.area>
-From: Yafang Shao <laoar.shao@gmail.com>
-Date: Fri, 30 Aug 2024 17:14:28 +0800
-Message-ID: <CALOAHbCssCSb7zF6VoKugFjAQcMACmOTtSCzd7n8oGfXdsxNsg@mail.gmail.com>
-Subject: Re: [PATCH] bcachefs: Switch to memalloc_flags_do() for vmalloc allocations
-To: Dave Chinner <david@fromorbit.com>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>, Michal Hocko <mhocko@suse.com>, 
-	Matthew Wilcox <willy@infradead.org>, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Dave Chinner <dchinner@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 4/8] x86/virt/tdx: Refine a comment to reflect the
+ latest TDX spec
+To: Kai Huang <kai.huang@intel.com>, dave.hansen@intel.com,
+ kirill.shutemov@linux.intel.com, tglx@linutronix.de, bp@alien8.de,
+ peterz@infradead.org, mingo@redhat.com, hpa@zytor.com,
+ dan.j.williams@intel.com, seanjc@google.com, pbonzini@redhat.com
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+ rick.p.edgecombe@intel.com, isaku.yamahata@intel.com, chao.gao@intel.com,
+ binbin.wu@linux.intel.com, adrian.hunter@intel.com
+References: <cover.1724741926.git.kai.huang@intel.com>
+ <88b2198138d89a9d5dc89b42efaed9ae669ae1c0.1724741926.git.kai.huang@intel.com>
+From: Nikolay Borisov <nik.borisov@suse.com>
+Content-Language: en-US
+In-Reply-To: <88b2198138d89a9d5dc89b42efaed9ae669ae1c0.1724741926.git.kai.huang@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 29, 2024 at 10:29=E2=80=AFPM Dave Chinner <david@fromorbit.com>=
- wrote:
->
-> On Thu, Aug 29, 2024 at 07:55:08AM -0400, Kent Overstreet wrote:
-> > Ergo, if you're not absolutely sure that a GFP_NOFAIL use is safe
-> > according to call path and allocation size, you still need to be
-> > checking for failure - in the same way that you shouldn't be using
-> > BUG_ON() if you cannot prove that the condition won't occur in real wol=
-d
-> > usage.
->
-> We've been using __GFP_NOFAIL semantics in XFS heavily for 30 years
-> now. This was the default Irix kernel allocator behaviour (it had a
-> forwards progress guarantee and would never fail allocation unless
-> told it could do so). We've been using the same "guaranteed not to
-> fail" semantics on Linux since the original port started 25 years
-> ago via open-coded loops.
->
-> IOWs, __GFP_NOFAIL semantics have been production tested for a
-> couple of decades on Linux via XFS, and nobody here can argue that
-> XFS is unreliable or crashes in low memory scenarios. __GFP_NOFAIL
-> as it is used by XFS is reliable and lives up to the "will not fail"
-> guarantee that it is supposed to have.
->
-> Fundamentally, __GFP_NOFAIL came about to replace the callers doing
->
->         do {
->                 p =3D kmalloc(size);
->         while (!p);
->
-> so that they blocked until memory allocation succeeded. The call
-> sites do not check for failure, because -failure never occurs-.
->
-> The MM devs want to have visibility of these allocations - they may
-> not like them, but having __GFP_NOFAIL means it's trivial to audit
-> all the allocations that use these semantics.  IOWs, __GFP_NOFAIL
-> was created with an explicit guarantee that it -will not fail- for
-> normal allocation contexts so it could replace all the open-coded
-> will-not-fail allocation loops..
->
-> Given this guarantee, we recently removed these historic allocation
-> wrapper loops from XFS, and replaced them with __GFP_NOFAIL at the
-> allocation call sites. There's nearly a hundred memory allocation
-> locations in XFS that are tagged with __GFP_NOFAIL.
->
-> If we're now going to have the "will not fail" guarantee taken away
-> from __GFP_NOFAIL, then we cannot use __GFP_NOFAIL in XFS. Nor can
-> it be used anywhere else that a "will not fail" guarantee it
-> required.
->
-> Put simply: __GFP_NOFAIL will be rendered completely useless if it
-> can fail due to external scoped memory allocation contexts.  This
-> will force us to revert all __GFP_NOFAIL allocations back to
-> open-coded will-not-fail loops.
->
-> This is not a step forwards for anyone.
 
-Hello Dave,
 
-I've noticed that XFS has increasingly replaced kmem_alloc() with
-__GFP_NOFAIL. For example, in kernel 4.19.y, there are 0 instances of
-__GFP_NOFAIL under fs/xfs, but in kernel 6.1.y, there are 41
-occurrences. In kmem_alloc(), there's an explicit
-memalloc_retry_wait() to throttle the allocator under heavy memory
-pressure, which aligns with your filesystem design. However, using
-__GFP_NOFAIL removes this throttling mechanism, potentially causing
-issues when the system is under heavy memory load. I'm concerned that
-this shift might not be a beneficial trend.
+On 27.08.24 г. 10:14 ч., Kai Huang wrote:
+> The old versions of "Intel TDX Module v1.5 ABI Specification" contain
+> the definitions of all global metadata field IDs directly in a table.
+> 
+> However, the latest spec moves those definitions to a dedicated
+> 'global_metadata.json' file as part of a new (separate) "Intel TDX
+> Module v1.5 ABI definitions" [1].
+> 
+> Update the comment to reflect this.
+> 
+> [1]: https://cdrdv2.intel.com/v1/dl/getContent/795381
+> 
+> Reported-by: Nikolay Borisov <nik.borisov@suse.com>
+> Signed-off-by: Kai Huang <kai.huang@intel.com>
 
-We have been using XFS for our big data servers for years, and it has
-consistently performed well with older kernels like 4.19.y. However,
-after upgrading all our servers from 4.19.y to 6.1.y over the past two
-years, we have frequently encountered livelock issues caused by memory
-exhaustion. To mitigate this, we've had to limit the RSS of
-applications, which isn't an ideal solution and represents a worrying
-trend.
-
---=20
-Regards
-Yafang
+Reviewed-by: Nikolay Borisov <nik.borisov@suse.com>
 
