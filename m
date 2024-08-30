@@ -1,227 +1,147 @@
-Return-Path: <linux-kernel+bounces-308817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50309966220
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 14:57:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45A46966222
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 14:58:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7561A1C22D84
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:57:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 009D0280C00
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:58:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10B5D19FA77;
-	Fri, 30 Aug 2024 12:57:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE34C19ABC2;
+	Fri, 30 Aug 2024 12:57:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EXWewsPe"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eUgf3x3M"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CA25192D79;
-	Fri, 30 Aug 2024 12:57:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11EFC19645C
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 12:57:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725022634; cv=none; b=sFQ2SF6vQ8oBUmuSZwau4Ioivt+jQ9uEYEaKFBx2LS2udh1uX+TPZ//jAZniXCYDkfRCtNx8z7AZ0ew08NCHL42q+9vcnUScFu1l17L2nTZzptrrj/jZgOgQkOKREhSZUrJnu/EjjgZfrOABXPGBCYlOvWIRWs1YK9k/GZS/8zQ=
+	t=1725022674; cv=none; b=QZRW87KcK6mdHma+xPUbNwWyjokqwX49y41Bt+kcRq7WxE8+dYBV2Clc1EYv1kBqi4MSog2mzY9xob6e7WyjNAd0xlLr2EJGyONVzRsKFbr/ejGAq5nau3B0eBlU1DE+kO9JTaaLbEjnCxT8AN5jmh+UtMv9wV1LjmXuNd6LkWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725022634; c=relaxed/simple;
-	bh=636WsPg3WRlImUP1Ow5Z9og0PiDOi2SHgti5uiQze1I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CRqpdJxKG+XucR7mfJk6pmnadoU3YaW4XTSVvCAywp9mTyTle99ryOJ22OM4ogq3TYT2lModIVML2Y8doLwNTlEPwbw6TxdicyRr4yBTugNHyY401WlP2RmpdiGS1baLIbsM5oiWg+RJyavMrHoJDrUrj5vIibrgfqZM7BypLxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EXWewsPe; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-371936541caso1136453f8f.0;
-        Fri, 30 Aug 2024 05:57:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725022631; x=1725627431; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=vCgr74y9AiLo/scYXhaI4I/tHTGFD5TGQGVR/RJySd0=;
-        b=EXWewsPesKmH/GoGYMnJ4+IEFuNtXLanfe74hq8w9fXp9myH5dsQcrFhlZyrRYtLNp
-         DKnG+ZGH54DMl2AVWn7r2/oXtreP1Efo0AVp3eY5cPzRfGcNqJGmYyu89Uhy+R1jgDQF
-         sgbPKHsZZ2fU//VkfNCxNCgXhBAGDtCMrw0QInlNKbeMgCndO2HfExLKYQNrzUkhi0p2
-         bjThjHDp0ONS7lAvEmmagVEFxUZLjWZw2b743rA3/23Z30gCQVquPS6Ux+tGi80Ozyok
-         2dn3uKss0/ys3FWU9GnWfuV3d028thLnE9CjKQjyb9gB6FDSXEZq1lx2idb6/XUWOISP
-         xZyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725022631; x=1725627431;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vCgr74y9AiLo/scYXhaI4I/tHTGFD5TGQGVR/RJySd0=;
-        b=E5uXMjqOKNhmLHKyPMZEM5cnPqwH4b6srAXAk6JhGq072Wgg5ewzb+PIo3Purk4/52
-         dbizZ0cqKKrffOCfuIMl1qrtjwPM1/tgQNFGEMTnQOr7i9yb3+WKbEhEeWUrlsXkIphd
-         Fjb2U1feiksMY1OLxJlSmbcvOv18zSEb0e4ACueYb7Th7SdpmDOpl24MF+VIv19S8r6a
-         zwxHaPZC7ESKTXM4zewv5fkWrMwrAJHz7Jg01LCsl34dprqQkb8sTXYjvzqLDcsK+PjD
-         PYmuBP8DV4RLmEK3ShQbZp8O6R9WOi0W5UQWUVpoXglPxAcMBJNU4Wu2htnMPVh0PBvb
-         M2lA==
-X-Forwarded-Encrypted: i=1; AJvYcCUR3d/FZKJ0HK6rvadN1/u62JTgvE6tKKE4wve9iL8GuH6twMFSSnnwY/8g1OrAc+HGe/nCES8Uaw6WH45FExUI@vger.kernel.org, AJvYcCUgO3QHhvoA7l2GSFtNv1KkRSvnJgZQTuZvOo+EojL3l/gaApUKFqQmagE4W8alMtd2vg+Koq3ku5YnTxgwqLk=@vger.kernel.org, AJvYcCVdJohbsG5CXr53iIArrEs9p0dC2dNRPl3GlGK2CF6fhbsPD8CmmH0+BIwaA460O1lTCwylcqkhx+I075E9@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxj6JIiWLj+KNQptQfaNZ/i2VBE9HgGrh49k5y3JTCmyRjC1LZW
-	F1gI8VkIpVpcITlMX5eTul30rGvK3PwbJven1WVjoB8VnfvMLB9N
-X-Google-Smtp-Source: AGHT+IELuymsP2ONyWahLAwU24MxpYIrM9umnYMsspvUe2V+UJHjPjR3wpX8ecF314kw6+RiM8FfYw==
-X-Received: by 2002:a5d:59a2:0:b0:369:b7e3:497c with SMTP id ffacd0b85a97d-3749b5320fbmr5447995f8f.1.1725022630153;
-        Fri, 30 Aug 2024 05:57:10 -0700 (PDT)
-Received: from PC-PEDRO-ARCH ([2001:8a0:7862:ea00:1d36:5f53:3f57:14ad])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3749ee4c83fsm3977953f8f.22.2024.08.30.05.57.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Aug 2024 05:57:09 -0700 (PDT)
-Date: Fri, 30 Aug 2024 13:57:06 +0100
-From: Pedro Falcato <pedro.falcato@gmail.com>
-To: jeffxu@chromium.org
-Cc: akpm@linux-foundation.org, linux-kselftest@vger.kernel.org, 
-	linux-mm@kvack.org, linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	willy@infradead.org, lorenzo.stoakes@oracle.com, broonie@kernel.org, vbabka@suse.cz, 
-	Liam.Howlett@oracle.com, rientjes@google.com, keescook@chromium.org
-Subject: Re: [PATCH v2 3/4] selftests/mm: mseal_test add more tests for mmap
-Message-ID: <q3xvzsnyltr2gdgnecgw74umi2yrjvimkxo7bvgnqb4darakzw@jahjkavgcyfm>
-References: <20240829214352.963001-1-jeffxu@chromium.org>
- <20240829214352.963001-4-jeffxu@chromium.org>
+	s=arc-20240116; t=1725022674; c=relaxed/simple;
+	bh=pITWRVgmLjxu1KlpGQAOrookls8MbfzgD+BpU31jtU8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=OlbP6gRm0fGeV5mcFyzedNEJ9JhjHAsEBs0Z0xGSXGVSqhNTntiordI7FuEBbOrXMQ/0fcdDJwv7cHCFQimh4xu51sVU8LBlnxY8ymw2KDM+ug5TPqN5hKaX5Ii8jJt3DPRfjLtRADEo4Gg4y+ncGXH0PI+X9Jk4HPEEW9uX3Fo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eUgf3x3M; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DD39C4CEC2;
+	Fri, 30 Aug 2024 12:57:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725022673;
+	bh=pITWRVgmLjxu1KlpGQAOrookls8MbfzgD+BpU31jtU8=;
+	h=Date:From:To:Cc:Subject:From;
+	b=eUgf3x3MUj/U8evr04d18n3kQ0QtNCRbxJzq/vIYjHlkvbog1UbtPPrafXe9t0p9L
+	 UphN/YpDL1ROFdAvG9Wr8rkuoFspEWlMBHdfywLR92DyJeVeHpY8rgFw+TQlVdwlI6
+	 GShZIlTEtj4M/N3+jduKBKWN9K889Gm/7OpGlcRRgEvoN47irkEdnPpFrKcp+5cdwO
+	 ImgkOl40JaUGf0Dw8QpGrO2yvu9mNVs3MBd5OseIdHZ+IOSdJ5ZvfKDxtm291eK+o9
+	 /gff6C7KHu693sgOXj5Kc3pi8ZOi6AXIzgH85T9vVUcdLsaxBG3qpyzQIJXj3zmO/T
+	 CBYARgTnDQX0Q==
+Date: Fri, 30 Aug 2024 18:27:50 +0530
+From: Vinod Koul <vkoul@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL]: dmanegine fixes for v6.11
+Message-ID: <ZtHBzmaZzRaluC74@vaman>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="DjAHJzx7f1mTrGS6"
+Content-Disposition: inline
+
+
+--DjAHJzx7f1mTrGS6
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240829214352.963001-4-jeffxu@chromium.org>
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 29, 2024 at 09:43:51PM GMT, jeffxu@chromium.org wrote:
-> From: Jeff Xu <jeffxu@chromium.org>
-> 
-> Add sealing test to cover mmap for
-> Expand/shrink across vmas.
-> Reuse the same address in !MAP_FIXED case.
-> 
-> Signed-off-by: Jeff Xu <jeffxu@chromium.org>
-> ---
->  tools/testing/selftests/mm/mseal_test.c | 125 +++++++++++++++++++++++-
->  1 file changed, 124 insertions(+), 1 deletion(-)
-> 
-> diff --git a/tools/testing/selftests/mm/mseal_test.c b/tools/testing/selftests/mm/mseal_test.c
-> index ae06c354220d..d83538039e76 100644
-> --- a/tools/testing/selftests/mm/mseal_test.c
-> +++ b/tools/testing/selftests/mm/mseal_test.c
-> @@ -2222,6 +2222,122 @@ static void test_munmap_free_multiple_ranges(bool seal)
->  	REPORT_TEST_PASS();
->  }
->  
-> +static void test_seal_mmap_expand_seal_middle(bool seal)
-> +{
-> +	void *ptr;
-> +	unsigned long page_size = getpagesize();
-> +	unsigned long size = 12 * page_size;
-> +	int ret;
-> +	void *ret2;
-> +	int prot;
-> +
-> +	setup_single_address(size, &ptr);
-> +	FAIL_TEST_IF_FALSE(ptr != (void *)-1);
-> +	/* ummap last 4 pages. */
-> +	ret = sys_munmap(ptr + 8 * page_size, 4 * page_size);
-> +	FAIL_TEST_IF_FALSE(!ret);
-> +
-> +	size = get_vma_size(ptr, &prot);
-> +	FAIL_TEST_IF_FALSE(size == 8 * page_size);
-> +	FAIL_TEST_IF_FALSE(prot == 0x4);
-> +
-> +	if (seal) {
-> +		ret = sys_mseal(ptr + 4 * page_size, 4 * page_size);
-> +		FAIL_TEST_IF_FALSE(!ret);
-> +	}
-> +
-> +	/* use mmap to expand. */
-> +	ret2 = mmap(ptr, 12 * page_size, PROT_READ,
-> +			MAP_ANONYMOUS | MAP_PRIVATE | MAP_FIXED, -1, 0);
+Hello Linus,
 
-This is not expansion, but overwriting. Expansion is allowed through an adjacent mmap + mseal (which will merge the two VMAs).
+Last one for the weekend, so please pull the dmaengine fixes which
+contain the driver fixes for couple of them.
 
-> +	if (seal) {
-> +		FAIL_TEST_IF_FALSE(ret2 == MAP_FAILED);
-> +		FAIL_TEST_IF_FALSE(errno == EPERM);
-> +
-> +		size = get_vma_size(ptr, &prot);
-> +		FAIL_TEST_IF_FALSE(size == 4 * page_size);
-> +		FAIL_TEST_IF_FALSE(prot == 0x4);
-> +
-> +		size = get_vma_size(ptr + 4 * page_size, &prot);
-> +		FAIL_TEST_IF_FALSE(size == 4 * page_size);
-> +		FAIL_TEST_IF_FALSE(prot == 0x4);
-> +	} else
-> +		FAIL_TEST_IF_FALSE(ret2 == ptr);
-> +
-> +	REPORT_TEST_PASS();
-> +}
-> +
-> +static void test_seal_mmap_shrink_seal_middle(bool seal)
-> +{
-> +	void *ptr;
-> +	unsigned long page_size = getpagesize();
-> +	unsigned long size = 12 * page_size;
-> +	int ret;
-> +	void *ret2;
-> +	int prot;
-> +
-> +	setup_single_address(size, &ptr);
-> +	FAIL_TEST_IF_FALSE(ptr != (void *)-1);
-> +
-> +	if (seal) {
-> +		ret = sys_mseal(ptr + 4 * page_size, 4 * page_size);
-> +		FAIL_TEST_IF_FALSE(!ret);
-> +	}
-> +
-> +	/* use mmap to shrink. */
-> +	ret2 = mmap(ptr, 7 * page_size, PROT_READ,
-> +			MAP_ANONYMOUS | MAP_PRIVATE | MAP_FIXED, -1, 0);
+The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
 
-This is also a partial overwrite.
+  Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
 
-> +	if (seal) {
-> +		FAIL_TEST_IF_FALSE(ret2 == MAP_FAILED);
-> +		FAIL_TEST_IF_FALSE(errno == EPERM);
-> +
-> +		size = get_vma_size(ptr, &prot);
-> +		FAIL_TEST_IF_FALSE(size == 4 * page_size);
-> +		FAIL_TEST_IF_FALSE(prot == 0x4);
-> +
-> +		size = get_vma_size(ptr + 4 * page_size, &prot);
-> +		FAIL_TEST_IF_FALSE(size == 4 * page_size);
-> +		FAIL_TEST_IF_FALSE(prot == 0x4);
-> +
-> +		size = get_vma_size(ptr + 4 * page_size, &prot);
-> +		FAIL_TEST_IF_FALSE(size == 4 * page_size);
-> +		FAIL_TEST_IF_FALSE(prot == 0x4);
-> +	} else
-> +		FAIL_TEST_IF_FALSE(ret2 == ptr);
-> +
-> +	REPORT_TEST_PASS();
-> +}
-> +
-> +static void test_seal_mmap_reuse_addr(bool seal)
-> +{
-> +	void *ptr;
-> +	unsigned long page_size = getpagesize();
-> +	unsigned long size = page_size;
-> +	int ret;
-> +	void *ret2;
-> +	int prot;
-> +
-> +	setup_single_address(size, &ptr);
-> +	FAIL_TEST_IF_FALSE(ptr != (void *)-1);
-> +
-> +	if (seal) {
-> +		ret = sys_mseal(ptr, size);
-> +		FAIL_TEST_IF_FALSE(!ret);
-> +	}
-> +
-> +	/* use mmap to change protection. */
-> +	ret2 = mmap(ptr, size, PROT_NONE,
-> +			MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
-> +
+are available in the Git repository at:
 
-This is also an overwrite. You're semantically testing the same thing, and testing the same regions of code.
-These 3 tests are all kind of the same thing.
+  git://git.kernel.org/pub/scm/linux/kernel/git/vkoul/dmaengine.git tags/dm=
+aengine-fix-6.11
 
--- 
-Pedro
+for you to fetch changes up to 9f646ff25c09c52cebe726601db27a60f876f15e:
+
+  dmaengine: dw-edma: Do not enable watermark interrupts for HDMA (2024-08-=
+28 18:40:17 +0530)
+
+----------------------------------------------------------------
+dmaengine fixes for v6.11
+
+Driver fixes for:
+ - Bunch of dw driver changes to fix the src/dst addr width config
+ - Omap driver fix for sglen initialization
+ - stm32-dma3 driver lli_size init fix
+ - dw edma driver fixes for watermark interrupts and unmasking STOP and
+   ABORT interrupts
+
+----------------------------------------------------------------
+Kees Cook (2):
+      dmaengine: ti: omap-dma: Initialize sglen after allocation
+      dmaengine: stm32-dma3: Set lli_size after allocation
+
+Mrinmay Sarkar (2):
+      dmaengine: dw-edma: Fix unmasking STOP and ABORT interrupts for HDMA
+      dmaengine: dw-edma: Do not enable watermark interrupts for HDMA
+
+Serge Semin (6):
+      dmaengine: dw: Add peripheral bus width verification
+      dmaengine: dw: Add memory bus width verification
+      dmaengine: dw: Simplify prepare CTL_LO methods
+      dmaengine: dw: Define encode_maxburst() above prepare_ctllo() callbac=
+ks
+      dmaengine: dw: Simplify max-burst calculation procedure
+      dmaengine: dw: Unify ret-val local variables naming
+
+ drivers/dma/dw-edma/dw-hdma-v0-core.c |  26 +++----
+ drivers/dma/dw/core.c                 | 131 ++++++++++++++++++++++++++++--=
+----
+ drivers/dma/dw/dw.c                   |  44 +++++++-----
+ drivers/dma/dw/idma32.c               |  19 ++---
+ drivers/dma/dw/platform.c             |  20 +++---
+ drivers/dma/dw/regs.h                 |   1 -
+ drivers/dma/stm32/stm32-dma3.c        |   2 +-
+ drivers/dma/ti/omap-dma.c             |   6 +-
+ 8 files changed, 168 insertions(+), 81 deletions(-)
+
+--=20
+~Vinod
+
+--DjAHJzx7f1mTrGS6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE+vs47OPLdNbVcHzyfBQHDyUjg0cFAmbRwc0ACgkQfBQHDyUj
+g0e9wQ/7BS1LSBL1EMldrFljS917fe4dGAGZFqO3Epz6JqNp3fyYclrkKECOYN23
+xl1FQSZG5M8FMHTL7AthzeN9FbqtnGXjrs93OL/IX6VmL/RUVKyq8SHRo3XJ29uh
+GobQLFPgN8y3Do5GcNwy5dlf6JakZDrG1jWjPvh8oTpT9oLExvOKDimZitjrCohx
+OyUrBNNGUtMBmMgwmoIYk47GQ9wxocJBVbVqlzO5+CR8tewXkts0ffNjEa26PW4c
+qfBt0uSgh2HgGLAF7+gszgEr1gTjWN+ntNi6oMJl+sexlGVv7RkBGP0IhnunfMZt
+24HXH27a+cYR4pVw4Xhtrd1KRyBq8aYQhLT/i41xOtYH9BqPXilPNrh2TIjbRsnR
+BoGeFrKU2rwi78p2sNLY7AkoL0CRVRMBS23YEFqg/4UViTYYY4Vk7eSP9lGDs9T0
+stYWcjf518yKlLfj4Y1VVQdIUU3ZnTJAHJaAYaq1gd4/XQca9wMf8w20TzzMZvRS
+xReo5bkzCZjaFWMpJdiLluvaEM4wOZcfWNG3oQNiP8KTa1vcm+ZS7Rcbjk+y841H
+ybRcWrbB+e75zIvXURysXGtvKy961fVaykCyYLIa+WimP4Jcl90qnKjx7i/tjpIC
+MFDDSn43R427ct8n2kBJMBob+Tl2j7FVofYu6a3fSWmxzMhCuTU=
+=WLHT
+-----END PGP SIGNATURE-----
+
+--DjAHJzx7f1mTrGS6--
 
