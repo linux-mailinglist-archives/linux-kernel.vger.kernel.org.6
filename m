@@ -1,227 +1,281 @@
-Return-Path: <linux-kernel+bounces-308385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFFE6965C45
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 11:03:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B3F1965C46
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 11:05:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 004E7B20C3F
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 09:03:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D0811C234B6
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 09:05:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7D8016E860;
-	Fri, 30 Aug 2024 09:03:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFAA216EB7E;
+	Fri, 30 Aug 2024 09:05:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="GpMD3tPw";
-	dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b="T8UwMgTe"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="IwtTP+tE"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B431115CD4D
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 09:03:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=210.61.82.184
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725008604; cv=fail; b=aT30L2I1JfNVr9Tsx3XCNgIs4AY8REeVZj6zCtVYFxEGki4qf764PbiSV/mK7Na3db+sT99B/+JHDtgPHUYuEqfkpFC5Xfma2N3EOocCvWfTSKup2Bdanqjn21Lv1SbGehBMaerPWMJOSQ6YeamU6grYchKWWGcekPqtwL/BFKs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725008604; c=relaxed/simple;
-	bh=mV0CCaMIjyvTG8nrKmJ5hPG5QzT3flzKabGYI7i4pww=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=NMjL25KdYjnM2VTIvo3toU67kRnFUR05q4l5MwsWThKLhdUT9NGKF0uZRUOmixTSJuIXY9BklOfYdM9rj3Jiq+7//CCjaMu8X6hTRRqSnQYiPYaelra1fEnwBYgBA7Vy7o/yrLiGHxTack2TFX3PcP4tH/yuIdf014fRwwS3+s4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=GpMD3tPw; dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b=T8UwMgTe; arc=fail smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: b204c15e66ae11ef8b96093e013ec31c-20240830
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=MIME-Version:Content-Transfer-Encoding:Content-ID:Content-Type:In-Reply-To:References:Message-ID:Date:Subject:CC:To:From; bh=mV0CCaMIjyvTG8nrKmJ5hPG5QzT3flzKabGYI7i4pww=;
-	b=GpMD3tPwSfoRP6kYj3lCZ3Oj/VCLUZNtBIQoRRyJ4xTNve8wiFPFwiyra3DSUZdwlyFgKEnNav3Tm//eZHbobYL4y43FDTbwMwMQgeYQkUb8UNfsT0HGThmaLe/Z7fxT2H36ppdxha8V5SsOqeRyah30+YIS8/YDutlH8B7+hRs=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.41,REQID:9a3a2c09-ca62-4a1d-b27e-415831ebaf48,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6dc6a47,CLOUDID:fc9c6dcf-7921-4900-88a1-3aef019a55ce,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|-5,EDM:-3,IP:ni
-	l,URL:1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
-	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
-X-UUID: b204c15e66ae11ef8b96093e013ec31c-20240830
-Received: from mtkmbs14n2.mediatek.inc [(172.21.101.76)] by mailgw02.mediatek.com
-	(envelope-from <ck.hu@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 296760649; Fri, 30 Aug 2024 17:03:16 +0800
-Received: from mtkmbs10n2.mediatek.inc (172.21.101.183) by
- MTKMBS09N2.mediatek.inc (172.21.101.94) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Fri, 30 Aug 2024 02:03:17 -0700
-Received: from HK2PR02CU002.outbound.protection.outlook.com (172.21.101.237)
- by mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Fri, 30 Aug 2024 17:03:17 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=urf3ZBfQZZxYbYe1IXHsLHXNRGwWer9WO8sbTnknYuCP9ozbhJKHPFj0qd4ouwGNsVIH69WjAwt6Xb2tsQS8sfRjkjedo1jm0zob8TC8tAQyTsmfruUPUVS10SkzkO+I26wdVhYqLmX0BeoIW542fNpelYV0KZkXbxi3NqCGIXyV0RHEF/LaC2AybfTRGaAC6ZyJ1oyMNhEhUSZccPO5jzJDBe833hCMMFDot/UEJFtVXJ9WNLict2NWzMi42dDUIv9ZsCYFwk/4CTbLFDgwJC1ni//y+X+Lt6TsRbb4wSPqP49WgWfATMHPmzP9tx6mUwwDq2h6I4dyMS0D/QhlMA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=mV0CCaMIjyvTG8nrKmJ5hPG5QzT3flzKabGYI7i4pww=;
- b=U1lpo6artioyHdd2XZeqEVg4Dd02bMJaIlXl8whkFtu964C1Ceq5F3QbX8nU3ZowBXFYImuUPsVx3n4ROx/jYMfVtwjowAIJKr9Jnp+aU0Pb2tCzL8M9JuVp5HSD7dGfUuDy1zdB+GnJf3ohj6Pf8YR7xD2jm3aYELiGshdrCcgGkqT3ikbrcYP/fUyOKtM/ViBhR1dpXu4P+02HENuA4DKqYi//IpkSjJG77Wi3eUK2YXKK/AnxYxP+bnRydHTw4da5/DQTrlWpl4UPcs4PgvKkqub3osPQohFITEjRot2ExInPeIxtf7zdLMdSOKowz2/Xi8j2L1rX/yinLtfqnw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=mediatek.com; dmarc=pass action=none header.from=mediatek.com;
- dkim=pass header.d=mediatek.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EB92139597
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 09:05:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725008721; cv=none; b=oXlB+DAEQ/V5TiwUuOrjV/bnhS1PArIa8f9IozkZ5ftogXTMN0FCvpKV1MYfcIWh8ewSma5mo989yiHy28CCmYPpsmrbFx2T7hG8fHM1Gfyol03DVKJGPg5okX1u3qran4nwRIhVU1QnvQ+gPJA16jhBy/i+gBm82dJTICs+WUM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725008721; c=relaxed/simple;
+	bh=3Wbtju0u+4fqvsCsLz29fQKY/B3vmJFPmQsW6setUn8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Z5GXglSrZ09EiccXi2JBhl2RmDJSB6EMLH18oK4xIkdtLYFzIbk2Q44Hi83NiOQzrCpyMpoX3J34u/YXoKECudGyKaBLUaqM2Z5W3tFfYDgX1fUTovunFyusV+b29uLH3D5LQXFqRYXx8wqGxoK2RvQaES9kVpdJmp9BydAJ5fE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=IwtTP+tE; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5bed83487aeso1414267a12.2
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 02:05:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mediateko365.onmicrosoft.com; s=selector2-mediateko365-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mV0CCaMIjyvTG8nrKmJ5hPG5QzT3flzKabGYI7i4pww=;
- b=T8UwMgTet5Ru8CHK1yMZDH4xGBrhiK86qSQTBeLjQsFViAbShokl1cO7cV2LaIc8lEhwY6jGGEjnduSmfEMXogYS8lctJQM92NRFaRBFXkFJXotvUepb8ojavaytvXXGFdEdBEAqZ+1NkxQUcZWywSzuBDljsKMQVUGup03Q5wQ=
-Received: from TYZPR03MB6624.apcprd03.prod.outlook.com (2603:1096:400:1f4::13)
- by SEZPR03MB8381.apcprd03.prod.outlook.com (2603:1096:101:222::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.20; Fri, 30 Aug
- 2024 09:03:15 +0000
-Received: from TYZPR03MB6624.apcprd03.prod.outlook.com
- ([fe80::9ce6:1e85:c4a7:2a54]) by TYZPR03MB6624.apcprd03.prod.outlook.com
- ([fe80::9ce6:1e85:c4a7:2a54%7]) with mapi id 15.20.7918.019; Fri, 30 Aug 2024
- 09:03:15 +0000
-From: =?utf-8?B?Q0sgSHUgKOiDoeS/iuWFiSk=?= <ck.hu@mediatek.com>
-To: =?utf-8?B?TWFjIFNoZW4gKOayiOS/iik=?= <Mac.Shen@mediatek.com>,
-	"chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>,
-	=?utf-8?B?Sml0YW8gU2hpICjnn7PorrDmtpsp?= <jitao.shi@mediatek.com>,
-	"daniel@ffwll.ch" <daniel@ffwll.ch>, "p.zabel@pengutronix.de"
-	<p.zabel@pengutronix.de>, "airlied@gmail.com" <airlied@gmail.com>,
-	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
-	"angelogioacchino.delregno@collabora.com"
-	<angelogioacchino.delregno@collabora.com>
-CC: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	=?utf-8?B?U2h1aWppbmcgTGkgKOadjuawtOmdmSk=?= <Shuijing.Li@mediatek.com>
-Subject: Re: [PATCH v3 3/3] Subject: [PATCH] drm/mediatek/dp: Add HDCP1.x
- feature for DisplayPort
-Thread-Topic: [PATCH v3 3/3] Subject: [PATCH] drm/mediatek/dp: Add HDCP1.x
- feature for DisplayPort
-Thread-Index: AQHauZvRErk8l0amMEOChLNTPEmqU7JAA6wA
-Date: Fri, 30 Aug 2024 09:03:15 +0000
-Message-ID: <e03d36b4d8e6ddfe55f58987cb9ebb97db9c1957.camel@mediatek.com>
-References: <20240608120219.21817-1-mac.shen@mediatek.com>
-	 <20240608120219.21817-4-mac.shen@mediatek.com>
-In-Reply-To: <20240608120219.21817-4-mac.shen@mediatek.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=mediatek.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TYZPR03MB6624:EE_|SEZPR03MB8381:EE_
-x-ms-office365-filtering-correlation-id: 04da4670-8f4b-4e81-4967-08dcc8d2951f
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|7416014|1800799024|366016|376014|38070700018;
-x-microsoft-antispam-message-info: =?utf-8?B?NjBHSjRxMFNTMzd3K3JTVC9XMVExWXpudTg4Vk1peHp4MURYd2pCNVNTZDN6?=
- =?utf-8?B?eldTdXM3RGdhS1FOR0haZDB1RjNrVzNIbEdiVUtwbVhwa3M4R0J1UUcyak5r?=
- =?utf-8?B?YzVJUW9jQWZ0MEpMR3JuUEF4TEZ5MXE4VGRqRjBtTytRa3EyNUlSa0VoL1d5?=
- =?utf-8?B?eVliZEV1ZnJBK3NDYllBV1REM0lTU2RqYm8zK2plSjI2ZFpFbEpoVy94cEpP?=
- =?utf-8?B?bWxWa0tLKzNqeUVEYVpzMC9Xc0NjVjZYTzBDY0RCay83T0wwT2NrTGxSeTFz?=
- =?utf-8?B?dEl5Y0RTS3hQWHExVDVHdklXUFd2VmsxM1hnVXFzTThFR0xNbUNvSGdKWXlw?=
- =?utf-8?B?MlUxRzVwYlM5eGJ1SXkyMTBqSTFEdUxER05zM1ZBMTBsRm5DSFdkbGluQlFq?=
- =?utf-8?B?Zm9FbFF5MTF4NDl3MWQrcXh6UEN6U2VTS0REdHluTHRYM2M2RXBHSFpSdmtw?=
- =?utf-8?B?aC9md0Q3Um1ITENRNiszSnJneEY2YWJSRUZQTnBuL0dzbmpuVitKMHp5OHUr?=
- =?utf-8?B?UUhkL1I0dnZJWGg0M2lkMmhVQStkR1htVDE4SzQvSG9qdWdodC9vTThGUm5i?=
- =?utf-8?B?TFo1WWp4aXdoRHBxVFV3T1BacXdYWWF1Zmx4T2YwdDFkVk9nT0U1bHF5b1F3?=
- =?utf-8?B?UnJRYVkwcWUxQi9NdVlEMlRSNDRUSUwzcVNNY0hVMWFoS0ZXU2MzQWF4eHlT?=
- =?utf-8?B?WGZyYkt0bU1CZ1JucEk1dndmakN3OHVzRm9zMDVKVWIwUU54QWV5QWpSbXdO?=
- =?utf-8?B?YjFQRC9EdjU1MTBZSGlnR0pMcnBmMjhZTmpZd09BN3MvdnNzTGl2RVBCK3Ji?=
- =?utf-8?B?V2N0N0wzWGhPYUZYWFF1MGxGMTEwVWh1cVk5ZERRYnlPcUNnenF2TElPWjZR?=
- =?utf-8?B?Z2dKSk5haGhWbWs2dmZzR1FraUgrY0lESS9RaUZWK2UrYkc5RjFPeEUyNnBQ?=
- =?utf-8?B?OWNnejZOUnlqb2VJSVcrbUozN0VhOFRaQUtaeGZadkpsRWRkT0ZkNzBmdVZZ?=
- =?utf-8?B?cE82K2dERmZid3RFa212SFc5QUlVWTZGVi81R3REbjVXbDRQN1BVSzdlRE9R?=
- =?utf-8?B?Yk5vNWZuTmNvRnE2U3BlSVpONFNsUE9xdTJNQkh4U0RobUxXc0d6ZFN5NlMx?=
- =?utf-8?B?KzVlSGoySjI0eUUyTUpGWEM0emtwRGxzNGtVUmZvSVk2U0FaS0R5V1B3WUF5?=
- =?utf-8?B?cWtKYnlrQ1dTdmtJZzRwVHBycTNiN05aR2RDTnhkSjFWL2d0OTNIMVZiK0Jk?=
- =?utf-8?B?ODU2Nmw2OERTTThObnhReGFpbjNocHZub1h1OTVFdFoycE9URHlVU3JTSXNq?=
- =?utf-8?B?WGlCVXNQYWpLaW1sZ0RQczNhazVac1NicEdMdmdtc1dna2QwWVN5WjFBaXhj?=
- =?utf-8?B?bE03MkxBenA3MDlTY2ZodGdqQ2c0UUVtb1ErZnVmY1BJVWw2ZS95R1EwNU0w?=
- =?utf-8?B?M0xUalJGTjkzSTRUVjJDUUJnN2cwWW8vUnZhYWNRbTB5K0tYZEFER0dSSkx2?=
- =?utf-8?B?K1laZjc3dTJLZE92RHlNNTBHVkJvODJTREhVb0ttUHc0QXUvMkFjUmczMW92?=
- =?utf-8?B?VXZJK3N1TkhYWVV4NUQrRkRoZ2crM0xhRWlaNkkrK1NPeXFKejZ0V1ZZWStQ?=
- =?utf-8?B?Y1BuRUliYjlVdTN0NXI5NjhSU01PUVp3VWJ0Ukc1Uld5SXd3elE3QVlpS3hW?=
- =?utf-8?B?N0wzVFVJd3pxT3NWVkhWMkQrZDhjYURsUHN5SkxjbmRqNUlIU2FtWjM0WXlp?=
- =?utf-8?B?Z2tiRzY3Y1JPSHFlajNvc1NwcXdEbThkd0pieklBbGhyT3hpNDRaSy9TK3hN?=
- =?utf-8?B?TTdPL0c2S2ZQMHg2Wjh4Vk03T0VIYWFtdTR1QWttcTdPd3I4QXdreWl0RURJ?=
- =?utf-8?B?cWgyYXQvUHc2UXAxK3pad1NCYytQanRNdkFQeThtcFBmY0E9PQ==?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR03MB6624.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(366016)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?NXcvcWRVNGNWaGpobHUyeVllc3ByOUl5bzVTVnE3Y0xCM2VBb0dZU0xTVWhh?=
- =?utf-8?B?OHVGS1ZaVXVDUFdnNFlJMkhSVWFDbmt4VThBWm1SclRkbU9sWkNkQ2w4Smpx?=
- =?utf-8?B?RUNmRE45YlA5QXB6MjBoU0dMSkpmSE1kcFRxTHRZckNtcGtaZWIwTXlsMXU1?=
- =?utf-8?B?bkRkYjJ0NDA5THJtc3luVHRHOHFQelBKRGo1SE9KTmQ0SXpXbCtrRmpvbDFU?=
- =?utf-8?B?L0IrRVdJQ1BMME4rUGFvYlFrVWQySkJmMWNmTi81U0NJTTRqc3FCTkkrK1JL?=
- =?utf-8?B?WmNjc1Nqdk1YTUdXOVVJaE1RZWcwRHRDYlBoRlBQWjZzMExjOURPN0kwYUY3?=
- =?utf-8?B?VWRIWFAwdTZDQkl3dDd6bHFOR1lIcUVjWC92RHdmU0hYaWUzYTh1RUlhS2Ex?=
- =?utf-8?B?U2tYbEhOdmZ4OEFtMFBUOWFBZFpkZUpzN2xCQmRFckFucHpDTmE5RldtME5l?=
- =?utf-8?B?OFByU3g5dFZPeEhkNzBRZ0tNN0VGQnpUZzJHYVZhUTNVdW9TcUlJSzExWDVs?=
- =?utf-8?B?azBUbEo1ZVgydW9JVVpibk1iUWwvVUZnU1BQUldhNkE1MjI1d0lBbUdPZE5R?=
- =?utf-8?B?NGFqMXFET0JsUnF3WnRBQlZpMDFIdm1ZdVVHQlZnUUgwKzFLNjdmaHhEOTgr?=
- =?utf-8?B?UUFjYU4xZ2JqYXptaTNySDNobnNKRW5vRDFqekdRbGlITXhQWTY4UXhhU3Rt?=
- =?utf-8?B?TnpVcS94dnh5cVllL1REVk80a085Y0F0S1lrbjJDZXQ4NXZuUHlMMHp6aXZC?=
- =?utf-8?B?MTJqTnNVUVh3eXdQVDlxSTNGeVJPQmJlcUNwU0tCU3B6UE1kTjV0TmVKYVNG?=
- =?utf-8?B?dkZyeXJEYzBhRDVwVWRudTF5QmJtTTk2bXlMS3k5VzRmTlRNNEJsRnNEcnov?=
- =?utf-8?B?aVhZYXM1QTd3T2ZzQS9TQ3VVNjRkTGlVL1NkaXNON0lqTVdWUzB4NEdoTk5U?=
- =?utf-8?B?QnUrNnJMamdFV2hZSk1McDZBNDlrS1pZczZpYTU1MGIvaUpyY1QvR2hJMWRZ?=
- =?utf-8?B?azc4T24veVcwd2FKcmtvTTdUZ2M1TGdwMnR1OU12NzNFNDVjMjdiZUR0S0pv?=
- =?utf-8?B?eUIyTFh1WVdYWUVJOFgzUVoyN3c3TUViZVVWM292OUlyK3ljK0VSd2RURi9o?=
- =?utf-8?B?akhrNW1wY3pTT29VWU81QmwveDY3TFBCOTFXd1NzTFJKMFNPcUtheWthTElr?=
- =?utf-8?B?d0tpaEs3U04ySHdaYk00NWQxK2w5UjJEby9vVDBiNE43UHlheWIrNkUwVVhs?=
- =?utf-8?B?Skx3V2ZjbTVtMlJoU0YxSzhLNDljOWdTMFRvakZuYnNRdzdmOWY5aFE4QUd5?=
- =?utf-8?B?dDA4K0dySmZIMnZVeks4aGFNaVo1NzVCZ09qNGRTK1hYdGUwUEdiN0FnbnQ5?=
- =?utf-8?B?akN5YkMzbG9CYmQ3QWcwVmJqV2tYTFYzUFFycnBwMk80YU0ycWFjZDlCcXZo?=
- =?utf-8?B?UTNJcXFnNWtxY01LVHlRTzJjaDk1a2NrZTgyUFVsaUNYblBPZFZrM0MrQzVk?=
- =?utf-8?B?UmVrdGtHemhGR2lKTU5PdWxNZGdxSFNoOXZ0a0F3U1l5eW4wVjUzVDVsZFZ2?=
- =?utf-8?B?ejVLSENtQ3I4cWRrWW94ZVE5NEVLTSt5RTYwdElOMnZNdGNlWDA1Tk1nZEJD?=
- =?utf-8?B?cGVGR2dWMVBhc2pZNFdXaWY1MWtzbWc5UzUwQjFYM3JrbXc5VzYyZDVQWUw3?=
- =?utf-8?B?MGdmMkZMUzNhWk5zSENSektjTGIvOCs4eGY4UUs2VzdqYjR0aENCSWhJQVNM?=
- =?utf-8?B?cE1NMS9ySEU1SjJDR1AyNGpudmt3SVR3ZGxuWVFxMGNhUEovSFkwaWdmQXd4?=
- =?utf-8?B?a2FWZVZKa3N6SzR5WUpkSi9EdmFxTlFvbUx6NDdsTWlyVkk3RkJkZk9pd1RZ?=
- =?utf-8?B?K2JYYVRoYnQ4QjFoWHFBbUVneXZsb1FLb1RpQ1Zoc0gyL3F1YjNKUG12ZG9X?=
- =?utf-8?B?R3k1ckdYY0VWYVRZSWU4OHJ4SGxlUmMzYmZET0ppekVzQ3BEeEZ4Mm5vUWdZ?=
- =?utf-8?B?cVFnU21WNzBjZm42Wm02M1R5UVFyc2kwbHA0cGdDWmJjVytqakJ2OG1pOXdn?=
- =?utf-8?B?VUhzVUMxMzBlWU5LQ1VsSFpFZndtM2IyQWVNbkZheTl2RlF2cFdRQ3RvOVVo?=
- =?utf-8?Q?D8b9YCZVJtEeHk+Q2NIRZo3wo?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <E13B07EE3AD57B44A829B53BEC86D939@apcprd03.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        d=suse.com; s=google; t=1725008718; x=1725613518; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=PYYXpww9BLoecZi7S6vRbZ1I0Y637G0WqXbbhcM+O0w=;
+        b=IwtTP+tEKrGFgYiyRaI58j+nDLoHcIOR4CaJv3sSpWzyCwx/BqE+YyDyQwIkwA2n+g
+         g2twA025rINersDzMyYVYxvqFB+u+pLWuib8au3bnKAf1Y+B0dFJ/uYom6nEJWGnaHie
+         yaHtslMZ1R4eMgmkBnooBOnFftwMMd2x5OZQqmLebqOgocFPWzN00teRKQps9KkN+QZ6
+         ebJFtvVxT0sCTFU0k/Ki2LtZFkmHlBbTyIVp0Ce3xdrihqNAmSPcCXh04oI2phipTOP0
+         fLu1hgAQ7riQ5uZE4q0dQf88+pCjIKJkjm4JvkbXrzDGkQkbcC1/dDE+fTl/Xdbo0LiL
+         ynRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725008718; x=1725613518;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PYYXpww9BLoecZi7S6vRbZ1I0Y637G0WqXbbhcM+O0w=;
+        b=D2CTLhOQ4gCsAS623u67wjr/WPC+nBIoLrbc0KumTn0meMW8pr51qmQ+hoR8EE+qTI
+         fWAXHQpTMIhVIkvM4c6XPMYTS/cGCBl01TbHwEg4Jga/Hp+E2zMTzSFFACXATrl0rBIh
+         gsFpUWrHHWI937ZfAwRE2bxA79eGhhW03ggeO8dTFPeoxMi7ZxpYQi1aIj/KZSK6MKki
+         gfVIoZU2B3Rfx7X2DI+Kr8sFtXrIFy/3euFojJBbnwZkIaTnMED9Tnw1Gx63OpZ+lfgy
+         9JVtO2Xw+ODjPzM/l2foAbiK9ruHVCUlGTsG2S2+9xRseglQBWqRlw2oBMhj7uQrfego
+         Z0jg==
+X-Forwarded-Encrypted: i=1; AJvYcCU2ih/qqLFqjHzzWtv8+Is+sYFKdKDguk6jIEQjD7wYzfNmdLl0p5ZgG2pjkhpVEW4Ga7eBKqJkOOdsNGM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxC6OlS7n8L1cz8dmQOorwD4eSnmTMlrwV5WKJ9yZ+S49zw9hW8
+	VPoggA+NYM9yVIxiaFjJhCyDGC3XsFtKsJmbFuLfy1GmgOXjz8ebCEFc8a4sjrk=
+X-Google-Smtp-Source: AGHT+IGHLyc8N9LthDSdx2jpVrMxlnFbSRiGIxGh86NyE2UgEnvDT6yn74MwZAnCKM4+HamW3JBgbA==
+X-Received: by 2002:a17:907:6d28:b0:a86:a9a4:69fa with SMTP id a640c23a62f3a-a897fa72317mr476669266b.43.1725008716647;
+        Fri, 30 Aug 2024 02:05:16 -0700 (PDT)
+Received: from [10.20.4.146] (212-5-158-102.ip.btc-net.bg. [212.5.158.102])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8988feacbfsm190685966b.27.2024.08.30.02.05.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 30 Aug 2024 02:05:16 -0700 (PDT)
+Message-ID: <de4e1842-1ca2-44aa-b028-359008b591fd@suse.com>
+Date: Fri, 30 Aug 2024 12:05:13 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TYZPR03MB6624.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 04da4670-8f4b-4e81-4967-08dcc8d2951f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Aug 2024 09:03:15.0150
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a7687ede-7a6b-4ef6-bace-642f677fbe31
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 115WOJv0jlUkBa6A3keTvVy5CmT2YBFcS7Yx2RskErpknT0v2TH8n38WqoDy8VLOrvwSWGLMYZD3j/9zrrvG/w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR03MB8381
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/8] x86/virt/tdx: Prepare to support reading other
+ global metadata fields
+To: Kai Huang <kai.huang@intel.com>, dave.hansen@intel.com,
+ kirill.shutemov@linux.intel.com, tglx@linutronix.de, bp@alien8.de,
+ peterz@infradead.org, mingo@redhat.com, hpa@zytor.com,
+ dan.j.williams@intel.com, seanjc@google.com, pbonzini@redhat.com
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+ rick.p.edgecombe@intel.com, isaku.yamahata@intel.com, chao.gao@intel.com,
+ binbin.wu@linux.intel.com, adrian.hunter@intel.com
+References: <cover.1724741926.git.kai.huang@intel.com>
+ <0403cdb142b40b9838feeb222eb75a4831f6b46d.1724741926.git.kai.huang@intel.com>
+From: Nikolay Borisov <nik.borisov@suse.com>
+Content-Language: en-US
+In-Reply-To: <0403cdb142b40b9838feeb222eb75a4831f6b46d.1724741926.git.kai.huang@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-T24gU2F0LCAyMDI0LTA2LTA4IGF0IDIwOjAxICswODAwLCBtYWMuc2hlbiB3cm90ZToNCj4gQ2hh
-bmdlcyBpbiB2MzoNCj4gLSByZW1vdmUgdXNlbGVzcyBjb2RlDQo+IC0gcmVtb3ZlIG1hZ2ljIG51
-bWJlcg0KPiAtIHJlZmluZSB0aGUgZmxvdyB0byBkbyBIRENQMS54IGF1dGhlbnRpY2F0aW9uDQo+
-IHBlciBzdWdnZXN0aW9uIGZyb20gdGhlIHByZXZpb3VzIHRocmVhZDoNCj4gaHR0cHM6Ly91cmxk
-ZWZlbnNlLmNvbS92My9fX2h0dHBzOi8vcGF0Y2h3b3JrLmtlcm5lbC5vcmcvcHJvamVjdC9saW51
-eC1tZWRpYXRla19fOyEhQ1RSTktBOXdNZzBBUmJ3IWwzbVZlUHVLTjAzOHJkNVhvQ3VJT04welA0
-MEJ0V0JiNzE0OGhIc1hzN2hDV0RUUmdFU0lrZk5IdUV0UFExUmI0UDlNT3BKWnN0Z0U0ajJMSmck
-IA0KPiAvcGF0Y2gvMjAyNDAyMDUwNTUwNTUuMjUzNDAtNC1tYWMuc2hlbkBtZWRpYXRlay5jb20v
-DQoNCk1vdmUgdGhlIHZlcnNpb24gY2hhbmdlIGluZm9ybWF0aW9uIGFmdGVyICctLS0nLg0KDQpJ
-biBoZXJlLCBkZXNjcmliZSBIRENQMS54Lg0KRG9lcyBNZWRpYVRlayBEUCBoYXMgc29tZSBsaW1p
-dGF0aW9uPyBJZiBzbywgZGVzY3JpYmUgaXQuDQoNCkkgd291bGQgbGlrZSB0byBIRENQMS54IHBh
-dGNoIGluIGZyb250IG9mIEhEQ1AyLnggYmVjYXVzZSB0aGUgc3BlYyBkZXZlbG9wbWVudCBpcyBm
-cm9tIDEueCB0byAyLnguDQpTbyBtb3ZlIHRoaXMgcGF0Y2ggYmVmb3JlIEhEQ1AyLnggcGF0Y2gu
-DQoNClJlZ2FyZHMsDQpDSw0KDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBtYWMuc2hlbiA8bWFjLnNo
-ZW5AbWVkaWF0ZWsuY29tPg0KPiAtLS0NCg0KDQoNCg==
+
+
+On 27.08.24 г. 10:14 ч., Kai Huang wrote:
+> The TDX module provides a set of "global metadata fields".  They report
+> things like TDX module version, supported features, and fields related
+> to create/run TDX guests and so on.
+> 
+> For now the kernel only reads "TD Memory Region" (TDMR) related fields
+> for module initialization.  There are both immediate needs to read more
+> fields for module initialization and near-future needs for other kernel
+> components like KVM to run TDX guests.
+> will be organized in different structures depending on their meanings.
+> 
+> For now the kernel only reads TDMR related fields.  The TD_SYSINFO_MAP()
+> macro hard-codes the 'struct tdx_sys_info_tdmr' instance name.  To make
+> it work with different instances of different structures, extend it to
+> take the structure instance name as an argument.
+> 
+> This also means the current code which uses TD_SYSINFO_MAP() must type
+> 'struct tdx_sys_info_tdmr' instance name explicitly for each use.  To
+> make the code easier to read, add a wrapper TD_SYSINFO_MAP_TDMR_INFO()
+> which hides the instance name.
+> 
+> TDX also support 8/16/32/64 bits metadata field element sizes.  For now
+> all TDMR related fields are 16-bit long thus the kernel only has one
+> helper:
+> 
+>    static int read_sys_metadata_field16(u64 field_id, u16 *val) {}
+> 
+> Future changes will need to read more metadata fields with different
+> element sizes.  To make the code short, extend the helper to take a
+> 'void *' buffer and the buffer size so it can work with all element
+> sizes.
+> 
+> Note in this way the helper loses the type safety and the build-time
+> check inside the helper cannot work anymore because the compiler cannot
+> determine the exact value of the buffer size.
+> 
+> To resolve those, add a wrapper of the helper which only works with
+> u8/u16/u32/u64 directly and do build-time check, where the compiler
+> can easily know both the element size (from field ID) and the buffer
+> size(using sizeof()), before calling the helper.
+> 
+> An alternative option is to provide one helper for each element size:
+> 
+>    static int read_sys_metadata_field8(u64 field_id, u8 *val) {}
+>    static int read_sys_metadata_field16(u64 field_id, u16 *val) {}
+>    ...
+> 
+> But this will result in duplicated code given those helpers will look
+> exactly the same except for the type of buffer pointer.  It's feasible
+> to define a macro for the body of the helper and define one entry for
+> each element size to reduce the code, but it is a little bit
+> over-engineering.
+> 
+> Signed-off-by: Kai Huang <kai.huang@intel.com>
+> ---
+> 
+> v2 -> v3:
+>   - Rename read_sys_metadata_field() to tdh_sys_rd() so the former can be
+>     used as the high level wrapper.  Get rid of "stbuf_" prefix since
+>     people don't like it.
+>   
+>   - Rewrite after removing 'struct field_mapping' and reimplementing
+>     TD_SYSINFO_MAP().
+>   
+> ---
+>   arch/x86/virt/vmx/tdx/tdx.c | 45 +++++++++++++++++++++----------------
+>   arch/x86/virt/vmx/tdx/tdx.h |  3 ++-
+>   2 files changed, 28 insertions(+), 20 deletions(-)
+> 
+> diff --git a/arch/x86/virt/vmx/tdx/tdx.c b/arch/x86/virt/vmx/tdx/tdx.c
+> index 7e75c1b10838..1cd9035c783f 100644
+> --- a/arch/x86/virt/vmx/tdx/tdx.c
+> +++ b/arch/x86/virt/vmx/tdx/tdx.c
+> @@ -250,7 +250,7 @@ static int build_tdx_memlist(struct list_head *tmb_list)
+>   	return ret;
+>   }
+>   
+> -static int read_sys_metadata_field(u64 field_id, u64 *data)
+> +static int tdh_sys_rd(u64 field_id, u64 *data)
+>   {
+>   	struct tdx_module_args args = {};
+>   	int ret;
+> @@ -270,43 +270,50 @@ static int read_sys_metadata_field(u64 field_id, u64 *data)
+>   	return 0;
+>   }
+>   
+> -static int read_sys_metadata_field16(u64 field_id, u16 *val)
+> +static int __read_sys_metadata_field(u64 field_id, void *val, int size)
+
+The type of 'size' should be size_t.
+
+>   {
+>   	u64 tmp;
+>   	int ret;
+>   
+> -	BUILD_BUG_ON(MD_FIELD_ID_ELE_SIZE_CODE(field_id) !=
+> -			MD_FIELD_ID_ELE_SIZE_16BIT);
+> -
+> -	ret = read_sys_metadata_field(field_id, &tmp);
+> +	ret = tdh_sys_rd(field_id, &tmp);
+>   	if (ret)
+>   		return ret;
+>   
+> -	*val = tmp;
+> +	memcpy(val, &tmp, size);
+>   
+>   	return 0;
+>   }
+>   
+> +/* Wrapper to read one global metadata to u8/u16/u32/u64 */
+> +#define read_sys_metadata_field(_field_id, _val)					\
+> +	({										\
+> +		BUILD_BUG_ON(MD_FIELD_ELE_SIZE(_field_id) != sizeof(typeof(*(_val))));	\
+> +		__read_sys_metadata_field(_field_id, _val, sizeof(typeof(*(_val))));	\
+> +	})
+> +
+>   /*
+> - * Assumes locally defined @ret and @sysinfo_tdmr to convey the error
+> - * code and the 'struct tdx_sys_info_tdmr' instance to fill out.
+> + * Read one global metadata field to a member of a structure instance,
+> + * assuming locally defined @ret to convey the error code.
+>    */
+> -#define TD_SYSINFO_MAP(_field_id, _member)						\
+> -	({										\
+> -		if (!ret)								\
+> -			ret = read_sys_metadata_field16(MD_FIELD_ID_##_field_id,	\
+> -					&sysinfo_tdmr->_member);			\
+> +#define TD_SYSINFO_MAP(_field_id, _stbuf, _member)				\
+> +	({									\
+> +		if (!ret)							\
+> +			ret = read_sys_metadata_field(MD_FIELD_ID_##_field_id,	\
+> +					&_stbuf->_member);			\
+>   	})
+>   
+>   static int get_tdx_sys_info_tdmr(struct tdx_sys_info_tdmr *sysinfo_tdmr)
+>   {
+>   	int ret = 0;
+>   
+> -	TD_SYSINFO_MAP(MAX_TDMRS,	      max_tdmrs);
+> -	TD_SYSINFO_MAP(MAX_RESERVED_PER_TDMR, max_reserved_per_tdmr);
+> -	TD_SYSINFO_MAP(PAMT_4K_ENTRY_SIZE,    pamt_entry_size[TDX_PS_4K]);
+> -	TD_SYSINFO_MAP(PAMT_2M_ENTRY_SIZE,    pamt_entry_size[TDX_PS_2M]);
+> -	TD_SYSINFO_MAP(PAMT_1G_ENTRY_SIZE,    pamt_entry_size[TDX_PS_1G]);
+> +#define TD_SYSINFO_MAP_TDMR_INFO(_field_id, _member)	\
+> +	TD_SYSINFO_MAP(_field_id, sysinfo_tdmr, _member)
+
+nit: I guess its a personal preference but honestly I think the amount 
+of macro indirection (3 levels) here is crazy, despite each being rather 
+simple. Just use TD_SYSINFO_MAP directly, saving the typing of 
+"sysinfo_tdmr" doesn't seem like a big deal.
+
+You can probably take it even a bit further and simply opencode 
+read_sys_metadata_field macro inside TD_SYSINFO_MAP and be left with 
+just it, no ? No other patch in this series uses read_sys_metadata_field 
+stand alone, if anything factoring it out could be deferred until the 
+first users gets introduced.
+
+> +
+> +	TD_SYSINFO_MAP_TDMR_INFO(MAX_TDMRS,	        max_tdmrs);
+> +	TD_SYSINFO_MAP_TDMR_INFO(MAX_RESERVED_PER_TDMR, max_reserved_per_tdmr);
+> +	TD_SYSINFO_MAP_TDMR_INFO(PAMT_4K_ENTRY_SIZE,    pamt_entry_size[TDX_PS_4K]);
+> +	TD_SYSINFO_MAP_TDMR_INFO(PAMT_2M_ENTRY_SIZE,    pamt_entry_size[TDX_PS_2M]);
+> +	TD_SYSINFO_MAP_TDMR_INFO(PAMT_1G_ENTRY_SIZE,    pamt_entry_size[TDX_PS_1G]);
+>   
+>   	return ret;
+>   }
+> diff --git a/arch/x86/virt/vmx/tdx/tdx.h b/arch/x86/virt/vmx/tdx/tdx.h
+> index 148f9b4d1140..7458f6717873 100644
+> --- a/arch/x86/virt/vmx/tdx/tdx.h
+> +++ b/arch/x86/virt/vmx/tdx/tdx.h
+> @@ -53,7 +53,8 @@
+>   #define MD_FIELD_ID_ELE_SIZE_CODE(_field_id)	\
+>   		(((_field_id) & GENMASK_ULL(33, 32)) >> 32)
+>   
+> -#define MD_FIELD_ID_ELE_SIZE_16BIT	1
+> +#define MD_FIELD_ELE_SIZE(_field_id)	\
+
+That ELE seems a bit ambiguous, ELEM seems more natural and is in line 
+with other macros in the kernel.
+
+> +	(1 << MD_FIELD_ID_ELE_SIZE_CODE(_field_id))
+>   
+>   struct tdmr_reserved_area {
+>   	u64 offset;
 
