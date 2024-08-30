@@ -1,163 +1,134 @@
-Return-Path: <linux-kernel+bounces-308300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FCAA965A05
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:20:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CF17965A0F
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:21:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDF111F2232E
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 08:20:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FB991C23112
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 08:21:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE5B116BE2B;
-	Fri, 30 Aug 2024 08:20:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46DC416D332;
+	Fri, 30 Aug 2024 08:20:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S6pf6yW2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="auy1iR6n"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8F1313D53E;
-	Fri, 30 Aug 2024 08:20:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9477D16B390
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 08:20:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725006020; cv=none; b=eQeqBYElxGA3qtF4haOCWEj91L/0MTSjts+v5eExYhWHMckIDkY61+g/+k6s9qbs9Z2W9+uAMjCz90HQOy8z/C6QEVLRSRwqRlk3WRY2GEOgtpWn5QUwqerS9qDxthcjXNxe4+KF0SARyOYenbQXB+yP/Y+cR1DFIHRmFQh5NKc=
+	t=1725006052; cv=none; b=YZDZ6IDEdQRsXkCLwcUXFw26WcQvQDXaDW1rXArxSa8vjBnzP8FteeInSGXJoKL0zQNUo1BkuGpfT59ActmUa/tfPESem3j7NgxJbIjut+cE+nYaLF39SibS96g1Tk2+Oauk0h9mQbFsLOOjXKTkP7Y2p09k/BDOnbFxp30KlfU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725006020; c=relaxed/simple;
-	bh=8BnN5DBF5PyD8ejLqZl3nUmYt2pMYCYaD3RZT+KL8Js=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S45P59TyM6HyGpNYyg7oYI/HIRFHifMFUgErjtLNh+aiIJeBBCukFAdob06Hc15NT8HZdekSgl34Pgi68s2eutAUrpeRxA3UqVvLlv54lWKMHu5dTZLwzPmjoTL9vUwa2x9iTDBa2g8jIY8qz3t9NLgUaKgS2W5FiMXn8vUKKzg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S6pf6yW2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E93A5C4CEC2;
-	Fri, 30 Aug 2024 08:20:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725006019;
-	bh=8BnN5DBF5PyD8ejLqZl3nUmYt2pMYCYaD3RZT+KL8Js=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=S6pf6yW2mEYxVJ8pMscwAphZR8+YV89giq2YbpUBupjpdXp7czVUvq3xG7G9XnRRH
-	 zw9ou5Lps/5xdysFVs4DY9PKf2t7oaoQAbZwp4bWCMp+6SlBwTrbYTMWbPKudpor5P
-	 zDCFaVZK7RIAlxf8qVydbijUBKgYCvOZlGTQHoYjCmidvs6ShU4NyaQnBiLIbI2vuj
-	 htfEL+cm2DaqDVqoCsYSJCBVRtteeljSo2+z7tzzWcc/c68Xbj7Xhmy06B8zOxapOL
-	 zf+1CsvX2G7hRz+n5ZIEfixA+8M/2DBMCQygmQMVcgSoUvfiUP6+Lt2dZ6xUvH5inO
-	 jtqr7UnuG+dtA==
-Date: Fri, 30 Aug 2024 10:20:17 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Jens Wiklander <jens.wiklander@linaro.org>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, 
-	op-tee@lists.trustedfirmware.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org, Olivier Masse <olivier.masse@nxp.com>, 
-	Thierry Reding <thierry.reding@gmail.com>, Yong Wu <yong.wu@mediatek.com>, 
-	Sumit Semwal <sumit.semwal@linaro.org>, Benjamin Gaignard <benjamin.gaignard@collabora.com>, 
-	Brian Starkey <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>, 
-	"T . J . Mercier" <tjmercier@google.com>, Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, 
-	Sumit Garg <sumit.garg@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Subject: Re: [RFC PATCH 3/4] dt-bindings: reserved-memory: add
- linaro,restricted-heap
-Message-ID: <3bqb6mktkvbdl6h4eekad4mpjhyvzx7mjidhnanboygbwu2asz@6ros56bp6isd>
-References: <20240830070351.2855919-1-jens.wiklander@linaro.org>
- <20240830070351.2855919-4-jens.wiklander@linaro.org>
+	s=arc-20240116; t=1725006052; c=relaxed/simple;
+	bh=YucLZiKtcTOQ2LZLPspdYxYZ3G8B0cZuu5cpOrrY3uQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=P+r0y3iNLZygJHtaspkc9z794ZY3iaxb3dVeDjFnCkYTfpFbMQhtdZXYFu0j1TOLgmZqChzJZ+NXJRA1trzzzneij3FsjBymRdF4gdmyd54SFFKThAgr3CRNMOnhhqNySZZd4mLRmwD4RTHrbd5ygiXLmAFo4tILASkyFswQu+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=auy1iR6n; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-53349ee42a9so2093031e87.3
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 01:20:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725006049; x=1725610849; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tNNx6R/CTj6/etPLMLqRbZQLDDYvh5RRNyVtz+9vczA=;
+        b=auy1iR6nAgN4MAMiDIS//8NevZ1DQ9es4TNVR5G2Jb3GLvoRM5eiVqRFEfrJ91kxmU
+         IdgeoSuJyTumklTkobPkw+luRyvX/fdQ1gZSMd0+pvdk9rgoUMKApwxz0rtEs3Xx6fEb
+         8FgKlGjRg1dV1R02O7uA/Y/iUp9p1VQ2rfnCKat+jiKju+b7/Rlpzujmbqk1gaS3cCkz
+         zi22oqW1Lp9IeOXMMmE3rvbxYYdhi6ZZbJHoaKBF/K6nY8/QYaBY2KbOj0N7MRCiend1
+         izCJygK78o++GOYj679cgaSqI4PLYnuMdd9rPDmC/Jk4+K9WTWQrX5DBVlAmGAAbnzvo
+         lq4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725006049; x=1725610849;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tNNx6R/CTj6/etPLMLqRbZQLDDYvh5RRNyVtz+9vczA=;
+        b=YREZb4CDWAkQ4FTkE+9fyll7U1Lbj15iRHlqJvo84YuvrlBNI+q6OSfFBlKgFT6Eny
+         vq/zoPpZ11awyl2DPic1KJqh9OeKUTQUB6aO9D599D2x5PVhdBzJhyyDu1CiGBoFTHCr
+         /+RlEMrvwVTf/OLumyUuFw8/E4AjUFU4fjlJPBo1TEj6dRhGLrJ1eHjwvo/Iuf1Vvz5R
+         qtnLngFYCh9YyyNmVj0kRiqXz/caR3e9sszI2YNM5vtrS0AqneNZZIZn6N3thzz2CBD+
+         CSYlX8JsgI0cRoU47hoTGDICQdpx9ahvkXmOtnNNjakbXjQp2dAZnweTxiMrkY1A6tDM
+         xBhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUJ5Wvwl9OPYa2E+fwp3Gw/N3Tjm05iIDie7XtSm5/2/ZvLUrq+QSSabAZ0WCy2Q38qlv4a5g97TVoa7cQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8nXRxWzUYpYYItaireL8jOpjNjHxATs95ovM7j15aPZT9fKVi
+	Reoc4nY6I0WGRM9PofezhswmSHNcwzO3uJF9D2JtnzEXsPMSNt5RXzHg9HK/FFE=
+X-Google-Smtp-Source: AGHT+IHGG+kYAl7eRrAUxIf40F23jCJzii6dmVx9hrJqP30xeomNshfKUkKgkv4Nshm5utOmgZzdnw==
+X-Received: by 2002:a05:6512:4014:b0:530:daeb:c1d4 with SMTP id 2adb3069b0e04-53546b1920fmr784708e87.12.1725006047931;
+        Fri, 30 Aug 2024 01:20:47 -0700 (PDT)
+Received: from umbar.lan ([192.130.178.90])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5354084e00asm482623e87.271.2024.08.30.01.20.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Aug 2024 01:20:47 -0700 (PDT)
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Subject: [PATCH v2 0/2] phy: add NXP PTN3222 eUSB2 to USB2 redriver
+Date: Fri, 30 Aug 2024 11:20:44 +0300
+Message-Id: <20240830-nxp-ptn3222-v2-0-4c6d8535cf6c@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240830070351.2855919-4-jens.wiklander@linaro.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANyA0WYC/23MQQqDMBCF4avIrDsljkGTrnqP4sLYqQ6URBIJF
+ vHuTV13+T943w6Jo3CCW7VD5CxJgi9BlwrGefATozxLAynSypBFvy24rL4hImyUc87UbI1mKI8
+ l8ku2U3v0pWdJa4ifE8/1b/3v5BoV6taq1o26091wf4sfYriGOEF/HMcXvrYvI6cAAAA=
+To: Vinod Koul <vkoul@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Konrad Dybcio <konradybcio@kernel.org>, linux-phy@lists.infradead.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+ Conor Dooley <conor.dooley@microchip.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1066;
+ i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
+ bh=YucLZiKtcTOQ2LZLPspdYxYZ3G8B0cZuu5cpOrrY3uQ=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBm0YDeWPNA1ymm+x1qxspVMU3+Q3+Fx3fQb25KX
+ 4Q+J63WS2SJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZtGA3gAKCRCLPIo+Aiko
+ 1Z6xCACpSleZDi29XNNeLJF0ITh7C8B2OkfchPfTrm6NdUvhBEjxCYDNGMX3ZhwcSIrF8un6aE+
+ J8KHfMlNPvxDcEp8fAXNlIaXOeOz0dfLeyqHEFr9r6cg9QBpLyRTx/gtVTa7RkkB/7hxxeck91x
+ 5WT8AlsiA57Eg2Smn9wAliucD34zabwPJ5sFFsLhA//fAC/0poK74gegTk5o2LjNqlTOckXSuaF
+ Np1o5MQ2hP+yua/DpT0HK/fQ4Zo6Ln6QvRRg4gLdsl3A2PNnkg0ubw76WbKB9Db++ifmB9oVZZO
+ 5mbCLcBLnA8qJhvN9jqqDeRBgM1CzsF9KPhW6pi6NZttt2C6
+X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
+ fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-On Fri, Aug 30, 2024 at 09:03:50AM +0200, Jens Wiklander wrote:
-> From: Olivier Masse <olivier.masse@nxp.com>
-> 
-> DMABUF reserved memory definition for OP-TEE secure data path feature.
-> 
-> Signed-off-by: Olivier Masse <olivier.masse@nxp.com>
-> Signed-off-by: Jens Wiklander <jens.wiklander@linaro.org>
-> ---
->  .../linaro,restricted-heap.yaml               | 56 +++++++++++++++++++
->  1 file changed, 56 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/reserved-memory/linaro,restricted-heap.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/reserved-memory/linaro,restricted-heap.yaml b/Documentation/devicetree/bindings/reserved-memory/linaro,restricted-heap.yaml
-> new file mode 100644
-> index 000000000000..0ab87cf02775
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/reserved-memory/linaro,restricted-heap.yaml
-> @@ -0,0 +1,56 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/reserved-memory/linaro,restricted-heap.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Linaro Secure DMABUF Heap
-> +
-> +maintainers:
-> +  - Olivier Masse <olivier.masse@nxp.com>
-> +
-> +description:
-> +  Linaro OP-TEE firmware needs a reserved memory for the
-> +  Secure Data Path feature (aka SDP).
-> +  The purpose is to provide a restricted memory heap which allow
-> +  the normal world OS (REE) to allocate/free restricted buffers.
-> +  The TEE is reponsible for protecting the SDP memory buffers.
-> +  TEE Trusted Application can access restricted memory references
-> +  provided as parameters (DMABUF file descriptor).
+The NXP PTN3222 is the single-port eUSB2 to USB2 redriver that performs
+translation between eUSB2 and USB2 signalling schemes. It supports all
+three data rates: Low Speed, Full Speed and High Speed.
 
-And what is the difference from regular reserved memory? Why it cannot
-be used?
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
+Changes in v2:
+- Switched to devm_regulator_bulk_get_const() (Neil)
+- Link to v1: https://lore.kernel.org/r/20240829-nxp-ptn3222-v1-0-46906bc4747a@linaro.org
 
-> +
-> +allOf:
-> +  - $ref: "reserved-memory.yaml"
+---
+Dmitry Baryshkov (2):
+      dt-bindings: phy: add NXP PTN3222 eUSB2 to USB2 redriver
+      phy: add NXP PTN3222 eUSB2 to USB2 redriver
 
-It does not look like you tested the bindings, at least after quick
-look. Please run  (see
-Documentation/devicetree/bindings/writing-schema.rst for instructions).
-Maybe you need to update your dtschema and yamllint.
-
-> +
-> +properties:
-> +  compatible:
-> +    const: linaro,restricted-heap
-> +
-> +  reg:
-> +    description:
-> +      Region of memory reserved for OP-TEE SDP feature
-> +
-> +  no-map:
-> +    $ref: /schemas/types.yaml#/definitions/flag
-> +    description:
-> +      Avoid creating a virtual mapping of the region as part of the OS'
-> +      standard mapping of system memory.
-> +
-> +unevaluatedProperties: false
-
-This goes after "required:" block.
-
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - no-map
-> +
-> +examples:
-> +  - |
-> +  reserved-memory {
-> +    #address-cells = <2>;
-> +    #size-cells = <2>;
-> +
-> +    sdp@3e800000 {
-> +      compatible = "linaro,restricted-heap";
-> +      no-map;
-> +      reg = <0 0x3E800000 0 0x00400000>;
-
-lowercase hex
+ .../devicetree/bindings/phy/nxp,ptn3222.yaml       |  55 +++++++++
+ drivers/phy/Kconfig                                |  11 ++
+ drivers/phy/Makefile                               |   1 +
+ drivers/phy/phy-nxp-ptn3222.c                      | 123 +++++++++++++++++++++
+ 4 files changed, 190 insertions(+)
+---
+base-commit: 195a402a75791e6e0d96d9da27ca77671bc656a8
+change-id: 20240829-nxp-ptn3222-30bbb81e984e
 
 Best regards,
-Krzysztof
+-- 
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
 
