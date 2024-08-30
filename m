@@ -1,255 +1,140 @@
-Return-Path: <linux-kernel+bounces-309572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14F92966CF0
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 01:35:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80826966CF2
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 01:40:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 394611C227EF
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 23:35:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 333EF1F21BB0
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 23:40:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 324FC18FDBA;
-	Fri, 30 Aug 2024 23:35:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0B0118E371;
+	Fri, 30 Aug 2024 23:40:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="gSWt9G2w"
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dJpHnabf"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E10E189B86
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 23:35:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C14EB18C033
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 23:40:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725060938; cv=none; b=mzdoqaZ/kJy5wGVY5Nby+uQ+c/kqfnzITcSJXW+K1FyaFIRNTPccS2o8SSL+IDjkS/ZNi/KQY0dhEdsxEE/AHRYYfenRxz6Yhp1+/lA0s8bV1D82gIiMYk7Da98ttN9g9Z+8TO1MVSei9tDDilklLT/A/S6xYu7uismybk9qOlo=
+	t=1725061249; cv=none; b=TZE3CXCLWeRnsHEc+Q2C4Z1Jl+sdymhJbQjnA9iQE3XXR/HdsAnf2FMkhiyNd+S8/SNc0VMcHB5a4tFJ2qZYSeeKyi03is9iqoNOYTmyJi0u3Q7Vy5HbegweUEtL2qQyUCfiU145AcuGf96t5PCT7/vkgOeVUF1ZdVAECuux2FI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725060938; c=relaxed/simple;
-	bh=LQQNZA2lQEoRi9GKKSvucUr0JF3ARJYIkZ4ezaTKJvo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MCrjqoBq9QLlRpLATpkqHwcHGIVjoZnBxCyiIJe5WB7aUpZN/apVmubh0TqVOl4oSpy1prsWgZMUYHfxiC4U/gyh3mZ40QZKgTEcq80sF6Q5UmDu5ycib/8en5Lzt6xkcaKG5xiWj7eAHY1HOnF5JuACJ2oSQmbgA12bIGlmOv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=gSWt9G2w; arc=none smtp.client-ip=209.85.215.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-7cf5e179b68so1568539a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 16:35:35 -0700 (PDT)
+	s=arc-20240116; t=1725061249; c=relaxed/simple;
+	bh=M7iA6Og7rkscgShI8ugCJiyFV+diig6JJ6ihasK6GVo=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=f2OxxC5hDkn8cP2gntT/mpKF52ZS2qZBB8BkPxFuMFo6dnFb06aNcLxLp4ikdb46SEnkFZ0tY/WockgNQK1AnSo2UITn7IWtdMbwbOtYY5eE4oEq4K+gfNfybIyYrxOo5mdvKFkFa2jzn0w0Se5ZkOW2w6immoNfwNdCHDOBftM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dJpHnabf; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e1a8eedf001so312926276.0
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 16:40:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1725060935; x=1725665735; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IGZJFABiiwQ/JcxTEIMxL9o5eO7pEFGecgwfYFoEAXo=;
-        b=gSWt9G2wjAgZ3eQ2eeljuCOT8KL8FvDMW50RDgoVVN3O2NZACd7Iqicb74p5S0mriK
-         TiHUPgUIEWPGlpcMIcPB+C2AeMiMx22Sc6SG2QSMSh1mEfXaSajxGL1/zRGW5IHmPWuT
-         f2GDrHkZZTDTXdnzh6/Oi0m8mAnmWihFEi4tk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725060935; x=1725665735;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=google.com; s=20230601; t=1725061247; x=1725666047; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=IGZJFABiiwQ/JcxTEIMxL9o5eO7pEFGecgwfYFoEAXo=;
-        b=sC7bymWIJ+58bf9NBptxoHoPG7Xit7o9Tge8rHSVDZGD0lpL3d9z+OyPW/2pLFcwrz
-         mdt7cLlex1JqhIYrDE6ylX/HzEXdpuKjCEXBxfTSmYBonntSGURhWhO5XFfsmotZvVe8
-         H5n47a55ixC/I56wxlYIpmiY6rfiBr+mPWzpy1n6/CibPkiFUPcNTYJJOi02eLKIAmAt
-         tDaaF8Li4b9KIW1rMhc1FacVn9sG2c/mOILaNOm4i8ZexbU6GWwkeitrEWY9VRf9erSn
-         fN3NEpoje8glbbSU2j5mN+iDoHQ5Zb0M34HvKvkbnKd8Mp0p4LUTKCw8F7HHBbFLPV/0
-         /wuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUdEe3SC5OOmWKbRl/sZx0LvW4QzNg+zleJOytnt4sbg54TiunsunCywuCN8n9kHdX1JPOd4+erSRWqHh0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMvyE2lPTmhMaEwGZ81MRh735iCDW16RMdNX6sXiR332wNJg8i
-	P7so4dcITc0cw7BaaMn51XumdDG269KDY/Mr9gqbgrcAkwh+7bYXrJ+ib9ynpfDlUHC5JFdTsUC
-	oJGaWb4khqejLNXnu058EoNPD0INBOtaW+KGX
-X-Google-Smtp-Source: AGHT+IFO2EmUFEtOMUYJcEffOgckKQVp9+l73ByoEm+F4H4tX/gdEvT2YlZRRuejeicxCLqYfNh//ZKxuQ+5NID+Eao=
-X-Received: by 2002:a17:90a:e16:b0:2d8:3f7a:edf2 with SMTP id
- 98e67ed59e1d1-2d856b047f7mr11126610a91.12.1725060935251; Fri, 30 Aug 2024
- 16:35:35 -0700 (PDT)
+        bh=fzg5+H8KkNoQ/oaD/mZ9dMAx+MaTWuSVzn0ffSsgaXc=;
+        b=dJpHnabfpXmQhFh4iC9/5+f2PL7Dq9xsZT2Ye+7wjc1KnzqiemzJaOPt7vyKAA0Na0
+         HX2wESe/fAhtgebFKLjSx2V6IgO8fHIebTp1cbX7Kjhetj1wY+bg13HRqZrZT0aZlleF
+         IwCYpPIlk1Tbcda8XANikLapEexFy8b9uY6hLHuRNP2YDDYUFBthXZrs9ACAFq0Ss8iF
+         KpHxdzt7sOK1GliNOmwDnDa5FQoQuVcQo8hT/z21AS9k/lb/Kdfu8xgE+rYk2P87r3bt
+         syREOCkUaW5zmLkR8KrEtX1NYhu/KNbEbb21xOefze2OJ4mKomtOub1NUHyHB5wDzHaU
+         kHDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725061247; x=1725666047;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fzg5+H8KkNoQ/oaD/mZ9dMAx+MaTWuSVzn0ffSsgaXc=;
+        b=M8m6WCjTHo4yRU2QWGfypjiaYM77T/BnKTbUdLvWx00G7J64xBZDG5RewiH+F0SjIw
+         RQb/Vk+pYjZEgWoT96h/uaB3CcCsHuRFV4jCKc9cEooGWdv9jCIIbROdKwmHm/z2Bpob
+         J9K8up4WxGpjIm2GLOx2IJYwiEu7g/sQJV7Xq3TBmRK4UI82U8qbtEELjz7Haq7Zz7C7
+         892lSnI0C2gBWtrTqpv2NTJFgO7yl0BZ4Mf+Xj002tIlqTc/7duEFd6hQgOTC2LpICWb
+         M6abIci5eKTCN3hVk177MQdx+436W2g3+r0X2ouBQGEZ4w93dd4qgoGbSjk9VIJONY4j
+         Qy5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU+EGX/6TNighu2s02SgO8nShbqmYa12Plj1kesrtJGoVNJmVns5XKkR27NuZZJdQn4H03lup2Y6ds/hXE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywa2hkziQ6gcW0ZZDet5GERat0Wnca+PYPBrNtFX7/hE9ZseBa4
+	hmgFZNpuMXxsJz+fdqfbmWAzW5Takh6JniQw/8KgS8q82TsMQcdfKYqgs2Cy3JKqlYEX/k1XcgE
+	N1Q==
+X-Google-Smtp-Source: AGHT+IFHGNIxU233H2j9s0EV/iSKYApQhaTCqlpgnaxkztZF5uywKsu0bHvHaA/yt91UoaCw96+3L5AbJv8=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a25:dc8c:0:b0:e11:712d:9af8 with SMTP id
+ 3f1490d57ef6-e1a79ffa017mr6085276.4.1725061246694; Fri, 30 Aug 2024 16:40:46
+ -0700 (PDT)
+Reply-To: Sean Christopherson <seanjc@google.com>
+Date: Fri, 30 Aug 2024 16:40:42 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240814221818.2612484-1-jitendra.vegiraju@broadcom.com>
- <20240814221818.2612484-4-jitendra.vegiraju@broadcom.com> <vxpwwstbvbruaafcatq5zyi257hf25x5levct3y7s7ympcsqvh@b6wmfkd4cxfy>
- <CAMdnO-LDw0OZRfBWmh_4AEYuwbq6dmnh=W3PZwRe1766Ys2huA@mail.gmail.com> <li75hdp527xa3k23za3mfnwgwdcs7j324mlqj3qcxto6t5f6mw@yvhnpxlvlt5c>
-In-Reply-To: <li75hdp527xa3k23za3mfnwgwdcs7j324mlqj3qcxto6t5f6mw@yvhnpxlvlt5c>
-From: Jitendra Vegiraju <jitendra.vegiraju@broadcom.com>
-Date: Fri, 30 Aug 2024 16:35:22 -0700
-Message-ID: <CAMdnO-K8CPMihDwJnzy1KcTXNT51FGeTAYRQFHMdG6fG45wR-g@mail.gmail.com>
-Subject: Re: [net-next v4 3/5] net: stmmac: Integrate dw25gmac into stmmac
- hwif handling
-To: Serge Semin <fancer.lancer@gmail.com>
-Cc: netdev@vger.kernel.org, alexandre.torgue@foss.st.com, joabreu@synopsys.com, 
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
-	mcoquelin.stm32@gmail.com, bcm-kernel-feedback-list@broadcom.com, 
-	richardcochran@gmail.com, ast@kernel.org, daniel@iogearbox.net, 
-	hawk@kernel.org, john.fastabend@gmail.com, rmk+kernel@armlinux.org.uk, 
-	ahalaney@redhat.com, xiaolei.wang@windriver.com, rohan.g.thomas@intel.com, 
-	Jianheng.Zhang@synopsys.com, linux-kernel@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, 
-	linux-arm-kernel@lists.infradead.org, bpf@vger.kernel.org, andrew@lunn.ch, 
-	linux@armlinux.org.uk, horms@kernel.org, florian.fainelli@broadcom.com
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.46.0.469.g59c65b2a67-goog
+Message-ID: <20240830234042.322988-1-seanjc@google.com>
+Subject: [GIT PULL] KVM: x86: Fixes for 6.11-rcN
+From: Sean Christopherson <seanjc@google.com>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Sean Christopherson <seanjc@google.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 29, 2024 at 3:52=E2=80=AFAM Serge Semin <fancer.lancer@gmail.co=
-m> wrote:
->
-> Hi Jitendra
->
-> On Mon, Aug 26, 2024 at 11:53:13AM -0700, Jitendra Vegiraju wrote:
-> > Hi Serge(y)
-> > Thank you for reviewing the patch.
-> >
-> > On Fri, Aug 23, 2024 at 6:49=E2=80=AFAM Serge Semin <fancer.lancer@gmai=
-l.com> wrote:
-> > >
-> > > Hi Jitendra
-> > >
-> > > On Wed, Aug 14, 2024 at 03:18:16PM -0700, jitendra.vegiraju@broadcom.=
-com wrote:
-> > > > From: Jitendra Vegiraju <jitendra.vegiraju@broadcom.com>
-> > > >
-> > > > Integrate dw25gmac support into stmmac hardware interface handling.
-> > > > Added a new entry to the stmmac_hw table in hwif.c.
-> > > > Define new macros DW25GMAC_CORE_4_00 and DW25GMAC_ID to identify 25=
-GMAC
-> > > > device.
-> > > > Since BCM8958x is an early adaptor device, the synopsis_id reported=
- in HW
-> > > > is 0x32 and device_id is DWXGMAC_ID. Provide override support by de=
-fining
-> > > > synopsys_dev_id member in struct stmmac_priv so that driver specifi=
-c setup
-> > > > functions can override the hardware reported values.
-> > > >
-> > > > Signed-off-by: Jitendra Vegiraju <jitendra.vegiraju@broadcom.com>
-> > > > ---
-> > > > +     }, {
-> > > > +             .gmac =3D false,
-> > > > +             .gmac4 =3D false,
-> > > > +             .xgmac =3D true,
-> > > > +             .min_id =3D DW25GMAC_CORE_4_00,
-> > > > +             .dev_id =3D DW25GMAC_ID,
-> > > > +             .regs =3D {
-> > > > +                     .ptp_off =3D PTP_XGMAC_OFFSET,
-> > > > +                     .mmc_off =3D MMC_XGMAC_OFFSET,
-> > > > +                     .est_off =3D EST_XGMAC_OFFSET,
-> > > > +             },
-> > > > +             .desc =3D &dwxgmac210_desc_ops,
-> > > > +             .dma =3D &dw25gmac400_dma_ops,
-> > > > +             .mac =3D &dwxgmac210_ops,
-> > > > +             .hwtimestamp =3D &stmmac_ptp,
-> > > > +             .mode =3D NULL,
-> > > > +             .tc =3D &dwmac510_tc_ops,
-> > > > +             .mmc =3D &dwxgmac_mmc_ops,
-> > > > +             .est =3D &dwmac510_est_ops,
-> > > > +             .setup =3D dwxgmac2_setup,
-> > > > +             .quirks =3D NULL,
-> > > >       },
-> > >
-> > > This can be replaced with just:
-> > >
-> > > +       }, {
-> > > +               .gmac =3D false,
-> > > +               .gmac4 =3D false,
-> > > +               .xgmac =3D true,
-> > > +               .min_id =3D DW25GMAC_CORE_4_00,
-> > > +               .dev_id =3D DWXGMAC_ID, /* Early DW 25GMAC IP-core ha=
-d XGMAC ID */
-> > > +               .regs =3D {
-> > > +                       .ptp_off =3D PTP_XGMAC_OFFSET,
-> > > +                       .mmc_off =3D MMC_XGMAC_OFFSET,
-> > > +                       .est_off =3D EST_XGMAC_OFFSET,
-> > > +               },
-> > > +               .desc =3D &dwxgmac210_desc_ops,
-> > > +               .dma =3D &dw25gmac400_dma_ops,
-> > > +               .mac =3D &dwxgmac210_ops,
-> > > +               .hwtimestamp =3D &stmmac_ptp,
-> > > +               .mode =3D NULL,
-> > > +               .tc =3D &dwmac510_tc_ops,
-> > > +               .mmc =3D &dwxgmac_mmc_ops,
-> > > +               .est =3D &dwmac510_est_ops,
-> > > +               .setup =3D dw25gmac_setup,
-> > > +               .quirks =3D NULL,
-> > >         }
-> > >
-> > > and you won't need to pre-define the setup() method in the
-> > > glue driver. Instead you can define a new dw25xgmac_setup() method in
-> > > the dwxgmac2_core.c as it's done for the DW XGMAC/LXGMAC IP-cores.
-> > >
-> > > Note if your device is capable to work with up to 10Gbps speed, then
-> > > just set the plat_stmmacenet_data::max_speed field to SPEED_10000.
-> > > Alternatively if you really need to specify the exact MAC
-> > > capabilities, then you can implement what Russell suggested here
-> > > sometime ago:
-> > > https://lore.kernel.org/netdev/Zf3ifH%2FCjyHtmXE3@shell.armlinux.org.=
-uk/
-> > >
-> > I like your suggestion to add one stmmac_hw[] array entry (entry_a) for=
- this
-> > "early release" DW25GMAC IP and another entry (entry_b) for final DW25M=
-AC
-> > IP, in the process eliminate the need for a new member variable in stru=
-ct
-> > stmmac_priv.
-> >
->
-> > However, I would like to bring to your attention that this device requi=
-res
-> > special handling for both synopsys_id and dev_id.
-> > This device is reporting 0x32 for synopsys_id and 0x76(XGMAC) for dev_i=
-d.
-> > The final 25GMAC spec will have 0x40 for synopsys_id and 0x55(25GMAC) f=
-or
-> > dev_id.
->
-> For some reason I was thinking that your device had only the device ID
-> pre-defined with the XGMAC value meanwhile the Synopsys ID was 0x40.
-> Indeed you get to override both of these data in the platform-specific
-> setup() method.
->
-> >
-> > So, in order to avoid falsely qualifying other XGMAC devices with
-> > synopsis_id >=3D0x32 as DW25GMAC, I am thinking we will have to overwri=
-te the
-> > synopsys_id to 0x40 (DW25GMAC_CORE_4_00) in glue driver using existing
-> > glue driver override mechanism.
-> >
-> > We can implement dw25gmac_setup() in dwxgmac2_core.c for generic 25GMAC
-> > case. But, this glue driver will have to rely on its own setup function
-> > to override the synopsys_id as DW25GMAC_CORE_4_00.
-> >
-> > Do you think it looks reasonable?
->
-> What I was trying to avoid was the setup() method re-definition just
-> for the sake of the IP-core version override. Because if not for that
-> you could have created and used the generic DW 25GMAC dw25gmac_setup()
-> function.
->
-> One of the possible solutions I was thinking was to introduce the
-> plat_stmmacenet_data::{snps_id,dev_id} fields and use their values in
-> the stmmac_hwif_init() procedure instead of the data read from the
-> MAC.VERSION CSR.
->
-Hi Serge(y),
-Thanks for the suggestions, I will implement this option since the
-code change is mostly local.
-We will have to add following check in hwif.c
-@@ -313,7 +313,10 @@ int stmmac_hwif_init(struct stmmac_priv *priv)
-        u32 id, dev_id =3D 0;
-        int i, ret;
+Please pull a handful of random fixes.  Details in the tag and changelogs.
 
--       if (needs_gmac) {
-+       if (priv->plat->snps_id && priv->plat->snps_dev_id) {
-+               id =3D priv->plat->snps_id;
-+               dev_id =3D priv->plat->snps_dev_id;
-+       } else if (needs_gmac) {
-                id =3D stmmac_get_id(priv, GMAC_VERSION);
+The following changes since commit 47ac09b91befbb6a235ab620c32af719f8208399:
 
-> Another solution could be to add the plat_stmmacenet_data::has_25gmac
-> field and fix the generic driver code to using it where it's relevant.
-> Then you won't need to think about what actual Synopsys ID/Device ID
-> since it would mean a whole new IP-core.
->
-> -Serge(y)
->
+  Linux 6.11-rc4 (2024-08-18 13:17:27 -0700)
+
+are available in the Git repository at:
+
+  https://github.com/kvm-x86/linux.git tags/kvm-x86-fixes-6.11-rcN
+
+for you to fetch changes up to 5fa9f0480c7985e44e6ec32def0a395b768599cc:
+
+  KVM: SEV: Update KVM_AMD_SEV Kconfig entry and mention SEV-SNP (2024-08-28 05:46:25 -0700)
+
+----------------------------------------------------------------
+KVM x86 fixes for 6.11
+
+ - Fixup missed comments from the REMOVED_SPTE=>FROZEN_SPTE rename.
+
+ - Ensure a root is successfully loaded when pre-faulting SPTEs.
+
+ - Grab kvm->srcu when handling KVM_SET_VCPU_EVENTS to guard against accessing
+   memslots if toggling SMM happens to force a VM-Exit.
+
+ - Emulate MSR_{FS,GS}_BASE on SVM even though interception is always disabled,
+   so that KVM does the right thing if KVM's emulator encounters {RD,WR}MSR.
+
+ - Explicitly clear BUS_LOCK_DETECT from KVM's caps on AMD, as KVM doesn't yet
+   virtualize BUS_LOCK_DETECT on AMD.
+
+ - Cleanup the help message for CONFIG_KVM_AMD_SEV, and call out that KVM now
+   supports SEV-SNP too.
+
+----------------------------------------------------------------
+Maxim Levitsky (1):
+      KVM: SVM: fix emulation of msr reads/writes of MSR_FS_BASE and MSR_GS_BASE
+
+Ravi Bangoria (1):
+      KVM: SVM: Don't advertise Bus Lock Detect to guest if SVM support is missing
+
+Sean Christopherson (2):
+      KVM: x86/mmu: Check that root is valid/loaded when pre-faulting SPTEs
+      KVM: x86: Acquire kvm->srcu when handling KVM_SET_VCPU_EVENTS
+
+Vitaly Kuznetsov (1):
+      KVM: SEV: Update KVM_AMD_SEV Kconfig entry and mention SEV-SNP
+
+Yan Zhao (1):
+      KVM: x86/mmu: Fixup comments missed by the REMOVED_SPTE=>FROZEN_SPTE rename
+
+ arch/x86/kvm/Kconfig       |  6 ++++--
+ arch/x86/kvm/mmu/mmu.c     |  4 +++-
+ arch/x86/kvm/mmu/spte.c    |  6 +++---
+ arch/x86/kvm/mmu/spte.h    |  2 +-
+ arch/x86/kvm/mmu/tdp_mmu.c |  8 ++++----
+ arch/x86/kvm/svm/svm.c     | 15 +++++++++++++++
+ arch/x86/kvm/x86.c         |  2 ++
+ 7 files changed, 32 insertions(+), 11 deletions(-)
 
