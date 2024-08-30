@@ -1,85 +1,103 @@
-Return-Path: <linux-kernel+bounces-307852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA9879653FB
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 02:23:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 596DE9653FC
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 02:27:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 971DA284865
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 00:23:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1B6B1F239CD
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 00:27:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2DB429CA;
-	Fri, 30 Aug 2024 00:23:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6AF93C0B;
+	Fri, 30 Aug 2024 00:27:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UgUuwC0F"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="W9rPqE/Z"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 388E420EB;
-	Fri, 30 Aug 2024 00:23:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1FB920EB
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 00:27:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724977392; cv=none; b=q1EJa1eUFRhRGgzjz7LMpqzIB5b88MDGuSPqPCSt2rAD+oItXx2SeJ6IcmBGdX6NtwpASOL64OSL5mF7tGpebMcmPeL1uMad3IwIPHrsxFEHk++mchHRQNjSwhWE5tUoZxa0Nn9TNfMr1mI3WofJuf/fY7T+MSa/XiFGxxNIZZo=
+	t=1724977633; cv=none; b=jx5KitWHowOrqPPQn34wWvh9grsq6DjkkOzK6o/Lqos7GonsNrH0IBj4DJZup4Nzlk4uPUC9WujPcVgZSn8BYrcBD6lei3FLShdMRgACZnD177/UNBp0uU9iUXql6fP1ojFiBq9wcSm2ACEAWUhoO6Ax3LnNNcsO9mHr10CCpu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724977392; c=relaxed/simple;
-	bh=lh7JLnFP5s1aJ5xS8eg+yLx07MrFuSLffVxCf49ZDdA=;
+	s=arc-20240116; t=1724977633; c=relaxed/simple;
+	bh=bJd9I32v7Otg4KdUboUZFduUF4MCAqDOB8cOCWhBtsU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=l2i/wOwPdfUjiFPTbcfOlS1LTqNV0RnOlkYNJjGEohyhXqSPWVlMwgei7LRA4P7eK7a54+dfeKupYF3ieGWWw+YbpwyvmeTeA3p3pwfcoUT9mXYv+oQpMh0B+z9uzmi6Lig2R9wOJSW2T32CS2tMbop1H4Hv8299zyX/Fs+SA2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UgUuwC0F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3CE0C4CEC5;
-	Fri, 30 Aug 2024 00:23:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724977391;
-	bh=lh7JLnFP5s1aJ5xS8eg+yLx07MrFuSLffVxCf49ZDdA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=UgUuwC0F/jwl0XlnE+41/CzyQeeMhrt8Bl0bZHck3USg+o4ZKZYON1GfHiuxOkGki
-	 qEicXvp9dujgeif7ji02FsPdClxBTWMqfMGHqJq8h4i/ytwr8wanzqEmW3uLSxGeq5
-	 OJz5hrFmQ4GV+H9zxVixMpPwCne4wDt9wZ+sTsxvIKRbDCWcC7YUVo+gYxTO5lJ0SQ
-	 mRT271mx5zP5Y75pRIZ1pjeQDSJWTO0lFI0jXalC6FM0MQvrkn9xW2hjHeKTVnOhd2
-	 6i+uTUnp06Hr2cywFhl6p+xqLLUaSBV/p3+T5vcKD9sPEzyeTkRkvdX1XcmqEO8EFg
-	 UTX39C3pY4YTQ==
-Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-70f670eb827so189606a34.0;
-        Thu, 29 Aug 2024 17:23:11 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUBjj+TG7kpmHOtSxszaLpFIXbi14CX+Kzr2GFQuTGiBctYVVSflZt+Kab86C5ZTxG3GL4W8GxPIOVTAkKV1Gk=@vger.kernel.org, AJvYcCUU3v4i7IDRe0QsZ9DOqjhhHSobjzL9858KLQ6XzBV673ubONaBTkCMavvDVIzhJchAkB7p2yxJgCmSpuDW@vger.kernel.org, AJvYcCXWK0IlLsWJoQMOK/8RtiE3U6IiKazNzXWLHMlfv+Q1+asiENEIR4daHN60KV4ys3aihTumuMRFOnJxxA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyK7X67KsQSIAplBfVTnOdALFBH5Jmww9xsFk7DFHDZAVbo69vd
-	Q3kcWbmErCrbqR3ZJ+b4omOGp9iR1zuK5rIuIH27W2O70hGvw4+YaBSVYrc9CLvhsvGujQOLdjW
-	0WsSUVebwn2CnPnU+SzjF1ulMmS0=
-X-Google-Smtp-Source: AGHT+IF1HOIvuR07ISWkm9lOBPvOjH1Fv+cPfeKw7L2knPjRe2Cbni0rIZvQV07RTjTSNXDkJ41oZxVbgwUNcvuSAdo=
-X-Received: by 2002:a05:6830:278a:b0:703:6b11:33a4 with SMTP id
- 46e09a7af769-70f5da97fd4mr1154441a34.9.1724977390911; Thu, 29 Aug 2024
- 17:23:10 -0700 (PDT)
+	 To:Cc:Content-Type; b=WO0h/DGr3QMxq+8n14xqlCL/hO3dlfTlBfUJ6sJWkLSsAVEX1n5l67iRQ6cKdnI0jZHM1N3C1AB6xbxZpJ6t+Q/jtg8+NnU71lNy3kx3yOs3b9lS8UbFXfoStyfIjS80MFncnagQewKFvndMCCTG1DMz2EwaN1oMs3raa7Ghbgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=W9rPqE/Z; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a86c476f679so158177266b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 17:27:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1724977628; x=1725582428; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=0U2GctD6QRgRftcHbwdJFZ3yjPiOgv4RiUO/asYgyGY=;
+        b=W9rPqE/Zr5zlfmXkb42q8EjBvSCNp0os45rzNaiq5I97nExyat1eXbe3tOFMT1n/WR
+         AG4xveJ8nSrIRbfyGeLqdE9fJjwHg8oDQma1kHU5z7lU7EXct8qaehGS3rKlj3YGFU0b
+         44SrLEmm1tz7M8/eUOSpez279rxyTEqMEJWCc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724977628; x=1725582428;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0U2GctD6QRgRftcHbwdJFZ3yjPiOgv4RiUO/asYgyGY=;
+        b=EOC234JorUO2GFlXBc1Cp9HGG2ckk+3wlF+JGtgYXCMZQjiUlupgxdaFWVVYJNSZbM
+         9xDab4RBJLMdyxhSZv0gUfzEls/XmvLK4uofcPlWulaA5ibxFZ9lWqvO1ahAz/vl/buS
+         l4cNfiwApjeo3VYzy/t1SU/AnmjC8Y+gN+Hq4RD+M0GErTZSdmVqfkhL8DOt/b8tLmi3
+         im/BriWeDwyVm+FI0lwX01pFjlBm0Cox5CgtT0TlI0SJDkyAdEE11vDRsB7FF6snoQxL
+         YSDYZGf8A1G4bhje+obNIGzp1vL63flJmUIm82mEtDcBgv1n9d7sHU5S/wC+IBnptdGW
+         F6yw==
+X-Forwarded-Encrypted: i=1; AJvYcCWAOoE3hTsGwzi1DFT7vV1dL3O/do2V9MClivcAZjIPXfoJypcKjW3Z91UHa26XJHEoRIJlhLsY4HOuD4w=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywep+epr9/mmky0QLOmJYONq1QfC6wMDlLTtgRblqB+fBGI1HlV
+	MCswAyjZ5yues9uJE6kOPmsT4G71DPXS4lzfv86f3veOShreDRzTuBnhVZA7i+SJipQ+V1ipDBZ
+	DnMC/DQ==
+X-Google-Smtp-Source: AGHT+IH+RJtwGcly7h3QiqtLjxzjx1LD/6tX8FLIQWX8we+6u2WqIQtfxca2d2QbGgjfN8Kza+1E2A==
+X-Received: by 2002:a17:906:dac6:b0:a86:6858:8a8f with SMTP id a640c23a62f3a-a897f84bce7mr357861566b.26.1724977627461;
+        Thu, 29 Aug 2024 17:27:07 -0700 (PDT)
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com. [209.85.221.49])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8988fea68dsm140500966b.26.2024.08.29.17.27.06
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 29 Aug 2024 17:27:06 -0700 (PDT)
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3718acbc87fso710388f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 17:27:06 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUd+RX1t8M6xqMxO11nyJzX7W3OUbmZYP6aav+AJrbuhQhhqO4LGe1qyzehOwa1akFEYSIz9tAw2GEwf3I=@vger.kernel.org
+X-Received: by 2002:adf:b647:0:b0:368:526d:41d8 with SMTP id
+ ffacd0b85a97d-3749b548673mr2714437f8f.23.1724977626257; Thu, 29 Aug 2024
+ 17:27:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <89c440a9-27bd-45d9-9d5b-5b4bf51ec950@stanley.mountain>
-In-Reply-To: <89c440a9-27bd-45d9-9d5b-5b4bf51ec950@stanley.mountain>
-From: Namjae Jeon <linkinjeon@kernel.org>
-Date: Fri, 30 Aug 2024 09:23:00 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd_Wdb+Ss1GODQBh8Mxrrx=dWWD1zSiR6JCeMYQyR5h0Fw@mail.gmail.com>
-Message-ID: <CAKYAXd_Wdb+Ss1GODQBh8Mxrrx=dWWD1zSiR6JCeMYQyR5h0Fw@mail.gmail.com>
-Subject: Re: [PATCH] ksmbd: Unlock on in ksmbd_tcp_set_interfaces()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Namjae Jeon <namjae.jeon@samsung.com>, Steve French <sfrench@samba.org>, 
-	Sergey Senozhatsky <senozhatsky@chromium.org>, Tom Talpey <tom@talpey.com>, 
-	Hyunchul Lee <hyc.lee@gmail.com>, Ronnie Sahlberg <lsahlber@redhat.com>, linux-cifs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <20240829182049.287086-1-stephen.s.brennan@oracle.com>
+In-Reply-To: <20240829182049.287086-1-stephen.s.brennan@oracle.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 30 Aug 2024 12:26:49 +1200
+X-Gmail-Original-Message-ID: <CAHk-=wjKbgRY+Jvu2GNaDXaAhyydOOW-R=0qCzM3mTLrZZg+iQ@mail.gmail.com>
+Message-ID: <CAHk-=wjKbgRY+Jvu2GNaDXaAhyydOOW-R=0qCzM3mTLrZZg+iQ@mail.gmail.com>
+Subject: Re: [PATCH] dcache: don't discard dentry_hashtable or d_hash_shift
+To: Stephen Brennan <stephen.s.brennan@oracle.com>
+Cc: Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-debuggers@vger.kernel.org, Jan Kara <jack@suse.cz>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 30, 2024 at 4:22=E2=80=AFAM Dan Carpenter <dan.carpenter@linaro=
-.org> wrote:
+On Fri, 30 Aug 2024 at 06:21, Stephen Brennan
+<stephen.s.brennan@oracle.com> wrote:
 >
-> Unlock before returning an error code if this allocation fails.
->
-> Fixes: 0626e6641f6b ("cifsd: add server handler for central processing an=
-d tranport layers")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-Looks good to me.
-Applied it to #ksmbd-for-next-next.
-Thanks!
+> I know this "fix" may seem a bit silly, but reading out the dentry
+> hashtable contents from a core dump or live system has been a real life
+> saver when debugging dentry cache bloat issues. Could we do something
+> like this (even making it opt-in would be great) for v6.11?
+
+Sure, applied with fixes to the comment (you seem to have dropped a word).
+
+             Linus
 
