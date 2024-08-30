@@ -1,367 +1,361 @@
-Return-Path: <linux-kernel+bounces-309253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14B2E966826
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 19:38:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB410966824
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 19:38:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A3681C241C1
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 17:38:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B4901F2414A
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 17:38:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DF8D1BB6A0;
-	Fri, 30 Aug 2024 17:38:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 662651BB6A3;
+	Fri, 30 Aug 2024 17:38:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ppTFfRVR"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2066.outbound.protection.outlook.com [40.107.244.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ro4/v4Cu"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 675E11B4C2D;
-	Fri, 30 Aug 2024 17:38:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.66
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725039525; cv=fail; b=PovDTkI0lMLA9i4DRDCskpis3IvwXxaZd8OFvcZ0PBmcHKVRmc6ibAhMzLN5qgNrorErn5ZkiriKM/OM1YNu5f0uTVNPJS+96GDb2hKwubgmg7J7JOtPR2fwHQHfzvPKe9/Ls34R/YzFkUZokrhg8WvH6qxjs5pq9xz52OqOeFU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725039525; c=relaxed/simple;
-	bh=Fjxms/JqjF5rxKqGh/GGZZLFq+W51MdU4g5uo64tJJ8=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RyyV2nqoIBRvMkcFSdr9mSuJUCJ9aVxOPeXGyfbcOumiPpxZYPRR0AXRUah0+EDj3CrMZHdyy8semeC+vEd9Re88wbF6wLQsniCLDcJxSYKCNMsERDFgyqK6nn3Vc3XOa/Sg61O4zwzgb6mrtb8P51uxRnT6R1qDIijdzV9H99c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ppTFfRVR; arc=fail smtp.client-ip=40.107.244.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=yxHeNfoo6aiEjSPgm3WMYaWEuzFS/QQHNT9dkOYQgeb19VQlXa2WlTmLu8utan4KihZVLpkuZfJcWvTziX5wfg4gOwpeKAQiIw4e4KbIDeIuVZ6/9Y1FmSNPKV5qZjLUTAhkTWsh4nkWAgPKG3q0UR94YKpqH02pd0Pr9oQoISYHYWcbTFH1yQGxXHlDpH/A7rAX+oCKjJ6LyUfXIhmTMVcyAOvNeL+UN/rXUKkYxI3nvM17VfuFynBchQUihFTEn/5N4LZ593AA3AY4OgyRL3SEmUXpwERrFXbGgd79DrOVsci89GNcgXADTKw3lIGBVVS6+gkFZEWLEYOY2AK+MA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/DFTA+BhjL20KP3HMRuCTDLqJvUb2S9vW9KeUR4VZ6A=;
- b=DJuQDZlKdwtEEWQO3uQGHbdz6N99S/RQA5mELLJHpCF1JXvkzz4ErCj77qp4wZ9CyohhoIx4l/B6UTQz9bneTfWGYpNJFKgAOWJNsR1NWea/hNXfaaEfBcLCTQrmo6AKXpP1naZ3opJAVCOaDMnFMch0QLICsWw3bkTVc0Tu5dkzfv4Y6znbnfnCzbqV35O4Zc8vIfewqxjWKXILz2/PB4YSlWJFirT2UXVHnO2tnze/Kb9s2EK6d7j1jVGxgLBRGSwf+eyPYiwDOpGseW5zJ4Lrsv3AjoP1CbfIHZekdvEh5BeH+sawQYgAK4YJ6KSk14MJ9J5xmsVI6O8QPmI3Cw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/DFTA+BhjL20KP3HMRuCTDLqJvUb2S9vW9KeUR4VZ6A=;
- b=ppTFfRVRB2UrjvhJB/I5RK54JQLW3gmdvTiR8GCo8XIblyKRO23aVBf48lojJXe0ub9tQQW2F9VSwsWNRiuAKFz9C9HXhASgKYCFHC1hvdcJY18sg9EbEt+jj5At30U7rtIlZfYojZII+kugmRKDp6RgajEdH7yxTq6MdQ/hl5o=
-Received: from CH5PR04CA0010.namprd04.prod.outlook.com (2603:10b6:610:1f4::18)
- by DS0PR12MB6488.namprd12.prod.outlook.com (2603:10b6:8:c3::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.20; Fri, 30 Aug
- 2024 17:38:38 +0000
-Received: from CH2PEPF000000A0.namprd02.prod.outlook.com
- (2603:10b6:610:1f4:cafe::fb) by CH5PR04CA0010.outlook.office365.com
- (2603:10b6:610:1f4::18) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.20 via Frontend
- Transport; Fri, 30 Aug 2024 17:38:38 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
-Received: from SATLEXMB03.amd.com (165.204.84.17) by
- CH2PEPF000000A0.mail.protection.outlook.com (10.167.244.26) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7918.13 via Frontend Transport; Fri, 30 Aug 2024 17:38:37 +0000
-Received: from SATLEXMB05.amd.com (10.181.40.146) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 30 Aug
- 2024 12:38:36 -0500
-Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB05.amd.com
- (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 30 Aug
- 2024 12:38:36 -0500
-Received: from xsjtanmays50.xilinx.com (10.180.168.240) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Fri, 30 Aug 2024 12:38:35 -0500
-From: Tanmay Shah <tanmay.shah@amd.com>
-To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>
-CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Tanmay
- Shah <tanmay.shah@amd.com>
-Subject: [PATCH v5] remoteproc: xlnx: add sram support
-Date: Fri, 30 Aug 2024 10:37:36 -0700
-Message-ID: <20240830173735.279432-1-tanmay.shah@amd.com>
-X-Mailer: git-send-email 2.25.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3ED116C68F
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 17:38:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725039491; cv=none; b=NQ8lcsO4EDYGxg/nNm3Sg2Br/t+q00a4rEK0Aa/PI9MukMmEq5aj1zhSmQSo0iH0wArMhEnvmZw2qtwwnvobC7/ojH/BoOW+nHjrePNeBIAgZkWNspXgYk8nqOi13m4pm622Fn+N8HZTmL6i2G/IJYm1p10gBK/zdiL45IBkpfU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725039491; c=relaxed/simple;
+	bh=DIRvJN75BI6ZcDMoN56RkJd770BrPZnL26TYARaCmLo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WFxd/f25DmAZBCfsLyYCtWI/ZkNB+JMoANQ12zhZilxjh2hKCehFwMIw+JnAXPfTGTTFpWPPmPkk/qzHyq0/lok4AGygeLjYne5Eh4EbBYwQMQtkKf1na9RLdEnsZpuLSrKnnvG3CaPuWrsGO1NuzAx6ZHPnW/mAs6Ding+HxW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ro4/v4Cu; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-202089e57d8so14572545ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 10:38:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725039488; x=1725644288; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=94im9BOaQRR7bOCoTzpbzzJQE0FEOF3V36nzvAWIihA=;
+        b=ro4/v4Cu2j2uoZMDWqGQW4e+Wksy09259D7UYPqzv3s0LrTyKf1B2Zhl1aB8Quij85
+         rGSzWF7pfS+wMRC29CGr8iHosB1OSyTD6N2V12KIZhhxi8LcSv4QUHODeNckMYUU6LaX
+         AZM4R/vXiqJKjfZ+SoN3P4NTAwzRaZzzMDziJ2gfzurXgwCyj9JpXE2eb3eMh1RhmJ5H
+         DXmbWqOuMJa/wkqcCtb6s0pY8S/tiwhdXkwG2Ine66JLBaqlBaD5EckW2Y8dmZ0Fld48
+         2PMug7MKJKHyiU1xoKf1bh2C3sh3PIiwDcGynbMo6C8tKEckxBJnbxLb/Kh+OldOKzI1
+         8rlw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725039488; x=1725644288;
+        h=content-transfer-encoding:in-reply-to:organization:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=94im9BOaQRR7bOCoTzpbzzJQE0FEOF3V36nzvAWIihA=;
+        b=qbyl3iq77y/xhUhSi+VAoSIhvCmuVNf7VIxIRAkONKO9+xslPdikoNDdktisKGh0ZN
+         Xva8PcWYvTbkawfgUtw9CCQl3mwocsLJ4G8wKaeCMNJ9dZZ8iegFLpr1Lgay68TtZd0j
+         uQppwro00YDycMuFWgDJ1s2Ob2H0yesaBl7S9n9LVtqvFMB4Eghhlq181n+coaYfKPlG
+         Dnu7YjpTj9dQ4CbaZBQ5bIxadAOEelnrdJMVjCSou2RIkrKFSc0/1Ti5FcRpnLxmrBMG
+         y7RiR+yuyKtsFxUrGeUUW6MYSTvO9SgNxYxbHsjQqSghOtgOU7RJ9JGDOtHi/e0Fr+vl
+         Dh2w==
+X-Forwarded-Encrypted: i=1; AJvYcCUjD6yqprc6Qg4CKfhizFslmrMyzTOkfEauDW2th3Srw4lJDmf9JDKgyLuoPAnK1x7YfsAEbXFB7Br7tw8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnWgTiv1Q+TOscV1i5U/qFTSf99XCFcclL1GrAfvCAGfAJ4u7D
+	/mQ2aHQalIK9t0P3gMlmIpQYoWbUqeDn+xmPQX546SCmSAWaZJu3OfQKP1ltD7U=
+X-Google-Smtp-Source: AGHT+IG7OtLe0iFlbzoAtEYseXf/s/gcdc6CrXeB4sUmiwH1tdSbqIL80AQ35CS2r2ZSAVwszoA3ew==
+X-Received: by 2002:a17:902:e5c2:b0:203:a03c:a4ae with SMTP id d9443c01a7336-205287d5e1amr56017255ad.24.1725039487814;
+        Fri, 30 Aug 2024 10:38:07 -0700 (PDT)
+Received: from ?IPV6:2804:1b3:a7c3:4c2c:97d:de0:fa17:dbc6? ([2804:1b3:a7c3:4c2c:97d:de0:fa17:dbc6])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-205152b3122sm29552965ad.9.2024.08.30.10.38.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 30 Aug 2024 10:38:07 -0700 (PDT)
+Message-ID: <723120f6-c2e5-4277-bcd7-daf95984877e@linaro.org>
+Date: Fri, 30 Aug 2024 14:38:03 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-Received-SPF: None (SATLEXMB05.amd.com: tanmay.shah@amd.com does not designate
- permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PEPF000000A0:EE_|DS0PR12MB6488:EE_
-X-MS-Office365-Filtering-Correlation-Id: efec7b8a-b6c6-4bf0-4243-08dcc91a9492
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|376014|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?u9XefQV9QY99hYBBGjgzqun1+0Yzopl/2W2ttRN/HOfnphbIc5W621K9ocvs?=
- =?us-ascii?Q?H8tAEHVxXpkSTbbKcDF/4zWhdu6L74MGiri787H5utDJpvXWxJ5JfOAtQUWe?=
- =?us-ascii?Q?PDHAijqAs8wYEFKKYBSkW79OQWaWLfRL+itGFJR7tNNVUj/rrFGrzmKzelrk?=
- =?us-ascii?Q?U2SISuJHe3hkd3VBnZqtSv+NHjj+/qIJGms3DuTTJqUO1mWfmItHSbvFI5xF?=
- =?us-ascii?Q?ScVLwTfFGWW5JnLGvBNrZLGChL5i5tv6rqXPuRAIeQyo3vdvQXf87bhzU5sO?=
- =?us-ascii?Q?KMWe5vfLZyuKCcA+lr7shasY7dARpcXuqt8UDv3rISs78HRH6NbvXsX4GK9y?=
- =?us-ascii?Q?n3Cx9qAto0OCjMGcI1x8gf5sr0EvivyiVKshPOJitaibgalveY4r7Y6p+b2v?=
- =?us-ascii?Q?a2Zoy+NassiQPpNzKiQwK99yChPu11E6HNgkezhldOmTSL6oEi+0DTs/WQx+?=
- =?us-ascii?Q?AKOrzC0KP1kGse+bngyaPzXCvY7EUupb70bkvPJV3+wzlby5s0Na9k4kKp9i?=
- =?us-ascii?Q?Wgws9OkmWPIJ9mdWFh4abdnh3Fbkw8lnpdv7Je4DPqnSdJ8NOrJbRgFyVJhS?=
- =?us-ascii?Q?O1ZgqzpLYChN+YnRxZ8pE21GsdKvQsqoddLQJ4BYKsbDYMbIf7nVqtETvLEW?=
- =?us-ascii?Q?McrTZTnzrH1LnTlLg8N2nnkFR83DBZyBOUU6t6zMbF+PIZ4/sui31DnYtRA4?=
- =?us-ascii?Q?b6Seg1DY74XJ+dQjNVRS7q9Mif5VNVj1rz8CRNB6q1PgH0vR7CeICE75PRlo?=
- =?us-ascii?Q?U9xK3hgzoEe3rafvA9xv8EjhIggppiJau4eC8AalOiHaM3P9uBFZqumIgDQH?=
- =?us-ascii?Q?5p6pFCqVr5ne2/Q7IashNmrrGS1RqfUC4ZLxAnll6L2arV98Z8bC23K5GR1n?=
- =?us-ascii?Q?FRN4xAyh1jd0I+CNGHDfWd4g0VoUUSg5VhekXVLljlGZnTvgekSrMhMIB96k?=
- =?us-ascii?Q?K3zWE+xteof4TdVEewvpd/utqnEOj+qfSs8g8zssl2rE7jDjWXPT7iCgvC7W?=
- =?us-ascii?Q?c2Jw+d3GCiOI+gaDzTCpzNsK4GxIzeerPUci3XoKT3V5YvxJp19SlHA149Qb?=
- =?us-ascii?Q?RIuNLP5oxCGR7DGPHmhxX3ttPlZno4cbEQ8zZ12pAVCANsaoG/iGnnVkZRjK?=
- =?us-ascii?Q?DrWP20zq47gDBeV0aYQxgmF0xyQ7MZ1NMzxKPjFPZnahef3hZR407OwYM5N1?=
- =?us-ascii?Q?GftXLfhO7XVjCjh/hO0J898WiMwe4PnVhmEeSt//EhDjsOUDUtSR/xE13WTj?=
- =?us-ascii?Q?Qt0nJBQ/gtVXdl6m+6qY+5/8Evx0FiW2FG7rITyUV1w8j11uUXWP48uYN7P1?=
- =?us-ascii?Q?zawkLmIIyv8IK9DhTQrLzzpDT2b6eMLOr/TyJbAFM7VlkjRDAVsn6qNVN/pU?=
- =?us-ascii?Q?v7TLorjnfMrj6MzeCS6OLtHB6gpNYYK66e/Tkfn6Kswj1w1ll1PzJRlM7D6d?=
- =?us-ascii?Q?PbZT/ArKk5ZqKwi+NlwaInzzPypgyGUG?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(376014)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Aug 2024 17:38:37.5432
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: efec7b8a-b6c6-4bf0-4243-08dcc91a9492
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH2PEPF000000A0.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB6488
-
-AMD-Xilinx zynqmp platform contains on-chip sram memory (OCM).
-R5 cores can access OCM and access is faster than DDR memory but slower
-than TCM memories available. Sram region can have optional multiple
-power-domains. Platform management firmware is responsible
-to operate these power-domains.
-
-Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
----
-
-Changes in v5:
-  - remoteproc: xlnx: remove genpool use for OCM sram
-
-Changes in v4:
-  - Free previously allocalted genpool if adding carveouts fail for any
-    sram.
-  - add comment about sram size used in creating carveouts.
-
-Changes in v3:
-  - make @sram an array rather than an array of pointers
-  - fix of_node_put usage to maintain proper refcount of node
-  - s/proprty/property
-  - Use gen pool framework for mapping sram address space.
-
-Changes in v2:
-  - Expand commit message with power-domains related information.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] aarch64: vdso: Wire up getrandom() vDSO implementation
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: "Jason A . Donenfeld" <Jason@zx2c4.com>, Theodore Ts'o <tytso@mit.edu>,
+ linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-arch@vger.kernel.org,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Eric Biggers <ebiggers@kernel.org>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>
+References: <20240829201728.2825-1-adhemerval.zanella@linaro.org>
+ <CAMj1kXEnYW7ft3e-bSqWRLhickUeOkaWwtVVSxi49jski6T2iQ@mail.gmail.com>
+Content-Language: en-US
+From: Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>
+Organization: Linaro
+In-Reply-To: <CAMj1kXEnYW7ft3e-bSqWRLhickUeOkaWwtVVSxi49jski6T2iQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
- drivers/remoteproc/xlnx_r5_remoteproc.c | 135 ++++++++++++++++++++++++
- 1 file changed, 135 insertions(+)
 
-diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
-index 2cea97c746fd..af4e0e53dc9d 100644
---- a/drivers/remoteproc/xlnx_r5_remoteproc.c
-+++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
-@@ -56,6 +56,17 @@ struct mem_bank_data {
- 	char *bank_name;
- };
- 
-+/**
-+ * struct zynqmp_sram_bank - sram bank description
-+ *
-+ * @sram_res: sram address region information
-+ * @da: device address of sram
-+ */
-+struct zynqmp_sram_bank {
-+	struct resource sram_res;
-+	u32 da;
-+};
-+
- /**
-  * struct mbox_info
-  *
-@@ -120,6 +131,8 @@ static const struct mem_bank_data zynqmp_tcm_banks_lockstep[] = {
-  * struct zynqmp_r5_core
-  *
-  * @rsc_tbl_va: resource table virtual address
-+ * @sram: Array of sram memories assigned to this core
-+ * @num_sram: number of sram for this core
-  * @dev: device of RPU instance
-  * @np: device node of RPU instance
-  * @tcm_bank_count: number TCM banks accessible to this RPU
-@@ -131,6 +144,8 @@ static const struct mem_bank_data zynqmp_tcm_banks_lockstep[] = {
-  */
- struct zynqmp_r5_core {
- 	void __iomem *rsc_tbl_va;
-+	struct zynqmp_sram_bank *sram;
-+	int num_sram;
- 	struct device *dev;
- 	struct device_node *np;
- 	int tcm_bank_count;
-@@ -494,6 +509,45 @@ static int add_mem_regions_carveout(struct rproc *rproc)
- 	return 0;
- }
- 
-+static int add_sram_carveouts(struct rproc *rproc)
-+{
-+	struct zynqmp_r5_core *r5_core = rproc->priv;
-+	struct rproc_mem_entry *rproc_mem;
-+	struct zynqmp_sram_bank *sram;
-+	dma_addr_t dma_addr;
-+	size_t len;
-+	int da, i;
-+
-+	for (i = 0; i < r5_core->num_sram; i++) {
-+		sram = &r5_core->sram[i];
-+
-+		dma_addr = (dma_addr_t)sram->sram_res.start;
-+
-+		len = resource_size(&sram->sram_res);
-+		da = sram->da;
-+
-+		rproc_mem = rproc_mem_entry_init(&rproc->dev, NULL,
-+						 (dma_addr_t)dma_addr,
-+						 len, da,
-+						 zynqmp_r5_mem_region_map,
-+						 zynqmp_r5_mem_region_unmap,
-+						 sram->sram_res.name);
-+		if (!rproc_mem) {
-+			dev_err(&rproc->dev, "failed to add sram %s da=0x%x, size=0x%lx",
-+				sram->sram_res.name, da, len);
-+			return -ENOMEM;
-+		}
-+
-+		rproc_add_carveout(rproc, rproc_mem);
-+		rproc_coredump_add_segment(rproc, da, len);
-+
-+		dev_dbg(&rproc->dev, "sram carveout %s addr=%llx, da=0x%x, size=0x%lx",
-+			sram->sram_res.name, dma_addr, da, len);
-+	}
-+
-+	return 0;
-+}
-+
- /*
-  * tcm_mem_unmap()
-  * @rproc: single R5 core's corresponding rproc instance
-@@ -669,6 +723,12 @@ static int zynqmp_r5_rproc_prepare(struct rproc *rproc)
- 		return ret;
- 	}
- 
-+	ret = add_sram_carveouts(rproc);
-+	if (ret) {
-+		dev_err(&rproc->dev, "failed to get sram carveout %d\n", ret);
-+		return ret;
-+	}
-+
- 	return 0;
- }
- 
-@@ -881,6 +941,77 @@ static struct zynqmp_r5_core *zynqmp_r5_add_rproc_core(struct device *cdev)
- 	return ERR_PTR(ret);
- }
- 
-+static int zynqmp_r5_get_sram_banks(struct zynqmp_r5_core *r5_core)
-+{
-+	struct device_node *np = r5_core->np;
-+	struct device *dev = r5_core->dev;
-+	struct zynqmp_sram_bank *sram;
-+	struct device_node *sram_np;
-+	int num_sram, i, ret;
-+	u64 abs_addr, size;
-+
-+	/* "sram" is optional property. Do not fail, if unavailable. */
-+	if (!of_property_present(r5_core->np, "sram"))
-+		return 0;
-+
-+	num_sram = of_property_count_elems_of_size(np, "sram", sizeof(phandle));
-+	if (num_sram <= 0) {
-+		dev_err(dev, "Invalid sram property, ret = %d\n",
-+			num_sram);
-+		return -EINVAL;
-+	}
-+
-+	sram = devm_kcalloc(dev, num_sram,
-+			    sizeof(struct zynqmp_sram_bank), GFP_KERNEL);
-+	if (!sram)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < num_sram; i++) {
-+		sram_np = of_parse_phandle(np, "sram", i);
-+		if (!sram_np) {
-+			dev_err(dev, "failed to get sram %d phandle\n", i);
-+			return -EINVAL;
-+		}
-+
-+		if (!of_device_is_available(sram_np)) {
-+			dev_err(dev, "sram device not available\n");
-+			ret = -EINVAL;
-+			goto fail_sram_get;
-+		}
-+
-+		ret = of_address_to_resource(sram_np, 0, &sram[i].sram_res);
-+		if (ret) {
-+			dev_err(dev, "addr to res failed\n");
-+			goto fail_sram_get;
-+		}
-+
-+		/* Get SRAM device address */
-+		ret = of_property_read_reg(sram_np, i, &abs_addr, &size);
-+		if (ret) {
-+			dev_err(dev, "failed to get reg property\n");
-+			goto fail_sram_get;
-+		}
-+
-+		sram[i].da = (u32)abs_addr;
-+
-+		of_node_put(sram_np);
-+
-+		dev_dbg(dev, "sram %d: name=%s, addr=0x%llx, da=0x%x, size=0x%llx\n",
-+			i, sram[i].sram_res.name, sram[i].sram_res.start,
-+			sram[i].da, resource_size(&sram[i].sram_res));
-+	}
-+
-+	r5_core->sram = sram;
-+	r5_core->num_sram = num_sram;
-+
-+	return 0;
-+
-+fail_sram_get:
-+	of_node_put(sram_np);
-+
-+	return ret;
-+}
-+
- static int zynqmp_r5_get_tcm_node_from_dt(struct zynqmp_r5_cluster *cluster)
- {
- 	int i, j, tcm_bank_count, ret, tcm_pd_idx, pd_count;
-@@ -1095,6 +1226,10 @@ static int zynqmp_r5_core_init(struct zynqmp_r5_cluster *cluster,
- 				return ret;
- 			}
- 		}
-+
-+		ret = zynqmp_r5_get_sram_banks(r5_core);
-+		if (ret)
-+			return ret;
- 	}
- 
- 	return 0;
+On 30/08/24 11:11, Ard Biesheuvel wrote:
+> On Thu, 29 Aug 2024 at 22:17, Adhemerval Zanella
+> <adhemerval.zanella@linaro.org> wrote:
+>>
+>> Hook up the generic vDSO implementation to the aarch64 vDSO data page.
+>> The _vdso_rng_data required data is placed within the _vdso_data vvar
+>> page, by using a offset larger than the vdso_data.
+>>
+>> The vDSO function requires a ChaCha20 implementation that does not
+>> write to the stack, and that can do an entire ChaCha20 permutation.
+>> The one provided is based on the current chacha-neon-core.S and uses NEON
+>> on the permute operation. The fallback for chips that do not support
+>> NEON issues the syscall.
+>>
+>> This also passes the vdso_test_chacha test along with
+>> vdso_test_getrandom. The vdso_test_getrandom bench-single result on
+>> Neoverse-N1 shows:
+>>
+>>    vdso: 25000000 times in 0.746506464 seconds
+>>    libc: 25000000 times in 8.849179444 seconds
+>> syscall: 25000000 times in 8.818726425 seconds
+>>
+>> Changes from v1:
+>> - Fixed style issues and typos.
+>> - Added fallback for systems without NEON support.
+>> - Avoid use of non-volatile vector registers in neon chacha20.
+>> - Use c-getrandom-y for vgetrandom.c.
+>> - Fixed TIMENS vdso_rnd_data access.
+>>
+>> Signed-off-by: Adhemerval Zanella <adhemerval.zanella@linaro.org>
+>> ---
+> ...
+>> diff --git a/arch/arm64/kernel/vdso/vgetrandom-chacha.S b/arch/arm64/kernel/vdso/vgetrandom-chacha.S
+>> new file mode 100644
+>> index 000000000000..9ebf12a09c65
+>> --- /dev/null
+>> +++ b/arch/arm64/kernel/vdso/vgetrandom-chacha.S
+>> @@ -0,0 +1,168 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +
+>> +#include <linux/linkage.h>
+>> +#include <asm/cache.h>
+>> +#include <asm/assembler.h>
+>> +
+>> +       .text
+>> +
+>> +#define state0         v0
+>> +#define state1         v1
+>> +#define state2         v2
+>> +#define state3         v3
+>> +#define copy0          v4
+>> +#define copy1          v5
+>> +#define copy2          v6
+>> +#define copy3          v7
+>> +#define copy3_d                d7
+>> +#define one_d          d16
+>> +#define one_q          q16
+>> +#define tmp            v17
+>> +#define rot8           v18
+>> +
+> 
+> Please make a note somewhere around here that you are deliberately
+> avoiding d8-d15 because they are callee-save in user space.
 
-base-commit: 057e5c17e29fe67fae4c2786d558c31fd3b106ba
--- 
-2.25.1
+Ack.
 
+> 
+>> +/*
+>> + * ARM64 ChaCha20 implementation meant for vDSO.  Produces a given positive
+>> + * number of blocks of output with nonce 0, taking an input key and 8-bytes
+>> + * counter.  Importantly does not spill to the stack.
+>> + *
+>> + * void __arch_chacha20_blocks_nostack(uint8_t *dst_bytes,
+>> + *                                    const uint8_t *key,
+>> + *                                    uint32_t *counter,
+>> + *                                    size_t nblocks)
+>> + *
+>> + *     x0: output bytes
+>> + *     x1: 32-byte key input
+>> + *     x2: 8-byte counter input/output
+>> + *     x3: number of 64-byte block to write to output
+>> + */
+>> +SYM_FUNC_START(__arch_chacha20_blocks_nostack)
+>> +
+>> +       /* copy0 = "expand 32-byte k" */
+>> +       adr_l           x8, CTES
+>> +       ld1             {copy0.4s}, [x8]
+>> +       /* copy1,copy2 = key */
+>> +       ld1             { copy1.4s, copy2.4s }, [x1]
+>> +       /* copy3 = counter || zero nonce  */
+>> +       ldr             copy3_d, [x2]
+>> +
+>> +       adr_l           x8, ONE
+>> +       ldr             one_q, [x8]
+>> +
+>> +       adr_l           x10, ROT8
+>> +       ld1             {rot8.4s}, [x10]
+> 
+> These immediate loads are forcing the vDSO to have a .rodata section,
+> which is best avoided, given that this is mapped into every user space
+> program.
+> 
+> Either use the existing mov_q macro and then move the values into SIMD
+> registers, or compose the required vectors in a different way.
+
+Ack, mov_q seems suffice here.
+
+> 
+> E.g., with one_v == v16,
+> 
+> movi one_v.2s, #1
+> uzp1 one_v.4s, one_v.4s, one_v.4s
+> 
+> puts the correct value in one_d, uses 1 instruction and 16 bytes of
+> rodata less, and avoids a memory access.
+
+Ack.
+
+> 
+> The ROT8 + tbl can be replaced by shl/sri (see below)
+> 
+>> +.Lblock:
+>> +       /* copy state to auxiliary vectors for the final add after the permute.  */
+>> +       mov             state0.16b, copy0.16b
+>> +       mov             state1.16b, copy1.16b
+>> +       mov             state2.16b, copy2.16b
+>> +       mov             state3.16b, copy3.16b
+>> +
+>> +       mov             w4, 20
+>> +.Lpermute:
+>> +       /*
+>> +        * Permute one 64-byte block where the state matrix is stored in the four NEON
+>> +        * registers state0-state3.  It performs matrix operations on four words in parallel,
+>> +        * but requires shuffling to rearrange the words after each round.
+>> +        */
+>> +
+>> +.Ldoubleround:
+>> +       /* state0 += state1, state3 = rotl32(state3 ^ state0, 16) */
+>> +       add             state0.4s, state0.4s, state1.4s
+>> +       eor             state3.16b, state3.16b, state0.16b
+>> +       rev32           state3.8h, state3.8h
+>> +
+>> +       /* state2 += state3, state1 = rotl32(state1 ^ state2, 12) */
+>> +       add             state2.4s, state2.4s, state3.4s
+>> +       eor             tmp.16b, state1.16b, state2.16b
+>> +       shl             state1.4s, tmp.4s, #12
+>> +       sri             state1.4s, tmp.4s, #20
+>> +
+>> +       /* state0 += state1, state3 = rotl32(state3 ^ state0, 8) */
+>> +       add             state0.4s, state0.4s, state1.4s
+>> +       eor             state3.16b, state3.16b, state0.16b
+>> +       tbl             state3.16b, {state3.16b}, rot8.16b
+>> +
+> 
+> This can be changed to the below, removing the need for the ROT8 vector
+> 
+> eor   tmp.16b, state3.16b, state0.16b
+> shl   state3.4s, tmp.4s, #8
+> sri   state3.4s, tmp.4s, #24
+> 
+
+Ack.
+
+>> +       /* state2 += state3, state1 = rotl32(state1 ^ state2, 7) */
+>> +       add             state2.4s, state2.4s, state3.4s
+>> +       eor             tmp.16b, state1.16b, state2.16b
+>> +       shl             state1.4s, tmp.4s, #7
+>> +       sri             state1.4s, tmp.4s, #25
+>> +
+>> +       /* state1[0,1,2,3] = state1[1,2,3,0] */
+>> +       ext             state1.16b, state1.16b, state1.16b, #4
+>> +       /* state2[0,1,2,3] = state2[2,3,0,1] */
+>> +       ext             state2.16b, state2.16b, state2.16b, #8
+>> +       /* state3[0,1,2,3] = state3[1,2,3,0] */
+>> +       ext             state3.16b, state3.16b, state3.16b, #12
+>> +
+>> +       /* state0 += state1, state3 = rotl32(state3 ^ state0, 16) */
+>> +       add             state0.4s, state0.4s, state1.4s
+>> +       eor             state3.16b, state3.16b, state0.16b
+>> +       rev32           state3.8h, state3.8h
+>> +
+>> +       /* state2 += state3, state1 = rotl32(state1 ^ state2, 12) */
+>> +       add             state2.4s, state2.4s, state3.4s
+>> +       eor             tmp.16b, state1.16b, state2.16b
+>> +       shl             state1.4s, tmp.4s, #12
+>> +       sri             state1.4s, tmp.4s, #20
+>> +
+>> +       /* state0 += state1, state3 = rotl32(state3 ^ state0, 8) */
+>> +       add             state0.4s, state0.4s, state1.4s
+>> +       eor             state3.16b, state3.16b, state0.16b
+>> +       tbl             state3.16b, {state3.16b}, rot8.16b
+>> +
+>> +       /* state2 += state3, state1 = rotl32(state1 ^ state2, 7) */
+>> +       add             state2.4s, state2.4s, state3.4s
+>> +       eor             tmp.16b, state1.16b, state2.16b
+>> +       shl             state1.4s, tmp.4s, #7
+>> +       sri             state1.4s, tmp.4s, #25
+>> +
+>> +       /* state1[0,1,2,3] = state1[3,0,1,2] */
+>> +       ext             state1.16b, state1.16b, state1.16b, #12
+>> +       /* state2[0,1,2,3] = state2[2,3,0,1] */
+>> +       ext             state2.16b, state2.16b, state2.16b, #8
+>> +       /* state3[0,1,2,3] = state3[1,2,3,0] */
+>> +       ext             state3.16b, state3.16b, state3.16b, #4
+>> +
+>> +       subs            w4, w4, #2
+>> +       b.ne            .Ldoubleround
+>> +
+>> +       /* output0 = state0 + state0 */
+>> +       add             state0.4s, state0.4s, copy0.4s
+>> +       /* output1 = state1 + state1 */
+>> +       add             state1.4s, state1.4s, copy1.4s
+>> +       /* output2 = state2 + state2 */
+>> +       add             state2.4s, state2.4s, copy2.4s
+>> +       /* output2 = state3 + state3 */
+>> +       add             state3.4s, state3.4s, copy3.4s
+>> +       st1             { state0.4s - state3.4s }, [x0]
+>> +
+>> +       /* ++copy3.counter */
+>> +       add             copy3_d, copy3_d, one_d
+>> +
+> 
+> This 'add' clears the upper half of the SIMD register, which is where
+> the zero nonce lives. So this happens to be correct, but it is not
+> very intuitive, so perhaps a comment would be in order here.
+
+Ack, will do.
+
+> 
+>> +       /* output += 64, --nblocks */
+>> +       add             x0, x0, 64
+>> +       subs            x3, x3, #1
+>> +       b.ne            .Lblock
+>> +
+>> +       /* counter = copy3.counter */
+>> +       str             copy3_d, [x2]
+>> +
+>> +       /* Zero out the potentially sensitive regs, in case nothing uses these again. */
+>> +       eor             state0.16b, state0.16b, state0.16b
+>> +       eor             state1.16b, state1.16b, state1.16b
+>> +       eor             state2.16b, state2.16b, state2.16b
+>> +       eor             state3.16b, state3.16b, state3.16b
+>> +       eor             copy1.16b, copy1.16b, copy1.16b
+>> +       eor             copy2.16b, copy2.16b, copy2.16b
+> 
+> This is not x86 - no need to use XOR to clear registers, you can just
+> use 'movi reg.16b, #0' here.
+
+Ack.
+
+> 
+>> +       ret
+>> +SYM_FUNC_END(__arch_chacha20_blocks_nostack)
+>> +
+>> +        .section        ".rodata", "a", %progbits
+>> +        .align          L1_CACHE_SHIFT
+>> +
+>> +CTES:  .word           1634760805, 857760878,  2036477234, 1797285236
+>> +ONE:    .xword         1, 0
+>> +ROT8:  .word           0x02010003, 0x06050407, 0x0a09080b, 0x0e0d0c0f
+>> +
+>> +emit_aarch64_feature_1_and
+> ...
 
