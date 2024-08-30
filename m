@@ -1,160 +1,121 @@
-Return-Path: <linux-kernel+bounces-308351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FB63965AA4
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:44:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3A71965AA6
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:44:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B97C01F242D5
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 08:44:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C692B22F18
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 08:44:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8708516EB42;
-	Fri, 30 Aug 2024 08:44:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E160716EB7C;
+	Fri, 30 Aug 2024 08:44:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="MBPn82I8"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ANmUWpk+"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1908D16E873;
-	Fri, 30 Aug 2024 08:44:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6725916EB77;
+	Fri, 30 Aug 2024 08:44:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725007467; cv=none; b=BlGRMb/JHHiX6E03HGH703H96kNklpQdx5TRUWzd5HcsPla5uJHc0+r06foZhiHKB8uNlilIhlNtS3JtMt08IBE+ZEscaTvct37EuSoc0P+M3+r5aWPoaEUH98jm2RZOm9cMjg489pMh3wV7Ko8OWvrA4PRcrzMDiX/m1SIUkRg=
+	t=1725007470; cv=none; b=RcsLZYoimUM1JpZ8yau0PLMKb225vL/3hnryHCAz8vLEBzK4Xlrt+C5MU1c744f8uJHl3UaYfinzc6uvLQeXjGc07fEZLC+m8yCCDBCe5PO9LhxewWEDktw4gMXtSOFvmPzciUYq//tK6CaObEKeJrvV+bzhjYj2Ej3Su2MihLs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725007467; c=relaxed/simple;
-	bh=C225QkJd2epNCH0etsveqgpfETwyaMzzkR42Qj72KpA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=o3bn6zQLPBfpSKgGUotbWSP+HPhJv4gNbgV4D0ER/TY/dcWDWHsxlgIvwJYQ/PoX77FN1r/XTiI93KqyDP5/yluQBOMnejO0xJSI2zUIVPrJEEJrfRBmqnpG9tkHgcfjPSLGyz3HigAyN7kJzq0p24Ufdro/ibYGEzJ5Fxbss0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=MBPn82I8; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47U7wlPe019971;
-	Fri, 30 Aug 2024 08:44:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	oq2dse9VR1I6VjtxSVdHNe1+4MMRfLvcK9XF6VbBV/E=; b=MBPn82I86lzF3g7b
-	FmELT6vYuyRe/jbMqjLwRPl16p3KrMVXkYIMf3QH+FEK1CoGjDAIuVtrAtv8uW8c
-	451xYoEXNWSJ2mwPskJ54hGCMDci5LyJnm0VnKTxZPsantNlSQLNeLd//bio9FsV
-	BbPiElRpXheVyv+NS/iQBZhMNHRnpyGb4Du5mjn2yd8LJOTxX5pxgiE5Lzve3o3s
-	Es3RNLd7dtrJZK+wCygsu9Mw/MEaRW/ImYjDWLM2VFyHbib4sBIeqRGgL1n6bEvR
-	28jEW9sDbJiz8O6R65VVnPvqdD50KvfTNymYHyEH1lv/hqSWwFtJHPAGysv0RXpy
-	GXCNvQ==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 419putr29j-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 30 Aug 2024 08:44:22 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47U8iKp9014726
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 30 Aug 2024 08:44:20 GMT
-Received: from [10.204.65.112] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 30 Aug
- 2024 01:44:18 -0700
-Message-ID: <4b0b90e2-a6c1-40d7-9dc6-ec22adfafca4@quicinc.com>
-Date: Fri, 30 Aug 2024 14:14:15 +0530
+	s=arc-20240116; t=1725007470; c=relaxed/simple;
+	bh=nWORpDjHBlmvyxz56zK8RG+lMeot8yHSeyqRH13vmP0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mhQfEwpoYuHN78WHgROIKSlT+Md1Eu0x38M/e3RlDjSKc5M/PEF4kmrJtDgGvFFExAruaayvI3Dytykdrxasmy9JRBet06+1B3M5VJFtuSf1+R0Pgzhot28KfJbOaFF5BwfN+At8HKgVZgaOvc0S847KiWqTUWUHR63DSkyxLxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ANmUWpk+; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725007468; x=1756543468;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=nWORpDjHBlmvyxz56zK8RG+lMeot8yHSeyqRH13vmP0=;
+  b=ANmUWpk+jgqmdhQtltlvgVSwlT+8cRPP8Vlt/D5jJSXWutW1KdlnkkjW
+   /uBGiKgbvs5ZrRVtqy1o9SkEEhaQnYO15vG9cEUsLF9vma1XF+JTcS0K+
+   W7C/oY+9+K7MB/gt7W2M6d8kn0fvXX7VJFfdZvADOaITRGnd9flVF5ndI
+   6D8lwdRWW/1Q9NLee1DDsMHEMUNkACqfGgsX36BW85BoAmHgpFqniZ68C
+   4Mac2cZQMGYDR55a+3wQqToEvCj2uN3Sf1dS9gtJ5l0Pko85+aVjwmMbC
+   K2Vlc8wVq7ikfyaRqbJw0sjwYxTlzT/T380yo6git5sGxWhMoJjWufr2T
+   g==;
+X-CSE-ConnectionGUID: PBEUvDZXTFCQjSD3bq5tRA==
+X-CSE-MsgGUID: 77LFr8eZSuqPxWcEFvtz4A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11179"; a="46150404"
+X-IronPort-AV: E=Sophos;i="6.10,188,1719903600"; 
+   d="scan'208";a="46150404"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Aug 2024 01:44:28 -0700
+X-CSE-ConnectionGUID: AKOPcsXaRnS5rUr6GjQcew==
+X-CSE-MsgGUID: Mysq7RXlT6alWhWasCxvsQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,188,1719903600"; 
+   d="scan'208";a="63798628"
+Received: from sschumil-mobl2.ger.corp.intel.com (HELO tlindgre-MOBL1) ([10.245.246.63])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Aug 2024 01:44:23 -0700
+Date: Fri, 30 Aug 2024 11:44:18 +0300
+From: Tony Lindgren <tony.lindgren@linux.intel.com>
+To: "Huang, Kai" <kai.huang@intel.com>
+Cc: "Gao, Chao" <chao.gao@intel.com>,
+	"Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
+	"Li, Xiaoyao" <xiaoyao.li@intel.com>,
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+	"pbonzini@redhat.com" <pbonzini@redhat.com>,
+	"seanjc@google.com" <seanjc@google.com>,
+	"isaku.yamahata@gmail.com" <isaku.yamahata@gmail.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 10/25] KVM: TDX: Initialize KVM supported capabilities
+ when module setup
+Message-ID: <ZtGGYmE3rE7d1wiu@tlindgre-MOBL1>
+References: <20240812224820.34826-1-rick.p.edgecombe@intel.com>
+ <20240812224820.34826-11-rick.p.edgecombe@intel.com>
+ <ZrrSMaAxyqMBcp8a@chao-email>
+ <185d2a6c0317fe74fdb449df62dbafcb922a74f3.camel@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] misc: fastrpc: Trigger a panic using BUG_ON in device
- release
-To: Greg KH <gregkh@linuxfoundation.org>
-CC: <srinivas.kandagatla@linaro.org>, <linux-arm-msm@vger.kernel.org>,
-        <quic_bkumar@quicinc.com>, <linux-kernel@vger.kernel.org>,
-        <quic_ktadakam@quicinc.com>, <dri-devel@lists.freedesktop.org>
-References: <20240730070945.4174823-1-quic_abhishes@quicinc.com>
- <2024073007-nickname-payee-20c8@gregkh>
- <7eab4618-9173-44f5-a185-0071f3893cc7@quicinc.com>
- <2024081353-blah-reversion-1435@gregkh>
-Content-Language: en-US
-From: Abhishek Singh <quic_abhishes@quicinc.com>
-In-Reply-To: <2024081353-blah-reversion-1435@gregkh>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: fPnWUN-dZcG1MQM9iX8EXEY13SosmtZG
-X-Proofpoint-ORIG-GUID: fPnWUN-dZcG1MQM9iX8EXEY13SosmtZG
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-30_04,2024-08-29_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 phishscore=0 adultscore=0 priorityscore=1501
- impostorscore=0 malwarescore=0 suspectscore=0 spamscore=0 bulkscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408300064
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <185d2a6c0317fe74fdb449df62dbafcb922a74f3.camel@intel.com>
 
-
-
-On 8/13/2024 3:07 PM, Greg KH wrote:
-> On Mon, Aug 05, 2024 at 04:36:28PM +0530, Abhishek Singh wrote:
->>
->> On 7/30/2024 12:46 PM, Greg KH wrote:
->>> On Tue, Jul 30, 2024 at 12:39:45PM +0530, Abhishek Singh wrote:
->>>> The user process on ARM closes the device node while closing the
->>>> session, triggers a remote call to terminate the PD running on the
->>>> DSP. If the DSP is in an unstable state and cannot process the remote
->>>> request from the HLOS, glink fails to deliver the kill request to the
->>>> DSP, resulting in a timeout error. Currently, this error is ignored,
->>>> and the session is closed, causing all the SMMU mappings associated
->>>> with that specific PD to be removed. However, since the PD is still
->>>> operational on the DSP, any attempt to access these SMMU mappings
->>>> results in an SMMU fault, leading to a panic.  As the SMMU mappings
->>>> have already been removed, there is no available information on the
->>>> DSP to determine the root cause of its unresponsiveness to remote
->>>> calls. As the DSP is unresponsive to all process remote calls, use
->>>> BUG_ON to prevent the removal of SMMU mappings and to properly
->>>> identify the root cause of the DSP’s unresponsiveness to the remote
->>>> calls.
->>>>
->>>> Signed-off-by: Abhishek Singh <quic_abhishes@quicinc.com>
->>>> ---
->>>>  drivers/misc/fastrpc.c | 4 ++++
->>>>  1 file changed, 4 insertions(+)
->>>>
->>>> diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
->>>> index 5204fda51da3..bac9c749564c 100644
->>>> --- a/drivers/misc/fastrpc.c
->>>> +++ b/drivers/misc/fastrpc.c
->>>> @@ -97,6 +97,7 @@
->>>>  #define FASTRPC_RMID_INIT_CREATE_STATIC	8
->>>>  #define FASTRPC_RMID_INIT_MEM_MAP      10
->>>>  #define FASTRPC_RMID_INIT_MEM_UNMAP    11
->>>> +#define PROCESS_KILL_SC 0x01010000
->>>>  
->>>>  /* Protection Domain(PD) ids */
->>>>  #define ROOT_PD		(0)
->>>> @@ -1128,6 +1129,9 @@ static int fastrpc_invoke_send(struct fastrpc_session_ctx *sctx,
->>>>  	fastrpc_context_get(ctx);
->>>>  
->>>>  	ret = rpmsg_send(cctx->rpdev->ept, (void *)msg, sizeof(*msg));
->>>> +	/* trigger panic if glink communication is broken and the message is for PD kill */
->>>> +	BUG_ON((ret == -ETIMEDOUT) && (handle == FASTRPC_INIT_HANDLE) &&
->>>> +			(ctx->sc == PROCESS_KILL_SC));
->>>
->>> You just crashed the machine completely, sorry, but no, properly handle
->>> the issue and clean up if you can detect it, do not break systems.
->>>
->> But the Glink communication with DSP is already broken; we cannot communicate with the DSP.
->> The system will crash if we proceed with cleanup on the ARM side. If we don’t do cleanup,
->> a resource leak will occur. Eventually, the system will become dead. That’s why I am
->> crashing the device.
+On Tue, Aug 13, 2024 at 05:26:06AM +0000, Huang, Kai wrote:
+> On Tue, 2024-08-13 at 11:25 +0800, Chao Gao wrote:
+> > > +	for (i = 0; i < td_conf->num_cpuid_config; i++) {
+> > > +		struct kvm_tdx_cpuid_config source = {
+> > > +			.leaf = (u32)td_conf->cpuid_config_leaves[i],
+> > > +			.sub_leaf = td_conf->cpuid_config_leaves[i] >> 32,
+> > > +			.eax = (u32)td_conf->cpuid_config_values[i].eax_ebx,
+> > > +			.ebx = td_conf->cpuid_config_values[i].eax_ebx >> 32,
+> > > +			.ecx = (u32)td_conf->cpuid_config_values[i].ecx_edx,
+> > > +			.edx = td_conf->cpuid_config_values[i].ecx_edx >> 32,
+> > > +		};
+> > > +		struct kvm_tdx_cpuid_config *dest =
+> > > +			&kvm_tdx_caps->cpuid_configs[i];
+> > > +
+> > > +		memcpy(dest, &source, sizeof(struct kvm_tdx_cpuid_config));
+> > 
+> > this memcpy() looks superfluous. does this work?
+> > 
+> > 		kvm_tdx_caps->cpuid_configs[i] = {
+> > 			.leaf = (u32)td_conf->cpuid_config_leaves[i],
+> > 			.sub_leaf = td_conf->cpuid_config_leaves[i] >> 32,
+> > 			.eax = (u32)td_conf->cpuid_config_values[i].eax_ebx,
+> > 			.ebx = td_conf->cpuid_config_values[i].eax_ebx >> 32,
+> > 			.ecx = (u32)td_conf->cpuid_config_values[i].ecx_edx,
+> > 			.edx = td_conf->cpuid_config_values[i].ecx_edx >> 32,
+> > 		};
 > 
-> Then explicitly call panic() if you think you really want to shut the
-> system down.
->
->> What does it mean to explicitly call panic()? Are you trying to say we should use panic() instead of BUG_ON()?
-> 
-> greg k-h
+> This looks good to me.  I didn't try to optimize because it's done in the
+> module loading time.
 
+I'll do a patch to initialize dest directly without a memcpy().
+
+Tony
 
