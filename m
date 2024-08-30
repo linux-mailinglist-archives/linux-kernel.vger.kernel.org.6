@@ -1,109 +1,105 @@
-Return-Path: <linux-kernel+bounces-309471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5929A966AFD
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 22:54:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BAEF966B03
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 22:55:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C3281C22025
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 20:54:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F1CA1C22108
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 20:55:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ACBD1C2DCF;
-	Fri, 30 Aug 2024 20:52:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 165851C0DDB;
+	Fri, 30 Aug 2024 20:55:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nCq0ruzJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="m1hF70Ml"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0B511BFDF0
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 20:51:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D75815C153;
+	Fri, 30 Aug 2024 20:55:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725051120; cv=none; b=fFyR73UCFqM96t0xadBxbVvKwjJgcexurVGNfPlbYC7iE1Q6vWeBovox1ue6lU3AfpOkR203u/S4n1NykwU+yAOel+WjbnYAQJz8R6tEwLjZyQ5+fY6voMvgTT0DDoGdeo5XAYa9WokALLI1QYX9jb0MWzChCZtqGrWbnF0RtkU=
+	t=1725051321; cv=none; b=QcE73V5jmyrPsrpGNZfTobXWO07nLbHTNO2wX0d6o7rzfGugL75bKwvcXmsw7DqNbsdcU3sBa6fRy+O/kmxuqsGFHYkYP8OqHe0jRLiT5q0/JIn/R3ByMRMfhMgxitBu4SYJzx9KQMsqfYz/yKo6ERqrfg+s5v2y1Otz+hCRWxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725051120; c=relaxed/simple;
-	bh=L39tLmzteaMlelknO4XtntQrZCNbukWTk4YH9v898y0=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=mLI8+fBqa/ZLGTK9duqwRayMLpYWFzmRFdqMJGBy446nW0q46NqIcK/Jpujc+RJBtqi1/lgRK5Dt2K9RNoiCz3+0oG/yVWIP0TEcyJ6PdpTUfpZINLlw9iWf7dsI5wAv5fprfb/58o2esxq9EPgCZlIZPDWTnC+JkGq8rKukUhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nCq0ruzJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3080C4CEC2;
-	Fri, 30 Aug 2024 20:51:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725051119;
-	bh=L39tLmzteaMlelknO4XtntQrZCNbukWTk4YH9v898y0=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=nCq0ruzJbOdNfxGId2egEJhy6keNoNaQU9/UpoUuHKkRE52mCANKeLWQnooXCX5hH
-	 21If42pgjCu9e+oV9sp5C9y4sWmoJQOiFrMSUcEJ/exy57gvynV4CDnq2iM1SUncRx
-	 f8s7XehBmN3Iid/NDmbbDiUeOj7dJWePgFi86aLiY4jJZ+RdEvCdpPWqS9zKBrZIa9
-	 ce+EaoEweRF/MVlhxhoC0zgptpWbHJX8R7wvncjfCbYMccBT3mEKSAKyqur1P2XRyU
-	 qpIFYJ/6VTr4WsRciQN75c3eSas6rOFAdln3qUT7j0pAY7p+Ww4Gh1vUEY3rvwnMX8
-	 18qdSLJ7JtVbg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 718813809A80;
-	Fri, 30 Aug 2024 20:52:01 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1725051321; c=relaxed/simple;
+	bh=eRy/T0dM5d9sN8CcvnEOCZI63rDlZpxyYwoxQyXHJs8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jjaD/XqUBVmhhRh+W4Z0zqxGu8mixCvvRCcAInLMsH2Sclx4S72nV0+tQEdr2zPrqcBY8Az3XnbGAkjucemxthe/qCyB42olKB3poZIMirOR+GqtkbT70u+u4qeP9bKUGYkdnZfnxE2E2XSwxg9gb2XoKOV+qP4pMSZqzJnNhOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=m1hF70Ml; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=ZnjFPUJoVaR73vzgtYuu5vl+6599xEYO9CADh+mGU04=; b=m1hF70MlmiFd06xmIyt8t3rrlX
+	hm1279LbqcB9jY/f+7anVA6OLU6GZZeSMG0h8ijY9SSWDGEj85PzE6cg6hxcAGf0eOAW3BizzmzU/
+	eDT5kzCMQnf0EvXCF0IizH9wjHshLihZDy0EQLjaDQGoJNBdX+JNb3lLukYAFBrkLbis=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sk8eE-006ACN-71; Fri, 30 Aug 2024 22:55:10 +0200
+Date: Fri, 30 Aug 2024 22:55:10 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Raju Lakkaraju <Raju.Lakkaraju@microchip.com>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, linux@armlinux.org.uk,
+	kuba@kernel.org, hkallweit1@gmail.com, richardcochran@gmail.com,
+	rdunlap@infradead.org, Bryan.Whitehead@microchip.com,
+	edumazet@google.com, pabeni@redhat.com,
+	linux-kernel@vger.kernel.org, horms@kernel.org,
+	UNGLinuxDriver@microchip.com
+Subject: Re: [PATCH net-next V4 5/5] net: lan743x: Add support to ethtool
+ phylink get and set settings
+Message-ID: <9f74455e-45ec-495a-bc8e-1c61caab747c@lunn.ch>
+References: <20240829055132.79638-1-Raju.Lakkaraju@microchip.com>
+ <20240829055132.79638-6-Raju.Lakkaraju@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [f2fs-dev] [PATCH v2] f2fs: fix to avoid use-after-free in
- f2fs_stop_gc_thread()
-From: patchwork-bot+f2fs@kernel.org
-Message-Id: 
- <172505112026.2712133.17685334156318477673.git-patchwork-notify@kernel.org>
-Date: Fri, 30 Aug 2024 20:52:00 +0000
-References: <20240730010855.2942132-1-chao@kernel.org>
-In-Reply-To: <20240730010855.2942132-1-chao@kernel.org>
-To: Chao Yu <chao@kernel.org>
-Cc: jaegeuk@kernel.org, syzbot+1a8e2b31f2ac9bd3d148@syzkaller.appspotmail.com,
- linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240829055132.79638-6-Raju.Lakkaraju@microchip.com>
 
-Hello:
+> @@ -3055,6 +3071,10 @@ static void lan743x_phylink_mac_link_up(struct phylink_config *config,
+>  					  cap & FLOW_CTRL_TX,
+>  					  cap & FLOW_CTRL_RX);
+>  
+> +	if (phydev)
+> +		lan743x_mac_eee_enable(adapter, phydev->enable_tx_lpi &&
+> +				       phydev->eee_enabled);
 
-This patch was applied to jaegeuk/f2fs.git (dev)
-by Jaegeuk Kim <jaegeuk@kernel.org>:
+This is wrong. The documentation says:
 
-On Tue, 30 Jul 2024 09:08:55 +0800 you wrote:
-> syzbot reports a f2fs bug as below:
-> 
->  __dump_stack lib/dump_stack.c:88 [inline]
->  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
->  print_report+0xe8/0x550 mm/kasan/report.c:491
->  kasan_report+0x143/0x180 mm/kasan/report.c:601
->  kasan_check_range+0x282/0x290 mm/kasan/generic.c:189
->  instrument_atomic_read_write include/linux/instrumented.h:96 [inline]
->  atomic_fetch_add_relaxed include/linux/atomic/atomic-instrumented.h:252 [inline]
->  __refcount_add include/linux/refcount.h:184 [inline]
->  __refcount_inc include/linux/refcount.h:241 [inline]
->  refcount_inc include/linux/refcount.h:258 [inline]
->  get_task_struct include/linux/sched/task.h:118 [inline]
->  kthread_stop+0xca/0x630 kernel/kthread.c:704
->  f2fs_stop_gc_thread+0x65/0xb0 fs/f2fs/gc.c:210
->  f2fs_do_shutdown+0x192/0x540 fs/f2fs/file.c:2283
->  f2fs_ioc_shutdown fs/f2fs/file.c:2325 [inline]
->  __f2fs_ioctl+0x443a/0xbe60 fs/f2fs/file.c:4325
->  vfs_ioctl fs/ioctl.c:51 [inline]
->  __do_sys_ioctl fs/ioctl.c:907 [inline]
->  __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:893
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> 
-> [...]
+/**
+ * phy_support_eee - Set initial EEE policy configuration
+ * @phydev: Target phy_device struct
+ *
+ * This function configures the initial policy for Energy Efficient Ethernet
+ * (EEE) on the specified PHY device, influencing that EEE capabilities are
+ * advertised before the link is established. It should be called during PHY
+ * registration by the MAC driver and/or the PHY driver (for SmartEEE PHYs)
+ * if MAC supports LPI or PHY is capable to compensate missing LPI functionality
+ * of the MAC.
+ *
+ * The function sets default EEE policy parameters, including preparing the PHY
+ * to advertise EEE capabilities based on hardware support.
+ *
+ * It also sets the expected configuration for Low Power Idle (LPI) in the MAC
+ * driver. If the PHY framework determines that both local and remote
+ * advertisements support EEE, and the negotiated link mode is compatible with
+ * EEE, it will set enable_tx_lpi = true. The MAC driver is expected to act on
+ * this setting by enabling the LPI timer if enable_tx_lpi is set.
+ */
 
-Here is the summary with links:
-  - [f2fs-dev,v2] f2fs: fix to avoid use-after-free in f2fs_stop_gc_thread()
-    https://git.kernel.org/jaegeuk/f2fs/c/c7f114d864ac
+So you should only be looking at enable_tx_lpi.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Also, do you actually call phy_support_eee() anywhere? I don't see it
+in this patch, but maybe it was already there?
 
-
+   	Adrew
 
