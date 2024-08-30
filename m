@@ -1,119 +1,78 @@
-Return-Path: <linux-kernel+bounces-308981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9C8E966498
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 16:53:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5170C966492
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 16:52:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 30614B236B9
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 14:53:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 849F31C210F0
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 14:52:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2A6C1B530E;
-	Fri, 30 Aug 2024 14:52:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 026E71B2EF6;
+	Fri, 30 Aug 2024 14:52:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="MBNnpelH"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qFdiNl7w"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 370EC1B3B1C;
-	Fri, 30 Aug 2024 14:52:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B85D18FDA7
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 14:52:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725029556; cv=none; b=Qukc2K+0RgdjpYNQPj2xtpDh7Kwo4PUeBDg7oA+QJ3VjNZORJayKeHkz2+IduuJ9kEMfwcFw4nh4Yfndswd6WvcMA6Wf8itUX+YEDw7MJR13Ydr1XxDs9+QhMqZObvUsP0SZgOLgDYZRH/AgxIsXeQIg1RF6NBH9ukgRutMw+38=
+	t=1725029532; cv=none; b=Mxqvk2kaeNh2ssgFe/wJ0RnFHbs0o3MNOzTEFqTsrVehniI81rYn2dv7QjRaEOz17ES60CwAoTS0ulHzI0c2S1yBOZ+/66ZPfIR7BF4bBF1ftj3Epfsw4XbrG8kLqwEIfJgNaa3L1GeENzqJSsO9VUU9d/NgPcd8fTO8Jpl630k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725029556; c=relaxed/simple;
-	bh=QESBbG94UsyFuv4RBgVGwBy6zCS6X5ImhMgiGrxYpEg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=YgQhM+liMlCjVP/29hYOZPC1tahK66KLokcVwwWStHi821AJq7v13VEOkBEm0EJzRtIBKmU3HU6TB/kD/v1b10C9dXijKTCVqTRFrsm/YTl0e5PhABBw+DklP42GJayWMMjwiIJslS2q+1DCX1wp8MiIxIuSzgw4WL+H1xpL5y0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=MBNnpelH; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1725029554; x=1756565554;
-  h=from:date:subject:mime-version:content-transfer-encoding:
-   message-id:references:in-reply-to:to:cc;
-  bh=QESBbG94UsyFuv4RBgVGwBy6zCS6X5ImhMgiGrxYpEg=;
-  b=MBNnpelHmOPddP7bKNCBTiDsWJhkajZ2268/hTF5GBM/u5x81M1XyZjb
-   SQxCxrG1WHF8kz3JDXJWbcguZgKmeITVhQ0gMJYcfUmbiuKzcB0GDaqUO
-   VC9bV12AAXNrZ7m4Swwf5lCozOGWf1iIno5gq6x1WoGsJwrlEBNsKKD+r
-   kO8569uWboQm4QMMtPldD5AeMb3TJTV2ucvhLNoB27qdBrQ/uKmf98+oK
-   MxmxIzXtYexauhPYOh/9k8KV1GVcf1v3XZW+AEyDnxCUcO2z1ReLNXm8/
-   PuUcR9+QflaHq5bsIJ7SQhymKpsvtQNEhGO9Q4pTn/3qfGC727ZKc/tmf
-   A==;
-X-CSE-ConnectionGUID: 2zZRB9uxQuqDg306Gmx2hg==
-X-CSE-MsgGUID: TqL8IWjUTAajSmhggNAgcQ==
-X-IronPort-AV: E=Sophos;i="6.10,189,1719903600"; 
-   d="scan'208";a="31104534"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 30 Aug 2024 07:52:31 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Fri, 30 Aug 2024 07:52:02 -0700
-Received: from che-lt-i70843lx.mchp-main.com (10.10.85.11) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Fri, 30 Aug 2024 07:51:54 -0700
-From: Dharma Balasubiramani <dharma.b@microchip.com>
-Date: Fri, 30 Aug 2024 20:21:21 +0530
-Subject: [PATCH v3 2/2] dt-bindings: mmc: atmel,sama5d2-sdhci: Add sama7d65
- compatible
+	s=arc-20240116; t=1725029532; c=relaxed/simple;
+	bh=I9Pun/kr5/Bslk1OWoitzFURlDAnR56ZIlRPk6WxJHc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=teifreXhIodNBnAFkBczCnrTCf7lWYy9OX6ILGwgodoL/j38jXgsVEpEDcnre2WivFM3EZDqPYPSqMrw6qRKx/FknJeR2o3BRfzUukvjacgKxZhaWOWHK/K3d/Jek5hzMJ553OzDvLvrbzLd8scIK9nQlocP4Zusu6JMNnnwIxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qFdiNl7w; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C111C4CEC2;
+	Fri, 30 Aug 2024 14:52:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725029531;
+	bh=I9Pun/kr5/Bslk1OWoitzFURlDAnR56ZIlRPk6WxJHc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qFdiNl7wf/63BOblSwKODZiX7S5A5LeZM/dU+JwZLejJ2uQcoPwEUC13IBmw0xSPn
+	 VPsHaG0iSbZ8r2FnP0+i29QaPkrxRFAh9WBwiTw1QqPoKpfq3eXOyLVZUN7EPlv9IK
+	 R8TIvxryxdqMv/A3RQ8un9e6Dk/DqA8Rv6Sr3DZwF1vbsX/EN6hfdB+mVEN8x6DLdb
+	 IqhDXNvVWvjZOOeXUSfFa6RERcJaOewpy3GZMvz3IPymIkLvNNXqBaGJNZximYvmAI
+	 DZbCaG85evIGRV4QZ66xYtioXXIqG0MmtZUaSisgMoJS+LbhXnSZYdXhQ/XHb6EyFx
+	 VCxl6QvpxTDEg==
+Date: Fri, 30 Aug 2024 08:52:09 -0600
+From: Keith Busch <kbusch@kernel.org>
+To: Puranjay Mohan <pjy@amazon.com>
+Cc: Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
+	Sagi Grimberg <sagi@grimberg.me>, linux-nvme@lists.infradead.org,
+	linux-kernel@vger.kernel.org, puranjay@kernel.org,
+	amazon-linux-kernel@amazon.com
+Subject: Re: [PATCH v3] nvme: fix metadata handling in nvme-passthrough
+Message-ID: <ZtHcmYvTTmZfTEXY@kbusch-mbp>
+References: <20240829133217.1627-1-pjy@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240830-atmel-sdhci-v3-2-7c97a0872af4@microchip.com>
-References: <20240830-atmel-sdhci-v3-0-7c97a0872af4@microchip.com>
-In-Reply-To: <20240830-atmel-sdhci-v3-0-7c97a0872af4@microchip.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>, Alexandre Belloni
-	<alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Aubin Constans <aubin.constans@microchip.com>
-CC: <linux-mmc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	Dharma Balasubiramani <dharma.b@microchip.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1725029490; l=903;
- i=dharma.b@microchip.com; s=20240209; h=from:subject:message-id;
- bh=QESBbG94UsyFuv4RBgVGwBy6zCS6X5ImhMgiGrxYpEg=;
- b=7xmvoRjcIUf0MEuwspw/R63zBo9m+2HqLLQVftqsX+CoGWpMgyqAywrwiVVfLEV9z5QJQVK8W
- 9Q0uOy3yaOuBT+Ps8mCg2o44iGhSy7JYpjvLXVdNlG3jcdMrUYRwsI3
-X-Developer-Key: i=dharma.b@microchip.com; a=ed25519;
- pk=kCq31LcpLAe9HDfIz9ZJ1U7T+osjOi7OZSbe0gqtyQ4=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240829133217.1627-1-pjy@amazon.com>
 
-Add mmc binding documentation for sama7d65.
+On Thu, Aug 29, 2024 at 01:32:17PM +0000, Puranjay Mohan wrote:
+> On an NVMe namespace that does not support metadata, it is possible to
+> send an IO command with metadata through io-passthru. This allows issues
+> like [1] to trigger in the completion code path.
+> nvme_map_user_request() doesn't check if the namespace supports metadata
+> before sending it forward. It also allows admin commands with metadata to
+> be processed as it ignores metadata when bdev == NULL and may report
+> success.
+> 
+> Reject an IO command with metadata when the NVMe namespace doesn't
+> support it and reject an admin command if it has metadata.
+> 
+> [1] https://lore.kernel.org/all/mb61pcylvnym8.fsf@amazon.com/
 
-Signed-off-by: Dharma Balasubiramani <dharma.b@microchip.com>
----
- Documentation/devicetree/bindings/mmc/atmel,sama5d2-sdhci.yaml | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/mmc/atmel,sama5d2-sdhci.yaml b/Documentation/devicetree/bindings/mmc/atmel,sama5d2-sdhci.yaml
-index ba4786328833..a7c0ce201a5c 100644
---- a/Documentation/devicetree/bindings/mmc/atmel,sama5d2-sdhci.yaml
-+++ b/Documentation/devicetree/bindings/mmc/atmel,sama5d2-sdhci.yaml
-@@ -25,6 +25,11 @@ properties:
-           - enum:
-               - microchip,sama7g5-sdhci
-           - const: microchip,sam9x60-sdhci
-+      - items:
-+          - enum:
-+              - microchip,sama7d65-sdhci
-+          - const: microchip,sama7g5-sdhci
-+          - const: microchip,sam9x60-sdhci
- 
-   reg:
-     maxItems: 1
-
--- 
-2.43.0
-
+Thanks, applied to nvme-6.12.
 
