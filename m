@@ -1,78 +1,104 @@
-Return-Path: <linux-kernel+bounces-308875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A18709662F8
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 15:32:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43CA89662FF
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 15:34:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F6D228511D
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 13:32:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76AFA1C21EF9
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 13:34:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81A451ACDF2;
-	Fri, 30 Aug 2024 13:32:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kiWgM4MN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE64C1AD5D6;
+	Fri, 30 Aug 2024 13:33:59 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4F9C17BB17;
-	Fri, 30 Aug 2024 13:32:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB77B199FA4;
+	Fri, 30 Aug 2024 13:33:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725024758; cv=none; b=rT+qrpBXd++Sd/0mJQqiDEbLEyNbMhC+TGVOBXO3ptdM2koj9pBI9E11hTehmV6FlZriJPPTk7tN+1Zr4+eqQf6VGk+eF1ov7FSpc9bHix8n8Z9a7uh22iYToJN/raw8Wgr0UdC3Q/JqsurNAUsi8qCfQ+VM191qqy+x7xDbeHk=
+	t=1725024839; cv=none; b=cxMcKWFgguec1c5INEjum8mTpgmXt/2pJlWo8ZaujjRRNja/fmwWhN1ETSIHmURzC+Yr5Qqw5ZSyDI6tTGF5WFh9t5sZ09ubJuJ0aJw6hBJDtRqvaQN4HSBpcv4O0eAe/Wm1dwJiMLz20AZuLc/qQRxsOHlkjJ7hR3+Sk1iKUSk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725024758; c=relaxed/simple;
-	bh=0hkmyUrgKgnCT1jdQMLQhzZ3cXAJeNIFBAkTsJ5biJk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G/vtSktzempm27VZH6Kqg6Zs9eiS1T1m32YFhrHh9j20kBpD/Kc4KGeJVdp8jjPyHxawKoParowHQCgOlBUeMV6M88onvLSJRp/iSrkWt+ONRHB+Ps2/2imgDPnebEaL7DFXc5XcJF6yAKG1Csc5bM4tm8de6E7zWjYN9UCNzks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kiWgM4MN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBED0C4CEC5;
-	Fri, 30 Aug 2024 13:32:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725024758;
-	bh=0hkmyUrgKgnCT1jdQMLQhzZ3cXAJeNIFBAkTsJ5biJk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kiWgM4MNTosRBmWOdS+mnDenaMdaHuMjFXpUrRb0JSTA7meQWV8+jp3nLOvXlh2bb
-	 m7jc5+5pEReuhXb12R+56+tfmgun0JBxZfgSoc9akEQtYR0BqIo6Pj5QcUqriPizPm
-	 Ce4BdQtq01bDzCp43Fxbqpn3wcnkonJPAptWtzMjbXLdf5K8kOki0/P0j2IxiDxf2P
-	 G4C2QtaGxAQUmLPKv9xRYH/w/+tJaefdvuC0Aw9iN/Juaq6QItSfvh8oaXsljjDH8K
-	 KOKptvu3BBUXtbn1lmfCNQvl8w8Xsi0wH/AhXlaLEj9Fsk+F7k2g5quWM81QXDpwgs
-	 nZE85aCPxtphQ==
-Date: Fri, 30 Aug 2024 10:32:35 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Yang Jihong <yangjihong@bytedance.com>, peterz@infradead.org,
-	mingo@redhat.com, mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-	irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, james.clark@arm.com,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] perf sched timehist: Fixed timestamp error when
- unable to confirm event sched_in time
-Message-ID: <ZtHJ83dtmi16zR9D@x1>
-References: <20240819024720.2405244-1-yangjihong@bytedance.com>
- <CAM9d7cjvx2jozQNiSj+Anf1+hsyL7DT17XJWv8oDJUr_4Ud=hg@mail.gmail.com>
+	s=arc-20240116; t=1725024839; c=relaxed/simple;
+	bh=zVMzHLcLjZEgVaXGJ9tVn+DRIBXnzl+zWI8UmzU9mdc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pXNFEWMtannRgbUVBXTMTtoHs8rICuYxYn3ChZXwKxvrppl5EzC/NNsklA5Iw8X7c9kRMlzjKEFwEbQGu9yESLzU4nHtsSTrsrKgIVvaEsAS2BvECwl2+iAHIOvkR817DftOsLV3+z3ACkhWiQBEDNdV5Is5jdM92czcPCPPdwo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
+	by APP-05 (Coremail) with SMTP id zQCowABXPjksytFmcK18Cw--.19684S2;
+	Fri, 30 Aug 2024 21:33:34 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: anthony.l.nguyen@intel.com,
+	przemyslaw.kitszel@intel.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	shiraz.saleem@intel.com,
+	david.m.ertman@intel.com
+Cc: intel-wired-lan@lists.osuosl.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Ma Ke <make24@iscas.ac.cn>,
+	stable@vger.kernel.org
+Subject: [PATCH] ice: Fix possible double free in error handling path
+Date: Fri, 30 Aug 2024 21:33:24 +0800
+Message-Id: <20240830133325.3439293-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAM9d7cjvx2jozQNiSj+Anf1+hsyL7DT17XJWv8oDJUr_4Ud=hg@mail.gmail.com>
+X-CM-TRANSID:zQCowABXPjksytFmcK18Cw--.19684S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7JF4rAFyrtryDKry3GryUKFg_yoWfZrX_u3
+	W2vryfXr4DGFyFya15Ar47Za40kFyDtas5GFyIqa43tw45Wry3uas7Wr1rJ3y5GryqyFyU
+	Cas7tryxA3yDKjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbfAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
+	Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
+	0DM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
+	64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8Jw
+	Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAG
+	YxC7M4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7V
+	AKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCj
+	r7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6x
+	IIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAI
+	w20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x
+	0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbQVy7UUUUU==
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 
-On Mon, Aug 19, 2024 at 01:08:57PM -0700, Namhyung Kim wrote:
-> On Sun, Aug 18, 2024 at 7:47 PM Yang Jihong <yangjihong@bytedance.com> wrote:
-> > Fixes: 853b74071110 ("perf sched timehist: Add option to specify time window of interest")
-> > Signed-off-by: Yang Jihong <yangjihong@bytedance.com>
+When auxiliary_device_add() returns error and then calls
+auxiliary_device_uninit(), callback function adev_release
+calls kfree(iadev). We shouldn't call kfree(iadev) again
+in the error handling path. Set 'iadev' to NULL.
+
+Cc: stable@vger.kernel.org
+Fixes: f9f5301e7e2d ("ice: Register auxiliary device to provide RDMA")
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+---
+ drivers/net/ethernet/intel/ice/ice_idc.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/net/ethernet/intel/ice/ice_idc.c b/drivers/net/ethernet/intel/ice/ice_idc.c
+index 145b27f2a4ce..5db05f54a80c 100644
+--- a/drivers/net/ethernet/intel/ice/ice_idc.c
++++ b/drivers/net/ethernet/intel/ice/ice_idc.c
+@@ -330,6 +330,7 @@ int ice_plug_aux_dev(struct ice_pf *pf)
+ 		return ret;
+ 	}
  
-> Acked-by: Namhyung Kim <namhyung@kernel.org>
++	iadev = NULL;
+ 	ret = auxiliary_device_add(adev);
+ 	if (ret) {
+ 		auxiliary_device_uninit(adev);
+-- 
+2.25.1
 
-Thanks, applied to perf-tools-next,
-
-- Arnaldo
 
