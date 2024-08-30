@@ -1,122 +1,84 @@
-Return-Path: <linux-kernel+bounces-307972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 246829655BB
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 05:39:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65D849655BD
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 05:41:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C30311F23A5F
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 03:39:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 987231C20A03
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 03:41:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6E9513B280;
-	Fri, 30 Aug 2024 03:39:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="LzS0ZQ6o"
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1385D13B280;
+	Fri, 30 Aug 2024 03:41:02 +0000 (UTC)
+Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C51674068
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 03:39:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D62B36B0D;
+	Fri, 30 Aug 2024 03:40:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724989185; cv=none; b=YOp6KfUZd4n41jQg08fVFXQdRwjvGbbuDu7vqVAlFBPTlM0ApTtn5EUhDpZmD8i7cJ+Ap8VleRjFsA2KKAH8M0SmtgtPyjewSpemagFG23KhAtSedbp0DkVcP6oQH4rhp0nbgjRbzpARusq7IE4By4pXbrdn+/s6oKsIOFf8EWI=
+	t=1724989261; cv=none; b=hjoDTPpiAdY9/qJd/+KENCm96GWDdc9BJdgeMrYUYVgszTnCQbL82RXxlBTjU2tjzRzU+HBURF5RCL4AmnmzIFL0p2r9WRHCX9aVm7MIme4zWys8sU5Z1FVg+L/737I4N/fjSFYEWg9GRnNNxxSq71BuvV7Zue6kUVbrSVW4hyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724989185; c=relaxed/simple;
-	bh=9g+fkzgNiLmkzb8kJYA3wu4o17li5UlZA5Js0dxJiRg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PxOIlNx2O60ORM9X5DjRS2BDrkSpIPXj+xNXiOwm9g4lPt6NMjT/yGoCHRVNbMv/iLCwyz1hEv2AMO7pWK2z+2Ahz4/xwE/Ex4xZ4LYfp9M/xiD3Bh2fWAIbL9xg3SEEYTP/eZQhg7EjjAoAlBZzRG07NdH07yDADUWvR/a8lcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=LzS0ZQ6o; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from cwcc.thunk.org (pool-173-48-112-93.bstnma.fios.verizon.net [173.48.112.93])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 47U3d6d9028280
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 29 Aug 2024 23:39:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1724989148; bh=iBN1OqKISlzImerjylAD7DIlwprKTEvfPiiXXj/dLaQ=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=LzS0ZQ6obZmSSsyjaPriURvOuAoToFy5I4SVjGhUGdpCwKSIXBwt3LZQJrgW740CJ
-	 dGEwODnZCAyJ3lxGE+mn0WiD5tg+uRkVnfRYWXLozyKP18C+ODYuYythaN6+xaxz+t
-	 T4lyl4FHjRVGVUKlVOCnTyQPjV59vymE0AlJP6uON6/0OsI8iCWuYLNW3D70vqgOm7
-	 qtW7ZUA6diTVtP2gWnXCOEelkxj4N3xzrXFPs4cg3FHB+1SeNUvAvAvF/rrOd4IdXU
-	 LohFASq22zl8qk2Yqh2KA26DCP9izryo8n3t5HLL4AxxV1HqAvwxPDx7qw8Ewvct1r
-	 e3YMRiCA0OFug==
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-	id B367C15C02C1; Thu, 29 Aug 2024 23:39:05 -0400 (EDT)
-Date: Thu, 29 Aug 2024 23:39:05 -0400
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>,
-        Michal Hocko <mhocko@suse.com>, Matthew Wilcox <willy@infradead.org>,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Dave Chinner <dchinner@redhat.com>
-Subject: Re: [PATCH] bcachefs: Switch to memalloc_flags_do() for vmalloc
- allocations
-Message-ID: <20240830033905.GC9627@mit.edu>
-References: <20240828140638.3204253-1-kent.overstreet@linux.dev>
- <Zs9xC3OJPbkMy25C@casper.infradead.org>
- <gutyvxwembnzaoo43dzvmnpnbmj6pzmypx5kcyor3oeomgzkva@6colowp7crgk>
- <Zs959Pa5H5WeY5_i@tiehlicka>
- <xxs3s22qmlzby3ligct7x5a3fbzzjfdqqt7unmpih64dk3kdyx@vml4m27gpujw>
- <ZtBWxWunhXTh0bhS@tiehlicka>
- <wjfubyrzk4ovtuae5uht7uhhigkrym2anmo5w5vp7xgq3zss76@s2uy3qindie4>
- <ZtCFP5w6yv/aykui@dread.disaster.area>
+	s=arc-20240116; t=1724989261; c=relaxed/simple;
+	bh=bSiRdyUan6CT3lGdG7FeD172FEaTD1UwprvspX3XlWs=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Ba0ZL7xnvp8W2RKB9HyR+dAzxkOyoikWuLDVCfmok+qh2kC07iCoQPRUTWzpJl5LAG7ccR+Qowpy9/GPyzWOkI+uSYOsYfkV4f9cmYDznpyzkg2GZ8xwOImGmTMAg+UfZ0FV3mhmq9KtzRfrdv1WC1Pd6rufh8vM09+6Qba2egE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
+Received: from TWMBX01.aspeed.com (192.168.0.62) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.12; Fri, 30 Aug
+ 2024 11:40:47 +0800
+Received: from mail.aspeedtech.com (192.168.10.10) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server id 15.2.1258.12 via Frontend
+ Transport; Fri, 30 Aug 2024 11:40:47 +0800
+From: Billy Tsai <billy_tsai@aspeedtech.com>
+To: <linus.walleij@linaro.org>, <brgl@bgdev.pl>, <robh@kernel.org>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <joel@jms.id.au>,
+	<andrew@codeconstruct.com.au>, <linux-gpio@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-aspeed@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
+	<BMC-SW@aspeedtech.com>
+Subject: [PATCH v2 0/4] Add Aspeed G7 gpio support 
+Date: Fri, 30 Aug 2024 11:40:43 +0800
+Message-ID: <20240830034047.2251482-1-billy_tsai@aspeedtech.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZtCFP5w6yv/aykui@dread.disaster.area>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Fri, Aug 30, 2024 at 12:27:11AM +1000, Dave Chinner wrote:
-> 
-> We've been using __GFP_NOFAIL semantics in XFS heavily for 30 years
-> now. This was the default Irix kernel allocator behaviour (it had a
-> forwards progress guarantee and would never fail allocation unless
-> told it could do so). We've been using the same "guaranteed not to
-> fail" semantics on Linux since the original port started 25 years
-> ago via open-coded loops.
+The Aspeed 7th generation SoC features two GPIO controllers: one with 12
+GPIO pins and another with 216 GPIO pins. The main difference from the
+previous generation is that the control logic has been updated to support
+per-pin control, allowing each pin to have its own 32-bit register for
+configuring value, direction, interrupt type, and more.
+This patch serial also add low-level operations (llops) to abstract the
+register access for GPIO registers and the coprocessor request/release in
+gpio-aspeed.c making it easier to extend the driver to support different
+hardware register layouts.
 
-Ext3/ext4 doesn't have quite the history as XFS --- it's only been
-around for 23 years --- but we've also used __GFP_NOFAIL or its
-moral equivalent, e.g.:
+Changes since v1:
+- Merge the gpio-aspeed-g7.c into the gpio-aspeed.c.
+- Create the llops in gpio-aspeed.c for flexibility.
 
-> 	do {
-> 		p = kmalloc(size);
-> 	while (!p);
+Billy Tsai (4):
+  dt-bindings: gpio: aspeed,ast2400-gpio: Support ast2700
+  gpio: aspeed: Remove the name for bank array
+  gpio: aspeed: Create llops to handle hardware access
+  gpio: aspeed: Support G7 Aspeed gpio controller
 
-For the entire existence of ext3.
+ .../bindings/gpio/aspeed,ast2400-gpio.yaml    |  46 +-
+ drivers/gpio/gpio-aspeed.c                    | 442 ++++++++++--------
+ 2 files changed, 303 insertions(+), 185 deletions(-)
 
-> Put simply: __GFP_NOFAIL will be rendered completely useless if it
-> can fail due to external scoped memory allocation contexts.  This
-> will force us to revert all __GFP_NOFAIL allocations back to
-> open-coded will-not-fail loops.
+-- 
+2.25.1
 
-The same will be true for ext4.  And as Dave has said, the MM
-developers want to have visibility to when file systems have basically
-said, "if you can't allow us to allocate memory, our only alternative
-is to cause user data loss, crash the kernel, or loop forever; we will
-choose the latter".  The MM developers tried to make __GFP_NOFAIL go
-away several years ago, and ext4 put the retry loop back, As a result,
-the compromise was that the MM developers restored __GFP_NOFAIL, and
-the file systems developers have done their best to reduce the use of
-__GFP_NOFAIL as much as possible.
-
-So if you try to break the GFP_NOFAIL promise, both xfs and ext4 will
-back to the retry loop.  And the MM devs will be sad, and they will
-forcibly revert your change to *ther* code, even if that means
-breaking bcachefs.  Becuase otherwise, you will be breaking ext4 and
-xfs, and so we will go back to using a retry loop, which will be worse
-for Linux users.
-
-Cheers,
-
-					- Ted
 
