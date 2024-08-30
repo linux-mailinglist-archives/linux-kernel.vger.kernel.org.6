@@ -1,106 +1,101 @@
-Return-Path: <linux-kernel+bounces-308295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CC499659F2
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:17:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D71689659F3
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:18:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC3521F245AA
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 08:17:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B7CD1C215F7
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 08:18:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02D8716DC01;
-	Fri, 30 Aug 2024 08:16:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45A37166F05;
+	Fri, 30 Aug 2024 08:18:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LCXsHsJq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="TUshZIbE"
+Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26F3C1531CD;
-	Fri, 30 Aug 2024 08:16:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD0943FF1;
+	Fri, 30 Aug 2024 08:18:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725005800; cv=none; b=eB1plt6f01JkHu1eWjk9RpP1GbPJWSwcjUXdJmkRfkJdh/KLu1NcaZP6sx5yOWSpTSSn8yErkHWtke9N36quFlmaxdUXYIXDnwRQGFI9qbbxXeBvX7g6Sr3izr0S3kZFUc4mewok8QHTcxRP34BenCzLP8nLNFuv6bOHDCBZulE=
+	t=1725005886; cv=none; b=HpiN034WBD4fPCv4AZ/NBbG1Hes/FjoI6+rjg+Dtq08bKAmb8M2CK8L7alexWcd98p6461koiAhcLWSnackeRqCAzpVuA9xw46Bufg8S/LSUy3CSScZx/hNOOc0z1uzfkiEJ1tUIMEoBPLneb7QRYtMI738zeOmXYadrV46kijg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725005800; c=relaxed/simple;
-	bh=MG9+FSOwpHPPAIZp15fzWWgzZZG7+ro0BmYE/pM5Kvc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Pv6MDdRmQ72kOg+C/tVbsEkvwCirlm7bDBa2DCB2VihmXsEPeH49yLAoOzE9UodoFa/D+FXUpIBXR0TChjCAqo/OAQdwkPnS01BlLwqFfzVfqfx+GsFR9f9OHePtz/Vc5o/qaEjWjn778KpJg/+lsWHAWO5YvmKVGxCHMGxjgmc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LCXsHsJq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CC71C4CED3;
-	Fri, 30 Aug 2024 08:16:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725005799;
-	bh=MG9+FSOwpHPPAIZp15fzWWgzZZG7+ro0BmYE/pM5Kvc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LCXsHsJqND33H+cT8yoYbcXxjUARgjBG94mxukWpolQ4HzYDeBtotYMJekZe/Tf3S
-	 zW3UE61X5FtKEtq/LAVYgGyT6da8F1mA6swt5npu5+WLPK4zNO4+IuSMcGjuQrSYhJ
-	 c9OBv1EP/5g3jvJpy0RumX0WOQu+RK6n1DnjeMeFkjJdYpkxANxiAeQ1LkEIOk9zdk
-	 VUsSEVDCYItvgqhRUD9SHd5Rx2BV054E2rLma2k0R6q8qNiwSBYk7+w+NCm5r7ShYP
-	 kj4wsQ3HgOIkSN0tDkhuPx1a3TA9U7BpI0H6iV+TQcqxXmOBq+lXFwurlHtV36NDgk
-	 RJRwOJwp/acNQ==
-Date: Fri, 30 Aug 2024 10:16:36 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Conor Dooley <conor@kernel.org>
-Cc: Angelo Dureghello <adureghello@baylibre.com>, 
-	Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, 
-	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, Jonathan Cameron <jic23@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Olivier Moysan <olivier.moysan@foss.st.com>, 
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	dlechner@baylibre.com
-Subject: Re: [PATCH RFC 4/8] dt-bindings: iio: dac: add adi axi-dac bus
- property
-Message-ID: <lets4c46zg4rzfqrjakeby3oa3zhxh4nyfcg4vxhfnufcpaxak@xmzdwb47xhx5>
-References: <20240829-wip-bl-ad3552r-axi-v0-v1-0-b6da6015327a@baylibre.com>
- <20240829-wip-bl-ad3552r-axi-v0-v1-4-b6da6015327a@baylibre.com>
- <20240829-stopwatch-morality-a933abb4d688@spud>
+	s=arc-20240116; t=1725005886; c=relaxed/simple;
+	bh=PvpR8U7gWZr3H8JbQyG45V9BPVBKlv/mk1ETgNTT/o0=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S1RGpf9Ky4w7jb9vpN1zpNRpPjKP9EP2dn/dYR78ERj/N+g2YWdNXDHdVbhGEIL/nfSa3T4P5nbsTf4dTjou7ocGxpTPhL6LXTr4FwjpS85X8m/p9fPQqrRqAAnWbUaK8fgg9PHa4tDwDzZCajVNWKzEbP44PiJDU8Y3ea0vqRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=TUshZIbE; arc=none smtp.client-ip=67.231.149.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47U6g4O1029742;
+	Fri, 30 Aug 2024 03:17:47 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=PODMain02222019; bh=iPQvNt4NrjPXbMYc+3
+	you9iuaI5VM9JsQvJ3x/6Fxbo=; b=TUshZIbEvYytLwR/UQ+ODt6DdSp6uvjLHX
+	1Atq0yrj+d7gvXz/7nUypAB/VQLR7tpuLHwcvPp0QDgFoiZcOYHJwOcTlFFIIFYb
+	AxAX4x0u9zJ/BGcdOctCHEKbUgHd1mNM3G9njBBfGW4e8cwyQ2MzyO9YuFGMeUtI
+	QOyKeGsJoO1500F3xpVruvf5kYQTVKxpFVu7Yaxo1isWIX1/gOlYXPJ4SOgJatsZ
+	JJi1MKTrrsepnyx90OI8MEBYF51IBzXkc5USy8au2GRwDsvlxY0l7JGJRb+SjI8W
+	NcH7C4BEpeyYSmBoadlkVoTYKe4JarzM4vK6LjhX+caTiujU80Lg==
+Received: from ediex02.ad.cirrus.com ([84.19.233.68])
+	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 419pukbg25-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 30 Aug 2024 03:17:47 -0500 (CDT)
+Received: from ediex01.ad.cirrus.com (198.61.84.80) by ediex02.ad.cirrus.com
+ (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 30 Aug
+ 2024 09:17:45 +0100
+Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
+ anon-ediex01.ad.cirrus.com (198.61.84.80) with Microsoft SMTP Server id
+ 15.2.1544.9 via Frontend Transport; Fri, 30 Aug 2024 09:17:45 +0100
+Received: from opensource.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTPS id EDBF9820249;
+	Fri, 30 Aug 2024 08:17:44 +0000 (UTC)
+Date: Fri, 30 Aug 2024 09:17:43 +0100
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
+To: Yan Zhen <yanzhen@vivo.com>
+CC: <rf@opensource.cirrus.com>, <tglx@linutronix.de>,
+        <linux-sound@vger.kernel.org>, <patches@opensource.cirrus.com>,
+        <linux-kernel@vger.kernel.org>, <opensource.kernel@vivo.com>
+Subject: Re: [PATCH v2] irqchip: Simplify with dev_err_probe()
+Message-ID: <ZtGAJ0JnVAUMrG6j@opensource.cirrus.com>
+References: <20240830070504.289450-1-yanzhen@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20240829-stopwatch-morality-a933abb4d688@spud>
+In-Reply-To: <20240830070504.289450-1-yanzhen@vivo.com>
+X-Proofpoint-GUID: wiVYXE83PLsTliYSk365iFajLcM-N1uV
+X-Proofpoint-ORIG-GUID: wiVYXE83PLsTliYSk365iFajLcM-N1uV
+X-Proofpoint-Spam-Reason: safe
 
-On Thu, Aug 29, 2024 at 04:46:59PM +0100, Conor Dooley wrote:
-> On Thu, Aug 29, 2024 at 02:32:02PM +0200, Angelo Dureghello wrote:
-> > From: Angelo Dureghello <adureghello@baylibre.com>
-> > 
-> > Add bus property.
+On Fri, Aug 30, 2024 at 03:05:04PM +0800, Yan Zhen wrote:
+> Switch to use dev_err_probe() to simplify the error path and
+> unify a message template.
 > 
-> RFC it may be, but you do need to explain what this bus-type actually
-> describes for commenting on the suitability of the method to be
-> meaningful.
+> Using this helper is totally fine even if err is known to never
+> be -EPROBE_DEFER.
 > 
-> > 
-> > Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
-> > ---
-> >  Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml | 9 +++++++++
-> >  1 file changed, 9 insertions(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml b/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml
-> > index a55e9bfc66d7..a7ce72e1cd81 100644
-> > --- a/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml
-> > +++ b/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml
-> > @@ -38,6 +38,15 @@ properties:
-> >    clocks:
-> >      maxItems: 1
+> The benefit compared to a normal dev_err() is the standardized format
+> of the error code, it being emitted symbolically and the fact that
+> the error code is returned which allows more compact error paths. 
 > 
-> You mentioned about new compatible strings, does the one currently
-> listed in this binding support both bus types?
-> 
-> Making the bus type decision based on compatible only really makes sense
-> if they're different versions of the IP, but not if they're different
-> configuration options for a given version.
-> 
+> Signed-off-by: Yan Zhen <yanzhen@vivo.com>
+> ---
 
-Yeah, in general the parent defines the bus type.
+Subject line probably should be irqchip/madera: but otherwise:
 
-Best regards,
-Krzysztof
+Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 
+Thanks,
+Charles
 
