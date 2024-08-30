@@ -1,45 +1,64 @@
-Return-Path: <linux-kernel+bounces-307893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91A1D9654AF
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 03:27:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C9B19654B3
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 03:29:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 323D2B24322
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 01:27:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF9E4B21B5A
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 01:29:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C500F38DD4;
-	Fri, 30 Aug 2024 01:27:02 +0000 (UTC)
-Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 542984778E;
+	Fri, 30 Aug 2024 01:29:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NL0TDQjA"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B9F44436E;
-	Fri, 30 Aug 2024 01:26:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C35064690;
+	Fri, 30 Aug 2024 01:29:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724981222; cv=none; b=ExAbkGLk+j6iCR1p8YydgGD8FoO6xslaXsYcH3VzmuWMa4delpRn2DFuyq9TK6IDcDRERb1RYSn87WOSGx7NmtdasnZp/AauJH+mWrPoLC5tHvGlNzi7xBseeBq6t0H/DmyXnYq+KmfEq9fSmi4Y3t7yKGz564B1vDHVCQc4OWg=
+	t=1724981367; cv=none; b=B6EcD/9sFARdEU52UfucPzvUfAHvNNeJr5pqr9/obEzK2XMKHm2bv3IKwArHsSz2qoNc9e4Ss9Eb1A2HkPWaEQm4E8opc0+AT7KWLx+ks62o27aqNy88ZLxwbeFeMPQ1RNnYKIL0a/DDvPxmpjbQrAAqOfLfaVryBKBTYno5Wb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724981222; c=relaxed/simple;
-	bh=uC92lRxRM4Bx29JBhuolM3crcaiIAvECHgifmMbH1uo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=LHhsVaSNPC7yrxsgSN0m+Bk+SNfPjmMWlsInTiiI72zrfT0Q912MQbBCSlVOVFT0vAbVQpGZo5OKgj5oz+eowO7gBI3bTSGM6+MKbJyzqII9JT46sIUM0MSdg+8GFyc4Ew3dx40xjBHI9ehJ9Fc7dy8CE4KevptwWln5BSnhz+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4Ww0qQ52Ngz1S9Qx;
-	Fri, 30 Aug 2024 09:26:42 +0800 (CST)
-Received: from dggpeml500022.china.huawei.com (unknown [7.185.36.66])
-	by mail.maildlp.com (Postfix) with ESMTPS id ADB1D1A0188;
-	Fri, 30 Aug 2024 09:26:56 +0800 (CST)
-Received: from [10.67.111.104] (10.67.111.104) by
- dggpeml500022.china.huawei.com (7.185.36.66) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 30 Aug 2024 09:26:56 +0800
-Message-ID: <9cf7c3b9-e9df-43cf-84fc-1e8a790c0763@huawei.com>
-Date: Fri, 30 Aug 2024 09:26:56 +0800
+	s=arc-20240116; t=1724981367; c=relaxed/simple;
+	bh=pkUmoxffZAzxV8tI1/o047ilCDHAtHXf1NsIkJBqzuk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BQCIo+ZmmrKEK488BdPChkv1WmbJn5L5GHfUemxWf0IiHz2Oz1/anHVtAKUk94d2XFAIK/CnbrKQNHTFlZofgQzBB+XbxTVGvojNtJA9XOcNih5KbadBATuee6vHepZG1Xrl1VmTb2L8gCzWDkKEKCor1Wz0FlHJZU16+biGCcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NL0TDQjA; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724981365; x=1756517365;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=pkUmoxffZAzxV8tI1/o047ilCDHAtHXf1NsIkJBqzuk=;
+  b=NL0TDQjAAJmmxejJKjKuFWmBACNZXjOy2816W2m4nCZYibmNf7Y7axYm
+   ZZ21oVads22n+xkZ6ShhRRLS8enCqK4yenOcI9zmXXEz36xPT/mKzQiGe
+   bQ3JZ2xlmWC6AaRUqM+TEuUZfZeX+E7zltfCjk1iB9VUWt6ljnGeNzkha
+   I8Ka5G5Pej1Dc9FdEZzLpkP1oub8YDwdXjd7FnVzdMYLIknuPQy3bnMAU
+   Q4MVPN/vAgAkPZSTAoqVro3ZtNHAu/A22RMnPJgXZ1A7QA2c/pZQd5iqJ
+   MzZurYFWq7ofBYtimvdSnvW2T/XGzY7W/LMJptaHMTbTmDJMkfBA30wQb
+   g==;
+X-CSE-ConnectionGUID: q2CpDKHDTMyC4JMzSRY/Vw==
+X-CSE-MsgGUID: 7B9eqNTYQD6gGZBJgYsvpA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11179"; a="27490099"
+X-IronPort-AV: E=Sophos;i="6.10,187,1719903600"; 
+   d="scan'208";a="27490099"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 18:29:25 -0700
+X-CSE-ConnectionGUID: omHaOa5tTEWSdnGgt9nXxw==
+X-CSE-MsgGUID: 6/koAYe/Rryk7ff40Wd+hg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,187,1719903600"; 
+   d="scan'208";a="101261202"
+Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.240.26]) ([10.124.240.26])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 18:29:22 -0700
+Message-ID: <e686a7ac-fc50-4de8-a279-e674ad8a84f4@intel.com>
+Date: Fri, 30 Aug 2024 09:29:19 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,50 +66,69 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] bcachefs: Remove duplicate included headers
+Subject: Re: [PATCH 02/25] KVM: TDX: Define TDX architectural definitions
+To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
+ "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+ "pbonzini@redhat.com" <pbonzini@redhat.com>,
+ "seanjc@google.com" <seanjc@google.com>
+Cc: "Yamahata, Isaku" <isaku.yamahata@intel.com>,
+ "sean.j.christopherson@intel.com" <sean.j.christopherson@intel.com>,
+ "tony.lindgren@linux.intel.com" <tony.lindgren@linux.intel.com>,
+ "Huang, Kai" <kai.huang@intel.com>,
+ "isaku.yamahata@gmail.com" <isaku.yamahata@gmail.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20240812224820.34826-1-rick.p.edgecombe@intel.com>
+ <20240812224820.34826-3-rick.p.edgecombe@intel.com>
+ <4eb4a26e-ebad-478e-9635-93f7fbed103b@intel.com>
+ <4de6d1fa5f72274af51d063dc17726625de535ac.camel@intel.com>
 Content-Language: en-US
-To: Thorsten Blum <thorsten.blum@toblux.com>, <kent.overstreet@linux.dev>
-CC: <linux-bcachefs@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240829154949.109402-2-thorsten.blum@toblux.com>
-From: Hongbo Li <lihongbo22@huawei.com>
-In-Reply-To: <20240829154949.109402-2-thorsten.blum@toblux.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- dggpeml500022.china.huawei.com (7.185.36.66)
+From: Xiaoyao Li <xiaoyao.li@intel.com>
+In-Reply-To: <4de6d1fa5f72274af51d063dc17726625de535ac.camel@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-
-
-On 2024/8/29 23:49, Thorsten Blum wrote:
-> The header files dirent_format.h and disk_groups_format.h are included
-> twice. Remove the redundant includes and the following warnings reported
-> by make includecheck:
+On 8/30/2024 3:46 AM, Edgecombe, Rick P wrote:
+> On Thu, 2024-08-29 at 21:25 +0800, Xiaoyao Li wrote:
+>> On 8/13/2024 6:47 AM, Rick Edgecombe wrote:
+>>> +/*
+>>> + * TD_PARAMS is provided as an input to TDH_MNG_INIT, the size of which is
+>>> 1024B.
+>>> + */
+>>> +struct td_params {
+>>> +       u64 attributes;
+>>> +       u64 xfam;
+>>> +       u16 max_vcpus;
+>>> +       u8 reserved0[6];
+>>> +
+>>> +       u64 eptp_controls;
+>>> +       u64 exec_controls;
+>>
+>> TDX 1.5 renames 'exec_controls' to 'config_flags', maybe we need update
+>> it to match TDX 1.5 since the minimum supported TDX module of linux
+>> starts from 1.5.
 > 
->    disk_groups_format.h is included more than once
->    dirent_format.h is included more than once
+> Agreed.
 > 
-> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
-> ---
->   fs/bcachefs/bcachefs_format.h | 2 --
->   1 file changed, 2 deletions(-)
+>>
+>> Besides, TDX 1.5 defines more fields that was reserved in TDX 1.0, but
+>> most of them are not used by current TDX enabling patches. If we update
+>> TD_PARAMS to match with TDX 1.5, should we add them as well?
 > 
-> diff --git a/fs/bcachefs/bcachefs_format.h b/fs/bcachefs/bcachefs_format.h
-> index 14ce726bf5a3..b97fd0f75831 100644
-> --- a/fs/bcachefs/bcachefs_format.h
-> +++ b/fs/bcachefs/bcachefs_format.h
-> @@ -499,8 +499,6 @@ struct bch_sb_field {
->   #include "disk_groups_format.h"
->   #include "extents_format.h"
->   #include "ec_format.h"
-> -#include "dirent_format.h"
-> -#include "disk_groups_format.h"
+> You mean config_flags or supported "features0"? For config_flags, it seems just
+> one is missing. I don't think we need to add it.
 
-line 497 and line 499.
+No. I meant NUM_L2_VMS, MSR_CONFIG_CTLS, IA32_ARCH_CAPABILITIES_CONFIG, 
+MRCONFIGSVN and MROWNERCONFIGSVN introduced in TD_PARAMS from TDX 1.5.
 
-Reviewed-by: Hongbo Li <lihongbo22@huawei.com>
+Only MSR_CONFIG_CTLS and IA32_ARCH_CAPABILITIES_CONFIG likely need 
+enabling for now since they relates to MSR_IA32_ARCH_CAPABILITIES 
+virtualization of TDs.
 
+>>
+>> This leads to another topic that defining all the TDX structure in this
+>> patch seems unfriendly for review. It seems better to put the
+>> introduction of definition and its user in a single patch.
+> 
+> Yea.
 
->   #include "inode_format.h"
->   #include "journal_seq_blacklist_format.h"
->   #include "logged_ops_format.h"
 
