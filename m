@@ -1,108 +1,121 @@
-Return-Path: <linux-kernel+bounces-308334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C64E6965A7C
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:37:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73785965A80
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:37:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66C0DB237CE
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 08:37:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F05CD287CB8
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 08:37:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D416516E873;
-	Fri, 30 Aug 2024 08:36:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 721AB171E65;
+	Fri, 30 Aug 2024 08:36:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I/msJJxS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kob7DTOh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F89B16D31B;
-	Fri, 30 Aug 2024 08:36:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1420170A00;
+	Fri, 30 Aug 2024 08:36:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725007005; cv=none; b=bJF76LLCUUSa1qKtZUntpVJzcHBJHMQ1U9VJ8cn0ogS6+Zc+8wROlv2r1GkgSdiISM2J5/GTbJpXJMn+JLJpwfJK1q0dC1Hx6jDG6+55V4w5CfwlnCDtUcv7kIovTjWOxNAfNhWrrd0E3fOrw3sv0pmYRKxW0Mnvw0dFdg3koRU=
+	t=1725007007; cv=none; b=BQ7LiHy7qKgHIvCmUY2GN5u+wtuykSGE4jxZiQQP3jg+3Dktunpmbi0DfDwvR+iBKu2MlkFF2N5zUnCqp5NBF0I9dJA/n6nTmiNtbQErQjxOV0bLyywD0RzkpamgD2XJgihlorG76hgQwD0UAvwzT0AO7FMAJR7LJB7P2bkbLL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725007005; c=relaxed/simple;
-	bh=grKhKNpeqGkYtMzM62/xBG6cFi1MZzqmLd9p1Tq6bx4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=MoyFH/8TxB2cHUNddRzOOO80TRkSgzotzgBsg048RLtcVpposImt8D8zeyzJcF2zoHPfZ64DXE79dTBoHo6ol5rRoeSQ07/zxJwNjcLmsjc5/Siaxe1zyCsAzAfuoNCz1aWdtIRXUWU6y8XimdEp4Tx2Biw00eNo73OimJjRTgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I/msJJxS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id BBC3DC4CECB;
-	Fri, 30 Aug 2024 08:36:44 +0000 (UTC)
+	s=arc-20240116; t=1725007007; c=relaxed/simple;
+	bh=1a2JOCmMwUGJNO60kmTzz/sqotfRqeia2mSRSozIqcM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LSen+msqi3RxZYcu5QZ38iJa9/gUriVTEMIu1mJTrT2/WA5UT3hlZ9rMTljGCSBQafnE4nA3iFJSbRjxEgQ3vSy7JE0i62Fgp2daBu2LwuANT5mFMfwb29/DFsI0VcSIyZA3eMiNjgz2yGTcEOMNOJFwBn9GeO3W9pn6lfLDBuU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kob7DTOh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18672C4CEC2;
+	Fri, 30 Aug 2024 08:36:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725007004;
-	bh=grKhKNpeqGkYtMzM62/xBG6cFi1MZzqmLd9p1Tq6bx4=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=I/msJJxSKURBRUlADhMdmwI5RIWB9sNG8Nl9zcpyMLYeMcQNTRt3kkmdMxP2hMG0h
-	 3thHsnN8/Wpa/UAJ4awixQHnfpZ6/gfzdM9Dfg27Z96PaN2wXhfLKOiOFCGf4fo2P4
-	 xiYGElnKDHDOWPO4RGllReezXkkvmwqf/jA7z1AI1CmIesTIYeUXwTf/8Q4VN2qmy6
-	 cZTnolz9ffv+Bnr4QlqlCDYM/oPgqQsQt9svlxJLG8WP1oUG9lVKXer7gk9XraR7nV
-	 Ob+YmBI4CE3lElI79l0cUaHxHIbp41QQdfK124LwO++P28z+tme4/FevDzMCkgqXPv
-	 Ifd+CKCKjpNNw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE0E6CA0EF1;
-	Fri, 30 Aug 2024 08:36:44 +0000 (UTC)
-From: =?utf-8?q?T=C3=B3th_J=C3=A1nos_via_B4_Relay?= <devnull+gomba007.gmail.com@kernel.org>
-Date: Fri, 30 Aug 2024 10:36:40 +0200
-Subject: [PATCH v7 2/3] dt-bindings: rtc: Add support for SD2405AL.
+	s=k20201202; t=1725007007;
+	bh=1a2JOCmMwUGJNO60kmTzz/sqotfRqeia2mSRSozIqcM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kob7DTOhbqsAaSjdfwGZvf6ryZb6RlAdR/z5yrlQ6I+NLuRHGGZIrrP3/0LDjG6BA
+	 s9Z6dvtw9amMJD0PIVt2Ir9Ebacx6jnwD3PT/OQwNqfR9F5b7AWD3KQGKUWUingNSc
+	 OZyCpU976P3wr5e1K3XKhM/uvjb3zLKdKprp6jwNwUdkC6H22+qsbRxxZ8Wox8JkKR
+	 k3NEUdPzoXew3cT+z27xek1cnHo4Tfb8FWt7bSRe6ybnN0UpD3JPaXP27mqGzbj+h1
+	 6EQxvq9TjTDtlAEQWmIkrghHn+Rxk7y/IwOBoIEHaMYKa2mwHDIPG2FSmrKcb6Kudk
+	 sH+gfj7LSMPnA==
+Date: Fri, 30 Aug 2024 09:36:41 +0100
+From: Simon Horman <horms@kernel.org>
+To: Joe Damato <jdamato@fastly.com>
+Cc: netdev@vger.kernel.org, edumazet@google.com, amritha.nambiar@intel.com,
+	sridhar.samudrala@intel.com, sdf@fomichev.me, bjorn@rivosinc.com,
+	hch@infradead.org, willy@infradead.org,
+	willemdebruijn.kernel@gmail.com, skhawaja@google.com,
+	kuba@kernel.org, Martin Karsten <mkarsten@uwaterloo.ca>,
+	"David S. Miller" <davem@davemloft.net>,
+	Paolo Abeni <pabeni@redhat.com>, Jiri Pirko <jiri@resnulli.us>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Breno Leitao <leitao@debian.org>,
+	Johannes Berg <johannes.berg@intel.com>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next 1/5] net: napi: Make napi_defer_hard_irqs
+ per-NAPI
+Message-ID: <20240830083641.GI1368797@kernel.org>
+References: <20240829131214.169977-1-jdamato@fastly.com>
+ <20240829131214.169977-2-jdamato@fastly.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240830-rtc-sd2405al-v7-2-2f7102621b1d@gmail.com>
-References: <20240830-rtc-sd2405al-v7-0-2f7102621b1d@gmail.com>
-In-Reply-To: <20240830-rtc-sd2405al-v7-0-2f7102621b1d@gmail.com>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org, 
- devicetree@vger.kernel.org, 
- =?utf-8?q?T=C3=B3th_J=C3=A1nos?= <gomba007@gmail.com>, 
- Conor Dooley <conor.dooley@microchip.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1725007003; l=891;
- i=gomba007@gmail.com; s=20230706; h=from:subject:message-id;
- bh=v8SGicMUEve3ehv2KdVupsi+4VK3XCqH4IHxbA+90tk=;
- b=lt9DhKeP2YOvwZq6gRys+1XCVsaDcmqvwk9Lo8S7DiMSz4gd+udqa3wKc4CZy4gJcf9H2+pTA
- mnBXfKTdvDXCrhY7YbH0pGHzjM/U1c+MZj12FolSxt+PJMJhTjOZ25G
-X-Developer-Key: i=gomba007@gmail.com; a=ed25519;
- pk=iY9MjPCbud82ULS2PQJIq3QwjKyP/Sg730I6T2M8Y5U=
-X-Endpoint-Received: by B4 Relay for gomba007@gmail.com/20230706 with
- auth_id=60
-X-Original-From: =?utf-8?q?T=C3=B3th_J=C3=A1nos?= <gomba007@gmail.com>
-Reply-To: gomba007@gmail.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240829131214.169977-2-jdamato@fastly.com>
 
-From: Tóth János <gomba007@gmail.com>
+On Thu, Aug 29, 2024 at 01:11:57PM +0000, Joe Damato wrote:
+> Allow per-NAPI defer_hard_irqs setting.
+> 
+> The existing sysfs parameter is respected; writes to sysfs will write to
+> all NAPI structs for the device and the net_device defer_hard_irq field.
+> Reads from sysfs will read from the net_device field.
+> 
+> sysfs code was updated to guard against what appears to be a potential
+> overflow as the field is an int, but the value passed in is an unsigned
+> long.
+> 
+> The ability to set defer_hard_irqs on specific NAPI instances will be
+> added in a later commit, via netdev-genl.
+> 
+> Signed-off-by: Joe Damato <jdamato@fastly.com>
+> Reviewed-by: Martin Karsten <mkarsten@uwaterloo.ca>
+> Tested-by: Martin Karsten <mkarsten@uwaterloo.ca>
+> ---
+>  include/linux/netdevice.h | 23 +++++++++++++++++++++++
+>  net/core/dev.c            | 29 ++++++++++++++++++++++++++---
+>  net/core/net-sysfs.c      |  5 ++++-
+>  3 files changed, 53 insertions(+), 4 deletions(-)
 
-Add the necessary documentation for SD2405AL.
+...
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-Signed-off-by: Tóth János <gomba007@gmail.com>
----
- Documentation/devicetree/bindings/rtc/trivial-rtc.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+> @@ -534,6 +535,28 @@ static inline void napi_schedule_irqoff(struct napi_struct *n)
+>  		__napi_schedule_irqoff(n);
+>  }
+>  
+> +/**
+> + * napi_get_defer_hard_irqs - get the NAPI's defer_hard_irqs
+> + * @n: napi struct to get the defer_hard_irqs field from
+> + *
+> + * Returns the per-NAPI value of the defar_hard_irqs field.
+> + */
+> +int napi_get_defer_hard_irqs(const struct napi_struct *n);
 
-diff --git a/Documentation/devicetree/bindings/rtc/trivial-rtc.yaml b/Documentation/devicetree/bindings/rtc/trivial-rtc.yaml
-index fffd759c603f..dae594626b2e 100644
---- a/Documentation/devicetree/bindings/rtc/trivial-rtc.yaml
-+++ b/Documentation/devicetree/bindings/rtc/trivial-rtc.yaml
-@@ -38,6 +38,8 @@ properties:
-       - dallas,ds1672
-       # Extremely Accurate I²C RTC with Integrated Crystal and SRAM
-       - dallas,ds3232
-+      # SD2405AL Real-Time Clock
-+      - dfrobot,sd2405al
-       # EM Microelectronic EM3027 RTC
-       - emmicro,em3027
-       # I2C-BUS INTERFACE REAL TIME CLOCK MODULE
+Hi Joe,
 
--- 
-2.34.1
+As it looks like there will be a v2 anyway, a minor nit from my side.
 
+Thanks for documenting the return value, but I believe that
+./scripts/kernel-doc -none -Wall expects "Return: " or "Returns: "
 
+Likewise in patch 3/5.
+
+...
 
