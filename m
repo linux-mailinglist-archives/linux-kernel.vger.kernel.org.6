@@ -1,135 +1,151 @@
-Return-Path: <linux-kernel+bounces-308242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED57296592B
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 09:56:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99E02965927
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 09:55:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8E96284324
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 07:56:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C8001F24A59
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 07:55:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECD65166F19;
-	Fri, 30 Aug 2024 07:55:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C6BB16190B;
+	Fri, 30 Aug 2024 07:55:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="SO8orggT"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jsaF7WdG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D58B15C147;
-	Fri, 30 Aug 2024 07:55:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A40B615C129
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 07:55:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725004543; cv=none; b=GaLMCd7xIjALcoR43WZjNfjPtOifvksANCqDSX7bRLAQrCFyCxNN2kdOLgBdIqhYs4bepFGnwXUKxsRbeOFQLD6Rzi6pfvaTw07oULdoJwPBRmYQQuptjcjqiol2BizFSsxU16/odUPOJZqRZugRSr0gFV9NWjSX+00+wFIE9ro=
+	t=1725004536; cv=none; b=q72ah39+2ysQE+pUK6fA21hgsax2CncKvvVoMbBepygjzrimXchhl1SIXn+gsQUDXewycu5TdPsZdCgAaKUx2Y00sqo0EtfuYLDX3pUkY8KB5jcymWDFRAJ1HFcYtc87bsHW9hOITDNjiRH7dyH4uuDKxmsQXOxNtB2aGS2Vkeo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725004543; c=relaxed/simple;
-	bh=ICOnWy5ERtMLb4aSD3kPGAsQnN7m6tT8L+4jFpK3UFM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Jgkhemus3VKiQjJj0yC2xTfeWrNqFoY6Mm6+BYf07iEPrmVuOtdujunENbNzwlPw8v6mCCRKStfjvF7g09DaZfa0qEZ7un6sV7RAF3GIm4OowSmpPaBULNPQF4jWId/4vW+Qlqul9VPFC7ajvDBXKRJYgz2q+FCKOyabHSMbHCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=SO8orggT; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47TITuiq011732;
-	Fri, 30 Aug 2024 07:54:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	zYycfQ4lgaP4WF5dIMosJrmcyjh/Y2HNGGyYhdP2JtU=; b=SO8orggTFx1V5LiP
-	9mX9wuxE/5g0JhXMQpgYOLIHs2duHRm5fJqalUZVnWugLgAIO/1vD9d8c4ySLrrh
-	S5VqXtx86szGRqqGkan/VqZzemVP4JYsNXhyByeE7MI0dlqu9ztm9i0Yds3l3ten
-	ZPGrI2apaiBErdcLTo71EoXVzJbtGBjr367ABriWvpvNijBuM98SZuXO7JDGH34d
-	MzPcVumMHZc2uWK+0ZtxfY11p2v4zQ3lEe+Pfp0XUYIo7+0l7WZwMA4+O1K6H1Yn
-	m5/cfi9vlCKJDG/B0JxizHrjA932R1DnbIro/H8ii8hWXLq+sTEika3eYA1h3TzO
-	A13gfQ==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 419pv0fv1x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 30 Aug 2024 07:54:56 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47U7stlY017067
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 30 Aug 2024 07:54:55 GMT
-Received: from [10.151.37.100] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 30 Aug
- 2024 00:54:49 -0700
-Message-ID: <c17d6216-654d-427a-b267-a3886929ab48@quicinc.com>
-Date: Fri, 30 Aug 2024 13:24:46 +0530
+	s=arc-20240116; t=1725004536; c=relaxed/simple;
+	bh=a6GgthwpQdP+3MyNf7hJ+X0yUzvhEYWRQZqJ5m0AGNg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bc0h+I+H15z3ZAMrkghGr3uVyB5jFgDJtO0rXUb+eqHQunieGgTYyEY5hV38ywZK4Dl8Wmi+S+WL/jxVzivfwiQr+fDQJCrR8OwIBp165NzrXEFj180dZwoP9kJWt31Tk8j9+FIqiyWCino7qKC7VbjKzTsuZXn9Q7WZoDhGauE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jsaF7WdG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AFE3C4CEC2;
+	Fri, 30 Aug 2024 07:55:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725004536;
+	bh=a6GgthwpQdP+3MyNf7hJ+X0yUzvhEYWRQZqJ5m0AGNg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jsaF7WdG755TNKq/3PWm9sS0/Bd+hFVVXie4y2g6fUjg1JbbGBwcnjpTzvPWLPXGe
+	 f2YSn5lJ7AOZ4TsZfkiaLyQ6ECWP/62lfyHmIujIbH9GcGIH9rG902kTYHNRUgtj5U
+	 9kBbqkZHXedvl3+9hdTqz5ml/0kXrLn+ar3TgiO2eA5620kdXplSABOn6t9gvyfVsf
+	 2ksOaIdzQ0h2E7jpM/1anpXTZ275HnwBaYFEzNyE7PZQmq1R9ntAXV8l0QuIeWqKYj
+	 53FbgzbXv0mdWjuVlYro2QTSz7cX2GeNZgd9bvoovfauj/RVUFy8WtpZgw8j0wYNE4
+	 J6CH+qla9AHaQ==
+Date: Fri, 30 Aug 2024 13:25:32 +0530
+From: Vinod Koul <vkoul@kernel.org>
+To: Adam Ford <aford173@gmail.com>
+Cc: linux-phy@lists.infradead.org, dominique.martinet@atmark-techno.com,
+	linux-imx@nxp.com, festevam@gmail.com, frieder.schrempf@kontron.de,
+	aford@beaconembedded.com,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Marco Felsch <m.felsch@pengutronix.de>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC V2 2/2] phy: freescale: fsl-samsung-hdmi: Support dynamic
+ integer divider
+Message-ID: <ZtF69NSHFtAwDupq@vaman>
+References: <20240829021256.787615-1-aford173@gmail.com>
+ <20240829021256.787615-2-aford173@gmail.com>
+ <ZtC2LhYAAdPdSRpz@vaman>
+ <CAHCN7xKW=zxips+J73913eEfS+p_e3dN9BWU08=poj599JbUxA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 6/6] arm64: dts: qcom: ipq5018: Enable PCIe
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: <bhelgaas@google.com>, <lpieralisi@kernel.org>, <kw@linux.com>,
-        <manivannan.sadhasivam@linaro.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <vkoul@kernel.org>,
-        <kishon@kernel.org>, <andersson@kernel.org>, <konradybcio@kernel.org>,
-        <p.zabel@pengutronix.de>, <quic_nsekar@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-phy@lists.infradead.org>, <robimarko@gmail.com>
-References: <20240827045757.1101194-1-quic_srichara@quicinc.com>
- <20240827045757.1101194-7-quic_srichara@quicinc.com>
- <nut3ru5rdjf3k3np47gqbpuczvpsuoismx6hp55ivc5mqmdglz@zyzbra46i6iz>
-Content-Language: en-US
-From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
-In-Reply-To: <nut3ru5rdjf3k3np47gqbpuczvpsuoismx6hp55ivc5mqmdglz@zyzbra46i6iz>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: ZFbtisr6HyB-2IYFdtE3WJX3D8urmszh
-X-Proofpoint-ORIG-GUID: ZFbtisr6HyB-2IYFdtE3WJX3D8urmszh
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-30_03,2024-08-29_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 clxscore=1015
- priorityscore=1501 impostorscore=0 suspectscore=0 lowpriorityscore=0
- malwarescore=0 spamscore=0 mlxlogscore=701 mlxscore=0 bulkscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408300057
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHCN7xKW=zxips+J73913eEfS+p_e3dN9BWU08=poj599JbUxA@mail.gmail.com>
 
-
-
-On 8/29/2024 2:40 PM, Dmitry Baryshkov wrote:
-> On Tue, Aug 27, 2024 at 10:27:57AM GMT, Sricharan R wrote:
->> From: Nitheesh Sekar <quic_nsekar@quicinc.com>
->>
->> Enable the PCIe controller and PHY nodes for RDP 432-c2.
->>
->> Signed-off-by: Nitheesh Sekar <quic_nsekar@quicinc.com>
->> Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
->> ---
->>   [v2] Moved status as last property
->>
->>   arch/arm64/boot/dts/qcom/ipq5018-rdp432-c2.dts | 9 +++++++++
->>   1 file changed, 9 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/qcom/ipq5018-rdp432-c2.dts b/arch/arm64/boot/dts/qcom/ipq5018-rdp432-c2.dts
->> index 8460b538eb6a..2b253da7f776 100644
->> --- a/arch/arm64/boot/dts/qcom/ipq5018-rdp432-c2.dts
->> +++ b/arch/arm64/boot/dts/qcom/ipq5018-rdp432-c2.dts
->> @@ -28,6 +28,15 @@ &blsp1_uart1 {
->>   	status = "okay";
->>   };
->>   
->> +&pcie1 {
->> +	perst-gpios = <&tlmm 15 GPIO_ACTIVE_LOW>;
+On 29-08-24, 13:30, Adam Ford wrote:
+> On Thu, Aug 29, 2024 at 12:56 PM Vinod Koul <vkoul@kernel.org> wrote:
+> >
+> > On 28-08-24, 21:12, Adam Ford wrote:
+> > > There is currently a look-up table for a variety of resolutions.
+> > > Since the phy has the ability to dynamically calculate the values
+> > > necessary to use the intger divider which should allow more
+> > > resolutions without having to update the look-up-table.  If the
+> > > integer calculator cannot get an exact frequency, it falls back
+> > > to the look-up-table.  Because the LUT algorithm does some
+> > > rounding, I did not remove integer entries from the LUT.
+> >
+> > Any reason why this is RFC?
 > 
-> pinctrl? wake-gpios?
+> Someone was asking for functionality, but I'm not 100% sure this is
+> the right approach or it would even work.  I am waiting for feedback
+> from Dominique to determine if this helps solve the display for that
+> particular display.
 > 
+> >
+> > >
+> > > Signed-off-by: Adam Ford <aford173@gmail.com>
+> > >
+> > > diff --git a/drivers/phy/freescale/phy-fsl-samsung-hdmi.c b/drivers/phy/freescale/phy-fsl-samsung-hdmi.c
+> > > index bc5d3625ece6..76e0899c6006 100644
+> > > --- a/drivers/phy/freescale/phy-fsl-samsung-hdmi.c
+> > > +++ b/drivers/phy/freescale/phy-fsl-samsung-hdmi.c
+> > > @@ -16,6 +16,8 @@
+> > >
+> > >  #define PHY_REG(reg)         (reg * 4)
+> > >
+> > > +#define REG01_PMS_P_MASK     GENMASK(3, 0)
+> > > +#define REG03_PMS_S_MASK     GENMASK(7, 4)
+> > >  #define REG12_CK_DIV_MASK    GENMASK(5, 4)
+> > >  #define REG13_TG_CODE_LOW_MASK       GENMASK(7, 0)
+> > >  #define REG14_TOL_MASK               GENMASK(7, 4)
+> > > @@ -31,11 +33,17 @@
+> > >
+> > >  #define PHY_PLL_DIV_REGS_NUM 6
+> > >
+> > > +#ifndef MHZ
+> > > +#define MHZ  (1000UL * 1000UL)
+> > > +#endif
+> > > +
+> > >  struct phy_config {
+> > >       u32     pixclk;
+> > >       u8      pll_div_regs[PHY_PLL_DIV_REGS_NUM];
+> > >  };
+> > >
+> > > +static struct phy_config custom_phy_pll_cfg;
+> > > +
+> > >  static const struct phy_config phy_pll_cfg[] = {
+> > >       {
+> > >               .pixclk = 22250000,
+> > > @@ -440,10 +448,83 @@ fsl_samsung_hdmi_phy_configure_pll_lock_det(struct fsl_samsung_hdmi_phy *phy,
+> > >              phy->regs + PHY_REG(14));
+> > >  }
+> > >
+> > > +static unsigned long fsl_samsung_hdmi_phy_find_pms(unsigned long fout, u8 *p, u16 *m, u8 *s)
+> > > +{
+> > > +     unsigned long best_freq = 0;
+> > > +     u32 min_delta = 0xffffffff;
+> >
+> > > +     u8 _p, best_p;
+> > > +     u16 _m, best_m;
+> > > +     u8 _s, best_s;
+> > > +
+> > > +     for (_p = 1; _p <= 11; ++_p) {
+> >
+> > starts with 1 to 11.. why?
+> 
+> According to Rev 2 of the 8MP Reference Manual, the Previder range is
+> between 1 and 11.
 
-  ok, will add to make it explicit.
-  Otherwise pinctrl was default muxed.
+Would be better to document these assumptions, am sure if someone asks
+you this next year, it would be hard to recall :-)
 
-Regards,
-  Sricharan
+-- 
+~Vinod
 
