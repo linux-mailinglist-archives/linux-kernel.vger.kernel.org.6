@@ -1,151 +1,102 @@
-Return-Path: <linux-kernel+bounces-309540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 498B7966C86
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 00:33:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55773966C8D
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 00:35:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CB311C217B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 22:33:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AF208B20936
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 22:35:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E2171BC9E1;
-	Fri, 30 Aug 2024 22:33:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF0191C1AB2;
+	Fri, 30 Aug 2024 22:35:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Dp1v7+aW"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FIRXkQJK"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 913781C173E
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 22:33:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 694A41C173E
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 22:35:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725057197; cv=none; b=sv+ocx11jm2jgfgmvyEzq7ia10oYjm39V1B7gaef5rLHnU+BlHQsrPF1avZ/sahxcqrRD95jP9A97KdnZSPRyGqZdoGzs89WOjHipt8kqOBLQgTmwGLZ7tlx/RIPtVeX6tdxlZSd/qaZlmwarEp0ARdNJ0NECOsohhx/5ftbSDg=
+	t=1725057331; cv=none; b=JlBhefvIPSB7LGmVH0Synn+Ww7aaQa7VgTks8tbM3bnp9vU8eFJg4FAYSxTnBdvkESbmk606HGa4CXcXjfIJdnjUmYIgWKPlcgUduBt2JE6eWMd+mx02yWmZeCNXhUmA4PoPhEX2dBxwZmXeqG+jrered24IJSHdMXz1KvQ4HGY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725057197; c=relaxed/simple;
-	bh=DqAVqqLfjpgjASo+CIfe1feDonNcG4Odo1DBuX7wdR4=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JtNioYAIq93MLfbJdVjID2gaoUwLa98lcCsOm8a9PrVc+1Av2jGPp5rZSskkSVEQZkyK0/A3iCAK45W/m1iTYM515DnrmavX61PA/qekZ678//s/dE5kmF5v5yR3cnuuBYSgA/jXjFUZulPBGkUaHPCXWBZmKdv+gQvaE5sYHeg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Dp1v7+aW; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a7a9cf7d3f3so263445766b.1
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 15:33:15 -0700 (PDT)
+	s=arc-20240116; t=1725057331; c=relaxed/simple;
+	bh=v4iBb4s46qTC+OnNjFfAVZeMlvAyxTlCo/S0K1EAh0E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YqIkfEaVL7vPqDTYYxFmVegzD9uxhPobKHxyNQwUZtMQxonPUe5O9Ca3w8FprvX84TEXPrnoPb+PXiRvscxxMXMNBhFZMINkfFzp6MbKXLKKPWl8GKcaH5qy76U7A9UX3dYRHDEtd2jhRHr/ch0KUXVHnDs7jBQSeeVUsggB3PE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FIRXkQJK; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5353d0b7463so4135903e87.3
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 15:35:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1725057194; x=1725661994; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=oK95C0BSC1jzK2D55nrE90clLVhwEM+Y9bSdjRWpEd8=;
-        b=Dp1v7+aWJz+A4cKaT17oli44/yP7f2EW22bHOILyblolzuTJO8ufFE9h6WAZImPwqB
-         FvIP6MkS4VBTdglAlZrkkemaTnAP17V9CI7Akrcz6QU3vjSzMSyKleqKcmbnO9iwcdxH
-         Qn/8Z6lagO/ez613Qk6hVmWoA3v/ETIgM4LbGNi9D4AGRabXoIsWYqWAV+onnKHYgcp1
-         I55prglG9jD1jTFlh0ezT84sinyOk6ck64uOBbuXon4UejFLuYgRWMu7IAYy7EnTlKMF
-         7BMHrMYhVM4xX+7bC3jEsBzlLskQRblwFvT0haTOTx2nwEi6YuL7AmptvwKLlBeKkwiA
-         P+Tg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725057194; x=1725661994;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+        d=linaro.org; s=google; t=1725057327; x=1725662127; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=oK95C0BSC1jzK2D55nrE90clLVhwEM+Y9bSdjRWpEd8=;
-        b=uAB2ZKH4U02vpZVAnoGM7t7Li4gMjsbRyaeONwH87taOD0hioo/ZqQAkNB2/EmEweJ
-         zNmJ2yDURzIWDTiia0lIFukUPtA7z8IJ14JiyZ2te96VMLLBQfbzaLuxhTjQhPiMR6Vn
-         RgRwoxaM3PXofNgLKSIvmsgyLmrbqvMYsvEgqwM6PwS5KKVXuqBPUAgNM0jBg1By8/Bt
-         gYNTKT+0yfDUz9uyGSyFW3D4GgKAyd6BE/eQvGT6fLKANew/ChnhbPLfy8fj6LJEyQxm
-         4SDwMzRsyazpQA6F9YW/YhH/8pYjbCqlMiIamta3dU5uWUs4wLNbVBkec9Mq0M4cXh6+
-         JUeg==
-X-Forwarded-Encrypted: i=1; AJvYcCXDiw9xZTyrsNqx1BX3MyoV2MkKbnoogeg3kOyF7oFW4M5TvM+AQDfRsGHLrdaZDNQjsAaBfcRhtCIOXwc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDvi0eVlwN6RdBZKovPZE4/yptD1qRxnkZN4FGlx15bZjJk833
-	Z81QSqKskDUYDUfCzySZuVapqBBZF6nRO40ajsXVTKiFyoOEGzvRsWE44lfwVU0=
-X-Google-Smtp-Source: AGHT+IHqkz6MDPFM4AoearcdXDKhXOMUBNtVV9Zz1IeP9NcojNkgXiXqwILRRdgqIEEC3J1YsUnnqQ==
-X-Received: by 2002:a17:907:2da2:b0:a7a:a5ae:11b7 with SMTP id a640c23a62f3a-a897fa63905mr698523966b.49.1725057193226;
-        Fri, 30 Aug 2024 15:33:13 -0700 (PDT)
-Received: from localhost (host-80-182-198-72.pool80182.interbusiness.it. [80.182.198.72])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8989195e8csm260291966b.105.2024.08.30.15.33.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Aug 2024 15:33:12 -0700 (PDT)
-From: Andrea della Porta <andrea.porta@suse.com>
-X-Google-Original-From: Andrea della Porta <aporta@suse.de>
-Date: Sat, 31 Aug 2024 00:33:19 +0200
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Andrea della Porta <andrea.porta@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
-	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-	Stefan Wahren <wahrenst@gmx.net>
-Subject: Re: [PATCH 11/11] arm64: dts: rp1: Add support for MACB contained in
- RP1
-Message-ID: <ZtJIr-PCWSQWWjaK@apocalypse>
-References: <cover.1724159867.git.andrea.porta@suse.com>
- <a3fde99c2e522ef1fbf4e4bb125bc1d97a715eaf.1724159867.git.andrea.porta@suse.com>
- <c3cgkrwnwkrzr67viuvo66ckkxc4ehcye4zomcqdwy2h4dabol@wjp4cd4clm77>
+        bh=v4iBb4s46qTC+OnNjFfAVZeMlvAyxTlCo/S0K1EAh0E=;
+        b=FIRXkQJK60oX0HSKcsAyjeAb9Vrf84275dDoWiZ7DEvvDkGTn2hYJHAoKO4VGcMSWR
+         OaTZ7dUy7o0/bmK9FkSGhi2jTn66XEUZkcMsHvqn7IKyV8CORW5TJe5QISGT+M8msVAN
+         xbGFU4tqCyl2ljx6Ud/zAsC5jID0/rYMqIkmIjxoHUr5V1AAdoqL4njehBM3tazrHLhA
+         pFqUwozDdwQ6JcADJe3VgiNYBXJHONrxDGQUAle+Z2TXimeFS/erAQuUYYUtOugpEysv
+         pWdh2G5Wzx9dSeciigU/EPphpCad329evx06S3MzmbQoTy8D7PKF7dCTgf6pslvw849Z
+         U7Jw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725057327; x=1725662127;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=v4iBb4s46qTC+OnNjFfAVZeMlvAyxTlCo/S0K1EAh0E=;
+        b=Be1phnyGCTgQU+pk5L6Bt5OAjGVXoQsuLCi3AMipKRq19H7mLzf7UFeOkZpcEArocV
+         cxscP6y/2FSl1w1gYbQLNJNEGAbEMoUAuo3xjBRNBwO7UvBj/B60yOQ03p507r0hoftM
+         708KA8USz3ifXS4Lk46otmqC+MlRv6y2m6pqEiU9iOfx5AAHIRghUKds/ZvQRCus0//J
+         rDdRtxEEJnlB69Mznj0GvREW2U1dudDGS7JBeO2TJtJvm6VGwpN6/nuhSYc7S4ASjQiL
+         kd/TJXRpRBU+tQlQkDddTgaRzsjXahDtchoB+hGe8U+J6qXfGaJbGnfMm/N66i9FqJ3J
+         l+lg==
+X-Forwarded-Encrypted: i=1; AJvYcCWR/xeoj9NfjzFr6chn6F6e+NQq+rV1UuzoKjXzaqhNe3361Lps3P+Uv2EZ5w78czjvpNabB5YtR5pJ4TY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyv5UbR7ts4Qp/nKm7hb4rTA+wscDNzuE7H9f31/KICRZnCPPEU
+	SHX4PqfavYcUN8xilNweEtDmByl8czKP7UbxKn5ChMrNBnfHwl/9okBix9B+O4nRJb8saOk+x4l
+	KiXi+5IGUhJkdHpDGZoAQBmm1qk066CNGVxNj0A==
+X-Google-Smtp-Source: AGHT+IEtFXEb5SKkS9Dwum0owW9p7oKua/V4jc1o1ChojvOLPjtG+8DqWfpQtMEozfboOaOre8Jhvg92ZV6kMcJdkjA=
+X-Received: by 2002:a05:6512:b9f:b0:533:4591:fc03 with SMTP id
+ 2adb3069b0e04-53546bde01dmr3131559e87.46.1725057326166; Fri, 30 Aug 2024
+ 15:35:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c3cgkrwnwkrzr67viuvo66ckkxc4ehcye4zomcqdwy2h4dabol@wjp4cd4clm77>
+References: <20240828142554.2424189-1-andriy.shevchenko@linux.intel.com> <20240828142554.2424189-2-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20240828142554.2424189-2-andriy.shevchenko@linux.intel.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Sat, 31 Aug 2024 00:35:14 +0200
+Message-ID: <CACRpkdZ3L0DGdrFEzRUF54c=yC+aDjO1TNd0dVuSmKninpR6TQ@mail.gmail.com>
+Subject: Re: [PATCH v1 1/2] gpiolib: legacy: Kill GPIOF_INIT_* definitions
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-mips@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	Hartley Sweeten <hsweeten@visionengravers.com>, 
+	Alexander Sverdlin <alexander.sverdlin@gmail.com>, Russell King <linux@armlinux.org.uk>, 
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Bartosz Golaszewski <brgl@bgdev.pl>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Krzysztof,
+On Wed, Aug 28, 2024 at 4:26=E2=80=AFPM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
 
-On 10:43 Wed 21 Aug     , Krzysztof Kozlowski wrote:
-> On Tue, Aug 20, 2024 at 04:36:13PM +0200, Andrea della Porta wrote:
-> > RaspberryPi RP1 is multi function PCI endpoint device that
-> > exposes several subperipherals via PCI BAR.
-> > Add an ethernet node for Cadence MACB to the RP1 dtso
-> > 
-> > Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
-> > ---
-> >  arch/arm64/boot/dts/broadcom/rp1.dtso | 23 +++++++++++++++++++++++
-> >  1 file changed, 23 insertions(+)
-> > 
-> > diff --git a/arch/arm64/boot/dts/broadcom/rp1.dtso b/arch/arm64/boot/dts/broadcom/rp1.dtso
-> > index d80178a278ee..b40e203c28d5 100644
-> > --- a/arch/arm64/boot/dts/broadcom/rp1.dtso
-> > +++ b/arch/arm64/boot/dts/broadcom/rp1.dtso
-> > @@ -78,6 +78,29 @@ rp1_clocks: clocks@c040018000 {
-> >  							       <50000000>;   // RP1_CLK_ETH_TSU
-> >  				};
-> >  
-> > +				rp1_eth: ethernet@c040100000 {
-> > +					reg = <0xc0 0x40100000  0x0 0x4000>;
-> > +					compatible = "cdns,macb";
-> 
-> Please start using DTS coding style...
+> Besides the fact that (old) drivers use wrong definitions, e.g.,
+> GPIOF_INIT_HIGH instead of GPIOF_OUT_INIT_HIGH, shrink the legacy
+> definitions by killing those GPIOF_INIT_* completely.
+>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Ack.
+Excellent, thanks Andy.
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-Regards,
-Andrea
-
-> 
-> Best regards,
-> Krzysztof
-> 
+Yours,
+Linus Walleij
 
