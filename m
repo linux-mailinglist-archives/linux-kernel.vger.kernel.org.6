@@ -1,121 +1,112 @@
-Return-Path: <linux-kernel+bounces-308587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89801965F30
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:29:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62AD6965F2F
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:29:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0B316B2929B
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:29:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DA261F28E3F
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:29:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C2AA1917ED;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 158481917F1;
 	Fri, 30 Aug 2024 10:28:32 +0000 (UTC)
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="HUsFWtlW"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B11D18E355;
-	Fri, 30 Aug 2024 10:28:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D36317D375;
+	Fri, 30 Aug 2024 10:28:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725013711; cv=none; b=D2vQ6vrS9wmkTc5yKWIXXFl241GvsU10nMtSqCdh6VU84SLeXeYJu6n5pMSciiEzrKffKexjZ6EpBdqqaz/kmRuBe/lMGHCjGBRh4u6TGVH+ZXYzQBU6rceWli9H9AFy8YjyyXnhnB5brX5QXmsIFkeS+deD91KEro0JqLLbpPA=
+	t=1725013711; cv=none; b=Yk1zy8cOMdtbfACns1DoKV4WafkhOHU/w9eATmlLhyWInE3OqxPEqOU6tYnvRAUzLbbgigTbrX2AB7I0fndGXYcFM9VcSHi8C/xcLTDx3rWusG7K6h1NGqYbWR1OqoY46QOu6F+IjOBnlnfElmPKNNpxc54qpBNy7KF5TN4hk4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1725013711; c=relaxed/simple;
-	bh=zIr6ofHRy4wHFT1oom3DmckyPg52yr84jBW6Dqoz3Go=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LNR6K2lplVii/R8R9kRm+o94ksdkgZhElhaQQd5n4QavXBtP3kWGzSrB4zCxRjwfA/qBld97DmO+WIQfiXIb3adwybtij+l3DgaE8NgX6H+cgXjLKRhH47QfMhDWvc5KSY+jJptNSVdHItFn3zCZ8+uPlV8bglYTrKIr4V5uAfM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1sjyj9-008Ufb-1u;
-	Fri, 30 Aug 2024 18:28:21 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 30 Aug 2024 18:28:20 +0800
-Date: Fri, 30 Aug 2024 18:28:20 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Pavan Kumar Paluri <papaluri@amd.com>
-Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Ashish Kalra <ashish.kalra@amd.com>,
-	John Allen <john.allen@amd.com>,
-	"David S . Miller" <davem@davemloft.net>, stable@vger.kernel.org
-Subject: Re: [PATCH] crypto: ccp: Properly unregister /dev/sev on sev
- PLATFORM_STATUS failure
-Message-ID: <ZtGexA2G-kOTQZ4i@gondor.apana.org.au>
-References: <20240815122500.71946-1-papaluri@amd.com>
+	bh=NdghgHFvzG1MpM+aBjKDpQN039vumSxfcn1T406Z3ZU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=lkqGq6Z1miXqF3JgDJmqTuiiL9O+Nrer+YPs+YX5BRnSmMm6ibdrVOcoiI/maCiLMVHkanOHpSeI2SuQEfRYBOiIPUSTH2j9XQb9yb8XOnNi+r0PJt8YRbUdFe3tHbkm/F6I5zXjkIwq2+d1JOlbq1uABJyJyHN0d0V336fLR6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=HUsFWtlW; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47UASOge059515;
+	Fri, 30 Aug 2024 05:28:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1725013704;
+	bh=4v0txenOCN9l16vss+K3ILdyxnDp9LZiJ22Nj2+eVKk=;
+	h=From:To:CC:Subject:Date;
+	b=HUsFWtlWEt364cr1auK9RSqtpMrY20HC4yx7y+KpVoydxHu6Xzt5MIs5WHHSATjPr
+	 bJQR/psPmerA7cfytTndZNDbJSSacOT/IVy+mrj8xqkQjH+tKjQh8sleBM+uhOCdMA
+	 BqEUCj5BiOzI/h0nUw7cgcWn5o+d577LmtUnkvDY=
+Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47UASOjC012538
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 30 Aug 2024 05:28:24 -0500
+Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 30
+ Aug 2024 05:28:23 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 30 Aug 2024 05:28:23 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47UASNC0111661;
+	Fri, 30 Aug 2024 05:28:23 -0500
+From: Nishanth Menon <nm@ti.com>
+To: Conor Dooley <conor+dt@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Rob Herring <robh@kernel.org>
+CC: Tero Kristo <kristo@kernel.org>, Vignesh Raghavendra <vigneshr@ti.com>,
+        Nishanth Menon <nm@ti.com>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        Siddharth Vadapalli <s-vadapalli@ti.com>
+Subject: [PATCH] arm64: dts: ti: k3-j721s2-evm-gesi-exp-board: Rename gpio-hog node name
+Date: Fri, 30 Aug 2024 05:28:22 -0500
+Message-ID: <20240830102822.3970269-1-nm@ti.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240815122500.71946-1-papaluri@amd.com>
+Organization: Texas Instruments, Inc.
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Thu, Aug 15, 2024 at 07:25:00AM -0500, Pavan Kumar Paluri wrote:
-> In case of sev PLATFORM_STATUS failure, sev_get_api_version() fails
-> resulting in sev_data field of psp_master nulled out. This later becomes
-> a problem when unloading the ccp module because the device has not been
-> unregistered (via misc_deregister()) before clearing the sev_data field
-> of psp_master. As a result, on reloading the ccp module, a duplicate
-> device issue is encountered as can be seen from the dmesg log below.
-> 
-> on reloading ccp module via modprobe ccp
-> 
-> Call Trace:
->   <TASK>
->   dump_stack_lvl+0xd7/0xf0
->   dump_stack+0x10/0x20
->   sysfs_warn_dup+0x5c/0x70
->   sysfs_create_dir_ns+0xbc/0xd
->   kobject_add_internal+0xb1/0x2f0
->   kobject_add+0x7a/0xe0
->   ? srso_alias_return_thunk+0x5/0xfbef5
->   ? get_device_parent+0xd4/0x1e0
->   ? __pfx_klist_children_get+0x10/0x10
->   device_add+0x121/0x870
->   ? srso_alias_return_thunk+0x5/0xfbef5
->   device_create_groups_vargs+0xdc/0x100
->   device_create_with_groups+0x3f/0x60
->   misc_register+0x13b/0x1c0
->   sev_dev_init+0x1d4/0x290 [ccp]
->   psp_dev_init+0x136/0x300 [ccp]
->   sp_init+0x6f/0x80 [ccp]
->   sp_pci_probe+0x2a6/0x310 [ccp]
->   ? srso_alias_return_thunk+0x5/0xfbef5
->   local_pci_probe+0x4b/0xb0
->   work_for_cpu_fn+0x1a/0x30
->   process_one_work+0x203/0x600
->   worker_thread+0x19e/0x350
->   ? __pfx_worker_thread+0x10/0x10
->   kthread+0xeb/0x120
->   ? __pfx_kthread+0x10/0x10
->   ret_from_fork+0x3c/0x60
->   ? __pfx_kthread+0x10/0x10
->   ret_from_fork_asm+0x1a/0x30
->   </TASK>
->   kobject: kobject_add_internal failed for sev with -EEXIST, don't try to register things with the same name in the same directory.
->   ccp 0000:22:00.1: sev initialization failed
->   ccp 0000:22:00.1: psp initialization failed
->   ccp 0000:a2:00.1: no command queues available
->   ccp 0000:a2:00.1: psp enabled
-> 
-> Address this issue by unregistering the /dev/sev before clearing out
-> sev_data in case of PLATFORM_STATUS failure.
-> 
-> Fixes: 200664d5237f ("crypto: ccp: Add Secure Encrypted Virtualization (SEV) command support")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Pavan Kumar Paluri <papaluri@amd.com>
-> ---
->  drivers/crypto/ccp/sev-dev.c | 2 ++
->  1 file changed, 2 insertions(+)
+Fix the gpio hog node name to p15-hog to match up with gpio-hog
+convention. This fixes dtbs_check warning:
+p15: $nodename:0: 'p15' does not match '^(hog-[0-9]+|.+-hog(-[0-9]+)?)$'
 
-Patch applied.  Thanks.
+Signed-off-by: Nishanth Menon <nm@ti.com>
+---
+Cc: Siddharth Vadapalli <s-vadapalli@ti.com>
+
+This seemed to trivial to add fixes tag, so skipped.
+
+ arch/arm64/boot/dts/ti/k3-j721s2-evm-gesi-exp-board.dtso | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm64/boot/dts/ti/k3-j721s2-evm-gesi-exp-board.dtso b/arch/arm64/boot/dts/ti/k3-j721s2-evm-gesi-exp-board.dtso
+index 1be28283c7d9..8583178fa1f3 100644
+--- a/arch/arm64/boot/dts/ti/k3-j721s2-evm-gesi-exp-board.dtso
++++ b/arch/arm64/boot/dts/ti/k3-j721s2-evm-gesi-exp-board.dtso
+@@ -48,7 +48,7 @@ J721S2_IOPAD(0x09c, PIN_OUTPUT, 6) /* (T24) MCASP0_AXR11.RGMII1_TX_CTL */
+ };
+ 
+ &exp1 {
+-	p15 {
++	p15-hog {
+ 		/* P15 - EXP_MUX2 */
+ 		gpio-hog;
+ 		gpios = <13 GPIO_ACTIVE_HIGH>;
+
+base-commit: d2bafcf224f3911b183113b2fcb536c9e90684a3
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.46.0
+
 
