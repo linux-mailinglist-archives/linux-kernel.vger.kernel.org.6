@@ -1,144 +1,78 @@
-Return-Path: <linux-kernel+bounces-308132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A77AB9657A5
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 08:32:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DB7B965792
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 08:24:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1BD21C22561
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 06:32:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8E4D1C2248D
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 06:24:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32AF214F9F3;
-	Fri, 30 Aug 2024 06:32:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f1RmxXhm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AC5F1531D4;
+	Fri, 30 Aug 2024 06:24:28 +0000 (UTC)
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 751D444C7C;
-	Fri, 30 Aug 2024 06:32:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC88514A0B6
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 06:24:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724999538; cv=none; b=s8PoXj/hIXDunaKUn8yvUZNCwSmeYskbowujI+b0+a2yH2GMihxvM3wJJiUwRZQor//Ec7iZhmBoZSAgkHUqq1nOJlGzPZcoADYNJCCud9ZZ+tAGgw2Lu2278mxqAemkrTYGrJaUSBW0oBo7AYMy9RKymcnx+pdX2ktJFAoKQxI=
+	t=1724999067; cv=none; b=SHl/X/N+6H5fbs5bXi8BpROjWMoJrpKhfXWUPpEaEs7a7w8941iQniRiP64KloU6TzBFL540P/ClqRpe2+dPySaxgJU4fqXkH7VWfoN9mTEES+tYBRCinN8I3LUXzA3ND1cuZLKwuAQsXUp98+U3ofPlQeMK2yLu+89P2ZbMJfY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724999538; c=relaxed/simple;
-	bh=UoC7Tqt2sZoHI4+CzQrsZWia+6J+z2QR8hiT2dGYBog=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sY4PYlxJ5ploJXj3iE5HuVK+EAdH331LDJvMWvHlO6cJ6wyE055FSR2AUuh75mC4niXRdgMPNaGMMLBpL0K9jh2A0ADiavgcKo36na9M1SvriFyBc5tXKMV2g3iAXT0UV9W+S0YFkLvCcygFdzyP5LVlkx9FYqtC4iMSULu+GE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f1RmxXhm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13394C4CEC4;
-	Fri, 30 Aug 2024 06:32:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724999538;
-	bh=UoC7Tqt2sZoHI4+CzQrsZWia+6J+z2QR8hiT2dGYBog=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=f1RmxXhmsX7dEydMo2oMZ0r8rPBpus9eB6kPwhlQxtyOxAuWbZ6KGoMEJE3dCRkrK
-	 kkp+Z6zwnUbf6fBV9lV7YbyTaUdvvFHLThJltopij3KtMrp41GuNoRvXU/8IJlKlMB
-	 D7ZsF+D2mrCxFVn6IJk2nqeYXGQnVmEdrFkvWlJ76NTLnNyFx7tbQNBgO1gTbXz++y
-	 i7j8ukuaBiMOHhy/FNDGa48b7K6AgA1b1OflIfE2AkUnU0GPCPY6TOmFb0INg9mueh
-	 3xJGd7UkvuPK+BmKAsWRgtL8Fvh45DDKHAEiY6YjXfH2eUXZLIXEvtvof759Wkffip
-	 auVcH29/F4nlA==
-Date: Thu, 29 Aug 2024 23:32:14 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: James Clark <james.clark@linaro.org>
-Cc: irogers@google.com, linux-perf-users@vger.kernel.org,
-	kan.liang@linux.intel.com, ak@linux.intel.com,
-	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
-	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Weilin Wang <weilin.wang@intel.com>,
-	Dominique Martinet <asmadeus@codewreck.org>,
-	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
-	Colin Ian King <colin.i.king@gmail.com>,
-	Yang Jihong <yangjihong@bytedance.com>,
-	Ze Gao <zegao2021@gmail.com>, Sun Haiyong <sunhaiyong@loongson.cn>,
-	Jing Zhang <renyu.zj@linux.alibaba.com>,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 7/7] perf test: Add a test for default perf stat
- command
-Message-ID: <ZtFnbq_158fxttmW@google.com>
-References: <20240828140736.156703-1-james.clark@linaro.org>
- <20240828140736.156703-8-james.clark@linaro.org>
+	s=arc-20240116; t=1724999067; c=relaxed/simple;
+	bh=0/aKtq6DVhNpyWnEeUcnJz2hwZwjEWX9C6TxaOrhxaM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RDu+BLAvUdeTDckMvId0wqeNQf7HSMLAqmfb1s7iM8oXcLnxmq/xw7d9ob0e2Rd+oEwRIUI0rvLb/VTMBpW1BmLfkYMq2tx9DY7Twk5YBvuubKKofeHyHXu79qHDz2zWCYNpAei1/CuXfmahR/1Gfp1f2fRAsNQaYkFGwTobaIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4Ww7NZ5Rjwz1xwPk;
+	Fri, 30 Aug 2024 14:22:22 +0800 (CST)
+Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
+	by mail.maildlp.com (Postfix) with ESMTPS id 3841B14011D;
+	Fri, 30 Aug 2024 14:24:21 +0800 (CST)
+Received: from huawei.com (10.90.53.73) by kwepemh500013.china.huawei.com
+ (7.202.181.146) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 30 Aug
+ 2024 14:24:20 +0800
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+To: <nm@ti.com>, <ssantosh@kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <krzk@kernel.org>, <jic23@kernel.org>
+CC: <ruanjinjie@huawei.com>
+Subject: [PATCH -next v2 0/4] soc: ti: Simplify with scoped for each OF child loop and dev_err_probe()
+Date: Fri, 30 Aug 2024 14:32:24 +0800
+Message-ID: <20240830063228.3519385-1-ruanjinjie@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240828140736.156703-8-james.clark@linaro.org>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemh500013.china.huawei.com (7.202.181.146)
 
-Hello,
+Changes in v2:
+- Rebased.
+- Split from the whole soc patch set.
+- Split Simplify with scoped for each OF child and dev_err_probe().
+- Update the commit message.
 
-On Wed, Aug 28, 2024 at 03:07:21PM +0100, James Clark wrote:
-> Test that one cycles event is opened for each core PMU when "perf stat"
-> is run without arguments.
-> 
-> The event line can either be output as "pmu/cycles/" or just "cycles" if
-> there is only one PMU. Include 2 spaces for padding in the one PMU case
-> to avoid matching when the word cycles is included in metric
-> descriptions.
-> 
-> Signed-off-by: James Clark <james.clark@linaro.org>
-> ---
->  tools/perf/tests/shell/stat.sh | 21 +++++++++++++++++++++
->  1 file changed, 21 insertions(+)
-> 
-> diff --git a/tools/perf/tests/shell/stat.sh b/tools/perf/tests/shell/stat.sh
-> index 525d0c44fdc6..24ace1de71cc 100755
-> --- a/tools/perf/tests/shell/stat.sh
-> +++ b/tools/perf/tests/shell/stat.sh
-> @@ -148,6 +148,26 @@ test_cputype() {
->    echo "cputype test [Success]"
->  }
->  
-> +test_hybrid() {
-> +  # Test the default stat command on hybrid devices opens one cycles event for
-> +  # each CPU type.
-> +  echo "hybrid test"
-> +
-> +  # Count the number of core PMUs
-> +  pmus=$(ls /sys/bus/event_source/devices/*/cpus 2>/dev/null | wc -l)
+Jinjie Ruan (4):
+  soc: ti: knav_dma: Simplify with scoped for each OF child loop
+  soc: ti: knav_dma: Use dev_err_probe() to simplfy code
+  soc: ti: knav_qmss_queue: Simplify with scoped for each OF child loop
+  soc: ti: knav_qmss_queue: Simplify with dev_err_probe()
 
-Is it working on non-hybrid systems?  I don't think they have cpus file
-in the core PMU.
+ drivers/soc/ti/knav_dma.c        | 16 ++++--------
+ drivers/soc/ti/knav_qmss_queue.c | 45 ++++++++++----------------------
+ 2 files changed, 19 insertions(+), 42 deletions(-)
 
-Thanks,
-Namhyung
+-- 
+2.34.1
 
-> +
-> +  # Run default Perf stat
-> +  cycles_events=$(perf stat -- true 2>&1 | grep -E "/cycles/|  cycles  " | wc -l)
-> +
-> +  if [ "$pmus" -ne "$cycles_events" ]
-> +  then
-> +    echo "hybrid test [Found $pmus PMUs but $cycles_events cycles events. Failed]"
-> +    err=1
-> +    return
-> +  fi
-> +  echo "hybrid test [Success]"
-> +}
-> +
->  test_default_stat
->  test_stat_record_report
->  test_stat_record_script
-> @@ -155,4 +175,5 @@ test_stat_repeat_weak_groups
->  test_topdown_groups
->  test_topdown_weak_groups
->  test_cputype
-> +test_hybrid
->  exit $err
-> -- 
-> 2.34.1
-> 
 
