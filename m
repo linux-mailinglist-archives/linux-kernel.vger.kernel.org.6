@@ -1,162 +1,126 @@
-Return-Path: <linux-kernel+bounces-309578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9B2A966CFF
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 01:45:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 36B2B966D02
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 01:49:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 678962815C6
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 23:45:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4E6328386A
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 23:49:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7542A192587;
-	Fri, 30 Aug 2024 23:45:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7734118F2FA;
+	Fri, 30 Aug 2024 23:49:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="n5E5gcI8"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BlkmYLfs"
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36FD218F2FA
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 23:45:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52C2B193
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 23:49:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725061520; cv=none; b=TDzNiZgC/+6As2jXF7YKA0Qs/RT3oY6CGBJy9ry6xBirucRHsMxVbCVtux/LsiJypvyxBmkI61eX75nY2rzMkYb6vrFILtWGC+ddcXqHUDADrW+W2xBwjXVbIo9MfHUTARs8nuG6Tx9SJh4hwBr46Ge6NH8u3k7Z2ZmiHWNKc80=
+	t=1725061758; cv=none; b=BKstEqzIUt9lpY0ICvJ5D4bORiRemZ9+H7e7jn/EswP7cJQhTbOncKmMRnnGNvVTZR1u4bz3hHjeFuDQ00l8Ud/d6G0YeeGn8lVYr5a5Fi2egUj1VY1T9WVyQQOi5TnjwOGmEevE0aPNB9rci+iRtXzbUIv9wDTEu/8R9CPP01Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725061520; c=relaxed/simple;
-	bh=wMq8fcpcUbfH9RqkPRWJri2Nj7kzPTs23AYrLOXTvkk=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=NJCZN2oBVqqm/8QPSHuoNitmYJRW9EPfK4cqT6szps0mHaO3AhFwLh9yOdSEwxNcnXV+6SoFshnHxFmJZVrYCgrOGm8pAojaa3cDgVoPAavtGMUR97L7ilT9Fa14JPrkWSeG7QmH3J58wIHdPjpiJ1MKAg7SuzX6xCa3UvgjAwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=n5E5gcI8; arc=none smtp.client-ip=209.85.128.202
+	s=arc-20240116; t=1725061758; c=relaxed/simple;
+	bh=E4bwRTmMN3gpdrrJ+34PGDohq3gLhiEt90gFRaqXxyU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cz3+0lcBqVf1MWhqjYfuo1Sinj82T/Nq5yYX2LiizfUyB2mpbhPSXS3qNVqdMfPBSNip9kw8rbPE66SYvFnjlrr9TMisUr/hAmRdJvTiaJXm94lDr2VWxb1HadzfZ7IaryQm9RM+ErtqkeLNs4ELHnT3+HdNtBDTy2OkFp8nxDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BlkmYLfs; arc=none smtp.client-ip=209.85.160.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-690404fd230so41257037b3.3
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 16:45:18 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-45029af1408so41151cf.1
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 16:49:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725061518; x=1725666318; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rJOwOLrN9fCKsj31ZOyoET6NEGryeoiVS8pcmwkgvZY=;
-        b=n5E5gcI83b6uAQivqmHbIds7cjNDsSTx3PZ/W+u4/PY/dkjMRvPen6mAwR9wk3cJ14
-         9AMEEPrB6kqbJ5cu2An8sP6HQL0b0PL/4gjFazpS5gs1XdWGvIloIg+27HH+YMUE0NhL
-         zsyHSmKiQfrUelXPXV5KHXZ3KQbb15fp9viAuAxkrHeqEWZxawelKH86+c3d1NqCH9h7
-         iLd0Pgo+6a2xsRZFzapOiFrPbGr1LSUadUur6NMXXoC5YL72GUcyWiE9D+hvfkikmRuh
-         ujJwzxQqZHOcNpTblUoEg9bOd8uwEGyV0iA6o9KXd56sJonojpTH6THnNlFzczqhWo2R
-         0iJA==
+        d=google.com; s=20230601; t=1725061756; x=1725666556; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TP0VIEgrFYpHgeMfKEUNg/ROM1J2CbpA619iyejeYoc=;
+        b=BlkmYLfsljY44QTG3HKlIOsBE0II3bP8yl2bq8tdX7jDuFTOPblVZkJacKb1DutT+a
+         dPyGgDQ/SQeMlx7lO1iSM70e4oUYQqPvQ3b3Xnv0GUaB9pKSTdQT3cn0CsDH8i//svdR
+         WQAE9ElP7ImYIYUvnjnIX4/83M7tOLss9V9D+dLFIwoapeIle2EsMgupJ8KlggR5V9A6
+         t8S8orXlEinj36l9/5jCnhQBTdcNeCybByrqLc9+2iLNfiE85Opz5akLm0/xR+K/XWgF
+         8/E7QqgBcBGFBjxYCt2l5TVJdgF1eHW2EeRanxNN3wZmtxYDIxfA3S0mvRl6c9AUOgW/
+         D6OA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725061518; x=1725666318;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=rJOwOLrN9fCKsj31ZOyoET6NEGryeoiVS8pcmwkgvZY=;
-        b=JOK+WLNw1YZe6b4SptdLdDhzeFgGbAY841UbOIGvRxXOjbLtmSH+t0INBdXmRFZuGn
-         4IExNmsce92nOo49oDRHMdj8nFK8HmKJpxwxUFVFdcEtDbQZoLrzioWve9kzFYno3RwE
-         4ctA5pu5HXczIUMFWlEvr0l8DgqCsbDxFMskgopXc6KqQzk8Z+CEi/twlnbvIOUue9wA
-         t5wOjnPpY3sdoloWU7+oTnu13CsldbX35Gc9lDQBq90eh0xeq5XclH1a6vk725kYZGZ+
-         aIMorpzvuVK5WhFMb7bVuhPUKsKcCPx1mlBhUgEvEhSVS4jpgDiH0um6Ud92MQ8wkMKj
-         rkJA==
-X-Forwarded-Encrypted: i=1; AJvYcCWxltK0VmzOeJDCPlMPQmtG7YE7NliF9MaHb7kAuBChoYnI6IZwsF9E2M6pp6V/ddqrIQ0R6U0U6lxXbLg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLmznnXOylg3U7cSzNxL1zg4QjChYYC7xGlUkNzJOA9cJcr/Qy
-	QLjv6VgXFXBcKgYVWol2KO64FNP2ahVYaEd/nXVl1xWNpJqYtWnyWYt6lAbviyZGFkgF6WW5tEa
-	7UQ==
-X-Google-Smtp-Source: AGHT+IH1lPOudhT62PJGTofQxOruBAiqUYlrCNQI4oNs0c97UCsba7G2Vigk3ybkwDh2sT9EBq08lseCwvI=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6902:2493:b0:e0e:4350:d7de with SMTP id
- 3f1490d57ef6-e1a7a1786a0mr6613276.9.1725061518076; Fri, 30 Aug 2024 16:45:18
- -0700 (PDT)
-Date: Fri, 30 Aug 2024 16:45:16 -0700
-In-Reply-To: <CABgObfZSCZ-dgK3zWao573+RmZSPhnaoMsrify9-48UVhbKVdw@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1725061756; x=1725666556;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TP0VIEgrFYpHgeMfKEUNg/ROM1J2CbpA619iyejeYoc=;
+        b=TpKFXOLRupbFzu5sYyRjfJgF/9zbAinx7AV99/LxKZwdpBKHYtYYvjJY5Z/y/+8b6d
+         nXBkHEg0PH/+pbB7I+7gprGF/xwY5Q9I9o011wDoP6n+koJ7nrMaPrlD9CH5aREqG2eu
+         fGUBW+ihgzd5PsGnQMlBIwMFZwrtHonewV8edftWynArzo7Zm3C/SRN3AaJUwUwJ8xJw
+         zwYj823J7wagZrzWVA3zn5+u7mX4U3ADJn5+gG+jfk8a3pbNaj/u2V3HOagFRy+lMGO2
+         7Oyqh6hZPCxIJgAgF1NEIv3nVPuhj0/jUr01/m8itokqOO8sw6Q37u0sLxbmHeDwMdCP
+         DG4Q==
+X-Gm-Message-State: AOJu0YxEUmlCobj/BZhtGxzCmNYSvDMubVQxi6+O2Mpb/VJdgT9tZwcL
+	K0jUyjXS5AAtAyAwYl/ad3ZnKG0VBv5r4MzXkVHcG/77kc9DYGL1RMCD06MclvsIVS6Ny/kmdUl
+	h1YoQRrqrIWeW08zBVsPotJlG0VRU5aw20bSn
+X-Google-Smtp-Source: AGHT+IGhb6pwgPVlootJoP49CP94+EsPf6u+/j/OQWLkWAwJ0wQhWQED7bZMZLKe3dOxdh7MSSDMORHBJlY90a7t6Ho=
+X-Received: by 2002:a05:622a:1a20:b0:453:581f:f29e with SMTP id
+ d75a77b69052e-4574543029cmr1072671cf.24.1725061756115; Fri, 30 Aug 2024
+ 16:49:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240608000639.3295768-1-seanjc@google.com> <20240608000639.3295768-2-seanjc@google.com>
- <efb9af41-21ed-4b97-8c67-40d6cda10484@redhat.com> <Zr4TPVQ_SNEKyfUz@google.com>
- <CABgObfZSCZ-dgK3zWao573+RmZSPhnaoMsrify9-48UVhbKVdw@mail.gmail.com>
-Message-ID: <ZtJZjIRdiN8e5_Es@google.com>
-Subject: Re: [PATCH v3 1/8] KVM: Use dedicated mutex to protect
- kvm_usage_count to avoid deadlock
-From: Sean Christopherson <seanjc@google.com>
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Chao Gao <chao.gao@intel.com>, Kai Huang <kai.huang@intel.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+References: <20240824033757.52005-1-kris.van.hees@oracle.com> <20240824033757.52005-4-kris.van.hees@oracle.com>
+In-Reply-To: <20240824033757.52005-4-kris.van.hees@oracle.com>
+From: Sami Tolvanen <samitolvanen@google.com>
+Date: Fri, 30 Aug 2024 16:48:37 -0700
+Message-ID: <CABCJKufBPaVu-C4bKY=jWxOQJX1OR+7=+DE-wtcy7=d=9ZFFcQ@mail.gmail.com>
+Subject: Re: [PATCH v9 3/4] scripts: add verifier script for builtin module
+ range data
+To: Kris Van Hees <kris.van.hees@oracle.com>
+Cc: linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	linux-modules@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	Nick Alcock <nick.alcock@oracle.com>, Alan Maguire <alan.maguire@oracle.com>, 
+	Masahiro Yamada <masahiroy@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
+	Luis Chamberlain <mcgrof@kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Nick Desaulniers <ndesaulniers@google.com>, Jiri Olsa <olsajiri@gmail.com>, 
+	Elena Zannoni <elena.zannoni@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 15, 2024, Paolo Bonzini wrote:
-> On Thu, Aug 15, 2024 at 4:40=E2=80=AFPM Sean Christopherson <seanjc@googl=
-e.com> wrote:
-> >
-> > On Wed, Aug 14, 2024, Paolo Bonzini wrote:
-> > > On 6/8/24 02:06, Sean Christopherson wrote:
-> > > > Use a dedicated mutex to guard kvm_usage_count to fix a potential d=
-eadlock
-> > > > on x86 due to a chain of locks and SRCU synchronizations.  Translat=
-ing the
-> > > > below lockdep splat, CPU1 #6 will wait on CPU0 #1, CPU0 #8 will wai=
-t on
-> > > > CPU2 #3, and CPU2 #7 will wait on CPU1 #4 (if there's a writer, due=
- to the
-> > > > fairness of r/w semaphores).
-> > > >
-> > > >      CPU0                     CPU1                     CPU2
-> > > > 1   lock(&kvm->slots_lock);
-> > > > 2                                                     lock(&vcpu->m=
-utex);
-> > > > 3                                                     lock(&kvm->sr=
-cu);
-> > > > 4                            lock(cpu_hotplug_lock);
-> > > > 5                            lock(kvm_lock);
-> > > > 6                            lock(&kvm->slots_lock);
-> > > > 7                                                     lock(cpu_hotp=
-lug_lock);
-> > > > 8   sync(&kvm->srcu);
-> > > >
-> > > > Note, there are likely more potential deadlocks in KVM x86, e.g. th=
-e same
-> > > > pattern of taking cpu_hotplug_lock outside of kvm_lock likely exist=
-s with
-> > > > __kvmclock_cpufreq_notifier()
-> > >
-> > > Offhand I couldn't see any places where {,__}cpufreq_driver_target() =
-is
-> > > called within cpus_read_lock().  I didn't look too closely though.
-> >
-> > Anyways...
-> >
-> >   cpuhp_cpufreq_online()
-> >   |
-> >   -> cpufreq_online()
-> >      |
-> >      -> cpufreq_gov_performance_limits()
-> >         |
-> >         -> __cpufreq_driver_target()
-> >            |
-> >            -> __target_index()
->=20
-> Ah, I only looked in generic code.
->=20
-> Can you add a comment to the comment message suggesting switching the vm_=
-list
-> to RCU? All the occurrences of list_for_each_entry(..., &vm_list, ...) se=
-em
-> amenable to that, and it should be as easy to stick all or part of
-> kvm_destroy_vm() behind call_rcu().
+Hi Kris,
 
-+1 to the idea of making vm_list RCU-protected, though I think we'd want to=
- use
-SRCU, e.g. set_nx_huge_pages() currently takes eash VM's slots_lock while p=
-urging
-possible NX hugepages.
+On Fri, Aug 23, 2024 at 8:38=E2=80=AFPM Kris Van Hees <kris.van.hees@oracle=
+.com> wrote:
+>
+> diff --git a/scripts/verify_builtin_ranges.awk b/scripts/verify_builtin_r=
+anges.awk
+> new file mode 100755
+> index 000000000000..f513841da83e
+> --- /dev/null
+> +++ b/scripts/verify_builtin_ranges.awk
+> @@ -0,0 +1,356 @@
+> +#!/usr/bin/gawk -f
+> +# SPDX-License-Identifier: GPL-2.0
+> +# verify_builtin_ranges.awk: Verify address range data for builtin modul=
+es
+> +# Written by Kris Van Hees <kris.van.hees@oracle.com>
+> +#
+> +# Usage: verify_builtin_ranges.awk modules.builtin.ranges System.map \
+> +#                                 modules.builtin vmlinux.map vmlinux.o.=
+map \
+> +#                                 [ <build-dir> ]
 
-And I think kvm_destroy_vm() can simply do a synchronize_srcu() after remov=
-ing
-the VM from the list.  Trying to put kvm_destroy_vm() into an RCU callback =
-would
-probably be a bit of a disaster, e.g. kvm-intel.ko in particular currently =
-does
-some rather nasty things while destory a VM.
+While I was testing this, I did an arm64 build and I'm getting a long
+list of errors that ends with this:
+
+ERROR: Failed to read:
+././drivers/firmware/efi/libstub/.lib.a(efi-stub-entry.stub.o.cmd
+
+  Invalid kernel build directory (.)
+  or its content does not match modules.builtin.ranges
+
+That path looks a bit funky. Have you tested this with other
+architectures? I was able to get this to work on x86 builds just fine.
+
+Sami
 
