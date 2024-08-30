@@ -1,117 +1,101 @@
-Return-Path: <linux-kernel+bounces-309068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE8D19665CA
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 17:38:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E41B49665C7
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 17:37:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F12331C23A2F
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 15:38:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 223AB1C21E06
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 15:37:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33DCB1BE241;
-	Fri, 30 Aug 2024 15:34:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01DCB1B78E6;
+	Fri, 30 Aug 2024 15:34:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X6VBKc8l"
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="G7x7lqFO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 703371B7901;
-	Fri, 30 Aug 2024 15:34:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 426941B653B;
+	Fri, 30 Aug 2024 15:34:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725032059; cv=none; b=OuwCMzL3aMmuNL3HNXvpb3x6vnCMH8x/F2dNBejTPiwaKFJCamu2OE5RiQpK8LpIOL6vWFTavY8KYdTt+goqFR2GRLePDEP8doKd7p2UHNgA6grICTDbvZ7CRUWtnKRRPiQ5efsZN8yEcd4w8xKKw5o/ZRGVnubFnYsmDveSIrA=
+	t=1725032058; cv=none; b=et0bWgCukkY5HUaZBlWmPrfcK7exvoXI2Ud1EgoYCumLc3+4ASINPhrJSLAhmDex8HmEeDsgYQ9i6rMcgGQcspkrUGPFL0BSwyLr8aWOGuFtasui7ThwTbyQT2VZnHnY6YXQ6bg10eTrghLvgkG0OjZJZEzZ/wiwUqSYGjQdbOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725032059; c=relaxed/simple;
-	bh=h5Dh9w2B631NC+SF0BB02Jl/dZ4K6lx7MsnDASvr5tM=;
+	s=arc-20240116; t=1725032058; c=relaxed/simple;
+	bh=/XryR1JGSGlWcvWZUrlRcN4aOhv3ZUX5yaHJjEerzJA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rsjmNrgCAOchpwgYKGwTcTlHabcg9hDPJSCnsbbp6IXBuXv43PQRO4yibnQme3kx6fuoaXeZLn4kkQ37B9ouE/fYT8pGADNb9BCm1VTnTPGABvfG+sRH7WuC0qeYucs69lfIszCvOrywohHmWvzJ08geSl5nmCKFN9mCtXDGriI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X6VBKc8l; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6522C4CEC2;
+	 Content-Type:Content-Disposition:In-Reply-To; b=LrVX4xdKeTTZuZuDXy4B7FsfcMqZc2CbdOqLRXct2hhDfvaIh85wTCdYc4KnRgMz3GdBhEi7+yO2ut0jzfvioIsE15Kdyc2yMKOK524znOufi6xptEx2mBudmDATIxU/CHWssRG/0mmfl4HdCu9dzOgOiUFpOrybyNDCaGQPxpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=G7x7lqFO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 300F0C4CEC5;
+	Fri, 30 Aug 2024 15:34:17 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="G7x7lqFO"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1725032055;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pEF7065aXbW2Ym3pos15rAL0Nq8C/WBIBiNy2olJqEo=;
+	b=G7x7lqFOgvLsWS5KqCk3NLUO7J9PtQXUitskQTDfclq54jRri3t6ESD/XhNLPMTS6zqJtl
+	a/NfgKAh7EaTpWRUcNMTo8P+mUKsW6dbrXJxPSsnivCmLoLMVt+p/wWAA99qf+UzXSxc9i
+	xtdpDW5/bD0ZENmfzHE/BDa1gvIC21o=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 16dad5be (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
 	Fri, 30 Aug 2024 15:34:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725032059;
-	bh=h5Dh9w2B631NC+SF0BB02Jl/dZ4K6lx7MsnDASvr5tM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=X6VBKc8lPgjHp6f7jbf7w0oNckYBnFgYvehEf07A+MY4h6yL6C+/FSAS/unAAC8J8
-	 rfybVNdvl2Lz99RcwuIx7BonGginesqKZ1fDMw/TYcepTeVsjSjzR6uXIqXU8mntTv
-	 1rIXzNmlUPumIAesKpRsea5/b4cWQQ9Bo4HyXcJuxsIPBw6brlWTSBraXa9BrnPQNs
-	 DmteLwUiCGKB631+2XDOAwActb/YbS19+UZoo9e4/9qLc/8Qg+MwJU2lWeIoPHSvEG
-	 x1BO0pbc7nL1UEfT2w+KD5KBisOJ+/jWY77RX/vI1fj5/UTqphXW61u6I4MKX2gLHa
-	 vCy6TMHMk2Dsg==
-Date: Fri, 30 Aug 2024 16:34:13 +0100
-From: Simon Horman <horms@kernel.org>
-To: Menglong Dong <menglong8.dong@gmail.com>
-Cc: idosch@nvidia.com, kuba@kernel.org, davem@davemloft.net,
-	edumazet@google.com, pabeni@redhat.com, dsahern@kernel.org,
-	dongml2@chinatelecom.cn, amcohen@nvidia.com, gnault@redhat.com,
-	bpoirier@nvidia.com, b.galvani@gmail.com, razor@blackwall.org,
-	petrm@nvidia.com, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH net-next v2 08/12] net: vxlan: use vxlan_kfree_skb() in
- vxlan_xmit()
-Message-ID: <20240830153413.GQ1368797@kernel.org>
-References: <20240830020001.79377-1-dongml2@chinatelecom.cn>
- <20240830020001.79377-9-dongml2@chinatelecom.cn>
+Date: Fri, 30 Aug 2024 17:34:13 +0200
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] selftest/vDSO: Fix cross build for the random tests
+Message-ID: <ZtHmdf1XsEJLur84@zx2c4.com>
+References: <20240830-vdso-chacha-build-v1-1-78f93d2a142f@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240830020001.79377-9-dongml2@chinatelecom.cn>
+In-Reply-To: <20240830-vdso-chacha-build-v1-1-78f93d2a142f@kernel.org>
 
-On Fri, Aug 30, 2024 at 09:59:57AM +0800, Menglong Dong wrote:
-> Replace kfree_skb() with vxlan_kfree_skb() in vxlan_xmit(). Following
-> new skb drop reasons are introduced for vxlan:
+On Fri, Aug 30, 2024 at 03:06:35PM +0100, Mark Brown wrote:
+> Unlike the check for the standalone x86 test the check for building the
+> vDSO getrandom and chacaha tests looks at the architecture for the host
+> rather than the architecture for the target when deciding if they should
+> be built. Since the chacha test includes some assembler code this means
+> that cross building with x86 as either the target or host is broken. Use
+> a check for ARCH instead.
 > 
-> /* no remote found */
-> VXLAN_DROP_NO_REMOTE
-> 
-> And following drop reason is introduced to dropreason-core:
-> 
-> /* txinfo is missed in "external" mode */
-> SKB_DROP_REASON_TUNNEL_TXINFO
-> 
-> Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
+> Fixes: 4920a2590e91 ("selftests/vDSO: add tests for vgetrandom")
+> Signed-off-by: Mark Brown <broonie@kernel.org>
 > ---
-> v2:
-> - move the drop reason "TXINFO" from vxlan to core
-> - rename VXLAN_DROP_REMOTE to VXLAN_DROP_NO_REMOTE
+> The x86_64 build is still broken for me because nothing installs
+> tools/arch/x86_64/vdso/vgetrandom-chacha.S (I beleive it's supposed to
+> be copied from ./arch/x86/entry/vdso/vgetrandom-chacha.S but I don't see
+> how?) but this at least fixes all the other architectures.
 > ---
->  drivers/net/vxlan/drop.h       | 3 +++
->  drivers/net/vxlan/vxlan_core.c | 6 +++---
->  include/net/dropreason-core.h  | 3 +++
->  3 files changed, 9 insertions(+), 3 deletions(-)
+>  tools/testing/selftests/vDSO/Makefile | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/net/vxlan/drop.h b/drivers/net/vxlan/drop.h
-> index 416532633881..a8ad96e0a502 100644
-> --- a/drivers/net/vxlan/drop.h
-> +++ b/drivers/net/vxlan/drop.h
-> @@ -13,6 +13,7 @@
->  	R(VXLAN_DROP_ENTRY_EXISTS)		\
->  	R(VXLAN_DROP_INVALID_HDR)		\
->  	R(VXLAN_DROP_VNI_NOT_FOUND)		\
-> +	R(VXLAN_DROP_NO_REMOTE)			\
->  	/* deliberate comment for trailing \ */
->  
->  enum vxlan_drop_reason {
-> @@ -33,6 +34,8 @@ enum vxlan_drop_reason {
->  	VXLAN_DROP_INVALID_HDR,
->  	/** @VXLAN_DROP_VNI_NOT_FOUND: no vxlan device found for the vni */
->  	VXLAN_DROP_VNI_NOT_FOUND,
-> +	/** @VXLAN_DROP_NO_REMOTE: no remote found to transmit the packet */
+> diff --git a/tools/testing/selftests/vDSO/Makefile b/tools/testing/selftests/vDSO/Makefile
+> index e21e78aae24d..7fb59310718c 100644
+> --- a/tools/testing/selftests/vDSO/Makefile
+> +++ b/tools/testing/selftests/vDSO/Makefile
+> @@ -10,7 +10,7 @@ ifeq ($(ARCH),$(filter $(ARCH),x86 x86_64))
+>  TEST_GEN_PROGS += vdso_standalone_test_x86
+>  endif
+>  TEST_GEN_PROGS += vdso_test_correctness
+> -ifeq ($(uname_M),x86_64)
+> +ifeq ($(ARCH),$(filter $(ARCH),x86_64))
 
-Maybe: no remote found for transmit
-   or: no remote found for xmit
+Actually... this doesn't work. Because:
 
-> +	VXLAN_DROP_NO_REMOTE,
->  };
->  
->  static inline void
+ARCH ?= $(shell echo $(uname_M) | sed -e s/i.86/x86/ -e s/x86_64/x86/)
 
-...
+The x86_64 gets turned into an x86. It's a little trickier when
+considering subarch. I'll send a followup here and not queue this.
 
