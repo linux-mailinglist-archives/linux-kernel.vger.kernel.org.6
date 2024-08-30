@@ -1,104 +1,110 @@
-Return-Path: <linux-kernel+bounces-308877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43CA89662FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 15:34:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 706A5966302
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 15:35:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76AFA1C21EF9
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 13:34:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F1D22837B0
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 13:35:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE64C1AD5D6;
-	Fri, 30 Aug 2024 13:33:59 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C22B11ACE00;
+	Fri, 30 Aug 2024 13:35:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="E30l85fb"
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB77B199FA4;
-	Fri, 30 Aug 2024 13:33:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F114199952
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 13:35:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725024839; cv=none; b=cxMcKWFgguec1c5INEjum8mTpgmXt/2pJlWo8ZaujjRRNja/fmwWhN1ETSIHmURzC+Yr5Qqw5ZSyDI6tTGF5WFh9t5sZ09ubJuJ0aJw6hBJDtRqvaQN4HSBpcv4O0eAe/Wm1dwJiMLz20AZuLc/qQRxsOHlkjJ7hR3+Sk1iKUSk=
+	t=1725024931; cv=none; b=cAGeUt/sGPq5fUJLFWKP/5JsiC0q6Z9dLNS1R8uPpSaE5+W5Dyv4X8HuOBTxoI56A23e/CPv7Zzh2OaJMhgUqghMJkgvFGcn3KwU0ZQnlKcrxdHNyS/NTYKsnPkuNbZyHXbCra2Aqk4IpT7UXIE1oN+YdyR1CU51QPggmNkzqm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725024839; c=relaxed/simple;
-	bh=zVMzHLcLjZEgVaXGJ9tVn+DRIBXnzl+zWI8UmzU9mdc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pXNFEWMtannRgbUVBXTMTtoHs8rICuYxYn3ChZXwKxvrppl5EzC/NNsklA5Iw8X7c9kRMlzjKEFwEbQGu9yESLzU4nHtsSTrsrKgIVvaEsAS2BvECwl2+iAHIOvkR817DftOsLV3+z3ACkhWiQBEDNdV5Is5jdM92czcPCPPdwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
-	by APP-05 (Coremail) with SMTP id zQCowABXPjksytFmcK18Cw--.19684S2;
-	Fri, 30 Aug 2024 21:33:34 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: anthony.l.nguyen@intel.com,
-	przemyslaw.kitszel@intel.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	shiraz.saleem@intel.com,
-	david.m.ertman@intel.com
-Cc: intel-wired-lan@lists.osuosl.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Ma Ke <make24@iscas.ac.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH] ice: Fix possible double free in error handling path
-Date: Fri, 30 Aug 2024 21:33:24 +0800
-Message-Id: <20240830133325.3439293-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1725024931; c=relaxed/simple;
+	bh=bG2QJU+RysPPNXXbdeo596snXbZUz33HdRuBGNnU1jg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FCVeoRFWOOLXWMhfZeb80JgXNdYF4BbP3FrwOM8/hiuTSbZmWJNiXvQ092etwuqB+HbLW5Aw0ZZL7w/ZNN+bsAKKdzBGavM2zMzNcdAZnI3ySXmGl2/1qpuT4e3LNlVM94NIS7QyorXMVeXPCZnr2S5P0+UlpCtezR6B39gV0O8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=E30l85fb; arc=none smtp.client-ip=209.85.160.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-456768fb0a6so11071241cf.1
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 06:35:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1725024928; x=1725629728; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=lHvnH/4zOuzzT8TCzaUdUbOM1uEXUpCOxCXYL3PqkuU=;
+        b=E30l85fbSojXnuXxRtMmnTpEUKNtWrxsvdSUjjbEYSm8o00Dzn0A3IjJQFbsRXUwlm
+         3ogKcjjt8Eqyafsjm0s7aK3FbNAB3FZ79zoSH8pGvw4+DtkoZmSP9/lpcyKQZ4+dn0Tk
+         lA55KuhOno7SkXmHj+L4IrB9EwdVfS8MU2BsY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725024928; x=1725629728;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lHvnH/4zOuzzT8TCzaUdUbOM1uEXUpCOxCXYL3PqkuU=;
+        b=npWhYw5ekJQ4H1SxlUp5Fnzzhn+k/4D7tX6iHPEx+yftv1VTJN0wtASwEPZuYB23OT
+         L/xS/ljR0HJrIq09vE0MD2Nm3hHEziCXcZ9Npouv4B2gUM4p6XkBqt0u9ROGNTBR70Yv
+         8udrf5kp3Ok4CvSyw6owbmfNYjX/vM0kfvMIOoHngizKkoKEkY8/y0pYtVGZJA/3tPGu
+         ll/rJOB3jm8qER2QKYrwGN2tcWw+iNrcF8pOHiL3hrvDJzBcML6GdXEhfzGkSGRo21GF
+         Xj9GDb/c9wh1bjOTLYqjZiaLWikSFuRyXnqkExEPpZVMwyajOMkmyt89d1pW3IWnBlxQ
+         ol0g==
+X-Forwarded-Encrypted: i=1; AJvYcCUEcfM6KoOPipz0eSfhaZySH+o50p0eBKWAZin59eDl3pcM8hnyS278YpKUOkT2jNsDvz9NbkbBTx6AfnM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzOQIaGTUsGaDiTaVijmjSkVaqiNKEYEr2bvlBPmYwPRVZjZt6
+	lhvr+U5beLQPoIFQ8cfA4yYVa/XqXSCMedr9NQ8F7j+fPQ3CiBulMVKW4PtNSck=
+X-Google-Smtp-Source: AGHT+IG8cg3+iwNoBRjX29bHUWGerLYZqb/2lmBI6h5IfvZ9WYS6tunfEvRS+bcOhw4pt4KgG5PXtw==
+X-Received: by 2002:a05:622a:40c8:b0:456:4688:d70b with SMTP id d75a77b69052e-4567f71c204mr79224871cf.61.1725024928201;
+        Fri, 30 Aug 2024 06:35:28 -0700 (PDT)
+Received: from [172.19.248.149] ([205.220.129.17])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45682d66c9dsm13869521cf.76.2024.08.30.06.35.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 30 Aug 2024 06:35:27 -0700 (PDT)
+Message-ID: <af63ebb4-af0c-4b0d-9b58-691be5087868@linuxfoundation.org>
+Date: Fri, 30 Aug 2024 07:34:53 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowABXPjksytFmcK18Cw--.19684S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7JF4rAFyrtryDKry3GryUKFg_yoWfZrX_u3
-	W2vryfXr4DGFyFya15Ar47Za40kFyDtas5GFyIqa43tw45Wry3uas7Wr1rJ3y5GryqyFyU
-	Cas7tryxA3yDKjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbfAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
-	Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
-	0DM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
-	64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8Jw
-	Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAG
-	YxC7M4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7V
-	AKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCj
-	r7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6x
-	IIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAI
-	w20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x
-	0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbQVy7UUUUU==
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/5] selftests: vdso: Fix vDSO name for powerpc
+To: "Jason A. Donenfeld" <Jason@zx2c4.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>, Shuah Khan <shuah@kernel.org>
+Cc: Vincenzo Frascino <vincenzo.frascino@arm.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Andy Lutomirski <luto@mit.edu>,
+ "H. Peter Anvin" <hpa@linux.intel.com>, Mark Brown <broonie@kernel.org>,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, Shuah Khan <skhan@linuxfoundation.org>
+References: <6c5da802e72befecfa09046c489aa45d934d611f.1725020674.git.christophe.leroy@csgroup.eu>
+ <ZtG-DqWo8kBMocVh@zx2c4.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <ZtG-DqWo8kBMocVh@zx2c4.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-When auxiliary_device_add() returns error and then calls
-auxiliary_device_uninit(), callback function adev_release
-calls kfree(iadev). We shouldn't call kfree(iadev) again
-in the error handling path. Set 'iadev' to NULL.
+On 8/30/24 06:41, Jason A. Donenfeld wrote:
+> Hi Shuah,
+> 
+> No 0/5 patch, so replying to the first one.
+> 
+> These are fixes to the vDSO selftests that Christophe is ostensibly
+> providing as a preamble to his work porting vgetrandom to PPC. Do you
+> mind if I take these via my random tree so his PPC vgetrandom code can
+> go on top of it?
+> 
+> Jason
+> 
 
-Cc: stable@vger.kernel.org
-Fixes: f9f5301e7e2d ("ice: Register auxiliary device to provide RDMA")
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
----
- drivers/net/ethernet/intel/ice/ice_idc.c | 1 +
- 1 file changed, 1 insertion(+)
+Yes - here is the Ack to apply to all patches in the series:
 
-diff --git a/drivers/net/ethernet/intel/ice/ice_idc.c b/drivers/net/ethernet/intel/ice/ice_idc.c
-index 145b27f2a4ce..5db05f54a80c 100644
---- a/drivers/net/ethernet/intel/ice/ice_idc.c
-+++ b/drivers/net/ethernet/intel/ice/ice_idc.c
-@@ -330,6 +330,7 @@ int ice_plug_aux_dev(struct ice_pf *pf)
- 		return ret;
- 	}
- 
-+	iadev = NULL;
- 	ret = auxiliary_device_add(adev);
- 	if (ret) {
- 		auxiliary_device_uninit(adev);
--- 
-2.25.1
+Acked-by: Shuah Khan <skhan@linuxfoundation.org>
 
+thanks,
+-- Shuah
 
