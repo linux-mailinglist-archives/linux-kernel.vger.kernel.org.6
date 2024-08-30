@@ -1,113 +1,159 @@
-Return-Path: <linux-kernel+bounces-308402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5D81965C7D
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 11:14:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DC16965C7F
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 11:15:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62D9228962F
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 09:14:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DA0C2B21F6E
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 09:15:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24CC1170822;
-	Fri, 30 Aug 2024 09:14:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9564717332B;
+	Fri, 30 Aug 2024 09:14:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="QqYfZ5hL"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="MYe3iDKv"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90631165EED
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 09:14:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C1EA170A19
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 09:14:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725009285; cv=none; b=DrLauEvLwmC9OILwWseuNJZnHcAoBIErj0sU8D8lpxJJzStLkbQkj3Aljmu84PKkUzpfbBV56qgK+tY3MMpbm0ZgMpxnnpDY/EWTqvYKItQXt/Xw9YrIrRHfIx4KacGoccGGjfvuCCvYYwpPGbq9iA+OzjtSex5By6Wf4iOh0KQ=
+	t=1725009288; cv=none; b=f6GgMxJCu1NMEf4Nyd+g7YB0RFWYJfc0G8JWbpqLW7qyPs17aQBQESY8Ma0PS7whQB853XpbafDFDGxWiitw6nDbXSPOinql9wMsmz37y7hkn0okEiIlIH1ApDY5yMLG3pI2vXttgFgGyOptCLqjSI6RNJCNgkgcXQ3NGbSq/I4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725009285; c=relaxed/simple;
-	bh=MunnVq1WWPfhulh5ublCo8ivCjgw6ojCfob+0vtSfi4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LpEME1wfbzIFxOZDaKFw0wkR/7ZQJ6NWW01h+2vAl+YrdVmeU1MlaPHRHfVqYWdo+mgZJ3dewXrq3h6yJB1Bcc3CBsTN2FbLAkVIH1bpNwUPXY37606J9t3xNGDC/SYXM1Lr4utjx2i8l8WsOPEo0Yf5HS0OyNCN9sPy9oangZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=QqYfZ5hL; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a7aa086b077so155271766b.0
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 02:14:42 -0700 (PDT)
+	s=arc-20240116; t=1725009288; c=relaxed/simple;
+	bh=Be/ZXGgJhznFStfm5kc4CEbbjD/yQhPDJ4xEYxcPO5k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sull2bDjMxeDCm8EYTv2j3gTqR5R1bp0HbJpZf3qy+OLNNacpJAnvrD/sgdBhIXE4kBtA9xM4Dg3BxjLF21JuAEgGxp55O23Q/aaa/Sdk07lejqgCNWsz3PL95nf+/dVxQMHbQxUOv8wFgepT1TLJdrxl7YT9b6oTGwbUavvq0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=MYe3iDKv; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2f43de7ad5eso20564791fa.1
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 02:14:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1725009281; x=1725614081; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dCpWiuYzwJ/FauLPmsqDAK2T4ZYA4VoIq/mWU+rdRSc=;
-        b=QqYfZ5hLq0ypboJ6yPa6PI/cwgQJ8qWKLrViJ1uBcDTorND0H/kXZOCaEfCO6VRbEE
-         Gs7a/1cCe1nZgVL+GqOhHUmdp2J3aR31/+n+PK/AxdhSv2pDoibZOaOXtacqA3KlZfFe
-         DlL8oZWEvdc8depAixo4EhEEieui7bv46/P5/lLDRYHdPGEtNjreyJvX5lA1oTrsw3nz
-         IsKcIAF19mE/LW1ndoio8tOfSiD4gPt6t1wEz96OoGPTkXfa4T+crybDgtRrdoaOIhdy
-         WpdWp8uzlA8sSb7JtNViBWf3SSjVNqn/bWyJ/NaHihgf5i3ccGt6kO+FctxQZMAC0HQI
-         IPeA==
+        d=fastly.com; s=google; t=1725009285; x=1725614085; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dHsMn5kFdGCBqudkVoxsaBBiaJWQEZ/c0MyvIXo/wrs=;
+        b=MYe3iDKvTokGpcc8CPHXPGxXTdd9mFRe/hT2yWSuX0jOyUx+j14LJIH8zSIDWXwdpz
+         1b0LSE6kLANtOVErFLxpQodDIRfwtnms/ifysVllLvN5KY5it+2tH3Se+ouxThj9NqE4
+         /mRhq7CjLWfWApjXPlVmNzCOHC4Qj5UKoc66w=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725009281; x=1725614081;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1725009285; x=1725614085;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dCpWiuYzwJ/FauLPmsqDAK2T4ZYA4VoIq/mWU+rdRSc=;
-        b=d4TUY1EOuGhNOKodckgHSYvhh8GLk94KFxtRcla7vrDudKLKWldP6xTxzvkRYynazQ
-         t8HoVq34xsDcHAwtl3XzGtra3LOKQYGnh1EPrufq8wxJO/asakW0axW48yYkX7XiAR0M
-         vptGcpfh1UWusOBNEd7IPNQEUJJBP9zgoGWqxBhOMB9ssvnkXAA+mgeCI+f6VxEkbyyX
-         l4hEraH5BMm1uKnoD5UbkaDP1VZyDd98TZ9DNUe9g33l5fDa/BH7fTuFin8MNCN1ISXj
-         5mkPI9eQBtfydek131DJVD4flKMOcteVDwxSosXTAI8jgiHh64dgSozvbV/54iZQgPV8
-         DT8w==
-X-Forwarded-Encrypted: i=1; AJvYcCXBGAarAI86a1nyXTdnF/myzuIFodlvBA4lU04H12mdpteJ9KUo9i44p6DQIbpjGV4b4JlEImM8B3qFqoc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzY1nWTj+dp8U7SyPBBZBMaDK8ew//2iIaWc8OyNvBjF2dTp8FF
-	iD+ZRLKesv6oqNkFfWflTchb8ass+joChAfOLfcZNvS99PfGAJxWzMmFd3QwMb4=
-X-Google-Smtp-Source: AGHT+IFAr1LxcA7An7pzAxQ81bnftOoBZ24oOM6gpjEcc9xyIM4qbjIqXwvlNIMbdUQuIuTDlnqWQA==
-X-Received: by 2002:a17:907:7d93:b0:a86:746a:dced with SMTP id a640c23a62f3a-a897f822f9bmr481910566b.19.1725009280520;
-        Fri, 30 Aug 2024 02:14:40 -0700 (PDT)
-Received: from [10.20.4.146] (212-5-158-102.ip.btc-net.bg. [212.5.158.102])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a89891a3ceasm190249166b.115.2024.08.30.02.14.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 30 Aug 2024 02:14:40 -0700 (PDT)
-Message-ID: <8c651be6-aa5a-4ae6-b58e-aac2efa31de0@suse.com>
-Date: Fri, 30 Aug 2024 12:14:37 +0300
+        bh=dHsMn5kFdGCBqudkVoxsaBBiaJWQEZ/c0MyvIXo/wrs=;
+        b=j7CHjWC5RPMrC2rrNLWZWjcaOhNYO6j1QUuidk/2/kWZv/IemA6u2fii6pMjCVmQSP
+         gMP9RjzoM00/njCT6K6su/MAbZLTvuJzPYapjgeAsy7VbkaCKaewg30QG2HzxDATjOhV
+         maXFR7WPASHqjIEtuK1LNxuOtn6VKKFJ/rDOK7BDXwebUgz6kbaf1LJQRa/a4FMJJM0I
+         MbWKLx+I0sQhnZyHpnYbHK9tp/foQUbOq4f0B3XmXI6/55YaKP+Fe/eVKEqf5lDb7Lgo
+         8p7sqaSuqBTSFRskrcCDgQk2Z9S4nwfWn5hRw6HtpV6LFIVtQEiMxkkppzizhmO7n9ri
+         X4vQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV8paplrJQRMeDEqoEVFUzXlP0gYHB+gmu72L5ygROIayqAoHTYbOHQdhmtGOLB1jWUAxGDmD8RROeBzpY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YybuHajKITcMOo914FutWcLLaBs8tqC6Z2OG4rZ1sHhNj1guPkO
+	VUtFgL+ZqmkMkryJDODt2MGXWhBBNcaIkIyRH0VOkHmhwMaJmVkCqhIdCXv6w+g=
+X-Google-Smtp-Source: AGHT+IHrVWZfHTQhT1DNzeqyBzoKe1zbIswbPjjJzfJTqyX34FI39PiV6qLxU/kQYANfmbNGGzd1GQ==
+X-Received: by 2002:a05:6512:3b14:b0:533:4e2b:62fd with SMTP id 2adb3069b0e04-53546b035d0mr1076878e87.18.1725009284459;
+        Fri, 30 Aug 2024 02:14:44 -0700 (PDT)
+Received: from LQ3V64L9R2 ([80.208.222.2])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a89890090a1sm191708766b.49.2024.08.30.02.14.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Aug 2024 02:14:44 -0700 (PDT)
+Date: Fri, 30 Aug 2024 10:14:41 +0100
+From: Joe Damato <jdamato@fastly.com>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: netdev@vger.kernel.org, edumazet@google.com, amritha.nambiar@intel.com,
+	sridhar.samudrala@intel.com, sdf@fomichev.me, bjorn@rivosinc.com,
+	hch@infradead.org, willy@infradead.org,
+	willemdebruijn.kernel@gmail.com, skhawaja@google.com,
+	Martin Karsten <mkarsten@uwaterloo.ca>,
+	"David S. Miller" <davem@davemloft.net>,
+	Paolo Abeni <pabeni@redhat.com>, Jiri Pirko <jiri@resnulli.us>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Breno Leitao <leitao@debian.org>,
+	Johannes Berg <johannes.berg@intel.com>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next 1/5] net: napi: Make napi_defer_hard_irqs
+ per-NAPI
+Message-ID: <ZtGNgfXZv2BWbtY3@LQ3V64L9R2>
+Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
+	Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+	edumazet@google.com, amritha.nambiar@intel.com,
+	sridhar.samudrala@intel.com, sdf@fomichev.me, bjorn@rivosinc.com,
+	hch@infradead.org, willy@infradead.org,
+	willemdebruijn.kernel@gmail.com, skhawaja@google.com,
+	Martin Karsten <mkarsten@uwaterloo.ca>,
+	"David S. Miller" <davem@davemloft.net>,
+	Paolo Abeni <pabeni@redhat.com>, Jiri Pirko <jiri@resnulli.us>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Breno Leitao <leitao@debian.org>,
+	Johannes Berg <johannes.berg@intel.com>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>,
+	open list <linux-kernel@vger.kernel.org>
+References: <20240829131214.169977-1-jdamato@fastly.com>
+ <20240829131214.169977-2-jdamato@fastly.com>
+ <20240829150502.4a2442be@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/8] x86/virt/tdx: Refine a comment to reflect the
- latest TDX spec
-To: Kai Huang <kai.huang@intel.com>, dave.hansen@intel.com,
- kirill.shutemov@linux.intel.com, tglx@linutronix.de, bp@alien8.de,
- peterz@infradead.org, mingo@redhat.com, hpa@zytor.com,
- dan.j.williams@intel.com, seanjc@google.com, pbonzini@redhat.com
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
- rick.p.edgecombe@intel.com, isaku.yamahata@intel.com, chao.gao@intel.com,
- binbin.wu@linux.intel.com, adrian.hunter@intel.com
-References: <cover.1724741926.git.kai.huang@intel.com>
- <88b2198138d89a9d5dc89b42efaed9ae669ae1c0.1724741926.git.kai.huang@intel.com>
-From: Nikolay Borisov <nik.borisov@suse.com>
-Content-Language: en-US
-In-Reply-To: <88b2198138d89a9d5dc89b42efaed9ae669ae1c0.1724741926.git.kai.huang@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240829150502.4a2442be@kernel.org>
 
+On Thu, Aug 29, 2024 at 03:05:02PM -0700, Jakub Kicinski wrote:
+> On Thu, 29 Aug 2024 13:11:57 +0000 Joe Damato wrote:
+> > +/**
+> > + * napi_get_defer_hard_irqs - get the NAPI's defer_hard_irqs
+> > + * @n: napi struct to get the defer_hard_irqs field from
+> > + *
+> > + * Returns the per-NAPI value of the defar_hard_irqs field.
+> > + */
+> > +int napi_get_defer_hard_irqs(const struct napi_struct *n);
+> > +
+> > +/**
+> > + * napi_set_defer_hard_irqs - set the defer_hard_irqs for a napi
+> > + * @n: napi_struct to set the defer_hard_irqs field
+> > + * @defer: the value the field should be set to
+> > + */
+> > +void napi_set_defer_hard_irqs(struct napi_struct *n, int defer);
+> > +
+> > +/**
+> > + * netdev_set_defer_hard_irqs - set defer_hard_irqs for all NAPIs of a netdev
+> > + * @netdev: the net_device for which all NAPIs will have their defer_hard_irqs set
+> > + * @defer: the defer_hard_irqs value to set
+> > + */
+> > +void netdev_set_defer_hard_irqs(struct net_device *netdev, int defer);
+> 
+> Do you expect drivers or modules to call these?
+> I'm not sure we need the wrappers just to cover up the READ/WRITE_ONCE()
+> but if you do want to keep them they can be static inlines in
+> net/core/dev.h
 
+It looked like there were a few call sites for these in
+net/core/dev.c, the sysfs code, and the netlink code.
 
-On 27.08.24 г. 10:14 ч., Kai Huang wrote:
-> The old versions of "Intel TDX Module v1.5 ABI Specification" contain
-> the definitions of all global metadata field IDs directly in a table.
-> 
-> However, the latest spec moves those definitions to a dedicated
-> 'global_metadata.json' file as part of a new (separate) "Intel TDX
-> Module v1.5 ABI definitions" [1].
-> 
-> Update the comment to reflect this.
-> 
-> [1]: https://cdrdv2.intel.com/v1/dl/getContent/795381
-> 
-> Reported-by: Nikolay Borisov <nik.borisov@suse.com>
-> Signed-off-by: Kai Huang <kai.huang@intel.com>
+I figured having it all wrapped up somewhere might be better than
+repeating the READ/WRITE_ONCE() stuff.
 
-Reviewed-by: Nikolay Borisov <nik.borisov@suse.com>
+I have no preference on whether there are wrappers or not, though.
+If you'd like me to drop the wrappers for the v2, let me know.
+
+Otherwise: I'll make them static inlines as you suggested.
+
+Let me know if you have a preference here because I am neutral.
+
+> nit: IIUC the kdoc should go on the definition, not the declaration.
+
+My mistake; thanks. I suppose if I move them as static inlines, I'll
+just move the kdoc as well and the problem solves itself :)
 
