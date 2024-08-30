@@ -1,140 +1,142 @@
-Return-Path: <linux-kernel+bounces-309289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70BAE966895
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 20:01:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AB1B696689A
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 20:01:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A12C71C23A99
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 18:01:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE44B1C20935
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 18:01:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 571741BA89B;
-	Fri, 30 Aug 2024 18:01:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C8B01BC068;
+	Fri, 30 Aug 2024 18:01:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="WIdXrmX1"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N0ow5aR9"
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 100AC1BAEE3
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 18:01:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D6041BAEE3;
+	Fri, 30 Aug 2024 18:01:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725040884; cv=none; b=qRye2vDlKhoFkGhbjKw81rzHlnMNr/ut9hiVw7bc4Mr2RrsnIjgR4pQ+FC2mfFMeGoPSJnGklQh6aPky/GGBJunEAHAJ42PmkMsfbfxoQznx6H2pFv0Rb6l90BCRGDtx9a/u+1Uq8nK2JXx5vtbsoNePMuh2kykIOY8Zmgvgevc=
+	t=1725040899; cv=none; b=BJI0TjbAH1ot3yM6Iv6VdEzMpfgZJN7OD4yzzZNCwhpiYX+xZnlTbYxUEBhkzXxJYBqL3cvdRQhV4wkMy2lYiQhiB0i6FyHERL8xyAixqqByX7gL31kQ0h9tuwP4H8K6fOs6q5NTrs1i0Sh7SwHeyYlZ97jvzNQAY0m6UEVRevI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725040884; c=relaxed/simple;
-	bh=iONqyQ/8IRXyxLGbP8yDXUNOn1rmtSVFD3P6Y5gH4Rs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VzwRoD2B2znnD5+Fvx+QFY5ClIwoGZMxv1XAu5Q09S2zcl7C4hdal4IXCuIINLdJV07eRmTf+7ntmubOpYqlgem+KHkGo6b81hv+6PCCgb7xrAnfAqquqNr54wSQQNgay1A9Sf60252Xn/XJKzqJMZsEvaHTWb7y7IHSaoL4p0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=WIdXrmX1; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-7140ff4b1e9so1841219b3a.3
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 11:01:22 -0700 (PDT)
+	s=arc-20240116; t=1725040899; c=relaxed/simple;
+	bh=ZS7rAQHnKHVt9ULoDQ7CQ752YPOg47HODDvhgraxX1E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OwwKBPTh19+nlHElvn6FzRtXDaEgMZ1keQiGBAhAddvFemwgcvj++X5/uXzKT9HMzoe67rQzjFIlnYE670MePXOTKLNj8AaOB+1sQs8qrmw2pTkNRC9PFfJv42R04w316548c/tS2aQr50S+rD2cu/oaxx76ezRcW1bmk8asgis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N0ow5aR9; arc=none smtp.client-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-45693d58a19so3191571cf.1;
+        Fri, 30 Aug 2024 11:01:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1725040882; x=1725645682; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=WHX2e16HhFXHNyVsyMjV+wt66b4YFtJkCjB0C7Pos18=;
-        b=WIdXrmX1GUazbBuDiYqieW+IyGllXuGQglxoZDp9R4TnSr7irujhZbbeNsnX7VvcWE
-         O+VzpdzjRPo+QSwx1i20hQoGf0cPQCvPOwOobEudxvs1SscITYMpvYTNyUf3FDs6yd8c
-         GEKySrHNJ3Al92gQYqf2jpBvL9Th6Upl71txkzLxcZ72vA2qqya61qrikfVbuwBSSxHJ
-         jSRk1z24X6ateLvjgLOZ3GjgSGvoQzr5KNksSEDd1yV+OfNBRIvhS9qmuJZFm76fCL2X
-         ZDEckrZ0560knSxJmNN3piIJXBk55b47LXY8oUbYcBi9CyOmtauZJYBkMMCIk0YG+bKz
-         RbjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725040882; x=1725645682;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1725040897; x=1725645697; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=WHX2e16HhFXHNyVsyMjV+wt66b4YFtJkCjB0C7Pos18=;
-        b=AoXYv4eAaLAhJhqu04cY/fJniIaQgE8FH3aRuJQNgLH25eu0QCzHES0vP/SlKxSY39
-         6QlvaZX0mKmfMeyX26Cubp6FtaARbngTardK8eihJ2MfuS8fWN0ADM5CY7FhqOYcaUoh
-         03z1XDsFUnVZu1GhJfs0HPyBaUoE/C38p8OqV1KkumsFsJpWjX4KdcdZPuM9oQpz8LLc
-         PwQNy5R4UhemyUsBNMBirMNrPxAShly29VvdMc+Jrgrvavm8bFVGAbbWs4yiVzCwXz12
-         WC+E8lali5URNOwvw+J+thuMWf6PM2svP588TvvMn9EpfRjxA1fWDPCqjLkGQSntvIq1
-         f3Ig==
-X-Forwarded-Encrypted: i=1; AJvYcCXT4w0npXESZg6rre50FLvQmkkTvWMsJ0FyppdCUZLa/7tJRme5wqDnj2jY2PVQXditIn/JCZ5S+L1Sbu8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwaTsBcQMbf1VzIlhXPpOl5X4UAfW8xwv3GguWxCRvYVpz2IMlU
-	1sneJgIu/+9K5M+WJbI9Vl98Hx/vyptzHUw2RrgDADANZyqOXYTVJVTgrdoRHfQ=
-X-Google-Smtp-Source: AGHT+IEFG8jRDeUE2XzEv/D/mcMBxmEig6pfl17gyEOiCPD1MBq5+4FIl0XovF0o+BsUsWuJ23oV4w==
-X-Received: by 2002:a05:6a20:d494:b0:1c4:8da5:21a4 with SMTP id adf61e73a8af0-1cce10aed82mr5375029637.41.1725040881940;
-        Fri, 30 Aug 2024 11:01:21 -0700 (PDT)
-Received: from medusa.lab.kspace.sh (c-98-207-191-243.hsd1.ca.comcast.net. [98.207.191.243])
-        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-715e569e9a9sm3046256b3a.117.2024.08.30.11.01.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Aug 2024 11:01:21 -0700 (PDT)
-Date: Fri, 30 Aug 2024 11:01:19 -0700
-From: Mohamed Khalfella <mkhalfella@purestorage.com>
-To: Alexander Lobakin <aleksander.lobakin@intel.com>
-Cc: Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	yzhong@purestorage.com, Tariq Toukan <tariqt@nvidia.com>,
-	Shay Drori <shayd@nvidia.com>, Moshe Shemesh <moshe@nvidia.com>,
-	netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/1] net/mlx5: Added cond_resched() to crdump
- collection
-Message-ID: <ZtII7_XLo2i1aZcj@ceto>
-References: <20240829213856.77619-1-mkhalfella@purestorage.com>
- <20240829213856.77619-2-mkhalfella@purestorage.com>
- <cbec42b2-6b9f-4957-8f71-46b42df1b35c@intel.com>
+        bh=HLvYg5qPZOuBa2bLwjdlcUDAONbv8N/Y0QijdwRkes4=;
+        b=N0ow5aR9aV9/WvouxeIs88GO9yxT5CDIUWW17pgldQD3B6fYCa/oGBI4/gWrrbZnKm
+         bt+W+jCVM9rQYMaQD9WaaUs3ZxPlqSw1sekz8qPGnrxYvur/nSM+psUX8moxVy4F2FTy
+         sa5PPqELSM0oYN5e7qpuDhOyAAToF2Lpv9T8EEATkrFAD49W9K9KD7VQdK3zWhhnnwif
+         pThNPnNUkkcSXj7Zap0gBOKUrYETOijH3qKKqpY8ETXLMhlOV+xiwQZBD2kBRGK08iSm
+         vqDvlGOHbwvsEdW2HtJbIV629+ZOH8XYT71C88Ukf0ZPhWk5MkSOUvgXss/VQsd7YmMH
+         8efQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725040897; x=1725645697;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HLvYg5qPZOuBa2bLwjdlcUDAONbv8N/Y0QijdwRkes4=;
+        b=MAn0gaZbD8AMEeYM4sT34DHN9QhLmvyyeJG/1pdMHQl1zQ0aZq7aDhBLP+mjduJXxx
+         oFjSgoTB0EQL4MSujqtz6IJgWdLUFEDJ8uk+jsRdyF9rWZNtYAB5tgjP442Sm5sbPFAh
+         J6ZaJ+cFZrjTA3WC2Jes4xcHcS7cILMeB9yEDboOxcBEoD6o1e+o0YM5Inx0im/ZDayR
+         +DI0aRDGO1j4Lk/1oMln3+cQWeOCgGgQAZ3pvB1QRpbghP46P25Ve7eTgf5gu9aMho4L
+         DXYKOrT1Fmq+IkWtpnV9ip2ESmwTWtooNLhApZGDWprBSg+QKF2/STlkAXVO/IS678+j
+         /rTg==
+X-Forwarded-Encrypted: i=1; AJvYcCVpVxZcZDx6ssgGvGiC2PggF5Mnd36wq4IDSy862P23hcKMEzeF+G3kCITfN4FSOY55Xwi3zXggQnKzwTdn@vger.kernel.org, AJvYcCXJ85lS+8I/z9iXxpYjEsD/NpXCKOb1smW4JsVJbVnJ1jfu+noLEHouDWwCZuKnM3qUHczOt1GKvoHfhMDp@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJN0N7eP7FwESI9YNvBCjHPCn0BQbxoMV/A9in524rfCQJxFaz
+	DLMYW0HV3FMNiKgHU5UZpIO6Uk26q03Lm0vEk+mWbBC+mgkBa5hvV2BTTxTeO7RdHwDdS3leCma
+	GLXv5Sq80SGUuCjgwdi6M473z+kY=
+X-Google-Smtp-Source: AGHT+IFu///hBMmZWnVnZFXWWl3sgqFDNwBWJcs8tlCbuU7dA43zOW8J5u4FcLF2SJo5g8r7eT05NQ0pWhwY2DhDSV0=
+X-Received: by 2002:a05:622a:2b4a:b0:44f:f11a:63de with SMTP id
+ d75a77b69052e-4567f6fae93mr77951991cf.61.1725040896527; Fri, 30 Aug 2024
+ 11:01:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cbec42b2-6b9f-4957-8f71-46b42df1b35c@intel.com>
+References: <20240830-preemption-a750-t-v2-0-86aeead2cd80@gmail.com> <20240830-preemption-a750-t-v2-4-86aeead2cd80@gmail.com>
+In-Reply-To: <20240830-preemption-a750-t-v2-4-86aeead2cd80@gmail.com>
+From: Rob Clark <robdclark@gmail.com>
+Date: Fri, 30 Aug 2024 11:01:23 -0700
+Message-ID: <CAF6AEGtxCnoyrEHPknV7C9XO3OcTpSOmGq-j2K7UDKXF1j0ssA@mail.gmail.com>
+Subject: Re: [PATCH v2 4/9] drm/msm/A6xx: Implement preemption for A7XX targets
+To: Antonino Maniscalco <antomani103@gmail.com>
+Cc: Sean Paul <sean@poorly.run>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, linux-arm-msm@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, Sharat Masetty <smasetty@codeaurora.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2024-08-30 15:07:45 +0200, Alexander Lobakin wrote:
-> From: Mohamed Khalfella <mkhalfella@purestorage.com>
-> Date: Thu, 29 Aug 2024 15:38:56 -0600
-> > diff --git a/drivers/net/ethernet/mellanox/mlx5/core/lib/pci_vsc.c b/drivers/net/ethernet/mellanox/mlx5/core/lib/pci_vsc.c
-> > index 6b774e0c2766..bc6c38a68702 100644
-> > --- a/drivers/net/ethernet/mellanox/mlx5/core/lib/pci_vsc.c
-> > +++ b/drivers/net/ethernet/mellanox/mlx5/core/lib/pci_vsc.c
-> > @@ -269,6 +269,7 @@ int mlx5_vsc_gw_read_block_fast(struct mlx5_core_dev *dev, u32 *data,
-> >  {
-> >  	unsigned int next_read_addr = 0;
-> >  	unsigned int read_addr = 0;
-> > +	unsigned int count = 0;
-> >  
-> >  	while (read_addr < length) {
-> >  		if (mlx5_vsc_gw_read_fast(dev, read_addr, &next_read_addr,
-> > @@ -276,6 +277,9 @@ int mlx5_vsc_gw_read_block_fast(struct mlx5_core_dev *dev, u32 *data,
-> >  			return read_addr;
-> >  
-> >  		read_addr = next_read_addr;
-> > +		/* Yield the cpu every 128 register read */
-> > +		if ((++count & 0x7f) == 0)
-> > +			cond_resched();
-> 
-> Why & 0x7f, could it be written more clearly?
-> 
-> 		if (++count == 128) {
-> 			cond_resched();
-> 			count = 0;
-> 		}
-> 
-> Also, I'd make this open-coded value a #define somewhere at the
-> beginning of the file with a comment with a short explanation.
+On Fri, Aug 30, 2024 at 8:33=E2=80=AFAM Antonino Maniscalco
+<antomani103@gmail.com> wrote:
+>
+> This patch implements preemption feature for A6xx targets, this allows
+> the GPU to switch to a higher priority ringbuffer if one is ready. A6XX
+> hardware as such supports multiple levels of preemption granularities,
+> ranging from coarse grained(ringbuffer level) to a more fine grained
+> such as draw-call level or a bin boundary level preemption. This patch
+> enables the basic preemption level, with more fine grained preemption
+> support to follow.
+>
+> Signed-off-by: Sharat Masetty <smasetty@codeaurora.org>
+> Signed-off-by: Antonino Maniscalco <antomani103@gmail.com>
+> Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8650-QRD
+> ---
+>  drivers/gpu/drm/msm/Makefile              |   1 +
+>  drivers/gpu/drm/msm/adreno/a6xx_gpu.c     | 323 +++++++++++++++++++++-
+>  drivers/gpu/drm/msm/adreno/a6xx_gpu.h     | 168 ++++++++++++
+>  drivers/gpu/drm/msm/adreno/a6xx_preempt.c | 431 ++++++++++++++++++++++++=
+++++++
+>  drivers/gpu/drm/msm/msm_ringbuffer.h      |   7 +
+>  5 files changed, 921 insertions(+), 9 deletions(-)
+>
 
-What you are suggesting should work also. I copied the style from
-mlx5_vsc_wait_on_flag() to keep the code consistent. The comment above
-the line should make it clear.
+[snip]
 
-> 
-> BTW, why 128? Not 64, not 256 etc? You just picked it, I don't see any
-> explanation in the commitmsg or here in the code why exactly 128. Have
-> you tried different values?
+> +
+> +int a6xx_preempt_submitqueue_setup(struct msm_gpu *gpu,
+> +               struct msm_gpu_submitqueue *queue)
+> +{
+> +       void *ptr;
+> +
+> +       /*
+> +        * Create a per submitqueue buffer for the CP to save and restore=
+ user
+> +        * specific information such as the VPC streamout data.
+> +        */
+> +       ptr =3D msm_gem_kernel_new(gpu->dev, A6XX_PREEMPT_USER_RECORD_SIZ=
+E,
+> +                       MSM_BO_WC, gpu->aspace, &queue->bo, &queue->bo_io=
+va);
 
-This mostly subjective. For the numbers I saw in the lab, this will
-release the cpu after ~4.51ms. If crdump takes ~5s, the code should
-release the cpu after ~18.0ms. These numbers look reasonable to me.
+Can this be MSM_BO_MAP_PRIV?  Otherwise it is visible (and writeable)
+by other proceess's userspace generated cmdstream.
+
+And a similar question for the scratch_bo..  I'd have to give some
+thought to what sort of mischief could be had, but generall kernel
+mappings that are not MAP_PRIV are a thing to be careful about.
+
+BR,
+-R
 
