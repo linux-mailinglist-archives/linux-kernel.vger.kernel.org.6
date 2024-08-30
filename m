@@ -1,114 +1,84 @@
-Return-Path: <linux-kernel+bounces-308589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9AD8965F46
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:30:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 615FD965F0D
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:26:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 56AB5B298FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:30:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9370A1C22335
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:26:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BE14176ADA;
-	Fri, 30 Aug 2024 10:29:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b="Fgl69IBm"
-Received: from smtp1.tecnico.ulisboa.pt (smtp1.tecnico.ulisboa.pt [193.136.128.21])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F12F518DF66;
+	Fri, 30 Aug 2024 10:23:56 +0000 (UTC)
+Received: from SHSQR01.spreadtrum.com (unknown [222.66.158.135])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60B0C17B508;
-	Fri, 30 Aug 2024 10:29:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.136.128.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84B1318B46F;
+	Fri, 30 Aug 2024 10:23:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725013773; cv=none; b=IqBtqxtGGY1xWR76vIzKn0oXcrOMRsNLgncrJX/n5vS7nxXPUVoODUCkdQQS6SHqREfc0mWLWZyIVQJ+PtqlqTxfhXLWU66OEdtEPfsgr7tcnbk5GXD11rHz9deiSVXcGSzKIxkhIAFhn8d23QRjh+76y6/Lf+woEzoWR1rm5HQ=
+	t=1725013436; cv=none; b=QhG9miMPpMr49cWtup2osydhgzYlmtUIaBBet8dhZd7BM3k0+PobRzd0hvNlArjRqDrMNdweUVrKo6M82rc7c2FORnu6TK/rUfrdK3mNgQ3Lib4757SsVTzhOuwYJO0y9zeg7Ya6h1NNJAya+OaG7H4cKXzpHNeyv15FHB91ulg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725013773; c=relaxed/simple;
-	bh=7X5uorWeH4q6GihKuadn5u1Ek5InKG1JjJAOorTZqkU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FI+3te+Ha26kwJTGNlShA+MV1T8Bf3HLbSQtBCIl4PT0Kyzbo0ozAB9QtHG21jdc6UeYIgnan64M+aqgJ8FuacEsUqEjdFgQ/IUptWKwW3vbrBoimxJeFv0j1iYabnXoQ3uvHESS8M13cHE7erb/yaPZSX+6yf/7hFsfby9EW0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt; spf=pass smtp.mailfrom=tecnico.ulisboa.pt; dkim=pass (1024-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b=Fgl69IBm; arc=none smtp.client-ip=193.136.128.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tecnico.ulisboa.pt
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTP id 8ACDB600881C;
-	Fri, 30 Aug 2024 11:20:55 +0100 (WEST)
-X-Virus-Scanned: by amavis-2.13.0 (20230106) (Debian) at tecnico.ulisboa.pt
-Received: from smtp1.tecnico.ulisboa.pt ([127.0.0.1])
- by localhost (smtp1.tecnico.ulisboa.pt [127.0.0.1]) (amavis, port 10025)
- with LMTP id y_YNDg5Yp5Zj; Fri, 30 Aug 2024 11:20:53 +0100 (WEST)
-Received: from mail1.tecnico.ulisboa.pt (mail1.ist.utl.pt [193.136.128.10])
-	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTPS id 4D4486008812;
-	Fri, 30 Aug 2024 11:20:53 +0100 (WEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tecnico.ulisboa.pt;
-	s=mail; t=1725013253;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Eu4S81HobKPBEZpOa/pzICVzPqFu5G68cDTXmSDyMX4=;
-	b=Fgl69IBmSoErzCo3CeMAyNYGEX64+2LILN3qnPhOzAUo4xo+fFbbF4BVZ+F/wzUvz11gha
-	cSfvJEXRkvQ3cybsCU8stLcRwHrxlGXAogJtRFQxBX4MLRgRAxLjLg8RADXEutAOz0KXEp
-	qXF+44CpctLb6hIyTCk6r7/kRbR9XQM=
-Received: from diogo-gram (unknown [IPv6:2a01:14:8073:1e10:c362:ff08:aa85:54c6])
-	(Authenticated sender: ist187313)
-	by mail1.tecnico.ulisboa.pt (Postfix) with ESMTPSA id EBB4E360134;
-	Fri, 30 Aug 2024 11:20:52 +0100 (WEST)
-Date: Fri, 30 Aug 2024 11:20:45 +0100
-From: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] arm64: tegra: add wp-gpio to P2957 board
-Message-ID: <kbz72jma3bj7dnfnvdjo6m5yqrvjwkvz2gtt6bxpezkslwt3kh@a7wqzkssdfvf>
-References: <20240815-tx1_sdmmc-v1-0-7856ac25a204@tecnico.ulisboa.pt>
- <172494536049.1302383.5328678787632525054.b4-ty@nvidia.com>
+	s=arc-20240116; t=1725013436; c=relaxed/simple;
+	bh=uchYXotEvwfqAovoBQ9zvFpEchjkRtP07Y8RH7YhG2U=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=anawm5T3CbBcUOUcNBbbZeEJMbp51fsB1WLYBk1s/gZo3N6Gkk6S1VRdhdIOXTNwTTrXjwbOtGKNAzVJoZJS2Tjw/uOyiNkDBH6EQn4+Y53U6gJ1t4SU7fbPUVaT67XQYXgRtHFsqte0BCMVCfqHDMtL2hzn6iF9OPQ4Jjf5hSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
+Received: from dlp.unisoc.com ([10.29.3.86])
+	by SHSQR01.spreadtrum.com with ESMTP id 47UALvSY029187;
+	Fri, 30 Aug 2024 18:21:57 +0800 (+08)
+	(envelope-from Yibin.Ding@unisoc.com)
+Received: from SHDLP.spreadtrum.com (bjmbx02.spreadtrum.com [10.0.64.8])
+	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4WwDY52PfCz2N5cJ3;
+	Fri, 30 Aug 2024 18:15:05 +0800 (CST)
+Received: from tj10379pcu.spreadtrum.com (10.5.32.15) by
+ BJMBX02.spreadtrum.com (10.0.64.8) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.23; Fri, 30 Aug 2024 18:21:55 +0800
+From: Yibin Ding <Yibin.Ding@unisoc.com>
+To: <djakov@kernel.org>, <gregkh@linuxfoundation.org>, <rafael@kernel.org>
+CC: <yibin.ding01@gmail.com>, <niuzhiguo84@gmail.com>,
+        <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <Hao_hao.Wang@unisoc.com>, <Ke.Wang@unisoc.com>
+Subject: [PATCH 0/2] Added debugfs node initialization and null pointer detection.
+Date: Fri, 30 Aug 2024 18:21:53 +0800
+Message-ID: <20240830102153.408675-1-Yibin.Ding@unisoc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <172494536049.1302383.5328678787632525054.b4-ty@nvidia.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SHCAS01.spreadtrum.com (10.0.1.201) To
+ BJMBX02.spreadtrum.com (10.0.64.8)
+X-MAIL:SHSQR01.spreadtrum.com 47UALvSY029187
 
-Hi Thierry,
+From: Yibin Ding <Yibin.ding@unisoc.com>
 
-On Thu, Aug 29, 2024 at 05:31:23PM GMT, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
-> 
-> 
-> On Thu, 15 Aug 2024 16:50:38 +0100, Diogo Ivo wrote:
-> > Define the wp-gpio for the P2597 board.
-> > 
-> > For this, patch 1 fixes the assignment of the vmmc supply's gpio that
-> > was incorrectly assigned to the wp-gpio of the external slot.
-> > 
-> > Patch 2 adds the definition of the wp-gpio.
-> > 
-> > [...]
-> 
-> Applied, thanks!
+The two debugfs nodes (/sys/kernel/debug/interconnect/test_client/dst_node,
+src_node) do not initialize the character pointers before creation. For
+such uninitialized nodes, direct access will cause a crash due to accessing
+a null pointer.
+For example, directly execute the following command after booting:
+    cat /sys/kernel/debug/interconnect/test_client/dst_node.
 
-Thanks for picking up the patches! In my testing around SD/MMC I found that
-currently UHS-I cards are broken on the P2597. When trying to use one
-the system shows somewhat erratic behaviour where it sometimes hangs and
-some other times it simply fails to read from the SD card. I have
-tracked the point at which this happens to be around
-tegra_sdhci_pad_autocalib() when switching to SDR104 mode, where there
-is the possibility of using specific offsets for this mode. Currently
-there are no values specified in tegra210.dtsi, so the 1.8V values are
-being used. However, when I tried specifying them as
+Therefore, for the problem nodes, it is necessary to add initialization
+operations and null pointer detection when accessing.
 
-	nvidia,pad-autocal-pull-up-offset-sdr104 = <0>;
-	nvidia,pad-autocal-pull-down-offset-sdr104 = <0>;
+Yibin Ding (2):
+  interconnect: Add character pointer initialization
+  debugfs: Fix crash problem caused by accessing uninitialized nodes
 
-in the DT things started working fine. I did not send a patch with these
-values since I could not find what they should be on the X1 TRM, are
-there any recommended values for these parameters so that we can have
-this fixed?
+ drivers/interconnect/debugfs-client.c | 10 ++++++++--
+ fs/debugfs/file.c                     |  4 ++++
+ 2 files changed, 12 insertions(+), 2 deletions(-)
 
-Diogo
+-- 
+2.25.1
+
 
