@@ -1,120 +1,132 @@
-Return-Path: <linux-kernel+bounces-309129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A2C6966687
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 18:10:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90D9396668B
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 18:11:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21CE91C22A57
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 16:10:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C18B2824E8
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 16:11:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9647B1B86D3;
-	Fri, 30 Aug 2024 16:10:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 456141B81AB;
+	Fri, 30 Aug 2024 16:11:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="glvNI7XQ"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="sQT/VZHi"
+Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB2AE199FB7;
-	Fri, 30 Aug 2024 16:10:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E6CB1B4C51
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 16:11:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725034203; cv=none; b=hzAU42FzdYzLsEKfm3TvoUggfSL+ubbhQ+my0YtUnGNcFpohTcZuZ7ILWz5CMlFvabXltHqUCrWnlzcMQ9kqQaZxqtLk0iTjUO0iGUktt91sKtO/41IS1couyAzkoZPTxEdCZkhzE79yp1EzMeJc56wxK6EFCXXukP+35hgL0Lk=
+	t=1725034285; cv=none; b=tTwlYacQCL/u9IPRDp5NkrId6vR2Rmp0BW5RNzWts/yqZ/GDtj7q12fQl8mK7lKY32bAIpFqWI0Je+hSuO2RhS7a0+s0bsguo9M7fAhi90YUuA2dfujl6VRHZJ6w+HJUA7iBQok9AN3MQcOnD/F6l7xPflyubAuhj2lKgp/d9zs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725034203; c=relaxed/simple;
-	bh=fs5r9a7+4o5m7r+P9T33tlELpNm09e4/5KwdXAJI5Do=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=tLI3aKiYUm21M4t4Es9TxgaRBobjSLMGWScGoV3ZuKqgfWyPYNJlljd3lmQW9NQ2pKQ/qYw40LhHbc9qwhmS6BeE1TH6h6rY19VsZkznSOJMczktMPuLArcFi3ksuQTqp1Kn2/OIvczC+H6GUopkgRLlVSEAW+OTBOnnUih6zDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=glvNI7XQ; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47UG9esH063664;
-	Fri, 30 Aug 2024 11:09:40 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1725034180;
-	bh=UtRIdCY2mej4r1D29l8J74CgITE2kP+9FO1lvFfhaAI=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=glvNI7XQl3VfJX9JP3tF257zQsTkDtXy35GyRrNX98tDty78nIYCf9r0Ls38KmkZC
-	 JEg6MLMSA2FGCCi7ffpM9W6SN2bGZ2Xgy4UravJmnEf1mTkS03VdwiJcxP3zfUYG70
-	 BO3NtdILjD8WIp0fYzUfDSlrb7zcvTYvTaCCtR4E=
-Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47UG9e3H077994
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 30 Aug 2024 11:09:40 -0500
-Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 30
- Aug 2024 11:09:40 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 30 Aug 2024 11:09:40 -0500
-Received: from [172.24.227.193] (devarsht.dhcp.ti.com [172.24.227.193] (may be forged))
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47UG9WFb094581;
-	Fri, 30 Aug 2024 11:09:33 -0500
-Message-ID: <f6331333-dc3c-b28c-2bbb-229a180c9ede@ti.com>
-Date: Fri, 30 Aug 2024 21:39:32 +0530
+	s=arc-20240116; t=1725034285; c=relaxed/simple;
+	bh=SazL0GeHUvqITaELsOdk/Z+Qai6Y7zQpEB/FKqn5ElQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rNusk6nSBuRF5HfZdu3NNIoNTVFqvS7ocUJhVtilUs2mKK54oAu+Chgh6T+5DdPiIV5932TmPBXlMK2di9hc3ykoKA9luQHrVz1LeRDpPKz9/EYurdlBGyyC6ZWJinVTtfB9rNOKf2k0y8Dl/7xgMNtYfQuUFYrzrnitYT0uwfA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=sQT/VZHi; arc=none smtp.client-ip=167.114.26.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
+	s=smtpout1; t=1725034282;
+	bh=SazL0GeHUvqITaELsOdk/Z+Qai6Y7zQpEB/FKqn5ElQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=sQT/VZHi90WwfGh1B6N76OUNrjSRk+4McPwu5/2Zya56g6FV/sS7fht1n0FR2GM/n
+	 whJ5t5Y1rUX7eiWMJFcCSW1D4dIhZ5jGsxu+OKot9gyvyDi2qiZQAIC/XvHANKifoR
+	 NC/zQoMeP5EA5vnFXQw1+K5p40LYS7puPSeeS+hRb8B/zv0kd74R0bOL1I61JqWiec
+	 WnBMyS+1uCcgzABoh5zk8ckzT8djH8ehofy/frFDDTjD3uRjSY2oSQwsmgTUe7Irsl
+	 JDvloiKAqPpXTN0+eebKfTNnSuP2G+noqLFZCH1GAc1KYRqUcCYvbr+aogriGYBQLt
+	 pbRGcCuhZXk0w==
+Received: from [172.16.0.134] (96-127-217-162.qc.cable.ebox.net [96.127.217.162])
+	by smtpout.efficios.com (Postfix) with ESMTPSA id 4WwNSB1tFdz1Jjq;
+	Fri, 30 Aug 2024 12:11:22 -0400 (EDT)
+Message-ID: <3469aa9d-5883-4e02-bfa6-b36f49c207c3@efficios.com>
+Date: Fri, 30 Aug 2024 12:10:59 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH v2 1/6] math.h: Add macros for rounding to the closest
- value
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/6] lib: Extend bitmap find binary operations
+To: Yury Norov <yury.norov@gmail.com>
+Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>, linux-kernel@vger.kernel.org
+References: <20240829135926.926603-1-mathieu.desnoyers@efficios.com>
+ <ZtHrl_1DEku-VeQV@yury-ThinkPad>
 Content-Language: en-US
-To: Jiri Slaby <jirislaby@kernel.org>, Jani Nikula <jani.nikula@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Sebastian Fricke
-	<sebastian.fricke@collabora.com>
-CC: <mchehab@kernel.org>, <hverkuil-cisco@xs4all.nl>,
-        <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <sebastian.fricke@collabora.com>, <linux-doc@vger.kernel.org>,
-        <praneeth@ti.com>, <nm@ti.com>, <vigneshr@ti.com>, <s-jain1@ti.com>,
-        <r-donadkar@ti.com>, <b-brnich@ti.com>, <detheridge@ti.com>,
-        <p-mantena@ti.com>, <vijayp@ti.com>, <andi.shyti@linux.intel.com>,
-        <nicolas@ndufresne.ca>, <davidgow@google.com>, <dlatypov@google.com>,
-        <corbet@lwn.net>, <broonie@kernel.org>, <rdunlap@infradead.org>,
-        <nik.borisov@suse.com>, <Dave.Martin@arm.com>
-References: <20240826150822.4057164-1-devarsht@ti.com>
- <20240826150822.4057164-2-devarsht@ti.com>
- <Zsy-8xXQ01-JhL0m@smile.fi.intel.com>
- <9c41f6b7-6b06-cd5b-74bd-24873c4beaf7@ti.com> <87frqqyw9r.fsf@intel.com>
- <0b06794b-34c5-ec0d-59c6-8412a8789eaf@ti.com> <878qwfy9cg.fsf@intel.com>
- <8bcddd10-6699-4e76-9eaf-8768f1c1ae66@kernel.org>
-From: Devarsh Thakkar <devarsht@ti.com>
-In-Reply-To: <8bcddd10-6699-4e76-9eaf-8768f1c1ae66@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+In-Reply-To: <ZtHrl_1DEku-VeQV@yury-ThinkPad>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Hi Andy, Randy, Sebastian,
-
-On 29/08/24 15:24, Jiri Slaby wrote:
-> On 29. 08. 24, 11:19, Jani Nikula wrote:
->> The stupid thing here is, I still don't remember which one is the
->> generic thing, rounddown() or round_down(). I have to look it up every
->> single time to be sure. I refuse to believe I'd be the only one.
+On 2024-08-30 17:56, Yury Norov wrote:
+> On Thu, Aug 29, 2024 at 09:59:20AM -0400, Mathieu Desnoyers wrote:
+>> Extend bitmap find.h and cpumask.h with additional binary operations
+>> such as "nor".
 >>
->> It's okay to accidentally use the generic version, no harm done. It's
->> definitely not okay to accidentally use the special pow-2 version, so it
->> should have a special name. I think _pow2() or _pow_2() is a fine
->> suffix.
+>> Also extend the testing and benchmark coverage of those bitmap find with
+>> binary operations.
+>>
+>> This is useful for NUMA-aware rseq concurrency IDs which depend on this
+>> series.
+>   
+> Hi Mathieu,
 > 
-> Concur.
+> Thanks for the series! I appreciate your time nailing it down, and
+> especially the tests provided. A couple nits is that we don't need
+> an 'extern' specifier,  and would better avoid local statics, even
+> in tests.
+
+OK. I've mostly followed the style present in the files I modified.
+I'm OK if you change that in place.
+
 > 
+> I'll fix that inplace and apply in bitmap-for-next. Can you share
+> a link for your work that requires the new API? I need to point it
+> when sending a merge request.
 
-We have got 2 votes to change round_closest_up to round_closest_up_pow_2 and
-likewise for round_closest_down to round_closest_up_pow_2.
+Here is the latest version posted, before I split the bitmap patches
+into a serparate series:
 
-Kindly let us know if you have any concerns w.r.t above name change. Else, I
-was thinking to proceed with the suggestion.
+https://lore.kernel.org/lkml/20240823185946.418340-1-mathieu.desnoyers@efficios.com/
 
-Regards
-Devarsh
+Please note that I am currently doing additional tests/benchmarks/schedstat
+instrumentation and bug fixes on the RSEQ numa-aware patch.
+
+Thanks,
+
+Mathieu
+
+> 
+> Thanks,
+> Yury
+>   
+>> Mathieu Desnoyers (6):
+>>    lib: Clarify comment on top of find_next_andnot_bit
+>>    lib: Implement find_{first,next,nth}_nor_bit, for_each_nor_bit,
+>>      find_first_andnot_bit
+>>    lib: test bitmap sets binary operation iterators
+>>    lib: Fix test_find_first_and_bit and test_find_next_and_bit benchmark
+>>    lib: benchmark bitmap sets binary operation find
+>>    cpumask: Implement cpumask_{first,next}_{nor,andnot}
+>>
+>>   include/linux/cpumask.h  |  60 +++++++++++++++++++
+>>   include/linux/find.h     | 124 +++++++++++++++++++++++++++++++++++++--
+>>   lib/find_bit.c           |  36 ++++++++++++
+>>   lib/find_bit_benchmark.c | 103 ++++++++++++++++++++++++++++++--
+>>   lib/test_bitmap.c        |  81 +++++++++++++++++++++++++
+>>   5 files changed, 396 insertions(+), 8 deletions(-)
+>>
+>> -- 
+>> 2.39.2
+
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
+
 
