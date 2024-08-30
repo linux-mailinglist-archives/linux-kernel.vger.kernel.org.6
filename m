@@ -1,128 +1,201 @@
-Return-Path: <linux-kernel+bounces-309218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE9FC9667A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 19:09:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3F4D9667A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 19:10:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F16BC1C2317B
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 17:09:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 26D97B26A74
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 17:10:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 793FA1BA86D;
-	Fri, 30 Aug 2024 17:09:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D6821BA272;
+	Fri, 30 Aug 2024 17:10:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="D/63zj5w"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LQODLueL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C30F13BAF1
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 17:09:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73563135417;
+	Fri, 30 Aug 2024 17:10:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725037774; cv=none; b=PKhiHzwK/HVHWshzIsfwbpvvaxEjJlCt/tlTOX6wb9e+YLd3btasp0d97fycDwqjTT1113FZfIcevPANxZg7ul/EfasEeXfjZMBNQMzwefpgItXaOrUlgHjWK1v3vCrkcIMi5ea7H+lH5MFeAWmIvsHbuJACLxKgvxECqFZ5j/o=
+	t=1725037828; cv=none; b=P7dtHuRaC1YIxarYYw8i6n2LkpiXBCRUjsWguOxfCn2TxE+8oSB48mRTnc43RIm5WgxQnFC9JnnUpC2/TG15FjG34LSP4sxDxNZ8XZGAtT0LIb5ENUVa8ALqW2kNCLmbMHIXd/o+OZwfvI4TyMFse5vgCIj/gFED3/59eKnrmEE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725037774; c=relaxed/simple;
-	bh=CU346vDOqsSTaU3Zni7xFPxbjTXZB+6lE4+IxGvIin4=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=GfQJCeW63RcdrZw92SEVtFTiRA4zDzT3nLJekeRri2jf7RbttDouBsN5jgbytuZklSNQYx9nbxb0788ZI2yxEuDBzsbdHJurlsL3D3jlPSoo8o7rmxhGMc75STngHZks7I8wL7MiQFzX+iSWh3qE5gUrRl3cMNMHULbk/H449YE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=D/63zj5w; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-7141d43582cso2128208b3a.3
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 10:09:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1725037773; x=1725642573; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=U/DqUd03uLisJ+lBV6coVazHA/8Mv1E9hChZqzhDQx4=;
-        b=D/63zj5wPjlolrfCsivNV3IWEtLug/VbFwPjgd4Grl18gAGH3T2yFT23KhktRRXjk9
-         JNObrTVBsWDh3K4fZwVuVBXouFNXdEmpf7bcZ9eaxH4OVVxB3fWwwnqmUedwTpxlPG1L
-         jbCN2F7z8ucVzrTmBUs6VbheAYNk1JTLRsppP9oBB/pG1y/BhlcD1SRUPeUaKGM2zvHo
-         U6+BSkUsl3B5IH4+V5z43Kr9VfNu930FEiMp8jaM+9r1vvYpPMcmUHhsNpBwSY5rpleV
-         6cHYGfjLB8bCH30xmM4MYmwHq4UswAPNM+y9d01owjKSF3bCkVVl3HUibHjRd3qimz8U
-         QvGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725037773; x=1725642573;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=U/DqUd03uLisJ+lBV6coVazHA/8Mv1E9hChZqzhDQx4=;
-        b=AOhlF0cKmgKDg/64Fb7A3/0DMPrJOVtyP+9DjOFvSrmX37WYMzcmBWSrzIepjR1UvU
-         eGBWUa3hMIRmDR8sIyEyuPmmjNmNhGFXkguFOorRK53RbBC9lEPOqFq4hZUTn7cVM8+g
-         N4zKx7g+PrV6sa54eP3tTqUoyJoiyfj7UPzl8bAUzRV+3FUFkHet6gXTJqszgpEX/2Lw
-         hnLfRWuNxaAeZpUy3OfvpGvThrY9RHySvWIs/syMjAJTjbfFgV2hD1EpK9ETtVjjc+JT
-         W1yyzOKM1OsLdet/+KIs3jdmlc/FgNUR3HBJVaOZ5AX+JqRTwcr65ByqAG1wbtaJZKkl
-         0ydQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWjhRJeXvxbCvOcjuInrURzTQIOD5zZ/oDJT5aYlb0KjiIlw0I86iK+XjfvoqHslX+naFoRYBdUFHV45gc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YycPAdFFyIZ4i2ySXojWuTa2Opm3RhGm/I7uGBC2YZDsFXUyfOZ
-	qP36WboUumweVwBeHPvqumFu4v0OS0KmH5yCA/S1hamS5xogLTW99fcYS096ciHnQhBLmDAraZS
-	mAQ==
-X-Google-Smtp-Source: AGHT+IFFKP/thrpWlcd7MMBTCnnTgAMVFprrx6gPBFzwzuc79yk0sgtRNBZcK7vPcXyz945EdY+xAc0UhR8=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6a00:9467:b0:714:24bf:eaf5 with SMTP id
- d2e1a72fcca58-717307852dcmr5463b3a.5.1725037772263; Fri, 30 Aug 2024 10:09:32
- -0700 (PDT)
-Date: Fri, 30 Aug 2024 10:09:30 -0700
-In-Reply-To: <20240830124720.GX3468552@ziepe.ca>
+	s=arc-20240116; t=1725037828; c=relaxed/simple;
+	bh=xXaOa1EOcgjVMDBY0/KOJQlAxgyqOnhlk926ATOqOOM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=d4yfQ9j0KOaVyCQz9gVWQsahGfiIGj8NIkF3R/irEUYBXzZKT1yrMRzSnpxEHvs/HxjBo9IsN+ffifX5kJVbEGyEkuTRbvCS3NnLjUGBIjnJQI+MKhLFF8HhwMlbdrLxG2hoY+xA3mWphnzrnqPvAqhFyvIV6WzZ5/8lG7XkepU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LQODLueL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EB3DC4CEC2;
+	Fri, 30 Aug 2024 17:10:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725037828;
+	bh=xXaOa1EOcgjVMDBY0/KOJQlAxgyqOnhlk926ATOqOOM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=LQODLueLXD1OGVoqZ0DZDOaOiLcR/drcYGrn04Z1cXQ1Ncn+ytMOJbYgM+LglmEem
+	 aAvmCoP3vNo+aHDjpZ+gx8K6rzlEV51mkczDcCDXdUzn9ShDH/5omaNeyOVJp2wOvG
+	 5Okpji5VPdB66JvqenoPWJxJvuH7+9IGrR0wLafWCkQpbVbXHuRPjSldN11GaBZFKF
+	 JPJnq7O7R24fbbWPr7cys1eDBsK9Yuya5ViSLR/M4YiUj0AB9VNN38ZpxqKzTK0UMp
+	 yLYeI2ANvEwc9+UyZF7DebjYrWx1uBDBYynpWxsvBqP0m2uiWDzW8zkCXx1J3p83aZ
+	 VCrQ8WVQZAt8w==
+Message-ID: <4e2ad62b-b11e-40db-9cd9-a26f7642c735@kernel.org>
+Date: Fri, 30 Aug 2024 19:10:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240724011037.3671523-1-jthoughton@google.com>
- <20240724011037.3671523-3-jthoughton@google.com> <Zr_3Vohvzt0KmFiN@google.com>
- <CADrL8HWQqVm5VbNnR6iMEZF17+nuO_Y25m6uuScCBVSE_YCTdg@mail.gmail.com>
- <ZtFA79zreVt4GBri@google.com> <20240830124720.GX3468552@ziepe.ca>
-Message-ID: <ZtH8yv5AabMEpBoj@google.com>
-Subject: Re: [PATCH v6 02/11] KVM: x86: Relax locking for kvm_test_age_gfn and kvm_age_gfn
-From: Sean Christopherson <seanjc@google.com>
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: James Houghton <jthoughton@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Ankit Agrawal <ankita@nvidia.com>, 
-	Axel Rasmussen <axelrasmussen@google.com>, Catalin Marinas <catalin.marinas@arm.com>, 
-	David Matlack <dmatlack@google.com>, David Rientjes <rientjes@google.com>, 
-	James Morse <james.morse@arm.com>, Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>, 
-	Oliver Upton <oliver.upton@linux.dev>, Raghavendra Rao Ananta <rananta@google.com>, 
-	Ryan Roberts <ryan.roberts@arm.com>, Shaoqin Huang <shahuang@redhat.com>, 
-	Suzuki K Poulose <suzuki.poulose@arm.com>, Wei Xu <weixugc@google.com>, 
-	Will Deacon <will@kernel.org>, Yu Zhao <yuzhao@google.com>, Zenghui Yu <yuzenghui@huawei.com>, 
-	kvmarm@lists.linux.dev, kvm@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] drivers: spi: Insert the missing pci_dev_put()before
+ return
+To: Jakub Kicinski <kuba@kernel.org>,
+ Geert Uytterhoeven <geert@linux-m68k.org>,
+ "David S. Miller" <davem@davemloft.net>, Mark Brown <broonie@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Paolo Abeni <pabeni@redhat.com>
+Cc: Daniel Mack <daniel@zonque.org>, Haojian Zhuang
+ <haojian.zhuang@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>,
+ linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org,
+ linux-kernel@vger.kernel.org, opensource.kernel@vivo.com,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Yang Ruibin <11162571@vivo.com>
+References: <20240829033511.1917015-1-11162571@vivo.com>
+ <CAMuHMdWNjo69_W6f+R9QJJOf8uF0htg2XazeS-yjugJv3UM+kg@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <CAMuHMdWNjo69_W6f+R9QJJOf8uF0htg2XazeS-yjugJv3UM+kg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, Aug 30, 2024, Jason Gunthorpe wrote:
-> On Thu, Aug 29, 2024 at 08:47:59PM -0700, Sean Christopherson wrote:
-> > On Thu, Aug 29, 2024, James Houghton wrote:
-> > > On Fri, Aug 16, 2024 at 6:05=E2=80=AFPM Sean Christopherson <seanjc@g=
-oogle.com> wrote:
-> > > > > +static __always_inline bool kvm_tdp_mmu_handle_gfn_lockless(
-> > > > > +             struct kvm *kvm,
-> > > > > +             struct kvm_gfn_range *range,
-> > > > > +             tdp_handler_t handler)
-> > > >
-> > > > Please burn all the Google3 from your brain, and code ;-)
-> > >=20
-> > > I indented this way to avoid going past the 80 character limit. I've
-> > > adjusted it to be more like the other functions in this file.
-> > >=20
-> > > Perhaps I should put `static __always_inline bool` on its own line?
-> >=20
-> > Noooo. Do not wrap before the function name.  Linus has a nice explanat=
-ion/rant
-> > on this[1].
->=20
-> IMHO, run clang-format on your stuff and just be happy with 99% of
-> what it spits out. Saves *so much time* and usually arguing..
+On 30/08/2024 10:55, Geert Uytterhoeven wrote:
+> Hi Yang,
+> 
+> On Thu, Aug 29, 2024 at 5:35 AM Yang Ruibin <11162571@vivo.com> wrote:
+>> Increase the reference count by calling pci_get_slot(), and remember to
+>> decrement the reference count by calling pci_dev_put().
+>>
+>> Signed-off-by: Yang Ruibin <11162571@vivo.com>
+> 
+> Thanks for your patch, which is now commit 8a0ec8c2d736961f ("spi:
+> Insert the missing pci_dev_put()before return") in spi/for-next.
+> 
+>> --- a/drivers/spi/spi-pxa2xx-pci.c
+>> +++ b/drivers/spi/spi-pxa2xx-pci.c
+>> @@ -146,8 +146,10 @@ static int lpss_spi_setup(struct pci_dev *dev, struct pxa2xx_spi_controller *c)
+>>         c->num_chipselect = 1;
+>>
+>>         ret = pxa2xx_spi_pci_clk_register(dev, ssp, 50000000);
+>> -       if (ret)
+>> +       if (ret) {
+>> +               pci_dev_put(dma_dev);
+> 
+> dma_dev is still uninitialized at this point.
+> 
+>>                 return ret;
+>> +       }
+>>
+>>         dma_dev = pci_get_slot(dev->bus, PCI_DEVFN(PCI_SLOT(dev->devfn), 0));
+> 
+> dma_dev is initialized only here...
+> 
+>>         ret = devm_add_action_or_reset(&dev->dev, lpss_dma_put_device, dma_dev);
+> 
+> ... and freed automatically by lpss_dma_put_device() in case of
+> any later failures since commit 609d7ffdc42199a0 ("spi: pxa2xx-pci:
+> Balance reference count for PCI DMA device") in v5.18.
+> 
+>> @@ -222,8 +224,10 @@ static int mrfld_spi_setup(struct pci_dev *dev, struct pxa2xx_spi_controller *c)
+>>         }
+>>
+>>         ret = pxa2xx_spi_pci_clk_register(dev, ssp, 25000000);
+>> -       if (ret)
+>> +       if (ret) {
+>> +               pci_dev_put(dma_dev);
+>>                 return ret;
+>> +       }
+>>
+>>         dma_dev = pci_get_slot(dev->bus, PCI_DEVFN(21, 0));
+>>         ret = devm_add_action_or_reset(&dev->dev, lpss_dma_put_device, dma_dev);
+> 
+> Likewise.
+> 
+> Hence this patch is not needed, and introduced two bugs.
 
-Heh, nope, not bending on this one.  The time I spend far hunting for imple=
-mentations
-because of wraps before the function name far exceeds the time it takes me =
-to
-push back on these warts in review.
+Cc Greg, Jakub, David and Paolo,
+
+It seems Vivo (at least two persons from vivo.com) is sending patches
+generated through some sort of automation without really knowing what
+they were doing. All of the patches look like innocent
+cleanups/simplifications/fixes, but they do more.
+
+This patch here looks like introducing two bugs.
+
+These patches:
+1. https://lore.kernel.org/all/20240830033251.232992-1-yujiaoliang@vivo.com/
+
+2. https://lore.kernel.org/all/20240828122650.1324246-1-11162571@vivo.com/
+(I sent a revert for this)
+
+3. https://lore.kernel.org/all/20240829072016.2329466-1-11162571@vivo.com/
+
+and probably more...
+
+introduce dev_err_probe() outside of probe path which is not desired,
+because it marks a probed (working) device as deferred.
+
+The patches look trivial and/or helpful, so people tend to accept them
+through default trust.
+
+I kindly suggest reverse - do not trust them by default and instead do a
+thorough review before accepting any cleanup/trivial patch from @vivo.com.
+
+Best regards,
+Krzysztof
+
 
