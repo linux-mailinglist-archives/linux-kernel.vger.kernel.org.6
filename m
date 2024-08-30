@@ -1,114 +1,117 @@
-Return-Path: <linux-kernel+bounces-307940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 027B796553D
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 04:29:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53A0296553A
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 04:27:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3C031F23FE2
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 02:29:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11351284A38
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 02:27:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3049912C486;
-	Fri, 30 Aug 2024 02:29:47 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E647D86AFA;
+	Fri, 30 Aug 2024 02:27:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GAr7klop"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B259D22619;
-	Fri, 30 Aug 2024 02:29:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59BEA7404E
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 02:27:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724984986; cv=none; b=uCkcN6xdaiuQrPk9aJgKpm3pfB4OAQKFGBq8mXFJvj0ShMafBXnX9vzAkdYxLgjDhC6oyS53eXiuFaJC2mZdAuDUtEmaG4WzKEsAQiJ6/uOk+N/9+TLM7ewbkeH/4Q6mdifk0/4XSqz1vmEcGtmemmn3j+rYrVMh00bL3fst+K8=
+	t=1724984864; cv=none; b=Hwdgv7gwRQcROWDmI2sAYrRPZlGwpElBfAAdgCfPhLxbe2JtJNUrJZ8V4lHiLvYQxd0O8/6emjERQJZ+m6qfRU2Y1PlEE5luCs/n2SG2hbx6neGBeY2/UQFVk8cR9Mvr34FTTUD9Bm0Q8DRbS3lxqNElth9EHU1VWYCZ+/P2hdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724984986; c=relaxed/simple;
-	bh=VAJxpD3Cfof0zbdWuANipGDY5cuDchp+MQ9GKV6YAVU=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YRtduWms/G/yD281GLgyI2RXYWu7GK42szIvHUKwe1wiB3PQhXGt+TTK3CXXYPKK8h1nDQv2ZhZCOFhtssCOW9BlnqE7iPDTfi+YdZTI3ST/ewKafcE1VnTYnVdBdbY3n2UEr+wirQVSXZc+PDliGwrlcmtBN3AQtMmx2OGBgEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Ww26V6NjVz20n3m;
-	Fri, 30 Aug 2024 10:24:50 +0800 (CST)
-Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id 18DA11400F4;
-	Fri, 30 Aug 2024 10:29:42 +0800 (CST)
-Received: from huawei.com (10.175.101.6) by dggpemf500002.china.huawei.com
- (7.185.36.57) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 30 Aug
- 2024 10:29:41 +0800
-From: Yue Haibing <yuehaibing@huawei.com>
-To: <seanjc@google.com>, <pbonzini@redhat.com>, <tglx@linutronix.de>,
-	<mingo@redhat.com>, <bp@alien8.de>, <dave.hansen@linux.intel.com>,
-	<x86@kernel.org>, <hpa@zytor.com>
-CC: <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<yuehaibing@huawei.com>
-Subject: [PATCH -next] KVM: x86: Remove some unused declarations
-Date: Fri, 30 Aug 2024 10:25:37 +0800
-Message-ID: <20240830022537.2403873-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1724984864; c=relaxed/simple;
+	bh=7aOFzquSXsxWdg9sGe6soNpradm3zUkzZgIEXOgg6N4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MKXPhSR2FYAbryckjqHXm7AjjY3C15f6pAy3Kc6cnYJsmXiXok9e3HrDN37fPAmo1OH3DSZOTy+rVUaCvmLotLvg+C7rraVbHiNzXPgSxT6YKQYzywJxsdzWKolVThRbiK8bXl+Apdp/7vhhCHxGwHhwJRs57/EMn/bqRxDTxYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GAr7klop; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724984860;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Fqa6fnY1m7BN2MuwAFexWwsKLrqxXcsUqarIMqCmGqY=;
+	b=GAr7klopEJFtFsTKgez1COygRolSKZPEh/vxKzgO02yLRW/IqsHvI8VtitrSxifL0YatTk
+	/8j7gkBhK+U289oiww07tTQur8vqbGUx5VI+7gepCYs4Kax+GjNa7/ThFXE7D8U6ABJExZ
+	UpztAnKExFvInHXU0FzLAVJb6HeLZPQ=
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
+ [209.85.216.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-581-rN7N6m5sNCG-2lMqnQcp6A-1; Thu, 29 Aug 2024 22:27:38 -0400
+X-MC-Unique: rN7N6m5sNCG-2lMqnQcp6A-1
+Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-2d3efe18d05so1306935a91.3
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 19:27:38 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724984857; x=1725589657;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Fqa6fnY1m7BN2MuwAFexWwsKLrqxXcsUqarIMqCmGqY=;
+        b=nCbvk9kEkkjRb4bzfUp2YRaZJVfab9JMaPdeCJ8P4LLPMWEFs1phiml/vIlpsY3bwu
+         UMyy/c+GsPpMGk3al0D9Vwpf4T1ZryWihOdlUQo55CIQMusXQFG5/bRlOLjzoQhs2GRj
+         2q9S+ZiZiUOoV+Jno8dGal9EYiS3CuK2iXSkvy5FSWfaji4C7SYJdiEnzDkz/AWDJIH7
+         tOJ/kG8OiZVbIyOo1cpPzmRFb5Ett1fwzwH9SVIa6736ftFDOrL19Fvnn1P+WSsEoEhe
+         aMbB4WveioEq6OapdcipTWizLRCmRo5sm0u4mVtm84FBZUAWCRBrCEubdmjwRzhrlS0a
+         ZoNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXFidYk8NIzEIJ0ThAzhW2t7ciCTMIiQnGX5AnzGZNh4LuAs1rtEowJl3l/84hGPowB1jl9mVYfBNH1bb4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHWLNFFRJNFP5l/pK/8iqqhae3uazECoF1ZLX/QqzUlLVrGm3f
+	Uo1mjCfjBR8Ugla9iEqjr5T02mSRcGDfdZHW+7w9JxSDq7HUFW6TbnZIYmAjLqGfz5i7zl3+xWx
+	EJlwqIFZOW5+rL7NEF2p0W3ERE9CbsdqYFO0LHgyYrMwt18fwE2wu6dLzU82K5ONBL9aaV03McG
+	htAi7Q8gdVByCfsSaBfc+AAzK6yvL/4FSXylOY
+X-Received: by 2002:a17:90b:1c8d:b0:2d1:bf4b:4a6d with SMTP id 98e67ed59e1d1-2d856171083mr5715597a91.1.1724984857613;
+        Thu, 29 Aug 2024 19:27:37 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHuPvs4K6ErQNk0JQcambzJJSK9Hb/yPLY7k6nxtFvEimYY7nj16dOoSPmKxLqdHCvR6Gg7k0fB8H2rbMXASD0=
+X-Received: by 2002:a17:90b:1c8d:b0:2d1:bf4b:4a6d with SMTP id
+ 98e67ed59e1d1-2d856171083mr5715575a91.1.1724984857029; Thu, 29 Aug 2024
+ 19:27:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- dggpemf500002.china.huawei.com (7.185.36.57)
+References: <20240829143757.85844-1-sgarzare@redhat.com> <CAJSP0QW3WN2Z-x5Y8TnyA_Rq-ok9VgG1YSUzYPDCrav7Phx6Hw@mail.gmail.com>
+In-Reply-To: <CAJSP0QW3WN2Z-x5Y8TnyA_Rq-ok9VgG1YSUzYPDCrav7Phx6Hw@mail.gmail.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Fri, 30 Aug 2024 10:27:24 +0800
+Message-ID: <CACGkMEvS-kVERRhYHQh5=o_6O=-1qyrzraNq+3KsJLyVZ6LPZw@mail.gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: add virtio-vsock driver in the VIRTIO CORE section
+To: Stefan Hajnoczi <stefanha@gmail.com>
+Cc: Stefano Garzarella <sgarzare@redhat.com>, virtualization@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, "Michael S. Tsirkin" <mst@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Commit 238adc77051a ("KVM: Cleanup LAPIC interface") removed
-kvm_lapic_get_base() but leave declaration.
+On Thu, Aug 29, 2024 at 11:15=E2=80=AFPM Stefan Hajnoczi <stefanha@gmail.co=
+m> wrote:
+>
+> On Thu, 29 Aug 2024 at 11:01, Stefano Garzarella <sgarzare@redhat.com> wr=
+ote:
+> >
+> > The virtio-vsock driver is already under VM SOCKETS (AF_VSOCK),
+> > managed pricipally with the net tree, and VIRTIO AND VHOST
+> > VSOCK DRIVER. However, changes that only affect the virtio part
+> > usually go with Michael's tree, so let's also put the driver in
+> > the VIRTIO CORE section to have its maintainers in CC for changes
+> > to the virtio-vsock driver.
+> >
+> > Cc: "Michael S. Tsirkin" <mst@redhat.com>
+> > Cc: Jason Wang <jasowang@redhat.com>
+> > Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
+> > ---
+> >  MAINTAINERS | 1 +
+> >  1 file changed, 1 insertion(+)
+>
+> Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
 
-And other two declarations were never implenmented since introduction.
+Acked-by: Jason Wang <jasowang@redhat.com>
 
-Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
----
- arch/x86/kvm/lapic.h            | 1 -
- arch/x86/kvm/mmu.h              | 2 --
- arch/x86/kvm/mmu/mmu_internal.h | 2 --
- 3 files changed, 5 deletions(-)
-
-diff --git a/arch/x86/kvm/lapic.h b/arch/x86/kvm/lapic.h
-index 7ef8ae73e82d..7c95eedd771e 100644
---- a/arch/x86/kvm/lapic.h
-+++ b/arch/x86/kvm/lapic.h
-@@ -96,7 +96,6 @@ u64 kvm_lapic_get_cr8(struct kvm_vcpu *vcpu);
- void kvm_lapic_set_tpr(struct kvm_vcpu *vcpu, unsigned long cr8);
- void kvm_lapic_set_eoi(struct kvm_vcpu *vcpu);
- void kvm_lapic_set_base(struct kvm_vcpu *vcpu, u64 value);
--u64 kvm_lapic_get_base(struct kvm_vcpu *vcpu);
- void kvm_recalculate_apic_map(struct kvm *kvm);
- void kvm_apic_set_version(struct kvm_vcpu *vcpu);
- void kvm_apic_after_set_mcg_cap(struct kvm_vcpu *vcpu);
-diff --git a/arch/x86/kvm/mmu.h b/arch/x86/kvm/mmu.h
-index 4341e0e28571..9dc5dd43ae7f 100644
---- a/arch/x86/kvm/mmu.h
-+++ b/arch/x86/kvm/mmu.h
-@@ -223,8 +223,6 @@ static inline u8 permission_fault(struct kvm_vcpu *vcpu, struct kvm_mmu *mmu,
- 
- bool kvm_mmu_may_ignore_guest_pat(void);
- 
--int kvm_arch_write_log_dirty(struct kvm_vcpu *vcpu);
--
- int kvm_mmu_post_init_vm(struct kvm *kvm);
- void kvm_mmu_pre_destroy_vm(struct kvm *kvm);
- 
-diff --git a/arch/x86/kvm/mmu/mmu_internal.h b/arch/x86/kvm/mmu/mmu_internal.h
-index 1721d97743e9..1469a1d9782d 100644
---- a/arch/x86/kvm/mmu/mmu_internal.h
-+++ b/arch/x86/kvm/mmu/mmu_internal.h
-@@ -349,8 +349,6 @@ int kvm_mmu_max_mapping_level(struct kvm *kvm,
- void kvm_mmu_hugepage_adjust(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault);
- void disallowed_hugepage_adjust(struct kvm_page_fault *fault, u64 spte, int cur_level);
- 
--void *mmu_memory_cache_alloc(struct kvm_mmu_memory_cache *mc);
--
- void track_possible_nx_huge_page(struct kvm *kvm, struct kvm_mmu_page *sp);
- void untrack_possible_nx_huge_page(struct kvm *kvm, struct kvm_mmu_page *sp);
- 
--- 
-2.34.1
+Thanks
 
 
