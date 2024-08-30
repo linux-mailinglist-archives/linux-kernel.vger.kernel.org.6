@@ -1,164 +1,187 @@
-Return-Path: <linux-kernel+bounces-308317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC2A0965A3F
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:26:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BE39965A3D
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:26:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0ADBD1C22BC3
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 08:26:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B675928C4B3
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 08:25:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67CA416DED4;
-	Fri, 30 Aug 2024 08:25:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE8E316DC01;
+	Fri, 30 Aug 2024 08:25:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b="whEbelLn"
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="YXQGLbdy"
+Received: from EUR03-VI1-obe.outbound.protection.outlook.com (mail-vi1eur03on2086.outbound.protection.outlook.com [40.107.103.86])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA99916D332;
-	Fri, 30 Aug 2024 08:25:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725006347; cv=none; b=fMuprCTvR2ppPb4LwW0GHy9exk0/wvkNkaeewK1FVmbGmVPMBXfI0Tbj0tTAEjzHweWoQIwXMT2LaX6PIWr4Yx6PX7IHIh8jLW3xcGxMPGIGGSSBcWr6mak2ipDf2riFDNdy9es4WF1p7Xy9urpctOSVhuC4uRmPpr4mgvFLlDE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725006347; c=relaxed/simple;
-	bh=pNKIxLJE4wGsG4I7ubN5qge1eo8HE1IiZV9n0njwfow=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=B7lgaKvSvPaS3PxpUh5SZmHOj6ttFy0zzW1JOsCxCXDfPom3vpK7FqBpgCr7AIpk6VjGnRDeNv9lSCzybohqyLShOy737zVxZiBgQ5OpcOuXuRUjmaue6dsS0vUHTi+J9TrHNqbDPl+DYSNMPTfXqaKaVixcSKgkH4C8tk8GpKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b=whEbelLn; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1725006337; x=1725611137; i=spasswolf@web.de;
-	bh=rLZNMuyCRmqs3FEvJHEFsz3u3ucAr75iaGC9Dy8BKeY=;
-	h=X-UI-Sender-Class:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
-	 References:Content-Type:MIME-Version:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=whEbelLn2hSjnnNyiLpL6mMP+Pfx+JUh+Ua86RAIqke+k0qqMtWExoU0KKq5b487
-	 Lr9Ta9HV61FfvtZjldD9t9M0lNuEZtmplfRDholm6BSPQu9lP/cg+QRUHae2ygfGl
-	 6SeRT4kyVHnSRs98oXEW4z8y7QxiWQYe5sEYzzWAfmfSBZlPaU7LQoH8C2quFKEH1
-	 /udxZ9qd17KKtmgWoAXOz1MDxepSvRQzbrD+hnHoilye36ufj5Cjzi8VyH35+ZH0J
-	 qOftVbHG5lXhXgsBnGnGmqMewvKEM+TXXJ8nswhvHY32IWgtNFtdB4zpdbD+f1Fmo
-	 WnN9tC1H536uQ4K96g==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.0.101] ([84.119.92.193]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MkElZ-1sLNqS2vqz-00qZcc; Fri, 30
- Aug 2024 10:25:37 +0200
-Message-ID: <7fec4df2e44ea2b11ac617d1a4ed5cbb49214f7b.camel@web.de>
-Subject: Re: [PATCH 3/5] fbdev: Introduce devm_register_framebuffer()
-From: Bert Karwatzki <spasswolf@web.de>
-To: Thomas =?ISO-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>, Helge Deller
-	 <deller@gmx.de>
-Cc: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, Daniel Vetter <daniel@ffwll.ch>, Peter Jones
-	 <pjones@redhat.com>, spasswolf@web.de
-Date: Fri, 30 Aug 2024 10:25:37 +0200
-In-Reply-To: <8b52669c-4c99-45e2-8b5e-9348e5e00f70@t-8ch.de>
-References: <20240827-efifb-sysfs-v1-0-c9cc3e052180@weissschuh.net>
-	 <20240827-efifb-sysfs-v1-3-c9cc3e052180@weissschuh.net>
-	 <8b52669c-4c99-45e2-8b5e-9348e5e00f70@t-8ch.de>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.53.2-1 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE21316C6BD;
+	Fri, 30 Aug 2024 08:25:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.103.86
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725006344; cv=fail; b=u+ivGwC+Igj4u10mzi5WaRDqgxbrKUTgE8VJj9UmZ2OQgrS+GK0GTOPMfdRGhbKpOpSf2uACf94lopftrEW0QXMlfNAHEQ+SMrH2AiCwbabX5kl1jx4azoicJ5SLOcj2yZUEncIowgYZRyzSKdnc49zPTT8mTnuzB3jJ3mHl6Ow=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725006344; c=relaxed/simple;
+	bh=mvoWwDb1AqXRxjpZQ6LdLdyUOBBz/Fd1aYF8cJtslmk=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=W3Dmy0tjr9CTA1TtiZMhaFINK3iFg2hFla/n1D5LjuLy+kXd05s7wVOnd+/RxNSmOPuxkeGovOak/t6i601B4tG1qnJnQI2Hgco/HwQpK1njb1nRRDjmZzyvjd/aRQsvPw5f3r0tXTMAoCnWMqGO5q52Nuyix6lf1JPyvNit6YA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=YXQGLbdy; arc=fail smtp.client-ip=40.107.103.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=B+uZftTfiH0yiorYej+BtO2E8MA6pmrxK4N/26bM5Fs2ZJ42tGlPs5X92uVoAABBHHgYboZLkQO7iH0HmnN+n9nNXsruyl3B8Ydg7ExwRUqqsyvvSTifUdzltnD4LKylgow1I23PSYMyolrQnipPziAB4qKnQBx5b0mE8/rW75xVpuTHo9Z/1HWr1ujzxClzAzORmDfAfSkSQdQ2wBdt8EhKxXDcuCtCfk3ePw/ZjoUYseMGi6yRw6a2PKo36peXg21xJ5Dtkia8m3IIOL1osJV9zePDmGYxt11xE1RV6UowquBybzOLgUNJxN6Vti1PliPJjD+82nrzyPY75drlHA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=mvoWwDb1AqXRxjpZQ6LdLdyUOBBz/Fd1aYF8cJtslmk=;
+ b=qmRP/HQTEDEMj48mmuSkFIFqWSCERoygUs9DchiRbQwe0alOvrmeNtS395mitKYGzzD3xbfdA1yD3mJ2ZYIWta4C6mEXidMvykwaGpPWOw86rBQa6RQfWTzwcuVwNjmf+Zh3BSVgfo+5gW0XCIDNRbDYNrSdyqPvjy0NNYOmBhgbWL3HqCR5+2z4yv2xxP4IkjO/ekUwlKjtZeW5IUI6En9CpsjSeyUEQqhh0/dk7IdhS7r+kw6i3MX3l/kuSxnJMpem4NoEGByfdgGbIkHjihnulPBA9m9HRPUj9cqDVHN0jO0EYnvlPF/LNxD+HDMvzV9SZciNsAnB4OQHV5o3iA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=mvoWwDb1AqXRxjpZQ6LdLdyUOBBz/Fd1aYF8cJtslmk=;
+ b=YXQGLbdyoa+pB2HnoqCtjiqtgv0IHD0uHc8spTwCsopFuwXVokRtFe2ivQYIc6g5VCmbzEqafB6rndjnHroDDxh28E/r5lH5T3bckGUuPcDHIwVsjW0YIo4sEecWkLju94li5xEgTP1zMBv1S0B8GsgsgTw094jMr5TnVC425PndbqkDpURTkp1pepq0Qi8Dk373fsFz5gv/e82o7K6jmbHAEaS4jdmbTlGHD1Xe5V6QlAMDa6qFXpd6QdPDMj4SdZy0W27E3YTUEoB+ItkpVkz0+9ZmDSPkpcHlQhN+6uWJSZCmDypkzml1B6C7CYRkKVEMYLJ+W1N1WLV/NFDUqA==
+Received: from PA4PR04MB9638.eurprd04.prod.outlook.com (2603:10a6:102:273::20)
+ by VI1PR04MB7037.eurprd04.prod.outlook.com (2603:10a6:800:125::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.20; Fri, 30 Aug
+ 2024 08:25:40 +0000
+Received: from PA4PR04MB9638.eurprd04.prod.outlook.com
+ ([fe80::f950:3bb6:6848:2257]) by PA4PR04MB9638.eurprd04.prod.outlook.com
+ ([fe80::f950:3bb6:6848:2257%5]) with mapi id 15.20.7897.027; Fri, 30 Aug 2024
+ 08:25:39 +0000
+From: David Lin <yu-hao.lin@nxp.com>
+To: Francesco Dolcini <francesco@dolcini.it>
+CC: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"briannorris@chromium.org" <briannorris@chromium.org>, "kvalo@kernel.org"
+	<kvalo@kernel.org>, Pete Hsieh <tsung-hsien.hsieh@nxp.com>, Sascha Hauer
+	<s.hauer@pengutronix.de>
+Subject: RE: [EXT] Re: [PATCH] wifi: mwifiex: fix firmware crash for AP DFS
+ mode
+Thread-Topic: [EXT] Re: [PATCH] wifi: mwifiex: fix firmware crash for AP DFS
+ mode
+Thread-Index: AQHa+rOve95XNg2YF0iAcaLwH755k7I/cviAgAACnDA=
+Date: Fri, 30 Aug 2024 08:25:39 +0000
+Message-ID:
+ <PA4PR04MB96385C38F3BB46684ABB6FE2D1972@PA4PR04MB9638.eurprd04.prod.outlook.com>
+References: <20240830080719.826142-1-yu-hao.lin@nxp.com>
+ <ZtF-pbt6-wXWe3zb@gaggiata.pivistrello.it>
+In-Reply-To: <ZtF-pbt6-wXWe3zb@gaggiata.pivistrello.it>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PA4PR04MB9638:EE_|VI1PR04MB7037:EE_
+x-ms-office365-filtering-correlation-id: 10fc0b7a-8250-4d74-8d7a-08dcc8cd54ca
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?2LFcgAeHIo0da28RI7/24F2UcsOrC5orAYLTx5NsVIiXXioo5coEYRnifSY/?=
+ =?us-ascii?Q?JyTJcjjP71up2YKhcCjKTVq/HMfsRgj7ysAKPotZ6Zs462O+5aYR+xPSuEFO?=
+ =?us-ascii?Q?lSWLKdbg95MtqpeIukO/NWNSC5bmDTWW6ov1NtuGh2Nd+2OclSeiJalmrkCb?=
+ =?us-ascii?Q?hHX4s7ZQqUnKBHmT63xtyG7zxQ681i7sfju0CjNmwqzhTGesN5xJNmaT+jHm?=
+ =?us-ascii?Q?EU3ryCZUnczqo0QSOc3HQvsMgnX78iQep2ilzma8YlsznkHykdy7QmvT9aCq?=
+ =?us-ascii?Q?gj6oY6d/BnxxmuoEvCrjRvd2FxRHECzxizsfhQEXv2zK73AQo1BsvrKIwhnL?=
+ =?us-ascii?Q?ARgD+S6S90LdiF/H/LHlGCpi6Vtz+XNgC9yIJhP+i1TDno9KMDWF8KyYKh6e?=
+ =?us-ascii?Q?6it3vAEzRVlXZ5mcO792qyCd1r4U6wdGQwmKaU4cnOVNIIAjWPJ14FwAH1cl?=
+ =?us-ascii?Q?092ehxUSZpvOezrFRPFnOVkQEGc8tE2juT4EBDd9bYGJECgAHYVJeCYNHGYG?=
+ =?us-ascii?Q?4wlBNm3FexBtTqT+xloBODrLZo1dLkMWnp40K9+vGYdClraoJ+ovr048zv1C?=
+ =?us-ascii?Q?69lK2TlMPtyTUuB+GPEBbJiuOikJCEhVa3DamNbIC7t+Fea9qlxo+O/qSzYg?=
+ =?us-ascii?Q?5NaBc2Hwdy2Td1LzPo8itaup+u/LftBNqcRGk/ifM9bpbnWEYYGLBQlc0Pzd?=
+ =?us-ascii?Q?59oM+2k6fvsrtK4NwovDrEPfEz2SpJisrGT5HOqSVb4V8i+UxfUwQjUa09Kq?=
+ =?us-ascii?Q?iSgD9/WdW26x9yVFBBTCwWTsoyhnNEc2M62JP7CFQ3il2GK85ZDtXXSD7mrR?=
+ =?us-ascii?Q?WR/Fdc7FFnaIsz3JcJeGGUl0CeCbu5YelswF3JQ9rGMzwHfGyH2fbLDP1OQ1?=
+ =?us-ascii?Q?J7AvUI2zhLGhMNdLK7T84hcoHtJdCt/if5fG8+aakCZLCfQ1FI0j1aRRH+py?=
+ =?us-ascii?Q?bMcCBRBfkOzBKNyWHNvCSVq2Wzh2O3ElXF42iAOKJ89i1vazMCEoP5WI21Qg?=
+ =?us-ascii?Q?dWm/0uZ2wIyWvCo1dssMeCAWm5grrYCUbbi49BvKiknuJfemUX0y8am0C45g?=
+ =?us-ascii?Q?52pWRKVE3P+o1J8GgUljzTsOcjZBexAiXCyoWBwOFY65BYnDTCI52ka/FktF?=
+ =?us-ascii?Q?qC5M9p1Dizu1yn5zQ1a+cr2tsJquJfWhXBZktPf1Y8zsaG6dPLzYYZmon0Mq?=
+ =?us-ascii?Q?6iVOhuETXA2twl1hsx8ogOSW9nyWQ7AXwK/x0HX9LbhReBCKqHDHKl14RHWP?=
+ =?us-ascii?Q?aEh2YNo5OcvK756uSzbfKdvTFKYdi4Q/nEvjwoc+YyAecSkZoNCU9BX/Mcs5?=
+ =?us-ascii?Q?8aOB3+CUrGZlKbOJ2fFwMzybRNHfBSXTEPcSuclooL2p+UOC3tkxXj4VNHTm?=
+ =?us-ascii?Q?QdtgnJBTHNBksBkOxZEEV1Sh4PRWv4yQhqVD+kow3hk7SZqx7Q=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA4PR04MB9638.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?jbCGYlqNFstrIQMeo8fYrwnG2vZIyJoI2VC6eRi46aTWGU10GPEAfrMZwDs7?=
+ =?us-ascii?Q?CtIdA4JIHkWEEDg3RqY1U0/GV/ts8zOfUmaMPvZbIOh1t22ybg3cdaHJcuw3?=
+ =?us-ascii?Q?DuB1+qLWsUzIhBDWfGy54ggA8eiIjtrsv2KRi0Svo7hgl6yN4lnGJnXe/b7j?=
+ =?us-ascii?Q?GieuWWx/VXixxmWpqDmUmhWZaaCqjhRz3NMoDle8noGK7qg0CVhf67F4hmjD?=
+ =?us-ascii?Q?CYoXkhFjX884sHaglnIvQrGShPECPvDl0MFcrLHmrpuBPqtWxjZrmLmCoTYS?=
+ =?us-ascii?Q?t1iCFLNb8H2xyQEmDGkyze0h4O2WfXMYCZ26dWl1Paddw3s37fdHL9emS5fr?=
+ =?us-ascii?Q?W9qtW0yjBWezSu1UidCHKGKZ65mlbyB+vPgvLL0XpviUDg26KvRiILnNwKRM?=
+ =?us-ascii?Q?pvdetUPptykct16hob4kZLelIIafdL8HykD5r5PnSts6gduCVBtwloiCh7YT?=
+ =?us-ascii?Q?82c0FHnaAscJJbfVih5D/XmdGDhD1y9EpcZnqQ5v99XGWqdix5PoOArkoJlM?=
+ =?us-ascii?Q?0g55JtT91cxq3UWMwvDiYFSEZSVIekg9/MwS2XRMi2kX4VvyvCgW3mNOEGbv?=
+ =?us-ascii?Q?mBzUW3nOqh0TWXxb9K0FdrNzuR23j9nyWOrxplu838XKjRQcKVxkmFsJAu/u?=
+ =?us-ascii?Q?LarLcy3MmB6KFARh7c/n+6p7kVUvcEhy/cZAYDHtcXSguJ50IPcZAYaYWcWO?=
+ =?us-ascii?Q?0FfdG/FumLHCcBRVJrRzphiSCRFaGX6JJQiH4DLcjCDPKwkRNJ4MmLqoE2oI?=
+ =?us-ascii?Q?5pyDIsC/szWVLe3jdIOnm4P8V7l2irr3Z6BcFE2uxYCeswSBVcBirmqdlm+e?=
+ =?us-ascii?Q?GgIlOFTy8N0DxOCqnJhxQHzHb/1L4kDcxdeRQDsmrPkACVXzRu2RXSDY+LqJ?=
+ =?us-ascii?Q?ivPHhJHkh6wVXU78uS4rYoIldiaqRl1QShowRvJ+0Xzw+lUbY/E66Vygcyov?=
+ =?us-ascii?Q?8olrfnnA5SG2tJsimIGLa6c3Urq/CceshbJyNQNmuGTHfXhKrJ1MTeYDnWKz?=
+ =?us-ascii?Q?NeTPnB5DKo1ZvX9k95s9DUE6wmvrzPDxop7RmI+Kh7uC1aL6OM3cybgV6gda?=
+ =?us-ascii?Q?BCvOy6T8oxXq7h5vn15GR+EZQjA8kHpP2iEcOmKRL+rvYvjDExOrnwuZiscq?=
+ =?us-ascii?Q?Vs+nWQPMaBFNqAcpzxCXXuogS5jUdQNhivH+00WLRa9dnRPzn+kqIRmpwsdT?=
+ =?us-ascii?Q?TwqvSh54B7qJCXdB4SZlcYJGhoGyqPz1M9ZIF9gnTracppPX169j65AEDlJd?=
+ =?us-ascii?Q?KnYZgkppCwKRoJUyBhUpK6R3lc8vbsGJA9NBqbk9s3nUeeHM60+ELW0T8Tvl?=
+ =?us-ascii?Q?QDUnonS//5Gfzm96aEepvtubEZiOCmpYIzyMIUXiNWYJiZkPKiiKobK8VIzK?=
+ =?us-ascii?Q?O38cjASwWyyq1K0Wm398h0cvUrvsDKWcRCpxdDDIROTKoVS9sgo2BfcShtsu?=
+ =?us-ascii?Q?IbYsoK8mchRcK5mE7LIitAKvev+bJMCtYTgmFpq94XKeBSN8habToqnMVs5d?=
+ =?us-ascii?Q?t+8nB1G4/yGdPlD1cUOSTbLPuOFu1e6mAHz4R1Zii10ot6eIXX6PmQz85YcX?=
+ =?us-ascii?Q?dCAlYYmqFracSrxNM6Fu/JcxRGUP+8gHfF4Bv5mt?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:+FdI8o/2YrKjm68Lbh/q8MiS51hHZaxjW9Zbi2U4FBolgcbKulo
- LONFJnjTZHwQfC2kKD3MMzfPdlK50LqMksqoWPGQ3LKkuRRN9fHuLljGNOIAK/kX1pBkvK3
- NXEI1REb/ggvBmb3OCFLWdLoS9Bdc3y38EdmCG5RYlbRPY/tdVTfxxkr3MS+iLRkMe+zns5
- FH0LgYlG2BWUjo/b3uNGA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:CfBl2Kn8HZs=;9YkQpnR9CawyvMWZMzuLGWuBe1i
- dWwspHZi2hyg5I/AuGkBGWx57cItlhKEn4kkbOgkESzt5PxSsFyHZkIlsOg81QZ5dNur9NBXs
- GWNtf0MJ5mIm51K6e0/8u+6gCeNMOdoe6XL/oWfZTvO1BTDYv9fVzpql92t/np/JmUCiK0cSa
- jxE4vYaE+EbL2apwHWkGVKonGJvHzgD17YOnpZglIehkZAvkRULSHWJ9fu1hdUbuQqx0SC9vb
- RrHN2BVwZrau6MLfPADF1bETfGKmOI53omyyRqEeeNCgW+0cOYLp5ohJ9MstP1NrXCEkNEoL2
- j9Cq/4ApwdkDxU1YlDrhl9Z6wfczB/EzMlxR7DCRTLnT3Kuvelll+HdxJiHr6oVkvhxh0JQ/5
- ewKpyqcAIzUAMjFTd2EegfwcrFUETtc//MElGX52WXGzvS3BNhsdDeGaIyJi62hAX+DdhFP9h
- 2jODfnB+N0ual2+sZghuXBMKy8aOiiyResJGMVhd+ugC//P4Aa7UfxQT41RoxncEoahtwAJ4P
- yQiHzFqud04yk8IaaqTRtOiwyoAxlZgS4rOQgsBUZby6OXzgW+qmEhOP3+qdqt5Ok3AYI9jpE
- fIDMjLBqFMlNXQOT63igWy19DS81/u8D/t8lfhHztjY/m3uCH9nv3o4pS7qj18hMh1EiNtUDE
- kHyFC9t/V1DTwnxjKgGmGtkoPg6Pahy7UWts5FE8kIc9aOluRyzrUz5mKnWSsSyB7s1ZRDzDF
- ZwCUMXxbAU3AXaNUXUZzQrplbmy/AIu3ODwePPOtHvzs1Kisk96GNvM7+LMcg2q8JENDJQgfL
- vFCx4rerxIl3+S2J5O9hKWCw==
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PA4PR04MB9638.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 10fc0b7a-8250-4d74-8d7a-08dcc8cd54ca
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Aug 2024 08:25:39.5741
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: RVYYUP/y+/86x+x799NZmPaH/2EGFth98xq5aOjuBCOImtIzbht1r3WbbukhBT+swGVvIJv7o11WY9sjAe+pEQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB7037
 
-Am Freitag, dem 30.08.2024 um 09:17 +0200 schrieb Thomas Wei=C3=9Fschuh:
-> Hi everybody,
->
-> On 2024-08-27 17:25:14+0000, Thomas Wei=C3=9Fschuh wrote:
-> > Introduce a device-managed variant of register_framebuffer() which
-> > automatically unregisters the framebuffer on device destruction.
-> > This can simplify the error handling and resource management in driver=
-s.
->
-> Bert reported that this series broke his framebuffer ([0], [1]).
->
-> [0] https://lore.kernel.org/lkml/20240829224124.2978-1-spasswolf@web.de/
-> [1] https://lore.kernel.org/lkml/20240829230438.3226-1-spasswolf@web.de/
->
-> > Signed-off-by: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
-> > ---
-> >  drivers/video/fbdev/core/fbmem.c | 24 ++++++++++++++++++++++++
-> >  include/linux/fb.h               |  1 +
-> >  2 files changed, 25 insertions(+)
-> >
-> > diff --git a/drivers/video/fbdev/core/fbmem.c b/drivers/video/fbdev/co=
-re/fbmem.c
-> > index 4c4ad0a86a50..d17a2daa2483 100644
-> > --- a/drivers/video/fbdev/core/fbmem.c
-> > +++ b/drivers/video/fbdev/core/fbmem.c
-> > @@ -544,6 +544,30 @@ unregister_framebuffer(struct fb_info *fb_info)
->
-> [..]
->
-> > +/**
-> > + *	devm_register_framebuffer - resource-managed frame buffer device r=
-egistration
-> > + *	@dev: device the framebuffer belongs to
-> > + *	@fb_info: frame buffer info structure
-> > + *
-> > + *	Registers a frame buffer device @fb_info to device @dev.
-> > + *
-> > + *	Returns negative errno on error, or zero for success.
-> > + *
-> > + */
-> > +int
-> > +devm_register_framebuffer(struct device *dev, struct fb_info *fb_info=
-)
-> > +{
-> > +	return devm_add_action_or_reset(dev, devm_unregister_framebuffer, fb=
-_info);
-> > +}
-> > +EXPORT_SYMBOL(devm_register_framebuffer);
->
-> This implementation is wrong, it never actually registers the
-> framebuffer. It should look like this:
->
-> int
-> devm_register_framebuffer(struct device *dev, struct fb_info *fb_info)
-> {
-> 	int ret;
->
-> 	ret =3D register_framebuffer(fb_info);
-> 	if (ret)
-> 		return ret;
->
-> 	return devm_add_action_or_reset(dev, devm_unregister_framebuffer, fb_in=
-fo);
-> }
-> EXPORT_SYMBOL(devm_register_framebuffer);
->
-> Bert, could you test this?
-> Helge, do you want me to resend the series, minus the original patch 1?
+> From: Francesco Dolcini <francesco@dolcini.it>
+> Sent: Friday, August 30, 2024 4:11 PM
+> To: David Lin <yu-hao.lin@nxp.com>
+> Cc: linux-wireless@vger.kernel.org; linux-kernel@vger.kernel.org;
+> briannorris@chromium.org; kvalo@kernel.org; francesco@dolcini.it; Pete
+> Hsieh <tsung-hsien.hsieh@nxp.com>
+> Subject: [EXT] Re: [PATCH] wifi: mwifiex: fix firmware crash for AP DFS m=
+ode=20
+>=20
+> On Fri, Aug 30, 2024 at 04:07:19PM +0800, David Lin wrote:
+> > Firmware crashes when AP works on a DFS channel and radar detection
+> occurs.
+> > This patch fixes the issue, also add "fake_radar_detect" entry to
+> > mimic radar detection for testing purpose.
+>=20
+> Is this issue generic or specific to some firmware version or Wi-Fi devic=
+e?
+>=20
+> Francesco
+>=20
 
-Yes, this works for me. Thanks!
+This is generic issue. Mwifiex is too old to have the correct code to handl=
+e DFS.
 
-Bert Karwatzki
-
+David
 
