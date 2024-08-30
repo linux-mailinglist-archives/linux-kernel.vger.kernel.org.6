@@ -1,258 +1,134 @@
-Return-Path: <linux-kernel+bounces-308371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF1C4965C22
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:53:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EC63965C23
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:54:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D862B2328E
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 08:53:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 463481F25657
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 08:54:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 121D216EB7B;
-	Fri, 30 Aug 2024 08:53:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B94A16EBF7;
+	Fri, 30 Aug 2024 08:53:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="LkLQdMPC"
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2084.outbound.protection.outlook.com [40.107.21.84])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="S2wos1Ty"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D731816C440;
-	Fri, 30 Aug 2024 08:53:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.84
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725008004; cv=fail; b=FNHij80Z9JCh/gVJSU1uvPJZPQBr6zG67E44ENAzO4HTaNEEzNa9nmHlVyB1QvauIAS71UPeAqANssxPNpBEeXy7A3jwSvpq2RBSQRAgzqwnz0I6D175Zxxv5/o7U0/srFoNf4p3wxcs0YhbBkmyJzSGGG3LFnGSw6uTkvwgwfc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725008004; c=relaxed/simple;
-	bh=fbfz1qjavxhnV9EqXzJwRp/jVL66gwj9Y67l7rlp3NM=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=G2rEMBPnpKl8rugzACUDxLEF6eEx0Cc9IRQu8FbWlaGtURWJGGWhhlLwtV9rzwZya8qSweMdIIAFmusaUsdk3ju4elC/eBGx5VWQTufcJbRTWRAo8ZKtfxwC/rnHpja6jbi3xUXuBiSmuSDlW5a2oNgHn2nnnzNW68YkEwtbELE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=LkLQdMPC; arc=fail smtp.client-ip=40.107.21.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Rnl1TyjuE4B0ParDCeECnl1isTHF0woL8PwO8OodL7lUt9Mece7eCATRWNkHdgMylxQHv/kve2fyP/MKyHNNiyqXFptB8LT2hgoQ8CiKvwM4ejjFq2IoEikW7IoLpPtsgMQPXW5k3JGSO+FFb7zqkBYDvHXBVQM1CUVc8EJL0gisrtdHD1pSexXwfEsFVBcVLz1UNkkO8aaSY5g2xctF58OxrB/a1VZIsBj+AZM2sYKA/Mf3bBLmaqFzeAFInFMgAYeOnAeoFI2XQLqfnqp4T9oGVTZW/sCu/wBZ2lm8mvKEM5WdGV3OjHII9buwpaY0LYbBN+Xuotjd/XSM4i7FHg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zra1kmcFz1EShNTItiMpu7YsYwA1ARyFnst97ldpSD4=;
- b=qcGPUQtSb311j/UBwK4EVIfOK/JnXwfvVI6AUMndnlE8Qp1f/fCIwiTrbOJFh0UmdEsLkANLtfpw6cJz6Oe91ya0bqYDBmXidYE42YdMAF2gHde+hQcYbCdNdEOD8D6CsweToCvPT6KD6AVz1uBF4vWxQgXIp8NXElyJcfnjyw1uaKvw5xtgMg9DqqOr00Euop5hbLHOHLGtAgEEmyfgmBIz0m3h1JxVmCstm0Pajw8JMU67lKRosHRsX5ecGLu7X2jvsugFPI3H5oBqVabIvOSTLf4Og5z9uxcMrQxOkWD3o0sRACtuCStY0gf8lXUzErUHwSZTsrOrrb25/u6ypA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zra1kmcFz1EShNTItiMpu7YsYwA1ARyFnst97ldpSD4=;
- b=LkLQdMPCIzRFBd9AE2rVASVpOJPYUbXs0SgsPz2ayUcsF/M91xmyMReeVglToJ1j5MXtVN77vqflzsv/NvNqyCdT3Fxrz79i136tip1F6htg1OcFDoMUKSDUqgpFFlwrEXq0Ar/IePOz8KhHQ1iS1xE8ZW6xzrHbTy1zKd88BKaigWdRCE+1D4Jw8ftxzNqCFCU4AEH5x/dM2+VGBSb5fo8S4wnHQzZUkL+/r2UUAmAJMZkhPM69Zh+CxJleT2yLjGycleaulyyKmQBetXzu31sl4AutqfP7iDf3RB3GxTON/V711t5pH/3kLbZbPSs7new2ty63KcviTiF0r1kobA==
-Received: from DB7PR04MB5003.eurprd04.prod.outlook.com (2603:10a6:10:1a::19)
- by VI1PR04MB9785.eurprd04.prod.outlook.com (2603:10a6:800:1dc::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.20; Fri, 30 Aug
- 2024 08:53:16 +0000
-Received: from DB7PR04MB5003.eurprd04.prod.outlook.com
- ([fe80::68ea:5937:4fa7:db2b]) by DB7PR04MB5003.eurprd04.prod.outlook.com
- ([fe80::68ea:5937:4fa7:db2b%5]) with mapi id 15.20.7897.027; Fri, 30 Aug 2024
- 08:53:16 +0000
-From: Carlos Song <carlos.song@nxp.com>
-To: Alexander Stein <alexander.stein@ew.tq-group.com>, Aisheng Dong
-	<aisheng.dong@nxp.com>, "andi.shyti@kernel.org" <andi.shyti@kernel.org>,
-	"shawnguo@kernel.org" <shawnguo@kernel.org>, "s.hauer@pengutronix.de"
-	<s.hauer@pengutronix.de>, "kernel@pengutronix.de" <kernel@pengutronix.de>,
-	"festevam@gmail.com" <festevam@gmail.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-CC: "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [EXT] Re: [PATCH 5/5] i2c: imx-lpi2c: increase PM timeout to
- avoid operate clk frequently
-Thread-Topic: [EXT] Re: [PATCH 5/5] i2c: imx-lpi2c: increase PM timeout to
- avoid operate clk frequently
-Thread-Index: AQHa+fXXc1yrMzyuwkKbQjkjZbk2B7I+D/AAgAD7X/A=
-Date: Fri, 30 Aug 2024 08:53:16 +0000
-Message-ID:
- <DB7PR04MB500383BFE3957B1E422270AEE8972@DB7PR04MB5003.eurprd04.prod.outlook.com>
-References: <20240829093722.2714921-1-carlos.song@nxp.com>
- <20240829093722.2714921-5-carlos.song@nxp.com> <4375906.ejJDZkT8p0@steina-w>
-In-Reply-To: <4375906.ejJDZkT8p0@steina-w>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DB7PR04MB5003:EE_|VI1PR04MB9785:EE_
-x-ms-office365-filtering-correlation-id: 98bd7bbd-cf9f-4931-5761-08dcc8d1307e
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|1800799024|7416014|376014|38070700018;
-x-microsoft-antispam-message-info:
- =?iso-8859-1?Q?iAXepNUxjFAK2zdm0vjGCnw6qoJJeisqRKJKxYnTB/EfWSCMCIlGqDGHRd?=
- =?iso-8859-1?Q?4DOW8AOJlzmEcVhHDBAhHKqR9ezoMFqGWBe6J07u3afFo8QNvwevb8pcCp?=
- =?iso-8859-1?Q?AiW2/FQ4qHh2KErsuXE8fD8Aq2zoXPr63TRNkIsZPRj1ndOUV4ZML7LMjm?=
- =?iso-8859-1?Q?4MuwJiyQXMPJGPe+yBQfVXoh94w9oPtjYe4FXEDvUGm64RHN3m1G/KkgXT?=
- =?iso-8859-1?Q?vLTAvvRhS4QWbUVqhDJu1feAbchDxQ2+SQuLvxbW2RHCPUhQGFDhwucJSQ?=
- =?iso-8859-1?Q?0mSQdcSH6VvLKUsIcSpGaMM8ExLy17v1vOvFyvuLqRcO+zyY3PmthKEVLJ?=
- =?iso-8859-1?Q?gn92rGV9CbQFW6ADR4V7+9CWrNjZtbejcBe9coyKak/Ztaq+QRikShL+HY?=
- =?iso-8859-1?Q?R2d/4y4WDW5v7wnuxc5m2Bt3P++YpitCtoWEonQbynNNx9abumRfbK/kEK?=
- =?iso-8859-1?Q?5/bKXgTzcH+ZEZ5JSuPC9FJO3DdK9rMiccE3sxTg0j1QYzai7i9ayPy8Wr?=
- =?iso-8859-1?Q?n39U+zsX/72S3x9UyGW0r/huV6uQOLW5xf43+nlrJbayHYe2uCT9Ebj+71?=
- =?iso-8859-1?Q?CgW38F7OFJ0YNiV3XjmCrtebnDQw1OQlHINKEPmX28IWkjPKEK51WiJIHw?=
- =?iso-8859-1?Q?XYEFjhgTm9jvuAf/87IcsaKcTOCDIXUCP+RTd9I1X50Dc09Ho17emOb2ia?=
- =?iso-8859-1?Q?pzN2TpHE2LwQ+gilxWMwCAY+hZelIzMlSrnMqf0pDBWJNbm+RIful4gsGX?=
- =?iso-8859-1?Q?x/IlbX7JeYmHHYL6YpbUTqE6ACUIyHzVjbxuZx2BSieGx2ECx1zVq6G8N2?=
- =?iso-8859-1?Q?swKVH3juq3lfxK/HQsikPe97SEuW7IfMHhpHnMvKy/hMtS+IYTmaqDBHJB?=
- =?iso-8859-1?Q?0Zt/wntvebW6jT7rPlCJRip+0f3O1KFf1JbLpNpEKa4JWUAncn1wLdG/h1?=
- =?iso-8859-1?Q?mL18RyRHvznyw3kZvgNSeoLWTgNI0SnPpTme06z47CLVnlPRrP0l3GLaJf?=
- =?iso-8859-1?Q?p0yBz2KhioxCbeWHknQ2RL7+rmMU2nN037+k6mHIBEQ6WJrYitfPnZdjLl?=
- =?iso-8859-1?Q?bvVEPcaL6MPH7ReDGZOqEGaFQWZK27LDS+p8uDoqDY5oO8HaIp29zPHqna?=
- =?iso-8859-1?Q?A1/IO4W3XVi46J3JHl/cG9xV88mFJmr9vU7i0ZowW5UyUekL95HspJtVHe?=
- =?iso-8859-1?Q?LQ83uxtkHK8Vm22GD1OAe92iYkTCmwYaqxtHXKexyzcqU4MVkEhIK8Ez45?=
- =?iso-8859-1?Q?zTk7278GNe0sAsGYjofnHke4swaNkDhPxIKentMULhDPyawMnTTIhl3fdD?=
- =?iso-8859-1?Q?E+03qmDfMyBvUqfX6F0x3A0MUMmfOAKeEdhZFGzWu2Mj0UTWJUVsdEWCaM?=
- =?iso-8859-1?Q?QR1dx/y8aCXN/oU2R/G1rQKWIduGsEkh8kyFpm/eqtBNEje5pVXm4=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB7PR04MB5003.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-8859-1?Q?0SKL61UFwSxWEVkc4iCZxo/2tSml1y7wlBrf9chh/n44cu/jJPIxmeXe25?=
- =?iso-8859-1?Q?QXam3fKccsPsm2+FZGzFeeyUQ7ZwrlMhD7T0o1+MAqkIhZnthvPH4CFLwk?=
- =?iso-8859-1?Q?wZmhoMdh+T1NZOMXTBtaAn0i+/uqE3aALdJ7pRnKZ669MC96U9cKlcmzTe?=
- =?iso-8859-1?Q?gUfiFEEl5CheFXSzqp0bNNmpE+8p66S6/HNA4THmVhRewBiKzMnfXyQLYa?=
- =?iso-8859-1?Q?8I+7YFRZmgGli7h9qHP7UgT+mf0d4FiEZ3sxGdFYReJcUGBx4M0n1n6RS/?=
- =?iso-8859-1?Q?vGaweC++GWjqgavOYz0gd6r+qBheYqXUjZk1AcJ0DnjXTj1qmEaLENuvAm?=
- =?iso-8859-1?Q?RlEoNRPuk8nQ7yaNZCt3rnMG/2hcUBPAB+DlQ5eQ5okEtrFDRJ4LZgPGbn?=
- =?iso-8859-1?Q?IFhjk1e1gtup87ATRwpA3EbzxxcTPp7SS2O9dxJSvMd3z5+UisSpj9KYja?=
- =?iso-8859-1?Q?vhHO/kyHHJKX1OVJm9+PSbXSsdpvu2gLtn7OE1TshvNIOLJZ/ppEZS8N+2?=
- =?iso-8859-1?Q?Sf3GY2h6lbUHWZpAUQmHR3wgqOdoaMtgI67xmLpFJh8wsSoraEoxaTEx6d?=
- =?iso-8859-1?Q?KsWwolfNpPRxFQow0tOIqM0qBKRKeSNefSzgfKLmoyFep1qr1kjvB9w2/1?=
- =?iso-8859-1?Q?7BVKZQCr0tJpb4kmOIh72iFUiUkq2sAqzSe1zmnwOchsAUQcm/dsBRxtvw?=
- =?iso-8859-1?Q?e6b28d+Aq3E+Yk6KukbNncwPtixgRxX1xj00fMGFaCKcqEliZFByX+ocyI?=
- =?iso-8859-1?Q?GUyMfymvtrIRX5ukDMZDFNYKBlWPOMVk8yDzsohXqDlOvQYsYPlBy/4Uuh?=
- =?iso-8859-1?Q?F/NsGwurZYji6NHVtOx5VPQH2zmPg+OIugatsKVBtObJ+/W7EVrAnTxGR+?=
- =?iso-8859-1?Q?6alEt7mTJ+mhklKmeY9d3SFWOrmoylig9yc+h3/w+LsLfE3tMh8pJAzFG1?=
- =?iso-8859-1?Q?uvYXb09OwaJyd28KMUptB+/R2iUBODnW82vrqc7IAG0hDPT5VmpZ5E0w64?=
- =?iso-8859-1?Q?k7CisXy+ma4BtpD7zJIjI9jMM1Q0V3s7aYN1gwz4ISLMlvM5t9YqhzoXvT?=
- =?iso-8859-1?Q?s31Mfg+0L+2TsyOuyE1nIzRQC1RJiRafDapdEs6IjGuXgQnr67K6/w2Sxv?=
- =?iso-8859-1?Q?O/RmXfPWbiw0occp0an+CkUTHjKs6YjnsSB9jrbssgPNRPyn5WLvR95Iy1?=
- =?iso-8859-1?Q?JYbhO1pLjh/3c+e5BrleoivBcsof1ZPXft4b1F1UCcODT/CM1/uqIuhRQI?=
- =?iso-8859-1?Q?1jH6s+imam1Qfh5o3aoyBCFAEyIuPZ/QTPl3HBkj8k8XIgY5pHb4wDsx9Z?=
- =?iso-8859-1?Q?Z1pdXjUAjWS82jOA8brQqGeGJ1/3gO72ruelwYIlKYQH/aDt6qbi6UbJIA?=
- =?iso-8859-1?Q?kX4SNx7oM1nqWJCCianICAylSU/rXOptj3t/Q4WOo96TzC4fxHBW9DlgaX?=
- =?iso-8859-1?Q?oJ9vmebFyFD8kAfcLnNGl+vxQ6XJ76wIN8188slilskjaSXdR9zTP0tLt1?=
- =?iso-8859-1?Q?+/iUdT2NqE2mdmPU3ixZBakSaCvlxUjGTYTqf4IUd5tI3qZPlnEVro3wwc?=
- =?iso-8859-1?Q?Rn90v4bn2xdlsp5WEtEKr29mczePTumTho1gdSwYGP7uEh0D+T+52Wbktd?=
- =?iso-8859-1?Q?MDWCZNI79f3SIdmD0Je8mNGkVfO/UwcGNG?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBCFD16DED4;
+	Fri, 30 Aug 2024 08:53:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725008022; cv=none; b=E+9K+HaIhg37siKWyDM8U0bvtVmx2EUNU0tDd1cW5gfm7AfsnO9pMFu10JBMj7f03R0MTk1zLfsybhEv1SU56o52AJgqWNZFRdCo8miLNiUpJx5dUq2BkSO/DVP0XMwIvAr+OnkdA5sNuPA5/JmCx929hi+t4Yw9RF/XmBW+8Eg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725008022; c=relaxed/simple;
+	bh=TU3MSrwb8TrLODtBDsBEhrcdIGfc0V68Tw319uiHy2o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rhjBr7a0+lZi9NyoYVhbB9Jto4hqJm9zbjR/j9nxwqf4UxsUscfvWw1x37Xry/oG+yzc4Og7RWEzXFSJEz6rZczalsDCnPSsPMBjZef/xyjNMdHXRnvfMOe3mwIUENkqO04E+ebftLNpmDtrteX3rEE8VHGZbSCHFFy86y+ckJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=S2wos1Ty; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725008021; x=1756544021;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=TU3MSrwb8TrLODtBDsBEhrcdIGfc0V68Tw319uiHy2o=;
+  b=S2wos1Tyu9VSsP1ejHADlJEwHVzEkcRMwfm5zvow6yMimxwmyUbZmg07
+   GIvqev8fHHmTBqES2ZVOMON9XWod0nhk5UTS42VP74iG+XV5zD7z8uq7I
+   zerKzP1gI9M3xdv4hB1MSAnBO3dAmVP5eXX93XEGublBMLhZEIsR8v4Ix
+   FnxCfOXqyrR9MkcK01JIrc07AgFDj+xpYxWRQPUn/rd+xcW0cvPoYTDni
+   N0Bkk6qSHAzoLuPPOjJn7DSEkW2Sruqlfvf5lsVP87Jel/kLho0d1B9dN
+   /rRkEg4p6HpOnT6P/0WJuYwfgoQ4e3gzSfS4y5wx6PCGe7avvkpZ3n1zY
+   g==;
+X-CSE-ConnectionGUID: SkmqpBNtSfi3w0+DklGxXQ==
+X-CSE-MsgGUID: 6nQTe/MeTB2w9jDb+/IRrA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11179"; a="41120957"
+X-IronPort-AV: E=Sophos;i="6.10,188,1719903600"; 
+   d="scan'208";a="41120957"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Aug 2024 01:53:40 -0700
+X-CSE-ConnectionGUID: /p3lcBR8QNG8crPNLRB9mQ==
+X-CSE-MsgGUID: umQ0sSEgRA6ZBUmG4rrPjA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,188,1719903600"; 
+   d="scan'208";a="64186982"
+Received: from sschumil-mobl2.ger.corp.intel.com (HELO tlindgre-MOBL1) ([10.245.246.63])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Aug 2024 01:53:37 -0700
+Date: Fri, 30 Aug 2024 11:53:31 +0300
+From: Tony Lindgren <tony.lindgren@linux.intel.com>
+To: Tao Su <tao1.su@linux.intel.com>
+Cc: Rick Edgecombe <rick.p.edgecombe@intel.com>, seanjc@google.com,
+	pbonzini@redhat.com, kvm@vger.kernel.org, kai.huang@intel.com,
+	isaku.yamahata@gmail.com, xiaoyao.li@intel.com,
+	linux-kernel@vger.kernel.org,
+	Isaku Yamahata <isaku.yamahata@intel.com>
+Subject: Re: [PATCH 12/25] KVM: TDX: Allow userspace to configure maximum
+ vCPUs for TDX guests
+Message-ID: <ZtGIi_G-3s17_n58@tlindgre-MOBL1>
+References: <20240812224820.34826-1-rick.p.edgecombe@intel.com>
+ <20240812224820.34826-13-rick.p.edgecombe@intel.com>
+ <ZsKdFu9KTdoLJEBV@linux.bj.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DB7PR04MB5003.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 98bd7bbd-cf9f-4931-5761-08dcc8d1307e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Aug 2024 08:53:16.6474
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: NB7dnRXXFbLvLsh6Q7fry0DPqNveKYEHuDCnmE74dZjq1/Psr7tqxfl/B0p/SuQ6NZkR+UrTc11yXlcsns+GFg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB9785
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZsKdFu9KTdoLJEBV@linux.bj.intel.com>
 
+On Mon, Aug 19, 2024 at 09:17:10AM +0800, Tao Su wrote:
+> On Mon, Aug 12, 2024 at 03:48:07PM -0700, Rick Edgecombe wrote:
+> > From: Isaku Yamahata <isaku.yamahata@intel.com>
+> > --- a/arch/x86/kvm/vmx/tdx.c
+> > +++ b/arch/x86/kvm/vmx/tdx.c
+> > @@ -44,6 +44,35 @@ struct kvm_tdx_caps {
+> >  
+> >  static struct kvm_tdx_caps *kvm_tdx_caps;
+> >  
+> > +int tdx_vm_enable_cap(struct kvm *kvm, struct kvm_enable_cap *cap)
+> > +{
+> > +	int r;
+> > +
+> > +	switch (cap->cap) {
+> > +	case KVM_CAP_MAX_VCPUS: {
+> 
+> How about delete the curly braces on the case?
 
+Thanks I'll do a patch to drop these. And there's an unpaired if else
+bracket cosmetic issue there too.
 
-> -----Original Message-----
-> From: Alexander Stein <alexander.stein@ew.tq-group.com>
-> Sent: Thursday, August 29, 2024 6:55 PM
-> To: Aisheng Dong <aisheng.dong@nxp.com>; andi.shyti@kernel.org;
-> shawnguo@kernel.org; s.hauer@pengutronix.de; kernel@pengutronix.de;
-> festevam@gmail.com; linux-arm-kernel@lists.infradead.org
-> Cc: linux-i2c@vger.kernel.org; imx@lists.linux.dev;
-> linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org; Carlo=
-s Song
-> <carlos.song@nxp.com>
-> Subject: [EXT] Re: [PATCH 5/5] i2c: imx-lpi2c: increase PM timeout to avo=
-id
-> operate clk frequently
->
-> Caution: This is an external email. Please take care when clicking links =
-or
-> opening attachments. When in doubt, report the message using the 'Report =
-this
-> email' button
->
->
-> Hi,
->
-> Am Donnerstag, 29. August 2024, 11:37:22 CEST schrieb carlos.song@nxp.com=
-:
-> > From: Clark Wang <xiaoning.wang@nxp.com>
-> >
-> > Switching the clock frequently will affect the data transmission
-> > efficiency, and prolong the timeout to reduce autosuspend times for
-> > lpi2c.
->
-> Efficiency as in throughput or total time per transfer? Do you have any n=
-umbers?
->
+> > +		if (cap->flags || cap->args[0] == 0)
+> > +			return -EINVAL;
+> > +		if (cap->args[0] > KVM_MAX_VCPUS ||
+> > +		    cap->args[0] > tdx_sysinfo->td_conf.max_vcpus_per_td)
+> > +			return -E2BIG;
+> > +
+> > +		mutex_lock(&kvm->lock);
+> > +		if (kvm->created_vcpus)
+> > +			r = -EBUSY;
+> > +		else {
+> > +			kvm->max_vcpus = cap->args[0];
+> > +			r = 0;
+> > +		}
+> > +		mutex_unlock(&kvm->lock);
+> > +		break;
+> > +	}
+> > +	default:
+> > +		r = -EINVAL;
+> > +		break;
+> > +	}
 
-Hi, Thank your for your quick ack!
+And adding a line break here after the switch.
 
-Apologies for the unclear explanation. The efficiency I'm referring to isn'=
-t just for I2C. For platforms with SC firmware
-like the 8X series, every i2c transfer to enable or disable the clock notif=
-ies the SC firmware to perform a clock operation.
-So if the autosuspend time is short, i2c may enable and disable clock frequ=
-ently, it will occupy resources of the SC firmware.
+> > +	return r;
+> > +}
 
-Therefore, we add this patch to minimize the excessive sc firmware resource=
- waste caused by frequent I2C clock enable/disable operations.
+Regards,
 
-
-> Best regards,
-> Alexander
->
-> > Signed-off-by: Clark Wang <xiaoning.wang@nxp.com>
-> > Signed-off-by: Carlos Song <carlos.song@nxp.com>
-> > ---
-> >  drivers/i2c/busses/i2c-imx-lpi2c.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/i2c/busses/i2c-imx-lpi2c.c
-> > b/drivers/i2c/busses/i2c-imx-lpi2c.c
-> > index 210d505db76d..cc5e5d96aacd 100644
-> > --- a/drivers/i2c/busses/i2c-imx-lpi2c.c
-> > +++ b/drivers/i2c/busses/i2c-imx-lpi2c.c
-> > @@ -129,7 +129,7 @@
-> >  #define I2C_CLK_RATIO        2
-> >  #define CHUNK_DATA   256
-> >
-> > -#define I2C_PM_TIMEOUT               10 /* ms */
-> > +#define I2C_PM_TIMEOUT               1000 /* ms */
-> >  #define I2C_DMA_THRESHOLD    8 /* bytes */
-> >
-> >  enum lpi2c_imx_mode {
-> >
->
->
-> --
-> TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
-> Amtsgericht M=FCnchen, HRB 105018
-> Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
-> http://www.tq-g/
-> roup.com%2F&data=3D05%7C02%7Ccarlos.song%40nxp.com%7C85ca11fd9cff416
-> ea43108dcc8191786%7C686ea1d3bc2b4c6fa92cd99c5c301635%7C0%7C0%7C
-> 638605257330352810%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMD
-> AiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C0%7C%7C%7C&sdat
-> a=3DAV343gx9HRiXKLNQk5kBKj%2FfJM0p%2FSLKG%2FQFuQg64I0%3D&reserved
-> =3D0
->
-
+Tony
 
