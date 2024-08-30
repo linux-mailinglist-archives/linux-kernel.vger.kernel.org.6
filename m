@@ -1,427 +1,261 @@
-Return-Path: <linux-kernel+bounces-308570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-308572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD1CB965EED
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:24:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17431965EF1
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 12:25:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CCE01F290D2
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:24:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDEFA28D725
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 10:25:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F4FF19047A;
-	Fri, 30 Aug 2024 10:19:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C33DB199FC4;
+	Fri, 30 Aug 2024 10:20:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="mrwtBLfY";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="UXHG0aFJ";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="SjF55k67";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="22obkMIM"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="oZ8W5Mri"
+Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2052.outbound.protection.outlook.com [40.107.255.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA2B4190472;
-	Fri, 30 Aug 2024 10:19:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725013178; cv=none; b=daAaPxFbZxgfYD7Nz7QPF8ggrsu+0eJxJON2vbzKS/dhHMqTq3nA2bcrTPY7R54pYN5GGaylwLZXwGEOfvWsmO4tknocJqWw1b8lIFWhG1eDzeRwAxTEf8KQppDC/1kHw6CraP4iB9XwVvvvSeJPjPft2gVP0l0MJLFCMD6Rnj4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725013178; c=relaxed/simple;
-	bh=wO7vMFPkdOLyYUsiY7riyYkjhqRZyhMzAxZ4k1osBek=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EM7AEGkbmujYnhEQWU/8kw+q4o0EAaeNCTlxS0H5LozO4ro/9MQ9gwu1EM02chhm1uqQCC7XZ3OU+JJOmb5Us1CL+tX9npwBr//6YS2o9JFHmi3rPQl/yUnXr2p+OXgseW3YIy8xhqx2SLyjMBqW0fm0+ewFQwGK8uX4oJfVYBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=mrwtBLfY; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=UXHG0aFJ; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=SjF55k67; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=22obkMIM; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id D86481F7BE;
-	Fri, 30 Aug 2024 10:19:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1725013174; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pPFOJa+kmQrE2qKcJe1c8BJADMfptk+py9Juhb/GWrE=;
-	b=mrwtBLfYYLeSdUIWpnyeeJMVpb1MmeuNclPBbXi9/0Q1HoCZUv5IUE50PISAbwsWxjPKgB
-	2wmVIyj1YX/wZX5zDabOV4SOJF6reFBzJ4jJm6f3VVXYc4xjKC2Cov2cZRt2Kjxb660Rrl
-	vI+g/5ujTwiD90fxyt03buz9TdOan6I=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1725013174;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pPFOJa+kmQrE2qKcJe1c8BJADMfptk+py9Juhb/GWrE=;
-	b=UXHG0aFJuA8W1zWj52qxqWy4Mgu3r8g806PURgcSHyn6IP8Pm0W8HPw26x0cSlsXhXRYH3
-	y2Muiq/81L0isSCQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1725013173; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pPFOJa+kmQrE2qKcJe1c8BJADMfptk+py9Juhb/GWrE=;
-	b=SjF55k67/UBnyThixBMscd+ABto7/Rmwcd15Va6qLlG66pyQZg/s6vDCkpO9xbMQ5oa0uK
-	05OpZXb1erKK8Axb8WKYYkK8BMSe4+LDjWi17FEZDfdbTiyAZfl/GCdq+jydD6cslwHOUW
-	A1EgE7613u3mviZC0itAinMTuDFKwOo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1725013173;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pPFOJa+kmQrE2qKcJe1c8BJADMfptk+py9Juhb/GWrE=;
-	b=22obkMIM9syGrZazHGxcQkNv7Mq8tO8xo22x1Ve+bPiO2ULp1sAxIF98sscMO2K3CnnRFj
-	PTSPugrljzvGR0BQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9DFF013A3D;
-	Fri, 30 Aug 2024 10:19:33 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Vt9VJbWc0WabGgAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Fri, 30 Aug 2024 10:19:33 +0000
-Date: Fri, 30 Aug 2024 12:20:18 +0200
-Message-ID: <878qwel3bx.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Leo Tsai <antivirus621@gmail.com>
-Cc: perex@perex.cz,
-	tiwai@suse.com,
-	leo.tsai@cmedia.com.tw,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 706DC189B96;
+	Fri, 30 Aug 2024 10:20:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.52
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725013246; cv=fail; b=dTUMscZn/Jh3DECHmShBEl7IUg3X1HK7cC5G9a0yPfJ6tayuonB6dhPa0/jq7pyNcp3irF/byUH+gyqmJlw8FFTNZvifzwmIYnJoOSvqXDA9kgaTt/CJ4KpTVdQwvVbChXn3AGpO5WMvkyDv164t5kSBJ5ECcetDsHxNqZtzwws=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725013246; c=relaxed/simple;
+	bh=+Tb9hyFYCjfalY7tN7H9XJQwyrcIJ7KsCOqoZFz3CFk=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=hUo4IT2mBARlKKMhPCNz+8IslZll8BSJeOt1AJ01FxxbqguCpltZ5BNXG8aBEVI7dsX/E+E2M7i4BZncXzVgtUtOWVQf1e2gYywZhk1VggCayuhJdSCOJlgaib7x7VLTYtrGKTnNW5ltU8psNVb3m6sbZVlyucYrpUo7dxYfI6o=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=oZ8W5Mri; arc=fail smtp.client-ip=40.107.255.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=DSh8cg/hqQvRImHUknmFpR9bo8fHo4q9aW1rgC5gdl9mSmnKuBi/5Qzy/2xlp61xQnpfKKZ37EFpWZ66R47ELGd38q0QdmyySis1de97ED4RioL885HEoif0G81wC0iQV2Z3zpTEr7mo0uyj4bvDPnTQBiySQ3Nt6aiR2sMe5fZnxuIOl235+yCRm2e6nwC2SjNMIGZH0M4YdSoN9TvdQX8/44/FjhbNUwf+2Nu4o5bvyAgJS3eClMOQR0RE8sZ+8aBXNW7KTLsbOEHV+K3LYBKj49MjtBhb5aGPVEC2GHJKm6dXfMTxmGYG1PUwvfeGeU9kIU/oZFuB8HLwr+Kbgw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=10hKJMizoceae8yqobwsAlwB1qikcpJPLHVXv8OKcOU=;
+ b=R4XHU8lPzlY97W7yVJlTRBDEpFwh+q8kXHn71FXl2vjb0Lu337+uviJbwd0W9qMtJ383RXYZ0RQVQocnrv/iL6Ee4H7TgHaPESY5jLaPGjpiIiU/IVkA1id9b68H3kBNU1FC1ca0t/FKToESC3ZHl+TkwZh3JjxY/ZZFaF3QionOTFCIKSZTnIAPJ7NieheOHpTzCxdxpGPN2prM4quKB7G9SK1csU49f8jmiBCl4ac3qfCrLmLkZuwS6IGZEeLxaqV1J1ytAhcOF1ZFg3YpgVQGRshij75jS2ySAjd8bs92V8DQEHQ+EuZZsvqaXVnO/QtatNh18cqu6/guLd8UuA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=10hKJMizoceae8yqobwsAlwB1qikcpJPLHVXv8OKcOU=;
+ b=oZ8W5MriXjq6wEHpAaUrrgnKw6rCNxD213/cZWcEgoTPEhKu6auj/DwKXx3MTgSrzkQCDQIyXwzV0yuIpY6BAvrvUEK5rLJQ4UAYMnGl7exm0Q2FLVXTp/f0Qxvp2og+KHwReuN0k2IfLP0/aTXapF4srAkEIt1hWawSKOIergT/AVl+wlJBaOKzPJxvZxusUyAMmNEVdnFUtjzseU3HBeHezU/suJBFORYNzvoo3RmRJjpjjrEqRaZ45XR9272XIPr4FFfKSW91K6XdWyPnX1qVYWVvq4hBOZzCNHg/2uuN3paCrWd0EPQ4R+ckew0I+EgWC/+8Plskl5t07wRwyw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SEZPR06MB5899.apcprd06.prod.outlook.com (2603:1096:101:e3::16)
+ by SEYPR06MB6062.apcprd06.prod.outlook.com (2603:1096:101:d4::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Fri, 30 Aug
+ 2024 10:20:35 +0000
+Received: from SEZPR06MB5899.apcprd06.prod.outlook.com
+ ([fe80::8bfc:f1ee:8923:77ce]) by SEZPR06MB5899.apcprd06.prod.outlook.com
+ ([fe80::8bfc:f1ee:8923:77ce%3]) with mapi id 15.20.7897.027; Fri, 30 Aug 2024
+ 10:20:35 +0000
+From: Shen Lichuan <shenlichuan@vivo.com>
+To: shengjiu.wang@gmail.com,
+	Xiubo.Lee@gmail.com,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com
+Cc: festevam@gmail.com,
+	nicoleotsuka@gmail.com,
+	alsa-devel@alsa-project.org,
+	linuxppc-dev@lists.ozlabs.org,
 	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ALSA: hda: Add new CM9825 driver
-In-Reply-To: <20240830084521.15706-1-antivirus621@gmail.com>
-References: <20240830084521.15706-1-antivirus621@gmail.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	linux-kernel@vger.kernel.org,
+	opensource.kernel@vivo.com,
+	Shen Lichuan <shenlichuan@vivo.com>
+Subject: [PATCH v1] ASoC: fsl_ssi: Simplify with dev_err_probe()
+Date: Fri, 30 Aug 2024 18:20:19 +0800
+Message-Id: <20240830102019.33086-1-shenlichuan@vivo.com>
+X-Mailer: git-send-email 2.17.1
+Content-Type: text/plain
+X-ClientProxiedBy: SGBP274CA0016.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b0::28)
+ To SEZPR06MB5899.apcprd06.prod.outlook.com (2603:1096:101:e3::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.998];
-	MIME_GOOD(-0.10)[text/plain];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FREEMAIL_TO(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid]
-X-Spam-Score: -3.30
-X-Spam-Flag: NO
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SEZPR06MB5899:EE_|SEYPR06MB6062:EE_
+X-MS-Office365-Filtering-Correlation-Id: a0b024f9-1d61-4833-1702-08dcc8dd62ac
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|52116014|7416014|376014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?oDUvfrjZ043YmyV9PxxejMDRnF9IBWW0WuNrGDtA28yMl5KcGfVaCe3zZ52q?=
+ =?us-ascii?Q?Sx9XEQ3OelSw1RQkxo4X/1GRENJLBik2Gqm1iRV7xyZzFjjuIqaaCCKS8xxZ?=
+ =?us-ascii?Q?eUdH4DATWJI9WkPg2jExfmkkzTXp7v+k/OhB0e9l4rft5qWmTwCh901VaE+S?=
+ =?us-ascii?Q?5M4kVCIL7wNlFuPZDlcHvcpaaPNq6ixTQiKjcg/pOMsnIbSwwiiIbDRF2/47?=
+ =?us-ascii?Q?g4vDNbbDHrMHUOZHU1Pj55lvz/f88l9aZmRDJUe/mMU+1aNXgaXJ6yZY8VTh?=
+ =?us-ascii?Q?VbTPNNTWofqqwNzs/HnwN+eEcSOJbOTsV3IdXeZpc8GmZqcZIfjZ4HRxf1yn?=
+ =?us-ascii?Q?nNgyBJLcKskyypSGiPbXVARL0KuRXnpPd+dz27sEeyuGg7mkl1hmzV/HTJG8?=
+ =?us-ascii?Q?P/ndJHdcqsYqyUZi6lsJxJQCwmHXzcRbHffJtPkHQ2b2v/WYUnL9hRxcnoUO?=
+ =?us-ascii?Q?NtFIk34HhWSjRPEY6+O+W/M/vlNGzKrf/8gQCgBuN3LSczMEeRi8T42+VLnu?=
+ =?us-ascii?Q?8u4z+7qicCGzUP4Fh3mLaQJOFgfsqtXW6ad1Z5GmlTNlBd91qnxKpJGyDMS1?=
+ =?us-ascii?Q?eWKwr9p1IUvAowV7/fXtnJOW4BaqrEWF1Ll1/uS5n9dT0Lm0AqZ2VUEcWzE3?=
+ =?us-ascii?Q?rqu5ZK2FwGexcUdDiZ4j+riSq/WMRxGqyB7QZck0XisusgZM9Fo2HypjYg3D?=
+ =?us-ascii?Q?AmiUGHtENROMGgxriq5SjW8hk8btYjd2oVKT7D9hdxpLxXI8BCax4c3N3cYi?=
+ =?us-ascii?Q?7iOEgxBUQY2UApNkI4qz3ebOA02MyIEFnElGlDnjIChsgWkYGQ7R5vBLCN0t?=
+ =?us-ascii?Q?Qw7Kc3NihU1A3VMXp1Qkx9/Ku8s47AKA1U8LEqsysswtaxDyWI3KZUbJrvnL?=
+ =?us-ascii?Q?+mpI38EGeXuScRaWRMyBDTxLFVgewPNt6xnvPOg1eKfUVEMBosT/WJazPSM4?=
+ =?us-ascii?Q?taeKuzhoy5drJkyHbiGeiM79xDLuUdyjjSV0np3NCNrACjqx0UoNzFn+x+xG?=
+ =?us-ascii?Q?bgeHhmQn81rCJ6nQB+vP3LqaeG7Ymtu1gR/JPRCtxhFzdCis78zvcUx24NiN?=
+ =?us-ascii?Q?FM5Pten7N9ua6StAqCAvBF53J5geErLOIPz8Uxp6YxdqqBMCe0UoBf7wvIC4?=
+ =?us-ascii?Q?e8Nmkt6PVV8QEKIwNlXZxDeS0c7k3Dr64YZ7aIFWhzPuS7lh2VRPXm+SQuVe?=
+ =?us-ascii?Q?SGipHPGOqRZCfATfmijKy/CV9MuFAbxMgQJ2S/mKOYQUO23c7ypkpNi4rKaY?=
+ =?us-ascii?Q?nC+BGzmjcJAOIXjSsOdVNsoXmfyL4c8KFVmY506bC7qXAszDUXTaFO7EUJHS?=
+ =?us-ascii?Q?wUtdJ6HLvRXmq8xCA2lHdueT8pTmOwcMBpjQPGBINymcl8SEOp4DI3i0kt3w?=
+ =?us-ascii?Q?OYkNIQqr7gvsndfSSF+y9S5et8XoLILvgQ/0XdHwA0khvGp5Uw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5899.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(52116014)(7416014)(376014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?O5+T5SnXOCh9imZzzmv9//K+UNSRt8rDakjcPbWu1p1nDec9N846E+60EjSE?=
+ =?us-ascii?Q?Z9cxuCBo2G7BrQzVhEfa2HuTAsKIxMYmi/D0TtTi4+xbzK1PLJxPiX80q5Sf?=
+ =?us-ascii?Q?u7jzMLN04qHEtpmhhxXVHAcvEdn2uP8mQnKiBMwy91DyTZnLjup+0VXcjUlw?=
+ =?us-ascii?Q?5JNftVtHjriWEGacVSqFqanVxzZTLU/IjdDaZXRCL836NN3IKUNmcek0kIMn?=
+ =?us-ascii?Q?+2ESM2u0zhjx4f+Gvi8vJUQ9sYQOQmIrgjnH5izyqDqQg2l04sC1RGx4yypm?=
+ =?us-ascii?Q?RYFugvekmkL49u2LGHE+KA3bEZKHLWAEb89o2AbLV0kNmzN8Ghi4ZCUC6jrv?=
+ =?us-ascii?Q?CUKMMlYzO3CQcAjfRFO4gaEklqJLYCNsteei+j80ah+Vatb18MtG+TBrpdTW?=
+ =?us-ascii?Q?F7docdR7yE4ghlkiJzAWmPOr41bDpnhrh28eY/7CMA5rkvJ7G+xEdPbUG5TX?=
+ =?us-ascii?Q?o7aPPYMvYnPiC26/TKYKKSSqydBvrW/QruaZEPyXzpdqcb4FHFUznOJpvdLn?=
+ =?us-ascii?Q?VTe2fj6Kf/g4nNjtN2hj0Ur6a0FEl6x9w+ea4TjlnGc97ZANRfpI8nJlXEdr?=
+ =?us-ascii?Q?vPHdYgLyqTwEbQ0jwR0fwBLvypZYPNmo4qhryDibuIMex6XaHf4GS9dRQxQt?=
+ =?us-ascii?Q?O9NB7E0sZr+b6aFRuqYYZNDSzr3k4Vn3uq3a9rVIcsQ+WEYbEGMfh7MP4OcB?=
+ =?us-ascii?Q?zL9kDF5D3iMJ+I4dQGpNrb1hHRt/oQwqOgwO3lxX59bfOOijdXEvVYmMgUVY?=
+ =?us-ascii?Q?HGjBImvkDVabSnajGGsNwYJIQbIdtymkYododIfM+yHLtjPXxvEUQZELcwoc?=
+ =?us-ascii?Q?BQ7xl5U0x4MQX06nMhR8TxyAkBi+VfkY75NgvQDtSzgMjXCCjS7Y1VHZZkxJ?=
+ =?us-ascii?Q?eLQUlVwZ8VYA/EMGLEwZXt8Uf0ySIoiLiZRlpE7b9tj8c2xJLJAHvrgK9JK0?=
+ =?us-ascii?Q?o1SBWV49BH69in9TkhgHEMtcBrMSl0TbOmop6sZI5avVWf6Ihg0MmD9hQIG/?=
+ =?us-ascii?Q?s0wctLy6tW4hytjZ+7+TqJm9Zlkbcaa3urYD55MpWh0RnIkfFIoDs4gMp73+?=
+ =?us-ascii?Q?jPyqo5vpMDbzXoSxoq01ARf9+wLN3HrgP79eIBmij2S5m4+3TZ0a5RXWuJpN?=
+ =?us-ascii?Q?3p2BjFUaSgpjbNGPJuGRxDbPfuDAoTxLdB2UiAM3Sv6An1Qkq3uh3e4SE490?=
+ =?us-ascii?Q?ShUTAFIFq/3/m9xjboNM2gX4urB3QBInYvR4Z2BiRTshwcxOAPMbdDJoGI/z?=
+ =?us-ascii?Q?jmKN983Yiy+2rCaML+OLGw03DUFiCxILvLB9fQHFTyPu48WsVTfvcEzJkZa/?=
+ =?us-ascii?Q?HJ1wcNw0vpRJsq9iU/m0rWcDqHVdKravUuDmOGqc/dplCmEgngH/Odlowp2P?=
+ =?us-ascii?Q?a2HX/lVluexN/ERzvRtCwbweTdPm1smabsx3JnvhFQ6++G843SeCdAvmAmhN?=
+ =?us-ascii?Q?XRP/Ssq51lIH38cfl2Q0DIxxjcSSFgXBRjTM2bBhKL0YisbE5a276CFJggob?=
+ =?us-ascii?Q?uKxmeAXvnQOgpk0VW89vIDftl9kCWZvmjpGc0QApU/MK59gWzDLdlzkU0QCP?=
+ =?us-ascii?Q?gmIXpT/JUg4nF4yk65c34NbwMTHV1GQ4lB3LydiO?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a0b024f9-1d61-4833-1702-08dcc8dd62ac
+X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5899.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Aug 2024 10:20:35.1020
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: AS8SGfUbv0Pknh6OCTSs4MFjA1eMMf3aPJJAROiZt2wKuWSCpEH/4jQR2ad2C99UxGe9Hx26YNOBtZZgLs/81w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR06MB6062
 
-On Fri, 30 Aug 2024 10:45:21 +0200,
-Leo Tsai wrote:
-> 
-> From: Leo Tsai <leo.tsai@cmedia.com.tw>
-> 
-> Add new CM9825 driver with standard and NCR model.
-> 
-> Signed-off-by: Leo Tsai <leo.tsai@cmedia.com.tw>
+Use dev_err_probe() to simplify the error path and unify a message
+template.
 
-Thanks for the patch.
+Using this helper is totally fine even if err is known to never
+be -EPROBE_DEFER.
 
-But first of all, the patch description is too short and lack of info
-in comparison with the code change you've added.  If it were a simple
-quirk, it's OK, but this isn't such a case.  Ideally speaking, the
-code should be understandable enough without looking at the too much
-details in the datasheet.
+The benefit compared to a normal dev_err() is the standardized format
+of the error code, it being emitted symbolically and the fact that
+the error code is returned which allows more compact error paths.
 
-That is, please give more information in both the patch description
-and the comment in the code.
+Signed-off-by: Shen Lichuan <shenlichuan@vivo.com>
+---
+ sound/soc/fsl/fsl_ssi.c | 33 +++++++++++++++------------------
+ 1 file changed, 15 insertions(+), 18 deletions(-)
 
-And, if there is some external reference, put the information such as
-the URL of the spec sheet.
+diff --git a/sound/soc/fsl/fsl_ssi.c b/sound/soc/fsl/fsl_ssi.c
+index c4c1d9c44056..51927f89241f 100644
+--- a/sound/soc/fsl/fsl_ssi.c
++++ b/sound/soc/fsl/fsl_ssi.c
+@@ -1354,19 +1354,16 @@ static int fsl_ssi_imx_probe(struct platform_device *pdev,
+ 		ssi->clk = devm_clk_get(dev, "ipg");
+ 	else
+ 		ssi->clk = devm_clk_get(dev, NULL);
+-	if (IS_ERR(ssi->clk)) {
+-		ret = PTR_ERR(ssi->clk);
+-		dev_err(dev, "failed to get clock: %d\n", ret);
+-		return ret;
+-	}
++	if (IS_ERR(ssi->clk))
++		return dev_err_probe(dev, PTR_ERR(ssi->clk),
++				     "failed to get clock\n");
+ 
+ 	/* Enable the clock since regmap will not handle it in this case */
+ 	if (!ssi->has_ipg_clk_name) {
+ 		ret = clk_prepare_enable(ssi->clk);
+-		if (ret) {
+-			dev_err(dev, "clk_prepare_enable failed: %d\n", ret);
+-			return ret;
+-		}
++		if (ret)
++			return dev_err_probe(dev, ret,
++					     "clk_prepare_enable failed\n");
+ 	}
+ 
+ 	/* Do not error out for consumer cases that live without a baud clock */
+@@ -1552,10 +1549,9 @@ static int fsl_ssi_probe(struct platform_device *pdev)
+ 						      &regconfig);
+ 	else
+ 		ssi->regs = devm_regmap_init_mmio(dev, iomem, &regconfig);
+-	if (IS_ERR(ssi->regs)) {
+-		dev_err(dev, "failed to init register map\n");
+-		return PTR_ERR(ssi->regs);
+-	}
++	if (IS_ERR(ssi->regs))
++		return dev_err_probe(dev, PTR_ERR(ssi->regs),
++				     "failed to init register map\n");
+ 
+ 	ssi->irq = platform_get_irq(pdev, 0);
+ 	if (ssi->irq < 0)
+@@ -1607,7 +1603,7 @@ static int fsl_ssi_probe(struct platform_device *pdev)
+ 		mutex_init(&ssi->ac97_reg_lock);
+ 		ret = snd_soc_set_ac97_ops_of_reset(&fsl_ssi_ac97_ops, pdev);
+ 		if (ret) {
+-			dev_err(dev, "failed to set AC'97 ops\n");
++			dev_err_probe(dev, ret, "failed to set AC'97 ops\n");
+ 			goto error_ac97_ops;
+ 		}
+ 	}
+@@ -1615,7 +1611,7 @@ static int fsl_ssi_probe(struct platform_device *pdev)
+ 	ret = devm_snd_soc_register_component(dev, &fsl_ssi_component,
+ 					      &ssi->cpu_dai_drv, 1);
+ 	if (ret) {
+-		dev_err(dev, "failed to register DAI: %d\n", ret);
++		dev_err_probe(dev, ret, "failed to register DAI\n");
+ 		goto error_asoc_register;
+ 	}
+ 
+@@ -1623,7 +1619,8 @@ static int fsl_ssi_probe(struct platform_device *pdev)
+ 		ret = devm_request_irq(dev, ssi->irq, fsl_ssi_isr, 0,
+ 				       dev_name(dev), ssi);
+ 		if (ret < 0) {
+-			dev_err(dev, "failed to claim irq %u\n", ssi->irq);
++			dev_err_probe(dev, ret, "failed to claim irq %u\n",
++				      ssi->irq);
+ 			goto error_asoc_register;
+ 		}
+ 	}
+@@ -1649,8 +1646,8 @@ static int fsl_ssi_probe(struct platform_device *pdev)
+ 				ssi->card_name, ssi->card_idx, NULL, 0);
+ 		if (IS_ERR(ssi->card_pdev)) {
+ 			ret = PTR_ERR(ssi->card_pdev);
+-			dev_err(dev, "failed to register %s: %d\n",
+-				ssi->card_name, ret);
++			dev_err_probe(dev, ret, "failed to register %s\n",
++				      ssi->card_name);
+ 			goto error_sound_card;
+ 		}
+ 	}
+-- 
+2.17.1
 
-Also, what is NCR model?
-i guess it's a certain hardware vendor or such, but it has to be
-clarified.  And, the patch should be better split to two patches, one
-implementing the standard behavior and another NCR-specific quirk.
-
-
-In anyway, go for the more details:
-
-> +static char CM9825_Standard_Drv_Ver[15] = { "0.240723.0" };
-> +static char CM9825_NCR_Drv_Ver[15] = { "1.240805.0" };
-> +
-> +module_param_string(CM9825_Standard_Drv_Ver, CM9825_Standard_Drv_Ver,
-> +		    sizeof(CM9825_Standard_Drv_Ver), 0444);
-> +module_param_string(CM9825_NCR_Drv_Ver, CM9825_NCR_Drv_Ver,
-> +		    sizeof(CM9825_NCR_Drv_Ver), 0444);
-
-Don't put such stuff.  Those are purely downstream info, and have
-nothing to do with the upstream stuff.
-
->  struct cmi_spec {
->  	struct hda_gen_spec gen;
-> +	const struct hda_verb *chip_D0_verbs;
-> +	const struct hda_verb *chip_D3_verbs;
-> +	const struct hda_verb *chip_playback_start_verbs;
-> +	const struct hda_verb *chip_playback_stop_verbs;
-> +	const struct hda_verb *chip_HP_Present_verbs;
-> +	const struct hda_verb *chip_HP_Remove_verbs;
-
-The variable, function and field names are usually in lower letters.
-
-> +	struct hda_codec *codec;
-> +	struct delayed_work unsol_hp_work;
-> +	int quirk;
-> +	unsigned int playback_started:1;
-> +};
-> +
-> +static const struct hda_verb cm9825_NCR_TpCon_verbs[] = {
-
-Ditto.
-
-> +	{0x01, 0x720, 0xF0},
-> +	{0x01, 0x721, 0x88},
-> +	{0x01, 0x722, 0x43},
-> +	{0x01, 0x723, 0x10},
-> +	{0x34, 0x70C, 0x02},
-> +	{0x36, 0x71E, 0x11},
-(snip)
-
-Please try to use AC_VERB_* for the parameters.
-I see many of the verbs are undefined ones, i.e. vendor-specific, and
-they can be better defined locally.  It makes much more
-understandable, and it can help debugging.
-
-For example, the verb 0x71e is AC_VERB_SET_CONFIG_DEFAULT_BYTES_2.
-But you change only this.  Why?  The intention can be commented.
-
-> +static const struct hda_verb cm9825_std_playback_start_verbs[] = {
-> +	{}
-> +};
-> +
-> +static const struct hda_verb cm9825_std_playback_stop_verbs[] = {
-> +	{}
-> +};
-
-Those can be set NULL instead?
-
-> +
-> +/*
-> + * CM9825 quirks table
-> + */
-> +enum {
-> +	QUIRK_NONE,
-> +	QUIRK_CM9825_STANDARD,
-> +	QUIRK_CM9825_NCR,
-> +};
-> +
-> +static const struct snd_pci_quirk cm9825_quirks[] = {
-> +	SND_PCI_QUIRK(0x13F6, 0x9825, "Cmedia Standard", QUIRK_CM9825_STANDARD),
-> +	{}
-> +};
-
-Do you really need this quirk entry?  Why not just taking the STANDARD
-as default?
-
-> +static hda_nid_t cmi_get_hp_pin(struct cmi_spec *spec)
-> +{
-> +	if (spec->gen.autocfg.hp_pins[0]) {
-> +		codec_dbg(spec->codec, "hp_pin 0x%X\n",
-> +			  spec->gen.autocfg.hp_pins[0]);
-> +		return spec->gen.autocfg.hp_pins[0];
-> +	}
-> +	return 0;
-> +}
-
-Simply refer to spec->gen.autocfg.hp_pins[0] in the caller side
-instead.  There is little merit of factoring out as a function.
-
-> +static void cm9825_unsol_hp_delayed(struct work_struct *work)
-> +{
-> +	struct cmi_spec *spec =
-> +	    container_of(to_delayed_work(work), struct cmi_spec, unsol_hp_work);
-> +	struct hda_jack_tbl *jack;
-> +	hda_nid_t hp_pin = cmi_get_hp_pin(spec);
-> +	bool hp_jack_plugin = false;
-> +	int err = 0;
-> +
-> +	hp_jack_plugin = snd_hda_jack_detect(spec->codec, hp_pin);
-> +
-> +	codec_dbg(spec->codec, "hp_jack_plugin %d, hp_pin 0x%X\n",
-> +		  (int)hp_jack_plugin, hp_pin);
-> +
-> +	if (!hp_jack_plugin) {
-> +		err = snd_hda_codec_write(spec->codec, 0x42, 0, 0x707, 0x40);
-
-Again, try to use the AC_VERB_*.
-
-> +static void CM9825_init_hook(struct hda_codec *codec)
-> +{
-> +	struct cmi_spec *spec = codec->spec;
-> +
-> +	codec_dbg(spec->codec, "Start\n");
-> +
-> +	snd_hda_sequence_write(codec, spec->chip_D0_verbs);
-> +}
-
-You don't have to make an extra function but just add the init verbs
-via snd_hda_add_verbs() at the probe time.
-
-> +static void cm9825_playback_pcm_hook(struct hda_pcm_stream *hinfo,
-> +				     struct hda_codec *codec,
-> +				     struct snd_pcm_substream *substream,
-> +				     int action)
-> +{
-> +	struct cmi_spec *spec = codec->spec;
-> +
-> +	codec_dbg(codec, "start, action %d\n", action);
-> +
-> +	switch (action) {
-> +	case HDA_GEN_PCM_ACT_PREPARE:
-> +		spec->playback_started = 1;
-
-This flag is never referred.  Can be dropped?
-
-> +static int CM9825_init(struct hda_codec *codec)
-
-Again, use lower letters.
-
-> +#ifdef CONFIG_PM
-
-This ifdef is no longer needed for the latest upstream code.
-
-> +static int cm9825_suspend(struct hda_codec *codec)
-> +{
-> +	struct cmi_spec *spec = codec->spec;
-> +
-> +	codec_dbg(codec, "Start\n");
-
-Better to be a more understandable debug print :)
-
-> +static void cm9825_detect_quirk(struct hda_codec *codec)
-> +{
-> +	struct cmi_spec *spec = codec->spec;
-> +
-> +	switch (codec->core.subsystem_id) {
-> +	case 0x104316E2:
-> +		spec->quirk = QUIRK_CM9825_STANDARD;
-> +		break;
-> +	case 0x104388F0:
-> +		spec->quirk = QUIRK_CM9825_NCR;
-> +		break;
-> +	default:
-> +		spec->quirk = QUIRK_CM9825_STANDARD;
-> +		break;
-> +	}
-
-Those can be simply put in the quirk table instead.
-The codec SSID is also checked at the quirk table lookup.
-
-
-> +static u32 get_amp_max_value(struct hda_codec *codec, hda_nid_t nid, int dir,
-> +			     unsigned int ofs)
-> +{
-> +	u32 caps = query_amp_caps(codec, nid, dir);
-> +	/* get num steps */
-> +	caps = (caps & AC_AMPCAP_NUM_STEPS) >> AC_AMPCAP_NUM_STEPS_SHIFT;
-> +	if (ofs < caps)
-> +		caps -= ofs;
-> +	return caps;
-> +}
-> +
-> +static inline int
-> +update_amp_value(struct hda_codec *codec, hda_nid_t nid,
-> +		 int ch, int dir, int idx, unsigned int ofs, unsigned int val)
-> +{
-> +	unsigned int maxval;
-> +
-> +	if (val > 0)
-> +		val += ofs;
-> +	/* ofs = 0: raw max value */
-> +	maxval = get_amp_max_value(codec, nid, dir, 0);
-> +	if (val > maxval)
-> +		val = maxval;
-> +	return snd_hda_codec_amp_update(codec, nid, ch, dir, idx,
-> +					HDA_AMP_VOLMASK, val);
-> +}
-> +
-> +static int cm9825_ncr_spk_vol_put(struct snd_kcontrol *kcontrol,
-> +				  struct snd_ctl_elem_value *ucontrol)
-> +{
-> +	struct hda_codec *codec = snd_kcontrol_chip(kcontrol);
-> +	hda_nid_t nid = get_amp_nid(kcontrol);
-> +	int chs = get_amp_channels(kcontrol);
-> +	int dir = get_amp_direction(kcontrol);
-> +	int idx = get_amp_index(kcontrol);
-> +	unsigned int ofs = get_amp_offset(kcontrol);
-> +	long *valp = ucontrol->value.integer.value;
-> +	int change = 0;
-> +
-> +	codec_dbg(codec, "nid 0x%X, chs %d, dir %d, *valp %ld\n",
-> +		  nid, chs, dir, *valp);
-> +
-> +	if (chs & 1) {
-> +		change = update_amp_value(codec, nid, 0, dir, idx, ofs, *valp);
-> +		update_amp_value(codec, 0x38, 0, dir, idx, ofs, *valp);
-
-What this mirroring to the node 0x38 at all?  This has to be clarified.
-
-> +static int patch_cm9825(struct hda_codec *codec)
-> +{
-> +	/* Detect codec quirk */
-> +	quirk = snd_pci_quirk_lookup(codec->bus->pci, cm9825_quirks);
-> +	if (quirk)
-> +		spec->quirk = quirk->value;
-> +	else
-> +		spec->quirk = QUIRK_CM9825_STANDARD;
-> +
-> +	if (spec->quirk == QUIRK_CM9825_STANDARD)
-> +		cm9825_detect_quirk(codec);
-> +
-> +	codec_dbg(spec->codec, "spec->quirk %d\n", spec->quirk);
-
-So this quirk lookup is weird.  Just put all needed entries in the
-quirk table and do a single lookup.
-
-> +	codec->patch_ops = cmi_auto_patch_ops;
-> +	codec->patch_ops.init = CM9825_init;
-> +#ifdef CONFIG_PM
-
-The ifdef is superfluous.
-
-> +	if (spec->quirk == (int)QUIRK_CM9825_STANDARD) {
-> +		INIT_DELAYED_WORK(&spec->unsol_hp_work,
-> +				  cm9825_unsol_hp_delayed);
-
-Better to initialize the work unconditionally.
-Then you don't have to differentiate at suspend or free, and you can
-call cancel_delayed_work_sync() no matter whether it's used or not.
-
-> @@ -91,8 +729,8 @@ static int patch_cmi8888(struct hda_codec *codec)
->  	if (get_defcfg_device(snd_hda_codec_get_pincfg(codec, 0x10)) ==
->  	    AC_JACK_HP_OUT) {
->  		static const struct snd_kcontrol_new amp_kctl =
-> -			HDA_CODEC_VOLUME("Headphone Amp Playback Volume",
-> -					 0x10, 0, HDA_OUTPUT);
-> +		    HDA_CODEC_VOLUME("Headphone Amp Playback Volume",
-> +				     0x10, 0, HDA_OUTPUT);
-
-This is a superfluous change?
-
-
-thanks,
-
-Takashi
 
