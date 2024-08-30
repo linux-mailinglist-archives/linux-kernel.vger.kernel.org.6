@@ -1,168 +1,195 @@
-Return-Path: <linux-kernel+bounces-309522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACFBD966C45
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 00:25:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB838966C4A
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2024 00:26:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1A2CBB21ADD
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 22:25:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66C6E1F21C60
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 22:26:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B993B1C1AAC;
-	Fri, 30 Aug 2024 22:24:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 174611C1AB3;
+	Fri, 30 Aug 2024 22:25:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HCCqfKnv"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="i6DCz8Df"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F19C136337;
-	Fri, 30 Aug 2024 22:24:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C535136337;
+	Fri, 30 Aug 2024 22:25:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725056684; cv=none; b=G/id5JVL7cljSfAXjehyiAd7FPMuVWug/mAWf/U0Vx92JA8mekXPU7pDz91sUY6y9Iyq+SkUkGL8RzzV/j4Z1FtaiD3HIXP+u482YfIlauVhHi3HWaF2xtuKM6MDPZ4ScHDV8bt7gl13qIhTqCAJyn6tlPADYWU881pqelti5Dg=
+	t=1725056754; cv=none; b=jfdNJGJcWyjQFAol7Uf7phTSisBLfHfhcYZeLYxuMxrTJ65WRk+pDfOoASgixRD+Jxs0QvpIRD5RHUXu08LiULLNxC+lUuh45gCHfSJTWUbQ8ITPBHHFGIpPbBcvZu/YeilyZ/1EtBANjiWpb2GLyKbBHTSjAjo3ZRP6VMQYCmk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725056684; c=relaxed/simple;
-	bh=Ngr9/febxtlS7xmY7K0UaawwcsoKa8aW6rBes7FLKBs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nv87CMYOJXFvcUIwCSixJJS9graW/8kiIbhKB2jn4h2mTG41/YPOF2DJ1JNALLXDyOs/p0J6EobPFuxcWwxttEnIpa7Xmu+f7nNxoxxe7jgaiob2/AdjAhH7DYVFj9OnPnok45rJOlanFDJzQZTopS/dYm1Od3cQNVfxla9X0xo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HCCqfKnv; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42bb81e795bso17336175e9.1;
-        Fri, 30 Aug 2024 15:24:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725056681; x=1725661481; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PMu8xuM4A8JgaI03qzs8RyiKKY0OlctnI6474Q81v7Y=;
-        b=HCCqfKnveSGQiAOI+Vk/ziFlO6wc6/fpz1BD9n3TMvwBnCyWYIkftadecDxCvbbSQp
-         wV/Z0fDn5w99QYbjJsUs/nIXuHScz7zUddU6WxZjjFcxWD7XC2aWbEnxGSE4+DVP3l5+
-         VLVx6NcH+x88E8slBl+thgdbSOSFjkjdtHPWetucSt6pi7CAE/yqGQuxlAJ3B83cgrE7
-         nwOclCrH0sI9q+Gsfh6XJxF1iCmbtu0OtUT0LlcqlSYL/6kIR363XVNd4E/J+SO4fekX
-         VUEOEmtCBKB4bCHDljy+hOeeot8ReYjF3/X9IBSRFBE+2yfN2CfoFh8hLkaRyr3tj8xc
-         cadA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725056681; x=1725661481;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PMu8xuM4A8JgaI03qzs8RyiKKY0OlctnI6474Q81v7Y=;
-        b=OuRW805SZz/fbBOSSsm0XkvN/Q47Y1KoEt8Phvj86HsYyjCCQZqciL+S77VZZTnnkD
-         MnBauV59cxzQMSbZpoUHRrnLh4AbQ5XjLTSYITQU13PZHE0PnfNIcbWPheJRtTzn0vpu
-         XY1CJct26ui7NxxiLy5jNfMvMzsmOHDaNvy4f3oP9oC/IPnR8VxT+KmVERjT8sGFUshj
-         ghb+Jxo25vslkpNSS9s0lWtavylxm7wV3xZMWVNnX2yV++kcv3Vro+8WRnkcD50uwjIU
-         RmOCs+KX7VkjmAG6OTW5gHNuTE7CmcOAbyQObTC9TmRAI20eO4N74v4VarvOmc+UaeIK
-         3gyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVAlrxbUvZ2rwzwSZk21UZaMqsYpa3+M9mD8EO66hJhCMAKOdd98rkLfzeM88EI6kublbRL0hnCgImgbjEG@vger.kernel.org, AJvYcCVoynB+VRCDf83eZ3NCvnzkETJwekxT8MNtNyog5H0SAhSSLzEpyEDh16V/rM2WUg2TIcmSrYhZJoA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1aaPEZJ6V/jaRQ6FPw7mmR6eM5IxdnGbyZC62jxMVoE1EuLxE
-	3rad0XeYqMIbG8wP7oiFnTnSFKMWgcgFwWF4O4d9XHCL/Sbz29r+
-X-Google-Smtp-Source: AGHT+IH4YQZXnwbhyHlXSXIcq5R6GiimdE0PpvIrTJiTNcEakPp1RQ8gmEDH9PJNVOk9MmXo1lMOxQ==
-X-Received: by 2002:a05:600c:138e:b0:428:c0a:27ea with SMTP id 5b1f17b1804b1-42bbb205ac6mr27182405e9.12.1725056679958;
-        Fri, 30 Aug 2024 15:24:39 -0700 (PDT)
-Received: from ?IPV6:2a02:6b6f:e750:7600:c5:51ce:2b5:970b? ([2a02:6b6f:e750:7600:c5:51ce:2b5:970b])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bbc87773fsm25956195e9.0.2024.08.30.15.24.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 30 Aug 2024 15:24:39 -0700 (PDT)
-Message-ID: <cb141207-6065-4ee5-9e69-2d4ffd9eb7f3@gmail.com>
-Date: Fri, 30 Aug 2024 23:24:39 +0100
+	s=arc-20240116; t=1725056754; c=relaxed/simple;
+	bh=f2XKavdW1vhVPPhblS1ZTY7s6BzocYVLygaWMIG4E8U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Mlkc5q9sjlwhLU4TF54e9ghj3XkIteoOH+EPC4KcbN8ENKh6rR4/Hx0dXnT3vkXYmhR3Sx6NAsC3WC6ZmkkLASBflbRohLE67AXcIaI4Z/xtzL9YRLhOTwg5LqT20NB2bSadZVIVOlw0ZpNEc9ksmlDjHhLNzR6UIZhY7687TmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=i6DCz8Df; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id E80FAE0002;
+	Fri, 30 Aug 2024 22:25:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1725056743;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bdFbgMzvJfpDhPePQ3r4tXcwVqtf83V3DSLfXhWmeh4=;
+	b=i6DCz8Df3DS85Yq0zFUf7EEIoONfr6gr2r9oB4Ay9Kx3Tm9eLlszQ+nmQlYYQyozSnV/lO
+	I8wvFRcRbAyBxV+1jgT86KlYUS4JjTbYQpzZnFUmViYmBnLVU9vp7jaLmZoAgCbNIEYlEw
+	riRw3LDrJ2HDtXPfTaCcctoG+IO2iQDWHDDs69PlHf08cLLZ344FCtXR3ydIEv6/X90c2w
+	tL051qgA6Hlu8O235aadAdFtrsdsmh44Gp0UBwOl/jnVtta922z5lpmODpAIcUT+suPbP5
+	YGk/HJn7ZE8+ogAoSLmnIi1AP2BN+2FPtIfOZVzCi+lmWWEspAWRUpNYJTyCjA==
+Date: Sat, 31 Aug 2024 00:25:41 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: geert+renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	magnus.damm@gmail.com, p.zabel@pengutronix.de,
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+	kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH v3 06/12] rtc: renesas-rtca3: Add driver for RTCA-3
+ available on Renesas RZ/G3S SoC
+Message-ID: <202408302225417622f1e7@mail.local>
+References: <20240830130218.3377060-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240830130218.3377060-7-claudiu.beznea.uj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] efi: reserve memory for tpm_log only if TPM final events
- table is valid
-To: Gregory Price <gourry@gourry.net>
-Cc: ardb@kernel.org, linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
- leitao@debian.org
-References: <20240830212852.2794145-1-usamaarif642@gmail.com>
- <ZtI82gt30kUhwkFY@PC2K9PVX.TheFacebook.com>
- <30f285bc-7540-4d70-8b6c-11675b68e9e4@gmail.com>
- <1a31390d-f452-4d53-84a9-b9fb2af71e4c@gmail.com>
- <ZtJAnkd3Rkh5Amfb@PC2K9PVX.TheFacebook.com>
-Content-Language: en-US
-From: Usama Arif <usamaarif642@gmail.com>
-In-Reply-To: <ZtJAnkd3Rkh5Amfb@PC2K9PVX.TheFacebook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240830130218.3377060-7-claudiu.beznea.uj@bp.renesas.com>
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
+On 30/08/2024 16:02:12+0300, Claudiu wrote:
+> +	priv->rtc_dev->range_min = mktime64(2000, 1, 1, 0, 0, 0);
 
+RTC_TIMESTAMP_BEGIN_2000
 
-On 30/08/2024 17:58, Gregory Price wrote:
-> On Fri, Aug 30, 2024 at 10:52:48PM +0100, Usama Arif wrote:
->>
->>
->> On 30/08/2024 17:49, Usama Arif wrote:
->>>
->>>
->>> On 30/08/2024 17:42, Gregory Price wrote:
->>>> On Fri, Aug 30, 2024 at 10:28:52PM +0100, Usama Arif wrote:
->>>>> If efi.tpm_log is corrupted, log_tbl->size can be garbage (and
->>>>> negative). This can result in a large memblock reservation, resulting
->>>>> in the kernel booting without sufficient memory. Move the memblock
->>>>> reservation after log_tbl->version check, and check the value of
->>>>> both tbl_size and memblock_reserve.
->>>>>
->>>>> Signed-off-by: Usama Arif <usamaarif642@gmail.com>
->>>>> ---
->>>>>  drivers/firmware/efi/tpm.c | 16 +++++++++++++---
->>>>>  1 file changed, 13 insertions(+), 3 deletions(-)
->>>>>
->>>>> diff --git a/drivers/firmware/efi/tpm.c b/drivers/firmware/efi/tpm.c
->>>>> index e8d69bd548f3..cfc6a065f441 100644
->>>>> --- a/drivers/firmware/efi/tpm.c
->>>>> +++ b/drivers/firmware/efi/tpm.c
->>>>> @@ -59,9 +59,6 @@ int __init efi_tpm_eventlog_init(void)
->>>>>  		return -ENOMEM;
->>>>>  	}
->>>>>  
->>>>> -	tbl_size = sizeof(*log_tbl) + log_tbl->size;
->>>>> -	memblock_reserve(efi.tpm_log, tbl_size);
->>>>> -
->>>>>  	if (efi.tpm_final_log == EFI_INVALID_TABLE_ADDR) {
->>>>>  		pr_info("TPM Final Events table not present\n");
->>>>>  		goto out;
->>>>
->>>> The final event table is not present in TCG 1_2 format, but the
->>>> tpm log still needs to be mapped.  So this change is incorrect for
->>>> v1_2.
->>>
->>> hmm so we have 
->>>
->>> 	if (efi.tpm_final_log == EFI_INVALID_TABLE_ADDR) {
->>> 		pr_info("TPM Final Events table not present\n");
->>> 		goto out;
->>> 	} else if (log_tbl->version != EFI_TCG2_EVENT_LOG_FORMAT_TCG_2) {
->>> 		pr_warn(FW_BUG "TPM Final Events table invalid\n");
->>> 		goto out;
->>> 	}
->>>
->>> If the format is TCG 1_2, then log_tbl is not used?
->>>
->>
->> Ah its the case that log_tbl->size will be valid, even if its TCG 2.
->> Got it, Thanks!
+> +	priv->rtc_dev->range_max = mktime64(2099, 12, 31, 23, 59, 59);
+
+RTC_TIMESTAMP_END_2099
+
+> +
+> +	return devm_rtc_register_device(priv->rtc_dev);
+> +}
+> +
+> +static void rtca3_remove(struct platform_device *pdev)
+> +{
+> +	struct rtca3_priv *priv = platform_get_drvdata(pdev);
+> +
+> +	guard(spinlock_irqsave)(&priv->lock);
+> +
+> +	/* Disable alarm, periodic interrupts. */
+> +	rtca3_alarm_irq_set_helper(priv, RTCA3_RCR1_AIE | RTCA3_RCR1_PIE, 0);
+
+Why do you disable alarms on driver remove? I think you need to add a
+comment if this is because it can't system up, else this is a bad
+practice.
+
+> +
+> +static int rtca3_clean_alarm(struct rtca3_priv *priv)
+> +{
+> +	struct rtc_device *rtc_dev = priv->rtc_dev;
+> +	time64_t alarm_time, now;
+> +	struct rtc_wkalrm alarm;
+> +	struct rtc_time tm;
+> +	u8 pending;
+> +	int ret;
+> +
+> +	ret = rtc_read_alarm(rtc_dev, &alarm);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (!alarm.enabled)
+> +		return 0;
+> +
+> +	ret = rtc_read_time(rtc_dev, &tm);
+> +	if (ret)
+> +		return ret;
+> +
+> +	alarm_time = rtc_tm_to_time64(&alarm.time);
+> +	now = rtc_tm_to_time64(&tm);
+> +	if (alarm_time >= now)
+> +		return 0;
+> +
+> +	/*
+> +	 * Heuristically, it has been determined that when returning from deep
+> +	 * sleep state the RTCA3_RSR.AF is zero even though the alarm expired.
+> +	 * Call again the rtc_update_irq() if alarm helper detects this.
+> +	 */
+> +
+> +	guard(spinlock_irqsave)(&priv->lock);
+> +
+> +	pending = rtca3_alarm_handler_helper(priv);
+> +	if (!pending)
+> +		rtc_update_irq(priv->rtc_dev, 1, RTC_AF | RTC_IRQF);
+> +
+> +	return 0;
+> +}
+> +
+> +static int rtca3_resume(struct device *dev)
+> +{
+> +	struct rtca3_priv *priv = dev_get_drvdata(dev);
+> +
+> +	if (!device_may_wakeup(dev))
+> +		return 0;
+> +
+> +	disable_irq_wake(priv->wakeup_irq);
+> +
+> +	/*
+> +	 * According to the HW manual (section 22.6.4 Notes on writing to
+> +	 * and reading from registers) we need to wait 1/128 seconds while
+> +	 * RCR2.START = 1 to be able to read the counters after a return from low
+> +	 * power consumption state.
+> +	 */
+> +	mdelay(8);
+> +
+> +	/*
+> +	 * The alarm cannot wake the system from deep sleep states. In case
+> +	 * we return from deep sleep states and the alarm expired we need
+> +	 * to disable it to avoid failures when setting another alarm.
+> +	 */
+> +	return rtca3_clean_alarm(priv);
+> +}
+> +
+> +static DEFINE_SIMPLE_DEV_PM_OPS(rtca3_pm_ops, rtca3_suspend, rtca3_resume);
+> +
+> +static const struct of_device_id rtca3_of_match[] = {
+> +	{ .compatible = "renesas,rz-rtca3", },
+> +	{ /* sentinel */ }
+> +};
+> +MODULE_DEVICE_TABLE(of, rtca3_of_match);
+> +
+> +static struct platform_driver rtca3_platform_driver = {
+> +	.driver = {
+> +		.name = "rtc-rtca3",
+> +		.pm = pm_ptr(&rtca3_pm_ops),
+> +		.of_match_table = rtca3_of_match,
+> +	},
+> +	.probe = rtca3_probe,
+> +	.remove_new = rtca3_remove,
+> +};
+> +module_platform_driver(rtca3_platform_driver);
+> +
+> +MODULE_DESCRIPTION("Renesas RTCA-3 RTC driver");
+> +MODULE_AUTHOR("Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>");
+> +MODULE_LICENSE("GPL");
+> -- 
+> 2.39.2
 > 
-> No, not necessarily.  The corruption issue is entirely separate from the
-> patches here. size can technically be 0xffffffff and treated as valid
-> because as far as I can see the spec does not define a maximum size.
-> 
-> the tl;dr here is that the above checks on tpm_final_log and log_tbl->version
-> gate mapping/operating on the final log - but do not have anything to
-> say about the event log.
-> 
-> There isn't really a good sanity check for whether or not to memblock_reserve
-> the log.  Possibly you add a LOG_FORMAT_MAX and check if version >= MAX,
-> but again that should be separate from the change that checks the return
-> value of the memblock_reserve call.
-> 
-> ~Gregory
 
-Yes, makes sense. Thanks!
-
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
