@@ -1,332 +1,183 @@
-Return-Path: <linux-kernel+bounces-309143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 159979666AE
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 18:18:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E03F9666B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 18:19:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D91D1F22DFC
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 16:18:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADC12280E3B
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 16:19:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C6251B8EB9;
-	Fri, 30 Aug 2024 16:18:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93F401BAEC0;
+	Fri, 30 Aug 2024 16:18:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="KgSIGDYS"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gskcS+sE"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8A471B252A;
-	Fri, 30 Aug 2024 16:18:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC6DA1B81A4;
+	Fri, 30 Aug 2024 16:18:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725034682; cv=none; b=kL/U5MtS5BeXr7ZIAeoAaYu1gI4IcBTZajBPV0B0a/FldaDageGXEZ95dBSAM4rHu94qizp1DO6dS5ati4IhBKHc+V4NfQIrgo9Y6YVS0lcGtg9IFZvZmJzvQcIP6JDfAhhKcT40TeETSBRV9/GI97RW+PjQvFsx26m3VtlcfXA=
+	t=1725034705; cv=none; b=mzdGgkfn8ZXKDi5vnBlGLwHs2u69DRUN9qylVS5nvZCco4xZCpg4pqy4FbtfJOhp1WY2mtxEHdfFDEQuDznT8pHOD+tJ24Zb37ZsulPf4Bxie6Lt1vFwSTbU/fXMga/YRx0kyisBt345nGZAp/R8pLAtRbJCIBgfk4ANSs9pJ/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725034682; c=relaxed/simple;
-	bh=25WCuY9uH2dbA07fdaEdnb7H9sRC1Z3mEazMYP07Xb8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pTkAFHoTv5C75hGef+Grhoqli25Bhj19wYLEjco965HJrtKcKRlx3boGZR5eB3GHsiobDs0k+atTvx5q6V+s1F1wfpQvJi4b7NdxLlwO+9AR70XGwW4C2ktJDe04lh1D4E/qQIoE/GnPmLJcF0Q9v8497HcVIpaO6mQTVpuH0K0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=KgSIGDYS; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47UGHswG066831;
-	Fri, 30 Aug 2024 11:17:54 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1725034674;
-	bh=+nWZk5H7bvoB55vHrKYWMBxW4eVVWqOq41u+HHflULw=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=KgSIGDYSq0tmMGanKHRcBXHAIxtsw6V9Ty08/3GqvX7KrxsNFo/kjAJnF6k07cRb8
-	 Th8Fse7sNeBc/52yDURD1C7jExf0GjNkPpkolwVk6qJh4eWrNYo35r2Nbo16iys3ZB
-	 e9l4wFkCczi1fodX4vGilSqkYON3x8+r9ILAUwWc=
-Received: from DFLE107.ent.ti.com (dfle107.ent.ti.com [10.64.6.28])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47UGHsIJ024652
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 30 Aug 2024 11:17:54 -0500
-Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 30
- Aug 2024 11:17:54 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 30 Aug 2024 11:17:54 -0500
-Received: from uda0510294.dhcp.ti.com (uda0510294.dhcp.ti.com [172.24.227.151])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47UGHhRc103243;
-	Fri, 30 Aug 2024 11:17:51 -0500
-From: Beleswar Padhi <b-padhi@ti.com>
-To: <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>
-CC: <u-kumar1@ti.com>, <j-choudhary@ti.com>, <vaishnav.a@ti.com>, <afd@ti.com>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH v5 2/2] arm64: dts: ti: k3-j722s-evm: Enable Inter-Processor Communication
-Date: Fri, 30 Aug 2024 21:47:42 +0530
-Message-ID: <20240830161742.925145-3-b-padhi@ti.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240830161742.925145-1-b-padhi@ti.com>
-References: <20240830161742.925145-1-b-padhi@ti.com>
+	s=arc-20240116; t=1725034705; c=relaxed/simple;
+	bh=JCOqLvrLqOx3DNojy4FXBmVcn7BGm5zq+V6ecOYS73c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FKOJjfS1eFh5xJK/2fSQqUzmU5QCXy6alFocIzzYHlK5rh4sXOXYZgOm+aLZE7o3lnr1nbOr2y+/TPWsF1Z3OBNooLvK4xE5rQotr86WOqk6b7grHfZNT/M/oGAbdf2MpDFwiql7cz6siau/55hdqyqv7hbTDT/nlTtzgEjgvMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gskcS+sE; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725034703; x=1756570703;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=JCOqLvrLqOx3DNojy4FXBmVcn7BGm5zq+V6ecOYS73c=;
+  b=gskcS+sEChuO2wOIBPsmuwEoGwf4CGfHa+vUGhyNM2nwqpUXSSmOLKRO
+   PuH4MToybpYPY2YMMEDixMWecIHwIqHSM0uCKCj9+h6r6++czMbcXI0aU
+   2C0lFxFMpsbZakFr0wwihjsJb2zjm0LpyKpZH3Q5YL+VSxq8MolIxpqh1
+   GgvQd6gyQWTAjAuC0UFFUeDr1h5H8IfjqP8HywxF5rhzNU+43pWImSNSX
+   o8SXJMI573FnOvb+NRb6Id2ClH2oPVD0EanKa2P956u878ypBuAEJP8mE
+   nChVsyYrSWiBsj8goiVwgisDWRmuyODK0OVgZfsqyBiQ0f5FEDZaph9/x
+   A==;
+X-CSE-ConnectionGUID: jTkU1/OYRD6rkINTL1DD3w==
+X-CSE-MsgGUID: WnqnGMSsSdqzhf088jGDhg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11180"; a="23201140"
+X-IronPort-AV: E=Sophos;i="6.10,189,1719903600"; 
+   d="scan'208";a="23201140"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Aug 2024 09:18:22 -0700
+X-CSE-ConnectionGUID: n9AH2EjpT3uItkVQoWElZQ==
+X-CSE-MsgGUID: /+BV2KMXRRuZacypThYJTQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,189,1719903600"; 
+   d="scan'208";a="64134781"
+Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
+  by fmviesa010.fm.intel.com with ESMTP; 30 Aug 2024 09:18:17 -0700
+Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sk4KF-0001dQ-0I;
+	Fri, 30 Aug 2024 16:18:15 +0000
+Date: Sat, 31 Aug 2024 00:18:09 +0800
+From: kernel test robot <lkp@intel.com>
+To: Joe Damato <jdamato@fastly.com>, netdev@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, edumazet@google.com,
+	amritha.nambiar@intel.com, sridhar.samudrala@intel.com,
+	sdf@fomichev.me, bjorn@rivosinc.com, hch@infradead.org,
+	willy@infradead.org, willemdebruijn.kernel@gmail.com,
+	skhawaja@google.com, kuba@kernel.org,
+	Joe Damato <jdamato@fastly.com>,
+	Martin Karsten <mkarsten@uwaterloo.ca>,
+	Paolo Abeni <pabeni@redhat.com>, Jiri Pirko <jiri@resnulli.us>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Breno Leitao <leitao@debian.org>,
+	Johannes Berg <johannes.berg@intel.com>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 3/5] net: napi: Make gro_flush_timeout per-NAPI
+Message-ID: <202408310026.wxZySizP-lkp@intel.com>
+References: <20240829131214.169977-4-jdamato@fastly.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240829131214.169977-4-jdamato@fastly.com>
 
-From: Apurva Nandan <a-nandan@ti.com>
+Hi Joe,
 
-The K3 J722S-EVM platform is based on the J722S SoC which has one
-single-core Arm Cortex-R5F processor in each of the WAKEUP, MCU and MAIN
-voltage domain, and two C71x DSP subsystems in MAIN voltage domain.
+kernel test robot noticed the following build errors:
 
-The Inter-Processor communication between the A53 cores and these R5F
-and DSP remote cores is achieved through shared memory and Mailboxes.
-Thus, add the memory carveouts and enable the mailbox clusters required
-for communication.
+[auto build test ERROR on net-next/main]
 
-Also, The remoteproc firmware like of R5F and DSPs in the MAIN voltage
-domain use timers. Therefore, change the status of the timer nodes to
-"reserved" to avoid any clash during booting of remotecores. Usage is
-described as below:
+url:    https://github.com/intel-lab-lkp/linux/commits/Joe-Damato/net-napi-Make-napi_defer_hard_irqs-per-NAPI/20240829-211617
+base:   net-next/main
+patch link:    https://lore.kernel.org/r/20240829131214.169977-4-jdamato%40fastly.com
+patch subject: [PATCH net-next 3/5] net: napi: Make gro_flush_timeout per-NAPI
+config: s390-allyesconfig (https://download.01.org/0day-ci/archive/20240831/202408310026.wxZySizP-lkp@intel.com/config)
+compiler: s390-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240831/202408310026.wxZySizP-lkp@intel.com/reproduce)
 
-	+===================+=============+
-	|  Remoteproc Node  | Timer Node  |
-	+===================+=============+
-	| main_r5fss0_core0 | main_timer0 |
-	+-------------------+-------------+
-	| c7x_0             | main_timer1 |
-	+-------------------+-------------+
-	| c7x_1             | main_timer2 |
-	+-------------------+-------------+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408310026.wxZySizP-lkp@intel.com/
 
-Signed-off-by: Apurva Nandan <a-nandan@ti.com>
-[ Enabled mailbox instances and Reserved timer nodes ]
-Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
----
-v5: Changelog:
-1) Updated commit message to correctly reflect the host core name (A53
-not A72).
-2) Updated mbox DT node label and name to "mbox_wkup_r5_0" from
-"mbox_r5_0" for clarity.
+All errors (new ones prefixed by >>):
 
-Link to v4:
-https://lore.kernel.org/all/20240829060932.3441295-3-b-padhi@ti.com/
+   In file included from include/linux/minmax.h:5,
+                    from include/linux/jiffies.h:8,
+                    from include/net/pkt_sched.h:5,
+                    from drivers/net/ethernet/intel/idpf/idpf.h:12,
+                    from drivers/net/ethernet/intel/idpf/idpf_dev.c:4:
+   include/linux/build_bug.h:78:41: error: static assertion failed: "offsetof(struct idpf_q_vector, __cacheline_group_end__read_write) - offsetofend(struct idpf_q_vector, __cacheline_group_begin__read_write) <= (424 + 2 * sizeof(struct dim))"
+      78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
+         |                                         ^~~~~~~~~~~~~~
+   include/linux/build_bug.h:77:34: note: in expansion of macro '__static_assert'
+      77 | #define static_assert(expr, ...) __static_assert(expr, ##__VA_ARGS__, #expr)
+         |                                  ^~~~~~~~~~~~~~~
+   include/net/libeth/cache.h:24:9: note: in expansion of macro 'static_assert'
+      24 |         static_assert(offsetof(type, __cacheline_group_end__##grp) -          \
+         |         ^~~~~~~~~~~~~
+   include/net/libeth/cache.h:62:9: note: in expansion of macro 'libeth_cacheline_group_assert'
+      62 |         libeth_cacheline_group_assert(type, read_write, rw);                  \
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/net/ethernet/intel/idpf/idpf_txrx.h:475:1: note: in expansion of macro 'libeth_cacheline_set_assert'
+     475 | libeth_cacheline_set_assert(struct idpf_q_vector, 104,
+         | ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+>> include/linux/build_bug.h:78:41: error: static assertion failed: "sizeof(struct idpf_q_vector) <= ((((((104)) + ((__typeof__((104)))((256)) - 1)) & ~((__typeof__((104)))((256)) - 1)) + ((((424 + 2 * sizeof(struct dim))) + ((__typeof__((424 + 2 * sizeof(struct dim))))((256)) - 1)) & ~((__typeof__((424 + 2 * sizeof(struct dim))))((256)) - 1)) + ((((8 + sizeof(cpumask_var_t))) + ((__typeof__((8 + sizeof(cpumask_var_t))))((256)) - 1)) & ~((__typeof__((8 + sizeof(cpumask_var_t))))((256)) - 1))))"
+      78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
+         |                                         ^~~~~~~~~~~~~~
+   include/linux/build_bug.h:77:34: note: in expansion of macro '__static_assert'
+      77 | #define static_assert(expr, ...) __static_assert(expr, ##__VA_ARGS__, #expr)
+         |                                  ^~~~~~~~~~~~~~~
+   include/net/libeth/cache.h:28:9: note: in expansion of macro 'static_assert'
+      28 |         static_assert(sizeof(type) <= (sz))
+         |         ^~~~~~~~~~~~~
+   include/net/libeth/cache.h:48:9: note: in expansion of macro '__libeth_cacheline_struct_assert'
+      48 |         __libeth_cacheline_struct_assert(type, __libeth_cls(__VA_ARGS__));    \
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/net/libeth/cache.h:64:9: note: in expansion of macro 'libeth_cacheline_struct_assert'
+      64 |         libeth_cacheline_struct_assert(type, ro, rw, c)
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/net/ethernet/intel/idpf/idpf_txrx.h:475:1: note: in expansion of macro 'libeth_cacheline_set_assert'
+     475 | libeth_cacheline_set_assert(struct idpf_q_vector, 104,
+         | ^~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-v4: Changelog:
-1) Moved "status" property to the end in all the extended DT nodes added
-in this patch.
-2) Preceded child-nodes by a single blank line in the extended DT nodes
-added in this patch.
 
-Link to v3:
-https://lore.kernel.org/all/20240828112713.2668526-3-b-padhi@ti.com/
+vim +78 include/linux/build_bug.h
 
-v3: Changelog:
-1) Reserved conflicting timer nodes with remoteproc firmware (reflected the same
-in commit message).
-2) Simplified $subject to clarify that this patch enables IPC and transferred
-the details into commit message.
+bc6245e5efd70c Ian Abbott       2017-07-10  60  
+6bab69c65013be Rasmus Villemoes 2019-03-07  61  /**
+6bab69c65013be Rasmus Villemoes 2019-03-07  62   * static_assert - check integer constant expression at build time
+6bab69c65013be Rasmus Villemoes 2019-03-07  63   *
+6bab69c65013be Rasmus Villemoes 2019-03-07  64   * static_assert() is a wrapper for the C11 _Static_assert, with a
+6bab69c65013be Rasmus Villemoes 2019-03-07  65   * little macro magic to make the message optional (defaulting to the
+6bab69c65013be Rasmus Villemoes 2019-03-07  66   * stringification of the tested expression).
+6bab69c65013be Rasmus Villemoes 2019-03-07  67   *
+6bab69c65013be Rasmus Villemoes 2019-03-07  68   * Contrary to BUILD_BUG_ON(), static_assert() can be used at global
+6bab69c65013be Rasmus Villemoes 2019-03-07  69   * scope, but requires the expression to be an integer constant
+6bab69c65013be Rasmus Villemoes 2019-03-07  70   * expression (i.e., it is not enough that __builtin_constant_p() is
+6bab69c65013be Rasmus Villemoes 2019-03-07  71   * true for expr).
+6bab69c65013be Rasmus Villemoes 2019-03-07  72   *
+6bab69c65013be Rasmus Villemoes 2019-03-07  73   * Also note that BUILD_BUG_ON() fails the build if the condition is
+6bab69c65013be Rasmus Villemoes 2019-03-07  74   * true, while static_assert() fails the build if the expression is
+6bab69c65013be Rasmus Villemoes 2019-03-07  75   * false.
+6bab69c65013be Rasmus Villemoes 2019-03-07  76   */
+6bab69c65013be Rasmus Villemoes 2019-03-07  77  #define static_assert(expr, ...) __static_assert(expr, ##__VA_ARGS__, #expr)
+6bab69c65013be Rasmus Villemoes 2019-03-07 @78  #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
+6bab69c65013be Rasmus Villemoes 2019-03-07  79  
+07a368b3f55a79 Maxim Levitsky   2022-10-25  80  
 
-Link to v2:
-https://lore.kernel.org/all/20240612112259.1131653-3-b-padhi@ti.com/
-
-v2: Changelog:
-1) Squashed Patch 2 and 3 from V1 into Patch 2 in V2 as they were doing
-the same logical thing.
-
-Links to v1:
-https://lore.kernel.org/all/20240607090433.488454-3-b-padhi@ti.com/
-https://lore.kernel.org/all/20240607090433.488454-4-b-padhi@ti.com/
-
- arch/arm64/boot/dts/ti/k3-j722s-evm.dts | 157 ++++++++++++++++++++++++
- 1 file changed, 157 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/ti/k3-j722s-evm.dts b/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
-index 41c36f82a3c5..a00f4a7d20d9 100644
---- a/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
-+++ b/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
-@@ -52,12 +52,71 @@ secure_ddr: optee@9e800000 {
- 			no-map;
- 		};
- 
-+		wkup_r5fss0_core0_dma_memory_region: r5f-dma-memory@a0000000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x00 0xa0000000 0x00 0x100000>;
-+			no-map;
-+		};
-+
- 		wkup_r5fss0_core0_memory_region: r5f-memory@a0100000 {
- 			compatible = "shared-dma-pool";
- 			reg = <0x00 0xa0100000 0x00 0xf00000>;
- 			no-map;
- 		};
- 
-+		mcu_r5fss0_core0_dma_memory_region: mcu-r5fss-dma-memory-region@a1000000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x00 0xa1000000 0x00 0x100000>;
-+			no-map;
-+		};
-+
-+		mcu_r5fss0_core0_memory_region: mcu-r5fss-memory-region@a1100000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x00 0xa1100000 0x00 0xf00000>;
-+			no-map;
-+		};
-+
-+		main_r5fss0_core0_dma_memory_region: main-r5fss-dma-memory-region@a2000000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x00 0xa2000000 0x00 0x100000>;
-+			no-map;
-+		};
-+
-+		main_r5fss0_core0_memory_region: main-r5fss-memory-region@a2100000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x00 0xa2100000 0x00 0xf00000>;
-+			no-map;
-+		};
-+
-+		c7x_0_dma_memory_region: c7x-dma-memory@a3000000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x00 0xa3000000 0x00 0x100000>;
-+			no-map;
-+		};
-+
-+		c7x_0_memory_region: c7x-memory@a3100000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x00 0xa3100000 0x00 0xf00000>;
-+			no-map;
-+		};
-+
-+		c7x_1_dma_memory_region: c7x-dma-memory@a4000000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x00 0xa4000000 0x00 0x100000>;
-+			no-map;
-+		};
-+
-+		c7x_1_memory_region: c7x-memory@a4100000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x00 0xa4100000 0x00 0xf00000>;
-+			no-map;
-+		};
-+
-+		rtos_ipc_memory_region: ipc-memories@a5000000 {
-+			reg = <0x00 0xa5000000 0x00 0x1c00000>;
-+			alignment = <0x1000>;
-+			no-map;
-+		};
- 	};
- 
- 	vmain_pd: regulator-0 {
-@@ -558,6 +617,104 @@ &sdhci1 {
- 	bootph-all;
- };
- 
-+&mailbox0_cluster0 {
-+	status = "okay";
-+
-+	mbox_wkup_r5_0: mbox-wkup-r5-0 {
-+		ti,mbox-rx = <0 0 0>;
-+		ti,mbox-tx = <1 0 0>;
-+	};
-+};
-+
-+&mailbox0_cluster1 {
-+	status = "okay";
-+
-+	mbox_mcu_r5_0: mbox-mcu-r5-0 {
-+		ti,mbox-rx = <0 0 0>;
-+		ti,mbox-tx = <1 0 0>;
-+	};
-+};
-+
-+&mailbox0_cluster2 {
-+	status = "okay";
-+
-+	mbox_c7x_0: mbox-c7x-0 {
-+		ti,mbox-rx = <0 0 0>;
-+		ti,mbox-tx = <1 0 0>;
-+	};
-+};
-+
-+&mailbox0_cluster3 {
-+	status = "okay";
-+
-+	mbox_main_r5_0: mbox-main-r5-0 {
-+		ti,mbox-rx = <0 0 0>;
-+		ti,mbox-tx = <1 0 0>;
-+	};
-+
-+	mbox_c7x_1: mbox-c7x-1 {
-+		ti,mbox-rx = <2 0 0>;
-+		ti,mbox-tx = <3 0 0>;
-+	};
-+};
-+
-+/* Timers are used by Remoteproc firmware */
-+&main_timer0 {
-+	status = "reserved";
-+};
-+
-+&main_timer1 {
-+	status = "reserved";
-+};
-+
-+&main_timer2 {
-+	status = "reserved";
-+};
-+
-+&wkup_r5fss0 {
-+	status = "okay";
-+};
-+
-+&wkup_r5fss0_core0 {
-+	mboxes = <&mailbox0_cluster0 &mbox_wkup_r5_0>;
-+	memory-region = <&wkup_r5fss0_core0_dma_memory_region>,
-+			<&wkup_r5fss0_core0_memory_region>;
-+};
-+
-+&mcu_r5fss0 {
-+	status = "okay";
-+};
-+
-+&mcu_r5fss0_core0 {
-+	mboxes = <&mailbox0_cluster1 &mbox_mcu_r5_0>;
-+	memory-region = <&mcu_r5fss0_core0_dma_memory_region>,
-+			<&mcu_r5fss0_core0_memory_region>;
-+};
-+
-+&main_r5fss0 {
-+	status = "okay";
-+};
-+
-+&main_r5fss0_core0 {
-+	mboxes = <&mailbox0_cluster3 &mbox_main_r5_0>;
-+	memory-region = <&main_r5fss0_core0_dma_memory_region>,
-+			<&main_r5fss0_core0_memory_region>;
-+};
-+
-+&c7x_0 {
-+	mboxes = <&mailbox0_cluster2 &mbox_c7x_0>;
-+	memory-region = <&c7x_0_dma_memory_region>,
-+			<&c7x_0_memory_region>;
-+	status = "okay";
-+};
-+
-+&c7x_1 {
-+	mboxes = <&mailbox0_cluster3 &mbox_c7x_1>;
-+	memory-region = <&c7x_1_dma_memory_region>,
-+			<&c7x_1_memory_region>;
-+	status = "okay";
-+};
-+
- &serdes_ln_ctrl {
- 	idle-states = <J722S_SERDES0_LANE0_USB>,
- 		      <J722S_SERDES1_LANE0_PCIE0_LANE0>;
 -- 
-2.34.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
