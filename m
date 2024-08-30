@@ -1,108 +1,238 @@
-Return-Path: <linux-kernel+bounces-309124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-309126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1AAB966677
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 18:06:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9278C96667D
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 18:08:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BCDB281778
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 16:06:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE42BB221A2
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 16:08:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F7E4199FB7;
-	Fri, 30 Aug 2024 16:06:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46D061B8E86;
+	Fri, 30 Aug 2024 16:08:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="FsFPIiQ9"
-Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Em0t3yBR"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 301204D8AE
-	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 16:06:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89DA41B5EC2;
+	Fri, 30 Aug 2024 16:08:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725033968; cv=none; b=ao/MnJiPKAQTKqX/euKV+6w7F6osNp8il3vZBGZh6CYBLcFsLHtFyq6iUPlivUMuBSOmzZc8ssbh1UNzW9+lmV0zfE3Cqw90OIiql+Z6rB/fQ5DgvgY0PFYBXlAIkdYVoH0aXIhZWH973gTG4IVX5iW4tYdxeMVqfaABBbcrsPo=
+	t=1725034103; cv=none; b=VO+04gMULc1ZFQ4anmh5JpTDbRO7605TVs7UIpIrEG+d+7BPPnWq6HsXnxaBHvcHtCcZdqTtZMXE9cFLd/pK62BUBQZgypxyD/7UIq0lSPHpygq5KF5a6uNMZYd4Hbdn0Wbmw6CQBvfCkw+jqioTvhy9QuzJBZa1Cpcwgk2Pu/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725033968; c=relaxed/simple;
-	bh=MbCkbm5ZmFVv2vebmshq0PtmKsDB/QM/xw0exezg9xs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=r/NVjAwnlZH09L2apT6xu35CI02/pcjq65zCq8ODQJGrHuTmGPS3ErlivBnsT2q4+fzWO/KstvSjM+hxy2Cs5NVBMMjF3EOMdvMFLmgV1CCbL6cF90dd4u4TKff4S+ebrxKUA6iI8YbtAETCNiCBWubZEy92Wfxsr+NTH5mzExg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=FsFPIiQ9; arc=none smtp.client-ip=209.85.210.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-70f59e5419eso94640a34.3
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 09:06:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1725033966; x=1725638766; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6QFnBrHUOHBIu1g328bGqUADv8FhXAP6VMkOjyVwhEw=;
-        b=FsFPIiQ94Fu01IuTjHAqh2RxyWrpttt2/gODvBghCKQIUMX8cIyPSK8qYOzU7wh9Gz
-         SFMcaen7mZ2epLd+ojq4x6KUuQWPRwas8iniFKZbwFScfoeEFWd820xgKIskA0+yb8ke
-         1r/uq8cO7EooVbh5gxyoc6rZpx9dPlkKNhhCo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725033966; x=1725638766;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6QFnBrHUOHBIu1g328bGqUADv8FhXAP6VMkOjyVwhEw=;
-        b=aiOx5xwFimVT6OtVHny5LbsK57IHOXJHAyqSlVyNDnYRGu1K9nnSDXuQse0aqjbwQK
-         v8qvkJxU5EuCGvf2RHwk3wMkwMFn285uXoorkNQiHufPUV/uqWO1m8fYbAyHd58l/BO3
-         SShanqnq3CCP4uCcNdPZYN/QwnyZmYfx++12qcqCqWuq+joJgJXATcjj2Ay1HXzm0rZm
-         di5c7ZrLs91bigb8UVI+lTuvRfW8fJH6FBnLxyZt41MkS1/6y9s6ztvMJaPhiT2kCOAw
-         x5GgcwiAoA5+1TQS/w22nE7dLki9xWDNYuKorxHe/77mcHYjDg1wN68swQnze6+T7Fod
-         inog==
-X-Forwarded-Encrypted: i=1; AJvYcCWKRsQilUTYIrnGAT0UTRZSK5H6Wr84dgmuLR/3zblj91X8d3NxRtG1xboE62SI+CQkIz1rwB/SaxgEQFY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxgewRMvleVb0I/QR3YeG3iuBvi3oNx6xX5S8YcKahLtstnuNLs
-	BFujdJn9nb0pkEF4StxKX5GPYrS6wFNyRp+WSVFfLcD5ly5omd156yAcIeZqPHa4SPuzIKVE3Bw
-	ecd+c5KuBFMoiEA+xo65euwijnQESeWFztfij
-X-Google-Smtp-Source: AGHT+IFLHlMJJ5EBpVwqu1rWmjCPR3DZ5QkbAb7tP5TcOYOi7XVDZanOxHa7tKmN0cLHKkx7iXFjyBjweMsnL1z/4zo=
-X-Received: by 2002:a05:6870:d192:b0:25e:44b9:b2ee with SMTP id
- 586e51a60fabf-277b0b536b8mr1436022fac.2.1725033965860; Fri, 30 Aug 2024
- 09:06:05 -0700 (PDT)
+	s=arc-20240116; t=1725034103; c=relaxed/simple;
+	bh=NQvkHbKFvCNmAk13O0Hw0+Go2GG2xCkOaQ+cBqqlySY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MTPynz9TZZ7gLF8LwKIPGRXWZ9Gt355h/L6E1yIllRO/qH9r+zSw3mgiAHBbBiqPLXEz98EWl1WGCHezPJzm1QyF5sNiw3x9h6A4KHmJoRrTm7YlAsVyuZUd6H0d62d52hpHAMC99NcTe/3/T0E+dF7nltWGwLQkJ/aW+jxOQzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Em0t3yBR; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1725034102; x=1756570102;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=NQvkHbKFvCNmAk13O0Hw0+Go2GG2xCkOaQ+cBqqlySY=;
+  b=Em0t3yBRqOUmsfaPqA4IAQq8Q7ow5sL6oiubbBhZ8MSXW3VMFvKFlHSJ
+   0q676kWrPqEeORiM756nHYwTiagO1Edn6F8E/slxoRJFgvE820dgXlv0w
+   FyIQcrTtAExlgXCR78lK4XwfyvCMSrBbxb1FGkq806wO3AtAFDZwSmV1E
+   XD5pGE/czFbuV1i8BGcQZwQ7ddNprbBWQmgKuHF3mj4DO6pKORYyNCauB
+   WtlYY+UOPWsk/6jMO8t7OLZxZtoq2EnvCa1mN6QMXvdtjdhZbJhmDUXbG
+   o+cywhEkXllkyVToAGuLzE+aUtSHcWTLYITtOWQlgDQQtaXPHO0RILDo4
+   A==;
+X-CSE-ConnectionGUID: zYjzy1UES4OWZY7xxII6oQ==
+X-CSE-MsgGUID: DwiCuyqNTzC0w1aoRHk49Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11180"; a="34255326"
+X-IronPort-AV: E=Sophos;i="6.10,189,1719903600"; 
+   d="scan'208";a="34255326"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Aug 2024 09:08:21 -0700
+X-CSE-ConnectionGUID: dUUB7NMLS0i/oQh7OvxTUA==
+X-CSE-MsgGUID: LVikeV91R/i9tICoQsoktg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,189,1719903600"; 
+   d="scan'208";a="94674482"
+Received: from lkp-server01.sh.intel.com (HELO 9c6b1c7d3b50) ([10.239.97.150])
+  by orviesa002.jf.intel.com with ESMTP; 30 Aug 2024 09:08:17 -0700
+Received: from kbuild by 9c6b1c7d3b50 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sk4AY-0001cu-2r;
+	Fri, 30 Aug 2024 16:08:14 +0000
+Date: Sat, 31 Aug 2024 00:07:37 +0800
+From: kernel test robot <lkp@intel.com>
+To: Billy Tsai <billy_tsai@aspeedtech.com>, linus.walleij@linaro.org,
+	brgl@bgdev.pl, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, joel@jms.id.au, andrew@codeconstruct.com.au,
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org, BMC-SW@aspeedtech.com
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev
+Subject: Re: [PATCH v2 3/4] gpio: aspeed: Create llops to handle hardware
+ access
+Message-ID: <202408302344.bCpCF6bu-lkp@intel.com>
+References: <20240830034047.2251482-4-billy_tsai@aspeedtech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240830040101.822209-1-Liam.Howlett@oracle.com>
-In-Reply-To: <20240830040101.822209-1-Liam.Howlett@oracle.com>
-From: Jeff Xu <jeffxu@chromium.org>
-Date: Fri, 30 Aug 2024 09:05:53 -0700
-Message-ID: <CABi2SkVjphqbh5M_ybWRbDYWG08C9eL3x5fmy01AQfp+svM0Tg@mail.gmail.com>
-Subject: Re: [PATCH v8 00/21] Avoid MAP_FIXED gap exposure
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Suren Baghdasaryan <surenb@google.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Matthew Wilcox <willy@infradead.org>, 
-	Vlastimil Babka <vbabka@suse.cz>, sidhartha.kumar@oracle.com, 
-	Bert Karwatzki <spasswolf@web.de>, Jiri Olsa <olsajiri@gmail.com>, Kees Cook <kees@kernel.org>, 
-	"Paul E . McKenney" <paulmck@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240830034047.2251482-4-billy_tsai@aspeedtech.com>
 
-Hi Liam
+Hi Billy,
 
-On Thu, Aug 29, 2024 at 9:01=E2=80=AFPM Liam R. Howlett <Liam.Howlett@oracl=
-e.com> wrote:
->
-> Changes since v7:
->
-> This is all the patches I've sent for v7 fixups plus the return code for
-> mseal().  The incorrect return code was introduced in an earlier patch
-> and then modified (still incorrectly) later, so this version will
-> hopefully bisect cleanly.
->
-> - Fixed return type of vms_gather_munmap_vmas() to -ENOMEM or -EPERM
-> - Passed through error returned from vms_gather_munmap_vmas() in
->   mmap_region() - Thanks Jeff
+kernel test robot noticed the following build warnings:
 
-I would think it is cleaner to fix the original commit directly
-instead of as part of a large patch series, no ?  If not possible,
-maybe mm-unstable should apply my fix first then you can refactor
-based on that ?
+[auto build test WARNING on brgl/gpio/for-next]
+[also build test WARNING on linus/master v6.11-rc5 next-20240830]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
--Jeff
+url:    https://github.com/intel-lab-lkp/linux/commits/Billy-Tsai/dt-bindings-gpio-aspeed-ast2400-gpio-Support-ast2700/20240830-114325
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gpio/for-next
+patch link:    https://lore.kernel.org/r/20240830034047.2251482-4-billy_tsai%40aspeedtech.com
+patch subject: [PATCH v2 3/4] gpio: aspeed: Create llops to handle hardware access
+config: i386-buildonly-randconfig-004-20240830 (https://download.01.org/0day-ci/archive/20240830/202408302344.bCpCF6bu-lkp@intel.com/config)
+compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240830/202408302344.bCpCF6bu-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408302344.bCpCF6bu-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/gpio/gpio-aspeed.c:394:6: warning: variable 'copro' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+     394 |         if (gpio->llops->copro_request)
+         |             ^~~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/gpio/gpio-aspeed.c:399:6: note: uninitialized use occurs here
+     399 |         if (copro && gpio->llops->copro_release)
+         |             ^~~~~
+   drivers/gpio/gpio-aspeed.c:394:2: note: remove the 'if' if its condition is always true
+     394 |         if (gpio->llops->copro_request)
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     395 |                 copro = gpio->llops->copro_request(gpio, offset);
+   drivers/gpio/gpio-aspeed.c:391:12: note: initialize the variable 'copro' to silence this warning
+     391 |         bool copro;
+         |                   ^
+         |                    = 0
+   drivers/gpio/gpio-aspeed.c:415:6: warning: variable 'copro' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+     415 |         if (gpio->llops->copro_request)
+         |             ^~~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/gpio/gpio-aspeed.c:418:6: note: uninitialized use occurs here
+     418 |         if (copro && gpio->llops->copro_release)
+         |             ^~~~~
+   drivers/gpio/gpio-aspeed.c:415:2: note: remove the 'if' if its condition is always true
+     415 |         if (gpio->llops->copro_request)
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     416 |                 copro = gpio->llops->copro_request(gpio, offset);
+   drivers/gpio/gpio-aspeed.c:408:12: note: initialize the variable 'copro' to silence this warning
+     408 |         bool copro;
+         |                   ^
+         |                    = 0
+   drivers/gpio/gpio-aspeed.c:438:6: warning: variable 'copro' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+     438 |         if (gpio->llops->copro_request)
+         |             ^~~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/gpio/gpio-aspeed.c:443:6: note: uninitialized use occurs here
+     443 |         if (copro && gpio->llops->copro_release)
+         |             ^~~~~
+   drivers/gpio/gpio-aspeed.c:438:2: note: remove the 'if' if its condition is always true
+     438 |         if (gpio->llops->copro_request)
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     439 |                 copro = gpio->llops->copro_request(gpio, offset);
+   drivers/gpio/gpio-aspeed.c:431:12: note: initialize the variable 'copro' to silence this warning
+     431 |         bool copro;
+         |                   ^
+         |                    = 0
+   drivers/gpio/gpio-aspeed.c:502:6: warning: variable 'copro' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+     502 |         if (gpio->llops->copro_request)
+         |             ^~~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/gpio/gpio-aspeed.c:507:6: note: uninitialized use occurs here
+     507 |         if (copro && gpio->llops->copro_release)
+         |             ^~~~~
+   drivers/gpio/gpio-aspeed.c:502:2: note: remove the 'if' if its condition is always true
+     502 |         if (gpio->llops->copro_request)
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     503 |                 copro = gpio->llops->copro_request(gpio, offset);
+   drivers/gpio/gpio-aspeed.c:495:12: note: initialize the variable 'copro' to silence this warning
+     495 |         bool copro;
+         |                   ^
+         |                    = 0
+   drivers/gpio/gpio-aspeed.c:528:6: warning: variable 'copro' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+     528 |         if (gpio->llops->copro_request)
+         |             ^~~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/gpio/gpio-aspeed.c:533:6: note: uninitialized use occurs here
+     533 |         if (copro && gpio->llops->copro_release)
+         |             ^~~~~
+   drivers/gpio/gpio-aspeed.c:528:2: note: remove the 'if' if its condition is always true
+     528 |         if (gpio->llops->copro_request)
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     529 |                 copro = gpio->llops->copro_request(gpio, offset);
+   drivers/gpio/gpio-aspeed.c:517:12: note: initialize the variable 'copro' to silence this warning
+     517 |         bool copro;
+         |                   ^
+         |                    = 0
+   drivers/gpio/gpio-aspeed.c:589:6: warning: variable 'copro' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+     589 |         if (gpio->llops->copro_request)
+         |             ^~~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/gpio/gpio-aspeed.c:596:6: note: uninitialized use occurs here
+     596 |         if (copro && gpio->llops->copro_release)
+         |             ^~~~~
+   drivers/gpio/gpio-aspeed.c:589:2: note: remove the 'if' if its condition is always true
+     589 |         if (gpio->llops->copro_request)
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     590 |                 copro = gpio->llops->copro_request(gpio, offset);
+   drivers/gpio/gpio-aspeed.c:561:12: note: initialize the variable 'copro' to silence this warning
+     561 |         bool copro;
+         |                   ^
+         |                    = 0
+   drivers/gpio/gpio-aspeed.c:659:6: warning: variable 'copro' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+     659 |         if (gpio->llops->copro_request)
+         |             ^~~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/gpio/gpio-aspeed.c:664:6: note: uninitialized use occurs here
+     664 |         if (copro && gpio->llops->copro_release)
+         |             ^~~~~
+   drivers/gpio/gpio-aspeed.c:659:2: note: remove the 'if' if its condition is always true
+     659 |         if (gpio->llops->copro_request)
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     660 |                 copro = gpio->llops->copro_request(gpio, offset);
+   drivers/gpio/gpio-aspeed.c:656:12: note: initialize the variable 'copro' to silence this warning
+     656 |         bool copro;
+         |                   ^
+         |                    = 0
+   7 warnings generated.
+
+
+vim +394 drivers/gpio/gpio-aspeed.c
+
+   385	
+   386	static void aspeed_gpio_set(struct gpio_chip *gc, unsigned int offset,
+   387				    int val)
+   388	{
+   389		struct aspeed_gpio *gpio = gpiochip_get_data(gc);
+   390		unsigned long flags;
+   391		bool copro;
+   392	
+   393		raw_spin_lock_irqsave(&gpio->lock, flags);
+ > 394		if (gpio->llops->copro_request)
+   395			copro = gpio->llops->copro_request(gpio, offset);
+   396	
+   397		__aspeed_gpio_set(gc, offset, val);
+   398	
+   399		if (copro && gpio->llops->copro_release)
+   400			gpio->llops->copro_release(gpio, offset);
+   401		raw_spin_unlock_irqrestore(&gpio->lock, flags);
+   402	}
+   403	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
