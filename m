@@ -1,141 +1,181 @@
-Return-Path: <linux-kernel+bounces-307990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-307981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E3A79655F9
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 05:50:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4033F9655E1
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 05:48:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43FE11F244D9
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 03:50:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A72CB22D22
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2024 03:48:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E44EC1531D4;
-	Fri, 30 Aug 2024 03:49:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 753091494D1;
+	Fri, 30 Aug 2024 03:48:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P2adroIa"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="36NA014R"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE7351531C3;
-	Fri, 30 Aug 2024 03:49:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77A801369AE
+	for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2024 03:48:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724989756; cv=none; b=gjuyPlU1fNpsqoqgLIEXbuI2cOj+2lo35wWsl3mGS72apC6kZFjWE4Pbe0Y7V9/Kib5XiclChNKStGkmFOCmX21f1KzfyCKxfUcxOs7p1uhBd4yUl8Ho5vHQG7gHrjHZiG1D8VTCwR20tsllIoM2cH328zWD20HErSlNzAQ+WYc=
+	t=1724989683; cv=none; b=lz2NFn8Fk9ch6B37057+bUGf5kbNIWvTCXAFo2ATFFW7gL6axgRjmy0rxL21K8ogwI3s30XRXew5ocVXYKfWKbpoJutWPaQLesPLFXeyg4DyDbh0xcqrGq7CUFh9B63iDE9eMIsxgMIY0KtZgc3NoBFWZRz+pyKGMBnhpqQIQPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724989756; c=relaxed/simple;
-	bh=GyGJDuotmpT+T6oQysyKHcd2ws3AuvjX3ZNsznw/iEA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=FqpZTZyfnvwqhMrFwm3Fu0VsdjCkywwmIClqHCu0BS/BX2CKG8eaEl5gwtc7I8yTCZfv7vKLuFHLRPgJ/v7Ioxm1qiA5CZabTT1VaC/lfqBuDQATMkKtr2r8Ps9YIxmpdPGN88Ny+LlMSBcW/6zXHbVa/+X6jjqjkOi28lNPM+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P2adroIa; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-201f2b7fe0dso11574505ad.1;
-        Thu, 29 Aug 2024 20:49:14 -0700 (PDT)
+	s=arc-20240116; t=1724989683; c=relaxed/simple;
+	bh=8X4cJIJqX+703YojJTQK5ekGonK/y/arTKL/aqKkyEI=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=lzvuCYoyxicNrKJNKIiHOitBuR/e+mVyXGXvuVM1GTjyJNVCpzVYVLlq279eu4wdjgE2j1TKKlSdzfTSZzSaiyfj5Xc8J/EOxAhPVMt1ZM7QzrxHSG+OEBghvd2zTplrDqPG8vDs5LNW1ctxNtsgakMBaRiajMx5wxv83gtVj8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=36NA014R; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-201e24bd4d9so13699855ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2024 20:48:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724989754; x=1725594554; darn=vger.kernel.org;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=R1w8U38LxbqsHMWFXxaIYW4AXwoQS5Rj9y5ARnmh8Yw=;
-        b=P2adroIa6Wlj7GO38zejHgGu9nqgvPj54fWE5uhyCE8YRkH+Yij3VJTxRuk1vFZFqL
-         +XoYwvkLf8w4JeLHVSIZJ07WsJ0I+GiR47/S3CXvq6cP8bYSbeLHMweELV5wTVNx9oOd
-         ywgDwUrqxaUDobuvI+L9wmllmHgfTeczRBmHTrgRawI7hkfkwzdI4yqYyQbZPGWouL4k
-         vUZZN7w3O2FvDcDTjq9lgWwWxOWrYxh/v8kaJ1Pj/3dpKF5tK/2uMqZrNZouP5nMgARr
-         Wsz4+HOu76kLgQakniSYheSD3u12DVDKEAHtLXrheg5lzuWtTlbBLIArPi2qgScUbnrO
-         rxvg==
+        d=google.com; s=20230601; t=1724989681; x=1725594481; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7oDkTMtkbW8nQHJkC6FNRU/4bZFr8mldBmCcZx8NdnI=;
+        b=36NA014R6nPw0VhVy0a82O/PyRygQjCh/NhLfcMYJTf/P8ib5WDcjIH5W64o/L8PNu
+         Jn6SUytoX3gR8d9NfYUfub1Jb2mfTYOXGxo6fE2m5IUBAUz7GoaGs1HzhDOlfVzCvAsc
+         xn0oHjGpS6poitMkD/YoZtrPSi84jkHGn/qv0tV3FA4EUihYV3A2TV4URBL+AMllBK2j
+         N0vyfxRFGBK+yoW4+xczayJ553eLODwPiqJPyQPrmGCcSsBhcwZHfpE8Vvj54uggHscJ
+         tZKVRXoAVbGpxcCQdv4weBrux8iLnOZikG2eRTIKkl5+2IX92/5L6EekZmwZWpl1StNa
+         mVKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724989754; x=1725594554;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=R1w8U38LxbqsHMWFXxaIYW4AXwoQS5Rj9y5ARnmh8Yw=;
-        b=K1tZR/yanZYF/q4ORBler49ayO0Y/gB6bvceTlsJ/cRw/6J6Fu5TWlYZPZvJgQ0jsZ
-         nIKc6R2f1EOKNRjLhReegBZf1O1OTQjrwp3OKgRVPWgN03sVwoeAdR+tGOPDyjSfGJz7
-         fhpL216DpRhkdXf52iAaoPLJbYhljLrKQK4I91z93cqTnOorWiQCE1ni1nkhP5lu5jpq
-         t8Pu409VyKDU3GCmUNWKYpGJIcyC80rEPXPYL7jZD/FHvnW/NDZrpskXQ1qrk9F5e0ox
-         FSgXJjB8oTZV+H1nNPKoyZRJKnnfik1lCrUXalmTWIQ6y+1qTKBuRSnOfDekfsS18wWM
-         9C2w==
-X-Forwarded-Encrypted: i=1; AJvYcCWdcPHbfYjM/SIUaPfEiLGwNSPltd2WDxI6Qt8U/vYQ4GNH2p4jO9qzYsyi2EE6xjPrFTMa8hgrdRQ=@vger.kernel.org, AJvYcCXstXQ65bc1kTZ0hPqHoD7B0t9TbCC/F65dUafMCiFQtGcGFuddm8P37ugkS1CokXrQpxsBGla3ZDrdOV4T@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCvQ+i71CsgC370yizP7EQB79ziTIUkSN53GCz2SiCmavkTxIX
-	L9dPngCOTbyS8MzSbGgWePgIhcADXJI2b3mghsfWjRr79uzEOhw=
-X-Google-Smtp-Source: AGHT+IGrJD1LOrRYZRsGSK8KrWyqBhIIUuxqyDXZM8UZXfrS+XZ4T7TqZJ1nRpyYmsA8M78lXul8eg==
-X-Received: by 2002:a17:903:234c:b0:1fb:8419:8384 with SMTP id d9443c01a7336-2050c37255emr62935835ad.13.1724989754013;
-        Thu, 29 Aug 2024 20:49:14 -0700 (PDT)
-Received: from localhost (2001-b400-e338-dab5-746d-1a82-f21e-bb0a.emome-ip6.hinet.net. [2001:b400:e338:dab5:746d:1a82:f21e:bb0a])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-205155452ecsm18259455ad.219.2024.08.29.20.49.13
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 29 Aug 2024 20:49:13 -0700 (PDT)
-From: Tyrone Ting <warp5tw@gmail.com>
-X-Google-Original-From: Tyrone Ting <kfting@nuvoton.com>
-To: avifishman70@gmail.com,
-	tmaimon77@gmail.com,
-	tali.perry1@gmail.com,
-	venture@google.com,
-	yuenn@google.com,
-	benjaminfair@google.com,
-	andi.shyti@kernel.org,
-	andriy.shevchenko@linux.intel.com,
-	wsa@kernel.org,
-	rand.sec96@gmail.com,
-	wsa+renesas@sang-engineering.com,
-	warp5tw@gmail.com,
-	tali.perry@nuvoton.com,
-	Avi.Fishman@nuvoton.com,
-	tomer.maimon@nuvoton.com,
-	KWLIU@nuvoton.com,
-	JJLIU0@nuvoton.com,
-	kfting@nuvoton.com
-Cc: openbmc@lists.ozlabs.org,
-	linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Charles Boyer <Charles.Boyer@fii-usa.com>,
-	Vivekanand Veeracholan <vveerach@google.com>
-Subject: [PATCH v2 7/7] i2c: npcm: Enable slave in eob interrupt
-Date: Fri, 30 Aug 2024 11:46:40 +0800
-Message-Id: <20240830034640.7049-8-kfting@nuvoton.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20240830034640.7049-1-kfting@nuvoton.com>
-References: <20240830034640.7049-1-kfting@nuvoton.com>
+        d=1e100.net; s=20230601; t=1724989681; x=1725594481;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=7oDkTMtkbW8nQHJkC6FNRU/4bZFr8mldBmCcZx8NdnI=;
+        b=LfjjmqB/Ns4pXwD8xpIOn+228cVKrabL6wVQQcaKc+xjizHsRyAERmNQ1h0OymiysT
+         gJjt3VcczI5KkAsnWS6j2DQb+rXMMhh0o8RilVorIwMavQx6UreYNTXRY75ts6AVg4/3
+         l6qFee8serRW1NDXIfqRkQaL+kdA7hzng1VU4A2ZWV6+G2g8p2ht4r4ALYdw96ta6FV2
+         oMX5yqLCU/L9Tv0r9YTgXlP1VUZJ/UQdrSQNmxQ5mOIuZ2G5NTjBkuI7nCeOAVBj61S6
+         P4FLYk2glC8IJ4Nche6pekdaqz+mvzy7GDtvhkTsgXqDA/H8AlVQLnMoBrdCy+8dM92o
+         DGUg==
+X-Forwarded-Encrypted: i=1; AJvYcCUHQe6q9OpqmmOkJDVIAPkZa+nYe29BzioZBNn3T+DJ4ujuYpExbpsVKaOVyCagvPrKOQHd7WnJGoXjRxE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyuF5kmuwRwLAmO7S88WhEOhJZNLCZ/hHQi5lMOhJdIC4qZ9k97
+	Jd9gVCPGR+hW52/RchYsY82vQ6OKhebA2w7/wsHc1gsUNQAHhvKkGVhGZIt0vwZXPDrhTMBhooM
+	/Pw==
+X-Google-Smtp-Source: AGHT+IFuJaHoFSCV5+8BWRf+q8zKeUDxkgIb0cxDbWq2MCPl2PJvwzOB/7AGr0dtEc/kwU7osl3dzfbQCdc=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a17:902:f54c:b0:1ff:4618:36dd with SMTP id
+ d9443c01a7336-20527612dc9mr665745ad.1.1724989680602; Thu, 29 Aug 2024
+ 20:48:00 -0700 (PDT)
+Date: Thu, 29 Aug 2024 20:47:59 -0700
+In-Reply-To: <CADrL8HWQqVm5VbNnR6iMEZF17+nuO_Y25m6uuScCBVSE_YCTdg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+Mime-Version: 1.0
+References: <20240724011037.3671523-1-jthoughton@google.com>
+ <20240724011037.3671523-3-jthoughton@google.com> <Zr_3Vohvzt0KmFiN@google.com>
+ <CADrL8HWQqVm5VbNnR6iMEZF17+nuO_Y25m6uuScCBVSE_YCTdg@mail.gmail.com>
+Message-ID: <ZtFA79zreVt4GBri@google.com>
+Subject: Re: [PATCH v6 02/11] KVM: x86: Relax locking for kvm_test_age_gfn and kvm_age_gfn
+From: Sean Christopherson <seanjc@google.com>
+To: James Houghton <jthoughton@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Ankit Agrawal <ankita@nvidia.com>, Axel Rasmussen <axelrasmussen@google.com>, 
+	Catalin Marinas <catalin.marinas@arm.com>, David Matlack <dmatlack@google.com>, 
+	David Rientjes <rientjes@google.com>, James Morse <james.morse@arm.com>, 
+	Jason Gunthorpe <jgg@ziepe.ca>, Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>, 
+	Oliver Upton <oliver.upton@linux.dev>, Raghavendra Rao Ananta <rananta@google.com>, 
+	Ryan Roberts <ryan.roberts@arm.com>, Shaoqin Huang <shahuang@redhat.com>, 
+	Suzuki K Poulose <suzuki.poulose@arm.com>, Wei Xu <weixugc@google.com>, 
+	Will Deacon <will@kernel.org>, Yu Zhao <yuzhao@google.com>, Zenghui Yu <yuzenghui@huawei.com>, 
+	kvmarm@lists.linux.dev, kvm@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Charles Boyer <Charles.Boyer@fii-usa.com>
+On Thu, Aug 29, 2024, James Houghton wrote:
+> On Fri, Aug 16, 2024 at 6:05=E2=80=AFPM Sean Christopherson <seanjc@googl=
+e.com> wrote:
+> > > +static __always_inline bool kvm_tdp_mmu_handle_gfn_lockless(
+> > > +             struct kvm *kvm,
+> > > +             struct kvm_gfn_range *range,
+> > > +             tdp_handler_t handler)
+> >
+> > Please burn all the Google3 from your brain, and code ;-)
+>=20
+> I indented this way to avoid going past the 80 character limit. I've
+> adjusted it to be more like the other functions in this file.
+>=20
+> Perhaps I should put `static __always_inline bool` on its own line?
 
-Nuvoton slave enable was in user space API call master_xfer, so it is
-subject to delays from the OS scheduler. If the BMC is not enabled for
-slave mode in time for master to send response, then it will NAK the
-address match. Then the PLDM request timeout occurs.
+Noooo. Do not wrap before the function name.  Linus has a nice explanation/=
+rant
+on this[1].
 
-If the slave enable is moved to the EOB interrupt service routine, then
-the BMC can be ready in slave mode by the time it needs to receive a
-response.
+In this case, I'm pretty sure you can avoid the helper and simply handle al=
+l aging
+paths in a single API, e.g. similar to what I proposed for the shadow MMU[2=
+].
 
-Signed-off-by: Charles Boyer <Charles.Boyer@fii-usa.com>
-Signed-off-by: Vivekanand Veeracholan <vveerach@google.com>
-Signed-off-by: Tyrone Ting <kfting@nuvoton.com>
----
- drivers/i2c/busses/i2c-npcm7xx.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+[1] https://lore.kernel.org/all/CAHk-=3DwjoLAYG446ZNHfg=3DGhjSY6nFmuB_wA8fY=
+d5iLBNXjo9Bw@mail.gmail.com
+[2] https://lore.kernel.org/all/20240809194335.1726916-16-seanjc@google.com
 
-diff --git a/drivers/i2c/busses/i2c-npcm7xx.c b/drivers/i2c/busses/i2c-npcm7xx.c
-index cac4ea0b69b8..5bdc1b5895ac 100644
---- a/drivers/i2c/busses/i2c-npcm7xx.c
-+++ b/drivers/i2c/busses/i2c-npcm7xx.c
-@@ -1781,6 +1781,12 @@ static int npcm_i2c_int_master_handler(struct npcm_i2c *bus)
- 	    (FIELD_GET(NPCM_I2CCST3_EO_BUSY,
- 		       ioread8(bus->reg + NPCM_I2CCST3)))) {
- 		npcm_i2c_irq_handle_eob(bus);
-+#if IS_ENABLED(CONFIG_I2C_SLAVE)
-+		/* reenable slave if it was enabled */
-+		if (bus->slave)
-+			iowrite8((bus->slave->addr & 0x7F) | NPCM_I2CADDR_SAEN,
-+				 bus->reg + NPCM_I2CADDR1);
-+#endif
- 		return 0;
- 	}
- 
--- 
-2.34.1
+> > >  /*
+> > >   * Mark the SPTEs range of GFNs [start, end) unaccessed and return n=
+on-zero
+> > >   * if any of the GFNs in the range have been accessed.
+> > > @@ -1237,28 +1272,30 @@ static bool age_gfn_range(struct kvm *kvm, st=
+ruct tdp_iter *iter,
+> > >  {
+> > >       u64 new_spte;
+> > >
+> > > +retry:
+> > >       /* If we have a non-accessed entry we don't need to change the =
+pte. */
+> > >       if (!is_accessed_spte(iter->old_spte))
+> > >               return false;
+> > >
+> > >       if (spte_ad_enabled(iter->old_spte)) {
+> > > -             iter->old_spte =3D tdp_mmu_clear_spte_bits(iter->sptep,
+> > > -                                                      iter->old_spte=
+,
+> > > -                                                      shadow_accesse=
+d_mask,
+> > > -                                                      iter->level);
+> > > +             iter->old_spte =3D tdp_mmu_clear_spte_bits_atomic(iter-=
+>sptep,
+> > > +                                             shadow_accessed_mask);
+> > >               new_spte =3D iter->old_spte & ~shadow_accessed_mask;
+> > >       } else {
+> > > -             /*
+> > > -              * Capture the dirty status of the page, so that it doe=
+sn't get
+> > > -              * lost when the SPTE is marked for access tracking.
+> > > -              */
+> > > +             new_spte =3D mark_spte_for_access_track(iter->old_spte)=
+;
+> > > +             if (__tdp_mmu_set_spte_atomic(iter, new_spte)) {
+> > > +                     /*
+> > > +                      * The cmpxchg failed. If the spte is still a
+> > > +                      * last-level spte, we can safely retry.
+> > > +                      */
+> > > +                     if (is_shadow_present_pte(iter->old_spte) &&
+> > > +                         is_last_spte(iter->old_spte, iter->level))
+> > > +                             goto retry;
+> >
+> > Do we have a feel for how often conflicts actually happen?  I.e. is it =
+worth
+> > retrying and having to worry about infinite loops, however improbable t=
+hey may
+> > be?
+>=20
+> I'm not sure how common this is. I think it's probably better not to
+> retry actually. If the cmpxchg fails, this spte is probably young
+> anyway, so I can just `return true` instead of potentially retrying.
+> This is all best-effort anyway.
 
++1
 
